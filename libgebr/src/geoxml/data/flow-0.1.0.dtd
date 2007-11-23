@@ -1,0 +1,76 @@
+<!ELEMENT flow (filename, title, description, help, author, email, category*, io, program*)>
+<!ATTLIST flow version CDATA #FIXED "0.1.0">
+
+<!-- Name of the XML flow file -->
+<!ELEMENT filename         (#PCDATA)>
+<!-- Short title for a program or flow -->
+<!ELEMENT title	           (#PCDATA)>
+<!-- One line description for a program or flow -->
+<!ELEMENT description      (#PCDATA)>
+<!-- Detailed text used as help message for a program or flow -->
+<!ELEMENT help             (#PCDATA)>
+<!-- Author of the flow and his/her email -->
+<!ELEMENT author           (#PCDATA)>
+<!ELEMENT email            (#PCDATA)>
+<!-- Categories to which the flow belongs to -->
+<!ELEMENT category         (#PCDATA)>
+<!-- Input/Output/Erro log files -->
+<!ELEMENT input            (#PCDATA)>
+<!ELEMENT output           (#PCDATA)>
+<!ELEMENT error            (#PCDATA)>
+
+<!-- Input/Output to run the flow -->
+<!ELEMENT io (input, output, error)>
+
+
+<!ELEMENT program (menu, title, binary, description, help, parameters?)>
+<!ATTLIST program
+   stdin  (yes | no)                             #REQUIRED
+   stdout (yes | no)                             #REQUIRED
+   stderr (yes | no)                             #REQUIRED
+   status (disabled | configured | unconfigured) #REQUIRED>
+
+<!-- Menu file from which this program belong -->
+<!ELEMENT menu             (#PCDATA)>
+<!ATTLIST menu index CDATA #REQUIRED>
+<!-- Binary to program (without path) -->
+<!ELEMENT binary           (#PCDATA)>
+
+
+<!ELEMENT parameters (int | float | string | flag | file | range)*>
+
+<!-- Types of parameters -->
+<!-- Integer -->
+<!ELEMENT int (keyword, label, value)>
+<!ATTLIST int required (yes | no) #REQUIRED>
+<!-- Real number -->
+<!ELEMENT float (keyword, label, value)>
+<!ATTLIST float required (yes | no) #REQUIRED>
+<!-- String -->
+<!ELEMENT string (keyword, label, value)>
+<!ATTLIST string required (yes | no) #REQUIRED>
+<!-- Flag -->
+<!ELEMENT flag (keyword, label, state)>
+<!-- File -->
+<!ELEMENT file (keyword, label, value)>
+<!ATTLIST file
+   required  (yes | no) #REQUIRED
+   directory (yes | no) #REQUIRED>
+<!-- Range -->
+<!ELEMENT range (keyword, label, value)>
+<!ATTLIST range
+   required (yes | no) #REQUIRED
+   min           CDATA #REQUIRED
+   max           CDATA #REQUIRED
+   inc           CDATA #REQUIRED>
+
+<!-- Keyword to build the command line -->
+<!ELEMENT keyword          (#PCDATA)>
+<!-- Short text to be displayed as label for an input parameter -->
+<!ELEMENT label            (#PCDATA)>
+<!-- Actual value of a parameter -->
+<!ELEMENT value            (#PCDATA)>
+<!ATTLIST value default CDATA #IMPLIED>
+<!-- State of a flag parameter -->
+<!ELEMENT state            (#PCDATA)>
+<!ATTLIST state default (on | off) #REQUIRED>

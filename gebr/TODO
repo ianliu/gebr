@@ -1,0 +1,41 @@
+*feito escrita do arq.*
+Criar uma widget na janela principal para exibir o log, substituindo a
+atual statusbar. Esta widget seria uma janela com barra de scroll e
+exibiria sequencialmente todos as mensagens e ainda gravaria tudo o
+que fosse escrito em um arquivo de log (~/.gebr/gebr.log), que seria
+recarregado ao início do programa. O arquivo de log poderia ser
+apagado por uma opção no menu File. Mensagens de erro apareceriam em
+vermelho. Início e término de execução da GêBR seriam marcados. O
+arquivo será texto porém com marcas para indicar o highlight na
+tela. Sugestão:
+[STR] Início da GêBR
+[END] Término da GêBR
+[MSG] Mensagens gerais
+[ERR] Mensagens de erro
+
+Import/Export de fluxo.
+
+Import/Export de linha.
+
+Import/Export de projeto.
+
+Limpar o código das strings com tamanho estático STRMAX, em
+prol da GString.
+
+Adicionar linha mesmo que a seleção esteja numa linha.
+
+Opção nas preferências para shell e terminal.
+
+Janela de parâmetros contruída como tabela.
+
+Validar parametros dos tipos numéricos.
+
+Menu de propriedades para projetos e linhas.
+
+Opção de personalizar a linha de comando com parâmetros do usuário.
+
+Acrescentar o parâmetro do tipo lista.
+
+Usar FAM para monitora o diretório de menu, regerando o índice e a
+listagem de menus quando houver alterações.
+(http://oss.sgi.com/projects/fam/qt_gtk.html#gtk)
