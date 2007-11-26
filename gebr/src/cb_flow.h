@@ -35,6 +35,10 @@ int
 flow_save   (void);
 
 void
+flow_export        (GtkMenuItem *menuitem,
+		    gpointer     user_data);
+
+void
 flow_new     (GtkMenuItem *menuitem,
 	      gpointer     user_data);
 

@@ -61,7 +61,6 @@ ssh_run_server_finished(GProcess * process, struct server * server)
 	/* now ask via ssh its port */
 	ssh_ask_server_port(server);
 	g_print("ssh_run_server_finished\n");
-
 // 	g_process_free(process);
 }
 
@@ -116,10 +115,6 @@ ssh_read_finished(GProcess * process, struct server * server)
 		g_tcp_socket_connect(server->tcp_socket, host, server->ssh_tunnel.port);
 	} else {
 		GString *	status;
-<<<<<<< .mine
-		GProcess *	server_process;
-=======
->>>>>>> .r400
 		GString *	cmd_line;
 
 		cmd_line = g_string_new(NULL);
@@ -128,33 +123,19 @@ ssh_read_finished(GProcess * process, struct server * server)
 		log_message(ACTION, status->str, TRUE);
 		g_string_free(status, TRUE);
 
-<<<<<<< .mine
-		/* run gebrd via ssh */
-// 		server_process = g_process_new();
-// 		g_signal_connect(server_process, "finished",
-// 			G_CALLBACK(ssh_run_server_finished), server);
-		g_string_printf(cmd_line, "bash -c \"ssh -f %s bash -c gebrd\"", server->address->str);
-=======
 		/* run gebrd via ssh for remote hosts */
 		{
 		   gchar hostname[100];
->>>>>>> .r400
 
-<<<<<<< .mine
-// 		g_process_start(server_process, cmd_line);
-		system(cmd_line->str);
-		ssh_ask_server_port(server);
-=======
 		   gethostname(hostname, 100);
-		   if (!g_ascii_strcasecmp(hostname, server->address->str))
+		   if (!g_ascii_strcasecmp(hostname, server->address->str)) 
 		      g_string_printf(cmd_line, "bash -c gebrd&");
 		   else
 		      g_string_printf(cmd_line, "bash -c \"ssh -f %s bash -c gebrd\"", server->address->str);
->>>>>>> .r400
 
 		   system(cmd_line->str);
 		   ssh_ask_server_port(server);
-
+		   
 		   g_string_free(cmd_line, TRUE);
 		}
 	}
@@ -269,11 +250,11 @@ server_connected(GTcpSocket * tcp_socket, struct server * server)
 	gethostname(hostname, 100);
 	display = getenv("DISPLAY");
 
-	/* TODO: port to GProcess using blocking calls */
+	/* TODO: port to GProcess using blocking calls */ 
 	/* get this X session magic cookie */
 	g_string_printf(mcookie_cmd, "xauth list %s", display);
 	output_fp = popen(mcookie_cmd->str, "r");
-	fread(line, 1, 1024, output_fp);
+	fread(line, 1, 1024, output_fp); 
 	/* split output and get only the magic cookie */
 	splits = g_strsplit_set(line, " \n", 6);
 	pclose(output_fp);
@@ -322,7 +303,7 @@ server_run_flow(struct server * server)
 	/* TODO: check logged instead of connected */
 	if (g_socket_get_state(G_SOCKET(server->tcp_socket)) != G_SOCKET_STATE_CONNECTED) {
 	   GtkWidget *	dialog;
-
+	   
 	   dialog = gtk_message_dialog_new(GTK_WINDOW(W.mainwin),
 					   GTK_DIALOG_MODAL,
 					   GTK_MESSAGE_ERROR,
@@ -330,7 +311,7 @@ server_run_flow(struct server * server)
 					   "You are not connected to this server");
 	   gtk_widget_show_all(dialog);
 	   gtk_dialog_run(GTK_DIALOG(dialog));
-
+	   
 	   gtk_widget_destroy(dialog);
 	   return;
 	}

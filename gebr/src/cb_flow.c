@@ -89,6 +89,61 @@ flow_save   (void)
 	return geoxml_document_save( GEOXML_DOC(flow), fname->str );
 }
 
+/*
+ * Fucntion: flow_export
+ * Export current flow to a file
+ */
+void
+flow_export        (GtkMenuItem *menuitem,
+		    gpointer     user_data)
+{
+	GtkTreeIter		iter;
+	GtkTreeSelection *	selection;
+	GtkTreeModel     *	model;
+	GtkWidget *		chooser_dialog;
+	GtkFileFilter *		filefilter;
+	gchar *			path;
+	gchar *			filename;
+	gchar *                 oldfilename;
+
+
+	if (flow == NULL){
+	   log_message(INTERFACE, no_flow_selected_error, TRUE);
+	   return;
+	}
+
+	/* run file chooser */
+	chooser_dialog = gtk_file_chooser_dialog_new(	"Choose file", NULL,
+							GTK_FILE_CHOOSER_ACTION_SAVE,
+							GTK_STOCK_SAVE, GTK_RESPONSE_YES,
+							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+							NULL);
+	filefilter = gtk_file_filter_new();
+	gtk_file_filter_set_name(filefilter, "System flow files (*.mnu)");
+	gtk_file_filter_add_pattern(filefilter, "*.mnu");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), filefilter);
+
+	/* show file chooser */
+	gtk_widget_show(chooser_dialog);
+	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
+		goto out;
+	path = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser_dialog));
+	filename = g_path_get_basename(path);
+
+	/* export current flow to disk */
+	oldfilename = geoxml_document_get_filename(GEOXML_DOC(flow));
+	geoxml_document_set_filename(GEOXML_DOC(flow), filename);
+	geoxml_document_save( GEOXML_DOC(flow), path );
+	geoxml_document_set_filename(GEOXML_DOC(flow), oldfilename);
+
+	g_free(path);
+	g_free(filename);
+
+out:
+	gtk_widget_destroy(chooser_dialog);
+
+}
+
 void
 flow_add_programs_to_view   (GeoXmlFlow * f)
 {
