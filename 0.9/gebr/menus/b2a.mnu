@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<flow version="0.1.0">
+  <filename>b2a.mnu</filename>
+  <title>BIN to ASCII</title>
+  <description>convert binary floats to ascii</description>
+  <help>
+    <![CDATA[
+    <html>
+    <header>
+       <title>BIN to ASCII</title>
+    </header>
+    <body>
+    <h1>BIN to ASCII</h1>
+    <p>Convert binary floats to ascii</p>
+    </body>
+    </html>
+    ]]>
+  </help>
+  <author>GêBR core team</author>
+  <email>gebr@users.sf.net</email>
+  <category>Import/Export</category>
+  <category>Seismic Unix</category>
+  <io><input /><output /><error /></io>
+  <program stdin="yes" stdout="yes" stderr="yes" status="unconfigured">
+    <menu index="0">b2a.mnu</menu>
+    <title>BIN to ASCII</title>
+    <binary>b2a</binary>
+    <description>convert binary floats to ascii</description>
+    <help><![CDATA[<pre>
+ B2A - convert binary floats to ascii
+
+ b2a &lt;stdin &gt;stdout
+
+ Required parameters:
+        none
+
+ Optional parameters:
+        n1=2            floats per line in output file
+
+        outpar=/dev/tty output parameter file, contains the
+                        number of lines (n=)
+                       other choices for outpar are: /dev/tty,
+                       /dev/stderr, or a name of a disk file
+      </pre>]]>
+    </help>
+    <parameters>
+      <int required="no">
+	<keyword>n1=</keyword>
+	<label>floats per line in input file</label>
+	<value></value>
+      </int>
+      <file directory="no" required="no">
+	<keyword>outpar=</keyword>
+	<label>output parameter file</label>
+	<value default=""></value>
+      </file>
+    </parameters>
+  </program>
+</flow>

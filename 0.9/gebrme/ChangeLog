@@ -1,0 +1,210 @@
+2007-10-10  Ricardo Biloti  <biloti@gmail.com>
+
+	* src/parameter: added a function to build parameter label
+	from type and keyword.
+
+	* src/help.c: added a function to insert title, description and
+	categories when creating help from template (if already
+	available).
+
+2007-09-16 17:24  brauliobo
+
+	* src/parameter.c: fixed file paramater's type alignment
+
+2007-09-16 17:17  brauliobo
+
+	* ChangeLog, src/callbacks.c, src/callbacks.h, src/interface.c: -
+	  added toolbar icons
+	  - added close action
+
+2007-09-16 16:38  brauliobo
+
+	* ChangeLog, TODO, src/parameter.c: - fixed parameter specific
+	  table positions
+	  - changelog and todo updated
+
+2007-09-16 16:18  brauliobo
+
+	* src/parameter.c, src/parameter.h: support for directories in
+	  files parameters
+
+2007-09-16 15:19  brauliobo
+
+	* src/info.c, src/info.h, src/interface.c, src/program.c,
+	  src/program.h: option to open help
+
+2007-09-16 14:54  brauliobo
+
+	* src/parameter.c, src/parameter.h, src/program.c, src/program.h:
+	  key-release-event -> changed
+
+2007-09-16 14:47  brauliobo
+
+	* src/info.c, src/info.h, src/interface.c, src/parameter.c,
+	  src/parameter.h: use signal changed for flow information
+
+2007-09-16 14:18  biloti
+
+	* src/info.c, src/info.h, src/interface.c: futher signal connected
+	  to fill in entries with mouse paste
+
+2007-09-16 13:55  biloti
+
+	* src/info.c, src/info.h, src/interface.c: futher signal connected
+	  to fill in entries with mouse paste
+
+2007-09-15 23:04  brauliobo
+
+	* src/menu.c: code cleanup!
+
+2007-09-15 23:02  brauliobo
+
+	* src/gebrme.h, src/info.c, src/info.h, src/interface.c,
+	  src/menu.c: fixed set of default author/email
+
+2007-09-15 22:46  brauliobo
+
+	* src/gebrme.h, src/info.c, src/info.h, src/interface.c:
+	  author/email writen to xml
+
+2007-09-15 22:14  biloti
+
+	* src/gebrme.h, src/info.c, src/info.h, src/interface.c:
+	  author/email widgets
+
+2007-09-15 22:04  brauliobo
+
+	* TODO: TODO enlarged
+
+2007-09-15 21:55  brauliobo
+
+	* ChangeLog, TODO, src/parameter.c: fixed min, max and inc values
+	  handling
+
+2007-09-15 21:35  biloti
+
+	* ChangeLog, src/interface.c: four more categories
+
+2007-09-15 13:50  brauliobo
+
+	* ChangeLog, src/callbacks.c, src/menu.c, src/menu.h,
+	  src/parameter.c: write menu info for programs
+
+2007-09-15 13:25  brauliobo
+
+	* src/parameter.c, src/parameter.h: removed value from parameter
+
+2007-09-15 13:23  brauliobo
+
+	* ChangeLog, TODO, src/parameter.c:
+
+2007-09-15 12:49  brauliobo
+
+	* src/program.c, src/program.h: added binary to program
+
+2007-09-15 12:43  brauliobo
+
+	* src/callbacks.c, src/main.c, src/parameter.c, src/program.c:
+	  extract filename from path
+
+2007-09-15 11:07  brauliobo
+
+	* src/parameter.c: changed order to make possible remove "required"
+	  from flag
+
+2007-09-15 10:47  brauliobo
+
+	* src/program.c: program down fixed
+
+2007-09-15 03:48  biloti
+
+	* src/parameter.c: enum order fixed
+
+2007-09-14 23:04  brauliobo
+
+	* src/interface.c, src/main.c, src/menu.c, src/parameter.c,
+	  src/parameter.h: - no more warnings
+	  - range parameter support
+
+2007-09-14 16:42  brauliobo
+
+	* src/interface.c, src/interface.h, src/parameter.c,
+	  src/parameter.h: support file parameter
+
+2007-09-14 06:53  brauliobo
+
+	* src/interface.c, src/interface.h, src/main.c, src/parameter.c,
+	  src/program.c: - hacked gtkexpander to workaround
+	  - remove fixed
+
+2007-09-09 18:54  brauliobo
+
+	* src/parameter.c: variables initialization (temporary)
+
+2007-09-09 18:50  brauliobo
+
+	* src/parameter.c, src/program.c: io bug fix
+
+2007-09-09 18:38  brauliobo
+
+	* src/callbacks.c, src/menu.c, src/parameter.c, src/parameter.h,
+	  src/program.c, src/program.h: program up and down
+
+2007-09-09 03:10  brauliobo
+
+	* src/gebrme.h, src/parameter.c, src/parameter.h: more parameters
+	  (complicated) work
+
+2007-09-09 00:40  brauliobo
+
+	* src/interface.c, src/parameter.c, src/program.c: fixed boxes
+	  packing
+
+2007-09-09 00:27  brauliobo
+
+	* src/interface.c, src/parameter.c, src/parameter.h, src/program.c:
+	  some work to support parameters
+
+2007-09-08 23:02  brauliobo
+
+	* src/Makefile.am, src/gebrme.h, src/info.c, src/info.h,
+	  src/interface.c, src/interface.h, src/main.c, src/menu.c,
+	  src/parameter.c, src/parameter.h, src/program.c, src/program.h:
+	  initial program support
+
+2007-09-08 18:54  brauliobo
+
+	* src/callbacks.c, src/gebrme.h, src/info.c, src/info.h,
+	  src/interface.c, src/menu.c, src/menu.h: open/save code
+
+2007-09-08 14:45  brauliobo
+
+	* src/info.c, src/info.h: forgot to add info.c&h
+
+2007-09-08 14:45  brauliobo
+
+	* src/Makefile.am, src/category.c, src/category.h, src/gebrme.c,
+	  src/gebrme.h, src/interface.c, src/menu.c, src/menu.h: title,
+	  description and category code
+
+2007-09-03 18:23  brauliobo
+
+	* ChangeLog, THANKS: added THANKS
+
+2007-09-03 18:19  brauliobo
+
+	* TODO, autogen.sh, configure: removed configure and autogen.sh;
+	  added TODO
+
+2007-09-03 18:15  brauliobo
+
+	* ., AUTHORS, COPYING, ChangeLog, INSTALL, Makefile.am, NEWS,
+	  README, autogen.sh, config.guess, config.sub, configure,
+	  configure.ac, depcomp, install-sh, missing, mkinstalldirs, po,
+	  po/ChangeLog, po/Makefile, po/Makefile.in, po/Makefile.in.in,
+	  po/POTFILES, po/POTFILES.in, src, src/Makefile.am,
+	  src/callbacks.c, src/callbacks.h, src/category.c, src/category.h,
+	  src/gebrme.c, src/gebrme.h, src/interface.c, src/interface.h,
+	  src/main.c, src/menu.c, src/menu.h, src/program.c, src/program.h,
+	  src/support.h: initial import
+

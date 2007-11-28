@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: gebr-misc
+Description: GêBR network library
+Version: @VERSION@
+Requires: glib-2.0 >= 2.8 gobject-2.0 >= 2.8
+Libs: -L${libdir} -lgebr_misc
+Cflags: -I${includedir}/libgebr

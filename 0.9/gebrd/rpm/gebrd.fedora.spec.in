@@ -1,0 +1,52 @@
+%define name @PACKAGE@
+%define version @VERSION@
+%define release fedora
+%define _topdir %(echo $PWD)/rpm
+
+Name: %{name}
+Version: %{version}
+Release: %{release}
+License: GPL
+Group: Application/Misc
+URL: http://groups.google.com/group/gebr
+Packager: BrÃ¡ulio Barros de Oliveira <brauliobo@gmail.com>
+Source: %{name}-%{version}.tar.gz
+Requires: libgebr, glib2, gtk2
+BuildRoot: /tmp/%{name}-%{version}
+Summary: GêBRD is server for executing flows
+%description
+GÃªBR is an environment to seismic processing based on open-source
+technologies, designed to easily assembly and run processing flows.
+
+What GÃªBR does:
+
+    * Handle projects and lines
+    * Assembly and run processing flows
+    * Act as an interface to many freely-available seismic-processing
+      packages (Seismic Unix, Madagascar, etc)
+
+GêBRD is server for executing flows
+
+%prep
+%setup -q
+
+%configure
+
+%build
+make -j 4
+
+%install
+rm -rf %{buildroot}
+mkdir -p %{buildroot}
+
+%makeinstall
+
+%clean
+rm -rf %{buildroot}
+
+%files
+%defattr(-,root,root)
+%{_bindir}/*
+%{_datadir}/%{name}/*
+
+%changelog

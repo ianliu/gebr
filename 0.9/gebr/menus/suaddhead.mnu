@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<flow version="0.1.0">
+  <filename>suaddhead.mnu</filename>
+  <title>SU Add Header</title>
+  <description>put headers on bare traces and set the tracl and ns fields</description>
+  <help><![CDATA[
+    <html>
+    <header>
+       <title>SU Add Header</title>
+    </header>
+    <body>
+    <h1>SU Add Header</h1>
+    <p>Put headers on bare traces and set the tracl and ns fields</p>
+    </body>
+    </html>
+    ]]>
+  </help>
+  <author>GêBR core team</author>
+  <email>gebr@users.sf.net</email>
+  <category>Import/Export</category>
+  <category>Seismic Unix</category>
+  <io><input /><output /><error /></io>
+  <program stdin="yes" stdout="yes" stderr="yes" status="unconfigured">
+    <menu index="0">suaddhead.mnu</menu>
+    <title>SU Add Header</title>
+    <binary>suaddhead</binary>
+    <description>put headers on bare traces and set the tracl and ns fields</description>
+    <help><![CDATA[<pre>
+SUADDHEAD - put headers on bare traces and set the tracl and ns fields
+
+ suaddhead &lt;stdin &gt;stdout ns= ftn=0
+
+ Required parameter:
+        ns=the number of samples per trace
+
+ Optional parameter:
+        ftn=0           Fortran flag
+                        0 = data written unformatted from C
+                        1 = data written unformatted from Fortran
+       tsort=3         trace sorting code:
+                                1 = as recorded (no sorting)
+                                2 = CDP ensemble
+                                3 = single fold continuous profile
+                                4 = horizontally stacked
+       ntrpr=1         number of data traces per record
+                       if tsort=2, this is the number of traces per cdp
+
+ Trace header fields set: ns, tracl
+ Use sushw/suchw to set other needed fields.
+
+ Caution: An incorrect ns field will munge subsequent processing.
+ Note:    n1 and nt are acceptable aliases for ns.
+
+ Example:
+ suaddhead ns=1024 &lt;bare_traces | sushw key=dt a=4000 &gt;segy_traces
+
+ This command line adds headers with ns=1024 samples.  The second part
+ of the pipe sets the trace header field dt to 4 ms.
+      </pre>]]>
+    </help>
+    <parameters>
+      <int required="yes">
+	<keyword>ns=</keyword>
+	<label>the number of samples per trace</label>
+	<value></value>
+      </int>
+      <flag>
+	<keyword>ftn=1</keyword>
+	<label>data written unformatted from Fortran</label>
+	<state default="off"></state>
+      </flag>
+      <range required="no" min="1" max="4" inc="1">
+	<keyword>tsort=</keyword>
+	<label>trace sorting code (check documentation)</label>
+	<value default="3"></value>
+      </range>
+      <int required="no">
+	<keyword>ntrpr=</keyword>
+	<label>number of data traces per record</label>
+	<value></value>
+      </int>
+    </parameters>
+  </program>
+</flow>
