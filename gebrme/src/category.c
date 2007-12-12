@@ -44,23 +44,24 @@ category_add(void)
 void
 category_remove(void)
 {
-	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
-	GtkTreeModel     *	model;
-	GeoXmlCategory *	category;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+
+	GeoXmlSequence *	category;
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebrme.categories_treeview));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-		gtk_statusbar_push(GTK_STATUSBAR(gebrme.statusbar), 0, _("Please select a category"));
+		gebrme_message(ERROR, TRUE, FALSE, _("Please select a category"));
 		return;
 	}
 
 	gtk_tree_model_get (GTK_TREE_MODEL(gebrme.categories_liststore), &iter,
 		CATEGORY_XMLPOINTER, &category,
 		-1);
-
-	geoxml_flow_remove_category(gebrme.current, category);
+	geoxml_sequence_remove(category);
 	gtk_list_store_remove(gebrme.categories_liststore, &iter);
+
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -70,9 +71,10 @@ category_renamed(	GtkCellRendererText *	cell,
 			gchar *			new_text,
 			gpointer		user_data)
 {
-	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
-	GtkTreeModel     *	model;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+
 	GeoXmlCategory *	category;
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebrme.categories_treeview));

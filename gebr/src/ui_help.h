@@ -15,15 +15,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GEBR_UI_HELP_H_
-#define _GEBR_UI_HELP_H_
+#ifndef __UI_HELP_H
+#define __UI_HELP_H
 
 #include <gtk/gtk.h>
+#include <geoxml.h>
 
 void
-show_help  (char *help,
-	    char *title,
-	    char *fname);
+help_show(const gchar * help, const gchar * title);
 
+void
+help_edit(GtkButton * button, GeoXmlDocument * document);
 
-#endif //_GEBR_UI_HELP_H_
+#endif //__UI_HELP_H

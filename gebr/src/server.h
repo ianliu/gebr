@@ -15,12 +15,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GEBR_SERVER_H_
-#define _GEBR_SERVER_H_
+#ifndef __SERVER_H
+#define __SERVER_H
 
-#include <misc/gtcpsocket.h>
-#include <misc/protocol.h>
-#include <misc/ssh.h>
+#include <gtk/gtk.h>
+
+#include <comm/gtcpsocket.h>
+#include <comm/protocol.h>
+#include <comm/ssh.h>
 
 struct server {
 	/* the communication channel. */
@@ -31,9 +33,23 @@ struct server {
 	GString *		address;
 	guint16			port;
 	/* ssh tunneling */
-	struct ssh_tunnel	ssh_tunnel;
+	struct ssh_tunnel *	ssh_tunnel;
 
-	guint			retries;
+	enum server_state {
+		SERVER_STATE_ASK_PORT,
+		SERVER_STATE_RUN,
+		SERVER_STATE_RUNNED_ASK_PORT,
+		SERVER_STATE_OPEN_TUNNEL,
+		SERVER_STATE_CONNECT,
+		SERVER_STATE_CONNECTED,
+	} state;
+	enum server_error {
+		SERVER_ERROR_NONE,
+		SERVER_ERROR_SSH_ASK_PORT,
+	} error;
+
+	/* iter to set icons on logged/disconneted */
+	GtkTreeIter		iter;
 };
 
 struct server *
@@ -43,9 +59,12 @@ void
 server_free(struct server * server);
 
 void
-server_run_flow(struct server * server);
+server_connect(struct server * server);
+
+gboolean
+server_is_logged(struct server * server);
 
 void
-server_list_flows(struct server * server);
+server_run_flow(struct server * server);
 
-#endif //_GEBR_SERVER_H_
+#endif //__SERVER_H

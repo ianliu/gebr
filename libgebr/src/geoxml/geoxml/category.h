@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  Br√°ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GÍBR Library
+ *   Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,13 +15,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEOXML_CATEGORY_H
-#define __LIBGEOXML_CATEGORY_H
+#ifndef __LIBGEBR_GEOXML_CATEGORY_H
+#define __LIBGEBR_GEOXML_CATEGORY_H
 
 #include <glib.h>
 
 /**
- * \struct GeoXmlCategory category.h libgeoxml/category.h
+ * \struct GeoXmlCategory category.h geoxml/category.h
  * \brief
  * A flow category.
  * \dot
@@ -30,7 +30,7 @@
  * 	fontsize = 8
  * 	size = "6"
  * 	node [
- *		color = palegreen2, style = filled
+ * 		color = palegreen2, style = filled
  * 		fontname = "Bitstream Vera Sans"
  * 		fontsize = 8
  * 		shape = record
@@ -42,14 +42,19 @@
  *
  * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
  * 	"GeoXmlFlow" [ URL = "\ref flow.h" ];
- * 	"GeoXmlDocument" -> { "GeoXmlFlow" };
+ * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GeoXmlCategory" [ URL = "\ref category.h" ];
+ *
+ * 	edge [
+ * 		arrowhead = "normal"
+ * 	]
+ * 	"GeoXmlDocument" -> "GeoXmlFlow";
+ * 	"GeoXmlSequence" -> "GeoXmlCategory";
  *
  * 	edge [
  * 		arrowhead = "none"
  * 		taillabel = "0..*"
  * 	]
- *
- * 	"GeoXmlCategory" [ URL = "\ref category.h" ];
  * 	"GeoXmlFlow" -> { "GeoXmlCategory" };
  * }
  * \enddot
@@ -119,4 +124,4 @@ geoxml_category_next(GeoXmlCategory ** category);
 void GEOXML_DEPRECATED
 geoxml_category_remove(GeoXmlCategory * category);
 
-#endif //__LIBGEOXML_CATEGORY_H
+#endif //__LIBGEBR_GEOXML_CATEGORY_H

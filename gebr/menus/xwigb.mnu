@@ -271,7 +271,7 @@
       <file directory="no" required="no">
 	<keyword>mpicks=</keyword>
 	<label>file to save mouse picks in</label>
-	<value/>
+	<value default="/dev/null" />
       </file>
       <float required="no">
         <keyword>bias=</keyword>

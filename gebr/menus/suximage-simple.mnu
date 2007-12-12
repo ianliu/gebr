@@ -119,7 +119,7 @@
       <file directory="no" required="no">
 	<keyword>mpicks=</keyword>
 	<label>file to save mouse picks in</label>
-	<value></value>
+	<value default="/dev/null"></value>
       </file>
       <range min="0" max="100" inc="1" required="no">
 	<keyword>perc=</keyword>

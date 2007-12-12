@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  Br√°ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GÍBR Library
+ *   Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,13 +15,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEOXML_LINE_H
-#define __LIBGEOXML_LINE_H
+#ifndef __LIBGEBR_GEOXML_LINE_H
+#define __LIBGEBR_GEOXML_LINE_H
 
 #include <glib.h>
 
 /**
- * \struct GeoXmlLine line.h libgeoxml/line.h
+ * \struct GeoXmlLine line.h geoxml/line.h
  * \brief
  * Line compounds a list of flows references.
  * \dot
@@ -30,7 +30,7 @@
  * 	fontsize = 8
  * 	size = "6"
  * 	node [
- *		color = palegreen2, style = filled
+ * 		color = palegreen2, style = filled
  * 		fontname = "Bitstream Vera Sans"
  * 		fontsize = 8
  * 		shape = record
@@ -42,7 +42,20 @@
  *
  * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
  * 	"GeoXmlLine" [ URL = "\ref line.h" ];
+ * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GeoXmlLineFlow" [ URL = "\ref GeoXmlLineFlow" ];
+ *
+ * 	edge [
+ * 		arrowhead = "normal"
+ * 	]
  * 	"GeoXmlDocument" -> { "GeoXmlLine" };
+ * 	"GeoXmlSequence" -> { "GeoXmlLineFlow" };
+ *
+ * 	edge [
+ * 		arrowhead = "none"
+ * 		taillabel = "0..*"
+ * 	]
+ * 	"GeoXmlLine" -> { "GeoXmlLineFlow" };
  * }
  * \enddot
  * \see line.h
@@ -90,6 +103,7 @@ typedef struct geoxml_line GeoXmlLine;
  */
 typedef struct geoxml_line_flow GeoXmlLineFlow;
 
+#include "sequence.h"
 #include "macros.h"
 
 /**
@@ -112,6 +126,15 @@ GeoXmlLineFlow *
 geoxml_line_new_flow(GeoXmlLine * line, const gchar * source);
 
 /**
+ * Create a new flow and append to list of flows references.
+ * Provided for convenience.
+ *
+ * \see geoxml_line_new_flow
+ */
+GeoXmlLineFlow *
+geoxml_line_append_flow(GeoXmlLine * line, const gchar * source);
+
+/**
  * Writes to \p line_flow the \p index ieth flow reference that \p line belong.
  * If an error ocurred, the content of \p line_flow is assigned to NULL.
  *
@@ -122,7 +145,7 @@ geoxml_line_new_flow(GeoXmlLine * line, const gchar * source);
  * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
  */
 int
-geoxml_line_get_flow(GeoXmlLine * line, GeoXmlLineFlow ** line_flow, gulong index);
+geoxml_line_get_flow(GeoXmlLine * line, GeoXmlSequence ** line_flow, gulong index);
 
 /**
  * Get the number of flows that \p line has.
@@ -176,4 +199,4 @@ geoxml_line_add_flow(GeoXmlLine * line, const gchar * source);
 void GEOXML_DEPRECATED
 geoxml_line_remove_flow(GeoXmlLine * line, GeoXmlLineFlow * line_flow);
 
-#endif //__LIBGEOXML_LINE_H
+#endif //__LIBGEBR_GEOXML_LINE_H

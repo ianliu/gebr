@@ -1,4 +1,4 @@
-/*   GêBR Daemon - Process and control execution of flows
+/*   libgebr - G�BR Library
  *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -16,11 +16,6 @@
  */
 
 /* include all misc library's headers. */
-#include <misc/ghostaddress.h>
-#include <misc/ghostinfo.h>
-#include <misc/gsocket.h>
-#include <misc/gtcpsocket.h>
-#include <misc/gtcpserver.h>
-#include <misc/gprocess.h>
-#include <misc/protocol.h>
-#include <misc/ssh.h>
+#include <misc/date.h>
+#include <misc/log.h>
+#include <misc/utils.h>

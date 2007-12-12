@@ -21,60 +21,55 @@ cmdline.h: cmdline.c
 cmdline.c: gebr.ggo
 	gengetopt < gebr.ggo --file-name=cmdline -C -a ggopt
 
-gebr_SOURCES =	main.c \
-		cmdline.c \
-		gebr.c \
-		callbacks.c \
-		cb_proj.c \
-		cb_line.c \
-		cb_flow.c \
-		cb_flowcomp.c \
-		cb_help.c \
-		cb_job.c \
-		cb_prop.c \
-		cb_server.c \
-		cb_job.h \
-		ui_help.c \
-		ui_menubar.c \
-		ui_pages.c \
-		ui_prop.c \
-		ui_server.c \
-		interface.c \
-		menus.c \
-		server.c client.c \
-		parse.c
-noinst_HEADERS = cmdline.h \
-		gebr.h \
-		callbacks.h \
-		cb_proj.h \
-		cb_line.h \
-		cb_flow.h \
-		cb_flowcomp.h \
-		cb_help.h \
-		cb_job.h \
-		cb_prop.h \
-		cb_server.h \
-		cb_job.h \
-		ui_help.h \
-		ui_menubar.h \
-		ui_pages.h \
-		ui_prop.h \
-		ui_server.h \
-		interface.h \
-		menus.h \
-		parse.h \
-		server.h client.h \
-		widgets.h
-EXTRA_DIST = gebr.ggo
+gebr_SOURCES = main.c \
+	cmdline.c \
+	gebr.c \
+	callbacks.c \
+	document.c \
+	project.c \
+	line.c \
+	flow.c \
+	job.c \
+	server.c client.c \
+	menu.c \
+	support.c \
+	interface.c \
+	ui_document.c \
+	ui_flow.c \
+	ui_parameters.c \
+	ui_help.c \
+	ui_project_line.c \
+	ui_flow_browse.c \
+	ui_flow_edition.c \
+	ui_job_control.c \
+	ui_preferences.c \
+	ui_server.c
+noinst_HEADERS = \
+	cmdline.h \
+	gebr.h \
+	callbacks.h \
+	document.h \
+	project.h \
+	line.h \
+	flow.h \
+	job.h \
+	server.h client.h \
+	menu.h \
+	support.h \
+	interface.h \
+	ui_document.h \
+	ui_flow.h \
+	ui_parameters.h \
+	ui_help.h \
+	ui_project_line.h \
+	ui_flow_browse.h \
+	ui_flow_edition.h \
+	ui_job_control.h \
+	ui_preferences.h \
+	ui_server.h
+EXTRA_DIST = gebr.ggo ${noinst_HEADERS}
 
-GEBR_PIXMAPS_DIR = $(datadir)/gebr/pixmaps/
-GEBR_MENUSYS_DIR = $(datadir)/gebr/menus/
-GEBR_DATA_DIR = $(datadir)/gebr/
-
-INCLUDES =	-D GEBRMENUSYS=\"$(GEBR_MENUSYS_DIR)\" \
-		-D GEBR_PIXMAPS_DIR=\"$(GEBR_PIXMAPS_DIR)\" \
-		-D GEBRDATADIR=\"$(GEBR_DATA_DIR)\"
+INCLUDES =	-DSYS_MENUS_DIR=\"$(datadir)/gebr/menus/\" \
+		-DDATA_DIR=\"$(datadir)/gebr/\"
 AM_CFLAGS = -Wall $(GTK_CFLAGS) $(LIBGEBR_CFLAGS)
 gebr_LDADD = $(GTK_LIBS) $(LIBGEBR_LIBS)
-
-

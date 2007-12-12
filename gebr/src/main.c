@@ -15,29 +15,36 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <locale.h>
 #include <stdlib.h>
-#include <stdio.h>
+#include <locale.h>
+/* TODO: Check for libintl on configure */
+#ifdef ENABLE_NLS
+#  include <libintl.h>
+#endif
+
 #include <gtk/gtk.h>
 
 #include "gebr.h"
+#include "interface.h"
 
 int
 main(int argc, char ** argv, char ** env)
 {
-	gtk_init (&argc, &argv);
+	gtk_init(&argc, &argv);
 
-	/* temporary: necessary for representing fractional numbers only with comma */
+	/* FIXME: necessary for representing fractional numbers only with comma */
 	setlocale(LC_NUMERIC, "C");
 
-	assembly_interface ();
+#ifdef ENABLE_NLS
+	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
+#endif
 
-	/* read command line */
-	gebr_config_load(argc, argv);
+	assembly_interface();
+	gebr_init(argc, argv);
 
-	gtk_widget_show_all (W.mainwin);
-
-	gtk_main ();
+	gtk_main();
 
 	return EXIT_SUCCESS;
 }

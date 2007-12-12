@@ -21,7 +21,7 @@
 #include "gebrme.h"
 #include "support.h"
 #include "parameter.h"
-#include "interface.h"
+#include "menu.h"
 #include "help.h"
 
 void
@@ -31,11 +31,13 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	GtkWidget *			program_label_widget;
 	GtkWidget *			program_label;
 	GtkWidget *			program_vbox;
+
 	GtkWidget *			io_hbox;
 	GtkWidget *			io_label;
 	GtkWidget *			io_stdin_checkbutton;
 	GtkWidget *			io_stdout_checkbutton;
 	GtkWidget *			io_stderr_checkbutton;
+
 	GtkWidget *			info_expander;
 	GtkWidget *			info_table;
 	GtkWidget *			title_label;
@@ -48,14 +50,17 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	GtkWidget *			help_label;
 	GtkWidget *			help_view_button;
 	GtkWidget *			help_edit_button;
+
 	GtkWidget *			parameters_expander;
 	GtkWidget *			parameters_label_widget;
 	GtkWidget *			parameters_label;
 	GtkWidget *			parameters_vbox;
 	GtkWidget *			depth_hbox;
 	GtkWidget *			widget;
+
+	GeoXmlSequence *		parameter;
+
 	gchar *				program_title_str;
-	GeoXmlProgramParameter *	parameter;
 
 	program_expander = gtk_expander_new("");
 	gtk_box_pack_start(GTK_BOX(gebrme.programs_vbox), program_expander, FALSE, TRUE, 0);
@@ -251,13 +256,13 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 		program);
 	g_object_set(G_OBJECT(widget), "user-data", parameters_vbox, NULL);
 
-	parameter = geoxml_program_get_first_parameter(program);
+	parameter = geoxml_parameters_get_first_parameter(geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
 	while (parameter != NULL) {
-		gtk_box_pack_start(GTK_BOX(parameters_vbox), parameter_create_ui(parameter, hidden), FALSE, TRUE, 0);
-		geoxml_program_parameter_next(&parameter);
-	}
+		gtk_box_pack_start(GTK_BOX(parameters_vbox),
+			parameter_create_ui(GEOXML_PARAMETER(parameter), hidden), FALSE, TRUE, 0);
 
-	return program_expander;
+		geoxml_sequence_next(&parameter);
+	}
 }
 
 void
@@ -265,13 +270,14 @@ program_add(void)
 {
 	GeoXmlProgram *	program;
 
-	program = geoxml_flow_new_program(gebrme.current);
+	program = geoxml_flow_append_program(gebrme.current);
 	/* default settings */
 	geoxml_program_set_stdin(program, TRUE);
 	geoxml_program_set_stdout(program, TRUE);
 	geoxml_program_set_stderr(program, TRUE);
-
+	/* ui */
 	program_create_ui(program, TRUE);
+
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -281,8 +287,10 @@ program_remove(GtkButton * button, GeoXmlProgram * program)
 	GtkWidget *	program_expander;
 
 	g_object_get(G_OBJECT(button), "user-data", &program_expander, NULL);
+
 	gtk_widget_destroy(program_expander);
-	geoxml_flow_remove_program(gebrme.current, program);
+	geoxml_sequence_remove(GEOXML_SEQUENCE(program));
+
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -301,7 +309,7 @@ program_up(GtkButton * button, GeoXmlProgram * program)
 	up = g_list_previous(this);
 	if (up != NULL) {
 		gtk_box_reorder_child(GTK_BOX(gebrme.programs_vbox), up->data, g_list_position(programs_expanders, this));
-		geoxml_flow_move_program_up(gebrme.current, program);
+		geoxml_sequence_move_up(GEOXML_SEQUENCE(program));
 	}
 
 	g_list_free(programs_expanders);
@@ -323,7 +331,7 @@ program_down(GtkButton * button, GeoXmlProgram * program)
 	down = g_list_next(this);
 	if (down != NULL) {
 		gtk_box_reorder_child(GTK_BOX(gebrme.programs_vbox), down->data, g_list_position(programs_expanders, this));
-		geoxml_flow_move_program_down(gebrme.current, program);
+		geoxml_sequence_move_down(GEOXML_SEQUENCE(program));
 	}
 
 	g_list_free(programs_expanders);
@@ -334,6 +342,7 @@ void
 program_stdin_changed(GtkToggleButton *togglebutton, GeoXmlProgram * program)
 {
 	geoxml_program_set_stdin(program, gtk_toggle_button_get_active(togglebutton));
+
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -341,6 +350,7 @@ void
 program_stdout_changed(GtkToggleButton *togglebutton, GeoXmlProgram * program)
 {
 	geoxml_program_set_stdout(program, gtk_toggle_button_get_active(togglebutton));
+
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -348,16 +358,18 @@ void
 program_stderr_changed(GtkToggleButton *togglebutton, GeoXmlProgram * program)
 {
 	geoxml_program_set_stderr(program, gtk_toggle_button_get_active(togglebutton));
+
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
 gboolean
-program_info_title_changed(GtkEntry * entry, gpointer user_data)
+program_info_title_changed(GtkEntry * entry, GeoXmlProgram * program)
 {
 	GtkWidget *	program_label;
 
 	g_object_get(G_OBJECT(entry), "user-data", &program_label, NULL);
-	geoxml_program_set_title((GeoXmlProgram*)user_data, gtk_entry_get_text(GTK_ENTRY(entry)));
+
+	geoxml_program_set_title(program, gtk_entry_get_text(GTK_ENTRY(entry)));
 	gtk_label_set_text(GTK_LABEL(program_label), gtk_entry_get_text(GTK_ENTRY(entry)));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -365,17 +377,19 @@ program_info_title_changed(GtkEntry * entry, gpointer user_data)
 }
 
 gboolean
-program_info_binary_changed(GtkEntry * entry, gpointer user_data)
+program_info_binary_changed(GtkEntry * entry, GeoXmlProgram * program)
 {
-	geoxml_program_set_binary((GeoXmlProgram*)user_data, gtk_entry_get_text(GTK_ENTRY(entry)));
+	geoxml_program_set_binary(program, gtk_entry_get_text(GTK_ENTRY(entry)));
+
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 	return FALSE;
 }
 
 gboolean
-program_info_desc_changed(GtkEntry * entry, gpointer user_data)
+program_info_desc_changed(GtkEntry * entry, GeoXmlProgram * program)
 {
-	geoxml_program_set_description((GeoXmlProgram*)user_data, gtk_entry_get_text(GTK_ENTRY(entry)));
+	geoxml_program_set_description(program, gtk_entry_get_text(GTK_ENTRY(entry)));
+
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 	return FALSE;
 }
@@ -394,5 +408,6 @@ program_info_help_edit(GtkButton * button, GeoXmlProgram * program)
 	help = help_edit(geoxml_program_get_help(program));
 	geoxml_program_set_help(program, help->str);
 	g_string_free(help, TRUE);
+
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }

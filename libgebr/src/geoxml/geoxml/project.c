@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  Br√°ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GÍBR Library
+ *   Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,18 +23,17 @@
 #include "error.h"
 #include "xml.h"
 #include "types.h"
-#include "sequence.h"
 
 /*
  * internal structures and funcionts
  */
 
 struct geoxml_project {
-	GeoXmlDocument * document;
+	GeoXmlDocument *	document;
 };
 
 struct geoxml_project_line {
-	GdomeElement * element;
+	GdomeElement *		element;
 };
 
 /*
@@ -44,7 +43,7 @@ struct geoxml_project_line {
 GeoXmlProject *
 geoxml_project_new()
 {
-	GeoXmlDocument * document = geoxml_document_new("project", "0.1.0");
+	GeoXmlDocument * document = geoxml_document_new("project", "0.2.0");
 	return GEOXML_PROJECT(document);
 }
 
@@ -56,22 +55,37 @@ geoxml_project_new_line(GeoXmlProject * project, const gchar * source)
 
 	GeoXmlProjectLine * project_line;
 
-	project_line =(GeoXmlProjectLine*)__geoxml_new_element(
-		geoxml_document_root_element(GEOXML_DOC(project)), NULL, "line");
+	project_line = (GeoXmlProjectLine*)__geoxml_new_element(
+		geoxml_document_root_element(GEOXML_DOC(project)), "line");
+	__geoxml_set_attr_value((GdomeElement*)project_line, "source", source);
+
+	return project_line;
+}
+
+GeoXmlProjectLine *
+geoxml_project_append_line(GeoXmlProject * project, const gchar * source)
+{
+	if (project == NULL)
+		return NULL;
+
+	GeoXmlProjectLine* project_line;
+
+	project_line = (GeoXmlProjectLine*)__geoxml_insert_new_element(
+		geoxml_document_root_element(GEOXML_DOC(project)), "line", NULL);
 	__geoxml_set_attr_value((GdomeElement*)project_line, "source", source);
 
 	return project_line;
 }
 
 int
-geoxml_project_get_line(GeoXmlProject * project, GeoXmlProjectLine ** project_line, gulong index)
+geoxml_project_get_line(GeoXmlProject * project, GeoXmlSequence ** project_line, gulong index)
 {
 	if (project == NULL) {
 		*project_line = NULL;
 		return GEOXML_RETV_NULL_PTR;
 	}
 
-	*project_line = (GeoXmlProjectLine*)__geoxml_get_element_at(geoxml_document_root_element(GEOXML_DOC(project)), "line", index);
+	*project_line = (GeoXmlSequence*)__geoxml_get_element_at(geoxml_document_root_element(GEOXML_DOC(project)), "line", index);
 
 	return (*project_line == NULL)
 		? GEOXML_RETV_INVALID_INDEX
@@ -117,25 +131,11 @@ geoxml_project_next_line(GeoXmlProjectLine ** project_line)
 GeoXmlProjectLine *
 geoxml_project_add_line(GeoXmlProject * project, const gchar * source)
 {
-	if (project == NULL)
-		return NULL;
-
-	GeoXmlProjectLine* project_line;
-
-	project_line = (GeoXmlProjectLine*)__geoxml_new_element(
-		geoxml_document_root_element(GEOXML_DOC(project)), NULL, "line");
-	__geoxml_set_attr_value((GdomeElement*)project_line, "source", source);
-
-	return project_line;
+	return geoxml_project_append_line(project, source);
 }
 
 void
 geoxml_project_remove_line(GeoXmlProject * project, GeoXmlProjectLine * project_line)
 {
-	if (project == NULL || project_line == NULL)
-		return;
-
-	GdomeException exception;
-
-	gdome_el_removeChild(geoxml_document_root_element(GEOXML_DOC(project)), (GdomeNode*)project_line, &exception);
+	geoxml_sequence_remove(GEOXML_SEQUENCE(project_line));
 }

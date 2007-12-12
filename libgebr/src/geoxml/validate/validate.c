@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  Brï¿½ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GêBR Library
+ *   Copyright (C) 2007  Bráulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

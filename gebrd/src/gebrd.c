@@ -16,8 +16,12 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+
+#include <misc/utils.h>
 
 #include "gebrd.h"
+#include "support.h"
 #include "server.h"
 #include "client.h"
 
@@ -26,7 +30,21 @@ struct gebrd	gebrd;
 void
 gebrd_init(void)
 {
+	GString *	log_filename;
 	GHostAddress *	host_address;
+
+	/* initialization */
+	log_filename = g_string_new(NULL);
+
+	/* from libgebr-misc */
+	if (gebr_create_config_dirs() == FALSE) {
+		gebrd_message(ERROR, TRUE, TRUE, _("Could not access GêBR configuration directories."));
+		goto out;
+	}
+
+	/* log */
+	g_string_printf(log_filename, "%s/.gebr/gebrd.log", getenv("HOME"));
+	gebrd.log = log_open(log_filename->str);
 
 	/* local address used for listening */
 	host_address = g_host_address_new();
@@ -34,23 +52,50 @@ gebrd_init(void)
 
 	/* server */
 	if (!server_init()) {
-		fprintf(stderr, "Could not init server. Quiting...\n");
+		gebrd_message(ERROR, TRUE, TRUE, _("Could not init server. Quiting..."));
 
 		server_free();
 		g_main_loop_quit(gebrd.main_loop);
 		g_main_loop_unref(gebrd.main_loop);
-		return;
+		goto out;
 	}
 
-	g_print("Server started at %u port\n", g_tcp_server_server_port(gebrd.tcp_server));
+	gebrd_message(START, TRUE, TRUE, _("Server started at %u port"), g_tcp_server_server_port(gebrd.tcp_server));
+
+	/* frees */
+out:	g_string_free(log_filename, TRUE);
 }
 
 void
 gebrd_quit(void)
 {
-	/* TODO: someway we have to make the user reach this function */
+	gebrd_message(END, TRUE, TRUE, _("Server quited"), g_tcp_server_server_port(gebrd.tcp_server));
+	log_close(gebrd.log);
 
 	server_quit();
 	g_main_loop_quit(gebrd.main_loop);
 	g_main_loop_unref(gebrd.main_loop);
+}
+
+/*
+ * Function: gebrd_message
+ * Log a message. If in_stdout is TRUE it is writen to standard output.
+ *
+ */
+void
+gebrd_message(enum log_message_type type, gboolean in_stdout, gboolean in_log_file, const gchar * message, ...)
+{
+	gchar *		string;
+	va_list		argp;
+
+	va_start(argp, message);
+	string = g_strdup_vprintf(message, argp);
+	va_end(argp);
+
+	if (in_stdout)
+		g_print("%s\n", string);
+	if (in_log_file)
+		log_add_message(gebrd.log, type, string);
+
+	g_free(string);
 }

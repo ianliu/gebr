@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  Br√°ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GÍBR Library
+ *   Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,11 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEOXML_PROJECT_H
-#define __LIBGEOXML_PROJECT_H
+#ifndef __LIBGEBR_GEOXML_PROJECT_H
+#define __LIBGEBR_GEOXML_PROJECT_H
 
 /**
- * \struct GeoXmlProject project.h libgeoxml/project.h
+ * \struct GeoXmlProject project.h geoxml/project.h
  * \brief
  * Project compounds a list of lines references.
  * \dot
@@ -40,7 +40,20 @@
  *
  * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
  * 	"GeoXmlProject" [ URL = "\ref project.h" ];
+ * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GeoXmlProjectLine" [ URL = "\ref GeoXmlProjectLine" ];
+ *
+ * 	edge [
+ * 		arrowhead = "normal"
+ * 	]
  * 	"GeoXmlDocument" -> { "GeoXmlProject" };
+ * 	"GeoXmlSequence" -> { "GeoXmlProjectLine" };
+ *
+ * 	edge [
+ * 		arrowhead = "none"
+ * 		taillabel = "0..*"
+ * 	]
+ * 	"GeoXmlProject" -> { "GeoXmlProjectLine" };
  * }
  * \enddot
  * \see project.h
@@ -88,6 +101,7 @@ typedef struct geoxml_project GeoXmlProject;
  */
 typedef struct geoxml_project_line GeoXmlProjectLine;
 
+#include "sequence.h"
 #include "macros.h"
 
 /**
@@ -108,6 +122,15 @@ GeoXmlProjectLine *
 geoxml_project_new_line(GeoXmlProject * project, const gchar * source);
 
 /**
+ * Create a new flow and append to list of flows references.
+ * Provided for convenience.
+ *
+ * \see geoxml_project_new_line
+ */
+GeoXmlProjectLine *
+geoxml_project_append_line(GeoXmlProject * project, const gchar * source);
+
+/**
  * Writes to \p project_line the \p index ieth line reference that \p project belong.
  * If an error ocurred, the content of \p project_line is assigned to NULL.
  *
@@ -116,7 +139,7 @@ geoxml_project_new_line(GeoXmlProject * project, const gchar * source);
  * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR
  */
 int
-geoxml_project_get_line(GeoXmlProject * project, GeoXmlProjectLine ** project_line, gulong index);
+geoxml_project_get_line(GeoXmlProject * project, GeoXmlSequence ** project_line, gulong index);
 
 /**
  * Get the number of lines that \p project has.
@@ -170,4 +193,4 @@ geoxml_project_add_line(GeoXmlProject * project, const gchar * source);
 void GEOXML_DEPRECATED
 geoxml_project_remove_line(GeoXmlProject * project, GeoXmlProjectLine * project_line);
 
-#endif //__LIBGEOXML_PROJECT_H
+#endif //__LIBGEBR_GEOXML_PROJECT_H

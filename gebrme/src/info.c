@@ -46,9 +46,13 @@ info_help_edit(void)
 	GString *	help;
 
 	help = help_edit(geoxml_document_get_help(GEOXML_DOC(gebrme.current)));
+	if (help == NULL)
+		return;
+
 	geoxml_document_set_help(GEOXML_DOC(gebrme.current), help->str);
-	g_string_free(help, TRUE);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
+
+	g_string_free(help, TRUE);
 }
 
 void

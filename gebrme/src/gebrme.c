@@ -19,6 +19,10 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <glib/gstdio.h>
+
+#include <misc/utils.h>
+
 #include "gebrme.h"
 #include "menu.h"
 #include "preferences.h"
@@ -37,6 +41,7 @@
 		} else \
 			g_string_assign(gstring, default); \
 	} while(0)
+#define LOG_DEBUG
 
 /* global instance for data exchange */
 struct gebrme gebrme;
@@ -50,10 +55,8 @@ gebrme_init(void)
 	gebrme.tmpfiles = g_slist_alloc();
 
 	/* load status icons */
-	{
-	   GError * error = NULL;
-	   gebrme.unsaved_icon = gdk_pixbuf_new_from_file(GEBRME_PIXMAPS_DIR "gebrme_unsaved.png", &error);
-	}
+	gebrme.invisible = gtk_invisible_new();
+	gebrme.pixmaps.stock_no = gtk_widget_render_icon(gebrme.invisible, GTK_STOCK_NO, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
 	if (!strcmp(gebrme.config.menu_dir->str, ""))
 		create_preferences_window();
@@ -79,9 +82,12 @@ gebrme_quit(void)
 	g_string_free(gebrme.config.htmleditor, TRUE);
 
 	/* remove temporaries files */
-	g_slist_foreach(gebrme.tmpfiles, (GFunc)unlink, NULL);
-	g_slist_foreach(gebrme.tmpfiles, (GFunc)free, NULL);
+	g_slist_foreach(gebrme.tmpfiles, (GFunc)g_unlink, NULL);
+	g_slist_foreach(gebrme.tmpfiles, (GFunc)g_free, NULL);
 	g_slist_free(gebrme.tmpfiles);
+
+	g_object_unref(gebrme.pixmaps.stock_no);
+	gtk_widget_destroy(gebrme.invisible);
 
 	gtk_main_quit();
 }
@@ -91,6 +97,7 @@ gebrme_config_load(void)
 {
 	GError *	error;
 
+	gebr_create_config_dirs();
 	gebrme.config.path = g_string_new(getenv("HOME"));
 	g_string_append(gebrme.config.path, "/.gebr/gebrme.conf");
 
@@ -128,4 +135,31 @@ gebrme_config_save(void)
 	}
 	fwrite(string, sizeof(gchar), length, configfp);
 	fclose(configfp);
+}
+
+/*
+ * Function: gebrme_message
+ * Log a message. If in_statusbar is TRUE it is writen to status bar.
+ *
+ */
+void
+gebrme_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...)
+{
+	gchar *		string;
+	va_list		argp;
+
+	va_start(argp, message);
+	string = g_strdup_vprintf(message, argp);
+	va_end(argp);
+
+#ifdef LOG_DEBUG
+	if (type == DEBUG)
+		g_print("%s\n", string);
+#endif
+	if (in_log_file)
+// 		log_add_message(gebrme.log, type, string);
+	if (in_statusbar)
+		gtk_statusbar_push(GTK_STATUSBAR(gebrme.statusbar), 0, string);
+
+	g_free(string);
 }

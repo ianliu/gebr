@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  Br√°ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GÍBR Library
+ *   Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,17 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEOXML_TYPES_H
-#define __LIBGEOXML_TYPES_H
+#ifndef __LIBGEBR_GEOXML_TYPES_H
+#define __LIBGEBR_GEOXML_TYPES_H
 
 /**
  * \internal
- * Internal data types.
- */
-
-/**
- * \internal
- * defined in program.c
+ * defined in parameter.c
  */
 extern const char*	parameter_type_to_str[];
 extern const int 	parameter_type_to_str_len;
@@ -44,4 +39,4 @@ extern const int 	parameter_type_to_str_len;
  */
 extern GdomeException	exception;
 
-#endif // __LIBGEOXML_TYPES_H
+#endif // __LIBGEBR_GEOXML_TYPES_H

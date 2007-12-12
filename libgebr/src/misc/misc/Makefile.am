@@ -1,5 +1,5 @@
-# GÃªBR Daemon - Process and control execution of flows
-# Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
+# libgebr - GêBR Library
+# Copyright (C) 2007  Bráulio Barros de Oliveira (brauliobo@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,20 +16,15 @@
 
 lib_LTLIBRARIES = libgebr_misc.la
 libgebr_misc_la_SOURCES = \
-	ghostaddress.c ghostinfo.c gsocket.c gtcpsocket.c gtcpserver.c \
-	gprocess.c \
-	protocol.c ssh.c
+	date.c log.c utils.c
 
 libgebr_miscsubincludedir = $(includedir)/libgebr/misc
 libgebr_miscsubinclude_HEADERS = \
-	ghostaddress.h ghostinfo.h gsocket.h gtcpsocket.h gtcpserver.h \
-	gprocess.h \
-	protocol.h ssh.h
-noinst_HEADERS = \
-	gsocketprivate.h gtcpsocketprivate.h
+	date.h log.h utils.h
+noinst_HEADERS =
 EXTRA_DIST = ${noinst_HEADERS}
 
 INCLUDES =
-AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(GTHREAD_CFLAGS)
-libgebr_misc_la_LIBADD = $(GLIB_LIBS) $(GOBJECT_LIBS) $(GTHREAD_LIBS)
+AM_CFLAGS = -Wall -DLOGDEBUG $(GLIB_CFLAGS)
+libgebr_misc_la_LIBADD = $(GLIB_LIBS)
 libgebr_misc_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@

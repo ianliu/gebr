@@ -15,41 +15,72 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GEBR_CALLBACKS_H_
-#define _GEBR_CALLBACKS_H_
+#ifndef __CALLBACKS_H
+#define __CALLBACKS_H
 
 #include <gtk/gtk.h>
-#include <glib.h>
 
 void
-show_widget   (GtkWidget *widget,
-	       GtkWidget *data   );
-void
-hide_widget   (GtkWidget *widget,
-	       GtkWidget *data   );
+switch_page(GtkNotebook * notebook, GtkNotebookPage * page, guint page_num);
 
 void
-data_fname (const char *document,
-	    GString    **fname   );
+on_project_new_activate(void);
 
 void
-file_browse                    (GtkButton  *button,
-                                GtkWidget  *entry);
-void
-file_browse_ok                  (GtkButton  *button,
-                                 GtkWidget  *entry);
+on_project_delete_activate(void);
 
 void
-pref_actions                (GtkDialog *dialog,
-			     gint       arg1,
-			     gpointer   user_data);
+on_project_properties_activate(void);
 
 void
-switch_menu     (GtkNotebook     *notebook,
-		 GtkNotebookPage *page,
-		 guint            page_num,
-		 gpointer         user_data);
+on_project_refresh_activate(void);
 
-extern const char* browser[];
+void
+on_line_new_activate(void);
 
-#endif //_GEBR_CALLBACKS_H_
+void
+on_line_delete_activate(void);
+
+void
+on_line_properties_activate(void);
+
+void
+on_flow_new_activate(void);
+
+void
+on_flow_import_activate(void);
+
+void
+on_flow_export_activate(void);
+
+void
+on_flow_delete_activate(void);
+
+void
+on_flow_properties_activate(void);
+
+void
+on_flow_io_activate(void);
+
+void
+on_flow_execute_activate(void);
+
+void
+on_flow_component_properties_activate(void);
+
+void
+on_flow_component_refresh_activate(void);
+
+void
+on_flow_component_status_activate(GtkMenuItem * menuitem);
+
+void
+on_configure_preferences_activate(void);
+
+void
+on_configure_servers_activate(void);
+
+void
+on_help_about_activate(void);
+
+#endif //__CALLBACKS_H

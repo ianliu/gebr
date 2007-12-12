@@ -53,6 +53,5 @@ rm -rf %{buildroot}
 %{_includedir}/%{name}/*
 %{_datadir}/%{name}/*
 %{_mandir}/*
-%{_infodir}/*
 
 %changelog

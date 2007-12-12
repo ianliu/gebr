@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  Br√°ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GÍBR Library
+ *   Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,15 +15,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEOXML_SEQUENCE_H
-#define __LIBGEOXML_SEQUENCE_H
+#ifndef __LIBGEBR_GEOXML_SEQUENCE_H
+#define __LIBGEBR_GEOXML_SEQUENCE_H
 
 /**
- * \struct GeoXmlSequence sequence.h libgeoxml/sequence.h
+ * \struct GeoXmlSequence sequence.h geoxml/sequence.h
  * \brief
  * Abstract class for elements of a sequence in libgeoxml
  * \dot
- * digraph program {
+ * digraph sequence {
  * 	fontname = "Bitstream Vera Sans"
  * 	fontsize = 8
  * 	size = "6"
@@ -39,16 +39,24 @@
  * 	]
  *
  * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
- * 	"GeoXmlProjectLine" [ URL = "\ref project.h" ];
- * 	"GeoXmlLineFlow" [ URL = "\ref line.h" ];
+ * 	"GeoXmlProjectLine" [ URL = "\ref GeoXmlProjectLine" ];
+ * 	"GeoXmlLineFlow" [ URL = "\ref GeoXmlLineFlow" ];
  * 	"GeoXmlProgram" [ URL = "\ref program.h" ];
- * 	"GeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
+ * 	"GeoXmlParameter" [ URL = "\ref parameter.h" ];
  * 	"GeoXmlCategory" [ URL = "\ref category.h" ];
+ * 	"GeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
+ * 	"GeoXmlEnumOption" [ URL = "\ref GeoXmlEnumOption" ];
+ *
+ * 	edge [
+ * 		arrowhead = "normal"
+ * 	]
  * 	"GeoXmlSequence" -> { "GeoXmlProjectLine" };
  * 	"GeoXmlSequence" -> { "GeoXmlLineFlow" };
- * 	"GeoXmlSequence" -> { "GeoXmlProgram" };
- * 	"GeoXmlSequence" -> { "GeoXmlProgramParameter" };
  * 	"GeoXmlSequence" -> { "GeoXmlCategory" };
+ * 	"GeoXmlSequence" -> { "GeoXmlProgram" };
+ * 	"GeoXmlSequence" -> { "GeoXmlParameter" };
+ * 	"GeoXmlSequence" -> { "GeoXmlValueSequence" };
+ * 	"GeoXmlValueSequence" -> { "GeoXmlEnumOption" };
  * }
  * \enddot
  * \see sequence.h
@@ -64,8 +72,6 @@
 
 /**
  * Cast to super types of GeoXmlSequence to it.
- * No type checking is done here. Instead sequence functions check if it really
- * a sequence.
  */
 #define GEOXML_SEQUENCE(seq) ((GeoXmlSequence*)(seq))
 
@@ -77,7 +83,7 @@ typedef struct geoxml_sequence GeoXmlSequence;
 #include <glib.h>
 
 /**
- * Use as an auxiliary function to \ref geoxml_sequence_next.
+ * Use as an auxiliary function to geoxml_sequence_next.
  * Assign \p sequence to the previous sequence sequenced
  * or NULL if there isn't.
  *
@@ -120,7 +126,7 @@ geoxml_sequence_remove(GeoXmlSequence * sequence);
 
 /**
  *
- * In case that \p sequence is a parameter, \p before should be 
+ * In case that \p sequence is a parameter, \p before should be
  *
  * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_NULL_PTR, GEOXML_RETV_NOT_A_SEQUENCE, GEOXML_RETV_DIFFERENT_SEQUENCES
  */
@@ -145,4 +151,4 @@ geoxml_sequence_move_up(GeoXmlSequence * sequence);
 int
 geoxml_sequence_move_down(GeoXmlSequence * sequence);
 
-#endif //__LIBGEOXML_SEQUENCE_H
+#endif //__LIBGEBR_GEOXML_SEQUENCE_H

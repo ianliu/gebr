@@ -18,17 +18,20 @@
 #ifndef __GEBRD_H
 #define __GEBRD_H
 
-#include <misc/gtcpserver.h>
-#include <misc/gtcpsocket.h>
+#include <comm/gtcpserver.h>
+#include <comm/gtcpsocket.h>
+#include <misc/log.h>
 
 extern struct gebrd	gebrd;
 
 struct gebrd {
-	GTcpServer *	tcp_server;
-	GList *		clients;
-	GList *		jobs;
+	GTcpServer *		tcp_server;
+	GList *			clients;
+	GList *			jobs;
 
-	GMainLoop *	main_loop;
+	struct log *		log;
+
+	GMainLoop *		main_loop;
 };
 
 void
@@ -36,5 +39,8 @@ gebrd_init(void);
 
 void
 gebrd_quit(void);
+
+void
+gebrd_message(enum log_message_type type, gboolean in_stdout, gboolean in_log_file, const gchar * message, ...);
 
 #endif //__GEBRD_H

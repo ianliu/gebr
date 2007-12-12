@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  Br√°ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GÍBR Library
+ *   Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,13 +15,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEOXML_FLOW_H
-#define __LIBGEOXML_FLOW_H
+#ifndef __LIBGEBR_GEOXML_FLOW_H
+#define __LIBGEBR_GEOXML_FLOW_H
 
 #include <glib.h>
 
 /**
- * \struct GeoXmlFlow flow.h libgeoxml/flow.h
+ * \struct GeoXmlFlow flow.h geoxml/flow.h
  * \brief
  * A sequence of programs.
  * \dot
@@ -30,7 +30,7 @@
  * 	fontsize = 8
  * 	size = "6"
  * 	node [
- *		color = palegreen2, style = filled
+ * 		color = palegreen2, style = filled
  * 		fontname = "Bitstream Vera Sans"
  * 		fontsize = 8
  * 		shape = record
@@ -42,15 +42,21 @@
  *
  * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
  * 	"GeoXmlFlow" [ URL = "\ref flow.h" ];
- * 	"GeoXmlDocument" -> { "GeoXmlFlow" };
+ * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GeoXmlProgram" [ URL = "\ref program.h" ];
+ * 	"GeoXmlCategory" [ URL = "\ref category.h" ];
+ *
+ * 	edge [
+ * 		arrowhead = "normal"
+ * 	]
+ * 	"GeoXmlDocument" -> "GeoXmlFlow";
+ * 	"GeoXmlSequence" -> "GeoXmlCategory";
+ * 	"GeoXmlSequence" -> "GeoXmlProgram";
  *
  * 	edge [
  * 		arrowhead = "none"
  * 		taillabel = "0..*"
  * 	]
- *
- * 	"GeoXmlProgram" [ URL = "\ref program.h" ];
- * 	"GeoXmlCategory" [ URL = "\ref category.h" ];
  * 	"GeoXmlFlow" -> { "GeoXmlCategory" "GeoXmlProgram" };
  * }
  * \enddot
@@ -80,6 +86,7 @@ typedef struct geoxml_flow GeoXmlFlow;
 #include "program.h"
 #include "category.h"
 #include "macros.h"
+#include "sequence.h"
 
 /**
  * Create a new empty flow and return a pointer to it.
@@ -99,10 +106,20 @@ void
 geoxml_flow_add_flow(GeoXmlFlow * flow, GeoXmlFlow * flow2);
 
 /**
+ * Change the \p flow 's modified date to \p last_run
+ *
+ * If \p flow or \p last_run is NULL nothing is done.
+ *
+ * \see geoxml_document_get_date_modified
+ */
+void
+geoxml_flow_set_date_last_run(GeoXmlFlow * flow, const gchar * last_run);
+
+/**
  * Set the \p flow input file path to \p input. The input file
  * is used to start the flow, by loading it on the first program of \p flow.
  *
- * If \p flow is NULL nothing is done.
+ * If \p flow or \p input is NULL nothing is done.
  *
  * \see geoxml_flow_io_get_input
  */
@@ -113,7 +130,7 @@ geoxml_flow_io_set_input(GeoXmlFlow * flow, const gchar * input);
  * Set the \p flow output file path to \p output. The output file is
  * the one used to gather the output sent by the last program of \p flow.
  *
- * If \p flow is NULL nothing is done.
+ * If \p flow or \p output is NULL nothing is done.
  *
  * \see geoxml_flow_io_get_output
  */
@@ -124,12 +141,22 @@ geoxml_flow_io_set_output(GeoXmlFlow * flow, const gchar * output);
  * Set the \p flow error file path to \p error. This should be the file
  * containing the error log, which might include program's stderr
  *
- * If \p flow is NULL nothing is done.
+ * If \p flow or \p error is NULL nothing is done.
  *
  * \see geoxml_flow_io_get_error geoxml_program_set_stderr
  */
 void
 geoxml_flow_io_set_error(GeoXmlFlow * flow, const gchar * error);
+
+/**
+ * Get the \p flow 's last modification date
+ *
+ * If \p flow is NULL returns NULL.
+ *
+ * \see geoxml_flow_set_date_modified
+ */
+const gchar *
+geoxml_flow_get_date_last_run(GeoXmlFlow * flow);
 
 /**
  * Retrieves the input file path of \p flow.
@@ -173,6 +200,15 @@ GeoXmlProgram *
 geoxml_flow_new_program(GeoXmlFlow * flow);
 
 /**
+ * Creates a new program associated and append to the list of programs
+ * Provided for convenience
+ *
+ * \see geoxml_flow_new_program
+ */
+GeoXmlProgram *
+geoxml_flow_append_program(GeoXmlFlow * flow);
+
+/**
  * Writes to \p program the \p index ieth category that \p flow belong.
  * If an error ocurred, the content of \p program is assigned to NULL.
  *
@@ -183,7 +219,7 @@ geoxml_flow_new_program(GeoXmlFlow * flow);
  * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
  */
 int
-geoxml_flow_get_program(GeoXmlFlow * flow, GeoXmlProgram ** program, gulong index);
+geoxml_flow_get_program(GeoXmlFlow * flow, GeoXmlSequence ** program, gulong index);
 
 /**
  * Get the number of programs \p flow has.
@@ -205,17 +241,24 @@ GeoXmlCategory *
 geoxml_flow_new_category(GeoXmlFlow * flow, const gchar * name);
 
 /**
- * Writes to \p category the \p index ieth category that \p flow belong.
- * If an error ocurred, the content of \p category is assigned to NULL.
+ * Creates a new category and append it to the list of categories.
+ * Provided for convenience.
  *
- * If \p flow is NULL nothing is done.
+ * \see geoxml_flow_new_category
+ */
+GeoXmlCategory *
+geoxml_flow_append_category(GeoXmlFlow * flow, const gchar * name);
+
+/**
+ * Writes to \p category the \p index ieth category that belongs to \p flow.
+ * If an error ocurred, the content of \p category is assigned to NULL.
  *
  * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR
  *
  * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
  */
 int
-geoxml_flow_get_category(GeoXmlFlow * flow, GeoXmlCategory ** category, gulong index);
+geoxml_flow_get_category(GeoXmlFlow * flow, GeoXmlSequence ** category, gulong index);
 
 /**
  * Get the number of categories that \p flow has.
@@ -255,13 +298,6 @@ geoxml_flow_move_program_down(GeoXmlFlow * flow, GeoXmlProgram * program);
 
 /**
  * \deprecated
- * Renamed to \ref geoxml_flow_new_category . Kept only for backwards compatible and should not be used in newly written code
- */
-GeoXmlCategory * GEOXML_DEPRECATED
-geoxml_flow_append_category(GeoXmlFlow * flow, const gchar * name);
-
-/**
- * \deprecated
  * Use \ref geoxml_sequence_remove instead. Kept only for backwards compatible and should not be used in newly written code
  */
 void GEOXML_DEPRECATED
@@ -269,4 +305,4 @@ geoxml_flow_remove_category(GeoXmlFlow * flow, GeoXmlCategory * category);
 
 
 
-#endif //__LIBGEOXML_FLOW_H
+#endif //__LIBGEBR_GEOXML_FLOW_H

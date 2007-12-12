@@ -17,8 +17,8 @@
 
 #include <gtk/gtk.h>
 
-#include <misc/gtcpserver.h>
-#include <misc/gprocess.h>
+#include <comm/gtcpserver.h>
+#include <comm/gprocess.h>
 
 #include <string.h>
 #include <unistd.h>
@@ -27,45 +27,46 @@
 #include <stdio.h>
 
 #include "server.h"
-#include "client.h"
 #include "gebr.h"
-#include "cb_job.h"
+#include "support.h"
+#include "client.h"
+#include "job.h"
 #include "callbacks.h"
 
 /*
  * Prototypes
  */
 
-void
+static void
 server_connected(GTcpSocket * tcp_socket, struct server * server);
 
-void
+static void
 server_disconnected(GTcpSocket * tcp_socket, struct server * server);
 
-void
+static void
 server_read(GTcpSocket * tcp_socket, struct server * server);
 
-void
+static void
 server_error(GTcpSocket * tcp_socket, enum GSocketError error, struct server * server);
 
 /*
  * Internal functions
  */
 
-void
+static void
 ssh_ask_server_port(struct server * server);
 
-void
-ssh_run_server_finished(GProcess * process, struct server * server)
-{
-	/* now ask via ssh its port */
-	ssh_ask_server_port(server);
-	g_print("ssh_run_server_finished\n");
-// 	g_process_free(process);
-}
+// static void
+// ssh_run_server_finished(GProcess * process, struct server * server)
+// {
+// 	/* now ask via ssh its port */
+// 	ssh_ask_server_port(server);
+// 	gebr_message(DEBUG, FALSE, TRUE, "ssh_run_server_finished");
+// // 	g_process_free(process);
+// }
 
-void
-ssh_read_stdout(GProcess * process, struct server * server)
+static void
+ssh_ask_port_read_stdout(GProcess * process, struct server * server)
 {
 	GString *	output;
 	gchar *		strtol_endptr;
@@ -75,91 +76,92 @@ ssh_read_stdout(GProcess * process, struct server * server)
 	port = strtol(output->str, &strtol_endptr, 10);
 	if (errno != ERANGE)
 		server->port = port;
-	g_print("ssh_read_stdout %d %d\n", port, server->port);
+	gebr_message(DEBUG, FALSE, TRUE, "ssh_ask_port_read_stdout: %d", port, server->port);
 	g_string_free(output, TRUE);
 }
 
-void
-ssh_read_stderr(GProcess * process, struct server * server)
+static void
+ssh_ask_port_read_stderr(GProcess * process, struct server * server)
 {
-	GtkWidget *	dialog;
 	GString *	error;
 
 	if (g_process_is_running(process) == TRUE)
 		g_process_kill(process);
 
 	error = g_process_read_stderr_string_all(process);
-	dialog = gtk_message_dialog_new(GTK_WINDOW(W.mainwin),
-		GTK_DIALOG_MODAL,
-		GTK_MESSAGE_ERROR,
-		GTK_BUTTONS_CLOSE,
-		"Error contacting server host %s via ssh:\n%s",
+	server->error = SERVER_ERROR_SSH_ASK_PORT;
+
+	gebr_message(ERROR, TRUE, TRUE, _("Error contacting server at address %s via ssh: %s"),
 		server->address->str, error->str);
-	gtk_dialog_run(GTK_DIALOG(dialog));
 
 	g_string_free(error, TRUE);
-	gtk_widget_destroy(dialog);
 }
 
-void
-//ssh_read_finished(GProcess * process, gint exit_code, enum GProcessExitStatus exit_status, struct server * server)
-ssh_read_finished(GProcess * process, struct server * server)
+static void
+ssh_ask_port_finished(GProcess * process, struct server * server)
 {
+	if (server->error != SERVER_ERROR_NONE)
+		goto out;
 	if (server->port) {
-		/* now the port became the tunnel port */
+		GHostAddress *	host_address;
+
+		/* connection is made to a localhost tunnel */
+		host_address = g_host_address_new();
+		g_host_address_set_ipv4_string(host_address, "127.0.0.1");
+
+		server->state = SERVER_STATE_OPEN_TUNNEL;
 		server->ssh_tunnel = ssh_tunnel_new(2125, server->address->str, server->port);
 
-		GHostAddress *	host;
-		host = g_host_address_new();
-		g_host_address_set_ipv4_string(host, "127.0.0.1");
-		g_tcp_socket_connect(server->tcp_socket, host, server->ssh_tunnel.port);
+		server->state = SERVER_STATE_CONNECT;
+		g_tcp_socket_connect(server->tcp_socket, host_address, server->ssh_tunnel->port);
+
+		g_host_address_free(host_address);
 	} else {
-		GString *	status;
+// 		GProcess *	server_process;
 		GString *	cmd_line;
-		gchar		hostname[100];
+
+		if (server->state == SERVER_STATE_RUNNED_ASK_PORT)
+			goto out;
 
 		cmd_line = g_string_new(NULL);
-		status = g_string_new(NULL);
-		g_string_printf(status, "Running server at %s...", server->address->str);
-		log_message(ACTION, status->str, TRUE);
-		g_string_free(status, TRUE);
+
+		gebr_message(INFO, TRUE, TRUE, _("Launching server at %s"), server->address->str);
 
 		/* run gebrd via ssh for remote hosts */
-		gethostname(hostname, 100);
-		if (!g_ascii_strcasecmp(hostname, server->address->str))
+		if (g_ascii_strcasecmp(server->address->str, "127.0.0.1") == 0)
 			g_string_printf(cmd_line, "bash -l -c gebrd&");
 		else
-			g_string_printf(cmd_line, "ssh -x -f %s \"bash -l -c gebrd\"", server->address->str);
+			g_string_printf(cmd_line, "ssh -f -x %s 'gebrd'", server->address->str);
 
 		system(cmd_line->str);
+		server->state = SERVER_STATE_RUNNED_ASK_PORT;
 		ssh_ask_server_port(server);
 
 		g_string_free(cmd_line, TRUE);
 	}
 
-	g_process_free(process);
+out:	g_process_free(process);
 }
 
-void
+static void
 ssh_ask_server_port(struct server * server)
 {
-	if (++server->retries > 3)
-		return;
+	GProcess *	process;
+	GString *	cmd_line;
 
-	/* ask via ssh port from server */
-	GProcess * process;
-	GString * cmd_line;
 	process = g_process_new();
 	cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "ssh %s \"test -e .gebr/run/gebrd.run && cat .gebr/run/gebrd.run\"",
-		server->address->str);
-g_print("ssh_ask_server_port\n");
+
 	g_signal_connect(process, "ready-read-stdout",
-			G_CALLBACK(ssh_read_stdout), server);
+			G_CALLBACK(ssh_ask_port_read_stdout), server);
 	g_signal_connect(process, "ready-read-stderr",
-			G_CALLBACK(ssh_read_stderr), server);
+			G_CALLBACK(ssh_ask_port_read_stderr), server);
 	g_signal_connect(process, "finished",
-			G_CALLBACK(ssh_read_finished), server);
+			G_CALLBACK(ssh_ask_port_finished), server);
+
+	/* ask via ssh port from server */
+	g_string_printf(cmd_line, "ssh %s 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'",
+		server->address->str);
 	g_process_start(process, cmd_line);
 
 	g_string_free(cmd_line, TRUE);
@@ -170,19 +172,33 @@ g_print("ssh_ask_server_port\n");
  */
 
 struct server *
-server_new(const gchar * address)
+server_new(const gchar * _address)
 {
+	GtkTreeIter	iter;
+	gchar *		address;
+
 	struct server *	server;
 
+	address = g_ascii_strcasecmp(_address, "127.0.0.1") == 0
+		? _("Local server") : (gchar*)_address;
+
+	/* initialize */
 	server = g_malloc(sizeof(struct server));
+	/* add to the list of servers */
+	gtk_list_store_append(gebr.ui_server_list->store, &iter);
+	gtk_list_store_set(gebr.ui_server_list->store, &iter,
+			SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
+			SERVER_ADDRESS, address,
+			SERVER_POINTER, server,
+			-1);
+	/* fill struct */
 	*server = (struct server) {
 		.tcp_socket = g_tcp_socket_new(),
 		.protocol = protocol_new(),
-		.address = g_string_new(address),
+		.address = g_string_new(_address),
 		.port = 0,
-		.retries = 0,
+		.iter = iter
 	};
-g_print("server_new\n");
 
 	g_signal_connect(server->tcp_socket, "connected",
 			G_CALLBACK(server_connected), server);
@@ -193,7 +209,7 @@ g_print("server_new\n");
 	g_signal_connect(server->tcp_socket, "error",
 			G_CALLBACK(server_error), server);
 
-	ssh_ask_server_port(server);
+	server_connect(server);
 
 	return server;
 }
@@ -205,16 +221,16 @@ server_free(struct server * server)
 	gboolean	valid;
 
 	/* delete all jobs at server */
-	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(W.job_store), &iter);
+	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
 	while (valid) {
 		struct job *	job;
 		GtkTreeIter	this;
 
-		gtk_tree_model_get (GTK_TREE_MODEL(W.job_store), &iter,
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
 				JC_STRUCT, &job,
 				-1);
 		this = iter;
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(W.job_store), &iter);
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
 
 		if (job->server == server)
 			job_delete(job);
@@ -229,100 +245,130 @@ server_free(struct server * server)
 }
 
 void
+server_connect(struct server * server)
+{
+	/* initiate the marathon to communicate to server */
+	server->error = SERVER_ERROR_NONE;
+	server->state = SERVER_STATE_ASK_PORT;
+	ssh_ask_server_port(server);
+}
+
+gboolean
+server_is_logged(struct server * server)
+{
+	return server->protocol->logged;
+}
+
+void
 server_connected(GTcpSocket * tcp_socket, struct server * server)
 {
-	g_print("server_connected\n");
-
 	gchar		hostname[100];
 	gchar *		display;
-	GString *	mcookie_cmd;
+
+	GString *	cmd_line;
 	FILE *		output_fp;
 	gchar		line[1024];
+
+	GString *	mcookie;
+	GString *	ip;
 	gchar **	splits;
 
 	/* initialization */
-	mcookie_cmd = g_string_new(NULL);
+	mcookie = g_string_new(NULL);
+	ip = g_string_new(NULL);
+	cmd_line = g_string_new(NULL);
 
 	/* hostname and display */
 	gethostname(hostname, 100);
 	display = getenv("DISPLAY");
 
-	/* TODO: port to GProcess using blocking calls */ 
+	/* TODO: port to GProcess using blocking calls */
 	/* get this X session magic cookie */
-	g_string_printf(mcookie_cmd, "xauth list %s", display);
-	output_fp = popen(mcookie_cmd->str, "r");
-	fread(line, 1, 1024, output_fp); 
+	g_string_printf(cmd_line, "xauth list %s", display);
+	output_fp = popen(cmd_line->str, "r");
+	fread(line, 1, 1024, output_fp);
 	/* split output and get only the magic cookie */
 	splits = g_strsplit_set(line, " \n", 6);
+	g_string_assign(mcookie, splits[4]);
+
+	/* frees for reuse */
+	g_strfreev(splits);
 	pclose(output_fp);
 
-	protocol_send_data(server->protocol, server->tcp_socket,
-		protocol_defs.ini_def, 4, PROTOCOL_VERSION, hostname, display, splits[4]);
+	/* get client IP address via SSH */
+	g_string_printf(cmd_line, "ssh %s 'echo $SSH_CLIENT'", server->address->str);
+	output_fp = popen(cmd_line->str, "r");
+	fread(line, 1, 1024, output_fp);
+	/* split output to get IP */
+	splits = g_strsplit(line, " ", 3);
+	g_string_assign(ip, splits[0]);
 
-	g_string_free(mcookie_cmd, TRUE);
+	/* send INI */
+	protocol_send_data(server->protocol, server->tcp_socket,
+		protocol_defs.ini_def, 5, PROTOCOL_VERSION, hostname, ip->str, display, mcookie->str);
+
+	/* frees */
 	g_strfreev(splits);
+	pclose(output_fp);
+	g_string_free(mcookie, TRUE);
+	g_string_free(ip, TRUE);
+	g_string_free(cmd_line, TRUE);
 }
 
-void
+static void
 server_disconnected(GTcpSocket * tcp_socket, struct server * server)
 {
-	g_print("server_disconnected\n");
 	server->port = 0;
+	server->protocol->logged = FALSE;
+	server_list_updated_status(server);
+
+	gebr_message(WARNING, TRUE, TRUE, "Server '%s' disconnected",
+		     server->address->str);
 }
 
-void
+static void
 server_read(GTcpSocket * tcp_socket, struct server * server)
 {
 	GString *	data;
 
-	data = g_socket_read_string_all(G_SOCKET(tcp_socket));g_print("server_read %s\n", data->str);
+	data = g_socket_read_string_all(G_SOCKET(tcp_socket));
 	protocol_receive_data(server->protocol, data);
 	client_parse_server_messages(server);
+
+	gebr_message(DEBUG, FALSE, TRUE, "Read from server '%s': %s",
+		server->address->str, data->str);
 
 	g_string_free(data, TRUE);
 }
 
-void
+static void
 server_error(GTcpSocket * tcp_socket, enum GSocketError error, struct server * server)
 {
-	g_print("server_error = %d\n", error);
-	server_free(server);
+	/* FIXME: fix signal on GTcpSocket */
+//	gebr_message(ERROR, FALSE, TRUE, _("Connection error '%s' on server '%s'"), error, server->address->str);
 }
 
+/*
+ * Function: server_run_flow
+ * Ask _server_ to run the current flow (at gebr.flow)
+ *
+ */
 void
 server_run_flow(struct server * server)
 {
 	GeoXmlFlow *		flow_wnh; /* wnh: with no help */
-	GeoXmlProgram *		program;
-	GeoXmlSequence *	sequence;
+	GeoXmlSequence *	program;
 	gchar *			xml;
 
-	/* TODO: check logged instead of connected */
-	if (g_socket_get_state(G_SOCKET(server->tcp_socket)) != G_SOCKET_STATE_CONNECTED) {
-	   GtkWidget *	dialog;
-	   
-	   dialog = gtk_message_dialog_new(GTK_WINDOW(W.mainwin),
-					   GTK_DIALOG_MODAL,
-					   GTK_MESSAGE_ERROR,
-					   GTK_BUTTONS_CLOSE,
-					   "You are not connected to this server");
-	   gtk_widget_show_all(dialog);
-	   gtk_dialog_run(GTK_DIALOG(dialog));
-	   
-	   gtk_widget_destroy(dialog);
-	   return;
-	}
-
 	/* removes flow's help */
-	flow_wnh = GEOXML_FLOW(geoxml_document_clone(GEOXML_DOC(flow)));
+	flow_wnh = GEOXML_FLOW(geoxml_document_clone(GEOXML_DOC(gebr.flow)));
 	geoxml_document_set_help(GEOXML_DOC(flow_wnh), "");
 	/* removes programs' help */
 	geoxml_flow_get_program(flow_wnh, &program, 0);
-	sequence = GEOXML_SEQUENCE(program);
-	while (sequence != NULL) {
-		program = GEOXML_PROGRAM(sequence);
-		geoxml_program_set_help(program, "");
-		geoxml_sequence_next(&sequence);
+	while (program != NULL) {
+		geoxml_program_set_help(GEOXML_PROGRAM(program), "");
+
+		geoxml_sequence_next(&program);
 	}
 
 	/* get the xml */
@@ -331,11 +377,7 @@ server_run_flow(struct server * server)
 	/* finally... */
 	protocol_send_data(server->protocol, server->tcp_socket, protocol_defs.run_def, 1, xml);
 
+	/* frees */
 	g_free(xml);
 	geoxml_document_free(GEOXML_DOC(flow_wnh));
-}
-
-void
-server_list_flows(struct server * server)
-{
 }

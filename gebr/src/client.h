@@ -15,12 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GEBR_CLIENT_H_
-#define _GEBR_CLIENT_H_
+#ifndef __CLIENT_H
+#define __CLIENT_H
 
 #include "server.h"
 
 gboolean
 client_parse_server_messages(struct server * server);
 
-#endif //_GEBR_CLIENT_H_
+#endif //__CLIENT_H

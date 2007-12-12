@@ -42,8 +42,8 @@ menu_new(void)
 	geoxml_document_set_author(GEOXML_DOC(gebrme.current), gebrme.config.name->str);
 	geoxml_document_set_email(GEOXML_DOC(gebrme.current), gebrme.config.email->str);
 
-	gtk_list_store_append (gebrme.menus_liststore, &iter);
-	gtk_list_store_set (gebrme.menus_liststore, &iter,
+	gtk_list_store_append(gebrme.menus_liststore, &iter);
+	gtk_list_store_set(gebrme.menus_liststore, &iter,
 			MENU_FILENAME, new_menu_str->str,
 			MENU_XMLPOINTER, (gpointer)gebrme.current,
 			MENU_PATH, "",
@@ -78,7 +78,7 @@ menu_open(const gchar * path)
 				MENU_PATH, &ipath,
 				-1);
 
-		if (!strcmp(ipath, path)) {
+		if (!g_ascii_strcasecmp(ipath, path)) {
 			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebrme.menus_treeview));
 			gtk_tree_selection_select_iter(selection, &iter);
 			menu_selected();
@@ -112,7 +112,7 @@ menu_open(const gchar * path)
 		}
 		return;
 	}
-			    
+
 	/* add to the view */
 	filename = g_path_get_basename(path);
 	gebrme.current = GEOXML_FLOW(menu);
@@ -139,7 +139,7 @@ menu_load_user_directory(void)
 	GString *	path;
 
 	if ((dir = opendir(gebrme.config.menu_dir->str)) == NULL) {
-		gtk_statusbar_push(GTK_STATUSBAR(gebrme.statusbar), 0, _("Could not open menus' directory"));
+		gebrme_message(ERROR, TRUE, TRUE, _("Could not open menus' directory"));
 		return;
 	}
 
@@ -161,9 +161,9 @@ menu_load_user_directory(void)
 void
 menu_save(const gchar * path)
 {
-	GeoXmlProgram *	program;
-	gulong		index;
-	gchar *		filename;
+	GeoXmlSequence *	program;
+	gulong			index;
+	gchar *			filename;
 
 	/* Write menu tag for each program
 	 * TODO: make it on the fly?
@@ -172,8 +172,8 @@ menu_save(const gchar * path)
 	filename = (gchar*)geoxml_document_get_filename(GEOXML_DOC(gebrme.current));
 	geoxml_flow_get_program(gebrme.current, &program, index);
 	while (program != NULL) {
-		geoxml_program_set_menu(program, filename, index++);
-		geoxml_program_next(&program);
+		geoxml_program_set_menu(GEOXML_PROGRAM(program), filename, index++);
+		geoxml_sequence_next(&program);
 	}
 
 	geoxml_document_save(GEOXML_DOC(gebrme.current), path);
@@ -183,17 +183,18 @@ menu_save(const gchar * path)
 void
 menu_selected(void)
 {
-	GtkTreeIter		itermenu;
-	GtkTreeIter		itercat;
 	GtkTreeSelection *	selection;
-	GtkTreeModel     *	model;
-	GeoXmlCategory *	category;
-	GeoXmlProgram *		program;
+	GtkTreeModel *		model;
+	GtkTreeIter		menu_iter;
+	GtkTreeIter		category_iter;
+
+	GeoXmlSequence *	category;
+	GeoXmlSequence *	program;
 	GdkPixbuf *             icon;
 
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebrme.menus_treeview));
-	gtk_tree_selection_get_selected (selection, &model, &itermenu);
-	gtk_tree_model_get (GTK_TREE_MODEL(gebrme.menus_liststore), &itermenu,
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (gebrme.menus_treeview));
+	gtk_tree_selection_get_selected(selection, &model, &menu_iter);
+	gtk_tree_model_get(GTK_TREE_MODEL(gebrme.menus_liststore), &menu_iter,
 			    MENU_STATUS, &icon,
 			    MENU_XMLPOINTER, &gebrme.current,
 			    -1);
@@ -212,13 +213,13 @@ menu_selected(void)
 	gtk_list_store_clear(gebrme.categories_liststore);
 	geoxml_flow_get_category(gebrme.current, &category, 0);
 	while (category != NULL) {
-		gtk_list_store_append (gebrme.categories_liststore, &itercat);
-		gtk_list_store_set (gebrme.categories_liststore, &itercat,
-			CATEGORY_NAME, geoxml_category_get_name(category),
+		gtk_list_store_append(gebrme.categories_liststore, &category_iter);
+		gtk_list_store_set(gebrme.categories_liststore, &category_iter,
+			CATEGORY_NAME, geoxml_category_get_name(GEOXML_CATEGORY(category)),
 			CATEGORY_XMLPOINTER, (gpointer)category,
 			-1);
 
-		geoxml_category_next(&category);
+		geoxml_sequence_next(&category);
 	}
 
 	/* clear program list */
@@ -226,10 +227,12 @@ menu_selected(void)
 	/* programs */
 	geoxml_flow_get_program(gebrme.current, &program, 0);
 	while (program != NULL) {
-		program_create_ui(program, FALSE);
-		geoxml_program_next(&program);
+		program_create_ui(GEOXML_PROGRAM(program), FALSE);
+		geoxml_sequence_next(&program);
 	}
-	gtk_list_store_set(GTK_LIST_STORE(gebrme.menus_liststore), &itermenu,
+
+	/* recover status */
+	gtk_list_store_set(GTK_LIST_STORE(gebrme.menus_liststore), &menu_iter,
 			   MENU_STATUS, icon,
 			   -1);
 }
@@ -237,10 +240,12 @@ menu_selected(void)
 gboolean
 menu_cleanup(void)
 {
+	GtkWidget *	dialog;
+
 	GtkTreeIter	iter;
+
 	GSList *	unsaved;
 	gboolean	has_next;
-	GtkWidget *	dialog;
 	gboolean	has_unsaved;
 	gboolean	ret;
 
@@ -254,7 +259,7 @@ menu_cleanup(void)
 		gtk_tree_model_get(GTK_TREE_MODEL(gebrme.menus_liststore), &iter,
 				MENU_STATUS, &pixbuf,
 				-1);
-		if (pixbuf == gebrme.unsaved_icon) {
+		if (pixbuf == gebrme.pixmaps.stock_no) {
 			GtkTreeIter *	iter_pointer;
 
 			iter_pointer = g_malloc(sizeof(GtkTreeIter));
@@ -272,7 +277,7 @@ menu_cleanup(void)
 
 	/* TODO: add cancel button */
 	dialog = gtk_message_dialog_new(GTK_WINDOW(gebrme.window),
-					GTK_DIALOG_MODAL,
+					GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_QUESTION,
 					GTK_BUTTONS_YES_NO,
 					_("There are flows unsaved. Do you want to save them?"));
@@ -315,23 +320,23 @@ out:	g_slist_free(unsaved);
 void
 menu_saved_status_set(MenuStatus status)
 {
-	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
+	GtkTreeIter		iter;
 
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebrme.menus_treeview));
-	gtk_tree_selection_get_selected (selection, &model, &iter);
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (gebrme.menus_treeview));
+	gtk_tree_selection_get_selected(selection, &model, &iter);
 
 	switch (status) {
 	case MENU_STATUS_SAVED:
-		gtk_list_store_set (GTK_LIST_STORE(gebrme.menus_liststore), &iter,
-				MENU_STATUS, NULL,
-				-1);
+		gtk_list_store_set(GTK_LIST_STORE(gebrme.menus_liststore), &iter,
+			MENU_STATUS, NULL,
+			-1);
 		break;
 	case MENU_STATUS_UNSAVED:
-		gtk_list_store_set (GTK_LIST_STORE(gebrme.menus_liststore), &iter,
-				MENU_STATUS, gebrme.unsaved_icon,
-				-1);
+		gtk_list_store_set(GTK_LIST_STORE(gebrme.menus_liststore), &iter,
+			MENU_STATUS, gebrme.pixmaps.stock_no,
+			-1);
 		break;
 	}
 }

@@ -43,9 +43,9 @@ noinst_HEADERS =	interface.h \
 GEBRME_PIXMAPS_DIR = $(datadir)/gebrme/pixmaps/
 
 EXTRA_DIST = $(noinst_HEADERS)
-INCLUDES =	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
-		-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-		-DGEBRME_DATA_DIR=\"$(datadir)/gebrme/\" \
-		-DGEBRME_PIXMAPS_DIR=\""$(GEBRME_PIXMAPS_DIR)"\"
-AM_CFLAGS = -Wall $(GTK_CFLAGS) $(LIBGEBR_GEOXML_CFLAGS)
-gebrme_LDADD = $(INTLLIBS) $(GTK_LIBS) $(LIBGEBR_GEOXML_LIBS)
+INCLUDES = \
+	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
+	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" \
+	-DDATA_DIR=\"$(datadir)/gebrme/\"
+AM_CFLAGS = -Wall $(GTK_CFLAGS) $(LIBGEBR_GEOXML_CFLAGS) $(LIBGEBR_GUI_CFLAGS) $(LIBGEBR_MISC_CFLAGS)
+gebrme_LDADD = $(INTLLIBS) $(GTK_LIBS) $(LIBGEBR_GEOXML_LIBS) $(LIBGEBR_GUI_LIBS) $(LIBGEBR_MISC_LIBS)

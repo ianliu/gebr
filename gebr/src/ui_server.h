@@ -15,12 +15,63 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GEBR_UI_SERVER_H_
-#define _GEBR_UI_SERVER_H_
+/*
+ * File: ui_server.h
+ */
+
+#ifndef __UI_SERVER_H
+#define __UI_SERVER_H
 
 #include <gtk/gtk.h>
 
-void
-assembly_server_win     (void);
+#include "server.h"
 
-#endif //_GEBR_UI_SERVER_H_
+/* Store field */
+enum {
+	SERVER_STATUS_ICON = 0,
+	SERVER_ADDRESS,
+	SERVER_POINTER,
+	SERVER_N_COLUMN
+};
+
+/*
+ * Struct: ui_server_list
+ *
+ * (start code)
+ *   struct ui_server_list {
+ *                    GtkWidget *		dialog;
+ *
+ *                    GtkListStore *	store;
+ *                    GtkWidget *		view;
+ *   };
+ * (end code)
+*/
+struct ui_server_list {
+	GtkWidget *		dialog;
+
+	GtkListStore *		store;
+	GtkWidget *		view;
+};
+
+struct ui_server_list *
+server_list_setup_ui(void);
+
+void
+server_list_updated_status(struct server * server);
+
+struct ui_server_select {
+	GtkWidget *		dialog;
+
+	struct server *		selected;
+
+	/* same as gebr.ui_server_list.store */
+	GtkListStore *		store;
+	GtkWidget *		view;
+
+	GtkWidget *		ok_button;
+};
+
+struct server *
+server_select_setup_ui(void);
+
+#endif //__UI_SERVER_H

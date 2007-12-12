@@ -15,39 +15,101 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GEBR_H_
-#define _GEBR_H_
+#ifndef __GEBR_H
+#define __GEBR_H
 
-#define STRMAX 2048
+#include <gtk/gtk.h>
 
 #include <geoxml.h>
-#include "widgets.h"
+#include <gui/about.h>
+#include <misc/log.h>
 
-extern GeoXmlFlow *	flow;
-extern gebrw_t		W;
+#include "cmdline.h"
+#include "interface.h"
+#include "ui_project_line.h"
+#include "ui_flow_browse.h"
+#include "ui_flow_edition.h"
+#include "ui_job_control.h"
+#include "ui_preferences.h"
+#include "ui_server.h"
 
-enum msg_type {
-	START, END, ACTION, SERVER, ERROR, WARNING, INTERFACE
+/* global variable of common needed stuff */
+extern struct gebr gebr;
+
+struct gebr {
+	GtkWidget *			window;
+	GtkWidget *			menu[MENUBAR_N];
+	GtkWidget *			notebook;
+	GtkWidget *			statusbar;
+	struct about			about;
+	/* for strange things ;) */
+	GtkWidget *			invisible;
+
+	/* doc: the current selected project or line */
+	GeoXmlDocument *		doc;
+	GeoXmlProject *			project;
+	GeoXmlLine *			line;
+	GeoXmlFlow *			flow;
+
+	/* log file */
+	struct log *			log;
+
+	/* List of temporary file to be deleted */
+	GSList *			tmpfiles;
+
+	/* Persistant GUI */
+	struct ui_project_line *	ui_project_line;
+	struct ui_flow_browse *		ui_flow_browse;
+	struct ui_flow_edition *	ui_flow_edition;
+	struct ui_job_control *		ui_job_control;
+	struct ui_server_list *		ui_server_list;
+
+	struct gebr_config {
+		/* config options from gengetopt
+		 * loaded in gebr_config_load at gebr.c
+		 */
+		struct ggopt		ggopt;
+
+		GString *		username;
+		GString *		email;
+		GString *		usermenus;
+		GString *		data;
+		GString *		editor;
+		GString *		browser;
+	} config;
+
+	/* status menu items */
+	GtkWidget *			configured_menuitem;
+	GtkWidget *			disabled_menuitem;
+	GtkWidget *			unconfigured_menuitem;
+
+	/* Pixmaps */
+	struct gebr_pixmaps {
+		GdkPixbuf *		stock_apply;
+		GdkPixbuf *		stock_warning;
+		GdkPixbuf *		stock_cancel;
+		GdkPixbuf *		stock_execute;
+		GdkPixbuf *		stock_connect;
+		GdkPixbuf *		stock_disconnect;
+	} pixmaps;
 };
 
 void
-gebr_init(void);
+gebr_init(int argc, char ** argv);
 
 gboolean
-gebr_quit       (GtkWidget *widget,
-		 GdkEvent  *event,
-		 gpointer   user_data);
+gebr_quit(void);
 
-int
+void
 gebr_config_load(int argc, char ** argv);
 
-int
-gebr_config_reload(void);
+void
+gebr_config_apply(void);
 
-int
+gboolean
 gebr_config_save(void);
 
 void
-log_message(enum msg_type type, const gchar * message, gboolean in_statusbar);
+gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...);
 
-#endif //_GEBR_H_
+#endif //__GEBR_H

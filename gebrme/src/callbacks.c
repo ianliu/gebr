@@ -39,7 +39,7 @@ on_open_activate(void)
 	gchar *			path;
 
 	/* create file chooser */
-	chooser_dialog = gtk_file_chooser_dialog_new(	"Open file", NULL,
+	chooser_dialog = gtk_file_chooser_dialog_new(	_("Open flow"), NULL,
 							GTK_FILE_CHOOSER_ACTION_OPEN,
 							GTK_STOCK_OPEN, GTK_RESPONSE_YES,
 							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -65,9 +65,10 @@ out:	gtk_widget_destroy(chooser_dialog);
 void
 on_save_activate(void)
 {
-	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
-	GtkTreeModel     *	model;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+
 	gchar *			path;
 
 	/* get path of selection */
@@ -91,16 +92,18 @@ on_save_activate(void)
 void
 on_save_as_activate(void)
 {
-	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
-	GtkTreeModel     *	model;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+
 	GtkWidget *		chooser_dialog;
 	GtkFileFilter *		filefilter;
+
 	gchar *			path;
 	gchar *			filename;
 
 	/* run file chooser */
-	chooser_dialog = gtk_file_chooser_dialog_new(	"Choose file", NULL,
+	chooser_dialog = gtk_file_chooser_dialog_new(	_("Choose file"), NULL,
 							GTK_FILE_CHOOSER_ACTION_SAVE,
 							GTK_STOCK_SAVE, GTK_RESPONSE_YES,
 							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -136,9 +139,10 @@ out:
 void
 on_delete_activate(void)
 {
-	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
-	GtkTreeModel     *	model;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+
 	gchar *			path;
 
 	/* get path of selection */
@@ -167,12 +171,51 @@ on_delete_activate(void)
 void
 on_close_activate(void)
 {
-	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
-	GtkTreeModel     *	model;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
 
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebrme.menus_treeview));
-	gtk_tree_selection_get_selected (selection, &model, &iter);
+	GdkPixbuf *		pixbuf;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebrme.menus_treeview));
+	gtk_tree_selection_get_selected(selection, &model, &iter);
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebrme.menus_liststore), &iter,
+				MENU_STATUS, &pixbuf,
+				-1);
+
+	if (pixbuf == gebrme.pixmaps.stock_no) {
+		GtkWidget *	dialog;
+		gboolean	cancel;
+
+		/* TODO: add cancel button */
+		cancel = FALSE;
+		dialog = gtk_message_dialog_new(GTK_WINDOW(gebrme.window),
+					GTK_DIALOG_MODAL,
+					GTK_MESSAGE_QUESTION,
+					GTK_BUTTONS_YES_NO,
+					_("This flow has unsaved changes. Do you want to save it?"));
+		switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
+		case GTK_RESPONSE_YES: {
+			gchar *	path;
+
+			gtk_tree_model_get(GTK_TREE_MODEL(gebrme.menus_liststore), &iter,
+				MENU_PATH, &path,
+				-1);
+
+			geoxml_document_save(GEOXML_DOC(gebrme.current), path);
+			break;
+		} case GTK_RESPONSE_NO:
+			break;
+		case GTK_RESPONSE_CANCEL:
+			cancel = TRUE;
+			return;
+		}
+
+		gtk_widget_destroy(dialog);
+		if (cancel == TRUE)
+			return;
+	}
 
 	geoxml_document_free(GEOXML_DOC(gebrme.current));
 	gtk_list_store_remove(gebrme.menus_liststore, &iter);
@@ -221,5 +264,5 @@ on_preferences_activate(void)
 void
 on_about_activate(void)
 {
-
+	gtk_widget_show(gebrme.about.dialog);
 }

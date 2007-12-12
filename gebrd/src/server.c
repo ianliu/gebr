@@ -17,16 +17,17 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <signal.h>
+#include <unistd.h>
 
-#include <misc.h>
+#include <glib/gstdio.h>
+
+#include <comm.h>
 #include <geoxml.h>
 
 #include "server.h"
 #include "gebrd.h"
+#include "support.h"
 #include "job.h"
 #include "client.h"
 
@@ -40,7 +41,7 @@ server_init(void)
 	struct sigaction  act;
 
 	/* run path */
-	run_filename = g_string_new(getenv("HOME"));
+	run_filename = g_string_new(NULL);
 
 	/* protocol */
 	protocol_init();
@@ -53,56 +54,29 @@ server_init(void)
 	gebrd.tcp_server = g_tcp_server_new();
 	ret = g_tcp_server_listen(gebrd.tcp_server, host_address, 0);
 	if (ret == FALSE) {
-		g_print("Could not listen for connections.\n");
+		gebrd_message(ERROR, TRUE, TRUE, _("Could not listen for connections.\n"));
 		goto out;
 	}
 	g_signal_connect(gebrd.tcp_server, "new-connection",
 			G_CALLBACK(server_new_connection), NULL);
 
-	/* Test for gebr conf dir */
-	g_string_append(run_filename, "/.gebr");
-	if (g_file_test(run_filename->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {
-	   struct stat	home_stat;
-	   gchar *	home = getenv("HOME");
-	   stat(home, &home_stat);
-
-	   if (mkdir(run_filename->str, home_stat.st_mode)){
-	      ret = FALSE;
-	      goto out;
-	   }
-	}
-
-	/* Test for .gebr/run conf dir */
-	g_string_append(run_filename, "/run");
-	if (g_file_test(run_filename->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {
-	   struct stat	home_stat;
-	   gchar *	home = getenv("HOME");
-	   stat(home, &home_stat);
-
-	   if (mkdir(run_filename->str, home_stat.st_mode)){
-	      ret = FALSE;
-	      goto out;
-	   }
-	}
-
-	g_string_append(run_filename, "/gebrd.run");
 	/* write on user's home directory a file with a port */
+	g_string_printf(run_filename, "%s/.gebr/run/gebrd.run", getenv("HOME"));
 	if (g_file_test(run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
-		g_print("Run file (~/.gebr/run/gebrd.run) already exists or is not a regular file\n");
+		gebrd_message(ERROR, TRUE, TRUE, _("Run file (~/.gebr/run/gebrd.run) already exists or is not a regular file.\n"));
 		ret = FALSE;
 		goto out;
 	}
 	if ((run_fp = fopen(run_filename->str, "w")) == NULL) {
-		g_print("Could not write run file\n");
+		gebrd_message(ERROR, TRUE, TRUE, _("Could not write run file.\n"));
 		ret = FALSE;
 		goto out;
 	}
 	fprintf(run_fp, "%d\n", g_tcp_server_server_port(gebrd.tcp_server));
 	fclose(run_fp);
 
-
-	/* connecting signals TERM */
-	act.sa_sigaction = &gebrd_quit;
+	/* connecting signal TERM */
+	act.sa_sigaction = (typeof(act.sa_sigaction))&gebrd_quit;
 	sigemptyset(&act.sa_mask);
 	sigaction(SIGTERM, &act, NULL);
 
@@ -131,9 +105,9 @@ server_quit(void)
 	GString *	run_filename;
 
 	/* delete lock */
-	run_filename = g_string_new(getenv("HOME"));
-	g_string_append(run_filename, "/.gebr/run/gebrd.run");
-	unlink(run_filename->str);
+	run_filename = g_string_new(NULL);
+	g_string_printf(run_filename, "%s/.gebr/run/gebrd.run", getenv("HOME"));
+	g_unlink(run_filename->str);
 	g_string_free(run_filename, TRUE);
 
 	server_free();
@@ -143,9 +117,11 @@ void
 server_new_connection(void)
 {
 	GTcpSocket *	client_socket;
-g_print("new connection\n");
+
 	while ((client_socket = g_tcp_server_get_next_pending_connection(gebrd.tcp_server)) != NULL)
 		client_add(client_socket);
+
+	gebrd_message(DEBUG, TRUE, TRUE, "server_new_connection\n");
 }
 
 gboolean
@@ -160,32 +136,37 @@ server_parse_client_messages(struct client * client)
 		/* check login */
 		if (message->hash == protocol_defs.ini_def.hash) {
 			GList *		arguments;
-			GString *	version, * hostname, * display, * mcookie;
+			GString *	version, * hostname, * address, * display, * mcookie;
 			gchar		server_hostname[100];
-			GString *       cmd_line;
 
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 4);
+			arguments = protocol_split_new(message->argument, 5);
 			version = g_list_nth_data(arguments, 0);
 			hostname = g_list_nth_data(arguments, 1);
-			display = g_list_nth_data(arguments, 2);
-			mcookie = g_list_nth_data(arguments, 3);
+			address = g_list_nth_data(arguments, 2);
+			display = g_list_nth_data(arguments, 3);
+			mcookie = g_list_nth_data(arguments, 4);
 
 			/* set client info */
 			client->protocol->logged = TRUE;
 			g_string_assign(client->protocol->hostname, hostname->str);
+			g_string_assign(client->address, address->str);
 			g_string_assign(client->display, display->str);
 			g_string_assign(client->mcookie, mcookie->str);
 
-			/* add client magic cookie */
-			cmd_line = g_string_new(NULL);
-			g_string_printf(cmd_line, "xauth add %s%s . %s",
-					hostname->str,
-					display->str,
-					mcookie->str);
-			printf("%s\n", cmd_line->str);
-			system(cmd_line->str);
-			g_string_free(cmd_line, TRUE);
+			if (client_is_local(client) == FALSE) {
+				GString *	cmd_line;
+
+				/* add client magic cookie */
+				cmd_line = g_string_new(NULL);
+				g_string_printf(cmd_line, "xauth add %s%s . %s",
+						client->address->str,
+						display->str,
+						mcookie->str);
+				system(cmd_line->str);
+
+				g_string_free(cmd_line, TRUE);
+			}
 
 			/* send return */
 			gethostname(server_hostname, 100);

@@ -15,12 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <misc/protocol.h>
+#include <comm/protocol.h>
 
 #include "client.h"
-#include "server.h"
-#include "cb_job.h"
 #include "gebr.h"
+#include "server.h"
+#include "job.h"
 
 gboolean
 client_parse_server_messages(struct server * server)
@@ -42,7 +42,9 @@ client_parse_server_messages(struct server * server)
 
 				/* say we are logged */
 				server->protocol->logged = TRUE;
+				server_list_updated_status(server);
 				g_string_assign(server->protocol->hostname, hostname->str);
+
 				/* request list of jobs */
 				protocol_send_data(server->protocol, server->tcp_socket,
 					protocol_defs.lst_def, 0);
@@ -64,11 +66,9 @@ client_parse_server_messages(struct server * server)
 				output = g_list_nth_data(arguments, 6);
 
 				job = job_add(server, jid, status, title, start_date, NULL,
-					NULL, issues, cmd_line, output, TRUE);
-				if (job->status != JOB_STATUS_RUNNING) {
-					g_string_assign(job->finish_date, job->start_date->str);
-					job_clicked();
-				}
+					NULL, issues, cmd_line, output);
+				job_set_active(job);
+				gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 3);
 
 				protocol_split_free(arguments);
 			} else if (server->protocol->waiting_ret_hash == protocol_defs.flw_def.hash) {
@@ -92,10 +92,9 @@ client_parse_server_messages(struct server * server)
 			output = g_list_nth_data(arguments, 8);
 
 			job = job_find(server->address, jid);
-			if (job == NULL) {
+			if (job == NULL)
 				job = job_add(server, jid, status, title, start_date, finish_date,
-					hostname, issues, cmd_line, output, FALSE);
-			}
+					hostname, issues, cmd_line, output);
 
 			protocol_split_free(arguments);
 		} else if (message->hash == protocol_defs.out_def.hash) {

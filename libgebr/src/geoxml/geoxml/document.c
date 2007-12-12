@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  BrÃ¡ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GêBR Library
+ *   Copyright (C) 2007  Bráulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,76 +27,19 @@
 #include "types.h"
 #include "error.h"
 
-/*
- * private functions
- */
-
-GdomeDOMImplementation*	dom_implementation;
-gint			dom_implementation_ref_count = 0;
-GdomeException		exception;
-
-GeoXmlDocument *
-geoxml_document_new(const gchar * name, const gchar * version)
-{
-	GdomeDocument *	document;
-	GdomeElement *	root_element;
-
-	/* create the implementation. */
-	if (!dom_implementation_ref_count)
-		dom_implementation = gdome_di_mkref();
-	else
-		gdome_di_ref(dom_implementation, &exception);
-	++dom_implementation_ref_count;
-
-	/* doc */
-	document = gdome_di_createDocument(dom_implementation,
-		NULL, gdome_str_mkref(name), NULL, &exception);
-
-	/* document (root) element */
-	root_element = gdome_doc_documentElement(document, &exception);
-	__geoxml_set_attr_value(root_element, "version", version);
-
-	/* elements (as specified in DTD) */
-	__geoxml_new_element(root_element, NULL, "filename");
-	__geoxml_new_element(root_element, NULL, "title");
-	__geoxml_new_element(root_element, NULL, "description");
-	__geoxml_new_element(root_element, NULL, "help");
-	__geoxml_new_element(root_element, NULL, "author");
-	__geoxml_new_element(root_element, NULL, "email");
-
-	return (GeoXmlDocument*)document;
-}
-
-const gchar *
-geoxml_document_get_version_doc(GdomeDocument * document)
-{
-	return __geoxml_get_attr_value(gdome_doc_documentElement(document, &exception), "version");
-}
-
-enum document_type
-geoxml_document_get_type(GeoXmlDocument * document)
-{
-	GdomeElement *	root_element;
-
-	root_element = gdome_doc_documentElement((GdomeDocument*)document, &exception);
-
-	if (g_ascii_strcasecmp("flow", gdome_el_nodeName(root_element, &exception)->str))
-		return FLOW;
-	else if (g_ascii_strcasecmp("line", gdome_el_nodeName(root_element, &exception)->str))
-		return LINE;
-	else if (g_ascii_strcasecmp("project", gdome_el_nodeName(root_element, &exception)->str))
-		return PROJECT;
-
-	return UNKNOWN;
-}
+/* global variables */
+GdomeException			exception;
 
 /*
- * internal structures and functions
+ * internal stuff
  */
 
 struct geoxml_document {
 	GdomeDocument*	document;
 };
+
+static GdomeDOMImplementation*	dom_implementation;
+static gint			dom_implementation_ref_count = 0;
 
 static GdomeDocument *
 __geoxml_document_clone_doc(GdomeDocument * source, GdomeDocumentType * document_type);
@@ -139,6 +82,46 @@ err:	gdome_di_unref(dom_implementation, &exception);
 	--dom_implementation_ref_count;
 	*document = NULL;
 	return ret;
+}
+
+/*
+ * private functions and variables
+ */
+
+GeoXmlDocument *
+geoxml_document_new(const gchar * name, const gchar * version)
+{
+	GdomeDocument *	document;
+	GdomeElement *	root_element;
+	GdomeElement *	element;
+
+	/* create the implementation. */
+	if (!dom_implementation_ref_count)
+		dom_implementation = gdome_di_mkref();
+	else
+		gdome_di_ref(dom_implementation, &exception);
+	++dom_implementation_ref_count;
+
+	/* doc */
+	document = gdome_di_createDocument(dom_implementation,
+		NULL, gdome_str_mkref(name), NULL, &exception);
+
+	/* document (root) element */
+	root_element = gdome_doc_documentElement(document, &exception);
+	__geoxml_set_attr_value(root_element, "version", version);
+
+	/* elements (as specified in DTD) */
+	__geoxml_insert_new_element(root_element, "filename", NULL);
+	__geoxml_insert_new_element(root_element, "title", NULL);
+	__geoxml_insert_new_element(root_element, "description", NULL);
+	__geoxml_insert_new_element(root_element, "help", NULL);
+	__geoxml_insert_new_element(root_element, "author", NULL);
+	__geoxml_insert_new_element(root_element, "email", NULL);
+	element = __geoxml_insert_new_element(root_element, "date", NULL);
+	__geoxml_insert_new_element(element, "created", NULL);
+	__geoxml_insert_new_element(element, "modified", NULL);
+
+	return (GeoXmlDocument*)document;
 }
 
 /*
@@ -226,12 +209,32 @@ __geoxml_document_clone_doc(GdomeDocument * source, GdomeDocumentType * document
 	return document;
 }
 
+enum GEOXML_DOCUMENT_TYPE
+geoxml_document_get_type(GeoXmlDocument * document)
+{
+	if (document == NULL)
+		return GEOXML_DOCUMENT_TYPE_FLOW;
+
+	GdomeElement *	root_element;
+
+	root_element = gdome_doc_documentElement((GdomeDocument*)document, &exception);
+
+	if (g_ascii_strcasecmp("flow", gdome_el_nodeName(root_element, &exception)->str) == 0)
+		return GEOXML_DOCUMENT_TYPE_FLOW;
+	else if (g_ascii_strcasecmp("line", gdome_el_nodeName(root_element, &exception)->str) == 0)
+		return GEOXML_DOCUMENT_TYPE_LINE;
+	else if (g_ascii_strcasecmp("project", gdome_el_nodeName(root_element, &exception)->str) == 0)
+		return GEOXML_DOCUMENT_TYPE_PROJECT;
+
+	return GEOXML_DOCUMENT_TYPE_FLOW;
+}
+
 const gchar *
 geoxml_document_get_version(GeoXmlDocument * document)
 {
 	if (document == NULL)
 		return NULL;
-	return __geoxml_get_attr_value(geoxml_document_root_element(document), "version");
+	return __geoxml_get_attr_value(gdome_doc_documentElement((GdomeDocument*)document, &exception), "version");
 }
 
 int
@@ -262,13 +265,16 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 	xmlParserCtxtPtr	ctxt;
 	xmlDocPtr		doc;
 	gchar *			xml;
+
 	GString *		dtd_filename;
+
 	GdomeDocument *		tmp_doc;
 	GdomeDocumentType *	tmp_document_type;
-	int			ret;
 
-	if (geoxml_document_get_type((GeoXmlDocument*)document) == UNKNOWN)
-		return GEOXML_RETV_INVALID_DOCUMENT;
+	GdomeElement *		root_element;
+	gchar *			version;
+
+	int			ret;
 
 	ctxt = xmlNewParserCtxt();
 	if (ctxt == NULL)
@@ -278,9 +284,13 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 		goto out2;
 	}
 
+	/* initialization */
 	dtd_filename = g_string_new(NULL);
+	root_element = geoxml_document_root_element(document);
+
+	/* find DTD */
 	g_string_printf(dtd_filename, "%s/%s-%s.dtd", GEOXML_DTDDIR,
-		gdome_el_nodeName(geoxml_document_root_element(document), &exception)->str,
+		gdome_el_nodeName(root_element, &exception)->str,
 		geoxml_document_get_version((GeoXmlDocument*)document));
 	if (g_file_test(dtd_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == FALSE
 		|| g_access(dtd_filename->str, R_OK) < 0) {
@@ -288,8 +298,9 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 		goto out;
 	}
 
+	/* include DTD with full path */
 	tmp_document_type = gdome_di_createDocumentType(dom_implementation,
-		gdome_el_nodeName(geoxml_document_root_element(document), &exception), NULL,
+		gdome_el_nodeName(root_element, &exception), NULL,
 		gdome_str_mkref_own(dtd_filename->str), &exception);
 	tmp_doc = __geoxml_document_clone_doc(document, tmp_document_type);
 	if (tmp_document_type == NULL || tmp_doc == NULL) {
@@ -319,6 +330,33 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 			xmlFreeParserCtxt(ctxt);
 			ret = GEOXML_RETV_INVALID_DOCUMENT;
 			goto out;
+		}
+	}
+
+	/* success, now change to last version */
+	version = (gchar*)geoxml_document_get_version((GeoXmlDocument*)document);
+	/* 0.1.x to 0.2.0 */
+	if (g_ascii_strcasecmp(version, "0.2.0") < 0) {
+		GdomeElement *		element;
+		GdomeElement *		before;
+
+		__geoxml_set_attr_value(root_element, "version", "0.2.0");
+
+		before = __geoxml_get_first_element(root_element, "email");
+		before = __geoxml_next_element(before);
+
+		element = __geoxml_insert_new_element(root_element, "date", before);
+		__geoxml_insert_new_element(element, "created", NULL);
+		__geoxml_insert_new_element(element, "modified", NULL);
+
+		switch (geoxml_document_get_type((GeoXmlDocument*)document)) {
+		case GEOXML_DOCUMENT_TYPE_FLOW:
+			__geoxml_insert_new_element(element, "lastrun", NULL);
+			break;
+		case GEOXML_DOCUMENT_TYPE_LINE:
+			break;
+		case GEOXML_DOCUMENT_TYPE_PROJECT:
+			break;
 		}
 	}
 
@@ -398,6 +436,24 @@ geoxml_document_set_email(GeoXmlDocument * document, const gchar * email)
 }
 
 void
+geoxml_document_set_date_created(GeoXmlDocument * document, const gchar * created)
+{
+	if (document == NULL || created == NULL)
+		return;
+	__geoxml_set_tag_value(__geoxml_get_first_element(geoxml_document_root_element(document), "date"),
+		"created", created, __geoxml_create_TextNode);
+}
+
+void
+geoxml_document_set_date_modified(GeoXmlDocument * document, const gchar * modified)
+{
+	if (document == NULL || modified == NULL)
+		return;
+	__geoxml_set_tag_value(__geoxml_get_first_element(geoxml_document_root_element(document), "date"),
+		"modified", modified, __geoxml_create_TextNode);
+}
+
+void
 geoxml_document_set_description(GeoXmlDocument * document, const gchar * description)
 {
 	if (document == NULL || description == NULL)
@@ -445,6 +501,22 @@ geoxml_document_get_email(GeoXmlDocument * document)
 	if (document == NULL)
 		return NULL;
 	return __geoxml_get_tag_value(geoxml_document_root_element(document), "email");
+}
+
+const gchar *
+geoxml_document_get_date_created(GeoXmlDocument * document)
+{
+	if (document == NULL)
+		return NULL;
+	return __geoxml_get_tag_value(__geoxml_get_first_element(geoxml_document_root_element(document), "date"), "created");
+}
+
+const gchar *
+geoxml_document_get_date_modified(GeoXmlDocument * document)
+{
+	if (document == NULL)
+		return NULL;
+	return __geoxml_get_tag_value(__geoxml_get_first_element(geoxml_document_root_element(document), "date"), "modified");
 }
 
 const gchar *

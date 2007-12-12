@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  Br√°ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GÍBR Library
+ *   Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include <gdome.h>
 
 #include "program.h"
+#include "parameters.h"
 #include "xml.h"
 #include "error.h"
 #include "types.h"
@@ -33,42 +34,6 @@ struct geoxml_program {
 	GdomeElement * element;
 };
 
-const char * parameter_type_to_str[] = {
-	"string", "int", "file",
-	"flag", "float", "range"
-};
-
-const int parameter_type_to_str_len = 6;
-
-GeoXmlProgramParameter *
-__geoxml_program_new_parameter(GeoXmlProgram * program, GdomeElement * before, enum GEOXML_PARAMETERTYPE parameter_type)
-{
-	GdomeElement *	program_element;
-	GdomeElement *	parameter_element;
-	gchar *		tag_name;
-
-	program_element   = (GdomeElement*)program;
-	parameter_element = __geoxml_new_element(__geoxml_get_first_element((GdomeElement*)program, "parameters"),
-		before, parameter_type_to_str[parameter_type]);
-	tag_name = (parameter_type != GEOXML_PARAMETERTYPE_FLAG)
-		? "value" : "state";
-
-	/* elements/attibutes */
-	if (parameter_type != GEOXML_PARAMETERTYPE_FLAG)
-		geoxml_program_parameter_set_required((GeoXmlProgramParameter*)parameter_element, FALSE);
-	__geoxml_new_element(parameter_element, NULL, "keyword");
-	__geoxml_new_element(parameter_element, NULL, "label");
-	__geoxml_new_element(parameter_element, NULL, tag_name);
-	if (parameter_type == GEOXML_PARAMETERTYPE_FILE)
-		geoxml_program_parameter_set_file_be_directory((GeoXmlProgramParameter*)parameter_element, FALSE);
-	else if (parameter_type == GEOXML_PARAMETERTYPE_FLAG)
-		geoxml_program_parameter_set_flag_default((GeoXmlProgramParameter*)parameter_element, FALSE);
-	else if (parameter_type == GEOXML_PARAMETERTYPE_RANGE)
-		geoxml_program_parameter_set_range_properties((GeoXmlProgramParameter*)parameter_element, "", "", "");
-
-	return (GeoXmlProgramParameter*)parameter_element;
-}
-
 /*
  * library functions.
  */
@@ -81,39 +46,12 @@ geoxml_program_flow(GeoXmlProgram * program)
 	return (GeoXmlFlow*)gdome_n_parentNode((GdomeNode*)program, &exception);
 }
 
-GeoXmlProgramParameter *
-geoxml_program_new_parameter(GeoXmlProgram * program, enum GEOXML_PARAMETERTYPE parameter_type)
+GeoXmlParameters *
+geoxml_program_get_parameters(GeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;
-	return __geoxml_program_new_parameter(program, NULL, parameter_type);
-}
-
-GeoXmlProgramParameter *
-geoxml_program_get_first_parameter(GeoXmlProgram * program)
-{
-	if (program == NULL)
-		return NULL;
-	return (GeoXmlProgramParameter *)__geoxml_get_first_element(
-		__geoxml_get_first_element((GdomeElement*)program, "parameters"), "*");
-}
-
-glong
-geoxml_program_get_parameters_number(GeoXmlProgram * program)
-{
-	if (program == NULL)
-		return -1;
-
-	GdomeElement*	parameters_element;
-	gint		i;
-	gint		parameters_number = 0;
-
-	parameters_element = __geoxml_get_first_element((GdomeElement*)program, "parameters");
-
-	for (i = 0; i < parameter_type_to_str_len; ++i)
-		parameters_number += __geoxml_get_elements_number(parameters_element, parameter_type_to_str[i]);
-
-	return parameters_number;
+	return (GeoXmlParameters*)__geoxml_get_first_element((GdomeElement*)program, "parameters");
 }
 
 void
@@ -271,6 +209,27 @@ geoxml_program_get_help(GeoXmlProgram * program)
 	if (program == NULL)
 		return NULL;
 	return __geoxml_get_tag_value((GdomeElement*)program, "help");
+}
+
+GeoXmlProgramParameter *
+geoxml_program_new_parameter(GeoXmlProgram * program, enum GEOXML_PARAMETERTYPE type)
+{
+	return (GeoXmlProgramParameter*)geoxml_parameters_append_parameter((GeoXmlParameters *)
+		__geoxml_get_first_element((GdomeElement*)program, "parameters"), type);
+}
+
+GeoXmlProgramParameter *
+geoxml_program_get_first_parameter(GeoXmlProgram * program)
+{
+	return (GeoXmlProgramParameter*)geoxml_parameters_get_first_parameter((GeoXmlParameters *)
+		__geoxml_get_first_element((GdomeElement*)program, "parameters"));
+}
+
+glong
+geoxml_program_get_parameters_number(GeoXmlProgram * program)
+{
+	return geoxml_parameters_get_number((GeoXmlParameters *)
+		__geoxml_get_first_element((GdomeElement*)program, "parameters"));
 }
 
 void

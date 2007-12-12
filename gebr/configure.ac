@@ -32,6 +32,13 @@ PACKAGE_VERSION=$VERSION
 AC_PROG_INSTALL
 AC_PROG_CC
 
+dnl gettext stuff
+dnl GETTEXT_PACKAGE=$PACKAGE
+dnl AC_SUBST(GETTEXT_PACKAGE)
+dnl AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package.])
+dnl ALL_LINGUAS=""
+dnl AM_GLIB_GNU_GETTEXT
+
 dnl check for GTK
 PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0.0,,AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.0.0]))
 AC_SUBST(GTK_LIBS)
@@ -45,5 +52,5 @@ AC_SUBST(LIBGEBR_LIBS)
 AC_OUTPUT([
 debian/changelog
 rpm/gebr.fedora.spec rpm/gebr.opensuse.spec rpm/gebr.mandriva.spec
-Makefile data/Makefile menus/Makefile pixmaps/Makefile src/Makefile
+Makefile data/Makefile menus/Makefile src/Makefile
 ])

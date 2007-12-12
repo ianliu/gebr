@@ -19,7 +19,7 @@
 #define __FAKE_CLIENT_H
 
 #include <glib.h>
-#include <misc/gtcpsocket.h>
+#include <comm/gtcpsocket.h>
 
 extern struct fake_client	fake_client;
 

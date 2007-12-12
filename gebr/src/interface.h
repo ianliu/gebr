@@ -15,18 +15,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GEBR_INTERFACE_H_
-#define _GEBR_INTERFACE_H_
+#ifndef __INTERFACE_H
+#define __INTERFACE_H
 
-#include "widgets.h"
+#include <gtk/gtk.h>
 
-void
-assembly_preference_win (void);
+/* Menubar entries */
+enum {
+	MENUBAR_PROJECT = 0,
+	MENUBAR_LINE,
+	MENUBAR_FLOW,
+	MENUBAR_FLOW_COMPONENTS,
+	MENUBAR_N
+};
 
 void
 assembly_interface(void);
 
-gebr_save_widget_t
-save_widget_create(void);
-
-#endif //_GEBR_INTERFACE_H_
+#endif //__INTERFACE_H

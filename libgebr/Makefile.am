@@ -16,13 +16,16 @@
 
 SUBDIRS = src
 
-PKG_DEBIAN = changelog.in copyright info libgebr-default.ex libgebr.doc-base.ex postrm.ex README.Debian \
-	compat dirs libgebr0.dirs libgebr-dev.dirs manpage.1.ex preinst.ex rules \
-	control docs libgebr0.install libgebr-dev.install postinst.ex prerm.ex shlibs.local.ex
-EXTRA_DIST = ${PKG_DEBIAN} \
-	rpm/libgebr.fedora.spec		\
-	rpm/libgebr.opensuse.spec	\
+PKG_DEBIAN = debian/changelog.in debian/copyright debian/info debian/libgebr-default.ex \
+	debian/libgebr.doc-base.ex debian/postrm.ex debian/README.Debian \
+	debian/compat debian/dirs debian/libgebr0.dirs debian/libgebr-dev.dirs \
+	debian/manpage.1.ex debian/preinst.ex debian/rules debian/control \
+	debian/docs debian/libgebr0.install debian/libgebr-dev.install \
+	debian/postinst.ex debian/prerm.ex debian/shlibs.local.ex
+PKG_RPM = rpm/libgebr.fedora.spec \
+	rpm/libgebr.opensuse.spec \
 	rpm/libgebr.mandriva.spec
+EXTRA_DIST = ${PKG_DEBIAN} ${PKG_RPM}
 
 deb-package:
 	dpkg-buildpackage -rfakeroot
@@ -38,3 +41,5 @@ opensuse-package: rpm-structure
 
 mandriva-package: rpm-structure
 	rpmbuild -ba rpm/libgebr.mandriva.spec
+
+rpm-package: fedora-package opensuse-package mandriva-package

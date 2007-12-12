@@ -51,9 +51,19 @@ PKG_CHECK_MODULES(LIBGEBR_GEOXML, gebr-geoxml,,AC_MSG_ERROR([Could not find libg
 AC_SUBST(LIBGEBR_GEOXML_CFLAGS)
 AC_SUBST(LIBGEBR_GEOXML_LIBS)
 
+dnl check for libgebr_gui
+PKG_CHECK_MODULES(LIBGEBR_GUI, gebr-gui,,AC_MSG_ERROR([Could not find libgebr_gui]))
+AC_SUBST(LIBGEBR_GUI_CFLAGS)
+AC_SUBST(LIBGEBR_GUI_LIBS)
+
+dnl check for libgebr_misc
+PKG_CHECK_MODULES(LIBGEBR_MISC, gebr-misc,,AC_MSG_ERROR([Could not find libgebr_misc]))
+AC_SUBST(LIBGEBR_MISC_CFLAGS)
+AC_SUBST(LIBGEBR_MISC_LIBS)
+
 AC_OUTPUT([
 debian/changelog
 rpm/gebrme.fedora.spec rpm/gebrme.opensuse.spec rpm/gebrme.mandriva.spec
 data/help-template.html
-Makefile data/Makefile pixmaps/Makefile src/Makefile
+Makefile data/Makefile src/Makefile
 ])

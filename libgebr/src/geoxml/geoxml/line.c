@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  Br√°ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GÍBR Library
+ *   Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,18 +23,17 @@
 #include "error.h"
 #include "xml.h"
 #include "types.h"
-#include "sequence.h"
 
 /*
  * internal structures and funcionts
  */
 
 struct geoxml_line {
-	GeoXmlDocument * document;
+	GeoXmlDocument *	document;
 };
 
 struct geoxml_line_flow {
-	GdomeElement * element;
+	GdomeElement *		element;
 };
 
 /*
@@ -44,7 +43,7 @@ struct geoxml_line_flow {
 GeoXmlLine *
 geoxml_line_new()
 {
-	GeoXmlDocument * document = geoxml_document_new("line", "0.1.0");
+	GeoXmlDocument * document = geoxml_document_new("line", "0.2.0");
 	return GEOXML_LINE(document);
 }
 
@@ -56,21 +55,35 @@ geoxml_line_new_flow(GeoXmlLine * line, const gchar * source)
 
 	GeoXmlLineFlow * line_flow;
 
-	line_flow =(GeoXmlLineFlow*)__geoxml_new_element(geoxml_document_root_element(GEOXML_DOC(line)), NULL, "flow");
+	line_flow = (GeoXmlLineFlow*)__geoxml_new_element(geoxml_document_root_element(GEOXML_DOC(line)), "flow");
+	__geoxml_set_attr_value((GdomeElement*)line_flow, "source", source);
+
+	return line_flow;
+}
+
+GeoXmlLineFlow *
+geoxml_line_append_flow(GeoXmlLine * line, const gchar * source)
+{
+	if (line == NULL)
+		return NULL;
+
+	GeoXmlLineFlow* line_flow;
+
+	line_flow = (GeoXmlLineFlow*)__geoxml_insert_new_element(geoxml_document_root_element(GEOXML_DOC(line)), "flow", NULL);
 	__geoxml_set_attr_value((GdomeElement*)line_flow, "source", source);
 
 	return line_flow;
 }
 
 int
-geoxml_line_get_flow(GeoXmlLine * line, GeoXmlLineFlow ** line_flow, gulong index)
+geoxml_line_get_flow(GeoXmlLine * line, GeoXmlSequence ** line_flow, gulong index)
 {
 	if (line == NULL) {
 		*line_flow = NULL;
 		return GEOXML_RETV_NULL_PTR;
 	}
 
-	*line_flow = (GeoXmlLineFlow*)__geoxml_get_element_at(
+	*line_flow = (GeoXmlSequence*)__geoxml_get_element_at(
 		geoxml_document_root_element(GEOXML_DOC(line)), "flow", index);
 
 	return (*line_flow == NULL)
@@ -117,19 +130,11 @@ geoxml_line_next_flow(GeoXmlLineFlow ** line_flow)
 GeoXmlLineFlow *
 geoxml_line_add_flow(GeoXmlLine * line, const gchar * source)
 {
-	if (line == NULL)
-		return NULL;
-
-	GeoXmlLineFlow* line_flow;
-
-	line_flow = (GeoXmlLineFlow*)__geoxml_new_element(geoxml_document_root_element(GEOXML_DOC(line)), NULL, "flow");
-	__geoxml_set_attr_value((GdomeElement*)line_flow, "source", source);
-
-	return line_flow;
+	return geoxml_line_append_flow(line, source);
 }
 
 void
 geoxml_line_remove_flow(GeoXmlLine * line, GeoXmlLineFlow * line_flow)
 {
-	geoxml_sequence_remove((GeoXmlSequence*)line_flow);
+	geoxml_sequence_remove(GEOXML_SEQUENCE(line_flow));
 }

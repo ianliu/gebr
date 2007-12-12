@@ -19,7 +19,7 @@
 #define __JOB_H
 
 #include <geoxml.h>
-#include <misc/gprocess.h>
+#include <comm/gprocess.h>
 
 #include "client.h"
 

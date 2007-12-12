@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  Br√°ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GÍBR Library
+ *   Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ main (int argc, char **argv)
 	GeoXmlFlow	* flow6;
 	GeoXmlDocument	* document;
 	int		ret;
-	
+
 	/* flow_load */
 	print_test("geoxml_document_load sufrac.mnu");
 	if ((ret = geoxml_document_load(&document, "sufrac.mnu")) < 0) {
@@ -74,7 +74,7 @@ main (int argc, char **argv)
 	flow1 = GEOXML_FLOW(document);
 	print_xml(GEOXML_DOC(flow1));
 
-	
+
 	geoxml_flow_append_category(flow1, "abc");
 	print_xml(GEOXML_DOC(flow1));
 

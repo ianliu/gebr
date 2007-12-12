@@ -47,6 +47,5 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root)
 %{_bindir}/*
-%{_datadir}/%{name}/*
 
 %changelog

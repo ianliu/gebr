@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  Br√°ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GÍBR Library
+ *   Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,13 +15,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEOXML_DOCUMENT_H
-#define __LIBGEOXML_DOCUMENT_H
+#ifndef __LIBGEBR_GEOXML_DOCUMENT_H
+#define __LIBGEBR_GEOXML_DOCUMENT_H
 
 #include <glib.h>
 
 /**
- * \struct GeoXmlDocument document.h libgeoxml/document.h
+ * \struct GeoXmlDocument document.h geoxml/document.h
  * \brief
  * An abstraction to common data and functions found in flows, lines and projects.
  * \dot
@@ -30,7 +30,7 @@
  * 	fontsize = 8
  * 	size = "6"
  * 	node [
- *		color = palegreen2, style = filled
+ * 		color = palegreen2, style = filled
  * 		fontname = "Bitstream Vera Sans"
  * 		fontsize = 8
  * 		shape = record
@@ -44,6 +44,10 @@
  * 	"GeoXmlFlow" [ URL = "\ref flow.h" ];
  * 	"GeoXmlLine" [ URL = "\ref line.h" ];
  * 	"GeoXmlProject" [ URL = "\ref project.h" ];
+ *
+ * 	edge [
+ * 		arrowhead = "normal"
+ * 	]
  * 	"GeoXmlDocument" -> { "GeoXmlFlow" "GeoXmlLine" "GeoXmlProject" };
  * }
  * \enddot
@@ -69,6 +73,25 @@
  * The GeoXmlDocument struct contains private data only, and should be accessed using the functions below.
  */
 typedef struct geoxml_document GeoXmlDocument;
+
+/**
+ * Document type: flow, line or project
+ *
+ */
+enum GEOXML_DOCUMENT_TYPE {
+	/**
+	 * The document is a GeoXmlFlow
+	 */
+	GEOXML_DOCUMENT_TYPE_FLOW,
+	/**
+	 * The document is a GeoXmlLine
+	 */
+	GEOXML_DOCUMENT_TYPE_LINE,
+	/**
+	 * The document is a GeoXmlProject
+	 */
+	GEOXML_DOCUMENT_TYPE_PROJECT,
+};
 
 /**
  * Load a document XML file at \p path into \p document.
@@ -105,6 +128,16 @@ geoxml_document_free(GeoXmlDocument * document);
  */
 GeoXmlDocument *
 geoxml_document_clone(GeoXmlDocument * source);
+
+/**
+ * Return the type of \p document
+ *
+ * If \p document is NULL, GEOXML_DOCUMENT_TYPE_FLOW is returned
+ *
+ * \see GEOXML_DOCUMENT_TYPE
+ */
+enum GEOXML_DOCUMENT_TYPE
+geoxml_document_get_type(GeoXmlDocument * document);
 
 /**
  * Returns the version string of \p document.
@@ -159,7 +192,7 @@ void
 geoxml_document_set_filename(GeoXmlDocument * document, const gchar * filename);
 
 /**
- * Change the flow's title to \p title
+ * Change the \p document 's title to \p title
  *
  * If \p document is NULL nothing is done.
  *
@@ -169,7 +202,7 @@ void
 geoxml_document_set_title(GeoXmlDocument * document, const gchar * title);
 
 /**
- * Change the flow's author to \p author
+ * Change the \p document 's author to \p author
  *
  * If \p document is NULL nothing is done.
  *
@@ -179,7 +212,7 @@ void
 geoxml_document_set_author(GeoXmlDocument * document, const gchar * author);
 
 /**
- * Change the flow's author email to \p email
+ * Change the \p document 's author email to \p email
  *
  * If \p document is NULL nothing is done.
  *
@@ -187,6 +220,26 @@ geoxml_document_set_author(GeoXmlDocument * document, const gchar * author);
  */
 void
 geoxml_document_set_email(GeoXmlDocument * document, const gchar * email);
+
+/**
+ * Change the \p document 's creation date to \p created
+ *
+ * If \p document is NULL nothing is done.
+ *
+ * \see geoxml_document_get_date_created
+ */
+void
+geoxml_document_set_date_created(GeoXmlDocument * document, const gchar * created);
+
+/**
+ * Change the \p document 's modified date to \p created
+ *
+ * If \p document is NULL nothing is done.
+ *
+ * \see geoxml_document_get_date_modified
+ */
+void
+geoxml_document_set_date_modified(GeoXmlDocument * document, const gchar * created);
 
 /**
  * Set a brief description of the document, usually an one line text.
@@ -259,6 +312,26 @@ const gchar *
 geoxml_document_get_email(GeoXmlDocument * document);
 
 /**
+ * Get the \p document 'c creation date
+ *
+ * If \p document is NULL returns NULL.
+ *
+ * \see geoxml_document_set_date_created
+ */
+const gchar *
+geoxml_document_get_date_created(GeoXmlDocument * document);
+
+/**
+ * Get the \p document 's last modification date
+ *
+ * If \p document is NULL returns NULL.
+ *
+ * \see geoxml_document_set_date_modified
+ */
+const gchar *
+geoxml_document_get_date_modified(GeoXmlDocument * document);
+
+/**
  * Get a brief description of the document, usually an one line text.
  * No html is allowed here. See 'geoxml_document_set_help' and 'geoxml_document_get_help'
  *
@@ -283,4 +356,4 @@ geoxml_document_get_description(GeoXmlDocument * document);
 const gchar *
 geoxml_document_get_help(GeoXmlDocument * document);
 
-#endif //__LIBGEOXML_DOCUMENT_H
+#endif //__LIBGEBR_GEOXML_DOCUMENT_H

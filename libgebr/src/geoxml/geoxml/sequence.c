@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  BrÃ¡ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GêBR Library
+ *   Copyright (C) 2007  Bráulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,16 +30,19 @@ struct geoxml_sequence {
 	GdomeElement * element;
 };
 
-gboolean
+static gboolean
 __geoxml_sequence_is_parameter(GeoXmlSequence * sequence)
 {
-	GdomeElement *	parameters;
+	GdomeElement *	parent;
 
-	parameters = (GdomeElement*)gdome_el_parentNode((GdomeElement*)sequence, &exception);
-	return (gboolean)!g_ascii_strcasecmp(gdome_el_nodeName(parameters, &exception)->str, "parameters");
+	parent = (GdomeElement*)gdome_el_parentNode((GdomeElement*)sequence, &exception);
+	return	(gboolean)!g_ascii_strcasecmp(
+			gdome_el_nodeName(parent, &exception)->str, "parameters") ||
+		(gboolean)!g_ascii_strcasecmp(
+			gdome_el_nodeName(parent, &exception)->str, "group");
 }
 
-gboolean
+static gboolean
 __geoxml_sequence_check(GeoXmlSequence * sequence)
 {
 	return __geoxml_sequence_is_parameter(sequence) ||
@@ -49,7 +52,7 @@ __geoxml_sequence_check(GeoXmlSequence * sequence)
 		(gboolean)!g_ascii_strcasecmp(gdome_el_nodeName((GdomeElement*)sequence, &exception)->str, "line");
 }
 
-gboolean
+static gboolean
 __geoxml_sequence_is_same_sequence(GeoXmlSequence * sequence, GeoXmlSequence * other)
 {
 	return __geoxml_sequence_is_parameter(sequence)
@@ -133,12 +136,12 @@ geoxml_sequence_move_up(GeoXmlSequence * sequence)
 
 	previous = sequence;
 	geoxml_sequence_previous(&previous);
-	if (previous != NULL) {
-		gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
-			(GdomeNode*)sequence, (GdomeNode*)previous, &exception);
-		return GEOXML_RETV_SUCCESS;
-	} else
+	if (previous == NULL)
 		return GEOXML_RETV_INVALID_INDEX;
+
+	gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
+		(GdomeNode*)sequence, (GdomeNode*)previous, &exception);
+	return GEOXML_RETV_SUCCESS;
 }
 
 int
@@ -153,13 +156,11 @@ geoxml_sequence_move_down(GeoXmlSequence * sequence)
 
 	next = sequence;
 	geoxml_sequence_next(&next);
-	if (next == NULL) {
+	if (next == NULL)
 	   return GEOXML_RETV_INVALID_INDEX;
-	}
 	geoxml_sequence_next(&next);
 
 	gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
 			     (GdomeNode*)sequence, (GdomeNode*)next, &exception);
 	return GEOXML_RETV_SUCCESS;
-
 }

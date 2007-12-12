@@ -1,5 +1,5 @@
-/*   libgeoxml - An interface to describe seismic software in XML
- *   Copyright (C) 2007  Br√°ulio Barros de Oliveira (brauliobo@gmail.com)
+/*   libgebr - GÍBR Library
+ *   Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,11 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEOXML_PROGRAM_H
-#define __LIBGEOXML_PROGRAM_H
+#ifndef __LIBGEBR_GEOXML_PROGRAM_H
+#define __LIBGEBR_GEOXML_PROGRAM_H
 
 /**
- * \struct GeoXmlProgram program.h libgeoxml/program.h
+ * \struct GeoXmlProgram program.h geoxml/program.h
  * \brief
  * Represents a program and its parameters.
  * \dot
@@ -28,7 +28,7 @@
  * 	fontsize = 8
  * 	size = "6"
  * 	node [
- *		color = palegreen2, style = filled
+ * 		color = palegreen2, style = filled
  * 		fontname = "Bitstream Vera Sans"
  * 		fontsize = 8
  * 		shape = record
@@ -40,15 +40,20 @@
  *
  * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
  * 	"GeoXmlFlow" [ URL = "\ref flow.h" ];
- * 	"GeoXmlDocument" -> { "GeoXmlFlow" };
+ * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GeoXmlProgram" [ URL = "\ref program.h" ];
+ * 	"GeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
+ *
+ * 	edge [
+ * 		arrowhead = "normal"
+ * 	]
+ * 	"GeoXmlDocument" -> "GeoXmlFlow";
+ * 	"GeoXmlSequence" -> "GeoXmlProgram";
  *
  * 	edge [
  * 		arrowhead = "none"
  * 		taillabel = "0..*"
  * 	]
- *
- * 	"GeoXmlProgram" [ URL = "\ref program.h" ];
- * 	"GeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
  * 	"GeoXmlFlow" -> { "GeoXmlProgram" };
  * 	"GeoXmlProgram" -> "GeoXmlProgramParameter";
  * }
@@ -87,6 +92,8 @@ typedef struct geoxml_program GeoXmlProgram;
 
 #include <glib.h>
 
+#include "parameter.h"
+#include "parameters.h"
 #include "program_parameter.h"
 #include "flow.h"
 #include "macros.h"
@@ -100,43 +107,36 @@ GeoXmlFlow *
 geoxml_program_flow(GeoXmlProgram * program);
 
 /**
- * Create a new parameter.
- * Use geoxml_sequence_prepend or geoxml_sequence_append to add it to the
- * list of parameters.
+ * Get \p program 's parameters list.
+ *
+ * \see \ref parameters.h "GeoXmlParameters"
  */
-GeoXmlProgramParameter *
-geoxml_program_new_parameter(GeoXmlProgram * program, enum GEOXML_PARAMETERTYPE parameter_type);
+GeoXmlParameters *
+geoxml_program_get_parameters(GeoXmlProgram * program);
 
 /**
- * Get the first paramater of \p program. 
+ * Specify wheter \p program accepts standard input or not,
+ * depending on \p enable
  *
- * \note Due to internal implementation, it is very slow to get the nieth paramater. If you want so, you'll need to call geoxml_sequence_next
- */
-GeoXmlProgramParameter *
-geoxml_program_get_first_parameter(GeoXmlProgram * program);
-
-/**
- * Get the number of parameters that \p program has.
- *
- * If \p program is NULL returns -1.
- */
-glong
-geoxml_program_get_parameters_number(GeoXmlProgram * program);
-
-/**
- *
+ * \see geoxml_program_get_stdin
  */
 void
 geoxml_program_set_stdin(GeoXmlProgram * program, const gboolean enable);
 
 /**
+ * Specify wheter \p program writes standard output or not,
+ * depending on \p enable
  *
+ * \see geoxml_program_get_stdout
  */
 void
 geoxml_program_set_stdout(GeoXmlProgram * program, const gboolean enable);
 
 /**
+ * Specify wheter \p program writes standard error or not,
+ * depending on \p enable
  *
+ * \see geoxml_program_get_stderr
  */
 void
 geoxml_program_set_stderr(GeoXmlProgram * program, const gboolean enable);
@@ -233,6 +233,30 @@ geoxml_program_get_help(GeoXmlProgram * program);
 
 /**
  * \deprecated
+ * Use \ref geoxml_program_get_parameters and \ref geoxml_parameters_new_parameter instead.
+ * Kept only for backwards compatible and should not be used in newly written code
+ */
+GeoXmlProgramParameter * GEOXML_DEPRECATED
+geoxml_program_new_parameter(GeoXmlProgram * program, enum GEOXML_PARAMETERTYPE type);
+
+/**
+ * \deprecated
+ * Use \ref geoxml_program_get_parameters and \ref geoxml_parameters_new_parameter instead.
+ * Kept only for backwards compatible and should not be used in newly written code
+ */
+GeoXmlProgramParameter * GEOXML_DEPRECATED
+geoxml_program_get_first_parameter(GeoXmlProgram * program);
+
+/**
+ * Get the number of parameters that \p program has.
+ *
+ * If \p program is NULL returns -1.
+ */
+glong GEOXML_DEPRECATED
+geoxml_program_get_parameters_number(GeoXmlProgram * program);
+
+/**
+ * \deprecated
  * Use \ref geoxml_sequence_previous instead. Kept only for backwards compatible and should not be used in newly written code
  */
 void GEOXML_DEPRECATED
@@ -259,4 +283,4 @@ geoxml_program_remove(GeoXmlProgram * program);
 void GEOXML_DEPRECATED
 geoxml_program_remove_parameter(GeoXmlProgram * program, GeoXmlProgramParameter * parameter);
 
-#endif //__LIBGEOXML_PROGRAM_H
+#endif //__LIBGEBR_GEOXML_PROGRAM_H
