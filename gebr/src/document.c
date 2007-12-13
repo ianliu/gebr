@@ -39,15 +39,14 @@
 GeoXmlDocument *
 document_new(enum GEOXML_DOCUMENT_TYPE type)
 {
-
-	GTimeVal                current;
-	gchar*                  date;
-
 	gchar *			extension;
 	GString *		filename;
 
 	GeoXmlDocument *	document;
 	GeoXmlDocument *	(*new_func)();
+
+	GTimeVal		current;
+	gchar *			date;
 
 	switch (type) {
 	case GEOXML_DOCUMENT_TYPE_FLOW:
