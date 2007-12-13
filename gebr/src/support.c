@@ -58,17 +58,18 @@ confirm_action_dialog(const gchar * message, ...)
  * Function: localized_date
  * Returns an string with localized date
  */
-gchar *
-localized_date(gchar *isodate)
+const gchar *
+localized_date(const gchar * iso_date)
 {
-	GTimeVal             gtime;
-	static gchar         date[100];
-	struct tm *          tm;
+	static gchar	date[100];
+	GTimeVal	time_val;
+	struct tm *	tm;
 
-	if (g_time_val_from_iso8601(isodate, &gtime)){
-		tm = localtime(&gtime.tv_sec);
-		strftime (date, 100, "%c", tm);
-		return date;
-	}
-	else return _("Unknown");
+	if (g_time_val_from_iso8601(iso_date, &time_val) == FALSE)
+		return _("Unknown");
+
+	tm = localtime(&time_val.tv_sec);
+	strftime (date, 100, "%c", tm);
+
+	return date;
 }

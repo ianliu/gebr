@@ -62,7 +62,7 @@ fake_client_connected(GTcpSocket * tcp_socket)
 
 	gethostname(hostname, 100);
 	message = g_string_new("");
-	g_string_printf(message, "INI %d %s", strlen(hostname), hostname);
+	g_string_printf(message, "INI %lu %s", strlen(hostname), hostname);
 
 	g_print("%s\n", message->str);
 

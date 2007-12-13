@@ -131,7 +131,7 @@ line_delete(void)
 
 	GeoXmlSequence *	project_line;
 	GeoXmlSequence *	line_flow;
-	gchar *                 line_filename;
+	const gchar *		line_filename;
 
 	if (gebr.line == NULL) {
 		gebr_message(ERROR, TRUE, FALSE, no_selection_error);
@@ -143,12 +143,6 @@ line_delete(void)
 	if (confirm_action_dialog(_("Are you sure you want to delete line '%s' and all its flows?"),
 		geoxml_document_get_title(GEOXML_DOC(gebr.line))) == FALSE)
 		return;
-
-	/* make the user happy */
-	gebr_message(INFO, TRUE, FALSE, _("Erasing line '%s'"), geoxml_document_get_title(GEOXML_DOC(gebr.line)));
-	gebr_message(INFO, FALSE, TRUE, _("Erasing line '%s' from project '%s'"),
-		     geoxml_document_get_title(GEOXML_DOC(gebr.line)),
-		     geoxml_document_get_title(GEOXML_DOC(gebr.project)));
 
 	/* Removes its flows */
 	geoxml_line_get_flow(gebr.line, &line_flow, 0);
@@ -168,6 +162,7 @@ line_delete(void)
 	}
 
 	/* Remove the line from its project */
+	line_filename = geoxml_document_get_filename(GEOXML_DOC(gebr.line));
 	geoxml_project_get_line(gebr.project, &project_line, 0);
 	while (project_line != NULL) {
 		if (g_ascii_strcasecmp(line_filename, geoxml_project_get_line_source(GEOXML_PROJECT_LINE(project_line))) == 0) {
@@ -180,7 +175,6 @@ line_delete(void)
 	}
 
 	/* finally, remove it from the disk */
-	line_filename = (gchar *) geoxml_document_get_filename(GEOXML_DOC(gebr.line));
 	document_delete(line_filename);
 	/* and from the GUI */
 	gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), &line_iter);
@@ -188,6 +182,12 @@ line_delete(void)
 	flow_free();
 	document_free();
 	project_line_info_update();
+
+	/* make the user happy */
+	gebr_message(INFO, TRUE, FALSE, _("Erasing line '%s'"), geoxml_document_get_title(GEOXML_DOC(gebr.line)));
+	gebr_message(INFO, FALSE, TRUE, _("Erasing line '%s' from project '%s'"),
+		     geoxml_document_get_title(GEOXML_DOC(gebr.line)),
+		     geoxml_document_get_title(GEOXML_DOC(gebr.project)));
 }
 
 /*

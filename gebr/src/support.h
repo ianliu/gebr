@@ -45,7 +45,7 @@
 gboolean
 confirm_action_dialog(const gchar * message, ...);
 
-gchar *
-localized_date(gchar *isodate);
+const gchar *
+localized_date(const gchar * iso_date);
 
 #endif //__SUPPORT_H
