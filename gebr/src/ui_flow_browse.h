@@ -38,6 +38,13 @@ struct ui_flow_browse {
 		GtkWidget *	title;
 		GtkWidget *	description;
 
+		GtkWidget *	created_label;
+		GtkWidget *	created;
+		GtkWidget *	modified_label;
+		GtkWidget *	modified;
+		GtkWidget *	lastrun_label;
+		GtkWidget *	lastrun;
+
 		GtkWidget *	input_label;
 		GtkWidget *	input;
 		GtkWidget *	output_label;

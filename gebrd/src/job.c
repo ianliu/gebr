@@ -330,7 +330,7 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 	}
 
 	/* Binary followed by an space */
-	g_string_printf(job->cmd_line, "%s ", geoxml_program_get_binary(GEOXML_PROGRAM(program)));
+	g_string_append_printf(job->cmd_line, "%s ", geoxml_program_get_binary(GEOXML_PROGRAM(program)));
 
 	if (job_add_program_parameters(job, GEOXML_PROGRAM(program)) == FALSE)
 		goto err;

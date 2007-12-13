@@ -39,6 +39,10 @@
 GeoXmlDocument *
 document_new(enum GEOXML_DOCUMENT_TYPE type)
 {
+
+	GTimeVal                current;
+	gchar*                  date;
+
 	gchar *			extension;
 	GString *		filename;
 
@@ -69,6 +73,12 @@ document_new(enum GEOXML_DOCUMENT_TYPE type)
 	filename = document_assembly_filename(extension);
 	geoxml_document_set_filename(document, filename->str);
 	g_string_free(filename, TRUE);
+
+	/* get today's date */
+	g_get_current_time(&current);
+	date = g_time_val_to_iso8601(&current);
+	geoxml_document_set_date_created(document, date);
+	g_free(date);
 
 	return document;
 }
@@ -152,7 +162,16 @@ document_free(void)
 void
 document_save(GeoXmlDocument * document)
 {
+	GTimeVal                current;
+	gchar*                  date;
+
 	GString *	path;
+
+	/* get today's date */
+	g_get_current_time(&current);
+	date = g_time_val_to_iso8601(&current);
+	geoxml_document_set_date_modified(document, date);
+	g_free(date);
 
 	/* TODO: check save */
 	path = document_get_path(geoxml_document_get_filename(document));

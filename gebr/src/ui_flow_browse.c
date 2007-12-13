@@ -71,6 +71,7 @@ flow_browse_setup_ui(void)
 	GtkWidget *			scrolledwin;
 	GtkWidget *			frame;
 	GtkWidget *			infopage;
+	GtkWidget *                     table;
 
 	gchar *				label;
 
@@ -137,10 +138,37 @@ flow_browse_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.description), 0, 0);
 	gtk_box_pack_start(GTK_BOX(infopage), ui_flow_browse->info.description, FALSE, TRUE, 10);
 
-	/* I/O */
-	GtkWidget *table;
+	/* Dates */
 	table = gtk_table_new(3, 2, FALSE);
-	gtk_box_pack_start(GTK_BOX(infopage), table, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(infopage), table, FALSE, TRUE, 10);
+
+	ui_flow_browse->info.created_label = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.created_label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.created_label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
+
+	ui_flow_browse->info.created = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.created), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.created, 1, 2, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
+
+	ui_flow_browse->info.modified_label = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.modified_label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.modified_label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
+
+	ui_flow_browse->info.modified = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.modified), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.modified, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
+
+	ui_flow_browse->info.lastrun_label = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.lastrun_label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.lastrun_label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
+
+	ui_flow_browse->info.lastrun = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.lastrun), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.lastrun, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
+
+	/* I/O */
+	table = gtk_table_new(3, 2, FALSE);
+	gtk_box_pack_start(GTK_BOX(infopage), table, FALSE, TRUE, 10);
 
 	ui_flow_browse->info.input_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.input_label), 0, 0);
@@ -297,6 +325,25 @@ flow_browse_info_update(void)
 	markup = g_markup_printf_escaped("<i>%s</i>", geoxml_document_get_description(GEOXML_DOC(gebr.flow)));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.description), markup);
 	g_free(markup);
+
+	/* Date labels */
+	markup = g_markup_printf_escaped("<b>%s</b>", _("Created:"));
+	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.created_label), markup);
+	g_free(markup);
+	markup = g_markup_printf_escaped("<b>%s</b>", _("Modified:"));
+	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.modified_label), markup);
+	g_free(markup);
+	markup = g_markup_printf_escaped("<b>%s</b>", _("Last run:"));
+	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun_label), markup);
+	g_free(markup);
+
+	/* Dates */
+	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.created),
+			   localized_date(geoxml_document_get_date_created(GEOXML_DOC(gebr.flow))));
+	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.modified),
+			   localized_date(geoxml_document_get_date_modified(GEOXML_DOC(gebr.flow))));
+	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun),
+			   localized_date(geoxml_flow_get_date_last_run(gebr.flow)));
 
 	/* I/O labels */
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Input:"));

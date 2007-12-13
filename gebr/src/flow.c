@@ -323,6 +323,10 @@ out:	g_free(title);
 void
 flow_run(void)
 {
+	GTimeVal                current;
+	gchar*                  date;
+	GString *	        path;
+
 	struct server *		server;
 
 	/* check for a flow selected */
@@ -341,6 +345,21 @@ flow_run(void)
 		geoxml_document_get_title(GEOXML_DOC(gebr.flow)));
 
 	server_run_flow(server);
+
+	/* get today's date */
+	g_get_current_time(&current);
+	date = g_time_val_to_iso8601(&current);
+	geoxml_flow_set_date_last_run(gebr.flow, date);
+	g_free(date);
+
+	/* TODO: check save */
+	/* Saving manualy to preserve modified date */
+	path = document_get_path(geoxml_document_get_filename(GEOXML_DOC(gebr.flow)));
+	geoxml_document_save(GEOXML_DOC(gebr.flow), path->str);
+	g_string_free(path, TRUE);
+
+	/* Update details */
+	flow_browse_info_update();
 }
 
 /*

@@ -360,8 +360,8 @@ project_line_info_update(void)
 	g_free(markup);
 
 	/* Dates */
-	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created), geoxml_document_get_date_created(gebr.doc));
-	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified), geoxml_document_get_date_modified(gebr.doc));
+	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created), localized_date(geoxml_document_get_date_created(gebr.doc)));
+	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified), localized_date(geoxml_document_get_date_modified(gebr.doc)));
 
 	/* Author and email */
 	text = g_string_new(NULL);

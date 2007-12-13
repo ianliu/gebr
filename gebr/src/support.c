@@ -16,6 +16,7 @@
  */
 
 #include <stdarg.h>
+#include <time.h>
 
 #include <gtk/gtk.h>
 #include <glib.h>
@@ -51,4 +52,23 @@ confirm_action_dialog(const gchar * message, ...)
 	g_free(string);
 
 	return confirmed;
+}
+
+/*
+ * Function: localized_date
+ * Returns an string with localized date
+ */
+gchar *
+localized_date(gchar *isodate)
+{
+	GTimeVal             gtime;
+	static gchar         date[100];
+	struct tm *          tm;
+
+	if (g_time_val_from_iso8601(isodate, &gtime)){
+		tm = localtime(&gtime.tv_sec);
+		strftime (date, 100, "%c", tm);
+		return date;
+	}
+	else return _("Unknown");
 }
