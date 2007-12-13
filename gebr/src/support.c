@@ -1,5 +1,5 @@
-/*   GêBR ME - GêBR Menu Editor
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   GÃªBR ME - GÃªBR Menu Editor
+ *   Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -72,4 +72,19 @@ localized_date(const gchar * iso_date)
 	strftime (date, 100, "%c", tm);
 
 	return date;
+}
+
+/*
+ * Function: set_tooltip
+ * Set tooltip all across the code.
+ */
+void
+set_tooltip(GtkWidget *widget, const gchar *tip)
+{
+#if GTK_CHECK_VERSION(2,12,0)
+	g_object_set(G_OBJECT(widget), "tooltip-text",  tip, NULL);
+#else
+	gtk_tooltips_set_tip(gebr.tips, widget, tip, NULL);
+#endif
+
 }

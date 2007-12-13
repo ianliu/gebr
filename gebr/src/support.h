@@ -1,5 +1,5 @@
-/*   GêBR ME - GêBR Menu Editor
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   GÃªBR ME - GÃªBR Menu Editor
+ *   Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -47,5 +47,8 @@ confirm_action_dialog(const gchar * message, ...);
 
 const gchar *
 localized_date(const gchar * iso_date);
+
+void
+set_tooltip(GtkWidget *widget, const gchar *tip);
 
 #endif //__SUPPORT_H

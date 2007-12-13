@@ -336,11 +336,11 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 	/* success, now change to last version */
 	version = (gchar*)geoxml_document_get_version((GeoXmlDocument*)document);
 	/* 0.1.x to 0.2.0 */
-	if (g_ascii_strcasecmp(version, "0.2.0") < 0) {
+	if (g_ascii_strcasecmp(version, DOCUMENT_VERSION) < 0) {
 		GdomeElement *		element;
 		GdomeElement *		before;
 
-		__geoxml_set_attr_value(root_element, "version", "0.2.0");
+		__geoxml_set_attr_value(root_element, "version", DOCUMENT_VERSION);
 
 		before = __geoxml_get_first_element(root_element, "email");
 		before = __geoxml_next_element(before);

@@ -107,7 +107,7 @@ job_control_setup_ui(void)
 	button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_container_add(GTK_CONTAINER(toolitem), button);
-	g_object_set(G_OBJECT(button), "tooltip-text", _("Save job information in a file"), NULL);
+	set_tooltip(button, _("Save job information in a file"));
 
 	g_signal_connect(GTK_BUTTON(button), "clicked",
 			GTK_SIGNAL_FUNC(job_control_save), NULL);
@@ -118,7 +118,7 @@ job_control_setup_ui(void)
 	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_container_add(GTK_CONTAINER(toolitem), button);
-	g_object_set(G_OBJECT(button), "tooltip-text", _("Ask server to terminate the job"), NULL);
+	set_tooltip(button, _("Ask server to terminate the job"));
 
 	g_signal_connect(GTK_BUTTON(button), "clicked",
 			GTK_SIGNAL_FUNC(job_control_cancel), NULL);
@@ -130,7 +130,7 @@ job_control_setup_ui(void)
 	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_container_add(GTK_CONTAINER(toolitem), button);
-	g_object_set(G_OBJECT(button), "tooltip-text",  _("Clear current job log"), NULL);
+	set_tooltip(button, _("Clear current job log"));
 
 	g_signal_connect(GTK_BUTTON(button), "clicked",
 			GTK_SIGNAL_FUNC(job_control_close), NULL);
@@ -142,7 +142,7 @@ job_control_setup_ui(void)
 	button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_container_add(GTK_CONTAINER(toolitem), button);
-	g_object_set(G_OBJECT(button), "tooltip-text", _("Clear all job logs"), NULL);
+	set_tooltip(button, _("Clear all job logs"));
 
 	g_signal_connect(GTK_BUTTON(button), "clicked",
 			GTK_SIGNAL_FUNC(job_control_clear), NULL);
@@ -154,7 +154,7 @@ job_control_setup_ui(void)
 	button = gtk_button_new_from_stock(GTK_STOCK_STOP);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_container_add(GTK_CONTAINER(toolitem), button);
-	g_object_set(G_OBJECT(button), "tooltip-text", _("Ask server to kill the job"), NULL);
+	set_tooltip(button, _("Ask server to kill the job"));
 
 	g_signal_connect(GTK_BUTTON(button), "clicked",
 			GTK_SIGNAL_FUNC(job_control_stop), NULL);

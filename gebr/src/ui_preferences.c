@@ -89,7 +89,7 @@ preferences_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
 
 	ui_preferences->username = gtk_entry_new();
-	g_object_set(G_OBJECT(ui_preferences->username), "tooltip-text", _("You should know your name"), NULL);
+	set_tooltip(ui_preferences->username, _("You should know your name"));
 	gtk_table_attach(GTK_TABLE(table), ui_preferences->username, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3);
 
 	/* read config */
@@ -103,7 +103,7 @@ preferences_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 
 	ui_preferences->email = gtk_entry_new();
-	g_object_set(G_OBJECT(ui_preferences->email), "tooltip-text", _("Your email address"), NULL);
+	set_tooltip(ui_preferences->email, _("Your email address"));
 	gtk_table_attach(GTK_TABLE(table), ui_preferences->email, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* read config */
@@ -118,7 +118,7 @@ preferences_setup_ui(void)
 
 	/* Browse button for user's menus dir */
 	ui_preferences->usermenus = gtk_file_chooser_button_new(_("GêBR dir"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-	g_object_set(G_OBJECT(ui_preferences->usermenus), "tooltip-text", _("Path to look for private user's menus"), NULL);
+	set_tooltip(ui_preferences->usermenus, _("Path to look for private user's menus"));
 	gtk_table_attach(GTK_TABLE(table), ui_preferences->usermenus, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* read config */
@@ -136,7 +136,7 @@ preferences_setup_ui(void)
 	/* Browse button for ui_preferences->data */
 	ui_preferences->data = gtk_file_chooser_button_new(_("Browser data dir"),
 						GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-	g_object_set(G_OBJECT(ui_preferences->data), "tooltip-text", _("Path to store projects, lines and flows"), NULL);
+	set_tooltip(ui_preferences->data, _("Path to store projects, lines and flows"));
 	gtk_table_attach(GTK_TABLE(table), ui_preferences->data, 1, 2, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* read config */
@@ -152,7 +152,7 @@ preferences_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 
 	ui_preferences->editor = gtk_entry_new();
-	g_object_set(G_OBJECT(ui_preferences->editor), "tooltip-text", _("An HTML capable editor to edit helps and reports"), NULL);
+	set_tooltip(ui_preferences->editor, _("An HTML capable editor to edit helps and reports"));
 	gtk_table_attach(GTK_TABLE(table), ui_preferences->editor, 1, 2, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* read config */
@@ -164,7 +164,7 @@ preferences_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
 
 	ui_preferences->browser = gtk_combo_box_entry_new_text();
-	g_object_set(G_OBJECT(ui_preferences->browser), "tooltip-text", _("An HTML browser to display helps and reports"), NULL);
+	set_tooltip(ui_preferences->browser, _("An HTML browser to display helps and reports"));
 	gtk_table_attach(GTK_TABLE(table), ui_preferences->browser, 1, 2, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
 	/* read config */
 	{

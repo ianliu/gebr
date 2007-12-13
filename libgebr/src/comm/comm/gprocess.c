@@ -326,14 +326,14 @@ g_process_get_pid(GProcess * process)
 void
 g_process_kill(GProcess * process)
 {
-	kill(process->pid, SIGKILL);
+	kill(-process->pid, SIGKILL);
 	g_spawn_close_pid(process->pid);
 }
 
 void
 g_process_terminate(GProcess * process)
 {
-	kill(process->pid, SIGTERM);
+	kill(-process->pid, SIGTERM);
 	g_spawn_close_pid(process->pid);
 }
 

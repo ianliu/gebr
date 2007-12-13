@@ -1,5 +1,5 @@
-/*   GêBR - An environment for seismic processing.
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   GÃªBR - An environment for seismic processing.
+ *   Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ job_add(struct server * server, GString * jid,
 /*
  * Function: job_free
  * Frees job structure.
- * Only called when GêBR quits.
+ * Only called when GÃªBR quits.
  */
 void
 job_free(struct job * job)
