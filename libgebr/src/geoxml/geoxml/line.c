@@ -43,7 +43,7 @@ struct geoxml_line_flow {
 GeoXmlLine *
 geoxml_line_new()
 {
-	GeoXmlDocument * document = geoxml_document_new("line", "0.2.0");
+	GeoXmlDocument * document = geoxml_document_new("line", LINE_VERSION);
 	return GEOXML_LINE(document);
 }
 

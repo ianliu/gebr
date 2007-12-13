@@ -17,9 +17,9 @@
 lib_LTLIBRARIES = libgebr_geoxml.la
 libgebr_geoxml_la_SOURCES = \
 	xml.c sequence.c value_sequence.c \
- 	category.c program.c \
- 	parameters.c parameter.c program_parameter.c parameter_group.c \
- 	document.c flow.c line.c project.c
+	category.c program.c \
+	parameters.c parameter.c program_parameter.c parameter_group.c \
+	document.c flow.c line.c project.c
 
 libgebr_geoxmlsubincludedir=$(includedir)/libgebr/geoxml
 libgebr_geoxmlsubinclude_HEADERS = \
@@ -33,7 +33,13 @@ noinst_HEADERS = \
 	types.h
 EXTRA_DIST = ${noinst_HEADERS}
 
-INCLUDES = -DGEOXML_DTDDIR=\"$(datadir)/libgebr/geoxml\"
-AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
+INCLUDES = -DGEOXML_DTDDIR=\"$(datadir)/libgebr/geoxml\" \
+	-DFLOW_VERSION=\"@FLOW_VERSION@\"                \
+	-DLINE_VERSION=\"@LINE_VERSION@\"                \
+	-DPROJECT_VERSION=\"@PROJECT_VERSION@\"          \
+	-DDOCUMENT_VERSION=\"@DOCUMENT_VERSION@\"
+
+
+AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS) 
 libgebr_geoxml_la_LIBADD = $(GLIB_LIBS) $(GDOME2_LIBS)
 libgebr_geoxml_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@

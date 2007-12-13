@@ -43,7 +43,7 @@ geoxml_flow_new()
 	GeoXmlDocument *	document;
 	GdomeElement *		element;
 
-	document = geoxml_document_new("flow", "0.2.0");
+	document = geoxml_document_new("flow", FLOW_VERSION);
 
 	element = __geoxml_insert_new_element(geoxml_document_root_element(document), "io", NULL);
 	__geoxml_insert_new_element(element, "input", NULL);

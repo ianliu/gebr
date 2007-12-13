@@ -43,7 +43,7 @@ struct geoxml_project_line {
 GeoXmlProject *
 geoxml_project_new()
 {
-	GeoXmlDocument * document = geoxml_document_new("project", "0.2.0");
+	GeoXmlDocument * document = geoxml_document_new("project", PROJECT_VERSION);
 	return GEOXML_PROJECT(document);
 }
 
