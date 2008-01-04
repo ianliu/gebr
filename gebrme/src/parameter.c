@@ -198,7 +198,8 @@ parameter_create_ui(GeoXmlParameter * parameter, gboolean hidden)
 	g_signal_connect(widget, "clicked",
 		GTK_SIGNAL_FUNC (parameter_up),
 		data);
-	g_object_set(G_OBJECT(widget), "user-data", frame, NULL);
+	g_object_set(G_OBJECT(widget), "user-data", frame,
+		     "relief", GTK_RELIEF_NONE, NULL);
 
 	widget = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
 	gtk_widget_show(widget);
@@ -206,7 +207,8 @@ parameter_create_ui(GeoXmlParameter * parameter, gboolean hidden)
 	g_signal_connect(widget, "clicked",
 		GTK_SIGNAL_FUNC (parameter_down),
 		data);
-	g_object_set(G_OBJECT(widget), "user-data", frame, NULL);
+	g_object_set(G_OBJECT(widget), "user-data", frame,
+		     "relief", GTK_RELIEF_NONE, NULL);
 
 	widget = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	gtk_widget_show(widget);
@@ -214,7 +216,8 @@ parameter_create_ui(GeoXmlParameter * parameter, gboolean hidden)
 	g_signal_connect(widget, "clicked",
 			  GTK_SIGNAL_FUNC (parameter_remove),
 			  data);
-	g_object_set(G_OBJECT(widget), "user-data", frame, NULL);
+	g_object_set(G_OBJECT(widget), "user-data", frame, 
+		     "relief", GTK_RELIEF_NONE, NULL);
 
 	parameter_uilabel_update(data);
 

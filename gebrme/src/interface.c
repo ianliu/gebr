@@ -355,12 +355,15 @@ create_gebrme_window (void)
 	g_signal_connect ((gpointer) menuhelp_view_button, "clicked",
 			GTK_SIGNAL_FUNC (info_help_view),
 			NULL);
+	g_object_set(G_OBJECT(menuhelp_view_button), "relief", GTK_RELIEF_NONE, NULL);
+
 	menuhelp_edit_button = gtk_button_new_from_stock (GTK_STOCK_EDIT);
 	gtk_widget_show (menuhelp_edit_button);
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_edit_button, FALSE, FALSE, 5);
 	g_signal_connect ((gpointer) menuhelp_edit_button, "clicked",
 			GTK_SIGNAL_FUNC (info_help_edit),
 			NULL);
+	g_object_set(G_OBJECT(menuhelp_edit_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	author_label = gtk_label_new (_("Author:"));
 	gtk_widget_show (author_label);
@@ -491,6 +494,7 @@ create_gebrme_window (void)
 	g_signal_connect ((gpointer) programs_add_button, "clicked",
 			G_CALLBACK (program_add),
 			NULL);
+	g_object_set(G_OBJECT(programs_add_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	/* Programs' depth */
 	depth_hbox = create_depth(edition_vbox);

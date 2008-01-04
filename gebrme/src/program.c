@@ -81,7 +81,8 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	g_signal_connect ((gpointer) widget, "clicked",
 		GTK_SIGNAL_FUNC (program_up),
 		program);
-	g_object_set(G_OBJECT(widget), "user-data", program_expander, NULL);
+	g_object_set(G_OBJECT(widget), "user-data", program_expander, 
+		     "relief", GTK_RELIEF_NONE, NULL);
 
 	widget = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
 	gtk_widget_show(widget);
@@ -89,7 +90,8 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	g_signal_connect ((gpointer) widget, "clicked",
 		GTK_SIGNAL_FUNC (program_down),
 		program);
-	g_object_set(G_OBJECT(widget), "user-data", program_expander, NULL);
+	g_object_set(G_OBJECT(widget), "user-data", program_expander,
+		     "relief", GTK_RELIEF_NONE, NULL);
 
 	widget = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	gtk_widget_show(widget);
@@ -97,7 +99,8 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	g_signal_connect ((gpointer) widget, "clicked",
 		GTK_SIGNAL_FUNC (program_remove),
 		program);
-	g_object_set(G_OBJECT(widget), "user-data", program_expander, NULL);
+	g_object_set(G_OBJECT(widget), "user-data", program_expander,
+		     "relief", GTK_RELIEF_NONE, NULL);
 
 	program_vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(depth_hbox), program_vbox, TRUE, TRUE, 0);
@@ -224,12 +227,15 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	g_signal_connect ((gpointer) help_view_button, "clicked",
 			GTK_SIGNAL_FUNC (program_info_help_view),
 			program);
+	g_object_set(G_OBJECT(help_view_button), "relief", GTK_RELIEF_NONE, NULL);
+
 	help_edit_button = gtk_button_new_from_stock (GTK_STOCK_EDIT);
 	gtk_widget_show (help_edit_button);
 	gtk_box_pack_start(GTK_BOX(help_hbox), help_edit_button, FALSE, FALSE, 5);
 	g_signal_connect ((gpointer) help_edit_button, "clicked",
 			GTK_SIGNAL_FUNC (program_info_help_edit),
 			program);
+	g_object_set(G_OBJECT(help_edit_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	parameters_expander = gtk_expander_new("");
 	gtk_expander_set_expanded (GTK_EXPANDER (parameters_expander), hidden);
@@ -254,7 +260,8 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	g_signal_connect ((gpointer) widget, "clicked",
 		GTK_SIGNAL_FUNC (parameter_add),
 		program);
-	g_object_set(G_OBJECT(widget), "user-data", parameters_vbox, NULL);
+	g_object_set(G_OBJECT(widget), "user-data", parameters_vbox,
+		     "relief", GTK_RELIEF_NONE, NULL);
 
 	parameter = geoxml_parameters_get_first_parameter(geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
 	while (parameter != NULL) {
