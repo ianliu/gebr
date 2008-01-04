@@ -109,11 +109,19 @@ ssh_ask_port_finished(GProcess * process, struct server * server)
 		host_address = g_host_address_new();
 		g_host_address_set_ipv4_string(host_address, "127.0.0.1");
 
-		server->state = SERVER_STATE_OPEN_TUNNEL;
-		server->ssh_tunnel = ssh_tunnel_new(2125, server->address->str, server->port);
+		if (strcmp(server->address->str, "127.0.0.1") != 0){
+		
+			server->state = SERVER_STATE_OPEN_TUNNEL;
+			server->ssh_tunnel = ssh_tunnel_new(2125, server->address->str, server->port);
 
-		server->state = SERVER_STATE_CONNECT;
-		g_tcp_socket_connect(server->tcp_socket, host_address, server->ssh_tunnel->port);
+			server->state = SERVER_STATE_CONNECT;
+			g_tcp_socket_connect(server->tcp_socket, host_address, server->ssh_tunnel->port);
+		}
+		else{
+			server->ssh_tunnel = NULL;
+			server->state = SERVER_STATE_CONNECT;
+			g_tcp_socket_connect(server->tcp_socket, host_address, server->port);
+		}
 
 		g_host_address_free(host_address);
 	} else {
@@ -160,8 +168,14 @@ ssh_ask_server_port(struct server * server)
 			G_CALLBACK(ssh_ask_port_finished), server);
 
 	/* ask via ssh port from server */
-	g_string_printf(cmd_line, "ssh %s 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'",
-		server->address->str);
+	if (strcmp(server->address->str, "127.0.0.1") != 0){
+		g_string_printf(cmd_line, "ssh %s 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'",
+				server->address->str);
+	}
+	else{
+		g_string_printf(cmd_line, "bash -l -c 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'");	
+	}
+
 	g_process_start(process, cmd_line);
 
 	g_string_free(cmd_line, TRUE);
@@ -236,7 +250,7 @@ server_free(struct server * server)
 			job_delete(job);
 	}
 
-	if (server->port)
+	if (strcmp(server->address->str, "127.0.0.1") != 0)
 		ssh_tunnel_free(server->ssh_tunnel);
 	g_string_free(server->address, TRUE);
 	g_socket_close(G_SOCKET(server->tcp_socket));
@@ -295,21 +309,26 @@ server_connected(GTcpSocket * tcp_socket, struct server * server)
 	g_strfreev(splits);
 	pclose(output_fp);
 
-	/* get client IP address via SSH */
-	g_string_printf(cmd_line, "ssh %s 'echo $SSH_CLIENT'", server->address->str);
-	output_fp = popen(cmd_line->str, "r");
-	fread(line, 1, 1024, output_fp);
-	/* split output to get IP */
-	splits = g_strsplit(line, " ", 3);
-	g_string_assign(ip, splits[0]);
+	/* get client IP address via SSH for non-local servers */
+	if (strcmp(server->address->str, "127.0.0.1") != 0){
+		g_string_printf(cmd_line, "ssh %s 'echo $SSH_CLIENT'", server->address->str);
+		output_fp = popen(cmd_line->str, "r");
+		fread(line, 1, 1024, output_fp);
+		/* split output to get IP */
+		splits = g_strsplit(line, " ", 3);
+		g_string_assign(ip, splits[0]);
+		g_strfreev(splits);
+		pclose(output_fp);
+	}
+	else{
+		g_string_assign(ip, "127.0.0.1");
+	}
 
 	/* send INI */
 	protocol_send_data(server->protocol, server->tcp_socket,
 		protocol_defs.ini_def, 5, PROTOCOL_VERSION, hostname, ip->str, display, mcookie->str);
 
 	/* frees */
-	g_strfreev(splits);
-	pclose(output_fp);
 	g_string_free(mcookie, TRUE);
 	g_string_free(ip, TRUE);
 	g_string_free(cmd_line, TRUE);
