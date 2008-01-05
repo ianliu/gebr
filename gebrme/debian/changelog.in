@@ -2,7 +2,13 @@ gebrme (@VERSION@) unstable; urgency=low
 
   * Daily shapshot
 
- -- Bráulio Barros de Oliveira <brauliobo@gmail.com>  @TODAY@
+ -- Ricardo Biloti <biloti@gmail.com>  @TODAY@
+
+gebrme (0.9.3) unstable; urgency=low
+
+  * Release 0.9.3 with many improvements
+
+ -- Ricardo Biloti <biloti@gmail.com>  Thu, 13 Dec 2007 14:00:00 -0200
 
 gebrme (0.9.1-1) unstable; urgency=low
 

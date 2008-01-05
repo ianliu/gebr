@@ -17,7 +17,7 @@
 AC_INIT(configure.ac)
 
 PACKAGE=gebrme
-VERSION=0.9.2pre`date +"%Y%m%d"`
+VERSION=0.9.4pre`date +"%Y%m%d"`
 TODAY=$(LANG=C date +"%a, %d %b %Y %T %z")
 FLOW_VERSION=0.2.0
 AC_SUBST(PACKAGE)

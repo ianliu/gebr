@@ -17,7 +17,7 @@
 AC_INIT(configure.ac)
 
 PACKAGE=libgebr
-VERSION=0.9.2pre`date +"%Y%m%d"`
+VERSION=0.9.4pre`date +"%Y%m%d"`
 TODAY=$(LANG=C date +"%a, %d %b %Y %T %z")
 GEOXML_VERSION_INFO=`echo $VERSION | awk -F. '{ printf "%d:%d:%d", $1+$2, $3, $2 }'`
 DOCUMENT_VERSION=0.2.0
