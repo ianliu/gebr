@@ -316,7 +316,7 @@ job_control_save(void)
 	/* show file chooser */
 	gtk_widget_show(chooser_dialog);
 	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
-		return;
+		goto out2;
 	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 
 	/* save to file */
@@ -335,7 +335,7 @@ job_control_save(void)
 
 	g_free(text);
 out:	g_free(path);
-	gtk_widget_destroy(chooser_dialog);
+out2:	gtk_widget_destroy(chooser_dialog);
 }
 
 /*

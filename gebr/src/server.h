@@ -64,6 +64,9 @@ server_connect(struct server * server);
 gboolean
 server_is_logged(struct server * server);
 
+gboolean
+server_is_local(struct server * server);
+
 void
 server_run_flow(struct server * server);
 

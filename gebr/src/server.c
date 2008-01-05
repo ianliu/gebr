@@ -109,16 +109,13 @@ ssh_ask_port_finished(GProcess * process, struct server * server)
 		host_address = g_host_address_new();
 		g_host_address_set_ipv4_string(host_address, "127.0.0.1");
 
-		if (strcmp(server->address->str, "127.0.0.1") != 0){
-		
+		if (server_is_local(server) == FALSE) {
 			server->state = SERVER_STATE_OPEN_TUNNEL;
 			server->ssh_tunnel = ssh_tunnel_new(2125, server->address->str, server->port);
 
 			server->state = SERVER_STATE_CONNECT;
 			g_tcp_socket_connect(server->tcp_socket, host_address, server->ssh_tunnel->port);
-		}
-		else{
-			server->ssh_tunnel = NULL;
+		} else {
 			server->state = SERVER_STATE_CONNECT;
 			g_tcp_socket_connect(server->tcp_socket, host_address, server->port);
 		}
@@ -136,10 +133,10 @@ ssh_ask_port_finished(GProcess * process, struct server * server)
 		gebr_message(INFO, TRUE, TRUE, _("Launching server at %s"), server->address->str);
 
 		/* run gebrd via ssh for remote hosts */
-		if (g_ascii_strcasecmp(server->address->str, "127.0.0.1") == 0)
-			g_string_printf(cmd_line, "bash -l -c gebrd&");
-		else
+		if (server_is_local(server) == FALSE)
 			g_string_printf(cmd_line, "ssh -f -x %s 'gebrd'", server->address->str);
+		else
+			g_string_printf(cmd_line, "bash -l -c gebrd&");
 
 		system(cmd_line->str);
 		server->state = SERVER_STATE_RUNNED_ASK_PORT;
@@ -168,13 +165,11 @@ ssh_ask_server_port(struct server * server)
 			G_CALLBACK(ssh_ask_port_finished), server);
 
 	/* ask via ssh port from server */
-	if (strcmp(server->address->str, "127.0.0.1") != 0){
+	if (server_is_local(server) == FALSE)
 		g_string_printf(cmd_line, "ssh %s 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'",
-				server->address->str);
-	}
-	else{
-		g_string_printf(cmd_line, "bash -l -c 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'");	
-	}
+			server->address->str);
+	else
+		g_string_printf(cmd_line, "bash -l -c 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'");
 
 	g_process_start(process, cmd_line);
 
@@ -189,12 +184,8 @@ struct server *
 server_new(const gchar * _address)
 {
 	GtkTreeIter	iter;
-	gchar *		address;
 
 	struct server *	server;
-
-	address = g_ascii_strcasecmp(_address, "127.0.0.1") == 0
-		? _("Local server") : (gchar*)_address;
 
 	/* initialize */
 	server = g_malloc(sizeof(struct server));
@@ -202,7 +193,7 @@ server_new(const gchar * _address)
 	gtk_list_store_append(gebr.ui_server_list->store, &iter);
 	gtk_list_store_set(gebr.ui_server_list->store, &iter,
 			SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
-			SERVER_ADDRESS, address,
+			SERVER_ADDRESS, server_is_local(server) == TRUE ? _("Local server") : (gchar*)_address,
 			SERVER_POINTER, server,
 			-1);
 	/* fill struct */
@@ -250,7 +241,7 @@ server_free(struct server * server)
 			job_delete(job);
 	}
 
-	if (strcmp(server->address->str, "127.0.0.1") != 0)
+	if (server_is_local(server) == FALSE)
 		ssh_tunnel_free(server->ssh_tunnel);
 	g_string_free(server->address, TRUE);
 	g_socket_close(G_SOCKET(server->tcp_socket));
@@ -271,6 +262,13 @@ gboolean
 server_is_logged(struct server * server)
 {
 	return server->protocol->logged;
+}
+
+gboolean
+server_is_local(struct server * server)
+{
+	return g_ascii_strcasecmp(server->address->str, "127.0.0.1") == 0
+		? TRUE : FALSE;
 }
 
 void
@@ -310,19 +308,18 @@ server_connected(GTcpSocket * tcp_socket, struct server * server)
 	pclose(output_fp);
 
 	/* get client IP address via SSH for non-local servers */
-	if (strcmp(server->address->str, "127.0.0.1") != 0){
+	if (server_is_local(server) == FALSE) {
 		g_string_printf(cmd_line, "ssh %s 'echo $SSH_CLIENT'", server->address->str);
 		output_fp = popen(cmd_line->str, "r");
 		fread(line, 1, 1024, output_fp);
 		/* split output to get IP */
 		splits = g_strsplit(line, " ", 3);
 		g_string_assign(ip, splits[0]);
+
 		g_strfreev(splits);
 		pclose(output_fp);
-	}
-	else{
+	} else
 		g_string_assign(ip, "127.0.0.1");
-	}
 
 	/* send INI */
 	protocol_send_data(server->protocol, server->tcp_socket,
