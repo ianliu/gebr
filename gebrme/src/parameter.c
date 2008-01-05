@@ -216,7 +216,7 @@ parameter_create_ui(GeoXmlParameter * parameter, gboolean hidden)
 	g_signal_connect(widget, "clicked",
 			  GTK_SIGNAL_FUNC (parameter_remove),
 			  data);
-	g_object_set(G_OBJECT(widget), "user-data", frame, 
+	g_object_set(G_OBJECT(widget), "user-data", frame,
 		     "relief", GTK_RELIEF_NONE, NULL);
 
 	parameter_uilabel_update(data);
@@ -415,7 +415,7 @@ parameter_add(GtkButton * button, GeoXmlProgram * program)
 
 	g_object_get(G_OBJECT(button), "user-data", &parameters_vbox, NULL);
 
-	parameter = geoxml_parameters_new_parameter(geoxml_program_get_parameters(program), GEOXML_PARAMETERTYPE_STRING);
+	parameter = geoxml_parameters_append_parameter(geoxml_program_get_parameters(program), GEOXML_PARAMETERTYPE_STRING);
 	parameter_widget = parameter_create_ui(parameter, TRUE);
 	gtk_box_pack_start(GTK_BOX(parameters_vbox), parameter_widget, FALSE, TRUE, 0);
 
@@ -501,6 +501,8 @@ parameter_type_changed(GtkComboBox * combo, struct parameter_data * data)
 
 	/* change its type and recreate UI */
 	geoxml_parameter_set_type(&data->parameter, (enum GEOXML_PARAMETERTYPE)gtk_combo_box_get_active(combo));
+	if (data->parameter == NULL)
+		puts("err");
 	parameter_create_ui_type_specific(table, data);
 
 	parameter_uilabel_update(data);
@@ -709,7 +711,7 @@ parameter_uilabel_update(struct parameter_data * data)
 	/* keyword */
 	g_string_append(uilabel, geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(data->parameter)));
 	/* default */
-	g_string_append(uilabel, " = [");
+	g_string_append(uilabel, " [");
 	g_string_append(uilabel, geoxml_program_parameter_get_default(GEOXML_PROGRAM_PARAMETER(data->parameter)));
 	g_string_append(uilabel, "]");
 	/* label */
