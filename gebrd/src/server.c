@@ -79,6 +79,7 @@ server_init(void)
 	act.sa_sigaction = (typeof(act.sa_sigaction))&gebrd_quit;
 	sigemptyset(&act.sa_mask);
 	sigaction(SIGTERM, &act, NULL);
+	sigaction(SIGINT, &act, NULL);
 
 	/* client list structure */
 	gebrd.clients = NULL;

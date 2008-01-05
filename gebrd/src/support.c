@@ -16,6 +16,7 @@
  */
 
 #include <stdlib.h>
+#include <time.h>
 
 #include "support.h"
 
@@ -28,7 +29,7 @@ generate_seed(void)
 {
 	static unsigned int seed = 1;
 
-	seed *= 1103515245 + 12345;
+	seed *= (time(NULL) + 12345) / 2;
 	srand(seed);
 }
 

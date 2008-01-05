@@ -454,8 +454,8 @@ job_run_flow(struct job * job, struct client * client)
 
 	/* command-line */
 	g_string_printf(cmd_line, "bash -l -c \"export DISPLAY=%s%s; %s\"",
-			client->address->str, client->display->str,
-			job->cmd_line->str);
+			g_ascii_strcasecmp(client->address->str, "127.0.0.1") ? client->address->str : "",
+			client->display->str, job->cmd_line->str);
 
 	gebrd.jobs = g_list_append(gebrd.jobs, job);
 	g_signal_connect(job->process, "ready-read-stdout",
