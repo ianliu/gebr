@@ -1,6 +1,6 @@
 Source: libgebr
 Priority: extra
-Maintainer: Bráulio Barros de Oliveira <brauliobo@gmail.com>
+Maintainer: Ricardo Biloti <biloti@gmail.com>
 Build-Depends: debhelper (>= 5)
 Standards-Version: 3.7.2
 
