@@ -189,6 +189,7 @@ server_new(const gchar * _address)
 
 	/* initialize */
 	server = g_malloc(sizeof(struct server));
+	server->address = g_string_new(_address);
 	/* add to the list of servers */
 	gtk_list_store_append(gebr.ui_server_list->store, &iter);
 	gtk_list_store_set(gebr.ui_server_list->store, &iter,
