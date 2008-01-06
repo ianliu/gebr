@@ -113,7 +113,6 @@ job_send_clients_output(struct job * job, GString * _output)
 		GError *	error;
 
 		error = NULL;
-		allocated = TRUE;
 		output = g_locale_to_utf8(_output->str, -1, &bytes_read, &bytes_written, &error);
 		/* TODO: what else should be tried? */
 		if (output == NULL) {
@@ -121,9 +120,10 @@ job_send_clients_output(struct job * job, GString * _output)
 			gebrd_message(ERROR, TRUE, TRUE, _("Job '%s' sent output not in UTF-8"), job->title->str);
 			return;
 		}
+		allocated = TRUE;
 	} else {
-		allocated = FALSE;
 		output = _output->str;
+		allocated = FALSE;
 	}
 
 	link = g_list_first(gebrd.clients);
@@ -137,7 +137,7 @@ job_send_clients_output(struct job * job, GString * _output)
 		link = g_list_next(link);
 	}
 
-	if (allocated)
+	if (allocated == TRUE)
 		g_free(output);
 }
 
@@ -454,7 +454,7 @@ job_run_flow(struct job * job, struct client * client)
 
 	/* command-line */
 	g_string_printf(cmd_line, "bash -l -c \"export DISPLAY=%s%s; %s\"",
-			g_ascii_strcasecmp(client->address->str, "127.0.0.1") ? client->address->str : "",
+			client_is_local(client) == FALSE ? client->address->str : "",
 			client->display->str, job->cmd_line->str);
 
 	gebrd.jobs = g_list_append(gebrd.jobs, job);

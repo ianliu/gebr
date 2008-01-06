@@ -54,7 +54,7 @@ server_init(void)
 	gebrd.tcp_server = g_tcp_server_new();
 	ret = g_tcp_server_listen(gebrd.tcp_server, host_address, 0);
 	if (ret == FALSE) {
-		gebrd_message(ERROR, TRUE, TRUE, _("Could not listen for connections.\n"));
+		gebrd_message(ERROR, TRUE, TRUE, _("Could not listen for connections."));
 		goto out;
 	}
 	g_signal_connect(gebrd.tcp_server, "new-connection",
@@ -63,12 +63,12 @@ server_init(void)
 	/* write on user's home directory a file with a port */
 	g_string_printf(run_filename, "%s/.gebr/run/gebrd.run", getenv("HOME"));
 	if (g_file_test(run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
-		gebrd_message(ERROR, TRUE, TRUE, _("Run file (~/.gebr/run/gebrd.run) already exists or is not a regular file.\n"));
+		gebrd_message(ERROR, TRUE, TRUE, _("Run file (~/.gebr/run/gebrd.run) already exists or is not a regular file."));
 		ret = FALSE;
 		goto out;
 	}
 	if ((run_fp = fopen(run_filename->str, "w")) == NULL) {
-		gebrd_message(ERROR, TRUE, TRUE, _("Could not write run file.\n"));
+		gebrd_message(ERROR, TRUE, TRUE, _("Could not write run file."));
 		ret = FALSE;
 		goto out;
 	}
@@ -122,7 +122,7 @@ server_new_connection(void)
 	while ((client_socket = g_tcp_server_get_next_pending_connection(gebrd.tcp_server)) != NULL)
 		client_add(client_socket);
 
-	gebrd_message(DEBUG, TRUE, TRUE, "server_new_connection\n");
+	gebrd_message(DEBUG, TRUE, TRUE, "server_new_connection");
 }
 
 gboolean
