@@ -71,6 +71,7 @@ static void
 g_terminal_process_init(GTerminalProcess * terminal_process)
 {
 	__g_terminal_process_stop_state(terminal_process);
+	terminal_process->ptm_io_channel = NULL;
 }
 
 G_DEFINE_TYPE(GTerminalProcess, g_terminal_process, G_TYPE_OBJECT)
@@ -85,8 +86,9 @@ __g_terminal_process_free(GTerminalProcess * terminal_process)
 	GError *	error;
 
 	error = NULL;
-	g_io_channel_shutdown(terminal_process->ptm_io_channel, TRUE, &error);
 	g_io_channel_unref(terminal_process->ptm_io_channel);
+	terminal_process->ptm_io_channel = NULL;
+	terminal_process->watch_id = 0;
 }
 
 static void
@@ -94,38 +96,25 @@ __g_terminal_process_stop_state(GTerminalProcess * terminal_process)
 {
 	terminal_process->pid = 0;
 	terminal_process->is_running = FALSE;
-	terminal_process->ptm_io_channel = NULL;
-}
-
-static void
-__g_terminal_process_free_and_stop_state(GTerminalProcess * terminal_process)
-{
-	__g_terminal_process_free(terminal_process);
-	__g_terminal_process_stop_state(terminal_process);
 }
 
 static gboolean
 __g_terminal_process_read_watch(GIOChannel * source, GIOCondition condition, GTerminalProcess * terminal_process)
 {
-// 	if (g_terminal_process_bytes_available(terminal_process) && (condition & G_IO_HUP))
-// 		g_signal_emit(terminal_process, object_signals[READY_READ], 0);
-
-	if (condition & G_IO_IN)
-		g_signal_emit(terminal_process, object_signals[READY_READ], 0);
-	if (condition & G_IO_NVAL) {
-		/* probably a fd change */
-		return FALSE;
-	}
 	if (condition & G_IO_ERR) {
 		/* TODO: */
 		return FALSE;
 	}
 	if (condition & G_IO_HUP) {
 		/* using g_child_watch_add */
-		puts("G_IO_HUP");
-		g_signal_emit(terminal_process, object_signals[FINISHED], 0);
 		return FALSE;
 	}
+	if (condition & G_IO_NVAL) {
+		/* probably a fd change or end of process */
+		return FALSE;
+	}
+
+	g_signal_emit(terminal_process, object_signals[READY_READ], 0);
 
 	return TRUE;
 }
@@ -136,10 +125,13 @@ __g_terminal_process_finished_watch(GPid pid, gint status, GTerminalProcess * te
 	gint				exit_code;
 	enum GTerminalProcessExitStatus	exit_status;
 
-	if (g_terminal_process_bytes_available(terminal_process)) {
-		g_signal_emit(terminal_process, object_signals[READY_READ], 0);
-		puts("rest");
+	if (terminal_process->watch_id) {
+		if (g_terminal_process_bytes_available(terminal_process))
+			g_signal_emit(terminal_process, object_signals[READY_READ], 0);
+		g_source_remove(terminal_process->watch_id);
+		__g_terminal_process_free(terminal_process);
 	}
+	__g_terminal_process_stop_state(terminal_process);
 
 	exit_code = WEXITSTATUS(status);
 	exit_status =  WIFEXITED(status) ? G_TERMINAL_PROCESS_NORMAL_EXIT : G_TERMINAL_PROCESS_CRASH_EXIT;
@@ -201,10 +193,10 @@ g_terminal_process_new(void)
 void
 g_terminal_process_free(GTerminalProcess * terminal_process)
 {
-	if (terminal_process->ptm_io_channel != NULL) {
+	if (terminal_process->is_running)
 		g_terminal_process_kill(terminal_process);
+	if (terminal_process->ptm_io_channel != NULL)
 		__g_terminal_process_free(terminal_process);
-	}
 	g_object_unref(G_OBJECT(terminal_process));
 }
 
@@ -230,9 +222,6 @@ g_terminal_process_start(GTerminalProcess * terminal_process, GString * cmd_line
 
 	error = NULL;
 	g_shell_parse_argv(cmd_line->str, &argc, &argv, &error);
-// 	int i;
-// 	for (i = 0; argv[i] != NULL; ++i)
-// 		puts(argv[i]);
 	pid = forkpty(&ptm_fd, NULL, NULL, NULL);
 	if (pid == -1) {
 		ret = FALSE;
@@ -247,11 +236,15 @@ g_terminal_process_start(GTerminalProcess * terminal_process, GString * cmd_line
 
 	ret = TRUE;
 	terminal_process->pid = pid;
-// 	g_child_watch_add(terminal_process->pid, (GChildWatchFunc)__g_terminal_process_finished_watch, terminal_process);
+	/* monitor exit */
+	terminal_process->watch_id = 0;
+	g_child_watch_add(terminal_process->pid, (GChildWatchFunc)__g_terminal_process_finished_watch, terminal_process);
 	/* create io channel */
 	terminal_process->ptm_io_channel = g_io_channel_unix_new(ptm_fd);
+	g_io_channel_set_close_on_unref(terminal_process->ptm_io_channel, TRUE);
 	/* watch */
-	g_io_add_watch(terminal_process->ptm_io_channel, G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
+	terminal_process->watch_id = g_io_add_watch(terminal_process->ptm_io_channel,
+		G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
 		(GIOFunc)__g_terminal_process_read_watch, terminal_process);
 	/* nonblock operation */
 	g_io_channel_set_flags(terminal_process->ptm_io_channel,

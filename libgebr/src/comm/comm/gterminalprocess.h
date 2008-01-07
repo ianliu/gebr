@@ -49,7 +49,9 @@ struct _GTerminalProcess {
 
 	GPid			pid;
 	gboolean		is_running;
+
 	GIOChannel *		ptm_io_channel;
+	guint			watch_id;
 };
 struct _GTerminalProcessClass {
 	GObjectClass		parent;
