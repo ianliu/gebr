@@ -24,14 +24,28 @@
 gboolean
 __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * event, GtkTreeViewPopupCallback callback)
 {
-	GtkMenu * menu;
+	GtkMenu *		menu;
+	GtkTreeSelection *	selection;
 
 	if (!(event->type == GDK_BUTTON_PRESS  &&  event->button == 3))
 		return FALSE;
 
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
+	if (gtk_tree_selection_count_selected_rows(selection) <= 1) {
+		GtkTreePath *	path;
+
+		/* Get tree path for row that was clicked */
+		if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tree_view),
+			(gint)event->x, (gint)event->y, &path, NULL, NULL, NULL)) {
+			gtk_tree_selection_unselect_all(selection);
+			gtk_tree_selection_select_path(selection, path);
+			gtk_tree_path_free(path);
+		}
+	}
+
 	menu = callback(tree_view);
 	if (menu == NULL)
-		return;
+		return TRUE;
 	gtk_menu_popup(menu, NULL, NULL, NULL, NULL,
 		event->button, gdk_event_get_time((GdkEvent*)event));
 
@@ -41,7 +55,7 @@ __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * even
 void
 __gtk_tree_view_on_popup_menu(GtkTreeView * tree_view, GtkTreeViewPopupCallback callback)
 {
-	GtkMenu * menu;
+	GtkMenu *	menu;
 
 	menu = callback(tree_view);
 	if (menu == NULL)
