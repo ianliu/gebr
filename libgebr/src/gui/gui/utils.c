@@ -18,6 +18,27 @@
 #include "utils.h"
 
 gboolean
+gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter)
+{
+	gboolean	ret;
+
+	previous_path = gtk_tree_model_get_path(GTK_TREE_MODEL(store), iter);
+	ret = gtk_tree_path_prev(previous_path);
+
+	gtk_tree_path_free(previous_path);
+	return ret;
+}
+
+gboolean
+gtk_list_store_can_move_down(GtkListStore * store, GtkTreeIter * iter)
+{
+	GtkTreeIter	next;
+
+	next = *iter;
+	return gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &next);
+}
+
+gboolean
 gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter)
 {
 	GtkTreeIter 	previous;
@@ -32,8 +53,6 @@ gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter)
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(store),
 				&previous, previous_path);
 	gtk_list_store_move_before(store, iter, &previous);
-
-	gtk_tree_path_free(previous_path);
 
 	return TRUE;
 }

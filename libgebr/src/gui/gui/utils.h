@@ -21,6 +21,12 @@
 #include <gtk/gtk.h>
 
 gboolean
+gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter);
+
+gboolean
+gtk_list_store_can_move_down(GtkListStore * store, GtkTreeIter * iter);
+
+gboolean
 gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter);
 
 gboolean
