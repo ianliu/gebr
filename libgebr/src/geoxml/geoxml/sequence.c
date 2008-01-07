@@ -73,10 +73,11 @@ geoxml_sequence_previous(GeoXmlSequence ** sequence)
 	if (!__geoxml_sequence_check(*sequence))
 		return GEOXML_RETV_NOT_A_SEQUENCE;
 
-	if (__geoxml_sequence_is_parameter(*sequence))
+	if (__geoxml_sequence_is_parameter(*sequence) == TRUE)
 		*sequence = (GeoXmlSequence*)__geoxml_previous_element((GdomeElement*)*sequence);
 	else
 		*sequence = (GeoXmlSequence*)__geoxml_previous_same_element((GdomeElement*)*sequence);
+
 	return GEOXML_RETV_SUCCESS;
 }
 
@@ -88,10 +89,11 @@ geoxml_sequence_next(GeoXmlSequence ** sequence)
 	if (!__geoxml_sequence_check(*sequence))
 		return GEOXML_RETV_NOT_A_SEQUENCE;
 
-	if (__geoxml_sequence_is_parameter(*sequence))
+	if (__geoxml_sequence_is_parameter(*sequence) == TRUE)
 		*sequence = (GeoXmlSequence*)__geoxml_next_element((GdomeElement*)*sequence);
 	else
 		*sequence = (GeoXmlSequence*)__geoxml_next_same_element((GdomeElement*)*sequence);
+
 	return GEOXML_RETV_SUCCESS;
 }
 
@@ -127,11 +129,6 @@ geoxml_sequence_move(GeoXmlSequence * sequence, GeoXmlSequence * before)
 int
 geoxml_sequence_move_up(GeoXmlSequence * sequence)
 {
-	if (sequence == NULL)
-		return GEOXML_RETV_NULL_PTR;
-	if (!__geoxml_sequence_check(sequence))
-		return GEOXML_RETV_NOT_A_SEQUENCE;
-
 	GeoXmlSequence *	previous;
 
 	previous = sequence;
@@ -141,26 +138,23 @@ geoxml_sequence_move_up(GeoXmlSequence * sequence)
 
 	gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
 		(GdomeNode*)sequence, (GdomeNode*)previous, &exception);
+
 	return GEOXML_RETV_SUCCESS;
 }
 
 int
 geoxml_sequence_move_down(GeoXmlSequence * sequence)
 {
-	if (sequence == NULL)
-		return GEOXML_RETV_NULL_PTR;
-	if (!__geoxml_sequence_check(sequence))
-		return GEOXML_RETV_NOT_A_SEQUENCE;
-
 	GeoXmlSequence *	next;
 
 	next = sequence;
 	geoxml_sequence_next(&next);
 	if (next == NULL)
-	   return GEOXML_RETV_INVALID_INDEX;
-	geoxml_sequence_next(&next);
+		return GEOXML_RETV_INVALID_INDEX;
+	next = (GeoXmlSequence*)__geoxml_next_element((GdomeElement*)next);
 
 	gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
 			     (GdomeNode*)sequence, (GdomeNode*)next, &exception);
+
 	return GEOXML_RETV_SUCCESS;
 }
