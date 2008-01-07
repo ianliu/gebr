@@ -1,5 +1,5 @@
-/*   GÃªBR ME - GÃªBR Menu Editor
- *   Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
+/*   GêBR ME - GêBR Menu Editor
+ *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -190,16 +190,17 @@ create_gebrme_window (void)
 
 	help_menuitem = gtk_menu_item_new_with_mnemonic (_("_Help"));
 	gtk_widget_show (help_menuitem);
-	gtk_container_add (GTK_CONTAINER (menubar), help_menuitem);
+	gtk_container_add(GTK_CONTAINER (menubar), help_menuitem);
+	gtk_menu_item_right_justify(GTK_MENU_ITEM(help_menuitem));
 
 	help_menuitem_menu = gtk_menu_new ();
-	gtk_menu_item_set_submenu (GTK_MENU_ITEM (help_menuitem), help_menuitem_menu);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM (help_menuitem), help_menuitem_menu);
 
 	/* About */
 	about_menuitem = gtk_image_menu_item_new_from_stock ("gtk-about", accel_group);
 	gtk_widget_show (about_menuitem);
 	gtk_container_add (GTK_CONTAINER (help_menuitem_menu), about_menuitem);
-	gebrme.about = about_setup_ui("GÃªBRME", _("Flow describer for GêBR"));
+	gebrme.about = about_setup_ui("GÃªBRME", _("Flow describer for GÃªBR"));
 
 	toolbar = gtk_toolbar_new ();
 	gtk_widget_show (toolbar);
@@ -532,15 +533,15 @@ create_gebrme_window (void)
 	g_signal_connect(quit_menuitem, "activate",
 			(GCallback)gebrme_quit,
 			NULL);
-/*	g_signal_connect(cut_menuitem, "activate",
-			(GCallback)on_cut_activate,
-			NULL);
-	g_signal_connect(copy_menuitem, "activate",
-			(GCallback)on_copy_activate,
-			NULL);
-	g_signal_connect(paste_menuitem, "activate",
-			(GCallback)on_paste_activate,
-			NULL);*/
+// 	g_signal_connect(cut_menuitem, "activate",
+// 			(GCallback)on_cut_activate,
+// 			NULL);
+// 	g_signal_connect(copy_menuitem, "activate",
+// 			(GCallback)on_copy_activate,
+// 			NULL);
+// 	g_signal_connect(paste_menuitem, "activate",
+// 			(GCallback)on_paste_activate,
+// 			NULL);
 	g_signal_connect(preferences_menuitem, "activate",
 			(GCallback)on_preferences_activate,
 			NULL);
