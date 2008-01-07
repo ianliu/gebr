@@ -15,33 +15,33 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "info.h"
+#include "summary.h"
 #include "gebrme.h"
 #include "help.h"
 #include "menu.h"
 
 void
-info_title_changed(GtkEntry * entry)
+summary_title_changed(GtkEntry * entry)
 {
 	geoxml_document_set_title(GEOXML_DOC(gebrme.current), gtk_entry_get_text(entry));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
 void
-info_description_changed(GtkEntry * entry)
+summary_description_changed(GtkEntry * entry)
 {
 	geoxml_document_set_description(GEOXML_DOC(gebrme.current), gtk_entry_get_text(entry));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
 void
-info_help_view(void)
+summary_help_view(void)
 {
 	help_show(geoxml_document_get_help(GEOXML_DOC(gebrme.current)));
 }
 
 void
-info_help_edit(void)
+summary_help_edit(void)
 {
 	GString *	help;
 
@@ -56,14 +56,14 @@ info_help_edit(void)
 }
 
 void
-info_author_changed(GtkEntry * entry)
+summary_author_changed(GtkEntry * entry)
 {
 	geoxml_document_set_author(GEOXML_DOC(gebrme.current), gtk_entry_get_text(entry));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
 void
-info_email_changed(GtkEntry * entry)
+summary_email_changed(GtkEntry * entry)
 {
 	geoxml_document_set_email(GEOXML_DOC(gebrme.current), gtk_entry_get_text(entry));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);

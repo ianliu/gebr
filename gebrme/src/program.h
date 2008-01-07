@@ -46,18 +46,18 @@ void
 program_stderr_changed(GtkToggleButton *togglebutton, GeoXmlProgram * program);
 
 gboolean
-program_info_title_changed(GtkEntry * entry, GeoXmlProgram * program);
+program_summary_title_changed(GtkEntry * entry, GeoXmlProgram * program);
 
 gboolean
-program_info_binary_changed(GtkEntry * entry, GeoXmlProgram * program);
+program_summary_binary_changed(GtkEntry * entry, GeoXmlProgram * program);
 
 gboolean
-program_info_desc_changed(GtkEntry * entry, GeoXmlProgram * program);
+program_summary_desc_changed(GtkEntry * entry, GeoXmlProgram * program);
 
 void
-program_info_help_view(GtkButton * button, GeoXmlProgram * program);
+program_summary_help_view(GtkButton * button, GeoXmlProgram * program);
 
 void
-program_info_help_edit(GtkButton * button, GeoXmlProgram * program);
+program_summary_help_edit(GtkButton * button, GeoXmlProgram * program);
 
 #endif //__PROGRAM_H

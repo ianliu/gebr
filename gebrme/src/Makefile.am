@@ -21,7 +21,7 @@ gebrme_SOURCES =	main.c \
 			callbacks.c \
 			gebrme.c \
 			menu.c \
-			info.c \
+			summary.c \
 			category.c \
 			program.c \
 			parameter.c \
@@ -32,7 +32,7 @@ noinst_HEADERS =	interface.h \
 			callbacks.h \
 			gebrme.h \
 			menu.h \
-			info.h \
+			summary.h \
 			category.h \
 			program.h \
 			parameter.h \

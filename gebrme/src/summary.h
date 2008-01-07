@@ -15,27 +15,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __INFO_H
-#define __INFO_H
+#ifndef __SUMMARY_H
+#define __SUMMARY_H
 
 #include <gtk/gtk.h>
 
 void
-info_title_changed(GtkEntry * entry);
+summary_title_changed(GtkEntry * entry);
 
 void
-info_description_changed(GtkEntry * entry);
+summary_description_changed(GtkEntry * entry);
 
 void
-info_help_view(void);
+summary_help_view(void);
 
 void
-info_help_edit(void);
+summary_help_edit(void);
 
 void
-info_author_changed(GtkEntry * entry);
+summary_author_changed(GtkEntry * entry);
 
 void
-info_email_changed(GtkEntry * entry);
+summary_email_changed(GtkEntry * entry);
 
-#endif //__INFO_H
+#endif //__SUMMARY_H

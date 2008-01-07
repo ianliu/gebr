@@ -22,7 +22,7 @@
 #include "callbacks.h"
 #include "support.h"
 #include "menu.h"
-#include "info.h"
+#include "summary.h"
 #include "category.h"
 #include "program.h"
 
@@ -68,9 +68,9 @@ create_gebrme_window (void)
 	GtkWidget *		edition_viewport;
 	GtkWidget *		edition_vbox;
 
-	GtkWidget *		info_expander;
-	GtkWidget *		info_label;
-	GtkWidget *		info_table;
+	GtkWidget *		summary_expander;
+	GtkWidget *		summary_label;
+	GtkWidget *		summary_table;
 	GtkWidget *		title_label;
 	GtkWidget *		title_entry;
 	GtkWidget *		description_label;
@@ -288,41 +288,41 @@ create_gebrme_window (void)
 	gtk_widget_show (edition_vbox);
 	gtk_container_add (GTK_CONTAINER (edition_viewport), edition_vbox);
 
-	info_expander = gtk_expander_new (NULL);
-	depth_hbox = create_depth(info_expander);
-	gtk_widget_show (info_expander);
-	gtk_box_pack_start (GTK_BOX (edition_vbox), info_expander, FALSE, FALSE, 0);
-	gtk_expander_set_expanded (GTK_EXPANDER (info_expander), TRUE);
-	info_label = gtk_label_new (_("Information"));
-	gtk_widget_show (info_label);
-	gtk_expander_set_label_widget(GTK_EXPANDER (info_expander), info_label);
+	summary_expander = gtk_expander_new (NULL);
+	depth_hbox = create_depth(summary_expander);
+	gtk_widget_show(summary_expander);
+	gtk_box_pack_start(GTK_BOX (edition_vbox), summary_expander, FALSE, FALSE, 0);
+	gtk_expander_set_expanded(GTK_EXPANDER (summary_expander), TRUE);
+	summary_label = gtk_label_new(_("Summary"));
+	gtk_widget_show(summary_label);
+	gtk_expander_set_label_widget(GTK_EXPANDER(summary_expander), summary_label);
 
-	info_table = gtk_table_new (6, 2, FALSE);
-	gtk_widget_show (info_table);
-	gtk_container_add (GTK_CONTAINER (depth_hbox), info_table);
-	gtk_table_set_row_spacings (GTK_TABLE (info_table), 5);
-	gtk_table_set_col_spacings (GTK_TABLE (info_table), 5);
+	summary_table = gtk_table_new(6, 2, FALSE);
+	gtk_widget_show(summary_table);
+	gtk_container_add(GTK_CONTAINER (depth_hbox), summary_table);
+	gtk_table_set_row_spacings(GTK_TABLE(summary_table), 5);
+	gtk_table_set_col_spacings(GTK_TABLE(summary_table), 5);
 
 	title_label = gtk_label_new (_("Title:"));
 	gtk_widget_show (title_label);
-	gtk_table_attach (GTK_TABLE (info_table), title_label, 0, 1, 0, 1,
-			(GtkAttachOptions) (GTK_FILL),
-			(GtkAttachOptions) (0), 0, 0);
+	gtk_table_attach(GTK_TABLE(summary_table), title_label, 0, 1, 0, 1,
+			(GtkAttachOptions)(GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
 	gtk_misc_set_alignment (GTK_MISC (title_label), 0, 0.5);
 
 	title_entry = gtk_entry_new ();
 	gebrme.title_entry = title_entry;
 	gtk_widget_show (title_entry);
-	gtk_table_attach (GTK_TABLE (info_table), title_entry, 1, 2, 0, 1,
+	gtk_table_attach(GTK_TABLE(summary_table), title_entry, 1, 2, 0, 1,
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
 	g_signal_connect ((gpointer) title_entry, "changed",
-			G_CALLBACK (info_title_changed),
+			G_CALLBACK (summary_title_changed),
 			NULL);
 
 	description_label = gtk_label_new (_("Description:"));
 	gtk_widget_show (description_label);
-	gtk_table_attach (GTK_TABLE (info_table), description_label, 0, 1, 1, 2,
+	gtk_table_attach (GTK_TABLE (summary_table), description_label, 0, 1, 1, 2,
 			(GtkAttachOptions) (GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
 	gtk_misc_set_alignment (GTK_MISC (description_label), 0, 0.5);
@@ -330,30 +330,30 @@ create_gebrme_window (void)
 	description_entry = gtk_entry_new ();
 	gebrme.description_entry = description_entry;
 	gtk_widget_show (description_entry);
-	gtk_table_attach (GTK_TABLE (info_table), description_entry, 1, 2, 1, 2,
+	gtk_table_attach (GTK_TABLE (summary_table), description_entry, 1, 2, 1, 2,
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
 	g_signal_connect ((gpointer) description_entry, "changed",
-			G_CALLBACK (info_description_changed),
+			G_CALLBACK (summary_description_changed),
 			NULL);
 
 	menuhelp_label = gtk_label_new (_("Help"));
 	gtk_widget_show (menuhelp_label);
-	gtk_table_attach (GTK_TABLE (info_table), menuhelp_label, 0, 1, 2, 3,
+	gtk_table_attach (GTK_TABLE (summary_table), menuhelp_label, 0, 1, 2, 3,
 			(GtkAttachOptions) (GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
 	gtk_misc_set_alignment (GTK_MISC (menuhelp_label), 0, 0.5);
 
 	menuhelp_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_widget_show(menuhelp_hbox);
-	gtk_table_attach (GTK_TABLE (info_table), menuhelp_hbox, 1, 2, 2, 3,
+	gtk_table_attach (GTK_TABLE (summary_table), menuhelp_hbox, 1, 2, 2, 3,
 			(GtkAttachOptions) (GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
 	menuhelp_view_button = gtk_button_new_from_stock (GTK_STOCK_OPEN);
 	gtk_widget_show (menuhelp_view_button);
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_view_button, FALSE, FALSE, 0);
 	g_signal_connect ((gpointer) menuhelp_view_button, "clicked",
-			GTK_SIGNAL_FUNC (info_help_view),
+			GTK_SIGNAL_FUNC (summary_help_view),
 			NULL);
 	g_object_set(G_OBJECT(menuhelp_view_button), "relief", GTK_RELIEF_NONE, NULL);
 
@@ -361,13 +361,13 @@ create_gebrme_window (void)
 	gtk_widget_show (menuhelp_edit_button);
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_edit_button, FALSE, FALSE, 5);
 	g_signal_connect ((gpointer) menuhelp_edit_button, "clicked",
-			GTK_SIGNAL_FUNC (info_help_edit),
+			GTK_SIGNAL_FUNC (summary_help_edit),
 			NULL);
 	g_object_set(G_OBJECT(menuhelp_edit_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	author_label = gtk_label_new (_("Author:"));
 	gtk_widget_show (author_label);
-	gtk_table_attach (GTK_TABLE (info_table), author_label, 0, 1, 3, 4,
+	gtk_table_attach (GTK_TABLE (summary_table), author_label, 0, 1, 3, 4,
 			(GtkAttachOptions) (GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
 	gtk_misc_set_alignment (GTK_MISC (author_label), 0, 0.5);
@@ -375,16 +375,16 @@ create_gebrme_window (void)
 	author_entry = gtk_entry_new ();
 	gebrme.author_entry = author_entry;
 	gtk_widget_show (author_entry);
-	gtk_table_attach (GTK_TABLE (info_table), author_entry, 1, 2, 3, 4,
+	gtk_table_attach (GTK_TABLE (summary_table), author_entry, 1, 2, 3, 4,
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
 	g_signal_connect ((gpointer) author_entry, "changed",
-			G_CALLBACK (info_author_changed),
+			G_CALLBACK (summary_author_changed),
 			NULL);
 
 	email_label = gtk_label_new (_("Email:"));
 	gtk_widget_show (email_label);
-	gtk_table_attach (GTK_TABLE (info_table), email_label, 0, 1, 4, 5,
+	gtk_table_attach (GTK_TABLE (summary_table), email_label, 0, 1, 4, 5,
 			(GtkAttachOptions) (GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
 	gtk_misc_set_alignment (GTK_MISC (email_label), 0, 0.5);
@@ -392,15 +392,15 @@ create_gebrme_window (void)
 	email_entry = gtk_entry_new ();
 	gebrme.email_entry = email_entry;
 	gtk_widget_show (email_entry);
-	gtk_table_attach (GTK_TABLE (info_table), email_entry, 1, 2, 4, 5,
+	gtk_table_attach (GTK_TABLE (summary_table), email_entry, 1, 2, 4, 5,
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
 	g_signal_connect ((gpointer) email_entry, "changed",
-			G_CALLBACK (info_email_changed),
+			G_CALLBACK (summary_email_changed),
 			NULL);
 
 	categories_vbox2 = gtk_vbox_new(FALSE, 0);
-	gtk_table_attach (GTK_TABLE (info_table), categories_vbox2, 1, 2, 5, 6,
+	gtk_table_attach (GTK_TABLE (summary_table), categories_vbox2, 1, 2, 5, 6,
 			(GtkAttachOptions) (GTK_FILL),
 			(GtkAttachOptions) (GTK_FILL), 0, 0);
 	gtk_widget_show(categories_vbox2);
@@ -449,7 +449,7 @@ create_gebrme_window (void)
 
 	categories_vbox = gtk_vbox_new (FALSE, 8);
 	gtk_widget_show (categories_vbox);
-	gtk_table_attach (GTK_TABLE (info_table), categories_vbox, 0, 1, 5, 6,
+	gtk_table_attach (GTK_TABLE (summary_table), categories_vbox, 0, 1, 5, 6,
 			(GtkAttachOptions) (GTK_FILL),
 			(GtkAttachOptions) (GTK_FILL), 0, 0);
 
