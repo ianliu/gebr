@@ -19,6 +19,7 @@
 
 #include <comm/gtcpserver.h>
 #include <comm/gprocess.h>
+#include <comm/gterminalprocess.h>
 
 #include <string.h>
 #include <unistd.h>
@@ -54,19 +55,10 @@ server_error(GTcpSocket * tcp_socket, enum GSocketError error, struct server * s
  */
 
 static void
-ssh_ask_server_port(struct server * server);
-
-// static void
-// ssh_run_server_finished(GProcess * process, struct server * server)
-// {
-// 	/* now ask via ssh its port */
-// 	ssh_ask_server_port(server);
-// 	gebr_message(DEBUG, FALSE, TRUE, "ssh_run_server_finished");
-// // 	g_process_free(process);
-// }
+ask_server_port(struct server * server);
 
 static void
-ssh_ask_port_read_stdout(GProcess * process, struct server * server)
+local_ask_port_read(GProcess * process, struct server * server)
 {
 	GString *	output;
 	gchar *		strtol_endptr;
@@ -74,55 +66,50 @@ ssh_ask_port_read_stdout(GProcess * process, struct server * server)
 
 	output = g_process_read_stdout_string_all(process);
 	port = strtol(output->str, &strtol_endptr, 10);
-	if (errno != ERANGE)
+	if (errno != ERANGE) {
 		server->port = port;
-	gebr_message(DEBUG, FALSE, TRUE, "ssh_ask_port_read_stdout: %d", port, server->port);
+		gebr_message(DEBUG, FALSE, TRUE, "ssh_ask_port_read: %d", port, server->port);
+	} else {
+		server->port = 0;
+		server->error = SERVER_ERROR_ASK_PORT;
+		gebr_message(ERROR, TRUE, TRUE, _("Error contacting local server"),
+			server->address->str, output->str);
+	}
+
 	g_string_free(output, TRUE);
 }
 
 static void
-ssh_ask_port_read_stderr(GProcess * process, struct server * server)
+local_run_server_finished(GProcess * process, struct server * server)
 {
-	GString *	error;
+	gebr_message(DEBUG, FALSE, TRUE, "local_run_server_finished");
 
-	if (g_process_is_running(process) == TRUE)
-		g_process_kill(process);
+	server->state = SERVER_STATE_RUNNED_ASK_PORT;
+	ask_server_port(server);
 
-	error = g_process_read_stderr_string_all(process);
-	server->error = SERVER_ERROR_SSH_ASK_PORT;
-
-	gebr_message(ERROR, TRUE, TRUE, _("Error contacting server at address %s via ssh: %s"),
-		server->address->str, error->str);
-
-	g_string_free(error, TRUE);
+	g_process_free(process);
 }
 
 static void
-ssh_ask_port_finished(GProcess * process, struct server * server)
+local_ask_port_finished(GProcess * process, struct server * server)
 {
+	gebr_message(DEBUG, FALSE, TRUE, "local_ask_port_finished");
+
 	if (server->error != SERVER_ERROR_NONE)
 		goto out;
 	if (server->port) {
 		GHostAddress *	host_address;
 
-		/* connection is made to a localhost tunnel */
 		host_address = g_host_address_new();
 		g_host_address_set_ipv4_string(host_address, "127.0.0.1");
+		g_string_assign(server->client_address, "127.0.0.1");
 
-		if (server_is_local(server) == FALSE) {
-			server->state = SERVER_STATE_OPEN_TUNNEL;
-			server->ssh_tunnel = ssh_tunnel_new(2125, server->address->str, server->port);
-
-			server->state = SERVER_STATE_CONNECT;
-			g_tcp_socket_connect(server->tcp_socket, host_address, server->ssh_tunnel->port);
-		} else {
-			server->state = SERVER_STATE_CONNECT;
-			g_tcp_socket_connect(server->tcp_socket, host_address, server->port);
-		}
+		server->state = SERVER_STATE_CONNECT;
+		g_tcp_socket_connect(server->tcp_socket, host_address, server->port);
 
 		g_host_address_free(host_address);
 	} else {
-// 		GProcess *	server_process;
+		GProcess *	server_process;
 		GString *	cmd_line;
 
 		if (server->state == SERVER_STATE_RUNNED_ASK_PORT)
@@ -130,17 +117,16 @@ ssh_ask_port_finished(GProcess * process, struct server * server)
 
 		cmd_line = g_string_new(NULL);
 
-		gebr_message(INFO, TRUE, TRUE, _("Launching server at %s"), server->address->str);
+		server->state = SERVER_STATE_RUN;
+		gebr_message(INFO, TRUE, TRUE, _("Launching local server"), server->address->str);
 
-		/* run gebrd via ssh for remote hosts */
-		if (server_is_local(server) == FALSE)
-			g_string_printf(cmd_line, "ssh -f -x %s 'gebrd'", server->address->str);
-		else
-			g_string_printf(cmd_line, "bash -l -c gebrd&");
+		server_process = g_process_new();
+		g_signal_connect(server_process, "finished",
+			G_CALLBACK(local_run_server_finished), server);
 
-		system(cmd_line->str);
-		server->state = SERVER_STATE_RUNNED_ASK_PORT;
-		ssh_ask_server_port(server);
+		/* FIXME: remove /dev/null and change GProcess */
+		g_string_printf(cmd_line, "bash -l -c \"gebrd 1>/dev/null 2>/dev/null &\"");
+		g_process_start(server_process, cmd_line);
 
 		g_string_free(cmd_line, TRUE);
 	}
@@ -148,30 +134,264 @@ ssh_ask_port_finished(GProcess * process, struct server * server)
 out:	g_process_free(process);
 }
 
-static void
-ssh_ask_server_port(struct server * server)
+static gboolean
+ssh_parse_output(GTerminalProcess * process, struct server * server, GString * output)
 {
-	GProcess *	process;
+	if (output->len <= 2)
+		return FALSE;
+	if (output->str[output->len-2] == ':') {
+		GtkWidget *	dialog;
+		GtkWidget *	label;
+		GtkWidget *	entry;
+
+		GString *	string;
+
+		if (server->password->len && server->tried_existant_pass == FALSE) {
+			g_terminal_process_write_string(process, server->password);
+			server->tried_existant_pass = TRUE;
+			goto out;
+		}
+
+		string = g_string_new(NULL);
+		dialog = gtk_dialog_new_with_buttons(_("SSH login:"),
+						GTK_WINDOW(gebr.window),
+						GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+						GTK_STOCK_OK, GTK_RESPONSE_OK,
+						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+						NULL);
+
+		g_string_printf(string, _("Server %s needs SSH login:\n%s"), server->address->str, output->str);
+		label = gtk_label_new(string->str);
+		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, TRUE, 0);
+
+		entry = gtk_entry_new();
+		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), entry, FALSE, TRUE, 0);
+		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+
+		gtk_widget_show_all(dialog);
+		if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
+			server->error = SERVER_ERROR_SSH;
+			g_terminal_process_kill(process);
+			gtk_widget_destroy(dialog);
+			goto out;
+		}
+
+		g_string_printf(server->password, "%s\n", gtk_entry_get_text(GTK_ENTRY(entry)));
+		g_terminal_process_write_string(process, server->password);
+		server->tried_existant_pass = FALSE;
+
+		g_string_free(string, TRUE);
+		gtk_widget_destroy(dialog);
+	} else if (output->str[output->len-2] == '?') {
+		GtkWidget *	dialog;
+		GString *	answer;
+
+		answer = g_string_new(NULL);
+		dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
+			GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
+			GTK_MESSAGE_QUESTION,
+			GTK_BUTTONS_YES_NO,
+			_("SSH question:"));
+
+		if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES)
+			g_string_assign(answer, "yes\n");
+		else {
+			server->error = SERVER_ERROR_SSH;
+			g_string_assign(answer, "no\n");
+		}
+		g_terminal_process_write_string(process, answer);
+
+		g_string_free(answer, TRUE);
+		gtk_widget_destroy(dialog);
+	} else
+		return FALSE;
+
+out:	return TRUE;
+}
+
+static void
+ssh_ask_port_read(GTerminalProcess * process, struct server * server)
+{
+	GString *	output;
+	gchar *		strtol_endptr;
+	guint16		port;
+
+	output = g_terminal_process_read_string_all(process);
+	if (ssh_parse_output(process, server, output) == TRUE)
+		goto out;
+
+	port = strtol(output->str, &strtol_endptr, 10);
+	if (errno != ERANGE) {
+		server->port = port;
+		gebr_message(DEBUG, FALSE, TRUE, "ssh_ask_port_read: %d", port, server->port);
+	} else {
+		server->port = 0;
+		server->error = SERVER_ERROR_ASK_PORT;
+		gebr_message(ERROR, TRUE, TRUE, _("Error contacting server at address %s via ssh: %s"),
+			server->address->str, output->str);
+	}
+
+out:	g_string_free(output, TRUE);
+}
+
+static void
+ssh_run_server_read(GTerminalProcess * process, struct server * server)
+{
+	GString *	output;
+
+	output = g_terminal_process_read_string_all(process);
+	gebr_message(DEBUG, FALSE, TRUE, "ssh_run_server_read %s", output->str);
+	ssh_parse_output(process, server, output);
+
+	g_string_free(output, TRUE);
+}
+
+static void
+ssh_run_server_finished(GTerminalProcess * process, struct server * server)
+{
+	gebr_message(DEBUG, FALSE, TRUE, "ssh_run_server_finished");
+
+	if (server->error != SERVER_ERROR_NONE)
+		goto out;
+
+	server->state = SERVER_STATE_RUNNED_ASK_PORT;
+	server->tried_existant_pass = FALSE;
+	ask_server_port(server);
+
+out:	g_terminal_process_free(process);
+}
+
+static void
+ssh_open_tunnel_finished(GTerminalProcess * process, struct server * server);
+
+static void
+ssh_open_tunnel_read(GTerminalProcess * process, struct server * server)
+{
+	GString *	output;
+	gchar **	splits;
+
+	output = g_terminal_process_read_string_all(process);
+	gebr_message(DEBUG, FALSE, TRUE, "ssh_open_tunnel_read %s", output->str);
+	if (ssh_parse_output(process, server, output) == TRUE)
+		goto out;
+
+	/* time to get IP */
+	splits = g_strsplit(output->str, " ", 3);
+	g_string_assign(server->client_address, splits[0]);
+
+	/* FIXME: uhm? */
+	if (server->client_address->len > 5)
+		ssh_open_tunnel_finished(process, server);
+
+	g_strfreev(splits);
+out:	g_string_free(output, TRUE);
+}
+
+static void
+ssh_open_tunnel_finished(GTerminalProcess * process, struct server * server)
+{
+	GHostAddress *		host_address;
+
+	gebr_message(DEBUG, FALSE, TRUE, "ssh_open_tunnel_finished");
+
+	if (server->error != SERVER_ERROR_NONE)
+		goto out;
+
+	/* connection is made to a localhost tunnel */
+	host_address = g_host_address_new();
+	g_host_address_set_ipv4_string(host_address, "127.0.0.1");
+
+	server->state = SERVER_STATE_CONNECT;
+	g_tcp_socket_connect(server->tcp_socket, host_address, server->tunnel_port);
+
+	g_host_address_free(host_address);
+out:	g_terminal_process_free(process);
+}
+
+static void
+ssh_ask_port_finished(GTerminalProcess * process, struct server * server)
+{
 	GString *	cmd_line;
 
-	process = g_process_new();
+	gebr_message(DEBUG, FALSE, TRUE, "ssh_ask_port_finished");
 	cmd_line = g_string_new(NULL);
 
-	g_signal_connect(process, "ready-read-stdout",
-			G_CALLBACK(ssh_ask_port_read_stdout), server);
-	g_signal_connect(process, "ready-read-stderr",
-			G_CALLBACK(ssh_ask_port_read_stderr), server);
-	g_signal_connect(process, "finished",
+	if (server->error != SERVER_ERROR_NONE)
+		goto out;
+	if (server->port) {
+		GTerminalProcess *	tunnel_process;
+
+		tunnel_process = g_terminal_process_new();
+		g_signal_connect(tunnel_process, "ready-read",
+			G_CALLBACK(ssh_open_tunnel_read), server);
+		g_signal_connect(tunnel_process, "finished",
+			G_CALLBACK(ssh_open_tunnel_finished), server);
+
+		server->state = SERVER_STATE_OPEN_TUNNEL;
+		server->tried_existant_pass = FALSE;
+		server->tunnel_port = 2125;
+		while (!g_tcp_server_is_local_port_available(server->tunnel_port))
+			++server->tunnel_port;
+
+		g_string_printf(cmd_line, "ssh -f -L %d:127.0.0.1:%d %s 'bash -l -c echo $SSH_CLIENT; sleep 300'",
+			server->tunnel_port, server->port, server->address->str);
+		g_terminal_process_start(tunnel_process, cmd_line);
+	} else {
+		GTerminalProcess *	server_process;
+
+		if (server->state == SERVER_STATE_RUNNED_ASK_PORT)
+			goto out;
+
+		server->state = SERVER_STATE_RUN;
+		gebr_message(INFO, TRUE, TRUE, _("Launching server at %s"), server->address->str);
+
+		server_process = g_terminal_process_new();
+		g_signal_connect(server_process, "ready-read",
+			G_CALLBACK(ssh_run_server_read), server);
+		g_signal_connect(server_process, "finished",
+			G_CALLBACK(ssh_run_server_finished), server);
+
+		g_string_printf(cmd_line, "ssh -f -x %s 'bash -l -c gebrd'", server->address->str);
+		g_terminal_process_start(server_process, cmd_line);
+	}
+
+out:	g_string_free(cmd_line, TRUE);
+	g_terminal_process_free(process);
+}
+
+static void
+ask_server_port(struct server * server)
+{
+	gebr_message(DEBUG, FALSE, TRUE, "ask_server_port");
+
+	GString *	cmd_line;
+
+	cmd_line = g_string_new(NULL);
+
+	if (server_is_local(server) == FALSE) {
+		GTerminalProcess *	process;
+
+		process = g_terminal_process_new();
+		g_signal_connect(process, "ready-read",
+			G_CALLBACK(ssh_ask_port_read), server);
+		g_signal_connect(process, "finished",
 			G_CALLBACK(ssh_ask_port_finished), server);
 
-	/* ask via ssh port from server */
-	if (server_is_local(server) == FALSE)
 		g_string_printf(cmd_line, "ssh %s 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'",
 			server->address->str);
-	else
-		g_string_printf(cmd_line, "bash -l -c 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'");
+		g_terminal_process_start(process, cmd_line);
+	} else {
+		GProcess *	process;
 
-	g_process_start(process, cmd_line);
+		process = g_process_new();
+		g_signal_connect(process, "ready-read-stdout",
+			G_CALLBACK(local_ask_port_read), server);
+		g_signal_connect(process, "finished",
+			G_CALLBACK(local_ask_port_finished), server);
+
+		g_string_printf(cmd_line, "bash -l -c 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'");
+		g_process_start(process, cmd_line);
+	}
 
 	g_string_free(cmd_line, TRUE);
 }
@@ -189,22 +409,24 @@ server_new(const gchar * _address)
 
 	/* initialize */
 	server = g_malloc(sizeof(struct server));
-	server->address = g_string_new(_address);
-	/* add to the list of servers */
 	gtk_list_store_append(gebr.ui_server_list->store, &iter);
-	gtk_list_store_set(gebr.ui_server_list->store, &iter,
-			SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
-			SERVER_ADDRESS, server_is_local(server) == TRUE ? _("Local server") : (gchar*)_address,
-			SERVER_POINTER, server,
-			-1);
 	/* fill struct */
 	*server = (struct server) {
 		.tcp_socket = g_tcp_socket_new(),
 		.protocol = protocol_new(),
 		.address = g_string_new(_address),
 		.port = 0,
+		.client_address = g_string_new(""),
+		.password = g_string_new(""),
+		.tried_existant_pass = FALSE,
 		.iter = iter
 	};
+	/* fill iter */
+	gtk_list_store_set(gebr.ui_server_list->store, &iter,
+			SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
+			SERVER_ADDRESS, server_is_local(server) == TRUE ? _("Local server") : (gchar*)_address,
+			SERVER_POINTER, server,
+			-1);
 
 	g_signal_connect(server->tcp_socket, "connected",
 			G_CALLBACK(server_connected), server);
@@ -242,11 +464,11 @@ server_free(struct server * server)
 			job_delete(job);
 	}
 
-	if (server_is_local(server) == FALSE)
-		ssh_tunnel_free(server->ssh_tunnel);
-	g_string_free(server->address, TRUE);
 	g_socket_close(G_SOCKET(server->tcp_socket));
 	protocol_free(server->protocol);
+	g_string_free(server->address, TRUE);
+	g_string_free(server->password, TRUE);
+	g_string_free(server->client_address, TRUE);
 	g_free(server);
 }
 
@@ -256,7 +478,8 @@ server_connect(struct server * server)
 	/* initiate the marathon to communicate to server */
 	server->error = SERVER_ERROR_NONE;
 	server->state = SERVER_STATE_ASK_PORT;
-	ssh_ask_server_port(server);
+	server->tried_existant_pass = FALSE;
+	ask_server_port(server);
 }
 
 gboolean
@@ -283,19 +506,16 @@ server_connected(GTcpSocket * tcp_socket, struct server * server)
 	gchar		line[1024];
 
 	GString *	mcookie;
-	GString *	ip;
 	gchar **	splits;
 
 	/* initialization */
 	mcookie = g_string_new(NULL);
-	ip = g_string_new(NULL);
 	cmd_line = g_string_new(NULL);
 
 	/* hostname and display */
 	gethostname(hostname, 100);
 	display = getenv("DISPLAY");
 
-	/* TODO: port to GProcess using blocking calls */
 	/* get this X session magic cookie */
 	g_string_printf(cmd_line, "xauth list %s", display);
 	output_fp = popen(cmd_line->str, "r");
@@ -304,31 +524,14 @@ server_connected(GTcpSocket * tcp_socket, struct server * server)
 	splits = g_strsplit_set(line, " \n", 6);
 	g_string_assign(mcookie, splits[4]);
 
-	/* frees for reuse */
-	g_strfreev(splits);
-	pclose(output_fp);
-
-	/* get client IP address via SSH for non-local servers */
-	if (server_is_local(server) == FALSE) {
-		g_string_printf(cmd_line, "ssh %s 'echo $SSH_CLIENT'", server->address->str);
-		output_fp = popen(cmd_line->str, "r");
-		fread(line, 1, 1024, output_fp);
-		/* split output to get IP */
-		splits = g_strsplit(line, " ", 3);
-		g_string_assign(ip, splits[0]);
-
-		g_strfreev(splits);
-		pclose(output_fp);
-	} else
-		g_string_assign(ip, "127.0.0.1");
-
 	/* send INI */
 	protocol_send_data(server->protocol, server->tcp_socket,
-		protocol_defs.ini_def, 5, PROTOCOL_VERSION, hostname, ip->str, display, mcookie->str);
+		protocol_defs.ini_def, 5, PROTOCOL_VERSION, hostname, server->client_address->str, display, mcookie->str);
 
 	/* frees */
+	g_strfreev(splits);
+	pclose(output_fp);
 	g_string_free(mcookie, TRUE);
-	g_string_free(ip, TRUE);
 	g_string_free(cmd_line, TRUE);
 }
 

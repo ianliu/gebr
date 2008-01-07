@@ -22,7 +22,6 @@
 
 #include <comm/gtcpsocket.h>
 #include <comm/protocol.h>
-#include <comm/ssh.h>
 
 struct server {
 	/* the communication channel. */
@@ -32,8 +31,11 @@ struct server {
 	/* address */
 	GString *		address;
 	guint16			port;
-	/* ssh tunneling */
-	struct ssh_tunnel *	ssh_tunnel;
+	GString *		client_address;		/* client address as seen by server (from $SSH_CLIENT)*/
+	/* ssh stuff */
+	GString *		password;
+	gint16			tunnel_port;
+	gboolean		tried_existant_pass;
 
 	enum server_state {
 		SERVER_STATE_ASK_PORT,
@@ -45,7 +47,8 @@ struct server {
 	} state;
 	enum server_error {
 		SERVER_ERROR_NONE,
-		SERVER_ERROR_SSH_ASK_PORT,
+		SERVER_ERROR_ASK_PORT,
+		SERVER_ERROR_SSH,
 	} error;
 
 	/* iter to set icons on logged/disconneted */
