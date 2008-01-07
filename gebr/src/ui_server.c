@@ -346,12 +346,13 @@ server_select_setup_ui(void)
 	GtkTreeIter			iter;
 	gboolean			valid;
 
-	gboolean			has_connected;
+	GtkTreeIter			first_connected_iter;
+	guint				connected;
 	struct server *			server;
 
 	/* initializations */
 	server = NULL;
-	has_connected = FALSE;
+	connected = 0;
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
 	while (valid) {
 		struct server *	server;
@@ -360,19 +361,20 @@ server_select_setup_ui(void)
 				SERVER_POINTER, &server,
 				-1);
 		if (server_is_logged(server) == TRUE) {
-			has_connected = TRUE;
-			break;
+			if (connected == 0)
+				first_connected_iter = iter;
+			++connected;
 		}
 
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
 	}
-	if (has_connected == FALSE) {
+	if (connected == 0) {
 		gebr_message(ERROR, TRUE, FALSE,
 			_("There are no running servers available. Please configure them in Configure/Server"));
 		goto out;
 	}
-	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_server_list->common.store), NULL) == 1) {
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+	if (connected == 1) {
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &first_connected_iter,
 			SERVER_POINTER, &server,
 			-1);
 		goto out;
@@ -388,7 +390,6 @@ server_select_setup_ui(void)
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_REFRESH, GEBR_SERVER_REFRESH,
 		NULL);
-	server_common_check_for_local(&ui_server_select->common);
 	/* Take the apropriate action when a button is pressed */
 	g_signal_connect(ui_server_select->common.dialog, "response",
 		G_CALLBACK(server_actions), &ui_server_select->common);
@@ -402,9 +403,11 @@ server_select_setup_ui(void)
 	g_signal_connect(GTK_OBJECT(ui_server_select->common.view), "cursor-changed",
 		GTK_SIGNAL_FUNC(server_select_cursor_changed), ui_server_select);
 
+	server_common_check_for_local(&ui_server_select->common);
+
 	/* select the first running server */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_server_select->common.view));
-	gtk_tree_selection_select_iter(selection, &iter);
+	gtk_tree_selection_select_iter(selection, &first_connected_iter);
 	g_signal_emit_by_name(ui_server_select->common.view, "cursor-changed");
 
 	gtk_widget_show_all(ui_server_select->common.dialog);

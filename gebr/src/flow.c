@@ -29,6 +29,7 @@
 
 #include <geoxml.h>
 #include <comm.h>
+#include <gui/utils.h>
 
 #include "flow.h"
 #include "gebr.h"
@@ -406,8 +407,6 @@ flow_program_move_up(void)
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 	GtkTreeIter		iter;
-	GtkTreeIter 		previous;
-	GtkTreePath *		previous_path;
 
 	GeoXmlSequence *	program;
 	gulong 			nprogram;
@@ -418,25 +417,20 @@ flow_program_move_up(void)
 		gebr_message(ERROR, TRUE, FALSE, no_program_selected_error);
 		return;
 	}
-	previous_path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter);
-	if (gtk_tree_path_prev(previous_path) == FALSE)
-		goto out;
+	if (gtk_list_store_can_move_up(gebr.ui_flow_edition->fseq_store, &iter) == FALSE)
+		return;
 
 	/* Get the index. */
 	node = gtk_tree_model_get_string_from_iter(model, &iter);
 	nprogram = (gulong)atoi(node);
 	g_free(node);
 
-	/* XML change */
+	/* Update flow */
 	geoxml_flow_get_program(gebr.flow, &program, nprogram);
 	geoxml_sequence_move_up(program);
 	flow_save();
-	/* View change */
-	gtk_tree_model_get_iter(GTK_TREE_MODEL (gebr.ui_flow_edition->fseq_store),
-				&previous, previous_path);
-	gtk_list_store_move_before(gebr.ui_flow_edition->fseq_store, &iter, &previous);
-
-out:	gtk_tree_path_free(previous_path);
+	/* Update GUI */
+	gtk_list_store_move_up(gebr.ui_flow_edition->fseq_store, &iter);
 }
 
 /*
@@ -448,7 +442,7 @@ flow_program_move_down(void)
 {
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
-	GtkTreeIter		iter, next;
+	GtkTreeIter		iter;
 
 	GeoXmlSequence *	program;
 	gulong			nprogram;
@@ -459,13 +453,12 @@ flow_program_move_down(void)
 		gebr_message(ERROR, TRUE, FALSE, no_program_selected_error);
 		return;
 	}
-	next = iter;
-	if (gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &next) == FALSE)
+	if (gtk_list_store_can_move_down(gebr.ui_flow_edition->fseq_store, &iter) == FALSE)
 		return;
 
 	/* Get index */
 	node = gtk_tree_model_get_string_from_iter(model, &iter);
-	nprogram = (gulong) atoi(node);
+	nprogram = (gulong)atoi(node);
 	g_free(node);
 
 	/* Update flow */
@@ -473,5 +466,5 @@ flow_program_move_down(void)
 	geoxml_sequence_move_down(program);
 	flow_save();
 	/* Update GUI */
-	gtk_list_store_move_after(gebr.ui_flow_edition->fseq_store, &iter, &next);
+	gtk_list_store_move_down(gebr.ui_flow_edition->fseq_store, &iter);
 }
