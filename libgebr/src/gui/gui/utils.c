@@ -17,51 +17,37 @@
 
 #include "utils.h"
 
-/*
- * Internal functions
- */
+gboolean
+gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter)
+{
+	GtkTreeIter 	previous;
+	GtkTreePath *	previous_path;
 
-// void
-// save_widget_browse_button_clicked(GtkWidget * button, GtkWidget * entry)
-// {
-// 	GtkWidget *	chooser_dialog;
-//
-// 	chooser_dialog = gtk_file_chooser_dialog_new(	"Choose file", NULL,
-// 							GTK_FILE_CHOOSER_ACTION_SAVE,
-// 							GTK_STOCK_OK, GTK_RESPONSE_OK,
-// 							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-// 							NULL);
-//
-// 	switch (gtk_dialog_run(GTK_DIALOG(chooser_dialog))) {
-// 	case GTK_RESPONSE_OK:
-// 		gtk_entry_set_text(GTK_ENTRY(entry), gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog)));
-// 		break;
-// 	default:
-// 		break;
-// 	}
-//
-// 	gtk_widget_destroy(GTK_WIDGET(chooser_dialog));
-// }
-//
-// /*
-//  * Library functions
-//  */
-// gebr_save_widget_t
-// save_widget_create(void)
-// {
-// 	gebr_save_widget_t save_widget;
-//
-// 	save_widget.hbox = gtk_hbox_new(FALSE, 10);
-//
-// 	/* entry */
-// 	save_widget.entry = gtk_entry_new();
-// 	gtk_box_pack_start(GTK_BOX (save_widget.hbox), save_widget.entry, TRUE, TRUE, 0);
-//
-// 	/* browse button */
-// 	save_widget.browse_button = gtk_button_new_from_stock(GTK_STOCK_OPEN);
-// 	gtk_box_pack_start(GTK_BOX (save_widget.hbox), save_widget.browse_button, FALSE, TRUE, 0);
-// 	g_signal_connect (GTK_OBJECT (save_widget.browse_button), "clicked",
-// 			  G_CALLBACK (save_widget_browse_button_clicked), save_widget.entry);
-//
-// 	return save_widget;
-// }
+	previous_path = gtk_tree_model_get_path(GTK_TREE_MODEL(store), iter);
+	if (gtk_tree_path_prev(previous_path) == FALSE) {
+		gtk_tree_path_free(previous_path);
+		return FALSE;
+	}
+
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(store),
+				&previous, previous_path);
+	gtk_list_store_move_before(store, iter, &previous);
+
+	gtk_tree_path_free(previous_path);
+
+	return TRUE;
+}
+
+gboolean
+gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter)
+{
+	GtkTreeIter	next;
+
+	next = *iter;
+	if (gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &next) == FALSE)
+		return FALSE;
+
+	gtk_list_store_move_after(store, iter, &next);
+
+	return TRUE;
+}

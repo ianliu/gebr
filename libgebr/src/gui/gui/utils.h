@@ -18,6 +18,12 @@
 #ifndef __LIBGEBR_GUI_UTILS_H
 #define __LIBGEBR_GUI_UTILS_H
 
+#include <gtk/gtk.h>
 
+gboolean
+gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter);
+
+gboolean
+gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter);
 
 #endif //__LIBGEBR_GUI_UTILS_H
