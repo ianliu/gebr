@@ -64,6 +64,7 @@ server_common_setup(struct ui_server_common * ui_server_common)
 	GtkCellRenderer *	renderer;
 
 	ui_server_common->add_local_button = NULL;
+	gtk_widget_set_size_request(ui_server_common->dialog, 580, 300);
 
 	view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_server_common->store));
 	ui_server_common->view = view;
@@ -112,9 +113,12 @@ server_common_check_for_local(struct ui_server_common * ui_server_common)
 
 	if (has_local == FALSE) {
 		/* TODO: needs testing first */
-// 		ui_server_common->add_local_button = gtk_dialog_add_button(
-// 			GTK_DIALOG(ui_server_common->dialog), _("Add local server"), GEBR_SERVER_ADD_LOCAL);
-// 		gtk_widget_show(ui_server_common->add_local_button);
+		ui_server_common->add_local_button = gtk_dialog_add_button(
+			GTK_DIALOG(ui_server_common->dialog), _("Add local server"), GEBR_SERVER_ADD_LOCAL);
+		gtk_widget_show(ui_server_common->add_local_button);
+		gtk_button_box_set_child_secondary(
+			GTK_BUTTON_BOX(GTK_DIALOG(ui_server_common->dialog)->action_area),
+			ui_server_common->add_local_button, TRUE);
 	} else {
 		if (ui_server_common->add_local_button != NULL)
 			gtk_widget_destroy(ui_server_common->add_local_button);
@@ -255,7 +259,6 @@ server_list_setup_ui(void)
 						GTK_STOCK_REFRESH, GEBR_SERVER_REFRESH,
 						NULL);
 	ui_server_list->common.dialog = dialog;
-	gtk_widget_set_size_request(dialog, 380, 300);
 	/* Take the apropriate action when a button is pressed */
 	g_signal_connect(dialog, "response",
 		G_CALLBACK(server_actions), &ui_server_list->common);
@@ -377,7 +380,6 @@ server_select_setup_ui(void)
 							GTK_WINDOW(gebr.window),
 							GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 							NULL);
-	gtk_widget_set_size_request(ui_server_select->common.dialog, 380, 300);
 	ui_server_select->ok_button = gtk_dialog_add_button(GTK_DIALOG(ui_server_select->common.dialog), GTK_STOCK_OK, GTK_RESPONSE_OK);
 	gtk_dialog_add_buttons(GTK_DIALOG(ui_server_select->common.dialog),
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,

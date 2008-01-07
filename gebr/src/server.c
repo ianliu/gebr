@@ -524,12 +524,12 @@ server_connected(GTcpSocket * tcp_socket, struct server * server)
 	display = getenv("DISPLAY");
 
 	/* get this X session magic cookie */
-	g_string_printf(cmd_line, "xauth list %s", display);
+	g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display);
 	output_fp = popen(cmd_line->str, "r");
 	fread(line, 1, 1024, output_fp);
 	/* split output and get only the magic cookie */
-	splits = g_strsplit_set(line, " \n", 6);
-	g_string_assign(mcookie, splits[4]);
+	splits = g_strsplit_set(line, " \n", 1);
+	g_string_assign(mcookie, splits[0]);
 
 	/* send INI */
 	protocol_send_data(server->protocol, server->tcp_socket,
