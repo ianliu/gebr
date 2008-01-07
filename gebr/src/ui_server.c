@@ -112,7 +112,9 @@ server_common_check_for_local(struct ui_server_common * ui_server_common)
 	}
 
 	if (has_local == FALSE) {
-		/* TODO: needs testing first */
+		if (ui_server_common->add_local_button != NULL)
+			return;
+
 		ui_server_common->add_local_button = gtk_dialog_add_button(
 			GTK_DIALOG(ui_server_common->dialog), _("Add local server"), GEBR_SERVER_ADD_LOCAL);
 		gtk_widget_show(ui_server_common->add_local_button);

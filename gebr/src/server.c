@@ -145,8 +145,6 @@ ssh_parse_output(GTerminalProcess * process, struct server * server, GString * o
 
 		GString *	string;
 
-		server->ssh_logged_in = TRUE;
-
 		if (server->password->len && server->tried_existant_pass == FALSE) {
 			g_terminal_process_write_string(process, server->password);
 			server->tried_existant_pass = TRUE;
@@ -324,7 +322,7 @@ ssh_ask_port_finished(GTerminalProcess * process, struct server * server)
 	if (server->error != SERVER_ERROR_NONE)
 		goto out;
 
-	server->ssh_logged_in = FALSE;
+	server->tried_existant_pass = FALSE;
 	if (server->port) {
 		GTerminalProcess *	tunnel_process;
 
@@ -335,7 +333,6 @@ ssh_ask_port_finished(GTerminalProcess * process, struct server * server)
 			G_CALLBACK(ssh_open_tunnel_finished), server);
 
 		server->state = SERVER_STATE_OPEN_TUNNEL;
-		server->tried_existant_pass = FALSE;
 		server->tunnel_port = 2125;
 		while (!g_tcp_server_is_local_port_available(server->tunnel_port))
 			++server->tunnel_port;
@@ -484,7 +481,6 @@ server_connect(struct server * server)
 	/* initiate the marathon to communicate to server */
 	server->error = SERVER_ERROR_NONE;
 	server->state = SERVER_STATE_ASK_PORT;
-	server->ssh_logged_in = FALSE;
 	server->tried_existant_pass = FALSE;
 	ask_server_port(server);
 }

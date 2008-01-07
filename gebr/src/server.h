@@ -35,7 +35,6 @@ struct server {
 	/* ssh stuff */
 	GString *		password;
 	gint16			tunnel_port;
-	gboolean		ssh_logged_in;
 	gboolean		tried_existant_pass;
 
 	enum server_state {
