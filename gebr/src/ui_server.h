@@ -34,41 +34,34 @@ enum {
 	SERVER_N_COLUMN
 };
 
-/*
- * Struct: ui_server_list
- *
- * (start code)
- *   struct ui_server_list {
- *                    GtkWidget *		dialog;
- *
- *                    GtkListStore *	store;
- *                    GtkWidget *		view;
- *   };
- * (end code)
-*/
-struct ui_server_list {
-	GtkWidget *		dialog;
+struct ui_server_common {
+	GtkWidget *			dialog;
 
-	GtkListStore *		store;
-	GtkWidget *		view;
+	GtkListStore *			store;
+	GtkWidget *			view;
+
+	GtkWidget *			add_local_button;
+};
+
+struct ui_server_list {
+	struct ui_server_common		common;
 };
 
 struct ui_server_list *
 server_list_setup_ui(void);
 
 void
+server_list_show(struct ui_server_list * ui_server_list);
+
+void
 server_list_updated_status(struct server * server);
 
 struct ui_server_select {
-	GtkWidget *		dialog;
+	struct ui_server_common		common;
 
-	struct server *		selected;
+	struct server *			selected;
 
-	/* same as gebr.ui_server_list.store */
-	GtkListStore *		store;
-	GtkWidget *		view;
-
-	GtkWidget *		ok_button;
+	GtkWidget *			ok_button;
 };
 
 struct server *

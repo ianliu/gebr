@@ -275,7 +275,7 @@ on_configure_preferences_activate(void)
 void
 on_configure_servers_activate(void)
 {
-	gtk_widget_show_all(gebr.ui_server_list->dialog);
+	server_list_show(gebr.ui_server_list);
 }
 
 /*
