@@ -144,9 +144,11 @@ geoxml_program_parameter_set_value(GeoXmlProgramParameter * program_parameter, c
 {
 	if (program_parameter == NULL || value == NULL)
 		return;
-	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) == GEOXML_PARAMETERTYPE_FLAG)
-		return;
-	__geoxml_set_tag_value((GdomeElement*)program_parameter, "value", value, __geoxml_create_TextNode);
+
+	gchar * tag_name = (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) != GEOXML_PARAMETERTYPE_FLAG)
+		? "value" : "state";
+
+	__geoxml_set_tag_value((GdomeElement*)program_parameter, tag_name, value, __geoxml_create_TextNode);
 }
 
 void
