@@ -17,6 +17,43 @@
 
 #include "utils.h"
 
+/*
+ * Internal functions
+ */
+
+gboolean
+__gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * event, GtkTreeViewPopupCallback callback)
+{
+	GtkMenu * menu;
+
+	if (!(event->type == GDK_BUTTON_PRESS  &&  event->button == 3))
+		return FALSE;
+
+	menu = callback(tree_view);
+	if (menu == NULL)
+		return;
+	gtk_menu_popup(menu, NULL, NULL, NULL, NULL,
+		event->button, gdk_event_get_time((GdkEvent*)event));
+
+	return TRUE;
+}
+
+void
+__gtk_tree_view_on_popup_menu(GtkTreeView * tree_view, GtkTreeViewPopupCallback callback)
+{
+	GtkMenu * menu;
+
+	menu = callback(tree_view);
+	if (menu == NULL)
+		return;
+	gtk_menu_popup(menu, NULL, NULL, NULL, NULL,
+		0, gdk_event_get_time(NULL));
+}
+
+/*
+ * Public functions
+ */
+
 gboolean
 gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter)
 {
@@ -73,4 +110,13 @@ gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter)
 	gtk_list_store_move_after(store, iter, &next);
 
 	return TRUE;
+}
+
+void
+gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkTreeViewPopupCallback callback)
+{
+	g_signal_connect(tree_view, "button-press-event",
+		(GCallback)__gtk_tree_view_on_button_pressed, callback);
+	g_signal_connect(tree_view, "popup-menu",
+		(GCallback)__gtk_tree_view_on_popup_menu, callback);
 }

@@ -32,4 +32,9 @@ gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter);
 gboolean
 gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter);
 
+typedef GtkMenu * (*GtkTreeViewPopupCallback)(GtkTreeView * tree_view);
+
+void
+gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkTreeViewPopupCallback callback);
+
 #endif //__LIBGEBR_GUI_UTILS_H
