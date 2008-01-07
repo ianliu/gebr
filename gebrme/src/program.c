@@ -166,7 +166,7 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
 	g_signal_connect ((gpointer) title_entry, "changed",
-		G_CALLBACK (program_summary_title_changed),
+		(GCallback)program_summary_title_changed,
 		program);
 	g_object_set(G_OBJECT(title_entry), "user-data", program_label, NULL);
 	program_title_str = (gchar*)geoxml_program_get_title(program);
@@ -188,7 +188,7 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
 	g_signal_connect ((gpointer) binary_entry, "changed",
-		G_CALLBACK (program_summary_binary_changed),
+		(GCallback)program_summary_binary_changed,
 		program);
 	gtk_entry_set_text(GTK_ENTRY(binary_entry), geoxml_program_get_binary(program));
 
@@ -205,7 +205,7 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
 	g_signal_connect ((gpointer) desc_entry, "changed",
-		G_CALLBACK (program_summary_desc_changed),
+		(GCallback)program_summary_desc_changed,
 		program);
 	gtk_entry_set_text(GTK_ENTRY(desc_entry), geoxml_program_get_description(program));
 

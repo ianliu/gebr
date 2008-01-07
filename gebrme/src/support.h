@@ -49,10 +49,10 @@ create_depth(GtkWidget * container);
 
 #define gtk_expander_hacked_define(expander, label_widget)			\
 	g_signal_connect_after ((gpointer) label_widget, "expose-event",	\
-			G_CALLBACK (gtk_expander_hacked_idle),			\
+			(GCallback)gtk_expander_hacked_idle,			\
 			expander);						\
 	g_signal_connect((gpointer) expander, "unmap",				\
-			G_CALLBACK (gtk_expander_hacked_visible),		\
+			(GCallback)gtk_expander_hacked_visible,		\
 			label_widget)
 
 void

@@ -17,6 +17,8 @@
 
 #include <gui/pixmaps.h>
 
+#include <gui/utils.h>
+
 #include "interface.h"
 #include "gebrme.h"
 #include "callbacks.h"
@@ -32,6 +34,7 @@ create_gebrme_window (void)
 	GtkWidget *		gebrme_window;
 	GtkWidget *		mainwindow_vbox;
 	GtkWidget *		menubar;
+	GtkWidget *		statusbar;
 
 	GtkWidget *		flow_menuitem;
 	GtkWidget *		flow_menuitem_menu;
@@ -84,13 +87,12 @@ create_gebrme_window (void)
 	GtkWidget *		email_label;
 	GtkWidget *		email_entry;
 
+	GtkWidget *		categories_hbox;
 	GtkWidget *		categories_combo;
 	GtkWidget *		categories_scrolledwindow;
 	GtkWidget *		categories_treeview;
 	GtkWidget *		categories_vbox;
-	GtkWidget *		categories_vbox2;
 	GtkWidget *		categories_label;
-	GtkWidget *		categories_toolbar;
 
 	GtkWidget *		programs_hbox;
 	GtkWidget *		programs_label;
@@ -98,7 +100,8 @@ create_gebrme_window (void)
 	GtkWidget *		programs_scrolledwindow;
 	GtkWidget *		programs_vbox;
 
-	GtkWidget *		statusbar;
+	GtkWidget *		widget;
+	GtkWidget *		button;
 
 	GtkWidget *		depth_hbox;
 	GtkAccelGroup *		accel_group;
@@ -114,10 +117,10 @@ create_gebrme_window (void)
 	gtk_window_set_title (GTK_WINDOW (gebrme_window), _("GêBR ME"));
 	gtk_widget_set_size_request (gebrme_window, 600, 500);
 
-	g_signal_connect ((gpointer) gebrme_window, "delete_event",
+	g_signal_connect(gebrme_window, "delete_event",
 			GTK_SIGNAL_FUNC (gebrme_quit),
 			NULL);
-	g_signal_connect ((gpointer) gebrme_window, "show",
+	g_signal_connect(gebrme_window, "show",
 			GTK_SIGNAL_FUNC (gebrme_init),
 			NULL);
 
@@ -207,32 +210,32 @@ create_gebrme_window (void)
 	toolbutton = gtk_tool_button_new_from_stock (GTK_STOCK_NEW);
 	gtk_toolbar_insert (GTK_TOOLBAR(toolbar), toolbutton, -1);
 	gtk_widget_show (GTK_WIDGET(toolbutton));
-	g_signal_connect ((gpointer) toolbutton, "clicked",
-			G_CALLBACK (menu_new),
+	g_signal_connect(toolbutton, "clicked",
+			(GCallback)menu_new,
 			NULL);
 	toolbutton = gtk_tool_button_new_from_stock (GTK_STOCK_OPEN);
 	gtk_toolbar_insert (GTK_TOOLBAR(toolbar), toolbutton, -1);
 	gtk_widget_show (GTK_WIDGET(toolbutton));
-	g_signal_connect ((gpointer) toolbutton, "clicked",
-			G_CALLBACK (on_open_activate),
+	g_signal_connect(toolbutton, "clicked",
+			(GCallback)on_open_activate,
 			NULL);
 	toolbutton = gtk_tool_button_new_from_stock (GTK_STOCK_SAVE);
 	gtk_toolbar_insert (GTK_TOOLBAR(toolbar), toolbutton, -1);
 	gtk_widget_show (GTK_WIDGET(toolbutton));
-	g_signal_connect ((gpointer) toolbutton, "clicked",
-			G_CALLBACK (on_save_activate),
+	g_signal_connect(toolbutton, "clicked",
+			(GCallback)on_save_activate,
 			NULL);
 	toolbutton = gtk_tool_button_new_from_stock (GTK_STOCK_SAVE_AS);
 	gtk_toolbar_insert (GTK_TOOLBAR(toolbar), toolbutton, -1);
 	gtk_widget_show (GTK_WIDGET(toolbutton));
-	g_signal_connect ((gpointer) toolbutton, "clicked",
-			G_CALLBACK (on_save_as_activate),
+	g_signal_connect(toolbutton, "clicked",
+			(GCallback)on_save_as_activate,
 			NULL);
 	toolbutton = gtk_tool_button_new_from_stock (GTK_STOCK_CLOSE);
 	gtk_toolbar_insert (GTK_TOOLBAR(toolbar), toolbutton, -1);
 	gtk_widget_show (GTK_WIDGET(toolbutton));
-	g_signal_connect ((gpointer) toolbutton, "clicked",
-			G_CALLBACK (on_close_activate),
+	g_signal_connect(toolbutton, "clicked",
+			(GCallback)on_close_activate,
 			NULL);
 
 	central_hbox = gtk_hbox_new (FALSE, 0);
@@ -271,8 +274,8 @@ create_gebrme_window (void)
 	col = gtk_tree_view_column_new_with_attributes ("", renderer, NULL);
 	gtk_tree_view_column_add_attribute (col, renderer, "text", MENU_FILENAME);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (menus_treeview), col);
-	g_signal_connect ((gpointer) menus_treeview, "cursor-changed",
-			  G_CALLBACK (menu_selected),
+	g_signal_connect(menus_treeview, "cursor-changed",
+			  (GCallback)menu_selected,
 			  NULL);
 
 	edition_scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
@@ -314,45 +317,45 @@ create_gebrme_window (void)
 	gebrme.title_entry = title_entry;
 	gtk_widget_show (title_entry);
 	gtk_table_attach(GTK_TABLE(summary_table), title_entry, 1, 2, 0, 1,
-			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-			(GtkAttachOptions) (0), 0, 0);
-	g_signal_connect ((gpointer) title_entry, "changed",
-			G_CALLBACK (summary_title_changed),
+			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
+	g_signal_connect(title_entry, "changed",
+			(GCallback)summary_title_changed,
 			NULL);
 
 	description_label = gtk_label_new (_("Description:"));
 	gtk_widget_show (description_label);
 	gtk_table_attach (GTK_TABLE (summary_table), description_label, 0, 1, 1, 2,
-			(GtkAttachOptions) (GTK_FILL),
-			(GtkAttachOptions) (0), 0, 0);
+			(GtkAttachOptions)(GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
 	gtk_misc_set_alignment (GTK_MISC (description_label), 0, 0.5);
 
 	description_entry = gtk_entry_new ();
 	gebrme.description_entry = description_entry;
 	gtk_widget_show (description_entry);
 	gtk_table_attach (GTK_TABLE (summary_table), description_entry, 1, 2, 1, 2,
-			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-			(GtkAttachOptions) (0), 0, 0);
-	g_signal_connect ((gpointer) description_entry, "changed",
-			G_CALLBACK (summary_description_changed),
+			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
+	g_signal_connect(description_entry, "changed",
+			(GCallback)summary_description_changed,
 			NULL);
 
 	menuhelp_label = gtk_label_new (_("Help"));
 	gtk_widget_show (menuhelp_label);
 	gtk_table_attach (GTK_TABLE (summary_table), menuhelp_label, 0, 1, 2, 3,
-			(GtkAttachOptions) (GTK_FILL),
-			(GtkAttachOptions) (0), 0, 0);
+			(GtkAttachOptions)(GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
 	gtk_misc_set_alignment (GTK_MISC (menuhelp_label), 0, 0.5);
 
 	menuhelp_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_widget_show(menuhelp_hbox);
 	gtk_table_attach (GTK_TABLE (summary_table), menuhelp_hbox, 1, 2, 2, 3,
-			(GtkAttachOptions) (GTK_FILL),
-			(GtkAttachOptions) (0), 0, 0);
+			(GtkAttachOptions)(GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
 	menuhelp_view_button = gtk_button_new_from_stock (GTK_STOCK_OPEN);
 	gtk_widget_show (menuhelp_view_button);
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_view_button, FALSE, FALSE, 0);
-	g_signal_connect ((gpointer) menuhelp_view_button, "clicked",
+	g_signal_connect(menuhelp_view_button, "clicked",
 			GTK_SIGNAL_FUNC (summary_help_view),
 			NULL);
 	g_object_set(G_OBJECT(menuhelp_view_button), "relief", GTK_RELIEF_NONE, NULL);
@@ -360,7 +363,7 @@ create_gebrme_window (void)
 	menuhelp_edit_button = gtk_button_new_from_stock (GTK_STOCK_EDIT);
 	gtk_widget_show (menuhelp_edit_button);
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_edit_button, FALSE, FALSE, 5);
-	g_signal_connect ((gpointer) menuhelp_edit_button, "clicked",
+	g_signal_connect(menuhelp_edit_button, "clicked",
 			GTK_SIGNAL_FUNC (summary_help_edit),
 			NULL);
 	g_object_set(G_OBJECT(menuhelp_edit_button), "relief", GTK_RELIEF_NONE, NULL);
@@ -368,47 +371,61 @@ create_gebrme_window (void)
 	author_label = gtk_label_new (_("Author:"));
 	gtk_widget_show (author_label);
 	gtk_table_attach (GTK_TABLE (summary_table), author_label, 0, 1, 3, 4,
-			(GtkAttachOptions) (GTK_FILL),
-			(GtkAttachOptions) (0), 0, 0);
+			(GtkAttachOptions)(GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
 	gtk_misc_set_alignment (GTK_MISC (author_label), 0, 0.5);
 
 	author_entry = gtk_entry_new ();
 	gebrme.author_entry = author_entry;
 	gtk_widget_show (author_entry);
 	gtk_table_attach (GTK_TABLE (summary_table), author_entry, 1, 2, 3, 4,
-			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-			(GtkAttachOptions) (0), 0, 0);
-	g_signal_connect ((gpointer) author_entry, "changed",
-			G_CALLBACK (summary_author_changed),
+			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
+	g_signal_connect(author_entry, "changed",
+			(GCallback)summary_author_changed,
 			NULL);
 
 	email_label = gtk_label_new (_("Email:"));
 	gtk_widget_show (email_label);
 	gtk_table_attach (GTK_TABLE (summary_table), email_label, 0, 1, 4, 5,
-			(GtkAttachOptions) (GTK_FILL),
-			(GtkAttachOptions) (0), 0, 0);
+			(GtkAttachOptions)(GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
 	gtk_misc_set_alignment (GTK_MISC (email_label), 0, 0.5);
 
 	email_entry = gtk_entry_new ();
 	gebrme.email_entry = email_entry;
 	gtk_widget_show (email_entry);
 	gtk_table_attach (GTK_TABLE (summary_table), email_entry, 1, 2, 4, 5,
-			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-			(GtkAttachOptions) (0), 0, 0);
-	g_signal_connect ((gpointer) email_entry, "changed",
-			G_CALLBACK (summary_email_changed),
+			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
+	g_signal_connect(email_entry, "changed",
+			(GCallback)summary_email_changed,
 			NULL);
 
-	categories_vbox2 = gtk_vbox_new(FALSE, 0);
-	gtk_table_attach (GTK_TABLE (summary_table), categories_vbox2, 1, 2, 5, 6,
-			(GtkAttachOptions) (GTK_FILL),
-			(GtkAttachOptions) (GTK_FILL), 0, 0);
-	gtk_widget_show(categories_vbox2);
+	categories_label = gtk_label_new(_("Categories:"));
+	gtk_widget_show(categories_label);
+	widget = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(widget);
+	gtk_box_pack_start(GTK_BOX(widget), categories_label, FALSE, FALSE, 0);
+	gtk_table_attach(GTK_TABLE(summary_table), widget, 0, 1, 5, 6,
+			(GtkAttachOptions)(GTK_FILL),
+			(GtkAttachOptions)(GTK_FILL), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(categories_label), 0, 0.5);
+
+	categories_vbox = gtk_vbox_new(FALSE, 0);
+	gtk_table_attach(GTK_TABLE(summary_table), categories_vbox, 1, 2, 5, 6,
+			(GtkAttachOptions)(GTK_FILL),
+			(GtkAttachOptions)(GTK_FILL), 0, 0);
+	gtk_widget_show(categories_vbox);
+
+	categories_hbox = gtk_hbox_new(FALSE, 8);
+	gtk_widget_show(categories_hbox);
+	gtk_box_pack_start(GTK_BOX(categories_vbox), categories_hbox, FALSE, FALSE, 0);
 
 	categories_combo = gtk_combo_box_entry_new_text();
 	gebrme.categories_combo = categories_combo;
 	gtk_widget_show(categories_combo);
-	gtk_box_pack_start(GTK_BOX(categories_vbox2), categories_combo, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(categories_hbox), categories_combo, TRUE, TRUE, 0);
 	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Data Compression");
 	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Editing, Sorting and Manipulation");
 	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Filtering, Transforms and Attributes");
@@ -421,10 +438,20 @@ create_gebrme_window (void)
 	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Seismic Unix");
 	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Simulation and Model Building");
 	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Utilities");
+	/* TODO: GtkComboBoxEntry doesn't have activate signal */
+// 	g_signal_connect(GTK_OBJECT(categories_combo), "activate",
+// 		GTK_SIGNAL_FUNC(category_add), NULL);
+
+	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	g_object_set(G_OBJECT(button), "relief", GTK_RELIEF_NONE, NULL);
+	gtk_widget_show(button);
+	gtk_box_pack_start(GTK_BOX(categories_hbox), button, FALSE, FALSE, 5);
+	g_signal_connect(button, "clicked",
+		GTK_SIGNAL_FUNC(category_add), NULL);
 
 	categories_scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
 	gtk_widget_show (categories_scrolledwindow);
-	gtk_box_pack_start(GTK_BOX(categories_vbox2), categories_scrolledwindow, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(categories_vbox), categories_scrolledwindow, FALSE, FALSE, 0);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (categories_scrolledwindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (categories_scrolledwindow), GTK_SHADOW_IN);
 
@@ -435,6 +462,8 @@ create_gebrme_window (void)
 	gebrme.categories_treeview = categories_treeview;
 	gtk_widget_show (categories_treeview);
 	gtk_container_add (GTK_CONTAINER (categories_scrolledwindow), categories_treeview);
+	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(categories_treeview),
+		(GtkTreeViewPopupCallback)category_popup_menu);
 
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW(categories_treeview), FALSE);
 	renderer = gtk_cell_renderer_text_new ();
@@ -443,41 +472,8 @@ create_gebrme_window (void)
 	gtk_tree_view_append_column (GTK_TREE_VIEW (categories_treeview), col);
 
 	g_object_set (renderer, "editable", TRUE, NULL);
-	g_signal_connect ((gpointer) renderer, "edited",
-			G_CALLBACK (category_renamed),
-			NULL);
-
-	categories_vbox = gtk_vbox_new (FALSE, 8);
-	gtk_widget_show (categories_vbox);
-	gtk_table_attach (GTK_TABLE (summary_table), categories_vbox, 0, 1, 5, 6,
-			(GtkAttachOptions) (GTK_FILL),
-			(GtkAttachOptions) (GTK_FILL), 0, 0);
-
-	categories_label = gtk_label_new (_("Categories:"));
-	gtk_widget_show (categories_label);
-	gtk_box_pack_start (GTK_BOX (categories_vbox), categories_label, FALSE, FALSE, 0);
-	gtk_misc_set_alignment (GTK_MISC (categories_label), 0, 0.5);
-
-	categories_toolbar = gtk_toolbar_new ();
-	gebrme.categories_toolbar = categories_toolbar;
-	gtk_widget_show (categories_toolbar);
-	gtk_box_pack_start (GTK_BOX (categories_vbox), categories_toolbar, FALSE, FALSE, 0);
-	gtk_toolbar_set_style (GTK_TOOLBAR (categories_toolbar), GTK_TOOLBAR_ICONS);
-	tmp_toolbar_icon_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (categories_toolbar));
-
-	toolbutton = gtk_tool_button_new_from_stock (GTK_STOCK_ADD);
-	gtk_toolbar_insert (GTK_TOOLBAR(categories_toolbar), toolbutton, -1);
-	gtk_widget_show (GTK_WIDGET(toolbutton));
-	g_signal_connect ((gpointer) toolbutton, "clicked",
-			G_CALLBACK (category_add),
-			NULL);
-
-	toolbutton = gtk_tool_button_new_from_stock (GTK_STOCK_REMOVE);
-	gtk_toolbar_insert (GTK_TOOLBAR(categories_toolbar), toolbutton, -1);
-	gtk_widget_show (GTK_WIDGET(toolbutton));
-	g_signal_connect ((gpointer) toolbutton, "clicked",
-			G_CALLBACK (category_remove),
-			NULL);
+	g_signal_connect(renderer, "edited",
+			(GCallback)category_renamed, NULL);
 
 	/* Programs label and add button */
 	programs_hbox = gtk_hbox_new (FALSE, 0);
@@ -491,8 +487,8 @@ create_gebrme_window (void)
 	programs_add_button = gtk_button_new_from_stock (GTK_STOCK_ADD);
 	gtk_box_pack_start(GTK_BOX(programs_hbox), programs_add_button, FALSE, FALSE, 10);
 	gtk_widget_show (GTK_WIDGET(programs_add_button));
-	g_signal_connect ((gpointer) programs_add_button, "clicked",
-			G_CALLBACK (program_add),
+	g_signal_connect(programs_add_button, "clicked",
+			(GCallback)program_add,
 			NULL);
 	g_object_set(G_OBJECT(programs_add_button), "relief", GTK_RELIEF_NONE, NULL);
 
@@ -515,46 +511,46 @@ create_gebrme_window (void)
 	gtk_widget_show (statusbar);
 	gtk_box_pack_start (GTK_BOX (mainwindow_vbox), statusbar, FALSE, FALSE, 0);
 
-	g_signal_connect ((gpointer) new_menuitem, "activate",
-			G_CALLBACK (on_new_activate),
+	g_signal_connect(new_menuitem, "activate",
+			(GCallback)on_new_activate,
 			NULL);
-	g_signal_connect ((gpointer) open_menuitem, "activate",
-			G_CALLBACK (on_open_activate),
+	g_signal_connect(open_menuitem, "activate",
+			(GCallback)on_open_activate,
 			NULL);
-	g_signal_connect ((gpointer) save_menuitem, "activate",
-			G_CALLBACK (on_save_activate),
+	g_signal_connect(save_menuitem, "activate",
+			(GCallback)on_save_activate,
 			NULL);
-	g_signal_connect ((gpointer) save_as_menuitem, "activate",
-			G_CALLBACK (on_save_as_activate),
+	g_signal_connect(save_as_menuitem, "activate",
+			(GCallback)on_save_as_activate,
 			NULL);
-	g_signal_connect ((gpointer) delete_menuitem, "activate",
-			G_CALLBACK (on_delete_activate),
+	g_signal_connect(delete_menuitem, "activate",
+			(GCallback)on_delete_activate,
 			NULL);
-	g_signal_connect ((gpointer) close_menuitem, "activate",
-			G_CALLBACK (on_close_activate),
+	g_signal_connect(close_menuitem, "activate",
+			(GCallback)on_close_activate,
 			NULL);
-	g_signal_connect ((gpointer) quit_menuitem, "activate",
-			G_CALLBACK (gebrme_quit),
+	g_signal_connect(quit_menuitem, "activate",
+			(GCallback)gebrme_quit,
 			NULL);
-/*	g_signal_connect ((gpointer) cut_menuitem, "activate",
-			G_CALLBACK (on_cut_activate),
+/*	g_signal_connect(cut_menuitem, "activate",
+			(GCallback)on_cut_activate,
 			NULL);
-	g_signal_connect ((gpointer) copy_menuitem, "activate",
-			G_CALLBACK (on_copy_activate),
+	g_signal_connect(copy_menuitem, "activate",
+			(GCallback)on_copy_activate,
 			NULL);
-	g_signal_connect ((gpointer) paste_menuitem, "activate",
-			G_CALLBACK (on_paste_activate),
+	g_signal_connect(paste_menuitem, "activate",
+			(GCallback)on_paste_activate,
 			NULL);*/
-	g_signal_connect ((gpointer) preferences_menuitem, "activate",
-			G_CALLBACK (on_preferences_activate),
+	g_signal_connect(preferences_menuitem, "activate",
+			(GCallback)on_preferences_activate,
 			NULL);
-	g_signal_connect ((gpointer) about_menuitem, "activate",
-			G_CALLBACK (on_about_activate),
+	g_signal_connect(about_menuitem, "activate",
+			(GCallback)on_about_activate,
 			NULL);
 
 	gtk_window_add_accel_group (GTK_WINDOW (gebrme_window), accel_group);
-	g_signal_connect ((gpointer) gebrme_window, "destroy_event",
-			G_CALLBACK (gebrme_quit),
+	g_signal_connect(gebrme_window, "destroy_event",
+			(GCallback)gebrme_quit,
 			NULL);
 
 	return gebrme_window;

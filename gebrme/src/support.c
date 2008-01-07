@@ -40,7 +40,7 @@ gtk_expander_hacked_visible(GtkWidget * expander, GtkWidget * label_widget)
 	g_signal_handlers_unblock_matched(G_OBJECT(label_widget),
 					G_SIGNAL_MATCH_FUNC,
 					0, 0, NULL,
-					G_CALLBACK (gtk_expander_hacked_idle),
+					(GCallback)gtk_expander_hacked_idle,
 					NULL);
 }
 
@@ -50,7 +50,7 @@ gtk_expander_hacked_idle(GtkWidget * label_widget, GdkEventExpose *event, GtkWid
 	g_signal_handlers_block_matched(G_OBJECT(label_widget),
 					G_SIGNAL_MATCH_FUNC,
 					0, 0, NULL,
-					G_CALLBACK (gtk_expander_hacked_idle),
+					(GCallback)gtk_expander_hacked_idle,
 					NULL);
 	g_object_ref (G_OBJECT (label_widget));
 	gtk_expander_set_label_widget (GTK_EXPANDER (expander), NULL);
