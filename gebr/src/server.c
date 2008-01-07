@@ -68,7 +68,7 @@ local_ask_port_read(GProcess * process, struct server * server)
 	port = strtol(output->str, &strtol_endptr, 10);
 	if (errno != ERANGE) {
 		server->port = port;
-		gebr_message(DEBUG, FALSE, TRUE, "ssh_ask_port_read: %d", port, server->port);
+		gebr_message(DEBUG, FALSE, TRUE, "local_ask_port_read: %d", port, server->port);
 	}
 
 	g_string_free(output, TRUE);

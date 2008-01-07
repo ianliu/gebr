@@ -198,7 +198,8 @@ server_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * ui_serve
 		gebr_config_save();
 		break;
 	case GEBR_SERVER_ADD_LOCAL:
-		server_common_add(ui_server_common, "127.0.0.1");
+		server_new("127.0.0.1");
+		server_common_check_for_local(ui_server_common);
 		break;
 	case GEBR_SERVER_REMOVE: { /* For server list */
 		GtkTreeSelection *	selection;
