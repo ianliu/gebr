@@ -56,10 +56,6 @@ struct _GProcess {
 struct _GProcessClass {
 	GObjectClass		parent;
 
-	/* virtual */
-	void			(*connected)(GProcess * self);
-	void			(*disconnected)(GProcess * self);
-	void			(*new_connection)(GProcess * self);
 	/* signals */
 	void			(*ready_read_stdout)(GProcess * self);
 	void			(*ready_read_stderr)(GProcess * self);

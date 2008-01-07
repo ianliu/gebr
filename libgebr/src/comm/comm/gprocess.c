@@ -50,27 +50,22 @@ static guint object_signals[LAST_SIGNAL];
 static void
 g_process_class_init(GProcessClass * class)
 {
-	/* virtual */
-	class->connected = NULL;
-	class->disconnected = NULL;
-	class->new_connection = NULL;
-
 	/* signals */
-	object_signals[READY_READ_STDOUT] = g_signal_new ("ready-read-stdout",
+	object_signals[READY_READ_STDOUT] = g_signal_new("ready-read-stdout",
 		G_PROCESS_TYPE,
 		(GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
 		G_STRUCT_OFFSET (GProcessClass, ready_read_stdout),
 		NULL, NULL, /* acumulators */
 		g_cclosure_marshal_VOID__VOID,
 		G_TYPE_NONE, 0);
-	object_signals[READY_READ_STDERR] = g_signal_new ("ready-read-stderr",
+	object_signals[READY_READ_STDERR] = g_signal_new("ready-read-stderr",
 		G_PROCESS_TYPE,
 		(GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
 		G_STRUCT_OFFSET (GProcessClass, ready_read_stderr),
 		NULL, NULL, /* acumulators */
 		g_cclosure_marshal_VOID__VOID,
 		G_TYPE_NONE, 0);
-	object_signals[FINISHED] = g_signal_new ("finished",
+	object_signals[FINISHED] = g_signal_new("finished",
 		G_PROCESS_TYPE,
 		(GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
 		G_STRUCT_OFFSET (GProcessClass, finished),
@@ -125,8 +120,8 @@ __g_process_free_and_stop_state(GProcess * process)
 static gboolean
 __g_process_read_stdout_watch(GIOChannel * source, GIOCondition condition, GProcess * process)
 {
-        if (g_process_stdout_bytes_available(process) && (condition & G_IO_HUP))
-   	        g_signal_emit(process, object_signals[READY_READ_STDOUT], 0);
+	if (g_process_stdout_bytes_available(process) && (condition & G_IO_HUP))
+		g_signal_emit(process, object_signals[READY_READ_STDOUT], 0);
 
 	if (condition & G_IO_NVAL) {
 		/* probably a fd change */
@@ -150,7 +145,7 @@ __g_process_read_stdout_watch(GIOChannel * source, GIOCondition condition, GProc
 static gboolean
 __g_process_read_stderr_watch(GIOChannel * source, GIOCondition condition, GProcess * process)
 {
-        if (g_process_stderr_bytes_available(process) && (condition & G_IO_HUP))
+	if (g_process_stderr_bytes_available(process) && (condition & G_IO_HUP))
 	        g_signal_emit(process, object_signals[READY_READ_STDERR], 0);
 
 	if (condition & G_IO_NVAL) {
@@ -163,7 +158,7 @@ __g_process_read_stderr_watch(GIOChannel * source, GIOCondition condition, GProc
 	}
 	if (condition & G_IO_HUP) {
 		/* TODO: */
-		/* FIXME: */
+		/* FIXME: use g_child_add_watch */
 		__g_process_free_and_stop_state(process);
 		g_signal_emit(process, object_signals[FINISHED], 0);
 		return FALSE;
@@ -247,7 +242,7 @@ g_process_new(void)
 void
 g_process_free(GProcess * process)
 {
-	if (process->is_running) {
+	if (process->stdin_io_channel != NULL) {
 		g_process_kill(process);
 		__g_process_free(process);
 	}
@@ -326,6 +321,8 @@ g_process_get_pid(GProcess * process)
 void
 g_process_kill(GProcess * process)
 {
+	if (!process->pid)
+		return;
 	kill(-process->pid, SIGKILL);
 	g_spawn_close_pid(process->pid);
 }
@@ -333,6 +330,8 @@ g_process_kill(GProcess * process)
 void
 g_process_terminate(GProcess * process)
 {
+	if (!process->pid)
+		return;
 	kill(-process->pid, SIGTERM);
 	g_spawn_close_pid(process->pid);
 }

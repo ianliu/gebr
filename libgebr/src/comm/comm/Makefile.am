@@ -17,19 +17,19 @@
 lib_LTLIBRARIES = libgebr_comm.la
 libgebr_comm_la_SOURCES = \
 	ghostaddress.c ghostinfo.c gsocket.c gtcpsocket.c gtcpserver.c \
-	gprocess.c \
-	protocol.c ssh.c
+	gprocess.c gterminalprocess.c \
+	protocol.c
 
 libgebr_commsubincludedir = $(includedir)/libgebr/comm
 libgebr_commsubinclude_HEADERS = \
 	ghostaddress.h ghostinfo.h gsocket.h gtcpsocket.h gtcpserver.h \
-	gprocess.h \
-	protocol.h ssh.h
+	gprocess.h gterminalprocess.h \
+	protocol.h
 noinst_HEADERS = \
 	gsocketprivate.h gtcpsocketprivate.h
 EXTRA_DIST = ${noinst_HEADERS}
 
 INCLUDES =
 AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(GTHREAD_CFLAGS)
-libgebr_comm_la_LIBADD = $(GLIB_LIBS) $(GOBJECT_LIBS) $(GTHREAD_LIBS)
+libgebr_comm_la_LIBADD = -lutil $(GLIB_LIBS) $(GOBJECT_LIBS) $(GTHREAD_LIBS)
 libgebr_comm_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@
