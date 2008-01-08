@@ -311,7 +311,7 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 
 	gdome_di_saveDocToMemoryEnc(dom_implementation, tmp_doc,
 		&xml, ENCODING, GDOME_SAVE_STANDARD, &exception);
-	doc = xmlCtxtReadMemory(ctxt, xml, strlen(xml), (char *)g_get_current_dir(), NULL,
+	doc = xmlCtxtReadMemory(ctxt, xml, strlen(xml), NULL, NULL,
 		XML_PARSE_NOBLANKS |
 		XML_PARSE_DTDATTR |  /* default DTD attributes */
 		XML_PARSE_NOENT |    /* substitute entities */
