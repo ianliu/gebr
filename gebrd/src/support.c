@@ -43,16 +43,3 @@ random_number(void)
 	generate_seed();
 	return rand();
 }
-
-void
-assign_current_date(GString * date)
-{
-	GTimeVal	time_val;
-	gchar *		iso_date;
-
-	g_get_current_time(&time_val);
-	iso_date = g_time_val_to_iso8601(&time_val);
-	g_string_assign(date, iso_date);
-
-	g_free(iso_date);
-}

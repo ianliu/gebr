@@ -30,6 +30,7 @@
 #include <geoxml.h>
 #include <comm.h>
 #include <gui/utils.h>
+#include <misc/date.h>
 
 #include "flow.h"
 #include "gebr.h"
@@ -328,9 +329,7 @@ out:	g_free(title);
 void
 flow_run(void)
 {
-	GTimeVal                current;
-	gchar*                  date;
-	GString *	        path;
+	GString *		path;
 
 	struct server *		server;
 
@@ -352,10 +351,7 @@ flow_run(void)
 	server_run_flow(server);
 
 	/* get today's date */
-	g_get_current_time(&current);
-	date = g_time_val_to_iso8601(&current);
-	geoxml_flow_set_date_last_run(gebr.flow, date);
-	g_free(date);
+	geoxml_flow_set_date_last_run(gebr.flow, iso_date());
 
 	/* TODO: check save */
 	/* Saving manualy to preserve modified date */

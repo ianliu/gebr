@@ -23,6 +23,7 @@
 #include <comm/gtcpsocket.h>
 #include <comm/ghostaddress.h>
 #include <misc/utils.h>
+#include <misc/date.h>
 
 #include "job.h"
 #include "gebrd.h"
@@ -169,7 +170,7 @@ job_process_finished(GProcess * process, struct job * job)
 	GList *	link;
 
 	/* set the finish date */
-	assign_current_date(job->finish_date);
+	g_string_assign(job->finish_date, iso_date());
 
 	/* what make it quit? */
 	g_string_assign(job->status, (job->user_finished == FALSE) ? "finished" : "canceled");
@@ -409,7 +410,7 @@ out:
 	g_string_assign(job->hostname, client->protocol->hostname->str);
 	g_string_assign(job->title, geoxml_document_get_title(document));
 	/* set the start date */
-	assign_current_date(job->start_date);
+	g_string_assign(job->start_date, iso_date());
 
 	return success;
 }

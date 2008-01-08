@@ -23,6 +23,7 @@
 #include <glib/gstdio.h>
 
 #include <misc/utils.h>
+#include <misc/date.h>
 
 #include "document.h"
 #include "gebr.h"
@@ -44,9 +45,6 @@ document_new(enum GEOXML_DOCUMENT_TYPE type)
 
 	GeoXmlDocument *	document;
 	GeoXmlDocument *	(*new_func)();
-
-	GTimeVal		current;
-	gchar *			date;
 
 	switch (type) {
 	case GEOXML_DOCUMENT_TYPE_FLOW:
@@ -74,10 +72,7 @@ document_new(enum GEOXML_DOCUMENT_TYPE type)
 	g_string_free(filename, TRUE);
 
 	/* get today's date */
-	g_get_current_time(&current);
-	date = g_time_val_to_iso8601(&current);
-	geoxml_document_set_date_created(document, date);
-	g_free(date);
+	geoxml_document_set_date_created(document, iso_date());
 
 	return document;
 }
@@ -161,16 +156,10 @@ document_free(void)
 void
 document_save(GeoXmlDocument * document)
 {
-	GTimeVal                current;
-	gchar*                  date;
-
 	GString *	path;
 
 	/* get today's date */
-	g_get_current_time(&current);
-	date = g_time_val_to_iso8601(&current);
-	geoxml_document_set_date_modified(document, date);
-	g_free(date);
+	geoxml_document_set_date_modified(document, iso_date());
 
 	/* TODO: check save */
 	path = document_get_path(geoxml_document_get_filename(document));

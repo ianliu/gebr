@@ -47,7 +47,4 @@
 int
 random_number(void);
 
-void
-assign_current_date(GString * date);
-
 #endif //__SUPPORT_H
