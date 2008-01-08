@@ -99,6 +99,7 @@ __gtk_file_entry_browse_button_clicked(GtkButton * button, GtkFileEntry * file_e
 		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		NULL);
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
 
 	switch (gtk_dialog_run(GTK_DIALOG(chooser_dialog))) {
 	case GTK_RESPONSE_OK:
