@@ -21,8 +21,34 @@
  * Internal functions
  */
 
+struct popup_callback {
+	GtkPopupCallback	callback;
+	gpointer		user_data;
+};
+
+static void
+__popup_callback_weak_notify(struct popup_callback * popup_callback, GtkObject * object)
+{
+	g_free(popup_callback);
+}
+
+static struct popup_callback *
+__popup_callback_init(GObject * object, GtkPopupCallback callback, gpointer user_data)
+{
+	struct popup_callback *	popup_callback;
+
+	popup_callback = g_malloc(sizeof(struct popup_callback));
+	*popup_callback = (struct popup_callback){
+		.callback = callback,
+		.user_data = user_data
+	};
+	g_object_weak_ref(object, (GWeakNotify)__popup_callback_weak_notify, popup_callback);
+
+	return popup_callback;
+}
+
 static gboolean
-__gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * event, GtkPopupCallback callback)
+__gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * event, struct popup_callback * popup_callback)
 {
 	GtkMenu *		menu;
 	GtkTreeSelection *	selection;
@@ -43,7 +69,7 @@ __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * even
 		}
 	}
 
-	menu = callback(GTK_WIDGET(tree_view));
+	menu = popup_callback->callback(GTK_WIDGET(tree_view), popup_callback->user_data);
 	if (menu == NULL)
 		return TRUE;
 	gtk_menu_popup(menu, NULL, NULL, NULL, NULL,
@@ -53,14 +79,14 @@ __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * even
 }
 
 static gboolean
-__gtk_widget_on_button_pressed(GtkWidget * widget, GdkEventButton * event, GtkPopupCallback callback)
+__gtk_widget_on_button_pressed(GtkWidget * widget, GdkEventButton * event, struct popup_callback * popup_callback)
 {
 	GtkMenu *		menu;
 
 	if (!(event->type == GDK_BUTTON_PRESS && event->button == 3))
 		return FALSE;
 
-	menu = callback(widget);
+	menu = popup_callback->callback(widget, popup_callback->user_data);
 	if (menu == NULL)
 		return TRUE;
 	gtk_menu_popup(menu, NULL, NULL, NULL, NULL,
@@ -70,11 +96,11 @@ __gtk_widget_on_button_pressed(GtkWidget * widget, GdkEventButton * event, GtkPo
 }
 
 static void
-__gtk_widget_on_popup_menu(GtkWidget * tree_view, GtkPopupCallback callback)
+__gtk_widget_on_popup_menu(GtkWidget * widget, struct popup_callback * popup_callback)
 {
 	GtkMenu *	menu;
 
-	menu = callback(tree_view);
+	menu = popup_callback->callback(widget, popup_callback->user_data);
 	if (menu == NULL)
 		return;
 	gtk_menu_popup(menu, NULL, NULL, NULL, NULL,
@@ -144,19 +170,25 @@ gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter)
 }
 
 void
-gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback)
+gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback, gpointer user_data)
 {
+	struct popup_callback *	popup_callback;
+
+	popup_callback = __popup_callback_init(G_OBJECT(tree_view), callback, user_data);
 	g_signal_connect(tree_view, "button-press-event",
-		(GCallback)__gtk_tree_view_on_button_pressed, callback);
+		(GCallback)__gtk_tree_view_on_button_pressed, popup_callback);
 	g_signal_connect(tree_view, "popup-menu",
-		(GCallback)__gtk_widget_on_popup_menu, callback);
+		(GCallback)__gtk_widget_on_popup_menu, popup_callback);
 }
 
 void
-gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback)
+gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpointer user_data)
 {
+	struct popup_callback *	popup_callback;
+
+	popup_callback = __popup_callback_init(G_OBJECT(widget), callback, user_data);
 	g_signal_connect(widget, "button-press-event",
-		(GCallback)__gtk_widget_on_button_pressed, callback);
+		(GCallback)__gtk_widget_on_button_pressed, popup_callback);
 	g_signal_connect(widget, "popup-menu",
-		(GCallback)__gtk_widget_on_popup_menu, callback);
+		(GCallback)__gtk_widget_on_popup_menu, popup_callback);
 }
