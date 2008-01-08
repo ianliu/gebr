@@ -67,5 +67,5 @@ AC_SUBST(LIBGEBR_MISC_LIBS)
 AC_OUTPUT([
 debian/changelog
 rpm/gebrd.fedora.spec rpm/gebrd.opensuse.spec rpm/gebrd.mandriva.spec
-Makefile src/Makefile test/Makefile
+Makefile src/Makefile
 ])
