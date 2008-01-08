@@ -32,6 +32,7 @@
 #include <geoxml.h>
 
 #include "menu.h"
+#include "defines.h"
 #include "gebr.h"
 #include "support.h"
 #include "document.h"
@@ -92,7 +93,7 @@ menu_get_path(const gchar * filename)
 
 	/* system directory */
 	path = g_string_new(NULL);
-	g_string_printf(path, "%s/%s", SYS_MENUS_DIR, filename);
+	g_string_printf(path, "%s/%s", GEBR_SYS_MENUS_DIR, filename);
 	if (g_access((path)->str, F_OK) == 0)
 		goto out;
 
@@ -225,7 +226,7 @@ menu_list_create_index(void)
 		ret = FALSE;
 		goto out;
 	}
-	menu_scan_directory(SYS_MENUS_DIR, index_fp);
+	menu_scan_directory(GEBR_SYS_MENUS_DIR, index_fp);
 	menu_scan_directory(gebr.config.usermenus->str, index_fp);
 	fclose(index_fp);
 

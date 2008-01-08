@@ -23,7 +23,7 @@ libgebr_geoxml_la_SOURCES = \
 
 libgebr_geoxmlsubincludedir=$(includedir)/libgebr/geoxml
 libgebr_geoxmlsubinclude_HEADERS = \
-	error.h macros.h sequence.h value_sequence.h \
+	defines.h error.h macros.h sequence.h value_sequence.h \
 	category.h program.h \
 	parameters.h parameter.h program_parameter.h parameter_group.h \
 	document.h flow.h line.h project.h
@@ -33,13 +33,7 @@ noinst_HEADERS = \
 	types.h
 EXTRA_DIST = ${noinst_HEADERS}
 
-INCLUDES = -DGEOXML_DTDDIR=\"$(datadir)/libgebr/geoxml\" \
-	-DFLOW_VERSION=\"@FLOW_VERSION@\"                \
-	-DLINE_VERSION=\"@LINE_VERSION@\"                \
-	-DPROJECT_VERSION=\"@PROJECT_VERSION@\"          \
-	-DDOCUMENT_VERSION=\"@DOCUMENT_VERSION@\"
-
-
+INCLUDES =
 AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
 libgebr_geoxml_la_LIBADD = $(GLIB_LIBS) $(GDOME2_LIBS)
 libgebr_geoxml_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@

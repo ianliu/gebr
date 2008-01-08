@@ -1,5 +1,5 @@
-# GÃªBR ME - GÃªBR Menu Editor
-# Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
+# GêBR ME - GêBR Menu Editor
+# Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,12 +40,8 @@ noinst_HEADERS =	interface.h \
 			preferences.h \
 			support.h
 
-GEBRME_PIXMAPS_DIR = $(datadir)/gebrme/pixmaps/
-
 EXTRA_DIST = $(noinst_HEADERS)
 INCLUDES = \
-	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
-	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" \
-	-DDATA_DIR=\"$(datadir)/gebrme/\"
+	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
 AM_CFLAGS = -Wall $(GTK_CFLAGS) $(LIBGEBR_GEOXML_CFLAGS) $(LIBGEBR_GUI_CFLAGS) $(LIBGEBR_MISC_CFLAGS)
 gebrme_LDADD = $(INTLLIBS) $(GTK_LIBS) $(LIBGEBR_GEOXML_LIBS) $(LIBGEBR_GUI_LIBS) $(LIBGEBR_MISC_LIBS)

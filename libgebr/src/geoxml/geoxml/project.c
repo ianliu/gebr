@@ -20,6 +20,7 @@
 #include "project.h"
 #include "document.h"
 #include "document_p.h"
+#include "defines.h"
 #include "error.h"
 #include "xml.h"
 #include "types.h"
@@ -43,7 +44,7 @@ struct geoxml_project_line {
 GeoXmlProject *
 geoxml_project_new()
 {
-	GeoXmlDocument * document = geoxml_document_new("project", PROJECT_VERSION);
+	GeoXmlDocument * document = geoxml_document_new("project", GEOXML_PROJECT_VERSION);
 	return GEOXML_PROJECT(document);
 }
 

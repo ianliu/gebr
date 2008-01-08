@@ -21,6 +21,7 @@
 #include "document.h"
 #include "document_p.h"
 #include "program.h"
+#include "defines.h"
 #include "xml.h"
 #include "error.h"
 #include "types.h"
@@ -43,7 +44,7 @@ geoxml_flow_new()
 	GeoXmlDocument *	document;
 	GdomeElement *		element;
 
-	document = geoxml_document_new("flow", FLOW_VERSION);
+	document = geoxml_document_new("flow", GEOXML_FLOW_VERSION);
 
 	element = __geoxml_insert_new_element(geoxml_document_root_element(document), "io", NULL);
 	__geoxml_insert_new_element(element, "input", NULL);

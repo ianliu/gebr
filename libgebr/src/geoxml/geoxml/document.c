@@ -23,6 +23,7 @@
 
 #include "document.h"
 #include "document_p.h"
+#include "defines.h"
 #include "xml.h"
 #include "types.h"
 #include "error.h"
@@ -289,7 +290,7 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 	root_element = geoxml_document_root_element(document);
 
 	/* find DTD */
-	g_string_printf(dtd_filename, "%s/%s-%s.dtd", GEOXML_DTDDIR,
+	g_string_printf(dtd_filename, "%s/%s-%s.dtd", GEOXML_DTD_DIR,
 		gdome_el_nodeName(root_element, &exception)->str,
 		geoxml_document_get_version((GeoXmlDocument*)document));
 	if (g_file_test(dtd_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == FALSE
@@ -336,11 +337,11 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 	/* success, now change to last version */
 	version = (gchar*)geoxml_document_get_version((GeoXmlDocument*)document);
 	/* 0.1.x to 0.2.0 */
-	if (g_ascii_strcasecmp(version, DOCUMENT_VERSION) < 0) {
+	if (g_ascii_strcasecmp(version, "0.2.0") < 0) {
 		GdomeElement *		element;
 		GdomeElement *		before;
 
-		__geoxml_set_attr_value(root_element, "version", DOCUMENT_VERSION);
+		__geoxml_set_attr_value(root_element, "version", "0.2.0");
 
 		before = __geoxml_get_first_element(root_element, "email");
 		before = __geoxml_next_element(before);

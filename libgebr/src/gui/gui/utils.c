@@ -26,23 +26,30 @@
 struct popup_callback {
 	GtkPopupCallback	callback;
 	gpointer		user_data;
+
+	GtkWidget *		event_box;
+	GtkWidget *		widget;
 };
 
 static void
 __popup_callback_weak_notify(struct popup_callback * popup_callback, GtkObject * object)
 {
+	if (popup_callback->event_box != NULL)
+		gtk_widget_destroy(popup_callback->event_box);
 	g_free(popup_callback);
 }
 
 static struct popup_callback *
-__popup_callback_init(GObject * object, GtkPopupCallback callback, gpointer user_data)
+__popup_callback_init(GObject * object, GtkPopupCallback callback, gpointer user_data, GtkWidget * event_box)
 {
 	struct popup_callback *	popup_callback;
 
 	popup_callback = g_malloc(sizeof(struct popup_callback));
 	*popup_callback = (struct popup_callback){
 		.callback = callback,
-		.user_data = user_data
+		.user_data = user_data,
+		.event_box = event_box,
+		.widget = GTK_WIDGET(object)
 	};
 	g_object_weak_ref(object, (GWeakNotify)__popup_callback_weak_notify, popup_callback);
 
@@ -88,7 +95,7 @@ __gtk_widget_on_button_pressed(GtkWidget * widget, GdkEventButton * event, struc
 	if (!(event->type == GDK_BUTTON_PRESS && event->button == 3))
 		return FALSE;
 
-	menu = popup_callback->callback(widget, popup_callback->user_data);
+	menu = popup_callback->callback(popup_callback->widget, popup_callback->user_data);
 	if (menu == NULL)
 		return TRUE;
 	gtk_menu_popup(menu, NULL, NULL, NULL, NULL,
@@ -176,7 +183,7 @@ gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callb
 {
 	struct popup_callback *	popup_callback;
 
-	popup_callback = __popup_callback_init(G_OBJECT(tree_view), callback, user_data);
+	popup_callback = __popup_callback_init(G_OBJECT(tree_view), callback, user_data, NULL);
 	g_signal_connect(tree_view, "button-press-event",
 		(GCallback)__gtk_tree_view_on_button_pressed, popup_callback);
 	g_signal_connect(tree_view, "popup-menu",
@@ -188,9 +195,23 @@ gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpo
 {
 	struct popup_callback *	popup_callback;
 
-	popup_callback = __popup_callback_init(G_OBJECT(widget), callback, user_data);
-	g_signal_connect(widget, "button-press-event",
-		(GCallback)__gtk_widget_on_button_pressed, popup_callback);
+// 	if (GTK_WIDGET_FLAGS(widget) & GTK_NO_WINDOW) {
+// 		GtkWidget *	event_box;
+//
+// 		event_box = gtk_event_box_new();
+// 		gtk_widget_show(event_box);
+// 		gtk_container_add(GTK_CONTAINER(event_box), widget);
+// 		gtk_event_box_set_above_child(GTK_EVENT_BOX(event_box), TRUE);
+// puts("eve");
+// 		popup_callback = __popup_callback_init(G_OBJECT(widget), callback, user_data, event_box);
+// 		g_signal_connect(event_box, "button-press-event",
+// 			(GCallback)__gtk_widget_on_button_pressed, popup_callback);
+// 	} else {
+		popup_callback = __popup_callback_init(G_OBJECT(widget), callback, user_data, NULL);
+		g_signal_connect(widget, "button-press-event",
+			(GCallback)__gtk_widget_on_button_pressed, popup_callback);
+// 	}
+
 	g_signal_connect(widget, "popup-menu",
 		(GCallback)__gtk_widget_on_popup_menu, popup_callback);
 }

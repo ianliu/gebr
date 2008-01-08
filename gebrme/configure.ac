@@ -1,5 +1,5 @@
-# GÃªBR ME - GÃªBR Menu Editor
-# Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
+# GêBR ME - GêBR Menu Editor
+# Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,10 +19,11 @@ AC_INIT(configure.ac)
 PACKAGE=gebrme
 VERSION=0.9.4pre`date +"%Y%m%d"`
 TODAY=$(LANG=C date +"%a, %d %b %Y %T %z")
-FLOW_VERSION=0.2.0
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
 AC_SUBST(TODAY)
+
+FLOW_VERSION=0.2.0
 AC_SUBST(FLOW_VERSION)
 
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
@@ -65,5 +66,5 @@ AC_OUTPUT([
 debian/changelog
 rpm/gebrme.fedora.spec rpm/gebrme.opensuse.spec rpm/gebrme.mandriva.spec
 data/help-template.html
-Makefile data/Makefile src/Makefile
+Makefile data/Makefile src/Makefile src/defines.h
 ])

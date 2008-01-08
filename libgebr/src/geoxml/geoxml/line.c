@@ -20,6 +20,7 @@
 #include "line.h"
 #include "document.h"
 #include "document_p.h"
+#include "defines.h"
 #include "error.h"
 #include "xml.h"
 #include "types.h"
@@ -43,7 +44,7 @@ struct geoxml_line_flow {
 GeoXmlLine *
 geoxml_line_new()
 {
-	GeoXmlDocument * document = geoxml_document_new("line", LINE_VERSION);
+	GeoXmlDocument * document = geoxml_document_new("line", GEOXML_LINE_VERSION);
 	return GEOXML_LINE(document);
 }
 

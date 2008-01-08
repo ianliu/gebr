@@ -89,6 +89,7 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	io_label = gtk_label_new(_("IO:"));
 	gtk_widget_show(io_label);
 	gtk_box_pack_start(GTK_BOX(io_hbox), io_label, FALSE, TRUE, 0);
+// 	gtk_widget_set_popup_callback(io_label, (GtkPopupCallback)program_popup_menu, program);
 
 	io_stdin_checkbutton = gtk_check_button_new_with_label(_("input"));
 	gtk_widget_show(io_stdin_checkbutton);
@@ -282,7 +283,7 @@ program_popup_menu(GtkExpander * expander, GeoXmlProgram * program)
 {
 	GtkWidget *	menu;
 	GtkWidget *	menu_item;
-
+puts("puts");
 	menu = gtk_menu_new();
 
 	/* Move up */

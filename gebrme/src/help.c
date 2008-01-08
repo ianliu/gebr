@@ -26,6 +26,7 @@
 
 #include "help.h"
 #include "gebrme.h"
+#include "defines.h"
 #include "support.h"
 
 void
@@ -39,16 +40,16 @@ help_fix_css(GString * help)
 
 		pos = (gebrcsspos - help->str)/sizeof(char);
 		g_string_erase(help, pos, 9);
-		g_string_insert(help, pos, "\"file://" DATA_DIR "gebr.css");
+		g_string_insert(help, pos, "\"file://" GEBRME_DATA_DIR "gebr.css");
 	}
 }
 
 void
 help_subst_fields(GString * help)
 {
-	gchar *	content;
-	gchar *	ptr;
-	gsize	pos;
+	gchar *		content;
+	gchar *		ptr;
+	gsize		pos;
 
 	/* Title replacement */
 	content = (gchar*)geoxml_document_get_title(GEOXML_DOC(gebrme.current));
@@ -159,7 +160,7 @@ help_edit(const gchar * help)
 	g_string_assign(prepared_html, help);
 	if (prepared_html->len == 0) {
 		/* Read back the help from file */
-		fp = fopen(DATA_DIR "help-template.html", "r");
+		fp = fopen(GEBRME_DATA_DIR "help-template.html", "r");
 		if (fp == NULL) {
 			gebrme_message(ERROR, _("Could not open template. Please check your installation."));
 			return prepared_html;

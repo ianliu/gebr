@@ -50,5 +50,5 @@ AC_SUBST(LIBGEBR_LIBS)
 AC_OUTPUT([
 debian/changelog
 rpm/gebr.fedora.spec rpm/gebr.opensuse.spec rpm/gebr.mandriva.spec
-Makefile data/Makefile menus/Makefile src/Makefile
+Makefile data/Makefile menus/Makefile src/Makefile src/defines.h
 ])

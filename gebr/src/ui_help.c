@@ -32,6 +32,7 @@
 
 #include "ui_help.h"
 #include "gebr.h"
+#include "defines.h"
 #include "support.h"
 
 #define BUFFER_SIZE 1024
@@ -78,7 +79,7 @@ help_show(const gchar * help, const gchar * title)
 		if ((gebrcsspos = strstr(ghelp->str, "gebr.css")) != NULL) {
 			pos = (gebrcsspos - ghelp->str)/sizeof(char);
 			g_string_erase(ghelp, pos, 8);
-			g_string_insert(ghelp, pos, "file://" DATA_DIR "/gebr.css");
+			g_string_insert(ghelp, pos, "file://" GEBR_DATA_DIR "/gebr.css");
 		}
 	}
 

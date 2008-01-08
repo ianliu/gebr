@@ -46,6 +46,7 @@ gebr_SOURCES = main.c \
 	ui_server.c
 noinst_HEADERS = \
 	cmdline.h \
+	defines.h \
 	gebr.h \
 	callbacks.h \
 	document.h \
@@ -69,7 +70,7 @@ noinst_HEADERS = \
 	ui_server.h
 EXTRA_DIST = gebr.ggo ${noinst_HEADERS}
 
-INCLUDES =	-DSYS_MENUS_DIR=\"$(datadir)/gebr/menus/\" \
-		-DDATA_DIR=\"$(datadir)/gebr/\"
+INCLUDES = \
+	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
 AM_CFLAGS = -Wall $(GTK_CFLAGS) $(LIBGEBR_CFLAGS)
 gebr_LDADD = $(GTK_LIBS) $(LIBGEBR_LIBS)
