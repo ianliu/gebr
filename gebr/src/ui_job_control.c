@@ -303,11 +303,13 @@ job_control_save(void)
 			-1);
 
 	/* run file chooser */
-	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose filename to save"), NULL,
-						     GTK_FILE_CHOOSER_ACTION_SAVE,
-						     GTK_STOCK_SAVE, GTK_RESPONSE_YES,
-						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-						     NULL);
+	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose filename to save"),
+		GTK_WINDOW(gebr.window),
+		GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_STOCK_SAVE, GTK_RESPONSE_YES,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		NULL);
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
 	filefilter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filefilter, _("Text (*.txt)"));
 	gtk_file_filter_add_pattern(filefilter, "*.txt");

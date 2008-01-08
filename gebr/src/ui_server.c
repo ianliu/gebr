@@ -360,11 +360,9 @@ server_select_setup_ui(void)
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 				SERVER_POINTER, &server,
 				-1);
-		if (server_is_logged(server) == TRUE) {
-			if (connected == 0)
+		if (server_is_logged(server) == TRUE)
+			if (connected++ == 0)
 				first_connected_iter = iter;
-			++connected;
-		}
 
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
 	}

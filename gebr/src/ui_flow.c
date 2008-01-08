@@ -151,7 +151,9 @@ flow_io_actions(GtkDialog * dialog, gint arg1, struct ui_flow_io * ui_flow_io)
 }
 
 /*
- * F
+ * Function: flow_add_programs_to_view
+ * Add _flow_'s programs to flow sequence view
+ *
  */
 void
 flow_add_programs_to_view(GeoXmlFlow * flow)
