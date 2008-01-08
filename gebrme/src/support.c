@@ -26,6 +26,7 @@ create_depth(GtkWidget * container)
 	depth_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(container), depth_hbox);
 	gtk_widget_show(depth_hbox);
+
 	depth_widget = gtk_label_new("");
 	gtk_box_pack_start(GTK_BOX(depth_hbox), depth_widget, FALSE, TRUE, 0);
 	gtk_widget_set_size_request(depth_widget, 25, -1);

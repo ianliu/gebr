@@ -22,19 +22,28 @@
 #include <geoxml.h>
 
 void
-program_add(void);
-
-void
 program_create_ui(GeoXmlProgram * program, gboolean hidden);
 
 void
-program_remove(GtkButton * button, GeoXmlProgram * program);
+program_add(void);
 
 void
-program_up(GtkButton * button, GeoXmlProgram * program);
+program_remove(GtkMenuItem * menu_item, GeoXmlProgram * program);
+
+GtkMenu *
+program_popup_menu(GtkExpander * expander, GeoXmlProgram * program);
+
+GtkExpander *
+program_previous(GtkExpander * program_expander, gint * position);
+
+GtkExpander *
+program_next(GtkExpander * program_expander, gint * position);
 
 void
-program_down(GtkButton * button, GeoXmlProgram * program);
+program_move_up(GtkMenuItem * menu_item, GeoXmlProgram * program);
+
+void
+program_move_down(GtkMenuItem * menu_item, GeoXmlProgram * program);
 
 void
 program_stdin_changed(GtkToggleButton *togglebutton, GeoXmlProgram * program);

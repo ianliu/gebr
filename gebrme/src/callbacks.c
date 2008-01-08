@@ -72,11 +72,11 @@ on_save_activate(void)
 	gchar *			path;
 
 	/* get path of selection */
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebrme.menus_treeview));
-	gtk_tree_selection_get_selected (selection, &model, &iter);
-	gtk_tree_model_get (GTK_TREE_MODEL(gebrme.menus_liststore), &iter,
-			MENU_PATH, &path,
-			-1);
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (gebrme.menus_treeview));
+	gtk_tree_selection_get_selected(selection, &model, &iter);
+	gtk_tree_model_get(GTK_TREE_MODEL(gebrme.menus_liststore), &iter,
+		MENU_PATH, &path,
+		-1);
 
 	/* is this a new menu? */
 	if (strlen(path)) {
@@ -103,11 +103,12 @@ on_save_as_activate(void)
 	gchar *			filename;
 
 	/* run file chooser */
-	chooser_dialog = gtk_file_chooser_dialog_new(	_("Choose file"), NULL,
-							GTK_FILE_CHOOSER_ACTION_SAVE,
-							GTK_STOCK_SAVE, GTK_RESPONSE_YES,
-							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-							NULL);
+	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose file"), GTK_WINDOW(gebrme.window),
+		GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_STOCK_SAVE, GTK_RESPONSE_YES,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		NULL);
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
 	filefilter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filefilter, _("System flow files (*.mnu)"));
 	gtk_file_filter_add_pattern(filefilter, "*.mnu");
@@ -132,8 +133,46 @@ on_save_as_activate(void)
 	g_free(path);
 	g_free(filename);
 
-out:
-	gtk_widget_destroy(chooser_dialog);
+out:	gtk_widget_destroy(chooser_dialog);
+}
+
+void
+on_revert_activate(void)
+{
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+
+	gchar *			path;
+	GeoXmlFlow *		menu;
+
+	/* get path of selection */
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (gebrme.menus_treeview));
+	gtk_tree_selection_get_selected(selection, &model, &iter);
+	gtk_tree_model_get(GTK_TREE_MODEL(gebrme.menus_liststore), &iter,
+		MENU_PATH, &path,
+		-1);
+
+	/* is this a new menu? */
+	if (!strlen(path)) {
+		gebrme_message(ERROR, _("Menu was not saved yet."));
+		g_free(path);
+		return;
+	}
+
+	menu = menu_load(path);
+	if (menu == NULL)
+		return;
+	/* revert to the one in disk */
+	geoxml_document_free(GEOXML_DOC(gebrme.current));
+	gtk_list_store_set(gebrme.menus_liststore, &iter,
+		MENU_XMLPOINTER, menu,
+		-1);
+	menu_selected();
+	menu_saved_status_set(MENU_STATUS_SAVED);
+
+	/* frees */
+	g_free(path);
 }
 
 void

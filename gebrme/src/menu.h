@@ -24,6 +24,9 @@
 void
 menu_new(void);
 
+GeoXmlFlow *
+menu_load(const gchar * path);
+
 void
 menu_open(const gchar * path);
 

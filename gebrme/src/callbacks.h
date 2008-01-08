@@ -33,6 +33,9 @@ void
 on_save_as_activate(void);
 
 void
+on_revert_activate(void);
+
+void
 on_delete_activate(void);
 
 void

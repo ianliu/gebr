@@ -182,39 +182,37 @@ parameter_create_ui(GeoXmlParameter * parameter, gboolean hidden)
 	 * Buttons Up, Down and Remove
 	 */
 
-	align = gtk_alignment_new(1, 1, 0, 1);
-	gtk_box_pack_end(GTK_BOX(parameter_vbox), align, TRUE, FALSE, 0);
-	gtk_widget_show(align);
 	button_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_widget_show(button_hbox);
-	gtk_container_add(GTK_CONTAINER(align), button_hbox);
+	gtk_box_pack_end(GTK_BOX(parameter_vbox), button_hbox, TRUE, FALSE, 0);
 
 	widget = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
 	gtk_widget_show(widget);
-	gtk_box_pack_start(GTK_BOX(button_hbox), widget, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(button_hbox), widget, FALSE, FALSE, 5);
 	g_signal_connect(widget, "clicked",
-		GTK_SIGNAL_FUNC (parameter_up),
-		data);
+		GTK_SIGNAL_FUNC (parameter_up), data);
 	g_object_set(G_OBJECT(widget), "user-data", frame,
-		     "relief", GTK_RELIEF_NONE, NULL);
+		"relief", GTK_RELIEF_NONE, NULL);
 
 	widget = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
 	gtk_widget_show(widget);
-	gtk_box_pack_start(GTK_BOX(button_hbox), widget, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(button_hbox), widget, FALSE, FALSE, 5);
 	g_signal_connect(widget, "clicked",
 		GTK_SIGNAL_FUNC (parameter_down),
 		data);
 	g_object_set(G_OBJECT(widget), "user-data", frame,
-		     "relief", GTK_RELIEF_NONE, NULL);
+		"relief", GTK_RELIEF_NONE, NULL);
 
+	align = gtk_alignment_new(1, 0, 0, 1);
+	gtk_widget_show(align);
 	widget = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	gtk_widget_show(widget);
-	gtk_box_pack_start(GTK_BOX(button_hbox), widget, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(button_hbox), align, TRUE, TRUE, 5);
+	gtk_container_add(GTK_CONTAINER(align), widget);
 	g_signal_connect(widget, "clicked",
-			  GTK_SIGNAL_FUNC (parameter_remove),
-			  data);
+		GTK_SIGNAL_FUNC (parameter_remove), data);
 	g_object_set(G_OBJECT(widget), "user-data", frame,
-		     "relief", GTK_RELIEF_NONE, NULL);
+		"relief", GTK_RELIEF_NONE, NULL);
 
 	parameter_uilabel_update(data);
 

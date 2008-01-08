@@ -55,6 +55,10 @@ struct gebrme {
 	GtkWidget *		statusbar;
 	GtkWidget *		invisible;
 
+	/* actions */
+	GtkAction *		save_action;
+	GtkAction *		revert_action;
+
 	/* menus list */
 	GtkListStore *		menus_liststore;
 	GtkWidget *		menus_treeview;
@@ -78,9 +82,6 @@ struct gebrme {
 	struct gebrme_pixmaps {
         	GdkPixbuf *	stock_no;
 	} pixmaps;
-
-// 	/* log */
-// 	struct log *		log;
 
 	/* temporary files removed when GÍBRME quits */
 	GSList *		tmpfiles;
@@ -111,6 +112,6 @@ void
 gebrme_config_save(void);
 
 void
-gebrme_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...);
+gebrme_message(enum log_message_type type, const gchar * message, ...);
 
 #endif //__GEBRME_H

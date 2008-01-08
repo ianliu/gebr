@@ -143,7 +143,7 @@ gebrme_config_save(void)
  *
  */
 void
-gebrme_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...)
+gebrme_message(enum log_message_type type, const gchar * message, ...)
 {
 	gchar *		string;
 	va_list		argp;
@@ -156,10 +156,7 @@ gebrme_message(enum log_message_type type, gboolean in_statusbar, gboolean in_lo
 	if (type == DEBUG)
 		g_print("%s\n", string);
 #endif
-	if (in_log_file)
-// 		log_add_message(gebrme.log, type, string);
-	if (in_statusbar)
-		gtk_statusbar_push(GTK_STATUSBAR(gebrme.statusbar), 0, string);
+	gtk_statusbar_push(GTK_STATUSBAR(gebrme.statusbar), 0, string);
 
 	g_free(string);
 }

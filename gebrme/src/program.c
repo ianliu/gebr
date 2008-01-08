@@ -17,6 +17,8 @@
 
 #include <string.h>
 
+#include <gui/utils.h>
+
 #include "program.h"
 #include "gebrme.h"
 #include "support.h"
@@ -63,6 +65,7 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	gchar *				program_title_str;
 
 	program_expander = gtk_expander_new("");
+	gtk_widget_set_popup_callback(program_expander, (GtkPopupCallback)program_popup_menu, program);
 	gtk_box_pack_start(GTK_BOX(gebrme.programs_vbox), program_expander, FALSE, TRUE, 0);
 	gtk_expander_set_expanded (GTK_EXPANDER (program_expander), hidden);
 	gtk_widget_show(program_expander);
@@ -74,33 +77,6 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	program_label = gtk_label_new("");
 	gtk_widget_show(program_label);
 	gtk_box_pack_start(GTK_BOX(program_label_widget), program_label, FALSE, TRUE, 0);
-
-	widget = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
-	gtk_widget_show(widget);
-	gtk_box_pack_start(GTK_BOX(program_label_widget), widget, FALSE, TRUE, 5);
-	g_signal_connect ((gpointer) widget, "clicked",
-		GTK_SIGNAL_FUNC (program_up),
-		program);
-	g_object_set(G_OBJECT(widget), "user-data", program_expander,
-		     "relief", GTK_RELIEF_NONE, NULL);
-
-	widget = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
-	gtk_widget_show(widget);
-	gtk_box_pack_start(GTK_BOX(program_label_widget), widget, FALSE, TRUE, 5);
-	g_signal_connect ((gpointer) widget, "clicked",
-		GTK_SIGNAL_FUNC (program_down),
-		program);
-	g_object_set(G_OBJECT(widget), "user-data", program_expander,
-		     "relief", GTK_RELIEF_NONE, NULL);
-
-	widget = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-	gtk_widget_show(widget);
-	gtk_box_pack_start(GTK_BOX(program_label_widget), widget, FALSE, TRUE, 5);
-	g_signal_connect ((gpointer) widget, "clicked",
-		GTK_SIGNAL_FUNC (program_remove),
-		program);
-	g_object_set(G_OBJECT(widget), "user-data", program_expander,
-		     "relief", GTK_RELIEF_NONE, NULL);
 
 	program_vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(depth_hbox), program_vbox, TRUE, TRUE, 0);
@@ -289,59 +265,127 @@ program_add(void)
 }
 
 void
-program_remove(GtkButton * button, GeoXmlProgram * program)
+program_remove(GtkMenuItem * menu_item, GeoXmlProgram * program)
 {
-	GtkWidget *	program_expander;
+	GtkWidget *	expander;
 
-	g_object_get(G_OBJECT(button), "user-data", &program_expander, NULL);
+	g_object_get(G_OBJECT(menu_item), "user-data", &expander, NULL);
 
-	gtk_widget_destroy(program_expander);
+	gtk_widget_destroy(expander);
 	geoxml_sequence_remove(GEOXML_SEQUENCE(program));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-void
-program_up(GtkButton * button, GeoXmlProgram * program)
+GtkMenu *
+program_popup_menu(GtkExpander * expander, GeoXmlProgram * program)
 {
-	GtkWidget *	program_expander;
+	GtkWidget *	menu;
+	GtkWidget *	menu_item;
+
+	menu = gtk_menu_new();
+
+	/* Move up */
+	if (program_previous(expander, NULL) != NULL) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate",
+			(GCallback)program_move_up, program);
+		g_object_set(G_OBJECT(menu_item), "user-data", expander, NULL);
+	}
+	/* Move down */
+	if (program_next(expander, NULL) != NULL) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_DOWN, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate",
+			(GCallback)program_move_down, program);
+		g_object_set(G_OBJECT(menu_item), "user-data", expander, NULL);
+	}
+	/* Remove */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_REMOVE, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(menu_item, "activate",
+		(GCallback)program_remove, program);
+	g_object_set(G_OBJECT(menu_item), "user-data", expander, NULL);
+
+	gtk_widget_show_all(menu);
+
+	return GTK_MENU(menu);
+}
+
+GtkExpander *
+program_previous(GtkExpander * program_expander, gint * position)
+{
 	GList *		programs_expanders;
 	GList *		this;
-	GList *		up;
-
-	g_object_get(G_OBJECT(button), "user-data", &program_expander, NULL);
+	GList *		previous;
+	GtkExpander *	previous_program;
 
 	programs_expanders = gtk_container_get_children(GTK_CONTAINER(gebrme.programs_vbox));
 	this = g_list_find(programs_expanders, program_expander);
-	up = g_list_previous(this);
-	if (up != NULL) {
-		gtk_box_reorder_child(GTK_BOX(gebrme.programs_vbox), up->data, g_list_position(programs_expanders, this));
+	previous = g_list_previous(this);
+	previous_program = (previous != NULL) ? GTK_EXPANDER(previous->data) : NULL;
+	if (position != NULL)
+		*position = g_list_position(programs_expanders, this);
+
+	g_list_free(programs_expanders);
+
+	return previous_program;
+}
+
+GtkExpander *
+program_next(GtkExpander * program_expander, gint * position)
+{
+	GList *		programs_expanders;
+	GList *		this;
+	GList *		next;
+	GtkExpander *	next_program;
+
+	programs_expanders = gtk_container_get_children(GTK_CONTAINER(gebrme.programs_vbox));
+	this = g_list_find(programs_expanders, program_expander);
+	next = g_list_next(this);
+	next_program = (next != NULL) ? GTK_EXPANDER(next->data) : NULL;
+	if (position != NULL)
+		*position = g_list_position(programs_expanders, this);
+
+	g_list_free(programs_expanders);
+
+	return next_program;
+}
+
+void
+program_move_up(GtkMenuItem * menu_item, GeoXmlProgram * program)
+{
+	GtkExpander *	expander;
+	GtkExpander *	previous;
+	gint		position;
+
+	g_object_get(G_OBJECT(menu_item), "user-data", &expander, NULL);
+
+	previous = program_previous(expander, &position);
+	if (previous != NULL) {
+		gtk_box_reorder_child(GTK_BOX(gebrme.programs_vbox), GTK_WIDGET(previous), position);
 		geoxml_sequence_move_up(GEOXML_SEQUENCE(program));
 	}
 
-	g_list_free(programs_expanders);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
 void
-program_down(GtkButton * button, GeoXmlProgram * program)
+program_move_down(GtkMenuItem * menu_item, GeoXmlProgram * program)
 {
-	GtkWidget *	program_expander;
-	GList *		programs_expanders;
-	GList *		this;
-	GList *		down;
+	GtkExpander *	expander;
+	GtkExpander *	next;
+	gint		position;
 
-	g_object_get(G_OBJECT(button), "user-data", &program_expander, NULL);
+	g_object_get(G_OBJECT(menu_item), "user-data", &expander, NULL);
 
-	programs_expanders = gtk_container_get_children(GTK_CONTAINER(gebrme.programs_vbox));
-	this = g_list_find(programs_expanders, program_expander);
-	down = g_list_next(this);
-	if (down != NULL) {
-		gtk_box_reorder_child(GTK_BOX(gebrme.programs_vbox), down->data, g_list_position(programs_expanders, this));
+	next = program_next(expander, &position);
+	if (next != NULL) {
+		gtk_box_reorder_child(GTK_BOX(gebrme.programs_vbox), GTK_WIDGET(next), position);
 		geoxml_sequence_move_down(GEOXML_SEQUENCE(program));
 	}
 
-	g_list_free(programs_expanders);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 

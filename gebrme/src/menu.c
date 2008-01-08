@@ -59,15 +59,47 @@ menu_new(void)
 	g_string_free(new_menu_str, TRUE);
 }
 
+GeoXmlFlow *
+menu_load(const gchar * path)
+{
+	GeoXmlDocument *	menu;
+	int			ret;
+
+	if ((ret = geoxml_document_load(&menu, path))) {
+		/* TODO: */
+		switch (ret) {
+		case GEOXML_RETV_DTD_SPECIFIED:
+
+		break;
+		case GEOXML_RETV_INVALID_DOCUMENT:
+
+		break;
+		case GEOXML_RETV_CANT_ACCESS_FILE:
+
+		break;
+		case GEOXML_RETV_CANT_ACCESS_DTD:
+
+		break;
+		default:
+
+		break;
+		}
+
+		return NULL;
+	}
+
+	return GEOXML_FLOW(menu);
+}
+
 void
 menu_open(const gchar * path)
 {
-	gchar *			filename;
-	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
-	GeoXmlDocument *	menu;
-	int			ret;
+	GtkTreeIter		iter;
 	gboolean		valid;
+
+	gchar *			filename;
+	GeoXmlFlow *		menu;
 
 	/* check if it is already open */
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebrme.menus_liststore), &iter);
@@ -90,34 +122,15 @@ menu_open(const gchar * path)
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebrme.menus_liststore), &iter);
 	}
 
-	/* try to load it */
-	if ((ret = geoxml_document_load (&menu, path))) {
-		/* TODO: */
-		switch (ret) {
-		case GEOXML_RETV_DTD_SPECIFIED:
-
-		break;
-		case GEOXML_RETV_INVALID_DOCUMENT:
-
-		break;
-		case GEOXML_RETV_CANT_ACCESS_FILE:
-
-		break;
-		case GEOXML_RETV_CANT_ACCESS_DTD:
-
-		break;
-		default:
-
-		break;
-		}
+	menu = menu_load(path);
+	if (menu == NULL)
 		return;
-	}
 
 	/* add to the view */
 	filename = g_path_get_basename(path);
-	gebrme.current = GEOXML_FLOW(menu);
-	gtk_list_store_append (gebrme.menus_liststore, &iter);
-	gtk_list_store_set (gebrme.menus_liststore, &iter,
+	gebrme.current = menu;
+	gtk_list_store_append(gebrme.menus_liststore, &iter);
+	gtk_list_store_set(gebrme.menus_liststore, &iter,
 			    MENU_FILENAME, filename,
 			    MENU_XMLPOINTER, gebrme.current,
 			    MENU_PATH, path,
@@ -139,7 +152,7 @@ menu_load_user_directory(void)
 	GString *	path;
 
 	if ((dir = opendir(gebrme.config.menu_dir->str)) == NULL) {
-		gebrme_message(ERROR, TRUE, TRUE, _("Could not open menus' directory"));
+		gebrme_message(ERROR, _("Could not open menus' directory"));
 		return;
 	}
 
@@ -190,14 +203,19 @@ menu_selected(void)
 
 	GeoXmlSequence *	category;
 	GeoXmlSequence *	program;
-	GdkPixbuf *             icon;
+
+	GdkPixbuf *		icon;
+	MenuStatus		status;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (gebrme.menus_treeview));
 	gtk_tree_selection_get_selected(selection, &model, &menu_iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(gebrme.menus_liststore), &menu_iter,
-			    MENU_STATUS, &icon,
-			    MENU_XMLPOINTER, &gebrme.current,
-			    -1);
+		MENU_STATUS, &icon,
+		MENU_XMLPOINTER, &gebrme.current,
+		-1);
+
+	/* get status */
+	status = (icon == gebrme.pixmaps.stock_no) ? MENU_STATUS_UNSAVED : MENU_STATUS_SAVED;
 
 	/* load menu into widgets */
 	gtk_entry_set_text(GTK_ENTRY(gebrme.title_entry),
@@ -231,10 +249,8 @@ menu_selected(void)
 		geoxml_sequence_next(&program);
 	}
 
-	/* recover status */
-	gtk_list_store_set(GTK_LIST_STORE(gebrme.menus_liststore), &menu_iter,
-			   MENU_STATUS, icon,
-			   -1);
+	/* recover status set to unsaved by above functions */
+	menu_saved_status_set(status);
 }
 
 gboolean
@@ -324,6 +340,8 @@ menu_saved_status_set(MenuStatus status)
 	GtkTreeModel *		model;
 	GtkTreeIter		iter;
 
+	gboolean		enable;
+
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (gebrme.menus_treeview));
 	gtk_tree_selection_get_selected(selection, &model, &iter);
 
@@ -332,11 +350,18 @@ menu_saved_status_set(MenuStatus status)
 		gtk_list_store_set(GTK_LIST_STORE(gebrme.menus_liststore), &iter,
 			MENU_STATUS, NULL,
 			-1);
+		enable = FALSE;
 		break;
 	case MENU_STATUS_UNSAVED:
 		gtk_list_store_set(GTK_LIST_STORE(gebrme.menus_liststore), &iter,
 			MENU_STATUS, gebrme.pixmaps.stock_no,
 			-1);
+		enable = TRUE;
 		break;
+	default:
+		enable = FALSE;
 	}
+
+	gtk_action_set_sensitive(gebrme.save_action, enable);
+	gtk_action_set_sensitive(gebrme.revert_action, enable);
 }
