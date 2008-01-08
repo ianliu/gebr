@@ -21,4 +21,6 @@
 #define GEBR_SYS_MENUS_DIR	"@prefix@/share/gebr/menus/"
 #define GEBR_DATA_DIR		"@prefix@/share/gebr/"
 
+#define GEBR_STATIC_MODE	@STATIC_MODE@
+
 #endif //__DEFINES_H

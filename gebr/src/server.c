@@ -29,6 +29,7 @@
 
 #include "server.h"
 #include "gebr.h"
+#include <defines.h>
 #include "support.h"
 #include "client.h"
 #include "job.h"
@@ -120,7 +121,11 @@ local_ask_port_finished(GProcess * process, struct server * server)
 			G_CALLBACK(local_run_server_finished), server);
 
 		/* FIXME: remove /dev/null and change GProcess */
+#if (!GEBR_STATIC_MODE)
 		g_string_printf(cmd_line, "bash -l -c \"gebrd 1>/dev/null 2>/dev/null &\"");
+#else
+		g_string_printf(cmd_line, "bash -l -c \"./gebrd 1>/dev/null 2>/dev/null &\"");
+#endif
 		g_process_start(server_process, cmd_line);
 
 		/* wait a bit for server to initialize */

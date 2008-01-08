@@ -23,6 +23,12 @@ AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
 AC_SUBST(TODAY)
 
+dnl For create static packages
+AC_ARG_ENABLE([static-mode],
+	[  --enable-static-mode    enables flags for generating a static package],
+	STATIC_MODE=1, STATIC_MODE=0)
+AC_SUBST(STATIC_MODE)
+
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 PACKAGE_NAME=$PACKAGE
 PACKAGE_VERSION=$VERSION
