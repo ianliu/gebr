@@ -1,5 +1,5 @@
 # libgebr - GÍBR Library
-# Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
+# Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@ libgebr_misc_la_SOURCES = \
 
 libgebr_miscsubincludedir = $(includedir)/libgebr/misc
 libgebr_miscsubinclude_HEADERS = \
-	date.h log.h utils.h
+	date.h log.h utils.h \
+	support.h
 noinst_HEADERS =
 EXTRA_DIST = ${noinst_HEADERS}
 

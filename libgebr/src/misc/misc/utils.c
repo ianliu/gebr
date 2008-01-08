@@ -1,5 +1,5 @@
 /*   libgebr - GêBR Library
- *   Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
+ *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -132,4 +132,21 @@ gebr_create_config_dirs(void)
 out:	g_string_free(gebr, TRUE);
 	g_string_free(aux, TRUE);
 	return ret;
+}
+
+/**
+ * Simplified version of g_locale_to_utf8
+ */
+gchar *
+g_simple_locale_to_utf8(const gchar * string)
+{
+	gchar *		output;
+	gsize		bytes_read;
+	gsize		bytes_written;
+	GError *	error;
+
+	error = NULL;
+	output = g_locale_to_utf8(string, -1, &bytes_read, &bytes_written, &error);
+
+	return output;
 }

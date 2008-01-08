@@ -15,23 +15,31 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEOXML_DOCUMENT_P_H
-#define __GEOXML_DOCUMENT_P_H
+#ifndef __LIBGEBR_MISC_SUPPORT_H
+#define __LIBGEBR_MISC_SUPPORT_H
 
-/**
- * \internal
- * Private constructor. Used by super classes to create a new document
- * @param name refer to the root element (flow, line or project) @param version
- * to its corresponding last version (support by this version of libgeoxml)
+/*
+ * Standard gettext macros.
  */
-GeoXmlDocument *
-geoxml_document_new(const gchar * name, const gchar * version);
+#ifdef ENABLE_NLS
+#  include <libintl.h>
+#  undef _
+#  define _(String) dgettext (PACKAGE, String)
+#  define Q_(String) g_strip_context ((String), gettext (String))
+#  ifdef gettext_noop
+#    define N_(String) gettext_noop (String)
+#  else
+#    define N_(String) (String)
+#  endif
+#else
+#  define textdomain(String) (String)
+#  define gettext(String) (String)
+#  define dgettext(Domain,Message) (Message)
+#  define dcgettext(Domain,Message,Type) (Message)
+#  define bindtextdomain(Domain,Directory) (Domain)
+#  define _(String) (String)
+#  define Q_(String) g_strip_context ((String), (String))
+#  define N_(String) (String)
+#endif
 
-/**
- * \internal
- *
- */
-#define geoxml_document_root_element(document)	\
-	gdome_doc_documentElement((GdomeDocument*)document, &exception)
-
-#endif //__GEOXML_DOCUMENT_P_H
+#endif //__LIBGEBR_MISC_SUPPORT_H

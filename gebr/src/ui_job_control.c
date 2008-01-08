@@ -18,6 +18,8 @@
 
 #include <string.h>
 
+#include <gui/utils.h>
+
 #include "ui_job_control.h"
 #include "gebr.h"
 #include "support.h"
@@ -411,7 +413,7 @@ job_control_clear(void)
 	GtkTreeIter		iter;
 	gboolean		valid;
 
-	if (confirm_action_dialog(_("Are you sure you want to clear all jobs from all servers?")) == FALSE)
+	if (confirm_action_dialog("", _("Are you sure you want to clear all jobs from all servers?")) == FALSE)
 		return;
 
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);

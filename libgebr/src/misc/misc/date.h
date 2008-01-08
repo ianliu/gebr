@@ -1,5 +1,5 @@
 /*   libgebr - GêBR Library
- *   Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
+ *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,6 +18,12 @@
 #ifndef __LIBGEBR_MISC_DATE_H
 #define __LIBGEBR_MISC_DATE_H
 
+#include <glib.h>
 
+gchar *
+iso_date(void);
+
+gchar *
+localized_date(const gchar * iso_date);
 
 #endif //__LIBGEBR_MISC_DATE_H

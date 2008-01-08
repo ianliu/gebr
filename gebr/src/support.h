@@ -1,5 +1,5 @@
-/*   GÃªBR ME - GÃªBR Menu Editor
- *   Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
+/*   G�BR - An environment for seismic processing.
+ *   Copyright (C) 2007 G�BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -41,14 +41,5 @@
 #  define Q_(String) g_strip_context ((String), (String))
 #  define N_(String) (String)
 #endif
-
-gboolean
-confirm_action_dialog(const gchar * message, ...);
-
-const gchar *
-localized_date(const gchar * iso_date);
-
-void
-set_tooltip(GtkWidget *widget, const gchar *tip);
 
 #endif //__SUPPORT_H

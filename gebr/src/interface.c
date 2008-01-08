@@ -70,10 +70,6 @@ assembly_interface(void)
 	GtkWidget *	mainmenu;
 	GtkWidget *	pagetitle;
 
-#if !GTK_CHECK_VERSION(2,12,0)
-	gebr.tips = gtk_tooltips_new();
-#endif
-
 	gebr.about = about_setup_ui("GêBR", _("A plug-and-play environment to\nseismic processing tools"));
 	gebr.ui_server_list = server_list_setup_ui();
 
@@ -150,7 +146,7 @@ assembly_interface(void)
 	gebr.statusbar = gtk_statusbar_new();
 	gtk_widget_show_all(gebr.statusbar);
 	gtk_box_pack_end(GTK_BOX(vboxmain), gebr.statusbar, FALSE, FALSE, 0);
-	
+
 	switch_page(NULL, NULL, 0);
 }
 

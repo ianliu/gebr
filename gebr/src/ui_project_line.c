@@ -23,6 +23,8 @@
 
 #include <string.h>
 
+#include <misc/date.h>
+
 #include "ui_project_line.h"
 #include "gebr.h"
 #include "support.h"

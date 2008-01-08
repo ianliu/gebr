@@ -22,6 +22,7 @@
 #include <comm/protocol.h>
 #include <comm/gtcpsocket.h>
 #include <comm/ghostaddress.h>
+#include <misc/utils.h>
 
 #include "job.h"
 #include "gebrd.h"
@@ -108,13 +109,8 @@ job_send_clients_output(struct job * job, GString * _output)
 
 	/* ensure UTF-8 encoding */
 	if (g_utf8_validate(_output->str, -1, NULL) == FALSE) {
-		gsize		bytes_read;
-		gsize		bytes_written;
-		GError *	error;
-
-		error = NULL;
-		output = g_locale_to_utf8(_output->str, -1, &bytes_read, &bytes_written, &error);
 		/* TODO: what else should be tried? */
+		output = g_simple_locale_to_utf8(_output->str);
 		if (output == NULL) {
 			g_free(output);
 			gebrd_message(ERROR, TRUE, TRUE, _("Job '%s' sent output not in UTF-8"), job->title->str);
@@ -394,14 +390,10 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 	}
 
 	if (previous_stdout) {
-		if (strlen(geoxml_flow_io_get_output(flow)) == 0) {
-		   /* g_string_append_printf(job->issues, _("No output file selected\n"));
-		      goto err; */
-		   g_string_append_printf(job->issues, _("Proceeding without output file\n"));
-		}
-		else{
-		   g_string_append_printf(job->cmd_line, ">%s", geoxml_flow_io_get_output(flow));
-		}
+		if (strlen(geoxml_flow_io_get_output(flow)) == 0)
+			g_string_append_printf(job->issues, _("Proceeding without output file\n"));
+		else
+			g_string_append_printf(job->cmd_line, ">%s", geoxml_flow_io_get_output(flow));
 	}
 
 	/* success exit */

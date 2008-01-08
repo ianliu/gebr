@@ -24,6 +24,8 @@
 
 #include <string.h>
 
+#include <misc/date.h>
+
 #include "ui_flow_browse.h"
 #include "gebr.h"
 #include "support.h"

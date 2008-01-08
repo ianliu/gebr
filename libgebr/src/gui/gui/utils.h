@@ -1,5 +1,5 @@
 /*   libgebr - GêBR Library
- *   Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
+ *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -39,5 +39,11 @@ gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpo
 
 void
 gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback, gpointer user_data);
+
+gboolean
+confirm_action_dialog(const gchar * title, const gchar * message, ...);
+
+void
+set_tooltip(GtkWidget * widget, const gchar * tip);
 
 #endif //__LIBGEBR_GUI_UTILS_H

@@ -212,14 +212,10 @@ help_edit(const gchar * help)
 
 	/* ensure UTF-8 encoding */
 	if (g_utf8_validate(prepared_html->str, -1, NULL) == FALSE) {
-		gchar *		converted;
-		gsize		bytes_read;
-		gsize		bytes_written;
-		GError *	error;
+		gchar *	converted;
 
-		error = NULL;
-		converted = g_locale_to_utf8(prepared_html->str, -1, &bytes_read, &bytes_written, &error);
 		/* TODO: what else should be tried? */
+		converted = g_simple_locale_to_utf8(prepared_html->str);
 		if (converted == NULL) {
 			g_free(converted);
 			gebrme_message(ERROR, _("Please change the help encoding to UTF-8"));

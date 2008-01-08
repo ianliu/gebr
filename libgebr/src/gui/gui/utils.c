@@ -1,5 +1,5 @@
 /*   libgebr - GêBR Library
- *   Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
+ *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -14,6 +14,8 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include <stdarg.h>
 
 #include "utils.h"
 
@@ -191,4 +193,52 @@ gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpo
 		(GCallback)__gtk_widget_on_button_pressed, popup_callback);
 	g_signal_connect(widget, "popup-menu",
 		(GCallback)__gtk_widget_on_popup_menu, popup_callback);
+}
+
+/*
+ * Function: confirm_action_dialog
+ * Show an action confirmation dialog with formated _message_
+ */
+gboolean
+confirm_action_dialog(const gchar * title, const gchar * message, ...)
+{
+	GtkWidget *	dialog;
+
+	gchar *		string;
+	va_list		argp;
+	gboolean	confirmed;
+
+	va_start(argp, message);
+	string = g_strdup_vprintf(message, argp);
+	va_end(argp);
+
+	dialog = gtk_message_dialog_new(NULL,
+		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_MESSAGE_QUESTION,
+		GTK_BUTTONS_YES_NO,
+		string);
+	gtk_window_set_title(GTK_WINDOW(dialog), title);
+	confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES ? TRUE : FALSE;
+
+	gtk_widget_destroy(dialog);
+	g_free(string);
+
+	return confirmed;
+}
+
+/*
+ * Function: set_tooltip
+ * Set tooltip all across the code.
+ */
+void
+set_tooltip(GtkWidget * widget, const gchar * tip)
+{
+#if GTK_CHECK_VERSION(2,12,0)
+	g_object_set(G_OBJECT(widget), "tooltip-text",  tip, NULL);
+#else
+	static GtkTooltips * tips = NULL;
+	if (tips == NULL)
+		tips = gtk_tooltips_new();
+	gtk_tooltips_set_tip(tips, widget, tip, NULL);
+#endif
 }

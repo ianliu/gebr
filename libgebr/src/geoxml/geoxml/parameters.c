@@ -1,5 +1,5 @@
 /*   libgebr - GÍBR Library
- *   Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
+ *   Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
  *
  *   This parameters is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

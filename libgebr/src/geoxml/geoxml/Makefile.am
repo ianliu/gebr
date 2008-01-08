@@ -1,5 +1,5 @@
 # libgebr - GÍBR Library
-# Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
+# Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,6 +40,6 @@ INCLUDES = -DGEOXML_DTDDIR=\"$(datadir)/libgebr/geoxml\" \
 	-DDOCUMENT_VERSION=\"@DOCUMENT_VERSION@\"
 
 
-AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS) 
+AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
 libgebr_geoxml_la_LIBADD = $(GLIB_LIBS) $(GDOME2_LIBS)
 libgebr_geoxml_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@

@@ -1,4 +1,1 @@
-* Frame com título "Programs" contendo programas
-
-* Criar botão p/ stock a partir do cancel/lixeira para derivar um
-botão para remover parâmetros
+- Migrar para GtkAction

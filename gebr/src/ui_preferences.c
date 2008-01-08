@@ -25,6 +25,8 @@
 
 #include <string.h>
 
+#include <gui/utils.h>
+
 #include "ui_preferences.h"
 #include "gebr.h"
 #include "support.h"

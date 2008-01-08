@@ -1,5 +1,5 @@
 /*   GÍBR Library - Common stuff used by GÍBR programs
- *   Copyright (C) 2007 G√™BR core team (http://gebr.sourceforge.net)
+ *   Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

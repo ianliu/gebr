@@ -1,5 +1,5 @@
-/*   GÃªBR - An environment for seismic processing.
- *   Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
+/*   GêBR - An environment for seismic processing.
+ *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,9 @@
  */
 
 #include <unistd.h>
+
+#include <misc/utils.h>
+#include <misc/date.h>
 
 #include "job.h"
 #include "gebr.h"
