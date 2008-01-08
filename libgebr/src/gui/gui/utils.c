@@ -21,13 +21,13 @@
  * Internal functions
  */
 
-gboolean
-__gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * event, GtkTreeViewPopupCallback callback)
+static gboolean
+__gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * event, GtkPopupCallback callback)
 {
 	GtkMenu *		menu;
 	GtkTreeSelection *	selection;
 
-	if (!(event->type == GDK_BUTTON_PRESS  &&  event->button == 3))
+	if (!(event->type == GDK_BUTTON_PRESS && event->button == 3))
 		return FALSE;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
@@ -43,7 +43,7 @@ __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * even
 		}
 	}
 
-	menu = callback(tree_view);
+	menu = callback(GTK_WIDGET(tree_view));
 	if (menu == NULL)
 		return TRUE;
 	gtk_menu_popup(menu, NULL, NULL, NULL, NULL,
@@ -52,8 +52,25 @@ __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * even
 	return TRUE;
 }
 
-void
-__gtk_tree_view_on_popup_menu(GtkTreeView * tree_view, GtkTreeViewPopupCallback callback)
+static gboolean
+__gtk_widget_on_button_pressed(GtkWidget * widget, GdkEventButton * event, GtkPopupCallback callback)
+{
+	GtkMenu *		menu;
+
+	if (!(event->type == GDK_BUTTON_PRESS && event->button == 3))
+		return FALSE;
+
+	menu = callback(widget);
+	if (menu == NULL)
+		return TRUE;
+	gtk_menu_popup(menu, NULL, NULL, NULL, NULL,
+		event->button, gdk_event_get_time((GdkEvent*)event));
+
+	return TRUE;
+}
+
+static void
+__gtk_widget_on_popup_menu(GtkWidget * tree_view, GtkPopupCallback callback)
 {
 	GtkMenu *	menu;
 
@@ -127,10 +144,19 @@ gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter)
 }
 
 void
-gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkTreeViewPopupCallback callback)
+gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback)
 {
 	g_signal_connect(tree_view, "button-press-event",
 		(GCallback)__gtk_tree_view_on_button_pressed, callback);
 	g_signal_connect(tree_view, "popup-menu",
-		(GCallback)__gtk_tree_view_on_popup_menu, callback);
+		(GCallback)__gtk_widget_on_popup_menu, callback);
+}
+
+void
+gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback)
+{
+	g_signal_connect(widget, "button-press-event",
+		(GCallback)__gtk_widget_on_button_pressed, callback);
+	g_signal_connect(widget, "popup-menu",
+		(GCallback)__gtk_widget_on_popup_menu, callback);
 }

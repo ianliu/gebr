@@ -32,9 +32,12 @@ gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter);
 gboolean
 gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter);
 
-typedef GtkMenu * (*GtkTreeViewPopupCallback)(GtkTreeView * tree_view);
+typedef GtkMenu * (*GtkPopupCallback)(GtkWidget * widget);
 
 void
-gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkTreeViewPopupCallback callback);
+gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback);
+
+void
+gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback);
 
 #endif //__LIBGEBR_GUI_UTILS_H
