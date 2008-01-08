@@ -21,6 +21,8 @@
  * Program's parameter window stuff
  */
 
+//remove round warning
+#define _ISOC99_SOURCE
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>

@@ -43,10 +43,6 @@ struct gebr {
 	GtkWidget *			notebook;
 	GtkWidget *			statusbar;
 	struct about			about;
-
-#if !GTK_CHECK_VERSION(2,12,0)
-	GtkTooltips *                   tips;
-#endif
 	/* for strange things ;) */
 	GtkWidget *			invisible;
 
