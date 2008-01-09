@@ -34,7 +34,8 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	GtkWidget *			program_label;
 	GtkWidget *			program_vbox;
 
-	GtkWidget *			io_hbox;
+	GtkWidget *			io_vbox;
+	GtkWidget *			io_depth_hbox;
 	GtkWidget *			io_label;
 	GtkWidget *			io_stdin_checkbutton;
 	GtkWidget *			io_stdout_checkbutton;
@@ -82,37 +83,41 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	gtk_box_pack_start(GTK_BOX(depth_hbox), program_vbox, TRUE, TRUE, 0);
 	gtk_widget_show(program_vbox);
 
-	io_hbox = gtk_hbox_new(FALSE, 0);
-	gtk_widget_show(io_hbox);
-	gtk_box_pack_start(GTK_BOX(program_vbox), io_hbox, FALSE, TRUE, 0);
+	io_vbox = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(io_vbox);
+	gtk_box_pack_start(GTK_BOX(program_vbox), io_vbox, FALSE, TRUE, 0);
 
-	io_label = gtk_label_new(_("IO:"));
+	io_label = gtk_label_new(_("This program:"));
+	gtk_misc_set_alignment(GTK_MISC(io_label), 0, 0);
 	gtk_widget_show(io_label);
-	gtk_box_pack_start(GTK_BOX(io_hbox), io_label, FALSE, TRUE, 0);
-// 	gtk_widget_set_popup_callback(io_label, (GtkPopupCallback)program_popup_menu, program);
+	gtk_box_pack_start(GTK_BOX(io_vbox), io_label, FALSE, FALSE, 0);
 
-	io_stdin_checkbutton = gtk_check_button_new_with_label(_("input"));
+	io_depth_hbox = create_depth(io_vbox);
+	io_vbox = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(io_vbox);
+	gtk_box_pack_start(GTK_BOX(io_depth_hbox), io_vbox, FALSE, TRUE, 0);
+
+	io_stdin_checkbutton = gtk_check_button_new_with_label(_("reads from standard input"));
 	gtk_widget_show(io_stdin_checkbutton);
-	gtk_box_pack_start(GTK_BOX(io_hbox), io_stdin_checkbutton, FALSE, TRUE, 30);
-	g_signal_connect ((gpointer) io_stdin_checkbutton, "clicked",
-		GTK_SIGNAL_FUNC (program_stdin_changed),
-		program);
+	gtk_box_pack_start(GTK_BOX(io_vbox), io_stdin_checkbutton, FALSE, TRUE, 0);
+	g_signal_connect(io_stdin_checkbutton, "clicked",
+		GTK_SIGNAL_FUNC (program_stdin_changed), program);
 	g_object_set(G_OBJECT(io_stdin_checkbutton), "user-data", program_expander, NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(io_stdin_checkbutton), geoxml_program_get_stdin(program));
 
-	io_stdout_checkbutton = gtk_check_button_new_with_label(_("output"));
+	io_stdout_checkbutton = gtk_check_button_new_with_label(_("writes to standard output"));
 	gtk_widget_show(io_stdout_checkbutton);
-	gtk_box_pack_start(GTK_BOX(io_hbox), io_stdout_checkbutton, FALSE, TRUE, 5);
-	g_signal_connect ((gpointer) io_stdout_checkbutton, "clicked",
+	gtk_box_pack_start(GTK_BOX(io_vbox), io_stdout_checkbutton, FALSE, TRUE, 0);
+	g_signal_connect(io_stdout_checkbutton, "clicked",
 		GTK_SIGNAL_FUNC (program_stdout_changed),
 		program);
 	g_object_set(G_OBJECT(io_stdout_checkbutton), "user-data", program_expander, NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(io_stdout_checkbutton), geoxml_program_get_stdout(program));
 
-	io_stderr_checkbutton = gtk_check_button_new_with_label(_("error"));
+	io_stderr_checkbutton = gtk_check_button_new_with_label(_("appends to standard error"));
 	gtk_widget_show(io_stderr_checkbutton);
-	gtk_box_pack_start(GTK_BOX(io_hbox), io_stderr_checkbutton, FALSE, TRUE, 5);
-	g_signal_connect ((gpointer) io_stderr_checkbutton, "clicked",
+	gtk_box_pack_start(GTK_BOX(io_vbox), io_stderr_checkbutton, FALSE, TRUE, 0);
+	g_signal_connect(io_stderr_checkbutton, "clicked",
 		GTK_SIGNAL_FUNC (program_stderr_changed),
 		program);
 	g_object_set(G_OBJECT(io_stderr_checkbutton), "user-data", program_expander, NULL);
@@ -135,14 +140,14 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	gtk_table_attach (GTK_TABLE (summary_table), title_label, 0, 1, 0, 1,
 			(GtkAttachOptions) (GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
-	gtk_misc_set_alignment (GTK_MISC (title_label), 0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(title_label), 0, 0.5);
 
 	title_entry = gtk_entry_new ();
 	gtk_widget_show (title_entry);
 	gtk_table_attach (GTK_TABLE (summary_table), title_entry, 1, 2, 0, 1,
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
-	g_signal_connect ((gpointer) title_entry, "changed",
+	g_signal_connect(title_entry, "changed",
 		(GCallback)program_summary_title_changed,
 		program);
 	g_object_set(G_OBJECT(title_entry), "user-data", program_label, NULL);
@@ -157,14 +162,14 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	gtk_table_attach (GTK_TABLE (summary_table), binary_label, 0, 1, 1, 2,
 			(GtkAttachOptions) (GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
-	gtk_misc_set_alignment (GTK_MISC (binary_label), 0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(binary_label), 0, 0.5);
 
 	binary_entry = gtk_entry_new ();
 	gtk_widget_show (binary_entry);
 	gtk_table_attach (GTK_TABLE (summary_table), binary_entry, 1, 2, 1, 2,
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
-	g_signal_connect ((gpointer) binary_entry, "changed",
+	g_signal_connect(binary_entry, "changed",
 		(GCallback)program_summary_binary_changed,
 		program);
 	gtk_entry_set_text(GTK_ENTRY(binary_entry), geoxml_program_get_binary(program));
@@ -174,14 +179,14 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	gtk_table_attach (GTK_TABLE (summary_table), desc_label, 0, 1, 2, 3,
 			(GtkAttachOptions) (GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
-	gtk_misc_set_alignment (GTK_MISC (desc_label), 0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(desc_label), 0, 0.5);
 
 	desc_entry = gtk_entry_new ();
 	gtk_widget_show (desc_entry);
 	gtk_table_attach (GTK_TABLE (summary_table), desc_entry, 1, 2, 2, 3,
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
-	g_signal_connect ((gpointer) desc_entry, "changed",
+	g_signal_connect(desc_entry, "changed",
 		(GCallback)program_summary_desc_changed,
 		program);
 	gtk_entry_set_text(GTK_ENTRY(desc_entry), geoxml_program_get_description(program));
@@ -191,7 +196,7 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	gtk_table_attach (GTK_TABLE (summary_table), help_label, 0, 1, 3, 4,
 			(GtkAttachOptions) (GTK_FILL),
 			(GtkAttachOptions) (0), 0, 0);
-	gtk_misc_set_alignment (GTK_MISC (help_label), 0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(help_label), 0, 0.5);
 
 	help_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_widget_show(help_hbox);
@@ -201,7 +206,7 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	help_view_button = gtk_button_new_from_stock (GTK_STOCK_OPEN);
 	gtk_widget_show (help_view_button);
 	gtk_box_pack_start(GTK_BOX(help_hbox), help_view_button, FALSE, FALSE, 0);
-	g_signal_connect ((gpointer) help_view_button, "clicked",
+	g_signal_connect(help_view_button, "clicked",
 			GTK_SIGNAL_FUNC (program_summary_help_view),
 			program);
 	g_object_set(G_OBJECT(help_view_button), "relief", GTK_RELIEF_NONE, NULL);
@@ -209,7 +214,7 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	help_edit_button = gtk_button_new_from_stock (GTK_STOCK_EDIT);
 	gtk_widget_show (help_edit_button);
 	gtk_box_pack_start(GTK_BOX(help_hbox), help_edit_button, FALSE, FALSE, 5);
-	g_signal_connect ((gpointer) help_edit_button, "clicked",
+	g_signal_connect(help_edit_button, "clicked",
 			GTK_SIGNAL_FUNC (program_summary_help_edit),
 			program);
 	g_object_set(G_OBJECT(help_edit_button), "relief", GTK_RELIEF_NONE, NULL);
@@ -234,7 +239,7 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	widget = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	gtk_widget_show(widget);
 	gtk_box_pack_start(GTK_BOX(parameters_label_widget), widget, FALSE, TRUE, 5);
-	g_signal_connect ((gpointer) widget, "clicked",
+	g_signal_connect(widget, "clicked",
 		GTK_SIGNAL_FUNC (parameter_add),
 		program);
 	g_object_set(G_OBJECT(widget), "user-data", parameters_vbox,
