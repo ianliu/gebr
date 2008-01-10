@@ -68,7 +68,10 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	program_expander = gtk_expander_new("");
 	gtk_widget_set_popup_callback(program_expander, (GtkPopupCallback)program_popup_menu, program);
 	gtk_box_pack_start(GTK_BOX(gebrme.programs_vbox), program_expander, FALSE, TRUE, 0);
-	gtk_expander_set_expanded (GTK_EXPANDER (program_expander), hidden);
+	if (geoxml_flow_get_programs_number(gebrme.current) > 1)
+		gtk_expander_set_expanded(GTK_EXPANDER(program_expander), hidden);
+	else
+		gtk_expander_set_expanded(GTK_EXPANDER(program_expander), TRUE);
 	gtk_widget_show(program_expander);
 	depth_hbox = create_depth(program_expander);
 
