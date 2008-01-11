@@ -42,9 +42,14 @@ about_setup_ui(const gchar * program, const gchar * description)
 		"  Ricardo Biloti <biloti@gmail.com>",
 		"  Rodrigo Portugal <rosoport@gmail.com>",
 		_("SU Port Team"),
-		"  Jesse Costa",
-		"  Ellen Costa",
-		"  Various students",
+		"  Anderson Batista Gomes",
+		"  Andrei Gomes de Oliveira",
+		"  Daniela Rêgo Amazonas",
+		"  Ellen de Nazaré Souza Gomes",
+		"  Francisco Josa Coutinho da Silva",
+		"  Jessé Carvalho Costa",
+		"  Ligia Naia de Matos",
+		"  Victor Hugo Rocha Lopes",
 		NULL
 	};
 
