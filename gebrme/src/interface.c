@@ -320,21 +320,20 @@ create_gebrme_window (void)
 	gebrme.menus_treeview = menus_treeview;
 	gtk_widget_show(menus_treeview);
 	gtk_container_add(GTK_CONTAINER(menus_scrolledwindow), menus_treeview);
-
-	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW(menus_treeview), FALSE);
-	renderer = gtk_cell_renderer_pixbuf_new ();
-	col = gtk_tree_view_column_new_with_attributes ("", renderer, NULL);
-	gtk_tree_view_column_set_sizing (col, GTK_TREE_VIEW_COLUMN_FIXED);
-	gtk_tree_view_column_set_fixed_width(col, 24);
-	gtk_tree_view_column_add_attribute (col, renderer, "pixbuf", MENU_STATUS);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (menus_treeview), col);
-	renderer = gtk_cell_renderer_text_new ();
-	col = gtk_tree_view_column_new_with_attributes ("", renderer, NULL);
-	gtk_tree_view_column_add_attribute (col, renderer, "text", MENU_FILENAME);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (menus_treeview), col);
 	g_signal_connect(menus_treeview, "cursor-changed",
-			  (GCallback)menu_selected,
-			  NULL);
+		(GCallback)menu_selected, NULL);
+
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(menus_treeview), FALSE);
+	renderer = gtk_cell_renderer_pixbuf_new();
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_column_set_sizing(col, GTK_TREE_VIEW_COLUMN_FIXED);
+	gtk_tree_view_column_set_fixed_width(col, 24);
+	gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", MENU_STATUS);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(menus_treeview), col);
+	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_FILENAME);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(menus_treeview), col);
 
 	edition_scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
 	gtk_widget_show(edition_scrolledwindow);

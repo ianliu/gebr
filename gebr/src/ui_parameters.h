@@ -21,12 +21,14 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-struct ui_parameters {
-	GtkWidget *	dialog;
+#include <gui/parameter.h>
 
-	int		program_index;
-	GtkWidget **	widgets;
-	int		widgets_number;
+struct ui_parameters {
+	GtkWidget *			dialog;
+
+	int				program_index;
+	struct parameter_widget **	widgets;
+	int				widgets_number;
 };
 
 struct ui_parameters *

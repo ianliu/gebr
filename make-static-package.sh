@@ -24,7 +24,7 @@ mkdir $GEBR_DIR
 export CFLAGS="-g"
 # export LDFLAGS="-Wl,-rpath ."
 
-#GÃªBR libray
+#GêBR libray
 cd libgebr
 aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR
 cat src/geoxml/geoxml/defines.h.in | sed 's/@prefix@/../' > src/geoxml/geoxml/defines.h
@@ -32,22 +32,22 @@ cat src/geoxml/geoxml/defines.h.in | sed 's/@prefix@/../' > src/geoxml/geoxml/de
 make -j5 install
 cd ..
 
-#preparation for compiling GÃªBR's programs
+#preparation for compiling GêBR's programs
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$GEBR_DIR/lib/pkgconfig
 export LD_LIBRARY_PATH=$GEBR_DIR/lib
 export LDFLAGS="-Wl,-rpath ../lib"
 
-#GÃªBR
+#GêBR
 mkdir lib gebr/lib
 cd gebr
-aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR --enable-static-mode
+aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR
 cat src/defines.h.in | sed 's/@prefix@/../' | sed 's/@STATIC_MODE@/1/' > src/defines.h
 #make -j5 clean install
 make -j5 install
 cd ..
 rmdir lib gebr/lib
 
-#GÃªBRD
+#GêBRD
 mkdir lib gebrd/lib
 cd gebrd
 aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR
@@ -56,7 +56,7 @@ make -j5 install
 cd ..
 rmdir lib gebrd/lib
 
-#GÃªBRME
+#GêBRME
 mkdir lib gebrme/lib
 cd gebrme
 aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR

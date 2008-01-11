@@ -21,17 +21,13 @@
  * Program's parameter window stuff
  */
 
-//remove round warning
-#define _ISOC99_SOURCE
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #include <glib.h>
 #include <glib/gprintf.h>
 
 #include <geoxml.h>
-#include <gui/gtkfileentry.h>
 
 #include "ui_parameters.h"
 #include "gebr.h"
@@ -45,38 +41,9 @@
 /*
  * Prototypes
  */
+
 static void
 parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_parameters);
-
-static GtkWidget *
-parameters_create_label(GeoXmlParameter * parameter);
-
-static GtkWidget *
-parameters_add_input_float(GeoXmlParameter * parameter, GtkWidget ** widget);
-
-static GtkWidget *
-parameters_add_input_int(GeoXmlParameter * parameter, GtkWidget ** widget);
-
-static GtkWidget *
-parameters_add_input_string(GeoXmlParameter * parameter, GtkWidget ** widget);
-
-static GtkWidget *
-parameters_add_input_range(GeoXmlParameter * parameter, GtkWidget ** widget);
-
-static GtkWidget *
-parameters_add_input_flag(GeoXmlParameter * parameter, GtkWidget ** widget);
-
-static GtkWidget *
-parameters_add_input_file(GeoXmlParameter * parameter, GtkWidget ** widget);
-
-static void
-validate_int(GtkEntry *entry);
-
-static void
-validate_float(GtkEntry *entry);
-
-gboolean
-validate_on_leaving(GtkWidget * widget, GdkEventFocus * event, void (*function)(GtkEntry*));
 
 /*
  * Section: Public
@@ -173,36 +140,61 @@ parameters_configure_setup_ui(void)
 
 	parameter = geoxml_parameters_get_first_parameter(parameters);
 	for (i = 0; i < ui_parameters->widgets_number; ++i) {
-		GtkWidget *	widget;
-		GtkWidget *	parameter_widget;
+		enum GEOXML_PARAMETERTYPE	type;
 
-		switch (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter))) {
+		GtkWidget *			hbox;
+		struct parameter_widget *	widget;
+
+		type = geoxml_parameter_get_type(GEOXML_PARAMETER(parameter));
+		switch (type) {
 		case GEOXML_PARAMETERTYPE_FLOAT:
-			widget = parameters_add_input_float(GEOXML_PARAMETER(parameter), &parameter_widget);
+			widget = parameter_widget_new_float(GEOXML_PARAMETER(parameter));
 			break;
 		case GEOXML_PARAMETERTYPE_INT:
-			widget = parameters_add_input_int(GEOXML_PARAMETER(parameter), &parameter_widget);
+			widget = parameter_widget_new_int(GEOXML_PARAMETER(parameter));
 			break;
 		case GEOXML_PARAMETERTYPE_STRING:
-			widget = parameters_add_input_string(GEOXML_PARAMETER(parameter), &parameter_widget);
+			widget = parameter_widget_new_string(GEOXML_PARAMETER(parameter));
 			break;
 		case GEOXML_PARAMETERTYPE_RANGE:
-			widget = parameters_add_input_range(GEOXML_PARAMETER(parameter), &parameter_widget);
+			widget = parameter_widget_new_range(GEOXML_PARAMETER(parameter));
 			break;
 		case GEOXML_PARAMETERTYPE_FLAG:
-			widget = parameters_add_input_flag(GEOXML_PARAMETER(parameter), &parameter_widget);
+			widget = parameter_widget_new_flag(GEOXML_PARAMETER(parameter));
 			break;
 		case GEOXML_PARAMETERTYPE_FILE:
-			widget = parameters_add_input_file(GEOXML_PARAMETER(parameter), &parameter_widget);
+			widget = parameter_widget_new_file(GEOXML_PARAMETER(parameter));
 			break;
 		default:
 			continue;
 			break;
 		}
 
+		hbox = gtk_hbox_new(FALSE, 10);
+		if (type != GEOXML_PARAMETERTYPE_FLAG) {
+			GtkWidget *	label;
+			gchar *		label_str;
+
+			label_str = (gchar*)geoxml_parameter_get_label(GEOXML_PARAMETER(parameter));
+			label = gtk_label_new("");
+
+			if (geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(parameter)) == TRUE) {
+				gchar *	markup;
+
+				markup = g_markup_printf_escaped("<b>%s</b><sup>*</sup>", label_str);
+				gtk_label_set_markup(GTK_LABEL(label), markup);
+				g_free(markup);
+			} else
+				gtk_label_set_text(GTK_LABEL(label), label_str);
+
+			gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
+			gtk_box_pack_end(GTK_BOX(hbox), widget->widget, FALSE, TRUE, 0);
+		} else
+			gtk_box_pack_start(GTK_BOX(hbox), widget->widget, FALSE, FALSE, 0);
+
 		/* set and add */
-		ui_parameters->widgets[i] = parameter_widget;
-		gtk_box_pack_start(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
+		ui_parameters->widgets[i] = widget;
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 
 		geoxml_sequence_next(&parameter);
 	}
@@ -229,14 +221,10 @@ parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_param
 	switch (arg1) {
 	case GTK_RESPONSE_OK: {
 		GeoXmlSequence *	program;
-		GeoXmlSequence *	parameter;
 		int			i;
 
-		geoxml_flow_get_program(gebr.flow, &program, ui_parameters->program_index);
-		parameter = geoxml_parameters_get_first_parameter(
-			geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
-
 		/* Set program state to configured */
+		geoxml_flow_get_program(gebr.flow, &program, ui_parameters->program_index);
 		geoxml_program_set_status(GEOXML_PROGRAM(program), "configured");
 		/* Update interface */
 		{
@@ -255,46 +243,16 @@ parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_param
 
 		for (i = 0; i < ui_parameters->widgets_number; ++i) {
 			enum GEOXML_PARAMETERTYPE	type;
-			GtkWidget *			widget;
+			struct parameter_widget *	widget;
 
-			type = geoxml_parameter_get_type(GEOXML_PARAMETER(parameter));
+			widget = ui_parameters->widgets[i];
+			type = geoxml_parameter_get_type(widget->parameter);
 			if (type == GEOXML_PARAMETERTYPE_GROUP) {
 				/* TODO: call recursive function */
 				continue;
 			}
 
-			widget = ui_parameters->widgets[i];
-
-			switch (type) {
-			case GEOXML_PARAMETERTYPE_FLOAT:
-			case GEOXML_PARAMETERTYPE_INT:
-			case GEOXML_PARAMETERTYPE_STRING:
-				geoxml_program_parameter_set_value(GEOXML_PROGRAM_PARAMETER(parameter),
-					gtk_entry_get_text(GTK_ENTRY(widget)));
-				break;
-			case GEOXML_PARAMETERTYPE_RANGE: {
-				GString *	value;
-
-				value = g_string_new(NULL);
-
-				g_string_printf(value, "%f", gtk_spin_button_get_value(GTK_SPIN_BUTTON(widget)));
-				geoxml_program_parameter_set_value(GEOXML_PROGRAM_PARAMETER(parameter), value->str);
-
-				g_string_free(value, TRUE);
-				break;
-			} case GEOXML_PARAMETERTYPE_FLAG:
-				geoxml_program_parameter_set_flag_state(GEOXML_PROGRAM_PARAMETER(parameter),
-					gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
-				break;
-			case GEOXML_PARAMETERTYPE_FILE:
-				geoxml_program_parameter_set_value(GEOXML_PROGRAM_PARAMETER(parameter),
-					gtk_file_entry_get_path(GTK_FILE_ENTRY(widget)));
-				break;
-			default:
-				break;
-			}
-
-			geoxml_sequence_next(&parameter);
+			parameter_widget_submit(widget);
 		}
 
 		flow_save();
@@ -302,54 +260,22 @@ parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_param
 	} case GTK_RESPONSE_CANCEL:
 		break;
 	case GTK_RESPONSE_DEFAULT: {
-		GeoXmlSequence *	program;
-		GeoXmlSequence *	parameter;
-		int		 	i;
-
-		geoxml_flow_get_program(gebr.flow, &program, ui_parameters->program_index);
-		parameter = geoxml_parameters_get_first_parameter(
-			geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
+		int	i;
 
 		for (i = 0; i < ui_parameters->widgets_number; ++i) {
 			enum GEOXML_PARAMETERTYPE	type;
-			GtkWidget *			widget;
-			const gchar *			default_value;
+			struct parameter_widget *	widget;
 
-			type = geoxml_parameter_get_type(GEOXML_PARAMETER(parameter));
+			widget = ui_parameters->widgets[i];
+			type = geoxml_parameter_get_type(widget->parameter);
 			if (type == GEOXML_PARAMETERTYPE_GROUP) {
 				/* TODO: call recursive function */
 				continue;
 			}
 
-			widget = ui_parameters->widgets[i];
-			default_value = geoxml_program_parameter_get_default(GEOXML_PROGRAM_PARAMETER(parameter));
-
-			switch (type) {
-			case GEOXML_PARAMETERTYPE_FLOAT:
-			case GEOXML_PARAMETERTYPE_INT:
-			case GEOXML_PARAMETERTYPE_STRING:
-				gtk_entry_set_text(GTK_ENTRY(widget), default_value);
-				break;
-			case GEOXML_PARAMETERTYPE_RANGE: {
-				gchar *	endptr;
-				double	value;
-
-				value = strtod(default_value, &endptr);
-				if (endptr != default_value)
-					gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget), value);
-				break;
-			} case GEOXML_PARAMETERTYPE_FLAG:
-				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-					geoxml_program_parameter_get_flag_default(GEOXML_PROGRAM_PARAMETER(parameter)));
-				break;
-			case GEOXML_PARAMETERTYPE_FILE:
-				gtk_file_entry_set_path(GTK_FILE_ENTRY(widget), default_value);
-				break;
-			default:
-				break;
-			}
-
-			geoxml_sequence_next(&parameter);
+			geoxml_program_parameter_set_default(GEOXML_PROGRAM_PARAMETER(widget->parameter),
+				geoxml_program_parameter_get_default(GEOXML_PROGRAM_PARAMETER(widget->parameter)));
+			parameter_widget_update(widget);
 		}
 		return;
 	} case GTK_RESPONSE_HELP: {
@@ -396,234 +322,4 @@ parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_param
 	gtk_widget_destroy(GTK_WIDGET(dialog));
 	g_free(ui_parameters->widgets);
 	g_free(ui_parameters);
-}
-
-static GtkWidget *
-parameters_create_label(GeoXmlParameter * parameter)
-{
-	GtkWidget *	label;
-	gchar *		label_str;
-
-	label_str = (gchar*)geoxml_parameter_get_label(parameter);
-	label = gtk_label_new("");
-
-	if (geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(parameter)) == TRUE) {
-		gchar *	markup;
-
-		markup = g_markup_printf_escaped("<b>%s</b><sup>*</sup>", label_str);
-		gtk_label_set_markup(GTK_LABEL(label), markup);
-		g_free(markup);
-	} else
-		gtk_label_set_text(GTK_LABEL(label), label_str);
-
-	return label;
-}
-
-/*
- * Function: parameters_add_input_float
- * Add an input entry to a float parameter
- */
-static GtkWidget *
-parameters_add_input_float(GeoXmlParameter * parameter, GtkWidget ** widget)
-{
-	GtkWidget *	hbox;
-
-	hbox = parameters_add_input_string(parameter, widget);
-	gtk_widget_set_size_request(*widget, 90, 30);
-
-	g_signal_connect(GTK_OBJECT(*widget), "activate",
-		GTK_SIGNAL_FUNC(validate_float), NULL);
-	g_signal_connect(GTK_OBJECT(*widget), "focus-out-event",
-		GTK_SIGNAL_FUNC(validate_on_leaving), &validate_float);
-
-	return hbox;
-}
-
-/*
- * Function: parameters_add_input_int
- * Add an input entry to an integer parameter
- */
-static GtkWidget *
-parameters_add_input_int(GeoXmlParameter * parameter, GtkWidget ** widget)
-{
-	GtkWidget *	hbox;
-
-	hbox = parameters_add_input_string(parameter, widget);
-	gtk_widget_set_size_request(*widget, 90, 30);
-
-	g_signal_connect(GTK_OBJECT(*widget), "activate",
-		GTK_SIGNAL_FUNC(validate_int), NULL);
-	g_signal_connect(GTK_OBJECT(*widget), "focus-out-event",
-		GTK_SIGNAL_FUNC(validate_on_leaving), &validate_int);
-
-	return hbox;
-}
-
-/*
- * Function: parameters_add_input_string
- * Add an input entry to a string parameter
- */
-static GtkWidget *
-parameters_add_input_string(GeoXmlParameter * parameter, GtkWidget ** widget)
-{
-	GtkWidget *	hbox;
-	GtkWidget *	label;
-	GtkWidget *	entry;
-
-	hbox = gtk_hbox_new(FALSE, 10);
-	label = parameters_create_label(parameter);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
-
-	entry = gtk_entry_new();
-	gtk_widget_set_size_request (entry, 140, 30);
-	gtk_box_pack_end(GTK_BOX (hbox), entry, FALSE, FALSE, 0);
-
-	gtk_entry_set_text(GTK_ENTRY(entry),
-		geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter)));
-
-	*widget = entry;
-	return hbox;
-}
-
-/*
- * Function: parameters_add_input_range
- * Add an input entry to a range parameter
- */
-static GtkWidget *
-parameters_add_input_range(GeoXmlParameter * parameter, GtkWidget ** widget)
-{
-	GtkWidget *	hbox;
-	GtkWidget *	label;
-	GtkWidget *	spin;
-
-	gchar *		min;
-	gchar *		max;
-	gchar *		step;
-
-	hbox = gtk_hbox_new(FALSE, 10);
-	label = parameters_create_label(parameter);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
-
-	geoxml_program_parameter_get_range_properties(
-		GEOXML_PROGRAM_PARAMETER(parameter), &min, &max, &step);
-
-	spin = gtk_spin_button_new_with_range(atof(min), atof(max), atof(step));
-	gtk_widget_set_size_request(spin, 90, 30);
-	gtk_box_pack_end(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
-
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin),
-		atof(geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter))));
-
-	*widget = spin;
-	return hbox;
-}
-
-/*
- * Function: parameters_add_input_flag
- * Add an input entry to a flag parameter
- */
-static GtkWidget *
-parameters_add_input_flag(GeoXmlParameter * parameter, GtkWidget ** widget)
-{
-	GtkWidget *	hbox;
-	GtkWidget *	check_button;
-
-	hbox = gtk_hbox_new(FALSE, 10);
-	check_button = gtk_check_button_new_with_label(
-		geoxml_program_parameter_get_label(GEOXML_PROGRAM_PARAMETER(parameter)));
-	gtk_box_pack_start(GTK_BOX(hbox), check_button, FALSE, TRUE, 0);
-
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_button),
-		geoxml_program_parameter_get_flag_status(GEOXML_PROGRAM_PARAMETER(parameter)));
-
-	*widget = check_button;
-	return hbox;
-}
-
-/*
- * Function: parameters_add_input_file
- * Add an input entry and button to browse for a file or directory
- */
-static GtkWidget *
-parameters_add_input_file(GeoXmlParameter * parameter, GtkWidget ** widget)
-{
-	GtkWidget *	hbox;
-	GtkWidget *	label;
-	GtkWidget *	file_entry;
-
-	/* hbox */
-	hbox = gtk_hbox_new(FALSE, 10);
-	label = parameters_create_label(parameter);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
-
-	/* file entry */
-	file_entry = gtk_file_entry_new();
-	gtk_widget_set_size_request(file_entry, 220, 30);
-	gtk_box_pack_end(GTK_BOX(hbox), file_entry, FALSE, FALSE, 0);
-
-	gtk_file_entry_set_path(GTK_FILE_ENTRY(file_entry),
-		geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter)));
-	gtk_file_entry_set_choose_directory(GTK_FILE_ENTRY(file_entry),
-		geoxml_program_parameter_get_file_be_directory(GEOXML_PROGRAM_PARAMETER(parameter)));
-
-	*widget = file_entry;
-	return hbox;
-}
-
-/*
- * Function: validate_int
- * Validate an int parameter
- */
-static void
-validate_int(GtkEntry *entry)
-{
-	gchar		number[15];
-	gchar *		valuestr;
-	gdouble		value;
-
-	valuestr = (gchar*)gtk_entry_get_text(entry);
-	if (strlen(valuestr) == 0)
-		return;
-
-	value = g_ascii_strtod(valuestr, NULL);
-	gtk_entry_set_text(entry, g_ascii_dtostr(number, 15, round(value)));
-}
-
-/*
- * Function: validate_float
- * Validate a float parameter
- */
-static void
-validate_float(GtkEntry *entry)
-{
-	gchar *		valuestr;
-	gchar *		last;
-	GString *	value;
-
-	valuestr = (gchar*)gtk_entry_get_text(entry);
-	if (strlen(valuestr) == 0)
-		return;
-
-	/* initialization */
-	value = g_string_new(NULL);
-
-	g_ascii_strtod(valuestr, &last);
-	g_string_assign(value, valuestr);
-	g_string_truncate(value, strlen(valuestr) - strlen(last));
-	gtk_entry_set_text(entry, value->str);
-
-	/* frees */
-	g_string_free(value, TRUE);
-}
-
-/*
- * Function: validate_on_leaving
- * Call a validation function
- */
-gboolean
-validate_on_leaving(GtkWidget * widget, GdkEventFocus * event, void (*function)(GtkEntry*))
-{
-	function(GTK_ENTRY(widget));
-
-	return FALSE;
 }
