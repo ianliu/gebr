@@ -36,7 +36,8 @@ __geoxml_value_sequence_check(GeoXmlValueSequence * value_sequence)
 
 	name = gdome_el_nodeName((GdomeElement*)value_sequence, &exception);
 
-	return (gboolean)!g_ascii_strcasecmp(name->str, "option");
+	return (gboolean)!g_ascii_strcasecmp(name->str, "option") ||
+		(gboolean)!g_ascii_strcasecmp(name->str, "category");
 }
 
 /*

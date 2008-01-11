@@ -20,6 +20,7 @@
 #include "category.h"
 #include "xml.h"
 #include "types.h"
+#include "value_sequence.h"
 #include "sequence.h"
 
 /*
@@ -37,17 +38,13 @@ struct geoxml_category {
 void
 geoxml_category_set_name(GeoXmlCategory * category, const gchar * name)
 {
-	if (category == NULL)
-		return;
-	__geoxml_set_element_value((GdomeElement*)category, name, __geoxml_create_TextNode);
+	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(category), name);
 }
 
 const gchar *
 geoxml_category_get_name(GeoXmlCategory * category)
 {
-	if (category == NULL)
-		return NULL;
-	return __geoxml_get_element_value((GdomeElement*)category);
+	return geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category));
 }
 
 GeoXmlFlow *

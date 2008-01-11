@@ -111,11 +111,11 @@
  * 	]
  * 	"GeoXmlSequence" -> { "GeoXmlProjectLine" };
  * 	"GeoXmlSequence" -> { "GeoXmlLineFlow" };
- * 	"GeoXmlSequence" -> { "GeoXmlCategory" };
  * 	"GeoXmlSequence" -> { "GeoXmlProgram" };
  * 	"GeoXmlSequence" -> { "GeoXmlParameter" };
  * 	"GeoXmlSequence" -> { "GeoXmlValueSequence" };
  * 	"GeoXmlValueSequence" -> { "GeoXmlEnumOption" };
+ * 	"GeoXmlValueSequence" -> { "GeoXmlCategory" };
  * }
  * \enddot
  * Discussions group: http://groups.google.com/group/gebr and http://groups.google.com/group/gebr-devel

@@ -41,12 +41,14 @@
  * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
  * 	"GeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
  * 	"GeoXmlEnumOption" [ URL = "\ref GeoXmlEnumOption" ];
+ * 	"GeoXmlCategory" [ URL = "\ref category.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
  * 	"GeoXmlSequence" -> "GeoXmlSequence";
  * 	"GeoXmlValueSequence" -> "GeoXmlEnumOption";
+ * 	"GeoXmlValueSequence" -> "GeoXmlCategory";
  * }
  * \enddot
  * \see value_sequence.h
@@ -56,8 +58,7 @@
  * \file value_sequence.h
  * Abstract class for elements of a sequence in libgeoxml
  *
- * GeoXmlProjectLine, GeoXmlLineFlow, GeoXmlProgram, GeoXmlProgramParameter and GeoXmlCategory
- * can be treated as a super class of GeoXmlValueSequence.
+ * GeoXmlEnumOption and GeoXmlCategory inherits GeoXmlValueSequence.
  */
 
 /**

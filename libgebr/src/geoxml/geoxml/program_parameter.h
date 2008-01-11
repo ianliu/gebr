@@ -60,6 +60,7 @@
  * 	"GeoXmlSequence" -> "GeoXmlParameter";
  * 	"GeoXmlSequence" -> "GeoXmlValueSequence";
  * 	"GeoXmlValueSequence" -> "GeoXmlEnumOption";
+ * 	"GeoXmlValueSequence" -> "GeoXmlCategory";
  * 	"GeoXmlParameter" -> "GeoXmlProgramParameter";
  * 	"GeoXmlParameter" -> "GeoXmlParameterGroup";
  * 	"GeoXmlParameters" -> "GeoXmlParameterGroup";
@@ -69,6 +70,7 @@
  * 		taillabel = "0..*"
  * 	]
  * 	"GeoXmlFlow" -> "GeoXmlProgram";
+ * 	"GeoXmlFlow" -> "GeoXmlCategory";
  * 	"GeoXmlParameters" -> "GeoXmlParameter";
  * 	"GeoXmlProgramParameter" -> "GeoXmlEnumOption"
  *
@@ -233,7 +235,7 @@ geoxml_program_parameter_append_enum_option(GeoXmlProgramParameter * program_par
  * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
  */
 int
-geoxml_program_parameter_get_enum_option(GeoXmlProgramParameter * program_parameter, GeoXmlValueSequence ** enum_option, gulong index);
+geoxml_program_parameter_get_enum_option(GeoXmlProgramParameter * program_parameter, GeoXmlSequence ** enum_option, gulong index);
 
 /**
  * Get the number of enum options in \p program_parameter

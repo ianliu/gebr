@@ -52,11 +52,11 @@
  * 	]
  * 	"GeoXmlSequence" -> { "GeoXmlProjectLine" };
  * 	"GeoXmlSequence" -> { "GeoXmlLineFlow" };
- * 	"GeoXmlSequence" -> { "GeoXmlCategory" };
  * 	"GeoXmlSequence" -> { "GeoXmlProgram" };
  * 	"GeoXmlSequence" -> { "GeoXmlParameter" };
  * 	"GeoXmlSequence" -> { "GeoXmlValueSequence" };
  * 	"GeoXmlValueSequence" -> { "GeoXmlEnumOption" };
+ * 	"GeoXmlValueSequence" -> { "GeoXmlCategory" };
  * }
  * \enddot
  * \see sequence.h

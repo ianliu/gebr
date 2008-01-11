@@ -25,6 +25,7 @@
 #include "xml.h"
 #include "error.h"
 #include "types.h"
+#include "value_sequence.h"
 
 /*
  * internal structures and funcionts
@@ -227,7 +228,7 @@ geoxml_flow_new_category(GeoXmlFlow * flow, const gchar * name)
 
 	category = (GeoXmlCategory*)__geoxml_new_element(
 		geoxml_document_root_element(GEOXML_DOC(flow)), "category");
-	geoxml_category_set_name(category, name);
+	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(category), name);
 
 	return category;
 }
@@ -243,7 +244,7 @@ geoxml_flow_append_category(GeoXmlFlow * flow, const gchar * name)
 	category = (GeoXmlCategory*)__geoxml_insert_new_element(
 		geoxml_document_root_element(GEOXML_DOC(flow)), "category",
 		__geoxml_get_first_element(geoxml_document_root_element(GEOXML_DOC(flow)), "io"));
-	geoxml_category_set_name(category, name);
+	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(category), name);
 
 	return category;
 }

@@ -218,7 +218,7 @@ geoxml_program_parameter_append_enum_option(GeoXmlProgramParameter * program_par
 }
 
 int
-geoxml_program_parameter_get_enum_option(GeoXmlProgramParameter * program_parameter, GeoXmlValueSequence ** enum_option, gulong index)
+geoxml_program_parameter_get_enum_option(GeoXmlProgramParameter * program_parameter, GeoXmlSequence ** enum_option, gulong index)
 {
 	if (program_parameter == NULL) {
 		*enum_option = NULL;
@@ -227,7 +227,7 @@ geoxml_program_parameter_get_enum_option(GeoXmlProgramParameter * program_parame
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) != GEOXML_PARAMETERTYPE_ENUM)
 		return GEOXML_RETV_PARAMETER_NOT_ENUM;
 
-	*enum_option = (GeoXmlValueSequence*)__geoxml_get_element_at((GdomeElement*)program_parameter, "option", index);
+	*enum_option = (GeoXmlSequence*)__geoxml_get_element_at((GdomeElement*)program_parameter, "option", index);
 
 	return (*enum_option == NULL)
 		? GEOXML_RETV_INVALID_INDEX

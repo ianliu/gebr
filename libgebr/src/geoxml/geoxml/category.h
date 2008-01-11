@@ -43,13 +43,15 @@
  * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
  * 	"GeoXmlFlow" [ URL = "\ref flow.h" ];
  * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
  * 	"GeoXmlCategory" [ URL = "\ref category.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
  * 	"GeoXmlDocument" -> "GeoXmlFlow";
- * 	"GeoXmlSequence" -> "GeoXmlCategory";
+ * 	"GeoXmlSequence" -> "GeoXmlValueSequence";
+ * 	"GeoXmlValueSequence" -> "GeoXmlCategory";
  *
  * 	edge [
  * 		arrowhead = "none"
@@ -63,7 +65,8 @@
 
 /**
  * \file category.h
- *
+ * A flow category.
+ * Inherits GeoXmlValueSequence
  */
 
 /**
@@ -80,27 +83,24 @@ typedef struct geoxml_category GeoXmlCategory;
 #include "macros.h"
 
 /**
- * Change the name of \p category to \p name.
- *
- * If \p category is NULL nothing is done.
+ * \deprecated
+ * Use \ref geoxml_value_sequence_get instead. Kept only for backwards compatible and should not be used in newly written code
  */
-void
+void GEOXML_DEPRECATED
 geoxml_category_set_name(GeoXmlCategory * category, const gchar * name);
 
 /**
- * Returns \p category 's name.
- *
- * If \p category is NULL returns NULL.
+ * \deprecated
+ * Use \ref geoxml_value_sequence_set instead. Kept only for backwards compatible and should not be used in newly written code
  */
-const gchar *
+const gchar * GEOXML_DEPRECATED
 geoxml_category_get_name(GeoXmlCategory * category);
 
 /**
- * Get the flow to which \p category belongs to.
- *
- * If \p category is NULL nothing is done.
+ * \deprecated
+ * Kept only for backwards compatible and should not be used in newly written code
  */
-GeoXmlFlow *
+GeoXmlFlow * GEOXML_DEPRECATED
 geoxml_category_flow(GeoXmlCategory * category);
 
 /**
