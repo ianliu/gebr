@@ -141,7 +141,7 @@ void
 geoxml_program_parameter_set_keyword(GeoXmlProgramParameter * program_parameter, const gchar * keyword);
 
 /**
- * Say that \p program_parameter 'sthat this program_parameter's value is in fact a list of values
+ * Say that \p program_parameter's that this program_parameter's value is in fact a list of values
  * each one delimited by a separator, if \p is_list is TRUE
  *
  * \see geoxml_program_parameter_get_is_list, geoxml_program_parameter_set_list_separator,
@@ -261,7 +261,7 @@ geoxml_program_parameter_get_keyword(GeoXmlProgramParameter * program_parameter)
 
 /**
  * Return TRUE if \p program_parameter that this program_parameter's value is in fact a list of values
- * each one delimited by a separator, if \p is_list is TRUE.
+ * each one delimited by a separator.
  *
  * If \p program_parameter is NULL returns FALSE
  *
