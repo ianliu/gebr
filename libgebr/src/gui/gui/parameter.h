@@ -1,4 +1,4 @@
-/*   GÍBR - An environment for seismic processing.
+/*   libgebr - GÍBR Library
  *   Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -20,30 +20,33 @@
 
 #include <gtk/gtk.h>
 
+#include <geoxml.h>
+
 struct parameter_widget {
 	GtkWidget *		widget;
 	GeoXmlParameter *	parameter;
 
 	GtkWidget *		value_widget;
+	gboolean		use_default_value;
 };
 
 struct parameter_widget *
-parameter_widget_new_float(GeoXmlParameter * parameter);
+parameter_widget_new_float(GeoXmlParameter * parameter, gboolean use_default_value);
 
 struct parameter_widget *
-parameter_widget_new_int(GeoXmlParameter * parameter);
+parameter_widget_new_int(GeoXmlParameter * parameter, gboolean use_default_value);
 
 struct parameter_widget *
-parameter_widget_new_string(GeoXmlParameter * parameter);
+parameter_widget_new_string(GeoXmlParameter * parameter, gboolean use_default_value);
 
 struct parameter_widget *
-parameter_widget_new_range(GeoXmlParameter * parameter);
+parameter_widget_new_range(GeoXmlParameter * parameter, gboolean use_default_value);
 
 struct parameter_widget *
-parameter_widget_new_flag(GeoXmlParameter * parameter);
+parameter_widget_new_file(GeoXmlParameter * parameter, gboolean use_default_value);
 
 struct parameter_widget *
-parameter_widget_new_file(GeoXmlParameter * parameter);
+parameter_widget_new_flag(GeoXmlParameter * parameter, gboolean use_default_value);
 
 void
 parameter_widget_submit(struct parameter_widget * parameter_widget);

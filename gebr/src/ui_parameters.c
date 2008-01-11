@@ -32,7 +32,6 @@
 #include "ui_parameters.h"
 #include "gebr.h"
 #include "support.h"
-#include "parameter.h"
 #include "menu.h"
 #include "flow.h"
 #include "ui_help.h"
@@ -149,22 +148,22 @@ parameters_configure_setup_ui(void)
 		type = geoxml_parameter_get_type(GEOXML_PARAMETER(parameter));
 		switch (type) {
 		case GEOXML_PARAMETERTYPE_FLOAT:
-			widget = parameter_widget_new_float(GEOXML_PARAMETER(parameter));
+			widget = parameter_widget_new_float(GEOXML_PARAMETER(parameter), FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_INT:
-			widget = parameter_widget_new_int(GEOXML_PARAMETER(parameter));
+			widget = parameter_widget_new_int(GEOXML_PARAMETER(parameter), FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_STRING:
-			widget = parameter_widget_new_string(GEOXML_PARAMETER(parameter));
+			widget = parameter_widget_new_string(GEOXML_PARAMETER(parameter), FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_RANGE:
-			widget = parameter_widget_new_range(GEOXML_PARAMETER(parameter));
+			widget = parameter_widget_new_range(GEOXML_PARAMETER(parameter), FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_FLAG:
-			widget = parameter_widget_new_flag(GEOXML_PARAMETER(parameter));
+			widget = parameter_widget_new_flag(GEOXML_PARAMETER(parameter), FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_FILE:
-			widget = parameter_widget_new_file(GEOXML_PARAMETER(parameter));
+			widget = parameter_widget_new_file(GEOXML_PARAMETER(parameter), FALSE);
 			break;
 		default:
 			continue;

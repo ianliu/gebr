@@ -21,7 +21,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-#include "parameter.h"
+#include <gui/parameter.h>
 
 struct ui_parameters {
 	GtkWidget *			dialog;

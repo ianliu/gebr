@@ -524,13 +524,12 @@ create_gebrme_window (void)
 
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW(categories_treeview), FALSE);
 	renderer = gtk_cell_renderer_text_new ();
+	g_object_set(renderer, "editable", TRUE, NULL);
+	g_signal_connect(renderer, "edited",
+		(GCallback)category_renamed, NULL);
 	col = gtk_tree_view_column_new_with_attributes (NULL, renderer, NULL);
 	gtk_tree_view_column_add_attribute (col, renderer, "text", CATEGORY_NAME);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (categories_treeview), col);
-
-	g_object_set (renderer, "editable", TRUE, NULL);
-	g_signal_connect(renderer, "edited",
-			(GCallback)category_renamed, NULL);
 
 	/* Programs label and add button */
 	programs_hbox = gtk_hbox_new (FALSE, 0);

@@ -1,4 +1,4 @@
-/*   GÍBR - An environment for seismic processing.
+/*   libgebr - GÍBR Library
  *   Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,11 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <geoxml.h>
-#include <gui/gtkfileentry.h>
-
 #include "parameter.h"
+#include "gtkfileentry.h"
+
+#define DOUBLE_MAX +999999999
+#define DOUBLE_MIN -999999999
 
 /*
  * Section: Private
@@ -46,33 +47,58 @@ parameter_widget_weak_ref(struct parameter_widget * parameter_widget, GtkWidget 
  * Create a new parameter widget based on __parameter_ and _value_widget_
  */
 static struct parameter_widget *
-parameter_widget_init(GeoXmlParameter * _parameter, GtkWidget * value_widget)
+parameter_widget_init(GeoXmlParameter * _parameter, GtkWidget * value_widget, gboolean use_default_value)
 {
 	struct parameter_widget *	parameter_widget;
 	GtkWidget *			hbox;
 
-	hbox = gtk_hbox_new(FALSE, 10);
-	gtk_box_pack_start(GTK_BOX(hbox), value_widget, TRUE, TRUE, 0);
-
 	if (geoxml_program_parameter_get_is_list(GEOXML_PROGRAM_PARAMETER(_parameter)) == TRUE) {
+		hbox = gtk_hbox_new(FALSE, 10);
+		gtk_box_pack_start(GTK_BOX(hbox), value_widget, TRUE, TRUE, 0);
 // 		GtkWidget *	label;
 
 
 
 // 		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
-	}
+	} else
+		hbox = value_widget;
 
 	parameter_widget = g_malloc(sizeof(struct parameter_widget));
 	*parameter_widget = (struct parameter_widget) {
 		.widget = hbox,
 		.parameter = _parameter,
-		.value_widget = value_widget
+		.value_widget = value_widget,
+		.use_default_value = use_default_value
 	};
 
 	/* delete before widget destruction */
 	g_object_weak_ref(G_OBJECT(parameter_widget->widget), (GWeakNotify)parameter_widget_weak_ref, parameter_widget);
 
 	return parameter_widget;
+}
+
+/*
+ * Function: parameter_widget_set_value
+ * Set value considering _use_default_value_ flag.
+ */
+static void
+parameter_widget_set_value(struct parameter_widget *parameter_widget, const gchar * value)
+{
+	(parameter_widget->use_default_value == FALSE)
+		? parameter_widget_set_value(parameter_widget, value)
+		: geoxml_program_parameter_set_default(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), value);
+}
+
+/*
+ * Function: parameter_widget_get_value
+ * Get value considering _use_default_value_ flag.
+ */
+static const gchar *
+parameter_widget_get_value(struct parameter_widget * parameter_widget)
+{
+	return (parameter_widget->use_default_value == FALSE)
+		? geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter))
+		: geoxml_program_parameter_get_default(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter));
 }
 
 /*
@@ -142,11 +168,11 @@ validate_on_leaving(GtkWidget * widget, GdkEventFocus * event, void (*function)(
  * Add an input entry to a float parameter
  */
 struct parameter_widget *
-parameter_widget_new_float(GeoXmlParameter * parameter)
+parameter_widget_new_float(GeoXmlParameter * parameter, gboolean use_default_value)
 {
 	struct parameter_widget *	parameter_widget;
 
-	parameter_widget = parameter_widget_new_string(parameter);
+	parameter_widget = parameter_widget_new_string(parameter, use_default_value);
 	gtk_widget_set_size_request(parameter_widget->value_widget, 90, 30);
 
 	g_signal_connect(parameter_widget->value_widget, "activate",
@@ -162,11 +188,11 @@ parameter_widget_new_float(GeoXmlParameter * parameter)
  * Add an input entry to an integer parameter
  */
 struct parameter_widget *
-parameter_widget_new_int(GeoXmlParameter * parameter)
+parameter_widget_new_int(GeoXmlParameter * parameter, gboolean use_default_value)
 {
 	struct parameter_widget *	parameter_widget;
 
-	parameter_widget = parameter_widget_new_string(parameter);
+	parameter_widget = parameter_widget_new_string(parameter, use_default_value);
 	gtk_widget_set_size_request(parameter_widget->value_widget, 90, 30);
 
 	g_signal_connect(parameter_widget->value_widget, "activate",
@@ -182,17 +208,18 @@ parameter_widget_new_int(GeoXmlParameter * parameter)
  * Add an input entry to a string parameter
  */
 struct parameter_widget *
-parameter_widget_new_string(GeoXmlParameter * parameter)
+parameter_widget_new_string(GeoXmlParameter * parameter, gboolean use_default_value)
 {
-	GtkWidget *	entry;
+	struct parameter_widget *	parameter_widget;
+	GtkWidget *			entry;
 
 	entry = gtk_entry_new();
-	gtk_widget_set_size_request (entry, 140, 30);
+	gtk_widget_set_size_request(entry, 140, 30);
 
-	gtk_entry_set_text(GTK_ENTRY(entry),
-		geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter)));
+	parameter_widget = parameter_widget_init(parameter, entry, use_default_value);
+	gtk_entry_set_text(GTK_ENTRY(entry), parameter_widget_get_value(parameter_widget));
 
-	return parameter_widget_init(parameter, entry);
+	return parameter_widget;
 }
 
 /*
@@ -200,42 +227,31 @@ parameter_widget_new_string(GeoXmlParameter * parameter)
  * Add an input entry to a range parameter
  */
 struct parameter_widget *
-parameter_widget_new_range(GeoXmlParameter * parameter)
+parameter_widget_new_range(GeoXmlParameter * parameter, gboolean use_default_value)
 {
-	GtkWidget *	spin;
+	struct parameter_widget *	parameter_widget;
+	GtkWidget *			spin;
 
-	gchar *		min;
-	gchar *		max;
-	gchar *		step;
+	gchar *				min_str;
+	gchar *				max_str;
+	gchar *				inc_str;
+	double				min, max, inc;
 
 	geoxml_program_parameter_get_range_properties(
-		GEOXML_PROGRAM_PARAMETER(parameter), &min, &max, &step);
+		GEOXML_PROGRAM_PARAMETER(parameter), &min_str, &max_str, &inc_str);
+	min = !strlen(min_str) ? DOUBLE_MIN : atof(min_str);
+	max = !strlen(max_str) ? DOUBLE_MAX : atof(max_str);
+	inc = !strlen(inc_str) ? 1.0 : atof(inc_str);
 
-	spin = gtk_spin_button_new_with_range(atof(min), atof(max), atof(step));
+	spin = gtk_spin_button_new_with_range(min, max, inc);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), 3);
 	gtk_widget_set_size_request(spin, 90, 30);
 
+	parameter_widget = parameter_widget_init(parameter, spin, use_default_value);
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin),
-		atof(geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter))));
+		atof(parameter_widget_get_value(parameter_widget)));
 
-	return parameter_widget_init(parameter, spin);
-}
-
-/*
- * Function: parameter_widget_new_flag
- * Add an input entry to a flag parameter
- */
-struct parameter_widget *
-parameter_widget_new_flag(GeoXmlParameter * parameter)
-{
-	GtkWidget *	check_button;
-
-	check_button = gtk_check_button_new_with_label(
-		geoxml_program_parameter_get_label(GEOXML_PROGRAM_PARAMETER(parameter)));
-
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_button),
-		geoxml_program_parameter_get_flag_status(GEOXML_PROGRAM_PARAMETER(parameter)));
-
-	return parameter_widget_init(parameter, check_button);
+	return parameter_widget;
 }
 
 /*
@@ -243,20 +259,43 @@ parameter_widget_new_flag(GeoXmlParameter * parameter)
  * Add an input entry and button to browse for a file or directory
  */
 struct parameter_widget *
-parameter_widget_new_file(GeoXmlParameter * parameter)
+parameter_widget_new_file(GeoXmlParameter * parameter, gboolean use_default_value)
 {
-	GtkWidget *	file_entry;
+	struct parameter_widget *	parameter_widget;
+	GtkWidget *			file_entry;
 
 	/* file entry */
 	file_entry = gtk_file_entry_new();
 	gtk_widget_set_size_request(file_entry, 220, 30);
 
+	parameter_widget = parameter_widget_init(parameter, file_entry, use_default_value);
 	gtk_file_entry_set_path(GTK_FILE_ENTRY(file_entry),
-		geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter)));
+		parameter_widget_get_value(parameter_widget));
 	gtk_file_entry_set_choose_directory(GTK_FILE_ENTRY(file_entry),
 		geoxml_program_parameter_get_file_be_directory(GEOXML_PROGRAM_PARAMETER(parameter)));
 
-	return parameter_widget_init(parameter, file_entry);
+	return parameter_widget;
+}
+
+/*
+ * Function: parameter_widget_new_flag
+ * Add an input entry to a flag parameter
+ */
+struct parameter_widget *
+parameter_widget_new_flag(GeoXmlParameter * parameter, gboolean use_default_value)
+{
+	struct parameter_widget *	parameter_widget;
+	GtkWidget *			check_button;
+
+	check_button = gtk_check_button_new_with_label(
+		geoxml_program_parameter_get_label(GEOXML_PROGRAM_PARAMETER(parameter)));
+
+	parameter_widget = parameter_widget_init(parameter, check_button, use_default_value);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_button), (use_default_value == FALSE)
+		? geoxml_program_parameter_get_flag_status(GEOXML_PROGRAM_PARAMETER(parameter))
+		: geoxml_program_parameter_get_flag_default(GEOXML_PROGRAM_PARAMETER(parameter)));
+
+	return parameter_widget;
 }
 
 /*
@@ -270,7 +309,7 @@ parameter_widget_submit(struct parameter_widget * parameter_widget)
 	case GEOXML_PARAMETERTYPE_FLOAT:
 	case GEOXML_PARAMETERTYPE_INT:
 	case GEOXML_PARAMETERTYPE_STRING:
-		geoxml_program_parameter_set_value(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter),
+		parameter_widget_set_value(parameter_widget,
 			gtk_entry_get_text(GTK_ENTRY(parameter_widget->value_widget)));
 		break;
 	case GEOXML_PARAMETERTYPE_RANGE: {
@@ -279,18 +318,20 @@ parameter_widget_submit(struct parameter_widget * parameter_widget)
 		value = g_string_new(NULL);
 
 		g_string_printf(value, "%f", gtk_spin_button_get_value(GTK_SPIN_BUTTON(parameter_widget->value_widget)));
-		geoxml_program_parameter_set_value(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), value->str);
+		parameter_widget_set_value(parameter_widget, value->str);
 
 		g_string_free(value, TRUE);
 		break;
 	}
 	case GEOXML_PARAMETERTYPE_FILE:
-		geoxml_program_parameter_set_value(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter),
+		parameter_widget_set_value(parameter_widget,
 			gtk_file_entry_get_path(GTK_FILE_ENTRY(parameter_widget->value_widget)));
 		break;
 	case GEOXML_PARAMETERTYPE_FLAG:
 		geoxml_program_parameter_set_flag_state(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter),
-			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(parameter_widget->value_widget)));
+			(parameter_widget->use_default_value == FALSE)
+				? gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(parameter_widget->value_widget))
+				: gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(parameter_widget->value_widget)));
 		break;
 	default:
 		break;
@@ -306,7 +347,7 @@ parameter_widget_update(struct parameter_widget * parameter_widget)
 {
 	const gchar *	value;
 
-	value = geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter));
+	value = parameter_widget_get_value(parameter_widget);
 	switch (geoxml_parameter_get_type(parameter_widget->parameter)) {
 	case GEOXML_PARAMETERTYPE_FLOAT:
 	case GEOXML_PARAMETERTYPE_INT:
@@ -326,7 +367,9 @@ parameter_widget_update(struct parameter_widget * parameter_widget)
 		break;
 	case GEOXML_PARAMETERTYPE_FLAG:
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(parameter_widget->value_widget),
-			geoxml_program_parameter_get_flag_status(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter)));
+			(parameter_widget->use_default_value == FALSE)
+				? geoxml_program_parameter_get_flag_status(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter))
+				: geoxml_program_parameter_get_flag_default(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter)));
 		break;
 	default:
 		break;

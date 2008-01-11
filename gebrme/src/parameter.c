@@ -18,6 +18,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <gui/parameter.h>
+
 #include "parameter.h"
 #include "support.h"
 #include "gebrme.h"
@@ -25,16 +27,15 @@
 #include "interface.h"
 #include "menu.h"
 
-#define DOUBLE_MAX +999999999
-#define DOUBLE_MIN -999999999
-
 /* Persintant pointer of GeoXmlParameter. As
  * it may change (because of geoxml_parameter_set_type)
  * we must keep a container for it and share this container beetween signals.
  */
 struct parameter_data {
-	GeoXmlParameter *	parameter;
-	GtkWidget *		label;
+	GeoXmlParameter *		parameter;
+
+	struct parameter_widget *	widget;
+	GtkWidget *			label;
 };
 
 GtkWidget *
@@ -246,7 +247,8 @@ parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * dat
 		gtk_table_attach (GTK_TABLE (table), required_checkbox, 1, 2, 0, 1,
 				(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 				(GtkAttachOptions) (0), 0, 0);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(required_checkbox), geoxml_program_parameter_get_required(program_parameter));
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(required_checkbox),
+			geoxml_program_parameter_get_required(program_parameter));
 		g_signal_connect(required_checkbox, "toggled",
 				(GCallback)parameter_required_changed, data);
 	}
@@ -260,15 +262,28 @@ parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * dat
 
 	switch (type) {
 	case GEOXML_PARAMETERTYPE_STRING:
+		data->widget = parameter_widget_new_string(data->parameter, TRUE);
+		default_widget = data->widget->widget;
+		g_signal_connect(default_widget, "changed",
+				(GCallback)parameter_default_changed, data);
+
+		break;
 	case GEOXML_PARAMETERTYPE_INT:
+		data->widget = parameter_widget_new_int(data->parameter, TRUE);
+		default_widget = data->widget->widget;
+		g_signal_connect(default_widget, "changed",
+				(GCallback)parameter_default_changed, data);
+
+		break;
 	case GEOXML_PARAMETERTYPE_FLOAT:
-		default_widget = gtk_entry_new();
-		gtk_entry_set_text(GTK_ENTRY(default_widget), geoxml_program_parameter_get_default(program_parameter));
+		data->widget = parameter_widget_new_float(data->parameter, TRUE);
+		default_widget = data->widget->widget;
 		g_signal_connect(default_widget, "changed",
 				(GCallback)parameter_default_changed, data);
 
 		break;
 	case GEOXML_PARAMETERTYPE_FLAG:
+		data->widget = NULL;
 		default_widget = gtk_check_button_new();
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(default_widget),
 			geoxml_program_parameter_get_flag_default(program_parameter));
@@ -280,7 +295,8 @@ parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * dat
 		GtkWidget *		type_label;
 		GtkWidget *		type_combo;
 
-		default_widget = gtk_file_entry_new();
+		data->widget = parameter_widget_new_file(data->parameter, TRUE);
+		default_widget = data->widget->widget;
 		g_signal_connect(default_widget, "path-changed",
 				(GCallback)parameter_file_default_changed, data);
 
@@ -303,14 +319,9 @@ parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * dat
 		g_object_set(G_OBJECT(type_combo),
 			"user-data", default_widget, NULL);
 
-		/* path */
-		gtk_file_entry_set_path(GTK_FILE_ENTRY(default_widget),
-			geoxml_program_parameter_get_default(program_parameter));
 		/* file or directory? */
 		gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo),
 			geoxml_program_parameter_get_file_be_directory(program_parameter) == TRUE ? 1 : 0);
-		gtk_file_entry_set_choose_directory(GTK_FILE_ENTRY(default_widget),
-			geoxml_program_parameter_get_file_be_directory(program_parameter));
 		break;
 	} case GEOXML_PARAMETERTYPE_RANGE: {
 		GtkWidget *	min_label;
@@ -322,19 +333,13 @@ parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * dat
 		gchar *		min_str;
 		gchar *		max_str;
 		gchar *		inc_str;
-		gdouble		min, max, inc;
 
 		geoxml_program_parameter_get_range_properties(program_parameter, &min_str, &max_str, &inc_str);
-		min = !strlen(min_str) ? DOUBLE_MIN : atof(min_str);
-		max = !strlen(max_str) ? DOUBLE_MAX : atof(max_str);
-		inc = !strlen(inc_str) ? 1.0 : atof(inc_str);
 
-		default_widget = gtk_spin_button_new_with_range (min, max, inc);
-		gtk_spin_button_set_digits(GTK_SPIN_BUTTON(default_widget), 3);
+		data->widget = parameter_widget_new_range(data->parameter, TRUE);
+		default_widget = data->widget->widget;
 		g_signal_connect(default_widget, "output",
 				(GCallback)parameter_range_default_changed, data);
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(default_widget),
-			atof(geoxml_program_parameter_get_default(program_parameter)));
 
 		min_label = gtk_label_new (_("Minimum:"));
 		gtk_widget_show (min_label);
