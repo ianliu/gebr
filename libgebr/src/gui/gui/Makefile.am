@@ -17,14 +17,12 @@
 lib_LTLIBRARIES = libgebr_gui.la
 libgebr_gui_la_SOURCES = \
 	about.c utils.c pixmaps.c \
-	gtkfileentry.c gtklistedit.c \
-	parameter.c
+	gtkfileentry.c gtklistedit.c
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = \
 	about.h utils.h pixmaps.h \
-	gtkfileentry.h gtklistedit.h \
-	parameter.h
+	gtkfileentry.h gtklistedit.h
 noinst_HEADERS = \
 	support.h
 EXTRA_DIST = ${noinst_HEADERS}

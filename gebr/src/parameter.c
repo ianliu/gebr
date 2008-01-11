@@ -1,4 +1,4 @@
-/*   libgebr - GÍBR Library
+/*   GÍBR - An environment for seismic processing.
  *   Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -22,9 +22,9 @@
 #include <stdlib.h>
 
 #include <geoxml.h>
+#include <gui/gtkfileentry.h>
 
 #include "parameter.h"
-#include "gtkfileentry.h"
 
 /*
  * Section: Private

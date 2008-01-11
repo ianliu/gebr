@@ -32,6 +32,7 @@
 #include "ui_parameters.h"
 #include "gebr.h"
 #include "support.h"
+#include "parameter.h"
 #include "menu.h"
 #include "flow.h"
 #include "ui_help.h"

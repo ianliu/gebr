@@ -1,4 +1,4 @@
-/*   libgebr - GÍBR Library
+/*   GÍBR - An environment for seismic processing.
  *   Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify

@@ -29,6 +29,7 @@ gebr_SOURCES = main.c \
 	project.c \
 	line.c \
 	flow.c \
+	parameter.c \
 	job.c \
 	server.c client.c \
 	menu.c \
@@ -53,6 +54,7 @@ noinst_HEADERS = \
 	project.h \
 	line.h \
 	flow.h \
+	parameter.h \
 	job.h \
 	server.h client.h \
 	menu.h \
