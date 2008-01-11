@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <flow version="0.1.0">
   <filename>suxwigb-simple.mnu</filename>
-  <title>SU X Wiggle Bitmap</title>
+  <title>SU simple X Wiggle Bitmap</title>
   <description>SU X Wiggle-trace plot of f(x1,x2) via Bitmap with just the most common parameters</description>
   <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

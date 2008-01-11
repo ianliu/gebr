@@ -171,7 +171,7 @@
       <int required="no">
 	<keyword>clip=</keyword>
 	<label>clip used to determine bclip and wclip</label>
-	<value default="100"></value>
+	<value></value>
       </int>
       <float required="no">
 	<keyword>bperc=</keyword>
