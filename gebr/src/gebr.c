@@ -65,6 +65,9 @@ gebr_init(int argc, char ** argv)
 	log_filename = g_string_new(NULL);
 	protocol_init();
 
+	/* check/create config dir */
+	gebr_create_config_dirs();
+
 	/* log */
 	g_string_printf(log_filename, "%s/.gebr/gebr.log", getenv("HOME"));
 	gebr.log = log_open(log_filename->str);
@@ -187,9 +190,6 @@ gebr_config_load(int argc, char ** argv)
 	gebr.config.usermenus = g_string_new("");
 	gebr.config.data = g_string_new("");
 	gebr.config.browser = g_string_new("");
-
-	/* TODO: check return */
-	gebr_create_config_dirs();
 
 	g_string_printf(config, "%s/.gebr/gebr.conf", getenv("HOME"));
 	if (g_access(config->str, F_OK)) {
