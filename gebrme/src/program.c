@@ -63,10 +63,10 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 
 	GeoXmlSequence *		parameter;
 
+	GtkWidget *			event_box;
 	gchar *				program_title_str;
 
 	program_expander = gtk_expander_new("");
-	gtk_widget_set_popup_callback(program_expander, (GtkPopupCallback)program_popup_menu, program);
 	gtk_box_pack_start(GTK_BOX(gebrme.programs_vbox), program_expander, FALSE, TRUE, 0);
 	if (geoxml_flow_get_programs_number(gebrme.current) > 1)
 		gtk_expander_set_expanded(GTK_EXPANDER(program_expander), hidden);
@@ -75,8 +75,15 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	gtk_widget_show(program_expander);
 	depth_hbox = create_depth(program_expander);
 
+	/* used to prevent that popup menu will show up in expander child
+	 * and enable it on a label
+	 */
+	event_box = gtk_event_box_new();
+	gtk_widget_set_popup_callback(event_box, (GtkPopupCallback)program_popup_menu, program);
+	gtk_expander_set_label_widget(GTK_EXPANDER(program_expander), event_box);
+	gtk_widget_show(event_box);
 	program_label_widget = gtk_hbox_new(FALSE, 0);
-	gtk_expander_set_label_widget(GTK_EXPANDER(program_expander), program_label_widget);
+	gtk_container_add(GTK_CONTAINER(event_box), program_label_widget);
 	gtk_widget_show(program_label_widget);
 	program_label = gtk_label_new("");
 	gtk_widget_show(program_label);

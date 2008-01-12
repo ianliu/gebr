@@ -191,13 +191,10 @@ value_sequence_edit_add(ValueSequenceEdit * sequence_edit, GeoXmlValueSequence *
 {
 	GtkTreeIter	iter;
 
-	gtk_list_store_append(GTK_SEQUENCE_EDIT(sequence_edit)->list_store, &iter);
+	iter = gtk_sequence_edit_add(GTK_SEQUENCE_EDIT(sequence_edit), geoxml_value_sequence_get(value_sequence));
 	gtk_list_store_set(GTK_SEQUENCE_EDIT(sequence_edit)->list_store, &iter,
-		0, geoxml_value_sequence_get(value_sequence),
 		1, value_sequence,
 		-1);
-
-	g_signal_emit_by_name(sequence_edit, "changed");
 }
 
 void

@@ -62,6 +62,9 @@ gtk_sequence_edit_new(GtkWidget * widget);
 GtkWidget *
 gtk_sequence_edit_new_from_store(GtkWidget * widget, GtkListStore * list_store);
 
+GtkTreeIter
+gtk_sequence_edit_add(GtkSequenceEdit * sequence_edit, const gchar * text);
+
 G_END_DECLS
 
 #endif //__LIBGEBR_GUI_GTK_SEQUENCE_EDIT_H

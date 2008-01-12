@@ -283,10 +283,8 @@ parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * dat
 
 		break;
 	case GEOXML_PARAMETERTYPE_FLAG:
-		data->widget = NULL;
-		default_widget = gtk_check_button_new();
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(default_widget),
-			geoxml_program_parameter_get_flag_default(program_parameter));
+		data->widget = parameter_widget_new_flag(data->parameter, TRUE);
+		default_widget = data->widget->widget;
 		g_signal_connect(default_widget, "toggled",
 				(GCallback)parameter_flag_default_changed, data);
 

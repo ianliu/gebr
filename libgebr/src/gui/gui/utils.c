@@ -190,30 +190,22 @@ gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callb
 		(GCallback)__gtk_widget_on_popup_menu, popup_callback);
 }
 
-void
+gboolean
 gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpointer user_data)
 {
 	struct popup_callback *	popup_callback;
 
-// 	if (GTK_WIDGET_FLAGS(widget) & GTK_NO_WINDOW) {
-// 		GtkWidget *	event_box;
-//
-// 		event_box = gtk_event_box_new();
-// 		gtk_widget_show(event_box);
-// 		gtk_container_add(GTK_CONTAINER(event_box), widget);
-// 		gtk_event_box_set_above_child(GTK_EVENT_BOX(event_box), TRUE);
-// puts("eve");
-// 		popup_callback = __popup_callback_init(G_OBJECT(widget), callback, user_data, event_box);
-// 		g_signal_connect(event_box, "button-press-event",
-// 			(GCallback)__gtk_widget_on_button_pressed, popup_callback);
-// 	} else {
-		popup_callback = __popup_callback_init(G_OBJECT(widget), callback, user_data, NULL);
-		g_signal_connect(widget, "button-press-event",
-			(GCallback)__gtk_widget_on_button_pressed, popup_callback);
-// 	}
+	if (GTK_WIDGET_FLAGS(widget) & GTK_NO_WINDOW)
+		return FALSE;
 
+	popup_callback = __popup_callback_init(G_OBJECT(widget), callback, user_data, NULL);
+	GTK_WIDGET_SET_FLAGS(widget, GDK_BUTTON_PRESS);
+	g_signal_connect(widget, "button-press-event",
+		(GCallback)__gtk_widget_on_button_pressed, popup_callback);
 	g_signal_connect(widget, "popup-menu",
 		(GCallback)__gtk_widget_on_popup_menu, popup_callback);
+
+	return TRUE;
 }
 
 /*

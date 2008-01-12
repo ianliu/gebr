@@ -28,6 +28,10 @@ struct parameter_widget {
 
 	GtkWidget *		value_widget;
 	gboolean		use_default_value;
+
+	/* for lists */
+	GtkWidget *		list_value_widget;
+	GtkWidget *		sequence_edit;
 };
 
 struct parameter_widget *
@@ -46,7 +50,16 @@ struct parameter_widget *
 parameter_widget_new_file(GeoXmlParameter * parameter, gboolean use_default_value);
 
 struct parameter_widget *
+parameter_widget_new_enum(GeoXmlParameter * parameter, gboolean use_default_value);
+
+struct parameter_widget *
 parameter_widget_new_flag(GeoXmlParameter * parameter, gboolean use_default_value);
+
+void
+parameter_widget_set_widget_value(struct parameter_widget * parameter_widget, const gchar * value);
+
+GString *
+parameter_widget_get_widget_value(struct parameter_widget * parameter_widget);
 
 void
 parameter_widget_submit(struct parameter_widget * parameter_widget);

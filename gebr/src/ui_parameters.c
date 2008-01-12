@@ -165,6 +165,9 @@ parameters_configure_setup_ui(void)
 		case GEOXML_PARAMETERTYPE_FILE:
 			widget = parameter_widget_new_file(GEOXML_PARAMETER(parameter), FALSE);
 			break;
+		case GEOXML_PARAMETERTYPE_ENUM:
+			widget = parameter_widget_new_enum(GEOXML_PARAMETER(parameter), FALSE);
+			break;
 		default:
 			continue;
 			break;
@@ -189,8 +192,12 @@ parameters_configure_setup_ui(void)
 
 			gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
 			gtk_box_pack_end(GTK_BOX(hbox), widget->widget, FALSE, TRUE, 0);
-		} else
+		} else {
+			g_object_set(G_OBJECT(widget->value_widget), "label",
+				geoxml_program_parameter_get_label(GEOXML_PROGRAM_PARAMETER(parameter)), NULL);
+
 			gtk_box_pack_start(GTK_BOX(hbox), widget->widget, FALSE, FALSE, 0);
+		}
 
 		/* set and add */
 		ui_parameters->widgets[i] = widget;

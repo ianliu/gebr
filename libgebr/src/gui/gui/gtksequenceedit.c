@@ -326,3 +326,18 @@ gtk_sequence_edit_new_from_store(GtkWidget * widget, GtkListStore * list_store)
 		"list-store", list_store,
 		NULL);
 }
+
+GtkTreeIter
+gtk_sequence_edit_add(GtkSequenceEdit * sequence_edit, const gchar * text)
+{
+	GtkTreeIter	iter;
+
+	gtk_list_store_append(sequence_edit->list_store, &iter);
+	gtk_list_store_set(sequence_edit->list_store, &iter,
+		0, text,
+		-1);
+
+	g_signal_emit_by_name(sequence_edit, "changed");
+
+	return iter;
+}
