@@ -86,6 +86,8 @@ geoxml_program_parameter_set_be_list(GeoXmlProgramParameter * program_parameter,
 {
 	if (program_parameter == NULL)
 		return;
+	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) == GEOXML_PARAMETERTYPE_FLAG)
+		return;
 
 	GdomeElement *		element;
 	GdomeDOMString *	string;
@@ -267,6 +269,8 @@ gboolean
 geoxml_program_parameter_get_is_list(GeoXmlProgramParameter * program_parameter)
 {
 	if (program_parameter == NULL)
+		return FALSE;
+	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) == GEOXML_PARAMETERTYPE_FLAG)
 		return FALSE;
 
 	GdomeDOMString *	string;

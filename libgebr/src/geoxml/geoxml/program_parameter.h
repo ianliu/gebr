@@ -145,6 +145,7 @@ geoxml_program_parameter_set_keyword(GeoXmlProgramParameter * program_parameter,
 /**
  * Say that \p program_parameter's that this program_parameter's value is in fact a list of values
  * each one delimited by a separator, if \p is_list is TRUE
+ * Flags parameters can't be kept a list of values.
  *
  * \see geoxml_program_parameter_get_is_list, geoxml_program_parameter_set_list_separator,
  * geoxml_program_parameter_get_list_separator
