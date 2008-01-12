@@ -33,8 +33,10 @@ struct geoxml_sequence {
 static gboolean
 __geoxml_sequence_is_parameter(GeoXmlSequence * sequence)
 {
-	GdomeElement *	parent;
+	GdomeDOMString *	name;
+	GdomeElement *		parent;
 
+	name = gdome_el_nodeName((GdomeElement*)sequence, &exception);
 	parent = (GdomeElement*)gdome_el_parentNode((GdomeElement*)sequence, &exception);
 	return	(gboolean)!g_ascii_strcasecmp(
 			gdome_el_nodeName(parent, &exception)->str, "parameters") ||
@@ -45,11 +47,15 @@ __geoxml_sequence_is_parameter(GeoXmlSequence * sequence)
 static gboolean
 __geoxml_sequence_check(GeoXmlSequence * sequence)
 {
+	GdomeDOMString *	name;
+
+	name = gdome_el_nodeName((GdomeElement*)sequence, &exception);
 	return __geoxml_sequence_is_parameter(sequence) ||
-		(gboolean)!g_ascii_strcasecmp(gdome_el_nodeName((GdomeElement*)sequence, &exception)->str, "program") ||
-		(gboolean)!g_ascii_strcasecmp(gdome_el_nodeName((GdomeElement*)sequence, &exception)->str, "category") ||
-		(gboolean)!g_ascii_strcasecmp(gdome_el_nodeName((GdomeElement*)sequence, &exception)->str, "flow") ||
-		(gboolean)!g_ascii_strcasecmp(gdome_el_nodeName((GdomeElement*)sequence, &exception)->str, "line");
+		(gboolean)!g_ascii_strcasecmp(name->str, "option") ||
+		(gboolean)!g_ascii_strcasecmp(name->str, "program") ||
+		(gboolean)!g_ascii_strcasecmp(name->str, "category") ||
+		(gboolean)!g_ascii_strcasecmp(name->str, "flow") ||
+		(gboolean)!g_ascii_strcasecmp(name->str, "line");
 }
 
 static gboolean
