@@ -26,6 +26,18 @@
 #include "menu.h"
 #include "help.h"
 
+/* TODO: remove */
+static gboolean
+on_program_button_pressed(GtkWidget * widget, GdkEventButton * event, GtkExpander * expander)
+{
+	if (event->button != 1)
+		return FALSE;
+
+	gtk_expander_set_expanded(expander, !gtk_expander_get_expanded(expander));
+
+	return TRUE;
+}
+
 void
 program_create_ui(GeoXmlProgram * program, gboolean hidden)
 {
@@ -78,6 +90,8 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	 * and enable it on a label
 	 */
 	event_box = gtk_event_box_new();
+	g_signal_connect(event_box, "button-press-event",
+		(GCallback)on_program_button_pressed, program_expander);
 	gtk_widget_set_popup_callback(event_box, (GtkPopupCallback)program_popup_menu, program);
 	gtk_expander_set_label_widget(GTK_EXPANDER(program_expander), event_box);
 	gtk_widget_show(event_box);

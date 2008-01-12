@@ -112,7 +112,7 @@ geoxml_program_parameter_set_list_separator(GeoXmlProgramParameter * program_par
 		return;
 	if (separator == NULL)
 		return;
-	return __geoxml_set_attr_value((GdomeElement*)program_parameter, "separator", separator);
+	__geoxml_set_attr_value((GdomeElement*)program_parameter, "separator", separator);
 }
 
 void
@@ -288,7 +288,6 @@ geoxml_program_parameter_get_list_separator(GeoXmlProgramParameter * program_par
 {
 	if (geoxml_program_parameter_get_is_list(program_parameter) == FALSE)
 		return NULL;
-
 	return __geoxml_get_attr_value((GdomeElement*)program_parameter, "separator");
 }
 

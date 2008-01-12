@@ -34,6 +34,50 @@
  * Internal stuff
  */
 
+static GString *
+__parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, gboolean check_list)
+{
+	GString *	value;
+
+	value = g_string_new(NULL);
+
+	if (check_list && geoxml_program_parameter_get_is_list(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter)) == TRUE) {
+		g_string_assign(value, gtk_entry_get_text(GTK_ENTRY(parameter_widget->list_value_widget)));
+		return value;
+	}
+
+	switch (geoxml_parameter_get_type(parameter_widget->parameter)) {
+	case GEOXML_PARAMETERTYPE_FLOAT:
+	case GEOXML_PARAMETERTYPE_INT:
+	case GEOXML_PARAMETERTYPE_STRING:
+		g_string_assign(value, gtk_entry_get_text(GTK_ENTRY(parameter_widget->value_widget)));
+		break;
+	case GEOXML_PARAMETERTYPE_RANGE:
+		g_string_printf(value, "%f", gtk_spin_button_get_value(GTK_SPIN_BUTTON(parameter_widget->value_widget)));
+		break;
+	case GEOXML_PARAMETERTYPE_FILE:
+		g_string_assign(value, gtk_file_entry_get_path(GTK_FILE_ENTRY(parameter_widget->value_widget)));
+		break;
+	case GEOXML_PARAMETERTYPE_ENUM: {
+		gchar *	text;
+
+		text = gtk_combo_box_get_active_text(GTK_COMBO_BOX(parameter_widget->widget));
+		g_string_assign(value, text);
+
+		g_free(text);
+		break;
+	} case GEOXML_PARAMETERTYPE_FLAG:
+		g_string_assign(value,
+			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(parameter_widget->value_widget)) == TRUE
+				? "on" : "off");
+		break;
+	default:
+		break;
+	}
+
+	return value;
+}
+
 /*
  * Function: parameter_widget_weak_ref
  * Free struct before widget deletion
@@ -44,22 +88,56 @@ parameter_widget_weak_ref(struct parameter_widget * parameter_widget, GtkWidget 
 	g_free(parameter_widget);
 }
 
+static void
+parameter_widget_changed(GtkWidget * widget, struct parameter_widget * parameter_widget);
+
 /*
- * Function: on_edit_list_clicked
+ * Function: on_edit_list_toggled
  * Take action to start/finish editing list of parameter's values
  */
 static void
-on_edit_list_clicked(GtkToggleButton * toggle_button, struct parameter_widget * parameter_widget)
+on_edit_list_toggled(GtkToggleButton * toggle_button, struct parameter_widget * parameter_widget)
 {
-	if (gtk_toggle_button_get_active(toggle_button) == TRUE) {
+	gboolean		toggled;
 
+	g_signal_handlers_block_matched(G_OBJECT(parameter_widget->sequence_edit),
+					G_SIGNAL_MATCH_FUNC,
+					0, 0, NULL,
+					(GCallback)parameter_widget_changed,
+					NULL);
+
+	toggled = gtk_toggle_button_get_active(toggle_button);
+	if (toggled == TRUE) {
+		const gchar *	value;
+		const gchar *	separator;
+		gchar **	splits;
+		int		i;
+
+		gtk_sequence_edit_clear(GTK_SEQUENCE_EDIT(parameter_widget->sequence_edit));
+
+		value = gtk_entry_get_text(GTK_ENTRY(parameter_widget->list_value_widget));
+		separator = geoxml_program_parameter_get_list_separator(
+			GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter));
+		if (!strlen(separator)) {
+			if (strlen(value))
+				gtk_sequence_edit_add(GTK_SEQUENCE_EDIT(parameter_widget->sequence_edit), value);
+		} else if (strlen(value)) {
+			splits = g_strsplit(value, separator, 0);
+			for (i = 0; splits[i] != NULL; ++i)
+				gtk_sequence_edit_add(GTK_SEQUENCE_EDIT(parameter_widget->sequence_edit), splits[i]);
+			g_strfreev(splits);
+		}
 
 		gtk_widget_show(parameter_widget->sequence_edit);
-	} else {
-
-
+	} else
 		gtk_widget_hide(parameter_widget->sequence_edit);
-	}
+
+	gtk_widget_set_sensitive(parameter_widget->list_value_widget, !toggled);
+	g_signal_handlers_unblock_matched(G_OBJECT(parameter_widget->sequence_edit),
+					G_SIGNAL_MATCH_FUNC,
+					0, 0, NULL,
+					(GCallback)parameter_widget_changed,
+					NULL);
 }
 
 static void
@@ -67,7 +145,7 @@ on_sequence_edit_add_request(GtkSequenceEdit * sequence_edit, struct parameter_w
 {
 	GString *	value;
 
-	value = parameter_widget_get_widget_value(parameter_widget);
+	value = __parameter_widget_get_widget_value(parameter_widget, FALSE);
 	gtk_sequence_edit_add(sequence_edit, value->str);
 
 	g_string_free(value, TRUE);
@@ -76,12 +154,35 @@ on_sequence_edit_add_request(GtkSequenceEdit * sequence_edit, struct parameter_w
 static void
 on_sequence_edit_changed(GtkSequenceEdit * sequence_edit, struct parameter_widget * parameter_widget)
 {
-	GString *	value;
+	GtkListStore *		list_store;
+	GtkTreeIter		iter;
+	gboolean		valid;
 
-	value = parameter_widget_get_widget_value(parameter_widget);
+	gchar **		splits;
+	int			i;
+	gchar *			value;
 
+	g_object_get(G_OBJECT(parameter_widget->sequence_edit), "list-store", &list_store, NULL);
+	splits = g_malloc(sizeof(gchar*)*(gtk_tree_model_iter_n_children(GTK_TREE_MODEL(list_store), NULL)+1));
+	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(list_store), &iter);
+	for (i = 0; valid; ++i) {
+		gchar *		text;
 
-	g_string_free(value, TRUE);
+		gtk_tree_model_get(GTK_TREE_MODEL(list_store), &iter,
+				0, &text,
+				-1);
+		splits[i] = text;
+
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(list_store), &iter);
+	}
+	splits[i] = NULL;
+	value = g_strjoinv(
+		geoxml_program_parameter_get_list_separator(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter)),
+		splits);
+	gtk_entry_set_text(GTK_ENTRY(parameter_widget->list_value_widget), value);
+
+	g_free(value);
+	g_strfreev(splits);
 }
 
 /*
@@ -158,15 +259,17 @@ parameter_widget_init(GeoXmlParameter * parameter, GtkWidget * value_widget, gbo
 
 		button = gtk_toggle_button_new_with_label(_("Edit list"));
 		gtk_widget_show(button);
-		gtk_box_pack_start(GTK_BOX(hbox), value_widget, TRUE, FALSE, 0);
-		g_signal_connect(button, "activate",
-			GTK_SIGNAL_FUNC(on_edit_list_clicked), parameter_widget);
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 0);
+		g_signal_connect(button, "toggled",
+			GTK_SIGNAL_FUNC(on_edit_list_toggled), parameter_widget);
 
+		gtk_widget_show(value_widget);
 		sequence_edit = gtk_sequence_edit_new(value_widget);
 		parameter_widget->sequence_edit = sequence_edit;
-		g_signal_connect(button, "add-request",
+		gtk_box_pack_start(GTK_BOX(vbox), sequence_edit, TRUE, TRUE, 0);
+		g_signal_connect(sequence_edit, "add-request",
 			GTK_SIGNAL_FUNC(on_sequence_edit_add_request), parameter_widget);
-		g_signal_connect(button, "changed",
+		g_signal_connect(sequence_edit, "changed",
 			GTK_SIGNAL_FUNC(on_sequence_edit_changed), parameter_widget);
 
 		parameter_widget->widget = vbox;
@@ -465,46 +568,7 @@ parameter_widget_set_widget_value(struct parameter_widget * parameter_widget, co
 GString *
 parameter_widget_get_widget_value(struct parameter_widget * parameter_widget)
 {
-	GString *	value;
-
-	value = g_string_new(NULL);
-
-	if (geoxml_program_parameter_get_is_list(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter)) == TRUE) {
-		g_string_assign(value, gtk_entry_get_text(GTK_ENTRY(parameter_widget->list_value_widget)));
-		return value;
-	}
-
-	switch (geoxml_parameter_get_type(parameter_widget->parameter)) {
-	case GEOXML_PARAMETERTYPE_FLOAT:
-	case GEOXML_PARAMETERTYPE_INT:
-	case GEOXML_PARAMETERTYPE_STRING:
-		g_string_assign(value, gtk_entry_get_text(GTK_ENTRY(parameter_widget->value_widget)));
-		break;
-	case GEOXML_PARAMETERTYPE_RANGE:
-		g_string_printf(value, "%f", gtk_spin_button_get_value(GTK_SPIN_BUTTON(parameter_widget->value_widget)));
-		break;
-	case GEOXML_PARAMETERTYPE_FILE:
-		g_string_assign(value, gtk_file_entry_get_path(GTK_FILE_ENTRY(parameter_widget->value_widget)));
-		break;
-	case GEOXML_PARAMETERTYPE_ENUM: {
-		gchar *	text;
-
-		text = gtk_combo_box_get_active_text(GTK_COMBO_BOX(parameter_widget->widget));
-		parameter_widget_set_value(parameter_widget, text);
-		g_string_assign(value, text);
-
-		g_free(text);
-		break;
-	} case GEOXML_PARAMETERTYPE_FLAG:
-		g_string_assign(value,
-			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(parameter_widget->value_widget)) == TRUE
-				? "on" : "off");
-		break;
-	default:
-		break;
-	}
-
-	return value;
+	return __parameter_widget_get_widget_value(parameter_widget, TRUE);
 }
 
 /*

@@ -345,3 +345,9 @@ gtk_sequence_edit_add(GtkSequenceEdit * sequence_edit, const gchar * text)
 
 	return iter;
 }
+
+void
+gtk_sequence_edit_clear(GtkSequenceEdit * sequence_edit)
+{
+	gtk_list_store_clear(sequence_edit->list_store);
+}

@@ -31,7 +31,13 @@ GtkWidget *
 parameter_create_ui(GeoXmlParameter * parameter, gboolean hidden);
 
 void
+parameter_create_ui_type_general(GtkWidget * table, struct parameter_data * data);
+
+void
 parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * data);
+
+void
+parameter_data_free(GtkObject * expander, struct parameter_data * data);
 
 void
 parameter_add(GtkButton * button, GeoXmlProgram * program);
@@ -46,13 +52,16 @@ void
 parameter_remove(GtkButton * button, struct parameter_data * data);
 
 void
-parameter_data_free(GtkObject * expander, struct parameter_data * data);
-
-void
 parameter_type_changed(GtkComboBox * combo, struct parameter_data * data);
 
 void
-parameter_required_changed(GtkToggleButton *togglebutton, struct parameter_data * data);
+parameter_required_changed(GtkToggleButton * toggle_button, struct parameter_data * data);
+
+void
+parameter_is_list_changed(GtkToggleButton * toggle_button, struct parameter_data * data);
+
+void
+parameter_separator_changed(GtkEntry * entry, struct parameter_data * data);
 
 void
 parameter_label_changed(GtkEntry * entry, struct parameter_data * data);

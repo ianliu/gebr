@@ -62,7 +62,7 @@ __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * even
 	GtkMenu *		menu;
 	GtkTreeSelection *	selection;
 
-	if (!(event->type == GDK_BUTTON_PRESS && event->button == 3))
+	if (event->button != 3)
 		return FALSE;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
@@ -92,7 +92,7 @@ __gtk_widget_on_button_pressed(GtkWidget * widget, GdkEventButton * event, struc
 {
 	GtkMenu *		menu;
 
-	if (!(event->type == GDK_BUTTON_PRESS && event->button == 3))
+	if (event->button != 3)
 		return FALSE;
 
 	menu = popup_callback->callback(popup_callback->widget, popup_callback->user_data);
