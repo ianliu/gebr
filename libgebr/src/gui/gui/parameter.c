@@ -68,6 +68,17 @@ on_sequence_edit_add_request(GtkSequenceEdit * sequence_edit, struct parameter_w
 	GString *	value;
 
 	value = parameter_widget_get_widget_value(parameter_widget);
+	gtk_sequence_edit_add(sequence_edit, value->str);
+
+	g_string_free(value, TRUE);
+}
+
+static void
+on_sequence_edit_changed(GtkSequenceEdit * sequence_edit, struct parameter_widget * parameter_widget)
+{
+	GString *	value;
+
+	value = parameter_widget_get_widget_value(parameter_widget);
 
 
 	g_string_free(value, TRUE);
@@ -155,6 +166,8 @@ parameter_widget_init(GeoXmlParameter * parameter, GtkWidget * value_widget, gbo
 		parameter_widget->sequence_edit = sequence_edit;
 		g_signal_connect(button, "add-request",
 			GTK_SIGNAL_FUNC(on_sequence_edit_add_request), parameter_widget);
+		g_signal_connect(button, "changed",
+			GTK_SIGNAL_FUNC(on_sequence_edit_changed), parameter_widget);
 
 		parameter_widget->widget = vbox;
 	} else
@@ -221,6 +234,26 @@ validate_on_leaving(GtkWidget * widget, GdkEventFocus * event, void (*function)(
 {
 	function(GTK_ENTRY(widget));
 
+	return FALSE;
+}
+
+static void
+parameter_widget_report_submit(struct parameter_widget * parameter_widget)
+{
+	parameter_widget_submit(parameter_widget);
+	parameter_widget->callback(parameter_widget, parameter_widget->user_data);
+}
+
+static void
+parameter_widget_changed(GtkWidget * widget, struct parameter_widget * parameter_widget)
+{
+	parameter_widget_report_submit(parameter_widget);
+}
+
+static gboolean
+parameter_widget_range_changed(GtkSpinButton * spinbutton, struct parameter_widget * parameter_widget)
+{
+	parameter_widget_report_submit(parameter_widget);
 	return FALSE;
 }
 
@@ -472,6 +505,48 @@ parameter_widget_get_widget_value(struct parameter_widget * parameter_widget)
 	}
 
 	return value;
+}
+
+/*
+ * Function: parameter_widget_set_auto_submit_callback
+ *
+ */
+void
+parameter_widget_set_auto_submit_callback(struct parameter_widget * parameter_widget,
+	changed_callback callback, gpointer user_data)
+{
+	parameter_widget->callback = callback;
+	parameter_widget->user_data = user_data;
+
+	if (geoxml_program_parameter_get_is_list(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter)) == TRUE) {
+		g_signal_connect(parameter_widget->list_value_widget, "changed",
+			(GCallback)parameter_widget_changed, parameter_widget);
+		return;
+	}
+
+	switch (geoxml_parameter_get_type(parameter_widget->parameter)) {
+	case GEOXML_PARAMETERTYPE_FLOAT:
+	case GEOXML_PARAMETERTYPE_INT:
+	case GEOXML_PARAMETERTYPE_STRING:
+	case GEOXML_PARAMETERTYPE_ENUM:
+		g_signal_connect(parameter_widget->value_widget, "changed",
+			(GCallback)parameter_widget_changed, parameter_widget);
+		break;
+	case GEOXML_PARAMETERTYPE_RANGE:
+		g_signal_connect(parameter_widget->value_widget, "output",
+			(GCallback)parameter_widget_range_changed, parameter_widget);
+		break;
+	case GEOXML_PARAMETERTYPE_FLAG:
+		g_signal_connect(parameter_widget->value_widget, "toggled",
+			(GCallback)parameter_widget_changed, parameter_widget);
+		break;
+	case GEOXML_PARAMETERTYPE_FILE:
+		g_signal_connect(parameter_widget->value_widget, "path-changed",
+			(GCallback)parameter_widget_changed, parameter_widget);
+		break;
+	default:
+		break;
+	}
 }
 
 /*

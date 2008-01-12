@@ -38,6 +38,7 @@ typedef struct _GtkSequenceEditClass	GtkSequenceEditClass;
 struct _GtkSequenceEdit {
 	GtkVBox		parent;
 
+	GtkWidget *	widget;
 	GtkWidget *	widget_hbox;
 
 	GtkListStore *	list_store;

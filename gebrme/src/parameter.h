@@ -21,7 +21,8 @@
 #include <gtk/gtk.h>
 
 #include <geoxml.h>
-#include <gui/gtkfileentry.h>
+#include <gui/parameter.h>
+#include <gui/valuesequenceedit.h>
 
 struct parameter_data;
 struct parameter_ui_data;
@@ -54,25 +55,16 @@ void
 parameter_required_changed(GtkToggleButton *togglebutton, struct parameter_data * data);
 
 void
-parameter_keyword_changed(GtkEntry * entry, struct parameter_data * data);
-
-void
 parameter_label_changed(GtkEntry * entry, struct parameter_data * data);
 
 void
-parameter_default_changed(GtkEntry * entry, struct parameter_data * data);
+parameter_keyword_changed(GtkEntry * entry, struct parameter_data * data);
 
 void
-parameter_flag_default_changed(GtkToggleButton * togglebutton, struct parameter_data * data);
+parameter_default_widget_changed(struct parameter_widget * widget, struct parameter_data * data);
 
 void
 parameter_file_type_changed(GtkComboBox * combo, struct parameter_data * data);
-
-void
-parameter_file_default_changed(GtkFileEntry * file_entry, struct parameter_data * data);
-
-gboolean
-parameter_range_default_changed(GtkSpinButton * spinbutton, struct parameter_data * data);
 
 void
 parameter_range_min_changed(GtkEntry * entry, struct parameter_data * data);
@@ -82,6 +74,12 @@ parameter_range_max_changed(GtkEntry * entry, struct parameter_data * data);
 
 void
 parameter_range_inc_changed(GtkEntry * entry, struct parameter_data * data);
+
+void
+parameter_enum_options_add_request(ValueSequenceEdit * sequence_edit, struct parameter_data * data);
+
+void
+parameter_enum_options_changed(ValueSequenceEdit * sequence_edit, struct parameter_data * data);
 
 void
 parameter_uilabel_update(struct parameter_data * data);

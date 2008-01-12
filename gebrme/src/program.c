@@ -58,12 +58,11 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	GtkWidget *			parameters_label_widget;
 	GtkWidget *			parameters_label;
 	GtkWidget *			parameters_vbox;
+
 	GtkWidget *			depth_hbox;
 	GtkWidget *			widget;
-
-	GeoXmlSequence *		parameter;
-
 	GtkWidget *			event_box;
+	GeoXmlSequence *		parameter;
 	gchar *				program_title_str;
 
 	program_expander = gtk_expander_new("");

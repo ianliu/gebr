@@ -56,13 +56,11 @@ static void
 gtk_sequence_edit_set_property(GtkSequenceEdit * sequence_edit, guint property_id, const GValue * value, GParamSpec * param_spec)
 {
 	switch (property_id) {
-	case VALUE_WIDGET: {
-		GtkWidget *	widget;
-
-		widget = g_value_get_pointer(value);
-		gtk_box_pack_start(GTK_BOX(sequence_edit->widget_hbox), widget, TRUE, TRUE, 0);
+	case VALUE_WIDGET:
+		sequence_edit->widget = g_value_get_pointer(value);
+		gtk_box_pack_start(GTK_BOX(sequence_edit->widget_hbox), sequence_edit->widget, TRUE, TRUE, 0);
 		break;
-	} case LIST_STORE: {
+	case LIST_STORE: {
 		GtkWidget *		scrolledwindow;
 		GtkWidget *		tree_view;
 		GtkTreeViewColumn *	col;
@@ -105,6 +103,12 @@ static void
 gtk_sequence_edit_get_property(GtkSequenceEdit * sequence_edit, guint property_id, GValue * value, GParamSpec * param_spec)
 {
 	switch (property_id) {
+	case VALUE_WIDGET:
+		g_value_set_pointer(value, sequence_edit->widget);
+		break;
+	case LIST_STORE:
+		g_value_set_pointer(value, sequence_edit->list_store);
+		break;
 	default:
 		/* We don't have any other property... */
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(sequence_edit, property_id, param_spec);

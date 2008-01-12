@@ -22,6 +22,9 @@
 
 #include <geoxml.h>
 
+struct parameter_widget;
+typedef void (*changed_callback)(struct parameter_widget * parameter_widget, gpointer user_data);
+
 struct parameter_widget {
 	GtkWidget *		widget;
 	GeoXmlParameter *	parameter;
@@ -32,6 +35,10 @@ struct parameter_widget {
 	/* for lists */
 	GtkWidget *		list_value_widget;
 	GtkWidget *		sequence_edit;
+
+	/* auto submit stuff */
+	changed_callback	callback;
+	gpointer		user_data;
 };
 
 struct parameter_widget *
@@ -60,6 +67,10 @@ parameter_widget_set_widget_value(struct parameter_widget * parameter_widget, co
 
 GString *
 parameter_widget_get_widget_value(struct parameter_widget * parameter_widget);
+
+void
+parameter_widget_set_auto_submit_callback(struct parameter_widget * parameter_widget,
+	changed_callback callback, gpointer user_data);
 
 void
 parameter_widget_submit(struct parameter_widget * parameter_widget);
