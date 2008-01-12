@@ -291,7 +291,7 @@ program_popup_menu(GtkExpander * expander, GeoXmlProgram * program)
 {
 	GtkWidget *	menu;
 	GtkWidget *	menu_item;
-puts("puts");
+
 	menu = gtk_menu_new();
 
 	/* Move up */

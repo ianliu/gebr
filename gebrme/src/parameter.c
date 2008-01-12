@@ -497,7 +497,7 @@ parameter_type_changed(GtkComboBox * combo, struct parameter_data * data)
 	/* change its type and recreate UI */
 	geoxml_parameter_set_type(&data->parameter, (enum GEOXML_PARAMETERTYPE)gtk_combo_box_get_active(combo));
 	if (data->parameter == NULL)
-		puts("err");
+		puts("parameter_type_changed err");
 	parameter_create_ui_type_specific(table, data);
 
 	parameter_uilabel_update(data);

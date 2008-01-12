@@ -22,6 +22,8 @@
 #include <dirent.h>
 #include <fnmatch.h>
 
+#include <gui/valuesequenceedit.h>
+
 #include "menu.h"
 #include "support.h"
 #include "gebrme.h"
@@ -131,10 +133,10 @@ menu_open(const gchar * path)
 	gebrme.current = menu;
 	gtk_list_store_append(gebrme.menus_liststore, &iter);
 	gtk_list_store_set(gebrme.menus_liststore, &iter,
-			    MENU_FILENAME, filename,
-			    MENU_XMLPOINTER, gebrme.current,
-			    MENU_PATH, path,
-			    -1);
+		MENU_FILENAME, filename,
+		MENU_XMLPOINTER, gebrme.current,
+		MENU_PATH, path,
+		-1);
 
 	/* select it and load its contents into UI */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebrme.menus_treeview));
@@ -199,7 +201,6 @@ menu_selected(void)
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 	GtkTreeIter		menu_iter;
-	GtkTreeIter		category_iter;
 
 	GeoXmlSequence *	category;
 	GeoXmlSequence *	program;
@@ -228,17 +229,9 @@ menu_selected(void)
 		geoxml_document_get_email(GEOXML_DOC(gebrme.current)));
 
 	/* categories */
-	gtk_list_store_clear(gebrme.categories_liststore);
 	geoxml_flow_get_category(gebrme.current, &category, 0);
-	while (category != NULL) {
-		gtk_list_store_append(gebrme.categories_liststore, &category_iter);
-		gtk_list_store_set(gebrme.categories_liststore, &category_iter,
-			CATEGORY_NAME, geoxml_category_get_name(GEOXML_CATEGORY(category)),
-			CATEGORY_XMLPOINTER, (gpointer)category,
-			-1);
-
-		geoxml_sequence_next(&category);
-	}
+	g_object_set(G_OBJECT(gebrme.categories_sequence_edit), "value-sequence", category, NULL);
+	value_sequence_edit_load(VALUE_SEQUENCE_EDIT(gebrme.categories_sequence_edit));
 
 	/* clear program list */
 	gtk_container_foreach(GTK_CONTAINER(gebrme.programs_vbox), (GtkCallback)gtk_widget_destroy, NULL);

@@ -38,7 +38,7 @@ typedef struct _GtkSequenceEditClass	GtkSequenceEditClass;
 struct _GtkSequenceEdit {
 	GtkVBox		parent;
 
-	GtkWidget *	widget;
+	GtkWidget *	widget_hbox;
 
 	GtkListStore *	list_store;
 	GtkWidget *	tree_view;
@@ -46,11 +46,14 @@ struct _GtkSequenceEdit {
 struct _GtkSequenceEditClass {
 	GtkVBoxClass	parent;
 
+	/* signals */
+	void		(*add_request)(GtkSequenceEdit * self);
+	void		(*changed)(GtkSequenceEdit * self);
 	/* virtual */
-	void		(*add)(GtkSequenceEdit * self);
 	void		(*remove)(GtkSequenceEdit * self, GtkTreeIter * iter);
 	void		(*move_up)(GtkSequenceEdit * self, GtkTreeIter * iter);
 	void		(*move_down)(GtkSequenceEdit * self, GtkTreeIter * iter);
+	void		(*rename)(GtkSequenceEdit * self, GtkTreeIter * iter, const gchar * new_text);
 };
 
 GtkWidget *
@@ -58,9 +61,6 @@ gtk_sequence_edit_new(GtkWidget * widget);
 
 GtkWidget *
 gtk_sequence_edit_new_from_store(GtkWidget * widget, GtkListStore * list_store);
-
-GtkListStore *
-gtk_sequence_edit_get_store(GtkSequenceEdit * sequence_edit);
 
 G_END_DECLS
 

@@ -18,6 +18,7 @@
 #include <gui/pixmaps.h>
 
 #include <gui/utils.h>
+#include <gui/valuesequenceedit.h>
 
 #include "interface.h"
 #include "gebrme.h"
@@ -88,12 +89,9 @@ create_gebrme_window (void)
 	GtkWidget *		email_label;
 	GtkWidget *		email_entry;
 
-	GtkWidget *		categories_hbox;
-	GtkWidget *		categories_combo;
-	GtkWidget *		categories_scrolledwindow;
-	GtkWidget *		categories_treeview;
-	GtkWidget *		categories_vbox;
 	GtkWidget *		categories_label;
+	GtkWidget *		categories_combo;
+	GtkWidget *		categories_sequence_edit;
 
 	GtkWidget *		programs_frame;
 	GtkWidget *		programs_hbox;
@@ -103,8 +101,6 @@ create_gebrme_window (void)
 	GtkWidget *		programs_vbox;
 
 	GtkWidget *		widget;
-	GtkWidget *		button;
-
 	GtkWidget *		depth_hbox;
 	GtkAccelGroup *		accel_group;
 	GtkToolItem *		toolbutton;
@@ -469,20 +465,9 @@ create_gebrme_window (void)
 			(GtkAttachOptions)(GTK_FILL), 0, 0);
 	gtk_misc_set_alignment(GTK_MISC(categories_label), 0, 0.5);
 
-	categories_vbox = gtk_vbox_new(FALSE, 0);
-	gtk_table_attach(GTK_TABLE(summary_table), categories_vbox, 1, 2, 5, 6,
-			(GtkAttachOptions)(GTK_FILL),
-			(GtkAttachOptions)(GTK_FILL), 0, 0);
-	gtk_widget_show(categories_vbox);
-
-	categories_hbox = gtk_hbox_new(FALSE, 8);
-	gtk_widget_show(categories_hbox);
-	gtk_box_pack_start(GTK_BOX(categories_vbox), categories_hbox, FALSE, FALSE, 0);
-
 	categories_combo = gtk_combo_box_entry_new_text();
 	gebrme.categories_combo = categories_combo;
 	gtk_widget_show(categories_combo);
-	gtk_box_pack_start(GTK_BOX(categories_hbox), categories_combo, TRUE, TRUE, 0);
 	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Data Compression");
 	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Editing, Sorting and Manipulation");
 	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Filtering, Transforms and Attributes");
@@ -499,37 +484,17 @@ create_gebrme_window (void)
 // 	g_signal_connect(GTK_OBJECT(categories_combo), "activate",
 // 		GTK_SIGNAL_FUNC(category_add), NULL);
 
-	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
-	g_object_set(G_OBJECT(button), "relief", GTK_RELIEF_NONE, NULL);
-	gtk_widget_show(button);
-	gtk_box_pack_start(GTK_BOX(categories_hbox), button, FALSE, FALSE, 5);
-	g_signal_connect(button, "clicked",
+	categories_sequence_edit = value_sequence_edit_new(categories_combo);
+	gebrme.categories_sequence_edit = categories_sequence_edit;
+	gtk_widget_show(categories_sequence_edit);
+	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "add-request",
 		GTK_SIGNAL_FUNC(category_add), NULL);
-
-	categories_scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_show(categories_scrolledwindow);
-	gtk_box_pack_start(GTK_BOX(categories_vbox), categories_scrolledwindow, FALSE, FALSE, 0);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (categories_scrolledwindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (categories_scrolledwindow), GTK_SHADOW_IN);
-
-	gebrme.categories_liststore = gtk_list_store_new (CATEGORY_N_COLUMN,
-							G_TYPE_STRING,
-							G_TYPE_POINTER);
-	categories_treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL(gebrme.categories_liststore));
-	gebrme.categories_treeview = categories_treeview;
-	gtk_widget_show(categories_treeview);
-	gtk_container_add(GTK_CONTAINER(categories_scrolledwindow), categories_treeview);
-	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(categories_treeview),
-		(GtkPopupCallback)category_popup_menu, NULL);
-
-	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW(categories_treeview), FALSE);
-	renderer = gtk_cell_renderer_text_new ();
-	g_object_set(renderer, "editable", TRUE, NULL);
-	g_signal_connect(renderer, "edited",
-		(GCallback)category_renamed, NULL);
-	col = gtk_tree_view_column_new_with_attributes (NULL, renderer, NULL);
-	gtk_tree_view_column_add_attribute (col, renderer, "text", CATEGORY_NAME);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (categories_treeview), col);
+	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "changed",
+		GTK_SIGNAL_FUNC(category_changed), NULL);
+	gtk_table_attach(GTK_TABLE(summary_table), categories_sequence_edit, 1, 2, 5, 6,
+			(GtkAttachOptions)(GTK_FILL),
+			(GtkAttachOptions)(GTK_FILL), 0, 0);
+	gtk_widget_show(categories_sequence_edit);
 
 	/* Programs label and add button */
 	programs_hbox = gtk_hbox_new (FALSE, 0);
@@ -547,8 +512,7 @@ create_gebrme_window (void)
 	gtk_box_pack_start(GTK_BOX(programs_hbox), programs_add_button, FALSE, FALSE, 10);
 	gtk_widget_show(GTK_WIDGET(programs_add_button));
 	g_signal_connect(programs_add_button, "clicked",
-			(GCallback)program_add,
-			NULL);
+		(GCallback)program_add, NULL);
 	g_object_set(G_OBJECT(programs_add_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	/* Programs' depth */

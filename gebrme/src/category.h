@@ -21,21 +21,9 @@
 #include <gtk/gtk.h>
 
 void
-category_add(void);
+category_add(ValueSequenceEdit * sequence_edit);
 
 void
-category_remove(void);
-
-void
-category_renamed(GtkCellRendererText * cell, gchar * path_string, gchar * new_text);
-
-void
-category_move_up(void);
-
-void
-category_move_down(void);
-
-GtkMenu *
-category_popup_menu(GtkTreeView * tree_view);
+category_changed(void);
 
 #endif //__CATEGORY_H

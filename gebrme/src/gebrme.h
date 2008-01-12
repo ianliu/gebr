@@ -71,9 +71,7 @@ struct gebrme {
 
 	/* menu info: categories */
 	GtkWidget *		categories_combo;
-	GtkListStore *		categories_liststore;
-	GtkWidget *		categories_treeview;
-	GtkWidget *		categories_toolbar;
+	GtkWidget *		categories_sequence_edit;
 
 	/* menu's programs */
 	GtkWidget *		programs_vbox;
