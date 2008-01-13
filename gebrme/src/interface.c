@@ -117,7 +117,7 @@ create_gebrme_window (void)
 	gebrme_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gebrme.window = gebrme_window;
 	gtk_window_set_title(GTK_WINDOW (gebrme_window), _("GêBR ME"));
-	gtk_widget_set_size_request(gebrme_window, 600, 500);
+	gtk_widget_set_size_request(gebrme_window, 800, 800);
 	gebrme.about = about_setup_ui("GêBRME", _("Flow describer for GêBR"));
 
 	g_signal_connect(gebrme_window, "delete_event",

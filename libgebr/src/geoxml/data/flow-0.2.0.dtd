@@ -90,7 +90,7 @@
    separator     CDATA #IMPLIED>
 
 <!-- Options for a enum -->
-<!ELEMENT option (label, keyword)>
+<!ELEMENT option           (#PCDATA)>
 <!-- Keyword to build the command line -->
 <!ELEMENT keyword          (#PCDATA)>
 <!-- Short text to be displayed as label for an input parameter -->

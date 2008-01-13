@@ -37,7 +37,6 @@ struct parameter_data {
 
 	/* for non-groups */
 	struct parameter_widget *	widget;
-	GtkWidget *			default_widget_hbox;
 };
 
 GtkWidget *
@@ -170,7 +169,7 @@ parameter_create_ui(GeoXmlParameter * parameter, gboolean hidden)
 	g_object_set(G_OBJECT(keyword_entry), "user-data", parameter_label, NULL);
 
 	/*
-	 * Specific parameters fields
+	 * General parameters fields
 	 */
 	general_table = gtk_table_new(4, 2, FALSE);
 	gtk_widget_show(general_table);
@@ -309,6 +308,7 @@ void
 parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * data)
 {
 	GtkWidget *			default_label;
+	GtkWidget *			default_widget_hbox;
 	GtkWidget *			default_widget;
 	GtkWidget *			widget;
 	GeoXmlProgramParameter *	program_parameter;
@@ -322,6 +322,9 @@ parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * dat
 			(GtkAttachOptions)(GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0);
 	gtk_misc_set_alignment(GTK_MISC(default_label), 0, 0.5);
+
+	default_widget_hbox = gtk_hbox_new(FALSE, 0);
+	gtk_widget_show(default_widget_hbox);
 
 	program_parameter = GEOXML_PROGRAM_PARAMETER(data->parameter);
 	switch (geoxml_parameter_get_type(data->parameter)) {
@@ -453,6 +456,9 @@ parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * dat
 			GTK_SIGNAL_FUNC(parameter_enum_options_add_request), data);
 		g_signal_connect(GTK_OBJECT(sequence_edit), "changed",
 			GTK_SIGNAL_FUNC(parameter_enum_options_changed), data);
+		g_object_set(G_OBJECT(sequence_edit), "user-data", default_widget_hbox, NULL);
+
+		break;
 	} default:
 		return;
 	}
@@ -462,10 +468,8 @@ parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * dat
 	parameter_widget_set_auto_submit_callback(data->widget,
 		(changed_callback)parameter_default_widget_changed, data);
 
-	data->default_widget_hbox = gtk_hbox_new(FALSE, 0);
-	gtk_widget_show(data->default_widget_hbox);
-	gtk_box_pack_start(GTK_BOX(data->default_widget_hbox), default_widget, TRUE, TRUE, 0);
-	gtk_table_attach(GTK_TABLE(table), data->default_widget_hbox, 1, 2, 0, 1,
+	gtk_box_pack_start(GTK_BOX(default_widget_hbox), default_widget, TRUE, TRUE, 0);
+	gtk_table_attach(GTK_TABLE(table), default_widget_hbox, 1, 2, 0, 1,
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0);
 }
@@ -561,13 +565,13 @@ parameter_type_changed(GtkComboBox * combo, struct parameter_data * data)
 
 	g_object_get(G_OBJECT(combo), "user-data", &table, NULL);
 
-	/* clear specific data */
-	gtk_container_foreach(GTK_CONTAINER(table), (GtkCallback)gtk_widget_destroy, NULL);
-
-	/* change its type and recreate UI */
+	/* change its type */
 	geoxml_parameter_set_type(&data->parameter, (enum GEOXML_PARAMETERTYPE)gtk_combo_box_get_active(combo));
 	if (data->parameter == NULL)
 		puts("parameter_type_changed err");
+
+	/* recreate UI */
+	gtk_container_foreach(GTK_CONTAINER(table), (GtkCallback)gtk_widget_destroy, NULL);
 	parameter_create_ui_type_general(table, data);
 
 	parameter_uilabel_update(data);
@@ -733,13 +737,29 @@ parameter_range_inc_changed(GtkEntry * entry, struct parameter_data * data)
 void
 parameter_enum_options_add_request(ValueSequenceEdit * sequence_edit, struct parameter_data * data)
 {
+	GtkEntry *	entry;
 
+	g_object_get(G_OBJECT(sequence_edit), "value-widget", &entry, NULL);
+
+	value_sequence_edit_add(sequence_edit,
+		GEOXML_VALUE_SEQUENCE(geoxml_program_parameter_append_enum_option(
+			GEOXML_PROGRAM_PARAMETER(data->parameter),
+			gtk_entry_get_text(entry))));
 }
 
 void
 parameter_enum_options_changed(ValueSequenceEdit * sequence_edit, struct parameter_data * data)
 {
+	GtkWidget *	default_widget_hbox;
 
+	g_object_get(G_OBJECT(sequence_edit), "user-data", &default_widget_hbox, NULL);
+
+	gtk_widget_destroy(data->widget->widget);
+	data->widget = parameter_widget_new_enum(data->parameter, TRUE);
+	parameter_widget_set_auto_submit_callback(data->widget,
+		(changed_callback)parameter_default_widget_changed, data);
+	gtk_widget_show(data->widget->widget);
+	gtk_box_pack_start(GTK_BOX(default_widget_hbox), data->widget->widget, TRUE, TRUE, 0);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }

@@ -61,7 +61,9 @@ __parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, 
 	case GEOXML_PARAMETERTYPE_ENUM: {
 		gchar *	text;
 
-		text = gtk_combo_box_get_active_text(GTK_COMBO_BOX(parameter_widget->widget));
+		text = gtk_combo_box_get_active_text(GTK_COMBO_BOX(parameter_widget->value_widget));
+		if (text == NULL)
+			text = g_strdup("");
 		g_string_assign(value, text);
 
 		g_free(text);
@@ -86,6 +88,9 @@ static void
 parameter_widget_weak_ref(struct parameter_widget * parameter_widget, GtkWidget * widget)
 {
 	g_free(parameter_widget);
+	if (parameter_widget->sequence_edit)
+		g_object_unref(G_OBJECT(parameter_widget->sequence_edit));
+
 }
 
 static void
@@ -128,9 +133,9 @@ on_edit_list_toggled(GtkToggleButton * toggle_button, struct parameter_widget * 
 			g_strfreev(splits);
 		}
 
-		gtk_widget_show(parameter_widget->sequence_edit);
+		gtk_box_pack_start(GTK_BOX(parameter_widget->widget), parameter_widget->sequence_edit, TRUE, TRUE, 0);
 	} else
-		gtk_widget_hide(parameter_widget->sequence_edit);
+		gtk_container_remove(GTK_CONTAINER(parameter_widget->widget), parameter_widget->sequence_edit);
 
 	gtk_widget_set_sensitive(parameter_widget->list_value_widget, !toggled);
 	g_signal_handlers_unblock_matched(G_OBJECT(parameter_widget->sequence_edit),
@@ -221,8 +226,12 @@ parameter_widget_enum_set_widget_value(struct parameter_widget * parameter_widge
 
 	geoxml_program_parameter_get_enum_option(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), &option, 0);
 	for (i = 0; option != NULL; ++i, geoxml_sequence_next(&option))
-		if (g_ascii_strcasecmp(value, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(option))) == 0)
-			gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->widget), i);
+		if (g_ascii_strcasecmp(value, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(option))) == 0) {
+			gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->value_widget), i);
+			return;
+		}
+
+	gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->value_widget), 0);
 }
 
 /*
@@ -265,16 +274,20 @@ parameter_widget_init(GeoXmlParameter * parameter, GtkWidget * value_widget, gbo
 
 		gtk_widget_show(value_widget);
 		sequence_edit = gtk_sequence_edit_new(value_widget);
+		gtk_widget_show(sequence_edit);
 		parameter_widget->sequence_edit = sequence_edit;
-		gtk_box_pack_start(GTK_BOX(vbox), sequence_edit, TRUE, TRUE, 0);
 		g_signal_connect(sequence_edit, "add-request",
 			GTK_SIGNAL_FUNC(on_sequence_edit_add_request), parameter_widget);
 		g_signal_connect(sequence_edit, "changed",
 			GTK_SIGNAL_FUNC(on_sequence_edit_changed), parameter_widget);
+		/* for not being destroyed when removed from vbox */
+		g_object_ref(G_OBJECT(sequence_edit));
 
 		parameter_widget->widget = vbox;
-	} else
+	} else {
 		parameter_widget->widget = value_widget;
+		parameter_widget->sequence_edit = NULL;
+	}
 
 	/* delete before widget destruction */
 	g_object_weak_ref(G_OBJECT(parameter_widget->widget), (GWeakNotify)parameter_widget_weak_ref, parameter_widget);
@@ -478,6 +491,10 @@ parameter_widget_new_file(GeoXmlParameter * parameter, gboolean use_default_valu
 	return parameter_widget;
 }
 
+/*
+ * Function: parameter_widget_new_enum
+ * Add a combo box to select one in a list of values.
+ */
 struct parameter_widget *
 parameter_widget_new_enum(GeoXmlParameter * parameter, gboolean use_default_value)
 {
