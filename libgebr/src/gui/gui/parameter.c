@@ -87,10 +87,9 @@ __parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, 
 static void
 parameter_widget_weak_ref(struct parameter_widget * parameter_widget, GtkWidget * widget)
 {
-	g_free(parameter_widget);
 	if (parameter_widget->sequence_edit)
 		g_object_unref(G_OBJECT(parameter_widget->sequence_edit));
-
+	g_free(parameter_widget);
 }
 
 static void
