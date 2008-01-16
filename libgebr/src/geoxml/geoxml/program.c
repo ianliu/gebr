@@ -134,6 +134,14 @@ geoxml_program_set_help(GeoXmlProgram * program, const gchar * help)
 	__geoxml_set_tag_value((GdomeElement*)program, "help", help, __geoxml_create_CDATASection);
 }
 
+void
+geoxml_program_set_url(GeoXmlProgram * program, const gchar * url)
+{
+	if (program == NULL || url == NULL)
+		return;
+	__geoxml_set_tag_value((GdomeElement*)program, "url", url, __geoxml_create_TextNode);
+}
+
 gboolean
 geoxml_program_get_stdin(GeoXmlProgram * program)
 {
@@ -209,6 +217,14 @@ geoxml_program_get_help(GeoXmlProgram * program)
 	if (program == NULL)
 		return NULL;
 	return __geoxml_get_tag_value((GdomeElement*)program, "help");
+}
+
+const gchar *
+geoxml_program_get_url(GeoXmlProgram * program)
+{
+	if (program == NULL)
+		return NULL;
+	return __geoxml_get_tag_value((GdomeElement*)program, "url");
 }
 
 GeoXmlProgramParameter *

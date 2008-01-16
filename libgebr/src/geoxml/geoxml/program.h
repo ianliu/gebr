@@ -180,6 +180,12 @@ geoxml_program_set_help(GeoXmlProgram * program, const gchar * help);
 /**
  *
  */
+void
+geoxml_program_set_url(GeoXmlProgram * program, const gchar * url);
+
+/**
+ *
+ */
 gboolean
 geoxml_program_get_stdin(GeoXmlProgram * program);
 
@@ -230,6 +236,12 @@ geoxml_program_get_description(GeoXmlProgram * program);
  */
 const gchar *
 geoxml_program_get_help(GeoXmlProgram * program);
+
+/**
+ *
+ */
+const gchar *
+geoxml_program_get_url(GeoXmlProgram * program);
 
 /**
  * \deprecated

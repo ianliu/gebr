@@ -175,6 +175,7 @@ geoxml_flow_new_program(GeoXmlFlow * flow)
 	__geoxml_insert_new_element(program_element, "binary", NULL);
 	__geoxml_insert_new_element(program_element, "description", NULL);
 	__geoxml_insert_new_element(program_element, "help", NULL);
+	__geoxml_insert_new_element(program_element, "url", NULL);
 	__geoxml_insert_new_element(program_element, "parameters", NULL);
 
 	return (GeoXmlProgram*)program_element;
