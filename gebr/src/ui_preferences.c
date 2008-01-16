@@ -64,6 +64,7 @@ preferences_setup_ui(void)
 
 	GtkWidget *			table;
 	GtkWidget *			label;
+	GtkWidget *                     eventbox;
 
 	/* alloc */
 	ui_preferences = g_malloc(sizeof(struct ui_preferences));
@@ -119,9 +120,11 @@ preferences_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* Browse button for user's menus dir */
+	eventbox = gtk_event_box_new(); 	 
 	ui_preferences->usermenus = gtk_file_chooser_button_new(_("GêBR dir"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-	set_tooltip(ui_preferences->usermenus, _("Path to look for private user's menus"));
-	gtk_table_attach(GTK_TABLE(table), ui_preferences->usermenus, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->usermenus); 	 
+	set_tooltip(eventbox, _("Path to look for private user's menus"));
+	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* read config */
 	if (gebr.config.usermenus->len > 0)
@@ -136,10 +139,12 @@ preferences_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* Browse button for ui_preferences->data */
+	eventbox = gtk_event_box_new(); 
 	ui_preferences->data = gtk_file_chooser_button_new(_("Browser data dir"),
 						GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-	set_tooltip(ui_preferences->data, _("Path to store projects, lines and flows"));
-	gtk_table_attach(GTK_TABLE(table), ui_preferences->data, 1, 2, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->data); 	 
+	set_tooltip(eventbox, _("Path to store projects, lines and flows"));
+	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* read config */
 	if (gebr.config.data->len > 0)
@@ -165,9 +170,11 @@ preferences_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
 
+	eventbox = gtk_event_box_new(); 
 	ui_preferences->browser = gtk_combo_box_entry_new_text();
-	set_tooltip(ui_preferences->browser, _("An HTML browser to display helps and reports"));
-	gtk_table_attach(GTK_TABLE(table), ui_preferences->browser, 1, 2, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->browser);
+	set_tooltip(eventbox, _("An HTML browser to display helps and reports"));
+	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
 	/* read config */
 	{
 		int		i;
