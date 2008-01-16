@@ -65,6 +65,8 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	GtkWidget *			help_label;
 	GtkWidget *			help_view_button;
 	GtkWidget *			help_edit_button;
+	GtkWidget *                     url_label;
+	GtkWidget *                     url_entry;
 
 	GtkWidget *			parameters_expander;
 	GtkWidget *			parameters_label_widget;
@@ -152,11 +154,11 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	gtk_widget_show(summary_expander);
 	depth_hbox = create_depth(summary_expander);
 
-	summary_table = gtk_table_new (4, 2, FALSE);
+	summary_table = gtk_table_new (5, 2, FALSE);
 	gtk_widget_show (summary_table);
 	gtk_box_pack_start(GTK_BOX(depth_hbox), summary_table, TRUE, TRUE, 0);
-	gtk_table_set_row_spacings (GTK_TABLE (summary_table), 5);
-	gtk_table_set_col_spacings (GTK_TABLE (summary_table), 5);
+	gtk_table_set_row_spacings (GTK_TABLE (summary_table), 6);
+	gtk_table_set_col_spacings (GTK_TABLE (summary_table), 6);
 
 	title_label = gtk_label_new (_("Title:"));
 	gtk_widget_show (title_label);
@@ -241,6 +243,23 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 			GTK_SIGNAL_FUNC (program_summary_help_edit),
 			program);
 	g_object_set(G_OBJECT(help_edit_button), "relief", GTK_RELIEF_NONE, NULL);
+
+	url_label = gtk_label_new (_("URL:"));
+	gtk_widget_show (url_label);
+	gtk_table_attach (GTK_TABLE (summary_table), url_label, 0, 1, 4, 5,
+			(GtkAttachOptions) (GTK_FILL),
+			(GtkAttachOptions) (0), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(url_label), 0, 0.5);
+
+	url_entry = gtk_entry_new ();
+	gtk_widget_show (url_entry);
+	gtk_table_attach (GTK_TABLE (summary_table), url_entry, 1, 2, 4, 5,
+			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+			(GtkAttachOptions) (0), 0, 0);
+	g_signal_connect(url_entry, "changed",
+		(GCallback)program_summary_url_changed,
+		program);
+	gtk_entry_set_text(GTK_ENTRY(url_entry), geoxml_program_get_url(program));
 
 	parameters_expander = gtk_expander_new("");
 	gtk_expander_set_expanded (GTK_EXPANDER (parameters_expander), hidden);
@@ -491,3 +510,13 @@ program_summary_help_edit(GtkButton * button, GeoXmlProgram * program)
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
+
+gboolean
+program_summary_url_changed(GtkEntry * entry, GeoXmlProgram * program)
+{
+	geoxml_program_set_url(program, gtk_entry_get_text(GTK_ENTRY(entry)));
+
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+	return FALSE;
+}
+

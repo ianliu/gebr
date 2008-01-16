@@ -69,4 +69,7 @@ program_summary_help_view(GtkButton * button, GeoXmlProgram * program);
 void
 program_summary_help_edit(GtkButton * button, GeoXmlProgram * program);
 
+gboolean
+program_summary_url_changed(GtkEntry * entry, GeoXmlProgram * program);
+
 #endif //__PROGRAM_H
