@@ -217,6 +217,17 @@ job_control_setup_ui(void)
 		"editable", FALSE,
 		"cursor-visible", FALSE,
 		NULL);
+	{
+	   PangoFontDescription* font; 
+
+	   font = pango_font_description_new();
+	   pango_font_description_set_family(font, "courier 10 pitch");
+	   pango_font_description_set_style(font, PANGO_STYLE_NORMAL);
+
+	   gtk_widget_modify_font(text_view, font);
+	   pango_font_description_free(font);
+	   
+	}
 	ui_job_control->text_view = text_view;
 	gtk_container_add(GTK_CONTAINER(scrolledwin), text_view);
 

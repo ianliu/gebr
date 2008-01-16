@@ -30,6 +30,7 @@
 #include <glib/gstdio.h>
 
 #include <geoxml.h>
+#include <misc/utils.h>
 
 #include "menu.h"
 #include "defines.h"
@@ -213,6 +214,7 @@ menu_list_create_index(void)
 	GString *	path;
 	FILE *		index_fp;
 	GString	*	sort_cmd_line;
+	GString *       tmpfile;
 	gboolean	ret;
 
 	/* initialization */
@@ -231,8 +233,9 @@ menu_list_create_index(void)
 	fclose(index_fp);
 
 	/* Sort index */
-	g_string_printf(sort_cmd_line, "sort %s >/tmp/gebrmenus.tmp; mv /tmp/gebrmenus.tmp %s",
-		path->str, path->str);
+	tmpfile = make_temp_filename("gebrmenusXXXXXX.tmp");
+	g_string_printf(sort_cmd_line, "sort %s >%s; mv %s %s",
+		path->str, tmpfile->str, tmpfile->str, path->str);
 	system(sort_cmd_line->str);
 
 	/* frees */
