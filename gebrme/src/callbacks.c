@@ -114,6 +114,10 @@ on_save_as_activate(void)
 	gtk_file_filter_add_pattern(filefilter, "*.mnu");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), filefilter);
 
+	if (gebrme.config.menu_dir != NULL && strlen(gebrme.config.menu_dir->str) > 0){
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), gebrme.config.menu_dir->str);
+	}
+
 	/* show file chooser */
 	gtk_widget_show(chooser_dialog);
 	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
