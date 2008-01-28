@@ -198,7 +198,7 @@ protocol_send_data(struct protocol * protocol, GTcpSocket * tcp_socket,
 		gchar *	param;
 
 		param = va_arg(ap, char *);
-		g_string_append_printf(data, "%lu|%s", strlen(param), param);
+		g_string_append_printf(data, "%zu|%s", strlen(param), param);
 		if (i != n_params)
 			g_string_append(data, " ");
 	}
@@ -208,7 +208,7 @@ protocol_send_data(struct protocol * protocol, GTcpSocket * tcp_socket,
 	protocol->waiting_ret_hash = (message_def.returns == TRUE) ? message_def.hash : 0;
 	/* assembly message */
 	message = g_string_new(NULL);
-	g_string_printf(message, "%s %lu %s\n", message_def.string, data->len, data->str);
+	g_string_printf(message, "%s %zu %s\n", message_def.string, data->len, data->str);
 	/* send it */
 	g_socket_write_string(G_SOCKET(tcp_socket), message);
 
@@ -233,7 +233,7 @@ protocol_split_new(GString * arguments, guint parts)
 		gssize		arg_size;
 
 		/* get the argument size */
-		if (sscanf(iarg, "%lu|", &arg_size) == EOF) {
+		if (sscanf(iarg, "%zu|", &arg_size) == EOF) {
 			protocol_split_free(split);
 			break;
 		}
