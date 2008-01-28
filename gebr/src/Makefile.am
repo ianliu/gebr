@@ -72,5 +72,5 @@ EXTRA_DIST = gebr.ggo ${noinst_HEADERS}
 
 INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
-AM_CFLAGS = -Wall $(GTK_CFLAGS) $(LIBGEBR_CFLAGS)
+AM_CFLAGS = -Wall -std=gnu99 $(GTK_CFLAGS) $(LIBGEBR_CFLAGS)
 gebr_LDADD = $(GTK_LIBS) $(LIBGEBR_LIBS)

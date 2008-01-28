@@ -15,21 +15,25 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 bin_PROGRAMS = gebrd
-gebrd_SOURCES =		main.c \
-			gebrd.c \
-			server.c \
-			client.c \
-			job.c \
-			support.c
-noinst_HEADERS =	gebrd.h \
-			server.h \
-			client.h \
-			job.h \
-			support.h \
-			macros.h
+gebrd_SOURCES = \
+	main.c \
+	gebrd.c \
+	server.c \
+	client.c \
+	job.c \
+	support.c
+noinst_HEADERS = \
+	gebrd.h \
+	server.h \
+	client.h \
+	job.h \
+	support.h \
+	macros.h
 EXTRA_DIST = $(noinst_HEADERS)
 
+LIBGEBR_CFLAGS = ${LIBGEBR_GEOXML_CFLAGS} ${LIBGEBR_COMM_CFLAGS} ${LIBGEBR_MISC_CFLAGS}
+LIBGEBR_LIBS = ${LIBGEBR_GEOXML_LIBS} ${LIBGEBR_COMM_LIBS} ${LIBGEBR_MISC_LIBS}
 INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
-AM_CFLAGS = -Wall $(GLIB_CFLAGS) ${LIBGEBR_GEOXML_CFLAGS} ${LIBGEBR_COMM_CFLAGS} ${LIBGEBR_MISC_CFLAGS}
-gebrd_LDADD = $(INTLLIBS) $(GLIB_LIBS) ${LIBGEBR_GEOXML_LIBS} ${LIBGEBR_COMM_LIBS} ${LIBGEBR_MISC_LIBS}
+AM_CFLAGS = -Wall $(GLIB_CFLAGS) ${LIBGEBR_CFLAGS}
+gebrd_LDADD = $(INTLLIBS) $(GLIB_LIBS) ${LIBGEBR_LIBS}

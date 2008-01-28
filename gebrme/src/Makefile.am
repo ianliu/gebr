@@ -16,32 +16,36 @@
 
 bin_PROGRAMS = gebrme
 
-gebrme_SOURCES =	main.c \
-			interface.c \
-			callbacks.c \
-			gebrme.c \
-			menu.c \
-			summary.c \
-			category.c \
-			program.c \
-			parameter.c \
-			help.c \
-			preferences.c \
-			support.c
-noinst_HEADERS =	interface.h \
-			callbacks.h \
-			gebrme.h \
-			menu.h \
-			summary.h \
-			category.h \
-			program.h \
-			parameter.h \
-			help.h \
-			preferences.h \
-			support.h
-
+gebrme_SOURCES = \
+	main.c \
+	interface.c \
+	callbacks.c \
+	gebrme.c \
+	menu.c \
+	summary.c \
+	category.c \
+	program.c \
+	parameter.c \
+	help.c \
+	preferences.c \
+	support.c
+noinst_HEADERS = \
+	interface.h \
+	callbacks.h \
+	gebrme.h \
+	menu.h \
+	summary.h \
+	category.h \
+	program.h \
+	parameter.h \
+	help.h \
+	preferences.h \
+	support.h
 EXTRA_DIST = $(noinst_HEADERS)
+
+LIBGEBR_CFLAGS = $(LIBGEBR_GEOXML_CFLAGS) $(LIBGEBR_GUI_CFLAGS) $(LIBGEBR_MISC_CFLAGS)
+LIBGEBR_LIBS = $(LIBGEBR_GEOXML_LIBS) $(LIBGEBR_GUI_LIBS) $(LIBGEBR_MISC_LIBS)
 INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
-AM_CFLAGS = -Wall $(GTK_CFLAGS) $(LIBGEBR_GEOXML_CFLAGS) $(LIBGEBR_GUI_CFLAGS) $(LIBGEBR_MISC_CFLAGS)
-gebrme_LDADD = $(INTLLIBS) $(GTK_LIBS) $(LIBGEBR_GEOXML_LIBS) $(LIBGEBR_GUI_LIBS) $(LIBGEBR_MISC_LIBS)
+AM_CFLAGS = -Wall $(GTK_CFLAGS) ${LIBGEBR_CFLAGS}
+gebrme_LDADD = $(INTLLIBS) $(GTK_LIBS) $(LIBGEBR_LIBS)
