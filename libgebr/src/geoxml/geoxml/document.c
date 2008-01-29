@@ -27,6 +27,8 @@
 #include "xml.h"
 #include "types.h"
 #include "error.h"
+#include "sequence.h"
+#include "flow.h"
 
 /* global variables */
 GdomeException			exception;
@@ -39,17 +41,170 @@ struct geoxml_document {
 	GdomeDocument*	document;
 };
 
+typedef GdomeDocument *
+(*createDoc_func)(GdomeDOMImplementation *, char *, unsigned int, GdomeException *);
+
 static GdomeDOMImplementation*	dom_implementation;
 static gint			dom_implementation_ref_count = 0;
 
 static GdomeDocument *
-__geoxml_document_clone_doc(GdomeDocument * source, GdomeDocumentType * document_type);
+__geoxml_document_clone_doc(GdomeDocument * source, GdomeDocumentType * document_type)
+{
+	if (source == NULL)
+		return NULL;
+
+	GdomeDocument *	document;
+	GdomeElement *	root_element;
+	GdomeElement *	source_root_element;
+	GdomeNode *	node;
+
+	source_root_element = gdome_doc_documentElement(source, &exception);
+	document = gdome_di_createDocument(dom_implementation,
+		NULL, gdome_el_nodeName(source_root_element, &exception), document_type, &exception);
+	if (document == NULL)
+		return NULL;
+
+	/* copy version attribute */
+	root_element = gdome_doc_documentElement(document, &exception);
+	__geoxml_set_attr_value(root_element, "version",
+		__geoxml_get_attr_value(source_root_element, "version"));
+
+	node = gdome_el_firstChild(source_root_element, &exception);
+	do {
+		GdomeNode* new_node = gdome_doc_importNode(document, node, TRUE, &exception);
+		gdome_el_appendChild(root_element, new_node, &exception);
+
+		node = gdome_n_nextSibling(node, &exception);
+	} while (node != NULL);
+
+	return document;
+}
 
 static int
-__geoxml_document_validate_doc(GdomeDocument * document);
+__geoxml_document_validate_doc(GdomeDocument * document)
+{
+	/* Based on code by Daniel Veillard
+	 * References:
+	 *   http://xmlsoft.org/examples/index.html#parse2.c
+	 *   http://xmlsoft.org/examples/parse2.c
+	 */
 
-typedef GdomeDocument *
-(*createDoc_func)(GdomeDOMImplementation *, char *, unsigned int, GdomeException *);
+	xmlParserCtxtPtr	ctxt;
+	xmlDocPtr		doc;
+	gchar *			xml;
+
+	GString *		dtd_filename;
+
+	GdomeDocument *		tmp_doc;
+	GdomeDocumentType *	tmp_document_type;
+
+	GdomeElement *		root_element;
+	gchar *			version;
+
+	int			ret;
+
+	ctxt = xmlNewParserCtxt();
+	if (ctxt == NULL)
+		return GEOXML_RETV_NO_MEMORY;
+	if (gdome_doc_doctype(document, &exception) != NULL) {
+		ret = GEOXML_RETV_DTD_SPECIFIED;
+		goto out2;
+	}
+
+	/* initialization */
+	dtd_filename = g_string_new(NULL);
+	root_element = geoxml_document_root_element(document);
+
+	/* find DTD */
+	g_string_printf(dtd_filename, "%s/%s-%s.dtd", GEOXML_DTD_DIR,
+		gdome_el_nodeName(root_element, &exception)->str,
+		geoxml_document_get_version((GeoXmlDocument*)document));
+	if (g_file_test(dtd_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == FALSE
+		|| g_access(dtd_filename->str, R_OK) < 0) {
+		ret = GEOXML_RETV_CANT_ACCESS_DTD;
+		goto out;
+	}
+
+	/* include DTD with full path */
+	tmp_document_type = gdome_di_createDocumentType(dom_implementation,
+		gdome_el_nodeName(root_element, &exception), NULL,
+		gdome_str_mkref_own(dtd_filename->str), &exception);
+	tmp_doc = __geoxml_document_clone_doc(document, tmp_document_type);
+	if (tmp_document_type == NULL || tmp_doc == NULL) {
+		ret = GEOXML_RETV_NO_MEMORY;
+		goto out;
+	}
+
+	gdome_di_saveDocToMemoryEnc(dom_implementation, tmp_doc,
+		&xml, ENCODING, GDOME_SAVE_STANDARD, &exception);
+	doc = xmlCtxtReadMemory(ctxt, xml, strlen(xml), NULL, NULL,
+		XML_PARSE_NOBLANKS |
+		XML_PARSE_DTDATTR |  /* default DTD attributes */
+		XML_PARSE_NOENT |    /* substitute entities */
+		XML_PARSE_DTDVALID);
+
+	/* frees memory before we quit. */
+	gdome_doc_unref(tmp_doc, &exception);
+	g_free(xml);
+
+	if (doc == NULL) {
+		xmlFreeParserCtxt(ctxt);
+		ret = GEOXML_RETV_INVALID_DOCUMENT;
+		goto out;
+	} else {
+		xmlFreeDoc(doc);
+		if (ctxt->valid == 0) {
+			xmlFreeParserCtxt(ctxt);
+			ret = GEOXML_RETV_INVALID_DOCUMENT;
+			goto out;
+		}
+	}
+
+	/*
+	 * Success, now change to last version
+	 */
+
+	version = (gchar*)geoxml_document_get_version((GeoXmlDocument*)document);
+	/* 0.1.x to 0.2.0 */
+	if (g_ascii_strcasecmp(version, "0.2.0") < 0) {
+		GdomeElement *		element;
+		GdomeElement *		before;
+
+		__geoxml_set_attr_value(root_element, "version", "0.2.0");
+
+		before = __geoxml_get_first_element(root_element, "email");
+		before = __geoxml_next_element(before);
+
+		element = __geoxml_insert_new_element(root_element, "date", before);
+		__geoxml_insert_new_element(element, "created", NULL);
+		__geoxml_insert_new_element(element, "modified", NULL);
+
+		if (geoxml_document_get_type((GeoXmlDocument*)document) == GEOXML_DOCUMENT_TYPE_FLOW)
+			__geoxml_insert_new_element(element, "lastrun", NULL);
+	}
+	/* 0.2.0 to 0.2.1 */
+	if (g_ascii_strcasecmp(version, "0.2.1") < 0) {
+		if (geoxml_document_get_type(((GeoXmlDocument*)document)) == GEOXML_DOCUMENT_TYPE_FLOW) {
+			GeoXmlSequence *	program;
+
+			__geoxml_set_attr_value(root_element, "version", "0.2.1");
+
+			geoxml_flow_get_program(GEOXML_FLOW(document), &program, 0);
+			while (program != NULL) {
+				__geoxml_insert_new_element((GdomeElement*)program, "url",
+					__geoxml_get_first_element((GdomeElement*)program, "parameters"));
+
+				geoxml_sequence_next(&program);
+			}
+		}
+	}
+
+	ret = GEOXML_RETV_SUCCESS;
+out:	g_string_free(dtd_filename, TRUE);
+out2:	xmlFreeParserCtxt(ctxt);
+
+	return ret;
+}
 
 static int
 __geoxml_document_load(GeoXmlDocument ** document, const gchar * src, createDoc_func func)
@@ -64,14 +219,14 @@ __geoxml_document_load(GeoXmlDocument ** document, const gchar * src, createDoc_
 		gdome_di_ref(dom_implementation, &exception);
 	++dom_implementation_ref_count;
 
-	/* load. */
+	/* load */
 	doc = func(dom_implementation, (gchar*)src, GDOME_LOAD_PARSING, &exception);
 	if (doc == NULL) {
 		ret = GEOXML_RETV_INVALID_DOCUMENT;
 		goto err;
 	}
 
-	/* validade */
+	/* validate */
 	ret = __geoxml_document_validate_doc(doc);
 	if (ret != GEOXML_RETV_SUCCESS)
 		goto err;
@@ -177,39 +332,6 @@ geoxml_document_clone(GeoXmlDocument * source)
 	return (GeoXmlDocument*)document;
 }
 
-GdomeDocument *
-__geoxml_document_clone_doc(GdomeDocument * source, GdomeDocumentType * document_type)
-{
-	if (source == NULL)
-		return NULL;
-
-	GdomeDocument *	document;
-	GdomeElement *	root_element;
-	GdomeElement *	source_root_element;
-	GdomeNode *	node;
-
-	source_root_element = gdome_doc_documentElement(source, &exception);
-	document = gdome_di_createDocument(dom_implementation,
-		NULL, gdome_el_nodeName(source_root_element, &exception), document_type, &exception);
-	if (document == NULL)
-		return NULL;
-
-	/* copy version attribute */
-	root_element = gdome_doc_documentElement(document, &exception);
-	__geoxml_set_attr_value(root_element, "version",
-		__geoxml_get_attr_value(source_root_element, "version"));
-
-	node = gdome_el_firstChild(source_root_element, &exception);
-	do {
-		GdomeNode* new_node = gdome_doc_importNode(document, node, TRUE, &exception);
-		gdome_el_appendChild(root_element, new_node, &exception);
-
-		node = gdome_n_nextSibling(node, &exception);
-	} while (node != NULL);
-
-	return document;
-}
-
 enum GEOXML_DOCUMENT_TYPE
 geoxml_document_get_type(GeoXmlDocument * document)
 {
@@ -250,120 +372,6 @@ geoxml_document_validate(const gchar * filename)
 
 	ret = geoxml_document_load(&document, filename);
 	geoxml_document_free(document);
-
-	return ret;
-}
-
-int
-__geoxml_document_validate_doc(GdomeDocument * document)
-{
-	/* Based on code by Daniel Veillard
-	 * References:
-	 *   http://xmlsoft.org/examples/index.html#parse2.c
-	 *   http://xmlsoft.org/examples/parse2.c
-	 */
-
-	xmlParserCtxtPtr	ctxt;
-	xmlDocPtr		doc;
-	gchar *			xml;
-
-	GString *		dtd_filename;
-
-	GdomeDocument *		tmp_doc;
-	GdomeDocumentType *	tmp_document_type;
-
-	GdomeElement *		root_element;
-	gchar *			version;
-
-	int			ret;
-
-	ctxt = xmlNewParserCtxt();
-	if (ctxt == NULL)
-		return GEOXML_RETV_NO_MEMORY;
-	if (gdome_doc_doctype(document, &exception) != NULL) {
-		ret = GEOXML_RETV_DTD_SPECIFIED;
-		goto out2;
-	}
-
-	/* initialization */
-	dtd_filename = g_string_new(NULL);
-	root_element = geoxml_document_root_element(document);
-
-	/* find DTD */
-	g_string_printf(dtd_filename, "%s/%s-%s.dtd", GEOXML_DTD_DIR,
-		gdome_el_nodeName(root_element, &exception)->str,
-		geoxml_document_get_version((GeoXmlDocument*)document));
-	if (g_file_test(dtd_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == FALSE
-		|| g_access(dtd_filename->str, R_OK) < 0) {
-		ret = GEOXML_RETV_CANT_ACCESS_DTD;
-		goto out;
-	}
-
-	/* include DTD with full path */
-	tmp_document_type = gdome_di_createDocumentType(dom_implementation,
-		gdome_el_nodeName(root_element, &exception), NULL,
-		gdome_str_mkref_own(dtd_filename->str), &exception);
-	tmp_doc = __geoxml_document_clone_doc(document, tmp_document_type);
-	if (tmp_document_type == NULL || tmp_doc == NULL) {
-		ret = GEOXML_RETV_NO_MEMORY;
-		goto out;
-	}
-
-	gdome_di_saveDocToMemoryEnc(dom_implementation, tmp_doc,
-		&xml, ENCODING, GDOME_SAVE_STANDARD, &exception);
-	doc = xmlCtxtReadMemory(ctxt, xml, strlen(xml), NULL, NULL,
-		XML_PARSE_NOBLANKS |
-		XML_PARSE_DTDATTR |  /* default DTD attributes */
-		XML_PARSE_NOENT |    /* substitute entities */
-		XML_PARSE_DTDVALID);
-
-	/* frees memory before we quit. */
-	gdome_doc_unref(tmp_doc, &exception);
-	g_free(xml);
-
-	if (doc == NULL) {
-		xmlFreeParserCtxt(ctxt);
-		ret = GEOXML_RETV_INVALID_DOCUMENT;
-		goto out;
-	} else {
-		xmlFreeDoc(doc);
-		if (ctxt->valid == 0) {
-			xmlFreeParserCtxt(ctxt);
-			ret = GEOXML_RETV_INVALID_DOCUMENT;
-			goto out;
-		}
-	}
-
-	/* success, now change to last version */
-	version = (gchar*)geoxml_document_get_version((GeoXmlDocument*)document);
-	/* 0.1.x to 0.2.0 */
-	if (g_ascii_strcasecmp(version, "0.2.0") < 0) {
-		GdomeElement *		element;
-		GdomeElement *		before;
-
-		__geoxml_set_attr_value(root_element, "version", "0.2.0");
-
-		before = __geoxml_get_first_element(root_element, "email");
-		before = __geoxml_next_element(before);
-
-		element = __geoxml_insert_new_element(root_element, "date", before);
-		__geoxml_insert_new_element(element, "created", NULL);
-		__geoxml_insert_new_element(element, "modified", NULL);
-
-		switch (geoxml_document_get_type((GeoXmlDocument*)document)) {
-		case GEOXML_DOCUMENT_TYPE_FLOW:
-			__geoxml_insert_new_element(element, "lastrun", NULL);
-			break;
-		case GEOXML_DOCUMENT_TYPE_LINE:
-			break;
-		case GEOXML_DOCUMENT_TYPE_PROJECT:
-			break;
-		}
-	}
-
-	ret = GEOXML_RETV_SUCCESS;
-out:	g_string_free(dtd_filename, TRUE);
-out2:	xmlFreeParserCtxt(ctxt);
 
 	return ret;
 }

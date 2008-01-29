@@ -19,6 +19,8 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
+#include <gui/utils.h>
+
 #include "callbacks.h"
 #include "gebrme.h"
 #include "support.h"
@@ -150,6 +152,10 @@ on_revert_activate(void)
 	gchar *			path;
 	GeoXmlFlow *		menu;
 
+	if (confirm_action_dialog(_("Revert changes"), _("All unsaved changes will be lost. Are you sure you want to revert flow '%s'?"),
+	geoxml_document_get_filename(GEOXML_DOC(gebrme.current))) == FALSE)
+		return;
+
 	/* get path of selection */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (gebrme.menus_treeview));
 	gtk_tree_selection_get_selected(selection, &model, &iter);
@@ -188,12 +194,16 @@ on_delete_activate(void)
 
 	gchar *			path;
 
+	if (confirm_action_dialog(_("Delete flow"), _("Are you sure you delete flow '%s'?"),
+	geoxml_document_get_filename(GEOXML_DOC(gebrme.current))) == FALSE)
+		return;
+
 	/* get path of selection */
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebrme.menus_treeview));
-	gtk_tree_selection_get_selected (selection, &model, &iter);
-	gtk_tree_model_get (GTK_TREE_MODEL(gebrme.menus_liststore), &iter,
-			MENU_PATH, &path,
-			-1);
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebrme.menus_treeview));
+	gtk_tree_selection_get_selected(selection, &model, &iter);
+	gtk_tree_model_get(GTK_TREE_MODEL(gebrme.menus_liststore), &iter,
+		MENU_PATH, &path,
+		-1);
 
 	if (g_unlink(path)) {
 		GtkWidget *	dialog;

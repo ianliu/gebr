@@ -377,7 +377,7 @@ job_control_cancel(void)
 		gebr_message(WARNING, TRUE, FALSE, _("Job is not running"));
 		return;
 	}
-	if (confirm_action_dialog(_("Are you sure you want to terminate job '%s'?"), job->title->str) == FALSE)
+	if (confirm_action_dialog(_("Terminate job"), _("Are you sure you want to terminate job '%s'?"), job->title->str) == FALSE)
 		return;
 
 	gebr_message(INFO, TRUE, FALSE, _("Asking server to terminate job"));
@@ -407,7 +407,7 @@ job_control_close(void)
 			JC_STRUCT, &job,
 			-1);
 
-	if (confirm_action_dialog(_("Are you sure you want to clear job '%s'?"), job->title->str) == FALSE)
+	if (confirm_action_dialog(_("Clear job "), _("Are you sure you want to clear job '%s'?"), job->title->str) == FALSE)
 		return;
 
 	job_close(job);
@@ -424,7 +424,7 @@ job_control_clear(void)
 	GtkTreeIter		iter;
 	gboolean		valid;
 
-	if (confirm_action_dialog("", _("Are you sure you want to clear all jobs from all servers?")) == FALSE)
+	if (confirm_action_dialog(_("Clear all jobs"), _("Are you sure you want to clear all jobs from all servers?")) == FALSE)
 		return;
 
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
@@ -468,7 +468,7 @@ job_control_stop(void)
 		gebr_message(WARNING, TRUE, FALSE, _("Job is not running"));
 		return;
 	}
-	if (confirm_action_dialog(_("Are you sure you want to kill job '%s'?"), job->title->str) == FALSE)
+	if (confirm_action_dialog(_("Kill job"), _("Are you sure you want to kill job '%s'?"), job->title->str) == FALSE)
 		return;
 
 	gebr_message(INFO, TRUE, FALSE, _("Asking server to kill job"));
