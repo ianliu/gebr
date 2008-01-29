@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - GÃªBR Library
+ *   Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,13 +15,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <time.h>
 #include <stdio.h>
 #include <unistd.h>
 
 #include <glib/gstdio.h>
 
 #include "log.h"
+#include "date.h"
 
 /*
  * Internal functions
@@ -100,9 +100,6 @@ log_add_message(struct log * log, enum log_message_type type, const gchar * mess
 {
 	GString *	line;
 	gchar *		ident_str;
-	gchar		time_str[30];
-	time_t		t;
-	struct tm *	lt;
 	gsize		bytes_written;
 	GError *	error;
 
@@ -138,13 +135,8 @@ log_add_message(struct log * log, enum log_message_type type, const gchar * mess
 		break;
 	}
 
-	/* TODO: use own date library */
-	time(&t);
-	lt = localtime(&t);
-	strftime(time_str, 30, "%F %T", lt);
-
 	/* assembly log line and write to file */
-	g_string_printf(line, "%s %s %s\n", ident_str, time_str, message);
+	g_string_printf(line, "%s %s %s\n", ident_str, iso_date(), message);
 	g_io_channel_write_chars(log->io_channel, line->str, line->len, &bytes_written, &error);
 	g_io_channel_flush(log->io_channel, &error);
 

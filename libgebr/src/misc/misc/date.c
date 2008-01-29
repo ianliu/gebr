@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - GÃªBR Library
+ *   Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ iso_date(void)
 	g_free(tmp);
 
 	/* convert to utf-8 if necessary */
-	if (g_utf8_validate(date, -1, NULL)) {
+	if (g_utf8_validate(date, -1, NULL) == FALSE) {
 		tmp = g_simple_locale_to_utf8(date);
 		if (tmp != NULL) {
 			strcpy(date, tmp);
@@ -75,7 +75,7 @@ localized_date(const gchar * iso_date)
 	strftime(date, 100, "%c", tm);
 
 	/* convert to utf-8 if necessary */
-	if (g_utf8_validate(date, -1, NULL)) {
+	if (g_utf8_validate(date, -1, NULL) == FALSE) {
 		gchar *	tmp;
 
 		tmp = g_simple_locale_to_utf8(date);
