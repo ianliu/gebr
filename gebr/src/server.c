@@ -29,34 +29,45 @@
 
 #include "server.h"
 #include "gebr.h"
-#include <defines.h>
+#include "defines.h"
 #include "support.h"
 #include "client.h"
 #include "job.h"
 #include "callbacks.h"
 
 /*
- * Prototypes
- */
-
-static void
-server_connected(GTcpSocket * tcp_socket, struct server * server);
-
-static void
-server_disconnected(GTcpSocket * tcp_socket, struct server * server);
-
-static void
-server_read(GTcpSocket * tcp_socket, struct server * server);
-
-static void
-server_error(GTcpSocket * tcp_socket, enum GSocketError error, struct server * server);
-
-/*
  * Internal functions
  */
 
 static void
-ask_server_port(struct server * server);
+local_ask_port_read(GProcess * process, struct server * server);
+
+static void
+local_ask_port_finished(GProcess * process, struct server * server);
+
+static void
+local_run_server_finished(GProcess * process, struct server * server)
+{
+	GString *	cmd_line;
+
+	gebr_message(DEBUG, FALSE, TRUE, "local_run_server_finished");
+
+	cmd_line = g_string_new(NULL);
+	server->state = SERVER_STATE_ASK_PORT;
+	server->tried_existant_pass = FALSE;
+
+	g_process_free(process);
+	process = g_process_new();
+	g_signal_connect(process, "ready-read-stdout",
+		G_CALLBACK(local_ask_port_read), server);
+	g_signal_connect(process, "finished",
+		G_CALLBACK(local_ask_port_finished), server);
+
+	g_string_printf(cmd_line, "bash -l -c 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'");
+	g_process_start(process, cmd_line);
+
+	g_string_free(cmd_line, TRUE);
+}
 
 static void
 local_ask_port_read(GProcess * process, struct server * server)
@@ -73,17 +84,6 @@ local_ask_port_read(GProcess * process, struct server * server)
 	}
 
 	g_string_free(output, TRUE);
-}
-
-static void
-local_run_server_finished(GProcess * process, struct server * server)
-{
-	gebr_message(DEBUG, FALSE, TRUE, "local_run_server_finished");
-
-	server->state = SERVER_STATE_RUNNED_ASK_PORT;
-	ask_server_port(server);
-
-	g_process_free(process);
 }
 
 static void
@@ -105,34 +105,13 @@ local_ask_port_finished(GProcess * process, struct server * server)
 
 		g_host_address_free(host_address);
 	} else {
-		GProcess *	server_process;
+		puts("/* misterious magic code that brings stability! */");
+		/* misterious magic code that brings stability! */
+		GProcess *	process;
 		GString *	cmd_line;
+		/* misterious magic code that brings stability! */
 
-		if (server->state == SERVER_STATE_RUNNED_ASK_PORT)
-			goto out;
-
-		cmd_line = g_string_new(NULL);
-
-		server->state = SERVER_STATE_RUN;
-		gebr_message(INFO, TRUE, TRUE, _("Launching local server"), server->address->str);
-
-		server_process = g_process_new();
-		g_signal_connect(server_process, "finished",
-			G_CALLBACK(local_run_server_finished), server);
-
-		/* FIXME: remove /dev/null and change GProcess */
-#if (!GEBR_STATIC_MODE)
-		g_string_printf(cmd_line, "bash -l -c \"gebrd 1>/dev/null 2>/dev/null &\"");
-#else
-		g_string_printf(cmd_line, "bash -l -c \"./gebrd 1>/dev/null 2>/dev/null &\"");
-#endif
-		g_process_start(server_process, cmd_line);
-
-		/* wait a bit for server to initialize */
-		/* FIXME: race condition and remove sleep */
-		sleep(1);
-
-		g_string_free(cmd_line, TRUE);
+		gebr_message(ERROR, TRUE, TRUE, "Could not retrieve local server port");
 	}
 
 out:	g_process_free(process);
@@ -214,8 +193,20 @@ ssh_parse_output(GTerminalProcess * process, struct server * server, GString * o
 
 		g_string_free(answer, TRUE);
 		gtk_widget_destroy(dialog);
-	} else
+	} else {
+		/* check if it is an ssh error: check if string starts with "ssh:" */
+		gchar *	str;
+
+		str = strstr(output->str, "ssh:");
+		if (str == output->str) {
+			server->error = SERVER_ERROR_SSH;
+			gebr_message(ERROR, TRUE, TRUE, _("Error contacting server at address %s via ssh: %s"),
+				server->address->str, output->str);
+			return TRUE;
+		}
+
 		return FALSE;
+	}
 
 out:	return TRUE;
 }
@@ -232,7 +223,9 @@ ssh_ask_port_read(GTerminalProcess * process, struct server * server)
 	if (ssh_parse_output(process, server, output) == TRUE)
 		goto out;
 	if (output->len <= 2) {
-		/* server does not exist, because run file test lead to empty output */
+		/* server is not running, because run file test lead to empty output
+		 * (2 is greater than carriege return)
+		 */
 		server->port = 0;
 		goto out;
 	}
@@ -246,12 +239,51 @@ ssh_ask_port_read(GTerminalProcess * process, struct server * server)
 	} else {
 		server->port = 0;
 		server->error = SERVER_ERROR_SSH;
-		gebr_message(ERROR, TRUE, TRUE, _("Error contacting server at address %s via ssh: %s"),
-			server->address->str, output->str);
 	}
 
 	g_strfreev(splits);
 out:	g_string_free(output, TRUE);
+}
+
+static void
+ssh_open_tunnel_read(GTerminalProcess * process, struct server * server);
+
+static void
+ssh_open_tunnel_finished(GTerminalProcess * process, struct server * server);
+
+static void
+ssh_ask_port_finished(GTerminalProcess * process, struct server * server)
+{
+	GString *	cmd_line;
+
+	gebr_message(DEBUG, FALSE, TRUE, "ssh_ask_port_finished");
+	cmd_line = g_string_new(NULL);
+
+	if (server->error != SERVER_ERROR_NONE)
+		goto out;
+
+	server->tried_existant_pass = FALSE;
+	if (server->port) {
+		GTerminalProcess *	tunnel_process;
+
+		tunnel_process = g_terminal_process_new();
+		g_signal_connect(tunnel_process, "ready-read",
+			G_CALLBACK(ssh_open_tunnel_read), server);
+		g_signal_connect(tunnel_process, "finished",
+			G_CALLBACK(ssh_open_tunnel_finished), server);
+
+		server->state = SERVER_STATE_OPEN_TUNNEL;
+		server->tunnel_port = 2125;
+		while (!g_tcp_server_is_local_port_available(server->tunnel_port))
+			++server->tunnel_port;
+
+		g_string_printf(cmd_line, "ssh -f -L %d:127.0.0.1:%d %s 'sleep 300'",
+			server->tunnel_port, server->port, server->address->str);
+		g_terminal_process_start(tunnel_process, cmd_line);
+	}
+
+out:	g_string_free(cmd_line, TRUE);
+	g_terminal_process_free(process);
 }
 
 static void
@@ -261,7 +293,7 @@ ssh_run_server_read(GTerminalProcess * process, struct server * server)
 
 	gebr_message(DEBUG, FALSE, TRUE, "ssh_run_server_read");
 
-	/* in fact there is no output because ssh was ran with -f option */
+	/* ssh only output; gebrd doesn't output nothing */
 	output = g_terminal_process_read_string_all(process);
 	ssh_parse_output(process, server, output);
 
@@ -271,14 +303,29 @@ ssh_run_server_read(GTerminalProcess * process, struct server * server)
 static void
 ssh_run_server_finished(GTerminalProcess * process, struct server * server)
 {
+	GString *	cmd_line;
+
 	gebr_message(DEBUG, FALSE, TRUE, "ssh_run_server_finished");
 
+	g_terminal_process_free(process);
 	if (server->error != SERVER_ERROR_NONE)
-		goto out;
+		return;
 
-	server_connect(server);
+	cmd_line = g_string_new(NULL);
+	server->state = SERVER_STATE_ASK_PORT;
+	server->tried_existant_pass = FALSE;
 
-out:	g_terminal_process_free(process);
+	process = g_terminal_process_new();
+	g_signal_connect(process, "ready-read",
+		G_CALLBACK(ssh_ask_port_read), server);
+	g_signal_connect(process, "finished",
+		G_CALLBACK(ssh_ask_port_finished), server);
+
+	g_string_printf(cmd_line, "ssh %s 'test -e ~/.gebr/run/gebrd.run &&"
+		"echo `cat ~/.gebr/run/gebrd.run` $SSH_CLIENT'", server->address->str);
+	g_terminal_process_start(process, cmd_line);
+
+	g_string_free(cmd_line, TRUE);
 }
 
 static void
@@ -317,193 +364,6 @@ out:	g_terminal_process_free(process);
 }
 
 static void
-ssh_ask_port_finished(GTerminalProcess * process, struct server * server)
-{
-	GString *	cmd_line;
-
-	gebr_message(DEBUG, FALSE, TRUE, "ssh_ask_port_finished");
-	cmd_line = g_string_new(NULL);
-
-	if (server->error != SERVER_ERROR_NONE)
-		goto out;
-
-	server->tried_existant_pass = FALSE;
-	if (server->port) {
-		GTerminalProcess *	tunnel_process;
-
-		tunnel_process = g_terminal_process_new();
-		g_signal_connect(tunnel_process, "ready-read",
-			G_CALLBACK(ssh_open_tunnel_read), server);
-		g_signal_connect(tunnel_process, "finished",
-			G_CALLBACK(ssh_open_tunnel_finished), server);
-
-		server->state = SERVER_STATE_OPEN_TUNNEL;
-		server->tunnel_port = 2125;
-		while (!g_tcp_server_is_local_port_available(server->tunnel_port))
-			++server->tunnel_port;
-
-		g_string_printf(cmd_line, "ssh -f -L %d:127.0.0.1:%d %s 'sleep 300'",
-			server->tunnel_port, server->port, server->address->str);
-		g_terminal_process_start(tunnel_process, cmd_line);
-	} else {
-		GTerminalProcess *	server_process;
-
-		if (server->state == SERVER_STATE_RUNNED_ASK_PORT)
-			goto out;
-
-		server->state = SERVER_STATE_RUN;
-		gebr_message(INFO, TRUE, TRUE, _("Launching server at %s"), server->address->str);
-
-		server_process = g_terminal_process_new();
-		g_signal_connect(server_process, "ready-read",
-			G_CALLBACK(ssh_run_server_read), server);
-		g_signal_connect(server_process, "finished",
-			G_CALLBACK(ssh_run_server_finished), server);
-
-		g_string_printf(cmd_line, "ssh -f -x %s 'bash -l -c gebrd'", server->address->str);
-		g_terminal_process_start(server_process, cmd_line);
-	}
-
-out:	g_string_free(cmd_line, TRUE);
-	g_terminal_process_free(process);
-}
-
-static void
-ask_server_port(struct server * server)
-{
-	gebr_message(DEBUG, FALSE, TRUE, "ask_server_port");
-
-	GString *	cmd_line;
-
-	cmd_line = g_string_new(NULL);
-
-	if (server_is_local(server) == FALSE) {
-		GTerminalProcess *	process;
-
-		process = g_terminal_process_new();
-		g_signal_connect(process, "ready-read",
-			G_CALLBACK(ssh_ask_port_read), server);
-		g_signal_connect(process, "finished",
-			G_CALLBACK(ssh_ask_port_finished), server);
-
-		g_string_printf(cmd_line, "ssh %s 'test -e ~/.gebr/run/gebrd.run &&"
-			"echo `cat ~/.gebr/run/gebrd.run` $SSH_CLIENT'", server->address->str);
-		g_terminal_process_start(process, cmd_line);
-	} else {
-		GProcess *	process;
-
-		process = g_process_new();
-		g_signal_connect(process, "ready-read-stdout",
-			G_CALLBACK(local_ask_port_read), server);
-		g_signal_connect(process, "finished",
-			G_CALLBACK(local_ask_port_finished), server);
-
-		g_string_printf(cmd_line, "bash -l -c 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'");
-		g_process_start(process, cmd_line);
-	}
-
-	g_string_free(cmd_line, TRUE);
-}
-
-/*
- * Public functions
- */
-
-struct server *
-server_new(const gchar * _address)
-{
-	GtkTreeIter	iter;
-
-	struct server *	server;
-
-	/* initialize */
-	server = g_malloc(sizeof(struct server));
-	gtk_list_store_append(gebr.ui_server_list->common.store, &iter);
-	/* fill struct */
-	*server = (struct server) {
-		.tcp_socket = g_tcp_socket_new(),
-		.protocol = protocol_new(),
-		.address = g_string_new(_address),
-		.port = 0,
-		.client_address = g_string_new(""),
-		.password = g_string_new(""),
-		.iter = iter
-	};
-	/* fill iter */
-	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
-			SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
-			SERVER_ADDRESS, server_is_local(server) == TRUE ? _("Local server") : (gchar*)_address,
-			SERVER_POINTER, server,
-			-1);
-
-	g_signal_connect(server->tcp_socket, "connected",
-			G_CALLBACK(server_connected), server);
-	g_signal_connect(server->tcp_socket, "disconnected",
-			G_CALLBACK(server_disconnected), server);
-	g_signal_connect(server->tcp_socket, "ready-read",
-			G_CALLBACK(server_read), server);
-	g_signal_connect(server->tcp_socket, "error",
-			G_CALLBACK(server_error), server);
-
-	server_connect(server);
-
-	return server;
-}
-
-void
-server_free(struct server * server)
-{
-	GtkTreeIter	iter;
-	gboolean	valid;
-
-	/* delete all jobs at server */
-	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
-	while (valid) {
-		struct job *	job;
-		GtkTreeIter	this;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
-				JC_STRUCT, &job,
-				-1);
-		this = iter;
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
-
-		if (job->server == server)
-			job_delete(job);
-	}
-
-	g_socket_close(G_SOCKET(server->tcp_socket));
-	protocol_free(server->protocol);
-	g_string_free(server->address, TRUE);
-	g_string_free(server->password, TRUE);
-	g_string_free(server->client_address, TRUE);
-	g_free(server);
-}
-
-void
-server_connect(struct server * server)
-{
-	/* initiate the marathon to communicate to server */
-	server->error = SERVER_ERROR_NONE;
-	server->state = SERVER_STATE_ASK_PORT;
-	server->tried_existant_pass = FALSE;
-	ask_server_port(server);
-}
-
-gboolean
-server_is_logged(struct server * server)
-{
-	return server->protocol->logged;
-}
-
-gboolean
-server_is_local(struct server * server)
-{
-	return g_ascii_strcasecmp(server->address->str, "127.0.0.1") == 0
-		? TRUE : FALSE;
-}
-
-void
 server_connected(GTcpSocket * tcp_socket, struct server * server)
 {
 	gchar		hostname[100];
@@ -572,8 +432,146 @@ server_read(GTcpSocket * tcp_socket, struct server * server)
 static void
 server_error(GTcpSocket * tcp_socket, enum GSocketError error, struct server * server)
 {
-	/* FIXME: fix signal on GTcpSocket */
-//	gebr_message(ERROR, FALSE, TRUE, _("Connection error '%s' on server '%s'"), error, server->address->str);
+	server->error = SERVER_ERROR_CONNECT;
+	if (error == G_SOCKET_ERROR_UNKNOWN)
+		puts("unk");
+	gebr_message(ERROR, FALSE, TRUE, _("Connection error '%s' on server '%s'"), error, server->address->str);
+}
+
+
+/*
+ * Public functions
+ */
+
+struct server *
+server_new(const gchar * _address)
+{
+	GtkTreeIter	iter;
+
+	struct server *	server;
+
+	/* initialize */
+	server = g_malloc(sizeof(struct server));
+	gtk_list_store_append(gebr.ui_server_list->common.store, &iter);
+	/* fill struct */
+	*server = (struct server) {
+		.tcp_socket = g_tcp_socket_new(),
+		.protocol = protocol_new(),
+		.address = g_string_new(_address),
+		.port = 0,
+		.client_address = g_string_new(""),
+		.password = g_string_new(""),
+		.iter = iter
+	};
+	/* fill iter */
+	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
+			SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
+			SERVER_ADDRESS, server_is_local(server) == TRUE ? _("Local server") : (gchar*)_address,
+			SERVER_POINTER, server,
+			-1);
+
+	g_signal_connect(server->tcp_socket, "connected",
+		G_CALLBACK(server_connected), server);
+	g_signal_connect(server->tcp_socket, "disconnected",
+		G_CALLBACK(server_disconnected), server);
+	g_signal_connect(server->tcp_socket, "ready-read",
+		G_CALLBACK(server_read), server);
+	g_signal_connect(server->tcp_socket, "error",
+		G_CALLBACK(server_error), server);
+
+	server_connect(server);
+
+	return server;
+}
+
+void
+server_free(struct server * server)
+{
+	GtkTreeIter	iter;
+	gboolean	valid;
+
+	/* delete all jobs at server */
+	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
+	while (valid) {
+		struct job *	job;
+		GtkTreeIter	this;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
+				JC_STRUCT, &job,
+				-1);
+		this = iter;
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
+
+		if (job->server == server)
+			job_delete(job);
+	}
+
+	g_socket_close(G_SOCKET(server->tcp_socket));
+	protocol_free(server->protocol);
+	g_string_free(server->address, TRUE);
+	g_string_free(server->password, TRUE);
+	g_string_free(server->client_address, TRUE);
+	g_free(server);
+}
+
+void
+server_connect(struct server * server)
+{
+	GString *	cmd_line;
+
+	/* initiate the marathon to communicate to server */
+	server->error = SERVER_ERROR_NONE;
+	server->state = SERVER_STATE_RUN;
+	server->tried_existant_pass = FALSE;
+
+	cmd_line = g_string_new(NULL);
+
+	if (server_is_local(server) == FALSE) {
+		GTerminalProcess *	process;
+
+		server->state = SERVER_STATE_RUN;
+		gebr_message(INFO, TRUE, TRUE, _("Launching server at %s"), server->address->str);
+
+		process = g_terminal_process_new();
+		g_signal_connect(process, "ready-read",
+			G_CALLBACK(ssh_run_server_read), server);
+		g_signal_connect(process, "finished",
+			G_CALLBACK(ssh_run_server_finished), server);
+
+		g_string_printf(cmd_line, "ssh -x %s 'bash -l -c gebrd'", server->address->str);
+		g_terminal_process_start(process, cmd_line);
+	} else {
+		GProcess *	process;
+
+		server->state = SERVER_STATE_RUN;
+		gebr_message(INFO, TRUE, TRUE, _("Launching local server"), server->address->str);
+
+		process = g_process_new();
+		g_signal_connect(process, "finished",
+			G_CALLBACK(local_run_server_finished), server);
+
+#if (!GEBR_STATIC_MODE)
+		g_string_printf(cmd_line, "bash -l -c 'gebrd'");
+#else
+		g_string_printf(cmd_line, "bash -l -c './gebrd'");
+#endif
+		g_process_start(process, cmd_line);
+	}
+
+	g_string_free(cmd_line, TRUE);
+}
+
+gboolean
+server_is_logged(struct server * server)
+{
+	return server->protocol->logged;
+}
+
+gboolean
+server_is_local(struct server * server)
+{
+	return g_ascii_strcasecmp(server->address->str, "127.0.0.1") == 0
+		? TRUE : FALSE;
 }
 
 /*
