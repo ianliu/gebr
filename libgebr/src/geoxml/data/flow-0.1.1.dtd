@@ -23,7 +23,7 @@
 <!ELEMENT io (input, output, error)>
 
 
-<!ELEMENT program (menu, title, binary, description, help, parameters?)>
+<!ELEMENT program (menu, title, binary, description, help, parameters)>
 <!ATTLIST program
    stdin  (yes | no)                             #REQUIRED
    stdout (yes | no)                             #REQUIRED

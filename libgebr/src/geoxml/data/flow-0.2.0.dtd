@@ -28,7 +28,7 @@
 <!-- Input/Output to run the flow -->
 <!ELEMENT io (input, output, error)>
 
-<!ELEMENT program (menu, title, binary, description, help, parameters?)>
+<!ELEMENT program (menu, title, binary, description, help, url?, parameters)>
 <!ATTLIST program
    stdin  (yes | no)                             #REQUIRED
    stdout (yes | no)                             #REQUIRED
@@ -40,6 +40,8 @@
 <!ATTLIST menu index CDATA #REQUIRED>
 <!-- Binary to program (without path) -->
 <!ELEMENT binary           (#PCDATA)>
+<!-- URL to get the program -->
+<!ELEMENT url              (#PCDATA)>
 
 <!ELEMENT parameters (int | float | string | flag | file | range | enum | group)*>
 
