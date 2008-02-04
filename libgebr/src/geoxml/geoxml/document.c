@@ -148,13 +148,11 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 	g_free(xml);
 
 	if (doc == NULL) {
-		xmlFreeParserCtxt(ctxt);
 		ret = GEOXML_RETV_INVALID_DOCUMENT;
 		goto out;
 	} else {
 		xmlFreeDoc(doc);
 		if (ctxt->valid == 0) {
-			xmlFreeParserCtxt(ctxt);
 			ret = GEOXML_RETV_INVALID_DOCUMENT;
 			goto out;
 		}
@@ -228,8 +226,10 @@ __geoxml_document_load(GeoXmlDocument ** document, const gchar * src, createDoc_
 
 	/* validate */
 	ret = __geoxml_document_validate_doc(doc);
-	if (ret != GEOXML_RETV_SUCCESS)
+	if (ret != GEOXML_RETV_SUCCESS) {
+		gdome_doc_unref((GdomeDocument*)doc, &exception);
 		goto err;
+	}
 
 	*document = (GeoXmlDocument*)doc;
 	return GEOXML_RETV_SUCCESS;
