@@ -56,7 +56,8 @@ menu_new(void)
 	menu_selected();
 
 	program_add();
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
+	/* new menu with no changes shouldn't be save */
+	menu_saved_status_set(MENU_STATUS_SAVED);
 
 	g_string_free(new_menu_str, TRUE);
 }
