@@ -157,8 +157,12 @@ __g_socket_write(GIOChannel * source, GIOCondition condition, GSocket * socket)
 		case ECONNREFUSED:
 			_g_socket_emit_error(socket, G_SOCKET_ERROR_CONNECTION_REFUSED);
 			break;
+		case EINPROGRESS:
+			return TRUE;
 		default:
-			_g_socket_emit_error(socket, G_SOCKET_ERROR_UNKNOWN);
+// 			puts(strerror(errno));
+// 			printf("err %d\n", errno);
+// 			_g_socket_emit_error(socket, G_SOCKET_ERROR_UNKNOWN);
 			break;
 		}
 		if (socket->state == G_SOCKET_STATE_CONNECTED) {

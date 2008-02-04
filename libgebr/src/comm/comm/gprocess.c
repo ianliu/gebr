@@ -273,40 +273,40 @@ g_process_start(GProcess * process, GString * cmd_line)
 
 	error = NULL;
 	g_shell_parse_argv(cmd_line->str, &argc, &argv, &error);
-// 	ret = g_spawn_async_with_pipes(
-// 		NULL, /* working_directory */
-// 		argv,
-// 		NULL, /* envp */
-// 		G_SPAWN_LEAVE_DESCRIPTORS_OPEN | G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
-// 		NULL,
-// 		process,
-// 		&process->pid,
-// 		&stdin_fd, &stdout_fd, &stderr_fd,
-// 		&error);
-// 	if (ret == FALSE) {
-//
-// 		goto out;
-// 	}
-	pipe(stdin_pipe);
-	pipe(stdout_pipe);
-	pipe(stderr_pipe);
-	pid = fork();
-	if (pid == 0) {
-		close(stdin_pipe[1]);
-		close(stdout_pipe[0]);
-		close(stderr_pipe[0]);
-		dup2(stdin_pipe[0], 0);
-		dup2(stdout_pipe[1], 1);
-		dup2(stderr_pipe[1], 2);
+	ret = g_spawn_async_with_pipes(
+		NULL, /* working_directory */
+		argv,
+		NULL, /* envp */
+		G_SPAWN_LEAVE_DESCRIPTORS_OPEN | G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
+		NULL,
+		process,
+		&process->pid,
+		&stdin_fd, &stdout_fd, &stderr_fd,
+		&error);
+	if (ret == FALSE) {
 
-		if (execvp(argv[0], argv) == -1) {
-			ret = FALSE;
-			goto out;
-		}
+		goto out;
 	}
-	stdin_fd = stdin_pipe[1];
-	stdout_fd = stdout_pipe[0];
-	stderr_fd = stderr_pipe[0];
+// 	pipe(stdin_pipe);
+// 	pipe(stdout_pipe);
+// 	pipe(stderr_pipe);
+// 	pid = fork();
+// 	if (pid == 0) {
+// 		close(stdin_pipe[1]);
+// 		close(stdout_pipe[0]);
+// 		close(stderr_pipe[0]);
+// 		dup2(stdin_pipe[0], 0);
+// 		dup2(stdout_pipe[1], 1);
+// 		dup2(stderr_pipe[1], 2);
+// 
+// 		if (execvp(argv[0], argv) == -1) {
+// 			ret = FALSE;
+// 			goto out;
+// 		}
+// 	}
+// 	stdin_fd = stdin_pipe[1];
+// 	stdout_fd = stdout_pipe[0];
+// 	stderr_fd = stderr_pipe[0];
 
 	process->stdout_watch_id = process->stderr_watch_id = 0;
 	g_child_watch_add(process->pid, (GChildWatchFunc)__g_process_finished_watch, process);

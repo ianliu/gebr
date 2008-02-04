@@ -22,6 +22,7 @@
 
 #include "client.h"
 #include "gebrd.h"
+#include "support.h"
 #include "server.h"
 
 /*
@@ -33,6 +34,9 @@ client_disconnected(GTcpSocket * tcp_socket, struct client * client);
 
 static void
 client_read(GTcpSocket * tcp_socket, struct client * client);
+
+static void
+client_error(GTcpSocket * tcp_socket, enum GSocketError error, struct client * client);
 
 /*
  * Public functions
@@ -55,6 +59,8 @@ client_add(GTcpSocket * tcp_socket)
 	gebrd.clients = g_list_prepend(gebrd.clients, client);
 	g_signal_connect(tcp_socket, "disconnected",
 			G_CALLBACK(client_disconnected), client);
+	g_signal_connect(tcp_socket, "error",
+			 G_CALLBACK(client_error), client);
 	g_signal_connect(tcp_socket, "ready-read",
 			G_CALLBACK(client_read), client);
 
@@ -106,4 +112,12 @@ client_read(GTcpSocket * tcp_socket, struct client * client)
 	gebrd_message(DEBUG, "client_read %s", data->str);
 
 out:	g_string_free(data, TRUE);
+}
+
+static void
+client_error(GTcpSocket * tcp_socket, enum GSocketError error, struct client * client)
+{
+	if (error == G_SOCKET_ERROR_UNKNOWN)
+		gebrd_message(ERROR, _("unk"), error, client->address->str);
+	gebrd_message(ERROR, _("Connection error '%s' on server '%s'"), error, client->address->str);
 }

@@ -34,32 +34,6 @@
 #include "client.h"
 
 /*
- * Internal
- */
-
-struct try_connect {
-	GHostAddress *	host_address;
-	guint16		port;
-
-	gboolean	refused;
-};
-
-static gpointer
-__try_connect(struct try_connect * try_connect)
-{
-	GTcpSocket *	tcp_socket;
-
-	tcp_socket = g_tcp_socket_new();
-	g_tcp_socket_connect(tcp_socket, try_connect->host_address, try_connect->port, TRUE);
-// 	try_connect->refused = g_socket_last_error(G_SOCKET(tcp_socket)) == G_SOCKET_ERROR_CONNECTION_REFUSED;
-	try_connect->refused = g_socket_get_state(G_SOCKET(tcp_socket)) != G_SOCKET_STATE_CONNECTED;
-
-	g_socket_close(G_SOCKET(tcp_socket));
-
-	return NULL;
-}
-
-/*
  * Public
  */
 
@@ -125,23 +99,20 @@ server_init(void)
 		/* check if server crashed by trying connecting to it
 		 * if the connection is refused, the it *probably* did
 		 */
-		struct try_connect	try_connect;
-		GThread *		thread;
-		GError *		error;
+		GTcpSocket *	tcp_socket;
+		guint16		port;
+		gboolean	connected;
 
-		if (!g_thread_supported())
-			g_thread_init(NULL);
-
-		try_connect.host_address = host_address;
 		run_fp = fopen(run_filename->str, "r");
-		fscanf(run_fp, "%hu", &try_connect.port);
+		fscanf(run_fp, "%hu", &port);
 		fclose(run_fp);
 
-		error = NULL;
-		thread = g_thread_create((GThreadFunc)__try_connect, &try_connect, TRUE, &error);
-		g_thread_join(thread);
+		tcp_socket = g_tcp_socket_new();
+		g_tcp_socket_connect(tcp_socket, host_address, port, TRUE);
+		connected = g_socket_get_state(G_SOCKET(tcp_socket)) == G_SOCKET_STATE_CONNECTED;
+		g_socket_close(G_SOCKET(tcp_socket));
 
-		if (try_connect.refused == FALSE) {
+		if (connected == TRUE) {
 			gebrd_message(ERROR, _("Run file (~/.gebr/run/gebrd.run) already exists or is not a regular file."));
 			goto err;
 		}
@@ -162,7 +133,7 @@ server_init(void)
 	/* client list structure */
 	gebrd.clients = NULL;
 
-	/* sucess */
+	/* success */
 	ret = TRUE;
 	gebrd_message(START, _("Server started at %u port"), g_tcp_server_server_port(gebrd.tcp_server));
 	goto out;
