@@ -38,15 +38,15 @@ struct server {
 	gboolean		tried_existant_pass;
 
 	enum server_state {
-		SERVER_STATE_RUN,
 		SERVER_STATE_ASK_PORT,
+		SERVER_STATE_RUN,
+		SERVER_STATE_RUNNED_ASK_PORT,
 		SERVER_STATE_OPEN_TUNNEL,
 		SERVER_STATE_CONNECT,
 		SERVER_STATE_CONNECTED,
 	} state;
 	enum server_error {
 		SERVER_ERROR_NONE,
-		SERVER_ERROR_CONNECT,
 		SERVER_ERROR_SSH,
 	} error;
 
