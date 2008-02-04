@@ -32,6 +32,7 @@ struct gebrd {
 	struct log *		log;
 
 	GMainLoop *		main_loop;
+	int			finished_starting_pipe[2];
 };
 
 void
@@ -41,6 +42,6 @@ void
 gebrd_quit(void);
 
 void
-gebrd_message(enum log_message_type type, gboolean in_stdout, gboolean in_log_file, const gchar * message, ...);
+gebrd_message(enum log_message_type type, const gchar * message, ...);
 
 #endif //__GEBRD_H

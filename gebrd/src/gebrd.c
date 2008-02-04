@@ -15,10 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <misc/utils.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "gebrd.h"
 #include "support.h"
@@ -30,51 +28,34 @@ struct gebrd	gebrd;
 void
 gebrd_init(void)
 {
-	GString *	log_filename;
-	GHostAddress *	host_address;
+	gchar	buf[2];
 
-	/* initialization */
-	log_filename = g_string_new(NULL);
+	pipe(gebrd.finished_starting_pipe);
+	if (fork() == 0) {
+		gebrd.main_loop = g_main_loop_new(NULL, FALSE);
+		g_type_init();
 
-	/* from libgebr-misc */
-	if (gebr_create_config_dirs() == FALSE) {
-		gebrd_message(ERROR, TRUE, TRUE, _("Could not access GêBR configuration directories."));
-		goto out;
+		if (server_init() == TRUE) {
+			g_main_loop_run(gebrd.main_loop);
+			g_main_loop_unref(gebrd.main_loop);
+		}
+
+		return;
 	}
 
-	/* log */
-	g_string_printf(log_filename, "%s/.gebr/gebrd.log", getenv("HOME"));
-	gebrd.log = log_open(log_filename->str);
-
-	/* local address used for listening */
-	host_address = g_host_address_new();
-	g_host_address_set_ipv4_string(host_address, "127.0.0.1");
-
-	/* server */
-	if (!server_init()) {
-		gebrd_message(ERROR, TRUE, TRUE, _("Could not init server. Quiting..."));
-
-		server_free();
-		g_main_loop_quit(gebrd.main_loop);
-		g_main_loop_unref(gebrd.main_loop);
-		goto out;
-	}
-
-	gebrd_message(START, TRUE, TRUE, _("Server started at %u port"), g_tcp_server_server_port(gebrd.tcp_server));
-
-	/* frees */
-out:	g_string_free(log_filename, TRUE);
+	/* wait for server_init sign that it finished */
+	read(gebrd.finished_starting_pipe[0], buf, 2);
+	close(gebrd.finished_starting_pipe[0]);
+	close(gebrd.finished_starting_pipe[1]);
 }
 
 void
 gebrd_quit(void)
 {
-	gebrd_message(END, TRUE, TRUE, _("Server quited"), g_tcp_server_server_port(gebrd.tcp_server));
-	log_close(gebrd.log);
+	gebrd_message(END, _("Server quited"), g_tcp_server_server_port(gebrd.tcp_server));
 
 	server_quit();
 	g_main_loop_quit(gebrd.main_loop);
-	g_main_loop_unref(gebrd.main_loop);
 }
 
 /*
@@ -83,7 +64,7 @@ gebrd_quit(void)
  *
  */
 void
-gebrd_message(enum log_message_type type, gboolean in_stdout, gboolean in_log_file, const gchar * message, ...)
+gebrd_message(enum log_message_type type, const gchar * message, ...)
 {
 	gchar *		string;
 	va_list		argp;
@@ -92,10 +73,7 @@ gebrd_message(enum log_message_type type, gboolean in_stdout, gboolean in_log_fi
 	string = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
-	if (in_stdout)
-		g_print("%s\n", string);
-	if (in_log_file)
-		log_add_message(gebrd.log, type, string);
+	log_add_message(gebrd.log, type, string);
 
 	g_free(string);
 }

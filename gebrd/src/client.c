@@ -58,9 +58,7 @@ client_add(GTcpSocket * tcp_socket)
 	g_signal_connect(tcp_socket, "ready-read",
 			G_CALLBACK(client_read), client);
 
-	gebrd_message(DEBUG, TRUE, TRUE, "client_add");
-
-	return;
+	gebrd_message(DEBUG, "client_add");
 }
 
 void
@@ -84,7 +82,7 @@ client_is_local(struct client * client)
 static void
 client_disconnected(GTcpSocket * tcp_socket, struct client * client)
 {
-	gebrd_message(DEBUG, TRUE, TRUE, "client_disconnected");
+	gebrd_message(DEBUG, "client_disconnected");
 
 	gebrd.clients = g_list_remove(gebrd.clients, client);
 	client_free(client);
@@ -105,7 +103,7 @@ client_read(GTcpSocket * tcp_socket, struct client * client)
 		goto out;
 	}
 
-	gebrd_message(DEBUG, TRUE, TRUE, "client_read %s", data->str);
+	gebrd_message(DEBUG, "client_read %s", data->str);
 
 out:	g_string_free(data, TRUE);
 }

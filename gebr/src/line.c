@@ -142,7 +142,7 @@ line_delete(void)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	gtk_tree_selection_get_selected(selection, &model, &line_iter);
 
-	if (confirm_action_dialog(_("Delete line"), _("Are you sure you want to delete line '%s' and all its flows?"),
+	if (confirm_action_dialog("", _("Are you sure you want to delete line '%s' and all its flows?"),
 		geoxml_document_get_title(GEOXML_DOC(gebr.line))) == FALSE)
 		return;
 

@@ -291,7 +291,7 @@ flow_delete(void)
 			   FB_FILENAME, &filename,
 			   -1);
 
-	if (confirm_action_dialog(_("Delete flow"), _("Are you sure you want to delete flow '%s'?"), title) == FALSE)
+	if (confirm_action_dialog("", _("Are you sure you want to delete flow '%s'?"), title) == FALSE)
 		goto out;
 
 	/* Some feedback */

@@ -25,23 +25,83 @@
 #include <comm.h>
 #include <geoxml.h>
 
+#include <misc/utils.h>
+
 #include "server.h"
 #include "gebrd.h"
 #include "support.h"
 #include "job.h"
 #include "client.h"
 
+/*
+ * Internal
+ */
+
+struct try_connect {
+	GHostAddress *	host_address;
+	guint16		port;
+
+	gboolean	refused;
+};
+
+static gpointer
+__try_connect(struct try_connect * try_connect)
+{
+	GTcpSocket *	tcp_socket;
+
+	tcp_socket = g_tcp_socket_new();
+	g_tcp_socket_connect(tcp_socket, try_connect->host_address, try_connect->port, TRUE);
+// 	try_connect->refused = g_socket_last_error(G_SOCKET(tcp_socket)) == G_SOCKET_ERROR_CONNECTION_REFUSED;
+	try_connect->refused = g_socket_get_state(G_SOCKET(tcp_socket)) != G_SOCKET_STATE_CONNECTED;
+
+	g_socket_close(G_SOCKET(tcp_socket));
+
+	return NULL;
+}
+
+/*
+ * Public
+ */
+
 gboolean
 server_init(void)
 {
-	GHostAddress *	  host_address;
-	gboolean	  ret;
-	GString *	  run_filename;
-	FILE *		  run_fp;
-	struct sigaction  act;
+	GHostAddress *		host_address;
+	struct sigaction	act;
+	gboolean		ret;
+
+	GString *		log_filename;
+	GString *		run_filename;
+	FILE *			run_fp;
+
+	gchar *			ssh_env;
+	GString *		client_ip;
 
 	/* run path */
+	log_filename = g_string_new(NULL);
 	run_filename = g_string_new(NULL);
+	client_ip = g_string_new("");
+
+	/* if we were ran by ssh, then use IP to change log and run filenames */
+	ssh_env = getenv("SSH_CLIENT");
+	if (ssh_env != NULL) {
+		gchar **	splits;
+
+		splits = g_strsplit(ssh_env, " ", 3);
+		g_string_printf(client_ip, "-%s", splits[0]);
+
+		g_strfreev(splits);
+	}
+
+	/* from libgebr-misc */
+	if (gebr_create_config_dirs() == FALSE) {
+		gebrd_message(ERROR, _("Could not access GêBR configuration directories.\n"));
+		goto err;
+	}
+
+	/* log */
+	g_string_printf(log_filename, "%s/.gebr/log/gebrd%s.log", getenv("HOME"), client_ip->str);
+	gebrd.log = log_open(log_filename->str);
 
 	/* protocol */
 	protocol_init();
@@ -52,25 +112,43 @@ server_init(void)
 
 	/* init the server socket and listen */
 	gebrd.tcp_server = g_tcp_server_new();
-	ret = g_tcp_server_listen(gebrd.tcp_server, host_address, 0);
-	if (ret == FALSE) {
-		gebrd_message(ERROR, TRUE, TRUE, _("Could not listen for connections."));
-		goto out;
+	if (g_tcp_server_listen(gebrd.tcp_server, host_address, 0) == FALSE) {
+		gebrd_message(ERROR, _("Could not listen for connections.\n"));
+		goto err;
 	}
 	g_signal_connect(gebrd.tcp_server, "new-connection",
 			G_CALLBACK(server_new_connection), NULL);
 
 	/* write on user's home directory a file with a port */
-	g_string_printf(run_filename, "%s/.gebr/run/gebrd.run", getenv("HOME"));
+	g_string_printf(run_filename, "%s/.gebr/run/gebrd%s.run", getenv("HOME"), client_ip->str);
 	if (g_file_test(run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
-		gebrd_message(ERROR, TRUE, TRUE, _("Run file (~/.gebr/run/gebrd.run) already exists or is not a regular file."));
-		ret = FALSE;
-		goto out;
+		/* check if server crashed by trying connecting to it
+		 * if the connection is refused, the it *probably* did
+		 */
+		struct try_connect	try_connect;
+		GThread *		thread;
+		GError *		error;
+
+		if (!g_thread_supported())
+			g_thread_init(NULL);
+
+		try_connect.host_address = host_address;
+		run_fp = fopen(run_filename->str, "r");
+		fscanf(run_fp, "%hu", &try_connect.port);
+		fclose(run_fp);
+
+		error = NULL;
+		thread = g_thread_create((GThreadFunc)__try_connect, &try_connect, TRUE, &error);
+		g_thread_join(thread);
+
+		if (try_connect.refused == FALSE) {
+			gebrd_message(ERROR, _("Run file (~/.gebr/run/gebrd.run) already exists or is not a regular file."));
+			goto err;
+		}
 	}
 	if ((run_fp = fopen(run_filename->str, "w")) == NULL) {
-		gebrd_message(ERROR, TRUE, TRUE, _("Could not write run file."));
-		ret = FALSE;
-		goto out;
+		gebrd_message(ERROR, _("Could not write run file."));
+		goto err;
 	}
 	fprintf(run_fp, "%d\n", g_tcp_server_server_port(gebrd.tcp_server));
 	fclose(run_fp);
@@ -84,8 +162,21 @@ server_init(void)
 	/* client list structure */
 	gebrd.clients = NULL;
 
-out:	g_string_free(run_filename, TRUE);
+	/* sucess */
+	ret = TRUE;
+	gebrd_message(START, _("Server started at %u port"), g_tcp_server_server_port(gebrd.tcp_server));
+	goto out;
+
+err:	ret = FALSE;
+	gebrd_message(ERROR, _("Could not init server. Quiting..."));
+
+out:	g_string_free(log_filename, TRUE);
+	g_string_free(run_filename, TRUE);
 	g_host_address_free(host_address);
+
+	/* report to the parent process we finished to start */
+	write(gebrd.finished_starting_pipe[1], "1", 2);
+
 	return ret;
 }
 
@@ -105,6 +196,8 @@ server_quit(void)
 {
 	GString *	run_filename;
 
+	log_close(gebrd.log);
+
 	/* delete lock */
 	run_filename = g_string_new(NULL);
 	g_string_printf(run_filename, "%s/.gebr/run/gebrd.run", getenv("HOME"));
@@ -122,7 +215,7 @@ server_new_connection(void)
 	while ((client_socket = g_tcp_server_get_next_pending_connection(gebrd.tcp_server)) != NULL)
 		client_add(client_socket);
 
-	gebrd_message(DEBUG, TRUE, TRUE, "server_new_connection");
+	gebrd_message(DEBUG, "server_new_connection");
 }
 
 gboolean

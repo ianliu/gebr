@@ -45,21 +45,22 @@ enum GTerminalProcessExitStatus {
 };
 
 struct _GTerminalProcess {
-	GObject			parent;
+	GObject				parent;
 
-	GPid			pid;
-	gboolean		is_running;
+	GPid				pid;
+	gboolean			is_running;
+	gint				exit_code;
+	enum GTerminalProcessExitStatus	exit_status;
 
-	GIOChannel *		ptm_io_channel;
-	guint			watch_id;
+	GIOChannel *			ptm_io_channel;
+	guint				watch_id;
 };
 struct _GTerminalProcessClass {
-	GObjectClass		parent;
+	GObjectClass			parent;
 
 	/* signals */
-	void			(*ready_read)(GTerminalProcess * self);
-//	void			(*finished)(GTerminalProcess * self, gint exit_code, enum GTerminalProcessExitStatus exit_status);
-	void			(*finished)(GTerminalProcess * self);
+	void				(*ready_read)(GTerminalProcess * self);
+	void				(*finished)(GTerminalProcess * self);
 };
 
 /*

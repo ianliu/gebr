@@ -86,16 +86,17 @@ G_DEFINE_TYPE(GTcpSocket, g_tcp_socket, G_SOCKET_TYPE)
  */
 
 static void
-__g_tcp_socket_init(GTcpSocket * tcp_socket, int sockfd)
+__g_tcp_socket_init(GTcpSocket * tcp_socket, int sockfd, gboolean nonblocking)
 {
-	GError *	error;
-
 	/* initialization */
 	_g_socket_init(&tcp_socket->parent, sockfd);
 
-	/* for nonblocking call of connect */
-	error = NULL;
-	g_io_channel_set_flags(tcp_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
+	if (nonblocking == TRUE) {
+		GError *	error;
+
+		error = NULL;
+		g_io_channel_set_flags(tcp_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
+	}
 }
 
 static void
@@ -124,8 +125,7 @@ __g_tcp_socket_lookup(GHostInfo * host_info, GTcpSocket * tcp_socket)
 	}
 
 	host_address = g_host_info_first_address(host_info);
-g_print("address: %s\n", g_host_address_to_string(host_address));
-	g_tcp_socket_connect(tcp_socket, host_address, ntohs(tcp_socket->parent.sockaddr_in.sin_port));
+	g_tcp_socket_connect(tcp_socket, host_address, ntohs(tcp_socket->parent.sockaddr_in.sin_port), FALSE);
 
 out:	g_host_info_free(host_info);
 }
@@ -141,7 +141,7 @@ _g_tcp_socket_new_connected(int fd)
 
 	/* initialization */
 	tcp_socket = (GTcpSocket*)g_object_new(G_TCP_SOCKET_TYPE, NULL);
-	__g_tcp_socket_init(tcp_socket, fd);
+	__g_tcp_socket_init(tcp_socket, fd, TRUE);
 	tcp_socket->parent.state = G_SOCKET_STATE_CONNECTED;
 	_g_socket_enable_read_watch(&tcp_socket->parent);
 
@@ -159,14 +159,15 @@ g_tcp_socket_new(void)
 }
 
 void
-g_tcp_socket_connect(GTcpSocket * tcp_socket, GHostAddress * host_address, guint16 port)
+g_tcp_socket_connect(GTcpSocket * tcp_socket, GHostAddress * host_address, guint16 port, gboolean wait)
 {
 	int	sockfd;
 
 	/* initialization */
 	sockfd = socket(PF_INET, SOCK_STREAM, 0);
-	__g_tcp_socket_init(tcp_socket, sockfd);
+	__g_tcp_socket_init(tcp_socket, sockfd, !wait);
 	tcp_socket->parent.state = G_SOCKET_STATE_CONNECTING;
+	tcp_socket->parent.last_error = G_SOCKET_ERROR_NONE;
 
 	/* set address and connect */
 	tcp_socket->parent.sockaddr_in = (struct sockaddr_in) {
@@ -184,6 +185,14 @@ g_tcp_socket_connect(GTcpSocket * tcp_socket, GHostAddress * host_address, guint
 		tcp_socket->parent.state = G_SOCKET_STATE_CONNECTED;
 		__g_tcp_socket_connected(tcp_socket);
 	}
+
+	/* no more blocking calls */
+	if (wait) {
+		GError *	error;
+
+		error = NULL;
+		g_io_channel_set_flags(tcp_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
+	}
 }
 
 void
@@ -192,6 +201,7 @@ g_tcp_socket_connect_by_name(GTcpSocket * tcp_socket, GString * hostname, guint1
 	tcp_socket->parent.sockaddr_in.sin_port = htons(port);
 
 	tcp_socket->parent.state = G_SOCKET_STATE_LOOKINGUP;
+	tcp_socket->parent.last_error = G_SOCKET_ERROR_NONE;
 	g_host_info_lookup(hostname, (GHostInfoFunc)__g_tcp_socket_lookup, tcp_socket);
 }
 

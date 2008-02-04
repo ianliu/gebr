@@ -28,17 +28,12 @@
 int
 main(int argc, char ** argv)
 {
-	gebrd.main_loop = g_main_loop_new(NULL, FALSE);
-	g_type_init();
-
 #ifdef ENABLE_NLS
 	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 #endif
-
 	gebrd_init();
-	g_main_loop_run(gebrd.main_loop);
 
 	return 0;
 }

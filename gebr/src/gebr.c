@@ -69,7 +69,7 @@ gebr_init(int argc, char ** argv)
 	gebr_create_config_dirs();
 
 	/* log */
-	g_string_printf(log_filename, "%s/.gebr/gebr.log", getenv("HOME"));
+	g_string_printf(log_filename, "%s/.gebr/log/gebr.log", getenv("HOME"));
 	gebr.log = log_open(log_filename->str);
 
 	/* allocating list of temporary files */

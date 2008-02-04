@@ -58,8 +58,7 @@ job_add_program_parameters(struct job * job, GeoXmlProgram * program)
 		case GEOXML_PARAMETERTYPE_INT:
 		case GEOXML_PARAMETERTYPE_FLOAT:
 		case GEOXML_PARAMETERTYPE_RANGE:
-		case GEOXML_PARAMETERTYPE_FILE:
-		case GEOXML_PARAMETERTYPE_ENUM:{
+		case GEOXML_PARAMETERTYPE_FILE: {
 			const gchar *	value;
 
 			value = geoxml_program_parameter_get_value(program_parameter);
@@ -115,7 +114,7 @@ job_send_clients_output(struct job * job, GString * _output)
 		output = g_simple_locale_to_utf8(_output->str);
 		if (output == NULL) {
 			g_free(output);
-			gebrd_message(ERROR, TRUE, TRUE, _("Job '%s' sent output not in UTF-8"), job->title->str);
+			gebrd_message(ERROR, _("Job '%s' sent output not in UTF-8"), job->title->str);
 			return;
 		}
 		allocated = TRUE;

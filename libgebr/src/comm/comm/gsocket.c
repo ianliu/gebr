@@ -70,7 +70,7 @@ g_socket_class_init(GSocketClass * class)
 		(GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
 		G_STRUCT_OFFSET (GSocketClass, error),
 		NULL, NULL, /* acumulators */
-		g_cclosure_marshal_VOID__VOID,
+		g_cclosure_marshal_VOID__INT,
 		G_TYPE_NONE, 1, G_TYPE_INT);
 }
 
@@ -85,7 +85,7 @@ G_DEFINE_TYPE(GSocket, g_socket, G_TYPE_OBJECT)
 /*
  * internal functions
  */
-#include <string.h>
+
 static gboolean
 __g_socket_read(GIOChannel * source, GIOCondition condition, GSocket * socket)
 {
@@ -95,7 +95,6 @@ __g_socket_read(GIOChannel * source, GIOCondition condition, GSocket * socket)
 	}
 	if (condition & G_IO_ERR) {
 		/* TODO: */
-		g_print("__g_socket_read G_IO_ERR\n");
 		return FALSE;
 	}
 	if (condition & G_IO_HUP) {
@@ -112,7 +111,6 @@ __g_socket_read(GIOChannel * source, GIOCondition condition, GSocket * socket)
 			break;
 		}
 
-		g_print("__g_socket_read G_IO_HUP\n");
 		return FALSE;
 	}
 	if (!g_socket_bytes_available(socket)) {
@@ -157,16 +155,24 @@ __g_socket_write(GIOChannel * source, GIOCondition condition, GSocket * socket)
 	if (condition & G_IO_ERR) {
 		switch (errno) {
 		case ECONNREFUSED:
-			if (socket->state == G_SOCKET_STATE_CONNECTING)
-				_g_socket_emit_error(socket, G_SOCKET_ERROR_CONNECTION_REFUSED);
+			_g_socket_emit_error(socket, G_SOCKET_ERROR_CONNECTION_REFUSED);
+			break;
+		default:
+			_g_socket_emit_error(socket, G_SOCKET_ERROR_UNKNOWN);
 			break;
 		}
-		g_print("__g_socket_write G_IO_ERR\n");
+		if (socket->state == G_SOCKET_STATE_CONNECTED) {
+			GSocketClass *	class;
+
+			class = G_SOCKET_GET_CLASS(socket);
+			socket->state = G_SOCKET_STATE_UNCONNECTED;
+			if (class->disconnected != NULL)
+				class->disconnected(socket);
+		}
 		goto out;
 	}
 	if (condition & G_IO_HUP) {
 		/* TODO: */
-		g_print("__g_socket_write G_IO_HUP\n");
 		goto out;
 	}
 	if (!g_socket_bytes_available(socket)) {
@@ -219,6 +225,7 @@ _g_socket_init(GSocket * socket, int fd)
 
 	error = NULL;
 	socket->state = G_SOCKET_STATE_NONE;
+	socket->last_error = G_SOCKET_ERROR_NONE;
 	/* IO channel */
 	socket->io_channel = g_io_channel_unix_new(fd);
 	g_io_channel_set_encoding(socket->io_channel, NULL, &error);
@@ -263,7 +270,8 @@ _g_socket_enable_write_watch(GSocket * socket)
 void
 _g_socket_emit_error(GSocket * socket, enum GSocketError error)
 {
-	g_signal_emit(socket, object_signals[READY_READ], 0, error);
+	socket->last_error = error;
+	g_signal_emit(socket, object_signals[ERROR], 0, error);
 }
 
 /*
@@ -282,6 +290,12 @@ enum GSocketState
 g_socket_get_state(GSocket * socket)
 {
 	return socket->state;
+}
+
+enum GSocketError
+g_socket_get_last_error(GSocket * socket)
+{
+	return socket->last_error;
 }
 
 gulong

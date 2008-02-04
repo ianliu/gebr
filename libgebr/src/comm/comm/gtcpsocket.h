@@ -57,7 +57,7 @@ GTcpSocket *
 g_tcp_socket_new(void);
 
 void
-g_tcp_socket_connect(GTcpSocket * tcp_socket, GHostAddress * host_address, guint16 port);
+g_tcp_socket_connect(GTcpSocket * tcp_socket, GHostAddress * host_address, guint16 port, gboolean wait);
 
 void
 g_tcp_socket_connect_by_name(GTcpSocket * tcp_socket, GString * hostname, guint16 port);

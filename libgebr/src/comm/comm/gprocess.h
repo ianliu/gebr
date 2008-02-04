@@ -49,9 +49,14 @@ struct _GProcess {
 
 	GPid			pid;
 	gboolean		is_running;
+	gint			exit_code;
+	enum GProcessExitStatus	exit_status;
+
 	GIOChannel *		stdin_io_channel;
 	GIOChannel *		stdout_io_channel;
 	GIOChannel *		stderr_io_channel;
+	guint			stdout_watch_id;
+	guint			stderr_watch_id;
 };
 struct _GProcessClass {
 	GObjectClass		parent;
@@ -59,7 +64,6 @@ struct _GProcessClass {
 	/* signals */
 	void			(*ready_read_stdout)(GProcess * self);
 	void			(*ready_read_stderr)(GProcess * self);
-//	void			(*finished)(GProcess * self, gint exit_code, enum GProcessExitStatus exit_status);
 	void			(*finished)(GProcess * self);
 };
 

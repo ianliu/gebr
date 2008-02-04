@@ -71,7 +71,7 @@ g_process_class_init(GProcessClass * class)
 		G_STRUCT_OFFSET (GProcessClass, finished),
 		NULL, NULL, /* acumulators */
 		g_cclosure_marshal_VOID__VOID,
-		G_TYPE_NONE, 0/*2, G_TYPE_INT, G_TYPE_INT*/);
+		G_TYPE_NONE, 0);
 }
 
 static void
@@ -108,13 +108,6 @@ __g_process_stop_state(GProcess * process)
 	process->stdin_io_channel = NULL;
 	process->stdout_io_channel = NULL;
 	process->stderr_io_channel = NULL;
-}
-
-static void
-__g_process_free_and_stop_state(GProcess * process)
-{
-	__g_process_free(process);
-	__g_process_stop_state(process);
 }
 
 static gboolean
@@ -159,8 +152,9 @@ __g_process_read_stderr_watch(GIOChannel * source, GIOCondition condition, GProc
 	if (condition & G_IO_HUP) {
 		/* TODO: */
 		/* FIXME: use g_child_add_watch */
-		__g_process_free_and_stop_state(process);
-		g_signal_emit(process, object_signals[FINISHED], 0);
+// 		__g_process_free(process);
+// 		__g_process_stop_state(process);
+// 		g_signal_emit(process, object_signals[FINISHED], 0);
 		return FALSE;
 	}
 
@@ -175,17 +169,22 @@ __g_process_finished_watch(GPid pid, gint status, GProcess * process)
 	gint			exit_code;
 	enum GProcessExitStatus	exit_status;
 
-	__g_process_free_and_stop_state(process);
+	if (process->stdout_watch_id) {
+		if (g_process_stdout_bytes_available(process))
+			g_signal_emit(process, object_signals[READY_READ_STDOUT], 0);
+		g_source_remove(process->stdout_watch_id);
+
+		if (g_process_stderr_bytes_available(process))
+			g_signal_emit(process, object_signals[READY_READ_STDERR], 0);
+		g_source_remove(process->stderr_watch_id);
+
+		__g_process_free(process);
+	}
+	__g_process_stop_state(process);
+
 	exit_code = WEXITSTATUS(status);
 	exit_status =  WIFEXITED(status) ? G_PROCESS_NORMAL_EXIT : G_PROCESS_CRASH_EXIT;
-//	g_signal_emit(process, object_signals[FINISHED], 0, exit_code, exit_status);
 	g_signal_emit(process, object_signals[FINISHED], 0);
-}
-
-static void
-__g_process_about_to_start(GProcess * process)
-{
-	g_child_watch_add(process->pid, (GChildWatchFunc)__g_process_finished_watch, process);
 }
 
 static GByteArray *
@@ -242,10 +241,10 @@ g_process_new(void)
 void
 g_process_free(GProcess * process)
 {
-	if (process->stdin_io_channel != NULL) {
+	if (process->is_running)
 		g_process_kill(process);
+	if (process->stdin_io_channel != NULL)
 		__g_process_free(process);
-	}
 	g_object_unref(G_OBJECT(process));
 }
 
@@ -261,6 +260,10 @@ g_process_start(GProcess * process, GString * cmd_line)
 	gboolean	ret;
 	gchar **	argv;
 	gint		argc;
+	GPid		pid;
+	int		stdin_pipe[2];
+	int		stdout_pipe[2];
+	int		stderr_pipe[2];
 	gint		stdin_fd, stdout_fd, stderr_fd;
 	GError *	error;
 
@@ -270,29 +273,53 @@ g_process_start(GProcess * process, GString * cmd_line)
 
 	error = NULL;
 	g_shell_parse_argv(cmd_line->str, &argc, &argv, &error);
-	ret = g_spawn_async_with_pipes(
-		NULL, /* working_directory */
-		argv,
-		NULL, /* envp */
-		G_SPAWN_LEAVE_DESCRIPTORS_OPEN | G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
-		(GSpawnChildSetupFunc)__g_process_about_to_start,
-		process,
-		&process->pid,
-		&stdin_fd, &stdout_fd, &stderr_fd,
-		&error);
-	if (ret == FALSE) {
+// 	ret = g_spawn_async_with_pipes(
+// 		NULL, /* working_directory */
+// 		argv,
+// 		NULL, /* envp */
+// 		G_SPAWN_LEAVE_DESCRIPTORS_OPEN | G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
+// 		NULL,
+// 		process,
+// 		&process->pid,
+// 		&stdin_fd, &stdout_fd, &stderr_fd,
+// 		&error);
+// 	if (ret == FALSE) {
+//
+// 		goto out;
+// 	}
+	pipe(stdin_pipe);
+	pipe(stdout_pipe);
+	pipe(stderr_pipe);
+	pid = fork();
+	if (pid == 0) {
+		close(stdin_pipe[1]);
+		close(stdout_pipe[0]);
+		close(stderr_pipe[0]);
+		dup2(stdin_pipe[0], 0);
+		dup2(stdout_pipe[1], 1);
+		dup2(stderr_pipe[1], 2);
 
-		goto out;
+		if (execvp(argv[0], argv) == -1) {
+			ret = FALSE;
+			goto out;
+		}
 	}
+	stdin_fd = stdin_pipe[1];
+	stdout_fd = stdout_pipe[0];
+	stderr_fd = stderr_pipe[0];
 
+	process->stdout_watch_id = process->stderr_watch_id = 0;
+	g_child_watch_add(process->pid, (GChildWatchFunc)__g_process_finished_watch, process);
 	/* create io channels */
 	process->stdin_io_channel = g_io_channel_unix_new(stdin_fd);
 	process->stdout_io_channel = g_io_channel_unix_new(stdout_fd);
 	process->stderr_io_channel = g_io_channel_unix_new(stderr_fd);
 	/* watches */
-	g_io_add_watch(process->stdout_io_channel, G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
+	process->stdout_watch_id = g_io_add_watch(process->stdout_io_channel,
+		G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
 		(GIOFunc)__g_process_read_stdout_watch, process);
-	g_io_add_watch(process->stderr_io_channel, G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
+	process->stderr_watch_id = g_io_add_watch(process->stderr_io_channel,
+		G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
 		(GIOFunc)__g_process_read_stderr_watch, process);
 	/* nonblock operations */
 	g_io_channel_set_flags(process->stdin_io_channel,

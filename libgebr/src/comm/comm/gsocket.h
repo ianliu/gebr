@@ -40,8 +40,10 @@ typedef struct _GSocket	GSocket;
 typedef struct _GSocketClass	GSocketClass;
 
 enum GSocketError {
+	G_SOCKET_ERROR_NONE,
 	G_SOCKET_ERROR_CONNECTION_REFUSED,
 	G_SOCKET_ERROR_LOOKUP,
+	G_SOCKET_ERROR_UNKNOWN,
 };
 
 enum GSocketState {
@@ -61,8 +63,10 @@ struct _GSocket {
 
 	GIOChannel *		io_channel;
 	struct sockaddr_in	sockaddr_in;
-	enum GSocketState	state;
 	GByteArray *		queue_write_bytes;
+
+	enum GSocketState	state;
+	enum GSocketError	last_error;
 };
 struct _GSocketClass {
 	GObjectClass		parent;
@@ -86,6 +90,9 @@ g_socket_close(GSocket *);
 
 enum GSocketState
 g_socket_get_state(GSocket *);
+
+enum GSocketError
+g_socket_get_last_error(GSocket *);
 
 gulong
 g_socket_bytes_available(GSocket *);
