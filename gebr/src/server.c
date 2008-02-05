@@ -104,14 +104,6 @@ local_ask_port_finished(GProcess * process, struct server * server)
 		g_tcp_socket_connect(server->tcp_socket, host_address, server->port, FALSE);
 
 		g_host_address_free(host_address);
-	} else {
-		puts("/* misterious magic code that brings stability! */");
-		/* misterious magic code that brings stability! */
-		GProcess *	process;
-		GString *	cmd_line;
-		/* misterious magic code that brings stability! */
-
-		gebr_message(ERROR, TRUE, TRUE, "Could not retrieve local server port");
 	}
 
 out:	g_process_free(process);
@@ -321,8 +313,9 @@ ssh_run_server_finished(GTerminalProcess * process, struct server * server)
 	g_signal_connect(process, "finished",
 		G_CALLBACK(ssh_ask_port_finished), server);
 
-	g_string_printf(cmd_line, "ssh %s 'test -e ~/.gebr/run/gebrd.run &&"
-		"echo `cat ~/.gebr/run/gebrd.run` $SSH_CLIENT'", server->address->str);
+	g_string_printf(cmd_line,
+		"ssh %s \"LOCK=~/.gebr/run/gebrd-`echo $SSH_CLIENT | awk '{print $1}'`.run;"
+		"test -e $LOCK && echo `cat $LOCK` $SSH_CLIENT\"", server->address->str);
 	g_terminal_process_start(process, cmd_line);
 
 	g_string_free(cmd_line, TRUE);
@@ -546,15 +539,33 @@ server_connect(struct server * server)
 		server->state = SERVER_STATE_RUN;
 		gebr_message(INFO, TRUE, TRUE, _("Launching local server"), server->address->str);
 
-		process = g_process_new();
-		g_signal_connect(process, "finished",
-			G_CALLBACK(local_run_server_finished), server);
+// 		process = g_process_new();
+// // 		g_signal_connect(process, "finished",
+// 			G_CALLBACK(local_run_server_finished), server);
 
 #if (!GEBR_STATIC_MODE)
-		g_string_printf(cmd_line, "bash -l -c 'gebrd'");
+// 		g_string_printf(cmd_line, "bash -l -c 'gebrd'");
 #else
-		g_string_printf(cmd_line, "bash -l -c './gebrd'");
+// 		g_string_printf(cmd_line, "bash -l -c './gebrd'");
 #endif
+// 		g_process_start(process, cmd_line);
+		system("bash -l -c 'gebrd'");
+
+		GString *	cmd_line;
+
+		gebr_message(DEBUG, FALSE, TRUE, "local_run_server_finished");
+
+		server->state = SERVER_STATE_ASK_PORT;
+		server->tried_existant_pass = FALSE;
+
+		g_process_free(process);
+		process = g_process_new();
+		g_signal_connect(process, "ready-read-stdout",
+				 G_CALLBACK(local_ask_port_read), server);
+		g_signal_connect(process, "finished",
+				 G_CALLBACK(local_ask_port_finished), server);
+
+		g_string_printf(cmd_line, "bash -l -c 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'");
 		g_process_start(process, cmd_line);
 	}
 
