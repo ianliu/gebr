@@ -189,8 +189,9 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 
 			geoxml_flow_get_program(GEOXML_FLOW(document), &program, 0);
 			while (program != NULL) {
-				__geoxml_insert_new_element((GdomeElement*)program, "url",
-					__geoxml_get_first_element((GdomeElement*)program, "parameters"));
+				if (__geoxml_get_first_element((GdomeElement*)program, "url") == NULL)
+					__geoxml_insert_new_element((GdomeElement*)program, "url",
+						__geoxml_get_first_element((GdomeElement*)program, "parameters"));
 
 				geoxml_sequence_next(&program);
 			}
