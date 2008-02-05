@@ -540,7 +540,7 @@ server_connect(struct server * server)
 		gebr_message(INFO, TRUE, TRUE, _("Launching local server"), server->address->str);
 
 // 		process = g_process_new();
-// // 		g_signal_connect(process, "finished",
+// 		g_signal_connect(process, "finished",
 // 			G_CALLBACK(local_run_server_finished), server);
 
 #if (!GEBR_STATIC_MODE)
@@ -550,8 +550,6 @@ server_connect(struct server * server)
 #endif
 // 		g_process_start(process, cmd_line);
 		system("bash -l -c 'gebrd'");
-
-		GString *	cmd_line;
 
 		gebr_message(DEBUG, FALSE, TRUE, "local_run_server_finished");
 
