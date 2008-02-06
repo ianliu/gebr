@@ -556,7 +556,7 @@ server_connect(struct server * server)
 		server->state = SERVER_STATE_ASK_PORT;
 		server->tried_existant_pass = FALSE;
 
-		g_process_free(process);
+//		g_process_free(process);
 		process = g_process_new();
 		g_signal_connect(process, "ready-read-stdout",
 				 G_CALLBACK(local_ask_port_read), server);
