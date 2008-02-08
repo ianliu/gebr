@@ -22,6 +22,7 @@ gebrmenu_DATA = \
 		gbbeam.mnu	    \
 		segyread.mnu        \
 		segywrite.mnu       \
+		sleep.mnu           \
 		suabshw.mnu	    \
 		suacor.mnu          \
 		suaddhead.mnu       \

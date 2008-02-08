@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow version="0.2.1">
+  <filename>sleep.mnu</filename>
+  <title>Sleep</title>
+  <description>Delay for a specified amount of time</description>
+  <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="gebr.css" />
+
+  <title>G&ecirc;BR - Sleep</title>
+</head>
+
+<body>
+  <div class="outer-container">
+    <div class="inner-container">
+      <div class="header">
+        <div class="title">
+          <span class="flowtitle">Sleep</span>
+
+          <div class="description">
+            Delay for a specified amount of time
+          </div>
+        </div>
+      </div>
+
+      <div class="category">
+        Shell tools
+      </div>
+
+      <div class="main">
+        <div class="content">
+
+          <h2>Credits</h2>
+
+          <p>Feb 08, 2008: created by Ricardo Biloti, G&ecirc;BR Core Team.</p>
+        </div>
+
+        <div class="navigation">
+          <h2>Index</h2>
+
+          <ul>
+            <li><a href="#credits">Credits</a></li>
+          </ul>
+        </div>
+
+        <div class="clearer"></div>
+      </div>
+
+      <div class="footer">
+        <span class="left">G&ecirc;BR 0.9.4 (0.2.1) | Feb 08, 2008.</span>
+
+        <div class="clearer"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+]]></help>
+  <author>Ricardo Biloti</author>
+  <email>gebr@users.sf.net</email>
+  <date><created/><modified/><lastrun/></date>
+  
+  <category>Shell tools</category><io>
+    <input/>
+    <output/>
+    <error/>
+  </io>
+  <program stdin="no" stdout="no" stderr="no" status="unconfigured">
+    <menu index="0">sleep.mnu</menu>
+    <title>Sleep</title>
+    <binary>sleep</binary>
+    <description>Delay for a specified amount of time</description>
+    <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="gebr.css" />
+
+  <title>G&ecirc;BR - Sleep</title>
+</head>
+
+<body>
+  <div class="outer-container">
+    <div class="inner-container">
+      <div class="header">
+        <div class="title">
+          <span class="flowtitle">Sleep</span>
+
+          <div class="description">
+            Delay for a specified amount of time
+          </div>
+        </div>
+      </div>
+
+      <div class="category">
+        Shell tools
+      </div>
+
+      <div class="main">
+        <div class="content">
+
+          <a name="intro" id="intro"></a>
+          <h2>Introduction</h2>
+
+          <p>Pause execution for an specified amount of time.</p>
+
+          <div class="parameters">
+
+            <a name="par" id="par"></a> <h2>Required parameters</h2>
+
+	    <!-- List of required parameters -->
+            <ul>
+              <li><span class="label">[Time to sleep]</span> is by
+              default provided in seconds, but the suffixes "s" for
+              seconds, "m" for minutes, "h" for hours or "d" for days
+              can be specified. Besides, an arbitrary floating point
+              number is acceptable. </li>
+
+            </ul>
+
+          </div>
+	    
+          <a name="credits" id="credits"></a>
+          <h2>Credits</h2>
+
+          <p>sleep is part of GNU core utils and was written by Jim
+          Meyering and Paul Eggert.</p>
+        </div>
+
+        <div class="navigation">
+          <h2>Index</h2>
+
+          <ul>
+            <li><a href="#intro">Introduction</a></li>
+
+            <li><a href="#par">Parameters</a></li>
+
+            <li><a href="#credits">Credits</a></li>
+          </ul>
+        </div>
+
+        <div class="clearer"></div>
+      </div>
+
+      <div class="footer">
+        <span class="left">G&ecirc;BR 0.9.4 (0.2.1) | sleep 5.97</span>
+
+        <div class="clearer"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+]]></help>
+    <url>http://www.gnu.org/software/coreutils/</url><parameters>
+      <string required="yes"><keyword></keyword><label>Time to sleep</label><value default="1s"/></string>
+    </parameters>
+  </program>
+</flow>
