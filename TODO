@@ -1,0 +1,129 @@
+TODO:
+
+GêBR:
+
+  * Conferir/Corrigir o servidor
+		  
+  * Implementar o "export as menu" na gebr. Basta ler um fluxo que o
+  usuário tenha exportado e limpar os valores dos parâmetros, e
+  redefinir os campos menu dos programas. O help do usuário deve ser
+  descartado e lido novamente o help dos menus originais que
+  compuseram o fluxo do usuário. Trocar as referências de menus e o
+  status dos programas para unconfigured. Atualizar as datas de
+  criação e modificação e apagar a data de execução.
+
+  * Link para a URL do programa.
+
+  * Verificar o que acontece quando há um servidor remoto cadastrado
+  mas a máquina cliente está fora da rede. Acrescentar alguma
+  tolerência para as tentativas de conexão.
+
+  * Para servidores remotos poderia acontecer de ser necessário logar com
+  outro usuário. Então, no cadastramento de um servidor, deveríamos ter
+  o cuidado de armazenar o usuário também. Outra opção seria cadastrar
+  o servidor como usuario@server, porém temos que ter isso em mente e 
+  fazer o tratamento adequado.
+
+  * Deteção esperta de necessidade de atualização do índice dos
+  menus. Checagem de datas de arquivos em oposição à data do índice e
+  de arquivos a mais ou a menos.
+
+  * Se houver dois menus distintos com o mesmo nome de arquivo,
+  problema! Por exemplo, se o usuário pegar um menu do sistema e
+  coloca-lo na sua pasta local para edita-lo, gerando uma versão
+  própria.
+
+  * Criar uma widget na janela principal para exibir o log, substituindo a
+  atual statusbar. Esta widget seria uma janela com barra de scroll e
+  exibiria sequencialmente todos as mensagens e ainda gravaria tudo o
+  que fosse escrito em um arquivo de log (~/.gebr/gebr.log), que seria
+  recarregado ao início do programa. O arquivo de log poderia ser
+  apagado por uma opção no menu File. Mensagens de erro apareceriam em
+  vermelho. Início e término de execução da GêBR seriam marcados. O
+  arquivo será texto porém com marcas para indicar o highlight na
+  tela. Sugestão:
+  [STR] Início da GêBR
+  [END] Término da GêBR
+  [MSG] Mensagens gerais
+  [ERR] Mensagens de erro
+
+  ? Opção nas preferências para shell (Será?)
+
+GêBR Daemon:
+
+  * Quando a saida de um programa não é UTF-8, o GTK não a exibe. Exemplo:
+  criei um menu para o comando cal da Bash. Este imprime "Sáb" por exemplo.
+  Ai nada aparece, pois o texto não é UTF-8. Mas é pior que isso ainda. A
+  versão mais nova do cal, imprime o dia atual com um highlight (que são
+  alguns escapes de bash interpretados pelo terminal) e isso com certeza
+  não é UTF-8 independentemente do encode do sistema.
+
+GêBRME:
+
+  * Dialog de confirmação na hora de excluir um parâmetro/programa na
+  gebrme.
+
+  * Quando um parâmetro do tipo arquivo é marcado como "list" na gebr não
+  aparece mais o botão de browse para arquivo.
+
+  * Port para 0.2.2. Label para enum, suporte a grupos, digitos para range.
+
+LibGeBR:
+
+  * Retirar a pergunta de "overwrite" na abertura de arquivos na
+  tela de parâmetros de um programa e na abertura do arquivo
+  de input para fluxo.
+
+  * Suporte para flow 0.2.2.
+
+  * Parâmetros do tipo enum tem como subelemento "option", que é
+  texto. Na verdade "option" deveria ser algo com dois subelementos
+  "value" e "label", assim na interface aparece optionlabel, que pode
+  ser um texto compreensível, mas na linha de comando aparece
+  "optionvalue".
+
+  * libgeoxml_validade: validar nos menus seus indÃ­ces e nomes de
+  arquivos e campos obrigatórios
+
+  * Usar tidy no geoxml_document_set_help (se disponível - checar no
+  configure)
+  opções: utf-8
+	  indent
+	  modify
+	  bare
+
+DONE:
+
+  * Corrigir o bug de tentar acessar a pasta .gebr antes de
+  que ela tenham sido criada.
+
+  * Quando a gebrme for salvar um fluxo, iniciar na pasta definida
+  pelo usuário e não na pasta corrente.
+
+  * Corrigir o menu ximage, retirando o default do parâmetro clip.
+
+  * Utilizar um arquivo temporário com nome aleatório para fazer o sort
+  dos menus e não o arquivo /tmp/gebrmenu.tmp pois isso dá problema
+  quando mais de um usuário utiliza a mesma máquina.
+
+  * Tooltips não estão funcionando na gebr, janela de preferência, sobre
+  os botões para diretórios.
+
+  * Botão de forçar conectar no servidor (remove o arquivo ~/.gebr/gebrd.run
+  e roda um servidor novo).
+
+
+  * O configure da gebrme e da gebrd deveriam definir
+  as variáveis LIBGEBR_CFLAGS e LIBGEBR_LIBS de maneira
+  a poder definir as variáveis LIBGEBR_{GEOXML,COMM,GUI,MISC}_...
+  de uma vez só.
+
+
+  * Criar um elemento url para programa, onde será armazenado onde o
+  programa pode ser obtido para instalação. Este elemento é opcional
+  para programas (evitando assim que fluxo anteriores tornem-se
+  inválidos). A implementação foi feita na libgeoxml porém, como este
+  elemento pode ou não estar presente num programa, na função
+  geoxml_program_set_url, antes de defini-lo é preciso checar se ele
+  já existe e cria-lo se necessário. (Fazer a alteração para 0.2.1,
+  tornando-o obrigatório).

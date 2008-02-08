@@ -92,6 +92,7 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	 * and enable it on a label
 	 */
 	event_box = gtk_event_box_new();
+	g_object_set(event_box, "user-data", program_expander, NULL);
 	g_signal_connect(event_box, "button-press-event",
 		(GCallback)on_program_button_pressed, program_expander);
 	gtk_widget_set_popup_callback(event_box, (GtkPopupCallback)program_popup_menu, program);
@@ -326,12 +327,14 @@ program_remove(GtkMenuItem * menu_item, GeoXmlProgram * program)
 }
 
 GtkMenu *
-program_popup_menu(GtkExpander * expander, GeoXmlProgram * program)
+program_popup_menu(GtkWidget * event_box, GeoXmlProgram * program)
 {
+	GtkExpander *   expander;
 	GtkWidget *	menu;
 	GtkWidget *	menu_item;
 
 	menu = gtk_menu_new();
+	g_object_get(G_OBJECT(event_box), "user-data", &expander, NULL);
 
 	/* Move up */
 	if (program_previous(expander, NULL) != NULL) {

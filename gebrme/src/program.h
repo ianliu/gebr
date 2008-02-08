@@ -31,7 +31,7 @@ void
 program_remove(GtkMenuItem * menu_item, GeoXmlProgram * program);
 
 GtkMenu *
-program_popup_menu(GtkExpander * expander, GeoXmlProgram * program);
+program_popup_menu(GtkWidget * event_box, GeoXmlProgram * program);
 
 GtkExpander *
 program_previous(GtkExpander * program_expander, gint * position);
