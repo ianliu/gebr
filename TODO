@@ -1,93 +1,98 @@
 TODO:
 
-GÍBR:
+Geral:
+
+  * Cliente de linhas de comando para a G√™BR Daemon, capaz de
+  submeter um fluxo para execu√ß√£o, al√©m das outras consultas b√°sicas.
+
+G√™BR:
 
   * Conferir/Corrigir o servidor
 		  
   * Implementar o "export as menu" na gebr. Basta ler um fluxo que o
-  usu·rio tenha exportado e limpar os valores dos par‚metros, e
-  redefinir os campos menu dos programas. O help do usu·rio deve ser
+  usu√°rio tenha exportado e limpar os valores dos par√¢metros, e
+  redefinir os campos menu dos programas. O help do usu√°rio deve ser
   descartado e lido novamente o help dos menus originais que
-  compuseram o fluxo do usu·rio. Trocar as referÍncias de menus e o
+  compuseram o fluxo do usu√°rio. Trocar as refer√™ncias de menus e o
   status dos programas para unconfigured. Atualizar as datas de
-  criaÁ„o e modificaÁ„o e apagar a data de execuÁ„o.
+  cria√ß√£o e modifica√ß√£o e apagar a data de execu√ß√£o.
 
   * Link para a URL do programa.
 
-  * Verificar o que acontece quando h· um servidor remoto cadastrado
-  mas a m·quina cliente est· fora da rede. Acrescentar alguma
-  tolerÍncia para as tentativas de conex„o.
+  * Verificar o que acontece quando h√° um servidor remoto cadastrado
+  mas a m√°quina cliente est√° fora da rede. Acrescentar alguma
+  toler√™ncia para as tentativas de conex√£o.
 
-  * Para servidores remotos poderia acontecer de ser necess·rio logar com
-  outro usu·rio. Ent„o, no cadastramento de um servidor, deverÌamos ter
-  o cuidado de armazenar o usu·rio tambÈm. Outra opÁ„o seria cadastrar
-  o servidor como usuario@server, porÈm temos que ter isso em mente e 
+  * Para servidores remotos poderia acontecer de ser necess√°rio logar com
+  outro usu√°rio. Ent√£o, no cadastramento de um servidor, dever√≠amos ter
+  o cuidado de armazenar o usu√°rio tamb√©m. Outra op√ß√£o seria cadastrar
+  o servidor como usuario@server, por√©m temos que ter isso em mente e 
   fazer o tratamento adequado.
 
-  * DeteÁ„o esperta de necessidade de atualizaÁ„o do Ìndice dos
-  menus. Checagem de datas de arquivos em oposiÁ„o ‡ data do Ìndice e
+  * Dete√ß√£o esperta de necessidade de atualiza√ß√£o do √≠ndice dos
+  menus. Checagem de datas de arquivos em oposi√ß√£o √† data do √≠ndice e
   de arquivos a mais ou a menos.
 
   * Se houver dois menus distintos com o mesmo nome de arquivo,
-  problema! Por exemplo, se o usu·rio pegar um menu do sistema e
-  coloca-lo na sua pasta local para edita-lo, gerando uma vers„o
-  prÛpria.
+  problema! Por exemplo, se o usu√°rio pegar um menu do sistema e
+  coloca-lo na sua pasta local para edita-lo, gerando uma vers√£o
+  pr√≥pria.
 
   * Criar uma widget na janela principal para exibir o log, substituindo a
   atual statusbar. Esta widget seria uma janela com barra de scroll e
   exibiria sequencialmente todos as mensagens e ainda gravaria tudo o
   que fosse escrito em um arquivo de log (~/.gebr/gebr.log), que seria
-  recarregado ao inÌcio do programa. O arquivo de log poderia ser
-  apagado por uma opÁ„o no menu File. Mensagens de erro apareceriam em
-  vermelho. InÌcio e tÈrmino de execuÁ„o da GÍBR seriam marcados. O
-  arquivo ser· texto porÈm com marcas para indicar o highlight na
-  tela. Sugest„o:
-  [STR] InÌcio da GÍBR
-  [END] TÈrmino da GÍBR
+  recarregado ao in√≠cio do programa. O arquivo de log poderia ser
+  apagado por uma op√ß√£o no menu File. Mensagens de erro apareceriam em
+  vermelho. In√≠cio e t√©rmino de execu√ß√£o da G√™BR seriam marcados. O
+  arquivo ser√° texto por√©m com marcas para indicar o highlight na
+  tela. Sugest√£o:
+  [STR] In√≠cio da G√™BR
+  [END] T√©rmino da G√™BR
   [MSG] Mensagens gerais
   [ERR] Mensagens de erro
 
-  ? OpÁ„o nas preferÍncias para shell (Ser·?)
+  ? Op√ß√£o nas prefer√™ncias para shell (Ser√°?)
 
-GÍBR Daemon:
+G√™BR Daemon:
 
-  * Quando a saida de um programa n„o È UTF-8, o GTK n„o a exibe. Exemplo:
-  criei um menu para o comando cal da Bash. Este imprime "S·b" por exemplo.
-  Ai nada aparece, pois o texto n„o È UTF-8. Mas È pior que isso ainda. A
-  vers„o mais nova do cal, imprime o dia atual com um highlight (que s„o
+  * Quando a saida de um programa n√£o √© UTF-8, o GTK n√£o a exibe. Exemplo:
+  criei um menu para o comando cal da Bash. Este imprime "S√°b" por exemplo.
+  Ai nada aparece, pois o texto n√£o √© UTF-8. Mas √© pior que isso ainda. A
+  vers√£o mais nova do cal, imprime o dia atual com um highlight (que s√£o
   alguns escapes de bash interpretados pelo terminal) e isso com certeza
-  n„o È UTF-8 independentemente do encode do sistema.
+  n√£o √© UTF-8 independentemente do encode do sistema.
 
-GÍBRME:
+G√™BRME:
 
-  * Dialog de confirmaÁ„o na hora de excluir um par‚metro/programa na
+  * Dialog de confirma√ß√£o na hora de excluir um par√¢metro/programa na
   gebrme.
 
-  * Quando um par‚metro do tipo arquivo È marcado como "list" na gebr n„o
-  aparece mais o bot„o de browse para arquivo.
+  * Quando um par√¢metro do tipo arquivo √© marcado como "list" na gebr n√£o
+  aparece mais o bot√£o de browse para arquivo.
 
   * Port para 0.2.2. Label para enum, suporte a grupos, digitos para range.
 
 LibGeBR:
 
   * Retirar a pergunta de "overwrite" na abertura de arquivos na
-  tela de par‚metros de um programa e na abertura do arquivo
+  tela de par√¢metros de um programa e na abertura do arquivo
   de input para fluxo.
 
   * Suporte para flow 0.2.2.
 
-  * Par‚metros do tipo enum tem como subelemento "option", que È
+  * Par√¢metros do tipo enum tem como subelemento "option", que √©
   texto. Na verdade "option" deveria ser algo com dois subelementos
   "value" e "label", assim na interface aparece optionlabel, que pode
-  ser um texto compreensÌvel, mas na linha de comando aparece
+  ser um texto compreens√≠vel, mas na linha de comando aparece
   "optionvalue".
 
-  * libgeoxml_validade: validar nos menus seus ind√≠ces e nomes de
-  arquivos e campos obrigatÛrios
+  * libgeoxml_validade: validar nos menus seus ind√É¬≠ces e nomes de
+  arquivos e campos obrigat√≥rios
 
-  * Usar tidy no geoxml_document_set_help (se disponÌvel - checar no
+  * Usar tidy no geoxml_document_set_help (se dispon√≠vel - checar no
   configure)
-  opÁıes: utf-8
+  op√ß√µes: utf-8
 	  indent
 	  modify
 	  bare
@@ -98,32 +103,32 @@ DONE:
   que ela tenham sido criada.
 
   * Quando a gebrme for salvar um fluxo, iniciar na pasta definida
-  pelo usu·rio e n„o na pasta corrente.
+  pelo usu√°rio e n√£o na pasta corrente.
 
-  * Corrigir o menu ximage, retirando o default do par‚metro clip.
+  * Corrigir o menu ximage, retirando o default do par√¢metro clip.
 
-  * Utilizar um arquivo tempor·rio com nome aleatÛrio para fazer o sort
-  dos menus e n„o o arquivo /tmp/gebrmenu.tmp pois isso d· problema
-  quando mais de um usu·rio utiliza a mesma m·quina.
+  * Utilizar um arquivo tempor√°rio com nome aleat√≥rio para fazer o sort
+  dos menus e n√£o o arquivo /tmp/gebrmenu.tmp pois isso d√° problema
+  quando mais de um usu√°rio utiliza a mesma m√°quina.
 
-  * Tooltips n„o est„o funcionando na gebr, janela de preferÍncia, sobre
-  os botıes para diretÛrios.
+  * Tooltips n√£o est√£o funcionando na gebr, janela de prefer√™ncia, sobre
+  os bot√µes para diret√≥rios.
 
-  * Bot„o de forÁar conectar no servidor (remove o arquivo ~/.gebr/gebrd.run
+  * Bot√£o de for√ßar conectar no servidor (remove o arquivo ~/.gebr/gebrd.run
   e roda um servidor novo).
 
 
   * O configure da gebrme e da gebrd deveriam definir
-  as vari·veis LIBGEBR_CFLAGS e LIBGEBR_LIBS de maneira
-  a poder definir as vari·veis LIBGEBR_{GEOXML,COMM,GUI,MISC}_...
-  de uma vez sÛ.
+  as vari√°veis LIBGEBR_CFLAGS e LIBGEBR_LIBS de maneira
+  a poder definir as vari√°veis LIBGEBR_{GEOXML,COMM,GUI,MISC}_...
+  de uma vez s√≥.
 
 
-  * Criar um elemento url para programa, onde ser· armazenado onde o
-  programa pode ser obtido para instalaÁ„o. Este elemento È opcional
+  * Criar um elemento url para programa, onde ser√° armazenado onde o
+  programa pode ser obtido para instala√ß√£o. Este elemento √© opcional
   para programas (evitando assim que fluxo anteriores tornem-se
-  inv·lidos). A implementaÁ„o foi feita na libgeoxml porÈm, como este
-  elemento pode ou n„o estar presente num programa, na funÁ„o
-  geoxml_program_set_url, antes de defini-lo È preciso checar se ele
-  j· existe e cria-lo se necess·rio. (Fazer a alteraÁ„o para 0.2.1,
-  tornando-o obrigatÛrio).
+  inv√°lidos). A implementa√ß√£o foi feita na libgeoxml por√©m, como este
+  elemento pode ou n√£o estar presente num programa, na fun√ß√£o
+  geoxml_program_set_url, antes de defini-lo √© preciso checar se ele
+  j√° existe e cria-lo se necess√°rio. (Fazer a altera√ß√£o para 0.2.1,
+  tornando-o obrigat√≥rio).
