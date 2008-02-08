@@ -318,6 +318,10 @@ program_remove(GtkMenuItem * menu_item, GeoXmlProgram * program)
 {
 	GtkWidget *	expander;
 
+	if (confirm_action_dialog(_("Delete program"), _("Are you sure you want to delete program '%s'?"),
+		geoxml_program_get_title(program)) == FALSE)
+		return;
+
 	g_object_get(G_OBJECT(menu_item), "user-data", &expander, NULL);
 
 	gtk_widget_destroy(expander);
@@ -329,7 +333,7 @@ program_remove(GtkMenuItem * menu_item, GeoXmlProgram * program)
 GtkMenu *
 program_popup_menu(GtkWidget * event_box, GeoXmlProgram * program)
 {
-	GtkExpander *   expander;
+	GtkExpander *	expander;
 	GtkWidget *	menu;
 	GtkWidget *	menu_item;
 

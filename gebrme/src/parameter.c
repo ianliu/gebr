@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include <gui/gtkfileentry.h>
+#include <gui/utils.h>
 
 #include "parameter.h"
 #include "support.h"
@@ -549,6 +550,9 @@ void
 parameter_remove(GtkButton * button, struct parameter_data * data)
 {
 	GtkWidget *	parameter_expander;
+
+	if (confirm_action_dialog(_("Delete parameter"), _("Are you sure you want to delete this parameter?")) == FALSE)
+		return;
 
 	g_object_get(G_OBJECT(button), "user-data", &parameter_expander, NULL);
 
