@@ -58,7 +58,8 @@ job_add_program_parameters(struct job * job, GeoXmlProgram * program)
 		case GEOXML_PARAMETERTYPE_INT:
 		case GEOXML_PARAMETERTYPE_FLOAT:
 		case GEOXML_PARAMETERTYPE_RANGE:
-		case GEOXML_PARAMETERTYPE_FILE: {
+		case GEOXML_PARAMETERTYPE_FILE:
+		case GEOXML_PARAMETERTYPE_ENUM: {
 			const gchar *	value;
 
 			value = geoxml_program_parameter_get_value(program_parameter);
