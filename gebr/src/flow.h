@@ -19,6 +19,15 @@
 #define __FLOW_H
 
 void
+flow_new(void);
+
+void
+flow_free(void);
+
+void
+flow_delete(void);
+
+void
 flow_save(void);
 
 void
@@ -28,13 +37,7 @@ void
 flow_export(void);
 
 void
-flow_new(void);
-
-void
-flow_free(void);
-
-void
-flow_delete(void);
+flow_export_as_menu(void);
 
 void
 flow_run(void);

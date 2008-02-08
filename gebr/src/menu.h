@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+#include <geoxml.h>
+
 GeoXmlFlow *
 menu_load(const gchar * filename);
 
@@ -34,5 +36,8 @@ menu_list_populate(void);
 
 gboolean
 menu_list_create_index(void);
+
+GString *
+menu_get_help_from_program_ref(GeoXmlProgram * program);
 
 #endif //__MENU_H_

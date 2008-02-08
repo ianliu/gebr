@@ -54,6 +54,9 @@ void
 on_flow_export_activate(void);
 
 void
+on_flow_export_as_menu_activate(void);
+
+void
 on_flow_delete_activate(void);
 
 void

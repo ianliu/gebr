@@ -179,6 +179,16 @@ on_flow_export_activate(void)
 }
 
 /*
+ * Function: on_flow_export_as_menu_activate
+ * Call <flow_export_as_menu> from <flow.c>
+ */
+void
+on_flow_export_as_menu_activate(void)
+{
+	flow_export_as_menu();
+}
+
+/*
  * Function: on_flow_delete_activate
  * Call <flow_delete> from <flow.c>
  *

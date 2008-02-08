@@ -29,7 +29,6 @@
 
 #include <glib/gstdio.h>
 
-#include <geoxml.h>
 #include <misc/utils.h>
 
 #include "menu.h"
@@ -247,6 +246,34 @@ out:	g_string_free(path, TRUE);
 }
 
 /*
+ * Function: menu_scan_directory
+ * Scans _directory_ for menus
+ */
+GString *
+menu_get_help_from_program_ref(GeoXmlProgram * program)
+{
+	GeoXmlFlow *		menu;
+	gchar *			filename;
+	gulong			index;
+	GString *		help;
+
+	GeoXmlSequence *	menu_program;
+
+	geoxml_program_get_menu(GEOXML_PROGRAM(program), &filename, &index);
+	menu = menu_load(filename);
+	if (menu == NULL)
+		return g_string_new("");
+
+	/* go to menu's program index specified in flow */
+	geoxml_flow_get_program(menu, &menu_program, index);
+	help = g_string_new(geoxml_program_get_help(GEOXML_PROGRAM(menu_program)));
+
+	geoxml_document_free(GEOXML_DOC(menu));
+
+	return help;
+}
+
+/*
  * Section: Private
  * Private functions.
  */
@@ -298,4 +325,3 @@ menu_scan_directory(const gchar * directory, FILE * index_fp)
 	closedir(dir);
 	g_string_free(path, TRUE);
 }
-

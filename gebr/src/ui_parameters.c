@@ -291,11 +291,9 @@ parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_param
 		GtkTreeIter		iter;
 		GtkTreePath *		path;
 
-		GeoXmlFlow *		menu;
 		GeoXmlSequence *	program;
-
+		GString *		help;
 		gulong			index;
-		gchar *			menu_filename;
 
 		selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 		if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
@@ -309,17 +307,10 @@ parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_param
 
 		/* get the program and its path on menu */
 		geoxml_flow_get_program(gebr.flow, &program, index);
-		geoxml_program_get_menu(GEOXML_PROGRAM(program), &menu_filename, &index);
-
-		menu = menu_load(menu_filename);
-		if (menu == NULL)
-			break;
-
-		/* go to menu's program index specified in flow */
-		geoxml_flow_get_program(menu, &program, index);
+		help = menu_get_help_from_program_ref(GEOXML_PROGRAM(program));
 		help_show(geoxml_program_get_help(GEOXML_PROGRAM(program)), _("Program help"));
 
-		geoxml_document_free(GEOXML_DOC(menu));
+		g_string_free(help, TRUE);
 		return;
 	} default:
 		break;
