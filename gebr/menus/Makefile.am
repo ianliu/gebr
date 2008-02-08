@@ -86,6 +86,7 @@ gebrmenu_DATA = \
 		uni2tri.mnu	    \
 		unif2.mnu	    \
 		uptime.mnu          \
+		usernames.mnu       \
 		ximage.mnu	    \
 		xwigb.mnu
 
