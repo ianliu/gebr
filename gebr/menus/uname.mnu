@@ -162,7 +162,7 @@
 </body>
 </html>
 ]]></help>
-    <url>http://savannah.gnu.org/projects/coreutils</url><parameters>
+    <url>http://www.gnu.org/software/coreutils/</url><parameters>
       <flag>
         <keyword>-a</keyword>
         <label>Show complete information</label>
