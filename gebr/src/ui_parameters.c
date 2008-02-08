@@ -99,7 +99,7 @@ parameters_configure_setup_ui(void)
 						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 						NULL);
 	gtk_dialog_add_button(GTK_DIALOG(ui_parameters->dialog), "Default", GTK_RESPONSE_DEFAULT);
-	gtk_dialog_add_button(GTK_DIALOG(ui_parameters->dialog), "Help", GTK_RESPONSE_HELP);
+	gtk_dialog_add_button(GTK_DIALOG(ui_parameters->dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
 	gtk_widget_set_size_request(ui_parameters->dialog, 630, 400);
 	gtk_box_set_homogeneous(GTK_BOX(GTK_DIALOG(ui_parameters->dialog)->vbox), FALSE);
 
