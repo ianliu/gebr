@@ -486,31 +486,15 @@ comm_server_connect(struct comm_server * comm_server)
 		comm_server->state = SERVER_STATE_RUN;
 		comm_server_log_message(comm_server, LOG_INFO, _("Launching local server"), comm_server->address->str);
 
-// 		process = g_process_new();
-// 		g_signal_connect(process, "finished",
-// 			G_CALLBACK(local_run_comm_server_finished), comm_server);
+		process = g_process_new();
+		g_signal_connect(process, "finished",
+			G_CALLBACK(local_run_comm_server_finished), comm_server);
 
 #if (!LIBGEBR_STATIC_MODE)
-// 		g_string_printf(cmd_line, "bash -l -c 'gebrd'");
+		g_string_printf(cmd_line, "bash -l -c 'gebrd'");
 #else
-// 		g_string_printf(cmd_line, "bash -l -c './gebrd'");
+		g_string_printf(cmd_line, "bash -l -c './gebrd'");
 #endif
-// 		g_process_start(process, cmd_line);
-		system("bash -l -c 'gebrd'");
-
-		comm_server_log_message(comm_server, LOG_DEBUG, "local_run_comm_server_finished");
-
-		comm_server->state = SERVER_STATE_ASK_PORT;
-		comm_server->tried_existant_pass = FALSE;
-
-//		g_process_free(process);
-		process = g_process_new();
-		g_signal_connect(process, "ready-read-stdout",
-				 G_CALLBACK(local_ask_port_read), comm_server);
-		g_signal_connect(process, "finished",
-				 G_CALLBACK(local_ask_port_finished), comm_server);
-
-		g_string_printf(cmd_line, "bash -l -c 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'");
 		g_process_start(process, cmd_line);
 	}
 
