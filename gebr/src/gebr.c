@@ -313,14 +313,14 @@ gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_
 #ifdef __DEBUG
 	if (type == LOG_DEBUG)
 		g_print("%s\n", string);
-	if (in_log_file)
-		log_add_message(gebr.log, type, string);
+	else if (in_statusbar)
+		gtk_statusbar_push(GTK_STATUSBAR(gebr.statusbar), 0, string);
 #else
-	if (in_log_file)
-		log_add_message(gebr.log, type, string);
 	if (in_statusbar)
 		gtk_statusbar_push(GTK_STATUSBAR(gebr.statusbar), 0, string);
 #endif
+	if (in_log_file)
+		log_add_message(gebr.log, type, string);
 
 	g_free(string);
 }
