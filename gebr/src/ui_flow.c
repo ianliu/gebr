@@ -60,7 +60,7 @@ flow_io_setup_ui(void)
 	GtkWidget *		label;
 
 	if (gebr.flow == NULL) {
-		gebr_message(ERROR, TRUE, FALSE, no_flow_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
 		return NULL;
 	}
 
@@ -180,7 +180,7 @@ flow_add_programs_to_view(GeoXmlFlow * flow)
 		else if (g_ascii_strcasecmp(status, "disabled") == 0)
 			pixbuf = gebr.pixmaps.stock_cancel;
 		else {
-			gebr_message(WARNING, TRUE, TRUE, _("Unknown flow program '%s' status"),
+			gebr_message(LOG_WARNING, TRUE, TRUE, _("Unknown flow program '%s' status"),
 				geoxml_program_get_title(GEOXML_PROGRAM(program)));
 			pixbuf = NULL;
 		}

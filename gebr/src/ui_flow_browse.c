@@ -249,8 +249,8 @@ flow_browse_load(void)
 	/* load it */
 	gebr.flow = GEOXML_FLOW(document_load(filename));
 	if (gebr.flow == NULL){
-		gebr_message(ERROR, TRUE, FALSE, _("Unable to load flow '%s'"), title);
-		gebr_message(ERROR, FALSE, TRUE, _("Unable to load flow '%s' from file '%s'"), title, filename);
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load flow '%s'"), title);
+		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load flow '%s' from file '%s'"), title, filename);
 		goto out;
 	}
 
@@ -290,7 +290,7 @@ flow_browse_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new_
 	flow_save();
 
 	/* send feedback */
-	gebr_message(INFO, FALSE, TRUE, _("Flow '%s' renamed to '%s'"), old_title, new_text);
+	gebr_message(LOG_INFO, FALSE, TRUE, _("Flow '%s' renamed to '%s'"), old_title, new_text);
 }
 
 /*

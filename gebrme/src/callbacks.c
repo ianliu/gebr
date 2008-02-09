@@ -165,7 +165,7 @@ on_revert_activate(void)
 
 	/* is this a new menu? */
 	if (!strlen(path)) {
-		gebrme_message(ERROR, _("Menu was not saved yet."));
+		gebrme_message(LOG_ERROR, _("Menu was not saved yet."));
 		g_free(path);
 		return;
 	}

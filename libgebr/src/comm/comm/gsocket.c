@@ -159,10 +159,10 @@ __g_socket_write(GIOChannel * source, GIOCondition condition, GSocket * socket)
 			break;
 		case EINPROGRESS:
 			return TRUE;
+		case 0:
+			return FALSE;
 		default:
-// 			puts(strerror(errno));
-// 			printf("err %d\n", errno);
-// 			_g_socket_emit_error(socket, G_SOCKET_ERROR_UNKNOWN);
+			_g_socket_emit_error(socket, G_SOCKET_ERROR_UNKNOWN);
 			break;
 		}
 		if (socket->state == G_SOCKET_STATE_CONNECTED) {

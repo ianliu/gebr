@@ -18,13 +18,15 @@ SUBDIRS = geoxml comm gui misc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr.pc
-EXTRADIST = ${pkgconfig_DATA}
 
 lib_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES = libgebr.c
 
 libgebrincludedir = $(includedir)/libgebr
 libgebrinclude_HEADERS = libgebr.h
+noinst_HEADERS = defines.h
+
+EXTRADIST = ${pkgconfig_DATA} $(noinst_HEADERS)
 
 INCLUDES = -Igeoxml -Icomm -Igui -Imisc
 AM_CFLAGS = -Wall $(GTK_CFLAGS) $(GDOME2_CFLAGS)

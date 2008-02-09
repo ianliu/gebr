@@ -64,7 +64,7 @@ client_add(GTcpSocket * tcp_socket)
 	g_signal_connect(tcp_socket, "ready-read",
 			G_CALLBACK(client_read), client);
 
-	gebrd_message(DEBUG, "client_add");
+	gebrd_message(LOG_DEBUG, "client_add");
 }
 
 void
@@ -88,7 +88,7 @@ client_is_local(struct client * client)
 static void
 client_disconnected(GTcpSocket * tcp_socket, struct client * client)
 {
-	gebrd_message(DEBUG, "client_disconnected");
+	gebrd_message(LOG_DEBUG, "client_disconnected");
 
 	gebrd.clients = g_list_remove(gebrd.clients, client);
 	client_free(client);
@@ -109,7 +109,7 @@ client_read(GTcpSocket * tcp_socket, struct client * client)
 		goto out;
 	}
 
-	gebrd_message(DEBUG, "client_read %s", data->str);
+	gebrd_message(LOG_DEBUG, "client_read %s", data->str);
 
 out:	g_string_free(data, TRUE);
 }
@@ -118,6 +118,6 @@ static void
 client_error(GTcpSocket * tcp_socket, enum GSocketError error, struct client * client)
 {
 	if (error == G_SOCKET_ERROR_UNKNOWN)
-		gebrd_message(ERROR, _("unk"), error, client->address->str);
-	gebrd_message(ERROR, _("Connection error '%s' on server '%s'"), error, client->address->str);
+		gebrd_message(LOG_ERROR, _("unk"), error, client->address->str);
+	gebrd_message(LOG_ERROR, _("Connection error '%s' on server '%s'"), error, client->address->str);
 }

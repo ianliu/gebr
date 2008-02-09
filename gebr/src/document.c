@@ -125,7 +125,7 @@ document_load_path(const gchar * path)
 			break;
 		}
 
-		gebr_message(ERROR, TRUE, TRUE, _("Can't load document at %s: %s"), path, error);
+		gebr_message(LOG_ERROR, TRUE, TRUE, _("Can't load document at %s: %s"), path, error);
 	}
 
 	return document;

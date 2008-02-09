@@ -212,9 +212,9 @@ project_line_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new
 
 	/* feedback */
 	if (geoxml_document_get_type(gebr.doc) == GEOXML_DOCUMENT_TYPE_PROJECT)
-		gebr_message(INFO, FALSE, TRUE, _("Project '%s' renamed to '%s'"), old_title, new_text);
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Project '%s' renamed to '%s'"), old_title, new_text);
 	else
-		gebr_message(INFO, FALSE, TRUE, _("Line '%s' renamed to '%s'"), old_title, new_text);
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Line '%s' renamed to '%s'"), old_title, new_text);
 	project_line_info_update();
 }
 
@@ -238,7 +238,7 @@ project_line_load(void)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(ERROR, TRUE, FALSE, _("Neither project nor line selected"));
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Neither project nor line selected"));
 		return;
 	}
 
@@ -258,8 +258,8 @@ project_line_load(void)
 
 		gebr.line = GEOXML_LINE(document_load(filename));
 		if (gebr.line == NULL) {
-			gebr_message(ERROR, TRUE, FALSE, _("Unable to load line '%s'"), title);
-			gebr_message(ERROR, FALSE, TRUE, _("Unable to load line '%s' from file '%s'"), title, filename);
+			gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load line '%s'"), title);
+			gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load line '%s' from file '%s'"), title, filename);
 			goto out;
 		}
 		gebr.doc = GEOXML_DOC(gebr.line);
@@ -280,8 +280,8 @@ project_line_load(void)
 	/* Project load */
 	gebr.project = GEOXML_PROJECT(document_load(filename));
 	if (gebr.project == NULL) {
-		gebr_message(ERROR, TRUE, FALSE, _("Unable to load project '%s'"), title);
-		gebr_message(ERROR, FALSE, TRUE, _("Unable to load project '%s' from file '%s'"), title, filename);
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load project '%s'"), title);
+		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load project '%s' from file '%s'"), title, filename);
 		goto out;
 	}
 	if (gtk_tree_path_get_depth(path) == 1)

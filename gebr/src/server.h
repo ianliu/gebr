@@ -22,33 +22,10 @@
 
 #include <comm/gtcpsocket.h>
 #include <comm/protocol.h>
+#include <comm/server.h>
 
 struct server {
-	/* the communication channel. */
-	GTcpSocket *		tcp_socket;
-	/* protocol parsing stuff */
-	struct protocol *	protocol;
-	/* address */
-	GString *		address;
-	guint16			port;
-	GString *		client_address;		/* client address as seen by server (from $SSH_CLIENT)*/
-	/* ssh stuff */
-	GString *		password;
-	gint16			tunnel_port;
-	gboolean		tried_existant_pass;
-
-	enum server_state {
-		SERVER_STATE_RUN,
-		SERVER_STATE_ASK_PORT,
-		SERVER_STATE_OPEN_TUNNEL,
-		SERVER_STATE_CONNECT,
-		SERVER_STATE_CONNECTED,
-	} state;
-	enum server_error {
-		SERVER_ERROR_NONE,
-		SERVER_ERROR_CONNECT,
-		SERVER_ERROR_SSH,
-	} error;
+	struct comm_server *	comm;
 
 	/* iter to set icons on logged/disconneted */
 	GtkTreeIter		iter;
@@ -59,17 +36,5 @@ server_new(const gchar * address);
 
 void
 server_free(struct server * server);
-
-void
-server_connect(struct server * server);
-
-gboolean
-server_is_logged(struct server * server);
-
-gboolean
-server_is_local(struct server * server);
-
-void
-server_run_flow(struct server * server);
 
 #endif //__SERVER_H

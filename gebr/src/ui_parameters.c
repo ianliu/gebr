@@ -80,7 +80,7 @@ parameters_configure_setup_ui(void)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(ERROR, TRUE, FALSE, _("No program selected"));
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("No program selected"));
 		return NULL;
 	}
 
@@ -297,7 +297,7 @@ parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_param
 
 		selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 		if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-			gebr_message(ERROR, TRUE, FALSE, _("No flow component selected"));
+			gebr_message(LOG_ERROR, TRUE, FALSE, _("No flow component selected"));
 			return;
 		}
 

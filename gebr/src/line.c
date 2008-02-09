@@ -65,7 +65,7 @@ line_new(void)
 	GeoXmlLine *		line;
 
 	if (gebr.doc == NULL) {
-		gebr_message(ERROR, TRUE, FALSE, no_selection_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_selection_error);
 		return;
 	}
 
@@ -105,7 +105,7 @@ line_new(void)
 	geoxml_document_free(GEOXML_DOC(line));
 
 	/* feedback */
-	gebr_message(INFO, FALSE, TRUE, _("New line created in project '%s'"), project_title);
+	gebr_message(LOG_INFO, FALSE, TRUE, _("New line created in project '%s'"), project_title);
 
 	/* UI: select it expand parent */
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &line_iter);
@@ -136,7 +136,7 @@ line_delete(void)
 	const gchar *		line_filename;
 
 	if (gebr.line == NULL) {
-		gebr_message(ERROR, TRUE, FALSE, no_selection_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_selection_error);
 		return;
 	}
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
@@ -158,7 +158,7 @@ line_delete(void)
 		g_string_free(path, TRUE);
 
 		/* log action */
-		gebr_message(INFO, FALSE, TRUE, _("Erasing child flow '%s'"), flow_source);
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Erasing child flow '%s'"), flow_source);
 
 		geoxml_sequence_next(&line_flow);
 	}
@@ -186,8 +186,8 @@ line_delete(void)
 	project_line_info_update();
 
 	/* make the user happy */
-	gebr_message(INFO, TRUE, FALSE, _("Erasing line '%s'"), geoxml_document_get_title(GEOXML_DOC(gebr.line)));
-	gebr_message(INFO, FALSE, TRUE, _("Erasing line '%s' from project '%s'"),
+	gebr_message(LOG_INFO, TRUE, FALSE, _("Erasing line '%s'"), geoxml_document_get_title(GEOXML_DOC(gebr.line)));
+	gebr_message(LOG_INFO, FALSE, TRUE, _("Erasing line '%s' from project '%s'"),
 		     geoxml_document_get_title(GEOXML_DOC(gebr.line)),
 		     geoxml_document_get_title(GEOXML_DOC(gebr.project)));
 }
@@ -213,7 +213,7 @@ line_load_flows(void)
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(gebr.ui_project_line->view));
 	if (gtk_tree_selection_get_selected (selection, &model, &iter) == FALSE) {
-		gebr_message(ERROR, TRUE, FALSE, no_selection_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_selection_error);
 		flow_free();
 	}
 
@@ -268,7 +268,7 @@ line_load_flows(void)
 		geoxml_sequence_next(&line_flow);
 	}
 
-	gebr_message(INFO, TRUE, FALSE, _("Flows loaded"));
+	gebr_message(LOG_INFO, TRUE, FALSE, _("Flows loaded"));
 
 	gtk_tree_path_free(path);
 	g_free(line_title);

@@ -43,7 +43,7 @@
 #include "document.h"
 #include "flow.h"
 
-#define LOG_DEBUG
+#define __DEBUG
 struct gebr gebr;
 
 /*
@@ -85,7 +85,7 @@ gebr_init(int argc, char ** argv)
 	gebr.pixmaps.stock_disconnect = gtk_widget_render_icon(gebr.invisible, GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
 	/* message */
-	gebr_message(START, TRUE, TRUE, _("GêBR Initiating..."));
+	gebr_message(LOG_START, TRUE, TRUE, _("GêBR Initiating..."));
 
 	/* finally the config. file */
 	gebr_config_load(argc, argv);
@@ -124,7 +124,7 @@ gebr_quit(void)
 	g_string_free(gebr.config.data, TRUE);
 	g_string_free(gebr.config.browser, TRUE);
 
-	gebr_message(END, TRUE, TRUE, _("GêBR Finalizing..."));
+	gebr_message(LOG_END, TRUE, TRUE, _("GêBR Finalizing..."));
 	log_close(gebr.log);
 
 	/* Free servers structs */
@@ -265,7 +265,7 @@ gebr_config_save(void)
 
 	fp = fopen(config->str, "w");
 	if (fp == NULL) {
-		gebr_message(ERROR, TRUE, TRUE, _("Unable to write configuration"));
+		gebr_message(LOG_ERROR, TRUE, TRUE, _("Unable to write configuration"));
 		return FALSE;
 	}
 
@@ -284,13 +284,13 @@ gebr_config_save(void)
 		gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 				SERVER_POINTER, &server,
 				-1);
-		fprintf(fp, "server = \"%s\"\n", server->address->str);
+		fprintf(fp, "server = \"%s\"\n", server->comm->address->str);
 
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
 	}
 
 	fclose(fp);
-	gebr_message(INFO, FALSE, TRUE, _("Configuration saved"));
+	gebr_message(LOG_INFO, FALSE, TRUE, _("Configuration saved"));
 
 	return TRUE;
 }
@@ -310,14 +310,17 @@ gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_
 	string = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
-#ifdef LOG_DEBUG
-	if (type == DEBUG)
+#ifdef __DEBUG
+	if (type == LOG_DEBUG)
 		g_print("%s\n", string);
-#endif
+	if (in_log_file)
+		log_add_message(gebr.log, type, string);
+#else
 	if (in_log_file)
 		log_add_message(gebr.log, type, string);
 	if (in_statusbar)
 		gtk_statusbar_push(GTK_STATUSBAR(gebr.statusbar), 0, string);
+#endif
 
 	g_free(string);
 }

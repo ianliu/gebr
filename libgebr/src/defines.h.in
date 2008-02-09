@@ -1,5 +1,5 @@
-/*   GÃªBR Daemon - Process and control execution of flows
- *   Copyright (C) 2007 GÃªBR core team (http://gebr.sourceforge.net)
+/*   libgebr - GêBR Library
+ *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,12 +15,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* include all comm library's headers. */
-#include <comm/ghostaddress.h>
-#include <comm/ghostinfo.h>
-#include <comm/gsocket.h>
-#include <comm/gtcpsocket.h>
-#include <comm/gtcpserver.h>
-#include <comm/gprocess.h>
-#include <comm/protocol.h>
-#include <comm/server.h>
+#ifndef __LIBGEBR_DEFINES_H
+#define __LIBGEBR_DEFINES_H
+
+#define LIBGEBR_STATIC_MODE	@STATIC_MODE@
+
+#endif //__LIBGEBR_DEFINES_H

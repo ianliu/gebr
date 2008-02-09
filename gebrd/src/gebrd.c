@@ -52,7 +52,7 @@ gebrd_init(void)
 void
 gebrd_quit(void)
 {
-	gebrd_message(END, _("Server quited"), g_tcp_server_server_port(gebrd.tcp_server));
+	gebrd_message(LOG_END, _("Server quited"), g_tcp_server_server_port(gebrd.tcp_server));
 
 	server_quit();
 	g_main_loop_quit(gebrd.main_loop);

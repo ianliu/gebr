@@ -15,34 +15,31 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_MISC_LOG_H
-#define __LIBGEBR_MISC_LOG_H
+#ifndef __LIBGEBR_GUI_SUPPORT_H
+#define __LIBGEBR_GUI_SUPPORT_H
 
-#include <stdio.h>
+/*
+ * Standard gettext macros.
+ */
+#ifdef ENABLE_NLS
+#  include <libintl.h>
+#  undef _
+#  define _(String) dgettext (PACKAGE, String)
+#  define Q_(String) g_strip_context ((String), gettext (String))
+#  ifdef gettext_noop
+#    define N_(String) gettext_noop (String)
+#  else
+#    define N_(String) (String)
+#  endif
+#else
+#  define textdomain(String) (String)
+#  define gettext(String) (String)
+#  define dgettext(Domain,Message) (Message)
+#  define dcgettext(Domain,Message,Type) (Message)
+#  define bindtextdomain(Domain,Directory) (Domain)
+#  define _(String) (String)
+#  define Q_(String) g_strip_context ((String), (String))
+#  define N_(String) (String)
+#endif
 
-#include <glib.h>
-
-enum log_message_type {
-	LOG_START, LOG_END, LOG_INFO, LOG_ERROR, LOG_WARNING, LOG_DEBUG
-};
-
-struct log_message {
-	enum log_message_type	type;
-	GString *		string;
-};
-
-struct log {
-	GIOChannel *	io_channel;
-	GList *		messages;
-};
-
-struct log *
-log_open(const gchar * path);
-
-void
-log_close(struct log * log);
-
-void
-log_add_message(struct log * log, enum log_message_type type, const gchar * message);
-
-#endif //__LIBGEBR_MISC_LOG_H
+#endif //__LIBGEBR_GUI_SUPPORT_H

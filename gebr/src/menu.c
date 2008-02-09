@@ -224,7 +224,7 @@ menu_list_create_index(void)
 
 	g_string_printf(path, "%s/.gebr/menus.idx", getenv("HOME"));
 	if ((index_fp = fopen(path->str, "w")) == NULL) {
-		gebr_message(ERROR, TRUE, FALSE, _("Unable to write menus' index"));
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to write menus' index"));
 		ret = FALSE;
 		goto out;
 	}

@@ -34,6 +34,12 @@ AC_SUBST(LINE_VERSION)
 AC_SUBST(PROJECT_VERSION)
 AC_SUBST(DOCUMENT_VERSION)
 
+dnl For create static packages
+AC_ARG_ENABLE([static-mode],
+	[  --enable-static-mode    enables flags for generating a static package],
+	STATIC_MODE=1, STATIC_MODE=0)
+AC_SUBST(STATIC_MODE)
+
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 
 AC_PROG_CC
@@ -77,7 +83,7 @@ AC_SUBST(GDOME2_CFLAGS)
 AC_OUTPUT([
 debian/changelog
 rpm/libgebr.fedora.spec rpm/libgebr.opensuse.spec rpm/libgebr.mandriva.spec
-Makefile src/gebr.pc src/Makefile
+Makefile src/gebr.pc src/Makefile src/defines.h
 src/geoxml/Makefile src/geoxml/gebr-geoxml.pc src/geoxml/geoxml/Makefile src/geoxml/geoxml/defines.h src/geoxml/data/Makefile src/geoxml/validate/Makefile src/geoxml/doc/Makefile src/geoxml/test/Makefile
 src/comm/Makefile src/comm/gebr-comm.pc src/comm/comm/Makefile
 src/gui/Makefile src/gui/gebr-gui.pc src/gui/gui/Makefile src/gui/pixmaps/Makefile

@@ -9,14 +9,6 @@ GêBR:
 
   * Conferir/Corrigir o servidor
 		  
-  * Implementar o "export as menu" na gebr. Basta ler um fluxo que o
-  usuário tenha exportado e limpar os valores dos parâmetros, e
-  redefinir os campos menu dos programas. O help do usuário deve ser
-  descartado e lido novamente o help dos menus originais que
-  compuseram o fluxo do usuário. Trocar as referências de menus e o
-  status dos programas para unconfigured. Atualizar as datas de
-  criação e modificação e apagar a data de execução.
-
   * Link para a URL do programa.
 
   * Verificar o que acontece quando há um servidor remoto cadastrado
@@ -64,9 +56,6 @@ GêBR Daemon:
   não é UTF-8 independentemente do encode do sistema.
 
 GêBRME:
-
-  * Dialog de confirmação na hora de excluir um parâmetro/programa na
-  gebrme.
 
   * Quando um parâmetro do tipo arquivo é marcado como "list" na gebr não
   aparece mais o botão de browse para arquivo.

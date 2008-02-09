@@ -115,7 +115,7 @@ job_send_clients_output(struct job * job, GString * _output)
 		output = g_simple_locale_to_utf8(_output->str);
 		if (output == NULL) {
 			g_free(output);
-			gebrd_message(ERROR, _("Job '%s' sent output not in UTF-8"), job->title->str);
+			gebrd_message(LOG_ERROR, _("Job '%s' sent output not in UTF-8"), job->title->str);
 			return;
 		}
 		allocated = TRUE;

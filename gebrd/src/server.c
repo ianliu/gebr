@@ -51,10 +51,13 @@ server_init(void)
 	gchar *			ssh_env;
 	GString *		client_ip;
 
-	/* run path */
+	/* initialization */
 	log_filename = g_string_new(NULL);
 	run_filename = g_string_new(NULL);
 	client_ip = g_string_new("");
+	/* local address used for listening */
+	host_address = g_host_address_new();
+	g_host_address_set_ipv4_string(host_address, "127.0.0.1");
 
 	/* if we were ran by ssh, then use IP to change log and run filenames */
 	ssh_env = getenv("SSH_CLIENT");
@@ -69,7 +72,7 @@ server_init(void)
 
 	/* from libgebr-misc */
 	if (gebr_create_config_dirs() == FALSE) {
-		gebrd_message(ERROR, _("Could not access GêBR configuration directories.\n"));
+		gebrd_message(LOG_ERROR, _("Could not access GêBR configuration directories.\n"));
 		goto err;
 	}
 
@@ -80,14 +83,10 @@ server_init(void)
 	/* protocol */
 	protocol_init();
 
-	/* local address used for listening */
-	host_address = g_host_address_new();
-	g_host_address_set_ipv4_string(host_address, "127.0.0.1");
-
 	/* init the server socket and listen */
 	gebrd.tcp_server = g_tcp_server_new();
 	if (g_tcp_server_listen(gebrd.tcp_server, host_address, 0) == FALSE) {
-		gebrd_message(ERROR, _("Could not listen for connections.\n"));
+		gebrd_message(LOG_ERROR, _("Could not listen for connections.\n"));
 		goto err;
 	}
 	g_signal_connect(gebrd.tcp_server, "new-connection",
@@ -99,26 +98,19 @@ server_init(void)
 		/* check if server crashed by trying connecting to it
 		 * if the connection is refused, the it *probably* did
 		 */
-		GTcpSocket *	tcp_socket;
 		guint16		port;
-		gboolean	connected;
 
 		run_fp = fopen(run_filename->str, "r");
 		fscanf(run_fp, "%hu", &port);
 		fclose(run_fp);
 
-		tcp_socket = g_tcp_socket_new();
-		g_tcp_socket_connect(tcp_socket, host_address, port, TRUE);
-		connected = g_socket_get_state(G_SOCKET(tcp_socket)) == G_SOCKET_STATE_CONNECTED;
-		g_socket_close(G_SOCKET(tcp_socket));
-
-		if (connected == TRUE) {
-			gebrd_message(ERROR, _("Run file (~/.gebr/run/gebrd.run) already exists or is not a regular file."));
+		if (g_tcp_server_is_local_port_available(port) == FALSE) {
+			gebrd_message(LOG_ERROR, _("There is already a server running at %hu"), port);
 			goto err;
 		}
 	}
 	if ((run_fp = fopen(run_filename->str, "w")) == NULL) {
-		gebrd_message(ERROR, _("Could not write run file."));
+		gebrd_message(LOG_ERROR, _("Could not write run file."));
 		goto err;
 	}
 	fprintf(run_fp, "%d\n", g_tcp_server_server_port(gebrd.tcp_server));
@@ -135,11 +127,11 @@ server_init(void)
 
 	/* success */
 	ret = TRUE;
-	gebrd_message(START, _("Server started at %u port"), g_tcp_server_server_port(gebrd.tcp_server));
+	gebrd_message(LOG_START, _("Server started at %u port"), g_tcp_server_server_port(gebrd.tcp_server));
 	goto out;
 
 err:	ret = FALSE;
-	gebrd_message(ERROR, _("Could not init server. Quiting..."));
+	gebrd_message(LOG_ERROR, _("Could not init server. Quiting..."));
 
 out:	g_string_free(log_filename, TRUE);
 	g_string_free(run_filename, TRUE);
@@ -186,7 +178,7 @@ server_new_connection(void)
 	while ((client_socket = g_tcp_server_get_next_pending_connection(gebrd.tcp_server)) != NULL)
 		client_add(client_socket);
 
-	gebrd_message(DEBUG, "server_new_connection");
+	gebrd_message(LOG_DEBUG, "server_new_connection");
 }
 
 gboolean

@@ -218,7 +218,7 @@ job_control_setup_ui(void)
 		"cursor-visible", FALSE,
 		NULL);
 	{
-	   PangoFontDescription* font; 
+	   PangoFontDescription* font;
 
 	   font = pango_font_description_new();
 	   pango_font_description_set_family(font, "courier 10 pitch");
@@ -226,7 +226,7 @@ job_control_setup_ui(void)
 
 	   gtk_widget_modify_font(text_view, font);
 	   pango_font_description_free(font);
-	   
+
 	}
 	ui_job_control->text_view = text_view;
 	gtk_container_add(GTK_CONTAINER(scrolledwin), text_view);
@@ -337,7 +337,7 @@ job_control_save(void)
 	/* save to file */
 	fp = fopen(path, "w");
 	if (fp == NULL) {
-		gebr_message(ERROR, TRUE, TRUE, _("Could not write file"));
+		gebr_message(LOG_ERROR, TRUE, TRUE, _("Could not write file"));
 		goto out;
 	}
 	gtk_text_buffer_get_start_iter(gebr.ui_job_control->text_buffer, &start_iter);
@@ -346,7 +346,7 @@ job_control_save(void)
 	fputs(text, fp);
 	fclose(fp);
 
-	gebr_message(INFO, TRUE, TRUE, _("Saved job information at '%s'"), path);
+	gebr_message(LOG_INFO, TRUE, TRUE, _("Saved job information at '%s'"), path);
 
 	g_free(text);
 out:	g_free(path);
@@ -374,16 +374,16 @@ job_control_cancel(void)
 			-1);
 
 	if (job->status != JOB_STATUS_RUNNING) {
-		gebr_message(WARNING, TRUE, FALSE, _("Job is not running"));
+		gebr_message(LOG_WARNING, TRUE, FALSE, _("Job is not running"));
 		return;
 	}
 	if (confirm_action_dialog(_("Terminate job"), _("Are you sure you want to terminate job '%s'?"), job->title->str) == FALSE)
 		return;
 
-	gebr_message(INFO, TRUE, FALSE, _("Asking server to terminate job"));
-	gebr_message(INFO, FALSE, TRUE, _("Asking server '%s' to terminate job '%s'"), job->server->address, job->title->str);
+	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to terminate job"));
+	gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to terminate job '%s'"), job->server->comm->address, job->title->str);
 
-	protocol_send_data(job->server->protocol, job->server->tcp_socket,
+	protocol_send_data(job->server->comm->protocol, job->server->comm->tcp_socket,
 		protocol_defs.end_def, 1, job->jid->str);
 }
 
@@ -465,15 +465,15 @@ job_control_stop(void)
 			-1);
 
 	if (job->status != JOB_STATUS_RUNNING) {
-		gebr_message(WARNING, TRUE, FALSE, _("Job is not running"));
+		gebr_message(LOG_WARNING, TRUE, FALSE, _("Job is not running"));
 		return;
 	}
 	if (confirm_action_dialog(_("Kill job"), _("Are you sure you want to kill job '%s'?"), job->title->str) == FALSE)
 		return;
 
-	gebr_message(INFO, TRUE, FALSE, _("Asking server to kill job"));
-	gebr_message(INFO, FALSE, TRUE, _("Asking server '%s' to kill job '%s'"), job->server->address->str, job->title->str);
+	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to kill job"));
+	gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to kill job '%s'"), job->server->comm->address->str, job->title->str);
 
-	protocol_send_data(job->server->protocol, job->server->tcp_socket,
+	protocol_send_data(job->server->comm->protocol, job->server->comm->tcp_socket,
 		protocol_defs.kil_def, 1, job->jid->str);
 }

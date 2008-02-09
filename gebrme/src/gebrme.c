@@ -27,6 +27,7 @@
 #include "menu.h"
 #include "preferences.h"
 
+#define __DEBUG
 /* used to load config file in gebrme_init */
 #define load_key(keyfile, gstring, key, default) \
 	do { \
@@ -41,7 +42,6 @@
 		} else \
 			g_string_assign(gstring, default); \
 	} while(0)
-#define LOG_DEBUG
 
 /* global instance for data exchange */
 struct gebrme gebrme;
@@ -152,8 +152,8 @@ gebrme_message(enum log_message_type type, const gchar * message, ...)
 	string = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
-#ifdef LOG_DEBUG
-	if (type == DEBUG)
+#ifdef __DEBUG
+	if (type == LOG_DEBUG)
 		g_print("%s\n", string);
 #endif
 	gtk_statusbar_push(GTK_STATUSBAR(gebrme.statusbar), 0, string);

@@ -23,16 +23,16 @@
 #include "job.h"
 
 gboolean
-client_parse_server_messages(struct server * server)
+client_parse_server_messages(struct comm_server * comm_server, struct server * server)
 {
 	GList *			link;
 	struct message *	message;
 
-	while ((link = g_list_last(server->protocol->messages)) != NULL) {
+	while ((link = g_list_last(comm_server->protocol->messages)) != NULL) {
 		message = (struct message *)link->data;
 
 		if (message->hash == protocol_defs.ret_def.hash) {
-			if (server->protocol->waiting_ret_hash == protocol_defs.ini_def.hash) {
+			if (comm_server->protocol->waiting_ret_hash == protocol_defs.ini_def.hash) {
 				GList *		arguments;
 				GString *	hostname;
 
@@ -41,16 +41,16 @@ client_parse_server_messages(struct server * server)
 				hostname = g_list_nth_data(arguments, 0);
 
 				/* say we are logged */
-				server->protocol->logged = TRUE;
+				comm_server->protocol->logged = TRUE;
 				server_list_updated_status(server);
-				g_string_assign(server->protocol->hostname, hostname->str);
+				g_string_assign(comm_server->protocol->hostname, hostname->str);
 
 				/* request list of jobs */
-				protocol_send_data(server->protocol, server->tcp_socket,
+				protocol_send_data(comm_server->protocol, comm_server->tcp_socket,
 					protocol_defs.lst_def, 0);
 
 				protocol_split_free(arguments);
-			} else if (server->protocol->waiting_ret_hash == protocol_defs.run_def.hash) {
+			} else if (comm_server->protocol->waiting_ret_hash == protocol_defs.run_def.hash) {
 				GList *		arguments;
 				GString *	jid, *status, * title, * start_date, * issues, * cmd_line, * output;
 				struct job *	job;
@@ -71,7 +71,7 @@ client_parse_server_messages(struct server * server)
 				gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 3);
 
 				protocol_split_free(arguments);
-			} else if (server->protocol->waiting_ret_hash == protocol_defs.flw_def.hash) {
+			} else if (comm_server->protocol->waiting_ret_hash == protocol_defs.flw_def.hash) {
 
 			}
 		} else if (message->hash == protocol_defs.job_def.hash) {
@@ -91,7 +91,7 @@ client_parse_server_messages(struct server * server)
 			cmd_line = g_list_nth_data(arguments, 7);
 			output = g_list_nth_data(arguments, 8);
 
-			job = job_find(server->address, jid);
+			job = job_find(comm_server->address, jid);
 			if (job == NULL)
 				job = job_add(server, jid, status, title, start_date, finish_date,
 					hostname, issues, cmd_line, output);
@@ -107,7 +107,7 @@ client_parse_server_messages(struct server * server)
 			jid = g_list_nth_data(arguments, 0);
 			output = g_list_nth_data(arguments, 1);
 
-			job = job_find(server->address, jid);
+			job = job_find(comm_server->address, jid);
 			if (job != NULL) {
 				job_append_output(job, output);
 			}
@@ -124,7 +124,7 @@ client_parse_server_messages(struct server * server)
 			status = g_list_nth_data(arguments, 1);
 			finish_date = g_list_nth_data(arguments, 2);
 
-			job = job_find(server->address, jid);
+			job = job_find(comm_server->address, jid);
 			if (job != NULL) {
 				g_string_assign(job->finish_date, finish_date->str);
 				job->status = job_translate_status(status);
@@ -138,7 +138,7 @@ client_parse_server_messages(struct server * server)
 		}
 
 		message_free(message);
-		server->protocol->messages = g_list_delete_link(server->protocol->messages, link);
+		comm_server->protocol->messages = g_list_delete_link(comm_server->protocol->messages, link);
 	}
 
 	return TRUE;

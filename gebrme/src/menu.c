@@ -155,7 +155,7 @@ menu_load_user_directory(void)
 	GString *	path;
 
 	if ((dir = opendir(gebrme.config.menu_dir->str)) == NULL) {
-		gebrme_message(ERROR, _("Could not open menus' directory"));
+		gebrme_message(LOG_ERROR, _("Could not open menus' directory"));
 		return;
 	}
 

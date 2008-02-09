@@ -60,7 +60,7 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	GtkWidget *			label;
 
 	if (document == NULL){
-		gebr_message(ERROR, TRUE, FALSE, _("Nothing selected"));
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Nothing selected"));
 		return NULL;
 	}
 
@@ -209,10 +209,10 @@ document_properties_actions(GtkDialog * dialog, gint arg1, struct ui_document_pr
 			goto out;
 		}
 
-		gebr_message(INFO, FALSE, TRUE, _("Properties of %s '%s' updated"), doc_type,
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Properties of %s '%s' updated"), doc_type,
 			old_title);
 		if (g_ascii_strcasecmp(old_title, new_title) != 0)
-			gebr_message(INFO, FALSE, TRUE, _("Renaming %s '%s' to '%s'"),
+			gebr_message(LOG_INFO, FALSE, TRUE, _("Renaming %s '%s' to '%s'"),
 				doc_type, old_title, new_title);
 
 		break;

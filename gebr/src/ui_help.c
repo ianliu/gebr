@@ -59,7 +59,7 @@ help_show(const gchar * help, const gchar * title)
 	GString *	cmd_line;
 
 	if (!gebr.config.browser->len) {
-		gebr_message(ERROR, TRUE, FALSE, _("No editor defined. Choose one at Configure/Preferences"));
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("No editor defined. Choose one at Configure/Preferences"));
 		return;
 	}
 
@@ -85,7 +85,7 @@ help_show(const gchar * help, const gchar * title)
 
 	html_fp = fopen(html_path->str, "w");
 	if (html_fp == NULL) {
-		gebr_message(ERROR, TRUE, TRUE, unable_to_write_help_error);
+		gebr_message(LOG_ERROR, TRUE, TRUE, unable_to_write_help_error);
 		goto out;
 	}
 	fwrite(ghelp->str, sizeof(char), strlen(ghelp->str), html_fp);
@@ -123,7 +123,7 @@ help_edit(GtkButton * button, GeoXmlDocument * document)
 
 	/* Check for editor */
 	if (!gebr.config.editor->len) {
-		gebr_message(ERROR, TRUE, FALSE, _("No editor defined. Choose one at Configure/Preferences"));
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("No editor defined. Choose one at Configure/Preferences"));
 		return;
 	}
 
@@ -135,7 +135,7 @@ help_edit(GtkButton * button, GeoXmlDocument * document)
 	/* Write current help to temporary file */
 	html_fp = fopen(html_path->str, "w");
 	if (html_fp == NULL) {
-		gebr_message(ERROR, TRUE, TRUE, unable_to_write_help_error);
+		gebr_message(LOG_ERROR, TRUE, TRUE, unable_to_write_help_error);
 		goto out;
 	}
 	fputs(geoxml_document_get_help(document), html_fp);
@@ -148,7 +148,7 @@ help_edit(GtkButton * button, GeoXmlDocument * document)
 	/* Read back the help from file */
 	html_fp = fopen(html_path->str, "r");
 	if (html_fp == NULL) {
-		gebr_message(ERROR, TRUE, TRUE, _("Could not read created temporary file."));
+		gebr_message(LOG_ERROR, TRUE, TRUE, _("Could not read created temporary file."));
 		goto out;
 	}
 	while (fgets(buffer, BUFFER_SIZE, html_fp) != NULL)
@@ -168,7 +168,7 @@ help_edit(GtkButton * button, GeoXmlDocument * document)
 		/* TODO: what else should be tried? */
 		if (converted == NULL) {
 			g_free(converted);
-			gebr_message(ERROR, TRUE, TRUE, _("Please change the report encoding to UTF-8"));
+			gebr_message(LOG_ERROR, TRUE, TRUE, _("Please change the report encoding to UTF-8"));
 			goto out;
 		}
 

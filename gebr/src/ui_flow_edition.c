@@ -225,7 +225,7 @@ flow_edition_component_selected(void)
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_flow_edition->fseq_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(ERROR, TRUE, FALSE, no_flow_comp_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_comp_selected_error);
 		return;
 	}
 
@@ -258,7 +258,7 @@ flow_edition_component_change_parameters(void)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(ERROR, TRUE, FALSE, no_flow_comp_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_comp_selected_error);
 		return;
 	}
 
@@ -266,7 +266,7 @@ flow_edition_component_change_parameters(void)
 			FSEQ_TITLE_COLUMN, &title,
 			-1);
 
-	gebr_message(ERROR, TRUE, FALSE, _("Configuring flow component '%s'"), title);
+	gebr_message(LOG_ERROR, TRUE, FALSE, _("Configuring flow component '%s'"), title);
 	parameters_configure_setup_ui();
 
 	g_free(title);
@@ -291,7 +291,7 @@ flow_edition_set_status(GtkMenuItem * menuitem)
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_flow_edition->fseq_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(ERROR, TRUE, FALSE, no_flow_comp_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_comp_selected_error);
 		return;
 	}
 
@@ -337,16 +337,16 @@ flow_edition_menu_add(void)
 	GeoXmlSequence *	program;
 
 	if (gebr.flow == NULL) {
-		gebr_message(ERROR, TRUE, FALSE, no_flow_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
 		return;
 	}
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(gebr.ui_flow_edition->menu_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(ERROR, TRUE, FALSE, no_menu_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_menu_selected_error);
 		return;
 	}
 	if (!gtk_tree_store_iter_depth(gebr.ui_flow_edition->menu_store, &iter)) {
-		gebr_message(ERROR, TRUE, FALSE, selected_menu_instead_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, selected_menu_instead_error);
 		return;
 	}
 
@@ -413,11 +413,11 @@ flow_edition_menu_show_help(void)
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_flow_edition->menu_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(ERROR, TRUE, FALSE, no_menu_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_menu_selected_error);
 		return;
 	}
 	if (!gtk_tree_store_iter_depth(gebr.ui_flow_edition->menu_store, &iter)) {
-		gebr_message(ERROR, TRUE, FALSE, selected_menu_instead_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, selected_menu_instead_error);
 		return;
 	}
 

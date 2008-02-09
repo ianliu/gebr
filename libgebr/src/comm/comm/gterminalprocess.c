@@ -216,6 +216,21 @@ g_terminal_process_start(GTerminalProcess * terminal_process, GString * cmd_line
 	GPid		pid;
 	GError *	error;
 
+	struct sigaction sa;
+	sigset_t omask;
+	struct sigaction intr, quit;
+
+	sa.sa_handler = SIG_IGN;
+	sa.sa_flags = 0;
+	sigemptyset (&sa.sa_mask);
+// 	sigaction(SIGINT, &sa, &intr);
+// 	sigaction(SIGQUIT, &sa, &quit);
+
+// 	sigaddset(&sa.sa_mask, SIGCHLD);
+// 	sigprocmask(SIG_BLOCK, &sa.sa_mask, &omask);
+
+
+
 	/* free previous start stuff */
 	if (terminal_process->ptm_io_channel != NULL)
 		__g_terminal_process_free(terminal_process);
@@ -228,6 +243,10 @@ g_terminal_process_start(GTerminalProcess * terminal_process, GString * cmd_line
 		goto out;
 	}
 	if (pid == 0) {
+// 		sigaction(SIGINT, &intr, (struct sigaction *) NULL);
+// 		sigaction(SIGQUIT, &quit, (struct sigaction *) NULL);
+// 		sigprocmask(SIG_SETMASK, &omask, (sigset_t *) NULL);
+
 		if (execvp(argv[0], argv) == -1) {
 			ret = FALSE;
 			goto out;
@@ -253,6 +272,10 @@ g_terminal_process_start(GTerminalProcess * terminal_process, GString * cmd_line
 	/* there is already something available now? */
 	if (g_terminal_process_bytes_available(terminal_process))
 		g_signal_emit(terminal_process, object_signals[READY_READ], 0);
+
+// 	sigaction(SIGINT, &intr, (struct sigaction *) NULL);
+// 	sigaction(SIGQUIT, &quit, (struct sigaction *) NULL);
+// 	sigprocmask(SIG_SETMASK, &omask, (sigset_t *) NULL);
 
 out:	g_strfreev(argv);
 	return ret;

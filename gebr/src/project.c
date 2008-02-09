@@ -66,7 +66,7 @@ project_new(void)
 			-1);
 
 	/* feedback */
-	gebr_message(INFO, FALSE, TRUE, _("New project created"));
+	gebr_message(LOG_INFO, FALSE, TRUE, _("New project created"));
 
 	/* select it */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
@@ -99,7 +99,7 @@ project_delete(void)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (gebr.ui_project_line->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(ERROR, TRUE, FALSE, no_project_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_project_selected_error);
 		return;
 	}
 
@@ -110,7 +110,7 @@ project_delete(void)
 	path = gtk_tree_model_get_path(model, &iter);
 
 	if (gtk_tree_path_get_depth(path) == 2) {
-		gebr_message(ERROR, TRUE, FALSE, no_project_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_project_selected_error);
 		goto out;
 	}
 
@@ -119,12 +119,12 @@ project_delete(void)
 	/* Delete each line of the project */
 
 	if ((nlines = gtk_tree_model_iter_n_children(model, &iter)) > 0) {
-		gebr_message(ERROR, TRUE, FALSE, _("Project '%s' still has %i lines"), title, nlines);
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Project '%s' still has %i lines"), title, nlines);
 		goto out;
 	}
 
 	/* message user */
-	gebr_message(INFO, TRUE, TRUE, _("Erasing project '%s'"), title);
+	gebr_message(LOG_INFO, TRUE, TRUE, _("Erasing project '%s'"), title);
 
 	/* Remove the project from the store (and its children) */
 	gtk_tree_store_remove(GTK_TREE_STORE (gebr.ui_project_line->store), &iter);
@@ -150,7 +150,7 @@ project_list_populate(void)
 	DIR *		dir;
 
 	if (g_access(gebr.config.data->str, F_OK | R_OK)) {
-		gebr_message(ERROR, TRUE, FALSE, _("Unable to access data directory"));
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to access data directory"));
 		return;
 	}
 	if ((dir = opendir(gebr.config.data->str)) == NULL)

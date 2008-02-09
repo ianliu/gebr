@@ -108,22 +108,22 @@ log_add_message(struct log * log, enum log_message_type type, const gchar * mess
 	error = NULL;
 
 	switch (type) {
-	case START:
+	case LOG_START:
 		ident_str = "[STR]";
 		break;
-	case END:
+	case LOG_END:
 		ident_str = "[END]";
 		break;
-	case INFO:
+	case LOG_INFO:
 		ident_str = "[INFO]";
 		break;
-	case ERROR:
+	case LOG_ERROR:
 		ident_str = "[ERR]";
 		break;
-	case WARNING:
+	case LOG_WARNING:
 		ident_str = "[WARN]";
 		break;
-	case DEBUG:
+	case LOG_DEBUG:
 #ifdef LOGDEBUG
 		ident_str = "[DEB]";
 		break;

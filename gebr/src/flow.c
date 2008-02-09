@@ -67,7 +67,7 @@ flow_new(void)
 	GeoXmlFlow *		flow;
 
 	if (gebr.line == NULL) {
-		gebr_message(ERROR, TRUE, FALSE, _("Select a line to which a flow will be added to"));
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Select a line to which a flow will be added to"));
 		return;
 	}
 
@@ -98,7 +98,7 @@ flow_new(void)
 	g_signal_emit_by_name(gebr.ui_flow_browse->view, "cursor-changed");
 
 	/* feedback */
-	gebr_message(INFO, TRUE, TRUE, _("New flow added to line '%s'"), line_title);
+	gebr_message(LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'"), line_title);
 }
 
 /* Function: flow_free
@@ -137,7 +137,7 @@ flow_delete(void)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &flow_iter) == FALSE) {
-		gebr_message(ERROR, TRUE, FALSE, no_flow_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
 		return;
 	}
 
@@ -150,8 +150,8 @@ flow_delete(void)
 		goto out;
 
 	/* Some feedback */
-	gebr_message(INFO, TRUE, FALSE, _("Erasing flow '%s'"), title);
-	gebr_message(INFO, FALSE, TRUE, _("Erasing flow '%s' from line '%s'"),
+	gebr_message(LOG_INFO, TRUE, FALSE, _("Erasing flow '%s'"), title);
+	gebr_message(LOG_INFO, FALSE, TRUE, _("Erasing flow '%s' from line '%s'"),
 		title, geoxml_document_get_title(gebr.doc));
 
 	/* Seek and destroy */
@@ -209,7 +209,7 @@ flow_import(void)
 	GeoXmlFlow *		imported_flow;
 
 	if (gebr.line == NULL) {
-		gebr_message(ERROR, TRUE, FALSE, _("Select a line to which a flow will be added to"));
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Select a line to which a flow will be added to"));
 		return;
 	}
 
@@ -242,7 +242,7 @@ flow_import(void)
 	flow_filename = document_assembly_filename("flw");
 
 	/* feedback */
-	gebr_message(INFO, TRUE, TRUE, _("Flow '%s' imported to line '%s' from file '%s'"),
+	gebr_message(LOG_INFO, TRUE, TRUE, _("Flow '%s' imported to line '%s' from file '%s'"),
 		     flow_title, geoxml_document_get_title(GEOXML_DOC(gebr.line)), path);
 
 	/* change filename */
@@ -284,7 +284,7 @@ flow_export(void)
 	gchar *                 oldfilename;
 
 	if (gebr.flow == NULL) {
-		gebr_message(ERROR, TRUE, FALSE, no_flow_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
 		return;
 	}
 
@@ -314,7 +314,7 @@ flow_export(void)
 	geoxml_document_save(GEOXML_DOC(gebr.flow), path);
 	geoxml_document_set_filename(GEOXML_DOC(gebr.flow), oldfilename);
 
-	gebr_message(INFO, TRUE, TRUE, _("Flow '%s' exported to %s"),
+	gebr_message(LOG_INFO, TRUE, TRUE, _("Flow '%s' exported to %s"),
 		(gchar*)geoxml_document_get_title(GEOXML_DOC(gebr.flow)), path);
 
 	g_free(path);
@@ -366,7 +366,7 @@ flow_export_as_menu(void)
 	gint			i;
 
 	if (gebr.flow == NULL) {
-		gebr_message(ERROR, TRUE, FALSE, no_flow_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
 		return;
 	}
 
@@ -434,7 +434,7 @@ flow_export_as_menu(void)
 	geoxml_document_save(GEOXML_DOC(flow), path);
 	geoxml_document_free(GEOXML_DOC(flow));
 
-	gebr_message(INFO, TRUE, TRUE, _("Flow '%s' exported as menu to %s"),
+	gebr_message(LOG_INFO, TRUE, TRUE, _("Flow '%s' exported as menu to %s"),
 		     (gchar*)geoxml_document_get_title(GEOXML_DOC(gebr.flow)), path);
 
 	g_free(path);
@@ -456,20 +456,20 @@ flow_run(void)
 
 	/* check for a flow selected */
 	if (gebr.flow == NULL) {
-		gebr_message(ERROR, TRUE, FALSE, no_flow_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
 		return;
 	}
 	server = server_select_setup_ui();
 	if (server == NULL)
 		return;
 
-	gebr_message(INFO, TRUE, FALSE, _("Asking server to run flow '%s'"),
+	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'"),
 		geoxml_document_get_title(GEOXML_DOC(gebr.flow)));
-	gebr_message(INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'"),
-		server->address->str,
+	gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'"),
+		server->comm->address->str,
 		geoxml_document_get_title(GEOXML_DOC(gebr.flow)));
 
-	server_run_flow(server);
+	comm_server_run_flow(server->comm, gebr.flow);
 
 	/* get today's date */
 	geoxml_flow_set_date_last_run(gebr.flow, iso_date());
@@ -501,7 +501,7 @@ flow_program_remove(void)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(ERROR, TRUE, FALSE, no_program_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_program_selected_error);
 		return;
 	}
 
@@ -535,7 +535,7 @@ flow_program_move_up(void)
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_flow_edition->fseq_view));
 	if (gtk_tree_selection_get_selected (selection, &model, &iter) == FALSE) {
-		gebr_message(ERROR, TRUE, FALSE, no_program_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_program_selected_error);
 		return;
 	}
 	if (gtk_list_store_can_move_up(gebr.ui_flow_edition->fseq_store, &iter) == FALSE)
@@ -571,7 +571,7 @@ flow_program_move_down(void)
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_flow_edition->fseq_view));
 	if (gtk_tree_selection_get_selected (selection, &model, &iter) == FALSE) {
-		gebr_message(ERROR, TRUE, FALSE, no_program_selected_error);
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_program_selected_error);
 		return;
 	}
 	if (gtk_list_store_can_move_down(gebr.ui_flow_edition->fseq_store, &iter) == FALSE)
