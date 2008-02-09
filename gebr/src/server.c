@@ -64,6 +64,8 @@ server_ssh_login(const gchar * title, const gchar * message)
 	} else
 		password = g_string_new(gtk_entry_get_text(GTK_ENTRY(entry)));
 
+	gtk_widget_destroy(dialog);
+
 	return password;
 }
 
