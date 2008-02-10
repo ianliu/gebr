@@ -261,6 +261,8 @@ server_list_setup_ui(void)
 						GTK_STOCK_CLOSE, GEBR_SERVER_CLOSE,
 						GTK_STOCK_REFRESH, GEBR_SERVER_REFRESH,
 						NULL);
+	g_signal_connect(dialog, "delete-event",
+		G_CALLBACK(gtk_widget_hide_on_delete), NULL);
 	ui_server_list->common.dialog = dialog;
 	/* Take the apropriate action when a button is pressed */
 	g_signal_connect(dialog, "response",
