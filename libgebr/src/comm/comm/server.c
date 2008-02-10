@@ -136,7 +136,7 @@ comm_ssh_parse_output(GTerminalProcess * process, struct comm_server * comm_serv
 			g_string_printf(string, _("Server %s needs SSH login.\n\n%s"),
 				comm_server->address->str, output->str);
 		else
-			g_string_printf(string, _("Wrong password for comm_server %s, please try again.\n\n%s"),
+			g_string_printf(string, _("Wrong password for server %s, please try again.\n\n%s"),
 				comm_server->address->str, output->str);
 
 		password = comm_server->ops->ssh_login(_("SSH login:"), string->str);
@@ -171,7 +171,7 @@ comm_ssh_parse_output(GTerminalProcess * process, struct comm_server * comm_serv
 		str = strstr(output->str, "ssh:");
 		if (str == output->str) {
 			comm_server->error = SERVER_ERROR_SSH;
-			comm_server_log_message(comm_server, LOG_ERROR, _("Error contacting comm_server at address %s via ssh: %s"),
+			comm_server_log_message(comm_server, LOG_ERROR, _("Error contacting server at address %s via ssh: %s"),
 				comm_server->address->str, output->str);
 			return TRUE;
 		}
@@ -394,7 +394,7 @@ comm_server_read(GTcpSocket * tcp_socket, struct comm_server * comm_server)
 	protocol_receive_data(comm_server->protocol, data);
 	comm_server->ops->parse_messages(comm_server, comm_server->user_data);
 
-	comm_server_log_message(comm_server, LOG_DEBUG, "Read from comm_server '%s': %s",
+	comm_server_log_message(comm_server, LOG_DEBUG, "Read from server '%s': %s",
 		comm_server->address->str, data->str);
 
 	g_string_free(data, TRUE);
@@ -406,7 +406,7 @@ comm_server_error(GTcpSocket * tcp_socket, enum GSocketError error, struct comm_
 	comm_server->error = SERVER_ERROR_CONNECT;
 	if (error == G_SOCKET_ERROR_UNKNOWN)
 		puts("unk");
-	comm_server_log_message(comm_server, LOG_ERROR, _("Connection error '%s' on comm_server '%s'"), error, comm_server->address->str);
+	comm_server_log_message(comm_server, LOG_ERROR, _("Connection error '%s' on server '%s'"), error, comm_server->address->str);
 }
 
 
