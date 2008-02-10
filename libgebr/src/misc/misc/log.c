@@ -16,6 +16,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 #include <glib/gstdio.h>
@@ -102,7 +103,7 @@ log_messages_read(struct log * log)
 		enum log_message_type	type;
 		gchar **		splits;
 
-		splits = g_strsplit_set(line->str, " \n", 4);
+		splits = g_strsplit(line->str, " ", 3);
 		if (splits[0][0] != '[') {
 			g_strfreev(splits);
 			continue;
@@ -122,6 +123,8 @@ log_messages_read(struct log * log)
 			g_strfreev(splits);
 			continue;
 		}
+		/* remove end of line */
+		splits[2][strlen(splits[2])-1] = '\0';
 		message = log_message_new(type, splits[1], splits[2]);
 		messages = g_list_prepend(messages, message);
 

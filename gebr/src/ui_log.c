@@ -66,15 +66,13 @@ log_setup_ui(void)
 	gtk_widget_set_size_request(GTK_WIDGET(scrolled_win), 180, 130);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_win), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_container_add(GTK_CONTAINER(ui_log->widget), scrolled_win);
-	ui_log->viewport = gtk_viewport_new(NULL, NULL);
-	gtk_container_add(GTK_CONTAINER(scrolled_win), ui_log->viewport);
 
 	ui_log->store = gtk_list_store_new(LOG_N_COLUMN,
-					GDK_TYPE_PIXBUF,	/* Icon		*/
-					G_TYPE_STRING,		/* Date		*/
-					G_TYPE_STRING);		/* struct job	*/
+		GDK_TYPE_PIXBUF,	/* Icon		*/
+		G_TYPE_STRING,		/* Date		*/
+		G_TYPE_STRING);		/* struct job	*/
 	ui_log->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_log->store));
-	gtk_container_add(GTK_CONTAINER(ui_log->viewport), ui_log->view);
+	gtk_container_add(GTK_CONTAINER(scrolled_win), ui_log->view);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_log->view), FALSE);
 	g_signal_connect(GTK_OBJECT(ui_log->view), "cursor-changed",
 		GTK_SIGNAL_FUNC(log_clicked), NULL);
@@ -129,10 +127,8 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 {
 	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
+	GtkTreePath *		path;
 	GdkPixbuf *		pixbuf;
-
-	GtkAdjustment *		adjustment;
-	gdouble			upper, page_size;
 
 	switch (message->type) {
 	case LOG_START:
@@ -165,10 +161,7 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_log->view));
 	gtk_tree_selection_select_iter(selection, &iter);
 	/* scroll to end */
-	adjustment = gtk_viewport_get_vadjustment(GTK_VIEWPORT(ui_log->viewport));
-	g_object_get(G_OBJECT(adjustment),
-		"upper", &upper,
-		"page-size", &page_size,
-		NULL);
-	gtk_adjustment_set_value(adjustment, upper/2);
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(ui_log->store), &iter);
+	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(ui_log->view), path, NULL, FALSE, 0, 0);
+	gtk_tree_path_free(path);
 }

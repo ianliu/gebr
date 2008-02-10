@@ -33,7 +33,6 @@ enum {
 struct ui_log {
 	GtkWidget *		widget;
 
-	GtkWidget *		viewport;
 	GtkListStore *		store;
 	GtkWidget *		view;
 };

@@ -73,7 +73,7 @@ project_line_setup_ui(void)
 	GtkTreeViewColumn *		col;
 	GtkCellRenderer *		renderer;
 
-	GtkWidget *			scrolledwin;
+	GtkWidget *			scrolled_win;
 	GtkWidget *			hpanel;
 	GtkWidget *			frame;
 	GtkWidget *			infopage;
@@ -87,16 +87,16 @@ project_line_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(ui_project_line->widget), hpanel);
 
 	/* Left side */
-	scrolledwin = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_paned_pack1(GTK_PANED(hpanel), scrolledwin, FALSE, FALSE);
-	gtk_widget_set_size_request(scrolledwin, 300, -1);
+	scrolled_win = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_win), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_paned_pack1(GTK_PANED(hpanel), scrolled_win, FALSE, FALSE);
+	gtk_widget_set_size_request(scrolled_win, 300, -1);
 
 	ui_project_line->store = gtk_tree_store_new(PL_N_COLUMN,
 						G_TYPE_STRING,  /* Name (title for libgeoxml) */
 						G_TYPE_STRING); /* Filename */
 	ui_project_line->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_project_line->store));
-	gtk_container_add(GTK_CONTAINER(scrolledwin), ui_project_line->view);
+	gtk_container_add(GTK_CONTAINER(scrolled_win), ui_project_line->view);
 
 	/* Projects/lines column */
 	renderer = gtk_cell_renderer_text_new();
