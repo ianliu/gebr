@@ -193,8 +193,11 @@ server_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * ui_serve
 
 		break;
 	}
+	case GTK_RESPONSE_DELETE_EVENT:
+		if (dialog != GTK_DIALOG(gebr.ui_server_list->common.dialog))
+			break;
 	case GEBR_SERVER_CLOSE: /* Only for server list */
-		gtk_widget_hide(ui_server_common->dialog);
+		gtk_widget_hide(gebr.ui_server_list->common.dialog);
 		gebr_config_save();
 		break;
 	case GEBR_SERVER_ADD_LOCAL:

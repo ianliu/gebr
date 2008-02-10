@@ -94,12 +94,10 @@ gebr_init(int argc, char ** argv)
 	if (menu_refresh_needed() == TRUE) {
 		menu_list_create_index();
 		menu_list_populate();
-		puts("here");
 	}
 
 	/* frees */
 	g_string_free(log_filename, TRUE);
-
 }
 
 /*

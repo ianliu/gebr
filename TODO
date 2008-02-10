@@ -9,14 +9,6 @@ GêBR:
 
   * Conferir/Corrigir o servidor
 
-  * Link para a URL do programa.
-
-  * Para servidores remotos poderia acontecer de ser necessário logar com
-  outro usuário. Então, no cadastramento de um servidor, deveríamos ter
-  o cuidado de armazenar o usuário também. Outra opção seria cadastrar
-  o servidor como usuario@server, porém temos que ter isso em mente e
-  fazer o tratamento adequado.
-
   * Se houver dois menus distintos com o mesmo nome de arquivo,
   problema! Por exemplo, se o usuário pegar um menu do sistema e
   coloca-lo na sua pasta local para edita-lo, gerando uma versão
