@@ -14,20 +14,6 @@ GêBR:
   coloca-lo na sua pasta local para edita-lo, gerando uma versão
   própria.
 
-  * Criar uma widget na janela principal para exibir o log, substituindo a
-  atual statusbar. Esta widget seria uma janela com barra de scroll e
-  exibiria sequencialmente todos as mensagens e ainda gravaria tudo o
-  que fosse escrito em um arquivo de log (~/.gebr/gebr.log), que seria
-  recarregado ao início do programa. O arquivo de log poderia ser
-  apagado por uma opção no menu File. Mensagens de erro apareceriam em
-  vermelho. Início e término de execução da GêBR seriam marcados. O
-  arquivo será texto porém com marcas para indicar o highlight na
-  tela. Sugestão:
-  [STR] Início da GêBR
-  [END] Término da GêBR
-  [MSG] Mensagens gerais
-  [ERR] Mensagens de erro
-
   ? Opção nas preferências para shell (Será?)
 
 GêBR Daemon:
