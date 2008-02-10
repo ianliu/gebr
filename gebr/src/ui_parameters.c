@@ -138,7 +138,7 @@ parameters_configure_setup_ui(void)
 	hbox = gtk_hbox_new(FALSE, 3);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(ui_parameters->dialog)->vbox), hbox, FALSE, TRUE, 5);
 	/* program description */
-	label = gtk_label_new(geoxml_program_get_title(GEOXML_PROGRAM(program)));
+	label = gtk_label_new(geoxml_program_get_description(GEOXML_PROGRAM(program)));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 5);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	/* program URL */
