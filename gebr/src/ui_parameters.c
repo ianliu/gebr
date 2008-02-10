@@ -338,7 +338,7 @@ parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_param
 		/* get the program and its path on menu */
 		geoxml_flow_get_program(gebr.flow, &program, index);
 		help = menu_get_help_from_program_ref(GEOXML_PROGRAM(program));
-		help_show(geoxml_program_get_help(GEOXML_PROGRAM(program)), _("Program help"));
+		help_show(help->str, _("Program help"));
 
 		g_string_free(help, TRUE);
 		return;

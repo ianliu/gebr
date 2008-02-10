@@ -20,6 +20,7 @@ gebrmenu_DATA = \
 		b2a.mnu             \
 		df.mnu		    \
 		gbbeam.mnu	    \
+		grace.mnu           \
 		segyread.mnu        \
 		segywrite.mnu       \
 		sleep.mnu           \
