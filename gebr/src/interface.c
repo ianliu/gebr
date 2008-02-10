@@ -143,9 +143,9 @@ assembly_interface(void)
 		GTK_SIGNAL_FUNC(switch_page), NULL);
 
 	/* Create a status bar */
-	gebr.statusbar = gtk_statusbar_new();
-	gtk_widget_show_all(gebr.statusbar);
-	gtk_box_pack_end(GTK_BOX(vboxmain), gebr.statusbar, FALSE, FALSE, 0);
+	gebr.ui_log = log_setup_ui();
+	gtk_widget_show_all(gebr.ui_log->widget);
+	gtk_box_pack_end(GTK_BOX(vboxmain), gebr.ui_log->widget, FALSE, FALSE, 0);
 
 	switch_page(NULL, NULL, 0);
 }

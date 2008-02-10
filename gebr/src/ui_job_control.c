@@ -77,7 +77,7 @@ job_control_setup_ui(void)
 	GtkWidget *			button;
 
 	GtkWidget *			hpanel;
-	GtkWidget *			scrolledwin;
+	GtkWidget *			scrolled_win;
 	GtkWidget *			frame;
 
 	GtkTreeViewColumn *		col;
@@ -170,9 +170,9 @@ job_control_setup_ui(void)
 	frame = gtk_frame_new("Jobs");
 	gtk_paned_pack1(GTK_PANED(hpanel), frame, FALSE, FALSE);
 
-	scrolledwin = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(frame), scrolledwin);
+	scrolled_win = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_win), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_container_add(GTK_CONTAINER(frame), scrolled_win);
 
 	ui_job_control->store = gtk_list_store_new(JC_N_COLUMN,
 					GDK_TYPE_PIXBUF,	/* Icon		*/
@@ -195,8 +195,8 @@ job_control_setup_ui(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_job_control->view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", JC_TITLE);
 
-	gtk_container_add(GTK_CONTAINER(scrolledwin), ui_job_control->view);
-	gtk_widget_set_size_request(GTK_WIDGET(scrolledwin), 180, 30);
+	gtk_container_add(GTK_CONTAINER(scrolled_win), ui_job_control->view);
+	gtk_widget_set_size_request(GTK_WIDGET(scrolled_win), 180, 30);
 
 	/*
 	 * Right side
@@ -207,9 +207,9 @@ job_control_setup_ui(void)
 	ui_job_control->label = gtk_label_new("");
 	gtk_box_pack_start(GTK_BOX(vbox), ui_job_control->label, FALSE, TRUE, 0);
 
-	scrolledwin = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_end(GTK_BOX(vbox), scrolledwin, TRUE, TRUE, 0);
+	scrolled_win = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_win), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_end(GTK_BOX(vbox), scrolled_win, TRUE, TRUE, 0);
 
 	ui_job_control->text_buffer = gtk_text_buffer_new(NULL);
 	text_view = gtk_text_view_new_with_buffer(ui_job_control->text_buffer);
@@ -229,7 +229,7 @@ job_control_setup_ui(void)
 
 	}
 	ui_job_control->text_view = text_view;
-	gtk_container_add(GTK_CONTAINER(scrolledwin), text_view);
+	gtk_container_add(GTK_CONTAINER(scrolled_win), text_view);
 
 	return ui_job_control;
 }

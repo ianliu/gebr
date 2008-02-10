@@ -23,17 +23,17 @@
 #include <glib.h>
 
 enum log_message_type {
-	LOG_START, LOG_END, LOG_INFO, LOG_ERROR, LOG_WARNING, LOG_DEBUG
+	LOG_START, LOG_END, LOG_INFO, LOG_ERROR, LOG_WARNING, LOG_DEBUG, LOG_MSG
 };
 
 struct log_message {
 	enum log_message_type	type;
-	GString *		string;
+	GString *		date;
+	GString *		message;
 };
 
 struct log {
 	GIOChannel *	io_channel;
-	GList *		messages;
 };
 
 struct log *
@@ -41,6 +41,18 @@ log_open(const gchar * path);
 
 void
 log_close(struct log * log);
+
+struct log_message *
+log_message_new(enum log_message_type type, const gchar * date, const gchar * message);
+
+void
+log_message_free(struct log_message * message);
+
+GList *
+log_messages_read(struct log * log);
+
+void
+log_messages_free(GList * messages);
 
 void
 log_add_message(struct log * log, enum log_message_type type, const gchar * message);

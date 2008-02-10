@@ -27,13 +27,6 @@
  * Internal functions
  */
 
-void
-log_messages_free_each(struct log_message * message)
-{
-	g_string_free(message->string, TRUE);
-	g_free(message);
-}
-
 /*
  * Library functions
  */
@@ -42,12 +35,9 @@ struct log *
 log_open(const gchar * path)
 {
 	struct log *	log;
-	GIOStatus	io_status;
-
-	GString *	line;
 	GError *	error;
 
-	/* does it exist? */
+	/* does it exist? if not, create it */
 	if (g_access(path, F_OK)) {
 		FILE *	fp;
 
@@ -55,33 +45,37 @@ log_open(const gchar * path)
 		fclose(fp);
 	}
 
-	log = g_malloc(sizeof(log));
-	line = g_string_new(NULL);
 	error = NULL;
+	log = g_malloc(sizeof(struct log));
 	*log = (struct log) {
 		.io_channel = g_io_channel_new_file(path, "r+", &error),
-		.messages = NULL
 	};
-
-// 	while (1) {
-// 		GString *	tmp;
-// 		GError *	error;
-//
-// 		error = NULL;
-// 		tmp = g_string_new(NULL);
-// 		io_status = g_io_channel_read_line_string(log->io_channel, line, NULL, &error);
-// 		if (io_status != G_IO_STATUS_EOF) {
-// 			struct log_message * log
-// 		} else {
-// 			break;
-// 		}
-// 	}
-	/* FIXME: */
 	g_io_channel_seek_position(log->io_channel, 0, G_SEEK_END, &error);
 
-	g_string_free(line, TRUE);
-
 	return log;
+}
+
+struct log_message *
+log_message_new(enum log_message_type type, const gchar * date, const gchar * message)
+{
+	struct log_message *	log_message;
+
+	log_message = g_malloc(sizeof(struct log_message));
+	*log_message = (struct log_message) {
+		.type = type,
+		.date = g_string_new(date),
+		.message = g_string_new(message)
+	};
+
+	return log_message;
+}
+
+void
+log_message_free(struct log_message * message)
+{
+	g_string_free(message->date, TRUE);
+	g_string_free(message->message, TRUE);
+	g_free(message);
 }
 
 void
@@ -89,10 +83,63 @@ log_close(struct log * log)
 {
 	g_io_channel_unref(log->io_channel);
 
-	g_list_foreach(log->messages, (GFunc)log_messages_free_each, NULL);
-	g_list_free(log->messages);
-
 	g_free(log);
+}
+
+GList *
+log_messages_read(struct log * log)
+{
+	GList *		messages;
+	GString *	line;
+	GError *	error;
+
+	error = NULL;
+	messages = NULL;
+	line = g_string_new(NULL);
+	g_io_channel_seek_position(log->io_channel, 0, G_SEEK_SET, &error);
+	while (g_io_channel_read_line_string(log->io_channel, line, NULL, &error) == G_IO_STATUS_NORMAL) {
+		struct log_message *	message;
+		enum log_message_type	type;
+		gchar **		splits;
+
+		splits = g_strsplit_set(line->str, " \n", 4);
+		if (splits[0][0] != '[') {
+			g_strfreev(splits);
+			continue;
+		}
+
+		if (!g_ascii_strcasecmp(splits[0], "[ERR]"))
+			type = LOG_ERROR;
+		else if (!g_ascii_strcasecmp(splits[0], "[WARN]"))
+			type = LOG_WARNING;
+		else if (!g_ascii_strcasecmp(splits[0], "[INFO]"))
+			type = LOG_INFO;
+		else if (!g_ascii_strcasecmp(splits[0], "[STR]"))
+			type = LOG_START;
+		else if (!g_ascii_strcasecmp(splits[0], "[END]"))
+			type = LOG_END;
+		else {
+			g_strfreev(splits);
+			continue;
+		}
+		message = log_message_new(type, splits[1], splits[2]);
+		messages = g_list_prepend(messages, message);
+
+		g_strfreev(splits);
+	}
+	messages = g_list_reverse(messages);
+	g_io_channel_seek_position(log->io_channel, 0, G_SEEK_END, &error);
+
+	g_string_free(line, TRUE);
+
+	return messages;
+}
+
+void
+log_messages_free(GList * messages)
+{
+	g_list_foreach(messages, (GFunc)log_message_free, NULL);
+	g_list_free(messages);
 }
 
 void

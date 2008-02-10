@@ -41,6 +41,7 @@ gebr_SOURCES = main.c \
 	ui_project_line.c \
 	ui_flow_browse.c \
 	ui_flow_edition.c \
+	ui_log.c \
 	ui_job_control.c \
 	ui_preferences.c \
 	ui_server.c
@@ -66,6 +67,7 @@ noinst_HEADERS = \
 	ui_flow_browse.h \
 	ui_flow_edition.h \
 	ui_job_control.h \
+	ui_log.h \
 	ui_preferences.h \
 	ui_server.h
 EXTRA_DIST = gebr.ggo ${noinst_HEADERS}

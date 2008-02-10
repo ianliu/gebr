@@ -31,6 +31,7 @@
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
 #include "ui_job_control.h"
+#include "ui_log.h"
 #include "ui_preferences.h"
 #include "ui_server.h"
 
@@ -41,7 +42,6 @@ struct gebr {
 	GtkWidget *			window;
 	GtkWidget *			menu[MENUBAR_N];
 	GtkWidget *			notebook;
-	GtkWidget *			statusbar;
 	struct about			about;
 	/* for strange things ;) */
 	GtkWidget *			invisible;
@@ -63,6 +63,7 @@ struct gebr {
 	struct ui_flow_browse *		ui_flow_browse;
 	struct ui_flow_edition *	ui_flow_edition;
 	struct ui_job_control *		ui_job_control;
+	struct ui_log *			ui_log;
 	struct ui_server_list *		ui_server_list;
 
 	struct gebr_config {
@@ -92,6 +93,9 @@ struct gebr {
 		GdkPixbuf *		stock_execute;
 		GdkPixbuf *		stock_connect;
 		GdkPixbuf *		stock_disconnect;
+		GdkPixbuf *		stock_go_back;
+		GdkPixbuf *		stock_go_forward;
+		GdkPixbuf *		stock_info;
 	} pixmaps;
 };
 
@@ -100,6 +104,9 @@ gebr_init(int argc, char ** argv);
 
 gboolean
 gebr_quit(void);
+
+void
+gebr_log_load(void);
 
 void
 gebr_config_load(int argc, char ** argv);

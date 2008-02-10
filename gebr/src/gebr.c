@@ -31,6 +31,7 @@
 #include <glib/gstdio.h>
 
 #include <misc/utils.h>
+#include <misc/date.h>
 
 #include "gebr.h"
 #include "support.h"
@@ -55,22 +56,15 @@ struct gebr gebr;
 void
 gebr_init(int argc, char ** argv)
 {
-	GString *	log_filename;
-
 	/* initialization */
 	gebr.doc = NULL;
 	gebr.project = NULL;
 	gebr.line = NULL;
 	gebr.flow = NULL;
-	log_filename = g_string_new(NULL);
 	protocol_init();
 
 	/* check/create config dir */
 	gebr_create_config_dirs();
-
-	/* log */
-	g_string_printf(log_filename, "%s/.gebr/log/gebr.log", getenv("HOME"));
-	gebr.log = log_open(log_filename->str);
 
 	/* allocating list of temporary files */
 	gebr.tmpfiles = g_slist_alloc();
@@ -83,8 +77,12 @@ gebr_init(int argc, char ** argv)
 	gebr.pixmaps.stock_execute = gtk_widget_render_icon(gebr.invisible, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 	gebr.pixmaps.stock_connect = gtk_widget_render_icon(gebr.invisible, GTK_STOCK_CONNECT, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 	gebr.pixmaps.stock_disconnect = gtk_widget_render_icon(gebr.invisible, GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
+	gebr.pixmaps.stock_go_back = gtk_widget_render_icon(gebr.invisible, GTK_STOCK_GO_BACK, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
+	gebr.pixmaps.stock_go_forward = gtk_widget_render_icon(gebr.invisible, GTK_STOCK_GO_FORWARD, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
+	gebr.pixmaps.stock_info = gtk_widget_render_icon(gebr.invisible, GTK_STOCK_INFO, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
-	/* message */
+	/* log */
+	gebr_log_load();
 	gebr_message(LOG_START, TRUE, TRUE, _("GêBR Initiating..."));
 
 	/* finally the config. file */
@@ -95,9 +93,6 @@ gebr_init(int argc, char ** argv)
 		menu_list_create_index();
 		menu_list_populate();
 	}
-
-	/* frees */
-	g_string_free(log_filename, TRUE);
 }
 
 /*
@@ -171,11 +166,41 @@ gebr_quit(void)
 	g_object_unref(gebr.pixmaps.stock_execute);
 	g_object_unref(gebr.pixmaps.stock_connect);
 	g_object_unref(gebr.pixmaps.stock_disconnect);
+	g_object_unref(gebr.pixmaps.stock_go_back);
+	g_object_unref(gebr.pixmaps.stock_go_forward);
+	g_object_unref(gebr.pixmaps.stock_info);
 	gtk_widget_destroy(gebr.invisible);
 
 	gtk_main_quit();
 
 	return FALSE;
+}
+
+/*
+ * Function: gebr_config_load
+ * Initialize log on GUI
+ */
+void
+gebr_log_load(void)
+{
+	GString *	log_filename;
+	GList *		messages;
+	GList *		i;
+
+	log_filename = g_string_new(NULL);
+	g_string_printf(log_filename, "%s/.gebr/log/gebr.log", getenv("HOME"));
+	gebr.log = log_open(log_filename->str);
+
+	messages = log_messages_read(gebr.log);
+	i = messages;
+	while (i != NULL) {
+		log_add_message_to_list(gebr.ui_log, (struct log_message *)i->data);
+		i = g_list_next(i);
+	}
+
+	/* frees */
+	g_string_free(log_filename, TRUE);
+	log_messages_free(messages);
 }
 
 /*
@@ -308,8 +333,8 @@ gebr_config_save(void)
 void
 gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...)
 {
-	gchar *		string;
-	va_list		argp;
+	gchar *			string;
+	va_list			argp;
 
 	va_start(argp, message);
 	string = g_strdup_vprintf(message, argp);
@@ -319,13 +344,20 @@ gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_
 	if (type == LOG_DEBUG)
 		g_print("%s\n", string);
 	else if (in_statusbar)
-		gtk_statusbar_push(GTK_STATUSBAR(gebr.statusbar), 0, string);
+		log_set_message(gebr.ui_log, string);
 #else
 	if (in_statusbar)
-		gtk_statusbar_push(GTK_STATUSBAR(gebr.statusbar), 0, string);
+		log_set_message(gebr.ui_log, string);
 #endif
-	if (in_log_file)
+	if (in_log_file) {
+		struct log_message *	log_message;
+
+		log_message = log_message_new(type, iso_date(), string);
 		log_add_message(gebr.log, type, string);
+		log_add_message_to_list(gebr.ui_log, log_message);
+
+		log_message_free(log_message);
+	}
 
 	g_free(string);
 }
