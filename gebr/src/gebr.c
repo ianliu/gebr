@@ -90,6 +90,13 @@ gebr_init(int argc, char ** argv)
 	/* finally the config. file */
 	gebr_config_load(argc, argv);
 
+	/* check for a menu list change */
+	if (menu_refresh_needed() == TRUE) {
+		menu_list_create_index();
+		menu_list_populate();
+		puts("here");
+	}
+
 	/* frees */
 	g_string_free(log_filename, TRUE);
 

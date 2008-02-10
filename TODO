@@ -8,22 +8,14 @@ Geral:
 GêBR:
 
   * Conferir/Corrigir o servidor
-		  
-  * Link para a URL do programa.
 
-  * Verificar o que acontece quando há um servidor remoto cadastrado
-  mas a máquina cliente está fora da rede. Acrescentar alguma
-  tolerência para as tentativas de conexão.
+  * Link para a URL do programa.
 
   * Para servidores remotos poderia acontecer de ser necessário logar com
   outro usuário. Então, no cadastramento de um servidor, deveríamos ter
   o cuidado de armazenar o usuário também. Outra opção seria cadastrar
-  o servidor como usuario@server, porém temos que ter isso em mente e 
+  o servidor como usuario@server, porém temos que ter isso em mente e
   fazer o tratamento adequado.
-
-  * Deteção esperta de necessidade de atualização do índice dos
-  menus. Checagem de datas de arquivos em oposição à data do índice e
-  de arquivos a mais ou a menos.
 
   * Se houver dois menus distintos com o mesmo nome de arquivo,
   problema! Por exemplo, se o usuário pegar um menu do sistema e
@@ -60,6 +52,8 @@ GêBRME:
   * Quando um parâmetro do tipo arquivo é marcado como "list" na gebr não
   aparece mais o botão de browse para arquivo.
 
+  * Atualizar vers�o do DTD no template
+
   * Port para 0.2.2. Label para enum, suporte a grupos, digitos para range.
 
 LibGeBR:
@@ -85,6 +79,8 @@ LibGeBR:
 	  indent
 	  modify
 	  bare
+
+  * Criar um validador sem�ntico para fluxos. Implement�-lo na G�BRME
 
 DONE:
 

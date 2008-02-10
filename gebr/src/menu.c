@@ -20,6 +20,9 @@
  *
  */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -107,6 +110,93 @@ menu_get_path(const gchar * filename)
 	return NULL;
 
 out:	return path;
+}
+
+/*
+ * Function: menu_refresh_needed
+ * Create a list of filenames in _directory_
+ */
+void
+menu_ls(const gchar * directory, time_t * mod_time)
+{
+	DIR *		dir;
+	struct dirent *	file;
+	GString *	path;
+
+	/* initialization */
+	path = g_string_new(NULL);
+	if ((dir = opendir(directory)) == NULL)
+		return;
+
+	while ((file = readdir(dir)) != NULL) {
+		struct stat	file_stat;
+
+		if (fnmatch("*.mnu", file->d_name, 1))
+			continue;
+
+		g_string_printf(path, "%s/%s", directory, file->d_name);
+		stat(path->str, &file_stat);
+		if (*mod_time < file_stat.st_mtime)
+			*mod_time = file_stat.st_mtime;
+	}
+
+	closedir(dir);
+	g_string_free(path, TRUE);
+}
+
+/*
+ * Function: menu_refresh_needed
+ * Return TRUE if there is change in menus' directories
+ */
+gboolean
+menu_refresh_needed(void)
+{
+	gboolean	needed;
+	GString *	index_path;
+
+	time_t		ls_time;
+	time_t		index_time;
+	time_t		menudirs_time;
+	struct stat	_stat;
+
+	needed = FALSE;
+
+	/* index path string */
+	index_path = g_string_new(NULL);
+	g_string_printf(index_path, "%s/.gebr/menus.idx", getenv("HOME"));
+	if (g_access(index_path->str, F_OK | R_OK) && menu_list_create_index() == FALSE)
+		goto out;
+
+	/*
+	 * Get menu directories and index modification times
+	 */
+	stat(index_path->str, &_stat);
+	index_time = _stat.st_mtime;
+	stat(GEBR_SYS_MENUS_DIR, &_stat);
+	menudirs_time = _stat.st_mtime;
+	stat(gebr.config.usermenus->str, &_stat);
+	if (menudirs_time < _stat.st_mtime)
+		menudirs_time = _stat.st_mtime;
+
+	/* compare modification times */
+	if (menudirs_time > index_time) {
+		needed = TRUE;
+		goto out;
+	}
+
+	/*
+	 * List menus and get the most recent modification time
+	 */
+	ls_time = 0;
+	menu_ls(GEBR_SYS_MENUS_DIR, &ls_time);
+	menu_ls(gebr.config.usermenus->str, &ls_time);
+
+	if (ls_time > index_time)
+		needed = TRUE;
+
+out:	g_string_free(index_path, TRUE);
+
+	return needed;
 }
 
 /*
