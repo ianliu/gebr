@@ -127,7 +127,9 @@ job_close(struct job * job)
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Can't close running job"));
 		return;
 	}
-	if (g_ascii_strcasecmp(job->jid->str, "0"))
+	if (comm_server_is_logged(job->server->comm) == FALSE) {
+		/* TODO */
+	} else if (g_ascii_strcasecmp(job->jid->str, "0"))
 		protocol_send_data(job->server->comm->protocol, job->server->comm->tcp_socket,
 			protocol_defs.clr_def, 1, job->jid->str);
 

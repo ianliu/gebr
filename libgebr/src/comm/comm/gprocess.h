@@ -92,6 +92,9 @@ g_process_kill(GProcess *);
 void
 g_process_terminate(GProcess *);
 
+void
+g_process_close_stdin(GProcess *);
+
 gulong
 g_process_stdout_bytes_available(GProcess *);
 

@@ -441,6 +441,7 @@ void
 job_run_flow(struct job * job, struct client * client)
 {
 	GString *		cmd_line;
+	GeoXmlSequence *	program;
 
 	/* initialization */
 	cmd_line = g_string_new(NULL);
@@ -459,6 +460,11 @@ job_run_flow(struct job * job, struct client * client)
 			G_CALLBACK(job_process_finished), job);
 	g_process_start(job->process, cmd_line);
 	g_string_assign(job->status, "running");
+
+	/* for program that waits stdin EOF (like sfmath) */
+	geoxml_flow_get_program(job->flow, &program, 0);
+	if (geoxml_program_get_stdin(GEOXML_PROGRAM(program)) == FALSE)
+		g_process_close_stdin(job->process);
 
 	/* frees */
 	g_string_free(cmd_line, TRUE);

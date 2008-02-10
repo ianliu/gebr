@@ -18,6 +18,7 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
@@ -87,17 +88,24 @@ G_DEFINE_TYPE(GProcess, g_process, G_TYPE_OBJECT)
  */
 
 static void
+__g_process_io_channel_free(GIOChannel ** io_channel)
+{
+	if (*io_channel != NULL) {
+		GError *	error;
+
+		error = NULL;
+		g_io_channel_shutdown(*io_channel, TRUE, &error);
+		g_io_channel_unref(*io_channel);
+		*io_channel = NULL;
+	}
+}
+
+static void
 __g_process_free(GProcess * process)
 {
-	GError *	error;
-
-	error = NULL;
-	g_io_channel_shutdown(process->stdin_io_channel, TRUE, &error);
-	g_io_channel_unref(process->stdin_io_channel);
-	g_io_channel_shutdown(process->stdout_io_channel, TRUE, &error);
-	g_io_channel_unref(process->stdout_io_channel);
-	g_io_channel_shutdown(process->stderr_io_channel, TRUE, &error);
-	g_io_channel_unref(process->stderr_io_channel);
+	__g_process_io_channel_free(&process->stdin_io_channel);
+	__g_process_io_channel_free(&process->stdout_io_channel);
+	__g_process_io_channel_free(&process->stderr_io_channel);
 }
 
 static void
@@ -125,8 +133,6 @@ __g_process_read_stdout_watch(GIOChannel * source, GIOCondition condition, GProc
 		return FALSE;
 	}
 	if (condition & G_IO_HUP) {
-		/* TODO: */
-		/* using g_child_add_watch instead */
 		return FALSE;
 	}
 
@@ -150,11 +156,6 @@ __g_process_read_stderr_watch(GIOChannel * source, GIOCondition condition, GProc
 		return FALSE;
 	}
 	if (condition & G_IO_HUP) {
-		/* TODO: */
-		/* FIXME: use g_child_add_watch */
-// 		__g_process_free(process);
-// 		__g_process_stop_state(process);
-// 		g_signal_emit(process, object_signals[FINISHED], 0);
 		return FALSE;
 	}
 
@@ -260,19 +261,17 @@ g_process_start(GProcess * process, GString * cmd_line)
 	gboolean	ret;
 	gchar **	argv;
 	gint		argc;
-	GPid		pid;
-	int		stdin_pipe[2];
-	int		stdout_pipe[2];
-	int		stderr_pipe[2];
+// 	int		stdin_pipe[2], stdout_pipe[2], stderr_pipe[2];
 	gint		stdin_fd, stdout_fd, stderr_fd;
 	GError *	error;
 
 	/* free previous start stuff */
-	if (process->stdin_io_channel != NULL)
-		__g_process_free(process);
+	__g_process_free(process);
 
+	ret = FALSE;
 	error = NULL;
 	g_shell_parse_argv(cmd_line->str, &argc, &argv, &error);
+	/* using glib */
 	ret = g_spawn_async_with_pipes(
 		NULL, /* working_directory */
 		argv,
@@ -283,31 +282,34 @@ g_process_start(GProcess * process, GString * cmd_line)
 		&process->pid,
 		&stdin_fd, &stdout_fd, &stderr_fd,
 		&error);
-	if (ret == FALSE) {
-
+	if (ret == FALSE)
 		goto out;
-	}
+	/* manually */
 // 	pipe(stdin_pipe);
 // 	pipe(stdout_pipe);
 // 	pipe(stderr_pipe);
-// 	pid = fork();
-// 	if (pid == 0) {
+// 	process->pid = fork();
+// 	if (process->pid == -1)
+// 		goto out;
+// 	if (process->pid == 0) {
 // 		close(stdin_pipe[1]);
 // 		close(stdout_pipe[0]);
 // 		close(stderr_pipe[0]);
 // 		dup2(stdin_pipe[0], 0);
 // 		dup2(stdout_pipe[1], 1);
 // 		dup2(stderr_pipe[1], 2);
-// 
-// 		if (execvp(argv[0], argv) == -1) {
-// 			ret = FALSE;
-// 			goto out;
-// 		}
+//
+// 		if (execvp(argv[0], argv) == -1)
+// 			exit(0);
 // 	}
+// 	close(stdin_pipe[0]);
+// 	close(stdout_pipe[1]);
+// 	close(stderr_pipe[1]);
 // 	stdin_fd = stdin_pipe[1];
 // 	stdout_fd = stdout_pipe[0];
 // 	stderr_fd = stderr_pipe[0];
 
+	process->is_running = TRUE;
 	process->stdout_watch_id = process->stderr_watch_id = 0;
 	g_child_watch_add(process->pid, (GChildWatchFunc)__g_process_finished_watch, process);
 	/* create io channels */
@@ -335,6 +337,7 @@ g_process_start(GProcess * process, GString * cmd_line)
 	if (g_process_stderr_bytes_available(process))
 		g_signal_emit(process, object_signals[READY_READ_STDERR], 0);
 
+	ret = TRUE;
 out:	g_strfreev(argv);
 	return ret;
 }
@@ -361,6 +364,14 @@ g_process_terminate(GProcess * process)
 		return;
 	kill(-process->pid, SIGTERM);
 	g_spawn_close_pid(process->pid);
+}
+
+void
+g_process_close_stdin(GProcess * process)
+{
+	if (process->is_running == FALSE)
+		return;
+	__g_process_io_channel_free(&process->stdin_io_channel);
 }
 
 gulong

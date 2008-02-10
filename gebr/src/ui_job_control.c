@@ -377,6 +377,10 @@ job_control_cancel(void)
 		gebr_message(LOG_WARNING, TRUE, FALSE, _("Job is not running"));
 		return;
 	}
+	if (comm_server_is_logged(job->server->comm) == FALSE) {
+		gebr_message(LOG_WARNING, TRUE, FALSE, _("You are not connected to job's server"));
+		return;
+	}
 	if (confirm_action_dialog(_("Terminate job"), _("Are you sure you want to terminate job '%s'?"), job->title->str) == FALSE)
 		return;
 
@@ -466,6 +470,10 @@ job_control_stop(void)
 
 	if (job->status != JOB_STATUS_RUNNING) {
 		gebr_message(LOG_WARNING, TRUE, FALSE, _("Job is not running"));
+		return;
+	}
+	if (comm_server_is_logged(job->server->comm) == FALSE) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("You are not connected to job's server"));
 		return;
 	}
 	if (confirm_action_dialog(_("Kill job"), _("Are you sure you want to kill job '%s'?"), job->title->str) == FALSE)

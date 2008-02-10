@@ -91,6 +91,7 @@ server_ssh_question(const gchar * title, const gchar * message)
 static void
 server_disconnected(GTcpSocket * tcp_socket, struct server * server)
 {
+	server->comm->protocol->logged = FALSE;
 	server_list_updated_status(server);
 }
 
