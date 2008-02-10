@@ -45,6 +45,19 @@
 static void
 parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_parameters);
 
+static void
+on_link_button_clicked(GtkButton * button, GeoXmlProgram * program)
+{
+	GString * cmd_line;
+
+	cmd_line = g_string_new(NULL);
+	g_string_printf(cmd_line, "%s %s &", gebr.config.browser->str, geoxml_program_get_url(program));
+
+	system(cmd_line->str);
+
+	g_string_free(cmd_line, TRUE);
+}
+
 /*
  * Section: Public
  * Public functions.
@@ -70,6 +83,7 @@ parameters_configure_setup_ui(void)
 
 	GtkWidget *			label;
 	GtkWidget *			vbox;
+	GtkWidget *			hbox;
 	GtkWidget *			scrolledwin;
 	GtkWidget *			viewport;
 
@@ -87,10 +101,11 @@ parameters_configure_setup_ui(void)
 	/* alloc struct */
 	ui_parameters = g_malloc(sizeof(struct ui_parameters));
 
-	/* get program index */
-	path = gtk_tree_model_get_path (model, &iter);
+	/* get program index and load it */
+	path = gtk_tree_model_get_path(model, &iter);
 	ui_parameters->program_index = (int)atoi(gtk_tree_path_to_string(path));
 	gtk_tree_path_free(path);
+	geoxml_flow_get_program(gebr.flow, &program, ui_parameters->program_index);
 
 	ui_parameters->dialog = gtk_dialog_new_with_buttons(_("Parameters"),
 						GTK_WINDOW(gebr.window),
@@ -107,10 +122,39 @@ parameters_configure_setup_ui(void)
 	g_signal_connect(ui_parameters->dialog, "response",
 			G_CALLBACK (parameters_actions), ui_parameters);
 
-	/* flow title */
+	/* program title in bold */
 	label = gtk_label_new(NULL);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(ui_parameters->dialog)->vbox), label, FALSE, TRUE, 5);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0);
+	{
+		gchar *	markup;
+
+		markup = g_markup_printf_escaped("<big><b>%s</b></big>",
+			geoxml_program_get_title(GEOXML_PROGRAM(program)));
+		gtk_label_set_markup(GTK_LABEL (label), markup);
+		g_free(markup);
+	}
+
+	hbox = gtk_hbox_new(FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(ui_parameters->dialog)->vbox), hbox, FALSE, TRUE, 5);
+	/* program description */
+	label = gtk_label_new(geoxml_program_get_title(GEOXML_PROGRAM(program)));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 5);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	/* program URL */
+	if (strlen(geoxml_program_get_url(GEOXML_PROGRAM(program)))) {
+		GtkWidget *	alignment;
+		GtkWidget *	button;
+
+		alignment = gtk_alignment_new(1, 0, 0, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), alignment, TRUE, TRUE, 5);
+		button = gtk_button_new_with_label(_("Link"));
+		gtk_container_add(GTK_CONTAINER(alignment), button);
+		gtk_misc_set_alignment(GTK_MISC(label), 1, 0);
+
+		g_signal_connect(button, "clicked",
+			G_CALLBACK(on_link_button_clicked), program);
+	}
 
 	/* scrolled window for parameters */
 	scrolledwin = gtk_scrolled_window_new (NULL, NULL);
@@ -121,24 +165,10 @@ parameters_configure_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER (scrolledwin), viewport);
 	gtk_container_add(GTK_CONTAINER (viewport), vbox);
 
-	/* starts reading program and its parameters */
-	geoxml_flow_get_program(gebr.flow, &program, ui_parameters->program_index);
 	parameters = geoxml_program_get_parameters(GEOXML_PROGRAM(program));
-
-	/* program title in bold */
-	{
-		gchar *	markup;
-
-		markup = g_markup_printf_escaped("<big><b>%s</b></big>",
-			geoxml_program_get_title(GEOXML_PROGRAM(program)));
-		gtk_label_set_markup(GTK_LABEL (label), markup);
-		g_free(markup);
-	}
-
+	parameter = geoxml_parameters_get_first_parameter(parameters);
 	ui_parameters->widgets_number = geoxml_parameters_get_number(parameters);
 	ui_parameters->widgets = g_malloc(sizeof(GtkWidget*)*ui_parameters->widgets_number);
-
-	parameter = geoxml_parameters_get_first_parameter(parameters);
 	for (i = 0; i < ui_parameters->widgets_number; ++i) {
 		enum GEOXML_PARAMETERTYPE	type;
 

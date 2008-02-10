@@ -255,12 +255,12 @@ server_list_setup_ui(void)
 					G_TYPE_POINTER);
 
 	dialog = gtk_dialog_new_with_buttons(_("Servers configuration"),
-						GTK_WINDOW(gebr.window),
-						GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-						GTK_STOCK_REMOVE, GEBR_SERVER_REMOVE,
-						GTK_STOCK_CLOSE, GEBR_SERVER_CLOSE,
-						GTK_STOCK_REFRESH, GEBR_SERVER_REFRESH,
-						NULL);
+		GTK_WINDOW(gebr.window),
+		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_STOCK_REMOVE, GEBR_SERVER_REMOVE,
+		GTK_STOCK_CLOSE, GEBR_SERVER_CLOSE,
+		GTK_STOCK_REFRESH, GEBR_SERVER_REFRESH,
+		NULL);
 	g_signal_connect(dialog, "delete-event",
 		G_CALLBACK(gtk_widget_hide_on_delete), NULL);
 	ui_server_list->common.dialog = dialog;
