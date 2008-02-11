@@ -42,6 +42,7 @@ struct _GtkFileEntry {
 	GtkWidget *	entry;
 
 	gboolean	choose_directory;
+	gboolean	do_overwrite_confirmation;
 };
 struct _GtkFileEntryClass {
 	GtkHBoxClass	parent;
@@ -58,6 +59,12 @@ gtk_file_entry_set_choose_directory(GtkFileEntry * file_entry, gboolean choose_d
 
 gboolean
 gtk_file_entry_get_choose_directory(GtkFileEntry * file_entry);
+
+void
+gtk_file_entry_set_do_overwrite_confirmation(GtkFileEntry * file_entry, gboolean do_overwrite_confirmation);
+
+gboolean
+gtk_file_entry_get_do_overwrite_confirmation(GtkFileEntry * file_entry);
 
 void
 gtk_file_entry_set_path(GtkFileEntry * file_entry, const gchar * path);

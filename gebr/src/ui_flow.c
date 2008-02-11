@@ -93,6 +93,7 @@ flow_io_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), ui_flow_io->input, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL,  3, 3);
 	/* read */
 	gtk_file_entry_set_path(GTK_FILE_ENTRY(ui_flow_io->input), geoxml_flow_io_get_input(gebr.flow));
+	gtk_file_entry_set_do_overwrite_confirmation(GTK_FILE_ENTRY(ui_flow_io->input), FALSE);
 
 	/* Output */
 	label = gtk_label_new(_("Output file"));

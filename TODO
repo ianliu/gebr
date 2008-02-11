@@ -36,10 +36,6 @@ GêBRME:
 
 LibGeBR:
 
-  * Retirar a pergunta de "overwrite" na abertura de arquivos na
-  tela de parâmetros de um programa e na abertura do arquivo
-  de input para fluxo.
-
   * Suporte para flow 0.2.2.
 
   * Parâmetros do tipo enum tem como subelemento "option", que é

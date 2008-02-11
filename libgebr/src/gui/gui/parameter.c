@@ -486,6 +486,7 @@ parameter_widget_new_file(GeoXmlParameter * parameter, gboolean use_default_valu
 		parameter_widget_get_value(parameter_widget));
 	gtk_file_entry_set_choose_directory(GTK_FILE_ENTRY(file_entry),
 		geoxml_program_parameter_get_file_be_directory(GEOXML_PROGRAM_PARAMETER(parameter)));
+	gtk_file_entry_set_do_overwrite_confirmation(GTK_FILE_ENTRY(file_entry), FALSE);
 
 	return parameter_widget;
 }
