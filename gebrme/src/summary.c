@@ -45,7 +45,7 @@ summary_help_edit(void)
 {
 	GString *	help;
 
-	help = help_edit(geoxml_document_get_help(GEOXML_DOC(gebrme.current)));
+	help = help_edit(geoxml_document_get_help(GEOXML_DOC(gebrme.current)), NULL);
 	if (help == NULL)
 		return;
 

@@ -70,13 +70,7 @@
 
 	    <!-- List of optional parameters -->
             <ul>
-              <li><span class="label">[text used as label for first
-              parameter]</span> detailed description for this
-              parameter.</li>
-
-              <li><span class="label">[text used as label for
-              second parameter]</span> detailed description for
-              this parameter.</li>
+              <li><span class="label">[label for parameter]</span> detailed description.</li>
             </ul>
           </div>
 	    

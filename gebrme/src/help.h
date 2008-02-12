@@ -19,6 +19,7 @@
 #define __HELP_H
 
 #include <glib.h>
+#include <geoxml.h>
 
 void
 help_fix_css(GString * help);
@@ -27,6 +28,6 @@ void
 help_show(const gchar * help);
 
 GString *
-help_edit(const gchar * help);
+help_edit(const gchar * help, GeoXmlProgram * program);
 
 #endif //__HELP_H

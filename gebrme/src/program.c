@@ -511,7 +511,7 @@ program_summary_help_edit(GtkButton * button, GeoXmlProgram * program)
 {
 	GString *	help;
 
-	help = help_edit(geoxml_program_get_help(program));
+	help = help_edit(geoxml_program_get_help(program), program);
 	geoxml_program_set_help(program, help->str);
 	g_string_free(help, TRUE);
 

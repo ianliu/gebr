@@ -45,14 +45,21 @@ help_fix_css(GString * help)
 }
 
 void
-help_subst_fields(GString * help)
+help_subst_fields(GString * help, GeoXmlProgram * program)
 {
-	gchar *		content;
-	gchar *		ptr;
-	gsize		pos;
+	gchar *		        content;
+	gchar *		        ptr;
+	gsize		        pos;
+	GeoXmlParameters *	parameters;
+	GeoXmlSequence *	parameter;
+	int                     npar;
+        int                     ipar;
 
 	/* Title replacement */
-	content = (gchar*)geoxml_document_get_title(GEOXML_DOC(gebrme.current));
+	if (program != NULL)
+		content = (gchar*)geoxml_program_get_title(program);
+	else
+		content = (gchar*)geoxml_document_get_title(GEOXML_DOC(gebrme.current));
 	if (strlen(content)) {
 		ptr = strstr(help->str, "Flow/Program Title");
 
@@ -65,7 +72,10 @@ help_subst_fields(GString * help)
 	}
 
 	/* Description replacement */
-	content = (gchar*)geoxml_document_get_description(GEOXML_DOC(gebrme.current));
+	if (program != NULL)
+		content = (gchar*)geoxml_program_get_description(program);
+	else
+		content = (gchar*)geoxml_document_get_description(GEOXML_DOC(gebrme.current));
 	if (strlen(content)) {
 		ptr = strstr(help->str, "Put here an one-line description");
 
@@ -100,6 +110,43 @@ help_subst_fields(GString * help)
 
 		g_string_free(catstr, TRUE);
 	}
+
+	/* Parameter's description replacement */
+	if (program != NULL)
+	{
+		GString *      label;
+
+		parameters = geoxml_program_get_parameters(program);
+		parameter = geoxml_parameters_get_first_parameter(parameters);
+		npar = geoxml_parameters_get_number(parameters);
+		
+		label = g_string_new(NULL);
+		for (ipar = 0; ipar < npar; ipar++){
+			g_string_append_printf(label, "              "
+					       "<li><span class=\"label\">[%s]</span>"
+					       " detailed description comes here.</li>\n\n",
+					       geoxml_program_parameter_get_label(GEOXML_PROGRAM_PARAMETER(parameter)));
+			geoxml_sequence_next(&parameter);
+		}
+		if ((ptr = strstr(help->str, "              "
+				  "<li><span class=\"label\">[label for parameter]</span>")) != NULL){
+			pos = (ptr - help->str)/sizeof(char);
+			g_string_erase(help, pos, 96);
+			g_string_insert(help, pos, label->str);
+		}
+		g_string_free(label, TRUE);
+	}
+	else{ /* strip parameter section for flow help */
+		if( (ptr = strstr(help->str, "          <div class=\"parameters\">")) != NULL){
+			pos = (ptr - help->str)/sizeof(char);
+			g_string_erase(help, pos, 1317);
+		}
+		if( (ptr = strstr(help->str, "            <li><a href=\"#par\">Parameters</a></li>")) != NULL){
+			pos = (ptr - help->str)/sizeof(char);
+			g_string_erase(help, pos, 52);
+		}
+	}
+	
 }
 
 /*
@@ -145,7 +192,7 @@ out:	g_string_free(html_path, FALSE);
 }
 
 GString *
-help_edit(const gchar * help)
+help_edit(const gchar * help, GeoXmlProgram * program)
 {
 	FILE *		fp;
 	GString *	html_path;
@@ -172,7 +219,7 @@ help_edit(const gchar * help)
 		fclose(fp);
 
 		/* Substitute title, description and categories */
-		help_subst_fields(prepared_html);
+		help_subst_fields(prepared_html, program);
 	}
 
 	/* CSS fix */
