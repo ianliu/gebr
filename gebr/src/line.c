@@ -253,6 +253,7 @@ line_load_flows(void)
 		flow_filename = (gchar*)geoxml_line_get_flow_source(GEOXML_LINE_FLOW(line_flow));
 		flow = GEOXML_FLOW(document_load(flow_filename));
 		if (flow == NULL) {
+			gebr_message(LOG_ERROR, TRUE, TRUE, _("Flow file %s corrupted. Ignoring"), flow_filename);
 			geoxml_sequence_next(&line_flow);
 			continue;
 		}
