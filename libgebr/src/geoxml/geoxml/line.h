@@ -103,6 +103,13 @@ typedef struct geoxml_line GeoXmlLine;
  */
 typedef struct geoxml_line_flow GeoXmlLineFlow;
 
+/**
+ *
+ *
+ * The GeoXmlLinePath struct contains private data only, and should be accessed using the functions below.
+ */
+typedef struct geoxml_line_path GeoXmlLinePath;
+
 #include "sequence.h"
 #include "macros.h"
 
@@ -170,6 +177,44 @@ geoxml_line_set_flow_source(GeoXmlLineFlow * line_flow, const gchar * source);
  */
 const gchar *
 geoxml_line_get_flow_source(GeoXmlLineFlow * line_flow);
+
+/**
+ * Creates a new path pathd as \p path in \p line and returns a pointer to it.
+ *
+ * If \p line is NULL nothing is done.
+ *
+ * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
+ */
+GeoXmlLinePath *
+geoxml_line_new_path(GeoXmlLine * line, const gchar * path);
+
+/**
+ * Creates a new path and append it to the list of path.
+ * Provided for convenience.
+ *
+ * \see geoxml_line_new_path
+ */
+GeoXmlLinePath *
+geoxml_line_append_path(GeoXmlLine * line, const gchar * path);
+
+/**
+ * Writes to \p path the \p index ieth path that belongs to \p line.
+ * If an error ocurred, the content of \p path is assigned to NULL.
+ *
+ * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR
+ *
+ * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
+ */
+int
+geoxml_line_get_path(GeoXmlLine * line, GeoXmlSequence ** path, gulong index);
+
+/**
+ * Get the number of path that \p line has.
+ *
+ * If \p line is NULL returns -1.
+ */
+glong
+geoxml_line_get_path_number(GeoXmlLine * line);
 
 /**
  * \deprecated

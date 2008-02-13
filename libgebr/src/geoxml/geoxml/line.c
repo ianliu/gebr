@@ -24,6 +24,7 @@
 #include "error.h"
 #include "xml.h"
 #include "types.h"
+#include "value_sequence.h"
 
 /*
  * internal structures and funcionts
@@ -34,6 +35,10 @@ struct geoxml_line {
 };
 
 struct geoxml_line_flow {
+	GdomeElement *		element;
+};
+
+struct geoxml_line_path {
 	GdomeElement *		element;
 };
 
@@ -114,6 +119,60 @@ geoxml_line_get_flow_source(GeoXmlLineFlow * line_flow)
 	if (line_flow == NULL)
 		return NULL;
 	return __geoxml_get_attr_value((GdomeElement*)line_flow, "source");
+}
+
+GeoXmlLinePath *
+geoxml_line_new_path(GeoXmlLine * line, const gchar * path)
+{
+	if (line == NULL || path == NULL)
+		return NULL;
+
+	GeoXmlLinePath *	line_path;
+
+	line_path = (GeoXmlLinePath*)__geoxml_new_element(
+		geoxml_document_root_element(GEOXML_DOC(line)), "path");
+	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(path), path);
+
+	return line_path;
+}
+
+GeoXmlLinePath *
+geoxml_line_append_path(GeoXmlLine * line, const gchar * path)
+{
+	if (line == NULL || path == NULL)
+		return NULL;
+
+	GeoXmlLinePath *	line_path;
+
+	line_path = (GeoXmlLinePath*)__geoxml_insert_new_element(
+		geoxml_document_root_element(GEOXML_DOC(line)), "path",
+		__geoxml_get_first_element(geoxml_document_root_element(GEOXML_DOC(line)), "io"));
+	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(path), path);
+
+	return line_path;
+}
+
+int
+geoxml_line_get_path(GeoXmlLine * line, GeoXmlSequence ** path, gulong index)
+{
+	if (line == NULL) {
+		*path = NULL;
+		return GEOXML_RETV_NULL_PTR;
+	}
+
+	*path = (GeoXmlSequence*)__geoxml_get_element_at(geoxml_document_root_element(GEOXML_DOC(line)), "path", index);
+
+	return (*path == NULL)
+		? GEOXML_RETV_INVALID_INDEX
+		: GEOXML_RETV_SUCCESS;
+}
+
+glong
+geoxml_line_get_paths_number(GeoXmlLine * line)
+{
+	if (line == NULL)
+		return -1;
+	return __geoxml_get_elements_number(geoxml_document_root_element(GEOXML_DOC(line)), "path");
 }
 
 void

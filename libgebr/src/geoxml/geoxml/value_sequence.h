@@ -40,14 +40,14 @@
  *
  * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
  * 	"GeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
- * 	"GeoXmlEnumOption" [ URL = "\ref GeoXmlEnumOption" ];
+ * 	"GeoXmlLinePath" [ URL = "\ref GeoXmlLinePath" ];
  * 	"GeoXmlCategory" [ URL = "\ref category.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
  * 	"GeoXmlSequence" -> "GeoXmlSequence";
- * 	"GeoXmlValueSequence" -> "GeoXmlEnumOption";
+ * 	"GeoXmlValueSequence" -> "GeoXmlLinePath";
  * 	"GeoXmlValueSequence" -> "GeoXmlCategory";
  * }
  * \enddot
