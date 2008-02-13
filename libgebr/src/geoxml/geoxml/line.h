@@ -214,7 +214,7 @@ geoxml_line_get_path(GeoXmlLine * line, GeoXmlSequence ** path, gulong index);
  * If \p line is NULL returns -1.
  */
 glong
-geoxml_line_get_path_number(GeoXmlLine * line);
+geoxml_line_get_paths_number(GeoXmlLine * line);
 
 /**
  * \deprecated

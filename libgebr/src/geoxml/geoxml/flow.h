@@ -231,7 +231,6 @@ geoxml_flow_get_programs_number(GeoXmlFlow * flow);
 
 /**
  * Creates a new category named as \p name in \p flow and returns a pointer to it.
- * \p category is appended to the list of categories.
  *
  * If \p flow is NULL nothing is done.
  *
