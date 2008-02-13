@@ -131,7 +131,7 @@ geoxml_line_new_path(GeoXmlLine * line, const gchar * path)
 
 	line_path = (GeoXmlLinePath*)__geoxml_new_element(
 		geoxml_document_root_element(GEOXML_DOC(line)), "path");
-	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(path), path);
+	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(line_path), path);
 
 	return line_path;
 }
@@ -147,7 +147,7 @@ geoxml_line_append_path(GeoXmlLine * line, const gchar * path)
 	line_path = (GeoXmlLinePath*)__geoxml_insert_new_element(
 		geoxml_document_root_element(GEOXML_DOC(line)), "path",
 		__geoxml_get_first_element(geoxml_document_root_element(GEOXML_DOC(line)), "io"));
-	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(path), path);
+	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(line_path), path);
 
 	return line_path;
 }
