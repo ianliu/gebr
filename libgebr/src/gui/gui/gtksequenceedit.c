@@ -167,7 +167,7 @@ gtk_sequence_edit_init(GtkSequenceEdit * sequence_edit)
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_widget_show(hbox);
-	gtk_box_pack_start(GTK_BOX(sequence_edit), hbox, TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(sequence_edit), hbox, FALSE, TRUE, 0);
 
 	sequence_edit->widget_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_widget_show(sequence_edit->widget_hbox);
