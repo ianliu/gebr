@@ -51,6 +51,7 @@ __geoxml_sequence_check(GeoXmlSequence * sequence)
 
 	name = gdome_el_nodeName((GdomeElement*)sequence, &exception);
 	return __geoxml_sequence_is_parameter(sequence) ||
+		(gboolean)!g_ascii_strcasecmp(name->str, "option") ||
 		(gboolean)!g_ascii_strcasecmp(name->str, "program") ||
 		(gboolean)!g_ascii_strcasecmp(name->str, "category") ||
 		(gboolean)!g_ascii_strcasecmp(name->str, "flow") ||
