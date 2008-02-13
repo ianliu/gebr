@@ -73,7 +73,7 @@ gtk_sequence_edit_set_property(GtkSequenceEdit * sequence_edit, guint property_i
 
 		scrolledwindow = gtk_scrolled_window_new(NULL, NULL);
 		gtk_widget_show(scrolledwindow);
-		gtk_box_pack_start(GTK_BOX(sequence_edit), scrolledwindow, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(sequence_edit), scrolledwindow, TRUE, TRUE, 0);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 		tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(sequence_edit->list_store));
@@ -173,7 +173,8 @@ gtk_sequence_edit_init(GtkSequenceEdit * sequence_edit)
 	gtk_widget_show(sequence_edit->widget_hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), sequence_edit->widget_hbox, TRUE, TRUE, 0);
 
-	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	button = gtk_button_new();
+	gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(GTK_STOCK_ADD, 1));
 	g_object_set(G_OBJECT(button), "relief", GTK_RELIEF_NONE, NULL);
 	gtk_widget_show(button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
