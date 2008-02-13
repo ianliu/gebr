@@ -81,8 +81,8 @@ gtk_file_entry_class_init(GtkFileEntryClass * class)
 	gobject_class->set_property = (typeof(gobject_class->set_property))gtk_file_entry_set_property;
 	gobject_class->get_property = (typeof(gobject_class->get_property))gtk_file_entry_get_property;
 
-	param_spec = g_param_spec_pointer("custumize-function",
-		"Custumize function", "Custumize GtkFileChooser of dialog",
+	param_spec = g_param_spec_pointer("customize-function",
+		"Customize function", "Customize GtkFileChooser of dialog",
 		G_PARAM_READWRITE);
 	g_object_class_install_property(gobject_class, CUSTOMIZE_FUNCTION, param_spec);
 
