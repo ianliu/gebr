@@ -195,8 +195,9 @@ project_list_populate(void)
 			line_source = geoxml_project_get_line_source(GEOXML_PROJECT_LINE(project_line));
 			line = GEOXML_LINE(document_load(line_source));
 			if (line == NULL) {
-				geoxml_sequence_remove(project_line);
-				geoxml_document_save(GEOXML_DOC(project), geoxml_document_get_filename(GEOXML_DOC(project)));
+				gebr_message(LOG_ERROR, TRUE, TRUE, _("Line file %s corrupted. Ignoring."),
+					     line_source);
+				geoxml_sequence_next(&project_line);
 				continue;
 			}
 

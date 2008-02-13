@@ -239,6 +239,13 @@ assembly_line_menu(void)
 	submenu = gtk_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), submenu);
 
+	/* Paths */
+	submenu = gtk_image_menu_item_new_with_label(_("Paths"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(submenu), gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, 1));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), submenu);
+	g_signal_connect(GTK_OBJECT(submenu), "activate",
+			GTK_SIGNAL_FUNC(on_line_path_activate), NULL);
+
 	/* Properties entry */
 	submenu = gtk_image_menu_item_new_from_stock(GTK_STOCK_PROPERTIES, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), submenu);

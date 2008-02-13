@@ -45,6 +45,10 @@ struct ui_project_line {
 		GtkWidget *	modified_label;
 		GtkWidget *	modified;
 
+		GtkWidget *     path_label;
+		GtkWidget *     path1;
+		GtkWidget *     path2;
+
 		GtkWidget *	help;
 		GtkWidget *	author;
 

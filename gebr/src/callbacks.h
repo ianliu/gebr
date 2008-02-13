@@ -42,6 +42,9 @@ void
 on_line_delete_activate(void);
 
 void
+on_line_path_activate(void);
+
+void
 on_line_properties_activate(void);
 
 void

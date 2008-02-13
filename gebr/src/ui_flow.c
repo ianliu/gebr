@@ -37,6 +37,9 @@ extern gchar * no_flow_selected_error;
 static void
 flow_io_actions(GtkDialog * dialog, gint arg1, struct ui_flow_io * ui_flow_io);
 
+void
+customized_paths_from_line(GtkFileChooser *chooser);
+
 /*
  * Section: Public
  * Public functions.
@@ -87,7 +90,7 @@ flow_io_setup_ui(void)
 	/* Input */
 	label = gtk_label_new(_("Input file"));
 	gtk_misc_set_alignment( GTK_MISC(label), 0, 0);
-	ui_flow_io->input = gtk_file_entry_new();
+	ui_flow_io->input = gtk_file_entry_new(customized_paths_from_line);
 	gtk_widget_set_size_request(ui_flow_io->input, 140, 30);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), ui_flow_io->input, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL,  3, 3);
@@ -98,7 +101,7 @@ flow_io_setup_ui(void)
 	/* Output */
 	label = gtk_label_new(_("Output file"));
 	gtk_misc_set_alignment( GTK_MISC(label), 0, 0);
-	ui_flow_io->output = gtk_file_entry_new();
+	ui_flow_io->output = gtk_file_entry_new(customized_paths_from_line);
 	gtk_widget_set_size_request(ui_flow_io->output, 140, 30);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), ui_flow_io->output, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
@@ -108,7 +111,7 @@ flow_io_setup_ui(void)
 	/* Error */
 	label = gtk_label_new(_("Error log file"));
 	gtk_misc_set_alignment( GTK_MISC(label), 0, 0);
-	ui_flow_io->error = gtk_file_entry_new();
+	ui_flow_io->error = gtk_file_entry_new(customized_paths_from_line);
 	gtk_widget_set_size_request(ui_flow_io->error, 140, 30);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), ui_flow_io->error, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
@@ -124,6 +127,34 @@ flow_io_setup_ui(void)
  * Section: Private
  * Private functions.
  */
+
+/*
+ * Function: customize_paths_from_line
+ * Set line's path to input/output/error files
+ *
+ */
+void
+customized_paths_from_line(GtkFileChooser *chooser)
+{
+	GError *                    error = NULL;
+	GeoXmlSequence *            path_sequence;
+
+	if(gebr.line == NULL)
+		return;
+
+	geoxml_line_get_path(gebr.line, &path_sequence, 0);
+	
+	if(path_sequence != NULL){
+		gtk_file_chooser_set_current_folder(chooser, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path_sequence)));
+	
+		do{
+			gtk_file_chooser_add_shortcut_folder (chooser,
+							      geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path_sequence)),
+							      &error);
+			geoxml_sequence_next(&path_sequence);
+		}while (path_sequence != NULL);
+	}
+}
 
 /*
  * Function: flow_io_actions

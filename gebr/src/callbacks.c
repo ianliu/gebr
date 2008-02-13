@@ -29,6 +29,7 @@
 #include "menu.h"
 #include "ui_flow.h"
 #include "ui_document.h"
+#include "ui_paths.h"
 
 /*
  * Function: switch_page
@@ -132,6 +133,17 @@ void
 on_line_delete_activate(void)
 {
 	line_delete();
+}
+
+/*
+ * Function: on_line_properties_activate
+ * *Fill me in!*
+ *
+ */
+void
+on_line_path_activate(void)
+{
+	path_list_setup_ui();
 }
 
 /*

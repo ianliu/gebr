@@ -143,11 +143,11 @@ project_line_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.numberoflines), 0, 0);
 	gtk_box_pack_start(GTK_BOX(infopage), ui_project_line->info.numberoflines, FALSE, TRUE, 10);
 
-	/* Dates */
 	GtkWidget *table;
-	table = gtk_table_new(2, 2, FALSE);
+	table = gtk_table_new(4, 2, FALSE);
 	gtk_box_pack_start(GTK_BOX(infopage), table, FALSE, TRUE, 0);
 
+	/* Dates */
 	ui_project_line->info.created_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.created_label), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.created_label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
@@ -163,6 +163,20 @@ project_line_setup_ui(void)
 	ui_project_line->info.modified = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.modified), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.modified, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
+
+	/* Paths for lines */
+	ui_project_line->info.path_label = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path_label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path_label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
+
+	ui_project_line->info.path1 = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path1), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path1, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
+	
+	ui_project_line->info.path2 = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path2), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path2, 1, 2, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
+	
 
 	/* Help */
 	ui_project_line->info.help = gtk_button_new_from_stock(GTK_STOCK_INFO);
@@ -314,6 +328,9 @@ project_line_info_update(void)
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path_label), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.numberoflines), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.author), "");
 
@@ -364,6 +381,45 @@ project_line_info_update(void)
 	/* Dates */
 	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created), localized_date(geoxml_document_get_date_created(gebr.doc)));
 	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified), localized_date(geoxml_document_get_date_modified(gebr.doc)));
+
+	/* Line's paths */
+	if (!is_project){
+		markup = g_markup_printf_escaped("<b>%s</b>", _("Paths:"));
+		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.path_label), markup);
+		g_free(markup);
+
+		
+		GeoXmlSequence  *path;
+
+		switch (geoxml_line_get_paths_number(gebr.line)){
+		case 0:
+			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1), "None");
+			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");
+			break;
+			
+		case 1:
+			geoxml_line_get_path(gebr.line, &path, 0);
+			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
+					   geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
+			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");
+			break;
+		case 2:
+			geoxml_line_get_path(gebr.line, &path, 0);
+			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
+					   geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
+			
+			geoxml_line_get_path(gebr.line, &path, 1);
+			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2),
+					   geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
+			break;
+		default:
+			geoxml_line_get_path(gebr.line, &path, 0);
+			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
+					   geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
+			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "...");
+			break;
+		}
+	}
 
 	/* Author and email */
 	text = g_string_new(NULL);
