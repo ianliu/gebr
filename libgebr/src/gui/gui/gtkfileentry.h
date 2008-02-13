@@ -35,24 +35,27 @@ gtk_file_entry_get_type(void);
 typedef struct _GtkFileEntry		GtkFileEntry;
 typedef struct _GtkFileEntryClass	GtkFileEntryClass;
 
+typedef void (*GtkFileEntryCustomize)(GtkFileChooser *);
+
 struct _GtkFileEntry {
-	GtkHBox		parent;
+	GtkHBox			parent;
 
-	GdkWindow *	event_window;
-	GtkWidget *	entry;
+	GdkWindow *		event_window;
+	GtkWidget *		entry;
 
-	gboolean	choose_directory;
-	gboolean	do_overwrite_confirmation;
+	GtkFileEntryCustomize	customize_function;
+	gboolean		choose_directory;
+	gboolean		do_overwrite_confirmation;
 };
 struct _GtkFileEntryClass {
-	GtkHBoxClass	parent;
+	GtkHBoxClass		parent;
 
 	/* signals */
-	void		(*path_changed)(GtkFileEntry * self);
+	void			(*path_changed)(GtkFileEntry * self);
 };
 
 GtkWidget *
-gtk_file_entry_new();
+gtk_file_entry_new(GtkFileEntryCustomize customize_function);
 
 void
 gtk_file_entry_set_choose_directory(GtkFileEntry * file_entry, gboolean choose_directory);

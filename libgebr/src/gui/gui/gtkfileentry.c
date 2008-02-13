@@ -33,14 +33,59 @@ __gtk_file_entry_browse_button_clicked(GtkButton * button, GtkFileEntry * file_e
  */
 
 enum {
+	CUSTOMIZE_FUNCTION = 1,
+	LAST_PROPERTY
+};
+
+enum {
 	PATH_CHANGED = 0,
 	LAST_SIGNAL
 };
 static guint object_signals[LAST_SIGNAL];
 
 static void
+gtk_file_entry_set_property(GtkFileEntry * file_entry, guint property_id, const GValue * value, GParamSpec * param_spec)
+{
+	switch (property_id) {
+	case CUSTOMIZE_FUNCTION:
+		file_entry->customize_function = g_value_get_pointer(value);
+		break;
+	default:
+		/* We don't have any other property... */
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(file_entry, property_id, param_spec);
+		break;
+	}
+}
+
+static void
+gtk_file_entry_get_property(GtkFileEntry * file_entry, guint property_id, GValue * value, GParamSpec * param_spec)
+{
+	switch (property_id) {
+	case CUSTOMIZE_FUNCTION:
+		g_value_set_pointer(value, file_entry->customize_function);
+		break;
+	default:
+		/* We don't have any other property... */
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(file_entry, property_id, param_spec);
+		break;
+	}
+}
+
+static void
 gtk_file_entry_class_init(GtkFileEntryClass * class)
 {
+	GObjectClass *	gobject_class;
+	GParamSpec *	param_spec;
+
+	gobject_class = G_OBJECT_CLASS(class);
+	gobject_class->set_property = (typeof(gobject_class->set_property))gtk_file_entry_set_property;
+	gobject_class->get_property = (typeof(gobject_class->get_property))gtk_file_entry_get_property;
+
+	param_spec = g_param_spec_pointer("costumize-function",
+		"Costumize function", "Costumize GtkFileChooser of dialog",
+		G_PARAM_READWRITE);
+	g_object_class_install_property(gobject_class, CUSTOMIZE_FUNCTION, param_spec);
+
 	/* signals */
 	object_signals[PATH_CHANGED] = g_signal_new("path-changed",
 		GTK_TYPE_FILE_ENTRY,
@@ -105,6 +150,9 @@ __gtk_file_entry_browse_button_clicked(GtkButton * button, GtkFileEntry * file_e
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog),
 		file_entry->do_overwrite_confirmation);
 
+	/* call customize funtion for user changes */
+	if (file_entry->customize_function != NULL)
+		file_entry->customize_function(GTK_FILE_CHOOSER(chooser_dialog));
 	switch (gtk_dialog_run(GTK_DIALOG(chooser_dialog))) {
 	case GTK_RESPONSE_OK:
 		gtk_entry_set_text(GTK_ENTRY(file_entry->entry), gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog)));
@@ -122,9 +170,11 @@ __gtk_file_entry_browse_button_clicked(GtkButton * button, GtkFileEntry * file_e
  */
 
 GtkWidget *
-gtk_file_entry_new()
+gtk_file_entry_new(GtkFileEntryCustomize customize_function)
 {
-	return g_object_new(GTK_TYPE_FILE_ENTRY, NULL);
+	return g_object_new(GTK_TYPE_FILE_ENTRY,
+		"customize-function", customize_function,
+		NULL);
 }
 
 void
