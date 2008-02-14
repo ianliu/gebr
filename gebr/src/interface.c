@@ -291,6 +291,7 @@ assembly_flow_menu(void)
 			GTK_SIGNAL_FUNC(on_flow_export_activate), NULL);
 	/* Export as Menu entry */
 	submenu = gtk_image_menu_item_new_with_label(_("Export as Menu"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(submenu), gtk_image_new_from_stock(GTK_STOCK_CONVERT, 1));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), submenu);
 	g_signal_connect(GTK_OBJECT(submenu), "activate",
 			 GTK_SIGNAL_FUNC(on_flow_export_as_menu_activate), NULL);
@@ -408,6 +409,7 @@ assembly_config_menu(void)
 
 	/* Server entry */
 	submenu =  gtk_image_menu_item_new_with_mnemonic(_("_Servers"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(submenu), gtk_image_new_from_stock(GTK_STOCK_NETWORK, 1));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), submenu);
 	g_signal_connect(GTK_OBJECT(submenu), "activate",
 			GTK_SIGNAL_FUNC(on_configure_servers_activate), NULL);
