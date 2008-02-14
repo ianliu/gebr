@@ -419,6 +419,10 @@ project_line_info_update(void)
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "...");
 			break;
 		}
+	}else{
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path_label), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");
 	}
 
 	/* Author and email */
