@@ -34,6 +34,9 @@ struct ui_flow_io *
 flow_io_setup_ui(void);
 
 void
+flow_io_customized_paths_from_line(GtkFileChooser * chooser);
+
+void
 flow_add_programs_to_view(GeoXmlFlow * flow);
 
 #endif //__UI_FLOW_H

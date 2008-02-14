@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 
 #include <geoxml.h>
+#include "gtkfileentry.h"
 
 struct parameter_widget;
 typedef void (*changed_callback)(struct parameter_widget * parameter_widget, gpointer user_data);
@@ -54,7 +55,8 @@ struct parameter_widget *
 parameter_widget_new_range(GeoXmlParameter * parameter, gboolean use_default_value);
 
 struct parameter_widget *
-parameter_widget_new_file(GeoXmlParameter * parameter, gboolean use_default_value);
+parameter_widget_new_file(GeoXmlParameter * parameter,
+	GtkFileEntryCustomize customize, gboolean use_default_value);
 
 struct parameter_widget *
 parameter_widget_new_enum(GeoXmlParameter * parameter, gboolean use_default_value);

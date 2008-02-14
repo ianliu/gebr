@@ -23,7 +23,6 @@
 
 #include "parameter.h"
 #include "support.h"
-#include "gtkfileentry.h"
 #include "gtksequenceedit.h"
 
 #define DOUBLE_MAX +999999999
@@ -472,13 +471,14 @@ parameter_widget_new_range(GeoXmlParameter * parameter, gboolean use_default_val
  * Add an input entry and button to browse for a file or directory
  */
 struct parameter_widget *
-parameter_widget_new_file(GeoXmlParameter * parameter, gboolean use_default_value)
+parameter_widget_new_file(GeoXmlParameter * parameter,
+	GtkFileEntryCustomize customize, gboolean use_default_value)
 {
 	struct parameter_widget *	parameter_widget;
 	GtkWidget *			file_entry;
 
 	/* file entry */
-	file_entry = gtk_file_entry_new(NULL);
+	file_entry = gtk_file_entry_new(customize);
 	gtk_widget_set_size_request(file_entry, 220, 30);
 
 	parameter_widget = parameter_widget_init(parameter, file_entry, use_default_value);

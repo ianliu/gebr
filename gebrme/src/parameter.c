@@ -345,7 +345,7 @@ parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * dat
 		GtkWidget *		type_label;
 		GtkWidget *		type_combo;
 
-		data->widget = parameter_widget_new_file(data->parameter, TRUE);
+		data->widget = parameter_widget_new_file(data->parameter, NULL, TRUE);
 
 		type_label = gtk_label_new (_("Type:"));
 		gtk_widget_show (type_label);
