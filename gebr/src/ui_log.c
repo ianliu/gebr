@@ -85,7 +85,7 @@ log_setup_ui(void)
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Date"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_log->view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", LOG_DATE);
+	gtk_tree_view_column_add_attribute(col, renderer, "markup", LOG_DATE);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Message"), renderer, NULL);
@@ -129,6 +129,7 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 	GtkTreeSelection *	selection;
 	GtkTreePath *		path;
 	GdkPixbuf *		pixbuf;
+	GString *               markuped_date;
 
 	switch (message->type) {
 	case LOG_START:
@@ -150,12 +151,18 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 		return;
 	}
 
+		
+	markuped_date = g_string_new(NULL);
+	g_string_printf(markuped_date, "<small>%s</small>", localized_date(message->date->str));
+
 	gtk_list_store_append(ui_log->store, &iter);
 	gtk_list_store_set(ui_log->store, &iter,
-		LOG_TYPE_ICON, pixbuf,
-		LOG_DATE, localized_date(message->date->str),
-		LOG_MESSAGE, message->message->str,
-		-1);
+			   LOG_TYPE_ICON, pixbuf,
+			   LOG_DATE, markuped_date->str,
+			   LOG_MESSAGE, message->message->str,
+			   -1);
+		
+	g_string_free(markuped_date, TRUE);
 
 	/* select it on view */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_log->view));

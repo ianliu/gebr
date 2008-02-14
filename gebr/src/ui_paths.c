@@ -63,6 +63,7 @@ path_add(ValueSequenceEdit * sequence_edit)
 gboolean
 path_save(void){
 	document_save(gebr.doc);
+	project_line_info_update();
 	return TRUE;
 }
 
@@ -105,5 +106,6 @@ path_list_setup_ui(void)
 	
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	document_save(gebr.doc);
+	project_line_info_update();
 	gtk_widget_destroy(dialog);
 }

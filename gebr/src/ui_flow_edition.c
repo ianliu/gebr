@@ -178,7 +178,6 @@ flow_edition_setup_ui(void)
 						G_TYPE_STRING);
 
 		ui_flow_edition->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->menu_store));
-
 		g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated",
 				GTK_SIGNAL_FUNC(flow_edition_menu_add), ui_flow_edition);
 
