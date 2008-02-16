@@ -1,5 +1,5 @@
-/*   GêBR - An environment for seismic processing.
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   Gï¿½BR - An environment for seismic processing.
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -400,7 +400,7 @@ menu_scan_directory(const gchar * directory, FILE * index_fp)
 		geoxml_flow_get_category(GEOXML_FLOW(menu), &category, 0);
 		while (category != NULL) {
 			fprintf(index_fp, "%s|%s|%s|%s\n",
-				geoxml_category_get_name(GEOXML_CATEGORY(category)),
+				geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)),
 				geoxml_document_get_title(menu),
 				geoxml_document_get_description(menu),
 				geoxml_document_get_filename(menu));
