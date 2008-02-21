@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -33,6 +33,10 @@
 
 struct geoxml_flow {
 	GeoXmlDocument * document;
+};
+
+struct geoxml_category {
+	GdomeElement * element;
 };
 
 /*
@@ -184,12 +188,11 @@ geoxml_flow_new_program(GeoXmlFlow * flow)
 GeoXmlProgram *
 geoxml_flow_append_program(GeoXmlFlow * flow)
 {
-	if (flow == NULL)
-		return NULL;
-
 	GdomeElement *	element;
 
 	element = (GdomeElement*)geoxml_flow_new_program(flow);
+	if (element == NULL)
+		return NULL;
 	gdome_el_insertBefore(geoxml_document_root_element(GEOXML_DOC(flow)),
 		(GdomeNode*)element, NULL, &exception);
 

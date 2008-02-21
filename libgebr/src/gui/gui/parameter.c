@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 #include "parameter.h"
 #include "support.h"
+#include "gtkfileentry.h"
 #include "gtksequenceedit.h"
 
 #define DOUBLE_MAX +999999999
@@ -58,14 +59,19 @@ __parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, 
 		g_string_assign(value, gtk_file_entry_get_path(GTK_FILE_ENTRY(parameter_widget->value_widget)));
 		break;
 	case GEOXML_PARAMETERTYPE_ENUM: {
-		gchar *	text;
+		gint	index;
 
-		text = gtk_combo_box_get_active_text(GTK_COMBO_BOX(parameter_widget->value_widget));
-		if (text == NULL)
-			text = g_strdup("");
-		g_string_assign(value, text);
+		index = gtk_combo_box_get_active(GTK_COMBO_BOX(parameter_widget->value_widget));
+		if (index == -1)
+			g_string_assign(value, "");
+		else {
+			GeoXmlSequence *	enum_option;
 
-		g_free(text);
+			geoxml_program_parameter_get_enum_option(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter),
+				&enum_option, index);
+			g_string_assign(value, geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(enum_option)));
+		}
+
 		break;
 	} case GEOXML_PARAMETERTYPE_FLAG:
 		g_string_assign(value,
@@ -224,7 +230,7 @@ parameter_widget_enum_set_widget_value(struct parameter_widget * parameter_widge
 
 	geoxml_program_parameter_get_enum_option(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), &option, 0);
 	for (i = 0; option != NULL; ++i, geoxml_sequence_next(&option))
-		if (g_ascii_strcasecmp(value, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(option))) == 0) {
+		if (g_ascii_strcasecmp(value, geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(option))) == 0) {
 			gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->value_widget), i);
 			return;
 		}
@@ -262,7 +268,8 @@ parameter_widget_init(GeoXmlParameter * parameter, GtkWidget * value_widget, gbo
 		parameter_widget->list_value_widget = gtk_entry_new();
 		gtk_widget_show(parameter_widget->list_value_widget);
 		gtk_box_pack_start(GTK_BOX(hbox), parameter_widget->list_value_widget, TRUE, TRUE, 0);
-		gtk_entry_set_text(GTK_ENTRY(parameter_widget->list_value_widget), parameter_widget_get_value(parameter_widget));
+		gtk_entry_set_text(GTK_ENTRY(parameter_widget->list_value_widget),
+			parameter_widget_get_value(parameter_widget));
 
 		button = gtk_toggle_button_new_with_label(_("Edit list"));
 		gtk_widget_show(button);
@@ -447,16 +454,18 @@ parameter_widget_new_range(GeoXmlParameter * parameter, gboolean use_default_val
 	gchar *				min_str;
 	gchar *				max_str;
 	gchar *				inc_str;
-	double				min, max, inc;
+	gchar *				digits_str;
+	double				min, max, inc, digits;
 
 	geoxml_program_parameter_get_range_properties(
-		GEOXML_PROGRAM_PARAMETER(parameter), &min_str, &max_str, &inc_str);
+		GEOXML_PROGRAM_PARAMETER(parameter), &min_str, &max_str, &inc_str, &digits_str);
 	min = !strlen(min_str) ? DOUBLE_MIN : atof(min_str);
 	max = !strlen(max_str) ? DOUBLE_MAX : atof(max_str);
 	inc = !strlen(inc_str) ? 1.0 : atof(inc_str);
+	digits = !strlen(digits_str) ? 0 : atof(digits_str);
 
 	spin = gtk_spin_button_new_with_range(min, max, inc);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), 3);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), atoi(digits_str));
 	gtk_widget_set_size_request(spin, 90, 30);
 
 	parameter_widget = parameter_widget_init(parameter, spin, use_default_value);
@@ -505,8 +514,12 @@ parameter_widget_new_enum(GeoXmlParameter * parameter, gboolean use_default_valu
 	combo_box = gtk_combo_box_new_text();
 	geoxml_program_parameter_get_enum_option(GEOXML_PROGRAM_PARAMETER(parameter), &sequence, 0);
 	while (sequence != NULL) {
-		gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box),
-			geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(sequence)));
+		const gchar *		text;
+
+		text = strlen(geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(sequence)))
+			? geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(sequence))
+			: geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(sequence));
+		gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), text);
 
 		geoxml_sequence_next(&sequence);
 	}

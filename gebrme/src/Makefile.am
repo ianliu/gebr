@@ -1,5 +1,5 @@
-# GêBR ME - GêBR Menu Editor
-# Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+# Gï¿½BR ME - Gï¿½BR Menu Editor
+# Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ gebrme_SOURCES = \
 	category.c \
 	program.c \
 	parameter.c \
+	enumoptionedit.c \
 	help.c \
 	preferences.c \
 	support.c
@@ -38,6 +39,7 @@ noinst_HEADERS = \
 	category.h \
 	program.h \
 	parameter.h \
+	enumoptionedit.h \
 	help.h \
 	preferences.h \
 	support.h

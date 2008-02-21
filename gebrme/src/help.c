@@ -1,5 +1,5 @@
-/*   GêBR ME - GêBR Menu Editor
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   Gï¿½BR ME - Gï¿½BR Menu Editor
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -93,11 +93,11 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 		GString *		catstr;
 
 		geoxml_flow_get_category(gebrme.current, &category, 0);
-		catstr = g_string_new(geoxml_category_get_name(GEOXML_CATEGORY(category)));
+		catstr = g_string_new(geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)));
 		geoxml_sequence_next(&category);
 		while (category != NULL) {
 			g_string_append(catstr, " | ");
-			g_string_append(catstr, geoxml_category_get_name(GEOXML_CATEGORY(category)));
+			g_string_append(catstr, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)));
 
 			geoxml_sequence_next(&category);
 		}

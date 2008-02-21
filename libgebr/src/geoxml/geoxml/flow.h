@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -83,8 +83,12 @@
  */
 typedef struct geoxml_flow GeoXmlFlow;
 
+/**
+ * The GeoXmlCategory struct contains private data only, and should be accessed using the functions below.
+ */
+typedef struct geoxml_category GeoXmlCategory;
+
 #include "program.h"
-#include "category.h"
 #include "macros.h"
 #include "sequence.h"
 
@@ -231,6 +235,7 @@ geoxml_flow_get_programs_number(GeoXmlFlow * flow);
 
 /**
  * Creates a new category named as \p name in \p flow and returns a pointer to it.
+ * \p category is appended to the list of categories.
  *
  * If \p flow is NULL nothing is done.
  *

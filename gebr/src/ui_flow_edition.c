@@ -1,5 +1,5 @@
-/*   GêBR - An environment for seismic processing.
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   Gï¿½BR - An environment for seismic processing.
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -178,6 +178,7 @@ flow_edition_setup_ui(void)
 						G_TYPE_STRING);
 
 		ui_flow_edition->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->menu_store));
+
 		g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated",
 				GTK_SIGNAL_FUNC(flow_edition_menu_add), ui_flow_edition);
 

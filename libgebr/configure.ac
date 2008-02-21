@@ -1,5 +1,5 @@
-# libgebr - GêBR Library
-# Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+# libgebr - Gï¿½BR Library
+# Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ AC_SUBST(GEOXML_VERSION_INFO)
 DOCUMENT_VERSION=0.2.0
 PROJECT_VERSION=0.2.0
 LINE_VERSION=0.2.0
-FLOW_VERSION=0.2.1
+FLOW_VERSION=0.2.2
 AC_SUBST(FLOW_VERSION)
 AC_SUBST(LINE_VERSION)
 AC_SUBST(PROJECT_VERSION)

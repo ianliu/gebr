@@ -1,5 +1,5 @@
-/*   GêBR ME - GêBR Menu Editor
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   Gï¿½BR ME - Gï¿½BR Menu Editor
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 #include <geoxml.h>
 #include <gui/parameter.h>
 #include <gui/valuesequenceedit.h>
+
+#include "enumoptionedit.h"
 
 struct parameter_data;
 struct parameter_ui_data;
@@ -85,10 +87,10 @@ void
 parameter_range_inc_changed(GtkEntry * entry, struct parameter_data * data);
 
 void
-parameter_enum_options_add_request(ValueSequenceEdit * sequence_edit, struct parameter_data * data);
+parameter_range_digits_changed(GtkEntry * entry, struct parameter_data * data);
 
 void
-parameter_enum_options_changed(ValueSequenceEdit * sequence_edit, struct parameter_data * data);
+parameter_enum_options_changed(EnumOptionEdit * enum_option_edit, struct parameter_data * data);
 
 void
 parameter_uilabel_update(struct parameter_data * data);

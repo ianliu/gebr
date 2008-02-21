@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This parameters is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ __geoxml_parameters_new_parameter(GeoXmlParameters * parameters, enum GEOXML_PAR
 			geoxml_program_parameter_set_file_be_directory((GeoXmlProgramParameter*)parameter_element, FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_RANGE:
-			geoxml_program_parameter_set_range_properties((GeoXmlProgramParameter*)parameter_element, "", "", "");
+			geoxml_program_parameter_set_range_properties((GeoXmlProgramParameter*)parameter_element, "", "", "", "");
 			break;
 		default:
 			break;

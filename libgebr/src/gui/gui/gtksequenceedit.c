@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ static void __gtk_sequence_edit_remove(GtkSequenceEdit * sequence_edit, GtkTreeI
 static void __gtk_sequence_edit_move_up(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter);
 static void __gtk_sequence_edit_move_down(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter);
 static void __gtk_sequence_edit_rename(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter, const gchar * new_text);
+static GtkWidget * __gtk_sequence_edit_create_tree_view(GtkSequenceEdit * sequence_edit);
 
 /*
  * gobject stuff
@@ -61,36 +62,26 @@ gtk_sequence_edit_set_property(GtkSequenceEdit * sequence_edit, guint property_i
 		gtk_box_pack_start(GTK_BOX(sequence_edit->widget_hbox), sequence_edit->widget, TRUE, TRUE, 0);
 		break;
 	case LIST_STORE: {
-		GtkWidget *		scrolledwindow;
+		GtkWidget *		scrolled_window;
 		GtkWidget *		tree_view;
-		GtkTreeViewColumn *	col;
-		GtkCellRenderer *	renderer;
 
 		sequence_edit->list_store = g_value_get_pointer(value);
 
 		if (sequence_edit->list_store == NULL)
 			sequence_edit->list_store = gtk_list_store_new(1, G_TYPE_STRING, -1);
 
-		scrolledwindow = gtk_scrolled_window_new(NULL, NULL);
-		gtk_widget_show(scrolledwindow);
-		gtk_box_pack_start(GTK_BOX(sequence_edit), scrolledwindow, TRUE, TRUE, 0);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+		scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+		gtk_widget_show(scrolled_window);
+		gtk_box_pack_start(GTK_BOX(sequence_edit), scrolled_window, TRUE, TRUE, 0);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-		tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(sequence_edit->list_store));
+		tree_view = GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->create_tree_view(sequence_edit);
 		sequence_edit->tree_view = tree_view;
 		gtk_widget_show(tree_view);
-		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolledwindow), tree_view);
+		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), tree_view);
 		gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(tree_view),
 			(GtkPopupCallback)__gtk_sequence_edit_popup_menu, sequence_edit);
 
-		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree_view), FALSE);
-		renderer = gtk_cell_renderer_text_new();
-		g_object_set(renderer, "editable", TRUE, NULL);
-		g_signal_connect(renderer, "edited",
-			(GCallback)__gtk_sequence_edit_on_edited, sequence_edit);
-		col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
-		gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
-		gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
 		break;
 	} default:
 		/* We don't have any other property... */
@@ -143,6 +134,7 @@ gtk_sequence_edit_class_init(GtkSequenceEditClass * class)
 	class->move_up = __gtk_sequence_edit_move_up;
 	class->move_down = __gtk_sequence_edit_move_down;
 	class->rename = __gtk_sequence_edit_rename;
+	class->create_tree_view = __gtk_sequence_edit_create_tree_view;
 
 	gobject_class = G_OBJECT_CLASS(class);
 	gobject_class->set_property = (typeof(gobject_class->set_property))gtk_sequence_edit_set_property;
@@ -176,7 +168,7 @@ gtk_sequence_edit_init(GtkSequenceEdit * sequence_edit)
 	button = gtk_button_new();
 	gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(GTK_STOCK_ADD, 1));
 	g_object_set(G_OBJECT(button), "relief", GTK_RELIEF_NONE, NULL);
-	gtk_widget_show(button);
+	gtk_widget_show_all(button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 	g_signal_connect(button, "clicked",
 		GTK_SIGNAL_FUNC(__gtk_sequence_edit_on_add_clicked), sequence_edit);
@@ -308,6 +300,27 @@ __gtk_sequence_edit_rename(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter, 
 		0, new_text,
 		-1);
 	g_signal_emit(sequence_edit, object_signals[CHANGED], 0);
+}
+
+static GtkWidget *
+__gtk_sequence_edit_create_tree_view(GtkSequenceEdit * sequence_edit)
+{
+	GtkWidget *		tree_view;
+	GtkTreeViewColumn *	col;
+	GtkCellRenderer *	renderer;
+
+	tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(sequence_edit->list_store));
+
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree_view), FALSE);
+	renderer = gtk_cell_renderer_text_new();
+	g_object_set(renderer, "editable", TRUE, NULL);
+	g_signal_connect(renderer, "edited",
+		(GCallback)__gtk_sequence_edit_on_edited, sequence_edit);
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
+
+	return tree_view;
 }
 
 /*

@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@
  * \enddot
  * Discussions group: http://groups.google.com/group/gebr and http://groups.google.com/group/gebr-devel
  * \author
- * Bráulio Barros de Oliveira (brauliobo@gmail.com)
+ * Brï¿½ulio Barros de Oliveira (brauliobo@gmail.com)
  */
 
 /* For more information, go to libgebr-geoxml's documentation at
@@ -137,7 +137,7 @@
 #include <geoxml/flow.h>
 #include <geoxml/sequence.h>
 #include <geoxml/value_sequence.h>
-#include <geoxml/category.h>
+#include <geoxml/enum_option.h>
 #include <geoxml/program.h>
 #include <geoxml/parameters.h>
 #include <geoxml/parameter.h>

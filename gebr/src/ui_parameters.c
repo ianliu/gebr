@@ -1,5 +1,5 @@
-/*   GêBR - An environment for seismic processing.
- *   Copyright(C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   Gï¿½BR - An environment for seismic processing.
+ *   Copyright(C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or
  *   modify it under the terms of the GNU General Public License as
@@ -194,7 +194,8 @@ parameters_configure_setup_ui(void)
 			widget = parameter_widget_new_flag(GEOXML_PARAMETER(parameter), FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_FILE:
-			widget = parameter_widget_new_file(GEOXML_PARAMETER(parameter), flow_io_customized_paths_from_line, FALSE);
+			widget = parameter_widget_new_file(GEOXML_PARAMETER(parameter),
+				flow_io_customized_paths_from_line, FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_ENUM:
 			widget = parameter_widget_new_enum(GEOXML_PARAMETER(parameter), FALSE);
@@ -208,6 +209,7 @@ parameters_configure_setup_ui(void)
 		if (type != GEOXML_PARAMETERTYPE_FLAG) {
 			GtkWidget *	label;
 			gchar *		label_str;
+			GtkWidget *	align_vbox;
 
 			label_str = (gchar*)geoxml_parameter_get_label(GEOXML_PARAMETER(parameter));
 			label = gtk_label_new("");
@@ -221,7 +223,9 @@ parameters_configure_setup_ui(void)
 			} else
 				gtk_label_set_text(GTK_LABEL(label), label_str);
 
-			gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
+			align_vbox = gtk_vbox_new(FALSE, 0);
+			gtk_box_pack_start(GTK_BOX(align_vbox), label, FALSE, TRUE, 0);
+			gtk_box_pack_start(GTK_BOX(hbox), align_vbox, FALSE, TRUE, 0);
 			gtk_box_pack_end(GTK_BOX(hbox), widget->widget, FALSE, TRUE, 0);
 		} else {
 			g_object_set(G_OBJECT(widget->value_widget), "label",
@@ -311,9 +315,8 @@ parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_param
 				continue;
 			}
 
-			geoxml_program_parameter_set_default(GEOXML_PROGRAM_PARAMETER(widget->parameter),
+			parameter_widget_set_widget_value(widget,
 				geoxml_program_parameter_get_default(GEOXML_PROGRAM_PARAMETER(widget->parameter)));
-			parameter_widget_update(widget);
 		}
 		return;
 	} case GTK_RESPONSE_HELP: {

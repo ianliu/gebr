@@ -114,7 +114,7 @@ gtk_file_entry_init(GtkFileEntry * file_entry)
 	browse_button = gtk_button_new();
 	gtk_container_add(GTK_CONTAINER(browse_button), gtk_image_new_from_stock(GTK_STOCK_OPEN, 1));
 	g_object_set(G_OBJECT(browse_button), "relief", GTK_RELIEF_NONE, NULL);
-	gtk_widget_show(browse_button);
+	gtk_widget_show_all(browse_button);
 	gtk_box_pack_start(GTK_BOX(file_entry), browse_button, FALSE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(browse_button), "clicked",
 		G_CALLBACK(__gtk_file_entry_browse_button_clicked), file_entry);

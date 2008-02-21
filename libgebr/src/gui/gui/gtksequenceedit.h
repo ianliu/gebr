@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@ struct _GtkSequenceEditClass {
 	void		(*move_up)(GtkSequenceEdit * self, GtkTreeIter * iter);
 	void		(*move_down)(GtkSequenceEdit * self, GtkTreeIter * iter);
 	void		(*rename)(GtkSequenceEdit * self, GtkTreeIter * iter, const gchar * new_text);
+	GtkWidget *	(*create_tree_view)(GtkSequenceEdit * self);
 };
 
 GtkWidget *

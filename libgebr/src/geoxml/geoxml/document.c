@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@
 #include "error.h"
 #include "sequence.h"
 #include "flow.h"
+#include "parameter.h"
+#include "program_parameter.h"
 
 /* global variables */
 GdomeException			exception;
@@ -168,8 +170,6 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 		GdomeElement *		element;
 		GdomeElement *		before;
 
-		__geoxml_set_attr_value(root_element, "version", "0.2.0");
-
 		before = __geoxml_get_first_element(root_element, "email");
 		before = __geoxml_next_element(before);
 
@@ -185,13 +185,64 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 		if (geoxml_document_get_type(((GeoXmlDocument*)document)) == GEOXML_DOCUMENT_TYPE_FLOW) {
 			GeoXmlSequence *	program;
 
-			__geoxml_set_attr_value(root_element, "version", "0.2.1");
-
 			geoxml_flow_get_program(GEOXML_FLOW(document), &program, 0);
 			while (program != NULL) {
 				if (__geoxml_get_first_element((GdomeElement*)program, "url") == NULL)
 					__geoxml_insert_new_element((GdomeElement*)program, "url",
 						__geoxml_get_first_element((GdomeElement*)program, "parameters"));
+
+				geoxml_sequence_next(&program);
+			}
+		}
+	}
+	/* 0.2.1 to 0.2.2 */
+	if (g_ascii_strcasecmp(version, "0.2.2") < 0) {
+		if (geoxml_document_get_type(((GeoXmlDocument*)document)) == GEOXML_DOCUMENT_TYPE_FLOW) {
+			GeoXmlSequence *	program;
+			GeoXmlSequence *	parameter;
+
+			__geoxml_set_attr_value(root_element, "version", "0.2.2");
+
+			geoxml_flow_get_program(GEOXML_FLOW(document), &program, 0);
+			while (program != NULL) {
+				parameter = geoxml_parameters_get_first_parameter(
+					geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
+				while (parameter != NULL) {
+					switch (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter))) {
+					case GEOXML_PARAMETERTYPE_ENUM: {
+						GeoXmlSequence *	enum_option;
+
+						geoxml_program_parameter_get_enum_option(
+							GEOXML_PROGRAM_PARAMETER(parameter),
+							&enum_option, 0);
+
+						while (enum_option != NULL) {
+							gchar *	value;
+
+							value = strdup(__geoxml_get_element_value((GdomeElement*)enum_option));
+							__geoxml_set_element_value((GdomeElement*)enum_option, "", __geoxml_create_TextNode);
+
+							__geoxml_insert_new_element((GdomeElement*)enum_option, "label", NULL);
+							__geoxml_insert_new_element((GdomeElement*)enum_option, "value", NULL);
+							__geoxml_set_tag_value((GdomeElement*)enum_option,
+								"value", value, __geoxml_create_TextNode);
+
+							g_free(value);
+
+							geoxml_sequence_next(&enum_option);
+						}
+
+						break;
+					} case GEOXML_PARAMETERTYPE_RANGE:
+						__geoxml_set_attr_value((GdomeElement*)parameter, "digits", "");
+
+						break;
+					default:
+						break;
+					}
+
+					geoxml_sequence_next(&parameter);
+				}
 
 				geoxml_sequence_next(&program);
 			}
