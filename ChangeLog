@@ -1,0 +1,65 @@
+2007-10-31  Ricardo Biloti  <biloti@gmail.com>
+	* src/cb_flow.c: fixed a missing space after non-stdin
+	aware program.
+	
+2007-10-08  Ricardo Biloti  <biloti@gmail.com>
+
+	* menus/*: every non-flag keyword had an "=" sign appended.
+
+	* src/cb_flow.c: each non-flag parameter is now added to the
+	command line as <keyword><value>. Therefore, each "=" sign needed
+	between keyword and value must be explicited append to keyword.
+
+2007-09-05  Ricardo Biloti  <biloti@ime.unicamp.br>
+
+	* src/Makefile.am, src/cb_flow.c, src/cb_flow.h, src/cb_help.c,
+	src/cb_help.h, src/ui_prop.c: help edition support to flows.
+
+	* src/Makefile.am, src/menus.c src/ui_pages.c, src/cb_help.c,
+	src/ui_help.c, src/ui_help.h, src/cb_flow.h, src/cb_flow.c,
+	src/widgets.h: flow help can be displayed
+
+2007-08-30  Bráulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/cmdline.c&h: added in case where gengetopt is not installed.
+
+	* added autotools files needed for older versions.
+
+2007-08-29  Bráulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* menus/*.mnu: changed programs' help to use CDATA and <pre> and
+	escaped < and > characters.
+
+	* src/ui_prop.c, src/cb_prop.c: get help from menu at program's
+	parameters dialog.
+
+2007-08-28  Bráulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/*.png, src/Makefile.am: renamed and intalled pngs.
+
+	* src/menus.c: fixed size of help dialog.
+
+	* src/*.c&h: Several code cleanups.
+
+	* src/menu.c&h, configure.ac: Preliminary menu help support (using gtkhtml).
+
+2007-08-26  Ricardo Biloti  <biloti@ime.unicamp.br>
+
+	* src/interface.c: changed stock button from
+	directory to open.
+
+	* menus/suximage.menu, menus/suximage-simple.mnu,
+	menus/ximage.mnu: fix clip parameter.
+
+	* src/Makefile.am, src/callbacks.c, src/callbacks.h,
+	src/cb_flow.c, src/cb_line.c, src/cb_proj.c, src/cb_prop.c,
+	src/cb_prop.h, src/gebr.c, src/gebr.ggo, src/gebr.h,
+	src/interface.c, src/menus.c, src/ui_prop.c, src/widgets.h:
+	command line options merged into a single file; checkbutton
+	syncronized with dir browse button; reload configuration after
+	changing it.
+
+2007-08-26  Bráulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* First public release.
+
