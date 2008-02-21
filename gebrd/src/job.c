@@ -79,12 +79,14 @@ job_add_program_parameters(struct job * job, GeoXmlProgram * program)
 						geoxml_program_parameter_get_list_separator(program_parameter),
 						0);
 
-					g_string_append_printf(job->cmd_line, "%s",
+					g_string_append_printf(job->cmd_line,
 						geoxml_program_parameter_get_keyword(program_parameter));
-					for (i = 0; values[i] != NULL; ++i)
-						g_string_append_printf(job->cmd_line, "\"%s\"%s",
-							geoxml_program_parameter_get_keyword(program_parameter),
-							geoxml_program_parameter_get_list_separator(program_parameter));
+					for (i = 0; values[i] != NULL;) {
+						g_string_append_printf(job->cmd_line, "\"%s\"", values[i]);
+						if (values[++i] != NULL)
+							g_string_append(job->cmd_line, geoxml_program_parameter_get_list_separator(program_parameter));
+					}
+					g_string_append(job->cmd_line, " ");
 				}
 			} else {
 				/* Check if this is a required parameter */
