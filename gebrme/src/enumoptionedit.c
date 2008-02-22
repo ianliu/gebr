@@ -295,5 +295,7 @@ enum_option_edit_new(GeoXmlEnumOption * enum_option, GeoXmlProgramParameter * pr
 	g_signal_connect(GTK_OBJECT(enum_option_edit), "add-request",
 		GTK_SIGNAL_FUNC(enum_option_edit_add_request), NULL);
 
+	gtk_widget_set_size_request(GTK_WIDGET(enum_option_edit), -1, 150);
+
 	return (GtkWidget*)enum_option_edit;
 }

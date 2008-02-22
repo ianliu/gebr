@@ -512,6 +512,7 @@ parameter_widget_new_enum(GeoXmlParameter * parameter, gboolean use_default_valu
 	GeoXmlSequence *		sequence;
 
 	combo_box = gtk_combo_box_new_text();
+	gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), "");
 	geoxml_program_parameter_get_enum_option(GEOXML_PROGRAM_PARAMETER(parameter), &sequence, 0);
 	while (sequence != NULL) {
 		const gchar *		text;
