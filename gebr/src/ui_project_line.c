@@ -48,6 +48,9 @@ project_line_load(void);
 static void
 project_line_show_help(void);
 
+static void
+project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
+	GtkTreeViewColumn * column, struct ui_project_line * ui_project_line);
 
 /*
  * Section: Public
@@ -93,9 +96,11 @@ project_line_setup_ui(void)
 	gtk_widget_set_size_request(scrolled_win, 300, -1);
 
 	ui_project_line->store = gtk_tree_store_new(PL_N_COLUMN,
-						G_TYPE_STRING,  /* Name (title for libgeoxml) */
-						G_TYPE_STRING); /* Filename */
+		G_TYPE_STRING,  /* Name (title for libgeoxml) */
+		G_TYPE_STRING); /* Filename */
 	ui_project_line->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_project_line->store));
+	g_signal_connect(ui_project_line->view, "row-activated",
+		GTK_SIGNAL_FUNC(project_line_on_row_activated), ui_project_line);
 	gtk_container_add(GTK_CONTAINER(scrolled_win), ui_project_line->view);
 
 	/* Projects/lines column */
@@ -172,11 +177,11 @@ project_line_setup_ui(void)
 	ui_project_line->info.path1 = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path1), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path1, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
-	
+
 	ui_project_line->info.path2 = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path2), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path2, 1, 2, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
-	
+
 
 	/* Help */
 	ui_project_line->info.help = gtk_button_new_from_stock(GTK_STOCK_INFO);
@@ -388,7 +393,7 @@ project_line_info_update(void)
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.path_label), markup);
 		g_free(markup);
 
-		
+
 		GeoXmlSequence  *path;
 
 		switch (geoxml_line_get_paths_number(gebr.line)){
@@ -396,7 +401,7 @@ project_line_info_update(void)
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1), "None");
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");
 			break;
-			
+
 		case 1:
 			geoxml_line_get_path(gebr.line, &path, 0);
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
@@ -407,7 +412,7 @@ project_line_info_update(void)
 			geoxml_line_get_path(gebr.line, &path, 0);
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
 					   geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
-			
+
 			geoxml_line_get_path(gebr.line, &path, 1);
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2),
 					   geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
@@ -448,4 +453,11 @@ project_line_show_help(void)
 	help_show(geoxml_document_get_help(gebr.doc), title);
 
 	return;
+}
+
+static void
+project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
+	GtkTreeViewColumn * column, struct ui_project_line * ui_project_line)
+{
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 1);
 }

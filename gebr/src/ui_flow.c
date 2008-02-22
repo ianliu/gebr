@@ -181,12 +181,13 @@ flow_io_customized_paths_from_line(GtkFileChooser * chooser)
 void
 flow_add_programs_to_view(GeoXmlFlow * flow)
 {
-	GtkTreeIter		iter;
-
 	GeoXmlSequence *	program;
 
 	geoxml_flow_get_program(flow, &program, 0);
 	while (program != NULL) {
+		GtkTreeIter		iter;
+		GtkTreePath *		path;
+
 		gchar *			menu;
 		gulong			prog_index;
 		const gchar *		status;
@@ -211,12 +212,17 @@ flow_add_programs_to_view(GeoXmlFlow * flow)
 		/* Add to the GUI */
 		gtk_list_store_append(gebr.ui_flow_edition->fseq_store, &iter);
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
-				FSEQ_TITLE_COLUMN, geoxml_program_get_title(GEOXML_PROGRAM(program)),
-				FSEQ_STATUS_COLUMN, pixbuf,
-				FSEQ_MENU_FILE_NAME_COLUMN, menu,
-				FSEQ_MENU_INDEX, prog_index,
-				-1);
+			FSEQ_TITLE_COLUMN, geoxml_program_get_title(GEOXML_PROGRAM(program)),
+			FSEQ_STATUS_COLUMN, pixbuf,
+			FSEQ_MENU_FILE_NAME_COLUMN, menu,
+			FSEQ_MENU_INDEX, prog_index,
+			-1);
 
+		/* scroll to it */
+		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter);
+		gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), path, NULL, FALSE, 0, 0);
+
+		gtk_tree_path_free(path);
 		geoxml_sequence_next(&program);
 	}
 }

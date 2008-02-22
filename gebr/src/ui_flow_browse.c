@@ -47,6 +47,10 @@ flow_browse_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new_
 static void
 flow_browse_show_help(void);
 
+static void
+flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
+	GtkTreeViewColumn * column, struct ui_flow_browse * ui_flow_browse);
+
 /*
  * Section: Public
  * Public functions.
@@ -96,10 +100,11 @@ flow_browse_setup_ui(void)
 	gtk_widget_set_size_request(scrolledwin, 300, -1);
 
 	ui_flow_browse->store = gtk_list_store_new(FB_N_COLUMN,
-					G_TYPE_STRING,  /* Name(title for libgeoxml) */
-					G_TYPE_STRING); /* Filename */
-
+		G_TYPE_STRING,  /* Name(title for libgeoxml) */
+		G_TYPE_STRING); /* Filename */
 	ui_flow_browse->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->store));
+	g_signal_connect(ui_flow_browse->view, "row-activated",
+		GTK_SIGNAL_FUNC(flow_browse_on_row_activated), ui_flow_browse);
 
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(renderer, "editable", TRUE, NULL);
@@ -198,6 +203,7 @@ flow_browse_setup_ui(void)
 
 	/* Help */
 	ui_flow_browse->info.help = gtk_button_new_from_stock(GTK_STOCK_INFO);
+	g_object_set(ui_flow_browse->info.help, "sensitive", FALSE, NULL);
 	gtk_box_pack_end(GTK_BOX(infopage), ui_flow_browse->info.help, FALSE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->info.help), "clicked",
 			GTK_SIGNAL_FUNC(flow_browse_show_help), ui_flow_browse);
@@ -377,18 +383,26 @@ flow_browse_info_update(void)
 	/* Author and email */
 	text = g_string_new(NULL);
 	g_string_printf(text, "%s <%s>",
-			geoxml_document_get_author(GEOXML_DOC(gebr.flow)),
-			geoxml_document_get_email(GEOXML_DOC(gebr.flow)));
+		geoxml_document_get_author(GEOXML_DOC(gebr.flow)),
+		geoxml_document_get_email(GEOXML_DOC(gebr.flow)));
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.author), text->str);
 	g_string_free(text, TRUE);
 
 	/* Info button */
 	g_object_set(gebr.ui_flow_browse->info.help,
-		"sensitive", strlen(geoxml_document_get_help(GEOXML_DOC(gebr.flow))) ? TRUE : FALSE, NULL);
+		"sensitive", strlen(geoxml_document_get_help(GEOXML_DOC(gebr.flow))) ? TRUE : FALSE,
+		NULL);
 }
 
 static void
 flow_browse_show_help(void)
 {
 	help_show(geoxml_document_get_help(GEOXML_DOC(gebr.flow)), _("Flow help"));
+}
+
+static void
+flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
+	GtkTreeViewColumn * column, struct ui_flow_browse * ui_flow_browse)
+{
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 2);
 }

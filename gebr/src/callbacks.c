@@ -286,7 +286,7 @@ on_flow_component_status_activate(GtkMenuItem * menuitem)
 void
 on_configure_preferences_activate(void)
 {
-	preferences_setup_ui();
+	preferences_setup_ui(FALSE);
 }
 
 /*

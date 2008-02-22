@@ -44,6 +44,9 @@ static const gchar * browser [] = {
 static void
 preferences_actions(GtkDialog * dialog, gint arg1, struct ui_preferences * ui_preferences);
 
+static gboolean
+preferences_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_preferences * ui_preferences);
+
 /*
  * Section: Public
  * Public functions.
@@ -58,7 +61,7 @@ preferences_actions(GtkDialog * dialog, gint arg1, struct ui_preferences * ui_pr
  * dialog closes.
  */
 struct ui_preferences *
-preferences_setup_ui(void)
+preferences_setup_ui(gboolean first_run)
 {
 	struct ui_preferences *		ui_preferences;
 
@@ -66,16 +69,17 @@ preferences_setup_ui(void)
 	GtkWidget *			label;
 	GtkWidget *                     eventbox;
 
-	/* alloc */
 	ui_preferences = g_malloc(sizeof(struct ui_preferences));
-
+	ui_preferences->first_run = first_run;
 	ui_preferences->dialog = gtk_dialog_new_with_buttons(_("Preferences"),
-					GTK_WINDOW(gebr.window),
-					GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-					GTK_STOCK_OK, GTK_RESPONSE_OK,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					NULL);
-	gtk_widget_set_size_request(ui_preferences->dialog, 380, 260);
+		GTK_WINDOW(gebr.window),
+		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_STOCK_OK, GTK_RESPONSE_OK,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		NULL);
+	gtk_widget_set_size_request(ui_preferences->dialog, 400, 280);
+	g_signal_connect(ui_preferences->dialog, "delete-event",
+		G_CALLBACK(preferences_on_delete_event), ui_preferences);
 
 	/* Take the apropriate action when a button is pressed */
 	g_signal_connect(ui_preferences->dialog, "response",
@@ -120,9 +124,9 @@ preferences_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* Browse button for user's menus dir */
-	eventbox = gtk_event_box_new(); 	 
+	eventbox = gtk_event_box_new();
 	ui_preferences->usermenus = gtk_file_chooser_button_new(_("GêBR dir"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->usermenus); 	 
+	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->usermenus);
 	set_tooltip(eventbox, _("Path to look for private user's menus"));
 	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 
@@ -139,10 +143,10 @@ preferences_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* Browse button for ui_preferences->data */
-	eventbox = gtk_event_box_new(); 
+	eventbox = gtk_event_box_new();
 	ui_preferences->data = gtk_file_chooser_button_new(_("Browser data dir"),
 						GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->data); 	 
+	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->data);
 	set_tooltip(eventbox, _("Path to store projects, lines and flows"));
 	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
 
@@ -170,7 +174,7 @@ preferences_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
 
-	eventbox = gtk_event_box_new(); 
+	eventbox = gtk_event_box_new();
 	ui_preferences->browser = gtk_combo_box_entry_new_text();
 	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->browser);
 	set_tooltip(eventbox, _("An HTML browser to display helps and reports"));
@@ -248,10 +252,20 @@ preferences_actions(GtkDialog * dialog, gint arg1, struct ui_preferences * ui_pr
 		g_free(tmp3);
 		break;
 	} case GTK_RESPONSE_CANCEL: /* does nothing */
+		if (ui_preferences->first_run == TRUE)
+			gebr_quit();
+		break;
 	default:
 		break;
 	}
 
 	gtk_widget_destroy(ui_preferences->dialog);
 	g_free(ui_preferences);
+}
+
+static gboolean
+preferences_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_preferences * ui_preferences)
+{
+	preferences_actions(dialog, GTK_RESPONSE_CANCEL, ui_preferences);
+	return FALSE;
 }

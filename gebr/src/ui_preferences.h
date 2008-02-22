@@ -24,6 +24,8 @@
 struct ui_preferences {
 	GtkWidget *		dialog;
 
+	gboolean		first_run;
+
 	GtkWidget *		username;
 	GtkWidget *		email;
 	GtkWidget *		usermenus;
@@ -33,6 +35,6 @@ struct ui_preferences {
 };
 
 struct ui_preferences *
-preferences_setup_ui(void);
+preferences_setup_ui(gboolean first_run);
 
 #endif //__UI_PREFERENCES_H

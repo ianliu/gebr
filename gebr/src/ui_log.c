@@ -151,7 +151,7 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 		return;
 	}
 
-		
+
 	markuped_date = g_string_new(NULL);
 	g_string_printf(markuped_date, "<small>%s</small>", localized_date(message->date->str));
 
@@ -161,8 +161,6 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 			   LOG_DATE, markuped_date->str,
 			   LOG_MESSAGE, message->message->str,
 			   -1);
-		
-	g_string_free(markuped_date, TRUE);
 
 	/* select it on view */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_log->view));
@@ -170,5 +168,7 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 	/* scroll to end */
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(ui_log->store), &iter);
 	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(ui_log->view), path, NULL, FALSE, 0, 0);
+
+	g_string_free(markuped_date, TRUE);
 	gtk_tree_path_free(path);
 }

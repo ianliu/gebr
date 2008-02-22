@@ -223,7 +223,8 @@ gebr_config_load(int argc, char ** argv)
 
 	g_string_printf(config, "%s/.gebr/gebr.conf", getenv("HOME"));
 	if (g_access(config->str, F_OK)) {
-		on_configure_preferences_activate();
+		preferences_setup_ui(TRUE);
+		server_new("127.0.0.1");
 		goto out;
 	}
 
@@ -241,14 +242,12 @@ gebr_config_load(int argc, char ** argv)
 	g_string_assign(gebr.config.data, gebr.config.ggopt.data_arg);
 	g_string_assign(gebr.config.browser, gebr.config.ggopt.browser_arg);
 
-	if (!(gebr.config.ggopt.usermenus_given && gebr.config.ggopt.data_given &&
-		gebr.config.ggopt.editor_given && gebr.config.ggopt.browser_given))
-		on_configure_preferences_activate();
+	if (!gebr.config.ggopt.name_given)
+		preferences_setup_ui(TRUE);
 	else {
 		menu_list_populate();
 		project_list_populate();
 	}
-
 	if (!gebr.config.ggopt.server_given) {
 		server_new("127.0.0.1");
 	} else {
