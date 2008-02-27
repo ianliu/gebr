@@ -843,9 +843,10 @@ parameter_uilabel_update(struct parameter_data * data)
 		/* keyword */
 		g_string_append(uilabel, geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(data->parameter)));
 		/* default */
-		g_string_append(uilabel, " [");
-		g_string_append(uilabel, geoxml_program_parameter_get_default(GEOXML_PROGRAM_PARAMETER(data->parameter)));
-		g_string_append(uilabel, "]");
+		g_string_append_printf(uilabel, " [%s]",
+			type != GEOXML_PARAMETERTYPE_ENUM
+			? geoxml_program_parameter_get_default(GEOXML_PROGRAM_PARAMETER(data->parameter))
+			: gtk_combo_box_get_active_text(GTK_COMBO_BOX(data->widget->value_widget)));
 	}
 	/* label */
 	if (strlen(geoxml_parameter_get_label(data->parameter))) {

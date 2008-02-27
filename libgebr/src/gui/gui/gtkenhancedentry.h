@@ -39,7 +39,6 @@ struct _GtkEnhancedEntry {
 	GtkEntry		parent;
 
 	gchar *			empty_text;
-	gchar *			user_text;
 };
 struct _GtkEnhancedEntryClass {
 	GtkEntryClass		parent;
@@ -51,11 +50,14 @@ gtk_enhanced_entry_new();
 GtkWidget *
 gtk_enhanced_entry_new_with_empty_text(const gchar * empty_text);
 
+const gchar *
+gtk_enhanced_entry_get_text(GtkEnhancedEntry * enhanced_entry);
+
 void
-gtk_enhanced_set_empty_text(GtkEnhancedEntry * enhanced_entry, const gchar * empty_text);
+gtk_enhanced_entry_set_empty_text(GtkEnhancedEntry * enhanced_entry, const gchar * empty_text);
 
 const gchar *
-gtk_enhanced_get_empty_text(GtkEnhancedEntry * enhanced_entry);
+gtk_enhanced_entry_get_empty_text(GtkEnhancedEntry * enhanced_entry);
 
 G_END_DECLS
 

@@ -47,7 +47,7 @@ gtk_enhanced_entry_set_property(GtkEnhancedEntry * enhanced_entry, guint propert
 {
 	switch (property_id) {
 	case EMPTY_TEXT:
-		gtk_enhanced_set_empty_text(enhanced_entry, g_value_get_pointer(value));
+		gtk_enhanced_entry_set_empty_text(enhanced_entry, g_value_get_pointer(value));
 		break;
 	default:
 		/* We don't have any other property... */
@@ -61,7 +61,7 @@ gtk_enhanced_entry_get_property(GtkEnhancedEntry * enhanced_entry, guint propert
 {
 	switch (property_id) {
 	case EMPTY_TEXT:
-		g_value_set_pointer(value, (gchar*)gtk_enhanced_get_empty_text(enhanced_entry));
+		g_value_set_pointer(value, (gchar*)gtk_enhanced_entry_get_empty_text(enhanced_entry));
 		break;
 	default:
 		/* We don't have any other property... */
@@ -89,7 +89,6 @@ gtk_enhanced_entry_class_init(GtkEnhancedEntryClass * class)
 static void
 gtk_enhanced_entry_init(GtkEnhancedEntry * enhanced_entry)
 {
-	enhanced_entry->user_text = NULL;
 // 	gdk_window_set_events(GTK_WIDGET(enhanced_entry)->window,
 // 		GDK_FOCUS_CHANGE_MASK | gdk_window_get_events(GTK_WIDGET(enhanced_entry)->window));
 
@@ -125,11 +124,8 @@ __gtk_enhanced_entry_focus_in(GtkEntry * entry, GdkEventFocus * event, GtkEnhanc
 {
 // 	gtk_widget_modify_text(GTK_WIDGET(entry), GTK_STATE_ACTIVE, NULL);
 
-	if (enhanced_entry->user_text != NULL) {
-		gtk_entry_set_text(entry, enhanced_entry->user_text);
-		g_free(enhanced_entry->user_text);
-		enhanced_entry->user_text = NULL;
-	}
+	if (g_ascii_strcasecmp(gtk_entry_get_text(entry), enhanced_entry->empty_text) == 0)
+		gtk_entry_set_text(entry, "");
 
 	return FALSE;
 }
@@ -142,10 +138,8 @@ __gtk_enhanced_entry_focus_out(GtkEntry * entry, GdkEventFocus * event, GtkEnhan
 	gtk_widget_modify_text(GTK_WIDGET(entry), GTK_STATE_ACTIVE,
 		&(GdkColor){0xFFFF, 255, 255, 255});
 
-	if (!strlen(gtk_entry_get_text(entry)) && enhanced_entry->empty_text != NULL) {
-		enhanced_entry->user_text = strdup(gtk_entry_get_text(entry));
+	if (!strlen(gtk_enhanced_entry_get_text(enhanced_entry)) && enhanced_entry->empty_text != NULL)
 		gtk_entry_set_text(entry, enhanced_entry->empty_text);
-	}
 
 	return FALSE;
 }
@@ -170,8 +164,15 @@ gtk_enhanced_entry_new_with_empty_text(const gchar * empty_text)
 		NULL);
 }
 
+const gchar *
+gtk_enhanced_entry_get_text(GtkEnhancedEntry * enhanced_entry)
+{
+	return g_ascii_strcasecmp(gtk_entry_get_text(GTK_ENTRY(enhanced_entry)), enhanced_entry->empty_text) == 0
+		? "" : gtk_entry_get_text(GTK_ENTRY(enhanced_entry));
+}
+
 void
-gtk_enhanced_set_empty_text(GtkEnhancedEntry * enhanced_entry, const gchar * empty_text)
+gtk_enhanced_entry_set_empty_text(GtkEnhancedEntry * enhanced_entry, const gchar * empty_text)
 {
 	if (enhanced_entry->empty_text != NULL)
 		g_free(enhanced_entry->empty_text);
@@ -180,7 +181,7 @@ gtk_enhanced_set_empty_text(GtkEnhancedEntry * enhanced_entry, const gchar * emp
 }
 
 const gchar *
-gtk_enhanced_get_empty_text(GtkEnhancedEntry * enhanced_entry)
+gtk_enhanced_entry_get_empty_text(GtkEnhancedEntry * enhanced_entry)
 {
 	return enhanced_entry->empty_text;
 }

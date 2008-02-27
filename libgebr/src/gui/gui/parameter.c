@@ -67,8 +67,9 @@ __parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, 
 		else {
 			GeoXmlSequence *	enum_option;
 
+			/* minus one to skip the first empty value */
 			geoxml_program_parameter_get_enum_option(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter),
-				&enum_option, index);
+				&enum_option, index-1);
 			g_string_assign(value, geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(enum_option)));
 		}
 
@@ -110,10 +111,10 @@ on_edit_list_toggled(GtkToggleButton * toggle_button, struct parameter_widget * 
 	gboolean		toggled;
 
 	g_signal_handlers_block_matched(G_OBJECT(parameter_widget->sequence_edit),
-					G_SIGNAL_MATCH_FUNC,
-					0, 0, NULL,
-					(GCallback)parameter_widget_changed,
-					NULL);
+		G_SIGNAL_MATCH_FUNC,
+		0, 0, NULL,
+		(GCallback)parameter_widget_changed,
+		NULL);
 
 	toggled = gtk_toggle_button_get_active(toggle_button);
 	if (toggled == TRUE) {
@@ -143,10 +144,10 @@ on_edit_list_toggled(GtkToggleButton * toggle_button, struct parameter_widget * 
 
 	gtk_widget_set_sensitive(parameter_widget->list_value_widget, !toggled);
 	g_signal_handlers_unblock_matched(G_OBJECT(parameter_widget->sequence_edit),
-					G_SIGNAL_MATCH_FUNC,
-					0, 0, NULL,
-					(GCallback)parameter_widget_changed,
-					NULL);
+		G_SIGNAL_MATCH_FUNC,
+		0, 0, NULL,
+		(GCallback)parameter_widget_changed,
+		NULL);
 }
 
 static void
@@ -231,7 +232,7 @@ parameter_widget_enum_set_widget_value(struct parameter_widget * parameter_widge
 	geoxml_program_parameter_get_enum_option(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), &option, 0);
 	for (i = 0; option != NULL; ++i, geoxml_sequence_next(&option))
 		if (g_ascii_strcasecmp(value, geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(option))) == 0) {
-			gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->value_widget), i);
+			gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->value_widget), i+1);
 			return;
 		}
 

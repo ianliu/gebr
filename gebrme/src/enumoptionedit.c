@@ -119,8 +119,8 @@ enum_option_edit_add_request(EnumOptionEdit * enum_option_edit)
 	GeoXmlEnumOption *		enum_option;
 
 	enum_option = geoxml_program_parameter_append_enum_option(enum_option_edit->program_parameter,
-		gtk_entry_get_text(GTK_ENTRY(enum_option_edit->label_entry)),
-		gtk_entry_get_text(GTK_ENTRY(enum_option_edit->value_entry)));
+		gtk_enhanced_entry_get_text(GTK_ENHANCED_ENTRY(enum_option_edit->label_entry)),
+		gtk_enhanced_entry_get_text(GTK_ENHANCED_ENTRY(enum_option_edit->value_entry)));
 	__enum_option_edit_add(enum_option_edit, enum_option);
 
 	g_signal_emit_by_name(enum_option_edit, "changed");
@@ -143,7 +143,7 @@ __enum_option_edit_on_label_edited(GtkCellRendererText * cell, gchar * path_stri
 		-1);
 
 	gtk_list_store_set(sequence_edit->list_store, &iter,
-		0, new_text,
+		1, new_text,
 		-1);
 	geoxml_enum_option_set_label(enum_option, new_text);
 
@@ -167,7 +167,7 @@ __enum_option_edit_on_value_edited(GtkCellRendererText * cell, gchar * path_stri
 		-1);
 
 	gtk_list_store_set(sequence_edit->list_store, &iter,
-		1, new_text,
+		0, new_text,
 		-1);
 	geoxml_enum_option_set_value(enum_option, new_text);
 
@@ -244,7 +244,7 @@ __enum_option_edit_create_tree_view(EnumOptionEdit * enum_option_edit)
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(renderer, "editable", TRUE, NULL);
 	g_signal_connect(renderer, "edited",
-		(GCallback)__enum_option_edit_on_label_edited, enum_option_edit);
+		(GCallback)__enum_option_edit_on_value_edited, enum_option_edit);
 	col = gtk_tree_view_column_new_with_attributes(_("value"), renderer, NULL);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
@@ -252,7 +252,7 @@ __enum_option_edit_create_tree_view(EnumOptionEdit * enum_option_edit)
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(renderer, "editable", TRUE, NULL);
 	g_signal_connect(renderer, "edited",
-		(GCallback)__enum_option_edit_on_value_edited, enum_option_edit);
+		(GCallback)__enum_option_edit_on_label_edited, enum_option_edit);
 	col = gtk_tree_view_column_new_with_attributes(_("label"), renderer, NULL);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", 1);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
