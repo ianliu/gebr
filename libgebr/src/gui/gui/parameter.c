@@ -38,6 +38,7 @@ static GString *
 __parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, gboolean check_list)
 {
 	GString *	value;
+	guint           digits;
 
 	value = g_string_new(NULL);
 
@@ -53,7 +54,16 @@ __parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, 
 		g_string_assign(value, gtk_entry_get_text(GTK_ENTRY(parameter_widget->value_widget)));
 		break;
 	case GEOXML_PARAMETERTYPE_RANGE:
-		g_string_printf(value, "%f", gtk_spin_button_get_value(GTK_SPIN_BUTTON(parameter_widget->value_widget)));
+		digits = gtk_spin_button_get_digits (GTK_SPIN_BUTTON(parameter_widget->value_widget));
+		if (digits == 0)
+			g_string_printf(value, "%d", gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(parameter_widget->value_widget)));
+		else{
+			GString *mask;
+			mask = g_string_new(NULL);
+			g_string_printf(mask,"%%.%if", digits);
+			g_string_printf(value, mask->str, gtk_spin_button_get_value(GTK_SPIN_BUTTON(parameter_widget->value_widget)));
+			g_string_free(mask, TRUE);
+		}
 		break;
 	case GEOXML_PARAMETERTYPE_FILE:
 		g_string_assign(value, gtk_file_entry_get_path(GTK_FILE_ENTRY(parameter_widget->value_widget)));

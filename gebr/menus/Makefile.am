@@ -57,6 +57,7 @@ gebrmenu_DATA = \
 		surange.mnu         \
 		surelan.mnu	    \
 		sushape.mnu         \
+		sushw.mnu	    \
 		susort.mnu	    \
 		suspike.mnu	    \
 		sustack.mnu         \
