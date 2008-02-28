@@ -68,7 +68,7 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	ui_document_properties = g_malloc(sizeof(struct ui_document_properties));
 	ui_document_properties->document = document;
 
-	dialog = gtk_dialog_new_with_buttons(_("Flow properties"),
+	dialog = gtk_dialog_new_with_buttons(_("Properties"),
 						GTK_WINDOW(gebr.window),
 						GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 						GTK_STOCK_OK, GTK_RESPONSE_OK,

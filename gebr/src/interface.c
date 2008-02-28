@@ -23,6 +23,8 @@
  * This function assemblies the main window, preferences and menu bar.
  */
 
+#include <gdk/gdkkeysyms.h>
+
 #include <string.h>
 
 #include <gui/pixmaps.h>
@@ -69,6 +71,8 @@ assembly_interface(void)
 	GtkWidget *	vboxmain;
 	GtkWidget *	mainmenu;
 	GtkWidget *	pagetitle;
+	GtkAccelGroup*  accel_group;
+	GClosure *      closure;
 
 	gebr.about = about_setup_ui("GêBR", _("A plug-and-play environment to\nseismic processing tools"));
 	gebr.ui_server_list = server_list_setup_ui();
@@ -148,6 +152,18 @@ assembly_interface(void)
 	gtk_box_pack_end(GTK_BOX(vboxmain), gebr.ui_log->widget, FALSE, FALSE, 0);
 
 	switch_page(NULL, NULL, 0);
+
+	/* Create some hot-keys */
+	accel_group = gtk_accel_group_new();
+
+	/* CTRL+R - Run current flow */
+	closure = g_cclosure_new(on_flow_execute_activate, NULL, NULL);
+	gtk_accel_group_connect(accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE, closure);
+	/* CTR+Q - Quit GeBR */
+	closure = g_cclosure_new( (void*) gebr_quit, NULL, NULL);
+	gtk_accel_group_connect(accel_group, GDK_q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE, closure);
+
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), accel_group);
 }
 
 /*
