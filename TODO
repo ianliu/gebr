@@ -1,63 +1,70 @@
 Geral:
 
-  * Cliente de linhas de comando para a G√™BR Daemon, capaz de
-  submeter um fluxo para execu√ß√£o, al√©m das outras consultas b√°sicas.
+  * Cliente de linhas de comando para a GÍBR Daemon, capaz de
+  submeter um fluxo para execuÁ„o, alÈm das outras consultas
+  b·sicas.
 
   * atualizar copyright para 2007-2008
 
-G√™BR:
+GÍBR:
 
   * Conferir/Corrigir o servidor
 
   * Se houver dois menus distintos com o mesmo nome de arquivo,
-  problema! Por exemplo, se o usu√°rio pegar um menu do sistema e
-  coloca-lo na sua pasta local para edita-lo, gerando uma vers√£o
-  pr√≥pria.
+  problema! Por exemplo, se o usu·rio pegar um menu do sistema e
+  coloca-lo na sua pasta local para edita-lo, gerando uma vers„o
+  prÛpria.
 
-  * alternar cores de fundo na janela de parametros
-  * suporte a opÁıes de linha de comando no daemon. ocm isso, suportar a opÁ„o check para ver se h· um servidor rodando
-  * fazer scroll na adiÁ„o de parametros da gebrme/*jobs/*componentes de fluxo
+  * alternar cores de fundo na janela de par‚metros
+
+  * suporte a opÁıes de linha de comando no daemon. Com isso,
+    suportar a opÁ„o check para ver se h· um servidor rodando.
+
+  * fazer scroll na adiÁ„o de parametros da
+    gebrme/*jobs/*componentes de fluxo
+
   * proteÁ„o de extens„o na hora de salvar
-  * fechar gebr caso o usuario clique em cancelar na janela de preferencias lanÁada pela primeira vez
+
   * salvar o tamanho da janela
-  * pasta do usu·rio n„o setada quando o usu·rio decidi usar a padr„o, ou seja, a pasta do usu·rio
 
-  ? Op√ß√£o nas prefer√™ncias para shell (Ser√°?)
+  * pasta do usu·rio n„o setada quando o usu·rio decidi usar
+    a padr„o, ou seja, a pasta do usu·rio
 
-G√™BR Daemon:
+  ? OpÁ„o nas preferÍncias para shell (Ser·?)
 
-  * Quando a saida de um programa n√£o √© UTF-8, o GTK n√£o a exibe. Exemplo:
-  criei um menu para o comando cal da Bash. Este imprime "S√°b" por exemplo.
-  Ai nada aparece, pois o texto n√£o √© UTF-8. Mas √© pior que isso ainda. A
-  vers√£o mais nova do cal, imprime o dia atual com um highlight (que s√£o
-  alguns escapes de bash interpretados pelo terminal) e isso com certeza
-  n√£o √© UTF-8 independentemente do encode do sistema.
+GÍBR Daemon:
 
-G√™BRME:
+  * Quando a saida de um programa n„o È UTF-8, o GTK n„o a
+  exibe. Exemplo: criei um menu para o comando cal da Bash. Este
+  imprime "S·b" por exemplo. Ai nada aparece, pois o texto n„o
+  È UTF-8. Mas È pior que isso ainda. A vers„o mais nova do
+  cal, imprime o dia atual com um highlight (que s„o alguns escapes
+  de bash interpretados pelo terminal) e isso com certeza n„o È
+  UTF-8 independentemente do encode do sistema.
 
-  * Quando um par√¢metro do tipo arquivo √© marcado como "list" na gebr n√£o
-  aparece mais o bot√£o de browse para arquivo.
+GÍBRME:
 
-  * Atualizar vers„o do DTD no template
+  * Quando um par‚metro do tipo arquivo È marcado como "list" na
+  gebr n„o aparece mais o bot„o de browse para arquivo.
 
-  * Port para 0.2.2. Label para enum, suporte a grupos, digitos para range.
+  * Suporte a grupos.
 
-LibGeBR:
+LibGÍBR:
 
   * Suporte para flow 0.2.2.
 
-  * Par√¢metros do tipo enum tem como subelemento "option", que √©
+  * Par‚metros do tipo enum tem como subelemento "option", que È
   texto. Na verdade "option" deveria ser algo com dois subelementos
   "value" e "label", assim na interface aparece optionlabel, que pode
-  ser um texto compreens√≠vel, mas na linha de comando aparece
+  ser um texto compreensÌvel, mas na linha de comando aparece
   "optionvalue".
 
-  * libgeoxml_validade: validar nos menus seus ind√É¬≠ces e nomes de
-  arquivos e campos obrigat√≥rios
+  * libgeoxml_validade: validar nos menus seus Ìndices e nomes de
+  arquivos e campos obrigatÛrios
 
-  * Usar tidy no geoxml_document_set_help (se dispon√≠vel - checar no
+  * Usar tidy no geoxml_document_set_help (se disponÌvel - checar no
   configure)
-  op√ß√µes: utf-8
+  opÁıes: utf-8
 	  indent
 	  modify
 	  bare
@@ -70,32 +77,39 @@ DONE:
   que ela tenham sido criada.
 
   * Quando a gebrme for salvar um fluxo, iniciar na pasta definida
-  pelo usu√°rio e n√£o na pasta corrente.
+  pelo usu·rio e n„o na pasta corrente.
 
-  * Corrigir o menu ximage, retirando o default do par√¢metro clip.
+  * Corrigir o menu ximage, retirando o default do par‚metro clip.
 
-  * Utilizar um arquivo tempor√°rio com nome aleat√≥rio para fazer o sort
-  dos menus e n√£o o arquivo /tmp/gebrmenu.tmp pois isso d√° problema
-  quando mais de um usu√°rio utiliza a mesma m√°quina.
+  * Utilizar um arquivo tempor·rio com nome aleatÛrio para fazer
+  o sort dos menus e n„o o arquivo /tmp/gebrmenu.tmp pois isso
+  d· problema quando mais de um usu·rio utiliza a mesma
+  m·quina.
 
-  * Tooltips n√£o est√£o funcionando na gebr, janela de prefer√™ncia, sobre
-  os bot√µes para diret√≥rios.
+  * Tooltips n„o est„o funcionando na gebr, janela de preferÍncia, sobre
+  os botıes para diretÛrios.
 
-  * Bot√£o de for√ßar conectar no servidor (remove o arquivo ~/.gebr/gebrd.run
+  * Bot„o de forÁar conectar no servidor (remove o arquivo ~/.gebr/gebrd.run
   e roda um servidor novo).
 
-
   * O configure da gebrme e da gebrd deveriam definir
-  as vari√°veis LIBGEBR_CFLAGS e LIBGEBR_LIBS de maneira
-  a poder definir as vari√°veis LIBGEBR_{GEOXML,COMM,GUI,MISC}_...
-  de uma vez s√≥.
+  as vari·veis LIBGEBR_CFLAGS e LIBGEBR_LIBS de maneira
+  a poder definir as vari·veis LIBGEBR_{GEOXML,COMM,GUI,MISC}_...
+  de uma vez sÛ.
 
-
-  * Criar um elemento url para programa, onde ser√° armazenado onde o
-  programa pode ser obtido para instala√ß√£o. Este elemento √© opcional
+  * Criar um elemento url para programa, onde ser· armazenado onde o
+  programa pode ser obtido para instalaÁ„o. Este elemento È opcional
   para programas (evitando assim que fluxo anteriores tornem-se
-  inv√°lidos). A implementa√ß√£o foi feita na libgeoxml por√©m, como este
-  elemento pode ou n√£o estar presente num programa, na fun√ß√£o
-  geoxml_program_set_url, antes de defini-lo √© preciso checar se ele
-  j√° existe e cria-lo se necess√°rio. (Fazer a altera√ß√£o para 0.2.1,
-  tornando-o obrigat√≥rio).
+  inv·lidos). A implementaÁ„o foi feita na libgeoxml porÈm, como este
+  elemento pode ou n„o estar presente num programa, na funÁ„o
+  geoxml_program_set_url, antes de defini-lo È preciso checar se ele
+  j· existe e cria-lo se necess·rio. (Fazer a alteraÁ„o para 0.2.1,
+  tornando-o obrigatÛrio).
+
+  * Port para 0.2.2. Label para enum, dÌgitos para range.
+
+  * Atualizar vers„o do DTD no template.
+
+  * fechar gebr caso o usu·rio clique em cancelar na janela de
+    preferÍncias lanÁada pela primeira vez
+

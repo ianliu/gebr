@@ -1,5 +1,5 @@
 /*   GÍBR Daemon - Process and control execution of flows
- *   Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
+ *   Copyright (C) 2007-2008 GÍBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

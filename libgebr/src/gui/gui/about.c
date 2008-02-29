@@ -1,5 +1,5 @@
 /*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+ *   Copyright (C) 2007-2008 GêBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ about_setup_ui(const gchar * program, const gchar * description)
 					_("GÃªBR Core Team"));
 
 	gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about.dialog), _(
-		"Copyright (C) 2007 GÃªBR Core Team (http://groups.google.com/group/gebr)\n"
+		"Copyright (C) 2007-2008 GÃªBR Core Team (http://groups.google.com/group/gebr)\n"
 		"\n"
 		"This program is free software: you can redistribute it and/or modify "
 		"it under the terms of the GNU General Public License as published by "
