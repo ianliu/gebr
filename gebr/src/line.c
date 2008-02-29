@@ -111,6 +111,8 @@ line_new(void)
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &line_iter);
 	gtk_tree_view_expand_to_path(GTK_TREE_VIEW(gebr.ui_project_line->view), path);
 	gtk_tree_selection_select_iter(selection, &line_iter);
+	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), path,
+				     NULL, FALSE, 0, 0);
 	g_signal_emit_by_name(gebr.ui_project_line->view, "cursor-changed");
 
 	gtk_tree_path_free(path);

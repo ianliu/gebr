@@ -59,6 +59,7 @@ flow_new(void)
 {
 	GtkTreeSelection *	selection;
 	GtkTreeIter		iter;
+	GtkTreePath *           path;
 
 	gchar *			flow_title;
 	gchar *			line_title;
@@ -91,7 +92,9 @@ flow_new(void)
 		FB_TITLE, flow_title,
 		FB_FILENAME, geoxml_document_get_filename(GEOXML_DOC(flow)),
 		-1);
-
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter);
+	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), path,
+				     NULL, FALSE, 0, 0);
 	/* select it */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	gtk_tree_selection_select_iter(selection, &iter);
@@ -198,10 +201,11 @@ flow_import(void)
 {
 	GtkTreeSelection *	selection;
 	GtkTreeIter		iter;
+	GtkTreePath *           path;
 
 	GtkWidget *		chooser_dialog;
 	GtkFileFilter *		filefilter;
-	gchar *			path;
+	gchar *			dir;
 
 	gchar *			flow_title;
 	GString *		flow_filename;
@@ -232,8 +236,8 @@ flow_import(void)
 		goto out;
 
 	/* load flow */
-	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
-	imported_flow = GEOXML_FLOW(document_load_path(path));
+	dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
+	imported_flow = GEOXML_FLOW(document_load_path(dir));
 	if (imported_flow == NULL)
 		goto out2;
 
@@ -243,7 +247,7 @@ flow_import(void)
 
 	/* feedback */
 	gebr_message(LOG_INFO, TRUE, TRUE, _("Flow '%s' imported to line '%s' from file '%s'"),
-		     flow_title, geoxml_document_get_title(GEOXML_DOC(gebr.line)), path);
+		     flow_title, geoxml_document_get_title(GEOXML_DOC(gebr.line)), dir);
 
 	/* change filename */
 	geoxml_document_set_filename(GEOXML_DOC(imported_flow), flow_filename->str);
@@ -262,11 +266,14 @@ flow_import(void)
 	/* select it */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (gebr.ui_flow_browse->view));
 	gtk_tree_selection_select_iter (selection, &iter);
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter);
+	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), path,
+				     NULL, FALSE, 0, 0);
 	g_signal_emit_by_name(gebr.ui_flow_browse->view, "cursor-changed");
 
 	/* frees */
 	g_string_free(flow_filename, TRUE);
-out2:	g_free(path);
+out2:	g_free(dir);
 out:	gtk_widget_destroy(chooser_dialog);
 }
 

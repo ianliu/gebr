@@ -47,6 +47,7 @@ project_new(void)
 {
 	GtkTreeSelection *	selection;
 	GtkTreeIter		iter;
+	GtkTreePath *           path;
 
 	GeoXmlDocument *	project;
 	gchar *			title;
@@ -71,6 +72,9 @@ project_new(void)
 	/* select it */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	gtk_tree_selection_select_iter(selection, &iter);
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
+	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), path,
+				     NULL, FALSE, 0, 0);
 	g_signal_emit_by_name(gebr.ui_project_line->view, "cursor-changed");
 }
 
