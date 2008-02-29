@@ -1,9 +1,9 @@
-TODO:
-
 Geral:
 
   * Cliente de linhas de comando para a GÃªBR Daemon, capaz de
   submeter um fluxo para execuÃ§Ã£o, alÃ©m das outras consultas bÃ¡sicas.
+
+  * atualizar copyright para 2007-2008
 
 GÃªBR:
 
@@ -13,6 +13,14 @@ GÃªBR:
   problema! Por exemplo, se o usuÃ¡rio pegar um menu do sistema e
   coloca-lo na sua pasta local para edita-lo, gerando uma versÃ£o
   prÃ³pria.
+
+  * alternar cores de fundo na janela de parametros
+  * suporte a opções de linha de comando no daemon. ocm isso, suportar a opção check para ver se há um servidor rodando
+  * fazer scroll na adição de parametros da gebrme/*jobs/*componentes de fluxo
+  * proteção de extensão na hora de salvar
+  * fechar gebr caso o usuario clique em cancelar na janela de preferencias lançada pela primeira vez
+  * salvar o tamanho da janela
+  * pasta do usuário não setada quando o usuário decidi usar a padrão, ou seja, a pasta do usuário
 
   ? OpÃ§Ã£o nas preferÃªncias para shell (SerÃ¡?)
 
