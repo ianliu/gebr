@@ -105,10 +105,10 @@ gebr_quit(void)
 	GtkTreeIter	iter;
 	gboolean	valid;
 
+	gebr_config_save(FALSE);
 	/*
 	 * Data frees and cleanups
 	 */
-
 	flow_free();
 	document_free();
 
@@ -241,7 +241,13 @@ gebr_config_load(int argc, char ** argv)
 	g_string_assign(gebr.config.usermenus, gebr.config.ggopt.usermenus_arg);
 	g_string_assign(gebr.config.data, gebr.config.ggopt.data_arg);
 	g_string_assign(gebr.config.browser, gebr.config.ggopt.browser_arg);
-
+	gebr.config.width = gebr.config.ggopt.width_arg;
+	gebr.config.height = gebr.config.ggopt.height_arg;
+	gebr.config.log_expander_state = (gebr.config.ggopt.logexpand_given ? TRUE : FALSE);
+	
+	gtk_window_resize (GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
+	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
+	
 	if (!gebr.config.ggopt.name_given)
 		preferences_setup_ui(TRUE);
 	else {
@@ -280,7 +286,7 @@ gebr_config_apply(void)
  * Write ~/.gebr/.gebr.conf file.
  */
 gboolean
-gebr_config_save(void)
+gebr_config_save(gboolean *verbose)
 {
 	FILE *		fp;
 	GString *	config;
@@ -298,12 +304,19 @@ gebr_config_save(void)
 		return FALSE;
 	}
 
+	gtk_window_get_size(GTK_WINDOW(gebr.window), &gebr.config.width, &gebr.config.height);
+	gebr.config.log_expander_state = gtk_expander_get_expanded(GTK_EXPANDER(gebr.ui_log->widget));
+
 	fprintf(fp, "name = \"%s\"\n", gebr.config.username->str);
 	fprintf(fp, "email = \"%s\"\n", gebr.config.email->str);
 	fprintf(fp, "usermenus = \"%s\"\n", gebr.config.usermenus->str);
 	fprintf(fp, "data = \"%s\"\n",  gebr.config.data->str);
 	fprintf(fp, "editor = \"%s\"\n", gebr.config.editor->str);
 	fprintf(fp, "browser = \"%s\"\n", gebr.config.browser->str);
+	fprintf(fp, "width =\"%d\"\n", gebr.config.width);
+	fprintf(fp, "height =\"%d\"\n", gebr.config.height);
+	if (gebr.config.log_expander_state)
+		fprintf(fp, "logexpand\n");
 
 	/* Save list of servers */
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
@@ -319,7 +332,8 @@ gebr_config_save(void)
 	}
 
 	fclose(fp);
-	gebr_message(LOG_INFO, FALSE, TRUE, _("Configuration saved"));
+	if (verbose)
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Configuration saved"));
 
 	return TRUE;
 }

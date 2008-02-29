@@ -1,5 +1,5 @@
 #  GÍBR - An environment for seismic processing.
-#  Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
+#  Copyright (C) 2007-2008 GÍBR core team (http://gebr.sourceforge.net)
 #
 #  This program is free software: you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License as
@@ -22,7 +22,6 @@
 #
 # gengetopt < gebr.ggo --file-name=cmdline
 #
-# $Id: gebr.ggo,v 1.2 2007-05-27 11:48:54 biloti Exp $
 
 package "GÍBR"
 version "1.0"
@@ -35,4 +34,7 @@ option "usermenus" - "User local menus dir" string yes
 option "data" - "Data user dir" string yes
 option "editor" - "HTML capable editor" string no
 option "browser" - "HTML browser" string no
+option "width" - "Window width" int default="700" no
+option "height" - "Window height" int default="400" no
+option "logexpand" - "Log exapander state" flag off
 option "server" - "Server hostname" string no multiple

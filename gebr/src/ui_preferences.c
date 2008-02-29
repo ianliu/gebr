@@ -244,7 +244,7 @@ preferences_actions(GtkDialog * dialog, gint arg1, struct ui_preferences * ui_pr
 		g_string_assign(gebr.config.browser,
 				tmp3);
 
-		gebr_config_save();
+		gebr_config_save(TRUE);
 		gebr_config_apply();
 
 		g_free(tmp);

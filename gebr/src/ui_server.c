@@ -198,7 +198,7 @@ server_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * ui_serve
 			break;
 	case GEBR_SERVER_CLOSE: /* Only for server list */
 		gtk_widget_hide(gebr.ui_server_list->common.dialog);
-		gebr_config_save();
+		gebr_config_save(FALSE);
 		break;
 	case GEBR_SERVER_ADD_LOCAL:
 		server_new("127.0.0.1");
