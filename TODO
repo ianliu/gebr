@@ -23,10 +23,6 @@ GêBR:
   * fazer scroll na adição de parametros da
     gebrme/*jobs/*componentes de fluxo
 
-  * proteção de extensão na hora de salvar
-
-  * salvar o tamanho da janela
-
   * pasta do usuário não setada quando o usuário decidi usar
     a padrão, ou seja, a pasta do usuário
 
@@ -48,6 +44,8 @@ GêBRME:
   gebr não aparece mais o botão de browse para arquivo.
 
   * Suporte a grupos.
+
+  * proteção de extensão na hora de salvar
 
 LibGêBR:
 
@@ -112,4 +110,6 @@ DONE:
 
   * fechar gebr caso o usuário clique em cancelar na janela de
     preferências lançada pela primeira vez
+
+  * salvar o tamanho da janela e o estado do display do log
 
