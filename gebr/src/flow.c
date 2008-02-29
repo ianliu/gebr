@@ -366,6 +366,9 @@ flow_export_as_menu(void)
 
 	gchar *			path;
 	gchar *			filename;
+	GString *               menufn;
+	GString *               menupath;
+
 
 	GeoXmlFlow *		flow;
 	GeoXmlSequence *	program;
@@ -437,8 +440,14 @@ flow_export_as_menu(void)
 	geoxml_document_set_date_modified(GEOXML_DOC(flow), iso_date());
 
 	geoxml_document_set_help(GEOXML_DOC(flow), "");
-	geoxml_document_set_filename(GEOXML_DOC(flow), filename);
-	geoxml_document_save(GEOXML_DOC(flow), path);
+	menufn = g_string_new(filename);
+	menupath = g_string_new(path);
+	if (!g_str_has_suffix(filename,".mnu")){
+		g_string_append(menufn, ".mnu");
+		g_string_append(menupath, ".mnu");
+	}		
+	geoxml_document_set_filename(GEOXML_DOC(flow), menufn->str);
+	geoxml_document_save(GEOXML_DOC(flow), menupath->str);
 	geoxml_document_free(GEOXML_DOC(flow));
 
 	gebr_message(LOG_INFO, TRUE, TRUE, _("Flow '%s' exported as menu to %s"),
@@ -446,6 +455,8 @@ flow_export_as_menu(void)
 
 	g_free(path);
 	g_free(filename);
+	g_string_free(menufn, TRUE);
+	g_string_free(menupath, TRUE);
 
 out:	gtk_widget_destroy(dialog);
 }
