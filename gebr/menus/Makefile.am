@@ -18,7 +18,6 @@ gebrmenudir = $(datadir)/gebr/menus/
 gebrmenu_DATA = \
 		a2b.mnu             \
 		b2a.mnu             \
-		df.mnu		    \
 		gbbeam.mnu	    \
 		grace.mnu           \
 		segyread.mnu        \
@@ -84,10 +83,8 @@ gebrmenu_DATA = \
 		suximage.mnu        \
 		triseis.mnu         \
 		tvnmoqc.mnu         \
-		uname.mnu           \
 		uni2tri.mnu	    \
 		unif2.mnu	    \
-		uptime.mnu          \
 		usernames.mnu       \
 		ximage.mnu	    \
 		xwigb.mnu
