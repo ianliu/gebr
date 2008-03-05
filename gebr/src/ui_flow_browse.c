@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include <misc/date.h>
+#include <gui/utils.h>
 
 #include "ui_flow_browse.h"
 #include "gebr.h"
@@ -33,6 +34,7 @@
 #include "flow.h"
 #include "ui_flow.h"
 #include "ui_help.h"
+#include "callbacks.h"
 
 /*
  * Prototypes
@@ -51,6 +53,8 @@ static void
 flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	GtkTreeViewColumn * column, struct ui_flow_browse * ui_flow_browse);
 
+GtkMenu *
+flow_browse_popup_menu(GtkWidget *widget, gpointer data);
 /*
  * Section: Public
  * Public functions.
@@ -120,6 +124,8 @@ flow_browse_setup_ui(void)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
 	gtk_container_add(GTK_CONTAINER(scrolledwin), ui_flow_browse->view);
+
+	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view), flow_browse_popup_menu, NULL);
 
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->view), "cursor-changed",
 			GTK_SIGNAL_FUNC(flow_browse_load), ui_flow_browse);
@@ -405,4 +411,42 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	GtkTreeViewColumn * column, struct ui_flow_browse * ui_flow_browse)
 {
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 2);
+}
+
+
+GtkMenu *
+flow_browse_popup_menu(GtkWidget *widget, gpointer data)
+{
+	GtkWidget *	menu;
+	GtkWidget *	menu_item;
+
+	menu = gtk_menu_new();
+
+	/* Move up */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(menu_item, "activate",
+			 (GCallback)flow_move_up, NULL);
+	/* Move down */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_DOWN, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(menu_item, "activate",
+		(GCallback)flow_move_down, NULL);
+
+	/* Input/Output */
+	menu_item = gtk_image_menu_item_new_with_label(_("Input/Output"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+			GTK_SIGNAL_FUNC(on_flow_io_activate), NULL);
+
+	/* Run */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_EXECUTE, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(menu_item, "activate",
+		(GCallback)flow_run, NULL);
+
+	gtk_widget_show_all(menu);
+
+	return GTK_MENU(menu);
+	
 }

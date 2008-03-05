@@ -25,6 +25,7 @@ gebrmenu_DATA = \
 		sleep.mnu           \
 		suabshw.mnu	    \
 		suacor.mnu          \
+		suaddevent.mnu      \
 		suaddhead.mnu       \
 		suaddnoise.mnu      \
 		suamp.mnu           \
