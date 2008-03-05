@@ -1,5 +1,5 @@
-# GÍBR - An environment for seismic processing.
-# Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
+# GÍBR Menus SU - Seismic Unix menus for GÍBR
+# Copyright (C) 2008 GÍBR Core Team
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,9 +14,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-gebrmenudir = $(datadir)/gebr/menus/
-gebrmenu_DATA = \
-		grace.mnu           \
-		sleep.mnu
+AC_INIT(configure.ac)
 
-EXTRA_DIST = $(gebrmenu_DATA)
+PACKAGE=gebr-menus-su
+VERSION=0.1.0
+AC_SUBST(PACKAGE)
+AC_SUBST(VERSION)
+
+AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
+PACKAGE_NAME=$PACKAGE
+PACKAGE_VERSION=$VERSION
+
+AC_PROG_INSTALL
+AC_PROG_CC
+
+AC_OUTPUT([
+Makefile
+menus/Makefile
+rpm/gebr-menus-su.fedora.spec
+rpm/gebr-menus-su.opensuse.spec
+rpm/gebr-menus-su.mandriva.spec
+])
