@@ -27,6 +27,8 @@ PKG_RPM = rpm/libgebr.fedora.spec \
 	rpm/libgebr.mandriva.spec
 EXTRA_DIST = ${PKG_DEBIAN} ${PKG_RPM}
 
+packages: deb-package fedora-package opensuse-package mandriva-package
+
 deb-package:
 	dpkg-buildpackage -rfakeroot
 

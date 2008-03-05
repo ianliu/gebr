@@ -24,6 +24,8 @@ EXTRA_DIST=
 doc:
 	NaturalDocs -i src/ -p ndproj/ -o FramedHtml doc/
 
+packages: deb-package fedora-package opensuse-package mandriva-package
+
 deb-package:
 	dpkg-buildpackage -rfakeroot
 

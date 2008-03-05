@@ -21,6 +21,8 @@ EXTRA_DIST=
 	rpm/gebrd.opensuse.spec \
 	rpm/gebrd.mandriva.spec
 
+packages: deb-package fedora-package opensuse-package mandriva-package
+
 deb-package:
 	dpkg-buildpackage -rfakeroot
 
