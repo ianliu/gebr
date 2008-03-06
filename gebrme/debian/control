@@ -8,6 +8,7 @@ Package: gebrme
 Section: science
 Architecture: any
 Depends: ${shlibs:Depends}
+Recommends: gebr
 Description: Flow editor to seismic processing software GêBR
  GêBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.

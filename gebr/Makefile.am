@@ -24,10 +24,12 @@ EXTRA_DIST=
 doc:
 	NaturalDocs -i src/ -p ndproj/ -o FramedHtml doc/
 
-packages: deb-package fedora-package opensuse-package mandriva-package
+packages: deb-package rpm-packages
+rpm-packages: fedora-package opensuse-package mandriva-package
 
 deb-package:
-	dpkg-buildpackage -rfakeroot
+	dpkg-buildpackage -kA594D681 -tc -rfakeroot; \
+	dpkg-buildpackage -kA594D681 -tc -rfakeroot -ai386
 
 rpm-structure: dist
 	mkdir -p rpm/BUILD rpm/RPMS rpm/SRPMS rpm/SOURCES && cp @PACKAGE@-@VERSION@.tar.gz rpm/SOURCES

@@ -1,13 +1,14 @@
 Source: gebrd
+Section: science
 Priority: extra
 Maintainer: Ricardo Biloti <biloti@gmail.com>
-Build-Depends: debhelper (>= 5)
 Standards-Version: 3.7.2
+Build-Depends: debhelper (>= 5)
 
 Package: gebrd
-Section: science
 Architecture: any
 Depends: ${shlibs:Depends}
+Recommends: gebr
 Description: GêBRD is server for executing flows
  GÃªBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.

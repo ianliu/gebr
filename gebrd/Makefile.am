@@ -21,10 +21,12 @@ EXTRA_DIST=
 	rpm/gebrd.opensuse.spec \
 	rpm/gebrd.mandriva.spec
 
-packages: deb-package fedora-package opensuse-package mandriva-package
+packages: deb-package rpm-packages
+rpm-packages: fedora-package opensuse-package mandriva-package
 
 deb-package:
-	dpkg-buildpackage -rfakeroot
+	dpkg-buildpackage -kA594D681 -tc -rfakeroot; \
+	dpkg-buildpackage -kA594D681 -tc -rfakeroot -ai386
 
 rpm-structure: dist
 	mkdir -p rpm/BUILD rpm/RPMS rpm/SRPMS rpm/SOURCES && cp @PACKAGE@-@VERSION@.tar.gz rpm/SOURCES

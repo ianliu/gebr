@@ -7,7 +7,7 @@ Standards-Version: 3.7.2
 Package: gebr-menus-su
 Section: science
 Architecture: all
-Suggests: gebr
+Recommends: gebr
 Description: Seismic Unix menus for GêBR
  GÃªBR is an environment for seismic processing based on open-source
  technologies, but extensible and applicable to several different areas.
