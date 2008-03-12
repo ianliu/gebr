@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <glib.h>
 
 #include <comm/protocol.h>
 #include <comm/gtcpsocket.h>
@@ -463,14 +464,19 @@ job_run_flow(struct job * job, struct client * client)
 {
 	GString *		cmd_line;
 	GeoXmlSequence *	program;
+	gchar *                 escaped_str;
 
 	/* initialization */
 	cmd_line = g_string_new(NULL);
 
+	escaped_str = g_strescape(job->cmd_line->str, "");
+
 	/* command-line */
 	g_string_printf(cmd_line, "bash -l -c \"export DISPLAY=%s%s; %s\"",
 			client_is_local(client) == FALSE ? client->address->str : "",
-			client->display->str, job->cmd_line->str);
+			client->display->str, escaped_str);
+
+	g_free(escaped_str);
 
 	gebrd.jobs = g_list_append(gebrd.jobs, job);
 	g_signal_connect(job->process, "ready-read-stdout",

@@ -290,7 +290,7 @@ flow_browse_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new_
 	old_title = (gchar *)geoxml_document_get_title(GEOXML_DOC(gebr.flow));
 
 	/* was it really renamed? */
-	if (g_ascii_strcasecmp(old_title, new_text) == 0)
+	if (strcmp(old_title, new_text) == 0)
 		return;
 
 	/* update store */
