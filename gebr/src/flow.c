@@ -621,6 +621,10 @@ flow_move_up (void)
 	GtkTreeModel *		model;
 	GtkTreeSelection *	selection;
 	GtkTreePath *           path;
+	GeoXmlSequence *        flow;
+	gchar *                 flow_filename;
+	glong                   iflow;
+	
 
 	
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
@@ -629,6 +633,9 @@ flow_move_up (void)
 		return;
 	}
 	
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+			   FB_FILENAME, &flow_filename, -1);
+		
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter);
 	if(gtk_tree_path_prev(path)){
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &prev, path);
@@ -636,12 +643,23 @@ flow_move_up (void)
 	}
 	
 	/* Move in XML */
-	//document_save(GEOXML_DOC(gebr.line));
+	iflow = 0;
+	geoxml_line_get_flow(GEOXML_LINE(gebr.line), &flow, iflow);
+
+	while(strcmp(flow_filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(flow))) && 
+ 	      iflow < geoxml_line_get_flows_number(gebr.line)){
+	   geoxml_line_get_flow(GEOXML_LINE(gebr.line), &flow, ++iflow);
+	}
+
+	if (strcmp(flow_filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(flow))) == 0){
+	   geoxml_sequence_move_up(flow);
+	   document_save(GEOXML_DOC(gebr.line));
+	}
 }
 
 /*
  * Function: flow_move_down
- * Move flow up
+ * Move flow down
  */
 void
 flow_move_down (void)
@@ -652,6 +670,9 @@ flow_move_down (void)
 	GtkTreeModel *		model;
 	GtkTreeSelection *	selection;
 	GtkTreePath *           path;
+	GeoXmlSequence *        flow;
+	gchar *                 flow_filename;
+	glong                   iflow;
 	
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
@@ -659,6 +680,9 @@ flow_move_down (void)
 		return;
 	}
 
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+			   FB_FILENAME, &flow_filename, -1);
+		
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter);
 	gtk_tree_path_next(path);
 	if (gtk_tree_model_get_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &next, path)){
@@ -666,5 +690,16 @@ flow_move_down (void)
 	}
 
 	/* Move in XML */
-	// document_save(GEOXML_DOC(gebr.line));
+	iflow = 0;
+	geoxml_line_get_flow(GEOXML_LINE(gebr.line), &flow, iflow);
+
+	while(strcmp(flow_filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(flow))) && 
+ 	      iflow < geoxml_line_get_flows_number(gebr.line)){
+	   geoxml_line_get_flow(GEOXML_LINE(gebr.line), &flow, ++iflow);
+	}
+
+	if (strcmp(flow_filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(flow))) == 0){
+	   geoxml_sequence_move_down(flow);
+	   document_save(GEOXML_DOC(gebr.line));
+	}
 }
