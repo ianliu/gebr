@@ -53,8 +53,9 @@ static void
 flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	GtkTreeViewColumn * column, struct ui_flow_browse * ui_flow_browse);
 
-GtkMenu *
-flow_browse_popup_menu(GtkWidget *widget, gpointer data);
+static GtkMenu *
+flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_browse);
+
 /*
  * Section: Public
  * Public functions.
@@ -107,6 +108,8 @@ flow_browse_setup_ui(void)
 		G_TYPE_STRING,  /* Name(title for libgeoxml) */
 		G_TYPE_STRING); /* Filename */
 	ui_flow_browse->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->store));
+	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view),
+		(GtkPopupCallback)flow_browse_popup_menu, ui_flow_browse);
 	g_signal_connect(ui_flow_browse->view, "row-activated",
 		GTK_SIGNAL_FUNC(flow_browse_on_row_activated), ui_flow_browse);
 
@@ -124,8 +127,6 @@ flow_browse_setup_ui(void)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
 	gtk_container_add(GTK_CONTAINER(scrolledwin), ui_flow_browse->view);
-
-	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view), flow_browse_popup_menu, NULL);
 
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->view), "cursor-changed",
 			GTK_SIGNAL_FUNC(flow_browse_load), ui_flow_browse);
@@ -413,31 +414,42 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 2);
 }
 
-
-GtkMenu *
-flow_browse_popup_menu(GtkWidget *widget, gpointer data)
+static GtkMenu *
+flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_browse)
 {
-	GtkWidget *	menu;
-	GtkWidget *	menu_item;
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+
+	GtkWidget *		menu;
+	GtkWidget *		menu_item;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+		return NULL;
 
 	menu = gtk_menu_new();
 
 	/* Move up */
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(menu_item, "activate",
-			 (GCallback)flow_move_up, NULL);
+	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate",
+			(GCallback)flow_move_up, NULL);
+	}
 	/* Move down */
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_DOWN, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(menu_item, "activate",
-		(GCallback)flow_move_down, NULL);
+	if (gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_DOWN, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate",
+			(GCallback)flow_move_down, NULL);
+	}
 
 	/* Input/Output */
 	menu_item = gtk_image_menu_item_new_with_label(_("Input/Output"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect(GTK_OBJECT(menu_item), "activate",
-			GTK_SIGNAL_FUNC(on_flow_io_activate), NULL);
+		GTK_SIGNAL_FUNC(on_flow_io_activate), NULL);
 
 	/* Run */
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_EXECUTE, NULL);
@@ -448,5 +460,4 @@ flow_browse_popup_menu(GtkWidget *widget, gpointer data)
 	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
-	
 }

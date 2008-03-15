@@ -19,6 +19,8 @@
  * Interface functions and callbacks for the "Flow Edition" page.
  */
 
+#include <gui/utils.h>
+
 #include "ui_flow_edition.h"
 #include "gebr.h"
 #include "support.h"
@@ -46,6 +48,9 @@ flow_edition_menu_show_help(void);
 
 static void
 flow_edition_component_selected(void);
+
+static GtkMenu *
+flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edition);
 
 /*
  * Section: Public
@@ -90,12 +95,13 @@ flow_edition_setup_ui(void)
 		gtk_container_add(GTK_CONTAINER(frame), scrolledwin);
 
 		ui_flow_edition->fseq_store = gtk_list_store_new(FSEQ_N_COLUMN,
-						GDK_TYPE_PIXBUF,
-						G_TYPE_STRING,
-						G_TYPE_STRING,
-						G_TYPE_ULONG);
-
+			GDK_TYPE_PIXBUF,
+			G_TYPE_STRING,
+			G_TYPE_STRING,
+			G_TYPE_ULONG);
 		ui_flow_edition->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->fseq_store));
+		gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
+			(GtkPopupCallback)flow_edition_popup_menu, ui_flow_edition);
 		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_edition->fseq_view), FALSE);
 
 		renderer = gtk_cell_renderer_pixbuf_new();
@@ -431,4 +437,40 @@ flow_edition_menu_show_help(void)
 	help_show(geoxml_document_get_help(GEOXML_DOC(menu)), _("Menu help"));
 
 out:	g_free(menu_filename);
+}
+
+static GtkMenu *
+flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edition)
+{
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+
+	GtkWidget *		menu;
+	GtkWidget *		menu_item;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+		return NULL;
+
+	menu = gtk_menu_new();
+
+	/* Move up */
+	if (gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter) == TRUE) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate",
+			(GCallback)flow_program_move_up, NULL);
+	}
+	/* Move down */
+	if (gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter) == TRUE) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_DOWN, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate",
+			(GCallback)flow_program_move_down, NULL);
+	}
+
+	gtk_widget_show_all(menu);
+
+	return GTK_MENU(menu);
 }
