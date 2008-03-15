@@ -15,8 +15,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include <gdome.h>
-#include <stdio.h>
 
 #include "program_parameter.h"
 #include "types.h"
@@ -52,7 +53,7 @@ geoxml_program_parameter_program(GeoXmlProgramParameter * program_parameter)
 
 		program_element = (GdomeElement*)gdome_n_parentNode((GdomeNode*)program_parameter, &exception);
 		name = gdome_el_nodeName(program_element, &exception);
-		if (!g_ascii_strcasecmp(name->str, "program"))
+		if (!strcmp(name->str, "program"))
 			break;
 	}
 
@@ -256,7 +257,7 @@ geoxml_program_parameter_get_required(GeoXmlProgramParameter * program_parameter
 		return FALSE;
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) == GEOXML_PARAMETERTYPE_FLAG)
 		return FALSE;
-	return (!g_ascii_strcasecmp(__geoxml_get_attr_value((GdomeElement*)program_parameter, "required"), "yes"))
+	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)program_parameter, "required"), "yes"))
 		? TRUE : FALSE;
 }
 
@@ -340,7 +341,7 @@ geoxml_program_parameter_get_flag_default(GeoXmlProgramParameter * program_param
 	if (ret == FALSE)
 		return FALSE;
 
-	return (!g_ascii_strcasecmp(__geoxml_get_attr_value(element, "default"), "on"))
+	return (!strcmp(__geoxml_get_attr_value(element, "default"), "on"))
 		? TRUE : FALSE;
 }
 
@@ -361,7 +362,7 @@ geoxml_program_parameter_get_flag_status(GeoXmlProgramParameter * program_parame
 		return FALSE;
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) != GEOXML_PARAMETERTYPE_FLAG)
 		return FALSE;
-	return (!g_ascii_strcasecmp(__geoxml_get_tag_value((GdomeElement*)program_parameter, "state"), "on"))
+	return (!strcmp(__geoxml_get_tag_value((GdomeElement*)program_parameter, "state"), "on"))
 		? TRUE : FALSE;
 }
 
@@ -372,7 +373,7 @@ geoxml_program_parameter_get_file_be_directory(GeoXmlProgramParameter * program_
 		return FALSE;
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) != GEOXML_PARAMETERTYPE_FILE)
 		return FALSE;
-	return (!g_ascii_strcasecmp(__geoxml_get_attr_value((GdomeElement*)program_parameter, "directory"), "yes"))
+	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)program_parameter, "directory"), "yes"))
 		? TRUE : FALSE;
 }
 

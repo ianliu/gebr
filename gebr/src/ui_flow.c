@@ -20,6 +20,8 @@
  * File: ui_flow.c
  */
 
+#include <string.h>
+
 #include <gui/gtkfileentry.h>
 
 #include "ui_flow.h"
@@ -197,11 +199,11 @@ flow_add_programs_to_view(GeoXmlFlow * flow)
 		geoxml_program_get_menu(GEOXML_PROGRAM(program), &menu, &prog_index);
 		status = geoxml_program_get_status(GEOXML_PROGRAM(program));
 
-		if (g_ascii_strcasecmp(status, "unconfigured") == 0)
+		if (strcmp(status, "unconfigured") == 0)
 			pixbuf = gebr.pixmaps.stock_warning;
-		else if (g_ascii_strcasecmp(status, "configured") == 0)
+		else if (strcmp(status, "configured") == 0)
 			pixbuf = gebr.pixmaps.stock_apply;
-		else if (g_ascii_strcasecmp(status, "disabled") == 0)
+		else if (strcmp(status, "disabled") == 0)
 			pixbuf = gebr.pixmaps.stock_cancel;
 		else {
 			gebr_message(LOG_WARNING, TRUE, TRUE, _("Unknown flow program '%s' status"),

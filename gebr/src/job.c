@@ -20,6 +20,7 @@
  * Job callbacks
  */
 
+#include <string.h>
 #include <unistd.h>
 
 #include <misc/utils.h>
@@ -136,7 +137,7 @@ job_close(struct job * job)
 	}
 	if (comm_server_is_logged(job->server->comm) == FALSE) {
 		/* TODO */
-	} else if (g_ascii_strcasecmp(job->jid->str, "0"))
+	} else if (strcmp(job->jid->str, "0"))
 		protocol_send_data(job->server->comm->protocol, job->server->comm->tcp_socket,
 			protocol_defs.clr_def, 1, job->jid->str);
 
@@ -164,8 +165,8 @@ job_find(GString * address, GString * jid)
 				JC_STRUCT, &i,
 				-1);
 
-		if (!g_ascii_strcasecmp(i->server->comm->address->str, address->str) &&
-			!g_ascii_strcasecmp(i->jid->str, jid->str)) {
+		if (!strcmp(i->server->comm->address->str, address->str) &&
+			!strcmp(i->jid->str, jid->str)) {
 			job = i;
 			break;
 		}
@@ -316,11 +317,11 @@ job_translate_status(GString * status)
 {
 	enum JobStatus	translated_status;
 
-	if (!g_ascii_strcasecmp(status->str, "running"))
+	if (!strcmp(status->str, "running"))
 		translated_status = JOB_STATUS_RUNNING;
-	else if (!g_ascii_strcasecmp(status->str, "finished"))
+	else if (!strcmp(status->str, "finished"))
 		translated_status = JOB_STATUS_FINISHED;
-	else if (!g_ascii_strcasecmp(status->str, "canceled"))
+	else if (!strcmp(status->str, "canceled"))
 		translated_status = JOB_STATUS_CANCELED;
 	else
 		translated_status = JOB_STATUS_CANCELED;

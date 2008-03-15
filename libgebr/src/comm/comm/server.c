@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "server.h"
 #include "gtcpserver.h"
@@ -526,7 +527,7 @@ comm_server_is_logged(struct comm_server * comm_server)
 gboolean
 comm_server_is_local(struct comm_server * comm_server)
 {
-	return g_ascii_strcasecmp(comm_server->address->str, "127.0.0.1") == 0
+	return strcmp(comm_server->address->str, "127.0.0.1") == 0
 		? TRUE : FALSE;
 }
 

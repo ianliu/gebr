@@ -160,7 +160,7 @@ flow_delete(void)
 	/* Seek and destroy */
 	geoxml_line_get_flow(gebr.line, &line_flow, 0);
 	while (line_flow != NULL) {
-		if (g_ascii_strcasecmp(filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(line_flow))) == 0) {
+		if (strcmp(filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(line_flow))) == 0) {
 			geoxml_sequence_remove(line_flow);
 			document_save(GEOXML_DOC(gebr.line));
 			break;

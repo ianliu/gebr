@@ -124,7 +124,7 @@ __gtk_enhanced_entry_focus_in(GtkEntry * entry, GdkEventFocus * event, GtkEnhanc
 {
 // 	gtk_widget_modify_text(GTK_WIDGET(entry), GTK_STATE_ACTIVE, NULL);
 
-	if (g_ascii_strcasecmp(gtk_entry_get_text(entry), enhanced_entry->empty_text) == 0)
+	if (strcmp(gtk_entry_get_text(entry), enhanced_entry->empty_text) == 0)
 		gtk_entry_set_text(entry, "");
 
 	return FALSE;
@@ -167,7 +167,7 @@ gtk_enhanced_entry_new_with_empty_text(const gchar * empty_text)
 const gchar *
 gtk_enhanced_entry_get_text(GtkEnhancedEntry * enhanced_entry)
 {
-	return g_ascii_strcasecmp(gtk_entry_get_text(GTK_ENTRY(enhanced_entry)), enhanced_entry->empty_text) == 0
+	return strcmp(gtk_entry_get_text(GTK_ENTRY(enhanced_entry)), enhanced_entry->empty_text) == 0
 		? "" : gtk_entry_get_text(GTK_ENTRY(enhanced_entry));
 }
 

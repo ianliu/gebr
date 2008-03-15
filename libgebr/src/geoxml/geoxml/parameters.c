@@ -15,6 +15,8 @@
  *   along with this parameters.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include <gdome.h>
 
 #include "parameters.h"
@@ -123,6 +125,6 @@ geoxml_parameters_get_is_group(GeoXmlParameters * parameters)
 {
 	if (parameters == NULL)
 		return FALSE;
-	return !g_ascii_strcasecmp(gdome_el_nodeName((GdomeElement*)parameters, &exception)->str, "group")
+	return !strcmp(gdome_el_nodeName((GdomeElement*)parameters, &exception)->str, "group")
 		? TRUE : FALSE;
 }

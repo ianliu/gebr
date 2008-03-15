@@ -241,7 +241,7 @@ parameter_widget_enum_set_widget_value(struct parameter_widget * parameter_widge
 
 	geoxml_program_parameter_get_enum_option(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), &option, 0);
 	for (i = 0; option != NULL; ++i, geoxml_sequence_next(&option))
-		if (g_ascii_strcasecmp(value, geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(option))) == 0) {
+		if (strcmp(value, geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(option))) == 0) {
 			gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->value_widget), i+1);
 			return;
 		}
@@ -596,7 +596,7 @@ parameter_widget_set_widget_value(struct parameter_widget * parameter_widget, co
 		break;
 	case GEOXML_PARAMETERTYPE_FLAG:
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(parameter_widget->value_widget),
-			!g_ascii_strcasecmp(value, "on"));
+			!strcmp(value, "on"));
 		break;
 	default:
 		break;

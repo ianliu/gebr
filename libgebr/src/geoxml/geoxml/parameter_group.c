@@ -16,6 +16,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 
 #include <gdome.h>
 
@@ -153,7 +154,7 @@ geoxml_parameter_group_get_exclusive(GeoXmlParameterGroup * parameter_group)
 {
 	if (parameter_group == NULL)
 		return FALSE;
-	return (!g_ascii_strcasecmp(__geoxml_get_attr_value((GdomeElement*)parameter_group, "exclusive"), "yes"))
+	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)parameter_group, "exclusive"), "yes"))
 		? TRUE : FALSE;
 }
 
@@ -162,6 +163,6 @@ geoxml_parameter_group_get_expand(GeoXmlParameterGroup * parameter_group)
 {
 	if (parameter_group == NULL)
 		return FALSE;
-	return (!g_ascii_strcasecmp(__geoxml_get_attr_value((GdomeElement*)parameter_group, "expand"), "yes"))
+	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)parameter_group, "expand"), "yes"))
 		? TRUE : FALSE;
 }

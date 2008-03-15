@@ -15,6 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include <gdome.h>
 
 #include "value_sequence.h"
@@ -36,8 +38,8 @@ __geoxml_value_sequence_check(GeoXmlValueSequence * value_sequence)
 
 	name = gdome_el_nodeName((GdomeElement*)value_sequence, &exception);
 
-	return (gboolean)!g_ascii_strcasecmp(name->str, "path") ||
-		(gboolean)!g_ascii_strcasecmp(name->str, "category");
+	return (gboolean)!strcmp(name->str, "path") ||
+		(gboolean)!strcmp(name->str, "category");
 }
 
 /*

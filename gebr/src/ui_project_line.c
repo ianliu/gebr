@@ -217,7 +217,7 @@ project_line_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new
 	old_title = (gchar *)geoxml_document_get_title(gebr.doc);
 
 	/* was it really renamed? */
-	if (g_ascii_strcasecmp(old_title, new_text) == 0)
+	if (strcmp(old_title, new_text) == 0)
 		return;
 
 	/* change it on the xml. */

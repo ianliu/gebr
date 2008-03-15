@@ -71,7 +71,6 @@ assembly_interface(void)
 	GtkWidget *	vboxmain;
 	GtkWidget *	mainmenu;
 	GtkWidget *	pagetitle;
-	GtkAccelGroup*  accel_group;
 	GClosure *      closure;
 
 	gebr.about = about_setup_ui("GêBR", _("A plug-and-play environment to\nseismic processing tools"));
@@ -154,16 +153,14 @@ assembly_interface(void)
 	switch_page(NULL, NULL, 0);
 
 	/* Create some hot-keys */
-	accel_group = gtk_accel_group_new();
-
+	gebr.accel_group = gtk_accel_group_new();
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group);
 	/* CTRL+R - Run current flow */
-	closure = g_cclosure_new(on_flow_execute_activate, NULL, NULL);
-	gtk_accel_group_connect(accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new((GCallback)on_flow_execute_activate, NULL, NULL);
+	gtk_accel_group_connect(gebr.accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE, closure);
 	/* CTR+Q - Quit GeBR */
-	closure = g_cclosure_new( (void*) gebr_quit, NULL, NULL);
-	gtk_accel_group_connect(accel_group, GDK_q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE, closure);
-
-	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), accel_group);
+	closure = g_cclosure_new((GCallback)gebr_quit, NULL, NULL);
+	gtk_accel_group_connect(gebr.accel_group, GDK_q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE, closure);
 }
 
 /*

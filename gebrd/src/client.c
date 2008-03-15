@@ -16,6 +16,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 #include <comm/protocol.h>
@@ -81,7 +82,7 @@ client_free(struct client * client)
 gboolean
 client_is_local(struct client * client)
 {
-	return g_ascii_strcasecmp(client->address->str, "127.0.0.1") == 0
+	return strcmp(client->address->str, "127.0.0.1") == 0
 		? TRUE : FALSE;
 }
 

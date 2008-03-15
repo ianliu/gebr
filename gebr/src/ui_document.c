@@ -20,6 +20,8 @@
  * File: ui_document.c
  */
 
+#include <string.h>
+
 #include "ui_document.h"
 #include "gebr.h"
 #include "support.h"
@@ -211,7 +213,7 @@ document_properties_actions(GtkDialog * dialog, gint arg1, struct ui_document_pr
 
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Properties of %s '%s' updated"), doc_type,
 			old_title);
-		if (g_ascii_strcasecmp(old_title, new_title) != 0)
+		if (strcmp(old_title, new_title) != 0)
 			gebr_message(LOG_INFO, FALSE, TRUE, _("Renaming %s '%s' to '%s'"),
 				doc_type, old_title, new_title);
 

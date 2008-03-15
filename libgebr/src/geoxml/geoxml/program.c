@@ -17,6 +17,8 @@
 
 #include <glib.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include <gdome.h>
 
 #include "program.h"
@@ -147,7 +149,7 @@ geoxml_program_get_stdin(GeoXmlProgram * program)
 {
 	if (program == NULL)
 		return FALSE;
-	return (!g_ascii_strcasecmp(__geoxml_get_attr_value((GdomeElement*)program, "stdin"), "yes"))
+	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)program, "stdin"), "yes"))
 		? TRUE : FALSE;
 }
 
@@ -156,7 +158,7 @@ geoxml_program_get_stdout(GeoXmlProgram * program)
 {
 	if (program == NULL)
 		return FALSE;
-	return (!g_ascii_strcasecmp(__geoxml_get_attr_value((GdomeElement*)program, "stdout"), "yes"))
+	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)program, "stdout"), "yes"))
 		? TRUE : FALSE;
 }
 
@@ -165,7 +167,7 @@ geoxml_program_get_stderr(GeoXmlProgram * program)
 {
 	if (program == NULL)
 		return FALSE;
-	return (!g_ascii_strcasecmp(__geoxml_get_attr_value((GdomeElement*)program, "stderr"), "yes"))
+	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)program, "stderr"), "yes"))
 		? TRUE : FALSE;
 }
 

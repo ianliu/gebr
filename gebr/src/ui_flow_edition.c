@@ -19,6 +19,8 @@
  * Interface functions and callbacks for the "Flow Edition" page.
  */
 
+#include <string.h>
+
 #include <gui/utils.h>
 
 #include "ui_flow_edition.h"
@@ -239,11 +241,11 @@ flow_edition_component_selected(void)
 	geoxml_flow_get_program(gebr.flow, &program, gtk_tree_path_get_indices(path)[0]);
 	status = geoxml_program_get_status(GEOXML_PROGRAM(program));
 
-	if (!g_ascii_strcasecmp(status, "configured"))
+	if (!strcmp(status, "configured"))
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.configured_menuitem), TRUE);
-	else if (!g_ascii_strcasecmp(status, "disabled"))
+	else if (!strcmp(status, "disabled"))
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.disabled_menuitem), TRUE);
-	else if (!g_ascii_strcasecmp(status, "unconfigured"))
+	else if (!strcmp(status, "unconfigured"))
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.unconfigured_menuitem), TRUE);
 
 	gtk_tree_path_free(path);

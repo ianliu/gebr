@@ -146,7 +146,7 @@ server_common_add(struct ui_server_common * ui_server_common, const gchar * addr
 				SERVER_POINTER, &server,
 				-1);
 
-		if (!g_ascii_strcasecmp(server->comm->address->str, address)) {
+		if (!strcmp(server->comm->address->str, address)) {
 			GtkTreeSelection *	selection;
 
 			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_server_common->view));

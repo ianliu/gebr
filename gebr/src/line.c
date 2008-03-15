@@ -169,7 +169,7 @@ line_delete(void)
 	line_filename = geoxml_document_get_filename(GEOXML_DOC(gebr.line));
 	geoxml_project_get_line(gebr.project, &project_line, 0);
 	while (project_line != NULL) {
-		if (g_ascii_strcasecmp(line_filename, geoxml_project_get_line_source(GEOXML_PROJECT_LINE(project_line))) == 0) {
+		if (strcmp(line_filename, geoxml_project_get_line_source(GEOXML_PROJECT_LINE(project_line))) == 0) {
 			geoxml_sequence_remove(project_line);
 			document_save(GEOXML_DOC(gebr.project));
 			break;

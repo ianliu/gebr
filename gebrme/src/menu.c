@@ -113,7 +113,7 @@ menu_open(const gchar * path)
 				MENU_PATH, &ipath,
 				-1);
 
-		if (!g_ascii_strcasecmp(ipath, path)) {
+		if (!strcmp(ipath, path)) {
 			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebrme.menus_treeview));
 			gtk_tree_selection_select_iter(selection, &iter);
 			menu_selected();

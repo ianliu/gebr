@@ -166,7 +166,7 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 
 	version = (gchar*)geoxml_document_get_version((GeoXmlDocument*)document);
 	/* 0.1.x to 0.2.0 */
-	if (g_ascii_strcasecmp(version, "0.2.0") < 0) {
+	if (strcmp(version, "0.2.0") < 0) {
 		GdomeElement *		element;
 		GdomeElement *		before;
 
@@ -181,7 +181,7 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 			__geoxml_insert_new_element(element, "lastrun", NULL);
 	}
 	/* 0.2.0 to 0.2.1 */
-	if (g_ascii_strcasecmp(version, "0.2.1") < 0) {
+	if (strcmp(version, "0.2.1") < 0) {
 		if (geoxml_document_get_type(((GeoXmlDocument*)document)) == GEOXML_DOCUMENT_TYPE_FLOW) {
 			GeoXmlSequence *	program;
 
@@ -196,7 +196,7 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 		}
 	}
 	/* 0.2.1 to 0.2.2 */
-	if (g_ascii_strcasecmp(version, "0.2.2") < 0) {
+	if (strcmp(version, "0.2.2") < 0) {
 		if (geoxml_document_get_type(((GeoXmlDocument*)document)) == GEOXML_DOCUMENT_TYPE_FLOW) {
 			GeoXmlSequence *	program;
 			GeoXmlSequence *	parameter;
@@ -394,11 +394,11 @@ geoxml_document_get_type(GeoXmlDocument * document)
 
 	root_element = gdome_doc_documentElement((GdomeDocument*)document, &exception);
 
-	if (g_ascii_strcasecmp("flow", gdome_el_nodeName(root_element, &exception)->str) == 0)
+	if (strcmp("flow", gdome_el_nodeName(root_element, &exception)->str) == 0)
 		return GEOXML_DOCUMENT_TYPE_FLOW;
-	else if (g_ascii_strcasecmp("line", gdome_el_nodeName(root_element, &exception)->str) == 0)
+	else if (strcmp("line", gdome_el_nodeName(root_element, &exception)->str) == 0)
 		return GEOXML_DOCUMENT_TYPE_LINE;
-	else if (g_ascii_strcasecmp("project", gdome_el_nodeName(root_element, &exception)->str) == 0)
+	else if (strcmp("project", gdome_el_nodeName(root_element, &exception)->str) == 0)
 		return GEOXML_DOCUMENT_TYPE_PROJECT;
 
 	return GEOXML_DOCUMENT_TYPE_FLOW;

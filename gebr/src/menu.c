@@ -255,7 +255,7 @@ menu_list_populate(void)
 						-1);
 
 				/* different category? */
-				if (g_ascii_strcasecmp(category, titlebf->str)) {
+				if (strcmp(category, titlebf->str)) {
 					gtk_tree_store_append(gebr.ui_flow_edition->menu_store, &category_iter, NULL);
 					gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &category_iter,
 							MENU_TITLE_COLUMN, titlebf->str,

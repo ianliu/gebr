@@ -15,6 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include <gdome.h>
 
 #include "parameter.h"
@@ -102,7 +104,7 @@ geoxml_parameter_get_type(GeoXmlParameter * parameter)
 	tag_name = gdome_el_tagName((GdomeElement*)parameter, &exception);
 
 	for (i = 0; i < parameter_type_to_str_len; ++i)
-		if (!g_ascii_strcasecmp(parameter_type_to_str[i], tag_name->str))
+		if (!strcmp(parameter_type_to_str[i], tag_name->str))
 			return (enum GEOXML_PARAMETERTYPE)i;
 
 	/* just to suppress warning */

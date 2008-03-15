@@ -15,6 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include <gdome.h>
 
 #include "sequence.h"
@@ -38,9 +40,9 @@ __geoxml_sequence_is_parameter(GeoXmlSequence * sequence)
 
 	name = gdome_el_nodeName((GdomeElement*)sequence, &exception);
 	parent = (GdomeElement*)gdome_el_parentNode((GdomeElement*)sequence, &exception);
-	return	(gboolean)!g_ascii_strcasecmp(
+	return	(gboolean)!strcmp(
 			gdome_el_nodeName(parent, &exception)->str, "parameters") ||
-		(gboolean)!g_ascii_strcasecmp(
+		(gboolean)!strcmp(
 			gdome_el_nodeName(parent, &exception)->str, "group");
 }
 
@@ -51,12 +53,12 @@ __geoxml_sequence_check(GeoXmlSequence * sequence)
 
 	name = gdome_el_nodeName((GdomeElement*)sequence, &exception);
 	return __geoxml_sequence_is_parameter(sequence) ||
-		(gboolean)!g_ascii_strcasecmp(name->str, "option") ||
-		(gboolean)!g_ascii_strcasecmp(name->str, "program") ||
-		(gboolean)!g_ascii_strcasecmp(name->str, "category") ||
-		(gboolean)!g_ascii_strcasecmp(name->str, "flow") ||
-		(gboolean)!g_ascii_strcasecmp(name->str, "path") ||
-		(gboolean)!g_ascii_strcasecmp(name->str, "line");
+		(gboolean)!strcmp(name->str, "option") ||
+		(gboolean)!strcmp(name->str, "program") ||
+		(gboolean)!strcmp(name->str, "category") ||
+		(gboolean)!strcmp(name->str, "flow") ||
+		(gboolean)!strcmp(name->str, "path") ||
+		(gboolean)!strcmp(name->str, "line");
 }
 
 static gboolean

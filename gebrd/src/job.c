@@ -229,7 +229,7 @@ job_generate_id(void)
 			struct job *	job;
 
 			job = (struct job *)link->data;
-			if (!g_ascii_strcasecmp(job->jid->str, jid->str))
+			if (!strcmp(job->jid->str, jid->str))
 				continue;
 
 			link = g_list_next(link);
@@ -328,7 +328,7 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 
 	/* Check if there is configured programs */
 	geoxml_flow_get_program(flow, &program, 0);
-	while (program != NULL && g_ascii_strcasecmp(geoxml_program_get_status(GEOXML_PROGRAM(program)), "configured") != 0) {
+	while (program != NULL && strcmp(geoxml_program_get_status(GEOXML_PROGRAM(program)), "configured") != 0) {
 		g_string_append_printf(job->issues, _("%u) Skiping disabled/unconfigured program '%s.'\n"),
 			++issue_number, geoxml_program_get_title(GEOXML_PROGRAM(program)));
 
@@ -368,7 +368,7 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 	geoxml_sequence_next(&program);
 	while (program != NULL) {
 		/* Skiping disabled/unconfigured programs */
-		if (g_ascii_strcasecmp(geoxml_program_get_status(GEOXML_PROGRAM(program)), "configured") != 0) {
+		if (strcmp(geoxml_program_get_status(GEOXML_PROGRAM(program)), "configured") != 0) {
 			g_string_append_printf(job->issues, _("%u) Skipped disabled/unconfigured program '%s'.\n"),
 				++issue_number, geoxml_program_get_title(GEOXML_PROGRAM(program)));
 
@@ -509,7 +509,7 @@ job_find(GString * jid)
 		struct job * i;
 
 		i = (struct job *)link->data;
-		if (!g_ascii_strcasecmp(i->jid->str, jid->str)) {
+		if (!strcmp(i->jid->str, jid->str)) {
 			job = i;
 			break;
 		}

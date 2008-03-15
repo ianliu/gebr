@@ -43,6 +43,7 @@ struct gebr {
 	GtkWidget *			menu[MENUBAR_N];
 	GtkWidget *			notebook;
 	struct about			about;
+	GtkAccelGroup *			accel_group;
 	/* for strange things ;) */
 	GtkWidget *			invisible;
 
@@ -100,6 +101,10 @@ struct gebr {
 		GdkPixbuf *		stock_go_forward;
 		GdkPixbuf *		stock_info;
 	} pixmaps;
+
+	struct gebr_actions {
+
+	} actions;
 };
 
 void

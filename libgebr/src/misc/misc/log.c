@@ -109,15 +109,15 @@ log_messages_read(struct log * log)
 			continue;
 		}
 
-		if (!g_ascii_strcasecmp(splits[0], "[ERR]"))
+		if (!strcmp(splits[0], "[ERR]"))
 			type = LOG_ERROR;
-		else if (!g_ascii_strcasecmp(splits[0], "[WARN]"))
+		else if (!strcmp(splits[0], "[WARN]"))
 			type = LOG_WARNING;
-		else if (!g_ascii_strcasecmp(splits[0], "[INFO]"))
+		else if (!strcmp(splits[0], "[INFO]"))
 			type = LOG_INFO;
-		else if (!g_ascii_strcasecmp(splits[0], "[STR]"))
+		else if (!strcmp(splits[0], "[STR]"))
 			type = LOG_START;
-		else if (!g_ascii_strcasecmp(splits[0], "[END]"))
+		else if (!strcmp(splits[0], "[END]"))
 			type = LOG_END;
 		else {
 			g_strfreev(splits);
