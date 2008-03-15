@@ -76,6 +76,8 @@ project_new(void)
 	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), path,
 				     NULL, FALSE, 0, 0);
 	g_signal_emit_by_name(gebr.ui_project_line->view, "cursor-changed");
+
+	gtk_tree_path_free(path);
 }
 
 /*

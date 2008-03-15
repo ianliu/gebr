@@ -244,10 +244,10 @@ gebr_config_load(int argc, char ** argv)
 	gebr.config.width = gebr.config.ggopt.width_arg;
 	gebr.config.height = gebr.config.ggopt.height_arg;
 	gebr.config.log_expander_state = (gebr.config.ggopt.logexpand_given ? TRUE : FALSE);
-	
+
 	gtk_window_resize (GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
 	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
-	
+
 	if (!gebr.config.ggopt.name_given)
 		preferences_setup_ui(TRUE);
 	else {
@@ -286,7 +286,7 @@ gebr_config_apply(void)
  * Write ~/.gebr/.gebr.conf file.
  */
 gboolean
-gebr_config_save(gboolean *verbose)
+gebr_config_save(gboolean verbose)
 {
 	FILE *		fp;
 	GString *	config;

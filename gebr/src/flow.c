@@ -273,6 +273,7 @@ flow_import(void)
 
 	/* frees */
 	g_string_free(flow_filename, TRUE);
+	gtk_tree_path_free(path);
 out2:	g_free(dir);
 out:	gtk_widget_destroy(chooser_dialog);
 }
@@ -445,7 +446,7 @@ flow_export_as_menu(void)
 	if (!g_str_has_suffix(filename,".mnu")){
 		g_string_append(menufn, ".mnu");
 		g_string_append(menupath, ".mnu");
-	}		
+	}
 	geoxml_document_set_filename(GEOXML_DOC(flow), menufn->str);
 	geoxml_document_save(GEOXML_DOC(flow), menupath->str);
 	geoxml_document_free(GEOXML_DOC(flow));
@@ -615,45 +616,43 @@ flow_program_move_down(void)
 void
 flow_move_up (void)
 {
-	
 	GtkTreeIter		iter;
 	GtkTreeIter             prev;
 	GtkTreeModel *		model;
 	GtkTreeSelection *	selection;
 	GtkTreePath *           path;
-	GeoXmlSequence *        flow;
-	gchar *                 flow_filename;
-	glong                   iflow;
-	
 
-	
+	GeoXmlSequence *	flow;
+	gchar *			flow_filename;
+	glong			iflow;
+
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
 		return;
 	}
-	
+
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 			   FB_FILENAME, &flow_filename, -1);
-		
+
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter);
-	if(gtk_tree_path_prev(path)){
+	if(gtk_tree_path_prev(path)) {
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &prev, path);
 		gtk_list_store_move_before (GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, &prev);
 	}
-	
+
 	/* Move in XML */
 	iflow = 0;
 	geoxml_line_get_flow(GEOXML_LINE(gebr.line), &flow, iflow);
 
-	while(strcmp(flow_filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(flow))) && 
- 	      iflow < geoxml_line_get_flows_number(gebr.line)){
-	   geoxml_line_get_flow(GEOXML_LINE(gebr.line), &flow, ++iflow);
+	while(strcmp(flow_filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(flow))) &&
+		iflow < geoxml_line_get_flows_number(gebr.line)){
+		geoxml_line_get_flow(GEOXML_LINE(gebr.line), &flow, ++iflow);
 	}
 
-	if (strcmp(flow_filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(flow))) == 0){
-	   geoxml_sequence_move_up(flow);
-	   document_save(GEOXML_DOC(gebr.line));
+	if (strcmp(flow_filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(flow))) == 0) {
+		geoxml_sequence_move_up(flow);
+		document_save(GEOXML_DOC(gebr.line));
 	}
 }
 
@@ -664,16 +663,16 @@ flow_move_up (void)
 void
 flow_move_down (void)
 {
-	
 	GtkTreeIter		iter;
 	GtkTreeIter             next;
 	GtkTreeModel *		model;
 	GtkTreeSelection *	selection;
 	GtkTreePath *           path;
-	GeoXmlSequence *        flow;
-	gchar *                 flow_filename;
-	glong                   iflow;
-	
+
+	GeoXmlSequence *	flow;
+	gchar *			flow_filename;
+	glong			iflow;
+
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
@@ -682,7 +681,7 @@ flow_move_down (void)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 			   FB_FILENAME, &flow_filename, -1);
-		
+
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter);
 	gtk_tree_path_next(path);
 	if (gtk_tree_model_get_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &next, path)){
@@ -693,13 +692,12 @@ flow_move_down (void)
 	iflow = 0;
 	geoxml_line_get_flow(GEOXML_LINE(gebr.line), &flow, iflow);
 
-	while(strcmp(flow_filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(flow))) && 
- 	      iflow < geoxml_line_get_flows_number(gebr.line)){
-	   geoxml_line_get_flow(GEOXML_LINE(gebr.line), &flow, ++iflow);
+	while(strcmp(flow_filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(flow))) &&
+		iflow < geoxml_line_get_flows_number(gebr.line)) {
+		geoxml_line_get_flow(GEOXML_LINE(gebr.line), &flow, ++iflow);
 	}
-
-	if (strcmp(flow_filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(flow))) == 0){
-	   geoxml_sequence_move_down(flow);
-	   document_save(GEOXML_DOC(gebr.line));
+	if (strcmp(flow_filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(flow))) == 0) {
+		geoxml_sequence_move_down(flow);
+		document_save(GEOXML_DOC(gebr.line));
 	}
 }

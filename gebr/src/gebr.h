@@ -118,7 +118,7 @@ void
 gebr_config_apply(void);
 
 gboolean
-gebr_config_save(gboolean *verbose);
+gebr_config_save(gboolean verbose);
 
 void
 gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...);
