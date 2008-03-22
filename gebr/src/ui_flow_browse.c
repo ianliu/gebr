@@ -430,6 +430,14 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 
 	menu = gtk_menu_new();
 
+	/* Move top */
+	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate",
+			(GCallback)flow_move_top, NULL);
+	}
+
 	/* Move up */
 	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
@@ -444,6 +452,14 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 		g_signal_connect(menu_item, "activate",
 			(GCallback)flow_move_down, NULL);
 	}
+
+	/* Move bottom */
+	if (gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate",
+			(GCallback)flow_move_bottom, NULL);
+	}	
 
 	/* Input/Output */
 	menu_item = gtk_image_menu_item_new_with_label(_("Input/Output"));

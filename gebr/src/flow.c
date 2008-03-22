@@ -701,3 +701,69 @@ flow_move_down (void)
 		document_save(GEOXML_DOC(gebr.line));
 	}
 }
+
+/*
+ * Function: flow_move_top
+ * Move flow top
+ */
+void
+flow_move_top (void)
+{
+	GtkTreeIter		iter;
+	GtkTreeIter             next;
+	GtkTreeModel *		model;
+	GtkTreeSelection *	selection;
+	GtkTreePath *           path;
+
+	GeoXmlSequence *	flow;
+	gchar *			flow_filename;
+	glong			iflow;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
+		return;
+	}
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+			   FB_FILENAME, &flow_filename, -1);
+
+	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
+
+
+	/* Move in XML */
+
+}
+
+/*
+ * Function: flow_move_bottom
+ * Move flow bottom
+ */
+void
+flow_move_bottom (void)
+{
+	GtkTreeIter		iter;
+	GtkTreeIter             next;
+	GtkTreeModel *		model;
+	GtkTreeSelection *	selection;
+	GtkTreePath *           path;
+
+	GeoXmlSequence *	flow;
+	gchar *			flow_filename;
+	glong			iflow;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
+		return;
+	}
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+			   FB_FILENAME, &flow_filename, -1);
+	
+	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
+	
+	
+	/* Move in XML */
+	
+}

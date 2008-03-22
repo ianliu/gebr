@@ -57,4 +57,10 @@ flow_move_up (void);
 void
 flow_move_down (void);
 
+void
+flow_move_top (void);
+
+void
+flow_move_bottom (void);
+
 #endif //__FLOW_H
