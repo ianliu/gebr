@@ -1,5 +1,5 @@
-/*   GêBR - An environment for seismic processing.
- *   Copyright (C) 2007-2008 GêBR core team (http://gebr.sourceforge.net)
+/*   Gï¿½BR - An environment for seismic processing.
+ *   Copyright (C) 2007-2008 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or
  *   modify it under the terms of the GNU General Public License as
@@ -44,7 +44,6 @@
 #include "document.h"
 #include "flow.h"
 
-#define __DEBUG
 struct gebr gebr;
 
 /*
@@ -205,7 +204,7 @@ gebr_log_load(void)
 
 /*
  * Function: gebr_config_load
- * Initialize configuration for GêBR
+ * Initialize configuration for Gï¿½BR
  */
 void
 gebr_config_load(int argc, char ** argv)
@@ -228,7 +227,7 @@ gebr_config_load(int argc, char ** argv)
 		goto out;
 	}
 
-	/* Initialize GêBR with options in gebr.conf */
+	/* Initialize Gï¿½BR with options in gebr.conf */
 	if (cmdline_parser_configfile(config->str, &gebr.config.ggopt, 1, 1, 0) != 0) {
 		fprintf(stderr, "%s: try '--help' option\n", argv[0]);
 		exit(EXIT_FAILURE);
@@ -269,7 +268,7 @@ out:	g_string_free(config, TRUE);
 
 /*
  * Function: gebr_config_apply
- * Apply configurations to GêBR
+ * Apply configurations to Gï¿½BR
  */
 void
 gebr_config_apply(void)
@@ -281,7 +280,7 @@ gebr_config_apply(void)
 
 /*
  * Function: gebr_config_save
- * Save GêBR config to file.
+ * Save Gï¿½BR config to file.
  *
  * Write ~/.gebr/.gebr.conf file.
  */
@@ -353,7 +352,7 @@ gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_
 	string = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
-#ifdef __DEBUG
+#ifdef GEBR_DEBUG
 	if (type == LOG_DEBUG)
 		g_print("%s\n", string);
 	else if (in_statusbar)

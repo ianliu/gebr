@@ -25,6 +25,8 @@ gebrme_SOURCES = \
 	summary.c \
 	category.c \
 	program.c \
+	parameters.c \
+	groupparameters.c \
 	parameter.c \
 	enumoptionedit.c \
 	help.c \
@@ -38,6 +40,8 @@ noinst_HEADERS = \
 	summary.h \
 	category.h \
 	program.h \
+	parameters.h \
+	groupparameters.h \
 	parameter.h \
 	enumoptionedit.h \
 	help.h \
@@ -49,5 +53,5 @@ LIBGEBR_CFLAGS = $(LIBGEBR_GEOXML_CFLAGS) $(LIBGEBR_GUI_CFLAGS) $(LIBGEBR_MISC_C
 LIBGEBR_LIBS = $(LIBGEBR_GEOXML_LIBS) $(LIBGEBR_GUI_LIBS) $(LIBGEBR_MISC_LIBS)
 INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
-AM_CFLAGS = -Wall $(GTK_CFLAGS) ${LIBGEBR_CFLAGS}
+AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GTK_CFLAGS) ${LIBGEBR_CFLAGS}
 gebrme_LDADD = $(INTLLIBS) $(GTK_LIBS) $(LIBGEBR_LIBS)

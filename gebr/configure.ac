@@ -1,5 +1,5 @@
-# GêBR - An environment for seismic processing.
-# Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+# Gï¿½BR - An environment for seismic processing.
+# Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,6 +22,18 @@ TODAY=$(LANG=C date +"%a, %d %b %Y %T %z")
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
 AC_SUBST(TODAY)
+
+dnl Debug option
+AC_ARG_ENABLE(debug,
+	[AC_HELP_STRING([--enable-debug],
+	[turn on debugging])],,
+	enable_debug=yes)
+if test "$enable_debug" = "yes"; then
+	DEBUG_CFLAGS="-DGEBR_DEBUG"
+else
+	DEBUG_CFLAGS=""
+fi
+AC_SUBST(DEBUG_CFLAGS)
 
 dnl For create static packages
 AC_ARG_ENABLE([static-mode],

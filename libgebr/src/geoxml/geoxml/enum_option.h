@@ -27,25 +27,27 @@
  * \dot
  * digraph enum_option {
  * 	fontlabel = "Bitstream Vera Sans"
- * 	fontsize = 8
+ * 	fontsize = 9
  * 	size = "6"
  * 	node [
  * 		color = palegreen2, style = filled
  * 		fontlabel = "Bitstream Vera Sans"
- * 		fontsize = 8
+ *   fontsize = 9
  * 		shape = record
  * 	]
  * 	edge [
  * 		fontlabel = "Bitstream Vera Sans"
- * 		fontsize = 8
+ *   fontsize = 9
  * 	]
  *
+ * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
  * 	"GeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
  * 	"GeoXmlEnumOption" [ URL = "\ref enum_option.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
+ * 	"GeoXmlSequence" -> "GeoXmlEnumOption"
  * 	"GeoXmlProgramParameter" -> "GeoXmlEnumOption"
  * }
  * \enddot

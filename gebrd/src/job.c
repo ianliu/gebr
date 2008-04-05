@@ -1,5 +1,5 @@
-/*   GêBR Daemon - Process and control execution of flows
- *   Copyright (C) 2007-2008 GêBR core team (http://gebr.sourceforge.net)
+/*   Gï¿½BR Daemon - Process and control execution of flows
+ *   Copyright (C) 2007-2008 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <glib.h>
 
 #include <comm/protocol.h>
 #include <comm/gtcpsocket.h>
@@ -35,12 +34,10 @@
  */
 
 static gboolean
-job_add_program_parameters(struct job * job, GeoXmlProgram * program)
+job_add_program_parameters_aux(struct job * job, GeoXmlParameters * parameters, GeoXmlProgram * program)
 {
-	GeoXmlParameters *	parameters;
-	GeoXmlSequence*		parameter;
+	GeoXmlSequence *	parameter;
 
-	parameters = geoxml_program_get_parameters(program);
 	parameter = geoxml_parameters_get_first_parameter(parameters);
 	while (parameter != NULL) {
 		enum GEOXML_PARAMETERTYPE	type;
@@ -48,7 +45,9 @@ job_add_program_parameters(struct job * job, GeoXmlProgram * program)
 
 		type = geoxml_parameter_get_type(GEOXML_PARAMETER(parameter));
 		if (type == GEOXML_PARAMETERTYPE_GROUP) {
-			/* TODO: */
+			job_add_program_parameters_aux(job,
+				geoxml_parameter_group_get_parameters(GEOXML_PARAMETER_GROUP(parameter)),
+				program);
 			geoxml_sequence_next(&parameter);
 			continue;
 		}
@@ -65,30 +64,9 @@ job_add_program_parameters(struct job * job, GeoXmlProgram * program)
 
 			value = geoxml_program_parameter_get_value(program_parameter);
 			if (strlen(value) > 0) {
-				if (geoxml_program_parameter_get_is_list(program_parameter) == FALSE) {
-					g_string_append_printf(job->cmd_line, "%s\"%s\" ",
+				g_string_append_printf(job->cmd_line, "%s\"%s\" ",
 					geoxml_program_parameter_get_keyword(program_parameter),
 					value);
-				} else {
-					/* temporary fix for list parameter:
-					 * escape each individual parameter value
-					 */
-					gchar **	values;
-					guint		i;
-
-					values = g_strsplit(value,
-						geoxml_program_parameter_get_list_separator(program_parameter),
-						0);
-
-					g_string_append_printf(job->cmd_line,
-						geoxml_program_parameter_get_keyword(program_parameter));
-					for (i = 0; values[i] != NULL;) {
-						g_string_append_printf(job->cmd_line, "\"%s\"", values[i]);
-						if (values[++i] != NULL)
-							g_string_append(job->cmd_line, geoxml_program_parameter_get_list_separator(program_parameter));
-					}
-					g_string_append(job->cmd_line, " ");
-				}
 			} else {
 				/* Check if this is a required parameter */
 				if (geoxml_program_parameter_get_required(program_parameter)) {
@@ -108,6 +86,9 @@ job_add_program_parameters(struct job * job, GeoXmlProgram * program)
 				g_string_append_printf(job->cmd_line, "%s ", geoxml_program_parameter_get_keyword(program_parameter));
 
 			break;
+		case GEOXML_PARAMETERTYPE_GROUP:
+			if (job_add_program_parameters_aux(job, GEOXML_PARAMETERS(parameter), program) == FALSE)
+				return FALSE;
 		default:
 			g_string_append_printf(job->issues, _("Unknown parameter type.\n"));
 
@@ -118,6 +99,12 @@ job_add_program_parameters(struct job * job, GeoXmlProgram * program)
 	}
 
 	return TRUE;
+}
+
+static gboolean
+job_add_program_parameters(struct job * job, GeoXmlProgram * program)
+{
+	return job_add_program_parameters_aux(job, geoxml_program_get_parameters(program), program);
 }
 
 static void

@@ -1,5 +1,5 @@
-/*   GêBR ME - GêBR Menu Editor
- *   Copyright (C) 2007-2008 GêBR core team (http://gebr.sourceforge.net)
+/*   Gï¿½BR ME - Gï¿½BR Menu Editor
+ *   Copyright (C) 2007-2008 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ on_open_activate(void)
 
 	/* open it */
 	path = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser_dialog));
-	menu_open(path);
+	menu_open(path, TRUE);
 
 	g_free(path);
 out:	gtk_widget_destroy(chooser_dialog);

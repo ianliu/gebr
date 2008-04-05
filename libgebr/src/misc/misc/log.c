@@ -174,7 +174,7 @@ log_add_message(struct log * log, enum log_message_type type, const gchar * mess
 		ident_str = "[WARN]";
 		break;
 	case LOG_DEBUG:
-#ifdef LOGDEBUG
+#ifdef LIBGEBR_DEBUG
 		ident_str = "[DEB]";
 		break;
 #else

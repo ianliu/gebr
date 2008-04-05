@@ -32,6 +32,6 @@ EXTRA_DIST = ${noinst_HEADERS}
 INCLUDES = -I../../geoxml \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" \
 	-DPIXMAPS_DIR=\"$(datadir)/libgebr/pixmaps/\"
-AM_CFLAGS = -Wall $(GTK_CFLAGS)
+AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GTK_CFLAGS)
 libgebr_gui_la_LIBADD = $(INTLLIBS) $(GTK_LIBS) ../../geoxml/geoxml/libgebr_geoxml.la
 libgebr_gui_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@

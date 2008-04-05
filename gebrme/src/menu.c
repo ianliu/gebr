@@ -1,5 +1,5 @@
-/*   GêBR ME - GêBR Menu Editor
- *   Copyright (C) 2007-2008 GêBR core team (http://gebr.sourceforge.net)
+/*   Gï¿½BR ME - Gï¿½BR Menu Editor
+ *   Copyright (C) 2007-2008 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ menu_load(const gchar * path)
 }
 
 void
-menu_open(const gchar * path)
+menu_open(const gchar * path, gboolean select)
 {
 	GtkTreeSelection *	selection;
 	GtkTreeIter		iter;
@@ -131,18 +131,20 @@ menu_open(const gchar * path)
 
 	/* add to the view */
 	filename = g_path_get_basename(path);
-	gebrme.current = menu;
 	gtk_list_store_append(gebrme.menus_liststore, &iter);
 	gtk_list_store_set(gebrme.menus_liststore, &iter,
+		MENU_STATUS, NULL,
 		MENU_FILENAME, filename,
-		MENU_XMLPOINTER, gebrme.current,
+		MENU_XMLPOINTER, menu,
 		MENU_PATH, path,
 		-1);
 
 	/* select it and load its contents into UI */
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebrme.menus_treeview));
-	gtk_tree_selection_select_iter(selection, &iter);
-	menu_selected();
+	if (select == TRUE) {
+		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebrme.menus_treeview));
+		gtk_tree_selection_select_iter(selection, &iter);
+		menu_selected();
+	}
 
 	g_free(filename);
 }
@@ -150,9 +152,12 @@ menu_open(const gchar * path)
 void
 menu_load_user_directory(void)
 {
-	DIR *		dir;
-	struct dirent *	file;
-	GString *	path;
+	GtkTreeSelection *	selection;
+	GtkTreeIter		iter;
+
+	DIR *			dir;
+	struct dirent *		file;
+	GString *		path;
 
 	if ((dir = opendir(gebrme.config.menu_dir->str)) == NULL) {
 		gebrme_message(LOG_ERROR, _("Could not open menus' directory"));
@@ -166,12 +171,17 @@ menu_load_user_directory(void)
 		path = g_string_new(gebrme.config.menu_dir->str);
 		g_string_append(path, "/");
 		g_string_append(path, file->d_name);
-		menu_open(path->str);
-		menu_saved_status_set(MENU_STATUS_SAVED);
+		menu_open(path->str, FALSE);
 
 		g_string_free(path, TRUE);
 	}
 	closedir(dir);
+
+	/* select first menu */
+	gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebrme.menus_liststore), &iter);
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebrme.menus_treeview));
+	gtk_tree_selection_select_iter(selection, &iter);
+	menu_selected();
 }
 
 void
@@ -239,7 +249,7 @@ menu_selected(void)
 	/* programs */
 	geoxml_flow_get_program(gebrme.current, &program, 0);
 	while (program != NULL) {
-		program_create_ui(GEOXML_PROGRAM(program), FALSE);
+		program_create_ui(GEOXML_PROGRAM(program), TRUE);
 		geoxml_sequence_next(&program);
 	}
 

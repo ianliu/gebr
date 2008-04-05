@@ -1,5 +1,5 @@
-/*   GêBR ME - GêBR Menu Editor
- *   Copyright (C) 20072-2008 GêBR core team (http://gebr.sourceforge.net)
+/*   Gï¿½BR ME - Gï¿½BR Menu Editor
+ *   Copyright (C) 20072-2008 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "program.h"
 #include "gebrme.h"
 #include "support.h"
-#include "parameter.h"
+#include "parameters.h"
 #include "menu.h"
 #include "help.h"
 
@@ -68,25 +68,18 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	GtkWidget *                     url_label;
 	GtkWidget *                     url_entry;
 
-	GtkWidget *			parameters_expander;
-	GtkWidget *			parameters_label_widget;
-	GtkWidget *			parameters_label;
-	GtkWidget *			parameters_vbox;
-
 	GtkWidget *			depth_hbox;
-	GtkWidget *			widget;
 	GtkWidget *			event_box;
-	GeoXmlSequence *		parameter;
 	gchar *				program_title_str;
 
 	program_expander = gtk_expander_new("");
 	gtk_box_pack_start(GTK_BOX(gebrme.programs_vbox), program_expander, FALSE, TRUE, 0);
 	if (geoxml_flow_get_programs_number(gebrme.current) > 1)
-		gtk_expander_set_expanded(GTK_EXPANDER(program_expander), hidden);
+		gtk_expander_set_expanded(GTK_EXPANDER(program_expander), !hidden);
 	else
 		gtk_expander_set_expanded(GTK_EXPANDER(program_expander), TRUE);
 	gtk_widget_show(program_expander);
-	depth_hbox = create_depth(program_expander);
+	depth_hbox = gtk_container_add_depth_hbox(program_expander);
 
 	/* used to prevent that popup menu will show up in expander child
 	 * and enable it on a label
@@ -118,7 +111,7 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	gtk_widget_show(io_label);
 	gtk_box_pack_start(GTK_BOX(io_vbox), io_label, FALSE, FALSE, 0);
 
-	io_depth_hbox = create_depth(io_vbox);
+	io_depth_hbox = gtk_container_add_depth_hbox(io_vbox);
 	io_vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(io_vbox);
 	gtk_box_pack_start(GTK_BOX(io_depth_hbox), io_vbox, FALSE, TRUE, 0);
@@ -150,10 +143,10 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(io_stderr_checkbutton), geoxml_program_get_stderr(program));
 
 	summary_expander = gtk_expander_new(_("Summary"));
-	gtk_expander_set_expanded (GTK_EXPANDER (summary_expander), hidden);
+	gtk_expander_set_expanded(GTK_EXPANDER(summary_expander), !hidden);
 	gtk_box_pack_start(GTK_BOX(program_vbox), summary_expander, FALSE, TRUE, 0);
 	gtk_widget_show(summary_expander);
-	depth_hbox = create_depth(summary_expander);
+	depth_hbox = gtk_container_add_depth_hbox(summary_expander);
 
 	summary_table = gtk_table_new (5, 2, FALSE);
 	gtk_widget_show (summary_table);
@@ -262,39 +255,10 @@ program_create_ui(GeoXmlProgram * program, gboolean hidden)
 		program);
 	gtk_entry_set_text(GTK_ENTRY(url_entry), geoxml_program_get_url(program));
 
-	parameters_expander = gtk_expander_new("");
-	gtk_expander_set_expanded (GTK_EXPANDER (parameters_expander), hidden);
-	gtk_box_pack_start(GTK_BOX(program_vbox), parameters_expander, FALSE, TRUE, 0);
-	gtk_widget_show(parameters_expander);
-	depth_hbox = create_depth(parameters_expander);
-
-	parameters_vbox = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(depth_hbox), parameters_vbox, TRUE, TRUE, 0);
-	gtk_widget_show(parameters_vbox);
-
-	parameters_label_widget = gtk_hbox_new(FALSE, 0);
-	gtk_expander_set_label_widget(GTK_EXPANDER(parameters_expander), parameters_label_widget);
-	gtk_widget_show(parameters_label_widget);
-	gtk_expander_hacked_define(parameters_expander, parameters_label_widget);
-	parameters_label = gtk_label_new(_("Parameters"));
-	gtk_widget_show(parameters_label);
-	gtk_box_pack_start(GTK_BOX(parameters_label_widget), parameters_label, FALSE, TRUE, 0);
-	widget = gtk_button_new_from_stock(GTK_STOCK_ADD);
-	gtk_widget_show(widget);
-	gtk_box_pack_start(GTK_BOX(parameters_label_widget), widget, FALSE, TRUE, 5);
-	g_signal_connect(widget, "clicked",
-		GTK_SIGNAL_FUNC (parameter_add),
-		program);
-	g_object_set(G_OBJECT(widget), "user-data", parameters_vbox,
-		     "relief", GTK_RELIEF_NONE, NULL);
-
-	parameter = geoxml_parameters_get_first_parameter(geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
-	while (parameter != NULL) {
-		gtk_box_pack_start(GTK_BOX(parameters_vbox),
-			parameter_create_ui(GEOXML_PARAMETER(parameter), hidden), FALSE, TRUE, 0);
-
-		geoxml_sequence_next(&parameter);
-	}
+	/* parameters */
+	gtk_box_pack_start(GTK_BOX(program_vbox),
+		parameters_create_ui(geoxml_program_get_parameters(GEOXML_PROGRAM(program)), hidden),
+		FALSE, TRUE, 0);
 }
 
 void
@@ -308,7 +272,7 @@ program_add(void)
 	geoxml_program_set_stdout(program, TRUE);
 	geoxml_program_set_stderr(program, TRUE);
 	/* ui */
-	program_create_ui(program, TRUE);
+	program_create_ui(program, FALSE);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }

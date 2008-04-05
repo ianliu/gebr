@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -45,5 +45,22 @@ confirm_action_dialog(const gchar * title, const gchar * message, ...);
 
 void
 set_tooltip(GtkWidget * widget, const gchar * tip);
+
+GtkWidget *
+gtk_container_add_depth_hbox(GtkWidget * container);
+
+#define gtk_expander_hacked_define(expander, label_widget)			\
+	g_signal_connect_after ((gpointer) label_widget, "expose-event",	\
+			(GCallback)gtk_expander_hacked_idle,			\
+			expander);						\
+	g_signal_connect((gpointer) expander, "unmap",				\
+			(GCallback)gtk_expander_hacked_visible,		\
+			label_widget)
+
+void
+gtk_expander_hacked_visible(GtkWidget * parent_expander, GtkWidget * hbox);
+
+gboolean
+gtk_expander_hacked_idle(GtkWidget * hbox, GdkEventExpose *event, GtkWidget * expander);
 
 #endif //__LIBGEBR_GUI_UTILS_H

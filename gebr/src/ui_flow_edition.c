@@ -43,13 +43,16 @@ gchar * selected_menu_instead_error =	_("Select a menu instead of a category");
  */
 
 static void
+flow_edition_component_selected(void);
+
+static void
+flow_edition_reset_to_default(GeoXmlParameters * parameters);
+
+static void
 flow_edition_menu_add(void);
 
 static void
 flow_edition_menu_show_help(void);
-
-static void
-flow_edition_component_selected(void);
 
 static GtkMenu *
 flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edition);
@@ -209,49 +212,6 @@ flow_edition_setup_ui(void)
 }
 
 /*
- * Section: Private
- * Private functions
- */
-
-/* Function: flow_edition_component_selected
- * When a flow component (a program in the flow) is selected
- * this funtions get the state of the program and set it on Flow Component Menu
- *
- * PS: this function is called when the signal "cursor-changed" is triggered
- * also by hand.
- */
-static void
-flow_edition_component_selected(void)
-{
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
-	GtkTreePath *		path;
-
-	GeoXmlSequence *	program;
-	const gchar *		status;
-
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_flow_edition->fseq_view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_comp_selected_error);
-		return;
-	}
-
-	path = gtk_tree_model_get_path(model, &iter);
-	geoxml_flow_get_program(gebr.flow, &program, gtk_tree_path_get_indices(path)[0]);
-	status = geoxml_program_get_status(GEOXML_PROGRAM(program));
-
-	if (!strcmp(status, "configured"))
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.configured_menuitem), TRUE);
-	else if (!strcmp(status, "disabled"))
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.disabled_menuitem), TRUE);
-	else if (!strcmp(status, "unconfigured"))
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.unconfigured_menuitem), TRUE);
-
-	gtk_tree_path_free(path);
-}
-
-/*
  * Function: flow_edition_component_change_parameters
  * Show the current selected flow components parameters
  */
@@ -327,6 +287,78 @@ flow_edition_set_status(GtkMenuItem * menuitem)
 }
 
 /*
+ * Section: Private
+ * Private functions
+ */
+
+/* Function: flow_edition_component_selected
+ * When a flow component (a program in the flow) is selected
+ * this funtions get the state of the program and set it on Flow Component Menu
+ *
+ * PS: this function is called when the signal "cursor-changed" is triggered
+ * also by hand.
+ */
+static void
+flow_edition_component_selected(void)
+{
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+	GtkTreePath *		path;
+
+	GeoXmlSequence *	program;
+	const gchar *		status;
+
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_flow_edition->fseq_view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_comp_selected_error);
+		return;
+	}
+
+	path = gtk_tree_model_get_path(model, &iter);
+	geoxml_flow_get_program(gebr.flow, &program, gtk_tree_path_get_indices(path)[0]);
+	status = geoxml_program_get_status(GEOXML_PROGRAM(program));
+
+	if (!strcmp(status, "configured"))
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.configured_menuitem), TRUE);
+	else if (!strcmp(status, "disabled"))
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.disabled_menuitem), TRUE);
+	else if (!strcmp(status, "unconfigured"))
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.unconfigured_menuitem), TRUE);
+
+	gtk_tree_path_free(path);
+}
+
+/*
+ * Function: flow_edition_reset_to_default
+ * Change all parameters' values from _parameters_ to their default value
+ *
+ */
+static void
+flow_edition_reset_to_default(GeoXmlParameters * parameters)
+{
+	GeoXmlSequence *	parameter;
+
+	parameter = geoxml_parameters_get_first_parameter(parameters);
+	while (parameter != NULL) {
+		GeoXmlProgramParameter *	program_parameter;
+
+		if (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter)) == GEOXML_PARAMETERTYPE_GROUP) {
+			flow_edition_reset_to_default(
+				geoxml_parameter_group_get_parameters(GEOXML_PARAMETER_GROUP(parameter)));
+
+			geoxml_sequence_next(&parameter);
+			continue;
+		}
+		program_parameter = GEOXML_PROGRAM_PARAMETER(parameter);
+		geoxml_program_parameter_set_value(program_parameter,
+			geoxml_program_parameter_get_default(program_parameter));
+
+		geoxml_sequence_next(&parameter);
+	}
+}
+
+/*
  * Function: flow_edition_menu_add
  * Add selected menu to flow sequence
  *
@@ -348,7 +380,7 @@ flow_edition_menu_add(void)
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
 		return;
 	}
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(gebr.ui_flow_edition->menu_view));
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->menu_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_menu_selected_error);
 		return;
@@ -372,25 +404,7 @@ flow_edition_menu_add(void)
 	 */
 	geoxml_flow_get_program(menu, &program, 0);
 	while (program != NULL) {
-		GeoXmlSequence *	parameter;
-
-		parameter = geoxml_parameters_get_first_parameter(
-			geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
-
-		if (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter)) == GEOXML_PARAMETERTYPE_GROUP) {
-			/* TODO: call recursive function */
-			continue;
-		}
-		while (parameter != NULL) {
-			GeoXmlProgramParameter *	program_parameter;
-
-			program_parameter = GEOXML_PROGRAM_PARAMETER(parameter);
-			geoxml_program_parameter_set_value(program_parameter,
-				geoxml_program_parameter_get_default(program_parameter));
-
-			geoxml_sequence_next(&parameter);
-		}
-
+		flow_edition_reset_to_default(geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
 		geoxml_sequence_next(&program);
 	}
 

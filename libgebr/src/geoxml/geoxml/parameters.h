@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,17 +25,17 @@
  * \dot
  * digraph parameters {
  * 	fontname = "Bitstream Vera Sans"
- * 	fontsize = 8
+ * 	fontsize = 9
  * 	size = "6"
  * 	node [
  * 		color = palegreen2, style = filled
  * 		fontname = "Bitstream Vera Sans"
- * 		fontsize = 8
+ *   fontsize = 9
  * 		shape = record
  * 	]
  * 	edge [
  * 		fontname = "Bitstream Vera Sans"
- * 		fontsize = 8
+ *   fontsize = 9
  * 	]
  *
  * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
@@ -54,7 +54,6 @@
  * 	"GeoXmlSequence" -> "GeoXmlParameter";
  * 	"GeoXmlParameter" -> "GeoXmlProgramParameter";
  * 	"GeoXmlParameter" -> "GeoXmlParameterGroup";
- * 	"GeoXmlParameters" -> "GeoXmlParameterGroup";
  *
  * 	edge [
  * 		arrowhead = "none"
@@ -68,6 +67,7 @@
  * 		taillabel = "1"
  * 	]
  * 	"GeoXmlProgram" -> "GeoXmlParameters";
+ * 	"GeoXmlParameterGroup" -> "GeoXmlParameters";
  * }
  * \enddot
  * \see parameters.h
@@ -93,6 +93,11 @@ typedef struct geoxml_parameters GeoXmlParameters;
  * Create a new parameter.
  * Use geoxml_sequence_prepend or geoxml_sequence_append to add it to the
  * list of parameters.
+ *
+ * If \p parameters is a from a group parameter and it has more than one instance,
+ * then NULL is returned
+ *
+ * If \p parameters is NULL returns NULL.
  */
 GeoXmlParameter *
 geoxml_parameters_new_parameter(GeoXmlParameters * parameters, enum GEOXML_PARAMETERTYPE type);
@@ -100,6 +105,11 @@ geoxml_parameters_new_parameter(GeoXmlParameters * parameters, enum GEOXML_PARAM
 /**
  * Create a new parameter and append it to \p parameters.
  * Provided for convenience.
+ *
+ * If \p parameters is a from a group parameter and it has more than one instance,
+ * then NULL is returned
+ *
+ * If \p parameters is NULL returns NULL.
  *
  * \see geoxml_parameters_new_parameter
  */

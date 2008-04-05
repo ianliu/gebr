@@ -79,9 +79,9 @@ struct gebr {
 		GString *		data;
 		GString *		editor;
 		GString *		browser;
-		int                     width;
-		int                     height;
-		gboolean                log_expander_state;
+		int			width;
+		int			height;
+		gboolean		log_expander_state;
 	} config;
 
 	/* status menu items */

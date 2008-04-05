@@ -15,6 +15,7 @@
  *   along with this parameters.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
 #include <string.h>
 
 #include <gdome.h>
@@ -33,13 +34,35 @@ struct geoxml_parameters {
 	GdomeElement * element;
 };
 
+gboolean
+__geoxml_parameters_adjust_group_npar(GeoXmlParameters * parameters, gint adjust)
+{
+	GdomeElement *	parent_element;
+	gchar *		value;
+
+	parent_element = (GdomeElement*)gdome_el_parentNode((GdomeElement*)parameters, &exception);
+	if (strcmp(gdome_el_nodeName(parent_element, &exception)->str, "group") != 0)
+		return TRUE;
+	if (strcmp(__geoxml_get_attr_value(parent_element, "instances"), "1") != 0)
+		return FALSE;
+
+	value = g_strdup_printf("%d",
+		atoi(__geoxml_get_attr_value(parent_element, "npar")) + adjust);
+	__geoxml_set_attr_value(parent_element, "npar", value);
+
+	return TRUE;
+}
+
 GeoXmlParameter *
 __geoxml_parameters_new_parameter(GeoXmlParameters * parameters, enum GEOXML_PARAMETERTYPE type)
 {
 	GdomeElement *	parameter_element;
 
-	parameter_element = __geoxml_new_element((GdomeElement*)parameters, parameter_type_to_str[type]);
+	/* increases the npar counter if it is a group */
+	if (__geoxml_parameters_adjust_group_npar(parameters, +1) == FALSE)
+		return NULL;
 
+	parameter_element = __geoxml_new_element((GdomeElement*)parameters, parameter_type_to_str[type]);
 	if (type != GEOXML_PARAMETERTYPE_GROUP) {
 		__geoxml_insert_new_element(parameter_element, "keyword", NULL);
 		__geoxml_insert_new_element(parameter_element, "label", NULL);
@@ -62,13 +85,40 @@ __geoxml_parameters_new_parameter(GeoXmlParameters * parameters, enum GEOXML_PAR
 		}
 	} else {
 		__geoxml_insert_new_element(parameter_element, "label", NULL);
+		__geoxml_insert_new_element(parameter_element, "parameters", NULL);
 		/* attributes */
+		__geoxml_set_attr_value(parameter_element, "exclusive", "no");
+		__geoxml_set_attr_value(parameter_element, "expand", "yes");
+		__geoxml_set_attr_value(parameter_element, "multiple", "yes");
+		__geoxml_set_attr_value(parameter_element, "npar", "0");
 		__geoxml_set_attr_value(parameter_element, "instances", "1");
-		geoxml_parameter_group_set_exclusive((GeoXmlParameterGroup*)parameter_element, FALSE);
-		geoxml_parameter_group_set_expand((GeoXmlParameterGroup*)parameter_element, TRUE);
 	}
 
 	return (GeoXmlParameter*)parameter_element;
+}
+
+void
+__geoxml_parameters_reset(GeoXmlParameters * parameters, gboolean recursive)
+{
+	GeoXmlSequence *	parameter;
+
+	parameter = geoxml_parameters_get_first_parameter(parameters);
+	while (parameter != NULL) {
+		if (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter)) == GEOXML_PARAMETERTYPE_GROUP) {
+			if (recursive == FALSE) {
+				geoxml_sequence_next(&parameter);
+				continue;
+			}
+			__geoxml_parameters_reset(
+				geoxml_parameter_group_get_parameters(GEOXML_PARAMETER_GROUP(parameter)),
+				recursive);
+		} else {
+			geoxml_program_parameter_set_value(GEOXML_PROGRAM_PARAMETER(parameter), "");
+			geoxml_program_parameter_set_default(GEOXML_PROGRAM_PARAMETER(parameter), "");
+		}
+
+		geoxml_sequence_next(&parameter);
+	}
 }
 
 /*
@@ -92,6 +142,8 @@ geoxml_parameters_append_parameter(GeoXmlParameters * parameters, enum GEOXML_PA
 	GdomeElement *	element;
 
 	element = (GdomeElement*)__geoxml_parameters_new_parameter(parameters, type);
+	if (element == NULL)
+		return NULL;
 	gdome_el_insertBefore((GdomeElement*)parameters, (GdomeNode*)element, NULL, &exception);
 
 	return (GeoXmlParameter*)element;
@@ -111,11 +163,12 @@ geoxml_parameters_get_number(GeoXmlParameters * parameters)
 	if (parameters == NULL)
 		return -1;
 
-	gint		i;
-	gint		parameters_number = 0;
+	gint			parameters_number = 0;
+	GeoXmlSequence *	parameter;
 
-	for (i = 0; i < parameter_type_to_str_len; ++i)
-		parameters_number += __geoxml_get_elements_number((GdomeElement*)parameters, parameter_type_to_str[i]);
+	parameter = geoxml_parameters_get_first_parameter(parameters);
+	for (parameters_number = 0; parameter != NULL; ++parameters_number)
+		geoxml_sequence_next(&parameter);
 
 	return parameters_number;
 }

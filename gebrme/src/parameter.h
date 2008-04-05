@@ -26,73 +26,26 @@
 
 #include "enumoptionedit.h"
 
-struct parameter_data;
-struct parameter_ui_data;
+/* Persintant pointer of GeoXmlParameter. As
+ * it may change (because of geoxml_parameter_set_type)
+ * we must keep a container for it and share this container beetween signals.
+ */
+struct parameter_data {
+	GeoXmlParameter *		parameter;
+	GtkWidget *			label;
+	GtkWidget *			specific_table;
+
+	struct parameters_data * 	parameters_data;
+	/* for in-group parameter */
+	GtkWidget *			radio_button;
+	/* for non-groups */
+	struct parameter_widget *	widget;
+};
 
 GtkWidget *
-parameter_create_ui(GeoXmlParameter * parameter, gboolean hidden);
-
-void
-parameter_create_ui_type_general(GtkWidget * table, struct parameter_data * data);
+parameter_create_ui(GeoXmlParameter * parameter, struct parameters_data * parameters_data, gboolean hidden);
 
 void
 parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * data);
-
-void
-parameter_data_free(GtkObject * expander, struct parameter_data * data);
-
-void
-parameter_add(GtkButton * button, GeoXmlProgram * program);
-
-void
-parameter_up(GtkButton * button, struct parameter_data * data);
-
-void
-parameter_down(GtkButton * button, struct parameter_data * data);
-
-void
-parameter_remove(GtkButton * button, struct parameter_data * data);
-
-void
-parameter_type_changed(GtkComboBox * combo, struct parameter_data * data);
-
-void
-parameter_required_changed(GtkToggleButton * toggle_button, struct parameter_data * data);
-
-void
-parameter_is_list_changed(GtkToggleButton * toggle_button, struct parameter_data * data);
-
-void
-parameter_separator_changed(GtkEntry * entry, struct parameter_data * data);
-
-void
-parameter_label_changed(GtkEntry * entry, struct parameter_data * data);
-
-void
-parameter_keyword_changed(GtkEntry * entry, struct parameter_data * data);
-
-void
-parameter_default_widget_changed(struct parameter_widget * widget, struct parameter_data * data);
-
-void
-parameter_file_type_changed(GtkComboBox * combo, struct parameter_data * data);
-
-void
-parameter_range_min_changed(GtkEntry * entry, struct parameter_data * data);
-
-void
-parameter_range_max_changed(GtkEntry * entry, struct parameter_data * data);
-
-void
-parameter_range_inc_changed(GtkEntry * entry, struct parameter_data * data);
-
-void
-parameter_range_digits_changed(GtkEntry * entry, struct parameter_data * data);
-
-void
-parameter_enum_options_changed(EnumOptionEdit * enum_option_edit, struct parameter_data * data);
-
-void
-parameter_uilabel_update(struct parameter_data * data);
 
 #endif //__PARAMETER_H

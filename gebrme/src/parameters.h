@@ -1,5 +1,5 @@
-/*   GÔøΩBR - An environment for seismic processing.
- *   Copyright (C) 2007 GÔøΩBR core team (http://gebr.sourceforge.net)
+/*   GÍBR ME - GÍBR Menu Editor
+ *   Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,42 +18,19 @@
 #ifndef __PARAMETERS_H
 #define __PARAMETERS_H
 
-#include <glib.h>
 #include <gtk/gtk.h>
 
-#include <gui/parameter.h>
+#include <geoxml.h>
 
-struct parameter_data {
-	GeoXmlParameter *			parameter;
-	union {
-		/* program parameter */
-		struct parameter_widget	*	widget;
-		/* group */
-		struct {
-			GList *			parameters;
-			GtkWidget *		vbox;
-			GSList *		radio_group;
-		} group;
-	} data;
+struct parameters_data {
+	gboolean		is_group;
+	GeoXmlParameters *	parameters;
 };
 
-/*
- *
- */
-struct ui_parameters {
-	GtkWidget *					dialog;
+GtkWidget *
+parameters_create_ui(GeoXmlParameters * parameters, gboolean hidden);
 
-	GeoXmlProgram *					program;
-	int						program_index;
-	GtkWidget *					root_vbox;
-	GList *						to_free_list;
-	GtkWidget *					deinstanciate_button;
-
-	/* list of struct parameter_data */
-	GList *						parameters;
-};
-
-struct ui_parameters *
-parameters_configure_setup_ui(void);
+void
+parameters_add(GtkButton * button, struct parameters_data * parameters_data);
 
 #endif //__PARAMETERS_H

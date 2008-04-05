@@ -1,5 +1,5 @@
-/*   Gï¿½BR ME - Gï¿½BR Menu Editor
- *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
+/*   GêBR ME - GêBR Menu Editor
+ *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,37 +15,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MENU_H
-#define __MENU_H
+#ifndef __GROUP_PARAMETERS_H
+#define __GROUP_PARAMETERS_H
 
-#include <glib.h>
-#include <gebrme.h>
+#include "parameters.h"
+struct parameter_data;
 
-void
-menu_new(void);
+struct group_parameters_data {
+	struct parameters_data	parameters;
 
-GeoXmlFlow *
-menu_load(const gchar * path);
+	GeoXmlParameterGroup *	group;
+	/* for an exclusive group */
+	GSList *		radio_group;
+};
 
-void
-menu_open(const gchar * path, gboolean select);
-
-void
-menu_load_user_directory(void);
-
-void
-menu_save(const gchar * path);
+GtkWidget *
+group_parameters_create_ui(struct parameter_data * parameter_data, gboolean hidden);
 
 void
-menu_selected(void);
-
-/**
- * Asks for save and free memory allocated for menus
- */
-gboolean
-menu_cleanup(void);
+group_parameters_instanciate(GtkButton * button, struct parameters_data * parameters_data);
 
 void
-menu_saved_status_set(MenuStatus status);
+group_parameters_deinstanciate(GtkButton * button, struct parameters_data * parameters_data);
 
-#endif //__MENU_H
+#endif //__GROUP_PARAMETERS_H

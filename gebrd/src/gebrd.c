@@ -1,5 +1,5 @@
-/*   GêBR Daemon - Process and control execution of flows
- *   Copyright (C) 2007-2008 GêBR core team (http://gebr.sourceforge.net)
+/*   Gï¿½BR Daemon - Process and control execution of flows
+ *   Copyright (C) 2007-2008 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -73,6 +73,9 @@ gebrd_message(enum log_message_type type, const gchar * message, ...)
 	string = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
+#ifndef GEBRD_DEBUG
+	if (type != LOG_DEBUG)
+#endif
 	log_add_message(gebrd.log, type, string);
 
 	g_free(string);

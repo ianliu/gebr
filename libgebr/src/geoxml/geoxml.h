@@ -31,17 +31,17 @@
  * \dot
  * digraph geoxml {
  * 	fontname = "Bitstream Vera Sans"
- * 	fontsize = 8
+ * 	fontsize = 9
  * 	size = "6"
  * 	node [
  * 	color = palegreen2, style = filled
  * 		fontname = "Bitstream Vera Sans"
- * 		fontsize = 8
+ * 		fontsize = 9
  * 		shape = record
  * 	]
  * 	edge [
  * 		fontname = "Bitstream Vera Sans"
- * 		fontsize = 8
+ *		fontsize = 9
  * 	]
  *
  * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
@@ -55,7 +55,6 @@
  * 	"GeoXmlParameter" [ URL = "\ref parameter.h" ];
  * 	"GeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
  * 	"GeoXmlParameterGroup" [ URL = "\ref parameter_group.h" ];
- * 	"GeoXmlCategory" [ URL = "\ref category.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
@@ -63,7 +62,6 @@
  * 	"GeoXmlDocument" -> { "GeoXmlFlow" "GeoXmlLine" "GeoXmlProject" };
  * 	"GeoXmlParameter" -> "GeoXmlProgramParameter";
  * 	"GeoXmlParameter" -> "GeoXmlParameterGroup";
- * 	"GeoXmlParameters" -> "GeoXmlParameterGroup";
  *
  * 	edge [
  * 		arrowhead = "none"
@@ -79,22 +77,23 @@
  * 		taillabel = "1"
  * 	]
  * 	"GeoXmlProgram" -> "GeoXmlParameters";
+ * 	"GeoXmlParameterGroup" -> "GeoXmlParameters";
  * }
  * \enddot
  * \dot
  * digraph sequence {
  * 	fontname = "Bitstream Vera Sans"
- * 	fontsize = 8
+ * 	fontsize = 9
  * 	size = "6"
  * 	node [
  * 		color = palegreen2, style = filled
  * 		fontname = "Bitstream Vera Sans"
- * 		fontsize = 8
+ * 		fontsize = 9
  * 		shape = record
  * 	]
  * 	edge [
  * 		fontname = "Bitstream Vera Sans"
- * 		fontsize = 8
+ * 		fontsize = 9
  * 	]
  *
  * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
@@ -102,9 +101,8 @@
  * 	"GeoXmlLineFlow" [ URL = "\ref GeoXmlLineFlow" ];
  * 	"GeoXmlProgram" [ URL = "\ref program.h" ];
  * 	"GeoXmlParameter" [ URL = "\ref parameter.h" ];
- * 	"GeoXmlCategory" [ URL = "\ref category.h" ];
+ * 	"GeoXmlEnumOption" [ URL = "\ref enum_option.h" ];
  * 	"GeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
- * 	"GeoXmlEnumOption" [ URL = "\ref GeoXmlEnumOption" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
@@ -113,9 +111,10 @@
  * 	"GeoXmlSequence" -> { "GeoXmlLineFlow" };
  * 	"GeoXmlSequence" -> { "GeoXmlProgram" };
  * 	"GeoXmlSequence" -> { "GeoXmlParameter" };
+ * 	"GeoXmlSequence" -> { "GeoXmlEnumOption" };
  * 	"GeoXmlSequence" -> { "GeoXmlValueSequence" };
- * 	"GeoXmlValueSequence" -> { "GeoXmlEnumOption" };
  * 	"GeoXmlValueSequence" -> { "GeoXmlCategory" };
+ * 	"GeoXmlValueSequence" -> { "GeoXmlLinePath" };
  * }
  * \enddot
  * Discussions group: http://groups.google.com/group/gebr and http://groups.google.com/group/gebr-devel

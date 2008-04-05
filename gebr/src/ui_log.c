@@ -131,6 +131,10 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 	GdkPixbuf *		pixbuf;
 	GString *               markuped_date;
 
+	/* date */
+	markuped_date = g_string_new(NULL);
+	g_string_printf(markuped_date, "<small>%s</small>", localized_date(message->date->str));
+	/* icon type */
 	switch (message->type) {
 	case LOG_START:
 		pixbuf = gebr.pixmaps.stock_go_forward;
@@ -150,17 +154,13 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 	default:
 		return;
 	}
-
-
-	markuped_date = g_string_new(NULL);
-	g_string_printf(markuped_date, "<small>%s</small>", localized_date(message->date->str));
-
+	/* add */
 	gtk_list_store_append(ui_log->store, &iter);
 	gtk_list_store_set(ui_log->store, &iter,
-			   LOG_TYPE_ICON, pixbuf,
-			   LOG_DATE, markuped_date->str,
-			   LOG_MESSAGE, message->message->str,
-			   -1);
+		LOG_TYPE_ICON, pixbuf,
+		LOG_DATE, markuped_date->str,
+		LOG_MESSAGE, message->message->str,
+		-1);
 
 	/* select it on view */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_log->view));
@@ -169,6 +169,7 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(ui_log->store), &iter);
 	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(ui_log->view), path, NULL, FALSE, 0, 0);
 
+	/* frees */
 	g_string_free(markuped_date, TRUE);
 	gtk_tree_path_free(path);
 }

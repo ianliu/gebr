@@ -1,5 +1,5 @@
-# GêBR Daemon - Process and control execution of flows
-# Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+# Gï¿½BR Daemon - Process and control execution of flows
+# Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,6 +31,18 @@ AC_PROG_CC
 AM_PROG_CC_STDC
 AC_PROG_INSTALL
 AC_HEADER_STDC
+
+dnl Debug option
+AC_ARG_ENABLE(debug,
+	[AC_HELP_STRING([--enable-debug],
+	[turn on debugging])],,
+	enable_debug=yes)
+if test "$enable_debug" = "yes"; then
+	DEBUG_CFLAGS="-DGEBRD_DEBUG"
+else
+	DEBUG_CFLAGS=""
+fi
+AC_SUBST(DEBUG_CFLAGS)
 
 dnl gettext stuff
 dnl GETTEXT_PACKAGE=$PACKAGE

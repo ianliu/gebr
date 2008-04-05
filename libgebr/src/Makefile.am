@@ -29,6 +29,6 @@ noinst_HEADERS = defines.h
 EXTRADIST = ${pkgconfig_DATA} $(noinst_HEADERS)
 
 INCLUDES = -Igeoxml -Icomm -Igui -Imisc
-AM_CFLAGS = -Wall $(GTK_CFLAGS) $(GDOME2_CFLAGS)
+AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GTK_CFLAGS) $(GDOME2_CFLAGS)
 libgebr_la_LIBADD = geoxml/geoxml/libgebr_geoxml.la comm/comm/libgebr_comm.la gui/gui/libgebr_gui.la misc/misc/libgebr_misc.la
 libgebr_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@

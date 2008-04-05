@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007-2008 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007-2008 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 #include "xml.h"
 #include "types.h"
 #include "error.h"
+#include "parameters.h"
+#include "parameters_p.h"
 
 /*
  * internal structures and funcionts
@@ -111,7 +113,13 @@ geoxml_sequence_remove(GeoXmlSequence * sequence)
 {
 	if (sequence == NULL)
 		return GEOXML_RETV_NULL_PTR;
-	if (!__geoxml_sequence_check(sequence))
+	if (__geoxml_sequence_is_parameter(sequence)) {
+		GeoXmlParameters *	parameters;
+
+		parameters = (GeoXmlParameters*)gdome_el_parentNode((GdomeElement*)sequence, &exception);
+		if (__geoxml_parameters_adjust_group_npar(parameters, -1) == FALSE)
+			return GEOXML_RETV_MORE_THAN_ONE_INSTANCES;
+	} else if (!__geoxml_sequence_check(sequence))
 		return GEOXML_RETV_NOT_A_SEQUENCE;
 
 	gdome_n_removeChild(gdome_n_parentNode((GdomeNode*)sequence, &exception),

@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -93,6 +93,11 @@ enum GEOXML_RETV {
 	 * The parameter passed is not a enum parameter.
 	 */
 	GEOXML_RETV_PARAMETER_NOT_ENUM		= -10,
+	/**
+	 * The action could not be done because group
+	 * container of the parameter was instatiated.
+	 */
+	GEOXML_RETV_MORE_THAN_ONE_INSTANCES	= -11,
 };
 
 #endif //__LIBGEBR_GEOXML_ERROR_H

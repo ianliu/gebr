@@ -1,5 +1,5 @@
-/*   GêBR ME - GêBR Menu Editor
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   Gï¿½BR ME - Gï¿½BR Menu Editor
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -43,22 +43,5 @@
 #  define Q_(String) g_strip_context ((String), (String))
 #  define N_(String) (String)
 #endif
-
-GtkWidget *
-create_depth(GtkWidget * container);
-
-#define gtk_expander_hacked_define(expander, label_widget)			\
-	g_signal_connect_after ((gpointer) label_widget, "expose-event",	\
-			(GCallback)gtk_expander_hacked_idle,			\
-			expander);						\
-	g_signal_connect((gpointer) expander, "unmap",				\
-			(GCallback)gtk_expander_hacked_visible,		\
-			label_widget)
-
-void
-gtk_expander_hacked_visible(GtkWidget * parent_expander, GtkWidget * hbox);
-
-gboolean
-gtk_expander_hacked_idle(GtkWidget * hbox, GdkEventExpose *event, GtkWidget * expander);
 
 #endif //__SUPPORT_H

@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,11 +18,6 @@
 #ifndef __LIBGEBR_GEOXML_PARAMETER_P_H
 #define __LIBGEBR_GEOXML_PARAMETER_P_H
 
-/**
- * \internal
- * Reset recursively \p parameter's value.
- */
-void
-geoxml_parameter_reset(GeoXmlParameter * parameter);
+
 
 #endif //__LIBGEBR_GEOXML_PARAMETER_P_H

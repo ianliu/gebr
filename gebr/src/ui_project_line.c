@@ -388,43 +388,45 @@ project_line_info_update(void)
 	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified), localized_date(geoxml_document_get_date_modified(gebr.doc)));
 
 	/* Line's paths */
-	if (!is_project){
+	if (!is_project) {
+		GeoXmlSequence *	path;
+
 		markup = g_markup_printf_escaped("<b>%s</b>", _("Paths:"));
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.path_label), markup);
 		g_free(markup);
 
-
-		GeoXmlSequence  *path;
-
-		switch (geoxml_line_get_paths_number(gebr.line)){
+		switch (geoxml_line_get_paths_number(gebr.line)) {
 		case 0:
-			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1), "None");
+			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1), _("None"));
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");
-			break;
 
+			break;
 		case 1:
 			geoxml_line_get_path(gebr.line, &path, 0);
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
 					   geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");
+
 			break;
 		case 2:
 			geoxml_line_get_path(gebr.line, &path, 0);
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
-					   geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
+				geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
 
 			geoxml_line_get_path(gebr.line, &path, 1);
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2),
-					   geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
+				geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
+
 			break;
 		default:
 			geoxml_line_get_path(gebr.line, &path, 0);
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
 					   geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "...");
+
 			break;
 		}
-	}else{
+	} else {
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");

@@ -1,5 +1,5 @@
-# GêBR Daemon - Process and control execution of flows
-# Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+# Gï¿½BR Daemon - Process and control execution of flows
+# Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,5 +35,5 @@ LIBGEBR_CFLAGS = ${LIBGEBR_GEOXML_CFLAGS} ${LIBGEBR_COMM_CFLAGS} ${LIBGEBR_MISC_
 LIBGEBR_LIBS = ${LIBGEBR_GEOXML_LIBS} ${LIBGEBR_COMM_LIBS} ${LIBGEBR_MISC_LIBS}
 INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
-AM_CFLAGS = -Wall $(GLIB_CFLAGS) ${LIBGEBR_CFLAGS}
+AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GLIB_CFLAGS) ${LIBGEBR_CFLAGS}
 gebrd_LDADD = $(INTLLIBS) $(GLIB_LIBS) ${LIBGEBR_LIBS}

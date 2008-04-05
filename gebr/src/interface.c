@@ -23,9 +23,9 @@
  * This function assemblies the main window, preferences and menu bar.
  */
 
-#include <gdk/gdkkeysyms.h>
-
 #include <string.h>
+
+#include <gdk/gdkkeysyms.h>
 
 #include <gui/pixmaps.h>
 

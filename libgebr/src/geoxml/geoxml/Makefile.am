@@ -34,6 +34,6 @@ noinst_HEADERS = \
 EXTRA_DIST = ${noinst_HEADERS}
 
 INCLUDES =
-AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
+AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
 libgebr_geoxml_la_LIBADD = $(GLIB_LIBS) $(GDOME2_LIBS)
 libgebr_geoxml_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@

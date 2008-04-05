@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,10 +19,25 @@
 #define __LIBGEBR_GEOXML_PARAMETERS_P_H
 
 /**
+ * If \p parameters is a group and it was instantiated only once,
+ * then adjust the number of parameters of a instance (npar)
+ */
+gboolean
+__geoxml_parameters_adjust_group_npar(GeoXmlParameters * parameters, gint adjust);
+
+/**
  * \internal
  * Create a new parameter with type \p type.
  */
 GeoXmlParameter *
 __geoxml_parameters_new_parameter(GeoXmlParameters * parameters, enum GEOXML_PARAMETERTYPE type);
+
+/**
+ * \internal
+ * Change all \p parameters' values to \p value,
+ * including default values.
+ */
+void
+__geoxml_parameters_reset(GeoXmlParameters * parameters, gboolean recursive);
 
 #endif //__LIBGEBR_GEOXML_PARAMETERS_P_H
