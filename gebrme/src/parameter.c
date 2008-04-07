@@ -574,7 +574,7 @@ parameter_create_ui_type_general(GtkWidget * table, struct parameter_data * data
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(expanded_checkbox),
 			geoxml_parameter_group_get_expand(parameter_group));
 
-		multiple_label = gtk_label_new(_("Can be instanciate:"));
+		multiple_label = gtk_label_new(_("Instanciable:"));
 		gtk_widget_show(multiple_label);
 		gtk_table_attach(GTK_TABLE(table), multiple_label, 0, 1, 2, 3,
 			(GtkAttachOptions)(GTK_FILL),

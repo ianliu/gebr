@@ -285,7 +285,7 @@ geoxml_flow_remove_program(GeoXmlFlow * flow, GeoXmlProgram * program)
 void
 geoxml_flow_move_program(GeoXmlFlow * flow, GeoXmlProgram * program, GeoXmlProgram * before_program)
 {
-	geoxml_sequence_move((GeoXmlSequence*)program, (GeoXmlSequence*)before_program);
+	geoxml_sequence_move_before((GeoXmlSequence*)program, (GeoXmlSequence*)before_program);
 }
 
 int

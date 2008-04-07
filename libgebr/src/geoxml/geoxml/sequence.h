@@ -126,13 +126,24 @@ int
 geoxml_sequence_remove(GeoXmlSequence * sequence);
 
 /**
+ * Moves \p sequence to the position before \p position. If \p position is NULL then
+ * moves to the end of the sequence
  *
- * In case that \p sequence is a parameter, \p before should be
- *
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_NULL_PTR, GEOXML_RETV_NOT_A_SEQUENCE, GEOXML_RETV_DIFFERENT_SEQUENCES
+ * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_NULL_PTR,
+ * GEOXML_RETV_NOT_A_SEQUENCE, GEOXML_RETV_DIFFERENT_SEQUENCES
  */
 int
-geoxml_sequence_move(GeoXmlSequence * sequence, GeoXmlSequence * before);
+geoxml_sequence_move_before(GeoXmlSequence * sequence, GeoXmlSequence * position);
+
+/**
+ * Moves \p sequence to the position after \p position. If \p position is NULL then
+ * moves to the beggining of the sequence
+ *
+ * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_NULL_PTR,
+ * GEOXML_RETV_NOT_A_SEQUENCE, GEOXML_RETV_DIFFERENT_SEQUENCES
+ */
+int
+geoxml_sequence_move_after(GeoXmlSequence * sequence, GeoXmlSequence * position);
 
 /**
  * Exchange positions of the sequence above \p sequence with \p sequence in \p sequence.

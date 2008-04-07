@@ -6,6 +6,8 @@ Geral:
 
   * atualizar copyright para 2007-2008
 
+  *** gerenciamento de projetos: tutos
+
 GÍBR:
 
   * Conferir/Corrigir o servidor
@@ -38,12 +40,14 @@ GÍBR Daemon:
   de bash interpretados pelo terminal) e isso com certeza n„o È
   UTF-8 independentemente do encode do sistema.
 
+  * Converter a linha de comando de utf8 para a locale do usuario
+
 GÍBRME:
 
   * Quando um par‚metro do tipo arquivo È marcado como "list" na
   gebr n„o aparece mais o bot„o de browse para arquivo.
 
-  * Suporte a grupos.
+  * Duplicar parametro
 
   * proteÁ„o de extens„o na hora de salvar
 

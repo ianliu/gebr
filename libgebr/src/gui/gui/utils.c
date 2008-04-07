@@ -16,6 +16,7 @@
  */
 
 #include <stdarg.h>
+#include <stdlib.h>
 
 #include "utils.h"
 
@@ -176,6 +177,19 @@ gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter)
 	gtk_list_store_move_after(store, iter, &next);
 
 	return TRUE;
+}
+
+gulong
+gtk_list_store_get_iter_index(GtkListStore * list_store, GtkTreeIter * iter)
+{
+	gchar *	node;
+	gulong	index;
+
+	node = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(list_store), iter);
+	index = (gulong)atol(node);
+	g_free(node);
+
+	return index;
 }
 
 void

@@ -108,6 +108,7 @@ flow_browse_setup_ui(void)
 		G_TYPE_STRING,  /* Name(title for libgeoxml) */
 		G_TYPE_STRING); /* Filename */
 	ui_flow_browse->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->store));
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_browse->view), FALSE);
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view),
 		(GtkPopupCallback)flow_browse_popup_menu, ui_flow_browse);
 	g_signal_connect(ui_flow_browse->view, "row-activated",
@@ -116,11 +117,9 @@ flow_browse_setup_ui(void)
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(renderer, "editable", TRUE, NULL);
 	g_signal_connect(GTK_OBJECT(renderer), "edited",
-			GTK_SIGNAL_FUNC(flow_browse_rename), ui_flow_browse);
+		GTK_SIGNAL_FUNC(flow_browse_rename), ui_flow_browse);
 
-	col = gtk_tree_view_column_new_with_attributes(_("Index"), renderer, NULL);
-	gtk_tree_view_column_set_sort_column_id(col, FB_TITLE);
-	gtk_tree_view_column_set_sort_indicator(col, TRUE);
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", FB_TITLE);
 
@@ -459,7 +458,7 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
 			(GCallback)flow_move_bottom, NULL);
-	}	
+	}
 
 	/* Input/Output */
 	menu_item = gtk_image_menu_item_new_with_label(_("Input/Output"));

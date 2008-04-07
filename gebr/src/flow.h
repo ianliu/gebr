@@ -52,15 +52,15 @@ void
 flow_program_move_down(void);
 
 void
-flow_move_up (void);
+flow_move_up(void);
 
 void
-flow_move_down (void);
+flow_move_down(void);
 
 void
-flow_move_top (void);
+flow_move_top(void);
 
 void
-flow_move_bottom (void);
+flow_move_bottom(void);
 
 #endif //__FLOW_H

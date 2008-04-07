@@ -32,6 +32,9 @@ gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter);
 gboolean
 gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter);
 
+gulong
+gtk_list_store_get_iter_index(GtkListStore * list_store, GtkTreeIter * iter);
+
 typedef GtkMenu * (*GtkPopupCallback)(GtkWidget *, gpointer);
 
 gboolean
