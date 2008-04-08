@@ -592,6 +592,66 @@ flow_program_move_down(void)
 }
 
 /*
+ * Function: flow_program_move_top
+ * Move selected program to top in the processing flow
+ */
+void
+flow_program_move_top(void)
+{
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+
+	GeoXmlSequence *	program;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_program_selected_error);
+		return;
+	}
+	if (gtk_list_store_can_move_up(gebr.ui_flow_edition->fseq_store, &iter) == FALSE)
+		return;
+
+	/* Update flow */
+	geoxml_flow_get_program(gebr.flow, &program,
+		gtk_list_store_get_iter_index(gebr.ui_flow_edition->fseq_store, &iter));
+	geoxml_sequence_move_after(program, NULL);
+	flow_save();
+	/* Update GUI */
+	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter, NULL);
+}
+
+/*
+ * Function: flow_program_move_bottom
+ * Move selected program to bottom in the processing flow
+ */
+void
+flow_program_move_bottom(void)
+{
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+
+	GeoXmlSequence *	program;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_program_selected_error);
+		return;
+	}
+	if (gtk_list_store_can_move_down(gebr.ui_flow_edition->fseq_store, &iter) == FALSE)
+		return;
+
+	/* Update flow */
+	geoxml_flow_get_program(gebr.flow, &program,
+		gtk_list_store_get_iter_index(gebr.ui_flow_edition->fseq_store, &iter));
+	geoxml_sequence_move_before(program, NULL);
+	flow_save();
+	/* Update GUI */
+	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter, NULL);
+}
+
+/*
  * Function: flow_move_up
  * Move flow up
  */
@@ -628,7 +688,7 @@ flow_move_up(void)
 void
 flow_move_down(void)
 {
- GtkTreeSelection *	selection;
+	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 	GtkTreeIter		iter;
 

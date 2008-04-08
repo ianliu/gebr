@@ -52,6 +52,12 @@ void
 flow_program_move_down(void);
 
 void
+flow_program_move_top(void);
+
+void
+flow_program_move_bottom(void);
+
+void
 flow_move_up(void);
 
 void

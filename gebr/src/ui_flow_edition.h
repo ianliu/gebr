@@ -56,6 +56,6 @@ void
 flow_edition_component_change_parameters(void);
 
 void
-flow_edition_set_status(GtkMenuItem * menuitem);
+flow_edition_set_status(GtkMenuItem * menuitem, GtkWidget * status_menuitem);
 
 #endif //__UI_FLOW_COMPONENT_H

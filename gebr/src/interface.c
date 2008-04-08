@@ -353,7 +353,6 @@ assembly_flow_components_menu(void)
 	GtkWidget *	menuitem;
 	GtkWidget *	menu;
 	GtkWidget *	submenu;
-	GSList *	radio_slist;
 
 	menu = gtk_menu_new();
 	gtk_menu_set_title(GTK_MENU(menu), _("Flow component menu"));
@@ -374,23 +373,20 @@ assembly_flow_components_menu(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), submenu);
 	/* component status items */
 	/* configured */
-	radio_slist = NULL;
-	gebr.configured_menuitem = gtk_radio_menu_item_new_with_label(radio_slist, _("Configured"));
+	gebr.configured_menuitem = gtk_radio_menu_item_new_with_label(NULL, _("Configured"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gebr.configured_menuitem);
 	g_signal_connect(GTK_OBJECT(gebr.configured_menuitem), "activate",
-			GTK_SIGNAL_FUNC(on_flow_component_status_activate), NULL);
+			GTK_SIGNAL_FUNC(on_flow_component_status_activate), gebr.configured_menuitem);
 	/* disabled */
-	radio_slist = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(gebr.configured_menuitem));
-	gebr.disabled_menuitem = gtk_radio_menu_item_new_with_label(radio_slist, _("Disabled"));
+	gebr.disabled_menuitem = gtk_radio_menu_item_new_with_label_from_widget(GTK_RADIO_MENU_ITEM(gebr.configured_menuitem), _("Disabled"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gebr.disabled_menuitem);
 	g_signal_connect(GTK_OBJECT(gebr.disabled_menuitem), "activate",
-			GTK_SIGNAL_FUNC(on_flow_component_status_activate), NULL);
+			GTK_SIGNAL_FUNC(on_flow_component_status_activate), gebr.disabled_menuitem);
 	/* unconfigured */
-	radio_slist = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(gebr.disabled_menuitem));
-	gebr.unconfigured_menuitem = gtk_radio_menu_item_new_with_label(radio_slist, _("Unconfigured"));
+	gebr.unconfigured_menuitem = gtk_radio_menu_item_new_with_label_from_widget(GTK_RADIO_MENU_ITEM(gebr.disabled_menuitem), _("Unconfigured"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gebr.unconfigured_menuitem);
 	g_signal_connect(GTK_OBJECT(gebr.unconfigured_menuitem), "activate",
-			GTK_SIGNAL_FUNC(on_flow_component_status_activate), NULL);
+			GTK_SIGNAL_FUNC(on_flow_component_status_activate), gebr.unconfigured_menuitem);
 
 	menuitem = gtk_menu_item_new_with_label(_("Flow component"));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);

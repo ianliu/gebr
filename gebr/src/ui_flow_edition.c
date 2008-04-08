@@ -32,6 +32,7 @@
 #include "ui_flow.h"
 #include "ui_parameters.h"
 #include "ui_help.h"
+#include "callbacks.h"
 
 extern gchar * no_flow_selected_error;
 gchar * no_flow_comp_selected_error =	_("No flow component selected");
@@ -56,6 +57,7 @@ flow_edition_menu_show_help(void);
 
 static GtkMenu *
 flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edition);
+
 
 /*
  * Section: Public
@@ -245,14 +247,13 @@ flow_edition_component_change_parameters(void)
  * Change the flow status when select the status from the "Flow Component" menu.
  */
 void
-flow_edition_set_status(GtkMenuItem * menuitem)
+flow_edition_set_status(GtkMenuItem * menuitem, GtkWidget * status_menuitem)
 {
 	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 	GtkTreePath *		path;
 
-	GtkWidget *		status_menuitem;
 	GeoXmlSequence *	program;
 
 	GdkPixbuf *		pixbuf;
@@ -265,7 +266,6 @@ flow_edition_set_status(GtkMenuItem * menuitem)
 
 	path = gtk_tree_model_get_path(model, &iter);
 	geoxml_flow_get_program(gebr.flow, &program, gtk_tree_path_get_indices(path)[0]);
-	status_menuitem = GTK_WIDGET(menuitem);
 
 	if (status_menuitem == gebr.configured_menuitem) {
 		geoxml_program_set_status(GEOXML_PROGRAM(program), "configured");
@@ -280,7 +280,7 @@ flow_edition_set_status(GtkMenuItem * menuitem)
 		return;
 
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
-			FSEQ_STATUS_COLUMN, pixbuf, -1);
+			   FSEQ_STATUS_COLUMN, pixbuf, -1);
 
 	flow_save();
 	gtk_tree_path_free(path);
@@ -319,12 +319,9 @@ flow_edition_component_selected(void)
 	geoxml_flow_get_program(gebr.flow, &program, gtk_tree_path_get_indices(path)[0]);
 	status = geoxml_program_get_status(GEOXML_PROGRAM(program));
 
-	if (!strcmp(status, "configured"))
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.configured_menuitem), TRUE);
-	else if (!strcmp(status, "disabled"))
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.disabled_menuitem), TRUE);
-	else if (!strcmp(status, "unconfigured"))
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.unconfigured_menuitem), TRUE);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.configured_menuitem), !strcmp(status, "configured"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.disabled_menuitem), !strcmp(status, "disabled"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.unconfigured_menuitem), !strcmp(status, "unconfigured"));
 
 	gtk_tree_path_free(path);
 }
@@ -461,16 +458,31 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 	GtkTreeIter		iter;
+	GtkTreePath *		path;
 
 	GtkWidget *		menu;
 	GtkWidget *		menu_item;
+
+	GeoXmlSequence *	program;
+	const gchar *		status;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
 		return NULL;
 
+	path = gtk_tree_model_get_path(model, &iter);
+	geoxml_flow_get_program(gebr.flow, &program, gtk_tree_path_get_indices(path)[0]);
+	status = geoxml_program_get_status(GEOXML_PROGRAM(program));
+
 	menu = gtk_menu_new();
 
+	/* Move top */
+	if (gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter) == TRUE) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate",
+			(GCallback)flow_program_move_top, NULL);
+	}
 	/* Move up */
 	if (gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
@@ -485,6 +497,40 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 		g_signal_connect(menu_item, "activate",
 			(GCallback)flow_program_move_down, NULL);
 	}
+	/* Move bottom */
+	if (gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter) == TRUE) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate",
+			(GCallback)flow_program_move_bottom, NULL);
+	}
+
+	/* separator */
+	menu_item = gtk_separator_menu_item_new();
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	/* component status items */
+	status = geoxml_program_get_status(GEOXML_PROGRAM(program));
+	/* configured */
+	menu_item = gtk_radio_menu_item_new_with_label(NULL, _("Configured"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+			GTK_SIGNAL_FUNC(on_flow_component_status_activate), gebr.configured_menuitem);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), !strcmp(status, "configured"));
+
+	/* configured */
+	menu_item = gtk_radio_menu_item_new_with_label_from_widget(GTK_RADIO_MENU_ITEM(menu_item), _("Disabled"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+			GTK_SIGNAL_FUNC(on_flow_component_status_activate), gebr.disabled_menuitem);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), !strcmp(status, "disabled"));
+
+	/* configured */
+	menu_item = gtk_radio_menu_item_new_with_label_from_widget(GTK_RADIO_MENU_ITEM(menu_item), _("Unconfigured"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+			GTK_SIGNAL_FUNC(on_flow_component_status_activate), gebr.unconfigured_menuitem);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), !strcmp(status, "unconfigured"));
+
 
 	gtk_widget_show_all(menu);
 
