@@ -34,6 +34,7 @@
 #include "gebr.h"
 #include "defines.h"
 #include "support.h"
+#include "menu.h"
 
 #define BUFFER_SIZE 1024
 
@@ -44,6 +45,40 @@ gchar * unable_to_write_help_error = _("Unable to write help in temporary file")
  * Public functions.
  */
 
+/*
+ * Function: program_help_show
+ */
+void
+program_help_show(void)
+{
+
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+	GtkTreePath *		path;
+	
+	GeoXmlSequence *	program;
+	GString *		help;
+	gulong			index;
+	
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("No flow component selected"));
+		return;
+	}
+	
+	path = gtk_tree_model_get_path (model, &iter);
+	index = (gulong)atoi(gtk_tree_path_to_string(path));
+	gtk_tree_path_free(path);
+	
+	/* get the program and its path on menu */
+	geoxml_flow_get_program(gebr.flow, &program, index);
+	help = menu_get_help_from_program_ref(GEOXML_PROGRAM(program));
+	help_show(help->str, _("Program help"));
+	
+	g_string_free(help, TRUE);
+}
+		
 /*
  * Function: help_show
  * Open user's browser with _help_

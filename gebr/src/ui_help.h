@@ -22,6 +22,9 @@
 #include <geoxml.h>
 
 void
+program_help_show(void);
+
+void
 help_show(const gchar * help, const gchar * title);
 
 void

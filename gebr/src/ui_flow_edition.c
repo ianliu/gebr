@@ -58,6 +58,9 @@ flow_edition_menu_show_help(void);
 static GtkMenu *
 flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edition);
 
+static GtkMenu *
+flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edition);
+
 
 /*
  * Section: Public
@@ -78,9 +81,7 @@ flow_edition_setup_ui(void)
 	GtkWidget *			frame;
 	GtkWidget *			hpanel;
 	GtkWidget *			scrolledwin;
-	GtkWidget *			button;
 	GtkWidget *			vbox;
-	GtkWidget *			hbox;
 	GtkTreeViewColumn *		col;
 	GtkCellRenderer *		renderer;
 
@@ -135,51 +136,12 @@ flow_edition_setup_ui(void)
 	{
 		frame = gtk_frame_new(_("Flow components"));
 		gtk_paned_pack2(GTK_PANED(hpanel), frame, TRUE, TRUE);
-
-		hbox = gtk_hbox_new(FALSE, 1);
-		gtk_container_add(GTK_CONTAINER(frame), hbox);
-
-		/*
-		 * Up, Down, Right and Left buttons
-		 */
-		vbox = gtk_vbox_new(FALSE, 4);
-		gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
-
-		button = gtk_button_new();
-		gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(GTK_STOCK_ADD, 1));
-		gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
-		g_signal_connect(GTK_OBJECT(button), "clicked",
-				GTK_SIGNAL_FUNC(flow_edition_menu_add), NULL);
-
-		button = gtk_button_new();
-		gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(GTK_STOCK_REMOVE, 1));
-		gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
-		g_signal_connect(GTK_OBJECT(button), "clicked",
-				GTK_SIGNAL_FUNC(flow_program_remove), NULL);
-
-		button = gtk_button_new();
-		gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(GTK_STOCK_HELP, 1));
-		gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
-		g_signal_connect(GTK_OBJECT(button), "clicked",
-				GTK_SIGNAL_FUNC(flow_edition_menu_show_help), NULL);
-
-		button = gtk_button_new();
-		gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(GTK_STOCK_GO_DOWN, 1));
-		gtk_box_pack_end(GTK_BOX(vbox), button, FALSE, FALSE, 0);
-		g_signal_connect(GTK_OBJECT(button), "clicked",
-				GTK_SIGNAL_FUNC(flow_program_move_down), NULL);
-
-		button = gtk_button_new();
-		gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(GTK_STOCK_GO_UP, 1));
-		gtk_box_pack_end(GTK_BOX(vbox), button, FALSE, FALSE, 0);
-		g_signal_connect(GTK_OBJECT(button), "clicked",
-				GTK_SIGNAL_FUNC(flow_program_move_up), NULL);
-
+		
 		/*
 		 * Menu list
 		 */
 		vbox = gtk_vbox_new(FALSE, 3);
-		gtk_box_pack_end(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
+		gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 		scrolledwin = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -191,6 +153,8 @@ flow_edition_setup_ui(void)
 						G_TYPE_STRING);
 
 		ui_flow_edition->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->menu_store));
+		gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->menu_view),
+			(GtkPopupCallback)flow_edition_menu_popup_menu, ui_flow_edition);
 
 		g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated",
 				GTK_SIGNAL_FUNC(flow_edition_menu_add), ui_flow_edition);
@@ -508,6 +472,11 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 	/* separator */
 	menu_item = gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	/* properties */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PROPERTIES, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+				GTK_SIGNAL_FUNC(on_flow_component_properties_activate), NULL);
 	/* component status items */
 	status = geoxml_program_get_status(GEOXML_PROGRAM(program));
 	/* configured */
@@ -517,20 +486,68 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 			GTK_SIGNAL_FUNC(on_flow_component_status_activate), gebr.configured_menuitem);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), !strcmp(status, "configured"));
 
-	/* configured */
+	/* disabled */
 	menu_item = gtk_radio_menu_item_new_with_label_from_widget(GTK_RADIO_MENU_ITEM(menu_item), _("Disabled"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect(GTK_OBJECT(menu_item), "activate",
 			GTK_SIGNAL_FUNC(on_flow_component_status_activate), gebr.disabled_menuitem);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), !strcmp(status, "disabled"));
 
-	/* configured */
+	/* unconfigured */
 	menu_item = gtk_radio_menu_item_new_with_label_from_widget(GTK_RADIO_MENU_ITEM(menu_item), _("Unconfigured"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect(GTK_OBJECT(menu_item), "activate",
 			GTK_SIGNAL_FUNC(on_flow_component_status_activate), gebr.unconfigured_menuitem);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), !strcmp(status, "unconfigured"));
+	/* separator */
+	menu_item = gtk_separator_menu_item_new();
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	/* delete */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+				GTK_SIGNAL_FUNC(flow_program_remove), NULL);
+	/* help */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+				GTK_SIGNAL_FUNC(program_help_show), NULL);
 
+	gtk_widget_show_all(menu);
+
+	return GTK_MENU(menu);
+}
+
+static GtkMenu *
+flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edition)
+{
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+
+	GtkWidget *		menu;
+	GtkWidget *		menu_item;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->menu_view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+		return NULL;
+
+	if (!gtk_tree_store_iter_depth(gebr.ui_flow_edition->menu_store, &iter)) {
+		return NULL;
+	}
+
+	menu = gtk_menu_new();
+
+	/* add */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ADD, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+				GTK_SIGNAL_FUNC(flow_edition_menu_add), NULL);
+	/* help */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+				GTK_SIGNAL_FUNC(flow_edition_menu_show_help), NULL);
 
 	gtk_widget_show_all(menu);
 

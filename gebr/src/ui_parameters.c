@@ -583,31 +583,7 @@ parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_param
 		parameters_load_program(ui_parameters, TRUE);
 		return;
 	} case GTK_RESPONSE_HELP: {
-		GtkTreeSelection *	selection;
-		GtkTreeModel *		model;
-		GtkTreeIter		iter;
-		GtkTreePath *		path;
-
-		GeoXmlSequence *	program;
-		GString *		help;
-		gulong			index;
-
-		selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-		if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-			gebr_message(LOG_ERROR, TRUE, FALSE, _("No flow component selected"));
-			return;
-		}
-
-		path = gtk_tree_model_get_path (model, &iter);
-		index = (gulong)atoi(gtk_tree_path_to_string(path));
-		gtk_tree_path_free(path);
-
-		/* get the program and its path on menu */
-		geoxml_flow_get_program(gebr.flow, &program, index);
-		help = menu_get_help_from_program_ref(GEOXML_PROGRAM(program));
-		help_show(help->str, _("Program help"));
-
-		g_string_free(help, TRUE);
+		program_help_show();
 		return;
 	} default:
 		break;
