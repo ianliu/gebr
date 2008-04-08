@@ -75,16 +75,21 @@ path_list_setup_ui(void)
 	GtkWidget *                 file_entry;
 	GtkWidget *                 path_sequence_edit;
 	GeoXmlSequence *            path_sequence;
+	GString *                   dialog_title;
 
 	if (geoxml_document_get_type(gebr.doc) != GEOXML_DOCUMENT_TYPE_LINE){
 		gebr_message(LOG_WARNING, TRUE, FALSE, _("No line selected"));
 		return;
 	}
+	
+	dialog_title = g_string_new(NULL);
+	g_string_printf(dialog_title, _("Path list for line '%s'"), geoxml_document_get_title(gebr.doc));
 
-	dialog = gtk_dialog_new_with_buttons(_("Path list for line"),
+	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 					     GTK_WINDOW(gebr.window),
 					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 					     GTK_STOCK_CLOSE, GTK_RESPONSE_OK, NULL);
+	g_string_free(dialog_title, TRUE);
 	gtk_widget_set_size_request(dialog, 380, 260);
 
 	file_entry = gtk_file_entry_new(NULL);

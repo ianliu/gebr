@@ -50,7 +50,7 @@ gchar * no_selection_error =			_("Nothing selected");
  * Create a new line
  *
  */
-void
+int
 line_new(void)
 {
 	GtkTreeSelection *	selection;
@@ -66,7 +66,7 @@ line_new(void)
 
 	if (gebr.doc == NULL) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_selection_error);
-		return;
+		return 0;
 	}
 
 	/* get project iter */
@@ -118,6 +118,8 @@ line_new(void)
 	gtk_tree_path_free(path);
 	g_free(project_title);
 	g_free(project_filename);
+
+	return 1;
 }
 
 /*
@@ -126,7 +128,7 @@ line_new(void)
  *
  * TODO: ask the user about erasing all flows associated to this line.
  */
-void
+int
 line_delete(void)
 {
 	GtkTreeSelection  *	selection;
@@ -139,14 +141,14 @@ line_delete(void)
 
 	if (gebr.line == NULL) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_selection_error);
-		return;
+		return 0;
 	}
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	gtk_tree_selection_get_selected(selection, &model, &line_iter);
 
 	if (confirm_action_dialog(_("Delete line"), _("Are you sure you want to delete line '%s' and all its flows?"),
 		geoxml_document_get_title(GEOXML_DOC(gebr.line))) == FALSE)
-		return;
+		return 0;
 
 	/* Removes its flows */
 	geoxml_line_get_flow(gebr.line, &line_flow, 0);
@@ -178,6 +180,12 @@ line_delete(void)
 		geoxml_sequence_next(&project_line);
 	}
 
+	/* inform the user */
+	gebr_message(LOG_INFO, TRUE, FALSE, _("Erasing line '%s'"), geoxml_document_get_title(GEOXML_DOC(gebr.line)));
+	gebr_message(LOG_INFO, FALSE, TRUE, _("Erasing line '%s' from project '%s'"),
+		     geoxml_document_get_title(GEOXML_DOC(gebr.line)),
+		     geoxml_document_get_title(GEOXML_DOC(gebr.project)));
+
 	/* finally, remove it from the disk */
 	document_delete(line_filename);
 	/* and from the GUI */
@@ -187,11 +195,7 @@ line_delete(void)
 	document_free();
 	project_line_info_update();
 
-	/* make the user happy */
-	gebr_message(LOG_INFO, TRUE, FALSE, _("Erasing line '%s'"), geoxml_document_get_title(GEOXML_DOC(gebr.line)));
-	gebr_message(LOG_INFO, FALSE, TRUE, _("Erasing line '%s' from project '%s'"),
-		     geoxml_document_get_title(GEOXML_DOC(gebr.line)),
-		     geoxml_document_get_title(GEOXML_DOC(gebr.project)));
+	return 1;
 }
 
 /*

@@ -470,8 +470,11 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 	}
 
 	/* separator */
-	menu_item = gtk_separator_menu_item_new();
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	if (gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter)   == TRUE ||
+	    gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter) == TRUE ){
+		menu_item = gtk_separator_menu_item_new();
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	}
 	/* properties */
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PROPERTIES, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);

@@ -21,9 +21,6 @@
 #include <gtk/gtk.h>
 
 void
-switch_page(GtkNotebook * notebook, GtkNotebookPage * page, guint page_num);
-
-void
 on_project_new_activate(void);
 
 void

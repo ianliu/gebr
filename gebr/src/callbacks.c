@@ -31,43 +31,6 @@
 #include "ui_document.h"
 #include "ui_paths.h"
 
-/*
- * Function: switch_page
- * Hide/Show the corresponding menus to the selected page
- *
- */
-void
-switch_page(GtkNotebook * notebook, GtkNotebookPage * page, guint page_num)
-{
-	switch (page_num) {
-	case 0: /* Project page */
-		g_object_set(gebr.menu[MENUBAR_PROJECT], "sensitive", TRUE, NULL);
-		g_object_set(gebr.menu[MENUBAR_LINE], "sensitive", TRUE, NULL);
-		g_object_set(gebr.menu[MENUBAR_FLOW], "sensitive", FALSE, NULL);
-		g_object_set(gebr.menu[MENUBAR_FLOW_COMPONENTS], "sensitive", FALSE, NULL);
-		break;
-	case 1: /* Flow browse page */
-		g_object_set(gebr.menu[MENUBAR_PROJECT], "sensitive", FALSE, NULL);
-		g_object_set(gebr.menu[MENUBAR_LINE], "sensitive", FALSE, NULL);
-		g_object_set(gebr.menu[MENUBAR_FLOW], "sensitive", TRUE, NULL);
-		g_object_set(gebr.menu[MENUBAR_FLOW_COMPONENTS], "sensitive", FALSE, NULL);
-		break;
-	case 2: /* Flow edit page */
-		g_object_set(gebr.menu[MENUBAR_PROJECT], "sensitive", FALSE, NULL);
-		g_object_set(gebr.menu[MENUBAR_LINE], "sensitive", FALSE, NULL);
-		g_object_set(gebr.menu[MENUBAR_FLOW], "sensitive", TRUE, NULL);
-		g_object_set(gebr.menu[MENUBAR_FLOW_COMPONENTS], "sensitive", TRUE, NULL);
-		break;
-	case 3: /* Job control page */
-		g_object_set(gebr.menu[MENUBAR_PROJECT], "sensitive", FALSE, NULL);
-		g_object_set(gebr.menu[MENUBAR_LINE], "sensitive", FALSE, NULL);
-		g_object_set(gebr.menu[MENUBAR_FLOW], "sensitive", FALSE, NULL);
-		g_object_set(gebr.menu[MENUBAR_FLOW_COMPONENTS], "sensitive", FALSE, NULL);
-		break;
-	default:
-		break;
-	}
-}
 
 /*
  * Function: on_project_new_activate
@@ -77,7 +40,8 @@ switch_page(GtkNotebook * notebook, GtkNotebookPage * page, guint page_num)
 void
 on_project_new_activate(void)
 {
-	project_new();
+	gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 0);
+	project_new();	
 }
 
 /*
@@ -88,7 +52,8 @@ on_project_new_activate(void)
 void
 on_project_delete_activate(void)
 {
-	project_delete();
+	if (project_delete())
+		gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 0);
 }
 
 /*
@@ -110,6 +75,7 @@ on_project_properties_activate(void)
 void
 on_project_refresh_activate(void)
 {
+	gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 0);
 	project_list_populate();
 }
 
@@ -121,7 +87,8 @@ on_project_refresh_activate(void)
 void
 on_line_new_activate(void)
 {
-	line_new();
+	if (line_new())
+		gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 0);
 }
 
 /*
@@ -132,7 +99,8 @@ on_line_new_activate(void)
 void
 on_line_delete_activate(void)
 {
-	line_delete();
+	if (line_delete())
+		gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 0);
 }
 
 /*
@@ -165,7 +133,8 @@ on_line_properties_activate(void)
 void
 on_flow_new_activate(void)
 {
-	flow_new();
+	if (flow_new())
+		gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 1);
 }
 
 /*
@@ -176,6 +145,7 @@ on_flow_new_activate(void)
 void
 on_flow_import_activate(void)
 {
+	gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 1);
 	flow_import();
 }
 
@@ -208,6 +178,7 @@ on_flow_export_as_menu_activate(void)
 void
 on_flow_delete_activate(void)
 {
+	gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 1);
 	flow_delete();
 }
 
@@ -219,6 +190,7 @@ on_flow_delete_activate(void)
 void
 on_flow_properties_activate(void)
 {
+	gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 1);
 	document_properties_setup_ui(GEOXML_DOC(gebr.flow));
 }
 
@@ -252,6 +224,7 @@ on_flow_execute_activate(void)
 void
 on_flow_component_properties_activate(void)
 {
+	gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 2);
 	flow_edition_component_change_parameters();
 }
 

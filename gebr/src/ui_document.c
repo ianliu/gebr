@@ -60,6 +60,7 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	GtkWidget *			dialog;
 	GtkWidget *			table;
 	GtkWidget *			label;
+	GString *                       dialog_title;
 
 	if (document == NULL){
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Nothing selected"));
@@ -70,12 +71,29 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	ui_document_properties = g_malloc(sizeof(struct ui_document_properties));
 	ui_document_properties->document = document;
 
-	dialog = gtk_dialog_new_with_buttons(_("Properties"),
+	dialog_title = g_string_new(NULL);
+	switch (geoxml_document_get_type(document)){
+	case GEOXML_DOCUMENT_TYPE_PROJECT:
+		g_string_printf(dialog_title, _("Properties for project '%s'"), geoxml_document_get_title(document));
+		break;
+	case GEOXML_DOCUMENT_TYPE_LINE:
+		g_string_printf(dialog_title, _("Properties for line '%s'"), geoxml_document_get_title(document));
+		break;
+	case GEOXML_DOCUMENT_TYPE_FLOW:
+		g_string_printf(dialog_title, _("Properties for flow '%s'"), geoxml_document_get_title(document));
+		break;
+	default:
+		g_string_printf(dialog_title, _("Properties for document '%s'"), geoxml_document_get_title(document));
+		break;
+	}
+
+	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 						GTK_WINDOW(gebr.window),
 						GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 						GTK_STOCK_OK, GTK_RESPONSE_OK,
 						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 						NULL);
+	g_string_free(dialog_title, TRUE);
 
 	ui_document_properties->dialog = GTK_WIDGET(dialog);
 

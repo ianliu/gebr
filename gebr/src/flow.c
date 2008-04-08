@@ -54,7 +54,7 @@ gchar * no_program_selected_error =	_("No program selected");
  * Function: flow_new
  * Create a new flow
  */
-void
+int
 flow_new(void)
 {
 	GtkTreeSelection *	selection;
@@ -69,7 +69,8 @@ flow_new(void)
 
 	if (gebr.line == NULL) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Select a line to which a flow will be added to"));
-		return;
+		return 0
+;
 	}
 
 	flow_title = _("New Flow");
@@ -102,6 +103,8 @@ flow_new(void)
 
 	/* feedback */
 	gebr_message(LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'"), line_title);
+
+	return 1;
 }
 
 /* Function: flow_free

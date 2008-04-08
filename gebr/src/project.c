@@ -90,7 +90,7 @@ project_new(void)
  *   all project's lines.
  * * Project's line files should be deleted as well.
  */
-void
+int
 project_delete(void)
 {
 	GtkTreeIter		iter;
@@ -106,7 +106,7 @@ project_delete(void)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (gebr.ui_project_line->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_project_selected_error);
-		return;
+		return 0;
 	}
 
 	gtk_tree_model_get(model, &iter,
@@ -143,6 +143,8 @@ project_delete(void)
 out:	g_free(title);
 	g_free(filename);
 	gtk_tree_path_free(path);
+
+	return 1;
 }
 
 /*

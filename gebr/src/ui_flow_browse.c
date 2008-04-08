@@ -460,6 +460,13 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 			(GCallback)flow_move_bottom, NULL);
 	}
 
+		/* separator */
+	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter)   == TRUE ||
+	    gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE ){
+		menu_item = gtk_separator_menu_item_new();
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	}
+
 	/* Input/Output */
 	menu_item = gtk_image_menu_item_new_with_label(_("Input/Output"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);

@@ -22,10 +22,10 @@
 
 #include <geoxml.h>
 
-void
+int
 line_new(void);
 
-void
+int
 line_delete(void);
 
 void

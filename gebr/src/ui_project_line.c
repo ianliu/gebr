@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include <misc/date.h>
+#include <gui/utils.h>
 
 #include "ui_project_line.h"
 #include "gebr.h"
@@ -33,14 +34,15 @@
 #include "project.h"
 #include "line.h"
 #include "ui_help.h"
+#include "callbacks.h"
 
 /*
  * Prototypes
  */
 
 static void
-project_line_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new_text, struct ui_project_line * ui_project_line);
-
+project_line_rename(GtkCellRendererText * cell, gchar * path_string,
+		    gchar * new_text, struct ui_project_line * ui_project_line);
 
 static void
 project_line_load(void);
@@ -51,6 +53,10 @@ project_line_show_help(void);
 static void
 project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	GtkTreeViewColumn * column, struct ui_project_line * ui_project_line);
+
+static GtkMenu *
+project_line_popup_menu(GtkWidget * widget, struct ui_project_line * ui_project_line);
+
 
 /*
  * Section: Public
@@ -99,6 +105,8 @@ project_line_setup_ui(void)
 		G_TYPE_STRING,  /* Name (title for libgeoxml) */
 		G_TYPE_STRING); /* Filename */
 	ui_project_line->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_project_line->store));
+	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_project_line->view),
+	        (GtkPopupCallback)project_line_popup_menu, ui_project_line);
 	g_signal_connect(ui_project_line->view, "row-activated",
 		GTK_SIGNAL_FUNC(project_line_on_row_activated), ui_project_line);
 	gtk_container_add(GTK_CONTAINER(scrolled_win), ui_project_line->view);
@@ -462,4 +470,67 @@ project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	GtkTreeViewColumn * column, struct ui_project_line * ui_project_line)
 {
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 1);
+}
+
+static GtkMenu *
+project_line_popup_menu(GtkWidget * widget, struct ui_project_line * ui_project_line)
+{
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+	GtkTreePath *		path;
+
+	GtkWidget *		menu;
+	GtkWidget *		menu_item;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+		return NULL;
+
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
+	g_signal_emit_by_name(gebr.ui_project_line->view, "cursor-changed");
+
+	menu = gtk_menu_new();
+
+	/* new line */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_NEW, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+			 GTK_SIGNAL_FUNC(on_line_new_activate), NULL);
+
+	if (gtk_tree_path_get_depth(path) == 1) { /* Project */
+		/* properties */
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PROPERTIES, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(GTK_OBJECT(menu_item), "activate",
+				 GTK_SIGNAL_FUNC(on_project_properties_activate), NULL);
+		/* delete */
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(GTK_OBJECT(menu_item), "activate",
+				 GTK_SIGNAL_FUNC(on_project_delete_activate), NULL);
+	}
+	else{ /* Line */
+		/* properties */
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PROPERTIES, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(GTK_OBJECT(menu_item), "activate",
+				 GTK_SIGNAL_FUNC(on_line_properties_activate), NULL);
+		/* paths */
+		menu_item = gtk_image_menu_item_new_with_label(_("Paths"));
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
+					      gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, 1));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(GTK_OBJECT(menu_item), "activate",
+				 GTK_SIGNAL_FUNC(on_line_path_activate), NULL);
+		/* delete */
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(GTK_OBJECT(menu_item), "activate",
+				 GTK_SIGNAL_FUNC(on_line_delete_activate), NULL);
+	}
+
+	gtk_widget_show_all(menu);
+
+	return GTK_MENU(menu);
 }

@@ -142,15 +142,10 @@ assembly_interface(void)
 	pagetitle = gtk_label_new(_("Job control"));
 	gtk_notebook_append_page(GTK_NOTEBOOK(gebr.notebook), gebr.ui_job_control->widget, pagetitle);
 
-	g_signal_connect(GTK_OBJECT(gebr.notebook), "switch-page",
-		GTK_SIGNAL_FUNC(switch_page), NULL);
-
 	/* Create a status bar */
 	gebr.ui_log = log_setup_ui();
 	gtk_widget_show_all(gebr.ui_log->widget);
 	gtk_box_pack_end(GTK_BOX(vboxmain), gebr.ui_log->widget, FALSE, FALSE, 0);
-
-	switch_page(NULL, NULL, 0);
 
 	/* Create some hot-keys */
 	gebr.accel_group = gtk_accel_group_new();

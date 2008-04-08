@@ -25,7 +25,7 @@
 void
 project_new(void);
 
-void
+int
 project_delete(void);
 
 void
