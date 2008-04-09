@@ -50,7 +50,7 @@ gchar * no_selection_error =			_("Nothing selected");
  * Create a new line
  *
  */
-int
+gboolean
 line_new(void)
 {
 	GtkTreeSelection *	selection;
@@ -64,14 +64,14 @@ line_new(void)
 
 	GeoXmlLine *		line;
 
-	if (gebr.doc == NULL) {
+	if (gebr.project_line == NULL) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_selection_error);
-		return 0;
+		return FALSE;
 	}
 
 	/* get project iter */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	if (geoxml_document_get_type(gebr.doc) == GEOXML_DOCUMENT_TYPE_PROJECT)
+	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
 		gtk_tree_selection_get_selected(selection, &model, &project_iter);
 	else {
 		gtk_tree_selection_get_selected(selection, &model, &line_iter);
@@ -119,7 +119,7 @@ line_new(void)
 	g_free(project_title);
 	g_free(project_filename);
 
-	return 1;
+	return TRUE;
 }
 
 /*
@@ -128,7 +128,7 @@ line_new(void)
  *
  * TODO: ask the user about erasing all flows associated to this line.
  */
-int
+gboolean
 line_delete(void)
 {
 	GtkTreeSelection  *	selection;
@@ -141,14 +141,14 @@ line_delete(void)
 
 	if (gebr.line == NULL) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_selection_error);
-		return 0;
+		return FALSE;
 	}
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	gtk_tree_selection_get_selected(selection, &model, &line_iter);
 
 	if (confirm_action_dialog(_("Delete line"), _("Are you sure you want to delete line '%s' and all its flows?"),
 		geoxml_document_get_title(GEOXML_DOC(gebr.line))) == FALSE)
-		return 0;
+		return FALSE;
 
 	/* Removes its flows */
 	geoxml_line_get_flow(gebr.line, &line_flow, 0);
@@ -192,62 +192,26 @@ line_delete(void)
 	gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), &line_iter);
 	gtk_list_store_clear(gebr.ui_flow_browse->store);
 	flow_free();
-	document_free();
+	project_line_free();
 	project_line_info_update();
 
-	return 1;
+	return TRUE;
 }
 
 /*
  * Function: line_load_flows
  * Load flows associated to the selected line.
- *
+ * Called only by project_line_load
  */
 void
 line_load_flows(void)
 {
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
-	GtkTreePath *		path;
-	GtkTreePath *		selection_path;
-
-	gchar *			line_title;
-	gchar *			line_filename;
-
 	GeoXmlSequence*		line_flow;
 
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(gebr.ui_project_line->view));
-	if (gtk_tree_selection_get_selected (selection, &model, &iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_selection_error);
-		flow_free();
-	}
-
-	selection_path = gtk_tree_model_get_path(model, &iter);
-	if (gebr.ui_project_line->selection_path != NULL && !gtk_tree_path_compare(selection_path, gebr.ui_project_line->selection_path)) {
-		/* uhm, the same line/project is selected, don't need to do nothing */
-		gtk_tree_path_free(selection_path);
-		return;
-	}
-	gtk_tree_path_free(gebr.ui_project_line->selection_path);
-	gebr.ui_project_line->selection_path = selection_path;
-
-	/* reset part of GUI */
+	/* reset flow parts of GUI */
 	gtk_list_store_clear(gebr.ui_flow_browse->store);
 	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
 	flow_free();
-
-	/* check if the item is a project */
-	path = gtk_tree_model_get_path (model, &iter);
-	if (gtk_tree_path_get_depth(path) == 1) {
-		gtk_tree_path_free(path);
-		return;
-	}
-
-	gtk_tree_model_get(model, &iter,
-		PL_TITLE, &line_title,
-		PL_FILENAME, &line_filename,
-		-1);
 
 	/* iterate over its flows */
 	geoxml_line_get_flow(gebr.line, &line_flow, 0);
@@ -267,17 +231,13 @@ line_load_flows(void)
 		/* add to the flow browser. */
 		gtk_list_store_append(gebr.ui_flow_browse->store, &flow_iter);
 		gtk_list_store_set(gebr.ui_flow_browse->store, &flow_iter,
-				FB_TITLE, geoxml_document_get_title(GEOXML_DOC(flow)),
-				FB_FILENAME, flow_filename,
-				-1);
+			FB_TITLE, geoxml_document_get_title(GEOXML_DOC(flow)),
+			FB_FILENAME, flow_filename,
+			-1);
 
 		geoxml_document_free(GEOXML_DOC(flow));
 		geoxml_sequence_next(&line_flow);
 	}
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Flows loaded"));
-
-	gtk_tree_path_free(path);
-	g_free(line_title);
-	g_free(line_filename);
 }

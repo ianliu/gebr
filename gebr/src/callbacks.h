@@ -75,7 +75,7 @@ void
 on_flow_component_refresh_activate(void);
 
 void
-on_flow_component_status_activate(GtkMenuItem * menuitem, GtkWidget * status_menu_item);
+on_flow_component_status_activate(GtkRadioAction * action);
 
 void
 on_configure_preferences_activate(void);

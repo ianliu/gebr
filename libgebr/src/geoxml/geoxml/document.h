@@ -67,7 +67,8 @@
 /**
  * Cast to GeoXmlDocument's from its derived classes: GeoXmlFlow, GeoXmlLine and GeoXmlProject
  */
-#define GEOXML_DOC(x) ((GeoXmlDocument*)(x))
+#define GEOXML_DOCUMENT(x) ((GeoXmlDocument*)(x))
+#define GEOXML_DOC(x) GEOXML_DOCUMENT(x)
 
 /**
  * The GeoXmlDocument struct contains private data only, and should be accessed using the functions below.

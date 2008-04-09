@@ -127,12 +127,6 @@ project_line_setup_ui(void)
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
 	g_signal_connect(GTK_OBJECT(ui_project_line->view), "cursor-changed",
 			GTK_SIGNAL_FUNC(project_line_load), ui_project_line);
-	g_signal_connect(GTK_OBJECT(ui_project_line->view), "cursor-changed",
-			GTK_SIGNAL_FUNC(line_load_flows), ui_project_line);
-	g_signal_connect(GTK_OBJECT(ui_project_line->view), "cursor-changed",
-			GTK_SIGNAL_FUNC(project_line_info_update), NULL);
-
-	ui_project_line->selection_path = NULL;
 
 	/* Right side */
 	frame = gtk_frame_new(_("Details"));
@@ -202,9 +196,25 @@ project_line_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.author), 0, 0);
 	gtk_box_pack_end(GTK_BOX(infopage), ui_project_line->info.author, FALSE, TRUE, 0);
 
-
 	return ui_project_line;
 }
+
+/*
+ * Function: project_line_free
+ * Frees memory related to project and line
+ */
+void
+project_line_free(void)
+{
+	if (gebr.project != NULL)
+		geoxml_document_free(GEOXML_DOC(gebr.project));
+	if (gebr.line != NULL)
+		geoxml_document_free(GEOXML_DOC(gebr.line));
+	gebr.project_line = NULL;
+	gebr.project = NULL;
+	gebr.line = NULL;
+}
+
 
 /*
  * Section: Private
@@ -222,15 +232,15 @@ project_line_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new
 	gchar *			old_title;
 
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(ui_project_line->store), &iter, path_string);
-	old_title = (gchar *)geoxml_document_get_title(gebr.doc);
+	old_title = (gchar *)geoxml_document_get_title(gebr.project_line);
 
 	/* was it really renamed? */
 	if (strcmp(old_title, new_text) == 0)
 		return;
 
 	/* change it on the xml. */
-	geoxml_document_set_title(gebr.doc, new_text);
-	document_save(gebr.doc);
+	geoxml_document_set_title(gebr.project_line, new_text);
+	document_save(gebr.project_line);
 
 	/* store's change */
 	gtk_tree_store_set(ui_project_line->store, &iter,
@@ -238,7 +248,7 @@ project_line_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new
 			-1);
 
 	/* feedback */
-	if (geoxml_document_get_type(gebr.doc) == GEOXML_DOCUMENT_TYPE_PROJECT)
+	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Project '%s' renamed to '%s'"), old_title, new_text);
 	else
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Line '%s' renamed to '%s'"), old_title, new_text);
@@ -257,11 +267,14 @@ project_line_load(void)
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 	GtkTreeIter		iter;
-	GtkTreeIter		project_iter;
 	GtkTreePath *		path;
 
-	gchar *			filename;
-	gchar *                 title;
+	gchar *			project_filename;
+	gchar *                 project_title;
+	gchar *			line_filename;
+	gchar *                 line_title;
+
+	gboolean		is_line;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
@@ -270,52 +283,65 @@ project_line_load(void)
 	}
 
 	/* Frees any previous project and line loaded */
-	document_free();
+	project_line_free();
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
-	gtk_tree_model_get(GTK_TREE_MODEL (gebr.ui_project_line->store), &iter,
-			  PL_FILENAME, &filename,
-			  PL_TITLE, &title,
-			  -1);
+	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
+	if (is_line == TRUE) {
+		GtkTreeIter	child;
 
-	/* Was a line selected? */
-	if (gtk_tree_path_get_depth(path) == 2) {
-		/* Line load */
-		gtk_tree_model_iter_parent(model, &project_iter, &iter);
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
+			PL_FILENAME, &line_filename,
+			PL_TITLE, &line_title,
+			-1);
+		child = iter;
+		gtk_tree_model_iter_parent(model, &iter, &child);
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
+			PL_FILENAME, &project_filename,
+			PL_TITLE, &project_title,
+			-1);
 
-		gebr.line = GEOXML_LINE(document_load(filename));
-		if (gebr.line == NULL) {
-			gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load line '%s'"), title);
-			gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load line '%s' from file '%s'"), title, filename);
-			goto out;
-		}
-		gebr.doc = GEOXML_DOC(gebr.line);
+	} else {
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
+			PL_FILENAME, &project_filename,
+			PL_TITLE, &project_title,
+			-1);
+	}
 
-		/* free before reuse */
-		g_free(filename);
-		g_free(title);
-
-		/* new get from the parent */
-		gtk_tree_model_iter_parent(model, &project_iter, &iter);
-		gtk_tree_model_get(GTK_TREE_MODEL (gebr.ui_project_line->store), &project_iter,
-			  PL_FILENAME, &filename,
-			  PL_TITLE, &title,
-			  -1);
-	} else
-		gebr.line = NULL;
-
-	/* Project load */
-	gebr.project = GEOXML_PROJECT(document_load(filename));
+	gebr.project = GEOXML_PROJECT(document_load(project_filename));
 	if (gebr.project == NULL) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load project '%s'"), title);
-		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load project '%s' from file '%s'"), title, filename);
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load project '%s'"), project_title);
+		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load project '%s' from file '%s'"),
+			project_title, project_filename);
 		goto out;
 	}
-	if (gtk_tree_path_get_depth(path) == 1)
-		gebr.doc = GEOXML_DOC(gebr.project);
 
-out:	g_free(filename);
-	g_free(title);
+	if (is_line == TRUE) {
+		gebr.line = GEOXML_LINE(document_load(line_filename));
+		if (gebr.line == NULL) {
+			gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load line '%s'"), line_title);
+			gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load line '%s' from file '%s'"),
+				line_title, line_filename);
+			project_line_free();
+			goto out;
+		}
+
+		gebr.project_line = GEOXML_DOC(gebr.line);
+		line_load_flows();
+	} else {
+		gebr.project_line = GEOXML_DOC(gebr.project);
+		gebr.line = NULL;
+	}
+
+	project_line_info_update();
+
+out:	gtk_tree_path_free(path);
+	g_free(project_filename);
+	g_free(project_title);
+	if (is_line == TRUE) {
+		g_free(line_filename);
+		g_free(line_title);
+	}
 }
 
 /*
@@ -325,16 +351,16 @@ out:	g_free(filename);
 void
 project_line_info_update(void)
 {
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
+	GtkTreeSelection *		selection;
+	GtkTreeModel *			model;
+	GtkTreeIter			iter;
 
-	gchar *		        markup;
-	GString *	        text;
+	gchar *				markup;
+	GString *	 		text;
 
-	gboolean		is_project;
+	gboolean			is_project;
 
-	if (gebr.doc == NULL) {
+	if (gebr.project_line == NULL) {
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.title), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.description), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created_label), "");
@@ -352,19 +378,19 @@ project_line_info_update(void)
 	}
 
 	/* initialization */
-	is_project = (geoxml_document_get_type(gebr.doc) == GEOXML_DOCUMENT_TYPE_PROJECT) ? TRUE : FALSE;
+	is_project = (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT) ? TRUE : FALSE;
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	gtk_tree_selection_get_selected(selection, &model, &iter);
 
 	/* Title in bold */
 	markup = is_project
-		? g_markup_printf_escaped("<b>%s %s</b>", _("Project"), geoxml_document_get_title(gebr.doc))
-		: g_markup_printf_escaped("<b>%s %s</b>", _("Line"), geoxml_document_get_title(gebr.doc));
+		? g_markup_printf_escaped("<b>%s %s</b>", _("Project"), geoxml_document_get_title(gebr.project_line))
+		: g_markup_printf_escaped("<b>%s %s</b>", _("Line"), geoxml_document_get_title(gebr.project_line));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.title), markup);
 	g_free(markup);
 
 	/* Description in italic */
-	markup = g_markup_printf_escaped("<i>%s</i>", geoxml_document_get_description(GEOXML_DOC(gebr.doc)));
+	markup = g_markup_printf_escaped("<i>%s</i>", geoxml_document_get_description(GEOXML_DOC(gebr.project_line)));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.description), markup);
 	g_free(markup);
 
@@ -392,8 +418,8 @@ project_line_info_update(void)
 	g_free(markup);
 
 	/* Dates */
-	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created), localized_date(geoxml_document_get_date_created(gebr.doc)));
-	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified), localized_date(geoxml_document_get_date_modified(gebr.doc)));
+	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created), localized_date(geoxml_document_get_date_created(gebr.project_line)));
+	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified), localized_date(geoxml_document_get_date_modified(gebr.project_line)));
 
 	/* Line's paths */
 	if (!is_project) {
@@ -443,14 +469,14 @@ project_line_info_update(void)
 	/* Author and email */
 	text = g_string_new(NULL);
 	g_string_printf(text, "%s <%s>",
-			geoxml_document_get_author(GEOXML_DOC(gebr.doc)),
-			geoxml_document_get_email(GEOXML_DOC(gebr.doc)));
+			geoxml_document_get_author(GEOXML_DOC(gebr.project_line)),
+			geoxml_document_get_email(GEOXML_DOC(gebr.project_line)));
 	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.author), text->str);
 	g_string_free(text, TRUE);
 
 	/* Info button */
 	g_object_set(gebr.ui_project_line->info.help,
-		"sensitive", strlen(geoxml_document_get_help(gebr.doc)) ? TRUE : FALSE, NULL);
+		"sensitive", strlen(geoxml_document_get_help(gebr.project_line)) ? TRUE : FALSE, NULL);
 }
 
 static void
@@ -458,9 +484,9 @@ project_line_show_help(void)
 {
 	gchar * title;
 
-	title = (geoxml_document_get_type(gebr.doc) == GEOXML_DOCUMENT_TYPE_PROJECT)
+	title = (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
 		? _("Project report") : _("Line report");
-	help_show(geoxml_document_get_help(gebr.doc), title);
+	help_show(geoxml_document_get_help(gebr.project_line), title);
 
 	return;
 }
@@ -483,54 +509,62 @@ project_line_popup_menu(GtkWidget * widget, struct ui_project_line * ui_project_
 	GtkWidget *		menu;
 	GtkWidget *		menu_item;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
-		return NULL;
-
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
-	g_signal_emit_by_name(gebr.ui_project_line->view, "cursor-changed");
+	gboolean		is_project;
 
 	menu = gtk_menu_new();
 
-	/* new line */
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_NEW, NULL);
+	/* new project */
+	menu_item = gtk_image_menu_item_new_with_label(_("New Project"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
+		gtk_image_new_from_stock(GTK_STOCK_NEW, GTK_ICON_SIZE_SMALL_TOOLBAR));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect(GTK_OBJECT(menu_item), "activate",
-			 GTK_SIGNAL_FUNC(on_line_new_activate), NULL);
+		GTK_SIGNAL_FUNC(on_project_new_activate), NULL);
 
-	if (gtk_tree_path_get_depth(path) == 1) { /* Project */
-		/* properties */
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PROPERTIES, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(GTK_OBJECT(menu_item), "activate",
-				 GTK_SIGNAL_FUNC(on_project_properties_activate), NULL);
-		/* delete */
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(GTK_OBJECT(menu_item), "activate",
-				 GTK_SIGNAL_FUNC(on_project_delete_activate), NULL);
-	}
-	else{ /* Line */
-		/* properties */
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PROPERTIES, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(GTK_OBJECT(menu_item), "activate",
-				 GTK_SIGNAL_FUNC(on_line_properties_activate), NULL);
-		/* paths */
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+		goto out;
+
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
+	is_project = gtk_tree_path_get_depth(path) == 1;
+
+	/* new line */
+	menu_item = gtk_image_menu_item_new_with_label(_("New Line"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
+		gtk_image_new_from_stock(GTK_STOCK_NEW, GTK_ICON_SIZE_SMALL_TOOLBAR));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+		GTK_SIGNAL_FUNC(on_line_new_activate), NULL);
+	/* properties */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PROPERTIES, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+		is_project
+			? GTK_SIGNAL_FUNC(on_project_properties_activate)
+			: GTK_SIGNAL_FUNC(on_line_properties_activate),
+		NULL);
+	/* paths */
+	if (is_project == FALSE) {
 		menu_item = gtk_image_menu_item_new_with_label(_("Paths"));
 		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
-					      gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, 1));
+			gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, GTK_ICON_SIZE_SMALL_TOOLBAR));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(GTK_OBJECT(menu_item), "activate",
-				 GTK_SIGNAL_FUNC(on_line_path_activate), NULL);
-		/* delete */
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(GTK_OBJECT(menu_item), "activate",
-				 GTK_SIGNAL_FUNC(on_line_delete_activate), NULL);
+			GTK_SIGNAL_FUNC(on_line_path_activate), NULL);
 	}
+	/* delete */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+		is_project
+			? GTK_SIGNAL_FUNC(on_project_delete_activate)
+			: GTK_SIGNAL_FUNC(on_line_delete_activate),
+		NULL);
 
-	gtk_widget_show_all(menu);
+	/* frees */
+	gtk_tree_path_free(path);
+
+out:	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
 }

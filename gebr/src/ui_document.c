@@ -62,7 +62,7 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	GtkWidget *			label;
 	GString *                       dialog_title;
 
-	if (document == NULL){
+	if (document == NULL) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Nothing selected"));
 		return NULL;
 	}
@@ -72,7 +72,7 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	ui_document_properties->document = document;
 
 	dialog_title = g_string_new(NULL);
-	switch (geoxml_document_get_type(document)){
+	switch (geoxml_document_get_type(document)) {
 	case GEOXML_DOCUMENT_TYPE_PROJECT:
 		g_string_printf(dialog_title, _("Properties for project '%s'"), geoxml_document_get_title(document));
 		break;
@@ -88,23 +88,17 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	}
 
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
-						GTK_WINDOW(gebr.window),
-						GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-						GTK_STOCK_OK, GTK_RESPONSE_OK,
-						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-						NULL);
-	g_string_free(dialog_title, TRUE);
-
+		GTK_WINDOW(gebr.window),
+		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_STOCK_OK, GTK_RESPONSE_OK,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		NULL);
 	ui_document_properties->dialog = GTK_WIDGET(dialog);
-
-	g_signal_connect(dialog, "response",
-				G_CALLBACK(document_properties_actions), ui_document_properties);
-
 	gtk_widget_set_size_request(dialog, 390, 260);
-
-	g_signal_connect(GTK_OBJECT(dialog), "delete_event",
-			GTK_SIGNAL_FUNC(gtk_widget_destroy), NULL);
-
+	g_signal_connect(dialog, "response",
+		G_CALLBACK(document_properties_actions), ui_document_properties);
+	g_signal_connect(dialog, "delete_event",
+		GTK_SIGNAL_FUNC(gtk_widget_destroy), NULL);
 
 	table = gtk_table_new(5, 2, FALSE);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 0);
@@ -153,6 +147,9 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	gtk_table_attach(GTK_TABLE(table), ui_document_properties->email, 1, 2, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 	/* read */
 	gtk_entry_set_text(GTK_ENTRY(ui_document_properties->email), geoxml_document_get_email(document));
+
+	/* frees */
+	g_string_free(dialog_title, TRUE);
 
 	gtk_widget_show_all(ui_document_properties->dialog);
 

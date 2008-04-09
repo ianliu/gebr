@@ -568,7 +568,7 @@ parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_param
 					FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_apply,
 					-1);
 
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gebr.configured_menuitem), TRUE);
+			gtk_radio_action_set_current_value(gebr.actions.configured, 1<<0);
 		}
 
 		/* Write values from UI to XML */

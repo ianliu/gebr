@@ -423,11 +423,19 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 	GtkWidget *		menu;
 	GtkWidget *		menu_item;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+	if (gebr.line == NULL)
 		return NULL;
 
 	menu = gtk_menu_new();
+
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_NEW, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate",
+		GTK_SIGNAL_FUNC(on_flow_new_activate), NULL);
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+		goto out;
 
 	/* Move top */
 	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE) {
@@ -436,7 +444,6 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 		g_signal_connect(menu_item, "activate",
 			(GCallback)flow_move_top, NULL);
 	}
-
 	/* Move up */
 	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
@@ -451,7 +458,6 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 		g_signal_connect(menu_item, "activate",
 			(GCallback)flow_move_down, NULL);
 	}
-
 	/* Move bottom */
 	if (gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
@@ -460,9 +466,9 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 			(GCallback)flow_move_bottom, NULL);
 	}
 
-		/* separator */
-	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter)   == TRUE ||
-	    gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE ){
+	/* separator */
+	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE ||
+	gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE) {
 		menu_item = gtk_separator_menu_item_new();
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	}
@@ -479,7 +485,7 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 	g_signal_connect(menu_item, "activate",
 		(GCallback)flow_run, NULL);
 
-	gtk_widget_show_all(menu);
+out:	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
 }

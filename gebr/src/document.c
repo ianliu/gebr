@@ -132,24 +132,6 @@ document_load_path(const gchar * path)
 }
 
 /*
- * Function: document_free
- * Frees memory related to project and line
- */
-void
-document_free(void)
-{
-	if (gebr.project != NULL) {
-		geoxml_document_free(GEOXML_DOC(gebr.project));
-	}
-	if (gebr.line != NULL) {
-		geoxml_document_free(GEOXML_DOC(gebr.line));
-	}
-	gebr.doc = NULL;
-	gebr.project = NULL;
-	gebr.line = NULL;
-}
-
-/*
  * Function: document_save
  * Save _document_ using its filename field at data directory.
  */

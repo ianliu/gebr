@@ -54,7 +54,7 @@ gchar * no_program_selected_error =	_("No program selected");
  * Function: flow_new
  * Create a new flow
  */
-int
+gboolean
 flow_new(void)
 {
 	GtkTreeSelection *	selection;
@@ -69,13 +69,12 @@ flow_new(void)
 
 	if (gebr.line == NULL) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Select a line to which a flow will be added to"));
-		return 0
-;
+		return FALSE;
 	}
 
 	flow_title = _("New Flow");
-	line_title = (gchar *)geoxml_document_get_title(gebr.doc);
-	line_filename = (gchar *)geoxml_document_get_filename(gebr.doc);
+	line_title = (gchar *)geoxml_document_get_title(GEOXML_DOCUMENT(gebr.line));
+	line_filename = (gchar *)geoxml_document_get_filename(GEOXML_DOCUMENT(gebr.line));
 
 	/* Create a new flow */
 	flow = GEOXML_FLOW(document_new(GEOXML_DOCUMENT_TYPE_FLOW));
@@ -104,7 +103,7 @@ flow_new(void)
 	/* feedback */
 	gebr_message(LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'"), line_title);
 
-	return 1;
+	return TRUE;
 }
 
 /* Function: flow_free
@@ -158,7 +157,7 @@ flow_delete(void)
 	/* Some feedback */
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Erasing flow '%s'"), title);
 	gebr_message(LOG_INFO, FALSE, TRUE, _("Erasing flow '%s' from line '%s'"),
-		title, geoxml_document_get_title(gebr.doc));
+		title, geoxml_document_get_title(GEOXML_DOCUMENT(gebr.line)));
 
 	/* Seek and destroy */
 	geoxml_line_get_flow(gebr.line, &line_flow, 0);

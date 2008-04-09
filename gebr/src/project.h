@@ -25,7 +25,7 @@
 void
 project_new(void);
 
-int
+gboolean
 project_delete(void);
 
 void

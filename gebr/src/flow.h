@@ -18,7 +18,7 @@
 #ifndef __FLOW_H
 #define __FLOW_H
 
-int
+gboolean
 flow_new(void);
 
 void

@@ -90,7 +90,7 @@ project_new(void)
  *   all project's lines.
  * * Project's line files should be deleted as well.
  */
-int
+gboolean
 project_delete(void)
 {
 	GtkTreeIter		iter;
@@ -106,7 +106,7 @@ project_delete(void)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (gebr.ui_project_line->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_project_selected_error);
-		return 0;
+		return FALSE;
 	}
 
 	gtk_tree_model_get(model, &iter,
@@ -137,14 +137,14 @@ project_delete(void)
 
 	/* finally, remove it from the disk */
 	document_delete(filename);
-	document_free();
+	project_line_free();
 	project_line_info_update();
 
 out:	g_free(title);
 	g_free(filename);
 	gtk_tree_path_free(path);
 
-	return 1;
+	return TRUE;
 }
 
 /*
@@ -165,14 +165,10 @@ project_list_populate(void)
 		return;
 
 	/* free previous selection path */
-	if (gebr.ui_project_line->selection_path != NULL) {
-		gtk_tree_path_free(gebr.ui_project_line->selection_path);
-		gebr.ui_project_line->selection_path = NULL;
-	}
 	gtk_tree_store_clear(gebr.ui_project_line->store);
 	gtk_list_store_clear(gebr.ui_flow_browse->store);
 	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
-	document_free();
+	project_line_free();
 	flow_free();
 
 	while ((file = readdir(dir)) != NULL) {

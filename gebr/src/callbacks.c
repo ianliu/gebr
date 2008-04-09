@@ -40,8 +40,8 @@
 void
 on_project_new_activate(void)
 {
-	gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 0);
-	project_new();	
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
+	project_new();
 }
 
 /*
@@ -53,7 +53,7 @@ void
 on_project_delete_activate(void)
 {
 	if (project_delete())
-		gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 0);
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
 }
 
 /*
@@ -75,7 +75,7 @@ on_project_properties_activate(void)
 void
 on_project_refresh_activate(void)
 {
-	gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 0);
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
 	project_list_populate();
 }
 
@@ -88,7 +88,7 @@ void
 on_line_new_activate(void)
 {
 	if (line_new())
-		gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 0);
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
 }
 
 /*
@@ -100,7 +100,7 @@ void
 on_line_delete_activate(void)
 {
 	if (line_delete())
-		gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 0);
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
 }
 
 /*
@@ -134,7 +134,7 @@ void
 on_flow_new_activate(void)
 {
 	if (flow_new())
-		gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 1);
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 1);
 }
 
 /*
@@ -145,7 +145,7 @@ on_flow_new_activate(void)
 void
 on_flow_import_activate(void)
 {
-	gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 1);
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 1);
 	flow_import();
 }
 
@@ -178,7 +178,7 @@ on_flow_export_as_menu_activate(void)
 void
 on_flow_delete_activate(void)
 {
-	gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 1);
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 1);
 	flow_delete();
 }
 
@@ -190,7 +190,7 @@ on_flow_delete_activate(void)
 void
 on_flow_properties_activate(void)
 {
-	gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 1);
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 1);
 	document_properties_setup_ui(GEOXML_DOC(gebr.flow));
 }
 
@@ -224,7 +224,7 @@ on_flow_execute_activate(void)
 void
 on_flow_component_properties_activate(void)
 {
-	gtk_notebook_set_current_page (GTK_NOTEBOOK(gebr.notebook), 2);
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 2);
 	flow_edition_component_change_parameters();
 }
 
@@ -246,9 +246,9 @@ on_flow_component_refresh_activate(void)
  *
  */
 void
-on_flow_component_status_activate(GtkMenuItem * menuitem, GtkWidget * status_menu_item)
+on_flow_component_status_activate(GtkRadioAction * action)
 {
-	flow_edition_set_status(menuitem, status_menu_item);
+	flow_edition_set_status(action);
 }
 
 /*

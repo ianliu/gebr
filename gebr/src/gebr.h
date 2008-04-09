@@ -47,8 +47,8 @@ struct gebr {
 	/* for strange things ;) */
 	GtkWidget *			invisible;
 
-	/* doc: the current selected project or line */
-	GeoXmlDocument *		doc;
+	/* the project or the line selected */
+	GeoXmlDocument *		project_line;
 	GeoXmlProject *			project;
 	GeoXmlLine *			line;
 	GeoXmlFlow *			flow;
@@ -84,11 +84,6 @@ struct gebr {
 		gboolean		log_expander_state;
 	} config;
 
-	/* status menu items */
-	GtkWidget *			configured_menuitem;
-	GtkWidget *			disabled_menuitem;
-	GtkWidget *			unconfigured_menuitem;
-
 	/* Pixmaps */
 	struct gebr_pixmaps {
 		GdkPixbuf *		stock_apply;
@@ -103,7 +98,9 @@ struct gebr {
 	} pixmaps;
 
 	struct gebr_actions {
-
+		GtkRadioAction *	configured;
+		GtkRadioAction *	disabled;
+		GtkRadioAction *	unconfigured;
 	} actions;
 };
 

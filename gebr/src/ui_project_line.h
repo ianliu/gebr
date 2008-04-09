@@ -33,8 +33,6 @@ struct ui_project_line {
 
 	GtkTreeStore *		store;
 	GtkWidget *		view;
-	/* used to determine wether the selection changed */
-	GtkTreePath  *		selection_path;
 
 	struct ui_project_line_info {
 		GtkWidget *	title;
@@ -62,5 +60,8 @@ project_line_setup_ui(void);
 
 void
 project_line_info_update(void);
+
+void
+project_line_free(void);
 
 #endif //__UI_PROJECT_LINE_H

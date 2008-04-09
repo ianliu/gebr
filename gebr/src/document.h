@@ -32,9 +32,6 @@ GeoXmlDocument *
 document_load_path(const gchar * path);
 
 void
-document_free(void);
-
-void
 document_save(GeoXmlDocument * document);
 
 GString *

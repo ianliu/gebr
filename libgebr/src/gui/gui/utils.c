@@ -79,6 +79,7 @@ __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * even
 		}
 	}
 
+	g_signal_emit_by_name(tree_view, "cursor-changed");
 	menu = popup_callback->callback(GTK_WIDGET(tree_view), popup_callback->user_data);
 	if (menu == NULL)
 		return TRUE;

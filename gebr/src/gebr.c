@@ -56,9 +56,7 @@ void
 gebr_init(int argc, char ** argv)
 {
 	/* initialization */
-	gebr.doc = NULL;
-	gebr.project = NULL;
-	gebr.line = NULL;
+	gebr.project_line = NULL;
 	gebr.flow = NULL;
 	protocol_init();
 
@@ -109,7 +107,7 @@ gebr_quit(void)
 	 * Data frees and cleanups
 	 */
 	flow_free();
-	document_free();
+	project_line_free();
 
 	g_slist_foreach(gebr.tmpfiles, (GFunc)g_unlink, NULL);
 	g_slist_foreach(gebr.tmpfiles, (GFunc)g_free, NULL);
