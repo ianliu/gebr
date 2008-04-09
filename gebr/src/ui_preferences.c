@@ -1,5 +1,5 @@
-/*   GÍBR - An environment for seismic processing.
- *   Copyright(C) 2007 GÍBR core team(http://gebr.sourceforge.net)
+/*   GeBR - An environment for seismic processing.
+ *   Copyright(C) 2007-2008 GeBR core team(http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ preferences_setup_ui(gboolean first_run)
 	gtk_entry_set_text(GTK_ENTRY(ui_preferences->email), gebr.config.email->str);
 
 	/*
-	 * GÍBR dir
+	 * GeBR dir
 	 */
 	label = gtk_label_new(_("User's menus directory"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
