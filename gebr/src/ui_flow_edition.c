@@ -280,10 +280,19 @@ flow_edition_component_selected(void)
 		gtk_list_store_get_iter_index(gebr.ui_flow_edition->fseq_store, &iter));
 	status = geoxml_program_get_status(GEOXML_PROGRAM(program));
 
+#if GTK_CHECK_VERSION(2,10,0)
 	gtk_radio_action_set_current_value(gebr.actions.configured,
 		(!strcmp(status, "configured"))<<0 |
 		(!strcmp(status, "disabled"))<<1 |
 		(!strcmp(status, "unconfigured"))<<2);
+#else
+	if (!strcmp(status, "configured"))
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.configured), TRUE);
+	else if (!strcmp(status, "disabled"))
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.disabled), TRUE);
+	else if (!strcmp(status, "unconfigured"))
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.unconfigured), TRUE);
+#endif
 }
 
 /*
