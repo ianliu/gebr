@@ -1,5 +1,5 @@
-/*   GÍBR Daemon - Process and control execution of flows
- *   Copyright (C) 2007-2008 GÍBR core team (http://gebr.sourceforge.net)
+/*   GeBR Daemon - Process and control execution of flows
+ *   Copyright (C) 2007-2008 GeBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ server_init(void)
 
 	/* from libgebr-misc */
 	if (gebr_create_config_dirs() == FALSE) {
-		gebrd_message(LOG_ERROR, _("Could not access GÍBR configuration directories.\n"));
+		gebrd_message(LOG_ERROR, _("Could not access G√™BR configuration directories.\n"));
 		goto err;
 	}
 

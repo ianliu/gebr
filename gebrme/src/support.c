@@ -1,5 +1,5 @@
-/*   G�BR ME - G�BR Menu Editor
- *   Copyright (C) 2007-2008 G�BR core team (http://gebr.sourceforge.net)
+/*   GeBR ME - GeBR Menu Editor
+ *   Copyright (C) 2007-2008 GeBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

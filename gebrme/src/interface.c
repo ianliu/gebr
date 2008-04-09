@@ -1,5 +1,5 @@
-/*   G�BR ME - G�BR Menu Editor
- *   Copyright (C) 2007-2008 G�BR core team (http://gebr.sourceforge.net)
+/*   GeBR ME - GeBR Menu Editor
+ *   Copyright (C) 2007-2008 GeBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ create_gebrme_window (void)
 		NULL, NULL, GTK_STOCK_SAVE);
 	/* TODO: */
 // 	gtk_action_set_accel_group(gebrme.save_action, accel_group);
-// 	gtk_action_set_accel_path(gebrme.save_action, "<G�BR>File/Save");
+// 	gtk_action_set_accel_path(gebrme.save_action, "<GeBR>File/Save");
 // 	gtk_action_connect_accelerator(gebrme.save_action);
 	g_signal_connect(gebrme.save_action, "activate",
 		(GCallback)on_save_activate, NULL);
