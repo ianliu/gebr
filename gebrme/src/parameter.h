@@ -43,7 +43,7 @@ struct parameter_data {
 };
 
 GtkWidget *
-parameter_create_ui(GeoXmlParameter * parameter, struct parameters_data * parameters_data, gboolean hidden);
+parameter_create_ui(GeoXmlParameter * parameter, struct parameters_data * parameters_data, gboolean expanded);
 
 void
 parameter_create_ui_type_specific(GtkWidget * table, struct parameter_data * data);

@@ -30,7 +30,7 @@ struct group_parameters_data {
 };
 
 GtkWidget *
-group_parameters_create_ui(struct parameter_data * parameter_data, gboolean hidden);
+group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expanded);
 
 void
 group_parameters_instanciate(GtkButton * button, struct parameters_data * parameters_data);

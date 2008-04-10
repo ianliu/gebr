@@ -35,7 +35,7 @@ parameters_data_free(GtkObject * expander, struct parameters_data * data)
  * Public functions
  */
 GtkWidget *
-parameters_create_ui(GeoXmlParameters * parameters, gboolean hidden)
+parameters_create_ui(GeoXmlParameters * parameters, gboolean expanded)
 {
 	GtkWidget *			parameters_expander;
 	GtkWidget *			parameters_label_widget;
@@ -47,18 +47,21 @@ parameters_create_ui(GeoXmlParameters * parameters, gboolean hidden)
 	GeoXmlSequence *		i;
 	struct parameters_data *	data;
 
+	data = g_malloc(sizeof(struct parameters_data));
+	*data = (struct parameters_data) {
+		.parameters = parameters,
+		.is_group = FALSE,
+	};
+
 	parameters_expander = gtk_expander_new("");
-	gtk_expander_set_expanded (GTK_EXPANDER (parameters_expander), hidden);
+	gtk_expander_set_expanded(GTK_EXPANDER(parameters_expander), expanded);
+	g_signal_connect(parameters_expander, "destroy",
+		GTK_SIGNAL_FUNC(parameters_data_free), data);
 	gtk_widget_show(parameters_expander);
 	depth_hbox = gtk_container_add_depth_hbox(parameters_expander);
 
-	data = g_malloc(sizeof(struct parameters_data));
-	data->parameters = parameters;
-	data->is_group = FALSE;
-	g_signal_connect(parameters_expander, "destroy",
-		GTK_SIGNAL_FUNC(parameters_data_free), data);
-
 	parameters_vbox = gtk_vbox_new(FALSE, 0);
+	data->vbox = parameters_vbox;
 	gtk_box_pack_start(GTK_BOX(depth_hbox), parameters_vbox, TRUE, TRUE, 0);
 	gtk_widget_show(parameters_vbox);
 
@@ -74,15 +77,12 @@ parameters_create_ui(GeoXmlParameters * parameters, gboolean hidden)
 	gtk_box_pack_start(GTK_BOX(parameters_label_widget), widget, FALSE, TRUE, 5);
 	g_signal_connect(widget, "clicked",
 		GTK_SIGNAL_FUNC(parameters_add), data);
-	g_object_set(G_OBJECT(widget),
-		"user-data", parameters_vbox,
-		"relief", GTK_RELIEF_NONE,
-		NULL);
+	g_object_set(G_OBJECT(widget), "relief", GTK_RELIEF_NONE, NULL);
 
 	i = geoxml_parameters_get_first_parameter(parameters);
 	while (i != NULL) {
 		gtk_box_pack_start(GTK_BOX(parameters_vbox),
-			parameter_create_ui(GEOXML_PARAMETER(i), data, hidden), FALSE, TRUE, 0);
+			parameter_create_ui(GEOXML_PARAMETER(i), data, expanded), FALSE, TRUE, 0);
 
 		geoxml_sequence_next(&i);
 	}
@@ -94,15 +94,12 @@ void
 parameters_add(GtkButton * button, struct parameters_data * parameters_data)
 {
 	GtkWidget *		parameter_widget;
-	GtkWidget *		parameters_vbox;
 
 	GeoXmlParameter *	parameter;
 
-	g_object_get(G_OBJECT(button), "user-data", &parameters_vbox, NULL);
-
 	parameter = geoxml_parameters_append_parameter(parameters_data->parameters, GEOXML_PARAMETERTYPE_STRING);
 	parameter_widget = parameter_create_ui(parameter, parameters_data, FALSE);
-	gtk_box_pack_start(GTK_BOX(parameters_vbox), parameter_widget, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(parameters_data->vbox), parameter_widget, FALSE, TRUE, 0);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }

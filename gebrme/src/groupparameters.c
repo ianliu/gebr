@@ -33,7 +33,7 @@ group_parameters_data_free(GtkObject * expander, struct group_parameters_data * 
  * Public functions
  */
 GtkWidget *
-group_parameters_create_ui(struct parameter_data * parameter_data, gboolean hidden)
+group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expanded)
 {
 	GtkWidget *			group_parameters_expander;
 	GtkWidget *			group_parameters_label_widget;
@@ -47,19 +47,20 @@ group_parameters_create_ui(struct parameter_data * parameter_data, gboolean hidd
 	GeoXmlParameterGroup *		parameter_group;
 	struct group_parameters_data *	data;
 
-	group_parameters_expander = gtk_expander_new("");
-	gtk_expander_set_expanded (GTK_EXPANDER (group_parameters_expander), hidden);
-	gtk_widget_show(group_parameters_expander);
-	depth_hbox = gtk_container_add_depth_hbox(group_parameters_expander);
-
 	parameter_group = GEOXML_PARAMETER_GROUP(parameter_data->parameter);
 	data = g_malloc(sizeof(struct group_parameters_data));
 	data->parameters.is_group = TRUE;
 	data->parameters.parameters = geoxml_parameter_group_get_parameters(parameter_group);
+
+	group_parameters_expander = gtk_expander_new("");
+	gtk_expander_set_expanded(GTK_EXPANDER(group_parameters_expander), expanded);
 	g_signal_connect(group_parameters_expander, "destroy",
 		GTK_SIGNAL_FUNC(group_parameters_data_free), data);
+	gtk_widget_show(group_parameters_expander);
+	depth_hbox = gtk_container_add_depth_hbox(group_parameters_expander);
 
 	group_parameters_vbox = gtk_vbox_new(FALSE, 0);
+	data->parameters.vbox = group_parameters_vbox;
 	gtk_box_pack_start(GTK_BOX(depth_hbox), group_parameters_vbox, TRUE, TRUE, 0);
 	gtk_widget_show(group_parameters_vbox);
 
@@ -118,7 +119,7 @@ group_parameters_create_ui(struct parameter_data * parameter_data, gboolean hidd
 	i = geoxml_parameters_get_first_parameter(data->parameters.parameters);
 	while (i != NULL) {
 		gtk_box_pack_start(GTK_BOX(group_parameters_vbox),
-			parameter_create_ui(GEOXML_PARAMETER(i), (struct parameters_data *)data, hidden), FALSE, TRUE, 0);
+			parameter_create_ui(GEOXML_PARAMETER(i), (struct parameters_data *)data, expanded), FALSE, TRUE, 0);
 
 		geoxml_sequence_next(&i);
 	}

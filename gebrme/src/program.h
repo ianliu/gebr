@@ -22,7 +22,7 @@
 #include <geoxml.h>
 
 void
-program_create_ui(GeoXmlProgram * program, gboolean hidden);
+program_create_ui(GeoXmlProgram * program, gboolean expanded);
 
 void
 program_add(void);

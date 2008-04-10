@@ -42,6 +42,8 @@ parameter_up(GtkButton * button, struct parameter_data * data);
 static void
 parameter_down(GtkButton * button, struct parameter_data * data);
 static void
+parameter_duplicate(GtkButton * button, struct parameter_data * data);
+static void
 parameter_remove(GtkButton * button, struct parameter_data * data);
 static void
 parameter_type_changed(GtkComboBox * combo, struct parameter_data * data);
@@ -87,7 +89,7 @@ parameter_uilabel_update(struct parameter_data * data);
  */
 
 GtkWidget *
-parameter_create_ui(GeoXmlParameter * parameter, struct parameters_data * parameters_data, gboolean hidden)
+parameter_create_ui(GeoXmlParameter * parameter, struct parameters_data * parameters_data, gboolean expanded)
 {
 	struct parameter_data *		data;
 	enum GEOXML_PARAMETERTYPE	type;
@@ -122,7 +124,7 @@ parameter_create_ui(GeoXmlParameter * parameter, struct parameters_data * parame
 
 	parameter_expander = gtk_expander_new("");
 	gtk_container_add(GTK_CONTAINER(frame), parameter_expander);
-	gtk_expander_set_expanded(GTK_EXPANDER(parameter_expander), !hidden);
+	gtk_expander_set_expanded(GTK_EXPANDER(parameter_expander), !expanded);
 	gtk_widget_show(parameter_expander);
 	depth_hbox = gtk_container_add_depth_hbox(parameter_expander);
 	g_signal_connect(parameter_expander, "destroy",
@@ -246,18 +248,34 @@ parameter_create_ui(GeoXmlParameter * parameter, struct parameters_data * parame
 	gtk_widget_show(widget);
 	gtk_box_pack_start(GTK_BOX(button_hbox), widget, FALSE, FALSE, 5);
 	g_signal_connect(widget, "clicked",
-		GTK_SIGNAL_FUNC (parameter_up), data);
-	g_object_set(G_OBJECT(widget), "user-data", frame,
-		"relief", GTK_RELIEF_NONE, NULL);
+		GTK_SIGNAL_FUNC(parameter_up), data);
+	g_object_set(G_OBJECT(widget),
+		"user-data", frame,
+		"relief", GTK_RELIEF_NONE,
+		NULL);
 
 	widget = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
 	gtk_widget_show(widget);
 	gtk_box_pack_start(GTK_BOX(button_hbox), widget, FALSE, FALSE, 5);
 	g_signal_connect(widget, "clicked",
-		GTK_SIGNAL_FUNC (parameter_down),
+		GTK_SIGNAL_FUNC(parameter_down), data);
+	g_object_set(G_OBJECT(widget),
+		"user-data", frame,
+		"relief", GTK_RELIEF_NONE,
+		NULL);
+
+	widget = gtk_button_new();
+	gtk_widget_show(widget);
+	gtk_box_pack_start(GTK_BOX(button_hbox), widget, FALSE, FALSE, 5);
+	g_signal_connect(widget, "clicked",
+		GTK_SIGNAL_FUNC(parameter_duplicate),
 		data);
-	g_object_set(G_OBJECT(widget), "user-data", frame,
-		"relief", GTK_RELIEF_NONE, NULL);
+	g_object_set(G_OBJECT(widget),
+		"label", _("Duplicate"),
+		"image", gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_SMALL_TOOLBAR),
+		"user-data", frame,
+		"relief", GTK_RELIEF_NONE,
+		NULL);
 
 	align = gtk_alignment_new(1, 0, 0, 1);
 	gtk_widget_show(align);
@@ -266,9 +284,11 @@ parameter_create_ui(GeoXmlParameter * parameter, struct parameters_data * parame
 	gtk_box_pack_start(GTK_BOX(button_hbox), align, TRUE, TRUE, 5);
 	gtk_container_add(GTK_CONTAINER(align), widget);
 	g_signal_connect(widget, "clicked",
-		GTK_SIGNAL_FUNC (parameter_remove), data);
-	g_object_set(G_OBJECT(widget), "user-data", frame,
-		"relief", GTK_RELIEF_NONE, NULL);
+		GTK_SIGNAL_FUNC(parameter_remove), data);
+	g_object_set(G_OBJECT(widget),
+		"user-data", frame,
+		"relief", GTK_RELIEF_NONE,
+		NULL);
 
 	return frame;
 }
@@ -748,6 +768,18 @@ parameter_down(GtkButton * button, struct parameter_data * data)
 	}
 
 	g_list_free(parameters_frames);
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+}
+
+static void
+parameter_duplicate(GtkButton * button, struct parameter_data * data)
+{
+	GtkWidget *	widget;
+
+	widget = parameter_create_ui(GEOXML_SEQUENCE(geoxml_sequence_append_clone(GEOXML_SEQUENCE(data->parameter))),
+		data->parameters_data, FALSE);
+	gtk_box_pack_start(GTK_BOX(data->parameters_data->vbox), widget, FALSE, TRUE, 0);
+
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 

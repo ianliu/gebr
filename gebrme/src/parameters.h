@@ -25,10 +25,12 @@
 struct parameters_data {
 	gboolean		is_group;
 	GeoXmlParameters *	parameters;
+
+	GtkWidget *		vbox;
 };
 
 GtkWidget *
-parameters_create_ui(GeoXmlParameters * parameters, gboolean hidden);
+parameters_create_ui(GeoXmlParameters * parameters, gboolean expanded);
 
 void
 parameters_add(GtkButton * button, struct parameters_data * parameters_data);
