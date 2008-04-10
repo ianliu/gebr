@@ -126,6 +126,16 @@ int
 geoxml_sequence_remove(GeoXmlSequence * sequence);
 
 /**
+ * Clone \p sequence element and add it to the end of the sequence.
+ * Returns the cloned sequence element.
+ *
+ * If \p sequence is NULL or is not a sequence, NULL is returned.
+ *
+ */
+GeoXmlSequence *
+geoxml_sequence_append_clone(GeoXmlSequence * sequence);
+
+/**
  * Moves \p sequence to the position before \p position. If \p position is NULL then
  * moves to the end of the sequence
  *

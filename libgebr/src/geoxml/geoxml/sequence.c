@@ -127,6 +127,23 @@ geoxml_sequence_remove(GeoXmlSequence * sequence)
 	return GEOXML_RETV_SUCCESS;
 }
 
+GeoXmlSequence *
+geoxml_sequence_append_clone(GeoXmlSequence * sequence)
+{
+	if (sequence == NULL)
+		return NULL;
+	if (!__geoxml_sequence_check(sequence))
+		return NULL;
+
+	GeoXmlSequence *	clone;
+
+	clone = (GeoXmlSequence *)gdome_n_cloneNode((GdomeNode*)sequence, TRUE, &exception);
+	gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
+		(GdomeNode*)clone, NULL, &exception);
+
+	return clone;
+}
+
 int
 geoxml_sequence_move_before(GeoXmlSequence * sequence, GeoXmlSequence * position)
 {
