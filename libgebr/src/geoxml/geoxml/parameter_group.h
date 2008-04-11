@@ -140,11 +140,26 @@ void
 geoxml_parameter_group_set_parameters_by_instance(GeoXmlParameterGroup * parameter_group, gulong number);
 
 /**
+ * Set this \p parameter_group to be an exclusive group and \p parameter
+ * to be its exclusive parameter by default.
+ * If \p parameter is NULL then you want to use the group in non-exclusive mode
+ *
+ * If \p parameter_group is NULL nothing is done.
+ *
+ * \see geoxml_parameter_group_get_exclusive
+ * geoxml_parameter_group_set_selected
+ */
+void
+geoxml_parameter_group_set_exclusive(GeoXmlParameterGroup * parameter_group, GeoXmlParameter * parameter);
+
+/**
+ * If \p parameter_group is a exclusive group (aka has a non-NULL exclusive parameter set)
+ * then select \p parameter to be current derised for use parameter; otherwise, nothing is done.
  *
  * If \p parameter_group is NULL nothing is done.
  */
 void
-geoxml_parameter_group_set_exclusive(GeoXmlParameterGroup * parameter_group, const gboolean enable);
+geoxml_parameter_group_set_selected(GeoXmlParameterGroup * parameter_group, GeoXmlParameter * parameter);
 
 /**
  * Set it \p parameter_group should be expanded by default, according to \p enable.
@@ -171,18 +186,27 @@ gulong
 geoxml_parameter_group_get_parameters_by_instance(GeoXmlParameterGroup * parameter_group);
 
 /**
- *
- * If \p parameter_group is NULL returns FALSE.
- */
-gboolean
-geoxml_parameter_group_get_exclusive(GeoXmlParameterGroup * parameter_group);
-
-/**
  * Return TRUE if \p parameter_group should be expanded by default, otherwise returns FALSE.
  *
  * If \p parameter_group is NULL returns FALSE.
  */
 gboolean
 geoxml_parameter_group_get_expand(GeoXmlParameterGroup * parameter_group);
+
+/**
+ *
+ * If \p parameter_group is NULL returns FALSE.
+ */
+GeoXmlParameter *
+geoxml_parameter_group_get_exclusive(GeoXmlParameterGroup * parameter_group);
+
+/**
+ * If \p parameter_group is a exclusive group (aka has a non-NULL exclusive parameter set)
+ * then select \p parameter to be current derised for use parameter; otherwise, returns NULL
+ *
+ * If \p parameter_group is NULL returns NULL.
+ */
+GeoXmlParameter *
+geoxml_parameter_group_get_selected(GeoXmlParameterGroup * parameter_group);
 
 #endif //__LIBGEBR_GEOXML_PARAMETER_GROUP_H

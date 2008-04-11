@@ -72,6 +72,13 @@ __geoxml_get_element_at(GdomeElement * parent_element, const gchar * tag_name, g
  * \internal
  *
  */
+glong
+__geoxml_get_element_index(GdomeElement * element);
+
+/**
+ * \internal
+ *
+ */
 gulong
 __geoxml_get_elements_number(GdomeElement * parent_element, const gchar * tag_name);
 

@@ -130,6 +130,27 @@ __geoxml_get_element_at(GdomeElement * parent_element, const gchar * tag_name, g
 	return element;
 }
 
+glong
+__geoxml_get_element_index(GdomeElement * element)
+{
+	glong		index;
+	GdomeElement *	i;
+
+	/* root element */
+	if (gdome_el_parentNode(element, &exception) == NULL)
+		return 0;
+
+	index = 0;
+	i = __geoxml_get_element_at((GdomeElement*)gdome_el_parentNode(element, &exception), "*", 0);
+	do {
+		if (i == element)
+			return index;
+		++index;
+	} while ((i = __geoxml_next_element(i)) != NULL);
+
+	return -1;
+}
+
 gulong
 __geoxml_get_elements_number(GdomeElement * parent_element, const gchar * tag_name)
 {

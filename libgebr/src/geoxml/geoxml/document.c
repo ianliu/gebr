@@ -248,6 +248,35 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 			}
 		}
 	}
+	/* 0.2.2 to 0.2.3 */
+	if (strcmp(version, "0.2.2") < 0) {
+		if (geoxml_document_get_type(((GeoXmlDocument*)document)) == GEOXML_DOCUMENT_TYPE_FLOW) {
+			GeoXmlSequence *	program;
+			GeoXmlSequence *	parameter;
+
+			__geoxml_set_attr_value(root_element, "version", "0.2.3");
+
+			geoxml_flow_get_program(GEOXML_FLOW(document), &program, 0);
+			while (program != NULL) {
+				parameter = geoxml_parameters_get_first_parameter(
+					geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
+				while (parameter != NULL) {
+					const gchar *	exclusive;
+
+					if (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter))
+					!= GEOXML_PARAMETERTYPE_GROUP)
+						continue;
+
+					exclusive = __geoxml_get_attr_value((GdomeElement*)parameter, "exclusive");
+					__geoxml_set_attr_value((GdomeElement*)parameter, "exclusive",
+						!strcmp(exclusive, "yes") ? "1" : "0");
+
+					geoxml_sequence_next(&parameter);
+				}
+				geoxml_sequence_next(&program);
+			}
+		}
+	}
 
 	ret = GEOXML_RETV_SUCCESS;
 out:	g_string_free(dtd_filename, TRUE);

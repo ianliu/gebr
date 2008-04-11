@@ -87,11 +87,11 @@ __geoxml_parameters_new_parameter(GeoXmlParameters * parameters, enum GEOXML_PAR
 		__geoxml_insert_new_element(parameter_element, "label", NULL);
 		__geoxml_insert_new_element(parameter_element, "parameters", NULL);
 		/* attributes */
-		__geoxml_set_attr_value(parameter_element, "exclusive", "no");
 		__geoxml_set_attr_value(parameter_element, "expand", "yes");
 		__geoxml_set_attr_value(parameter_element, "multiple", "yes");
 		__geoxml_set_attr_value(parameter_element, "npar", "0");
 		__geoxml_set_attr_value(parameter_element, "instances", "1");
+		__geoxml_set_attr_value(parameter_element, "exclusive", "0");
 	}
 
 	return (GeoXmlParameter*)parameter_element;
