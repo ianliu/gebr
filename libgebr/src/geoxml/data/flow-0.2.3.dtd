@@ -1,5 +1,5 @@
 <!ELEMENT flow (filename, title, description, help, author, email, date, category*, io, program*)>
-<!ATTLIST flow version CDATA #FIXED "0.2.2">
+<!ATTLIST flow version CDATA #FIXED "0.2.3">
 
 <!-- Name of the XML flow file -->
 <!ELEMENT filename         (#PCDATA)>

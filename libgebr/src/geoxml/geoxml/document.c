@@ -249,7 +249,7 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 		}
 	}
 	/* 0.2.2 to 0.2.3 */
-	if (strcmp(version, "0.2.2") < 0) {
+	if (strcmp(version, "0.2.3") < 0) {
 		if (geoxml_document_get_type(((GeoXmlDocument*)document)) == GEOXML_DOCUMENT_TYPE_FLOW) {
 			GeoXmlSequence *	program;
 			GeoXmlSequence *	parameter;
@@ -260,7 +260,7 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 			while (program != NULL) {
 				parameter = geoxml_parameters_get_first_parameter(
 					geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
-				while (parameter != NULL) {
+				for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
 					const gchar *	exclusive;
 
 					if (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter))
@@ -270,8 +270,6 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 					exclusive = __geoxml_get_attr_value((GdomeElement*)parameter, "exclusive");
 					__geoxml_set_attr_value((GdomeElement*)parameter, "exclusive",
 						!strcmp(exclusive, "yes") ? "1" : "0");
-
-					geoxml_sequence_next(&parameter);
 				}
 				geoxml_sequence_next(&program);
 			}
