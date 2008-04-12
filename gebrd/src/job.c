@@ -34,69 +34,79 @@
  */
 
 static gboolean
-job_add_program_parameters_aux(struct job * job, GeoXmlParameters * parameters, GeoXmlProgram * program)
+job_parse_parameters(struct job * job, GeoXmlParameters * parameters, GeoXmlProgram * program);
+
+static gboolean
+job_parse_parameter(struct job * job, GeoXmlParameter * parameter, GeoXmlProgram * program)
+{
+	enum GEOXML_PARAMETERTYPE	type;
+	GeoXmlProgramParameter *	program_parameter;
+
+	type = geoxml_parameter_get_type(GEOXML_PARAMETER(parameter));
+	if (type == GEOXML_PARAMETERTYPE_GROUP) {
+		GeoXmlParameter *	selected;
+
+		selected = geoxml_parameter_group_get_selected(GEOXML_PARAMETER_GROUP(parameter));
+		if (selected != NULL)
+			return job_parse_parameter(job, selected, program);
+
+		return job_parse_parameters(job,
+			geoxml_parameter_group_get_parameters(GEOXML_PARAMETER_GROUP(parameter)),
+			program);
+	}
+
+	program_parameter = GEOXML_PROGRAM_PARAMETER(parameter);
+	switch (type) {
+	case GEOXML_PARAMETERTYPE_STRING:
+	case GEOXML_PARAMETERTYPE_INT:
+	case GEOXML_PARAMETERTYPE_FLOAT:
+	case GEOXML_PARAMETERTYPE_RANGE:
+	case GEOXML_PARAMETERTYPE_FILE:
+	case GEOXML_PARAMETERTYPE_ENUM: {
+		const gchar *	value;
+
+		value = geoxml_program_parameter_get_value(program_parameter);
+		if (strlen(value) > 0) {
+			g_string_append_printf(job->cmd_line, "%s\"%s\" ",
+				geoxml_program_parameter_get_keyword(program_parameter),
+				value);
+		} else {
+			/* Check if this is a required parameter */
+			if (geoxml_program_parameter_get_required(program_parameter)) {
+				g_string_append_printf(job->issues,
+					_("Required parameter '%s' of program '%s' not provided.\n"),
+					geoxml_program_parameter_get_label(program_parameter),
+					geoxml_program_get_title(program));
+
+				return FALSE;
+			}
+		}
+
+		break;
+	}
+	case GEOXML_PARAMETERTYPE_FLAG:
+		if (geoxml_program_parameter_get_flag_status(program_parameter))
+			g_string_append_printf(job->cmd_line, "%s ", geoxml_program_parameter_get_keyword(program_parameter));
+
+		break;
+	default:
+		g_string_append_printf(job->issues, _("Unknown parameter type.\n"));
+
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static gboolean
+job_parse_parameters(struct job * job, GeoXmlParameters * parameters, GeoXmlProgram * program)
 {
 	GeoXmlSequence *	parameter;
 
 	parameter = geoxml_parameters_get_first_parameter(parameters);
-	while (parameter != NULL) {
-		enum GEOXML_PARAMETERTYPE	type;
-		GeoXmlProgramParameter *	program_parameter;
-
-		type = geoxml_parameter_get_type(GEOXML_PARAMETER(parameter));
-		if (type == GEOXML_PARAMETERTYPE_GROUP) {
-			job_add_program_parameters_aux(job,
-				geoxml_parameter_group_get_parameters(GEOXML_PARAMETER_GROUP(parameter)),
-				program);
-			geoxml_sequence_next(&parameter);
-			continue;
-		}
-
-		program_parameter = GEOXML_PROGRAM_PARAMETER(parameter);
-		switch (type) {
-		case GEOXML_PARAMETERTYPE_STRING:
-		case GEOXML_PARAMETERTYPE_INT:
-		case GEOXML_PARAMETERTYPE_FLOAT:
-		case GEOXML_PARAMETERTYPE_RANGE:
-		case GEOXML_PARAMETERTYPE_FILE:
-		case GEOXML_PARAMETERTYPE_ENUM: {
-			const gchar *	value;
-
-			value = geoxml_program_parameter_get_value(program_parameter);
-			if (strlen(value) > 0) {
-				g_string_append_printf(job->cmd_line, "%s\"%s\" ",
-					geoxml_program_parameter_get_keyword(program_parameter),
-					value);
-			} else {
-				/* Check if this is a required parameter */
-				if (geoxml_program_parameter_get_required(program_parameter)) {
-					g_string_append_printf(job->issues,
-						_("Required parameter '%s' of program '%s' not provided.\n"),
-						geoxml_program_parameter_get_label(program_parameter),
-						geoxml_program_get_title(program));
-
-					return FALSE;
-				}
-			}
-
-			break;
-		}
-		case GEOXML_PARAMETERTYPE_FLAG:
-			if (geoxml_program_parameter_get_flag_status(program_parameter))
-				g_string_append_printf(job->cmd_line, "%s ", geoxml_program_parameter_get_keyword(program_parameter));
-
-			break;
-		case GEOXML_PARAMETERTYPE_GROUP:
-			if (job_add_program_parameters_aux(job, GEOXML_PARAMETERS(parameter), program) == FALSE)
-				return FALSE;
-		default:
-			g_string_append_printf(job->issues, _("Unknown parameter type.\n"));
-
+	for (; parameter != NULL; geoxml_sequence_next(&parameter))
+		if (job_parse_parameter(job, GEOXML_PARAMETER(parameter), program) == FALSE)
 			return FALSE;
-		}
-
-		geoxml_sequence_next(&parameter);
-	}
 
 	return TRUE;
 }
@@ -104,7 +114,7 @@ job_add_program_parameters_aux(struct job * job, GeoXmlParameters * parameters, 
 static gboolean
 job_add_program_parameters(struct job * job, GeoXmlProgram * program)
 {
-	return job_add_program_parameters_aux(job, geoxml_program_get_parameters(program), program);
+	return job_parse_parameters(job, geoxml_program_get_parameters(program), program);
 }
 
 static void
