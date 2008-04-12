@@ -255,16 +255,18 @@ geoxml_parameter_group_get_exclusive(GeoXmlParameterGroup * parameter_group)
 	if (parameter_group == NULL)
 		return FALSE;
 
-	gulong	index;
+	gulong			index;
+	GeoXmlSequence *	parameter;
 
-	index = atoi(__geoxml_get_attr_value((GdomeElement*)parameter_group, "exclusive"));
+	index = atol(__geoxml_get_attr_value((GdomeElement*)parameter_group, "exclusive"));
 	if (index == 0)
 		return NULL;
 	index--;
-
-	return (GeoXmlParameter *)__geoxml_get_element_at(
+	geoxml_parameters_get_parameter((GeoXmlParameters*)
 		__geoxml_get_first_element((GdomeElement*)parameter_group, "parameters"),
-		"*", index);
+		&parameter, index);
+
+	return (GeoXmlParameter *)parameter;
 }
 
 GeoXmlParameter *
@@ -275,14 +277,16 @@ geoxml_parameter_group_get_selected(GeoXmlParameterGroup * parameter_group)
 	if (geoxml_parameter_group_get_exclusive(parameter_group) == NULL)
 		return NULL;
 
-	gulong	index;
+	gulong			index;
+	GeoXmlSequence *	parameter;
 
-	index = atoi(__geoxml_get_attr_value((GdomeElement*)parameter_group, "selected"));
+	index = atol(__geoxml_get_attr_value((GdomeElement*)parameter_group, "selected"));
 	if (index == 0)
 		return NULL;
 	index--;
-
-	return (GeoXmlParameter *)__geoxml_get_element_at(
+	geoxml_parameters_get_parameter((GeoXmlParameters*)
 		__geoxml_get_first_element((GdomeElement*)parameter_group, "parameters"),
-		"*", index);
+		&parameter, index);
+
+	return (GeoXmlParameter *)parameter;
 }

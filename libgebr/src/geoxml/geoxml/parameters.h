@@ -119,11 +119,20 @@ geoxml_parameters_append_parameter(GeoXmlParameters * parameters, enum GEOXML_PA
 /**
  * Get the first paramater of \p program.
  *
- * \note Due to internal implementation, it is very slow to get the nieth paramater.
- * If you want so, you'll need to call geoxml_sequence_next multiple times
+ * If \p parameters is NULL returns NULL.
  */
 GeoXmlSequence *
 geoxml_parameters_get_first_parameter(GeoXmlParameters * parameters);
+
+/**
+ * Get the parameter at \p index
+ *
+ * \note Due to XML estrutucture, it is very slow to get the nieth paramater.
+ * Therefore, you should avoid this function and use \ref geoxml_parameters_get_first_parameter
+ * instead
+ */
+int
+geoxml_parameters_get_parameter(GeoXmlParameters * parameters, GeoXmlSequence ** parameter, gulong index);
 
 /**
  * Get the number of parameters that \p parameters has.

@@ -23,6 +23,7 @@
 #include "parameters.h"
 #include "xml.h"
 #include "types.h"
+#include "error.h"
 #include "parameter_group.h"
 #include "program_parameter.h"
 
@@ -155,6 +156,30 @@ geoxml_parameters_get_first_parameter(GeoXmlParameters * parameters)
 	if (parameters == NULL)
 		return NULL;
 	return (GeoXmlSequence*)__geoxml_get_first_element((GdomeElement*)parameters, "*");
+}
+
+int
+geoxml_parameters_get_parameter(GeoXmlParameters * parameters, GeoXmlSequence ** _parameter, gulong index)
+{
+	if (parameters == NULL) {
+		*_parameter = NULL;
+		return GEOXML_RETV_NULL_PTR;
+	}
+
+	gulong			i;
+	GeoXmlSequence *	parameter;
+
+	parameter = (GeoXmlSequence*)__geoxml_get_first_element((GdomeElement*)parameters, "*");
+	for (i = 0; i < index; ++i) {
+		parameter = (GeoXmlSequence*)__geoxml_next_element((GdomeElement*)parameter);
+		if (parameter == NULL) {
+			*_parameter = parameter;
+			return GEOXML_RETV_INVALID_INDEX;
+		}
+	}
+	*_parameter = parameter;
+
+	return GEOXML_RETV_SUCCESS;
 }
 
 glong
