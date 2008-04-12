@@ -210,6 +210,9 @@ geoxml_parameter_group_set_exclusive(GeoXmlParameterGroup * parameter_group, Geo
 	value = g_strdup_printf("%ld", __geoxml_get_element_index((GdomeElement*)parameter)+1);
 	__geoxml_set_attr_value((GdomeElement*)parameter_group, "exclusive", value);
 	g_free(value);
+
+	if (geoxml_parameter_group_get_selected(parameter_group) == NULL)
+		geoxml_parameter_group_set_selected(parameter_group, parameter);
 }
 
 void
