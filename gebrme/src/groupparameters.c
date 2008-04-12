@@ -32,7 +32,8 @@ group_parameters_data_free(GtkObject * expander, struct group_parameters_data * 
 /*
  * Public functions
  */
-GtkWidget *
+
+struct group_parameters_data *
 group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expanded)
 {
 	GtkWidget *			group_parameters_expander;
@@ -49,8 +50,6 @@ group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expa
 
 	parameter_group = GEOXML_PARAMETER_GROUP(parameter_data->parameter);
 	data = g_malloc(sizeof(struct group_parameters_data));
-	data->parameters.is_group = TRUE;
-	data->parameters.parameters = geoxml_parameter_group_get_parameters(parameter_group);
 
 	group_parameters_expander = gtk_expander_new("");
 	gtk_expander_set_expanded(GTK_EXPANDER(group_parameters_expander), expanded);
@@ -60,7 +59,6 @@ group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expa
 	depth_hbox = gtk_container_add_depth_hbox(group_parameters_expander);
 
 	group_parameters_vbox = gtk_vbox_new(FALSE, 0);
-	data->parameters.vbox = group_parameters_vbox;
 	gtk_box_pack_start(GTK_BOX(depth_hbox), group_parameters_vbox, TRUE, TRUE, 0);
 	gtk_widget_show(group_parameters_vbox);
 
@@ -72,9 +70,23 @@ group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expa
 	gtk_widget_show(group_parameters_label);
 	gtk_box_pack_start(GTK_BOX(group_parameters_label_widget), group_parameters_label, FALSE, TRUE, 0);
 
+	widget = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	gtk_widget_show(widget);
+	/* FIXME: workaroung gtk bug! */
+// 	gtk_widget_set_sensitive(widget, geoxml_parameter_group_get_instances(parameter_group) == 1);
+	gtk_box_pack_start(GTK_BOX(group_parameters_label_widget), widget, FALSE, TRUE, 5);
+	g_signal_connect(widget, "clicked",
+		GTK_SIGNAL_FUNC(parameters_add), data);
+	g_object_set(G_OBJECT(widget),
+		"visible", geoxml_parameter_group_get_instances(parameter_group) == 1,
+		"user-data", group_parameters_vbox,
+		"relief", GTK_RELIEF_NONE,
+		NULL);
+
 	if (geoxml_parameter_group_get_can_instanciate(parameter_group)) {
 		instanciate_button = gtk_button_new();
 		gtk_widget_show(instanciate_button);
+		gtk_box_pack_start(GTK_BOX(group_parameters_label_widget), instanciate_button, FALSE, TRUE, 5);
 		g_signal_connect(instanciate_button, "clicked",
 			GTK_SIGNAL_FUNC(group_parameters_instanciate), data);
 		g_object_set(G_OBJECT(instanciate_button),
@@ -83,26 +95,10 @@ group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expa
 			"user-data", parameter_data,
 			"relief", GTK_RELIEF_NONE,
 			NULL);
-	} else
-		instanciate_button = NULL;
-	if (geoxml_parameter_group_get_instances(parameter_group) == 1) {
-		widget = gtk_button_new_from_stock(GTK_STOCK_ADD);
-		gtk_widget_show(widget);
-		gtk_box_pack_start(GTK_BOX(group_parameters_label_widget), widget, FALSE, TRUE, 5);
-		g_signal_connect(widget, "clicked",
-			GTK_SIGNAL_FUNC(parameters_add), data);
-		g_object_set(G_OBJECT(widget),
-			"user-data", group_parameters_vbox,
-			"relief", GTK_RELIEF_NONE,
-			NULL);
-
-		if (instanciate_button != NULL)
-			gtk_box_pack_start(GTK_BOX(group_parameters_label_widget), instanciate_button, FALSE, TRUE, 5);
-	} else {
-		gtk_box_pack_start(GTK_BOX(group_parameters_label_widget), instanciate_button, FALSE, TRUE, 5);
 
 		widget = gtk_button_new();
 		gtk_widget_show(widget);
+		gtk_widget_set_sensitive(widget, geoxml_parameter_group_get_instances(parameter_group) > 1);
 		gtk_box_pack_start(GTK_BOX(group_parameters_label_widget), widget, FALSE, TRUE, 5);
 		g_signal_connect(widget, "clicked",
 			GTK_SIGNAL_FUNC(group_parameters_deinstanciate), data);
@@ -114,8 +110,17 @@ group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expa
 			NULL);
 	}
 
-	data->group = parameter_group;
-	data->radio_group = NULL;
+	*data = (struct group_parameters_data) {
+		.parameters = (struct parameters_data) {
+			.is_group = TRUE,
+			.vbox = group_parameters_vbox,
+			.parameters = geoxml_parameter_group_get_parameters(parameter_group),
+		},
+		.widget = group_parameters_expander,
+		.data = parameter_data,
+		.radio_group = NULL
+	};
+
 	i = geoxml_parameters_get_first_parameter(data->parameters.parameters);
 	while (i != NULL) {
 		gtk_box_pack_start(GTK_BOX(group_parameters_vbox),
@@ -124,7 +129,7 @@ group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expa
 		geoxml_sequence_next(&i);
 	}
 
-	return group_parameters_expander;
+	return data;
 }
 
 void

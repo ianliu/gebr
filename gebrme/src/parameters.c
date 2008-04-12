@@ -25,15 +25,18 @@
 /*
  * Internal stuff
  */
+
 void
 parameters_data_free(GtkObject * expander, struct parameters_data * data)
 {
+// 	TODO: fix crash menu selection changed after a group exclusive option change
 	g_free(data);
 }
 
 /*
  * Public functions
  */
+
 GtkWidget *
 parameters_create_ui(GeoXmlParameters * parameters, gboolean expanded)
 {

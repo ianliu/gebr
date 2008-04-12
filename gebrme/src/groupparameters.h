@@ -24,12 +24,14 @@ struct parameter_data;
 struct group_parameters_data {
 	struct parameters_data	parameters;
 
-	GeoXmlParameterGroup *	group;
+	struct parameter_data *	data;
+	GtkWidget *		widget;
+
 	/* for an exclusive group */
 	GSList *		radio_group;
 };
 
-GtkWidget *
+struct group_parameters_data *
 group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expanded);
 
 void

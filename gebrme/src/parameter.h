@@ -25,21 +25,30 @@
 #include <gui/valuesequenceedit.h>
 
 #include "enumoptionedit.h"
+struct group_parameters_data;
 
 /* Persintant pointer of GeoXmlParameter. As
  * it may change (because of geoxml_parameter_set_type)
  * we must keep a container for it and share this container beetween signals.
  */
 struct parameter_data {
-	GeoXmlParameter *		parameter;
-	GtkWidget *			label;
-	GtkWidget *			specific_table;
+	GeoXmlParameter *				parameter;
+	GtkWidget *					frame;
+	GtkWidget *					label;
+	GtkWidget *					specific_table;
 
-	struct parameters_data * 	parameters_data;
+	/* parent parameters data (maybe be a group_parameters_data) */
+	struct parameters_data *		 	parameters_data;
 	/* for in-group parameter */
-	GtkWidget *			radio_button;
-	/* for non-groups */
-	struct parameter_widget *	widget;
+	GtkWidget *					radio_button;
+
+	union {
+		struct parameter_widget *		widget;
+		struct {
+			struct group_parameters_data *	parameters_data;
+			GtkWidget *			exclusive_check_button;
+		} group;
+	} specific;
 };
 
 GtkWidget *
