@@ -23,7 +23,7 @@
  * then adjust the number of parameters of a instance (npar)
  */
 gboolean
-__geoxml_parameters_adjust_group_npar(GeoXmlParameters * parameters, gint adjust);
+__geoxml_parameters_adjust_group_npar(GeoXmlParameters * parameters, glong adjust);
 
 /**
  * \internal

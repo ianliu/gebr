@@ -36,7 +36,7 @@ struct geoxml_parameters {
 };
 
 gboolean
-__geoxml_parameters_adjust_group_npar(GeoXmlParameters * parameters, gint adjust)
+__geoxml_parameters_adjust_group_npar(GeoXmlParameters * parameters, glong adjust)
 {
 	GdomeElement *	parent_element;
 	gchar *		value;
@@ -47,8 +47,8 @@ __geoxml_parameters_adjust_group_npar(GeoXmlParameters * parameters, gint adjust
 	if (strcmp(__geoxml_get_attr_value(parent_element, "instances"), "1") != 0)
 		return FALSE;
 
-	value = g_strdup_printf("%d",
-		atoi(__geoxml_get_attr_value(parent_element, "npar")) + adjust);
+	value = g_strdup_printf("%lu",
+		atol(__geoxml_get_attr_value(parent_element, "npar")) + adjust);
 	__geoxml_set_attr_value(parent_element, "npar", value);
 
 	return TRUE;
@@ -125,14 +125,6 @@ __geoxml_parameters_reset(GeoXmlParameters * parameters, gboolean recursive)
 /*
  * library functions.
  */
-
-GeoXmlParameter *
-geoxml_parameters_new_parameter(GeoXmlParameters * parameters, enum GEOXML_PARAMETERTYPE type)
-{
-	if (parameters == NULL)
-		return NULL;
-	return __geoxml_parameters_new_parameter(parameters, type);
-}
 
 GeoXmlParameter *
 geoxml_parameters_append_parameter(GeoXmlParameters * parameters, enum GEOXML_PARAMETERTYPE type)

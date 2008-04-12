@@ -132,7 +132,13 @@ geoxml_sequence_append_clone(GeoXmlSequence * sequence)
 {
 	if (sequence == NULL)
 		return NULL;
-	if (!__geoxml_sequence_check(sequence))
+	if (__geoxml_sequence_is_parameter(sequence)) {
+		GeoXmlParameters *	parameters;
+
+		parameters = (GeoXmlParameters*)gdome_el_parentNode((GdomeElement*)sequence, &exception);
+		if (__geoxml_parameters_adjust_group_npar(parameters, +1) == FALSE)
+			return NULL;
+	} else if (!__geoxml_sequence_check(sequence))
 		return NULL;
 
 	GeoXmlSequence *	clone;
