@@ -32,14 +32,15 @@
  * 	node [
  * 		color = palegreen2, style = filled
  * 		fontname = "Bitstream Vera Sans"
- *   fontsize = 9
+ * 		fontsize = 9
  * 		shape = record
  * 	]
  * 	edge [
  * 		fontname = "Bitstream Vera Sans"
- *   fontsize = 9
+ * 		fontsize = 9
  * 	]
  *
+ * 	"GeoXmlObject" [ URL = "\ref object.h" ];
  * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
  * 	"GeoXmlFlow" [ URL = "\ref flow.h" ];
  * 	"GeoXmlLine" [ URL = "\ref line.h" ];
@@ -48,6 +49,7 @@
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
+ * 	"GeoXmlObject" -> "GeoXmlDocument"
  * 	"GeoXmlDocument" -> { "GeoXmlFlow" "GeoXmlLine" "GeoXmlProject" };
  * }
  * \enddot

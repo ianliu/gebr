@@ -44,6 +44,7 @@
  *		fontsize = 9
  * 	]
  *
+ * 	"GeoXmlObject" [ URL = "\ref object.h" ];
  * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
  * 	"GeoXmlProject" [ URL = "\ref project.h" ];
  * 	"GeoXmlProjectLine" [ URL = "\ref GeoXmlProjectLine" ];
@@ -59,6 +60,7 @@
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
+ * 	"GeoXmlObject" -> "GeoXmlDocument"
  * 	"GeoXmlDocument" -> { "GeoXmlFlow" "GeoXmlLine" "GeoXmlProject" };
  * 	"GeoXmlParameter" -> "GeoXmlProgramParameter";
  * 	"GeoXmlParameter" -> "GeoXmlParameterGroup";
@@ -96,6 +98,7 @@
  * 		fontsize = 9
  * 	]
  *
+ * 	"GeoXmlObject" [ URL = "\ref object.h" ];
  * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
  * 	"GeoXmlProjectLine" [ URL = "\ref GeoXmlProjectLine" ];
  * 	"GeoXmlLineFlow" [ URL = "\ref GeoXmlLineFlow" ];
@@ -107,6 +110,7 @@
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
+ * 	"GeoXmlObject" -> "GeoXmlSequence"
  * 	"GeoXmlSequence" -> { "GeoXmlProjectLine" };
  * 	"GeoXmlSequence" -> { "GeoXmlLineFlow" };
  * 	"GeoXmlSequence" -> { "GeoXmlProgram" };
@@ -130,6 +134,7 @@
 #include <geoxml/defines.h>
 #include <geoxml/error.h>
 #include <geoxml/macros.h>
+#include <geoxml/object.h>
 #include <geoxml/document.h>
 #include <geoxml/project.h>
 #include <geoxml/line.h>

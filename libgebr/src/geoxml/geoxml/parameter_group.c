@@ -200,8 +200,10 @@ geoxml_parameter_group_set_exclusive(GeoXmlParameterGroup * parameter_group, Geo
 {
 	if (parameter_group == NULL)
 		return;
-	if (parameter == NULL)
+	if (parameter == NULL) {
 		__geoxml_set_attr_value((GdomeElement*)parameter_group, "exclusive", "0");
+		return;
+	}
 
 	gchar *	value;
 
@@ -217,8 +219,10 @@ geoxml_parameter_group_set_selected(GeoXmlParameterGroup * parameter_group, GeoX
 		return;
 	if (geoxml_parameter_group_get_exclusive(parameter_group) == NULL)
 		return;
-	if (parameter == NULL)
+	if (parameter == NULL) {
 		__geoxml_set_attr_value((GdomeElement*)parameter_group, "selected", "0");
+		return;
+	}
 
 	gchar *	value;
 
