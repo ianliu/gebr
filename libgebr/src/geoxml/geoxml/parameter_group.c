@@ -200,6 +200,8 @@ geoxml_parameter_group_set_exclusive(GeoXmlParameterGroup * parameter_group, Geo
 {
 	if (parameter_group == NULL)
 		return;
+	if (parameter == NULL)
+		__geoxml_set_attr_value((GdomeElement*)parameter_group, "exclusive", "0");
 
 	gchar *	value;
 
@@ -215,11 +217,13 @@ geoxml_parameter_group_set_selected(GeoXmlParameterGroup * parameter_group, GeoX
 		return;
 	if (geoxml_parameter_group_get_exclusive(parameter_group) == NULL)
 		return;
+	if (parameter == NULL)
+		__geoxml_set_attr_value((GdomeElement*)parameter_group, "selected", "0");
 
 	gchar *	value;
 
 	value = g_strdup_printf("%ld", __geoxml_get_element_index((GdomeElement*)parameter)+1);
-	__geoxml_set_attr_value((GdomeElement*)parameter_group, "exclusive", value);
+	__geoxml_set_attr_value((GdomeElement*)parameter_group, "selected", value);
 	g_free(value);
 }
 
