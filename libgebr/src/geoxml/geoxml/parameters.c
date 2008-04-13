@@ -55,12 +55,12 @@ __geoxml_parameters_adjust_group_npar(GeoXmlParameters * parameters, glong adjus
 }
 
 GeoXmlParameter *
-__geoxml_parameters_new_parameter(GeoXmlParameters * parameters, enum GEOXML_PARAMETERTYPE type)
+__geoxml_parameters_new_parameter(GeoXmlParameters * parameters, enum GEOXML_PARAMETERTYPE type, gboolean adjust_npar)
 {
 	GdomeElement *	parameter_element;
 
 	/* increases the npar counter if it is a group */
-	if (__geoxml_parameters_adjust_group_npar(parameters, +1) == FALSE)
+	if (adjust_npar == TRUE && __geoxml_parameters_adjust_group_npar(parameters, +1) == FALSE)
 		return NULL;
 
 	parameter_element = __geoxml_new_element((GdomeElement*)parameters, parameter_type_to_str[type]);
@@ -134,7 +134,7 @@ geoxml_parameters_append_parameter(GeoXmlParameters * parameters, enum GEOXML_PA
 
 	GdomeElement *	element;
 
-	element = (GdomeElement*)__geoxml_parameters_new_parameter(parameters, type);
+	element = (GdomeElement*)__geoxml_parameters_new_parameter(parameters, type, TRUE);
 	if (element == NULL)
 		return NULL;
 	gdome_el_insertBefore((GdomeElement*)parameters, (GdomeNode*)element, NULL, &exception);
