@@ -47,9 +47,6 @@ static void
 flow_edition_component_selected(void);
 
 static void
-flow_edition_reset_to_default(GeoXmlParameters * parameters);
-
-static void
 flow_edition_menu_add(void);
 
 static void
@@ -296,35 +293,6 @@ flow_edition_component_selected(void)
 }
 
 /*
- * Function: flow_edition_reset_to_default
- * Change all parameters' values from _parameters_ to their default value
- *
- */
-static void
-flow_edition_reset_to_default(GeoXmlParameters * parameters)
-{
-	GeoXmlSequence *	parameter;
-
-	parameter = geoxml_parameters_get_first_parameter(parameters);
-	while (parameter != NULL) {
-		GeoXmlProgramParameter *	program_parameter;
-
-		if (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter)) == GEOXML_PARAMETERTYPE_GROUP) {
-			flow_edition_reset_to_default(
-				geoxml_parameter_group_get_parameters(GEOXML_PARAMETER_GROUP(parameter)));
-
-			geoxml_sequence_next(&parameter);
-			continue;
-		}
-		program_parameter = GEOXML_PROGRAM_PARAMETER(parameter);
-		geoxml_program_parameter_set_value(program_parameter,
-			geoxml_program_parameter_get_default(program_parameter));
-
-		geoxml_sequence_next(&parameter);
-	}
-}
-
-/*
  * Function: flow_edition_menu_add
  * Add selected menu to flow sequence
  *
@@ -370,7 +338,7 @@ flow_edition_menu_add(void)
 	 */
 	geoxml_flow_get_program(menu, &program, 0);
 	while (program != NULL) {
-		flow_edition_reset_to_default(geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
+		parameters_reset_to_default(geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
 		geoxml_sequence_next(&program);
 	}
 

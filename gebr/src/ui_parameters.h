@@ -25,35 +25,41 @@
 
 struct parameter_data {
 	GeoXmlParameter *			parameter;
+
+	/* vbox packed widget */
+	GtkWidget *				widget;
+	/* for in-group(exclusive) parameter */
+	GtkWidget *				radio_button;
+
 	union {
 		/* program parameter */
 		struct parameter_widget	*	widget;
 		/* group */
 		struct {
-			GList *			parameters;
 			GtkWidget *		vbox;
+			GtkWidget *		deinstanciate_button;
 			GSList *		radio_group;
 		} group;
-	} data;
+	} specific;
 };
 
 /*
  *
  */
 struct ui_parameters {
-	GtkWidget *					dialog;
+	GtkWidget *		dialog;
+	GtkWidget *		vbox;
 
-	GeoXmlProgram *					program;
-	int						program_index;
-	GtkWidget *					root_vbox;
-	GList *						to_free_list;
-	GtkWidget *					deinstanciate_button;
-
-	/* list of struct parameter_data */
-	GList *						parameters;
+	/* cloned program for editing */
+	GeoXmlProgram *		program;
+	/* original program index */
+	int			program_index;
 };
 
 struct ui_parameters *
 parameters_configure_setup_ui(void);
+
+void
+parameters_reset_to_default(GeoXmlParameters * parameters);
 
 #endif //__PARAMETERS_H

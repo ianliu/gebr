@@ -45,21 +45,21 @@
  */
 
 static void
-parameters_load_program(struct ui_parameters * ui_parameters, gboolean use_default);
+parameters_load_program(struct ui_parameters * ui_parameters);
 
 static struct parameter_data *
 parameters_load_parameter(struct ui_parameters * ui_parameters, GeoXmlParameter * parameter,
-	gboolean exclusive, GSList ** radio_group, gboolean use_default,
-	GtkWidget ** widget);
+	GeoXmlParameter * selected, GSList ** radio_group);
 
 static void
-parameters_submit(struct ui_parameters * ui_parameters, GList * parameters);
+parameters_submit(struct ui_parameters * ui_parameters, GeoXmlParameters * parameters,
+	GeoXmlParameterGroup * parameter_group);
 
 static void
 parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_parameters);
 
 static void
-parameters_change_exclusive(GtkToggleButton * toggle_button, struct parameter_widget * widget);
+parameters_change_selected(GtkToggleButton * toggle_button, struct parameter_data * data);
 
 static void
 parameters_instanciate(GtkButton * button, struct ui_parameters * ui_parameters);
@@ -68,10 +68,13 @@ static void
 parameters_deinstanciate(GtkButton * button, struct ui_parameters * ui_parameters);
 
 static void
-on_link_button_clicked(GtkButton * button, GeoXmlProgram * program);
+parameters_on_link_button_clicked(GtkButton * button, GeoXmlProgram * program);
+
+static gboolean
+parameters_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_parameters * ui_parameters);
 
 static void
-parameters_free(GList * parameters);
+parameters_free_parameter_data(GtkWidget * widget, struct parameter_data * data);
 
 /*
  * Section: Public
@@ -135,6 +138,8 @@ parameters_configure_setup_ui(void)
 	/* take the apropriate action when a button is pressed */
 	g_signal_connect(dialog, "response",
 		G_CALLBACK(parameters_actions), ui_parameters);
+	g_signal_connect(dialog, "delete-event",
+		G_CALLBACK(parameters_on_delete_event), ui_parameters);
 
 	/* program title in bold */
 	label = gtk_label_new(NULL);
@@ -171,7 +176,7 @@ parameters_configure_setup_ui(void)
 		gtk_misc_set_alignment(GTK_MISC(label), 1, 0);
 
 		g_signal_connect(button, "clicked",
-			G_CALLBACK(on_link_button_clicked), program);
+			G_CALLBACK(parameters_on_link_button_clicked), program);
 	}
 
 	/* scrolled window for parameters */
@@ -189,46 +194,70 @@ parameters_configure_setup_ui(void)
 	/* fill struct */
 	*ui_parameters = (struct ui_parameters) {
 		.dialog = dialog,
-		.program = GEOXML_PROGRAM(program),
+		.vbox = vbox,
+		.program = GEOXML_PROGRAM(geoxml_sequence_append_clone(program)),
 		.program_index = program_index,
-		.root_vbox = vbox,
-		.to_free_list = NULL
 	};
 	/* load programs parameters into UI */
-	parameters_load_program(ui_parameters, FALSE);
+	parameters_load_program(ui_parameters);
 
 	gtk_widget_show(dialog);
 
 	return ui_parameters;
 }
 
+/*
+ * Function: parameters_reset_to_default
+ * Change all parameters' values from _parameters_ to their default value
+ *
+ */
+void
+parameters_reset_to_default(GeoXmlParameters * parameters)
+{
+	GeoXmlSequence *	parameter;
+
+	parameter = geoxml_parameters_get_first_parameter(parameters);
+	while (parameter != NULL) {
+		GeoXmlProgramParameter *	program_parameter;
+
+		if (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter)) == GEOXML_PARAMETERTYPE_GROUP) {
+			parameters_reset_to_default(
+				geoxml_parameter_group_get_parameters(GEOXML_PARAMETER_GROUP(parameter)));
+
+			geoxml_parameter_group_set_selected(GEOXML_PARAMETER_GROUP(parameter),
+				geoxml_parameter_group_get_exclusive(GEOXML_PARAMETER_GROUP(parameter)));
+
+			geoxml_sequence_next(&parameter);
+			continue;
+		}
+		program_parameter = GEOXML_PROGRAM_PARAMETER(parameter);
+		geoxml_program_parameter_set_value(program_parameter,			geoxml_program_parameter_get_default(program_parameter));
+
+		geoxml_sequence_next(&parameter);
+	}
+}
 
 /*
  * Section: Private
  * Private functions.
  */
 static void
-parameters_load_program(struct ui_parameters * ui_parameters, gboolean use_default)
+parameters_load_program(struct ui_parameters * ui_parameters)
 {
 	GeoXmlSequence *		parameter;
 
-	ui_parameters->parameters = NULL;
 	parameter = geoxml_parameters_get_first_parameter(
 		geoxml_program_get_parameters(ui_parameters->program));
 	for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
 		struct parameter_data *	data;
-		GtkWidget *		widget;
 
 		data = parameters_load_parameter(ui_parameters, GEOXML_PARAMETER(parameter),
-			FALSE, NULL, use_default, &widget);
+			NULL, NULL);
 		if (data == NULL)
 			continue;
-		ui_parameters->parameters = g_list_prepend(ui_parameters->parameters, data);
-		gtk_box_pack_start(GTK_BOX(ui_parameters->root_vbox), widget, FALSE, TRUE, 0);
-	}
 
-	ui_parameters->to_free_list = g_list_prepend(ui_parameters->to_free_list, ui_parameters->parameters);
-	ui_parameters->parameters = g_list_reverse(ui_parameters->parameters);
+		gtk_box_pack_start(GTK_BOX(ui_parameters->vbox), data->widget, FALSE, TRUE, 0);
+	}
 }
 
 /*
@@ -237,45 +266,60 @@ parameters_load_program(struct ui_parameters * ui_parameters, gboolean use_defau
  */
 static struct parameter_data *
 parameters_load_parameter(struct ui_parameters * ui_parameters, GeoXmlParameter * parameter,
-	gboolean exclusive, GSList ** radio_group, gboolean use_default,
-	GtkWidget ** _widget)
+	GeoXmlParameter * selected, GSList ** radio_group)
 {
 	struct parameter_data * 	data;
 	enum GEOXML_PARAMETERTYPE	type;
 
+	GtkWidget *			label_widget;
+
 	data = g_malloc(sizeof(struct parameter_data));
 	data->parameter = parameter;
+	geoxml_object_set_user_data(GEOXML_OBJECT(parameter), data);
 	type = geoxml_parameter_get_type(parameter);
+
+	label_widget = gtk_hbox_new(FALSE, 10);
+	gtk_widget_show(label_widget);
+	if (selected != NULL) {
+		GtkWidget *	radio_button;
+
+		radio_button = gtk_radio_button_new(*radio_group);
+		data->radio_button = radio_button;
+		gtk_widget_show(radio_button);
+		*radio_group = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button));
+
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio_button), selected == parameter);
+		g_signal_connect(radio_button, "toggled",
+			(GCallback)parameters_change_selected, data);
+
+		gtk_box_pack_start(GTK_BOX(label_widget), radio_button, FALSE, FALSE, 15);
+	} else
+		data->radio_button = NULL;
 
 	if (type == GEOXML_PARAMETERTYPE_GROUP) {
 		GtkWidget *		expander;
 		GtkWidget *		depth_hbox;
 		GtkWidget *		group_vbox;
-		GtkWidget *		label_widget;
 		GtkWidget *		label;
 
 		GeoXmlSequence *	i;
 
 		expander = gtk_expander_new("");
 		gtk_widget_show(expander);
-		gtk_expander_set_expanded(GTK_EXPANDER(expander),
-			geoxml_parameter_group_get_expand(GEOXML_PARAMETER_GROUP(parameter)));
-		depth_hbox = gtk_container_add_depth_hbox(expander);
-		gtk_widget_show(depth_hbox);
-
-		group_vbox = gtk_vbox_new(FALSE, 3);
-		gtk_widget_show(group_vbox);
-		gtk_container_add(GTK_CONTAINER(depth_hbox), group_vbox);
-		data->data.group.vbox = group_vbox;
-
-		label_widget = gtk_hbox_new(FALSE, 0);
-		gtk_widget_show(label_widget);
 		gtk_expander_set_label_widget(GTK_EXPANDER(expander), label_widget);
-		gtk_widget_show(label_widget);
 		gtk_expander_hacked_define(expander, label_widget);
 		label = gtk_label_new(geoxml_parameter_get_label(parameter));
 		gtk_widget_show(label);
 		gtk_box_pack_start(GTK_BOX(label_widget), label, FALSE, TRUE, 0);
+		gtk_expander_set_expanded(GTK_EXPANDER(expander),
+			geoxml_parameter_group_get_expand(GEOXML_PARAMETER_GROUP(parameter)));
+
+		depth_hbox = gtk_container_add_depth_hbox(expander);
+		gtk_widget_show(depth_hbox);
+		group_vbox = gtk_vbox_new(FALSE, 3);
+		gtk_widget_show(group_vbox);
+		gtk_container_add(GTK_CONTAINER(depth_hbox), group_vbox);
+		data->specific.group.vbox = group_vbox;
 
 		if (geoxml_parameter_group_get_can_instanciate(GEOXML_PARAMETER_GROUP(parameter))) {
 			GtkWidget *	instanciate_button;
@@ -294,7 +338,8 @@ parameters_load_parameter(struct ui_parameters * ui_parameters, GeoXmlParameter 
 				NULL);
 
 			deinstanciate_button = gtk_button_new();
-			ui_parameters->deinstanciate_button = deinstanciate_button;
+			gtk_widget_show(deinstanciate_button);
+			data->specific.group.deinstanciate_button = deinstanciate_button;
 			gtk_box_pack_start(GTK_BOX(label_widget), deinstanciate_button, FALSE, TRUE, 5);
 			g_signal_connect(deinstanciate_button, "clicked",
 				GTK_SIGNAL_FUNC(parameters_deinstanciate), ui_parameters);
@@ -305,92 +350,67 @@ parameters_load_parameter(struct ui_parameters * ui_parameters, GeoXmlParameter 
 				"user-data", data,
 				NULL);
 
-			if (geoxml_parameter_group_get_instances(GEOXML_PARAMETER_GROUP(parameter)) > 1)
-				gtk_widget_show(deinstanciate_button);
+			gtk_widget_set_sensitive(deinstanciate_button,
+				geoxml_parameter_group_get_instances(GEOXML_PARAMETER_GROUP(parameter)) > 1);
 		}
 
 		/* iterate list */
-		data->data.group.radio_group = NULL;
-		data->data.group.parameters = NULL;
+		data->specific.group.radio_group = NULL;
 		i = geoxml_parameters_get_first_parameter(
 			geoxml_parameter_group_get_parameters(GEOXML_PARAMETER_GROUP(parameter)));
 		for (; i != NULL; geoxml_sequence_next(&i)) {
 			struct parameter_data *	i_data;
-			GtkWidget *		widget;
 
 			i_data = parameters_load_parameter(ui_parameters, GEOXML_PARAMETER(i),
-				geoxml_parameter_group_get_exclusive(GEOXML_PARAMETER_GROUP(parameter)),
-				&data->data.group.radio_group, use_default,
-				&widget);
+				geoxml_parameter_group_get_selected(GEOXML_PARAMETER_GROUP(parameter)),
+				&data->specific.group.radio_group);
 			if (i_data == NULL)
 				continue;
-			data->data.group.parameters = g_list_prepend(data->data.group.parameters, i_data);
-			gtk_box_pack_start(GTK_BOX(group_vbox), widget, FALSE, TRUE, 0);
+
+			gtk_box_pack_start(GTK_BOX(group_vbox), i_data->widget, FALSE, TRUE, 0);
 		}
 
-		ui_parameters->to_free_list = g_list_prepend(ui_parameters->to_free_list, data->data.group.parameters);
-		data->data.group.parameters = g_list_reverse(data->data.group.parameters);
-
-		*_widget = expander;
+		data->widget = expander;
 	} else {
 		GeoXmlProgramParameter *	program_parameter;
 		GtkWidget *			hbox;
-		struct parameter_widget *	widget;
 
+		/* create the input widget */
 		program_parameter = GEOXML_PROGRAM_PARAMETER(parameter);
 		switch (type) {
 		case GEOXML_PARAMETERTYPE_FLOAT:
-			widget = parameter_widget_new_float(parameter, FALSE);
+			data->specific.widget = parameter_widget_new_float(parameter, FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_INT:
-			widget = parameter_widget_new_int(parameter, FALSE);
+			data->specific.widget = parameter_widget_new_int(parameter, FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_STRING:
-			widget = parameter_widget_new_string(parameter, FALSE);
+			data->specific.widget = parameter_widget_new_string(parameter, FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_RANGE:
-			widget = parameter_widget_new_range(parameter, FALSE);
+			data->specific.widget = parameter_widget_new_range(parameter, FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_FLAG:
-			widget = parameter_widget_new_flag(parameter, FALSE);
+			data->specific.widget = parameter_widget_new_flag(parameter, FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_FILE:
-			widget = parameter_widget_new_file(parameter,
+			data->specific.widget = parameter_widget_new_file(parameter,
 				flow_io_customized_paths_from_line, FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_ENUM:
-			widget = parameter_widget_new_enum(parameter, FALSE);
+			data->specific.widget = parameter_widget_new_enum(parameter, FALSE);
 			break;
 		default:
 			g_free(data);
 			return NULL;
 		}
-		data->data.widget = widget;
-		gtk_widget_show(widget->widget);
-		if (use_default == TRUE)
-			parameter_widget_set_widget_value(widget,
-				geoxml_program_parameter_get_default(program_parameter));
+		gtk_widget_show(data->specific.widget->widget);
 
 		hbox = gtk_hbox_new(FALSE, 10);
 		gtk_widget_show(hbox);
-		if (exclusive == TRUE) {
-			GtkWidget *	radio_button;
-			GString *	value;
+		gtk_box_pack_start(GTK_BOX(hbox), label_widget, FALSE, FALSE, 0);
 
-			radio_button = gtk_radio_button_new(*radio_group);
-			gtk_widget_show(radio_button);
-			*radio_group = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button));
-
-			value = parameter_widget_get_widget_value(widget);
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio_button), value->len);
-			g_signal_connect(radio_button, "toggled",
-				(GCallback)parameters_change_exclusive, widget);
-			g_signal_emit_by_name(radio_button, "toggled");
-
-			gtk_box_pack_start(GTK_BOX(hbox), radio_button, FALSE, FALSE, 15);
-
-			g_string_free(value, TRUE);
-		}
+		/* create the label widget */
 		if (type != GEOXML_PARAMETERTYPE_FLAG) {
 			GtkWidget *	label;
 			gchar *		label_str;
@@ -412,17 +432,22 @@ parameters_load_parameter(struct ui_parameters * ui_parameters, GeoXmlParameter 
 			align_vbox = gtk_vbox_new(FALSE, 0);
 			gtk_widget_show(align_vbox);
 			gtk_box_pack_start(GTK_BOX(align_vbox), label, FALSE, TRUE, 0);
-			gtk_box_pack_start(GTK_BOX(hbox), align_vbox, FALSE, TRUE, 0);
-			gtk_box_pack_end(GTK_BOX(hbox), widget->widget, FALSE, TRUE, 0);
+			gtk_box_pack_start(GTK_BOX(label_widget), align_vbox, FALSE, TRUE, 0);
+			gtk_box_pack_end(GTK_BOX(hbox), data->specific.widget->widget, FALSE, TRUE, 0);
 		} else {
-			g_object_set(G_OBJECT(widget->value_widget), "label",
+			g_object_set(G_OBJECT(data->specific.widget->value_widget), "label",
 				geoxml_parameter_get_label(parameter), NULL);
 
-			gtk_box_pack_start(GTK_BOX(hbox), widget->widget, FALSE, FALSE, 0);
+			gtk_box_pack_start(GTK_BOX(hbox), data->specific.widget->widget, FALSE, FALSE, 0);
 		}
 
-		*_widget = hbox;
+		data->widget = hbox;
 	}
+
+	if (selected != NULL)
+		g_signal_emit_by_name(data->radio_button, "toggled");
+	g_signal_connect(data->widget, "destroy",
+		GTK_SIGNAL_FUNC(parameters_free_parameter_data), data);
 
 	return data;
 }
@@ -433,39 +458,45 @@ parameters_load_parameter(struct ui_parameters * ui_parameters, GeoXmlParameter 
  *
  */
 static void
-parameters_submit(struct ui_parameters * ui_parameters, GList * parameters)
+parameters_submit(struct ui_parameters * ui_parameters, GeoXmlParameters * parameters,
+	GeoXmlParameterGroup * parameter_group)
 {
-	GList *	i;
+	GeoXmlSequence *	parameter;
 
-
-	for (i = g_list_first(parameters); i != NULL; i = g_list_next(i)) {
-		struct parameter_data *	data;
+	parameter = geoxml_parameters_get_first_parameter(parameters);
+	for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
 		enum GEOXML_PARAMETERTYPE	type;
+		struct parameter_data *		data;
 
-		data = (struct parameter_data *)i->data;
-		type = geoxml_parameter_get_type(data->parameter);
+		type = geoxml_parameter_get_type(GEOXML_PARAMETER(parameter));
 		if (type == GEOXML_PARAMETERTYPE_GROUP) {
-			parameters_submit(ui_parameters, data->data.group.parameters);
+			parameters_submit(ui_parameters,
+				geoxml_parameter_group_get_parameters(GEOXML_PARAMETER_GROUP(parameter)),
+				GEOXML_PARAMETER_GROUP(parameter));
 			continue;
 		}
 
-		parameter_widget_submit(data->data.widget);
+		data = (struct parameter_data *)geoxml_object_get_user_data(GEOXML_OBJECT(parameter));
+		if (data->radio_button != NULL &&
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->radio_button)) == TRUE)
+			geoxml_parameter_group_set_selected(parameter_group, GEOXML_PARAMETER(parameter));
+
+		parameter_widget_submit(data->specific.widget);
 	}
 }
 
 /*
- * Function: parameters_change_exclusive
+ * Function: parameters_change_selected
  *
  */
 static void
-parameters_change_exclusive(GtkToggleButton * toggle_button, struct parameter_widget * widget)
+parameters_change_selected(GtkToggleButton * toggle_button, struct parameter_data * data)
 {
-	gboolean	active;
-
-	active = gtk_toggle_button_get_active(toggle_button);
-	if (active == FALSE)
-		parameter_widget_set_widget_value(widget, "");
-	gtk_widget_set_sensitive(widget->widget, active);
+	if (geoxml_parameter_get_is_program_parameter(data->parameter) == TRUE)
+		gtk_widget_set_sensitive(data->specific.widget->widget, gtk_toggle_button_get_active(toggle_button));
+	else
+		gtk_widget_set_sensitive(GTK_BIN(data->widget)->child,
+			gtk_toggle_button_get_active(toggle_button));
 }
 
 /*
@@ -475,29 +506,26 @@ parameters_change_exclusive(GtkToggleButton * toggle_button, struct parameter_wi
 static void
 parameters_instanciate(GtkButton * button, struct ui_parameters * ui_parameters)
 {
-	struct parameter_data *	group;
+	struct parameter_data * group;
 	GeoXmlSequence *	parameter;
 
-	g_object_get(G_OBJECT(button), "user-data", &group, NULL);
-
+	g_object_get(button, "user-data", &group, NULL);
 	geoxml_parameter_group_instanciate(GEOXML_PARAMETER_GROUP(group->parameter));
 	parameter = GEOXML_SEQUENCE(
 		geoxml_parameter_group_last_instance_parameter(GEOXML_PARAMETER_GROUP(group->parameter)));
 	for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
 		struct parameter_data *	parameter_data;
-		GtkWidget *		widget;
 
 		parameter_data = parameters_load_parameter(ui_parameters, GEOXML_PARAMETER(parameter),
-			geoxml_parameter_group_get_exclusive(GEOXML_PARAMETER_GROUP(group->parameter)),
-			&group->data.group.radio_group, FALSE,
-			&widget);
+			geoxml_parameter_group_get_selected(GEOXML_PARAMETER_GROUP(group->parameter)),
+			&group->specific.group.radio_group);
 		if (parameter_data == NULL)
 			continue;
-		group->data.group.parameters = g_list_append(group->data.group.parameters, parameter_data);
-		gtk_box_pack_start(GTK_BOX(group->data.group.vbox), widget, FALSE, TRUE, 0);
+
+		gtk_box_pack_start(GTK_BOX(group->specific.group.vbox), parameter_data->widget, FALSE, TRUE, 0);
 	}
 
-	gtk_widget_show(ui_parameters->deinstanciate_button);
+	gtk_widget_set_sensitive(group->specific.group.deinstanciate_button, TRUE);
 }
 
 /*
@@ -508,37 +536,34 @@ static void
 parameters_deinstanciate(GtkButton * button, struct ui_parameters * ui_parameters)
 {
 	struct parameter_data *	group;
-	GList *			children;
-	GList *			i;
-	GList *			j;
-	gulong			index;
+	GeoXmlSequence *	parameter;
 
-	g_object_get(G_OBJECT(button), "user-data", &group, NULL);
+	g_object_get(button, "user-data", &group, NULL);
+	parameter = GEOXML_SEQUENCE(
+		geoxml_parameter_group_last_instance_parameter(GEOXML_PARAMETER_GROUP(group->parameter)));
+	for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
+		struct parameter_data *	parameter_data;
 
-	geoxml_parameter_group_deinstanciate(GEOXML_PARAMETER_GROUP(group->parameter));
-	if (geoxml_parameter_group_get_instances(GEOXML_PARAMETER_GROUP(group->parameter)) == 1)
-		gtk_widget_hide(GTK_WIDGET(button));
+		parameter_data = (struct parameter_data *)geoxml_object_get_user_data(GEOXML_OBJECT(parameter));
+		if (parameter_data->radio_button != NULL &&
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(parameter_data->radio_button)) == TRUE) {
+			GeoXmlSequence *	first;
+			struct parameter_data *	first_data;
 
-	index = geoxml_parameter_group_get_parameters_by_instance(GEOXML_PARAMETER_GROUP(group->parameter)) *
-		geoxml_parameter_group_get_instances(GEOXML_PARAMETER_GROUP(group->parameter));
-	children = gtk_container_get_children(GTK_CONTAINER(group->data.group.vbox));
-	i = g_list_nth(children, index);
-	j = g_list_nth(group->data.group.parameters, index);
-	while (i != NULL) {
-		GList *		aux;
+			first = geoxml_parameters_get_first_parameter(
+				geoxml_parameter_group_get_parameters(GEOXML_PARAMETER_GROUP(group->parameter)));
+			first_data = (struct parameter_data *)geoxml_object_get_user_data(GEOXML_OBJECT(first));
 
-		gtk_widget_destroy(GTK_WIDGET(i->data));
-		i = g_list_next(i);
-
-		aux = j;
-		j = g_list_next(j);
-// 		g_free(aux->data); FIXME
-		group->data.group.parameters = g_list_delete_link(group->data.group.parameters, aux);
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(first_data->radio_button), TRUE);
+		}
+		gtk_widget_destroy(GTK_WIDGET(parameter_data->widget));
 	}
 
-	/* FIXME: restablish the exclusive case */
+	geoxml_parameter_group_deinstanciate(GEOXML_PARAMETER_GROUP(group->parameter));
+	gtk_widget_set_sensitive(GTK_WIDGET(button),
+		geoxml_parameter_group_get_instances(GEOXML_PARAMETER_GROUP(group->parameter)) > 1);
 
-	g_list_free(children);
+	/* FIXME: restablish the exclusive case */
 }
 
 /*
@@ -547,14 +572,18 @@ parameters_deinstanciate(GtkButton * button, struct ui_parameters * ui_parameter
  * a response signal.
  */
 static void
-parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_parameters)
+parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_parameters)
 {
 	switch (arg1) {
 	case GTK_RESPONSE_OK: {
 		GeoXmlSequence *	program;
 
-		/* Set program state to configured */
+		/* clone substitute the original program */
 		geoxml_flow_get_program(gebr.flow, &program, ui_parameters->program_index);
+		geoxml_sequence_move_before(GEOXML_SEQUENCE(ui_parameters->program), program);
+		geoxml_sequence_remove(program);
+
+		/* Set program state to configured */
 		geoxml_program_set_status(GEOXML_PROGRAM(program), "configured");
 		/* Update interface */
 		{
@@ -564,54 +593,58 @@ parameters_actions(GtkDialog *dialog, gint arg1, struct ui_parameters * ui_param
 
 			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 			gtk_tree_selection_get_selected(selection, &model, &iter);
-			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
-					FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_apply,
-					-1);
 
+			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
+				FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_apply,
+				-1);
 			gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.configured), TRUE);
 		}
 
 		/* Write values from UI to XML */
-		parameters_submit(ui_parameters, ui_parameters->parameters);
+		parameters_submit(ui_parameters, geoxml_program_get_parameters(ui_parameters->program), NULL);
 
 		flow_save();
 		break;
-	} case GTK_RESPONSE_CANCEL:
-		break;
-	case GTK_RESPONSE_DEFAULT: {
-		gtk_container_foreach(GTK_CONTAINER(ui_parameters->root_vbox), (GtkCallback)gtk_widget_destroy, NULL);
-		parameters_load_program(ui_parameters, TRUE);
+	} case GTK_RESPONSE_DEFAULT: {
+		parameters_reset_to_default(geoxml_program_get_parameters(ui_parameters->program));
+		gtk_container_foreach(GTK_CONTAINER(ui_parameters->vbox), (GtkCallback)gtk_widget_destroy, NULL);
+		parameters_load_program(ui_parameters);
 		return;
 	} case GTK_RESPONSE_HELP: {
 		program_help_show();
 		return;
-	} default:
+	} case GTK_RESPONSE_CANCEL:
+	default:
+		geoxml_sequence_remove(GEOXML_SEQUENCE(ui_parameters->program));
 		break;
 	}
 
 	/* gui free */
 	gtk_widget_destroy(GTK_WIDGET(dialog));
-	g_list_foreach(ui_parameters->to_free_list, (GFunc)parameters_free, NULL);
-	g_list_free(ui_parameters->to_free_list);
 	g_free(ui_parameters);
 }
 
 static void
-on_link_button_clicked(GtkButton * button, GeoXmlProgram * program)
+parameters_on_link_button_clicked(GtkButton * button, GeoXmlProgram * program)
 {
 	GString * cmd_line;
 
 	cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s %s &", gebr.config.browser->str, geoxml_program_get_url(program));
-
 	system(cmd_line->str);
 
 	g_string_free(cmd_line, TRUE);
 }
 
-static void
-parameters_free(GList * parameters)
+static gboolean
+parameters_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_parameters * ui_parameters)
 {
-	g_list_foreach(parameters, (GFunc)g_free, NULL);
-	g_list_free(parameters);
+	parameters_actions(dialog, GTK_RESPONSE_CANCEL, ui_parameters);
+	return FALSE;
+}
+
+static void
+parameters_free_parameter_data(GtkWidget * widget, struct parameter_data * data)
+{
+	g_free(data);
 }
