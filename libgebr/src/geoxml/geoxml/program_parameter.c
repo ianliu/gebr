@@ -36,6 +36,30 @@ struct geoxml_program_parameter {
 	GdomeElement * element;
 };
 
+void
+__geoxml_program_parameter_reset_default(GeoXmlProgramParameter * program_parameter)
+{
+	enum GEOXML_PARAMETERTYPE	type;
+
+	type = geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter));
+	if (type != GEOXML_PARAMETERTYPE_FLAG)
+		geoxml_program_parameter_set_required(program_parameter, FALSE);
+	switch (type) {
+	case GEOXML_PARAMETERTYPE_FILE:
+		geoxml_program_parameter_set_file_be_directory(program_parameter, FALSE);
+		break;
+	case GEOXML_PARAMETERTYPE_RANGE:
+		geoxml_program_parameter_set_range_properties(program_parameter, "", "", "", "");
+		break;
+	case GEOXML_PARAMETERTYPE_FLAG:
+		geoxml_program_parameter_set_flag_default(program_parameter, FALSE);
+		break;
+	default:
+		geoxml_program_parameter_set_default(program_parameter, "");
+		break;
+	}
+}
+
 /*
  * library functions.
  */

@@ -26,6 +26,7 @@
 #include "parameters_p.h"
 #include "parameter_group.h"
 #include "program_parameter.h"
+#include "program_parameter_p.h"
 
 /*
  * internal stuff
@@ -142,6 +143,6 @@ geoxml_parameter_reset(GeoXmlParameter * parameter, gboolean recursive)
 		}
 	} else {
 		geoxml_program_parameter_set_value(GEOXML_PROGRAM_PARAMETER(parameter), "");
-		geoxml_program_parameter_set_default(GEOXML_PROGRAM_PARAMETER(parameter), "");
+		__geoxml_program_parameter_reset_default(GEOXML_PROGRAM_PARAMETER(parameter));
 	}
 }

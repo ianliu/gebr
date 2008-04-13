@@ -31,7 +31,7 @@ libgebr_geoxmlsubinclude_HEADERS = \
 	document.h flow.h line.h project.h
 noinst_HEADERS = \
 	xml.h document_p.h program_p.h \
-	parameter_p.h parameters_p.h \
+	parameter_p.h program_parameter_p.h parameters_p.h \
 	types.h
 EXTRA_DIST = ${noinst_HEADERS}
 
