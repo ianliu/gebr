@@ -1,12 +1,10 @@
 Geral:
 
-  * Cliente de linhas de comando para a GêBR Daemon, capaz de
+  * gebr-client: Cliente de linhas de comando para a GêBR Daemon, capaz de
   submeter um fluxo para execução, além das outras consultas
   básicas.
 
-  * atualizar copyright para 2007-2008
-
-  *** gerenciamento de projetos: tutos
+  * atualizar copyright para 2007-2008 (falta libgebr)
 
 GêBR:
 
@@ -21,9 +19,6 @@ GêBR:
 
   * suporte a opções de linha de comando no daemon. Com isso,
     suportar a opção check para ver se há um servidor rodando.
-
-  * fazer scroll na adição de parametros da
-    gebrme/*jobs/*componentes de fluxo
 
   * pasta do usuário não setada quando o usuário decidi usar
     a padrão, ou seja, a pasta do usuário
@@ -44,25 +39,16 @@ GêBR Daemon:
 
 GêBRME:
 
-  * Quando um parâmetro do tipo arquivo é marcado como "list" na
-  gebr não aparece mais o botão de browse para arquivo.
-
-  * Duplicar parametro
-
   * proteção de extensão na hora de salvar
 
 LibGêBR:
 
-  * Suporte para flow 0.2.2.
-
-  * Parâmetros do tipo enum tem como subelemento "option", que é
-  texto. Na verdade "option" deveria ser algo com dois subelementos
-  "value" e "label", assim na interface aparece optionlabel, que pode
-  ser um texto compreensível, mas na linha de comando aparece
-  "optionvalue".
+  * Padrao para instances, ou se nao nao é possivel restaurar selected para
+  default quando o numero de instancia é menos do que no menu original
 
   * libgeoxml_validade: validar nos menus seus índices e nomes de
-  arquivos e campos obrigatórios
+  arquivos e campos obrigatórios (quais?)
+  Com isso, gebrme, criar um validador semântico para fluxos.
 
   * Usar tidy no geoxml_document_set_help (se disponível - checar no
   configure)
@@ -70,50 +56,3 @@ LibGêBR:
 	  indent
 	  modify
 	  bare
-
-  * Criar um validador semântico para fluxos. Implementá-lo na GêBRME
-
-DONE:
-
-  * Corrigir o bug de tentar acessar a pasta .gebr antes de
-  que ela tenham sido criada.
-
-  * Quando a gebrme for salvar um fluxo, iniciar na pasta definida
-  pelo usuário e não na pasta corrente.
-
-  * Corrigir o menu ximage, retirando o default do parâmetro clip.
-
-  * Utilizar um arquivo temporário com nome aleatório para fazer
-  o sort dos menus e não o arquivo /tmp/gebrmenu.tmp pois isso
-  dá problema quando mais de um usuário utiliza a mesma
-  máquina.
-
-  * Tooltips não estão funcionando na gebr, janela de preferência, sobre
-  os botões para diretórios.
-
-  * Botão de forçar conectar no servidor (remove o arquivo ~/.gebr/gebrd.run
-  e roda um servidor novo).
-
-  * O configure da gebrme e da gebrd deveriam definir
-  as variáveis LIBGEBR_CFLAGS e LIBGEBR_LIBS de maneira
-  a poder definir as variáveis LIBGEBR_{GEOXML,COMM,GUI,MISC}_...
-  de uma vez só.
-
-  * Criar um elemento url para programa, onde será armazenado onde o
-  programa pode ser obtido para instalação. Este elemento é opcional
-  para programas (evitando assim que fluxo anteriores tornem-se
-  inválidos). A implementação foi feita na libgeoxml porém, como este
-  elemento pode ou não estar presente num programa, na função
-  geoxml_program_set_url, antes de defini-lo é preciso checar se ele
-  já existe e cria-lo se necessário. (Fazer a alteração para 0.2.1,
-  tornando-o obrigatório).
-
-  * Port para 0.2.2. Label para enum, dígitos para range.
-
-  * Atualizar versão do DTD no template.
-
-  * fechar gebr caso o usuário clique em cancelar na janela de
-    preferências lançada pela primeira vez
-
-  * salvar o tamanho da janela e o estado do display do log
-
