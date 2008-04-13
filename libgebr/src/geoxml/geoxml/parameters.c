@@ -70,6 +70,21 @@ __geoxml_parameters_new_parameter(GeoXmlParameters * parameters, enum GEOXML_PAR
 		__geoxml_insert_new_element(parameter_element, "label", NULL);
 		__geoxml_insert_new_element(parameter_element, (type != GEOXML_PARAMETERTYPE_FLAG) ? "value" : "state", NULL);
 
+		if (type != GEOXML_PARAMETERTYPE_FLAG)
+			geoxml_program_parameter_set_required(
+				(GeoXmlProgramParameter*)parameter_element, FALSE);
+		switch (type) {
+		case GEOXML_PARAMETERTYPE_FILE:
+			geoxml_program_parameter_set_file_be_directory(
+				(GeoXmlProgramParameter*)parameter_element, FALSE);
+			break;
+		case GEOXML_PARAMETERTYPE_RANGE:
+			geoxml_program_parameter_set_range_properties(
+				(GeoXmlProgramParameter*)parameter_element, "", "", "", "");
+			break;
+		default:
+			break;
+		}
 		__geoxml_program_parameter_reset_default((GeoXmlProgramParameter*)parameter_element);
 	} else {
 		__geoxml_insert_new_element(parameter_element, "label", NULL);
