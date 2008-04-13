@@ -24,7 +24,7 @@ struct parameter_data;
 struct group_parameters_data {
 	struct parameters_data	parameters;
 
-	struct parameter_data *	data;
+	struct parameter_data *	parameter;
 	GtkWidget *		widget;
 
 	/* for an exclusive group */
@@ -35,9 +35,6 @@ struct group_parameters_data *
 group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expanded);
 
 void
-group_parameters_instanciate(GtkButton * button, struct parameters_data * parameters_data);
-
-void
-group_parameters_deinstanciate(GtkButton * button, struct parameters_data * parameters_data);
+group_parameters_reset_exclusive(struct group_parameters_data * data);
 
 #endif //__GROUP_PARAMETERS_H

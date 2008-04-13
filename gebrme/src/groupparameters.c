@@ -29,6 +29,12 @@
 static void
 group_parameters_data_free(GtkObject * expander, struct group_parameters_data * data);
 
+static void
+group_parameters_instanciate(GtkButton * button, struct group_parameters_data * data);
+
+static void
+group_parameters_deinstanciate(GtkButton * button, struct group_parameters_data * data);
+
 /*
  * Public functions
  */
@@ -79,7 +85,6 @@ group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expa
 		GTK_SIGNAL_FUNC(parameters_add), data);
 	g_object_set(G_OBJECT(widget),
 		"visible", geoxml_parameter_group_get_instances(parameter_group) == 1,
-		"user-data", group_parameters_vbox,
 		"relief", GTK_RELIEF_NONE,
 		NULL);
 
@@ -92,7 +97,6 @@ group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expa
 		g_object_set(G_OBJECT(instanciate_button),
 			"label", _("Instanciate"),
 			"image", gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_SMALL_TOOLBAR),
-			"user-data", parameter_data,
 			"relief", GTK_RELIEF_NONE,
 			NULL);
 
@@ -105,7 +109,6 @@ group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expa
 		g_object_set(G_OBJECT(widget),
 			"label", _("Deinstanciate"),
 			"image", gtk_image_new_from_stock(GTK_STOCK_REMOVE, GTK_ICON_SIZE_SMALL_TOOLBAR),
-			"user-data", parameter_data,
 			"relief", GTK_RELIEF_NONE,
 			NULL);
 	}
@@ -116,8 +119,8 @@ group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expa
 			.vbox = group_parameters_vbox,
 			.parameters = geoxml_parameter_group_get_parameters(parameter_group),
 		},
+		.parameter = parameter_data,
 		.widget = group_parameters_expander,
-		.data = parameter_data,
 		.radio_group = NULL
 	};
 
@@ -133,38 +136,51 @@ group_parameters_create_ui(struct parameter_data * parameter_data, gboolean expa
 }
 
 void
-group_parameters_instanciate(GtkButton * button, struct parameters_data * parameters_data)
+group_parameters_reset_exclusive(struct group_parameters_data * data)
 {
-	struct parameter_data *	parameter_data;
+	GeoXmlSequence *	first;
+	struct parameter_data *	first_data;
+	GtkToggleButton *	radio_button;
 
-	g_object_get(G_OBJECT(button), "user-data", &parameter_data, NULL);
+	first = geoxml_parameters_get_first_parameter(data->parameters.parameters);
+	first_data = (struct parameter_data *)geoxml_object_get_user_data(GEOXML_OBJECT(first));
 
-	geoxml_parameter_group_instanciate(GEOXML_PARAMETER_GROUP(parameter_data->parameter));
-	/* rebuild parameters' widgets */
-	gtk_container_foreach(GTK_CONTAINER(parameter_data->specific_table), (GtkCallback)gtk_widget_destroy, NULL);
-	parameter_create_ui_type_specific(parameter_data->specific_table, parameter_data);
-
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
-}
-
-void
-group_parameters_deinstanciate(GtkButton * button, struct parameters_data * parameters_data)
-{
-	struct parameter_data *	parameter_data;
-
-	g_object_get(G_OBJECT(button), "user-data", &parameter_data, NULL);
-
-	geoxml_parameter_group_deinstanciate(GEOXML_PARAMETER_GROUP(parameter_data->parameter));
-	/* rebuild parameters' widgets */
-	gtk_container_foreach(GTK_CONTAINER(parameter_data->specific_table), (GtkCallback)gtk_widget_destroy, NULL);
-	parameter_create_ui_type_specific(parameter_data->specific_table, parameter_data);
-
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
+	g_object_get(G_OBJECT(first_data->label), "user-data", &radio_button, NULL);
+	gtk_toggle_button_set_active(radio_button, TRUE);
 }
 
 /*
  * Section: Private
  */
+
+static void
+group_parameters_instanciate(GtkButton * button, struct group_parameters_data * data)
+{
+	geoxml_parameter_group_instanciate(GEOXML_PARAMETER_GROUP(data->parameter->parameter));
+	/* rebuild parameters' widgets */
+	gtk_container_foreach(GTK_CONTAINER(data->parameter->specific_table), (GtkCallback)gtk_widget_destroy, NULL);
+	parameter_create_ui_type_specific(data->parameter->specific_table, data->parameter);
+
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+}
+
+static void
+group_parameters_deinstanciate(GtkButton * button, struct group_parameters_data * data)
+{
+	GeoXmlParameter *	exclusive;
+
+	exclusive = geoxml_parameter_group_get_exclusive(GEOXML_PARAMETER_GROUP(data->parameter->parameter));
+	geoxml_parameter_group_deinstanciate(GEOXML_PARAMETER_GROUP(data->parameter->parameter));
+	/* the exclusive was deleted? */
+	if (exclusive != geoxml_parameter_group_get_exclusive(GEOXML_PARAMETER_GROUP(data->parameter->parameter)))
+		group_parameters_reset_exclusive(data);
+
+	/* rebuild parameters' widgets */
+	gtk_container_foreach(GTK_CONTAINER(data->parameter->specific_table), (GtkCallback)gtk_widget_destroy, NULL);
+	parameter_create_ui_type_specific(data->parameter->specific_table, data->parameter);
+
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+}
 
 static void
 group_parameters_data_free(GtkObject * expander, struct group_parameters_data * data)

@@ -293,7 +293,7 @@ parameter_create_ui(GeoXmlParameter * parameter, struct parameters_data * parame
 		struct parameter_data *	group_data;
 		gboolean		one_instance;
 
-		group_data = ((struct group_parameters_data*)data->parameters_data)->data;
+		group_data = ((struct group_parameters_data*)data->parameters_data)->parameter;
 		one_instance = geoxml_parameter_group_get_instances(GEOXML_PARAMETER_GROUP(group_data->parameter)) == 1;
 
 		gtk_widget_set_sensitive(up_button, one_instance);
@@ -720,7 +720,7 @@ parameter_create_ui_type_general(GtkWidget * table, struct parameter_data * data
 
 		g_object_get(G_OBJECT(data->label), "user-data", &radio_button, NULL);
 		parameter_group = GEOXML_PARAMETER_GROUP(
-			((struct group_parameters_data *)data->parameters_data)->data->parameter);
+			((struct group_parameters_data *)data->parameters_data)->parameter->parameter);
 		g_object_set(radio_button,
 			"visible", geoxml_parameter_group_get_exclusive(parameter_group) != NULL,
 			NULL);
@@ -813,7 +813,7 @@ parameter_remove(GtkButton * button, struct parameter_data * data)
 			/* make this group non exclusive because it has no parameters */
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(
 				((struct group_parameters_data*)data->parameters_data)
-					->data->specific.group.exclusive_check_button),
+					->parameter->specific.group.exclusive_check_button),
 				FALSE);
 		}
 	} else {
@@ -1047,7 +1047,7 @@ parameter_is_exclusive(struct parameter_data * data)
 	GeoXmlParameterGroup *	parameter_group;
 
 	parameter_group = GEOXML_PARAMETER_GROUP(
-		((struct group_parameters_data *)data->parameters_data)->data->parameter);
+		((struct group_parameters_data *)data->parameters_data)->parameter->parameter);
 
 	return geoxml_parameter_group_get_exclusive(parameter_group) == data->parameter;
 }
@@ -1058,7 +1058,7 @@ parameter_change_exclusive(GtkToggleButton * toggle_button, struct parameter_dat
 	GeoXmlParameterGroup *	parameter_group;
 
 	parameter_group = GEOXML_PARAMETER_GROUP(
-		((struct group_parameters_data *)data->parameters_data)->data->parameter);
+		((struct group_parameters_data *)data->parameters_data)->parameter->parameter);
 	geoxml_parameter_group_set_exclusive(parameter_group, data->parameter);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -1117,9 +1117,18 @@ parameter_group_instances_changed(GtkSpinButton * spin_button, struct parameter_
 	if (instanciate > 0)
 		for (i = 0; i < instanciate; ++i)
 			geoxml_parameter_group_instanciate(GEOXML_PARAMETER_GROUP(data->parameter));
-	else
+	else {
+		GeoXmlParameter *	exclusive;
+
+		exclusive = geoxml_parameter_group_get_exclusive(GEOXML_PARAMETER_GROUP(data->parameter));
+
 		for (i = instanciate; i < 0; ++i)
 			geoxml_parameter_group_deinstanciate(GEOXML_PARAMETER_GROUP(data->parameter));
+
+		/* the exclusive parameter was deleted? */
+		if (exclusive != geoxml_parameter_group_get_exclusive(GEOXML_PARAMETER_GROUP(data->parameter)))
+			group_parameters_reset_exclusive(data->specific.group.parameters_data);
+	}
 
 	/* rebuild parameters' widgets */
 	gtk_container_foreach(GTK_CONTAINER(data->specific_table), (GtkCallback)gtk_widget_destroy, NULL);
