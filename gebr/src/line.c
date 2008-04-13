@@ -206,7 +206,7 @@ line_delete(void)
 void
 line_load_flows(void)
 {
-	GeoXmlSequence*		line_flow;
+	GeoXmlSequence *	line_flow;
 
 	/* reset flow parts of GUI */
 	gtk_list_store_clear(gebr.ui_flow_browse->store);

@@ -28,7 +28,7 @@ AC_SUBST(GEOXML_VERSION_INFO)
 DOCUMENT_VERSION=0.2.0
 PROJECT_VERSION=0.2.0
 LINE_VERSION=0.2.0
-FLOW_VERSION=0.2.2
+FLOW_VERSION=0.2.3
 AC_SUBST(FLOW_VERSION)
 AC_SUBST(LINE_VERSION)
 AC_SUBST(PROJECT_VERSION)
@@ -96,7 +96,7 @@ AC_OUTPUT([
 debian/changelog
 rpm/libgebr.fedora.spec rpm/libgebr.opensuse.spec rpm/libgebr.mandriva.spec
 Makefile src/gebr.pc src/Makefile src/defines.h
-src/geoxml/Makefile src/geoxml/gebr-geoxml.pc src/geoxml/geoxml/Makefile src/geoxml/geoxml/defines.h src/geoxml/data/Makefile src/geoxml/validate/Makefile src/geoxml/doc/Makefile src/geoxml/test/Makefile
+src/geoxml/Makefile src/geoxml/gebr-geoxml.pc src/geoxml/geoxml/Makefile src/geoxml/geoxml/defines.h src/geoxml/data/Makefile src/geoxml/validate/Makefile src/geoxml/upgrade/Makefile src/geoxml/doc/Makefile src/geoxml/test/Makefile
 src/comm/Makefile src/comm/gebr-comm.pc src/comm/comm/Makefile
 src/gui/Makefile src/gui/gebr-gui.pc src/gui/gui/Makefile src/gui/pixmaps/Makefile
 src/misc/Makefile src/misc/gebr-misc.pc src/misc/misc/Makefile
