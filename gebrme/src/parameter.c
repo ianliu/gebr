@@ -230,7 +230,7 @@ parameter_create_ui(GeoXmlParameter * parameter, struct parameters_data * parame
 	/*
 	 * General parameters fields
 	 */
-	general_table = gtk_table_new(4, 2, FALSE);
+	general_table = gtk_table_new(5, 2, FALSE);
 	gtk_widget_show(general_table);
 	gtk_box_pack_start(GTK_BOX(parameter_vbox), general_table, FALSE, TRUE, 5);
 	gtk_table_set_row_spacings(GTK_TABLE(general_table), 5);
@@ -545,15 +545,6 @@ parameter_create_ui_type_general(GtkWidget * table, struct parameter_data * data
 	GtkWidget *			specific_table;
 	enum GEOXML_PARAMETERTYPE	type;
 
-	specific_table = gtk_table_new(6, 2, FALSE);
-	data->specific_table = specific_table;
-	gtk_widget_show(specific_table);
-	gtk_table_attach(GTK_TABLE(table), specific_table, 0, 2, 3, 4,
-		(GtkAttachOptions)(GTK_FILL),
-		(GtkAttachOptions)(0), 0, 0);
-	gtk_table_set_row_spacings(GTK_TABLE(specific_table), 5);
-	gtk_table_set_col_spacings(GTK_TABLE(specific_table), 5);
-
 	type = geoxml_parameter_get_type(data->parameter);
 	if (type == GEOXML_PARAMETERTYPE_GROUP) {
 		GtkWidget *		exclusive_label;
@@ -630,14 +621,14 @@ parameter_create_ui_type_general(GtkWidget * table, struct parameter_data * data
  		 */
 		keyword_label = gtk_label_new(_("Keyword:"));
 		gtk_widget_show(keyword_label);
-		gtk_table_attach(GTK_TABLE(table), keyword_label, 0, 1, 2, 3,
+		gtk_table_attach(GTK_TABLE(table), keyword_label, 0, 1, 0, 1,
 			(GtkAttachOptions)(GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0);
 		gtk_misc_set_alignment(GTK_MISC(keyword_label), 0, 0.5);
 
 		keyword_entry = gtk_entry_new();
 		gtk_widget_show(keyword_entry);
-		gtk_table_attach(GTK_TABLE(table), keyword_entry, 1, 2, 2, 3,
+		gtk_table_attach(GTK_TABLE(table), keyword_entry, 1, 2, 0, 1,
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0);
 		/* read */
@@ -657,14 +648,14 @@ parameter_create_ui_type_general(GtkWidget * table, struct parameter_data * data
 
 			required_label = gtk_label_new(_("Required:"));
 			gtk_widget_show(required_label);
-			gtk_table_attach(GTK_TABLE(table), required_label, 0, 1, 0, 1,
+			gtk_table_attach(GTK_TABLE(table), required_label, 0, 1, 1, 2,
 				(GtkAttachOptions)(GTK_FILL),
 				(GtkAttachOptions)(0), 0, 0);
 			gtk_misc_set_alignment(GTK_MISC(required_label), 0, 0.5);
 
 			required_check_button = gtk_check_button_new();
 			gtk_widget_show(required_check_button);
-			gtk_table_attach(GTK_TABLE(table), required_check_button, 1, 2, 0, 1,
+			gtk_table_attach(GTK_TABLE(table), required_check_button, 1, 2, 1, 2,
 				(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 				(GtkAttachOptions)(0), 0, 0);
 			g_signal_connect(required_check_button, "toggled",
@@ -674,14 +665,14 @@ parameter_create_ui_type_general(GtkWidget * table, struct parameter_data * data
 
 			is_list_label = gtk_label_new(_("Is list?:"));
 			gtk_widget_show(is_list_label);
-			gtk_table_attach(GTK_TABLE(table), is_list_label, 0, 1, 1, 2,
+			gtk_table_attach(GTK_TABLE(table), is_list_label, 0, 1, 2, 3,
 				(GtkAttachOptions)(GTK_FILL),
 				(GtkAttachOptions)(0), 0, 0);
 			gtk_misc_set_alignment(GTK_MISC(is_list_label), 0, 0.5);
 
 			is_list_check_button = gtk_check_button_new();
 			gtk_widget_show(is_list_check_button);
-			gtk_table_attach(GTK_TABLE(table), is_list_check_button, 1, 2, 1, 2,
+			gtk_table_attach(GTK_TABLE(table), is_list_check_button, 1, 2, 2, 3,
 				(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 				(GtkAttachOptions)(0), 0, 0);
 			is_list = geoxml_program_parameter_get_is_list(program_parameter);
@@ -696,14 +687,14 @@ parameter_create_ui_type_general(GtkWidget * table, struct parameter_data * data
 
 				separator_label = gtk_label_new(_("List separator:"));
 				gtk_widget_show(separator_label);
-				gtk_table_attach(GTK_TABLE(table), separator_label, 0, 1, 2, 3,
+				gtk_table_attach(GTK_TABLE(table), separator_label, 0, 1, 3, 4,
 					(GtkAttachOptions)(GTK_FILL),
 					(GtkAttachOptions)(0), 0, 0);
 				gtk_misc_set_alignment(GTK_MISC(separator_label), 0, 0.5);
 
 				separator_entry = gtk_entry_new();
 				gtk_widget_show(separator_entry);
-				gtk_table_attach(GTK_TABLE(table), separator_entry, 1, 2, 2, 3,
+				gtk_table_attach(GTK_TABLE(table), separator_entry, 1, 2, 3, 4,
 					(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 					(GtkAttachOptions)(0), 0, 0);
 				gtk_entry_set_text(GTK_ENTRY(separator_entry),
@@ -725,6 +716,15 @@ parameter_create_ui_type_general(GtkWidget * table, struct parameter_data * data
 			"visible", geoxml_parameter_group_get_exclusive(parameter_group) != NULL,
 			NULL);
 	}
+
+	specific_table = gtk_table_new(6, 2, FALSE);
+	data->specific_table = specific_table;
+	gtk_widget_show(specific_table);
+	gtk_table_attach(GTK_TABLE(table), specific_table, 0, 2, 4, 5,
+		(GtkAttachOptions)(GTK_FILL),
+		(GtkAttachOptions)(0), 0, 0);
+	gtk_table_set_row_spacings(GTK_TABLE(specific_table), 5);
+	gtk_table_set_col_spacings(GTK_TABLE(specific_table), 5);
 
 	parameter_create_ui_type_specific(specific_table, data);
 }
