@@ -277,6 +277,11 @@ geoxml_parameter_group_get_exclusive(GeoXmlParameterGroup * parameter_group)
 		__geoxml_get_first_element((GdomeElement*)parameter_group, "parameters"),
 		&parameter, index);
 
+	/* there isn't a parameter at index, so use the first parameter of the group */
+	if (parameter == NULL)
+		return geoxml_parameters_get_first_parameter(
+			geoxml_parameter_group_get_parameters(parameter_group));
+
 	return (GeoXmlParameter *)parameter;
 }
 
@@ -298,6 +303,11 @@ geoxml_parameter_group_get_selected(GeoXmlParameterGroup * parameter_group)
 	geoxml_parameters_get_parameter((GeoXmlParameters*)
 		__geoxml_get_first_element((GdomeElement*)parameter_group, "parameters"),
 		&parameter, index);
+
+	/* there isn't a parameter at index, so use the first parameter of the group */
+	if (parameter == NULL)
+		return geoxml_parameters_get_first_parameter(
+			geoxml_parameter_group_get_parameters(parameter_group));
 
 	return (GeoXmlParameter *)parameter;
 }
