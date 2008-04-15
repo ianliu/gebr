@@ -15,26 +15,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <locale.h>
-/* TODO: Check for libintl on configure */
-#ifdef ENABLE_NLS
-#  include <libintl.h>
-#endif
+#ifndef __GEBR_CLIENT_H
+#define __GEBR_CLIENT_H
 
 #include <glib.h>
 
-#include "server.h"
+#include <misc/log.h>
 
-int
-main(int argc, char ** argv, char ** env)
-{
-#ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
-#endif
+void
+gebr_client_message(enum log_message_type type, const gchar * message, ...);
 
-
-
-	return 0;
-}
+#endif //__GEBR_CLIENT_H
