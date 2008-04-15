@@ -1,0 +1,40 @@
+#  GÍBR - An environment for seismic processing.
+#  Copyright (C) 2007-2008 GÍBR core team (http://gebr.sourceforge.net)
+#
+#  This program is free software: you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation, either version 3 of
+#  the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program. If not, see
+#  <http://www.gnu.org/licenses/>.
+
+# GenGetOpt file
+#
+# The following command line was used to generate the file
+# cmdline.c and cmdline.h
+#
+# gengetopt < gebr.ggo --file-name=cmdline
+#
+
+package "GÍBR"
+version "1.0"
+
+purpose "Seismic processing environment"
+
+option "name" - "User name" string no
+option "email" - "User email" string no
+option "usermenus" - "User local menus dir" string yes
+option "data" - "Data user dir" string yes
+option "editor" - "HTML capable editor" string no
+option "browser" - "HTML browser" string no
+option "width" - "Window width" int default="700" no
+option "height" - "Window height" int default="400" no
+option "logexpand" - "Log exapander state" flag off
+option "server" - "Server hostname" string no multiple
