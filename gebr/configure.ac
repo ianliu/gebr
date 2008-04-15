@@ -65,8 +65,19 @@ PKG_CHECK_MODULES(LIBGEBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
 AC_SUBST(LIBGEBR_CFLAGS)
 AC_SUBST(LIBGEBR_LIBS)
 
+dnl check for libgebr_comm
+PKG_CHECK_MODULES(LIBGEBR_COMM, gebr-comm,,AC_MSG_ERROR([Could not find libgebr_comm]))
+AC_SUBST(LIBGEBR_COMM_CFLAGS)
+AC_SUBST(LIBGEBR_COMM_LIBS)
+
+dnl check for libgebr_misc
+PKG_CHECK_MODULES(LIBGEBR_MISC, gebr-misc,,AC_MSG_ERROR([Could not find libgebr_misc]))
+AC_SUBST(LIBGEBR_MISC_CFLAGS)
+AC_SUBST(LIBGEBR_MISC_LIBS)
+
 AC_OUTPUT([
 debian/changelog
 rpm/gebr.fedora.spec rpm/gebr.opensuse.spec rpm/gebr.mandriva.spec
-Makefile data/Makefile menus/Makefile src/Makefile src/defines.h
+Makefile data/Makefile menus/Makefile
+src/Makefile src/gebr/Makefile src/gebr/defines.h src/gebr-client/Makefile
 ])

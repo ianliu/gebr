@@ -20,6 +20,7 @@ bin_PROGRAMS = gebr
 cmdline.h: cmdline.c
 cmdline.c: gebr.ggo
 	gengetopt < gebr.ggo --file-name=cmdline -C -a ggopt
+gebr.c: cmdline.c
 
 gebr_SOURCES = main.c \
 	cmdline.c \

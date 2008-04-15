@@ -15,58 +15,25 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __FLOW_H
-#define __FLOW_H
+#ifndef __SERVER_H
+#define __SERVER_H
 
-gboolean
-flow_new(void);
+#include <glib.h>
 
-void
-flow_free(void);
+#include <comm/gtcpsocket.h>
+#include <comm/protocol.h>
+#include <comm/server.h>
 
-void
-flow_delete(void);
+struct server {
+	struct comm_server *	comm;
 
-void
-flow_save(void);
 
-void
-flow_import(void);
+};
 
-void
-flow_export(void);
+struct server *
+server_new(const gchar * address);
 
 void
-flow_export_as_menu(void);
+server_free(struct server * server);
 
-void
-flow_run(void);
-
-void
-flow_program_remove(void);
-
-void
-flow_program_move_up(void);
-
-void
-flow_program_move_down(void);
-
-void
-flow_program_move_top(void);
-
-void
-flow_program_move_bottom(void);
-
-void
-flow_move_up(void);
-
-void
-flow_move_down(void);
-
-void
-flow_move_top(void);
-
-void
-flow_move_bottom(void);
-
-#endif //__FLOW_H
+#endif //__SERVER_H
