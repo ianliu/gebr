@@ -199,6 +199,10 @@ __geoxml_set_element_value(GdomeElement * element, const gchar * tag_value,
 	GdomeNode *		value_node;
 	const gchar *		value_str;
 
+	/* delete all childs elements */
+	while ((value_node = gdome_el_firstChild(element, &exception)) != NULL)
+		gdome_el_removeChild(element, value_node, &exception);
+
 	/* Protection agains line-breaks inside text nodes */
 	value_str = (create_func == __geoxml_create_TextNode)
 		? __geoxml_remove_line_break(tag_value) : tag_value;
