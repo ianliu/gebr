@@ -201,7 +201,6 @@ parameter_create_ui(GeoXmlParameter * parameter, struct parameters_data * parame
 	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), _("real number"));
 	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), _("range"));
 	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), _("enumeration"));
-	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), _("group"));
 	gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), type);
 	g_signal_connect(type_combo, "changed",
 		(GCallback)parameter_type_changed, data);

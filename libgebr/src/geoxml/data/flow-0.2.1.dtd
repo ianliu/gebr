@@ -43,15 +43,7 @@
 <!-- URL to get the program -->
 <!ELEMENT url              (#PCDATA)>
 
-<!ELEMENT parameters (int | float | string | flag | file | range | enum | group)*>
-
-<!ELEMENT group (label, (int | float | string | flag | file | range | enum | group)*)>
-<!ATTLIST group
-    exclusive (yes | no) #REQUIRED
-    expand    (yes | no) #REQUIRED
-    multiple  (yes | no) #REQUIRED
-    npar         NMTOKEN #REQUIRED
-    instances    NMTOKEN #REQUIRED>
+<!ELEMENT parameters (int | float | string | flag | file | range | enum)*>
 
 <!-- Types of parameters -->
 <!-- Integer -->
