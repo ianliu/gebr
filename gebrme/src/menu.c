@@ -220,7 +220,8 @@ menu_selected(void)
 	MenuStatus		status;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (gebrme.menus_treeview));
-	gtk_tree_selection_get_selected(selection, &model, &menu_iter);
+	if(!gtk_tree_selection_get_selected(selection, &model, &menu_iter))
+		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebrme.menus_liststore), &menu_iter,
 		MENU_STATUS, &icon,
 		MENU_XMLPOINTER, &gebrme.current,
