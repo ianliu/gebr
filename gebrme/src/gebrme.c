@@ -105,8 +105,8 @@ gebrme_config_load(void)
 	gebrme.config.keyfile = g_key_file_new();
 	g_key_file_load_from_file(gebrme.config.keyfile, gebrme.config.path->str, G_KEY_FILE_NONE, &error);
 
-	load_key(gebrme.config.keyfile, gebrme.config.name, "name", "GêBR core team");
-	load_key(gebrme.config.keyfile, gebrme.config.email, "email", "gebr@users.sf.net");
+	load_key(gebrme.config.keyfile, gebrme.config.name, "name", g_get_real_name());
+	load_key(gebrme.config.keyfile, gebrme.config.email, "email", g_get_user_name());
 	load_key(gebrme.config.keyfile, gebrme.config.menu_dir, "menu_dir", "");
 	load_key(gebrme.config.keyfile, gebrme.config.browser, "browser", "firefox");
 	load_key(gebrme.config.keyfile, gebrme.config.htmleditor, "htmleditor", "gedit");

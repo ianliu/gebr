@@ -100,7 +100,10 @@ preferences_setup_ui(gboolean first_run)
 	gtk_table_attach(GTK_TABLE(table), ui_preferences->username, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3);
 
 	/* read config */
-	gtk_entry_set_text(GTK_ENTRY(ui_preferences->username), gebr.config.username->str);
+	if (strlen(gebr.config.username->str))
+		gtk_entry_set_text(GTK_ENTRY(ui_preferences->username), gebr.config.username->str);
+	else
+		gtk_entry_set_text(GTK_ENTRY(ui_preferences->username), g_get_real_name());		
 
 	/*
 	 * User email
@@ -114,7 +117,10 @@ preferences_setup_ui(gboolean first_run)
 	gtk_table_attach(GTK_TABLE(table), ui_preferences->email, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* read config */
-	gtk_entry_set_text(GTK_ENTRY(ui_preferences->email), gebr.config.email->str);
+	if (strlen(gebr.config.email->str))
+		gtk_entry_set_text(GTK_ENTRY(ui_preferences->email), gebr.config.email->str);
+	else
+		gtk_entry_set_text(GTK_ENTRY(ui_preferences->email), g_get_user_name());
 
 	/*
 	 * GeBR dir
