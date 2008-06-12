@@ -24,6 +24,11 @@
  */
 
 #include <string.h>
+#include <unistd.h>
+#include <netdb.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+
 
 #include "ui_server.h"
 #include "gebr.h"
@@ -200,10 +205,17 @@ server_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * ui_serve
 		gtk_widget_hide(gebr.ui_server_list->common.dialog);
 		gebr_config_save(FALSE);
 		break;
-	case GEBR_SERVER_ADD_LOCAL:
-		server_new("127.0.0.1");
+	case GEBR_SERVER_ADD_LOCAL: {
+		gchar                   localhostname[256];
+		struct hostent *        host;
+
+		gethostname(localhostname, 255);
+		host = gethostbyname(localhostname);
+		
+		server_new(host->h_name);
 		server_common_check_for_local(ui_server_common);
 		break;
+	}
 	case GEBR_SERVER_REMOVE: { /* For server list */
 		GtkTreeSelection *	selection;
 		GtkTreeModel *		model;
@@ -331,7 +343,11 @@ server_list_updated_status(struct server * server)
 static void
 server_list_add(GtkEntry * entry, struct ui_server_list * ui_server_list)
 {
-	server_common_add(&ui_server_list->common, gtk_entry_get_text(entry));
+	struct hostent * host;
+
+	host = gethostbyname(gtk_entry_get_text(entry));
+
+	server_common_add(&ui_server_list->common, host->h_name);
 
 	gtk_entry_set_text(entry, "");
 }

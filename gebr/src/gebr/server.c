@@ -118,8 +118,7 @@ server_new(const gchar * address)
 	gtk_list_store_append(gebr.ui_server_list->common.store, &iter);
 	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
 			SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
-			SERVER_ADDRESS, comm_server_is_local(server->comm) == TRUE ?
-				_("Local server") : (gchar*)address,
+			SERVER_ADDRESS, (gchar*)address,
 			SERVER_POINTER, server,
 			-1);
 	server->iter = iter;
