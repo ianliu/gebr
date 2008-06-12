@@ -21,6 +21,7 @@
 #include <comm/gtcpserver.h>
 #include <comm/gtcpsocket.h>
 #include <misc/log.h>
+#include <netdb.h>
 
 extern struct gebrd	gebrd;
 
@@ -33,6 +34,8 @@ struct gebrd {
 
 	GMainLoop *		main_loop;
 	int			finished_starting_pipe[2];
+
+	struct hostent *        server_host;
 };
 
 void

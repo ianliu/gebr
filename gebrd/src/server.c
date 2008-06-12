@@ -19,6 +19,9 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
+#include <netdb.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
 #include <glib/gstdio.h>
 
@@ -48,27 +51,19 @@ server_init(void)
 	GString *		run_filename;
 	FILE *			run_fp;
 
-	gchar *			ssh_env;
-	GString *		client_ip;
+	gchar                   hostname[256];
 
 	/* initialization */
 	log_filename = g_string_new(NULL);
 	run_filename = g_string_new(NULL);
-	client_ip = g_string_new("");
+
+	/* fully qualified server address */
+	gethostname(hostname, 255);
+	gebrd.server_host = gethostbyname(hostname);
+	
 	/* local address used for listening */
 	host_address = g_host_address_new();
 	g_host_address_set_ipv4_string(host_address, "127.0.0.1");
-
-	/* if we were ran by ssh, then use IP to change log and run filenames */
-	ssh_env = getenv("SSH_CLIENT");
-	if (ssh_env != NULL) {
-		gchar **	splits;
-
-		splits = g_strsplit(ssh_env, " ", 3);
-		g_string_printf(client_ip, "-%s", splits[0]);
-
-		g_strfreev(splits);
-	}
 
 	/* from libgebr-misc */
 	if (gebr_create_config_dirs() == FALSE) {
@@ -77,7 +72,9 @@ server_init(void)
 	}
 
 	/* log */
-	g_string_printf(log_filename, "%s/.gebr/log/gebrd%s.log", getenv("HOME"), client_ip->str);
+	g_string_printf(log_filename, "%s/.gebr/log/gebrd-%s.log", getenv("HOME"),
+			inet_ntoa(*(struct in_addr*)gebrd.server_host->h_addr_list[0]));
+
 	gebrd.log = log_open(log_filename->str);
 
 	/* protocol */
@@ -93,7 +90,8 @@ server_init(void)
 			G_CALLBACK(server_new_connection), NULL);
 
 	/* write on user's home directory a file with a port */
-	g_string_printf(run_filename, "%s/.gebr/run/gebrd%s.run", getenv("HOME"), client_ip->str);
+	g_string_printf(run_filename, "%s/.gebr/run/gebrd-%s.run", getenv("HOME"),
+			inet_ntoa(*(struct in_addr*)gebrd.server_host->h_addr_list[0]));
 	if (g_file_test(run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
 		/* check if server crashed by trying connecting to it
 		 * if the connection is refused, the it *probably* did
@@ -163,7 +161,8 @@ server_quit(void)
 
 	/* delete lock */
 	run_filename = g_string_new(NULL);
-	g_string_printf(run_filename, "%s/.gebr/run/gebrd.run", getenv("HOME"));
+	g_string_printf(run_filename, "%s/.gebr/run/gebrd-%s.run", getenv("HOME"),
+			inet_ntoa(*(struct in_addr*)gebrd.server_host->h_addr_list[0]));
 	g_unlink(run_filename->str);
 	g_string_free(run_filename, TRUE);
 
@@ -194,7 +193,6 @@ server_parse_client_messages(struct client * client)
 		if (message->hash == protocol_defs.ini_def.hash) {
 			GList *		arguments;
 			GString *	version, * hostname, * address, * display, * mcookie;
-			gchar		server_hostname[100];
 
 			/* organize message data */
 			arguments = protocol_split_new(message->argument, 5);
@@ -224,11 +222,9 @@ server_parse_client_messages(struct client * client)
 
 				g_string_free(cmd_line, TRUE);
 			}
-
 			/* send return */
-			gethostname(server_hostname, 100);
 			protocol_send_data(client->protocol, client->tcp_socket,
-				protocol_defs.ret_def, 1, server_hostname);
+				protocol_defs.ret_def, 1, gebrd.server_host->h_name);
 
 			/* frees */
 			protocol_split_free(arguments);
