@@ -1,5 +1,5 @@
-/*   GÍBR - An environment for seismic processing.
- *   Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
+/*   GeBR Daemon - Process and control execution of flows
+ *   Copyright (C) 2007-2008 GeBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,10 +18,6 @@
 #ifndef __DEFINES_H
 #define __DEFINES_H
 
-#define GEBR_SYS_MENUS_DIR	"@prefix@/share/gebr/menus/"
-#define GEBR_DATA_DIR		"@prefix@/share/gebr/"
-
-#define GEBR_STATIC_MODE	@STATIC_MODE@
-#define GEBR_VERSION		"@VERSION@"
+#define GEBRD_VERSION	"@VERSION@"
 
 #endif //__DEFINES_H

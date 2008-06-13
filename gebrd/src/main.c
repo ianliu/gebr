@@ -24,31 +24,29 @@
 #include <glib.h>
 
 #include "gebrd.h"
+#include "defines.h"
 #include "support.h"
 
 int
 main(int argc, char ** argv)
 {
-	static GOptionEntry	entries[] = {
-		{"foreground", 'f', 0, G_OPTION_ARG_NONE, &gebrd.options.foreground,
-			"Run server in foreground mode, not as a daemon", ""},
+	gboolean		show_version;
+	GOptionEntry		entries[] = {
+		{"interactive", 'i', 0, G_OPTION_ARG_NONE, &gebrd.options.foreground,
+			"Run server in interactive mode, not as a daemon", NULL},
+		{"version", 0, 0, G_OPTION_ARG_NONE, &show_version,
+			"Show GeBR daemon version", NULL},
 		{NULL}
 	};
 	GError *		error = NULL;
 	GOptionContext *	context;
 
-#ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
-#endif
-
-	context = g_option_context_new("GeBR daemon");
+	context = g_option_context_new(_("GeBR daemon"));
 	g_option_context_set_summary(context,
-		""
+		_("")
 	);
 	g_option_context_set_description(context,
-		""
+		_("")
 	);
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
@@ -57,6 +55,17 @@ main(int argc, char ** argv)
 		fprintf(stderr, _("Try %s --­­help\n"), argv[0]);
 		return -1;
 	}
+
+	if (show_version == TRUE) {
+		fprintf(stdout, _("%s\n"), GEBRD_VERSION);
+		return 0;
+	}
+
+#ifdef ENABLE_NLS
+	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	textdomain(GETTEXT_PACKAGE);
+#endif
 
 	gebrd_init();
 

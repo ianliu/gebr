@@ -25,11 +25,42 @@
 #include <gtk/gtk.h>
 
 #include "gebr.h"
+#include "defines.h"
+#include "support.h"
 #include "interface.h"
 
 int
 main(int argc, char ** argv, char ** env)
 {
+	gboolean		show_version;
+	GOptionEntry		entries[] = {
+		{"version", 0, 0, G_OPTION_ARG_NONE, &show_version,
+			"Show GeBR daemon version", NULL},
+		{NULL}
+	};
+	GError *		error = NULL;
+	GOptionContext *	context;
+
+	context = g_option_context_new(_("GeBR"));
+	g_option_context_set_summary(context,
+		_("a seismic processing environment")
+	);
+	g_option_context_set_description(context,
+		_("")
+	);
+	g_option_context_add_main_entries(context, entries, NULL);
+	g_option_context_set_ignore_unknown_options(context, FALSE);
+	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE || argv == NULL) {
+		fprintf(stderr, _("%s: syntax error\n"), argv[0]);
+		fprintf(stderr, _("Try %s --­­help\n"), argv[0]);
+		return -1;
+	}
+
+	if (show_version == TRUE) {
+		fprintf(stdout, _("%s\n"), GEBR_VERSION);
+		return 0;
+	}
+
 	gtk_init(&argc, &argv);
 
 	/* FIXME: necessary for representing fractional numbers only with comma */
