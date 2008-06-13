@@ -56,12 +56,13 @@ local_run_server_read(GProcess * process, struct comm_server * comm_server)
 
 	output = g_process_read_stdout_string_all(process);
 	port = strtol(output->str, &strtol_endptr, 10);
-	if (errno != ERANGE) {
+	if (port) {
 		comm_server->port = port;
 		comm_server_log_message(comm_server, LOG_DEBUG, "local_run_server_read: %d", port);
 	} else {
 		comm_server->error = SERVER_ERROR_SERVER;
-		comm_server_log_message(comm_server, LOG_DEBUG, "local_run_server_read: failed");
+		comm_server_log_message(comm_server, LOG_ERROR, _("Could not launch local server: %s"),
+			output->str);
 	}
 
 	g_string_free(output, TRUE);
@@ -94,7 +95,7 @@ static gboolean
 comm_ssh_parse_output(GTerminalProcess * process, struct comm_server * comm_server, GString * output)
 {
 	if (output->len <= 2)
-		return FALSE;
+		return TRUE;
 	if (output->str[output->len-2] == ':') {
 		GString *	string;
 		GString *	password;
@@ -175,12 +176,13 @@ comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_s
 	if (comm_ssh_parse_output(process, comm_server, output) == TRUE)
 		goto out;
 	port = strtol(output->str, &strtol_endptr, 10);
-	if (errno != ERANGE) {
+	if (port) {
 		comm_server->port = port;
 		comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read: %d", port);
 	} else {
 		comm_server->error = SERVER_ERROR_SERVER;
-		comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read: error ssh");
+		comm_server_log_message(comm_server, LOG_ERROR, _("Could not comunicate with server %s: %s"),
+			comm_server->address->str, output->str);
 	}
 
 out:	g_string_free(output, TRUE);
@@ -195,7 +197,7 @@ comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * co
 
 	g_terminal_process_free(process);
 	if (comm_server->error != SERVER_ERROR_NONE)
-  return;
+		return;
 
 	comm_server->tried_existant_pass = FALSE;
 	cmd_line = g_string_new(NULL);
