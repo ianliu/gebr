@@ -17,6 +17,7 @@
  *   Inspired on Qt 4.3 version of QHostInfo, by Trolltech
  */
 
+#include <unistd.h>
 #include <netdb.h>
 extern int h_errno;
 #include <sys/socket.h>
@@ -35,6 +36,26 @@ struct thread_data {
 	gpointer	user_data;
 };
 
+void
+__g_host_info_init(GHostInfo * host_info)
+{
+	host_info->error = G_HOST_INFO_ERROR_NONE;
+	host_info->addresses = NULL;
+}
+
+GHostInfo *
+__g_host_info_new(void)
+{
+	GHostInfo *	new;
+
+	new = g_malloc(sizeof(GHostInfo));
+	if (new == NULL)
+		return NULL;
+	__g_host_info_init(new);
+
+	return new;
+}
+
 GHostInfo *
 __g_host_info_lookup_thread(struct thread_data * thread_data)
 {
@@ -43,11 +64,7 @@ __g_host_info_lookup_thread(struct thread_data * thread_data)
 	gchar *			address;
 	gint			i;
 
-	new = g_malloc(sizeof(GHostInfo));
-	if (new == NULL)
-		return NULL;
-	new->addresses = NULL;
-
+	new = __g_host_info_new();
 	if ((hostent = gethostbyname(thread_data->hostname->str)) == NULL) {
 		switch (h_errno) {
 		case HOST_NOT_FOUND:
@@ -118,7 +135,7 @@ __g_host_info_lookup(GString * hostname, GHostInfoFunc callback, gpointer user_d
 	thread = g_thread_create((GThreadFunc)__g_host_info_lookup_thread,
 		thread_data, joinable, &error);
 	if (joinable)
-		return g_thread_join(thread);
+		return (GHostInfo*)g_thread_join(thread);
 
 	return NULL;
 }
@@ -126,12 +143,6 @@ __g_host_info_lookup(GString * hostname, GHostInfoFunc callback, gpointer user_d
 /*
  * API functions
  */
-
-GHostInfo *
-g_host_info_new_from_name(GString * hostname)
-{
-	return __g_host_info_lookup(hostname, NULL, NULL);
-}
 
 void
 g_host_info_lookup(GString * hostname, GHostInfoFunc callback, gpointer user_data)
@@ -153,12 +164,6 @@ g_host_info_error(GHostInfo * host_info)
 	return host_info->error;
 }
 
-gboolean
-g_host_info_ok(GHostInfo * host_info)
-{
-	return (host_info->error == G_HOST_INFO_ERROR_NONE) ? TRUE : FALSE;
-}
-
 GList *
 g_host_info_addesses(GHostInfo * host_info)
 {
@@ -175,4 +180,25 @@ g_host_info_first_address(GHostInfo * host_info)
 		return NULL;
 
 	return (GHostAddress*)link->data;
+}
+
+GHostInfo *
+g_host_info_lookup_blocking(GString * hostname)
+{
+	return __g_host_info_lookup(hostname, NULL, NULL);
+}
+
+GHostInfo *
+g_host_info_lookup_local(void)
+{
+	GHostInfo *	host_info;
+	GString *	hostname;
+	char		name[512];
+
+	gethostname(name, 512);
+	hostname = g_string_new(name);
+	host_info = __g_host_info_lookup(hostname, NULL, NULL);
+
+	g_string_free(hostname, TRUE);
+	return host_info;
 }

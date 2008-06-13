@@ -211,6 +211,7 @@ protocol_send_data(struct protocol * protocol, GTcpSocket * tcp_socket,
 	g_string_printf(message, "%s %zu %s\n", message_def.string, data->len, data->str);
 	/* send it */
 	g_socket_write_string(G_SOCKET(tcp_socket), message);
+	puts(message->str);
 
 	g_string_free(data, TRUE);
 	g_string_free(message, TRUE);

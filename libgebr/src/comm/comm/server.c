@@ -48,37 +48,7 @@ comm_server_log_message(struct comm_server * comm_server, enum log_message_type 
 }
 
 static void
-local_ask_port_read(GProcess * process, struct comm_server * comm_server);
-
-static void
-local_ask_port_finished(GProcess * process, struct comm_server * comm_server);
-
-static void
-local_run_comm_server_finished(GProcess * process, struct comm_server * comm_server)
-{
-	GString *	cmd_line;
-
-	comm_server_log_message(comm_server, LOG_DEBUG, "local_run_comm_server_finished");
-
-	cmd_line = g_string_new(NULL);
-	comm_server->state = SERVER_STATE_ASK_PORT;
-	comm_server->tried_existant_pass = FALSE;
-
-	g_process_free(process);
-	process = g_process_new();
-	g_signal_connect(process, "ready-read-stdout",
-		G_CALLBACK(local_ask_port_read), comm_server);
-	g_signal_connect(process, "finished",
-		G_CALLBACK(local_ask_port_finished), comm_server);
-
-	g_string_printf(cmd_line, "bash -l -c 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'");
-	g_process_start(process, cmd_line);
-
-	g_string_free(cmd_line, TRUE);
-}
-
-static void
-local_ask_port_read(GProcess * process, struct comm_server * comm_server)
+local_run_server_read(GProcess * process, struct comm_server * comm_server)
 {
 	GString *	output;
 	gchar *		strtol_endptr;
@@ -88,32 +58,35 @@ local_ask_port_read(GProcess * process, struct comm_server * comm_server)
 	port = strtol(output->str, &strtol_endptr, 10);
 	if (errno != ERANGE) {
 		comm_server->port = port;
-		comm_server_log_message(comm_server, LOG_DEBUG, "local_ask_port_read: %d", port, comm_server->port);
+		comm_server_log_message(comm_server, LOG_DEBUG, "local_run_server_read: %d", port);
+	} else {
+		comm_server->error = SERVER_ERROR_SERVER;
+		comm_server_log_message(comm_server, LOG_DEBUG, "local_run_server_read: failed");
 	}
 
 	g_string_free(output, TRUE);
 }
 
 static void
-local_ask_port_finished(GProcess * process, struct comm_server * comm_server)
+local_run_server_finished(GProcess * process, struct comm_server * comm_server)
 {
-	comm_server_log_message(comm_server, LOG_DEBUG, "local_ask_port_finished");
+ GHostAddress *	host_address;
+
+	comm_server_log_message(comm_server, LOG_DEBUG, "local_run_server_finished");
 
 	if (comm_server->error != SERVER_ERROR_NONE)
 		goto out;
-	if (comm_server->port) {
-		GHostAddress *	host_address;
 
-		host_address = g_host_address_new();
-		g_host_address_set_ipv4_string(host_address, "127.0.0.1");
-		g_string_assign(comm_server->client_address, "127.0.0.1");
+	comm_server->state = SERVER_STATE_CONNECT;
+	comm_server->tried_existant_pass = FALSE;
 
-		comm_server->state = SERVER_STATE_CONNECT;
-		g_tcp_socket_connect(comm_server->tcp_socket, host_address, comm_server->port, FALSE);
+	host_address = g_host_address_new();
+	g_host_address_set_ipv4_string(host_address, "127.0.0.1");
 
-		g_host_address_free(host_address);
-	}
+	comm_server->state = SERVER_STATE_CONNECT;
+	g_tcp_socket_connect(comm_server->tcp_socket, host_address, comm_server->port, FALSE);
 
+	g_host_address_free(host_address);
 out:	g_process_free(process);
 }
 
@@ -184,118 +157,61 @@ out:	return TRUE;
 }
 
 static void
-comm_ssh_ask_port_read(GTerminalProcess * process, struct comm_server * comm_server)
-{
-	GString *	output;
-	gchar **	splits;
-	gchar *		strtol_endptr;
-	guint16		port;
-
-	output = g_terminal_process_read_string_all(process);
-	if (comm_ssh_parse_output(process, comm_server, output) == TRUE)
-		goto out;
-	if (output->len <= 2) {
-		/* comm_server is not running, because run file test lead to empty output
-		 * (2 is greater than carriege return)
-		 */
-		comm_server->port = 0;
-		goto out;
-	}
-
-	splits = g_strsplit(output->str, " ", 4);
-	port = strtol(splits[0], &strtol_endptr, 10);
-	if (errno != ERANGE) {
-		comm_server->port = port;
-		g_string_assign(comm_server->client_address, splits[1]);
-		comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_ask_port_read: %d", port, comm_server->port);
-	} else {
-		comm_server->port = 0;
-		comm_server->error = SERVER_ERROR_SSH;
-	}
-
-	g_strfreev(splits);
-out:	g_string_free(output, TRUE);
-}
-
-static void
 comm_ssh_open_tunnel_read(GTerminalProcess * process, struct comm_server * comm_server);
 
 static void
 comm_ssh_open_tunnel_finished(GTerminalProcess * process, struct comm_server * comm_server);
 
 static void
-comm_ssh_ask_port_finished(GTerminalProcess * process, struct comm_server * comm_server)
-{
-	GString *	cmd_line;
-
-	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_ask_port_finished");
-	cmd_line = g_string_new(NULL);
-
-	if (comm_server->error != SERVER_ERROR_NONE)
-		goto out;
-
-	comm_server->tried_existant_pass = FALSE;
-	if (comm_server->port) {
-		GTerminalProcess *	tunnel_process;
-
-		tunnel_process = g_terminal_process_new();
-		g_signal_connect(tunnel_process, "ready-read",
-			G_CALLBACK(comm_ssh_open_tunnel_read), comm_server);
-		g_signal_connect(tunnel_process, "finished",
-			G_CALLBACK(comm_ssh_open_tunnel_finished), comm_server);
-
-		comm_server->state = SERVER_STATE_OPEN_TUNNEL;
-		comm_server->tunnel_port = 2125;
-		while (!g_tcp_server_is_local_port_available(comm_server->tunnel_port))
-			++comm_server->tunnel_port;
-
-		g_string_printf(cmd_line, "ssh -f -L %d:127.0.0.1:%d %s 'sleep 300'",
-			comm_server->tunnel_port, comm_server->port, comm_server->address->str);
-		g_terminal_process_start(tunnel_process, cmd_line);
-	}
-
-out:	g_string_free(cmd_line, TRUE);
-	g_terminal_process_free(process);
-}
-
-static void
-comm_ssh_run_comm_server_read(GTerminalProcess * process, struct comm_server * comm_server)
+comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_server)
 {
 	GString *	output;
+	gchar *		strtol_endptr;
+	guint16		port;
 
-	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_comm_server_read");
+	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read");
 
-	/* ssh only output; gebrd doesn't output nothing */
 	output = g_terminal_process_read_string_all(process);
-	comm_ssh_parse_output(process, comm_server, output);
+	if (comm_ssh_parse_output(process, comm_server, output) == TRUE)
+		goto out;
+	port = strtol(output->str, &strtol_endptr, 10);
+	if (errno != ERANGE) {
+		comm_server->port = port;
+		comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read: %d", port);
+	} else {
+		comm_server->error = SERVER_ERROR_SERVER;
+		comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read: error ssh");
+	}
 
-	g_string_free(output, TRUE);
+out:	g_string_free(output, TRUE);
 }
 
 static void
-comm_ssh_run_comm_server_finished(GTerminalProcess * process, struct comm_server * comm_server)
+comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * comm_server)
 {
 	GString *	cmd_line;
 
-	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_comm_server_finished");
+	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_finished");
 
 	g_terminal_process_free(process);
 	if (comm_server->error != SERVER_ERROR_NONE)
-		return;
+  return;
 
-	cmd_line = g_string_new(NULL);
-	comm_server->state = SERVER_STATE_ASK_PORT;
 	comm_server->tried_existant_pass = FALSE;
-
+	cmd_line = g_string_new(NULL);
 	process = g_terminal_process_new();
 	g_signal_connect(process, "ready-read",
-		G_CALLBACK(comm_ssh_ask_port_read), comm_server);
+		G_CALLBACK(comm_ssh_open_tunnel_read), comm_server);
 	g_signal_connect(process, "finished",
-		G_CALLBACK(comm_ssh_ask_port_finished), comm_server);
+		G_CALLBACK(comm_ssh_open_tunnel_finished), comm_server);
 
-	g_string_printf(cmd_line,
-		"ssh %s \"LOCK=~/.gebr/run/gebrd-`echo $SSH_CLIENT | awk '{print $1}'`.run;"
-		"test -e $LOCK && echo `cat $LOCK` $SSH_CLIENT\"", comm_server->address->str);
+	comm_server->state = SERVER_STATE_OPEN_TUNNEL;
+	comm_server->tunnel_port = 2125;
+	while (!g_tcp_server_is_local_port_available(comm_server->tunnel_port))
+		++comm_server->tunnel_port;
+
+	g_string_printf(cmd_line, "ssh -f -L %d:127.0.0.1:%d %s 'sleep 300'",
+		comm_server->tunnel_port, comm_server->port, comm_server->address->str);
 	g_terminal_process_start(process, cmd_line);
 
 	g_string_free(cmd_line, TRUE);
@@ -367,7 +283,7 @@ comm_server_connected(GTcpSocket * tcp_socket, struct comm_server * comm_server)
 
 	/* send INI */
 	protocol_send_data(comm_server->protocol, comm_server->tcp_socket,
-		protocol_defs.ini_def, 5, PROTOCOL_VERSION, hostname, comm_server->client_address->str, display, mcookie->str);
+		protocol_defs.ini_def, 4, PROTOCOL_VERSION, hostname, display, mcookie->str);
 
 	/* frees */
 	g_strfreev(splits);
@@ -427,7 +343,6 @@ comm_server_new(const gchar * _address, const struct comm_server_ops * ops)
 		.protocol = protocol_new(),
 		.address = g_string_new(_address),
 		.port = 0,
-		.client_address = g_string_new(""),
 		.ops = ops,
 		.password = g_string_new(""),
 	};
@@ -451,7 +366,6 @@ comm_server_free(struct comm_server * comm_server)
 	protocol_free(comm_server->protocol);
 	g_string_free(comm_server->address, TRUE);
 	g_string_free(comm_server->password, TRUE);
-	g_string_free(comm_server->client_address, TRUE);
 	g_free(comm_server);
 }
 
@@ -475,9 +389,9 @@ comm_server_connect(struct comm_server * comm_server)
 
 		process = g_terminal_process_new();
 		g_signal_connect(process, "ready-read",
-			G_CALLBACK(comm_ssh_run_comm_server_read), comm_server);
+			G_CALLBACK(comm_ssh_run_server_read), comm_server);
 		g_signal_connect(process, "finished",
-			G_CALLBACK(comm_ssh_run_comm_server_finished), comm_server);
+			G_CALLBACK(comm_ssh_run_server_finished), comm_server);
 
 		g_string_printf(cmd_line, "ssh -x %s 'bash -l -c gebrd'", comm_server->address->str);
 		g_terminal_process_start(process, cmd_line);
@@ -487,31 +401,17 @@ comm_server_connect(struct comm_server * comm_server)
 		comm_server->state = SERVER_STATE_RUN;
 		comm_server_log_message(comm_server, LOG_INFO, _("Launching local server"), comm_server->address->str);
 
-// 		process = g_process_new();
-// 		g_signal_connect(process, "finished",
-// 			G_CALLBACK(local_run_comm_server_finished), comm_server);
-
-#if (!LIBGEBR_STATIC_MODE)
-// 		g_string_printf(cmd_line, "bash -l -c 'gebrd'");
-#else
-// 		g_string_printf(cmd_line, "bash -l -c './gebrd'");
-#endif
-// 		g_process_start(process, cmd_line);
-		system("bash -l -c 'gebrd'");
-
-		comm_server_log_message(comm_server, LOG_DEBUG, "local_run_comm_server_finished");
-
-		comm_server->state = SERVER_STATE_ASK_PORT;
-		comm_server->tried_existant_pass = FALSE;
-
-//		g_process_free(process);
 		process = g_process_new();
 		g_signal_connect(process, "ready-read-stdout",
-				 G_CALLBACK(local_ask_port_read), comm_server);
+			G_CALLBACK(local_run_server_read), comm_server);
 		g_signal_connect(process, "finished",
-				 G_CALLBACK(local_ask_port_finished), comm_server);
+			G_CALLBACK(local_run_server_finished), comm_server);
 
-		g_string_printf(cmd_line, "bash -l -c 'test -e ~/.gebr/run/gebrd.run && cat ~/.gebr/run/gebrd.run'");
+#if (!LIBGEBR_STATIC_MODE)
+		g_string_printf(cmd_line, "bash -l -c 'gebrd'");
+#else
+		g_string_printf(cmd_line, "bash -l -c './gebrd'");
+#endif
 		g_process_start(process, cmd_line);
 	}
 

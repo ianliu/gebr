@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 typedef struct _GHostInfo	GHostInfo;
 
 enum GHostInfoError {
-	G_HOST_INFO_ERROR_NONE,
+	G_HOST_INFO_ERROR_NONE = 0,
 	G_HOST_INFO_ERROR_NOT_FOUND,
 	G_HOST_INFO_ERROR_NO_ADDRESS,
 	G_HOST_INFO_ERROR_TRY_AGAIN,
@@ -41,10 +41,7 @@ struct _GHostInfo {
 	GList *			addresses;
 };
 
-typedef void (*GHostInfoFunc)	(GHostInfo * host_info, gpointer user_data);
-
-GHostInfo *
-g_host_info_new_from_name(GString * hostname);
+typedef void (*GHostInfoFunc)(GHostInfo * host_info, gpointer user_data);
 
 void
 g_host_info_lookup(GString * hostname, GHostInfoFunc callback, gpointer user_data);
@@ -55,14 +52,17 @@ g_host_info_free(GHostInfo * host_info);
 enum GHostInfoError
 g_host_info_error(GHostInfo * host_info);
 
-gboolean
-g_host_info_ok(GHostInfo * host_info);
-
 GList *
 g_host_info_addesses(GHostInfo * host_info);
 
 GHostAddress *
 g_host_info_first_address(GHostInfo * host_info);
+
+GHostInfo *
+g_host_info_lookup_blocking(GString * hostname);
+
+GHostInfo *
+g_host_info_lookup_local(void);
 
 G_END_DECLS
 

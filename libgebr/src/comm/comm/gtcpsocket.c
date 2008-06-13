@@ -118,7 +118,7 @@ __g_tcp_socket_lookup(GHostInfo * host_info, GTcpSocket * tcp_socket)
 {
 	GHostAddress *	host_address;
 
-	if (g_host_info_ok(host_info) == FALSE) {
+	if (g_host_info_error(host_info)) {
 		_g_socket_emit_error(&tcp_socket->parent, G_SOCKET_ERROR_LOOKUP);
 		tcp_socket->parent.state = G_SOCKET_STATE_UNCONNECTED;
 		goto out;
