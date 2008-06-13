@@ -15,6 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -60,7 +61,7 @@ server_init(void)
 	/* fully qualified server address */
 	gethostname(hostname, 255);
 	gebrd.server_host = gethostbyname(hostname);
-	
+
 	/* local address used for listening */
 	host_address = g_host_address_new();
 	g_host_address_set_ipv4_string(host_address, "127.0.0.1");
@@ -103,8 +104,9 @@ server_init(void)
 		fclose(run_fp);
 
 		if (g_tcp_server_is_local_port_available(port) == FALSE) {
-			gebrd_message(LOG_ERROR, _("There is already a server running at %hu"), port);
-			goto err;
+			ret = FALSE;
+			dprintf(gebrd.finished_starting_pipe[1], "%d", port);
+			goto out;
 		}
 	}
 	if ((run_fp = fopen(run_filename->str, "w")) == NULL) {
@@ -126,17 +128,16 @@ server_init(void)
 	/* success */
 	ret = TRUE;
 	gebrd_message(LOG_START, _("Server started at %u port"), g_tcp_server_server_port(gebrd.tcp_server));
+	dprintf(gebrd.finished_starting_pipe[1], "%d", g_tcp_server_server_port(gebrd.tcp_server));
 	goto out;
 
 err:	ret = FALSE;
 	gebrd_message(LOG_ERROR, _("Could not init server. Quiting..."));
+	dprintf(gebrd.finished_starting_pipe[1], "0");
 
 out:	g_string_free(log_filename, TRUE);
 	g_string_free(run_filename, TRUE);
 	g_host_address_free(host_address);
-
-	/* report to the parent process we finished to start */
-	write(gebrd.finished_starting_pipe[1], "1", 2);
 
 	return ret;
 }
@@ -162,7 +163,7 @@ server_quit(void)
 	/* delete lock */
 	run_filename = g_string_new(NULL);
 	g_string_printf(run_filename, "%s/.gebr/run/gebrd-%s.run", getenv("HOME"),
-			inet_ntoa(*(struct in_addr*)gebrd.server_host->h_addr_list[0]));
+		inet_ntoa(*(struct in_addr*)gebrd.server_host->h_addr_list[0]));
 	g_unlink(run_filename->str);
 	g_string_free(run_filename, TRUE);
 
@@ -192,35 +193,38 @@ server_parse_client_messages(struct client * client)
 		/* check login */
 		if (message->hash == protocol_defs.ini_def.hash) {
 			GList *		arguments;
-			GString *	version, * hostname, * address, * display, * mcookie;
+			GString *	version, * hostname, * display, * mcookie;
 
 			/* organize message data */
 			arguments = protocol_split_new(message->argument, 5);
 			version = g_list_nth_data(arguments, 0);
 			hostname = g_list_nth_data(arguments, 1);
-			address = g_list_nth_data(arguments, 2);
 			display = g_list_nth_data(arguments, 3);
 			mcookie = g_list_nth_data(arguments, 4);
 
 			/* set client info */
 			client->protocol->logged = TRUE;
 			g_string_assign(client->protocol->hostname, hostname->str);
-			g_string_assign(client->address, address->str);
 			g_string_assign(client->display, display->str);
 			g_string_assign(client->mcookie, mcookie->str);
 
 			if (client_is_local(client) == FALSE) {
 				GString *	cmd_line;
+				GHostAddress *	client_address;
 
 				/* add client magic cookie */
+				client_address = g_tcp_socket_peer_address(client->tcp_socket);
 				cmd_line = g_string_new(NULL);
 				g_string_printf(cmd_line, "xauth add %s%s . %s",
-						client->address->str,
-						display->str,
-						mcookie->str);
+					g_host_address_to_string(client_address),
+					display->str,
+					mcookie->str);
 				system(cmd_line->str);
 
+				gebrd_message(LOG_DEBUG, "client_address: %s", g_host_address_to_string(client_address));
+
 				g_string_free(cmd_line, TRUE);
+				g_host_address_free(client_address);
 			}
 			/* send return */
 			protocol_send_data(client->protocol, client->tcp_socket,

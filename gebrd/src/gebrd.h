@@ -36,6 +36,10 @@ struct gebrd {
 	int			finished_starting_pipe[2];
 
 	struct hostent *        server_host;
+
+	struct gebrd_options {
+		gboolean	foreground;
+	} options;
 };
 
 void

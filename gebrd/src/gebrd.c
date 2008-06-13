@@ -15,8 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <sys/types.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <signal.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "gebrd.h"
 #include "support.h"
@@ -28,10 +32,44 @@ struct gebrd	gebrd;
 void
 gebrd_init(void)
 {
-	gchar	buf[2];
+	gchar	buf[10];
 
 	pipe(gebrd.finished_starting_pipe);
-	if (fork() == 0) {
+	if (gebrd.options.foreground == FALSE) {
+		if (fork() == 0) {
+			int		i;
+			gboolean	ret;
+
+			/* daemon stuff */
+			setsid();
+			umask(027);
+			close(0);
+			close(1);
+			close(2);
+			i = open("/dev/null", O_RDWR); /* open stdin */
+			dup(i); /* stdout */
+			dup(i); /* stderr */
+			signal(SIGCHLD, SIG_IGN);
+
+			gebrd.main_loop = g_main_loop_new(NULL, FALSE);
+			g_type_init();
+
+			ret = server_init();
+			close(gebrd.finished_starting_pipe[0]);
+			close(gebrd.finished_starting_pipe[1]);
+			if (ret == TRUE) {
+				g_main_loop_run(gebrd.main_loop);
+				g_main_loop_unref(gebrd.main_loop);
+			}
+
+			return;
+		}
+
+		/* wait for server_init sign that it finished */
+		read(gebrd.finished_starting_pipe[0], buf, 10);
+
+		fprintf(stdout, "%s\n", buf);
+	} else {
 		gebrd.main_loop = g_main_loop_new(NULL, FALSE);
 		g_type_init();
 
@@ -39,14 +77,7 @@ gebrd_init(void)
 			g_main_loop_run(gebrd.main_loop);
 			g_main_loop_unref(gebrd.main_loop);
 		}
-
-		return;
 	}
-
-	/* wait for server_init sign that it finished */
-	read(gebrd.finished_starting_pipe[0], buf, 2);
-	close(gebrd.finished_starting_pipe[0]);
-	close(gebrd.finished_starting_pipe[1]);
 }
 
 void
@@ -74,9 +105,14 @@ gebrd_message(enum log_message_type type, const gchar * message, ...)
 	va_end(argp);
 
 #ifndef GEBRD_DEBUG
-	if (type != LOG_DEBUG)
+	if (type != LOG_DEBUG) {
 #endif
 	log_add_message(gebrd.log, type, string);
+	if (gebrd.options.foreground == TRUE)
+		puts(string);
+#ifndef GEBRD_DEBUG
+	}
+#endif
 
 	g_free(string);
 }

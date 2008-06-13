@@ -85,7 +85,6 @@ client_free(struct client * client)
 gboolean
 client_is_local(struct client * client)
 {
-
 	int i = 0;
 
 	while (gebrd.server_host->h_addr_list[i] != NULL) {

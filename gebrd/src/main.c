@@ -24,15 +24,40 @@
 #include <glib.h>
 
 #include "gebrd.h"
+#include "support.h"
 
 int
 main(int argc, char ** argv)
 {
+	static GOptionEntry	entries[] = {
+		{"foreground", 'f', 0, G_OPTION_ARG_NONE, &gebrd.options.foreground,
+			"Run server in foreground mode, not as a daemon", ""},
+		{NULL}
+	};
+	GError *		error = NULL;
+	GOptionContext *	context;
+
 #ifdef ENABLE_NLS
 	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 	textdomain(GETTEXT_PACKAGE);
 #endif
+
+	context = g_option_context_new("GeBR daemon");
+	g_option_context_set_summary(context,
+		""
+	);
+	g_option_context_set_description(context,
+		""
+	);
+	g_option_context_add_main_entries(context, entries, NULL);
+	g_option_context_set_ignore_unknown_options(context, FALSE);
+	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE || argv == NULL) {
+		fprintf(stderr, _("%s: syntax error\n"), argv[0]);
+		fprintf(stderr, _("Try %s --­­help\n"), argv[0]);
+		return -1;
+	}
+
 	gebrd_init();
 
 	return 0;

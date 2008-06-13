@@ -465,15 +465,15 @@ job_run_flow(struct job * job, struct client * client)
 
 	/* initialization */
 	cmd_line = g_string_new(NULL);
-
 	escaped_str = g_strescape(job->cmd_line->str, "");
 
 	/* command-line */
-	g_string_printf(cmd_line, "bash -l -c \"export DISPLAY=%s%s; %s\"",
+	if (client_is_local(client) == FALSE)
+		g_string_printf(cmd_line, "bash -l -c \"export DISPLAY=%s%s; %s\"",
 			client_is_local(client) == FALSE ? client->address->str : "",
 			client->display->str, escaped_str);
-
-	g_free(escaped_str);
+	else
+		g_string_printf(cmd_line, "bash -l -c \"%s\"", escaped_str);
 
 	gebrd.jobs = g_list_append(gebrd.jobs, job);
 	g_signal_connect(job->process, "ready-read-stdout",
@@ -492,6 +492,7 @@ job_run_flow(struct job * job, struct client * client)
 
 	/* frees */
 	g_string_free(cmd_line, TRUE);
+	g_free(escaped_str);
 }
 
 struct job *
