@@ -188,6 +188,7 @@ log_add_message(struct log * log, enum log_message_type type, const gchar * mess
 	/* assembly log line and write to file */
 	g_string_printf(line, "%s %s %s\n", ident_str, iso_date(), message);
 	g_io_channel_write_chars(log->io_channel, line->str, line->len, &bytes_written, &error);
+	error = NULL;
 	g_io_channel_flush(log->io_channel, &error);
 
 	/* frees */

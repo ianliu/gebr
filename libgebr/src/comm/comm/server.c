@@ -61,7 +61,7 @@ local_run_server_read(GProcess * process, struct comm_server * comm_server)
 		comm_server_log_message(comm_server, LOG_DEBUG, "local_run_server_read: %d", port);
 	} else {
 		comm_server->error = SERVER_ERROR_SERVER;
-		comm_server_log_message(comm_server, LOG_ERROR, _("Could not launch local server: %s"),
+		comm_server_log_message(comm_server, LOG_ERROR, _("Could not launch local server: \n%s"),
 			output->str);
 	}
 
@@ -133,12 +133,17 @@ comm_ssh_parse_output(GTerminalProcess * process, struct comm_server * comm_serv
 		answer = g_string_new(NULL);
 		if (comm_server->ops->ssh_question(_("SSH question:"), output->str) == FALSE) {
 			comm_server->error = SERVER_ERROR_SSH;
-			g_string_assign(answer, "no");
+			g_string_assign(answer, "no\n");
 		} else
-			g_string_assign(answer, "yes");
+			g_string_assign(answer, "yes\n");
 		g_terminal_process_write_string(process, answer);
 
 		g_string_free(answer, TRUE);
+	} else if (output->str[output->len-4] == '.') {
+		comm_server_log_message(comm_server, LOG_WARNING, _("Received SSH message: \n%s"),
+			output->str);
+	} else if (!strcmp(output->str, "yes\r\n")) {
+		goto out;
 	} else {
 		/* check if it is an ssh error: check if string starts with "ssh:" */
 		gchar *	str;
@@ -146,7 +151,8 @@ comm_ssh_parse_output(GTerminalProcess * process, struct comm_server * comm_serv
 		str = strstr(output->str, "ssh:");
 		if (str == output->str) {
 			comm_server->error = SERVER_ERROR_SSH;
-			comm_server_log_message(comm_server, LOG_ERROR, _("Error contacting server at address %s via ssh: %s"),
+			comm_server_log_message(comm_server, LOG_ERROR,
+				_("Error contacting server at address %s via ssh: \n%s"),
 				comm_server->address->str, output->str);
 			return TRUE;
 		}
@@ -170,9 +176,8 @@ comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_s
 	gchar *		strtol_endptr;
 	guint16		port;
 
-	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read");
-
 	output = g_terminal_process_read_string_all(process);
+	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read: %s", output->str);
 	if (comm_ssh_parse_output(process, comm_server, output) == TRUE)
 		goto out;
 	port = strtol(output->str, &strtol_endptr, 10);
@@ -181,7 +186,7 @@ comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_s
 		comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read: %d", port);
 	} else {
 		comm_server->error = SERVER_ERROR_SERVER;
-		comm_server_log_message(comm_server, LOG_ERROR, _("Could not comunicate with server %s: %s"),
+		comm_server_log_message(comm_server, LOG_ERROR, _("Could not comunicate with server %s: \n%s"),
 			comm_server->address->str, output->str);
 	}
 

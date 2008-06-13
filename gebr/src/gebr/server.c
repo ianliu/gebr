@@ -58,10 +58,9 @@ server_ssh_login(const gchar * title, const gchar * message)
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 
 	gtk_widget_show_all(dialog);
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK)
 		password = NULL;
-		gtk_widget_destroy(dialog);
-	} else
+	else
 		password = g_string_new(gtk_entry_get_text(GTK_ENTRY(entry)));
 
 	gtk_widget_destroy(dialog);

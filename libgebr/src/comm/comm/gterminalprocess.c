@@ -273,10 +273,6 @@ g_terminal_process_start(GTerminalProcess * terminal_process, GString * cmd_line
 	if (g_terminal_process_bytes_available(terminal_process))
 		g_signal_emit(terminal_process, object_signals[READY_READ], 0);
 
-// 	sigaction(SIGINT, &intr, (struct sigaction *) NULL);
-// 	sigaction(SIGQUIT, &quit, (struct sigaction *) NULL);
-// 	sigprocmask(SIG_SETMASK, &omask, (sigset_t *) NULL);
-
 out:	g_strfreev(argv);
 	return ret;
 }
