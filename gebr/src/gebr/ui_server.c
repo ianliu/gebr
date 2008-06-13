@@ -289,7 +289,7 @@ server_list_setup_ui(void)
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), entry, FALSE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(entry), "activate",
-			GTK_SIGNAL_FUNC(server_list_add), ui_server_list);
+		GTK_SIGNAL_FUNC(server_list_add), ui_server_list);
 
 	server_common_setup(&ui_server_list->common);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_server_list->common.view, TRUE, TRUE, 0);
@@ -343,12 +343,7 @@ server_list_updated_status(struct server * server)
 static void
 server_list_add(GtkEntry * entry, struct ui_server_list * ui_server_list)
 {
-	struct hostent * host;
-
-	host = gethostbyname(gtk_entry_get_text(entry));
-
-	server_common_add(&ui_server_list->common, host->h_name);
-
+	server_common_add(&ui_server_list->common, gtk_entry_get_text(entry));
 	gtk_entry_set_text(entry, "");
 }
 
@@ -401,9 +396,9 @@ server_select_setup_ui(void)
 
 	ui_server_select = g_malloc(sizeof(struct ui_server_select));
 	ui_server_select->common.dialog = gtk_dialog_new_with_buttons(_("Select server"),
-							GTK_WINDOW(gebr.window),
-							GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-							NULL);
+		GTK_WINDOW(gebr.window),
+		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		NULL);
 	ui_server_select->ok_button = gtk_dialog_add_button(GTK_DIALOG(ui_server_select->common.dialog), GTK_STOCK_OK, GTK_RESPONSE_OK);
 	gtk_dialog_add_buttons(GTK_DIALOG(ui_server_select->common.dialog),
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -468,8 +463,8 @@ server_select_cursor_changed(GtkTreeView * tree_view, struct ui_server_select * 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_server_select->common.view));
 	gtk_tree_selection_get_selected(selection, &model, &iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(ui_server_select->common.store), &iter,
-			SERVER_POINTER, &server,
-			-1);
+		SERVER_POINTER, &server,
+		-1);
 
 	if (server->comm->protocol->logged == FALSE)
 		g_object_set(ui_server_select->ok_button, "sensitive", FALSE, NULL);
@@ -481,7 +476,7 @@ server_select_cursor_changed(GtkTreeView * tree_view, struct ui_server_select * 
 
 static void
 server_select_row_changed(GtkTreeModel * tree_model, GtkTreePath * path, GtkTreeIter * iter,
-			  struct ui_server_select * ui_server_select)
+	struct ui_server_select * ui_server_select)
 {
 	/* A server may change its status and we should
 	   enable/disable OK */
