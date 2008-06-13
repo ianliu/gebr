@@ -196,11 +196,11 @@ server_parse_client_messages(struct client * client)
 			GString *	version, * hostname, * display, * mcookie;
 
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 5);
+			arguments = protocol_split_new(message->argument, 4);
 			version = g_list_nth_data(arguments, 0);
 			hostname = g_list_nth_data(arguments, 1);
-			display = g_list_nth_data(arguments, 3);
-			mcookie = g_list_nth_data(arguments, 4);
+			display = g_list_nth_data(arguments, 2);
+			mcookie = g_list_nth_data(arguments, 3);
 
 			/* set client info */
 			client->protocol->logged = TRUE;
