@@ -97,6 +97,9 @@ g_socket_get_last_error(GSocket *);
 gulong
 g_socket_bytes_available(GSocket *);
 
+gulong
+g_socket_bytes_to_write(GSocket *);
+
 GByteArray *
 g_socket_read(GSocket *, gsize);
 

@@ -317,6 +317,12 @@ g_socket_bytes_available(GSocket * socket)
 	return available;
 }
 
+gulong
+g_socket_bytes_to_write(GSocket * socket)
+{
+	return socket->queue_write_bytes->len;
+}
+
 GByteArray *
 g_socket_read(GSocket * socket, gsize max_size)
 {

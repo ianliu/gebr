@@ -32,7 +32,7 @@
 
 #include "ui_help.h"
 #include "gebr.h"
-#include "defines.h"
+#include "../defines.h"
 #include "support.h"
 #include "menu.h"
 

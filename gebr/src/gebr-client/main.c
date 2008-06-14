@@ -15,6 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
 #include <locale.h>
 /* TODO: Check for libintl on configure */
 #ifdef ENABLE_NLS
@@ -23,18 +24,62 @@
 
 #include <glib.h>
 
-#include "server.h"
+#include "gebrclient.h"
+#include "../defines.h"
+#include "support.h"
 
 int
 main(int argc, char ** argv, char ** env)
 {
+	gboolean		show_version;
+	GOptionEntry		entries[] = {
+		{"version", 0, 0, G_OPTION_ARG_NONE, &show_version,
+			"Show GeBR client version", NULL},
+		{NULL}
+	};
+	GError *		error = NULL;
+	GOptionContext *	context;
+
+	context = g_option_context_new(_("serveraddress command [args]}"));
+	g_option_context_set_summary(context,
+		_("GeBR commandline client")
+	);
+	g_option_context_set_description(context,
+		_("a seismic processing environment")
+	);
+	g_option_context_add_main_entries(context, entries, NULL);
+	g_option_context_set_ignore_unknown_options(context, FALSE);
+	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE || argv == NULL) {
+		gebr_client_message(LOG_ERROR, _("%s: syntax error"), argv[0]);
+		gebr_client_message(LOG_ERROR, _("Try %s --­­help"), argv[0]);
+		return -1;
+	}
+
+	if (show_version == TRUE) {
+		gebr_client_message(LOG_INFO, _("%s"), GEBR_VERSION);
+		return 0;
+	}
+
 #ifdef ENABLE_NLS
 	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 	textdomain(GETTEXT_PACKAGE);
 #endif
 
+	if (argc < 2) {
+		gebr_client_message(LOG_ERROR, _("No server address specified"));
+		return -1;
+	}
 
+	gebr_client.main_loop = g_main_loop_new(NULL, FALSE);
+	g_type_init();
+
+	if (gebr_client_init(argv[1]) == TRUE) {
+		
+
+		g_main_loop_run(gebr_client.main_loop);
+		g_main_loop_unref(gebr_client.main_loop);
+	}
 
 	return 0;
 }

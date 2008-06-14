@@ -35,7 +35,7 @@
 #include <misc/utils.h>
 
 #include "menu.h"
-#include "defines.h"
+#include "../defines.h"
 #include "gebr.h"
 #include "support.h"
 #include "document.h"

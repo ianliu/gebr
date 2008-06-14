@@ -79,5 +79,5 @@ AC_OUTPUT([
 debian/changelog
 rpm/gebr.fedora.spec rpm/gebr.opensuse.spec rpm/gebr.mandriva.spec
 Makefile data/Makefile menus/Makefile
-src/Makefile src/gebr/Makefile src/gebr/defines.h src/gebr-client/Makefile
+src/Makefile src/defines.h src/gebr/Makefile src/gebr-client/Makefile
 ])

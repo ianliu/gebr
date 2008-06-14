@@ -25,7 +25,7 @@
 #include <gtk/gtk.h>
 
 #include "gebr.h"
-#include "defines.h"
+#include "../defines.h"
 #include "support.h"
 #include "interface.h"
 
@@ -63,19 +63,17 @@ main(int argc, char ** argv, char ** env)
 
 	gtk_init(&argc, &argv);
 
+#ifdef ENABLE_NLS
+	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	textdomain(GETTEXT_PACKAGE);
+#endif
 	/* FIXME: necessary for representing fractional numbers only with comma */
 	setlocale(LC_NUMERIC, "C");
-
-#ifdef ENABLE_NLS
-	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-	textdomain (GETTEXT_PACKAGE);
-#endif
-
 	assembly_interface();
 	gebr_init(argc, argv);
 
 	gtk_main();
 
-	return EXIT_SUCCESS;
+	return 0;
 }

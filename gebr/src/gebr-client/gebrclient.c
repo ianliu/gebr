@@ -18,6 +18,26 @@
 #include <stdio.h>
 
 #include "gebrclient.h"
+#include "support.h"
+#include "server.h"
+
+struct gebr_client gebr_client;
+
+gboolean
+gebr_client_init(const gchar * server_address)
+{
+	gebr_client.server = server_new(server_address);
+
+	return TRUE;
+}
+
+void
+gebr_client_quit(void)
+{
+	server_free(gebr_client.server);
+
+	g_main_loop_quit(gebr_client.main_loop);
+}
 
 void
 gebr_client_message(enum log_message_type type, const gchar * message, ...)
@@ -30,12 +50,15 @@ gebr_client_message(enum log_message_type type, const gchar * message, ...)
 	va_end(argp);
 
 #ifndef GEBR_DEBUG
-	if (type != LOG_DEBUG)
+	if (type != LOG_DEBUG) {
 #endif
 	if (type == LOG_ERROR)
-		fprintf(stderr, string);
+		fprintf(stderr, "%s\n", string);
 	else
-		fprintf(stdout, string);
+		fprintf(stdout, "%s\n", string);
+#ifndef GEBR_DEBUG
+	}
+#endif
 
 	g_free(string);
 }

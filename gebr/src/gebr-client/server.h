@@ -27,7 +27,7 @@
 struct server {
 	struct comm_server *	comm;
 
-
+	
 };
 
 struct server *
@@ -35,5 +35,8 @@ server_new(const gchar * address);
 
 void
 server_free(struct server * server);
+
+gboolean
+server_run_flow(struct server * server, const gchar * flow_path);
 
 #endif //__SERVER_H

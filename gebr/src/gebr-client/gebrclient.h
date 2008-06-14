@@ -22,6 +22,26 @@
 
 #include <misc/log.h>
 
+#include "server.h"
+
+extern struct gebr_client gebr_client;
+
+struct gebr_client {
+	struct server *	server;
+
+	struct gebr_client_options {
+		
+	} options;
+
+	GMainLoop *	main_loop;
+};
+
+gboolean
+gebr_client_init(const gchar * server_address);
+
+void
+gebr_client_quit(void);
+
 void
 gebr_client_message(enum log_message_type type, const gchar * message, ...);
 
