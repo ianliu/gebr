@@ -1,5 +1,5 @@
-/*   libgebr - G�BR Library
- *   Copyright (C) 2007 G�BR core team (http://gebr.sourceforge.net)
+/*   libgebr - GeBR Library
+ *   Copyright (C) 2007 GeBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 
 #ifndef __LIBGEBR_GEOXML_ERROR_H
 #define __LIBGEBR_GEOXML_ERROR_H
+
+#include <glib.h>
 
 /**
  * \file error.h
@@ -63,14 +65,10 @@ enum GEOXML_RETV {
 	GEOXML_RETV_CANT_ACCESS_FILE		= -3,
 	/**
 	 * The index is equal or greater than the list.
-	 *
-	 * Returned by 'geoxml_programs_number' and 'geoxml_program_parameters_number'.
 	 */
 	GEOXML_RETV_INVALID_INDEX		= -4,
 	/**
 	 * The parsed flow is invalid acording to its DTD.
-	 *
-	 * Returned by 'geoxml_flow_load', 'geoxml_flow_validate' and 'geoxml_flow_save'.
 	 */
 	GEOXML_RETV_INVALID_DOCUMENT		= -5,
 	/**
@@ -99,5 +97,20 @@ enum GEOXML_RETV {
 	 */
 	GEOXML_RETV_MORE_THAN_ONE_INSTANCES	= -11,
 };
+
+/**
+ * Returns an one line string corresponding to \p error
+ * \see geoxml_error_explained_string
+ */
+const gchar *
+geoxml_error_string(enum GEOXML_RETV error);
+
+/**
+ * Returns a string corresponding to \p error. The text
+ * explain with details \p error, and can be multilined.
+ * \see geoxml_error_string
+ */
+const gchar *
+geoxml_error_explained_string(enum GEOXML_RETV error);
 
 #endif //__LIBGEBR_GEOXML_ERROR_H

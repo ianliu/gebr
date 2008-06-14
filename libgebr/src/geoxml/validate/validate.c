@@ -48,35 +48,9 @@ main(int argc, char ** argv)
 
 	for (i = 1; argv[i] != NULL; ++i) {
 		ret = geoxml_document_validate(argv[i]);
-		if (ret < 0) {
-			printf("%s INVALID: ", argv[i]);
-			switch (ret) {
-			case GEOXML_RETV_DTD_SPECIFIED:
-				printf("DTD specified. The <DOCTYPE ...> must not appear in XML.\n"
-					"libgeoxml will find the appriate DTD installed from version.\n");
-				break;
-			case GEOXML_RETV_INVALID_DOCUMENT:
-				printf("Invalid document. The has a sintax error or doesn't match the DTD.\n"
-					"In this case see the errors above\n");
-				break;
-			case GEOXML_RETV_CANT_ACCESS_FILE:
-				printf("Can't access file. The file doesn't exist or there is not enough "
-					"permission to read it.\n");
-				break;
-			case GEOXML_RETV_CANT_ACCESS_DTD:
-				printf("Can't access dtd. The file's DTD couldn't not be found.\n"
-					"It may be a newer version not support by this version of libgeoxml "
-					"or there is an installation problem\n");
-				break;
-			case GEOXML_RETV_NO_MEMORY:
-				printf("Not enough memory. "
-					"The library stoped after an unsucessful memory allocation.\n");
-				break;
-			default:
-				printf("Unspecified error %d.\n"
-					"See library documentation at http://gebr.sf.net/libgeoxml/doc\n", ret);
-				break;
-			}
+		if (ret) {
+			printf("%s INVALID: %s", argv[i],
+				geoxml_error_explained_string((enum GEOXML_RETV)ret));
 			continue;
 		}
 
