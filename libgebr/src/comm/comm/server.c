@@ -174,18 +174,36 @@ static void
 comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_server)
 {
 	GString *	output;
-	gchar *		strtol_endptr;
-	guint16		port;
-	gchar **	splits;
 
 	output = g_terminal_process_read_string_all(process);
 	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read: %s", output->str);
 	if (comm_ssh_parse_output(process, comm_server, output) == TRUE)
 		goto out;
 
-	splits = g_strsplit(output->str, "\n", 2);
-	g_string_assign(comm_server->own_address, splits[0]);
+	g_string_append(comm_server->tmp, output->str);
 
+out:	g_string_free(output, TRUE);
+}
+
+static void
+comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * comm_server)
+{
+	gchar **	splits;
+	gchar *		strtol_endptr;
+	guint16		port;
+	GString *	cmd_line;
+
+	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_finished");
+
+	g_terminal_process_free(process);
+	if (comm_server->error != SERVER_ERROR_NONE)
+		return;
+
+	/*
+	 * Get own IP and server port
+	 */
+	splits = g_strsplit(comm_server->tmp->str, "\n", 2);
+	g_string_assign(comm_server->own_address, splits[0]);
 	if (splits[1] == NULL) {
 		comm_server->error = SERVER_ERROR_SERVER;
 		goto out;
@@ -197,23 +215,8 @@ comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_s
 	} else {
 		comm_server->error = SERVER_ERROR_SERVER;
 		comm_server_log_message(comm_server, LOG_ERROR, _("Could not comunicate with server %s: \n%s"),
-			comm_server->address->str, output->str);
+			comm_server->address->str, comm_server->tmp->str);
 	}
-
-	g_strfreev(splits);
-out:	g_string_free(output, TRUE);
-}
-
-static void
-comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * comm_server)
-{
-	GString *	cmd_line;
-
-	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_finished");
-
-	g_terminal_process_free(process);
-	if (comm_server->error != SERVER_ERROR_NONE)
-		return;
 
 	comm_server->tried_existant_pass = FALSE;
 	cmd_line = g_string_new(NULL);
@@ -233,6 +236,7 @@ comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * co
 	g_terminal_process_start(process, cmd_line);
 
 	g_string_free(cmd_line, TRUE);
+out:	g_strfreev(splits);
 }
 
 static void
@@ -365,6 +369,7 @@ comm_server_new(const gchar * _address, const struct comm_server_ops * ops)
 		.own_address = g_string_new(NULL),
 		.ops = ops,
 		.password = g_string_new(""),
+		.tmp = g_string_new(NULL),
 	};
 
 	g_signal_connect(comm_server->tcp_socket, "connected",
@@ -387,6 +392,7 @@ comm_server_free(struct comm_server * comm_server)
 	g_string_free(comm_server->address, TRUE);
 	g_string_free(comm_server->password, TRUE);
 	g_string_free(comm_server->own_address, TRUE);
+	g_string_free(comm_server->tmp, TRUE);
 	g_free(comm_server);
 }
 
@@ -413,6 +419,7 @@ comm_server_connect(struct comm_server * comm_server)
 			G_CALLBACK(comm_ssh_run_server_read), comm_server);
 		g_signal_connect(process, "finished",
 			G_CALLBACK(comm_ssh_run_server_finished), comm_server);
+		g_string_assign(comm_server->tmp, "");
 
 		g_string_printf(cmd_line, "ssh %s \"echo $SSH_CLIENT | awk '{print $1}'; bash -l -c gebrd\"",
 			comm_server->address->str);

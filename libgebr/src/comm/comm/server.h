@@ -60,6 +60,9 @@ struct comm_server {
 		void		(*parse_messages)(struct comm_server * comm_server, gpointer user_data);
 	} * ops;
 	gpointer		user_data;
+
+	/* used for storing run_server_read output */
+	GString *		tmp;
 };
 
 struct comm_server *
