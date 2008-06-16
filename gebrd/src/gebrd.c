@@ -68,7 +68,7 @@ gebrd_init(void)
 		/* wait for server_init sign that it finished */
 		read(gebrd.finished_starting_pipe[0], buf, 10);
 
-		fprintf(stdout, "%s\n", buf);
+		fprintf(stdout, "%s", buf);
 	} else {
 		gebrd.main_loop = g_main_loop_new(NULL, FALSE);
 		g_type_init();
