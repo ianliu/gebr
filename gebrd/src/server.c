@@ -95,6 +95,12 @@ server_init(void)
 		fclose(run_fp);
 
 		if (g_tcp_server_is_local_port_available(port) == FALSE) {
+			if (gebrd.options.foreground == TRUE) {
+				ret = FALSE;
+				gebrd_message(LOG_ERROR,
+					_("Cannot run interactive server, GeBR daemon is already running"));
+				goto out;
+			}
 			ret = FALSE;
 			dprintf(gebrd.finished_starting_pipe[1], "%d\n", port);
 			goto out;
