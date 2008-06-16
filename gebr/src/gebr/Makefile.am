@@ -49,7 +49,6 @@ gebr_SOURCES = main.c \
 	ui_server.c
 noinst_HEADERS = \
 	cmdline.h \
-	defines.h \
 	gebr.h \
 	callbacks.h \
 	document.h \

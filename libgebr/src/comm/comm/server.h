@@ -31,9 +31,11 @@ struct comm_server {
 	GTcpSocket *		tcp_socket;
 	/* protocol parsing stuff */
 	struct protocol *	protocol;
-	/* address */
+	/* server address/port */
 	GString *		address;
 	guint16			port;
+	/* client own address as seen by server */
+	GString *		own_address;
 	/* ssh stuff */
 	GString *		password;
 	gint16			tunnel_port;

@@ -29,9 +29,10 @@ struct gebrd {
 	GTcpServer *		tcp_server;
 	GList *			clients;
 	GList *			jobs;
-
 	struct log *		log;
-	struct hostent *        server_host;
+	gchar			hostname[256];
+
+	GString *		run_filename;
 
 	struct gebrd_options {
 		gboolean	foreground;

@@ -55,6 +55,7 @@ local_run_server_read(GProcess * process, struct comm_server * comm_server)
 	guint16		port;
 
 	output = g_process_read_stdout_string_all(process);
+	g_string_assign(comm_server->own_address, "127.0.0.1");
 	port = strtol(output->str, &strtol_endptr, 10);
 	if (port) {
 		comm_server->port = port;
@@ -175,12 +176,21 @@ comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_s
 	GString *	output;
 	gchar *		strtol_endptr;
 	guint16		port;
+	gchar **	splits;
 
 	output = g_terminal_process_read_string_all(process);
 	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read: %s", output->str);
 	if (comm_ssh_parse_output(process, comm_server, output) == TRUE)
 		goto out;
-	port = strtol(output->str, &strtol_endptr, 10);
+
+	splits = g_strsplit(output->str, "\n", 2);
+	g_string_assign(comm_server->own_address, splits[0]);
+
+	if (splits[1] == NULL) {
+		comm_server->error = SERVER_ERROR_SERVER;
+		goto out;
+	}
+	port = strtol(splits[1], &strtol_endptr, 10);
 	if (port) {
 		comm_server->port = port;
 		comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read: %d", port);
@@ -190,6 +200,7 @@ comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_s
 			comm_server->address->str, output->str);
 	}
 
+	g_strfreev(splits);
 out:	g_string_free(output, TRUE);
 }
 
@@ -290,7 +301,8 @@ comm_server_connected(GTcpSocket * tcp_socket, struct comm_server * comm_server)
 
 	/* send INI */
 	protocol_send_data(comm_server->protocol, comm_server->tcp_socket,
-		protocol_defs.ini_def, 4, PROTOCOL_VERSION, hostname, display, mcookie->str);
+		protocol_defs.ini_def, 5, PROTOCOL_VERSION, hostname,
+			comm_server->own_address->str, display, mcookie->str);
 
 	/* frees */
 	g_strfreev(splits);
@@ -350,6 +362,7 @@ comm_server_new(const gchar * _address, const struct comm_server_ops * ops)
 		.protocol = protocol_new(),
 		.address = g_string_new(_address),
 		.port = 0,
+		.own_address = g_string_new(NULL),
 		.ops = ops,
 		.password = g_string_new(""),
 	};
@@ -373,6 +386,7 @@ comm_server_free(struct comm_server * comm_server)
 	protocol_free(comm_server->protocol);
 	g_string_free(comm_server->address, TRUE);
 	g_string_free(comm_server->password, TRUE);
+	g_string_free(comm_server->own_address, TRUE);
 	g_free(comm_server);
 }
 
@@ -400,13 +414,14 @@ comm_server_connect(struct comm_server * comm_server)
 		g_signal_connect(process, "finished",
 			G_CALLBACK(comm_ssh_run_server_finished), comm_server);
 
-		g_string_printf(cmd_line, "ssh -x %s 'bash -l -c gebrd'", comm_server->address->str);
+		g_string_printf(cmd_line, "ssh %s \"echo $SSH_CLIENT | awk '{print $1}'; bash -l -c gebrd\"",
+			comm_server->address->str);
 		g_terminal_process_start(process, cmd_line);
 	} else {
 		GProcess *	process;
 
 		comm_server->state = SERVER_STATE_RUN;
-		comm_server_log_message(comm_server, LOG_INFO, _("Launching local server"), comm_server->address->str);
+		comm_server_log_message(comm_server, LOG_INFO, _("Launching local server"));
 
 		process = g_process_new();
 		g_signal_connect(process, "ready-read-stdout",

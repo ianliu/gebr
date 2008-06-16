@@ -49,18 +49,12 @@ server_init(void)
 	gboolean		ret;
 
 	GString *		log_filename;
-	GString *		run_filename;
 	FILE *			run_fp;
 
-	gchar                   hostname[256];
-
 	/* initialization */
+	gebrd.run_filename = g_string_new(NULL);
+	gethostname(gebrd.hostname, 255);
 	log_filename = g_string_new(NULL);
-	run_filename = g_string_new(NULL);
-
-	/* fully qualified server address */
-	gethostname(hostname, 255);
-	gebrd.server_host = gethostbyname(hostname);
 
 	/* local address used for listening */
 	host_address = g_host_address_new();
@@ -73,9 +67,7 @@ server_init(void)
 	}
 
 	/* log */
-	g_string_printf(log_filename, "%s/.gebr/log/gebrd-%s.log", getenv("HOME"),
-			inet_ntoa(*(struct in_addr*)gebrd.server_host->h_addr_list[0]));
-
+	g_string_printf(log_filename, "%s/.gebr/log/gebrd-%s.log", getenv("HOME"), gebrd.hostname);
 	gebrd.log = log_open(log_filename->str);
 
 	/* protocol */
@@ -88,28 +80,27 @@ server_init(void)
 		goto err;
 	}
 	g_signal_connect(gebrd.tcp_server, "new-connection",
-			G_CALLBACK(server_new_connection), NULL);
+		G_CALLBACK(server_new_connection), NULL);
 
 	/* write on user's home directory a file with a port */
-	g_string_printf(run_filename, "%s/.gebr/run/gebrd-%s.run", getenv("HOME"),
-			inet_ntoa(*(struct in_addr*)gebrd.server_host->h_addr_list[0]));
-	if (g_file_test(run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
+	g_string_printf(gebrd.run_filename, "%s/.gebr/run/gebrd-%s.run", getenv("HOME"), gebrd.hostname);
+	if (g_file_test(gebrd.run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
 		/* check if server crashed by trying connecting to it
 		 * if the connection is refused, the it *probably* did
 		 */
 		guint16		port;
 
-		run_fp = fopen(run_filename->str, "r");
+		run_fp = fopen(gebrd.run_filename->str, "r");
 		fscanf(run_fp, "%hu", &port);
 		fclose(run_fp);
 
 		if (g_tcp_server_is_local_port_available(port) == FALSE) {
 			ret = FALSE;
-			dprintf(gebrd.finished_starting_pipe[1], "%d", port);
+			dprintf(gebrd.finished_starting_pipe[1], "%d\n", port);
 			goto out;
 		}
 	}
-	if ((run_fp = fopen(run_filename->str, "w")) == NULL) {
+	if ((run_fp = fopen(gebrd.run_filename->str, "w")) == NULL) {
 		gebrd_message(LOG_ERROR, _("Could not write run file."));
 		goto err;
 	}
@@ -128,15 +119,14 @@ server_init(void)
 	/* success */
 	ret = TRUE;
 	gebrd_message(LOG_START, _("Server started at %u port"), g_tcp_server_server_port(gebrd.tcp_server));
-	dprintf(gebrd.finished_starting_pipe[1], "%d", g_tcp_server_server_port(gebrd.tcp_server));
+	dprintf(gebrd.finished_starting_pipe[1], "%d\n", g_tcp_server_server_port(gebrd.tcp_server));
 	goto out;
 
 err:	ret = FALSE;
 	gebrd_message(LOG_ERROR, _("Could not init server. Quiting..."));
-	dprintf(gebrd.finished_starting_pipe[1], "0");
+	dprintf(gebrd.finished_starting_pipe[1], "0\n");
 
 out:	g_string_free(log_filename, TRUE);
-	g_string_free(run_filename, TRUE);
 	g_host_address_free(host_address);
 
 	return ret;
@@ -156,16 +146,11 @@ server_free(void)
 void
 server_quit(void)
 {
-	GString *	run_filename;
-
 	log_close(gebrd.log);
 
 	/* delete lock */
-	run_filename = g_string_new(NULL);
-	g_string_printf(run_filename, "%s/.gebr/run/gebrd-%s.run", getenv("HOME"),
-		inet_ntoa(*(struct in_addr*)gebrd.server_host->h_addr_list[0]));
-	g_unlink(run_filename->str);
-	g_string_free(run_filename, TRUE);
+	g_unlink(gebrd.run_filename->str);
+	g_string_free(gebrd.run_filename, TRUE);
 
 	server_free();
 }
@@ -193,42 +178,37 @@ server_parse_client_messages(struct client * client)
 		/* check login */
 		if (message->hash == protocol_defs.ini_def.hash) {
 			GList *		arguments;
-			GString *	version, * hostname, * display, * mcookie;
+			GString *	version, * hostname, * address, * display, * mcookie;
 
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 4);
+			arguments = protocol_split_new(message->argument, 5);
 			version = g_list_nth_data(arguments, 0);
 			hostname = g_list_nth_data(arguments, 1);
-			display = g_list_nth_data(arguments, 2);
-			mcookie = g_list_nth_data(arguments, 3);
+			address = g_list_nth_data(arguments, 2);
+			display = g_list_nth_data(arguments, 3);
+			mcookie = g_list_nth_data(arguments, 4);
 
 			/* set client info */
 			client->protocol->logged = TRUE;
 			g_string_assign(client->protocol->hostname, hostname->str);
 			g_string_assign(client->display, display->str);
 			g_string_assign(client->mcookie, mcookie->str);
+			g_string_assign(client->address, address->str);
 
 			if (client_is_local(client) == FALSE) {
 				GString *	cmd_line;
-				GHostAddress *	client_address;
 
 				/* add client magic cookie */
-				client_address = g_tcp_socket_peer_address(client->tcp_socket);
 				cmd_line = g_string_new(NULL);
 				g_string_printf(cmd_line, "xauth add %s%s . %s",
-					g_host_address_to_string(client_address),
-					display->str,
-					mcookie->str);
+					address->str, display->str, mcookie->str);
 				system(cmd_line->str);
 
-				gebrd_message(LOG_DEBUG, "client_address: %s", g_host_address_to_string(client_address));
-
 				g_string_free(cmd_line, TRUE);
-				g_host_address_free(client_address);
 			}
 			/* send return */
 			protocol_send_data(client->protocol, client->tcp_socket,
-				protocol_defs.ret_def, 1, gebrd.server_host->h_name);
+				protocol_defs.ret_def, 1, gebrd.hostname);
 
 			/* frees */
 			protocol_split_free(arguments);
@@ -261,9 +241,9 @@ server_parse_client_messages(struct client * client)
 			if ((success = job_new(&job, client, xml)) == TRUE)
 				job_run_flow(job, client);
 			protocol_send_data(client->protocol, client->tcp_socket, protocol_defs.ret_def,
-					7, job->jid->str, job->status->str, job->title->str,
-					job->start_date->str, job->issues->str,
-					job->cmd_line->str, job->output->str);
+				7, job->jid->str, job->status->str, job->title->str,
+				job->start_date->str, job->issues->str,
+				job->cmd_line->str, job->output->str);
 
 			/* notify all clients of this new job */
 			if (success == TRUE) {

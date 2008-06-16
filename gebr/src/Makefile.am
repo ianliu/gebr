@@ -15,3 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 SUBDIRS = gebr gebr-client
+
+noinst_HEADERS = \
+	defines.h

@@ -85,15 +85,7 @@ client_free(struct client * client)
 gboolean
 client_is_local(struct client * client)
 {
-	int i = 0;
-
-	while (gebrd.server_host->h_addr_list[i] != NULL) {
-		if (strcmp(inet_ntoa(*(struct in_addr*)gebrd.server_host->h_addr_list[i]), client->address->str) == 0)
-			return TRUE;
-                i++;
-        }
-	
-	return FALSE;
+	return (gboolean)!strcmp(client->address->str, "127.0.0.1");
 }
 
 static void
