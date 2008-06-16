@@ -108,8 +108,12 @@ gebrd_message(enum log_message_type type, const gchar * message, ...)
 	if (type != LOG_DEBUG) {
 #endif
 	log_add_message(gebrd.log, type, string);
-	if (gebrd.options.foreground == TRUE)
-		puts(string);
+	if (gebrd.options.foreground == TRUE) {
+		if (type != LOG_ERROR)
+			fprintf(stdout, "%s\n", string);
+		else
+			fprintf(stderr, "%s\n", string);
+	}
 #ifndef GEBRD_DEBUG
 	}
 #endif
