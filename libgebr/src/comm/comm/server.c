@@ -346,7 +346,7 @@ comm_server_error(GTcpSocket * tcp_socket, enum GSocketError error, struct comm_
 	comm_server->error = SERVER_ERROR_CONNECT;
 	if (error == G_SOCKET_ERROR_UNKNOWN)
 		puts("unk");
-	comm_server_log_message(comm_server, LOG_ERROR, _("Connection error '%s' on server '%s'"), error, comm_server->address->str);
+	comm_server_log_message(comm_server, LOG_ERROR, _("Connection error '%d' on server '%s'"), error, comm_server->address->str);
 }
 
 
