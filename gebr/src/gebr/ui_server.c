@@ -51,7 +51,7 @@ server_select_cursor_changed(GtkTreeView * tree_view, struct ui_server_select * 
 
 static void
 server_select_row_changed(GtkTreeModel * tree_model, GtkTreePath * path, GtkTreeIter * iter,
-			  struct ui_server_select * ui_server_select);
+	struct ui_server_select * ui_server_select);
 
 /*
  * Section: Private
@@ -355,6 +355,7 @@ server_select_setup_ui(void)
 	GtkTreeSelection *		selection;
 	GtkTreeIter			iter;
 	gboolean			valid;
+	gulong				handler_id;
 
 	GtkTreeIter			first_connected_iter;
 	guint				connected;
@@ -403,7 +404,7 @@ server_select_setup_ui(void)
 		G_CALLBACK(server_actions), &ui_server_select->common);
 
 	ui_server_select->common.store = gebr.ui_server_list->common.store;
-	g_signal_connect(G_OBJECT(ui_server_select->common.store), "row-changed",
+	handler_id = g_signal_connect(G_OBJECT(ui_server_select->common.store), "row-changed",
 		GTK_SIGNAL_FUNC(server_select_row_changed), ui_server_select);
 
 	server_common_setup(&ui_server_select->common);
@@ -434,6 +435,7 @@ server_select_setup_ui(void)
 	}
 
 	/* frees */
+	g_signal_handler_disconnect(G_OBJECT(ui_server_select->common.store), handler_id);
 	gtk_widget_destroy(ui_server_select->common.dialog);
 	g_free(ui_server_select);
 
