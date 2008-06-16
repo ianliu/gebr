@@ -202,7 +202,7 @@ comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * co
 	/*
 	 * Get own IP and server port
 	 */
-	splits = g_strsplit(comm_server->tmp->str, "\n", 2);
+	splits = g_strsplit(comm_server->tmp->str, "\r\n", 2);
 	g_string_assign(comm_server->own_address, splits[0]);
 	if (splits[1] == NULL) {
 		comm_server->error = SERVER_ERROR_SERVER;
@@ -421,7 +421,7 @@ comm_server_connect(struct comm_server * comm_server)
 			G_CALLBACK(comm_ssh_run_server_finished), comm_server);
 		g_string_assign(comm_server->tmp, "");
 
-		g_string_printf(cmd_line, "ssh %s \"echo $SSH_CLIENT | awk '{print $1}'; bash -l -c gebrd\"",
+		g_string_printf(cmd_line, "ssh -x %s \"echo $SSH_CLIENT | awk '{print $1}'; bash -l -c gebrd\"",
 			comm_server->address->str);
 		g_terminal_process_start(process, cmd_line);
 	} else {
