@@ -19,6 +19,7 @@
 
 #include "client.h"
 #include "gebr.h"
+#include "support.h"
 #include "server.h"
 #include "job.h"
 
@@ -44,6 +45,12 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 				comm_server->protocol->logged = TRUE;
 				server_list_updated_status(server);
 				g_string_assign(comm_server->protocol->hostname, hostname->str);
+				if (comm_server_is_local(comm_server) == TRUE)
+					gebr_message(LOG_INFO, TRUE, TRUE, _("Connected to local server"),
+						comm_server->address->str);
+				else
+					gebr_message(LOG_INFO, TRUE, TRUE, _("Connected to server '%s'"),
+						comm_server->address->str);
 
 				/* request list of jobs */
 				protocol_send_data(comm_server->protocol, comm_server->tcp_socket,
