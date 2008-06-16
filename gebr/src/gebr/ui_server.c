@@ -206,13 +206,7 @@ server_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * ui_serve
 		gebr_config_save(FALSE);
 		break;
 	case GEBR_SERVER_ADD_LOCAL: {
-		gchar                   localhostname[256];
-		struct hostent *        host;
-
-		gethostname(localhostname, 255);
-		host = gethostbyname(localhostname);
-		
-		server_new(host->h_name);
+		server_new("127.0.0.1");
 		server_common_check_for_local(ui_server_common);
 		break;
 	}

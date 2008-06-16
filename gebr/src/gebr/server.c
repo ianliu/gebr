@@ -15,6 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include <gtk/gtk.h>
 
 #include "server.h"
@@ -115,10 +117,10 @@ server_new(const gchar * address)
 	/* fill iter */
 	gtk_list_store_append(gebr.ui_server_list->common.store, &iter);
 	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
-			SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
-			SERVER_ADDRESS, (gchar*)address,
-			SERVER_POINTER, server,
-			-1);
+		SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
+		SERVER_ADDRESS, !strcmp(address, "127.0.0.1") ? _("Local server") : address,
+		SERVER_POINTER, server,
+		-1);
 	server->iter = iter;
 
 	g_signal_connect(server->comm->tcp_socket, "disconnected",
