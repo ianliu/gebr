@@ -210,6 +210,8 @@ server_parse_client_messages(struct client * client)
 					address->str, display->str, mcookie->str);
 				system(cmd_line->str);
 
+				gebrd_message(LOG_DEBUG, "xauth ran: %s", cmd_line->str);
+
 				g_string_free(cmd_line, TRUE);
 			}
 			/* send return */

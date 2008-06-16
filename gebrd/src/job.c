@@ -474,6 +474,7 @@ job_run_flow(struct job * job, struct client * client)
 			client->display->str, escaped_str);
 	else
 		g_string_printf(cmd_line, "bash -l -c \"%s\"", escaped_str);
+	gebrd_message(LOG_DEBUG, "Client flow about to run: %s", cmd_line->str);
 
 	gebrd.jobs = g_list_append(gebrd.jobs, job);
 	g_signal_connect(job->process, "ready-read-stdout",
