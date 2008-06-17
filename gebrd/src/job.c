@@ -468,13 +468,13 @@ job_run_flow(struct job * job, struct client * client)
 	escaped_str = g_strescape(job->cmd_line->str, "");
 
 	/* command-line */
-	if (client_is_local(client) == FALSE)
-		g_string_printf(cmd_line, "bash -l -c \"export DISPLAY=%s%s; %s\"",
-			client_is_local(client) == FALSE ? client->address->str : "",
+	if (client->display->len)
+		g_string_printf(cmd_line, "bash -l -c \"export DISPLAY=%s; %s\"",
 			client->display->str, escaped_str);
 	else
 		g_string_printf(cmd_line, "bash -l -c \"%s\"", escaped_str);
-	gebrd_message(LOG_DEBUG, "Client flow about to run: %s", cmd_line->str);
+	gebrd_message(LOG_DEBUG, "Client '%s' flow about to run: %s",
+		client->protocol->hostname->str, cmd_line->str);
 
 	gebrd.jobs = g_list_append(gebrd.jobs, job);
 	g_signal_connect(job->process, "ready-read-stdout",

@@ -51,4 +51,7 @@ gebrd_quit(void);
 void
 gebrd_message(enum log_message_type type, const gchar * message, ...);
 
+guint8
+gebrd_get_x11_redirect_display(void);
+
 #endif //__GEBRD_H

@@ -25,7 +25,6 @@
 #include "server.h"
 #include "gtcpserver.h"
 #include "gprocess.h"
-#include "gterminalprocess.h"
 #include "support.h"
 
 /*
@@ -55,7 +54,6 @@ local_run_server_read(GProcess * process, struct comm_server * comm_server)
 	guint16		port;
 
 	output = g_process_read_stdout_string_all(process);
-	g_string_assign(comm_server->own_address, "127.0.0.1");
 	port = strtol(output->str, &strtol_endptr, 10);
 	if (port) {
 		comm_server->port = port;
@@ -164,8 +162,22 @@ comm_ssh_parse_output(GTerminalProcess * process, struct comm_server * comm_serv
 out:	return TRUE;
 }
 
+/*
+ * Function: comm_ssh_read
+ * Simple ssh messages parser, like login questions and warnings
+ */ 
 static void
-comm_ssh_open_tunnel_read(GTerminalProcess * process, struct comm_server * comm_server);
+comm_ssh_read(GTerminalProcess * process, struct comm_server * comm_server)
+{
+	GString *	output;
+
+	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_read");
+
+	output = g_terminal_process_read_string_all(process);
+	comm_ssh_parse_output(process, comm_server, output);
+
+	g_string_free(output, TRUE);
+}
 
 static void
 comm_ssh_open_tunnel_finished(GTerminalProcess * process, struct comm_server * comm_server);
@@ -173,6 +185,8 @@ comm_ssh_open_tunnel_finished(GTerminalProcess * process, struct comm_server * c
 static void
 comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_server)
 {
+	gchar *		strtol_endptr;
+	guint16		port;
 	GString *	output;
 
 	output = g_terminal_process_read_string_all(process);
@@ -180,7 +194,15 @@ comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_s
 	if (comm_ssh_parse_output(process, comm_server, output) == TRUE)
 		goto out;
 
-	g_string_append(comm_server->tmp, output->str);
+	port = strtol(output->str, &strtol_endptr, 10);
+	if (port) {
+		comm_server->port = port;
+		comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read: %d", port);
+	} else {
+		comm_server->error = SERVER_ERROR_SERVER;
+		comm_server_log_message(comm_server, LOG_ERROR, _("Could not comunicate with server %s: \n%s"),
+			comm_server->address->str, output->str);
+	}
 
 out:	g_string_free(output, TRUE);
 }
@@ -188,9 +210,6 @@ out:	g_string_free(output, TRUE);
 static void
 comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * comm_server)
 {
-	gchar **	splits;
-	gchar *		strtol_endptr;
-	guint16		port;
 	GString *	cmd_line;
 
 	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_finished");
@@ -199,30 +218,11 @@ comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * co
 	if (comm_server->error != SERVER_ERROR_NONE)
 		return;
 
-	/*
-	 * Get own IP and server port
-	 */
-	splits = g_strsplit(comm_server->tmp->str, "\r\n", 2);
-	g_string_assign(comm_server->own_address, splits[0]);
-	if (splits[1] == NULL) {
-		comm_server->error = SERVER_ERROR_SERVER;
-		goto out;
-	}
-	port = strtol(splits[1], &strtol_endptr, 10);
-	if (port) {
-		comm_server->port = port;
-		comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read: %d", port);
-	} else {
-		comm_server->error = SERVER_ERROR_SERVER;
-		comm_server_log_message(comm_server, LOG_ERROR, _("Could not comunicate with server %s: \n%s"),
-			comm_server->address->str, comm_server->tmp->str);
-	}
-
 	comm_server->tried_existant_pass = FALSE;
 	cmd_line = g_string_new(NULL);
 	process = g_terminal_process_new();
 	g_signal_connect(process, "ready-read",
-		G_CALLBACK(comm_ssh_open_tunnel_read), comm_server);
+		G_CALLBACK(comm_ssh_read), comm_server);
 	g_signal_connect(process, "finished",
 		G_CALLBACK(comm_ssh_open_tunnel_finished), comm_server);
 
@@ -231,26 +231,11 @@ comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * co
 	while (!g_tcp_server_is_local_port_available(comm_server->tunnel_port))
 		++comm_server->tunnel_port;
 
-	g_string_printf(cmd_line, "ssh -f -L %d:127.0.0.1:%d %s 'sleep 300'",
+	g_string_printf(cmd_line, "ssh -x -f -L %d:127.0.0.1:%d %s 'sleep 300'",
 		comm_server->tunnel_port, comm_server->port, comm_server->address->str);
 	g_terminal_process_start(process, cmd_line);
 
 	g_string_free(cmd_line, TRUE);
-out:	g_strfreev(splits);
-}
-
-static void
-comm_ssh_open_tunnel_read(GTerminalProcess * process, struct comm_server * comm_server)
-{
-	GString *	output;
-
-	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_open_tunnel_read");
-
-	/* in fact there is no output because ssh was ran with -f option, only ssh login stuff */
-	output = g_terminal_process_read_string_all(process);
-	comm_ssh_parse_output(process, comm_server, output);
-
-	g_string_free(output, TRUE);
 }
 
 static void
@@ -277,42 +262,44 @@ out:	g_terminal_process_free(process);
 static void
 comm_server_connected(GTcpSocket * tcp_socket, struct comm_server * comm_server)
 {
-	gchar		hostname[100];
+	gchar		hostname[256];
+	GString *	mcookie;
 	gchar *		display;
 
-	GString *	cmd_line;
-	FILE *		output_fp;
-	gchar		line[1024];
-
-	GString *	mcookie;
-	gchar **	splits;
-
 	/* initialization */
-	mcookie = g_string_new(NULL);
-	cmd_line = g_string_new(NULL);
-
-	/* hostname and display */
-	gethostname(hostname, 100);
+	mcookie = g_string_new("");
+	gethostname(hostname, 255);
 	display = getenv("DISPLAY");
 
-	/* get this X session magic cookie */
-	g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display);
-	output_fp = popen(cmd_line->str, "r");
-	fread(line, 1, 1024, output_fp);
-	/* split output and get only the magic cookie */
-	splits = g_strsplit_set(line, " \n", 1);
-	g_string_assign(mcookie, splits[0]);
+	if (comm_server_is_local(comm_server) == FALSE && display != NULL && strlen(display)) {
+		GString *	cmd_line;
+		FILE *		output_fp;
+		gchar		line[1024];
+		gchar **	splits;
+
+		/* initialization */
+		cmd_line = g_string_new(NULL);
+
+		/* get this X session magic cookie */
+		g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display);
+		output_fp = popen(cmd_line->str, "r");
+		fread(line, 1, 1024, output_fp);
+		/* split output and get only the magic cookie */
+		splits = g_strsplit_set(line, " \n", 1);
+		g_string_assign(mcookie, splits[0]);
+
+		/* frees */
+		g_strfreev(splits);
+		pclose(output_fp);
+		g_string_free(cmd_line, TRUE);
+	}
 
 	/* send INI */
 	protocol_send_data(comm_server->protocol, comm_server->tcp_socket,
-		protocol_defs.ini_def, 5, PROTOCOL_VERSION, hostname,
-			comm_server->own_address->str, display, mcookie->str);
+		protocol_defs.ini_def, 3, PROTOCOL_VERSION, hostname, mcookie->str);
 
 	/* frees */
-	g_strfreev(splits);
-	pclose(output_fp);
 	g_string_free(mcookie, TRUE);
-	g_string_free(cmd_line, TRUE);
 }
 
 static void
@@ -323,6 +310,9 @@ comm_server_disconnected(GTcpSocket * tcp_socket, struct comm_server * comm_serv
 
 	comm_server_log_message(comm_server, LOG_WARNING, "Server '%s' disconnected",
 		     comm_server->address->str);
+
+	if (comm_server->x11_forward != NULL)
+		g_terminal_process_free(comm_server->x11_forward);
 }
 
 static void
@@ -366,10 +356,9 @@ comm_server_new(const gchar * _address, const struct comm_server_ops * ops)
 		.protocol = protocol_new(),
 		.address = g_string_new(_address),
 		.port = 0,
-		.own_address = g_string_new(NULL),
 		.ops = ops,
 		.password = g_string_new(""),
-		.tmp = g_string_new(NULL),
+		.x11_forward = NULL,
 	};
 
 	g_signal_connect(comm_server->tcp_socket, "connected",
@@ -391,8 +380,8 @@ comm_server_free(struct comm_server * comm_server)
 	protocol_free(comm_server->protocol);
 	g_string_free(comm_server->address, TRUE);
 	g_string_free(comm_server->password, TRUE);
-	g_string_free(comm_server->own_address, TRUE);
-	g_string_free(comm_server->tmp, TRUE);
+	if (comm_server->x11_forward != NULL)
+		g_terminal_process_free(comm_server->x11_forward);
 	g_free(comm_server);
 }
 
@@ -419,9 +408,8 @@ comm_server_connect(struct comm_server * comm_server)
 			G_CALLBACK(comm_ssh_run_server_read), comm_server);
 		g_signal_connect(process, "finished",
 			G_CALLBACK(comm_ssh_run_server_finished), comm_server);
-		g_string_assign(comm_server->tmp, "");
 
-		g_string_printf(cmd_line, "ssh -x %s \"echo $SSH_CLIENT | awk '{print $1}'; bash -l -c gebrd\"",
+		g_string_printf(cmd_line, "ssh -x %s \"bash -l -c gebrd\"",
 			comm_server->address->str);
 		g_terminal_process_start(process, cmd_line);
 	} else {
@@ -458,6 +446,47 @@ comm_server_is_local(struct comm_server * comm_server)
 {
 	return strcmp(comm_server->address->str, "127.0.0.1") == 0
 		? TRUE : FALSE;
+}
+
+/*
+ * Function: comm_server_forward_x11
+ * For the logged _comm_server_ forward x11 server _port_ to user display
+ * Fail if user's display is not set, returning FALSE.
+ * If any other x11 redirect was previously made it is unmade
+ */
+gboolean
+comm_server_forward_x11(struct comm_server * comm_server, guint16 port)
+{
+	gchar *		display;
+	guint16		display_port;
+	GString *	cmd_line;
+
+	display = getenv("DISPLAY");
+	if (display == NULL || !strlen(display))
+		return FALSE;
+
+	/* initialization */
+	cmd_line = g_string_new(NULL);
+	sscanf(display, ":%hu.", &display_port);
+
+	if (comm_server->x11_forward != NULL)
+		g_terminal_process_free(comm_server->x11_forward);
+
+	comm_server_log_message(comm_server, LOG_INFO, _("Redirecting '%s' graphical output"),
+		comm_server->address->str);
+
+	comm_server->x11_forward = g_terminal_process_new();
+	g_signal_connect(comm_server->x11_forward, "ready-read",
+		G_CALLBACK(comm_ssh_read), comm_server);
+
+	g_string_printf(cmd_line, "ssh -x -R %d:127.0.0.1:%d %s 'sleep 999d'",
+		display_port, port, comm_server->address->str);
+	g_terminal_process_start(comm_server->x11_forward, cmd_line);
+
+	/* frees */
+	g_string_free(cmd_line, TRUE);
+
+	return TRUE;
 }
 
 /*

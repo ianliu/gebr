@@ -184,42 +184,48 @@ server_parse_client_messages(struct client * client)
 		/* check login */
 		if (message->hash == protocol_defs.ini_def.hash) {
 			GList *		arguments;
-			GString *	version, * hostname, * address, * display, * mcookie;
+			GString *	version, * hostname, * mcookie;
+			GString *	display_port;
 
+			display_port = g_string_new("");
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 5);
+			arguments = protocol_split_new(message->argument, 3);
 			version = g_list_nth_data(arguments, 0);
 			hostname = g_list_nth_data(arguments, 1);
-			address = g_list_nth_data(arguments, 2);
-			display = g_list_nth_data(arguments, 3);
-			mcookie = g_list_nth_data(arguments, 4);
+			mcookie = g_list_nth_data(arguments, 2);
 
 			/* set client info */
 			client->protocol->logged = TRUE;
 			g_string_assign(client->protocol->hostname, hostname->str);
-			g_string_assign(client->display, display->str);
-			g_string_assign(client->mcookie, mcookie->str);
-			g_string_assign(client->address, address->str);
 
-			if (client_is_local(client) == FALSE) {
+			if (mcookie->len) {
 				GString *	cmd_line;
+				guint16		display;
+
+				/* figure out a free display */
+				display = gebrd_get_x11_redirect_display();
+				g_string_printf(display_port, "%d", 6000+display);
+				g_string_printf(client->display, ":%d", display);
 
 				/* add client magic cookie */
 				cmd_line = g_string_new(NULL);
-				g_string_printf(cmd_line, "xauth add %s%s . %s",
-					address->str, display->str, mcookie->str);
+				g_string_printf(cmd_line, "xauth add :%d . %s",
+					display, mcookie->str);
 				system(cmd_line->str);
 
 				gebrd_message(LOG_DEBUG, "xauth ran: %s", cmd_line->str);
 
 				g_string_free(cmd_line, TRUE);
-			}
+			} else
+				g_string_assign(client->display, "");
+
 			/* send return */
 			protocol_send_data(client->protocol, client->tcp_socket,
-				protocol_defs.ret_def, 1, gebrd.hostname);
+				protocol_defs.ret_def, 2, gebrd.hostname, display_port->str);
 
 			/* frees */
 			protocol_split_free(arguments);
+			g_string_free(display_port, TRUE);
 		} else if (client->protocol->logged == FALSE) {
 			/* not logged! */
 			goto err;

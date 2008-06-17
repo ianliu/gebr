@@ -56,8 +56,6 @@ client_add(GTcpSocket * tcp_socket)
 		.tcp_socket = tcp_socket,
 		.protocol = protocol_new(),
 		.display = g_string_new(NULL),
-		.mcookie = g_string_new(NULL),
-		.address = g_string_new(NULL)
 	};
 
 	gebrd.clients = g_list_prepend(gebrd.clients, client);
@@ -77,15 +75,7 @@ client_free(struct client * client)
 	g_socket_close(G_SOCKET(client->tcp_socket));
 	protocol_free(client->protocol);
 	g_string_free(client->display, TRUE);
-	g_string_free(client->mcookie, TRUE);
-	g_string_free(client->address, TRUE);
 	g_free(client);
-}
-
-gboolean
-client_is_local(struct client * client)
-{
-	return (gboolean)!strcmp(client->address->str, "127.0.0.1");
 }
 
 static void
@@ -121,6 +111,6 @@ static void
 client_error(GTcpSocket * tcp_socket, enum GSocketError error, struct client * client)
 {
 	if (error == G_SOCKET_ERROR_UNKNOWN)
-		gebrd_message(LOG_ERROR, _("unk"), error, client->address->str);
-	gebrd_message(LOG_ERROR, _("Connection error '%s' on server '%s'"), error, client->address->str);
+		gebrd_message(LOG_ERROR, _("unk"), error, client->protocol->hostname->str);
+	gebrd_message(LOG_ERROR, _("Connection error '%s' on server '%s'"), error, client->protocol->hostname->str);
 }

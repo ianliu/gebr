@@ -15,6 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
+
 #include <comm/protocol.h>
 
 #include "client.h"
@@ -35,11 +37,12 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 		if (message->hash == protocol_defs.ret_def.hash) {
 			if (comm_server->protocol->waiting_ret_hash == protocol_defs.ini_def.hash) {
 				GList *		arguments;
-				GString *	hostname;
+				GString *	hostname, * display_port;
 
 				/* organize message data */
-				arguments = protocol_split_new(message->argument, 1);
+				arguments = protocol_split_new(message->argument, 2);
 				hostname = g_list_nth_data(arguments, 0);
+				display_port = g_list_nth_data(arguments, 1);
 
 				/* say we are logged */
 				comm_server->protocol->logged = TRUE;
@@ -48,9 +51,11 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 				if (comm_server_is_local(comm_server) == TRUE)
 					gebr_message(LOG_INFO, TRUE, TRUE, _("Connected to local server"),
 						comm_server->address->str);
-				else
+				else {
 					gebr_message(LOG_INFO, TRUE, TRUE, _("Connected to server '%s'"),
 						comm_server->address->str);
+					comm_server_forward_x11(comm_server, atoi(display_port->str));
+				}
 
 				/* request list of jobs */
 				protocol_send_data(comm_server->protocol, comm_server->tcp_socket,

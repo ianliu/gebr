@@ -28,12 +28,8 @@ struct client {
 	GTcpSocket *		tcp_socket;
 	/* protocol parsing stuff */
 	struct protocol *	protocol;
-	/* display */
+	/* x11 redirected display, if server is remote */
 	GString *		display;
-	/* magic cookie for xauth */
-	GString *		mcookie;
-	/* 127.0.0.1 or and remote address got via ssh*/
-	GString *		address;
 };
 
 void
@@ -41,8 +37,5 @@ client_add(GTcpSocket * tcp_socket);
 
 void
 client_free(struct client * client);
-
-gboolean
-client_is_local(struct client * client);
 
 #endif //__CLIENT_H

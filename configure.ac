@@ -27,7 +27,7 @@ AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 PACKAGE_NAME=$PACKAGE
 PACKAGE_VERSION=$VERSION
 
-AC_CONFIG_SUBDIRS([libgebr gebrd gebr gebrme])
+AC_CONFIG_SUBDIRS([libgebr gebrd gebr-menus-su gebr gebrme])
 
 AC_OUTPUT([
 Makefile

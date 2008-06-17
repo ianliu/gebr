@@ -36,8 +36,7 @@ AC_SUBST(DOCUMENT_VERSION)
 
 dnl Debug option
 AC_ARG_ENABLE(debug,
-	[AC_HELP_STRING([--enable-debug],
-	[turn on debugging])],,
+	[AC_HELP_STRING([--enable-debug], [turn on debugging])],,
 	enable_debug=yes)
 if test "$enable_debug" = "yes"; then
 	DEBUG_CFLAGS="-DLIBGEBR_DEBUG"

@@ -80,6 +80,10 @@ gebrd_init(void)
 	}
 }
 
+/*
+ * Function: gebrd_quit
+ * 
+ */
 void
 gebrd_quit(void)
 {
@@ -119,4 +123,21 @@ gebrd_message(enum log_message_type type, const gchar * message, ...)
 #endif
 
 	g_free(string);
+}
+
+/*
+ * Function: gebrd_get_x11_redirect_port
+ * Return a free port to be used for X11 redirection.
+ * The server doesn't listen to it; the client is supposed to
+ * do a port forward thought SSH
+ */
+guint8
+gebrd_get_x11_redirect_display(void)
+{
+	static guint8	display = 10;
+
+	while (g_tcp_server_is_local_port_available(6000+display) == FALSE)
+		display++;
+
+	return display++;
 }

@@ -25,6 +25,7 @@
 
 #include "gtcpsocket.h"
 #include "protocol.h"
+#include "gterminalprocess.h"
 
 struct comm_server {
 	/* the communication channel. */
@@ -34,12 +35,11 @@ struct comm_server {
 	/* server address/port */
 	GString *		address;
 	guint16			port;
-	/* client own address as seen by server */
-	GString *		own_address;
 	/* ssh stuff */
 	GString *		password;
 	gint16			tunnel_port;
 	gboolean		tried_existant_pass;
+	GTerminalProcess *	x11_forward;
 
 	enum comm_server_state {
 		SERVER_STATE_RUN,
@@ -60,9 +60,6 @@ struct comm_server {
 		void		(*parse_messages)(struct comm_server * comm_server, gpointer user_data);
 	} * ops;
 	gpointer		user_data;
-
-	/* used for storing run_server_read output */
-	GString *		tmp;
 };
 
 struct comm_server *
@@ -79,6 +76,9 @@ comm_server_is_logged(struct comm_server * comm_server);
 
 gboolean
 comm_server_is_local(struct comm_server * comm_server);
+
+gboolean
+comm_server_forward_x11(struct comm_server * comm_server, guint16 port);
 
 void
 comm_server_run_flow(struct comm_server * comm_server, GeoXmlFlow * flow);
