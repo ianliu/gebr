@@ -479,7 +479,7 @@ comm_server_forward_x11(struct comm_server * comm_server, guint16 port)
 		G_CALLBACK(comm_ssh_read), comm_server);
 
 	g_string_printf(cmd_line, "ssh -x -R %d:127.0.0.1:%d %s 'sleep 999d'",
-		display_port, port, comm_server->address->str);
+		port, display_port, comm_server->address->str);
 	g_terminal_process_start(comm_server->x11_forward, cmd_line);
 
 	/* frees */
