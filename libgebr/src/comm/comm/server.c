@@ -474,6 +474,7 @@ comm_server_forward_x11(struct comm_server * comm_server, guint16 port)
 	comm_server_log_message(comm_server, LOG_INFO, _("Redirecting '%s' graphical output"),
 		comm_server->address->str);
 
+	comm_server->tried_existant_pass = FALSE;
 	comm_server->x11_forward = g_terminal_process_new();
 	g_signal_connect(comm_server->x11_forward, "ready-read",
 		G_CALLBACK(comm_ssh_read), comm_server);
