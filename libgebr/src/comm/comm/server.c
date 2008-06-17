@@ -171,10 +171,10 @@ comm_ssh_read(GTerminalProcess * process, struct comm_server * comm_server)
 {
 	GString *	output;
 
-	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_read");
-
 	output = g_terminal_process_read_string_all(process);
 	comm_ssh_parse_output(process, comm_server, output);
+
+	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_read: %s", output->str);
 
 	g_string_free(output, TRUE);
 }
@@ -274,8 +274,7 @@ comm_server_connected(GTcpSocket * tcp_socket, struct comm_server * comm_server)
 	if (comm_server_is_local(comm_server) == FALSE && display != NULL && strlen(display)) {
 		GString *	cmd_line;
 		FILE *		output_fp;
-		gchar		line[1024];
-		gchar **	splits;
+		gchar		mcookie_str[33];
 
 		/* initialization */
 		cmd_line = g_string_new(NULL);
@@ -283,13 +282,10 @@ comm_server_connected(GTcpSocket * tcp_socket, struct comm_server * comm_server)
 		/* get this X session magic cookie */
 		g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display);
 		output_fp = popen(cmd_line->str, "r");
-		fread(line, 1, 1024, output_fp);
-		/* split output and get only the magic cookie */
-		splits = g_strsplit_set(line, " \n", 1);
-		g_string_assign(mcookie, splits[0]);
+		fscanf(output_fp, "%32s", mcookie_str);
+		g_string_assign(mcookie, mcookie_str);
 
 		/* frees */
-		g_strfreev(splits);
 		pclose(output_fp);
 		g_string_free(cmd_line, TRUE);
 	}
@@ -380,8 +376,10 @@ comm_server_free(struct comm_server * comm_server)
 	protocol_free(comm_server->protocol);
 	g_string_free(comm_server->address, TRUE);
 	g_string_free(comm_server->password, TRUE);
-	if (comm_server->x11_forward != NULL)
+	if (comm_server->x11_forward != NULL) {
+		g_terminal_process_kill(comm_server->x11_forward);
 		g_terminal_process_free(comm_server->x11_forward);
+	}
 	g_free(comm_server);
 }
 
@@ -468,6 +466,7 @@ comm_server_forward_x11(struct comm_server * comm_server, guint16 port)
 	/* initialization */
 	cmd_line = g_string_new(NULL);
 	sscanf(display, ":%hu.", &display_port);
+	display_port += 6000;
 
 	if (comm_server->x11_forward != NULL)
 		g_terminal_process_free(comm_server->x11_forward);
