@@ -194,7 +194,10 @@ server_parse_client_messages(struct client * client)
 			version = g_list_nth_data(arguments, 0);
 			hostname = g_list_nth_data(arguments, 1);
 			place = g_list_nth_data(arguments, 2);
-			x11 = g_list_nth_data(arguments, 2);
+			x11 = g_list_nth_data(arguments, 3);
+
+// 			if (strcmp(version->str, PROTOCOL_VERSION))
+// 				goto err;
 
 			/* set client info */
 			client->protocol->logged = TRUE;
