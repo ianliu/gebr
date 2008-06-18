@@ -486,15 +486,15 @@ static void
 comm_server_connected(GTcpSocket * tcp_socket, struct comm_server * comm_server)
 {
 	gchar		hostname[256];
-	GString *	mcookie;
 	gchar *		display;
 
 	/* initialization */
-	mcookie = g_string_new("");
 	gethostname(hostname, 255);
 	display = getenv("DISPLAY");
+	if (display == NULL)
+		display = "";
 
-	if (comm_server_is_local(comm_server) == FALSE && display != NULL && strlen(display)) {
+	if (comm_server_is_local(comm_server) == FALSE) {
 		GString *	cmd_line;
 		FILE *		output_fp;
 		gchar		mcookie_str[33];
@@ -502,23 +502,27 @@ comm_server_connected(GTcpSocket * tcp_socket, struct comm_server * comm_server)
 		/* initialization */
 		cmd_line = g_string_new(NULL);
 
-		/* get this X session magic cookie */
-		g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display);
-		output_fp = popen(cmd_line->str, "r");
-		fscanf(output_fp, "%32s", mcookie_str);
-		g_string_assign(mcookie, mcookie_str);
+		if (strlen(display)) {
+			/* get this X session magic cookie */
+			g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display);
+			output_fp = popen(cmd_line->str, "r");
+			fscanf(output_fp, "%32s", mcookie_str);
+		} else {
+			strcpy(mcookie_str, "");
+		}
+
+		/* send INI */
+		protocol_send_data(comm_server->protocol, comm_server->tcp_socket,
+			protocol_defs.ini_def, 4, PROTOCOL_VERSION, hostname, "remote", mcookie_str);
 
 		/* frees */
 		pclose(output_fp);
 		g_string_free(cmd_line, TRUE);
+	} else {
+		/* send INI */
+		protocol_send_data(comm_server->protocol, comm_server->tcp_socket,
+			protocol_defs.ini_def, 4, PROTOCOL_VERSION, hostname, "local", display);
 	}
-
-	/* send INI */
-	protocol_send_data(comm_server->protocol, comm_server->tcp_socket,
-		protocol_defs.ini_def, 3, PROTOCOL_VERSION, hostname, mcookie->str);
-
-	/* frees */
-	g_string_free(mcookie, TRUE);
 }
 
 static void

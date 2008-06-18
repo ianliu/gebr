@@ -24,11 +24,11 @@
 struct protocol;
 
 struct client {
-	/* the communication channel. */
 	GTcpSocket *		tcp_socket;
-	/* protocol parsing stuff */
 	struct protocol *	protocol;
-	/* x11 redirected display, if server is remote */
+
+	gboolean		is_local;
+	/* x11 redirected display, if server is remote. if local this is the true display */
 	GString *		display;
 };
 

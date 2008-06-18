@@ -18,6 +18,7 @@
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <signal.h>
 #include <unistd.h>
 #include <netdb.h>
@@ -184,21 +185,27 @@ server_parse_client_messages(struct client * client)
 		/* check login */
 		if (message->hash == protocol_defs.ini_def.hash) {
 			GList *		arguments;
-			GString *	version, * hostname, * mcookie;
+			GString *	version, * hostname, * place, * x11;
 			GString *	display_port;
 
 			display_port = g_string_new("");
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 3);
+			arguments = protocol_split_new(message->argument, 4);
 			version = g_list_nth_data(arguments, 0);
 			hostname = g_list_nth_data(arguments, 1);
-			mcookie = g_list_nth_data(arguments, 2);
+			place = g_list_nth_data(arguments, 2);
+			x11 = g_list_nth_data(arguments, 2);
 
 			/* set client info */
 			client->protocol->logged = TRUE;
 			g_string_assign(client->protocol->hostname, hostname->str);
+			if (!strcmp(place->str, "local"))
+				client->is_local = TRUE;
+			else if (!strcmp(place->str, "remote"))
+				client->is_local = FALSE;
+			else goto err;
 
-			if (mcookie->len) {
+			if (client->is_local == FALSE) {
 				GString *	cmd_line;
 				guint16		display;
 
@@ -211,7 +218,7 @@ server_parse_client_messages(struct client * client)
 					/* add client magic cookie */
 					cmd_line = g_string_new(NULL);
 					g_string_printf(cmd_line, "xauth add :%d . %s",
-						display, mcookie->str);
+						display, x11->str);
 					system(cmd_line->str);
 
 					gebrd_message(LOG_DEBUG, "xauth ran: %s", cmd_line->str);
@@ -219,8 +226,9 @@ server_parse_client_messages(struct client * client)
 					g_string_free(cmd_line, TRUE);
 				} else
 					g_string_assign(client->display, "");
-			} else
-				g_string_assign(client->display, "");
+			} else {
+				g_string_assign(client->display, x11->str);
+			}
 
 			/* send return */
 			protocol_send_data(client->protocol, client->tcp_socket,
