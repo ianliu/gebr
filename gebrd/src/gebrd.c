@@ -136,8 +136,13 @@ gebrd_get_x11_redirect_display(void)
 {
 	static guint8	display = 10;
 
-	while (g_tcp_server_is_local_port_available(6000+display) == FALSE)
+	while (g_tcp_server_is_local_port_available(6000+display) == FALSE) {
+		if (display == 255) {
+			display = 10;
+			return 0;
+		}
 		display++;
+	}
 
 	return display++;
 }

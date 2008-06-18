@@ -204,18 +204,21 @@ server_parse_client_messages(struct client * client)
 
 				/* figure out a free display */
 				display = gebrd_get_x11_redirect_display();
-				g_string_printf(display_port, "%d", 6000+display);
-				g_string_printf(client->display, ":%d", display);
+				if (display) {
+					g_string_printf(display_port, "%d", 6000+display);
+					g_string_printf(client->display, ":%d", display);
 
-				/* add client magic cookie */
-				cmd_line = g_string_new(NULL);
-				g_string_printf(cmd_line, "xauth add :%d . %s",
-					display, mcookie->str);
-				system(cmd_line->str);
+					/* add client magic cookie */
+					cmd_line = g_string_new(NULL);
+					g_string_printf(cmd_line, "xauth add :%d . %s",
+						display, mcookie->str);
+					system(cmd_line->str);
 
-				gebrd_message(LOG_DEBUG, "xauth ran: %s", cmd_line->str);
+					gebrd_message(LOG_DEBUG, "xauth ran: %s", cmd_line->str);
 
-				g_string_free(cmd_line, TRUE);
+					g_string_free(cmd_line, TRUE);
+				} else
+					g_string_printf(client->display, "");
 			} else
 				g_string_assign(client->display, "");
 
