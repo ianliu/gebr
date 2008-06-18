@@ -263,53 +263,41 @@ g_process_start(GProcess * process, GString * cmd_line)
 	gboolean	ret;
 	gchar **	argv;
 	gint		argc;
-// 	int		stdin_pipe[2], stdout_pipe[2], stderr_pipe[2];
 	gint		stdin_fd, stdout_fd, stderr_fd;
+	int		stdin_pipe[2], stdout_pipe[2], stderr_pipe[2];
 	GError *	error;
 
-	/* free previous start stuff */
+	/* initialization */
 	__g_process_free(process);
-
 	ret = FALSE;
 	error = NULL;
 	g_shell_parse_argv(cmd_line->str, &argc, &argv, &error);
-	/* using glib */
-	ret = g_spawn_async_with_pipes(
-		NULL, /* working_directory */
-		argv,
-		NULL, /* envp */
-		G_SPAWN_LEAVE_DESCRIPTORS_OPEN | G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
-		NULL,
-		process,
-		&process->pid,
-		&stdin_fd, &stdout_fd, &stderr_fd,
-		&error);
-	if (ret == FALSE)
+
+	pipe(stdin_pipe);
+	pipe(stdout_pipe);
+	pipe(stderr_pipe);
+	process->pid = fork();
+	if (process->pid == -1)
 		goto out;
-	/* manually */
-// 	pipe(stdin_pipe);
-// 	pipe(stdout_pipe);
-// 	pipe(stderr_pipe);
-// 	process->pid = fork();
-// 	if (process->pid == -1)
-// 		goto out;
-// 	if (process->pid == 0) {
-// 		close(stdin_pipe[1]);
-// 		close(stdout_pipe[0]);
-// 		close(stderr_pipe[0]);
-// 		dup2(stdin_pipe[0], 0);
-// 		dup2(stdout_pipe[1], 1);
-// 		dup2(stderr_pipe[1], 2);
-//
-// 		if (execvp(argv[0], argv) == -1)
-// 			exit(0);
-// 	}
-// 	close(stdin_pipe[0]);
-// 	close(stdout_pipe[1]);
-// 	close(stderr_pipe[1]);
-// 	stdin_fd = stdin_pipe[1];
-// 	stdout_fd = stdout_pipe[0];
-// 	stderr_fd = stderr_pipe[0];
+	if (process->pid == 0) {
+		setpgrp();
+
+		close(stdin_pipe[1]);
+		close(stdout_pipe[0]);
+		close(stderr_pipe[0]);
+		dup2(stdin_pipe[0], 0);
+		dup2(stdout_pipe[1], 1);
+		dup2(stderr_pipe[1], 2);
+
+		if (execvp(argv[0], argv) == -1)
+			exit(0);
+	}
+	close(stdin_pipe[0]);
+	close(stdout_pipe[1]);
+	close(stderr_pipe[1]);
+	stdin_fd = stdin_pipe[1];
+	stdout_fd = stdout_pipe[0];
+	stderr_fd = stderr_pipe[0];
 
 	process->is_running = TRUE;
 	process->finish_watch_id = g_child_watch_add(
@@ -355,8 +343,7 @@ g_process_kill(GProcess * process)
 {
 	if (!process->pid)
 		return;
-	kill(-process->pid, SIGKILL);
-	g_spawn_close_pid(process->pid);
+	killpg(process->pid, SIGKILL);
 }
 
 void
@@ -364,8 +351,7 @@ g_process_terminate(GProcess * process)
 {
 	if (!process->pid)
 		return;
-	kill(-process->pid, SIGTERM);
-	g_spawn_close_pid(process->pid);
+	killpg(process->pid, SIGTERM);
 }
 
 void

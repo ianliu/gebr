@@ -228,6 +228,7 @@ g_terminal_process_start(GTerminalProcess * terminal_process, GString * cmd_line
 		goto out;
 	}
 	if (pid == 0) {
+		setpgrp();
 		if (execvp(argv[0], argv) == -1) {
 			ret = FALSE;
 			goto out;
@@ -268,8 +269,7 @@ g_terminal_process_kill(GTerminalProcess * terminal_process)
 {
 	if (!terminal_process->pid)
 		return;
-	kill(-terminal_process->pid, SIGKILL);
-	g_spawn_close_pid(terminal_process->pid);
+	killpg(terminal_process->pid, SIGKILL);
 }
 
 void
@@ -277,8 +277,7 @@ g_terminal_process_terminate(GTerminalProcess * terminal_process)
 {
 	if (!terminal_process->pid)
 		return;
-	kill(-terminal_process->pid, SIGTERM);
-	g_spawn_close_pid(terminal_process->pid);
+	killpg(terminal_process->pid, SIGTERM);
 }
 
 gulong
