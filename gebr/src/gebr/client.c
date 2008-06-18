@@ -54,7 +54,11 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 				else {
 					gebr_message(LOG_INFO, TRUE, TRUE, _("Connected to server '%s'"),
 						comm_server->address->str);
-					comm_server_forward_x11(comm_server, atoi(display_port->str));
+					if (display_port->len)
+						comm_server_forward_x11(comm_server, atoi(display_port->str));
+					else
+						gebr_message(LOG_ERROR, TRUE, TRUE, _("Server '%s' could not send display for graphical output redirection"),
+							comm_server->address->str);
 				}
 
 				/* request list of jobs */
