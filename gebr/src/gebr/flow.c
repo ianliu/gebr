@@ -494,17 +494,17 @@ flow_run(void)
 
 	comm_server_run_flow(server->comm, gebr.flow);
 
-	/* get today's date */
-	geoxml_flow_set_date_last_run(gebr.flow, iso_date());
-
 	/* TODO: check save */
-	/* Saving manualy to preserve modified date */
+	/* Save manualy to preserve modified date */
+	geoxml_flow_set_date_last_run(gebr.flow, iso_date());
 	path = document_get_path(geoxml_document_get_filename(GEOXML_DOC(gebr.flow)));
 	geoxml_document_save(GEOXML_DOC(gebr.flow), path->str);
-	g_string_free(path, TRUE);
 
 	/* Update details */
 	flow_browse_info_update();
+
+	/* frees */
+	g_string_free(path, TRUE);
 }
 
 /*

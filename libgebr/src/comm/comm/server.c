@@ -530,7 +530,7 @@ comm_server_disconnected(GTcpSocket * tcp_socket, struct comm_server * comm_serv
 	comm_server_log_message(comm_server, LOG_WARNING, "Server '%s' disconnected",
 		     comm_server->address->str);
 
-	comm_server_free_x11_process(comm_server);
+	comm_server_free_for_reuse(comm_server);
 }
 
 static void

@@ -218,7 +218,7 @@ server_parse_client_messages(struct client * client)
 
 					g_string_free(cmd_line, TRUE);
 				} else
-					g_string_printf(client->display, "");
+					g_string_assign(client->display, "");
 			} else
 				g_string_assign(client->display, "");
 
@@ -233,13 +233,7 @@ server_parse_client_messages(struct client * client)
 			/* not logged! */
 			goto err;
 		} else if (message->hash == protocol_defs.qut_def.hash) {
-			if (g_list_length(gebrd.clients) == 1) {
-				/* FIXME: seg. fault here */
-				gebrd_quit();
-			} else {
-				client_free(client);
-			}
-
+			client_free(client);
 			message_free(message);
 			return TRUE;
 		} else if (message->hash == protocol_defs.lst_def.hash) {
