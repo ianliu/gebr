@@ -57,6 +57,7 @@ struct _GProcess {
 	GIOChannel *		stderr_io_channel;
 	guint			stdout_watch_id;
 	guint			stderr_watch_id;
+	guint			finish_watch_id;
 };
 struct _GProcessClass {
 	GObjectClass		parent;

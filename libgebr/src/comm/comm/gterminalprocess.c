@@ -83,12 +83,18 @@ G_DEFINE_TYPE(GTerminalProcess, g_terminal_process, G_TYPE_OBJECT)
 static void
 __g_terminal_process_free(GTerminalProcess * terminal_process)
 {
-	GError *	error;
-
-	error = NULL;
-	g_io_channel_unref(terminal_process->ptm_io_channel);
-	terminal_process->ptm_io_channel = NULL;
-	terminal_process->watch_id = 0;
+	if (terminal_process->ptm_watch_id) {
+		if (g_terminal_process_bytes_available(terminal_process))
+			g_signal_emit(terminal_process, object_signals[READY_READ], 0);
+		g_source_remove(terminal_process->ptm_watch_id);
+		g_source_remove(terminal_process->finish_watch_id);
+		terminal_process->ptm_watch_id = 0;
+		terminal_process->finish_watch_id = 0;
+	}
+	if (terminal_process->ptm_io_channel != NULL) {
+		g_io_channel_unref(terminal_process->ptm_io_channel);
+		terminal_process->ptm_io_channel = NULL;
+	}
 }
 
 static void
@@ -125,12 +131,7 @@ __g_terminal_process_finished_watch(GPid pid, gint status, GTerminalProcess * te
 	gint				exit_code;
 	enum GTerminalProcessExitStatus	exit_status;
 
-	if (terminal_process->watch_id) {
-		if (g_terminal_process_bytes_available(terminal_process))
-			g_signal_emit(terminal_process, object_signals[READY_READ], 0);
-		g_source_remove(terminal_process->watch_id);
-		__g_terminal_process_free(terminal_process);
-	}
+	__g_terminal_process_free(terminal_process);
 	__g_terminal_process_stop_state(terminal_process);
 
 	exit_code = WEXITSTATUS(status);
@@ -195,8 +196,7 @@ g_terminal_process_free(GTerminalProcess * terminal_process)
 {
 	if (terminal_process->is_running)
 		g_terminal_process_kill(terminal_process);
-	if (terminal_process->ptm_io_channel != NULL)
-		__g_terminal_process_free(terminal_process);
+	__g_terminal_process_free(terminal_process);
 	g_object_unref(G_OBJECT(terminal_process));
 }
 
@@ -216,21 +216,6 @@ g_terminal_process_start(GTerminalProcess * terminal_process, GString * cmd_line
 	GPid		pid;
 	GError *	error;
 
-	struct sigaction sa;
-	sigset_t omask;
-	struct sigaction intr, quit;
-
-	sa.sa_handler = SIG_IGN;
-	sa.sa_flags = 0;
-	sigemptyset (&sa.sa_mask);
-// 	sigaction(SIGINT, &sa, &intr);
-// 	sigaction(SIGQUIT, &sa, &quit);
-
-// 	sigaddset(&sa.sa_mask, SIGCHLD);
-// 	sigprocmask(SIG_BLOCK, &sa.sa_mask, &omask);
-
-
-
 	/* free previous start stuff */
 	if (terminal_process->ptm_io_channel != NULL)
 		__g_terminal_process_free(terminal_process);
@@ -243,10 +228,6 @@ g_terminal_process_start(GTerminalProcess * terminal_process, GString * cmd_line
 		goto out;
 	}
 	if (pid == 0) {
-// 		sigaction(SIGINT, &intr, (struct sigaction *) NULL);
-// 		sigaction(SIGQUIT, &quit, (struct sigaction *) NULL);
-// 		sigprocmask(SIG_SETMASK, &omask, (sigset_t *) NULL);
-
 		if (execvp(argv[0], argv) == -1) {
 			ret = FALSE;
 			goto out;
@@ -256,13 +237,12 @@ g_terminal_process_start(GTerminalProcess * terminal_process, GString * cmd_line
 	ret = TRUE;
 	terminal_process->pid = pid;
 	/* monitor exit */
-	terminal_process->watch_id = 0;
-	g_child_watch_add(terminal_process->pid, (GChildWatchFunc)__g_terminal_process_finished_watch, terminal_process);
-	/* create io channel */
+	terminal_process->finish_watch_id = g_child_watch_add(
+		terminal_process->pid, (GChildWatchFunc)__g_terminal_process_finished_watch, terminal_process);
+	/* ptm */
 	terminal_process->ptm_io_channel = g_io_channel_unix_new(ptm_fd);
 	g_io_channel_set_close_on_unref(terminal_process->ptm_io_channel, TRUE);
-	/* watch */
-	terminal_process->watch_id = g_io_add_watch(terminal_process->ptm_io_channel,
+	terminal_process->ptm_watch_id = g_io_add_watch(terminal_process->ptm_io_channel,
 		G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
 		(GIOFunc)__g_terminal_process_read_watch, terminal_process);
 	/* nonblock operation */

@@ -53,7 +53,8 @@ struct _GTerminalProcess {
 	enum GTerminalProcessExitStatus	exit_status;
 
 	GIOChannel *			ptm_io_channel;
-	guint				watch_id;
+	guint				ptm_watch_id;
+	guint				finish_watch_id;
 };
 struct _GTerminalProcessClass {
 	GObjectClass			parent;

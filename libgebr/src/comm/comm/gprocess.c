@@ -79,6 +79,9 @@ static void
 g_process_init(GProcess * process)
 {
 	__g_process_stop_state(process);
+	process->stdin_io_channel = NULL;
+	process->stdout_io_channel = NULL;
+	process->stderr_io_channel = NULL;
 }
 
 G_DEFINE_TYPE(GProcess, g_process, G_TYPE_OBJECT)
@@ -103,6 +106,18 @@ __g_process_io_channel_free(GIOChannel ** io_channel)
 static void
 __g_process_free(GProcess * process)
 {
+	if (process->stdout_watch_id) {
+		if (g_process_stdout_bytes_available(process))
+			g_signal_emit(process, object_signals[READY_READ_STDOUT], 0);
+		if (g_process_stderr_bytes_available(process))
+			g_signal_emit(process, object_signals[READY_READ_STDERR], 0);
+		g_source_remove(process->stdout_watch_id);
+		g_source_remove(process->stderr_watch_id);
+		g_source_remove(process->finish_watch_id);
+		process->stdout_watch_id = 0;
+		process->stderr_watch_id = 0;
+		process->finish_watch_id = 0;
+	}
 	__g_process_io_channel_free(&process->stdin_io_channel);
 	__g_process_io_channel_free(&process->stdout_io_channel);
 	__g_process_io_channel_free(&process->stderr_io_channel);
@@ -113,9 +128,6 @@ __g_process_stop_state(GProcess * process)
 {
 	process->pid = 0;
 	process->is_running = FALSE;
-	process->stdin_io_channel = NULL;
-	process->stdout_io_channel = NULL;
-	process->stderr_io_channel = NULL;
 }
 
 static gboolean
@@ -170,21 +182,12 @@ __g_process_finished_watch(GPid pid, gint status, GProcess * process)
 	gint			exit_code;
 	enum GProcessExitStatus	exit_status;
 
-	if (process->stdout_watch_id) {
-		if (g_process_stdout_bytes_available(process))
-			g_signal_emit(process, object_signals[READY_READ_STDOUT], 0);
-		g_source_remove(process->stdout_watch_id);
-
-		if (g_process_stderr_bytes_available(process))
-			g_signal_emit(process, object_signals[READY_READ_STDERR], 0);
-		g_source_remove(process->stderr_watch_id);
-
-		__g_process_free(process);
-	}
+	__g_process_free(process);
 	__g_process_stop_state(process);
 
 	exit_code = WEXITSTATUS(status);
 	exit_status =  WIFEXITED(status) ? G_PROCESS_NORMAL_EXIT : G_PROCESS_CRASH_EXIT;
+// 	g_signal_emit(process, object_signals[FINISHED], 0, exit_code, exit_status);
 	g_signal_emit(process, object_signals[FINISHED], 0);
 }
 
@@ -244,8 +247,7 @@ g_process_free(GProcess * process)
 {
 	if (process->is_running)
 		g_process_kill(process);
-	if (process->stdin_io_channel != NULL)
-		__g_process_free(process);
+	__g_process_free(process);
 	g_object_unref(G_OBJECT(process));
 }
 
@@ -310,8 +312,8 @@ g_process_start(GProcess * process, GString * cmd_line)
 // 	stderr_fd = stderr_pipe[0];
 
 	process->is_running = TRUE;
-	process->stdout_watch_id = process->stderr_watch_id = 0;
-	g_child_watch_add(process->pid, (GChildWatchFunc)__g_process_finished_watch, process);
+	process->finish_watch_id = g_child_watch_add(
+		process->pid, (GChildWatchFunc)__g_process_finished_watch, process);
 	/* create io channels */
 	process->stdin_io_channel = g_io_channel_unix_new(stdin_fd);
 	process->stdout_io_channel = g_io_channel_unix_new(stdout_fd);

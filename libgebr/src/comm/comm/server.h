@@ -26,6 +26,7 @@
 #include "gtcpsocket.h"
 #include "protocol.h"
 #include "gterminalprocess.h"
+#include "gprocess.h"
 
 struct comm_server {
 	/* the communication channel. */
@@ -60,6 +61,19 @@ struct comm_server {
 		void		(*parse_messages)(struct comm_server * comm_server, gpointer user_data);
 	} * ops;
 	gpointer		user_data;
+
+	/* temporary process for operations */
+	struct comm_server_process {
+		enum comm_server_process_use {
+			COMM_SERVER_PROCESS_NONE,
+			COMM_SERVER_PROCESS_TERMINAL,
+			COMM_SERVER_PROCESS_REGULAR,
+		} use;
+		union comm_server_process_data {
+			GTerminalProcess *	terminal;
+			GProcess *		regular;
+		} data;
+	} process;
 };
 
 struct comm_server *
