@@ -385,7 +385,13 @@ job_control_cancel(void)
 		return;
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to terminate job"));
-	gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to terminate job '%s'"), job->server->comm->address, job->title->str);
+	if (comm_server_is_local(job->server->comm) == FALSE) {
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to terminate job '%s'"),
+			job->server->comm->address->str, job->title->str);
+	} else {
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking local server to terminate job '%s'"),
+			job->title->str);
+	}
 
 	protocol_send_data(job->server->comm->protocol, job->server->comm->tcp_socket,
 		protocol_defs.end_def, 1, job->jid->str);
@@ -480,7 +486,13 @@ job_control_stop(void)
 		return;
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to kill job"));
-	gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to kill job '%s'"), job->server->comm->address->str, job->title->str);
+	if (comm_server_is_local(job->server->comm) == FALSE) {
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to kill job '%s'"),
+			job->server->comm->address->str, job->title->str);
+	} else {
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking local server to kill job '%s'"),
+			job->title->str);
+	}
 
 	protocol_send_data(job->server->comm->protocol, job->server->comm->tcp_socket,
 		protocol_defs.kil_def, 1, job->jid->str);

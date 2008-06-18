@@ -484,11 +484,14 @@ flow_run(void)
 	if (server == NULL)
 		return;
 
+	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'"),
+		geoxml_document_get_title(GEOXML_DOC(gebr.flow)));
 	if (comm_server_is_local(server->comm) == FALSE) {
-		gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'"),
-			geoxml_document_get_title(GEOXML_DOC(gebr.flow)));
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'"),
 			server->comm->address->str,
+			geoxml_document_get_title(GEOXML_DOC(gebr.flow)));
+	} else {
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking local server to run flow '%s'"),
 			geoxml_document_get_title(GEOXML_DOC(gebr.flow)));
 	}
 
