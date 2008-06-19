@@ -15,7 +15,7 @@
  *   along with this program. If not, see
  *   <http://www.gnu.org/licenses/>.
  */
-
+#include <string.h>
 #include <misc/date.h>
 
 #include "ui_log.h"
@@ -119,7 +119,28 @@ log_clicked(void)
 void
 log_set_message(struct ui_log * ui_log, const gchar * message)
 {
-	gtk_expander_set_label(GTK_EXPANDER(ui_log->widget), message);
+	
+	gchar *                 msga;
+	gchar *                 ptr;
+	GString *               msgb;
+
+	msga = g_strndup(message, 80);
+	msga = g_strdelimit(g_strchug(msga), "\n", ' ');
+
+	ptr = msga;
+	while (*ptr != '\0'){
+		if (g_ascii_iscntrl(*ptr)) *ptr = ' ';
+		ptr++;
+	}
+       
+	msgb = g_string_new(msga);
+	
+	if (strlen(message) > 80)
+		g_string_append(msgb,"...");
+
+	gtk_expander_set_label(GTK_EXPANDER(ui_log->widget), msgb->str);
+	g_free(msga);
+	g_string_free(msgb, TRUE);
 }
 
 void
