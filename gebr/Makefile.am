@@ -14,32 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = data menus src
-
-EXTRA_DIST =
-	rpm/gebr.fedora.spec \
-	rpm/gebr.opensuse.spec \
-	rpm/gebr.mandriva.spec
+SUBDIRS = data menus src packages
 
 doc:
 	NaturalDocs -i src/ -p ndproj/ -o FramedHtml doc/
-
-packages: deb-package rpm-packages
-rpm-packages: fedora-package opensuse-package mandriva-package
-
-deb-package:
-	dpkg-buildpackage -kA594D681 -tc -rfakeroot
-
-rpm-structure: dist
-	mkdir -p rpm/BUILD rpm/RPMS rpm/SRPMS rpm/SOURCES && cp @PACKAGE@-@VERSION@.tar.gz rpm/SOURCES
-
-fedora-package: rpm-structure
-	rpmbuild -ba rpm/gebr.fedora.spec
-
-opensuse-package: rpm-structure
-	rpmbuild -ba rpm/gebr.opensuse.spec
-
-mandriva-package: rpm-structure
-	rpmbuild -ba rpm/gebr.mandriva.spec
-
-.PHONY: doc deb-package rpm-structure fedora-package opensuse-package mandriva-package

@@ -17,7 +17,7 @@
 AC_INIT(configure.ac)
 
 PACKAGE=gebrd
-VERSION=0.9.6-pre`date +"%Y%m%d"`
+VERSION=0.9.4pre`date +"%Y%m%d"`
 TODAY=$(LANG=C date +"%a, %d %b %Y %T %z")
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
@@ -77,7 +77,6 @@ AC_SUBST(LIBGEBR_MISC_CFLAGS)
 AC_SUBST(LIBGEBR_MISC_LIBS)
 
 AC_OUTPUT([
-debian/changelog
-rpm/gebrd.fedora.spec rpm/gebrd.opensuse.spec rpm/gebrd.mandriva.spec
-Makefile src/Makefile src/defines.h
+packages/debian/changelog packages/rpm/gebrd.fedora.spec packages/rpm/gebrd.opensuse.spec packages/rpm/gebrd.mandriva.spec
+Makefile src/Makefile src/defines.h packages/Makefile
 ])

@@ -30,8 +30,6 @@ AC_PROG_CC
 
 AC_OUTPUT([
 Makefile
-menus/Makefile
-rpm/gebr-menus-su.fedora.spec
-rpm/gebr-menus-su.opensuse.spec
-rpm/gebr-menus-su.mandriva.spec
+menus/Makefile packages/Makefile
+packages/rpm/gebr-menus-su.fedora.spec packages/rpm/gebr-menus-su.opensuse.spec packages/rpm/gebr-menus-su.mandriva.spec
 ])

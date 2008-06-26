@@ -17,7 +17,7 @@
 AC_INIT(configure.ac)
 
 PACKAGE=gebrme
-VERSION=0.9.6-pre`date +"%Y%m%d"`
+VERSION=0.9.4pre`date +"%Y%m%d"`
 TODAY=$(LANG=C date +"%a, %d %b %Y %T %z")
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
@@ -75,8 +75,7 @@ AC_SUBST(LIBGEBR_MISC_CFLAGS)
 AC_SUBST(LIBGEBR_MISC_LIBS)
 
 AC_OUTPUT([
-debian/changelog
-rpm/gebrme.fedora.spec rpm/gebrme.opensuse.spec rpm/gebrme.mandriva.spec
+packages/debian/changelog packages/rpm/gebrme.fedora.spec packages/rpm/gebrme.opensuse.spec packages/rpm/gebrme.mandriva.spec
 data/help-template.html
-Makefile data/Makefile src/Makefile src/defines.h
+Makefile data/Makefile src/Makefile src/defines.h packages/Makefile
 ])

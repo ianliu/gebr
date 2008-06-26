@@ -1,5 +1,5 @@
-# GÍBR ME - GÍBR Menu Editor
-# Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
+# GeBR ME - GÍBR Menu Editor
+# Copyright (C) 2007 GeBR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,27 +14,4 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = data src
-
-EXTRA_DIST=
-	rpm/gebrme.fedora.spec \
-	rpm/gebrme.opensuse.spec \
-	rpm/gebrme.mandriva.spec
-
-packages: deb-package rpm-packages
-rpm-packages: fedora-package opensuse-package mandriva-package
-
-deb-package:
-	dpkg-buildpackage -kA594D681 -tc -rfakeroot
-
-rpm-structure: dist
-	mkdir -p rpm/BUILD rpm/RPMS rpm/SRPMS rpm/SOURCES && cp @PACKAGE@-@VERSION@.tar.gz rpm/SOURCES
-
-fedora-package: rpm-structure
-	rpmbuild -ba rpm/gebrme.fedora.spec
-
-opensuse-package: rpm-structure
-	rpmbuild -ba rpm/gebrme.opensuse.spec
-
-mandriva-package: rpm-structure
-	rpmbuild -ba rpm/gebrme.mandriva.spec
+SUBDIRS = data src packages
