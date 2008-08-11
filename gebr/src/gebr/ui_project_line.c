@@ -33,6 +33,7 @@
 #include "document.h"
 #include "project.h"
 #include "line.h"
+#include "flow.h"
 #include "ui_help.h"
 #include "callbacks.h"
 
@@ -282,8 +283,10 @@ project_line_load(void)
 		return;
 	}
 
-	/* Frees any previous project and line loaded */
+	/* Frees any previous project, line and flow loaded */
 	project_line_free();
+	flow_free();
+	line_load_flows();
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
 	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
@@ -374,6 +377,8 @@ project_line_info_update(void)
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.author), "");
 
 		g_object_set(gebr.ui_project_line->info.help, "sensitive", FALSE, NULL);
+		
+		navigation_bar_update();
 		return;
 	}
 
@@ -477,6 +482,8 @@ project_line_info_update(void)
 	/* Info button */
 	g_object_set(gebr.ui_project_line->info.help,
 		"sensitive", strlen(geoxml_document_get_help(gebr.project_line)) ? TRUE : FALSE, NULL);
+
+	navigation_bar_update();
 }
 
 static void

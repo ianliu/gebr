@@ -86,4 +86,7 @@ on_configure_servers_activate(void);
 void
 on_help_about_activate(void);
 
+void
+navigation_bar_update(void);
+
 #endif //__CALLBACKS_H

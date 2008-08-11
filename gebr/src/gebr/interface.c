@@ -69,6 +69,7 @@ void
 assembly_interface(void)
 {
 	GtkWidget *	vboxmain;
+	GtkWidget *     navigation_hbox;
 	GtkWidget *	mainmenu;
 	GtkWidget *	pagetitle;
 	GClosure *      closure;
@@ -132,6 +133,16 @@ assembly_interface(void)
 	gtk_menu_bar_append(GTK_MENU_BAR(mainmenu), assembly_help_menu());
 
 	gtk_widget_show_all(mainmenu);
+
+	/*
+	 * Create navigation bar
+	 */
+	navigation_hbox = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(vboxmain), navigation_hbox, FALSE, FALSE, 4);
+	gebr.navigation_box_label = gtk_label_new(NULL);
+	gtk_box_pack_start(GTK_BOX(navigation_hbox), gebr.navigation_box_label, FALSE, FALSE, 0);
+	
+	gtk_widget_show_all(navigation_hbox);
 
 	/*
 	 * Create a notebook to hold several pages

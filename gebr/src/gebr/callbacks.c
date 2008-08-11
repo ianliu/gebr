@@ -283,3 +283,32 @@ on_help_about_activate(void)
 {
 	gtk_widget_show_all(gebr.about.dialog);
 }
+
+/* Function: on_document_update
+ * 
+ */
+void
+navigation_bar_update(void)
+{
+	GString *			markup;
+
+	if (gebr.project_line == NULL) {
+		gtk_label_set_text(GTK_LABEL(gebr.navigation_box_label), "");
+		return;
+	}
+
+	markup = g_string_new(NULL);
+	g_string_append(markup, g_markup_printf_escaped("<i>%s</i>",
+							geoxml_document_get_title(GEOXML_DOC(gebr.project))));
+
+	if (gebr.line != NULL)
+		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
+							geoxml_document_get_title(GEOXML_DOC(gebr.line))));
+	
+	if (gebr.flow != NULL)
+		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
+							geoxml_document_get_title(GEOXML_DOC(gebr.flow))));
+	
+	gtk_label_set_markup(GTK_LABEL(gebr.navigation_box_label), markup->str);
+	g_string_free(markup, TRUE);
+}

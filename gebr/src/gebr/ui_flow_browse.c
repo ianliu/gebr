@@ -324,6 +324,8 @@ flow_browse_info_update(void)
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.author), "");
 
 		g_object_set(gebr.ui_flow_browse->info.help, "sensitive", FALSE, NULL);
+
+		navigation_bar_update();
 		return;
 	}
 
@@ -398,6 +400,8 @@ flow_browse_info_update(void)
 	g_object_set(gebr.ui_flow_browse->info.help,
 		"sensitive", strlen(geoxml_document_get_help(GEOXML_DOC(gebr.flow))) ? TRUE : FALSE,
 		NULL);
+
+	navigation_bar_update();
 }
 
 static void
