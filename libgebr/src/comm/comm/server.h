@@ -23,14 +23,14 @@
 #include <geoxml.h>
 #include <misc/log.h>
 
-#include "gtcpsocket.h"
+#include "gstreamsocket.h"
 #include "protocol.h"
 #include "gterminalprocess.h"
 #include "gprocess.h"
 
 struct comm_server {
 	/* the communication channel. */
-	GTcpSocket *		tcp_socket;
+	GStreamSocket *		stream_socket;
 	/* protocol parsing stuff */
 	struct protocol *	protocol;
 	/* server address/port */

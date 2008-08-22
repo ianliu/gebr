@@ -16,13 +16,13 @@
 
 lib_LTLIBRARIES = libgebr_comm.la
 libgebr_comm_la_SOURCES = \
-	ghostaddress.c ghostinfo.c gsocket.c gtcpsocket.c gtcpserver.c \
+	gsocketaddress.c ghostinfo.c gsocket.c gstreamsocket.c glistensocket.c \
 	gprocess.c gterminalprocess.c \
 	protocol.c server.c
 
 libgebr_commsubincludedir = $(includedir)/libgebr/comm
 libgebr_commsubinclude_HEADERS = \
-	ghostaddress.h ghostinfo.h gsocket.h gtcpsocket.h gtcpserver.h \
+	gsocketaddress.h ghostinfo.h gsocket.h gstreamsocket.h glistensocket.h \
 	gprocess.h gterminalprocess.h \
 	protocol.h server.h
 noinst_HEADERS = \

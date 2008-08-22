@@ -24,7 +24,7 @@
  * Create an already connected socket
  * Used by GTcpServer when a new connection is accepted.
  */
-GTcpSocket *
-_g_tcp_socket_new_connected(int fd);
+GStreamSocket *
+_g_stream_socket_new_connected(int fd);
 
 #endif //__LIBGEBR_COMM_G_TCP_SOCKET_PRIVATE_H

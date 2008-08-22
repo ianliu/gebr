@@ -183,7 +183,7 @@ err:	g_strfreev(splits);
 }
 
 void
-protocol_send_data(struct protocol * protocol, GTcpSocket * tcp_socket,
+protocol_send_data(struct protocol * protocol, GStreamSocket * stream_socket,
 		struct message_def message_def, guint n_params, ...)
 {
 	GString *	message;
@@ -210,7 +210,7 @@ protocol_send_data(struct protocol * protocol, GTcpSocket * tcp_socket,
 	message = g_string_new(NULL);
 	g_string_printf(message, "%s %zu %s\n", message_def.string, data->len, data->str);
 	/* send it */
-	g_socket_write_string(G_SOCKET(tcp_socket), message);
+	g_socket_write_string(G_SOCKET(stream_socket), message);
 
 	g_string_free(data, TRUE);
 	g_string_free(message, TRUE);

@@ -20,7 +20,7 @@
 
 #include <glib.h>
 
-#include "gtcpsocket.h"
+#include "gstreamsocket.h"
 
 #define PROTOCOL_VERSION	"0.9.3"
 
@@ -91,7 +91,7 @@ gboolean
 protocol_receive_data(struct protocol * protocol, GString * data);
 
 void
-protocol_send_data(struct protocol * protocol, GTcpSocket * tcp_socket,
+protocol_send_data(struct protocol * protocol, GStreamSocket * stream_socket,
 		struct message_def message_def, guint n_params, ...);
 
 GList *

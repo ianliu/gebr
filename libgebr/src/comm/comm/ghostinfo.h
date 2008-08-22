@@ -22,7 +22,7 @@
 
 #include <glib.h>
 
-#include "ghostaddress.h"
+#include "gsocketaddress.h"
 
 G_BEGIN_DECLS
 
@@ -55,7 +55,7 @@ g_host_info_error(GHostInfo * host_info);
 GList *
 g_host_info_addesses(GHostInfo * host_info);
 
-GHostAddress *
+GSocketAddress *
 g_host_info_first_address(GHostInfo * host_info);
 
 GHostInfo *

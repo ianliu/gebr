@@ -23,7 +23,7 @@
 #include <string.h>
 
 #include "server.h"
-#include "gtcpserver.h"
+#include "glistensocket.h"
 #include "support.h"
 
 /*
@@ -50,13 +50,13 @@ static void
 comm_ssh_open_tunnel_finished(GTerminalProcess * process, struct comm_server * comm_server);
 
 static void
-comm_server_connected(GTcpSocket * tcp_socket, struct comm_server * comm_server);
+comm_server_connected(GStreamSocket * stream_socket, struct comm_server * comm_server);
 static void
-comm_server_disconnected(GTcpSocket * tcp_socket, struct comm_server * comm_server);
+comm_server_disconnected(GStreamSocket * stream_socket, struct comm_server * comm_server);
 static void
-comm_server_read(GTcpSocket * tcp_socket, struct comm_server * comm_server);
+comm_server_read(GStreamSocket * stream_socket, struct comm_server * comm_server);
 static void
-comm_server_error(GTcpSocket * tcp_socket, enum GSocketError error, struct comm_server * comm_server);
+comm_server_error(GStreamSocket * stream_socket, enum GSocketError error, struct comm_server * comm_server);
 
 static void
 comm_server_free_x11_process(struct comm_server * comm_server);
@@ -75,7 +75,7 @@ comm_server_new(const gchar * _address, const struct comm_server_ops * ops)
 	/* initialize */
 	comm_server = g_malloc(sizeof(struct comm_server));
 	*comm_server = (struct comm_server) {
-		.tcp_socket = g_tcp_socket_new(),
+		.stream_socket = g_stream_socket_new(),
 		.protocol = protocol_new(),
 		.address = g_string_new(_address),
 		.port = 0,
@@ -84,13 +84,13 @@ comm_server_new(const gchar * _address, const struct comm_server_ops * ops)
 		.x11_forward = NULL,
 	};
 
-	g_signal_connect(comm_server->tcp_socket, "connected",
+	g_signal_connect(comm_server->stream_socket, "connected",
 		G_CALLBACK(comm_server_connected), comm_server);
-	g_signal_connect(comm_server->tcp_socket, "disconnected",
+	g_signal_connect(comm_server->stream_socket, "disconnected",
 		G_CALLBACK(comm_server_disconnected), comm_server);
-	g_signal_connect(comm_server->tcp_socket, "ready-read",
+	g_signal_connect(comm_server->stream_socket, "ready-read",
 		G_CALLBACK(comm_server_read), comm_server);
-	g_signal_connect(comm_server->tcp_socket, "error",
+	g_signal_connect(comm_server->stream_socket, "error",
 		G_CALLBACK(comm_server_error), comm_server);
 
 	return comm_server;
@@ -99,7 +99,7 @@ comm_server_new(const gchar * _address, const struct comm_server_ops * ops)
 void
 comm_server_free(struct comm_server * comm_server)
 {
-	g_socket_close(G_SOCKET(comm_server->tcp_socket));
+	g_socket_close(G_SOCKET(comm_server->stream_socket));
 	protocol_free(comm_server->protocol);
 	g_string_free(comm_server->address, TRUE);
 	g_string_free(comm_server->password, TRUE);
@@ -241,7 +241,7 @@ comm_server_run_flow(struct comm_server * comm_server, GeoXmlFlow * flow)
 	geoxml_document_to_string(GEOXML_DOC(flow_wnh), &xml);
 
 	/* finally... */
-	protocol_send_data(comm_server->protocol, comm_server->tcp_socket, protocol_defs.run_def, 1, xml);
+	protocol_send_data(comm_server->protocol, comm_server->stream_socket, protocol_defs.run_def, 1, xml);
 
 	/* frees */
 	g_free(xml);
@@ -291,7 +291,7 @@ local_run_server_read(GProcess * process, struct comm_server * comm_server)
 static void
 local_run_server_finished(GProcess * process, struct comm_server * comm_server)
 {
-	GHostAddress *	host_address;
+	GSocketAddress *	socket_address;
 
 	comm_server->process.use = COMM_SERVER_PROCESS_NONE;
 	g_process_free(process);
@@ -300,13 +300,11 @@ local_run_server_finished(GProcess * process, struct comm_server * comm_server)
 	if (comm_server->error != SERVER_ERROR_NONE)
 		return;
 
-	host_address = g_host_address_new();
-	g_host_address_set_ipv4_string(host_address, "127.0.0.1");
-
 	comm_server->state = SERVER_STATE_CONNECT;
-	g_tcp_socket_connect(comm_server->tcp_socket, host_address, comm_server->port, FALSE);
+	socket_address = g_socket_address_new("127.0.0.1", G_SOCKET_ADDRESS_TYPE_IPV4);
+	g_stream_socket_connect(comm_server->stream_socket, socket_address, comm_server->port, FALSE);
 
-	g_host_address_free(host_address);
+	g_socket_address_free(socket_address);
 }
 
 static gboolean
@@ -449,7 +447,7 @@ comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * co
 
 	comm_server->state = SERVER_STATE_OPEN_TUNNEL;
 	comm_server->tunnel_port = 2125;
-	while (!g_tcp_server_is_local_port_available(comm_server->tunnel_port))
+	while (!g_listen_socket_is_local_port_available(comm_server->tunnel_port))
 		++comm_server->tunnel_port;
 
 	g_string_printf(cmd_line, "ssh -x -f -L %d:127.0.0.1:%d %s 'sleep 300'",
@@ -463,27 +461,24 @@ comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * co
 static void
 comm_ssh_open_tunnel_finished(GTerminalProcess * process, struct comm_server * comm_server)
 {
-	GHostAddress *		host_address;
+	GSocketAddress *		socket_address;
 
 	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_open_tunnel_finished");
 
 	if (comm_server->error != SERVER_ERROR_NONE)
 		goto out;
 
-	/* connection is made to a local tunnel */
-	host_address = g_host_address_new();
-	g_host_address_set_ipv4_string(host_address, "127.0.0.1");
-
 	comm_server->state = SERVER_STATE_CONNECT;
-	g_tcp_socket_connect(comm_server->tcp_socket, host_address, comm_server->tunnel_port, FALSE);
+	socket_address = g_socket_address_new("127.0.0.1", G_SOCKET_ADDRESS_TYPE_IPV4);
+	g_stream_socket_connect(comm_server->stream_socket, socket_address, comm_server->tunnel_port, FALSE);
 
-	g_host_address_free(host_address);
+	g_socket_address_free(socket_address);
 out:	comm_server->process.use = COMM_SERVER_PROCESS_NONE;
 	g_terminal_process_free(process);
 }
 
 static void
-comm_server_connected(GTcpSocket * tcp_socket, struct comm_server * comm_server)
+comm_server_connected(GStreamSocket * stream_socket, struct comm_server * comm_server)
 {
 	gchar		hostname[256];
 	gchar *		display;
@@ -496,37 +491,38 @@ comm_server_connected(GTcpSocket * tcp_socket, struct comm_server * comm_server)
 
 	if (comm_server_is_local(comm_server) == FALSE) {
 		GString *	cmd_line;
-		FILE *		output_fp;
 		gchar		mcookie_str[33];
 
 		/* initialization */
 		cmd_line = g_string_new(NULL);
 
 		if (strlen(display)) {
+			FILE * output_fp;
+
 			/* get this X session magic cookie */
 			g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display);
 			output_fp = popen(cmd_line->str, "r");
 			fscanf(output_fp, "%32s", mcookie_str);
-		} else {
+
+			pclose(output_fp);
+		} else
 			strcpy(mcookie_str, "");
-		}
 
 		/* send INI */
-		protocol_send_data(comm_server->protocol, comm_server->tcp_socket,
+		protocol_send_data(comm_server->protocol, comm_server->stream_socket,
 			protocol_defs.ini_def, 4, PROTOCOL_VERSION, hostname, "remote", mcookie_str);
 
 		/* frees */
-		pclose(output_fp);
 		g_string_free(cmd_line, TRUE);
 	} else {
 		/* send INI */
-		protocol_send_data(comm_server->protocol, comm_server->tcp_socket,
+		protocol_send_data(comm_server->protocol, comm_server->stream_socket,
 			protocol_defs.ini_def, 4, PROTOCOL_VERSION, hostname, "local", display);
 	}
 }
 
 static void
-comm_server_disconnected(GTcpSocket * tcp_socket, struct comm_server * comm_server)
+comm_server_disconnected(GStreamSocket * stream_socket, struct comm_server * comm_server)
 {
 	comm_server->port = 0;
 	comm_server->protocol->logged = FALSE;
@@ -538,11 +534,11 @@ comm_server_disconnected(GTcpSocket * tcp_socket, struct comm_server * comm_serv
 }
 
 static void
-comm_server_read(GTcpSocket * tcp_socket, struct comm_server * comm_server)
+comm_server_read(GStreamSocket * stream_socket, struct comm_server * comm_server)
 {
 	GString *	data;
 
-	data = g_socket_read_string_all(G_SOCKET(tcp_socket));
+	data = g_socket_read_string_all(G_SOCKET(stream_socket));
 	protocol_receive_data(comm_server->protocol, data);
 	comm_server->ops->parse_messages(comm_server, comm_server->user_data);
 
@@ -553,7 +549,7 @@ comm_server_read(GTcpSocket * tcp_socket, struct comm_server * comm_server)
 }
 
 static void
-comm_server_error(GTcpSocket * tcp_socket, enum GSocketError error, struct comm_server * comm_server)
+comm_server_error(GStreamSocket * stream_socket, enum GSocketError error, struct comm_server * comm_server)
 {
 	comm_server->error = SERVER_ERROR_CONNECT;
 	if (error == G_SOCKET_ERROR_UNKNOWN)
