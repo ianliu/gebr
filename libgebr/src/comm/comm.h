@@ -16,11 +16,12 @@
  */
 
 /* include all comm library's headers. */
-#include <comm/ghostaddress.h>
+#include <comm/gsocketaddress.h>
 #include <comm/ghostinfo.h>
 #include <comm/gsocket.h>
-#include <comm/gtcpsocket.h>
-#include <comm/gtcpserver.h>
+#include <comm/gstreamsocket.h>
+#include <comm/glistensocket.h>
+#include <comm/gchannelsocket.h>
 #include <comm/gprocess.h>
 #include <comm/protocol.h>
 #include <comm/server.h>

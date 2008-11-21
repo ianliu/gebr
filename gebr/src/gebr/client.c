@@ -62,7 +62,7 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 				}
 
 				/* request list of jobs */
-				protocol_send_data(comm_server->protocol, comm_server->tcp_socket,
+				protocol_send_data(comm_server->protocol, comm_server->stream_socket,
 					protocol_defs.lst_def, 0);
 
 				protocol_split_free(arguments);

@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007-2008 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007-2008 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -54,28 +54,15 @@ geoxml_line_new()
 }
 
 GeoXmlLineFlow *
-geoxml_line_new_flow(GeoXmlLine * line, const gchar * source)
-{
-	if (line == NULL)
-		return NULL;
-
-	GeoXmlLineFlow * line_flow;
-
-	line_flow = (GeoXmlLineFlow*)__geoxml_new_element(geoxml_document_root_element(GEOXML_DOC(line)), "flow");
-	__geoxml_set_attr_value((GdomeElement*)line_flow, "source", source);
-
-	return line_flow;
-}
-
-GeoXmlLineFlow *
 geoxml_line_append_flow(GeoXmlLine * line, const gchar * source)
 {
 	if (line == NULL)
 		return NULL;
 
-	GeoXmlLineFlow* line_flow;
+	GeoXmlLineFlow *	line_flow;
 
-	line_flow = (GeoXmlLineFlow*)__geoxml_insert_new_element(geoxml_document_root_element(GEOXML_DOC(line)), "flow", NULL);
+	line_flow = (GeoXmlLineFlow*)__geoxml_insert_new_element(
+		geoxml_document_root_element(GEOXML_DOC(line)), "flow", NULL);
 	__geoxml_set_attr_value((GdomeElement*)line_flow, "source", source);
 
 	return line_flow;
@@ -90,7 +77,7 @@ geoxml_line_get_flow(GeoXmlLine * line, GeoXmlSequence ** line_flow, gulong inde
 	}
 
 	*line_flow = (GeoXmlSequence*)__geoxml_get_element_at(
-		geoxml_document_root_element(GEOXML_DOC(line)), "flow", index);
+		geoxml_document_root_element(GEOXML_DOC(line)), "flow", index, FALSE);
 
 	return (*line_flow == NULL)
 		? GEOXML_RETV_INVALID_INDEX
@@ -122,21 +109,6 @@ geoxml_line_get_flow_source(GeoXmlLineFlow * line_flow)
 }
 
 GeoXmlLinePath *
-geoxml_line_new_path(GeoXmlLine * line, const gchar * path)
-{
-	if (line == NULL || path == NULL)
-		return NULL;
-
-	GeoXmlLinePath *	line_path;
-
-	line_path = (GeoXmlLinePath*)__geoxml_new_element(
-		geoxml_document_root_element(GEOXML_DOC(line)), "path");
-	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(line_path), path);
-
-	return line_path;
-}
-
-GeoXmlLinePath *
 geoxml_line_append_path(GeoXmlLine * line, const gchar * path)
 {
 	if (line == NULL || path == NULL)
@@ -160,7 +132,8 @@ geoxml_line_get_path(GeoXmlLine * line, GeoXmlSequence ** path, gulong index)
 		return GEOXML_RETV_NULL_PTR;
 	}
 
-	*path = (GeoXmlSequence*)__geoxml_get_element_at(geoxml_document_root_element(GEOXML_DOC(line)), "path", index);
+	*path = (GeoXmlSequence*)__geoxml_get_element_at(
+		geoxml_document_root_element(GEOXML_DOC(line)), "path", index, FALSE);
 
 	return (*path == NULL)
 		? GEOXML_RETV_INVALID_INDEX
@@ -173,28 +146,4 @@ geoxml_line_get_paths_number(GeoXmlLine * line)
 	if (line == NULL)
 		return -1;
 	return __geoxml_get_elements_number(geoxml_document_root_element(GEOXML_DOC(line)), "path");
-}
-
-void
-geoxml_line_previous_flow(GeoXmlLineFlow ** line_flow)
-{
-	geoxml_sequence_previous((GeoXmlSequence**)line_flow);
-}
-
-void
-geoxml_line_next_flow(GeoXmlLineFlow ** line_flow)
-{
-	geoxml_sequence_next((GeoXmlSequence**)line_flow);
-}
-
-GeoXmlLineFlow *
-geoxml_line_add_flow(GeoXmlLine * line, const gchar * source)
-{
-	return geoxml_line_append_flow(line, source);
-}
-
-void
-geoxml_line_remove_flow(GeoXmlLine * line, GeoXmlLineFlow * line_flow)
-{
-	geoxml_sequence_remove(GEOXML_SEQUENCE(line_flow));
 }

@@ -18,6 +18,28 @@
 #ifndef __LIBGEBR_GEOXML_PARAMETER_P_H
 #define __LIBGEBR_GEOXML_PARAMETER_P_H
 
+/**
+ * \internal
+ * Create element type and add it to \p parameter, according to \p type
+ * This function doesn't create a reference parameter.
+ */
+gboolean
+__geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETERTYPE type);
 
+/**
+ * \internal
+ *
+ * Return the type element of \p parameter
+ */
+GdomeElement *
+__geoxml_parameter_get_type_element(GeoXmlParameter * parameter);
+
+/**
+ * \internal
+ * Set \p parameter to be a reference to \p reference.
+ * If \p new is TRUE indicate that it was previously cloned.
+ */
+void
+__geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter * reference, gboolean new);
 
 #endif //__LIBGEBR_GEOXML_PARAMETER_P_H

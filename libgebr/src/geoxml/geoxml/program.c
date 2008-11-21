@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007-2008 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007-2008 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -227,49 +227,4 @@ geoxml_program_get_url(GeoXmlProgram * program)
 	if (program == NULL)
 		return NULL;
 	return __geoxml_get_tag_value((GdomeElement*)program, "url");
-}
-
-GeoXmlProgramParameter *
-geoxml_program_new_parameter(GeoXmlProgram * program, enum GEOXML_PARAMETERTYPE type)
-{
-	return (GeoXmlProgramParameter*)geoxml_parameters_append_parameter((GeoXmlParameters *)
-		__geoxml_get_first_element((GdomeElement*)program, "parameters"), type);
-}
-
-GeoXmlProgramParameter *
-geoxml_program_get_first_parameter(GeoXmlProgram * program)
-{
-	return (GeoXmlProgramParameter*)geoxml_parameters_get_first_parameter((GeoXmlParameters *)
-		__geoxml_get_first_element((GdomeElement*)program, "parameters"));
-}
-
-glong
-geoxml_program_get_parameters_number(GeoXmlProgram * program)
-{
-	return geoxml_parameters_get_number((GeoXmlParameters *)
-		__geoxml_get_first_element((GdomeElement*)program, "parameters"));
-}
-
-void
-geoxml_program_previous(GeoXmlProgram ** program)
-{
-	geoxml_sequence_previous((GeoXmlSequence**)program);
-}
-
-void
-geoxml_program_next(GeoXmlProgram ** program)
-{
-	geoxml_sequence_next((GeoXmlSequence**)program);
-}
-
-void
-geoxml_program_remove(GeoXmlProgram * program)
-{
-	geoxml_sequence_remove((GeoXmlSequence*)program);
-}
-
-void
-geoxml_program_remove_parameter(GeoXmlProgram * program, GeoXmlProgramParameter * parameter)
-{
-	geoxml_sequence_remove((GeoXmlSequence*)parameter);
 }

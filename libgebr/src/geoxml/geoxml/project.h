@@ -70,8 +70,7 @@
  * Therefore, a project is a list of lines files. When a line needs to be
  * read or edited you ask the project for its path (see \ref geoxml_project_get_line_source) and then
  * load it with \ref geoxml_document_load. New liness can be added to a project using
- * \ref geoxml_project_add_line, or removed with \ref geoxml_project_remove_line.
- * Iteration can be done combining \ref geoxml_project_get_line and \ref geoxml_project_next_line.
+ * \ref geoxml_project_append_line.
  *
  * \see line.h
  */
@@ -113,19 +112,9 @@ GeoXmlProject *
 geoxml_project_new();
 
 /**
- * Creates a new line reference located at \p source and returns a pointer to it.
- * The line returned should be added using geoxml_sequence_prepend or geoxml_sequence_append
+ * Create a new line and append it to list of flows references.
  *
- * If \p project is NULL returns NULL.
- */
-GeoXmlProjectLine *
-geoxml_project_new_line(GeoXmlProject * project, const gchar * source);
-
-/**
- * Create a new flow and append to list of flows references.
- * Provided for convenience.
- *
- * \see geoxml_project_new_line
+ * If \p project or \p source is NULL returns NULL.
  */
 GeoXmlProjectLine *
 geoxml_project_append_line(GeoXmlProject * project, const gchar * source);
@@ -164,33 +153,5 @@ geoxml_project_set_line_source(GeoXmlProjectLine * project_line, const gchar * s
  */
 const gchar *
 geoxml_project_get_line_source(GeoXmlProjectLine * project_line);
-
-/**
- * \deprecated
- * Use geoxml_sequence_previous instead. Kept only for backwards compatible and should not be used in newly written code
- */
-void GEOXML_DEPRECATED
-geoxml_project_previous_line(GeoXmlProjectLine ** project_line);
-
-/**
- * \deprecated
- * Use geoxml_sequence_next instead. Kept only for backwards compatible and should not be used in newly written code
- */
-void GEOXML_DEPRECATED
-geoxml_project_next_line(GeoXmlProjectLine ** project_line);
-
-/**
- * \deprecated
- * See geoxml_project_new_line instead. Kept only for backwards compatible and should not be used in newly written code
- */
-GeoXmlProjectLine * GEOXML_DEPRECATED
-geoxml_project_add_line(GeoXmlProject * project, const gchar * source);
-
-/**
- * \deprecated
- * Use geoxml_sequence_remove instead. Kept only for backwards compatible and should not be used in newly written code
- */
-void GEOXML_DEPRECATED
-geoxml_project_remove_line(GeoXmlProject * project, GeoXmlProjectLine * project_line);
 
 #endif //__LIBGEBR_GEOXML_PROJECT_H

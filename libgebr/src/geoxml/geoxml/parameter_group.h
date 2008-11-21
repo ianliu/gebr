@@ -88,78 +88,43 @@ typedef struct geoxml_parameter_group GeoXmlParameterGroup;
 #include <glib.h>
 
 /**
+ * Instanciate \p parameter_group, appending a new instances
+ * (which is a clone of the first instance) to the list of instances.
+ */
+GeoXmlParameters *
+geoxml_parameter_group_instanciate(GeoXmlParameterGroup * parameter_group);
+
+/**
+ * Remove the last instance.
+ */
+gboolean
+geoxml_parameter_group_deinstanciate(GeoXmlParameterGroup * parameter_group);
+
+/**
  * Get \p group's parameters list.
  *
  * \see \ref parameters.h "GeoXmlParameters"
  */
-GeoXmlParameters *
-geoxml_parameter_group_get_parameters(GeoXmlParameterGroup * parameter_group);
-
-/**
- * Get the first parameter of the last instance of \p parameter_group
- */
-GeoXmlParameter *
-geoxml_parameter_group_last_instance_parameter(GeoXmlParameterGroup * parameter_group);
-
-/**
- * Instanciate \p parameter_group.
- * Duplicates the parameters of one instance of parameter_group
- */
-gboolean
-geoxml_parameter_group_instanciate(GeoXmlParameterGroup * parameter_group);
-
-/**
- *
- */
-gboolean
-geoxml_parameter_group_deinstanciate(GeoXmlParameterGroup * parameter_group);
+int
+geoxml_parameter_group_get_instance(GeoXmlParameterGroup * parameter_group,
+	GeoXmlSequence ** parameters, gulong index);
 
 /**
  * Get the number of instances of \p parameter_group
  *
  * If \p parameter_group is NULL returns 0.
  */
-gulong
-geoxml_parameter_group_get_instances(GeoXmlParameterGroup * parameter_group);
+glong
+geoxml_parameter_group_get_instances_number(GeoXmlParameterGroup * parameter_group);
 
 /**
  * Set wheter \p parameter_group can have more than one instance.
- * If \p can_instanciate is FALSE, group is deinstanciated till it has only one
+ * If \p enable is FALSE, group is deinstanciated till it has only one
  * one instance
  *
  */
 void
-geoxml_parameter_group_set_can_instanciate(GeoXmlParameterGroup * parameter_group, gboolean can_instanciate);
-
-/**
- * Get the number of parameters that one instance of \p parameter_group has.
- *
- * If \p parameter_group is NULL nothing is done.
- */
-void
-geoxml_parameter_group_set_parameters_by_instance(GeoXmlParameterGroup * parameter_group, gulong number);
-
-/**
- * Set this \p parameter_group to be an exclusive group and \p parameter
- * to be its exclusive parameter by default.
- * If \p parameter is NULL then you want to use the group in non-exclusive mode
- *
- * If \p parameter_group is NULL nothing is done.
- *
- * \see geoxml_parameter_group_get_exclusive
- * geoxml_parameter_group_set_selected
- */
-void
-geoxml_parameter_group_set_exclusive(GeoXmlParameterGroup * parameter_group, GeoXmlParameter * parameter);
-
-/**
- * If \p parameter_group is a exclusive group (aka has a non-NULL exclusive parameter set)
- * then select \p parameter to be current derised for use parameter; otherwise, nothing is done.
- *
- * If \p parameter_group is NULL nothing is done.
- */
-void
-geoxml_parameter_group_set_selected(GeoXmlParameterGroup * parameter_group, GeoXmlParameter * parameter);
+geoxml_parameter_group_set_is_instanciable(GeoXmlParameterGroup * parameter_group, gboolean enable);
 
 /**
  * Set it \p parameter_group should be expanded by default, according to \p enable.
@@ -175,15 +140,7 @@ geoxml_parameter_group_set_expand(GeoXmlParameterGroup * parameter_group, const 
  * If \p parameter_group is NULL returns FALSE.
  */
 gboolean
-geoxml_parameter_group_get_can_instanciate(GeoXmlParameterGroup * parameter_group);
-
-/**
- * Get the number of parameters that one instance of \p parameter_group has.
- *
- * If \p parameter_group is NULL returns 0.
- */
-gulong
-geoxml_parameter_group_get_parameters_by_instance(GeoXmlParameterGroup * parameter_group);
+geoxml_parameter_group_get_is_instanciable(GeoXmlParameterGroup * parameter_group);
 
 /**
  * Return TRUE if \p parameter_group should be expanded by default, otherwise returns FALSE.
@@ -192,21 +149,5 @@ geoxml_parameter_group_get_parameters_by_instance(GeoXmlParameterGroup * paramet
  */
 gboolean
 geoxml_parameter_group_get_expand(GeoXmlParameterGroup * parameter_group);
-
-/**
- *
- * If \p parameter_group is NULL returns FALSE.
- */
-GeoXmlParameter *
-geoxml_parameter_group_get_exclusive(GeoXmlParameterGroup * parameter_group);
-
-/**
- * If \p parameter_group is a exclusive group (aka has a non-NULL exclusive parameter set)
- * then select \p parameter to be current derised for use parameter; otherwise, returns NULL
- *
- * If \p parameter_group is NULL returns NULL.
- */
-GeoXmlParameter *
-geoxml_parameter_group_get_selected(GeoXmlParameterGroup * parameter_group);
 
 #endif //__LIBGEBR_GEOXML_PARAMETER_GROUP_H

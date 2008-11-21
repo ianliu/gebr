@@ -1,5 +1,5 @@
-/*   libgebr - GêBR Library
- *   Copyright (C) 2007-2008 GêBR core team (http://gebr.sourceforge.net)
+/*   libgebr - Gï¿½BR Library
+ *   Copyright (C) 2007-2008 Gï¿½BR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -49,21 +49,6 @@ geoxml_project_new()
 }
 
 GeoXmlProjectLine *
-geoxml_project_new_line(GeoXmlProject * project, const gchar * source)
-{
-	if (project == NULL)
-		return NULL;
-
-	GeoXmlProjectLine * project_line;
-
-	project_line = (GeoXmlProjectLine*)__geoxml_new_element(
-		geoxml_document_root_element(GEOXML_DOC(project)), "line");
-	__geoxml_set_attr_value((GdomeElement*)project_line, "source", source);
-
-	return project_line;
-}
-
-GeoXmlProjectLine *
 geoxml_project_append_line(GeoXmlProject * project, const gchar * source)
 {
 	if (project == NULL)
@@ -86,7 +71,8 @@ geoxml_project_get_line(GeoXmlProject * project, GeoXmlSequence ** project_line,
 		return GEOXML_RETV_NULL_PTR;
 	}
 
-	*project_line = (GeoXmlSequence*)__geoxml_get_element_at(geoxml_document_root_element(GEOXML_DOC(project)), "line", index);
+	*project_line = (GeoXmlSequence*)__geoxml_get_element_at(
+		geoxml_document_root_element(GEOXML_DOC(project)), "line", index, FALSE);
 
 	return (*project_line == NULL)
 		? GEOXML_RETV_INVALID_INDEX
@@ -115,28 +101,4 @@ geoxml_project_get_line_source(GeoXmlProjectLine * project_line)
 	if (project_line == NULL)
 		return NULL;
 	return __geoxml_get_attr_value((GdomeElement*)project_line, "source");
-}
-
-void
-geoxml_project_previous_line(GeoXmlProjectLine ** project_line)
-{
-	geoxml_sequence_previous((GeoXmlSequence**)project_line);
-}
-
-void
-geoxml_project_next_line(GeoXmlProjectLine ** project_line)
-{
-	geoxml_sequence_next((GeoXmlSequence**)project_line);
-}
-
-GeoXmlProjectLine *
-geoxml_project_add_line(GeoXmlProject * project, const gchar * source)
-{
-	return geoxml_project_append_line(project, source);
-}
-
-void
-geoxml_project_remove_line(GeoXmlProject * project, GeoXmlProjectLine * project_line)
-{
-	geoxml_sequence_remove(GEOXML_SEQUENCE(project_line));
 }

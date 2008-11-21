@@ -45,4 +45,19 @@ job_control_setup_ui(void);
 void
 job_control_clear_or_select_first(void);
 
+void
+job_control_save(void);
+
+void
+job_control_cancel(void);
+
+void
+job_control_close(void);
+
+void
+job_control_clear(void);
+
+void
+job_control_stop(void);
+
 #endif //__UI_JOB_CONTROL_H

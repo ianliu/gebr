@@ -168,6 +168,31 @@ gebr_quit(void)
 	g_object_unref(gebr.pixmaps.stock_info);
 	gtk_widget_destroy(gebr.invisible);
 
+	g_object_unref(gebr.actions.project_line.new_line);
+	g_object_unref(gebr.actions.project_line.new_project);
+	g_object_unref(gebr.actions.project_line.delete);
+	g_object_unref(gebr.actions.project_line.properties);
+	g_object_unref(gebr.actions.project_line.line_paths);
+	g_object_unref(gebr.actions.flow.new);
+	g_object_unref(gebr.actions.flow.delete);
+	g_object_unref(gebr.actions.flow.properties);
+	g_object_unref(gebr.actions.flow.io);
+	g_object_unref(gebr.actions.flow.execute);
+	g_object_unref(gebr.actions.flow.import);
+	g_object_unref(gebr.actions.flow.export);
+	g_object_unref(gebr.actions.flow.export_as_menu);
+	g_object_unref(gebr.actions.flow_edition.delete);
+	g_object_unref(gebr.actions.flow_edition.properties);
+	g_object_unref(gebr.actions.flow_edition.refresh);
+	g_object_unref(gebr.actions.flow_edition.configured);
+	g_object_unref(gebr.actions.flow_edition.unconfigured);
+	g_object_unref(gebr.actions.flow_edition.disabled);
+	g_object_unref(gebr.actions.job_control.save);
+	g_object_unref(gebr.actions.job_control.cancel);
+	g_object_unref(gebr.actions.job_control.close);
+	g_object_unref(gebr.actions.job_control.clear);
+	g_object_unref(gebr.actions.job_control.stop);
+
 	gtk_main_quit();
 
 	return FALSE;

@@ -37,21 +37,6 @@
 static void
 job_control_clicked(void);
 
-static void
-job_control_save(void);
-
-static void
-job_control_cancel(void);
-
-static void
-job_control_close(void);
-
-static void
-job_control_clear(void);
-
-static void
-job_control_stop(void);
-
 /*
  * Section: Public
  * Public functions.
@@ -69,14 +54,9 @@ struct ui_job_control *
 job_control_setup_ui(void)
 {
 	struct ui_job_control *		ui_job_control;
-	GtkWidget *			page;
-	GtkWidget *			vbox;
-
-	GtkWidget *			toolbar;
-	GtkWidget *			toolitem;
-	GtkWidget *			button;
 
 	GtkWidget *			hpanel;
+	GtkWidget *			vbox;
 	GtkWidget *			scrolled_win;
 	GtkWidget *			frame;
 
@@ -88,81 +68,8 @@ job_control_setup_ui(void)
 	/* alloc */
 	ui_job_control = g_malloc(sizeof(struct ui_job_control));
 
-	/* Create flow edit page */
-	page = gtk_vbox_new(FALSE, 0);
-	ui_job_control->widget = page;
-
-	/* Vbox to hold toolbar and main content */
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(page), vbox);
-
-	/* Toolbar */
-	toolbar = gtk_toolbar_new();
-	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH);
-	/* FIXME ! */
-	/* g_object_set_property(G_OBJECT(toolbar), "shadow-type", GTK_SHADOW_NONE); */
-
-	/* Save */
-	toolitem = GTK_WIDGET(gtk_tool_item_new());
-	gtk_container_add(GTK_CONTAINER(toolbar), toolitem);
-	button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_container_add(GTK_CONTAINER(toolitem), button);
-	set_tooltip(button, _("Save job information in a file"));
-
-	g_signal_connect(GTK_BUTTON(button), "clicked",
-			GTK_SIGNAL_FUNC(job_control_save), NULL);
-
-	/* Cancel button = END */
-	toolitem = GTK_WIDGET(gtk_tool_item_new());
-	gtk_container_add(GTK_CONTAINER(toolbar), toolitem);
-	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_container_add(GTK_CONTAINER(toolitem), button);
-	set_tooltip(button, _("Ask server to terminate the job"));
-
-	g_signal_connect(GTK_BUTTON(button), "clicked",
-			GTK_SIGNAL_FUNC(job_control_cancel), NULL);
-
-	/* Close button */
-	toolitem =(GtkWidget*)gtk_tool_item_new();
-	gtk_container_add(GTK_CONTAINER(toolbar), toolitem);
-
-	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_container_add(GTK_CONTAINER(toolitem), button);
-	set_tooltip(button, _("Clear current job log"));
-
-	g_signal_connect(GTK_BUTTON(button), "clicked",
-			GTK_SIGNAL_FUNC(job_control_close), NULL);
-
-	/* Clear button */
-	toolitem =(GtkWidget*) gtk_tool_item_new();
-	gtk_container_add(GTK_CONTAINER(toolbar), toolitem);
-
-	button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_container_add(GTK_CONTAINER(toolitem), button);
-	set_tooltip(button, _("Clear all job logs"));
-
-	g_signal_connect(GTK_BUTTON(button), "clicked",
-			GTK_SIGNAL_FUNC(job_control_clear), NULL);
-
-	/* Stop button = KILL */
-	toolitem =(GtkWidget*) gtk_tool_item_new();
-	gtk_container_add(GTK_CONTAINER(toolbar), toolitem);
-
-	button = gtk_button_new_from_stock(GTK_STOCK_STOP);
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_container_add(GTK_CONTAINER(toolitem), button);
-	set_tooltip(button, _("Ask server to kill the job"));
-
-	g_signal_connect(GTK_BUTTON(button), "clicked",
-			GTK_SIGNAL_FUNC(job_control_stop), NULL);
-
 	hpanel = gtk_hpaned_new();
-	gtk_box_pack_start(GTK_BOX(vbox), hpanel, TRUE, TRUE, 0);
+	ui_job_control->widget = hpanel;
 
 	/*
 	 * Left side
@@ -255,41 +162,11 @@ job_control_clear_or_select_first(void)
 	}
 }
 
-
-
-/*
- * Section: Private
- * Private functions.
- */
-
-/*
- * Function: job_control_clicked
- * *Fill me in!*
- */
-static void
-job_control_clicked(void)
-{
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
-
-	struct job *		job;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
-		return;
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
-			JC_STRUCT, &job,
-			-1);
-
-	job_fill_info(job);
-}
-
 /*
  * Function: job_control_save
  * *Fill me in!*
  */
-static void
+void
 job_control_save(void)
 {
 	GtkTreeSelection *	selection;
@@ -393,7 +270,7 @@ job_control_cancel(void)
 			job->title->str);
 	}
 
-	protocol_send_data(job->server->comm->protocol, job->server->comm->tcp_socket,
+	protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
 		protocol_defs.end_def, 1, job->jid->str);
 }
 
@@ -494,6 +371,35 @@ job_control_stop(void)
 			job->title->str);
 	}
 
-	protocol_send_data(job->server->comm->protocol, job->server->comm->tcp_socket,
+	protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
 		protocol_defs.kil_def, 1, job->jid->str);
+}
+
+
+/*
+ * Section: Private
+ * Private functions.
+ */
+
+/*
+ * Function: job_control_clicked
+ * *Fill me in!*
+ */
+static void
+job_control_clicked(void)
+{
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+
+	struct job *		job;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+		return;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
+			JC_STRUCT, &job,
+			-1);
+
+	job_fill_info(job);
 }

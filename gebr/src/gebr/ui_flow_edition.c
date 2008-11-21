@@ -225,11 +225,11 @@ flow_edition_set_status(GtkRadioAction * action)
 		return;
 	}
 
-	if (action == gebr.actions.configured)
+	if (action == gebr.actions.flow_edition.configured)
 		pixbuf = gebr.pixmaps.stock_apply;
-	else if (action == gebr.actions.disabled)
+	else if (action == gebr.actions.flow_edition.disabled)
 		pixbuf = gebr.pixmaps.stock_cancel;
-	else if (action == gebr.actions.unconfigured)
+	else if (action == gebr.actions.flow_edition.unconfigured)
 		pixbuf = gebr.pixmaps.stock_warning;
 	else
 		return;
@@ -278,17 +278,17 @@ flow_edition_component_selected(void)
 	status = geoxml_program_get_status(GEOXML_PROGRAM(program));
 
 #if GTK_CHECK_VERSION(2,10,0)
-	gtk_radio_action_set_current_value(gebr.actions.configured,
+	gtk_radio_action_set_current_value(gebr.actions.flow_edition.configured,
 		(!strcmp(status, "configured"))<<0 |
 		(!strcmp(status, "disabled"))<<1 |
 		(!strcmp(status, "unconfigured"))<<2);
 #else
 	if (!strcmp(status, "configured"))
-		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.configured), TRUE);
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.flow_edition.configured), TRUE);
 	else if (!strcmp(status, "disabled"))
-		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.disabled), TRUE);
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.flow_edition.disabled), TRUE);
 	else if (!strcmp(status, "unconfigured"))
-		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.unconfigured), TRUE);
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.flow_edition.unconfigured), TRUE);
 #endif
 }
 
@@ -441,28 +441,29 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	}
 	/* properties */
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PROPERTIES, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(GTK_OBJECT(menu_item), "activate",
-				GTK_SIGNAL_FUNC(on_flow_component_properties_activate), NULL);
+	gtk_container_add(GTK_CONTAINER(menu),
+		gtk_action_create_menu_item(gebr.actions.flow_edition.properties));
 	/* status */
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(GTK_ACTION(gebr.actions.configured)));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(GTK_ACTION(gebr.actions.disabled)));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(GTK_ACTION(gebr.actions.unconfigured)));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),
+		gtk_action_create_menu_item(GTK_ACTION(gebr.actions.flow_edition.configured)));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),
+		gtk_action_create_menu_item(GTK_ACTION(gebr.actions.flow_edition.disabled)));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),
+		gtk_action_create_menu_item(GTK_ACTION(gebr.actions.flow_edition.unconfigured)));
 
 	/* separator */
 	menu_item = gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	/* delete */
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(GTK_OBJECT(menu_item), "activate",
-				GTK_SIGNAL_FUNC(flow_program_remove), NULL);
+	gtk_container_add(GTK_CONTAINER(menu),
+		gtk_action_create_menu_item(gebr.actions.flow_edition.delete));
 	/* help */
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect(GTK_OBJECT(menu_item), "activate",
-				GTK_SIGNAL_FUNC(program_help_show), NULL);
+		GTK_SIGNAL_FUNC(program_help_show), NULL);
+	gtk_container_add(GTK_CONTAINER(menu),
+		gtk_action_create_menu_item(gebr.actions.flow_edition.delete));
 
 	gtk_widget_show_all(menu);
 
@@ -493,12 +494,12 @@ flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flo
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ADD, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect(GTK_OBJECT(menu_item), "activate",
-				GTK_SIGNAL_FUNC(flow_edition_menu_add), NULL);
+		GTK_SIGNAL_FUNC(flow_edition_menu_add), NULL);
 	/* help */
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect(GTK_OBJECT(menu_item), "activate",
-				GTK_SIGNAL_FUNC(flow_edition_menu_show_help), NULL);
+		GTK_SIGNAL_FUNC(flow_edition_menu_show_help), NULL);
 
 	gtk_widget_show_all(menu);
 

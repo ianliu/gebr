@@ -1,5 +1,5 @@
-/*   libgebr - G�BR Library
- *   Copyright (C) 2007 G�BR core team (http://gebr.sourceforge.net)
+/*   libgebr - GeBR Library
+ *   Copyright (C) 2007 GeBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@
  * 	"GeoXmlParameters" [ URL = "\ref parameters.h" ];
  * 	"GeoXmlParameter" [ URL = "\ref parameter.h" ];
  * 	"GeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
+ * 	"GeoXmlPropertyValue" [ URL = "\ref GeoXmlPropertyValue" ];
  * 	"GeoXmlParameterGroup" [ URL = "\ref parameter_group.h" ];
  *
  * 	edge [
@@ -80,6 +81,12 @@
  * 	]
  * 	"GeoXmlProgram" -> "GeoXmlParameters";
  * 	"GeoXmlParameterGroup" -> "GeoXmlParameters";
+ *
+ * 	edge [
+ * 		arrowhead = "none"
+ * 		taillabel = "1..*"
+ * 	]
+ * 	"GeoXmlProgramParameter" -> "GeoXmlPropertyValue";
  * }
  * \enddot
  * \dot
@@ -103,7 +110,9 @@
  * 	"GeoXmlProjectLine" [ URL = "\ref GeoXmlProjectLine" ];
  * 	"GeoXmlLineFlow" [ URL = "\ref GeoXmlLineFlow" ];
  * 	"GeoXmlProgram" [ URL = "\ref program.h" ];
+ * 	"GeoXmlParameters" [ URL = "\ref parameters.h" ];
  * 	"GeoXmlParameter" [ URL = "\ref parameter.h" ];
+ * 	"GeoXmlPropertyValue" [ URL = "\ref GeoXmlPropertyValue" ];
  * 	"GeoXmlEnumOption" [ URL = "\ref enum_option.h" ];
  * 	"GeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
  *
@@ -114,7 +123,9 @@
  * 	"GeoXmlSequence" -> { "GeoXmlProjectLine" };
  * 	"GeoXmlSequence" -> { "GeoXmlLineFlow" };
  * 	"GeoXmlSequence" -> { "GeoXmlProgram" };
+ * 	"GeoXmlSequence" -> { "GeoXmlParameters" };
  * 	"GeoXmlSequence" -> { "GeoXmlParameter" };
+ * 	"GeoXmlSequence" -> { "GeoXmlPropertyValue" };
  * 	"GeoXmlSequence" -> { "GeoXmlEnumOption" };
  * 	"GeoXmlSequence" -> { "GeoXmlValueSequence" };
  * 	"GeoXmlValueSequence" -> { "GeoXmlCategory" };

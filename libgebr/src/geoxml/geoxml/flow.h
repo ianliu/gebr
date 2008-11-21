@@ -87,6 +87,11 @@ typedef struct geoxml_flow GeoXmlFlow;
  */
 typedef struct geoxml_category GeoXmlCategory;
 
+/**
+ * The GeoXmlRevision struct contains private data only, and should be accessed using the functions below.
+ */
+typedef struct geoxml_revision GeoXmlRevision;
+
 #include "program.h"
 #include "macros.h"
 #include "sequence.h"
@@ -192,17 +197,6 @@ const gchar *
 geoxml_flow_io_get_error(GeoXmlFlow * flow);
 
 /**
- * Creates a new program associated with \p flow.
- * \p program is append to the list of programs.
- *
- * If \p flow is NULL nothing is done.
- *
- * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
- */
-GeoXmlProgram *
-geoxml_flow_new_program(GeoXmlFlow * flow);
-
-/**
  * Creates a new program associated and append to the list of programs
  * Provided for convenience
  *
@@ -233,17 +227,6 @@ glong
 geoxml_flow_get_programs_number(GeoXmlFlow * flow);
 
 /**
- * Creates a new category named as \p name in \p flow and returns a pointer to it.
- * \p category is appended to the list of categories.
- *
- * If \p flow is NULL nothing is done.
- *
- * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
- */
-GeoXmlCategory *
-geoxml_flow_new_category(GeoXmlFlow * flow, const gchar * name);
-
-/**
  * Creates a new category and append it to the list of categories.
  * Provided for convenience.
  *
@@ -272,40 +255,57 @@ glong
 geoxml_flow_get_categories_number(GeoXmlFlow * flow);
 
 /**
- * \deprecated
- * Use \ref geoxml_sequence_remove instead. Kept only for backwards compatible and should not be used in newly written code
+ * Change all the flow data to the one stored at revision, except, of course,
+ * the list of revisions.
+ * Be aware that all \p flow data will be lost. If you don't want that, call
+ * \ref geoxml_flow_append_revision before.
+ *
+ * If \p flow or \p revision is NULL nothing is done.
+ * If it fails because the revision could not be loaded, returns FALSE.
+ * On success, return TRUE.
  */
-void GEOXML_DEPRECATED
-geoxml_flow_remove_program(GeoXmlFlow * flow, GeoXmlProgram * program);
+gboolean
+geoxml_flow_change_to_revision(GeoXmlFlow * flow, GeoXmlRevision * revision);
 
 /**
- * \deprecated
- * Use \ref geoxml_sequence_move instead. Kept only for backwards compatible and should not be used in newly written code
+ * Creates a new revision with the current time append to the list of revisions
+ * An revision is a way to keep the history of the flow changes. You can then restore
+ * one revision with \ref geoxml_flow_change_to_revision
+ *
+ * If \p flow is NULL nothing is done.
  */
-void GEOXML_DEPRECATED
-geoxml_flow_move_program(GeoXmlFlow * flow, GeoXmlProgram * program, GeoXmlProgram * before_program);
+GeoXmlRevision *
+geoxml_flow_append_revision(GeoXmlFlow * flow, const gchar * comment);
 
 /**
- * \deprecated
- * Use \ref geoxml_sequence_move_up instead. Kept only for backwards compatible and should not be used in newly written code
+ * Writes to \p revision the \p index ieth revision that \p flow has.
+ * If an error ocurred, the content of \p revision is assigned to NULL.
+ *
+ * If \p flow is NULL nothing is done.
+ *
+ * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR
+ *
+ * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
  */
-int GEOXML_DEPRECATED
-geoxml_flow_move_program_up(GeoXmlFlow * flow, GeoXmlProgram * program);
+int
+geoxml_flow_get_revision(GeoXmlFlow * flow, GeoXmlSequence ** revision, gulong index);
 
 /**
- * \deprecated
- * Use \ref geoxml_sequence_move_down instead. Kept only for backwards compatible and should not be used in newly written code
+ * Get information of \p revision. The flow is stored at \p flow and can be
+ * loaded with geoxml_document_load_buffer. \p receive the date of creation of \p revision.
+ * A NULL value of \p flow or \p date or \p comment mean not set.
+ *
+ * If \p revision in NULL nothing is done.
  */
-int GEOXML_DEPRECATED
-geoxml_flow_move_program_down(GeoXmlFlow * flow, GeoXmlProgram * program);
+void
+geoxml_flow_get_revision_data(GeoXmlRevision * revision, gchar ** flow, gchar ** date, gchar ** comment);
 
 /**
- * \deprecated
- * Use \ref geoxml_sequence_remove instead. Kept only for backwards compatible and should not be used in newly written code
+ * Get the number of revisions \p flow has.
+ *
+ * If \p flow is NULL returns -1.
  */
-void GEOXML_DEPRECATED
-geoxml_flow_remove_category(GeoXmlFlow * flow, GeoXmlCategory * category);
-
-
+glong
+geoxml_flow_get_revisions_number(GeoXmlFlow * flow);
 
 #endif //__LIBGEBR_GEOXML_FLOW_H

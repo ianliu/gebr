@@ -213,8 +213,10 @@ static void
 parameter_widget_set_value(struct parameter_widget *parameter_widget, const gchar * value)
 {
 	(parameter_widget->use_default_value == FALSE)
-		? geoxml_program_parameter_set_value(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), value)
-		: geoxml_program_parameter_set_default(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), value);
+		? geoxml_program_parameter_set_first_value(
+			GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), value)
+		: geoxml_program_parameter_set_first_default(
+			GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), value);
 }
 
 /*
@@ -225,8 +227,8 @@ static const gchar *
 parameter_widget_get_value(struct parameter_widget * parameter_widget)
 {
 	return (parameter_widget->use_default_value == FALSE)
-		? geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter))
-		: geoxml_program_parameter_get_default(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter));
+		? geoxml_program_parameter_get_first_value(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter))
+		: geoxml_program_parameter_get_first_default(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter));
 }
 
 /*
@@ -556,8 +558,8 @@ parameter_widget_new_flag(GeoXmlParameter * parameter, gboolean use_default_valu
 
 	parameter_widget = parameter_widget_init(parameter, check_button, use_default_value);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_button), (use_default_value == FALSE)
-		? geoxml_program_parameter_get_flag_status(GEOXML_PROGRAM_PARAMETER(parameter))
-		: geoxml_program_parameter_get_flag_default(GEOXML_PROGRAM_PARAMETER(parameter)));
+		? geoxml_program_parameter_get_first_boolean_value(GEOXML_PROGRAM_PARAMETER(parameter))
+		: geoxml_program_parameter_get_first_boolean_default(GEOXML_PROGRAM_PARAMETER(parameter)));
 
 	return parameter_widget;
 }

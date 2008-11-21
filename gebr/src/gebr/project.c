@@ -51,7 +51,7 @@ project_new(void)
 
 	GeoXmlDocument *	project;
 	gchar *			title;
-	
+
 	title = _("New project");
 	project = document_new(GEOXML_DOCUMENT_TYPE_PROJECT);
 	geoxml_document_set_title(project, title);

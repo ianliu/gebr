@@ -68,9 +68,7 @@
  */
 typedef struct geoxml_enum_option GeoXmlEnumOption;
 
-#include "flow.h"
 #include "macros.h"
-#include "program_parameter.h"
 
 /**
  *

@@ -30,12 +30,12 @@
  * 	node [
  * 		color = palegreen2, style = filled
  * 		fontname = "Bitstream Vera Sans"
- *   fontsize = 9
+ * 		fontsize = 9
  * 		shape = record
  * 	]
  * 	edge [
  * 		fontname = "Bitstream Vera Sans"
- *   fontsize = 9
+ * 		fontsize = 9
  * 	]
  *
  * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
@@ -91,8 +91,6 @@
  */
 typedef struct geoxml_parameter GeoXmlParameter;
 
-#include <glib.h>
-
 /**
  * \p GEOXML_PARAMETERTYPE lists the program's parameters types
  * supported by libgeoxml. They were made to create a properly
@@ -101,6 +99,10 @@ typedef struct geoxml_parameter GeoXmlParameter;
  * \see geoxml_parameter_get_is_program_parameter
  */
 enum GEOXML_PARAMETERTYPE {
+	/**
+	 * In case of error.
+	 */
+	GEOXML_PARAMETERTYPE_UNKNOWN = 0,
 	/**
 	 * A parameter able to store a string on it.
 	 */
@@ -133,25 +135,46 @@ enum GEOXML_PARAMETERTYPE {
 	 * A sequence of parameters.
 	 */
 	GEOXML_PARAMETERTYPE_GROUP,
+	/**
+	 * A reference to other parameter. If the referenced parameter is a program parameter,
+	 * then this parameter will only have its value as a difference.
+	 */
+	GEOXML_PARAMETERTYPE_REFERENCE,
 };
+
+#include <glib.h>
+#include "parameters.h"
+
+/**
+ * Get GeoXmlParameters in which \p parameter is inside
+ *
+ * If \p parameter is NULL returns NULL
+ */
+GeoXmlParameters *
+geoxml_parameter_get_parameters(GeoXmlParameter * parameter);
 
 /**
  * Change \p parameter type to \p type.
- * This funcion will create a new parameter and delete the old, as
- * needed to change its type. Because of this, \p parameter pointer
- * will be changed.
- * Keyword and label of \p parameter will have the same value after the change;
- * all other properties will lost their value.
+ * Only label of \p parameter will have the same value after the change;
+ * all other properties will have their value lost.
  *
  * If \p parameter is NULL nothing is done.
  */
-void
-geoxml_parameter_set_type(GeoXmlParameter ** parameter, enum GEOXML_PARAMETERTYPE type);
+gboolean
+geoxml_parameter_set_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETERTYPE type);
+
+/**
+ * Change \p parameter to reference \p reference.
+ *
+ * Return one of GEOXML_RETV_SUCCESS, GEOXML_RETV_REFERENCE_TO_ITSELF, GEOXML_RETV_NULL_PTR
+ */
+int
+geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter * reference);
 
 /**
  * Returns \p parameter 's type.
  *
- * If \p parameter is NULL returns \ref GEOXML_PARAMETERTYPE_STRING.
+ * If \p parameter is NULL returns \ref GEOXML_PARAMETERTYPE_UNKNOWN.
  *
  * \see GEOXML_PARAMETERTYPE
  */
@@ -187,7 +210,15 @@ const gchar *
 geoxml_parameter_get_label(GeoXmlParameter * parameter);
 
 /**
- * Reset \p parameter's value. If \p recursive, do it for groups and do recursively.
+ * Return TRUE if \p parameter is part of a group
+ *
+ * If \p parameter is NULL returns FALSE.
+ */
+gboolean
+geoxml_parameter_get_is_in_group(GeoXmlParameter * parameter);
+
+/**
+ * Reset \p parameter's value and default. If \p recursive, do it for groups and do recursively.
  */
 void
 geoxml_parameter_reset(GeoXmlParameter * parameter, gboolean recursive);

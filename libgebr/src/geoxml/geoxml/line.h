@@ -74,8 +74,7 @@
  * Therefore, a line is a list of flows files. When a flow needs to be
  * read or edited you ask the line for its path (see \ref geoxml_line_get_flow_source) and then
  * load it with \ref geoxml_document_load. New flows can be added to a line using
- * \ref geoxml_line_add_flow, or removed with \ref geoxml_line_remove_flow.
- * Iteration can be done combining \ref geoxml_line_get_flow and \ref geoxml_line_next_flow.
+ * \ref geoxml_line_append_flow.
  */
 
 /**
@@ -122,21 +121,9 @@ GeoXmlLine *
 geoxml_line_new();
 
 /**
- * Creates a new flow reference located at \p source and returns a pointer to it.
- * The flow returned should be added using geoxml_sequence_prepend or geoxml_sequence_append
+ * Create a new flow and append it to list of flows references.
  *
- * If \p line is NULL returns NULL.
- *
- * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
- */
-GeoXmlLineFlow *
-geoxml_line_new_flow(GeoXmlLine * line, const gchar * source);
-
-/**
- * Create a new flow and append to list of flows references.
- * Provided for convenience.
- *
- * \see geoxml_line_new_flow
+ * If \p line or \p source is NULL returns NULL
  */
 GeoXmlLineFlow *
 geoxml_line_append_flow(GeoXmlLine * line, const gchar * source);
@@ -179,18 +166,7 @@ const gchar *
 geoxml_line_get_flow_source(GeoXmlLineFlow * line_flow);
 
 /**
- * Creates a new path pathd as \p path in \p line and returns a pointer to it.
- *
- * If \p line is NULL nothing is done.
- *
- * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
- */
-GeoXmlLinePath *
-geoxml_line_new_path(GeoXmlLine * line, const gchar * path);
-
-/**
  * Creates a new path and append it to the list of path.
- * Provided for convenience.
  *
  * \see geoxml_line_new_path
  */
@@ -215,33 +191,5 @@ geoxml_line_get_path(GeoXmlLine * line, GeoXmlSequence ** path, gulong index);
  */
 glong
 geoxml_line_get_paths_number(GeoXmlLine * line);
-
-/**
- * \deprecated
- * Use geoxml_sequence_previous instead. Kept only for backwards compatible and should not be used in newly written code
- */
-void GEOXML_DEPRECATED
-geoxml_line_previous_flow(GeoXmlLineFlow ** line_flow);
-
-/**
- * \deprecated
- * Use geoxml_sequence_next instead. Kept only for backwards compatible and should not be used in newly written code
- */
-void GEOXML_DEPRECATED
-geoxml_line_next_flow(GeoXmlLineFlow ** line_flow);
-
-/**
- * \deprecated
- * See geoxml_line_new_flow instead. Kept only for backwards compatible and should not be used in newly written code
- */
-GeoXmlLineFlow * GEOXML_DEPRECATED
-geoxml_line_add_flow(GeoXmlLine * line, const gchar * source);
-
-/**
- * \deprecated
- * Use geoxml_sequence_remove instead. Kept only for backwards compatible and should not be used in newly written code
- */
-void GEOXML_DEPRECATED
-geoxml_line_remove_flow(GeoXmlLine * line, GeoXmlLineFlow * line_flow);
 
 #endif //__LIBGEBR_GEOXML_LINE_H

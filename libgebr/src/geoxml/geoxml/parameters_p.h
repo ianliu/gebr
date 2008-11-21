@@ -19,25 +19,20 @@
 #define __LIBGEBR_GEOXML_PARAMETERS_P_H
 
 /**
- * If \p parameters is a group and it was instantiated only once,
- * then adjust the number of parameters of a instance (npar)
+ * \internal
+ * Returns TRUE if \p parameters can be changed: if this is from a program one or the master
+ * instance of a group.
+ * The first instance of a group can be said as the master and the other ones as slaves. The changes made to
+ * it is reflected on all others. The slaves can't be changed directly.
  */
 gboolean
-__geoxml_parameters_adjust_group_npar(GeoXmlParameters * parameters, glong adjust);
+__geoxml_parameters_group_check(GeoXmlParameters * parameters);
 
 /**
  * \internal
  * Create a new parameter with type \p type.
  */
 GeoXmlParameter *
-__geoxml_parameters_new_parameter(GeoXmlParameters * parameters, enum GEOXML_PARAMETERTYPE type, gboolean adjust_npar);
-
-/**
- * \internal
- * Change all \p parameters' values to \p value,
- * including default values.
- */
-void
-__geoxml_parameters_reset(GeoXmlParameters * parameters, gboolean recursive);
+__geoxml_parameters_new_parameter(enum GEOXML_PARAMETERTYPE type, gboolean adjust_npar);
 
 #endif //__LIBGEBR_GEOXML_PARAMETERS_P_H

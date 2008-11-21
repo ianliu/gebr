@@ -21,28 +21,22 @@
 #include <gtk/gtk.h>
 
 void
-on_project_new_activate(void);
+on_project_line_new_project_activate(void);
 
 void
-on_project_delete_activate(void);
+on_project_line_new_line_activate(void);
 
 void
-on_project_properties_activate(void);
+on_project_line_delete_activate(void);
 
 void
-on_project_refresh_activate(void);
+on_project_line_properties_activate(void);
 
 void
-on_line_new_activate(void);
+on_project_line_refresh_activate(void);
 
 void
-on_line_delete_activate(void);
-
-void
-on_line_path_activate(void);
-
-void
-on_line_properties_activate(void);
+on_project_line_paths_activate(void);
 
 void
 on_flow_new_activate(void);
@@ -69,6 +63,9 @@ void
 on_flow_execute_activate(void);
 
 void
+on_flow_component_delete_activate(void);
+
+void
 on_flow_component_properties_activate(void);
 
 void
@@ -76,6 +73,21 @@ on_flow_component_refresh_activate(void);
 
 void
 on_flow_component_status_activate(GtkRadioAction * action);
+
+void
+on_job_control_save(void);
+
+void
+on_job_control_cancel(void);
+
+void
+on_job_control_close(void);
+
+void
+on_job_control_clear(void);
+
+void
+on_job_control_stop(void);
 
 void
 on_configure_preferences_activate(void);

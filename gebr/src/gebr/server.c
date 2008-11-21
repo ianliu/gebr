@@ -90,7 +90,7 @@ server_ssh_question(const gchar * title, const gchar * message)
 }
 
 static void
-server_disconnected(GTcpSocket * tcp_socket, struct server * server)
+server_disconnected(GTcpSocket * stream_socket, struct server * server)
 {
 	server_list_updated_status(server);
 }
@@ -123,7 +123,7 @@ server_new(const gchar * address)
 		-1);
 	server->iter = iter;
 
-	g_signal_connect(server->comm->tcp_socket, "disconnected",
+	g_signal_connect(server->comm->stream_socket, "disconnected",
 		G_CALLBACK(server_disconnected), server);
 
 	comm_server_connect(server->comm);

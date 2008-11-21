@@ -158,8 +158,7 @@ gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter)
 		return FALSE;
 	}
 
-	gtk_tree_model_get_iter(GTK_TREE_MODEL(store),
-				&previous, previous_path);
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(store), &previous, previous_path);
 	gtk_list_store_move_before(store, iter, &previous);
 
 	gtk_tree_path_free(previous_path);
@@ -192,6 +191,63 @@ gtk_list_store_get_iter_index(GtkListStore * list_store, GtkTreeIter * iter)
 	g_free(node);
 
 	return index;
+}
+
+gboolean
+gtk_tree_store_can_move_up(GtkTreeStore * store, GtkTreeIter * iter)
+{
+	GtkTreePath *	previous_path;
+	gboolean	ret;
+
+	previous_path = gtk_tree_model_get_path(GTK_TREE_MODEL(store), iter);
+	ret = gtk_tree_path_prev(previous_path);
+
+	gtk_tree_path_free(previous_path);
+
+	return ret;
+}
+
+gboolean
+gtk_tree_store_can_move_down(GtkTreeStore * store, GtkTreeIter * iter)
+{
+	GtkTreeIter	next;
+
+	next = *iter;
+	return gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &next);
+}
+
+gboolean
+gtk_tree_store_move_up(GtkTreeStore * store, GtkTreeIter * iter)
+{
+	GtkTreeIter 	previous;
+	GtkTreePath *	previous_path;
+
+	previous_path = gtk_tree_model_get_path(GTK_TREE_MODEL(store), iter);
+	if (gtk_tree_path_prev(previous_path) == FALSE) {
+		gtk_tree_path_free(previous_path);
+		return FALSE;
+	}
+
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(store), &previous, previous_path);
+	gtk_tree_store_move_before(store, iter, &previous);
+
+	gtk_tree_path_free(previous_path);
+
+	return TRUE;
+}
+
+gboolean
+gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter)
+{
+	GtkTreeIter	next;
+
+	next = *iter;
+	if (gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &next) == FALSE)
+		return FALSE;
+
+	gtk_tree_store_move_after(store, iter, &next);
+
+	return TRUE;
 }
 
 void

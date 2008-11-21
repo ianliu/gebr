@@ -30,6 +30,6 @@ enum {
 };
 
 void
-assembly_interface(void);
+gebr_setup_ui(void);
 
 #endif //__INTERFACE_H

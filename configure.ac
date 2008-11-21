@@ -1,5 +1,5 @@
-# GÍBR - An environment for seismic processing.
-# Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
+# GeBR - An environment for seismic processing.
+# Copyright (C) 2007 GeBR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 PACKAGE_NAME=$PACKAGE
 PACKAGE_VERSION=$VERSION
 
-AC_CONFIG_SUBDIRS([libgebr gebrd gebr-menus-su gebr gebrme])
+AC_CONFIG_SUBDIRS([libgebr gebrd gebr-menus-su gebr debr])
 
 AC_OUTPUT([
 Makefile

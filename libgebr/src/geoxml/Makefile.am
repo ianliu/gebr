@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = geoxml data validate upgrade doc test
+SUBDIRS = geoxml data validate upgrade doc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr-geoxml.pc

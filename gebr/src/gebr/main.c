@@ -70,7 +70,7 @@ main(int argc, char ** argv, char ** env)
 #endif
 	/* FIXME: necessary for representing fractional numbers only with comma */
 	setlocale(LC_NUMERIC, "C");
-	assembly_interface();
+	gebr_setup_ui();
 	gebr_init(argc, argv);
 
 	gtk_main();

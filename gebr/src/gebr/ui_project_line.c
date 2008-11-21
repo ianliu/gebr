@@ -185,7 +185,6 @@ project_line_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path2), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path2, 1, 2, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
 
-
 	/* Help */
 	ui_project_line->info.help = gtk_button_new_from_stock(GTK_STOCK_INFO);
 	gtk_box_pack_end(GTK_BOX(infopage), ui_project_line->info.help, FALSE, TRUE, 0);
@@ -511,65 +510,32 @@ project_line_popup_menu(GtkWidget * widget, struct ui_project_line * ui_project_
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 	GtkTreeIter		iter;
-	GtkTreePath *		path;
 
 	GtkWidget *		menu;
-	GtkWidget *		menu_item;
-
-	gboolean		is_project;
 
 	menu = gtk_menu_new();
 
 	/* new project */
-	menu_item = gtk_image_menu_item_new_with_label(_("New Project"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
-		gtk_image_new_from_stock(GTK_STOCK_NEW, GTK_ICON_SIZE_SMALL_TOOLBAR));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(GTK_OBJECT(menu_item), "activate",
-		GTK_SIGNAL_FUNC(on_project_new_activate), NULL);
+	gtk_container_add(GTK_CONTAINER(menu),
+		gtk_action_create_menu_item(gebr.actions.project_line.new_project));
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
 		goto out;
 
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
-	is_project = gtk_tree_path_get_depth(path) == 1;
-
 	/* new line */
-	menu_item = gtk_image_menu_item_new_with_label(_("New Line"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
-		gtk_image_new_from_stock(GTK_STOCK_NEW, GTK_ICON_SIZE_SMALL_TOOLBAR));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(GTK_OBJECT(menu_item), "activate",
-		GTK_SIGNAL_FUNC(on_line_new_activate), NULL);
+	gtk_container_add(GTK_CONTAINER(menu),
+		gtk_action_create_menu_item(gebr.actions.project_line.new_line));
 	/* properties */
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PROPERTIES, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(GTK_OBJECT(menu_item), "activate",
-		is_project
-			? GTK_SIGNAL_FUNC(on_project_properties_activate)
-			: GTK_SIGNAL_FUNC(on_line_properties_activate),
-		NULL);
+	gtk_container_add(GTK_CONTAINER(menu),
+		gtk_action_create_menu_item(gebr.actions.project_line.properties));
 	/* paths */
-	if (is_project == FALSE) {
-		menu_item = gtk_image_menu_item_new_with_label(_("Paths"));
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
-			gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, GTK_ICON_SIZE_SMALL_TOOLBAR));
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(GTK_OBJECT(menu_item), "activate",
-			GTK_SIGNAL_FUNC(on_line_path_activate), NULL);
-	}
+	if (gebr.line != NULL)
+		gtk_container_add(GTK_CONTAINER(menu),
+			gtk_action_create_menu_item(gebr.actions.project_line.new_project));
 	/* delete */
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(GTK_OBJECT(menu_item), "activate",
-		is_project
-			? GTK_SIGNAL_FUNC(on_project_delete_activate)
-			: GTK_SIGNAL_FUNC(on_line_delete_activate),
-		NULL);
-
-	/* frees */
-	gtk_tree_path_free(path);
+	gtk_container_add(GTK_CONTAINER(menu),
+		gtk_action_create_menu_item(gebr.actions.project_line.delete));
 
 out:	gtk_widget_show_all(menu);
 

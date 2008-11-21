@@ -138,7 +138,7 @@ job_close(struct job * job)
 	if (comm_server_is_logged(job->server->comm) == FALSE) {
 		/* TODO */
 	} else if (strcmp(job->jid->str, "0"))
-		protocol_send_data(job->server->comm->protocol, job->server->comm->tcp_socket,
+		protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
 			protocol_defs.clr_def, 1, job->jid->str);
 
 	job_delete(job);

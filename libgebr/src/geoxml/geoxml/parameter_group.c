@@ -21,8 +21,10 @@
 #include <gdome.h>
 
 #include "parameter_group.h"
+#include "parameter_group_p.h"
 #include "xml.h"
 #include "types.h"
+#include "error.h"
 #include "parameters.h"
 #include "parameters_p.h"
 #include "parameter_p.h"
@@ -35,85 +37,48 @@ struct geoxml_parameter_group {
 	GdomeElement * element;
 };
 
+void
+__geoxml_parameter_group_turn_instance_to_reference(GeoXmlParameters * instance)
+{
+	GeoXmlSequence *	parameter;
+
+	geoxml_parameters_get_parameter(instance, &parameter, 0);
+	for (; parameter != NULL; geoxml_sequence_next(&parameter))
+		__geoxml_parameter_set_be_reference(GEOXML_PARAMETER(parameter),
+			GEOXML_PARAMETER(parameter), TRUE);
+}
+
+void
+__geoxml_parameter_group_turn_to_reference(GeoXmlParameterGroup * parameter_group)
+{
+	GeoXmlSequence *	instance;
+
+	geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
+	for (; instance != NULL; geoxml_sequence_next(&instance))
+		__geoxml_parameter_group_turn_instance_to_reference(GEOXML_PARAMETERS(instance));
+}
+
 /*
  * library functions.
  */
 
 GeoXmlParameters *
-geoxml_parameter_group_get_parameters(GeoXmlParameterGroup * parameter_group)
-{
-	if (parameter_group == NULL)
-		return NULL;
-	return (GeoXmlParameters*)__geoxml_get_first_element((GdomeElement*)parameter_group, "parameters");
-}
-
-GeoXmlParameter *
-geoxml_parameter_group_last_instance_parameter(GeoXmlParameterGroup * parameter_group)
-{
-	if (parameter_group == NULL)
-		return FALSE;
-
-	gint			i;
-	gulong			fpoli; /* fpoli: first parameter of last instance :D */
-	GeoXmlParameters *	parameters;
-	glong			parameters_by_instance;
-	GeoXmlSequence *	parameter;
-
-	gulong			instances;
-
-	/* get the number of instances and check if we have at least one */
-	instances = geoxml_parameter_group_get_instances(parameter_group);
-	parameters_by_instance = geoxml_parameter_group_get_parameters_by_instance(parameter_group);
-	fpoli = parameters_by_instance*(instances-1);
-	parameters = geoxml_parameter_group_get_parameters(parameter_group);
-	parameter = geoxml_parameters_get_first_parameter(parameters);
-
-	/* go to the last instance */
-	for (i = 0; i < fpoli; ++i)
-		geoxml_sequence_next(&parameter);
-
-	return GEOXML_PARAMETER(parameter);
-}
-
-gboolean
 geoxml_parameter_group_instanciate(GeoXmlParameterGroup * parameter_group)
 {
 	if (parameter_group == NULL)
 		return FALSE;
-	if (geoxml_parameter_group_get_can_instanciate(parameter_group) == FALSE)
+	if (geoxml_parameter_group_get_is_instanciable(parameter_group) == FALSE)
 		return FALSE;
 
-	gint			i;
-	GeoXmlParameters *	parameters;
-	glong			parameters_by_instance;
-	GeoXmlSequence *	parameter;
+	GeoXmlSequence *	first_instance;
+	GeoXmlParameters *	new_instance;
 
-	gulong			instances;
-	gchar *			string;
+	geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
+	new_instance = (GeoXmlParameters*)geoxml_sequence_append_clone(first_instance);
+	__geoxml_parameter_group_turn_instance_to_reference(new_instance);
+	geoxml_parameters_reset(new_instance, TRUE);
 
-	/* instanciante by duplicating the instance parameters and appending them */
-	parameters = geoxml_parameter_group_get_parameters(parameter_group);
-	parameter = geoxml_parameters_get_first_parameter(parameters);
-	parameters_by_instance = geoxml_parameter_group_get_parameters_by_instance(parameter_group);
-	for (i = 0; i < parameters_by_instance; ++i) {
-		GdomeNode *	clone;
-
-		clone = gdome_n_cloneNode((GdomeNode*)parameter, TRUE, &exception);
-		gdome_el_insertBefore((GdomeElement*)parameters, clone, NULL, &exception);
-		/* reset its value */
-		geoxml_parameter_reset((GeoXmlParameter*)clone, TRUE);
-
-		geoxml_sequence_next(&parameter);
-	}
-
-	/* increase instances counter */
-	instances = geoxml_parameter_group_get_instances(parameter_group) + 1;
-	string = g_strdup_printf("%lu", instances);
-	__geoxml_set_attr_value((GdomeElement*)parameter_group, "instances", string);
-
-	g_free(string);
-
-	return TRUE;
+	return new_instance;
 }
 
 gboolean
@@ -121,70 +86,54 @@ geoxml_parameter_group_deinstanciate(GeoXmlParameterGroup * parameter_group)
 {
 	if (parameter_group == NULL)
 		return FALSE;
-	if (geoxml_parameter_group_get_can_instanciate(parameter_group) == FALSE)
+	if (geoxml_parameter_group_get_is_instanciable(parameter_group) == FALSE)
 		return FALSE;
 
-	GeoXmlSequence *	parameter;
-	GeoXmlParameters *	parameters;
+	GeoXmlSequence *	last_instance;
 
-	gulong			instances;
-	gchar *			string;
-
-	/* get the number of instances and check if we have at least one */
-	instances = geoxml_parameter_group_get_instances(parameter_group);
-	if (instances == 1)
+	geoxml_parameter_group_get_instance(parameter_group, &last_instance,
+		geoxml_parameter_group_get_instances_number(parameter_group)-1);
+	if (last_instance == NULL)
 		return FALSE;
-	parameters = geoxml_parameter_group_get_parameters(parameter_group);
-	parameter = GEOXML_SEQUENCE(geoxml_parameter_group_last_instance_parameter(parameter_group));
-
-	/* delete last instance's parameters */
-	do {
-		GeoXmlSequence *	aux;
-
-		aux = parameter;
-		geoxml_sequence_next(&parameter);
-		gdome_n_removeChild((GdomeNode*)parameters, (GdomeNode*)aux, &exception);
-	} while (parameter != NULL);
-
-	/* decrease instances counter */
-	string = g_strdup_printf("%lu", --instances);
-	__geoxml_set_attr_value((GdomeElement*)parameter_group, "instances", string);
-
-	g_free(string);
+	gdome_n_removeChild((GdomeNode*)parameter_group, (GdomeNode*)last_instance, &exception);
 
 	return TRUE;
 }
 
-gulong
-geoxml_parameter_group_get_instances(GeoXmlParameterGroup * parameter_group)
+int
+geoxml_parameter_group_get_instance(GeoXmlParameterGroup * parameter_group,
+	GeoXmlSequence ** parameters, gulong index)
+{
+	if (parameter_group == NULL) {
+		*parameters = NULL;
+		return GEOXML_RETV_NULL_PTR;
+	}
+
+	*parameters = (GeoXmlSequence*)__geoxml_get_element_at(
+		(GdomeElement*)parameter_group, "parameters", index, FALSE);
+
+	return (*parameters == NULL)
+		? GEOXML_RETV_INVALID_INDEX
+		: GEOXML_RETV_SUCCESS;
+}
+
+glong
+geoxml_parameter_group_get_instances_number(GeoXmlParameterGroup * parameter_group)
 {
 	if (parameter_group == NULL)
-		return 0;
-	return (gulong)atol(__geoxml_get_attr_value((GdomeElement*)parameter_group, "instances"));
+		return -1;
+	return __geoxml_get_elements_number((GdomeElement*)parameter_group, "parameters");
 }
 
 void
-geoxml_parameter_group_set_can_instanciate(GeoXmlParameterGroup * parameter_group, gboolean can_instanciate)
+geoxml_parameter_group_set_instanciable(GeoXmlParameterGroup * parameter_group, gboolean enable)
 {
 	if (parameter_group == NULL)
 		return;
-	if (can_instanciate == FALSE)
+	if (enable == FALSE)
 		while (geoxml_parameter_group_deinstanciate(parameter_group) == TRUE);
-	__geoxml_set_attr_value((GdomeElement*)parameter_group, "multiple",
-		(can_instanciate == TRUE ? "yes" : "no"));
-}
-
-void
-geoxml_parameter_group_set_parameters_by_instance(GeoXmlParameterGroup * parameter_group, gulong number)
-{
-	if (parameter_group == NULL)
-		return;
-
-	gchar *	string;
-
-	string = g_strdup_printf("%lu", number);
-	__geoxml_set_attr_value((GdomeElement*)parameter_group, "npar", string);
-	g_free(string);
+	__geoxml_set_attr_value((GdomeElement*)parameter_group, "instanciable",
+		(enable == TRUE ? "yes" : "no"));
 }
 
 void
@@ -195,60 +144,13 @@ geoxml_parameter_group_set_expand(GeoXmlParameterGroup * parameter_group, const 
 	__geoxml_set_attr_value((GdomeElement*)parameter_group, "expand", (enable == TRUE ? "yes" : "no"));
 }
 
-void
-geoxml_parameter_group_set_exclusive(GeoXmlParameterGroup * parameter_group, GeoXmlParameter * parameter)
-{
-	if (parameter_group == NULL)
-		return;
-	if (parameter == NULL) {
-		__geoxml_set_attr_value((GdomeElement*)parameter_group, "exclusive", "0");
-		return;
-	}
-
-	gchar *	value;
-
-	value = g_strdup_printf("%ld", __geoxml_get_element_index((GdomeElement*)parameter)+1);
-	__geoxml_set_attr_value((GdomeElement*)parameter_group, "exclusive", value);
-	g_free(value);
-
-	if (geoxml_parameter_group_get_selected(parameter_group) == NULL)
-		geoxml_parameter_group_set_selected(parameter_group, parameter);
-}
-
-void
-geoxml_parameter_group_set_selected(GeoXmlParameterGroup * parameter_group, GeoXmlParameter * parameter)
-{
-	if (parameter_group == NULL)
-		return;
-	if (geoxml_parameter_group_get_exclusive(parameter_group) == NULL)
-		return;
-	if (parameter == NULL) {
-		__geoxml_set_attr_value((GdomeElement*)parameter_group, "selected", "0");
-		return;
-	}
-
-	gchar *	value;
-
-	value = g_strdup_printf("%ld", __geoxml_get_element_index((GdomeElement*)parameter)+1);
-	__geoxml_set_attr_value((GdomeElement*)parameter_group, "selected", value);
-	g_free(value);
-}
-
 gboolean
-geoxml_parameter_group_get_can_instanciate(GeoXmlParameterGroup * parameter_group)
+geoxml_parameter_group_get_is_instanciable(GeoXmlParameterGroup * parameter_group)
 {
 	if (parameter_group == NULL)
 		return FALSE;
-	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)parameter_group, "multiple"), "yes"))
+	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)parameter_group, "instanciable"), "yes"))
 		? TRUE : FALSE;
-}
-
-gulong
-geoxml_parameter_group_get_parameters_by_instance(GeoXmlParameterGroup * parameter_group)
-{
-	if (parameter_group == NULL)
-		return 0;
-	return (gulong)atol(__geoxml_get_attr_value((GdomeElement*)parameter_group, "npar"));
 }
 
 gboolean
@@ -258,56 +160,4 @@ geoxml_parameter_group_get_expand(GeoXmlParameterGroup * parameter_group)
 		return FALSE;
 	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)parameter_group, "expand"), "yes"))
 		? TRUE : FALSE;
-}
-
-GeoXmlParameter *
-geoxml_parameter_group_get_exclusive(GeoXmlParameterGroup * parameter_group)
-{
-	if (parameter_group == NULL)
-		return FALSE;
-
-	gulong			index;
-	GeoXmlSequence *	parameter;
-
-	index = atol(__geoxml_get_attr_value((GdomeElement*)parameter_group, "exclusive"));
-	if (index == 0)
-		return NULL;
-	index--;
-	geoxml_parameters_get_parameter((GeoXmlParameters*)
-		__geoxml_get_first_element((GdomeElement*)parameter_group, "parameters"),
-		&parameter, index);
-
-	/* there isn't a parameter at index, so use the first parameter of the group */
-	if (parameter == NULL)
-		return geoxml_parameters_get_first_parameter(
-			geoxml_parameter_group_get_parameters(parameter_group));
-
-	return (GeoXmlParameter *)parameter;
-}
-
-GeoXmlParameter *
-geoxml_parameter_group_get_selected(GeoXmlParameterGroup * parameter_group)
-{
-	if (parameter_group == NULL)
-		return FALSE;
-	if (geoxml_parameter_group_get_exclusive(parameter_group) == NULL)
-		return NULL;
-
-	gulong			index;
-	GeoXmlSequence *	parameter;
-
-	index = atol(__geoxml_get_attr_value((GdomeElement*)parameter_group, "selected"));
-	if (index == 0)
-		return NULL;
-	index--;
-	geoxml_parameters_get_parameter((GeoXmlParameters*)
-		__geoxml_get_first_element((GdomeElement*)parameter_group, "parameters"),
-		&parameter, index);
-
-	/* there isn't a parameter at index, so use the first parameter of the group */
-	if (parameter == NULL)
-		return geoxml_parameters_get_first_parameter(
-			geoxml_parameter_group_get_parameters(parameter_group));
-
-	return (GeoXmlParameter *)parameter;
 }

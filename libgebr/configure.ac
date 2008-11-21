@@ -28,7 +28,7 @@ AC_SUBST(GEOXML_VERSION_INFO)
 DOCUMENT_VERSION=0.2.0
 PROJECT_VERSION=0.2.0
 LINE_VERSION=0.2.0
-FLOW_VERSION=0.2.3
+FLOW_VERSION=0.3.0
 AC_SUBST(FLOW_VERSION)
 AC_SUBST(LINE_VERSION)
 AC_SUBST(PROJECT_VERSION)
@@ -36,7 +36,8 @@ AC_SUBST(DOCUMENT_VERSION)
 
 dnl Debug option
 AC_ARG_ENABLE(debug,
-	[AC_HELP_STRING([--enable-debug], [turn on debugging])],,
+	[AC_HELP_STRING([--enable-debug],
+	[turn on debugging])],,
 	enable_debug=yes)
 if test "$enable_debug" = "yes"; then
 	DEBUG_CFLAGS="-DLIBGEBR_DEBUG"

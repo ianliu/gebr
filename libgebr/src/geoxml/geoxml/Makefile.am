@@ -1,5 +1,5 @@
-# libgebr - G�BR Library
-# Copyright (C) 2007 G�BR core team (http://gebr.sourceforge.net)
+# libgebr - GeBR Library
+# Copyright (C) 2007 GeBR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,18 +24,19 @@ libgebr_geoxml_la_SOURCES = \
 
 libgebr_geoxmlsubincludedir=$(includedir)/libgebr/geoxml
 libgebr_geoxmlsubinclude_HEADERS = \
-	defines.h macros.h error.h object.h \
+	defines.h error.h macros.h object.h \
 	sequence.h value_sequence.h \
 	enum_option.h program.h \
 	parameters.h parameter.h program_parameter.h parameter_group.h \
 	document.h flow.h line.h project.h
 noinst_HEADERS = \
-	xml.h document_p.h program_p.h \
-	parameter_p.h program_parameter_p.h parameters_p.h \
-	types.h support.h
+	xml.h sequence_p.h document_p.h program_p.h \
+	parameter_p.h parameter_group_p.h program_parameter_p.h parameters_p.h \
+	types.h
 EXTRA_DIST = ${noinst_HEADERS}
 
-INCLUDES =
+INCLUDES = -I../../misc
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
-libgebr_geoxml_la_LIBADD = $(GLIB_LIBS) $(GDOME2_LIBS)
+libgebr_geoxml_la_LIBADD = $(GLIB_LIBS) $(GDOME2_LIBS) \
+	../../misc/misc/libgebr_misc.la
 libgebr_geoxml_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@

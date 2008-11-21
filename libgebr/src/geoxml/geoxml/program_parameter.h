@@ -51,6 +51,7 @@
  * 	"GeoXmlParameter" [ URL = "\ref parameter.h" ];
  * 	"GeoXmlParameters" [ URL = "\ref parameters.h" ];
  * 	"GeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
+ * 	"GeoXmlPropertyValue" [ URL = "\ref GeoXmlPropertyValue" ];
  * 	"GeoXmlParameterGroup" [ URL = "\ref parameter_group.h" ];
  *
  * 	edge [
@@ -80,6 +81,12 @@
  * 	]
  * 	"GeoXmlProgram" -> "GeoXmlParameters";
  * 	"GeoXmlParameterGroup" -> "GeoXmlParameters";
+ *
+ * 	edge [
+ * 		arrowhead = "none"
+ * 		taillabel = "1..*"
+ * 	]
+ * 	"GeoXmlProgramParameter" -> "GeoXmlPropertyValue";
  * }
  * \enddot
  * \see program_parameter.h
@@ -98,9 +105,19 @@
 #define GEOXML_PROGRAM_PARAMETER(program_parameter) ((GeoXmlProgramParameter*)(program_parameter))
 
 /**
+ * Promote a sequence of property's values \p sequence to a GeoXmlPropertyValue.
+ */
+#define GEOXML_PROPERTY_VALUE(sequence) ((GeoXmlPropertyValue*)(sequence))
+
+/**
  * The GeoXmlProgramParameter struct contains private data only, and should be accessed using the functions below.
  */
 typedef struct geoxml_program_parameter GeoXmlProgramParameter;
+
+/**
+ * The GeoXmlPropertyValue struct contains private data only, and should be accessed using the functions below.
+ */
+typedef struct geoxml_property_value GeoXmlPropertyValue;
 
 #include "program_parameter.h"
 #include "program.h"
@@ -125,6 +142,14 @@ void
 geoxml_program_parameter_set_required(GeoXmlProgramParameter * program_parameter, gboolean required);
 
 /**
+ *
+ *
+ * If \p program_parameter is NULL returns FALSE.
+ */
+gboolean
+geoxml_program_parameter_get_required(GeoXmlProgramParameter * program_parameter);
+
+/**
  * Set \p program_parameter keyword to \p keyword.
  * The keyword is the identifier of the program_parameter in program. For example,
  * if keyword is 'infile' and value is 'data.su' a command line with
@@ -138,6 +163,14 @@ geoxml_program_parameter_set_required(GeoXmlProgramParameter * program_parameter
  */
 void
 geoxml_program_parameter_set_keyword(GeoXmlProgramParameter * program_parameter, const gchar * keyword);
+
+/**
+ *
+ *
+ * If \p program_parameter is NULL returns NULL.
+ */
+const gchar *
+geoxml_program_parameter_get_keyword(GeoXmlProgramParameter * program_parameter);
 
 /**
  * Say that \p program_parameter's that this program_parameter's value is in fact a list of values
@@ -165,15 +198,7 @@ geoxml_program_parameter_set_list_separator(GeoXmlProgramParameter * program_par
  * If \p program_parameter is NULL nothing is done.
  */
 void
-geoxml_program_parameter_set_default(GeoXmlProgramParameter * program_parameter, const gchar * value);
-
-/**
- * Set \p program_parameter 's (of type flag) state to \p state.
- *
- * If \p program_parameter is NULL nothing is done.
- */
-void
-geoxml_program_parameter_set_flag_default(GeoXmlProgramParameter * program_parameter, gboolean state);
+geoxml_program_parameter_set_first_default(GeoXmlProgramParameter * program_parameter, const gchar * value);
 
 /**
  * Set \p program_parameter 's value to \p value.
@@ -183,7 +208,15 @@ geoxml_program_parameter_set_flag_default(GeoXmlProgramParameter * program_param
  * @see geoxml_program_parameter_set_keyword
  */
 void
-geoxml_program_parameter_set_value(GeoXmlProgramParameter * program_parameter, const gchar * value);
+geoxml_program_parameter_set_first_value(GeoXmlProgramParameter * program_parameter, const gchar * value);
+
+/**
+ * Set \p program_parameter 's (of type flag) state to \p state.
+ *
+ * If \p program_parameter is NULL nothing is done.
+ */
+void
+geoxml_program_parameter_set_first_boolean_default(GeoXmlProgramParameter * program_parameter, gboolean state);
 
 /**
  *
@@ -191,7 +224,152 @@ geoxml_program_parameter_set_value(GeoXmlProgramParameter * program_parameter, c
  * If \p program_parameter is NULL nothing is done.
  */
 void
-geoxml_program_parameter_set_flag_state(GeoXmlProgramParameter * program_parameter, gboolean enabled);
+geoxml_program_parameter_set_first_boolean_value(GeoXmlProgramParameter * program_parameter, gboolean enabled);
+
+/**
+ * If \p program_parameter is a list, then get the string used to separate
+ * the elements of the value.
+ *
+ * If \p program_parameter is NULL or it is not a list (see \ref geoxml_program_parameter_set_be_list)
+ * NULL is returned
+ *
+ * \see geoxml_program_parameter_set_is_list, geoxml_program_parameter_set_list_separator,
+ * geoxml_program_parameter_get_list_separator
+ */
+const gchar *
+geoxml_program_parameter_get_list_separator(GeoXmlProgramParameter * program_parameter);
+
+/**
+ *
+ *
+ * If \p program_parameter is NULL returns NULL.
+ *
+ * \see geoxml_program_parameter_set_default
+ */
+const gchar *
+geoxml_program_parameter_get_first_default(GeoXmlProgramParameter * program_parameter);
+
+/**
+ *
+ *
+ * If \p program_parameter is NULL returns NULL.
+ */
+const gchar *
+geoxml_program_parameter_get_first_value(GeoXmlProgramParameter * program_parameter);
+
+/**
+ *
+ *
+ * If \p program_parameter is NULL or returns FALSE.
+ *
+ * @see GEOXML_PARAMETERTYPE_FLAG
+ */
+gboolean
+geoxml_program_parameter_get_first_boolean_value(GeoXmlProgramParameter * program_parameter);
+
+/**
+ *
+ *
+ * If \p program_parameter is NULL returns FALSE.
+ *
+ * \see geoxml_program_parameter_set_flag_default, geoxml_program_parameter_get_default,
+ * geoxml_program_parameter_set_default
+ */
+gboolean
+geoxml_program_parameter_get_first_boolean_default(GeoXmlProgramParameter * program_parameter);
+
+/**
+ * Create a new flow and append it to list of flows references.
+ *
+ * If \p program_parameter is NULL returns NULL
+ */
+GeoXmlPropertyValue *
+geoxml_program_parameter_append_value(GeoXmlProgramParameter * program_parameter);
+
+/**
+ * Writes to \p line_flow the \p index ieth flow reference that \p line belong.
+ * If an error ocurred, the content of \p line_flow is assigned to NULL.
+ *
+ * If \p line is NULL nothing is done.
+ *
+ * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR
+ *
+ * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
+ */
+int
+geoxml_program_parameter_get_property_value(GeoXmlProgramParameter * program_parameter, GeoXmlSequence ** property_value, gulong index);
+
+/**
+ * Get the number of flows that \p line has.
+ *
+ * If \p line is NULL returns -1.
+ */
+glong
+geoxml_program_parameter_get_values_number(GeoXmlPropertyValue * property_value);
+
+/**
+ * Set the value of \p property_value to \p value.
+ *
+ * If \p property_value is NULL nothing is done.
+ */
+void
+geoxml_program_parameter_set_value(GeoXmlPropertyValue * property_value, const gchar * value);
+
+/**
+ * Set the default value of \p property_value to \p value.
+ *
+ * If \p property_value is NULL nothing is done.
+ */
+void
+geoxml_program_parameter_set_default_value(GeoXmlPropertyValue * property_value, const gchar * default_value);
+
+/**
+ * Set a boolean value of \p property_value to \p state.
+ *
+ * If \p property_value is NULL nothing is done.
+ */
+void
+geoxml_program_parameter_set_boolean_value(GeoXmlPropertyValue * property_value, gboolean state);
+
+/**
+ * Set a boolean default value of \p property_value to \p state.
+ *
+ * If \p property_value is NULL nothing is done.
+ */
+void
+geoxml_program_parameter_set_boolean_default_value(GeoXmlPropertyValue * property_value, gboolean state);
+
+/**
+ * Returns the value of \p property_value.
+ *
+ * If \p property_value is NULL returns NULL.
+ */
+const gchar *
+geoxml_program_parameter_get_value(GeoXmlPropertyValue * property_value);
+
+/**
+ * Returns the default value of \p property_value.
+ *
+ * If \p property_value is NULL returns NULL.
+ */
+const gchar *
+geoxml_program_parameter_get_default_value(GeoXmlPropertyValue * property_value);
+
+/**
+ * Returns the value of a boolean \p property_value (a flag parameter).
+ *
+ * If \p property_value is NULL returns NULL.
+ */
+gboolean
+geoxml_program_parameter_get_boolean_value(GeoXmlPropertyValue * property_value);
+
+/**
+ * Returns the default value of a boolean \p property_value (a flag parameter).
+ *
+ * If \p property_value is NULL returns NULL.
+ */
+gboolean
+geoxml_program_parameter_get_boolean_default_value(GeoXmlPropertyValue * property_value);
 
 /**
  *
@@ -204,11 +382,45 @@ geoxml_program_parameter_set_file_be_directory(GeoXmlProgramParameter * program_
 /**
  *
  *
+ * If \p program_parameter is NULL returns NULL.
+ *
+ * @see GEOXML_PARAMETERTYPE_FILE
+ */
+gboolean
+geoxml_program_parameter_get_file_be_directory(GeoXmlProgramParameter * program_parameter);
+
+/**
+ *
+ *
  * If \p program_parameter is NULL nothing is done.
  */
 void
 geoxml_program_parameter_set_range_properties(GeoXmlProgramParameter * program_parameter,
 	const gchar * min, const gchar * max, const gchar * inc, const gchar * digits);
+
+
+/**
+ *
+ *
+ * If \p program_parameter is NULL nothing is done.
+ *
+ * @see GEOXML_PARAMETERTYPE_RANGE
+ */
+void
+geoxml_program_parameter_get_range_properties(GeoXmlProgramParameter * program_parameter,
+	gchar ** min, gchar ** max, gchar ** inc, gchar ** digits);
+
+/**
+ * Return TRUE if \p program_parameter that this program_parameter's value is in fact a list of values
+ * each one delimited by a separator.
+ *
+ * If \p program_parameter is NULL returns FALSE
+ *
+ * \see geoxml_program_parameter_set_is_list, geoxml_program_parameter_set_list_separator,
+ * geoxml_program_parameter_get_list_separator
+ */
+gboolean
+geoxml_program_parameter_get_is_list(GeoXmlProgramParameter * program_parameter);
 
 /**
  *
@@ -244,155 +456,5 @@ geoxml_program_parameter_get_enum_option(GeoXmlProgramParameter * program_parame
  */
 glong
 geoxml_program_parameter_get_enum_options_number(GeoXmlProgramParameter * program_parameter);
-
-/**
- *
- *
- * If \p program_parameter is NULL returns FALSE.
- */
-gboolean
-geoxml_program_parameter_get_required(GeoXmlProgramParameter * program_parameter);
-
-/**
- *
- *
- * If \p program_parameter is NULL returns NULL.
- */
-const gchar *
-geoxml_program_parameter_get_keyword(GeoXmlProgramParameter * program_parameter);
-
-/**
- * Return TRUE if \p program_parameter that this program_parameter's value is in fact a list of values
- * each one delimited by a separator.
- *
- * If \p program_parameter is NULL returns FALSE
- *
- * \see geoxml_program_parameter_set_is_list, geoxml_program_parameter_set_list_separator,
- * geoxml_program_parameter_get_list_separator
- */
-gboolean
-geoxml_program_parameter_get_is_list(GeoXmlProgramParameter * program_parameter);
-
-/**
- * If \p program_parameter is a list, then get the string used to separate
- * the elements of the value.
- *
- * If \p program_parameter is NULL or it is not a list (see \ref geoxml_program_parameter_set_be_list)
- * NULL is returned
- *
- * \see geoxml_program_parameter_set_is_list, geoxml_program_parameter_set_list_separator,
- * geoxml_program_parameter_get_list_separator
- */
-const gchar *
-geoxml_program_parameter_get_list_separator(GeoXmlProgramParameter * program_parameter);
-
-/**
- *
- *
- * If \p program_parameter is NULL returns NULL.
- *
- * \see geoxml_program_parameter_set_default
- */
-const gchar *
-geoxml_program_parameter_get_default(GeoXmlProgramParameter * program_parameter);
-
-/**
- *
- *
- * If \p program_parameter is NULL returns FALSE.
- *
- * \see geoxml_program_parameter_set_flag_default, geoxml_program_parameter_get_default,
- * geoxml_program_parameter_set_default
- */
-gboolean
-geoxml_program_parameter_get_flag_default(GeoXmlProgramParameter * program_parameter);
-
-/**
- *
- *
- * If \p program_parameter is NULL returns NULL.
- */
-const gchar *
-geoxml_program_parameter_get_value(GeoXmlProgramParameter * program_parameter);
-
-/**
- *
- *
- * If \p program_parameter is NULL or returns FALSE.
- *
- * @see GEOXML_PARAMETERTYPE_FLAG
- */
-gboolean
-geoxml_program_parameter_get_flag_status(GeoXmlProgramParameter * program_parameter);
-
-/**
- *
- *
- * If \p program_parameter is NULL returns NULL.
- *
- * @see GEOXML_PARAMETERTYPE_FILE
- */
-gboolean
-geoxml_program_parameter_get_file_be_directory(GeoXmlProgramParameter * program_parameter);
-
-/**
- *
- *
- * If \p program_parameter is NULL nothing is done.
- *
- * @see GEOXML_PARAMETERTYPE_RANGE
- */
-void
-geoxml_program_parameter_get_range_properties(GeoXmlProgramParameter * program_parameter,
-	gchar ** min, gchar ** max, gchar ** inc, gchar ** digits);
-
-/**
- * \deprecated
- * Use \ref geoxml_program_parameter_set_type instead. Kept only for backwards compatible and should not be used in newly written code
- */
-void GEOXML_DEPRECATED
-geoxml_program_parameter_set_type(GeoXmlProgramParameter ** program_parameter, enum GEOXML_PARAMETERTYPE type);
-
-/**
- * \deprecated
- * Use \ref geoxml_parameter_set_label instead. Kept only for backwards compatible and should not be used in newly written code
- */
-void GEOXML_DEPRECATED
-geoxml_program_parameter_set_label(GeoXmlProgramParameter * program_parameter, const gchar * label);
-
-/**
- * \deprecated
- * Use \ref geoxml_program_parameter_get_type instead. Kept only for backwards compatible and should not be used in newly written code
- */
-enum GEOXML_PARAMETERTYPE GEOXML_DEPRECATED
-geoxml_program_parameter_get_type(GeoXmlProgramParameter * program_parameter);
-
-/**
- * \deprecated
- * Use \ref geoxml_parameter_get_label instead. Kept only for backwards compatible and should not be used in newly written code
- */
-const gchar * GEOXML_DEPRECATED
-geoxml_program_parameter_get_label(GeoXmlProgramParameter * program_parameter);
-
-/**
- * \deprecated
- * Use \ref geoxml_sequence_previous instead. Kept only for backwards compatible and should not be used in newly written code
- */
-void GEOXML_DEPRECATED
-geoxml_program_parameter_previous(GeoXmlProgramParameter ** program_parameter);
-
-/**
-* \deprecated
- * Use \ref geoxml_sequence_next instead. Kept only for backwards compatible and should not be used in newly written code
- */
-void GEOXML_DEPRECATED
-geoxml_program_parameter_next(GeoXmlProgramParameter ** program_parameter);
-
-/**
- * \deprecated
- * Use \ref geoxml_sequence_remove instead. Kept only for backwards compatible and should not be used in newly written code
- */
-void GEOXML_DEPRECATED
-geoxml_program_parameter_remove(GeoXmlProgramParameter * program_parameter);
 
 #endif //__LIBGEBR_GEOXML_PROGRAM_PARAMETER_H

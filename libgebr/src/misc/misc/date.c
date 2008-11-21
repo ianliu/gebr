@@ -55,7 +55,7 @@ iso_date(void)
 
 /*
  * Function: localized_date
- * Returns an (static allocated) string with localized date
+ * Returns an (static allocated) string with _iso_date_ converted to a localized date
  * If _iso_date_ is NULL, current date is used.
  */
 gchar *

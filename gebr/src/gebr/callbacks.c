@@ -30,99 +30,87 @@
 #include "ui_flow.h"
 #include "ui_document.h"
 #include "ui_paths.h"
+#include "ui_job_control.h"
 
 
 /*
- * Function: on_project_new_activate
+ * Function: on_project_line_new_project_activate
  * Call <project_new> from <project.c>
  *
  */
 void
-on_project_new_activate(void)
+on_project_line_new_project_activate(void)
 {
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
 	project_new();
 }
 
 /*
- * Function: on_project_delete_activate
- * Call <project_delete> from <project.c>
+ * Function: on_project_line_new_line_activate
+ * Call <project_new> from <project.c>
  *
  */
 void
-on_project_delete_activate(void)
-{
-	if (project_delete())
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
-}
-
-/*
- * Function: on_project_properties_activate
- * *Fill me in!*
- *
- */
-void
-on_project_properties_activate(void)
-{
-	document_properties_setup_ui(GEOXML_DOC(gebr.project));
-}
-
-/*
- * Function: on_project_refresh_activate
- * Call <project_list_populate> from <project.c>
- *
- */
-void
-on_project_refresh_activate(void)
-{
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
-	project_list_populate();
-}
-
-/*
- * Function: on_line_new_activate
- * Call <line_new> from <line.c>
- *
- */
-void
-on_line_new_activate(void)
+on_project_line_new_line_activate(void)
 {
 	if (line_new())
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
 }
 
 /*
- * Function: on_line_delete_activate
- * Call <line_delete> from <line.c>
+ * Function: on_project_line_delete_activate
+ * Call <project_delete> from <project.c>
  *
  */
 void
-on_line_delete_activate(void)
+on_project_line_delete_activate(void)
 {
-	if (line_delete())
+	gboolean	ret;
+
+	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
+		ret = project_delete();
+	else
+		ret = line_delete();
+
+	if (ret)
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
 }
 
 /*
- * Function: on_line_properties_activate
+ * Function: on_project_line_properties_activate
  * *Fill me in!*
  *
  */
 void
-on_line_path_activate(void)
+on_project_line_properties_activate(void)
 {
-	path_list_setup_ui();
+	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
+		document_properties_setup_ui(GEOXML_DOC(gebr.project));
+	else
+		document_properties_setup_ui(GEOXML_DOC(gebr.line));
 }
 
 /*
- * Function: on_line_properties_activate
+ * Function: on_project_line_refresh_activate
+ * Call <project_list_populate> from <project.c>
+ *
+ */
+void
+on_project_line_refresh_activate(void)
+{
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
+	project_list_populate();
+}
+
+/*
+ * Function: on_project_line_paths_activate
  * *Fill me in!*
  *
  */
 void
-on_line_properties_activate(void)
+on_project_line_paths_activate(void)
 {
-	document_properties_setup_ui(GEOXML_DOC(gebr.line));
+	path_list_setup_ui();
 }
 
 /*
@@ -217,6 +205,18 @@ on_flow_execute_activate(void)
 }
 
 /*
+ * Function: on_flow_component_delete_activate
+ * *Fill me in!*
+ *
+ */
+void
+on_flow_component_delete_activate(void)
+{
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 2);
+	flow_program_remove();
+}
+
+/*
  * Function: on_flow_component_properties_activate
  * *Fill me in!*
  *
@@ -252,6 +252,61 @@ on_flow_component_status_activate(GtkRadioAction * action)
 }
 
 /*
+ * Function: on_job_control_save
+ * Call <job_control_save>
+ *
+ */
+void
+on_job_control_save(void)
+{
+	job_control_save();
+}
+
+/*
+ * Function: on_job_control_cancel
+ * Call <job_control_cancel>
+ *
+ */
+void
+on_job_control_cancel(void)
+{
+	job_control_cancel();
+}
+
+/*
+ * Function: on_job_control_close
+ * Call <job_control_close>
+ *
+ */
+void
+on_job_control_close(void)
+{
+	job_control_close();
+}
+
+/*
+ * Function: on_job_control_clear
+ * Call <job_control_clear>
+ *
+ */
+void
+on_job_control_clear(void)
+{
+	job_control_clear();
+}
+
+/*
+ * Function: on_job_control_stop
+ * Call <job_control_stop>
+ *
+ */
+void
+on_job_control_stop(void)
+{
+	job_control_stop();
+}
+
+/*
  * Function: on_configure_preferences_activate
  * *Fill me in!*
  *
@@ -284,13 +339,14 @@ on_help_about_activate(void)
 	gtk_widget_show_all(gebr.about.dialog);
 }
 
-/* Function: on_document_update
+/*
+ * Function: navigation_bar_update
  * 
  */
 void
 navigation_bar_update(void)
 {
-	GString *			markup;
+	GString *	markup;
 
 	if (gebr.project_line == NULL) {
 		gtk_label_set_text(GTK_LABEL(gebr.navigation_box_label), "");
@@ -299,16 +355,15 @@ navigation_bar_update(void)
 
 	markup = g_string_new(NULL);
 	g_string_append(markup, g_markup_printf_escaped("<i>%s</i>",
-							geoxml_document_get_title(GEOXML_DOC(gebr.project))));
-
+		geoxml_document_get_title(GEOXML_DOC(gebr.project))));
 	if (gebr.line != NULL)
 		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
-							geoxml_document_get_title(GEOXML_DOC(gebr.line))));
-	
+			geoxml_document_get_title(GEOXML_DOC(gebr.line))));
 	if (gebr.flow != NULL)
 		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
-							geoxml_document_get_title(GEOXML_DOC(gebr.flow))));
+			geoxml_document_get_title(GEOXML_DOC(gebr.flow))));
 	
 	gtk_label_set_markup(GTK_LABEL(gebr.navigation_box_label), markup->str);
+
 	g_string_free(markup, TRUE);
 }

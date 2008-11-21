@@ -82,7 +82,7 @@ flow_new(void)
 	geoxml_document_set_author(GEOXML_DOC(flow), gebr.config.username->str);
 	geoxml_document_set_email(GEOXML_DOC(flow), gebr.config.email->str);
 	/* and add to current line */
-	geoxml_line_add_flow(gebr.line, geoxml_document_get_filename(GEOXML_DOC(flow)));
+	geoxml_line_append_flow(gebr.line, geoxml_document_get_filename(GEOXML_DOC(flow)));
 	document_save(GEOXML_DOC(gebr.line));
 	document_save(GEOXML_DOC(flow));
 	geoxml_document_free(GEOXML_DOC(flow));
@@ -220,7 +220,7 @@ flow_import(void)
 	}
 
 	/* assembly a file chooser dialog */
-	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose filename to save"),
+	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose filename to open"),
 		GTK_WINDOW(gebr.window),
 		GTK_FILE_CHOOSER_ACTION_OPEN,
 		GTK_STOCK_OPEN, GTK_RESPONSE_YES,
@@ -335,25 +335,37 @@ out:	gtk_widget_destroy(chooser_dialog);
 
 /*
  * Function: flow_export_parameters_cleanup
- * Cleanup (if group recursevely) parameters value.
- * If _use_value_ is TRUE the value is made default
+ * Cleanup (if group recursively) parameters value.
+ * If _use_value_as_default_ is TRUE the value is made default
  */
 static void
-flow_export_parameters_cleanup(GeoXmlParameters * parameters, gboolean use_value)
+flow_export_parameters_cleanup(GeoXmlParameters * parameters, gboolean use_value_as_default)
 {
 	GeoXmlSequence *	parameter;
 
 	parameter = geoxml_parameters_get_first_parameter(parameters);
-	while (parameter != NULL) {
+	for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
 		if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE) {
-			if (use_value == TRUE)
-				geoxml_program_parameter_set_default(GEOXML_PROGRAM_PARAMETER(parameter),
-					geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter)));
-			geoxml_program_parameter_set_value(GEOXML_PROGRAM_PARAMETER(parameter), "");
-		} else if (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter)) == GEOXML_PARAMETERTYPE_GROUP)
-			flow_export_parameters_cleanup(GEOXML_PARAMETERS(parameter), use_value);
+			GeoXmlSequence *	property_value;
 
-		geoxml_sequence_next(&parameter);
+			geoxml_program_parameter_get_property_value(
+				GEOXML_PROGRAM_PARAMETER(parameter),
+				&property_value, 0);
+			for (; property_value != NULL; geoxml_sequence_next(&property_value)) {
+				if (use_value_as_default == TRUE)
+					geoxml_program_parameter_set_default_value(
+						GEOXML_PROPERTY_VALUE(property_value),
+						geoxml_program_parameter_get_value(
+							GEOXML_PROPERTY_VALUE(property_value)));
+				geoxml_program_parameter_set_value(GEOXML_PROPERTY_VALUE(property_value), "");
+			}
+		} else { /* a group, time for recursion! */
+			GeoXmlSequence *	instance;
+
+			geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+			for (; instance != NULL; geoxml_sequence_next(&instance))
+				flow_export_parameters_cleanup(GEOXML_PARAMETERS(instance), use_value_as_default);
+		}
 	}
 }
 

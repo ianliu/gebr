@@ -1,5 +1,5 @@
-/*   libgebr - G�BR Library
- *   Copyright (C) 2007 G�BR core team (http://gebr.sourceforge.net)
+/*   libgebr - GeBR Library
+ *   Copyright (C) 2007 GeBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,11 +22,13 @@
 
 /**
  * \internal
- * Reseting a program parameter default is not only settting it to a empty string.
- * In fact, this will break XML, as some default are implemented as enumerated attributes.
- *
+ * Assign to all values elements the values \p value and
+ * \p default_value for default value.
+ * A NULL pointer mean to no set.
+ * An empty value means reset.
  */
 void
-__geoxml_program_parameter_reset_default(GeoXmlProgramParameter * parameter);
+__geoxml_program_parameter_set_all_value(GeoXmlProgramParameter * program_parameter,
+	const gchar * value, const gchar * default_value);
 
 #endif //__LIBGEBR_GEOXML_PROGRAM_PARAMETER_P_H

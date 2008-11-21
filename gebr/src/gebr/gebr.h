@@ -99,9 +99,38 @@ struct gebr {
 	} pixmaps;
 
 	struct gebr_actions {
-		GtkRadioAction *	configured;
-		GtkRadioAction *	disabled;
-		GtkRadioAction *	unconfigured;
+		struct {
+			GtkAction *		new_project;
+			GtkAction *		new_line;
+			GtkAction *		delete;
+			GtkAction *		properties;
+			GtkAction *		line_paths;
+		} project_line;
+		struct {
+			GtkAction *		new;
+			GtkAction *		delete;
+			GtkAction *		properties;
+			GtkAction *		io;
+			GtkAction *		execute;
+			GtkAction *		import;
+			GtkAction *		export;
+			GtkAction *		export_as_menu;
+		} flow;
+		struct {
+			GtkAction *		delete;
+			GtkAction *		properties;
+			GtkAction *		refresh;
+			GtkRadioAction *	configured;
+			GtkRadioAction *	disabled;
+			GtkRadioAction *	unconfigured;
+		} flow_edition;
+		struct {
+			GtkAction *		save;
+			GtkAction *		cancel;
+			GtkAction *		close;
+			GtkAction *		clear;
+			GtkAction *		stop;
+		} job_control;
 	} actions;
 };
 

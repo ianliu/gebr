@@ -94,14 +94,13 @@ debr_setup_ui(void)
 	debr.accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(debr.window), debr.accel_group);
 
-
 	/*
 	 * Actions: Main
 	 */
 	debr.actions.main.quit = gtk_action_new("main_quit",
 		NULL, NULL, GTK_STOCK_QUIT);
 	g_signal_connect(debr.actions.main.quit, "activate",
-		       (GCallback)(debr_quit), NULL);
+		(GCallback)(debr_quit), NULL);
 	/*
 	 * Actions: Menu
 	 */
