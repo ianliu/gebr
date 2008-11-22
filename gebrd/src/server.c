@@ -45,7 +45,7 @@
 gboolean
 server_init(void)
 {
-	GHostAddress *		host_address;
+	GSocketAddress *	socket_address;
 	struct sigaction	act;
 	gboolean		ret;
 
@@ -58,8 +58,7 @@ server_init(void)
 	log_filename = g_string_new(NULL);
 
 	/* local address used for listening */
-	host_address = g_host_address_new();
-	g_host_address_set_ipv4_string(host_address, "127.0.0.1");
+	socket_address = g_socket_address_new("127.0.0.1", G_SOCKET_ADDRESS_TYPE_IPV4);
 
 	/* from libgebr-misc */
 	if (gebr_create_config_dirs() == FALSE) {
@@ -75,12 +74,12 @@ server_init(void)
 	protocol_init();
 
 	/* init the server socket and listen */
-	gebrd.tcp_server = g_tcp_server_new();
-	if (g_tcp_server_listen(gebrd.tcp_server, host_address, 0) == FALSE) {
+	gebrd.listen_socket = g_listen_socket_new();
+	if (g_listen_socket_listen(gebrd.listen_socket, socket_address, 0) == FALSE) {
 		gebrd_message(LOG_ERROR, _("Could not listen for connections.\n"));
 		goto err;
 	}
-	g_signal_connect(gebrd.tcp_server, "new-connection",
+	g_signal_connect(gebrd.listen_socket, "new-connection",
 		G_CALLBACK(server_new_connection), NULL);
 
 	/* write on user's home directory a file with a port */
@@ -95,7 +94,7 @@ server_init(void)
 		fscanf(run_fp, "%hu", &port);
 		fclose(run_fp);
 
-		if (g_tcp_server_is_local_port_available(port) == FALSE) {
+		if (g_listen_socket_is_local_port_available(port) == FALSE) {
 			if (gebrd.options.foreground == TRUE) {
 				ret = FALSE;
 				gebrd_message(LOG_ERROR,
@@ -111,7 +110,7 @@ server_init(void)
 		gebrd_message(LOG_ERROR, _("Could not write run file."));
 		goto err;
 	}
-	fprintf(run_fp, "%d\n", g_tcp_server_server_port(gebrd.tcp_server));
+	fprintf(run_fp, "%d\n", g_listen_socket_server_port(gebrd.listen_socket));
 	fclose(run_fp);
 
 	/* connecting signal TERM */
@@ -125,8 +124,8 @@ server_init(void)
 
 	/* success */
 	ret = TRUE;
-	gebrd_message(LOG_START, _("Server started at %u port"), g_tcp_server_server_port(gebrd.tcp_server));
-	dprintf(gebrd.finished_starting_pipe[1], "%d\n", g_tcp_server_server_port(gebrd.tcp_server));
+	gebrd_message(LOG_START, _("Server started at %u port"), g_listen_socket_server_port(gebrd.listen_socket));
+	dprintf(gebrd.finished_starting_pipe[1], "%d\n", g_listen_socket_server_port(gebrd.listen_socket));
 	goto out;
 
 err:	ret = FALSE;
@@ -134,7 +133,7 @@ err:	ret = FALSE;
 	dprintf(gebrd.finished_starting_pipe[1], "0\n");
 
 out:	g_string_free(log_filename, TRUE);
-	g_host_address_free(host_address);
+	g_socket_address_free(socket_address);
 
 	return ret;
 }
@@ -165,9 +164,9 @@ server_quit(void)
 void
 server_new_connection(void)
 {
-	GTcpSocket *	client_socket;
+	GStreamSocket *	client_socket;
 
-	while ((client_socket = g_tcp_server_get_next_pending_connection(gebrd.tcp_server)) != NULL)
+	while ((client_socket = g_listen_socket_get_next_pending_connection(gebrd.listen_socket)) != NULL)
 		client_add(client_socket);
 
 	gebrd_message(LOG_DEBUG, "server_new_connection");
@@ -234,7 +233,7 @@ server_parse_client_messages(struct client * client)
 			}
 
 			/* send return */
-			protocol_send_data(client->protocol, client->tcp_socket,
+			protocol_send_data(client->protocol, client->stream_socket,
 				protocol_defs.ret_def, 2, gebrd.hostname, display_port->str);
 
 			/* frees */
@@ -262,7 +261,7 @@ server_parse_client_messages(struct client * client)
 			/* try to run and send return */
 			if ((success = job_new(&job, client, xml)) == TRUE)
 				job_run_flow(job, client);
-			protocol_send_data(client->protocol, client->tcp_socket, protocol_defs.ret_def,
+			protocol_send_data(client->protocol, client->stream_socket, protocol_defs.ret_def,
 				7, job->jid->str, job->status->str, job->title->str,
 				job->start_date->str, job->issues->str,
 				job->cmd_line->str, job->output->str);

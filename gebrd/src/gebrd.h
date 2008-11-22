@@ -18,15 +18,14 @@
 #ifndef __GEBRD_H
 #define __GEBRD_H
 
-#include <comm/gtcpserver.h>
-#include <comm/gtcpsocket.h>
+#include <comm/glistensocket.h>
 #include <misc/log.h>
 #include <netdb.h>
 
 extern struct gebrd	gebrd;
 
 struct gebrd {
-	GTcpServer *		tcp_server;
+	GListenSocket *		listen_socket;
 	GList *			clients;
 	GList *			jobs;
 	struct log *		log;

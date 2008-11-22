@@ -19,12 +19,12 @@
 #define __CLIENT_H
 
 #include <glib.h>
-#include <comm/gtcpsocket.h>
+#include <comm/gstreamsocket.h>
 
 struct protocol;
 
 struct client {
-	GTcpSocket *		tcp_socket;
+	GStreamSocket *		stream_socket;
 	struct protocol *	protocol;
 
 	gboolean		is_local;
@@ -33,7 +33,7 @@ struct client {
 };
 
 void
-client_add(GTcpSocket * tcp_socket);
+client_add(GStreamSocket * stream_socket);
 
 void
 client_free(struct client * client);

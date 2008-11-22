@@ -34,36 +34,36 @@
  */
 
 static void
-client_disconnected(GTcpSocket * tcp_socket, struct client * client);
+client_disconnected(GStreamSocket * stream_socket, struct client * client);
 
 static void
-client_read(GTcpSocket * tcp_socket, struct client * client);
+client_read(GStreamSocket * stream_socket, struct client * client);
 
 static void
-client_error(GTcpSocket * tcp_socket, enum GSocketError error, struct client * client);
+client_error(GStreamSocket * stream_socket, enum GSocketError error, struct client * client);
 
 /*
  * Public functions
  */
 
 void
-client_add(GTcpSocket * tcp_socket)
+client_add(GStreamSocket * stream_socket)
 {
 	struct client *	client;
 
 	client = g_malloc(sizeof(struct client));
 	*client = (struct client) {
-		.tcp_socket = tcp_socket,
+		.stream_socket = stream_socket,
 		.protocol = protocol_new(),
 		.display = g_string_new(NULL),
 	};
 
 	gebrd.clients = g_list_prepend(gebrd.clients, client);
-	g_signal_connect(tcp_socket, "disconnected",
+	g_signal_connect(stream_socket, "disconnected",
 			G_CALLBACK(client_disconnected), client);
-	g_signal_connect(tcp_socket, "error",
+	g_signal_connect(stream_socket, "error",
 			 G_CALLBACK(client_error), client);
-	g_signal_connect(tcp_socket, "ready-read",
+	g_signal_connect(stream_socket, "ready-read",
 			G_CALLBACK(client_read), client);
 
 	gebrd_message(LOG_DEBUG, "client_add");
@@ -72,14 +72,14 @@ client_add(GTcpSocket * tcp_socket)
 void
 client_free(struct client * client)
 {
-	g_socket_close(G_SOCKET(client->tcp_socket));
+	g_socket_close(G_SOCKET(client->stream_socket));
 	protocol_free(client->protocol);
 	g_string_free(client->display, TRUE);
 	g_free(client);
 }
 
 static void
-client_disconnected(GTcpSocket * tcp_socket, struct client * client)
+client_disconnected(GStreamSocket * stream_socket, struct client * client)
 {
 	gebrd_message(LOG_DEBUG, "client_disconnected");
 
@@ -88,17 +88,17 @@ client_disconnected(GTcpSocket * tcp_socket, struct client * client)
 }
 
 static void
-client_read(GTcpSocket * tcp_socket, struct client * client)
+client_read(GStreamSocket * stream_socket, struct client * client)
 {
 	GString *	data;
 
-	data = g_socket_read_string_all(G_SOCKET(tcp_socket));
+	data = g_socket_read_string_all(G_SOCKET(stream_socket));
 	if (protocol_receive_data(client->protocol, data) == FALSE) {
-		client_disconnected(tcp_socket, client);
+		client_disconnected(stream_socket, client);
 		goto out;
 	}
 	if (server_parse_client_messages(client) == FALSE) {
-		client_disconnected(tcp_socket, client);
+		client_disconnected(stream_socket, client);
 		goto out;
 	}
 
@@ -108,7 +108,7 @@ out:	g_string_free(data, TRUE);
 }
 
 static void
-client_error(GTcpSocket * tcp_socket, enum GSocketError error, struct client * client)
+client_error(GStreamSocket * stream_socket, enum GSocketError error, struct client * client)
 {
 	if (error == G_SOCKET_ERROR_UNKNOWN)
 		gebrd_message(LOG_ERROR, _("unk"), error, client->protocol->hostname->str);

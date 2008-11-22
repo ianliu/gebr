@@ -87,7 +87,7 @@ gebrd_init(void)
 void
 gebrd_quit(void)
 {
-	gebrd_message(LOG_END, _("Server quited"), g_tcp_server_server_port(gebrd.tcp_server));
+	gebrd_message(LOG_END, _("Server quited"), g_listen_socket_server_port(gebrd.listen_socket));
 
 	server_quit();
 	g_main_loop_quit(gebrd.main_loop);
@@ -136,7 +136,7 @@ gebrd_get_x11_redirect_display(void)
 {
 	static guint8	display = 10;
 
-	while (g_tcp_server_is_local_port_available(6000+display) == FALSE) {
+	while (g_listen_socket_is_local_port_available(6000+display) == FALSE) {
 		if (display == 255) {
 			display = 10;
 			return 0;

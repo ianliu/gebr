@@ -20,7 +20,7 @@
 #include <unistd.h>
 
 #include <comm/protocol.h>
-#include <comm/gtcpsocket.h>
+#include <comm/gstreamsocket.h>
 #include <comm/ghostaddress.h>
 #include <misc/utils.h>
 #include <misc/date.h>
@@ -44,15 +44,22 @@ job_parse_parameter(struct job * job, GeoXmlParameter * parameter, GeoXmlProgram
 
 	type = geoxml_parameter_get_type(GEOXML_PARAMETER(parameter));
 	if (type == GEOXML_PARAMETERTYPE_GROUP) {
-		GeoXmlParameter *	selected;
+		GeoXmlSequence *	instance;
+		gboolean		ret;
+		
+		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+		for (ret = TRUE; instance != NULL && ret == TRUE; geoxml_sequence_next(&instance)) {
+			GeoXmlParameter *	selected;
 
-		selected = geoxml_parameter_group_get_selected(GEOXML_PARAMETER_GROUP(parameter));
-		if (selected != NULL)
-			return job_parse_parameter(job, selected, program);
+			/* for an exclusive instance */
+			selected = geoxml_parameters_get_selected(GEOXML_PARAMETERS(instance));
+			if (selected != NULL)
+				ret = job_parse_parameter(job, selected, program);
+			else
+				ret = job_parse_parameters(job, GEOXML_PARAMETERS(instance), program);
+		}
 
-		return job_parse_parameters(job,
-			geoxml_parameter_group_get_parameters(GEOXML_PARAMETER_GROUP(parameter)),
-			program);
+		return ret;
 	}
 
 	program_parameter = GEOXML_PROGRAM_PARAMETER(parameter);
@@ -63,29 +70,43 @@ job_parse_parameter(struct job * job, GeoXmlParameter * parameter, GeoXmlProgram
 	case GEOXML_PARAMETERTYPE_RANGE:
 	case GEOXML_PARAMETERTYPE_FILE:
 	case GEOXML_PARAMETERTYPE_ENUM: {
-		const gchar *	value;
+		GString *	value;
 
-		value = geoxml_program_parameter_get_value(program_parameter);
-		if (strlen(value) > 0) {
+		value = g_string_new("");
+
+		if (geoxml_program_parameter_get_is_list(program_parameter) == TRUE) {
+			GeoXmlSequence *	property_value;
+
+			geoxml_program_parameter_get_property_value(program_parameter, &property_value, 0);
+			for (; property_value != NULL; geoxml_sequence_next(&property_value))
+				g_string_append(value, geoxml_program_parameter_get_value(
+					GEOXML_PROPERTY_VALUE(property_value)));
+		} else
+			g_string_assign(value, geoxml_program_parameter_get_first_value(program_parameter));
+
+		
+		if (strlen(value->str) > 0) {
 			g_string_append_printf(job->cmd_line, "%s\"%s\" ",
 				geoxml_program_parameter_get_keyword(program_parameter),
-				value);
+				value->str);
 		} else {
 			/* Check if this is a required parameter */
 			if (geoxml_program_parameter_get_required(program_parameter)) {
 				g_string_append_printf(job->issues,
 					_("Required parameter '%s' of program '%s' not provided.\n"),
-					geoxml_program_parameter_get_label(program_parameter),
+					geoxml_parameter_get_label(parameter),
 					geoxml_program_get_title(program));
 
 				return FALSE;
 			}
 		}
 
+		g_string_free(value, TRUE);
+
 		break;
 	}
 	case GEOXML_PARAMETERTYPE_FLAG:
-		if (geoxml_program_parameter_get_flag_status(program_parameter))
+		if (geoxml_program_parameter_get_first_boolean_value(program_parameter) == TRUE)
 			g_string_append_printf(job->cmd_line, "%s ", geoxml_program_parameter_get_keyword(program_parameter));
 
 		break;
@@ -148,7 +169,7 @@ job_send_clients_output(struct job * job, GString * _output)
 		struct client * client;
 
 		client = (struct client *)link->data;
-		protocol_send_data(client->protocol, client->tcp_socket,
+		protocol_send_data(client->protocol, client->stream_socket,
 			protocol_defs.out_def, 2, job->jid->str, output);
 
 		link = g_list_next(link);
@@ -201,7 +222,7 @@ job_process_finished(GProcess * process, struct job * job)
 		struct client * client;
 
 		client = (struct client *)link->data;
-		protocol_send_data(client->protocol, client->tcp_socket, protocol_defs.fin_def,
+		protocol_send_data(client->protocol, client->stream_socket, protocol_defs.fin_def,
 			3, job->jid->str, job->status->str, job->finish_date->str);
 
 		link = g_list_next(link);
@@ -555,7 +576,7 @@ job_list(struct client * client)
 		struct job *	job;
 
 		job = (struct job *)link->data;
-		protocol_send_data(client->protocol, client->tcp_socket, protocol_defs.job_def, 9,
+		protocol_send_data(client->protocol, client->stream_socket, protocol_defs.job_def, 9,
 			job->jid->str, job->status->str, job->title->str,
 			job->start_date->str, job->finish_date->str, job->hostname->str,
 			job->issues->str, job->cmd_line->str, job->output->str);
@@ -574,7 +595,7 @@ job_send_clients_job_notify(struct job * job)
 		struct client * client;
 
 		client = (struct client *)link->data;
-		protocol_send_data(client->protocol, client->tcp_socket, protocol_defs.job_def, 9,
+		protocol_send_data(client->protocol, client->stream_socket, protocol_defs.job_def, 9,
 			job->jid->str, job->status->str, job->title->str,
 			job->start_date->str, job->finish_date->str, job->hostname->str,
 			job->issues->str, job->cmd_line->str, job->output->str);
