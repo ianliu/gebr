@@ -1,7 +1,7 @@
 <!ELEMENT project (filename, title, description, help, author, email, date, line*)>
 <!ATTLIST project
    version CDATA #FIXED "0.2.0"
-   lastid  IDREF #REQUIRED>
+   lastid  ID #REQUIRED>
 
 <!-- Name of the XML file -->
 <!ELEMENT filename         (#PCDATA)>
