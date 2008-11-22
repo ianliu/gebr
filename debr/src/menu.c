@@ -696,9 +696,6 @@ menu_load_selected(void)
 	GtkTreeIter	iter;
 
 	menu_get_selected(&iter);
-	gtk_list_store_set(debr.ui_menu.list_store, &iter,
-		MENU_FILENAME, geoxml_document_get_filename(GEOXML_DOCUMENT(debr.menu)),
-		-1);
 	menu_details_update();
 }
 

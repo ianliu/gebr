@@ -167,11 +167,13 @@ geoxml_program_parameter_get_is_list(GeoXmlProgramParameter * program_parameter)
 		return FALSE;
 
 	GdomeDOMString *	string;
+	GdomeElement *		property_element;
 	gboolean		is_list;
 
+	property_element = __geoxml_get_first_element((GdomeElement*)program_parameter, "property");
 	string = gdome_str_mkref("separator");
-	is_list = gdome_el_hasAttribute(__geoxml_get_first_element((GdomeElement*)program_parameter, "property"),
-		string, &exception);
+	is_list = gdome_el_hasAttribute(property_element, string, &exception);
+
 	gdome_str_unref(string);
 
 	return is_list;

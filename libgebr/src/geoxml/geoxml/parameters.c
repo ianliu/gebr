@@ -182,27 +182,19 @@ geoxml_parameters_get_first_parameter(GeoXmlParameters * parameters)
 }
 
 int
-geoxml_parameters_get_parameter(GeoXmlParameters * parameters, GeoXmlSequence ** _parameter, gulong index)
+geoxml_parameters_get_parameter(GeoXmlParameters * parameters, GeoXmlSequence ** parameter, gulong index)
 {
 	if (parameters == NULL) {
-		*_parameter = NULL;
+		*parameter = NULL;
 		return GEOXML_RETV_NULL_PTR;
 	}
 
-	gulong			i;
-	GeoXmlSequence *	parameter;
+	*parameter = (GeoXmlSequence*)__geoxml_get_element_at((GdomeElement*)parameters,
+		"parameter", index, FALSE);
 
-	parameter = (GeoXmlSequence*)__geoxml_get_first_element((GdomeElement*)parameters, "*");
-	for (i = 0; i < index; ++i) {
-		parameter = (GeoXmlSequence*)__geoxml_next_element((GdomeElement*)parameter);
-		if (parameter == NULL) {
-			*_parameter = parameter;
-			return GEOXML_RETV_INVALID_INDEX;
-		}
-	}
-	*_parameter = parameter;
-
-	return GEOXML_RETV_SUCCESS;
+	return (*parameter == NULL)
+		? GEOXML_RETV_INVALID_INDEX
+		: GEOXML_RETV_SUCCESS;
 }
 
 glong

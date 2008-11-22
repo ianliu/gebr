@@ -61,6 +61,7 @@ __geoxml_insert_new_element(GdomeElement * parent_element, const gchar * tag_nam
  * \internal
  * Get the first child element of \p parent_element with tag name
  * \p tag_name. The child might not be a direct child of \p parent_element
+ * (the search done is recursive)
  */
 GdomeElement *
 __geoxml_get_first_element(GdomeElement * parent_element, const gchar * tag_name);

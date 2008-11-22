@@ -94,12 +94,12 @@ enum GEOXML_RETV {
 	/**
 	 * The user tried to create a parameter that reference to itself
 	 */
-	GEOXML_RETV_REFERENCE_TO_ITSELF		= -12,
+	GEOXML_RETV_REFERENCE_TO_ITSELF		= -11,
 	/**
 	 * The operation could not be made because it is not the
 	 * first instance of a group, aka the master instance.
 	 */
-	GEOXML_RETV_NOT_MASTER_INSTANCE		= -13,
+	GEOXML_RETV_NOT_MASTER_INSTANCE		= -12,
 };
 
 /**
