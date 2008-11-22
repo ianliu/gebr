@@ -213,12 +213,12 @@ __geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
  * as __geoxml_foreach_xpath_result(element, __geoxml_xpath_evaluate(context, expression)).
  * If you use 'break' then you have to free it yourself.
  */
-#define __geoxml_foreach_xpath_result(element, _result) \
-	GdomeXPathResult * xpath_result = _result; \
-	if (xpath_result != NULL) \
-		for (element = (GdomeElement*)gdome_xpresult_singleNodeValue(xpath_result, &exception); \
-		element != NULL || (gdome_xpresult_unref(xpath_result, &exception), 0); \
-		element = (GdomeElement*)gdome_xpresult_iterateNext(xpath_result, &exception))
+#define __geoxml_foreach_xpath_result(element, xpath_result) \
+	GdomeXPathResult * __xpath_result = xpath_result; \
+	if (__xpath_result != NULL) \
+		for (element = (GdomeElement*)gdome_xpresult_singleNodeValue(__xpath_result, &exception); \
+		element != NULL || (gdome_xpresult_unref(__xpath_result, &exception), 0); \
+		element = (GdomeElement*)gdome_xpresult_iterateNext(__xpath_result, &exception))
 
 /**
  * \internal
@@ -228,10 +228,32 @@ __geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
  * If you use 'break' then you have to free it yourself.
  */
 #define __geoxml_foreach_element(element, list) \
-	GSList * i = g_slist_last(list); \
-	if (i != NULL || (g_slist_free(list), 0)) \
-		for (element = (GdomeElement*)i->data; \
-		(i != NULL && (element = (GdomeElement*)i->data, 1)) || (g_slist_free(list), 0); \
-		i = g_slist_next(i))
+	GSList * __i = g_slist_last(list); \
+	if (__i != NULL || (g_slist_free(list), 0)) \
+		for (element = (GdomeElement*)__i->data; \
+		(__i != NULL && (element = (GdomeElement*)__i->data, 1)) || (g_slist_free(list), 0); \
+		__i = g_slist_next(__i))
+
+/**
+ * hygienizing the macro...
+ */
+#define __geoxml_foreach_element_with_tagname_r_aux(base, tagname, element) \
+	GdomeNodeList *	__node_list; \
+	GdomeDOMString *	__string; \
+	int			__i, __l; \
+	__string = gdome_str_mkref(tagname); \
+	__node_list = gdome_el_getElementsByTagName(base, __string, &exception); \
+	__l = gdome_nl_length(__node_list, &exception); \
+	for (__i = 0, element = (GdomeElement*)gdome_nl_item(__node_list, 0, &exception); \
+		__i < __l || (gdome_str_unref(__string), gdome_nl_unref(__node_list, &exception), 0); \
+		element = (GdomeElement*)gdome_nl_item(__node_list, ++__i, &exception))
+/**
+ * \internal
+ * Look for each _element_ child of base (recursive search, not necessarily a direct child)
+ * and with tag name _tagname_
+ * A break in the loop will leak memory
+ */
+#define __geoxml_foreach_element_with_tagname_r(base, tagname, element) \
+	{ __geoxml_foreach_element_with_tagname_r_aux(base, tagname, element) {} }
 
 #endif //__LIBGEBR_GEOXML_XML_H

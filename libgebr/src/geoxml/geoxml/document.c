@@ -205,54 +205,26 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 	/* flow 0.2.1 to 0.2.2 */
 	if (strcmp(version, "0.2.2") < 0) {
 		if (geoxml_document_get_type(((GeoXmlDocument*)document)) == GEOXML_DOCUMENT_TYPE_FLOW) {
-			GeoXmlSequence *	program;
-			GeoXmlSequence *	parameter;
+			GdomeElement *		element;
 
 			__geoxml_set_attr_value(root_element, "version", "0.2.2");
 
-			geoxml_flow_get_program(GEOXML_FLOW(document), &program, 0);
-			while (program != NULL) {
-				parameter = geoxml_parameters_get_first_parameter(
-					geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
-				while (parameter != NULL) {
-					switch (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter))) {
-					case GEOXML_PARAMETERTYPE_ENUM: {
-						GeoXmlSequence *	enum_option;
+			__geoxml_foreach_element_with_tagname_r(root_element, "enum", element) {
+				gchar *	value;
 
-						geoxml_program_parameter_get_enum_option(
-							GEOXML_PROGRAM_PARAMETER(parameter),
-							&enum_option, 0);
+				value = g_strdup(__geoxml_get_element_value(element));
+				__geoxml_set_element_value(element, "", __geoxml_create_TextNode);
 
-						while (enum_option != NULL) {
-							gchar *	value;
+				__geoxml_insert_new_element(element, "label", NULL);
+				__geoxml_insert_new_element(element, "value", NULL);
+				__geoxml_set_tag_value((GdomeElement*)element,
+					"value", value, __geoxml_create_TextNode);
 
-							value = strdup(__geoxml_get_element_value((GdomeElement*)enum_option));
-							__geoxml_set_element_value((GdomeElement*)enum_option, "", __geoxml_create_TextNode);
-
-							__geoxml_insert_new_element((GdomeElement*)enum_option, "label", NULL);
-							__geoxml_insert_new_element((GdomeElement*)enum_option, "value", NULL);
-							__geoxml_set_tag_value((GdomeElement*)enum_option,
-								"value", value, __geoxml_create_TextNode);
-
-							g_free(value);
-
-							geoxml_sequence_next(&enum_option);
-						}
-
-						break;
-					} case GEOXML_PARAMETERTYPE_RANGE:
-						__geoxml_set_attr_value((GdomeElement*)parameter, "digits", "");
-
-						break;
-					default:
-						break;
-					}
-
-					geoxml_sequence_next(&parameter);
-				}
-
-				geoxml_sequence_next(&program);
+				g_free(value);
 			}
+
+			__geoxml_foreach_element_with_tagname_r(root_element, "range", element)
+				__geoxml_set_attr_value(element, "digits", "");
 		}
 	}
 	/* flow 0.2.2 to 0.2.3
@@ -263,7 +235,7 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 	/* flow 0.2.3 to 0.3.0 */
 	if (strcmp(version, "0.3.0") < 0) {
 		__geoxml_set_attr_value(root_element, "version", "0.3.0");
-		__geoxml_set_attr_value(root_element, "nextid", "0");
+		__geoxml_set_attr_value(root_element, "nextid", "n0");
 
 		if (geoxml_document_get_type(((GeoXmlDocument*)document)) == GEOXML_DOCUMENT_TYPE_FLOW) {
 			GeoXmlSequence *		program;
@@ -461,7 +433,7 @@ geoxml_document_new(const gchar * name, const gchar * version)
 	/* document (root) element */
 	root_element = gdome_doc_documentElement(document, &exception);
 	__geoxml_set_attr_value(root_element, "version", version);
-	__geoxml_set_attr_value(root_element, "nextid", "0");
+	__geoxml_set_attr_value(root_element, "nextid", "n0");
 
 	/* elements (as specified in DTD) */
 	__geoxml_insert_new_element(root_element, "filename", NULL);
