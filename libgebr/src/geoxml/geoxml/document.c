@@ -338,8 +338,11 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 							for (i = 0;; ++i) {
 								GdomeElement *	split_value;
 
-								if (value_splits[i] == NULL && default_splits[i] == NULL)
+								if (value_splits[i] == NULL && default_splits[i] == NULL) {
+									if (i == 0)
+										__geoxml_insert_new_element(property, "value", NULL);
 									break;
+								}
 
 								split_value = __geoxml_insert_new_element(
 									property, "value", NULL);
