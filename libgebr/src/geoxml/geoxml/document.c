@@ -71,11 +71,11 @@ __geoxml_document_clone_doc(GdomeDocument * source, GdomeDocumentType * document
 	root_element = gdome_doc_documentElement(document, &exception);
 	__geoxml_set_attr_value(root_element, "version",
 		__geoxml_get_attr_value(source_root_element, "version"));
-	/* lastid */
-	string = gdome_str_mkref("lastid");
+	/* nextid */
+	string = gdome_str_mkref("nextid");
 	if (gdome_el_hasAttribute(source_root_element, string, &exception) == TRUE)
-		__geoxml_set_attr_value(root_element, "lastid",
-			__geoxml_get_attr_value(source_root_element, "lastid"));
+		__geoxml_set_attr_value(root_element, "nextid",
+			__geoxml_get_attr_value(source_root_element, "nextid"));
 	gdome_str_unref(string);
 
 	node = gdome_el_firstChild(source_root_element, &exception);
@@ -263,7 +263,7 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 	/* flow 0.2.3 to 0.3.0 */
 	if (strcmp(version, "0.3.0") < 0) {
 		__geoxml_set_attr_value(root_element, "version", "0.3.0");
-		__geoxml_set_attr_value(root_element, "lastid", "");
+		__geoxml_set_attr_value(root_element, "nextid", "0");
 
 		if (geoxml_document_get_type(((GeoXmlDocument*)document)) == GEOXML_DOCUMENT_TYPE_FLOW) {
 			GeoXmlSequence *		program;
@@ -461,7 +461,7 @@ geoxml_document_new(const gchar * name, const gchar * version)
 	/* document (root) element */
 	root_element = gdome_doc_documentElement(document, &exception);
 	__geoxml_set_attr_value(root_element, "version", version);
-	__geoxml_set_attr_value(root_element, "lastid", "0");
+	__geoxml_set_attr_value(root_element, "nextid", "0");
 
 	/* elements (as specified in DTD) */
 	__geoxml_insert_new_element(root_element, "filename", NULL);

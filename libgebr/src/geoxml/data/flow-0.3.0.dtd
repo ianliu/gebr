@@ -1,7 +1,7 @@
 <!ELEMENT flow (filename, title, description, help, author, email, date, category*, io, program*, revision*)>
 <!ATTLIST flow
    version CDATA #FIXED "0.3.0"
-   lastid  ID #REQUIRED>
+   nextid  ID #REQUIRED>
 
 <!-- Name of the XML flow file -->
 <!ELEMENT filename (#PCDATA)>

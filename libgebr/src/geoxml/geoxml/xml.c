@@ -167,7 +167,7 @@ __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref)
 	GdomeElement *		document_element;
 	GdomeDOMString *	string, * id_string;
 	GdomeNodeList *		node_list;
-	gint			i;
+	gint			i, l;
 
 	idref_list = g_slist_alloc();
 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(base, &exception), &exception);
@@ -175,8 +175,9 @@ __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref)
 	id_string = gdome_str_mkref("id");
 	node_list = gdome_el_getElementsByTagName(document_element, string, &exception);
 
+	l = gdome_nl_length(node_list, &exception);
 	/* get the list of elements with this tag_name. */
-	for (i = 0; i < gdome_nl_length(node_list, &exception); ++i) {
+	for (i = 0; i < l; ++i) {
 		GdomeElement *	element;
 
 		element = (GdomeElement*)gdome_nl_item(node_list, i, &exception);
@@ -207,7 +208,7 @@ __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref)
 // 	g_string_printf(expression, "idref(('%s'))", idref);
 // 	xpath_result = __geoxml_xpath_evaluate(document_element, expression->str);
 // 
-// 	/* the result may contain document's element because of lastid attribute
+// 	/* the result may contain document's element because of nextid attribute
 // 	 * if so, ignore it */
 // 	if ((GdomeElement*)gdome_xpresult_singleNodeValue(xpath_result, &exception) == document_element) {
 // 		puts("idref at document element");
@@ -409,28 +410,29 @@ void
 __geoxml_element_assign_new_id(GdomeElement * element)
 {
 	GdomeElement *	document_element;
-	gulong		lastid;
-	gchar *		lastid_str;
+	gulong		nextid;
+	gchar *		id_str, * nextid_str;
 	GdomeElement *	reference_element;
 
 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(element, &exception), &exception);
-        lastid_str = (gchar*)__geoxml_get_attr_value(document_element, "lastid");
-	if (strlen(lastid_str))
-		sscanf(lastid_str, "n%lu", &lastid);
+        nextid_str = (gchar*)__geoxml_get_attr_value(document_element, "nextid");
+	if (strlen(nextid_str))
+		sscanf(nextid_str, "n%lu", &nextid);
 	else
-		lastid = 0;
-	lastid++;
-	lastid_str = g_strdup_printf("n%lu", lastid);
+		nextid = 0;
 
 	/* change referenced elements */
+	id_str = g_strdup_printf("n%lu", nextid);
+	__geoxml_set_attr_value(element, "id", id_str);
 	__geoxml_foreach_element(reference_element,
 	__geoxml_get_elements_by_idref(element, __geoxml_get_attr_value(element, "id")))
-		__geoxml_set_attr_value(reference_element, "id", lastid_str);
+		__geoxml_set_attr_value(reference_element, "id", nextid_str);
 
-	__geoxml_set_attr_value(document_element, "lastid", lastid_str);
-	__geoxml_set_attr_value(element, "id", lastid_str);
+	nextid_str = g_strdup_printf("n%lu", ++nextid);
+	__geoxml_set_attr_value(document_element, "nextid", nextid_str);
 
-	g_free(lastid_str);
+	g_free(id_str);
+	g_free(nextid_str);
 }
 
 void
