@@ -238,7 +238,7 @@ __geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
  * hygienizing the macro...
  */
 #define __geoxml_foreach_element_with_tagname_r_aux(base, tagname, element) \
-	GdomeNodeList *	__node_list; \
+	GdomeNodeList *		__node_list; \
 	GdomeDOMString *	__string; \
 	int			__i, __l; \
 	__string = gdome_str_mkref(tagname); \

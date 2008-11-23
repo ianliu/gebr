@@ -59,9 +59,10 @@
  * 	]
  * 	"GeoXmlDocument" -> "GeoXmlFlow";
  * 	"GeoXmlSequence" -> "GeoXmlParameter";
- * 	"GeoXmlSequence" -> "GeoXmlValueSequence";
  * 	"GeoXmlSequence" -> "GeoXmlEnumOption";
+ * 	"GeoXmlSequence" -> "GeoXmlValueSequence";
  * 	"GeoXmlValueSequence" -> "GeoXmlCategory";
+ * 	"GeoXmlValueSequence" -> "GeoXmlPropertyValue";
  * 	"GeoXmlParameter" -> "GeoXmlProgramParameter";
  * 	"GeoXmlParameter" -> "GeoXmlParameterGroup";
  * 	"GeoXmlParameters" -> "GeoXmlParameterGroup";
@@ -193,14 +194,6 @@ void
 geoxml_program_parameter_set_list_separator(GeoXmlProgramParameter * program_parameter, const gchar * separator);
 
 /**
- * Set \p program_parameter 's default value to \p value.
- *
- * If \p program_parameter is NULL nothing is done.
- */
-void
-geoxml_program_parameter_set_first_default(GeoXmlProgramParameter * program_parameter, const gchar * value);
-
-/**
  * Set \p program_parameter 's value to \p value.
  *
  * If \p program_parameter is NULL nothing is done.
@@ -208,15 +201,7 @@ geoxml_program_parameter_set_first_default(GeoXmlProgramParameter * program_para
  * @see geoxml_program_parameter_set_keyword
  */
 void
-geoxml_program_parameter_set_first_value(GeoXmlProgramParameter * program_parameter, const gchar * value);
-
-/**
- * Set \p program_parameter 's (of type flag) state to \p state.
- *
- * If \p program_parameter is NULL nothing is done.
- */
-void
-geoxml_program_parameter_set_first_boolean_default(GeoXmlProgramParameter * program_parameter, gboolean state);
+geoxml_program_parameter_set_first_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, const gchar * value);
 
 /**
  *
@@ -224,7 +209,7 @@ geoxml_program_parameter_set_first_boolean_default(GeoXmlProgramParameter * prog
  * If \p program_parameter is NULL nothing is done.
  */
 void
-geoxml_program_parameter_set_first_boolean_value(GeoXmlProgramParameter * program_parameter, gboolean enabled);
+geoxml_program_parameter_set_first_boolean_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, gboolean enabled);
 
 /**
  * If \p program_parameter is a list, then get the string used to separate
@@ -243,40 +228,19 @@ geoxml_program_parameter_get_list_separator(GeoXmlProgramParameter * program_par
  *
  *
  * If \p program_parameter is NULL returns NULL.
- *
- * \see geoxml_program_parameter_set_default
  */
 const gchar *
-geoxml_program_parameter_get_first_default(GeoXmlProgramParameter * program_parameter);
-
-/**
- *
- *
- * If \p program_parameter is NULL returns NULL.
- */
-const gchar *
-geoxml_program_parameter_get_first_value(GeoXmlProgramParameter * program_parameter);
-
-/**
- *
- *
- * If \p program_parameter is NULL or returns FALSE.
- *
- * @see GEOXML_PARAMETERTYPE_FLAG
- */
-gboolean
-geoxml_program_parameter_get_first_boolean_value(GeoXmlProgramParameter * program_parameter);
+geoxml_program_parameter_get_first_value(GeoXmlProgramParameter * program_parameter, gboolean default_value);
 
 /**
  *
  *
  * If \p program_parameter is NULL returns FALSE.
  *
- * \see geoxml_program_parameter_set_flag_default, geoxml_program_parameter_get_default,
- * geoxml_program_parameter_set_default
+ * @see GEOXML_PARAMETERTYPE_FLAG
  */
 gboolean
-geoxml_program_parameter_get_first_boolean_default(GeoXmlProgramParameter * program_parameter);
+geoxml_program_parameter_get_first_boolean_value(GeoXmlProgramParameter * program_parameter, gboolean default_value);
 
 /**
  * Create a new flow and append it to list of flows references.
@@ -284,7 +248,7 @@ geoxml_program_parameter_get_first_boolean_default(GeoXmlProgramParameter * prog
  * If \p program_parameter is NULL returns NULL
  */
 GeoXmlPropertyValue *
-geoxml_program_parameter_append_value(GeoXmlProgramParameter * program_parameter);
+geoxml_program_parameter_append_value(GeoXmlProgramParameter * program_parameter, gboolean default_value);
 
 /**
  * Writes to \p line_flow the \p index ieth flow reference that \p line belong.
@@ -297,7 +261,7 @@ geoxml_program_parameter_append_value(GeoXmlProgramParameter * program_parameter
  * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
  */
 int
-geoxml_program_parameter_get_property_value(GeoXmlProgramParameter * program_parameter, GeoXmlSequence ** property_value, gulong index);
+geoxml_program_parameter_get_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, GeoXmlSequence ** property_value, gulong index);
 
 /**
  * Get the number of flows that \p line has.
@@ -305,71 +269,15 @@ geoxml_program_parameter_get_property_value(GeoXmlProgramParameter * program_par
  * If \p line is NULL returns -1.
  */
 glong
-geoxml_program_parameter_get_values_number(GeoXmlPropertyValue * property_value);
+geoxml_program_parameter_get_values_number(GeoXmlProgramParameter * program_parameter, gboolean default_value);
 
 /**
- * Set the value of \p property_value to \p value.
  *
- * If \p property_value is NULL nothing is done.
+ *
+ * If \p program_parameter or \p value is NULL nothing is done.
  */
 void
-geoxml_program_parameter_set_value(GeoXmlPropertyValue * property_value, const gchar * value);
-
-/**
- * Set the default value of \p property_value to \p value.
- *
- * If \p property_value is NULL nothing is done.
- */
-void
-geoxml_program_parameter_set_default_value(GeoXmlPropertyValue * property_value, const gchar * default_value);
-
-/**
- * Set a boolean value of \p property_value to \p state.
- *
- * If \p property_value is NULL nothing is done.
- */
-void
-geoxml_program_parameter_set_boolean_value(GeoXmlPropertyValue * property_value, gboolean state);
-
-/**
- * Set a boolean default value of \p property_value to \p state.
- *
- * If \p property_value is NULL nothing is done.
- */
-void
-geoxml_program_parameter_set_boolean_default_value(GeoXmlPropertyValue * property_value, gboolean state);
-
-/**
- * Returns the value of \p property_value.
- *
- * If \p property_value is NULL returns NULL.
- */
-const gchar *
-geoxml_program_parameter_get_value(GeoXmlPropertyValue * property_value);
-
-/**
- * Returns the default value of \p property_value.
- *
- * If \p property_value is NULL returns NULL.
- */
-const gchar *
-geoxml_program_parameter_get_default_value(GeoXmlPropertyValue * property_value);
-
-/**
- * Returns the value of a boolean \p property_value (a flag parameter).
- *
- * If \p property_value is NULL returns NULL.
- */
-gboolean
-geoxml_program_parameter_get_boolean_value(GeoXmlPropertyValue * property_value);
-
-/**
- * Returns the default value of a boolean \p property_value (a flag parameter).
- *
- * If \p property_value is NULL returns NULL.
- */
-gboolean
-geoxml_program_parameter_get_boolean_default_value(GeoXmlPropertyValue * property_value);
+geoxml_program_parameter_set_parse_list_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, const gchar * value);
 
 /**
  *

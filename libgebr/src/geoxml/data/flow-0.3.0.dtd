@@ -68,7 +68,7 @@
 <!-- Short text to be displayed as label for a parameter -->
 <!ELEMENT label (#PCDATA)>
 
-<!ELEMENT property (keyword, value+)>
+<!ELEMENT property (keyword, value+, default+)>
 <!ATTLIST property
    required  (yes | no) #REQUIRED
    separator CDATA      #IMPLIED>
@@ -77,8 +77,8 @@
 <!ELEMENT keyword (#PCDATA)>
 <!-- Actual value of a parameter -->
 <!ELEMENT value (#PCDATA)>
-<!ATTLIST value
-   default CDATA #IMPLIED>
+<!-- Actual default value of a parameter -->
+<!ELEMENT default (#PCDATA)>
 
 <!-- Types of parameters -->
 <!-- Reference (except for groups) -->

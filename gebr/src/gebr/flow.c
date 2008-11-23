@@ -346,19 +346,39 @@ flow_export_parameters_cleanup(GeoXmlParameters * parameters, gboolean use_value
 	parameter = geoxml_parameters_get_first_parameter(parameters);
 	for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
 		if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE) {
-			GeoXmlSequence *	property_value;
+			GeoXmlSequence *	value;
 
-			geoxml_program_parameter_get_property_value(
-				GEOXML_PROGRAM_PARAMETER(parameter),
-				&property_value, 0);
-			for (; property_value != NULL; geoxml_sequence_next(&property_value)) {
-				if (use_value_as_default == TRUE)
-					geoxml_program_parameter_set_default_value(
-						GEOXML_PROPERTY_VALUE(property_value),
-						geoxml_program_parameter_get_value(
-							GEOXML_PROPERTY_VALUE(property_value)));
-				geoxml_program_parameter_set_value(GEOXML_PROPERTY_VALUE(property_value), "");
+			if (use_value_as_default == TRUE) {
+				GeoXmlSequence *	default_value;
+
+				geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter),
+					FALSE, &value, 0);
+				geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter),
+					TRUE, &default_value, 0);
+				for (; value != NULL; geoxml_sequence_next(&value),
+				geoxml_sequence_next(&default_value)) {
+					if (default_value == NULL)
+						default_value = GEOXML_SEQUENCE(geoxml_program_parameter_append_value(
+							GEOXML_PROGRAM_PARAMETER(parameter), TRUE));
+					geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(default_value),
+						geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(value)));
+				}
+
+				/* remove extras default values */
+				while (default_value != NULL) {
+					GeoXmlSequence *	tmp;
+
+					tmp = default_value;
+					geoxml_sequence_next(&tmp);
+					geoxml_sequence_remove(default_value);
+					default_value = tmp;
+				}
 			}
+
+			geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter),
+				FALSE, &value, 0);
+			for (; value != NULL; geoxml_sequence_next(&value))
+				geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(value), "");
 		} else { /* a group, time for recursion! */
 			GeoXmlSequence *	instance;
 

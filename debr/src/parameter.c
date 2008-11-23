@@ -22,7 +22,6 @@
 #include <gui/gtkfileentry.h>
 #include <gui/gtkenhancedentry.h>
 #include <gui/utils.h>
-#include <gui/parameter.h>
 #include <gui/valuesequenceedit.h>
 
 #include "parameter.h"
@@ -96,7 +95,7 @@ parameter_default_widget_changed(struct parameter_widget * widget);
 static void
 parameter_is_list_changed(GtkToggleButton * toggle_button, struct ui_parameter_dialog * ui);
 static void
-parameter_separator_changed(GtkEntry * entry);
+parameter_separator_changed(GtkEntry * entry, struct ui_parameter_dialog * ui);
 static void
 parameter_file_type_changed(GtkComboBox * combo, struct parameter_widget * widget);
 static void
@@ -530,26 +529,13 @@ parameter_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0), ++row;
 	g_signal_connect(separator_entry, "changed",
-		(GCallback)parameter_separator_changed, NULL);
+		(GCallback)parameter_separator_changed, ui);
 
+	parameter_widget = parameter_widget_new(debr.parameter, TRUE, NULL);
 	switch (type) {
-	case GEOXML_PARAMETERTYPE_STRING:
-		parameter_widget = parameter_widget_new_string(debr.parameter, TRUE);
-		break;
-	case GEOXML_PARAMETERTYPE_INT:
-		parameter_widget = parameter_widget_new_int(debr.parameter, TRUE);
-		break;
-	case GEOXML_PARAMETERTYPE_FLOAT:
-		parameter_widget = parameter_widget_new_float(debr.parameter, TRUE);
-		break;
-	case GEOXML_PARAMETERTYPE_FLAG:
-		parameter_widget = parameter_widget_new_flag(debr.parameter, TRUE);
-		break;
 	case GEOXML_PARAMETERTYPE_FILE: {
 		GtkWidget *		type_label;
 		GtkWidget *		type_combo;
-
-		parameter_widget = parameter_widget_new_file(debr.parameter, NULL, TRUE);
 
 		/*
 		 * Type
@@ -591,7 +577,6 @@ parameter_dialog_setup_ui(void)
 
 		geoxml_program_parameter_get_range_properties(program_parameter,
 			&min_str, &max_str, &inc_str, &digits_str);
-		parameter_widget = parameter_widget_new_range(debr.parameter, TRUE);
 
 		/*
 		 * Minimum
@@ -674,8 +659,6 @@ parameter_dialog_setup_ui(void)
 
 		GeoXmlSequence *	option;
 
-		parameter_widget = parameter_widget_new_enum(debr.parameter, TRUE);
-
 		/*
 		 * Options
 		 */
@@ -701,11 +684,10 @@ parameter_dialog_setup_ui(void)
 		g_object_set(G_OBJECT(enum_option_edit), "user-data", parameter_widget, NULL);
 
 		break;
-	} default:
-		/* FIXME: handle error */
-		parameter_widget = NULL;
-		return;
+	} default: break;
 	}
+
+	ui->parameter_widget = parameter_widget;
 
 	/*
 	 * Default value
@@ -932,16 +914,22 @@ parameter_is_list_changed(GtkToggleButton * toggle_button, struct ui_parameter_d
 {
 	geoxml_program_parameter_set_be_list(GEOXML_PROGRAM_PARAMETER(debr.parameter),
 		gtk_toggle_button_get_active(toggle_button));
+
 	gtk_widget_set_sensitive(ui->separator_entry, gtk_toggle_button_get_active(toggle_button));
+
+	parameter_widget_reconfigure(ui->parameter_widget);
+	gtk_box_pack_start(GTK_BOX(ui->default_widget_hbox), ui->parameter_widget->widget, TRUE, TRUE, 0);
+	gtk_widget_show(ui->parameter_widget->widget);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
 static void
-parameter_separator_changed(GtkEntry * entry)
+parameter_separator_changed(GtkEntry * entry, struct ui_parameter_dialog * ui)
 {
 	geoxml_program_parameter_set_list_separator(GEOXML_PROGRAM_PARAMETER(debr.parameter),
 		gtk_entry_get_text(GTK_ENTRY(entry)));
+	parameter_widget_update_list_separator(ui->parameter_widget);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -1064,10 +1052,7 @@ parameter_enum_options_changed(EnumOptionEdit * enum_option_edit, struct ui_para
 
 	g_object_get(G_OBJECT(enum_option_edit), "user-data", &parameter_widget, NULL);
 
-	gtk_widget_destroy(parameter_widget->widget);
-	parameter_widget = parameter_widget_new_enum(debr.parameter, TRUE);
-	parameter_widget_set_auto_submit_callback(parameter_widget,
-		(changed_callback)parameter_default_widget_changed, NULL);
+	parameter_widget_reconfigure(ui->parameter_widget);
 	gtk_widget_show(parameter_widget->widget);
 	gtk_box_pack_start(GTK_BOX(ui->default_widget_hbox), parameter_widget->widget, TRUE, TRUE, 0);
 

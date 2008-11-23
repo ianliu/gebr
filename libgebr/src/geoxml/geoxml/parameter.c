@@ -122,7 +122,8 @@ __geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETE
 				(GeoXmlProgramParameter*)parameter, FALSE);
 			break;
 		}
-		__geoxml_program_parameter_set_all_value((GeoXmlProgramParameter*)parameter, "", "");
+		__geoxml_program_parameter_set_all_value((GeoXmlProgramParameter*)parameter, FALSE, "");
+		__geoxml_program_parameter_set_all_value((GeoXmlProgramParameter*)parameter, TRUE, "");
 
 		break;
 	}}
@@ -240,6 +241,8 @@ geoxml_parameter_reset(GeoXmlParameter * parameter, gboolean recursive)
 		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
 		for (; instance != NULL; geoxml_sequence_next(&instance))
 			geoxml_parameters_reset(GEOXML_PARAMETERS(instance), recursive);
-	} else
-		__geoxml_program_parameter_set_all_value(GEOXML_PROGRAM_PARAMETER(parameter), "", "");
+	} else {
+		__geoxml_program_parameter_set_all_value((GeoXmlProgramParameter*)parameter, FALSE, "");
+		__geoxml_program_parameter_set_all_value((GeoXmlProgramParameter*)parameter, TRUE, "");
+	}
 }

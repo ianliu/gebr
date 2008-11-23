@@ -249,7 +249,6 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 				__geoxml_set_attr_value((GdomeElement*)parameters, "exclusive", "0");
 				old_parameter = __geoxml_get_first_element((GdomeElement*)parameters, "*");
 				while (old_parameter != NULL) {
-					GdomeNode *			node;
 					GdomeElement *			next_parameter;
 					GdomeElement *			parameter;
 					GdomeElement *			property;
@@ -282,6 +281,7 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 						(GdomeNode*)__geoxml_get_first_element(old_parameter, "keyword"),
 						NULL, &exception);
 					if (type != GEOXML_PARAMETERTYPE_FLAG) {
+						GdomeElement *		value;
 						GdomeDOMString *	string;
 						GdomeDOMString *	separator;
 
@@ -292,70 +292,51 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 						gdome_el_removeAttribute(old_parameter, string, &exception);
 						gdome_str_unref(string);
 
+						value = __geoxml_get_first_element(old_parameter, "value");
 						string = gdome_str_mkref("separator");
 						separator = gdome_el_getAttribute(old_parameter, string, &exception);
 						if (strlen(separator->str)) {
-							GdomeElement *		value;
-							gchar **		value_splits;
-							gchar **		default_splits;
-							int			i;
-
-							value = __geoxml_get_first_element(old_parameter, "value");
-							value_splits = g_strsplit(
-								__geoxml_get_element_value(old_parameter),
-								separator->str, 0);
-							default_splits = g_strsplit(
-								__geoxml_get_attr_value(old_parameter, "default"),
-								separator->str, 0);
-							for (i = 0;; ++i) {
-								GdomeElement *	split_value;
-
-								if (value_splits[i] == NULL && default_splits[i] == NULL) {
-									if (i == 0)
-										__geoxml_insert_new_element(property, "value", NULL);
-									break;
-								}
-
-								split_value = __geoxml_insert_new_element(
-									property, "value", NULL);
-								if (value_splits[i] != NULL)
-									__geoxml_set_element_value(split_value, value_splits[i],
-									__geoxml_create_TextNode);
-								if (default_splits[i] != NULL)
-									__geoxml_set_attr_value(split_value, "default", default_splits[i]);
-							}
-							g_strfreev(value_splits);
-							g_strfreev(default_splits);
-
 							gdome_el_setAttribute(property, string, separator, &exception);
-							gdome_el_removeChild(old_parameter, (GdomeNode*)value, &exception);
+
+							geoxml_program_parameter_set_parse_list_value(
+								GEOXML_PROGRAM_PARAMETER(parameter), FALSE,
+								__geoxml_get_element_value(value));
+							geoxml_program_parameter_set_parse_list_value(
+								GEOXML_PROGRAM_PARAMETER(parameter), TRUE,
+								__geoxml_get_attr_value(value, "default"));
 						} else {
-							gdome_el_insertBefore(property, (GdomeNode*)
-								__geoxml_get_first_element(old_parameter, "value"),
-								NULL, &exception);
+							__geoxml_set_element_value(
+								__geoxml_insert_new_element((GdomeElement*)property,
+									"value", NULL),
+								__geoxml_get_element_value(value),
+								__geoxml_create_TextNode);
+							__geoxml_set_element_value(
+								__geoxml_insert_new_element((GdomeElement*)property,
+									"default", NULL),
+								__geoxml_get_attr_value(value, "default"),
+								__geoxml_create_TextNode);
 						}
+						gdome_el_removeChild(old_parameter, (GdomeNode*)value, &exception);
 						gdome_el_removeAttribute(old_parameter, string, &exception);
 						gdome_str_unref(string);
 					} else {
 						GdomeElement *	state;
-						GdomeElement *	value;
 
-						value = __geoxml_insert_new_element((GdomeElement*)property,
-							"value", NULL);
 						state = __geoxml_get_first_element(old_parameter, "state");
-						__geoxml_set_element_value(value,
+						__geoxml_set_element_value(
+							__geoxml_insert_new_element((GdomeElement*)property,
+								"value", NULL),
 							__geoxml_get_element_value(state),
 							__geoxml_create_TextNode);
-						__geoxml_set_attr_value(value, "default",
-							__geoxml_get_attr_value(state, "default"));
+						__geoxml_set_element_value(
+							__geoxml_insert_new_element((GdomeElement*)property,
+								"default", NULL),
+							__geoxml_get_attr_value(state, "default"),
+							__geoxml_create_TextNode);
 						__geoxml_set_attr_value(property, "required", "no");
 
 						gdome_el_removeChild(old_parameter, (GdomeNode*)state, &exception);
 					}
-					/* for appeareance FIXME:*/
-// 					node = gdome_el_firstChild(old_parameter, &exception);
-// 					if (gdome_n_nodeType(node, &exception) != GDOME_ELEMENT_NODE)
-// 						gdome_el_removeChild(old_parameter, node, &exception);
 
 					old_parameter = next_parameter;
 				}

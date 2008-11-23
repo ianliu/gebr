@@ -22,13 +22,11 @@
 
 /**
  * \internal
- * Assign to all values elements the values \p value and
- * \p default_value for default value.
- * A NULL pointer mean to no set.
+ * Assign to all values (or default one according to \p default_value) the value \p value.
  * An empty value means reset.
  */
 void
 __geoxml_program_parameter_set_all_value(GeoXmlProgramParameter * program_parameter,
-	const gchar * value, const gchar * default_value);
+	gboolean default_value, const gchar * value);
 
 #endif //__LIBGEBR_GEOXML_PROGRAM_PARAMETER_P_H

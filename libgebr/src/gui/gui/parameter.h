@@ -1,5 +1,5 @@
-/*   libgebr - GÍBR Library
- *   Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
+/*   libgebr - GeBR Library
+ *   Copyright (C) 2007 GeBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,20 +22,22 @@
 
 #include <geoxml.h>
 #include "gtkfileentry.h"
+#include "valuesequenceedit.h"
 
 struct parameter_widget;
 typedef void (*changed_callback)(struct parameter_widget * parameter_widget, gpointer user_data);
 
 struct parameter_widget {
-	GtkWidget *		widget;
 	GeoXmlParameter *	parameter;
-
-	GtkWidget *		value_widget;
 	gboolean		use_default_value;
+	gpointer		data;
+
+	GtkWidget *		widget;
+	GtkWidget *		value_widget;
 
 	/* for lists */
 	GtkWidget *		list_value_widget;
-	GtkWidget *		sequence_edit;
+	ValueSequenceEdit *	value_sequence_edit;
 
 	/* auto submit stuff */
 	changed_callback	callback;
@@ -43,26 +45,7 @@ struct parameter_widget {
 };
 
 struct parameter_widget *
-parameter_widget_new_float(GeoXmlParameter * parameter, gboolean use_default_value);
-
-struct parameter_widget *
-parameter_widget_new_int(GeoXmlParameter * parameter, gboolean use_default_value);
-
-struct parameter_widget *
-parameter_widget_new_string(GeoXmlParameter * parameter, gboolean use_default_value);
-
-struct parameter_widget *
-parameter_widget_new_range(GeoXmlParameter * parameter, gboolean use_default_value);
-
-struct parameter_widget *
-parameter_widget_new_file(GeoXmlParameter * parameter,
-	GtkFileEntryCustomize customize, gboolean use_default_value);
-
-struct parameter_widget *
-parameter_widget_new_enum(GeoXmlParameter * parameter, gboolean use_default_value);
-
-struct parameter_widget *
-parameter_widget_new_flag(GeoXmlParameter * parameter, gboolean use_default_value);
+parameter_widget_new(GeoXmlParameter * parameter, gboolean use_default_value, gpointer data);
 
 void
 parameter_widget_set_widget_value(struct parameter_widget * parameter_widget, const gchar * value);
@@ -75,9 +58,12 @@ parameter_widget_set_auto_submit_callback(struct parameter_widget * parameter_wi
 	changed_callback callback, gpointer user_data);
 
 void
-parameter_widget_submit(struct parameter_widget * parameter_widget);
+parameter_widget_update(struct parameter_widget * parameter_widget);
 
 void
-parameter_widget_update(struct parameter_widget * parameter_widget);
+parameter_widget_update_list_separator(struct parameter_widget * parameter_widget);
+
+void
+parameter_widget_reconfigure(struct parameter_widget * parameter_widget);
 
 #endif //__LIBGEBR_GUI_PARAMETER_H

@@ -1,5 +1,5 @@
-# libgebr - G�BR Library
-# Copyright (C) 2007 G�BR core team (http://gebr.sourceforge.net)
+# libgebr - GeBR Library
+# Copyright (C) 2007 GeBR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,13 +18,15 @@ lib_LTLIBRARIES = libgebr_gui.la
 libgebr_gui_la_SOURCES = \
 	about.c utils.c pixmaps.c \
 	gtkfileentry.c gtkenhancedentry.c \
-	gtksequenceedit.c parameter.c valuesequenceedit.c
+	gtksequenceedit.c valuesequenceedit.c \
+	parameter.c
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = \
 	about.h utils.h pixmaps.h \
 	gtkfileentry.h gtkenhancedentry.h \
-	gtksequenceedit.h parameter.h valuesequenceedit.h
+	gtksequenceedit.h valuesequenceedit.h \
+	parameter.h
 noinst_HEADERS = \
 	support.h
 EXTRA_DIST = ${noinst_HEADERS}

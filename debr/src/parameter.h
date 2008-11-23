@@ -20,6 +20,8 @@
 
 #include <gtk/gtk.h>
 
+#include <gui/parameter.h>
+
 enum {
         PARAMETER_LABEL,
 	PARAMETER_TYPE,
@@ -28,17 +30,18 @@ enum {
 };
 
 struct ui_parameter {
-	GtkWidget *		widget;
+	GtkWidget *			widget;
 
-	GtkTreeStore *		tree_store;
-	GtkWidget *		tree_view;
+	GtkTreeStore *			tree_store;
+	GtkWidget *			tree_view;
 };
 
 struct ui_parameter_dialog {
-	GtkWidget *		dialog;
+	GtkWidget *			dialog;
 
-	GtkWidget *		default_widget_hbox;
-	GtkWidget *		separator_entry;
+	GtkWidget *			default_widget_hbox;
+	struct parameter_widget *	parameter_widget;
+	GtkWidget *			separator_entry;
 };
 
 void

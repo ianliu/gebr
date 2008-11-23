@@ -68,6 +68,7 @@ __geoxml_sequence_check(GeoXmlSequence * sequence)
 	}
 	/* on success, return 0 = GEOXML_RETV_SUCCESS */
 	return strcmp(name->str, "value") &&
+		strcmp(name->str, "default") &&
 		strcmp(name->str, "option") &&
 		(strcmp(name->str, "parameters") &&
 			geoxml_parameters_get_is_in_group((GeoXmlParameters*)sequence)) &&

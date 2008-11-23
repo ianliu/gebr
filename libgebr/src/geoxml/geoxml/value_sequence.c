@@ -38,7 +38,9 @@ __geoxml_value_sequence_check(GeoXmlValueSequence * value_sequence)
 
 	name = gdome_el_nodeName((GdomeElement*)value_sequence, &exception);
 
-	return (gboolean)!strcmp(name->str, "path") ||
+	return (gboolean)!strcmp(name->str, "value") ||
+		(gboolean)!strcmp(name->str, "default") ||
+		(gboolean)!strcmp(name->str, "path") ||
 		(gboolean)!strcmp(name->str, "category");
 }
 
@@ -56,6 +58,17 @@ geoxml_value_sequence_set(GeoXmlValueSequence * value_sequence, const gchar * va
 	__geoxml_set_element_value((GdomeElement*)value_sequence, value, __geoxml_create_TextNode);
 }
 
+// void
+// geoxml_value_sequence_set_boolean(GeoXmlValueSequence * value_sequence, gboolean state)
+// {
+// 	if (value_sequence == NULL)
+// 		return;
+// 	if (__geoxml_value_sequence_check(value_sequence) == FALSE)
+// 		return;
+// 	__geoxml_set_element_value((GdomeElement*)value_sequence,
+// 		state == TRUE ? "on" : "off", __geoxml_create_TextNode);
+// }
+
 const gchar *
 geoxml_value_sequence_get(GeoXmlValueSequence * value_sequence)
 {
@@ -65,3 +78,14 @@ geoxml_value_sequence_get(GeoXmlValueSequence * value_sequence)
 		return NULL;
 	return __geoxml_get_element_value((GdomeElement*)value_sequence);
 }
+
+// gboolean
+// geoxml_value_sequence_get_boolean(GeoXmlValueSequence * value_sequence)
+// {
+// 	if (value_sequence == NULL)
+// 		return NULL;
+// 	if (__geoxml_value_sequence_check(value_sequence) == FALSE)
+// 		return NULL;
+// 	return !strcmp(__geoxml_get_element_value((GdomeElement*)value_sequence), "on")
+// 		? TRUE : FALSE;
+// }

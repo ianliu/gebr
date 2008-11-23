@@ -33,7 +33,7 @@ static void __value_sequence_edit_rename(ValueSequenceEdit * sequence_edit, GtkT
  */
 
 enum {
-	VALUE_SEQUENCE = 1
+	VALUE_SEQUENCE = 1,
 };
 
 static void
@@ -205,9 +205,6 @@ value_sequence_edit_load(ValueSequenceEdit * sequence_edit)
 	gtk_list_store_clear(GTK_SEQUENCE_EDIT(sequence_edit)->list_store);
 
 	sequence = GEOXML_SEQUENCE(sequence_edit->value_sequence);
-	while (sequence != NULL) {
+	for (; sequence != NULL; geoxml_sequence_next(&sequence))
 		value_sequence_edit_add(sequence_edit, GEOXML_VALUE_SEQUENCE(sequence));
-
-		geoxml_sequence_next(&sequence);
-	}
 }

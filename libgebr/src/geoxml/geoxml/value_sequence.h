@@ -48,6 +48,7 @@
  * 	"GeoXmlSequence" -> "GeoXmlValueSequence";
  * 	"GeoXmlValueSequence" -> "GeoXmlLinePath";
  * 	"GeoXmlValueSequence" -> "GeoXmlCategory";
+ * 	"GeoXmlValueSequence" -> "GeoXmlPropertyValue";
  * }
  * \enddot
  * \see value_sequence.h
@@ -81,11 +82,27 @@ void
 geoxml_value_sequence_set(GeoXmlValueSequence * value_sequence, const gchar * value);
 
 /**
+ * Set the \p value_sequence element's value to a boolean \p state.
+ *
+ * If \p value_sequence is NULL nothing is done.
+ */
+// void
+// geoxml_value_sequence_set_boolean(GeoXmlValueSequence * value_sequence, gboolean state);
+
+/**
  * Get the \p value_sequence element's value.
  *
  * If \p value_sequence is NULL returns NULL.
  */
 const gchar *
 geoxml_value_sequence_get(GeoXmlValueSequence * value_sequence);
+
+/**
+ * Get the \p value_sequence element's value.
+ *
+ * If \p value_sequence is NULL returns FALSE.
+ */
+// gboolean
+// geoxml_value_sequence_get_boolean(GeoXmlValueSequence * value_sequence);
 
 #endif //__LIBGEBR_GEOXML_VALUE_SEQUENCE_H

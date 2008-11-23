@@ -42,18 +42,13 @@ struct geoxml_property_value {
 
 void
 __geoxml_program_parameter_set_all_value(GeoXmlProgramParameter * program_parameter,
-	const gchar * value, const gchar * default_value)
+	gboolean default_value, const gchar * value)
 {
 	GeoXmlSequence *	property_value;
 
-	geoxml_program_parameter_get_property_value(program_parameter, &property_value, 0);
+	geoxml_program_parameter_get_value(program_parameter, default_value, &property_value, 0);
 	for (; property_value != NULL; geoxml_sequence_next(&property_value)) {
-		if (value != NULL)
-			geoxml_program_parameter_set_value(
-				GEOXML_PROPERTY_VALUE(property_value), value);
-		if (default_value != NULL)
-			geoxml_program_parameter_set_default_value(
-				GEOXML_PROPERTY_VALUE(property_value), default_value);
+		geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(property_value), value);
 	}
 }
 
@@ -189,105 +184,73 @@ geoxml_program_parameter_get_list_separator(GeoXmlProgramParameter * program_par
 }
 
 void
-geoxml_program_parameter_set_first_default(GeoXmlProgramParameter * program_parameter, const gchar * value)
-{
-	if (program_parameter == NULL)
-		return;
-	__geoxml_set_attr_value(
-		__geoxml_get_first_element((GdomeElement*)program_parameter, "value"), "default", value);
-}
-
-void
-geoxml_program_parameter_set_first_boolean_default(GeoXmlProgramParameter * program_parameter, gboolean state)
-{
-	if (program_parameter == NULL)
-		return;
-	__geoxml_set_attr_value(
-		__geoxml_get_first_element((GdomeElement*)program_parameter, "value"), "default",
-		(state == TRUE ? "on" : "off"));
-}
-
-void
-geoxml_program_parameter_set_first_value(GeoXmlProgramParameter * program_parameter, const gchar * value)
+geoxml_program_parameter_set_first_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, const gchar * value)
 {
 	if (program_parameter == NULL || value == NULL)
 		return;
-	__geoxml_set_tag_value((GdomeElement*)program_parameter, "value", value, __geoxml_create_TextNode);
+	__geoxml_set_tag_value((GdomeElement*)program_parameter,
+		default_value == FALSE ? "value" : "default",
+		value, __geoxml_create_TextNode);
 }
 
 void
-geoxml_program_parameter_set_first_boolean_value(GeoXmlProgramParameter * program_parameter, gboolean enabled)
+geoxml_program_parameter_set_first_boolean_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, gboolean enabled)
 {
 	if (program_parameter == NULL)
 		return;
-	__geoxml_set_tag_value((GdomeElement*)program_parameter, "value", (enabled == TRUE ? "on" : "off"),
+	__geoxml_set_tag_value((GdomeElement*)program_parameter,
+		default_value == FALSE ? "value" : "default",
+		(enabled == TRUE ? "on" : "off"),
 		__geoxml_create_TextNode);
 }
 
 const gchar *
-geoxml_program_parameter_get_first_default(GeoXmlProgramParameter * program_parameter)
+geoxml_program_parameter_get_first_value(GeoXmlProgramParameter * program_parameter, gboolean default_value)
 {
 	if (program_parameter == NULL)
 		return NULL;
-	return __geoxml_get_attr_value(
-		__geoxml_get_first_element((GdomeElement*)program_parameter, "value"),
-		"default");
+	return __geoxml_get_tag_value((GdomeElement*)program_parameter,
+		default_value == FALSE ? "value" : "default");
 }
 
 gboolean
-geoxml_program_parameter_get_first_boolean_default(GeoXmlProgramParameter * program_parameter)
+geoxml_program_parameter_get_first_boolean_value(GeoXmlProgramParameter * program_parameter, gboolean default_value)
 {
 	if (program_parameter == NULL)
 		return FALSE;
-	return !strcmp(__geoxml_get_attr_value(
-			__geoxml_get_first_element((GdomeElement*)program_parameter, "value"),
-			"default"), "on")
-		? TRUE : FALSE;
-}
-
-const gchar *
-geoxml_program_parameter_get_first_value(GeoXmlProgramParameter * program_parameter)
-{
-	if (program_parameter == NULL)
-		return NULL;
-	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) == GEOXML_PARAMETERTYPE_FLAG)
-		return NULL;
-	return __geoxml_get_tag_value((GdomeElement*)program_parameter, "value");
-}
-
-gboolean
-geoxml_program_parameter_get_first_boolean_value(GeoXmlProgramParameter * program_parameter)
-{
-	if (program_parameter == NULL)
-		return FALSE;
-	return (!strcmp(__geoxml_get_tag_value((GdomeElement*)program_parameter, "value"), "on"))
-		? TRUE : FALSE;
+	return (!strcmp(__geoxml_get_tag_value((GdomeElement*)program_parameter,
+		default_value == FALSE ? "value" : "default"), "on")) ? TRUE : FALSE;
 }
 
 GeoXmlPropertyValue *
-geoxml_program_parameter_append_value(GeoXmlProgramParameter * program_parameter)
+geoxml_program_parameter_append_value(GeoXmlProgramParameter * program_parameter, gboolean default_value)
 {
 	if (program_parameter == NULL)
 		return NULL;
 
 	GeoXmlPropertyValue *	property_value;
 
-	property_value = (GeoXmlPropertyValue*)__geoxml_insert_new_element(
-		__geoxml_get_first_element((GdomeElement*)program_parameter, "property"), "value", NULL);
+	if (default_value == FALSE)
+		property_value = (GeoXmlPropertyValue*)__geoxml_insert_new_element(
+			__geoxml_get_first_element((GdomeElement*)program_parameter, "property"), "value",
+				__geoxml_get_first_element((GdomeElement*)program_parameter, "default"));
+	else
+		property_value = (GeoXmlPropertyValue*)__geoxml_insert_new_element(
+			__geoxml_get_first_element((GdomeElement*)program_parameter, "property"), "default", NULL);
 
 	return property_value;
 }
 
 int
-geoxml_program_parameter_get_property_value(GeoXmlProgramParameter * program_parameter, GeoXmlSequence ** property_value, gulong index)
+geoxml_program_parameter_get_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, GeoXmlSequence ** property_value, gulong index)
 {
 	if (program_parameter == NULL) {
 		*property_value = NULL;
 		return GEOXML_RETV_NULL_PTR;
 	}
 
-	*property_value = (GeoXmlSequence*)__geoxml_get_element_at(
-		(GdomeElement*)program_parameter, "value", index, TRUE);
+	*property_value = (GeoXmlSequence*)__geoxml_get_element_at((GdomeElement*)program_parameter,
+		default_value == FALSE ? "value" : "default", index, TRUE);
 
 	return (*property_value == NULL)
 		? GEOXML_RETV_INVALID_INDEX
@@ -295,80 +258,51 @@ geoxml_program_parameter_get_property_value(GeoXmlProgramParameter * program_par
 }
 
 glong
-geoxml_program_parameter_get_values_number(GeoXmlPropertyValue * property_value)
+geoxml_program_parameter_get_values_number(GeoXmlProgramParameter * program_parameter, gboolean default_value)
 {
-	if (property_value == NULL)
+	if (program_parameter == NULL)
 		return -1;
 	return __geoxml_get_elements_number(
-		__geoxml_get_first_element((GdomeElement*)property_value, "property"), "value");
+		__geoxml_get_first_element((GdomeElement*)program_parameter, "property"),
+			default_value == FALSE ? "value" : "default");
 }
 
 void
-geoxml_program_parameter_set_value(GeoXmlPropertyValue * property_value, const gchar * value)
+geoxml_program_parameter_set_parse_list_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, const gchar * value)
 {
-	if (property_value == NULL)
+	if (program_parameter == NULL || value == NULL)
 		return;
-	__geoxml_set_element_value((GdomeElement*)property_value, value, __geoxml_create_TextNode);
-}
-
-void
-geoxml_program_parameter_set_default_value(GeoXmlPropertyValue * property_value, const gchar * default_value)
-{
-	if (property_value == NULL)
+	if (geoxml_program_parameter_get_is_list(program_parameter) == FALSE)
 		return;
-	__geoxml_set_attr_value((GdomeElement*)property_value, "default", default_value);
-}
 
-void
-geoxml_program_parameter_set_boolean_value(GeoXmlPropertyValue * property_value, gboolean state)
-{
-	if (property_value == NULL)
-		return;
-	__geoxml_set_element_value((GdomeElement*)property_value,
-		state == TRUE ? "on" : "off", __geoxml_create_TextNode);
-}
+	GdomeElement *	element;
+	const gchar *	separator;
 
-void
-geoxml_program_parameter_set_boolean_default_value(GeoXmlPropertyValue * property_value, gboolean state)
-{
-	if (property_value == NULL)
-		return;
-	__geoxml_set_attr_value((GdomeElement*)property_value, "default",
-		state == TRUE ? "on" : "off");
-}
+	/* remove all value/default elements */
+	element = __geoxml_get_first_element((GdomeElement*)program_parameter,
+		default_value == FALSE ? "value" : "default");
+	while (element != NULL) {
+		GdomeElement *	tmp;
 
-const gchar *
-geoxml_program_parameter_get_value(GeoXmlPropertyValue * property_value)
-{
-	if (property_value == NULL)
-		return NULL;
-	return __geoxml_get_element_value((GdomeElement*)property_value);
-}
+		tmp = __geoxml_next_same_element(element);
+		gdome_n_removeChild(gdome_el_parentNode(element, &exception), (GdomeNode*)element, &exception);
+		element = tmp;
+	}
 
-const gchar *
-geoxml_program_parameter_get_default_value(GeoXmlPropertyValue * property_value)
-{
-	if (property_value == NULL)
-		return NULL;
-	return __geoxml_get_attr_value((GdomeElement*)property_value, "default");
-}
+	separator = geoxml_program_parameter_get_list_separator(program_parameter);
+	if (!strlen(value) || !strlen(separator))
+		geoxml_program_parameter_append_value(program_parameter, default_value);
+	else {
+		gchar **	splits;
+		int		i;
 
-gboolean
-geoxml_program_parameter_get_boolean_value(GeoXmlPropertyValue * property_value)
-{
-	if (property_value == NULL)
-		return FALSE;
-	return !strcmp(__geoxml_get_element_value((GdomeElement*)property_value), "on")
-		? TRUE : FALSE;
-}
-
-gboolean
-geoxml_program_parameter_get_boolean_default_value(GeoXmlPropertyValue * property_value)
-{
-	if (property_value == NULL)
-		return FALSE;
-	return !strcmp(__geoxml_get_attr_value((GdomeElement*)property_value, "default"), "on")
-		? TRUE : FALSE;
+		splits = g_strsplit(value, separator, 0);
+		for (i = 0; splits[i] != NULL; ++i)
+			geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(
+				geoxml_program_parameter_append_value(program_parameter, default_value)),
+				splits[i]);
+		g_strfreev(splits);
+	}
 }
 
 void

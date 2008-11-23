@@ -53,16 +53,17 @@
  * 		arrowhead = "normal"
  * 	]
  * 	"GeoXmlObject" -> "GeoXmlSequence"
- * 	"GeoXmlSequence" -> { "GeoXmlProjectLine" };
- * 	"GeoXmlSequence" -> { "GeoXmlLineFlow" };
- * 	"GeoXmlSequence" -> { "GeoXmlProgram" };
- * 	"GeoXmlSequence" -> { "GeoXmlParameters" };
- * 	"GeoXmlSequence" -> { "GeoXmlParameter" };
- * 	"GeoXmlSequence" -> { "GeoXmlPropertyValue" };
- * 	"GeoXmlSequence" -> { "GeoXmlEnumOption" };
- * 	"GeoXmlSequence" -> { "GeoXmlValueSequence" };
- * 	"GeoXmlValueSequence" -> { "GeoXmlCategory" };
- * 	"GeoXmlValueSequence" -> { "GeoXmlLinePath" };
+ * 	"GeoXmlSequence" -> "GeoXmlProjectLine";
+ * 	"GeoXmlSequence" -> "GeoXmlLineFlow";
+ * 	"GeoXmlSequence" -> "GeoXmlProgram";
+ * 	"GeoXmlSequence" -> "GeoXmlParameters";
+ * 	"GeoXmlSequence" -> "GeoXmlParameter";
+ * 	"GeoXmlSequence" -> "GeoXmlPropertyValue";
+ * 	"GeoXmlSequence" -> "GeoXmlEnumOption";
+ * 	"GeoXmlSequence" -> "GeoXmlValueSequence";
+ * 	"GeoXmlValueSequence" -> "GeoXmlCategory";
+ * 	"GeoXmlValueSequence" -> "GeoXmlLinePath";
+ * 	"GeoXmlValueSequence" -> "GeoXmlPropertyValue";
  * }
  * \enddot
  * \see sequence.h
