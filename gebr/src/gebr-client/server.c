@@ -94,7 +94,7 @@ server_new(const gchar * address)
 	server->comm = comm_server_new(address, &ops);
 	server->comm->user_data = server;
 
-	g_signal_connect(server->comm->tcp_socket, "disconnected",
+	g_signal_connect(server->comm->stream_socket, "disconnected",
 		G_CALLBACK(server_disconnected), server);
 
 	comm_server_connect(server->comm);
