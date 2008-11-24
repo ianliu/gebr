@@ -229,6 +229,7 @@ parameter_new(void)
 			NULL);
 	}
 	parameter_select_iter(iter);
+	parameter_change_type_setup_ui();
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -326,7 +327,7 @@ parameter_change_type_setup_ui(void)
 	if (parameter_get_selected(&iter) == FALSE)
 		return;
 
-	dialog = gtk_dialog_new_with_buttons(_("Edit menu"),
+	dialog = gtk_dialog_new_with_buttons(_("Parameter's type"),
 		GTK_WINDOW(debr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
@@ -880,6 +881,10 @@ parameter_popup_menu(GtkWidget * tree_view)
 
 	gtk_container_add(GTK_CONTAINER(menu),
 		gtk_action_create_menu_item(debr.actions.parameter.new));
+
+	if (parameter_get_selected(&iter) == FALSE)
+		goto out;
+
 	/* Move up */
 	if (gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
@@ -898,7 +903,7 @@ parameter_popup_menu(GtkWidget * tree_view)
 	gtk_container_add(GTK_CONTAINER(menu),
 		gtk_action_create_menu_item(debr.actions.parameter.delete));
 
-	gtk_widget_show_all(menu);
+out:	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
 }

@@ -228,9 +228,9 @@ gebr_setup_ui(void)
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.project_line.new_line)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.project_line.new_project)), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.project_line.new_line)), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.project_line.delete)), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),

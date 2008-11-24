@@ -92,21 +92,16 @@ __geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETE
 	GdomeElement *	type_element;
 
 	type_element = __geoxml_insert_new_element((GdomeElement*)parameter, parameter_type_to_str[type], NULL);
-	switch (type) {
-	case GEOXML_PARAMETERTYPE_GROUP: {
-		GeoXmlParameters *	parameters;
-
-		parameters = (GeoXmlParameters*)__geoxml_insert_new_element(type_element, "parameters", NULL);
-		geoxml_parameters_set_exclusive(parameters, NULL);
-
-		break;
-	} default: {
+	if (type == GEOXML_PARAMETERTYPE_GROUP)
+		__geoxml_parameters_append_new(type_element);
+	else {
 		GdomeElement *		property_element;
 
 		property_element = __geoxml_insert_new_element(type_element, "property", NULL);
 		__geoxml_insert_new_element(property_element, "keyword", NULL);
-		__geoxml_insert_new_element(property_element, "label", NULL);
 		__geoxml_insert_new_element(property_element, "value", NULL);
+		__geoxml_insert_new_element(property_element, "default", NULL);
+		__geoxml_set_attr_value(property_element, "required", "no");
 
 		switch (type) {
 		case GEOXML_PARAMETERTYPE_FILE:
@@ -118,15 +113,9 @@ __geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETE
 				(GeoXmlProgramParameter*)parameter, "", "", "", "");
 			break;
 		default:
-			geoxml_program_parameter_set_required(
-				(GeoXmlProgramParameter*)parameter, FALSE);
 			break;
 		}
-		__geoxml_program_parameter_set_all_value((GeoXmlProgramParameter*)parameter, FALSE, "");
-		__geoxml_program_parameter_set_all_value((GeoXmlProgramParameter*)parameter, TRUE, "");
-
-		break;
-	}}
+	}
 
 	return TRUE;
 }

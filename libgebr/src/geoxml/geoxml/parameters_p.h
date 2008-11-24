@@ -20,6 +20,13 @@
 
 /**
  * \internal
+ * Create new parameters element into the end of \p parent
+ */
+GeoXmlParameters *
+__geoxml_parameters_append_new(GdomeElement * parent);
+
+/**
+ * \internal
  * Returns TRUE if \p parameters can be changed: if this is from a program one or the master
  * instance of a group.
  * The first instance of a group can be said as the master and the other ones as slaves. The changes made to

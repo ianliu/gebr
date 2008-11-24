@@ -532,7 +532,7 @@ project_line_popup_menu(GtkWidget * widget, struct ui_project_line * ui_project_
 	/* paths */
 	if (gebr.line != NULL)
 		gtk_container_add(GTK_CONTAINER(menu),
-			gtk_action_create_menu_item(gebr.actions.project_line.new_project));
+			gtk_action_create_menu_item(gebr.actions.project_line.line_paths));
 	/* delete */
 	gtk_container_add(GTK_CONTAINER(menu),
 		gtk_action_create_menu_item(gebr.actions.project_line.delete));

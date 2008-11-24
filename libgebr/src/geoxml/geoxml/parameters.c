@@ -37,6 +37,17 @@ struct geoxml_parameters {
 	GdomeElement * element;
 };
 
+GeoXmlParameters *
+__geoxml_parameters_append_new(GdomeElement * parent)
+{
+	GeoXmlParameters *	parameters;
+
+	parameters = (GeoXmlParameters*)__geoxml_insert_new_element(parent, "parameters", NULL);
+	geoxml_parameters_set_exclusive(parameters, NULL);
+
+	return parameters;
+}
+
 gboolean
 __geoxml_parameters_group_check(GeoXmlParameters * parameters)
 {
