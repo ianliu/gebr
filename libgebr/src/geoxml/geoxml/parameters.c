@@ -65,6 +65,7 @@ geoxml_parameters_append_parameter(GeoXmlParameters * parameters, enum GEOXML_PA
 	GdomeElement *	element;
 
 	element = __geoxml_insert_new_element((GdomeElement*)parameters, "parameter", NULL);
+	__geoxml_element_assign_new_id(element);
 	__geoxml_insert_new_element(element, "label", NULL);
 	__geoxml_parameter_insert_type((GeoXmlParameter*)element, type);
 
