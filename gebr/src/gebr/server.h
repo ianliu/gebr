@@ -20,7 +20,6 @@
 
 #include <gtk/gtk.h>
 
-#include <comm/gtcpsocket.h>
 #include <comm/protocol.h>
 #include <comm/server.h>
 

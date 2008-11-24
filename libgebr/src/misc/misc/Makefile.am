@@ -28,4 +28,4 @@ EXTRA_DIST = ${noinst_HEADERS}
 INCLUDES =
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GLIB_CFLAGS)
 libgebr_misc_la_LIBADD = $(GLIB_LIBS)
-libgebr_misc_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@
+libgebr_misc_la_LDFLAGS =

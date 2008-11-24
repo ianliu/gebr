@@ -19,6 +19,8 @@
 
 #include <gtk/gtk.h>
 
+#include <comm/gstreamsocket.h>
+
 #include "server.h"
 #include "gebr.h"
 #include "support.h"
@@ -90,7 +92,7 @@ server_ssh_question(const gchar * title, const gchar * message)
 }
 
 static void
-server_disconnected(GTcpSocket * stream_socket, struct server * server)
+server_disconnected(GStreamSocket * stream_socket, struct server * server)
 {
 	server_list_updated_status(server);
 }

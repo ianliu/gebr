@@ -21,5 +21,5 @@ pkgconfig_DATA = gebr-misc.pc
 
 EXTRA_DIST = gebr-misc.pc
 
-libgebr_miscincludedir=$(includedir)/libgebr
-libgebr_miscinclude_HEADERS=misc.h
+libgebr_miscincludedir = $(includedir)/libgebr
+libgebr_miscinclude_HEADERS = misc.h

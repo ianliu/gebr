@@ -21,6 +21,8 @@
 #include <glib.h>
 
 #include <geoxml.h>
+#include <comm/gstreamsocket.h>
+#include <comm/protocol.h>
 
 #include "server.h"
 #include "gebrclient.h"
@@ -65,7 +67,7 @@ server_ssh_question(const gchar * title, const gchar * message)
 }
 
 static void
-server_disconnected(GTcpSocket * tcp_socket, struct server * server)
+server_disconnected(GStreamSocket * stream_socket, struct server * server)
 {
 // 	TODO:
 	

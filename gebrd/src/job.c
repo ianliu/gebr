@@ -21,7 +21,7 @@
 
 #include <comm/protocol.h>
 #include <comm/gstreamsocket.h>
-#include <comm/ghostaddress.h>
+#include <comm/gsocketaddress.h>
 #include <misc/utils.h>
 #include <misc/date.h>
 
