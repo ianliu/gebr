@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>sumute.mnu</filename>
   <title>Su Mute</title>
   <description>Mute above (or below) a user-defined polygonal curve</description>
@@ -17,7 +17,7 @@
   </help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Gain, NMO, Stack and Standard Processes</category>
+  <date><created/><modified/><lastrun/></date><category>Gain, NMO, Stack and Standard Processes</category>
   <category>Seismic Unix</category>
   <io>
     <input/>
@@ -143,7 +143,7 @@
 </body>
 </html>
     ]]></help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <float required="yes">
         <keyword>xmute=</keyword>
         <label>Array of position values as specified by key the parameter</label>
@@ -164,7 +164,7 @@
         <label>number of points to taper before hard mute (sine squared taper)</label>
         <value/>
       </int>
-      <range required="no" min="0" max="2" inc="1">
+      <range required="no" min="0" max="2" inc="1" digits="">
         <keyword>mode=</keyword>
         <label>mute the straight line</label>
         <value default="0"/>

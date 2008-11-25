@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>suspike.mnu</filename>
   <title>SU Spike</title>
   <description>Make a small spike data set</description>
@@ -72,7 +72,7 @@
 ]]></help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Simulation and Model Building</category>
+  <date><created/><modified/><lastrun/></date><category>Simulation and Model Building</category>
   <category>Seismic Unix</category>
   <io>
     <input/>
@@ -219,7 +219,7 @@
 </body>
 </html>
 ]]></help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <int required="no">
         <keyword>nt=</keyword>
         <label>number of time samples</label>

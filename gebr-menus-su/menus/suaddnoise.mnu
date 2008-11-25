@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>suaddnoise.mnu</filename>
   <title>SU Add Noise</title>
   <description>add noise to traces</description>
@@ -17,9 +17,9 @@
   </help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Editing, Sorting and Manipulation</category>
+  <date><created/><modified/><lastrun/></date><category>Editing, Sorting and Manipulation</category>
   <category>Seismic Unix</category>
-  <io><input /><output /><error /></io>
+  <io><input/><output/><error/></io>
   <program stdin="yes" stdout="yes" stderr="yes" status="unconfigured">
     <menu index="0">suaddnoise.mnu</menu>
     <title>SU Add Noise</title>
@@ -66,46 +66,46 @@
  bandlimited:     suaddnoise &lt; data f=20,30,40,50 amps=0,1,1,0 | ...
       </pre>]]>
     </help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <float required="no">
 	<keyword>sn=</keyword>
 	<label>signal to noise ratio</label>
-	<value></value>
+	<value/>
       </float>
       <flag>
 	<keyword>noise=flat</keyword>
 	<label>Flat noise probability distribution</label>
-	<state default="off"></state>
+	<state default="off"/>
       </flag>
       <int required="no">
 	<keyword>seed=</keyword>
 	<label>random number seed</label>
-	<value></value>
+	<value/>
       </int>
       <string required="no">
 	<keyword>f=</keyword>
 	<label>array of filter frequencies (as in sufilter)</label>
-	<value></value>
+	<value/>
       </string>
       <string required="no">
 	<keyword>amps=</keyword>
 	<label>array of filter amplitudes</label>
-	<value></value>
+	<value/>
       </string>
       <float required="no">
 	<keyword>dt=</keyword>
 	<label>time sampling interval (in sec)</label>
-	<value></value>
+	<value/>
       </float>
       <flag>
 	<keyword>verbose=1</keyword>
 	<label>echoing useful information</label>
-	<state default="off"></state>
+	<state default="off"/>
       </flag>
       <file directory="yes" required="no">
 	<keyword>tmpdir=</keyword>
 	<label>directory path to temporary files</label>
-	<value></value>
+	<value/>
       </file>
     </parameters>
   </program>

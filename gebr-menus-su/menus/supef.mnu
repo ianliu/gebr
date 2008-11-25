@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>supef.mnu</filename>
   <title>SU PEF</title>
   <description>Wiener predictive error filtering</description>
@@ -17,7 +17,7 @@
   </help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Filtering, Transforms and Attributes</category>
+  <date><created/><modified/><lastrun/></date><category>Filtering, Transforms and Attributes</category>
   <category>Multiple Supression</category>
   <category>Seismic Unix</category>
   <io>
@@ -29,7 +29,7 @@
     <menu index="0">supef.mnu</menu>
     <title>SU PEF</title>
     <binary>supef</binary>
-    <description></description>
+    <description/>
     <help><![CDATA[
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -233,7 +233,7 @@
 </body>
 </html>
     ]]></help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <float required="no">
         <keyword>dt=</keyword>
         <label>Time sampling interval</label>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>suvelan_uccs.mnu</filename>
   <title>SU Velan Uccs</title>
   <description>Compute stacking velocity panel for cdp gathers</description>
@@ -73,7 +73,7 @@
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
   
-  <category>Gain, NMO, Stack and Standard Processes</category>
+  <date><created/><modified/><lastrun/></date><category>Gain, NMO, Stack and Standard Processes</category>
   <category>Seismic Unix</category><io>
     <input/>
     <output/>
@@ -192,7 +192,7 @@
 </html>
 
 ]]></help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <int required="no">
         <keyword>nx=</keyword>
         <label>number of traces in cdp </label>

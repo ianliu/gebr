@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<flow version="0.1.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<flow version="0.2.2">
   <filename>sutetraray.mnu</filename>
   <title>SU Tetraray</title>
   <description>3-D Tetrahedral WaveFront construction Raytracing</description>
@@ -16,15 +16,14 @@
 </help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Seismic Unix</category>
+  <date><created/><modified/><lastrun/></date><category>Seismic Unix</category>
   <category>Simulation and Model Building</category>
   <io>
-    <input />
-    <output />
-    <error />
+    <input/>
+    <output/>
+    <error/>
   </io>
-  <program stdin="yes" stdout="yes" stderr="yes"
-  status="unconfigured">
+  <program stdin="yes" stdout="yes" stderr="yes" status="unconfigured">
     <menu index="0">sutetraray.mnu</menu>
     <title>SU Tetraray</title>
     <binary>sutetraray</binary>
@@ -183,191 +182,191 @@
 </body>
 </html>]]>
 </help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <int required="no">
         <keyword>nxgd=</keyword>
         <label>number of x samples</label>
-        <value />
+        <value/>
       </int>
       <int required="no">
         <keyword>nygd=</keyword>
         <label>number of y samples</label>
-        <value />
+        <value/>
       </int>
       <float required="no">
         <keyword>fxgd=xmin=</keyword>
         <label>first x sample</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>fygd=ymin=</keyword>
         <label>first y sample</label>
-        <value />
+        <value/>
       </float>
       <flag>
         <keyword>shootupward=-1</keyword>
         <label>downward shooting</label>
-        <state default="off" />
+        <state default="off"/>
       </flag>
       <float required="no">
         <keyword>dxgd=</keyword>
         <label>x sampling interval</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>dygd=</keyword>
         <label>y sampling interval</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>takeoff=</keyword>
         <label>max takeoff angle for shooting aperture</label>
-        <value />
+        <value/>
       </float>
       <int required="no">
         <keyword>ntakeoff=</keyword>
         <label>number of samples in takeoff angle</label>
-        <value />
+        <value/>
       </int>
       <int required="no">
         <keyword>nazimuth=</keyword>
         <label>number of samples in azimuth</label>
-        <value />
+        <value/>
       </int>
       <int required="no">
         <keyword>maxntris=</keyword>
         <label>maximum number of triangles allowed</label>
-        <value />
+        <value/>
       </int>
       <string required="no">
         <keyword>maxnrays=</keyword>
         <label>maximum number of rays allowed</label>
-        <value />
+        <value/>
       </string>
       <int required="no">
         <keyword>maxnsegs=</keyword>
         <label>maximum number of ray segments allowed</label>
-        <value />
+        <value/>
       </int>
       <float required="no">
         <keyword>tmax=</keyword>
         <label>maximum traveltime traced</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>dtwf=</keyword>
         <label>wavefront step size for raytracing</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>ntwf=</keyword>
         <label>maximum number of wavefronts</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>edgemax=</keyword>
         <label>maximum triangle length</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>fsx=</keyword>
         <label>first source in x</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>dsx=</keyword>
         <label>x increment in source</label>
-        <value />
+        <value/>
       </float>
       <int required="no">
         <keyword>nsx=</keyword>
         <label>number of source in x</label>
-        <value />
+        <value/>
       </int>
       <float required="no">
         <keyword>fsy=</keyword>
         <label>first source in y</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>dsy=</keyword>
         <label>y increment in source</label>
-        <value />
+        <value/>
       </float>
       <int required="no">
         <keyword>nsy=</keyword>
         <label>number of source in y</label>
-        <value />
+        <value/>
       </int>
       <float required="no">
         <keyword>fsz=</keyword>
         <label>first source in z</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>dzs=</keyword>
         <label>z increment in source</label>
-        <value />
+        <value/>
       </float>
       <int required="no">
         <keyword>nsz=</keyword>
         <label>number of source in z</label>
-        <value />
+        <value/>
       </int>
       <int required="no">
         <keyword>nxt=</keyword>
         <label>number of x-samples or sukdmig3d</label>
-        <value />
+        <value/>
       </int>
       <int required="no">
         <keyword>nxt=</keyword>
         <label>number of y-samples for sukdmig3d</label>
-        <value />
+        <value/>
       </int>
       <string required="no">
         <keyword>irefseq=</keyword>
         <label>reflector sequence</label>
-        <value />
+        <value/>
       </string>
       <file required="no" directory="no">
         <keyword>crfile=</keyword>
         <label>cosines and ray path file</label>
-        <value />
+        <value/>
       </file>
       <file required="no" directory="no">
         <keyword>sttfile=</keyword>
         <label>traveltime file</label>
-        <value />
+        <value/>
       </file>
       <flag>
         <keyword>verbose=1</keyword>
         <label>echoing information</label>
-        <state default="off" />
+        <state default="off"/>
       </flag>
       <file required="no" directory="no">
         <keyword>rayfile=</keyword>
         <label>ray path file</label>
-        <value />
+        <value/>
       </file>
       <file required="no" directory="no">
         <keyword>wffile=</keyword>
         <label>wavefront file</label>
-        <value />
+        <value/>
       </file>
       <float required="no">
         <keyword>ifwf2dump=</keyword>
         <label>first wavefront to dump</label>
-        <value />
+        <value/>
       </float>
       <int required="no">
         <keyword>nwf2dump=</keyword>
         <label>number of wavefronts to dump</label>
-        <value />
+        <value/>
       </int>
       <file required="no" directory="no">
         <keyword>jpfile=</keyword>
         <label>job print</label>
-        <value />
+        <value/>
       </file>
     </parameters>
   </program>

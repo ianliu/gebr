@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>sugain.mnu</filename>
   <title>SU Gain</title>
   <description>apply various types of gain to display traces</description>
@@ -17,9 +17,9 @@
   </help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Gain, NMO, Stack and Standard Processes</category>
+  <date><created/><modified/><lastrun/></date><category>Gain, NMO, Stack and Standard Processes</category>
   <category>Seismic Unix</category>
-  <io><input /><output /><error /></io>
+  <io><input/><output/><error/></io>
   <program stdin="yes" stdout="yes" stderr="yes" status="unconfigured">
     <menu index="0">sugain.mnu</menu>
     <title>SU Gain</title>
@@ -77,96 +77,96 @@
 	for more information about the mark header field.
     </pre>]]>
     </help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <flag>
 	<keyword>panel=1</keyword>
 	<label>gain whole data set (vs. trace by trace)</label>
-	<state default="off"></state>
+	<state default="off"/>
       </flag>
       <float required="no">
 	<keyword>tpow=</keyword>
 	<label>multiply data by t^tpow</label>
-	<value default="0.0"></value>
+	<value default="0.0"/>
       </float>
       <float required="no">
 	<keyword>epow=</keyword>
 	<label>multiply data by exp(epow*t)</label>
-	<value></value>
+	<value/>
       </float>
       <flag>
 	<keyword>agc=1</keyword>
 	<label>do automatic gain control</label>
-	<state default="on"></state>
+	<state default="on"/>
       </flag>
       <flag>
 	<keyword>gagc=1</keyword>
 	<label>with gaussian taper</label>
-	<state default="on"></state>
+	<state default="on"/>
       </flag>
       <float required="no">
 	<keyword>wagc=</keyword>
 	<label>agc window in seconds (use if agc or gagc is checked)</label>
-	<value default="0.5"></value>
+	<value default="0.5"/>
       </float>
       <float required="no">
 	<keyword>trap=</keyword>
 	<label>zero any value whose magnitude exceeds trapval</label>
-	<value default=""></value>
+	<value default=""/>
       </float>
       <float required="no">
 	<keyword>clip=</keyword>
 	<label>zero any value whose magnitude exceeds clipval</label>
-	<value default=""></value>
+	<value default=""/>
       </float>
       <float required="no">
 	<keyword>qclip=</keyword>
 	<label>clip by quantile on absolute values on trace</label>
-	<value></value>
+	<value/>
       </float>
       <flag>
 	<keyword>qbal=1</keyword>
 	<label>balance traces by qclip and scale</label>
-	<state default="off"></state>
+	<state default="off"/>
       </flag>
       <flag>
 	<keyword>pbal=1</keyword>
 	<label>bal traces by dividing by rms value</label>
-	<state default="off"></state>
+	<state default="off"/>
       </flag>
       <flag>
 	<keyword>mbal=1</keyword>
 	<label>bal traces by subtracting the mean</label>
-	<state default="off"></state>
+	<state default="off"/>
       </flag>
       <float required="no">
 	<keyword>scale=</keyword>
 	<label>multiply data by overall scale factor</label>
-	<value></value>
+	<value/>
       </float>
       <float required="no">
 	<keyword>norm=</keyword>
 	<label>divide data by overall scale factor</label>
-	<value></value>
+	<value/>
       </float>
       <float required="no">
 	<keyword>bias=</keyword>
 	<label>bias data by adding an overall bias value</label>
-	<value></value>
+	<value/>
       </float>
       <flag>
 	<keyword>jon=1</keyword>
 	<label>tpow=2, gpow=.5, qclip=.95</label>
-	<state default="off"></state>
+	<state default="off"/>
       </flag>
       <flag>
 	<keyword>verbose=1</keyword>
 	<label>echoes info</label>
-	<state default="off"></state>
+	<state default="off"/>
       </flag>
       <file directory="yes" required="no">
 	<keyword>tmpdir=</keyword>
 	<label>directory path prefix for storing temporary files</label>
-	<value default=""></value>
+	<value default=""/>
       </file>
     </parameters>
   </program>

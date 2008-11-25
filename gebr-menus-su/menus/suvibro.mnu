@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>suvibro.mnu</filename>
   <title>SU Vibro</title>
   <description>Generates a Vibroseis sweep</description>
@@ -72,7 +72,7 @@
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
   
-  <category>Gain, NMO, Stack and Standard Processes</category>
+  <date><created/><modified/><lastrun/></date><category>Gain, NMO, Stack and Standard Processes</category>
   <category>Seismic Unix</category><io>
     <input/>
     <output/>
@@ -199,13 +199,13 @@
 </html>
 
 ]]></help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <float required="no">
         <keyword>dt=</keyword>
         <label>time sampling interval</label>
         <value/>
       </float>
-      <range required="no" min="1" max="5" inc="1">
+      <range required="no" min="1" max="5" inc="1" digits="">
         <keyword>sweep=</keyword>
         <label>sweep</label>
         <value default="1.000000"/>
@@ -255,7 +255,7 @@
         <label>length of taper at end</label>
         <value/>
       </float>
-      <range required="no" min="1" max="5" inc="1">
+      <range required="no" min="1" max="5" inc="1" digits="">
         <keyword>taper=</keyword>
         <label>type of taper</label>
         <value default="1.000000"/>

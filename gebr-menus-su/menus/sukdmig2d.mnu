@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<flow version="0.1.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<flow version="0.2.2">
   <filename>sukdmig2d.mnu</filename>
   <title>SU Kirchhoff mig 2D</title>
   <description>Kirchhoff Depth Migration of 2D poststack or prestack data</description>
@@ -16,15 +16,14 @@
     ]]></help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Migration and Dip Moveout</category>
+  <date><created/><modified/><lastrun/></date><category>Migration and Dip Moveout</category>
   <category>Seismic Unix</category>
   <io>
-    <input />
-    <output />
-    <error />
+    <input/>
+    <output/>
+    <error/>
   </io>
-  <program stdin="no" stdout="no" stderr="yes"
-  status="unconfigured">
+  <program stdin="no" stdout="no" stderr="yes" status="unconfigured">
     <menu index="0">sukdmig2d.mnu</menu>
     <title>SU KDMIG 2D</title>
     <binary>sukdmig2d</binary>
@@ -210,217 +209,217 @@
   </div>
 </body>
 </html>]]></help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <file required="yes" directory="no">
         <keyword>infile=</keyword>
         <label>file for input seismic traces</label>
-        <value />
+        <value/>
       </file>
       <file required="yes" directory="no">
         <keyword>outfile=</keyword>
         <label>file for common offset migration output</label>
-        <value />
+        <value/>
       </file>
       <file required="yes" directory="no">
         <keyword>ttfile=</keyword>
         <label>file for input traveltime tables</label>
-        <value />
+        <value/>
       </file>
       <int required="yes">
         <keyword>fzt=</keyword>
         <label>first depth sample in traveltime table</label>
-        <value />
+        <value/>
       </int>
       <int required="yes">
         <keyword>nzt=</keyword>
         <label>number of depth samples in traveltime table</label>
-        <value />
+        <value/>
       </int>
       <float required="no">
         <keyword>dzt=</keyword>
         <label>depth interval in traveltime table</label>
-        <value />
+        <value/>
       </float>
       <int required="yes">
         <keyword>fxt=</keyword>
         <label>first lateral sample in traveltime table</label>
-        <value />
+        <value/>
       </int>
       <int required="yes">
         <keyword>nxt=</keyword>
         <label>number of lateral samples in traveltime
         table</label>
-        <value />
+        <value/>
       </int>
       <float required="no">
         <keyword>dxt=</keyword>
         <label>lateral interval in traveltime table</label>
-        <value />
+        <value/>
       </float>
       <float required="yes">
         <keyword>fs=</keyword>
         <label>x-coordinate of first source</label>
-        <value />
+        <value/>
       </float>
       <int required="yes">
         <keyword>ns=</keyword>
         <label>number of sources</label>
-        <value />
+        <value/>
       </int>
       <float required="yes">
         <keyword>ds=</keyword>
         <label>x-coordinate increment of sources</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>dt=</keyword>
         <label>time sampling interval of input data</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>ft=</keyword>
         <label>first time sample of input data</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>dxm=</keyword>
         <label>sampling interval of midpoints</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>fzo=</keyword>
         <label>z-coordinate of first point in output trace</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>dzo=</keyword>
         <label>vertical spacing of output trace</label>
-        <value />
+        <value/>
       </float>
       <int required="no">
         <keyword>nzo=</keyword>
         <label>number of points in output trace</label>
-        <value />
+        <value/>
       </int>
       <float required="no">
         <keyword>fxo=</keyword>
         <label>x-coordinate of first output trace</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>dxo=</keyword>
         <label>horizontal spacing of output trace</label>
-        <value />
+        <value/>
       </float>
       <int required="no">
         <keyword>nxo=</keyword>
         <label>number of output traces</label>
-        <value />
+        <value/>
       </int>
       <float required="no">
         <keyword>off0=</keyword>
         <label>first offest in output</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>doff=</keyword>
         <label>offset increment in output</label>
-        <value />
+        <value/>
       </float>
       <int required="no">
         <keyword>noff=</keyword>
         <label>number of offsets in output</label>
-        <value />
+        <value/>
       </int>
       <flag>
         <keyword>absoff=1</keyword>
         <label>flag for using absolute offsets of input
         traces</label>
-        <state default="off" />
+        <state default="off"/>
       </flag>
       <flag>
         <keyword>limoff=1</keyword>
         <label>flag for only using input traces that fall within
         the range</label>
-        <state default="off" />
+        <state default="off"/>
       </flag>
       <float required="no">
         <keyword>fmax=</keyword>
         <label>frequency-highcut for input traces</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>offmax=</keyword>
         <label>maximum absolute offset allowed in migration</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>aperx=</keyword>
         <label>migration lateral aperature</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>angmax=</keyword>
         <label>migration angle aperature from vertical</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>v0=</keyword>
         <label>reference velocity value at surface</label>
-        <value />
+        <value/>
       </float>
       <float required="no">
         <keyword>dvz=</keyword>
         <label>reference velocity vertical gradient</label>
-        <value />
+        <value/>
       </float>
       <flag>
         <keyword>ls=1</keyword>
         <label>flag for line source</label>
-        <state default="off" />
+        <state default="off"/>
       </flag>
       <string required="no">
         <keyword>jpfile=</keyword>
         <label>job print file name</label>
-        <value />
+        <value/>
       </string>
       <int required="no">
         <keyword>mtr=</keyword>
         <label>print verbal information at every traces</label>
-        <value />
+        <value/>
       </int>
       <int required="no">
         <keyword>ntr=</keyword>
         <label>maximum number of input traces to be
         migrated</label>
-        <value />
+        <value/>
       </int>
       <flag>
         <keyword>npv=1</keyword>
         <label>flag of computing quantities for velocity
         analysis</label>
-        <state default="off" />
+        <state default="off"/>
       </flag>
       <float required="no">
         <keyword>rscale=</keyword>
         <label>scaling for roundoff error suppression</label>
-        <value />
+        <value/>
       </float>
       <file required="no" directory="no">
         <keyword>tvfile=</keyword>
         <label>input file of traveltime variation tables</label>
-        <value />
+        <value/>
       </file>
       <file required="no" directory="no">
         <keyword>csfile=</keyword>
         <label>input file of cosine tables</label>
-        <value />
+        <value/>
       </file>
       <file required="no" directory="no">
         <keyword>outfile1=</keyword>
         <label>file containning additional migration output with
         extra amplitude</label>
-        <value />
+        <value/>
       </file>
     </parameters>
   </program>

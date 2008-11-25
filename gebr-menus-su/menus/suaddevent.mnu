@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.2.1">
+<flow version="0.2.2">
   <filename>suaddevent.mnu</filename>
   <title>SU Add Event</title>
   <description>Add a linear or hyperbolic moveout event to seismic data</description>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>susort.mnu</filename>
   <title>SU Sort</title>
   <description>Sort on any segy header keywords</description>
@@ -71,7 +71,7 @@
 ]]></help>
   <author>GÃªBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Editing, Sorting and Manipulation</category>
+  <date><created/><modified/><lastrun/></date><category>Editing, Sorting and Manipulation</category>
   <category>Seismic Unix</category>
   <io>
     <input/>
@@ -202,11 +202,11 @@
 </body>
 </html>
 ]]></help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <string required="no">
         <keyword>+</keyword>
         <label>First ascending keyword</label>
-        <value default="cdp" />
+        <value default="cdp"/>
       </string>
       <string required="no">
         <keyword>-</keyword>

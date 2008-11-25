@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>sufdmod2.mnu</filename>
   <title>SU FD Mod2</title>
   <description>Finite-Difference MODeling (2nd order) for acoustic wave equation</description>
@@ -17,9 +17,9 @@
   </help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Simulation and Model Building</category>
+  <date><created/><modified/><lastrun/></date><category>Simulation and Model Building</category>
   <category>Seismic Unix</category>
-  <io><input /><output /><error /></io>
+  <io><input/><output/><error/></io>
   <program stdin="yes" stdout="yes" stderr="yes" status="unconfigured">
     <menu index="0">sufdmod2.mnu</menu>
     <title>SU FD Mod2</title>
@@ -86,116 +86,116 @@ SUFDMOD2 - Finite-Difference MODeling (2nd order) for acoustic wave equation
                 - Correct the calculation of izs[is].
       </pre>]]>
     </help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <int required="yes">
 	<keyword>nx=</keyword>
 	<label>number of x samples (2nd dimension)</label>
-	<value default=""></value>
+	<value default=""/>
       </int>
       <int required="yes">
 	<keyword>nz=</keyword>
 	<label>number of z samples (1st dimension)</label>
-	<value default=""></value>
+	<value default=""/>
       </int>
       <string required="no">
 	<keyword>xs=</keyword>
 	<label>x coordinates of source (or a file containing x and z coordinates)</label>
-	<value default=""></value>
+	<value default=""/>
       </string>
       <string required="no">
 	<keyword>zs=</keyword>
 	<label>z coordinates of source</label>
-	<value default=""></value>
+	<value default=""/>
       </string>
       <int required="yes">
 	<keyword>=</keyword>
 	<label>strength of source</label>
-	<value default="1.0"></value>
+	<value default="1.0"/>
       </int>
       <float required="yes">
 	<keyword>tmax=</keyword>
 	<label>maximum time</label>
-	<value default=""></value>
+	<value default=""/>
       </float>
       <int required="no">
 	<keyword>nt=</keyword>
 	<label>number of time samples</label>
-	<value default=""></value>
+	<value default=""/>
       </int>
       <int required="no">
 	<keyword>mt=</keyword>
 	<label>number of time steps (dt) per output time step</label>
-	<value default=""></value>
+	<value default=""/>
       </int>
       <float required="no">
 	<keyword>dx=</keyword>
 	<label>x sampling interval</label>
-	<value default=""></value>
+	<value default=""/>
       </float>
       <float required="no">
 	<keyword>fx=</keyword>
 	<label>first x sample</label>
-	<value default=""></value>
+	<value default=""/>
       </float>
       <float required="no">
 	<keyword>dz=</keyword>
 	<label>z sampling interval</label>
-	<value default=""></value>
+	<value default=""/>
       </float>
       <float required="no">
 	<keyword>fz=</keyword>
 	<label>first z sample</label>
-	<value default=""></value>
+	<value default=""/>
       </float>
       <float required="no">
 	<keyword>fmax=</keyword>
 	<label>maximum frequency in source wavelet</label>
-	<value default=""></value>
+	<value default=""/>
       </float>
       <float required="no">
 	<keyword>fpeak=</keyword>
 	<label>peak frequency in ricker wavelet</label>
-	<value default=""></value>
+	<value default=""/>
       </float>
       <file directory="no" required="no">
 	<keyword>dfile=</keyword>
 	<label>input file containing density</label>
-	<value default=""></value>
+	<value default=""/>
       </file>
       <float required="no">
 	<keyword>vsx=</keyword>
 	<label>x coordinate of vertical line of seismograms</label>
-	<value default=""></value>
+	<value default=""/>
       </float>
       <float required="no">
 	<keyword>hsz=</keyword>
 	<label>z coordinate of horizontal line of seismograms</label>
-	<value default=""></value>
+	<value default=""/>
       </float>
       <file directory="no" required="no">
 	<keyword>vsfile=</keyword>
 	<label>output file for vertical line of seismograms</label>
-	<value default=""></value>
+	<value default=""/>
       </file>
       <file directory="no" required="no">
 	<keyword>hsfile=</keyword>
 	<label>output file for horizontal line of seismograms</label>
-	<value default=""></value>
+	<value default=""/>
       </file>
       <file directory="no" required="no">
 	<keyword>ssfile=</keyword>
 	<label>output file for source point seismograms</label>
-	<value default=""></value>
+	<value default=""/>
       </file>
       <string required="no">
 	<keyword>abs=</keyword>
 	<label>Absorbing boundary conditions on top,left,bottom,right sides of the model</label>
-	<value default="1,1,1,1"></value>
+	<value default="1,1,1,1"/>
       </string>
       <flag>
 	<keyword>verbose=1</keyword>
 	<label>diagnostic messages</label>
-	<state default="off"></state>
+	<state default="off"/>
       </flag>
     </parameters>
   </program>

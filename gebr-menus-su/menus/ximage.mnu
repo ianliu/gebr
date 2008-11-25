@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<flow version="0.2.0">
+<flow version="0.2.2">
   <filename>ximage.mnu</filename>
   <title>Ximage</title>
   <description>X IMAGE plot of a uniformly-sampled function f(x1,x2)</description>
@@ -127,7 +127,7 @@
  in each file as npair=npair1,npair2,... .
       </pre>]]>
     </help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <int required="yes">
 	<keyword>n1=</keyword>
 	<label>Number of samples in 1st (fast) dimension</label>
@@ -163,7 +163,7 @@
 	<label>file to save mouse picks in</label>
 	<value default="/dev/null"/>
       </file>
-      <range min="0" max="100" inc="1" required="no">
+      <range min="0" max="100" inc="1" required="no" digits="">
 	<keyword>perc=</keyword>
 	<label>percentile used to determine clip</label>
 	<value default="100.000000"/>
@@ -194,7 +194,7 @@
 	<value/>
       </float>
       <flag><keyword>balance=1</keyword><label>bclip and wclip individually (set them to the same abs value)</label><state default="off"/></flag>
-      <enum required="no"><keyword>cmap=</keyword><label>Colormap (hsv'n' or rgb'n', with n=0,1,...,13)</label><value default="rgb0"/><option>rgb0</option><option>rgb1</option><option>rgb2</option><option>rgb3</option><option>rgb4</option><option>rgb5</option><option>rgb6</option><option>rgb7</option><option>rgb8</option><option>rgb9</option><option>rgb10</option><option>rgb11</option><option>hsv0</option><option>hsv1</option><option>hsv2</option><option>hsv3</option><option>hsv4</option><option>hsv5</option><option>hsv6</option><option>hsv7</option><option>hsv8</option><option>hsv9</option><option>hsv10</option><option>hsv11</option><option>hsv12</option><option>hsv13</option></enum>
+      <enum required="no"><keyword>cmap=</keyword><label>Colormap (hsv'n' or rgb'n', with n=0,1,...,13)</label><value default="rgb0"/><option><label/><value>rgb0</value></option><option><label/><value>rgb1</value></option><option><label/><value>rgb2</value></option><option><label/><value>rgb3</value></option><option><label/><value>rgb4</value></option><option><label/><value>rgb5</value></option><option><label/><value>rgb6</value></option><option><label/><value>rgb7</value></option><option><label/><value>rgb8</value></option><option><label/><value>rgb9</value></option><option><label/><value>rgb10</value></option><option><label/><value>rgb11</value></option><option><label/><value>hsv0</value></option><option><label/><value>hsv1</value></option><option><label/><value>hsv2</value></option><option><label/><value>hsv3</value></option><option><label/><value>hsv4</value></option><option><label/><value>hsv5</value></option><option><label/><value>hsv6</value></option><option><label/><value>hsv7</value></option><option><label/><value>hsv8</value></option><option><label/><value>hsv9</value></option><option><label/><value>hsv10</value></option><option><label/><value>hsv11</value></option><option><label/><value>hsv12</value></option><option><label/><value>hsv13</value></option></enum>
       <flag>
 	<keyword>legend=1</keyword>
 	<label>display the color scale</label>
@@ -365,7 +365,7 @@
 	<label>Swap axes</label>
 	<state default="off"/>
       </flag>
-      <range min="0" max="1" inc="0.1" required="no">
+      <range min="0" max="1" inc="0.1" required="no" digits="">
 	<keyword>blank=</keyword>
 	<label>Portion of the lower range to blank out (make the background color).</label>
 	<value default="0"/>

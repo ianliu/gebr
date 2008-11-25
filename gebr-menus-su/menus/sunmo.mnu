@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<flow version="0.2.1">
+<flow version="0.2.2">
   <filename>sunmo.mnu</filename>
   <title>SU NMO</title>
   <description>NMO for an arbitrary velocity function of time and CDP</description>

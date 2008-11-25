@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>surange.mnu</filename>
   <title>SU Range</title>
   <description>get max and min values for non-zero header entries</description>
@@ -17,9 +17,9 @@
   </help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Editing, Sorting and Manipulation</category>
+  <date><created/><modified/><lastrun/></date><category>Editing, Sorting and Manipulation</category>
   <category>Seismic Unix</category>
-  <io><input /><output /><error /></io>
+  <io><input/><output/><error/></io>
   <program stdin="yes" stdout="no" stderr="yes" status="unconfigured">
     <menu index="0">surange.mnu</menu>
     <title>SU Range</title>
@@ -36,11 +36,11 @@
  Note: Gives partial results if interrupted
       </pre>]]>
     </help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <string required="no">
 	<keyword>key=</keyword>
 	<label>Header key(s) to range (leave empty for all)</label>
-	<value default=""></value>
+	<value default=""/>
       </string>
     </parameters>
   </program>

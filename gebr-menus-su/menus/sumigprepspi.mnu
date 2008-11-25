@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>sumigprepspi.mnu</filename>
   <title>SU Migration Pre PSPI</title>
   <description>The 2-D Prestack Phase-Shift-Plus interpolation depth Migration</description>
@@ -178,7 +178,7 @@
 ]]></help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Migration and Dip Moveout</category>
+  <date><created/><modified/><lastrun/></date><category>Migration and Dip Moveout</category>
   <category>Seismic Unix</category>
   <io>
     <input/>
@@ -386,7 +386,7 @@
 </body>
 </html>
 ]]></help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <int required="yes">
         <keyword>nxo=</keyword>
         <label>number of total horizontal output samples</label>

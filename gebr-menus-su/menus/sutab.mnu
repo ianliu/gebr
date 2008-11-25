@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>sutab.mnu</filename>
   <title>SU Tab</title>
   <description>print non zero header values and data for non-graphic terminals</description>
@@ -47,9 +47,9 @@ sutab &lt;stdin itmin=0 itmax=last_sample count=all
   </help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Editing, Sorting and Manipulation</category>
+  <date><created/><modified/><lastrun/></date><category>Editing, Sorting and Manipulation</category>
   <category>Seismic Unix</category>
-  <io><input /><output /><error /></io>
+  <io><input/><output/><error/></io>
   <program stdin="yes" stdout="yes" stderr="no" status="unconfigured">
     <menu index="0">sutab.mnu</menu>
     <title>SU Tab</title>
@@ -73,21 +73,21 @@ sutab &lt;stdin itmin=0 itmax=last_sample count=all
     Requests tab plot of samples 32 to 63 on the first 10 traces of DATA.
     </pre>]]>
     </help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <int required="yes">
 	<keyword>itmin=</keyword>
 	<label>first time sample (zero-based) to plot</label>
-	<value default="0"></value>
+	<value default="0"/>
       </int>
       <int required="no">
 	<keyword>itmax=</keyword>
 	<label>last time sample (zero-based) to plot</label>
-	<value></value>
+	<value/>
       </int>
       <int required="no">
 	<keyword>count=</keyword>
 	<label>number of traces to plot</label>
-	<value></value>
+	<value/>
       </int>
     </parameters>
   </program>

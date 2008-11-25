@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>suaddhead.mnu</filename>
   <title>SU Add Header</title>
   <description>put headers on bare traces and set the tracl and ns fields</description>
@@ -17,9 +17,9 @@
   </help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Import/Export</category>
+  <date><created/><modified/><lastrun/></date><category>Import/Export</category>
   <category>Seismic Unix</category>
-  <io><input /><output /><error /></io>
+  <io><input/><output/><error/></io>
   <program stdin="yes" stdout="yes" stderr="yes" status="unconfigured">
     <menu index="0">suaddhead.mnu</menu>
     <title>SU Add Header</title>
@@ -58,26 +58,26 @@ SUADDHEAD - put headers on bare traces and set the tracl and ns fields
  of the pipe sets the trace header field dt to 4 ms.
       </pre>]]>
     </help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <int required="yes">
 	<keyword>ns=</keyword>
 	<label>the number of samples per trace</label>
-	<value></value>
+	<value/>
       </int>
       <flag>
 	<keyword>ftn=1</keyword>
 	<label>data written unformatted from Fortran</label>
-	<state default="off"></state>
+	<state default="off"/>
       </flag>
-      <range required="no" min="1" max="4" inc="1">
+      <range required="no" min="1" max="4" inc="1" digits="">
 	<keyword>tsort=</keyword>
 	<label>trace sorting code (check documentation)</label>
-	<value default="3"></value>
+	<value default="3"/>
       </range>
       <int required="no">
 	<keyword>ntrpr=</keyword>
 	<label>number of data traces per record</label>
-	<value></value>
+	<value/>
       </int>
     </parameters>
   </program>

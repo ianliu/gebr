@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>suvelannccs.mnu</filename>
   <title>SU Velan NCCS</title>
   <description>Compute stacking velocity panel for cdp gathers using Normalized CrossCorrelation Sum</description>
   <help/>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Gain, NMO, Stack and Standard Processes</category>
+  <date><created/><modified/><lastrun/></date><category>Gain, NMO, Stack and Standard Processes</category>
   <category>Seismic Unix</category>
   <io>
     <input/>
@@ -19,7 +19,7 @@
     <binary>suvelan_nccs</binary>
     <description>Compute stacking velocity panel for cdp gathers using Normalized CrossCorrelation Sum</description>
     <help/>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <int required="no">
         <keyword>nx=</keyword>
         <label>Number of traces in cdp</label>

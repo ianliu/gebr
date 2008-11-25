@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.1.0">
+<flow version="0.2.2">
   <filename>sustolt.mnu</filename>
   <title>SU Stolt</title>
   <description>Stolt migration for stacked data or common-offset gathers</description>
@@ -17,7 +17,7 @@
   </help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Migration and Dip Moveout</category>
+  <date><created/><modified/><lastrun/></date><category>Migration and Dip Moveout</category>
   <category>Seismic Unix</category>
   <io>
     <input/>
@@ -187,7 +187,7 @@ Trace header fields accessed:  ns, dt, delrt, offset, cdp
 </body>
 </html>
     ]]></help>
-    <parameters>
+    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
       <int required="yes">
         <keyword>cdpmin=</keyword>
         <label>Minimum CDP in dataset</label>
@@ -218,7 +218,7 @@ Trace header fields accessed:  ns, dt, delrt, offset, cdp
         <label/>
         <value/>
       </string>
-      <range required="no" min="0.000" max="1.000" inc="0.001">
+      <range required="no" min="0.000" max="1.000" inc="0.001" digits="">
         <keyword>smig=</keyword>
         <label>Stretch factor (0-1)</label>
         <value default="0.600000"/>
