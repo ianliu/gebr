@@ -23,8 +23,9 @@
 #include <gui/parameter.h>
 
 enum {
-        PARAMETER_LABEL,
 	PARAMETER_TYPE,
+	PARAMETER_KEYWORD,
+        PARAMETER_LABEL,
 	PARAMETER_XMLPOINTER,
 	PARAMETER_N_COLUMN
 };

@@ -133,6 +133,7 @@ parameter_setup_ui(void)
 	debr.ui_parameter.tree_store = gtk_tree_store_new(PARAMETER_N_COLUMN,
 		G_TYPE_STRING,
 		G_TYPE_STRING,
+		G_TYPE_STRING,							  
 		G_TYPE_POINTER);
 	debr.ui_parameter.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_parameter.tree_store));
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
@@ -145,12 +146,16 @@ parameter_setup_ui(void)
 		GTK_SIGNAL_FUNC(parameter_activated), NULL);
 
 	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes(_("Label"), renderer, NULL);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", PARAMETER_LABEL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_parameter.tree_view), col);
-	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Type"), renderer, NULL);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", PARAMETER_TYPE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_parameter.tree_view), col);
+	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes(_("Keyword"), renderer, NULL);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", PARAMETER_KEYWORD);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_parameter.tree_view), col);
+	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes(_("Label"), renderer, NULL);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", PARAMETER_LABEL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_parameter.tree_view), col);
 
 	debr.ui_parameter.widget = scrolled_window;
@@ -774,8 +779,9 @@ static void
 parameter_load_iter(GeoXmlParameter * parameter, GtkTreeIter * iter)
 {
 	gtk_tree_store_set(debr.ui_parameter.tree_store, iter,
+			   PARAMETER_TYPE, combo_type_map_get_title(geoxml_parameter_get_type(parameter)),
+			   PARAMETER_KEYWORD, geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(parameter)),
 		PARAMETER_LABEL, geoxml_parameter_get_label(parameter),
-		PARAMETER_TYPE, combo_type_map_get_title(geoxml_parameter_get_type(parameter)),
 		PARAMETER_XMLPOINTER, parameter,
 		-1);
 }

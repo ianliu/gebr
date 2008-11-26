@@ -99,6 +99,7 @@ program_setup_ui(void)
 	hpanel = gtk_hpaned_new();
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_paned_pack1(GTK_PANED(hpanel), scrolled_window, FALSE, FALSE);
+	gtk_widget_set_size_request(scrolled_window, 200, -1);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_IN);
