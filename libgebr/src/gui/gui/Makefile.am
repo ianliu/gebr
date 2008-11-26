@@ -16,14 +16,14 @@
 
 lib_LTLIBRARIES = libgebr_gui.la
 libgebr_gui_la_SOURCES = \
-	about.c utils.c pixmaps.c \
+	about.c utils.c pixmaps.c icons.c \
 	gtkfileentry.c gtkenhancedentry.c \
 	gtksequenceedit.c valuesequenceedit.c \
 	parameter.c
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = \
-	about.h utils.h pixmaps.h \
+	about.h utils.h pixmaps.h icons.h \
 	gtkfileentry.h gtkenhancedentry.h \
 	gtksequenceedit.h valuesequenceedit.h \
 	parameter.h

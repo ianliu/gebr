@@ -16,6 +16,8 @@
 
 SUBDIRS = src
 
+ACLOCAL_AMFLAGS = -I m4
+
 PKG_DEBIAN = debian/changelog.in debian/copyright debian/info debian/libgebr-default.ex \
 	debian/libgebr.doc-base.ex debian/postrm.ex debian/README.Debian \
 	debian/compat debian/dirs debian/libgebr0.dirs debian/libgebr-dev.dirs \

@@ -24,6 +24,8 @@
 
 #include <gtk/gtk.h>
 
+#include <gui/icons.h>
+
 #include "gebr.h"
 #include "../defines.h"
 #include "support.h"
@@ -70,6 +72,7 @@ main(int argc, char ** argv, char ** env)
 #endif
 	/* FIXME: necessary for representing fractional numbers only with comma */
 	setlocale(LC_NUMERIC, "C");
+	gui_setup_stock_theme();
 	gebr_setup_ui();
 	gebr_init(argc, argv);
 

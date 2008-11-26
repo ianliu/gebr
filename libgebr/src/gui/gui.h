@@ -19,6 +19,7 @@
 #include <gui/about.h>
 #include <gui/gtkfileentry.h>
 #include <gui/gtksequenceedit.h>
+#include <gui/icons.h>
 #include <gui/pixmaps.h>
 #include <gui/parameter.h>
 #include <gui/valuesequenceedit.h>

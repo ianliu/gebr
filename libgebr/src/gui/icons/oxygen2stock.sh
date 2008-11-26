@@ -108,7 +108,7 @@ for SIZE in $SIZES; do
 		if test ${OXYGEN_STOCK_MAP[$I+1]} = "_"; then
 			continue
 		fi
-		cp -v /usr/share/icons/oxygen/$SIZE/${OXYGEN_STOCK_MAP[$I+1]}.png $SIZE/${OXYGEN_STOCK_MAP[$I]}.png
+		cp -v /usr/share/icons/oxygen/$SIZE/${OXYGEN_STOCK_MAP[$I+1]}.png $SIZE/stock/${OXYGEN_STOCK_MAP[$I]}.png
 	done
 done
 
