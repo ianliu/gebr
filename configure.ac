@@ -17,7 +17,7 @@
 AC_INIT(configure.ac)
 
 PACKAGE=gebr
-VERSION=0.9.4pre`date +"%Y%m%d"`
+VERSION=0.9.6pre`date +"%Y%m%d"`
 TODAY=$(LANG=C date +"%a, %d %b %Y %T %z")
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)

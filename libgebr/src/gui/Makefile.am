@@ -1,5 +1,5 @@
-# libgebr - GÍBR Library
-# Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
+# libgebr - GeBR Library
+# Copyright (C) 2007 GeBR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = gui pixmaps
+SUBDIRS = gui pixmaps icons
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr-gui.pc
