@@ -25,8 +25,18 @@
 
 #include "icons.h"
 
+/*
+ * Private functions
+ */
+
+
+
+/*
+ * Library functions
+ */
+
 void
-gui_setup_stock_theme(void)
+gui_setup_icons(void)
 {
 	static GtkIconFactory *	icon_factory = NULL;
 	static const gchar *	sizes [] = {
@@ -37,6 +47,7 @@ gui_setup_stock_theme(void)
 		GTK_ICON_SIZE_SMALL_TOOLBAR,
 		GTK_ICON_SIZE_LARGE_TOOLBAR
 	};
+	GString *		size_path;
 	GString *		path;
 	int			i;
 
@@ -45,53 +56,75 @@ gui_setup_stock_theme(void)
 	else
 		return;
 
+	size_path = g_string_new(NULL);
 	path = g_string_new(NULL);
-
-	puts(ICONS_DIR);
-	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), ICONS_DIR);
-	g_object_set(gtk_settings_get_default(), "gtk-icon-theme-name", "gebr-icons", NULL);
 
 	for (i = 0; sizes[i] != NULL; ++i) {
 		DIR *		dir;
-		struct dirent *	file;
+		struct dirent *	size_file;
 
-		g_string_printf(path, "%s%s", ICONS_DIR"/", sizes[i]);
-		if ((dir = opendir(path->str)) == NULL)
+		g_string_printf(size_path, "%s%s", ICONS_DIR"/", sizes[i]);
+		if ((dir = opendir(size_path->str)) == NULL)
 			continue;
 
-		while ((file = readdir(dir)) != NULL) {
-			gchar *		stock_id;
-			GtkIconSet *	icon_set;
-			GtkIconSource *	icon_source;
+		while ((size_file = readdir(dir)) != NULL) {
+			DIR *		dir;
+			struct dirent *	file;
 
-			if (fnmatch("*.png", file->d_name, 1))
+			/* ignore gtk stock items */
+			if (strcmp(size_file->d_name, "stock") == 0)
+				continue;
+			g_string_printf(path, "%s/%s", size_path->str, size_file->d_name);
+			if ((dir = opendir(path->str)) == NULL)
 				continue;
 
-			/* remove ".png" from string */
-			stock_id = g_strndup(file->d_name, strlen(file->d_name)-4);
-			icon_set = gtk_icon_factory_lookup(icon_factory, stock_id);
-			if (icon_set == NULL) {
-				icon_set = gtk_icon_set_new();
-				gtk_icon_factory_add(icon_factory, stock_id, icon_set);
+			while ((file = readdir(dir)) != NULL) {
+				gchar *		stock_id;
+				GtkIconSet *	icon_set;
+				GtkIconSource *	icon_source;
+				GString *	filename;
+
+				if (fnmatch("*.png", file->d_name, 1))
+					continue;
+
+				/* remove ".png" from string */
+				stock_id = g_strndup(file->d_name, strlen(file->d_name)-4);
+				icon_set = gtk_icon_factory_lookup(icon_factory, stock_id);
+				if (icon_set == NULL) {
+					icon_set = gtk_icon_set_new();
+					gtk_icon_factory_add(icon_factory, stock_id, icon_set);
+				}
+
+				filename = g_string_new(NULL);
+				g_string_printf(filename, "%s/%s", path->str, file->d_name);
+
+				icon_source = gtk_icon_source_new();
+				gtk_icon_source_set_filename(icon_source, filename->str);
+				gtk_icon_source_set_icon_name(icon_source, stock_id);
+				gtk_icon_source_set_size(icon_source, (GtkIconSize)gtk_icon_sizes[i]);
+				gtk_icon_source_set_size_wildcarded(icon_source, TRUE);
+
+				gtk_icon_set_add_source(icon_set, icon_source);
+
+				g_string_free(filename, TRUE);
+				g_free(stock_id);
+				gtk_icon_source_free(icon_source);
 			}
-
-			icon_source = gtk_icon_source_new();
-			gtk_icon_source_set_filename(icon_source, file->d_name);
-			gtk_icon_source_set_icon_name(icon_source, stock_id);
-			gtk_icon_source_set_size(icon_source, (GtkIconSize)gtk_icon_sizes[i]);
-			gtk_icon_source_set_size_wildcarded(icon_source, TRUE);
-
-			gtk_icon_set_add_source(icon_set, icon_source);
-
-			g_free(stock_id);
-			gtk_icon_source_free(icon_source);
 		}
 
 		closedir(dir);
 	}
 
-	/* finally... apply the theme */
+	/* finally... add icons */
 	gtk_icon_factory_add_default(icon_factory);
 
+	g_string_free(size_path, TRUE);
 	g_string_free(path, TRUE);
+}
+
+void
+gui_setup_theme(void)
+{
+	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), ICONS_DIR);
+	g_object_set(gtk_settings_get_default(), "gtk-icon-theme-name", "gebr-theme", NULL);
 }

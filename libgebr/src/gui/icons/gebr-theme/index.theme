@@ -1,20 +1,20 @@
 [Icon Theme]
-Name=gebr-icons
-Comment=gebr icons
+Name=gebr-theme
+Comment=GeBR icon theme
 Inherits=hicolor
-Directories=16x16/stock,48x48/stock,48x48/stock
+Directories=16x16/stock,22x22/stock,48x48/stock
 
 [16x16/stock]
-Size=16x16
+Size=16
 Context=Misc
 Type=Threshold
 
 [22x22/stock]
-Size=22x22
+Size=22
 Context=Misc
 Type=Threshold
 
 [48x48/stock]
-Size=48x48
+Size=48
 Context=Misc
 Type=Threshold

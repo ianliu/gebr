@@ -63,6 +63,9 @@ void
 on_flow_execute_activate(void);
 
 void
+on_flow_component_help_activate(void);
+
+void
 on_flow_component_delete_activate(void);
 
 void

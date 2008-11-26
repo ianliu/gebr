@@ -454,16 +454,10 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 	/* separator */
 	menu_item = gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	/* delete */
 	gtk_container_add(GTK_CONTAINER(menu),
 		gtk_action_create_menu_item(gebr.actions.flow_edition.delete));
-	/* help */
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(GTK_OBJECT(menu_item), "activate",
-		GTK_SIGNAL_FUNC(program_help_show), NULL);
 	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gebr.actions.flow_edition.delete));
+		gtk_action_create_menu_item(gebr.actions.flow_edition.help));
 
 	gtk_widget_show_all(menu);
 

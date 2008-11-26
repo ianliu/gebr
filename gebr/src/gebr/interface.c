@@ -139,7 +139,7 @@ gebr_setup_ui(void)
 	g_signal_connect(gebr.actions.flow.execute, "activate",
 		(GCallback)on_flow_execute_activate, NULL);
 	gebr.actions.flow.import = gtk_action_new("flow_import",
-		_("Import"), _("Import a flow"), NULL);
+		_("Import"), _("Import a flow"), "document-import");
 	g_signal_connect(gebr.actions.flow.import, "activate",
 		(GCallback)on_flow_import_activate, NULL);
 	gebr.actions.flow.export = gtk_action_new("flow_export",
@@ -152,7 +152,11 @@ gebr_setup_ui(void)
 		(GCallback)on_flow_export_as_menu_activate, NULL);
 
 	/* Flow Edition */
-	gebr.actions.flow_edition.delete= gtk_action_new("flow_edition_delete",
+	gebr.actions.flow_edition.help = gtk_action_new("flow_edition_help",
+		NULL, _("Show component's help"), GTK_STOCK_HELP);
+	g_signal_connect(gebr.actions.flow_edition.help, "activate",
+		(GCallback)on_flow_component_help_activate, NULL);
+	gebr.actions.flow_edition.delete = gtk_action_new("flow_edition_delete",
 		NULL, _("Delete component"), GTK_STOCK_DELETE);
 	g_signal_connect(gebr.actions.flow_edition.delete, "activate",
 		(GCallback)on_flow_component_delete_activate, NULL);

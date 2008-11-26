@@ -120,6 +120,7 @@ struct gebr {
 			GtkAction *		export_as_menu;
 		} flow;
 		struct {
+			GtkAction *		help;
 			GtkAction *		delete;
 			GtkAction *		properties;
 			GtkAction *		refresh;

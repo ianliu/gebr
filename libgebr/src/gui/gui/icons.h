@@ -19,7 +19,10 @@
 #define __LIBGEBR_GUI_ICONS_H
 
 void
-gui_setup_stock_theme(void);
+gui_setup_icons(void);
+
+void
+gui_setup_theme(void);
 
 #endif //__LIBGEBR_GUI_ICONS_H
 

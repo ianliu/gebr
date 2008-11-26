@@ -31,6 +31,7 @@
 #include "ui_document.h"
 #include "ui_paths.h"
 #include "ui_job_control.h"
+#include "ui_help.h"
 
 
 /*
@@ -202,6 +203,18 @@ void
 on_flow_execute_activate(void)
 {
 	flow_run();
+}
+
+/*
+ * Function: on_flow_component_help_activate
+ * *Fill me in!*
+ *
+ */
+void
+on_flow_component_help_activate(void)
+{
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 2);
+	program_help_show();
 }
 
 /*
