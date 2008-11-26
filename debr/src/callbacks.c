@@ -220,8 +220,8 @@ on_menu_delete_activate(void)
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
 		MENU_PATH, &path,
 		-1);
-
-	if (g_unlink(path)) {
+	
+	if ((strlen(path)) && (g_unlink(path))) {
 		GtkWidget *	dialog;
 
 		dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
@@ -317,6 +317,7 @@ void
 on_program_new_activate(void)
 {
 	program_new();
+	//menu_dialog_setup_ui();
 }
 
 /*
