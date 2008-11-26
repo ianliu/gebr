@@ -100,6 +100,9 @@ struct gebr {
 
 	struct gebr_actions {
 		struct {
+			GtkAction *             quit;
+		} main;
+		struct {
 			GtkAction *		new_project;
 			GtkAction *		new_line;
 			GtkAction *		delete;

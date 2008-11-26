@@ -89,6 +89,12 @@ gebr_setup_ui(void)
 	/*
 	 * Actions
 	 */
+	/* Main */
+	gebr.actions.main.quit = gtk_action_new("main_quit",
+		NULL, NULL, GTK_STOCK_QUIT);
+	g_signal_connect(gebr.actions.main.quit, "activate",
+		(GCallback)(gebr_quit), NULL);
+
 	/* Project/Line */
 	gebr.actions.project_line.new_project = gtk_action_new("project_line_new_project",
 		_("New Project"), _("Create a new project"), GTK_STOCK_NEW);
@@ -107,7 +113,7 @@ gebr_setup_ui(void)
 	g_signal_connect(gebr.actions.project_line.properties, "activate",
 		(GCallback)on_project_line_properties_activate, NULL);
 	gebr.actions.project_line.line_paths = gtk_action_new("project_line_line_paths",
-		_("Line paths"), _("Edit line custom paths"), GTK_STOCK_DIRECTORY);
+		_("Line paths"), _("Edit custom line paths"), GTK_STOCK_DIRECTORY);
 	g_signal_connect(gebr.actions.project_line.line_paths, "activate",
 		(GCallback)on_project_line_paths_activate, NULL);
 	 
@@ -359,7 +365,7 @@ assembly_config_menu(void)
 	GtkWidget *	child_menu_item;
 
 	menu = gtk_menu_new();
-	gtk_menu_set_title(GTK_MENU(menu), _("Config menu"));
+	gtk_menu_set_title(GTK_MENU(menu), _("Actions menu"));
 
 	/* Preferences entry */
 	child_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PREFERENCES, NULL);
@@ -374,8 +380,13 @@ assembly_config_menu(void)
 	g_signal_connect(GTK_OBJECT(child_menu_item), "activate",
 		GTK_SIGNAL_FUNC(on_configure_servers_activate), NULL);
 
-	menu_item = gtk_menu_item_new_with_label(_("Configure"));
+	menu_item = gtk_menu_item_new_with_label(_("Actions"));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
+
+	/* Quit entry */
+	gtk_container_add(GTK_CONTAINER(menu),gtk_separator_menu_item_new());
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gebr.actions.main.quit));
 
 	return menu_item;
 }

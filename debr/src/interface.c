@@ -286,6 +286,7 @@ debr_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(menu), child_menu_item);
 	g_signal_connect(child_menu_item, "activate",
 		(GCallback)on_configure_preferences_activate, NULL);
+	gtk_container_add(GTK_CONTAINER(menu),gtk_separator_menu_item_new());
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(debr.actions.main.quit));
 	/*
