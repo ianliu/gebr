@@ -26,7 +26,7 @@ OXYGEN_STOCK_MAP=(
 	gtk-dnd _
 	gtk-dnd-multiple _
 	gtk-edit actions/document-properties
-	gtk-execute actions/system-run
+	gtk-execute actions/run
 	gtk-find actions/edit-find
 	gtk-find-and-replace actions/edit-find
 	gtk-floppy devices/media-floppy
