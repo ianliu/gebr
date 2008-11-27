@@ -235,8 +235,9 @@ parameter_new(void)
 	}
 	parameter_select_iter(iter);
 	parameter_change_type_setup_ui();
-
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
+
+	parameter_dialog_setup_ui();
 }
 
 /*
@@ -848,10 +849,10 @@ parameter_selected(void)
 {
 	GtkTreeIter	iter;
 
-	parameter_get_selected(&iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
-		PARAMETER_XMLPOINTER, &debr.parameter,
-		-1);
+	if(parameter_get_selected(&iter))
+	   gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
+			      PARAMETER_XMLPOINTER, &debr.parameter,
+			      -1);
 }
 
 /*

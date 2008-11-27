@@ -163,11 +163,12 @@ menu_new(void)
 
 	/* select it */
 	menu_select_iter(&iter);
-
+	
 	/* add a new program for the user to play with */
 	program_new();
 	/* new menu with no changes shouldn't be save */
 	menu_saved_status_set(MENU_STATUS_SAVED);
+	menu_dialog_setup_ui();
 
 	g_string_free(new_menu_str, TRUE);
 }
