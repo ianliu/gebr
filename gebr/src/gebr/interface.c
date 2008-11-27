@@ -289,6 +289,9 @@ gebr_setup_ui(void)
 	/*
 	 * Notebook's page "Flow edition"
 	 */
+	GtkToolItem *	tool_item;
+	GtkWidget *	menu;
+
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
@@ -300,12 +303,18 @@ gebr_setup_ui(void)
 		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow_edition.properties)), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow_edition.refresh)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(GTK_ACTION(gebr.actions.flow_edition.configured))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(GTK_ACTION(gebr.actions.flow_edition.disabled))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(GTK_ACTION(gebr.actions.flow_edition.unconfigured))), -1);
+
+	menu = gtk_menu_new();
+	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_APPLY);
+	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
+	gtk_container_add(GTK_CONTAINER(menu),
+		gtk_action_create_menu_item(GTK_ACTION(gebr.actions.flow_edition.configured)));
+	gtk_container_add(GTK_CONTAINER(menu),
+		gtk_action_create_menu_item(GTK_ACTION(gebr.actions.flow_edition.disabled)));
+	gtk_container_add(GTK_CONTAINER(menu),
+		gtk_action_create_menu_item(GTK_ACTION(gebr.actions.flow_edition.unconfigured)));
+	
 
 	gebr.ui_flow_edition = flow_edition_setup_ui();
 	vbox = gtk_vbox_new(FALSE, 0);
