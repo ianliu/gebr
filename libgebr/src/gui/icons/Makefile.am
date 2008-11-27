@@ -21,14 +21,14 @@ libgebr_gui_icons_DATA =
 
 libgebr_gui_icons_16x16_actionsdir = $(datadir)/libgebr/icons/16x16/actions
 libgebr_gui_icons_16x16_actions_DATA = \
-	16x16/actions/document-import.png
+	16x16/actions/document-import.png 16x16/actions/document-export.png 16x16/actions/edit-clear.png 16x16/actions/folder-new.png 16x16/actions/system-switch-user.png 16x16/actions/tab-new-background.png
 
 libgebr_gui_icons_22x22_actionsdir = $(datadir)/libgebr/icons/22x22/actions
 libgebr_gui_icons_22x22_actions_DATA = \
-	22x22/actions/document-import.png
+	22x22/actions/document-import.png 22x22/actions/document-export.png 22x22/actions/edit-clear.png 22x22/actions/folder-new.png 22x22/actions/system-switch-user.png 22x22/actions/tab-new-background.png
 
 libgebr_gui_icons_48x48_actionsdir = $(datadir)/libgebr/icons/48x48/actions
 libgebr_gui_icons_48x48_actions_DATA = \
-	48x48/actions/document-import.png
+	48x48/actions/document-import.png 48x48/actions/document-export.png 48x48/actions/edit-clear.png 48x48/actions/folder-new.png 48x48/actions/system-switch-user.png 48x48/actions/tab-new-background.png
 
 EXTRA_DIST = $(libgebr_gui_icons_DATA)

@@ -97,11 +97,11 @@ gebr_setup_ui(void)
 
 	/* Project/Line */
 	gebr.actions.project_line.new_project = gtk_action_new("project_line_new_project",
-		_("New Project"), _("Create a new project"), GTK_STOCK_NEW);
+		_("New Project"), _("Create a new project"), "folder-new");
 	g_signal_connect(gebr.actions.project_line.new_project, "activate",
 		(GCallback)on_project_line_new_project_activate, NULL);
 	gebr.actions.project_line.new_line = gtk_action_new("project_line_new_line",
-		_("New Line"), _("Create a new line"), GTK_STOCK_NEW);
+		_("New Line"), _("Create a new line"), "tab-new-background");
 	g_signal_connect(gebr.actions.project_line.new_line, "activate",
 		(GCallback)on_project_line_new_line_activate, NULL);
 	gebr.actions.project_line.delete = gtk_action_new("project_line_delete",
@@ -131,7 +131,7 @@ gebr_setup_ui(void)
 	g_signal_connect(gebr.actions.flow.properties, "activate",
 		(GCallback)on_flow_properties_activate, NULL);
 	gebr.actions.flow.io = gtk_action_new("flow_io",
-		_("Input and Output"), _("Edit input/output flow files"), GTK_STOCK_JUMP_TO);
+		_("Input and Output"), _("Edit input/output flow files"), "system-switch-user");
 	g_signal_connect(gebr.actions.flow.io, "activate",
 		(GCallback)on_flow_io_activate, NULL);
 	gebr.actions.flow.execute = gtk_action_new("flow_execute",
@@ -143,11 +143,11 @@ gebr_setup_ui(void)
 	g_signal_connect(gebr.actions.flow.import, "activate",
 		(GCallback)on_flow_import_activate, NULL);
 	gebr.actions.flow.export = gtk_action_new("flow_export",
-		_("Export"), _("Export the flow"), GTK_STOCK_CONVERT);
+		_("Export"), _("Export the flow"), "document-export");
 	g_signal_connect(gebr.actions.flow.export, "activate",
 		(GCallback)on_flow_export_activate, NULL);
 	gebr.actions.flow.export_as_menu = gtk_action_new("flow_export_as_menu",
-		_("Export as menu"), _("Export the flow as a menu"), GTK_STOCK_CONVERT);
+		_("Export as menu"), _("Export the flow as a menu"), "document-export");
 	g_signal_connect(gebr.actions.flow.export_as_menu, "activate",
 		(GCallback)on_flow_export_as_menu_activate, NULL);
 
@@ -188,11 +188,11 @@ gebr_setup_ui(void)
 	g_signal_connect(gebr.actions.job_control.save, "activate",
 		(GCallback)on_job_control_save, NULL);
 	gebr.actions.job_control.cancel = gtk_action_new("job_cancel",
-		NULL, _("Ask server to terminate the job"), GTK_STOCK_CANCEL);
+		NULL, _("Ask server to terminate the job"), GTK_STOCK_MEDIA_STOP);
 	g_signal_connect(gebr.actions.job_control.cancel, "activate",
 		(GCallback)on_job_control_cancel, NULL);
 	gebr.actions.job_control.close = gtk_action_new("job_close",
-		NULL, _("Clear current job log"), GTK_STOCK_CLOSE);
+		NULL, _("Clear current job log"), "edit-clear");
 	g_signal_connect(gebr.actions.job_control.close, "activate",
 		(GCallback)on_job_control_close, NULL);
 	gebr.actions.job_control.clear = gtk_action_new("job_clear",

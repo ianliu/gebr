@@ -7,7 +7,7 @@ OXYGEN_STOCK_MAP=(
 	gtk-bold actions/format-text-bold
 	gtk-cancel actions/dialog-cancel
 	gtk-cdrom devices/drive-optical
-	gtk-clear actions/edit-clear
+	gtk-clear actions/edit-clear-list
 	gtk-close actions/dialog-close
 	gtk-color-picker actions/color-picker
 	gtk-connect actions/network-connect
@@ -59,6 +59,7 @@ OXYGEN_STOCK_MAP=(
 	gtk-media-rewind actions/media-seek-backward
 	gtk-media-stop actions/media-playback-stop
 	gtk-network _
+	gtk-new actions/document-new
 	gtk-no actions/dialog-cancel
 	gtk-ok actions/dialog-ok
 	gtk-open actions/document-open-folder
@@ -112,14 +113,14 @@ for SIZE in $SIZES; do
 	done
 done
 
-#list files to add to Makefile.am
-# for SIZE in $SIZES; do
-# 	LIST=""
-# 	for (( I=0; $I!=${#OXYGEN_STOCK_MAP[*]}; I=$I+2 )); do
-# 		if test ${OXYGEN_STOCK_MAP[$I+1]} = "_"; then
-# 			continue
-# 		fi
-# 		LIST="$LIST $SIZE/${OXYGEN_STOCK_MAP[$I]}.png"
-# 	done
-# 	echo $LIST
-# done
+list files to add to Makefile.am
+for SIZE in $SIZES; do
+	LIST=""
+	for (( I=0; $I!=${#OXYGEN_STOCK_MAP[*]}; I=$I+2 )); do
+		if test ${OXYGEN_STOCK_MAP[$I+1]} = "_"; then
+			continue
+		fi
+		LIST="$LIST $SIZE/${OXYGEN_STOCK_MAP[$I]}.png"
+	done
+	echo $LIST
+done

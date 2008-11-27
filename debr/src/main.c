@@ -23,6 +23,8 @@
 
 #include <gtk/gtk.h>
 
+#include <gui/icons.h>
+
 #include "interface.h"
 #include "debr.h"
 
@@ -41,6 +43,8 @@ main(int argc, char *argv[])
 	/* temporary: necessary for representing fractional numbers only with comma */
 	setlocale(LC_NUMERIC, "C");
 
+	gui_setup_icons();
+	gui_setup_theme();
 	debr_setup_ui();
 	gtk_widget_show(debr.window);
 	gtk_main();

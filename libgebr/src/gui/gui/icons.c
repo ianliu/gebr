@@ -79,32 +79,31 @@ gui_setup_icons(void)
 				continue;
 
 			while ((file = readdir(dir)) != NULL) {
-				gchar *		stock_id;
 				GtkIconSet *	icon_set;
 				GtkIconSource *	icon_source;
 				GString *	filename;
+				gchar *		stock_id;
 
 				if (fnmatch("*.png", file->d_name, 1))
 					continue;
 
 				/* remove ".png" from string */
-				stock_id = g_strndup(file->d_name, strlen(file->d_name)-4);
-				icon_set = gtk_icon_factory_lookup(icon_factory, stock_id);
-				if (icon_set == NULL) {
-					icon_set = gtk_icon_set_new();
-					gtk_icon_factory_add(icon_factory, stock_id, icon_set);
-				}
-
 				filename = g_string_new(NULL);
 				g_string_printf(filename, "%s/%s", path->str, file->d_name);
+				stock_id = g_strndup(file->d_name, strlen(file->d_name)-4);
 
 				icon_source = gtk_icon_source_new();
 				gtk_icon_source_set_filename(icon_source, filename->str);
-				gtk_icon_source_set_icon_name(icon_source, stock_id);
 				gtk_icon_source_set_size(icon_source, (GtkIconSize)gtk_icon_sizes[i]);
 				gtk_icon_source_set_size_wildcarded(icon_source, TRUE);
+				gtk_icon_source_set_direction_wildcarded(icon_source, TRUE);
+				gtk_icon_source_set_state_wildcarded(icon_source, TRUE);
 
+				icon_set = gtk_icon_factory_lookup(icon_factory, stock_id);
+				if (icon_set == NULL)
+					icon_set = gtk_icon_set_new();
 				gtk_icon_set_add_source(icon_set, icon_source);
+				gtk_icon_factory_add(icon_factory, stock_id, icon_set);
 
 				g_string_free(filename, TRUE);
 				g_free(stock_id);
