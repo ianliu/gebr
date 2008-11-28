@@ -471,16 +471,11 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 
 	/* separator */
 	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE ||
-	gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE) {
-		menu_item = gtk_separator_menu_item_new();
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	}
+	gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE)
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
-	/* Input/Output */
 	gtk_container_add(GTK_CONTAINER(menu),
 		gtk_action_create_menu_item(gebr.actions.flow.io));
-
-	/* Run */
 	gtk_container_add(GTK_CONTAINER(menu),
 		gtk_action_create_menu_item(gebr.actions.flow.execute));
 

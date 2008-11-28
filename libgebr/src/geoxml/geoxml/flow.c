@@ -28,6 +28,7 @@
 #include "document_p.h"
 #include "program.h"
 #include "parameters.h"
+#include "parameters_p.h"
 #include "parameter_group.h"
 #include "value_sequence.h"
 

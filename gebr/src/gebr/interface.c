@@ -384,11 +384,12 @@ assembly_config_menu(void)
 	child_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PREFERENCES, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), child_menu_item);
 	g_signal_connect(GTK_OBJECT(child_menu_item), "activate",
-			G_CALLBACK(on_configure_preferences_activate), NULL);
+		G_CALLBACK(on_configure_preferences_activate), NULL);
 
 	/* Server entry */
 	child_menu_item =  gtk_image_menu_item_new_with_mnemonic(_("_Servers"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(child_menu_item), gtk_image_new_from_stock(GTK_STOCK_NETWORK, 1));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(child_menu_item),
+		gtk_image_new_from_stock(GTK_STOCK_NETWORK, 1));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), child_menu_item);
 	g_signal_connect(GTK_OBJECT(child_menu_item), "activate",
 		GTK_SIGNAL_FUNC(on_configure_servers_activate), NULL);
@@ -399,7 +400,7 @@ assembly_config_menu(void)
 	/* Quit entry */
 	gtk_container_add(GTK_CONTAINER(menu),gtk_separator_menu_item_new());
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gebr.actions.main.quit));
+		gtk_action_create_menu_item(gebr.actions.main.quit));
 
 	return menu_item;
 }
