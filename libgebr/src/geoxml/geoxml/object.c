@@ -35,11 +35,15 @@ struct geoxml_object {
 void
 geoxml_object_set_user_data(GeoXmlObject * object, gpointer user_data)
 {
+	if (object == NULL)
+		return;
 	((GdomeNode*)object)->user_data = user_data;
 }
 
 gpointer
 geoxml_object_get_user_data(GeoXmlObject * object)
 {
+	if (object == NULL)
+		return NULL;
 	return ((GdomeNode*)object)->user_data;
 }

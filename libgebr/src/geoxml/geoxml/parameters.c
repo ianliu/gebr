@@ -61,6 +61,19 @@ __geoxml_parameters_group_check(GeoXmlParameters * parameters)
 	return (gboolean)(__geoxml_get_element_index((GdomeElement*)parameters) == 1);
 }
 
+GeoXmlParameter *
+__geoxml_parameters_append_reference_parameter(GeoXmlParameters * parameters, GeoXmlParameter * reference)
+{
+	GeoXmlParameter *	parameter;
+
+	parameter = (GeoXmlParameter*)gdome_el_cloneNode((GdomeElement*)reference, TRUE, &exception);
+	__geoxml_parameter_set_be_reference(parameter, reference, TRUE);
+	gdome_el_insertBefore((GdomeElement*)parameters, (GdomeNode*)parameter, NULL, &exception);
+
+	return parameter;
+}
+
+
 /*
  * library functions.
  */
@@ -74,11 +87,25 @@ geoxml_parameters_append_parameter(GeoXmlParameters * parameters, enum GEOXML_PA
 		return NULL;
 
 	GdomeElement *	element;
+	GdomeElement *	parent;
 
 	element = __geoxml_insert_new_element((GdomeElement*)parameters, "parameter", NULL);
 	__geoxml_element_assign_new_id(element);
 	__geoxml_insert_new_element(element, "label", NULL);
 	__geoxml_parameter_insert_type((GeoXmlParameter*)element, type);
+
+	/* append references to other instances */
+	parent = (GdomeElement*)gdome_el_parentNode((GdomeElement*)parameters, &exception);
+	if (strcmp(gdome_el_nodeName(parent, &exception)->str, "group") == 0) {
+		GeoXmlParameterGroup *	parameter_group;
+		GeoXmlSequence *	instance;
+
+		parameter_group = GEOXML_PARAMETER_GROUP(gdome_el_parentNode(parent, &exception));
+		geoxml_parameter_group_get_instance(parameter_group, &instance, 1);
+		for (; instance != NULL; geoxml_sequence_next(&instance))
+			__geoxml_parameters_append_reference_parameter(
+				GEOXML_PARAMETERS(instance), (GeoXmlParameter*)element);
+	}
 
 	return (GeoXmlParameter*)element;
 }
@@ -91,13 +118,7 @@ geoxml_parameters_append_reference_parameter(GeoXmlParameters * parameters, GeoX
 	if (__geoxml_parameters_group_check(parameters) == FALSE)
 		return NULL;
 
-	GeoXmlParameter *	parameter;
-
-	parameter = (GeoXmlParameter*)gdome_el_cloneNode((GdomeElement*)reference, TRUE, &exception);
-	__geoxml_parameter_set_be_reference(parameter, reference, TRUE);
-	gdome_el_insertBefore((GdomeElement*)parameters, (GdomeNode*)parameter, NULL, &exception);
-
-	return parameter;
+	return __geoxml_parameters_append_reference_parameter(parameters, reference);
 }
 
 void
@@ -190,7 +211,7 @@ geoxml_parameters_get_first_parameter(GeoXmlParameters * parameters)
 {
 	if (parameters == NULL)
 		return NULL;
-	return (GeoXmlSequence*)__geoxml_get_first_element((GdomeElement*)parameters, "*");
+	return (GeoXmlSequence*)__geoxml_get_first_element((GdomeElement*)parameters, "parameter");
 }
 
 int
@@ -214,19 +235,11 @@ geoxml_parameters_get_number(GeoXmlParameters * parameters)
 {
 	if (parameters == NULL)
 		return -1;
-
-	gint			parameters_number = 0;
-	GeoXmlSequence *	parameter;
-
-	parameter = geoxml_parameters_get_first_parameter(parameters);
-	for (parameters_number = 0; parameter != NULL; ++parameters_number)
-		geoxml_sequence_next(&parameter);
-
-	return parameters_number;
+	return __geoxml_get_elements_number((GdomeElement*)parameters, "parameter");
 }
 
 gboolean
-geoxml_parameters_get_is_in_group(GeoXmlParameters * parameters)
+geoxml_parameters_get_group(GeoXmlParameters * parameters)
 {
 	if (parameters == NULL)
 		return FALSE;

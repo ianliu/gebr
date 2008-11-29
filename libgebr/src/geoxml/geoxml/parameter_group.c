@@ -110,7 +110,8 @@ geoxml_parameter_group_get_instance(GeoXmlParameterGroup * parameter_group,
 	}
 
 	*parameters = (GeoXmlSequence*)__geoxml_get_element_at(
-		(GdomeElement*)parameter_group, "parameters", index, FALSE);
+		(GdomeElement*)__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group)),
+		"parameters", index, FALSE);
 
 	return (*parameters == NULL)
 		? GEOXML_RETV_INVALID_INDEX
