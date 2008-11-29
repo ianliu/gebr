@@ -28,6 +28,7 @@
 #include "parameters.h"
 #include "parameters_p.h"
 #include "parameter_p.h"
+#include "sequence_p.h"
 
 /*
  * internal stuff
@@ -43,9 +44,11 @@ __geoxml_parameter_group_turn_instance_to_reference(GeoXmlParameters * instance)
 	GeoXmlSequence *	parameter;
 
 	geoxml_parameters_get_parameter(instance, &parameter, 0);
-	for (; parameter != NULL; geoxml_sequence_next(&parameter))
+	for (; parameter != NULL; __geoxml_sequence_next(&parameter)) {
 		__geoxml_parameter_set_be_reference(GEOXML_PARAMETER(parameter),
-			GEOXML_PARAMETER(parameter), TRUE);
+			GEOXML_PARAMETER(parameter));
+		__geoxml_element_assign_new_id((GdomeElement*)parameter);
+	}
 }
 
 void
@@ -74,7 +77,7 @@ geoxml_parameter_group_instanciate(GeoXmlParameterGroup * parameter_group)
 	GeoXmlParameters *	new_instance;
 
 	geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
-	new_instance = (GeoXmlParameters*)geoxml_sequence_append_clone(first_instance);
+	new_instance = (GeoXmlParameters*)__geoxml_sequence_append_clone(first_instance);
 	__geoxml_parameter_group_turn_instance_to_reference(new_instance);
 	geoxml_parameters_reset(new_instance, TRUE);
 
@@ -123,7 +126,8 @@ geoxml_parameter_group_get_instances_number(GeoXmlParameterGroup * parameter_gro
 {
 	if (parameter_group == NULL)
 		return -1;
-	return __geoxml_get_elements_number((GdomeElement*)parameter_group, "parameters");
+	return __geoxml_get_elements_number((GdomeElement*)
+		__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group)), "parameters");
 }
 
 GSList *
@@ -131,8 +135,18 @@ geoxml_parameter_group_get_parameter_in_all_instances(GeoXmlParameterGroup * par
 {
 	if (parameter_group == NULL)
 		return NULL;
-	return __geoxml_parameter_get_referencee_list((GdomeElement*)parameter_group,
-		__geoxml_get_attr_value((GdomeElement*)parameter_group, "id"));
+
+	GeoXmlSequence *	first_instance;
+	GeoXmlSequence *	parameter;
+	GSList *		idref_list;
+
+	geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
+	geoxml_parameters_get_parameter(GEOXML_PARAMETERS(first_instance), &parameter, 0);
+	idref_list = __geoxml_parameter_get_referencee_list((GdomeElement*)parameter_group,
+		__geoxml_get_attr_value((GdomeElement*)parameter, "id"));
+	idref_list = g_slist_prepend(idref_list, parameter);
+
+	return idref_list;
 }
 
 void
@@ -140,10 +154,9 @@ geoxml_parameter_group_set_is_instanciable(GeoXmlParameterGroup * parameter_grou
 {
 	if (parameter_group == NULL)
 		return;
-	if (enable == FALSE)
-		while (geoxml_parameter_group_deinstanciate(parameter_group) == TRUE);
-	__geoxml_set_attr_value((GdomeElement*)parameter_group, "instanciable",
-		(enable == TRUE ? "yes" : "no"));
+	__geoxml_set_attr_value(
+		(GdomeElement*)__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group)),
+		"instanciable", (enable == TRUE ? "yes" : "no"));
 }
 
 void
@@ -151,7 +164,9 @@ geoxml_parameter_group_set_expand(GeoXmlParameterGroup * parameter_group, const 
 {
 	if (parameter_group == NULL)
 		return;
-	__geoxml_set_attr_value((GdomeElement*)parameter_group, "expand", (enable == TRUE ? "yes" : "no"));
+	__geoxml_set_attr_value(
+		(GdomeElement*)__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group)),
+		"expand", (enable == TRUE ? "yes" : "no"));
 }
 
 gboolean
@@ -159,7 +174,9 @@ geoxml_parameter_group_get_is_instanciable(GeoXmlParameterGroup * parameter_grou
 {
 	if (parameter_group == NULL)
 		return FALSE;
-	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)parameter_group, "instanciable"), "yes"))
+	return (!strcmp(__geoxml_get_attr_value(
+			(GdomeElement*)__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group)),
+			"instanciable"), "yes"))
 		? TRUE : FALSE;
 }
 
@@ -168,6 +185,8 @@ geoxml_parameter_group_get_expand(GeoXmlParameterGroup * parameter_group)
 {
 	if (parameter_group == NULL)
 		return FALSE;
-	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)parameter_group, "expand"), "yes"))
+	return (!strcmp(__geoxml_get_attr_value(
+			(GdomeElement*)__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group)),
+			"expand"), "yes"))
 		? TRUE : FALSE;
 }

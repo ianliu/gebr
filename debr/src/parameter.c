@@ -56,12 +56,13 @@ struct {
 	{GEOXML_PARAMETERTYPE_FILE, 6, _("file")},
 	{GEOXML_PARAMETERTYPE_GROUP, 7, _("group")},
 };
+const gsize	combo_type_map_size = 8;
 
 int
 combo_type_map_get_index(enum GEOXML_PARAMETERTYPE type)
 {
 	int i;
-	for (i = 0; i < 7; ++i)
+	for (i = 0; i < combo_type_map_size; ++i)
 		if (combo_type_map[i].type == type)
 			return combo_type_map[i].index;
 	return -1;
@@ -218,14 +219,18 @@ parameter_new(void)
 	if (debr.parameter != NULL && geoxml_parameter_get_is_program_parameter(debr.parameter) == FALSE) {
 		GeoXmlSequence *	first_instance;
 		GtkTreeIter		parent;
+		GtkTreePath *		tree_path;
 
 		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(debr.parameter), &first_instance, 0);
 		parameter_get_selected(&parent);
-
 		iter = parameter_append_to_ui(
 			geoxml_parameters_append_parameter(GEOXML_PARAMETERS(first_instance),
 				GEOXML_PARAMETERTYPE_FLOAT),
 			&parent);
+
+		tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent);
+		gtk_tree_view_expand_row(GTK_TREE_VIEW(debr.ui_parameter.tree_view), tree_path, FALSE);
+		gtk_tree_path_free(tree_path);
 	} else {
 		iter = parameter_append_to_ui(
 			geoxml_parameters_append_parameter(
@@ -779,12 +784,28 @@ parameter_append_to_ui(GeoXmlParameter * parameter, GtkTreeIter * parent)
 static void
 parameter_load_iter(GeoXmlParameter * parameter, GtkTreeIter * iter)
 {
+	GString *	keyword;
+
+	keyword = g_string_new("");
+	if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE)
+		g_string_assign(keyword, geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(parameter)));
+	else {
+		GeoXmlSequence *	instance;
+
+		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+		g_string_printf(keyword, "%lu parameter(s) and %lu instance(s)",
+			geoxml_parameters_get_number(GEOXML_PARAMETERS(instance)),
+			geoxml_parameter_group_get_instances_number(GEOXML_PARAMETER_GROUP(parameter)));
+	}
+
 	gtk_tree_store_set(debr.ui_parameter.tree_store, iter,
-			   PARAMETER_TYPE, combo_type_map_get_title(geoxml_parameter_get_type(parameter)),
-			   PARAMETER_KEYWORD, geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(parameter)),
+		PARAMETER_TYPE, combo_type_map_get_title(geoxml_parameter_get_type(parameter)),
+		PARAMETER_KEYWORD, keyword->str,
 		PARAMETER_LABEL, geoxml_parameter_get_label(parameter),
 		PARAMETER_XMLPOINTER, parameter,
 		-1);
+
+	g_string_free(keyword, TRUE);
 }
 
 /*

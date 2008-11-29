@@ -215,10 +215,10 @@ __gtk_sequence_edit_popup_menu(GtkTreeView * tree_view, GtkSequenceEdit * sequen
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(sequence_edit->tree_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
-		return menu;
+		goto out;
 	if (sequence_edit->minimum_one
 	&& gtk_tree_model_iter_n_children(GTK_TREE_MODEL(sequence_edit->list_store), NULL) == 1)
-		return menu;
+		goto out;
 
 	/* Move up */
 	if (gtk_list_store_can_move_up(sequence_edit->list_store, &iter) == TRUE) {
@@ -240,7 +240,7 @@ __gtk_sequence_edit_popup_menu(GtkTreeView * tree_view, GtkSequenceEdit * sequen
 	g_signal_connect(menu_item, "activate",
 		(GCallback)__gtk_sequence_edit_on_remove_activated, sequence_edit);
 
-	gtk_widget_show_all(menu);
+out:	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
 }
@@ -381,8 +381,6 @@ gtk_sequence_edit_add(GtkSequenceEdit * sequence_edit, const gchar * text, gbool
 	gtk_list_store_set(sequence_edit->list_store, &iter,
 		0, (show_empty_value_text && !strlen(text)) ? _("<empty value>") : text,
 		-1);
-
-	g_signal_emit_by_name(sequence_edit, "changed");
 
 	return iter;
 }

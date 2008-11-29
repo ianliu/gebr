@@ -58,7 +58,7 @@ __geoxml_parameters_group_check(GeoXmlParameters * parameters)
 	if (strcmp(gdome_el_nodeName(parent_element, &exception)->str, "group") != 0)
 		return TRUE;
 
-	return (gboolean)(__geoxml_get_element_index((GdomeElement*)parameters) == 1);
+	return (gboolean)(__geoxml_get_element_index((GdomeElement*)parameters) == 0);
 }
 
 GeoXmlParameter *
@@ -67,7 +67,8 @@ __geoxml_parameters_append_reference_parameter(GeoXmlParameters * parameters, Ge
 	GeoXmlParameter *	parameter;
 
 	parameter = (GeoXmlParameter*)gdome_el_cloneNode((GdomeElement*)reference, TRUE, &exception);
-	__geoxml_parameter_set_be_reference(parameter, reference, TRUE);
+	__geoxml_parameter_set_be_reference(parameter, reference);
+	__geoxml_element_assign_new_id((GdomeElement*)parameter);
 	gdome_el_insertBefore((GdomeElement*)parameters, (GdomeNode*)parameter, NULL, &exception);
 
 	return parameter;
@@ -239,7 +240,7 @@ geoxml_parameters_get_number(GeoXmlParameters * parameters)
 }
 
 gboolean
-geoxml_parameters_get_group(GeoXmlParameters * parameters)
+geoxml_parameters_get_is_in_group(GeoXmlParameters * parameters)
 {
 	if (parameters == NULL)
 		return FALSE;

@@ -206,8 +206,10 @@ int
 geoxml_sequence_previous(GeoXmlSequence ** sequence)
 {
 	int ret;
-	if ((ret = __geoxml_sequence_check(*sequence)))
+	if ((ret = __geoxml_sequence_check(*sequence))) {
+		*sequence = NULL;
 		return ret;
+	}
 
 	return __geoxml_sequence_previous(sequence);
 }
@@ -216,8 +218,10 @@ int
 geoxml_sequence_next(GeoXmlSequence ** sequence)
 {
 	int ret;
-	if ((ret = __geoxml_sequence_check(*sequence)))
+	if ((ret = __geoxml_sequence_check(*sequence))) {
+		*sequence = NULL;
 		return ret;
+	}
 
 	return __geoxml_sequence_next(sequence);
 }
@@ -231,14 +235,14 @@ geoxml_sequence_append_clone(GeoXmlSequence * sequence)
 	if ((ret = __geoxml_sequence_check(sequence)))
 		return NULL;
 	clone = __geoxml_sequence_append_clone(sequence);
-	if (__geoxml_sequence_is_parameter(sequence) && geoxml_parameter_get_is_in_group((GeoXmlParameter*)sequence)) {
-		GdomeElement *	reference_element;
-
-		/* append reference to clone for each group instance */
-		__geoxml_foreach_element(reference_element,
-		__geoxml_get_elements_by_idref((GdomeElement*)sequence, __geoxml_get_attr_value((GdomeElement*)sequence, "id")))
-			__geoxml_sequence_append_clone((GeoXmlSequence*)gdome_el_parentNode(reference_element, &exception));
-	}
+// 	if (__geoxml_sequence_is_parameter(sequence) && geoxml_parameter_get_is_in_group((GeoXmlParameter*)sequence)) {
+// 		GdomeElement *	reference_element;
+// 
+// 		/* append reference to clone for each group instance */
+// 		__geoxml_foreach_element(reference_element,
+// 		__geoxml_get_elements_by_idref((GdomeElement*)sequence, __geoxml_get_attr_value((GdomeElement*)sequence, "id")))
+// 			__geoxml_sequence_append_clone((GeoXmlSequence*)gdome_el_parentNode(reference_element, &exception));
+// 	}
 
 	return clone;
 }

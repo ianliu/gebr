@@ -172,7 +172,7 @@ __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref)
 	GdomeNodeList *		node_list;
 	gint			k, i, l;
 
-	idref_list = g_slist_alloc();
+	idref_list = NULL;
 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(base, &exception), &exception);
 	id_string = gdome_str_mkref("id");
 
@@ -240,12 +240,13 @@ __geoxml_get_element_index(GdomeElement * element)
 		return 0;
 
 	index = 0;
-	i = __geoxml_get_element_at((GdomeElement*)gdome_el_parentNode(element, &exception), "*", 0, FALSE);
+	i = __geoxml_get_element_at((GdomeElement*)gdome_el_parentNode(element, &exception),
+		gdome_el_tagName(element, &exception)->str, 0, FALSE);
 	do {
 		if (i == element)
 			return index;
 		++index;
-	} while ((i = __geoxml_next_element(i)) != NULL);
+	} while ((i = __geoxml_next_same_element(i)) != NULL);
 
 	return -1;
 }
@@ -253,21 +254,34 @@ __geoxml_get_element_index(GdomeElement * element)
 gulong
 __geoxml_get_elements_number(GdomeElement * parent_element, const gchar * tag_name)
 {
-	GString *		expression;
-	GdomeElement *		child;
-	gulong			elements_number;
+	GdomeNodeList *		node_list;
+	GdomeDOMString *	string;
+	gulong			number;
 
-	expression = g_string_new(NULL);
-	elements_number = 0;
+	string = gdome_str_mkref(tag_name);
+	node_list = gdome_el_getElementsByTagName(parent_element, string, &exception);
+	number = gdome_nl_length(node_list, &exception);
 
-	g_string_printf(expression, "child::%s", tag_name);
-	/* TODO: use an expression instead */
-	__geoxml_foreach_xpath_result(child, __geoxml_xpath_evaluate(parent_element, expression->str))
-		elements_number++;
+	gdome_str_unref(string);
+	gdome_nl_unref(node_list, &exception);
 
-	g_string_free(expression, TRUE);
+	return number;
 
-	return elements_number;
+// 	GString *		expression;
+// 	GdomeElement *		child;
+// 	gulong			elements_number;
+// 
+// 	expression = g_string_new(NULL);
+// 	elements_number = 0;
+// 
+// 	g_string_printf(expression, "child::%s", tag_name);
+// 	/* TODO: use an expression instead */
+// 	__geoxml_foreach_xpath_result(child, __geoxml_xpath_evaluate(parent_element, expression->str))
+// 		elements_number++;
+// 
+// 	g_string_free(expression, TRUE);
+// 
+// 	return elements_number;
 }
 
 const gchar *

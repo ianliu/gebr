@@ -21,9 +21,9 @@
 /**
  * \internal
  * Create element type and add it to \p parameter, according to \p type
- * This function doesn't create a reference parameter.
+ *
  */
-gboolean
+GdomeElement *
 __geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETERTYPE type);
 
 /**
@@ -40,7 +40,7 @@ __geoxml_parameter_get_type_element(GeoXmlParameter * parameter);
  * If \p new is TRUE indicate that it was previously cloned.
  */
 void
-__geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter * reference, gboolean new);
+__geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter * reference);
 
 /**
  * \internal

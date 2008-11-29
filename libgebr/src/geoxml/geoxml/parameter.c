@@ -20,6 +20,7 @@
 #include <gdome.h>
 
 #include "parameter.h"
+#include "parameter_p.h"
 #include "xml.h"
 #include "types.h"
 #include "error.h"
@@ -42,7 +43,6 @@ const char * parameter_type_to_str[] = { "",
 	"flag", "float", "range",
 	"enum", "group", "reference"
 };
-
 const int parameter_type_to_str_len = 9;
 
 /*
@@ -61,9 +61,8 @@ __geoxml_parameter_get_type_element(GeoXmlParameter * parameter)
 }
 
 void
-__geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter * reference, gboolean new)
+__geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter * reference)
 {
-	GdomeElement *			reference_element;
 	GdomeElement *			type_element;
 	enum GEOXML_PARAMETERTYPE	type;
 
@@ -74,27 +73,23 @@ __geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter
 	}
 
 	type_element = __geoxml_parameter_get_type_element(parameter);
-	reference_element = __geoxml_insert_new_element((GdomeElement*)parameter,
-		"reference", type_element);
 	gdome_el_removeChild((GdomeElement*)parameter, (GdomeNode*)type_element, &exception);
 
-	__geoxml_element_assign_reference_id(reference_element, (GdomeElement*)reference);
-	if (new == TRUE)
-		__geoxml_element_assign_new_id((GdomeElement*)parameter);
+	type_element = __geoxml_parameter_insert_type(parameter, GEOXML_PARAMETERTYPE_REFERENCE);
+	__geoxml_element_assign_reference_id(type_element, (GdomeElement*)reference);
 }
 
-gboolean
+GdomeElement *
 __geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETERTYPE type)
 {
-	if (type == GEOXML_PARAMETERTYPE_REFERENCE)
-		return FALSE;
-
 	GdomeElement *	type_element;
 
 	type_element = __geoxml_insert_new_element((GdomeElement*)parameter, parameter_type_to_str[type], NULL);
-	if (type == GEOXML_PARAMETERTYPE_GROUP)
+	if (type == GEOXML_PARAMETERTYPE_GROUP) {
 		__geoxml_parameters_append_new(type_element);
-	else {
+		geoxml_parameter_group_set_is_instanciable((GeoXmlParameterGroup*)parameter, TRUE);
+		geoxml_parameter_group_set_expand((GeoXmlParameterGroup*)parameter, TRUE);
+	} else {
 		GdomeElement *		property_element;
 
 		property_element = __geoxml_insert_new_element(type_element, "property", NULL);
@@ -117,7 +112,7 @@ __geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETE
 		}
 	}
 
-	return TRUE;
+	return type_element;
 }
 
 GSList *
@@ -128,7 +123,7 @@ __geoxml_parameter_get_referencee_list(GdomeElement * context, const gchar * id)
 	GdomeNodeList *		node_list;
 	gint			i, l;
 
-	idref_list = g_slist_alloc();
+	idref_list = NULL;
 	id_string = gdome_str_mkref("id");
 	string = gdome_str_mkref("reference");
 	node_list = gdome_el_getElementsByTagName(context, string, &exception);
@@ -175,8 +170,7 @@ geoxml_parameter_set_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETERTYPE
 	GdomeElement *		old_type_element;
 
 	old_type_element = __geoxml_parameter_get_type_element(parameter);
-	if (__geoxml_parameter_insert_type(parameter, type) == FALSE)
-		return FALSE;
+	__geoxml_parameter_insert_type(parameter, type);
 	gdome_n_removeChild((GdomeNode*)parameter, (GdomeNode*)old_type_element, &exception);
 
 	return TRUE;
@@ -190,7 +184,7 @@ geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter *
 	if (parameter == reference)
 		return GEOXML_RETV_REFERENCE_TO_ITSELF;
 
-	__geoxml_parameter_set_be_reference(parameter, reference, FALSE);
+	__geoxml_parameter_set_be_reference(parameter, reference);
 
 	return GEOXML_RETV_SUCCESS;
 }

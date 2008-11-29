@@ -15,6 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
+
 #include <gtk/gtk.h>
 
 #include <gui/utils.h>
@@ -23,7 +25,6 @@
 #include "debr.h"
 #include "support.h"
 #include "parameter.h"
-#include "parameteringroupedit.h"
 
 /*
  * File: parametergroup.c
@@ -68,7 +69,7 @@ parameter_group_dialog_setup_ui(void)
 	GtkWidget *				instanciable_label;
 	GtkWidget *				instanciable_check_button;
 	GtkWidget *				instances_label;
-	GtkWidget *				instances_spin;
+	GtkWidget *				instances_spin_button;
 	GtkWidget *				exclusive_label;
 	GtkWidget *				exclusive_check_button;
 	GtkWidget *				expanded_label;
@@ -82,13 +83,14 @@ parameter_group_dialog_setup_ui(void)
 	struct ui_parameter_group_dialog * ui;
 
 	ui = g_malloc(sizeof(struct ui_parameter_group_dialog));
+	ui->parameter_edits_ntarray = g_malloc(sizeof(void *));
 	ui->parameter_group = parameter_group = GEOXML_PARAMETER_GROUP(debr.parameter);
 	ui->dialog = dialog = gtk_dialog_new_with_buttons(_("Edit group"),
 		GTK_WINDOW(debr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 		NULL);
-	gtk_widget_set_size_request(dialog, 400, 300);
+	gtk_widget_set_size_request(dialog, 400, 500);
 
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_widget_show(scrolled_window);
@@ -118,7 +120,7 @@ parameter_group_dialog_setup_ui(void)
 	gtk_widget_show(label_entry);
 	gtk_table_attach(GTK_TABLE(table), label_entry, 1, 2, row, row+1,
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
-		(GtkAttachOptions)(0), 0, 0);
+		(GtkAttachOptions)(0), 0, 0), ++row;
 
 	/*
 	 * Expanded by default
@@ -178,13 +180,14 @@ parameter_group_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_FILL), 0, 0);
 	gtk_misc_set_alignment(GTK_MISC(instances_label), 0, 0.5);
 
-	instances_spin = gtk_spin_button_new_with_range(1, 999999999, 1);
-	gtk_widget_show(instances_spin);
-	gtk_table_attach(GTK_TABLE(table), instances_spin, 1, 2, row, row+1,
+	ui->instances_spin_button = instances_spin_button = gtk_spin_button_new_with_range(1, 999999999, 1);
+	gtk_widget_show(instances_spin_button);
+	gtk_table_attach(GTK_TABLE(table), instances_spin_button, 1, 2, row, row+1,
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0), ++row;
 
 	ui->instances_edit_vbox = instances_edit_vbox = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(ui->instances_edit_vbox);
 	gtk_table_attach(GTK_TABLE(table), instances_edit_vbox, 0, 2, row, row+1,
 		(GtkAttachOptions)(GTK_FILL | GTK_EXPAND),
 		(GtkAttachOptions)(0), 0, 0), ++row;
@@ -195,7 +198,7 @@ parameter_group_dialog_setup_ui(void)
 		geoxml_parameter_group_get_expand(parameter_group));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(instanciable_check_button),
 		geoxml_parameter_group_get_is_instanciable(parameter_group));
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(instances_spin),
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(instances_spin_button),
 		geoxml_parameter_group_get_instances_number(parameter_group));
 	/* scan for an exclusive instance */
 	geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
@@ -209,17 +212,15 @@ parameter_group_dialog_setup_ui(void)
 	parameter_in_group_edit_setup_instances_edit_ui(ui, parameter);
 
 	/* signals */
-	g_signal_connect(instances_spin, "output",
+	g_signal_connect(instances_spin_button, "output",
 		(GCallback)on_parameter_group_instances_changed, ui);
 	g_signal_connect(exclusive_check_button, "toggled",
 		(GCallback)on_parameter_group_is_exclusive_toggled, ui);
-	/* for DeBR it doesn't matter if it's instanciable */
-	geoxml_parameter_group_set_is_instanciable(parameter_group, TRUE);
 
+	/* for DeBR it doesn't matter if it's not instanciable */
+	geoxml_parameter_group_set_is_instanciable(parameter_group, TRUE);
 	/* let the user interact... */
 	gtk_dialog_run(GTK_DIALOG(dialog));
-	gtk_widget_destroy(dialog);
-	g_free(ui);
 
 	/* things not automatically synced to XML are synced here */
 	geoxml_parameter_set_label(debr.parameter, gtk_entry_get_text(GTK_ENTRY(label_entry)));
@@ -230,6 +231,11 @@ parameter_group_dialog_setup_ui(void)
 
 	parameter_load_selected();
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
+
+	/* frees */
+	gtk_widget_destroy(dialog);
+	g_free(ui->parameter_edits_ntarray);
+	g_free(ui);
 }
 
 /*
@@ -248,6 +254,11 @@ parameter_in_group_edit_setup_instances_edit_ui(struct ui_parameter_group_dialog
 
 	gtk_container_foreach(GTK_CONTAINER(ui->instances_edit_vbox), (GtkCallback)gtk_widget_destroy, NULL);
 
+	geoxml_parameter_group_get_instance(ui->parameter_group, &instance, 0);
+	if (geoxml_parameters_get_number(GEOXML_PARAMETERS(instance)) == 0) {
+		ui->parameter_edits_ntarray[0] = NULL;
+		return;
+	}
 	table = gtk_table_new(geoxml_parameters_get_number(GEOXML_PARAMETERS(instance)), 2, FALSE);
 	gtk_box_pack_start(GTK_BOX(ui->instances_edit_vbox), table, TRUE, TRUE, 5);
 	gtk_widget_show(table);
@@ -257,6 +268,8 @@ parameter_in_group_edit_setup_instances_edit_ui(struct ui_parameter_group_dialog
 	label_widget = NULL;
 	geoxml_parameter_group_get_instance(ui->parameter_group, &instance, 0);
 	geoxml_parameters_get_parameter(GEOXML_PARAMETERS(instance), &parameter, 0);
+	ui->parameter_edits_ntarray = g_realloc(ui->parameter_edits_ntarray,
+		1+sizeof(void*)*geoxml_parameter_group_get_instances_number(ui->parameter_group));
 	for (i = 0; parameter != NULL; ++i, geoxml_sequence_next(&parameter)) {
 		GtkWidget *	parameter_in_group_edit;
 
@@ -278,22 +291,21 @@ parameter_in_group_edit_setup_instances_edit_ui(struct ui_parameter_group_dialog
 		gtk_misc_set_alignment(GTK_MISC(label_widget), 0, 0.5);
 
 		parameter_in_group_edit = parameter_in_group_edit_new(ui->parameter_group, i);
+		parameter_in_group_edit_load(PARAMETER_IN_GROUP_EDIT(parameter_in_group_edit));
+		ui->parameter_edits_ntarray[i] = PARAMETER_IN_GROUP_EDIT(parameter_in_group_edit);
 		gtk_widget_show(parameter_in_group_edit);
 		gtk_table_attach(GTK_TABLE(table), parameter_in_group_edit, 1, 2, i, i+1,
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0);
 		g_signal_connect(parameter_in_group_edit, "instances-changed",
 			(GCallback)on_parameter_group_instances_changed_in_edit, ui);
-
-		geoxml_object_set_user_data(GEOXML_OBJECT(parameter), parameter_in_group_edit);
 	}
+	ui->parameter_edits_ntarray[i] = NULL;
 }
 
 static gboolean
 on_parameter_group_instances_changed(GtkSpinButton * spin_button, struct ui_parameter_group_dialog * ui)
 {
-	GeoXmlSequence *	instance;
-	GeoXmlSequence *	parameter;
 	gint			i, instanciate;
 
 	instanciate = gtk_spin_button_get_value(spin_button) -
@@ -308,9 +320,7 @@ on_parameter_group_instances_changed(GtkSpinButton * spin_button, struct ui_para
 		for (i = instanciate; i < 0; ++i)
 			geoxml_parameter_group_deinstanciate(ui->parameter_group);
 
-	geoxml_parameter_group_get_instance(ui->parameter_group, &instance, 0);
-	geoxml_parameters_get_parameter(GEOXML_PARAMETERS(instance), &parameter, 0);
-	g_signal_emit_by_name(PARAMETER_IN_GROUP_EDIT(geoxml_object_get_user_data(GEOXML_OBJECT(parameter))), "toggled");
+	on_parameter_group_instances_changed_in_edit(NULL, ui);
 
 	return FALSE;
 }
@@ -319,18 +329,14 @@ static void
 on_parameter_group_instances_changed_in_edit(ParameterInGroupEdit * parameter_in_group_edit,
 	struct ui_parameter_group_dialog * ui)
 {
-	GeoXmlSequence *	instance;
-	GeoXmlSequence *	parameter;
+	guint	i;
 
-	geoxml_parameter_group_get_instance(ui->parameter_group, &instance, 0);
-	geoxml_parameters_get_parameter(GEOXML_PARAMETERS(instance), &parameter, 0);
-	for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
-		ParameterInGroupEdit *	i;
+	for (i = 0; ui->parameter_edits_ntarray[i] != NULL; ++i)
+		if (ui->parameter_edits_ntarray[i] != parameter_in_group_edit)
+			parameter_in_group_edit_load(ui->parameter_edits_ntarray[i]);
 
-		i = PARAMETER_IN_GROUP_EDIT(geoxml_object_get_user_data(GEOXML_OBJECT(parameter)));
-		if (i != parameter_in_group_edit)
-			parameter_in_group_edit_load(i);
-	}
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->instances_spin_button),
+		geoxml_parameter_group_get_instances_number(ui->parameter_group));
 }
 
 static void
