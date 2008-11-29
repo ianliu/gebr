@@ -23,10 +23,10 @@
  * Prototypes
  */
 
-static void __value_sequence_edit_remove(ValueSequenceEdit * sequence_edit, GtkTreeIter * iter);
-static void __value_sequence_edit_move_up(ValueSequenceEdit * sequence_edit, GtkTreeIter * iter);
-static void __value_sequence_edit_move_down(ValueSequenceEdit * sequence_edit, GtkTreeIter * iter);
-static void __value_sequence_edit_rename(ValueSequenceEdit * sequence_edit, GtkTreeIter * iter, const gchar * new_text);
+static void __value_sequence_edit_remove(ValueSequenceEdit * value_sequence_edit, GtkTreeIter * iter);
+static void __value_sequence_edit_move_up(ValueSequenceEdit * value_sequence_edit, GtkTreeIter * iter);
+static void __value_sequence_edit_move_down(ValueSequenceEdit * value_sequence_edit, GtkTreeIter * iter);
+static void __value_sequence_edit_rename(ValueSequenceEdit * value_sequence_edit, GtkTreeIter * iter, const gchar * new_text);
 
 /*
  * gobject stuff
@@ -37,30 +37,30 @@ enum {
 };
 
 static void
-value_sequence_edit_set_property(ValueSequenceEdit * sequence_edit, guint property_id, const GValue * value, GParamSpec * param_spec)
+value_sequence_edit_set_property(ValueSequenceEdit * value_sequence_edit, guint property_id, const GValue * value, GParamSpec * param_spec)
 {
 	switch (property_id) {
 	case VALUE_SEQUENCE:
-		sequence_edit->value_sequence = g_value_get_pointer(value);
-		gtk_list_store_clear(GTK_SEQUENCE_EDIT(sequence_edit)->list_store);
+		value_sequence_edit->value_sequence = g_value_get_pointer(value);
+		gtk_list_store_clear(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store);
 		break;
 	default:
 		/* We don't have any other property... */
-		G_OBJECT_WARN_INVALID_PROPERTY_ID(sequence_edit, property_id, param_spec);
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(value_sequence_edit, property_id, param_spec);
 		break;
 	}
 }
 
 static void
-value_sequence_edit_get_property(ValueSequenceEdit * sequence_edit, guint property_id, GValue * value, GParamSpec * param_spec)
+value_sequence_edit_get_property(ValueSequenceEdit * value_sequence_edit, guint property_id, GValue * value, GParamSpec * param_spec)
 {
 	switch (property_id) {
 	case VALUE_SEQUENCE:
-		g_value_set_pointer(value, sequence_edit->value_sequence);
+		g_value_set_pointer(value, value_sequence_edit->value_sequence);
 		break;
 	default:
 		/* We don't have any other property... */
-		G_OBJECT_WARN_INVALID_PROPERTY_ID(sequence_edit, property_id, param_spec);
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(value_sequence_edit, property_id, param_spec);
 		break;
 	}
 }
@@ -90,7 +90,7 @@ value_sequence_edit_class_init(ValueSequenceEditClass * class)
 }
 
 static void
-value_sequence_edit_init(ValueSequenceEdit * sequence_edit)
+value_sequence_edit_init(ValueSequenceEdit * value_sequence_edit)
 {
 }
 
@@ -101,65 +101,65 @@ G_DEFINE_TYPE(ValueSequenceEdit, value_sequence_edit, GTK_TYPE_SEQUENCE_EDIT);
  */
 
 static void
-__value_sequence_edit_remove(ValueSequenceEdit * sequence_edit, GtkTreeIter * iter)
+__value_sequence_edit_remove(ValueSequenceEdit * value_sequence_edit, GtkTreeIter * iter)
 {
 	GeoXmlSequence *	sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(sequence_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store), iter,
 		1, &sequence,
 		-1);
 
 	geoxml_sequence_remove(sequence);
-	gtk_list_store_remove(GTK_SEQUENCE_EDIT(sequence_edit)->list_store, iter);
+	gtk_list_store_remove(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store, iter);
 
-	g_signal_emit_by_name(sequence_edit, "changed");
+	g_signal_emit_by_name(value_sequence_edit, "changed");
 }
 
 static void
-__value_sequence_edit_move_up(ValueSequenceEdit * sequence_edit, GtkTreeIter * iter)
+__value_sequence_edit_move_up(ValueSequenceEdit * value_sequence_edit, GtkTreeIter * iter)
 {
 	GeoXmlSequence *	sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(sequence_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store), iter,
 		1, &sequence,
 		-1);
 
 	geoxml_sequence_move_up(sequence);
-	gtk_list_store_move_up(GTK_SEQUENCE_EDIT(sequence_edit)->list_store, iter);
+	gtk_list_store_move_up(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store, iter);
 
-	g_signal_emit_by_name(sequence_edit, "changed");
+	g_signal_emit_by_name(value_sequence_edit, "changed");
 }
 
 static void
-__value_sequence_edit_move_down(ValueSequenceEdit * sequence_edit, GtkTreeIter * iter)
+__value_sequence_edit_move_down(ValueSequenceEdit * value_sequence_edit, GtkTreeIter * iter)
 {
 	GeoXmlSequence *	sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(sequence_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store), iter,
 		1, &sequence,
 		-1);
 
 	geoxml_sequence_move_down(sequence);
-	gtk_list_store_move_down(GTK_SEQUENCE_EDIT(sequence_edit)->list_store, iter);
+	gtk_list_store_move_down(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store, iter);
 
-	g_signal_emit_by_name(sequence_edit, "changed");
+	g_signal_emit_by_name(value_sequence_edit, "changed");
 }
 
 static void
-__value_sequence_edit_rename(ValueSequenceEdit * sequence_edit, GtkTreeIter * iter, const gchar * new_text)
+__value_sequence_edit_rename(ValueSequenceEdit * value_sequence_edit, GtkTreeIter * iter, const gchar * new_text)
 {
 	GeoXmlValueSequence *	value_sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(sequence_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store), iter,
 		1, &value_sequence,
 		-1);
 
-	gtk_list_store_set(GTK_SEQUENCE_EDIT(sequence_edit)->list_store, iter,
+	gtk_list_store_set(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store, iter,
 		0, new_text,
 		-1);
 	geoxml_value_sequence_set(value_sequence, new_text);
 
-	g_signal_emit_by_name(sequence_edit, "changed");
+	g_signal_emit_by_name(value_sequence_edit, "changed");
 }
 
 /*
@@ -187,24 +187,25 @@ value_sequence_edit_new_with_sequence(GtkWidget * widget, GeoXmlValueSequence * 
 }
 
 void
-value_sequence_edit_add(ValueSequenceEdit * sequence_edit, GeoXmlValueSequence * value_sequence)
+value_sequence_edit_add(ValueSequenceEdit * value_sequence_edit, GeoXmlValueSequence * value_sequence)
 {
 	GtkTreeIter	iter;
 
-	iter = gtk_sequence_edit_add(GTK_SEQUENCE_EDIT(sequence_edit), geoxml_value_sequence_get(value_sequence));
-	gtk_list_store_set(GTK_SEQUENCE_EDIT(sequence_edit)->list_store, &iter,
+	iter = gtk_sequence_edit_add(GTK_SEQUENCE_EDIT(value_sequence_edit),
+		geoxml_value_sequence_get(value_sequence), TRUE);
+	gtk_list_store_set(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store, &iter,
 		1, value_sequence,
 		-1);
 }
 
 void
-value_sequence_edit_load(ValueSequenceEdit * sequence_edit)
+value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit)
 {
 	GeoXmlSequence *	sequence;
 
-	gtk_list_store_clear(GTK_SEQUENCE_EDIT(sequence_edit)->list_store);
+	gtk_list_store_clear(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store);
 
-	sequence = GEOXML_SEQUENCE(sequence_edit->value_sequence);
+	sequence = GEOXML_SEQUENCE(value_sequence_edit->value_sequence);
 	for (; sequence != NULL; geoxml_sequence_next(&sequence))
-		value_sequence_edit_add(sequence_edit, GEOXML_VALUE_SEQUENCE(sequence));
+		value_sequence_edit_add(value_sequence_edit, GEOXML_VALUE_SEQUENCE(sequence));
 }

@@ -272,7 +272,29 @@ glong
 geoxml_program_parameter_get_values_number(GeoXmlProgramParameter * program_parameter, gboolean default_value);
 
 /**
+ * If \p program_parameter has a list of values, call
+ * \ref geoxml_program_parameter_set_parse_list_value. Otherwise
+ * call \ref geoxml_program_parameter_set_first_value
  *
+ * If \p program_parameter or \p value is NULL nothing is done.
+ */
+void
+geoxml_program_parameter_set_string_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, const gchar * value);
+
+/**
+ * If \p program_parameter has a list of values, return them separated
+ * by the list separator. Otherwise, return the same as
+ * geoxml_program_parameter_get_first_value.
+ * The GString pointer should be freed by you.
+ *
+ * * If \p program_parameter is NULL returns NULL.
+ */
+GString *
+geoxml_program_parameter_get_string_value(GeoXmlProgramParameter * program_parameter, gboolean default_value);
+
+/**
+ * Split \p value using \p program_parameter's separator to
+ * create a list of values or default values for it
  *
  * If \p program_parameter or \p value is NULL nothing is done.
  */

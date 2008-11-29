@@ -55,6 +55,7 @@ debr_init(void)
 	debr.menu = NULL;
 	debr.program = NULL;
 	debr.parameter = NULL;
+	debr.unsaved_count = 0;
 
 	/* list of temporaries files */
 	debr.tmpfiles = g_slist_alloc();
@@ -71,11 +72,11 @@ debr_init(void)
 		menu_new();
 }
 
-void
+gboolean
 debr_quit(void)
 {
 	if (!menu_cleanup())
-		return;
+		return TRUE;
 
 	gtk_widget_destroy(debr.about.dialog);
 	g_object_unref(debr.accel_group);
@@ -111,6 +112,8 @@ debr_quit(void)
 	gtk_widget_destroy(debr.invisible);
 
 	gtk_main_quit();
+
+	return FALSE;
 }
 
 void

@@ -116,7 +116,7 @@ debr_setup_ui(void)
 		(GCallback)on_menu_open_activate, NULL);
 	/* save */
 	debr.actions.menu.save = gtk_action_new("menu_save",
-		_(""), _("Save current Menu"), GTK_STOCK_SAVE);
+		_("Save"), _("Save current Menu"), GTK_STOCK_SAVE);
 	g_signal_connect(debr.actions.menu.save, "activate",
 		(GCallback)on_menu_save_activate, NULL);
 	/* save_as */
@@ -124,6 +124,11 @@ debr_setup_ui(void)
 		NULL, NULL, GTK_STOCK_SAVE_AS);
 	g_signal_connect(debr.actions.menu.save_as, "activate",
 		(GCallback)on_menu_save_as_activate, NULL);
+	/* save_all */
+	debr.actions.menu.save_all = gtk_action_new("menu_save_all",
+		NULL, NULL, "document-save-all");
+	g_signal_connect(debr.actions.menu.save_all, "activate",
+		(GCallback)on_menu_save_all_activate, NULL);
 	/* revert */
 	debr.actions.menu.revert = gtk_action_new("menu_revert",
 		NULL, NULL, GTK_STOCK_REVERT_TO_SAVED);
@@ -262,6 +267,8 @@ debr_setup_ui(void)
 		GTK_TOOL_ITEM(gtk_action_create_tool_item(debr.actions.menu.save)), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 		GTK_TOOL_ITEM(gtk_action_create_tool_item(debr.actions.menu.save_as)), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+		GTK_TOOL_ITEM(gtk_action_create_tool_item(debr.actions.menu.save_all)), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 		GTK_TOOL_ITEM(gtk_action_create_tool_item(debr.actions.menu.revert)), -1);
 

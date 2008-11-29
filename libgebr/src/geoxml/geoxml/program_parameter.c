@@ -268,6 +268,46 @@ geoxml_program_parameter_get_values_number(GeoXmlProgramParameter * program_para
 }
 
 void
+geoxml_program_parameter_set_string_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, const gchar * value)
+{
+	if (program_parameter == NULL)
+		return NULL;
+
+	if (geoxml_program_parameter_get_is_list(program_parameter) == FALSE)
+		geoxml_program_parameter_set_first_value(program_parameter, default_value, value);
+	else
+		geoxml_program_parameter_set_parse_list_value(program_parameter, default_value, value);
+}
+
+GString *
+geoxml_program_parameter_get_string_value(GeoXmlProgramParameter * program_parameter, gboolean default_value)
+{
+	if (program_parameter == NULL)
+		return NULL;
+
+	GString *	value;
+
+	value = g_string_new("");
+	if (geoxml_program_parameter_get_is_list(program_parameter) == FALSE)
+		g_string_assign(value, geoxml_program_parameter_get_first_value(program_parameter, default_value));
+	else {
+		GeoXmlSequence *	property_value;
+		const gchar *		separator;
+
+		separator = geoxml_program_parameter_get_list_separator(program_parameter);
+		geoxml_program_parameter_get_value(program_parameter, default_value, &property_value, 0);
+		g_string_assign(value, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(property_value)));
+		geoxml_sequence_next(&property_value);
+		for (; property_value != NULL; geoxml_sequence_next(&property_value)) {
+			g_string_append(value, separator);
+			g_string_append(value, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(property_value)));
+		}
+	}
+
+	return value;
+}
+
+void
 geoxml_program_parameter_set_parse_list_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, const gchar * value)
 {
 	if (program_parameter == NULL || value == NULL)

@@ -233,11 +233,11 @@ parameter_new(void)
 				GEOXML_PARAMETERTYPE_FLOAT),
 			NULL);
 	}
+
 	parameter_select_iter(iter);
 	parameter_change_type_setup_ui();
+	parameter_activated();
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
-
-	parameter_dialog_setup_ui();
 }
 
 /*
@@ -366,8 +366,8 @@ parameter_change_type_setup_ui(void)
 	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[5].title);
 	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[6].title);
 	/* does not allow group-in-group */
-// 	if (geoxml_parameter_get_is_in_group(debr.parameter) == FALSE)
-// 		gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[7].title);
+	if (geoxml_parameter_get_is_in_group(debr.parameter) == FALSE)
+		gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[7].title);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), combo_type_map_get_index(
 		geoxml_parameter_get_type(debr.parameter)));
 

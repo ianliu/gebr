@@ -1,5 +1,5 @@
-/*   libgebr - G�BR Library
- *   Copyright (C) 2007-2008 G�BR core team (http://gebr.sourceforge.net)
+/*   libgebr - GeBR Library
+ *   Copyright (C) 2007-2008 GeBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -120,6 +120,38 @@ __geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETE
 	return TRUE;
 }
 
+GSList *
+__geoxml_parameter_get_referencee_list(GdomeElement * context, const gchar * id)
+{
+	GSList *		idref_list;
+	GdomeDOMString *	string, * id_string;
+	GdomeNodeList *		node_list;
+	gint			i, l;
+
+	idref_list = g_slist_alloc();
+	id_string = gdome_str_mkref("id");
+	string = gdome_str_mkref("reference");
+	node_list = gdome_el_getElementsByTagName(context, string, &exception);
+
+	l = gdome_nl_length(node_list, &exception);
+	/* get the list of elements with this tag_name. */
+	for (i = 0; i < l; ++i) {
+		GdomeElement *	element;
+
+		element = (GdomeElement*)gdome_nl_item(node_list, i, &exception);
+		if (strcmp(gdome_el_getAttribute(element, id_string, &exception)->str, id) == 0)
+			idref_list = g_slist_prepend(idref_list, gdome_el_parentNode(element, &exception));
+	}
+
+	gdome_str_unref(string);
+	gdome_nl_unref(node_list, &exception);
+	gdome_str_unref(id_string);
+
+	idref_list = g_slist_reverse(idref_list);
+
+	return idref_list;
+}
+
 /*
  * library functions.
  */
@@ -179,6 +211,16 @@ geoxml_parameter_get_type(GeoXmlParameter * parameter)
 			return (enum GEOXML_PARAMETERTYPE)i;
 
 	return GEOXML_PARAMETERTYPE_UNKNOWN;
+}
+
+GSList *
+geoxml_parameter_get_referencee_list(GeoXmlParameter * parameter)
+{
+	if (parameter == NULL)
+		return NULL;
+	return __geoxml_parameter_get_referencee_list(
+		gdome_doc_documentElement(gdome_el_ownerDocument((GdomeElement*)parameter, &exception), &exception),
+		__geoxml_get_attr_value((GdomeElement*)parameter, "id"));
 }
 
 gboolean

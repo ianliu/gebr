@@ -63,6 +63,8 @@ menu_open(const gchar * path, gboolean select);
 void
 menu_save(const gchar * path);
 void
+menu_save_all(void);
+void
 menu_selected(void);
 gboolean
 menu_cleanup(void);

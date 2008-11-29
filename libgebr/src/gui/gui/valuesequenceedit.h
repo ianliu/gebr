@@ -55,10 +55,10 @@ GtkWidget *
 value_sequence_edit_new_with_sequence(GtkWidget * widget, GeoXmlValueSequence * value_sequence);
 
 void
-value_sequence_edit_add(ValueSequenceEdit * sequence_edit, GeoXmlValueSequence * value_sequence);
+value_sequence_edit_add(ValueSequenceEdit * value_sequence_edit, GeoXmlValueSequence * value_sequence);
 
 void
-value_sequence_edit_load(ValueSequenceEdit * sequence_edit);
+value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit);
 
 G_END_DECLS
 

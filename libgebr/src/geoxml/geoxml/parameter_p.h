@@ -42,4 +42,12 @@ __geoxml_parameter_get_type_element(GeoXmlParameter * parameter);
 void
 __geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter * reference, gboolean new);
 
+/**
+ * \internal
+ * Get the list of GeoXmlParameter referencees of \p id, inside the element
+ * _context_
+ */
+GSList *
+__geoxml_parameter_get_referencee_list(GdomeElement * context, const gchar * id);
+
 #endif //__LIBGEBR_GEOXML_PARAMETER_P_H

@@ -3,6 +3,7 @@
 ICONS=" \
 	actions/document-import \
 	actions/document-export \
+	actions/document-save-all \
 	actions/edit-clear \
 	actions/folder-new \
 	actions/system-switch-user \

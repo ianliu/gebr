@@ -44,7 +44,7 @@ struct _GtkSequenceEdit {
 	GtkListStore *	list_store;
 	GtkWidget *	tree_view;
 
-	gboolean		minimum_one;
+	gboolean	minimum_one;
 };
 struct _GtkSequenceEditClass {
 	GtkVBoxClass	parent;
@@ -68,7 +68,7 @@ GtkWidget *
 gtk_sequence_edit_new_from_store(GtkWidget * widget, GtkListStore * list_store);
 
 GtkTreeIter
-gtk_sequence_edit_add(GtkSequenceEdit * sequence_edit, const gchar * text);
+gtk_sequence_edit_add(GtkSequenceEdit * sequence_edit, const gchar * text, gboolean show_empty_value_text);
 
 void
 gtk_sequence_edit_clear(GtkSequenceEdit * sequence_edit);

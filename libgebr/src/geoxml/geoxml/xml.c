@@ -163,31 +163,38 @@ __geoxml_get_element_by_id(GdomeElement * base, const gchar * id)
 GSList *
 __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref)
 {
+	const static gchar *	reference_tags [] = {
+		"reference", NULL,
+	};
 	GSList *		idref_list;
 	GdomeElement *		document_element;
 	GdomeDOMString *	string, * id_string;
 	GdomeNodeList *		node_list;
-	gint			i, l;
+	gint			k, i, l;
 
 	idref_list = g_slist_alloc();
 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(base, &exception), &exception);
-	string = gdome_str_mkref("reference");
 	id_string = gdome_str_mkref("id");
-	node_list = gdome_el_getElementsByTagName(document_element, string, &exception);
 
-	l = gdome_nl_length(node_list, &exception);
-	/* get the list of elements with this tag_name. */
-	for (i = 0; i < l; ++i) {
-		GdomeElement *	element;
+	for (k = 0; reference_tags[k] != NULL; ++k) {
+		string = gdome_str_mkref(reference_tags[k]);
+		node_list = gdome_el_getElementsByTagName(document_element, string, &exception);
 
-		element = (GdomeElement*)gdome_nl_item(node_list, i, &exception);
-		if (strcmp(gdome_el_getAttribute(element, id_string, &exception)->str, idref) == 0)
-			idref_list = g_slist_prepend(idref_list, element);
+		l = gdome_nl_length(node_list, &exception);
+		/* get the list of elements with this tag_name. */
+		for (i = 0; i < l; ++i) {
+			GdomeElement *	element;
+
+			element = (GdomeElement*)gdome_nl_item(node_list, i, &exception);
+			if (strcmp(gdome_el_getAttribute(element, id_string, &exception)->str, idref) == 0)
+				idref_list = g_slist_prepend(idref_list, element);
+		}
+
+		gdome_str_unref(string);
+		gdome_nl_unref(node_list, &exception);
 	}
-
-	gdome_str_unref(string);
+	
 	gdome_str_unref(id_string);
-	gdome_nl_unref(node_list, &exception);
 
 	idref_list = g_slist_reverse(idref_list);
 

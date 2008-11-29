@@ -125,8 +125,17 @@ geoxml_parameter_group_get_instances_number(GeoXmlParameterGroup * parameter_gro
 	return __geoxml_get_elements_number((GdomeElement*)parameter_group, "parameters");
 }
 
+GSList *
+geoxml_parameter_group_get_parameter_in_all_instances(GeoXmlParameterGroup * parameter_group, guint index)
+{
+	if (parameter_group == NULL)
+		return NULL;
+	return __geoxml_parameter_get_referencee_list((GdomeElement*)parameter_group,
+		__geoxml_get_attr_value((GdomeElement*)parameter_group, "id"));
+}
+
 void
-geoxml_parameter_group_set_instanciable(GeoXmlParameterGroup * parameter_group, gboolean enable)
+geoxml_parameter_group_set_is_instanciable(GeoXmlParameterGroup * parameter_group, gboolean enable)
 {
 	if (parameter_group == NULL)
 		return;

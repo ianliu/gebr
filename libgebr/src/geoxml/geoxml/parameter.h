@@ -182,6 +182,14 @@ enum GEOXML_PARAMETERTYPE
 geoxml_parameter_get_type(GeoXmlParameter * parameter);
 
 /**
+ * Get the list of GeoXmlParameter referencees of \p parameter
+ *
+ * If \p parameter is NULL returns NULL.
+ */
+GSList *
+geoxml_parameter_get_referencee_list(GeoXmlParameter * parameter);
+
+/**
  * Return TRUE if \p parameter is a GeoXmlProgramParameter.
  * All parameters of any GEOXML_PARAMETERTYPE's types except GEOXML_PARAMETERTYPE_GROUP
  * are GeoXmlProgramParameter.

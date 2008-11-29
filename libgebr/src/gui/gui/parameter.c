@@ -178,21 +178,11 @@ parameter_list_value_widget_changed(GtkEntry * entry, struct parameter_widget * 
 static void
 parameter_list_value_widget_update(struct parameter_widget * parameter_widget)
 {
-	GString *		value;
-	const gchar *		separator;
-	GeoXmlSequence *	property_value;
+	GString *	value;
 
-	value = g_string_new("");
-	separator = geoxml_program_parameter_get_list_separator(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter));
-
-	geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter),
-		parameter_widget->use_default_value, &property_value, 0);
-	g_string_assign(value, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(property_value)));
-	geoxml_sequence_next(&property_value);
-	for (; property_value != NULL; geoxml_sequence_next(&property_value)) {
-		g_string_append(value, separator);
-		g_string_append(value, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(property_value)));
-	}
+	value = geoxml_program_parameter_get_string_value(
+		GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter),
+		parameter_widget->use_default_value);
 
 	g_signal_handlers_block_matched(G_OBJECT(parameter_widget->list_value_widget),
 		G_SIGNAL_MATCH_FUNC,

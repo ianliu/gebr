@@ -33,6 +33,9 @@ void
 on_menu_save_as_activate(void);
 
 void
+on_menu_save_all_activate(void);
+
+void
 on_menu_revert_activate(void);
 
 void

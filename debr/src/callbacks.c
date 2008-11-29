@@ -157,6 +157,16 @@ out:	gtk_widget_destroy(chooser_dialog);
 }
 
 /*
+ * Function: on_menu_save_all_activate
+ * Call <menu_save_all>
+ */
+void
+on_menu_save_all_activate(void)
+{
+	menu_save_all();
+}
+
+/*
  * Function: on_menu_new_activate
  * Confirm action and if confirmed reload menu from file
  */

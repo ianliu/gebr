@@ -42,6 +42,9 @@ enum {
 };
 
 static void
+menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status);
+
+static void
 menu_details_update(void);
 
 static void
@@ -305,6 +308,40 @@ menu_save(const gchar * path)
 	menu_saved_status_set(MENU_STATUS_SAVED);
 }
 
+void
+menu_save_all(void)
+{
+	GtkTreeIter	iter;
+	gboolean	has_next;
+
+	if (!debr.unsaved_count)
+		return;
+
+	has_next = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter);
+	while (has_next) {
+		GdkPixbuf *	pixbuf;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+			MENU_STATUS, &pixbuf,
+			-1);
+		if (pixbuf == debr.pixmaps.stock_no) {
+			GeoXmlFlow *	menu;
+			gchar *		path;
+
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+				MENU_XMLPOINTER, &menu,
+				MENU_PATH, &path,
+				-1);
+			geoxml_document_save(GEOXML_DOC(menu), path);
+			menu_saved_status_set_from_iter(&iter, MENU_STATUS_SAVED);
+
+			g_free(path);
+		}
+
+		has_next = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter);
+	}
+}
+
 /*
  * Function: menu_selected
  * Propagate the UI for a selected menu on the view
@@ -341,66 +378,20 @@ gboolean
 menu_cleanup(void)
 {
 	GtkWidget *	dialog;
-
-	GtkTreeIter	iter;
-
-	GSList *	unsaved;
-	gboolean	has_next;
-	gboolean	has_unsaved;
 	gboolean	ret;
 
-	ret = TRUE;
-	has_unsaved = FALSE;
-	unsaved = g_slist_alloc();
-	has_next = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter);
-	while (has_next) {
-		GdkPixbuf *	pixbuf;
+	if (!debr.unsaved_count)
+		return TRUE;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
-			MENU_STATUS, &pixbuf,
-			-1);
-		if (pixbuf == debr.pixmaps.stock_no) {
-			GtkTreeIter *	iter_pointer;
-
-			iter_pointer = g_malloc(sizeof(GtkTreeIter));
-			*iter_pointer = iter;
-			/* FIXME: why doesn't work with prepend?? */
-			unsaved = g_slist_append(unsaved, iter_pointer);
-			has_unsaved = TRUE;
-		}
-
-		has_next = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter);
-	}
-
-	if (has_unsaved == FALSE)
-		goto out;
-
-	/* TODO: add cancel button */
 	dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_MESSAGE_QUESTION,
 		GTK_BUTTONS_YES_NO,
 		_("There are flows unsaved. Do you want to save them?"));
+	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 	switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
 	case GTK_RESPONSE_YES: {
-		GSList *	link;
-
-		link = g_slist_last(unsaved);
-		while (link != NULL) {
-			GeoXmlFlow *	menu;
-			gchar *		path;
-
-			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), (GtkTreeIter*)link->data,
-				MENU_XMLPOINTER, &menu,
-				MENU_PATH, &path,
-				-1);
-			geoxml_document_save(GEOXML_DOC(menu), path);
-
-			g_free(link->data);
-			g_free(path);
-			link = g_slist_next(link);
-		}
-
+		menu_save_all();
 		ret = TRUE;
 		break;
 	}
@@ -410,10 +401,11 @@ menu_cleanup(void)
 	case GTK_RESPONSE_CANCEL:
 		ret = FALSE;
 		break;
+	default:
+		ret = FALSE;
 	}
 
 	gtk_widget_destroy(dialog);
-out:	g_slist_free(unsaved);
 	return ret;
 }
 
@@ -428,30 +420,10 @@ menu_saved_status_set(MenuStatus status)
 	GtkTreeModel *		model;
 	GtkTreeIter		iter;
 
-	gboolean		enable;
-
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (debr.ui_menu.tree_view));
 	gtk_tree_selection_get_selected(selection, &model, &iter);
 
-	switch (status) {
-	case MENU_STATUS_SAVED:
-		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.list_store), &iter,
-			MENU_STATUS, NULL,
-			-1);
-		enable = FALSE;
-		break;
-	case MENU_STATUS_UNSAVED:
-		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.list_store), &iter,
-			MENU_STATUS, debr.pixmaps.stock_no,
-			-1);
-		enable = TRUE;
-		break;
-	default:
-		enable = FALSE;
-	}
-
-	gtk_action_set_sensitive(debr.actions.menu.save, enable);
-	gtk_action_set_sensitive(debr.actions.menu.revert, enable);
+	menu_saved_status_set_from_iter(&iter, status);
 }
 
 /*
@@ -717,6 +689,44 @@ menu_select_iter(GtkTreeIter * iter)
 /*
  * Section: Private
  */
+
+/*
+ * Function: menu_saved_status_set_from_iter
+ * Change the status of the menu (saved or unsaved)
+ */
+static void
+menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
+{
+	GdkPixbuf *		pixbuf;
+	gboolean		enable;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter,
+		MENU_STATUS, &pixbuf,
+		-1);
+	switch (status) {
+	case MENU_STATUS_SAVED:
+		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.list_store), iter,
+			MENU_STATUS, NULL,
+			-1);
+		enable = FALSE;
+		if (pixbuf == debr.pixmaps.stock_no)
+			--debr.unsaved_count;
+		break;
+	case MENU_STATUS_UNSAVED:
+		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.list_store), iter,
+			MENU_STATUS, debr.pixmaps.stock_no,
+			-1);
+		enable = TRUE;
+		if (pixbuf == NULL)
+			++debr.unsaved_count;
+		break;
+	default:
+		enable = FALSE;
+	}
+
+	gtk_action_set_sensitive(debr.actions.menu.save, enable);
+	gtk_action_set_sensitive(debr.actions.menu.revert, enable);
+}
 
 /*
  * Function: menu_details_update

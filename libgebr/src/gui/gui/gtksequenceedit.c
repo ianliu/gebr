@@ -15,6 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include "gtksequenceedit.h"
 #include "support.h"
 #include "utils.h"
@@ -203,14 +205,20 @@ __gtk_sequence_edit_popup_menu(GtkTreeView * tree_view, GtkSequenceEdit * sequen
 	GtkWidget *		menu;
 	GtkWidget *		menu_item;
 
+	menu = gtk_menu_new();
+
+	/* add */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ADD, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(menu_item, "activate",
+		(GCallback)__gtk_sequence_edit_on_add_clicked, sequence_edit);
+
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(sequence_edit->tree_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
-		return NULL;
+		return menu;
 	if (sequence_edit->minimum_one
 	&& gtk_tree_model_iter_n_children(GTK_TREE_MODEL(sequence_edit->list_store), NULL) == 1)
-		return NULL;
-
-	menu = gtk_menu_new();
+		return menu;
 
 	/* Move up */
 	if (gtk_list_store_can_move_up(sequence_edit->list_store, &iter) == TRUE) {
@@ -253,9 +261,10 @@ __gtk_sequence_edit_button_clicked(GtkSequenceEdit * sequence_edit, void (*butto
 static void
 __gtk_sequence_edit_on_add_clicked(GtkWidget * button, GtkSequenceEdit * sequence_edit)
 {
-	g_signal_emit(sequence_edit, object_signals[ADD_REQUEST], 0);
 	if (GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->add != NULL)
 		GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->add(sequence_edit);
+	else
+		g_signal_emit(sequence_edit, object_signals[ADD_REQUEST], 0);
 }
 
 static void
@@ -364,13 +373,13 @@ gtk_sequence_edit_new_from_store(GtkWidget * widget, GtkListStore * list_store)
 }
 
 GtkTreeIter
-gtk_sequence_edit_add(GtkSequenceEdit * sequence_edit, const gchar * text)
+gtk_sequence_edit_add(GtkSequenceEdit * sequence_edit, const gchar * text, gboolean show_empty_value_text)
 {
 	GtkTreeIter	iter;
 
 	gtk_list_store_append(sequence_edit->list_store, &iter);
 	gtk_list_store_set(sequence_edit->list_store, &iter,
-		0, text,
+		0, (show_empty_value_text && !strlen(text)) ? _("<empty value>") : text,
 		-1);
 
 	g_signal_emit_by_name(sequence_edit, "changed");

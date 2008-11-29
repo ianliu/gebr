@@ -1,5 +1,5 @@
-# G�BR ME - G�BR Menu Editor
-# Copyright (C) 2007 G�BR core team (http://gebr.sourceforge.net)
+# Debr - GeBR Designer
+# Copyright (C) 2007 GeBR core team (http://gebr.sourceforge.net)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ debr_SOURCES = \
 	programparameter.c \
 	parametergroup.c \
 	enumoptionedit.c \
+	parameteringroupedit.c \
 	help.c \
 	preferences.c \
 	support.c
@@ -40,6 +41,7 @@ noinst_HEADERS = \
 	programparameter.h \
 	parametergroup.h \
 	enumoptionedit.h \
+	parameteringroupedit.h \
 	help.h \
 	preferences.h \
 	support.h

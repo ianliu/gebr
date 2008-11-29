@@ -118,6 +118,15 @@ glong
 geoxml_parameter_group_get_instances_number(GeoXmlParameterGroup * parameter_group);
 
 /**
+ * Return the list of the parameters at \p index position in
+ * each instance of \p parameter_group
+ *
+ * If \p parameter_group is NULL returns NULL.
+ */
+GSList *
+geoxml_parameter_group_get_parameter_in_all_instances(GeoXmlParameterGroup * parameter_group, guint index);
+
+/**
  * Set wheter \p parameter_group can have more than one instance.
  * If \p enable is FALSE, group is deinstanciated till it has only one
  * one instance

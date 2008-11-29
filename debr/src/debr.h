@@ -35,6 +35,7 @@ struct debr {
 	GeoXmlFlow *		menu;
 	GeoXmlProgram *		program;
 	GeoXmlParameter *	parameter;
+	guint			unsaved_count;
 
 	/* diverse widgets */
 	GtkWidget *		window;
@@ -57,6 +58,7 @@ struct debr {
 			GtkAction *		properties;
 			GtkAction *		save;
 			GtkAction *		save_as;
+			GtkAction *		save_all;
 			GtkAction *		revert;
 			GtkAction *		delete;
 			GtkAction *		close;
@@ -103,7 +105,7 @@ struct debr {
 void
 debr_init(void);
 
-void
+gboolean
 debr_quit(void);
 
 void

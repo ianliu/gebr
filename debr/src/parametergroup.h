@@ -18,6 +18,17 @@
 #ifndef __PARAMETER_GROUP_H
 #define __PARAMETER_GROUP_H
 
+#include <geoxml.h>
+
+struct ui_parameter_group_dialog {
+	GtkWidget *		dialog;
+
+	GtkWidget *		exclusive_check_button;
+	GtkWidget *		instances_edit_vbox;
+
+	GeoXmlParameterGroup *	parameter_group;
+};
+
 void
 parameter_group_dialog_setup_ui(void);
 

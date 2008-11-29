@@ -72,24 +72,7 @@ job_parse_parameter(struct job * job, GeoXmlParameter * parameter, GeoXmlProgram
 	case GEOXML_PARAMETERTYPE_ENUM: {
 		GString *	value;
 
-		value = g_string_new("");
-
-		if (geoxml_program_parameter_get_is_list(program_parameter) == TRUE) {
-			GeoXmlSequence *	property_value;
-			const gchar *		separator;
-
-			separator = geoxml_program_parameter_get_list_separator(program_parameter);
-			geoxml_program_parameter_get_value(program_parameter, FALSE, &property_value, 0);
-			g_string_assign(value, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(property_value)));
-			geoxml_sequence_next(&property_value);
-			for (; property_value != NULL; geoxml_sequence_next(&property_value)) {
-				g_string_append(value, separator);
-				g_string_append(value, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(property_value)));
-			}
-		} else
-			g_string_assign(value, geoxml_program_parameter_get_first_value(program_parameter, FALSE));
-
-		
+		value = geoxml_program_parameter_get_string_value(program_parameter, FALSE);
 		if (strlen(value->str) > 0) {
 			g_string_append_printf(job->cmd_line, "%s\"%s\" ",
 				geoxml_program_parameter_get_keyword(program_parameter),
