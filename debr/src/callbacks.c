@@ -20,6 +20,7 @@
 #include <glib/gstdio.h>
 
 #include <gui/utils.h>
+#include <misc/utils.h>
 
 #include "callbacks.h"
 #include "debr.h"
@@ -116,7 +117,8 @@ on_menu_save_as_activate(void)
 	GtkWidget *		chooser_dialog;
 	GtkFileFilter *		filefilter;
 
-	gchar *			path;
+	GString *		path;
+	gchar *			tmp;
 	gchar *			filename;
 
 	/* run file chooser */
@@ -130,17 +132,19 @@ on_menu_save_as_activate(void)
 	gtk_file_filter_set_name(filefilter, _("System flow files (*.mnu)"));
 	gtk_file_filter_add_pattern(filefilter, "*.mnu");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), filefilter);
-
-	if (debr.config.menu_dir != NULL && strlen(debr.config.menu_dir->str) > 0){
+	if (debr.config.menu_dir != NULL && strlen(debr.config.menu_dir->str) > 0)
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir->str);
-	}
 
 	/* show file chooser */
 	gtk_widget_show(chooser_dialog);
 	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
 		goto out;
-	path = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser_dialog));
-	filename = g_path_get_basename(path);
+
+	/* path and file */
+	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
+	path = g_string_new(tmp);
+	append_filename_extension(path, ".mnu");
+	filename = g_path_get_basename(path->str);
 
 	/* get selection, change the view and save to disk */
 	menu_get_selected(&iter);
@@ -149,8 +153,11 @@ on_menu_save_as_activate(void)
 		MENU_PATH, path,
 		-1);
 	geoxml_document_set_filename(GEOXML_DOC(debr.menu), filename);
-	menu_save(path);
-	g_free(path);
+	menu_save(path->str);
+
+	/* frees */
+	g_string_free(path, TRUE);
+	g_free(tmp);
 	g_free(filename);
 
 out:	gtk_widget_destroy(chooser_dialog);

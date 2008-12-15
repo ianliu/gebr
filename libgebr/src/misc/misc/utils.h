@@ -20,6 +20,9 @@
 
 #include <glib.h>
 
+void
+append_filename_extension(GString * filename, const gchar * extension);
+
 GString *
 make_unique_filename(const gchar * template);
 

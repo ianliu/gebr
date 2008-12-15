@@ -271,7 +271,7 @@ void
 geoxml_program_parameter_set_string_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, const gchar * value)
 {
 	if (program_parameter == NULL)
-		return NULL;
+		return;
 
 	if (geoxml_program_parameter_get_is_list(program_parameter) == FALSE)
 		geoxml_program_parameter_set_first_value(program_parameter, default_value, value);

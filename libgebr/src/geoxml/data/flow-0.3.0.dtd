@@ -63,7 +63,7 @@
 
 <!ELEMENT parameter (label, (reference | int | float | string | flag | file | range | enum | group))>
 <!ATTLIST parameter
-   id ID #REQUIRED>
+   xml:id ID #REQUIRED>
 
 <!-- Short text to be displayed as label for a parameter -->
 <!ELEMENT label (#PCDATA)>
@@ -84,7 +84,7 @@
 <!-- Reference (except for groups) -->
 <!ELEMENT reference (property)>
 <!ATTLIST reference
-   id IDREF #REQUIRED>
+   xml:idref IDREF #REQUIRED>
 <!-- Integer -->
 <!ELEMENT int (property)>
 <!-- Real number -->

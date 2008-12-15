@@ -31,6 +31,7 @@
 #include <comm.h>
 #include <gui/utils.h>
 #include <misc/date.h>
+#include <misc/utils.h>
 
 #include "flow.h"
 #include "gebr.h"
@@ -206,7 +207,7 @@ flow_import(void)
 	GtkTreePath *           path;
 
 	GtkWidget *		chooser_dialog;
-	GtkFileFilter *		filefilter;
+	GtkFileFilter *		file_filter;
 	gchar *			dir;
 
 	gchar *			flow_title;
@@ -227,10 +228,10 @@ flow_import(void)
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		NULL);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
-	filefilter = gtk_file_filter_new();
-	gtk_file_filter_set_name(filefilter, _("Flow files (*.flw)"));
-	gtk_file_filter_add_pattern(filefilter, "*.flw");
-	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), filefilter);
+	file_filter = gtk_file_filter_new();
+	gtk_file_filter_set_name(file_filter, _("Flow files (*.flw)"));
+	gtk_file_filter_add_pattern(file_filter, "*.flw");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 
 	/* show file chooser */
 	gtk_widget_show(chooser_dialog);
@@ -288,8 +289,11 @@ void
 flow_export(void)
 {
 	GtkWidget *		chooser_dialog;
-	GtkFileFilter *		filefilter;
-	gchar *			path;
+	GtkFileFilter *		file_filter;
+
+	GString *		path;
+	gchar *			tmp;
+
 	gchar *			filename;
 	gchar *                 oldfilename;
 
@@ -306,28 +310,32 @@ flow_export(void)
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		NULL);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
-	filefilter = gtk_file_filter_new();
-	gtk_file_filter_set_name(filefilter, _("Flow files (*.flw)"));
-	gtk_file_filter_add_pattern(filefilter, "*.flw");
-	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), filefilter);
+	file_filter = gtk_file_filter_new();
+	gtk_file_filter_set_name(file_filter, _("Flow files (*.flw)"));
+	gtk_file_filter_add_pattern(file_filter, "*.flw");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 
 	/* show file chooser */
 	gtk_widget_show(chooser_dialog);
 	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
 		goto out;
-	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (chooser_dialog));
-	filename = g_path_get_basename(path);
+	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
+	path = g_string_new(tmp);
+	append_filename_extension(path, ".flw");
+	filename = g_path_get_basename(path->str);
 
 	/* export current flow to disk */
 	oldfilename = (gchar*)geoxml_document_get_filename(GEOXML_DOC(gebr.flow));
 	geoxml_document_set_filename(GEOXML_DOC(gebr.flow), filename);
-	geoxml_document_save(GEOXML_DOC(gebr.flow), path);
+	geoxml_document_save(GEOXML_DOC(gebr.flow), path->str);
 	geoxml_document_set_filename(GEOXML_DOC(gebr.flow), oldfilename);
 
 	gebr_message(LOG_INFO, TRUE, TRUE, _("Flow '%s' exported to %s"),
 		(gchar*)geoxml_document_get_title(GEOXML_DOC(gebr.flow)), path);
 
-	g_free(path);
+	/* frees */
+	g_string_free(path, TRUE);
+	g_free(tmp);
 	g_free(filename);
 
 out:	gtk_widget_destroy(chooser_dialog);
@@ -397,18 +405,16 @@ void
 flow_export_as_menu(void)
 {
 	GtkWidget *		dialog;
-	GtkFileFilter *		filefilter;
+	GtkFileFilter *		file_filter;
 
-	gchar *			path;
+	GString *		path;
 	gchar *			filename;
-	GString *               menufn;
-	GString *               menupath;
-
 
 	GeoXmlFlow *		flow;
 	GeoXmlSequence *	program;
 	gboolean		use_value;
 	gint			i;
+	gchar *			tmp;
 
 	if (gebr.flow == NULL) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
@@ -424,17 +430,19 @@ flow_export_as_menu(void)
 		NULL);
 	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), gebr.config.usermenus->str);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog), TRUE);
-	filefilter = gtk_file_filter_new();
-	gtk_file_filter_set_name(filefilter, _("Menu files (*.mnu)"));
-	gtk_file_filter_add_pattern(filefilter, "*.mnu");
-	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filefilter);
+	file_filter = gtk_file_filter_new();
+	gtk_file_filter_set_name(file_filter, _("Menu files (*.mnu)"));
+	gtk_file_filter_add_pattern(file_filter, "*.mnu");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), file_filter);
 
 	/* show file chooser */
 	gtk_widget_show(dialog);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_YES)
 		goto out;
-	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
-	filename = g_path_get_basename(path);
+	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
+	path = g_string_new(tmp);
+	append_filename_extension(path, ".mnu");
+	filename = g_path_get_basename(path->str);
 
 	/* first clone it */
 	flow = GEOXML_FLOW(geoxml_document_clone(GEOXML_DOC(gebr.flow)));
@@ -475,23 +483,17 @@ flow_export_as_menu(void)
 	geoxml_document_set_date_modified(GEOXML_DOC(flow), iso_date());
 
 	geoxml_document_set_help(GEOXML_DOC(flow), "");
-	menufn = g_string_new(filename);
-	menupath = g_string_new(path);
-	if (!g_str_has_suffix(filename,".mnu")){
-		g_string_append(menufn, ".mnu");
-		g_string_append(menupath, ".mnu");
-	}
-	geoxml_document_set_filename(GEOXML_DOC(flow), menufn->str);
-	geoxml_document_save(GEOXML_DOC(flow), menupath->str);
+	geoxml_document_set_filename(GEOXML_DOC(flow), filename);
+	geoxml_document_save(GEOXML_DOC(flow), path->str);
 	geoxml_document_free(GEOXML_DOC(flow));
 
 	gebr_message(LOG_INFO, TRUE, TRUE, _("Flow '%s' exported as menu to %s"),
 		     (gchar*)geoxml_document_get_title(GEOXML_DOC(gebr.flow)), path);
 
-	g_free(path);
+	/* frees */
+	g_string_free(path, TRUE);
 	g_free(filename);
-	g_string_free(menufn, TRUE);
-	g_string_free(menupath, TRUE);
+	g_free(tmp);
 
 out:	gtk_widget_destroy(dialog);
 }

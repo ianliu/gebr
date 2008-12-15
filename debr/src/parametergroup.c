@@ -234,7 +234,7 @@ parameter_group_dialog_setup_ui(void)
 
 	/* frees */
 	gtk_widget_destroy(dialog);
-	g_free(ui->parameter_edits_ntarray);
+// 	g_free(ui->parameter_edits_ntarray);
 	g_free(ui);
 }
 

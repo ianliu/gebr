@@ -267,7 +267,7 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 
 					parameter = __geoxml_insert_new_element((GdomeElement*)parameters,
 						"parameter", old_parameter);
-					__geoxml_element_assign_new_id(parameter);
+					__geoxml_element_assign_new_id(parameter, FALSE);
 					gdome_el_insertBefore(parameter, (GdomeNode*)
 						__geoxml_get_first_element(old_parameter, "label"),
 						NULL, &exception);

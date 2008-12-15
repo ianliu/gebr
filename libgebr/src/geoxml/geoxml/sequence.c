@@ -240,7 +240,7 @@ geoxml_sequence_append_clone(GeoXmlSequence * sequence)
 // 
 // 		/* append reference to clone for each group instance */
 // 		__geoxml_foreach_element(reference_element,
-// 		__geoxml_get_elements_by_idref((GdomeElement*)sequence, __geoxml_get_attr_value((GdomeElement*)sequence, "id")))
+// 		__geoxml_get_elements_by_idref((GdomeElement*)sequence, __geoxml_get_attr_value((GdomeElement*)sequence, "xml:id")))
 // 			__geoxml_sequence_append_clone((GeoXmlSequence*)gdome_el_parentNode(reference_element, &exception));
 // 	}
 
@@ -260,7 +260,7 @@ geoxml_sequence_remove(GeoXmlSequence * sequence)
 		GdomeElement *	reference_element;
 
 		__geoxml_foreach_element(reference_element,
-		__geoxml_get_elements_by_idref((GdomeElement*)sequence, __geoxml_get_attr_value((GdomeElement*)sequence, "id")))
+		__geoxml_get_elements_by_idref((GdomeElement*)sequence, __geoxml_get_attr_value((GdomeElement*)sequence, "xml:id")))
 			__geoxml_sequence_remove((GeoXmlSequence*)gdome_el_parentNode(reference_element, &exception));
 	}
 
@@ -306,7 +306,7 @@ geoxml_sequence_move_up(GeoXmlSequence * sequence)
 		GdomeElement *	reference_element;
 
 		__geoxml_foreach_element(reference_element,
-		__geoxml_get_elements_by_idref((GdomeElement*)sequence, __geoxml_get_attr_value((GdomeElement*)sequence, "id")))
+		__geoxml_get_elements_by_idref((GdomeElement*)sequence, __geoxml_get_attr_value((GdomeElement*)sequence, "xml:id")))
 			__geoxml_sequence_move_up((GeoXmlSequence*)gdome_el_parentNode(reference_element, &exception));
 	}
 	return GEOXML_RETV_SUCCESS;
@@ -323,7 +323,7 @@ geoxml_sequence_move_down(GeoXmlSequence * sequence)
 		GdomeElement *	reference_element;
 
 		__geoxml_foreach_element(reference_element,
-		__geoxml_get_elements_by_idref((GdomeElement*)sequence, __geoxml_get_attr_value((GdomeElement*)sequence, "id")))
+		__geoxml_get_elements_by_idref((GdomeElement*)sequence, __geoxml_get_attr_value((GdomeElement*)sequence, "xml:id")))
 			__geoxml_sequence_move_down((GeoXmlSequence*)gdome_el_parentNode(reference_element, &exception));
 	}
 	return GEOXML_RETV_SUCCESS;

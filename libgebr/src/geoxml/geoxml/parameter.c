@@ -61,7 +61,7 @@ __geoxml_parameter_get_type_element(GeoXmlParameter * parameter)
 }
 
 void
-__geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter * reference)
+__geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter * referencee)
 {
 	GdomeElement *			type_element;
 	enum GEOXML_PARAMETERTYPE	type;
@@ -76,7 +76,7 @@ __geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter
 	gdome_el_removeChild((GdomeElement*)parameter, (GdomeNode*)type_element, &exception);
 
 	type_element = __geoxml_parameter_insert_type(parameter, GEOXML_PARAMETERTYPE_REFERENCE);
-	__geoxml_element_assign_reference_id(type_element, (GdomeElement*)reference);
+	__geoxml_element_assign_reference_id(type_element, (GdomeElement*)referencee);
 }
 
 GdomeElement *
@@ -119,28 +119,27 @@ GSList *
 __geoxml_parameter_get_referencee_list(GdomeElement * context, const gchar * id)
 {
 	GSList *		idref_list;
-	GdomeDOMString *	string, * id_string;
+	GdomeDOMString *	string, * idref_string;
 	GdomeNodeList *		node_list;
 	gint			i, l;
 
 	idref_list = NULL;
-	id_string = gdome_str_mkref("id");
+	idref_string = gdome_str_mkref("xml:idref");
 	string = gdome_str_mkref("reference");
 	node_list = gdome_el_getElementsByTagName(context, string, &exception);
 
 	l = gdome_nl_length(node_list, &exception);
-	/* get the list of elements with this tag_name. */
 	for (i = 0; i < l; ++i) {
 		GdomeElement *	element;
 
 		element = (GdomeElement*)gdome_nl_item(node_list, i, &exception);
-		if (strcmp(gdome_el_getAttribute(element, id_string, &exception)->str, id) == 0)
+		if (strcmp(gdome_el_getAttribute(element, idref_string, &exception)->str, id) == 0)
 			idref_list = g_slist_prepend(idref_list, gdome_el_parentNode(element, &exception));
 	}
 
 	gdome_str_unref(string);
 	gdome_nl_unref(node_list, &exception);
-	gdome_str_unref(id_string);
+	gdome_str_unref(idref_string);
 
 	idref_list = g_slist_reverse(idref_list);
 
@@ -199,7 +198,6 @@ geoxml_parameter_get_type(GeoXmlParameter * parameter)
 	int			i;
 
 	tag_name = gdome_el_tagName(__geoxml_parameter_get_type_element(parameter), &exception);
-
 	for (i = 1; i <= parameter_type_to_str_len; ++i)
 		if (!strcmp(parameter_type_to_str[i], tag_name->str))
 			return (enum GEOXML_PARAMETERTYPE)i;
@@ -208,13 +206,24 @@ geoxml_parameter_get_type(GeoXmlParameter * parameter)
 }
 
 GSList *
-geoxml_parameter_get_referencee_list(GeoXmlParameter * parameter)
+geoxml_parameter_get_references_list(GeoXmlParameter * parameter)
 {
 	if (parameter == NULL)
 		return NULL;
 	return __geoxml_parameter_get_referencee_list(
 		gdome_doc_documentElement(gdome_el_ownerDocument((GdomeElement*)parameter, &exception), &exception),
-		__geoxml_get_attr_value((GdomeElement*)parameter, "id"));
+		__geoxml_get_attr_value((GdomeElement*)parameter, "xml:id"));
+}
+
+GeoXmlParameter *
+geoxml_parameter_get_referencee(GeoXmlParameter * parameter_reference)
+{
+	if (geoxml_parameter_get_type(parameter_reference) != GEOXML_PARAMETERTYPE_REFERENCE)
+		return NULL;
+
+	puts(gdome_el_tagName(__geoxml_parameter_get_type_element(parameter_reference),&exception)->str);
+	return (GeoXmlParameter*)__geoxml_get_element_by_id((GdomeElement*)parameter_reference,
+		__geoxml_get_attr_value(__geoxml_parameter_get_type_element(parameter_reference), "xml:idref"));
 }
 
 gboolean

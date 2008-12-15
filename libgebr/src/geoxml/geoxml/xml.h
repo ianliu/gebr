@@ -189,14 +189,14 @@ __geoxml_next_same_element(GdomeElement * element);
  * Automatically change references ids.
  */
 void
-__geoxml_element_assign_new_id(GdomeElement * element);
+__geoxml_element_assign_new_id(GdomeElement * element, gboolean reassign_refereceds);
 
 /**
  * \internal
  * Assign \p reference's ID to \p element
  */
 void
-__geoxml_element_assign_reference_id(GdomeElement * element, GdomeElement * reference);
+__geoxml_element_assign_reference_id(GdomeElement * element, GdomeElement * referencee);
 
 /**
  * \internal

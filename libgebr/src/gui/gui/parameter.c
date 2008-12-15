@@ -35,7 +35,8 @@
 static GString *
 __parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, gboolean check_list)
 {
-	GString *	value;
+	GString *			value;
+	enum GEOXML_PARAMETERTYPE	type;
 
 	value = g_string_new(NULL);
 
@@ -44,7 +45,10 @@ __parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, 
 		return value;
 	}
 
-	switch (geoxml_parameter_get_type(parameter_widget->parameter)) {
+	type = geoxml_parameter_get_type(parameter_widget->parameter);
+	while (type == GEOXML_PARAMETERTYPE_REFERENCE)
+		type = geoxml_parameter_get_type(geoxml_parameter_get_referencee(parameter_widget->parameter));
+	switch (type) {
 	case GEOXML_PARAMETERTYPE_FLOAT:
 	case GEOXML_PARAMETERTYPE_INT:
 	case GEOXML_PARAMETERTYPE_STRING:
@@ -364,7 +368,15 @@ validate_on_leaving(GtkWidget * widget, GdkEventFocus * event, void (*function)(
 static void
 parameter_widget_configure(struct parameter_widget * parameter_widget)
 {
-	switch (geoxml_parameter_get_type(parameter_widget->parameter)) {
+	enum GEOXML_PARAMETERTYPE	type;
+
+	type = geoxml_parameter_get_type(parameter_widget->parameter);
+		printf("1 %d\n", type);
+	while (type == GEOXML_PARAMETERTYPE_REFERENCE) {
+		type = geoxml_parameter_get_type(geoxml_parameter_get_referencee(parameter_widget->parameter));
+			printf("2 %d\n", type);
+		}
+	switch (type) {
 	case GEOXML_PARAMETERTYPE_FLOAT: {
 		GtkWidget *			entry;
 

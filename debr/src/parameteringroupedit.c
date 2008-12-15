@@ -341,15 +341,15 @@ parameter_in_group_edit_load(ParameterInGroupEdit * parameter_in_group_edit)
 	GtkTreeSelection *	tree_selection;
 	GtkTreeIter		iter;
 
-	GSList *		referencee_list, * i;
+	GSList *		references_list, * i;
 
 	g_object_get(parameter_in_group_edit, "list-store", &list_store, NULL);
 	tree_view = GTK_SEQUENCE_EDIT(parameter_in_group_edit)->tree_view;
 	gtk_list_store_clear(list_store);
 
-	referencee_list = geoxml_parameter_group_get_parameter_in_all_instances(
+	references_list = geoxml_parameter_group_get_parameter_in_all_instances(
 		parameter_in_group_edit->parameter_group, parameter_in_group_edit->parameter_index);
-	for (i = referencee_list; i != NULL; i = g_slist_next(i))
+	for (i = references_list; i != NULL; i = g_slist_next(i))
 		__parameter_in_group_edit_add(parameter_in_group_edit, GEOXML_PARAMETER(i->data));
 
 	/* select first */
@@ -359,5 +359,5 @@ parameter_in_group_edit_load(ParameterInGroupEdit * parameter_in_group_edit)
 	on_parameter_in_group_tree_view_selected(tree_view, parameter_in_group_edit);
 
 	/* frees */
-	g_slist_free(referencee_list);
+	g_slist_free(references_list);
 }

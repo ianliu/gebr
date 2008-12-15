@@ -68,7 +68,7 @@ __geoxml_parameters_append_reference_parameter(GeoXmlParameters * parameters, Ge
 
 	parameter = (GeoXmlParameter*)gdome_el_cloneNode((GdomeElement*)reference, TRUE, &exception);
 	__geoxml_parameter_set_be_reference(parameter, reference);
-	__geoxml_element_assign_new_id((GdomeElement*)parameter);
+	__geoxml_element_assign_new_id((GdomeElement*)parameter, FALSE);
 	gdome_el_insertBefore((GdomeElement*)parameters, (GdomeNode*)parameter, NULL, &exception);
 
 	return parameter;
@@ -91,7 +91,7 @@ geoxml_parameters_append_parameter(GeoXmlParameters * parameters, enum GEOXML_PA
 	GdomeElement *	parent;
 
 	element = __geoxml_insert_new_element((GdomeElement*)parameters, "parameter", NULL);
-	__geoxml_element_assign_new_id(element);
+	__geoxml_element_assign_new_id(element, FALSE);
 	__geoxml_insert_new_element(element, "label", NULL);
 	__geoxml_parameter_insert_type((GeoXmlParameter*)element, type);
 

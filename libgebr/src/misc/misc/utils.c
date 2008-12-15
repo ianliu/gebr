@@ -26,6 +26,17 @@
 #include "utils.h"
 
 /**
+ * Append, if not already present, \p extension into \p filename
+ * \p extension must include the dot (e.g. ".mnu")
+ */
+void
+append_filename_extension(GString * filename, const gchar * extension)
+{
+	if (!g_str_has_suffix(filename->str, extension))
+		g_string_append(filename, extension);
+}
+
+/**
  * Create a file based on \p template.
  *
  * \p template must have a XXXXXX that will be replaced to random

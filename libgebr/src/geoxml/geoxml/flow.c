@@ -69,7 +69,7 @@ __geoxml_flow_id_reasign_imported_parameters(GeoXmlParameters * parameters)
 			continue;
 		}
 
-		__geoxml_element_assign_new_id((GdomeElement*)parameter);
+		__geoxml_element_assign_new_id((GdomeElement*)parameter, TRUE);
 	}
 }
 
