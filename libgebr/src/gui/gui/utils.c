@@ -281,6 +281,7 @@ gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callb
 		(GCallback)__gtk_widget_on_popup_menu, popup_callback);
 }
 
+#if GTK_CHECK_VERSION(2,12,0)
 struct tooltip_data {
 	GtkTreePath *	path;
 	int		column;
@@ -326,6 +327,8 @@ gtk_tree_view_set_tooltip_text(GtkTreeView * tree_view, GtkTreeIter * iter, int 
 {
 	struct tooltip_data *	tooltip_data;
 
+	if (column < -1)
+		return;
 	if (!g_signal_handler_find(tree_view, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, iter->user_data3) ||
 	((struct tooltip_data *)iter->user_data3)->column != column) {
 		tooltip_data = g_malloc(sizeof(struct tooltip_data));
@@ -350,7 +353,10 @@ gtk_tree_view_set_tooltip_text(GtkTreeView * tree_view, GtkTreeIter * iter, int 
 			tooltip_data->string = text; 
 	}
 }
-
+#else
+void
+gtk_tree_view_set_tooltip_text(GtkTreeView * tree_view, GtkTreeIter * iter, int column, const char * text) {}
+#endif
 /*
  * Function: confirm_action_dialog
  * Show an action confirmation dialog with formated _message_

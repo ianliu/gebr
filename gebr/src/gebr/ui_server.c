@@ -317,7 +317,7 @@ server_list_updated_status(struct server * server)
 		status_icon = server->comm->protocol->logged == TRUE
 			? gebr.pixmaps.stock_connect : gebr.pixmaps.stock_disconnect;
 		gtk_tree_view_set_tooltip_text(GTK_TREE_VIEW(gebr.ui_server_list->common.view),
-			&server->iter, -1, NULL);
+			&server->iter, SERVER_STATUS_ICON, NULL);
 	}
 	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter,
 		SERVER_STATUS_ICON, status_icon,
