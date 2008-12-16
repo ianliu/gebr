@@ -36,11 +36,10 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 
 		if (message->hash == protocol_defs.err_def.hash) {
 			GList *		arguments;
-			GString *	error;
 
 			/* organize message data */
 			arguments = protocol_split_new(message->argument, 1);
-			g_string_assign(server->last_error, g_list_nth_data(arguments, 0));
+			g_string_assign(server->last_error, ((GString *)g_list_nth_data(arguments, 0))->str);
 
 			protocol_split_free(arguments);
 		} else if (message->hash == protocol_defs.ret_def.hash) {
@@ -54,6 +53,7 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 				display_port = g_list_nth_data(arguments, 1);
 
 				/* say we are logged */
+				g_string_assign(server->last_error, "");
 				comm_server->protocol->logged = TRUE;
 				server_list_updated_status(server);
 				g_string_assign(comm_server->protocol->hostname, hostname->str);

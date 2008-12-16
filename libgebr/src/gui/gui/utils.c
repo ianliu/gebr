@@ -1,5 +1,5 @@
-/*   libgebr - G�BR Library
- *   Copyright (C) 2007-2008 G�BR core team (http://gebr.sourceforge.net)
+/*   libgebr - GeBR Library
+ *   Copyright (C) 2007-2008 GeBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -303,6 +303,7 @@ on_tooltip_query(GtkTreeView * tree_view, gint x, gint y, gboolean keyboard_mode
 	GtkTreePath *		path;
 	GtkTreeViewColumn *	column;
 
+	gtk_tree_view_convert_widget_to_bin_window_coords(tree_view, x, y, &x, &y);
 	if (!gtk_tree_view_get_path_at_pos(tree_view, x, y, &path, &column, NULL, NULL) ||
 	gtk_tree_path_compare(tooltip_data->path, path) ||
 	column != gtk_tree_view_get_column(tree_view, tooltip_data->column)) {
@@ -311,11 +312,10 @@ on_tooltip_query(GtkTreeView * tree_view, gint x, gint y, gboolean keyboard_mode
 	}
 
 	tooltip_data->gtk_tooltip_set(tooltip, tooltip_data->string);
-	if (tooltip_data->column < 0 )
+	if (tooltip_data->column != -1)
 		gtk_tree_view_set_tooltip_row(tree_view, tooltip, path);
 	else
-		gtk_tree_view_set_tooltip_cell(tree_view, tooltip, path,
-			column, NULL);
+		gtk_tree_view_set_tooltip_cell(tree_view, tooltip, path, column, NULL);
 
 	gtk_tree_path_free(path);
 

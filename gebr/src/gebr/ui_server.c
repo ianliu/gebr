@@ -307,7 +307,6 @@ void
 server_list_updated_status(struct server * server)
 {
 	GdkPixbuf *	status_icon;
-// 	GtkTreePath *	path;
 
 	if (server->last_error->len) {
 		status_icon = gebr.pixmaps.stock_warning;
