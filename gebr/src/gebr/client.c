@@ -34,7 +34,16 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 	while ((link = g_list_last(comm_server->protocol->messages)) != NULL) {
 		message = (struct message *)link->data;
 
-		if (message->hash == protocol_defs.ret_def.hash) {
+		if (message->hash == protocol_defs.err_def.hash) {
+			GList *		arguments;
+			GString *	error;
+
+			/* organize message data */
+			arguments = protocol_split_new(message->argument, 1);
+			g_string_assign(server->last_error, g_list_nth_data(arguments, 0));
+
+			protocol_split_free(arguments);
+		} else if (message->hash == protocol_defs.ret_def.hash) {
 			if (comm_server->protocol->waiting_ret_hash == protocol_defs.ini_def.hash) {
 				GList *		arguments;
 				GString *	hostname, * display_port;

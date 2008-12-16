@@ -69,6 +69,7 @@ protocol_init(void)
 	/* create messages hashes */
 	protocol_defs = (struct protocol_defs) {
 		.ret_def = create_message_def("RET", FALSE),
+		.err_def = create_message_def("ERR", FALSE),
 		.ini_def = create_message_def("INI", TRUE),
 		.qut_def = create_message_def("QUT", FALSE),
 		.lst_def = create_message_def("LST", FALSE), /* return, but it is not a ret */

@@ -17,6 +17,7 @@
 
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "utils.h"
 
@@ -250,18 +251,6 @@ gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter)
 	return TRUE;
 }
 
-void
-gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback, gpointer user_data)
-{
-	struct popup_callback *	popup_callback;
-
-	popup_callback = __popup_callback_init(G_OBJECT(tree_view), callback, user_data, NULL);
-	g_signal_connect(tree_view, "button-press-event",
-		(GCallback)__gtk_tree_view_on_button_pressed, popup_callback);
-	g_signal_connect(tree_view, "popup-menu",
-		(GCallback)__gtk_widget_on_popup_menu, popup_callback);
-}
-
 gboolean
 gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpointer user_data)
 {
@@ -278,6 +267,88 @@ gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpo
 		(GCallback)__gtk_widget_on_popup_menu, popup_callback);
 
 	return TRUE;
+}
+
+void
+gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback, gpointer user_data)
+{
+	struct popup_callback *	popup_callback;
+
+	popup_callback = __popup_callback_init(G_OBJECT(tree_view), callback, user_data, NULL);
+	g_signal_connect(tree_view, "button-press-event",
+		(GCallback)__gtk_tree_view_on_button_pressed, popup_callback);
+	g_signal_connect(tree_view, "popup-menu",
+		(GCallback)__gtk_widget_on_popup_menu, popup_callback);
+}
+
+struct tooltip_data {
+	GtkTreePath *	path;
+	int		column;
+	void		(*gtk_tooltip_set)(GtkTooltip * tooltip, const gchar * string);
+	const gchar *	string;
+};
+
+static void
+tooltip_weak_ref(struct tooltip_data * tooltip_data, GtkTreeView * tree_view)
+{
+	gtk_tree_path_free(tooltip_data->path);
+	g_free(tooltip_data);
+}
+
+static gboolean
+on_tooltip_query(GtkTreeView * tree_view, gint x, gint y, gboolean keyboard_mode,
+	GtkTooltip * tooltip, struct tooltip_data * tooltip_data)
+{
+	GtkTreePath *		path;
+	GtkTreeViewColumn *	column;
+
+	if (!gtk_tree_view_get_path_at_pos(tree_view, x, y, &path, &column, NULL, NULL) ||
+	gtk_tree_path_compare(tooltip_data->path, path) ||
+	column != gtk_tree_view_get_column(tree_view, tooltip_data->column)) {
+		gtk_tree_path_free(path);
+		return FALSE;
+	}
+
+	tooltip_data->gtk_tooltip_set(tooltip, tooltip_data->string);
+	if (tooltip_data->column < 0 )
+		gtk_tree_view_set_tooltip_row(tree_view, tooltip, path);
+	else
+		gtk_tree_view_set_tooltip_cell(tree_view, tooltip, path,
+			column, NULL);
+
+	gtk_tree_path_free(path);
+
+	return TRUE;
+}
+
+void
+gtk_tree_view_set_tooltip_text(GtkTreeView * tree_view, GtkTreeIter * iter, int column, const char * text)
+{
+	struct tooltip_data *	tooltip_data;
+
+	if (!g_signal_handler_find(tree_view, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, iter->user_data3) ||
+	((struct tooltip_data *)iter->user_data3)->column != column) {
+		tooltip_data = g_malloc(sizeof(struct tooltip_data));
+		*tooltip_data = (struct tooltip_data) {
+			.path = gtk_tree_model_get_path(gtk_tree_view_get_model(tree_view), iter),
+			.column = column,
+			.gtk_tooltip_set = gtk_tooltip_set_text,
+			.string = text,
+		};
+		iter->user_data3 = tooltip_data;
+
+		g_object_set(G_OBJECT(tree_view), "has-tooltip", TRUE, NULL);
+		g_signal_connect(tree_view, "query-tooltip",
+			(GCallback)on_tooltip_query, tooltip_data);
+		g_object_weak_ref(G_OBJECT(tree_view), (GWeakNotify)tooltip_weak_ref, tooltip_data);
+	} else {
+		tooltip_data = iter->user_data3;
+		if (text == NULL || !strlen(text)) {
+			tooltip_weak_ref(tooltip_data, tree_view);
+			g_object_weak_unref(G_OBJECT(tree_view), (GWeakNotify)tooltip_weak_ref, tooltip_data);
+		} else
+			tooltip_data->string = text; 
+	}
 }
 
 /*

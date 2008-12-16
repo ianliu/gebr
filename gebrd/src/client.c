@@ -110,7 +110,5 @@ out:	g_string_free(data, TRUE);
 static void
 client_error(GStreamSocket * stream_socket, enum GSocketError error, struct client * client)
 {
-	if (error == G_SOCKET_ERROR_UNKNOWN)
-		gebrd_message(LOG_ERROR, _("unk"), error, client->protocol->hostname->str);
-	gebrd_message(LOG_ERROR, _("Connection error '%s' on server '%s'"), error, client->protocol->hostname->str);
+	gebrd_message(LOG_ERROR, _("Connection error '%s' on client '%s'"), error, strerror(error), client->protocol->hostname->str);
 }

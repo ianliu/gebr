@@ -22,7 +22,7 @@
 
 #include "gstreamsocket.h"
 
-#define PROTOCOL_VERSION	"0.9.3"
+#define PROTOCOL_VERSION	"1.0.0"
 
 extern struct protocol_defs protocol_defs;
 
@@ -37,6 +37,7 @@ struct protocol_defs {
 	/* messages identifiers hashes */
 	struct message_def	ret_def;
 	struct message_def	ini_def;
+	struct message_def	err_def;
 	struct message_def	qut_def;
 	struct message_def	lst_def;
 	struct message_def	job_def;

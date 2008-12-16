@@ -60,7 +60,7 @@ struct gebr {
 	GSList *			tmpfiles;
 
 	/* Persistant GUI */
-	GtkWidget *                     navigation_box_label;
+	GtkWidget *			navigation_box_label;
 	struct ui_project_line *	ui_project_line;
 	struct ui_flow_browse *		ui_flow_browse;
 	struct ui_flow_edition *	ui_flow_edition;

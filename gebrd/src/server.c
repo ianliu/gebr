@@ -195,8 +195,11 @@ server_parse_client_messages(struct client * client)
 			place = g_list_nth_data(arguments, 2);
 			x11 = g_list_nth_data(arguments, 3);
 
-// 			if (strcmp(version->str, PROTOCOL_VERSION))
-// 				goto err;
+			if (strcmp(version->str, PROTOCOL_VERSION)) {
+				protocol_send_data(client->protocol, client->stream_socket,
+					protocol_defs.err_def, 1, "Client/server version mismatch");
+				goto err;
+			}
 
 			/* set client info */
 			client->protocol->logged = TRUE;

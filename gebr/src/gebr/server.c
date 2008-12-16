@@ -124,6 +124,7 @@ server_new(const gchar * address)
 		SERVER_POINTER, server,
 		-1);
 	server->iter = iter;
+	server->last_error = g_string_new("");
 
 	g_signal_connect(server->comm->stream_socket, "disconnected",
 		G_CALLBACK(server_disconnected), server);
@@ -146,8 +147,8 @@ server_free(struct server * server)
 		GtkTreeIter	this;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
-				JC_STRUCT, &job,
-				-1);
+			JC_STRUCT, &job,
+			-1);
 		this = iter;
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
 
@@ -156,5 +157,6 @@ server_free(struct server * server)
 	}
 
 	comm_server_free(server->comm);
+	g_string_free(server->last_error, TRUE);
 	g_free(server);
 }

@@ -231,7 +231,7 @@ gebr_log_load(void)
 
 /* Function: gebr_config_load_from_gengetopt
  * Backwards compatibility function for old configuration file format.
- * Returns TRUE if could not parse config with gengetopt.
+ * Returns FALSE if could not parse config with gengetopt.
  */
 static gboolean
 gebr_config_load_from_gengetopt(void)
@@ -328,8 +328,9 @@ gebr_config_load(void)
 		if (g_str_has_prefix(groups[i], "server-")) {
 			GString * address;
 
-			address = g_key_file_load_string_key(gebr.config.key_file, groups[i], "address", "localhost");
-			server_new(address->str);
+			address = g_key_file_load_string_key(gebr.config.key_file, groups[i], "address", "");
+			if (address->len)
+				server_new(address->str);
 
 			g_string_free(address, TRUE);
 		}

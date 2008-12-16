@@ -29,6 +29,8 @@
 #include "gebr.h"
 #include "support.h"
 
+#include <gui/utils.h>
+
 #define GEBR_SERVER_CLOSE	101
 #define GEBR_SERVER_REMOVE	102
 #define GEBR_SERVER_REFRESH	103
@@ -307,16 +309,22 @@ server_list_updated_status(struct server * server)
 	GdkPixbuf *	status_icon;
 // 	GtkTreePath *	path;
 
-	status_icon = server->comm->protocol->logged == TRUE ?
-		gebr.pixmaps.stock_connect : gebr.pixmaps.stock_disconnect,
+	if (server->last_error->len) {
+		status_icon = gebr.pixmaps.stock_warning;
+		gtk_tree_view_set_tooltip_text(GTK_TREE_VIEW(gebr.ui_server_list->common.view),
+			&server->iter, SERVER_STATUS_ICON, server->last_error->str);
+	} else {
+		status_icon = server->comm->protocol->logged == TRUE
+			? gebr.pixmaps.stock_connect : gebr.pixmaps.stock_disconnect;
+		gtk_tree_view_set_tooltip_text(GTK_TREE_VIEW(gebr.ui_server_list->common.view),
+			&server->iter, -1, NULL);
+	}
 	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter,
 		SERVER_STATUS_ICON, status_icon,
 		-1);
 
 	/* update view */
-// 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server->comm->iter);
 	g_signal_emit_by_name(gebr.ui_server_list->common.store, "row-changed", NULL, &server->iter);
-// 	gtk_tree_path_free(path);
 }
 
 /*

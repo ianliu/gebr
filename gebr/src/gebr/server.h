@@ -28,6 +28,9 @@ struct server {
 
 	/* iter to set icons on logged/disconneted */
 	GtkTreeIter		iter;
+
+	/* last error */
+	GString *		last_error;
 };
 
 struct server *

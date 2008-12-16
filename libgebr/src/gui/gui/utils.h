@@ -55,6 +55,9 @@ gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpo
 void
 gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback, gpointer user_data);
 
+void
+gtk_tree_view_set_tooltip_text(GtkTreeView * tree_view, GtkTreeIter * iter, int column, const char * text);
+
 gboolean
 confirm_action_dialog(const gchar * title, const gchar * message, ...);
 
