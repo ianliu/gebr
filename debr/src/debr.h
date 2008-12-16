@@ -88,7 +88,7 @@ struct debr {
 
 	/* config file */
 	struct debr_config {
-		GKeyFile *	keyfile;
+		GKeyFile *	key_file;
 		GString *	path;
 
 		GString *	name;

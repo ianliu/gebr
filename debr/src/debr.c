@@ -28,22 +28,6 @@
 #include "menu.h"
 #include "preferences.h"
 
-#define __DEBUG
-/* used to load config file in debr_init */
-#define load_key(keyfile, gstring, key, default) \
-	do { \
-		gchar *	value; \
-		\
-		error = NULL; \
-		gstring = g_string_new(""); \
-		value = g_key_file_get_string(keyfile, "general", key, &error); \
-		if (value != NULL) { \
-			g_string_assign(gstring, value); \
-			g_free(value); \
-		} else \
-			g_string_assign(gstring, default); \
-	} while(0)
-
 /* global instance for data exchange */
 struct debr debr;
 
@@ -95,7 +79,7 @@ debr_quit(void)
 	g_object_unref(debr.actions.parameter.delete);
 
 	/* free config stuff */
-	g_key_file_free(debr.config.keyfile);
+	g_key_file_free(debr.config.key_file);
 	g_string_free(debr.config.path, TRUE);
 	g_string_free(debr.config.name, TRUE);
 	g_string_free(debr.config.email, TRUE);
@@ -126,14 +110,14 @@ debr_config_load(void)
 	g_string_append(debr.config.path, "/.gebr/debr.conf");
 
 	error = NULL;
-	debr.config.keyfile = g_key_file_new();
-	g_key_file_load_from_file(debr.config.keyfile, debr.config.path->str, G_KEY_FILE_NONE, &error);
+	debr.config.key_file = g_key_file_new();
+	g_key_file_load_from_file(debr.config.key_file, debr.config.path->str, G_KEY_FILE_NONE, &error);
 
-	load_key(debr.config.keyfile, debr.config.name, "name", g_get_real_name());
-	load_key(debr.config.keyfile, debr.config.email, "email", g_get_user_name());
-	load_key(debr.config.keyfile, debr.config.menu_dir, "menu_dir", "");
-	load_key(debr.config.keyfile, debr.config.browser, "browser", "firefox");
-	load_key(debr.config.keyfile, debr.config.htmleditor, "htmleditor", "gedit");
+	debr.config.name = g_key_file_load_string_key(debr.config.key_file, "general", "name", g_get_real_name());
+	debr.config.email = g_key_file_load_string_key(debr.config.key_file, "general", "email", g_get_user_name());
+	debr.config.menu_dir = g_key_file_load_string_key(debr.config.key_file, "general", "menu_dir", "");
+	debr.config.browser = g_key_file_load_string_key(debr.config.key_file, "general", "browser", "firefox");
+	debr.config.htmleditor = g_key_file_load_string_key(debr.config.key_file, "general", "htmleditor", "gedit");
 }
 
 void
@@ -144,14 +128,14 @@ debr_config_save(void)
 	GError *	error;
 	FILE *		configfp;
 
-	g_key_file_set_string(debr.config.keyfile, "general", "name", debr.config.name->str);
-	g_key_file_set_string(debr.config.keyfile, "general", "email", debr.config.email->str);
-	g_key_file_set_string(debr.config.keyfile, "general", "menu_dir", debr.config.menu_dir->str);
-	g_key_file_set_string(debr.config.keyfile, "general", "browser", debr.config.browser->str);
-	g_key_file_set_string(debr.config.keyfile, "general", "htmleditor", debr.config.htmleditor->str);
+	g_key_file_set_string(debr.config.key_file, "general", "name", debr.config.name->str);
+	g_key_file_set_string(debr.config.key_file, "general", "email", debr.config.email->str);
+	g_key_file_set_string(debr.config.key_file, "general", "menu_dir", debr.config.menu_dir->str);
+	g_key_file_set_string(debr.config.key_file, "general", "browser", debr.config.browser->str);
+	g_key_file_set_string(debr.config.key_file, "general", "htmleditor", debr.config.htmleditor->str);
 
 	error = NULL;
-	string = g_key_file_to_data(debr.config.keyfile, &length, &error);
+	string = g_key_file_to_data(debr.config.key_file, &length, &error);
 	configfp = fopen(debr.config.path->str, "w");
 	if (configfp == NULL) {
 		/* TODO: warn user */

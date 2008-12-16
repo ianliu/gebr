@@ -38,4 +38,16 @@ gebr_create_config_dirs(void);
 gchar *
 g_simple_locale_to_utf8(const gchar * string);
 
+gboolean
+g_key_file_has_key_woe(GKeyFile * key_file, const gchar * group, const gchar * key);
+
+GString *
+g_key_file_load_string_key(GKeyFile * key_file, const gchar * group, const gchar * key, const gchar * default_value);
+
+gboolean
+g_key_file_load_boolean_key(GKeyFile * key_file, const gchar * group, const gchar * key, gboolean default_value);
+
+int
+g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * key, int default_value);
+
 #endif //__LIBGEBR_MISC_UTILS_H

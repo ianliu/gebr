@@ -69,10 +69,8 @@ struct gebr {
 	struct ui_server_list *		ui_server_list;
 
 	struct gebr_config {
-		/* config options from gengetopt
-		 * loaded in gebr_config_load at gebr.c
-		 */
-		struct ggopt		ggopt;
+		GKeyFile *		key_file;
+		GString *		path;
 
 		GString *		username;
 		GString *		email;
@@ -139,7 +137,7 @@ struct gebr {
 };
 
 void
-gebr_init(int argc, char ** argv);
+gebr_init(void);
 
 gboolean
 gebr_quit(void);
@@ -148,12 +146,12 @@ void
 gebr_log_load(void);
 
 void
-gebr_config_load(int argc, char ** argv);
+gebr_config_load(void);
 
 void
 gebr_config_apply(void);
 
-gboolean
+void
 gebr_config_save(gboolean verbose);
 
 void

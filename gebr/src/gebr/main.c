@@ -37,7 +37,7 @@ main(int argc, char ** argv, char ** env)
 	gboolean		show_version;
 	GOptionEntry		entries[] = {
 		{"version", 0, 0, G_OPTION_ARG_NONE, &show_version,
-			"Show GeBR daemon version", NULL},
+			"Show GeBR version", NULL},
 		{NULL}
 	};
 	GError *		error = NULL;
@@ -75,7 +75,7 @@ main(int argc, char ** argv, char ** env)
 	gui_setup_theme();
 	gui_setup_icons();
 	gebr_setup_ui();
-	gebr_init(argc, argv);
+	gebr_init();
 
 	gtk_main();
 

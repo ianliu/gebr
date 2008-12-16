@@ -87,8 +87,8 @@ __geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETE
 	type_element = __geoxml_insert_new_element((GdomeElement*)parameter, parameter_type_to_str[type], NULL);
 	if (type == GEOXML_PARAMETERTYPE_GROUP) {
 		__geoxml_parameters_append_new(type_element);
-		geoxml_parameter_group_set_is_instanciable((GeoXmlParameterGroup*)parameter, TRUE);
-		geoxml_parameter_group_set_expand((GeoXmlParameterGroup*)parameter, TRUE);
+		geoxml_parameter_group_set_is_instanciable((GeoXmlParameterGroup*)type_element, TRUE);
+		geoxml_parameter_group_set_expand((GeoXmlParameterGroup*)type_element, TRUE);
 	} else {
 		GdomeElement *		property_element;
 
@@ -221,7 +221,6 @@ geoxml_parameter_get_referencee(GeoXmlParameter * parameter_reference)
 	if (geoxml_parameter_get_type(parameter_reference) != GEOXML_PARAMETERTYPE_REFERENCE)
 		return NULL;
 
-	puts(gdome_el_tagName(__geoxml_parameter_get_type_element(parameter_reference),&exception)->str);
 	return (GeoXmlParameter*)__geoxml_get_element_by_id((GdomeElement*)parameter_reference,
 		__geoxml_get_attr_value(__geoxml_parameter_get_type_element(parameter_reference), "xml:idref"));
 }

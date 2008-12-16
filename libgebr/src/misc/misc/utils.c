@@ -161,3 +161,59 @@ g_simple_locale_to_utf8(const gchar * string)
 
 	return output;
 }
+
+gboolean
+g_key_file_has_key_woe(GKeyFile * key_file, const gchar * group, const gchar * key)
+{
+	GError *	error = NULL;
+
+	return g_key_file_has_key(key_file, group, key, &error);
+}
+
+GString *
+g_key_file_load_string_key(GKeyFile * key_file, const gchar * group, const gchar * key, const gchar * default_value)
+{
+	GString *	value;
+	gchar *		tmp;
+	GError *	error;
+
+	error = NULL;
+	value = g_string_new(NULL);
+	tmp = g_key_file_get_string(key_file, group, key, &error);
+	g_string_assign(value, (error != NULL && error->code == G_KEY_FILE_ERROR_KEY_NOT_FOUND)
+		? default_value : tmp);
+
+	g_free(tmp);
+
+	return value;
+}
+
+gboolean
+g_key_file_load_boolean_key(GKeyFile * key_file, const gchar * group, const gchar * key, gboolean default_value)
+{
+	gboolean	value;
+	gboolean	tmp;
+	GError *	error;
+
+	error = NULL;
+	tmp = g_key_file_get_boolean(key_file, group, key, &error);
+	value = (error != NULL && error->code == G_KEY_FILE_ERROR_KEY_NOT_FOUND)
+		? default_value : tmp;
+
+	return value;
+}
+
+int
+g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * key, int default_value)
+{
+	int		value;
+	int		tmp;
+	GError *	error;
+
+	error = NULL;
+	tmp = g_key_file_get_integer(key_file, group, key, &error);
+	value = (error != NULL && error->code == G_KEY_FILE_ERROR_KEY_NOT_FOUND)
+		? default_value : tmp;
+
+	return value;
+}

@@ -478,6 +478,32 @@ __geoxml_element_assign_new_id(GdomeElement * element, gboolean reassign_referec
 }
 
 void
+__geoxml_element_reassign_ids(GdomeElement * element)
+{
+	const static gchar *	id_tags [] = {
+		"parameter", NULL,
+	};
+	gint			i;
+
+	for (i = 0; id_tags[i] != NULL; ++i) {
+		GdomeDOMString *	string;
+		GdomeNodeList *		node_list;
+		gint			j, l;
+
+		string = gdome_str_mkref(id_tags[i]);
+		node_list = gdome_el_getElementsByTagName(element, string, &exception);
+
+		l = gdome_nl_length(node_list, &exception);
+		/* get the list of elements with this tag_name. */
+		for (j = 0; j < l; ++j)
+			__geoxml_element_assign_new_id((GdomeElement*)gdome_nl_item(node_list, j, &exception), TRUE);
+
+		gdome_str_unref(string);
+		gdome_nl_unref(node_list, &exception);
+	}
+}
+
+void
 __geoxml_element_assign_reference_id(GdomeElement * element, GdomeElement * referencee)
 {
 	__geoxml_set_attr_value(element, "xml:idref",

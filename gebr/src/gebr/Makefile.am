@@ -16,11 +16,7 @@
 
 bin_PROGRAMS = gebr
 
-#TODO: check for gengetopt at configure script
-cmdline.h: cmdline.c
-cmdline.c: gebr.ggo
-	gengetopt < gebr.ggo --file-name=cmdline -C -a ggopt
-gebr.c: cmdline.c
+#TODO: remove cmdline.{c,h} in future versions (or remove old config support)
 
 gebr_SOURCES = main.c \
 	cmdline.c \
@@ -72,7 +68,7 @@ noinst_HEADERS = \
 	ui_paths.h \
 	ui_preferences.h \
 	ui_server.h
-EXTRA_DIST = gebr.ggo ${noinst_HEADERS}
+EXTRA_DIST = ${noinst_HEADERS}
 
 INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"

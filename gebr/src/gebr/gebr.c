@@ -35,7 +35,6 @@
 
 #include "gebr.h"
 #include "support.h"
-#include "cmdline.h"
 #include "project.h"
 #include "server.h"
 #include "job.h"
@@ -53,7 +52,7 @@ struct gebr gebr;
  * This function is the callback of when the gebr.window is shown.
  */
 void
-gebr_init(int argc, char ** argv)
+gebr_init(void)
 {
 	/* initialization */
 	gebr.project_line = NULL;
@@ -62,6 +61,8 @@ gebr_init(int argc, char ** argv)
 
 	/* check/create config dir */
 	gebr_create_config_dirs();
+	gebr.config.path = g_string_new(getenv("HOME"));
+	g_string_append(gebr.config.path, "/.gebr/gebr.conf");
 
 	/* allocating list of temporary files */
 	gebr.tmpfiles = g_slist_alloc();
@@ -83,7 +84,7 @@ gebr_init(int argc, char ** argv)
 	gebr_message(LOG_START, TRUE, TRUE, _("GêBR Initiating..."));
 
 	/* finally the config. file */
-	gebr_config_load(argc, argv);
+	gebr_config_load();
 
 	/* check for a menu list change */
 	if (menu_refresh_needed() == TRUE) {
@@ -109,17 +110,20 @@ gebr_quit(void)
 	flow_free();
 	project_line_free();
 
-	g_slist_foreach(gebr.tmpfiles, (GFunc)g_unlink, NULL);
-	g_slist_foreach(gebr.tmpfiles, (GFunc)g_free, NULL);
-
-	g_slist_free(gebr.tmpfiles);
-
+	/* free config stuff */
+	g_key_file_free(gebr.config.key_file);
+	g_string_free(gebr.config.path, TRUE);
 	g_string_free(gebr.config.username, TRUE);
 	g_string_free(gebr.config.email, TRUE);
 	g_string_free(gebr.config.editor, TRUE);
 	g_string_free(gebr.config.usermenus, TRUE);
 	g_string_free(gebr.config.data, TRUE);
 	g_string_free(gebr.config.browser, TRUE);
+
+	/* remove temporaries files */
+	g_slist_foreach(gebr.tmpfiles, (GFunc)g_unlink, NULL);
+	g_slist_foreach(gebr.tmpfiles, (GFunc)g_free, NULL);
+	g_slist_free(gebr.tmpfiles);
 
 	gebr_message(LOG_END, TRUE, TRUE, _("GêBR Finalizing..."));
 	log_close(gebr.log);
@@ -199,7 +203,7 @@ gebr_quit(void)
 }
 
 /*
- * Function: gebr_config_load
+ * Function: gebr_log_load
  * Initialize log on GUI
  */
 void
@@ -225,68 +229,114 @@ gebr_log_load(void)
 	log_messages_free(messages);
 }
 
+/* Function: gebr_config_load_from_gengetopt
+ * Backwards compatibility function for old configuration file format.
+ * Returns TRUE if could not parse config with gengetopt.
+ */
+static gboolean
+gebr_config_load_from_gengetopt(void)
+{
+	struct ggopt		ggopt;
+	gint			i;
+
+	if (cmdline_parser_configfile(gebr.config.path->str, &ggopt, 1, 1, 0) != 0)
+		return FALSE;
+
+	gebr.config.username = g_string_new(ggopt.name_arg);
+	gebr.config.email = g_string_new(ggopt.email_arg);
+	gebr.config.editor = g_string_new(ggopt.editor_arg);
+	gebr.config.usermenus = g_string_new(ggopt.usermenus_arg);
+	gebr.config.data = g_string_new(ggopt.data_arg);
+	gebr.config.browser = g_string_new(ggopt.browser_arg);
+	gebr.config.width = ggopt.width_arg;
+	gebr.config.height = ggopt.height_arg;
+	gebr.config.log_expander_state = (gboolean)ggopt.logexpand_given;
+
+	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "usermenus", gebr.config.usermenus->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "data", gebr.config.data->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "browser", gebr.config.browser->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
+	g_key_file_set_integer(gebr.config.key_file, "general", "width", gebr.config.width);
+	g_key_file_set_integer(gebr.config.key_file, "general", "height", gebr.config.height);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "log_expander_state", gebr.config.log_expander_state);
+
+	for (i = 0; i < ggopt.server_given; ++i) {
+		GString *	group;
+
+		group = g_string_new(NULL);
+		g_string_printf(group, "server-%s", ggopt.server_arg[i]);
+		g_key_file_set_string(gebr.config.key_file, group->str, "address", ggopt.server_arg[i]);
+
+		g_string_free(group, TRUE);
+	}
+
+	return TRUE;
+}
+
 /*
  * Function: gebr_config_load
- * Initialize configuration for G�BR
+ * Initialize configuration for GeBR
  */
 void
-gebr_config_load(int argc, char ** argv)
+gebr_config_load(void)
 {
-	GString	*	config;
+	gboolean	done_by_gengetopt;
+	gchar **	groups;
+	gint		i;
+	GError *	error;
 
-	/* initialization */
-	config = g_string_new(NULL);
-	gebr.config.username = g_string_new("");
-	gebr.config.email = g_string_new("");
-	gebr.config.editor = g_string_new("");
-	gebr.config.usermenus = g_string_new("");
-	gebr.config.data = g_string_new("");
-	gebr.config.browser = g_string_new("");
-
-	g_string_printf(config, "%s/.gebr/gebr.conf", getenv("HOME"));
-	if (g_access(config->str, F_OK)) {
+	if (g_access(gebr.config.path->str, F_OK)) {
 		preferences_setup_ui(TRUE);
 		server_new("127.0.0.1");
-		goto out;
+		return;
 	}
 
-	/* Initialize G�BR with options in gebr.conf */
-	if (cmdline_parser_configfile(config->str, &gebr.config.ggopt, 1, 1, 0) != 0) {
-		fprintf(stderr, "%s: try '--help' option\n", argv[0]);
-		exit(EXIT_FAILURE);
+	error = NULL;
+	gebr.config.key_file = g_key_file_new();
+	if (g_key_file_load_from_file(gebr.config.key_file, gebr.config.path->str, G_KEY_FILE_NONE, &error))
+		done_by_gengetopt = FALSE;
+	else if (!(done_by_gengetopt = gebr_config_load_from_gengetopt()))
+		fprintf(stderr, "Error parsing config file; reseting it.");
+
+	if (!done_by_gengetopt) {
+		gebr.config.username = g_key_file_load_string_key(gebr.config.key_file,
+			"general", "name", g_get_real_name());
+		gebr.config.email = g_key_file_load_string_key(gebr.config.key_file,
+			"general", "email", g_get_user_name());
+		gebr.config.usermenus = g_key_file_load_string_key(gebr.config.key_file,
+			"general", "usermenus", getenv("HOME"));
+		gebr.config.data = g_key_file_load_string_key(gebr.config.key_file,
+			"general", "data", getenv("HOME"));
+		gebr.config.browser = g_key_file_load_string_key(gebr.config.key_file, "general", "browser", "firefox");
+		gebr.config.editor = g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "gedit");
+		gebr.config.width = g_key_file_load_int_key(gebr.config.key_file, "general", "width", 700);
+		gebr.config.height = g_key_file_load_int_key(gebr.config.key_file, "general", "height", 400);
+		gebr.config.log_expander_state = g_key_file_load_boolean_key(gebr.config.key_file,
+			"general", "logexpand", FALSE);
 	}
 
-	/* Filling our structure in */
-	g_string_assign(gebr.config.username, gebr.config.ggopt.name_arg);
-	g_string_assign(gebr.config.email, gebr.config.ggopt.email_arg);
-	g_string_assign(gebr.config.editor, gebr.config.ggopt.editor_arg);
-	g_string_assign(gebr.config.usermenus, gebr.config.ggopt.usermenus_arg);
-	g_string_assign(gebr.config.data, gebr.config.ggopt.data_arg);
-	g_string_assign(gebr.config.browser, gebr.config.ggopt.browser_arg);
-	gebr.config.width = gebr.config.ggopt.width_arg;
-	gebr.config.height = gebr.config.ggopt.height_arg;
-	gebr.config.log_expander_state = (gebr.config.ggopt.logexpand_given ? TRUE : FALSE);
-
-	gtk_window_resize (GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
+	gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
 	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
 
-	if (!gebr.config.ggopt.name_given)
-		preferences_setup_ui(TRUE);
-	else {
-		menu_list_populate();
-		project_list_populate();
-	}
-	if (!gebr.config.ggopt.server_given) {
-		server_new("127.0.0.1");
-	} else {
-		gint	i;
+	menu_list_populate();
+	project_list_populate();
 
-		for (i = 0; i < gebr.config.ggopt.server_given; ++i)
-			server_new(gebr.config.ggopt.server_arg[i]);
+	groups = g_key_file_get_groups(gebr.config.key_file, NULL);
+	for (i = 0; groups[i] != NULL; ++i) {
+		if (g_str_has_prefix(groups[i], "server-")) {
+			GString * address;
+
+			address = g_key_file_load_string_key(gebr.config.key_file, groups[i], "address", "localhost");
+			server_new(address->str);
+
+			g_string_free(address, TRUE);
+		}
 	}
 
 	/* frees */
-out:	g_string_free(config, TRUE);
+	g_strfreev(groups);
 }
 
 /*
@@ -307,57 +357,69 @@ gebr_config_apply(void)
  *
  * Write ~/.gebr/.gebr.conf file.
  */
-gboolean
+void
 gebr_config_save(gboolean verbose)
 {
-	FILE *		fp;
-	GString *	config;
-
 	GtkTreeIter	iter;
 	gboolean	valid;
 
-	/* initialization */
-	config = g_string_new(NULL);
-	g_string_printf(config, "%s/.gebr/gebr.conf", getenv("HOME"));
+	gsize		length;
+	gchar *		string;
+	GError *	error;
+	FILE *		configfp;
 
-	fp = fopen(config->str, "w");
-	if (fp == NULL) {
-		gebr_message(LOG_ERROR, TRUE, TRUE, _("Unable to write configuration"));
-		return FALSE;
-	}
+	/* reset key_file, cause we do not sync servers automatically */
+	g_key_file_free(gebr.config.key_file);
+	gebr.config.key_file = g_key_file_new();
+
+	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "usermenus", gebr.config.usermenus->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "data", gebr.config.data->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "browser", gebr.config.browser->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
 
 	gtk_window_get_size(GTK_WINDOW(gebr.window), &gebr.config.width, &gebr.config.height);
 	gebr.config.log_expander_state = gtk_expander_get_expanded(GTK_EXPANDER(gebr.ui_log->widget));
-
-	fprintf(fp, "name = \"%s\"\n", gebr.config.username->str);
-	fprintf(fp, "email = \"%s\"\n", gebr.config.email->str);
-	fprintf(fp, "usermenus = \"%s\"\n", gebr.config.usermenus->str);
-	fprintf(fp, "data = \"%s\"\n",  gebr.config.data->str);
-	fprintf(fp, "editor = \"%s\"\n", gebr.config.editor->str);
-	fprintf(fp, "browser = \"%s\"\n", gebr.config.browser->str);
-	fprintf(fp, "width =\"%d\"\n", gebr.config.width);
-	fprintf(fp, "height =\"%d\"\n", gebr.config.height);
-	if (gebr.config.log_expander_state)
-		fprintf(fp, "logexpand\n");
+	g_key_file_set_integer(gebr.config.key_file, "general", "width", gebr.config.width);
+	g_key_file_set_integer(gebr.config.key_file, "general", "height", gebr.config.height);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "log_expander_state", gebr.config.log_expander_state);
 
 	/* Save list of servers */
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
 	while (valid) {
 		struct server *	server;
+		GString *	group;
+
+		group = g_string_new(NULL);
 
 		gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
-				SERVER_POINTER, &server,
-				-1);
-		fprintf(fp, "server = \"%s\"\n", server->comm->address->str);
+			SERVER_POINTER, &server,
+			-1);
+		g_string_printf(group, "server-%s", server->comm->address->str);
+		g_key_file_set_string(gebr.config.key_file, group->str, "address", server->comm->address->str);
 
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
+		g_string_free(group, TRUE);
 	}
 
-	fclose(fp);
+	error = NULL;
+	string = g_key_file_to_data(gebr.config.key_file, &length, &error);
+	configfp = fopen(gebr.config.path->str, "w");
+	if (configfp == NULL) {
+		gebr_message(LOG_ERROR, TRUE, TRUE, _("Could not save configuration"));
+		goto out;
+	}
+	fwrite(string, sizeof(gchar), length, configfp);
+	fclose(configfp);
+
 	if (verbose)
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Configuration saved"));
 
-	return TRUE;
+	/* frees */
+out:	g_free(string);
+
+	return;
 }
 
 /*
