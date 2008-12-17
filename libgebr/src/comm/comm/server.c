@@ -79,9 +79,11 @@ comm_server_new(const gchar * _address, const struct comm_server_ops * ops)
 		.protocol = protocol_new(),
 		.address = g_string_new(_address),
 		.port = 0,
-		.ops = ops,
 		.password = g_string_new(""),
 		.x11_forward = NULL,
+		.state = SERVER_STATE_DISCONNECTED,
+		.error = SERVER_ERROR_NONE,
+		.ops = ops,
 	};
 
 	g_signal_connect(comm_server->stream_socket, "connected",
@@ -157,6 +159,13 @@ comm_server_connect(struct comm_server * comm_server)
 	}
 
 	g_string_free(cmd_line, TRUE);
+}
+
+void
+comm_server_disconnect(struct comm_server * comm_server)
+{
+	comm_server->state = SERVER_STATE_DISCONNECTED;
+	g_stream_socket_disconnect(comm_server->stream_socket);
 }
 
 gboolean
@@ -281,6 +290,7 @@ local_run_server_read(GProcess * process, struct comm_server * comm_server)
 		comm_server_log_message(comm_server, LOG_DEBUG, "local_run_server_read: %d", port);
 	} else {
 		comm_server->error = SERVER_ERROR_SERVER;
+		comm_server->state = SERVER_STATE_DISCONNECTED;
 		comm_server_log_message(comm_server, LOG_ERROR, _("Could not launch local server: \n%s"),
 			output->str);
 	}
@@ -333,6 +343,7 @@ comm_ssh_parse_output(GTerminalProcess * process, struct comm_server * comm_serv
 		password = comm_server->ops->ssh_login(_("SSH login:"), string->str);
 		if (password == NULL) {
 			comm_server->error = SERVER_ERROR_SSH;
+			comm_server->state = SERVER_STATE_DISCONNECTED;
 			g_string_assign(comm_server->password, "");
 			g_terminal_process_kill(process);
 		} else {
@@ -349,6 +360,7 @@ comm_ssh_parse_output(GTerminalProcess * process, struct comm_server * comm_serv
 		answer = g_string_new(NULL);
 		if (comm_server->ops->ssh_question(_("SSH question:"), output->str) == FALSE) {
 			comm_server->error = SERVER_ERROR_SSH;
+			comm_server->state = SERVER_STATE_DISCONNECTED;
 			g_string_assign(answer, "no\n");
 		} else
 			g_string_assign(answer, "yes\n");
@@ -367,6 +379,7 @@ comm_ssh_parse_output(GTerminalProcess * process, struct comm_server * comm_serv
 		str = strstr(output->str, "ssh:");
 		if (str == output->str) {
 			comm_server->error = SERVER_ERROR_SSH;
+			comm_server->state = SERVER_STATE_DISCONNECTED;
 			comm_server_log_message(comm_server, LOG_ERROR,
 				_("Error contacting server at address %s via ssh: \n%s"),
 				comm_server->address->str, output->str);
@@ -414,6 +427,7 @@ comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_s
 		comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_run_server_read: %d", port);
 	} else {
 		comm_server->error = SERVER_ERROR_SERVER;
+		comm_server->state = SERVER_STATE_DISCONNECTED;
 		comm_server_log_message(comm_server, LOG_ERROR, _("Could not comunicate with server %s: \n%s"),
 			comm_server->address->str, output->str);
 	}
@@ -526,6 +540,7 @@ comm_server_disconnected(GStreamSocket * stream_socket, struct comm_server * com
 {
 	comm_server->port = 0;
 	comm_server->protocol->logged = FALSE;
+	comm_server->state = SERVER_STATE_DISCONNECTED;
 
 	comm_server_log_message(comm_server, LOG_WARNING, "Server '%s' disconnected",
 		     comm_server->address->str);
@@ -552,6 +567,7 @@ static void
 comm_server_error(GStreamSocket * stream_socket, enum GSocketError error, struct comm_server * comm_server)
 {
 	comm_server->error = SERVER_ERROR_CONNECT;
+	comm_server->state = SERVER_STATE_DISCONNECTED;
 	if (error == G_SOCKET_ERROR_UNKNOWN)
 		puts("unk");
 	comm_server_log_message(comm_server, LOG_ERROR, _("Connection error '%d' on server '%s'"), error, comm_server->address->str);

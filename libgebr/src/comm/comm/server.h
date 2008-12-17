@@ -43,6 +43,7 @@ struct comm_server {
 	GTerminalProcess *	x11_forward;
 
 	enum comm_server_state {
+		SERVER_STATE_DISCONNECTED,
 		SERVER_STATE_RUN,
 		SERVER_STATE_OPEN_TUNNEL,
 		SERVER_STATE_CONNECT,
@@ -84,6 +85,9 @@ comm_server_free(struct comm_server * comm_server);
 
 void
 comm_server_connect(struct comm_server * comm_server);
+
+void
+comm_server_disconnect(struct comm_server * comm_server);
 
 gboolean
 comm_server_is_logged(struct comm_server * comm_server);

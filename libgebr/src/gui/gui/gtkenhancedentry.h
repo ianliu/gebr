@@ -38,6 +38,7 @@ typedef struct _GtkEnhancedEntryClass	GtkEnhancedEntryClass;
 struct _GtkEnhancedEntry {
 	GtkEntry		parent;
 
+	gboolean		empty;
 	gchar *			empty_text;
 };
 struct _GtkEnhancedEntryClass {

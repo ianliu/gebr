@@ -205,6 +205,15 @@ g_stream_socket_connect(GStreamSocket * stream_socket, GSocketAddress * socket_a
 // 	g_host_info_lookup(hostname, (GSocketInfoFunc)__g_stream_socket_lookup, stream_socket);
 // }
 
+void
+g_stream_socket_disconnect(GStreamSocket * stream_socket)
+{
+	if (stream_socket->parent.state >= G_SOCKET_STATE_CONNECTING)
+		close(_g_socket_get_fd(&stream_socket->parent));
+	__g_stream_socket_disconnected(stream_socket);
+	stream_socket->parent.last_error = G_SOCKET_ERROR_NONE;
+}
+
 GSocketAddress *
 g_stream_socket_peer_address(GStreamSocket * stream_socket)
 {

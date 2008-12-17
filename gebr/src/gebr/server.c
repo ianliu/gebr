@@ -102,7 +102,7 @@ server_disconnected(GStreamSocket * stream_socket, struct server * server)
  */
 
 struct server *
-server_new(const gchar * address)
+server_new(const gchar * address, gboolean autoconnect)
 {
 	static const struct comm_server_ops	ops = {
 		.log_message = server_log_message,
@@ -113,23 +113,26 @@ server_new(const gchar * address)
 	GtkTreeIter				iter;
 	struct server *				server;
 
-	server = g_malloc(sizeof(struct server));
-	server->comm = comm_server_new(address, &ops);
-	server->comm->user_data = server;
-	/* fill iter */
 	gtk_list_store_append(gebr.ui_server_list->common.store, &iter);
+	server = g_malloc(sizeof(struct server));
+	*server = (struct server){
+		.comm = comm_server_new(address, &ops),
+		.iter = iter,
+		.last_error = g_string_new("")
+	};
+	server->comm->user_data = server;
 	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
 		SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
 		SERVER_ADDRESS, !strcmp(address, "127.0.0.1") ? _("Local server") : address,
 		SERVER_POINTER, server,
+		SERVER_AUTOCONNECT, autoconnect,
 		-1);
-	server->iter = iter;
-	server->last_error = g_string_new("");
 
 	g_signal_connect(server->comm->stream_socket, "disconnected",
 		G_CALLBACK(server_disconnected), server);
 
-	comm_server_connect(server->comm);
+	if (autoconnect)
+		comm_server_connect(server->comm);
 
 	return server;
 }
@@ -139,6 +142,8 @@ server_free(struct server * server)
 {
 	GtkTreeIter	iter;
 	gboolean	valid;
+
+	gtk_list_store_remove(gebr.ui_server_list->common.store, &server->iter);
 
 	/* delete all jobs at server */
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);

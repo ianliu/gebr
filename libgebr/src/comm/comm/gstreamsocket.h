@@ -59,6 +59,9 @@ g_stream_socket_new(void);
 void
 g_stream_socket_connect(GStreamSocket * stream_socket, GSocketAddress * socket_address, guint16 port, gboolean wait);
 
+void
+g_stream_socket_disconnect(GStreamSocket * stream_socket);
+
 GSocketAddress *
 g_stream_socket_peer_address(GStreamSocket * stream_socket);
 

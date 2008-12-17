@@ -26,15 +26,14 @@
 struct server {
 	struct comm_server *	comm;
 
-	/* iter to set icons on logged/disconneted */
 	GtkTreeIter		iter;
 
-	/* last error */
+	/* last error showed on tooltip */
 	GString *		last_error;
 };
 
 struct server *
-server_new(const gchar * address);
+server_new(const gchar * address, gboolean autoconnect);
 
 void
 server_free(struct server * server);

@@ -134,10 +134,10 @@ gebr_quit(void)
 		struct server *	server;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
-				SERVER_POINTER, &server,
-				-1);
-		server_free(server);
+			SERVER_POINTER, &server,
+			-1);
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
+		server_free(server);
 	}
 	/* Free jobs structs */
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
@@ -145,10 +145,10 @@ gebr_quit(void)
 		struct job *	job;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
-				JC_STRUCT, &job,
-				-1);
-		job_free(job);
+			JC_STRUCT, &job,
+			-1);
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
+		job_free(job);
 	}
 
 	/*
@@ -289,7 +289,7 @@ gebr_config_load(void)
 
 	if (g_access(gebr.config.path->str, F_OK)) {
 		preferences_setup_ui(TRUE);
-		server_new("127.0.0.1");
+		server_new("127.0.0.1", TRUE);
 		return;
 	}
 
@@ -325,15 +325,17 @@ gebr_config_load(void)
 
 	groups = g_key_file_get_groups(gebr.config.key_file, NULL);
 	for (i = 0; groups[i] != NULL; ++i) {
-		if (g_str_has_prefix(groups[i], "server-")) {
-			GString * address;
+		if (!g_str_has_prefix(groups[i], "server-"))
+			continue;
 
-			address = g_key_file_load_string_key(gebr.config.key_file, groups[i], "address", "");
-			if (address->len)
-				server_new(address->str);
+		GString * address;
 
-			g_string_free(address, TRUE);
-		}
+		address = g_key_file_load_string_key(gebr.config.key_file, groups[i], "address", "");
+		if (address->len)
+			server_new(address->str,
+				g_key_file_load_boolean_key(gebr.config.key_file, groups[i], "autoconnect", TRUE));
+
+		g_string_free(address, TRUE);
 	}
 
 	/* frees */
@@ -391,14 +393,17 @@ gebr_config_save(gboolean verbose)
 	while (valid) {
 		struct server *	server;
 		GString *	group;
+		gboolean	autoconnect;
 
 		group = g_string_new(NULL);
 
 		gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 			SERVER_POINTER, &server,
+			SERVER_AUTOCONNECT, &autoconnect,
 			-1);
 		g_string_printf(group, "server-%s", server->comm->address->str);
 		g_key_file_set_string(gebr.config.key_file, group->str, "address", server->comm->address->str);
+		g_key_file_set_boolean(gebr.config.key_file, group->str, "autoconnect", autoconnect);
 
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
 		g_string_free(group, TRUE);
