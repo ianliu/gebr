@@ -55,6 +55,28 @@ server_select_row_changed(GtkTreeModel * tree_model, GtkTreePath * path, GtkTree
  * Private functions.
  */
 
+/* Function: server_common_tooltip_callback
+ * Callback for tree view tooltip
+ */
+#if GTK_CHECK_VERSION(2,12,0)
+static gboolean
+server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
+	GtkTreeIter * iter, GtkTreeViewColumn * column, struct ui_server_common * ui)
+{
+	if (gtk_tree_view_column_get_sort_column_id(column) == SERVER_STATUS_ICON) {
+		struct server *		server;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(ui->store), iter, SERVER_POINTER, &server, -1);
+		if (server->last_error->len)
+			gtk_tooltip_set_text(tooltip, server->last_error->str);
+
+		return (gboolean)server->last_error->len;
+	}
+
+	return FALSE;
+}
+#endif
+
 /* Function: server_common_connect
  * Callback for popup menu action
  */
@@ -169,10 +191,14 @@ server_common_setup(struct ui_server_common * ui_server_common)
 	ui_server_common->view = view;
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
 		(GtkPopupCallback)server_common_popup_menu, ui_server_common);
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(view),
+		(GtkTreeViewTooltipCallback)server_common_tooltip_callback, ui_server_common);
+#endif
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
-	gtk_tree_view_column_set_sort_column_id(col, SERVER_ADDRESS);
+	gtk_tree_view_column_set_sort_column_id(col, SERVER_STATUS_ICON);
 	gtk_tree_view_column_set_sort_indicator(col, TRUE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", SERVER_STATUS_ICON);
@@ -431,16 +457,11 @@ server_list_updated_status(struct server * server)
 {
 	GdkPixbuf *	status_icon;
 
-	if (server->last_error->len) {
-		status_icon = gebr.pixmaps.stock_warning;
-		gtk_tree_view_set_tooltip_text(GTK_TREE_VIEW(gebr.ui_server_list->common.view),
-			&server->iter, SERVER_STATUS_ICON, server->last_error->str);
-	} else {
-		status_icon = server->comm->protocol->logged == TRUE
+	status_icon = (server->last_error->len)
+		? gebr.pixmaps.stock_warning
+		: (server->comm->protocol->logged == TRUE)
 			? gebr.pixmaps.stock_connect : gebr.pixmaps.stock_disconnect;
-		gtk_tree_view_set_tooltip_text(GTK_TREE_VIEW(gebr.ui_server_list->common.view),
-			&server->iter, SERVER_STATUS_ICON, NULL);
-	}
+
 	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter,
 		SERVER_STATUS_ICON, status_icon,
 		-1);

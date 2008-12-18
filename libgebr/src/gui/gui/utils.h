@@ -57,8 +57,11 @@ gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpo
 void
 gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback, gpointer user_data);
 
+typedef gboolean (*GtkTreeViewTooltipCallback)(GtkTreeView * tree_view, GtkTooltip * tooltip,
+	GtkTreeIter * iter, GtkTreeViewColumn * column, gpointer user_data);
+
 void
-gtk_tree_view_set_tooltip_text(GtkTreeView * tree_view, GtkTreeIter * iter, int column, const char * text);
+gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GtkTreeViewTooltipCallback callback, gpointer user_data);
 
 typedef void (*GtkTreeModelReorderedCallback)(GtkTreeModel * tree_model, GeoXmlSequence * sequence,
 	GeoXmlSequence * before, gpointer user_data);
@@ -81,7 +84,7 @@ gtk_container_add_depth_hbox(GtkWidget * container);
 			(GCallback)gtk_expander_hacked_idle,			\
 			expander);						\
 	g_signal_connect((gpointer) expander, "unmap",				\
-			(GCallback)gtk_expander_hacked_visible,		\
+			(GCallback)gtk_expander_hacked_visible,			\
 			label_widget)
 
 void
