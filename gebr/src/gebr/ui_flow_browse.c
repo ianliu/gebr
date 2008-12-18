@@ -113,8 +113,9 @@ flow_browse_setup_ui(void)
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_browse->view), FALSE);
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view),
 		(GtkPopupCallback)flow_browse_popup_menu, ui_flow_browse);
-	gtk_list_store_set_geoxml_sequence_moveable(ui_flow_browse->store, GTK_TREE_VIEW(ui_flow_browse->view),
-		FB_LINE_FLOW_POINTER, (GtkListStoreReorderedCallback)line_save, NULL);
+	gtk_tree_model_set_geoxml_sequence_moveable(GTK_TREE_MODEL(ui_flow_browse->store),
+		GTK_TREE_VIEW(ui_flow_browse->view), FB_LINE_FLOW_POINTER,
+		(GtkTreeModelReorderedCallback)line_save, NULL);
 	g_signal_connect(ui_flow_browse->view, "row-activated",
 		GTK_SIGNAL_FUNC(flow_browse_on_row_activated), ui_flow_browse);
 

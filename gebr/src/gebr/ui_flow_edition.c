@@ -90,91 +90,85 @@ flow_edition_setup_ui(void)
 	hpanel = gtk_hpaned_new();
 	gtk_container_add(GTK_CONTAINER(ui_flow_edition->widget), hpanel);
 
-	/* Left side */
-	{
-		frame = gtk_frame_new(_("Flow sequence"));
-		gtk_paned_pack1(GTK_PANED(hpanel), frame, FALSE, FALSE);
+	/*
+	 * Left side: flow components
+	 */
+	frame = gtk_frame_new(_("Flow sequence"));
+	gtk_paned_pack1(GTK_PANED(hpanel), frame, FALSE, FALSE);
 
-		scrolledwin = gtk_scrolled_window_new(NULL, NULL);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwin),
-			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-		gtk_container_add(GTK_CONTAINER(frame), scrolledwin);
+	scrolledwin = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwin),
+		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_container_add(GTK_CONTAINER(frame), scrolledwin);
 
-		ui_flow_edition->fseq_store = gtk_list_store_new(FSEQ_N_COLUMN,
-			GDK_TYPE_PIXBUF,
-			G_TYPE_STRING,
-			G_TYPE_POINTER,
-			G_TYPE_STRING,
-			G_TYPE_ULONG);
-		ui_flow_edition->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->fseq_store));
-		gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
-			(GtkPopupCallback)flow_edition_popup_menu, ui_flow_edition);
-		gtk_list_store_set_geoxml_sequence_moveable(ui_flow_edition->fseq_store,
-			GTK_TREE_VIEW(ui_flow_edition->fseq_view), FSEQ_GEOXML_POINTER,
-			(GtkListStoreReorderedCallback)flow_save, NULL);
-		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_edition->fseq_view), FALSE);
+	ui_flow_edition->fseq_store = gtk_list_store_new(FSEQ_N_COLUMN,
+		GDK_TYPE_PIXBUF,
+		G_TYPE_STRING,
+		G_TYPE_POINTER,
+		G_TYPE_STRING,
+		G_TYPE_ULONG);
+	ui_flow_edition->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->fseq_store));
+	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
+		(GtkPopupCallback)flow_edition_popup_menu, ui_flow_edition);
+	gtk_tree_model_set_geoxml_sequence_moveable(GTK_TREE_MODEL(ui_flow_edition->fseq_store),
+		GTK_TREE_VIEW(ui_flow_edition->fseq_view), FSEQ_GEOXML_POINTER,
+		(GtkTreeModelReorderedCallback)flow_save, NULL);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_edition->fseq_view), FALSE);
 
-		renderer = gtk_cell_renderer_pixbuf_new();
-		col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
-		gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->fseq_view), col);
-		gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", FSEQ_STATUS_COLUMN);
+	renderer = gtk_cell_renderer_pixbuf_new();
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->fseq_view), col);
+	gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", FSEQ_STATUS_COLUMN);
 
-		renderer = gtk_cell_renderer_text_new();
-		col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
-		gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->fseq_view), col);
-		gtk_tree_view_column_add_attribute(col, renderer, "text", FSEQ_TITLE_COLUMN);
+	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->fseq_view), col);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", FSEQ_TITLE_COLUMN);
 
-		/* Double click on flow component open its parameter window */
-		g_signal_connect(ui_flow_edition->fseq_view, "row-activated",
-			GTK_SIGNAL_FUNC(flow_edition_component_change_parameters), ui_flow_edition);
-		g_signal_connect(GTK_OBJECT(ui_flow_edition->fseq_view), "cursor-changed",
-			GTK_SIGNAL_FUNC(flow_edition_component_selected), ui_flow_edition);
+	/* Double click on flow component open its parameter window */
+	g_signal_connect(ui_flow_edition->fseq_view, "row-activated",
+		GTK_SIGNAL_FUNC(flow_edition_component_change_parameters), ui_flow_edition);
+	g_signal_connect(GTK_OBJECT(ui_flow_edition->fseq_view), "cursor-changed",
+		GTK_SIGNAL_FUNC(flow_edition_component_selected), ui_flow_edition);
 
-		gtk_container_add(GTK_CONTAINER(scrolledwin), ui_flow_edition->fseq_view);
-		gtk_widget_set_size_request(GTK_WIDGET(scrolledwin), 180, 30);
-	}
+	gtk_container_add(GTK_CONTAINER(scrolledwin), ui_flow_edition->fseq_view);
+	gtk_widget_set_size_request(GTK_WIDGET(scrolledwin), 180, 30);
 
-	/* Right side */
-	{
-		frame = gtk_frame_new(_("Flow components"));
-		gtk_paned_pack2(GTK_PANED(hpanel), frame, TRUE, TRUE);
+	/*
+	 * Right side: Menu list
+	 */
+	frame = gtk_frame_new(_("Flow components"));
+	gtk_paned_pack2(GTK_PANED(hpanel), frame, TRUE, TRUE);
 
-		/*
-		 * Menu list
-		 */
-		vbox = gtk_vbox_new(FALSE, 3);
-		gtk_container_add(GTK_CONTAINER(frame), vbox);
+	vbox = gtk_vbox_new(FALSE, 3);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
-		scrolledwin = gtk_scrolled_window_new(NULL, NULL);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-		gtk_container_add(GTK_CONTAINER(vbox), scrolledwin);
+	scrolledwin = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_container_add(GTK_CONTAINER(vbox), scrolledwin);
 
-		ui_flow_edition->menu_store = gtk_tree_store_new(MENU_N_COLUMN,
-			G_TYPE_STRING,
-			G_TYPE_STRING,
-			G_TYPE_STRING);
+	ui_flow_edition->menu_store = gtk_tree_store_new(MENU_N_COLUMN,
+		G_TYPE_STRING,
+		G_TYPE_STRING,
+		G_TYPE_STRING);
+	ui_flow_edition->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->menu_store));
+	gtk_container_add(GTK_CONTAINER(scrolledwin), ui_flow_edition->menu_view);
+	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->menu_view),
+		(GtkPopupCallback)flow_edition_menu_popup_menu, ui_flow_edition);
+	g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated",
+		GTK_SIGNAL_FUNC(flow_edition_menu_add), ui_flow_edition);
 
-		ui_flow_edition->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->menu_store));
-		gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->menu_view),
-			(GtkPopupCallback)flow_edition_menu_popup_menu, ui_flow_edition);
+	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes("Flow", renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->menu_view), col);
+	gtk_tree_view_column_add_attribute(col, renderer, "markup", MENU_TITLE_COLUMN);
+	gtk_tree_view_column_set_sort_column_id(col, MENU_TITLE_COLUMN);
+	gtk_tree_view_column_set_sort_indicator(col, TRUE);
 
-		g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated",
-			GTK_SIGNAL_FUNC(flow_edition_menu_add), ui_flow_edition);
-
-		renderer = gtk_cell_renderer_text_new();
-		col = gtk_tree_view_column_new_with_attributes("Flow", renderer, NULL);
-		gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->menu_view), col);
-		gtk_tree_view_column_add_attribute(col, renderer, "markup", MENU_TITLE_COLUMN);
-		gtk_tree_view_column_set_sort_column_id(col, MENU_TITLE_COLUMN);
-		gtk_tree_view_column_set_sort_indicator(col, TRUE);
-
-		renderer = gtk_cell_renderer_text_new();
-		col = gtk_tree_view_column_new_with_attributes("Description", renderer, NULL);
-		gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->menu_view), col);
-		gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_DESC_COLUMN);
-
-		gtk_container_add(GTK_CONTAINER(scrolledwin), ui_flow_edition->menu_view);
-	}
+	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes("Description", renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->menu_view), col);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_DESC_COLUMN);
 
 	return ui_flow_edition;
 }

@@ -67,16 +67,16 @@ struct debr {
 			GtkAction *		new;
 			GtkAction *		delete;
 			GtkAction *		properties;
-			GtkAction *		up;
-			GtkAction *		down;
+			GtkAction *		top;
+			GtkAction *		bottom;
 		} program;
 		struct {
 			GtkAction *		new;
 			GtkAction *		delete;
 			GtkAction *		duplicate;
 			GtkAction *		properties;
-			GtkAction *		up;
-			GtkAction *		down;
+			GtkAction *		top;
+			GtkAction *		bottom;
 			GtkAction *		change_type;
 		} parameter;
 	} actions;

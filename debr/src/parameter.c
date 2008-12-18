@@ -134,11 +134,14 @@ parameter_setup_ui(void)
 	debr.ui_parameter.tree_store = gtk_tree_store_new(PARAMETER_N_COLUMN,
 		G_TYPE_STRING,
 		G_TYPE_STRING,
-		G_TYPE_STRING,							  
+		G_TYPE_STRING,
 		G_TYPE_POINTER);
 	debr.ui_parameter.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_parameter.tree_store));
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
 		(GtkPopupCallback)parameter_popup_menu, NULL);
+	gtk_tree_model_set_geoxml_sequence_moveable(GTK_TREE_MODEL(debr.ui_parameter.tree_store),
+		GTK_TREE_VIEW(debr.ui_parameter.tree_view), PARAMETER_XMLPOINTER,
+		(GtkTreeModelReorderedCallback)menu_saved_status_set_unsaved, NULL);
 	gtk_widget_show(debr.ui_parameter.tree_view);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_parameter.tree_view);
 	g_signal_connect(debr.ui_parameter.tree_view, "cursor-changed",
@@ -291,33 +294,37 @@ parameter_duplicate(void)
 }
 
 /*
- * Function: parameter_up
- * Move the current parameter one position up
+ * Function: parameter_top
+ * Move the current parameter to top
  */
 void
-parameter_up(void)
+parameter_top(void)
 {
 	GtkTreeIter	iter;
 
 	if (parameter_get_selected(&iter) == FALSE)
 		return;
-	gtk_tree_store_move_up(debr.ui_parameter.tree_store, &iter);
+
+	geoxml_sequence_move_before(GEOXML_SEQUENCE(debr.parameter), NULL);
+	gtk_tree_store_move_before(debr.ui_parameter.tree_store, &iter, NULL);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
 /*
- * Function: parameter_down
- * Move the current parameter one position down
+ * Function: parameter_bottom
+ * Move the current parameter to bottom
  */
 void
-parameter_down(void)
+parameter_bottom(void)
 {
 	GtkTreeIter	iter;
 
 	if (parameter_get_selected(&iter) == FALSE)
 		return;
-	gtk_tree_store_move_down(debr.ui_parameter.tree_store, &iter);
+
+	geoxml_sequence_move_after(GEOXML_SEQUENCE(debr.parameter), NULL);
+	gtk_tree_store_move_after(debr.ui_parameter.tree_store, &iter, NULL);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -901,7 +908,6 @@ static GtkMenu *
 parameter_popup_menu(GtkWidget * tree_view)
 {
 	GtkWidget *	menu;
-	GtkWidget *	menu_item;
 
 	GtkTreeIter	iter;
 
@@ -913,21 +919,14 @@ parameter_popup_menu(GtkWidget * tree_view)
 	if (parameter_get_selected(&iter) == FALSE)
 		goto out;
 
-	/* Move up */
-	if (gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate",
-			(GCallback)parameter_up, NULL);
-	}
-	/* Move down */
-	if (gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_DOWN, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate",
-			(GCallback)parameter_down, NULL);
-	}
-	/* Remove */
+	if (gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE)
+		gtk_container_add(GTK_CONTAINER(menu),
+			gtk_action_create_menu_item(debr.actions.parameter.top));
+	if (gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE)
+		gtk_container_add(GTK_CONTAINER(menu),
+			gtk_action_create_menu_item(debr.actions.parameter.bottom));
+	gtk_container_add(GTK_CONTAINER(menu),
+		gtk_action_create_menu_item(debr.actions.parameter.duplicate));
 	gtk_container_add(GTK_CONTAINER(menu),
 		gtk_action_create_menu_item(debr.actions.parameter.delete));
 

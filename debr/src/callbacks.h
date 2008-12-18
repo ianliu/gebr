@@ -57,10 +57,10 @@ void
 on_program_properties_activate(void);
 
 void
-on_program_up_activate(void);
+on_program_top_activate(void);
 
 void
-on_program_down_activate(void);
+on_program_bottom_activate(void);
 
 void
 on_parameter_new_activate(void);
@@ -75,10 +75,10 @@ void
 on_parameter_properties_activate(void);
 
 void
-on_parameter_up_activate(void);
+on_parameter_top_activate(void);
 
 void
-on_parameter_down_activate(void);
+on_parameter_bottom_activate(void);
 
 void
 on_parameter_change_type_activate(void);

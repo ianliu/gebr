@@ -358,23 +358,23 @@ on_program_properties_activate(void)
 }
 
 /*
- * Function: on_program_up_activate
- * Call <program_up>
+ * Function: on_program_top_activate
+ * Call <program_top>
  */
 void
-on_program_up_activate(void)
+on_program_top_activate(void)
 {
-	program_up();
+	program_top();
 }
 
 /*
- * Function: on_program_down_activate
- * Call <program_down>
+ * Function: on_program_bottom_activate
+ * Call <program_bottom>
  */
 void
-on_program_down_activate(void)
+on_program_bottom_activate(void)
 {
-	program_down();
+	program_bottom();
 }
 
 /*
@@ -418,23 +418,23 @@ on_parameter_properties_activate(void)
 }
 
 /*
- * Function: on_parameter_up_activate
- * Call <parameter_up>
+ * Function: on_parameter_top_activate
+ * Call <parameter_top>
  */
 void
-on_parameter_up_activate(void)
+on_parameter_top_activate(void)
 {
-	parameter_up();
+	parameter_top();
 }
 
 /*
- * Function: on_parameter_down_activate
- * Call <parameter_down>
+ * Function: on_parameter_bottom_activate
+ * Call <parameter_bottom>
  */
 void
-on_parameter_down_activate(void)
+on_parameter_bottom_activate(void)
 {
-	parameter_down();
+	parameter_bottom();
 }
 
 /*

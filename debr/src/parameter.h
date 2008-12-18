@@ -64,10 +64,10 @@ void
 parameter_duplicate(void);
 
 void
-parameter_up(void);
+parameter_top(void);
 
 void
-parameter_down(void);
+parameter_bottom(void);
 
 void
 parameter_change_type_setup_ui(void);

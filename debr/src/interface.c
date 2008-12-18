@@ -168,16 +168,16 @@ debr_setup_ui(void)
 		NULL, NULL, GTK_STOCK_PROPERTIES);
 	g_signal_connect(debr.actions.program.properties, "activate",
 		(GCallback)on_program_properties_activate, NULL);
-	/* up */
-	debr.actions.program.up = gtk_action_new("program_up",
-		NULL, NULL, GTK_STOCK_GO_UP);
-	g_signal_connect(debr.actions.program.up, "activate",
-		(GCallback)on_program_up_activate, NULL);
-	/* down */
-	debr.actions.program.down = gtk_action_new("program_down",
-		NULL, NULL, GTK_STOCK_GO_DOWN);
-	g_signal_connect(debr.actions.program.down, "activate",
-		(GCallback)on_program_down_activate, NULL);
+	/* top */
+	debr.actions.program.top = gtk_action_new("program_top",
+		NULL, NULL, GTK_STOCK_GOTO_TOP);
+	g_signal_connect(debr.actions.program.top, "activate",
+		(GCallback)on_program_top_activate, NULL);
+	/* bottom */
+	debr.actions.program.bottom = gtk_action_new("program_bottom",
+		NULL, NULL, GTK_STOCK_GOTO_BOTTOM);
+	g_signal_connect(debr.actions.program.bottom, "activate",
+		(GCallback)on_program_bottom_activate, NULL);
 
 	/*
 	 * Actions: Parameter
@@ -197,16 +197,16 @@ debr_setup_ui(void)
 		NULL, NULL, GTK_STOCK_PROPERTIES);
 	g_signal_connect(debr.actions.parameter.properties, "activate",
 		(GCallback)on_parameter_properties_activate, NULL);
-	/* up */
-	debr.actions.parameter.up = gtk_action_new("parameter_up",
-		NULL, NULL, GTK_STOCK_GO_UP);
-	g_signal_connect(debr.actions.parameter.up, "activate",
-		(GCallback)on_parameter_up_activate, NULL);
-	/* down */
-	debr.actions.parameter.down = gtk_action_new("parameter_down",
-		NULL, NULL, GTK_STOCK_GO_DOWN);
-	g_signal_connect(debr.actions.parameter.down, "activate",
-		(GCallback)on_parameter_down_activate, NULL);
+	/* top */
+	debr.actions.parameter.top = gtk_action_new("parameter_top",
+		NULL, NULL, GTK_STOCK_GOTO_TOP);
+	g_signal_connect(debr.actions.parameter.top, "activate",
+		(GCallback)on_parameter_top_activate, NULL);
+	/* bottom */
+	debr.actions.parameter.bottom = gtk_action_new("parameter_bottom",
+		NULL, NULL, GTK_STOCK_GOTO_BOTTOM);
+	g_signal_connect(debr.actions.parameter.bottom, "activate",
+		(GCallback)on_parameter_bottom_activate, NULL);
 	/* duplicate */
 	debr.actions.parameter.duplicate = gtk_action_new("parameter_duplicate",
 		_("Duplicate"), NULL, GTK_STOCK_COPY);
@@ -320,6 +320,8 @@ debr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 		GTK_TOOL_ITEM(gtk_action_create_tool_item(debr.actions.parameter.new)), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+		GTK_TOOL_ITEM(gtk_action_create_tool_item(debr.actions.parameter.duplicate)), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 		GTK_TOOL_ITEM(gtk_action_create_tool_item(debr.actions.parameter.delete)), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),

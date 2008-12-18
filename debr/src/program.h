@@ -21,6 +21,13 @@
 #include <gtk/gtk.h>
 #include <geoxml.h>
 
+enum {
+	PROGRAM_STATUS,
+        PROGRAM_TITLE,
+	PROGRAM_XMLPOINTER,
+	PROGRAM_N_COLUMN
+};
+
 struct ui_program {
 	GtkWidget *		widget;
 
@@ -46,10 +53,10 @@ void
 program_remove(void);
 
 void
-program_up(void);
+program_top(void);
 
 void
-program_down(void);
+program_bottom(void);
 
 void
 program_dialog_setup_ui(void);

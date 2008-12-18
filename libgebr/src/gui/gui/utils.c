@@ -362,12 +362,12 @@ struct reorderable_data {
 	GeoXmlSequence *		inserted;
 	GtkTreeIter			inserted_iter;
 	gint				geoxml_sequence_pointer_column;
-	GtkListStoreReorderedCallback	callback;
+	GtkTreeModelReorderedCallback	callback;
 	gpointer			user_data;
 };
 
 static void
-gtk_tree_view_set_geoxml_sequence_moveable_weak_ref(struct reorderable_data * data, GtkTreeView * tree_view)
+gtk_tree_model_set_geoxml_sequence_moveable_weak_ref(struct reorderable_data * data, GtkTreeView * tree_view)
 {
 	g_free(data);
 }
@@ -395,7 +395,7 @@ on_gtk_tree_model_row_deleted(GtkTreeModel * tree_model, GtkTreePath * path, str
 	gint			path_index;
 
 	index = geoxml_sequence_get_index(data->inserted);
-	path_index = gtk_tree_path_get_indices(path)[0];
+	path_index = gtk_tree_path_get_indices(path)[gtk_tree_path_get_depth(path)-1];
 	if (index == path_index || (index < path_index && index == path_index-1)) {
 		GtkTreeIter		iter;
 		GeoXmlSequence *	before;
@@ -409,14 +409,14 @@ on_gtk_tree_model_row_deleted(GtkTreeModel * tree_model, GtkTreePath * path, str
 		geoxml_sequence_move_before(data->inserted, before);
 
 		if (data->callback != NULL)
-			data->callback(GTK_LIST_STORE(tree_model), data->inserted, before, data->user_data);
+			data->callback(tree_model, data->inserted, before, data->user_data);
 		data->inserted = NULL;
 	}
 }
 
 void
-gtk_list_store_set_geoxml_sequence_moveable(GtkListStore * list_store, GtkTreeView * tree_view,
-	gint geoxml_sequence_pointer_column, GtkListStoreReorderedCallback callback, gpointer user_data)
+gtk_tree_model_set_geoxml_sequence_moveable(GtkTreeModel * tree_model, GtkTreeView * tree_view,
+	gint geoxml_sequence_pointer_column, GtkTreeModelReorderedCallback callback, gpointer user_data)
 {
 	struct reorderable_data * data;
 
@@ -428,13 +428,14 @@ gtk_list_store_set_geoxml_sequence_moveable(GtkListStore * list_store, GtkTreeVi
 		.user_data = user_data,
 	};
 	gtk_tree_view_set_reorderable(tree_view, TRUE);
-	g_signal_connect(GTK_TREE_MODEL(list_store), "row-inserted",
+	g_signal_connect(tree_model, "row-inserted",
 		(GCallback)on_gtk_tree_model_row_inserted, data);
-	g_signal_connect(GTK_TREE_MODEL(list_store), "row-changed",
+	g_signal_connect(tree_model, "row-changed",
 		(GCallback)on_gtk_tree_model_row_changed, data);
-	g_signal_connect(GTK_TREE_MODEL(list_store), "row-deleted",
+	g_signal_connect(tree_model, "row-deleted",
 		(GCallback)on_gtk_tree_model_row_deleted, data);
-	g_object_weak_ref(G_OBJECT(list_store), (GWeakNotify)gtk_tree_view_set_geoxml_sequence_moveable_weak_ref, data);
+	g_object_weak_ref(G_OBJECT(tree_model),
+		(GWeakNotify)gtk_tree_model_set_geoxml_sequence_moveable_weak_ref, data);
 }
 
 /*

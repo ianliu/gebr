@@ -33,13 +33,6 @@
  * Declarations
  */
 
-enum {
-	PROGRAM_STATUS,
-        PROGRAM_TITLE,
-	PROGRAM_XMLPOINTER,
-	PROGRAM_N_COLUMN
-};
-
 static void
 program_details_update(void);
 static gboolean
@@ -111,6 +104,9 @@ program_setup_ui(void)
 	debr.ui_program.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_program.list_store));
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_program.tree_view),
 		(GtkPopupCallback)program_popup_menu, NULL);
+	gtk_tree_model_set_geoxml_sequence_moveable(GTK_TREE_MODEL(debr.ui_program.list_store),
+		GTK_TREE_VIEW(debr.ui_program.tree_view), PROGRAM_XMLPOINTER,
+		(GtkTreeModelReorderedCallback)menu_saved_status_set_unsaved, NULL);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_program.tree_view);
 	g_signal_connect(debr.ui_program.tree_view, "cursor-changed",
 		(GCallback)program_selected, NULL);
@@ -223,41 +219,35 @@ program_remove(void)
 }
 
 /*
- * Function: program_up
- * Action move up
+ * Function: program_top
+ * Action move top
  */
 void
-program_up(void)
+program_top(void)
 {
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
+	GtkTreeIter	iter;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
-	gtk_tree_selection_get_selected(selection, &model, &iter);
+	program_get_selected(&iter);
 
-	gtk_list_store_move_up(debr.ui_program.list_store, &iter);
-	geoxml_sequence_move_up(GEOXML_SEQUENCE(debr.program));
+	gtk_list_store_move_after(debr.ui_program.list_store, &iter, NULL);
+	geoxml_sequence_move_after(GEOXML_SEQUENCE(debr.program), NULL);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
 /*
- * Function: program_down
- * Move down current selected program
+ * Function: program_bottom
+ * Move bottom current selected program
  */
 void
-program_down(void)
+program_bottom(void)
 {
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
 	GtkTreeIter		iter;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
-	gtk_tree_selection_get_selected(selection, &model, &iter);
+	program_get_selected(&iter);
 
-	gtk_list_store_move_down(debr.ui_program.list_store, &iter);
-	geoxml_sequence_move_down(GEOXML_SEQUENCE(debr.program));
+	gtk_list_store_move_before(debr.ui_program.list_store, &iter, NULL);
+	geoxml_sequence_move_before(GEOXML_SEQUENCE(debr.program), NULL);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -611,7 +601,6 @@ static GtkMenu *
 program_popup_menu(GtkWidget * tree_view)
 {
 	GtkWidget *	menu;
-	GtkWidget *	menu_item;
 
 	GtkTreeIter	iter;
 
@@ -619,25 +608,20 @@ program_popup_menu(GtkWidget * tree_view)
 
 	gtk_container_add(GTK_CONTAINER(menu),
 		gtk_action_create_menu_item(debr.actions.program.new));
-	/* Move up */
-	if (gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate",
-			(GCallback)program_up, NULL);
-	}
-	/* Move down */
-	if (gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_DOWN, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate",
-			(GCallback)program_down, NULL);
-	}
-	/* Remove */
+
+	if (program_get_selected(&iter) == FALSE)
+		goto out;
+
+	if (gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE)
+		gtk_container_add(GTK_CONTAINER(menu),
+			gtk_action_create_menu_item(debr.actions.program.top));
+	if (gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
+		gtk_container_add(GTK_CONTAINER(menu),
+			gtk_action_create_menu_item(debr.actions.program.bottom));
 	gtk_container_add(GTK_CONTAINER(menu),
 		gtk_action_create_menu_item(debr.actions.program.delete));
 
-	gtk_widget_show_all(menu);
+out:	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
 }

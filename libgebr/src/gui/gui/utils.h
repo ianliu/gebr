@@ -60,12 +60,12 @@ gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callb
 void
 gtk_tree_view_set_tooltip_text(GtkTreeView * tree_view, GtkTreeIter * iter, int column, const char * text);
 
-typedef void (*GtkListStoreReorderedCallback)(GtkListStore * list_store, GeoXmlSequence * sequence,
+typedef void (*GtkTreeModelReorderedCallback)(GtkTreeModel * tree_model, GeoXmlSequence * sequence,
 	GeoXmlSequence * before, gpointer user_data);
 
 void
-gtk_list_store_set_geoxml_sequence_moveable(GtkListStore * list_store, GtkTreeView * tree_view,
-	gint geoxml_sequence_pointer_column, GtkListStoreReorderedCallback callback, gpointer user_data);
+gtk_tree_model_set_geoxml_sequence_moveable(GtkTreeModel * tree_model, GtkTreeView * tree_view,
+	gint geoxml_sequence_pointer_column, GtkTreeModelReorderedCallback callback, gpointer user_data);
 
 gboolean
 confirm_action_dialog(const gchar * title, const gchar * message, ...);

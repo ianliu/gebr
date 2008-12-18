@@ -92,6 +92,36 @@ __geoxml_sequence_is_same_sequence(GeoXmlSequence * sequence, GeoXmlSequence * o
 		gdome_el_nodeName((GdomeElement*)other, &exception));
 }
 
+void
+__geoxml_sequence_move_in_group(GeoXmlSequence * sequence, GeoXmlSequence * position,
+	int (*move_function)(GeoXmlSequence * sequence, GeoXmlSequence * position))
+{
+	if (!__geoxml_sequence_is_parameter(position))
+		return;
+
+	GSList *	sequence_refs;
+	GSList *	i;
+
+	sequence_refs = __geoxml_get_elements_by_idref((GdomeElement*)sequence,
+		__geoxml_get_attr_value((GdomeElement*)sequence, "xml:id"));
+	if (geoxml_parameter_get_is_in_group((GeoXmlParameter*)position)) {
+		GSList *	position_refs;
+		GSList *	j;
+
+		position_refs = __geoxml_get_elements_by_idref((GdomeElement*)position,
+			__geoxml_get_attr_value((GdomeElement*)position, "xml:id"));
+		for (i = g_slist_last(sequence_refs), j = g_slist_last(position_refs);
+		i != NULL; i = g_slist_next(i), j = g_slist_next(j))
+			move_function((GeoXmlSequence*)i->data, (GeoXmlSequence*)j->data);
+
+		g_slist_free(position_refs);
+	} else
+		for (i = g_slist_last(sequence_refs); i != NULL; i = g_slist_next(i))
+			gdome_n_removeChild(gdome_el_parentNode((GdomeElement*)i->data, &exception),
+				(GdomeNode*)i->data, &exception);
+	g_slist_free(sequence_refs);
+}
+
 int
 __geoxml_sequence_previous(GeoXmlSequence ** sequence)
 {
@@ -310,10 +340,9 @@ geoxml_sequence_move_before(GeoXmlSequence * sequence, GeoXmlSequence * position
 
 	if ((ret = __geoxml_sequence_check(sequence)))
 		return ret;
-	/* FIXME */
-	if (__geoxml_sequence_is_parameter(sequence) && geoxml_parameter_get_is_in_group((GeoXmlParameter*)sequence)) {
-		return 0;
-	}
+	if (__geoxml_sequence_is_parameter(sequence) && geoxml_parameter_get_is_in_group((GeoXmlParameter*)sequence))
+		__geoxml_sequence_move_in_group(sequence, position, __geoxml_sequence_move_before);
+
 	return __geoxml_sequence_move_before(sequence, position);
 }
 
@@ -324,10 +353,9 @@ geoxml_sequence_move_after(GeoXmlSequence * sequence, GeoXmlSequence * position)
 
 	if ((ret = __geoxml_sequence_check(sequence)))
 		return ret;
-	/* FIXME */
-	if (__geoxml_sequence_is_parameter(sequence) && geoxml_parameter_get_is_in_group((GeoXmlParameter*)sequence)) {
-		return 0;
-	}
+	if (__geoxml_sequence_is_parameter(sequence) && geoxml_parameter_get_is_in_group((GeoXmlParameter*)sequence))
+		__geoxml_sequence_move_in_group(sequence, position, __geoxml_sequence_move_after);
+
 	return __geoxml_sequence_move_after(sequence, position);
 }
 
