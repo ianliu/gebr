@@ -242,6 +242,7 @@ flow_browse_load(void)
 
 	gchar *			filename;
 	gchar *                 title;
+	GeoXmlSequence *	first_program;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
@@ -249,10 +250,10 @@ flow_browse_load(void)
 			flow_free();
 		return;
 	}
-	gtk_tree_model_get(GTK_TREE_MODEL (gebr.ui_flow_browse->store), &iter,
-			   FB_FILENAME, &filename,
-			   FB_TITLE, &title,
-			-1);
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		FB_FILENAME, &filename,
+		FB_TITLE, &title,
+		-1);
 
 	/* free previous flow */
 	if (gebr.flow != NULL)
@@ -260,14 +261,15 @@ flow_browse_load(void)
 
 	/* load it */
 	gebr.flow = GEOXML_FLOW(document_load(filename));
-	if (gebr.flow == NULL){
+	if (gebr.flow == NULL) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load flow '%s'"), title);
 		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load flow '%s' from file '%s'"), title, filename);
 		goto out;
 	}
 
 	/* now into GUI */
-	flow_add_programs_to_view(gebr.flow);
+	geoxml_flow_get_program(gebr.flow, &first_program, 0);
+	flow_add_program_sequence_to_view(first_program);
 	flow_browse_info_update();
 
 out:	g_free(filename);

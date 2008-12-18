@@ -94,18 +94,18 @@ flow_io_setup_ui(void)
 	ui_flow_io = g_malloc(sizeof(struct ui_flow_io));
 
 	dialog = gtk_dialog_new_with_buttons(_("Flow input/output"),
-						GTK_WINDOW(gebr.window),
-						GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-						GTK_STOCK_OK, GTK_RESPONSE_OK,
-						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-						NULL);
+		GTK_WINDOW(gebr.window),
+		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_STOCK_OK, GTK_RESPONSE_OK,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		NULL);
 	ui_flow_io->dialog = dialog;
 	gtk_widget_set_size_request(dialog, 390, 160);
 
 	g_signal_connect(dialog, "response",
-			G_CALLBACK(flow_io_actions), ui_flow_io);
+		G_CALLBACK(flow_io_actions), ui_flow_io);
 	g_signal_connect(GTK_OBJECT(dialog), "delete_event",
-			GTK_SIGNAL_FUNC(gtk_widget_destroy), NULL);
+		GTK_SIGNAL_FUNC(gtk_widget_destroy), NULL);
 
 	table = gtk_table_new(5, 2, FALSE);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 0);
@@ -176,17 +176,14 @@ flow_io_customized_paths_from_line(GtkFileChooser * chooser)
 }
 
 /*
- * Function: flow_add_programs_to_view
- * Add _flow_'s programs to flow sequence view
+ * Function: flow_add_program_sequence_to_view
+ * Add _program_ sequence (from it to the end of sequence) to flow sequence view
  *
  */
 void
-flow_add_programs_to_view(GeoXmlFlow * flow)
+flow_add_program_sequence_to_view(GeoXmlSequence * program)
 {
-	GeoXmlSequence *	program;
-
-	geoxml_flow_get_program(flow, &program, 0);
-	while (program != NULL) {
+	for (; program != NULL; geoxml_sequence_next(&program)) {
 		GtkTreeIter		iter;
 		GtkTreePath *		path;
 
@@ -216,6 +213,7 @@ flow_add_programs_to_view(GeoXmlFlow * flow)
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
 			FSEQ_TITLE_COLUMN, geoxml_program_get_title(GEOXML_PROGRAM(program)),
 			FSEQ_STATUS_COLUMN, pixbuf,
+			FSEQ_GEOXML_POINTER, program,
 			FSEQ_MENU_FILE_NAME_COLUMN, menu,
 			FSEQ_MENU_INDEX, prog_index,
 			-1);
@@ -225,6 +223,5 @@ flow_add_programs_to_view(GeoXmlFlow * flow)
 		gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), path, NULL, FALSE, 0, 0);
 
 		gtk_tree_path_free(path);
-		geoxml_sequence_next(&program);
 	}
 }

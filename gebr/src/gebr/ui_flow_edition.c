@@ -96,17 +96,22 @@ flow_edition_setup_ui(void)
 		gtk_paned_pack1(GTK_PANED(hpanel), frame, FALSE, FALSE);
 
 		scrolledwin = gtk_scrolled_window_new(NULL, NULL);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwin),
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 		gtk_container_add(GTK_CONTAINER(frame), scrolledwin);
 
 		ui_flow_edition->fseq_store = gtk_list_store_new(FSEQ_N_COLUMN,
 			GDK_TYPE_PIXBUF,
 			G_TYPE_STRING,
+			G_TYPE_POINTER,
 			G_TYPE_STRING,
 			G_TYPE_ULONG);
 		ui_flow_edition->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->fseq_store));
 		gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
 			(GtkPopupCallback)flow_edition_popup_menu, ui_flow_edition);
+		gtk_list_store_set_geoxml_sequence_moveable(ui_flow_edition->fseq_store,
+			GTK_TREE_VIEW(ui_flow_edition->fseq_view), FSEQ_GEOXML_POINTER,
+			(GtkListStoreReorderedCallback)flow_save, NULL);
 		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_edition->fseq_view), FALSE);
 
 		renderer = gtk_cell_renderer_pixbuf_new();
@@ -121,9 +126,9 @@ flow_edition_setup_ui(void)
 
 		/* Double click on flow component open its parameter window */
 		g_signal_connect(ui_flow_edition->fseq_view, "row-activated",
-				GTK_SIGNAL_FUNC(flow_edition_component_change_parameters), ui_flow_edition);
+			GTK_SIGNAL_FUNC(flow_edition_component_change_parameters), ui_flow_edition);
 		g_signal_connect(GTK_OBJECT(ui_flow_edition->fseq_view), "cursor-changed",
-				GTK_SIGNAL_FUNC(flow_edition_component_selected), ui_flow_edition);
+			GTK_SIGNAL_FUNC(flow_edition_component_selected), ui_flow_edition);
 
 		gtk_container_add(GTK_CONTAINER(scrolledwin), ui_flow_edition->fseq_view);
 		gtk_widget_set_size_request(GTK_WIDGET(scrolledwin), 180, 30);
@@ -145,16 +150,16 @@ flow_edition_setup_ui(void)
 		gtk_container_add(GTK_CONTAINER(vbox), scrolledwin);
 
 		ui_flow_edition->menu_store = gtk_tree_store_new(MENU_N_COLUMN,
-						G_TYPE_STRING,
-						G_TYPE_STRING,
-						G_TYPE_STRING);
+			G_TYPE_STRING,
+			G_TYPE_STRING,
+			G_TYPE_STRING);
 
 		ui_flow_edition->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->menu_store));
 		gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->menu_view),
 			(GtkPopupCallback)flow_edition_menu_popup_menu, ui_flow_edition);
 
 		g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated",
-				GTK_SIGNAL_FUNC(flow_edition_menu_add), ui_flow_edition);
+			GTK_SIGNAL_FUNC(flow_edition_menu_add), ui_flow_edition);
 
 		renderer = gtk_cell_renderer_text_new();
 		col = gtk_tree_view_column_new_with_attributes("Flow", renderer, NULL);
@@ -194,8 +199,8 @@ flow_edition_component_change_parameters(void)
 	}
 
 	gtk_tree_model_get(model, &iter,
-			FSEQ_TITLE_COLUMN, &title,
-			-1);
+		FSEQ_TITLE_COLUMN, &title,
+		-1);
 
 	gebr_message(LOG_ERROR, TRUE, FALSE, _("Configuring flow component '%s'"), title);
 	parameters_configure_setup_ui();
@@ -309,6 +314,7 @@ flow_edition_menu_add(void)
 
 	GeoXmlFlow *		menu;
 	GeoXmlSequence *	program;
+	GeoXmlSequence *	last_program;
 
 	if (gebr.flow == NULL) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
@@ -325,9 +331,9 @@ flow_edition_menu_add(void)
 	}
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &iter,
-			MENU_TITLE_COLUMN, &name,
-			MENU_FILE_NAME_COLUMN, &filename,
-			-1);
+		MENU_TITLE_COLUMN, &name,
+		MENU_FILE_NAME_COLUMN, &filename,
+		-1);
 
 	menu = menu_load(filename);
 	if (menu == NULL)
@@ -342,12 +348,15 @@ flow_edition_menu_add(void)
 		geoxml_sequence_next(&program);
 	}
 
-	/* add it to the file  */
+	geoxml_flow_get_program(gebr.flow, &last_program, geoxml_flow_get_programs_number(gebr.flow)-1);
+	/* add it to the file */
 	geoxml_flow_add_flow(gebr.flow, menu);
 	geoxml_document_free(GEOXML_DOC(menu));
 	flow_save();
+
 	/* and to the GUI */
-	flow_add_programs_to_view(menu);
+	geoxml_sequence_next(&last_program);
+	flow_add_program_sequence_to_view(last_program);
 
 out:	g_free(name);
 	g_free(filename);

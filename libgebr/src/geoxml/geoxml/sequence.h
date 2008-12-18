@@ -133,6 +133,22 @@ GeoXmlSequence *
 geoxml_sequence_append_clone(GeoXmlSequence * sequence);
 
 /**
+ * Get the index of \p sequence.
+ *
+ * If \p sequence is NULL returns -1.
+ */
+gint
+geoxml_sequence_get_index(GeoXmlSequence * sequence);
+
+/**
+ * Returns the sequence at index in \p sequence.
+ *
+ * If \p sequence is NULL returns NULL.
+ */
+GeoXmlSequence *
+geoxml_sequence_get_at(GeoXmlSequence * sequence, gulong index);
+
+/**
  * Removes \p sequence from its sequence. It is not deleted and can be reinserted
  * into sequence using geoxml_sequence_prepend or geoxml_sequence_append.
  *

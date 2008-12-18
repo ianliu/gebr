@@ -357,6 +357,86 @@ gtk_tree_view_set_tooltip_text(GtkTreeView * tree_view, GtkTreeIter * iter, int 
 void
 gtk_tree_view_set_tooltip_text(GtkTreeView * tree_view, GtkTreeIter * iter, int column, const char * text) {}
 #endif
+
+struct reorderable_data {
+	GeoXmlSequence *		inserted;
+	GtkTreeIter			inserted_iter;
+	gint				geoxml_sequence_pointer_column;
+	GtkListStoreReorderedCallback	callback;
+	gpointer			user_data;
+};
+
+static void
+gtk_tree_view_set_geoxml_sequence_moveable_weak_ref(struct reorderable_data * data, GtkTreeView * tree_view)
+{
+	g_free(data);
+}
+
+static void
+on_gtk_tree_model_row_inserted(GtkTreeModel * tree_model, GtkTreePath * path, GtkTreeIter * iter, struct reorderable_data * data)
+{
+	gtk_tree_model_get(tree_model, iter, data->geoxml_sequence_pointer_column, &data->inserted, -1);
+	data->inserted_iter = *iter;
+}
+
+static void
+on_gtk_tree_model_row_changed(GtkTreeModel * tree_model, GtkTreePath * path, GtkTreeIter * iter, struct reorderable_data * data)
+{
+	if (data->inserted_iter.stamp == iter->stamp)
+		gtk_tree_model_get(tree_model, iter, data->geoxml_sequence_pointer_column, &data->inserted, -1);
+}
+
+static void
+on_gtk_tree_model_row_deleted(GtkTreeModel * tree_model, GtkTreePath * path, struct reorderable_data * data)
+{
+	if (data->inserted == NULL)
+		return;
+	gint			index;
+	gint			path_index;
+
+	index = geoxml_sequence_get_index(data->inserted);
+	path_index = gtk_tree_path_get_indices(path)[0];
+	if (index == path_index || (index < path_index && index == path_index-1)) {
+		GtkTreeIter		iter;
+		GeoXmlSequence *	inserted_next;
+
+		iter = data->inserted_iter;
+		if (gtk_tree_model_iter_next(tree_model, &iter))
+			gtk_tree_model_get(tree_model, &iter,
+				data->geoxml_sequence_pointer_column, &inserted_next, -1);
+		else
+			inserted_next = NULL;
+		geoxml_sequence_move_before(data->inserted, inserted_next);
+
+		if (data->callback != NULL)
+			data->callback(GTK_LIST_STORE(tree_model), data->inserted, inserted_next, data->user_data);
+		data->inserted = NULL;
+	}
+}
+
+void
+gtk_list_store_set_geoxml_sequence_moveable(GtkListStore * list_store, GtkTreeView * tree_view,
+	gint geoxml_sequence_pointer_column, GtkListStoreReorderedCallback callback, gpointer user_data)
+{
+	struct reorderable_data * data;
+
+	data = g_malloc(sizeof(struct reorderable_data));
+	*data = (struct reorderable_data) {
+		.inserted = NULL,
+		.geoxml_sequence_pointer_column = geoxml_sequence_pointer_column,
+		.callback = callback,
+		.user_data = user_data,
+	};
+	gtk_tree_view_set_reorderable(tree_view, TRUE);
+	g_signal_connect(GTK_TREE_MODEL(list_store), "row-inserted",
+		(GCallback)on_gtk_tree_model_row_inserted, data);
+	g_signal_connect(GTK_TREE_MODEL(list_store), "row-changed",
+		(GCallback)on_gtk_tree_model_row_changed, data);
+	g_signal_connect(GTK_TREE_MODEL(list_store), "row-deleted",
+		(GCallback)on_gtk_tree_model_row_deleted, data);
+	g_object_weak_ref(G_OBJECT(list_store), (GWeakNotify)gtk_tree_view_set_geoxml_sequence_moveable_weak_ref, data);
+}
+
 /*
  * Function: confirm_action_dialog
  * Show an action confirmation dialog with formated _message_

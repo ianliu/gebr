@@ -1,5 +1,5 @@
-/*   libgebr - G�BR Library
- *   Copyright (C) 2007 G�BR core team (http://gebr.sourceforge.net)
+/*   libgebr - GeBR Library
+ *   Copyright (C) 2007 GeBR core team (http://gebr.sourceforge.net)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 #define __LIBGEBR_GUI_UTILS_H
 
 #include <gtk/gtk.h>
+
+#include <geoxml.h>
 
 gboolean
 gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter);
@@ -57,6 +59,13 @@ gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callb
 
 void
 gtk_tree_view_set_tooltip_text(GtkTreeView * tree_view, GtkTreeIter * iter, int column, const char * text);
+
+typedef void (*GtkListStoreReorderedCallback)(GtkListStore * list_store, GeoXmlSequence * sequence,
+	GeoXmlSequence * before, gpointer user_data);
+
+void
+gtk_list_store_set_geoxml_sequence_moveable(GtkListStore * list_store, GtkTreeView * tree_view,
+	gint geoxml_sequence_pointer_column, GtkListStoreReorderedCallback callback, gpointer user_data);
 
 gboolean
 confirm_action_dialog(const gchar * title, const gchar * message, ...);

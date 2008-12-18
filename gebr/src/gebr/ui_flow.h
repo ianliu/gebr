@@ -37,6 +37,6 @@ void
 flow_io_customized_paths_from_line(GtkFileChooser * chooser);
 
 void
-flow_add_programs_to_view(GeoXmlFlow * flow);
+flow_add_program_sequence_to_view(GeoXmlSequence * program);
 
 #endif //__UI_FLOW_H

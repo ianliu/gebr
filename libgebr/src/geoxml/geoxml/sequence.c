@@ -240,16 +240,47 @@ geoxml_sequence_append_clone(GeoXmlSequence * sequence)
 	if ((ret = __geoxml_sequence_check(sequence)))
 		return NULL;
 	clone = __geoxml_sequence_append_clone(sequence);
-// 	if (__geoxml_sequence_is_parameter(sequence) && geoxml_parameter_get_is_in_group((GeoXmlParameter*)sequence)) {
-// 		GdomeElement *	reference_element;
-// 
-// 		/* append reference to clone for each group instance */
-// 		__geoxml_foreach_element(reference_element,
-// 		__geoxml_get_elements_by_idref((GdomeElement*)sequence, __geoxml_get_attr_value((GdomeElement*)sequence, "xml:id")))
-// 			__geoxml_sequence_append_clone((GeoXmlSequence*)gdome_el_parentNode(reference_element, &exception));
-// 	}
+	/* append reference to clone for others group instances */
+	if (__geoxml_sequence_is_parameter(sequence) && geoxml_parameter_get_is_in_group((GeoXmlParameter*)sequence)) {
+		GdomeElement *	reference_element;
+
+		__geoxml_foreach_element(reference_element,
+		__geoxml_get_elements_by_idref((GdomeElement*)sequence, __geoxml_get_attr_value((GdomeElement*)sequence, "xml:id")))
+			__geoxml_sequence_append_clone((GeoXmlSequence*)gdome_el_parentNode(reference_element, &exception));
+	}
 
 	return clone;
+}
+
+gint
+geoxml_sequence_get_index(GeoXmlSequence * sequence)
+{
+	gint index;
+
+	for (index = -1; sequence != NULL; geoxml_sequence_previous(&sequence))
+		index++;
+
+	return index;
+}
+
+//TODO: improve performance
+GeoXmlSequence *
+geoxml_sequence_get_at(GeoXmlSequence * sequence, gulong index)
+{
+	if (sequence == NULL)
+		return NULL;
+
+	gulong	i;
+
+	i = geoxml_sequence_get_index(sequence);
+	if (i == index)
+		return sequence;
+	if (i < index)
+		for (; i < index && sequence != NULL; ++i, geoxml_sequence_next(&sequence));
+	else
+		for (; i > index && sequence != NULL; --i, geoxml_sequence_previous(&sequence));
+
+	return sequence;
 }
 
 int
