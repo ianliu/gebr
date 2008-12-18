@@ -29,6 +29,15 @@ gboolean
 line_delete(void);
 
 void
+line_save(void);
+
+void
 line_load_flows(void);
+
+void
+line_move_flow_top(void);
+
+void
+line_move_flow_bottom(void);
 
 #endif //__LINE_H

@@ -421,20 +421,6 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 		g_signal_connect(menu_item, "activate",
 			(GCallback)flow_program_move_top, NULL);
 	}
-	/* Move up */
-	if (gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter) == TRUE) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate",
-			(GCallback)flow_program_move_up, NULL);
-	}
-	/* Move down */
-	if (gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter) == TRUE) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_DOWN, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate",
-			(GCallback)flow_program_move_down, NULL);
-	}
 	/* Move bottom */
 	if (gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);

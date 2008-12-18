@@ -34,6 +34,7 @@
 #include <misc/utils.h>
 
 #include "flow.h"
+#include "line.h"
 #include "gebr.h"
 #include "menu.h"
 #include "support.h"
@@ -84,7 +85,7 @@ flow_new(void)
 	geoxml_document_set_email(GEOXML_DOC(flow), gebr.config.email->str);
 	/* and add to current line */
 	geoxml_line_append_flow(gebr.line, geoxml_document_get_filename(GEOXML_DOC(flow)));
-	document_save(GEOXML_DOC(gebr.line));
+	line_save();
 	document_save(GEOXML_DOC(flow));
 	geoxml_document_free(GEOXML_DOC(flow));
 	/* and add to the GUI */
@@ -165,7 +166,7 @@ flow_delete(void)
 	while (line_flow != NULL) {
 		if (strcmp(filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(line_flow))) == 0) {
 			geoxml_sequence_remove(line_flow);
-			document_save(GEOXML_DOC(gebr.line));
+			line_save();
 			break;
 		}
 		geoxml_sequence_next(&line_flow);
@@ -258,7 +259,7 @@ flow_import(void)
 	geoxml_document_free(GEOXML_DOC(imported_flow));
 	/* and add it to the line */
 	geoxml_line_append_flow(gebr.line, flow_filename->str);
-	document_save(GEOXML_DOC(gebr.line));
+	line_save();
 	/* and to the GUI */
 	gtk_list_store_append(gebr.ui_flow_browse->store, &iter);
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
@@ -573,66 +574,6 @@ flow_program_remove(void)
 }
 
 /*
- * Function: flow_program_move_up
- * Move selected program up in the processing flow
- */
-void
-flow_program_move_up(void)
-{
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
-
-	GeoXmlSequence *	program;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_program_selected_error);
-		return;
-	}
-	if (gtk_list_store_can_move_up(gebr.ui_flow_edition->fseq_store, &iter) == FALSE)
-		return;
-
-	/* Update flow */
-	geoxml_flow_get_program(gebr.flow, &program,
-		gtk_list_store_get_iter_index(gebr.ui_flow_edition->fseq_store, &iter));
-	geoxml_sequence_move_up(program);
-	flow_save();
-	/* Update GUI */
-	gtk_list_store_move_up(gebr.ui_flow_edition->fseq_store, &iter);
-}
-
-/*
- * Function: flow_program_move_down
- * Move selected program down in the processing flow
- */
-void
-flow_program_move_down(void)
-{
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
-
-	GeoXmlSequence *	program;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_program_selected_error);
-		return;
-	}
-	if (gtk_list_store_can_move_down(gebr.ui_flow_edition->fseq_store, &iter) == FALSE)
-		return;
-
-	/* Update flow */
-	geoxml_flow_get_program(gebr.flow, &program,
-		gtk_list_store_get_iter_index(gebr.ui_flow_edition->fseq_store, &iter));
-	geoxml_sequence_move_down(program);
-	flow_save();
-	/* Update GUI */
-	gtk_list_store_move_down(gebr.ui_flow_edition->fseq_store, &iter);
-}
-
-/*
  * Function: flow_program_move_top
  * Move selected program to top in the processing flow
  */
@@ -646,12 +587,7 @@ flow_program_move_top(void)
 	GeoXmlSequence *	program;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_program_selected_error);
-		return;
-	}
-	if (gtk_list_store_can_move_up(gebr.ui_flow_edition->fseq_store, &iter) == FALSE)
-		return;
+	gtk_tree_selection_get_selected(selection, &model, &iter);
 
 	/* Update flow */
 	geoxml_flow_get_program(gebr.flow, &program,
@@ -676,12 +612,7 @@ flow_program_move_bottom(void)
 	GeoXmlSequence *	program;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_program_selected_error);
-		return;
-	}
-	if (gtk_list_store_can_move_down(gebr.ui_flow_edition->fseq_store, &iter) == FALSE)
-		return;
+	gtk_tree_selection_get_selected(selection, &model, &iter);
 
 	/* Update flow */
 	geoxml_flow_get_program(gebr.flow, &program,
@@ -690,120 +621,4 @@ flow_program_move_bottom(void)
 	flow_save();
 	/* Update GUI */
 	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter, NULL);
-}
-
-/*
- * Function: flow_move_up
- * Move flow up
- */
-void
-flow_move_up(void)
-{
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
-
-	GeoXmlSequence *	line_flow;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_program_selected_error);
-		return;
-	}
-	if (gtk_list_store_can_move_up(gebr.ui_flow_browse->store, &iter) == FALSE)
-		return;
-
-	/* Update line XML */
-	geoxml_line_get_flow(gebr.line, &line_flow,
-		gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
-	geoxml_sequence_move_up(line_flow);
-	document_save(GEOXML_DOC(gebr.line));
-	/* Update GUI */
-	gtk_list_store_move_up(gebr.ui_flow_browse->store, &iter);
-}
-
-/*
- * Function: flow_move_down
- * Move flow down
- */
-void
-flow_move_down(void)
-{
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
-
-	GeoXmlSequence *	line_flow;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_program_selected_error);
-		return;
-	}
-	if (gtk_list_store_can_move_down(gebr.ui_flow_browse->store, &iter) == FALSE)
-		return;
-
-	/* Update line XML */
-	geoxml_line_get_flow(gebr.line, &line_flow,
-		gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
-	geoxml_sequence_move_down(line_flow);
-	document_save(GEOXML_DOC(gebr.line));
-	/* Update GUI */
-	gtk_list_store_move_down(gebr.ui_flow_browse->store, &iter);
-}
-
-/*
- * Function: flow_move_top
- * Move flow top
- */
-void
-flow_move_top(void)
-{
-	GtkTreeIter		iter;
-	GtkTreeModel *		model;
-	GtkTreeSelection *	selection;
-
-	GeoXmlSequence *	line_flow;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
-		return;
-	}
-
-	/* Update line XML */
-	geoxml_line_get_flow(gebr.line, &line_flow,
-		gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
-	geoxml_sequence_move_after(line_flow, NULL);
-	document_save(GEOXML_DOC(gebr.line));
-	/* GUI */
-	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
-}
-
-/*
- * Function: flow_move_bottom
- * Move flow bottom
- */
-void
-flow_move_bottom(void)
-{
-	GtkTreeIter		iter;
-	GtkTreeModel *		model;
-	GtkTreeSelection *	selection;
-
-	GeoXmlSequence *	line_flow;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
-		return;
-	}
-
-	/* Update line XML */
-	geoxml_line_get_flow(gebr.line, &line_flow,
-		gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
-	geoxml_sequence_move_before(line_flow, NULL);
-	document_save(GEOXML_DOC(gebr.line));
-	/* GUI */
-	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
 }

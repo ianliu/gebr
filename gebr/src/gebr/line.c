@@ -198,6 +198,15 @@ line_delete(void)
 	return TRUE;
 }
 
+/* Function: line_save
+ * Save current line
+ */
+void
+line_save(void)
+{
+	document_save(GEOXML_DOC(gebr.line));
+}
+
 /*
  * Function: line_load_flows
  * Load flows associated to the selected line.
@@ -233,6 +242,7 @@ line_load_flows(void)
 		gtk_list_store_set(gebr.ui_flow_browse->store, &flow_iter,
 			FB_TITLE, geoxml_document_get_title(GEOXML_DOC(flow)),
 			FB_FILENAME, flow_filename,
+			FB_LINE_FLOW_POINTER, line_flow,
 			-1);
 
 		geoxml_document_free(GEOXML_DOC(flow));
@@ -240,4 +250,54 @@ line_load_flows(void)
 	}
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Flows loaded"));
+}
+
+/*
+ * Function: line_move_flow_top
+ * Move flow top
+ */
+void
+line_move_flow_top(void)
+{
+	GtkTreeIter		iter;
+	GtkTreeModel *		model;
+	GtkTreeSelection *	selection;
+
+	GeoXmlSequence *	line_flow;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	gtk_tree_selection_get_selected(selection, &model, &iter);
+
+	/* Update line XML */
+	geoxml_line_get_flow(gebr.line, &line_flow,
+		gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
+	geoxml_sequence_move_after(line_flow, NULL);
+	line_save();
+	/* GUI */
+	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
+}
+
+/*
+ * Function: line_move_flow_bottom
+ * Move flow bottom
+ */
+void
+line_move_flow_bottom(void)
+{
+	GtkTreeIter		iter;
+	GtkTreeModel *		model;
+	GtkTreeSelection *	selection;
+
+	GeoXmlSequence *	line_flow;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	gtk_tree_selection_get_selected(selection, &model, &iter);
+
+	/* Update line XML */
+	geoxml_line_get_flow(gebr.line, &line_flow,
+		gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
+	geoxml_sequence_move_before(line_flow, NULL);
+	line_save();
+	/* GUI */
+	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
 }

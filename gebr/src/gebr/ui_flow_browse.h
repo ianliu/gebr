@@ -25,6 +25,7 @@
 enum {
 	FB_TITLE = 0,
 	FB_FILENAME,
+	FB_LINE_FLOW_POINTER,
 	FB_N_COLUMN
 };
 

@@ -31,6 +31,7 @@
 #include "gebr.h"
 #include "support.h"
 #include "document.h"
+#include "line.h"
 #include "flow.h"
 #include "ui_flow.h"
 #include "ui_help.h"
@@ -105,12 +106,15 @@ flow_browse_setup_ui(void)
 	gtk_widget_set_size_request(scrolledwin, 300, -1);
 
 	ui_flow_browse->store = gtk_list_store_new(FB_N_COLUMN,
-		G_TYPE_STRING,  /* Name(title for libgeoxml) */
-		G_TYPE_STRING); /* Filename */
+		G_TYPE_STRING, /* Name(title for libgeoxml) */
+		G_TYPE_STRING, /* Filename */
+		G_TYPE_POINTER /* GeoXmlLineFlow pointer */);
 	ui_flow_browse->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->store));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_browse->view), FALSE);
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view),
 		(GtkPopupCallback)flow_browse_popup_menu, ui_flow_browse);
+	gtk_list_store_set_geoxml_sequence_moveable(ui_flow_browse->store, GTK_TREE_VIEW(ui_flow_browse->view),
+		FB_LINE_FLOW_POINTER, (GtkListStoreReorderedCallback)line_save, NULL);
 	g_signal_connect(ui_flow_browse->view, "row-activated",
 		GTK_SIGNAL_FUNC(flow_browse_on_row_activated), ui_flow_browse);
 
@@ -297,8 +301,8 @@ flow_browse_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new_
 
 	/* update store */
 	gtk_list_store_set(ui_flow_browse->store, &iter,
-			   FB_TITLE, new_text,
-			   -1);
+		FB_TITLE, new_text,
+		-1);
 	/* update XML */
 	geoxml_document_set_title(GEOXML_DOC(gebr.flow), new_text);
 	flow_save();
@@ -447,28 +451,14 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
-			(GCallback)flow_move_top, NULL);
-	}
-	/* Move up */
-	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate",
-			(GCallback)flow_move_up, NULL);
-	}
-	/* Move down */
-	if (gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_DOWN, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate",
-			(GCallback)flow_move_down, NULL);
+			(GCallback)line_move_flow_top, NULL);
 	}
 	/* Move bottom */
 	if (gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
-			(GCallback)flow_move_bottom, NULL);
+			(GCallback)line_move_flow_bottom, NULL);
 	}
 
 	/* separator */

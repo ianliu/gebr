@@ -398,18 +398,18 @@ on_gtk_tree_model_row_deleted(GtkTreeModel * tree_model, GtkTreePath * path, str
 	path_index = gtk_tree_path_get_indices(path)[0];
 	if (index == path_index || (index < path_index && index == path_index-1)) {
 		GtkTreeIter		iter;
-		GeoXmlSequence *	inserted_next;
+		GeoXmlSequence *	before;
 
 		iter = data->inserted_iter;
 		if (gtk_tree_model_iter_next(tree_model, &iter))
 			gtk_tree_model_get(tree_model, &iter,
-				data->geoxml_sequence_pointer_column, &inserted_next, -1);
+				data->geoxml_sequence_pointer_column, &before, -1);
 		else
-			inserted_next = NULL;
-		geoxml_sequence_move_before(data->inserted, inserted_next);
+			before = NULL;
+		geoxml_sequence_move_before(data->inserted, before);
 
 		if (data->callback != NULL)
-			data->callback(GTK_LIST_STORE(tree_model), data->inserted, inserted_next, data->user_data);
+			data->callback(GTK_LIST_STORE(tree_model), data->inserted, before, data->user_data);
 		data->inserted = NULL;
 	}
 }
