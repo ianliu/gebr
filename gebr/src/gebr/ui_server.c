@@ -63,7 +63,7 @@ static gboolean
 server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 	GtkTreeIter * iter, GtkTreeViewColumn * column, struct ui_server_common * ui)
 {
-	if (gtk_tree_view_column_get_sort_column_id(column) == SERVER_STATUS_ICON) {
+	if (gtk_tree_view_get_column(tree_view, SERVER_STATUS_ICON) == column) {
 		struct server *		server;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(ui->store), iter, SERVER_POINTER, &server, -1);
@@ -71,6 +71,17 @@ server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 			gtk_tooltip_set_text(tooltip, server->last_error->str);
 
 		return (gboolean)server->last_error->len;
+	}
+	if (gtk_tree_view_get_column(tree_view, SERVER_AUTOCONNECT) == column) {
+		gboolean		autoconnect;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(ui->store), iter, SERVER_AUTOCONNECT, &autoconnect, -1);
+		if (autoconnect)
+			gtk_tooltip_set_text(tooltip, _("Autoconnect ON"));
+		else
+			gtk_tooltip_set_text(tooltip, _("Autoconnect OFF"));
+			
+		return TRUE;
 	}
 
 	return FALSE;
@@ -205,24 +216,18 @@ server_common_setup(struct ui_server_common * ui_server_common)
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
-	gtk_tree_view_column_set_sort_column_id(col, SERVER_STATUS_ICON);
-	gtk_tree_view_column_set_sort_indicator(col, TRUE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", SERVER_STATUS_ICON);
 
-	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes(_("Address"), renderer, NULL);
-	gtk_tree_view_column_set_sort_column_id(col, SERVER_ADDRESS);
-	gtk_tree_view_column_set_sort_indicator(col, TRUE);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_ADDRESS);
-
 	renderer = gtk_cell_renderer_toggle_new();
-	col = gtk_tree_view_column_new_with_attributes(_("Autoconnect"), renderer, NULL);
-	gtk_tree_view_column_set_sort_column_id(col, SERVER_AUTOCONNECT);
-	gtk_tree_view_column_set_sort_indicator(col, FALSE);
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "active", SERVER_AUTOCONNECT);
+
+	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes(_("Address"), renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_ADDRESS);
 }
 
 /*
@@ -403,14 +408,13 @@ server_list_setup_ui(void)
 	ui_server_list = g_malloc(sizeof(struct ui_server_list));
 	ui_server_list->common.store = gtk_list_store_new(SERVER_N_COLUMN,
 		GDK_TYPE_PIXBUF,
+		G_TYPE_BOOLEAN,
 		G_TYPE_STRING,
-		G_TYPE_POINTER,
-		G_TYPE_BOOLEAN);
+		G_TYPE_POINTER);
 
 	dialog = gtk_dialog_new_with_buttons(_("Servers configuration"),
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_STOCK_CLOSE, RESPONSE_CLOSE,
 		NULL);
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Connect all"), RESPONSE_CONNECT_ALL);
 	gtk_button_set_image(GTK_BUTTON(button),
@@ -418,6 +422,7 @@ server_list_setup_ui(void)
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Disconnect all"), RESPONSE_DISCONNECT_ALL);
 	gtk_button_set_image(GTK_BUTTON(button),
 		gtk_image_new_from_stock(GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_SMALL_TOOLBAR));
+	button = gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CLOSE, RESPONSE_CLOSE);
 	g_signal_connect(dialog, "delete-event",
 		G_CALLBACK(gtk_widget_hide_on_delete), NULL);
 	ui_server_list->common.dialog = dialog;
