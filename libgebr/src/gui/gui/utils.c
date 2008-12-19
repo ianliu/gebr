@@ -343,9 +343,6 @@ gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GtkTreeViewTooltipCa
 		(GCallback)on_tooltip_query, tooltip_data);
 	g_object_weak_ref(G_OBJECT(tree_view), (GWeakNotify)tooltip_weak_ref, tooltip_data);
 }
-#else
-void
-gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GtkTreeViewTooltipCallback callback, gpointer user_data) {}
 #endif
 
 struct reorderable_data {
