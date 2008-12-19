@@ -50,8 +50,8 @@ __geoxml_parameter_group_turn_instance_to_reference(GeoXmlParameterGroup * param
 	geoxml_parameters_get_parameter(instance, &parameter, 0);
 	for (; fi_parameter != NULL; __geoxml_sequence_next(&parameter), __geoxml_sequence_next(&fi_parameter)) {
 		__geoxml_element_assign_new_id((GdomeElement*)parameter, FALSE);
-// 		puts(__geoxml_get_attr_value(fi_parameter, "xml:id"));
-// 		puts(__geoxml_get_attr_value(parameter, "xml:id"));
+// 		puts(__geoxml_get_attr_value(fi_parameter, "id"));
+// 		puts(__geoxml_get_attr_value(parameter, "id"));
 		__geoxml_parameter_set_be_reference(GEOXML_PARAMETER(parameter),
 			GEOXML_PARAMETER(fi_parameter));
 	}
@@ -149,7 +149,7 @@ geoxml_parameter_group_get_parameter_in_all_instances(GeoXmlParameterGroup * par
 	geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
 	geoxml_parameters_get_parameter(GEOXML_PARAMETERS(first_instance), &parameter, 0);
 	idref_list = __geoxml_parameter_get_referencee_list((GdomeElement*)parameter_group,
-		__geoxml_get_attr_value((GdomeElement*)parameter, "xml:id"));
+		__geoxml_get_attr_value((GdomeElement*)parameter, "id"));
 	idref_list = g_slist_prepend(idref_list, parameter);
 
 	return idref_list;

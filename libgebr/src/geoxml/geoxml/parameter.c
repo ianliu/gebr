@@ -124,7 +124,7 @@ __geoxml_parameter_get_referencee_list(GdomeElement * context, const gchar * id)
 	gint			i, l;
 
 	idref_list = NULL;
-	idref_string = gdome_str_mkref("xml:idref");
+	idref_string = gdome_str_mkref("idref");
 	string = gdome_str_mkref("reference");
 	node_list = gdome_el_getElementsByTagName(context, string, &exception);
 
@@ -212,7 +212,7 @@ geoxml_parameter_get_references_list(GeoXmlParameter * parameter)
 		return NULL;
 	return __geoxml_parameter_get_referencee_list(
 		gdome_doc_documentElement(gdome_el_ownerDocument((GdomeElement*)parameter, &exception), &exception),
-		__geoxml_get_attr_value((GdomeElement*)parameter, "xml:id"));
+		__geoxml_get_attr_value((GdomeElement*)parameter, "id"));
 }
 
 GeoXmlParameter *
@@ -222,7 +222,7 @@ geoxml_parameter_get_referencee(GeoXmlParameter * parameter_reference)
 		return NULL;
 
 	return (GeoXmlParameter*)__geoxml_get_element_by_id((GdomeElement*)parameter_reference,
-		__geoxml_get_attr_value(__geoxml_parameter_get_type_element(parameter_reference), "xml:idref"));
+		__geoxml_get_attr_value(__geoxml_parameter_get_type_element(parameter_reference), "idref"));
 }
 
 gboolean

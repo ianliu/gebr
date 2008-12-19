@@ -26,6 +26,10 @@
  * Internal internal functions
  */
 
+const static gchar *	id_tags [] = {
+	"parameter", NULL,
+};
+
 static gchar *
 __geoxml_remove_line_break(const gchar * tag_value)
 {
@@ -150,25 +154,54 @@ __geoxml_get_element_at(GdomeElement * parent_element, const gchar * tag_name, g
 GdomeElement *
 __geoxml_get_element_by_id(GdomeElement * base, const gchar * id)
 {
-	GString *		expression;
-	GdomeXPathResult *	xpath_result;
 	GdomeElement *		document_element;
-	GdomeElement *		element;
+	gint			i;
 
-	expression = g_string_new(NULL);
 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(base, &exception), &exception);
-	g_string_printf(expression, "id('%s')", id);
-	puts(expression->str);
-	xpath_result = __geoxml_xpath_evaluate(document_element, expression->str);
-	element = (GdomeElement*)gdome_xpresult_singleNodeValue(xpath_result, &exception);
-	if (element == NULL)
-		puts("null");
+	for (i = 0; id_tags[i] != NULL; ++i) {
+		GdomeDOMString *	string;
+		GdomeNodeList *		node_list;
+		gint			j, l;
 
-	/* frees */
-	g_string_free(expression, TRUE);
-	gdome_xpresult_unref(xpath_result, &exception);
+		string = gdome_str_mkref(id_tags[i]);
+		node_list = gdome_el_getElementsByTagName(document_element, string, &exception);
 
-	return element;
+		l = gdome_nl_length(node_list, &exception);
+		/* get the list of elements with this tag_name. */
+		for (j = 0; j < l; ++j) {
+			GdomeElement *		element;
+
+			element = (GdomeElement*)gdome_nl_item(node_list, j, &exception);
+			if (!strcmp(__geoxml_get_attr_value(element, "id"), id))
+				return element;
+		}
+
+		gdome_str_unref(string);
+		gdome_nl_unref(node_list, &exception);
+	}
+
+	return NULL;
+
+/* only work with xml:id att. name */
+// 	GString *		expression;
+// 	GdomeXPathResult *	xpath_result;
+// 	GdomeElement *		document_element;
+// 	GdomeElement *		element;
+// 
+// 	expression = g_string_new(NULL);
+// 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(base, &exception), &exception);
+// 	g_string_printf(expression, "id('%s')", id);
+// 	puts(expression->str);
+// 	xpath_result = __geoxml_xpath_evaluate(document_element, expression->str);
+// 	element = (GdomeElement*)gdome_xpresult_singleNodeValue(xpath_result, &exception);
+// 	if (element == NULL)
+// 		puts("null");
+// 
+// 	/* frees */
+// 	g_string_free(expression, TRUE);
+// 	gdome_xpresult_unref(xpath_result, &exception);
+// 
+// 	return element;
 /* simple, but doesn't work :( */
 // 	GdomeDOMString *	string;
 // 	GdomeElement *		element;
@@ -194,7 +227,7 @@ __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref)
 
 	idref_list = NULL;
 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(base, &exception), &exception);
-	idref_string = gdome_str_mkref("xml:idref");
+	idref_string = gdome_str_mkref("idref");
 
 	for (k = 0; reference_tags[k] != NULL; ++k) {
 		string = gdome_str_mkref(reference_tags[k]);
@@ -465,11 +498,11 @@ __geoxml_element_assign_new_id(GdomeElement * element, gboolean reassign_referec
 	/* change referenced elements */
 	if (reassign_refereceds) {
 		__geoxml_foreach_element(reference_element,
-		__geoxml_get_elements_by_idref(element, __geoxml_get_attr_value(element, "xml:id")))
-			__geoxml_set_attr_value(reference_element, "xml:idref", nextid_str);
+		__geoxml_get_elements_by_idref(element, __geoxml_get_attr_value(element, "id")))
+			__geoxml_set_attr_value(reference_element, "idref", nextid_str);
 	}
 
-	__geoxml_set_attr_value(element, "xml:id", nextid_str);
+	__geoxml_set_attr_value(element, "id", nextid_str);
 
 	nextid_str = g_strdup_printf("n%lu", ++nextid);
 	__geoxml_set_attr_value(document_element, "nextid", nextid_str);
@@ -480,9 +513,6 @@ __geoxml_element_assign_new_id(GdomeElement * element, gboolean reassign_referec
 void
 __geoxml_element_reassign_ids(GdomeElement * element)
 {
-	const static gchar *	id_tags [] = {
-		"parameter", NULL,
-	};
 	gint			i;
 
 	for (i = 0; id_tags[i] != NULL; ++i) {
@@ -509,8 +539,8 @@ __geoxml_element_reassign_ids(GdomeElement * element)
 void
 __geoxml_element_assign_reference_id(GdomeElement * element, GdomeElement * referencee)
 {
-	__geoxml_set_attr_value(element, "xml:idref",
-		__geoxml_get_attr_value(referencee, "xml:id"));
+	__geoxml_set_attr_value(element, "idref",
+		__geoxml_get_attr_value(referencee, "id"));
 }
 
 GdomeXPathResult *
