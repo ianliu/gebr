@@ -220,7 +220,7 @@ server_common_setup(struct ui_server_common * ui_server_common)
 	gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", SERVER_STATUS_ICON);
 
 	renderer = gtk_cell_renderer_toggle_new();
-	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	col = gtk_tree_view_column_new_with_attributes(_("AC"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "active", SERVER_AUTOCONNECT);
 
