@@ -209,7 +209,7 @@ void
 g_stream_socket_disconnect(GStreamSocket * stream_socket)
 {
 	if (stream_socket->parent.state >= G_SOCKET_STATE_CONNECTING)
-		close(_g_socket_get_fd(&stream_socket->parent));
+		_g_socket_close(&stream_socket->parent);
 	__g_stream_socket_disconnected(stream_socket);
 	stream_socket->parent.last_error = G_SOCKET_ERROR_NONE;
 }

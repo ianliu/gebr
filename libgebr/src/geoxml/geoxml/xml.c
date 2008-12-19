@@ -491,7 +491,7 @@ __geoxml_element_reassign_ids(GdomeElement * element)
 		gint			j, l;
 
 		if (!strcmp(gdome_el_tagName(element, &exception)->str, id_tags[i]))
-			__geoxml_element_assign_new_id(element);
+			__geoxml_element_assign_new_id(element, TRUE);
 
 		string = gdome_str_mkref(id_tags[i]);
 		node_list = gdome_el_getElementsByTagName(element, string, &exception);
