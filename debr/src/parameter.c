@@ -305,8 +305,8 @@ parameter_top(void)
 	if (parameter_get_selected(&iter) == FALSE)
 		return;
 
-	geoxml_sequence_move_before(GEOXML_SEQUENCE(debr.parameter), NULL);
-	gtk_tree_store_move_before(debr.ui_parameter.tree_store, &iter, NULL);
+	geoxml_sequence_move_after(GEOXML_SEQUENCE(debr.parameter), NULL);
+	gtk_tree_store_move_after(debr.ui_parameter.tree_store, &iter, NULL);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -323,8 +323,8 @@ parameter_bottom(void)
 	if (parameter_get_selected(&iter) == FALSE)
 		return;
 
-	geoxml_sequence_move_after(GEOXML_SEQUENCE(debr.parameter), NULL);
-	gtk_tree_store_move_after(debr.ui_parameter.tree_store, &iter, NULL);
+	geoxml_sequence_move_before(GEOXML_SEQUENCE(debr.parameter), NULL);
+	gtk_tree_store_move_before(debr.ui_parameter.tree_store, &iter, NULL);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
