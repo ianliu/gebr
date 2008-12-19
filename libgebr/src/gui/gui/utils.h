@@ -57,20 +57,20 @@ gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpo
 void
 gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback, gpointer user_data);
 
+#if GTK_CHECK_VERSION(2,12,0)
 typedef gboolean (*GtkTreeViewTooltipCallback)(GtkTreeView * tree_view, GtkTooltip * tooltip,
 	GtkTreeIter * iter, GtkTreeViewColumn * column, gpointer user_data);
 
 void
 gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GtkTreeViewTooltipCallback callback, gpointer user_data);
+#endif
 
-#if GTK_CHECK_VERSION(2,12,0)
 typedef void (*GtkTreeModelReorderedCallback)(GtkTreeModel * tree_model, GeoXmlSequence * sequence,
 	GeoXmlSequence * before, gpointer user_data);
 
 void
 gtk_tree_model_set_geoxml_sequence_moveable(GtkTreeModel * tree_model, GtkTreeView * tree_view,
 	gint geoxml_sequence_pointer_column, GtkTreeModelReorderedCallback callback, gpointer user_data);
-#endif
 
 gboolean
 confirm_action_dialog(const gchar * title, const gchar * message, ...);
