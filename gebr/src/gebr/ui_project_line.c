@@ -83,7 +83,7 @@ project_line_setup_ui(void)
 	GtkTreeViewColumn *		col;
 	GtkCellRenderer *		renderer;
 
-	GtkWidget *			scrolled_win;
+	GtkWidget *			scrolled_window;
 	GtkWidget *			hpanel;
 	GtkWidget *			frame;
 	GtkWidget *			infopage;
@@ -97,10 +97,10 @@ project_line_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(ui_project_line->widget), hpanel);
 
 	/* Left side */
-	scrolled_win = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_win), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_paned_pack1(GTK_PANED(hpanel), scrolled_win, FALSE, FALSE);
-	gtk_widget_set_size_request(scrolled_win, 300, -1);
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_paned_pack1(GTK_PANED(hpanel), scrolled_window, FALSE, FALSE);
+	gtk_widget_set_size_request(scrolled_window, 300, -1);
 
 	ui_project_line->store = gtk_tree_store_new(PL_N_COLUMN,
 		G_TYPE_STRING,  /* Name (title for libgeoxml) */
@@ -110,7 +110,7 @@ project_line_setup_ui(void)
 	        (GtkPopupCallback)project_line_popup_menu, ui_project_line);
 	g_signal_connect(ui_project_line->view, "row-activated",
 		GTK_SIGNAL_FUNC(project_line_on_row_activated), ui_project_line);
-	gtk_container_add(GTK_CONTAINER(scrolled_win), ui_project_line->view);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_project_line->view);
 
 	/* Projects/lines column */
 	renderer = gtk_cell_renderer_text_new();
@@ -130,8 +130,13 @@ project_line_setup_ui(void)
 			GTK_SIGNAL_FUNC(project_line_load), ui_project_line);
 
 	/* Right side */
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_paned_pack2(GTK_PANED(hpanel), scrolled_window, TRUE, FALSE);
+
 	frame = gtk_frame_new(_("Details"));
-	gtk_paned_pack2(GTK_PANED(hpanel), frame, TRUE, FALSE);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), frame);
 
 	infopage = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(frame), infopage);

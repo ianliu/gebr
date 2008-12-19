@@ -180,6 +180,7 @@ server_common_popup_menu(GtkWidget * widget, struct ui_server_common * ui_server
 static void
 server_common_setup(struct ui_server_common * ui_server_common)
 {
+	GtkWidget *		scrolled_window;
 	GtkWidget *		view;
 	GtkTreeViewColumn *	col;
 	GtkCellRenderer *	renderer;
@@ -187,7 +188,13 @@ server_common_setup(struct ui_server_common * ui_server_common)
 	ui_server_common->add_local_button = NULL;
 	gtk_widget_set_size_request(ui_server_common->dialog, 580, 300);
 
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	ui_server_common->widget = scrolled_window;
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
 	view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_server_common->store));
+	gtk_container_add(GTK_CONTAINER(scrolled_window), view);
 	ui_server_common->view = view;
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
 		(GtkPopupCallback)server_common_popup_menu, ui_server_common);
@@ -419,12 +426,12 @@ server_list_setup_ui(void)
 		G_CALLBACK(server_common_actions), &ui_server_list->common);
 
 	server_common_setup(&ui_server_list->common);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_server_list->common.view, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_server_list->common.widget, TRUE, TRUE, 0);
 
 	hbox = gtk_hbox_new(FALSE, 3);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, TRUE, 0);
 
-	entry = gtk_enhanced_entry_new_with_empty_text(_("Hostname"));
+	entry = gtk_enhanced_entry_new_with_empty_text(_("Type here [user@]serverhostname"));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(entry), "activate",
 		GTK_SIGNAL_FUNC(on_entry_activate), ui_server_list);
@@ -538,7 +545,7 @@ server_select_setup_ui(void)
 	server_common_setup(&ui_server_select->common);
 	gtk_tree_view_column_set_visible(
 		gtk_tree_view_get_column(GTK_TREE_VIEW(ui_server_select->common.view), SERVER_AUTOCONNECT), FALSE);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(ui_server_select->common.dialog)->vbox), ui_server_select->common.view, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(ui_server_select->common.dialog)->vbox), ui_server_select->common.widget, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(ui_server_select->common.view), "cursor-changed",
 		GTK_SIGNAL_FUNC(server_select_cursor_changed), ui_server_select);
 

@@ -37,6 +37,7 @@ enum {
 
 struct ui_server_common {
 	GtkWidget *			dialog;
+	GtkWidget *			widget;
 
 	GtkListStore *			store;
 	GtkWidget *			view;

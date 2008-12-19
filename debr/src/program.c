@@ -125,8 +125,17 @@ program_setup_ui(void)
 	gtk_tree_view_column_add_attribute(col, renderer, "text", PROGRAM_TITLE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_program.tree_view), col);
 
+	/*
+	 * Info panel
+	 */
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_paned_pack2(GTK_PANED(hpanel), scrolled_window, TRUE, FALSE);
+
 	frame = gtk_frame_new(_("Details"));
-	gtk_paned_pack2(GTK_PANED(hpanel), frame, TRUE, FALSE);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), frame);
+
 	details = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(frame), details);
 

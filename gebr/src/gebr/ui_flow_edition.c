@@ -77,7 +77,7 @@ flow_edition_setup_ui(void)
 
 	GtkWidget *			frame;
 	GtkWidget *			hpanel;
-	GtkWidget *			scrolledwin;
+	GtkWidget *			scrolled_window;
 	GtkWidget *			vbox;
 	GtkTreeViewColumn *		col;
 	GtkCellRenderer *		renderer;
@@ -96,10 +96,10 @@ flow_edition_setup_ui(void)
 	frame = gtk_frame_new(_("Flow sequence"));
 	gtk_paned_pack1(GTK_PANED(hpanel), frame, FALSE, FALSE);
 
-	scrolledwin = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwin),
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(frame), scrolledwin);
+	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
 
 	ui_flow_edition->fseq_store = gtk_list_store_new(FSEQ_N_COLUMN,
 		GDK_TYPE_PIXBUF,
@@ -131,8 +131,8 @@ flow_edition_setup_ui(void)
 	g_signal_connect(GTK_OBJECT(ui_flow_edition->fseq_view), "cursor-changed",
 		GTK_SIGNAL_FUNC(flow_edition_component_selected), ui_flow_edition);
 
-	gtk_container_add(GTK_CONTAINER(scrolledwin), ui_flow_edition->fseq_view);
-	gtk_widget_set_size_request(GTK_WIDGET(scrolledwin), 180, 30);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_edition->fseq_view);
+	gtk_widget_set_size_request(GTK_WIDGET(scrolled_window), 180, 30);
 
 	/*
 	 * Right side: Menu list
@@ -143,16 +143,16 @@ flow_edition_setup_ui(void)
 	vbox = gtk_vbox_new(FALSE, 3);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
-	scrolledwin = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(vbox), scrolledwin);
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_container_add(GTK_CONTAINER(vbox), scrolled_window);
 
 	ui_flow_edition->menu_store = gtk_tree_store_new(MENU_N_COLUMN,
 		G_TYPE_STRING,
 		G_TYPE_STRING,
 		G_TYPE_STRING);
 	ui_flow_edition->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->menu_store));
-	gtk_container_add(GTK_CONTAINER(scrolledwin), ui_flow_edition->menu_view);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_edition->menu_view);
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->menu_view),
 		(GtkPopupCallback)flow_edition_menu_popup_menu, ui_flow_edition);
 	g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated",

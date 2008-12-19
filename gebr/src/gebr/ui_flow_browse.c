@@ -80,8 +80,8 @@ flow_browse_setup_ui(void)
 
 	GtkWidget *			page;
 	GtkWidget *			hpanel;
-	GtkWidget *			scrolledwin;
 	GtkWidget *			frame;
+	GtkWidget *			scrolled_window;
 	GtkWidget *			infopage;
 	GtkWidget *                     table;
 
@@ -100,10 +100,10 @@ flow_browse_setup_ui(void)
 	/*
 	 * Left side: flow list
 	 */
-	scrolledwin = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_paned_pack1(GTK_PANED(hpanel), scrolledwin, FALSE, FALSE);
-	gtk_widget_set_size_request(scrolledwin, 300, -1);
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_paned_pack1(GTK_PANED(hpanel), scrolled_window, FALSE, FALSE);
+	gtk_widget_set_size_request(scrolled_window, 300, -1);
 
 	ui_flow_browse->store = gtk_list_store_new(FB_N_COLUMN,
 		G_TYPE_STRING, /* Name(title for libgeoxml) */
@@ -130,7 +130,7 @@ flow_browse_setup_ui(void)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
-	gtk_container_add(GTK_CONTAINER(scrolledwin), ui_flow_browse->view);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->view);
 
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->view), "cursor-changed",
 			GTK_SIGNAL_FUNC(flow_browse_load), ui_flow_browse);
@@ -140,8 +140,13 @@ flow_browse_setup_ui(void)
 	/*
 	 * Right side: flow info
 	 */
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_paned_pack2(GTK_PANED(hpanel), scrolled_window, TRUE, FALSE);
+
 	frame = gtk_frame_new(_("Details"));
-	gtk_paned_pack2(GTK_PANED(hpanel), frame, TRUE, FALSE);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), frame);
 
 	infopage = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(frame), infopage);
@@ -438,6 +443,7 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 		return NULL;
 
 	menu = gtk_menu_new();
+	gtk_menu_set_accel_group(GTK_MENU(menu), gebr.accel_group);
 
 	/* new */
 	gtk_container_add(GTK_CONTAINER(menu),

@@ -62,7 +62,6 @@ gebr_setup_ui(void)
 
 	GtkWidget *	vbox;
 	GtkWidget *	toolbar;
-	GClosure *	closure;
 
 	gebr.about = about_setup_ui("GêBR", _("A plug-and-play environment to\nseismic processing tools"));
 	gebr.ui_server_list = server_list_setup_ui();
@@ -358,11 +357,11 @@ gebr_setup_ui(void)
 	 * Create some hot-keys
 	 */
 	/* CTRL+R - Run current flow */
-	closure = g_cclosure_new((GCallback)on_flow_execute_activate, NULL, NULL);
-	gtk_accel_group_connect(gebr.accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE, closure);
+	gtk_accel_group_connect(gebr.accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+		gtk_action_get_accel_closure(gebr.actions.flow.execute));
 	/* CTR+Q - Quit GeBR */
-	closure = g_cclosure_new((GCallback)gebr_quit, NULL, NULL);
-	gtk_accel_group_connect(gebr.accel_group, GDK_q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE, closure);
+	gtk_accel_group_connect(gebr.accel_group, GDK_q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+		gtk_action_get_accel_closure(gebr.actions.main.quit));
 }
 
 /*
