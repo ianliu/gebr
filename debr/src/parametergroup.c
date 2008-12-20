@@ -36,7 +36,7 @@
  */
 
 static void
-parameter_in_group_edit_setup_instances_edit_ui(struct ui_parameter_group_dialog * ui);
+parameter_group_instances_setup_ui(struct ui_parameter_group_dialog * ui);
 static gboolean
 on_parameter_group_instances_changed(GtkSpinButton * spin_button, struct ui_parameter_group_dialog * ui);
 static void
@@ -181,8 +181,7 @@ parameter_group_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), instances_spin_button, 1, 2, row, row+1,
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0), ++row;
-	gtk_widget_set_sensitive(instances_spin_button,
-		geoxml_parameter_group_get_instances_number(parameter_group) ? TRUE : FALSE);
+	geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
 
 	ui->instances_edit_vbox = instances_edit_vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(ui->instances_edit_vbox);
@@ -208,7 +207,7 @@ parameter_group_dialog_setup_ui(void)
 			break;
 		}
 	}
-	parameter_in_group_edit_setup_instances_edit_ui(ui);
+	parameter_group_instances_setup_ui(ui);
 
 	/* signals */
 	g_signal_connect(instances_spin_button, "output",
@@ -241,7 +240,7 @@ parameter_group_dialog_setup_ui(void)
  */
 
 static void
-parameter_in_group_edit_setup_instances_edit_ui(struct ui_parameter_group_dialog * ui)
+parameter_group_instances_setup_ui(struct ui_parameter_group_dialog * ui)
 {
 	GeoXmlSequence *	instance;
 	gint			i, j;
@@ -320,7 +319,7 @@ on_parameter_group_instances_changed(GtkSpinButton * spin_button, struct ui_para
 		for (i = instanciate; i < 0; ++i)
 			geoxml_parameter_group_deinstanciate(ui->parameter_group);
 
-	parameter_in_group_edit_setup_instances_edit_ui(ui);
+	parameter_group_instances_setup_ui(ui);
 
 	return FALSE;
 }
@@ -342,7 +341,7 @@ on_parameter_group_is_exclusive_toggled(GtkToggleButton * toggle_button, struct 
 		}
 	}
 
-	parameter_in_group_edit_setup_instances_edit_ui(ui);
+	parameter_group_instances_setup_ui(ui);
 }
 
 static void

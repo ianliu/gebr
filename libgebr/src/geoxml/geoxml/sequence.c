@@ -49,7 +49,7 @@ __geoxml_sequence_is_parameter(GeoXmlSequence * sequence)
  * Check if \p sequence is really a sequence and can be modified (the case of parameter in a group)
  */
 static int
-__geoxml_sequence_check(GeoXmlSequence * sequence)
+__geoxml_sequence_check(GeoXmlSequence * sequence, gboolean check_master_instance)
 {
 	if (sequence == NULL)
 		return GEOXML_RETV_NULL_PTR;
@@ -57,14 +57,16 @@ __geoxml_sequence_check(GeoXmlSequence * sequence)
 	GdomeDOMString *	name;
 
 	name = gdome_el_nodeName((GdomeElement*)sequence, &exception);
-	if (!strcmp(name->str, "parameter")) {
-		GeoXmlParameters *	parameters;
+	if (check_master_instance) {
+		if (!strcmp(name->str, "parameter")) {
+			GeoXmlParameters *	parameters;
 
-		parameters = (GeoXmlParameters*)gdome_el_parentNode((GdomeElement*)sequence, &exception);
-		if (__geoxml_parameters_group_check(parameters) == FALSE)
-			return GEOXML_RETV_NOT_MASTER_INSTANCE;
+			parameters = (GeoXmlParameters*)gdome_el_parentNode((GdomeElement*)sequence, &exception);
+			if (__geoxml_parameters_group_check(parameters) == FALSE)
+				return GEOXML_RETV_NOT_MASTER_INSTANCE;
 
-		return GEOXML_RETV_SUCCESS;
+			return GEOXML_RETV_SUCCESS;
+		}
 	}
 	/* on success, return 0 = GEOXML_RETV_SUCCESS */
 	return strcmp(name->str, "value") &&
@@ -157,7 +159,7 @@ __geoxml_sequence_append_clone(GeoXmlSequence * sequence)
 	__geoxml_element_reassign_ids((GdomeElement*)clone);
 
 	after_last = sequence;
-	while (!__geoxml_sequence_next(&after_last));
+	while (__geoxml_sequence_next(&after_last) == GEOXML_RETV_SUCCESS);
 	gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
 		(GdomeNode*)clone, (GdomeNode*)after_last, &exception);
 
@@ -241,7 +243,7 @@ int
 geoxml_sequence_previous(GeoXmlSequence ** sequence)
 {
 	int ret;
-	if ((ret = __geoxml_sequence_check(*sequence))) {
+	if ((ret = __geoxml_sequence_check(*sequence, FALSE))) {
 		*sequence = NULL;
 		return ret;
 	}
@@ -253,7 +255,7 @@ int
 geoxml_sequence_next(GeoXmlSequence ** sequence)
 {
 	int ret;
-	if ((ret = __geoxml_sequence_check(*sequence))) {
+	if ((ret = __geoxml_sequence_check(*sequence, FALSE))) {
 		*sequence = NULL;
 		return ret;
 	}
@@ -267,7 +269,7 @@ geoxml_sequence_append_clone(GeoXmlSequence * sequence)
 	int			ret;
 	GeoXmlSequence *	clone;
 
-	if ((ret = __geoxml_sequence_check(sequence)))
+	if ((ret = __geoxml_sequence_check(sequence, TRUE)))
 		return NULL;
 	clone = __geoxml_sequence_append_clone(sequence);
 	/* append reference to clone for others group instances */
@@ -318,7 +320,7 @@ geoxml_sequence_remove(GeoXmlSequence * sequence)
 {
 	int ret;
 
-	if ((ret = __geoxml_sequence_check(sequence)))
+	if ((ret = __geoxml_sequence_check(sequence, TRUE)))
 		return ret;
 	if ((ret = __geoxml_sequence_remove(sequence)))
 		return ret;
@@ -338,7 +340,7 @@ geoxml_sequence_move_before(GeoXmlSequence * sequence, GeoXmlSequence * position
 {
 	int ret;
 
-	if ((ret = __geoxml_sequence_check(sequence)))
+	if ((ret = __geoxml_sequence_check(sequence, TRUE)))
 		return ret;
 	if (__geoxml_sequence_is_parameter(sequence) && geoxml_parameter_get_is_in_group((GeoXmlParameter*)sequence))
 		__geoxml_sequence_move_in_group(sequence, position, __geoxml_sequence_move_before);
@@ -351,7 +353,7 @@ geoxml_sequence_move_after(GeoXmlSequence * sequence, GeoXmlSequence * position)
 {
 	int ret;
 
-	if ((ret = __geoxml_sequence_check(sequence)))
+	if ((ret = __geoxml_sequence_check(sequence, TRUE)))
 		return ret;
 	if (__geoxml_sequence_is_parameter(sequence) && geoxml_parameter_get_is_in_group((GeoXmlParameter*)sequence))
 		__geoxml_sequence_move_in_group(sequence, position, __geoxml_sequence_move_after);
@@ -364,6 +366,8 @@ geoxml_sequence_move_up(GeoXmlSequence * sequence)
 {
 	int ret;
 
+	if ((ret = __geoxml_sequence_check(sequence, TRUE)))
+		return ret;
 	if ((ret = __geoxml_sequence_move_up(sequence)))
 		return ret;
 	if (__geoxml_sequence_is_parameter(sequence) && geoxml_parameter_get_is_in_group((GeoXmlParameter*)sequence)) {
@@ -381,6 +385,8 @@ geoxml_sequence_move_down(GeoXmlSequence * sequence)
 {
 	int ret;
 
+	if ((ret = __geoxml_sequence_check(sequence, TRUE)))
+		return ret;
 	if ((ret = __geoxml_sequence_move_down(sequence)))
 		return ret;
 	if (__geoxml_sequence_is_parameter(sequence) && geoxml_parameter_get_is_in_group((GeoXmlParameter*)sequence)) {

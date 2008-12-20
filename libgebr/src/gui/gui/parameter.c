@@ -371,11 +371,8 @@ parameter_widget_configure(struct parameter_widget * parameter_widget)
 	enum GEOXML_PARAMETERTYPE	type;
 
 	type = geoxml_parameter_get_type(parameter_widget->parameter);
-		printf("1 %d\n", type);
-	while (type == GEOXML_PARAMETERTYPE_REFERENCE) {
+	while (type == GEOXML_PARAMETERTYPE_REFERENCE)
 		type = geoxml_parameter_get_type(geoxml_parameter_get_referencee(parameter_widget->parameter));
-			printf("2 %d\n", type);
-		}
 	switch (type) {
 	case GEOXML_PARAMETERTYPE_FLOAT: {
 		GtkWidget *			entry;

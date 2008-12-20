@@ -219,7 +219,8 @@ parameter_new(void)
 {
 	GtkTreeIter		iter;
 
-	if (debr.parameter != NULL && geoxml_parameter_get_is_program_parameter(debr.parameter) == FALSE) {
+	if (debr.parameter != NULL && (geoxml_parameter_get_is_program_parameter(debr.parameter) == FALSE ||
+	geoxml_parameter_get_is_in_group(debr.parameter) == TRUE)) {
 		GeoXmlSequence *	first_instance;
 		GtkTreeIter		parent;
 		GtkTreePath *		tree_path;
@@ -234,6 +235,8 @@ parameter_new(void)
 		tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent);
 		gtk_tree_view_expand_row(GTK_TREE_VIEW(debr.ui_parameter.tree_view), tree_path, FALSE);
 		gtk_tree_path_free(tree_path);
+
+		parameter_load_iter(debr.parameter, &parent);
 	} else {
 		iter = parameter_append_to_ui(
 			geoxml_parameters_append_parameter(

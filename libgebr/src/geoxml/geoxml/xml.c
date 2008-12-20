@@ -486,6 +486,7 @@ __geoxml_element_assign_new_id(GdomeElement * element, gboolean reassign_referec
 	GdomeElement *	document_element;
 	gulong		nextid;
 	gchar *		nextid_str;
+	gchar *		newid;
 	GdomeElement *	reference_element;
 
 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(element, &exception), &exception);
@@ -495,19 +496,20 @@ __geoxml_element_assign_new_id(GdomeElement * element, gboolean reassign_referec
 	else
 		nextid = 0;
 
+	newid = g_strdup(nextid_str);
+	nextid_str = g_strdup_printf("n%lu", ++nextid);
+	__geoxml_set_attr_value(document_element, "nextid", nextid_str);
+	
+	__geoxml_set_attr_value(element, "id", newid);
 	/* change referenced elements */
 	if (reassign_refereceds) {
 		__geoxml_foreach_element(reference_element,
 		__geoxml_get_elements_by_idref(element, __geoxml_get_attr_value(element, "id")))
-			__geoxml_set_attr_value(reference_element, "idref", nextid_str);
+			__geoxml_set_attr_value(reference_element, "idref", newid);
 	}
 
-	__geoxml_set_attr_value(element, "id", nextid_str);
-
-	nextid_str = g_strdup_printf("n%lu", ++nextid);
-	__geoxml_set_attr_value(document_element, "nextid", nextid_str);
-
 	g_free(nextid_str);
+	g_free(newid);
 }
 
 void

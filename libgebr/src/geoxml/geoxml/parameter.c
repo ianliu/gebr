@@ -71,11 +71,12 @@ __geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter
 		__geoxml_parameter_group_turn_to_reference(GEOXML_PARAMETER_GROUP(parameter));
 		return;
 	}
-
 	type_element = __geoxml_parameter_get_type_element(parameter);
-	gdome_el_removeChild((GdomeElement*)parameter, (GdomeNode*)type_element, &exception);
+	if (type != GEOXML_PARAMETERTYPE_REFERENCE) {
+		gdome_el_removeChild((GdomeElement*)parameter, (GdomeNode*)type_element, &exception);
+		type_element = __geoxml_parameter_insert_type(parameter, GEOXML_PARAMETERTYPE_REFERENCE);
+	}
 
-	type_element = __geoxml_parameter_insert_type(parameter, GEOXML_PARAMETERTYPE_REFERENCE);
 	__geoxml_element_assign_reference_id(type_element, (GdomeElement*)referencee);
 }
 
@@ -255,8 +256,7 @@ geoxml_parameter_get_is_in_group(GeoXmlParameter * parameter)
 {
 	if (parameter == NULL)
 		return FALSE;
-	return geoxml_parameters_get_is_in_group(
-		(GeoXmlParameters*)gdome_n_parentNode((GdomeNode*)parameter, &exception));
+	return geoxml_parameters_get_is_in_group(geoxml_parameter_get_parameters(parameter));
 }
 
 void

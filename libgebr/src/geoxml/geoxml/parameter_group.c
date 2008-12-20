@@ -1,5 +1,5 @@
-/*   libgebr - G�BR Library
- *   Copyright (C) 2007-2008 G�BR core team (http://gebr.sourceforge.net)
+/*   libgebr - GeBR Library
+ *   Copyright (C) 2007-2008 GeBR core team (http://gebr.sourceforge.net)
  *
  *   This parameter_group is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ struct geoxml_parameter_group {
 	GdomeElement * element;
 };
 
-void
+static void
 __geoxml_parameter_group_turn_instance_to_reference(GeoXmlParameterGroup * parameter_group, GeoXmlParameters * instance)
 {
 	GeoXmlSequence *	first_instance;
@@ -46,12 +46,10 @@ __geoxml_parameter_group_turn_instance_to_reference(GeoXmlParameterGroup * param
 	GeoXmlSequence *	parameter;
 
 	geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
-	geoxml_parameters_get_parameter(first_instance, &fi_parameter, 0);
+	geoxml_parameters_get_parameter(GEOXML_PARAMETERS(first_instance), &fi_parameter, 0);
 	geoxml_parameters_get_parameter(instance, &parameter, 0);
-	for (; fi_parameter != NULL; __geoxml_sequence_next(&parameter), __geoxml_sequence_next(&fi_parameter)) {
+	for (; fi_parameter != NULL; __geoxml_sequence_next(&fi_parameter), __geoxml_sequence_next(&parameter)) {
 		__geoxml_element_assign_new_id((GdomeElement*)parameter, FALSE);
-// 		puts(__geoxml_get_attr_value(fi_parameter, "id"));
-// 		puts(__geoxml_get_attr_value(parameter, "id"));
 		__geoxml_parameter_set_be_reference(GEOXML_PARAMETER(parameter),
 			GEOXML_PARAMETER(fi_parameter));
 	}
