@@ -54,32 +54,30 @@ __geoxml_sequence_check(GeoXmlSequence * sequence, gboolean check_master_instanc
 	if (sequence == NULL)
 		return GEOXML_RETV_NULL_PTR;
 
-	GdomeDOMString *	name;
+	GdomeDOMString *	tag;
 
-	name = gdome_el_nodeName((GdomeElement*)sequence, &exception);
-	if (check_master_instance) {
-		if (!strcmp(name->str, "parameter")) {
-			GeoXmlParameters *	parameters;
+	tag = gdome_el_tagName((GdomeElement*)sequence, &exception);
+	if (check_master_instance && !strcmp(tag->str, "parameter")) {
+		GeoXmlParameters *	parameters;
 
-			parameters = (GeoXmlParameters*)gdome_el_parentNode((GdomeElement*)sequence, &exception);
-			if (__geoxml_parameters_group_check(parameters) == FALSE)
-				return GEOXML_RETV_NOT_MASTER_INSTANCE;
+		parameters = (GeoXmlParameters*)gdome_el_parentNode((GdomeElement*)sequence, &exception);
+		if (__geoxml_parameters_group_check(parameters) == FALSE)
+			return GEOXML_RETV_NOT_MASTER_INSTANCE;
 
-			return GEOXML_RETV_SUCCESS;
-		}
+		return GEOXML_RETV_SUCCESS;
 	}
 	/* on success, return 0 = GEOXML_RETV_SUCCESS */
-	return strcmp(name->str, "value") &&
-		strcmp(name->str, "default") &&
-		strcmp(name->str, "option") &&
-		(strcmp(name->str, "parameters") &&
+	return strcmp(tag->str, "value") &&
+		strcmp(tag->str, "default") &&
+		strcmp(tag->str, "option") &&
+		(strcmp(tag->str, "parameters") &&
 			geoxml_parameters_get_is_in_group((GeoXmlParameters*)sequence)) &&
-		strcmp(name->str, "program") &&
-		strcmp(name->str, "category") &&
-		strcmp(name->str, "revision") &&
-		strcmp(name->str, "flow") &&
-		strcmp(name->str, "path") &&
-		strcmp(name->str, "line");
+		strcmp(tag->str, "program") &&
+		strcmp(tag->str, "category") &&
+		strcmp(tag->str, "revision") &&
+		strcmp(tag->str, "flow") &&
+		strcmp(tag->str, "path") &&
+		strcmp(tag->str, "line");
 }
 
 /**
@@ -289,7 +287,7 @@ geoxml_sequence_get_index(GeoXmlSequence * sequence)
 {
 	gint index;
 
-	for (index = -1; sequence != NULL; geoxml_sequence_previous(&sequence))
+	for (index = -1; sequence != NULL; __geoxml_sequence_previous(&sequence))
 		index++;
 
 	return index;

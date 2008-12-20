@@ -23,25 +23,25 @@
 
 #include <gui/parameter.h>
 
-struct parameter_data {
-	GeoXmlParameter *			parameter;
-
-	/* vbox packed widget */
-	GtkWidget *				widget;
-	/* for in-group(exclusive) parameter */
-	GtkWidget *				radio_button;
-
-	union {
-		/* program parameter */
-		struct parameter_widget	*	widget;
-		/* group */
-		struct {
-			GtkWidget *		vbox;
-			GtkWidget *		deinstanciate_button;
-			GSList *		radio_group;
-		} group;
-	} specific;
-};
+// struct parameter_data {
+// 	GeoXmlParameter *			parameter;
+// 
+// 	/* vbox packed widget */
+// 	GtkWidget *				widget;
+// 	/* for in-group(exclusive) parameter */
+// 	GtkWidget *				radio_button;
+// 
+// 	union {
+// 		/* program parameter */
+// 		struct parameter_widget	*	widget;
+// 		/* group */
+// 		struct {
+// 			GtkWidget *		vbox;
+// 			GtkWidget *		deinstanciate_button;
+// 			GSList *		radio_group;
+// 		} group;
+// 	} specific;
+// };
 
 /*
  *

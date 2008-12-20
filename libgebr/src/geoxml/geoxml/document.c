@@ -438,8 +438,10 @@ int
 geoxml_document_load(GeoXmlDocument ** document, const gchar * path)
 {
 	if (g_file_test(path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == FALSE
-		|| g_access(path, R_OK) < 0)
+		|| g_access(path, R_OK) < 0) {
+		*document = NULL;
 		return GEOXML_RETV_CANT_ACCESS_FILE;
+	}
 
 	return __geoxml_document_load(document, path, (createDoc_func)gdome_di_createDocFromURI);
 }

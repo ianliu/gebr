@@ -362,7 +362,6 @@ gtk_tree_model_set_geoxml_sequence_moveable_weak_ref(struct reorderable_data * d
 static void
 on_gtk_tree_model_row_inserted(GtkTreeModel * tree_model, GtkTreePath * path, GtkTreeIter * iter, struct reorderable_data * data)
 {
-	gtk_tree_model_get(tree_model, iter, data->geoxml_sequence_pointer_column, &data->inserted, -1);
 	data->inserted_iter = *iter;
 }
 
@@ -376,28 +375,28 @@ on_gtk_tree_model_row_changed(GtkTreeModel * tree_model, GtkTreePath * path, Gtk
 static void
 on_gtk_tree_model_row_deleted(GtkTreeModel * tree_model, GtkTreePath * path, struct reorderable_data * data)
 {
-	if (data->inserted == NULL)
-		return;
 	gint			index;
 	gint			path_index;
 
 	index = geoxml_sequence_get_index(data->inserted);
+	if (index == -1)
+		return;
 	path_index = gtk_tree_path_get_indices(path)[gtk_tree_path_get_depth(path)-1];
 	if (index == path_index || (index < path_index && index == path_index-1)) {
 		GtkTreeIter		iter;
 		GeoXmlSequence *	before;
 
 		iter = data->inserted_iter;
-		if (gtk_tree_model_iter_next(tree_model, &iter))
-			gtk_tree_model_get(tree_model, &iter,
-				data->geoxml_sequence_pointer_column, &before, -1);
-		else
-			before = NULL;
+		/* false move of the last iter? */
+		if (!gtk_tree_model_iter_next(tree_model, &iter))
+			return;
+
+		gtk_tree_model_get(tree_model, &iter,
+			data->geoxml_sequence_pointer_column, &before, -1);
 		geoxml_sequence_move_before(data->inserted, before);
 
 		if (data->callback != NULL)
 			data->callback(tree_model, data->inserted, before, data->user_data);
-		data->inserted = NULL;
 	}
 }
 
