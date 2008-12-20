@@ -96,13 +96,16 @@ geoxml_parameter_group_deinstanciate(GeoXmlParameterGroup * parameter_group)
 	if (geoxml_parameter_group_get_is_instanciable(parameter_group) == FALSE)
 		return FALSE;
 
+	GeoXmlSequence *	first_instance;
 	GeoXmlSequence *	last_instance;
 
+	geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
 	geoxml_parameter_group_get_instance(parameter_group, &last_instance,
 		geoxml_parameter_group_get_instances_number(parameter_group)-1);
-	if (last_instance == NULL)
+	if (last_instance == NULL && last_instance == first_instance)
 		return FALSE;
-	gdome_n_removeChild((GdomeNode*)parameter_group, (GdomeNode*)last_instance, &exception);
+	gdome_n_removeChild(gdome_n_parentNode((GdomeNode*)last_instance, &exception),
+		(GdomeNode*)last_instance, &exception);
 
 	return TRUE;
 }

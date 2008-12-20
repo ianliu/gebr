@@ -253,6 +253,7 @@ parameter_group_instances_setup_ui(struct ui_parameter_group_dialog * ui)
 	for (i = 1; instance != NULL; i++, geoxml_sequence_next(&instance)) {
 		GtkWidget *		frame;
 		GtkWidget *		table;
+		GtkWidget *		label_widget;
 
 		GeoXmlSequence *	parameter;
 		GeoXmlSequence *	exclusive;
@@ -262,11 +263,11 @@ parameter_group_instances_setup_ui(struct ui_parameter_group_dialog * ui)
 		gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 		gtk_table_set_col_spacings(GTK_TABLE(table), 6);
 
+		label_widget = NULL;
 		exclusive = GEOXML_SEQUENCE(geoxml_parameters_get_exclusive(GEOXML_PARAMETERS(instance)));
 		geoxml_parameters_get_parameter(GEOXML_PARAMETERS(instance), &parameter, 0);
 		for (j = 0; parameter != NULL; ++j, geoxml_sequence_next(&parameter)) {
 			struct parameter_widget *	widget;
-			GtkWidget *			label_widget;
 
 			if (exclusive == NULL)
 				label_widget = gtk_label_new(geoxml_parameter_get_label(GEOXML_PARAMETER(parameter)));
@@ -283,7 +284,6 @@ parameter_group_instances_setup_ui(struct ui_parameter_group_dialog * ui)
 			gtk_table_attach(GTK_TABLE(table), label_widget, 0, 1, j, j+1,
 				(GtkAttachOptions)(GTK_FILL),
 				(GtkAttachOptions)(0), 0, 0);
-			gtk_misc_set_alignment(GTK_MISC(label_widget), 0, 0.5);
 
 			widget = parameter_widget_new(GEOXML_PARAMETER(parameter), FALSE, NULL);
 			gtk_widget_show(widget->widget);
