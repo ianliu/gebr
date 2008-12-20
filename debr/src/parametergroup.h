@@ -20,17 +20,12 @@
 
 #include <geoxml.h>
 
-#include "parameteringroupedit.h"
-
 struct ui_parameter_group_dialog {
 	GtkWidget *		dialog;
 
-	GtkWidget *		instances_spin_button;
-	GtkWidget *		exclusive_check_button;
 	GtkWidget *		instances_edit_vbox;
 
 	GeoXmlParameterGroup *	parameter_group;
-	ParameterInGroupEdit **	parameter_edits_ntarray;
 };
 
 void

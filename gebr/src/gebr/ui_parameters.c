@@ -234,8 +234,7 @@ parameters_reset_to_default(GeoXmlParameters * parameters)
 			FALSE, &value, 0);
 		geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter),
 			TRUE, &default_value, 0);
-		for (; default_value != NULL; geoxml_sequence_next(&default_value),
-		geoxml_sequence_next(&value)) {
+		for (; default_value != NULL; geoxml_sequence_next(&default_value), geoxml_sequence_next(&value)) {
 			if (value == NULL)
 				value = GEOXML_SEQUENCE(geoxml_program_parameter_append_value(
 					GEOXML_PROGRAM_PARAMETER(parameter), FALSE));
@@ -269,8 +268,7 @@ parameters_load_program(struct ui_parameters * ui_parameters)
 	for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
 		struct parameter_data *	data;
 
-		data = parameters_load_parameter(ui_parameters, GEOXML_PARAMETER(parameter),
-			NULL, NULL);
+		data = parameters_load_parameter(ui_parameters, GEOXML_PARAMETER(parameter));
 		if (data == NULL)
 			continue;
 
@@ -283,8 +281,7 @@ parameters_load_program(struct ui_parameters * ui_parameters)
  *
  */
 static struct parameter_data *
-parameters_load_parameter(struct ui_parameters * ui_parameters, GeoXmlParameter * parameter,
-	GeoXmlParameter * selected, GSList ** radio_group)
+parameters_load_parameter(struct ui_parameters * ui_parameters, GeoXmlParameter * parameter)
 {
 	struct parameter_data * 	data;
 	enum GEOXML_PARAMETERTYPE	type;
