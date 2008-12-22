@@ -579,7 +579,12 @@ parameter_widget_set_widget_value(struct parameter_widget * parameter_widget, co
 		return;
 	}
 
-	switch (geoxml_parameter_get_type(parameter_widget->parameter)) {
+	enum GEOXML_PARAMETERTYPE	type;
+
+	type = geoxml_parameter_get_type(parameter_widget->parameter);
+	while (type == GEOXML_PARAMETERTYPE_REFERENCE)
+		type = geoxml_parameter_get_type(geoxml_parameter_get_referencee(parameter_widget->parameter));
+	switch (type) {
 	case GEOXML_PARAMETERTYPE_FLOAT:
 	case GEOXML_PARAMETERTYPE_INT:
 	case GEOXML_PARAMETERTYPE_STRING:
