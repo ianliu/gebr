@@ -382,10 +382,13 @@ parameters_load_parameter(struct ui_parameters * ui_parameters, GeoXmlParameter 
 		g_object_set(G_OBJECT(group_vbox), "user-data", deinstanciate_button, NULL);
 
 		geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
-		for (; instance != NULL; geoxml_sequence_next(&instance))
-			gtk_box_pack_start(GTK_BOX(group_vbox),
-				parameters_load(ui_parameters, GEOXML_PARAMETERS(instance)),
-				FALSE, TRUE, 0);
+		for (; instance != NULL; geoxml_sequence_next(&instance)) {
+			GtkWidget *	widget;
+
+			widget = parameters_load(ui_parameters, GEOXML_PARAMETERS(instance));
+			geoxml_object_set_user_data(GEOXML_OBJECT(instance), widget);
+			gtk_box_pack_start(GTK_BOX(group_vbox), widget, FALSE, TRUE, 0);
+		}
 
 		return expander;
 	} else {
@@ -480,15 +483,16 @@ parameters_instanciate(GtkButton * button, struct ui_parameters * ui_parameters)
 	GeoXmlParameters *	instance;
 	GtkWidget *		group_vbox;
 	GtkWidget *		deinstanciate_button;
+	GtkWidget *		widget;
 
 	g_object_get(button, "user-data", &parameter_group, NULL);
 	group_vbox = geoxml_object_get_user_data(GEOXML_OBJECT(parameter_group));
 	g_object_get(group_vbox, "user-data", &deinstanciate_button, NULL);
 
 	instance = geoxml_parameter_group_instanciate(parameter_group);
-	gtk_box_pack_start(GTK_BOX(group_vbox),
-		parameters_load(ui_parameters, GEOXML_PARAMETERS(instance)),
-		FALSE, TRUE, 0);
+	widget = parameters_load(ui_parameters, GEOXML_PARAMETERS(instance));
+	geoxml_object_set_user_data(GEOXML_OBJECT(instance), widget);
+	gtk_box_pack_start(GTK_BOX(group_vbox), widget, FALSE, TRUE, 0);
 
 	gtk_widget_set_sensitive(deinstanciate_button, TRUE);
 }
