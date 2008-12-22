@@ -191,11 +191,9 @@ __geoxml_get_element_by_id(GdomeElement * base, const gchar * id)
 // 	expression = g_string_new(NULL);
 // 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(base, &exception), &exception);
 // 	g_string_printf(expression, "id('%s')", id);
-// 	puts(expression->str);
+
 // 	xpath_result = __geoxml_xpath_evaluate(document_element, expression->str);
 // 	element = (GdomeElement*)gdome_xpresult_singleNodeValue(xpath_result, &exception);
-// 	if (element == NULL)
-// 		puts("null");
 // 
 // 	/* frees */
 // 	g_string_free(expression, TRUE);
@@ -214,24 +212,24 @@ __geoxml_get_element_by_id(GdomeElement * base, const gchar * id)
 }
 
 GSList *
-__geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref)
+__geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref, gboolean global)
 {
 	const static gchar *	reference_tags [] = {
 		"reference", NULL,
 	};
 	GSList *		idref_list;
-	GdomeElement *		document_element;
 	GdomeDOMString *	string, * idref_string;
 	GdomeNodeList *		node_list;
 	gint			k, i, l;
 
 	idref_list = NULL;
-	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(base, &exception), &exception);
+	if (global)
+		base = gdome_doc_documentElement(gdome_el_ownerDocument(base, &exception), &exception);
 	idref_string = gdome_str_mkref("idref");
 
 	for (k = 0; reference_tags[k] != NULL; ++k) {
 		string = gdome_str_mkref(reference_tags[k]);
-		node_list = gdome_el_getElementsByTagName(document_element, string, &exception);
+		node_list = gdome_el_getElementsByTagName(base, string, &exception);
 
 		l = gdome_nl_length(node_list, &exception);
 		/* get the list of elements with this tag_name. */
@@ -246,7 +244,7 @@ __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref)
 		gdome_str_unref(string);
 		gdome_nl_unref(node_list, &exception);
 	}
-	
+
 	gdome_str_unref(idref_string);
 
 	idref_list = g_slist_reverse(idref_list);
@@ -271,7 +269,6 @@ __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref)
 // 	/* the result may contain document's element because of nextid attribute
 // 	 * if so, ignore it */
 // 	if ((GdomeElement*)gdome_xpresult_singleNodeValue(xpath_result, &exception) == document_element) {
-// 		puts("idref at document element");
 // 		gdome_xpresult_iterateNext(xpath_result, &exception);
 // 	}
 // 
@@ -481,7 +478,7 @@ __geoxml_next_same_element(GdomeElement * element)
 }
 
 void
-__geoxml_element_assign_new_id(GdomeElement * element, gboolean reassign_refereceds)
+__geoxml_element_assign_new_id(GdomeElement * element, GdomeElement * reassign_context, gboolean reassign_refereceds)
 {
 	GdomeElement *	document_element;
 	gulong		nextid;
@@ -499,14 +496,19 @@ __geoxml_element_assign_new_id(GdomeElement * element, gboolean reassign_referec
 	newid = g_strdup(nextid_str);
 	nextid_str = g_strdup_printf("n%lu", ++nextid);
 	__geoxml_set_attr_value(document_element, "nextid", nextid_str);
-	
-	__geoxml_set_attr_value(element, "id", newid);
+
 	/* change referenced elements */
 	if (reassign_refereceds) {
+		const gchar *	oldid;
+
+		oldid = __geoxml_get_attr_value(element, "id");
+		if (reassign_context == NULL)
+			reassign_context = document_element;
 		__geoxml_foreach_element(reference_element,
-		__geoxml_get_elements_by_idref(element, __geoxml_get_attr_value(element, "id")))
+		__geoxml_get_elements_by_idref(reassign_context, oldid, FALSE)) 
 			__geoxml_set_attr_value(reference_element, "idref", newid);
 	}
+	__geoxml_set_attr_value(element, "id", newid);
 
 	g_free(nextid_str);
 	g_free(newid);
@@ -523,7 +525,7 @@ __geoxml_element_reassign_ids(GdomeElement * element)
 		gint			j, l;
 
 		if (!strcmp(gdome_el_tagName(element, &exception)->str, id_tags[i]))
-			__geoxml_element_assign_new_id(element, TRUE);
+			__geoxml_element_assign_new_id(element, element, TRUE);
 
 		string = gdome_str_mkref(id_tags[i]);
 		node_list = gdome_el_getElementsByTagName(element, string, &exception);
@@ -531,7 +533,9 @@ __geoxml_element_reassign_ids(GdomeElement * element)
 		l = gdome_nl_length(node_list, &exception);
 		/* get the list of elements with this tag_name. */
 		for (j = 0; j < l; ++j)
-			__geoxml_element_assign_new_id((GdomeElement*)gdome_nl_item(node_list, j, &exception), TRUE);
+			__geoxml_element_assign_new_id(
+				(GdomeElement*)gdome_nl_item(node_list, j, &exception),
+				element, TRUE);
 
 		gdome_str_unref(string);
 		gdome_nl_unref(node_list, &exception);

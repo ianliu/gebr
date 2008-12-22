@@ -64,4 +64,7 @@ flow_browse_setup_ui(void);
 void
 flow_browse_info_update(void);
 
+void
+flow_browse_select_iter(GtkTreeIter * iter);
+
 #endif //__UI_FLOW_BROWSE_H

@@ -215,6 +215,7 @@ line_save(void)
 void
 line_load_flows(void)
 {
+	GtkTreeIter		flow_iter;
 	GeoXmlSequence *	line_flow;
 
 	/* reset flow parts of GUI */
@@ -225,7 +226,6 @@ line_load_flows(void)
 	/* iterate over its flows */
 	geoxml_line_get_flow(gebr.line, &line_flow, 0);
 	while (line_flow != NULL) {
-		GtkTreeIter	flow_iter;
 		GeoXmlFlow *	flow;
 		gchar *		flow_filename;
 
@@ -250,6 +250,9 @@ line_load_flows(void)
 	}
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Flows loaded"));
+
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &flow_iter) == TRUE)
+		flow_browse_select_iter(&flow_iter);
 }
 
 /*

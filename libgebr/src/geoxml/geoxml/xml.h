@@ -86,7 +86,7 @@ __geoxml_get_element_by_id(GdomeElement * base, const gchar * id);
  *
  */
 GSList *
-__geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref);
+__geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref, gboolean global);
 
 /**
  * \internal
@@ -189,7 +189,7 @@ __geoxml_next_same_element(GdomeElement * element);
  * Automatically change references ids.
  */
 void
-__geoxml_element_assign_new_id(GdomeElement * element, gboolean reassign_refereceds);
+__geoxml_element_assign_new_id(GdomeElement * element, GdomeElement * context, gboolean reassign_refereceds);
 
 /**
  * \internal
@@ -236,7 +236,7 @@ __geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
  * If you use 'break' then you have to free it yourself.
  */
 #define __geoxml_foreach_element(element, list) \
-	GSList * __i = g_slist_last(list); \
+	GSList * __i = list; \
 	if (__i != NULL || (g_slist_free(list), 0)) \
 		for (element = (GdomeElement*)__i->data; \
 		(__i != NULL && (element = (GdomeElement*)__i->data, 1)) || (g_slist_free(list), 0); \

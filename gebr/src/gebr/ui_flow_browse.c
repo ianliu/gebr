@@ -416,6 +416,20 @@ flow_browse_info_update(void)
 	navigation_bar_update();
 }
 
+/* Function: flow_browse_select_iter
+ * Select flow at _iter_
+ */
+void
+flow_browse_select_iter(GtkTreeIter * iter)
+{
+	GtkTreeSelection *	selection;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	gtk_tree_selection_select_iter(selection, iter);
+
+	flow_browse_load();
+}
+
 static void
 flow_browse_show_help(void)
 {

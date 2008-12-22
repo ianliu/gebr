@@ -308,7 +308,8 @@ flow_edition_menu_add(void)
 
 	GeoXmlFlow *		menu;
 	GeoXmlSequence *	program;
-	GeoXmlSequence *	last_program;
+	gint			menu_programs_index;
+	GeoXmlSequence *	menu_programs;
 
 	if (gebr.flow == NULL) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
@@ -342,15 +343,15 @@ flow_edition_menu_add(void)
 		geoxml_sequence_next(&program);
 	}
 
-	geoxml_flow_get_program(gebr.flow, &last_program, geoxml_flow_get_programs_number(gebr.flow)-1);
+	menu_programs_index = geoxml_flow_get_programs_number(gebr.flow);
 	/* add it to the file */
 	geoxml_flow_add_flow(gebr.flow, menu);
 	geoxml_document_free(GEOXML_DOC(menu));
 	flow_save();
 
 	/* and to the GUI */
-	geoxml_sequence_next(&last_program);
-	flow_add_program_sequence_to_view(last_program);
+	geoxml_flow_get_program(gebr.flow, &menu_programs, menu_programs_index);
+	flow_add_program_sequence_to_view(menu_programs);
 
 out:	g_free(name);
 	g_free(filename);

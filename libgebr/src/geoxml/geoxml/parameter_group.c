@@ -49,7 +49,7 @@ __geoxml_parameter_group_turn_instance_to_reference(GeoXmlParameterGroup * param
 	geoxml_parameters_get_parameter(GEOXML_PARAMETERS(first_instance), &fi_parameter, 0);
 	geoxml_parameters_get_parameter(instance, &parameter, 0);
 	for (; fi_parameter != NULL; __geoxml_sequence_next(&fi_parameter), __geoxml_sequence_next(&parameter)) {
-		__geoxml_element_assign_new_id((GdomeElement*)parameter, FALSE);
+		__geoxml_element_assign_new_id((GdomeElement*)parameter, NULL, FALSE);
 		__geoxml_parameter_set_be_reference(GEOXML_PARAMETER(parameter),
 			GEOXML_PARAMETER(fi_parameter));
 	}
