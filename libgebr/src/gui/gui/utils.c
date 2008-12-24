@@ -281,6 +281,32 @@ gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callb
 		(GCallback)__gtk_widget_on_popup_menu, popup_callback);
 }
 
+
+gboolean
+gtk_tree_view_get_iter_from_coords(GtkTreeView * tree_view, GtkTreeIter * iter, gint x, gint y)
+{
+	GtkTreeModel *		model;
+	GtkTreePath *		path;
+	gchar *			path_string;
+
+	gtk_tree_view_convert_widget_to_bin_window_coords(tree_view, x, y, &x, &y);
+	if (!gtk_tree_view_get_path_at_pos(tree_view, x, y, &path, NULL, NULL, NULL)) {
+		gtk_tree_path_free(path);
+		return FALSE;
+	}
+
+	/* get iter */
+	model = gtk_tree_view_get_model(tree_view);
+	path_string = gtk_tree_path_to_string(path);
+	gtk_tree_model_get_iter_from_string(model, iter, path_string);
+
+	/* frees */
+	gtk_tree_path_free(path);
+	g_free(path_string);
+
+	return TRUE;
+}
+
 #if GTK_CHECK_VERSION(2,12,0)
 struct tooltip_data {
 	GtkTreeViewTooltipCallback	callback;
@@ -346,82 +372,151 @@ gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GtkTreeViewTooltipCa
 #endif
 
 struct reorderable_data {
-	GeoXmlSequence *		inserted;
-	GtkTreeIter			inserted_iter;
 	gint				geoxml_sequence_pointer_column;
-	GtkTreeModelReorderedCallback	callback;
+	GtkTreeViewMoveSequenceCallback	callback;
 	gpointer			user_data;
 };
 
 static void
-gtk_tree_model_set_geoxml_sequence_moveable_weak_ref(struct reorderable_data * data, GtkTreeView * tree_view)
+gtk_tree_view_set_geoxml_sequence_moveable_weak_ref(struct reorderable_data * data, GtkTreeView * tree_view)
 {
 	g_free(data);
 }
 
-static void
-on_gtk_tree_model_row_inserted(GtkTreeModel * tree_model, GtkTreePath * path, GtkTreeIter * iter, struct reorderable_data * data)
+gboolean
+gtk_tree_view_reorder_callback(GtkTreeView * tree_view, GtkTreeIter * iter,
+	GtkTreeIter * before, struct reorderable_data * data)
 {
-	data->inserted_iter = *iter;
-}
+	GtkTreeModel *		tree_model;
+	GeoXmlSequence *	sequence;
+	GeoXmlSequence *	before_sequence;
 
-static void
-on_gtk_tree_model_row_changed(GtkTreeModel * tree_model, GtkTreePath * path, GtkTreeIter * iter, struct reorderable_data * data)
-{
-	if (data->inserted_iter.stamp == iter->stamp)
-		gtk_tree_model_get(tree_model, iter, data->geoxml_sequence_pointer_column, &data->inserted, -1);
-}
+	tree_model = gtk_tree_view_get_model(tree_view);
+	gtk_tree_model_get(tree_model, iter,
+		data->geoxml_sequence_pointer_column, &sequence, -1);
+	gtk_tree_model_get(tree_model, before,
+		data->geoxml_sequence_pointer_column, &before_sequence, -1);
 
-static void
-on_gtk_tree_model_row_deleted(GtkTreeModel * tree_model, GtkTreePath * path, struct reorderable_data * data)
-{
-	gint			index;
-	gint			path_index;
+	geoxml_sequence_move_before(sequence, before_sequence);
 
-	index = geoxml_sequence_get_index(data->inserted);
-	if (index == -1)
-		return;
-	path_index = gtk_tree_path_get_indices(path)[gtk_tree_path_get_depth(path)-1];
-	if (index == path_index || (index < path_index && index == path_index-1)) {
-		GtkTreeIter		iter;
-		GeoXmlSequence *	before;
+	if (data->callback != NULL)
+		data->callback(tree_model, sequence, before_sequence, data->user_data);
 
-		iter = data->inserted_iter;
-		/* false move of the last iter? */
-		if (!gtk_tree_model_iter_next(tree_model, &iter))
-			return;
-
-		gtk_tree_model_get(tree_model, &iter,
-			data->geoxml_sequence_pointer_column, &before, -1);
-		geoxml_sequence_move_before(data->inserted, before);
-
-		if (data->callback != NULL)
-			data->callback(tree_model, data->inserted, before, data->user_data);
-	}
+	return TRUE;
 }
 
 void
-gtk_tree_model_set_geoxml_sequence_moveable(GtkTreeModel * tree_model, GtkTreeView * tree_view,
-	gint geoxml_sequence_pointer_column, GtkTreeModelReorderedCallback callback, gpointer user_data)
+gtk_tree_view_set_geoxml_sequence_moveable(GtkTreeView * tree_view, gint geoxml_sequence_pointer_column,
+	GtkTreeViewMoveSequenceCallback callback, gpointer user_data)
 {
 	struct reorderable_data * data;
 
 	data = g_malloc(sizeof(struct reorderable_data));
 	*data = (struct reorderable_data) {
-		.inserted = NULL,
 		.geoxml_sequence_pointer_column = geoxml_sequence_pointer_column,
 		.callback = callback,
 		.user_data = user_data,
 	};
-	gtk_tree_view_set_reorderable(tree_view, TRUE);
-	g_signal_connect(tree_model, "row-inserted",
-		(GCallback)on_gtk_tree_model_row_inserted, data);
-	g_signal_connect(tree_model, "row-changed",
-		(GCallback)on_gtk_tree_model_row_changed, data);
-	g_signal_connect(tree_model, "row-deleted",
-		(GCallback)on_gtk_tree_model_row_deleted, data);
-	g_object_weak_ref(G_OBJECT(tree_model),
-		(GWeakNotify)gtk_tree_model_set_geoxml_sequence_moveable_weak_ref, data);
+
+	gtk_tree_view_set_reorder_callback(tree_view,
+		(GtkTreeViewReorderCallback)gtk_tree_view_reorder_callback, NULL, data);
+
+	g_object_weak_ref(G_OBJECT(tree_view),
+		(GWeakNotify)gtk_tree_view_set_geoxml_sequence_moveable_weak_ref, data);
+}
+
+struct reorder_data {
+	GtkTreeIter			deleted;
+	GtkTreeViewReorderCallback	callback;
+	GtkTreeViewReorderCallback	can_callback;
+	gpointer			user_data;
+};
+
+static void
+gtk_tree_view_reorder_weak_ref(struct reorder_data * data, GtkTreeView * tree_view)
+{
+	g_free(data);
+}
+
+static void
+on_gtk_tree_view_drag_begin(GtkTreeView * tree_view, GdkDragContext * drag_context, struct reorder_data * data)
+{
+	GtkTreeSelection *	selection;
+
+	selection = gtk_tree_view_get_selection(tree_view);
+	gtk_tree_selection_get_selected(selection, NULL, &data->deleted);
+}
+
+static gboolean
+on_gtk_tree_view_drag_motion(GtkTreeView * tree_view, GdkDragContext * drag_context, gint x, gint y,
+	guint time, struct reorder_data * data)
+{
+	GtkTreeIter	iter;
+	int		ret;
+
+	if (!gtk_tree_view_get_iter_from_coords(tree_view, &iter, x, y))
+		return FALSE;
+	if ((ret = data->can_callback(tree_view, &data->deleted, &iter, data->user_data)))
+		gdk_drag_status(drag_context, GDK_ACTION_MOVE, time);
+
+	return ret;
+}
+
+gboolean
+on_gtk_tree_view_drag_drop(GtkTreeView * tree_view, GdkDragContext * drag_context, gint x, gint y,
+	guint time, struct reorder_data * data)
+{
+	GtkTreeIter	iter;
+	int		ret;
+
+	if (!gtk_tree_view_get_iter_from_coords(tree_view, &iter, x, y))
+		return FALSE;
+	if ((ret = data->callback(tree_view, &data->deleted, &iter, data->user_data))) {
+		GtkTreeModel *	model;
+
+		model = gtk_tree_view_get_model(tree_view);
+		if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_LIST_STORE))
+			gtk_list_store_move_before(GTK_LIST_STORE(model), &data->deleted, &iter);
+		else if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_TREE_STORE))
+			gtk_tree_store_move_before(GTK_TREE_STORE(model), &data->deleted, &iter);
+		gtk_drag_finish(drag_context, TRUE, FALSE, time);
+	}
+
+	return ret;
+}
+
+void
+gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GtkTreeViewReorderCallback callback,
+	GtkTreeViewReorderCallback can_callback, gpointer user_data)
+{
+	const static GtkTargetEntry	target_entries [] = {
+		{"reorder", GTK_TARGET_SAME_WIDGET, 1}
+	};
+	struct reorder_data *		data;
+
+	if (tree_view == NULL || callback == NULL)
+		return;
+
+	data = g_malloc(sizeof(struct reorder_data));
+	*data = (struct reorder_data) {
+		.callback = callback,
+		.can_callback = can_callback,
+		.user_data = user_data,
+	};
+
+	gtk_tree_view_enable_model_drag_source(tree_view, GDK_MODIFIER_MASK, target_entries, 1 , GDK_ACTION_MOVE);
+	gtk_tree_view_enable_model_drag_dest(tree_view, target_entries, 1 , GDK_ACTION_MOVE);
+
+	g_signal_connect(tree_view, "drag-begin",
+		(GCallback)on_gtk_tree_view_drag_begin, data);
+	g_signal_connect(tree_view, "drag-drop",
+		(GCallback)on_gtk_tree_view_drag_drop, data);
+	if (data->can_callback != NULL)
+		g_signal_connect(tree_view, "drag-motion",
+			(GCallback)on_gtk_tree_view_drag_motion, data);
+
+	g_object_weak_ref(G_OBJECT(tree_view),
+		(GWeakNotify)gtk_tree_view_reorder_weak_ref, data);
 }
 
 /*

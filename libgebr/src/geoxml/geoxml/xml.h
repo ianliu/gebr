@@ -251,9 +251,10 @@ __geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
 	int			__i, __l; \
 	__string = gdome_str_mkref(tagname); \
 	__node_list = gdome_el_getElementsByTagName(base, __string, &exception); \
+	gdome_str_unref(__string); \
 	__l = gdome_nl_length(__node_list, &exception); \
 	for (__i = 0, element = (GdomeElement*)gdome_nl_item(__node_list, 0, &exception); \
-		__i < __l || (gdome_str_unref(__string), gdome_nl_unref(__node_list, &exception), 0); \
+		__i < __l || (gdome_nl_unref(__node_list, &exception), 0); \
 		element = (GdomeElement*)gdome_nl_item(__node_list, ++__i, &exception))
 /**
  * \internal

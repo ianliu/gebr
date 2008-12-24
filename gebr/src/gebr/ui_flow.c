@@ -53,6 +53,11 @@ flow_io_actions(GtkDialog * dialog, gint arg1, struct ui_flow_io * ui_flow_io)
 		geoxml_flow_io_set_error(gebr.flow,
 			gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->error)));
 
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
+			FSEQ_TITLE_COLUMN, gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->input)), -1);
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
+			FSEQ_TITLE_COLUMN, gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->output)), -1);
+
 		flow_save();
 		break;
 	default:
@@ -209,7 +214,8 @@ flow_add_program_sequence_to_view(GeoXmlSequence * program)
 		}
 
 		/* Add to the GUI */
-		gtk_list_store_append(gebr.ui_flow_edition->fseq_store, &iter);
+		gtk_list_store_insert_before(gebr.ui_flow_edition->fseq_store,
+			&iter, &gebr.ui_flow_edition->output_iter);
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
 			FSEQ_TITLE_COLUMN, geoxml_program_get_title(GEOXML_PROGRAM(program)),
 			FSEQ_STATUS_COLUMN, pixbuf,

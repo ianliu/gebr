@@ -18,6 +18,8 @@
 #ifndef __LIBGEBR_GUI_UTILS_H
 #define __LIBGEBR_GUI_UTILS_H
 
+#include <string.h>
+
 #include <gtk/gtk.h>
 
 #include <geoxml.h>
@@ -49,6 +51,9 @@ gtk_tree_store_move_up(GtkTreeStore * store, GtkTreeIter * iter);
 gboolean
 gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter);
 
+#define gtk_tree_model_iter_equal_to(iter1, iter2) \
+	((gboolean)((iter1)->user_data == (iter2)->user_data))
+
 typedef GtkMenu * (*GtkPopupCallback)(GtkWidget *, gpointer);
 
 gboolean
@@ -56,6 +61,9 @@ gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpo
 
 void
 gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback, gpointer user_data);
+
+gboolean
+gtk_tree_view_get_iter_from_coords(GtkTreeView * tree_view, GtkTreeIter * iter, gint x, gint y);
 
 #if GTK_CHECK_VERSION(2,12,0)
 typedef gboolean (*GtkTreeViewTooltipCallback)(GtkTreeView * tree_view, GtkTooltip * tooltip,
@@ -65,12 +73,19 @@ void
 gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GtkTreeViewTooltipCallback callback, gpointer user_data);
 #endif
 
-typedef void (*GtkTreeModelReorderedCallback)(GtkTreeModel * tree_model, GeoXmlSequence * sequence,
+typedef void (*GtkTreeViewMoveSequenceCallback)(GtkTreeModel * tree_model, GeoXmlSequence * sequence,
 	GeoXmlSequence * before, gpointer user_data);
 
 void
-gtk_tree_model_set_geoxml_sequence_moveable(GtkTreeModel * tree_model, GtkTreeView * tree_view,
-	gint geoxml_sequence_pointer_column, GtkTreeModelReorderedCallback callback, gpointer user_data);
+gtk_tree_view_set_geoxml_sequence_moveable(GtkTreeView * tree_view, gint geoxml_sequence_pointer_column,
+	GtkTreeViewMoveSequenceCallback callback, gpointer user_data);
+
+typedef gboolean (*GtkTreeViewReorderCallback)(GtkTreeView * tree_view, GtkTreeIter * iter,
+	GtkTreeIter * before, gpointer user_data);
+
+void
+gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GtkTreeViewReorderCallback callback,
+	GtkTreeViewReorderCallback can_callback, gpointer user_data);
 
 gboolean
 confirm_action_dialog(const gchar * title, const gchar * message, ...);

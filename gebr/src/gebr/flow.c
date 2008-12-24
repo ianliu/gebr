@@ -595,7 +595,8 @@ flow_program_move_top(void)
 	geoxml_sequence_move_after(program, NULL);
 	flow_save();
 	/* Update GUI */
-	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter, NULL);
+	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store),
+		&iter, &gebr.ui_flow_edition->input_iter);
 }
 
 /*
@@ -620,5 +621,6 @@ flow_program_move_bottom(void)
 	geoxml_sequence_move_before(program, NULL);
 	flow_save();
 	/* Update GUI */
-	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter, NULL);
+	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store),
+		&iter, &gebr.ui_flow_edition->output_iter);
 }

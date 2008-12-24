@@ -139,9 +139,8 @@ parameter_setup_ui(void)
 	debr.ui_parameter.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_parameter.tree_store));
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
 		(GtkPopupCallback)parameter_popup_menu, NULL);
-	gtk_tree_model_set_geoxml_sequence_moveable(GTK_TREE_MODEL(debr.ui_parameter.tree_store),
-		GTK_TREE_VIEW(debr.ui_parameter.tree_view), PARAMETER_XMLPOINTER,
-		(GtkTreeModelReorderedCallback)menu_saved_status_set_unsaved, NULL);
+	gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(debr.ui_parameter.tree_view), PARAMETER_XMLPOINTER,
+		(GtkTreeViewMoveSequenceCallback)menu_saved_status_set_unsaved, NULL);
 	gtk_widget_show(debr.ui_parameter.tree_view);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_parameter.tree_view);
 	g_signal_connect(debr.ui_parameter.tree_view, "cursor-changed",

@@ -41,6 +41,9 @@ enum {
 struct ui_flow_edition {
 	GtkWidget *	widget;
 
+	GtkTreeIter	input_iter;
+	GtkTreeIter	output_iter;
+
 	/* Sequence of programs of a flow */
 	GtkListStore *	fseq_store;
 	GtkWidget *	fseq_view;
@@ -54,7 +57,10 @@ struct ui_flow_edition *
 flow_edition_setup_ui(void);
 
 void
-flow_edition_component_change_parameters(void);
+flow_edition_load_components(const gchar * filename, const gchar * title);
+
+void
+flow_edition_component_activated(void);
 
 void
 flow_edition_set_status(GtkRadioAction * action);

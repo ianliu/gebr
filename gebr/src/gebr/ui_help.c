@@ -55,24 +55,18 @@ program_help_show(void)
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 	GtkTreeIter		iter;
-	GtkTreePath *		path;
-	
+
 	GeoXmlSequence *	program;
 	GString *		help;
-	gulong			index;
-	
+
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("No flow component selected"));
 		return;
 	}
-	
-	path = gtk_tree_model_get_path (model, &iter);
-	index = (gulong)atoi(gtk_tree_path_to_string(path));
-	gtk_tree_path_free(path);
-	
+
 	/* get the program and its path on menu */
-	geoxml_flow_get_program(gebr.flow, &program, index);
+	gtk_tree_model_get(model, &iter, FSEQ_GEOXML_POINTER, &program, -1);
 	help = menu_get_help_from_program_ref(GEOXML_PROGRAM(program));
 	help_show(help->str, _("Program help"));
 	

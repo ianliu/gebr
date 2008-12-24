@@ -238,7 +238,7 @@ void
 on_flow_component_properties_activate(void)
 {
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 2);
-	flow_edition_component_change_parameters();
+	flow_edition_component_activated();
 }
 
 /*

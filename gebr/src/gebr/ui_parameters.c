@@ -91,7 +91,6 @@ parameters_configure_setup_ui(void)
 	GtkTreeSelection *		selection;
 	GtkTreeModel *			model;
 	GtkTreeIter			iter;
-	GtkTreePath *			path;
 
 	GtkWidget *			dialog;
 	GtkWidget *			label;
@@ -101,7 +100,6 @@ parameters_configure_setup_ui(void)
 	GtkWidget *			viewport;
 
 	GeoXmlSequence *		program;
-	int				program_index;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
@@ -111,12 +109,7 @@ parameters_configure_setup_ui(void)
 
 	/* alloc struct */
 	ui_parameters = g_malloc(sizeof(struct ui_parameters));
-
-	/* get program index and load it */
-	path = gtk_tree_model_get_path(model, &iter);
-	program_index = (int)atoi(gtk_tree_path_to_string(path));
-	gtk_tree_path_free(path);
-	geoxml_flow_get_program(gebr.flow, &program, program_index);
+	gtk_tree_model_get(model, &iter, FSEQ_GEOXML_POINTER, &program, -1);
 
 	dialog = gtk_dialog_new_with_buttons(_("Parameters"),
 		GTK_WINDOW(gebr.window),
@@ -190,7 +183,6 @@ parameters_configure_setup_ui(void)
 		.dialog = dialog,
 		.vbox = vbox,
 		.program = GEOXML_PROGRAM(geoxml_sequence_append_clone(program)),
-		.program_index = program_index,
 	};
 	/* load programs parameters into UI */
 	parameters_load_program(ui_parameters);
@@ -530,29 +522,26 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 {
 	switch (arg1) {
 	case GTK_RESPONSE_OK: {
+		GtkTreeSelection *	selection;
+		GtkTreeModel *		model;
+		GtkTreeIter		iter;
+
 		GeoXmlSequence *	program;
 
-		/* Set program state to configured */
+		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+		gtk_tree_selection_get_selected(selection, &model, &iter);
+		gtk_tree_model_get(model, &iter, FSEQ_GEOXML_POINTER, &program, -1);
+
 		geoxml_program_set_status(GEOXML_PROGRAM(ui_parameters->program), "configured");
-		/* Update interface */
-		{
-			GtkTreeSelection *	selection;
-			GtkTreeModel *		model;
-			GtkTreeIter		iter;
-
-			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-			gtk_tree_selection_get_selected(selection, &model, &iter);
-
-			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
-				FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_apply,
-				-1);
-			gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.flow_edition.configured), TRUE);
-		}
-
-		/* clone substitute the original program */
-		geoxml_flow_get_program(gebr.flow, &program, ui_parameters->program_index);
 		geoxml_sequence_move_before(GEOXML_SEQUENCE(ui_parameters->program), program);
 		geoxml_sequence_remove(program);
+
+		/* Update interface */
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
+			FSEQ_GEOXML_POINTER, ui_parameters->program,
+			FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_apply,
+			-1);
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.flow_edition.configured), TRUE);
 
 		flow_save();
 		break;

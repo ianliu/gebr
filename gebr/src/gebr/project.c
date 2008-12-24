@@ -62,9 +62,9 @@ project_new(void)
 
 	gtk_tree_store_append(gebr.ui_project_line->store, &iter, NULL);
 	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
-			PL_TITLE, title,
-			PL_FILENAME, geoxml_document_get_filename(project),
-			-1);
+		PL_TITLE, title,
+		PL_FILENAME, geoxml_document_get_filename(project),
+		-1);
 
 	/* feedback */
 	gebr_message(LOG_INFO, FALSE, TRUE, _("New project created"));

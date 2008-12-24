@@ -43,6 +43,13 @@ gchar * selected_menu_instead_error =	_("Select a menu instead of a category");
  * Prototypes
  */
 
+static gboolean
+flow_edition_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before,
+	struct ui_flow_edition * ui_flow_edition);
+static gboolean
+flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before,
+	struct ui_flow_edition * ui_flow_edition);
+
 static void
 flow_edition_component_selected(void);
 
@@ -110,9 +117,10 @@ flow_edition_setup_ui(void)
 	ui_flow_edition->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->fseq_store));
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
 		(GtkPopupCallback)flow_edition_popup_menu, ui_flow_edition);
-	gtk_tree_model_set_geoxml_sequence_moveable(GTK_TREE_MODEL(ui_flow_edition->fseq_store),
-		GTK_TREE_VIEW(ui_flow_edition->fseq_view), FSEQ_GEOXML_POINTER,
-		(GtkTreeModelReorderedCallback)flow_save, NULL);
+	gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
+		(GtkTreeViewReorderCallback)flow_edition_reorder,
+		(GtkTreeViewReorderCallback)flow_edition_can_reorder,
+		ui_flow_edition);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_edition->fseq_view), FALSE);
 
 	renderer = gtk_cell_renderer_pixbuf_new();
@@ -127,7 +135,7 @@ flow_edition_setup_ui(void)
 
 	/* Double click on flow component open its parameter window */
 	g_signal_connect(ui_flow_edition->fseq_view, "row-activated",
-		GTK_SIGNAL_FUNC(flow_edition_component_change_parameters), ui_flow_edition);
+		GTK_SIGNAL_FUNC(flow_edition_component_activated), ui_flow_edition);
 	g_signal_connect(GTK_OBJECT(ui_flow_edition->fseq_view), "cursor-changed",
 		GTK_SIGNAL_FUNC(flow_edition_component_selected), ui_flow_edition);
 
@@ -174,11 +182,58 @@ flow_edition_setup_ui(void)
 }
 
 /*
- * Function: flow_edition_component_change_parameters
+ * Function: flow_edition_load_components
+ * Load flow at _filename_ and title _title_
+ */
+void
+flow_edition_load_components(const gchar * filename, const gchar * title)
+{
+	GeoXmlSequence *	first_program;
+	gchar *			input_file;
+	gchar *			output_file;
+
+	/* free previous flow */
+	flow_free();
+
+	/* load it */
+	gebr.flow = GEOXML_FLOW(document_load(filename));
+	if (gebr.flow == NULL) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load flow '%s'"), title);
+		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load flow '%s' from file '%s'"), title, filename);
+		return;
+	}
+
+	/* input iter */
+	input_file = strlen(geoxml_flow_io_get_input(gebr.flow))
+		? g_path_get_basename(geoxml_flow_io_get_input(gebr.flow)) : strdup("");
+	gtk_list_store_append(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter);
+	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
+		FSEQ_TITLE_COLUMN, input_file,
+		FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_go_back,
+		-1);
+	/* output iter */
+	output_file = strlen(geoxml_flow_io_get_output(gebr.flow))
+		? g_path_get_basename(geoxml_flow_io_get_output(gebr.flow)) : strdup("");
+	gtk_list_store_append(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter);
+	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
+		FSEQ_TITLE_COLUMN, output_file,
+		FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_go_forward,
+		-1);
+
+	/* now into GUI */
+	geoxml_flow_get_program(gebr.flow, &first_program, 0);
+	flow_add_program_sequence_to_view(first_program);
+
+	g_free(input_file);
+	g_free(output_file);
+}
+
+/*
+ * Function: flow_edition_component_activated
  * Show the current selected flow components parameters
  */
 void
-flow_edition_component_change_parameters(void)
+flow_edition_component_activated(void)
 {
 	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
@@ -192,10 +247,15 @@ flow_edition_component_change_parameters(void)
 		return;
 	}
 
+	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
+		on_flow_io_activate();
+		return;
+	}
+
 	gtk_tree_model_get(model, &iter,
 		FSEQ_TITLE_COLUMN, &title,
 		-1);
-
 	gebr_message(LOG_ERROR, TRUE, FALSE, _("Configuring flow component '%s'"), title);
 	parameters_configure_setup_ui();
 
@@ -203,7 +263,7 @@ flow_edition_component_change_parameters(void)
 }
 
 /*
- * Function: flow_edition_component_change_parameters
+ * Function: flow_edition_component_activated
  * Change the flow status when select the status from the "Flow Component" menu.
  */
 void
@@ -212,7 +272,6 @@ flow_edition_set_status(GtkRadioAction * action)
 	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
-	GtkTreePath *		path;
 
 	GeoXmlSequence *	program;
 
@@ -223,6 +282,10 @@ flow_edition_set_status(GtkRadioAction * action)
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_comp_selected_error);
 		return;
 	}
+
+	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
+		return;
 
 	if (action == gebr.actions.flow_edition.configured)
 		pixbuf = gebr.pixmaps.stock_apply;
@@ -236,18 +299,46 @@ flow_edition_set_status(GtkRadioAction * action)
 		FSEQ_STATUS_COLUMN, pixbuf,
 		-1);
 
-	path = gtk_tree_model_get_path(model, &iter);
-	geoxml_flow_get_program(gebr.flow, &program, gtk_tree_path_get_indices(path)[0]);
+	gtk_tree_model_get(model, &iter, FSEQ_GEOXML_POINTER, &program, -1);
 	geoxml_program_set_status(GEOXML_PROGRAM(program), gtk_action_get_name(GTK_ACTION(action)));
 
 	flow_save();
-	gtk_tree_path_free(path);
 }
 
 /*
  * Section: Private
  * Private functions
  */
+
+/*
+ * Fuction: flow_edition_can_reorder
+ *
+ *
+ */
+static gboolean
+flow_edition_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before,
+	struct ui_flow_edition * ui_flow_edition)
+{
+	if (gtk_tree_model_iter_equal_to(iter, &gebr.ui_flow_edition->input_iter) ||
+	gtk_tree_model_iter_equal_to(iter, &gebr.ui_flow_edition->output_iter) ||
+	gtk_tree_model_iter_equal_to(before, &gebr.ui_flow_edition->input_iter))
+		return FALSE;
+
+	return TRUE;
+}
+
+/*
+ * Fuction: flow_edition_reorder
+ *
+ * 
+ */
+static gboolean
+flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before,
+	struct ui_flow_edition * ui_flow_edition)
+{
+	return TRUE;
+}
+
 
 /* Function: flow_edition_component_selected
  * When a flow component (a program in the flow) is selected
@@ -272,8 +363,11 @@ flow_edition_component_selected(void)
 		return;
 	}
 
-	geoxml_flow_get_program(gebr.flow, &program,
-		gtk_list_store_get_iter_index(gebr.ui_flow_edition->fseq_store, &iter));
+	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
+		return;
+
+	gtk_tree_model_get(model, &iter, FSEQ_GEOXML_POINTER, &program, -1);
 	status = geoxml_program_get_status(GEOXML_PROGRAM(program));
 
 #if GTK_CHECK_VERSION(2,10,0)
@@ -409,6 +503,13 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 
 	menu = gtk_menu_new();
 
+	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
+		gtk_container_add(GTK_CONTAINER(menu),
+			gtk_action_create_menu_item(gebr.actions.flow_edition.properties));
+		goto out;
+	}
+
 	/* Move top */
 	if (gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
@@ -449,7 +550,7 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 	gtk_container_add(GTK_CONTAINER(menu),
 		gtk_action_create_menu_item(gebr.actions.flow_edition.help));
 
-	gtk_widget_show_all(menu);
+out:	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
 }

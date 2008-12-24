@@ -32,8 +32,6 @@ struct ui_parameters {
 
 	/* cloned program for editing */
 	GeoXmlProgram *		program;
-	/* original program index */
-	int			program_index;
 };
 
 struct ui_parameters *
