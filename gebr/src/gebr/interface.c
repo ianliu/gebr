@@ -35,6 +35,66 @@
 #include "callbacks.h"
 
 /*
+ * Private data
+ */
+
+static const GtkActionEntry actions_entries [] = {
+	{"main_quit",  GTK_STOCK_QUIT, NULL, "<Control>q", NULL, (GCallback)gebr_quit},
+	/* Project/Line */
+	{"project_line_new_project", "folder-new", _("New Project"), NULL, _("Create a new project"),
+		(GCallback)on_project_line_new_project_activate},
+	{"project_line_new_line", "tab-new-background", _("New Line"), NULL,  _("Create a new line"),
+		(GCallback)on_project_line_new_line_activate},
+	{"project_line_delete", GTK_STOCK_DELETE, NULL, NULL, _("Delete selected project or line"),
+		(GCallback)on_project_line_delete_activate},
+	{"project_line_properties", GTK_STOCK_PROPERTIES, NULL, NULL, _("Edit properties"),
+		(GCallback)on_project_line_properties_activate},
+	{"project_line_line_paths", GTK_STOCK_DIRECTORY, _("Line paths"), NULL, _("Edit custom line paths"),
+		(GCallback)on_project_line_paths_activate},
+	/* Flow */
+	{"flow_new", GTK_STOCK_NEW, NULL, NULL, _("Create a new flow"), (GCallback)on_flow_new_activate},
+	{"flow_delete", GTK_STOCK_DELETE, NULL, NULL, _("Delete selected flow"), (GCallback)on_flow_delete_activate},
+	{"flow_properties", GTK_STOCK_PROPERTIES, NULL, NULL, _("Edit flow properties"),
+		(GCallback)on_flow_properties_activate},
+	{"flow_io", "system-switch-user", _("Input and Output"), NULL, _("Edit input/output flow files"),
+		(GCallback)on_flow_io_activate},
+	{"flow_execute", GTK_STOCK_EXECUTE, NULL, "<Control>r", _("Run current flow"),
+		(GCallback)on_flow_execute_activate},
+	{"flow_import", "document-import", _("Import"), NULL, _("Import a flow"), (GCallback)on_flow_import_activate},
+	{"flow_export", "document-export", _("Export"), NULL, _("Export the flow"),
+		(GCallback)on_flow_export_activate},
+	{"flow_export_as_menu", "document-export", _("Export as menu"), NULL, _("Export the flow as a menu"),
+		(GCallback)on_flow_export_as_menu_activate},
+	/* Flow Edition */
+	{"flow_edition_help", GTK_STOCK_HELP, NULL, NULL, _("Show component's help"),
+		(GCallback)on_flow_component_help_activate},
+	{"flow_edition_delete", GTK_STOCK_DELETE, NULL, NULL, _("Delete component"),
+		(GCallback)on_flow_component_delete_activate},
+	{"flow_edition_properties", GTK_STOCK_PROPERTIES, NULL, NULL, _("Edit component parameters"),
+		(GCallback)on_flow_component_properties_activate},
+	{"flow_edition_refresh", GTK_STOCK_REFRESH, NULL, NULL, _("Refresh available components list"),
+		(GCallback)on_flow_component_refresh_activate},
+	/* Job control */
+	{"job_save", GTK_STOCK_SAVE, NULL, NULL, _("Save job information in a file"),
+		(GCallback)on_job_control_save},
+	{"job_cancel", GTK_STOCK_MEDIA_STOP, NULL, NULL, _("Ask server to terminate the job"),
+		(GCallback)on_job_control_cancel},
+	{"job_close", "edit-clear", NULL, NULL, _("Clear current job log"),
+		(GCallback)on_job_control_close},
+	{"job_clear", GTK_STOCK_CLEAR, NULL, NULL, _("Clear all unactive job logs"),
+		(GCallback)on_job_control_clear},
+	{"job_stop", GTK_STOCK_STOP, NULL, NULL, _("Ask server to kill the job"),
+		(GCallback)on_job_control_stop}
+};
+static const gint actions_entries_number = 22;
+
+static const GtkRadioActionEntry status_radio_actions_entries [] = {
+	{"flow_edition_status_configured", NULL, _("Configured"), NULL, NULL, 0},
+	{"flow_edition_status_disabled", NULL, _("Disabled"), NULL, NULL, 1},
+	{"flow_edition_status_unconfigured", NULL, _("Unconfigured"), NULL, NULL, 2}
+};
+
+/*
  * Prototypes functions
  */
 
@@ -73,8 +133,14 @@ gebr_setup_ui(void)
 	gtk_widget_set_size_request(gebr.window, 700, 400);
 	gtk_widget_show(gebr.window);
 
-	gebr.accel_group = gtk_accel_group_new();
+	gebr.ui_manager = gtk_ui_manager_new();
+	gebr.accel_group = gtk_ui_manager_get_accel_group(gebr.ui_manager);
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group);
+	gebr.action_group = gtk_action_group_new("General");
+	gtk_action_group_add_actions(gebr.action_group, actions_entries, actions_entries_number, NULL);
+	gtk_action_group_add_radio_actions(gebr.action_group, status_radio_actions_entries, 3, -1,
+		(GCallback)on_flow_component_status_activate, NULL);
+	gtk_ui_manager_insert_action_group(gebr.ui_manager, gebr.action_group, 0);
 
 	/* Signals */
 	g_signal_connect(GTK_OBJECT(gebr.window), "delete_event",
@@ -84,124 +150,6 @@ gebr_setup_ui(void)
 	main_vbox = gtk_vbox_new(FALSE, 1);
 	gtk_container_add(GTK_CONTAINER(gebr.window), main_vbox);
 	gtk_widget_show(main_vbox);
-
-	/*
-	 * Actions
-	 */
-	/* Main */
-	gebr.actions.main.quit = gtk_action_new("main_quit",
-		NULL, NULL, GTK_STOCK_QUIT);
-	g_signal_connect(gebr.actions.main.quit, "activate",
-		(GCallback)(gebr_quit), NULL);
-
-	/* Project/Line */
-	gebr.actions.project_line.new_project = gtk_action_new("project_line_new_project",
-		_("New Project"), _("Create a new project"), "folder-new");
-	g_signal_connect(gebr.actions.project_line.new_project, "activate",
-		(GCallback)on_project_line_new_project_activate, NULL);
-	gebr.actions.project_line.new_line = gtk_action_new("project_line_new_line",
-		_("New Line"), _("Create a new line"), "tab-new-background");
-	g_signal_connect(gebr.actions.project_line.new_line, "activate",
-		(GCallback)on_project_line_new_line_activate, NULL);
-	gebr.actions.project_line.delete = gtk_action_new("project_line_delete",
-		NULL, _("Delete selected project or line"), GTK_STOCK_DELETE);
-	g_signal_connect(gebr.actions.project_line.delete, "activate",
-		(GCallback)on_project_line_delete_activate, NULL);
-	gebr.actions.project_line.properties = gtk_action_new("project_line_properties",
-		NULL, _("Edit properties"), GTK_STOCK_PROPERTIES);
-	g_signal_connect(gebr.actions.project_line.properties, "activate",
-		(GCallback)on_project_line_properties_activate, NULL);
-	gebr.actions.project_line.line_paths = gtk_action_new("project_line_line_paths",
-		_("Line paths"), _("Edit custom line paths"), GTK_STOCK_DIRECTORY);
-	g_signal_connect(gebr.actions.project_line.line_paths, "activate",
-		(GCallback)on_project_line_paths_activate, NULL);
-	 
-	/* Flow */
-	gebr.actions.flow.new = gtk_action_new("flow_new",
-		NULL, _("Create a new flow"), GTK_STOCK_NEW);
-	g_signal_connect(gebr.actions.flow.new, "activate",
-		(GCallback)on_flow_new_activate, NULL);
-	gebr.actions.flow.delete = gtk_action_new("flow_delete",
-		NULL, _("Delete selected flow"), GTK_STOCK_DELETE);
-	g_signal_connect(gebr.actions.flow.delete, "activate",
-		(GCallback)on_flow_delete_activate, NULL);
-	gebr.actions.flow.properties = gtk_action_new("flow_properties",
-		NULL, _("Edit flow properties"), GTK_STOCK_PROPERTIES);
-	g_signal_connect(gebr.actions.flow.properties, "activate",
-		(GCallback)on_flow_properties_activate, NULL);
-	gebr.actions.flow.io = gtk_action_new("flow_io",
-		_("Input and Output"), _("Edit input/output flow files"), "system-switch-user");
-	g_signal_connect(gebr.actions.flow.io, "activate",
-		(GCallback)on_flow_io_activate, NULL);
-	gebr.actions.flow.execute = gtk_action_new("flow_execute",
-		NULL, _("Run current flow"), GTK_STOCK_EXECUTE);
-	g_signal_connect(gebr.actions.flow.execute, "activate",
-		(GCallback)on_flow_execute_activate, NULL);
-	gebr.actions.flow.import = gtk_action_new("flow_import",
-		_("Import"), _("Import a flow"), "document-import");
-	g_signal_connect(gebr.actions.flow.import, "activate",
-		(GCallback)on_flow_import_activate, NULL);
-	gebr.actions.flow.export = gtk_action_new("flow_export",
-		_("Export"), _("Export the flow"), "document-export");
-	g_signal_connect(gebr.actions.flow.export, "activate",
-		(GCallback)on_flow_export_activate, NULL);
-	gebr.actions.flow.export_as_menu = gtk_action_new("flow_export_as_menu",
-		_("Export as menu"), _("Export the flow as a menu"), "document-export");
-	g_signal_connect(gebr.actions.flow.export_as_menu, "activate",
-		(GCallback)on_flow_export_as_menu_activate, NULL);
-
-	/* Flow Edition */
-	gebr.actions.flow_edition.help = gtk_action_new("flow_edition_help",
-		NULL, _("Show component's help"), GTK_STOCK_HELP);
-	g_signal_connect(gebr.actions.flow_edition.help, "activate",
-		(GCallback)on_flow_component_help_activate, NULL);
-	gebr.actions.flow_edition.delete = gtk_action_new("flow_edition_delete",
-		NULL, _("Delete component"), GTK_STOCK_DELETE);
-	g_signal_connect(gebr.actions.flow_edition.delete, "activate",
-		(GCallback)on_flow_component_delete_activate, NULL);
-	gebr.actions.flow_edition.properties = gtk_action_new("flow_edition_properties",
-		NULL, _("Edit component parameters"), GTK_STOCK_PROPERTIES);
-	g_signal_connect(gebr.actions.flow_edition.properties, "activate",
-		(GCallback)on_flow_component_properties_activate, NULL);
-	gebr.actions.flow_edition.refresh = gtk_action_new("flow_edition_refresh",
-		NULL, _("Refresh available components list"), GTK_STOCK_REFRESH);
-	g_signal_connect(gebr.actions.flow_edition.refresh, "activate",
-		(GCallback)on_flow_component_refresh_activate, NULL);
-	gebr.actions.flow_edition.configured = gtk_radio_action_new("configured", _("Configured"), NULL, NULL, 1<<0);
-	gebr.actions.flow_edition.disabled = gtk_radio_action_new("disabled", _("Disabled"), NULL, NULL, 1<<1);
-	gebr.actions.flow_edition.unconfigured = gtk_radio_action_new("unconfigured", _("Unconfigured"), NULL, NULL, 1<<2);
-	gtk_radio_action_set_group(gebr.actions.flow_edition.disabled,
-		gtk_radio_action_get_group(gebr.actions.flow_edition.configured));
-	gtk_radio_action_set_group(gebr.actions.flow_edition.unconfigured,
-		gtk_radio_action_get_group(gebr.actions.flow_edition.configured));
-	g_signal_connect(gebr.actions.flow_edition.configured, "activate",
-		GTK_SIGNAL_FUNC(on_flow_component_status_activate), NULL);
-	g_signal_connect(gebr.actions.flow_edition.disabled, "activate",
-		GTK_SIGNAL_FUNC(on_flow_component_status_activate), NULL);
-	g_signal_connect(gebr.actions.flow_edition.unconfigured, "activate",
-		GTK_SIGNAL_FUNC(on_flow_component_status_activate), NULL);
-
-	/* Job control */
-	gebr.actions.job_control.save = gtk_action_new("job_save",
-		NULL, _("Save job information in a file"), GTK_STOCK_SAVE);
-	g_signal_connect(gebr.actions.job_control.save, "activate",
-		(GCallback)on_job_control_save, NULL);
-	gebr.actions.job_control.cancel = gtk_action_new("job_cancel",
-		NULL, _("Ask server to terminate the job"), GTK_STOCK_MEDIA_STOP);
-	g_signal_connect(gebr.actions.job_control.cancel, "activate",
-		(GCallback)on_job_control_cancel, NULL);
-	gebr.actions.job_control.close = gtk_action_new("job_close",
-		NULL, _("Clear current job log"), "edit-clear");
-	g_signal_connect(gebr.actions.job_control.close, "activate",
-		(GCallback)on_job_control_close, NULL);
-	gebr.actions.job_control.clear = gtk_action_new("job_clear",
-		NULL, _("Clear all unactive job logs"), GTK_STOCK_CLEAR);
-	g_signal_connect(gebr.actions.job_control.clear, "activate",
-		(GCallback)on_job_control_clear, NULL);
-	gebr.actions.job_control.stop = gtk_action_new("job_stop",
-		NULL, _("Ask server to kill the job"), GTK_STOCK_STOP);
-	g_signal_connect(gebr.actions.job_control.stop, "activate",
-		(GCallback)on_job_control_stop, NULL);
 
 	/*
 	 * Create the main menu
@@ -237,16 +185,16 @@ gebr_setup_ui(void)
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 	gtk_toolbar_set_tooltips(GTK_TOOLBAR(toolbar), TRUE);
 
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.project_line.new_project)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.project_line.new_line)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.project_line.delete)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.project_line.properties)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.project_line.line_paths)), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "project_line_new_project"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "project_line_new_line"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "project_line_delete"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "project_line_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "project_line_line_paths"))), -1);
 
 	gebr.ui_project_line = project_line_setup_ui();
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -261,22 +209,22 @@ gebr_setup_ui(void)
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow.new)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow.delete)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow.properties)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow.io)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow.execute)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow.import)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow.export)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow.export_as_menu)), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_new"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_delete"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_io"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_import"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_export"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_export_as_menu"))), -1);
 
 	gebr.ui_flow_browse = flow_browse_setup_ui();
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -294,26 +242,25 @@ gebr_setup_ui(void)
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow.execute)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow_edition.delete)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow_edition.properties)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.flow_edition.refresh)), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_delete"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_refresh"))), -1);
 
 	menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_APPLY);
 	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(GTK_ACTION(gebr.actions.flow_edition.configured)));
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(GTK_ACTION(gebr.actions.flow_edition.disabled)));
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(GTK_ACTION(gebr.actions.flow_edition.unconfigured)));
-	
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_disabled")));
+ gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_unconfigured")));
 
 	gebr.ui_flow_edition = flow_edition_setup_ui();
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -328,16 +275,16 @@ gebr_setup_ui(void)
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.job_control.save)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.job_control.cancel)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.job_control.close)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.job_control.clear)), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		GTK_TOOL_ITEM(gtk_action_create_tool_item(gebr.actions.job_control.stop)), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "job_control_save"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "job_control_cancel"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "job_control_close"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "job_control_clear"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "job_control_stop"))), -1);
 
 	gebr.ui_job_control = job_control_setup_ui();
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -352,16 +299,6 @@ gebr_setup_ui(void)
 	gebr.ui_log = log_setup_ui();
 	gtk_widget_show_all(gebr.ui_log->widget);
 	gtk_box_pack_end(GTK_BOX(main_vbox), gebr.ui_log->widget, FALSE, FALSE, 0);
-
-	/*
-	 * Create some hot-keys
-	 */
-	/* CTRL+R - Run current flow */
-	gtk_accel_group_connect(gebr.accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
-		gtk_action_get_accel_closure(gebr.actions.flow.execute));
-	/* CTR+Q - Quit GeBR */
-	gtk_accel_group_connect(gebr.accel_group, GDK_q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
-		gtk_action_get_accel_closure(gebr.actions.main.quit));
 }
 
 /*
@@ -398,8 +335,8 @@ assembly_config_menu(void)
 
 	/* Quit entry */
 	gtk_container_add(GTK_CONTAINER(menu),gtk_separator_menu_item_new());
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gebr.actions.main.quit));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "main_quit")));
 
 	return menu_item;
 }

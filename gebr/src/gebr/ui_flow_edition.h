@@ -63,6 +63,6 @@ void
 flow_edition_component_activated(void);
 
 void
-flow_edition_set_status(GtkRadioAction * action);
+flow_edition_status_changed(void);
 
 #endif //__UI_FLOW_COMPONENT_H

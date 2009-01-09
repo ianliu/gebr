@@ -43,7 +43,9 @@ struct gebr {
 	GtkWidget *			menu[MENUBAR_N];
 	GtkWidget *			notebook;
 	struct about			about;
+	GtkUIManager *			ui_manager;
 	GtkAccelGroup *			accel_group;
+	GtkActionGroup *		action_group;
 	/* for strange things ;) */
 	GtkWidget *			invisible;
 
@@ -95,45 +97,6 @@ struct gebr {
 		GdkPixbuf *		stock_go_forward;
 		GdkPixbuf *		stock_info;
 	} pixmaps;
-
-	struct gebr_actions {
-		struct {
-			GtkAction *             quit;
-		} main;
-		struct {
-			GtkAction *		new_project;
-			GtkAction *		new_line;
-			GtkAction *		delete;
-			GtkAction *		properties;
-			GtkAction *		line_paths;
-		} project_line;
-		struct {
-			GtkAction *		new;
-			GtkAction *		delete;
-			GtkAction *		properties;
-			GtkAction *		io;
-			GtkAction *		execute;
-			GtkAction *		import;
-			GtkAction *		export;
-			GtkAction *		export_as_menu;
-		} flow;
-		struct {
-			GtkAction *		help;
-			GtkAction *		delete;
-			GtkAction *		properties;
-			GtkAction *		refresh;
-			GtkRadioAction *	configured;
-			GtkRadioAction *	disabled;
-			GtkRadioAction *	unconfigured;
-		} flow_edition;
-		struct {
-			GtkAction *		save;
-			GtkAction *		cancel;
-			GtkAction *		close;
-			GtkAction *		clear;
-			GtkAction *		stop;
-		} job_control;
-	} actions;
 };
 
 void

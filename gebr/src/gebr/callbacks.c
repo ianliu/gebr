@@ -259,9 +259,9 @@ on_flow_component_refresh_activate(void)
  *
  */
 void
-on_flow_component_status_activate(GtkRadioAction * action)
+on_flow_component_status_activate(void)
 {
-	flow_edition_set_status(action);
+	flow_edition_status_changed();
 }
 
 /*

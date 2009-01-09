@@ -172,31 +172,6 @@ gebr_quit(void)
 	g_object_unref(gebr.pixmaps.stock_info);
 	gtk_widget_destroy(gebr.invisible);
 
-	g_object_unref(gebr.actions.project_line.new_line);
-	g_object_unref(gebr.actions.project_line.new_project);
-	g_object_unref(gebr.actions.project_line.delete);
-	g_object_unref(gebr.actions.project_line.properties);
-	g_object_unref(gebr.actions.project_line.line_paths);
-	g_object_unref(gebr.actions.flow.new);
-	g_object_unref(gebr.actions.flow.delete);
-	g_object_unref(gebr.actions.flow.properties);
-	g_object_unref(gebr.actions.flow.io);
-	g_object_unref(gebr.actions.flow.execute);
-	g_object_unref(gebr.actions.flow.import);
-	g_object_unref(gebr.actions.flow.export);
-	g_object_unref(gebr.actions.flow.export_as_menu);
-	g_object_unref(gebr.actions.flow_edition.delete);
-	g_object_unref(gebr.actions.flow_edition.properties);
-	g_object_unref(gebr.actions.flow_edition.refresh);
-	g_object_unref(gebr.actions.flow_edition.configured);
-	g_object_unref(gebr.actions.flow_edition.unconfigured);
-	g_object_unref(gebr.actions.flow_edition.disabled);
-	g_object_unref(gebr.actions.job_control.save);
-	g_object_unref(gebr.actions.job_control.cancel);
-	g_object_unref(gebr.actions.job_control.close);
-	g_object_unref(gebr.actions.job_control.clear);
-	g_object_unref(gebr.actions.job_control.stop);
-
 	gtk_main_quit();
 
 	return FALSE;
@@ -282,24 +257,23 @@ gebr_config_load_from_gengetopt(void)
 void
 gebr_config_load(void)
 {
+	gboolean	new_config;
 	gboolean	done_by_gengetopt;
 	gchar **	groups;
 	gint		i;
 	GError *	error;
 
-	if (g_access(gebr.config.path->str, F_OK)) {
-		preferences_setup_ui(TRUE);
-		server_new("127.0.0.1", TRUE);
-		return;
-	}
-
 	error = NULL;
 	gebr.config.key_file = g_key_file_new();
-	if (g_key_file_load_from_file(gebr.config.key_file, gebr.config.path->str, G_KEY_FILE_NONE, &error))
-		done_by_gengetopt = FALSE;
-	else if (!(done_by_gengetopt = gebr_config_load_from_gengetopt()))
-		fprintf(stderr, "Error parsing config file; reseting it.");
 
+	if ((new_config = (gboolean)g_access(gebr.config.path->str, F_OK | R_OK)))
+		done_by_gengetopt = FALSE;
+	else {
+		if (g_key_file_load_from_file(gebr.config.key_file, gebr.config.path->str, G_KEY_FILE_NONE, &error))
+			done_by_gengetopt = FALSE;
+		else if (!(done_by_gengetopt = gebr_config_load_from_gengetopt()))
+			fprintf(stderr, "Error parsing config file; reseting it.");
+	}
 	if (!done_by_gengetopt) {
 		gebr.config.username = g_key_file_load_string_key(gebr.config.key_file,
 			"general", "name", g_get_real_name());
@@ -315,6 +289,11 @@ gebr_config_load(void)
 		gebr.config.height = g_key_file_load_int_key(gebr.config.key_file, "general", "height", 400);
 		gebr.config.log_expander_state = g_key_file_load_boolean_key(gebr.config.key_file,
 			"general", "logexpand", FALSE);
+	}
+	if (new_config) {
+		server_new("127.0.0.1", TRUE);
+		preferences_setup_ui(TRUE);
+		return;
 	}
 
 	gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);

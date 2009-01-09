@@ -267,7 +267,7 @@ flow_edition_component_activated(void)
  * Change the flow status when select the status from the "Flow Component" menu.
  */
 void
-flow_edition_set_status(GtkRadioAction * action)
+flow_edition_status_changed(void)
 {
 	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
@@ -275,6 +275,7 @@ flow_edition_set_status(GtkRadioAction * action)
 
 	GeoXmlSequence *	program;
 
+	GtkRadioAction *	radio_action;
 	GdkPixbuf *		pixbuf;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
@@ -282,25 +283,32 @@ flow_edition_set_status(GtkRadioAction * action)
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_comp_selected_error);
 		return;
 	}
-
 	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
 	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
 		return;
 
-	if (action == gebr.actions.flow_edition.configured)
+	gtk_tree_model_get(model, &iter, FSEQ_GEOXML_POINTER, &program, -1);
+	radio_action = GTK_RADIO_ACTION(gtk_action_group_get_action(
+		gebr.action_group, "flow_edition_status_configured"));
+	switch (gtk_radio_action_get_current_value(radio_action)) {
+	case 0:
 		pixbuf = gebr.pixmaps.stock_apply;
-	else if (action == gebr.actions.flow_edition.disabled)
+		geoxml_program_set_status(GEOXML_PROGRAM(program), "configured");
+		break;
+	case 1:
 		pixbuf = gebr.pixmaps.stock_cancel;
-	else if (action == gebr.actions.flow_edition.unconfigured)
+		geoxml_program_set_status(GEOXML_PROGRAM(program), "disabled");
+		break;
+	case 2:
 		pixbuf = gebr.pixmaps.stock_warning;
-	else
-		return;
+		geoxml_program_set_status(GEOXML_PROGRAM(program), "unconfigured");
+		break;
+	default:
+		pixbuf = NULL;
+	}
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
 		FSEQ_STATUS_COLUMN, pixbuf,
 		-1);
-
-	gtk_tree_model_get(model, &iter, FSEQ_GEOXML_POINTER, &program, -1);
-	geoxml_program_set_status(GEOXML_PROGRAM(program), gtk_action_get_name(GTK_ACTION(action)));
 
 	flow_save();
 }
@@ -370,19 +378,15 @@ flow_edition_component_selected(void)
 	gtk_tree_model_get(model, &iter, FSEQ_GEOXML_POINTER, &program, -1);
 	status = geoxml_program_get_status(GEOXML_PROGRAM(program));
 
-#if GTK_CHECK_VERSION(2,10,0)
-	gtk_radio_action_set_current_value(gebr.actions.flow_edition.configured,
-		(!strcmp(status, "configured"))<<0 |
-		(!strcmp(status, "disabled"))<<1 |
-		(!strcmp(status, "unconfigured"))<<2);
-#else
 	if (!strcmp(status, "configured"))
-		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.flow_edition.configured), TRUE);
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,
+			"flow_edition_status_configured")), TRUE);
 	else if (!strcmp(status, "disabled"))
-		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.flow_edition.disabled), TRUE);
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,
+			"flow_edition_status_disabled")), TRUE);
 	else if (!strcmp(status, "unconfigured"))
-		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gebr.actions.flow_edition.unconfigured), TRUE);
-#endif
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,
+			"flow_edition_status_unconfigured")), TRUE);
 }
 
 /*
@@ -505,8 +509,8 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 
 	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
 	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
-		gtk_container_add(GTK_CONTAINER(menu),
-			gtk_action_create_menu_item(gebr.actions.flow_edition.properties));
+		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+			gtk_action_group_get_action(gebr.action_group, "flow_edition_properties")));
 		goto out;
 	}
 
@@ -533,22 +537,22 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 	}
 	/* properties */
 	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gebr.actions.flow_edition.properties));
+		gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_edition_properties")));
 	/* status */
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),
-		gtk_action_create_menu_item(GTK_ACTION(gebr.actions.flow_edition.configured)));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),
-		gtk_action_create_menu_item(GTK_ACTION(gebr.actions.flow_edition.disabled)));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),
-		gtk_action_create_menu_item(GTK_ACTION(gebr.actions.flow_edition.unconfigured)));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(GTK_ACTION(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured)"))));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(GTK_ACTION(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_disabled)"))));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(GTK_ACTION(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_unconfigured)"))));
 
 	/* separator */
 	menu_item = gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gebr.actions.flow_edition.delete));
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gebr.actions.flow_edition.help));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_delete")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_help")));
 
 out:	gtk_widget_show_all(menu);
 

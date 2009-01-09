@@ -438,11 +438,10 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 		return NULL;
 
 	menu = gtk_menu_new();
-	gtk_menu_set_accel_group(GTK_MENU(menu), gebr.accel_group);
 
 	/* new */
 	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gebr.actions.flow.new));
+		gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_new")));
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
@@ -469,9 +468,9 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
 	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gebr.actions.flow.io));
+		gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_io")));
 	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gebr.actions.flow.execute));
+		gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_execute")));
 
 out:	gtk_widget_show_all(menu);
 

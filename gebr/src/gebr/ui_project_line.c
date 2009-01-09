@@ -521,26 +521,26 @@ project_line_popup_menu(GtkWidget * widget, struct ui_project_line * ui_project_
 	menu = gtk_menu_new();
 
 	/* new project */
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gebr.actions.project_line.new_project));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "project_line_new_project")));
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
 		goto out;
 
 	/* new line */
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gebr.actions.project_line.new_line));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "project_line_new_line")));
 	/* properties */
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gebr.actions.project_line.properties));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "project_line_properties")));
 	/* paths */
 	if (gebr.line != NULL)
-		gtk_container_add(GTK_CONTAINER(menu),
-			gtk_action_create_menu_item(gebr.actions.project_line.line_paths));
+		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+			gtk_action_group_get_action(gebr.action_group, "project_line_line_paths")));
 	/* delete */
 	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gebr.actions.project_line.delete));
+		gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "project_line_delete")));
 
 out:	gtk_widget_show_all(menu);
 
