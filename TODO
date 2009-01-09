@@ -1,58 +1,68 @@
-Geral:
+1.0:
 
-  * gebr-client: Cliente de linhas de comando para a GÍBR Daemon, capaz de
-  submeter um fluxo para execuÁ„o, alÈm das outras consultas
-  b·sicas.
++	Redirecionamento completo do X
++	Internacionaliza√ß√£o (portugu√™s, espanhol, alem√£o, etc)
++	Suporte a help
 
-  * atualizar copyright para 2007-2008 (falta libgebr)
++	Acertar tooltips (D√©BR/G√™BR)
++	Conferir e completar os menus popup
++	Teclas de atalho
 
-GÍBR:
++	Mais detalhes para visao lateral da D√©BR e scrolled window para
+        todas as janelas de detalhes D√©BR/G√™BR
++      Duplicate para programas na G√™BR
 
-  * Conferir/Corrigir o servidor
++	Barra de navega√ß√£o na D√©BR como na G√™BR
++	Bot√£o de troca de tipo do par√¢metro na D√©BR fica a la status da G√™BR
++	Quebra de linha na janela de job control
++	Icone do export as menu
++	Acrescentar uma quantidade especificada de par√¢metros de um
+        mesmo tipo de uma √∫nica vez
 
-  * Se houver dois menus distintos com o mesmo nome de arquivo,
-  problema! Por exemplo, se o usu·rio pegar um menu do sistema e
-  coloca-lo na sua pasta local para edita-lo, gerando uma vers„o
-  prÛpria.
++	Import/export de projetos e linhas (pensar)
 
-  * alternar cores de fundo na janela de par‚metros
++	Categorias do usu√°rio na D√©BR, lidas a partir dos menus
+        em edi√ß√£o e salvas no arquivo de conf da D√©BR
++	Multiline com tags gays gtk_text_buffer_insert_with_tags ()
 
-  * suporte a opÁıes de linha de comando no daemon. Com isso,
-    suportar a opÁ„o check para ver se h· um servidor rodando.
++      Revis√µes
++      Ao excluir um √≠tem, selecionar o seguinte
++      Make packages acrescentar --disable-debug
++      Diret√≥rio de packages para a D√©BR
++      Pensar e descobrir como lan√ßar vers√µes em pacotes DEB/RPM
 
-  * pasta do usu·rio n„o setada quando o usu·rio decidi usar
-    a padr„o, ou seja, a pasta do usu·rio
+=====================
 
-  ? OpÁ„o nas preferÍncias para shell (Ser·?)
+1.x:
 
-GÍBR Daemon:
++	Copy/paste de projetos, linhas, fluxos, componentes de fluxos (*****)
++	Op√ß√£o de customiza√ß√£o do CSS para relat√≥rios
++	Execu√ß√£o de fluxo e ger√™ncia de jobs no cluster (pensar)
+++	Execu√ß√£o programada de um fluxo (**)
 
-  * Quando a saida de um programa n„o È UTF-8, o GTK n„o a
-  exibe. Exemplo: criei um menu para o comando cal da Bash. Este
-  imprime "S·b" por exemplo. Ai nada aparece, pois o texto n„o
-  È UTF-8. Mas È pior que isso ainda. A vers„o mais nova do
-  cal, imprime o dia atual com um highlight (que s„o alguns escapes
-  de bash interpretados pelo terminal) e isso com certeza n„o È
-  UTF-8 independentemente do encode do sistema.
+++      Impress√£o de relat√≥rios, listas de projetos, linhas ou fluxos,
+        propriedades de projetos linhas ou fluxos, relat√≥rio de execu√ß√£o, log
 
-  * Converter a linha de comando de utf8 para a locale do usuario
+++	Ordena√ß√£o de fluxos em ordem alfab√©tica, por data de cria√ß√£o, atualiza√ß√£o ou execu√ß√£o
+++	Servidor preservando dados em disco
+++   	Ler/gravar XML compactado (zlib)
+++	Suporte a programas com MPI
 
-GÍBRME:
+++	Cliente texto para G√™BR
+++      Validador sint√°tico para menus
 
-  * proteÁ„o de extens„o na hora de salvar
++++	Seguran√ßa (1)
++++	Cliente web usando XUL
++++	Editor/visualizador de HTML embutido (ver thunderbird, evolution e outros em gtk)
++++	Fluxos n√£o sequenciais (pensar: s√≥ input/output para cada programa?)
 
-LibGÍBR:
+Quest√µes:
+Tudo foi pensado para a execu√ß√£o de programas texto. H√° algo de
+especial na execu√ß√£o de programas gr√°ficos?
 
-  * Padrao para instances, ou se nao nao È possivel restaurar selected para
-  default quando o numero de instancia È menos do que no menu original
+(1) Um usu√°rio malicioso poderia alterar o XML de um fluxo, inserindo
+comando maldosos, que seria executados sem pestanejar pelo
+servidor. Ser√° que h√° como acrescentar uma assinatura gpg a um fluxo
+para garantir a sua autoria? Ser√° que tem como validar um fluxo,
+assegurando que foi constru√≠do apenas com componentes certificados?
 
-  * libgeoxml_validade: validar nos menus seus Ìndices e nomes de
-  arquivos e campos obrigatÛrios (quais?)
-  Com isso, gebrme, criar um validador sem‚ntico para fluxos.
-
-  * Usar tidy no geoxml_document_set_help (se disponÌvel - checar no
-  configure)
-  opÁıes: utf-8
-	  indent
-	  modify
-	  bare

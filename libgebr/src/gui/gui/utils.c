@@ -289,7 +289,11 @@ gtk_tree_view_get_iter_from_coords(GtkTreeView * tree_view, GtkTreeIter * iter, 
 	GtkTreePath *		path;
 	gchar *			path_string;
 
+#if GTK_CHECK_VERSION(2,12,0)
 	gtk_tree_view_convert_widget_to_bin_window_coords(tree_view, x, y, &x, &y);
+#else
+	gtk_tree_view_widget_to_tree_coords(tree_view, x, y, &x, &y);
+#endif
 	if (!gtk_tree_view_get_path_at_pos(tree_view, x, y, &path, NULL, NULL, NULL)) {
 		gtk_tree_path_free(path);
 		return FALSE;
@@ -328,7 +332,11 @@ on_tooltip_query(GtkTreeView * tree_view, gint x, gint y, gboolean keyboard_mode
 	gchar *			path_string;
 	GtkTreeIter		iter;
 
+#if GTK_CHECK_VERSION(2,12,0)
 	gtk_tree_view_convert_widget_to_bin_window_coords(tree_view, x, y, &x, &y);
+#else
+	gtk_tree_view_widget_to_tree_coords(tree_view, x, y, &x, &y);
+#endif
 	if (!gtk_tree_view_get_path_at_pos(tree_view, x, y, &path, &column, NULL, NULL)) {
 		gtk_tree_path_free(path);
 		return FALSE;
