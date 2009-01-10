@@ -39,7 +39,7 @@
 
 static const GtkActionEntry actions_entries [] = {
 	/* Main */
-	{"main_quit", GTK_STOCK_QUIT, NULL, NULL, NULL, (GCallback)debr_quit},
+	{"main_quit", GTK_STOCK_QUIT, NULL, "<Control>q", NULL, (GCallback)debr_quit},
 	/* Menu */
 	{"menu_new", GTK_STOCK_NEW, _("New Menu"), NULL, _("Create new Menu"), (GCallback)on_menu_new_activate},
 	{"menu_open", GTK_STOCK_OPEN, _("Open Menu"), NULL, _("Open an existing Menu"),
@@ -79,11 +79,13 @@ static const GtkActionEntry actions_entries [] = {
 void
 debr_setup_ui(void)
 {
+	GtkWidget *		vbox;
+
 	GtkWidget *		menu_bar;
+	GtkWidget *		navigation_hbox;
 	GtkWidget *		notebook;
 	GtkWidget *		statusbar;
 
-	GtkWidget *		vbox;
 	GtkWidget *		menu;
 	GtkWidget *		menu_item;
 	GtkWidget *		child_menu_item;
@@ -111,6 +113,12 @@ debr_setup_ui(void)
 	gtk_widget_show(menu_bar);
 	gtk_box_pack_start(GTK_BOX(vbox), menu_bar, FALSE, FALSE, 0);
 
+	navigation_hbox = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(vbox), navigation_hbox, FALSE, FALSE, 4);
+	debr.navigation_box_label = gtk_label_new(NULL);
+	gtk_box_pack_start(GTK_BOX(navigation_hbox), debr.navigation_box_label, FALSE, FALSE, 0);
+	gtk_widget_show_all(navigation_hbox);
+
 	notebook = gtk_notebook_new();
 	gtk_widget_show(notebook);
 	gtk_box_pack_start(GTK_BOX(vbox), notebook, TRUE, TRUE, 0);
@@ -128,7 +136,7 @@ debr_setup_ui(void)
 	gtk_action_group_add_actions(debr.action_group, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
 
 	/*
-	 * Menu: Configure
+	 * Menu: Actions
 	 */
 	menu_item = gtk_menu_item_new_with_mnemonic(_("_Actions"));
 	gtk_container_add(GTK_CONTAINER(menu_bar), menu_item);
@@ -140,8 +148,9 @@ debr_setup_ui(void)
 	g_signal_connect(child_menu_item, "activate",
 		(GCallback)on_configure_preferences_activate, NULL);
 	gtk_container_add(GTK_CONTAINER(menu),gtk_separator_menu_item_new());
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "main_quit")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "main_quit")));
+
 	/*
 	 * Menu: Help
 	 */

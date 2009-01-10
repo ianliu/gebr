@@ -27,6 +27,7 @@
 #include "parameter.h"
 #include "support.h"
 #include "debr.h"
+#include "callbacks.h"
 #include "enumoptionedit.h"
 #include "interface.h"
 #include "menu.h"
@@ -879,10 +880,16 @@ parameter_selected(void)
 {
 	GtkTreeIter	iter;
 
-	if (parameter_get_selected(&iter))
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
-			PARAMETER_XMLPOINTER, &debr.parameter,
-			-1);
+	if (parameter_get_selected(&iter) == FALSE) {
+		debr.parameter = NULL;
+		return;
+	}
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
+		PARAMETER_XMLPOINTER, &debr.parameter,
+		-1);
+
+	do_navigation_bar_update();
 }
 
 /*

@@ -28,6 +28,7 @@
 #include "menu.h"
 #include "support.h"
 #include "debr.h"
+#include "callbacks.h"
 #include "help.h"
 #include "program.h"
 
@@ -376,6 +377,7 @@ menu_selected(void)
 
 	/* update details view */
 	menu_details_update();
+	do_navigation_bar_update();
 }
 
 /*

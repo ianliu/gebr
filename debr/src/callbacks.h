@@ -21,6 +21,9 @@
 #include <gtk/gtk.h>
 
 void
+do_navigation_bar_update(void);
+
+void
 on_menu_new_activate(void);
 
 void

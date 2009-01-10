@@ -21,6 +21,7 @@
 
 #include "program.h"
 #include "debr.h"
+#include "callbacks.h"
 #include "support.h"
 #include "help.h"
 
@@ -580,11 +581,13 @@ program_selected(void)
 		debr.program = NULL;
 		return;
 	}
+
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), &iter,
 		PROGRAM_XMLPOINTER, &debr.program,
 		-1);
 	parameter_load_program();
 	program_details_update();
+	do_navigation_bar_update();
 }
 
 /*

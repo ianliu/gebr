@@ -33,6 +33,31 @@
  */
 
 /*
+ * Function: do_navigation_bar_update
+ * Callback to update navigation bar content
+ * according to menu, program and parameter selected
+ */
+void
+do_navigation_bar_update(void)
+{
+	GString *	markup;
+
+	markup = g_string_new(NULL);
+	g_string_append(markup, g_markup_printf_escaped("<i>%s</i>",
+		geoxml_document_get_title(GEOXML_DOC(debr.menu))));
+	if (debr.program != NULL)
+		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
+			geoxml_program_get_title(debr.program)));
+	if (debr.parameter != NULL)
+		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
+			geoxml_parameter_get_label(debr.parameter)));
+
+	gtk_label_set_markup(GTK_LABEL(debr.navigation_box_label), markup->str);
+
+	g_string_free(markup, TRUE);
+}
+
+/*
  * Function: on_menu_new_activate
  * Call <menu_new>
  */

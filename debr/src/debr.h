@@ -39,6 +39,7 @@ struct debr {
 
 	/* diverse widgets */
 	GtkWidget *		window;
+	GtkWidget *		navigation_box_label;
 	struct about		about;
 	GtkWidget *		statusbar;
 	GtkWidget *		invisible;
