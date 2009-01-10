@@ -288,6 +288,7 @@ gtk_tree_view_get_iter_from_coords(GtkTreeView * tree_view, GtkTreeIter * iter, 
 	GtkTreeModel *		model;
 	GtkTreePath *		path;
 	gchar *			path_string;
+	gboolean		ret;
 
 #if GTK_CHECK_VERSION(2,12,0)
 	gtk_tree_view_convert_widget_to_bin_window_coords(tree_view, x, y, &x, &y);
@@ -295,20 +296,20 @@ gtk_tree_view_get_iter_from_coords(GtkTreeView * tree_view, GtkTreeIter * iter, 
 	gtk_tree_view_widget_to_tree_coords(tree_view, x, y, &x, &y);
 #endif
 	if (!gtk_tree_view_get_path_at_pos(tree_view, x, y, &path, NULL, NULL, NULL)) {
-		gtk_tree_path_free(path);
-		return FALSE;
+		ret = FALSE;
+		goto out;
 	}
 
 	/* get iter */
 	model = gtk_tree_view_get_model(tree_view);
 	path_string = gtk_tree_path_to_string(path);
-	gtk_tree_model_get_iter_from_string(model, iter, path_string);
+	ret = gtk_tree_model_get_iter_from_string(model, iter, path_string);
 
 	/* frees */
-	gtk_tree_path_free(path);
 	g_free(path_string);
+out:	gtk_tree_path_free(path);
 
-	return TRUE;
+	return ret;
 }
 
 #if GTK_CHECK_VERSION(2,12,0)
@@ -459,15 +460,21 @@ static gboolean
 on_gtk_tree_view_drag_motion(GtkTreeView * tree_view, GdkDragContext * drag_context, gint x, gint y,
 	guint time, struct reorder_data * data)
 {
-	GtkTreeIter	iter;
-	int		ret;
+	GtkWidgetClass *	widget_class;
+	GtkTreeIter		iter;
 
+	/* to draw drop indicator */
+	widget_class = GTK_WIDGET_GET_CLASS(GTK_WIDGET(tree_view));
+	if (!widget_class->drag_motion(GTK_WIDGET(tree_view), drag_context, x, y, time))
+		return TRUE;
 	if (!gtk_tree_view_get_iter_from_coords(tree_view, &iter, x, y))
-		return FALSE;
-	if ((ret = data->can_callback(tree_view, &data->deleted, &iter, data->user_data)))
+		return TRUE;
+	if (data->can_callback(tree_view, &data->deleted, &iter, data->user_data))
 		gdk_drag_status(drag_context, GDK_ACTION_MOVE, time);
+	else
+		gdk_drag_status(drag_context, 0, time);
 
-	return ret;
+	return TRUE;
 }
 
 gboolean
