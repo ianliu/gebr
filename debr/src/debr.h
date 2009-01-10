@@ -43,43 +43,10 @@ struct debr {
 	GtkWidget *		statusbar;
 	GtkWidget *		invisible;
 	GtkAccelGroup *		accel_group;
+	GtkActionGroup *	action_group;
 	struct ui_menu		ui_menu;
 	struct ui_program	ui_program;
 	struct ui_parameter	ui_parameter;
-
-	/* actions */
-	struct debr_actions {
-		struct {
-			GtkAction *             quit;
-		} main;
-		struct {
-			GtkAction *		new;
-			GtkAction *		open;
-			GtkAction *		properties;
-			GtkAction *		save;
-			GtkAction *		save_as;
-			GtkAction *		save_all;
-			GtkAction *		revert;
-			GtkAction *		delete;
-			GtkAction *		close;
-		} menu;
-		struct {
-			GtkAction *		new;
-			GtkAction *		delete;
-			GtkAction *		properties;
-			GtkAction *		top;
-			GtkAction *		bottom;
-		} program;
-		struct {
-			GtkAction *		new;
-			GtkAction *		delete;
-			GtkAction *		duplicate;
-			GtkAction *		properties;
-			GtkAction *		top;
-			GtkAction *		bottom;
-			GtkAction *		change_type;
-		} parameter;
-	} actions;
 
         /* icons */
 	struct debr_pixmaps {

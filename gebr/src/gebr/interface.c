@@ -86,7 +86,6 @@ static const GtkActionEntry actions_entries [] = {
 	{"job_control_stop", GTK_STOCK_STOP, NULL, NULL, _("Ask server to kill the job"),
 		(GCallback)on_job_control_stop}
 };
-static const gint actions_entries_number = 23;
 
 static const GtkRadioActionEntry status_radio_actions_entries [] = {
 	{"flow_edition_status_configured", NULL, _("Configured"), NULL, NULL, 0},
@@ -134,13 +133,13 @@ gebr_setup_ui(void)
 	gtk_widget_show(gebr.window);
 
 	gebr.ui_manager = gtk_ui_manager_new();
-	gebr.accel_group = gtk_ui_manager_get_accel_group(gebr.ui_manager);
-	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group);
 	gebr.action_group = gtk_action_group_new("General");
-	gtk_action_group_add_actions(gebr.action_group, actions_entries, actions_entries_number, NULL);
+	gtk_action_group_add_actions(gebr.action_group, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
 	gtk_action_group_add_radio_actions(gebr.action_group, status_radio_actions_entries, 3, -1,
 		(GCallback)on_flow_component_status_activate, NULL);
 	gtk_ui_manager_insert_action_group(gebr.ui_manager, gebr.action_group, 0);
+	gebr.accel_group = gtk_ui_manager_get_accel_group(gebr.ui_manager);
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group);
 
 	/* Signals */
 	g_signal_connect(GTK_OBJECT(gebr.window), "delete_event",
@@ -259,7 +258,7 @@ gebr_setup_ui(void)
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_disabled")));
- gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_unconfigured")));
 
 	gebr.ui_flow_edition = flow_edition_setup_ui();

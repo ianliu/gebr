@@ -915,22 +915,22 @@ parameter_popup_menu(GtkWidget * tree_view)
 
 	menu = gtk_menu_new();
 
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(debr.actions.parameter.new));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "parameter_new")));
 
 	if (parameter_get_selected(&iter) == FALSE)
 		goto out;
 
 	if (gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE)
-		gtk_container_add(GTK_CONTAINER(menu),
-			gtk_action_create_menu_item(debr.actions.parameter.top));
+		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+			gtk_action_group_get_action(debr.action_group, "parameter_top")));
 	if (gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE)
-		gtk_container_add(GTK_CONTAINER(menu),
-			gtk_action_create_menu_item(debr.actions.parameter.bottom));
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(debr.actions.parameter.duplicate));
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(debr.actions.parameter.delete));
+		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+			gtk_action_group_get_action(debr.action_group, "parameter_bottom")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "parameter_duplicate")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "parameter_delete")));
 
 out:	gtk_widget_show_all(menu);
 

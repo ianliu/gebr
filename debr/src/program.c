@@ -614,20 +614,20 @@ program_popup_menu(GtkWidget * tree_view)
 
 	menu = gtk_menu_new();
 
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(debr.actions.program.new));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "program_new")));
 
 	if (program_get_selected(&iter) == FALSE)
 		goto out;
 
 	if (gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE)
-		gtk_container_add(GTK_CONTAINER(menu),
-			gtk_action_create_menu_item(debr.actions.program.top));
+		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "program_top")));
 	if (gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
-		gtk_container_add(GTK_CONTAINER(menu),
-			gtk_action_create_menu_item(debr.actions.program.bottom));
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(debr.actions.program.delete));
+		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "program_bottom")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "program_delete")));
 
 out:	gtk_widget_show_all(menu);
 

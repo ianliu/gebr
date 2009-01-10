@@ -65,19 +65,6 @@ debr_quit(void)
 	gtk_widget_destroy(debr.about.dialog);
 	g_object_unref(debr.accel_group);
 
-	/* actions */
-	g_object_unref(debr.actions.menu.new);
-	g_object_unref(debr.actions.menu.open);
-	g_object_unref(debr.actions.menu.save);
-	g_object_unref(debr.actions.menu.save_as);
-	g_object_unref(debr.actions.menu.revert);
-	g_object_unref(debr.actions.menu.delete);
-	g_object_unref(debr.actions.menu.close);
-	g_object_unref(debr.actions.program.new);
-	g_object_unref(debr.actions.program.delete);
-	g_object_unref(debr.actions.parameter.new);
-	g_object_unref(debr.actions.parameter.delete);
-
 	/* free config stuff */
 	g_key_file_free(debr.config.key_file);
 	g_string_free(debr.config.path, TRUE);

@@ -732,8 +732,8 @@ menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 		enable = FALSE;
 	}
 
-	gtk_action_set_sensitive(debr.actions.menu.save, enable);
-	gtk_action_set_sensitive(debr.actions.menu.revert, enable);
+	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save"), enable);
+	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert"), enable);
 }
 
 /*
