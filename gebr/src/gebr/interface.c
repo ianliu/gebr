@@ -75,18 +75,18 @@ static const GtkActionEntry actions_entries [] = {
 	{"flow_edition_refresh", GTK_STOCK_REFRESH, NULL, NULL, _("Refresh available components list"),
 		(GCallback)on_flow_component_refresh_activate},
 	/* Job control */
-	{"job_save", GTK_STOCK_SAVE, NULL, NULL, _("Save job information in a file"),
+	{"job_control_save", GTK_STOCK_SAVE, NULL, NULL, _("Save job information in a file"),
 		(GCallback)on_job_control_save},
-	{"job_cancel", GTK_STOCK_MEDIA_STOP, NULL, NULL, _("Ask server to terminate the job"),
+	{"job_control_cancel", GTK_STOCK_MEDIA_STOP, NULL, NULL, _("Ask server to terminate the job"),
 		(GCallback)on_job_control_cancel},
-	{"job_close", "edit-clear", NULL, NULL, _("Clear current job log"),
+	{"job_control_close", "edit-clear", NULL, NULL, _("Clear current job log"),
 		(GCallback)on_job_control_close},
-	{"job_clear", GTK_STOCK_CLEAR, NULL, NULL, _("Clear all unactive job logs"),
+	{"job_control_clear", GTK_STOCK_CLEAR, NULL, NULL, _("Clear all unactive job logs"),
 		(GCallback)on_job_control_clear},
-	{"job_stop", GTK_STOCK_STOP, NULL, NULL, _("Ask server to kill the job"),
+	{"job_control_stop", GTK_STOCK_STOP, NULL, NULL, _("Ask server to kill the job"),
 		(GCallback)on_job_control_stop}
 };
-static const gint actions_entries_number = 22;
+static const gint actions_entries_number = 23;
 
 static const GtkRadioActionEntry status_radio_actions_entries [] = {
 	{"flow_edition_status_configured", NULL, _("Configured"), NULL, NULL, 0},
