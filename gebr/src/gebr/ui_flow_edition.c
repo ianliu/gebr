@@ -341,12 +341,22 @@ flow_edition_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIte
  * 
  */
 static gboolean
-flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before,
+flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before_iter,
 	struct ui_flow_edition * ui_flow_edition)
 {
+	GeoXmlSequence *	program;
+	GeoXmlSequence *	before;
+
+	gtk_tree_model_get(gtk_tree_view_get_model(tree_view),
+		iter, FSEQ_GEOXML_POINTER, &program, -1);
+	gtk_tree_model_get(gtk_tree_view_get_model(tree_view),
+		before_iter, FSEQ_GEOXML_POINTER, &before, -1);
+
+	geoxml_sequence_move_before(program, before);
+	flow_save();
+
 	return TRUE;
 }
-
 
 /* Function: flow_edition_component_selected
  * When a flow component (a program in the flow) is selected
