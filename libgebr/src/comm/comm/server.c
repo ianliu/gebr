@@ -601,4 +601,5 @@ comm_server_free_for_reuse(struct comm_server * comm_server)
 		g_process_free(comm_server->process.data.regular);
 		break;
 	}
+	comm_server->process.use = COMM_SERVER_PROCESS_NONE;
 }
