@@ -43,6 +43,9 @@ void
 flow_run(void);
 
 void
+flow_program_duplicate(void);
+
+void
 flow_program_remove(void);
 
 void

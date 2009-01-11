@@ -68,6 +68,8 @@ static const GtkActionEntry actions_entries [] = {
 	/* Flow Edition */
 	{"flow_edition_help", GTK_STOCK_HELP, NULL, NULL, _("Show component's help"),
 		(GCallback)on_flow_component_help_activate},
+	{"flow_edition_duplicate", GTK_STOCK_COPY, NULL, NULL, _("Duplicate component"),
+		(GCallback)on_flow_component_duplicate_activate},
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL, NULL, _("Delete component"),
 		(GCallback)on_flow_component_delete_activate},
 	{"flow_edition_properties", GTK_STOCK_PROPERTIES, NULL, NULL, _("Edit component parameters"),
@@ -243,6 +245,8 @@ gebr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_duplicate"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_delete"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(

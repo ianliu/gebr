@@ -213,19 +213,27 @@ on_flow_execute_activate(void)
 void
 on_flow_component_help_activate(void)
 {
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 2);
 	program_help_show();
 }
 
 /*
+ * Function: on_flow_component_duplicate_activate
+ * Call <flow_program_duplicate>
+ */
+void
+on_flow_component_duplicate_activate(void)
+{
+	flow_program_duplicate();
+}
+
+
+/*
  * Function: on_flow_component_delete_activate
- * *Fill me in!*
- *
+ * Call <flow_program_remove>
  */
 void
 on_flow_component_delete_activate(void)
 {
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 2);
 	flow_program_remove();
 }
 

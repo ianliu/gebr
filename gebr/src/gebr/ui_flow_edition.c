@@ -558,6 +558,8 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 	menu_item = gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_duplicate")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_delete")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_help")));

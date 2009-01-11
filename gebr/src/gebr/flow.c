@@ -40,6 +40,7 @@
 #include "support.h"
 #include "document.h"
 #include "server.h"
+#include "ui_flow.h"
 #include "ui_flow_browse.h"
 
 /* errors strings. */
@@ -546,6 +547,33 @@ flow_run(void)
 }
 
 /*
+ * Function: flow_program_duplicate
+ * Remove selected program from flow process
+ */
+void
+flow_program_duplicate(void)
+{
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+
+	GeoXmlSequence *	program;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_program_selected_error);
+		return;
+	}
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+		FSEQ_GEOXML_POINTER, &program,
+		-1);
+	program = geoxml_sequence_append_clone(program);
+	flow_add_program_sequence_to_view(program);
+	flow_save();
+}
+
+/*
  * Function: flow_program_remove
  * Remove selected program from flow process
  */
@@ -565,12 +593,13 @@ flow_program_remove(void)
 	}
 
 	/* SEEK AND DESTROY */
-	geoxml_flow_get_program(gebr.flow, &program,
-		gtk_list_store_get_iter_index(gebr.ui_flow_edition->fseq_store, &iter));
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+		FSEQ_GEOXML_POINTER, &program,
+		-1);
 	geoxml_sequence_remove(program);
 	flow_save();
 	/* from GUI... */
-	gtk_list_store_remove(GTK_LIST_STORE (gebr.ui_flow_edition->fseq_store), &iter);
+	gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
 }
 
 /*
@@ -590,8 +619,9 @@ flow_program_move_top(void)
 	gtk_tree_selection_get_selected(selection, &model, &iter);
 
 	/* Update flow */
-	geoxml_flow_get_program(gebr.flow, &program,
-		gtk_list_store_get_iter_index(gebr.ui_flow_edition->fseq_store, &iter));
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+		FSEQ_GEOXML_POINTER, &program,
+		-1);
 	geoxml_sequence_move_after(program, NULL);
 	flow_save();
 	/* Update GUI */
@@ -616,8 +646,9 @@ flow_program_move_bottom(void)
 	gtk_tree_selection_get_selected(selection, &model, &iter);
 
 	/* Update flow */
-	geoxml_flow_get_program(gebr.flow, &program,
-		gtk_list_store_get_iter_index(gebr.ui_flow_edition->fseq_store, &iter));
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+		FSEQ_GEOXML_POINTER, &program,
+		-1);
 	geoxml_sequence_move_before(program, NULL);
 	flow_save();
 	/* Update GUI */
