@@ -26,6 +26,7 @@
 #include "support.h"
 #include "menu.h"
 #include "program.h"
+#include "parameter.h"
 
 /*
  * File: interface.c
@@ -90,6 +91,7 @@ debr_setup_ui(void)
 	GtkWidget *		menu_item;
 	GtkWidget *		child_menu_item;
 	GtkWidget *		toolbar;
+	GtkToolItem *		tool_item;
 
 	/*
 	 * Main window and its vbox contents
@@ -134,6 +136,8 @@ debr_setup_ui(void)
 	gtk_window_add_accel_group(GTK_WINDOW(debr.window), debr.accel_group);
 	debr.action_group = gtk_action_group_new("General");
 	gtk_action_group_add_actions(debr.action_group, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
+	gtk_action_group_add_radio_actions(debr.action_group, parameter_type_radio_actions_entries,
+		combo_type_map_size, -1, (GCallback)on_parameter_type_activate, NULL);
 
 	/*
 	 * Menu: Actions
@@ -244,8 +248,16 @@ debr_setup_ui(void)
 		gtk_action_group_get_action(debr.action_group, "parameter_delete"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "parameter_properties"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "parameter_change_type"))), -1);
+	debr.parameter_type_menu = menu = gtk_menu_new();
+	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_CONVERT);
+	g_signal_connect(tool_item, "clicked",
+		(GCallback)on_parameter_change_type_activate, NULL);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
+	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
+	guint i, l = combo_type_map_size;
+	for (i = 0; i < l; ++i)
+		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+			gtk_action_group_get_action(debr.action_group, parameter_type_radio_actions_entries[i].name)));
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);

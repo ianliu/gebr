@@ -18,14 +18,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <geoxml.h>
 #include <gui/gtkfileentry.h>
 #include <gui/gtkenhancedentry.h>
 #include <gui/utils.h>
 #include <gui/valuesequenceedit.h>
 
 #include "parameter.h"
-#include "support.h"
 #include "debr.h"
 #include "callbacks.h"
 #include "enumoptionedit.h"
@@ -34,7 +32,7 @@
 #include "parametergroup.h"
 
 /*
- * File: program.c
+ * File: parameter.c
  * Construct interfaces for parameter
  */
 
@@ -75,6 +73,18 @@ combo_type_map_get_index(enum GEOXML_PARAMETERTYPE type)
 #define combo_type_map_get_title(type) \
 	combo_type_map[combo_type_map_get_index(type)].title
 
+/* same order as combo_box_map */
+const GtkRadioActionEntry parameter_type_radio_actions_entries [] = {
+	{"parameter_type_real", NULL, _("real"), NULL, NULL, GEOXML_PARAMETERTYPE_FLOAT},
+	{"parameter_type_integer", NULL, _("integer"), NULL, NULL, GEOXML_PARAMETERTYPE_INT},
+	{"parameter_type_range", NULL, _("range"), NULL, NULL, GEOXML_PARAMETERTYPE_RANGE},
+	{"parameter_type_flag", NULL, _("flag"), NULL, NULL, GEOXML_PARAMETERTYPE_FLAG},
+	{"parameter_type_text", NULL, _("text"), NULL, NULL, GEOXML_PARAMETERTYPE_STRING},
+	{"parameter_type_enum", NULL, _("enum"), NULL, NULL, GEOXML_PARAMETERTYPE_ENUM},
+	{"parameter_type_file", NULL, _("file"), NULL, NULL, GEOXML_PARAMETERTYPE_FILE},
+	{"parameter_type_group", NULL, _("group"), NULL, NULL, GEOXML_PARAMETERTYPE_GROUP},
+};
+ 
 static GtkTreeIter
 parameter_append_to_ui(GeoXmlParameter * parameter, GtkTreeIter * parent);
 static void
@@ -333,7 +343,7 @@ parameter_bottom(void)
 }
 
 /*
- * Function: parameter_change_type
+ * Function: parameter_change_type_setup_ui
  * Open dialog to change type of current selected parameter
  */
 void
@@ -345,6 +355,7 @@ parameter_change_type_setup_ui(void)
 	GtkWidget *	type_combo;
 
 	GtkTreeIter	iter;
+
 	if (parameter_get_selected(&iter) == FALSE)
 		return;
 
@@ -396,6 +407,20 @@ parameter_change_type_setup_ui(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 
 	gtk_widget_destroy(dialog);
+}
+
+/*
+ * Function: parameter_change_type
+ * Change type of selected parameter to _type_
+ */
+void
+parameter_change_type(enum GEOXML_PARAMETERTYPE type)
+{
+	if (parameter_check_selected() == FALSE)
+		return;
+
+	geoxml_parameter_set_type(debr.parameter, type);
+	parameter_load_selected();
 }
 
 /*
@@ -888,8 +913,15 @@ parameter_selected(void)
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
 		PARAMETER_XMLPOINTER, &debr.parameter,
 		-1);
-
 	do_navigation_bar_update();
+
+	/* parameter type stuff */
+	gtk_action_set_visible(gtk_action_group_get_action(debr.action_group,
+		"parameter_type_group"), !geoxml_parameter_get_is_in_group(debr.parameter));
+	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(debr.action_group,
+		parameter_type_radio_actions_entries[
+			combo_type_map_get_index(geoxml_parameter_get_type(debr.parameter))].name)),
+		TRUE);
 }
 
 /*
@@ -917,6 +949,7 @@ static GtkMenu *
 parameter_popup_menu(GtkWidget * tree_view)
 {
 	GtkWidget *	menu;
+	GtkWidget *	menu_item;
 
 	GtkTreeIter	iter;
 
@@ -934,6 +967,14 @@ parameter_popup_menu(GtkWidget * tree_view)
 	if (gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE)
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 			gtk_action_group_get_action(debr.action_group, "parameter_bottom")));
+
+	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_change_type"));
+	gtk_action_block_activate_from(gtk_action_group_get_action(debr.action_group,
+		"parameter_change_type"), menu_item);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), debr.parameter_type_menu);
+	gtk_container_add(GTK_CONTAINER(menu), menu_item);
+	
+
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "parameter_duplicate")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(

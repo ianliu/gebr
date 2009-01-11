@@ -87,6 +87,9 @@ void
 on_parameter_change_type_activate(void);
 
 void
+on_parameter_type_activate(GtkRadioAction * first_action);
+
+void
 on_configure_preferences_activate(void);
 
 void

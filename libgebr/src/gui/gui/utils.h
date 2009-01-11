@@ -90,9 +90,6 @@ gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GtkTreeViewReorderCa
 gboolean
 confirm_action_dialog(const gchar * title, const gchar * message, ...);
 
-void
-set_tooltip(GtkWidget * widget, const gchar * tip);
-
 GtkWidget *
 gtk_container_add_depth_hbox(GtkWidget * container);
 

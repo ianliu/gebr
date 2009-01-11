@@ -19,8 +19,14 @@
 #define __PARAMETER_H
 
 #include <gtk/gtk.h>
+#include <geoxml.h>
 
 #include <gui/parameter.h>
+
+#include "support.h"
+
+extern const GtkRadioActionEntry parameter_type_radio_actions_entries [];
+extern const gsize combo_type_map_size;
 
 enum {
 	PARAMETER_TYPE,
@@ -71,6 +77,9 @@ parameter_bottom(void);
 
 void
 parameter_change_type_setup_ui(void);
+
+void
+parameter_change_type(enum GEOXML_PARAMETERTYPE type);
 
 void
 parameter_dialog_setup_ui(void);

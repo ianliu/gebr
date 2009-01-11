@@ -473,6 +473,16 @@ on_parameter_change_type_activate(void)
 }
 
 /*
+ * Function: on_parameter_type_activate
+ * Call <parameter_change_type>
+ */
+void
+on_parameter_type_activate(GtkRadioAction * first_action)
+{
+	parameter_change_type((enum GEOXML_PARAMETERTYPE)gtk_radio_action_get_current_value(first_action));
+}
+
+/*
  * Function: on_configure_preferences_activate
  * Call <preferences_dialog_setup_ui>
  */

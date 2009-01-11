@@ -48,6 +48,7 @@ struct debr {
 	struct ui_menu		ui_menu;
 	struct ui_program	ui_program;
 	struct ui_parameter	ui_parameter;
+	GtkWidget *		parameter_type_menu;
 
         /* icons */
 	struct debr_pixmaps {
