@@ -63,7 +63,7 @@ static const GtkActionEntry actions_entries [] = {
 	{"flow_import", "document-import", _("Import"), NULL, _("Import a flow"), (GCallback)on_flow_import_activate},
 	{"flow_export", "document-export", _("Export"), NULL, _("Export the flow"),
 		(GCallback)on_flow_export_activate},
-	{"flow_export_as_menu", "document-export", _("Export as menu"), NULL, _("Export the flow as a menu"),
+	{"flow_export_as_menu", GTK_STOCK_CONVERT, _("Export as menu"), NULL, _("Export the flow as a menu"),
 		(GCallback)on_flow_export_as_menu_activate},
 	/* Flow Edition */
 	{"flow_edition_help", GTK_STOCK_HELP, NULL, NULL, _("Show component's help"),
