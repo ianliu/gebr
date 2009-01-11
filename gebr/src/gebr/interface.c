@@ -252,7 +252,6 @@ gebr_setup_ui(void)
 
 	menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_APPLY);
-	gtk_menu_tool_button_enable_show_menu_on_clicked(GTK_MENU_TOOL_BUTTON(tool_item));
 	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(

@@ -289,6 +289,8 @@ gebr_config_load(void)
 		gebr.config.height = g_key_file_load_int_key(gebr.config.key_file, "general", "height", 400);
 		gebr.config.log_expander_state = g_key_file_load_boolean_key(gebr.config.key_file,
 			"general", "logexpand", FALSE);
+		gebr.config.job_log_word_wrap = g_key_file_load_boolean_key(gebr.config.key_file,
+			"general", "job_log_word_wrap", FALSE);
 	}
 	if (new_config) {
 		server_new("127.0.0.1", TRUE);
@@ -298,6 +300,8 @@ gebr_config_load(void)
 
 	gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
 	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
+	g_object_set(G_OBJECT(gebr.ui_job_control->text_view), "wrap-mode",
+		gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
 
 	menu_list_populate();
 	project_list_populate();
@@ -366,6 +370,7 @@ gebr_config_save(gboolean verbose)
 	g_key_file_set_integer(gebr.config.key_file, "general", "width", gebr.config.width);
 	g_key_file_set_integer(gebr.config.key_file, "general", "height", gebr.config.height);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "log_expander_state", gebr.config.log_expander_state);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_word_wrap", gebr.config.job_log_word_wrap);
 
 	/* Save list of servers */
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);

@@ -37,6 +37,9 @@
 static void
 job_control_clicked(void);
 
+static void
+on_text_view_populate_popup(GtkTextView * textview, GtkMenu * menu); 
+
 /*
  * Section: Public
  * Public functions.
@@ -82,9 +85,9 @@ job_control_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(frame), scrolled_win);
 
 	ui_job_control->store = gtk_list_store_new(JC_N_COLUMN,
-					GDK_TYPE_PIXBUF,	/* Icon		*/
-					G_TYPE_STRING,		/* Title	*/
-					G_TYPE_POINTER);	/* struct job	*/
+		GDK_TYPE_PIXBUF,
+		G_TYPE_STRING,
+		G_TYPE_POINTER);
 
 	ui_job_control->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_job_control->store));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_job_control->view), FALSE);
@@ -120,20 +123,20 @@ job_control_setup_ui(void)
 
 	ui_job_control->text_buffer = gtk_text_buffer_new(NULL);
 	text_view = gtk_text_view_new_with_buffer(ui_job_control->text_buffer);
+	g_signal_connect(text_view, "populate-popup", (GCallback)on_text_view_populate_popup, NULL);
 	g_object_set(G_OBJECT(text_view),
 		"editable", FALSE,
 		"cursor-visible", FALSE,
 		NULL);
 	{
-	   PangoFontDescription* font;
+		PangoFontDescription* font;
 
-	   font = pango_font_description_new();
-	   pango_font_description_set_family(font, "courier 10 pitch");
-	   pango_font_description_set_style(font, PANGO_STYLE_NORMAL);
+		font = pango_font_description_new();
+		pango_font_description_set_family(font, "courier 10 pitch");
+		pango_font_description_set_style(font, PANGO_STYLE_NORMAL);
 
-	   gtk_widget_modify_font(text_view, font);
-	   pango_font_description_free(font);
-
+		gtk_widget_modify_font(text_view, font);
+		pango_font_description_free(font);
 	}
 	ui_job_control->text_view = text_view;
 	gtk_container_add(GTK_CONTAINER(scrolled_win), text_view);
@@ -402,4 +405,28 @@ job_control_clicked(void)
 			-1);
 
 	job_fill_info(job);
+}
+
+static void
+wordwrap_toggled(GtkCheckMenuItem * check_menu_item, GtkTextView * text_view)
+{
+	gebr.config.job_log_word_wrap = gtk_check_menu_item_get_active(check_menu_item);
+	g_object_set(G_OBJECT(text_view), "wrap-mode",
+		gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
+}
+
+static void
+on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
+{
+	GtkWidget *	menu_item;
+
+	menu_item = gtk_separator_menu_item_new();
+	gtk_widget_show(menu_item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+
+	menu_item = gtk_check_menu_item_new_with_label(_("Word-wrap"));
+	gtk_widget_show(menu_item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(menu_item, "toggled", (GCallback)wordwrap_toggled, text_view);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), gebr.config.job_log_word_wrap);
 }

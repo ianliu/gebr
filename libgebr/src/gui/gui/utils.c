@@ -565,6 +565,23 @@ confirm_action_dialog(const gchar * title, const gchar * message, ...)
 	return confirmed;
 }
 
+/*
+ * Function: set_tooltip
+ * Set tooltip all across the code.
+ */
+void
+set_tooltip(GtkWidget * widget, const gchar * tip)
+{
+#if GTK_CHECK_VERSION(2,12,0)
+	g_object_set(G_OBJECT(widget), "tooltip-text",  tip, NULL);
+#else
+	static GtkTooltips * tips = NULL;
+	if (tips == NULL)
+		tips = gtk_tooltips_new();
+	gtk_tooltips_set_tip(tips, widget, tip, NULL);
+#endif
+}
+
 GtkWidget *
 gtk_container_add_depth_hbox(GtkWidget * container)
 {
