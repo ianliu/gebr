@@ -25,12 +25,12 @@ What GêBR does:
     * Act as an interface to many freely-available seismic-processing
       packages (Seismic Unix, Madagascar, etc)
 
-GêBRME is the flow editor to seismic processing software.
+D�BR is the flow editor to seismic processing software.
 
 %prep
 %setup -q
 
-%configure
+%configure --disable-debug
 
 %build
 make -j 4

@@ -28,7 +28,7 @@ What GêBR does:
 %prep
 %setup -q
 
-%configure
+%configure --disable-debug
 
 %build
 make -j 4

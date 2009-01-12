@@ -32,7 +32,7 @@ libgebr is the collection of libraries of GêBR:
 %prep
 %setup -q
 
-%configure
+%configure --disable-debug
 
 %build
 make -j 4
