@@ -1,5 +1,5 @@
 #!/bin/sh
-# GÃªBR - An environment for seismic processing.
+# GeBR - An environment for seismic processing.
 # Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
 #
 # This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ mkdir $GEBR_DIR
 export CFLAGS="-g"
 # export LDFLAGS="-Wl,-rpath ."
 
-#GÃªBR libray
+#GeBR libray
 cd libgebr
 aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR --enable-static-mode
 cat src/geoxml/geoxml/defines.h.in | sed 's/@prefix@/../' > src/geoxml/geoxml/defines.h
@@ -37,7 +37,7 @@ export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$GEBR_DIR/lib/pkgconfig
 export LD_LIBRARY_PATH=$GEBR_DIR/lib
 export LDFLAGS="-Wl,-rpath ../lib"
 
-#GÃªBR
+#GeBR
 mkdir lib gebr/lib
 cd gebr
 aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR --enable-static-mode
@@ -47,7 +47,7 @@ make -j5 install
 cd ..
 rmdir lib gebr/lib
 
-#GÃªBRD
+#GeBRD
 mkdir lib gebrd/lib
 cd gebrd
 aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR
@@ -56,14 +56,14 @@ make -j5 install
 cd ..
 rmdir lib gebrd/lib
 
-#GÃªBRME
-mkdir lib gebrme/lib
-cd gebrme
+#DeBR
+mkdir lib debr/lib
+cd debr
 aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR
 cat src/defines.h.in | sed 's/@prefix@/../' > src/defines.h
 #make -j5 clean install
 make -j5 install
 cd ..
-rmdir lib gebrme/lib
+rmdir lib debr/lib
 
 #final adjustments
