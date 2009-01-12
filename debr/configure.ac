@@ -41,7 +41,7 @@ AC_ARG_ENABLE(debug,
 	[turn on debugging])],,
 	enable_debug=yes)
 if test "$enable_debug" = "yes"; then
-	DEBUG_CFLAGS="-DGEBR_DEBUG"
+	DEBUG_CFLAGS="-DDEBR_DEBUG"
 else
 	DEBUG_CFLAGS=""
 fi

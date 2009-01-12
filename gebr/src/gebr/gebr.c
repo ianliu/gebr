@@ -423,19 +423,19 @@ gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_
 	gchar *			string;
 	va_list			argp;
 
+#ifndef GEBR_DEBUG
+	if (type == LOG_DEBUG)
+		return;
+#endif
+
 	va_start(argp, message);
 	string = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
-#ifdef GEBR_DEBUG
 	if (type == LOG_DEBUG)
 		g_print("%s\n", string);
 	else if (in_statusbar)
 		log_set_message(gebr.ui_log, string);
-#else
-	if (in_statusbar)
-		log_set_message(gebr.ui_log, string);
-#endif
 	if (in_log_file) {
 		struct log_message *	log_message;
 

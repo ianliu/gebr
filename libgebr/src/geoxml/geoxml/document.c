@@ -216,8 +216,7 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 				__geoxml_set_element_value(element, "", __geoxml_create_TextNode);
 
 				__geoxml_insert_new_element(element, "label", NULL);
-				__geoxml_insert_new_element(element, "value", NULL);
-				__geoxml_set_tag_value((GdomeElement*)element,
+				__geoxml_set_tag_value(__geoxml_insert_new_element(element, "value", NULL),
 					"value", value, __geoxml_create_TextNode);
 
 				g_free(value);

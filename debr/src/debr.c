@@ -143,14 +143,17 @@ debr_message(enum log_message_type type, const gchar * message, ...)
 	gchar *		string;
 	va_list		argp;
 
+#ifndef DEBR_DEBUG
+	if (type == LOG_DEBUG)
+		return;
+#endif
+
 	va_start(argp, message);
 	string = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
-#ifdef __DEBUG
 	if (type == LOG_DEBUG)
 		g_print("%s\n", string);
-#endif
 	gtk_statusbar_push(GTK_STATUSBAR(debr.statusbar), 0, string);
 
 	g_free(string);

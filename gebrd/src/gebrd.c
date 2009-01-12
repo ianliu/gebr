@@ -104,13 +104,15 @@ gebrd_message(enum log_message_type type, const gchar * message, ...)
 	gchar *		string;
 	va_list		argp;
 
+#ifndef GEBRD_DEBUG
+	if (type == LOG_DEBUG)
+		return;
+#endif
+
 	va_start(argp, message);
 	string = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
-#ifndef GEBRD_DEBUG
-	if (type != LOG_DEBUG) {
-#endif
 	log_add_message(gebrd.log, type, string);
 	if (gebrd.options.foreground == TRUE) {
 		if (type != LOG_ERROR)
@@ -118,9 +120,6 @@ gebrd_message(enum log_message_type type, const gchar * message, ...)
 		else
 			fprintf(stderr, "%s\n", string);
 	}
-#ifndef GEBRD_DEBUG
-	}
-#endif
 
 	g_free(string);
 }
