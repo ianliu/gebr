@@ -40,7 +40,7 @@ help_fix_css(GString * help)
 
 		pos = (gebrcsspos - help->str)/sizeof(char);
 		g_string_erase(help, pos, 9);
-		g_string_insert(help, pos, "\"file://" GEBRME_DATA_DIR "gebr.css");
+		g_string_insert(help, pos, "\"file://" DEBR_DATA_DIR "gebr.css");
 	}
 }
 
@@ -206,7 +206,7 @@ help_edit(const gchar * help, GeoXmlProgram * program)
 	g_string_assign(prepared_html, help);
 	if (prepared_html->len == 0) {
 		/* Read back the help from file */
-		fp = fopen(GEBRME_DATA_DIR "help-template.html", "r");
+		fp = fopen(DEBR_DATA_DIR "help-template.html", "r");
 		if (fp == NULL) {
 			debr_message(LOG_ERROR, _("Could not open template. Please check your installation."));
 			return prepared_html;

@@ -1,5 +1,5 @@
-/*   libgebr - GÍBR Library
- *   Copyright (C) 2007-2008 GÍBR core team (http://gebr.sourceforge.net)
+/*   libgebr - GeBR Library
+ *   Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -99,8 +99,8 @@ home_mode(void)
 }
 
 /**
- * Create all configurations directories for all GÍBR programs.
- * Used by GÍBR programs before read/write config..
+ * Create all configurations directories for all GeBR programs.
+ * Used by GeBR programs before read/write config..
  */
 gboolean
 gebr_create_config_dirs(void)

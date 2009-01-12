@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEBRME_H
-#define __GEBRME_H
+#ifndef __DEBR_H
+#define __DEBR_H
 
 #include <gtk/gtk.h>
 #include <geoxml.h>
@@ -86,4 +86,4 @@ debr_config_save(void);
 void
 debr_message(enum log_message_type type, const gchar * message, ...);
 
-#endif //__GEBRME_H
+#endif //__DEBR_H

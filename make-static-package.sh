@@ -1,6 +1,6 @@
 #!/bin/sh
-# GêBR - An environment for seismic processing.
-# Copyright (C) 2007 GêBR core team (http://gebr.sourceforge.net)
+# GÃƒÂªBR - An environment for seismic processing.
+# Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ mkdir $GEBR_DIR
 export CFLAGS="-g"
 # export LDFLAGS="-Wl,-rpath ."
 
-#GêBR libray
+#GÃƒÂªBR libray
 cd libgebr
 aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR --enable-static-mode
 cat src/geoxml/geoxml/defines.h.in | sed 's/@prefix@/../' > src/geoxml/geoxml/defines.h
@@ -32,12 +32,12 @@ cat src/geoxml/geoxml/defines.h.in | sed 's/@prefix@/../' > src/geoxml/geoxml/de
 make -j5 install
 cd ..
 
-#preparation for compiling GêBR's programs
+#preparation for compiling GÃƒÂªBR's programs
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$GEBR_DIR/lib/pkgconfig
 export LD_LIBRARY_PATH=$GEBR_DIR/lib
 export LDFLAGS="-Wl,-rpath ../lib"
 
-#GêBR
+#GÃƒÂªBR
 mkdir lib gebr/lib
 cd gebr
 aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR --enable-static-mode
@@ -47,7 +47,7 @@ make -j5 install
 cd ..
 rmdir lib gebr/lib
 
-#GêBRD
+#GÃƒÂªBRD
 mkdir lib gebrd/lib
 cd gebrd
 aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR
@@ -56,7 +56,7 @@ make -j5 install
 cd ..
 rmdir lib gebrd/lib
 
-#GêBRME
+#GÃƒÂªBRME
 mkdir lib gebrme/lib
 cd gebrme
 aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR

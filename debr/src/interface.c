@@ -1,5 +1,5 @@
 /*   DeBR - GeBR Designer
- *   Copyright(C) 2007-2008 GeBR core team(http://debr.sourceforge.net)
+ *   Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -98,9 +98,9 @@ debr_setup_ui(void)
 	 */
 	gtk_window_set_default_icon(pixmaps_gebr_icon_16x16());
 	debr.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(debr.window), "DéBR");
+	gtk_window_set_title(GTK_WINDOW(debr.window), "DÃ©BR");
 	gtk_widget_set_size_request(debr.window, 600, 450);
-	debr.about = about_setup_ui("DéBR", _("Flow designer for GêBR"));
+	debr.about = about_setup_ui("DÃ©BR", _("Flow designer for GÃªBR"));
 
 	g_signal_connect(debr.window, "delete_event",
 		GTK_SIGNAL_FUNC(debr_quit), NULL);
