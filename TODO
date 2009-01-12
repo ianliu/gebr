@@ -4,6 +4,8 @@
 +	Internacionalização (português, espanhol, alemão, etc)
 +	Suporte a help
 
++	DéBR: preservar "keyword" na troca de tipo
++	"Enter" adiciona em GtkSequenceEdit
 +	Acertar tooltips (DéBR/GeBR)
 +	Conferir e completar os menus popup
 +	Teclas de atalho
@@ -21,8 +23,6 @@
 +	Multiline com tags gays gtk_text_buffer_insert_with_tags ()
 
 +      Revisões
-+      Ao excluir um ítem, selecionar o seguinte
-+      Pensar e descobrir como lançar versões em pacotes DEB/RPM
 
 =====================
 
