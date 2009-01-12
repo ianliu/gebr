@@ -1,5 +1,5 @@
 /*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2008 GeBR core team (http://gebr.sourceforge.net)
+ *   Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
  *
  *   This program is free software: you can redistribute it and/or
  *   modify it under the terms of the GNU General Public License as
@@ -327,7 +327,7 @@ gebr_config_load(void)
 
 /*
  * Function: gebr_config_apply
- * Apply configurations to G�BR
+ * Apply configurations to GeBR
  */
 void
 gebr_config_apply(void)
@@ -339,7 +339,7 @@ gebr_config_apply(void)
 
 /*
  * Function: gebr_config_save
- * Save G�BR config to file.
+ * Save GeBR config to file.
  *
  * Write ~/.gebr/.gebr.conf file.
  */

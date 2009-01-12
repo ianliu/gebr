@@ -15,17 +15,17 @@ Requires: libgebr, glib2, gtk2
 BuildRoot: /tmp/%{name}-%{version}
 Summary: Flow editor to seismic processing software.
 %description
-GêBR is an environment to seismic processing based on open-source
+GeBR is an environment to seismic processing based on open-source
 technologies, designed to easily assembly and run processing flows.
 
-What GêBR does:
+What GeBR does:
 
     * Handle projects and lines
     * Assembly and run processing flows
     * Act as an interface to many freely-available seismic-processing
       packages (Seismic Unix, Madagascar, etc)
 
-GêBRME is the flow editor to seismic processing software.
+GeBRME is the flow editor to seismic processing software.
 
 %prep
 %setup -q

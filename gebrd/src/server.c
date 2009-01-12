@@ -1,5 +1,5 @@
 /*   GeBR Daemon - Process and control execution of flows
- *   Copyright (C) 2007-2008 GeBR core team (http://gebr.sourceforge.net)
+ *   Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ server_init(void)
 			if (gebrd.options.foreground == TRUE) {
 				ret = FALSE;
 				gebrd_message(LOG_ERROR,
-					_("Cannot run interactive server, GeBR daemon is already running"));
+					_("Cannot run interactive server, GêBR daemon is already running"));
 				goto out;
 			}
 			ret = FALSE;

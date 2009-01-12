@@ -1,5 +1,5 @@
 # GeBR - An environment for seismic processing.
-# Copyright (C) 2007 GeBR core team (http://gebr.sourceforge.net)
+# Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ AC_SUBST(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 
 dnl check for libgebr
-PKG_CHECK_MODULES(LIBGEBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
+PKG_CHECK_MODULES(LIBGeBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
 AC_SUBST(LIBGEBR_CFLAGS)
 AC_SUBST(LIBGEBR_LIBS)
 

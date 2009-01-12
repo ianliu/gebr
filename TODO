@@ -4,12 +4,12 @@
 +	Internacionalização (português, espanhol, alemão, etc)
 +	Suporte a help
 
-+	Acertar tooltips (DéBR/GêBR)
++	Acertar tooltips (DéBR/GeBR)
 +	Conferir e completar os menus popup
 +	Teclas de atalho
 
 +	Mais detalhes para visao lateral da DéBR e scrolled window para
-        todas as janelas de detalhes DéBR/GêBR
+        todas as janelas de detalhes DéBR/GeBR
 
 +	Acrescentar uma quantidade especificada de parâmetros de um
         mesmo tipo de uma única vez
@@ -41,7 +41,7 @@
 ++   	Ler/gravar XML compactado (zlib)
 ++	Suporte a programas com MPI
 
-++	Cliente texto para GêBR
+++	Cliente texto para GeBR
 ++      Validador sintático para menus
 
 +++	Segurança (1)

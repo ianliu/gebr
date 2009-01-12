@@ -13,20 +13,20 @@ Packager: Bráulio Barros de Oliveira <brauliobo@gmail.com>
 Source: %{name}-%{version}.tar.gz
 Requires: libglib2.0_0 >= 2.8.0, libgdome0
 BuildRoot: /tmp/%{name}-%{version}
-Summary: GêBR library collecion
+Summary: GeBR library collecion
 %description
-GêBR is an environment to seismic processing based on open-source
+GeBR is an environment to seismic processing based on open-source
 technologies, designed to easily assembly and run processing flows.
 
-What GêBR does:
+What GeBR does:
 
     * Handle projects and lines
     * Assembly and run processing flows
     * Act as an interface to many freely-available seismic-processing
       packages (Seismic Unix, Madagascar, etc)
 
-libgebr is the collection of libraries of GêBR:
-    * libgebr_geoxml is the XML engine of GêBR
+libgebr is the collection of libraries of GeBR:
+    * libgebr_geoxml is the XML engine of GeBR
     * libgebr_misc network and process classes.
 
 %prep

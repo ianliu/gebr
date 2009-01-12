@@ -1,5 +1,5 @@
-/*   libgebr - G�BR Library
- *   Copyright (C) 2007-2008 G�BR core team (http://gebr.sourceforge.net)
+/*   libgebr - GeBR Library
+ *   Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
  *
  *   This parameters is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

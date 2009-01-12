@@ -11,10 +11,10 @@ Depends: ${shlibs:Depends}
 Recommends: gebrd, gebrme
 Suggests: gebr-menus-su
 Description: Seismic processing environment
- GêBR is an environment to seismic processing based on open-source
+ GeBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.
  . 
- What GêBR does:
+ What GeBR does:
  . 
      * Handle projects and lines
      * Assembly and run processing flows

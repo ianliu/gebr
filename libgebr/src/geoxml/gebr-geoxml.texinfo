@@ -2,7 +2,7 @@
 @c This file uses the @command command introduced in Texinfo 4.0.
 @c %**start of header
 @setfilename libgeoxml.info
-@settitle GêBR Library
+@settitle GeBR Library
 @finalout
 @setchapternewpage odd
 @c %**end of header
@@ -10,7 +10,7 @@
 @set VERSION 0.1.0
 
 @ifinfo
-This file documents the @command{libgeoxml} command which GêBR Library
+This file documents the @command{libgeoxml} command which GeBR Library
 
 Copyright (C) 2007 Bráulio Barros de Oliveira
 
@@ -38,7 +38,7 @@ by the Foundation.
 
 @titlepage
 @title libgeoxml
-@subtitle GêBR Library
+@subtitle GeBR Library
 @subtitle for libgeoxml Version @value{VERSION}
 @author by Bráulio Barros de Oliveira
 
@@ -66,7 +66,7 @@ by the Foundation.
 @node Top, Instructions, (dir), (dir)
 
 @ifinfo
-This file documents the @command{libgeoxml} command to GêBR Library.
+This file documents the @command{libgeoxml} command to GeBR Library.
 @end ifinfo
 
 @c All the menus can be updated with the EMACS command
@@ -125,7 +125,7 @@ This is the output of the command @samp{libgeoxml --help}:
 
 @example
 Usage: libgeoxml [OPTION...] [FILE...]
-GêBR Library
+GeBR Library
 
   -?, --help                 Give this help list
       --usage                Give a short usage message

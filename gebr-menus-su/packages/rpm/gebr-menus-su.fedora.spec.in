@@ -14,7 +14,7 @@ Source: %{name}-%{version}.tar.gz
 BuildRoot: /tmp/%{name}-%{version}
 Summary: Extra menus for GêBR concerning several shell tools
 %description
-GÃªBR is an environment for seismic processing based on open-source
+GeBR is an environment for seismic processing based on open-source
 technologies, but extensible and applicable to several different areas.
 
 This package provides many shell tools for general purpose.
