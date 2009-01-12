@@ -1,5 +1,5 @@
-# GÍBR ME - GÍBR Menu Editor
-# Copyright (C) 2007 GÍBR core team (http://gebr.sourceforge.net)
+# DeBR - GeBR Menu Designer
+# Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
