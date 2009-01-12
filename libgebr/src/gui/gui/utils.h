@@ -62,8 +62,12 @@ gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpo
 void
 gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback, gpointer user_data);
 
-gboolean
-gtk_tree_view_get_iter_from_coords(GtkTreeView * tree_view, GtkTreeIter * iter, gint x, gint y);
+/**
+ * Used when the selected iter is about to be removed
+ * so the next or previous (if it is the last) is selected
+ */
+void
+gtk_tree_view_select_sibling(GtkTreeView * tree_view);
 
 #if GTK_CHECK_VERSION(2,12,0)
 typedef gboolean (*GtkTreeViewTooltipCallback)(GtkTreeView * tree_view, GtkTooltip * tooltip,

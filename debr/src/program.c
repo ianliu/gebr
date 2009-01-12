@@ -220,6 +220,7 @@ program_remove(void)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
 	gtk_tree_selection_get_selected(selection, &model, &iter);
 
+	gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_program.tree_view));
 	gtk_list_store_remove(debr.ui_program.list_store, &iter);
 	geoxml_sequence_remove(GEOXML_SEQUENCE(debr.program));
 	debr.program = NULL;

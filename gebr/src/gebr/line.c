@@ -189,6 +189,7 @@ line_delete(void)
 	/* finally, remove it from the disk */
 	document_delete(line_filename);
 	/* and from the GUI */
+	gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), &line_iter);
 	gtk_list_store_clear(gebr.ui_flow_browse->store);
 	flow_free();

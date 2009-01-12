@@ -339,16 +339,12 @@ on_menu_close_activate(void)
 	}
 
 	geoxml_document_free(GEOXML_DOC(debr.menu));
-	gtk_list_store_remove(debr.ui_menu.list_store, &iter);
-
 	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.list_store), NULL) == 0)
 		menu_new();
-	else {
-		GtkTreeIter	first_iter;
+	else
+		gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 
-		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(debr.ui_menu.list_store), &first_iter, NULL, 0);
-		menu_select_iter(&first_iter);
-	}
+	gtk_list_store_remove(debr.ui_menu.list_store, &iter);
 }
 
 /*

@@ -178,7 +178,8 @@ flow_delete(void)
 	document_delete(filename);
 
 	/* Finally, from the GUI */
-	gtk_list_store_remove(GTK_LIST_STORE (gebr.ui_flow_browse->store), &flow_iter);
+	gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_browse->store), &flow_iter);
 	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
 
 out:	g_free(title);
@@ -591,6 +592,9 @@ flow_program_remove(void)
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_program_selected_error);
 		return;
 	}
+	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
+		return;
 
 	/* SEEK AND DESTROY */
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
@@ -599,6 +603,7 @@ flow_program_remove(void)
 	geoxml_sequence_remove(program);
 	flow_save();
 	/* from GUI... */
+	gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 	gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
 }
 

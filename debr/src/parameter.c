@@ -276,6 +276,7 @@ parameter_remove(void)
 	geoxml_parameter_get_label(debr.parameter)) == FALSE)
 		return;
 
+	gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	gtk_tree_store_remove(debr.ui_parameter.tree_store, &iter);
 	geoxml_sequence_remove(GEOXML_SEQUENCE(debr.parameter));
 	debr.parameter = NULL;

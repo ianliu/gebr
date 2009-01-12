@@ -28,6 +28,8 @@
 
 #include <glib/gstdio.h>
 
+#include <gui/utils.h>
+
 #include "project.h"
 #include "gebr.h"
 #include "support.h"
@@ -133,6 +135,7 @@ project_delete(void)
 	gebr_message(LOG_INFO, TRUE, TRUE, _("Erasing project '%s'"), title);
 
 	/* Remove the project from the store (and its children) */
+	gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	gtk_tree_store_remove(GTK_TREE_STORE (gebr.ui_project_line->store), &iter);
 
 	/* finally, remove it from the disk */
