@@ -14,27 +14,4 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = data src
-
-EXTRA_DIST=
-	rpm/debr.fedora.spec \
-	rpm/debr.opensuse.spec \
-	rpm/debr.mandriva.spec
-
-packages: deb-package rpm-packages
-rpm-packages: fedora-package opensuse-package mandriva-package
-
-deb-package:
-	dpkg-buildpackage -kA594D681 -tc -rfakeroot
-
-rpm-structure: dist
-	mkdir -p rpm/BUILD rpm/RPMS rpm/SRPMS rpm/SOURCES && cp @PACKAGE@-@VERSION@.tar.gz rpm/SOURCES
-
-fedora-package: rpm-structure
-	rpmbuild -ba rpm/debr.fedora.spec
-
-opensuse-package: rpm-structure
-	rpmbuild -ba rpm/debr.opensuse.spec
-
-mandriva-package: rpm-structure
-	rpmbuild -ba rpm/debr.mandriva.spec
+SUBDIRS = data src packages

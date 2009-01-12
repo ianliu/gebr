@@ -75,8 +75,8 @@ AC_SUBST(LIBGEBR_MISC_CFLAGS)
 AC_SUBST(LIBGEBR_MISC_LIBS)
 
 AC_OUTPUT([
-debian/changelog
-rpm/debr.fedora.spec rpm/debr.opensuse.spec rpm/debr.mandriva.spec
-data/help-template.html
+packages/debian/changelog
+packages/rpm/debr.fedora.spec packages/rpm/debr.opensuse.spec packages/rpm/debr.mandriva.spec
+data/help-template.html packages/Makefile 
 Makefile data/Makefile src/Makefile src/defines.h
 ])
