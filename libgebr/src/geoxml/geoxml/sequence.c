@@ -181,12 +181,13 @@ int
 __geoxml_sequence_move_after(GeoXmlSequence * sequence, GeoXmlSequence * position)
 {
 	if (position == NULL) {
-		GdomeNode *	parent_element;
+		GeoXmlSequence *	first_element, * tmp;
 
-		parent_element = gdome_el_parentNode((GdomeElement*)sequence, &exception);
-		gdome_n_insertBefore(parent_element, (GdomeNode*)sequence,
-			gdome_n_firstChild(parent_element, &exception),
-			&exception);
+		first_element = tmp = sequence;
+		while (!__geoxml_sequence_previous(&tmp))
+			first_element = tmp;
+		gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
+			(GdomeNode*)sequence, (GdomeNode*)first_element, &exception);
 
 		return exception == GDOME_NOEXCEPTION_ERR
 			? GEOXML_RETV_SUCCESS : GEOXML_RETV_DIFFERENT_SEQUENCES;
