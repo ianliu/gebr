@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<flow version="0.2.3">
+<flow version="0.3.0" nextid="n22">
   <filename>sufdmod2.mnu</filename>
   <title>SU FD Mod2</title>
   <description>Finite-Difference Modeling (2nd order) for acoustic wave equation</description>
@@ -195,101 +195,101 @@
 </body>
 </html>
 ]]></help>
-    <url/><parameters>
-      <int required="yes">
-	<keyword>nx=</keyword>
-	<label>Number of x samples</label>
-	<value default=""/>
-      </int>
-      <int required="yes">
-	<keyword>nz=</keyword>
-	<label>Number of z samples</label>
-	<value default=""/>
-      </int>
-      <float required="yes" separator=","><keyword>xs=</keyword><label>x coordinates of source</label><value default=""/></float>
-      <float required="yes" separator=","><keyword>zs=</keyword><label>z coordinates of source</label><value default=""/></float>
-      <float required="yes"><keyword>sstrength=</keyword><label>Strength of source</label><value default=""/></float>
-      <float required="yes">
-	<keyword>tmax=</keyword>
-	<label>Maximum time</label>
-	<value default=""/>
-      </float>
-      <int required="no">
-	<keyword>nt=</keyword>
-	<label>Number of time samples</label>
-	<value default=""/>
-      </int>
-      <int required="no">
-	<keyword>mt=</keyword>
-	<label>Number of time steps per output time step</label>
-	<value default=""/>
-      </int>
-      <float required="no">
-	<keyword>dx=</keyword>
-	<label>x sampling interval</label>
-	<value default=""/>
-      </float>
-      <float required="no">
-	<keyword>fx=</keyword>
-	<label>First x sample</label>
-	<value default=""/>
-      </float>
-      <float required="no">
-	<keyword>dz=</keyword>
-	<label>z sampling interval</label>
-	<value default=""/>
-      </float>
-      <float required="no">
-	<keyword>fz=</keyword>
-	<label>First z sample</label>
-	<value default=""/>
-      </float>
-      <float required="no">
-	<keyword>fmax=</keyword>
-	<label>Maximum frequency in source wavelet</label>
-	<value default=""/>
-      </float>
-      <float required="no">
-	<keyword>fpeak=</keyword>
-	<label>Peak frequency in ricker wavelet</label>
-	<value default=""/>
-      </float>
-      <file directory="no" required="no">
-	<keyword>dfile=</keyword>
-	<label>Input file containing density</label>
-	<value default=""/>
-      </file>
-      <float required="no">
-	<keyword>vsx=</keyword>
-	<label>x coordinate of vertical line of seismograms</label>
-	<value default=""/>
-      </float>
-      <float required="no">
-	<keyword>hsz=</keyword>
-	<label>z coordinate of horizontal line of seismograms</label>
-	<value default=""/>
-      </float>
-      <file directory="no" required="no">
-	<keyword>vsfile=</keyword>
-	<label>Output file for vertical line of seismograms</label>
-	<value default=""/>
-      </file>
-      <file directory="no" required="no">
-	<keyword>hsfile=</keyword>
-	<label>Output file for horizontal line of seismograms</label>
-	<value default=""/>
-      </file>
-      <file directory="no" required="no">
-	<keyword>ssfile=</keyword>
-	<label>Output file for source point seismograms</label>
-	<value default=""/>
-      </file>
-      <float required="no" separator=","><keyword>abs=</keyword><label>Absorbing boundary conditions</label><value default=""/></float>
-      <flag>
-	<keyword>verbose=1</keyword>
-	<label>Print some useful information</label>
-	<state default="off"/>
-      </flag>
+    <url>http://www.cwp.mines.edu/cwpcodes/</url><parameters exclusive="0">
+      <parameter id="n0"><label>Number of x samples</label><int><property required="yes"><keyword>nx=</keyword><value></value><default></default></property>
+	
+	
+	
+      </int></parameter>
+      <parameter id="n1"><label>Number of z samples</label><int><property required="yes"><keyword>nz=</keyword><value></value><default></default></property>
+	
+	
+	
+      </int></parameter>
+      <parameter id="n2"><label>x coordinates of source</label><float><property required="yes" separator=","><keyword>xs=</keyword><value/><default/></property></float></parameter>
+      <parameter id="n3"><label>z coordinates of source</label><float><property required="yes" separator=","><keyword>zs=</keyword><value/><default/></property></float></parameter>
+      <parameter id="n4"><label>Strength of source</label><float><property required="yes"><keyword>sstrength=</keyword><value></value><default></default></property></float></parameter>
+      <parameter id="n5"><label>Maximum time</label><float><property required="yes"><keyword>tmax=</keyword><value></value><default></default></property>
+	
+	
+	
+      </float></parameter>
+      <parameter id="n6"><label>Number of time samples</label><int><property required="no"><keyword>nt=</keyword><value></value><default></default></property>
+	
+	
+	
+      </int></parameter>
+      <parameter id="n7"><label>Number of time steps per output time step</label><int><property required="no"><keyword>mt=</keyword><value></value><default></default></property>
+	
+	
+	
+      </int></parameter>
+      <parameter id="n8"><label>x sampling interval</label><float><property required="no"><keyword>dx=</keyword><value></value><default></default></property>
+	
+	
+	
+      </float></parameter>
+      <parameter id="n9"><label>First x sample</label><float><property required="no"><keyword>fx=</keyword><value></value><default></default></property>
+	
+	
+	
+      </float></parameter>
+      <parameter id="n10"><label>z sampling interval</label><float><property required="no"><keyword>dz=</keyword><value></value><default></default></property>
+	
+	
+	
+      </float></parameter>
+      <parameter id="n11"><label>First z sample</label><float><property required="no"><keyword>fz=</keyword><value></value><default></default></property>
+	
+	
+	
+      </float></parameter>
+      <parameter id="n12"><label>Maximum frequency in source wavelet</label><float><property required="no"><keyword>fmax=</keyword><value></value><default></default></property>
+	
+	
+	
+      </float></parameter>
+      <parameter id="n13"><label>Peak frequency in ricker wavelet</label><float><property required="no"><keyword>fpeak=</keyword><value></value><default></default></property>
+	
+	
+	
+      </float></parameter>
+      <parameter id="n14"><label>Input file containing density</label><file directory="no"><property required="no"><keyword>dfile=</keyword><value></value><default></default></property>
+	
+	
+	
+      </file></parameter>
+      <parameter id="n15"><label>x coordinate of vertical line of seismograms</label><float><property required="no"><keyword>vsx=</keyword><value></value><default></default></property>
+	
+	
+	
+      </float></parameter>
+      <parameter id="n16"><label>z coordinate of horizontal line of seismograms</label><float><property required="no"><keyword>hsz=</keyword><value></value><default></default></property>
+	
+	
+	
+      </float></parameter>
+      <parameter id="n17"><label>Output file for vertical line of seismograms</label><file directory="no"><property required="no"><keyword>vsfile=</keyword><value></value><default></default></property>
+	
+	
+	
+      </file></parameter>
+      <parameter id="n18"><label>Output file for horizontal line of seismograms</label><file directory="no"><property required="no"><keyword>hsfile=</keyword><value></value><default></default></property>
+	
+	
+	
+      </file></parameter>
+      <parameter id="n19"><label>Output file for source point seismograms</label><file directory="no"><property required="no"><keyword>ssfile=</keyword><value></value><default></default></property>
+	
+	
+	
+      </file></parameter>
+      <parameter id="n20"><label>Absorbing boundary conditions</label><float><property required="no" separator=","><keyword>abs=</keyword><value/><default/></property></float></parameter>
+      <parameter id="n21"><label>Print some useful information</label><flag><property required="no"><keyword>verbose=1</keyword><value></value><default>off</default></property>
+	
+	
+	
+      </flag></parameter>
     </parameters>
   </program>
 </flow>

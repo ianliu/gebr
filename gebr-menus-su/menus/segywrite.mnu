@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.2.3">
+<flow version="0.3.0" nextid="n12">
   <filename>segywrite.mnu</filename>
   <title>SU SEG-Y write</title>
-  <description>Write an SEG-Y tape</description>
+  <description>Write a SEG-Y tape</description>
   <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -86,7 +86,7 @@
     <menu index="0">segywrite.mnu</menu>
     <title>SU SEG-Y write</title>
     <binary>segywrite</binary>
-    <description>write an SEG-Y tape</description>
+    <description>Write a SEG-Y tape</description>
     <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -206,19 +206,19 @@
 </body>
 </html>
 ]]></help>
-    <url/><parameters>
-      <file required="yes" directory="no"><keyword>tape=</keyword><label>Tape device to use or filename</label><value/></file>
-      <flag><keyword>buff=0</keyword><label>For 8mm EXABYTE drives</label><state default="off"/></flag>
-      <flag><keyword>conv=0</keyword><label>Don't convert to IBM format</label><state default="off"/></flag>
-      <file required="no" directory="no"><keyword>hfile=</keyword><label>EBCDIC card image header file</label><value/></file>
-      <file required="no" directory="no"><keyword>bfile=</keyword><label>Binary header file</label><value/></file>
-      <int required="no"><keyword>trmin=</keyword><label>First trace to write</label><value/></int>
-      <int required="no"><keyword>trmax=</keyword><label>Last trace to write</label><value/></int>
-      <flag><keyword>endian=0</keyword><label>Little-endian machines</label><state default="off"/></flag>
-      <int required="no"><keyword>errmax=</keyword><label>Allowable number of consecutive tape IO errors</label><value default="0"/></int>
-      <string required="no"><keyword>format=</keyword><label>Override value of format in binary header file</label><value/></string>
-      <int required="no"><keyword>vblock=</keyword><label>Echoing at each amount of trace</label><value default="50"/></int>
-      <flag><keyword>verbose=1</keyword><label>Print some useful information</label><state default="off"/></flag>
+    <url>http://www.cwp.mines.edu/cwpcodes/</url><parameters exclusive="0">
+      <parameter id="n0"><label>Tape device to use or filename</label><file directory="no"><property required="yes"><keyword>tape=</keyword><value/><default/></property></file></parameter>
+      <parameter id="n1"><label>For 8mm EXABYTE drives</label><flag><property required="no"><keyword>buff=0</keyword><value/><default>off</default></property></flag></parameter>
+      <parameter id="n2"><label>Don't convert to IBM format</label><flag><property required="no"><keyword>conv=0</keyword><value/><default>off</default></property></flag></parameter>
+      <parameter id="n3"><label>EBCDIC card image header file</label><file directory="no"><property required="no"><keyword>hfile=</keyword><value/><default/></property></file></parameter>
+      <parameter id="n4"><label>Binary header file</label><file directory="no"><property required="no"><keyword>bfile=</keyword><value/><default/></property></file></parameter>
+      <parameter id="n5"><label>First trace to write</label><int><property required="no"><keyword>trmin=</keyword><value/><default/></property></int></parameter>
+      <parameter id="n6"><label>Last trace to write</label><int><property required="no"><keyword>trmax=</keyword><value/><default/></property></int></parameter>
+      <parameter id="n7"><label>Little-endian machines</label><flag><property required="no"><keyword>endian=0</keyword><value/><default>off</default></property></flag></parameter>
+      <parameter id="n8"><label>Allowable number of consecutive tape IO errors</label><int><property required="no"><keyword>errmax=</keyword><value/><default>0</default></property></int></parameter>
+      <parameter id="n9"><label>Override value of format in binary header file</label><string><property required="no"><keyword>format=</keyword><value/><default/></property></string></parameter>
+      <parameter id="n10"><label>Echoing at each amount of trace</label><int><property required="no"><keyword>vblock=</keyword><value/><default>50</default></property></int></parameter>
+      <parameter id="n11"><label>Print some useful information</label><flag><property required="no"><keyword>verbose=1</keyword><value/><default>off</default></property></flag></parameter>
     </parameters>
   </program>
 </flow>

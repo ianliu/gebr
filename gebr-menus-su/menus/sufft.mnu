@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.2.3">
+<flow version="0.3.0" nextid="n3">
   <filename>sufft.mnu</filename>
   <title>SU FFT</title>
   <description>FFT real time traces to complex frequency traces</description>
@@ -178,18 +178,18 @@
 </html>
     
 ]]></help>
-    <url/><parameters>
-      <int required="no"><keyword>sign=</keyword><label>Sign in exponent of FFT</label><value default=""/></int>
-      <float required="no">
-        <keyword>dt=</keyword>
-        <label>Time sampling interval</label>
-        <value/>
-      </float>
-      <flag>
-        <keyword>verbose=0</keyword>
-        <label>Stop advisory messages</label>
-        <state default="off"/>
-      </flag>
+    <url>http://www.cwp.mines.edu/cwpcodes/</url><parameters exclusive="0">
+      <parameter id="n0"><label>Sign in exponent of FFT</label><int><property required="no"><keyword>sign=</keyword><value></value><default></default></property></int></parameter>
+      <parameter id="n1"><label>Time sampling interval</label><float><property required="no"><keyword>dt=</keyword><value></value><default></default></property>
+        
+        
+        
+      </float></parameter>
+      <parameter id="n2"><label>Stop advisory messages</label><flag><property required="no"><keyword>verbose=0</keyword><value></value><default>off</default></property>
+        
+        
+        
+      </flag></parameter>
     </parameters>
   </program>
 </flow>

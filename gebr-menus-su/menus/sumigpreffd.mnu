@@ -2,7 +2,7 @@
 <flow version="0.3.0" nextid="n14">
   <filename>sumigpreffd.mnu</filename>
   <title>SU FFD pre-stack migration</title>
-  <description>The 2-D prestack Fourier finite-difference depth  migration.</description>
+  <description>The 2-D prestack Fourier finite-difference depth migration</description>
   <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -95,7 +95,7 @@
     <menu index="0">sumigpreffd.mnu</menu>
     <title>SU FFD pre-stack migration</title>
     <binary>sumigpreffd</binary>
-    <description>The 2-D prestack Fourier finite-difference depth  migration.</description>
+    <description>The 2-D prestack Fourier finite-difference depth migration</description>
     <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -234,7 +234,7 @@
 </body>
 </html>
 ]]></help>
-    <url/>
+    <url>http://www.cwp.mines.edu/cwpcodes/</url>
     <parameters exclusive="0">
       <parameter id="n0">
         <label>Number of total horizontal output samples</label>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.2.3">
+<flow version="0.3.0" nextid="n1">
   <filename>suamp.mnu</filename>
   <title>SU Amp</title>
   <description>Output attributes of trace from data</description>
@@ -184,12 +184,12 @@
 </html>
     
 ]]></help>
-    <url/><parameters>
-      <string required="no">
-        <keyword>mode=</keyword>
-        <label>Mode</label>
-        <value/>
-      </string>
+    <url>http://www.cwp.mines.edu/cwpcodes/</url><parameters exclusive="0">
+      <parameter id="n0"><label>Mode</label><string><property required="no"><keyword>mode=</keyword><value></value><default></default></property>
+        
+        
+        
+      </string></parameter>
     </parameters>
   </program>
 </flow>

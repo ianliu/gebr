@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<flow version="0.2.2">
+<flow version="0.3.0" nextid="n2">
   <filename>a2b.mnu</filename>
   <title>ASCII to BIN</title>
   <description>Convert ASCII floats to binary</description>
@@ -110,17 +110,17 @@
 </html>
 ]]>
     </help>
-    <url/><parameters>
-      <int required="no">
-	<keyword>n1=</keyword>
-	<label>Floats per line in input file</label>
-	<value/>
-      </int>
-      <file directory="no" required="no">
-	<keyword>outpar=</keyword>
-	<label>Output parameter file</label>
-	<value default=""/>
-      </file>
+    <url>http://www.cwp.mines.edu/cwpcodes/</url><parameters exclusive="0">
+      <parameter id="n0"><label>Floats per line in input file</label><int><property required="no"><keyword>n1=</keyword><value/><default/></property>
+	
+	
+	
+      </int></parameter>
+      <parameter id="n1"><label>Output parameter file</label><file directory="no"><property required="no"><keyword>outpar=</keyword><value/><default/></property>
+	
+	
+	
+      </file></parameter>
     </parameters>
   </program>
 </flow>

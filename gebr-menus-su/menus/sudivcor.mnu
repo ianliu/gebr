@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.2.3">
+<flow version="0.3.0" nextid="n3">
   <filename>sudivcor.mnu</filename>
   <title>SU Divcor</title>
   <description>Divergence correction</description>
@@ -177,22 +177,22 @@
 </body>
 </html>
 ]]></help>
-    <url/><parameters>
-      <string required="no">
-        <keyword>trms=</keyword>
-        <label>Times corresponding to rms velocities below</label>
-        <value default="0.0"/>
-      </string>
-      <string required="no">
-        <keyword>vrms=</keyword>
-        <label>Interval velocities corresponding to times above</label>
-        <value default="1500.00"/>
-      </string>
-      <file required="no" directory="no">
-        <keyword>vfile=</keyword>
-        <label>File containing velocities vrms</label>
-        <value/>
-      </file>
+    <url>http://www.cwp.mines.edu/cwpcodes/</url><parameters exclusive="0">
+      <parameter id="n0"><label>Times corresponding to rms velocities below</label><string><property required="no"><keyword>trms=</keyword><value></value><default>0.0</default></property>
+        
+        
+        
+      </string></parameter>
+      <parameter id="n1"><label>Interval velocities corresponding to times above</label><string><property required="no"><keyword>vrms=</keyword><value></value><default>1500.00</default></property>
+        
+        
+        
+      </string></parameter>
+      <parameter id="n2"><label>File containing velocities vrms</label><file directory="no"><property required="no"><keyword>vfile=</keyword><value></value><default></default></property>
+        
+        
+        
+      </file></parameter>
     </parameters>
   </program>
 </flow>

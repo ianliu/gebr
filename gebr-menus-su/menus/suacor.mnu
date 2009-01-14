@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.2.3">
+<flow version="0.3.0" nextid="n3">
   <filename>suacor.mnu</filename>
   <title>SU Acor</title>
   <description>Computes auto-correlation</description>
@@ -172,22 +172,22 @@
 </html>
     
 ]]></help>
-    <url/><parameters>
-      <int required="no">
-        <keyword>ntout=</keyword>
-        <label>Number of time sample output</label>
-        <value/>
-      </int>
-      <flag>
-        <keyword>norm=0</keyword>
-        <label>Do not normalize maximum absolute output to 1</label>
-        <state default="off"/>
-      </flag>
-      <flag>
-        <keyword>sym=0</keyword>
-        <label>Turn off symmetric output</label>
-        <state default="off"/>
-      </flag>
+    <url>http://www.cwp.mines.edu/cwpcodes/</url><parameters exclusive="0">
+      <parameter id="n0"><label>Number of time sample output</label><int><property required="no"><keyword>ntout=</keyword><value></value><default></default></property>
+        
+        
+        
+      </int></parameter>
+      <parameter id="n1"><label>Do not normalize maximum absolute output to 1</label><flag><property required="no"><keyword>norm=0</keyword><value></value><default>off</default></property>
+        
+        
+        
+      </flag></parameter>
+      <parameter id="n2"><label>Turn off symmetric output</label><flag><property required="no"><keyword>sym=0</keyword><value></value><default>off</default></property>
+        
+        
+        
+      </flag></parameter>
     </parameters>
   </program>
 </flow>
