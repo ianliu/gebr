@@ -62,7 +62,7 @@ about_setup_ui(const gchar * program, const gchar * description)
 					_("GêBR Core Team"));
 
 	gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about.dialog), _(
-		"Copyright (C) 2007-2008 GêBR Core Team (http://groups.google.com/group/gebr)\n"
+		"Copyright (C) 2007-2009 GêBR core team (http://sites.google.com/site/gebrproject/)\n"
 		"\n"
 		"This program is free software: you can redistribute it and/or modify "
 		"it under the terms of the GNU General Public License as published by "
