@@ -243,7 +243,7 @@ gboolean
 geoxml_program_parameter_get_first_boolean_value(GeoXmlProgramParameter * program_parameter, gboolean default_value);
 
 /**
- * Create a new flow and append it to list of flows references.
+ * Create a new value and append it to list of values of \p program_parameter.
  *
  * If \p program_parameter is NULL returns NULL
  */
@@ -251,10 +251,10 @@ GeoXmlPropertyValue *
 geoxml_program_parameter_append_value(GeoXmlProgramParameter * program_parameter, gboolean default_value);
 
 /**
- * Writes to \p line_flow the \p index ieth flow reference that \p line belong.
- * If an error ocurred, the content of \p line_flow is assigned to NULL.
+ * Writes to \p property_value the \p index ieth value that \p program_parameter has.
+ * If an error ocurred, the content of \p property_value is assigned to NULL.
  *
- * If \p line is NULL nothing is done.
+ * If \p program_parameter is NULL nothing is done.
  *
  * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR
  *
@@ -264,9 +264,9 @@ int
 geoxml_program_parameter_get_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, GeoXmlSequence ** property_value, gulong index);
 
 /**
- * Get the number of flows that \p line has.
+ * Get the number of values that \p program_parameter has.
  *
- * If \p line is NULL returns -1.
+ * If \p program_parameter is NULL returns -1.
  */
 glong
 geoxml_program_parameter_get_values_number(GeoXmlProgramParameter * program_parameter, gboolean default_value);

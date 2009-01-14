@@ -209,7 +209,7 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 
 			__geoxml_set_attr_value(root_element, "version", "0.2.2");
 
-			__geoxml_foreach_element_with_tagname_r(root_element, "enum", element) {
+			__geoxml_foreach_element_with_tagname_r(root_element, "option", element) {
 				gchar *	value;
 
 				value = g_strdup(__geoxml_get_element_value(element));

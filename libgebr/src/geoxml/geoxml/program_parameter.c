@@ -437,7 +437,7 @@ geoxml_program_parameter_append_enum_option(GeoXmlProgramParameter * program_par
 	enum_option = geoxml_program_parameter_new_enum_option(program_parameter, label, value);
 	if (enum_option == NULL)
 		return NULL;
-	gdome_el_insertBefore((GdomeElement*)program_parameter,
+	gdome_el_insertBefore((GdomeElement*)__geoxml_parameter_get_type_element((GeoXmlParameter*)program_parameter),
 		(GdomeNode*)enum_option, NULL, &exception);
 
 	return enum_option;
@@ -453,7 +453,7 @@ geoxml_program_parameter_get_enum_option(GeoXmlProgramParameter * program_parame
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) != GEOXML_PARAMETERTYPE_ENUM)
 		return GEOXML_RETV_PARAMETER_NOT_ENUM;
 
-	*enum_option = (GeoXmlSequence*)__geoxml_get_element_at((GdomeElement*)program_parameter, "option", index, FALSE);
+	*enum_option = (GeoXmlSequence*)__geoxml_get_element_at((GdomeElement*)program_parameter, "option", index, TRUE);
 
 	return (*enum_option == NULL)
 		? GEOXML_RETV_INVALID_INDEX

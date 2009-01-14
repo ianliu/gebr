@@ -24,7 +24,6 @@ debr_SOURCES = \
 	menu.c \
 	program.c \
 	parameter.c \
-	programparameter.c \
 	parametergroup.c \
 	enumoptionedit.c \
 	parameteringroupedit.c \
@@ -38,7 +37,6 @@ noinst_HEADERS = \
 	menu.h \
 	program.h \
 	parameter.h \
-	programparameter.h \
 	parametergroup.h \
 	enumoptionedit.h \
 	parameteringroupedit.h \

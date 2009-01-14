@@ -919,10 +919,18 @@ parameter_selected(void)
 	/* parameter type stuff */
 	gtk_action_set_visible(gtk_action_group_get_action(debr.action_group,
 		"parameter_type_group"), !geoxml_parameter_get_is_in_group(debr.parameter));
+	g_signal_handlers_block_matched(
+		G_OBJECT(gtk_action_group_get_action(debr.action_group, "parameter_type_real")),
+		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+		(GCallback)on_parameter_type_activate, NULL);
 	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(debr.action_group,
 		parameter_type_radio_actions_entries[
 			combo_type_map_get_index(geoxml_parameter_get_type(debr.parameter))].name)),
 		TRUE);
+	g_signal_handlers_unblock_matched(
+		G_OBJECT(gtk_action_group_get_action(debr.action_group, "parameter_type_real")),
+		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+		(GCallback)on_parameter_type_activate, NULL);
 }
 
 /*

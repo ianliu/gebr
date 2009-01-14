@@ -49,6 +49,7 @@ enum_option_edit_set_property(EnumOptionEdit * enum_option_edit, guint property_
 		gtk_list_store_clear(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store);
 		enum_option_edit->enum_option = g_value_get_pointer(value);
 		enum_option = (GeoXmlSequence*)enum_option_edit->enum_option;
+
 		while (enum_option != NULL) {
 			__enum_option_edit_add(enum_option_edit, GEOXML_ENUM_OPTION(enum_option));
 
@@ -274,14 +275,7 @@ enum_option_edit_new(GeoXmlEnumOption * enum_option, GeoXmlProgramParameter * pr
 	GtkWidget *		value_entry;
 
 	list_store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER, -1);
-	hbox = gtk_hbox_new(FALSE, 0);
-
-	enum_option_edit = g_object_new(TYPE_ENUM_OPTION_EDIT,
-		"value-widget", hbox,
-		"list-store", list_store,
-		"enum-option", enum_option,
-		NULL);
-
+	hbox = gtk_hbox_new(TRUE, 0);
 	label_entry = gtk_enhanced_entry_new_with_empty_text(_("label"));
 	value_entry = gtk_enhanced_entry_new_with_empty_text(_("value"));
 	gtk_widget_set_size_request(value_entry, 20, -1);
@@ -289,7 +283,13 @@ enum_option_edit_new(GeoXmlEnumOption * enum_option, GeoXmlProgramParameter * pr
 	gtk_box_pack_start(GTK_BOX(hbox), label_entry, TRUE, TRUE, 2);
 	gtk_widget_show_all(hbox);
 
-	enum_option_edit->program_parameter = program_parameter;
+	enum_option_edit = g_object_new(TYPE_ENUM_OPTION_EDIT,
+		"value-widget", hbox,
+		"list-store", list_store,
+		"enum-option", enum_option,
+		NULL);
+
+		enum_option_edit->program_parameter = program_parameter;
 	enum_option_edit->label_entry = label_entry;
 	enum_option_edit->value_entry = value_entry;
 	g_signal_connect(GTK_OBJECT(enum_option_edit), "add-request",
