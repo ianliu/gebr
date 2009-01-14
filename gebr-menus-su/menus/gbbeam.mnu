@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.1.0">
+<flow version="0.2.3">
   <filename>gbbeam.mnu</filename>
   <title>GBBeam</title>
   <description>Gaussian beam synthetic seismograms for a sloth model</description>
@@ -43,7 +43,8 @@
 	  <a name="credits" id="credits"></a>
           <h2>Credits</h2>
 
-          <p>G&ecirc;BR core team</p>
+          <p>Oct 09, 2007: written by Ricardo Biloti, UNICAMP - biloti@gmail.com</p>
+          <p>Mar 17, 2007: revised by Daniela Rego Amazonas, UFPA - daniela.amazonas@gmail.com</p>
         </div>
 
         <div class="navigation">
@@ -59,7 +60,7 @@
       </div>
 
       <div class="footer">
-        <span class="left">G&ecirc;BR 0.9.1 (0.1.0) | SU 40</span>
+        <span class="left">G&ecirc;BR 0.9.1 (0.1.0) | Mar 17, 2008</span>
 
         <div class="clearer"></div>
       </div>
@@ -68,9 +69,9 @@
 </body>
 </html>
 ]]></help>
-  <author>GêBR core team</author>
-  <email>gebr@users.sf.net</email>
-  <category>Simulation and Model Building</category>
+  <author>Ricardo Biloti</author>
+  <email>biloti@gmail.com</email>
+  <date><created/><modified/><lastrun/></date><category>Simulation and Model Building</category>
   <category>Seismic Unix</category>
   <io>
     <input/>
@@ -130,40 +131,40 @@
 
   	    <!-- List of optional parameters -->
             <ul>
-              <li><span class="label">[number of receivers]</span> uniformly distributed
+              <li><span class="label">[Number of receivers]</span> Uniformly distributed
  	      along the surface.</li>
 
-              <li><span class="label">[integer index of receiver surface]</span></li>
+              <li><span class="label">[Integer index of receiver surface]</span></li>
 
-              <li><span class="label">[array of angles corresponding to
-              amplitudes]</span> defined in the next parameter.</li>
+              <li><span class="label">[Array of angles corresponding to
+              amplitudes]</span> Defined in the next parameter.</li>
 
-              <li><span class="label">[array of amplitudes corresponding to
-              angles]</span> defined in the previous parameter.</li>
+              <li><span class="label">[Array of amplitudes corresponding to
+              angles]</span> Defined in the previous parameter.</li>
 
-              <li><span class="label">[beamwidth at peak frequency]</span></li>
+              <li><span class="label">[Beamwidth at peak frequency]</span></li>
 
-              <li><span class="label">[number of time samples]</span></li>
+              <li><span class="label">[Number of time samples]</span></li>
 
-              <li><span class="label">[time sampling interval]</span></li>
+              <li><span class="label">[Time sampling interval]</span></li>
 
-              <li><span class="label">[first time sample]</span></li>
+              <li><span class="label">[First time sample]</span></li>
 
-              <li><span class="label">[complex refl/transm. coefficients
-              considered]</span> when turned on.</li>
+              <li><span class="label">[Complex refl/transm. coefficients
+              considered]</span> When turned on.</li>
 
-              <li><span class="label">[only single-reflected rays are
-              considered]</span>, when turned on, and only direct hits are
+              <li><span class="label">[Only single-reflected rays are
+              considered]</span> When turned on, and only direct hits are
               considered, when turned off.</li>
 
-              <li><span class="label">[attenuation]</span>: 0, for no attenuation; 1,
+              <li><span class="label">[Attenuation]</span>: 0, for no attenuation; 1,
               to add noncausal attenuation; 2, to add causal attenuation.</li>
 
-              <li><span class="label">[restricts range of extrapolation]</span></li>
+              <li><span class="label">[Restricts range of extrapolation]</span></li>
 
-              <li><span class="label">[maximum angle of receiver aperture]</span></li>
+              <li><span class="label">[Maximum angle of receiver aperture]</span></li>
 
-              <li><span class="label">[peak frequency of ricker wavelet]</span></li>
+              <li><span class="label">[Peak frequency of ricker wavelet]</span></li>
 
               <li><span class="label">[ASCII-file to store useful information]</span></li>
 
@@ -174,9 +175,9 @@
           <h2>Notes</h2>
 
           <p> Only rays that terminate with index krecord will contribute to the
-	  synthetic seismograms at the receiver (xg,zg) locations. The
+	  synthetic seismograms at the receiver locations. The
 	  receiver locations are determined by cubic spline interpolation
-	  of the specified (xg,zg) coordinates.</p>
+	  of the specified coordinates.</p>
 
 	  <a name="credits" id="credits"></a>
           <h2>Credits</h2>
@@ -213,85 +214,69 @@
 </body>
 </html>
 ]]></help>
-    <parameters>
-      <string required="yes">
-        <keyword>xg=</keyword>
-        <label>x coordinates of receiver surface</label>
-        <value/>
-      </string>
-      <string required="yes">
-        <keyword>zg=</keyword>
-        <label>z coordinates of receiver surface</label>
-        <value/>
-      </string>
+    <url/><parameters>
+      <float required="yes" separator=","><keyword>xg=</keyword><label>x coordinates of receiver surface</label><value/></float>
+      <float required="yes" separator=","><keyword>zg=</keyword><label>z coordinates of receiver surface</label><value/></float>
       <int required="no">
         <keyword>ng=</keyword>
-        <label>number of receivers (uniform distributed along surface)</label>
-        <value default="101"/>
+        <label>Number of receivers</label>
+        <value default=""/>
       </int>
       <int required="no">
         <keyword>krecord=</keyword>
-        <label>integer index of receiver surface</label>
-        <value default="1"/>
+        <label>Integer index of receiver surface</label>
+        <value default=""/>
       </int>
-      <string required="no">
-        <keyword>ang=</keyword>
-        <label>array of angles corresponding to amplitudes below</label>
-        <value/>
-      </string>
-      <string required="no">
-        <keyword>amp=</keyword>
-        <label>array of amplitudes corresponding to angles above</label>
-        <value/>
-      </string>
+      <float required="no" separator=","><keyword>ang=</keyword><label>Array of angles corresponding to amplitudes below</label><value/></float>
+      <float required="no" separator=","><keyword>amp=</keyword><label>Array of amplitudes corresponding to angles above</label><value/></float>
       <int required="no">
         <keyword>bw=</keyword>
-        <label>beamwidth at peak frequency</label>
+        <label>Beamwidth at peak frequency</label>
         <value/>
       </int>
       <int required="no">
         <keyword>nt=</keyword>
-        <label>number of time samples</label>
-        <value default="251"/>
+        <label>Number of time samples</label>
+        <value default=""/>
       </int>
       <float required="no">
         <keyword>dt=</keyword>
-        <label>time sampling interval</label>
-        <value default="0.004"/>
+        <label>Time sampling interval</label>
+        <value default=""/>
       </float>
       <float required="no">
         <keyword>ft=</keyword>
-        <label>first time sample</label>
-        <value default="0.0"/>
+        <label>First time sample</label>
+        <value default=""/>
       </float>
       <flag>
         <keyword>reftrans=1</keyword>
-        <label>consider complex refl/transm. coefficients</label>
+        <label>Consider complex refl/transm. coefficients</label>
         <state default="off"/>
       </flag>
       <flag>
         <keyword>prim=1</keyword>
-        <label>only single-reflected rays are considered</label>
+        <label>Only single-reflected rays are considered</label>
         <state default="on"/>
       </flag>
-      <range required="no" min="0" max="2" inc="1">
+      <range required="no" min="0" max="2" inc="1" digits="">
         <keyword>atten=</keyword>
-        <label>attenuation type</label>
-        <value default="0.000000"/>
+        <label>Attenuation type</label>
+        <value default="0"/>
       </range>
       <float required="no">
         <keyword>lscale=</keyword>
-        <label>restriction on range of extrapolation</label>
+        <label>Restriction on range of extrapolation</label>
         <value/>
       </float>
       <float required="no">
         <keyword>aperture=</keyword>
-        <label>maximum angle of receiver aperture</label>
+        <label>Maximum angle of receiver aperture</label>
         <value/>
       </float>
       <float required="no">
         <keyword>fpeak=</keyword>
-        <label>peak frequency of ricker wavelet</label>
+        <label>Peak frequency of ricker wavelet</label>
         <value/>
       </float>
       <file required="no" directory="no">

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.2.2">
+<flow version="0.2.3">
   <filename>suabshw.mnu</filename>
   <title>SU ABS HW</title>
-  <description>replace header key word by its absolute value</description>
+  <description>Replace header key word by its absolute value</description>
   <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -44,7 +44,8 @@
 	  <a name="credits" id="credits"></a>
           <h2>Credits</h2>
 
-          <p>G&ecirc;BR core team</p>
+          <p>Oct 08, 2007: written by Ricardo Biloti, UNICAMP, biloti@gmail.com </p>
+          <p>Mar 17, 2008: revised by Daniela Amazonas, UFPA, daniela.amazonas@gmail.com</p>
         </div>
 
         <div class="navigation">
@@ -61,7 +62,7 @@
       </div>
 
       <div class="footer">
-        <span class="left">G&ecirc;BR 0.9.1 (0.1.0) | SU 40</span>
+        <span class="left">G&ecirc;BR 0.9.4 (0.2.2) | Mar 17, 2008</span>
 
         <div class="clearer"></div>
       </div>
@@ -83,7 +84,7 @@
     <menu index="0">suabshw.mnu</menu>
     <title>SU ABS HW</title>
     <binary>suabshw</binary>
-    <description>replace header key word by its absolute value</description>
+    <description>Replace header key word by its absolute value</description>
     <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -130,7 +131,7 @@
 
 	    <!-- List of optional parameters -->
             <ul>
-              <li><span class="label">[header keyword]</span> enter one of
+              <li><span class="label">[Header keyword]</span> Enter one of
 	      the header keyword (offset, cdp, sx, sy, gx, gy,...)</li>
             </ul>
           </div>
@@ -157,7 +158,7 @@
       </div>
 
       <div class="footer">
-        <span class="left">G&ecirc;BR 0.9.1 (0.1.0) | SU 40</span>
+        <span class="left">G&ecirc;BR 0.9.4 (0.2.2) | SU 40</span>
 
         <div class="clearer"></div>
       </div>
@@ -166,10 +167,10 @@
 </body>
 </html>
 ]]></help>
-    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
+    <url/><parameters>
       <string required="no">
         <keyword>key=</keyword>
-        <label>header key word</label>
+        <label>Header key word</label>
         <value default="offset"/>
       </string>
     </parameters>

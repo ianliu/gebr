@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.2.2">
+<flow version="0.2.3">
   <filename>sufilter.mnu</filename>
   <title>SU Filter</title>
-  <description>applies a zero-phase, sine-squared tapered filter</description>
+  <description>Applies a zero-phase, sine-squared tapered filter</description>
   <help><![CDATA[
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+  <link rel="stylesheet" type="text/css" href="gebr.css" />
   <meta name="generator" content=
   "HTML Tidy for Linux/x86 (vers 1 September 2005), see www.w3.org" />
   <meta http-equiv="content-type" content=
   "text/html; charset=utf-8" />
-  <link rel="stylesheet" type="text/css" href="gebr.css" media=
+  <link rel="stylesheet" type="text/css" href="file:///usr/share/gebrme/gebr.css" media=
   "screen" />
   <title>GeBR - SU Filter</title>
 </head>
@@ -36,7 +37,9 @@
 
 	  <a name="credits"></a>
 	  <h2>Credits</h2>
-           <p>GêBR core team</p>
+           <p>Set 15, 2007: written by UFPA - G&ecirc;BR Core Team</p>
+           <p>Oct 05, 2007: modified by Ricardo Biloti, UNICAMP - biloti@gmail.com</p>
+           <p>Jun 11, 2008: revised by Daniela Amazonas, UFPA - daniela.amazonas@gmail.com</p>
         </div>
 
         <div class="navigation">
@@ -59,7 +62,8 @@
   </div>
 </body>
 </html>
-    ]]></help>
+    
+]]></help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
   <date><created/><modified/><lastrun/></date><category>Filtering, Transforms and Attributes</category>
@@ -73,18 +77,19 @@
     <menu index="0">sufilter.mnu</menu>
     <title>SU Filter</title>
     <binary>sufilter</binary>
-    <description>applies a zero-phase, sine-squared tapered filter</description>
+    <description>Applies a zero-phase, sine-squared tapered filter</description>
     <help><![CDATA[
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+  <link rel="stylesheet" type="text/css" href="gebr.css" />
   <meta name="generator" content=
   "HTML Tidy for Linux/x86 (vers 1 September 2005), see www.w3.org" />
   <meta http-equiv="content-type" content=
   "text/html; charset=utf-8" />
-  <link rel="stylesheet" type="text/css" href="gebr.css" media=
+  <link rel="stylesheet" type="text/css" href="file:///usr/share/gebrme/gebr.css" media=
   "screen" />
   <title>GeBR - SU Filter</title>
 </head>
@@ -112,14 +117,14 @@
 	  
 	  <ul>
 	  
-	  <li><span class="label">[array of filter frequencies(HZ)]</span>
+	  <li><span class="label">[Array of filter frequencies]</span>
 	  A list of frequencies to filter, separated by commas.
 	  For example: 10,20,50,65</li>
 	  
-	  <li><span class="label">[array of filter amplitudes]</span>A 
+	  <li><span class="label">[Array of filter amplitudes]</span>A 
 	  list of corresponding filter amplitudes.</li>
 	  
-	  <li><span class="label">[echoing useful information]</span>
+	  <li><span class="label">[Echoing useful information]</span>
 	  A flag to send to error log some information.
 	  </li>
 	  
@@ -184,26 +189,19 @@
   </div>
 </body>
 </html>
-    ]]></help>
-    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
+    
+]]></help>
+    <url/><parameters>
       <float required="no">
         <keyword>dt=</keyword>
-        <label>time sampling interval</label>
+        <label>Time sampling interval</label>
         <value/>
       </float>
-      <string required="no">
-        <keyword>f=</keyword>
-        <label>array of filter frequencies(HZ)</label>
-        <value/>
-      </string>
-      <string required="no">
-        <keyword>amps=</keyword>
-        <label>array of filter amplitudes</label>
-        <value/>
-      </string>
+      <float required="no" separator=","><keyword>f=</keyword><label>Array of filter frequencies</label><value default=""/></float>
+      <float required="no" separator=","><keyword>amps=</keyword><label>Array of filter amplitudes</label><value default=""/></float>
       <flag>
         <keyword>verbose=1</keyword>
-        <label>echoing useful information</label>
+        <label>Echoing useful information</label>
         <state default="off"/>
       </flag>
     </parameters>

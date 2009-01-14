@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.2.2">
+<flow version="0.2.3">
   <filename>sudivcor.mnu</filename>
-  <title>SU DivCor</title>
-  <description>Divergence (spreading) correction</description>
+  <title>SU Divcor</title>
+  <description>Divergence correction</description>
   <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -12,7 +12,7 @@
   "text/html; charset=utf-8" />
   <link rel="stylesheet" type="text/css" href="gebr.css" />
 
-  <title>G&ecirc;BR - SU DivCor</title>
+  <title>G&ecirc;BR - SU Divcor</title>
 </head>
 
 <body>
@@ -20,10 +20,10 @@
     <div class="inner-container">
       <div class="header">
         <div class="title">
-          <span class="flowtitle">SU DivCor</span>
+          <span class="flowtitle">SU Divcor</span>
 
           <div class="description">
-            Divergence (spreading) correction
+            Divergence correction
           </div>
         </div>
       </div>
@@ -43,7 +43,8 @@
  	  <a name="credits" id="credits"></a>
           <h2>Credits</h2>
 
-          <p>G&ecirc;BR core team</p>
+          <p>Oct 10, 2007: written by Ricardo Biloti, UNICAMP - biloti@gmail.com</p>
+          <p>Jun 10, 2008: revised by Daniela Amazonas, UFPA - daniela.amazonas@gmail.com</p>
         </div>
 
         <div class="navigation">
@@ -59,7 +60,7 @@
       </div>
 
       <div class="footer">
-        <span class="left">G&ecirc;BR 0.9.1 (0.1.0) | SU 40</span>
+        <span class="left">G&ecirc;BR 0.9.1 (0.1.0) | Jun 10, 2008</span>
 
         <div class="clearer"></div>
       </div>
@@ -79,9 +80,9 @@
   </io>
   <program stdin="yes" stdout="yes" stderr="yes" status="unconfigured">
     <menu index="0">sudivcor.mnu</menu>
-    <title>SU DivCor</title>
+    <title>SU Divcor</title>
     <binary>sudivcor</binary>
-    <description>Divergence (spreading) correction</description>
+    <description>Divergence correction</description>
     <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -91,7 +92,7 @@
   "text/html; charset=utf-8" />
   <link rel="stylesheet" type="text/css" href="gebr.css" />
 
-  <title>G&ecirc;BR - SU DivCor</title>
+  <title>G&ecirc;BR - SU Divcor</title>
 </head>
 
 <body>
@@ -99,10 +100,10 @@
     <div class="inner-container">
       <div class="header">
         <div class="title">
-          <span class="flowtitle">SU DivCor</span>
+          <span class="flowtitle">SU Divcor</span>
 
           <div class="description">
-            Divergence (spreading) correction
+            Divergence correction
           </div>
         </div>
       </div>
@@ -121,11 +122,11 @@
 
 	    <!-- List of optional parameters -->
             <ul>
-              <li><span class="label">[times corresponding to rms velocities]</span> comma-separated list of times. </li>
+              <li><span class="label">[Times corresponding to rms velocities]</span> Comma-separated list of times</li>
 
-              <li><span class="label">[interval velocities corresponding to times above]</span> comma-separeted list of rms velocities.</li>
+              <li><span class="label">[Interval velocities corresponding to times above]</span> Comma-separeted list of rms velocities</li>
 
-              <li><span class="label">[file containing velocities vrms(t)]</span> (binary).</li>
+              <li><span class="label">[File containing velocities vrms]</span> Binary</li>
 
             </ul>
           </div>
@@ -133,7 +134,7 @@
 	  <a name="notes" id="notes"></a>
           <h2>Notes</h2>
 
-          <p>The time and velocity arrays specify an rms velocity function of time.
+          <p>The trms and vrms arrays specify an rms velocity function of time.
  	  Linear interpolation and constant extrapolation is used to determine
 	  interval velocities at times not specified.  Values specified in trms
 	  must increase monotonically.</p>
@@ -176,20 +177,20 @@
 </body>
 </html>
 ]]></help>
-    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
+    <url/><parameters>
       <string required="no">
         <keyword>trms=</keyword>
-        <label>times corresponding to rms velocities below</label>
+        <label>Times corresponding to rms velocities below</label>
         <value default="0.0"/>
       </string>
       <string required="no">
         <keyword>vrms=</keyword>
-        <label>interval velocities corresponding to times above</label>
+        <label>Interval velocities corresponding to times above</label>
         <value default="1500.00"/>
       </string>
       <file required="no" directory="no">
         <keyword>vfile=</keyword>
-        <label>file containing velocities vrms(t)</label>
+        <label>File containing velocities vrms</label>
         <value/>
       </file>
     </parameters>

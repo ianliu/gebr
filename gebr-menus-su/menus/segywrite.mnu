@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.1.0">
+<flow version="0.2.3">
   <filename>segywrite.mnu</filename>
   <title>SU SEG-Y write</title>
-  <description>write an SEG-Y tape</description>
+  <description>Write an SEG-Y tape</description>
   <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -12,7 +12,7 @@
   "text/html; charset=utf-8" />
   <link rel="stylesheet" type="text/css" href="gebr.css" />
 
-  <title>G&ecirc;BR - SU SEG-Y Write</title>
+  <title>G&ecirc;BR - SU SEG-Y write</title>
 </head>
 
 <body>
@@ -20,10 +20,10 @@
     <div class="inner-container">
       <div class="header">
         <div class="title">
-          <span class="flowtitle">SU SEG-Y Write</span>
+          <span class="flowtitle">SU SEG-Y write</span>
 
           <div class="description">
-            write an SEG-Y tape
+            Write an SEG-Y tape
           </div>
         </div>
       </div>
@@ -45,7 +45,8 @@
 	  <a name="credits" id="credits"></a>
           <h2>Credits</h2>
 
-          <p>G&ecirc;BR core team.</p>
+          <p>Oct 17, 2007: written by Ricardo Biloti, UNICAMP - biloti@gmail.com</p>
+          <p>Mar 17, 2008: revised by Daniela Rego Amazonas, UFPA - daniela.amazonas@gmail.com</p>
         </div>
 
         <div class="navigation">
@@ -62,7 +63,7 @@
       </div>
 
       <div class="footer">
-        <span class="left">G&ecirc;BR 0.9.1 (0.1.0) | SU 40</span>
+        <span class="left">G&ecirc;BR 0.9.1 (0.1.0) | Mar 17, 2008</span>
 
         <div class="clearer"></div>
       </div>
@@ -74,7 +75,7 @@
   </help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
-  <category>Import/Export</category>
+  <date><created/><modified/><lastrun/></date><category>Import/Export</category>
   <category>Seismic Unix</category>
   <io>
     <input/>
@@ -106,7 +107,7 @@
           <span class="flowtitle">SU SEG-Y write</span>
 
           <div class="description">
-            write an SEG-Y tape
+            Write an SEG-Y tape
           </div>
         </div>
       </div>
@@ -125,24 +126,24 @@
 
 	    <!-- List of required parameters -->
             <ul>
-              <li><span class="label">[tape device to use or filename]</span> to export the SEG-Y data.</li>
+              <li><span class="label">[Tape device to use or seg-y filename]</span></li>
             </ul>
 
             <h2>Optional parameters</h2>
 
 	    <!-- List of optional parameters -->
             <ul>
-              <li><span class="label">[useful for 8mm EXABYTE drive]</span></li>
-              <li><span class="label">[don't convert to IBM format]</span></li>
-              <li><span class="label">[ebcdic card image header file]</span></li>
-              <li><span class="label">[binary header file]</span></li>
-              <li><span class="label">[first trace to write]</span></li>
-              <li><span class="label">[last trace to write]</span></li>
-              <li><span class="label">[little-endian machines]</span></li>
-              <li><span class="label">[allowable number of consecutive tape IO errors]</span></li>
-              <li><span class="label">[override value of format in binary header file]</span></li>
-              <li><span class="label">[echo every 'vblock' traces under verbose option]</span></li>
-              <li><span class="label">[echo useful information]</span></li>
+              <li><span class="label">[Useful for 8mm EXABYTE drive]</span></li>
+              <li><span class="label">[Don't convert to IBM format]</span></li>
+              <li><span class="label">[EBCDIC card image header file]</span></li>
+              <li><span class="label">[Binary header file]</span></li>
+              <li><span class="label">[First trace to write]</span></li>
+              <li><span class="label">[Last trace to write]</span></li>
+              <li><span class="label">[Little-endian machines]</span> PC's, DEC, etc ...</li>
+              <li><span class="label">[Allowable number of consecutive tape IO errors]</span></li>
+              <li><span class="label">[Override value of format in binary header file]</span></li>
+              <li><span class="label">[Echoing at each amount of trace]</span></li>
+              <li><span class="label">[Print some useful information]</span></li>
            </ul>
           </div>
 	    
@@ -152,8 +153,13 @@
           <p>For flag <b>[useful for 8mm EXABYTE drive]</b> turned off (default) tape is accessed with 'write', otherwise it is accessed with fwrite. Try the default setting for all tape types.</p>
 	  <p>Caveat: may be slow on an 8mm streaming (EXABYTE) tapedrive.</p>
 	
-	<p>Warning: segyread or segywrite to 8mm tape is fragile. Allow time
-           between successive reads and writes.</p>
+	<p>Warnings: (1) SU SEG-Y read or SU SEG-Y write to 8mm tape is fragile. Allow time
+           between successive reads and writes. (2) May return the error message "efclose: fclose failed"
+         intermittently when SEG-Y reading or SEG-Y writing to 8mm EXABYTE tape,
+         even if actual SEG-Y read/SEG-Y write is successful. However, this
+         may indicate that your tape drive has been set to a fixed block
+         size. Tape drives should be set to variable block size before reading
+         or writing tapes in the SEG-Y format.</p>
 
          <p>Precaution: make sure tapedrive is set to read/write variable blocksize
            tapefiles.</p>
@@ -164,6 +170,17 @@
           <p>SEP: Einar Kjartansson<br />
              CWP: Jack, Brian, Chris<br />
              CWP: John Stockwell (added EXABYTE functionality)</p>
+          <p>  Notes:
+        Brian's subroutine, float_to_ibm, for converting IEEE floating
+        point to IBM floating point is NOT portable and must be
+        altered for non-IEEE machines.  See the subroutine notes below.</p>
+
+        <p>On machines where shorts are not 2 bytes and/or ints are not 
+        4 bytes, routines to convert SEGY 16 bit and 32 bit integers 
+        will be required.</p>
+
+        <p>The program, segyhdrs, can be used to make the ascii and binary
+        files required by this code.</p>
         </div>
 
         <div class="navigation">
@@ -189,19 +206,19 @@
 </body>
 </html>
 ]]></help>
-    <parameters>
-      <file required="yes" directory="no"><keyword>tape=</keyword><label>tape device to use or filename</label><value/></file>
-      <flag><keyword>buff=0</keyword><label>for 8mm EXABYTE drives</label><state default="off"/></flag>
-      <flag><keyword>conv=0</keyword><label>don't convert to IBM format</label><state default="off"/></flag>
-      <file required="no" directory="no"><keyword>hfile=</keyword><label>ebcdic card image header file</label><value/></file>
-      <file required="no" directory="no"><keyword>bfile=</keyword><label>binary header file</label><value/></file>
-      <int required="no"><keyword>trmin=</keyword><label>first trace to write</label><value/></int>
-      <int required="no"><keyword>trmax=</keyword><label>last trace to write</label><value/></int>
-      <flag><keyword>endian=0</keyword><label>little-endian machines (PC's, DEC, etc...)</label><state default="off"/></flag>
-      <int required="no"><keyword>errmax=</keyword><label>allowable number of consecutive tape IO errors</label><value default="0"/></int>
-      <string required="no"><keyword>format=</keyword><label>convert data to native format</label><value/></string>
-      <int required="no"><keyword>vblock=</keyword><label>echoing at each amount of trace</label><value default="50"/></int>
-      <flag><keyword>verbose=1</keyword><label>echoing useful information</label><state default="off"/></flag>
+    <url/><parameters>
+      <file required="yes" directory="no"><keyword>tape=</keyword><label>Tape device to use or filename</label><value/></file>
+      <flag><keyword>buff=0</keyword><label>For 8mm EXABYTE drives</label><state default="off"/></flag>
+      <flag><keyword>conv=0</keyword><label>Don't convert to IBM format</label><state default="off"/></flag>
+      <file required="no" directory="no"><keyword>hfile=</keyword><label>EBCDIC card image header file</label><value/></file>
+      <file required="no" directory="no"><keyword>bfile=</keyword><label>Binary header file</label><value/></file>
+      <int required="no"><keyword>trmin=</keyword><label>First trace to write</label><value/></int>
+      <int required="no"><keyword>trmax=</keyword><label>Last trace to write</label><value/></int>
+      <flag><keyword>endian=0</keyword><label>Little-endian machines</label><state default="off"/></flag>
+      <int required="no"><keyword>errmax=</keyword><label>Allowable number of consecutive tape IO errors</label><value default="0"/></int>
+      <string required="no"><keyword>format=</keyword><label>Override value of format in binary header file</label><value/></string>
+      <int required="no"><keyword>vblock=</keyword><label>Echoing at each amount of trace</label><value default="50"/></int>
+      <flag><keyword>verbose=1</keyword><label>Print some useful information</label><state default="off"/></flag>
     </parameters>
   </program>
 </flow>

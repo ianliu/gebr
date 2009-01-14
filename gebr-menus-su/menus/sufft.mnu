@@ -1,20 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.2.2">
+<flow version="0.2.3">
   <filename>sufft.mnu</filename>
   <title>SU FFT</title>
-  <description>fft real time traces to complex frequency traces</description>
-  <help><![CDATA[
-    <html>
-    <header>
-       <title>SU FFT</title>
-    </header>
-    <body>
-    <h1>SU FFT</h1>
-    <p>fft real time traces to complex frequency traces></p>
-    </body>
-    </html>
-    ]]>
-  </help>
+  <description>FFT real time traces to complex frequency traces</description>
+  <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="gebr.css" />
+
+  <title>G&ecirc;BR - SU FFT</title>
+</head>
+
+<body>
+  <div class="outer-container">
+    <div class="inner-container">
+      <div class="header">
+        <div class="title">
+          <span class="flowtitle">SU FFT</span>
+
+          <div class="description">
+            FFT real time traces to complex frequency traces
+          </div>
+        </div>
+      </div>
+
+      <div class="category">
+        Filtering, Transforms and Attributes | Seismic Unix
+      </div>
+
+      <div class="main">
+        <div class="content">
+
+	  <a name="credits" id="credits"></a>
+          <h2>Credits</h2>
+
+          <p>Set 16, 2007: written by UFPA - G&ecirc;BR Core Team</p>
+          <p>Oct 10, 2007: modified by Ricardo Biloti, UNICAMP - biloti@gmail.com</p>
+          <p>Jun 11, 2007: revised by Daniela Amazonas, UFPA - daniela.amazonas@gmail.com</p>
+
+        </div>
+
+        <div class="navigation">
+          <h2>Index</h2>
+
+          <ul>
+
+            <li><a href="#credits">Credits</a></li>
+          </ul>
+        </div>
+
+        <div class="clearer"></div>
+      </div>
+
+      <div class="footer">
+        <span class="left">G&ecirc;BR 0.9.4 (0.2.2) | Jun 11, 2008</span>
+
+        <div class="clearer"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+]]></help>
   <author>GêBR core team</author>
   <email>gebr@users.sf.net</email>
   <date><created/><modified/><lastrun/></date><category>Filtering, Transforms and Attributes</category>
@@ -28,15 +79,16 @@
     <menu index="0">sufft.mnu</menu>
     <title>SU FFT</title>
     <binary>sufft</binary>
-    <description/>
+    <description>FFT real time traces to complex frequency traces</description>
     <help><![CDATA[
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+  <link rel="stylesheet" type="text/css" href="gebr.css" />
   <meta name="generator" content=
   "HTML Tidy for Linux/x86 (vers 1 September 2005), see www.w3.org" />
   <meta http-equiv="content-type" content=
   "text/html; charset=utf-8" />
-  <link rel="stylesheet" type="text/css" href="gebr.css" media=
+  <link rel="stylesheet" type="text/css" href="file:///usr/share/gebrme/gebr.css" media=
   "screen" />
   <title>G&ecirc;BR - SU FFT</title>
 </head>
@@ -46,12 +98,12 @@
       <div class="header">
         <div class="title">
           <span class="flowtitle">SU FFT</span>
-          <div class="description">fft real time traces to complex frequency traces</div>
+          <div class="description">FFT real time traces to complex frequency traces</div>
         </div>
       </div><!-- header -->
 
       <div class="category">
-        Filtering,Transforms And Attributes | Seismic Unix
+        Filtering, Transforms And Attributes | Seismic Unix
       </div>
 
       <div class="main">
@@ -61,17 +113,17 @@
 
           <a name="par"></a>
           <h2>Required parameters</h2>
-          <p>none</p>
+          <p>None</p>
 
           <h2>Optional parameters</h2>
           
           <ul>
           
-          <li><span class="label">[sign in exponent of fft]</span></li>
+          <li><span class="label">[Sign in exponent of FFT]</span></li>
 
-          <li><span class="label">[sampling interval]</span></li>
+          <li><span class="label">[Time sampling interval]</span></li>
 
-          <li><span class="label">[echoing useful information]</span></li>
+          <li><span class="label">[Stop advisory messages]</span></li>
 
           </u1>
 
@@ -85,17 +137,18 @@
                 
         <p> SU FFT | SU IFFT is not quite a no-op since the trace
            length will usually be longer due to fft padding</p>
+
         <p> Caveats:No check is made that the data is real time traces!</p>
 
         <p>Output is type complex To view amplitude, phase or real, imaginary
          parts, use SU AMP.</p>
         
-        <p>Note: leave sampling interval set for later inversion
-        </p>
+        <p>Note: leave sampling interval set for later inversion</p>
 
       <a name="credits"></a>
           <h2>Credits</h2>
           <p>CWP: Shuki Ronen, Chris Liner, Jack K. Cohen</p>
+          <p>CENPET: Werner M. Heigl - added well log support</p>
         </div>
 
         <div class="navigation">
@@ -123,21 +176,18 @@
   </div>
 </body>
 </html>
-    ]]></help>
-    <url>http://www.cwp.mines.edu/cwpcodes/index.html</url><parameters>
-      <string required="no">
-        <keyword>sign=</keyword>
-        <label>sign in exponent of fft</label>
-        <value/>
-      </string>
+    
+]]></help>
+    <url/><parameters>
+      <int required="no"><keyword>sign=</keyword><label>Sign in exponent of FFT</label><value default=""/></int>
       <float required="no">
         <keyword>dt=</keyword>
-        <label>sampling interval</label>
+        <label>Time sampling interval</label>
         <value/>
       </float>
       <flag>
-        <keyword>verbose=1</keyword>
-        <label>to stop advisory messages</label>
+        <keyword>verbose=0</keyword>
+        <label>Stop advisory messages</label>
         <state default="off"/>
       </flag>
     </parameters>
