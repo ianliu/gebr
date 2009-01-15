@@ -427,7 +427,6 @@ gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_
 	if (type == LOG_DEBUG)
 		return;
 #endif
-puts(message);
 	va_start(argp, message);
 	string = g_strdup_vprintf(message, argp);
 	va_end(argp);
