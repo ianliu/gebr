@@ -1,65 +1,1296 @@
-2007-10-31  Ricardo Biloti  <biloti@gmail.com>
-	* src/cb_flow.c: fixed a missing space after non-stdin
-	aware program.
-	
-2007-10-08  Ricardo Biloti  <biloti@gmail.com>
+2009-01-15  Ricardo Biloti <biloti@gmail.com>
 
-	* menus/*: every non-flag keyword had an "=" sign appended.
+	* src/gebr/gebr.c: strip debug code
 
-	* src/cb_flow.c: each non-flag parameter is now added to the
-	command line as <keyword><value>. Therefore, each "=" sign needed
-	between keyword and value must be explicited append to keyword.
+2009-01-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-2007-09-05  Ricardo Biloti  <biloti@ime.unicamp.br>
+	* src/gebr/gebr.c: fix move_after with position=NULL
 
-	* src/Makefile.am, src/cb_flow.c, src/cb_flow.h, src/cb_help.c,
-	src/cb_help.h, src/ui_prop.c: help edition support to flows.
+2009-01-12  Ricardo Biloti <biloti@gmail.com>
 
-	* src/Makefile.am, src/menus.c src/ui_pages.c, src/cb_help.c,
-	src/ui_help.c, src/ui_help.h, src/cb_flow.h, src/cb_flow.c,
-	src/widgets.h: flow help can be displayed
+	* INSTALL, Makefile.am, data/Makefile.am, menus/Makefile.am,
+	  src/defines.h.in, src/gebr/callbacks.c, src/gebr/ui_paths.c,
+	  src/gebr/ui_preferences.c: - Copyright messages updated
+	  - accents suppressed
 
-2007-08-30  Bráulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/cmdline.c&h: added in case where gengetopt is not installed.
+	* src/gebr/gebr.c: fixed debug flag usage
+	* mkinstalldirs: removed mkinstalldirs (also generated)
 
-	* added autotools files needed for older versions.
+2009-01-12  Ricardo Biloti <biloti@gmail.com>
 
-2007-08-29  Bráulio Barros de Oliveira <brauliobo@gmail.com>
+	* configure.ac: small fix to previous mega sed
 
-	* menus/*.mnu: changed programs' help to use CDATA and <pre> and
-	escaped < and > characters.
+2009-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/ui_prop.c, src/cb_prop.c: get help from menu at program's
-	parameters dialog.
+	* src/gebr/flow.c, src/gebr/line.c, src/gebr/project.c: select next
+	  or previous iter after delete actions
 
-2007-08-28  Bráulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-12  Ricardo Biloti <biloti@gmail.com>
 
-	* src/*.png, src/Makefile.am: renamed and intalled pngs.
+	* config.guess, config.sub, depcomp, install-sh, missing: delete
+	  automatically generated files
+	* configure.ac, packages/Makefile.am, packages/debian/control,
+	  packages/rpm/gebr.fedora.spec.in,
+	  packages/rpm/gebr.mandriva.spec.in,
+	  packages/rpm/gebr.opensuse.spec.in, src/Makefile.am,
+	  src/gebr-client/Makefile.am, src/gebr-client/client.c,
+	  src/gebr-client/client.h, src/gebr-client/gebrclient.c,
+	  src/gebr-client/gebrclient.h, src/gebr-client/main.c,
+	  src/gebr-client/server.c, src/gebr-client/server.h,
+	  src/gebr-client/support.h, src/gebr/Makefile.am,
+	  src/gebr/callbacks.h, src/gebr/client.c, src/gebr/client.h,
+	  src/gebr/document.c, src/gebr/document.h, src/gebr/flow.c,
+	  src/gebr/flow.h, src/gebr/gebr.c, src/gebr/gebr.h,
+	  src/gebr/interface.c, src/gebr/interface.h, src/gebr/job.c,
+	  src/gebr/job.h, src/gebr/line.c, src/gebr/line.h,
+	  src/gebr/main.c, src/gebr/menu.c, src/gebr/menu.h,
+	  src/gebr/project.c, src/gebr/project.h, src/gebr/server.c,
+	  src/gebr/server.h, src/gebr/support.c, src/gebr/support.h,
+	  src/gebr/ui_document.c, src/gebr/ui_document.h,
+	  src/gebr/ui_flow.c, src/gebr/ui_flow.h,
+	  src/gebr/ui_flow_browse.c, src/gebr/ui_flow_browse.h,
+	  src/gebr/ui_flow_edition.c, src/gebr/ui_flow_edition.h,
+	  src/gebr/ui_help.c, src/gebr/ui_help.h,
+	  src/gebr/ui_job_control.c, src/gebr/ui_job_control.h,
+	  src/gebr/ui_log.c, src/gebr/ui_log.h, src/gebr/ui_parameters.c,
+	  src/gebr/ui_parameters.h, src/gebr/ui_paths.h,
+	  src/gebr/ui_preferences.h, src/gebr/ui_project_line.c,
+	  src/gebr/ui_project_line.h, src/gebr/ui_server.c,
+	  src/gebr/ui_server.h: - Copyright messages updated
+	  - accents suppressed
+	* configure.ac, packages/debian/changelog.in: package version fixed
 
-	* src/menus.c: fixed size of help dialog.
+2009-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/*.c&h: Several code cleanups.
+	* packages/debian/rules, packages/rpm/gebr.fedora.spec.in,
+	  packages/rpm/gebr.mandriva.spec.in,
+	  packages/rpm/gebr.opensuse.spec.in: use --disable-debug to build
+	  packages
 
-	* src/menu.c&h, configure.ac: Preliminary menu help support (using gtkhtml).
+2009-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-2007-08-26  Ricardo Biloti  <biloti@ime.unicamp.br>
+	* src/gebr/interface.c: export as menu icon changed
+	* src/gebr/callbacks.c, src/gebr/callbacks.h, src/gebr/flow.c,
+	  src/gebr/flow.h, src/gebr/interface.c,
+	  src/gebr/ui_flow_edition.c: duplicate action for gebr
+	* src/gebr/gebr.c, src/gebr/gebr.h, src/gebr/interface.c,
+	  src/gebr/ui_flow_edition.c, src/gebr/ui_job_control.c: - updated
+	  TODO
+	  - fix compilation
+	  - word-wrap option at job log popup menu
+	* src/gebr/interface.c: popup menu for parameter type change in
+	  debr
 
-	* src/interface.c: changed stock button from
-	directory to open.
+2009-01-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* menus/suximage.menu, menus/suximage-simple.mnu,
-	menus/ximage.mnu: fix clip parameter.
+	* src/gebr/interface.c: converted debr to gtkactiongroup usage
+	* src/gebr/ui_flow_edition.c: reorder by drag n' drop changes
+	  weren't being saved on xml
+	* src/gebr/interface.c: fix job's actions
 
+2009-01-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/callbacks.c, src/gebr/callbacks.h, src/gebr/gebr.c,
+	  src/gebr/gebr.h, src/gebr/interface.c, src/gebr/ui_flow_browse.c,
+	  src/gebr/ui_flow_edition.c, src/gebr/ui_flow_edition.h,
+	  src/gebr/ui_parameters.c, src/gebr/ui_project_line.c: - initial
+	  buggy use of gtkuimanager and gtkactiongroup
+	  - fix crash when gebr.conf doesn't exist
+
+2008-12-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/callbacks.c, src/gebr/flow.c, src/gebr/project.c,
+	  src/gebr/ui_flow.c, src/gebr/ui_flow_browse.c,
+	  src/gebr/ui_flow_edition.c, src/gebr/ui_flow_edition.h,
+	  src/gebr/ui_help.c, src/gebr/ui_parameters.c,
+	  src/gebr/ui_parameters.h: - move by drag n' drop refactored
+	  - input/ouput items in flow edition view
+
+2008-12-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/ui_parameters.c: fix instanciate/deinstanciate bug
+	* src/gebr/line.c, src/gebr/ui_flow_browse.c,
+	  src/gebr/ui_flow_browse.h, src/gebr/ui_flow_edition.c: bizarre
+	  bug fixes
+
+2008-12-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/ui_parameters.c, src/gebr/ui_parameters.h: fixes to
+	  parameters dialog
+
+2008-12-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/ui_parameters.c, src/gebr/ui_parameters.h: - fix bug in
+	  move with drag n' drop
+	  - work on support for groups in gebr
+	* src/gebr/ui_parameters.c: - some work for group implementation on
+	  debr
+	  - updated TODO
+
+2008-12-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/ui_server.c: fix column name
+	* src/gebr/ui_server.c, src/gebr/ui_server.h: tweaks in server
+	  dialog
+	* src/gebr/interface.c, src/gebr/ui_flow_browse.c,
+	  src/gebr/ui_flow_edition.c, src/gebr/ui_project_line.c,
+	  src/gebr/ui_server.c, src/gebr/ui_server.h: - add some scrolled
+	  windows
+	  - minor fixes
+
+2008-12-18  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/ui_server.c: fix tooltip on tree view usage
+	* src/gebr/ui_flow_browse.c, src/gebr/ui_flow_edition.c: - drag n'
+	  drop for debr
+	  - top/bottom actions for debr
+	  - duplicate parameter for debr :P
+	* src/gebr/flow.c, src/gebr/flow.h, src/gebr/line.c,
+	  src/gebr/line.h, src/gebr/ui_flow_browse.c,
+	  src/gebr/ui_flow_browse.h, src/gebr/ui_flow_edition.c: - add drag
+	  n' drop support for flow browse
+	  - remove up and down and left only top and bottom
+	* src/gebr/ui_flow.c, src/gebr/ui_flow.h,
+	  src/gebr/ui_flow_browse.c, src/gebr/ui_flow_edition.c,
+	  src/gebr/ui_flow_edition.h: aff, finally move with drag n' drop
+	  working (huge delay due to crappy gtk infrastructure)
+
+2008-12-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/gebr.c, src/gebr/server.c, src/gebr/server.h,
+	  src/gebr/ui_parameters.c, src/gebr/ui_server.c,
+	  src/gebr/ui_server.h: first version of server dialog redesign
+
+2008-12-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/client.c, src/gebr/ui_server.c: fix to client/server
+	  check
+	* src/gebr/ui_server.c: gtk < 2.12 cannot set tooltips for a
+	  gtktreeview
+	* src/gebr/client.c, src/gebr/gebr.c, src/gebr/gebr.h,
+	  src/gebr/server.c, src/gebr/server.h, src/gebr/ui_server.c:
+	  initial work to support client/server version check
+	* src/gebr/Makefile.am, src/gebr/cmdline.c, src/gebr/cmdline.h,
+	  src/gebr/gebr.c, src/gebr/gebr.ggo, src/gebr/gebr.h,
+	  src/gebr/main.c: ported gengetopt in gebr to gkeyfile, keeping
+	  backwards compatibility
+
+2008-12-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/flow.c: add proper extension if needed on save actions
+
+2008-11-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/interface.c, src/gebr/ui_flow_browse.c: fix libgebr's
+	  libtool
+
+2008-11-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/interface.c: - readded actions icons
+	  - put statuses on a menu tool button
+	* src/gebr/interface.c: to satisfy git-svn
+
+2008-11-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/callbacks.c, src/gebr/callbacks.h, src/gebr/gebr.h,
+	  src/gebr/interface.c, src/gebr/main.c,
+	  src/gebr/ui_flow_edition.c: - fixes to gebr theme
+	  - fix flow edition popup menu
+	* src/gebr/main.c, src/gebr/menu.c: - fix icons installation
+	  - create a gtkiconfactory for the icons
+	  - added index.theme
+
+2008-11-26  Ricardo Biloti <biloti@gmail.com>
+
+	* src/gebr/gebr.h, src/gebr/interface.c: quit menu entry for gebr
+	  and configure rename to actions
+
+2008-11-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* configure.ac: added stock theme based on kde4's oxygen
+
+2008-11-25  Ricardo Biloti <biloti@gmail.com>
+
+	* src/gebr/interface.c: toolbar without text and with tooltips
+
+2008-11-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/interface.c, src/gebr/ui_project_line.c: - fixed
+	  geoxml's new parameter and program creation
+	  - minor fixes to gebr and debr creation
+	* src/gebr-client/server.c, src/gebr-client/server.h,
+	  src/gebr/server.c, src/gebr/server.h: more compilation due to old
+	  installation with old headers
+
+2008-11-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr-client/client.c, src/gebr-client/server.c: fix
+	  compilation issues
+	* src/gebr/flow.c, src/gebr/ui_parameters.c: the saga of list
+	  parameters ended!
+	  - changed DTD to make value and default values independets
+	  - refactoring of GeoXmlProgramParameter functions
+	  - general refacte on parameter_widget function:
+	  - every change is auto submited
+	  - ability to auto rebuild the ui to match new parameter
+	  properties
+	  - adapted to the in each element value list parameter
+	  - a lot of conversion to flow 0.3.0 fixes
+
+2008-11-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/interface.c: fix a bug when no value element is inserted
+	  into property
+
+2008-11-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/callbacks.c, src/gebr/callbacks.h, src/gebr/client.c,
+	  src/gebr/flow.c, src/gebr/gebr.c, src/gebr/gebr.h,
+	  src/gebr/interface.c, src/gebr/interface.h, src/gebr/job.c,
+	  src/gebr/main.c, src/gebr/project.c, src/gebr/server.c,
+	  src/gebr/ui_flow_browse.c, src/gebr/ui_flow_edition.c,
+	  src/gebr/ui_job_control.c, src/gebr/ui_job_control.h,
+	  src/gebr/ui_parameters.c, src/gebr/ui_project_line.c,
+	  src/gebr/ui_server.c: last commit with git commit's -a option
+
+2008-08-11  Ricardo Biloti <biloti@gmail.com>
+
+	* configure.ac: update to 0.9.6-pre version
+	* src/gebr/callbacks.c, src/gebr/callbacks.h, src/gebr/gebr.h,
+	  src/gebr/interface.c, src/gebr/project.c,
+	  src/gebr/ui_flow_browse.c, src/gebr/ui_project_line.c: navigation
+	  bar
+
+2008-06-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* debian: final merge operations
+	* Makefile.am, configure.ac, debian, packages,
+	  packages/Makefile.am, packages/debian,
+	  packages/debian/README.Debian, packages/debian/changelog.in,
+	  packages/debian/compat, packages/debian/control,
+	  packages/debian/copyright, packages/debian/dirs,
+	  packages/debian/docs, packages/debian/install,
+	  packages/debian/postinst.ex, packages/debian/postrm.ex,
+	  packages/debian/preinst.ex, packages/debian/prerm.ex,
+	  packages/debian/rules, packages/rpm,
+	  packages/rpm/gebr.fedora.spec.in,
+	  packages/rpm/gebr.mandriva.spec.in,
+	  packages/rpm/gebr.opensuse.spec.in, rpm: branches
+	  packages_reorganization merged with trunk
+	* configure.ac: - created tag 0.9.5 for release, and changed trunk
+	  pre versions
+	  - created branch packages_reorganitazation
+
+2008-06-19  Ricardo Biloti <biloti@gmail.com>
+
+	* src/gebr/ui_log.c: elipses to long message in status bar
+
+2008-06-18  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/flow.c, src/gebr/ui_job_control.c: fixed asking server
+	  messages
+	* src/gebr/flow.c: minor fixes/cleanups
+	* src/gebr/client.c, src/gebr/flow.c: - check for display
+	  redirection result
+	  - only show asking server ... (for running flows) message for
+	  remote servers
+
+2008-06-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/client.c: change x11 forward architecture (with protocol
+	  implications)
+
+2008-06-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/ui_server.c: fixed crash when clicked refresh on
+	  servers' dialog
+	* src/gebr/client.c: show message when connected to a server
+	* src/gebr/server.c, src/gebr/ui_server.c: make add local server
+	  button work again
+	* src/Makefile.am, src/gebr/Makefile.am: - defines.h away from gebr
+	  makefile
+	  - gebr client now send it its IP (again)
+	  - server use its hostname for lock/log files
+
+2008-06-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* configure.ac, src/defines.h.in, src/gebr-client/gebrclient.c,
+	  src/gebr-client/gebrclient.h, src/gebr-client/main.c,
+	  src/gebr-client/server.c, src/gebr-client/server.h,
+	  src/gebr/defines.h.in, src/gebr/main.c, src/gebr/menu.c,
+	  src/gebr/server.c, src/gebr/ui_help.c: some gebr-client progress
+	  achieved
+
+2008-06-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/defines.h.in, src/gebr/main.c: - added version
+	  commandline option to gebr and gebrd
+	  - gebrd: added defines.h and change foreground option name to
+	  interactive
+	* src/gebr/server.c: fix yes/no ssh message handling
+	* src/gebr/ui_server.c: fix way server was added which was causing
+	  strange behaviour with multiple servers
+
+2008-06-12  Ricardo Biloti <biloti@gmail.com>
+
+	* src/gebr/server.c, src/gebr/ui_server.c: change server lock
+	  policy to gebrd-<serve_ip>.run and get rid of localhost's as
+	  127.0.0.1
+
+2008-04-17  Ricardo Biloti <biloti@gmail.com>
+
+	* src/gebr/ui_preferences.c: better guess of username and email
+	  when running for the first time
+
+2008-04-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr-client/Makefile.am, src/gebr-client/client.c,
+	  src/gebr-client/gebrclient.c, src/gebr-client/gebrclient.h,
+	  src/gebr-client/main.c, src/gebr-client/server.c: make
+	  gebr-client at least compile
+	* configure.ac, src/Makefile.am, src/callbacks.c, src/callbacks.h,
+	  src/client.c, src/client.h, src/defines.h.in, src/document.c,
+	  src/document.h, src/flow.c, src/flow.h,
+	  src/gebr-client/Makefile.am, src/gebr-client/client.c,
+	  src/gebr-client/client.h, src/gebr-client/main.c,
+	  src/gebr-client/server.c, src/gebr-client/server.h,
+	  src/gebr-client/support.h, src/gebr.c, src/gebr.ggo, src/gebr.h,
+	  src/gebr/Makefile.am, src/interface.c, src/interface.h,
+	  src/job.c, src/job.h, src/line.c, src/line.h, src/main.c,
+	  src/menu.c, src/menu.h, src/project.c, src/project.h,
+	  src/server.c, src/server.h, src/support.c, src/support.h,
+	  src/ui_document.c, src/ui_document.h, src/ui_flow.c,
+	  src/ui_flow.h, src/ui_flow_browse.c, src/ui_flow_browse.h,
+	  src/ui_flow_edition.c, src/ui_flow_edition.h, src/ui_help.c,
+	  src/ui_help.h, src/ui_job_control.c, src/ui_job_control.h,
+	  src/ui_log.c, src/ui_log.h, src/ui_parameters.c,
+	  src/ui_parameters.h, src/ui_paths.c, src/ui_paths.h,
+	  src/ui_preferences.c, src/ui_preferences.h,
+	  src/ui_project_line.c, src/ui_project_line.h, src/ui_server.c,
+	  src/ui_server.h: preparing repository for adding gebr-client
+	  makefiles
+	* src/gebr/Makefile.am, src/gebr/callbacks.c, src/gebr/callbacks.h,
+	  src/gebr/client.c, src/gebr/client.h, src/gebr/document.c,
+	  src/gebr/document.h, src/gebr/flow.c, src/gebr/flow.h,
+	  src/gebr/gebr.c, src/gebr/gebr.ggo, src/gebr/gebr.h,
+	  src/gebr/interface.c, src/gebr/interface.h, src/gebr/job.c,
+	  src/gebr/job.h, src/gebr/line.c, src/gebr/line.h,
+	  src/gebr/main.c, src/gebr/menu.c, src/gebr/menu.h,
+	  src/gebr/project.c, src/gebr/project.h, src/gebr/server.c,
+	  src/gebr/server.h, src/gebr/support.c, src/gebr/support.h,
+	  src/gebr/ui_document.c, src/gebr/ui_document.h,
+	  src/gebr/ui_flow.c, src/gebr/ui_flow.h,
+	  src/gebr/ui_flow_browse.c, src/gebr/ui_flow_browse.h,
+	  src/gebr/ui_flow_edition.c, src/gebr/ui_flow_edition.h,
+	  src/gebr/ui_help.c, src/gebr/ui_help.h,
+	  src/gebr/ui_job_control.c, src/gebr/ui_job_control.h,
+	  src/gebr/ui_log.c, src/gebr/ui_log.h, src/gebr/ui_parameters.c,
+	  src/gebr/ui_parameters.h, src/gebr/ui_paths.c,
+	  src/gebr/ui_paths.h, src/gebr/ui_preferences.c,
+	  src/gebr/ui_preferences.h, src/gebr/ui_project_line.c,
+	  src/gebr/ui_project_line.h, src/gebr/ui_server.c,
+	  src/gebr/ui_server.h: preparing repository for adding gebr-client
+	  makefiles
+	* src/gebr/defines.h.in: preparing repository for adding
+	  gebr-client makefiles
+	* src/gebr, src/gebr-client: preparing for adding gebr-client
+	  makefiles
+
+2008-04-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/line.c, src/ui_parameters.c: missing stuff to be commited
+	* src/ui_flow_edition.c, src/ui_parameters.c, src/ui_parameters.h:
+	  initial refactoring work to support exclusive groups
+
+2008-04-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/ui_flow_edition.c, src/ui_parameters.c: backward compatible
+	  gtkradioaction method for gtk 2.8
+
+2008-04-09  Ricardo Biloti <biloti@gmail.com>
+
+	* src/callbacks.c, src/callbacks.h, src/client.c, src/client.h,
+	  src/document.c, src/document.h, src/flow.c, src/flow.h,
+	  src/gebr.c, src/gebr.h, src/interface.c, src/interface.h,
+	  src/job.c, src/job.h, src/line.c, src/line.h, src/main.c,
+	  src/menu.c, src/menu.h, src/project.c, src/project.h,
+	  src/server.c, src/server.h, src/support.c, src/support.h,
+	  src/ui_document.c, src/ui_document.h, src/ui_flow.c,
+	  src/ui_flow.h, src/ui_flow_browse.c, src/ui_flow_browse.h,
+	  src/ui_flow_edition.c, src/ui_flow_edition.h, src/ui_help.c,
+	  src/ui_help.h, src/ui_job_control.c, src/ui_job_control.h,
+	  src/ui_log.c, src/ui_log.h, src/ui_parameters.c,
+	  src/ui_parameters.h, src/ui_paths.c, src/ui_paths.h,
+	  src/ui_preferences.c, src/ui_preferences.h,
+	  src/ui_project_line.c, src/ui_project_line.h, src/ui_server.c,
+	  src/ui_server.h: file's header updated and changed to plain ascii
+
+2008-04-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/callbacks.c, src/callbacks.h, src/document.c, src/document.h,
+	  src/flow.c, src/flow.h, src/gebr.c, src/gebr.h, src/interface.c,
+	  src/line.c, src/line.h, src/project.c, src/project.h,
+	  src/ui_document.c, src/ui_flow_browse.c, src/ui_flow_edition.c,
+	  src/ui_flow_edition.h, src/ui_parameters.c, src/ui_paths.c,
+	  src/ui_project_line.c, src/ui_project_line.h: - emit signal
+	  cursor-changed but call popup callback
+	  - fix and ported to gtkaction program status menus items
+	  - add project new and flow new to popups menus.
+	  - little code organization and cleanups
+
+2008-04-08  Ricardo Biloti <biloti@gmail.com>
+
+	* src/callbacks.c, src/callbacks.h, src/flow.c, src/flow.h,
+	  src/interface.c, src/line.c, src/line.h, src/project.c,
+	  src/project.h, src/ui_document.c, src/ui_flow_browse.c,
+	  src/ui_flow_edition.c, src/ui_paths.c, src/ui_project_line.c:
+	  popup menu for project/line view
+	* src/ui_flow_edition.c, src/ui_help.c, src/ui_help.h,
+	  src/ui_parameters.c: - popup menu for menus
+	  - vertical bar of buttons suppressed in flow edition view in
+	  favor of popup menus
+	* src/callbacks.c, src/callbacks.h, src/flow.c, src/flow.h,
+	  src/interface.c, src/ui_flow_edition.c, src/ui_flow_edition.h:
+	  popup menu for flow edition enhanced
+
+2008-04-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/flow.c, src/flow.h, src/ui_flow_browse.c: - updated TODO
+	  - flow browse view column should exist anymore as now it is
+	  treated as a sequence
+	  - implement top/bottom for the xml
+	  - cleanups on code for moving elements on the store/xml
+
+2008-04-05  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* Makefile.am, configure.ac, src/Makefile.am, src/gebr.c,
+	  src/gebr.h, src/interface.c, src/ui_flow_edition.c, src/ui_log.c,
+	  src/ui_parameters.c, src/ui_parameters.h, src/ui_project_line.c:
+	  - groups functional on gebr and gebrme
+	  - debug flags thought --enable-debug
+
+2008-03-22  Ricardo Biloti <biloti@gmail.com>
+
+	* src/flow.c, src/flow.h, src/ui_flow_browse.c: initial top/bottom
+	  options in flow_browse popup menu
+
+2008-03-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/flow.c, src/gebr.h, src/interface.c, src/job.c, src/line.c,
+	  src/menu.c, src/ui_document.c, src/ui_flow.c,
+	  src/ui_flow_edition.c, src/ui_project_line.c, src/ui_server.c: -
+	  fixed string comparison to consider case
+	  - gebr: make accel_group a global variable
+	* src/ui_flow_browse.c, src/ui_flow_edition.c: - smarter popup menu
+	  in flow browser
+	  - simple popup menu for flow edition
+	* src/flow.c, src/gebr.c, src/gebr.h, src/project.c: fixed warning:
+	  parameter should not be a pointer
+
+2008-03-13  Ricardo Biloti <biloti@gmail.com>
+
+	* src/flow.c: move and down in popup flow browse menu persistent
+
+2008-03-12  Ricardo Biloti <biloti@gmail.com>
+
+	* src/ui_flow_browse.c: - fix a case insensitive string comparison
+	  - escape command line string
+
+2008-03-07  Ricardo Biloti <biloti@gmail.com>
+
+	* Makefile.am: revert wrong deb package rule
+
+2008-03-06  Ricardo Biloti <biloti@gmail.com>
+
+	* Makefile.am, debian/control: enhancements in package generation
+
+2008-03-05  Ricardo Biloti <biloti@gmail.com>
+
+	* Makefile.am: new rule packages
+	* debian/control, menus/Makefile.am, menus/a2b.mnu, menus/b2a.mnu,
+	  menus/gbbeam.mnu, menus/segyread.mnu, menus/segywrite.mnu,
+	  menus/suabshw.mnu, menus/suacor.mnu, menus/suaddevent.mnu,
+	  menus/suaddhead.mnu, menus/suaddnoise.mnu, menus/suamp.mnu,
+	  menus/suchw.mnu, menus/sudivcor.mnu, menus/sufdmod2.mnu,
+	  menus/sufft.mnu, menus/sufilter.mnu, menus/sugain.mnu,
+	  menus/sukdmig2d.mnu, menus/sukill.mnu, menus/sumigfd.mnu,
+	  menus/sumigffd.mnu, menus/sumiggbzo.mnu, menus/sumigprefd.mnu,
+	  menus/sumigpreffd.mnu, menus/sumigprepspi.mnu,
+	  menus/sumigpresp.mnu, menus/sumigpspi.mnu, menus/sumigsplit.mnu,
+	  menus/sumix.mnu, menus/sumute.mnu, menus/sunmo.mnu,
+	  menus/suop.mnu, menus/suop2.mnu, menus/supef.mnu,
+	  menus/suplane.mnu, menus/supws.mnu, menus/suramp.mnu,
+	  menus/surange.mnu, menus/surelan.mnu, menus/sushape.mnu,
+	  menus/sushw.mnu, menus/susort.mnu, menus/suspike.mnu,
+	  menus/sustack.mnu, menus/sustolt.mnu, menus/sutab.mnu,
+	  menus/sutaper.mnu, menus/sutaup.mnu, menus/sutetraray.mnu,
+	  menus/sutihalednmo.mnu, menus/sutivel.mnu, menus/suvelan.mnu,
+	  menus/suvelan_nsel.mnu, menus/suvelan_uccs.mnu,
+	  menus/suvelan_usel.mnu, menus/suvelannccs.mnu, menus/suvibro.mnu,
+	  menus/suvlength.mnu, menus/suweight.mnu, menus/suwellrf.mnu,
+	  menus/suwind.mnu, menus/suximage-simple.mnu, menus/suximage.mnu,
+	  menus/suxwigb-simple.mnu, menus/suxwigb.mnu, menus/triseis.mnu,
+	  menus/tvnmoqc.mnu, menus/uni2tri.mnu, menus/unif2.mnu,
+	  menus/usernames.mnu, menus/ximage.mnu, menus/xwigb.mnu: - new
+	  package gebr-menus-su created
+	  - all SU menus moved from gebr to gebr-menus-su
+	* menus/Makefile.am, menus/suaddevent.mnu, src/flow.c, src/flow.h,
+	  src/ui_flow_browse.c: - initial pop-up menu for flow browse view
+	  - suaddevent added
+
+2008-03-04  Ricardo Biloti <biloti@gmail.com>
+
+	* menus/Makefile.am, menus/df.mnu, menus/uname.mnu,
+	  menus/uptime.mnu: Shell tools deleted in favor of a specific
+	  package
+
+2008-02-29  Ricardo Biloti <biloti@gmail.com>
+
+	* src/gebr.c, src/gebr.ggo, src/gebr.h, src/ui_preferences.c,
+	  src/ui_server.c: preserve window size and log expander state
+	* src/flow.c: ensure that exported menu file has .mnu extension
+	* src/client.c, src/document.c, src/flow.c, src/gebr.c, src/job.c,
+	  src/line.c, src/main.c, src/menu.c, src/project.c, src/server.c,
+	  src/support.c, src/ui_flow_edition.c, src/ui_help.c: TODO and
+	  Copyright note updated
+	* src/flow.c, src/line.c, src/project.c: scroll on new
+	  project/line/flow
+
+2008-02-28  Ricardo Biloti <biloti@gmail.com>
+
+	* src/interface.c, src/ui_document.c: added some hot-keys
+	* menus/Makefile.am: honor range digits when retrieving parameter's
+	  value
+
+2008-02-25  Ricardo Biloti <biloti@gmail.com>
+
+	* menus/sushw.mnu: sushw added
+	* menus/suximage-simple.mnu: suximage-simple improved
+
+2008-02-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/callbacks.c, src/gebr.c, src/job.c, src/ui_flow.c,
+	  src/ui_flow_browse.c, src/ui_log.c, src/ui_preferences.c,
+	  src/ui_preferences.h, src/ui_project_line.c: - put missing
+	  flow-0.2.2.dtd in Makefile.am
+	  - double click action for line and flow
+	  - scroll job and flow sequence
+	  - first run improvementes along side with preferences dialog
+	  - a bunch of other things
+
+2008-02-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/ui_flow_edition.c, src/ui_parameters.c: - fixed icon of
+	  gtkfileentry and gtksequenceedit
+	  - merged enum-impl and improved show on combo box
+	  - quote each value when parameter accepts a list of parameters
+	  - fixed revert to default value on parameters dialog
+
+2008-02-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/menu.c: - a lot of work in enum-impl
+	  - added branch group-impl from enum-impl branch
+
+2008-02-15  Ricardo Biloti <biloti@gmail.com>
+
+	* menus/grace.mnu, menus/sunmo.mnu: update to grace and sunmo menus
+
+2008-02-14  Ricardo Biloti <biloti@gmail.com>
+
+	* src/interface.c: two more icons
+	* src/ui_project_line.c: minor fix to project/line update
+	* src/ui_flow_edition.c, src/ui_log.c, src/ui_parameters.c,
+	  src/ui_paths.c: Link button reverted to regular button (otherwise
+	  GTK+ >= 2.10 required)
+	  Line's properties view updated whenever line's path is updated
+	  Dates in log widget shown with markup
+
+2008-02-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/ui_flow.c, src/ui_flow.h, src/ui_parameters.c: - use
+	  gtklinkbutton to show program's url
+	  - use line's path in file parameters
+
+2008-02-13  Ricardo Biloti <biloti@gmail.com>
+
+	* src/ui_paths.c, src/ui_paths.h: line's path feature added
 	* src/Makefile.am, src/callbacks.c, src/callbacks.h,
-	src/cb_flow.c, src/cb_line.c, src/cb_proj.c, src/cb_prop.c,
-	src/cb_prop.h, src/gebr.c, src/gebr.ggo, src/gebr.h,
-	src/interface.c, src/menus.c, src/ui_prop.c, src/widgets.h:
-	command line options merged into a single file; checkbutton
-	syncronized with dir browse button; reload configuration after
-	changing it.
+	  src/interface.c, src/project.c, src/ui_flow.c,
+	  src/ui_project_line.c, src/ui_project_line.h: line's path feature
+	  added
 
-2007-08-26  Bráulio Barros de Oliveira <brauliobo@gmail.com>
+2008-02-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* First public release.
+	* src/line.c: fixed line path and add message when a invalid flow
+	  is found
+
+2008-02-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/ui_flow.c: don't confirm overwrite in parameters' dialog and
+	  on flow input selection
+
+2008-02-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/ui_log.c, src/ui_log.h, src/ui_project_line.c: fixed in log
+	  viewer
+	* src/Makefile.am, src/gebr.c, src/gebr.h, src/interface.c,
+	  src/ui_job_control.c, src/ui_log.c, src/ui_log.h: initial version
+	  o log viewer for gebr
+
+2008-02-10  Ricardo Biloti <biloti@gmail.com>
+
+	* menus/Makefile.am, menus/grace.mnu, src/ui_parameters.c: grace
+	  added and program help fixed
+
+2008-02-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr.c, src/ui_server.c: - updated TODO
+	  - handle delete-event for server list dialog to save settings
+	* src/gebr.c, src/menu.c, src/menu.h: check in gebr start if menu
+	  list should be refreshed
+
+2008-02-10  Ricardo Biloti <biloti@gmail.com>
+
+	* src/ui_parameters.c: description instead of title
+
+2008-02-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/ui_parameters.c, src/ui_server.c: show programs' description
+	  and link to url in parameters' dialog
+	* src/ui_server.c: bug fixed: avoid server list dialog to be
+	  deleted when delete-event is received
+	* src/job.c, src/server.c, src/ui_job_control.c: - close stdin for
+	  programs that do not use it (in gebrd)
+	  - fixed crash when clearing jobs from disconnected servers
+
+2008-02-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr.c: fixed statusbar messages
+	* src/server.c: fixed ssh login dialog
+	* src/client.c, src/client.h, src/document.c, src/flow.c,
+	  src/gebr.c, src/job.c, src/line.c, src/menu.c, src/project.c,
+	  src/server.c, src/server.h, src/ui_document.c, src/ui_flow.c,
+	  src/ui_flow_browse.c, src/ui_flow_edition.c, src/ui_help.c,
+	  src/ui_job_control.c, src/ui_parameters.c, src/ui_project_line.c,
+	  src/ui_server.c: - added define.h in libgebr for static mode
+	  support
+	  - changed names of enum log_message_type
+	  - ported server infrastruture to libgebr-comm for further use in
+	  gebr-run
+
+2008-02-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/ui_parameters.c: use help stock in parameters' dialog
+	* src/callbacks.c, src/callbacks.h, src/flow.c, src/flow.h,
+	  src/interface.c, src/menu.c, src/menu.h, src/ui_parameters.c:
+	  support for exporting a flow as a menu
+
+2008-02-08  Ricardo Biloti <biloti@gmail.com>
+
+	* menus/Makefile.am: usernames entry missing
+	* menus/df.mnu, menus/uname.mnu: url fix
+	* menus/Makefile.am, menus/sleep.mnu, menus/uname.mnu: sleep added
+	* menus/Makefile.am, menus/df.mnu, menus/uname.mnu,
+	  menus/uptime.mnu, menus/usernames.mnu: df, uptime, usernames and
+	  uname added
+	* TODO: global TODO file and small program remove fix to gebrme
+
+2008-02-06  Ricardo Biloti <biloti@gmail.com>
+
+	* src/server.c: crash fixed
+
+2008-02-05  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/server.c: fixed crash
+	* src/server.c: temporary workaround for running local servers
+
+2008-02-04  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/server.c, src/server.h: - introduced misterious magic code
+	  that brings stability!
+	  - report ssh errors
+	* src/flow.c, src/line.c, src/server.c, src/server.h: rollback to
+	  last commit's server.{c,h} in gebr
+	* src/flow.c, src/gebr.c, src/line.c, src/menu.c, src/server.c,
+	  src/server.h: - improved client/server archtecture (still
+	  unstable)
+	  - general fixes
+
+2008-01-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/flow.c, src/line.c, src/ui_job_control.c: - fixed dialogs for
+	  confirming actions
+	  - added confimation dialogs for revert and delete
+	  - moved support for programs' url to 0.2.1. finished implementing
+	  full support to urls
+
+2008-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/Makefile.am: - use LIBGEBR_{CFLAGS, LIBS} in gebrd and gebrme
+	  - disable file overwrite confirmation on gtkfileentry
+
+2008-01-16  Ricardo Biloti <biloti@gmail.com>
+
+	* menus/ximage.mnu: ximage updated
+	* src/ui_preferences.c: tooltips fixed for preferences
+	* src/menu.c, src/ui_job_control.c: safe temp file for sort menu
+	  items
+
+2008-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/ui_parameters.c: - fix program popup menu appearence
+	  - initial code for enums ands lists
+
+2008-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/Makefile.am, src/parameter.c, src/parameter.h,
+	  src/ui_parameters.c, src/ui_parameters.h: common code reuse of
+	  parameters for gebr and gebrme
+	* src/Makefile.am, src/parameter.c, src/parameter.h,
+	  src/ui_parameters.c, src/ui_parameters.h: moved back parameters.*
+	  to gebr
+
+2008-01-11  Ricardo Biloti <biloti@gmail.com>
+
+	* THANKS: more thanks
+	* menus/suxwigb-simple.mnu, menus/ximage.mnu: Fix default value and
+	  title
+	* src/gebr.c: fix segfault to users without .gebr directory
+
+2008-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/ui_parameters.c, src/ui_parameters.h: moved parateters' code
+	  to libgebr_gui
+
+2008-01-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* configure.ac, src/defines.h.in, src/server.c: static mode option
+	* src/document.c: - fixed an increbile anoying bug (or maybe a
+	  libxml2 bug?)
+	  - fixed gÃªbr's message
+	* configure.ac, src/Makefile.am, src/defines.h.in, src/menu.c,
+	  src/ui_help.c: - changed use of -D in favor of a defines.h
+	  - minor changes
+	* src/document.c, src/flow.c: ported to iso_date from libgebr
+	* src/gebr.h, src/ui_parameters.c: - remove unused tips variable
+	  - remove round warning
+	* src/flow.c, src/interface.c, src/job.c, src/line.c,
+	  src/support.c, src/support.h, src/ui_flow_browse.c,
+	  src/ui_job_control.c, src/ui_preferences.c,
+	  src/ui_project_line.c: - fix header encoding problems and
+	  copyright
+	  - moved date, tooltip and confirm_action_dialog to libgebr
+	  - added g_simple_locale_to_utf8 to libgebr
+	  - improved set_tooltip
+	* src/flow.c, src/ui_flow.c, src/ui_job_control.c, src/ui_server.c:
+	  ask for overwrite confirmation
+
+2008-01-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/flow.c, src/ui_server.c: fixed flow run
+	* src/server.c, src/ui_server.c: minor fixes
+	* src/server.c, src/server.h, src/ui_server.c: - fix multiple
+	  appreances of 'add local server' button
+	  - fix asking password twice
+	* src/server.c, src/ui_server.c: - more reliable retrieve o magic
+	  cookie
+	  - enabled add local server button
+	* src/callbacks.c, src/gebr.c, src/server.c, src/server.h,
+	  src/ui_server.c, src/ui_server.h: - common server structure
+	  - better support for ssh login
+	* src/server.c, src/server.h: preliminary support login in with
+	  passwords and passphares on SSH
+
+2008-01-05  Ricardo Biloti <biloti@gmail.com>
+
+	* src/server.c: lack of initialization of server address
+
+2008-01-05  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/server.c, src/server.h, src/ui_job_control.c: - added
+	  function server_is_local
+	  - fixed bug in job save dialog
+
+2008-01-05  Ricardo Biloti <biloti@gmail.com>
+
+	* configure.ac, debian/changelog.in: Fix changelogs
+
+2008-01-04  Ricardo Biloti <biloti@gmail.com>
+
+	* src/server.c: no ssh dependency for local server
+
+2007-12-13  Ricardo Biloti <biloti@gmail.com>
+
+	* src/gebr.h, src/interface.c, src/job.c, src/line.c,
+	  src/support.c, src/support.h, src/ui_job_control.c,
+	  src/ui_preferences.c, src/ui_preferences.h: tooltips fixed and
+	  some other minor bugs
+
+2007-12-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/document.c: fixed use of version define in geoxml
+	* src/job.c, src/line.c, src/support.c, src/support.h: - fixed used
+	  of uninitialized varible
+	  - localize date in jobs
+	  - minor cleanups
+
+2007-12-13  Ricardo Biloti <biloti@gmail.com>
+
+	* src/document.c, src/flow.c, src/support.c, src/support.h,
+	  src/ui_flow_browse.c, src/ui_flow_browse.h,
+	  src/ui_project_line.c: several bug fixes
+	* configure.ac: DTD versions fixed
+	* src/ui_job_control.c: small message fix
+
+2007-12-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* Makefile.am, TODO, configure.ac, menus/suximage-simple.mnu,
+	  menus/suximage.mnu, menus/suxwigb-simple.mnu, menus/suxwigb.mnu,
+	  menus/ximage.mnu, menus/xwigb.mnu, pixmaps, src/Makefile.am,
+	  src/callbacks.c, src/callbacks.h, src/cb_flow.c, src/cb_flow.h,
+	  src/cb_flowcomp.c, src/cb_flowcomp.h, src/cb_help.c,
+	  src/cb_help.h, src/cb_job.c, src/cb_job.h, src/cb_line.c,
+	  src/cb_line.h, src/cb_proj.c, src/cb_proj.h, src/cb_prop.c,
+	  src/cb_prop.h, src/cb_server.c, src/cb_server.h, src/client.c,
+	  src/client.h, src/cmdline.c, src/cmdline.h, src/document.c,
+	  src/document.h, src/flow.c, src/flow.h, src/gebr.c, src/gebr.ggo,
+	  src/gebr.h, src/interface.c, src/interface.h, src/job.c,
+	  src/job.h, src/line.c, src/line.h, src/main.c, src/menu.c,
+	  src/menu.h, src/menus.c, src/menus.h, src/parse.c, src/parse.h,
+	  src/project.c, src/project.h, src/server.c, src/server.h,
+	  src/support.c, src/support.h, src/ui_document.c,
+	  src/ui_document.h, src/ui_flow.c, src/ui_flow.h,
+	  src/ui_flow_browse.c, src/ui_flow_browse.h,
+	  src/ui_flow_edition.c, src/ui_flow_edition.h, src/ui_help.c,
+	  src/ui_help.h, src/ui_job_control.c, src/ui_job_control.h,
+	  src/ui_menubar.c, src/ui_menubar.h, src/ui_pages.c,
+	  src/ui_pages.h, src/ui_parameters.c, src/ui_parameters.h,
+	  src/ui_preferences.c, src/ui_preferences.h,
+	  src/ui_project_line.c, src/ui_project_line.h, src/ui_prop.c,
+	  src/ui_prop.h, src/ui_server.c, src/ui_server.h, src/widgets.h: -
+	  merged branch code-reorganization into trunk
+	  - fixed syntax error on flow DTD
+
+2007-11-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* .: fixed trunk subdir tree
+	* recovered trunk
+	* fixed filter name in export file chooser window
+	* .: preparation to make trunk stable and delete branch 0.9
+
+2007-11-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fixed job_append_output
+	* fixed job executed info
+	* disabled x11 port forwarding when running gebrd remotely
+	* only show finish date when job is active
+	* fixed output append
+	* - added protocol version in INI
+	  - added finish date in FIN
+	  - append output instead of regenerate all job info buffer
+	  - run bash -l
+
+2007-11-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* 0.9.3 will be a tag and 0.9 is a brach
+	* created the first branch, 0.9.3
+
+2007-11-23  Ricardo Biloti <biloti@gmail.com>
+
+	* x support through xauth (broken)
+	* no server ask when only one available
+	* gprocess fixed, add localhost to prevent empty server lists
+	* down button fixed
+
+2007-11-20  Ricardo Biloti <biloti@gmail.com>
+
+	* many congress fixes
+
+2007-11-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* change ssh functions names
+
+2007-11-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* prevent that a server is added twice
+	* fix server removal
+	* fixed stop/cancel of not running jobs
+	* - pid -> jid
+	  - a lot of fixes
+	* more fixes. now it is able to executed non-graphical flows
+	* more work... II
+
+2007-11-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* gebrd: process -> job
+	* more work...
+	* some work...
+	* - fix peer_address in gtcpsocket
+	  - fix X11 forwarding
+	* removed gnetwork (fogotten)
+	* - fill job info
+	  - prevent run when there is no flow selected
+	  - gebrd: more issues info
+	* - show flows that could not be run into jobs view
+	  - protocol fixes
+	* added protocol support for sizing each argument of a message
+
+2007-11-14  Ricardo Biloti <biloti@gmail.com>
+
+	* job callbacks improved
+	* job connects fixed
+	* job interface enhacements
+	* job new and add further implemented
+
+2007-11-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* some code to job callbacks
+
+2007-11-14  Ricardo Biloti <biloti@gmail.com>
+
+	* suchw added
+	* menus minor fixes
+
+2007-11-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* show error or warnings when assemblying flow command line
+	* - fixed sockets behaviour on libgebr_misc
+	  - more run stuff
+
+2007-11-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* job callbacks
+	* more process job support on server
+	* choose server to run flow interface
+	* server auth and protocol fixes
+	* fix compile errors
+	* some protocol_send changes
+	* fixes...
+
+2007-11-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* second ssh try
+	* - fixes on GProcess
+	  - more ssh work on gebr
+	  - fixes command QUT on gebrd
+
+2007-11-12  Ricardo Biloti <biloti@gmail.com>
+
+	* minor bug due to gchar -> gstring
+
+2007-11-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fix config values init when there is no config
+
+2007-11-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - gprocess work
+	  - initial code for ssh execution for port discovery
+	  - protocol ifs on gebr and gebrd
+	  - removed info on debian package
+	  - fixed build error on libgebr
+
+2007-11-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - change name of gnetwork to misc (part II)
+	  - moved gprocess to libgebr_misc
+	* - initial server support on gebr
+	  - minor changes in libgebr
+	  - partially fiz quit on gebrd
+	* server running on a random port
+
+2007-11-10  Ricardo Biloti <biloti@gmail.com>
+
+	* server interface done
+
+2007-11-09  Ricardo Biloti <biloti@gmail.com>
+
+	* config kept internaly and other fixes
+
+2007-11-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - moved protocol messaging to libgebr_gnetwork
+	  - client/server files on gebr
+
+2007-11-09  Ricardo Biloti <biloti@gmail.com>
+
+	* initial server config interface
+	* start job interface implementation
+	* 
+	* package build fixes
+
+2007-11-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* use libgebr
+	* initial move of libgeoxml to libgebr
+
+2007-11-05  Ricardo Biloti <biloti@gmail.com>
+
+	* tvnmoqc fixed
+
+2007-11-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - sequence abstraction on libgeoxml
+	  - moved line-break protection to libgeoxml
+
+2007-10-30  Ricardo Biloti <biloti@gmail.com>
+
+	* missing space after binary
+
+2007-10-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* updated TODO
+
+2007-10-29  Ricardo Biloti <biloti@gmail.com>
+
+	* bug on flow filename fixed
+
+2007-10-22  Ricardo Biloti <biloti@gmail.com>
+
+	* version fixed (again)
+	* suspike added
+
+2007-10-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* parallel build in rpms
+
+2007-10-19  Ricardo Biloti <biloti@gmail.com>
+
+	* version macro fixed
+	* unfineshed implemetation for job support
+
+2007-10-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - changed debian stuff to enabled automatic build
+	  - relicenced gebr under GPLv3
+
+2007-10-19  Ricardo Biloti <biloti@gmail.com>
+
+	* spec.in fixed
+	* minor adjustments
+	* support for automatic debian package generation
+
+2007-10-17  Ricardo Biloti <biloti@gmail.com>
+
+	* uni2tri added
+	* unif2d added
+	* stdin fixed
+	* menu fixed
+	* segywrite added
+	* keywords fixed
+	* suvelan_uccs added
+	* suvelan_usel added
+	* suvlength added
+	* suvibro added
+	* suvelan_nsel added
+	* suwellrt added
+	* suweight added
+	* suwxigb added
+
+2007-10-16  Ricardo Biloti <biloti@gmail.com>
+
+	* supws added
+
+2007-10-15  Ricardo Biloti <biloti@gmail.com>
+
+	* xwigb added
+
+2007-10-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* changed rpm dependency from libgeoxml0 to libgeoxml
+
+2007-10-11  Ricardo Biloti <biloti@gmail.com>
+
+	* TODO expanded
+
+2007-10-10  Ricardo Biloti <biloti@gmail.com>
+
+	* sudivcor added
+
+2007-10-09  Ricardo Biloti <biloti@gmail.com>
+
+	* suramp added
+	* gbbeam added
+
+2007-10-08  Ricardo Biloti <biloti@gmail.com>
+
+	* description fixed
+	* protection against linebreak inside description
+	* surelan added
+	* keyword fixed
+	* part of static strings replaced by GString
+	* keyword fixed
+	* suop2 added
+	* suop added
+	* susort fixed
+	* susort added
+	* label fixed
+	* author fixed
+	* description fixed
+	* = sign must be placed inside <keyword>
+	* suabshw added
+
+2007-10-06  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* rpm stuff
+
+2007-10-05  Ricardo Biloti <biloti@gmail.com>
+
+	* typo corrected in flow's help
+	* version correction in help of flows
+	* sukdmig2d sumiggbzo sumigprefd sumigpreffd sumigprepspi
+	  sumigpresp sumigpspi sumigsplit added
+	* spec updated
+	* control and configure.ac fixed
+
+2007-10-03  Ricardo Biloti <biloti@gmail.com>
+
+	* css path fixed
+
+2007-09-30  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* debianized
+	  Esta linha, e as abaixo, serÃ£o ignoradas--
+	  
+	  A debian
+	  A debian/preinst.ex
+	  A debian/postrm.ex
+	  A debian/prerm.ex
+	  A debian/control
+	  A debian/dirs
+	  A debian/compat
+	  A debian/install
+	  A debian/changelog
+	  A debian/copyright
+	  A debian/docs
+	  A debian/shlibs.local.ex
+	  AM debian/rules
+	  A debian/README.Debian
+	  A debian/postinst.ex
+	  M Makefile.am
+	* initial RPM spec file (need testing)
+
+2007-09-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fixed menu name
+	  - removed template
+	  - reverted help code (transported to gebrme)
+
+2007-09-28  Ricardo Biloti <biloti@gmail.com>
+
+	* sutivel added
+	* sutihalednmo added
+	* TODO enlarged again
+	* fake commit just to store a code to gebrme. Please ignore me
+	* directory structure update and template for program/flow help
+	* directory structure of share changed
+	* single pngs shared through the code
+	* temporary files deleted upon exit
+
+2007-09-27  Ricardo Biloti <biloti@gmail.com>
+
+	* sutetraray added
+	* sutaup added
+	* sutaper added
+
+2007-09-21  Ricardo Biloti <biloti@gmail.com>
+
+	* version meaningful
+	* help displayed with CSS
+	* make distcheck ok
+
+2007-09-18  Ricardo Biloti <biloti@gmail.com>
+
+	* browser selection option in preferences
+
+2007-09-16  Ricardo Biloti <biloti@gmail.com>
+
+	* typo fixed
+	* typo fixed
+	* sustolt and tvnmoqc added
+	* suamp, sufft, sukill added
+	* segyread fixed
+	* triseis fixed
+	* help displayed by firefox
+	* help displayed by firefox
+	* suacor e supef added
+	* CSS for help of flow/program
+	* segyread added
+	* triseis added
+	* suvelannccs and sumute added
+	* suvelannccs and sumute added
+	* sumigffd added
+	* sushape added
+
+2007-09-15  Ricardo Biloti <biloti@gmail.com>
+
+	* sufilter added
+	* sufilter added
+	* help enhanced
+
+2007-09-06  Ricardo Biloti <biloti@gmail.com>
+
+	* TODO enlarged
+
+2007-09-05  Ricardo Biloti <biloti@gmail.com>
+
+	* help of flow can be displayed
+	* changelog update
+	* flow help edition allowed
+
+2007-09-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* added THANKS
+
+2007-09-03  Ricardo Biloti <biloti@gmail.com>
+
+	* check for any 3.x version of gtkhtml
+
+2007-08-30  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/cmdline.c&h: added in case where gengetopt is not installed
+
+2007-08-30  Ricardo Biloti <biloti@gmail.com>
+
+	* suvelan adicionado
+
+2007-08-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fix makefile.am
+	* autotools files
+	* changed programs' help to use CDATA and <pre> and escaped < and >
+	  characters
+	* get help from menu at program's parameters dialog
+	* - renamed and intalled pngs
+	  - fixed size of help dialog
+	* - Several code cleanups
+	  - Preliminary menu help support (using gtkhtml)
+
+2007-08-27  Ricardo Biloti <biloti@gmail.com>
+
+	* GTK_STOCK_DIRECTORY -> GTK_STOCK_OPEN
+	* changelog partialy updated
+	* clip parameter fixed
+	* checkbutton syncronized with dir browse button
+
+2007-08-26  Ricardo Biloti <biloti@gmail.com>
+
+	* clip parameter fixed
+	* command line options merged into a single parser
+	* Log to save configuration
+
+2007-08-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* updated TODO
+	* porting: added depcomp
+	* removed Makefile
+	* - porting to autotools
+	  - added menus
+	* porting to autotools...
+	* porting to autotools
+	* porting to autotools
+	* porting to autotools
+	* Initial import
 

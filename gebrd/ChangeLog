@@ -1,0 +1,495 @@
+2009-01-12  Ricardo Biloti <biloti@gmail.com>
+
+	* INSTALL, packages/Makefile.am: - Copyright messages updated
+	  - accents suppressed
+
+2009-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebrd.c: fixed debug flag usage
+	* mkinstalldirs: removed mkinstalldirs (also generated)
+
+2009-01-12  Ricardo Biloti <biloti@gmail.com>
+
+	* config.guess, config.sub, depcomp, install-sh, ltmain.sh,
+	  missing: delete automatically generated files
+	* Makefile.am, configure.ac, packages/debian/control,
+	  packages/rpm/gebrd.fedora.spec.in,
+	  packages/rpm/gebrd.mandriva.spec.in,
+	  packages/rpm/gebrd.opensuse.spec.in, src/Makefile.am,
+	  src/client.c, src/client.h, src/defines.h.in, src/gebrd.c,
+	  src/gebrd.h, src/job.c, src/job.h, src/macros.h, src/main.c,
+	  src/server.c, src/server.h, src/support.c, src/support.h: -
+	  Copyright messages updated
+	  - accents suppressed
+	* configure.ac, packages/debian/changelog.in: package version fixed
+
+2009-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* packages/debian/rules, packages/rpm/gebrd.fedora.spec.in,
+	  packages/rpm/gebrd.mandriva.spec.in,
+	  packages/rpm/gebrd.opensuse.spec.in: use --disable-debug to build
+	  packages
+
+2008-12-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/client.c, src/server.c: initial work to support client/server
+	  version check
+
+2008-11-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/job.c: - tons of code for group implementation in debr (not
+	  yet working :)
+	  - save all button in debr
+
+2008-11-25  Ricardo Biloti <biloti@gmail.com>
+
+	* configure.ac: version updated to 0.9.6-pre
+
+2008-11-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/job.c: more compilation due to old installation with old
+	  headers
+
+2008-11-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/job.c: the saga of list parameters ended!
+	  - changed DTD to make value and default values independets
+	  - refactoring of GeoXmlProgramParameter functions
+	  - general refacte on parameter_widget function:
+	  - every change is auto submited
+	  - ability to auto rebuild the ui to match new parameter
+	  properties
+	  - adapted to the in each element value list parameter
+	  - a lot of conversion to flow 0.3.0 fixes
+
+2008-11-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/client.c, src/client.h, src/gebrd.c, src/gebrd.h, src/job.c,
+	  src/server.c: adapted gebrd to compile with flow0.3 and
+	  libgebr_comm modifications
+
+2008-06-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* debian: final merge operations
+	* Makefile.am, configure.ac, debian, packages,
+	  packages/Makefile.am, packages/debian,
+	  packages/debian/README.Debian, packages/debian/changelog.in,
+	  packages/debian/compat, packages/debian/control,
+	  packages/debian/copyright, packages/debian/dirs,
+	  packages/debian/docs, packages/debian/install,
+	  packages/debian/postinst.ex, packages/debian/postrm.ex,
+	  packages/debian/preinst.ex, packages/debian/prerm.ex,
+	  packages/debian/rules, packages/rpm,
+	  packages/rpm/gebrd.fedora.spec.in,
+	  packages/rpm/gebrd.mandriva.spec.in,
+	  packages/rpm/gebrd.opensuse.spec.in, rpm: branches
+	  packages_reorganization merged with trunk
+	* configure.ac: - created tag 0.9.5 for release, and changed trunk
+	  pre versions
+	  - created branch packages_reorganitazation
+
+2008-06-18  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/job.c: fixed typo
+	* src/job.c: fix display export on job run for remote servers
+	* src/server.c: fix argument index at INI
+	* src/client.h, src/server.c: protocol change: local clients now
+	  sends display
+	* src/server.c: minor fixes/cleanups
+	* src/gebrd.c, src/server.c: more robust display port discovery
+
+2008-06-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* configure.ac, src/client.c, src/client.h, src/gebrd.c,
+	  src/gebrd.h, src/job.c, src/server.c: change x11 forward
+	  architecture (with protocol implications)
+
+2008-06-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/job.c, src/server.c: more too debug messages
+	* src/gebrd.c: outputs to stderr and message is an error
+	* src/server.c: message for when gebrd cannot run in interactive
+	  mode
+	* src/gebrd.c: removed duplicated new line feed
+	* src/client.c, src/gebrd.h, src/server.c: - defines.h away from
+	  gebr makefile
+	  - gebr client now send it its IP (again)
+	  - server use its hostname for lock/log files
+
+2008-06-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebrd.h: some gebr-client progress achieved
+
+2008-06-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* configure.ac, src/defines.h.in, src/main.c: - added version
+	  commandline option to gebr and gebrd
+	  - gebrd: added defines.h and change foreground option name to
+	  interactive
+	* src/server.c: fix ini receive message
+	* src/client.c, src/gebrd.c, src/gebrd.h, src/job.c, src/main.c,
+	  src/server.c: - foreground mode
+	  - in daemon mode, server returns the port
+
+2008-06-12  Ricardo Biloti <biloti@gmail.com>
+
+	* src/client.c, src/gebrd.h, src/server.c: - gebrd lock file is
+	  gebrd-<server_ip>.run
+	  - name resolution is done through gethostbyname
+
+2008-04-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/main.c: removed type group from gebrme and from 0.2 DTDs. it
+	  will be refacted and readded at flow 0.3
+
+2008-04-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/job.c: flow to command genereration:
+	  - support for exclusive group
+	  - more reliable error handling
+
+2008-04-09  Ricardo Biloti <biloti@gmail.com>
+
+	* src/client.c, src/client.h, src/gebrd.c, src/gebrd.h, src/job.c,
+	  src/job.h, src/macros.h, src/main.c, src/server.c, src/server.h,
+	  src/support.c, src/support.h: file's header updated and changed
+	  to plain ascii
+
+2008-04-05  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* configure.ac, src/Makefile.am, src/gebrd.c, src/job.c: - groups
+	  functional on gebr and gebrme
+	  - debug flags thought --enable-debug
+
+2008-03-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/client.c, src/job.c: - fixed string comparison to consider
+	  case
+	  - gebr: make accel_group a global variable
+
+2008-03-12  Ricardo Biloti <biloti@gmail.com>
+
+	* src/job.c: - fix a case insensitive string comparison
+	  - escape command line string
+
+2008-03-07  Ricardo Biloti <biloti@gmail.com>
+
+	* Makefile.am: revert wrong deb package rule
+
+2008-03-06  Ricardo Biloti <biloti@gmail.com>
+
+	* Makefile.am, debian/control: enhancements in package generation
+
+2008-03-05  Ricardo Biloti <biloti@gmail.com>
+
+	* Makefile.am: new rule packages
+	* debian/control: - new package gebr-menus-su created
+	  - all SU menus moved from gebr to gebr-menus-su
+
+2008-02-29  Ricardo Biloti <biloti@gmail.com>
+
+	* src/client.c, src/gebrd.c, src/job.c, src/main.c, src/server.c,
+	  src/support.c: TODO and Copyright note updated
+
+2008-02-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/job.c: fixed generation of commandline for list parameters
+	* src/job.c: - fixed icon of gtkfileentry and gtksequenceedit
+	  - merged enum-impl and improved show on combo box
+	  - quote each value when parameter accepts a list of parameters
+	  - fixed revert to default value on parameters dialog
+
+2008-02-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/job.c: - close stdin for programs that do not use it (in
+	  gebrd)
+	  - fixed crash when clearing jobs from disconnected servers
+
+2008-02-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/job.c: - improved no error file reporting
+	  - minor code and pontuation cleanups
+	* src/client.c, src/gebrd.c, src/job.c, src/server.c: - added
+	  define.h in libgebr for static mode support
+	  - changed names of enum log_message_type
+	  - ported server infrastruture to libgebr-comm for further use in
+	  gebr-run
+
+2008-02-08  Ricardo Biloti <biloti@gmail.com>
+
+	* TODO: global TODO file and small program remove fix to gebrme
+	* src/job.c: enum support to gebrd (again)
+
+2008-02-04  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/client.c, src/server.c: fixed EINPROGRESS in GSocket
+	* src/client.c, src/gebrd.c, src/gebrd.h, src/job.c, src/main.c,
+	  src/server.c: - improved client/server archtecture (still
+	  unstable)
+	  - general fixes
+
+2008-02-01  Ricardo Biloti <biloti@gmail.com>
+
+	* src/job.c: enun support added to gebrd
+
+2008-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/Makefile.am: - use LIBGEBR_{CFLAGS, LIBS} in gebrd and gebrme
+	  - disable file overwrite confirmation on gtkfileentry
+
+2008-01-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/Makefile.am: - changed use of -D in favor of a defines.h
+	  - minor changes
+	* Makefile.am, configure.ac, src/Makefile.am, src/client.c,
+	  src/client.h, src/gebrd.c, src/gebrd.h, src/job.c, src/job.h,
+	  src/macros.h, src/main.c, src/server.c, src/server.h: fixed
+	  headers' encoding
+	* Makefile.am, configure.ac, src/Makefile.am, test: removed test
+	  (old and unused stuff)
+	* src/job.c, src/support.c, src/support.h: ported to iso_date from
+	  libgebr
+	* src/job.c: - fix header encoding problems and copyright
+	  - moved date, tooltip and confirm_action_dialog to libgebr
+	  - added g_simple_locale_to_utf8 to libgebr
+	  - improved set_tooltip
+
+2008-01-07  Ricardo Biloti <biloti@gmail.com>
+
+	* src/job.c: do not interrupt by lacking output file
+
+2008-01-06  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/job.c, src/server.c: minor changes
+
+2008-01-05  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/job.c, src/server.c, src/support.c: - better random algorithm
+	  - trap SIGINT (CTRL+C)
+
+2008-01-05  Ricardo Biloti <biloti@gmail.com>
+
+	* configure.ac, debian/changelog.in: Fix changelogs
+
+2007-12-13  Ricardo Biloti <biloti@gmail.com>
+
+	* test/fakeclient.c: tooltips fixed and some other minor bugs
+
+2007-12-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* test/fakeclient.c: - fixed used of uninitialized varible
+	  - localize date in jobs
+	  - minor cleanups
+
+2007-12-13  Ricardo Biloti <biloti@gmail.com>
+
+	* src/job.c: several bug fixes
+	* configure.ac: DTD versions fixed
+
+2007-12-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* TODO, configure.ac, rpm/gebrd.fedora.spec.in,
+	  rpm/gebrd.mandriva.spec.in, rpm/gebrd.opensuse.spec.in,
+	  src/Makefile.am, src/client.c, src/client.h, src/gebrd.c,
+	  src/gebrd.h, src/job.c, src/job.h, src/main.c, src/server.c,
+	  src/support.c, test/Makefile.am, test/fakeclient.c,
+	  test/fakeclient.h: - merged branch code-reorganization into trunk
+	  - fixed syntax error on flow DTD
+
+2007-11-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* .: fixed trunk subdir tree
+	* recovered trunk
+
+2007-11-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* undo last commit
+	* run xauth on every command execution
+	* fixed DISPLAY for remote command execution
+	* - added protocol version in INI
+	  - added finish date in FIN
+	  - append output instead of regenerate all job info buffer
+	  - run bash -l
+
+2007-11-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* 0.9.3 will be a tag and 0.9 is a brach
+	* created the first branch, 0.9.3
+
+2007-11-23  Ricardo Biloti <biloti@gmail.com>
+
+	* x support through xauth (broken)
+	* gprocess fixed, add localhost to prevent empty server lists
+	* down button fixed
+
+2007-11-20  Ricardo Biloti <biloti@gmail.com>
+
+	* many congress fixes
+
+2007-11-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* change ssh functions names
+
+2007-11-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fixed gtcpserver
+	* server welcome message
+	* - pid -> jid
+	  - a lot of fixes
+	* more fixes. now it is able to executed non-graphical flows
+	* more work... II
+
+2007-11-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* gebrd: process -> job
+	* more work...
+	* some work...
+	* - fix peer_address in gtcpsocket
+	  - fix X11 forwarding
+	* - fill job info
+	  - prevent run when there is no flow selected
+	  - gebrd: more issues info
+	* - show flows that could not be run into jobs view
+	  - protocol fixes
+	* added protocol support for sizing each argument of a message
+
+2007-11-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fix the last fix
+	* fix deletion of lock file on wrong time
+	* show error or warnings when assemblying flow command line
+	* - fixed sockets behaviour on libgebr_misc
+	  - more run stuff
+
+2007-11-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fix compile
+	* more process job support on server
+	* server auth and protocol fixes
+	* fix compile errors
+	* some protocol_send changes
+	* fixes...
+
+2007-11-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fixes on GProcess
+	  - more ssh work on gebr
+	  - fixes command QUT on gebrd
+	* some process work
+
+2007-11-11  Ricardo Biloti <biloti@gmail.com>
+
+	* fixing debian package construction
+	* removing gebrme metions
+
+2007-11-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - gprocess work
+	  - initial code for ssh execution for port discovery
+	  - protocol ifs on gebr and gebrd
+	  - removed info on debian package
+	  - fixed build error on libgebr
+
+2007-11-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - change name of gnetwork to misc (part II)
+	  - moved gprocess to libgebr_misc
+	* - initial server support on gebr
+	  - minor changes in libgebr
+	  - partially fiz quit on gebrd
+	* server running on a random port
+
+2007-11-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - moved protocol messaging to libgebr_gnetwork
+	  - client/server files on gebr
+	* gprocess work
+	* packages fixes
+	* gprocess
+
+2007-11-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* initial process code
+	* use libgebr
+
+2007-11-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* initial protocol support implementation
+	* updated gnetwork
+
+2007-11-06  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fixed new connection on gnetwork
+	* fixed server crash on client connect
+	* still buggy; just keep changes on repository
+
+2007-11-05  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* get fid of the most anoying infinite loop
+
+2007-10-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* separated test client from server
+
+2007-10-22  Ricardo Biloti <biloti@gmail.com>
+
+	* version fixed (again)
+
+2007-10-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - get rid of threads (for now)
+	  - ported to nonblocking sockets
+
+2007-10-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* parallel build in rpms
+
+2007-10-19  Ricardo Biloti <biloti@gmail.com>
+
+	* version macro fixed
+
+2007-10-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - changed debian stuff to enabled automatic build
+	  - relicenced gebr under GPLv3
+
+2007-10-19  Ricardo Biloti <biloti@gmail.com>
+
+	* spec.in fixed
+
+2007-10-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - more work on gnetwork (still confused by glib's io channel)
+	  - initial protocol implementation
+
+2007-10-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - server class
+	  - client_info struct
+	  - fake_client stuff created for testing
+
+2007-10-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fixed reception of new connections on gtcpserver
+	  - added some source files
+
+2007-10-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - grouped network classes in a module called gnetwork
+	  - various works on gnetwork
+	* added new-connection signal to gtcpserver and made it a gobject
+	* changed rpm dependency from libgeoxml0 to libgeoxml
+
+2007-10-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* check for gthread
+
+2007-10-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - added classes to forge a glib socket library
+	  - work on GTcpServer and GHostAddress
+
+2007-10-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* created daemon source structure
+
