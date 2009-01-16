@@ -26,6 +26,7 @@ Calendar, disk usage, system information.
 
 %prep
 %setup -q
+aclocal;automake --add-missing;autoconf
 
 %configure
 

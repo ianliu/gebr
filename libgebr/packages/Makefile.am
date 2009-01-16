@@ -45,5 +45,3 @@ opensuse-package: rpm-structure
 
 mandriva-package: rpm-structure
 	rpmbuild -ba rpm/libgebr.mandriva.spec
-
-rpm-package: fedora-package opensuse-package mandriva-package

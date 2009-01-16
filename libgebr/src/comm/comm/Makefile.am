@@ -30,7 +30,7 @@ noinst_HEADERS = \
 EXTRA_DIST = ${noinst_HEADERS}
 
 INCLUDES = -I../../misc -I../../geoxml
-AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(GTHREAD_CFLAGS)
+AM_CFLAGS = -Wall -std=gnu99 -fPIC @DEBUG_CFLAGS@ $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(GTHREAD_CFLAGS)
 libgebr_comm_la_LIBADD = -lutil $(INTLLIBS) \
 	$(GLIB_LIBS) $(GOBJECT_LIBS) $(GTHREAD_LIBS) \
 	../../geoxml/geoxml/libgebr_geoxml.la

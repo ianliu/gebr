@@ -27,6 +27,7 @@ What GeBR does:
 
 %prep
 %setup -q
+aclocal;automake --add-missing;autoconf
 
 %configure --disable-debug
 
