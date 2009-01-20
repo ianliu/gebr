@@ -17,8 +17,8 @@
  *   Inspired on Qt 4.3 version of QChannelSocket, by Trolltech
  */
 
-#ifndef __LIBGEBR_COMM_GLISTENSOCKET_H
-#define __LIBGEBR_COMM_GLISTENSOCKET_H
+#ifndef __LIBGEBR_COMM_GCHANNELSOCKET_H
+#define __LIBGEBR_COMM_GCHANNELSOCKET_H
 
 #include "gsocket.h"
 #include "gstreamsocket.h"
@@ -29,12 +29,12 @@ G_BEGIN_DECLS
 GType
 g_channel_socket_get_type(void);
 
-#define G_LISTEN_SOCKET_TYPE		(g_channel_socket_get_type())
-#define G_LISTEN_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_LISTEN_SOCKET_TYPE, GChannelSocket))
-#define G_LISTEN_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), G_LISTEN_SOCKET_TYPE, GChannelSocketClass))
-#define G_IS_LISTEN_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), G_LISTEN_SOCKET_TYPE))
-#define G_IS_LISTEN_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), G_LISTEN_SOCKET_TYPE))
-#define G_LISTEN_SOCKET_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), G_LISTEN_SOCKET_TYPE, GChannelSocketClass))
+#define G_CHANNEL_SOCKET_TYPE		(g_channel_socket_get_type())
+#define G_CHANNEL_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_CHANNEL_SOCKET_TYPE, GChannelSocket))
+#define G_CHANNEL_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), G_CHANNEL_SOCKET_TYPE, GChannelSocketClass))
+#define G_IS_CHANNEL_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), G_CHANNEL_SOCKET_TYPE))
+#define G_IS_CHANNEL_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), G_CHANNEL_SOCKET_TYPE))
+#define G_CHANNEL_SOCKET_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), G_CHANNEL_SOCKET_TYPE, GChannelSocketClass))
 
 typedef struct _GChannelSocket	GChannelSocket;
 typedef struct _GChannelSocketClass	GChannelSocketClass;
@@ -67,4 +67,4 @@ g_channel_socket_get_forward_address(GChannelSocket * channel_socket);
 
 G_END_DECLS
 
-#endif //__LIBGEBR_COMM_GLISTENSOCKET_H
+#endif //__LIBGEBR_COMM_GCHANNELSOCKET_H

@@ -62,6 +62,7 @@ struct _GSocket {
 	GObject			parent;
 
 	GIOChannel *		io_channel;
+	guint			write_watch_id;
 	GByteArray *		queue_write_bytes;
 
 	enum GSocketAddressType	address_type;

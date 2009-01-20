@@ -54,12 +54,12 @@ _g_socket_address_get_sockaddr(GSocketAddress * socket_address, struct sockaddr 
 {
 	switch (socket_address->type) {
 	case G_SOCKET_ADDRESS_TYPE_UNIX:
-		*sockaddr = (struct sockaddr *)&socket_address->address.inet_sockaddr;
-		*size = sizeof(socket_address->address.inet_sockaddr);
-		return TRUE;
-	case G_SOCKET_ADDRESS_TYPE_IPV4:
 		*sockaddr = (struct sockaddr *)&socket_address->address.unix_sockaddr;
 		*size = sizeof(socket_address->address.unix_sockaddr);
+		return TRUE;
+	case G_SOCKET_ADDRESS_TYPE_IPV4:
+		*sockaddr = (struct sockaddr *)&socket_address->address.inet_sockaddr;
+		*size = sizeof(socket_address->address.inet_sockaddr);
 		return TRUE;
 	default:
 		*sockaddr = NULL;

@@ -76,7 +76,7 @@ static void
 __g_channel_socket_source_read(GStreamSocket * source_socket, GStreamSocket * forward_socket)
 {
 	GByteArray *	byte_array;
-
+puts("__g_channel_socket_source_read");
 	byte_array = g_socket_read_all(G_SOCKET(source_socket));
 	g_socket_write(G_SOCKET(forward_socket), byte_array);
 
@@ -112,7 +112,7 @@ __g_channel_socket_new_connection(GChannelSocket * channel_socket)
 {
 	GSocketAddress	peer_address;
 	int		client_sockfd, sockfd;
-
+puts("__g_channel_socket_new_connection");
 	sockfd = _g_socket_get_fd(&channel_socket->parent);
 	while ((client_sockfd = _g_socket_address_accept(&peer_address,
 	channel_socket->parent.address_type, sockfd)) != -1) {
@@ -123,7 +123,6 @@ __g_channel_socket_new_connection(GChannelSocket * channel_socket)
 		forward_socket = g_stream_socket_new();
 		g_stream_socket_connect(forward_socket, &channel_socket->forward_address, FALSE);
 
-		g_object_set(source_socket, "user-data", forward_socket, NULL);
 		g_signal_connect(source_socket, "disconnected", (GCallback)
 			__g_channel_socket_source_disconnected, forward_socket);
 		g_signal_connect(source_socket, "ready-read", (GCallback)
@@ -131,7 +130,6 @@ __g_channel_socket_new_connection(GChannelSocket * channel_socket)
 		g_signal_connect(source_socket, "error", (GCallback)
 			__g_channel_socket_source_error, forward_socket);
 
-		g_object_set(forward_socket, "user-data", source_socket, NULL);
 		g_signal_connect(source_socket, "disconnected", (GCallback)
 			__g_channel_socket_forward_disconnected, forward_socket);
 		g_signal_connect(source_socket, "ready-read", (GCallback)
@@ -148,7 +146,7 @@ __g_channel_socket_new_connection(GChannelSocket * channel_socket)
 GChannelSocket *
 g_channel_socket_new(void)
 {
-	return (GChannelSocket*)g_object_new(G_LISTEN_SOCKET_TYPE, NULL);
+	return (GChannelSocket*)g_object_new(G_CHANNEL_SOCKET_TYPE, NULL);
 }
 
 void
@@ -173,7 +171,7 @@ g_channel_socket_start(GChannelSocket * channel_socket, GSocketAddress * listen_
 	/* initialization */
 	error = NULL;
 	sockfd = socket(_g_socket_address_get_family(listen_address), SOCK_STREAM, 0);
-	_g_socket_init(&channel_socket->parent, sockfd, channel_socket->parent.address_type);
+	_g_socket_init(&channel_socket->parent, sockfd, listen_address->type);
 	channel_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
 	g_io_channel_set_flags(channel_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
 	_g_socket_enable_read_watch(&channel_socket->parent);

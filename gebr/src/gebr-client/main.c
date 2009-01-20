@@ -69,30 +69,31 @@ main(int argc, char ** argv, char ** env)
 	textdomain(GETTEXT_PACKAGE);
 #endif
 
-	if (argc < 2) {
-		gebr_client_message(LOG_ERROR, _("No server address specified"));
-		return -1;
-	}
+// 	if (argc < 2) {
+// 		gebr_client_message(LOG_ERROR, _("No server address specified"));
+// 		return -1;
+// 	}
 
 	gebr_client.main_loop = g_main_loop_new(NULL, FALSE);
 	g_type_init();
 
-// 	GSocketAddress * listen_address;
-// 	GSocketAddress * forward_address;
-// 	GChannelSocket * channel_socket;
-// 
-// 	listen_address = g_socket_address_new("127.0.0.1", G_SOCKET_ADDRESS_TYPE_IPV4)
-// 	forward_address = g_socket_address_new("/home/braulio/sock", G_SOCKET_ADDRESS_TYPE_UNIX);
-// 	channel_socket = g_channel_socket_new();
-// 	g_channel_socket_start(channel_socket, )
+	GSocketAddress listen_address;
+	GSocketAddress forward_address;
+	GChannelSocket * channel_socket;
+
+// 	listen_address = g_socket_address_ipv4_local(0);
+	listen_address = g_socket_address_unix("/home/braulio/unix-listen");
+	forward_address = g_socket_address_unix("/tmp/.X11-unix/X0");
+	channel_socket = g_channel_socket_new();
+	g_channel_socket_start(channel_socket, &listen_address, &forward_address);
 
 
-	if (gebr_client_init(argv[1]) == TRUE) {
+// 	if (gebr_client_init(argv[1]) == TRUE) {
 		
 
 		g_main_loop_run(gebr_client.main_loop);
 		g_main_loop_unref(gebr_client.main_loop);
-	}
+// 	}
 
 	return 0;
 }

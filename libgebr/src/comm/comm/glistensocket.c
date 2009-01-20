@@ -208,13 +208,11 @@ g_listen_socket_listen(GListenSocket * listen_socket, GSocketAddress * socket_ad
 	sockfd = socket(_g_socket_address_get_family(socket_address), SOCK_STREAM, 0);
 	_g_socket_init(&listen_socket->parent, sockfd, socket_address->type);
 	listen_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
-	/* for nonblocking call of accept */
 	g_io_channel_set_flags(listen_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
+	_g_socket_enable_read_watch(&listen_socket->parent);
 	/* pending connections */
 	listen_socket->pending_connections = g_slist_alloc();
 	g_listen_socket_set_max_pending_connections(listen_socket, 30);
-	/* watch */
-	_g_socket_enable_read_watch(&listen_socket->parent);
 
 	/* bind and listen */
 	_g_socket_address_get_sockaddr(socket_address, &sockaddr, &sockaddr_size);

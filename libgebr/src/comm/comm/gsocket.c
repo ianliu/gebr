@@ -225,10 +225,11 @@ _g_socket_init(GSocket * socket, int fd, enum GSocketAddressType address_type)
 {
 	GError *	error;
 
-	if (socket->io_channel != NULL)
-		_g_socket_close(socket);
+	/* free previous stuff */
+	_g_socket_close(socket);
 
 	error = NULL;
+	socket->write_watch_id = 0;
 	socket->address_type = address_type;
 	socket->state = G_SOCKET_STATE_NONE;
 	socket->last_error = G_SOCKET_ERROR_NONE;
@@ -245,6 +246,9 @@ _g_socket_close(GSocket * socket)
 {
 	if (socket->io_channel != NULL) {
 		GError *	error;
+
+		if (socket->write_watch_id)
+			g_source_remove(socket->write_watch_id);
 
 		error = NULL;
 		g_io_channel_shutdown(socket->io_channel, FALSE, &error);
@@ -270,7 +274,9 @@ _g_socket_enable_read_watch(GSocket * socket)
 void
 _g_socket_enable_write_watch(GSocket * socket)
 {
-	g_io_add_watch(socket->io_channel, G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
+	if (socket->write_watch_id)
+		return;
+	socket->write_watch_id = g_io_add_watch(socket->io_channel, G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
 		(GIOFunc)__g_socket_write, socket);
 }
 
@@ -339,6 +345,9 @@ g_socket_bytes_to_write(GSocket * socket)
 GByteArray *
 g_socket_read(GSocket * socket, gsize max_size)
 {
+	if (socket->state != G_SOCKET_STATE_CONNECTED)
+		return NULL;
+
 	guint8		buffer[max_size];
 	size_t		read_bytes;
 	GByteArray *	byte_array;
@@ -356,6 +365,9 @@ g_socket_read(GSocket * socket, gsize max_size)
 GString *
 g_socket_read_string(GSocket * socket, gsize max_size)
 {
+	if (socket->state != G_SOCKET_STATE_CONNECTED)
+		return NULL;
+
 	gchar		buffer[max_size+1];
 	size_t		read_bytes;
 	GString *	string;
@@ -390,13 +402,15 @@ g_socket_write(GSocket * socket, GByteArray * byte_array)
 {
 	size_t	written_bytes;
 
-	/* enable signal for writting queued bytes */
-	_g_socket_enable_write_watch(socket);
+	if (socket->state == G_SOCKET_STATE_CONNECTED) {
+		written_bytes = send(_g_socket_get_fd(socket), byte_array->data, byte_array->len, 0);
+		if (written_bytes == -1)
+			return 0;
+	} else
+		written_bytes = 0;
 
-	written_bytes = send(_g_socket_get_fd(socket), byte_array->data, byte_array->len, 0);
-	if (written_bytes == -1)
-		return 0;
 	if (written_bytes < byte_array->len) {
+		_g_socket_enable_write_watch(socket);
 		g_byte_array_append(socket->queue_write_bytes,
 			byte_array->data + written_bytes, byte_array->len - written_bytes);
 	}
