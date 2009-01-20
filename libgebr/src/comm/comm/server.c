@@ -59,7 +59,7 @@ static void
 comm_server_error(GStreamSocket * stream_socket, enum GSocketError error, struct comm_server * comm_server);
 
 static void
-comm_server_free_x11_process(struct comm_server * comm_server);
+comm_server_free_x11_forward(struct comm_server * comm_server);
 static void
 comm_server_free_for_reuse(struct comm_server * comm_server);
 
@@ -80,7 +80,8 @@ comm_server_new(const gchar * _address, const struct comm_server_ops * ops)
 		.address = g_string_new(_address),
 		.port = 0,
 		.password = g_string_new(""),
-		.x11_forward = NULL,
+		.x11_forward_process = NULL,
+		.x11_forward_channel = NULL,
 		.state = SERVER_STATE_DISCONNECTED,
 		.error = SERVER_ERROR_NONE,
 		.ops = ops,
@@ -191,34 +192,48 @@ gboolean
 comm_server_forward_x11(struct comm_server * comm_server, guint16 port)
 {
 	gchar *		display;
-	guint16		display_port;
-	GString *	cmd_line;
+	guint16		display_number;
+	guint16		redirect_display_port;
+
+	GSocketAddress	listen_address;
+	GSocketAddress	forward_address;
+
+	GString *	string;
 
 	display = getenv("DISPLAY");
 	if (display == NULL || !strlen(display))
 		return FALSE;
 
 	/* initialization */
-	cmd_line = g_string_new(NULL);
-	sscanf(display, ":%hu.", &display_port);
-	display_port += 6000;
+	string = g_string_new(NULL);
+	sscanf(display, ":%hu.", &display_number);
+	redirect_display_port = 6010;
+	while (!g_listen_socket_is_local_port_available(redirect_display_port))
+		++redirect_display_port;
 
-	comm_server_free_x11_process(comm_server);
+	comm_server_free_x11_forward(comm_server);
 
 	comm_server_log_message(comm_server, LOG_INFO, _("Redirecting '%s' graphical output"),
 		comm_server->address->str);
 
 	comm_server->tried_existant_pass = FALSE;
-	comm_server->x11_forward = g_terminal_process_new();
-	g_signal_connect(comm_server->x11_forward, "ready-read",
+	comm_server->x11_forward_process = g_terminal_process_new();
+	g_signal_connect(comm_server->x11_forward_process, "ready-read",
 		G_CALLBACK(comm_ssh_read), comm_server);
 
-	g_string_printf(cmd_line, "ssh -x -R %d:127.0.0.1:%d %s 'sleep 999d'",
-		port, display_port, comm_server->address->str);
-	g_terminal_process_start(comm_server->x11_forward, cmd_line);
+	g_string_printf(string, "ssh -x -R %d:127.0.0.1:%d %s 'sleep 999d'",
+		port, redirect_display_port, comm_server->address->str);
+	g_terminal_process_start(comm_server->x11_forward_process, string);
+
+	/* redirect_display_port tcp port to X11 unix socket */
+	listen_address = g_socket_address_ipv4_local(redirect_display_port);
+	g_string_printf(string, "/tmp/.X11-unix/X%hu", display_number);
+	forward_address = g_socket_address_unix(string->str);
+	comm_server->x11_forward_channel = g_channel_socket_new();
+	g_channel_socket_start(comm_server->x11_forward_channel, &listen_address, &forward_address);
 
 	/* frees */
-	g_string_free(cmd_line, TRUE);
+	g_string_free(string, TRUE);
 
 	return TRUE;
 }
@@ -575,23 +590,27 @@ comm_server_error(GStreamSocket * stream_socket, enum GSocketError error, struct
 }
 
 /*
- * Function: comm_server_free_x11_process
- * Free (if necessary) comm_server->x11_forward for reuse
+ * Function: comm_server_free_x11_forward
+ * Free (if necessary) comm_server->x11_forward_process for reuse
  */
 static void
-comm_server_free_x11_process(struct comm_server * comm_server)
+comm_server_free_x11_forward(struct comm_server * comm_server)
 {
-	if (comm_server->x11_forward != NULL) {
-		g_terminal_process_kill(comm_server->x11_forward);
-		g_terminal_process_free(comm_server->x11_forward);
-		comm_server->x11_forward = NULL;
+	if (comm_server->x11_forward_process != NULL) {
+		g_terminal_process_kill(comm_server->x11_forward_process);
+		g_terminal_process_free(comm_server->x11_forward_process);
+		comm_server->x11_forward_process = NULL;
+	}
+	if (comm_server->x11_forward_channel != NULL) {
+		g_socket_close(G_SOCKET(comm_server->x11_forward_channel));
+		comm_server->x11_forward_channel = NULL;
 	}
 }
 
 static void
 comm_server_free_for_reuse(struct comm_server * comm_server)
 {
-	comm_server_free_x11_process(comm_server);
+	comm_server_free_x11_forward(comm_server);
 	switch (comm_server->process.use) {
 	case COMM_SERVER_PROCESS_NONE:
 		break;

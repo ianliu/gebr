@@ -27,6 +27,7 @@
 #include "protocol.h"
 #include "gterminalprocess.h"
 #include "gprocess.h"
+#include "gchannelsocket.h"
 
 struct comm_server {
 	/* the communication channel. */
@@ -40,7 +41,8 @@ struct comm_server {
 	GString *		password;
 	gint16			tunnel_port;
 	gboolean		tried_existant_pass;
-	GTerminalProcess *	x11_forward;
+	GTerminalProcess *	x11_forward_process;
+	GChannelSocket *	x11_forward_channel;
 
 	enum comm_server_state {
 		SERVER_STATE_DISCONNECTED,
