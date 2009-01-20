@@ -27,6 +27,7 @@
 #include "gstreamsocketprivate.h"
 #include "gsocketprivate.h"
 #include "ghostinfo.h"
+#include "gsocketaddressprivate.h"
 
 /*
  * prototypes
@@ -86,10 +87,10 @@ G_DEFINE_TYPE(GStreamSocket, g_stream_socket, G_SOCKET_TYPE)
  */
 
 static void
-__g_stream_socket_init(GStreamSocket * stream_socket, int sockfd, gboolean nonblocking)
+__g_stream_socket_init(GStreamSocket * stream_socket, int sockfd, enum GSocketAddressType type, gboolean nonblocking)
 {
 	/* initialization */
-	_g_socket_init(&stream_socket->parent, sockfd);
+	_g_socket_init(&stream_socket->parent, sockfd, type);
 
 	if (nonblocking == TRUE) {
 		GError *	error;
@@ -135,13 +136,13 @@ __g_stream_socket_disconnected(GStreamSocket * stream_socket)
  */
 
 GStreamSocket *
-_g_stream_socket_new_connected(int fd)
+_g_stream_socket_new_connected(int fd, enum GSocketAddressType address_type)
 {
 	GStreamSocket *	stream_socket;
 
 	/* initialization */
 	stream_socket = (GStreamSocket*)g_object_new(G_STREAM_SOCKET_TYPE, NULL);
-	__g_stream_socket_init(stream_socket, fd, TRUE);
+	__g_stream_socket_init(stream_socket, fd, address_type, TRUE);
 	stream_socket->parent.state = G_SOCKET_STATE_CONNECTED;
 	_g_socket_enable_read_watch(&stream_socket->parent);
 
@@ -158,30 +159,29 @@ g_stream_socket_new(void)
 	return (GStreamSocket*)g_object_new(G_STREAM_SOCKET_TYPE, NULL);
 }
 
-void
-g_stream_socket_connect(GStreamSocket * stream_socket, GSocketAddress * socket_address, guint16 port, gboolean wait)
+gboolean
+g_stream_socket_connect(GStreamSocket * stream_socket, GSocketAddress * socket_address, gboolean wait)
 {
-	int	sockfd;
+	struct sockaddr *	sockaddr;
+	gsize			sockaddr_size;
+	int			sockfd;
+
+	if (!g_socket_address_get_is_valid(socket_address))
+		return FALSE;
 
 	/* initialization */
-	sockfd = socket(PF_INET, SOCK_STREAM, 0);
-	__g_stream_socket_init(stream_socket, sockfd, !wait);
+	sockfd = socket(_g_socket_address_get_family(socket_address), SOCK_STREAM, 0);
+	__g_stream_socket_init(stream_socket, sockfd, socket_address->type, !wait);
 	stream_socket->parent.state = G_SOCKET_STATE_CONNECTING;
 	stream_socket->parent.last_error = G_SOCKET_ERROR_NONE;
-
-	/* set address and connect */
-	stream_socket->parent.sockaddr_in = (struct sockaddr_in) {
-		.sin_family = AF_INET,
-		.sin_port = htons(port),
-		.sin_addr = socket_address->address.in_addr
-	};
 
 	/* watches */
 	_g_socket_enable_read_watch(&stream_socket->parent);
 	_g_socket_enable_write_watch(&stream_socket->parent);
 
-	if (!connect(sockfd, (struct sockaddr *)&stream_socket->parent.sockaddr_in,
-			sizeof(stream_socket->parent.sockaddr_in))) {
+	/* TODO: treat connect return */
+	_g_socket_address_get_sockaddr(socket_address, &sockaddr, &sockaddr_size);
+	if (!connect(sockfd, sockaddr, sockaddr_size)) {
 		stream_socket->parent.state = G_SOCKET_STATE_CONNECTED;
 		__g_stream_socket_connected(stream_socket);
 	}
@@ -193,6 +193,8 @@ g_stream_socket_connect(GStreamSocket * stream_socket, GSocketAddress * socket_a
 		error = NULL;
 		g_io_channel_set_flags(stream_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
 	}
+
+	return TRUE;
 }
 
 // void
@@ -214,28 +216,16 @@ g_stream_socket_disconnect(GStreamSocket * stream_socket)
 	stream_socket->parent.last_error = G_SOCKET_ERROR_NONE;
 }
 
-GSocketAddress *
+GSocketAddress
 g_stream_socket_peer_address(GStreamSocket * stream_socket)
 {
 	if (stream_socket->parent.state != G_SOCKET_STATE_CONNECTED)
-		return NULL;
+		return _g_socket_address_unknown();
 
-	GSocketAddress *		socket_address;
-	struct sockaddr_in	sockaddr_in;
-	socklen_t		namelen;
+	GSocketAddress	peer_address;
 
-	namelen = sizeof(sockaddr_in);
-	getsockname(_g_socket_get_fd(&stream_socket->parent), (struct sockaddr *)&sockaddr_in, &namelen);
+	_g_socket_address_getpeername(&peer_address, stream_socket->parent.address_type,
+		_g_socket_get_fd(&stream_socket->parent));
 
-	/* TODO: handle other protocols */
-	socket_address = g_socket_address_new("", G_SOCKET_ADDRESS_TYPE_IPV4);
-	g_socket_address_set_ipv4(socket_address, sockaddr_in.sin_addr.s_addr);
-
-	return socket_address;
-}
-
-guint16
-g_stream_socket_peer_port(GStreamSocket * stream_socket)
-{
-	return stream_socket->parent.sockaddr_in.sin_port;
+	return peer_address;
 }

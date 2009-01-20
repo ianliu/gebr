@@ -17,6 +17,9 @@
  *   Inspired on Qt 4.3 version of QSocketAddress, by Trolltech
  */
 
+#define UNIX_PATH_MAX 108
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -24,70 +27,167 @@
 
 #include "gsocketaddress.h"
 
-GSocketAddress *
-g_socket_address_new(const gchar * string, enum GSocketAddressType type)
-{
-	GSocketAddress *	new;
+/*
+ * private functions
+ */
 
-	new = g_malloc(sizeof(struct _GSocketAddress));
-	if (new == NULL)
+static const int type_enum_to_size [] = {
+	0,
+	sizeof(struct sockaddr_in),
+	sizeof(struct sockaddr_un)
+};
+
+static const int type_enum_to_family [] = {
+	0, AF_INET, AF_UNIX
+};
+
+GSocketAddress
+_g_socket_address_unknown(void)
+{
+	return (GSocketAddress) {
+		.type = G_SOCKET_ADDRESS_TYPE_UNKNOWN
+	};
+}
+
+gboolean
+_g_socket_address_get_sockaddr(GSocketAddress * socket_address, struct sockaddr ** sockaddr, gsize * size)
+{
+	switch (socket_address->type) {
+	case G_SOCKET_ADDRESS_TYPE_UNIX:
+		*sockaddr = (struct sockaddr *)&socket_address->address.inet_sockaddr;
+		*size = sizeof(socket_address->address.inet_sockaddr);
+		return TRUE;
+	case G_SOCKET_ADDRESS_TYPE_IPV4:
+		*sockaddr = (struct sockaddr *)&socket_address->address.unix_sockaddr;
+		*size = sizeof(socket_address->address.unix_sockaddr);
+		return TRUE;
+	default:
+		*sockaddr = NULL;
+		*size = 0;
+		return FALSE;
+	}
+}
+
+int
+_g_socket_address_get_family(GSocketAddress * socket_address)
+{
+	return type_enum_to_family[socket_address->type];
+}
+
+typedef int (*sockname_function)(int sockfd, struct sockaddr * addr, socklen_t * addrlen);
+static int
+__g_socket_address_sockname_function(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd,
+	sockname_function function)
+{
+	struct sockaddr *	sockaddr;
+	socklen_t		addrlen;
+
+	switch ((socket_address->type = type)) {
+	case G_SOCKET_ADDRESS_TYPE_UNIX:
+		sockaddr = (struct sockaddr *)&socket_address->address.unix_sockaddr;
+		break;
+	case G_SOCKET_ADDRESS_TYPE_IPV4:
+		sockaddr = (struct sockaddr *)&socket_address->address.inet_sockaddr;
+		break;
+	default:
+		return -1;
+	}
+	addrlen = type_enum_to_size[type];
+
+	return function(sockfd, sockaddr, &addrlen);
+}
+
+int
+_g_socket_address_getsockname(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd)
+{
+	return __g_socket_address_sockname_function(socket_address, type, sockfd, getsockname);
+}
+
+int
+_g_socket_address_getpeername(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd)
+{
+	return __g_socket_address_sockname_function(socket_address, type, sockfd, getpeername);
+}
+
+int
+_g_socket_address_accept(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd)
+{
+	return __g_socket_address_sockname_function(socket_address, type, sockfd, accept);
+}
+
+/*
+ * library functions
+ */
+
+GSocketAddress
+g_socket_address_unix(const gchar * path)
+{
+	GSocketAddress	socket_address;
+
+	socket_address = (GSocketAddress) {
+		.type = G_SOCKET_ADDRESS_TYPE_UNIX,
+		.address.unix_sockaddr.sun_family = AF_UNIX,
+	};
+	strncpy(socket_address.address.unix_sockaddr.sun_path, path, UNIX_PATH_MAX);
+
+	return socket_address;
+}
+
+GSocketAddress
+g_socket_address_ipv4(const gchar * string, guint16 port)
+{
+	GSocketAddress	socket_address;
+	struct in_addr	in_addr;
+
+	if (inet_aton(string, &in_addr) == 0) {
+		socket_address.type = G_SOCKET_ADDRESS_TYPE_UNKNOWN;
 		goto out;
-	g_socket_address_set_string(new, string, type);
+	}
 
-out:	return new;
+	socket_address = (GSocketAddress) {
+		.type = G_SOCKET_ADDRESS_TYPE_IPV4,
+		.address.inet_sockaddr = (struct sockaddr_in) {
+			.sin_family = AF_INET,
+			.sin_port = htons(port),
+			.sin_addr = in_addr
+		}
+	};
+
+out:	return socket_address;
 }
 
-void
-g_socket_address_free(GSocketAddress * socket_address)
+GSocketAddress
+g_socket_address_ipv4_local(guint16 port)
 {
-	if (socket_address->type == G_SOCKET_ADDRESS_TYPE_UNIX)
-		g_free(socket_address->address.un_addr.sun_path);
-	g_free(socket_address);
+	return g_socket_address_ipv4("127.0.0.1", port);
 }
 
-enum GSocketAddressType
-g_socket_address_get_type(GSocketAddress * socket_address)
+gboolean
+g_socket_address_get_is_valid(GSocketAddress * socket_address)
 {
-	return socket_address->type;
+	return (gboolean)(socket_address->type != G_SOCKET_ADDRESS_TYPE_UNKNOWN);
 }
 
-gchar *
+const gchar *
 g_socket_address_get_string(GSocketAddress * socket_address)
 {
-	if (socket_address->type != G_SOCKET_ADDRESS_TYPE_UNIX)
-		return inet_ntoa(socket_address->address.in_addr);
-	else
-		return socket_address->address.un_addr.sun_path;
+	switch (socket_address->type) {
+	case G_SOCKET_ADDRESS_TYPE_UNIX:
+		return inet_ntoa(socket_address->address.inet_sockaddr.sin_addr);
+	case G_SOCKET_ADDRESS_TYPE_IPV4:
+		return socket_address->address.unix_sockaddr.sun_path;
+	default:
+		return NULL;
+	}
 }
 
-void
-g_socket_address_set_ipv4(GSocketAddress * socket_address, guint16 address)
+guint16
+g_socket_address_get_ip_port(GSocketAddress * socket_address)
 {
-	socket_address->type = G_SOCKET_ADDRESS_TYPE_IPV4;
-	socket_address->address.in_addr.s_addr = htons(address);
-}
-
-void
-g_socket_address_set_ipv6(GSocketAddress * socket_address, guint32 address)
-{
-	socket_address->type = G_SOCKET_ADDRESS_TYPE_IPV6;
-	socket_address->address.in_addr.s_addr = htonl(address);
-}
-
-void
-g_socket_address_set_unix(GSocketAddress * socket_address, const gchar * path)
-{
-	socket_address->address.un_addr.sun_family = AF_UNIX;
-	strcpy(socket_address->address.un_addr.sun_path, path);
-}
-
-void
-g_socket_address_set_string(GSocketAddress * socket_address, const gchar * string, enum GSocketAddressType type)
-{
-	socket_address->type = type;
-	if (type != G_SOCKET_ADDRESS_TYPE_UNIX) {
-		if (inet_aton(string, &socket_address->address.in_addr))
-			socket_address->address.in_addr.s_addr = 0;
-	} else
-		g_socket_address_set_unix(socket_address, string);
+	switch (socket_address->type) {
+	case G_SOCKET_ADDRESS_TYPE_IPV4:
+		return ntohs(socket_address->address.inet_sockaddr.sin_port);
+	default:
+		return 0;
+	}
 }

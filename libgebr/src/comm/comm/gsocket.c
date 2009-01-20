@@ -29,6 +29,7 @@
 
 #include "gsocket.h"
 #include "gsocketprivate.h"
+#include "gsocketaddressprivate.h"
 
 /*
  * gobject stuff
@@ -220,7 +221,7 @@ out:	return FALSE;
  */
 
 void
-_g_socket_init(GSocket * socket, int fd)
+_g_socket_init(GSocket * socket, int fd, enum GSocketAddressType address_type)
 {
 	GError *	error;
 
@@ -228,6 +229,7 @@ _g_socket_init(GSocket * socket, int fd)
 		_g_socket_close(socket);
 
 	error = NULL;
+	socket->address_type = address_type;
 	socket->state = G_SOCKET_STATE_NONE;
 	socket->last_error = G_SOCKET_ERROR_NONE;
 	/* IO channel */
@@ -301,6 +303,16 @@ enum GSocketError
 g_socket_get_last_error(GSocket * socket)
 {
 	return socket->last_error;
+}
+
+GSocketAddress
+g_socket_get_address(GSocket * socket)
+{
+	GSocketAddress	address;
+
+	_g_socket_address_getsockname(&address, socket->address_type, _g_socket_get_fd(socket));
+
+	return address;
 }
 
 gulong

@@ -45,20 +45,12 @@
 gboolean
 server_init(void)
 {
-	GSocketAddress *	socket_address;
+	GSocketAddress		socket_address;
 	struct sigaction	act;
 	gboolean		ret;
 
 	GString *		log_filename;
 	FILE *			run_fp;
-
-	/* initialization */
-	gebrd.run_filename = g_string_new(NULL);
-	gethostname(gebrd.hostname, 255);
-	log_filename = g_string_new(NULL);
-
-	/* local address used for listening */
-	socket_address = g_socket_address_new("127.0.0.1", G_SOCKET_ADDRESS_TYPE_IPV4);
 
 	/* from libgebr-misc */
 	if (gebr_create_config_dirs() == FALSE) {
@@ -66,23 +58,9 @@ server_init(void)
 		goto err;
 	}
 
-	/* log */
-	g_string_printf(log_filename, "%s/.gebr/log/gebrd-%s.log", getenv("HOME"), gebrd.hostname);
-	gebrd.log = log_open(log_filename->str);
-
-	/* protocol */
-	protocol_init();
-
-	/* init the server socket and listen */
-	gebrd.listen_socket = g_listen_socket_new();
-	if (g_listen_socket_listen(gebrd.listen_socket, socket_address, 0) == FALSE) {
-		gebrd_message(LOG_ERROR, _("Could not listen for connections.\n"));
-		goto err;
-	}
-	g_signal_connect(gebrd.listen_socket, "new-connection",
-		G_CALLBACK(server_new_connection), NULL);
-
-	/* write on user's home directory a file with a port */
+	/* check if there is another daemon running for this user and hostname */
+	gethostname(gebrd.hostname, 255);
+	gebrd.run_filename = g_string_new(NULL);
 	g_string_printf(gebrd.run_filename, "%s/.gebr/run/gebrd-%s.run", getenv("HOME"), gebrd.hostname);
 	if (g_file_test(gebrd.run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
 		/* check if server crashed by trying connecting to it
@@ -106,12 +84,33 @@ server_init(void)
 			goto out;
 		}
 	}
+
+	/* protocol */
+	protocol_init();
+
+	/* init the server socket and listen */
+	socket_address = g_socket_address_ipv4_local(0);
+	gebrd.listen_socket = g_listen_socket_new();
+	if (g_listen_socket_listen(gebrd.listen_socket, &socket_address) == FALSE) {
+		gebrd_message(LOG_ERROR, _("Could not listen for connections.\n"));
+		goto err;
+	}
+	socket_address = g_socket_get_address(G_SOCKET(gebrd.listen_socket));
+	g_signal_connect(gebrd.listen_socket, "new-connection",
+		G_CALLBACK(server_new_connection), NULL);
+
+	/* write on run directory a file with the port */
 	if ((run_fp = fopen(gebrd.run_filename->str, "w")) == NULL) {
 		gebrd_message(LOG_ERROR, _("Could not write run file."));
 		goto err;
 	}
-	fprintf(run_fp, "%d\n", g_listen_socket_server_port(gebrd.listen_socket));
+	fprintf(run_fp, "%d\n", g_socket_address_get_ip_port(&socket_address));
 	fclose(run_fp);
+
+	/* log */
+	log_filename = g_string_new(NULL);
+	g_string_printf(log_filename, "%s/.gebr/log/gebrd-%s.log", getenv("HOME"), gebrd.hostname);
+	gebrd.log = log_open(log_filename->str);
 
 	/* connecting signal TERM */
 	act.sa_sigaction = (typeof(act.sa_sigaction))&gebrd_quit;
@@ -124,18 +123,19 @@ server_init(void)
 
 	/* success */
 	ret = TRUE;
-	gebrd_message(LOG_START, _("Server started at %u port"), g_listen_socket_server_port(gebrd.listen_socket));
-	dprintf(gebrd.finished_starting_pipe[1], "%d\n", g_listen_socket_server_port(gebrd.listen_socket));
+	gebrd_message(LOG_START, _("Server started at %u port"), g_socket_address_get_ip_port(&socket_address));
+	dprintf(gebrd.finished_starting_pipe[1], "%d\n", g_socket_address_get_ip_port(&socket_address));
+
+	/* frees */
+	g_string_free(log_filename, TRUE);
+
 	goto out;
 
 err:	ret = FALSE;
 	gebrd_message(LOG_ERROR, _("Could not init server. Quiting..."));
 	dprintf(gebrd.finished_starting_pipe[1], "0\n");
 
-out:	g_string_free(log_filename, TRUE);
-	g_socket_address_free(socket_address);
-
-	return ret;
+out:	return ret;
 }
 
 void

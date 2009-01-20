@@ -16,17 +16,20 @@
 
 lib_LTLIBRARIES = libgebr_comm.la
 libgebr_comm_la_SOURCES = \
-	gsocketaddress.c ghostinfo.c gsocket.c gstreamsocket.c glistensocket.c gchannelsocket.c \
+	gsocketaddress.c ghostinfo.c gsocket.c \
+	gstreamsocket.c glistensocket.c gchannelsocket.c \
 	gprocess.c gterminalprocess.c \
 	protocol.c server.c
 
 libgebr_commsubincludedir = $(includedir)/libgebr/comm
 libgebr_commsubinclude_HEADERS = \
-	gsocketaddress.h ghostinfo.h gsocket.h gstreamsocket.h glistensocket.h gchannelsocket.h \
+	gsocketaddress.h ghostinfo.h gsocket.h \
+	gstreamsocket.h glistensocket.h gchannelsocket.h \
 	gprocess.h gterminalprocess.h \
 	protocol.h server.h
 noinst_HEADERS = \
-	gsocketprivate.h gstreamsocketprivate.h support.h
+	support.h \
+	gsocketaddressprivate.h gsocketprivate.h gstreamsocketprivate.h
 EXTRA_DIST = ${noinst_HEADERS}
 
 INCLUDES = -I../../misc -I../../geoxml

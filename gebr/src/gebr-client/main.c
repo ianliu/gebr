@@ -24,6 +24,9 @@
 
 #include <glib.h>
 
+//remove
+#include <comm.h>
+
 #include "gebrclient.h"
 #include "../defines.h"
 #include "support.h"
@@ -73,6 +76,16 @@ main(int argc, char ** argv, char ** env)
 
 	gebr_client.main_loop = g_main_loop_new(NULL, FALSE);
 	g_type_init();
+
+// 	GSocketAddress * listen_address;
+// 	GSocketAddress * forward_address;
+// 	GChannelSocket * channel_socket;
+// 
+// 	listen_address = g_socket_address_new("127.0.0.1", G_SOCKET_ADDRESS_TYPE_IPV4)
+// 	forward_address = g_socket_address_new("/home/braulio/sock", G_SOCKET_ADDRESS_TYPE_UNIX);
+// 	channel_socket = g_channel_socket_new();
+// 	g_channel_socket_start(channel_socket, )
+
 
 	if (gebr_client_init(argv[1]) == TRUE) {
 		

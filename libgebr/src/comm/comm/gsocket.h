@@ -24,6 +24,8 @@
 #include <glib-object.h>
 #include <netinet/in.h>
 
+#include "gsocketaddress.h"
+
 G_BEGIN_DECLS
 
 GType
@@ -60,9 +62,9 @@ struct _GSocket {
 	GObject			parent;
 
 	GIOChannel *		io_channel;
-	struct sockaddr_in	sockaddr_in;
 	GByteArray *		queue_write_bytes;
 
+	enum GSocketAddressType	address_type;
 	enum GSocketState	state;
 	enum GSocketError	last_error;
 };
@@ -91,6 +93,9 @@ g_socket_get_state(GSocket *);
 
 enum GSocketError
 g_socket_get_last_error(GSocket *);
+
+GSocketAddress
+g_socket_get_address(GSocket *);
 
 gulong
 g_socket_bytes_available(GSocket *);

@@ -17,51 +17,33 @@
  *   Inspired on Qt 4.3 version of QSocketAddress, by Trolltech
  */
 
-#ifndef __LIBGEBR_COMM_GSOCKETADDRESS_H
-#define __LIBGEBR_COMM_GSOCKETADDRESS_H
+#ifndef __LIBGEBR_COMM_GSOCKETADDRESSPRIVATE_H
+#define __LIBGEBR_COMM_GSOCKETADDRESSPRIVATE_H
 
 #include <glib.h>
 
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <netinet/ip.h>
+#include "gsocketaddress.h"
 
 G_BEGIN_DECLS
 
-typedef struct _GSocketAddress	GSocketAddress;
-
-enum GSocketAddressType {
-	G_SOCKET_ADDRESS_TYPE_UNKNOWN = 0,
-	G_SOCKET_ADDRESS_TYPE_IPV4,
-	G_SOCKET_ADDRESS_TYPE_UNIX
-};
-
-struct _GSocketAddress {
-	enum GSocketAddressType		type;
-	union {
-		struct sockaddr_un	unix_sockaddr;
-		struct sockaddr_in	inet_sockaddr;
-	} address;
-};
-
 GSocketAddress
-g_socket_address_unix(const gchar * string);
-
-GSocketAddress
-g_socket_address_ipv4(const gchar * string, guint16 port);
-
-GSocketAddress
-g_socket_address_ipv4_local(guint16 port);
+_g_socket_address_unknown(void);
 
 gboolean
-g_socket_address_get_is_valid(GSocketAddress * socket_address);
+_g_socket_address_get_sockaddr(GSocketAddress * socket_address, struct sockaddr ** sockaddr, gsize * size);
 
-const gchar *
-g_socket_address_get_string(GSocketAddress * socket_address);
+int
+_g_socket_address_get_family(GSocketAddress * socket_address);
 
-guint16
-g_socket_address_get_ip_port(GSocketAddress * socket_address);
+int
+_g_socket_address_getsockname(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd);
+
+int
+_g_socket_address_getpeername(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd);
+
+int
+_g_socket_address_accept(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd);
 
 G_END_DECLS
 
-#endif // __LIBGEBR_COMM_GSOCKETADDRESS_H
+#endif // 

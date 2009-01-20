@@ -26,6 +26,7 @@
 #include "glistensocket.h"
 #include "gsocketprivate.h"
 #include "gstreamsocketprivate.h"
+#include "gsocketaddressprivate.h"
 
 /*
  * prototypes
@@ -133,20 +134,19 @@ G_DEFINE_TYPE(GListenSocket, g_listen_socket, G_SOCKET_TYPE)
 static void
 __g_listen_socket_new_connection(GListenSocket * listen_socket)
 {
-	struct sockaddr_in peer_sockaddr_in;
-	socklen_t peer_socklen;
-	int client_sockfd, sockfd;
+	GSocketAddress	peer_address;
+	int		client_sockfd, sockfd;
 
 	sockfd = _g_socket_get_fd(&listen_socket->parent);
-	peer_socklen = sizeof(peer_sockaddr_in);
-	while ((client_sockfd = accept(sockfd, (struct sockaddr *)&peer_sockaddr_in, &peer_socklen)) != -1) {
+	while ((client_sockfd = _g_socket_address_accept(&peer_address,
+	listen_socket->parent.address_type, sockfd)) != -1) {
 		GStreamSocket * stream_socket;
 
 		if (g_slist_length(listen_socket->pending_connections) > listen_socket->max_pending_connections)
 			break;
 
 		/* create GStreamSocket */
-		stream_socket = _g_stream_socket_new_connected(client_sockfd);
+		stream_socket = _g_stream_socket_new_connected(client_sockfd, listen_socket->parent.address_type);
 
 		/* add to the list of pending connections and notify user */
 		listen_socket->pending_connections = g_slist_append(listen_socket->pending_connections, stream_socket);
@@ -193,16 +193,20 @@ g_listen_socket_free(GListenSocket * listen_socket)
 }
 
 gboolean
-g_listen_socket_listen(GListenSocket * listen_socket, GSocketAddress * socket_address, guint16 port)
+g_listen_socket_listen(GListenSocket * listen_socket, GSocketAddress * socket_address)
 {
-	int		sockfd;
-	GError *	error;
-	socklen_t	namelen;
+	int			sockfd;
+	struct sockaddr	*	sockaddr;
+	gsize			sockaddr_size;
+	GError *		error;
+
+	if (!g_socket_address_get_is_valid(socket_address))
+		return FALSE;
 
 	/* initialization */
 	error = NULL;
-	sockfd = socket(PF_INET, SOCK_STREAM, 0);
-	_g_socket_init(&listen_socket->parent, sockfd);
+	sockfd = socket(_g_socket_address_get_family(socket_address), SOCK_STREAM, 0);
+	_g_socket_init(&listen_socket->parent, sockfd, socket_address->type);
 	listen_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
 	/* for nonblocking call of accept */
 	g_io_channel_set_flags(listen_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
@@ -213,30 +217,16 @@ g_listen_socket_listen(GListenSocket * listen_socket, GSocketAddress * socket_ad
 	_g_socket_enable_read_watch(&listen_socket->parent);
 
 	/* bind and listen */
-	listen_socket->parent.sockaddr_in = (struct sockaddr_in) {
-		.sin_family = AF_INET,
-		.sin_port = htons(port),
-		.sin_addr = socket_address->address.in_addr
-	};
-	if (bind(sockfd, (struct sockaddr *)&listen_socket->parent.sockaddr_in, sizeof(listen_socket->parent.sockaddr_in)))
+	_g_socket_address_get_sockaddr(socket_address, &sockaddr, &sockaddr_size);
+	if (bind(sockfd, sockaddr, sockaddr_size))
 		return FALSE;
 	if (listen(sockfd, listen_socket->max_pending_connections)) {
 		listen_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
 		return FALSE;
 	}
-
-	/* get "real" server address */
-	namelen = sizeof(listen_socket->parent.sockaddr_in);
-	getsockname(sockfd, (struct sockaddr *)&listen_socket->parent.sockaddr_in, &namelen);
-
 	listen_socket->parent.state = G_SOCKET_STATE_LISTENING;
-	return TRUE;
-}
 
-guint16
-g_listen_socket_server_port(GListenSocket * listen_socket)
-{
-	return (guint16)ntohs(listen_socket->parent.sockaddr_in.sin_port);
+	return TRUE;
 }
 
 void

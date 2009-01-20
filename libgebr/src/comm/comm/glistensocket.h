@@ -66,10 +66,7 @@ void
 g_listen_socket_free(GListenSocket *);
 
 gboolean
-g_listen_socket_listen(GListenSocket * listen_socket, GSocketAddress * socket_address, guint16 port);
-
-guint16
-g_listen_socket_server_port(GListenSocket * listen_socket);
+g_listen_socket_listen(GListenSocket * listen_socket, GSocketAddress * socket_address);
 
 void
 g_listen_socket_set_max_pending_connections(GListenSocket * listen_socket, guint number);

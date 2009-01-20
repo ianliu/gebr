@@ -87,7 +87,7 @@ gebrd_init(void)
 void
 gebrd_quit(void)
 {
-	gebrd_message(LOG_END, _("Server quited"), g_listen_socket_server_port(gebrd.listen_socket));
+	gebrd_message(LOG_END, _("Server quited"));
 
 	server_quit();
 	g_main_loop_quit(gebrd.main_loop);

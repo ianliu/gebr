@@ -301,7 +301,7 @@ local_run_server_read(GProcess * process, struct comm_server * comm_server)
 static void
 local_run_server_finished(GProcess * process, struct comm_server * comm_server)
 {
-	GSocketAddress *	socket_address;
+	GSocketAddress	socket_address;
 
 	comm_server->process.use = COMM_SERVER_PROCESS_NONE;
 	g_process_free(process);
@@ -311,10 +311,8 @@ local_run_server_finished(GProcess * process, struct comm_server * comm_server)
 		return;
 
 	comm_server->state = SERVER_STATE_CONNECT;
-	socket_address = g_socket_address_new("127.0.0.1", G_SOCKET_ADDRESS_TYPE_IPV4);
-	g_stream_socket_connect(comm_server->stream_socket, socket_address, comm_server->port, FALSE);
-
-	g_socket_address_free(socket_address);
+	socket_address = g_socket_address_ipv4_local(comm_server->port);
+	g_stream_socket_connect(comm_server->stream_socket, &socket_address, FALSE);
 }
 
 static gboolean
@@ -475,7 +473,7 @@ comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * co
 static void
 comm_ssh_open_tunnel_finished(GTerminalProcess * process, struct comm_server * comm_server)
 {
-	GSocketAddress *		socket_address;
+	GSocketAddress	socket_address;
 
 	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_open_tunnel_finished");
 
@@ -483,10 +481,9 @@ comm_ssh_open_tunnel_finished(GTerminalProcess * process, struct comm_server * c
 		goto out;
 
 	comm_server->state = SERVER_STATE_CONNECT;
-	socket_address = g_socket_address_new("127.0.0.1", G_SOCKET_ADDRESS_TYPE_IPV4);
-	g_stream_socket_connect(comm_server->stream_socket, socket_address, comm_server->tunnel_port, FALSE);
+	socket_address = g_socket_address_ipv4_local(comm_server->tunnel_port);
+	g_stream_socket_connect(comm_server->stream_socket, &socket_address, FALSE);
 
-	g_socket_address_free(socket_address);
 out:	comm_server->process.use = COMM_SERVER_PROCESS_NONE;
 	g_terminal_process_free(process);
 }

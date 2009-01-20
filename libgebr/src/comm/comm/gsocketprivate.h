@@ -20,8 +20,10 @@
 #ifndef __LIBGEBR_COMM_GSOCKETPRIVATE_H
 #define __LIBGEBR_COMM_GSOCKETPRIVATE_H
 
+#include "gsocketaddress.h"
+
 void
-_g_socket_init(GSocket * socket, int fd);
+_g_socket_init(GSocket * socket, int fd, enum GSocketAddressType address_type);
 
 void
 _g_socket_close(GSocket * socket);
