@@ -17,6 +17,7 @@
  *   Inspired on Qt 4.3 version of QStreamSocket, by Trolltech
  */
 
+#include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
@@ -165,25 +166,39 @@ g_stream_socket_connect(GStreamSocket * stream_socket, GSocketAddress * socket_a
 	struct sockaddr *	sockaddr;
 	gsize			sockaddr_size;
 	int			sockfd;
+	gboolean		ret;
 
 	if (!g_socket_address_get_is_valid(socket_address))
 		return FALSE;
 
 	/* initialization */
+	ret = TRUE;
 	sockfd = socket(_g_socket_address_get_family(socket_address), SOCK_STREAM, 0);
 	__g_stream_socket_init(stream_socket, sockfd, socket_address->type, !wait);
-	stream_socket->parent.state = G_SOCKET_STATE_CONNECTING;
+	stream_socket->parent.state = G_SOCKET_STATE_UNCONNECTED;
 	stream_socket->parent.last_error = G_SOCKET_ERROR_NONE;
 
 	/* watches */
 	_g_socket_enable_read_watch(&stream_socket->parent);
 	_g_socket_enable_write_watch(&stream_socket->parent);
 
-	/* TODO: treat connect return */
 	_g_socket_address_get_sockaddr(socket_address, &sockaddr, &sockaddr_size);
 	if (!connect(sockfd, sockaddr, sockaddr_size)) {
 		stream_socket->parent.state = G_SOCKET_STATE_CONNECTED;
 		__g_stream_socket_connected(stream_socket);
+	} else {
+		switch (errno) {
+		case EINPROGRESS:
+			stream_socket->parent.state = G_SOCKET_STATE_CONNECTING;
+			break;
+		case ECONNREFUSED:
+			stream_socket->parent.last_error = G_SOCKET_ERROR_CONNECTION_REFUSED;
+			ret = FALSE;
+			break;
+		case ETIMEDOUT:
+			stream_socket->parent.last_error = G_SOCKET_ERROR_SERVER_TIMED_OUT;
+			ret = FALSE;
+		}
 	}
 
 	/* no more blocking calls */
@@ -194,7 +209,7 @@ g_stream_socket_connect(GStreamSocket * stream_socket, GSocketAddress * socket_a
 		g_io_channel_set_flags(stream_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
 	}
 
-	return TRUE;
+	return ret;
 }
 
 // void

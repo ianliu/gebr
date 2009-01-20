@@ -76,7 +76,7 @@ static void
 __g_channel_socket_source_read(GStreamSocket * source_socket, GStreamSocket * forward_socket)
 {
 	GByteArray *	byte_array;
-puts("__g_channel_socket_source_read");
+
 	byte_array = g_socket_read_all(G_SOCKET(source_socket));
 	g_socket_write(G_SOCKET(forward_socket), byte_array);
 
@@ -84,7 +84,7 @@ puts("__g_channel_socket_source_read");
 }
 
 static void
-__g_channel_socket_source_error(GStreamSocket * source_socket, GStreamSocket * forward_socket)
+__g_channel_socket_source_error(GStreamSocket * source_socket, enum GSocketError error, GStreamSocket * forward_socket)
 {
 	__g_channel_socket_source_disconnected(source_socket, forward_socket);
 }
@@ -98,13 +98,13 @@ __g_channel_socket_forward_disconnected(GStreamSocket * forward_socket, GStreamS
 static void
 __g_channel_socket_forward_read(GStreamSocket * forward_socket, GStreamSocket * source_socket)
 {
-	__g_channel_socket_source_read(source_socket, forward_socket);
+	__g_channel_socket_source_read(forward_socket, source_socket);
 }
 
 static void
-__g_channel_socket_forward_error(GStreamSocket * forward_socket, GStreamSocket * source_socket)
+__g_channel_socket_forward_error(GStreamSocket * forward_socket, enum GSocketError error, GStreamSocket * source_socket)
 {
-	__g_channel_socket_source_error(source_socket, forward_socket);
+	__g_channel_socket_source_error(source_socket, error, forward_socket);
 }
 
 static void
@@ -112,7 +112,7 @@ __g_channel_socket_new_connection(GChannelSocket * channel_socket)
 {
 	GSocketAddress	peer_address;
 	int		client_sockfd, sockfd;
-puts("__g_channel_socket_new_connection");
+
 	sockfd = _g_socket_get_fd(&channel_socket->parent);
 	while ((client_sockfd = _g_socket_address_accept(&peer_address,
 	channel_socket->parent.address_type, sockfd)) != -1) {
@@ -130,12 +130,12 @@ puts("__g_channel_socket_new_connection");
 		g_signal_connect(source_socket, "error", (GCallback)
 			__g_channel_socket_source_error, forward_socket);
 
-		g_signal_connect(source_socket, "disconnected", (GCallback)
-			__g_channel_socket_forward_disconnected, forward_socket);
-		g_signal_connect(source_socket, "ready-read", (GCallback)
-			__g_channel_socket_forward_read, forward_socket);
-		g_signal_connect(source_socket, "error", (GCallback)
-			__g_channel_socket_forward_error, forward_socket);
+		g_signal_connect(forward_socket, "disconnected", (GCallback)
+			__g_channel_socket_forward_disconnected, source_socket);
+		g_signal_connect(forward_socket, "ready-read", (GCallback)
+			__g_channel_socket_forward_read, source_socket);
+		g_signal_connect(forward_socket, "error", (GCallback)
+			__g_channel_socket_forward_error, source_socket);
 	}
 }
 

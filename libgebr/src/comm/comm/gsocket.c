@@ -402,6 +402,8 @@ g_socket_write(GSocket * socket, GByteArray * byte_array)
 {
 	size_t	written_bytes;
 
+	_g_socket_enable_write_watch(socket);
+
 	if (socket->state == G_SOCKET_STATE_CONNECTED) {
 		written_bytes = send(_g_socket_get_fd(socket), byte_array->data, byte_array->len, 0);
 		if (written_bytes == -1)
@@ -409,11 +411,9 @@ g_socket_write(GSocket * socket, GByteArray * byte_array)
 	} else
 		written_bytes = 0;
 
-	if (written_bytes < byte_array->len) {
-		_g_socket_enable_write_watch(socket);
+	if (written_bytes < byte_array->len)
 		g_byte_array_append(socket->queue_write_bytes,
 			byte_array->data + written_bytes, byte_array->len - written_bytes);
-	}
 
 	return written_bytes;
 }
