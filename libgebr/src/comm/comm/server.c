@@ -206,11 +206,11 @@ comm_server_forward_x11(struct comm_server * comm_server, guint16 port)
 
 	/* does we have a display? */
 	display = getenv("DISPLAY");
-	if ((ret = (display == NULL || !strlen(display))))
+	if (!(ret = !(display == NULL || !strlen(display))))
 		goto out;
 	sscanf(display, ":%hu.", &display_number);
 
-	/* set display for*/
+	/* set redirection port */
 	redirect_display_port = (display_number+6000 > 6010) ? display_number+6000 : 6010;
 	while (!g_listen_socket_is_local_port_available(redirect_display_port))
 		++redirect_display_port;
