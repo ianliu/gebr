@@ -198,44 +198,51 @@ comm_server_forward_x11(struct comm_server * comm_server, guint16 port)
 	GSocketAddress	listen_address;
 	GSocketAddress	forward_address;
 
+	gboolean	ret;
 	GString *	string;
-
-	display = getenv("DISPLAY");
-	if (display == NULL || !strlen(display))
-		return FALSE;
 
 	/* initialization */
 	string = g_string_new(NULL);
+
+	/* does we have a display? */
+	display = getenv("DISPLAY");
+	if ((ret = (display == NULL || !strlen(display))))
+		goto out;
 	sscanf(display, ":%hu.", &display_number);
-	redirect_display_port = 6010;
+
+	/* set display for*/
+	redirect_display_port = (display_number+6000 > 6010) ? display_number+6000 : 6010;
 	while (!g_listen_socket_is_local_port_available(redirect_display_port))
 		++redirect_display_port;
 
+	/* free previous forward */
 	comm_server_free_x11_forward(comm_server);
-
-	comm_server_log_message(comm_server, LOG_INFO, _("Redirecting '%s' graphical output"),
-		comm_server->address->str);
-
-	comm_server->tried_existant_pass = FALSE;
-	comm_server->x11_forward_process = g_terminal_process_new();
-	g_signal_connect(comm_server->x11_forward_process, "ready-read",
-		G_CALLBACK(comm_ssh_read), comm_server);
-
-	g_string_printf(string, "ssh -x -R %d:127.0.0.1:%d %s 'sleep 999d'",
-		port, redirect_display_port, comm_server->address->str);
-	g_terminal_process_start(comm_server->x11_forward_process, string);
 
 	/* redirect_display_port tcp port to X11 unix socket */
 	listen_address = g_socket_address_ipv4_local(redirect_display_port);
 	g_string_printf(string, "/tmp/.X11-unix/X%hu", display_number);
 	forward_address = g_socket_address_unix(string->str);
 	comm_server->x11_forward_channel = g_channel_socket_new();
-	g_channel_socket_start(comm_server->x11_forward_channel, &listen_address, &forward_address);
+	if (!(ret = g_channel_socket_start(comm_server->x11_forward_channel, &listen_address, &forward_address)))
+		goto out;
+
+	/* now ssh from server to redirect_display_port */
+	comm_server->tried_existant_pass = FALSE;
+	comm_server->x11_forward_process = g_terminal_process_new();
+	g_signal_connect(comm_server->x11_forward_process, "ready-read",
+		G_CALLBACK(comm_ssh_read), comm_server);
+	g_string_printf(string, "ssh -x -R %d:127.0.0.1:%d %s 'sleep 999d'",
+		port, redirect_display_port, comm_server->address->str);
+	g_terminal_process_start(comm_server->x11_forward_process, string);
+
+	/* log */
+	comm_server_log_message(comm_server, LOG_INFO, _("Redirecting '%s' graphical output"),
+		comm_server->address->str);
 
 	/* frees */
-	g_string_free(string, TRUE);
+out:	g_string_free(string, TRUE);
 
-	return TRUE;
+	return ret;
 }
 
 /*
