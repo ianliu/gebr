@@ -1,5 +1,5 @@
 /*   libgebr - GeBR Library
- *   Copyright (C) 2007-2008  Br�ulio Barros de Oliveira (brauliobo@gmail.com)
+ *   Copyright (C) 2007-2009 Braulio Barros de Oliveira (brauliobo@gmail.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ main(int argc, char ** argv)
 			"arq1.flw arq2.mnu arq3.prj arq4.lne ..." },
 		{NULL}
 	};
-	gint			ret;
+	gint			ret = 0;
 	gint			i;
 	GError *		error = NULL;
 	GOptionContext *	context;
@@ -41,13 +41,19 @@ main(int argc, char ** argv)
 	);
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
-	/*�Parse�command�line�*/
-	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE || argv == NULL) {
-		fprintf(stderr, "%s:�syntax�error\n", argv[0]);
-		fprintf(stderr, "Try�%s�--��help\n", argv[0]);
+	/* Parse command line */
+	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE) {
+		fprintf(stderr, "%s: syntax error\n", argv[0]);
+		fprintf(stderr, "Try %s --help\n", argv[0]);
 		ret = -1;
 		goto out;
 	}
+
+        if (files == NULL) {
+                fprintf(stderr, "%s", 
+                        g_option_context_get_help(context, FALSE, NULL));
+                goto out;
+        }
 
 	for (i = 0; files[i] != NULL; ++i) {
 		GeoXmlDocument *	document;
