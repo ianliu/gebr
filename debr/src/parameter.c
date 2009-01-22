@@ -401,10 +401,7 @@ parameter_change_type_setup_ui(void)
 	gtk_widget_show(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
-	geoxml_parameter_set_type(debr.parameter, combo_type_map_get_type(
-		gtk_combo_box_get_active(GTK_COMBO_BOX(type_combo))));
-
-	parameter_load_selected();
+	parameter_change_type(combo_type_map_get_type(gtk_combo_box_get_active(GTK_COMBO_BOX(type_combo))));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 
 	gtk_widget_destroy(dialog);
@@ -420,7 +417,18 @@ parameter_change_type(enum GEOXML_PARAMETERTYPE type)
 	if (parameter_check_selected() == FALSE)
 		return;
 
+	const gchar *	keyword;
+
+	/* save keyword */
+	keyword = (geoxml_parameter_get_is_program_parameter(debr.parameter))
+		? geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(debr.parameter)) : NULL;
+
 	geoxml_parameter_set_type(debr.parameter, type);
+
+	/* restore keyword */
+	if (geoxml_parameter_get_is_program_parameter(debr.parameter))
+		geoxml_program_parameter_set_keyword(GEOXML_PROGRAM_PARAMETER(debr.parameter), keyword);
+
 	parameter_load_selected();
 }
 
