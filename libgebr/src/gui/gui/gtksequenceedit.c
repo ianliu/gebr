@@ -28,14 +28,16 @@
 static GtkMenu * __gtk_sequence_edit_popup_menu(GtkTreeView * tree_view, GtkSequenceEdit * sequence_edit);
 static void __gtk_sequence_edit_on_add_clicked(GtkWidget * button, GtkSequenceEdit * sequence_edit);
 static void __gtk_sequence_edit_on_remove_activated(GtkWidget * button, GtkSequenceEdit * sequence_edit);
-static void __gtk_sequence_edit_on_move_up_activated(GtkWidget * button, GtkSequenceEdit * sequence_edit);
-static void __gtk_sequence_edit_on_move_down_activated(GtkWidget * button, GtkSequenceEdit * sequence_edit);
+static gboolean __gtk_sequence_edit_on_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before, GtkSequenceEdit * sequence_edit);
+static void __gtk_sequence_edit_on_move_top_activated(GtkWidget * button, GtkSequenceEdit * sequence_edit);
+static void __gtk_sequence_edit_on_move_bottom_activated(GtkWidget * button, GtkSequenceEdit * sequence_edit);
 static void __gtk_sequence_edit_on_edited(GtkCellRendererText * cell, gchar * path_string, gchar * new_text,
 	GtkSequenceEdit * sequence_edit);
 
 static void __gtk_sequence_edit_remove(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter);
-static void __gtk_sequence_edit_move_up(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter);
-static void __gtk_sequence_edit_move_down(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter);
+static void __gtk_sequence_edit_move_before(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter, GtkTreeIter * before);
+static void __gtk_sequence_edit_move_top(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter);
+static void __gtk_sequence_edit_move_bottom(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter);
 static void __gtk_sequence_edit_rename(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter, const gchar * new_text);
 static GtkWidget * __gtk_sequence_edit_create_tree_view(GtkSequenceEdit * sequence_edit);
 
@@ -79,6 +81,8 @@ gtk_sequence_edit_set_property(GtkSequenceEdit * sequence_edit, guint property_i
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 		tree_view = GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->create_tree_view(sequence_edit);
+		gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(tree_view),
+			(GtkTreeViewReorderCallback)__gtk_sequence_edit_on_reorder, NULL, sequence_edit);
 		sequence_edit->tree_view = tree_view;
 		gtk_widget_show(tree_view);
 		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), tree_view);
@@ -141,8 +145,9 @@ gtk_sequence_edit_class_init(GtkSequenceEditClass * class)
 	/* virtual definition */
 	class->add = NULL;
 	class->remove = __gtk_sequence_edit_remove;
-	class->move_up = __gtk_sequence_edit_move_up;
-	class->move_down = __gtk_sequence_edit_move_down;
+	class->move_before = __gtk_sequence_edit_move_before;
+	class->move_top = __gtk_sequence_edit_move_top;
+	class->move_bottom = __gtk_sequence_edit_move_bottom;
 	class->rename = __gtk_sequence_edit_rename;
 	class->create_tree_view = __gtk_sequence_edit_create_tree_view;
 
@@ -225,14 +230,14 @@ __gtk_sequence_edit_popup_menu(GtkTreeView * tree_view, GtkSequenceEdit * sequen
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_UP, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
-			(GCallback)__gtk_sequence_edit_on_move_up_activated, sequence_edit);
+			(GCallback)__gtk_sequence_edit_on_move_top_activated, sequence_edit);
 	}
 	/* Move down */
-	if (gtk_list_store_can_move_down(sequence_edit->list_store, &iter) == TRUE) {
+	if (gtk_list_store_can_move_up(sequence_edit->list_store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GO_DOWN, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
-			(GCallback)__gtk_sequence_edit_on_move_down_activated, sequence_edit);
+			(GCallback)__gtk_sequence_edit_on_move_bottom_activated, sequence_edit);
 	}
 	/* Remove */
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_REMOVE, NULL);
@@ -273,16 +278,24 @@ __gtk_sequence_edit_on_remove_activated(GtkWidget * button, GtkSequenceEdit * se
 	__gtk_sequence_edit_button_clicked(sequence_edit, GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->remove);
 }
 
-static void
-__gtk_sequence_edit_on_move_up_activated(GtkWidget * button, GtkSequenceEdit * sequence_edit)
+static gboolean
+__gtk_sequence_edit_on_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before,
+	GtkSequenceEdit * sequence_edit)
 {
-	__gtk_sequence_edit_button_clicked(sequence_edit, GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->move_up);
+	GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->move_before(sequence_edit, iter, before);
+	return TRUE;
 }
 
 static void
-__gtk_sequence_edit_on_move_down_activated(GtkWidget * button, GtkSequenceEdit * sequence_edit)
+__gtk_sequence_edit_on_move_top_activated(GtkWidget * button, GtkSequenceEdit * sequence_edit)
 {
-	__gtk_sequence_edit_button_clicked(sequence_edit, GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->move_down);
+	__gtk_sequence_edit_button_clicked(sequence_edit, GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->move_top);
+}
+
+static void
+__gtk_sequence_edit_on_move_bottom_activated(GtkWidget * button, GtkSequenceEdit * sequence_edit)
+{
+	__gtk_sequence_edit_button_clicked(sequence_edit, GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->move_bottom);
 }
 
 static void
@@ -307,16 +320,23 @@ __gtk_sequence_edit_remove(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter)
 }
 
 static void
-__gtk_sequence_edit_move_up(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter)
+__gtk_sequence_edit_move_before(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter, GtkTreeIter * before)
 {
-	gtk_list_store_move_up(sequence_edit->list_store, iter);
+	gtk_list_store_move_before(sequence_edit->list_store, iter, before);
 	g_signal_emit(sequence_edit, object_signals[CHANGED], 0);
 }
 
 static void
-__gtk_sequence_edit_move_down(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter)
+__gtk_sequence_edit_move_top(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter)
 {
-	gtk_list_store_move_down(sequence_edit->list_store, iter);
+	gtk_list_store_move_after(sequence_edit->list_store, iter, NULL);
+	g_signal_emit(sequence_edit, object_signals[CHANGED], 0);
+}
+
+static void
+__gtk_sequence_edit_move_bottom(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter)
+{
+	gtk_list_store_move_before(sequence_edit->list_store, iter, NULL);
 	g_signal_emit(sequence_edit, object_signals[CHANGED], 0);
 }
 
@@ -337,8 +357,8 @@ __gtk_sequence_edit_create_tree_view(GtkSequenceEdit * sequence_edit)
 	GtkCellRenderer *	renderer;
 
 	tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(sequence_edit->list_store));
-
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree_view), FALSE);
+
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(renderer, "editable", TRUE, NULL);
 	g_signal_connect(renderer, "edited",

@@ -1,10 +1,6 @@
-1.0:
-
-0.9.7:
-
+1.0 roadmap:
 
 0.9.8:
-+	Redirecionamento completo do X
 +	Import/export de projetos e linhas (pensar)
 +	Categorias do usuário na DéBR, lidas a partir dos menus
         em edição e salvas no arquivo de conf da DéBR
@@ -12,21 +8,17 @@
 +	Teclas de atalho
 +	Revisões
 +	DéBR: preservar "keyword" na troca de tipo
-+	mover com drag n' drop para listas
 
 0.9.9:
++	OK/Cancel para dialogs da DéBR
 +	Internacionalização (português, espanhol, alemão, etc)
 +	Suporte a help
-
 +	"Enter" adiciona em GtkSequenceEdit
 +	Acertar tooltips (DéBR/GeBR)
-
 +	Mais detalhes para visao lateral da DéBR e scrolled window para
         todas as janelas de detalhes DéBR/GeBR
-
 +	Acrescentar uma quantidade especificada de parâmetros de um
         mesmo tipo de uma única vez
-
 +	Multiline com tags gays gtk_text_buffer_insert_with_tags ()
 
 =====================
