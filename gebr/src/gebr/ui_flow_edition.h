@@ -57,7 +57,7 @@ struct ui_flow_edition *
 flow_edition_setup_ui(void);
 
 void
-flow_edition_load_components(const gchar * filename, const gchar * title);
+flow_edition_load_components(void);
 
 void
 flow_edition_component_activated(void);

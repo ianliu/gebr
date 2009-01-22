@@ -183,25 +183,18 @@ flow_edition_setup_ui(void)
 
 /*
  * Function: flow_edition_load_components
- * Load flow at _filename_ and title _title_
+ * Load current flow's (gebr.flow) programs
  */
 void
-flow_edition_load_components(const gchar * filename, const gchar * title)
+flow_edition_load_components(void)
 {
 	GeoXmlSequence *	first_program;
 	gchar *			input_file;
 	gchar *			output_file;
 
-	/* free previous flow */
-	flow_free();
-
-	/* load it */
-	gebr.flow = GEOXML_FLOW(document_load(filename));
-	if (gebr.flow == NULL) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load flow '%s'"), title);
-		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load flow '%s' from file '%s'"), title, filename);
+	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
+	if (!flow_browse_get_selected(NULL))
 		return;
-	}
 
 	/* input iter */
 	input_file = strlen(geoxml_flow_io_get_input(gebr.flow))

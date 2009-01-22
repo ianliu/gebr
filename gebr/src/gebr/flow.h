@@ -42,6 +42,9 @@ flow_export_as_menu(void);
 void
 flow_run(void);
 
+gboolean
+flow_revision_save(void);
+
 void
 flow_program_duplicate(void);
 

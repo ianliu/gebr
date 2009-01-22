@@ -28,6 +28,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include <gui/pixmaps.h>
+#include <gui/utils.h>
 
 #include "interface.h"
 #include "gebr.h"
@@ -123,6 +124,9 @@ gebr_setup_ui(void)
 
 	GtkWidget *	vbox;
 	GtkWidget *	toolbar;
+	GtkToolItem *	tool_item;
+	GtkWidget *	menu;
+	GtkWidget *	revisions_menu;
 
 	gebr.about = about_setup_ui("GêBR", _("A plug-and-play environment to\nseismic processing tools"));
 	gebr.ui_server_list = server_list_setup_ui();
@@ -227,7 +231,15 @@ gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_export_as_menu"))), -1);
 
-	gebr.ui_flow_browse = flow_browse_setup_ui();
+	revisions_menu = menu = gtk_menu_new();
+	tool_item = gtk_menu_tool_button_new_from_stock("document-open-recent");
+	g_signal_connect(GTK_OBJECT(tool_item), "clicked",
+		G_CALLBACK(on_flow_revision_save_activate), NULL);
+	set_tooltip(GTK_WIDGET(tool_item), _("Save flow state"));
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
+	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
+
+	gebr.ui_flow_browse = flow_browse_setup_ui(revisions_menu);
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gebr.ui_flow_browse->widget, TRUE, TRUE, 0);
@@ -237,9 +249,6 @@ gebr_setup_ui(void)
 	/*
 	 * Notebook's page "Flow edition"
 	 */
-	GtkToolItem *	tool_item;
-	GtkWidget *	menu;
-
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 

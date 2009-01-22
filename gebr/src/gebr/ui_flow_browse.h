@@ -35,6 +35,8 @@ struct ui_flow_browse {
 	GtkListStore *		store;
 	GtkWidget *		view;
 
+	GtkWidget *		revisions_menu;
+
 	struct ui_flow_browse_info {
 		GtkWidget *	title;
 		GtkWidget *	description;
@@ -59,12 +61,18 @@ struct ui_flow_browse {
 };
 
 struct ui_flow_browse *
-flow_browse_setup_ui(void);
+flow_browse_setup_ui(GtkWidget * revisions_menu);
 
 void
 flow_browse_info_update(void);
 
+gboolean
+flow_browse_get_selected(GtkTreeIter * iter);
+
 void
 flow_browse_select_iter(GtkTreeIter * iter);
+
+void
+flow_browse_load_revision(GeoXmlRevision * revision, gboolean new);
 
 #endif //__UI_FLOW_BROWSE_H

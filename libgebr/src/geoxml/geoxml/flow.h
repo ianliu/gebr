@@ -78,6 +78,11 @@
 #define GEOXML_FLOW(doc) ((GeoXmlFlow*)(doc))
 
 /**
+ * Cast from GeoXmlSequence at \p seq to GeoXmlRevision
+ */
+#define GEOXML_REVISION(seq) ((GeoXmlRevision*)(seq))
+
+/**
  * The GeoXmlFlow struct contains private data only, and should be accessed using the functions below.
  */
 typedef struct geoxml_flow GeoXmlFlow;
@@ -294,6 +299,7 @@ geoxml_flow_get_revision(GeoXmlFlow * flow, GeoXmlSequence ** revision, gulong i
  * Get information of \p revision. The flow is stored at \p flow and can be
  * loaded with geoxml_document_load_buffer. \p receive the date of creation of \p revision.
  * A NULL value of \p flow or \p date or \p comment mean not set.
+ * Any of the string should be freed.
  *
  * If \p revision in NULL nothing is done.
  */

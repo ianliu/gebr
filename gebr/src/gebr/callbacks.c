@@ -206,6 +206,17 @@ on_flow_execute_activate(void)
 }
 
 /*
+ * Function: on_flow_revision_save_activate
+ * Call <flow_revision_save> from <flow.c>
+ *
+ */
+void
+on_flow_revision_save_activate(void)
+{
+	flow_revision_save();
+}
+
+/*
  * Function: on_flow_component_help_activate
  * *Fill me in!*
  *

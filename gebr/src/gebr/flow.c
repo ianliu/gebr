@@ -548,6 +548,58 @@ flow_run(void)
 }
 
 /*
+ * Function: flow_revision_save
+ * Make a revision from current flow.
+ * Opens a dialog asking the user for a comment of it.
+ */
+gboolean
+flow_revision_save(void)
+{
+	GtkWidget *		dialog;
+	GtkBox *		vbox;
+	GtkWidget *		label;
+	GtkWidget *		entry;
+	gboolean		ret;
+
+	if (gebr.flow == NULL)
+		return FALSE;
+
+	dialog = gtk_dialog_new_with_buttons(_("Save flow state"),
+		GTK_WINDOW(gebr.window),
+		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_STOCK_OK, GTK_RESPONSE_OK,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		NULL);
+	vbox = GTK_BOX(GTK_DIALOG(dialog)->vbox);
+// 	gtk_box_set_homogeneous(vbox, FALSE);
+
+	label = gtk_label_new(_("Make a comment for this state:"));
+	gtk_box_pack_start(vbox, label, FALSE, TRUE, 0);
+	entry = gtk_entry_new();
+	gtk_box_pack_start(vbox, entry, FALSE, TRUE, 0);
+
+	gtk_widget_show_all(dialog);
+	switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
+	case GTK_RESPONSE_OK: {
+		GeoXmlRevision *	revision;
+
+		revision = geoxml_flow_append_revision(gebr.flow, gtk_entry_get_text(GTK_ENTRY(entry)));
+		flow_browse_load_revision(revision, TRUE);
+		flow_save();
+		ret = TRUE;
+
+		break;
+	} default:
+		ret = FALSE;
+		break;
+	}
+
+	gtk_widget_destroy(dialog);
+
+	return ret;
+}
+
+/*
  * Function: flow_program_duplicate
  * Remove selected program from flow process
  */

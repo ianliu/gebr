@@ -312,14 +312,16 @@ geoxml_flow_append_revision(GeoXmlFlow * flow, const gchar * comment)
 	if (flow == NULL)
 		return NULL;
 
+	GeoXmlSequence *	first_revision;
 	GeoXmlRevision *	revision;
 	GeoXmlFlow *		revision_flow;
 	gchar *			revision_xml;
 	GeoXmlSequence *	i;
 
+	geoxml_flow_get_revision(flow, &first_revision, 0);
 	revision = (GeoXmlRevision*)__geoxml_insert_new_element(
 		geoxml_document_root_element(GEOXML_DOCUMENT(flow)),
-		"revision", NULL);
+		"revision", (GdomeElement*)first_revision);
 	__geoxml_set_attr_value((GdomeElement*)revision, "date", iso_date());
 	__geoxml_set_attr_value((GdomeElement*)revision, "comment", comment);
 

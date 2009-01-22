@@ -57,6 +57,9 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 static GtkMenu *
 flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_browse);
 
+static void
+flow_browse_on_revision_activate(GtkMenuItem * menu_item, GeoXmlRevision * revision);
+
 /*
  * Section: Public
  * Public functions.
@@ -70,7 +73,7 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
  * The structure containing relevant data.
  */
 struct ui_flow_browse *
-flow_browse_setup_ui(void)
+flow_browse_setup_ui(GtkWidget * revisions_menu)
 {
 	struct ui_flow_browse *		ui_flow_browse;
 
@@ -89,6 +92,7 @@ flow_browse_setup_ui(void)
 
 	/* alloc */
 	ui_flow_browse = g_malloc(sizeof(struct ui_flow_browse));
+	ui_flow_browse->revisions_menu = revisions_menu;
 
 	/* Create flow browse page */
 	page = gtk_vbox_new(FALSE, 0);
@@ -133,8 +137,6 @@ flow_browse_setup_ui(void)
 
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->view), "cursor-changed",
 		GTK_SIGNAL_FUNC(flow_browse_load), ui_flow_browse);
-	g_signal_connect(GTK_OBJECT(ui_flow_browse->view), "cursor-changed",
-		GTK_SIGNAL_FUNC(flow_browse_info_update), ui_flow_browse);
 
 	/*
 	 * Right side: flow info
@@ -229,73 +231,6 @@ flow_browse_setup_ui(void)
 	gtk_box_pack_end(GTK_BOX(infopage), ui_flow_browse->info.author, FALSE, TRUE, 0);
 
 	return ui_flow_browse;
-}
-
-/*
- * Section: Private
- * Private functions.
- */
-
-/*
- * Function: flow_browse_load
- * Load a selected flow from file
- *
- * Load a selected flow from file when selected in "Flow Browse"
- */
-static void
-flow_browse_load(void)
-{
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
-
-	gchar *			filename;
-	gchar *			title;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
-		return;
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
-		FB_FILENAME, &filename,
-		FB_TITLE, &title,
-		-1);
-
-	flow_edition_load_components(filename, title);
-	flow_browse_info_update();
-
-	g_free(filename);
-	g_free(title);
-}
-
-/*
- * Function: flow_browse_rename
- * Rename a flow upon double click.
- */
-static void
-flow_browse_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new_text, struct ui_flow_browse * ui_flow_browse)
-{
-	GtkTreeIter	iter;
-	gchar *         old_title;
-
-	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(ui_flow_browse->store),
-		&iter,
-		path_string);
-	old_title = (gchar *)geoxml_document_get_title(GEOXML_DOC(gebr.flow));
-
-	/* was it really renamed? */
-	if (strcmp(old_title, new_text) == 0)
-		return;
-
-	/* update store */
-	gtk_list_store_set(ui_flow_browse->store, &iter,
-		FB_TITLE, new_text,
-		-1);
-	/* update XML */
-	geoxml_document_set_title(GEOXML_DOC(gebr.flow), new_text);
-	flow_save();
-
-	/* send feedback */
-	gebr_message(LOG_INFO, FALSE, TRUE, _("Flow '%s' renamed to '%s'"), old_title, new_text);
 }
 
 /*
@@ -397,6 +332,19 @@ flow_browse_info_update(void)
 	navigation_bar_update();
 }
 
+/* Function: flow_browse_get_selected
+ * Set to _iter_ the current selected flow
+ */
+gboolean
+flow_browse_get_selected(GtkTreeIter * iter)
+{
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	return gtk_tree_selection_get_selected(selection, &model, iter);
+}
+
 /* Function: flow_browse_select_iter
  * Select flow at _iter_
  */
@@ -406,9 +354,125 @@ flow_browse_select_iter(GtkTreeIter * iter)
 	GtkTreeSelection *	selection;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	gtk_tree_selection_select_iter(selection, iter);
+	if (iter != NULL)
+		gtk_tree_selection_select_iter(selection, iter);
+	else
+		gtk_tree_selection_unselect_all(selection);
 
 	flow_browse_load();
+}
+
+/*
+ * Function: flow_browse_load
+ * Load _revision_ into the list of revision.
+ * If _new_ is true, then it is prepended; otherwise, appended
+ */
+void
+flow_browse_load_revision(GeoXmlRevision * revision, gboolean new)
+{
+	GString *	label;
+	gchar *		date;
+	gchar *		comment;
+
+	GtkWidget *	menu_item;
+
+	geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
+	label = g_string_new(NULL);
+	g_string_printf(label, "%s: %s", date, comment);
+
+	menu_item = gtk_menu_item_new_with_label(label->str);
+	gtk_widget_show(menu_item);
+	if (new)
+		gtk_menu_shell_prepend(GTK_MENU_SHELL(gebr.ui_flow_browse->revisions_menu), menu_item);
+	else
+		gtk_menu_shell_append(GTK_MENU_SHELL(gebr.ui_flow_browse->revisions_menu), menu_item);
+	g_signal_connect(menu_item, "activate",
+		(GCallback)flow_browse_on_revision_activate, revision);
+}
+
+/*
+ * Section: Private
+ * Private functions.
+ */
+
+/*
+ * Function: flow_browse_load
+ * Load a selected flow from file when selected in "Flow Browse"
+ */
+static void
+flow_browse_load(void)
+{
+	GtkTreeIter		iter;
+
+	gchar *			filename;
+	gchar *			title;
+
+	GeoXmlSequence *	revision;
+
+	gtk_container_foreach(GTK_CONTAINER(gebr.ui_flow_browse->revisions_menu),
+		(GtkCallback)gtk_widget_destroy, NULL);
+	if (!flow_browse_get_selected(&iter)) {
+		gebr.flow = NULL;
+		flow_edition_load_components();
+		flow_browse_info_update();
+		return;
+	}
+
+	/* load its filename and title */
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		FB_FILENAME, &filename,
+		FB_TITLE, &title,
+		-1);
+	/* free previous flow and load it */
+	flow_free();
+	gebr.flow = GEOXML_FLOW(document_load(filename));
+	if (gebr.flow == NULL) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load flow '%s'"), title);
+		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load flow '%s' from file '%s'"), title, filename);
+		flow_browse_select_iter(NULL);
+		goto out;
+	}
+	flow_edition_load_components();
+	flow_browse_info_update();
+
+	/* load revisions */
+	geoxml_flow_get_revision(gebr.flow, &revision, 0);
+	for (; revision != NULL; geoxml_sequence_next(&revision))
+		flow_browse_load_revision(GEOXML_REVISION(revision), FALSE);
+
+out:	g_free(filename);
+	g_free(title);
+}
+
+/*
+ * Function: flow_browse_rename
+ * Rename a flow upon double click.
+ */
+static void
+flow_browse_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new_text, struct ui_flow_browse * ui_flow_browse)
+{
+	GtkTreeIter	iter;
+	gchar *         old_title;
+
+	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(ui_flow_browse->store),
+		&iter,
+		path_string);
+	old_title = (gchar *)geoxml_document_get_title(GEOXML_DOC(gebr.flow));
+
+	/* was it really renamed? */
+	if (strcmp(old_title, new_text) == 0)
+		return;
+
+	/* update store */
+	gtk_list_store_set(ui_flow_browse->store, &iter,
+		FB_TITLE, new_text,
+		-1);
+	/* update XML */
+	geoxml_document_set_title(GEOXML_DOC(gebr.flow), new_text);
+	flow_save();
+
+	/* send feedback */
+	gebr_message(LOG_INFO, FALSE, TRUE, _("Flow '%s' renamed to '%s'"), old_title, new_text);
 }
 
 static void
@@ -427,24 +491,21 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 static GtkMenu *
 flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_browse)
 {
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
-
 	GtkWidget *		menu;
 	GtkWidget *		menu_item;
+
+	GtkTreeIter		iter;
 
 	if (gebr.line == NULL)
 		return NULL;
 
 	menu = gtk_menu_new();
 
-	/* new */
+	/* New */
 	gtk_container_add(GTK_CONTAINER(menu),
 		gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_new")));
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+	if (!flow_browse_get_selected(&iter))
 		goto out;
 
 	/* Move top */
@@ -475,4 +536,26 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 out:	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
+}
+
+static void
+flow_browse_on_revision_activate(GtkMenuItem * menu_item, GeoXmlRevision * revision)
+{
+	if (confirm_action_dialog(_("Backup current state?"),
+	_("You are about to revert to a previous state."
+	"The current flow will be lost after this action."
+	"Do you want to save the current flow state?")) && !flow_revision_save())
+		return;
+
+	gchar *		date;
+	gchar *		comment;
+
+	geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
+	if (geoxml_flow_change_to_revision(gebr.flow, revision))
+		gebr_message(LOG_INFO, TRUE, FALSE, _("Changed to state '%s' ('%s')"), comment, date);
+	else
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Could not change to state '%s' ('%s')"), comment, date);
+
+	flow_save();
+	flow_browse_load();
 }
