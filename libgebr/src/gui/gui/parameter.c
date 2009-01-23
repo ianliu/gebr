@@ -296,7 +296,9 @@ parameter_widget_enum_set_widget_value(struct parameter_widget * parameter_widge
 	geoxml_program_parameter_get_enum_option(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), &option, 0);
 	for (i = 0; option != NULL; ++i, geoxml_sequence_next(&option))
 		if (strcmp(value, geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(option))) == 0) {
-			gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->value_widget), i+1);
+			gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->value_widget),
+				geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(
+				parameter_widget->parameter)) ? i : i+1);
 			return;
 		}
 
@@ -456,7 +458,8 @@ parameter_widget_configure(struct parameter_widget * parameter_widget)
 		GeoXmlSequence *	sequence;
 
 		parameter_widget->value_widget = combo_box = gtk_combo_box_new_text();
-		gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), "");
+		if (!geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter)))
+			gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), "");
 		geoxml_program_parameter_get_enum_option(
 			GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), &sequence, 0);
 		while (sequence != NULL) {
