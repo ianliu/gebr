@@ -48,7 +48,7 @@ job_parse_parameter(struct job * job, GeoXmlParameter * parameter, GeoXmlProgram
 	if (type == GEOXML_PARAMETERTYPE_GROUP) {
 		GeoXmlSequence *	instance;
 		gboolean		ret;
-		
+
 		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
 		for (ret = TRUE; instance != NULL && ret == TRUE; geoxml_sequence_next(&instance)) {
 			GeoXmlParameter *	selected;

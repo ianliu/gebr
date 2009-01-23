@@ -363,7 +363,7 @@ flow_browse_select_iter(GtkTreeIter * iter)
 }
 
 /*
- * Function: flow_browse_load
+ * Function: flow_browse_load_revision
  * Load _revision_ into the list of revision.
  * If _new_ is true, then it is prepended; otherwise, appended
  */
@@ -432,6 +432,12 @@ flow_browse_load(void)
 		flow_browse_select_iter(NULL);
 		goto out;
 	}
+
+	/* load into UI */
+	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
+		FB_FILENAME, geoxml_document_get_filename(GEOXML_DOCUMENT(gebr.flow)),
+		FB_TITLE, geoxml_document_get_title(GEOXML_DOCUMENT(gebr.flow)),
+		-1);
 	flow_edition_load_components();
 	flow_browse_info_update();
 

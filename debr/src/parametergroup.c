@@ -181,7 +181,10 @@ parameter_group_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), instances_spin_button, 1, 2, row, row+1,
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0), ++row;
+	/* if we don't any parameter we cannot instanciate */
 	geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
+	gtk_widget_set_sensitive(instances_spin_button, geoxml_parameters_get_number(GEOXML_PARAMETERS(instance)) > 0
+		? TRUE : FALSE);
 
 	ui->instances_edit_vbox = instances_edit_vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(ui->instances_edit_vbox);
