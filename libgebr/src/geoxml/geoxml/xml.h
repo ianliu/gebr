@@ -243,26 +243,21 @@ __geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
 		__i = g_slist_next(__i))
 
 /**
- * hygienizing the macro...
- */
-#define __geoxml_foreach_element_with_tagname_r_aux(base, tagname, element) \
-	GdomeNodeList *		__node_list; \
-	GdomeDOMString *	__string; \
-	int			__i, __l; \
-	__string = gdome_str_mkref(tagname); \
-	__node_list = gdome_el_getElementsByTagName(base, __string, &exception); \
-	gdome_str_unref(__string); \
-	__l = gdome_nl_length(__node_list, &exception); \
-	for (__i = 0, element = (GdomeElement*)gdome_nl_item(__node_list, 0, &exception); \
-		__i < __l || (gdome_nl_unref(__node_list, &exception), 0); \
-		element = (GdomeElement*)gdome_nl_item(__node_list, ++__i, &exception))
-/**
  * \internal
  * Look for each _element_ child of base (recursive search, not necessarily a direct child)
  * and with tag name _tagname_
  * A break in the loop will leak memory
  */
-#define __geoxml_foreach_element_with_tagname_r(base, tagname, element) \
-	{ __geoxml_foreach_element_with_tagname_r_aux(base, tagname, element) {} }
+#define __geoxml_foreach_element_with_tagname_r(base, tagname, element, hygid) \
+	GdomeNodeList *		__node_list##hygid; \
+	GdomeDOMString *	__string##hygid; \
+	int			__i##hygid, __l##hygid; \
+	__string##hygid = gdome_str_mkref(tagname); \
+	__node_list##hygid = gdome_el_getElementsByTagName(base, __string##hygid, &exception); \
+	gdome_str_unref(__string##hygid); \
+	__l##hygid = gdome_nl_length(__node_list##hygid, &exception); \
+	for (__i##hygid = 0, element = (GdomeElement*)gdome_nl_item(__node_list##hygid, 0, &exception); \
+		__i##hygid < __l##hygid || (gdome_nl_unref(__node_list##hygid, &exception), 0); \
+		element = (GdomeElement*)gdome_nl_item(__node_list##hygid, ++__i##hygid, &exception))
 
 #endif //__LIBGEBR_GEOXML_XML_H

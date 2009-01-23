@@ -209,20 +209,20 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 
 			__geoxml_set_attr_value(root_element, "version", "0.2.2");
 
-			__geoxml_foreach_element_with_tagname_r(root_element, "option", element) {
+			__geoxml_foreach_element_with_tagname_r(root_element, "option", element, option) {
 				gchar *	value;
 
 				value = g_strdup(__geoxml_get_element_value(element));
 				__geoxml_set_element_value(element, "", __geoxml_create_TextNode);
 
 				__geoxml_insert_new_element(element, "label", NULL);
-				__geoxml_set_tag_value(__geoxml_insert_new_element(element, "value", NULL),
-					"value", value, __geoxml_create_TextNode);
+				__geoxml_set_element_value(__geoxml_insert_new_element(element, "value", NULL),
+					value, __geoxml_create_TextNode);
 
 				g_free(value);
 			}
 
-			__geoxml_foreach_element_with_tagname_r(root_element, "range", element)
+			__geoxml_foreach_element_with_tagname_r(root_element, "range", element, range)
 				__geoxml_set_attr_value(element, "digits", "");
 		}
 	}
