@@ -42,7 +42,9 @@ job_parse_parameter(struct job * job, GeoXmlParameter * parameter, GeoXmlProgram
 	enum GEOXML_PARAMETERTYPE	type;
 	GeoXmlProgramParameter *	program_parameter;
 
-	type = geoxml_parameter_get_type(GEOXML_PARAMETER(parameter));
+	type = geoxml_parameter_get_type(parameter);
+	while (type == GEOXML_PARAMETERTYPE_REFERENCE)
+		type = geoxml_parameter_get_type(geoxml_parameter_get_referencee(parameter));
 	if (type == GEOXML_PARAMETERTYPE_GROUP) {
 		GeoXmlSequence *	instance;
 		gboolean		ret;
