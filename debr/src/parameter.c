@@ -228,25 +228,31 @@ void
 parameter_new(void)
 {
 	GtkTreeIter		iter;
+	GtkTreePath *		tree_path;
 
 	if (debr.parameter != NULL && (geoxml_parameter_get_is_program_parameter(debr.parameter) == FALSE ||
 	geoxml_parameter_get_is_in_group(debr.parameter) == TRUE)) {
+		GeoXmlParameterGroup *	parameter_group;
 		GeoXmlSequence *	first_instance;
 		GtkTreeIter		parent;
-		GtkTreePath *		tree_path;
 
-		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(debr.parameter), &first_instance, 0);
-		parameter_get_selected(&parent);
+		parameter_get_selected(&iter);
+		if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &iter)) {
+			parameter_group = GEOXML_PARAMETER_GROUP(debr.parameter);
+			parent = iter;
+			tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent);
+			gtk_tree_view_expand_row(GTK_TREE_VIEW(debr.ui_parameter.tree_view), tree_path, FALSE);
+			gtk_tree_path_free(tree_path);
+		} else
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent,
+				PARAMETER_XMLPOINTER, &parameter_group,
+				-1);
+
+		geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
 		iter = parameter_append_to_ui(
 			geoxml_parameters_append_parameter(GEOXML_PARAMETERS(first_instance),
 				GEOXML_PARAMETERTYPE_FLOAT),
 			&parent);
-
-		tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent);
-		gtk_tree_view_expand_row(GTK_TREE_VIEW(debr.ui_parameter.tree_view), tree_path, FALSE);
-		gtk_tree_path_free(tree_path);
-
-		parameter_load_iter(debr.parameter, &parent);
 	} else {
 		iter = parameter_append_to_ui(
 			geoxml_parameters_append_parameter(
@@ -254,6 +260,10 @@ parameter_new(void)
 				GEOXML_PARAMETERTYPE_FLOAT),
 			NULL);
 	}
+
+	tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter);
+	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(debr.ui_parameter.tree_view), tree_path, NULL, FALSE, 0, 0);
+	gtk_tree_path_free(tree_path);
 
 	parameter_select_iter(iter);
 	parameter_change_type_setup_ui();
@@ -268,7 +278,9 @@ parameter_new(void)
 void
 parameter_remove(void)
 {
+	GtkTreeIter	parent;
 	GtkTreeIter		iter;
+	gboolean		in_group;
 
 	if (parameter_get_selected(&iter) == FALSE)
 		return;
@@ -276,10 +288,21 @@ parameter_remove(void)
 	geoxml_parameter_get_label(debr.parameter)) == FALSE)
 		return;
 
+	in_group = gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &iter);
+
 	gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	gtk_tree_store_remove(debr.ui_parameter.tree_store, &iter);
 	geoxml_sequence_remove(GEOXML_SEQUENCE(debr.parameter));
 	debr.parameter = NULL;
+
+	if (in_group) {
+		GeoXmlParameter *	parameter_group;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent,
+			PARAMETER_XMLPOINTER, &parameter_group,
+			-1);
+		parameter_load_iter(parameter_group, &parent);
+	}
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -393,10 +416,13 @@ parameter_change_type_setup_ui(void)
 	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[5].title);
 	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[6].title);
 	/* does not allow group-in-group */
-	if (geoxml_parameter_get_is_in_group(debr.parameter) == FALSE)
+	if (geoxml_parameter_get_is_program_parameter(debr.parameter) == TRUE &&
+	geoxml_parameter_get_is_in_group(debr.parameter) == FALSE) {
 		gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[7].title);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), combo_type_map_get_index(
-		geoxml_parameter_get_type(debr.parameter)));
+		gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), combo_type_map_get_index(
+			geoxml_parameter_get_type(debr.parameter)));
+	} else
+		gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), 0);
 
 	gtk_widget_show(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
