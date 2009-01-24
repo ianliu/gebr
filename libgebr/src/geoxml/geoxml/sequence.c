@@ -170,8 +170,18 @@ __geoxml_sequence_move_before(GeoXmlSequence * sequence, GeoXmlSequence * positi
 	if (position != NULL && !__geoxml_sequence_is_same_sequence(sequence, position))
 		return GEOXML_RETV_DIFFERENT_SEQUENCES;
 
-	gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
-		(GdomeNode*)sequence, (GdomeNode*)position, &exception);
+	if (position == NULL) {
+		GeoXmlSequence *	last_element, * tmp;
+
+		last_element = tmp = sequence;
+		while (!__geoxml_sequence_next(&tmp))
+			last_element = tmp;
+		last_element = (GeoXmlSequence*)__geoxml_next_element((GdomeElement*)last_element);
+		gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
+			(GdomeNode*)sequence, (GdomeNode*)last_element, &exception);
+	} else
+		gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
+			(GdomeNode*)sequence, (GdomeNode*)position, &exception);
 
 	return exception == GDOME_NOEXCEPTION_ERR
 		? GEOXML_RETV_SUCCESS : GEOXML_RETV_DIFFERENT_SEQUENCES;
@@ -188,17 +198,14 @@ __geoxml_sequence_move_after(GeoXmlSequence * sequence, GeoXmlSequence * positio
 			first_element = tmp;
 		gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
 			(GdomeNode*)sequence, (GdomeNode*)first_element, &exception);
-
-		return exception == GDOME_NOEXCEPTION_ERR
-			? GEOXML_RETV_SUCCESS : GEOXML_RETV_DIFFERENT_SEQUENCES;
 	} else {
 		__geoxml_sequence_next(&position);
 		gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
 			(GdomeNode*)sequence, (GdomeNode*)position, &exception);
-
-		return exception == GDOME_NOEXCEPTION_ERR
-			? GEOXML_RETV_SUCCESS : GEOXML_RETV_DIFFERENT_SEQUENCES;
 	}
+
+	return exception == GDOME_NOEXCEPTION_ERR
+			? GEOXML_RETV_SUCCESS : GEOXML_RETV_DIFFERENT_SEQUENCES;
 }
 
 int
