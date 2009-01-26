@@ -241,6 +241,16 @@ geoxml_parameter_set_label(GeoXmlParameter * parameter, const gchar * label)
 	if (parameter == NULL || label == NULL)
 		return;
 	__geoxml_set_tag_value((GdomeElement*)parameter, "label", label, __geoxml_create_TextNode);
+	if (geoxml_parameter_get_is_in_group(parameter)) {
+		GeoXmlParameterGroup *	parameter_group;
+		GdomeElement *		reference_element;
+
+		parameter_group = geoxml_parameter_get_group(parameter);
+		__geoxml_foreach_element(reference_element,
+		__geoxml_get_elements_by_idref((GdomeElement*)parameter_group,
+		__geoxml_get_attr_value((GdomeElement*)parameter, "id"), TRUE))
+			geoxml_parameter_set_label((GeoXmlParameter*)gdome_el_parentNode(reference_element, &exception), label);
+	}
 }
 
 const gchar *
