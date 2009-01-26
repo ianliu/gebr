@@ -277,28 +277,20 @@ __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref, gboolea
 // 	return xpath_result;
 // }
 
-glong
+gulong
 __geoxml_get_element_index(GdomeElement * element)
 {
-	glong		index;
+	gulong		index;
 	GdomeElement *	i;
 
 	/* TODO: try XPath position() */
 
-	/* root element */
-	if (gdome_el_parentNode(element, &exception) == NULL)
-		return 0;
-
 	index = 0;
-	i = __geoxml_get_element_at((GdomeElement*)gdome_el_parentNode(element, &exception),
-		gdome_el_tagName(element, &exception)->str, 0, FALSE);
-	do {
-		if (i == element)
-			return index;
+	i = element;
+	while ((i = __geoxml_previous_same_element(i)) != NULL)
 		++index;
-	} while ((i = __geoxml_next_same_element(i)) != NULL);
 
-	return -1;
+	return index;
 }
 
 gulong

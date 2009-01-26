@@ -461,7 +461,7 @@ gtk_tree_view_set_geoxml_sequence_moveable(GtkTreeView * tree_view, gint geoxml_
 }
 
 struct reorder_data {
-	GtkTreeIter			deleted;
+	GtkTreeIter			iter;
 	GtkTreeViewReorderCallback	callback;
 	GtkTreeViewReorderCallback	can_callback;
 	gpointer			user_data;
@@ -479,7 +479,7 @@ on_gtk_tree_view_drag_begin(GtkTreeView * tree_view, GdkDragContext * drag_conte
 	GtkTreeSelection *	selection;
 
 	selection = gtk_tree_view_get_selection(tree_view);
-	gtk_tree_selection_get_selected(selection, NULL, &data->deleted);
+	gtk_tree_selection_get_selected(selection, NULL, &data->iter);
 }
 
 static gboolean
@@ -495,7 +495,7 @@ on_gtk_tree_view_drag_motion(GtkTreeView * tree_view, GdkDragContext * drag_cont
 		return TRUE;
 	if (!gtk_tree_view_get_iter_from_coords(tree_view, &iter, x, y))
 		return TRUE;
-	if (data->can_callback(tree_view, &data->deleted, &iter, data->user_data))
+	if (data->can_callback(tree_view, &data->iter, &iter, data->user_data))
 		gdk_drag_status(drag_context, GDK_ACTION_MOVE, time);
 	else
 		gdk_drag_status(drag_context, 0, time);
@@ -508,22 +508,42 @@ on_gtk_tree_view_drag_drop(GtkTreeView * tree_view, GdkDragContext * drag_contex
 	guint time, struct reorder_data * data)
 {
 	GtkTreeIter	iter;
-	int		ret;
 
 	if (!gtk_tree_view_get_iter_from_coords(tree_view, &iter, x, y))
 		return FALSE;
-	if ((ret = data->callback(tree_view, &data->deleted, &iter, data->user_data))) {
+	if ((data->can_callback == NULL) || data->can_callback(tree_view, &data->iter, &iter, data->user_data)) {
 		GtkTreeModel *	model;
 
 		model = gtk_tree_view_get_model(tree_view);
 		if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_LIST_STORE))
-			gtk_list_store_move_before(GTK_LIST_STORE(model), &data->deleted, &iter);
-		else if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_TREE_STORE))
-			gtk_tree_store_move_before(GTK_TREE_STORE(model), &data->deleted, &iter);
+			gtk_list_store_move_before(GTK_LIST_STORE(model), &data->iter, &iter);
+		else if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_TREE_STORE)) {
+			GtkTreeIter	old;
+			GValue		value;
+			guint		i, n;
+
+			old = data->iter;
+			gtk_tree_store_insert_before(GTK_TREE_STORE(model), &data->iter, NULL, &iter);
+
+			value = (GValue){0, };
+			n = gtk_tree_model_get_n_columns(model);
+			for (i = 0; i < n; ++i) {
+				gtk_tree_model_get_value(model, &old, i, &value);
+				gtk_tree_store_set_value(GTK_TREE_STORE(model), &data->iter, i, &value);
+
+				g_value_unset(&value);
+			}
+
+			gtk_tree_store_remove(GTK_TREE_STORE(model), &old);
+		}
 		gtk_drag_finish(drag_context, TRUE, FALSE, time);
+
+		data->callback(tree_view, &data->iter, &iter, data->user_data);
+
+		return TRUE;
 	}
 
-	return ret;
+	return FALSE;
 }
 
 void

@@ -101,6 +101,8 @@ static void
 parameter_activated(void);
 static GtkMenu *
 parameter_popup_menu(GtkWidget * tree_view);
+static gboolean
+parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before);
 
 static void
 parameter_default_widget_changed(struct parameter_widget * widget);
@@ -150,8 +152,8 @@ parameter_setup_ui(void)
 	debr.ui_parameter.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_parameter.tree_store));
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
 		(GtkPopupCallback)parameter_popup_menu, NULL);
-	gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(debr.ui_parameter.tree_view), PARAMETER_XMLPOINTER,
-		(GtkTreeViewMoveSequenceCallback)menu_saved_status_set_unsaved, NULL);
+	gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
+		(GtkTreeViewReorderCallback)parameter_reorder, NULL, NULL);
 	gtk_widget_show(debr.ui_parameter.tree_view);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_parameter.tree_view);
 	g_signal_connect(debr.ui_parameter.tree_view, "cursor-changed",
@@ -1017,7 +1019,6 @@ parameter_popup_menu(GtkWidget * tree_view)
 		"parameter_change_type"), menu_item);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), debr.parameter_type_menu);
 	gtk_container_add(GTK_CONTAINER(menu), menu_item);
-	
 
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "parameter_duplicate")));
@@ -1027,6 +1028,32 @@ parameter_popup_menu(GtkWidget * tree_view)
 out:	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
+}
+
+/*
+ * Funcion: parameter_reorder
+ * Parameter reordering callback. Also responsible for putting
+ * parameters in or out of a group.
+ */
+static gboolean
+parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before)
+{
+	GeoXmlParameter *	parameter;
+	GeoXmlParameter *	before_parameter;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter,
+		PARAMETER_XMLPOINTER, &parameter, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), before,
+		PARAMETER_XMLPOINTER, &before_parameter, -1);
+
+	if (geoxml_parameter_get_type(before_parameter) == GEOXML_PARAMETERTYPE_GROUP) {
+	} else {
+		geoxml_sequence_move_before(GEOXML_SEQUENCE(parameter), GEOXML_SEQUENCE(before_parameter));
+	}
+	parameter_load_iter(parameter, iter);
+
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+	return TRUE;
 }
 
 static void

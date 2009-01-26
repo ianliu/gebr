@@ -73,8 +73,6 @@
  * \see parameter_group.h
  */
 
-#include "parameters.h"
-
 /**
  * The GeoXmlParameterGroup struct contains private data only, and should be accessed using the functions below.
  */
@@ -86,6 +84,9 @@ typedef struct geoxml_parameter_group GeoXmlParameterGroup;
 #define GEOXML_PARAMETER_GROUP(seq) ((GeoXmlParameterGroup*)(seq))
 
 #include <glib.h>
+
+#include "parameters.h"
+#include "sequence.h"
 
 /**
  * Instanciate \p parameter_group, appending a new instances

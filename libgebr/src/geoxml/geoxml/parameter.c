@@ -259,6 +259,14 @@ geoxml_parameter_get_is_in_group(GeoXmlParameter * parameter)
 	return geoxml_parameters_get_is_in_group(geoxml_parameter_get_parameters(parameter));
 }
 
+GeoXmlParameterGroup *
+geoxml_parameter_get_group(GeoXmlParameter * parameter)
+{
+	if (parameter == NULL)
+		return NULL;
+	return geoxml_parameters_get_group(geoxml_parameter_get_parameters(parameter));
+}
+
 void
 geoxml_parameter_reset(GeoXmlParameter * parameter, gboolean recursive)
 {

@@ -92,7 +92,7 @@ __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref, gboolea
  * \internal
  *
  */
-glong
+gulong
 __geoxml_get_element_index(GdomeElement * element);
 
 /**

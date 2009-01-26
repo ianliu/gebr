@@ -37,9 +37,9 @@ __geoxml_parameters_group_check(GeoXmlParameters * parameters);
 
 /**
  * \internal
- * Create a new parameter with type \p type.
+ * If \p parameters is in a group, append references of parameter in group instances
  */
-GeoXmlParameter *
-__geoxml_parameters_new_parameter(enum GEOXML_PARAMETERTYPE type, gboolean adjust_npar);
+void
+__geoxml_parameters_do_insert_in_group_stuff(GeoXmlParameters * parameters, GeoXmlParameter * parameter);
 
 #endif //__LIBGEBR_GEOXML_PARAMETERS_P_H

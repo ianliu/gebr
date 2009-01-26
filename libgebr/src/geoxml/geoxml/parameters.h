@@ -85,6 +85,7 @@ typedef struct geoxml_parameters GeoXmlParameters;
 
 #include <glib.h>
 
+#include "parameter_group.h"
 #include "parameter.h"
 #include "sequence.h"
 
@@ -165,9 +166,20 @@ geoxml_parameters_get_number(GeoXmlParameters * parameters);
  * Return TRUE if \p parameters is part of a group
  *
  * If \p parameters is NULL returns FALSE.
+ * @see geoxml_parameters_get_group
  */
 gboolean
 geoxml_parameters_get_is_in_group(GeoXmlParameters * parameters);
+
+/**
+ * If \p parameters is in a group, return this group;
+ * otherwise, returns NULL.
+ *
+ * If \p parameters is NULL returns NULL.
+ * @see geoxml_parameters_get_is_in_group
+ */
+GeoXmlParameterGroup *
+geoxml_parameters_get_group(GeoXmlParameters * parameters);
 
 /**
  * Reset \p parameters' values and default values.
