@@ -373,7 +373,7 @@ void
 geoxml_program_parameter_set_range_properties(GeoXmlProgramParameter * program_parameter,
 	const gchar * min, const gchar * max, const gchar * inc, const gchar * digits)
 {
-	if (program_parameter == NULL || min == NULL || max == NULL || inc == NULL || digits == NULL)
+	if (program_parameter == NULL)
 		return;
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) != GEOXML_PARAMETERTYPE_RANGE)
 		return;
@@ -381,10 +381,14 @@ geoxml_program_parameter_set_range_properties(GeoXmlProgramParameter * program_p
 	GdomeElement *	type_element;
 
 	type_element = __geoxml_parameter_get_type_element(GEOXML_PARAMETER(program_parameter));
-	__geoxml_set_attr_value(type_element, "min", min);
-	__geoxml_set_attr_value(type_element, "max", max);
-	__geoxml_set_attr_value(type_element, "inc", inc);
-	__geoxml_set_attr_value(type_element, "digits", digits);
+	if (min != NULL)
+		__geoxml_set_attr_value(type_element, "min", min);
+	if (max != NULL)
+		__geoxml_set_attr_value(type_element, "max", max);
+	if (inc != NULL)
+		__geoxml_set_attr_value(type_element, "inc", inc);
+	if (digits != NULL)
+		__geoxml_set_attr_value(type_element, "digits", digits);
 }
 
 void

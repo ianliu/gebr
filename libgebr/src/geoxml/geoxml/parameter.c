@@ -105,8 +105,10 @@ __geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETE
 				(GeoXmlProgramParameter*)parameter, FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_RANGE:
-			geoxml_program_parameter_set_range_properties(
-				(GeoXmlProgramParameter*)parameter, "", "", "", "");
+			geoxml_program_parameter_set_first_value((GeoXmlProgramParameter*)parameter, FALSE, "0");
+			geoxml_program_parameter_set_first_value((GeoXmlProgramParameter*)parameter, TRUE, "0");
+			geoxml_program_parameter_set_range_properties((GeoXmlProgramParameter*)parameter
+				, "", "", "", "");
 			break;
 		default:
 			break;
@@ -167,11 +169,9 @@ geoxml_parameter_set_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETERTYPE
 	if (type == GEOXML_PARAMETERTYPE_UNKNOWN || type == GEOXML_PARAMETERTYPE_REFERENCE)
 		return FALSE;
 
-	GdomeElement *		old_type_element;
-
-	old_type_element = __geoxml_parameter_get_type_element(parameter);
+	gdome_n_removeChild((GdomeNode*)parameter,
+		(GdomeNode*)__geoxml_parameter_get_type_element(parameter), &exception);
 	__geoxml_parameter_insert_type(parameter, type);
-	gdome_n_removeChild((GdomeNode*)parameter, (GdomeNode*)old_type_element, &exception);
 
 	return TRUE;
 }
