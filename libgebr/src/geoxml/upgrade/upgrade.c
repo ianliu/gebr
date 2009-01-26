@@ -50,8 +50,12 @@ main(int argc, char ** argv)
 	}
 
         if (files == NULL) {
+#if GLIB_CHECK_VERSION(2,14,0)
                 fprintf(stderr, "%s", 
                         g_option_context_get_help(context, FALSE, NULL));
+#else
+                fprintf(stderr,"Try %s --help\n", argv[0]);
+#endif
                 goto out;
         }
 
