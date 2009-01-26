@@ -240,9 +240,6 @@ parameter_new(void)
 		if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &iter)) {
 			parameter_group = GEOXML_PARAMETER_GROUP(debr.parameter);
 			parent = iter;
-			tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent);
-			gtk_tree_view_expand_row(GTK_TREE_VIEW(debr.ui_parameter.tree_view), tree_path, FALSE);
-			gtk_tree_path_free(tree_path);
 		} else
 			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent,
 				PARAMETER_XMLPOINTER, &parameter_group,
@@ -253,6 +250,10 @@ parameter_new(void)
 			geoxml_parameters_append_parameter(GEOXML_PARAMETERS(first_instance),
 				GEOXML_PARAMETERTYPE_FLOAT),
 			&parent);
+
+		tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent);
+		gtk_tree_view_expand_row(GTK_TREE_VIEW(debr.ui_parameter.tree_view), tree_path, FALSE);
+		gtk_tree_path_free(tree_path);
 	} else {
 		iter = parameter_append_to_ui(
 			geoxml_parameters_append_parameter(
