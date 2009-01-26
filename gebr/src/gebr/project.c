@@ -112,9 +112,9 @@ project_delete(void)
 	}
 
 	gtk_tree_model_get(model, &iter,
-			   PL_TITLE, &title,
-			   PL_FILENAME, &filename,
-			   -1);
+		PL_TITLE, &title,
+		PL_FILENAME, &filename,
+		-1);
 	path = gtk_tree_model_get_path(model, &iter);
 
 	if (gtk_tree_path_get_depth(path) == 2) {
@@ -134,14 +134,14 @@ project_delete(void)
 	/* message user */
 	gebr_message(LOG_INFO, TRUE, TRUE, _("Erasing project '%s'"), title);
 
-	/* Remove the project from the store (and its children) */
-	gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	gtk_tree_store_remove(GTK_TREE_STORE (gebr.ui_project_line->store), &iter);
-
 	/* finally, remove it from the disk */
 	document_delete(filename);
 	project_line_free();
 	project_line_info_update();
+
+	/* Remove the project from the store (and its children) */
+	gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_project_line->view));
+	gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), &iter);
 
 out:	g_free(title);
 	g_free(filename);

@@ -281,7 +281,7 @@ parameter_new(void)
 void
 parameter_remove(void)
 {
-	GtkTreeIter	parent;
+	GtkTreeIter		parent;
 	GtkTreeIter		iter;
 	gboolean		in_group;
 
@@ -293,9 +293,9 @@ parameter_remove(void)
 
 	in_group = gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &iter);
 
+	geoxml_sequence_remove(GEOXML_SEQUENCE(debr.parameter));
 	gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	gtk_tree_store_remove(debr.ui_parameter.tree_store, &iter);
-	geoxml_sequence_remove(GEOXML_SEQUENCE(debr.parameter));
 	debr.parameter = NULL;
 
 	if (in_group) {

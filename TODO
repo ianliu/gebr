@@ -6,6 +6,7 @@
         em edição e salvas no arquivo de conf da DéBR
 +	Conferir e completar os menus popup
 +	Teclas de atalho
++	Na tela de edição de parâmetros, manter mesma altura das linhas.
 
 0.9.9:
 +	OK/Cancel para dialogs da DéBR
