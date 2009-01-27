@@ -50,14 +50,39 @@ const int parameter_type_to_str_len = 9;
  */
 
 GdomeElement *
-__geoxml_parameter_get_type_element(GeoXmlParameter * parameter)
+__geoxml_parameter_get_type_element(GeoXmlParameter * parameter, gboolean resolve_references)
 {
-	GdomeElement *	type_element;
+	GdomeElement *		type_element;
 
-	type_element = __geoxml_get_first_element((GdomeElement*)parameter, "label");
-	type_element = __geoxml_next_element(type_element);
+	if (!resolve_references) {
+		type_element = __geoxml_get_first_element((GdomeElement*)parameter, "label");
+		type_element = __geoxml_next_element(type_element);
+	} else {
+		GeoXmlParameter *	ref;
+
+		ref = parameter;
+		do {
+			type_element = __geoxml_get_first_element((GdomeElement*)ref, "label");
+			type_element = __geoxml_next_element(type_element);
+		} while (!strcmp(gdome_el_tagName(type_element, &exception)->str, "reference") &&
+		((ref = geoxml_parameter_get_referencee(ref)),1));
+	}
 
 	return type_element;
+}
+
+enum GEOXML_PARAMETERTYPE
+__geoxml_parameter_get_type(GeoXmlParameter * parameter, gboolean resolve_references)
+{
+	GdomeDOMString *	tag_name;
+	int			i;
+
+	tag_name = gdome_el_tagName(__geoxml_parameter_get_type_element(parameter, resolve_references), &exception);
+	for (i = 1; i <= parameter_type_to_str_len; ++i)
+		if (!strcmp(parameter_type_to_str[i], tag_name->str))
+			return (enum GEOXML_PARAMETERTYPE)i;
+
+	return GEOXML_PARAMETERTYPE_UNKNOWN;
 }
 
 void
@@ -66,12 +91,12 @@ __geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter
 	GdomeElement *			type_element;
 	enum GEOXML_PARAMETERTYPE	type;
 
-	type = geoxml_parameter_get_type(parameter);
+	type = __geoxml_parameter_get_type(parameter, FALSE);
+	type_element = __geoxml_parameter_get_type_element(parameter, FALSE);
 	if (type == GEOXML_PARAMETERTYPE_GROUP) {
-		__geoxml_parameter_group_turn_to_reference(GEOXML_PARAMETER_GROUP(parameter));
+		/* FIXME: handle errors */
 		return;
 	}
-	type_element = __geoxml_parameter_get_type_element(parameter);
 	if (type != GEOXML_PARAMETERTYPE_REFERENCE) {
 		gdome_el_removeChild((GdomeElement*)parameter, (GdomeNode*)type_element, &exception);
 		type_element = __geoxml_parameter_insert_type(parameter, GEOXML_PARAMETERTYPE_REFERENCE);
@@ -105,8 +130,6 @@ __geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETE
 				(GeoXmlProgramParameter*)parameter, FALSE);
 			break;
 		case GEOXML_PARAMETERTYPE_RANGE:
-			geoxml_program_parameter_set_first_value((GeoXmlProgramParameter*)parameter, FALSE, "0");
-			geoxml_program_parameter_set_first_value((GeoXmlProgramParameter*)parameter, TRUE, "0");
 			geoxml_program_parameter_set_range_properties((GeoXmlProgramParameter*)parameter
 				, "", "", "", "");
 			break;
@@ -170,7 +193,7 @@ geoxml_parameter_set_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETERTYPE
 		return FALSE;
 
 	gdome_n_removeChild((GdomeNode*)parameter,
-		(GdomeNode*)__geoxml_parameter_get_type_element(parameter), &exception);
+		(GdomeNode*)__geoxml_parameter_get_type_element(parameter, FALSE), &exception);
 	__geoxml_parameter_insert_type(parameter, type);
 
 	return TRUE;
@@ -195,15 +218,16 @@ geoxml_parameter_get_type(GeoXmlParameter * parameter)
 	if (parameter == NULL)
 		return GEOXML_PARAMETERTYPE_UNKNOWN;
 
-	GdomeDOMString *	tag_name;
-	int			i;
+	return __geoxml_parameter_get_type(parameter, TRUE);
+}
 
-	tag_name = gdome_el_tagName(__geoxml_parameter_get_type_element(parameter), &exception);
-	for (i = 1; i <= parameter_type_to_str_len; ++i)
-		if (!strcmp(parameter_type_to_str[i], tag_name->str))
-			return (enum GEOXML_PARAMETERTYPE)i;
-
-	return GEOXML_PARAMETERTYPE_UNKNOWN;
+gboolean
+geoxml_parameter_get_is_reference(GeoXmlParameter * parameter)
+{
+	if (parameter == NULL)
+		return FALSE;
+	return __geoxml_parameter_get_type(parameter, FALSE) == GEOXML_PARAMETERTYPE_REFERENCE
+		? TRUE : FALSE;
 }
 
 GSList *
@@ -219,11 +243,10 @@ geoxml_parameter_get_references_list(GeoXmlParameter * parameter)
 GeoXmlParameter *
 geoxml_parameter_get_referencee(GeoXmlParameter * parameter_reference)
 {
-	if (geoxml_parameter_get_type(parameter_reference) != GEOXML_PARAMETERTYPE_REFERENCE)
+	if (!geoxml_parameter_get_is_reference(parameter_reference))
 		return NULL;
-
 	return (GeoXmlParameter*)__geoxml_get_element_by_id((GdomeElement*)parameter_reference,
-		__geoxml_get_attr_value(__geoxml_parameter_get_type_element(parameter_reference), "idref"));
+		__geoxml_get_attr_value(__geoxml_parameter_get_type_element(parameter_reference, FALSE), "idref"));
 }
 
 gboolean

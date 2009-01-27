@@ -26,39 +26,38 @@
 
 gboolean
 gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter);
-
 gboolean
 gtk_list_store_can_move_down(GtkListStore * store, GtkTreeIter * iter);
-
 gboolean
 gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter);
-
 gboolean
 gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter);
-
 gulong
 gtk_list_store_get_iter_index(GtkListStore * list_store, GtkTreeIter * iter);
 
 gboolean
 gtk_tree_store_can_move_up(GtkTreeStore * store, GtkTreeIter * iter);
-
 gboolean
 gtk_tree_store_can_move_down(GtkTreeStore * store, GtkTreeIter * iter);
-
 gboolean
 gtk_tree_store_move_up(GtkTreeStore * store, GtkTreeIter * iter);
-
 gboolean
 gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter);
 
+#define gtk_tree_model_iter_is_valid(iter) \
+	((gboolean)(iter)->stamp)
 #define gtk_tree_model_iter_equal_to(iter1, iter2) \
-	((gboolean)((iter1)->user_data == (iter2)->user_data))
+	((iter1 == NULL || !(iter1)->stamp) && (iter2 == NULL || !(iter2)->stamp) \
+		? TRUE : (iter1 == NULL || !(iter1)->stamp) || (iter2 == NULL || !(iter2)->stamp) \
+			? FALSE : (gboolean)((iter1)->user_data == (iter2)->user_data))
+void
+gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source);
+gboolean
+gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_path, GtkTreeIter * iter);
 
 typedef GtkMenu * (*GtkPopupCallback)(GtkWidget *, gpointer);
-
 gboolean
 gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpointer user_data);
-
 void
 gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback, gpointer user_data);
 
@@ -72,24 +71,32 @@ gtk_tree_view_select_sibling(GtkTreeView * tree_view);
 #if GTK_CHECK_VERSION(2,12,0)
 typedef gboolean (*GtkTreeViewTooltipCallback)(GtkTreeView * tree_view, GtkTooltip * tooltip,
 	GtkTreeIter * iter, GtkTreeViewColumn * column, gpointer user_data);
-
 void
 gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GtkTreeViewTooltipCallback callback, gpointer user_data);
 #endif
 
 typedef void (*GtkTreeViewMoveSequenceCallback)(GtkTreeModel * tree_model, GeoXmlSequence * sequence,
 	GeoXmlSequence * before, gpointer user_data);
-
 void
 gtk_tree_view_set_geoxml_sequence_moveable(GtkTreeView * tree_view, gint geoxml_sequence_pointer_column,
 	GtkTreeViewMoveSequenceCallback callback, gpointer user_data);
 
+/**
+ * Callback for \ref gtk_tree_view_set_reorder_callback
+ */
 typedef gboolean (*GtkTreeViewReorderCallback)(GtkTreeView * tree_view, GtkTreeIter * iter,
-	GtkTreeIter * before, gpointer user_data);
-
+	GtkTreeIter * position, GtkTreeViewDropPosition drop_position, gpointer user_data);
+/**
+ * Make \p tree_view reorderable.
+ * \p reorder_callback is responsible for reorderation. Its return value
+ * is ignored.
+ * \p may_reorder_callback is called at each cursor movement. If it returns TRUE, then the
+ * drop is allowed; otherwise is denied.
+ * If \p may_reorder_callback is NULL every movement will be accepted.
+ */
 void
-gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GtkTreeViewReorderCallback callback,
-	GtkTreeViewReorderCallback can_callback, gpointer user_data);
+gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GtkTreeViewReorderCallback reorder_callback,
+	GtkTreeViewReorderCallback may_reorder_callback, gpointer user_data);
 
 gboolean
 confirm_action_dialog(const gchar * title, const gchar * message, ...);

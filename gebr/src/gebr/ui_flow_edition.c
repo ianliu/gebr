@@ -44,11 +44,11 @@ gchar * selected_menu_instead_error =	_("Select a menu instead of a category");
  */
 
 static gboolean
-flow_edition_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before,
-	struct ui_flow_edition * ui_flow_edition);
+flow_edition_may_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+	GtkTreeViewDropPosition drop_position, struct ui_flow_edition * ui_flow_edition);
 static gboolean
-flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before,
-	struct ui_flow_edition * ui_flow_edition);
+flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+	GtkTreeViewDropPosition drop_position, struct ui_flow_edition * ui_flow_edition);
 
 static void
 flow_edition_component_selected(void);
@@ -119,7 +119,7 @@ flow_edition_setup_ui(void)
 		(GtkPopupCallback)flow_edition_popup_menu, ui_flow_edition);
 	gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
 		(GtkTreeViewReorderCallback)flow_edition_reorder,
-		(GtkTreeViewReorderCallback)flow_edition_can_reorder,
+		(GtkTreeViewReorderCallback)flow_edition_may_reorder,
 		ui_flow_edition);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_edition->fseq_view), FALSE);
 
@@ -312,17 +312,22 @@ flow_edition_status_changed(void)
  */
 
 /*
- * Fuction: flow_edition_can_reorder
+ * Fuction: flow_edition_may_reorder
  *
  *
  */
 static gboolean
-flow_edition_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before,
-	struct ui_flow_edition * ui_flow_edition)
+flow_edition_may_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+	GtkTreeViewDropPosition drop_position, struct ui_flow_edition * ui_flow_edition)
 {
-	if (gtk_tree_model_iter_equal_to(iter, &gebr.ui_flow_edition->input_iter) ||
-	gtk_tree_model_iter_equal_to(iter, &gebr.ui_flow_edition->output_iter) ||
-	gtk_tree_model_iter_equal_to(before, &gebr.ui_flow_edition->input_iter))
+	if (gtk_tree_model_iter_equal_to(iter, &ui_flow_edition->input_iter) ||
+	gtk_tree_model_iter_equal_to(iter, &ui_flow_edition->output_iter))
+		return FALSE;
+	if (drop_position != GTK_TREE_VIEW_DROP_AFTER &&
+	gtk_tree_model_iter_equal_to(position, &ui_flow_edition->input_iter))
+		return FALSE;
+	if (drop_position == GTK_TREE_VIEW_DROP_AFTER &&
+	gtk_tree_model_iter_equal_to(position, &ui_flow_edition->output_iter))
 		return FALSE;
 
 	return TRUE;
@@ -334,21 +339,27 @@ flow_edition_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIte
  * 
  */
 static gboolean
-flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before_iter,
-	struct ui_flow_edition * ui_flow_edition)
+flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+	GtkTreeViewDropPosition drop_position, struct ui_flow_edition * ui_flow_edition)
 {
 	GeoXmlSequence *	program;
-	GeoXmlSequence *	before;
+	GeoXmlSequence *	position_program;
 
 	gtk_tree_model_get(gtk_tree_view_get_model(tree_view),
 		iter, FSEQ_GEOXML_POINTER, &program, -1);
 	gtk_tree_model_get(gtk_tree_view_get_model(tree_view),
-		before_iter, FSEQ_GEOXML_POINTER, &before, -1);
+		position, FSEQ_GEOXML_POINTER, &position_program, -1);
 
-	geoxml_sequence_move_before(program, before);
+	if (drop_position != GTK_TREE_VIEW_DROP_AFTER) {
+		geoxml_sequence_move_before(program, position_program);
+		gtk_list_store_move_before(gebr.ui_flow_edition->fseq_store, iter, position);
+	} else {
+		geoxml_sequence_move_after(program, position_program);
+		gtk_list_store_move_after(gebr.ui_flow_edition->fseq_store, iter, position);
+	}
 	flow_save();
 
-	return TRUE;
+	return FALSE;
 }
 
 /* Function: flow_edition_component_selected

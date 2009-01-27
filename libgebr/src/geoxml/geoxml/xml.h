@@ -236,10 +236,10 @@ __geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
  * If you use 'break' then you have to free it yourself.
  */
 #define __geoxml_foreach_element(element, list) \
-	GSList * __i = list; \
-	if (__i != NULL || (g_slist_free(list), 0)) \
+	GSList * __list = list, * __i = list; \
+	if (__i != NULL || (g_slist_free(__list), 0)) \
 		for (element = (GdomeElement*)__i->data; \
-		(__i != NULL && (element = (GdomeElement*)__i->data, 1)) || (g_slist_free(list), 0); \
+		(__i != NULL && (element = (GdomeElement*)__i->data, 1)) || (g_slist_free(__list), 0); \
 		__i = g_slist_next(__i))
 
 /**

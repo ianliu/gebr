@@ -328,7 +328,6 @@ void
 geoxml_program_parameter_set_range_properties(GeoXmlProgramParameter * program_parameter,
 	const gchar * min, const gchar * max, const gchar * inc, const gchar * digits);
 
-
 /**
  *
  *
@@ -351,14 +350,6 @@ geoxml_program_parameter_get_range_properties(GeoXmlProgramParameter * program_p
  */
 gboolean
 geoxml_program_parameter_get_is_list(GeoXmlProgramParameter * program_parameter);
-
-/**
- *
- * If \p program_parameter or \p label or \p value is NULL returns NULL.
- */
-GeoXmlEnumOption *
-geoxml_program_parameter_new_enum_option(GeoXmlProgramParameter * program_parameter,
-	const gchar * label, const gchar * value);
 
 /**
  *

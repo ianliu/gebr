@@ -46,8 +46,6 @@ __parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, 
 	}
 
 	type = geoxml_parameter_get_type(parameter_widget->parameter);
-	while (type == GEOXML_PARAMETERTYPE_REFERENCE)
-		type = geoxml_parameter_get_type(geoxml_parameter_get_referencee(parameter_widget->parameter));
 	switch (type) {
 	case GEOXML_PARAMETERTYPE_FLOAT:
 	case GEOXML_PARAMETERTYPE_INT:
@@ -373,8 +371,6 @@ parameter_widget_configure(struct parameter_widget * parameter_widget)
 	enum GEOXML_PARAMETERTYPE	type;
 
 	type = geoxml_parameter_get_type(parameter_widget->parameter);
-	while (type == GEOXML_PARAMETERTYPE_REFERENCE)
-		type = geoxml_parameter_get_type(geoxml_parameter_get_referencee(parameter_widget->parameter));
 	switch (type) {
 	case GEOXML_PARAMETERTYPE_FLOAT: {
 		GtkWidget *			entry;
@@ -585,8 +581,6 @@ parameter_widget_set_widget_value(struct parameter_widget * parameter_widget, co
 	enum GEOXML_PARAMETERTYPE	type;
 
 	type = geoxml_parameter_get_type(parameter_widget->parameter);
-	while (type == GEOXML_PARAMETERTYPE_REFERENCE)
-		type = geoxml_parameter_get_type(geoxml_parameter_get_referencee(parameter_widget->parameter));
 	switch (type) {
 	case GEOXML_PARAMETERTYPE_FLOAT:
 	case GEOXML_PARAMETERTYPE_INT:
@@ -598,8 +592,8 @@ parameter_widget_set_widget_value(struct parameter_widget * parameter_widget, co
 		double	number_value;
 
 		number_value = strtod(value, &endptr);
-		if (endptr != value)
-			gtk_spin_button_set_value(GTK_SPIN_BUTTON(parameter_widget->value_widget), number_value);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(parameter_widget->value_widget),
+			(endptr != value) ? number_value : 0);
 		break;
 	} case GEOXML_PARAMETERTYPE_FILE:
 		gtk_file_entry_set_path(GTK_FILE_ENTRY(parameter_widget->value_widget), value);

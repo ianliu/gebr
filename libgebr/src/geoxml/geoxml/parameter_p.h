@@ -29,10 +29,18 @@ __geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETE
 /**
  * \internal
  *
- * Return the type element of \p parameter
+ * Return the type element of \p parameter, according to \p resolve_references
  */
 GdomeElement *
-__geoxml_parameter_get_type_element(GeoXmlParameter * parameter);
+__geoxml_parameter_get_type_element(GeoXmlParameter * parameter, gboolean resolve_references);
+
+/**
+ * \internal
+ * Return type of \p parameter, according to \p resolve_references
+ *
+ */
+enum GEOXML_PARAMETERTYPE
+__geoxml_parameter_get_type(GeoXmlParameter * parameter, gboolean resolve_references);
 
 /**
  * \internal

@@ -88,7 +88,7 @@ const GtkRadioActionEntry parameter_type_radio_actions_entries [] = {
 static GtkTreeIter
 parameter_append_to_ui(GeoXmlParameter * parameter, GtkTreeIter * parent);
 static void
-parameter_load_iter(GeoXmlParameter * parameter, GtkTreeIter * iter);
+parameter_load_iter(GtkTreeIter * iter);
 static void
 parameter_select_iter(GtkTreeIter iter);
 static gboolean
@@ -102,7 +102,11 @@ parameter_activated(void);
 static GtkMenu *
 parameter_popup_menu(GtkWidget * tree_view);
 static gboolean
-parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before);
+parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+	GtkTreeViewDropPosition drop_position);
+static gboolean
+parameter_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+	GtkTreeViewDropPosition drop_position);
 
 static void
 parameter_default_widget_changed(struct parameter_widget * widget);
@@ -153,7 +157,8 @@ parameter_setup_ui(void)
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
 		(GtkPopupCallback)parameter_popup_menu, NULL);
 	gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
-		(GtkTreeViewReorderCallback)parameter_reorder, NULL, NULL);
+		(GtkTreeViewReorderCallback)parameter_reorder,
+		(GtkTreeViewReorderCallback)parameter_can_reorder, NULL);
 	gtk_widget_show(debr.ui_parameter.tree_view);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_parameter.tree_view);
 	g_signal_connect(debr.ui_parameter.tree_view, "cursor-changed",
@@ -219,7 +224,7 @@ parameter_load_selected(void)
 	GtkTreeIter	iter;
 
 	parameter_get_selected(&iter);
-	parameter_load_iter(debr.parameter, &iter);
+	parameter_load_iter(&iter);
 }
 
 /*
@@ -252,7 +257,7 @@ parameter_new(void)
 			geoxml_parameters_append_parameter(GEOXML_PARAMETERS(first_instance),
 				GEOXML_PARAMETERTYPE_FLOAT),
 			&parent);
-
+		parameter_load_iter(&parent);
 		tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent);
 		gtk_tree_view_expand_row(GTK_TREE_VIEW(debr.ui_parameter.tree_view), tree_path, FALSE);
 		gtk_tree_path_free(tree_path);
@@ -298,14 +303,8 @@ parameter_remove(void)
 	gtk_tree_store_remove(debr.ui_parameter.tree_store, &iter);
 	debr.parameter = NULL;
 
-	if (in_group) {
-		GeoXmlParameter *	parameter_group;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent,
-			PARAMETER_XMLPOINTER, &parameter_group,
-			-1);
-		parameter_load_iter(parameter_group, &parent);
-	}
+	if (in_group)
+		parameter_load_iter(&parent);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -845,21 +844,29 @@ parameter_append_to_ui(GeoXmlParameter * parameter, GtkTreeIter * parent)
 	GtkTreeIter	iter;
 
 	gtk_tree_store_append(debr.ui_parameter.tree_store, &iter, parent);
-	parameter_load_iter(parameter, &iter);
+	gtk_tree_store_set(debr.ui_parameter.tree_store, &iter,
+		PARAMETER_XMLPOINTER, parameter,
+		-1);
+	parameter_load_iter(&iter);
 
 	return iter;
 }
 
 /*
  * Function: parameter_load_iter
- * Load _parameter_ stuff into _iter_
+ * Load _iter_ columns from its parameter
  */
 static void
-parameter_load_iter(GeoXmlParameter * parameter, GtkTreeIter * iter)
+parameter_load_iter(GtkTreeIter * iter)
 {
-	GString *	keyword;
+	GeoXmlParameter *	parameter;
+	GString *		keyword;
 
 	keyword = g_string_new("");
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter,
+		PARAMETER_XMLPOINTER, &parameter,
+		-1);
+
 	if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE)
 		g_string_assign(keyword, geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(parameter)));
 	else {
@@ -875,7 +882,6 @@ parameter_load_iter(GeoXmlParameter * parameter, GtkTreeIter * iter)
 		PARAMETER_TYPE, combo_type_map_get_title(geoxml_parameter_get_type(parameter)),
 		PARAMETER_KEYWORD, keyword->str,
 		PARAMETER_LABEL, geoxml_parameter_get_label(parameter),
-		PARAMETER_XMLPOINTER, parameter,
 		-1);
 
 	g_string_free(keyword, TRUE);
@@ -1036,23 +1042,93 @@ out:	gtk_widget_show_all(menu);
  * parameters in or out of a group.
  */
 static gboolean
-parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * before)
+parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+	GtkTreeViewDropPosition drop_position)
 {
 	GeoXmlParameter *	parameter;
-	GeoXmlParameter *	before_parameter;
+	GeoXmlParameter *	position_parameter;
+	GtkTreeIter		parent;
+	GtkTreeIter		position_parent;
+	GtkTreeIter		new;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter,
 		PARAMETER_XMLPOINTER, &parameter, -1);
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), before,
-		PARAMETER_XMLPOINTER, &before_parameter, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), position,
+		PARAMETER_XMLPOINTER, &position_parameter, -1);
+	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, iter);
+	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &position_parent, position);
 
-	if (geoxml_parameter_get_type(before_parameter) == GEOXML_PARAMETERTYPE_GROUP) {
+	if ((drop_position == GTK_TREE_VIEW_DROP_INTO_OR_BEFORE || drop_position == GTK_TREE_VIEW_DROP_INTO_OR_AFTER) &&
+	geoxml_parameter_get_type(position_parameter) == GEOXML_PARAMETERTYPE_GROUP) {
+		GeoXmlSequence *	first_instance;
+		GeoXmlSequence *	first_parameter;
+
+		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(position_parameter), &first_instance, 0);
+		first_parameter = geoxml_parameters_get_first_parameter(GEOXML_PARAMETERS(first_instance));
+		geoxml_sequence_move_before(GEOXML_SEQUENCE(parameter), first_parameter);
+
+		gtk_tree_store_prepend(debr.ui_parameter.tree_store, &new, position);
+		gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &new, iter);
+		gtk_tree_store_remove(debr.ui_parameter.tree_store, iter);
+
+		parameter_load_iter(position);
 	} else {
-		geoxml_sequence_move_before(GEOXML_SEQUENCE(parameter), GEOXML_SEQUENCE(before_parameter));
+		if (drop_position == GTK_TREE_VIEW_DROP_AFTER)
+			geoxml_sequence_move_after(GEOXML_SEQUENCE(parameter), GEOXML_SEQUENCE(position_parameter));
+		else
+			geoxml_sequence_move_before(GEOXML_SEQUENCE(parameter), GEOXML_SEQUENCE(position_parameter));
+
+		if (gtk_tree_model_iter_equal_to(&parent, &position_parent)) {
+			if (drop_position == GTK_TREE_VIEW_DROP_AFTER)
+				gtk_tree_store_move_after(debr.ui_parameter.tree_store, iter, position);
+			else
+				gtk_tree_store_move_before(debr.ui_parameter.tree_store, iter, position);
+		} else {
+			if (drop_position == GTK_TREE_VIEW_DROP_AFTER)
+				gtk_tree_store_insert_after(debr.ui_parameter.tree_store, &new, NULL, position);
+			else
+				gtk_tree_store_insert_before(debr.ui_parameter.tree_store, &new, NULL, position);
+			gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &new, iter);
+			gtk_tree_store_remove(debr.ui_parameter.tree_store, iter);
+		}
+
+		if (gtk_tree_model_iter_is_valid(&position_parent))
+			parameter_load_iter(&position_parent);
 	}
-	parameter_load_iter(parameter, iter);
+	if (gtk_tree_model_iter_is_valid(&parent))
+		parameter_load_iter(&parent);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
+
+	return TRUE;
+}
+
+/*
+ * Funcion: parameter_can_reorder
+ * Parameter reordering acceptance callback.
+ */
+static gboolean
+parameter_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+	GtkTreeViewDropPosition drop_position)
+{
+	GeoXmlParameter *	parameter;
+	GeoXmlParameter *	position_parameter;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter,
+		PARAMETER_XMLPOINTER, &parameter, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), position,
+		PARAMETER_XMLPOINTER, &position_parameter, -1);
+
+	if (geoxml_parameter_get_type(parameter) != GEOXML_PARAMETERTYPE_GROUP)
+		return TRUE;
+	/* group inside another expanded group */
+	if (geoxml_parameter_get_group(position_parameter) != NULL)
+		return FALSE;
+	/* group inside another group */
+	if ((drop_position == GTK_TREE_VIEW_DROP_INTO_OR_BEFORE || drop_position == GTK_TREE_VIEW_DROP_INTO_OR_AFTER) &&
+	geoxml_parameter_get_type(position_parameter) == GEOXML_PARAMETERTYPE_GROUP)
+		return FALSE;
+
 	return TRUE;
 }
 

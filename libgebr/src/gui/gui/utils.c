@@ -251,6 +251,40 @@ gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter)
 	return TRUE;
 }
 
+void
+gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source)
+{
+	GValue	value;
+	guint	i, n;
+
+	value = (GValue){0, };
+	n = gtk_tree_model_get_n_columns(model);
+	for (i = 0; i < n; ++i) {
+		gtk_tree_model_get_value(model, source, i, &value);
+		if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_LIST_STORE))
+			gtk_list_store_set_value(GTK_LIST_STORE(model), iter, i, &value);
+		else if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_TREE_STORE))
+			gtk_tree_store_set_value(GTK_TREE_STORE(model), iter, i, &value);
+		else
+			return;
+
+		g_value_unset(&value);
+	}
+}
+
+gboolean
+gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_path, GtkTreeIter * iter)
+{
+	gchar *		path_string;
+	gboolean	ret;
+
+	path_string = gtk_tree_path_to_string(tree_path);
+	ret = gtk_tree_model_get_iter_from_string(model, iter, path_string);
+	g_free(path_string);
+
+	return ret;
+}
+
 gboolean
 gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpointer user_data)
 {
@@ -306,36 +340,6 @@ gtk_tree_view_select_sibling(GtkTreeView * tree_view)
 		}
 		gtk_tree_path_free(path);
 	}
-}
-
-static gboolean
-gtk_tree_view_get_iter_from_coords(GtkTreeView * tree_view, GtkTreeIter * iter, gint x, gint y)
-{
-	GtkTreeModel *		model;
-	GtkTreePath *		path;
-	gchar *			path_string;
-	gboolean		ret;
-
-#if GTK_CHECK_VERSION(2,12,0)
-	gtk_tree_view_convert_widget_to_bin_window_coords(tree_view, x, y, &x, &y);
-#else
-	gtk_tree_view_widget_to_tree_coords(tree_view, x, y, &x, &y);
-#endif
-	if (!gtk_tree_view_get_path_at_pos(tree_view, x, y, &path, NULL, NULL, NULL)) {
-		ret = FALSE;
-		goto out;
-	}
-
-	/* get iter */
-	model = gtk_tree_view_get_model(tree_view);
-	path_string = gtk_tree_path_to_string(path);
-	ret = gtk_tree_model_get_iter_from_string(model, iter, path_string);
-
-	/* frees */
-	g_free(path_string);
-out:	gtk_tree_path_free(path);
-
-	return ret;
 }
 
 #if GTK_CHECK_VERSION(2,12,0)
@@ -419,23 +423,31 @@ gtk_tree_view_set_geoxml_sequence_moveable_weak_ref(struct reorderable_data * da
 }
 
 gboolean
-gtk_tree_view_reorder_callback(GtkTreeView * tree_view, GtkTreeIter * iter,
-	GtkTreeIter * before, struct reorderable_data * data)
+gtk_tree_view_reorder_callback(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+	GtkTreeViewDropPosition drop_position, struct reorderable_data * data)
 {
 	GtkTreeModel *		tree_model;
 	GeoXmlSequence *	sequence;
-	GeoXmlSequence *	before_sequence;
+	GeoXmlSequence *	position_sequence;
 
 	tree_model = gtk_tree_view_get_model(tree_view);
 	gtk_tree_model_get(tree_model, iter,
 		data->geoxml_sequence_pointer_column, &sequence, -1);
-	gtk_tree_model_get(tree_model, before,
-		data->geoxml_sequence_pointer_column, &before_sequence, -1);
+	gtk_tree_model_get(tree_model, position,
+		data->geoxml_sequence_pointer_column, &position_sequence, -1);
 
-	geoxml_sequence_move_before(sequence, before_sequence);
+	if (drop_position == GTK_TREE_VIEW_DROP_AFTER) {
+		geoxml_sequence_move_after(sequence, position_sequence);
+		gtk_list_store_move_after(GTK_LIST_STORE(tree_model), iter, position);
+
+		geoxml_sequence_next(&position_sequence);
+	} else {
+		geoxml_sequence_move_before(sequence, position_sequence);
+		gtk_list_store_move_before(GTK_LIST_STORE(tree_model), iter, position);
+	}
 
 	if (data->callback != NULL)
-		data->callback(tree_model, sequence, before_sequence, data->user_data);
+		data->callback(tree_model, sequence, position_sequence, data->user_data);
 
 	return TRUE;
 }
@@ -462,6 +474,8 @@ gtk_tree_view_set_geoxml_sequence_moveable(GtkTreeView * tree_view, gint geoxml_
 
 struct reorder_data {
 	GtkTreeIter			iter;
+	GtkTreeIter			position;
+	GtkTreeViewDropPosition		drop_position;
 	GtkTreeViewReorderCallback	callback;
 	GtkTreeViewReorderCallback	can_callback;
 	gpointer			user_data;
@@ -487,18 +501,29 @@ on_gtk_tree_view_drag_motion(GtkTreeView * tree_view, GdkDragContext * drag_cont
 	guint time, struct reorder_data * data)
 {
 	GtkWidgetClass *	widget_class;
-	GtkTreeIter		iter;
+	GtkTreePath *		tree_path;
 
 	/* to draw drop indicator */
 	widget_class = GTK_WIDGET_GET_CLASS(GTK_WIDGET(tree_view));
 	if (!widget_class->drag_motion(GTK_WIDGET(tree_view), drag_context, x, y, time))
 		return TRUE;
-	if (!gtk_tree_view_get_iter_from_coords(tree_view, &iter, x, y))
-		return TRUE;
-	if (data->can_callback(tree_view, &data->iter, &iter, data->user_data))
+
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_tree_view_convert_widget_to_bin_window_coords(tree_view, x, y, &x, &y);
+#else
+	gtk_tree_view_widget_to_tree_coords(tree_view, x, y, &x, &y);
+#endif
+	gtk_tree_view_get_drag_dest_row(tree_view, &tree_path, &data->drop_position);
+	gtk_tree_model_path_to_iter(gtk_tree_view_get_model(tree_view), tree_path, &data->position);
+
+	if (data->can_callback == NULL || data->can_callback(tree_view, &data->iter, &data->position,
+	data->drop_position, data->user_data))
 		gdk_drag_status(drag_context, GDK_ACTION_MOVE, time);
 	else
 		gdk_drag_status(drag_context, 0, time);
+
+	/* frees */
+	gtk_tree_path_free(tree_path);
 
 	return TRUE;
 }
@@ -507,43 +532,10 @@ gboolean
 on_gtk_tree_view_drag_drop(GtkTreeView * tree_view, GdkDragContext * drag_context, gint x, gint y,
 	guint time, struct reorder_data * data)
 {
-	GtkTreeIter	iter;
+	data->callback(tree_view, &data->iter, &data->position, data->drop_position, data->user_data);
+	gtk_drag_finish(drag_context, TRUE, FALSE, time);
 
-	if (!gtk_tree_view_get_iter_from_coords(tree_view, &iter, x, y))
-		return FALSE;
-	if ((data->can_callback == NULL) || data->can_callback(tree_view, &data->iter, &iter, data->user_data)) {
-		GtkTreeModel *	model;
-
-		model = gtk_tree_view_get_model(tree_view);
-		if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_LIST_STORE))
-			gtk_list_store_move_before(GTK_LIST_STORE(model), &data->iter, &iter);
-		else if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_TREE_STORE)) {
-			GtkTreeIter	old;
-			GValue		value;
-			guint		i, n;
-
-			old = data->iter;
-			gtk_tree_store_insert_before(GTK_TREE_STORE(model), &data->iter, NULL, &iter);
-
-			value = (GValue){0, };
-			n = gtk_tree_model_get_n_columns(model);
-			for (i = 0; i < n; ++i) {
-				gtk_tree_model_get_value(model, &old, i, &value);
-				gtk_tree_store_set_value(GTK_TREE_STORE(model), &data->iter, i, &value);
-
-				g_value_unset(&value);
-			}
-
-			gtk_tree_store_remove(GTK_TREE_STORE(model), &old);
-		}
-		gtk_drag_finish(drag_context, TRUE, FALSE, time);
-
-		data->callback(tree_view, &data->iter, &iter, data->user_data);
-
-		return TRUE;
-	}
-
-	return FALSE;
+	return TRUE;
 }
 
 void
@@ -572,9 +564,8 @@ gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GtkTreeViewReorderCa
 		(GCallback)on_gtk_tree_view_drag_begin, data);
 	g_signal_connect(tree_view, "drag-drop",
 		(GCallback)on_gtk_tree_view_drag_drop, data);
-	if (data->can_callback != NULL)
-		g_signal_connect(tree_view, "drag-motion",
-			(GCallback)on_gtk_tree_view_drag_motion, data);
+	g_signal_connect(tree_view, "drag-motion",
+		(GCallback)on_gtk_tree_view_drag_motion, data);
 
 	g_object_weak_ref(G_OBJECT(tree_view),
 		(GWeakNotify)gtk_tree_view_reorder_weak_ref, data);

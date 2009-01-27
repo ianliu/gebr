@@ -174,6 +174,8 @@ geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter *
 
 /**
  * Returns \p parameter 's type.
+ * GEOXML_PARAMETERTYPE_REFERENCE is not returned here. The "true" type
+ * of the parameter is returned instead.
  *
  * If \p parameter is NULL returns \ref GEOXML_PARAMETERTYPE_UNKNOWN.
  *
@@ -181,6 +183,14 @@ geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter *
  */
 enum GEOXML_PARAMETERTYPE
 geoxml_parameter_get_type(GeoXmlParameter * parameter);
+
+/**
+ * Return TRUE if \p parameter is a reference
+ *
+ * If \p parameter is NULL return FALSE
+ */
+gboolean
+geoxml_parameter_get_is_reference(GeoXmlParameter * parameter);
 
 /**
  * Get the list of GeoXmlParameter references to \p parameter

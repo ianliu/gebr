@@ -248,7 +248,7 @@ g_listen_socket_get_next_pending_connection(GListenSocket * listen_socket)
 	GSList * link;
 
 	/* get the first pending conn. */
-	link = g_slist_last(listen_socket->pending_connections);
+	link = listen_socket->pending_connections;
 	if (link == NULL)
 		return NULL;
 	stream_socket = (GStreamSocket*)link->data;
