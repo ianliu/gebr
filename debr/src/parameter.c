@@ -1060,14 +1060,9 @@ parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * pos
 
 	if ((drop_position == GTK_TREE_VIEW_DROP_INTO_OR_BEFORE || drop_position == GTK_TREE_VIEW_DROP_INTO_OR_AFTER) &&
 	geoxml_parameter_get_type(position_parameter) == GEOXML_PARAMETERTYPE_GROUP) {
-		GeoXmlSequence *	first_instance;
-		GeoXmlSequence *	first_parameter;
+		geoxml_sequence_move_into_group(parameter, GEOXML_PARAMETER_GROUP(position_parameter));
 
-		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(position_parameter), &first_instance, 0);
-		first_parameter = geoxml_parameters_get_first_parameter(GEOXML_PARAMETERS(first_instance));
-		geoxml_sequence_move_before(GEOXML_SEQUENCE(parameter), first_parameter);
-
-		gtk_tree_store_prepend(debr.ui_parameter.tree_store, &new, position);
+		gtk_tree_store_append(debr.ui_parameter.tree_store, &new, position);
 		gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &new, iter);
 		gtk_tree_store_remove(debr.ui_parameter.tree_store, iter);
 

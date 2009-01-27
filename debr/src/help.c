@@ -204,7 +204,7 @@ help_edit(const gchar * help, GeoXmlProgram * program)
 
 	/* help empty; create from template. */
 	g_string_assign(prepared_html, help);
-	if (prepared_html->len == 0) {
+	if (prepared_html->len <= 1) {
 		/* Read back the help from file */
 		fp = fopen(DEBR_DATA_DIR "help-template.html", "r");
 		if (fp == NULL) {

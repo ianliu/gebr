@@ -89,6 +89,8 @@ typedef struct geoxml_sequence GeoXmlSequence;
 
 #include <glib.h>
 
+#include "parameter_group.h"
+
 /**
  * Use as an auxiliary function to geoxml_sequence_next.
  * Assign \p sequence to the previous sequence sequenced
@@ -161,6 +163,16 @@ geoxml_sequence_get_at(GeoXmlSequence * sequence, gulong index);
  */
 int
 geoxml_sequence_remove(GeoXmlSequence * sequence);
+
+/**
+ * Move \p sequence to \p parameter_group, appending it to the list of is parameters.
+ * \p sequence is removed from wherever it belonged.
+ *
+ * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_NULL_PTR,
+ * GEOXML_RETV_NOT_A_SEQUENCE, GEOXML_RETV_MORE_THAN_ONE_INSTANCES
+ */
+int
+geoxml_sequence_move_into_group(GeoXmlSequence * sequence, GeoXmlParameterGroup * parameter_group);
 
 /**
  * Moves \p sequence to the position before \p position. If \p position is NULL then

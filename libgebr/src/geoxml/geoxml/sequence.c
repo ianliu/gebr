@@ -125,12 +125,12 @@ __geoxml_sequence_move_after_before(GeoXmlSequence * sequence, GeoXmlSequence * 
 
 			g_slist_free(position_refs);
 		} else {
-			__geoxml_parameters_do_insert_in_group_stuff(geoxml_parameter_get_parameters(
-				GEOXML_PARAMETER(sequence)), GEOXML_PARAMETER(sequence));
-
 			for (i = sequence_refs; i != NULL; i = g_slist_next(i))
 				gdome_n_removeChild(gdome_el_parentNode((GdomeElement*)i->data, &exception),
 					(GdomeNode*)i->data, &exception);
+
+			__geoxml_parameters_do_insert_in_group_stuff(geoxml_parameter_get_parameters(
+				GEOXML_PARAMETER(sequence)), GEOXML_PARAMETER(sequence));
 		}
 
 		g_slist_free(sequence_refs);
@@ -345,8 +345,7 @@ geoxml_sequence_get_at(GeoXmlSequence * sequence, gulong index)
 int
 geoxml_sequence_remove(GeoXmlSequence * sequence)
 {
-	int	ret;
-	gchar *	id;
+	int ret;
 
 	if ((ret = __geoxml_sequence_check(sequence, TRUE)))
 		return ret;
@@ -358,9 +357,40 @@ geoxml_sequence_remove(GeoXmlSequence * sequence)
 		__geoxml_get_attr_value((GdomeElement*)sequence, "id")))
 			__geoxml_sequence_remove((GeoXmlSequence*)parameter_element);
 	}
+	/* must be done after cause we need the id */
 	__geoxml_sequence_remove(sequence);
 
 	return GEOXML_RETV_SUCCESS;
+}
+
+int
+geoxml_sequence_move_into_group(GeoXmlSequence * sequence, GeoXmlParameterGroup * parameter_group)
+{
+	int 			ret;
+	GeoXmlSequence *	first_instance;
+
+	if (parameter_group == NULL)
+		return GEOXML_RETV_NULL_PTR;
+	if ((ret = __geoxml_sequence_check(sequence, TRUE)))
+		return ret;
+	if (!__geoxml_sequence_is_parameter(sequence))
+		return GEOXML_RETV_DIFFERENT_SEQUENCES;
+
+	if (geoxml_parameter_get_is_in_group((GeoXmlParameter*)sequence)) {
+		GdomeElement *	parameter_element;
+
+		__geoxml_foreach_element(parameter_element, __geoxml_parameter_get_referencee_list(
+		(GdomeElement*)geoxml_parameter_get_group((GeoXmlParameter*)sequence),
+		__geoxml_get_attr_value((GdomeElement*)sequence, "id")))
+			__geoxml_sequence_remove((GeoXmlSequence*)parameter_element);
+	}
+
+	geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
+	gdome_el_insertBefore((GdomeElement*)first_instance,
+		(GdomeNode*)sequence, NULL, &exception);
+	__geoxml_parameters_do_insert_in_group_stuff(GEOXML_PARAMETERS(first_instance), GEOXML_PARAMETER(sequence));
+
+	return ret;
 }
 
 int

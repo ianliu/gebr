@@ -120,7 +120,7 @@ geoxml_parameter_group_get_instance(GeoXmlParameterGroup * parameter_group,
 	}
 
 	*parameters = (GeoXmlSequence*)__geoxml_get_element_at(
-		__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group), TRUE),
+		__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group), FALSE),
 		"parameters", index, FALSE);
 
 	return (*parameters == NULL)
@@ -134,7 +134,7 @@ geoxml_parameter_group_get_instances_number(GeoXmlParameterGroup * parameter_gro
 	if (parameter_group == NULL)
 		return -1;
 	return __geoxml_get_elements_number((GdomeElement*)
-		__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group), TRUE), "parameters");
+		__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group), FALSE), "parameters");
 }
 
 GSList *
@@ -162,7 +162,7 @@ geoxml_parameter_group_set_is_instanciable(GeoXmlParameterGroup * parameter_grou
 	if (parameter_group == NULL)
 		return;
 	__geoxml_set_attr_value(
-		__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group), TRUE),
+		__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group), FALSE),
 		"instanciable", (enable == TRUE ? "yes" : "no"));
 }
 
@@ -172,7 +172,7 @@ geoxml_parameter_group_set_expand(GeoXmlParameterGroup * parameter_group, const 
 	if (parameter_group == NULL)
 		return;
 	__geoxml_set_attr_value(
-		__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group), TRUE),
+		__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group), FALSE),
 		"expand", (enable == TRUE ? "yes" : "no"));
 }
 
@@ -182,7 +182,7 @@ geoxml_parameter_group_get_is_instanciable(GeoXmlParameterGroup * parameter_grou
 	if (parameter_group == NULL)
 		return FALSE;
 	return (!strcmp(__geoxml_get_attr_value(
-			__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group), TRUE),
+			__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group), FALSE),
 			"instanciable"), "yes"))
 		? TRUE : FALSE;
 }
@@ -193,7 +193,7 @@ geoxml_parameter_group_get_expand(GeoXmlParameterGroup * parameter_group)
 	if (parameter_group == NULL)
 		return FALSE;
 	return (!strcmp(__geoxml_get_attr_value(
-			__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group), TRUE),
+			__geoxml_parameter_get_type_element(GEOXML_PARAMETER(parameter_group), FALSE),
 			"expand"), "yes"))
 		? TRUE : FALSE;
 }

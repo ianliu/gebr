@@ -54,19 +54,11 @@ __geoxml_parameter_get_type_element(GeoXmlParameter * parameter, gboolean resolv
 {
 	GdomeElement *		type_element;
 
-	if (!resolve_references) {
+	do {
 		type_element = __geoxml_get_first_element((GdomeElement*)parameter, "label");
 		type_element = __geoxml_next_element(type_element);
-	} else {
-		GeoXmlParameter *	ref;
-
-		ref = parameter;
-		do {
-			type_element = __geoxml_get_first_element((GdomeElement*)ref, "label");
-			type_element = __geoxml_next_element(type_element);
-		} while (!strcmp(gdome_el_tagName(type_element, &exception)->str, "reference") &&
-		((ref = geoxml_parameter_get_referencee(ref)),1));
-	}
+	} while (resolve_references && !strcmp(gdome_el_tagName(type_element, &exception)->str, "reference")
+	&& ((parameter = geoxml_parameter_get_referencee(parameter)),1));
 
 	return type_element;
 }
