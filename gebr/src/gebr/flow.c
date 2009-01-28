@@ -334,7 +334,7 @@ flow_export(void)
 	geoxml_document_set_filename(GEOXML_DOC(gebr.flow), oldfilename);
 
 	gebr_message(LOG_INFO, TRUE, TRUE, _("Flow '%s' exported to %s"),
-		(gchar*)geoxml_document_get_title(GEOXML_DOC(gebr.flow)), path);
+		(gchar*)geoxml_document_get_title(GEOXML_DOC(gebr.flow)), path->str);
 
 	/* frees */
 	g_string_free(path, TRUE);
