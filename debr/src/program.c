@@ -15,6 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
 #include <string.h>
 
 #include <gui/utils.h>
@@ -65,6 +66,8 @@ static gboolean
 program_binary_changed(GtkEntry * entry);
 static gboolean
 program_description_changed(GtkEntry * entry);
+static void
+program_url_open(GtkButton * button);
 static void
 program_help_view(GtkButton * button);
 static void
@@ -146,6 +149,24 @@ program_setup_ui(void)
 	debr.ui_program.details.description_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.description_label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.description_label, FALSE, TRUE, 0);
+
+	debr.ui_program.details.nparams_label = gtk_label_new(NULL);
+	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.nparams_label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.nparams_label, FALSE, TRUE, 10);
+
+	debr.ui_program.details.binary_label = gtk_label_new(NULL);
+	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.binary_label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.binary_label, FALSE, TRUE, 10);
+
+/*         debr.ui_program.details.url_button = gtk_link_button_new("."); */
+/* 	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.url_button, FALSE, TRUE, 0); */
+/* 	g_signal_connect(GTK_OBJECT(debr.ui_program.details.url_button), "clicked", */
+/* 			 GTK_SIGNAL_FUNC(program_url_open), debr.program); */
+
+        debr.ui_program.details.help_button = gtk_button_new_from_stock(GTK_STOCK_INFO);
+	gtk_box_pack_end(GTK_BOX(details), debr.ui_program.details.help_button, FALSE, TRUE, 0);
+	g_signal_connect(GTK_OBJECT(debr.ui_program.details.help_button), "clicked",
+			 GTK_SIGNAL_FUNC(program_help_view), debr.program);
 
 	debr.ui_program.widget = hpanel;
 	gtk_widget_show_all(debr.ui_program.widget);
@@ -483,7 +504,12 @@ program_dialog_setup_ui(void)
 static void
 program_details_update(void)
 {
-	gchar *		markup;
+        GString *               text;
+        GeoXmlParameters *      parameters;
+	gchar *		        markup;
+
+        if (debr.program == NULL)
+                return;
 
 	markup = g_markup_printf_escaped("<b>%s</b>", geoxml_program_get_title(debr.program));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.title_label), markup);
@@ -492,6 +518,37 @@ program_details_update(void)
 	markup = g_markup_printf_escaped("<i>%s</i>", geoxml_program_get_description(debr.program));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.description_label), markup);
 	g_free(markup);
+        
+        parameters = geoxml_program_get_parameters(debr.program);
+
+        text = g_string_new(NULL);
+        switch (geoxml_parameters_get_number(parameters)){
+        case 0:
+                g_string_printf(text, _("This program has no parameters"));
+                break;
+        case 1:
+                g_string_printf(text, _("This program has 1 parameter"));
+                break;
+        default:
+                g_string_printf(text, _("This program has %li parameters"),
+                                geoxml_parameters_get_number(parameters));
+        }
+        gtk_label_set_text(GTK_LABEL(debr.ui_program.details.nparams_label), text->str);
+	g_string_free(text, TRUE);
+
+        markup = g_markup_printf_escaped("<b>%s</b>: %s", _("Binary"), geoxml_program_get_binary(debr.program));
+	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.binary_label), markup);
+	g_free(markup);
+
+/*         gtk_link_button_set_uri(GTK_LINK_BUTTON(debr.ui_program.details.url_button), geoxml_program_get_url(debr.program)); */
+/*         gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button), geoxml_program_get_url(debr.program)); */
+        
+/*         g_object_set(G_OBJECT(debr.ui_program.details.url_button), */
+/*                      "sensitive", strlen(geoxml_program_get_url(debr.program)) ? TRUE : FALSE, NULL); */
+
+        g_object_set(G_OBJECT(debr.ui_program.details.help_button),
+                     "sensitive", (strlen(geoxml_program_get_help(debr.program))>1) ? TRUE : FALSE, NULL);
+
 }
 
 /*
@@ -711,6 +768,17 @@ program_description_changed(GtkEntry * entry)
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 	return FALSE;
+}
+
+static void
+program_url_open(GtkButton * button)
+{
+        GString * cmdline;
+        
+        cmdline = g_string_new(NULL);
+        g_string_printf(cmdline, "%s %s&", debr.config.browser->str, geoxml_program_get_url(debr.program));
+        system(cmdline->str);
+        g_string_free(cmdline, TRUE);
 }
 
 static void

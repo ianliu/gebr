@@ -860,31 +860,46 @@ static void
 parameter_load_iter(GtkTreeIter * iter)
 {
 	GeoXmlParameter *	parameter;
-	GString *		keyword;
+        GString *               keyword_label;
 
-	keyword = g_string_new("");
+
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter,
 		PARAMETER_XMLPOINTER, &parameter,
 		-1);
 
-	if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE)
+	if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE){
+                GString *		keyword;
+
+                keyword = g_string_new(NULL);
 		g_string_assign(keyword, geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(parameter)));
+
+                if (keyword->str[keyword->len-1] ==  ' '){
+                        keyword_label = g_string_new_len(keyword->str, keyword->len - 1);
+                        g_string_append_printf(keyword_label, "%lc", 0x02FD);
+                }
+                else{
+                        keyword_label = g_string_new(keyword->str);
+                }
+
+                g_string_free(keyword, TRUE);
+        }
 	else {
 		GeoXmlSequence *	instance;
 
+                keyword_label = g_string_new(NULL);
 		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-		g_string_printf(keyword, "%lu parameter(s) and %lu instance(s)",
+		g_string_printf(keyword_label, "%lu parameter(s) and %lu instance(s)",
 			geoxml_parameters_get_number(GEOXML_PARAMETERS(instance)),
 			geoxml_parameter_group_get_instances_number(GEOXML_PARAMETER_GROUP(parameter)));
 	}
 
 	gtk_tree_store_set(debr.ui_parameter.tree_store, iter,
 		PARAMETER_TYPE, combo_type_map_get_title(geoxml_parameter_get_type(parameter)),
-		PARAMETER_KEYWORD, keyword->str,
+		PARAMETER_KEYWORD, keyword_label->str,
 		PARAMETER_LABEL, geoxml_parameter_get_label(parameter),
 		-1);
 
-	g_string_free(keyword, TRUE);
+	g_string_free(keyword_label, TRUE);
 }
 
 /*

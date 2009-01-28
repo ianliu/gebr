@@ -36,6 +36,7 @@
 #include "document.h"
 #include "flow.h"
 #include "line.h"
+#include "callbacks.h"
 
 gchar * no_project_selected_error = _("No project selected");
 
@@ -78,6 +79,7 @@ project_new(void)
 	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), path,
 				     NULL, FALSE, 0, 0);
 	g_signal_emit_by_name(gebr.ui_project_line->view, "cursor-changed");
+        on_project_line_properties_activate();
 
 	gtk_tree_path_free(path);
 }

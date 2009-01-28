@@ -24,6 +24,7 @@
 
 #include <gui/utils.h>
 #include <gui/valuesequenceedit.h>
+#include <misc/date.h>
 
 #include "menu.h"
 #include "support.h"
@@ -145,28 +146,49 @@ menu_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.description_label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(details), debr.ui_menu.details.description_label, FALSE, TRUE, 0);
 
-	debr.ui_menu.details.nprogs_label = gtk_label_new("");
+	debr.ui_menu.details.nprogs_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.nprogs_label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(details), debr.ui_menu.details.nprogs_label, FALSE, TRUE, 10);
 
-	table = gtk_table_new(3, 2, FALSE);
+	table = gtk_table_new(6, 2, FALSE);
 	gtk_box_pack_start(GTK_BOX(details), table, FALSE, TRUE, 0);
 
-	debr.ui_menu.details.category_label = gtk_label_new("");
+        debr.ui_menu.details.created_label = gtk_label_new(NULL);
+        gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.created_label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.created_label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
+
+        debr.ui_menu.details.created_date_label = gtk_label_new(NULL);
+        gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.created_date_label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.created_date_label, 1, 2, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
+
+        debr.ui_menu.details.modified_label = gtk_label_new(NULL);
+        gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.modified_label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.modified_label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
+
+        debr.ui_menu.details.modified_date_label = gtk_label_new(NULL);
+        gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.modified_date_label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.modified_date_label, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
+
+	debr.ui_menu.details.category_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.category_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.category_label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.category_label, 0, 1, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
 
-	debr.ui_menu.details.categories_label[0] = gtk_label_new("");
+	debr.ui_menu.details.categories_label[0] = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.categories_label[0]), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.categories_label[0], 1, 2, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.categories_label[0], 1, 2, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
 
-	debr.ui_menu.details.categories_label[1] = gtk_label_new("");
+	debr.ui_menu.details.categories_label[1] = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.categories_label[1]), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.categories_label[1], 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.categories_label[1], 1, 2, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 
-	debr.ui_menu.details.categories_label[2] = gtk_label_new("");
+	debr.ui_menu.details.categories_label[2] = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.categories_label[2]), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.categories_label[2], 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.categories_label[2], 1, 2, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
+        
+        debr.ui_menu.details.help_button = gtk_button_new_from_stock(GTK_STOCK_INFO);
+        gtk_box_pack_end(GTK_BOX(details), debr.ui_menu.details.help_button, FALSE, TRUE, 0);
+        g_signal_connect(GTK_OBJECT(debr.ui_menu.details.help_button), "clicked",
+			 GTK_SIGNAL_FUNC(menu_help_view), debr.menu);
 
 	debr.ui_menu.details.author_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.author_label), 0, 0);
@@ -733,8 +755,8 @@ void
 menu_details_update(void)
 {
 	gchar *		markup;
-	GString *	text;
-	glong		icmax;
+	GString *       text;
+        glong           icmax;
 
 	markup = g_markup_printf_escaped("<b>%s</b>", geoxml_document_get_title(GEOXML_DOC(debr.menu)));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), markup);
@@ -744,56 +766,72 @@ menu_details_update(void)
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.description_label), markup);
 	g_free(markup);
 
-	text = g_string_new(NULL);
-	switch (geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu))) {
-	case 0:
-		g_string_printf(text, _("This menu has no programs"));
-		break;
-	case 1:
-		g_string_printf(text, _("This menu has 1 program"));
-		break;
-	default:
-		g_string_printf(text, _("This menu has %li programs"),
-			geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu)));
-	}
-	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.nprogs_label), text->str);
+        text = g_string_new(NULL);
+        switch (geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu))){
+        case 0:
+                g_string_printf(text, _("This menu has no programs"));
+                break;
+        case 1:
+                g_string_printf(text, _("This menu has 1 program"));
+                break;
+        default:
+                g_string_printf(text, _("This menu has %li programs"),
+                                geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu)));
+        }
+        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.nprogs_label), text->str);
 	g_string_free(text, TRUE);
 
-	markup = g_markup_printf_escaped("<b>%s</b>", _("Categories: "));
-	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.category_label), markup);
+        markup = g_markup_printf_escaped("<b>%s</b>", _("Created: "));
+        gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.created_label), markup);
 	g_free(markup);
 
-	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[0]),"");
-	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[1]),"");
-	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]),"");
+        markup = g_markup_printf_escaped("<b>%s</b>", _("Modified: "));
+        gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.modified_label), markup);
+	g_free(markup);
 
+        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.created_date_label),
+                           localized_date(geoxml_document_get_date_created(GEOXML_DOCUMENT(debr.menu))));
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.modified_date_label),
+                           localized_date(geoxml_document_get_date_modified(GEOXML_DOCUMENT(debr.menu))));
 
-	icmax = MIN(geoxml_flow_get_categories_number(GEOXML_FLOW(debr.menu)), 2);
-	for (long int ic = 0; ic < icmax; ic++) {
+        markup = g_markup_printf_escaped("<b>%s</b>", _("Categories: "));
+        gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.category_label), markup);
+	g_free(markup);
+
+        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[0]),NULL);
+        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[1]),NULL);
+        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]),NULL);
+
+        icmax = MIN(geoxml_flow_get_categories_number(GEOXML_FLOW(debr.menu)), 2);
+        for (long int ic=0; ic<icmax; ic++){
 		GeoXmlSequence *  	category;
 
-		geoxml_flow_get_category(GEOXML_FLOW(debr.menu), &category, ic);
+                geoxml_flow_get_category(GEOXML_FLOW(debr.menu), &category, ic);
 
-		text = g_string_new(NULL);
-		g_string_printf(text, "%s", geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)));
-		gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[ic]),text->str);
-		g_string_free(text, TRUE);
+                text = g_string_new(NULL);
+                g_string_printf(text, "%s", geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)));
+                gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[ic]),text->str);
+                g_string_free(text, TRUE);                
         }
-	if (icmax == 0) {
-		markup = g_markup_printf_escaped("<i>%s</i>", _("None"));
-		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.categories_label[0]), markup);
-		g_free(markup);
-	}
-
-	if (geoxml_flow_get_categories_number(GEOXML_FLOW(debr.menu)) > 2)
-		gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]),"...");
-
+        if (icmax == 0){
+                markup = g_markup_printf_escaped("<i>%s</i>", _("None"));
+                gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.categories_label[0]), markup);
+                g_free(markup);
+        }
+        
+        if (geoxml_flow_get_categories_number(GEOXML_FLOW(debr.menu)) > 2)
+                gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]),"...");
+        
 	text = g_string_new(NULL);
 	g_string_printf(text, "%s <%s>",
 		geoxml_document_get_author(GEOXML_DOC(debr.menu)),
 		geoxml_document_get_email(GEOXML_DOC(debr.menu)));
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.author_label), text->str);
 	g_string_free(text, TRUE);
+
+        g_object_set(G_OBJECT(debr.ui_menu.details.help_button),
+                     "sensitive", (strlen(geoxml_document_get_help(GEOXML_DOC(debr.menu)))>1) ? TRUE : FALSE, NULL);
+
 }
 
 /*
@@ -872,7 +910,6 @@ menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save"), enable);
 	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert"), enable);
 }
-
 /*
  * Function: menu_title_changed
  * Keep XML in sync with widget

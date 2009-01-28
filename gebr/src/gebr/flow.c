@@ -40,6 +40,7 @@
 #include "support.h"
 #include "document.h"
 #include "server.h"
+#include "callbacks.h"
 #include "ui_flow.h"
 #include "ui_flow_browse.h"
 
@@ -102,6 +103,7 @@ flow_new(void)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	gtk_tree_selection_select_iter(selection, &iter);
 	g_signal_emit_by_name(gebr.ui_flow_browse->view, "cursor-changed");
+        on_flow_properties_activate();
 
 	/* feedback */
 	gebr_message(LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'"), line_title);
