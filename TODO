@@ -13,7 +13,6 @@
 +	Internacionalização (português, espanhol, alemão, etc)
 +	Suporte a help
 +	"Enter" adiciona em GtkSequenceEdit
-+	Acertar tooltips (DéBR/GeBR)
 +	Mais detalhes para visao lateral da DéBR e scrolled window para
         todas as janelas de detalhes DéBR/GeBR
 +	Acrescentar uma quantidade especificada de parâmetros de um
