@@ -45,6 +45,10 @@ struct ui_menu {
 		GtkWidget *	title_label;
 		GtkWidget *	description_label;
 		GtkWidget *	author_label;
+		GtkWidget *	nprogs_label;
+		GtkWidget *	category_label;
+		GtkWidget *	categories_label[3];
+
 	} details;
 };
 

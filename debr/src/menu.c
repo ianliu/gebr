@@ -83,6 +83,7 @@ menu_setup_ui(void)
 	GtkWidget *		details;
 	GtkTreeViewColumn *	col;
 	GtkCellRenderer *	renderer;
+        GtkWidget *             table;
 
 	hpanel = gtk_hpaned_new();
 	gtk_widget_show(hpanel);
@@ -139,6 +140,29 @@ menu_setup_ui(void)
 	debr.ui_menu.details.description_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.description_label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(details), debr.ui_menu.details.description_label, FALSE, TRUE, 0);
+
+	debr.ui_menu.details.nprogs_label = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.nprogs_label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(details), debr.ui_menu.details.nprogs_label, FALSE, TRUE, 10);
+
+	table = gtk_table_new(3, 2, FALSE);
+	gtk_box_pack_start(GTK_BOX(details), table, FALSE, TRUE, 0);
+
+	debr.ui_menu.details.category_label = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.category_label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.category_label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
+
+	debr.ui_menu.details.categories_label[0] = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.categories_label[0]), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.categories_label[0], 1, 2, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
+
+	debr.ui_menu.details.categories_label[1] = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.categories_label[1]), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.categories_label[1], 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
+
+	debr.ui_menu.details.categories_label[2] = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.categories_label[2]), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.categories_label[2], 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 
 	debr.ui_menu.details.author_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.author_label), 0, 0);
@@ -746,7 +770,8 @@ static void
 menu_details_update(void)
 {
 	gchar *		markup;
-	GString *       author_email;
+	GString *       text;
+        glong           icmax;
 
 	markup = g_markup_printf_escaped("<b>%s</b>", geoxml_document_get_title(GEOXML_DOC(debr.menu)));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), markup);
@@ -756,12 +781,56 @@ menu_details_update(void)
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.description_label), markup);
 	g_free(markup);
 
-	author_email = g_string_new(NULL);
-	g_string_printf(author_email, "%s <%s>",
+        text = g_string_new(NULL);
+        switch (geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu))){
+                case 0:
+                        g_string_printf(text, _("This menu has no programs"));
+                        break;
+                case 1:
+                        g_string_printf(text, _("This menu has 1 program"));
+                        break;
+                default:
+                        g_string_printf(text, _("This menu has %li programs"),
+                                        geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu)));
+                }
+        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.nprogs_label), text->str);
+	g_string_free(text, TRUE);
+
+        markup = g_markup_printf_escaped("<b>%s</b>", _("Categories: "));
+        gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.category_label), markup);
+	g_free(markup);
+
+        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[0]),"");
+        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[1]),"");
+        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]),"");
+
+
+        icmax = MIN(geoxml_flow_get_categories_number(GEOXML_FLOW(debr.menu)), 2);
+        for (long int ic=0; ic<icmax; ic++){
+		GeoXmlSequence *  	category;
+
+                geoxml_flow_get_category(GEOXML_FLOW(debr.menu), &category, ic);
+
+                text = g_string_new(NULL);
+                g_string_printf(text, "%s", geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)));
+                gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[ic]),text->str);
+                g_string_free(text, TRUE);                
+        }
+        if (icmax == 0){
+                markup = g_markup_printf_escaped("<i>%s</i>", _("None"));
+                gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.categories_label[0]), markup);
+                g_free(markup);
+        }
+        
+        if (geoxml_flow_get_categories_number(GEOXML_FLOW(debr.menu)) > 2)
+                gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]),"...");
+
+	text = g_string_new(NULL);
+	g_string_printf(text, "%s <%s>",
 		geoxml_document_get_author(GEOXML_DOC(debr.menu)),
 		geoxml_document_get_email(GEOXML_DOC(debr.menu)));
-	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.author_label), author_email->str);
-	g_string_free(author_email, TRUE);
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.author_label), text->str);
+	g_string_free(text, TRUE);
 }
 
 /*
