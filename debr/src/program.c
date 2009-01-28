@@ -177,7 +177,7 @@ program_load_menu(void)
  * Append a new program and selects it
  */
 void
-program_new(void)
+program_new(gboolean edit)
 {
 	GeoXmlProgram *		program;
 	GtkTreeIter		iter;
@@ -195,7 +195,8 @@ program_new(void)
 		-1);
 
 	program_select_iter(iter);
-	on_program_properties_activate();
+	if (edit)
+		on_program_properties_activate();
 	menu_details_update();
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }

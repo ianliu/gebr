@@ -47,7 +47,7 @@ void
 program_load_menu(void);
 
 void
-program_new(void);
+program_new(gboolean edit);
 
 void
 program_remove(void);

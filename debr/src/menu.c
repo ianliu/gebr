@@ -205,7 +205,7 @@ menu_new(void)
 	menu_select_iter(&iter);
 	
 	/* add a new program for the user to play with */
-	program_new();
+	program_new(FALSE);
 	/* new menu with no changes shouldn't be save */
 	menu_saved_status_set(MENU_STATUS_SAVED);
 	menu_dialog_setup_ui();
@@ -416,6 +416,7 @@ gboolean
 menu_cleanup(void)
 {
 	GtkWidget *	dialog;
+	GtkWidget *	button;
 	gboolean	ret;
 
 	if (!debr.unsaved_count)
@@ -424,22 +425,22 @@ menu_cleanup(void)
 	dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_MESSAGE_QUESTION,
-		GTK_BUTTONS_YES_NO,
+		GTK_BUTTONS_NONE,
 		_("There are flows unsaved. Do you want to save them?"));
+	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
+	g_object_set(G_OBJECT(button),
+		"image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
 	switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-	case GTK_RESPONSE_YES: {
+	case GTK_RESPONSE_YES:
 		menu_save_all();
 		ret = TRUE;
 		break;
-	}
 	case GTK_RESPONSE_NO:
 		ret = TRUE;
 		break;
-	case GTK_RESPONSE_CANCEL:
-		ret = FALSE;
-		break;
-	default:
+	case GTK_RESPONSE_CANCEL: default:
 		ret = FALSE;
 	}
 

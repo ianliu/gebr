@@ -27,7 +27,7 @@
 
 static void __enum_option_edit_add(EnumOptionEdit * enum_option_edit, GeoXmlEnumOption * enum_option);
 static void __enum_option_edit_remove(EnumOptionEdit * enum_option_edit, GtkTreeIter * iter);
-static void __enum_option_edit_move_before(EnumOptionEdit * enum_option_edit, GtkTreeIter * iter, GtkTreeIter * before);
+static void __enum_option_edit_move(EnumOptionEdit * enum_option_edit, GtkTreeIter * iter, GtkTreeIter * position, 	GtkTreeViewDropPosition drop_position);
 static void __enum_option_edit_move_top(EnumOptionEdit * enum_option_edit, GtkTreeIter * iter);
 static void __enum_option_edit_move_bottom(EnumOptionEdit * enum_option_edit, GtkTreeIter * iter);
 static GtkWidget * __enum_option_edit_create_tree_view(EnumOptionEdit * enum_option_edit);
@@ -89,7 +89,7 @@ enum_option_edit_class_init(EnumOptionEditClass * class)
 	/* virtual */
 	enum_option_edit_class = GTK_SEQUENCE_EDIT_CLASS(class);
 	enum_option_edit_class->remove = (typeof(enum_option_edit_class->remove))__enum_option_edit_remove;
-	enum_option_edit_class->move_before = (typeof(enum_option_edit_class->move_before))__enum_option_edit_move_before;
+	enum_option_edit_class->move = (typeof(enum_option_edit_class->move))__enum_option_edit_move;
 	enum_option_edit_class->move_top = (typeof(enum_option_edit_class->move_top))__enum_option_edit_move_top;
 	enum_option_edit_class->move_bottom = (typeof(enum_option_edit_class->move_bottom))__enum_option_edit_move_bottom;
 	enum_option_edit_class->create_tree_view =
@@ -206,20 +206,24 @@ __enum_option_edit_remove(EnumOptionEdit * enum_option_edit, GtkTreeIter * iter)
 }
 
 static void
-__enum_option_edit_move_before(EnumOptionEdit * enum_option_edit, GtkTreeIter * iter, GtkTreeIter * before)
+__enum_option_edit_move(EnumOptionEdit * enum_option_edit, GtkTreeIter * iter, GtkTreeIter * position,
+	GtkTreeViewDropPosition drop_position)
 {
 	GeoXmlSequence *	sequence;
-	GeoXmlSequence *	before_sequence;
+	GeoXmlSequence *	position_sequence;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store), iter,
-		2, &sequence,
-		-1);
-	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store), before,
-		2, &before_sequence,
-		-1);
+		2, &sequence, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store), position,
+		2, &position_sequence, -1);
 
-	geoxml_sequence_move_before(sequence, before_sequence);
-	gtk_list_store_move_before(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, before);
+	if (drop_position == GTK_TREE_VIEW_DROP_AFTER) {
+		geoxml_sequence_move_after(sequence, position_sequence);
+		gtk_list_store_move_after(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, position);
+	} else {
+		geoxml_sequence_move_before(sequence, position_sequence);
+		gtk_list_store_move_before(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, position);
+	}
 
 	g_signal_emit_by_name(enum_option_edit, "changed");
 }

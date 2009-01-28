@@ -40,7 +40,7 @@ __parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, 
 
 	value = g_string_new(NULL);
 
-	if (check_list && geoxml_program_parameter_get_is_list(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter)) == TRUE) {
+	if (check_list && geoxml_program_parameter_get_is_list(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter))) {
 		g_string_assign(value, gtk_entry_get_text(GTK_ENTRY(parameter_widget->list_value_widget)));
 		return value;
 	}
@@ -89,9 +89,8 @@ __parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, 
 
 		break;
 	} case GEOXML_PARAMETERTYPE_FLAG:
-		g_string_assign(value,
-			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(parameter_widget->value_widget)) == TRUE
-				? "on" : "off");
+		g_string_assign(value, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
+			parameter_widget->value_widget)) == TRUE ? "on" : "off");
 		break;
 	default:
 		break;
@@ -272,6 +271,8 @@ on_sequence_edit_add_request(ValueSequenceEdit * value_sequence_edit, struct par
 		GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), parameter_widget->use_default_value));
 	geoxml_value_sequence_set(value_sequence, value->str);
 	value_sequence_edit_add(value_sequence_edit, value_sequence);
+
+	parameter_list_value_widget_update(parameter_widget);
 
 	g_string_free(value, TRUE);
 }

@@ -354,8 +354,7 @@ on_menu_close_activate(void)
 void
 on_program_new_activate(void)
 {
-	program_new();
-	//menu_dialog_setup_ui();
+	program_new(TRUE);
 }
 
 /*
