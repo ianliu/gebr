@@ -82,7 +82,8 @@ __parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, 
 
 			/* minus one to skip the first empty value */
 			geoxml_program_parameter_get_enum_option(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter),
-				&enum_option, index-1);
+				&enum_option, geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(
+				parameter_widget->parameter)) ? index : index-1);
 			g_string_assign(value, geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(enum_option)));
 		}
 
