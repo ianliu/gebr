@@ -93,6 +93,7 @@ parameters_configure_setup_ui(void)
 	GtkTreeIter			iter;
 
 	GtkWidget *			dialog;
+	GtkWidget *			button;
 	GtkWidget *			label;
 	GtkWidget *			vbox;
 	GtkWidget *			hbox;
@@ -114,14 +115,16 @@ parameters_configure_setup_ui(void)
 	dialog = gtk_dialog_new_with_buttons(_("Parameters"),
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_STOCK_OK, GTK_RESPONSE_OK,
-		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		NULL);
-	gtk_dialog_add_button(GTK_DIALOG(dialog), _("Default"), GTK_RESPONSE_DEFAULT);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
+	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Default"), GTK_RESPONSE_DEFAULT);
+	g_object_set(G_OBJECT(button),
+		"image", gtk_image_new_from_stock(GTK_STOCK_REVERT_TO_SAVED, GTK_ICON_SIZE_BUTTON), NULL);
+	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_OK, GTK_RESPONSE_OK);
+
 	gtk_widget_set_size_request(dialog, 630, 400);
 	gtk_box_set_homogeneous(GTK_BOX(GTK_DIALOG(dialog)->vbox), FALSE);
-
 	/* take the apropriate action when a button is pressed */
 	g_signal_connect(dialog, "response",
 		G_CALLBACK(parameters_actions), ui_parameters);

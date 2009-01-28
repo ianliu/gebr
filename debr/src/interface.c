@@ -41,47 +41,47 @@
 static const GtkActionEntry actions_entries [] = {
 	/* Main */
 	{"main_quit", GTK_STOCK_QUIT, _("Quit"), "<Control>q", _("Quit DÈBR"), (GCallback)debr_quit},
-	/* Menu */
-	{"menu_new", GTK_STOCK_NEW, _("New"), NULL, _("Create new Menu"), (GCallback)on_menu_new_activate},
-	{"menu_open", GTK_STOCK_OPEN, _("Open"), NULL, _("Open an existing Menu"),
+	/* menu */
+	{"menu_new", GTK_STOCK_NEW, NULL, NULL, _("Create new menu"), (GCallback)on_menu_new_activate},
+	{"menu_open", GTK_STOCK_OPEN, NULL, NULL, _("Open an existing menu"),
 		(GCallback)on_menu_open_activate},
-	{"menu_save", GTK_STOCK_SAVE, _("Save"), NULL, _("Save current Menu"), (GCallback)on_menu_save_activate},
-	{"menu_save_as", GTK_STOCK_SAVE_AS, _("Save as"), NULL, _("Open existing Menu"),
+	{"menu_save", GTK_STOCK_SAVE, NULL, NULL, _("Save current menu"), (GCallback)on_menu_save_activate},
+	{"menu_save_as", GTK_STOCK_SAVE_AS, NULL, NULL, _("Open existing menu"),
 		(GCallback)on_menu_save_as_activate},
-	{"menu_save_all", "document-save-all", _("Save all"), NULL, _("Save all unsaved Menus"),
+	{"menu_save_all", "document-save-all", _("Save all"), NULL, _("Save all unsaved menus"),
 		(GCallback)on_menu_save_all_activate},
-	{"menu_revert", GTK_STOCK_REVERT_TO_SAVED, _("Revert"), NULL, _("Revert current Menu to last saved version"),
+	{"menu_revert", GTK_STOCK_REVERT_TO_SAVED, NULL, NULL, _("Revert current menu to last saved version"),
 		(GCallback)on_menu_revert_activate},
-	{"menu_delete", GTK_STOCK_DELETE, _("Delete"), NULL, _("Delete Menu file"),
+	{"menu_delete", GTK_STOCK_DELETE, NULL, NULL, _("Delete menu file"),
 		(GCallback)on_menu_delete_activate},
-	{"menu_properties", GTK_STOCK_PROPERTIES, _("Properties"), NULL, _("Edit Menu properties"),
+	{"menu_properties", GTK_STOCK_PROPERTIES, NULL, NULL, _("Edit menu properties"),
 		(GCallback)on_menu_properties_activate},
-	{"menu_close", GTK_STOCK_CLOSE, _("Close"), NULL, _("Remove Menu from list"),
+	{"menu_close", GTK_STOCK_CLOSE, NULL, NULL, _("Remove menu from list"),
 		(GCallback)on_menu_close_activate},
-	/* Program */
-	{"program_new", GTK_STOCK_NEW, _("New"), NULL, _("Create new Program"),
+	/* program */
+	{"program_new", GTK_STOCK_NEW, NULL, NULL, _("Create new program"),
 		(GCallback)on_program_new_activate},
-	{"program_delete", GTK_STOCK_DELETE, _("Delete"), NULL, _("Delete current Program"),
+	{"program_delete", GTK_STOCK_DELETE, NULL, NULL, _("Delete current program"),
 		(GCallback)on_program_delete_activate},
-	{"program_properties", GTK_STOCK_PROPERTIES, _("Properties"), NULL, _("Edit Program properties"),
+	{"program_properties", GTK_STOCK_PROPERTIES, NULL, NULL, _("Edit program properties"),
 		(GCallback)on_program_properties_activate},
-	{"program_top", GTK_STOCK_GOTO_TOP, _("Move to top"), NULL, _("Move Program to the top of the list"),
+	{"program_top", GTK_STOCK_GOTO_TOP, NULL, NULL, _("Move program to the top of the list"),
 		(GCallback)on_program_top_activate},
-	{"program_bottom", GTK_STOCK_GOTO_BOTTOM, _("Move to bottom"), NULL,
-		_("Move Program to the bottom of the list"), (GCallback)on_program_bottom_activate},
-	/* Parameter */
-	{"parameter_new", GTK_STOCK_NEW, _("New"), NULL, _("Create new Parameter"), (GCallback)on_parameter_new_activate},
-	{"parameter_delete", GTK_STOCK_DELETE, _("Delete"), NULL, _("Delete current Parameter"),
+	{"program_bottom", GTK_STOCK_GOTO_BOTTOM, NULL, NULL,
+		_("Move program to the bottom of the list"), (GCallback)on_program_bottom_activate},
+	/* parameter */
+	{"parameter_new", GTK_STOCK_NEW, NULL, NULL, _("Create new parameter"), (GCallback)on_parameter_new_activate},
+	{"parameter_delete", GTK_STOCK_DELETE, NULL, NULL, _("Delete current parameter"),
 		(GCallback)on_parameter_delete_activate},
-	{"parameter_properties", GTK_STOCK_PROPERTIES, _("Properties"), NULL, _("Edit Parameter properties"),
+	{"parameter_properties", GTK_STOCK_PROPERTIES, NULL, NULL, _("Edit parameter properties"),
 		(GCallback)on_parameter_properties_activate},
-	{"parameter_top", GTK_STOCK_GOTO_TOP, _("Move to top"), NULL, _("Move Parameter to the top of the list"),
+	{"parameter_top", GTK_STOCK_GOTO_TOP, NULL, NULL, _("Move parameter to the top of the list"),
 		(GCallback)on_parameter_top_activate},
-	{"parameter_bottom", GTK_STOCK_GOTO_BOTTOM, _("Move to bottom"), NULL,
-		_("Move Parameter to the bottom of the list"), (GCallback)on_parameter_bottom_activate},
-	{"parameter_duplicate", GTK_STOCK_COPY, _("Duplicate"), NULL, _("Duplicate Parameter"),
+	{"parameter_bottom", GTK_STOCK_GOTO_BOTTOM, NULL, NULL,
+		_("Move parameter to the bottom of the list"), (GCallback)on_parameter_bottom_activate},
+	{"parameter_duplicate", GTK_STOCK_COPY, _("Duplicate"), NULL, _("Duplicate parameter"),
 		(GCallback)on_parameter_duplicate_activate},
-	{"parameter_change_type", GTK_STOCK_CONVERT, _("Change type"), NULL, _("Change Parameter type"),
+	{"parameter_change_type", GTK_STOCK_CONVERT, _("Change type"), NULL, _("Change parameter type"),
 		(GCallback)on_parameter_change_type_activate},
 };
 
@@ -200,6 +200,12 @@ debr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "menu_new"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(debr.action_group, "menu_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(debr.action_group, "menu_close"))), -1);
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "menu_open"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "menu_save"))), -1);
@@ -209,13 +215,8 @@ debr_setup_ui(void)
 		gtk_action_group_get_action(debr.action_group, "menu_save_all"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "menu_revert"))), -1);
-
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "menu_delete"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "menu_properties"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "menu_close"))), -1);
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);

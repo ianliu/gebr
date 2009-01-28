@@ -144,8 +144,8 @@ __gtk_file_entry_browse_button_clicked(GtkButton * button, GtkFileEntry * file_e
 		file_entry->choose_directory == FALSE ? _("Choose file") : _("Choose directory"),
 		NULL,
 		file_entry->choose_directory == FALSE ? GTK_FILE_CHOOSER_ACTION_SAVE : GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		NULL);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog),
 		file_entry->do_overwrite_confirmation);

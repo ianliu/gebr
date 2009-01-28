@@ -85,5 +85,7 @@ void
 menu_load_selected(void);
 void
 menu_select_iter(GtkTreeIter * iter);
+void
+menu_details_update(void);
 
 #endif //__MENU_H

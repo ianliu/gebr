@@ -33,40 +33,13 @@
 extern gchar * no_flow_selected_error;
 
 /*
- * Section: Private
- * Private functions.
+ * Declarations
  */
 
-/*
- * Function: flow_io_actions
- * Actions for Flow IO files edition dialog
- */
 static void
-flow_io_actions(GtkDialog * dialog, gint arg1, struct ui_flow_io * ui_flow_io)
-{
-	switch (arg1) {
-	case GTK_RESPONSE_OK:
-		geoxml_flow_io_set_input(gebr.flow,
-			gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->input)));
-		geoxml_flow_io_set_output(gebr.flow,
-			gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->output)));
-		geoxml_flow_io_set_error(gebr.flow,
-			gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->error)));
-
-		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
-			FSEQ_TITLE_COLUMN, gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->input)), -1);
-		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
-			FSEQ_TITLE_COLUMN, gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->output)), -1);
-
-		flow_save();
-		break;
-	default:
-		break;
-	}
-
-	gtk_widget_destroy(GTK_WIDGET(ui_flow_io->dialog));
-	g_free(ui_flow_io);
-}
+flow_io_on_show(GtkDialog * dialog, struct ui_flow_io * ui);
+static void
+flow_io_actions(GtkDialog * dialog, gint arg1, struct ui_flow_io * ui_flow_io);
 
 /*
  * Section: Public
@@ -82,7 +55,7 @@ flow_io_actions(GtkDialog * dialog, gint arg1, struct ui_flow_io * ui_flow_io)
  * dialog closes.
  */
 struct ui_flow_io *
-flow_io_setup_ui(void)
+flow_io_setup_ui(gboolean focus_output)
 {
 	struct ui_flow_io *	ui_flow_io;
 
@@ -97,18 +70,21 @@ flow_io_setup_ui(void)
 
 	/* alloc */
 	ui_flow_io = g_malloc(sizeof(struct ui_flow_io));
+	ui_flow_io->focus_output = focus_output;
 
 	dialog = gtk_dialog_new_with_buttons(_("Flow input/output"),
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		NULL);
 	ui_flow_io->dialog = dialog;
 	gtk_widget_set_size_request(dialog, 390, 160);
 
 	g_signal_connect(dialog, "response",
 		G_CALLBACK(flow_io_actions), ui_flow_io);
+	g_signal_connect(GTK_OBJECT(dialog), "show",
+		GTK_SIGNAL_FUNC(flow_io_on_show), ui_flow_io);
 	g_signal_connect(GTK_OBJECT(dialog), "delete_event",
 		GTK_SIGNAL_FUNC(gtk_widget_destroy), NULL);
 
@@ -230,4 +206,51 @@ flow_add_program_sequence_to_view(GeoXmlSequence * program)
 
 		gtk_tree_path_free(path);
 	}
+}
+
+/*
+ * Section: Private
+ * Private functions.
+ */
+
+/*
+ * Function: flow_io_actions
+ * Actions for Flow IO files edition dialog
+ */
+static void
+flow_io_on_show(GtkDialog * dialog, struct ui_flow_io * ui)
+{
+	if (ui->focus_output)
+		gtk_widget_grab_focus(ui->output);
+}
+
+/*
+ * Function: flow_io_actions
+ * Actions for Flow IO files edition dialog
+ */
+static void
+flow_io_actions(GtkDialog * dialog, gint arg1, struct ui_flow_io * ui_flow_io)
+{
+	switch (arg1) {
+	case GTK_RESPONSE_OK:
+		geoxml_flow_io_set_input(gebr.flow,
+			gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->input)));
+		geoxml_flow_io_set_output(gebr.flow,
+			gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->output)));
+		geoxml_flow_io_set_error(gebr.flow,
+			gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->error)));
+
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
+			FSEQ_TITLE_COLUMN, gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->input)), -1);
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
+			FSEQ_TITLE_COLUMN, gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->output)), -1);
+
+		flow_save();
+		break;
+	default:
+		break;
+	}
+
+	gtk_widget_destroy(GTK_WIDGET(ui_flow_io->dialog));
+	g_free(ui_flow_io);
 }

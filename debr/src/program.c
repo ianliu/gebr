@@ -195,6 +195,8 @@ program_new(void)
 		-1);
 
 	program_select_iter(iter);
+	on_program_properties_activate();
+	menu_details_update();
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -225,6 +227,7 @@ program_remove(void)
 	gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_program.tree_view));
 	gtk_list_store_remove(debr.ui_program.list_store, &iter);
 
+	menu_details_update();
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -618,11 +621,11 @@ program_popup_menu(GtkWidget * tree_view)
 
 	menu = gtk_menu_new();
 
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
-		gtk_action_group_get_action(debr.action_group, "program_new")));
-
-	if (program_get_selected(&iter) == FALSE)
+	if (program_get_selected(&iter) == FALSE) {
+		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+			gtk_action_group_get_action(debr.action_group, "program_new")));
 		goto out;
+	}
 
 	if (gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE)
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
@@ -630,8 +633,16 @@ program_popup_menu(GtkWidget * tree_view)
 	if (gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "program_bottom")));
+	if (gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE ||
+	gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "program_new")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "program_delete")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "program_properties")));
 
 out:	gtk_widget_show_all(menu);
 

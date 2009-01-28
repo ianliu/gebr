@@ -74,8 +74,8 @@ preferences_setup_ui(gboolean first_run)
 	ui_preferences->dialog = gtk_dialog_new_with_buttons(_("Preferences"),
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		NULL);
 	gtk_widget_set_size_request(ui_preferences->dialog, 400, 280);
 	g_signal_connect(ui_preferences->dialog, "delete-event",

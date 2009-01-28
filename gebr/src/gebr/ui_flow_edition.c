@@ -239,10 +239,12 @@ flow_edition_component_activated(void)
 		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_comp_selected_error);
 		return;
 	}
-
-	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
-		on_flow_io_activate();
+	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter)) {
+		flow_io_setup_ui(FALSE);
+		return;
+	}
+	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
+		flow_io_setup_ui(TRUE);
 		return;
 	}
 
@@ -542,21 +544,18 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 		g_signal_connect(menu_item, "activate",
 			(GCallback)flow_program_move_bottom, NULL);
 	}
-
 	/* separator */
 	if (gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter) == TRUE ||
 	gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter) == TRUE)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-	/* properties */
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_edition_properties")));
+
 	/* status */
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(GTK_ACTION(
-		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured)"))));
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured"))));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(GTK_ACTION(
-		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_disabled)"))));
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_disabled"))));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(GTK_ACTION(
-		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_unconfigured)"))));
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_unconfigured"))));
 
 	/* separator */
 	menu_item = gtk_separator_menu_item_new();
@@ -565,6 +564,8 @@ flow_edition_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edi
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_duplicate")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_delete")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_edition_properties")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_help")));
 
@@ -583,16 +584,18 @@ flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flo
 	GtkWidget *		menu;
 	GtkWidget *		menu_item;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->menu_view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
-		return NULL;
-
-	if (!gtk_tree_store_iter_depth(gebr.ui_flow_edition->menu_store, &iter)) {
-		return NULL;
-	}
-
 	menu = gtk_menu_new();
 
+	gtk_container_add(GTK_CONTAINER(menu),
+		gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_edition_refresh")));
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->menu_view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+		goto out;
+	if (!gtk_tree_store_iter_depth(gebr.ui_flow_edition->menu_store, &iter))
+		goto out;
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 	/* add */
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ADD, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
@@ -604,7 +607,7 @@ flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flo
 	g_signal_connect(GTK_OBJECT(menu_item), "activate",
 		GTK_SIGNAL_FUNC(flow_edition_menu_show_help), NULL);
 
-	gtk_widget_show_all(menu);
+out:	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
 }

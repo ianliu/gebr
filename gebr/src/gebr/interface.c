@@ -57,19 +57,20 @@ static const GtkActionEntry actions_entries [] = {
 	{"flow_delete", GTK_STOCK_DELETE, NULL, NULL, _("Delete selected flow"), (GCallback)on_flow_delete_activate},
 	{"flow_properties", GTK_STOCK_PROPERTIES, NULL, NULL, _("Edit flow properties"),
 		(GCallback)on_flow_properties_activate},
-	{"flow_io", "system-switch-user", _("Input and Output"), NULL, _("Edit input/output flow files"),
-		(GCallback)on_flow_io_activate},
-	{"flow_execute", GTK_STOCK_EXECUTE, NULL, "<Control>r", _("Run current flow"),
-		(GCallback)on_flow_execute_activate},
+	{"flow_change_revision", "document-open-recent", _("Saved status"), NULL, NULL, NULL},
 	{"flow_import", "document-import", _("Import"), NULL, _("Import a flow"), (GCallback)on_flow_import_activate},
 	{"flow_export", "document-export", _("Export"), NULL, _("Export the flow"),
 		(GCallback)on_flow_export_activate},
 	{"flow_export_as_menu", GTK_STOCK_CONVERT, _("Export as menu"), NULL, _("Export the flow as a menu"),
 		(GCallback)on_flow_export_as_menu_activate},
+	{"flow_io", "system-switch-user", _("Input and Output"), NULL, _("Edit input/output flow files"),
+		(GCallback)on_flow_io_activate},
+	{"flow_execute", GTK_STOCK_EXECUTE, NULL, "<Control>r", _("Run current flow"),
+		(GCallback)on_flow_execute_activate},
 	/* Flow Edition */
 	{"flow_edition_help", GTK_STOCK_HELP, NULL, NULL, _("Show component's help"),
 		(GCallback)on_flow_component_help_activate},
-	{"flow_edition_duplicate", GTK_STOCK_COPY, NULL, NULL, _("Duplicate component"),
+	{"flow_edition_duplicate", GTK_STOCK_COPY, _("Duplicate"), NULL, _("Duplicate component"),
 		(GCallback)on_flow_component_duplicate_activate},
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL, NULL, _("Delete component"),
 		(GCallback)on_flow_component_delete_activate},
@@ -220,16 +221,6 @@ gebr_setup_ui(void)
 		gtk_action_group_get_action(gebr.action_group, "flow_delete"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_properties"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(gebr.action_group, "flow_io"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(gebr.action_group, "flow_import"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(gebr.action_group, "flow_export"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(gebr.action_group, "flow_export_as_menu"))), -1);
 
 	revisions_menu = menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock("document-open-recent");
@@ -238,6 +229,20 @@ gebr_setup_ui(void)
 	set_tooltip(GTK_WIDGET(tool_item), _("Save flow state"));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
 	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_import"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_export"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_export_as_menu"))), -1);
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_io"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
 
 	gebr.ui_flow_browse = flow_browse_setup_ui(revisions_menu);
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -253,15 +258,11 @@ gebr_setup_ui(void)
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_duplicate"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_delete"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_properties"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(gebr.action_group, "flow_edition_refresh"))), -1);
 
 	menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_APPLY);
@@ -273,6 +274,10 @@ gebr_setup_ui(void)
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_disabled")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_unconfigured")));
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
 
 	gebr.ui_flow_edition = flow_edition_setup_ui();
 	vbox = gtk_vbox_new(FALSE, 0);

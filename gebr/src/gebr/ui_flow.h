@@ -25,13 +25,15 @@
 struct ui_flow_io {
 	GtkWidget *		dialog;
 
+	gboolean		focus_output;
+
 	GtkWidget *		input;
 	GtkWidget *		output;
 	GtkWidget *		error;
 };
 
 struct ui_flow_io *
-flow_io_setup_ui(void);
+flow_io_setup_ui(gboolean focus_output);
 
 void
 flow_io_customized_paths_from_line(GtkFileChooser * chooser);

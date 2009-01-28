@@ -180,7 +180,6 @@ flow_delete(void)
 	/* Finally, from the GUI */
 	gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_browse->store), &flow_iter);
-	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
 
 out:	g_free(title);
 	g_free(filename);
@@ -567,11 +566,10 @@ flow_revision_save(void)
 	dialog = gtk_dialog_new_with_buttons(_("Save flow state"),
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		NULL);
 	vbox = GTK_BOX(GTK_DIALOG(dialog)->vbox);
-// 	gtk_box_set_homogeneous(vbox, FALSE);
 
 	label = gtk_label_new(_("Make a comment for this state:"));
 	gtk_box_pack_start(vbox, label, FALSE, TRUE, 0);

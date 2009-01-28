@@ -81,8 +81,8 @@ on_menu_open_activate(void)
 	/* create file chooser */
 	chooser_dialog = gtk_file_chooser_dialog_new(_("Open flow"), NULL,
 		GTK_FILE_CHOOSER_ACTION_OPEN,
-		GTK_STOCK_OPEN, GTK_RESPONSE_YES,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_OPEN, GTK_RESPONSE_YES,
 		NULL);
 	filefilter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filefilter, _("System flow files (*.mnu)"));
@@ -149,8 +149,8 @@ on_menu_save_as_activate(void)
 	/* run file chooser */
 	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose file"), GTK_WINDOW(debr.window),
 		GTK_FILE_CHOOSER_ACTION_SAVE,
-		GTK_STOCK_SAVE, GTK_RESPONSE_YES,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_SAVE, GTK_RESPONSE_YES,
 		NULL);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
 	filefilter = gtk_file_filter_new();

@@ -507,12 +507,11 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 
 	menu = gtk_menu_new();
 
-	/* New */
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_new")));
-
-	if (!flow_browse_get_selected(&iter))
+	if (!flow_browse_get_selected(&iter)) {
+		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+			gtk_action_group_get_action(gebr.action_group, "flow_new")));
 		goto out;
+	}
 
 	/* Move top */
 	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE) {
@@ -528,16 +527,28 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 		g_signal_connect(menu_item, "activate",
 			(GCallback)line_move_flow_bottom, NULL);
 	}
-
 	/* separator */
 	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE ||
 	gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_io")));
-	gtk_container_add(GTK_CONTAINER(menu),
-		gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_execute")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_new")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_delete")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_properties")));
+
+	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(
+		gebr.action_group, "flow_change_revision"));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), ui_flow_browse->revisions_menu);
+	gtk_container_add(GTK_CONTAINER(menu), menu_item);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_io")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_execute")));
 
 out:	gtk_widget_show_all(menu);
 

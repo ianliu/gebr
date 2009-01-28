@@ -50,8 +50,8 @@ server_ssh_login(const gchar * title, const gchar * message)
 	dialog = gtk_dialog_new_with_buttons(title,
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		NULL);
 
 	label = gtk_label_new(message);

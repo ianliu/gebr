@@ -90,8 +90,8 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		NULL);
 	ui_document_properties->dialog = GTK_WIDGET(dialog);
 	gtk_widget_set_size_request(dialog, 390, 260);

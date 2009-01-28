@@ -18,6 +18,7 @@
 +	Acrescentar uma quantidade especificada de parâmetros de um
         mesmo tipo de uma única vez
 +	Multiline com tags gays gtk_text_buffer_insert_with_tags ()
++	Seleção multipla
 
 =====================
 

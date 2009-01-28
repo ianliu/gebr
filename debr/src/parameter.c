@@ -1007,9 +1007,6 @@ parameter_popup_menu(GtkWidget * tree_view)
 
 	menu = gtk_menu_new();
 
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
-		gtk_action_group_get_action(debr.action_group, "parameter_new")));
-
 	if (parameter_get_selected(&iter) == FALSE)
 		goto out;
 
@@ -1019,6 +1016,12 @@ parameter_popup_menu(GtkWidget * tree_view)
 	if (gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE)
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 			gtk_action_group_get_action(debr.action_group, "parameter_bottom")));
+	if (gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE ||
+	gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE)
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "parameter_new")));
 
 	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_change_type"));
 	gtk_action_block_activate_from(gtk_action_group_get_action(debr.action_group,
@@ -1030,6 +1033,8 @@ parameter_popup_menu(GtkWidget * tree_view)
 		gtk_action_group_get_action(debr.action_group, "parameter_duplicate")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "parameter_delete")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "parameter_properties")));
 
 out:	gtk_widget_show_all(menu);
 

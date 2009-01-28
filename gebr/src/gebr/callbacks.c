@@ -191,7 +191,7 @@ on_flow_properties_activate(void)
 void
 on_flow_io_activate(void)
 {
-	flow_io_setup_ui();
+	flow_io_setup_ui(FALSE);
 }
 
 /*
