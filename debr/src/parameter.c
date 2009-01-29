@@ -111,6 +111,8 @@ parameter_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter *
 static void
 parameter_default_widget_changed(struct parameter_widget * widget);
 static void
+parameter_required_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog * ui);
+static void
 parameter_is_list_changed(GtkToggleButton * toggle_button, struct ui_parameter_dialog * ui);
 static void
 parameter_separator_changed(GtkEntry * entry, struct ui_parameter_dialog * ui);
@@ -577,7 +579,7 @@ parameter_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0), ++row;
 	g_signal_connect(required_check_button, "toggled",
-		(GCallback)menu_saved_status_set_unsaved, NULL);
+		(GCallback)parameter_required_toggled, NULL);
 
 	/*
 	 * Is List
@@ -765,7 +767,6 @@ parameter_dialog_setup_ui(void)
 			(GtkAttachOptions)(0), 0, 0), ++row;
 		g_signal_connect(GTK_OBJECT(enum_option_edit), "changed",
 			GTK_SIGNAL_FUNC(parameter_enum_options_changed), ui);
-		g_object_set(G_OBJECT(enum_option_edit), "user-data", parameter_widget, NULL);
 
 		break;
 	} default: break;
@@ -1148,8 +1149,23 @@ parameter_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter *
 }
 
 static void
+parameter_reconfigure_default_widget(struct ui_parameter_dialog * ui)
+{
+	parameter_widget_reconfigure(ui->parameter_widget);
+	gtk_box_pack_start(GTK_BOX(ui->default_widget_hbox), ui->parameter_widget->widget, TRUE, TRUE, 0);
+	gtk_widget_show(ui->parameter_widget->widget);
+}
+
+static void
 parameter_default_widget_changed(struct parameter_widget * widget)
 {
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+}
+
+static void
+parameter_required_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog * ui)
+{
+	parameter_reconfigure_default_widget(ui);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -1158,13 +1174,9 @@ parameter_is_list_changed(GtkToggleButton * toggle_button, struct ui_parameter_d
 {
 	geoxml_program_parameter_set_be_list(GEOXML_PROGRAM_PARAMETER(debr.parameter),
 		gtk_toggle_button_get_active(toggle_button));
-
 	gtk_widget_set_sensitive(ui->separator_entry, gtk_toggle_button_get_active(toggle_button));
 
-	parameter_widget_reconfigure(ui->parameter_widget);
-	gtk_box_pack_start(GTK_BOX(ui->default_widget_hbox), ui->parameter_widget->widget, TRUE, TRUE, 0);
-	gtk_widget_show(ui->parameter_widget->widget);
-
+	parameter_reconfigure_default_widget(ui);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -1292,13 +1304,6 @@ parameter_range_digits_changed(GtkEntry * entry, struct parameter_widget * widge
 static void
 parameter_enum_options_changed(EnumOptionEdit * enum_option_edit, struct ui_parameter_dialog * ui)
 {
-	struct parameter_widget *	parameter_widget;
-
-	g_object_get(G_OBJECT(enum_option_edit), "user-data", &parameter_widget, NULL);
-
-	parameter_widget_reconfigure(ui->parameter_widget);
-	gtk_widget_show(parameter_widget->widget);
-	gtk_box_pack_start(GTK_BOX(ui->default_widget_hbox), parameter_widget->widget, TRUE, TRUE, 0);
-
+	parameter_reconfigure_default_widget(ui);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }

@@ -111,10 +111,9 @@ __value_sequence_edit_remove(ValueSequenceEdit * value_sequence_edit, GtkTreeIte
 		-1);
 
 	if (value_sequence_edit->minimum_one &&
-	gtk_tree_model_iter_n_children(GTK_TREE_MODEL(value_sequence_edit->parent.list_store), NULL) == 1) {
+	gtk_tree_model_iter_n_children(GTK_TREE_MODEL(value_sequence_edit->parent.list_store), NULL) == 1)
 		geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(sequence), "");
-		puts("minimum");
-	} else
+	else
 		geoxml_sequence_remove(sequence);
 
 	gtk_list_store_remove(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store, iter);
