@@ -579,7 +579,7 @@ parameter_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0), ++row;
 	g_signal_connect(required_check_button, "toggled",
-		(GCallback)parameter_required_toggled, NULL);
+		(GCallback)parameter_required_toggled, ui);
 
 	/*
 	 * Is List
@@ -1165,6 +1165,8 @@ parameter_default_widget_changed(struct parameter_widget * widget)
 static void
 parameter_required_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog * ui)
 {
+	geoxml_program_parameter_set_required(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+		gtk_toggle_button_get_active(toggle_button));
 	parameter_reconfigure_default_widget(ui);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
