@@ -1,3 +1,34 @@
+2009-01-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/job.c: - various bugfixes to handle reference parameters
+	  - geoxml_parameter_get_type resolve references
+	  - a lot of fixes to geoxmlsequence functions
+	  - rewritten dran n' drop API
+	  - full drag n' drop support in debr's parameter page
+
+2009-01-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/job.c: - debr: if we don't have any parameter in the group we
+	  cannot instaciate
+	  - gebr: update flow title on flow_browse_load (fix bug of loading
+	  a revision with diferent title)
+	* src/job.c: fix parse of "reference" parameter type in gebrd
+
+2009-01-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebrd.c, src/server.c: general refactoring in libgebr_comm to
+	  really support unix sockets
+
+2009-01-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* packages/rpm/gebrd.fedora.spec.in,
+	  packages/rpm/gebrd.mandriva.spec.in,
+	  packages/rpm/gebrd.opensuse.spec.in: fixes to rpm creation
+
+2009-01-15  Ricardo Biloti <biloti@gmail.com>
+
+	* ChangeLog: preparation for release 0.9.7
+
 2009-01-12  Ricardo Biloti <biloti@gmail.com>
 
 	* INSTALL, packages/Makefile.am: - Copyright messages updated

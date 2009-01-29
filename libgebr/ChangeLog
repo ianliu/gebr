@@ -1,5 +1,155 @@
+2009-01-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gui/gui/gtksequenceedit.c, src/gui/gui/gtksequenceedit.h,
+	  src/gui/gui/parameter.c, src/gui/gui/parameter.h: - do not allow
+	  list rename for enums
+	  - code cleanups
+	* src/gui/gui/parameter.c, src/gui/gui/valuesequenceedit.c: -
+	  reconfigure parameter widget if required changed (needed for enum
+	  parameter)
+	  - really fix the problem with list parameter (now for all types)
+	* src/gui/gui/parameter.c: fix last commit: really fixed list
+	  parameter editing
+	* src/gui/gui/gtksequenceedit.c, src/gui/gui/gtksequenceedit.h,
+	  src/gui/gui/parameter.c, src/gui/gui/valuesequenceedit.c,
+	  src/gui/gui/valuesequenceedit.h: - valuesequenceedit refactored
+	  - fix parameter_widget's on_edit_list_toggled
+
+2009-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gui/gui/gtksequenceedit.c, src/gui/gui/gtksequenceedit.h,
+	  src/gui/gui/parameter.c, src/gui/gui/valuesequenceedit.c: - fix
+	  drag n' drop on gtksequenceedit and devivates
+	  - fix save on exit dialog on debr
+	* src/gui/gui/gtkfileentry.c: ¡commit 1000! several UI tweaks
+	* src/gui/gui/parameter.c: follow required condition for enums when
+	  reading its value
+
+2009-01-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/comm/comm/glistensocket.c: fix regression on
+	  g_listen_socket_get_next_pending_connection
+	* src/geoxml/geoxml/parameter.c,
+	  src/geoxml/geoxml/parameter_group.c,
+	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/sequence.h: - fix
+	  geoxmlparametergroup
+	  - fix move into a empty group (debr)
+	  - fix help edit in debr: a empty file can be a file with a return
+	  char. (length 1)
+	* src/comm/comm/glistensocket.c, src/geoxml/geoxml/parameter.c,
+	  src/geoxml/geoxml/parameter.h,
+	  src/geoxml/geoxml/parameter_group.c,
+	  src/geoxml/geoxml/parameter_p.h,
+	  src/geoxml/geoxml/program_parameter.c,
+	  src/geoxml/geoxml/program_parameter.h,
+	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/xml.h,
+	  src/gui/gui/parameter.c, src/gui/gui/utils.c,
+	  src/gui/gui/utils.h: - various bugfixes to handle reference
+	  parameters
+	  - geoxml_parameter_get_type resolve references
+	  - a lot of fixes to geoxmlsequence functions
+	  - rewritten dran n' drop API
+	  - full drag n' drop support in debr's parameter page
+
+2009-01-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/geoxml/geoxml/parameter.c,
+	  src/geoxml/geoxml/program_parameter.c: fix
+	  geoxml_parameter_set_type, fixing wrong range parameter creation
+
+2009-01-26  Ricardo Biloti <biloti@gmail.com>
+
+	* src/geoxml/upgrade/upgrade.c: fix to compile even with GLIB 2.12
+
+2009-01-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/geoxml/geoxml/parameter.c: keep parameter label synced with
+	  references in the group
+	* src/geoxml/geoxml/parameter.c, src/geoxml/geoxml/parameter.h,
+	  src/geoxml/geoxml/parameter_group.h,
+	  src/geoxml/geoxml/parameters.c, src/geoxml/geoxml/parameters.h,
+	  src/geoxml/geoxml/parameters_p.h, src/geoxml/geoxml/sequence.c,
+	  src/geoxml/geoxml/xml.c, src/geoxml/geoxml/xml.h,
+	  src/gui/gui/utils.c: - initial buggy code to support drag n' drop
+	  from/to/inside a group (debr)
+
+2009-01-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/geoxml/geoxml/sequence.c, src/gui/gui/gtksequenceedit.c,
+	  src/gui/gui/valuesequenceedit.c: - fix
+	  __geoxml_sequence_move_before with position NULL
+	  - fixes to top/bottom at gtksequenceedit and derivatives
+
+2009-01-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gui/gui/parameter.c: don't show empty option in enum when it
+	  is required
+	* src/geoxml/geoxml/document.c, src/geoxml/geoxml/xml.h: fix
+	  __geoxml_foreach_element_with_tagname_r, fixing conversion from
+	  flow 0.2.1 to 0.2.2
+
+2009-01-22  Ricardo Biloti <biloti@gmail.com>
+
+	* src/geoxml/upgrade/upgrade.c: fix segfault whenever no files are
+	  provided
+
+2009-01-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/geoxml/geoxml/flow.c, src/geoxml/geoxml/flow.h,
+	  src/gui/icons/16x16/actions/document-open-recent.png,
+	  src/gui/icons/16x16/actions/svn-add.png,
+	  src/gui/icons/22x22/actions/document-open-recent.png,
+	  src/gui/icons/22x22/actions/svn-add.png,
+	  src/gui/icons/48x48/actions/document-open-recent.png,
+	  src/gui/icons/48x48/actions/svn-add.png,
+	  src/gui/icons/Makefile.am, src/gui/icons/oxygen-copy.sh: geoxml
+	  flow revisions supported in gebr
+	* src/gui/gui/gtksequenceedit.c, src/gui/gui/gtksequenceedit.h,
+	  src/gui/gui/valuesequenceedit.c: support for moving with drag n'
+	  drop on gktsequenceedit
+
+2009-01-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/comm/comm/server.c: return value and comment fix for
+	  comm_server_forward_x11
+	* src/comm/comm/server.c: more beautiful and robust
+	  comm_server_forward_x11
+	* src/comm/comm/server.c, src/comm/comm/server.h: first working
+	  version of x11 full redirect!
+	* src/comm/comm/gchannelsocket.c, src/comm/comm/gsocket.c,
+	  src/comm/comm/gsocket.h, src/comm/comm/gstreamsocket.c: - first
+	  working version o gchannelsocket
+	  - g_stream_socket_connect
+	* src/comm/comm/gchannelsocket.c, src/comm/comm/gchannelsocket.h,
+	  src/comm/comm/glistensocket.c, src/comm/comm/gsocket.c,
+	  src/comm/comm/gsocket.h, src/comm/comm/gsocketaddress.c: - fixed
+	  _g_socket_address_get_sockaddr
+	  - fixes to gchannelsocket
+	* src/comm/comm/Makefile.am, src/comm/comm/gchannelsocket.c,
+	  src/comm/comm/gchannelsocket.h, src/comm/comm/glistensocket.c,
+	  src/comm/comm/glistensocket.h, src/comm/comm/gsocket.c,
+	  src/comm/comm/gsocket.h, src/comm/comm/gsocketaddress.c,
+	  src/comm/comm/gsocketaddress.h,
+	  src/comm/comm/gsocketaddressprivate.h,
+	  src/comm/comm/gsocketprivate.h, src/comm/comm/gstreamsocket.c,
+	  src/comm/comm/gstreamsocket.h,
+	  src/comm/comm/gstreamsocketprivate.h, src/comm/comm/server.c:
+	  general refactoring in libgebr_comm to really support unix
+	  sockets
+
+2009-01-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* Makefile.am, packages/Makefile.am,
+	  packages/rpm/libgebr.fedora.spec.in,
+	  packages/rpm/libgebr.mandriva.spec.in,
+	  packages/rpm/libgebr.opensuse.spec.in, src/comm/comm/Makefile.am,
+	  src/geoxml/geoxml/Makefile.am, src/gui/gui/Makefile.am,
+	  src/gui/icons/Makefile.am, src/gui/icons/gebr-theme/Makefile.am,
+	  src/misc/misc/Makefile.am: fixes to rpm creation
+
 2009-01-15  Ricardo Biloti <biloti@gmail.com>
 
+	* ChangeLog: preparation for release 0.9.7
 	* src/comm/comm/server.c: strip debug code
 
 2009-01-14  Braulio Barros de Oliveira <brauliobo@gmail.com>

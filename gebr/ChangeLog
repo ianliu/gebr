@@ -1,5 +1,73 @@
+2009-01-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/ui_paths.c: - valuesequenceedit refactored
+	  - fix parameter_widget's on_edit_list_toggled
+
+2009-01-28  Ricardo Biloti <biloti@gmail.com>
+
+	* src/gebr/flow.c, src/gebr/line.c, src/gebr/project.c: - more
+	  details to DeBR a la GeBR
+	  - space highlight at end of parameters
+
+2009-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/callbacks.c, src/gebr/flow.c, src/gebr/interface.c,
+	  src/gebr/server.c, src/gebr/ui_document.c, src/gebr/ui_flow.c,
+	  src/gebr/ui_flow.h, src/gebr/ui_flow_browse.c,
+	  src/gebr/ui_flow_edition.c, src/gebr/ui_job_control.c,
+	  src/gebr/ui_parameters.c, src/gebr/ui_preferences.c: ¡commit
+	  1000! several UI tweaks
+
+2009-01-28  Ricardo Biloti <biloti@gmail.com>
+
+	* src/gebr/flow.c: gchar-instead-of-GString-expected bug fixed
+
+2009-01-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/ui_flow_edition.c: - various bugfixes to handle
+	  reference parameters
+	  - geoxml_parameter_get_type resolve references
+	  - a lot of fixes to geoxmlsequence functions
+	  - rewritten dran n' drop API
+	  - full drag n' drop support in debr's parameter page
+
+2009-01-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/project.c: fix use of gtk_tree_view_select_sibling
+
+2009-01-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/ui_flow_browse.c: - debr: if we don't have any parameter
+	  in the group we cannot instaciate
+	  - gebr: update flow title on flow_browse_load (fix bug of loading
+	  a revision with diferent title)
+
+2009-01-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr/callbacks.c, src/gebr/callbacks.h, src/gebr/flow.c,
+	  src/gebr/flow.h, src/gebr/interface.c, src/gebr/ui_flow_browse.c,
+	  src/gebr/ui_flow_browse.h, src/gebr/ui_flow_edition.c,
+	  src/gebr/ui_flow_edition.h: geoxml flow revisions supported in
+	  gebr
+
+2009-01-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/gebr-client/main.c: - first working version o gchannelsocket
+	  - g_stream_socket_connect
+	* src/gebr-client/main.c: - fixed _g_socket_address_get_sockaddr
+	  - fixes to gchannelsocket
+	* src/gebr-client/main.c: general refactoring in libgebr_comm to
+	  really support unix sockets
+
+2009-01-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* packages/rpm/gebr.fedora.spec.in,
+	  packages/rpm/gebr.mandriva.spec.in,
+	  packages/rpm/gebr.opensuse.spec.in: fixes to rpm creation
+
 2009-01-15  Ricardo Biloti <biloti@gmail.com>
 
+	* ChangeLog: preparation for release 0.9.7
 	* src/gebr/gebr.c: strip debug code
 
 2009-01-14  Braulio Barros de Oliveira <brauliobo@gmail.com>

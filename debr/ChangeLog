@@ -1,3 +1,94 @@
+2009-01-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/parameter.c: - do not allow list rename for enums
+	  - code cleanups
+	* src/parameter.c: fixed parameter_required_toggled
+	* src/parameter.c: - reconfigure parameter widget if required
+	  changed (needed for enum parameter)
+	  - really fix the problem with list parameter (now for all types)
+	* src/menu.c: - valuesequenceedit refactored
+	  - fix parameter_widget's on_edit_list_toggled
+
+2009-01-28  Ricardo Biloti <biloti@gmail.com>
+
+	* src/menu.c, src/menu.h, src/parameter.c, src/program.c,
+	  src/program.h: - more details to DeBR a la GeBR
+	  - space highlight at end of parameters
+
+2009-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/callbacks.c, src/enumoptionedit.c, src/menu.c, src/program.c,
+	  src/program.h: - fix drag n' drop on gtksequenceedit and
+	  devivates
+	  - fix save on exit dialog on debr
+	* src/callbacks.c, src/interface.c, src/menu.c, src/menu.h,
+	  src/parameter.c, src/preferences.c, src/program.c: ¡commit 1000!
+	  several UI tweaks
+
+2009-01-28  Ricardo Biloti <biloti@gmail.com>
+
+	* src/menu.c, src/menu.h: more details to menu view
+
+2009-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/interface.c, src/parameter.c: added labels/tooltips to debr's
+	  actions
+
+2009-01-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/help.c, src/parameter.c: - fix geoxmlparametergroup
+	  - fix move into a empty group (debr)
+	  - fix help edit in debr: a empty file can be a file with a return
+	  char. (length 1)
+	* src/parameter.c: - various bugfixes to handle reference
+	  parameters
+	  - geoxml_parameter_get_type resolve references
+	  - a lot of fixes to geoxmlsequence functions
+	  - rewritten dran n' drop API
+	  - full drag n' drop support in debr's parameter page
+
+2009-01-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/parameter.c, src/program.c: fix use of
+	  gtk_tree_view_select_sibling
+	* src/parameter.c: - initial buggy code to support drag n' drop
+	  from/to/inside a group (debr)
+	* src/parameter.c: fix creation of the first parameter in a group
+	  (debr)
+
+2009-01-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/parameter.c: fixed parameter group creation and deletion
+	  (debr)
+	* src/enumoptionedit.c: - fix __geoxml_sequence_move_before with
+	  position NULL
+	  - fixes to top/bottom at gtksequenceedit and derivatives
+
+2009-01-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/parametergroup.c: - debr: if we don't have any parameter in
+	  the group we cannot instaciate
+	  - gebr: update flow title on flow_browse_load (fix bug of loading
+	  a revision with diferent title)
+
+2009-01-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* src/parameter.c: keyword preserved on parameter type change at
+	  debr
+	* src/Makefile.am, src/enumoptionedit.c,
+	  src/parameteringroupedit.c, src/parameteringroupedit.h: support
+	  for moving with drag n' drop on gktsequenceedit
+
+2009-01-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* packages/Makefile.am, packages/rpm/debr.fedora.spec.in,
+	  packages/rpm/debr.mandriva.spec.in,
+	  packages/rpm/debr.opensuse.spec.in: fixes to rpm creation
+
+2009-01-15  Ricardo Biloti <biloti@gmail.com>
+
+	* ChangeLog: preparation for release 0.9.7
+
 2009-01-14  Ricardo Biloti <biloti@gmail.com>
 
 	* src/interface.c: fix string enconde

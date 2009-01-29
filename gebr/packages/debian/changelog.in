@@ -4,6 +4,12 @@ gebr (@VERSION@) unstable; urgency=low
 
  -- Ricardo Biloti <biloti@gmail.com>  @TODAY@
 
+gebr (0.9.7) unstable; urgency=low
+
+  * Release 0.9.7 (1.0.0 beta 1)
+
+ -- Ricardo Biloti <biloti@gmail.com>  Thu, 15 Jan 2009  14:00:00 -0200
+
 gebr (0.9.3) unstable; urgency=low
 
   * Release 0.9.3 with many improvements
