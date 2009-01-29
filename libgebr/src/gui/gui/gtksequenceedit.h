@@ -43,8 +43,6 @@ struct _GtkSequenceEdit {
 
 	GtkListStore *	list_store;
 	GtkWidget *	tree_view;
-
-	gboolean	minimum_one;
 };
 struct _GtkSequenceEditClass {
 	GtkVBoxClass	parent;

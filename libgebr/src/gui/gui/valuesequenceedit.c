@@ -34,16 +34,15 @@ static void __value_sequence_edit_rename(ValueSequenceEdit * value_sequence_edit
  */
 
 enum {
-	VALUE_SEQUENCE = 1,
+	MINIMUM_ONE = 1,
 };
 
 static void
 value_sequence_edit_set_property(ValueSequenceEdit * value_sequence_edit, guint property_id, const GValue * value, GParamSpec * param_spec)
 {
 	switch (property_id) {
-	case VALUE_SEQUENCE:
-		value_sequence_edit->value_sequence = g_value_get_pointer(value);
-		gtk_list_store_clear(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store);
+	case MINIMUM_ONE:
+		value_sequence_edit->minimum_one = g_value_get_boolean(value);
 		break;
 	default:
 		/* We don't have any other property... */
@@ -56,8 +55,8 @@ static void
 value_sequence_edit_get_property(ValueSequenceEdit * value_sequence_edit, guint property_id, GValue * value, GParamSpec * param_spec)
 {
 	switch (property_id) {
-	case VALUE_SEQUENCE:
-		g_value_set_pointer(value, value_sequence_edit->value_sequence);
+	case MINIMUM_ONE:
+		g_value_set_boolean(value, value_sequence_edit->minimum_one);
 		break;
 	default:
 		/* We don't have any other property... */
@@ -85,10 +84,10 @@ value_sequence_edit_class_init(ValueSequenceEditClass * class)
 	gobject_class->set_property = (typeof(gobject_class->set_property))value_sequence_edit_set_property;
 	gobject_class->get_property = (typeof(gobject_class->get_property))value_sequence_edit_get_property;
 
-	param_spec = g_param_spec_pointer("value-sequence",
-		"Value sequence", "Value sequence data basis",
-		G_PARAM_READWRITE);
-	g_object_class_install_property(gobject_class, VALUE_SEQUENCE, param_spec);
+	param_spec = g_param_spec_boolean("minimum-one",
+		"Minimum one", "True if the list keep at least one item",
+		FALSE, G_PARAM_READWRITE);
+	g_object_class_install_property(gobject_class, MINIMUM_ONE, param_spec);
 }
 
 static void
@@ -111,7 +110,13 @@ __value_sequence_edit_remove(ValueSequenceEdit * value_sequence_edit, GtkTreeIte
 		1, &sequence,
 		-1);
 
-	geoxml_sequence_remove(sequence);
+	if (value_sequence_edit->minimum_one &&
+	gtk_tree_model_iter_n_children(GTK_TREE_MODEL(value_sequence_edit->parent.list_store), NULL) == 1) {
+		geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(sequence), "");
+		puts("minimum");
+	} else
+		geoxml_sequence_remove(sequence);
+
 	gtk_list_store_remove(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store, iter);
 
 	g_signal_emit_by_name(value_sequence_edit, "changed");
@@ -194,19 +199,12 @@ __value_sequence_edit_rename(ValueSequenceEdit * value_sequence_edit, GtkTreeIte
 GtkWidget *
 value_sequence_edit_new(GtkWidget * widget)
 {
-	return value_sequence_edit_new_with_sequence(widget, NULL);
-}
-
-GtkWidget *
-value_sequence_edit_new_with_sequence(GtkWidget * widget, GeoXmlValueSequence * value_sequence)
-{
-	GtkListStore *	list_store;
+ GtkListStore *	list_store;
 
 	list_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER, -1);
 
 	return g_object_new(TYPE_VALUE_SEQUENCE_EDIT,
 		"value-widget", widget,
-		"value-sequence", value_sequence,
 		"list-store", list_store,
 		NULL);
 }
@@ -217,20 +215,29 @@ value_sequence_edit_add(ValueSequenceEdit * value_sequence_edit, GeoXmlValueSequ
 	GtkTreeIter	iter;
 
 	iter = gtk_sequence_edit_add(GTK_SEQUENCE_EDIT(value_sequence_edit),
-		geoxml_value_sequence_get(value_sequence), TRUE);
+		geoxml_value_sequence_get(value_sequence), FALSE);		
 	gtk_list_store_set(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store, &iter,
 		1, value_sequence,
 		-1);
 }
 
 void
-value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit)
+value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit, GeoXmlValueSequence * value_sequence)
 {
 	GeoXmlSequence *	sequence;
 
 	gtk_list_store_clear(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store);
 
-	sequence = GEOXML_SEQUENCE(value_sequence_edit->value_sequence);
+	sequence = GEOXML_SEQUENCE(value_sequence);
+	if (value_sequence_edit->minimum_one) {
+		GeoXmlSequence *	next;
+
+		next = sequence;
+		geoxml_sequence_next(&next);
+		if (next == NULL && !strlen(geoxml_value_sequence_get(value_sequence)))
+			return;
+	}
+
 	for (; sequence != NULL; geoxml_sequence_next(&sequence))
 		value_sequence_edit_add(value_sequence_edit, GEOXML_VALUE_SEQUENCE(sequence));
 }

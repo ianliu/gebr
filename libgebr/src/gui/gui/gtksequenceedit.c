@@ -50,7 +50,6 @@ static GtkWidget * __gtk_sequence_edit_create_tree_view(GtkSequenceEdit * sequen
 enum {
 	VALUE_WIDGET = 1,
 	LIST_STORE,
-	MINIMUM_ONE
 };
 
 enum {
@@ -92,9 +91,6 @@ gtk_sequence_edit_set_property(GtkSequenceEdit * sequence_edit, guint property_i
 			(GtkPopupCallback)__gtk_sequence_edit_popup_menu, sequence_edit);
 
 		break;
-	case MINIMUM_ONE:
-		sequence_edit->minimum_one = g_value_get_boolean(value);
-		break;
 	} default:
 		/* We don't have any other property... */
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(sequence_edit, property_id, param_spec);
@@ -111,9 +107,6 @@ gtk_sequence_edit_get_property(GtkSequenceEdit * sequence_edit, guint property_i
 		break;
 	case LIST_STORE:
 		g_value_set_pointer(value, sequence_edit->list_store);
-		break;
-	case MINIMUM_ONE:
-		g_value_set_boolean(value, sequence_edit->minimum_one);
 		break;
 	default:
 		/* We don't have any other property... */
@@ -166,11 +159,6 @@ gtk_sequence_edit_class_init(GtkSequenceEditClass * class)
 		"List store", "List store, model for view",
 		G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
 	g_object_class_install_property(gobject_class, LIST_STORE, param_spec);
-
-	param_spec = g_param_spec_boolean("minimum-one",
-		"Minimum one", "True if the list keep at least one item",
-		FALSE, G_PARAM_READWRITE);
-	g_object_class_install_property(gobject_class, MINIMUM_ONE, param_spec);
 }
 
 static void
@@ -222,9 +210,6 @@ __gtk_sequence_edit_popup_menu(GtkTreeView * tree_view, GtkSequenceEdit * sequen
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(sequence_edit->tree_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
-		goto out;
-	if (sequence_edit->minimum_one
-	&& gtk_tree_model_iter_n_children(GTK_TREE_MODEL(sequence_edit->list_store), NULL) == 1)
 		goto out;
 
 	/* Move top */

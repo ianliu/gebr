@@ -42,7 +42,7 @@ typedef struct _ValueSequenceEditClass	ValueSequenceEditClass;
 struct _ValueSequenceEdit {
 	GtkSequenceEdit		parent;
 
-	GeoXmlValueSequence *	value_sequence;
+	gboolean		minimum_one;
 };
 struct _ValueSequenceEditClass {
 	GtkSequenceEditClass	parent;
@@ -51,14 +51,11 @@ struct _ValueSequenceEditClass {
 GtkWidget *
 value_sequence_edit_new(GtkWidget * widget);
 
-GtkWidget *
-value_sequence_edit_new_with_sequence(GtkWidget * widget, GeoXmlValueSequence * value_sequence);
-
 void
 value_sequence_edit_add(ValueSequenceEdit * value_sequence_edit, GeoXmlValueSequence * value_sequence);
 
 void
-value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit);
+value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit, GeoXmlValueSequence * value_sequence);
 
 G_END_DECLS
 

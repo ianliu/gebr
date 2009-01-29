@@ -696,8 +696,7 @@ menu_dialog_setup_ui(void)
 	/* categories */
 	GeoXmlSequence * category;
 	geoxml_flow_get_category(debr.menu, &category, 0);
-	g_object_set(G_OBJECT(categories_sequence_edit), "value-sequence", category, NULL);
-	value_sequence_edit_load(VALUE_SEQUENCE_EDIT(categories_sequence_edit));
+	value_sequence_edit_load(VALUE_SEQUENCE_EDIT(categories_sequence_edit), GEOXML_VALUE_SEQUENCE(category));
 
 	gtk_widget_show(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));

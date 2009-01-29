@@ -102,8 +102,8 @@ path_list_setup_ui(void)
 	gtk_widget_set_size_request(file_entry, 220, 30);
 
 	geoxml_line_get_path(gebr.line, &path_sequence, 0);
-	path_sequence_edit = value_sequence_edit_new_with_sequence(file_entry, GEOXML_VALUE_SEQUENCE(path_sequence));
-	value_sequence_edit_load(VALUE_SEQUENCE_EDIT(path_sequence_edit));
+	path_sequence_edit = value_sequence_edit_new(file_entry);
+	value_sequence_edit_load(VALUE_SEQUENCE_EDIT(path_sequence_edit), GEOXML_VALUE_SEQUENCE(path_sequence));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), path_sequence_edit, TRUE, TRUE, 0);
 
 	g_signal_connect(GTK_OBJECT(path_sequence_edit), "add-request",
