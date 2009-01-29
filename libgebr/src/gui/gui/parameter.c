@@ -209,12 +209,6 @@ on_edit_list_toggled(GtkToggleButton * toggle_button, struct parameter_widget * 
 {
 	gboolean		toggled;
 
-	g_signal_handlers_block_matched(G_OBJECT(parameter_widget->value_widget),
-		G_SIGNAL_MATCH_FUNC,
-		0, 0, NULL,
-		(GCallback)parameter_widget_on_value_widget_changed,
-		NULL);
-
 	toggled = gtk_toggle_button_get_active(toggle_button);
 	if (toggled == TRUE) {
 		GeoXmlSequence *	first_value;
@@ -245,17 +239,11 @@ on_edit_list_toggled(GtkToggleButton * toggle_button, struct parameter_widget * 
 
 		gtk_box_pack_start(GTK_BOX(parameter_widget->widget),
 			GTK_WIDGET(parameter_widget->value_sequence_edit), TRUE, TRUE, 0);
-	} else {
+	} else
 		gtk_container_remove(GTK_CONTAINER(parameter_widget->widget),
 			GTK_WIDGET(parameter_widget->value_sequence_edit));
-	}
 
 	gtk_widget_set_sensitive(parameter_widget->list_value_widget, !toggled);
-	g_signal_handlers_unblock_matched(G_OBJECT(parameter_widget->value_widget),
-		G_SIGNAL_MATCH_FUNC,
-		0, 0, NULL,
-		(GCallback)parameter_widget_on_value_widget_changed,
-		NULL);
 }
 
 static void
@@ -520,6 +508,12 @@ parameter_widget_configure(struct parameter_widget * parameter_widget)
 			GTK_SIGNAL_FUNC(on_edit_list_toggled), parameter_widget);
 
 		gtk_widget_show(parameter_widget->value_widget);
+		g_signal_handlers_block_matched(G_OBJECT(parameter_widget->value_widget),
+			G_SIGNAL_MATCH_FUNC,
+			0, 0, NULL,
+			(GCallback)parameter_widget_on_value_widget_changed,
+			NULL);
+
 		sequence_edit = value_sequence_edit_new(parameter_widget->value_widget);
 		gtk_widget_show(sequence_edit);
 		parameter_widget->value_sequence_edit = VALUE_SEQUENCE_EDIT(sequence_edit);
