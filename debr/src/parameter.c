@@ -509,7 +509,7 @@ parameter_dialog_setup_ui(void)
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 		NULL);
-	gtk_widget_set_size_request(dialog, 400, 300);
+	gtk_widget_set_size_request(dialog, 530, 400);
 
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_widget_show(scrolled_window);

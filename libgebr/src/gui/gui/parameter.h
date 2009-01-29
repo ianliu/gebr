@@ -47,9 +47,6 @@ struct parameter_widget {
 struct parameter_widget *
 parameter_widget_new(GeoXmlParameter * parameter, gboolean use_default_value, gpointer data);
 
-void
-parameter_widget_set_widget_value(struct parameter_widget * parameter_widget, const gchar * value);
-
 GString *
 parameter_widget_get_widget_value(struct parameter_widget * parameter_widget);
 

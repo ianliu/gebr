@@ -36,13 +36,16 @@ typedef struct _GtkSequenceEdit		GtkSequenceEdit;
 typedef struct _GtkSequenceEditClass	GtkSequenceEditClass;
 
 struct _GtkSequenceEdit {
-	GtkVBox		parent;
+	GtkVBox			parent;
 
-	GtkWidget *	widget;
-	GtkWidget *	widget_hbox;
+	GtkWidget *		widget;
+	GtkWidget *		widget_hbox;
 
-	GtkListStore *	list_store;
-	GtkWidget *	tree_view;
+	GtkListStore *		list_store;
+	GtkWidget *		tree_view;
+	GtkCellRenderer *	renderer;
+
+	gboolean		may_rename;
 };
 struct _GtkSequenceEditClass {
 	GtkVBoxClass	parent;

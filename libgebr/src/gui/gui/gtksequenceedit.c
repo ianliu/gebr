@@ -50,6 +50,7 @@ static GtkWidget * __gtk_sequence_edit_create_tree_view(GtkSequenceEdit * sequen
 enum {
 	VALUE_WIDGET = 1,
 	LIST_STORE,
+	MAY_RENAME,
 };
 
 enum {
@@ -91,6 +92,10 @@ gtk_sequence_edit_set_property(GtkSequenceEdit * sequence_edit, guint property_i
 			(GtkPopupCallback)__gtk_sequence_edit_popup_menu, sequence_edit);
 
 		break;
+	case MAY_RENAME:
+		sequence_edit->may_rename = g_value_get_boolean(value);
+		g_object_set(sequence_edit->renderer, "editable", sequence_edit->may_rename, NULL);
+		break;
 	} default:
 		/* We don't have any other property... */
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(sequence_edit, property_id, param_spec);
@@ -107,6 +112,9 @@ gtk_sequence_edit_get_property(GtkSequenceEdit * sequence_edit, guint property_i
 		break;
 	case LIST_STORE:
 		g_value_set_pointer(value, sequence_edit->list_store);
+		break;
+	case MAY_RENAME:
+		g_value_set_boolean(value, sequence_edit->may_rename);
 		break;
 	default:
 		/* We don't have any other property... */
@@ -159,6 +167,11 @@ gtk_sequence_edit_class_init(GtkSequenceEditClass * class)
 		"List store", "List store, model for view",
 		G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
 	g_object_class_install_property(gobject_class, LIST_STORE, param_spec);
+
+	param_spec = g_param_spec_boolean("may-rename",
+		"Rename enabled", "True if the list is renameable",
+		TRUE, G_PARAM_READWRITE);
+	g_object_class_install_property(gobject_class, MAY_RENAME, param_spec);
 }
 
 static void
@@ -166,6 +179,8 @@ gtk_sequence_edit_init(GtkSequenceEdit * sequence_edit)
 {
 	GtkWidget *		hbox;
 	GtkWidget *		button;
+
+	sequence_edit->may_rename = TRUE;
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_widget_show(hbox);
@@ -350,8 +365,8 @@ __gtk_sequence_edit_create_tree_view(GtkSequenceEdit * sequence_edit)
 	tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(sequence_edit->list_store));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree_view), FALSE);
 
-	renderer = gtk_cell_renderer_text_new();
-	g_object_set(renderer, "editable", TRUE, NULL);
+	sequence_edit->renderer = renderer = gtk_cell_renderer_text_new();
+	g_object_set(renderer, "editable", sequence_edit->may_rename, NULL);
 	g_signal_connect(renderer, "edited",
 		(GCallback)__gtk_sequence_edit_on_edited, sequence_edit);
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
