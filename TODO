@@ -1,24 +1,23 @@
 1.0 roadmap:
 
-0.9.8:
+0.9.9 (beta 3):
 +	Import/export de projetos e linhas (pensar)
 +	Categorias do usuário na DéBR, lidas a partir dos menus
         em edição e salvas no arquivo de conf da DéBR
-+	Conferir e completar os menus popup
 +	Teclas de atalho
 +	Na tela de edição de parâmetros, manter mesma altura das linhas.
++	Versão correta para dialog de About
++	Seleção multipla
++	Detalhes para URL de programa na DeBR
 
-0.9.9:
+0.9.10 (rc1):
 +	OK/Cancel para dialogs da DéBR
 +	Internacionalização (português, espanhol, alemão, etc)
 +	Suporte a help
 +	"Enter" adiciona em GtkSequenceEdit
-+	Mais detalhes para visao lateral da DéBR e scrolled window para
-        todas as janelas de detalhes DéBR/GeBR
 +	Acrescentar uma quantidade especificada de parâmetros de um
         mesmo tipo de uma única vez
 +	Multiline com tags gays gtk_text_buffer_insert_with_tags ()
-+	Seleção multipla
 
 =====================
 
