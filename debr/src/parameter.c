@@ -1096,6 +1096,7 @@ parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * pos
 			geoxml_sequence_move_before(GEOXML_SEQUENCE(parameter), GEOXML_SEQUENCE(position_parameter));
 
 		if (gtk_tree_model_iter_equal_to(&parent, &position_parent)) {
+			new = *iter;
 			if (drop_position == GTK_TREE_VIEW_DROP_AFTER)
 				gtk_tree_store_move_after(debr.ui_parameter.tree_store, iter, position);
 			else
@@ -1115,6 +1116,7 @@ parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * pos
 	if (gtk_tree_model_iter_is_valid(&parent))
 		parameter_load_iter(&parent);
 
+	parameter_select_iter(new);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 
 	return TRUE;
