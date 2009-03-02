@@ -43,20 +43,13 @@
 
 static void
 flow_browse_load(void);
-
-static void
-flow_browse_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new_text, struct ui_flow_browse * ui_flow_browse);
-
 static void
 flow_browse_show_help(void);
-
 static void
 flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	GtkTreeViewColumn * column, struct ui_flow_browse * ui_flow_browse);
-
 static GtkMenu *
 flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_browse);
-
 static void
 flow_browse_on_revision_activate(GtkMenuItem * menu_item, GeoXmlRevision * revision);
 
@@ -123,10 +116,6 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 		GTK_SIGNAL_FUNC(flow_browse_on_row_activated), ui_flow_browse);
 
 	renderer = gtk_cell_renderer_text_new();
-	g_object_set(renderer, "editable", TRUE, NULL);
-	g_signal_connect(GTK_OBJECT(renderer), "edited",
-		GTK_SIGNAL_FUNC(flow_browse_rename), ui_flow_browse);
-
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", FB_TITLE);
@@ -448,37 +437,6 @@ flow_browse_load(void)
 
 out:	g_free(filename);
 	g_free(title);
-}
-
-/*
- * Function: flow_browse_rename
- * Rename a flow upon double click.
- */
-static void
-flow_browse_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new_text, struct ui_flow_browse * ui_flow_browse)
-{
-	GtkTreeIter	iter;
-	gchar *         old_title;
-
-	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(ui_flow_browse->store),
-		&iter,
-		path_string);
-	old_title = (gchar *)geoxml_document_get_title(GEOXML_DOC(gebr.flow));
-
-	/* was it really renamed? */
-	if (strcmp(old_title, new_text) == 0)
-		return;
-
-	/* update store */
-	gtk_list_store_set(ui_flow_browse->store, &iter,
-		FB_TITLE, new_text,
-		-1);
-	/* update XML */
-	geoxml_document_set_title(GEOXML_DOC(gebr.flow), new_text);
-	flow_save();
-
-	/* send feedback */
-	gebr_message(LOG_INFO, FALSE, TRUE, _("Flow '%s' renamed to '%s'"), old_title, new_text);
 }
 
 static void
