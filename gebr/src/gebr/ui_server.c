@@ -447,7 +447,6 @@ server_list_setup_ui(void)
 		GTK_SIGNAL_FUNC(on_add_clicked), ui_server_list);
 	g_object_set(button, "user-data", entry, NULL);
 
-
 	return ui_server_list;
 }
 

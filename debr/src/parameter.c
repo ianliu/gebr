@@ -92,9 +92,9 @@ parameter_load_iter(GtkTreeIter * iter);
 static void
 parameter_select_iter(GtkTreeIter iter);
 static gboolean
-parameter_check_selected(void);
+parameter_check_selected(gboolean show_warning);
 static gboolean
-parameter_get_selected(GtkTreeIter * iter);
+parameter_get_selected(GtkTreeIter * iter, gboolean show_warning);
 static void
 parameter_selected(void);
 static void
@@ -225,7 +225,7 @@ parameter_load_selected(void)
 {
 	GtkTreeIter	iter;
 
-	parameter_get_selected(&iter);
+	parameter_get_selected(&iter, FALSE);
 	parameter_load_iter(&iter);
 }
 
@@ -239,13 +239,13 @@ parameter_new(void)
 	GtkTreeIter		iter;
 	GtkTreePath *		tree_path;
 
-	if (debr.parameter != NULL && (geoxml_parameter_get_is_program_parameter(debr.parameter) == FALSE ||
+	if (parameter_get_selected(&iter, FALSE) &&
+	(geoxml_parameter_get_is_program_parameter(debr.parameter) == FALSE ||
 	geoxml_parameter_get_is_in_group(debr.parameter) == TRUE)) {
 		GeoXmlParameterGroup *	parameter_group;
 		GeoXmlSequence *	first_instance;
 		GtkTreeIter		parent;
 
-		parameter_get_selected(&iter);
 		if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &iter)) {
 			parameter_group = GEOXML_PARAMETER_GROUP(debr.parameter);
 			parent = iter;
@@ -292,7 +292,7 @@ parameter_remove(void)
 	GtkTreeIter		iter;
 	gboolean		in_group;
 
-	if (parameter_get_selected(&iter) == FALSE)
+	if (parameter_get_selected(&iter, TRUE) == FALSE)
 		return;
 	if (confirm_action_dialog(_("Delete parameter"), _("Are you sure you want to delete parameter '%s'?"),
 	geoxml_parameter_get_label(debr.parameter)) == FALSE)
@@ -343,7 +343,7 @@ parameter_top(void)
 {
 	GtkTreeIter	iter;
 
-	if (parameter_get_selected(&iter) == FALSE)
+	if (parameter_get_selected(&iter, TRUE) == FALSE)
 		return;
 
 	geoxml_sequence_move_after(GEOXML_SEQUENCE(debr.parameter), NULL);
@@ -361,7 +361,7 @@ parameter_bottom(void)
 {
 	GtkTreeIter	iter;
 
-	if (parameter_get_selected(&iter) == FALSE)
+	if (parameter_get_selected(&iter, TRUE) == FALSE)
 		return;
 
 	geoxml_sequence_move_before(GEOXML_SEQUENCE(debr.parameter), NULL);
@@ -384,7 +384,7 @@ parameter_change_type_setup_ui(void)
 
 	GtkTreeIter	iter;
 
-	if (parameter_get_selected(&iter) == FALSE)
+	if (parameter_get_selected(&iter, TRUE) == FALSE)
 		return;
 
 	dialog = gtk_dialog_new_with_buttons(_("Parameter's type"),
@@ -444,7 +444,7 @@ parameter_change_type_setup_ui(void)
 void
 parameter_change_type(enum GEOXML_PARAMETERTYPE type)
 {
-	if (parameter_check_selected() == FALSE)
+	if (parameter_check_selected(TRUE) == FALSE)
 		return;
 
 	const gchar *	keyword;
@@ -494,7 +494,7 @@ parameter_dialog_setup_ui(void)
 	GeoXmlProgramParameter *	program_parameter;
 	struct parameter_widget *	parameter_widget;
 
-	if (parameter_check_selected() == FALSE)
+	if (parameter_check_selected(TRUE) == FALSE)
 		return;
 
 	program_parameter = GEOXML_PROGRAM_PARAMETER(debr.parameter);
@@ -926,7 +926,7 @@ parameter_select_iter(GtkTreeIter iter)
  * returns false and show a message on the status bar.
  */
 static gboolean
-parameter_check_selected(void)
+parameter_check_selected(gboolean show_warning)
 {
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
@@ -934,7 +934,8 @@ parameter_check_selected(void)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		debr_message(LOG_ERROR, _("No parameter is selected"));
+		if (show_warning)
+			debr_message(LOG_ERROR, _("No parameter is selected"));
 		return FALSE;
 	}
 	return TRUE;
@@ -945,12 +946,12 @@ parameter_check_selected(void)
  * Return true if there is a parameter selected and write it to _iter_
  */
 static gboolean
-parameter_get_selected(GtkTreeIter * iter)
+parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
 {
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 
-	if (parameter_check_selected() == FALSE)
+	if (parameter_check_selected(show_warning) == FALSE)
 		return FALSE;
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	return gtk_tree_selection_get_selected(selection, &model, iter);
@@ -965,7 +966,7 @@ parameter_selected(void)
 {
 	GtkTreeIter	iter;
 
-	if (parameter_get_selected(&iter) == FALSE) {
+	if (parameter_get_selected(&iter, FALSE) == FALSE) {
 		debr.parameter = NULL;
 		return;
 	}
@@ -1001,7 +1002,7 @@ parameter_activated(void)
 {
 	GtkTreeIter	iter;
 
-	if (parameter_get_selected(&iter) == FALSE)
+	if (parameter_get_selected(&iter, FALSE) == FALSE)
 		return;
 	if (geoxml_parameter_get_is_program_parameter(debr.parameter) == TRUE)
 		parameter_dialog_setup_ui();
@@ -1023,7 +1024,7 @@ parameter_popup_menu(GtkWidget * tree_view)
 
 	menu = gtk_menu_new();
 
-	if (parameter_get_selected(&iter) == FALSE)
+	if (parameter_get_selected(&iter, FALSE) == FALSE)
 		goto out;
 
 	if (gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE)
