@@ -445,6 +445,7 @@ server_list_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	g_signal_connect(GTK_OBJECT(button), "clicked",
 		GTK_SIGNAL_FUNC(on_add_clicked), ui_server_list);
+	g_object_set(button, "user-data", entry, NULL);
 
 
 	return ui_server_list;
