@@ -135,7 +135,7 @@ comm_server_connect(struct comm_server * comm_server)
 		g_signal_connect(process, "finished",
 			G_CALLBACK(comm_ssh_run_server_finished), comm_server);
 
-		g_string_printf(cmd_line, "ssh -x %s \"bash -l -c gebrd\"",
+		g_string_printf(cmd_line, "ssh -x %s \"bash -l -c 'gebrd' 3>&1 >/dev/null\"",
 			comm_server->address->str);
 		g_terminal_process_start(process, cmd_line);
 	} else {
@@ -152,9 +152,9 @@ comm_server_connect(struct comm_server * comm_server)
 			G_CALLBACK(local_run_server_finished), comm_server);
 
 #if (!LIBGEBR_STATIC_MODE)
-		g_string_printf(cmd_line, "bash -l -c 'gebrd'");
+		g_string_printf(cmd_line, "bash -c \"bash -l -c 'gebrd >&3' 3>&1 >/dev/null\"");
 #else
-		g_string_printf(cmd_line, "bash -l -c './gebrd'");
+		g_string_printf(cmd_line, "bash -c \"bash -l -c './gebrd >&3' 3>&1 >/dev/null\"");
 #endif
 		g_process_start(process, cmd_line);
 	}
