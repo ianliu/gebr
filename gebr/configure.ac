@@ -17,8 +17,7 @@
 AC_INIT(configure.ac)
 
 PACKAGE=gebr
-VERSION=`date +"%Y.%m.%d"`
-TODAY=$(LANG=C date +"%a, %d %b %Y %T %z")
+VERSION=0.9.9
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
 AC_SUBST(TODAY)
@@ -76,7 +75,7 @@ AC_SUBST(LIBGEBR_MISC_CFLAGS)
 AC_SUBST(LIBGEBR_MISC_LIBS)
 
 AC_OUTPUT([
-packages/debian/changelog packages/rpm/gebr.fedora.spec packages/rpm/gebr.opensuse.spec packages/rpm/gebr.mandriva.spec
+packages/rpm/gebr.fedora.spec packages/rpm/gebr.opensuse.spec packages/rpm/gebr.mandriva.spec
 Makefile data/Makefile menus/Makefile packages/Makefile
 src/Makefile src/defines.h src/gebr/Makefile src/gebr-client/Makefile
 ])

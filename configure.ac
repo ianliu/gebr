@@ -17,8 +17,7 @@
 AC_INIT(configure.ac)
 
 PACKAGE=gebr
-VERSION=0.9.6pre`date +"%Y%m%d"`
-TODAY=$(LANG=C date +"%a, %d %b %Y %T %z")
+VERSION=0.9.9
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
 AC_SUBST(TODAY)
@@ -27,7 +26,7 @@ AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 PACKAGE_NAME=$PACKAGE
 PACKAGE_VERSION=$VERSION
 
-AC_CONFIG_SUBDIRS([libgebr gebrd gebr-menus-su gebr debr])
+AC_CONFIG_SUBDIRS([libgebr gebrd gebr debr])
 
 AC_OUTPUT([
 Makefile

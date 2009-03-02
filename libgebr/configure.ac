@@ -17,8 +17,7 @@
 AC_INIT(configure.ac)
 
 PACKAGE=libgebr
-VERSION=`date +"%Y.%m.%d"`
-TODAY=$(LANG=C date +"%a, %d %b %Y %T %z")
+VERSION=0.9.9
 GEOXML_VERSION_INFO=`echo $VERSION | awk -F. '{ printf "%d:%d:%d", $1+$2, $3, $2 }'`
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
@@ -94,7 +93,7 @@ AC_SUBST(GDOME2_LIBS)
 AC_SUBST(GDOME2_CFLAGS)
 
 AC_OUTPUT([
-packages/debian/changelog packages/rpm/libgebr.fedora.spec packages/rpm/libgebr.opensuse.spec packages/rpm/libgebr.mandriva.spec
+packages/rpm/libgebr.fedora.spec packages/rpm/libgebr.opensuse.spec packages/rpm/libgebr.mandriva.spec
 Makefile src/gebr.pc src/Makefile src/defines.h packages/Makefile
 src/geoxml/Makefile src/geoxml/gebr-geoxml.pc src/geoxml/geoxml/Makefile src/geoxml/geoxml/defines.h src/geoxml/data/Makefile src/geoxml/validate/Makefile src/geoxml/upgrade/Makefile src/geoxml/doc/Makefile
 src/comm/Makefile src/comm/gebr-comm.pc src/comm/comm/Makefile
