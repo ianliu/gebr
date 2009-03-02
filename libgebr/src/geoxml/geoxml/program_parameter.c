@@ -144,9 +144,11 @@ geoxml_program_parameter_set_be_list(GeoXmlProgramParameter * program_parameter,
 void
 geoxml_program_parameter_set_list_separator(GeoXmlProgramParameter * program_parameter, const gchar * separator)
 {
+	if (separator == NULL)
+		return;
 	if (geoxml_program_parameter_get_is_list(program_parameter) == FALSE)
 		return;
-	if (separator == NULL)
+	if (geoxml_parameter_get_is_reference((GeoXmlParameter*)program_parameter))
 		return;
 	__geoxml_set_attr_value(
 		__geoxml_get_first_element((GdomeElement*)program_parameter, "property"),
@@ -158,8 +160,9 @@ geoxml_program_parameter_get_is_list(GeoXmlProgramParameter * program_parameter)
 {
 	if (program_parameter == NULL)
 		return FALSE;
-	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) == GEOXML_PARAMETERTYPE_FLAG)
-		return FALSE;
+	if (geoxml_parameter_get_is_reference((GeoXmlParameter*)program_parameter))
+		return geoxml_program_parameter_get_is_list((GeoXmlProgramParameter*)
+			geoxml_parameter_get_referencee((GeoXmlParameter*)program_parameter));
 
 	GdomeDOMString *	string;
 	GdomeElement *		property_element;
@@ -179,6 +182,9 @@ geoxml_program_parameter_get_list_separator(GeoXmlProgramParameter * program_par
 {
 	if (geoxml_program_parameter_get_is_list(program_parameter) == FALSE)
 		return NULL;
+	if (geoxml_parameter_get_is_reference((GeoXmlParameter*)program_parameter))
+		return geoxml_program_parameter_get_list_separator((GeoXmlProgramParameter*)
+			geoxml_parameter_get_referencee((GeoXmlParameter*)program_parameter));
 	return __geoxml_get_attr_value(
 		__geoxml_get_first_element((GdomeElement*)program_parameter, "property"), "separator");
 }
