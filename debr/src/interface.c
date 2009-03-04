@@ -46,7 +46,7 @@ static const GtkActionEntry actions_entries [] = {
 	{"menu_open", GTK_STOCK_OPEN, NULL, NULL, _("Open an existing menu"),
 		(GCallback)on_menu_open_activate},
 	{"menu_save", GTK_STOCK_SAVE, NULL, NULL, _("Save current menu"), (GCallback)on_menu_save_activate},
-	{"menu_save_as", GTK_STOCK_SAVE_AS, NULL, NULL, _("Open existing menu"),
+	{"menu_save_as", GTK_STOCK_SAVE_AS, NULL, NULL, _("Save current menu to another file"),
 		(GCallback)on_menu_save_as_activate},
 	{"menu_save_all", "document-save-all", _("Save all"), NULL, _("Save all unsaved menus"),
 		(GCallback)on_menu_save_all_activate},
@@ -116,7 +116,7 @@ debr_setup_ui(void)
 	debr.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(debr.window), "DéBR");
 	gtk_widget_set_size_request(debr.window, 600, 450);
-	debr.about = about_setup_ui("DéBR", _("Flow designer for GéBR"));
+	debr.about = about_setup_ui("DéBR", _("Flow designer for GêBR"));
 
 	g_signal_connect(debr.window, "delete_event",
 		GTK_SIGNAL_FUNC(debr_quit), NULL);
