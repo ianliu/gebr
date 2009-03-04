@@ -18,6 +18,7 @@
 #include "about.h"
 #include "support.h"
 #include "pixmaps.h"
+#include "../../defines.h"
 
 static void
 about_actions(GtkDialog * dialog, gint arg)
@@ -41,22 +42,13 @@ about_setup_ui(const gchar * program, const gchar * description)
 		"  Fernando Roxo <roxo@roxo.org>",
 		"  Ricardo Biloti <biloti@gmail.com>",
 		"  Rodrigo Portugal <rosoport@gmail.com>",
-		_("SU Port Team"),
-		"  Anderson Batista Gomes",
-		"  Andrei Gomes de Oliveira",
-		"  Daniela Rêgo Amazonas",
-		"  Ellen de Nazaré Souza Gomes",
-		"  Francisco Josa Coutinho da Silva",
-		"  Jessé Carvalho Costa",
-		"  Ligia Naia de Matos",
-		"  Victor Hugo Rocha Lopes",
 		NULL
 	};
 
 	about.dialog = gtk_about_dialog_new();
 
 	gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about.dialog), program);
-	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about.dialog), "1.0"); /* FIXME: use version define */
+	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about.dialog), LIBGEBR_VERSION);
 	gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about.dialog), pixmaps_gebr_logo());
 	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about.dialog),
 					_("GêBR Core Team"));
@@ -83,7 +75,7 @@ about_setup_ui(const gchar * program, const gchar * description)
 		"Instituto Nacional da Propriedade Industrial (INPI) under number 70156."));
 	gtk_about_dialog_set_wrap_license(GTK_ABOUT_DIALOG(about.dialog), TRUE);
 
-	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about.dialog), "http://groups.google.com/group/gebr");
+	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about.dialog), "http://sites.google.com/site/gebrproject/");
 	gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(about.dialog), _("GêBR Home page"));
 	gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(about.dialog), authors);
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about.dialog),
