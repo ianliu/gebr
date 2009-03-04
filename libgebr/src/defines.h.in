@@ -19,5 +19,6 @@
 #define __LIBGEBR_DEFINES_H
 
 #define LIBGEBR_STATIC_MODE	@STATIC_MODE@
+#define LIBGEBR_VERSION         "@VERSION@"
 
 #endif //__LIBGEBR_DEFINES_H
