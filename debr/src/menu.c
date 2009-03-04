@@ -215,6 +215,7 @@ menu_new(void)
 	debr.menu = geoxml_flow_new();
 	geoxml_document_set_author(GEOXML_DOC(debr.menu), debr.config.name->str);
 	geoxml_document_set_email(GEOXML_DOC(debr.menu), debr.config.email->str);
+        geoxml_document_set_date_created(GEOXML_DOC(debr.menu), iso_date());
 
 	gtk_list_store_append(debr.ui_menu.list_store, &iter);
 	gtk_list_store_set(debr.ui_menu.list_store, &iter,
@@ -363,8 +364,11 @@ menu_save(const gchar * path)
 		geoxml_sequence_next(&program);
 	}
 
+        geoxml_document_set_date_modified(GEOXML_DOC(debr.menu), iso_date());
 	geoxml_document_save(GEOXML_DOC(debr.menu), path);
 	menu_saved_status_set(MENU_STATUS_SAVED);
+        menu_details_update();
+
 }
 
 void
@@ -391,6 +395,7 @@ menu_save_all(void)
 				MENU_XMLPOINTER, &menu,
 				MENU_PATH, &path,
 				-1);
+                        geoxml_document_set_date_modified(GEOXML_DOC(menu), iso_date());
 			geoxml_document_save(GEOXML_DOC(menu), path);
 			menu_saved_status_set_from_iter(&iter, MENU_STATUS_SAVED);
 
@@ -399,6 +404,7 @@ menu_save_all(void)
 
 		has_next = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter);
 	}
+        menu_details_update();
 }
 
 /*
