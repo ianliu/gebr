@@ -377,6 +377,9 @@ geoxml_program_parameter_get_file_be_directory(GeoXmlProgramParameter * program_
 {
 	if (program_parameter == NULL)
 		return FALSE;
+	if (geoxml_parameter_get_is_reference(GEOXML_PARAMETER(program_parameter)))
+		return geoxml_program_parameter_get_file_be_directory((GeoXmlProgramParameter*)
+			geoxml_parameter_get_referencee((GeoXmlParameter*)program_parameter));
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) != GEOXML_PARAMETERTYPE_FILE)
 		return FALSE;
 	return (!strcmp(__geoxml_get_attr_value(
@@ -414,6 +417,10 @@ geoxml_program_parameter_get_range_properties(GeoXmlProgramParameter * program_p
 {
 	if (program_parameter == NULL)
 		return;
+	if (geoxml_parameter_get_is_reference(GEOXML_PARAMETER(program_parameter)))
+		return geoxml_program_parameter_get_range_properties((GeoXmlProgramParameter*)
+			geoxml_parameter_get_referencee((GeoXmlParameter*)program_parameter),
+			min, max, inc, digits);
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) != GEOXML_PARAMETERTYPE_RANGE)
 		return;
 
@@ -437,7 +444,9 @@ geoxml_program_parameter_append_enum_option(GeoXmlProgramParameter * program_par
 	if (program_parameter == NULL || label == NULL || value == NULL)
 		return NULL;
 	if (geoxml_parameter_get_is_reference(GEOXML_PARAMETER(program_parameter)))
-		return NULL;
+		return geoxml_program_parameter_append_enum_option((GeoXmlProgramParameter*)
+			geoxml_parameter_get_referencee((GeoXmlParameter*)program_parameter),
+			label, value);
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) != GEOXML_PARAMETERTYPE_ENUM)
 		return NULL;
 
@@ -466,6 +475,10 @@ geoxml_program_parameter_get_enum_option(GeoXmlProgramParameter * program_parame
 	}
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) != GEOXML_PARAMETERTYPE_ENUM)
 		return GEOXML_RETV_PARAMETER_NOT_ENUM;
+	if (geoxml_parameter_get_is_reference((GeoXmlParameter*)program_parameter))
+		return geoxml_program_parameter_get_enum_option((GeoXmlProgramParameter*)
+			geoxml_parameter_get_referencee((GeoXmlParameter*)program_parameter),
+			enum_option, index);
 
 	*enum_option = (GeoXmlSequence*)__geoxml_get_element_at(
 		__geoxml_parameter_get_type_element((GeoXmlParameter*)program_parameter, TRUE),
@@ -481,6 +494,9 @@ geoxml_program_parameter_get_enum_options_number(GeoXmlProgramParameter * progra
 {
 	if (program_parameter == NULL)
 		return -1;
+	if (geoxml_parameter_get_is_reference((GeoXmlParameter*)program_parameter))
+		return geoxml_program_parameter_get_enum_options_number((GeoXmlProgramParameter*)
+			geoxml_parameter_get_referencee((GeoXmlParameter*)program_parameter));
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) != GEOXML_PARAMETERTYPE_ENUM)
 		return -1;
 	return __geoxml_get_elements_number(
