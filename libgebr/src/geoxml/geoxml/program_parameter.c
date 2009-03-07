@@ -106,6 +106,8 @@ geoxml_program_parameter_set_keyword(GeoXmlProgramParameter * program_parameter,
 {
 	if (program_parameter == NULL || keyword == NULL)
 		return;
+	if (geoxml_parameter_get_is_reference((GeoXmlParameter*)program_parameter))
+		return;
 	__geoxml_set_tag_value((GdomeElement*)program_parameter, "keyword", keyword, __geoxml_create_TextNode);
 }
 
@@ -114,6 +116,9 @@ geoxml_program_parameter_get_keyword(GeoXmlProgramParameter * program_parameter)
 {
 	if (program_parameter == NULL)
 		return NULL;
+	if (geoxml_parameter_get_is_reference((GeoXmlParameter*)program_parameter))
+		return geoxml_program_parameter_get_keyword((GeoXmlProgramParameter*)
+			geoxml_parameter_get_referencee((GeoXmlParameter*)program_parameter));
 	return __geoxml_get_tag_value((GdomeElement*)program_parameter, "keyword");
 }
 
@@ -123,6 +128,8 @@ geoxml_program_parameter_set_be_list(GeoXmlProgramParameter * program_parameter,
 	if (program_parameter == NULL)
 		return;
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) == GEOXML_PARAMETERTYPE_FLAG)
+		return;
+	if (geoxml_parameter_get_is_reference((GeoXmlParameter*)program_parameter))
 		return;
 
 	GdomeElement *		element;
