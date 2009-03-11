@@ -158,10 +158,10 @@ program_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.binary_label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.binary_label, FALSE, TRUE, 10);
 
-/*         debr.ui_program.details.url_button = gtk_link_button_new("."); */
-/* 	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.url_button, FALSE, TRUE, 0); */
-/* 	g_signal_connect(GTK_OBJECT(debr.ui_program.details.url_button), "clicked", */
-/* 			 GTK_SIGNAL_FUNC(program_url_open), debr.program); */
+        debr.ui_program.details.url_button = gtk_button_new_with_label( _("URL not set"));
+	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.url_button, FALSE, TRUE, 0);
+	g_signal_connect(GTK_OBJECT(debr.ui_program.details.url_button), "clicked",
+			 GTK_SIGNAL_FUNC(program_url_open), debr.program);
 
         debr.ui_program.details.help_button = gtk_button_new_from_stock(GTK_STOCK_INFO);
 	gtk_box_pack_end(GTK_BOX(details), debr.ui_program.details.help_button, FALSE, TRUE, 0);
@@ -540,12 +540,20 @@ program_details_update(void)
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.binary_label), markup);
 	g_free(markup);
 
-/*         gtk_link_button_set_uri(GTK_LINK_BUTTON(debr.ui_program.details.url_button), geoxml_program_get_url(debr.program)); */
-/*         gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button), geoxml_program_get_url(debr.program)); */
-        
-/*         g_object_set(G_OBJECT(debr.ui_program.details.url_button), */
-/*                      "sensitive", strlen(geoxml_program_get_url(debr.program)) ? TRUE : FALSE, NULL); */
 
+        if(strlen(geoxml_program_get_url(debr.program))>0){
+                gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button),
+                                     geoxml_program_get_url(debr.program));
+        }
+        else {
+                gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button),
+                                     _("URL not set"));
+
+        }
+
+        g_object_set(G_OBJECT(debr.ui_program.details.url_button), "sensitive",
+                     (strlen(geoxml_program_get_url(debr.program))>0) ? TRUE : FALSE, NULL);
+        
         g_object_set(G_OBJECT(debr.ui_program.details.help_button),
                      "sensitive", (strlen(geoxml_program_get_help(debr.program))>1) ? TRUE : FALSE, NULL);
 
