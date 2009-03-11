@@ -325,8 +325,8 @@ on_menu_close_activate(void)
 				-1);
 
 			geoxml_document_save(GEOXML_DOC(debr.menu), path);
+			break;
 		} case GTK_RESPONSE_NO:
-                        --debr.unsaved_count;
 			break;
 		case GTK_RESPONSE_CANCEL:
 			cancel = TRUE;
@@ -395,6 +395,26 @@ void
 on_program_bottom_activate(void)
 {
 	program_bottom();
+}
+
+/*
+ * Function: on_program_copy_activate
+ * Set debr.clipboard to selected program
+ */
+void
+on_program_copy_activate(void)
+{
+	debr.clipboard = GEOXML_SEQUENCE(debr.program);
+}
+
+/*
+ * Function: on_program_paste_activate
+ * Set debr.clipboard to selected program
+ */
+void
+on_program_paste_activate(void)
+{
+	debr.clipboard = GEOXML_SEQUENCE(debr.program);
 }
 
 /*
@@ -475,6 +495,26 @@ void
 on_parameter_type_activate(GtkRadioAction * first_action)
 {
 	parameter_change_type((enum GEOXML_PARAMETERTYPE)gtk_radio_action_get_current_value(first_action));
+}
+
+/*
+ * Function: on_parameter_copy_activate
+ * Set debr.clipboard to selected parameter
+ */
+void
+on_parameter_copy_activate(void)
+{
+	debr.clipboard = GEOXML_SEQUENCE(debr.parameter);
+}
+
+/*
+ * Function: on_parameter_paste_activate
+ * Call <parameter_paste>
+ */
+void
+on_parameter_paste_activate(void)
+{
+	parameter_paste();
 }
 
 /*

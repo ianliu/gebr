@@ -66,6 +66,12 @@ void
 on_program_bottom_activate(void);
 
 void
+on_program_copy_activate(void);
+
+void
+on_program_paste_activate(void);
+
+void
 on_parameter_new_activate(void);
 
 void
@@ -88,6 +94,12 @@ on_parameter_change_type_activate(void);
 
 void
 on_parameter_type_activate(GtkRadioAction * first_action);
+
+void
+on_parameter_copy_activate(void);
+
+void
+on_parameter_paste_activate(void);
 
 void
 on_configure_preferences_activate(void);

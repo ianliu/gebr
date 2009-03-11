@@ -1,6 +1,6 @@
 1.0 roadmap:
 
-0.9.9 (beta 3):
+Beta:
 +	Import/export de projetos e linhas (pensar)
 +	Categorias do usuário na DéBR, lidas a partir dos menus
         em edição e salvas no arquivo de conf da DéBR
@@ -10,7 +10,7 @@
 +	Seleção multipla
 +	Detalhes para URL de programa na DeBR
 
-0.9.10 (rc1):
+RC:
 +	OK/Cancel para dialogs da DéBR
 +	Internacionalização (português, espanhol, alemão, etc)
 +	Suporte a help

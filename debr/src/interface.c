@@ -69,6 +69,10 @@ static const GtkActionEntry actions_entries [] = {
 		(GCallback)on_program_top_activate},
 	{"program_bottom", GTK_STOCK_GOTO_BOTTOM, NULL, NULL,
 		_("Move program to the bottom of the list"), (GCallback)on_program_bottom_activate},
+	{"program_copy", GTK_STOCK_COPY, _("Copy"), "<Control>c", _("Copy program to clipboard"),
+		(GCallback)on_program_copy_activate},
+	{"program_paste", GTK_STOCK_PASTE, _("Paste"), "<Control>v", _("Paste program from clipboard"),
+		(GCallback)on_program_paste_activate},
 	/* parameter */
 	{"parameter_new", GTK_STOCK_NEW, NULL, NULL, _("Create new parameter"), (GCallback)on_parameter_new_activate},
 	{"parameter_delete", GTK_STOCK_DELETE, NULL, NULL, _("Delete current parameter"),
@@ -83,6 +87,10 @@ static const GtkActionEntry actions_entries [] = {
 		(GCallback)on_parameter_duplicate_activate},
 	{"parameter_change_type", GTK_STOCK_CONVERT, _("Change type"), NULL, _("Change parameter type"),
 		(GCallback)on_parameter_change_type_activate},
+	{"parameter_copy", GTK_STOCK_COPY, _("Copy"), "<Control>c", _("Copy parameter to clipboard"),
+		(GCallback)on_parameter_copy_activate},
+	{"parameter_paste", GTK_STOCK_PASTE, _("Paste"), "<Control>v", _("Paste parameter from clipboard"),
+		(GCallback)on_parameter_paste_activate},
 };
 
 /*
@@ -240,6 +248,11 @@ debr_setup_ui(void)
 		gtk_action_group_get_action(debr.action_group, "program_delete"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "program_properties"))), -1);
+// 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+// 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+// 		gtk_action_group_get_action(debr.action_group, "program_copy"))), -1);
+// 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+// 		gtk_action_group_get_action(debr.action_group, "program_paste"))), -1);
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -265,6 +278,7 @@ debr_setup_ui(void)
 		gtk_action_group_get_action(debr.action_group, "parameter_delete"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "parameter_properties"))), -1);
+
 	debr.parameter_type_menu = menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_CONVERT);
 	g_signal_connect(tool_item, "clicked",
@@ -275,6 +289,12 @@ debr_setup_ui(void)
 	for (i = 0; i < l; ++i)
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 			gtk_action_group_get_action(debr.action_group, parameter_type_radio_actions_entries[i].name)));
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(debr.action_group, "parameter_copy"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(debr.action_group, "parameter_paste"))), -1);
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);

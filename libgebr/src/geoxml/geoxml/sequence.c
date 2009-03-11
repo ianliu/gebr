@@ -82,18 +82,6 @@ __geoxml_sequence_check(GeoXmlSequence * sequence, gboolean check_master_instanc
 		strcmp(tag->str, "line");
 }
 
-/**
- * \internal
- * Check if \p sequence and \p other are exactly of the same sequence type
- */
-static gboolean
-__geoxml_sequence_is_same_sequence(GeoXmlSequence * sequence, GeoXmlSequence * other)
-{
-	return (gboolean)gdome_str_equal(
-		gdome_el_nodeName((GdomeElement*)sequence, &exception),
-		gdome_el_nodeName((GdomeElement*)other, &exception));
-}
-
 int
 __geoxml_sequence_move_after_before(GeoXmlSequence * sequence, GeoXmlSequence * position,
 	int (*move_function)(GeoXmlSequence * sequence, GeoXmlSequence * position))
@@ -311,6 +299,29 @@ geoxml_sequence_append_clone(GeoXmlSequence * sequence)
 	return clone;
 }
 
+GeoXmlSequence *
+geoxml_sequence_copy(GeoXmlSequence * sequence, GeoXmlSequence * other)
+{
+	if (sequence == NULL || other == NULL)
+		return NULL;
+	if (!geoxml_sequence_is_same_sequence(sequence, other))
+		return NULL;
+
+	GdomeNode *	copy;
+
+	if (gdome_n_ownerDocument((GdomeNode*)sequence, &exception) ==
+	gdome_n_ownerDocument((GdomeNode*)other, &exception))
+		copy = gdome_n_cloneNode((GdomeNode*)other, TRUE, &exception);
+	else
+		copy = gdome_doc_importNode(
+			gdome_n_ownerDocument((GdomeNode*)sequence, &exception),
+			(GdomeNode*)other, TRUE, &exception);
+	__geoxml_element_reassign_ids((GdomeElement*)copy);
+	__geoxml_sequence_move_after_before((GeoXmlSequence*)copy, sequence, __geoxml_sequence_move_after);
+
+	return (GeoXmlSequence*)copy;
+}
+
 gint
 geoxml_sequence_get_index(GeoXmlSequence * sequence)
 {
@@ -363,6 +374,16 @@ geoxml_sequence_remove(GeoXmlSequence * sequence)
 	return GEOXML_RETV_SUCCESS;
 }
 
+gboolean
+geoxml_sequence_is_same_sequence(GeoXmlSequence * sequence, GeoXmlSequence * other)
+{
+	if (sequence == NULL || other == NULL)
+		return FALSE;
+	return (gboolean)gdome_str_equal(
+		gdome_el_nodeName((GdomeElement*)sequence, &exception),
+		gdome_el_nodeName((GdomeElement*)other, &exception));
+}
+
 int
 geoxml_sequence_move_into_group(GeoXmlSequence * sequence, GeoXmlParameterGroup * parameter_group)
 {
@@ -400,7 +421,7 @@ geoxml_sequence_move_before(GeoXmlSequence * sequence, GeoXmlSequence * position
 
 	if ((ret = __geoxml_sequence_check(sequence, TRUE)))
 		return ret;
-	if (position != NULL && !__geoxml_sequence_is_same_sequence(sequence, position))
+	if (position != NULL && !geoxml_sequence_is_same_sequence(sequence, position))
 		return GEOXML_RETV_DIFFERENT_SEQUENCES;
 	return __geoxml_sequence_move_after_before(sequence, position, __geoxml_sequence_move_before);
 }
@@ -412,7 +433,7 @@ geoxml_sequence_move_after(GeoXmlSequence * sequence, GeoXmlSequence * position)
 
 	if ((ret = __geoxml_sequence_check(sequence, TRUE)))
 		return ret;
-	if (position != NULL && !__geoxml_sequence_is_same_sequence(sequence, position))
+	if (position != NULL && !geoxml_sequence_is_same_sequence(sequence, position))
 		return GEOXML_RETV_DIFFERENT_SEQUENCES;
 	return __geoxml_sequence_move_after_before(sequence, position, __geoxml_sequence_move_after);
 }

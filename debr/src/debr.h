@@ -35,6 +35,7 @@ struct debr {
 	GeoXmlFlow *		menu;
 	GeoXmlProgram *		program;
 	GeoXmlParameter *	parameter;
+	GeoXmlSequence *	clipboard;
 	guint			unsaved_count;
 
 	/* diverse widgets */

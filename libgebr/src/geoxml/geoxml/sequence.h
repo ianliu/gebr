@@ -135,6 +135,15 @@ GeoXmlSequence *
 geoxml_sequence_append_clone(GeoXmlSequence * sequence);
 
 /**
+ * Append a copy of \p other to after \p sequence and return the copied sequence.
+ *
+ * If \p sequence is NULL or \p other is NULL, NULL is returned.
+ *
+ */
+GeoXmlSequence *
+geoxml_sequence_copy(GeoXmlSequence * sequence, GeoXmlSequence * other);
+
+/**
  * Get the index of \p sequence.
  *
  * If \p sequence is NULL returns -1.
@@ -163,6 +172,15 @@ geoxml_sequence_get_at(GeoXmlSequence * sequence, gulong index);
  */
 int
 geoxml_sequence_remove(GeoXmlSequence * sequence);
+
+/**
+ * Return TRUE if \p sequence and \p other are the same sequences.
+ * Otherwise, return FALSE.
+ *
+ * If \p sequence or \p other is NULL, returns FALSE.
+ */
+gboolean
+geoxml_sequence_is_same_sequence(GeoXmlSequence * sequence, GeoXmlSequence * other);
 
 /**
  * Move \p sequence to \p parameter_group, appending it to the list of is parameters.

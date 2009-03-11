@@ -84,7 +84,7 @@ const GtkRadioActionEntry parameter_type_radio_actions_entries [] = {
 	{"parameter_type_file", NULL, _("file"), NULL, NULL, GEOXML_PARAMETERTYPE_FILE},
 	{"parameter_type_group", NULL, _("group"), NULL, NULL, GEOXML_PARAMETERTYPE_GROUP},
 };
- 
+
 static GtkTreeIter
 parameter_append_to_ui(GeoXmlParameter * parameter, GtkTreeIter * parent);
 static void
@@ -435,6 +435,53 @@ parameter_change_type_setup_ui(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 
 	gtk_widget_destroy(dialog);
+}
+
+/*
+ * Function: parameter_paste
+ * Paste debr.clipboard
+ */
+void
+parameter_paste(void)
+{
+	if (debr.parameter != NULL &&
+	!geoxml_sequence_is_same_sequence(GEOXML_SEQUENCE(debr.parameter), debr.clipboard)) {
+		debr_message(LOG_ERROR, _("Clipboard doesn't keep a parameter"));
+		return;
+	}
+
+	GeoXmlSequence *	copy;
+	GtkTreeIter		copy_iter;
+	GtkTreeIter		iter;
+
+	copy = geoxml_sequence_copy(GEOXML_SEQUENCE(debr.parameter), debr.clipboard);
+	if (copy == NULL) {
+		debr_message(LOG_ERROR, _("Could not paste parameter"));
+		return;
+	}
+
+	if (debr.parameter == NULL) {
+		gint		n_children;
+
+		if (!(n_children = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_parameter.tree_store), NULL))) {
+			//FIXME: Check if it is a parameter
+			copy_iter = parameter_append_to_ui(GEOXML_PARAMETER(copy), NULL);
+			goto out;
+		}
+
+		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(debr.ui_parameter.tree_store),
+			&iter, NULL, n_children-1);
+	} else
+		parameter_get_selected(&iter, FALSE);
+
+	gtk_tree_store_insert_after(debr.ui_parameter.tree_store, &copy_iter, NULL, &iter);
+	gtk_tree_store_set(debr.ui_parameter.tree_store, &copy_iter,
+		PARAMETER_XMLPOINTER, copy,
+		-1);
+	parameter_load_iter(&copy_iter);
+
+out:	parameter_select_iter(copy_iter);
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
 /*
