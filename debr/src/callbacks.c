@@ -325,8 +325,8 @@ on_menu_close_activate(void)
 				-1);
 
 			geoxml_document_save(GEOXML_DOC(debr.menu), path);
-			break;
 		} case GTK_RESPONSE_NO:
+                        --debr.unsaved_count;
 			break;
 		case GTK_RESPONSE_CANCEL:
 			cancel = TRUE;
