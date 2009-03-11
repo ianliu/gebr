@@ -161,8 +161,8 @@ parameters_configure_setup_ui(void)
 		alignment = gtk_alignment_new(1, 0, 0, 0);
 		gtk_box_pack_start(GTK_BOX(hbox), alignment, TRUE, TRUE, 5);
 		button = gtk_button_new_with_label(_("Link"));
-		gtk_widget_show(button);
 		gtk_container_add(GTK_CONTAINER(alignment), button);
+		gtk_widget_show_all(alignment);
 		gtk_misc_set_alignment(GTK_MISC(label), 1, 0);
 
 		g_signal_connect(button, "clicked",
