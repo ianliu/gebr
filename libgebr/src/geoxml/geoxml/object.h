@@ -69,6 +69,26 @@
 typedef struct geoxml_object GeoXmlObject;
 
 /**
+ * GeoXml basic object types
+ */
+enum GEOXML_OBJECT_TYPE {
+	GEOXML_OBJECT_TYPE_UNKNOWN = 0,
+	GEOXML_OBJECT_TYPE_PROJECT,
+	GEOXML_OBJECT_TYPE_LINE,
+	GEOXML_OBJECT_TYPE_FLOW,
+	GEOXML_OBJECT_TYPE_PROGRAM,
+	GEOXML_OBJECT_TYPE_PARAMETERS,
+	GEOXML_OBJECT_TYPE_PARAMETER,
+	GEOXML_OBJECT_TYPE_ENUM_OPTION,
+};
+
+/**
+ * Return the type of \p object
+ */
+enum GEOXML_OBJECT_TYPE
+geoxml_object_get_type(GeoXmlObject * object);
+
+/**
  *
  * \see geoxml_object_get_user_data
  */

@@ -15,9 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include <gdome.h>
 
 #include "object.h"
+#include "types.h"
 #include "xml.h"
 
 /*
@@ -31,6 +34,26 @@ struct geoxml_object {
 /*
  * library functions.
  */
+
+enum GEOXML_OBJECT_TYPE
+geoxml_object_get_type(GeoXmlObject * object)
+{
+	static const gchar *	tag_map [] = { "",
+		"project", "line", "flow",
+		"program", "parameters", "parameter",
+		"option"
+	};
+	guint			i;
+
+	if (object == NULL)
+		return GEOXML_OBJECT_TYPE_UNKNOWN;
+
+	for (i = 1; i <= 7; ++i)
+		if (!strcmp(gdome_el_tagName((GdomeElement*)object, &exception)->str, tag_map[i]))
+			return (enum GEOXML_OBJECT_TYPE)i;
+
+	return GEOXML_OBJECT_TYPE_UNKNOWN;
+}
 
 void
 geoxml_object_set_user_data(GeoXmlObject * object, gpointer user_data)
