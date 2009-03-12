@@ -39,7 +39,7 @@ struct ui_program {
 		GtkWidget *	description_label;
 		GtkWidget *	nparams_label;
 		GtkWidget *	binary_label;
-		//GtkWidget *	url_button;
+		GtkWidget *	url_button;
 		GtkWidget *	help_button;
 	} details;
 };
