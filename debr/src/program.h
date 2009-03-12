@@ -63,6 +63,9 @@ void
 program_bottom(void);
 
 void
+program_paste(void);
+
+void
 program_dialog_setup_ui(void);
 
 #endif //__PROGRAM_H

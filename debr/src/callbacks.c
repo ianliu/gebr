@@ -409,12 +409,12 @@ on_program_copy_activate(void)
 
 /*
  * Function: on_program_paste_activate
- * Set debr.clipboard to selected program
+ * Call <program_paste>
  */
 void
 on_program_paste_activate(void)
 {
-	debr.clipboard = GEOXML_SEQUENCE(debr.program);
+	program_paste();
 }
 
 /*

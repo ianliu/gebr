@@ -444,8 +444,7 @@ parameter_change_type_setup_ui(void)
 void
 parameter_paste(void)
 {
-	if (debr.parameter != NULL &&
-	!geoxml_sequence_is_same_sequence(GEOXML_SEQUENCE(debr.parameter), debr.clipboard)) {
+	if (geoxml_object_get_type(GEOXML_OBJECT(debr.clipboard)) != GEOXML_OBJECT_TYPE_PARAMETER) {
 		debr_message(LOG_ERROR, _("Clipboard doesn't keep a parameter"));
 		return;
 	}
@@ -464,7 +463,6 @@ parameter_paste(void)
 		gint		n_children;
 
 		if (!(n_children = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_parameter.tree_store), NULL))) {
-			//FIXME: Check if it is a parameter
 			copy_iter = parameter_append_to_ui(GEOXML_PARAMETER(copy), NULL);
 			goto out;
 		}
@@ -908,33 +906,29 @@ static void
 parameter_load_iter(GtkTreeIter * iter)
 {
 	GeoXmlParameter *	parameter;
-        GString *               keyword_label;
-
+	GString *		keyword_label;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter,
 		PARAMETER_XMLPOINTER, &parameter,
 		-1);
 
-	if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE){
-                GString *		keyword;
+	if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE) {
+		GString *		keyword;
 
-                keyword = g_string_new(NULL);
+		keyword = g_string_new(NULL);
 		g_string_assign(keyword, geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(parameter)));
 
-                if (keyword->str[keyword->len-1] ==  ' '){
-                        keyword_label = g_string_new_len(keyword->str, keyword->len - 1);
-                        g_string_append_printf(keyword_label, "%lc", 0x02FD);
-                }
-                else{
-                        keyword_label = g_string_new(keyword->str);
-                }
+		if (keyword->str[keyword->len-1] ==  ' ') {
+			keyword_label = g_string_new_len(keyword->str, keyword->len - 1);
+			g_string_append_printf(keyword_label, "%lc", 0x02FD);
+		} else
+			keyword_label = g_string_new(keyword->str);
 
-                g_string_free(keyword, TRUE);
-        }
-	else {
+		g_string_free(keyword, TRUE);
+	} else {
 		GeoXmlSequence *	instance;
 
-                keyword_label = g_string_new(NULL);
+		keyword_label = g_string_new(NULL);
 		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
 		g_string_printf(keyword_label, "%lu parameter(s) and %lu instance(s)",
 			geoxml_parameters_get_number(GEOXML_PARAMETERS(instance)),
