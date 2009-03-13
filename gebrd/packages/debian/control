@@ -8,8 +8,8 @@ Build-Depends: debhelper (>= 5)
 Package: gebrd
 Architecture: any
 Depends: ${shlibs:Depends}
-Recommends: gebr
-Description: GÍBRD is server for executing flows
+Suggests: gebr
+Description: GeBRD is server for executing flows
  GeBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.
  . 

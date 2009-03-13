@@ -8,7 +8,7 @@ Package: debr
 Section: science
 Architecture: any
 Depends: ${shlibs:Depends}
-Recommends: gebr
+Suggests: gebr
 Description: Flow editor to seismic processing software GeBR
  GeBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.
