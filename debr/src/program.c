@@ -780,6 +780,10 @@ program_popup_menu(GtkWidget * tree_view)
 		gtk_action_group_get_action(debr.action_group, "program_delete")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "program_properties")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "program_copy")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "program_paste")));
 
 out:	gtk_widget_show_all(menu);
 
