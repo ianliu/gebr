@@ -8,8 +8,8 @@ Package: debr
 Section: science
 Architecture: any
 Depends: ${shlibs:Depends}
-Suggests: gebr
-Description: Flow editor to seismic processing software GeBR
+Recommends: gebr
+Description: Menu Designer for GeBR
  GeBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.
  . 
@@ -20,5 +20,6 @@ Description: Flow editor to seismic processing software GeBR
      * Act as an interface to many freely-available seismic-processing
        packages (Seismic Unix, Madagascar, etc)
  .
- GeBRME is the flow editor to seismic processing software.
+ DeBR is the menu designer for GeBR. Each menu adds new functionalities
+ to GeBR.
  .
