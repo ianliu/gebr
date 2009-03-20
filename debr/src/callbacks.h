@@ -48,6 +48,9 @@ void
 on_menu_properties_activate(void);
 
 void
+on_menu_validate_activate(void);
+
+void
 on_menu_close_activate(void);
 
 void

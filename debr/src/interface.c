@@ -43,6 +43,12 @@ static const GtkActionEntry actions_entries [] = {
 	{"main_quit", GTK_STOCK_QUIT, _("Quit"), "<Control>q", _("Quit DÈBR"), (GCallback)debr_quit},
 	/* menu */
 	{"menu_new", GTK_STOCK_NEW, NULL, NULL, _("Create new menu"), (GCallback)on_menu_new_activate},
+	{"menu_properties", GTK_STOCK_PROPERTIES, NULL, NULL, _("Edit menu properties"),
+		(GCallback)on_menu_properties_activate},
+	{"menu_validate", GTK_STOCK_APPLY, NULL, NULL, _("Validate menu"),
+		(GCallback)on_menu_validate_activate},
+	{"menu_close", GTK_STOCK_CLOSE, NULL, NULL, _("Remove menu from list"),
+		(GCallback)on_menu_close_activate},
 	{"menu_open", GTK_STOCK_OPEN, NULL, NULL, _("Open an existing menu"),
 		(GCallback)on_menu_open_activate},
 	{"menu_save", GTK_STOCK_SAVE, NULL, NULL, _("Save current menu"), (GCallback)on_menu_save_activate},
@@ -54,10 +60,6 @@ static const GtkActionEntry actions_entries [] = {
 		(GCallback)on_menu_revert_activate},
 	{"menu_delete", GTK_STOCK_DELETE, NULL, NULL, _("Delete menu file"),
 		(GCallback)on_menu_delete_activate},
-	{"menu_properties", GTK_STOCK_PROPERTIES, NULL, NULL, _("Edit menu properties"),
-		(GCallback)on_menu_properties_activate},
-	{"menu_close", GTK_STOCK_CLOSE, NULL, NULL, _("Remove menu from list"),
-		(GCallback)on_menu_close_activate},
 	/* program */
 	{"program_new", GTK_STOCK_NEW, NULL, NULL, _("Create new program"),
 		(GCallback)on_program_new_activate},
@@ -145,7 +147,7 @@ debr_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(navigation_hbox), debr.navigation_box_label, FALSE, FALSE, 0);
 	gtk_widget_show_all(navigation_hbox);
 
-	notebook = gtk_notebook_new();
+	debr.notebook = notebook = gtk_notebook_new();
 	gtk_widget_show(notebook);
 	gtk_box_pack_start(GTK_BOX(vbox), notebook, TRUE, TRUE, 0);
 
@@ -209,6 +211,8 @@ debr_setup_ui(void)
 		gtk_action_group_get_action(debr.action_group, "menu_new"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "menu_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(debr.action_group, "menu_validate"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "menu_close"))), -1);
 
@@ -301,6 +305,11 @@ debr_setup_ui(void)
 	parameter_setup_ui();
 	gtk_box_pack_start(GTK_BOX(vbox), debr.ui_parameter.widget, TRUE, TRUE, 0);
 
+	/*
+	 * Notebook page: Validate
+	 */
+	validate_setup_ui();
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), debr.ui_validate.widget, gtk_label_new(_("Validate")));
 }
 
 /*

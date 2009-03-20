@@ -27,6 +27,7 @@
 #include "menu.h"
 #include "program.h"
 #include "parameter.h"
+#include "validate.h"
 
 extern struct debr debr;
 
@@ -41,14 +42,18 @@ struct debr {
 	/* diverse widgets */
 	GtkWidget *		window;
 	GtkWidget *		navigation_box_label;
+	GtkWidget *		notebook;
 	struct about		about;
 	GtkWidget *		statusbar;
 	GtkWidget *		invisible;
 	GtkAccelGroup *		accel_group;
 	GtkActionGroup *	action_group;
+
+	/* notebook's widgets */
 	struct ui_menu		ui_menu;
 	struct ui_program	ui_program;
 	struct ui_parameter	ui_parameter;
+	struct ui_validate	ui_validate;
 	GtkWidget *		parameter_type_menu;
 
         /* icons */

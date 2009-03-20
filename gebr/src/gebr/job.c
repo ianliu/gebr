@@ -75,9 +75,9 @@ job_add(struct server * server, GString * jid,
 	/* append to the store and select it */
 	gtk_list_store_append(gebr.ui_job_control->store, &iter);
 	gtk_list_store_set(gebr.ui_job_control->store, &iter,
-			JC_TITLE, job->title->str,
-			JC_STRUCT, job,
-			-1);
+		JC_TITLE, job->title->str,
+		JC_STRUCT, job,
+		-1);
 	job->iter = iter;
 	job_update_status(job);
 	job_append_output(job, output);

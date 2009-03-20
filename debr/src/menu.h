@@ -74,6 +74,8 @@ menu_save(const gchar * path);
 void
 menu_save_all(void);
 void
+menu_validate(void);
+void
 menu_selected(void);
 gboolean
 menu_cleanup(void);

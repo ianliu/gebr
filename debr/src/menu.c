@@ -408,6 +408,21 @@ menu_save_all(void)
 }
 
 /*
+ * Function: menu_validate
+ * Validate selected menus
+ */
+void
+menu_validate(void)
+{
+	GtkTreeIter	iter;
+
+	if (!menu_get_selected(&iter))
+		return;
+
+	validate_menu(&iter, debr.menu);
+}
+
+/*
  * Function: menu_selected
  * Propagate the UI for a selected menu on the view
  */

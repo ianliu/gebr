@@ -280,13 +280,24 @@ on_menu_delete_activate(void)
 }
 
 /*
- * Function: on_menu_new_activate
- * Call <menu_remove>
+ * Function: on_menu_properties_activate
+ * Call <menu_dialog_setup_ui>
  */
 void
 on_menu_properties_activate(void)
 {
 	menu_dialog_setup_ui();
+}
+
+/*
+ * Function: on_menu_validate_activate
+ * Call <menu_validate>
+ */
+void
+on_menu_validate_activate(void)
+{
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(debr.notebook), 3);
+	menu_validate();
 }
 
 /*

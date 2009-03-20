@@ -1,6 +1,7 @@
 1.0 roadmap:
 
 Beta:
++	Organizar menus por data na DéBR
 +	Import/export de projetos e linhas (pensar)
 +	Categorias do usuário na DéBR, lidas a partir dos menus
         em edição e salvas no arquivo de conf da DéBR

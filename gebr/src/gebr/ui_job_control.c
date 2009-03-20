@@ -60,7 +60,7 @@ job_control_setup_ui(void)
 
 	GtkWidget *			hpanel;
 	GtkWidget *			vbox;
-	GtkWidget *			scrolled_win;
+	GtkWidget *			scrolled_window;
 	GtkWidget *			frame;
 
 	GtkTreeViewColumn *		col;
@@ -77,12 +77,12 @@ job_control_setup_ui(void)
 	/*
 	 * Left side
 	 */
-	frame = gtk_frame_new("Jobs");
+	frame = gtk_frame_new(_("Jobs"));
 	gtk_paned_pack1(GTK_PANED(hpanel), frame, FALSE, FALSE);
 
-	scrolled_win = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_win), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(frame), scrolled_win);
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
 
 	ui_job_control->store = gtk_list_store_new(JC_N_COLUMN,
 		GDK_TYPE_PIXBUF,
@@ -105,8 +105,8 @@ job_control_setup_ui(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_job_control->view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", JC_TITLE);
 
-	gtk_container_add(GTK_CONTAINER(scrolled_win), ui_job_control->view);
-	gtk_widget_set_size_request(GTK_WIDGET(scrolled_win), 180, 30);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_job_control->view);
+	gtk_widget_set_size_request(GTK_WIDGET(scrolled_window), 180, 30);
 
 	/*
 	 * Right side
@@ -117,9 +117,9 @@ job_control_setup_ui(void)
 	ui_job_control->label = gtk_label_new("");
 	gtk_box_pack_start(GTK_BOX(vbox), ui_job_control->label, FALSE, TRUE, 0);
 
-	scrolled_win = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_win), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_end(GTK_BOX(vbox), scrolled_win, TRUE, TRUE, 0);
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_end(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
 
 	ui_job_control->text_buffer = gtk_text_buffer_new(NULL);
 	text_view = gtk_text_view_new_with_buffer(ui_job_control->text_buffer);
@@ -129,17 +129,17 @@ job_control_setup_ui(void)
 		"cursor-visible", FALSE,
 		NULL);
 	{
-		PangoFontDescription* font;
+		PangoFontDescription *	font;
 
 		font = pango_font_description_new();
 		pango_font_description_set_family(font, "courier 10 pitch");
 		pango_font_description_set_style(font, PANGO_STYLE_NORMAL);
-
 		gtk_widget_modify_font(text_view, font);
+
 		pango_font_description_free(font);
 	}
 	ui_job_control->text_view = text_view;
-	gtk_container_add(GTK_CONTAINER(scrolled_win), text_view);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
 
 	return ui_job_control;
 }
@@ -293,9 +293,7 @@ job_control_close(void)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
 		return;
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
-			JC_STRUCT, &job,
-			-1);
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
 	if (confirm_action_dialog(_("Clear job "), _("Are you sure you want to clear job '%s'?"), job->title->str) == FALSE)
 		return;
