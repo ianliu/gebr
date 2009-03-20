@@ -11,6 +11,9 @@ Beta:
 +	Detalhes para URL de programa na DeBR
 
 RC:
++	Reiniciar ou avisar o usuário de daemons antigos ao instalar o gebrd
++	Mais checagens antes de executar um daemon, como:
+a existência e acessibilidade de arquivos de entrada e saída, permissões de escrita em diretórios, e se consegue de fato encontrar todos os binários
 +	OK/Cancel para dialogs da DéBR
 +	Internacionalização (português, espanhol, alemão, etc)
 +	Suporte a help
