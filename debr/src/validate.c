@@ -174,6 +174,7 @@ validate_menu(GtkTreeIter * iter, GeoXmlFlow * menu)
 		VALIDATE_POINTER, validate,
 		-1);
 	validate_set_selected(iter);
+	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_validate.tree_view), iter);
 }
 
 /*

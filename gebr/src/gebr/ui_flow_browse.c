@@ -325,13 +325,19 @@ flow_browse_info_update(void)
  * Set to _iter_ the current selected flow
  */
 gboolean
-flow_browse_get_selected(GtkTreeIter * iter)
+flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 {
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	return gtk_tree_selection_get_selected(selection, &model, iter);
+	if (!gtk_tree_selection_get_selected(selection, &model, iter)) {
+		if (warn_unselected)
+			gebr_message(LOG_ERROR, TRUE, FALSE, _("Any flow selected"));
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 /* Function: flow_browse_select_iter
@@ -400,7 +406,7 @@ flow_browse_load(void)
 
 	gtk_container_foreach(GTK_CONTAINER(gebr.ui_flow_browse->revisions_menu),
 		(GtkCallback)gtk_widget_destroy, NULL);
-	if (!flow_browse_get_selected(&iter)) {
+	if (!flow_browse_get_selected(&iter, FALSE)) {
 		gebr.flow = NULL;
 		flow_edition_load_components();
 		flow_browse_info_update();
@@ -465,7 +471,7 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 
 	menu = gtk_menu_new();
 
-	if (!flow_browse_get_selected(&iter)) {
+	if (!flow_browse_get_selected(&iter, FALSE)) {
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 			gtk_action_group_get_action(gebr.action_group, "flow_new")));
 		goto out;

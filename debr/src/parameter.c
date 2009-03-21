@@ -996,7 +996,12 @@ parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
 	if (parameter_check_selected(show_warning) == FALSE)
 		return FALSE;
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
-	return gtk_tree_selection_get_selected(selection, &model, iter);
+	gtk_tree_selection_get_selected(selection, &model, iter);
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter,
+		PARAMETER_XMLPOINTER, &debr.parameter,
+		-1);
+
+	return TRUE;
 }
 
 /*
@@ -1013,9 +1018,6 @@ parameter_selected(void)
 		return;
 	}
 
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
-		PARAMETER_XMLPOINTER, &debr.parameter,
-		-1);
 	do_navigation_bar_update();
 
 	/* parameter type stuff */

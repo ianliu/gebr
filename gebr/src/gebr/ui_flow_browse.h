@@ -67,7 +67,7 @@ void
 flow_browse_info_update(void);
 
 gboolean
-flow_browse_get_selected(GtkTreeIter * iter);
+flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected);
 
 void
 flow_browse_select_iter(GtkTreeIter * iter);

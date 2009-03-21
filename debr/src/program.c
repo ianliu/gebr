@@ -654,7 +654,13 @@ program_get_selected(GtkTreeIter * iter, gboolean warn_user)
 	if (program_check_selected(warn_user) == FALSE)
 		return FALSE;
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
-	return gtk_tree_selection_get_selected(selection, &model, iter);
+	gtk_tree_selection_get_selected(selection, &model, iter);
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), iter,
+		PROGRAM_XMLPOINTER, &debr.program,
+		-1);
+
+	return TRUE;
 }
 
 /*
@@ -723,9 +729,6 @@ program_selected(void)
 		return;
 	}
 
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), &iter,
-		PROGRAM_XMLPOINTER, &debr.program,
-		-1);
 	parameter_load_program();
 	program_details_update();
 	do_navigation_bar_update();
