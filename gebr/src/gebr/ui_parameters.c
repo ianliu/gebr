@@ -470,6 +470,8 @@ static void
 parameters_change_selected(GtkToggleButton * toggle_button, struct parameter_widget * widget)
 {
 	gtk_widget_set_sensitive(widget->widget, gtk_toggle_button_get_active(toggle_button));
+	if (gtk_toggle_button_get_active(toggle_button))
+		geoxml_parameters_set_selected(geoxml_parameter_get_parameters(widget->parameter), widget->parameter);
 }
 
 /*
@@ -549,7 +551,8 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 			FSEQ_GEOXML_POINTER, ui_parameters->program,
 			FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_apply,
 			-1);
-		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group, "flow_edition_configured")), TRUE);
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(
+			gebr.action_group, "flow_edition_status_configured")), TRUE);
 
 		flow_save();
 		break;
