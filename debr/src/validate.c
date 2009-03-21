@@ -113,6 +113,7 @@ validate_setup_ui(void)
 	gtk_paned_pack2(GTK_PANED(hpanel), debr.ui_validate.text_view_vbox, TRUE, TRUE);
 
 	gtk_widget_show_all(debr.ui_validate.widget);
+
 }
 
 /*
@@ -148,6 +149,18 @@ validate_menu(GtkTreeIter * iter, GeoXmlFlow * menu)
 		.iter = *iter,
 		.menu = menu
 	};
+
+        {
+                PangoFontDescription *	font;
+                
+		font = pango_font_description_new();
+		pango_font_description_set_family(font, "courier 10 pitch");
+		pango_font_description_set_style(font, PANGO_STYLE_NORMAL);
+		gtk_widget_modify_font(text_view, font);
+                
+		pango_font_description_free(font);
+	}
+
 
 	gtk_list_store_append(debr.ui_validate.list_store, iter);
 	gtk_list_store_set(debr.ui_validate.list_store, iter,
@@ -273,7 +286,7 @@ validate_append_text_valist(struct validate * validate, GtkTextTag * text_tag, c
 }
 
 static void
-validate_append_text(struct validate * validate, GtkTextTag * text_tag, const gchar * format, ...)
+validate_append_text_with_tag(struct validate * validate, GtkTextTag * text_tag, const gchar * format, ...)
 {
 	va_list		argp;
 
@@ -295,13 +308,52 @@ validate_append_text_with_property_list(struct validate * validate, const char *
 	g_object_set_valist(G_OBJECT(text_tag), first_property_name, argp);
 	va_end(argp);
 
-	validate_append_text(validate, text_tag, text);
+	validate_append_text_with_tag(validate, text_tag, text);
+}
+
+static void
+validate_append_text_emph(struct validate * validate, const char * format, ...)
+{
+	gchar *		string;
+        va_list         argp;
+
+	va_start(argp, format);
+	string = g_strdup_vprintf(format, argp);
+	validate_append_text_with_property_list(validate, string, "weight", PANGO_WEIGHT_BOLD, NULL);
+        va_end(argp);
+        g_free(string);
+}
+
+static void
+validate_append_text(struct validate * validate, const char * format, ...)
+{
+	gchar *		string;
+        va_list         argp;
+
+	va_start(argp, format);
+	string = g_strdup_vprintf(format, argp);
+	validate_append_text_with_tag(validate, NULL, string);
+        va_end(argp);
+        g_free(string);
+}
+
+static void
+validate_append_text_error(struct validate * validate, const char * format, ...)
+{
+	gchar *		string;
+        va_list         argp;
+
+	va_start(argp, format);
+	string = g_strdup_vprintf(format, argp);
+        validate_append_text_with_property_list(validate, string, "foreground", "#ff0000", NULL);
+	va_end(argp);
+        g_free(string);
 }
 
 static void
 validate_append_item(struct validate * validate, const char * item)
 {
-	validate_append_text_with_property_list(validate, item, "weight", PANGO_WEIGHT_BOLD, NULL);
+	validate_append_text_emph(validate, item);
 }
 
 static void
@@ -348,9 +400,12 @@ validate_do(struct validate * validate)
 	if (author || all) {
 		validate_append_item(validate, "Author:        ");
 		validate_append_check(validate, geoxml_document_get_author(GEOXML_DOCUMENT(validate->menu)),
-			EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, "<");
-		validate_append_check(validate, geoxml_document_get_email(GEOXML_DOCUMENT(validate->menu)), EMAIL, "<\n");
+			EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, " <");
+		validate_append_check(validate, geoxml_document_get_email(GEOXML_DOCUMENT(validate->menu)), EMAIL, ">");
+                validate_append_text(validate, "\n");
 	}
+
+
 	if (dates || all) {
 		validate_append_item_with_check(validate, "Created:       ",
 			localized_date(geoxml_document_get_date_created(GEOXML_DOCUMENT(validate->menu))), EMPTY);
@@ -360,9 +415,10 @@ validate_do(struct validate * validate)
 	if (mhelp || all) {
 		validate_append_item(validate, "Help:          ");
 		if (strlen(geoxml_document_get_help(GEOXML_DOCUMENT(validate->menu))) >= 1)
-			validate_append_text(validate, NULL, "Defined");
+			validate_append_text(validate,  "Defined");
 		else
 			validate_append_check(validate, "", EMPTY, "");
+                validate_append_text(validate,  "\n");
 	}
 	if (category || all) {
 		geoxml_flow_get_category(validate->menu, &seq, 0);
@@ -377,7 +433,8 @@ validate_do(struct validate * validate)
 	if (!progs && !all && !params)
 		goto out;
 
-	validate_append_text(validate, NULL, "Menu with:     %ld program(s)\n",
+	validate_append_text_emph(validate, "Menu with:     ");
+	validate_append_text(validate,  "%ld program(s)\n",
 		geoxml_flow_get_programs_number(validate->menu));
 	geoxml_flow_get_program(validate->menu, &seq, 0);
 	for (i = 0; seq != NULL; i++, geoxml_sequence_next(&seq)) {
@@ -387,27 +444,33 @@ validate_do(struct validate * validate)
 
 		prog = GEOXML_PROGRAM(seq);
 
-		validate_append_text(validate, NULL, ">>Program:     %d\n", i+1);
+		validate_append_text_emph(validate, "\n>>Program:     ");
+		validate_append_text(validate,  "%d\n", i+1);
 		validate_append_item_with_check(validate, "  Title:       ",
 			geoxml_program_get_title(prog), EMPTY | NOBLK | MTBLK);
 		validate_append_item_with_check(validate, "  Description: ",
 			geoxml_program_get_description(prog), EMPTY | CAPIT | NOBLK | MTBLK | NOPNT);
-		validate_append_text(validate, NULL, "  In/out/err:  %s/%s/%s\n",
+
+                validate_append_text_emph(validate, "  In/out/err:  ");
+                validate_append_text(validate,  "%s/%s/%s\n",
 			geoxml_program_get_stdin(prog) ? "Read" : "Ignore",
 			geoxml_program_get_stdout(prog) ? "Write" : "Ignore",
 			geoxml_program_get_stdin(prog) ? "Append" : "Ignore");
-		validate_append_item_with_check(validate, "  Binary:      %s\n",
+
+		validate_append_item_with_check(validate, "  Binary:      ",
 			geoxml_program_get_binary(prog), EMPTY);
-		validate_append_item_with_check(validate, "  URL:         %s\n",
+		validate_append_item_with_check(validate, "  URL:         ",
 			geoxml_program_get_url(prog), EMPTY);
 		validate_append_item(validate, "  Help:        ");
 		if (strlen(geoxml_program_get_help(prog)) >= 1)
-			validate_append_text(validate, NULL, "Defined");
+			validate_append_text(validate,  "Defined");
 		else
 			validate_append_check(validate, "", EMPTY, "");
+                validate_append_text(validate,  "\n");
+
 
 		if (params || all) {
-			validate_append_text(validate, NULL, "  >>Parameters:\n");
+			validate_append_text_emph(validate, "  >>Parameters:\n");
 
 			parameter = GEOXML_PARAMETER(geoxml_parameters_get_first_parameter(geoxml_program_get_parameters(prog)));
 
@@ -418,7 +481,7 @@ validate_do(struct validate * validate)
 		}
 	}
 
-out:    validate_append_text(validate, NULL, "%d potencial error(s)", validate->error_count);
+out:    validate_append_text_emph(validate,  "%d potencial error(s)", validate->error_count);
 }
 
 /* ------------------------------------------------------------*/
@@ -530,12 +593,12 @@ validate_append_check(struct validate * validate, const gchar * value, int flags
 	if (flags & FILEN) result = result && check_menu_filename(value);
 
 	if (result)
-		validate_append_text(validate, NULL, value);
+		validate_append_text(validate,  value);
 	else {
 		if (check_is_not_empty(value))
-			validate_append_text(validate, NULL, "**%s**", value);
+			validate_append_text_error(validate, "%s", value);
 		else
-			validate_append_text(validate, NULL, "**UNSET**"); //FIXME: show in red
+			validate_append_text_error(validate, "UNSET");
 		validate->error_count++;
 	}
 
@@ -550,56 +613,56 @@ show_program_parameter(struct validate * validate, GeoXmlProgramParameter * pp, 
 	GString *	default_value;
 
 	if (isubpar) {
-		validate_append_text(validate, NULL, "       %2d.%02d: ", ipar, isubpar);
+		validate_append_text(validate,  "       %2d.%02d: ", ipar, isubpar);
 		validate_append_check(validate, geoxml_parameter_get_label(GEOXML_PARAMETER(pp)),
 			EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, "\n");
 	} else {
-		validate_append_text(validate, NULL, "    %2d: ", ipar);
+		validate_append_text(validate,  "    %2d: ", ipar);
 		validate_append_check(validate, geoxml_parameter_get_label(GEOXML_PARAMETER(pp)),
 			EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, "\n");
 	}
 
-	validate_append_text(validate, NULL, "        ");
+	validate_append_text(validate,  "        ");
 	if (isubpar)
-		validate_append_text(validate, NULL, "        ");
+		validate_append_text(validate,  "        ");
 
 	switch (geoxml_parameter_get_type(GEOXML_PARAMETER(pp))) {
 	case GEOXML_PARAMETERTYPE_STRING:
-		validate_append_text(validate, NULL, "[string]     ");
+		validate_append_text(validate,  "[string]     ");
 		break;
 	case GEOXML_PARAMETERTYPE_INT:
-		validate_append_text(validate, NULL, "[integer]    ");
+		validate_append_text(validate,  "[integer]    ");
 		break;
 	case GEOXML_PARAMETERTYPE_FILE:
-		validate_append_text(validate, NULL, "[file]       ");
+		validate_append_text(validate,  "[file]       ");
 		break;
 	case GEOXML_PARAMETERTYPE_FLAG:
-		validate_append_text(validate, NULL, "[flag]       ");
+		validate_append_text(validate,  "[flag]       ");
 		break;
 	case GEOXML_PARAMETERTYPE_FLOAT:
-		validate_append_text(validate, NULL, "[real number]");
+		validate_append_text(validate,  "[real number]");
 		break;
 	case GEOXML_PARAMETERTYPE_RANGE:
-		validate_append_text(validate, NULL, "[range]      ");
+		validate_append_text(validate,  "[range]      ");
 		break;
 	case GEOXML_PARAMETERTYPE_ENUM:
-		validate_append_text(validate, NULL, "[enum]       ");
+		validate_append_text(validate,  "[enum]       ");
 		break;
 	default:
-		validate_append_text(validate, NULL, "[UNKNOWN]    ");
+		validate_append_text(validate,  "[UNKNOWN]    ");
 		break;
 	}
 
-	validate_append_text(validate, NULL, " '");
-	validate_append_check(validate, geoxml_program_parameter_get_keyword(pp), EMPTY, "''");
+	validate_append_text(validate,  " '");
+	validate_append_check(validate, geoxml_program_parameter_get_keyword(pp), EMPTY, "'");
 
 	default_value = geoxml_program_parameter_get_string_value(pp, TRUE);
 	if (default_value->len)
-		validate_append_text(validate, NULL, " [%s]", default_value->str);
+		validate_append_text(validate,  " [%s]", default_value->str);
 	g_string_free(default_value, TRUE);
 
 	if (geoxml_program_parameter_get_required(pp))
-		validate_append_text(validate, NULL, "  REQUIRED ");
+		validate_append_text(validate,  "  REQUIRED ");
 
         /* enum details */
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(pp)) == GEOXML_PARAMETERTYPE_ENUM){
@@ -608,17 +671,17 @@ show_program_parameter(struct validate * validate, GeoXmlProgramParameter * pp, 
 		geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
 
 		for (; enum_option != NULL; geoxml_sequence_next(&enum_option)){
-			validate_append_text(validate, NULL, "\n");
+			validate_append_text(validate,  "\n");
 			if (isubpar)
-				validate_append_text(validate, NULL, "      ");
+				validate_append_text(validate,  "      ");
 
-			validate_append_text(validate, NULL, "        %s (%s)",
+			validate_append_text(validate,  "        %s (%s)",
 				geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(enum_option)),
 				geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(enum_option)));
 		}
 	}
 
-	validate_append_text(validate, NULL, "\n\n");
+	validate_append_text(validate,  "\n\n");
 }
 
 static void
@@ -632,9 +695,14 @@ show_parameter(struct validate * validate, GeoXmlParameter * parameter, gint ipa
 
 		gint subipar = 0;
 
-		validate_append_text(validate, NULL, "    %2d: ", ipar);
+		validate_append_text(validate,  "    %2d: ", ipar);
 		validate_append_check(validate, geoxml_parameter_get_label(parameter),
-				EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, "\n");
+				EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, NULL);
+
+                if (geoxml_parameter_group_get_is_instanciable(GEOXML_PARAMETER_GROUP(parameter)))
+                        validate_append_text(validate,  "   [Instanciable]\n");
+                else
+                        validate_append_text(validate,  "\n");
 
 		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
 		subpar = geoxml_parameters_get_first_parameter(GEOXML_PARAMETERS(instance));
