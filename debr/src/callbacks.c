@@ -529,6 +529,26 @@ on_parameter_paste_activate(void)
 }
 
 /*
+ * Function: on_validate_close
+ * Call <validate_close>
+ */
+void
+on_validate_close(void)
+{
+	validate_close();
+}
+
+/*
+ * Function: on_validate_clear
+ * Call <validate_clear>
+ */
+void
+on_validate_clear(void)
+{
+	validate_clear();
+}
+
+/*
  * Function: on_configure_preferences_activate
  * Call <preferences_dialog_setup_ui>
  */

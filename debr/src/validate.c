@@ -21,6 +21,7 @@
 #include <regex.h>
 
 #include <misc.h>
+#include <gui/utils.h>
 
 #include "validate.h"
 #include "debr.h"
@@ -39,9 +40,11 @@ struct validate {
 	GtkTreeIter		iter;
 	GeoXmlFlow *		menu;
 
-	int			error_count;
+	guint			error_count;
 };
 
+static void
+validate_free(struct validate * validate);
 static gboolean
 validate_get_selected(GtkTreeIter * iter, gboolean warn_unselected);
 static void
@@ -94,6 +97,8 @@ validate_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_validate.tree_view);
 	gtk_widget_set_size_request(GTK_WIDGET(scrolled_window), 180, 30);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(debr.ui_validate.tree_view), FALSE);
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_validate.tree_view)),
+		GTK_SELECTION_MULTIPLE);
 	g_signal_connect(GTK_OBJECT(debr.ui_validate.tree_view), "cursor-changed",
 		GTK_SIGNAL_FUNC(validate_clicked), NULL);
 
@@ -141,6 +146,7 @@ validate_menu(GtkTreeIter * iter, GeoXmlFlow * menu)
 		"cursor-visible", FALSE,
 		NULL);
 
+	gtk_list_store_insert_after(debr.ui_validate.list_store, iter, NULL);
 	validate = g_malloc(sizeof(struct validate));
 	*validate = (struct validate) {
 		.widget = scrolled_window,
@@ -151,32 +157,47 @@ validate_menu(GtkTreeIter * iter, GeoXmlFlow * menu)
 	};
 
         {
-                PangoFontDescription *	font;
-                
+		PangoFontDescription *	font;
+
 		font = pango_font_description_new();
 		pango_font_description_set_family(font, "courier 10 pitch");
 		pango_font_description_set_style(font, PANGO_STYLE_NORMAL);
 		gtk_widget_modify_font(text_view, font);
-                
+
 		pango_font_description_free(font);
 	}
 
-
-	gtk_list_store_append(debr.ui_validate.list_store, iter);
+	validate_do(validate);
 	gtk_list_store_set(debr.ui_validate.list_store, iter,
+		VALIDATE_ICON, !validate->error_count ? debr.pixmaps.stock_apply : debr.pixmaps.stock_cancel,
 		VALIDATE_FILENAME, geoxml_document_get_filename(GEOXML_DOCUMENT(menu)),
 		VALIDATE_POINTER, validate,
 		-1);
 	validate_set_selected(iter);
-	validate_do(validate);
 }
 
 /*
- * Function: validate_clear_history
- * Clear the list of validated menus
+ * Function: validate_close
+ * Clear selecteds validated menus
  */
 void
-validate_clear_history(void)
+validate_close(void)
+{
+	GtkTreeIter		iter;
+	struct validate *	validate;
+
+	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_validate.tree_view) {
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_validate.list_store), &iter, VALIDATE_POINTER, &validate, -1);
+		validate_free(validate);
+	}
+}
+
+/*
+ * Function: validate_clear
+ * Clear all the list of validated menus
+ */
+void
+validate_clear(void)
 {
 	GtkTreeIter		iter;
 	gboolean		valid;
@@ -191,9 +212,7 @@ validate_clear_history(void)
 		this = iter;
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_validate.list_store), &iter);
 
-		gtk_list_store_remove(debr.ui_validate.list_store, &validate->iter);
-		g_object_unref(validate->text_view);
-		g_free(validate);
+		validate_free(validate);
 	}
 }
 
@@ -203,17 +222,25 @@ validate_clear_history(void)
  */
 
 /*
+ * Function: validate_free
+ * Frees _validate_ its iter and interface
+ */
+static void
+validate_free(struct validate * validate)
+{
+	gtk_list_store_remove(debr.ui_validate.list_store, &validate->iter);
+	gtk_widget_destroy(validate->widget);
+	g_free(validate);
+}
+
+/*
  * Function: validate_get_selected
  * Show selected menu report
  */
 static gboolean
 validate_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 {
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_validate.tree_view));
-	if (gtk_tree_selection_get_selected(selection, &model, iter) == FALSE) {
+	if (libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_validate.tree_view), iter) == FALSE) {
 		if (warn_unselected)
 			debr_message(LOG_ERROR, _("No menu selected"));
 		return FALSE;
@@ -232,6 +259,7 @@ validate_set_selected(GtkTreeIter * iter)
 	GtkTreeSelection *	selection;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_validate.tree_view));
+	gtk_tree_selection_unselect_all(selection);
 	gtk_tree_selection_select_iter(selection, iter);
 	validate_clicked();
 }
@@ -277,6 +305,8 @@ validate_append_text_valist(struct validate * validate, GtkTextTag * text_tag, c
 	GtkTextIter	iter;
 	gchar *		string;
 
+	if (format == NULL)
+		return;
 	string = g_strdup_vprintf(format, argp);
 
 	gtk_text_buffer_get_end_iter(validate->text_buffer, &iter);
@@ -315,13 +345,13 @@ static void
 validate_append_text_emph(struct validate * validate, const char * format, ...)
 {
 	gchar *		string;
-        va_list         argp;
+	va_list         argp;
 
 	va_start(argp, format);
 	string = g_strdup_vprintf(format, argp);
 	validate_append_text_with_property_list(validate, string, "weight", PANGO_WEIGHT_BOLD, NULL);
-        va_end(argp);
-        g_free(string);
+	va_end(argp);
+	g_free(string);
 }
 
 static void
@@ -404,8 +434,6 @@ validate_do(struct validate * validate)
 		validate_append_check(validate, geoxml_document_get_email(GEOXML_DOCUMENT(validate->menu)), EMAIL, ">");
                 validate_append_text(validate, "\n");
 	}
-
-
 	if (dates || all) {
 		validate_append_item_with_check(validate, "Created:       ",
 			localized_date(geoxml_document_get_date_created(GEOXML_DOCUMENT(validate->menu))), EMPTY);

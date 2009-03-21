@@ -105,6 +105,12 @@ void
 on_parameter_paste_activate(void);
 
 void
+on_validate_close(void);
+
+void
+on_validate_clear(void);
+
+void
 on_configure_preferences_activate(void);
 
 void

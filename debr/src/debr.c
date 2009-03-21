@@ -47,6 +47,10 @@ debr_init(void)
 
 	/* load status icons */
 	debr.invisible = gtk_invisible_new();
+	debr.pixmaps.stock_apply = gtk_widget_render_icon(debr.invisible,
+		GTK_STOCK_APPLY, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
+	debr.pixmaps.stock_cancel = gtk_widget_render_icon(debr.invisible,
+		GTK_STOCK_CANCEL, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 	debr.pixmaps.stock_no = gtk_widget_render_icon(debr.invisible, GTK_STOCK_NO, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
 	if (!strcmp(debr.config.menu_dir->str, ""))
@@ -80,6 +84,8 @@ debr_quit(void)
 	g_slist_foreach(debr.tmpfiles, (GFunc)g_free, NULL);
 	g_slist_free(debr.tmpfiles);
 
+	g_object_unref(debr.pixmaps.stock_apply);
+	g_object_unref(debr.pixmaps.stock_cancel);
 	g_object_unref(debr.pixmaps.stock_no);
 	gtk_widget_destroy(debr.invisible);
 

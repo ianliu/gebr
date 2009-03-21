@@ -45,6 +45,9 @@ void
 validate_menu(GtkTreeIter * iter, GeoXmlFlow * menu);
 
 void
-validate_clear_history(void);
+validate_close(void);
+
+void
+validate_clear(void);
 
 #endif //__VALIDATE_H

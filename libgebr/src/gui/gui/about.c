@@ -68,17 +68,14 @@ about_setup_ui(const gchar * program, const gchar * description)
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about.dialog), "http://sites.google.com/site/gebrproject/");
 	gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(about.dialog), _("GêBR Home page"));
 	gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(about.dialog), authors);
-	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about.dialog),
-					description);
+	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about.dialog), description);
 
         g_signal_connect(GTK_OBJECT(about.dialog), "close",
-                         GTK_SIGNAL_FUNC(gtk_widget_hide), GTK_OBJECT(about.dialog));
+		GTK_SIGNAL_FUNC(gtk_widget_hide), GTK_OBJECT(about.dialog));
 	g_signal_connect(GTK_OBJECT(about.dialog), "delete-event",
-                         GTK_SIGNAL_FUNC(gtk_widget_hide), NULL);
+		GTK_SIGNAL_FUNC(gtk_widget_hide), NULL);
         g_signal_connect_swapped(GTK_OBJECT(about.dialog), "response", 
-                                 G_CALLBACK (gtk_widget_hide), GTK_OBJECT(about.dialog));
+		G_CALLBACK (gtk_widget_hide), GTK_OBJECT(about.dialog));
 
 	return about;
 }
-
-

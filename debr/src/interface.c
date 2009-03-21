@@ -93,6 +93,12 @@ static const GtkActionEntry actions_entries [] = {
 		(GCallback)on_parameter_copy_activate},
 	{"parameter_paste", GTK_STOCK_PASTE, _("Paste"), "<Control>v", _("Paste parameter from clipboard"),
 		(GCallback)on_parameter_paste_activate},
+	/* validate */
+	{"validate_close", "edit-clear", NULL, NULL, _("Clear selecteds validations reports"),
+		(GCallback)on_validate_close},
+	{"validate_clear", GTK_STOCK_CLEAR, NULL, NULL, _("Clear all validations reports"),
+		(GCallback)on_validate_clear},
+
 };
 
 /*
@@ -232,7 +238,6 @@ debr_setup_ui(void)
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-
 	menu_setup_ui();
 	gtk_box_pack_start(GTK_BOX(vbox), debr.ui_menu.widget, TRUE, TRUE, 0);
 
@@ -260,7 +265,6 @@ debr_setup_ui(void)
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-
 	program_setup_ui();
 	gtk_box_pack_start(GTK_BOX(vbox), debr.ui_program.widget, TRUE, TRUE, 0);
 
@@ -301,15 +305,28 @@ debr_setup_ui(void)
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-
 	parameter_setup_ui();
 	gtk_box_pack_start(GTK_BOX(vbox), debr.ui_parameter.widget, TRUE, TRUE, 0);
 
 	/*
 	 * Notebook page: Validate
 	 */
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(vbox);
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox, gtk_label_new(_("Validate")));
+
+	toolbar = gtk_toolbar_new();
+	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(debr.action_group, "validate_close"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(debr.action_group, "validate_clear"))), -1);
+
+	gtk_widget_show_all(toolbar);
+	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 	validate_setup_ui();
-	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), debr.ui_validate.widget, gtk_label_new(_("Validate")));
+	gtk_box_pack_start(GTK_BOX(vbox), debr.ui_validate.widget, TRUE, TRUE, 0);
 }
 
 /*

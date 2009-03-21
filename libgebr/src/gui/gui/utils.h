@@ -54,6 +54,23 @@ void
 gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source);
 gboolean
 gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_path, GtkTreeIter * iter);
+GList *
+libgebr_gtk_tree_model_path_to_iter_list(GtkTreeModel * model, GList * path_list);
+
+gboolean
+libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
+#define libgebr_gtk_tree_view_foreach_selected(iter, tree_view) \
+	GtkTreeModel * __model; \
+	GList * __path_list = gtk_tree_selection_get_selected_rows( \
+		gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view)), &__model); \
+	GList * __list = libgebr_gtk_tree_model_path_to_iter_list(__model, __path_list); \
+	g_list_foreach(__path_list, (GFunc)gtk_tree_path_free, NULL), g_list_free(__path_list); \
+	GList * __i = g_list_first(__list); \
+	if (__i != NULL || (g_list_free(__list), 0)) \
+		for (*iter = *(GtkTreeIter*)__i->data; \
+		(__i != NULL && (*iter = *(GtkTreeIter*)__i->data, 1)) || \
+			(g_list_foreach(__list, (GFunc)gtk_tree_iter_free, NULL), g_list_free(__list), 0); \
+		__i = g_list_next(__i))
 
 typedef GtkMenu * (*GtkPopupCallback)(GtkWidget *, gpointer);
 gboolean

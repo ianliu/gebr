@@ -43,8 +43,8 @@ struct debr {
 	GtkWidget *		window;
 	GtkWidget *		navigation_box_label;
 	GtkWidget *		notebook;
-	struct about		about;
 	GtkWidget *		statusbar;
+	struct about		about;
 	GtkWidget *		invisible;
 	GtkAccelGroup *		accel_group;
 	GtkActionGroup *	action_group;
@@ -58,6 +58,8 @@ struct debr {
 
         /* icons */
 	struct debr_pixmaps {
+		GdkPixbuf *	stock_apply;
+		GdkPixbuf *	stock_cancel;
         	GdkPixbuf *	stock_no;
 	} pixmaps;
 
