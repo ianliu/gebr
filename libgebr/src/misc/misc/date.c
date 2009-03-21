@@ -96,7 +96,7 @@ libgebr_iso_date_to_g_time_val(const gchar * iso_date)
 	GTimeVal	time_val;
 
 	if (!g_time_val_from_iso8601(iso_date, &time_val))
-		time_val.tv_sec = LONG_MAX;
+		time_val.tv_sec = LONG_MIN;
 
 	return time_val;
 }
