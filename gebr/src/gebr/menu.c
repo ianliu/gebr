@@ -402,7 +402,7 @@ menu_scan_directory(const gchar * directory, FILE * index_fp)
 				geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)),
 				geoxml_document_get_title(menu),
 				geoxml_document_get_description(menu),
-				geoxml_document_get_filename(menu));
+				file->d_name);
 
 			geoxml_sequence_next(&category);
 		}

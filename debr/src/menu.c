@@ -355,11 +355,13 @@ menu_save(const gchar * path)
 	gulong			index;
 	gchar *			filename;
 
+	filename = g_path_get_basename(path);
+	geoxml_document_set_filename(GEOXML_DOC(debr.menu), filename);
+
 	/* Write menu tag for each program
 	 * TODO: make it on the fly?
 	 */
 	index = 0;
-	filename = (gchar*)geoxml_document_get_filename(GEOXML_DOC(debr.menu));
 	geoxml_flow_get_program(debr.menu, &program, index);
 	while (program != NULL) {
 		geoxml_program_set_menu(GEOXML_PROGRAM(program), filename, index++);
@@ -371,6 +373,7 @@ menu_save(const gchar * path)
 	menu_saved_status_set(MENU_STATUS_SAVED);
         menu_details_update();
 
+	g_free(filename);
 }
 
 void
@@ -738,7 +741,10 @@ menu_dialog_setup_ui(void)
 gboolean
 menu_get_selected(GtkTreeIter * iter)
 {
-	return libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
+	libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter, MENU_XMLPOINTER, &debr.menu, -1);
+
+	return TRUE;
 }
 
 /*
