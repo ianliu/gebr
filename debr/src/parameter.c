@@ -386,7 +386,8 @@ parameter_change_type_setup_ui(void)
 	dialog = gtk_dialog_new_with_buttons(_("Parameter's type"),
 		GTK_WINDOW(debr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		NULL);
 	gtk_widget_set_size_request(dialog, 300, 100);
 
@@ -425,12 +426,13 @@ parameter_change_type_setup_ui(void)
 		gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), 0);
 
 	gtk_widget_show(dialog);
-	gtk_dialog_run(GTK_DIALOG(dialog));
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK)
+		goto out;
 
 	parameter_change_type(combo_type_map_get_type(gtk_combo_box_get_active(GTK_COMBO_BOX(type_combo))));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 
-	gtk_widget_destroy(dialog);
+out:	gtk_widget_destroy(dialog);
 }
 
 /*
@@ -538,9 +540,10 @@ parameter_dialog_setup_ui(void)
 	if (parameter_check_selected(TRUE) == FALSE)
 		return;
 
-	program_parameter = GEOXML_PROGRAM_PARAMETER(debr.parameter);
-	type = geoxml_parameter_get_type(debr.parameter);
 	ui = g_malloc(sizeof(struct ui_parameter_dialog));
+	ui->parameter = debr.parameter;
+	program_parameter = GEOXML_PROGRAM_PARAMETER(ui->parameter);
+	type = geoxml_parameter_get_type(ui->parameter);
 
 	/*
 	 * Dialog and table
@@ -658,7 +661,7 @@ parameter_dialog_setup_ui(void)
 	g_signal_connect(separator_entry, "changed",
 		(GCallback)parameter_separator_changed, ui);
 
-	parameter_widget = parameter_widget_new(debr.parameter, TRUE, NULL);
+	parameter_widget = parameter_widget_new(ui->parameter, TRUE, NULL);
 	switch (type) {
 	case GEOXML_PARAMETERTYPE_FILE: {
 		GtkWidget *		type_label;
@@ -799,9 +802,8 @@ parameter_dialog_setup_ui(void)
 			(GtkAttachOptions)(GTK_FILL), 0, 0);
 		gtk_misc_set_alignment(GTK_MISC(options_label), 0, 0.5);
 
-		geoxml_program_parameter_get_enum_option(GEOXML_PROGRAM_PARAMETER(debr.parameter), &option, 0);
-		enum_option_edit = enum_option_edit_new(GEOXML_ENUM_OPTION(option),
-			GEOXML_PROGRAM_PARAMETER(debr.parameter));
+		geoxml_program_parameter_get_enum_option(program_parameter, &option, 0);
+		enum_option_edit = enum_option_edit_new(GEOXML_ENUM_OPTION(option), program_parameter);
 		gtk_widget_show(enum_option_edit);
 		gtk_table_attach(GTK_TABLE(table), enum_option_edit, 1, 2, row, row+1,
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
@@ -810,7 +812,8 @@ parameter_dialog_setup_ui(void)
 			GTK_SIGNAL_FUNC(parameter_enum_options_changed), ui);
 
 		break;
-	} default: break;
+	} default:
+		break;
 	}
 
 	ui->parameter_widget = parameter_widget;
@@ -839,7 +842,7 @@ parameter_dialog_setup_ui(void)
 		(changed_callback)parameter_default_widget_changed, NULL);
 
 	/* parameter -> UI */
-	gtk_entry_set_text(GTK_ENTRY(label_entry), geoxml_parameter_get_label(debr.parameter));
+	gtk_entry_set_text(GTK_ENTRY(label_entry), geoxml_parameter_get_label(ui->parameter));
 	gtk_entry_set_text(GTK_ENTRY(keyword_entry),
 		geoxml_program_parameter_get_keyword(program_parameter));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(required_check_button),
@@ -854,15 +857,15 @@ parameter_dialog_setup_ui(void)
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
 	/* save not automatically synced changes */
-	geoxml_parameter_set_label(debr.parameter, gtk_entry_get_text(GTK_ENTRY(label_entry)));
-	geoxml_program_parameter_set_keyword(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_parameter_set_label(ui->parameter, gtk_entry_get_text(GTK_ENTRY(label_entry)));
+	geoxml_program_parameter_set_keyword(GEOXML_PROGRAM_PARAMETER(ui->parameter),
 		gtk_entry_get_text(GTK_ENTRY(keyword_entry)));
-	geoxml_program_parameter_set_required(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_program_parameter_set_required(GEOXML_PROGRAM_PARAMETER(ui->parameter),
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(required_check_button)));
-	geoxml_program_parameter_set_be_list(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_program_parameter_set_be_list(GEOXML_PROGRAM_PARAMETER(ui->parameter),
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button)));
 	if (geoxml_program_parameter_get_is_list(program_parameter) == TRUE)
-		geoxml_program_parameter_set_list_separator(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+		geoxml_program_parameter_set_list_separator(GEOXML_PROGRAM_PARAMETER(ui->parameter),
 			gtk_entry_get_text(GTK_ENTRY(separator_entry)));
 
 	parameter_load_selected();
@@ -1212,7 +1215,7 @@ parameter_default_widget_changed(struct parameter_widget * widget)
 static void
 parameter_required_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog * ui)
 {
-	geoxml_program_parameter_set_required(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_program_parameter_set_required(GEOXML_PROGRAM_PARAMETER(ui->parameter),
 		gtk_toggle_button_get_active(toggle_button));
 	parameter_reconfigure_default_widget(ui);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -1221,7 +1224,7 @@ parameter_required_toggled(GtkToggleButton * toggle_button, struct ui_parameter_
 static void
 parameter_is_list_changed(GtkToggleButton * toggle_button, struct ui_parameter_dialog * ui)
 {
-	geoxml_program_parameter_set_be_list(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_program_parameter_set_be_list(GEOXML_PROGRAM_PARAMETER(ui->parameter),
 		gtk_toggle_button_get_active(toggle_button));
 	gtk_widget_set_sensitive(ui->separator_entry, gtk_toggle_button_get_active(toggle_button));
 
@@ -1232,7 +1235,7 @@ parameter_is_list_changed(GtkToggleButton * toggle_button, struct ui_parameter_d
 static void
 parameter_separator_changed(GtkEntry * entry, struct ui_parameter_dialog * ui)
 {
-	geoxml_program_parameter_set_list_separator(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_program_parameter_set_list_separator(GEOXML_PROGRAM_PARAMETER(ui->parameter),
 		gtk_entry_get_text(GTK_ENTRY(entry)));
 	parameter_widget_update_list_separator(ui->parameter_widget);
 
@@ -1247,7 +1250,7 @@ parameter_file_type_changed(GtkComboBox * combo, struct parameter_widget * widge
 	is_directory = gtk_combo_box_get_active(combo) == 0 ? FALSE : TRUE;
 
 	gtk_file_entry_set_choose_directory(GTK_FILE_ENTRY(widget->value_widget), is_directory);
-	geoxml_program_parameter_set_file_be_directory(GEOXML_PROGRAM_PARAMETER(debr.parameter), is_directory);
+	geoxml_program_parameter_set_file_be_directory(GEOXML_PROGRAM_PARAMETER(widget->parameter), is_directory);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -1263,7 +1266,7 @@ parameter_range_min_changed(GtkEntry * entry, struct parameter_widget * widget)
 	GtkSpinButton *	spin_button;
 
 	spin_button = GTK_SPIN_BUTTON(widget->value_widget);
-	geoxml_program_parameter_get_range_properties(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_program_parameter_get_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
 		&min_str, &max_str, &inc_str, &digits_str);
 	gtk_spin_button_get_range(spin_button, &min, &max);
 
@@ -1271,7 +1274,7 @@ parameter_range_min_changed(GtkEntry * entry, struct parameter_widget * widget)
 	min = atof(min_str);
 
 	gtk_spin_button_set_range(spin_button, min, max);
-	geoxml_program_parameter_set_range_properties(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_program_parameter_set_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
 		min_str, max_str, inc_str, digits_str);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -1288,7 +1291,7 @@ parameter_range_max_changed(GtkEntry * entry, struct parameter_widget * widget)
 	GtkSpinButton *	spin_button;
 
 	spin_button = GTK_SPIN_BUTTON(widget->value_widget);
-	geoxml_program_parameter_get_range_properties(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_program_parameter_get_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
 		&min_str, &max_str, &inc_str, &digits_str);
 	gtk_spin_button_get_range(spin_button, &min, &max);
 
@@ -1296,7 +1299,7 @@ parameter_range_max_changed(GtkEntry * entry, struct parameter_widget * widget)
 	max = atof(max_str);
 
 	gtk_spin_button_set_range(spin_button, min, max);
-	geoxml_program_parameter_set_range_properties(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_program_parameter_set_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
 		min_str, max_str, inc_str, digits_str);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -1313,14 +1316,14 @@ parameter_range_inc_changed(GtkEntry * entry, struct parameter_widget * widget)
 	GtkSpinButton *	spin_button;
 
 	spin_button = GTK_SPIN_BUTTON(widget->value_widget);
-	geoxml_program_parameter_get_range_properties(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_program_parameter_get_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
 		&min_str, &max_str, &inc_str, &digits_str);
 
 	inc_str = (gchar*)gtk_entry_get_text(GTK_ENTRY(entry));
 	inc = atof(inc_str);
 
 	gtk_spin_button_set_increments(spin_button, inc, 0);
-	geoxml_program_parameter_set_range_properties(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_program_parameter_set_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
 		min_str, max_str, inc_str, digits_str);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -1337,14 +1340,14 @@ parameter_range_digits_changed(GtkEntry * entry, struct parameter_widget * widge
 	GtkSpinButton *	spin_button;
 
 	spin_button = GTK_SPIN_BUTTON(widget->value_widget);
-	geoxml_program_parameter_get_range_properties(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_program_parameter_get_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
 		&min_str, &max_str, &inc_str, &digits_str);
 
 	digits_str = (gchar*)gtk_entry_get_text(GTK_ENTRY(entry));
 	digits = atof(digits_str);
 
 	gtk_spin_button_set_digits(spin_button, digits);
-	geoxml_program_parameter_set_range_properties(GEOXML_PROGRAM_PARAMETER(debr.parameter),
+	geoxml_program_parameter_set_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
 		min_str, max_str, inc_str, digits_str);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);

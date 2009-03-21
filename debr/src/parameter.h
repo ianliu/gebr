@@ -46,6 +46,8 @@ struct ui_parameter {
 struct ui_parameter_dialog {
 	GtkWidget *			dialog;
 
+	GeoXmlParameter *		parameter;
+
 	GtkWidget *			default_widget_hbox;
 	struct parameter_widget *	parameter_widget;
 	GtkWidget *			separator_entry;
