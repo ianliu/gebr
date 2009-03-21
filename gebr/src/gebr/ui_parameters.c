@@ -276,11 +276,13 @@ parameters_load(struct ui_parameters * ui_parameters, GeoXmlParameters * paramet
 	GtkWidget *		frame;
 	GtkWidget *		vbox;
 	GeoXmlSequence *	parameter;
+	GeoXmlParameterGroup *	parameter_group;
 	GSList *		radio_group;
 
 	frame = gtk_frame_new(NULL);
 	gtk_widget_show(frame);
-	if (geoxml_parameters_get_is_in_group(parameters))
+	parameter_group = geoxml_parameters_get_group(parameters);
+	if (parameter_group != NULL && !geoxml_parameter_group_get_is_instanciable(parameter_group))
 		g_object_set(G_OBJECT(frame), "shadow-type", GTK_SHADOW_NONE, NULL);
 
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -411,7 +413,8 @@ parameters_load_parameter(struct ui_parameters * ui_parameters, GeoXmlParameter 
 		if (selected != NULL) {
 			GtkWidget *	radio_button;
 
-			radio_button = gtk_radio_button_new(*radio_group);
+			radio_button = gtk_radio_button_new_with_label(*radio_group,
+				geoxml_parameter_get_label(parameter));
 			gtk_widget_show(radio_button);
 			*radio_group = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button));
 
@@ -420,10 +423,12 @@ parameters_load_parameter(struct ui_parameters * ui_parameters, GeoXmlParameter 
 				(GCallback)parameters_change_selected, parameter_widget);
 
 			gtk_box_pack_start(GTK_BOX(hbox), radio_button, FALSE, FALSE, 15);
-		}
 
-		/* label */
-		if (type != GEOXML_PARAMETERTYPE_FLAG) {
+			if (type != GEOXML_PARAMETERTYPE_FLAG)
+				gtk_box_pack_end(GTK_BOX(hbox), parameter_widget->widget, FALSE, TRUE, 0);
+			else
+				gtk_box_pack_start(GTK_BOX(hbox), parameter_widget->widget, FALSE, FALSE, 0);
+		} else if (type != GEOXML_PARAMETERTYPE_FLAG) {
 			GtkWidget *	label;
 			gchar *		label_str;
 			GtkWidget *	align_vbox;

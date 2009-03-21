@@ -57,7 +57,7 @@ path_add(ValueSequenceEdit * sequence_edit)
 	if (!strlen(path))
 		return;
 
-	value_sequence_edit_add(sequence_edit, GEOXML_VALUE_SEQUENCE(geoxml_line_append_path(gebr.line, path)));
+	value_sequence_edit_add(sequence_edit, GEOXML_SEQUENCE(geoxml_line_append_path(gebr.line, path)));
 }
 
 gboolean
@@ -103,7 +103,9 @@ path_list_setup_ui(void)
 
 	geoxml_line_get_path(gebr.line, &path_sequence, 0);
 	path_sequence_edit = value_sequence_edit_new(file_entry);
-	value_sequence_edit_load(VALUE_SEQUENCE_EDIT(path_sequence_edit), GEOXML_VALUE_SEQUENCE(path_sequence));
+	value_sequence_edit_load(VALUE_SEQUENCE_EDIT(path_sequence_edit), path_sequence,
+		(ValueSequenceSetFunction)geoxml_value_sequence_set,
+		(ValueSequenceGetFunction)geoxml_value_sequence_get, NULL);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), path_sequence_edit, TRUE, TRUE, 0);
 
 	g_signal_connect(GTK_OBJECT(path_sequence_edit), "add-request",

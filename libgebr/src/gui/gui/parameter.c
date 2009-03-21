@@ -32,7 +32,37 @@
  * Internal stuff
  */
 
-void
+static void
+enum_value_to_label_set(GeoXmlSequence * sequence, const gchar * label, struct parameter_widget * parameter_widget)
+{
+	GeoXmlSequence *	enum_option;
+
+	geoxml_program_parameter_get_enum_option(
+		GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), &enum_option, 0);
+	for (; enum_option != NULL; geoxml_sequence_next(&enum_option))
+		if (!strcmp(label, geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(enum_option)))) {
+			geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(sequence),
+				geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(enum_option)));
+			return;
+		}
+	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(sequence), "");
+}
+
+static const gchar *
+enum_value_to_label_get(GeoXmlSequence * sequence, struct parameter_widget * parameter_widget)
+{
+	GeoXmlSequence *	enum_option;
+
+	geoxml_program_parameter_get_enum_option(
+		GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), &enum_option, 0);
+	for (; enum_option != NULL; geoxml_sequence_next(&enum_option))
+		if (!strcmp(geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(sequence)),
+		geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(enum_option))))
+			return geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(enum_option));
+	return geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(sequence));
+}
+
+static void
 __parameter_widget_set_non_list_widget_value(struct parameter_widget * parameter_widget, const gchar * value)
 {
 	enum GEOXML_PARAMETERTYPE	type;
@@ -211,8 +241,6 @@ __parameter_widget_on_range_changed(GtkSpinButton * spinbutton, struct parameter
 static void
 __parameter_widget_weak_ref(struct parameter_widget * parameter_widget, GtkWidget * widget)
 {
-	if (parameter_widget->value_sequence_edit)
-		g_object_unref(G_OBJECT(parameter_widget->value_sequence_edit));
 	g_free(parameter_widget);
 }
 
@@ -259,41 +287,49 @@ __parameter_widget_on_value_widget_changed(GtkWidget * widget, struct parameter_
 static void
 __on_edit_list_toggled(GtkToggleButton * toggle_button, struct parameter_widget * parameter_widget)
 {
-	gboolean		toggled;
+	gboolean			toggled;
+	enum GEOXML_PARAMETERTYPE	type;
 
 	toggled = gtk_toggle_button_get_active(toggle_button);
+	type = geoxml_parameter_get_type(parameter_widget->parameter);
 	if (toggled == TRUE) {
 		GeoXmlSequence *	first_value;
 
-		g_signal_handlers_block_matched(G_OBJECT(parameter_widget->list_value_widget),
-			G_SIGNAL_MATCH_FUNC,
-			0, 0, NULL,
-			(GCallback)__parameter_on_list_value_widget_changed,
-			NULL);
-		g_signal_handlers_block_matched(G_OBJECT(parameter_widget->value_sequence_edit),
-			G_SIGNAL_MATCH_FUNC,
-			0, 0, NULL,
-			(GCallback)__on_sequence_edit_changed,
-			NULL);
 		geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter),
 			parameter_widget->use_default_value, &first_value, 0);
-		value_sequence_edit_load(parameter_widget->value_sequence_edit, GEOXML_VALUE_SEQUENCE(first_value));
-		g_signal_handlers_unblock_matched(G_OBJECT(parameter_widget->list_value_widget),
-			G_SIGNAL_MATCH_FUNC,
-			0, 0, NULL,
-			(GCallback)__parameter_on_list_value_widget_changed,
-			NULL);
-		g_signal_handlers_unblock_matched(G_OBJECT(parameter_widget->value_sequence_edit),
-			G_SIGNAL_MATCH_FUNC,
-			0, 0, NULL,
-			(GCallback)__on_sequence_edit_changed,
-			NULL);
+		if (type != GEOXML_PARAMETERTYPE_ENUM) {
+			g_signal_handlers_block_matched(G_OBJECT(parameter_widget->list_value_widget),
+				G_SIGNAL_MATCH_FUNC,
+				0, 0, NULL,
+				(GCallback)__parameter_on_list_value_widget_changed,
+				NULL);
+			g_signal_handlers_block_matched(G_OBJECT(parameter_widget->value_sequence_edit),
+				G_SIGNAL_MATCH_FUNC,
+				0, 0, NULL,
+				(GCallback)__on_sequence_edit_changed,
+				NULL);
+			value_sequence_edit_load(parameter_widget->value_sequence_edit, first_value,
+				(ValueSequenceSetFunction)geoxml_value_sequence_set,
+				(ValueSequenceGetFunction)geoxml_value_sequence_get, NULL);
+			g_signal_handlers_unblock_matched(G_OBJECT(parameter_widget->list_value_widget),
+				G_SIGNAL_MATCH_FUNC,
+				0, 0, NULL,
+				(GCallback)__parameter_on_list_value_widget_changed,
+				NULL);
+			g_signal_handlers_unblock_matched(G_OBJECT(parameter_widget->value_sequence_edit),
+				G_SIGNAL_MATCH_FUNC,
+				0, 0, NULL,
+				(GCallback)__on_sequence_edit_changed,
+				NULL);
 
-		gtk_box_pack_start(GTK_BOX(parameter_widget->widget),
-			GTK_WIDGET(parameter_widget->value_sequence_edit), TRUE, TRUE, 0);
-	} else
-		gtk_container_remove(GTK_CONTAINER(parameter_widget->widget),
-			GTK_WIDGET(parameter_widget->value_sequence_edit));
+			gtk_widget_show(GTK_WIDGET(parameter_widget->value_sequence_edit));
+		} else {
+			value_sequence_edit_load(parameter_widget->value_sequence_edit, first_value,
+				(ValueSequenceSetFunction)enum_value_to_label_set,
+				(ValueSequenceGetFunction)enum_value_to_label_get, parameter_widget);
+		}
+	} else if (type != GEOXML_PARAMETERTYPE_ENUM)
+		gtk_widget_hide(GTK_WIDGET(parameter_widget->value_sequence_edit));
 
 	gtk_widget_set_sensitive(parameter_widget->list_value_widget, !toggled);
 }
@@ -303,7 +339,7 @@ __on_sequence_edit_add_request(ValueSequenceEdit * value_sequence_edit, struct p
 {
 	GString *			value;
 	GeoXmlProgramParameter *	program_parameter;
-	GeoXmlValueSequence *		value_sequence;
+	GeoXmlSequence *		sequence;
 	GtkListStore *			list_store;
 
 	g_object_get(value_sequence_edit, "list-store", &list_store, NULL);
@@ -314,13 +350,13 @@ __on_sequence_edit_add_request(ValueSequenceEdit * value_sequence_edit, struct p
 
 		geoxml_program_parameter_get_value(program_parameter, parameter_widget->use_default_value,
 			&first_sequence, 0);
-		value_sequence = GEOXML_VALUE_SEQUENCE(first_sequence);
+		sequence = first_sequence;
 	} else
-		value_sequence = GEOXML_VALUE_SEQUENCE(geoxml_program_parameter_append_value(
+		sequence = GEOXML_SEQUENCE(geoxml_program_parameter_append_value(
 			program_parameter, parameter_widget->use_default_value));
 
-	geoxml_value_sequence_set(value_sequence, value->str);
-	value_sequence_edit_add(value_sequence_edit, value_sequence);
+	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(sequence), value->str);
+	value_sequence_edit_add(value_sequence_edit, sequence);
 
 	__parameter_list_value_widget_update(parameter_widget);
 
@@ -468,19 +504,19 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 		break;
 	} case GEOXML_PARAMETERTYPE_ENUM: {
 		GtkWidget *		combo_box;
-		GeoXmlSequence *	sequence;
+		GeoXmlSequence *	enum_option;
 
 		parameter_widget->value_widget = combo_box = gtk_combo_box_new_text();
 		if (!geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter)))
 			gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), "");
 		geoxml_program_parameter_get_enum_option(
-			GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), &sequence, 0);
-		for (; sequence != NULL; geoxml_sequence_next(&sequence)) {
+			GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), &enum_option, 0);
+		for (; enum_option != NULL; geoxml_sequence_next(&enum_option)) {
 			const gchar *		text;
 
-			text = strlen(geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(sequence)))
-				? geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(sequence))
-				: geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(sequence));
+			text = strlen(geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(enum_option)))
+				? geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(enum_option))
+				: geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(enum_option));
 			gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), text);
 		}
 
@@ -500,14 +536,16 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 
 		vbox = gtk_vbox_new(FALSE, 10);
 		hbox = gtk_hbox_new(FALSE, 10);
-		gtk_widget_show(hbox);
+		if (type != GEOXML_PARAMETERTYPE_ENUM)
+			gtk_widget_show(hbox);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
 		parameter_widget->list_value_widget = gtk_entry_new();
 		gtk_widget_show(parameter_widget->list_value_widget);
 		gtk_box_pack_start(GTK_BOX(hbox), parameter_widget->list_value_widget, TRUE, TRUE, 0);
-		g_signal_connect(parameter_widget->list_value_widget, "changed",
-			(GCallback)__parameter_on_list_value_widget_changed, parameter_widget);
+		if (type != GEOXML_PARAMETERTYPE_ENUM)
+			g_signal_connect(parameter_widget->list_value_widget, "changed",
+				(GCallback)__parameter_on_list_value_widget_changed, parameter_widget);
 
 		button = gtk_toggle_button_new_with_label(_("Edit list"));
 		gtk_widget_show(button);
@@ -519,18 +557,19 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 		gtk_widget_show(parameter_widget->value_widget);
 
 		sequence_edit = value_sequence_edit_new(parameter_widget->value_widget);
-		gtk_widget_show(sequence_edit);
+		gtk_box_pack_start(GTK_BOX(vbox), sequence_edit, TRUE, TRUE, 0);
 		parameter_widget->value_sequence_edit = VALUE_SEQUENCE_EDIT(sequence_edit);
 		g_object_set(G_OBJECT(sequence_edit), "minimum-one", TRUE, NULL);
 		g_signal_connect(sequence_edit, "add-request",
 			GTK_SIGNAL_FUNC(__on_sequence_edit_add_request), parameter_widget);
-		g_signal_connect(sequence_edit, "changed",
-			GTK_SIGNAL_FUNC(__on_sequence_edit_changed), parameter_widget);
-		/* for not being destroyed when removed from vbox */
-		g_object_ref(G_OBJECT(sequence_edit));
-
-		if (type == GEOXML_PARAMETERTYPE_ENUM)
+		if (type != GEOXML_PARAMETERTYPE_ENUM)
+			g_signal_connect(sequence_edit, "changed",
+				GTK_SIGNAL_FUNC(__on_sequence_edit_changed), parameter_widget);
+		else {
+			gtk_widget_show(sequence_edit);
 			g_object_set(sequence_edit, "may-rename", FALSE, NULL);
+			gtk_button_clicked(GTK_BUTTON(button));
+		}
 
 		parameter_widget->widget = vbox;
 	} else {

@@ -39,23 +39,30 @@ value_sequence_edit_get_type(void);
 typedef struct _ValueSequenceEdit	ValueSequenceEdit;
 typedef struct _ValueSequenceEditClass	ValueSequenceEditClass;
 
-struct _ValueSequenceEdit {
-	GtkSequenceEdit		parent;
+typedef void (*ValueSequenceSetFunction)(GeoXmlSequence *, const gchar *, gpointer);
+typedef const gchar * (*ValueSequenceGetFunction)(GeoXmlSequence *, gpointer);
 
-	gboolean		minimum_one;
+struct _ValueSequenceEdit {
+	GtkSequenceEdit			parent;
+
+	gboolean			minimum_one;
+	ValueSequenceSetFunction	set_function;
+	ValueSequenceGetFunction	get_function;
+	gpointer			user_data;
 };
 struct _ValueSequenceEditClass {
-	GtkSequenceEditClass	parent;
+	GtkSequenceEditClass		parent;
 };
 
 GtkWidget *
 value_sequence_edit_new(GtkWidget * widget);
 
 void
-value_sequence_edit_add(ValueSequenceEdit * value_sequence_edit, GeoXmlValueSequence * value_sequence);
+value_sequence_edit_add(ValueSequenceEdit * value_sequence_edit, GeoXmlSequence * sequence);
 
 void
-value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit, GeoXmlValueSequence * value_sequence);
+value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit, GeoXmlSequence * sequence,
+	ValueSequenceSetFunction set_function, ValueSequenceGetFunction get_function, gpointer user_data);
 
 G_END_DECLS
 

@@ -725,7 +725,9 @@ menu_dialog_setup_ui(void)
 	/* categories */
 	GeoXmlSequence * category;
 	geoxml_flow_get_category(debr.menu, &category, 0);
-	value_sequence_edit_load(VALUE_SEQUENCE_EDIT(categories_sequence_edit), GEOXML_VALUE_SEQUENCE(category));
+	value_sequence_edit_load(VALUE_SEQUENCE_EDIT(categories_sequence_edit), category,
+		(ValueSequenceSetFunction)geoxml_value_sequence_set,
+		(ValueSequenceGetFunction)geoxml_value_sequence_get, NULL);
 
 	gtk_widget_show(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
@@ -1027,7 +1029,7 @@ menu_category_add(ValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
 	if (!strlen(name))
 		name = _("New category");
 	value_sequence_edit_add(VALUE_SEQUENCE_EDIT(sequence_edit),
-		GEOXML_VALUE_SEQUENCE(geoxml_flow_append_category(debr.menu, name)));
+		GEOXML_SEQUENCE(geoxml_flow_append_category(debr.menu, name)));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
