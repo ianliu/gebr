@@ -128,11 +128,11 @@ menu_setup_ui(void)
 	gtk_tree_view_column_set_sort_indicator(col, TRUE);
 	gtk_tree_view_column_clicked(col);
 	renderer = gtk_cell_renderer_spin_new();
+	g_object_set(renderer, "visible", FALSE, NULL);
 	col = gtk_tree_view_column_new_with_attributes(_("Modified"), renderer, NULL);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_MODIFIED_DATE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), col);
 	gtk_tree_view_column_set_sort_column_id(col, MENU_MODIFIED_DATE);
-	gtk_tree_view_column_clicked(col);
 
 	/*
 	 * Info Panel
