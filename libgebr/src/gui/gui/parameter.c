@@ -32,28 +32,6 @@
  * Internal stuff
  */
 
-/*
- * Function: __parameter_widget_enum_set_widget_value
- *
- */
-static void
-__parameter_widget_enum_set_widget_value(struct parameter_widget * parameter_widget, const gchar * value)
-{
-	GeoXmlSequence *	option;
-	int			i;
-
-	geoxml_program_parameter_get_enum_option(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), &option, 0);
-	for (i = 0; option != NULL; ++i, geoxml_sequence_next(&option))
-		if (strcmp(value, geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(option))) == 0) {
-			gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->value_widget),
-				geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(
-				parameter_widget->parameter)) ? i : i+1);
-			return;
-		}
-
-	gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->value_widget), 0);
-}
-
 void
 __parameter_widget_set_non_list_widget_value(struct parameter_widget * parameter_widget, const gchar * value)
 {
@@ -81,10 +59,23 @@ __parameter_widget_set_non_list_widget_value(struct parameter_widget * parameter
 	case GEOXML_PARAMETERTYPE_FILE:
 		gtk_file_entry_set_path(GTK_FILE_ENTRY(parameter_widget->value_widget), value);
 		break;
-	case GEOXML_PARAMETERTYPE_ENUM:
-		__parameter_widget_enum_set_widget_value(parameter_widget, value);
+	case GEOXML_PARAMETERTYPE_ENUM: {
+		GeoXmlSequence *	option;
+		int			i;
+
+		geoxml_program_parameter_get_enum_option(
+			GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), &option, 0);
+		for (i = 0; option != NULL; ++i, geoxml_sequence_next(&option))
+			if (strcmp(value, geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(option))) == 0) {
+				gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->value_widget),
+					geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(
+					parameter_widget->parameter)) ? i : i+1);
+				return;
+			}
+
+		gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->value_widget), 0);
 		break;
-	case GEOXML_PARAMETERTYPE_FLAG:
+	} case GEOXML_PARAMETERTYPE_FLAG:
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(parameter_widget->value_widget),
 			!strcmp(value, "on"));
 		break;
@@ -484,15 +475,13 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 			gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), "");
 		geoxml_program_parameter_get_enum_option(
 			GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), &sequence, 0);
-		while (sequence != NULL) {
+		for (; sequence != NULL; geoxml_sequence_next(&sequence)) {
 			const gchar *		text;
 
 			text = strlen(geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(sequence)))
 				? geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(sequence))
 				: geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(sequence));
 			gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), text);
-
-			geoxml_sequence_next(&sequence);
 		}
 
 		break;

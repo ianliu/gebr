@@ -288,7 +288,7 @@ parameter_group_instances_setup_ui(struct ui_parameter_group_dialog * ui)
 				(GtkAttachOptions)(GTK_FILL),
 				(GtkAttachOptions)(0), 0, 0);
 
-			widget = parameter_widget_new(GEOXML_PARAMETER(parameter), FALSE, NULL);
+			widget = parameter_widget_new(GEOXML_PARAMETER(parameter), TRUE, NULL);
 			gtk_widget_show(widget->widget);
 			gtk_table_attach(GTK_TABLE(table), widget->widget, 1, 2, j, j+1,
 				(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
