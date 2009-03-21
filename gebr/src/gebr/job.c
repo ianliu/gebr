@@ -23,6 +23,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <gui/utils.h>
 #include <misc/utils.h>
 #include <misc/date.h>
 

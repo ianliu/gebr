@@ -244,6 +244,7 @@ parameter_new(void)
 		GeoXmlParameterGroup *	parameter_group;
 		GeoXmlSequence *	first_instance;
 		GtkTreeIter		parent;
+		GtkTreePath *		tree_path;
 
 		if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &iter)) {
 			parameter_group = GEOXML_PARAMETER_GROUP(debr.parameter);
@@ -953,7 +954,7 @@ parameter_select_iter(GtkTreeIter iter)
 		-1);
 	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	gtk_tree_selection_select_iter(tree_selection, &iter);
-	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_parameter.tree_view), iter);
+	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &iter);
 
 	parameter_selected();
 }

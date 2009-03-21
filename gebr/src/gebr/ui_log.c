@@ -15,17 +15,20 @@
  *   along with this program. If not, see
  *   <http://www.gnu.org/licenses/>.
  */
-#include <string.h>
-#include <misc/date.h>
-
-#include "ui_log.h"
-#include "gebr.h"
-#include "support.h"
 
 /*
  * File: ui_log.c
  * Responsible for UI for viewing the log file
  */
+
+#include <string.h>
+
+#include <gui/utils.h>
+#include <misc/date.h>
+
+#include "ui_log.h"
+#include "gebr.h"
+#include "support.h"
 
 /*
  * Prototypes

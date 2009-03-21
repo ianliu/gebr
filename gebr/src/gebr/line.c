@@ -57,6 +57,7 @@ line_new(void)
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 	GtkTreeIter		project_iter, line_iter;
+	GtkTreePath *		path;
 
 	gchar *			line_title;
 	gchar *			project_filename;
