@@ -302,6 +302,21 @@ libgebr_gtk_tree_model_path_to_iter_list(GtkTreeModel * model, GList * path_list
 	return iter_list;
 }
 
+GList *
+libgebr_gtk_tree_view_get_selected_iters(GtkTreeView * tree_view)
+{
+	GtkTreeModel *	model;
+	GList *		path_list, * list;
+
+	path_list = gtk_tree_selection_get_selected_rows(gtk_tree_view_get_selection(tree_view), &model);
+	list = libgebr_gtk_tree_model_path_to_iter_list(model, path_list);
+
+	g_list_foreach(path_list, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(path_list);
+
+	return list;
+}
+
 gboolean
 libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter)
 {
@@ -363,26 +378,39 @@ gtk_tree_view_select_sibling(GtkTreeView * tree_view)
 {
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
-	GtkTreeIter		iter, next_iter;
+	GtkTreeIter		iter;
 
+	model = gtk_tree_view_get_model(tree_view);
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
-	if (!gtk_tree_selection_get_selected(selection, &model, &iter))
+	if (gtk_tree_selection_get_mode(selection) != GTK_SELECTION_MULTIPLE) {
+		if (!gtk_tree_selection_get_selected(selection, NULL, &iter)) {
+			if (!gtk_tree_model_get_iter_first(model, &iter))
+				return;
+		} else {
+			GtkTreeIter	next_iter;
+
+			next_iter = iter;
+			if (gtk_tree_model_iter_next(model, &next_iter)) {
+				gtk_tree_selection_select_iter(selection, &next_iter);
+				g_signal_emit_by_name(tree_view, "cursor-changed");
+			} else {
+				GtkTreePath *	path;
+
+				path = gtk_tree_model_get_path(model, &iter);
+				if (gtk_tree_path_prev(path)) {
+					gtk_tree_selection_select_path(selection, path);
+					g_signal_emit_by_name(tree_view, "cursor-changed");
+				}
+				gtk_tree_path_free(path);
+			}
+
+			return;
+		}
+	} else if (!gtk_tree_model_get_iter_first(model, &iter))
 		return;
 
-	next_iter = iter;
-	if (gtk_tree_model_iter_next(model, &next_iter)) {
-		gtk_tree_selection_select_iter(selection, &next_iter);
-		g_signal_emit_by_name(tree_view, "cursor-changed");
-	} else {
-		GtkTreePath *	path;
-
-		path = gtk_tree_model_get_path(model, &iter);
-		if (gtk_tree_path_prev(path)) {
-			gtk_tree_selection_select_path(selection, path);
-			g_signal_emit_by_name(tree_view, "cursor-changed");
-		}
-		gtk_tree_path_free(path);
-	}
+	gtk_tree_selection_select_iter(selection, &iter);
+	g_signal_emit_by_name(tree_view, "cursor-changed");
 }
 
 #if GTK_CHECK_VERSION(2,12,0)

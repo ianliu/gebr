@@ -74,7 +74,9 @@ menu_save(const gchar * path);
 void
 menu_save_all(void);
 void
-menu_validate(void);
+menu_validate(GtkTreeIter * iter);
+void
+menu_close(GtkTreeIter * iter);
 void
 menu_selected(void);
 gboolean

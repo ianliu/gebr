@@ -101,6 +101,8 @@ menu_setup_ui(void)
 		G_TYPE_POINTER,
 		G_TYPE_STRING);
 	debr.ui_menu.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_menu.list_store));
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view)),
+		GTK_SELECTION_MULTIPLE);
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_menu.tree_view),
 		(GtkPopupCallback)menu_popup_menu, NULL);
 	gtk_widget_show(debr.ui_menu.tree_view);
@@ -412,14 +414,22 @@ menu_save_all(void)
  * Validate selected menus
  */
 void
-menu_validate(void)
+menu_validate(GtkTreeIter * iter)
 {
-	GtkTreeIter	iter;
+	GeoXmlFlow *	menu;
 
-	if (!menu_get_selected(&iter))
-		return;
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter, MENU_XMLPOINTER, &menu, -1);
+	validate_menu(iter, menu);
+}
 
-	validate_menu(&iter, debr.menu);
+void
+menu_close(GtkTreeIter * iter)
+{
+	GeoXmlFlow *	menu;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter, MENU_XMLPOINTER, &menu, -1);
+	geoxml_document_free(GEOXML_DOC(menu));
+	gtk_list_store_remove(debr.ui_menu.list_store, iter);
 }
 
 /*
@@ -430,7 +440,6 @@ void
 menu_selected(void)
 {
 	GtkTreeIter		iter;
-
 	GdkPixbuf *		icon;
 
 	menu_get_selected(&iter);
@@ -498,14 +507,10 @@ menu_cleanup(void)
 void
 menu_saved_status_set(MenuStatus status)
 {
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
 	GtkTreeIter		iter;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (debr.ui_menu.tree_view));
-	gtk_tree_selection_get_selected(selection, &model, &iter);
-
-	menu_saved_status_set_from_iter(&iter, status);
+	if (menu_get_selected(&iter))
+		menu_saved_status_set_from_iter(&iter, status);
 }
 
 /*
@@ -733,11 +738,7 @@ menu_dialog_setup_ui(void)
 gboolean
 menu_get_selected(GtkTreeIter * iter)
 {
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
-	return gtk_tree_selection_get_selected(selection, &model, iter);
+	return libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
 }
 
 /*
@@ -763,6 +764,7 @@ menu_select_iter(GtkTreeIter * iter)
 	GtkTreeSelection *	selection;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
+	gtk_tree_selection_unselect_all(selection);
 	gtk_tree_selection_select_iter(selection, iter);
 	menu_selected();
 }

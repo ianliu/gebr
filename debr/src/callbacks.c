@@ -110,7 +110,6 @@ void
 on_menu_save_activate(void)
 {
 	GtkTreeIter		iter;
-
 	gchar *			path;
 
 	/* get path of selection */
@@ -251,32 +250,39 @@ on_menu_delete_activate(void)
 {
 	GtkTreeIter		iter;
 
-	gchar *			path;
-
-	if (confirm_action_dialog(_("Delete flow"), _("Are you sure you delete flow '%s'?"),
-	geoxml_document_get_filename(GEOXML_DOC(debr.menu))) == FALSE)
+	if (confirm_action_dialog(_("Delete flow"), _("Are you sure you want to delete selected menus?")) == FALSE)
 		return;
 
-	/* get path of selection */
-	menu_get_selected(&iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
-		MENU_PATH, &path,
-		-1);
-	
-	if ((strlen(path)) && (g_unlink(path))) {
-		GtkWidget *	dialog;
+	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
+		GeoXmlFlow *	menu;
+		gchar *		path;
 
-		dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-			GTK_DIALOG_MODAL,
-			GTK_MESSAGE_ERROR,
-			GTK_BUTTONS_OK,
-			_("Could not delete flow"));
-		gtk_dialog_run(GTK_DIALOG(dialog));
-		gtk_widget_destroy(dialog);
-	} else
-		on_menu_close_activate();
+		/* get path of selection */
+		menu_get_selected(&iter);
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+			MENU_XMLPOINTER, &menu,
+			MENU_PATH, &path,
+			-1);
 
-	g_free(path);
+		if ((strlen(path)) && (g_unlink(path))) {
+			GtkWidget *	dialog;
+
+			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
+				GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				_("Could not delete menu '%s'"),
+					geoxml_document_get_filename(GEOXML_DOCUMENT(menu)));
+			gtk_dialog_run(GTK_DIALOG(dialog));
+			gtk_widget_destroy(dialog);
+		} else
+			menu_close(&iter);
+
+		g_free(path);
+	}
+
+	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.list_store), NULL) == 0)
+		menu_new();
+	else
+		gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 }
 
 /*
@@ -296,8 +302,11 @@ on_menu_properties_activate(void)
 void
 on_menu_validate_activate(void)
 {
+	GtkTreeIter	iter;
+
+	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view)
+		menu_validate(&iter);
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(debr.notebook), 3);
-	menu_validate();
 }
 
 /*
@@ -309,53 +318,56 @@ on_menu_close_activate(void)
 {
 	GtkTreeIter		iter;
 
-	GdkPixbuf *		pixbuf;
+	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
+		GeoXmlFlow *	menu;
+		GdkPixbuf *	pixbuf;
 
-	menu_get_selected(&iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
-		MENU_STATUS, &pixbuf,
-		-1);
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+			MENU_XMLPOINTER, &menu,
+			MENU_STATUS, &pixbuf,
+			-1);
 
-	if (pixbuf == debr.pixmaps.stock_no) {
-		GtkWidget *	dialog;
-		gboolean	cancel;
+		if (pixbuf == debr.pixmaps.stock_no) {
+			GtkWidget *	dialog;
+			gboolean	cancel;
 
-		/* TODO: add cancel button */
-		cancel = FALSE;
-		dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-					GTK_DIALOG_MODAL,
-					GTK_MESSAGE_QUESTION,
-					GTK_BUTTONS_YES_NO,
-					_("This flow has unsaved changes. Do you want to save it?"));
-		switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-		case GTK_RESPONSE_YES: {
-			gchar *	path;
+			/* TODO: add cancel button */
+			cancel = FALSE;
+			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
+				GTK_DIALOG_MODAL,
+				GTK_MESSAGE_QUESTION,
+				GTK_BUTTONS_YES_NO,
+				_("'%s' flow has unsaved changes. Do you want to save it?"),
+					geoxml_document_get_filename(GEOXML_DOCUMENT(menu)));
+			switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
+			case GTK_RESPONSE_YES: {
+				gchar *	path;
 
-			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
-				MENU_PATH, &path,
-				-1);
+				gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+					MENU_PATH, &path,
+					-1);
+				geoxml_document_save(GEOXML_DOC(debr.menu), path);
+				g_free(path);
+				break;
+			} case GTK_RESPONSE_NO:
+				break;
+			case GTK_RESPONSE_CANCEL:
+				cancel = TRUE;
+				return;
+			}
 
-			geoxml_document_save(GEOXML_DOC(debr.menu), path);
-			break;
-		} case GTK_RESPONSE_NO:
-			break;
-		case GTK_RESPONSE_CANCEL:
-			cancel = TRUE;
-			return;
+			gtk_widget_destroy(dialog);
+			if (cancel == TRUE)
+				return;
 		}
 
-		gtk_widget_destroy(dialog);
-		if (cancel == TRUE)
-			return;
+		menu_close(&iter);
 	}
 
-	geoxml_document_free(GEOXML_DOC(debr.menu));
 	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.list_store), NULL) == 0)
 		menu_new();
 	else
 		gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
-
-	gtk_list_store_remove(debr.ui_menu.list_store, &iter);
 }
 
 /*

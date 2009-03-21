@@ -57,14 +57,12 @@ gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_path, GtkTr
 GList *
 libgebr_gtk_tree_model_path_to_iter_list(GtkTreeModel * model, GList * path_list);
 
+GList *
+libgebr_gtk_tree_view_get_selected_iters(GtkTreeView * tree_view);
 gboolean
 libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
 #define libgebr_gtk_tree_view_foreach_selected(iter, tree_view) \
-	GtkTreeModel * __model; \
-	GList * __path_list = gtk_tree_selection_get_selected_rows( \
-		gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view)), &__model); \
-	GList * __list = libgebr_gtk_tree_model_path_to_iter_list(__model, __path_list); \
-	g_list_foreach(__path_list, (GFunc)gtk_tree_path_free, NULL), g_list_free(__path_list); \
+	GList * __list = libgebr_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(tree_view)); \
 	GList * __i = g_list_first(__list); \
 	if (__i != NULL || (g_list_free(__list), 0)) \
 		for (*iter = *(GtkTreeIter*)__i->data; \
@@ -81,6 +79,9 @@ gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callb
 /**
  * Used when the selected iter is about to be removed
  * so the next or previous (if it is the last) is selected
+ * If nothing is selected or the selection mode is multiple,
+ * then the first iter (if exists) is selected. So this function
+ * can be used just to select the first iter.
  */
 void
 gtk_tree_view_select_sibling(GtkTreeView * tree_view);
