@@ -98,6 +98,7 @@ menu_setup_ui(void)
 	debr.ui_menu.list_store = gtk_list_store_new(MENU_N_COLUMN,
 		GDK_TYPE_PIXBUF,
 		G_TYPE_STRING,
+		G_TYPE_STRING,
 		G_TYPE_POINTER,
 		G_TYPE_STRING);
 	debr.ui_menu.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_menu.list_store));
@@ -125,6 +126,12 @@ menu_setup_ui(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), col);
 	gtk_tree_view_column_set_sort_column_id(col, MENU_FILENAME);
 	gtk_tree_view_column_set_sort_indicator(col, TRUE);
+	gtk_tree_view_column_clicked(col);
+	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes(_("Modified"), renderer, NULL);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_MODIFIED_DATE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), col);
+	gtk_tree_view_column_set_sort_column_id(col, MENU_MODIFIED_DATE);
 	gtk_tree_view_column_clicked(col);
 
 	/*
@@ -301,6 +308,7 @@ menu_open(const gchar * path, gboolean select)
 	gboolean		valid;
 
 	gchar *			filename;
+	gchar *			tmp;
 	GeoXmlFlow *		menu;
 
 	/* check if it is already open */
@@ -328,11 +336,14 @@ menu_open(const gchar * path, gboolean select)
 
 	/* add to the view */
 	filename = g_path_get_basename(path);
+	tmp = g_strdup_printf("%ld", libgebr_localized_date_to_g_time_val(
+		geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu))).tv_sec);
 	gtk_list_store_append(debr.ui_menu.list_store, &iter);
 	gtk_list_store_set(debr.ui_menu.list_store, &iter,
 		MENU_FILENAME, filename,
-		MENU_PATH, path,
+		MENU_MODIFIED_DATE, tmp, 
 		MENU_XMLPOINTER, menu,
+		MENU_PATH, path,
 		-1);
 
 	/* select it and load its contents into UI */
@@ -342,6 +353,7 @@ menu_open(const gchar * path, gboolean select)
 	}
 
 	g_free(filename);
+	g_free(tmp);
 }
 
 /*
@@ -351,9 +363,14 @@ menu_open(const gchar * path, gboolean select)
 void
 menu_save(const gchar * path)
 {
+	GtkTreeIter		iter;
 	GeoXmlSequence *	program;
 	gulong			index;
 	gchar *			filename;
+	gchar *			tmp;
+
+	if (!menu_get_selected(&iter))
+		return;
 
 	filename = g_path_get_basename(path);
 	geoxml_document_set_filename(GEOXML_DOC(debr.menu), filename);
@@ -370,10 +387,16 @@ menu_save(const gchar * path)
 
         geoxml_document_set_date_modified(GEOXML_DOC(debr.menu), iso_date());
 	geoxml_document_save(GEOXML_DOC(debr.menu), path);
+
+	tmp = g_strdup_printf("%ld", libgebr_localized_date_to_g_time_val(
+		geoxml_document_get_date_modified(GEOXML_DOCUMENT(debr.menu))).tv_sec);
+	gtk_list_store_set(debr.ui_menu.list_store, &iter,
+		MENU_MODIFIED_DATE, tmp, -1);
 	menu_saved_status_set(MENU_STATUS_SAVED);
         menu_details_update();
 
 	g_free(filename);
+	g_free(tmp);
 }
 
 void
@@ -828,12 +851,12 @@ menu_details_update(void)
         gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.category_label), markup);
 	g_free(markup);
 
-        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[0]),NULL);
-        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[1]),NULL);
-        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]),NULL);
+        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[0]), NULL);
+        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[1]), NULL);
+        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]), NULL);
 
         icmax = MIN(geoxml_flow_get_categories_number(GEOXML_FLOW(debr.menu)), 2);
-        for (long int ic=0; ic<icmax; ic++){
+        for (long int ic = 0; ic < icmax; ic++) {
 		GeoXmlSequence *  	category;
 
                 geoxml_flow_get_category(GEOXML_FLOW(debr.menu), &category, ic);
@@ -869,6 +892,32 @@ menu_details_update(void)
  */
 
 /*
+ * Function: menu_sort_by_name
+ * Sort the list of menus alphabetically
+ */
+static void
+menu_sort_by_name(GtkMenuItem * menu_item)
+{
+	GtkTreeViewColumn *	column;
+
+	column = gtk_tree_view_get_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), 1);
+	gtk_tree_view_column_clicked(column);
+}
+
+/*
+ * Function: menu_sort_by_modified_date
+ * Sort the list of menus by the newest modified date
+ */
+static void
+menu_sort_by_modified_date(GtkMenuItem * menu_item)
+{
+	GtkTreeViewColumn *	column;
+
+	column = gtk_tree_view_get_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), 2);
+	gtk_tree_view_column_clicked(column);
+}
+
+/*
  * Function: menu_popup_menu
  * Agregate action to the popup menu and shows it.
  */
@@ -876,6 +925,8 @@ static GtkMenu *
 menu_popup_menu(GtkTreeView * tree_view)
 {
 	GtkWidget *	menu;
+	GtkWidget *	menu_item;
+	GtkWidget *	sub_menu;
 
 	menu = gtk_menu_new();
 
@@ -899,6 +950,21 @@ menu_popup_menu(GtkTreeView * tree_view)
 			gtk_action_group_get_action(debr.action_group, "menu_revert")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "menu_delete")));
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	menu_item = gtk_menu_item_new_with_label(_("Sort by"));
+	gtk_container_add(GTK_CONTAINER(menu), menu_item);
+
+	sub_menu = gtk_menu_new();
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), sub_menu);
+	menu_item = gtk_menu_item_new_with_label(_("Name"));
+	g_signal_connect(menu_item, "activate",
+		(GCallback)menu_sort_by_name, NULL);
+	gtk_container_add(GTK_CONTAINER(sub_menu), menu_item);
+	menu_item = gtk_menu_item_new_with_label(_("Modified date"));
+	g_signal_connect(menu_item, "activate",
+		(GCallback)menu_sort_by_modified_date, NULL);
+	gtk_container_add(GTK_CONTAINER(sub_menu), menu_item);
 
 	gtk_widget_show_all(menu);
 

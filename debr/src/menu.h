@@ -30,6 +30,7 @@ typedef enum {
 enum {
         MENU_STATUS,
 	MENU_FILENAME,
+	MENU_MODIFIED_DATE,
 	MENU_XMLPOINTER,
 	MENU_PATH,
 	MENU_N_COLUMN
@@ -56,8 +57,6 @@ struct ui_menu {
 
 	} details;
 };
-
-
 
 void
 menu_setup_ui(void);

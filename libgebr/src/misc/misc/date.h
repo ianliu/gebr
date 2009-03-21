@@ -26,4 +26,7 @@ iso_date(void);
 gchar *
 localized_date(const gchar * iso_date);
 
+GTimeVal
+libgebr_localized_date_to_g_time_val(const gchar * localized_date);
+
 #endif //__LIBGEBR_MISC_DATE_H
