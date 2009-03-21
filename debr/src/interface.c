@@ -45,7 +45,7 @@ static const GtkActionEntry actions_entries [] = {
 	{"menu_new", GTK_STOCK_NEW, NULL, NULL, _("Create new menu"), (GCallback)on_menu_new_activate},
 	{"menu_properties", GTK_STOCK_PROPERTIES, NULL, NULL, _("Edit menu properties"),
 		(GCallback)on_menu_properties_activate},
-	{"menu_validate", GTK_STOCK_APPLY, NULL, NULL, _("Validate menu"),
+	{"menu_validate", GTK_STOCK_APPLY, _("Validate"), NULL, _("Validate menu"),
 		(GCallback)on_menu_validate_activate},
 	{"menu_close", GTK_STOCK_CLOSE, NULL, NULL, _("Remove menu from list"),
 		(GCallback)on_menu_close_activate},
