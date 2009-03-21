@@ -127,7 +127,7 @@ menu_setup_ui(void)
 	gtk_tree_view_column_set_sort_column_id(col, MENU_FILENAME);
 	gtk_tree_view_column_set_sort_indicator(col, TRUE);
 	gtk_tree_view_column_clicked(col);
-	renderer = gtk_cell_renderer_text_new();
+	renderer = gtk_cell_renderer_spin_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Modified"), renderer, NULL);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_MODIFIED_DATE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), col);
@@ -336,12 +336,12 @@ menu_open(const gchar * path, gboolean select)
 
 	/* add to the view */
 	filename = g_path_get_basename(path);
-	tmp = g_strdup_printf("%ld", libgebr_localized_date_to_g_time_val(
+	tmp = g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(
 		geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu))).tv_sec);
 	gtk_list_store_append(debr.ui_menu.list_store, &iter);
 	gtk_list_store_set(debr.ui_menu.list_store, &iter,
 		MENU_FILENAME, filename,
-		MENU_MODIFIED_DATE, tmp, 
+		MENU_MODIFIED_DATE, tmp,
 		MENU_XMLPOINTER, menu,
 		MENU_PATH, path,
 		-1);
@@ -388,7 +388,7 @@ menu_save(const gchar * path)
         geoxml_document_set_date_modified(GEOXML_DOC(debr.menu), iso_date());
 	geoxml_document_save(GEOXML_DOC(debr.menu), path);
 
-	tmp = g_strdup_printf("%ld", libgebr_localized_date_to_g_time_val(
+	tmp = g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(
 		geoxml_document_get_date_modified(GEOXML_DOCUMENT(debr.menu))).tv_sec);
 	gtk_list_store_set(debr.ui_menu.list_store, &iter,
 		MENU_MODIFIED_DATE, tmp, -1);

@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define _XOPEN_SOURCE
 #include <time.h>
+#include <limits.h>
 #include <string.h>
 
 #include "date.h"
@@ -91,15 +91,12 @@ localized_date(const gchar * iso_date)
 }
 
 GTimeVal
-libgebr_localized_date_to_g_time_val(const gchar * localized_date)
+libgebr_iso_date_to_g_time_val(const gchar * iso_date)
 {
-	struct tm	tm;
-	time_t		time;
+	GTimeVal	time_val;
 
-	strptime(localized_date, "%c", &tm);
-	time = mktime(&tm);
-	return (GTimeVal) {
-		.tv_sec = time,
-		.tv_usec = 0,
-	};
+	if (!g_time_val_from_iso8601(iso_date, &time_val))
+		time_val.tv_sec = LONG_MAX;
+
+	return time_val;
 }
