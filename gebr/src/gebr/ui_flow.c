@@ -166,7 +166,6 @@ flow_add_program_sequence_to_view(GeoXmlSequence * program)
 {
 	for (; program != NULL; geoxml_sequence_next(&program)) {
 		GtkTreeIter		iter;
-		GtkTreePath *		path;
 
 		gchar *			menu;
 		gulong			prog_index;
@@ -199,12 +198,6 @@ flow_add_program_sequence_to_view(GeoXmlSequence * program)
 			FSEQ_MENU_FILE_NAME_COLUMN, menu,
 			FSEQ_MENU_INDEX, prog_index,
 			-1);
-
-		/* scroll to it */
-		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter);
-		gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), path, NULL, FALSE, 0, 0);
-
-		gtk_tree_path_free(path);
 	}
 }
 

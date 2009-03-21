@@ -148,7 +148,6 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 {
 	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
-	GtkTreePath *		path;
 	GdkPixbuf *		pixbuf;
 	GString *               markuped_date;
 
@@ -186,11 +185,8 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 	/* select it on view */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_log->view));
 	gtk_tree_selection_select_iter(selection, &iter);
-	/* scroll to end */
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(ui_log->store), &iter);
-	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(ui_log->view), path, NULL, FALSE, 0, 0);
+	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(ui_log->view), &iter);
 
 	/* frees */
 	g_string_free(markuped_date, TRUE);
-	gtk_tree_path_free(path);
 }

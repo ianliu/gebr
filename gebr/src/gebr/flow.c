@@ -63,7 +63,6 @@ flow_new(void)
 {
 	GtkTreeSelection *	selection;
 	GtkTreeIter		iter;
-	GtkTreePath *           path;
 
 	gchar *			flow_title;
 	gchar *			line_title;
@@ -96,15 +95,13 @@ flow_new(void)
 		FB_TITLE, flow_title,
 		FB_FILENAME, geoxml_document_get_filename(GEOXML_DOC(flow)),
 		-1);
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter);
-	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), path,
-				     NULL, FALSE, 0, 0);
 	/* select it */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	gtk_tree_selection_select_iter(selection, &iter);
 	g_signal_emit_by_name(gebr.ui_flow_browse->view, "cursor-changed");
-        on_flow_properties_activate();
+	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), &iter);
 
+        on_flow_properties_activate();
 	/* feedback */
 	gebr_message(LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'"), line_title);
 
@@ -208,7 +205,6 @@ flow_import(void)
 {
 	GtkTreeSelection *	selection;
 	GtkTreeIter		iter;
-	GtkTreePath *           path;
 
 	GtkWidget *		chooser_dialog;
 	GtkFileFilter *		file_filter;
@@ -272,15 +268,12 @@ flow_import(void)
 
 	/* select it */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	gtk_tree_selection_select_iter (selection, &iter);
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter);
-	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), path,
-				     NULL, FALSE, 0, 0);
+	gtk_tree_selection_select_iter(selection, &iter);
 	g_signal_emit_by_name(gebr.ui_flow_browse->view, "cursor-changed");
+	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), &iter);
 
 	/* frees */
 	g_string_free(flow_filename, TRUE);
-	gtk_tree_path_free(path);
 out2:	g_free(dir);
 out:	gtk_widget_destroy(chooser_dialog);
 }

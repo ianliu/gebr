@@ -57,7 +57,6 @@ line_new(void)
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 	GtkTreeIter		project_iter, line_iter;
-	GtkTreePath *		path;
 
 	gchar *			line_title;
 	gchar *			project_filename;
@@ -85,14 +84,14 @@ line_new(void)
 
 	/* gtk stuff */
 	gtk_tree_model_get(model, &project_iter,
-			   PL_TITLE, &project_title,
-			   PL_FILENAME, &project_filename,
-			   -1);
+		PL_TITLE, &project_title,
+		PL_FILENAME, &project_filename,
+		-1);
 	gtk_tree_store_append(gebr.ui_project_line->store, &line_iter, &project_iter);
 	gtk_tree_store_set(gebr.ui_project_line->store, &line_iter,
-			   PL_TITLE, line_title,
-			   PL_FILENAME, geoxml_document_get_filename(GEOXML_DOC(line)),
-			   -1);
+		PL_TITLE, line_title,
+		PL_FILENAME, geoxml_document_get_filename(GEOXML_DOC(line)),
+		-1);
 
 	/* add to project */
 	geoxml_project_append_line(gebr.project, geoxml_document_get_filename(GEOXML_DOC(line)));
@@ -112,12 +111,11 @@ line_new(void)
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &line_iter);
 	gtk_tree_view_expand_to_path(GTK_TREE_VIEW(gebr.ui_project_line->view), path);
 	gtk_tree_selection_select_iter(selection, &line_iter);
-	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), path,
-				     NULL, FALSE, 0, 0);
 	g_signal_emit_by_name(gebr.ui_project_line->view, "cursor-changed");
+	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), &line_iter);
+
         on_project_line_properties_activate();
 
-	gtk_tree_path_free(path);
 	g_free(project_title);
 	g_free(project_filename);
 

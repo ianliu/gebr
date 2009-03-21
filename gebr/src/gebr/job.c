@@ -48,7 +48,6 @@ job_add(struct server * server, GString * jid,
 	GString * cmd_line, GString * output)
 {
 	GtkTreeIter		iter;
-	GtkTreePath *		path;
 
 	struct job *		job;
 	enum JobStatus		status;
@@ -82,11 +81,7 @@ job_add(struct server * server, GString * jid,
 	job_update_status(job);
 	job_append_output(job, output);
 
-	/* scroll to it */
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
-	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gebr.ui_job_control->view), path, NULL, FALSE, 0, 0);
-
-	gtk_tree_path_free(path);
+	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter);
 
 	return job;
 }

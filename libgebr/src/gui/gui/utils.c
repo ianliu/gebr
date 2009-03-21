@@ -302,6 +302,16 @@ libgebr_gtk_tree_model_path_to_iter_list(GtkTreeModel * model, GList * path_list
 	return iter_list;
 }
 
+void
+libgebr_gtk_tree_view_scroll_to_iter_cell(GtkTreeView * tree_view, GtkTreeIter * iter)
+{
+	GtkTreePath *	tree_path;
+
+	tree_path = gtk_tree_model_get_path(gtk_tree_view_get_model(tree_view), iter);
+	gtk_tree_view_scroll_to_cell(tree_view, tree_path, NULL, FALSE, 0, 0);
+	gtk_tree_path_free(tree_path);
+}
+
 GList *
 libgebr_gtk_tree_view_get_selected_iters(GtkTreeView * tree_view)
 {

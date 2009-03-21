@@ -237,7 +237,6 @@ void
 parameter_new(void)
 {
 	GtkTreeIter		iter;
-	GtkTreePath *		tree_path;
 
 	if (parameter_get_selected(&iter, FALSE) &&
 	(geoxml_parameter_get_is_program_parameter(debr.parameter) == FALSE ||
@@ -270,10 +269,6 @@ parameter_new(void)
 				GEOXML_PARAMETERTYPE_FLOAT),
 			NULL);
 	}
-
-	tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter);
-	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(debr.ui_parameter.tree_view), tree_path, NULL, FALSE, 0, 0);
-	gtk_tree_path_free(tree_path);
 
 	parameter_select_iter(iter);
 	parameter_change_type_setup_ui();
@@ -958,6 +953,8 @@ parameter_select_iter(GtkTreeIter iter)
 		-1);
 	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	gtk_tree_selection_select_iter(tree_selection, &iter);
+	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_parameter.tree_view), iter);
+
 	parameter_selected();
 }
 
