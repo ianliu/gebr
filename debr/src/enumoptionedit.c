@@ -237,8 +237,8 @@ __enum_option_edit_move_top(EnumOptionEdit * enum_option_edit, GtkTreeIter * ite
 		2, &sequence,
 		-1);
 
-	geoxml_sequence_move_before(sequence, NULL);
-	gtk_list_store_move_before(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, NULL);
+	geoxml_sequence_move_after(sequence, NULL);
+	gtk_list_store_move_after(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, NULL);
 
 	g_signal_emit_by_name(enum_option_edit, "changed");
 }
@@ -252,8 +252,8 @@ __enum_option_edit_move_bottom(EnumOptionEdit * enum_option_edit, GtkTreeIter * 
 		2, &sequence,
 		-1);
 
-	geoxml_sequence_move_after(sequence, NULL);
-	gtk_list_store_move_after(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, NULL);
+	geoxml_sequence_move_before(sequence, NULL);
+	gtk_list_store_move_before(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, NULL);
 
 	g_signal_emit_by_name(enum_option_edit, "changed");
 }
