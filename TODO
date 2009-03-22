@@ -7,9 +7,7 @@ Beta:
         em edição e salvas no arquivo de conf da DéBR
 +	Teclas de atalho
 +	Na tela de edição de parâmetros, manter mesma altura das linhas.
-+	Versão correta para dialog de About
 +	Seleção multipla
-+	Detalhes para URL de programa na DeBR
 
 RC:
 +	Reiniciar ou avisar o usuário de daemons antigos ao instalar o gebrd
