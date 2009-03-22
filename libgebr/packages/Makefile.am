@@ -16,7 +16,7 @@
 
 SUBDIRS =
 
-PKG_DEBIAN = debian/changelog.in debian/copyright debian/info debian/libgebr-default.ex \
+PKG_DEBIAN = debian/changelog debian/copyright debian/info debian/libgebr-default.ex \
 	debian/libgebr.doc-base.ex debian/postrm.ex debian/README.Debian \
 	debian/compat debian/dirs debian/libgebr0.dirs debian/libgebr-dev.dirs \
 	debian/manpage.1.ex debian/preinst.ex debian/rules debian/control \
