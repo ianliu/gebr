@@ -81,9 +81,6 @@ void
 on_parameter_delete_activate(void);
 
 void
-on_parameter_duplicate_activate(void);
-
-void
 on_parameter_properties_activate(void);
 
 void

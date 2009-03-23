@@ -85,8 +85,6 @@ static const GtkActionEntry actions_entries [] = {
 		(GCallback)on_parameter_top_activate},
 	{"parameter_bottom", GTK_STOCK_GOTO_BOTTOM, NULL, NULL,
 		_("Move parameter to the bottom of the list"), (GCallback)on_parameter_bottom_activate},
-	{"parameter_duplicate", GTK_STOCK_COPY, _("Duplicate"), NULL, _("Duplicate parameter"),
-		(GCallback)on_parameter_duplicate_activate},
 	{"parameter_change_type", GTK_STOCK_CONVERT, _("Change type"), NULL, _("Change parameter type"),
 		(GCallback)on_parameter_change_type_activate},
 	{"parameter_copy", GTK_STOCK_COPY, _("Copy"), "<Control>c", _("Copy parameter to clipboard"),

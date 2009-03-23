@@ -259,7 +259,6 @@ parameter_new(void)
 			geoxml_parameters_append_parameter(GEOXML_PARAMETERS(first_instance),
 				GEOXML_PARAMETERTYPE_FLOAT),
 			&parent);
-		parameter_load_iter(&parent);
 		tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent);
 		gtk_tree_view_expand_row(GTK_TREE_VIEW(debr.ui_parameter.tree_view), tree_path, FALSE);
 		gtk_tree_path_free(tree_path);
@@ -303,29 +302,6 @@ parameter_remove(void)
 
 	if (in_group)
 		parameter_load_iter(&parent);
-
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
-}
-
-/*
- * Function: parameter_duplicate
- * Append a duplicated parameter
- */
-void
-parameter_duplicate(void)
-{
-	GeoXmlParameter *		parameter;
-
-	if (debr.parameter != NULL && geoxml_parameter_get_is_program_parameter(debr.parameter) == FALSE) {
-		GeoXmlSequence *	first_instance;
-
-		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(debr.parameter), &first_instance, 0);
-		parameter = geoxml_parameters_append_parameter(GEOXML_PARAMETERS(first_instance),
-			GEOXML_PARAMETERTYPE_STRING);
-	} else {
-		parameter = GEOXML_PARAMETER(geoxml_sequence_append_clone(GEOXML_SEQUENCE(debr.parameter)));
-	}
-	parameter_select_iter(parameter_append_to_ui(parameter, NULL));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -904,6 +880,7 @@ parameter_append_to_ui(GeoXmlParameter * parameter, GtkTreeIter * parent)
 static void
 parameter_load_iter(GtkTreeIter * iter)
 {
+	GtkTreeIter		parent;
 	GeoXmlParameter *	parameter;
 	GString *		keyword_label;
 
@@ -939,6 +916,8 @@ parameter_load_iter(GtkTreeIter * iter)
 		PARAMETER_KEYWORD, keyword_label->str,
 		PARAMETER_LABEL, geoxml_parameter_get_label(parameter),
 		-1);
+	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, iter))
+		parameter_load_iter(&parent);
 
 	g_string_free(keyword_label, TRUE);
 }
@@ -1083,9 +1062,6 @@ parameter_popup_menu(GtkWidget * tree_view)
 
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "parameter_new")));
-
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
-		gtk_action_group_get_action(debr.action_group, "parameter_duplicate")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "parameter_copy")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(

@@ -461,16 +461,6 @@ on_parameter_delete_activate(void)
 }
 
 /*
- * Function: on_parameter_duplicate_activate
- * Call <parameter_duplicate>
- */
-void
-on_parameter_duplicate_activate(void)
-{
-	parameter_duplicate();
-}
-
-/*
  * Function: on_parameter_new_activate
  * Call <parameter_remove>
  */

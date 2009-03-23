@@ -69,9 +69,6 @@ void
 parameter_remove(void);
 
 void
-parameter_duplicate(void);
-
-void
 parameter_top(void);
 
 void
