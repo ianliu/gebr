@@ -411,7 +411,7 @@ flow_edition_component_selected(void)
 	GeoXmlSequence *	program;
 	const gchar *		status;
 
-	if (flow_edition_get_selected_component(&iter, FALSE))
+	if (!flow_edition_get_selected_component(&iter, FALSE))
 		return;
 	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
 	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
