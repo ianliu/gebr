@@ -174,7 +174,7 @@ on_menu_save_as_activate(void)
 	menu_get_selected(&iter);
 	gtk_list_store_set(debr.ui_menu.list_store, &iter,
 		MENU_FILENAME, filename,
-		MENU_PATH, path,
+		MENU_PATH, path->str,
 		-1);
 	geoxml_document_set_filename(GEOXML_DOC(debr.menu), filename);
 	menu_save(path->str);
