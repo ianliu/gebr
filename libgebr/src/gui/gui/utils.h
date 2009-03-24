@@ -122,6 +122,9 @@ gboolean
 confirm_action_dialog(const gchar * title, const gchar * message, ...);
 
 void
+libgebr_gtk_action_group_set_accel_group(GtkActionGroup * action_group, GtkAccelGroup * accel_group);
+
+void
 set_tooltip(GtkWidget * widget, const gchar * tip);
 
 GtkWidget *

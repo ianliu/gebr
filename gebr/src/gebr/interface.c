@@ -133,7 +133,7 @@ gebr_setup_ui(void)
 	gebr.ui_server_list = server_list_setup_ui();
 
 	/* Create the main window */
-	gtk_window_set_default_icon (pixmaps_gebr_icon_16x16());
+	gtk_window_set_default_icon(pixmaps_gebr_icon_16x16());
 	gebr.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(gebr.window), "GêBR");
 	gtk_widget_set_size_request(gebr.window, 700, 400);
@@ -147,6 +147,7 @@ gebr_setup_ui(void)
 	gtk_ui_manager_insert_action_group(gebr.ui_manager, gebr.action_group, 0);
 	gebr.accel_group = gtk_ui_manager_get_accel_group(gebr.ui_manager);
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group);
+	libgebr_gtk_action_group_set_accel_group(gebr.action_group, gebr.accel_group);
 
 	/* Signals */
 	g_signal_connect(GTK_OBJECT(gebr.window), "delete_event",

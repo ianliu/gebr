@@ -684,6 +684,22 @@ confirm_action_dialog(const gchar * title, const gchar * message, ...)
 }
 
 /*
+ * Function: libgebr_gtk_action_group_set_accel_group
+ * Set to all actions in _action_group_ the GtkAccelGroup _accel_group_
+ */
+void
+libgebr_gtk_action_group_set_accel_group(GtkActionGroup * action_group, GtkAccelGroup * accel_group)
+{
+	GList	* i, * list;
+
+	list = gtk_action_group_list_actions(action_group);
+	for (i = g_list_first(list); i != NULL; i = g_list_next(i))
+		gtk_action_set_accel_group((GtkAction*)i->data, accel_group);
+
+	g_list_free(list);
+}
+
+/*
  * Function: set_tooltip
  * Set tooltip all across the code.
  */
