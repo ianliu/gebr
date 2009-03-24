@@ -58,6 +58,76 @@ do_navigation_bar_update(void)
 }
 
 /*
+ * Function: on_new_activate
+ * Select new target depending on the context
+ */
+void
+on_new_activate(void)
+{
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(debr.notebook))) {
+	case NOTEBOOK_PAGE_MENU:
+		on_menu_new_activate();
+		break;
+	case NOTEBOOK_PAGE_PROGRAM:
+		on_program_new_activate();
+		break;
+	case NOTEBOOK_PAGE_PARAMETER:
+		on_parameter_new_activate();
+		break;
+	default:
+		break;
+	}
+}
+
+/*
+ * Function: on_copy_activate
+ * Select copy target depending on the context
+ */
+void
+on_copy_activate(void)
+{
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(debr.notebook))) {
+	case NOTEBOOK_PAGE_PROGRAM:
+		on_program_copy_activate();
+		break;
+	case NOTEBOOK_PAGE_PARAMETER:
+		on_parameter_copy_activate();
+		break;
+	default:
+		break;
+	}
+}
+
+/*
+ * Function: on_paste_activate
+ * Select paste target depending on the context
+ */
+void
+on_paste_activate(void)
+{
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(debr.notebook))) {
+	case NOTEBOOK_PAGE_PROGRAM:
+		on_program_paste_activate();
+		break;
+	case NOTEBOOK_PAGE_PARAMETER:
+		on_parameter_paste_activate();
+		break;
+	default:
+		break;
+	}
+}
+
+/*
+ * Function: on_quit_activate
+ * Call <debr_quit>
+ */
+void
+on_quit_activate(void)
+{
+	debr_quit();
+}
+
+/*
  * Function: on_menu_new_activate
  * Call <menu_new>
  */
@@ -306,7 +376,7 @@ on_menu_validate_activate(void)
 
 	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view)
 		menu_validate(&iter);
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(debr.notebook), 3);
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(debr.notebook), NOTEBOOK_PAGE_VALIDATE);
 }
 
 /*
@@ -531,21 +601,21 @@ on_parameter_paste_activate(void)
 }
 
 /*
- * Function: on_validate_close
+ * Function: on_validate_close_activate
  * Call <validate_close>
  */
 void
-on_validate_close(void)
+on_validate_close_activate(void)
 {
 	validate_close();
 }
 
 /*
- * Function: on_validate_clear
+ * Function: on_validate_clear_activate
  * Call <validate_clear>
  */
 void
-on_validate_clear(void)
+on_validate_clear_activate(void)
 {
 	validate_clear();
 }

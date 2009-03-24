@@ -693,8 +693,10 @@ libgebr_gtk_action_group_set_accel_group(GtkActionGroup * action_group, GtkAccel
 	GList	* i, * list;
 
 	list = gtk_action_group_list_actions(action_group);
-	for (i = g_list_first(list); i != NULL; i = g_list_next(i))
+	for (i = g_list_first(list); i != NULL; i = g_list_next(i)) {
 		gtk_action_set_accel_group((GtkAction*)i->data, accel_group);
+		gtk_action_connect_accelerator((GtkAction*)i->data);
+	}
 
 	g_list_free(list);
 }

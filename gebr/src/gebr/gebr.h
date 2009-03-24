@@ -35,6 +35,13 @@
 #include "ui_preferences.h"
 #include "ui_server.h"
 
+enum NOTEBOOK_PAGE {
+	NOTEBOOK_PAGE_PROJECT_LINE = 0,
+	NOTEBOOK_PAGE_FLOW_BROWSE,
+	NOTEBOOK_PAGE_FLOW_EDITION,
+	NOTEBOOK_PAGE_JOB_CONTROL,
+};
+
 /* global variable of common needed stuff */
 extern struct gebr gebr;
 
@@ -43,7 +50,6 @@ struct gebr {
 	GtkWidget *			menu[MENUBAR_N];
 	GtkWidget *			notebook;
 	struct about			about;
-	GtkUIManager *			ui_manager;
 	GtkAccelGroup *			accel_group;
 	GtkActionGroup *		action_group;
 	/* for strange things ;) */

@@ -21,6 +21,15 @@
 #include <gtk/gtk.h>
 
 void
+on_copy_activate(void);
+
+void
+on_paste_activate(void);
+
+void
+on_quit_activate(void);
+
+void
 on_project_line_new_project_activate(void);
 
 void

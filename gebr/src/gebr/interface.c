@@ -40,7 +40,7 @@
  */
 
 static const GtkActionEntry actions_entries [] = {
-	{"main_quit",  GTK_STOCK_QUIT, NULL, "<Control>q", NULL, (GCallback)gebr_quit},
+	{"quit",  GTK_STOCK_QUIT, NULL, "<Control>q", NULL, (GCallback)on_quit_activate},
 	/* Project/Line */
 	{"project_line_new_project", "folder-new", _("New Project"), NULL, _("Create a new project"),
 		(GCallback)on_project_line_new_project_activate},
@@ -53,7 +53,7 @@ static const GtkActionEntry actions_entries [] = {
 	{"project_line_line_paths", GTK_STOCK_DIRECTORY, _("Line paths"), NULL, _("Edit custom line paths"),
 		(GCallback)on_project_line_paths_activate},
 	/* Flow */
-	{"flow_new", GTK_STOCK_NEW, NULL, NULL, _("Create a new flow"), (GCallback)on_flow_new_activate},
+	{"flow_new", GTK_STOCK_NEW, NULL, "<Control>n", _("Create a new flow"), (GCallback)on_flow_new_activate},
 	{"flow_delete", GTK_STOCK_DELETE, NULL, NULL, _("Delete selected flow"), (GCallback)on_flow_delete_activate},
 	{"flow_properties", GTK_STOCK_PROPERTIES, NULL, NULL, _("Edit flow properties"),
 		(GCallback)on_flow_properties_activate},
@@ -97,6 +97,12 @@ static const GtkRadioActionEntry status_radio_actions_entries [] = {
 	{"flow_edition_status_unconfigured", NULL, _("Unconfigured"), NULL, NULL, 2}
 };
 
+static const GtkActionEntry common_actions_entries [] = {
+	{"copy", GTK_STOCK_COPY, "copy", NULL, "copy", (GCallback)on_copy_activate},
+	{"paste", GTK_STOCK_PASTE, "paste", NULL, "paste", (GCallback)on_paste_activate},
+};
+
+
 /*
  * Prototypes functions
  */
@@ -119,15 +125,17 @@ assembly_help_menu(void);
 void
 gebr_setup_ui(void)
 {
-	GtkWidget *	main_vbox;
-	GtkWidget *	menu_bar;
-	GtkWidget *	navigation_hbox;
+	GtkWidget *		main_vbox;
+	GtkWidget *		menu_bar;
+	GtkWidget *		navigation_hbox;
 
-	GtkWidget *	vbox;
-	GtkWidget *	toolbar;
-	GtkToolItem *	tool_item;
-	GtkWidget *	menu;
-	GtkWidget *	revisions_menu;
+	GtkWidget *		vbox;
+	GtkWidget *		toolbar;
+	GtkToolItem *		tool_item;
+	GtkWidget *		menu;
+	GtkWidget *		revisions_menu;
+
+	GtkActionGroup *	common_action_group;
 
 	gebr.about = about_setup_ui("GêBR", _("A plug-and-play environment to\nseismic processing tools"));
 	gebr.ui_server_list = server_list_setup_ui();
@@ -139,15 +147,18 @@ gebr_setup_ui(void)
 	gtk_widget_set_size_request(gebr.window, 700, 400);
 	gtk_widget_show(gebr.window);
 
-	gebr.ui_manager = gtk_ui_manager_new();
 	gebr.action_group = gtk_action_group_new("General");
 	gtk_action_group_add_actions(gebr.action_group, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
 	gtk_action_group_add_radio_actions(gebr.action_group, status_radio_actions_entries, 3, -1,
 		(GCallback)on_flow_component_status_activate, NULL);
-	gtk_ui_manager_insert_action_group(gebr.ui_manager, gebr.action_group, 0);
-	gebr.accel_group = gtk_ui_manager_get_accel_group(gebr.ui_manager);
+	gebr.accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group);
 	libgebr_gtk_action_group_set_accel_group(gebr.action_group, gebr.accel_group);
+
+	common_action_group = gtk_action_group_new("Common");
+	gtk_action_group_add_actions(common_action_group, common_actions_entries,
+		G_N_ELEMENTS(common_actions_entries), NULL);
+	libgebr_gtk_action_group_set_accel_group(common_action_group, gebr.accel_group);
 
 	/* Signals */
 	g_signal_connect(GTK_OBJECT(gebr.window), "delete_event",
@@ -354,7 +365,7 @@ assembly_config_menu(void)
 	/* Quit entry */
 	gtk_container_add(GTK_CONTAINER(menu),gtk_separator_menu_item_new());
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
-		gtk_action_group_get_action(gebr.action_group, "main_quit")));
+		gtk_action_group_get_action(gebr.action_group, "quit")));
 
 	return menu_item;
 }

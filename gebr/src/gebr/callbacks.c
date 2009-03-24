@@ -33,6 +33,43 @@
 #include "ui_job_control.h"
 #include "ui_help.h"
 
+/*
+ * Function: on_copy_activate
+ * Select copy target depending on the context
+ */
+void
+on_copy_activate(void)
+{
+// 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+// 	case NOTEBOOK_PAGE_PROJECT_LINE:
+// 
+// 		break;
+// 	case NOTEBOOK_PAGE_FLOW_BROWSE:
+// 
+// 		break;
+// 	default:
+// 		break;
+// 	}
+}
+
+/*
+ * Function: on_paste_activate
+ * Select paste target depending on the context
+ */
+void
+on_paste_activate(void)
+{
+}
+
+/*
+ * Function: on_quit_activate
+ * Call <gebr_quit>
+ */
+void
+on_quit_activate(void)
+{
+	gebr_quit();
+}
 
 /*
  * Function: on_project_line_new_project_activate
@@ -42,7 +79,6 @@
 void
 on_project_line_new_project_activate(void)
 {
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
 	project_new();
 }
 
@@ -54,8 +90,7 @@ on_project_line_new_project_activate(void)
 void
 on_project_line_new_line_activate(void)
 {
-	if (line_new())
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
+	line_new();
 }
 
 /*
@@ -66,15 +101,10 @@ on_project_line_new_line_activate(void)
 void
 on_project_line_delete_activate(void)
 {
-	gboolean	ret;
-
 	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
-		ret = project_delete();
+		project_delete();
 	else
-		ret = line_delete();
-
-	if (ret)
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
+		line_delete();
 }
 
 /*
@@ -99,7 +129,6 @@ on_project_line_properties_activate(void)
 void
 on_project_line_refresh_activate(void)
 {
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 0);
 	project_list_populate();
 }
 
@@ -122,8 +151,7 @@ on_project_line_paths_activate(void)
 void
 on_flow_new_activate(void)
 {
-	if (flow_new())
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 1);
+	flow_new();
 }
 
 /*
@@ -134,7 +162,6 @@ on_flow_new_activate(void)
 void
 on_flow_import_activate(void)
 {
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 1);
 	flow_import();
 }
 
@@ -167,7 +194,6 @@ on_flow_export_as_menu_activate(void)
 void
 on_flow_delete_activate(void)
 {
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 1);
 	flow_delete();
 }
 
@@ -179,7 +205,6 @@ on_flow_delete_activate(void)
 void
 on_flow_properties_activate(void)
 {
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 1);
 	document_properties_setup_ui(GEOXML_DOC(gebr.flow));
 }
 
@@ -256,7 +281,6 @@ on_flow_component_delete_activate(void)
 void
 on_flow_component_properties_activate(void)
 {
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 2);
 	flow_edition_component_activated();
 }
 

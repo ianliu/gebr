@@ -39,8 +39,7 @@
  */
 
 static const GtkActionEntry actions_entries [] = {
-	/* Main */
-	{"main_quit", GTK_STOCK_QUIT, _("Quit"), "<Control>q", _("Quit DÈBR"), (GCallback)debr_quit},
+	{"quit", GTK_STOCK_QUIT, _("Quit"), NULL, _("Quit DÈBR"), (GCallback)on_quit_activate},
 	/* menu */
 	{"menu_new", GTK_STOCK_NEW, NULL, NULL, _("Create new menu"), (GCallback)on_menu_new_activate},
 	{"menu_properties", GTK_STOCK_PROPERTIES, NULL, NULL, _("Edit menu properties"),
@@ -71,9 +70,9 @@ static const GtkActionEntry actions_entries [] = {
 		(GCallback)on_program_top_activate},
 	{"program_bottom", GTK_STOCK_GOTO_BOTTOM, NULL, NULL,
 		_("Move program to the bottom of the list"), (GCallback)on_program_bottom_activate},
-	{"program_copy", GTK_STOCK_COPY, _("Copy"), "<Control>c", _("Copy program to clipboard"),
+	{"program_copy", GTK_STOCK_COPY, _("Copy"), NULL, _("Copy program to clipboard"),
 		(GCallback)on_program_copy_activate},
-	{"program_paste", GTK_STOCK_PASTE, _("Paste"), "<Control>v", _("Paste program from clipboard"),
+	{"program_paste", GTK_STOCK_PASTE, _("Paste"), NULL, _("Paste program from clipboard"),
 		(GCallback)on_program_paste_activate},
 	/* parameter */
 	{"parameter_new", GTK_STOCK_NEW, NULL, NULL, _("Create new parameter"), (GCallback)on_parameter_new_activate},
@@ -87,16 +86,21 @@ static const GtkActionEntry actions_entries [] = {
 		_("Move parameter to the bottom of the list"), (GCallback)on_parameter_bottom_activate},
 	{"parameter_change_type", GTK_STOCK_CONVERT, _("Change type"), NULL, _("Change parameter type"),
 		(GCallback)on_parameter_change_type_activate},
-	{"parameter_copy", GTK_STOCK_COPY, _("Copy"), "<Control>c", _("Copy parameter to clipboard"),
+	{"parameter_copy", GTK_STOCK_COPY, _("Copy"), NULL, _("Copy parameter to clipboard"),
 		(GCallback)on_parameter_copy_activate},
-	{"parameter_paste", GTK_STOCK_PASTE, _("Paste"), "<Control>v", _("Paste parameter from clipboard"),
+	{"parameter_paste", GTK_STOCK_PASTE, _("Paste"), NULL, _("Paste parameter from clipboard"),
 		(GCallback)on_parameter_paste_activate},
 	/* validate */
 	{"validate_close", "edit-clear", NULL, NULL, _("Clear selecteds validations reports"),
-		(GCallback)on_validate_close},
+		(GCallback)on_validate_close_activate},
 	{"validate_clear", GTK_STOCK_CLEAR, NULL, NULL, _("Clear all validations reports"),
-		(GCallback)on_validate_clear},
+		(GCallback)on_validate_clear_activate},
+};
 
+static const GtkActionEntry common_actions_entries [] = {
+	{"new", GTK_STOCK_NEW, "new", NULL, "new", (GCallback)on_new_activate},
+	{"copy", GTK_STOCK_COPY, "copy", NULL, "copy", (GCallback)on_copy_activate},
+	{"paste", GTK_STOCK_PASTE, "paste", NULL, "paste", (GCallback)on_paste_activate},
 };
 
 /*
@@ -122,6 +126,8 @@ debr_setup_ui(void)
 	GtkWidget *		child_menu_item;
 	GtkWidget *		toolbar;
 	GtkToolItem *		tool_item;
+
+	GtkActionGroup *	common_action_group;
 
 	/*
 	 * Main window and its vbox contents
@@ -162,12 +168,26 @@ debr_setup_ui(void)
 	/*
 	 * Actions
 	 */
-	debr.accel_group = gtk_accel_group_new();
-	gtk_window_add_accel_group(GTK_WINDOW(debr.window), debr.accel_group);
 	debr.action_group = gtk_action_group_new("General");
 	gtk_action_group_add_actions(debr.action_group, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
 	gtk_action_group_add_radio_actions(debr.action_group, parameter_type_radio_actions_entries,
 		combo_type_map_size, -1, (GCallback)on_parameter_type_activate, NULL);
+	debr.accel_group = gtk_accel_group_new();
+	gtk_window_add_accel_group(GTK_WINDOW(debr.window), debr.accel_group);
+	libgebr_gtk_action_group_set_accel_group(debr.action_group, debr.accel_group);
+
+	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "menu_new"));
+	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "program_new"));
+	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "parameter_new"));
+	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "program_copy"));
+	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "parameter_copy"));
+	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "program_paste"));
+	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "parameter_paste"));
+
+	common_action_group = gtk_action_group_new("Common");
+	gtk_action_group_add_actions(common_action_group, common_actions_entries,
+		G_N_ELEMENTS(common_actions_entries), NULL);
+	libgebr_gtk_action_group_set_accel_group(common_action_group, debr.accel_group);
 
 	/*
 	 * Menu: Actions
@@ -183,7 +203,7 @@ debr_setup_ui(void)
 		(GCallback)on_configure_preferences_activate, NULL);
 	gtk_container_add(GTK_CONTAINER(menu),gtk_separator_menu_item_new());
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
-		gtk_action_group_get_action(debr.action_group, "main_quit")));
+		gtk_action_group_get_action(debr.action_group, "quit")));
 
 	/*
 	 * Menu: Help
@@ -278,8 +298,6 @@ debr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "parameter_new"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "parameter_duplicate"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "parameter_copy"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(

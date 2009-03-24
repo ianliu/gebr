@@ -191,7 +191,7 @@ flow_edition_load_components(void)
 	gchar *			output_file;
 
 	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
-	if (!flow_browse_get_selected(NULL, TRUE))
+	if (!flow_browse_get_selected(NULL, FALSE))
 		return;
 
 	/* input iter */

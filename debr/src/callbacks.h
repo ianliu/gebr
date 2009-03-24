@@ -24,6 +24,18 @@ void
 do_navigation_bar_update(void);
 
 void
+on_new_activate(void);
+
+void
+on_copy_activate(void);
+
+void
+on_paste_activate(void);
+
+void
+on_quit_activate(void);
+
+void
 on_menu_new_activate(void);
 
 void
@@ -102,10 +114,10 @@ void
 on_parameter_paste_activate(void);
 
 void
-on_validate_close(void);
+on_validate_close_activate(void);
 
 void
-on_validate_clear(void);
+on_validate_clear_activate(void);
 
 void
 on_configure_preferences_activate(void);

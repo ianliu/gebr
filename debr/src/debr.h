@@ -31,6 +31,13 @@
 
 extern struct debr debr;
 
+enum NOTEBOOK_PAGE {
+	NOTEBOOK_PAGE_MENU = 0,
+	NOTEBOOK_PAGE_PROGRAM,
+	NOTEBOOK_PAGE_PARAMETER,
+	NOTEBOOK_PAGE_VALIDATE,
+};
+
 struct debr {
 	/* current stuff being edited */
 	GeoXmlFlow *		menu;
