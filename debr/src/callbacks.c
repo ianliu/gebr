@@ -420,6 +420,7 @@ on_menu_close_activate(void)
 				g_free(path);
 				break;
 			} case GTK_RESPONSE_NO:
+				--debr.unsaved_count;
 				break;
 			case GTK_RESPONSE_CANCEL:
 				cancel = TRUE;

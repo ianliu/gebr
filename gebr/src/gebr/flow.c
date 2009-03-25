@@ -502,6 +502,8 @@ out:	gtk_widget_destroy(dialog);
 void
 flow_run(void)
 {
+	GeoXmlFlow *		flow;
+	GeoXmlSequence *	i;
 	GString *		path;
 
 	struct server *		server;
@@ -515,30 +517,45 @@ flow_run(void)
 	if (server == NULL)
 		return;
 
-	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'"),
-		geoxml_document_get_title(GEOXML_DOC(gebr.flow)));
-	if (comm_server_is_local(server->comm) == FALSE) {
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'"),
-			server->comm->address->str,
-			geoxml_document_get_title(GEOXML_DOC(gebr.flow)));
-	} else {
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking local server to run flow '%s'"),
-			geoxml_document_get_title(GEOXML_DOC(gebr.flow)));
-	}
+	flow = GEOXML_FLOW(geoxml_document_clone(GEOXML_DOCUMENT(gebr.flow)));
+	/* Strip flow: remove helps and revisions */
+	geoxml_document_set_help(GEOXML_DOCUMENT(flow), "");
+	geoxml_flow_get_program(flow, &i, 0);
+	for (; i != NULL; geoxml_sequence_next(&i))
+		geoxml_program_set_help(GEOXML_PROGRAM(i), "");
+	geoxml_flow_get_revision(flow, &i, 0);
+	while (i != NULL) {
+		GeoXmlSequence *	tmp;
 
-	comm_server_run_flow(server->comm, gebr.flow);
+		tmp = i;
+		geoxml_sequence_next(&tmp);
+		geoxml_sequence_remove(i);
+		i = tmp;
+	}
+	/* RUN */
+	comm_server_run_flow(server->comm, flow);
 
 	/* TODO: check save */
-	/* Save manualy to preserve modified date */
+	/* Save manualy to preserve run date */
 	geoxml_flow_set_date_last_run(gebr.flow, iso_date());
 	path = document_get_path(geoxml_document_get_filename(GEOXML_DOC(gebr.flow)));
 	geoxml_document_save(GEOXML_DOC(gebr.flow), path->str);
-
-	/* Update details */
 	flow_browse_info_update();
+
+	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'"),
+		geoxml_document_get_title(GEOXML_DOC(flow)));
+	if (comm_server_is_local(server->comm) == FALSE) {
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'"),
+			server->comm->address->str,
+			geoxml_document_get_title(GEOXML_DOC(flow)));
+	} else {
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking local server to run flow '%s'"),
+			geoxml_document_get_title(GEOXML_DOC(flow)));
+	}
 
 	/* frees */
 	g_string_free(path, TRUE);
+	geoxml_document_free(GEOXML_DOCUMENT(flow));
 }
 
 /*
