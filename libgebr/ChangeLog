@@ -1,51 +1,82 @@
+2009-03-21  Ricardo Biloti <biloti@gmail.com>
+
+	* Release 0.9.11
+
+2009-03-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fix sort again
+	* fix sort by modified date
+	* sort by name and date in debr
+	* no manual editing and value is hidden for list of enum value
+	  parameter
+	* use libgebr_gtk_tree_view_scroll_to_iter_cell
+	* silly bug! debr parameters in a group were writing to value
+	  instead of default value
+	* multiselection support for menus, with actions
+	  validate/close/delete working
+	* - close/clear actions for validate (debr)
+	  - functions to handle multiple selection in libgebr_gui
+
+2009-03-13  Ricardo Biloti <biloti@gmail.com>
+
+	* debian control files updated
+
+2009-03-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* type checking for geoxml
+
+2009-03-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* first "trashy" copy/paste support for parameter
+
+2009-03-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fix for referenced parameter of type file and range
+	* read keyword from referencee when parameter is a reference
+
+2009-03-04  Ricardo Biloti <biloti@gmail.com>
+
+	* About dialog fixed (version, url, and close button)
+	* actual version displayed in about dialog
+
+2009-03-02  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fix bash login message removal for ssh command
+	* - removed changelog.in from debian packages
+	  - fixed VERSION in configure.ac's
+	* protect against login messages when running servers
+	* fix list parameters on instances
+
+2009-01-29  Ricardo Biloti <biloti@gmail.com>
+
+	* ChangeLogs updated
+
 2009-01-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/gtksequenceedit.c, src/gui/gui/gtksequenceedit.h,
-	  src/gui/gui/parameter.c, src/gui/gui/parameter.h: - do not allow
-	  list rename for enums
+	* - do not allow list rename for enums
 	  - code cleanups
-	* src/gui/gui/parameter.c, src/gui/gui/valuesequenceedit.c: -
-	  reconfigure parameter widget if required changed (needed for enum
-	  parameter)
+	* - reconfigure parameter widget if required changed (needed for
+	  enum parameter)
 	  - really fix the problem with list parameter (now for all types)
-	* src/gui/gui/parameter.c: fix last commit: really fixed list
-	  parameter editing
-	* src/gui/gui/gtksequenceedit.c, src/gui/gui/gtksequenceedit.h,
-	  src/gui/gui/parameter.c, src/gui/gui/valuesequenceedit.c,
-	  src/gui/gui/valuesequenceedit.h: - valuesequenceedit refactored
+	* fix last commit: really fixed list parameter editing
+	* - valuesequenceedit refactored
 	  - fix parameter_widget's on_edit_list_toggled
 
 2009-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/gtksequenceedit.c, src/gui/gui/gtksequenceedit.h,
-	  src/gui/gui/parameter.c, src/gui/gui/valuesequenceedit.c: - fix
-	  drag n' drop on gtksequenceedit and devivates
+	* - fix drag n' drop on gtksequenceedit and devivates
 	  - fix save on exit dialog on debr
-	* src/gui/gui/gtkfileentry.c: ¡commit 1000! several UI tweaks
-	* src/gui/gui/parameter.c: follow required condition for enums when
-	  reading its value
+	* ¡commit 1000! several UI tweaks
+	* follow required condition for enums when reading its value
 
 2009-01-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/comm/comm/glistensocket.c: fix regression on
-	  g_listen_socket_get_next_pending_connection
-	* src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/sequence.h: - fix
-	  geoxmlparametergroup
+	* fix regression on g_listen_socket_get_next_pending_connection
+	* - fix geoxmlparametergroup
 	  - fix move into a empty group (debr)
 	  - fix help edit in debr: a empty file can be a file with a return
 	  char. (length 1)
-	* src/comm/comm/glistensocket.c, src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/parameter.h,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameter_p.h,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/program_parameter.h,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/xml.h,
-	  src/gui/gui/parameter.c, src/gui/gui/utils.c,
-	  src/gui/gui/utils.h: - various bugfixes to handle reference
-	  parameters
+	* - various bugfixes to handle reference parameters
 	  - geoxml_parameter_get_type resolve references
 	  - a lot of fixes to geoxmlsequence functions
 	  - rewritten dran n' drop API
@@ -53,1749 +84,238 @@
 
 2009-01-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/program_parameter.c: fix
-	  geoxml_parameter_set_type, fixing wrong range parameter creation
+	* fix geoxml_parameter_set_type, fixing wrong range parameter
+	  creation
 
 2009-01-26  Ricardo Biloti <biloti@gmail.com>
 
-	* src/geoxml/upgrade/upgrade.c: fix to compile even with GLIB 2.12
+	* fix to compile even with GLIB 2.12
 
 2009-01-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/parameter.c: keep parameter label synced with
-	  references in the group
-	* src/geoxml/geoxml/parameter.c, src/geoxml/geoxml/parameter.h,
-	  src/geoxml/geoxml/parameter_group.h,
-	  src/geoxml/geoxml/parameters.c, src/geoxml/geoxml/parameters.h,
-	  src/geoxml/geoxml/parameters_p.h, src/geoxml/geoxml/sequence.c,
-	  src/geoxml/geoxml/xml.c, src/geoxml/geoxml/xml.h,
-	  src/gui/gui/utils.c: - initial buggy code to support drag n' drop
-	  from/to/inside a group (debr)
+	* keep parameter label synced with references in the group
+	* - initial buggy code to support drag n' drop from/to/inside a
+	  group (debr)
 
 2009-01-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/sequence.c, src/gui/gui/gtksequenceedit.c,
-	  src/gui/gui/valuesequenceedit.c: - fix
-	  __geoxml_sequence_move_before with position NULL
+	* - fix __geoxml_sequence_move_before with position NULL
 	  - fixes to top/bottom at gtksequenceedit and derivatives
 
 2009-01-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/parameter.c: don't show empty option in enum when it
-	  is required
-	* src/geoxml/geoxml/document.c, src/geoxml/geoxml/xml.h: fix
-	  __geoxml_foreach_element_with_tagname_r, fixing conversion from
-	  flow 0.2.1 to 0.2.2
+	* don't show empty option in enum when it is required
+	* fix __geoxml_foreach_element_with_tagname_r, fixing conversion
+	  from flow 0.2.1 to 0.2.2
 
 2009-01-22  Ricardo Biloti <biloti@gmail.com>
 
-	* src/geoxml/upgrade/upgrade.c: fix segfault whenever no files are
-	  provided
+	* fix segfault whenever no files are provided
 
 2009-01-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/flow.c, src/geoxml/geoxml/flow.h,
-	  src/gui/icons/16x16/actions/document-open-recent.png,
-	  src/gui/icons/16x16/actions/svn-add.png,
-	  src/gui/icons/22x22/actions/document-open-recent.png,
-	  src/gui/icons/22x22/actions/svn-add.png,
-	  src/gui/icons/48x48/actions/document-open-recent.png,
-	  src/gui/icons/48x48/actions/svn-add.png,
-	  src/gui/icons/Makefile.am, src/gui/icons/oxygen-copy.sh: geoxml
-	  flow revisions supported in gebr
-	* src/gui/gui/gtksequenceedit.c, src/gui/gui/gtksequenceedit.h,
-	  src/gui/gui/valuesequenceedit.c: support for moving with drag n'
-	  drop on gktsequenceedit
+	* geoxml flow revisions supported in gebr
+	* support for moving with drag n' drop on gktsequenceedit
 
 2009-01-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/comm/comm/server.c: return value and comment fix for
-	  comm_server_forward_x11
-	* src/comm/comm/server.c: more beautiful and robust
-	  comm_server_forward_x11
-	* src/comm/comm/server.c, src/comm/comm/server.h: first working
-	  version of x11 full redirect!
-	* src/comm/comm/gchannelsocket.c, src/comm/comm/gsocket.c,
-	  src/comm/comm/gsocket.h, src/comm/comm/gstreamsocket.c: - first
-	  working version o gchannelsocket
+	* return value and comment fix for comm_server_forward_x11
+	* more beautiful and robust comm_server_forward_x11
+	* first working version of x11 full redirect!
+	* - first working version o gchannelsocket
 	  - g_stream_socket_connect
-	* src/comm/comm/gchannelsocket.c, src/comm/comm/gchannelsocket.h,
-	  src/comm/comm/glistensocket.c, src/comm/comm/gsocket.c,
-	  src/comm/comm/gsocket.h, src/comm/comm/gsocketaddress.c: - fixed
-	  _g_socket_address_get_sockaddr
+	* - fixed _g_socket_address_get_sockaddr
 	  - fixes to gchannelsocket
-	* src/comm/comm/Makefile.am, src/comm/comm/gchannelsocket.c,
-	  src/comm/comm/gchannelsocket.h, src/comm/comm/glistensocket.c,
-	  src/comm/comm/glistensocket.h, src/comm/comm/gsocket.c,
-	  src/comm/comm/gsocket.h, src/comm/comm/gsocketaddress.c,
-	  src/comm/comm/gsocketaddress.h,
-	  src/comm/comm/gsocketaddressprivate.h,
-	  src/comm/comm/gsocketprivate.h, src/comm/comm/gstreamsocket.c,
-	  src/comm/comm/gstreamsocket.h,
-	  src/comm/comm/gstreamsocketprivate.h, src/comm/comm/server.c:
-	  general refactoring in libgebr_comm to really support unix
+	* general refactoring in libgebr_comm to really support unix
 	  sockets
 
 2009-01-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* Makefile.am, packages/Makefile.am,
-	  packages/rpm/libgebr.fedora.spec.in,
-	  packages/rpm/libgebr.mandriva.spec.in,
-	  packages/rpm/libgebr.opensuse.spec.in, src/comm/comm/Makefile.am,
-	  src/geoxml/geoxml/Makefile.am, src/gui/gui/Makefile.am,
-	  src/gui/icons/Makefile.am, src/gui/icons/gebr-theme/Makefile.am,
-	  src/misc/misc/Makefile.am: fixes to rpm creation
+	* fixes to rpm creation
 
 2009-01-15  Ricardo Biloti <biloti@gmail.com>
 
-	* ChangeLog: preparation for release 0.9.7
-	* src/comm/comm/server.c: strip debug code
+	* preparation for release 0.9.7
+	* strip debug code
 
 2009-01-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/comm/comm/server.c, src/geoxml/geoxml/sequence.c: fix
-	  move_after with position=NULL
+	* fix move_after with position=NULL
 
 2009-01-14  Ricardo Biloti <biloti@gmail.com>
 
-	* src/gui/gui/about.c: copyright text fixed in about dialog
+	* copyright text fixed in about dialog
 
 2009-01-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/document.c,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/program_parameter.h: - updated TODO
+	* - updated TODO
 	  - fixed enum option add and get functions
 	  - fixed program_parameter documentation
 	  - fixed bug in type change on selection (debr)
 
 2009-01-12  Ricardo Biloti <biloti@gmail.com>
 
-	* INSTALL, Makefile.am, packages/Makefile.am, src/Makefile.am,
-	  src/comm/comm/Makefile.am, src/comm/comm/ghostinfo.c,
-	  src/comm/comm/ghostinfo.h, src/comm/comm/glistensocket.c,
-	  src/comm/comm/glistensocket.h, src/comm/comm/gprocess.c,
-	  src/comm/comm/gprocess.h, src/comm/comm/gsocket.c,
-	  src/comm/comm/gsocket.h, src/comm/comm/gsocketaddress.c,
-	  src/comm/comm/gsocketaddress.h, src/comm/comm/gsocketprivate.h,
-	  src/comm/comm/gstreamsocket.c, src/comm/comm/gstreamsocket.h,
-	  src/comm/comm/gstreamsocketprivate.h,
-	  src/comm/comm/gterminalprocess.c,
-	  src/comm/comm/gterminalprocess.h, src/comm/comm/protocol.c,
-	  src/comm/comm/protocol.h, src/comm/comm/server.c,
-	  src/comm/comm/server.h, src/comm/comm/support.h,
-	  src/defines.h.in, src/gebr.pc.in, src/geoxml/Makefile.am,
-	  src/geoxml/gebr-geoxml.pc.in, src/geoxml/geoxml/defines.h.in,
-	  src/geoxml/geoxml/document_p.h, src/geoxml/geoxml/macros.h,
-	  src/geoxml/geoxml/program_p.h, src/geoxml/geoxml/types.h,
-	  src/geoxml/texinfo.tex, src/gui/gui/about.h,
-	  src/gui/gui/gtkenhancedentry.c, src/gui/gui/gtkenhancedentry.h,
-	  src/gui/gui/gtkfileentry.c, src/gui/gui/gtkfileentry.h,
-	  src/gui/gui/pixmaps.c, src/gui/gui/support.h,
-	  src/gui/gui/valuesequenceedit.c, src/gui/gui/valuesequenceedit.h,
-	  src/gui/icons/Makefile.am, src/gui/icons/gebr-theme/Makefile.am,
-	  src/gui/pixmaps/Makefile.am, src/libgebr.c, src/libgebr.h,
-	  src/misc/Makefile.am, src/misc/gebr-misc.pc.in,
-	  src/misc/misc/Makefile.am, src/misc/misc/date.h,
-	  src/misc/misc/log.h, src/misc/misc/support.h,
-	  src/misc/misc/utils.c, src/misc/misc/utils.h: - Copyright
-	  messages updated
+	* - Copyright messages updated
 	  - accents suppressed
 
 2009-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/document.c: fixed debug flag usage
-	* mkinstalldirs: removed mkinstalldirs (also generated)
-	* m4: removed m4 (is generated by libtoolize)
-	* src/gui/gui/utils.c, src/gui/gui/utils.h: select next or previous
-	  iter after delete actions
+	* fixed debug flag usage
+	* removed mkinstalldirs (also generated)
+	* removed m4 (is generated by libtoolize)
+	* select next or previous iter after delete actions
 
 2009-01-12  Ricardo Biloti <biloti@gmail.com>
 
-	* config.guess, config.sub, depcomp, install-sh, ltmain.sh,
-	  missing: delete automatically generated files
-	* README, configure.ac, packages/debian/control,
-	  packages/rpm/libgebr.fedora.spec.in,
-	  packages/rpm/libgebr.mandriva.spec.in,
-	  packages/rpm/libgebr.opensuse.spec.in, src/comm/Makefile.am,
-	  src/comm/comm.h, src/comm/gebr-comm.pc.in,
-	  src/geoxml/doc/libgeoxml.cfg, src/geoxml/gebr-geoxml.1,
-	  src/geoxml/gebr-geoxml.info, src/geoxml/gebr-geoxml.texinfo,
-	  src/geoxml/geoxml.h, src/geoxml/geoxml/Makefile.am,
-	  src/geoxml/geoxml/document.c, src/geoxml/geoxml/document.h,
-	  src/geoxml/geoxml/enum_option.c, src/geoxml/geoxml/enum_option.h,
-	  src/geoxml/geoxml/error.c, src/geoxml/geoxml/error.h,
-	  src/geoxml/geoxml/flow.c, src/geoxml/geoxml/flow.h,
-	  src/geoxml/geoxml/line.c, src/geoxml/geoxml/line.h,
-	  src/geoxml/geoxml/object.c, src/geoxml/geoxml/object.h,
-	  src/geoxml/geoxml/parameter.c, src/geoxml/geoxml/parameter.h,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameter_group.h,
-	  src/geoxml/geoxml/parameter_group_p.h,
-	  src/geoxml/geoxml/parameter_p.h, src/geoxml/geoxml/parameters.c,
-	  src/geoxml/geoxml/parameters.h, src/geoxml/geoxml/parameters_p.h,
-	  src/geoxml/geoxml/program.c, src/geoxml/geoxml/program.h,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/program_parameter.h,
-	  src/geoxml/geoxml/program_parameter_p.h,
-	  src/geoxml/geoxml/project.c, src/geoxml/geoxml/project.h,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/sequence.h,
-	  src/geoxml/geoxml/sequence_p.h, src/geoxml/geoxml/support.h,
-	  src/geoxml/geoxml/value_sequence.c,
-	  src/geoxml/geoxml/value_sequence.h, src/geoxml/geoxml/xml.c,
-	  src/geoxml/geoxml/xml.h, src/geoxml/upgrade/upgrade.c,
-	  src/gui/Makefile.am, src/gui/gebr-gui.pc.in, src/gui/gui.h,
-	  src/gui/gui/Makefile.am, src/gui/gui/about.c,
-	  src/gui/gui/gtksequenceedit.c, src/gui/gui/gtksequenceedit.h,
-	  src/gui/gui/icons.c, src/gui/gui/icons.h,
-	  src/gui/gui/parameter.c, src/gui/gui/parameter.h,
-	  src/gui/gui/pixmaps.h, src/gui/gui/utils.c, src/gui/gui/utils.h,
-	  src/misc/misc.h, src/misc/misc/date.c, src/misc/misc/log.c: -
-	  Copyright messages updated
+	* delete automatically generated files
+	* - Copyright messages updated
 	  - accents suppressed
-	* config.guess, config.sub, configure.ac, ltmain.sh,
-	  packages/debian/changelog.in: package version fixed
+	* package version fixed
 
 2009-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* packages/debian/rules, packages/rpm/libgebr.fedora.spec.in,
-	  packages/rpm/libgebr.mandriva.spec.in,
-	  packages/rpm/libgebr.opensuse.spec.in: use --disable-debug to
-	  build packages
+	* use --disable-debug to build packages
 
 2009-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/utils.c, src/gui/gui/utils.h: - updated TODO
+	* - updated TODO
 	  - fix compilation
 	  - word-wrap option at job log popup menu
-	* src/gui/gui/utils.c, src/gui/gui/utils.h: popup menu for
-	  parameter type change in debr
+	* popup menu for parameter type change in debr
 
 2009-01-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/comm/comm/server.c: fixed crash for disconnect & connect of a
-	  connecting server
-	* src/gui/gui/utils.c: better move with drag n' drop
+	* fixed crash for disconnect & connect of a connecting server
+	* better move with drag n' drop
 
 2009-01-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/utils.c: - updated TODO
+	* - updated TODO
 	  - don't use gtk_tree_view_convert_widget_to_bin_window_coords if
 	  gtk's version is lower than 2.12
 
 2008-12-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/xml.h, src/gui/gui/utils.c,
-	  src/gui/gui/utils.h: - move by drag n' drop refactored
+	* - move by drag n' drop refactored
 	  - input/ouput items in flow edition view
 
 2008-12-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/parameter.c: fix set_widget_value for reference
-	  parameters
-	* src/geoxml/geoxml/document.c,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameters.c, src/geoxml/geoxml/sequence.c,
-	  src/geoxml/geoxml/xml.c, src/geoxml/geoxml/xml.h: bizarre bug
-	  fixes
+	* fix set_widget_value for reference parameters
+	* bizarre bug fixes
 
 2008-12-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/document.c, src/geoxml/geoxml/sequence.c,
-	  src/gui/gui/utils.c: - fix bug in move with drag n' drop
+	* - fix bug in move with drag n' drop
 	  - work on support for groups in gebr
-	* src/geoxml/geoxml/parameter_group.c: final fixes to group impl.
-	  in debr
-	* src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameters.c, src/geoxml/geoxml/parameters.h,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/xml.c,
-	  src/gui/gui/parameter.c: fixes to group implementation
+	* final fixes to group impl. in debr
+	* fixes to group implementation
 
 2008-12-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/utils.h: fix last commit
-	* src/gui/gui/utils.c, src/gui/gui/utils.h: don't use tooltip on
-	  tree view if gtk version < 2.12
-	* src/geoxml/data/flow-0.3.0.dtd, src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/xml.c: workaround
-	  for id lookup
-	* src/comm/comm/gsocket.c, src/comm/comm/gstreamsocket.c,
-	  src/geoxml/geoxml/xml.c: fix connect after disconnect on server
-	  dialog
+	* fix last commit
+	* don't use tooltip on tree view if gtk version < 2.12
+	* workaround for id lookup
+	* fix connect after disconnect on server dialog
 
 2008-12-18  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/utils.c, src/gui/gui/utils.h: fix tooltip on tree
-	  view usage
-	* src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/xml.c,
-	  src/gui/gui/utils.c, src/gui/gui/utils.h: - drag n' drop for debr
+	* fix tooltip on tree view usage
+	* - drag n' drop for debr
 	  - top/bottom actions for debr
 	  - duplicate parameter for debr :P
-	* src/gui/gui/utils.c: - add drag n' drop support for flow browse
+	* - add drag n' drop support for flow browse
 	  - remove up and down and left only top and bottom
-	* src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/sequence.h,
-	  src/gui/gui/Makefile.am, src/gui/gui/utils.c,
-	  src/gui/gui/utils.h: aff, finally move with drag n' drop working
-	  (huge delay due to crappy gtk infrastructure)
+	* aff, finally move with drag n' drop working (huge delay due to
+	  crappy gtk infrastructure)
 
 2008-12-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/comm/comm/gsocket.h, src/comm/comm/gstreamsocket.c,
-	  src/comm/comm/gstreamsocket.h, src/comm/comm/server.c,
-	  src/comm/comm/server.h, src/gui/gui/gtkenhancedentry.c,
-	  src/gui/gui/gtkenhancedentry.h: first version of server dialog
-	  redesign
+	* first version of server dialog redesign
 
 2008-12-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/utils.c: fix to client/server check
-	* src/gui/gui/utils.c: gtk < 2.12 cannot set tooltips for a
-	  gtktreeview
-	* ltmain.sh: add missing ltmain.sh
-	* src/comm/comm/protocol.c, src/comm/comm/protocol.h,
-	  src/gui/gui/utils.c, src/gui/gui/utils.h: initial work to support
-	  client/server version check
-	* src/geoxml/geoxml/flow.c, src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/xml.c,
-	  src/geoxml/geoxml/xml.h, src/misc/misc/utils.c,
-	  src/misc/misc/utils.h: ported gengetopt in gebr to gkeyfile,
-	  keeping backwards compatibility
+	* fix to client/server check
+	* gtk < 2.12 cannot set tooltips for a gtktreeview
+	* add missing ltmain.sh
+	* initial work to support client/server version check
+	* ported gengetopt in gebr to gkeyfile, keeping backwards
+	  compatibility
 
 2008-12-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/data/flow-0.3.0.dtd, src/geoxml/geoxml/document.c,
-	  src/geoxml/geoxml/flow.c, src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/parameter.h,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameters.c,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/xml.c,
-	  src/geoxml/geoxml/xml.h, src/gui/gui/parameter.c,
-	  src/misc/misc/utils.c, src/misc/misc/utils.h: add proper
-	  extension if needed on save actions
+	* add proper extension if needed on save actions
 
 2008-11-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/data/flow-0.3.0.dtd, src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameter_p.h, src/geoxml/geoxml/parameters.c,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/xml.c,
-	  src/gui/gui/gtksequenceedit.c: a bunch of fixes to parameter
-	  group in debr implementation
-	* src/geoxml/geoxml/object.c, src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameters.c: fixes to parameter group
-	  implementation
-	* src/geoxml/geoxml/parameter.c, src/geoxml/geoxml/parameter.h,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameter_group.h,
-	  src/geoxml/geoxml/parameter_p.h,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/program_parameter.h, src/geoxml/geoxml/xml.c,
-	  src/gui/gui/gtksequenceedit.c, src/gui/gui/gtksequenceedit.h,
-	  src/gui/gui/parameter.c, src/gui/gui/valuesequenceedit.c,
-	  src/gui/gui/valuesequenceedit.h,
-	  src/gui/icons/16x16/actions/document-save-all.png,
-	  src/gui/icons/22x22/actions/document-save-all.png,
-	  src/gui/icons/48x48/actions/document-save-all.png,
-	  src/gui/icons/Makefile.am, src/gui/icons/oxygen-copy.sh: - tons
-	  of code for group implementation in debr (not yet working :)
+	* a bunch of fixes to parameter group in debr implementation
+	* fixes to parameter group implementation
+	* - tons of code for group implementation in debr (not yet working
+	  :)
 	  - save all button in debr
 
 2008-11-29  Ricardo Biloti <biloti@gmail.com>
 
-	* ltmain.sh: ltmain.sh removed (again)
+	* ltmain.sh removed (again)
 
 2008-11-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* ltmain.sh, src/geoxml/geoxml/flow.c: fix libgebr's libtool
+	* fix libgebr's libtool
 
 2008-11-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/icons/16x16/actions/document-export.png,
-	  src/gui/icons/16x16/actions/document-import.png,
-	  src/gui/icons/16x16/actions/edit-clear.png,
-	  src/gui/icons/16x16/actions/folder-new.png,
-	  src/gui/icons/16x16/actions/system-switch-user.png,
-	  src/gui/icons/16x16/actions/tab-new-background.png,
-	  src/gui/icons/22x22/actions/document-export.png,
-	  src/gui/icons/22x22/actions/document-import.png,
-	  src/gui/icons/22x22/actions/edit-clear.png,
-	  src/gui/icons/22x22/actions/folder-new.png,
-	  src/gui/icons/22x22/actions/system-switch-user.png,
-	  src/gui/icons/22x22/actions/tab-new-background.png,
-	  src/gui/icons/48x48/actions/document-export.png,
-	  src/gui/icons/48x48/actions/document-import.png,
-	  src/gui/icons/48x48/actions/edit-clear.png,
-	  src/gui/icons/48x48/actions/folder-new.png,
-	  src/gui/icons/48x48/actions/system-switch-user.png,
-	  src/gui/icons/48x48/actions/tab-new-background.png: - readded
-	  actions icons
+	* - readded actions icons
 	  - put statuses on a menu tool button
 
 2008-11-27  Ricardo Biloti <biloti@gmail.com>
 
-	* src/gui/icons/16x16/stock, src/gui/icons/22x22/stock,
-	  src/gui/icons/48x48/stock: purge unused dirs
-	* src/gui/icons/16x16, src/gui/icons/16x16/actions,
-	  src/gui/icons/16x16/actions/edit-clear.png,
-	  src/gui/icons/16x16/stock, src/gui/icons/22x22,
-	  src/gui/icons/22x22/actions,
-	  src/gui/icons/22x22/actions/edit-clear.png,
-	  src/gui/icons/22x22/stock, src/gui/icons/48x48,
-	  src/gui/icons/48x48/actions,
-	  src/gui/icons/48x48/actions/edit-clear.png,
-	  src/gui/icons/48x48/stock: edit-clear icon added
+	* purge unused dirs
+	* edit-clear icon added
 
 2008-11-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/icons.c,
-	  src/gui/icons/16x16/actions/document-export.png,
-	  src/gui/icons/16x16/actions/folder-new.png,
-	  src/gui/icons/16x16/actions/system-switch-user.png,
-	  src/gui/icons/16x16/actions/tab-new-background.png,
-	  src/gui/icons/22x22/actions/document-export.png,
-	  src/gui/icons/22x22/actions/folder-new.png,
-	  src/gui/icons/22x22/actions/system-switch-user.png,
-	  src/gui/icons/22x22/actions/tab-new-background.png,
-	  src/gui/icons/48x48/actions/document-export.png,
-	  src/gui/icons/48x48/actions/folder-new.png,
-	  src/gui/icons/48x48/actions/system-switch-user.png,
-	  src/gui/icons/48x48/actions/tab-new-background.png,
-	  src/gui/icons/Makefile.am,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-clear.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-new.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-clear.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-new.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-clear.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-new.png,
-	  src/gui/icons/gebr-theme/Makefile.am,
-	  src/gui/icons/gebr-theme/oxygen2stock.sh,
-	  src/gui/icons/oxygen-copy.sh: to satisfy git-svn
+	* to satisfy git-svn
 
 2008-11-27  Ricardo Biloti <biloti@gmail.com>
 
-	* src/gui/icons/gebr-theme/16x16/stock/gtk-execute.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-execute.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-execute.png,
-	  src/gui/icons/gebr-theme/oxygen2stock.sh: system-run replaced by
-	  run
+	* system-run replaced by run
 
 2008-11-26  Ricardo Biloti <biloti@gmail.com>
 
-	* ltmain.sh: ltmain.sh removed
+	* ltmain.sh removed
 
 2008-11-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* configure.ac, src/gui/gui/icons.c, src/gui/gui/icons.h,
-	  src/gui/icons/16x16/actions,
-	  src/gui/icons/16x16/actions/document-import.png,
-	  src/gui/icons/16x16/stock/gtk-about.png,
-	  src/gui/icons/16x16/stock/gtk-add.png,
-	  src/gui/icons/16x16/stock/gtk-apply.png,
-	  src/gui/icons/16x16/stock/gtk-bold.png,
-	  src/gui/icons/16x16/stock/gtk-cancel.png,
-	  src/gui/icons/16x16/stock/gtk-cdrom.png,
-	  src/gui/icons/16x16/stock/gtk-clear.png,
-	  src/gui/icons/16x16/stock/gtk-close.png,
-	  src/gui/icons/16x16/stock/gtk-color-picker.png,
-	  src/gui/icons/16x16/stock/gtk-connect.png,
-	  src/gui/icons/16x16/stock/gtk-convert.png,
-	  src/gui/icons/16x16/stock/gtk-copy.png,
-	  src/gui/icons/16x16/stock/gtk-cut.png,
-	  src/gui/icons/16x16/stock/gtk-delete.png,
-	  src/gui/icons/16x16/stock/gtk-dialog-authentication.png,
-	  src/gui/icons/16x16/stock/gtk-dialog-error.png,
-	  src/gui/icons/16x16/stock/gtk-dialog-info.png,
-	  src/gui/icons/16x16/stock/gtk-dialog-question.png,
-	  src/gui/icons/16x16/stock/gtk-dialog-warning.png,
-	  src/gui/icons/16x16/stock/gtk-directory.png,
-	  src/gui/icons/16x16/stock/gtk-disconnect.png,
-	  src/gui/icons/16x16/stock/gtk-edit.png,
-	  src/gui/icons/16x16/stock/gtk-execute.png,
-	  src/gui/icons/16x16/stock/gtk-find-and-replace.png,
-	  src/gui/icons/16x16/stock/gtk-find.png,
-	  src/gui/icons/16x16/stock/gtk-floppy.png,
-	  src/gui/icons/16x16/stock/gtk-fullscreen.png,
-	  src/gui/icons/16x16/stock/gtk-go-back.png,
-	  src/gui/icons/16x16/stock/gtk-go-down.png,
-	  src/gui/icons/16x16/stock/gtk-go-next.png,
-	  src/gui/icons/16x16/stock/gtk-go-up.png,
-	  src/gui/icons/16x16/stock/gtk-goto-bottom.png,
-	  src/gui/icons/16x16/stock/gtk-goto-first.png,
-	  src/gui/icons/16x16/stock/gtk-goto-last.png,
-	  src/gui/icons/16x16/stock/gtk-goto-top.png,
-	  src/gui/icons/16x16/stock/gtk-harddisk.png,
-	  src/gui/icons/16x16/stock/gtk-help.png,
-	  src/gui/icons/16x16/stock/gtk-home.png,
-	  src/gui/icons/16x16/stock/gtk-info.png,
-	  src/gui/icons/16x16/stock/gtk-italic.png,
-	  src/gui/icons/16x16/stock/gtk-jump-to.png,
-	  src/gui/icons/16x16/stock/gtk-justify-center.png,
-	  src/gui/icons/16x16/stock/gtk-justify-fill.png,
-	  src/gui/icons/16x16/stock/gtk-justify-left.png,
-	  src/gui/icons/16x16/stock/gtk-justify-right.png,
-	  src/gui/icons/16x16/stock/gtk-leave-fullscreen.png,
-	  src/gui/icons/16x16/stock/gtk-media-forward.png,
-	  src/gui/icons/16x16/stock/gtk-media-pause.png,
-	  src/gui/icons/16x16/stock/gtk-media-play.png,
-	  src/gui/icons/16x16/stock/gtk-media-previous.png,
-	  src/gui/icons/16x16/stock/gtk-media-record.png,
-	  src/gui/icons/16x16/stock/gtk-media-rewind.png,
-	  src/gui/icons/16x16/stock/gtk-media-stop.png,
-	  src/gui/icons/16x16/stock/gtk-no.png,
-	  src/gui/icons/16x16/stock/gtk-ok.png,
-	  src/gui/icons/16x16/stock/gtk-open.png,
-	  src/gui/icons/16x16/stock/gtk-paste.png,
-	  src/gui/icons/16x16/stock/gtk-preferences.png,
-	  src/gui/icons/16x16/stock/gtk-print-preview.png,
-	  src/gui/icons/16x16/stock/gtk-print.png,
-	  src/gui/icons/16x16/stock/gtk-properties.png,
-	  src/gui/icons/16x16/stock/gtk-quit.png,
-	  src/gui/icons/16x16/stock/gtk-refresh.png,
-	  src/gui/icons/16x16/stock/gtk-remove.png,
-	  src/gui/icons/16x16/stock/gtk-revert-to-saved.png,
-	  src/gui/icons/16x16/stock/gtk-save-as.png,
-	  src/gui/icons/16x16/stock/gtk-save.png,
-	  src/gui/icons/16x16/stock/gtk-select-all.png,
-	  src/gui/icons/16x16/stock/gtk-select-color.png,
-	  src/gui/icons/16x16/stock/gtk-sort-ascending.png,
-	  src/gui/icons/16x16/stock/gtk-sort-descending.png,
-	  src/gui/icons/16x16/stock/gtk-spell-check.png,
-	  src/gui/icons/16x16/stock/gtk-stock-indent.png,
-	  src/gui/icons/16x16/stock/gtk-stop.png,
-	  src/gui/icons/16x16/stock/gtk-strikethrough.png,
-	  src/gui/icons/16x16/stock/gtk-underline.png,
-	  src/gui/icons/16x16/stock/gtk-undo.png,
-	  src/gui/icons/16x16/stock/gtk-unindent.png,
-	  src/gui/icons/16x16/stock/gtk-yes.png,
-	  src/gui/icons/16x16/stock/gtk-zoom-100.png,
-	  src/gui/icons/16x16/stock/gtk-zoom-fit.png,
-	  src/gui/icons/16x16/stock/gtk-zoom-in.png,
-	  src/gui/icons/16x16/stock/gtk-zoom-out.png,
-	  src/gui/icons/22x22/actions,
-	  src/gui/icons/22x22/actions/document-import.png,
-	  src/gui/icons/22x22/stock/gtk-about.png,
-	  src/gui/icons/22x22/stock/gtk-add.png,
-	  src/gui/icons/22x22/stock/gtk-apply.png,
-	  src/gui/icons/22x22/stock/gtk-bold.png,
-	  src/gui/icons/22x22/stock/gtk-cancel.png,
-	  src/gui/icons/22x22/stock/gtk-cdrom.png,
-	  src/gui/icons/22x22/stock/gtk-clear.png,
-	  src/gui/icons/22x22/stock/gtk-close.png,
-	  src/gui/icons/22x22/stock/gtk-color-picker.png,
-	  src/gui/icons/22x22/stock/gtk-connect.png,
-	  src/gui/icons/22x22/stock/gtk-convert.png,
-	  src/gui/icons/22x22/stock/gtk-copy.png,
-	  src/gui/icons/22x22/stock/gtk-cut.png,
-	  src/gui/icons/22x22/stock/gtk-delete.png,
-	  src/gui/icons/22x22/stock/gtk-dialog-authentication.png,
-	  src/gui/icons/22x22/stock/gtk-dialog-error.png,
-	  src/gui/icons/22x22/stock/gtk-dialog-info.png,
-	  src/gui/icons/22x22/stock/gtk-dialog-question.png,
-	  src/gui/icons/22x22/stock/gtk-dialog-warning.png,
-	  src/gui/icons/22x22/stock/gtk-directory.png,
-	  src/gui/icons/22x22/stock/gtk-disconnect.png,
-	  src/gui/icons/22x22/stock/gtk-edit.png,
-	  src/gui/icons/22x22/stock/gtk-execute.png,
-	  src/gui/icons/22x22/stock/gtk-find-and-replace.png,
-	  src/gui/icons/22x22/stock/gtk-find.png,
-	  src/gui/icons/22x22/stock/gtk-floppy.png,
-	  src/gui/icons/22x22/stock/gtk-fullscreen.png,
-	  src/gui/icons/22x22/stock/gtk-go-back.png,
-	  src/gui/icons/22x22/stock/gtk-go-down.png,
-	  src/gui/icons/22x22/stock/gtk-go-next.png,
-	  src/gui/icons/22x22/stock/gtk-go-up.png,
-	  src/gui/icons/22x22/stock/gtk-goto-bottom.png,
-	  src/gui/icons/22x22/stock/gtk-goto-first.png,
-	  src/gui/icons/22x22/stock/gtk-goto-last.png,
-	  src/gui/icons/22x22/stock/gtk-goto-top.png,
-	  src/gui/icons/22x22/stock/gtk-harddisk.png,
-	  src/gui/icons/22x22/stock/gtk-help.png,
-	  src/gui/icons/22x22/stock/gtk-home.png,
-	  src/gui/icons/22x22/stock/gtk-info.png,
-	  src/gui/icons/22x22/stock/gtk-italic.png,
-	  src/gui/icons/22x22/stock/gtk-jump-to.png,
-	  src/gui/icons/22x22/stock/gtk-justify-center.png,
-	  src/gui/icons/22x22/stock/gtk-justify-fill.png,
-	  src/gui/icons/22x22/stock/gtk-justify-left.png,
-	  src/gui/icons/22x22/stock/gtk-justify-right.png,
-	  src/gui/icons/22x22/stock/gtk-leave-fullscreen.png,
-	  src/gui/icons/22x22/stock/gtk-media-forward.png,
-	  src/gui/icons/22x22/stock/gtk-media-pause.png,
-	  src/gui/icons/22x22/stock/gtk-media-play.png,
-	  src/gui/icons/22x22/stock/gtk-media-previous.png,
-	  src/gui/icons/22x22/stock/gtk-media-record.png,
-	  src/gui/icons/22x22/stock/gtk-media-rewind.png,
-	  src/gui/icons/22x22/stock/gtk-media-stop.png,
-	  src/gui/icons/22x22/stock/gtk-no.png,
-	  src/gui/icons/22x22/stock/gtk-ok.png,
-	  src/gui/icons/22x22/stock/gtk-open.png,
-	  src/gui/icons/22x22/stock/gtk-paste.png,
-	  src/gui/icons/22x22/stock/gtk-preferences.png,
-	  src/gui/icons/22x22/stock/gtk-print-preview.png,
-	  src/gui/icons/22x22/stock/gtk-print.png,
-	  src/gui/icons/22x22/stock/gtk-properties.png,
-	  src/gui/icons/22x22/stock/gtk-quit.png,
-	  src/gui/icons/22x22/stock/gtk-refresh.png,
-	  src/gui/icons/22x22/stock/gtk-remove.png,
-	  src/gui/icons/22x22/stock/gtk-revert-to-saved.png,
-	  src/gui/icons/22x22/stock/gtk-save-as.png,
-	  src/gui/icons/22x22/stock/gtk-save.png,
-	  src/gui/icons/22x22/stock/gtk-select-all.png,
-	  src/gui/icons/22x22/stock/gtk-select-color.png,
-	  src/gui/icons/22x22/stock/gtk-sort-ascending.png,
-	  src/gui/icons/22x22/stock/gtk-sort-descending.png,
-	  src/gui/icons/22x22/stock/gtk-spell-check.png,
-	  src/gui/icons/22x22/stock/gtk-stock-indent.png,
-	  src/gui/icons/22x22/stock/gtk-stop.png,
-	  src/gui/icons/22x22/stock/gtk-strikethrough.png,
-	  src/gui/icons/22x22/stock/gtk-underline.png,
-	  src/gui/icons/22x22/stock/gtk-undo.png,
-	  src/gui/icons/22x22/stock/gtk-unindent.png,
-	  src/gui/icons/22x22/stock/gtk-yes.png,
-	  src/gui/icons/22x22/stock/gtk-zoom-100.png,
-	  src/gui/icons/22x22/stock/gtk-zoom-fit.png,
-	  src/gui/icons/22x22/stock/gtk-zoom-in.png,
-	  src/gui/icons/22x22/stock/gtk-zoom-out.png,
-	  src/gui/icons/48x48/actions,
-	  src/gui/icons/48x48/actions/document-import.png,
-	  src/gui/icons/48x48/stock/gtk-about.png,
-	  src/gui/icons/48x48/stock/gtk-add.png,
-	  src/gui/icons/48x48/stock/gtk-apply.png,
-	  src/gui/icons/48x48/stock/gtk-bold.png,
-	  src/gui/icons/48x48/stock/gtk-cancel.png,
-	  src/gui/icons/48x48/stock/gtk-cdrom.png,
-	  src/gui/icons/48x48/stock/gtk-clear.png,
-	  src/gui/icons/48x48/stock/gtk-close.png,
-	  src/gui/icons/48x48/stock/gtk-color-picker.png,
-	  src/gui/icons/48x48/stock/gtk-connect.png,
-	  src/gui/icons/48x48/stock/gtk-convert.png,
-	  src/gui/icons/48x48/stock/gtk-copy.png,
-	  src/gui/icons/48x48/stock/gtk-cut.png,
-	  src/gui/icons/48x48/stock/gtk-delete.png,
-	  src/gui/icons/48x48/stock/gtk-dialog-authentication.png,
-	  src/gui/icons/48x48/stock/gtk-dialog-error.png,
-	  src/gui/icons/48x48/stock/gtk-dialog-info.png,
-	  src/gui/icons/48x48/stock/gtk-dialog-question.png,
-	  src/gui/icons/48x48/stock/gtk-dialog-warning.png,
-	  src/gui/icons/48x48/stock/gtk-directory.png,
-	  src/gui/icons/48x48/stock/gtk-disconnect.png,
-	  src/gui/icons/48x48/stock/gtk-edit.png,
-	  src/gui/icons/48x48/stock/gtk-execute.png,
-	  src/gui/icons/48x48/stock/gtk-find-and-replace.png,
-	  src/gui/icons/48x48/stock/gtk-find.png,
-	  src/gui/icons/48x48/stock/gtk-floppy.png,
-	  src/gui/icons/48x48/stock/gtk-fullscreen.png,
-	  src/gui/icons/48x48/stock/gtk-go-back.png,
-	  src/gui/icons/48x48/stock/gtk-go-down.png,
-	  src/gui/icons/48x48/stock/gtk-go-next.png,
-	  src/gui/icons/48x48/stock/gtk-go-up.png,
-	  src/gui/icons/48x48/stock/gtk-goto-bottom.png,
-	  src/gui/icons/48x48/stock/gtk-goto-first.png,
-	  src/gui/icons/48x48/stock/gtk-goto-last.png,
-	  src/gui/icons/48x48/stock/gtk-goto-top.png,
-	  src/gui/icons/48x48/stock/gtk-harddisk.png,
-	  src/gui/icons/48x48/stock/gtk-help.png,
-	  src/gui/icons/48x48/stock/gtk-home.png,
-	  src/gui/icons/48x48/stock/gtk-info.png,
-	  src/gui/icons/48x48/stock/gtk-italic.png,
-	  src/gui/icons/48x48/stock/gtk-jump-to.png,
-	  src/gui/icons/48x48/stock/gtk-justify-center.png,
-	  src/gui/icons/48x48/stock/gtk-justify-fill.png,
-	  src/gui/icons/48x48/stock/gtk-justify-left.png,
-	  src/gui/icons/48x48/stock/gtk-justify-right.png,
-	  src/gui/icons/48x48/stock/gtk-leave-fullscreen.png,
-	  src/gui/icons/48x48/stock/gtk-media-forward.png,
-	  src/gui/icons/48x48/stock/gtk-media-pause.png,
-	  src/gui/icons/48x48/stock/gtk-media-play.png,
-	  src/gui/icons/48x48/stock/gtk-media-previous.png,
-	  src/gui/icons/48x48/stock/gtk-media-record.png,
-	  src/gui/icons/48x48/stock/gtk-media-rewind.png,
-	  src/gui/icons/48x48/stock/gtk-media-stop.png,
-	  src/gui/icons/48x48/stock/gtk-no.png,
-	  src/gui/icons/48x48/stock/gtk-ok.png,
-	  src/gui/icons/48x48/stock/gtk-open.png,
-	  src/gui/icons/48x48/stock/gtk-paste.png,
-	  src/gui/icons/48x48/stock/gtk-preferences.png,
-	  src/gui/icons/48x48/stock/gtk-print-preview.png,
-	  src/gui/icons/48x48/stock/gtk-print.png,
-	  src/gui/icons/48x48/stock/gtk-properties.png,
-	  src/gui/icons/48x48/stock/gtk-quit.png,
-	  src/gui/icons/48x48/stock/gtk-refresh.png,
-	  src/gui/icons/48x48/stock/gtk-remove.png,
-	  src/gui/icons/48x48/stock/gtk-revert-to-saved.png,
-	  src/gui/icons/48x48/stock/gtk-save-as.png,
-	  src/gui/icons/48x48/stock/gtk-save.png,
-	  src/gui/icons/48x48/stock/gtk-select-all.png,
-	  src/gui/icons/48x48/stock/gtk-select-color.png,
-	  src/gui/icons/48x48/stock/gtk-sort-ascending.png,
-	  src/gui/icons/48x48/stock/gtk-sort-descending.png,
-	  src/gui/icons/48x48/stock/gtk-spell-check.png,
-	  src/gui/icons/48x48/stock/gtk-stock-indent.png,
-	  src/gui/icons/48x48/stock/gtk-stop.png,
-	  src/gui/icons/48x48/stock/gtk-strikethrough.png,
-	  src/gui/icons/48x48/stock/gtk-underline.png,
-	  src/gui/icons/48x48/stock/gtk-undo.png,
-	  src/gui/icons/48x48/stock/gtk-unindent.png,
-	  src/gui/icons/48x48/stock/gtk-yes.png,
-	  src/gui/icons/48x48/stock/gtk-zoom-100.png,
-	  src/gui/icons/48x48/stock/gtk-zoom-fit.png,
-	  src/gui/icons/48x48/stock/gtk-zoom-in.png,
-	  src/gui/icons/48x48/stock/gtk-zoom-out.png,
-	  src/gui/icons/Makefile.am, src/gui/icons/gebr-theme,
-	  src/gui/icons/gebr-theme/16x16,
-	  src/gui/icons/gebr-theme/16x16/stock,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-about.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-add.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-apply.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-bold.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-cancel.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-cdrom.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-clear.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-close.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-color-picker.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-connect.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-convert.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-copy.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-cut.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-delete.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-dialog-authentication.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-dialog-error.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-dialog-info.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-dialog-question.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-dialog-warning.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-directory.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-disconnect.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-edit.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-execute.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-find-and-replace.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-find.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-floppy.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-fullscreen.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-go-back.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-go-down.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-go-next.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-go-up.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-goto-bottom.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-goto-first.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-goto-last.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-goto-top.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-harddisk.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-help.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-home.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-info.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-italic.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-jump-to.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-justify-center.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-justify-fill.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-justify-left.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-justify-right.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-leave-fullscreen.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-media-forward.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-media-pause.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-media-play.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-media-previous.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-media-record.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-media-rewind.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-media-stop.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-no.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-ok.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-open.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-paste.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-preferences.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-print-preview.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-print.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-properties.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-quit.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-refresh.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-remove.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-revert-to-saved.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-save-as.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-save.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-select-all.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-select-color.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-sort-ascending.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-sort-descending.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-spell-check.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-stock-indent.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-stop.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-strikethrough.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-underline.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-undo.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-unindent.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-yes.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-zoom-100.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-zoom-fit.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-zoom-in.png,
-	  src/gui/icons/gebr-theme/16x16/stock/gtk-zoom-out.png,
-	  src/gui/icons/gebr-theme/22x22,
-	  src/gui/icons/gebr-theme/22x22/stock,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-about.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-add.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-apply.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-bold.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-cancel.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-cdrom.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-clear.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-close.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-color-picker.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-connect.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-convert.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-copy.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-cut.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-delete.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-dialog-authentication.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-dialog-error.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-dialog-info.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-dialog-question.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-dialog-warning.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-directory.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-disconnect.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-edit.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-execute.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-find-and-replace.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-find.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-floppy.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-fullscreen.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-go-back.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-go-down.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-go-next.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-go-up.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-goto-bottom.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-goto-first.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-goto-last.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-goto-top.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-harddisk.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-help.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-home.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-info.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-italic.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-jump-to.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-justify-center.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-justify-fill.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-justify-left.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-justify-right.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-leave-fullscreen.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-media-forward.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-media-pause.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-media-play.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-media-previous.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-media-record.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-media-rewind.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-media-stop.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-no.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-ok.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-open.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-paste.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-preferences.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-print-preview.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-print.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-properties.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-quit.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-refresh.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-remove.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-revert-to-saved.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-save-as.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-save.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-select-all.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-select-color.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-sort-ascending.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-sort-descending.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-spell-check.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-stock-indent.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-stop.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-strikethrough.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-underline.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-undo.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-unindent.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-yes.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-zoom-100.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-zoom-fit.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-zoom-in.png,
-	  src/gui/icons/gebr-theme/22x22/stock/gtk-zoom-out.png,
-	  src/gui/icons/gebr-theme/48x48,
-	  src/gui/icons/gebr-theme/48x48/stock,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-about.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-add.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-apply.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-bold.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-cancel.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-cdrom.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-clear.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-close.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-color-picker.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-connect.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-convert.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-copy.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-cut.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-delete.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-dialog-authentication.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-dialog-error.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-dialog-info.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-dialog-question.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-dialog-warning.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-directory.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-disconnect.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-edit.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-execute.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-find-and-replace.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-find.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-floppy.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-fullscreen.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-go-back.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-go-down.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-go-next.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-go-up.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-goto-bottom.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-goto-first.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-goto-last.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-goto-top.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-harddisk.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-help.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-home.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-info.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-italic.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-jump-to.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-justify-center.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-justify-fill.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-justify-left.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-justify-right.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-leave-fullscreen.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-media-forward.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-media-pause.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-media-play.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-media-previous.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-media-record.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-media-rewind.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-media-stop.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-no.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-ok.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-open.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-paste.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-preferences.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-print-preview.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-print.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-properties.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-quit.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-refresh.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-remove.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-revert-to-saved.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-save-as.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-save.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-select-all.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-select-color.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-sort-ascending.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-sort-descending.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-spell-check.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-stock-indent.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-stop.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-strikethrough.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-underline.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-undo.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-unindent.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-yes.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-zoom-100.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-zoom-fit.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-zoom-in.png,
-	  src/gui/icons/gebr-theme/48x48/stock/gtk-zoom-out.png,
-	  src/gui/icons/gebr-theme/Makefile.am,
-	  src/gui/icons/gebr-theme/index.theme,
-	  src/gui/icons/gebr-theme/oxygen2stock.sh,
-	  src/gui/icons/index.theme, src/gui/icons/oxygen-copy.sh,
-	  src/gui/icons/oxygen2stock.sh: - fixes to gebr theme
+	* - fixes to gebr theme
 	  - fix flow edition popup menu
-	* Makefile.am, ltmain.sh, src/gui/gui.h, src/gui/gui/Makefile.am,
-	  src/gui/gui/icons.c, src/gui/gui/icons.h, src/gui/gui/pixmaps.h,
-	  src/gui/icons/16x16/gtk-about.png,
-	  src/gui/icons/16x16/gtk-add.png,
-	  src/gui/icons/16x16/gtk-apply.png,
-	  src/gui/icons/16x16/gtk-bold.png,
-	  src/gui/icons/16x16/gtk-cancel.png,
-	  src/gui/icons/16x16/gtk-cdrom.png,
-	  src/gui/icons/16x16/gtk-clear.png,
-	  src/gui/icons/16x16/gtk-close.png,
-	  src/gui/icons/16x16/gtk-color-picker.png,
-	  src/gui/icons/16x16/gtk-connect.png,
-	  src/gui/icons/16x16/gtk-convert.png,
-	  src/gui/icons/16x16/gtk-copy.png,
-	  src/gui/icons/16x16/gtk-cut.png,
-	  src/gui/icons/16x16/gtk-delete.png,
-	  src/gui/icons/16x16/gtk-dialog-authentication.png,
-	  src/gui/icons/16x16/gtk-dialog-error.png,
-	  src/gui/icons/16x16/gtk-dialog-info.png,
-	  src/gui/icons/16x16/gtk-dialog-question.png,
-	  src/gui/icons/16x16/gtk-dialog-warning.png,
-	  src/gui/icons/16x16/gtk-directory.png,
-	  src/gui/icons/16x16/gtk-disconnect.png,
-	  src/gui/icons/16x16/gtk-edit.png,
-	  src/gui/icons/16x16/gtk-execute.png,
-	  src/gui/icons/16x16/gtk-find-and-replace.png,
-	  src/gui/icons/16x16/gtk-find.png,
-	  src/gui/icons/16x16/gtk-floppy.png,
-	  src/gui/icons/16x16/gtk-fullscreen.png,
-	  src/gui/icons/16x16/gtk-go-back.png,
-	  src/gui/icons/16x16/gtk-go-down.png,
-	  src/gui/icons/16x16/gtk-go-next.png,
-	  src/gui/icons/16x16/gtk-go-up.png,
-	  src/gui/icons/16x16/gtk-goto-bottom.png,
-	  src/gui/icons/16x16/gtk-goto-first.png,
-	  src/gui/icons/16x16/gtk-goto-last.png,
-	  src/gui/icons/16x16/gtk-goto-top.png,
-	  src/gui/icons/16x16/gtk-harddisk.png,
-	  src/gui/icons/16x16/gtk-help.png,
-	  src/gui/icons/16x16/gtk-home.png,
-	  src/gui/icons/16x16/gtk-info.png,
-	  src/gui/icons/16x16/gtk-italic.png,
-	  src/gui/icons/16x16/gtk-jump-to.png,
-	  src/gui/icons/16x16/gtk-justify-center.png,
-	  src/gui/icons/16x16/gtk-justify-fill.png,
-	  src/gui/icons/16x16/gtk-justify-left.png,
-	  src/gui/icons/16x16/gtk-justify-right.png,
-	  src/gui/icons/16x16/gtk-leave-fullscreen.png,
-	  src/gui/icons/16x16/gtk-media-forward.png,
-	  src/gui/icons/16x16/gtk-media-pause.png,
-	  src/gui/icons/16x16/gtk-media-play.png,
-	  src/gui/icons/16x16/gtk-media-previous.png,
-	  src/gui/icons/16x16/gtk-media-record.png,
-	  src/gui/icons/16x16/gtk-media-rewind.png,
-	  src/gui/icons/16x16/gtk-media-stop.png,
-	  src/gui/icons/16x16/gtk-no.png, src/gui/icons/16x16/gtk-ok.png,
-	  src/gui/icons/16x16/gtk-open.png,
-	  src/gui/icons/16x16/gtk-paste.png,
-	  src/gui/icons/16x16/gtk-preferences.png,
-	  src/gui/icons/16x16/gtk-print-preview.png,
-	  src/gui/icons/16x16/gtk-print.png,
-	  src/gui/icons/16x16/gtk-properties.png,
-	  src/gui/icons/16x16/gtk-quit.png,
-	  src/gui/icons/16x16/gtk-refresh.png,
-	  src/gui/icons/16x16/gtk-remove.png,
-	  src/gui/icons/16x16/gtk-revert-to-saved.png,
-	  src/gui/icons/16x16/gtk-save-as.png,
-	  src/gui/icons/16x16/gtk-save.png,
-	  src/gui/icons/16x16/gtk-select-all.png,
-	  src/gui/icons/16x16/gtk-select-color.png,
-	  src/gui/icons/16x16/gtk-sort-ascending.png,
-	  src/gui/icons/16x16/gtk-sort-descending.png,
-	  src/gui/icons/16x16/gtk-spell-check.png,
-	  src/gui/icons/16x16/gtk-stock-indent.png,
-	  src/gui/icons/16x16/gtk-stop.png,
-	  src/gui/icons/16x16/gtk-strikethrough.png,
-	  src/gui/icons/16x16/gtk-underline.png,
-	  src/gui/icons/16x16/gtk-undo.png,
-	  src/gui/icons/16x16/gtk-unindent.png,
-	  src/gui/icons/16x16/gtk-yes.png,
-	  src/gui/icons/16x16/gtk-zoom-100.png,
-	  src/gui/icons/16x16/gtk-zoom-fit.png,
-	  src/gui/icons/16x16/gtk-zoom-in.png,
-	  src/gui/icons/16x16/gtk-zoom-out.png, src/gui/icons/16x16/stock,
-	  src/gui/icons/16x16/stock/gtk-about.png,
-	  src/gui/icons/16x16/stock/gtk-add.png,
-	  src/gui/icons/16x16/stock/gtk-apply.png,
-	  src/gui/icons/16x16/stock/gtk-bold.png,
-	  src/gui/icons/16x16/stock/gtk-cancel.png,
-	  src/gui/icons/16x16/stock/gtk-cdrom.png,
-	  src/gui/icons/16x16/stock/gtk-clear.png,
-	  src/gui/icons/16x16/stock/gtk-close.png,
-	  src/gui/icons/16x16/stock/gtk-color-picker.png,
-	  src/gui/icons/16x16/stock/gtk-connect.png,
-	  src/gui/icons/16x16/stock/gtk-convert.png,
-	  src/gui/icons/16x16/stock/gtk-copy.png,
-	  src/gui/icons/16x16/stock/gtk-cut.png,
-	  src/gui/icons/16x16/stock/gtk-delete.png,
-	  src/gui/icons/16x16/stock/gtk-dialog-authentication.png,
-	  src/gui/icons/16x16/stock/gtk-dialog-error.png,
-	  src/gui/icons/16x16/stock/gtk-dialog-info.png,
-	  src/gui/icons/16x16/stock/gtk-dialog-question.png,
-	  src/gui/icons/16x16/stock/gtk-dialog-warning.png,
-	  src/gui/icons/16x16/stock/gtk-directory.png,
-	  src/gui/icons/16x16/stock/gtk-disconnect.png,
-	  src/gui/icons/16x16/stock/gtk-edit.png,
-	  src/gui/icons/16x16/stock/gtk-execute.png,
-	  src/gui/icons/16x16/stock/gtk-find-and-replace.png,
-	  src/gui/icons/16x16/stock/gtk-find.png,
-	  src/gui/icons/16x16/stock/gtk-floppy.png,
-	  src/gui/icons/16x16/stock/gtk-fullscreen.png,
-	  src/gui/icons/16x16/stock/gtk-go-back.png,
-	  src/gui/icons/16x16/stock/gtk-go-down.png,
-	  src/gui/icons/16x16/stock/gtk-go-next.png,
-	  src/gui/icons/16x16/stock/gtk-go-up.png,
-	  src/gui/icons/16x16/stock/gtk-goto-bottom.png,
-	  src/gui/icons/16x16/stock/gtk-goto-first.png,
-	  src/gui/icons/16x16/stock/gtk-goto-last.png,
-	  src/gui/icons/16x16/stock/gtk-goto-top.png,
-	  src/gui/icons/16x16/stock/gtk-harddisk.png,
-	  src/gui/icons/16x16/stock/gtk-help.png,
-	  src/gui/icons/16x16/stock/gtk-home.png,
-	  src/gui/icons/16x16/stock/gtk-info.png,
-	  src/gui/icons/16x16/stock/gtk-italic.png,
-	  src/gui/icons/16x16/stock/gtk-jump-to.png,
-	  src/gui/icons/16x16/stock/gtk-justify-center.png,
-	  src/gui/icons/16x16/stock/gtk-justify-fill.png,
-	  src/gui/icons/16x16/stock/gtk-justify-left.png,
-	  src/gui/icons/16x16/stock/gtk-justify-right.png,
-	  src/gui/icons/16x16/stock/gtk-leave-fullscreen.png,
-	  src/gui/icons/16x16/stock/gtk-media-forward.png,
-	  src/gui/icons/16x16/stock/gtk-media-pause.png,
-	  src/gui/icons/16x16/stock/gtk-media-play.png,
-	  src/gui/icons/16x16/stock/gtk-media-previous.png,
-	  src/gui/icons/16x16/stock/gtk-media-record.png,
-	  src/gui/icons/16x16/stock/gtk-media-rewind.png,
-	  src/gui/icons/16x16/stock/gtk-media-stop.png,
-	  src/gui/icons/16x16/stock/gtk-no.png,
-	  src/gui/icons/16x16/stock/gtk-ok.png,
-	  src/gui/icons/16x16/stock/gtk-open.png,
-	  src/gui/icons/16x16/stock/gtk-paste.png,
-	  src/gui/icons/16x16/stock/gtk-preferences.png,
-	  src/gui/icons/16x16/stock/gtk-print-preview.png,
-	  src/gui/icons/16x16/stock/gtk-print.png,
-	  src/gui/icons/16x16/stock/gtk-properties.png,
-	  src/gui/icons/16x16/stock/gtk-quit.png,
-	  src/gui/icons/16x16/stock/gtk-refresh.png,
-	  src/gui/icons/16x16/stock/gtk-remove.png,
-	  src/gui/icons/16x16/stock/gtk-revert-to-saved.png,
-	  src/gui/icons/16x16/stock/gtk-save-as.png,
-	  src/gui/icons/16x16/stock/gtk-save.png,
-	  src/gui/icons/16x16/stock/gtk-select-all.png,
-	  src/gui/icons/16x16/stock/gtk-select-color.png,
-	  src/gui/icons/16x16/stock/gtk-sort-ascending.png,
-	  src/gui/icons/16x16/stock/gtk-sort-descending.png,
-	  src/gui/icons/16x16/stock/gtk-spell-check.png,
-	  src/gui/icons/16x16/stock/gtk-stock-indent.png,
-	  src/gui/icons/16x16/stock/gtk-stop.png,
-	  src/gui/icons/16x16/stock/gtk-strikethrough.png,
-	  src/gui/icons/16x16/stock/gtk-underline.png,
-	  src/gui/icons/16x16/stock/gtk-undo.png,
-	  src/gui/icons/16x16/stock/gtk-unindent.png,
-	  src/gui/icons/16x16/stock/gtk-yes.png,
-	  src/gui/icons/16x16/stock/gtk-zoom-100.png,
-	  src/gui/icons/16x16/stock/gtk-zoom-fit.png,
-	  src/gui/icons/16x16/stock/gtk-zoom-in.png,
-	  src/gui/icons/16x16/stock/gtk-zoom-out.png,
-	  src/gui/icons/22x22/gtk-about.png,
-	  src/gui/icons/22x22/gtk-add.png,
-	  src/gui/icons/22x22/gtk-apply.png,
-	  src/gui/icons/22x22/gtk-bold.png,
-	  src/gui/icons/22x22/gtk-cancel.png,
-	  src/gui/icons/22x22/gtk-cdrom.png,
-	  src/gui/icons/22x22/gtk-clear.png,
-	  src/gui/icons/22x22/gtk-close.png,
-	  src/gui/icons/22x22/gtk-color-picker.png,
-	  src/gui/icons/22x22/gtk-connect.png,
-	  src/gui/icons/22x22/gtk-convert.png,
-	  src/gui/icons/22x22/gtk-copy.png,
-	  src/gui/icons/22x22/gtk-cut.png,
-	  src/gui/icons/22x22/gtk-delete.png,
-	  src/gui/icons/22x22/gtk-dialog-authentication.png,
-	  src/gui/icons/22x22/gtk-dialog-error.png,
-	  src/gui/icons/22x22/gtk-dialog-info.png,
-	  src/gui/icons/22x22/gtk-dialog-question.png,
-	  src/gui/icons/22x22/gtk-dialog-warning.png,
-	  src/gui/icons/22x22/gtk-directory.png,
-	  src/gui/icons/22x22/gtk-disconnect.png,
-	  src/gui/icons/22x22/gtk-edit.png,
-	  src/gui/icons/22x22/gtk-execute.png,
-	  src/gui/icons/22x22/gtk-find-and-replace.png,
-	  src/gui/icons/22x22/gtk-find.png,
-	  src/gui/icons/22x22/gtk-floppy.png,
-	  src/gui/icons/22x22/gtk-fullscreen.png,
-	  src/gui/icons/22x22/gtk-go-back.png,
-	  src/gui/icons/22x22/gtk-go-down.png,
-	  src/gui/icons/22x22/gtk-go-next.png,
-	  src/gui/icons/22x22/gtk-go-up.png,
-	  src/gui/icons/22x22/gtk-goto-bottom.png,
-	  src/gui/icons/22x22/gtk-goto-first.png,
-	  src/gui/icons/22x22/gtk-goto-last.png,
-	  src/gui/icons/22x22/gtk-goto-top.png,
-	  src/gui/icons/22x22/gtk-harddisk.png,
-	  src/gui/icons/22x22/gtk-help.png,
-	  src/gui/icons/22x22/gtk-home.png,
-	  src/gui/icons/22x22/gtk-info.png,
-	  src/gui/icons/22x22/gtk-italic.png,
-	  src/gui/icons/22x22/gtk-jump-to.png,
-	  src/gui/icons/22x22/gtk-justify-center.png,
-	  src/gui/icons/22x22/gtk-justify-fill.png,
-	  src/gui/icons/22x22/gtk-justify-left.png,
-	  src/gui/icons/22x22/gtk-justify-right.png,
-	  src/gui/icons/22x22/gtk-leave-fullscreen.png,
-	  src/gui/icons/22x22/gtk-media-forward.png,
-	  src/gui/icons/22x22/gtk-media-pause.png,
-	  src/gui/icons/22x22/gtk-media-play.png,
-	  src/gui/icons/22x22/gtk-media-previous.png,
-	  src/gui/icons/22x22/gtk-media-record.png,
-	  src/gui/icons/22x22/gtk-media-rewind.png,
-	  src/gui/icons/22x22/gtk-media-stop.png,
-	  src/gui/icons/22x22/gtk-no.png, src/gui/icons/22x22/gtk-ok.png,
-	  src/gui/icons/22x22/gtk-open.png,
-	  src/gui/icons/22x22/gtk-paste.png,
-	  src/gui/icons/22x22/gtk-preferences.png,
-	  src/gui/icons/22x22/gtk-print-preview.png,
-	  src/gui/icons/22x22/gtk-print.png,
-	  src/gui/icons/22x22/gtk-properties.png,
-	  src/gui/icons/22x22/gtk-quit.png,
-	  src/gui/icons/22x22/gtk-refresh.png,
-	  src/gui/icons/22x22/gtk-remove.png,
-	  src/gui/icons/22x22/gtk-revert-to-saved.png,
-	  src/gui/icons/22x22/gtk-save-as.png,
-	  src/gui/icons/22x22/gtk-save.png,
-	  src/gui/icons/22x22/gtk-select-all.png,
-	  src/gui/icons/22x22/gtk-select-color.png,
-	  src/gui/icons/22x22/gtk-sort-ascending.png,
-	  src/gui/icons/22x22/gtk-sort-descending.png,
-	  src/gui/icons/22x22/gtk-spell-check.png,
-	  src/gui/icons/22x22/gtk-stock-indent.png,
-	  src/gui/icons/22x22/gtk-stop.png,
-	  src/gui/icons/22x22/gtk-strikethrough.png,
-	  src/gui/icons/22x22/gtk-underline.png,
-	  src/gui/icons/22x22/gtk-undo.png,
-	  src/gui/icons/22x22/gtk-unindent.png,
-	  src/gui/icons/22x22/gtk-yes.png,
-	  src/gui/icons/22x22/gtk-zoom-100.png,
-	  src/gui/icons/22x22/gtk-zoom-fit.png,
-	  src/gui/icons/22x22/gtk-zoom-in.png,
-	  src/gui/icons/22x22/gtk-zoom-out.png, src/gui/icons/22x22/stock,
-	  src/gui/icons/22x22/stock/gtk-about.png,
-	  src/gui/icons/22x22/stock/gtk-add.png,
-	  src/gui/icons/22x22/stock/gtk-apply.png,
-	  src/gui/icons/22x22/stock/gtk-bold.png,
-	  src/gui/icons/22x22/stock/gtk-cancel.png,
-	  src/gui/icons/22x22/stock/gtk-cdrom.png,
-	  src/gui/icons/22x22/stock/gtk-clear.png,
-	  src/gui/icons/22x22/stock/gtk-close.png,
-	  src/gui/icons/22x22/stock/gtk-color-picker.png,
-	  src/gui/icons/22x22/stock/gtk-connect.png,
-	  src/gui/icons/22x22/stock/gtk-convert.png,
-	  src/gui/icons/22x22/stock/gtk-copy.png,
-	  src/gui/icons/22x22/stock/gtk-cut.png,
-	  src/gui/icons/22x22/stock/gtk-delete.png,
-	  src/gui/icons/22x22/stock/gtk-dialog-authentication.png,
-	  src/gui/icons/22x22/stock/gtk-dialog-error.png,
-	  src/gui/icons/22x22/stock/gtk-dialog-info.png,
-	  src/gui/icons/22x22/stock/gtk-dialog-question.png,
-	  src/gui/icons/22x22/stock/gtk-dialog-warning.png,
-	  src/gui/icons/22x22/stock/gtk-directory.png,
-	  src/gui/icons/22x22/stock/gtk-disconnect.png,
-	  src/gui/icons/22x22/stock/gtk-edit.png,
-	  src/gui/icons/22x22/stock/gtk-execute.png,
-	  src/gui/icons/22x22/stock/gtk-find-and-replace.png,
-	  src/gui/icons/22x22/stock/gtk-find.png,
-	  src/gui/icons/22x22/stock/gtk-floppy.png,
-	  src/gui/icons/22x22/stock/gtk-fullscreen.png,
-	  src/gui/icons/22x22/stock/gtk-go-back.png,
-	  src/gui/icons/22x22/stock/gtk-go-down.png,
-	  src/gui/icons/22x22/stock/gtk-go-next.png,
-	  src/gui/icons/22x22/stock/gtk-go-up.png,
-	  src/gui/icons/22x22/stock/gtk-goto-bottom.png,
-	  src/gui/icons/22x22/stock/gtk-goto-first.png,
-	  src/gui/icons/22x22/stock/gtk-goto-last.png,
-	  src/gui/icons/22x22/stock/gtk-goto-top.png,
-	  src/gui/icons/22x22/stock/gtk-harddisk.png,
-	  src/gui/icons/22x22/stock/gtk-help.png,
-	  src/gui/icons/22x22/stock/gtk-home.png,
-	  src/gui/icons/22x22/stock/gtk-info.png,
-	  src/gui/icons/22x22/stock/gtk-italic.png,
-	  src/gui/icons/22x22/stock/gtk-jump-to.png,
-	  src/gui/icons/22x22/stock/gtk-justify-center.png,
-	  src/gui/icons/22x22/stock/gtk-justify-fill.png,
-	  src/gui/icons/22x22/stock/gtk-justify-left.png,
-	  src/gui/icons/22x22/stock/gtk-justify-right.png,
-	  src/gui/icons/22x22/stock/gtk-leave-fullscreen.png,
-	  src/gui/icons/22x22/stock/gtk-media-forward.png,
-	  src/gui/icons/22x22/stock/gtk-media-pause.png,
-	  src/gui/icons/22x22/stock/gtk-media-play.png,
-	  src/gui/icons/22x22/stock/gtk-media-previous.png,
-	  src/gui/icons/22x22/stock/gtk-media-record.png,
-	  src/gui/icons/22x22/stock/gtk-media-rewind.png,
-	  src/gui/icons/22x22/stock/gtk-media-stop.png,
-	  src/gui/icons/22x22/stock/gtk-no.png,
-	  src/gui/icons/22x22/stock/gtk-ok.png,
-	  src/gui/icons/22x22/stock/gtk-open.png,
-	  src/gui/icons/22x22/stock/gtk-paste.png,
-	  src/gui/icons/22x22/stock/gtk-preferences.png,
-	  src/gui/icons/22x22/stock/gtk-print-preview.png,
-	  src/gui/icons/22x22/stock/gtk-print.png,
-	  src/gui/icons/22x22/stock/gtk-properties.png,
-	  src/gui/icons/22x22/stock/gtk-quit.png,
-	  src/gui/icons/22x22/stock/gtk-refresh.png,
-	  src/gui/icons/22x22/stock/gtk-remove.png,
-	  src/gui/icons/22x22/stock/gtk-revert-to-saved.png,
-	  src/gui/icons/22x22/stock/gtk-save-as.png,
-	  src/gui/icons/22x22/stock/gtk-save.png,
-	  src/gui/icons/22x22/stock/gtk-select-all.png,
-	  src/gui/icons/22x22/stock/gtk-select-color.png,
-	  src/gui/icons/22x22/stock/gtk-sort-ascending.png,
-	  src/gui/icons/22x22/stock/gtk-sort-descending.png,
-	  src/gui/icons/22x22/stock/gtk-spell-check.png,
-	  src/gui/icons/22x22/stock/gtk-stock-indent.png,
-	  src/gui/icons/22x22/stock/gtk-stop.png,
-	  src/gui/icons/22x22/stock/gtk-strikethrough.png,
-	  src/gui/icons/22x22/stock/gtk-underline.png,
-	  src/gui/icons/22x22/stock/gtk-undo.png,
-	  src/gui/icons/22x22/stock/gtk-unindent.png,
-	  src/gui/icons/22x22/stock/gtk-yes.png,
-	  src/gui/icons/22x22/stock/gtk-zoom-100.png,
-	  src/gui/icons/22x22/stock/gtk-zoom-fit.png,
-	  src/gui/icons/22x22/stock/gtk-zoom-in.png,
-	  src/gui/icons/22x22/stock/gtk-zoom-out.png,
-	  src/gui/icons/48x48/gtk-about.png,
-	  src/gui/icons/48x48/gtk-add.png,
-	  src/gui/icons/48x48/gtk-apply.png,
-	  src/gui/icons/48x48/gtk-bold.png,
-	  src/gui/icons/48x48/gtk-cancel.png,
-	  src/gui/icons/48x48/gtk-cdrom.png,
-	  src/gui/icons/48x48/gtk-clear.png,
-	  src/gui/icons/48x48/gtk-close.png,
-	  src/gui/icons/48x48/gtk-color-picker.png,
-	  src/gui/icons/48x48/gtk-connect.png,
-	  src/gui/icons/48x48/gtk-convert.png,
-	  src/gui/icons/48x48/gtk-copy.png,
-	  src/gui/icons/48x48/gtk-cut.png,
-	  src/gui/icons/48x48/gtk-delete.png,
-	  src/gui/icons/48x48/gtk-dialog-authentication.png,
-	  src/gui/icons/48x48/gtk-dialog-error.png,
-	  src/gui/icons/48x48/gtk-dialog-info.png,
-	  src/gui/icons/48x48/gtk-dialog-question.png,
-	  src/gui/icons/48x48/gtk-dialog-warning.png,
-	  src/gui/icons/48x48/gtk-directory.png,
-	  src/gui/icons/48x48/gtk-disconnect.png,
-	  src/gui/icons/48x48/gtk-edit.png,
-	  src/gui/icons/48x48/gtk-execute.png,
-	  src/gui/icons/48x48/gtk-find-and-replace.png,
-	  src/gui/icons/48x48/gtk-find.png,
-	  src/gui/icons/48x48/gtk-floppy.png,
-	  src/gui/icons/48x48/gtk-fullscreen.png,
-	  src/gui/icons/48x48/gtk-go-back.png,
-	  src/gui/icons/48x48/gtk-go-down.png,
-	  src/gui/icons/48x48/gtk-go-next.png,
-	  src/gui/icons/48x48/gtk-go-up.png,
-	  src/gui/icons/48x48/gtk-goto-bottom.png,
-	  src/gui/icons/48x48/gtk-goto-first.png,
-	  src/gui/icons/48x48/gtk-goto-last.png,
-	  src/gui/icons/48x48/gtk-goto-top.png,
-	  src/gui/icons/48x48/gtk-harddisk.png,
-	  src/gui/icons/48x48/gtk-help.png,
-	  src/gui/icons/48x48/gtk-home.png,
-	  src/gui/icons/48x48/gtk-info.png,
-	  src/gui/icons/48x48/gtk-italic.png,
-	  src/gui/icons/48x48/gtk-jump-to.png,
-	  src/gui/icons/48x48/gtk-justify-center.png,
-	  src/gui/icons/48x48/gtk-justify-fill.png,
-	  src/gui/icons/48x48/gtk-justify-left.png,
-	  src/gui/icons/48x48/gtk-justify-right.png,
-	  src/gui/icons/48x48/gtk-leave-fullscreen.png,
-	  src/gui/icons/48x48/gtk-media-forward.png,
-	  src/gui/icons/48x48/gtk-media-pause.png,
-	  src/gui/icons/48x48/gtk-media-play.png,
-	  src/gui/icons/48x48/gtk-media-previous.png,
-	  src/gui/icons/48x48/gtk-media-record.png,
-	  src/gui/icons/48x48/gtk-media-rewind.png,
-	  src/gui/icons/48x48/gtk-media-stop.png,
-	  src/gui/icons/48x48/gtk-no.png, src/gui/icons/48x48/gtk-ok.png,
-	  src/gui/icons/48x48/gtk-open.png,
-	  src/gui/icons/48x48/gtk-paste.png,
-	  src/gui/icons/48x48/gtk-preferences.png,
-	  src/gui/icons/48x48/gtk-print-preview.png,
-	  src/gui/icons/48x48/gtk-print.png,
-	  src/gui/icons/48x48/gtk-properties.png,
-	  src/gui/icons/48x48/gtk-quit.png,
-	  src/gui/icons/48x48/gtk-refresh.png,
-	  src/gui/icons/48x48/gtk-remove.png,
-	  src/gui/icons/48x48/gtk-revert-to-saved.png,
-	  src/gui/icons/48x48/gtk-save-as.png,
-	  src/gui/icons/48x48/gtk-save.png,
-	  src/gui/icons/48x48/gtk-select-all.png,
-	  src/gui/icons/48x48/gtk-select-color.png,
-	  src/gui/icons/48x48/gtk-sort-ascending.png,
-	  src/gui/icons/48x48/gtk-sort-descending.png,
-	  src/gui/icons/48x48/gtk-spell-check.png,
-	  src/gui/icons/48x48/gtk-stock-indent.png,
-	  src/gui/icons/48x48/gtk-stop.png,
-	  src/gui/icons/48x48/gtk-strikethrough.png,
-	  src/gui/icons/48x48/gtk-underline.png,
-	  src/gui/icons/48x48/gtk-undo.png,
-	  src/gui/icons/48x48/gtk-unindent.png,
-	  src/gui/icons/48x48/gtk-yes.png,
-	  src/gui/icons/48x48/gtk-zoom-100.png,
-	  src/gui/icons/48x48/gtk-zoom-fit.png,
-	  src/gui/icons/48x48/gtk-zoom-in.png,
-	  src/gui/icons/48x48/gtk-zoom-out.png, src/gui/icons/48x48/stock,
-	  src/gui/icons/48x48/stock/gtk-about.png,
-	  src/gui/icons/48x48/stock/gtk-add.png,
-	  src/gui/icons/48x48/stock/gtk-apply.png,
-	  src/gui/icons/48x48/stock/gtk-bold.png,
-	  src/gui/icons/48x48/stock/gtk-cancel.png,
-	  src/gui/icons/48x48/stock/gtk-cdrom.png,
-	  src/gui/icons/48x48/stock/gtk-clear.png,
-	  src/gui/icons/48x48/stock/gtk-close.png,
-	  src/gui/icons/48x48/stock/gtk-color-picker.png,
-	  src/gui/icons/48x48/stock/gtk-connect.png,
-	  src/gui/icons/48x48/stock/gtk-convert.png,
-	  src/gui/icons/48x48/stock/gtk-copy.png,
-	  src/gui/icons/48x48/stock/gtk-cut.png,
-	  src/gui/icons/48x48/stock/gtk-delete.png,
-	  src/gui/icons/48x48/stock/gtk-dialog-authentication.png,
-	  src/gui/icons/48x48/stock/gtk-dialog-error.png,
-	  src/gui/icons/48x48/stock/gtk-dialog-info.png,
-	  src/gui/icons/48x48/stock/gtk-dialog-question.png,
-	  src/gui/icons/48x48/stock/gtk-dialog-warning.png,
-	  src/gui/icons/48x48/stock/gtk-directory.png,
-	  src/gui/icons/48x48/stock/gtk-disconnect.png,
-	  src/gui/icons/48x48/stock/gtk-edit.png,
-	  src/gui/icons/48x48/stock/gtk-execute.png,
-	  src/gui/icons/48x48/stock/gtk-find-and-replace.png,
-	  src/gui/icons/48x48/stock/gtk-find.png,
-	  src/gui/icons/48x48/stock/gtk-floppy.png,
-	  src/gui/icons/48x48/stock/gtk-fullscreen.png,
-	  src/gui/icons/48x48/stock/gtk-go-back.png,
-	  src/gui/icons/48x48/stock/gtk-go-down.png,
-	  src/gui/icons/48x48/stock/gtk-go-next.png,
-	  src/gui/icons/48x48/stock/gtk-go-up.png,
-	  src/gui/icons/48x48/stock/gtk-goto-bottom.png,
-	  src/gui/icons/48x48/stock/gtk-goto-first.png,
-	  src/gui/icons/48x48/stock/gtk-goto-last.png,
-	  src/gui/icons/48x48/stock/gtk-goto-top.png,
-	  src/gui/icons/48x48/stock/gtk-harddisk.png,
-	  src/gui/icons/48x48/stock/gtk-help.png,
-	  src/gui/icons/48x48/stock/gtk-home.png,
-	  src/gui/icons/48x48/stock/gtk-info.png,
-	  src/gui/icons/48x48/stock/gtk-italic.png,
-	  src/gui/icons/48x48/stock/gtk-jump-to.png,
-	  src/gui/icons/48x48/stock/gtk-justify-center.png,
-	  src/gui/icons/48x48/stock/gtk-justify-fill.png,
-	  src/gui/icons/48x48/stock/gtk-justify-left.png,
-	  src/gui/icons/48x48/stock/gtk-justify-right.png,
-	  src/gui/icons/48x48/stock/gtk-leave-fullscreen.png,
-	  src/gui/icons/48x48/stock/gtk-media-forward.png,
-	  src/gui/icons/48x48/stock/gtk-media-pause.png,
-	  src/gui/icons/48x48/stock/gtk-media-play.png,
-	  src/gui/icons/48x48/stock/gtk-media-previous.png,
-	  src/gui/icons/48x48/stock/gtk-media-record.png,
-	  src/gui/icons/48x48/stock/gtk-media-rewind.png,
-	  src/gui/icons/48x48/stock/gtk-media-stop.png,
-	  src/gui/icons/48x48/stock/gtk-no.png,
-	  src/gui/icons/48x48/stock/gtk-ok.png,
-	  src/gui/icons/48x48/stock/gtk-open.png,
-	  src/gui/icons/48x48/stock/gtk-paste.png,
-	  src/gui/icons/48x48/stock/gtk-preferences.png,
-	  src/gui/icons/48x48/stock/gtk-print-preview.png,
-	  src/gui/icons/48x48/stock/gtk-print.png,
-	  src/gui/icons/48x48/stock/gtk-properties.png,
-	  src/gui/icons/48x48/stock/gtk-quit.png,
-	  src/gui/icons/48x48/stock/gtk-refresh.png,
-	  src/gui/icons/48x48/stock/gtk-remove.png,
-	  src/gui/icons/48x48/stock/gtk-revert-to-saved.png,
-	  src/gui/icons/48x48/stock/gtk-save-as.png,
-	  src/gui/icons/48x48/stock/gtk-save.png,
-	  src/gui/icons/48x48/stock/gtk-select-all.png,
-	  src/gui/icons/48x48/stock/gtk-select-color.png,
-	  src/gui/icons/48x48/stock/gtk-sort-ascending.png,
-	  src/gui/icons/48x48/stock/gtk-sort-descending.png,
-	  src/gui/icons/48x48/stock/gtk-spell-check.png,
-	  src/gui/icons/48x48/stock/gtk-stock-indent.png,
-	  src/gui/icons/48x48/stock/gtk-stop.png,
-	  src/gui/icons/48x48/stock/gtk-strikethrough.png,
-	  src/gui/icons/48x48/stock/gtk-underline.png,
-	  src/gui/icons/48x48/stock/gtk-undo.png,
-	  src/gui/icons/48x48/stock/gtk-unindent.png,
-	  src/gui/icons/48x48/stock/gtk-yes.png,
-	  src/gui/icons/48x48/stock/gtk-zoom-100.png,
-	  src/gui/icons/48x48/stock/gtk-zoom-fit.png,
-	  src/gui/icons/48x48/stock/gtk-zoom-in.png,
-	  src/gui/icons/48x48/stock/gtk-zoom-out.png,
-	  src/gui/icons/Makefile.am, src/gui/icons/index.theme,
-	  src/gui/icons/oxygen2stock.sh: - fix icons installation
+	* - fix icons installation
 	  - create a gtkiconfactory for the icons
 	  - added index.theme
-	* configure.ac, src/gui/Makefile.am, src/gui/gebr-gui.pc.in,
-	  src/gui/gui/Makefile.am, src/gui/icons, src/gui/icons/16x16,
-	  src/gui/icons/16x16/gtk-about.png,
-	  src/gui/icons/16x16/gtk-add.png,
-	  src/gui/icons/16x16/gtk-apply.png,
-	  src/gui/icons/16x16/gtk-bold.png,
-	  src/gui/icons/16x16/gtk-cancel.png,
-	  src/gui/icons/16x16/gtk-cdrom.png,
-	  src/gui/icons/16x16/gtk-clear.png,
-	  src/gui/icons/16x16/gtk-close.png,
-	  src/gui/icons/16x16/gtk-color-picker.png,
-	  src/gui/icons/16x16/gtk-connect.png,
-	  src/gui/icons/16x16/gtk-convert.png,
-	  src/gui/icons/16x16/gtk-copy.png,
-	  src/gui/icons/16x16/gtk-cut.png,
-	  src/gui/icons/16x16/gtk-delete.png,
-	  src/gui/icons/16x16/gtk-dialog-authentication.png,
-	  src/gui/icons/16x16/gtk-dialog-error.png,
-	  src/gui/icons/16x16/gtk-dialog-info.png,
-	  src/gui/icons/16x16/gtk-dialog-question.png,
-	  src/gui/icons/16x16/gtk-dialog-warning.png,
-	  src/gui/icons/16x16/gtk-directory.png,
-	  src/gui/icons/16x16/gtk-disconnect.png,
-	  src/gui/icons/16x16/gtk-edit.png,
-	  src/gui/icons/16x16/gtk-execute.png,
-	  src/gui/icons/16x16/gtk-find-and-replace.png,
-	  src/gui/icons/16x16/gtk-find.png,
-	  src/gui/icons/16x16/gtk-floppy.png,
-	  src/gui/icons/16x16/gtk-fullscreen.png,
-	  src/gui/icons/16x16/gtk-go-back.png,
-	  src/gui/icons/16x16/gtk-go-down.png,
-	  src/gui/icons/16x16/gtk-go-next.png,
-	  src/gui/icons/16x16/gtk-go-up.png,
-	  src/gui/icons/16x16/gtk-goto-bottom.png,
-	  src/gui/icons/16x16/gtk-goto-first.png,
-	  src/gui/icons/16x16/gtk-goto-last.png,
-	  src/gui/icons/16x16/gtk-goto-top.png,
-	  src/gui/icons/16x16/gtk-harddisk.png,
-	  src/gui/icons/16x16/gtk-help.png,
-	  src/gui/icons/16x16/gtk-home.png,
-	  src/gui/icons/16x16/gtk-info.png,
-	  src/gui/icons/16x16/gtk-italic.png,
-	  src/gui/icons/16x16/gtk-jump-to.png,
-	  src/gui/icons/16x16/gtk-justify-center.png,
-	  src/gui/icons/16x16/gtk-justify-fill.png,
-	  src/gui/icons/16x16/gtk-justify-left.png,
-	  src/gui/icons/16x16/gtk-justify-right.png,
-	  src/gui/icons/16x16/gtk-leave-fullscreen.png,
-	  src/gui/icons/16x16/gtk-media-forward.png,
-	  src/gui/icons/16x16/gtk-media-pause.png,
-	  src/gui/icons/16x16/gtk-media-play.png,
-	  src/gui/icons/16x16/gtk-media-previous.png,
-	  src/gui/icons/16x16/gtk-media-record.png,
-	  src/gui/icons/16x16/gtk-media-rewind.png,
-	  src/gui/icons/16x16/gtk-media-stop.png,
-	  src/gui/icons/16x16/gtk-no.png, src/gui/icons/16x16/gtk-ok.png,
-	  src/gui/icons/16x16/gtk-open.png,
-	  src/gui/icons/16x16/gtk-paste.png,
-	  src/gui/icons/16x16/gtk-preferences.png,
-	  src/gui/icons/16x16/gtk-print-preview.png,
-	  src/gui/icons/16x16/gtk-print.png,
-	  src/gui/icons/16x16/gtk-properties.png,
-	  src/gui/icons/16x16/gtk-quit.png,
-	  src/gui/icons/16x16/gtk-refresh.png,
-	  src/gui/icons/16x16/gtk-remove.png,
-	  src/gui/icons/16x16/gtk-revert-to-saved.png,
-	  src/gui/icons/16x16/gtk-save-as.png,
-	  src/gui/icons/16x16/gtk-save.png,
-	  src/gui/icons/16x16/gtk-select-all.png,
-	  src/gui/icons/16x16/gtk-select-color.png,
-	  src/gui/icons/16x16/gtk-sort-ascending.png,
-	  src/gui/icons/16x16/gtk-sort-descending.png,
-	  src/gui/icons/16x16/gtk-spell-check.png,
-	  src/gui/icons/16x16/gtk-stock-indent.png,
-	  src/gui/icons/16x16/gtk-stop.png,
-	  src/gui/icons/16x16/gtk-strikethrough.png,
-	  src/gui/icons/16x16/gtk-underline.png,
-	  src/gui/icons/16x16/gtk-undo.png,
-	  src/gui/icons/16x16/gtk-unindent.png,
-	  src/gui/icons/16x16/gtk-yes.png,
-	  src/gui/icons/16x16/gtk-zoom-100.png,
-	  src/gui/icons/16x16/gtk-zoom-fit.png,
-	  src/gui/icons/16x16/gtk-zoom-in.png,
-	  src/gui/icons/16x16/gtk-zoom-out.png, src/gui/icons/22x22,
-	  src/gui/icons/22x22/gtk-about.png,
-	  src/gui/icons/22x22/gtk-add.png,
-	  src/gui/icons/22x22/gtk-apply.png,
-	  src/gui/icons/22x22/gtk-bold.png,
-	  src/gui/icons/22x22/gtk-cancel.png,
-	  src/gui/icons/22x22/gtk-cdrom.png,
-	  src/gui/icons/22x22/gtk-clear.png,
-	  src/gui/icons/22x22/gtk-close.png,
-	  src/gui/icons/22x22/gtk-color-picker.png,
-	  src/gui/icons/22x22/gtk-connect.png,
-	  src/gui/icons/22x22/gtk-convert.png,
-	  src/gui/icons/22x22/gtk-copy.png,
-	  src/gui/icons/22x22/gtk-cut.png,
-	  src/gui/icons/22x22/gtk-delete.png,
-	  src/gui/icons/22x22/gtk-dialog-authentication.png,
-	  src/gui/icons/22x22/gtk-dialog-error.png,
-	  src/gui/icons/22x22/gtk-dialog-info.png,
-	  src/gui/icons/22x22/gtk-dialog-question.png,
-	  src/gui/icons/22x22/gtk-dialog-warning.png,
-	  src/gui/icons/22x22/gtk-directory.png,
-	  src/gui/icons/22x22/gtk-disconnect.png,
-	  src/gui/icons/22x22/gtk-edit.png,
-	  src/gui/icons/22x22/gtk-execute.png,
-	  src/gui/icons/22x22/gtk-find-and-replace.png,
-	  src/gui/icons/22x22/gtk-find.png,
-	  src/gui/icons/22x22/gtk-floppy.png,
-	  src/gui/icons/22x22/gtk-fullscreen.png,
-	  src/gui/icons/22x22/gtk-go-back.png,
-	  src/gui/icons/22x22/gtk-go-down.png,
-	  src/gui/icons/22x22/gtk-go-next.png,
-	  src/gui/icons/22x22/gtk-go-up.png,
-	  src/gui/icons/22x22/gtk-goto-bottom.png,
-	  src/gui/icons/22x22/gtk-goto-first.png,
-	  src/gui/icons/22x22/gtk-goto-last.png,
-	  src/gui/icons/22x22/gtk-goto-top.png,
-	  src/gui/icons/22x22/gtk-harddisk.png,
-	  src/gui/icons/22x22/gtk-help.png,
-	  src/gui/icons/22x22/gtk-home.png,
-	  src/gui/icons/22x22/gtk-info.png,
-	  src/gui/icons/22x22/gtk-italic.png,
-	  src/gui/icons/22x22/gtk-jump-to.png,
-	  src/gui/icons/22x22/gtk-justify-center.png,
-	  src/gui/icons/22x22/gtk-justify-fill.png,
-	  src/gui/icons/22x22/gtk-justify-left.png,
-	  src/gui/icons/22x22/gtk-justify-right.png,
-	  src/gui/icons/22x22/gtk-leave-fullscreen.png,
-	  src/gui/icons/22x22/gtk-media-forward.png,
-	  src/gui/icons/22x22/gtk-media-pause.png,
-	  src/gui/icons/22x22/gtk-media-play.png,
-	  src/gui/icons/22x22/gtk-media-previous.png,
-	  src/gui/icons/22x22/gtk-media-record.png,
-	  src/gui/icons/22x22/gtk-media-rewind.png,
-	  src/gui/icons/22x22/gtk-media-stop.png,
-	  src/gui/icons/22x22/gtk-no.png, src/gui/icons/22x22/gtk-ok.png,
-	  src/gui/icons/22x22/gtk-open.png,
-	  src/gui/icons/22x22/gtk-paste.png,
-	  src/gui/icons/22x22/gtk-preferences.png,
-	  src/gui/icons/22x22/gtk-print-preview.png,
-	  src/gui/icons/22x22/gtk-print.png,
-	  src/gui/icons/22x22/gtk-properties.png,
-	  src/gui/icons/22x22/gtk-quit.png,
-	  src/gui/icons/22x22/gtk-refresh.png,
-	  src/gui/icons/22x22/gtk-remove.png,
-	  src/gui/icons/22x22/gtk-revert-to-saved.png,
-	  src/gui/icons/22x22/gtk-save-as.png,
-	  src/gui/icons/22x22/gtk-save.png,
-	  src/gui/icons/22x22/gtk-select-all.png,
-	  src/gui/icons/22x22/gtk-select-color.png,
-	  src/gui/icons/22x22/gtk-sort-ascending.png,
-	  src/gui/icons/22x22/gtk-sort-descending.png,
-	  src/gui/icons/22x22/gtk-spell-check.png,
-	  src/gui/icons/22x22/gtk-stock-indent.png,
-	  src/gui/icons/22x22/gtk-stop.png,
-	  src/gui/icons/22x22/gtk-strikethrough.png,
-	  src/gui/icons/22x22/gtk-underline.png,
-	  src/gui/icons/22x22/gtk-undo.png,
-	  src/gui/icons/22x22/gtk-unindent.png,
-	  src/gui/icons/22x22/gtk-yes.png,
-	  src/gui/icons/22x22/gtk-zoom-100.png,
-	  src/gui/icons/22x22/gtk-zoom-fit.png,
-	  src/gui/icons/22x22/gtk-zoom-in.png,
-	  src/gui/icons/22x22/gtk-zoom-out.png, src/gui/icons/48x48,
-	  src/gui/icons/48x48/gtk-about.png,
-	  src/gui/icons/48x48/gtk-add.png,
-	  src/gui/icons/48x48/gtk-apply.png,
-	  src/gui/icons/48x48/gtk-bold.png,
-	  src/gui/icons/48x48/gtk-cancel.png,
-	  src/gui/icons/48x48/gtk-cdrom.png,
-	  src/gui/icons/48x48/gtk-clear.png,
-	  src/gui/icons/48x48/gtk-close.png,
-	  src/gui/icons/48x48/gtk-color-picker.png,
-	  src/gui/icons/48x48/gtk-connect.png,
-	  src/gui/icons/48x48/gtk-convert.png,
-	  src/gui/icons/48x48/gtk-copy.png,
-	  src/gui/icons/48x48/gtk-cut.png,
-	  src/gui/icons/48x48/gtk-delete.png,
-	  src/gui/icons/48x48/gtk-dialog-authentication.png,
-	  src/gui/icons/48x48/gtk-dialog-error.png,
-	  src/gui/icons/48x48/gtk-dialog-info.png,
-	  src/gui/icons/48x48/gtk-dialog-question.png,
-	  src/gui/icons/48x48/gtk-dialog-warning.png,
-	  src/gui/icons/48x48/gtk-directory.png,
-	  src/gui/icons/48x48/gtk-disconnect.png,
-	  src/gui/icons/48x48/gtk-edit.png,
-	  src/gui/icons/48x48/gtk-execute.png,
-	  src/gui/icons/48x48/gtk-find-and-replace.png,
-	  src/gui/icons/48x48/gtk-find.png,
-	  src/gui/icons/48x48/gtk-floppy.png,
-	  src/gui/icons/48x48/gtk-fullscreen.png,
-	  src/gui/icons/48x48/gtk-go-back.png,
-	  src/gui/icons/48x48/gtk-go-down.png,
-	  src/gui/icons/48x48/gtk-go-next.png,
-	  src/gui/icons/48x48/gtk-go-up.png,
-	  src/gui/icons/48x48/gtk-goto-bottom.png,
-	  src/gui/icons/48x48/gtk-goto-first.png,
-	  src/gui/icons/48x48/gtk-goto-last.png,
-	  src/gui/icons/48x48/gtk-goto-top.png,
-	  src/gui/icons/48x48/gtk-harddisk.png,
-	  src/gui/icons/48x48/gtk-help.png,
-	  src/gui/icons/48x48/gtk-home.png,
-	  src/gui/icons/48x48/gtk-info.png,
-	  src/gui/icons/48x48/gtk-italic.png,
-	  src/gui/icons/48x48/gtk-jump-to.png,
-	  src/gui/icons/48x48/gtk-justify-center.png,
-	  src/gui/icons/48x48/gtk-justify-fill.png,
-	  src/gui/icons/48x48/gtk-justify-left.png,
-	  src/gui/icons/48x48/gtk-justify-right.png,
-	  src/gui/icons/48x48/gtk-leave-fullscreen.png,
-	  src/gui/icons/48x48/gtk-media-forward.png,
-	  src/gui/icons/48x48/gtk-media-pause.png,
-	  src/gui/icons/48x48/gtk-media-play.png,
-	  src/gui/icons/48x48/gtk-media-previous.png,
-	  src/gui/icons/48x48/gtk-media-record.png,
-	  src/gui/icons/48x48/gtk-media-rewind.png,
-	  src/gui/icons/48x48/gtk-media-stop.png,
-	  src/gui/icons/48x48/gtk-no.png, src/gui/icons/48x48/gtk-ok.png,
-	  src/gui/icons/48x48/gtk-open.png,
-	  src/gui/icons/48x48/gtk-paste.png,
-	  src/gui/icons/48x48/gtk-preferences.png,
-	  src/gui/icons/48x48/gtk-print-preview.png,
-	  src/gui/icons/48x48/gtk-print.png,
-	  src/gui/icons/48x48/gtk-properties.png,
-	  src/gui/icons/48x48/gtk-quit.png,
-	  src/gui/icons/48x48/gtk-refresh.png,
-	  src/gui/icons/48x48/gtk-remove.png,
-	  src/gui/icons/48x48/gtk-revert-to-saved.png,
-	  src/gui/icons/48x48/gtk-save-as.png,
-	  src/gui/icons/48x48/gtk-save.png,
-	  src/gui/icons/48x48/gtk-select-all.png,
-	  src/gui/icons/48x48/gtk-select-color.png,
-	  src/gui/icons/48x48/gtk-sort-ascending.png,
-	  src/gui/icons/48x48/gtk-sort-descending.png,
-	  src/gui/icons/48x48/gtk-spell-check.png,
-	  src/gui/icons/48x48/gtk-stock-indent.png,
-	  src/gui/icons/48x48/gtk-stop.png,
-	  src/gui/icons/48x48/gtk-strikethrough.png,
-	  src/gui/icons/48x48/gtk-underline.png,
-	  src/gui/icons/48x48/gtk-undo.png,
-	  src/gui/icons/48x48/gtk-unindent.png,
-	  src/gui/icons/48x48/gtk-yes.png,
-	  src/gui/icons/48x48/gtk-zoom-100.png,
-	  src/gui/icons/48x48/gtk-zoom-fit.png,
-	  src/gui/icons/48x48/gtk-zoom-in.png,
-	  src/gui/icons/48x48/gtk-zoom-out.png, src/gui/icons/Makefile.am,
-	  src/gui/icons/oxygen2stock.sh: added stock theme based on kde4's
-	  oxygen
+	* added stock theme based on kde4's oxygen
 
 2008-11-25  Ricardo Biloti <biloti@gmail.com>
 
-	* Makefile.am, ltmain.sh: ltmain.sh removed from svn
-	* configure.ac: version updated to 0.9.6-pre
+	* ltmain.sh removed from svn
+	* version updated to 0.9.6-pre
 
 2008-11-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/flow.c, src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/parameters.c, src/geoxml/geoxml/parameters_p.h:
-	  - fixed geoxml's new parameter and program creation
+	* - fixed geoxml's new parameter and program creation
 	  - minor fixes to gebr and debr creation
-	* src/geoxml/geoxml/parameters.c: add forgotten id to parameter
+	* add forgotten id to parameter
 
 2008-11-24  Ricardo Biloti <biloti@gmail.com>
 
-	* configure.ac: DTD version update to 0.3.0
+	* DTD version update to 0.3.0
 
 2008-11-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* configure.ac: the last build fix?
-	* src/Makefile.am, src/misc/Makefile.am, src/misc/misc/Makefile.am:
-	  more compilation due to old installation with old headers
+	* the last build fix?
+	* more compilation due to old installation with old headers
 
 2008-11-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/data/flow-0.3.0.dtd, src/geoxml/geoxml.h,
-	  src/geoxml/geoxml/document.c, src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/program_parameter.h,
-	  src/geoxml/geoxml/program_parameter_p.h,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/sequence.h,
-	  src/geoxml/geoxml/value_sequence.c,
-	  src/geoxml/geoxml/value_sequence.h, src/geoxml/geoxml/xml.h,
-	  src/gui/gui/Makefile.am, src/gui/gui/gtksequenceedit.c,
-	  src/gui/gui/gtksequenceedit.h, src/gui/gui/parameter.c,
-	  src/gui/gui/parameter.h, src/gui/gui/valuesequenceedit.c: the
-	  saga of list parameters ended!
+	* the saga of list parameters ended!
 	  - changed DTD to make value and default values independets
 	  - refactoring of GeoXmlProgramParameter functions
 	  - general refacte on parameter_widget function:
@@ -1807,267 +327,142 @@
 
 2008-11-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/document.c, src/geoxml/geoxml/xml.h: uhm,
-	  really interesting problem to fix and learn hygienic macros...
-	  that is, conversion from flow 0.2.1 to 0.2.2 fixed (the functions
-	  did not behave as before)
-	* src/geoxml/data/flow-0.3.0.dtd, src/geoxml/data/line-0.3.0.dtd,
-	  src/geoxml/data/project-0.3.0.dtd, src/geoxml/geoxml/document.c,
-	  src/geoxml/geoxml/xml.c: lastid of 0.3.0 spec is now nextid,
-	  cause the change of IDREF to ID type
-	* src/geoxml/data/Makefile.am: something was not merged from
-	  flow0.3...
-	* src/geoxml/data/project-0.3.0.dtd: fix version in
-	  project-0.3.0.dtd
-	* src/geoxml/data/flow-0.3.0.dtd, src/geoxml/data/line-0.3.0.dtd,
-	  src/geoxml/data/project-0.3.0.dtd: lastid as ID instead of an
-	  IDREF will make life much easier (eg. when a program with
-	  parameters is removed)
-	* src/geoxml/geoxml/document.c: fix a bug when no value element is
-	  inserted into property
-	* src/geoxml/geoxml/document.c, src/geoxml/geoxml/error.h,
-	  src/geoxml/geoxml/parameters.c,
-	  src/geoxml/geoxml/program_parameter.c, src/geoxml/geoxml/xml.h: -
-	  initial working debr version
+	* uhm, really interesting problem to fix and learn hygienic
+	  macros... that is, conversion from flow 0.2.1 to 0.2.2 fixed (the
+	  functions did not behave as before)
+	* lastid of 0.3.0 spec is now nextid, cause the change of IDREF to
+	  ID type
+	* something was not merged from flow0.3...
+	* fix version in project-0.3.0.dtd
+	* lastid as ID instead of an IDREF will make life much easier (eg.
+	  when a program with parameters is removed)
+	* fix a bug when no value element is inserted into property
+	* - initial working debr version
 	  - fixes in geoxml
 	  - removal of gebrme
 
 2008-11-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* Makefile.am, configure.ac, ltmain.sh, m4/libtool.m4,
-	  m4/ltoptions.m4, m4/ltsugar.m4, m4/ltversion.m4, src/comm/comm.h,
-	  src/comm/comm/Makefile.am, src/geoxml/Makefile.am,
-	  src/geoxml/geoxml.h, src/geoxml/geoxml/Makefile.am,
-	  src/geoxml/geoxml/document.c, src/geoxml/geoxml/enum_option.c,
-	  src/geoxml/geoxml/enum_option.h, src/geoxml/geoxml/error.h,
-	  src/geoxml/geoxml/flow.c, src/geoxml/geoxml/flow.h,
-	  src/geoxml/geoxml/line.c, src/geoxml/geoxml/line.h,
-	  src/geoxml/geoxml/parameter.c, src/geoxml/geoxml/parameter.h,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameter_group.h,
-	  src/geoxml/geoxml/parameter_p.h, src/geoxml/geoxml/parameters.c,
-	  src/geoxml/geoxml/parameters.h, src/geoxml/geoxml/parameters_p.h,
-	  src/geoxml/geoxml/program.c, src/geoxml/geoxml/program.h,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/program_parameter.h,
-	  src/geoxml/geoxml/program_parameter_p.h,
-	  src/geoxml/geoxml/project.c, src/geoxml/geoxml/project.h,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/sequence.h,
-	  src/geoxml/geoxml/value_sequence.c, src/geoxml/geoxml/xml.c,
-	  src/geoxml/geoxml/xml.h, src/geoxml/upgrade/upgrade.c,
-	  src/geoxml/validate/validate.c, src/gui/gui/parameter.c,
-	  src/gui/gui/utils.c, src/gui/gui/utils.h, src/misc/misc/date.c:
-	  last commit with git commit's -a option
-	* src/geoxml/data/flow-0.3.0.dtd, src/geoxml/data/line-0.3.0.dtd,
-	  src/geoxml/data/project-0.3.0.dtd,
-	  src/geoxml/geoxml/parameter_group_p.h,
-	  src/geoxml/geoxml/sequence_p.h, src/geoxml/test/Makefile.am,
-	  src/geoxml/test/sufrac.mnu, src/geoxml/test/sugain.mnu,
-	  src/geoxml/test/suximage.mnu, src/geoxml/test/test.c: - imported
-	  geoxml from branch flow0.3
+	* last commit with git commit's -a option
+	* - imported geoxml from branch flow0.3
 	  - use actions in gebr
 	  - gebr now uses geoxml 0.3 functions
 	  - small fixes
-	* src/comm/comm/gchannelsocket.c, src/comm/comm/gchannelsocket.h:
-	  merged flow0.3 into trunk
+	* merged flow0.3 into trunk
 
 2008-08-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* Makefile.am, configure.ac, src/comm/Makefile.am,
-	  src/comm/comm/Makefile.am, src/comm/comm/ghostaddress.c,
-	  src/comm/comm/ghostaddress.h, src/comm/comm/ghostinfo.c,
-	  src/comm/comm/ghostinfo.h, src/comm/comm/glistensocket.c,
-	  src/comm/comm/glistensocket.h, src/comm/comm/gsocketaddress.c,
-	  src/comm/comm/gsocketaddress.h, src/comm/comm/gstreamsocket.c,
-	  src/comm/comm/gstreamsocket.h,
-	  src/comm/comm/gstreamsocketprivate.h, src/comm/comm/gtcpserver.c,
-	  src/comm/comm/gtcpserver.h, src/comm/comm/gtcpsocket.c,
-	  src/comm/comm/gtcpsocket.h, src/comm/comm/gtcpsocketprivate.h,
-	  src/comm/comm/protocol.c, src/comm/comm/protocol.h,
-	  src/comm/comm/server.c, src/comm/comm/server.h,
-	  src/comm/gebr-comm.pc.in: renamed GHostAddress to GSocketAddress,
-	  GTcpServer to GListenSocket and GTcpSocket to GStreamSocket to
-	  support unix sockets
+	* renamed GHostAddress to GSocketAddress, GTcpServer to
+	  GListenSocket and GTcpSocket to GStreamSocket to support unix
+	  sockets
 
 2008-06-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* config.guess, config.sub, configure.ac, ltmain.sh, m4,
-	  m4/libtool.m4, m4/ltoptions.m4, m4/ltsugar.m4, m4/ltversion.m4,
-	  m4/lt~obsolete.m4: added more libtool stuff
+	* added more libtool stuff
 
 2008-06-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* debian: final merge operations
-	* Makefile.am, configure.ac, debian, ltmain.sh, packages,
-	  packages/Makefile.am, packages/debian,
-	  packages/debian/README.Debian, packages/debian/changelog.in,
-	  packages/debian/compat, packages/debian/control,
-	  packages/debian/copyright, packages/debian/dirs,
-	  packages/debian/docs, packages/debian/info,
-	  packages/debian/libgebr-default.ex,
-	  packages/debian/libgebr-dev.dirs,
-	  packages/debian/libgebr-dev.install,
-	  packages/debian/libgebr.doc-base.ex,
-	  packages/debian/libgebr0.dirs, packages/debian/libgebr0.install,
-	  packages/debian/manpage.1.ex, packages/debian/postinst.ex,
-	  packages/debian/postrm.ex, packages/debian/preinst.ex,
-	  packages/debian/prerm.ex, packages/debian/rules,
-	  packages/debian/shlibs.local.ex, packages/rpm,
-	  packages/rpm/libgebr.fedora.spec.in,
-	  packages/rpm/libgebr.mandriva.spec.in,
-	  packages/rpm/libgebr.opensuse.spec.in, rpm: branches
-	  packages_reorganization merged with trunk
-	* configure.ac: - created tag 0.9.5 for release, and changed trunk
-	  pre versions
+	* final merge operations
+	* branches packages_reorganization merged with trunk
+	* - created tag 0.9.5 for release, and changed trunk pre versions
 	  - created branch packages_reorganitazation
 
 2008-06-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/Makefile.am: build fix: added upgrade to Makefile.am
-	  SUBDIRS
+	* build fix: added upgrade to Makefile.am SUBDIRS
 
 2008-06-18  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/comm/comm/gprocess.c, src/comm/comm/gterminalprocess.c: fixed
-	  process kill and terminate
-	* src/comm/comm/server.c: protocol change: local clients now sends
-	  display
-	* src/comm/comm/server.c: minor fixes/cleanups
-	* src/comm/comm/gprocess.c, src/comm/comm/gprocess.h,
-	  src/comm/comm/gterminalprocess.c,
-	  src/comm/comm/gterminalprocess.h, src/comm/comm/server.c,
-	  src/comm/comm/server.h: - process classes remove child finish
-	  watch
+	* fixed process kill and terminate
+	* protocol change: local clients now sends display
+	* minor fixes/cleanups
+	* - process classes remove child finish watch
 	  - comm_server reorganization
 	  - comm_server keep track and free temporary process
 
 2008-06-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/comm/comm/server.c: fix ssh password ask for x11 forwarding
-	* src/comm/comm/server.c: fix x11 forward port order
-	* src/comm/comm/server.c: - forgot to 6000 to display port
+	* fix ssh password ask for x11 forwarding
+	* fix x11 forward port order
+	* - forgot to 6000 to display port
 	  - fix mcookie acquire
-	* configure.ac, src/comm/comm/server.c, src/comm/comm/server.h:
-	  change x11 forward architecture (with protocol implications)
+	* change x11 forward architecture (with protocol implications)
 
 2008-06-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/comm/comm/server.c: - consider \r on ssh new lines
+	* - consider \r on ssh new lines
 	  - run ssh with -x
-	* src/comm/comm/server.c: stupid type error fixed
-	* src/comm/comm/server.c, src/comm/comm/server.h: read all server
-	  run output at once
-	* src/comm/comm/server.c, src/comm/comm/server.h: - defines.h away
-	  from gebr makefile
+	* stupid type error fixed
+	* read all server run output at once
+	* - defines.h away from gebr makefile
 	  - gebr client now send it its IP (again)
 	  - server use its hostname for lock/log files
 
 2008-06-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/comm/comm/gsocket.c, src/comm/comm/gsocket.h: some
-	  gebr-client progress achieved
-	* ltmain.sh, src/geoxml/geoxml/Makefile.am,
-	  src/geoxml/geoxml/error.c, src/geoxml/geoxml/error.h,
-	  src/geoxml/geoxml/support.h, src/geoxml/validate/validate.c:
-	  added error strings for each library error
+	* some gebr-client progress achieved
+	* added error strings for each library error
 
 2008-06-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/comm/comm/gterminalprocess.c, src/comm/comm/server.c,
-	  src/misc/misc/log.c: fix yes/no ssh message handling
-	* src/comm/comm/server.c: fix port reception
-	* src/comm/comm/protocol.c: remove debugging puts
-	* src/comm/comm/ghostinfo.c, src/comm/comm/ghostinfo.h,
-	  src/comm/comm/gtcpsocket.c, src/comm/comm/protocol.c,
-	  src/comm/comm/server.c, src/comm/comm/server.h: don't hack on
-	  server host for the port; the daemon now returns it
+	* fix yes/no ssh message handling
+	* fix port reception
+	* remove debugging puts
+	* don't hack on server host for the port; the daemon now returns it
 
 2008-04-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/data/flow-0.2.0.dtd, src/geoxml/data/flow-0.2.1.dtd,
-	  src/geoxml/data/flow-0.2.2.dtd, src/geoxml/data/flow-0.2.3.dtd:
-	  removed type group from gebrme and from 0.2 DTDs. it will be
+	* removed type group from gebrme and from 0.2 DTDs. it will be
 	  refacted and readded at flow 0.3
-	* src/geoxml/geoxml/xml.c: delete all childs elements on
-	  __geoxml_set_element_value
+	* delete all childs elements on __geoxml_set_element_value
 
 2008-04-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/parameter_group.c: protect
-	  geoxml_parameter_group_get_{exclusive,selected} against
+	* protect geoxml_parameter_group_get_{exclusive,selected} against
 	  deleted/deinstaciated parameter indexes
 
 2008-04-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/parameters.c,
-	  src/geoxml/geoxml/program_parameter.c:
-	  __geoxml_program_parameter_reset_default should not change
+	* __geoxml_program_parameter_reset_default should not change
 	  anything but default
-	* src/geoxml/geoxml/Makefile.am, src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/parameters.c,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/program_parameter_p.h: geoxml_parameter_reset
-	  made invalid flows
-	* configure.ac, src/gui/gui/utils.c: missing stuff to be commited
-	* src/geoxml/geoxml/parameter.c, src/geoxml/geoxml/parameters.c,
-	  src/geoxml/geoxml/parameters_p.h: don't adjust npar when changing
-	  the parameter type
+	* geoxml_parameter_reset made invalid flows
+	* missing stuff to be commited
+	* don't adjust npar when changing the parameter type
 
 2008-04-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/parameter_group.c: don't leave selected
-	  blank/invalid on geoxml_parameter_group_set_exclusive
-	* src/geoxml/geoxml/parameters.c, src/geoxml/geoxml/parameters.h,
-	  src/geoxml/geoxml/parameters_p.h, src/geoxml/geoxml/sequence.c: -
-	  remove geoxml_parameters_new_parameter as it is nonsense for
+	* don't leave selected blank/invalid on
+	  geoxml_parameter_group_set_exclusive
+	* - remove geoxml_parameters_new_parameter as it is nonsense for
 	  group npar
 	  - fixed geoxml_sequence_append_clone to adjust npar
 	  - fixed adjust type
-	* src/geoxml/geoxml.h, src/geoxml/geoxml/Makefile.am,
-	  src/geoxml/geoxml/document.h, src/geoxml/geoxml/object.c,
-	  src/geoxml/geoxml/object.h, src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameter_group.h,
-	  src/geoxml/geoxml/sequence.h: GeoXmlObject class introduced
-	* src/geoxml/geoxml/parameter_group.c: fixed
-	  geoxml_parameter_group_set_{exclusive,selected}
-	* src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameters.c, src/geoxml/geoxml/parameters.h:
-	  fixed geoxml_parameter_group_get_{exclusive,selected}
+	* GeoXmlObject class introduced
+	* fixed geoxml_parameter_group_set_{exclusive,selected}
+	* fixed geoxml_parameter_group_get_{exclusive,selected}
 
 2008-04-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/data/Makefile.am, src/geoxml/data/flow-0.2.3.dtd,
-	  src/geoxml/geoxml/document.c: fixes for flow 0.2.3
-	* src/geoxml/data/flow-0.2.3.dtd, src/geoxml/geoxml/document.c,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameter_group.h,
-	  src/geoxml/geoxml/parameters.c, src/geoxml/geoxml/xml.c,
-	  src/geoxml/geoxml/xml.h, src/geoxml/upgrade,
-	  src/geoxml/upgrade/Makefile.am, src/geoxml/upgrade/upgrade.c,
-	  src/geoxml/validate/validate.c: - flow 0.2.3: exclusive not
-	  anymore value based and make possible to keep a default exclusive
-	  parameter
+	* fixes for flow 0.2.3
+	* - flow 0.2.3: exclusive not anymore value based and make possible
+	  to keep a default exclusive parameter
 	  - upgrade utily for upgrading documents to latest version
 	  - use glib command line parse for utilies
 
 2008-04-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/sequence.h: added
-	  geoxml_sequence_append_clone
+	* added geoxml_sequence_append_clone
 
 2008-04-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/document.h, src/gui/gui/utils.c: - emit signal
-	  cursor-changed but call popup callback
+	* - emit signal cursor-changed but call popup callback
 	  - fix and ported to gtkaction program status menus items
 	  - add project new and flow new to popups menus.
 	  - little code organization and cleanups
 
 2008-04-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/flow.c, src/geoxml/geoxml/sequence.c,
-	  src/geoxml/geoxml/sequence.h, src/gui/gui/utils.c,
-	  src/gui/gui/utils.h: - updated TODO
+	* - updated TODO
 	  - flow browse view column should exist anymore as now it is
 	  treated as a sequence
 	  - implement top/bottom for the xml
@@ -2075,88 +470,42 @@
 
 2008-04-05  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* configure.ac, src/Makefile.am, src/comm/comm/Makefile.am,
-	  src/geoxml/data/flow-0.2.2.dtd, src/geoxml/doc/libgeoxml.cfg,
-	  src/geoxml/geoxml.h, src/geoxml/geoxml/Makefile.am,
-	  src/geoxml/geoxml/document.h, src/geoxml/geoxml/enum_option.h,
-	  src/geoxml/geoxml/error.h, src/geoxml/geoxml/flow.h,
-	  src/geoxml/geoxml/line.h, src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/parameter.h,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameter_group.h,
-	  src/geoxml/geoxml/parameter_p.h, src/geoxml/geoxml/parameters.c,
-	  src/geoxml/geoxml/parameters.h, src/geoxml/geoxml/parameters_p.h,
-	  src/geoxml/geoxml/program.h,
-	  src/geoxml/geoxml/program_parameter.h,
-	  src/geoxml/geoxml/project.h, src/geoxml/geoxml/sequence.c,
-	  src/geoxml/geoxml/sequence.h, src/geoxml/geoxml/value_sequence.h,
-	  src/gui/gui/Makefile.am, src/gui/gui/utils.c,
-	  src/gui/gui/utils.h, src/misc/misc/Makefile.am,
-	  src/misc/misc/log.c: - groups functional on gebr and gebrme
+	* - groups functional on gebr and gebrme
 	  - debug flags thought --enable-debug
 
 2008-03-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/comm/comm/server.c, src/geoxml/geoxml/document.c,
-	  src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameters.c, src/geoxml/geoxml/program.c,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/value_sequence.c,
-	  src/gui/gui/gtkenhancedentry.c, src/gui/gui/parameter.c,
-	  src/misc/misc/log.c: - fixed string comparison to consider case
+	* - fixed string comparison to consider case
 	  - gebr: make accel_group a global variable
 
 2008-03-07  Ricardo Biloti <biloti@gmail.com>
 
-	* Makefile.am: revert wrong deb package rule
+	* revert wrong deb package rule
 
 2008-03-06  Ricardo Biloti <biloti@gmail.com>
 
-	* Makefile.am: enhancements in package generation
+	* enhancements in package generation
 
 2008-03-05  Ricardo Biloti <biloti@gmail.com>
 
-	* Makefile.am: new rule packages
+	* new rule packages
 
 2008-02-29  Ricardo Biloti <biloti@gmail.com>
 
-	* src/comm/comm/ghostaddress.c, src/comm/comm/ghostinfo.c,
-	  src/comm/comm/gprocess.c, src/comm/comm/gsocket.c,
-	  src/comm/comm/gtcpserver.c, src/comm/comm/gtcpsocket.c,
-	  src/comm/comm/gterminalprocess.c, src/comm/comm/protocol.c,
-	  src/comm/comm/server.c, src/geoxml/geoxml/document.c,
-	  src/geoxml/geoxml/enum_option.c, src/geoxml/geoxml/flow.c,
-	  src/geoxml/geoxml/line.c, src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameters.c, src/geoxml/geoxml/program.c,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/project.c, src/geoxml/geoxml/sequence.c,
-	  src/geoxml/geoxml/value_sequence.c, src/geoxml/geoxml/xml.c,
-	  src/geoxml/test/test.c, src/geoxml/validate/validate.c,
-	  src/gui/gui/about.c, src/gui/gui/gtkenhancedentry.c,
-	  src/gui/gui/gtkfileentry.c, src/gui/gui/gtksequenceedit.c,
-	  src/gui/gui/parameter.c, src/gui/gui/pixmaps.c,
-	  src/gui/gui/utils.c, src/gui/gui/valuesequenceedit.c,
-	  src/libgebr.c, src/misc/misc/date.c, src/misc/misc/log.c,
-	  src/misc/misc/utils.c: TODO and Copyright note updated
+	* TODO and Copyright note updated
 
 2008-02-28  Ricardo Biloti <biloti@gmail.com>
 
-	* src/gui/gui/parameter.c: honor range digits when retrieving
-	  parameter's value
+	* honor range digits when retrieving parameter's value
 
 2008-02-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/gtkenhancedentry.c, src/gui/gui/gtkenhancedentry.h,
-	  src/gui/gui/parameter.c: various fixes to parameter of type enum
+	* various fixes to parameter of type enum
 
 2008-02-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/parameter.c: enable to do not use the value of an
-	  enum
-	* src/geoxml/data/Makefile.am: - put missing flow-0.2.2.dtd in
-	  Makefile.am
+	* enable to do not use the value of an enum
+	* - put missing flow-0.2.2.dtd in Makefile.am
 	  - double click action for line and flow
 	  - scroll job and flow sequence
 	  - first run improvementes along side with preferences dialog
@@ -2164,390 +513,183 @@
 
 2008-02-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/enum_option.c, src/geoxml/geoxml/enum_option.h:
-	  added enum_option.{c,h}
-	* config.guess, config.sub, configure.ac, ltmain.sh,
-	  src/geoxml/geoxml.h, src/geoxml/geoxml/Makefile.am,
-	  src/geoxml/geoxml/category.c, src/geoxml/geoxml/category.h,
-	  src/geoxml/geoxml/document.c, src/geoxml/geoxml/flow.c,
-	  src/geoxml/geoxml/flow.h, src/geoxml/geoxml/parameters.c,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/program_parameter.h,
-	  src/geoxml/geoxml/value_sequence.c, src/gui/gui/Makefile.am,
-	  src/gui/gui/gtkenhancedentry.c, src/gui/gui/gtkenhancedentry.h,
-	  src/gui/gui/gtkfileentry.c, src/gui/gui/gtksequenceedit.c,
-	  src/gui/gui/gtksequenceedit.h, src/gui/gui/parameter.c: - fixed
-	  icon of gtkfileentry and gtksequenceedit
+	* added enum_option.{c,h}
+	* - fixed icon of gtkfileentry and gtksequenceedit
 	  - merged enum-impl and improved show on combo box
 	  - quote each value when parameter accepts a list of parameters
 	  - fixed revert to default value on parameters dialog
 
 2008-02-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/parameter.c, src/gui/gui/parameter.h: - use
-	  gtklinkbutton to show program's url
+	* - use gtklinkbutton to show program's url
 	  - use line's path in file parameters
 
 2008-02-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/value_sequence.c:
-	  readd support enumoption for in sequence and valuesequence
+	* readd support enumoption for in sequence and valuesequence
 
 2008-02-13  Ricardo Biloti <biloti@gmail.com>
 
-	* src/gui/gui/gtkfileentry.c: minor (but important) typo (again)
-	* src/gui/gui/gtkfileentry.c: minor (but important) typo
+	* minor (but important) typo (again)
+	* minor (but important) typo
 
 2008-02-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/gtkfileentry.c, src/gui/gui/gtkfileentry.h,
-	  src/gui/gui/parameter.c: add support for a customize function in
-	  gtkfileentry
-	* src/gui/gui/gtkfileentry.c, src/gui/gui/gtksequenceedit.c: layout
-	  fixes
-	* src/gui/gui/gtksequenceedit.c: fixed layout in gtksequenceedit
-	* src/geoxml/geoxml/line.c: fixed line path and add message when a
-	  invalid flow is found
-	* src/geoxml/geoxml/line.c: fixed line's paths
-	* src/geoxml/geoxml/flow.h, src/geoxml/geoxml/line.h: fixed typo
-	* src/geoxml/geoxml/line.c, src/geoxml/geoxml/line.h,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/value_sequence.c,
-	  src/geoxml/geoxml/value_sequence.h: support for path (dtd 0.2) in
-	  lines implemented
+	* add support for a customize function in gtkfileentry
+	* layout fixes
+	* fixed layout in gtksequenceedit
+	* fixed line path and add message when a invalid flow is found
+	* fixed line's paths
+	* fixed typo
+	* support for path (dtd 0.2) in lines implemented
 
 2008-02-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/gtkfileentry.c, src/gui/gui/gtkfileentry.h,
-	  src/gui/gui/parameter.c: don't confirm overwrite in parameters'
-	  dialog and on flow input selection
+	* don't confirm overwrite in parameters' dialog and on flow input
+	  selection
 
 2008-02-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/misc/misc/log.c: fixed in log viewer
-	* src/misc/misc/log.c, src/misc/misc/log.h: initial version o log
-	  viewer for gebr
-	* src/comm/comm/server.c: fixed server messages
-	* src/comm/comm/gprocess.c, src/comm/comm/gprocess.h: - close stdin
-	  for programs that do not use it (in gebrd)
+	* fixed in log viewer
+	* initial version o log viewer for gebr
+	* fixed server messages
+	* - close stdin for programs that do not use it (in gebrd)
 	  - fixed crash when clearing jobs from disconnected servers
 
 2008-02-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/comm/comm/server.c: put system back... the error persists for
-	  local servers
-	* src/comm/comm/server.c: remove system code (the strange error
-	  desapeared when server code went to libgebr)
-	* configure.ac, src/Makefile.am, src/comm/comm.h,
-	  src/comm/comm/Makefile.am, src/comm/comm/gsocket.c,
-	  src/comm/comm/gterminalprocess.c, src/comm/comm/server.c,
-	  src/comm/comm/server.h, src/comm/comm/support.h,
-	  src/defines.h.in, src/misc/misc/log.c, src/misc/misc/log.h: -
-	  added define.h in libgebr for static mode support
+	* put system back... the error persists for local servers
+	* remove system code (the strange error desapeared when server code
+	  went to libgebr)
+	* - added define.h in libgebr for static mode support
 	  - changed names of enum log_message_type
 	  - ported server infrastruture to libgebr-comm for further use in
 	  gebr-run
 
 2008-02-08  Ricardo Biloti <biloti@gmail.com>
 
-	* TODO, src/geoxml/data/flow-0.2.2.dtd: global TODO file and small
-	  program remove fix to gebrme
+	* global TODO file and small program remove fix to gebrme
 
 2008-02-05  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/document.c: only add url when it is not added
-	  at flow 0.2.0
+	* only add url when it is not added at flow 0.2.0
 
 2008-02-04  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/document.c: prevent libgeoxml to crash on
-	  invalid documents
-	* src/geoxml/data/flow-0.1.0.dtd, src/geoxml/data/flow-0.1.1.dtd,
-	  src/geoxml/data/flow-0.2.0.dtd, src/geoxml/data/flow-0.2.1.dtd: -
-	  avoid crash by making url optional (again) in flow 0.2.0
+	* prevent libgeoxml to crash on invalid documents
+	* - avoid crash by making url optional (again) in flow 0.2.0
 	  - fixed flows DTDs
-	* src/comm/comm/gprocess.c, src/comm/comm/gsocket.c: fixed
-	  EINPROGRESS in GSocket
-	* configure.ac: fixed version of flow
-	* src/comm/comm/gprocess.c, src/comm/comm/gprocess.h,
-	  src/comm/comm/gsocket.c, src/comm/comm/gsocket.h,
-	  src/comm/comm/gtcpsocket.c, src/comm/comm/gtcpsocket.h,
-	  src/comm/comm/gterminalprocess.h: - improved client/server
-	  archtecture (still unstable)
+	* fixed EINPROGRESS in GSocket
+	* fixed version of flow
+	* - improved client/server archtecture (still unstable)
 	  - general fixes
 
 2008-01-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/misc/misc/date.c, src/misc/misc/log.c: - fixed date
-	  validation
+	* - fixed date validation
 	  - fixed date in logs
-	* src/geoxml/data/Makefile.am, src/geoxml/data/flow-0.2.0.dtd,
-	  src/geoxml/data/flow-0.2.1.dtd, src/geoxml/geoxml/document.c: -
-	  fixed dialogs for confirming actions
+	* - fixed dialogs for confirming actions
 	  - added confimation dialogs for revert and delete
 	  - moved support for programs' url to 0.2.1. finished implementing
 	  full support to urls
 
 2008-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/gtkfileentry.c: - use LIBGEBR_{CFLAGS, LIBS} in gebrd
-	  and gebrme
+	* - use LIBGEBR_{CFLAGS, LIBS} in gebrd and gebrme
 	  - disable file overwrite confirmation on gtkfileentry
-	* src/comm/comm/protocol.c: fixed some printfs formats
+	* fixed some printfs formats
 
 2008-01-16  Ricardo Biloti <biloti@gmail.com>
 
-	* src/geoxml/data/flow-0.2.0.dtd, src/geoxml/geoxml/flow.c,
-	  src/geoxml/geoxml/program.c, src/geoxml/geoxml/program.h: partial
-	  support to URL element of program
+	* partial support to URL element of program
 
 2008-01-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui/parameter.c: fix free order
-	* src/geoxml/data/flow-0.2.0.dtd, src/gui/gui/parameter.c: first
-	  buggy support for enums (no label support)
+	* fix free order
+	* first buggy support for enums (no label support)
 
 2008-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/program_parameter.c,
-	  src/gui/gui/gtksequenceedit.c, src/gui/gui/gtksequenceedit.h,
-	  src/gui/gui/parameter.c, src/gui/gui/utils.c: support for
-	  parameters with list of values
-	* src/gui/gui/gtksequenceedit.c, src/gui/gui/gtksequenceedit.h,
-	  src/gui/gui/parameter.c, src/gui/gui/parameter.h: use
-	  parameter_widget_set_auto_submit_callback in gebrme
-	* src/gui/gui/gtksequenceedit.c, src/gui/gui/gtksequenceedit.h,
-	  src/gui/gui/parameter.c, src/gui/gui/parameter.h,
-	  src/gui/gui/utils.c, src/gui/gui/utils.h,
-	  src/gui/gui/valuesequenceedit.c: - fix program popup menu
-	  appearence
+	* support for parameters with list of values
+	* use parameter_widget_set_auto_submit_callback in gebrme
+	* - fix program popup menu appearence
 	  - initial code for enums ands lists
-	* src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/program_parameter.h: enable protection to avoid
-	  flag parameters to hold a list of values
-	* src/gui/gui.h: fixed gui.h
-	* src/gui/gui/Makefile.am, src/gui/gui/gtksequenceedit.c,
-	  src/gui/gui/gtksequenceedit.h, src/gui/gui/valuesequenceedit.c,
-	  src/gui/gui/valuesequenceedit.h: added ValueSequenceEdit and use
-	  it on gebrme for categories
-	* src/geoxml/geoxml/sequence.c: add category to sequence (fix)
+	* enable protection to avoid flag parameters to hold a list of
+	  values
+	* fixed gui.h
+	* added ValueSequenceEdit and use it on gebrme for categories
+	* add category to sequence (fix)
 
 2008-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml.h, src/geoxml/geoxml/category.c,
-	  src/geoxml/geoxml/category.h, src/geoxml/geoxml/flow.c,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/program_parameter.h,
-	  src/geoxml/geoxml/sequence.h, src/geoxml/geoxml/value_sequence.c,
-	  src/geoxml/geoxml/value_sequence.h: category inherits
-	  valuesequence
-	* src/gui/gui/Makefile.am, src/gui/gui/gtklistedit.c,
-	  src/gui/gui/gtklistedit.h, src/gui/gui/gtksequenceedit.c,
-	  src/gui/gui/gtksequenceedit.h, src/gui/gui/parameter.c,
-	  src/gui/gui/parameter.h: common code reuse of parameters for gebr
-	  and gebrme
-	* src/gui/gui/Makefile.am, src/gui/gui/parameter.c,
-	  src/gui/gui/parameter.h: moved back parameters.* to gebr
-	* src/gui/gui/gtklistedit.c, src/gui/gui/gtklistedit.h,
-	  src/gui/gui/parameter.c, src/gui/gui/parameter.h: added missing
-	  files
+	* category inherits valuesequence
+	* common code reuse of parameters for gebr and gebrme
+	* moved back parameters.* to gebr
+	* added missing files
 
 2008-01-11  Ricardo Biloti <biloti@gmail.com>
 
-	* src/gui/gui/about.c: authors updated
+	* authors updated
 
 2008-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/gui/gui.h, src/gui/gui/Makefile.am: moved parateters' code to
-	  libgebr_gui
-	* src/geoxml/doc/libgeoxml.cfg,
-	  src/geoxml/geoxml/program_parameter.h: fixed documentation
+	* moved parateters' code to libgebr_gui
+	* fixed documentation
 
 2008-01-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/document.c: - fixed an increbile anoying bug
-	  (or maybe a libxml2 bug?)
+	* - fixed an increbile anoying bug (or maybe a libxml2 bug?)
 	  - fixed gêbr's message
-	* configure.ac, src/geoxml/geoxml.h, src/geoxml/geoxml/Makefile.am,
-	  src/geoxml/geoxml/defines.h.in, src/geoxml/geoxml/document.c,
-	  src/geoxml/geoxml/flow.c, src/geoxml/geoxml/line.c,
-	  src/geoxml/geoxml/project.c, src/gui/gui/utils.c: - changed use
-	  of -D in favor of a defines.h
+	* - changed use of -D in favor of a defines.h
 	  - minor changes
-	* Makefile.am, configure.ac, src/Makefile.am, src/comm/Makefile.am,
-	  src/comm/comm/Makefile.am, src/comm/comm/ghostaddress.c,
-	  src/comm/comm/ghostaddress.h, src/comm/comm/ghostinfo.c,
-	  src/comm/comm/ghostinfo.h, src/comm/comm/gprocess.c,
-	  src/comm/comm/gprocess.h, src/comm/comm/gsocket.c,
-	  src/comm/comm/gsocket.h, src/comm/comm/gsocketprivate.h,
-	  src/comm/comm/gtcpserver.c, src/comm/comm/gtcpserver.h,
-	  src/comm/comm/gtcpsocket.c, src/comm/comm/gtcpsocket.h,
-	  src/comm/comm/gterminalprocess.c,
-	  src/comm/comm/gterminalprocess.h, src/comm/comm/protocol.c,
-	  src/comm/comm/protocol.h, src/gebr.pc.in, src/geoxml/Makefile.am,
-	  src/geoxml/gebr-geoxml.pc.in, src/geoxml/geoxml.h,
-	  src/geoxml/geoxml/Makefile.am, src/geoxml/geoxml/category.c,
-	  src/geoxml/geoxml/category.h, src/geoxml/geoxml/document.c,
-	  src/geoxml/geoxml/document.h, src/geoxml/geoxml/document_p.h,
-	  src/geoxml/geoxml/error.h, src/geoxml/geoxml/flow.c,
-	  src/geoxml/geoxml/flow.h, src/geoxml/geoxml/line.c,
-	  src/geoxml/geoxml/line.h, src/geoxml/geoxml/macros.h,
-	  src/geoxml/geoxml/parameter.c, src/geoxml/geoxml/parameter.h,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameter_group.h,
-	  src/geoxml/geoxml/parameter_p.h, src/geoxml/geoxml/parameters.c,
-	  src/geoxml/geoxml/parameters.h, src/geoxml/geoxml/parameters_p.h,
-	  src/geoxml/geoxml/program.c, src/geoxml/geoxml/program.h,
-	  src/geoxml/geoxml/program_p.h,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/program_parameter.h,
-	  src/geoxml/geoxml/project.c, src/geoxml/geoxml/project.h,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/sequence.h,
-	  src/geoxml/geoxml/types.h, src/geoxml/geoxml/value_sequence.c,
-	  src/geoxml/geoxml/value_sequence.h, src/geoxml/geoxml/xml.c,
-	  src/geoxml/geoxml/xml.h, src/gui/Makefile.am,
-	  src/gui/gebr-gui.pc.in, src/gui/gui/Makefile.am,
-	  src/gui/gui/about.c, src/gui/gui/about.h,
-	  src/gui/gui/gtkfileentry.c, src/gui/gui/gtkfileentry.h,
-	  src/gui/gui/pixmaps.c, src/gui/gui/pixmaps.h,
-	  src/gui/gui/support.h, src/gui/gui/utils.c, src/gui/gui/utils.h,
-	  src/gui/pixmaps/Makefile.am, src/libgebr.c, src/misc/Makefile.am,
-	  src/misc/gebr-misc.pc.in, src/misc/misc/Makefile.am,
-	  src/misc/misc/date.c, src/misc/misc/date.h, src/misc/misc/log.c,
-	  src/misc/misc/log.h, src/misc/misc/support.h,
-	  src/misc/misc/utils.c, src/misc/misc/utils.h: - fix header
-	  encoding problems and copyright
+	* - fix header encoding problems and copyright
 	  - moved date, tooltip and confirm_action_dialog to libgebr
 	  - added g_simple_locale_to_utf8 to libgebr
 	  - improved set_tooltip
-	* src/gui/gui/utils.c, src/gui/gui/utils.h: add support for user
-	  data in popup callback
-	* src/gui/gui/utils.c, src/gui/gui/utils.h: added
-	  gtk_widget_set_popup_callback
-	* src/gui/gui/gtkfileentry.c: ask for overwrite confirmation on
-	  GtkFileEntry
+	* add support for user data in popup callback
+	* added gtk_widget_set_popup_callback
+	* ask for overwrite confirmation on GtkFileEntry
 
 2008-01-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/program_parameter.c: fix bug in
-	  geoxml_program_parameter_set_value for flag parameters
-	* src/geoxml/geoxml/sequence.c: - fixed bug in
-	  geoxml_sequence_move_down
+	* fix bug in geoxml_program_parameter_set_value for flag parameters
+	* - fixed bug in geoxml_sequence_move_down
 	  - minor cleanups
-	* src/gui/gui/utils.c: improved popup selection handling
-	* src/gui/gui/utils.c, src/gui/gui/utils.h: decent popup menu
-	  support for GtkTreeView
-	* src/gui/gui/utils.c: fixed last commit
-	* src/gui/gui/utils.c, src/gui/gui/utils.h:
-	  gtk_list_store_can_move_{up,down}
-	* src/gui/gui/utils.c, src/gui/gui/utils.h:
-	  gtk_list_store_move_{up,down}
-	* src/comm/comm/gterminalprocess.c,
-	  src/comm/comm/gterminalprocess.h: fixed child watch in
-	  GTerminalProcess
-	* src/comm/comm.h: fix include deletion
-	* src/comm/comm/Makefile.am, src/comm/comm/gprocess.c,
-	  src/comm/comm/gprocess.h, src/comm/comm/gterminalprocess.c,
-	  src/comm/comm/gterminalprocess.h, src/comm/comm/ssh.c,
-	  src/comm/comm/ssh.h: added GTerminalProcess to handle process
-	  which communicate via terminal, like SSH
+	* improved popup selection handling
+	* decent popup menu support for GtkTreeView
+	* fixed last commit
+	* gtk_list_store_can_move_{up,down}
+	* gtk_list_store_move_{up,down}
+	* fixed child watch in GTerminalProcess
+	* fix include deletion
+	* added GTerminalProcess to handle process which communicate via
+	  terminal, like SSH
 
 2008-01-05  Ricardo Biloti <biloti@gmail.com>
 
-	* debian/control: Fix control
-	* configure.ac, debian/changelog.in: Fix changelogs
+	* Fix control
+	* Fix changelogs
 
 2007-12-13  Ricardo Biloti <biloti@gmail.com>
 
-	* src/comm/comm/gprocess.c, src/geoxml/geoxml/document.c: tooltips
-	  fixed and some other minor bugs
+	* tooltips fixed and some other minor bugs
 
 2007-12-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/geoxml/geoxml/document.c: fixed use of version define in
-	  geoxml
+	* fixed use of version define in geoxml
 
 2007-12-13  Ricardo Biloti <biloti@gmail.com>
 
-	* configure.ac, src/geoxml/geoxml/Makefile.am,
-	  src/geoxml/geoxml/document.c, src/geoxml/geoxml/flow.c,
-	  src/geoxml/geoxml/line.c, src/geoxml/geoxml/project.c: DTD
-	  versions fixed
+	* DTD versions fixed
 
 2007-12-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* Makefile.am, configure.ac, debian/shlibs.local.ex,
-	  rpm/libgebr.fedora.spec.in, rpm/libgebr.mandriva.spec.in,
-	  rpm/libgebr.opensuse.spec.in, src/Makefile.am, src/comm,
-	  src/comm/Makefile.am, src/comm/comm, src/comm/comm.h,
-	  src/comm/comm/Makefile.am, src/comm/comm/ghostaddress.c,
-	  src/comm/comm/ghostaddress.h, src/comm/comm/ghostinfo.c,
-	  src/comm/comm/ghostinfo.h, src/comm/comm/gprocess.c,
-	  src/comm/comm/gprocess.h, src/comm/comm/gsocket.c,
-	  src/comm/comm/gsocket.h, src/comm/comm/gsocketprivate.h,
-	  src/comm/comm/gtcpserver.c, src/comm/comm/gtcpserver.h,
-	  src/comm/comm/gtcpsocket.c, src/comm/comm/gtcpsocket.h,
-	  src/comm/comm/gtcpsocketprivate.h, src/comm/comm/protocol.c,
-	  src/comm/comm/protocol.h, src/comm/comm/ssh.c,
-	  src/comm/comm/ssh.h, src/comm/gebr-comm.pc.in, src/gebr.pc.in,
-	  src/geoxml/Makefile.am, src/geoxml/data/Makefile.am,
-	  src/geoxml/data/flow-0.1.1.dtd, src/geoxml/data/flow-0.2.0.dtd,
-	  src/geoxml/data/line-0.2.0.dtd,
-	  src/geoxml/data/project-0.2.0.dtd, src/geoxml/doc/Makefile.am,
-	  src/geoxml/doc/libgeoxml.cfg, src/geoxml/gebr-geoxml.pc.in,
-	  src/geoxml/geoxml.h, src/geoxml/geoxml/Makefile.am,
-	  src/geoxml/geoxml/category.c, src/geoxml/geoxml/category.h,
-	  src/geoxml/geoxml/document.c, src/geoxml/geoxml/document.h,
-	  src/geoxml/geoxml/document_p.h, src/geoxml/geoxml/error.h,
-	  src/geoxml/geoxml/flow.c, src/geoxml/geoxml/flow.h,
-	  src/geoxml/geoxml/line.c, src/geoxml/geoxml/line.h,
-	  src/geoxml/geoxml/macros.h, src/geoxml/geoxml/parameter.c,
-	  src/geoxml/geoxml/parameter.h,
-	  src/geoxml/geoxml/parameter_group.c,
-	  src/geoxml/geoxml/parameter_group.h,
-	  src/geoxml/geoxml/parameter_p.h, src/geoxml/geoxml/parameters.c,
-	  src/geoxml/geoxml/parameters.h, src/geoxml/geoxml/parameters_p.h,
-	  src/geoxml/geoxml/program.c, src/geoxml/geoxml/program.h,
-	  src/geoxml/geoxml/program_p.h,
-	  src/geoxml/geoxml/program_parameter.c,
-	  src/geoxml/geoxml/program_parameter.h,
-	  src/geoxml/geoxml/project.c, src/geoxml/geoxml/project.h,
-	  src/geoxml/geoxml/sequence.c, src/geoxml/geoxml/sequence.h,
-	  src/geoxml/geoxml/sequence_p.h, src/geoxml/geoxml/types.h,
-	  src/geoxml/geoxml/value_sequence.c,
-	  src/geoxml/geoxml/value_sequence.h, src/geoxml/geoxml/xml.c,
-	  src/geoxml/geoxml/xml.h, src/geoxml/test/Makefile.am,
-	  src/geoxml/test/test.c, src/geoxml/validate/Makefile.am,
-	  src/geoxml/validate/validate.c, src/gui, src/gui/Makefile.am,
-	  src/gui/gebr-gui.pc.in, src/gui/gui, src/gui/gui.h,
-	  src/gui/gui/Makefile.am, src/gui/gui/about.c,
-	  src/gui/gui/about.h, src/gui/gui/gtkfileentry.c,
-	  src/gui/gui/gtkfileentry.h, src/gui/gui/pixmaps.c,
-	  src/gui/gui/pixmaps.h, src/gui/gui/support.h,
-	  src/gui/gui/utils.c, src/gui/gui/utils.h, src/gui/pixmaps,
-	  src/gui/pixmaps/Makefile.am, src/gui/pixmaps/gebr-icon-16x16.png,
-	  src/gui/pixmaps/gebr-icon-32x32.png,
-	  src/gui/pixmaps/gebr-icon-64x64.png,
-	  src/gui/pixmaps/gebr-logo.png, src/libgebr.h,
-	  src/misc/Makefile.am, src/misc/gebr-misc.pc.in, src/misc/misc.h,
-	  src/misc/misc/Makefile.am, src/misc/misc/date.c,
-	  src/misc/misc/date.h, src/misc/misc/ghostaddress.c,
-	  src/misc/misc/ghostaddress.h, src/misc/misc/ghostinfo.c,
-	  src/misc/misc/ghostinfo.h, src/misc/misc/gprocess.c,
-	  src/misc/misc/gprocess.h, src/misc/misc/gsocket.c,
-	  src/misc/misc/gsocket.h, src/misc/misc/gsocketprivate.h,
-	  src/misc/misc/gtcpserver.c, src/misc/misc/gtcpserver.h,
-	  src/misc/misc/gtcpsocket.c, src/misc/misc/gtcpsocket.h,
-	  src/misc/misc/gtcpsocketprivate.h, src/misc/misc/log.c,
-	  src/misc/misc/log.h, src/misc/misc/protocol.c,
-	  src/misc/misc/protocol.h, src/misc/misc/ssh.c,
-	  src/misc/misc/ssh.h, src/misc/misc/utils.c,
-	  src/misc/misc/utils.h, src/ui: - merged branch
-	  code-reorganization into trunk
+	* - merged branch code-reorganization into trunk
 	  - fixed syntax error on flow DTD
 
 2007-11-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* .: fixed trunk subdir tree
+	* fixed trunk subdir tree
 	* recovered trunk
 
 2007-11-24  Braulio Barros de Oliveira <brauliobo@gmail.com>

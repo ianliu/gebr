@@ -1,47 +1,124 @@
+2009-03-21  Ricardo Biloti <biloti@gmail.com>
+
+	* Release 0.9.11
+
+2009-03-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* one more trick
+	* fix sort by modified date
+	* sort by name and date in debr
+
+2009-03-21  Ricardo Biloti <biloti@gmail.com>
+
+	* top/bottom mess in enumoptionedit
+
+2009-03-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - validate scrolling fixed
+	  - refactored selection in gebr
+	* do not use debr.para for parameter_dialog_setup_ui
+	* no manual editing and value is hidden for list of enum value
+	  parameter
+	* fix errors in last commit
+	* use libgebr_gtk_tree_view_scroll_to_iter_cell
+	* silly bug! debr parameters in a group were writing to value
+	  instead of default value
+	* fix filename tag bugs
+	* multiselection support for menus, with actions
+	  validate/close/delete working
+	* - close/clear actions for validate (debr)
+	  - functions to handle multiple selection in libgebr_gui
+
+2009-03-21  Ricardo Biloti <biloti@gmail.com>
+
+	* validate add to popup menu too
+	* beautify DeBR's validate log
+
+2009-03-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* initial validation support for debr
+
+2009-03-20  Ricardo Biloti <biloti@gmail.com>
+
+	* fix suggestion tag
+
+2009-03-13  Ricardo Biloti <biloti@gmail.com>
+
+	* copy/paste added to toolbar
+	* debian control files updated
+
+2009-03-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - preliminary copy/paste support for programs
+	  - more robust selection error handling in programs
+
+2009-03-12  Ricardo Biloti <biloti@gmail.com>
+
+	* fix url-view regression
+
+2009-03-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* first "trashy" copy/paste support for parameter
+
+2009-03-11  Ricardo Biloti <biloti@gmail.com>
+
+	* url button in program's detail view
+	* decrease unsaved counter whenever an unsaved menu is removed from
+	  the list
+
+2009-03-04  Ricardo Biloti <biloti@gmail.com>
+
+	* debr saves created/modified dates
+	* tooltip and description in about fixed
+
+2009-03-02  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - removed changelog.in from debian packages
+	  - fixed VERSION in configure.ac's
+	* debr: select iter on group drag n' drop
+	* debr: fix new parameter on group colapse
+
+2009-01-29  Ricardo Biloti <biloti@gmail.com>
+
+	* ChangeLogs updated
+
 2009-01-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/parameter.c: - do not allow list rename for enums
+	* - do not allow list rename for enums
 	  - code cleanups
-	* src/parameter.c: fixed parameter_required_toggled
-	* src/parameter.c: - reconfigure parameter widget if required
-	  changed (needed for enum parameter)
+	* fixed parameter_required_toggled
+	* - reconfigure parameter widget if required changed (needed for
+	  enum parameter)
 	  - really fix the problem with list parameter (now for all types)
-	* src/menu.c: - valuesequenceedit refactored
+	* - valuesequenceedit refactored
 	  - fix parameter_widget's on_edit_list_toggled
 
 2009-01-28  Ricardo Biloti <biloti@gmail.com>
 
-	* src/menu.c, src/menu.h, src/parameter.c, src/program.c,
-	  src/program.h: - more details to DeBR a la GeBR
+	* - more details to DeBR a la GeBR
 	  - space highlight at end of parameters
 
 2009-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/callbacks.c, src/enumoptionedit.c, src/menu.c, src/program.c,
-	  src/program.h: - fix drag n' drop on gtksequenceedit and
-	  devivates
+	* - fix drag n' drop on gtksequenceedit and devivates
 	  - fix save on exit dialog on debr
-	* src/callbacks.c, src/interface.c, src/menu.c, src/menu.h,
-	  src/parameter.c, src/preferences.c, src/program.c: ¡commit 1000!
-	  several UI tweaks
+	* ¡commit 1000! several UI tweaks
 
 2009-01-28  Ricardo Biloti <biloti@gmail.com>
 
-	* src/menu.c, src/menu.h: more details to menu view
+	* more details to menu view
 
 2009-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/interface.c, src/parameter.c: added labels/tooltips to debr's
-	  actions
+	* added labels/tooltips to debr's actions
 
 2009-01-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/help.c, src/parameter.c: - fix geoxmlparametergroup
+	* - fix geoxmlparametergroup
 	  - fix move into a empty group (debr)
 	  - fix help edit in debr: a empty file can be a file with a return
 	  char. (length 1)
-	* src/parameter.c: - various bugfixes to handle reference
-	  parameters
+	* - various bugfixes to handle reference parameters
 	  - geoxml_parameter_get_type resolve references
 	  - a lot of fixes to geoxmlsequence functions
 	  - rewritten dran n' drop API
@@ -49,245 +126,170 @@
 
 2009-01-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/parameter.c, src/program.c: fix use of
-	  gtk_tree_view_select_sibling
-	* src/parameter.c: - initial buggy code to support drag n' drop
-	  from/to/inside a group (debr)
-	* src/parameter.c: fix creation of the first parameter in a group
-	  (debr)
+	* fix use of gtk_tree_view_select_sibling
+	* - initial buggy code to support drag n' drop from/to/inside a
+	  group (debr)
+	* fix creation of the first parameter in a group (debr)
 
 2009-01-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/parameter.c: fixed parameter group creation and deletion
-	  (debr)
-	* src/enumoptionedit.c: - fix __geoxml_sequence_move_before with
-	  position NULL
+	* fixed parameter group creation and deletion (debr)
+	* - fix __geoxml_sequence_move_before with position NULL
 	  - fixes to top/bottom at gtksequenceedit and derivatives
 
 2009-01-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/parametergroup.c: - debr: if we don't have any parameter in
-	  the group we cannot instaciate
+	* - debr: if we don't have any parameter in the group we cannot
+	  instaciate
 	  - gebr: update flow title on flow_browse_load (fix bug of loading
 	  a revision with diferent title)
 
 2009-01-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/parameter.c: keyword preserved on parameter type change at
-	  debr
-	* src/Makefile.am, src/enumoptionedit.c,
-	  src/parameteringroupedit.c, src/parameteringroupedit.h: support
-	  for moving with drag n' drop on gktsequenceedit
+	* keyword preserved on parameter type change at debr
+	* support for moving with drag n' drop on gktsequenceedit
 
 2009-01-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* packages/Makefile.am, packages/rpm/debr.fedora.spec.in,
-	  packages/rpm/debr.mandriva.spec.in,
-	  packages/rpm/debr.opensuse.spec.in: fixes to rpm creation
+	* fixes to rpm creation
 
 2009-01-15  Ricardo Biloti <biloti@gmail.com>
 
-	* ChangeLog: preparation for release 0.9.7
+	* preparation for release 0.9.7
 
 2009-01-14  Ricardo Biloti <biloti@gmail.com>
 
-	* src/interface.c: fix string enconde
+	* fix string enconde
 
 2009-01-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/Makefile.am, src/enumoptionedit.c, src/parameter.c,
-	  src/programparameter.c, src/programparameter.h: - updated TODO
+	* - updated TODO
 	  - fixed enum option add and get functions
 	  - fixed program_parameter documentation
 	  - fixed bug in type change on selection (debr)
 
 2009-01-12  Ricardo Biloti <biloti@gmail.com>
 
-	* INSTALL, configure.ac, data/Makefile.am, src/debr.h,
-	  src/defines.h.in, src/help.c, src/interface.c,
-	  src/parameteringroupedit.c, src/parameteringroupedit.h,
-	  src/program.c: - Copyright messages updated
+	* - Copyright messages updated
 	  - accents suppressed
 
 2009-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* configure.ac, src/debr.c: fixed debug flag usage
+	* fixed debug flag usage
 
 2009-01-12  Ricardo Biloti <biloti@gmail.com>
 
-	* Makefile.am: Copyright messages updated
-	* mkinstalldirs: small fix to previous mega sed
+	* Copyright messages updated
+	* small fix to previous mega sed
 
 2009-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/callbacks.c, src/parameter.c, src/program.c: select next or
-	  previous iter after delete actions
+	* select next or previous iter after delete actions
 
 2009-01-12  Ricardo Biloti <biloti@gmail.com>
 
-	* depcomp, install-sh, missing: delete automatically generated
-	  files
-	* config.guess, config.sub, packages/rpm/debr.fedora.spec,
-	  packages/rpm/debr.mandriva.spec, packages/rpm/debr.opensuse.spec:
-	  delete automatically generated files
-	* packages/Makefile.am, packages/debian/control,
-	  packages/rpm/debr.fedora.spec, packages/rpm/debr.fedora.spec.in,
-	  packages/rpm/debr.mandriva.spec,
-	  packages/rpm/debr.mandriva.spec.in,
-	  packages/rpm/debr.opensuse.spec,
-	  packages/rpm/debr.opensuse.spec.in, src/Makefile.am,
-	  src/callbacks.c, src/callbacks.h, src/debr.c, src/debr.h,
-	  src/enumoptionedit.c, src/enumoptionedit.h, src/help.c,
-	  src/help.h, src/interface.h, src/main.c, src/menu.c, src/menu.h,
-	  src/parameter.c, src/parameter.h, src/parametergroup.c,
-	  src/parametergroup.h, src/preferences.c, src/preferences.h,
-	  src/program.h, src/programparameter.c, src/programparameter.h,
-	  src/support.c, src/support.h: - Copyright messages updated
+	* delete automatically generated files
+	* delete automatically generated files
+	* - Copyright messages updated
 	  - accents suppressed
 
 2009-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* packages/debian/changelog: removed debian/changelog from debr
+	* removed debian/changelog from debr
 
 2009-01-12  Ricardo Biloti <biloti@gmail.com>
 
-	* configure.ac, packages/debian/changelog,
-	  packages/debian/changelog.in: package version fixed
+	* package version fixed
 
 2009-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* configure.ac, debian, packages/debian/rules,
-	  packages/rpm/debr.fedora.spec.in,
-	  packages/rpm/debr.mandriva.spec.in,
-	  packages/rpm/debr.opensuse.spec.in: use --disable-debug to build
-	  packages
-	* debian, rpm: removid debian and rpm dirs from debr
-	* debian/a, rpm/a: fixing problem with git-svn II
-	* debian/a, rpm/a: fixing problem with git-svn
-	* Makefile.am, configure.ac, debian/README.Debian,
-	  debian/changelog.in, debian/compat, debian/control,
-	  debian/copyright, debian/dirs, debian/docs, debian/install,
-	  debian/postinst.ex, debian/postrm.ex, debian/preinst.ex,
-	  debian/prerm.ex, debian/rules, packages, packages/Makefile.am,
-	  packages/debian, packages/debian/README.Debian,
-	  packages/debian/changelog, packages/debian/changelog.in,
-	  packages/debian/compat, packages/debian/control,
-	  packages/debian/copyright, packages/debian/dirs,
-	  packages/debian/docs, packages/debian/install,
-	  packages/debian/postinst.ex, packages/debian/postrm.ex,
-	  packages/debian/preinst.ex, packages/debian/prerm.ex,
-	  packages/debian/rules, packages/rpm,
-	  packages/rpm/debr.fedora.spec, packages/rpm/debr.fedora.spec.in,
-	  packages/rpm/debr.mandriva.spec,
-	  packages/rpm/debr.mandriva.spec.in,
-	  packages/rpm/debr.opensuse.spec,
-	  packages/rpm/debr.opensuse.spec.in, rpm/debr.fedora.spec.in,
-	  rpm/debr.mandriva.spec.in, rpm/debr.opensuse.spec.in: packages
-	  folder for debr
+	* use --disable-debug to build packages
+	* removid debian and rpm dirs from debr
+	* fixing problem with git-svn II
+	* fixing problem with git-svn
+	* packages folder for debr
 
 2009-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/callbacks.c, src/callbacks.h, src/debr.h, src/interface.c,
-	  src/parameter.c, src/parameter.h: popup menu for parameter type
-	  change in debr
+	* popup menu for parameter type change in debr
 
 2009-01-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/callbacks.c, src/callbacks.h, src/debr.h, src/interface.c,
-	  src/menu.c, src/parameter.c, src/program.c: debr gained
-	  navigation bar
-	* src/debr.c, src/debr.h, src/interface.c, src/menu.c,
-	  src/parameter.c, src/program.c: converted debr to gtkactiongroup
-	  usage
+	* debr gained navigation bar
+	* converted debr to gtkactiongroup usage
 
 2008-12-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/parameter.c, src/program.c: - move by drag n' drop refactored
+	* - move by drag n' drop refactored
 	  - input/ouput items in flow edition view
 
 2008-12-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/parametergroup.c: final fixes to group impl. in debr
-	* src/parameter.c, src/parametergroup.c: fixes to group
-	  implementation
-	* src/parametergroup.c, src/parametergroup.h: - some work for group
-	  implementation on debr
+	* final fixes to group impl. in debr
+	* fixes to group implementation
+	* - some work for group implementation on debr
 	  - updated TODO
 
 2008-12-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/menu.c, src/program.c: - add some scrolled windows
+	* - add some scrolled windows
 	  - minor fixes
-	* src/parameter.c: fix parameter_{top,bottom}
+	* fix parameter_{top,bottom}
 
 2008-12-18  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/callbacks.c, src/callbacks.h, src/debr.h, src/interface.c,
-	  src/parameter.c, src/parameter.h, src/program.c, src/program.h: -
-	  drag n' drop for debr
+	* - drag n' drop for debr
 	  - top/bottom actions for debr
 	  - duplicate parameter for debr :P
 
 2008-12-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/debr.c, src/debr.h: ported gengetopt in gebr to gkeyfile,
-	  keeping backwards compatibility
+	* ported gengetopt in gebr to gkeyfile, keeping backwards
+	  compatibility
 
 2008-12-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/callbacks.c, src/parametergroup.c,
-	  src/parameteringroupedit.c: add proper extension if needed on
-	  save actions
+	* add proper extension if needed on save actions
 
 2008-11-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/parameter.c, src/parametergroup.c, src/parametergroup.h,
-	  src/parameteringroupedit.c: a bunch of fixes to parameter group
-	  in debr implementation
-	* src/Makefile.am, src/callbacks.c, src/callbacks.h, src/debr.c,
-	  src/debr.h, src/interface.c, src/menu.c, src/menu.h,
-	  src/parameter.c, src/parameter.h, src/parametergroup.c,
-	  src/parametergroup.h, src/parameteringroupedit.c,
-	  src/parameteringroupedit.h: - tons of code for group
-	  implementation in debr (not yet working :)
+	* a bunch of fixes to parameter group in debr implementation
+	* - tons of code for group implementation in debr (not yet working
+	  :)
 	  - save all button in debr
 
 2008-11-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/interface.c: fix libgebr's libtool
+	* fix libgebr's libtool
 
 2008-11-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/main.c, src/parameter.c: to satisfy git-svn
+	* to satisfy git-svn
 
 2008-11-27  Ricardo Biloti <biloti@gmail.com>
 
-	* src/menu.c, src/parameter.c: - minor fix against possible gtk bug
+	* - minor fix against possible gtk bug
 	  - popup parameter edit dialog as soon as a new parameter is
 	  created
 
 2008-11-26  Ricardo Biloti <biloti@gmail.com>
 
-	* src/callbacks.c: minor bug concerning delete of unsaved menus
-	* src/parameter.c, src/parameter.h, src/program.c: parameters
-	  notebook with keyword column
-	* src/interface.c: quit menu entry for gebr and configure rename to
-	  actions
+	* minor bug concerning delete of unsaved menus
+	* parameters notebook with keyword column
+	* quit menu entry for gebr and configure rename to actions
 
 2008-11-25  Ricardo Biloti <biloti@gmail.com>
 
-	* configure.ac: version updated to 0.9.6-pre
+	* version updated to 0.9.6-pre
 
 2008-11-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/parameter.c: - fixed geoxml's new parameter and program
-	  creation
+	* - fixed geoxml's new parameter and program creation
 	  - minor fixes to gebr and debr creation
 
 2008-11-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/interface.c, src/parameter.c, src/parameter.h: the saga of
-	  list parameters ended!
+	* the saga of list parameters ended!
 	  - changed DTD to make value and default values independets
 	  - refactoring of GeoXmlProgramParameter functions
 	  - general refacte on parameter_widget function:
@@ -299,31 +301,12 @@
 
 2008-11-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/menu.c: - initial working debr version
+	* - initial working debr version
 	  - fixes in geoxml
 	  - removal of gebrme
 
 2008-11-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* src/interface.c: last commit with git commit's -a option
-	* ., AUTHORS, COPYING, ChangeLog, INSTALL, Makefile.am, NEWS,
-	  README, THANKS, config.guess, config.sub, configure.ac, data,
-	  data/Makefile.am, data/gebr.css, data/help-template.html.in,
-	  debian, debian/README.Debian, debian/changelog.in, debian/compat,
-	  debian/control, debian/copyright, debian/dirs, debian/docs,
-	  debian/install, debian/postinst.ex, debian/postrm.ex,
-	  debian/preinst.ex, debian/prerm.ex, debian/rules, depcomp,
-	  install-sh, missing, mkinstalldirs, po, po/ChangeLog,
-	  po/Makefile, po/Makefile.in, po/Makefile.in.in, po/POTFILES,
-	  po/POTFILES.in, rpm, rpm/debr.fedora.spec.in,
-	  rpm/debr.mandriva.spec.in, rpm/debr.opensuse.spec.in, src,
-	  src/Makefile.am, src/callbacks.c, src/callbacks.h, src/debr.c,
-	  src/debr.h, src/defines.h.in, src/enumoptionedit.c,
-	  src/enumoptionedit.h, src/help.c, src/help.h, src/interface.c,
-	  src/interface.h, src/main.c, src/menu.c, src/menu.h,
-	  src/parameter.c, src/parameter.h, src/parametergroup.c,
-	  src/parametergroup.h, src/preferences.c, src/preferences.h,
-	  src/program.c, src/program.h, src/programparameter.c,
-	  src/programparameter.h, src/support.c, src/support.h: merged
-	  flow0.3 into trunk
+	* last commit with git commit's -a option
+	* merged flow0.3 into trunk
 
