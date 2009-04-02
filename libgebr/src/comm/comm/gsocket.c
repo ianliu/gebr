@@ -154,7 +154,7 @@ __g_socket_write_queue(GSocket * socket)
 		return;
 	/* write queud bytes */
 	if (socket->queue_write_bytes->len) {
-		size_t	written_bytes;
+		ssize_t	written_bytes;
 
 		_g_socket_enable_write_watch(socket);
 
