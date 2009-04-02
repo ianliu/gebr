@@ -423,7 +423,7 @@ comm_ssh_read(GTerminalProcess * process, struct comm_server * comm_server)
 
 	output = g_terminal_process_read_string_all(process);
 	comm_ssh_parse_output(process, comm_server, output);
-
+puts("!!!!!!!!!!!!!!!!!");
 	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_read: %s", output->str);
 
 	g_string_free(output, TRUE);
@@ -571,19 +571,19 @@ static void
 comm_server_read(GStreamSocket * stream_socket, struct comm_server * comm_server)
 {
 	GString *	data;
-	//gchar *		data_stripped;
+	gchar *		data_stripped;
 
 	data = g_socket_read_string_all(G_SOCKET(stream_socket));
 	protocol_receive_data(comm_server->protocol, data);
 	comm_server->ops->parse_messages(comm_server, comm_server->user_data);
 
 	/* we don't want a giant output */
-	//data_stripped = g_strndup(data->str, 500);
+	data_stripped = g_strndup(data->str, 50);
 	comm_server_log_message(comm_server, LOG_DEBUG, "Read from server '%s': %s",
-		comm_server->address->str, data->str);
+		comm_server->address->str, data_stripped);
 
 	g_string_free(data, TRUE);
-	//g_free(data_stripped);
+	g_free(data_stripped);
 }
 
 static void

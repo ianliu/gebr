@@ -147,6 +147,8 @@ server_free(void)
 	/* client */
 	g_list_foreach(gebrd.clients, (GFunc)client_free, NULL);
 	g_list_free(gebrd.clients);
+
+	protocol_destroy();
 }
 
 void

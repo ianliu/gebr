@@ -117,10 +117,10 @@ g_socket_read_all(GSocket *);
 GString *
 g_socket_read_string_all(GSocket *);
 
-gsize
+void
 g_socket_write(GSocket *, GByteArray *);
 
-gsize
+void
 g_socket_write_string(GSocket *, GString *);
 
 G_END_DECLS

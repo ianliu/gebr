@@ -195,7 +195,7 @@ static GByteArray *
 __g_process_read(GIOChannel * io_channel, gsize max_size)
 {
 	guint8		buffer[max_size];
-	size_t		read_bytes;
+	ssize_t		read_bytes;
 	GByteArray *	byte_array;
 
 	read_bytes = read(g_io_channel_unix_get_fd(io_channel), buffer, max_size);
@@ -212,7 +212,7 @@ static GString *
 __g_process_read_string(GIOChannel * io_channel, gsize max_size)
 {
 	gchar		buffer[max_size+1];
-	size_t		read_bytes;
+	ssize_t		read_bytes;
 	GString *	string;
 
 	read_bytes = read(g_io_channel_unix_get_fd(io_channel), buffer, max_size);
@@ -451,7 +451,7 @@ g_process_read_stderr_string_all(GProcess * process)
 gsize
 g_process_write_stdin(GProcess * process, GByteArray * byte_array)
 {
-	size_t	written_bytes;
+	ssize_t	written_bytes;
 
 	written_bytes = write(g_io_channel_unix_get_fd(process->stdin_io_channel),
 		byte_array->data, byte_array->len);
@@ -465,7 +465,7 @@ gsize
 g_process_write_stdin_string(GProcess * process, GString * string)
 {
 	GByteArray	byte_array;
-	size_t		written_bytes;
+	ssize_t		written_bytes;
 
 	byte_array = (GByteArray) {
 		.data = (guint8*)string->str,

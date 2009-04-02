@@ -82,6 +82,28 @@ protocol_init(void)
 		.out_def = create_message_def("OUT", FALSE),
 		.fin_def = create_message_def("FIN", FALSE)
 	};
+
+	protocol_defs.hash_table = g_hash_table_new(g_str_hash, g_str_equal);
+	g_hash_table_insert(protocol_defs.hash_table, "RET", &protocol_defs.ret_def);
+	g_hash_table_insert(protocol_defs.hash_table, "ERR", &protocol_defs.err_def);
+	g_hash_table_insert(protocol_defs.hash_table, "INI", &protocol_defs.ini_def);
+	g_hash_table_insert(protocol_defs.hash_table, "QUT", &protocol_defs.qut_def);
+	g_hash_table_insert(protocol_defs.hash_table, "LST", &protocol_defs.lst_def);
+	g_hash_table_insert(protocol_defs.hash_table, "JOB", &protocol_defs.job_def);
+	g_hash_table_insert(protocol_defs.hash_table, "RUN", &protocol_defs.run_def);
+	g_hash_table_insert(protocol_defs.hash_table, "FLW", &protocol_defs.flw_def);
+	g_hash_table_insert(protocol_defs.hash_table, "CLR", &protocol_defs.clr_def);
+	g_hash_table_insert(protocol_defs.hash_table, "END", &protocol_defs.end_def);
+	g_hash_table_insert(protocol_defs.hash_table, "KIL", &protocol_defs.kil_def);
+	g_hash_table_insert(protocol_defs.hash_table, "OUT", &protocol_defs.out_def);
+	g_hash_table_insert(protocol_defs.hash_table, "FIN", &protocol_defs.fin_def);
+	
+}
+
+void
+protocol_destroy(void)
+{
+	g_hash_table_unref(protocol_defs.hash_table);
 }
 
 struct protocol *
@@ -121,9 +143,7 @@ protocol_receive_data(struct protocol * protocol, GString * data)
 	gint		n_tokens;
 
 	g_string_append(protocol->data, data->str);
-
-	/* minimum message size: 6 */
-	while (protocol->data->len >= 6) {
+	while (protocol->data->len) {
 		gsize		missing;
 
 		/* if so, this is a new message; otherwise, another part
@@ -133,12 +153,20 @@ protocol_receive_data(struct protocol * protocol, GString * data)
 			gint	erase_len;
 			gchar *	strtol_endptr;
 
+			/* minimum message size: 6 */
+			if (protocol->data->len < 6)
+				break;
+
 			splits = g_strsplit(protocol->data->str, " ", 3);
 			for (n_tokens = 0; splits[n_tokens] != NULL; n_tokens++);
 			if (n_tokens < 2)
 				goto err;
 
 			/* code */
+			if (g_hash_table_lookup(protocol_defs.hash_table, splits[0]) == NULL) {
+				g_string_assign(protocol->data, "");
+				goto err;
+			}
 			protocol->message->hash = g_str_hash(splits[0]);
 			/* argument size */
 			strtol_endptr = NULL;
@@ -199,9 +227,7 @@ protocol_send_data(struct protocol * protocol, GStreamSocket * stream_socket,
 		gchar *	param;
 
 		param = va_arg(ap, char *);
-		g_string_append_printf(data, "%zu|%s", strlen(param), param);
-		if (i != n_params)
-			g_string_append(data, " ");
+		g_string_append_printf(data, (i != n_params) ? "%zu|%s " : "%zu|%s", strlen(param), param);
 	}
 	va_end(ap);
 
@@ -231,7 +257,7 @@ protocol_split_new(GString * arguments, guint parts)
 	for (i = 1; i <= parts; ++i) {
 		gchar *		sep;
 		GString *	arg;
-		gssize		arg_size;
+		gsize		arg_size;
 
 		/* get the argument size */
 		if (sscanf(iarg, "%zu|", &arg_size) == EOF) {

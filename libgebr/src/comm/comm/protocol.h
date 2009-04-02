@@ -34,6 +34,8 @@ struct message_def {
 };
 
 struct protocol_defs {
+	GHashTable *		hash_table;
+
 	/* messages identifiers hashes */
 	struct message_def	ret_def;
 	struct message_def	ini_def;
@@ -81,6 +83,9 @@ message_free(struct message * message);
 
 void
 protocol_init(void);
+
+void
+protocol_destroy(void);
 
 struct protocol *
 protocol_new(void);

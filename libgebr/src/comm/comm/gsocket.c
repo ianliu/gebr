@@ -146,6 +146,27 @@ __g_socket_read(GIOChannel * source, GIOCondition condition, GSocket * socket)
 	return TRUE;
 }
 
+
+void
+__g_socket_write_queue(GSocket * socket)
+{
+	if (socket->state != G_SOCKET_STATE_CONNECTED)
+		return;
+	/* write queud bytes */
+	if (socket->queue_write_bytes->len) {
+		size_t	written_bytes;
+
+		_g_socket_enable_write_watch(socket);
+
+		written_bytes = send(_g_socket_get_fd(socket), socket->queue_write_bytes->data,
+			socket->queue_write_bytes->len > 1024 ? 1024 : socket->queue_write_bytes->len, 0);
+		if (written_bytes == -1)
+			return;
+
+		g_byte_array_remove_range(socket->queue_write_bytes, 0, written_bytes);
+	}
+}
+
 static gboolean
 __g_socket_write(GIOChannel * source, GIOCondition condition, GSocket * socket)
 {
@@ -180,7 +201,7 @@ __g_socket_write(GIOChannel * source, GIOCondition condition, GSocket * socket)
 		/* TODO: */
 		goto out;
 	}
-	if (!g_socket_bytes_available(socket)) {
+	if (socket->state != G_SOCKET_STATE_CONNECTED && !g_socket_bytes_available(socket)) {
 		GSocketClass *	class;
 
 		class = G_SOCKET_GET_CLASS(socket);
@@ -197,22 +218,8 @@ __g_socket_write(GIOChannel * source, GIOCondition condition, GSocket * socket)
 		goto out;
 	}
 
-	/* write queud bytes */
-	if (socket->queue_write_bytes->len) {
-		size_t	written_bytes;
+	__g_socket_write_queue(socket);
 
-		written_bytes = send(_g_socket_get_fd(socket),
-			socket->queue_write_bytes->data, socket->queue_write_bytes->len, 0);
-		if (written_bytes == -1)
-			goto out;
-
-		g_byte_array_remove_range(socket->queue_write_bytes, 0, written_bytes);
-		/* there is still bytes left */
-		if (socket->queue_write_bytes->len)
-			_g_socket_enable_write_watch(socket);
-	}
-
-	g_signal_emit(socket, object_signals[READY_WRITE], 0);
 out:	return FALSE;
 }
 
@@ -274,8 +281,6 @@ _g_socket_enable_read_watch(GSocket * socket)
 void
 _g_socket_enable_write_watch(GSocket * socket)
 {
-	if (socket->write_watch_id)
-		return;
 	socket->write_watch_id = g_io_add_watch(socket->io_channel, G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
 		(GIOFunc)__g_socket_write, socket);
 }
@@ -397,38 +402,24 @@ g_socket_read_string_all(GSocket * socket)
 	return g_socket_read_string(socket, g_socket_bytes_available(socket));
 }
 
-gsize
+void
 g_socket_write(GSocket * socket, GByteArray * byte_array)
 {
-	size_t	written_bytes;
-
-	_g_socket_enable_write_watch(socket);
-
-	if (socket->state == G_SOCKET_STATE_CONNECTED) {
-		written_bytes = send(_g_socket_get_fd(socket), byte_array->data, byte_array->len, 0);
-		if (written_bytes == -1)
-			return 0;
-	} else
-		written_bytes = 0;
-
-	if (written_bytes < byte_array->len)
-		g_byte_array_append(socket->queue_write_bytes,
-			byte_array->data + written_bytes, byte_array->len - written_bytes);
-
-	return written_bytes;
+	g_byte_array_append(socket->queue_write_bytes,
+		byte_array->data, byte_array->len);
+// 	__g_socket_write_queue(socket);
+_g_socket_enable_write_watch(socket);
 }
 
-gsize
+void
 g_socket_write_string(GSocket * socket, GString * string)
 {
 	GByteArray	byte_array;
-	size_t		written_bytes;
 
 	byte_array = (GByteArray) {
 		.data = (guint8*)string->str,
 		.len = string->len
 	};
-	written_bytes = g_socket_write(socket, &byte_array);
 
-	return written_bytes;
+	g_socket_write(socket, &byte_array);
 }

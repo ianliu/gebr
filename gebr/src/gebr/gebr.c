@@ -150,6 +150,7 @@ gebr_quit(void)
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
 		job_free(job);
 	}
+	protocol_destroy();
 
 	/*
 	 * Interface frees

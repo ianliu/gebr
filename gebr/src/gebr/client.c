@@ -157,9 +157,6 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 			}
 
 			protocol_split_free(arguments);
-		} else {
-			/* unknown message! */
-			goto err;
 		}
 
 		message_free(message);
@@ -167,7 +164,4 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 	}
 
 	return TRUE;
-
-err:	message_free(message);
-	return FALSE;
 }

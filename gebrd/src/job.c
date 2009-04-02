@@ -127,44 +127,52 @@ job_add_program_parameters(struct job * job, GeoXmlProgram * program)
 }
 
 static void
-job_send_clients_output(struct job * job, GString * _output)
+job_send_clients_output(struct job * job, GString * output)
 {
 	GList *		link;
-	gchar *		output;
-	gboolean	allocated;
 
 	/* FIXME: remove and find the real problem */
 	if (!job->jid->len)
 		return;
 
-	/* ensure UTF-8 encoding */
-	if (g_utf8_validate(_output->str, -1, NULL) == FALSE) {
-		/* TODO: what else should be tried? */
-		output = g_simple_locale_to_utf8(_output->str);
-		if (output == NULL) {
-			g_free(output);
-			gebrd_message(LOG_ERROR, _("Job '%s' sent output not in UTF-8."), job->title->str);
-			return;
-		}
-		allocated = TRUE;
-	} else {
-		output = _output->str;
-		allocated = FALSE;
-	}
-
 	link = g_list_first(gebrd.clients);
 	while (link != NULL) {
-		struct client * client;
+		struct client *	client;
 
 		client = (struct client *)link->data;
 		protocol_send_data(client->protocol, client->stream_socket,
-			protocol_defs.out_def, 2, job->jid->str, output);
+			protocol_defs.out_def, 2, job->jid->str, output->str);
 
 		link = g_list_next(link);
 	}
+}
 
-	if (allocated == TRUE)
-		g_free(output);
+static void
+job_process_add_output(struct job * job, GString * destination, GString * output)
+{
+	GString *	final_output;
+
+	final_output = g_string_new(NULL);
+	/* ensure UTF-8 encoding */
+	if (g_utf8_validate(output->str, -1, NULL) == FALSE) {
+		gchar *	converted;
+
+		/* TODO: what else should be tried? */
+		converted = g_simple_locale_to_utf8(output->str);
+		if (converted == NULL) {
+			g_string_assign(final_output, converted);
+			gebrd_message(LOG_ERROR, _("Job '%s' sent output not in UTF-8."), job->title->str);
+		} else {
+			g_string_assign(final_output, converted);
+			g_free(converted);
+		}
+	} else
+		g_string_assign(final_output, output->str);
+
+	g_string_append(destination, final_output->str);
+	job_send_clients_output(job, final_output);
+
+	g_string_free(final_output, TRUE);
 }
 
 static void
@@ -173,9 +181,7 @@ job_process_read_stdout(GProcess * process, struct job * job)
 	GString *	stdout;
 
 	stdout = g_process_read_stdout_string_all(process);
-
-	g_string_append(job->output, stdout->str);
-	job_send_clients_output(job, stdout);
+	job_process_add_output(job, job->output, stdout);
 
 	g_string_free(stdout, TRUE);
 }
@@ -186,9 +192,7 @@ job_process_read_stderr(GProcess * process, struct job * job)
 	GString *	stderr;
 
 	stderr = g_process_read_stderr_string_all(process);
-
-	g_string_append(job->output, stderr->str);
-	job_send_clients_output(job, stderr);
+	job_process_add_output(job, job->output, stderr);
 
 	g_string_free(stderr, TRUE);
 }
