@@ -281,16 +281,16 @@ project_line_load(void)
 
 	gboolean		is_line;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("Neither project nor line selected"));
-		return;
-	}
-
 	/* Frees any previous project, line and flow loaded */
 	project_line_free();
 	flow_free();
 	line_load_flows();
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
+		project_line_info_update();
+		return;
+	}
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
 	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
@@ -381,7 +381,7 @@ project_line_info_update(void)
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.author), "");
 
 		g_object_set(gebr.ui_project_line->info.help, "sensitive", FALSE, NULL);
-		
+
 		navigation_bar_update();
 		return;
 	}

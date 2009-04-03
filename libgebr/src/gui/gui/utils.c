@@ -395,7 +395,7 @@ gtk_tree_view_select_sibling(GtkTreeView * tree_view)
 	if (gtk_tree_selection_get_mode(selection) != GTK_SELECTION_MULTIPLE) {
 		if (!gtk_tree_selection_get_selected(selection, NULL, &iter)) {
 			if (!gtk_tree_model_get_iter_first(model, &iter))
-				return;
+				goto none;
 		} else {
 			GtkTreeIter	next_iter;
 
@@ -410,16 +410,21 @@ gtk_tree_view_select_sibling(GtkTreeView * tree_view)
 				if (gtk_tree_path_prev(path)) {
 					gtk_tree_selection_select_path(selection, path);
 					g_signal_emit_by_name(tree_view, "cursor-changed");
-				}
+				} else
+					 goto none;
+
 				gtk_tree_path_free(path);
 			}
 
 			return;
 		}
 	} else if (!gtk_tree_model_get_iter_first(model, &iter))
-		return;
+		goto none;
 
 	gtk_tree_selection_select_iter(selection, &iter);
+	g_signal_emit_by_name(tree_view, "cursor-changed");
+
+none:	gtk_tree_selection_unselect_all(selection);
 	g_signal_emit_by_name(tree_view, "cursor-changed");
 }
 
