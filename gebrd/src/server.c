@@ -22,6 +22,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <netdb.h>
+#include <time.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
@@ -87,6 +88,7 @@ server_init(void)
 
 	/* protocol */
 	protocol_init();
+	g_random_set_seed((guint32)time(NULL));
 
 	/* init the server socket and listen */
 	socket_address = g_socket_address_ipv4_local(0);

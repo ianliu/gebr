@@ -19,27 +19,3 @@
 #include <time.h>
 
 #include "support.h"
-
-/*
- * Internal stuff
- */
-
-void
-generate_seed(void)
-{
-	static unsigned int seed = 1;
-
-	seed *= (time(NULL) + 12345) / 2;
-	srand(seed);
-}
-
-/*
- * Public sutff
- */
-
-int
-random_number(void)
-{
-	generate_seed();
-	return rand();
-}

@@ -20,6 +20,8 @@
 #ifndef __LIBGEBR_COMM_G_TCP_SOCKET_PRIVATE_H
 #define __LIBGEBR_COMM_G_TCP_SOCKET_PRIVATE_H
 
+#include "gstreamsocket.h"
+
 /**
  * Create an already connected socket
  * Used by GTcpServer when a new connection is accepted.

@@ -44,7 +44,4 @@
 #  define N_(String) (String)
 #endif
 
-int
-random_number(void);
-
 #endif //__SUPPORT_H

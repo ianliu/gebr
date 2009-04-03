@@ -20,6 +20,7 @@
 #ifndef __LIBGEBR_COMM_GSOCKETPRIVATE_H
 #define __LIBGEBR_COMM_GSOCKETPRIVATE_H
 
+#include "gsocket.h"
 #include "gsocketaddress.h"
 
 void

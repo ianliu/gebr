@@ -225,13 +225,15 @@ static GString *
 job_generate_id(void)
 {
 	GString *	jid;
-	int		random;
+	guint32		random;
 	GList *		link;
+	gboolean	unique;
 
+	unique = TRUE;
 	jid = g_string_new(NULL);
 	do {
-		random = random_number();
-		g_string_printf(jid, "%d", random);
+		random = g_random_int();
+		g_string_printf(jid, "%u", random);
 
 		/* check if it is unique */
 		link = g_list_first(gebrd.jobs);
@@ -239,14 +241,14 @@ job_generate_id(void)
 			struct job *	job;
 
 			job = (struct job *)link->data;
-			if (!strcmp(job->jid->str, jid->str))
-				continue;
+			if (!strcmp(job->jid->str, jid->str)) {
+				unique = FALSE;
+				break;
+			}
 
 			link = g_list_next(link);
 		}
-
-		break;
-	} while (1);
+	} while (!unique);
 
 	return jid;
 }
