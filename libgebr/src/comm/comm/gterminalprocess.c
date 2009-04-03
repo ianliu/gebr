@@ -128,15 +128,9 @@ __g_terminal_process_read_watch(GIOChannel * source, GIOCondition condition, GTe
 static void
 __g_terminal_process_finished_watch(GPid pid, gint status, GTerminalProcess * terminal_process)
 {
-	gint				exit_code;
-	enum GTerminalProcessExitStatus	exit_status;
-
 	__g_terminal_process_free(terminal_process);
 	__g_terminal_process_stop_state(terminal_process);
 
-	exit_code = WEXITSTATUS(status);
-	exit_status =  WIFEXITED(status) ? G_TERMINAL_PROCESS_NORMAL_EXIT : G_TERMINAL_PROCESS_CRASH_EXIT;
-//	g_signal_emit(terminal_process, object_signals[FINISHED], 0, exit_code, exit_status);
 	g_signal_emit(terminal_process, object_signals[FINISHED], 0);
 }
 

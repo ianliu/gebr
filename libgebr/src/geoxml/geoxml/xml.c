@@ -37,7 +37,7 @@ __geoxml_remove_line_break(const gchar * tag_value)
 	GString *	value;
 	gchar *		new_tag_value;
 
-	if ((linebreak = strchr(tag_value, 0x0A)) == NULL)
+	if (strchr(tag_value, 0x0A) == NULL)
 		return (gchar*)tag_value;
 
 	value = g_string_new(tag_value);

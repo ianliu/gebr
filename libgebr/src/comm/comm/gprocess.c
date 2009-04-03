@@ -179,15 +179,9 @@ __g_process_read_stderr_watch(GIOChannel * source, GIOCondition condition, GProc
 static void
 __g_process_finished_watch(GPid pid, gint status, GProcess * process)
 {
-	gint			exit_code;
-	enum GProcessExitStatus	exit_status;
-
 	__g_process_free(process);
 	__g_process_stop_state(process);
 
-	exit_code = WEXITSTATUS(status);
-	exit_status =  WIFEXITED(status) ? G_PROCESS_NORMAL_EXIT : G_PROCESS_CRASH_EXIT;
-// 	g_signal_emit(process, object_signals[FINISHED], 0, exit_code, exit_status);
 	g_signal_emit(process, object_signals[FINISHED], 0);
 }
 

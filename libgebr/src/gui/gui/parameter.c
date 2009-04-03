@@ -474,14 +474,13 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 		gchar *				max_str;
 		gchar *				inc_str;
 		gchar *				digits_str;
-		double				min, max, inc, digits;
+		double				min, max, inc;
 
 		geoxml_program_parameter_get_range_properties(GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter),
 			&min_str, &max_str, &inc_str, &digits_str);
 		min = !strlen(min_str) ? DOUBLE_MIN : atof(min_str);
 		max = !strlen(max_str) ? DOUBLE_MAX : atof(max_str);
 		inc = !strlen(inc_str) ? 1.0 : atof(inc_str);
-		digits = !strlen(digits_str) ? 0 : atof(digits_str);
 
 		parameter_widget->value_widget = spin = gtk_spin_button_new_with_range(min, max, inc);
 		gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), atoi(digits_str));

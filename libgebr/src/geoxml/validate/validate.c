@@ -42,7 +42,7 @@ main(int argc, char ** argv)
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
 	/* Parse command line*/
-	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE || argv == NULL) {
+	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE) {
 		fprintf(stderr, "%s: syntax error\n", argv[0]);
 		fprintf(stderr, "Try %s --help\n", argv[0]);
 		ret = -1;
@@ -52,34 +52,7 @@ main(int argc, char ** argv)
 	for (i = 0; files[i] != NULL; ++i) {
 		ret = geoxml_document_validate(files[i]);
 		if (ret < 0) {
-			printf("%s INVALID: ", files[i]);
-			switch (ret) {
-			case GEOXML_RETV_DTD_SPECIFIED:
-				printf("DTD specified. The <DOCTYPE ...> must not appear in XML.\n"
-					"libgeoxml will find the appriate DTD installed from version.\n");
-				break;
-			case GEOXML_RETV_INVALID_DOCUMENT:
-				printf("Invalid document. The has a sintax error or doesn't match the DTD.\n"
-					"In this case see the errors above\n");
-				break;
-			case GEOXML_RETV_CANT_ACCESS_FILE:
-				printf("Can't access file. The file doesn't exist or there is not enough "
-					"permission to read it.\n");
-				break;
-			case GEOXML_RETV_CANT_ACCESS_DTD:
-				printf("Can't access dtd. The file's DTD couldn't not be found.\n"
-					"It may be a newer version not support by this version of libgeoxml "
-					"or there is an installation problem\n");
-				break;
-			case GEOXML_RETV_NO_MEMORY:
-				printf("Not enough memory. "
-					"The library stoped after an unsucessful memory allocation.\n");
-				break;
-			default:
-				printf("Unspecified error %d.\n"
-					"See library documentation at http://gebr.sf.net/libgeoxml/doc\n", ret);
-				break;
-			}
+			printf("%s INVALID: %s", files[i], geoxml_error_explained_string((enum GEOXML_RETV)ret));
 			continue;
 		}
 

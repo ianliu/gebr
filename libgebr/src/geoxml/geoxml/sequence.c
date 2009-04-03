@@ -281,10 +281,9 @@ geoxml_sequence_next(GeoXmlSequence ** sequence)
 GeoXmlSequence *
 geoxml_sequence_append_clone(GeoXmlSequence * sequence)
 {
-	int			ret;
 	GeoXmlSequence *	clone;
 
-	if ((ret = __geoxml_sequence_check(sequence, TRUE)))
+	if (__geoxml_sequence_check(sequence, TRUE))
 		return NULL;
 	clone = __geoxml_sequence_append_clone(sequence);
 	/* append reference to clone for others group instances */
