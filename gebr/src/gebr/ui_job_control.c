@@ -132,8 +132,7 @@ job_control_setup_ui(void)
 		PangoFontDescription *	font;
 
 		font = pango_font_description_new();
-		pango_font_description_set_family(font, "courier 10 pitch");
-		pango_font_description_set_style(font, PANGO_STYLE_NORMAL);
+		pango_font_description_set_family(font, "monospace");
 		gtk_widget_modify_font(text_view, font);
 
 		pango_font_description_free(font);
