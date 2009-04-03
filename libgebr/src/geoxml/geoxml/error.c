@@ -33,7 +33,8 @@ geoxml_error_string(enum GEOXML_RETV error)
 		_("Not a sequence."),
 		_("An operation on two sequences requires that both sequences are of the same type."),
 		_("Not an enum."),
-		_("")
+		_("Reference to itlself"),
+		_("Not first instance of the group"),
 	};
 	guint		index = -(guint)error;
 
@@ -65,7 +66,8 @@ geoxml_error_explained_string(enum GEOXML_RETV error)
 			"doesn't apply. This is a type checking result error."),
 		_("An operation on two sequences requires that both sequences are of the same type."),
 		_("The function is only for enums. This is a type checking result error."),
-		_("")
+		_("The reference parameter references itself"),
+		_("The operation only applies to the first instance of the group")
 	};
 	guint		index = -(guint)error;
 

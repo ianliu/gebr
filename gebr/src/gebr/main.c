@@ -52,7 +52,7 @@ main(int argc, char ** argv, char ** env)
 	);
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
-	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE || argv == NULL) {
+	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE) {
 		fprintf(stderr, _("%s: syntax error\n"), argv[0]);
 		fprintf(stderr, _("Try %s --­­help\n"), argv[0]);
 		return -1;

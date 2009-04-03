@@ -205,11 +205,8 @@ validate_clear(void)
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_validate.list_store), &iter);
 	while (valid) {
 		struct validate *	validate;
-		GtkTreeIter		this;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_validate.list_store), &iter, VALIDATE_POINTER, &validate, -1);
-		/* go to next before the deletion */
-		this = iter;
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_validate.list_store), &iter);
 
 		validate_free(validate);

@@ -54,8 +54,6 @@ void
 gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source);
 gboolean
 gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_path, GtkTreeIter * iter);
-GList *
-libgebr_gtk_tree_model_path_to_iter_list(GtkTreeModel * model, GList * path_list);
 
 void
 libgebr_gtk_tree_view_scroll_to_iter_cell(GtkTreeView * tree_view, GtkTreeIter * iter);

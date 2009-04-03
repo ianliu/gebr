@@ -392,10 +392,7 @@ parameters_load_parameter(struct ui_parameters * ui_parameters, GeoXmlParameter 
 		GtkWidget *			hbox;
 		struct parameter_widget	*	parameter_widget;
 
-		GeoXmlProgramParameter *	program_parameter;
 		GeoXmlParameter *		selected;
-
-		program_parameter = GEOXML_PROGRAM_PARAMETER(parameter);
 
 		hbox = gtk_hbox_new(FALSE, 10);
 		gtk_widget_show(hbox);

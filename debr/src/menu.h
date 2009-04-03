@@ -28,7 +28,7 @@ typedef enum {
 } MenuStatus;
 
 enum {
-        MENU_STATUS,
+        MENU_STATUS = 0,
 	MENU_FILENAME,
 	MENU_MODIFIED_DATE,
 	MENU_XMLPOINTER,

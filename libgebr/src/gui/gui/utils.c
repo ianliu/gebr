@@ -285,7 +285,7 @@ gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_path, GtkTr
 	return ret;
 }
 
-GList *
+static GList *
 libgebr_gtk_tree_model_path_to_iter_list(GtkTreeModel * model, GList * path_list)
 {
 	GList *	iter_list, * i;
@@ -393,10 +393,7 @@ gtk_tree_view_select_sibling(GtkTreeView * tree_view)
 	model = gtk_tree_view_get_model(tree_view);
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
 	if (gtk_tree_selection_get_mode(selection) != GTK_SELECTION_MULTIPLE) {
-		if (!gtk_tree_selection_get_selected(selection, NULL, &iter)) {
-			if (!gtk_tree_model_get_iter_first(model, &iter))
-				goto none;
-		} else {
+		if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
 			GtkTreeIter	next_iter;
 
 			next_iter = iter;
@@ -418,11 +415,13 @@ gtk_tree_view_select_sibling(GtkTreeView * tree_view)
 
 			return;
 		}
-	} else if (!gtk_tree_model_get_iter_first(model, &iter))
-		goto none;
+	}
 
-	gtk_tree_selection_select_iter(selection, &iter);
-	g_signal_emit_by_name(tree_view, "cursor-changed");
+	if (gtk_tree_model_get_iter_first(model, &iter)) {
+		gtk_tree_selection_select_iter(selection, &iter);
+		g_signal_emit_by_name(tree_view, "cursor-changed");
+		return;
+	}
 
 none:	gtk_tree_selection_unselect_all(selection);
 	g_signal_emit_by_name(tree_view, "cursor-changed");

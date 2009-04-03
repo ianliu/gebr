@@ -81,8 +81,6 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 	GtkWidget *			infopage;
 	GtkWidget *                     table;
 
-	gchar *				label;
-
 	/* alloc */
 	ui_flow_browse = g_malloc(sizeof(struct ui_flow_browse));
 	ui_flow_browse->revisions_menu = revisions_menu;
@@ -90,7 +88,6 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 	/* Create flow browse page */
 	page = gtk_vbox_new(FALSE, 0);
 	ui_flow_browse->widget = page;
-	label = _("Flows");
 	hpanel = gtk_hpaned_new();
 	gtk_container_add(GTK_CONTAINER(page), hpanel);
 

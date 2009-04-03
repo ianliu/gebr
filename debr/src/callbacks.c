@@ -391,6 +391,7 @@ on_menu_close_activate(void)
 	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
 		GeoXmlFlow *	menu;
 		GdkPixbuf *	pixbuf;
+		GtkWidget *	button;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
 			MENU_XMLPOINTER, &menu,
@@ -401,14 +402,18 @@ on_menu_close_activate(void)
 			GtkWidget *	dialog;
 			gboolean	cancel;
 
-			/* TODO: add cancel button */
 			cancel = FALSE;
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 				GTK_DIALOG_MODAL,
 				GTK_MESSAGE_QUESTION,
-				GTK_BUTTONS_YES_NO,
+				GTK_BUTTONS_NONE,
 				_("'%s' flow has unsaved changes. Do you want to save it?"),
 					geoxml_document_get_filename(GEOXML_DOCUMENT(menu)));
+			button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
+			g_object_set(G_OBJECT(button),
+				"image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);
+			gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+			gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
 			switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
 			case GTK_RESPONSE_YES: {
 				gchar *	path;
@@ -422,9 +427,9 @@ on_menu_close_activate(void)
 			} case GTK_RESPONSE_NO:
 				--debr.unsaved_count;
 				break;
-			case GTK_RESPONSE_CANCEL:
+			default: /* cancel or dialog destroy */
 				cancel = TRUE;
-				return;
+				break;
 			}
 
 			gtk_widget_destroy(dialog);

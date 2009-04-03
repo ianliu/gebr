@@ -253,7 +253,7 @@ menu_load(const gchar * path)
 
 	if ((ret = geoxml_document_load(&menu, path))) {
 		debr_message(LOG_ERROR, _("Could not load menu at '%s': %s"), path,
-			"unknown error"/*geoxml_error_string((enum GEOXML_RETV)ret)*/);
+			geoxml_error_string((enum GEOXML_RETV)ret));
 
 		return NULL;
 	}
