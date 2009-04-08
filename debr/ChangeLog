@@ -1,9 +1,46 @@
-2009-03-21  Ricardo Biloti <biloti@gmail.com>
+2009-04-03  Ricardo Biloti <biloti@gmail.com>
 
-	* Release 0.9.11
+	* Release 0.9.12
+
+2009-04-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fix errors reported by clang
+	  - fix menu close on debr
+	  - fix select_sibling function
+
+2009-04-03  Ricardo Biloti <biloti@gmail.com>
+
+	* monospace font instead of courier for job and validate views
+
+2009-03-25  Ricardo Biloti <biloti@gmail.com>
+
+	* update Changelogs and configure.ac's
+
+2009-03-25  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - reapply missed commit 1035
+	  - strip flow to send to server
+
+2009-03-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fixed accelerators activation
+	  - enabled new/copy/paste accelerators on debr
+
+2009-03-24  Ricardo Biloti <biloti@gmail.com>
+
+	* GString in place of gchar* fixed]
+
+2009-03-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* removed unecessary and buggy parameter duplicate (debr)
+
+2009-03-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* do not use gtkcellrendererspin
 
 2009-03-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
+	* debian changelog readded to trunk
 	* one more trick
 	* fix sort by modified date
 	* sort by name and date in debr

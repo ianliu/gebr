@@ -1,6 +1,27 @@
-2009-03-21  Ricardo Biloti <biloti@gmail.com>
+2009-04-03  Ricardo Biloti <biloti@gmail.com>
 
-	* Release 0.9.11
+	* Release 0.9.12
+
+2009-04-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fix errors reported by clang
+	  - fix menu close on debr
+	  - fix select_sibling function
+	* fix jid generation
+
+2009-04-02  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fixed write in gsocket
+	  - more robust protocol error handling using a hash table for
+	  commands
+
+2009-03-25  Ricardo Biloti <biloti@gmail.com>
+
+	* update Changelogs and configure.ac's
+
+2009-03-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* debian changelog readded to trunk
 
 2009-03-13  Ricardo Biloti <biloti@gmail.com>
 

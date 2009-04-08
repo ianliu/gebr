@@ -1,9 +1,46 @@
-2009-03-21  Ricardo Biloti <biloti@gmail.com>
+2009-04-03  Ricardo Biloti <biloti@gmail.com>
 
-	* Release 0.9.11
+	* Release 0.9.12
+
+2009-04-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fix errors reported by clang
+	  - fix menu close on debr
+	  - fix select_sibling function
+	* fix selection on removal from gtktreeview
+
+2009-04-03  Ricardo Biloti <biloti@gmail.com>
+
+	* monospace font instead of courier for job and validate views
+
+2009-04-02  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fixed write in gsocket
+	  - more robust protocol error handling using a hash table for
+	  commands
+
+2009-03-25  Ricardo Biloti <biloti@gmail.com>
+
+	* update Changelogs and configure.ac's
+
+2009-03-25  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - reapply missed commit 1035
+	  - strip flow to send to server
+
+2009-03-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fixed accelerators activation
+	  - enabled new/copy/paste accelerators on debr
+	* finnaly we have shortcuts working (on gebr for now)
+
+2009-03-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fix silly bug in flow_edition_component_selected
 
 2009-03-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
+	* debian changelog readded to trunk
 	* - validate scrolling fixed
 	  - refactored selection in gebr
 	* selection for exclusive parameters in gebr was ignored
