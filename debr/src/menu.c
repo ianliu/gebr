@@ -468,7 +468,8 @@ menu_selected(void)
 	GtkTreeIter		iter;
 	GdkPixbuf *		icon;
 
-	menu_get_selected(&iter);
+	if (!menu_get_selected(&iter))
+                return;
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
 		MENU_STATUS, &icon,
 		MENU_XMLPOINTER, &debr.menu,
@@ -766,8 +767,9 @@ menu_dialog_setup_ui(void)
 gboolean
 menu_get_selected(GtkTreeIter * iter)
 {
-	libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter, MENU_XMLPOINTER, &debr.menu, -1);
+	if(libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter))
+	   gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter, MENU_XMLPOINTER, &debr.menu, -1);
+	else return FALSE;
 
 	return TRUE;
 }
