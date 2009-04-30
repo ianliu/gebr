@@ -1,0 +1,27 @@
+# List of source files containing translatable strings.
+src/gebr/callbacks.c
+src/gebr/client.c
+src/gebr/cmdline.c
+src/gebr/document.c
+src/gebr/flow.c
+src/gebr/gebr.c
+src/gebr/interface.c
+src/gebr/job.c
+src/gebr/line.c
+src/gebr/main.c
+src/gebr/menu.c
+src/gebr/project.c
+src/gebr/server.c
+src/gebr/support.c
+src/gebr/ui_document.c
+src/gebr/ui_flow_browse.c
+src/gebr/ui_flow.c
+src/gebr/ui_flow_edition.c
+src/gebr/ui_help.c
+src/gebr/ui_job_control.c
+src/gebr/ui_log.c
+src/gebr/ui_parameters.c
+src/gebr/ui_paths.c
+src/gebr/ui_preferences.c
+src/gebr/ui_project_line.c
+src/gebr/ui_server.c

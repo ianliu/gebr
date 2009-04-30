@@ -46,8 +46,8 @@
 
 /* errors strings. */
 extern gchar * no_line_selected_error;
-gchar * no_flow_selected_error =	_("No flow selected");
-gchar * no_program_selected_error =	_("No program selected");
+gchar * no_flow_selected_error =	N_("No flow selected");
+gchar * no_program_selected_error =	N_("No program selected");
 
 /*
  * Section: Public

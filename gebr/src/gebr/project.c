@@ -38,7 +38,7 @@
 #include "line.h"
 #include "callbacks.h"
 
-gchar * no_project_selected_error = _("No project selected");
+gchar * no_project_selected_error = N_("No project selected");
 
 /*
  * Function: project_new

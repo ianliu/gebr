@@ -38,7 +38,7 @@
 
 #define BUFFER_SIZE 1024
 
-gchar * unable_to_write_help_error = _("Unable to write help in temporary file");
+gchar * unable_to_write_help_error = N_("Unable to write help in temporary file");
 
 /*
  * Section: Public

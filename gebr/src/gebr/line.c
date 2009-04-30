@@ -38,8 +38,8 @@
 #include "flow.h"
 #include "callbacks.h"
 
-gchar * no_line_selected_error =		_("No line selected");
-gchar * no_selection_error =			_("Nothing selected");
+gchar * no_line_selected_error =		N_("No line selected");
+gchar * no_selection_error =			N_("Nothing selected");
 
 /*
  * Section: Public
