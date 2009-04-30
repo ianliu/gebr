@@ -17,7 +17,7 @@
 AC_INIT(configure.ac)
 
 PACKAGE=debr
-VERSION=0.9.12
+VERSION=0.9.11
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
 AC_SUBST(TODAY)
@@ -28,6 +28,9 @@ AC_SUBST(FLOW_VERSION)
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 PACKAGE_NAME=$PACKAGE
 PACKAGE_VERSION=$VERSION
+
+# AC_PATH_PROG(GCONFTOOL, gconftool-2)
+IT_PROG_INTLTOOL([0.40.0])
 
 AC_PROG_CC
 AM_PROG_CC_STDC
@@ -46,12 +49,13 @@ else
 fi
 AC_SUBST(DEBUG_CFLAGS)
 
-dnl gettext stuff
-dnl GETTEXT_PACKAGE=$PACKAGE
-dnl AC_SUBST(GETTEXT_PACKAGE)
-dnl AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package.])
-dnl ALL_LINGUAS=""
-dnl AM_GLIB_GNU_GETTEXT
+
+dnl Gettext stuff.
+GETTEXT_PACKAGE=$PACKAGE
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package])
+
+AM_GLIB_GNU_GETTEXT
 
 dnl check for GTK
 PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0.0,,AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.0.0]))
@@ -77,4 +81,5 @@ AC_OUTPUT([
 packages/rpm/debr.fedora.spec packages/rpm/debr.opensuse.spec packages/rpm/debr.mandriva.spec
 data/help-template.html packages/Makefile 
 Makefile data/Makefile src/Makefile src/defines.h
+po/Makefile.in
 ])

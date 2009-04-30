@@ -16,7 +16,6 @@
  */
 
 #include <locale.h>
-/* TODO: Check for libintl on configure */
 #ifdef ENABLE_NLS
 #  include <libintl.h>
 #endif

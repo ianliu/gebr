@@ -1,0 +1,721 @@
+# LANGUAGE translation of debr.
+# Copyright (C) 2009 THE debr'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the debr package.
+# biloti <EMAIL@ADDRESS>, 2009.
+# , fuzzy
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: debr 0.9.12\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-04-30 15:30-0300\n"
+"PO-Revision-Date: 2009-04-30 15:30-0300\n"
+"Last-Translator: biloti <biloti@gmail.com>\n"
+"Language-Team: biloti <biloti@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#. create file chooser
+#: ../src/callbacks.c:152
+msgid "Open flow"
+msgstr "Abrir fluxo"
+
+#: ../src/callbacks.c:158 ../src/callbacks.c:226
+msgid "System flow files (*.mnu)"
+msgstr ""
+
+#. run file chooser
+#: ../src/callbacks.c:219
+msgid "Choose file"
+msgstr ""
+
+#: ../src/callbacks.c:282
+msgid "Revert changes"
+msgstr ""
+
+#: ../src/callbacks.c:282
+#, c-format
+msgid ""
+"All unsaved changes will be lost. Are you sure you want to revert flow '%s'?"
+msgstr ""
+
+#: ../src/callbacks.c:294
+msgid "Menu was not saved yet."
+msgstr ""
+
+#: ../src/callbacks.c:323
+msgid "Delete flow"
+msgstr ""
+
+#: ../src/callbacks.c:323
+msgid "Are you sure you want to delete selected menus?"
+msgstr ""
+
+#: ../src/callbacks.c:342
+#, c-format
+msgid "Could not delete menu '%s'"
+msgstr ""
+
+#: ../src/callbacks.c:410
+#, c-format
+msgid "'%s' flow has unsaved changes. Do you want to save it?"
+msgstr ""
+
+#: ../src/callbacks.c:412 ../src/menu.c:509
+msgid "Don't save"
+msgstr ""
+
+#: ../src/enumoptionedit.c:274 ../src/enumoptionedit.c:305
+msgid "value"
+msgstr ""
+
+#: ../src/enumoptionedit.c:282 ../src/enumoptionedit.c:304
+msgid "label"
+msgstr ""
+
+#: ../src/help.c:172
+msgid "Could not create an temporary file."
+msgstr ""
+
+#: ../src/help.c:211
+msgid "Could not open template. Please check your installation."
+msgstr ""
+
+#: ../src/help.c:231
+msgid "Could not create a temporary file."
+msgstr ""
+
+#: ../src/help.c:244
+msgid "Could not launch editor"
+msgstr ""
+
+#: ../src/help.c:252
+msgid "Could not read created temporary file."
+msgstr ""
+
+#: ../src/help.c:268
+msgid "Please change the help encoding to UTF-8"
+msgstr ""
+
+#: ../src/interface.c:42
+msgid "Quit"
+msgstr ""
+
+#: ../src/interface.c:42
+msgid "Quit DBR"
+msgstr ""
+
+#. menu
+#: ../src/interface.c:44
+msgid "Create new menu"
+msgstr ""
+
+#: ../src/interface.c:45
+msgid "Edit menu properties"
+msgstr ""
+
+#: ../src/interface.c:47 ../src/interface.c:332
+msgid "Validate"
+msgstr ""
+
+#: ../src/interface.c:47
+msgid "Validate menu"
+msgstr "Valida menu"
+
+#: ../src/interface.c:49
+msgid "Remove selecteds menus from list"
+msgstr ""
+
+#: ../src/interface.c:51
+msgid "Open an existing menu"
+msgstr ""
+
+#: ../src/interface.c:53
+msgid "Save selecteds menus"
+msgstr ""
+
+#: ../src/interface.c:54
+msgid "Save current menu to another file"
+msgstr ""
+
+#: ../src/interface.c:56
+msgid "Save all"
+msgstr ""
+
+#: ../src/interface.c:56
+msgid "Save all unsaved menus"
+msgstr ""
+
+#: ../src/interface.c:58
+msgid "Revert current menu to last saved version"
+msgstr ""
+
+#: ../src/interface.c:60
+msgid "Delete selecteds menus files"
+msgstr ""
+
+#. program
+#: ../src/interface.c:63
+msgid "Create new program"
+msgstr ""
+
+#: ../src/interface.c:65
+msgid "Delete current program"
+msgstr ""
+
+#: ../src/interface.c:67
+msgid "Edit program properties"
+msgstr ""
+
+#: ../src/interface.c:69
+msgid "Move program to the top of the list"
+msgstr ""
+
+#: ../src/interface.c:72
+msgid "Move program to the bottom of the list"
+msgstr ""
+
+#: ../src/interface.c:73 ../src/interface.c:89
+msgid "Copy"
+msgstr ""
+
+#: ../src/interface.c:73
+msgid "Copy program to clipboard"
+msgstr ""
+
+#: ../src/interface.c:75 ../src/interface.c:91
+msgid "Paste"
+msgstr ""
+
+#: ../src/interface.c:75
+msgid "Paste program from clipboard"
+msgstr ""
+
+#. parameter
+#: ../src/interface.c:78
+msgid "Create new parameter"
+msgstr ""
+
+#: ../src/interface.c:79
+msgid "Delete current parameter"
+msgstr ""
+
+#: ../src/interface.c:81
+msgid "Edit parameter properties"
+msgstr ""
+
+#: ../src/interface.c:83
+msgid "Move parameter to the top of the list"
+msgstr ""
+
+#: ../src/interface.c:86
+msgid "Move parameter to the bottom of the list"
+msgstr ""
+
+#: ../src/interface.c:87
+msgid "Change type"
+msgstr ""
+
+#: ../src/interface.c:87
+msgid "Change parameter type"
+msgstr ""
+
+#: ../src/interface.c:89
+msgid "Copy parameter to clipboard"
+msgstr ""
+
+#: ../src/interface.c:91
+msgid "Paste parameter from clipboard"
+msgstr ""
+
+#. validate
+#: ../src/interface.c:94
+msgid "Clear selecteds validations reports"
+msgstr ""
+
+#: ../src/interface.c:96
+msgid "Clear all validations reports"
+msgstr ""
+
+#: ../src/interface.c:139
+msgid "Flow designer for GêBR"
+msgstr ""
+
+#.
+#. * Menu: Actions
+#.
+#: ../src/interface.c:195
+msgid "_Actions"
+msgstr ""
+
+#.
+#. * Menu: Help
+#.
+#: ../src/interface.c:211
+msgid "_Help"
+msgstr ""
+
+#: ../src/interface.c:229 ../src/menu.c:124
+msgid "Menu"
+msgstr ""
+
+#: ../src/interface.c:267
+msgid "Program"
+msgstr ""
+
+#: ../src/interface.c:294
+msgid "Parameter"
+msgstr ""
+
+#: ../src/menu.c:132
+msgid "Modified"
+msgstr ""
+
+#: ../src/menu.c:145 ../src/program.c:139
+msgid "Details"
+msgstr "Detalhes"
+
+#: ../src/menu.c:222
+msgid "untitled"
+msgstr ""
+
+#: ../src/menu.c:255
+#, c-format
+msgid "Could not load menu at '%s': %s"
+msgstr ""
+
+#: ../src/menu.c:278
+msgid "Could not open menus' directory"
+msgstr ""
+
+#: ../src/menu.c:508
+msgid "There are flows unsaved. Do you want to save them?"
+msgstr ""
+
+#: ../src/menu.c:582
+msgid "Edit menu"
+msgstr ""
+
+#.
+#. * Title
+#.
+#: ../src/menu.c:598 ../src/program.c:438
+msgid "Title:"
+msgstr ""
+
+#.
+#. * Description
+#.
+#: ../src/menu.c:616 ../src/program.c:474
+msgid "Description:"
+msgstr ""
+
+#.
+#. * Help
+#.
+#: ../src/menu.c:634 ../src/program.c:492
+msgid "Help"
+msgstr ""
+
+#.
+#. * Author
+#.
+#: ../src/menu.c:663
+msgid "Author:"
+msgstr ""
+
+#.
+#. * Email
+#.
+#: ../src/menu.c:681
+msgid "Email:"
+msgstr ""
+
+#.
+#. * Categories
+#.
+#: ../src/menu.c:699
+msgid "Categories:"
+msgstr ""
+
+#: ../src/menu.c:827
+#, c-format
+msgid "This menu has no programs"
+msgstr ""
+
+#: ../src/menu.c:830
+#, c-format
+msgid "This menu has 1 program"
+msgstr ""
+
+#: ../src/menu.c:833
+#, c-format
+msgid "This menu has %li programs"
+msgstr ""
+
+#: ../src/menu.c:839
+msgid "Created: "
+msgstr ""
+
+#: ../src/menu.c:843
+msgid "Modified: "
+msgstr ""
+
+#: ../src/menu.c:852
+msgid "Categories: "
+msgstr ""
+
+#: ../src/menu.c:872
+msgid "None"
+msgstr ""
+
+#: ../src/menu.c:957
+msgid "Sort by"
+msgstr ""
+
+#. Name
+#: ../src/menu.c:962 ../src/preferences.c:74
+msgid "Name"
+msgstr ""
+
+#: ../src/menu.c:966
+msgid "Modified date"
+msgstr ""
+
+#: ../src/menu.c:1098
+msgid "New category"
+msgstr ""
+
+#: ../src/parameter.c:49 ../src/parameter.c:78
+msgid "real"
+msgstr ""
+
+#: ../src/parameter.c:50 ../src/parameter.c:79
+msgid "integer"
+msgstr ""
+
+#: ../src/parameter.c:51 ../src/parameter.c:80
+msgid "range"
+msgstr ""
+
+#: ../src/parameter.c:52 ../src/parameter.c:81
+msgid "flag"
+msgstr ""
+
+#: ../src/parameter.c:53 ../src/parameter.c:82
+msgid "text"
+msgstr ""
+
+#: ../src/parameter.c:54 ../src/parameter.c:83
+msgid "enum"
+msgstr ""
+
+#: ../src/parameter.c:55 ../src/parameter.c:84
+msgid "file"
+msgstr ""
+
+#: ../src/parameter.c:56 ../src/parameter.c:85
+msgid "group"
+msgstr ""
+
+#: ../src/parameter.c:172
+msgid "Type"
+msgstr ""
+
+#: ../src/parameter.c:176
+msgid "Keyword"
+msgstr ""
+
+#: ../src/parameter.c:180
+msgid "Label"
+msgstr ""
+
+#: ../src/parameter.c:292
+msgid "Delete parameter"
+msgstr ""
+
+#: ../src/parameter.c:292
+#, c-format
+msgid "Are you sure you want to delete parameter '%s'?"
+msgstr ""
+
+#: ../src/parameter.c:362
+msgid "Parameter's type"
+msgstr ""
+
+#.
+#. * Type
+#.
+#: ../src/parameter.c:376 ../src/parameter.c:649
+msgid "Type:"
+msgstr ""
+
+#: ../src/parameter.c:422
+msgid "Clipboard doesn't keep a parameter"
+msgstr ""
+
+#: ../src/parameter.c:432
+msgid "Could not paste parameter"
+msgstr ""
+
+#.
+#. * Dialog and table
+#.
+#: ../src/parameter.c:527
+msgid "Edit parameter"
+msgstr ""
+
+#.
+#. * Label
+#.
+#: ../src/parameter.c:550 ../src/parametergroup.c:108
+msgid "Label:"
+msgstr ""
+
+#.
+#. * Keyword
+#.
+#: ../src/parameter.c:568
+msgid "Keyword:"
+msgstr ""
+
+#.
+#. * Required
+#.
+#: ../src/parameter.c:589
+msgid "Required:"
+msgstr ""
+
+#.
+#. * Is List
+#.
+#: ../src/parameter.c:607
+msgid "Is list?:"
+msgstr ""
+
+#.
+#. * List separator
+#.
+#: ../src/parameter.c:625
+msgid "List separator:"
+msgstr ""
+
+#: ../src/parameter.c:661
+msgid "File"
+msgstr ""
+
+#: ../src/parameter.c:662
+msgid "Directory"
+msgstr ""
+
+#.
+#. * Minimum
+#.
+#: ../src/parameter.c:690
+msgid "Minimum:"
+msgstr ""
+
+#.
+#. * Maximum
+#.
+#: ../src/parameter.c:707
+msgid "Maximum:"
+msgstr ""
+
+#.
+#. * Increment
+#.
+#: ../src/parameter.c:724
+msgid "Increment:"
+msgstr ""
+
+#.
+#. * Digits
+#.
+#: ../src/parameter.c:741
+msgid "Digits:"
+msgstr ""
+
+#.
+#. * Options
+#.
+#: ../src/parameter.c:771
+msgid "Options:"
+msgstr ""
+
+#.
+#. * Default value
+#.
+#: ../src/parameter.c:800
+msgid "Default value:"
+msgstr ""
+
+#: ../src/parameter.c:959
+msgid "No parameter is selected"
+msgstr ""
+
+#: ../src/parametergroup.c:84
+msgid "Edit group"
+msgstr ""
+
+#.
+#. * Expanded by default
+#.
+#: ../src/parametergroup.c:124
+msgid "Expanded by default:"
+msgstr ""
+
+#.
+#. * Instanciable
+#.
+#: ../src/parametergroup.c:140
+msgid "Instanciable:"
+msgstr ""
+
+#.
+#. * Exclusive
+#.
+#: ../src/parametergroup.c:156
+msgid "Is exclusive:"
+msgstr ""
+
+#.
+#. * Instances
+#.
+#: ../src/parametergroup.c:172
+msgid "Instances:"
+msgstr ""
+
+#: ../src/parametergroup.c:298
+#, c-format
+msgid "Instance #%d"
+msgstr ""
+
+#. dialog
+#: ../src/preferences.c:60
+msgid "Preferences"
+msgstr ""
+
+#: ../src/preferences.c:77
+msgid "You should know your name"
+msgstr ""
+
+#. Email
+#: ../src/preferences.c:83
+msgid "Email"
+msgstr ""
+
+#: ../src/preferences.c:86
+msgid "Your email address"
+msgstr ""
+
+#. Menus dir
+#: ../src/preferences.c:92
+msgid "Menus directory"
+msgstr ""
+
+#: ../src/preferences.c:99
+msgid "Path to look for private user's menus"
+msgstr ""
+
+#. Browser
+#: ../src/preferences.c:108
+msgid "Browser"
+msgstr ""
+
+#: ../src/preferences.c:134
+msgid "An HTML capable editor to edit helps and reports"
+msgstr ""
+
+#: ../src/program.c:167
+msgid "URL"
+msgstr ""
+
+#: ../src/program.c:176 ../src/program.c:611
+msgid "URL not set"
+msgstr ""
+
+#. default settings
+#: ../src/program.c:225
+msgid "New program"
+msgstr ""
+
+#: ../src/program.c:254 ../src/program.c:638
+msgid "No program is selected"
+msgstr ""
+
+#: ../src/program.c:257
+msgid "Delete program"
+msgstr ""
+
+#: ../src/program.c:257
+#, c-format
+msgid "Are you sure you want to delete program '%s'?"
+msgstr ""
+
+#: ../src/program.c:315
+msgid "Clipboard doesn't keep a program"
+msgstr ""
+
+#: ../src/program.c:325
+msgid "Could not paste program"
+msgstr ""
+
+#: ../src/program.c:385
+msgid "Edit program"
+msgstr ""
+
+#: ../src/program.c:407
+msgid "This program:"
+msgstr ""
+
+#: ../src/program.c:417
+msgid "reads from standard input"
+msgstr ""
+
+#: ../src/program.c:423
+msgid "writes to standard output"
+msgstr ""
+
+#: ../src/program.c:429
+msgid "appends to standard error"
+msgstr ""
+
+#.
+#. * Binary
+#.
+#: ../src/program.c:456
+msgid "Binary:"
+msgstr ""
+
+#.
+#. * URL
+#.
+#: ../src/program.c:522
+msgid "URL:"
+msgstr ""
+
+#: ../src/program.c:589
+#, c-format
+msgid "This program has no parameters"
+msgstr ""
+
+#: ../src/program.c:592
+#, c-format
+msgid "This program has 1 parameter"
+msgstr ""
+
+#: ../src/program.c:595
+#, c-format
+msgid "This program has %li parameters"
+msgstr ""
+
+#: ../src/program.c:601
+msgid "Binary"
+msgstr ""
+
+#: ../src/validate.c:242
+msgid "No menu selected"
+msgstr ""

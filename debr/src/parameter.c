@@ -46,14 +46,14 @@ struct {
 	guint				index;
 	gchar *				title;
 } combo_type_map [] = {
-	{GEOXML_PARAMETERTYPE_FLOAT, 0, _("real")},
-	{GEOXML_PARAMETERTYPE_INT, 1, _("integer")},
-	{GEOXML_PARAMETERTYPE_RANGE, 2, _("range")},
-	{GEOXML_PARAMETERTYPE_FLAG, 3, _("flag")},
-	{GEOXML_PARAMETERTYPE_STRING, 4, _("text")},
-	{GEOXML_PARAMETERTYPE_ENUM, 5, _("enum")},
-	{GEOXML_PARAMETERTYPE_FILE, 6, _("file")},
-	{GEOXML_PARAMETERTYPE_GROUP, 7, _("group")},
+	{GEOXML_PARAMETERTYPE_FLOAT, 0, N_("real")},
+	{GEOXML_PARAMETERTYPE_INT, 1, N_("integer")},
+	{GEOXML_PARAMETERTYPE_RANGE, 2, N_("range")},
+	{GEOXML_PARAMETERTYPE_FLAG, 3, N_("flag")},
+	{GEOXML_PARAMETERTYPE_STRING, 4, N_("text")},
+	{GEOXML_PARAMETERTYPE_ENUM, 5, N_("enum")},
+	{GEOXML_PARAMETERTYPE_FILE, 6, N_("file")},
+	{GEOXML_PARAMETERTYPE_GROUP, 7, N_("group")},
 };
 const gsize	combo_type_map_size = 8;
 
@@ -75,14 +75,14 @@ combo_type_map_get_index(enum GEOXML_PARAMETERTYPE type)
 
 /* same order as combo_box_map */
 const GtkRadioActionEntry parameter_type_radio_actions_entries [] = {
-	{"parameter_type_real", NULL, _("real"), NULL, NULL, GEOXML_PARAMETERTYPE_FLOAT},
-	{"parameter_type_integer", NULL, _("integer"), NULL, NULL, GEOXML_PARAMETERTYPE_INT},
-	{"parameter_type_range", NULL, _("range"), NULL, NULL, GEOXML_PARAMETERTYPE_RANGE},
-	{"parameter_type_flag", NULL, _("flag"), NULL, NULL, GEOXML_PARAMETERTYPE_FLAG},
-	{"parameter_type_text", NULL, _("text"), NULL, NULL, GEOXML_PARAMETERTYPE_STRING},
-	{"parameter_type_enum", NULL, _("enum"), NULL, NULL, GEOXML_PARAMETERTYPE_ENUM},
-	{"parameter_type_file", NULL, _("file"), NULL, NULL, GEOXML_PARAMETERTYPE_FILE},
-	{"parameter_type_group", NULL, _("group"), NULL, NULL, GEOXML_PARAMETERTYPE_GROUP},
+	{"parameter_type_real", NULL, N_("real"), NULL, NULL, GEOXML_PARAMETERTYPE_FLOAT},
+	{"parameter_type_integer", NULL, N_("integer"), NULL, NULL, GEOXML_PARAMETERTYPE_INT},
+	{"parameter_type_range", NULL, N_("range"), NULL, NULL, GEOXML_PARAMETERTYPE_RANGE},
+	{"parameter_type_flag", NULL, N_("flag"), NULL, NULL, GEOXML_PARAMETERTYPE_FLAG},
+	{"parameter_type_text", NULL, N_("text"), NULL, NULL, GEOXML_PARAMETERTYPE_STRING},
+	{"parameter_type_enum", NULL, N_("enum"), NULL, NULL, GEOXML_PARAMETERTYPE_ENUM},
+	{"parameter_type_file", NULL, N_("file"), NULL, NULL, GEOXML_PARAMETERTYPE_FILE},
+	{"parameter_type_group", NULL, N_("group"), NULL, NULL, GEOXML_PARAMETERTYPE_GROUP},
 };
 
 static GtkTreeIter
