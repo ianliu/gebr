@@ -53,6 +53,9 @@ AC_SUBST(STATIC_MODE)
 
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 
+# AC_PATH_PROG(GCONFTOOL, gconftool-2)
+IT_PROG_INTLTOOL([0.40.0])
+
 AC_CONFIG_MACRO_DIR([m4])
 AC_PROG_CC
 AM_PROG_CC_STDC
@@ -60,12 +63,12 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_HEADER_STDC
 
-dnl gettext stuff
-dnl GETTEXT_PACKAGE=$PACKAGE
-dnl AC_SUBST(GETTEXT_PACKAGE)
-dnl AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package.])
-dnl ALL_LINGUAS=""
-dnl AM_GLIB_GNU_GETTEXT
+dnl Gettext stuff.
+GETTEXT_PACKAGE=$PACKAGE
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package])
+
+AM_GLIB_GNU_GETTEXT
 
 dnl check for GLIB >= 2.8.0 (needed for g_access)
 PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.8.0],,AC_MSG_ERROR([Could not find glib >= 2.8.0]))
@@ -99,4 +102,5 @@ src/geoxml/Makefile src/geoxml/gebr-geoxml.pc src/geoxml/geoxml/Makefile src/geo
 src/comm/Makefile src/comm/gebr-comm.pc src/comm/comm/Makefile
 src/gui/Makefile src/gui/gebr-gui.pc src/gui/gui/Makefile src/gui/pixmaps/Makefile src/gui/icons/Makefile src/gui/icons/gebr-theme/Makefile
 src/misc/Makefile src/misc/gebr-misc.pc src/misc/misc/Makefile
+po/Makefile.in
 ])
