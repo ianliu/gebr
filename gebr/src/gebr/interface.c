@@ -148,6 +148,7 @@ gebr_setup_ui(void)
 	gtk_widget_show(gebr.window);
 
 	gebr.action_group = gtk_action_group_new("General");
+	gtk_action_group_set_translation_domain(gebr.action_group, PACKAGE);
 	gtk_action_group_add_actions(gebr.action_group, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
 	gtk_action_group_add_radio_actions(gebr.action_group, status_radio_actions_entries, 3, -1,
 		(GCallback)on_flow_component_status_activate, NULL);
