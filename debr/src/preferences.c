@@ -123,12 +123,12 @@ preferences_dialog_setup_ui(void)
 	}
 	eventbox = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(eventbox), browser_combo);
-	gtk_tooltips_set_tip(tips, eventbox, "An HTML browser to display helps and reports", "");
+	gtk_tooltips_set_tip(tips, eventbox, _("An HTML browser to display helps and reports"), "");
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* Editor */
-	label = gtk_label_new("HTML editor");
+	label = gtk_label_new(_("HTML editor"));
 	gtk_misc_set_alignment( GTK_MISC(label), 0, 0);
 	htmleditor_entry = gtk_entry_new();
 	gtk_tooltips_set_tip(tips, htmleditor_entry, _("An HTML capable editor to edit helps and reports"), "");

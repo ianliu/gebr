@@ -39,7 +39,7 @@
  */
 
 static const GtkActionEntry actions_entries [] = {
-	{"quit", GTK_STOCK_QUIT, N_("Quit"), NULL, N_("Quit DÈBR"), (GCallback)on_quit_activate},
+	{"quit", GTK_STOCK_QUIT, N_("Quit"), NULL, N_("Quit D√©BR"), (GCallback)on_quit_activate},
 	/* menu */
 	{"menu_new", GTK_STOCK_NEW, NULL, NULL, N_("Create new menu"), (GCallback)on_menu_new_activate},
 	{"menu_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit menu properties"),

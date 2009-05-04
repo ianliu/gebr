@@ -413,34 +413,34 @@ validate_do(struct validate * validate)
 
 	validate->error_count = 0;
 	if (filename || all)
-		validate_append_item_with_check(validate, "Filename:      ",
+		validate_append_item_with_check(validate, _("Filename:      "),
 			geoxml_document_get_filename(GEOXML_DOCUMENT(validate->menu)),
 			NOBLK | MTBLK | FILEN);
 	if (title || all)
-		validate_append_item_with_check(validate, "Title:         ",
+		validate_append_item_with_check(validate,_("Title:         "),
 			geoxml_document_get_title(GEOXML_DOCUMENT(validate->menu)),
 			EMPTY | NOBLK | NOPNT | MTBLK);
 	if (desc || all)
-		validate_append_item_with_check(validate, "Description:   ",
+		validate_append_item_with_check(validate,_("Description:   "),
 			geoxml_document_get_description(GEOXML_DOCUMENT(validate->menu)),
 			EMPTY | CAPIT | NOBLK | MTBLK | NOPNT);
 	if (author || all) {
-		validate_append_item(validate, "Author:        ");
+		validate_append_item(validate,_("Author:        "));
 		validate_append_check(validate, geoxml_document_get_author(GEOXML_DOCUMENT(validate->menu)),
 			EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, " <");
 		validate_append_check(validate, geoxml_document_get_email(GEOXML_DOCUMENT(validate->menu)), EMAIL, ">");
                 validate_append_text(validate, "\n");
 	}
 	if (dates || all) {
-		validate_append_item_with_check(validate, "Created:       ",
+		validate_append_item_with_check(validate,_("Created:       "),
 			localized_date(geoxml_document_get_date_created(GEOXML_DOCUMENT(validate->menu))), EMPTY);
-		validate_append_item_with_check(validate, "Modified:      ",
+		validate_append_item_with_check(validate,_("Modified:      "),
 			localized_date(geoxml_document_get_date_modified(GEOXML_DOCUMENT(validate->menu))), EMPTY);
 	}
 	if (mhelp || all) {
-		validate_append_item(validate, "Help:          ");
+		validate_append_item(validate,_("Help:          "));
 		if (strlen(geoxml_document_get_help(GEOXML_DOCUMENT(validate->menu))) >= 1)
-			validate_append_text(validate,  "Defined");
+			validate_append_text(validate, _("Defined"));
 		else
 			validate_append_check(validate, "", EMPTY, "");
                 validate_append_text(validate,  "\n");
@@ -448,9 +448,9 @@ validate_do(struct validate * validate)
 	if (category || all) {
 		geoxml_flow_get_category(validate->menu, &seq, 0);
 		if (seq == NULL)
-			validate_append_item_with_check(validate, "Category:      ", "", EMPTY);
+			validate_append_item_with_check(validate,_("Category:      "), "", EMPTY);
 		else for (; seq != NULL; geoxml_sequence_next(&seq))
-			validate_append_item_with_check(validate, "Category:      ",
+			validate_append_item_with_check(validate,_("Category:      "),
 				geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(seq)),
 				EMPTY | CAPIT | NOBLK | MTBLK | NOPNT);
 	}
@@ -458,8 +458,8 @@ validate_do(struct validate * validate)
 	if (!progs && !all && !params)
 		goto out;
 
-	validate_append_text_emph(validate, "Menu with:     ");
-	validate_append_text(validate,  "%ld program(s)\n",
+	validate_append_text_emph(validate,_("Menu with:     "));
+	validate_append_text(validate, _("%ld program(s)\n"),
 		geoxml_flow_get_programs_number(validate->menu));
 	geoxml_flow_get_program(validate->menu, &seq, 0);
 	for (i = 0; seq != NULL; i++, geoxml_sequence_next(&seq)) {
@@ -469,33 +469,33 @@ validate_do(struct validate * validate)
 
 		prog = GEOXML_PROGRAM(seq);
 
-		validate_append_text_emph(validate, "\n>>Program:     ");
+		validate_append_text_emph(validate,_("\n>>Program:     "));
 		validate_append_text(validate,  "%d\n", i+1);
-		validate_append_item_with_check(validate, "  Title:       ",
+		validate_append_item_with_check(validate,_("  Title:       "),
 			geoxml_program_get_title(prog), EMPTY | NOBLK | MTBLK);
-		validate_append_item_with_check(validate, "  Description: ",
+		validate_append_item_with_check(validate,_("  Description: "),
 			geoxml_program_get_description(prog), EMPTY | CAPIT | NOBLK | MTBLK | NOPNT);
 
-                validate_append_text_emph(validate, "  In/out/err:  ");
-                validate_append_text(validate,  "%s/%s/%s\n",
-			geoxml_program_get_stdin(prog) ? "Read" : "Ignore",
-			geoxml_program_get_stdout(prog) ? "Write" : "Ignore",
-			geoxml_program_get_stdin(prog) ? "Append" : "Ignore");
+                validate_append_text_emph(validate,_("  In/out/err:  "));
+                validate_append_text(validate, _("%s/%s/%s\n"),
+			geoxml_program_get_stdin(prog) ?_("Read") :_("Ignore"),
+			geoxml_program_get_stdout(prog) ?_("Write") :_("Ignore"),
+			geoxml_program_get_stdin(prog) ?_("Append") :_("Ignore"));
 
-		validate_append_item_with_check(validate, "  Binary:      ",
+		validate_append_item_with_check(validate,_("  Binary:      "),
 			geoxml_program_get_binary(prog), EMPTY);
-		validate_append_item_with_check(validate, "  URL:         ",
+		validate_append_item_with_check(validate,_("  URL:         "),
 			geoxml_program_get_url(prog), EMPTY);
-		validate_append_item(validate, "  Help:        ");
+		validate_append_item(validate,_("  Help:        "));
 		if (strlen(geoxml_program_get_help(prog)) >= 1)
-			validate_append_text(validate,  "Defined");
+			validate_append_text(validate, _("Defined"));
 		else
 			validate_append_check(validate, "", EMPTY, "");
                 validate_append_text(validate,  "\n");
 
 
 		if (params || all) {
-			validate_append_text_emph(validate, "  >>Parameters:\n");
+			validate_append_text_emph(validate,_("  >>Parameters:\n"));
 
 			parameter = GEOXML_PARAMETER(geoxml_parameters_get_first_parameter(geoxml_program_get_parameters(prog)));
 
@@ -506,7 +506,7 @@ validate_do(struct validate * validate)
 		}
 	}
 
-out:    validate_append_text_emph(validate,  "%d potencial error(s)", validate->error_count);
+out:    validate_append_text_emph(validate,  _("%d potencial error(s)"), validate->error_count);
 }
 
 /* ------------------------------------------------------------*/
@@ -623,7 +623,7 @@ validate_append_check(struct validate * validate, const gchar * value, int flags
 		if (check_is_not_empty(value))
 			validate_append_text_error(validate, "%s", value);
 		else
-			validate_append_text_error(validate, "UNSET");
+			validate_append_text_error(validate,_("UNSET"));
 		validate->error_count++;
 	}
 
@@ -687,7 +687,7 @@ show_program_parameter(struct validate * validate, GeoXmlProgramParameter * pp, 
 	g_string_free(default_value, TRUE);
 
 	if (geoxml_program_parameter_get_required(pp))
-		validate_append_text(validate,  "  REQUIRED ");
+		validate_append_text(validate, _("  REQUIRED "));
 
         /* enum details */
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(pp)) == GEOXML_PARAMETERTYPE_ENUM){
@@ -725,7 +725,7 @@ show_parameter(struct validate * validate, GeoXmlParameter * parameter, gint ipa
 				EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, NULL);
 
                 if (geoxml_parameter_group_get_is_instanciable(GEOXML_PARAMETER_GROUP(parameter)))
-                        validate_append_text(validate,  "   [Instanciable]\n");
+                        validate_append_text(validate,  _("   [Instanciable]\n"));
                 else
                         validate_append_text(validate,  "\n");
 

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-04 09:59-0300\n"
-"PO-Revision-Date: 2009-05-04 09:59-0300\n"
+"POT-Creation-Date: 2009-05-04 10:21-0300\n"
+"PO-Revision-Date: 2009-05-04 10:30-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -627,6 +627,15 @@ msgstr "Caminho para procurar menus privados do usuário"
 msgid "Browser"
 msgstr "Navegador"
 
+#: ../src/preferences.c:126
+msgid "An HTML browser to display helps and reports"
+msgstr "Um editor HTML para editar arquivos de ajuda e relatórios"
+
+#. Editor
+#: ../src/preferences.c:131
+msgid "HTML editor"
+msgstr ""
+
 #: ../src/preferences.c:134
 msgid "An HTML capable editor to edit helps and reports"
 msgstr "Um editor HTML para editar arquivos de a"
@@ -721,4 +730,127 @@ msgstr "Binário"
 #: ../src/validate.c:242
 msgid "No menu selected"
 msgstr "Nenhum menu selecionado"
+
+#: ../src/validate.c:416
+msgid "Filename:      "
+msgstr ""
+
+#: ../src/validate.c:420
+msgid "Title:         "
+msgstr ""
+
+#: ../src/validate.c:424
+msgid "Description:   "
+msgstr "Descrição:     "
+
+#: ../src/validate.c:428
+#, fuzzy
+msgid "Author:        "
+msgstr "Autor:"
+
+#: ../src/validate.c:435
+#, fuzzy
+msgid "Created:       "
+msgstr "Criado: "
+
+#: ../src/validate.c:437
+msgid "Modified:      "
+msgstr "Alterado: "
+
+#: ../src/validate.c:441
+msgid "Help:          "
+msgstr ""
+
+#: ../src/validate.c:443 ../src/validate.c:491
+msgid "Defined"
+msgstr ""
+
+#: ../src/validate.c:451 ../src/validate.c:453
+#, fuzzy
+msgid "Category:      "
+msgstr "Categorias: "
+
+#: ../src/validate.c:461
+msgid "Menu with:     "
+msgstr ""
+
+#: ../src/validate.c:462
+#, fuzzy, c-format
+msgid "%ld program(s)\n"
+msgstr "Editar programa"
+
+#: ../src/validate.c:472
+#, fuzzy
+msgid ""
+"\n"
+">>Program:     "
+msgstr "Programa"
+
+#: ../src/validate.c:474
+msgid "  Title:       "
+msgstr ""
+
+#: ../src/validate.c:476
+#, fuzzy
+msgid "  Description: "
+msgstr "Descrição:"
+
+#: ../src/validate.c:479
+msgid "  In/out/err:  "
+msgstr ""
+
+#: ../src/validate.c:480
+#, c-format
+msgid "%s/%s/%s\n"
+msgstr ""
+
+#: ../src/validate.c:481
+msgid "Read"
+msgstr ""
+
+#: ../src/validate.c:481 ../src/validate.c:482 ../src/validate.c:483
+msgid "Ignore"
+msgstr ""
+
+#: ../src/validate.c:482
+msgid "Write"
+msgstr ""
+
+#: ../src/validate.c:483
+msgid "Append"
+msgstr ""
+
+#: ../src/validate.c:485
+#, fuzzy
+msgid "  Binary:      "
+msgstr "Binário:"
+
+#: ../src/validate.c:487
+msgid "  URL:         "
+msgstr ""
+
+#: ../src/validate.c:489
+msgid "  Help:        "
+msgstr ""
+
+#: ../src/validate.c:498
+msgid "  >>Parameters:\n"
+msgstr "  >>Parâmetros:\n"
+
+#: ../src/validate.c:509
+#, c-format
+msgid "%d potencial error(s)"
+msgstr ""
+
+#: ../src/validate.c:626
+msgid "UNSET"
+msgstr ""
+
+#: ../src/validate.c:690
+msgid "  REQUIRED "
+msgstr ""
+
+#: ../src/validate.c:728
+msgid "   [Instanciable]\n"
+msgstr "   [Instanciável]\n"
 
