@@ -1,7 +1,7 @@
 # LANGUAGE translation of debr.
 # Copyright (C) 2009 THE debr'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the debr package.
-# biloti <biloti@gmail.com>, 2009.
+# Ricardo Biloti <biloti@gmail.com>, 2009.
 # , fuzzy
 #
 #
@@ -9,10 +9,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 15:30-0300\n"
-"PO-Revision-Date: 2009-05-02 04:18-0300\n"
-"Last-Translator: biloti <biloti@gmail.com>\n"
-"Language-Team: biloti <biloti@gmail.com>\n"
+"POT-Creation-Date: 2009-05-04 09:59-0300\n"
+"PO-Revision-Date: 2009-05-04 09:59-0300\n"
+"Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
+"Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);"
@@ -39,7 +39,9 @@ msgstr "Reverter alterações"
 #, c-format
 msgid ""
 "All unsaved changes will be lost. Are you sure you want to revert flow '%s'?"
-msgstr "Todas as modificações não salvar serão perdidas. Tem certeza que você quer reverter o fluxo '%s'?"
+msgstr ""
+"Todas as modificações não salvar serão perdidas. Tem certeza que você quer "
+"reverter o fluxo '%s'?"
 
 #: ../src/callbacks.c:294
 msgid "Menu was not saved yet."
@@ -73,7 +75,7 @@ msgstr "valor"
 
 #: ../src/enumoptionedit.c:282 ../src/enumoptionedit.c:304
 msgid "label"
-msgstr "nome"
+msgstr "rótulo"
 
 #: ../src/help.c:172
 msgid "Could not create an temporary file."
@@ -104,8 +106,8 @@ msgid "Quit"
 msgstr "Sair"
 
 #: ../src/interface.c:42
-msgid "Quit DBR"
-msgstr "Fechar DBR"
+msgid "Quit DéBR"
+msgstr "Fechar DéBR"
 
 #. menu
 #: ../src/interface.c:44
@@ -116,13 +118,13 @@ msgstr "Criar um novo menu"
 msgid "Edit menu properties"
 msgstr "Editar propriedades do menu"
 
-#: ../src/interface.c:47 ../src/interface.c:332
+#: ../src/interface.c:47 ../src/interface.c:333
 msgid "Validate"
 msgstr "Validar"
 
 #: ../src/interface.c:47
 msgid "Validate menu"
-msgstr "Valida menu"
+msgstr "Validar menu"
 
 #: ../src/interface.c:49
 msgid "Remove selecteds menus from list"
@@ -142,7 +144,7 @@ msgstr "Salvar o menu atual em outro arquivo"
 
 #: ../src/interface.c:56
 msgid "Save all"
-msgstr "Salvar tudo"
+msgstr "Salvar todos"
 
 #: ../src/interface.c:56
 msgid "Save all unsaved menus"
@@ -246,26 +248,26 @@ msgstr "Designer de fluxo para GêBR"
 #.
 #. * Menu: Actions
 #.
-#: ../src/interface.c:195
+#: ../src/interface.c:196
 msgid "_Actions"
 msgstr "A_ções"
 
 #.
 #. * Menu: Help
 #.
-#: ../src/interface.c:211
+#: ../src/interface.c:212
 msgid "_Help"
 msgstr "_Ajuda"
 
-#: ../src/interface.c:229 ../src/menu.c:124
+#: ../src/interface.c:230 ../src/menu.c:124
 msgid "Menu"
 msgstr "Menu"
 
-#: ../src/interface.c:267
+#: ../src/interface.c:268
 msgid "Program"
 msgstr "Programa"
 
-#: ../src/interface.c:294
+#: ../src/interface.c:295
 msgid "Parameter"
 msgstr "Parâmetro"
 
@@ -279,7 +281,7 @@ msgstr "Detalhes"
 
 #: ../src/menu.c:222
 msgid "untitled"
-msgstr "Sem título"
+msgstr "sem título"
 
 #: ../src/menu.c:255
 #, c-format
@@ -486,7 +488,7 @@ msgstr "Palavra-chave:"
 #.
 #: ../src/parameter.c:589
 msgid "Required:"
-msgstr "Requerido:"
+msgstr "Obrigatório:"
 
 #.
 #. * Is List
@@ -536,7 +538,7 @@ msgstr "Incremento:"
 #.
 #: ../src/parameter.c:741
 msgid "Digits:"
-msgstr "Digitos:"
+msgstr "Dígitos:"
 
 #.
 #. * Options
@@ -565,7 +567,7 @@ msgstr "Editar grupo"
 #.
 #: ../src/parametergroup.c:124
 msgid "Expanded by default:"
-msgstr "Espandida por padrão:"
+msgstr "Expandida por padrão:"
 
 #.
 #. * Instanciable
@@ -591,7 +593,7 @@ msgstr "Instâncias:"
 #: ../src/parametergroup.c:298
 #, c-format
 msgid "Instance #%d"
-msgstr "Instâncias #%d"
+msgstr "Instância #%d"
 
 #. dialog
 #: ../src/preferences.c:60
@@ -618,7 +620,7 @@ msgstr "Diretório de menus"
 
 #: ../src/preferences.c:99
 msgid "Path to look for private user's menus"
-msgstr "Caminho para procurar menus de usuário privado"
+msgstr "Caminho para procurar menus privados do usuário"
 
 #. Browser
 #: ../src/preferences.c:108
@@ -657,7 +659,7 @@ msgstr "Você tem certeza que quer deletar o programa '%s'?"
 
 #: ../src/program.c:315
 msgid "Clipboard doesn't keep a program"
-msgstr "Prancheta não mantém um programa"
+msgstr "Área de transferência não contém um programa"
 
 #: ../src/program.c:325
 msgid "Could not paste program"
@@ -681,7 +683,7 @@ msgstr "escreve na saída padrão"
 
 #: ../src/program.c:429
 msgid "appends to standard error"
-msgstr "Anexo ao erro padrão"
+msgstr "acrescenta à saída de erro padrão"
 
 #.
 #. * Binary
