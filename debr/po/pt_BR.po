@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-04 10:21-0300\n"
+"POT-Creation-Date: 2009-05-06 15:17-0300\n"
 "PO-Revision-Date: 2009-05-05 22:04-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
@@ -40,7 +40,7 @@ msgstr "Reverter alterações"
 msgid ""
 "All unsaved changes will be lost. Are you sure you want to revert flow '%s'?"
 msgstr ""
-"Todas as modificações não salvar serão perdidas. Tem certeza que você quer "
+"Todas as modificações não salvar serão perdidas. Tem certeza que quer "
 "reverter o fluxo '%s'?"
 
 #: ../src/callbacks.c:294
@@ -53,7 +53,7 @@ msgstr "Apagar fluxo"
 
 #: ../src/callbacks.c:323
 msgid "Are you sure you want to delete selected menus?"
-msgstr "Você tem certeza que quer apagar os menus selecionados?"
+msgstr "Tem certeza que quer apagar os menus selecionados?"
 
 #: ../src/callbacks.c:342
 #, c-format
@@ -63,7 +63,7 @@ msgstr "Não foi possível deletar o menu '%s'"
 #: ../src/callbacks.c:410
 #, c-format
 msgid "'%s' flow has unsaved changes. Do you want to save it?"
-msgstr "Fluxo '%s' tem modificações não salvas. Você quer salva-las?"
+msgstr "Fluxo '%s' tem modificações não salvas. Quer salva-las?"
 
 #: ../src/callbacks.c:412 ../src/menu.c:509
 msgid "Don't save"
@@ -161,7 +161,7 @@ msgstr "Apagar arquivos de menu selecionados"
 #. program
 #: ../src/interface.c:63
 msgid "Create new program"
-msgstr "Criar novo programa"
+msgstr "Criar um novo programa"
 
 #: ../src/interface.c:65
 msgid "Delete current program"
@@ -185,7 +185,7 @@ msgstr "Copiar"
 
 #: ../src/interface.c:73
 msgid "Copy program to clipboard"
-msgstr "Copiar programa para a prancheta"
+msgstr "Copiar programa para a área de transferência"
 
 #: ../src/interface.c:75 ../src/interface.c:91
 msgid "Paste"
@@ -193,12 +193,12 @@ msgstr "Colar"
 
 #: ../src/interface.c:75
 msgid "Paste program from clipboard"
-msgstr "Colar programa da prancheta"
+msgstr "Colar programa da área de transferência"
 
 #. parameter
 #: ../src/interface.c:78
 msgid "Create new parameter"
-msgstr "Criar novo parâmetro"
+msgstr "Criar um novo parâmetro"
 
 #: ../src/interface.c:79
 msgid "Delete current parameter"
@@ -226,11 +226,11 @@ msgstr "Mudar tipo do parâmetro"
 
 #: ../src/interface.c:89
 msgid "Copy parameter to clipboard"
-msgstr "Copiar parâmetro para prancheta"
+msgstr "Copiar parâmetro para a área de transferência"
 
 #: ../src/interface.c:91
 msgid "Paste parameter from clipboard"
-msgstr "Colar parâmetro da prancheta"
+msgstr "Colar parâmetro da área de transferência"
 
 #. validate
 #: ../src/interface.c:94
@@ -294,7 +294,7 @@ msgstr "Não foi possível abrir o diretório do menu"
 
 #: ../src/menu.c:508
 msgid "There are flows unsaved. Do you want to save them?"
-msgstr "Existem fluxos não salvos. Você deseja salva-los?"
+msgstr "Existem fluxos não salvos. Deseja salva-los?"
 
 #: ../src/menu.c:582
 msgid "Edit menu"
@@ -432,7 +432,7 @@ msgstr "Palavra-chave"
 
 #: ../src/parameter.c:180
 msgid "Label"
-msgstr "Nome"
+msgstr "Rótulo"
 
 #: ../src/parameter.c:292
 msgid "Delete parameter"
@@ -441,7 +441,7 @@ msgstr "Apagar parâmetro"
 #: ../src/parameter.c:292
 #, c-format
 msgid "Are you sure you want to delete parameter '%s'?"
-msgstr "Você tem certeza que quer deletar o parâmetro '%s'?"
+msgstr "Tem certeza que quer deletar o parâmetro '%s'?"
 
 #: ../src/parameter.c:362
 msgid "Parameter's type"
@@ -456,7 +456,7 @@ msgstr "Tipo:"
 
 #: ../src/parameter.c:422
 msgid "Clipboard doesn't keep a parameter"
-msgstr "Prancheta não guarda um parâmetro"
+msgstr "Área de transferência não contém um parâmetro"
 
 #: ../src/parameter.c:432
 msgid "Could not paste parameter"
@@ -664,7 +664,7 @@ msgstr "Apagar programa"
 #: ../src/program.c:257
 #, c-format
 msgid "Are you sure you want to delete program '%s'?"
-msgstr "Você tem certeza que quer deletar o programa '%s'?"
+msgstr "Tem certeza que quer deletar o programa '%s'?"
 
 #: ../src/program.c:315
 msgid "Clipboard doesn't keep a program"
@@ -796,26 +796,21 @@ msgstr "  Descrição:           "
 msgid "  In/out/err:  "
 msgstr "  Entrada/saída/erro:  "
 
-#: ../src/validate.c:480
-#, c-format
-msgid "%s/%s/%s\n"
-msgstr "%s/%s/%s\n"
-
 #: ../src/validate.c:481
 msgid "Read"
-msgstr "Ler"
+msgstr "Lê"
 
 #: ../src/validate.c:481 ../src/validate.c:482 ../src/validate.c:483
 msgid "Ignore"
-msgstr "Ignorar"
+msgstr "Ignora"
 
 #: ../src/validate.c:482
 msgid "Write"
-msgstr "Escrever"
+msgstr "Escreve"
 
 #: ../src/validate.c:483
 msgid "Append"
-msgstr "Acrescentar"
+msgstr "Acrescenta"
 
 #: ../src/validate.c:485
 msgid "  Binary:      "
@@ -844,7 +839,7 @@ msgstr "Não definida"
 
 #: ../src/validate.c:690
 msgid "  REQUIRED "
-msgstr "OBRIGATÓRIO"
+msgstr "  OBRIGATÓRIO"
 
 #: ../src/validate.c:728
 msgid "   [Instanciable]\n"

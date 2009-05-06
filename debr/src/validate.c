@@ -477,7 +477,7 @@ validate_do(struct validate * validate)
 			geoxml_program_get_description(prog), EMPTY | CAPIT | NOBLK | MTBLK | NOPNT);
 
                 validate_append_text_emph(validate,_("  In/out/err:  "));
-                validate_append_text(validate, _("%s/%s/%s\n"),
+                validate_append_text(validate, "%s/%s/%s\n",
 			geoxml_program_get_stdin(prog) ?_("Read") :_("Ignore"),
 			geoxml_program_get_stdout(prog) ?_("Write") :_("Ignore"),
 			geoxml_program_get_stdin(prog) ?_("Append") :_("Ignore"));
