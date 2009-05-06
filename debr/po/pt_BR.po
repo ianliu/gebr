@@ -10,7 +10,11 @@ msgstr ""
 "Project-Id-Version: debr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-05-04 10:21-0300\n"
+<<<<<<< HEAD:debr/po/pt_BR.po
 "PO-Revision-Date: 2009-05-04 10:30-0300\n"
+=======
+"PO-Revision-Date: 2009-05-05 22:04-0300\n"
+>>>>>>> debr validation traslated to pt_BR:debr/po/pt_BR.po
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -634,11 +638,15 @@ msgstr "Um editor HTML para editar arquivos de ajuda e relatórios"
 #. Editor
 #: ../src/preferences.c:131
 msgid "HTML editor"
+<<<<<<< HEAD:debr/po/pt_BR.po
 msgstr ""
+=======
+msgstr "Editor HTML"
+>>>>>>> debr validation traslated to pt_BR:debr/po/pt_BR.po
 
 #: ../src/preferences.c:134
 msgid "An HTML capable editor to edit helps and reports"
-msgstr "Um editor HTML para editar arquivos de a"
+msgstr "Um editor HTML para editar arquivos de ajuda e notificações"
 
 #: ../src/program.c:167
 msgid "URL"
@@ -733,6 +741,7 @@ msgstr "Nenhum menu selecionado"
 
 #: ../src/validate.c:416
 msgid "Filename:      "
+<<<<<<< HEAD:debr/po/pt_BR.po
 msgstr ""
 
 #: ../src/validate.c:420
@@ -798,10 +807,75 @@ msgstr "Descrição:"
 #: ../src/validate.c:479
 msgid "  In/out/err:  "
 msgstr ""
+=======
+msgstr "Nome do arquivo:  "
+
+#: ../src/validate.c:420
+msgid "Title:         "
+msgstr "Título:           "
+
+#: ../src/validate.c:424
+msgid "Description:   "
+msgstr "Descrição:        "
+
+#: ../src/validate.c:428
+msgid "Author:        "
+msgstr "Autor:            "
+
+#: ../src/validate.c:435
+msgid "Created:       "
+msgstr "Criado:           "
+
+#: ../src/validate.c:437
+msgid "Modified:      "
+msgstr "Alterado:         "
+
+#: ../src/validate.c:441
+msgid "Help:          "
+msgstr "Ajuda:            "
+
+#: ../src/validate.c:443 ../src/validate.c:491
+msgid "Defined"
+msgstr "Definido"
+
+#: ../src/validate.c:451 ../src/validate.c:453
+msgid "Category:      "
+msgstr "Categoria:        "
+
+#: ../src/validate.c:461
+msgid "Menu with:     "
+msgstr "Menu com:         "
+
+#: ../src/validate.c:462
+#, c-format
+msgid "%ld program(s)\n"
+msgstr "%ld programa(s)\n"
+
+#: ../src/validate.c:472
+msgid ""
+"\n"
+">>Program:     "
+msgstr ""
+"\n"
+">>Programa:            "
+
+#: ../src/validate.c:474
+msgid "  Title:       "
+msgstr "  Título:              "
+
+#: ../src/validate.c:476
+msgid "  Description: "
+msgstr "  Descrição:           "
+
+#: ../src/validate.c:479
+msgid "  In/out/err:  "
+msgstr "  Entrada/saída/erro:  "
+>>>>>>> debr validation traslated to pt_BR:debr/po/pt_BR.po
 
 #: ../src/validate.c:480
 #, c-format
 msgid "%s/%s/%s\n"
+<<<<<<< HEAD:debr/po/pt_BR.po
 msgstr ""
 
 #: ../src/validate.c:481
@@ -832,6 +906,37 @@ msgstr ""
 #: ../src/validate.c:489
 msgid "  Help:        "
 msgstr ""
+=======
+msgstr "%s/%s/%s\n"
+
+#: ../src/validate.c:481
+msgid "Read"
+msgstr "Ler"
+
+#: ../src/validate.c:481 ../src/validate.c:482 ../src/validate.c:483
+msgid "Ignore"
+msgstr "Ignorar"
+
+#: ../src/validate.c:482
+msgid "Write"
+msgstr "Escrever"
+
+#: ../src/validate.c:483
+msgid "Append"
+msgstr "Acrescentar"
+
+#: ../src/validate.c:485
+msgid "  Binary:      "
+msgstr "  Binário:             "
+
+#: ../src/validate.c:487
+msgid "  URL:         "
+msgstr "  URL:                 "
+
+#: ../src/validate.c:489
+msgid "  Help:        "
+msgstr "  Ajuda:               "
+>>>>>>> debr validation traslated to pt_BR:debr/po/pt_BR.po
 
 #: ../src/validate.c:498
 msgid "  >>Parameters:\n"
@@ -840,6 +945,7 @@ msgstr "  >>Parâmetros:\n"
 #: ../src/validate.c:509
 #, c-format
 msgid "%d potencial error(s)"
+<<<<<<< HEAD:debr/po/pt_BR.po
 msgstr ""
 
 #: ../src/validate.c:626
@@ -849,6 +955,17 @@ msgstr ""
 #: ../src/validate.c:690
 msgid "  REQUIRED "
 msgstr ""
+=======
+msgstr "%d erro(s) potencial(is)"
+
+#: ../src/validate.c:626
+msgid "UNSET"
+msgstr "Não definida"
+
+#: ../src/validate.c:690
+msgid "  REQUIRED "
+msgstr "OBRIGATÓRIO"
+>>>>>>> debr validation traslated to pt_BR:debr/po/pt_BR.po
 
 #: ../src/validate.c:728
 msgid "   [Instanciable]\n"
