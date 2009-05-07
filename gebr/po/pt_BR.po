@@ -1,7 +1,7 @@
 # LANGUAGE translation of debr.
 # Copyright (C) 2009 THE debr'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the debr package.
-# biloti <EMAIL@ADDRESS>, 2009.
+# biloti <biloti@gmail.com>, 2009.
 # , fuzzy
 #
 #
@@ -11,342 +11,344 @@ msgstr ""
 "Project-Id-Version: gebr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-04-30 20:02-0300\n"
-"PO-Revision-Date: 2009-04-30 19:30-0300\n"
+"PO-Revision-Date: 2009-05-06 23:59-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
+"Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);"
 
 #: ../src/gebr/client.c:61
 msgid "Connected to local server"
-msgstr ""
+msgstr "Conectado ao servidor local"
 
 #: ../src/gebr/client.c:64
 #, c-format
 msgid "Connected to server '%s'"
-msgstr ""
+msgstr "Conectado ao servidor '%s'"
 
 #: ../src/gebr/client.c:69
 #, c-format
 msgid "Server '%s' could not send display for graphical output redirection"
-msgstr ""
+msgstr "O servidor '%s' não conseguiu enviar um display para redirecionamento de saída gráfica"
 
 #: ../src/gebr/document.c:108
 #, c-format
 msgid "Can't load document at %s: %s"
-msgstr ""
+msgstr "Não foi possível carregar documento em %s: %s"
 
 #: ../src/gebr/flow.c:49
 msgid "No flow selected"
-msgstr ""
+msgstr "Nenhum fluxo selecionado"
 
 #: ../src/gebr/flow.c:50 ../src/gebr/ui_parameters.c:107
 msgid "No program selected"
-msgstr ""
+msgstr "Nenhum programa selecionado"
 
 #: ../src/gebr/flow.c:74 ../src/gebr/flow.c:219
 msgid "Select a line to which a flow will be added to"
-msgstr ""
+msgstr "Selecione a linha na qual um fluxo será adicionado"
 
 #: ../src/gebr/flow.c:78
 msgid "New Flow"
-msgstr ""
+msgstr "Novo fluxo"
 
 #. feedback
 #: ../src/gebr/flow.c:106
 #, c-format
 msgid "New flow added to line '%s'"
-msgstr ""
+msgstr "Novo fluxo adicionado na linha '%s'"
 
 #: ../src/gebr/flow.c:156
 msgid "Delete flow"
-msgstr ""
+msgstr "Apagar fluxo"
 
 #: ../src/gebr/flow.c:156
 #, c-format
 msgid "Are you sure you want to delete flow '%s'?"
-msgstr ""
+msgstr "Você tem certeza que quer deletar o fluxo '%s'?"
 
 #. Some feedback
 #: ../src/gebr/flow.c:160
 #, c-format
 msgid "Erasing flow '%s'"
-msgstr ""
+msgstr "Apagando o fluxo '%s'"
 
 #: ../src/gebr/flow.c:161
 #, c-format
 msgid "Erasing flow '%s' from line '%s'"
-msgstr ""
+msgstr "Apagando o fluxo '%s' da linha '%s'"
 
 #. assembly a file chooser dialog
 #: ../src/gebr/flow.c:224
 msgid "Choose filename to open"
-msgstr ""
+msgstr "Escolha o nome do arquivo para abrir"
 
 #: ../src/gebr/flow.c:232 ../src/gebr/flow.c:311
 msgid "Flow files (*.flw)"
-msgstr ""
+msgstr "Arquivos de fluxo (*.flw)"
 
 #. feedback
 #: ../src/gebr/flow.c:252
 #, c-format
 msgid "Flow '%s' imported to line '%s' from file '%s'"
-msgstr ""
+msgstr "O fluxo '%s' foi importado para a linha '%s' da linha '%s'"
 
 #. run file chooser
 #: ../src/gebr/flow.c:303 ../src/gebr/flow.c:422
 #: ../src/gebr/ui_job_control.c:198
 msgid "Choose filename to save"
-msgstr ""
+msgstr "Escolha o nome do arquivo para salvar"
 
 #: ../src/gebr/flow.c:330
 #, c-format
 msgid "Flow '%s' exported to %s"
-msgstr ""
+msgstr "Fluxo '%s' exportado para %s"
 
 #: ../src/gebr/flow.c:431
 msgid "Menu files (*.mnu)"
-msgstr ""
+msgstr "Arquivos de menu (*.mnu)"
 
 #: ../src/gebr/flow.c:453
 msgid "Default values"
-msgstr ""
+msgstr "Valores padrão"
 
 #: ../src/gebr/flow.c:487
 #, c-format
 msgid "Flow '%s' exported as menu to %s"
-msgstr ""
+msgstr "O fluxo '%s' foi exportado como menu para %s"
 
 #: ../src/gebr/flow.c:545
 #, c-format
 msgid "Asking server to run flow '%s'"
-msgstr ""
+msgstr "Pedindo para o servidor executar o fluxo '%s'"
 
 #: ../src/gebr/flow.c:548
 #, c-format
 msgid "Asking server '%s' to run flow '%s'"
-msgstr ""
+msgstr "Pedindo para o servidor '%s' executar o fluxo '%s'"
 
 #: ../src/gebr/flow.c:552
 #, c-format
 msgid "Asking local server to run flow '%s'"
-msgstr ""
+msgstr "Pedindo para o servidor local executar o fluxo '%s'"
 
 #: ../src/gebr/flow.c:578 ../src/gebr/interface.c:241
 msgid "Save flow state"
-msgstr ""
+msgstr "Salvar estado do fluxo"
 
 #: ../src/gebr/flow.c:586
 msgid "Make a comment for this state:"
-msgstr ""
+msgstr "Criar um comentário para este estado:"
 
 #: ../src/gebr/gebr.c:84
 msgid "GêBR Initiating..."
-msgstr ""
+msgstr "GêBR Inicializando..."
 
 #: ../src/gebr/gebr.c:128
 msgid "GêBR Finalizing..."
-msgstr ""
+msgstr "GêBR Finalizando..."
 
 #: ../src/gebr/gebr.c:401
 msgid "Could not save configuration"
-msgstr ""
+msgstr "Não foi possível salvar a configuração"
 
 #: ../src/gebr/gebr.c:408
 msgid "Configuration saved"
-msgstr ""
+msgstr "A configuração foi salva"
 
 #. Project/Line
 #: ../src/gebr/interface.c:45
 msgid "New Project"
-msgstr ""
+msgstr "Novo Projeto"
 
 #: ../src/gebr/interface.c:45
 msgid "Create a new project"
-msgstr ""
+msgstr "Criar um novo projeto"
 
 #: ../src/gebr/interface.c:47 ../src/gebr/line.c:84
 msgid "New Line"
-msgstr ""
+msgstr "Nova Linha"
 
 #: ../src/gebr/interface.c:47
 msgid "Create a new line"
-msgstr ""
+msgstr "Criar uma nova linha"
 
 #: ../src/gebr/interface.c:49
 msgid "Delete selected project or line"
-msgstr ""
+msgstr "Apagar projeto ou linha selecionados"
 
 #: ../src/gebr/interface.c:51
 msgid "Edit properties"
-msgstr ""
+msgstr "Editar propriedades"
 
 #: ../src/gebr/interface.c:53
 msgid "Line paths"
-msgstr ""
+msgstr "Caminhos da linha"
 
 #: ../src/gebr/interface.c:53
 msgid "Edit custom line paths"
-msgstr ""
+msgstr "Editar caminhos personalizados da linha"
 
 #. Flow
 #: ../src/gebr/interface.c:56
 msgid "Create a new flow"
-msgstr ""
+msgstr "Criar um novo fluxo"
 
 #: ../src/gebr/interface.c:57
 msgid "Delete selected flow"
-msgstr ""
+msgstr "Deletar o fluxo selecionado"
 
 #: ../src/gebr/interface.c:58
 msgid "Edit flow properties"
-msgstr ""
+msgstr "Editar propriedades do fluxo"
 
 #: ../src/gebr/interface.c:60
 msgid "Saved status"
-msgstr ""
+msgstr "Status salvo"
 
 #: ../src/gebr/interface.c:61
 msgid "Import"
-msgstr ""
+msgstr "Importar"
 
 #: ../src/gebr/interface.c:61
 msgid "Import a flow"
-msgstr ""
+msgstr "Importar um fluxo"
 
 #: ../src/gebr/interface.c:62
 msgid "Export"
-msgstr ""
+msgstr "Exportar"
 
 #: ../src/gebr/interface.c:62
 msgid "Export the flow"
-msgstr ""
+msgstr "Exportar o fluxo"
 
 #: ../src/gebr/interface.c:64
 msgid "Export as menu"
-msgstr ""
+msgstr "Exportar como um menu"
 
 #: ../src/gebr/interface.c:64
 msgid "Export the flow as a menu"
-msgstr ""
+msgstr "Exportar o fluxo como um menu"
 
 #: ../src/gebr/interface.c:66
 msgid "Input and Output"
-msgstr ""
+msgstr "Entrada e Saída"
 
 #: ../src/gebr/interface.c:66
 msgid "Edit input/output flow files"
-msgstr ""
+msgstr "Editar arquivos de fluxo de entrada/saída"
 
 #: ../src/gebr/interface.c:68
 msgid "Run current flow"
-msgstr ""
+msgstr "Executar fluxo atual"
 
 #. Flow Edition
 #: ../src/gebr/interface.c:71
 msgid "Show component's help"
-msgstr ""
+msgstr "Exibir ajuda do componente"
 
 #: ../src/gebr/interface.c:73
 msgid "Duplicate"
-msgstr ""
+msgstr "Duplicar"
 
 #: ../src/gebr/interface.c:73
 msgid "Duplicate component"
-msgstr ""
+msgstr "Duplicar componente"
 
 #: ../src/gebr/interface.c:75
 msgid "Delete component"
-msgstr ""
+msgstr "Apagar componente"
 
 #: ../src/gebr/interface.c:77
 msgid "Edit component parameters"
-msgstr ""
+msgstr "Editar parâmetros do componente"
 
 #: ../src/gebr/interface.c:79
 msgid "Refresh available components list"
-msgstr ""
+msgstr "Atualizar lista de componentes disponível"
 
 #. Job control
 #: ../src/gebr/interface.c:82
 msgid "Save job information in a file"
-msgstr ""
+msgstr "Salvar informação do trabalho em um arquivo"
 
 #: ../src/gebr/interface.c:84
 msgid "Ask server to terminate the job"
-msgstr ""
+msgstr "Pedir para o servidor terminar o trabalho"
 
 #: ../src/gebr/interface.c:86
 msgid "Clear current job log"
-msgstr ""
+msgstr "Limpar log de trabalho atual"
 
 #: ../src/gebr/interface.c:88
 msgid "Clear all unactive job logs"
-msgstr ""
+msgstr "Limpar todos os logs de trabalhos inativos"
 
 #: ../src/gebr/interface.c:90
 msgid "Ask server to kill the job"
-msgstr ""
+msgstr "Pedir para o servidor matar o trabalho"
 
 #: ../src/gebr/interface.c:95
 msgid "Configured"
-msgstr ""
+msgstr "Configurado"
 
 #: ../src/gebr/interface.c:96
 msgid "Disabled"
-msgstr ""
+msgstr "Desabilitado"
 
 #: ../src/gebr/interface.c:97
 msgid "Unconfigured"
-msgstr ""
+msgstr "Não configurado"
 
 #: ../src/gebr/interface.c:140
 msgid ""
 "A plug-and-play environment to\n"
 "seismic processing tools"
 msgstr ""
+"Um ambiente plug-and-play para\n"
+"ferramentas de processamento sísmico"
 
 #: ../src/gebr/interface.c:221
 msgid "Projects and Lines"
-msgstr ""
+msgstr "Projetos e Linhas"
 
 #: ../src/gebr/interface.c:263
 msgid "Flows"
-msgstr ""
+msgstr "Fluxos"
 
 #: ../src/gebr/interface.c:298
 msgid "Flow edition"
-msgstr ""
+msgstr "Edição de fluxo"
 
 #: ../src/gebr/interface.c:322
 msgid "Job control"
-msgstr ""
+msgstr "Controle de trabalhos"
 
 #: ../src/gebr/interface.c:346
 msgid "Actions menu"
-msgstr ""
+msgstr "Menu de ações"
 
 #. Server entry
 #: ../src/gebr/interface.c:355
 msgid "_Servers"
-msgstr ""
+msgstr "_Servidores"
 
 #: ../src/gebr/interface.c:362
 msgid "Actions"
-msgstr ""
+msgstr "Ações"
 
 #: ../src/gebr/interface.c:386
 msgid "Help menu"
-msgstr ""
+msgstr "Menu de ajuda"
 
 #: ../src/gebr/interface.c:394
 msgid "Help"
-msgstr ""
+msgstr "Ajuda"
 
 #: ../src/gebr/job.c:131
 msgid "Can't close running job"
-msgstr ""
+msgstr "Não foi possível fechar o trabalho em execução"
 
 #.
 #. * Fill job information
@@ -355,186 +357,186 @@ msgstr ""
 #: ../src/gebr/job.c:194
 #, c-format
 msgid "Job executed at %s by %s\n"
-msgstr ""
+msgstr "Trabalho executado em %s por %s\n"
 
 #. start date
 #: ../src/gebr/job.c:197
 msgid "Start date:"
-msgstr ""
+msgstr "Data de início:"
 
 #: ../src/gebr/job.c:200
 msgid "Issues:"
-msgstr ""
+msgstr "Causas:"
 
 #: ../src/gebr/job.c:203
 msgid "Command line:"
-msgstr ""
+msgstr "Linha de comando:"
 
 #. job info
 #: ../src/gebr/job.c:209 ../src/gebr/job.c:367
 msgid "Finish date:"
-msgstr ""
+msgstr "Data de término:"
 
 #: ../src/gebr/job.c:260 ../src/gebr/ui_flow_browse.c:282
 msgid "Output:"
-msgstr ""
+msgstr "Saída:"
 
 #: ../src/gebr/line.c:41 ../src/gebr/ui_paths.c:87
 msgid "No line selected"
-msgstr ""
+msgstr "Nenhuma linha selecionada"
 
 #: ../src/gebr/line.c:42 ../src/gebr/ui_document.c:66
 msgid "Nothing selected"
-msgstr ""
+msgstr "Nada foi selecionado"
 
 #. feedback
 #: ../src/gebr/line.c:109
 #, c-format
 msgid "New line created in project '%s'"
-msgstr ""
+msgstr "Uma nova linha foi criada no projeto '%s'"
 
 #: ../src/gebr/line.c:149
 msgid "Delete line"
-msgstr ""
+msgstr "Apagar a linha"
 
 #: ../src/gebr/line.c:149
 #, c-format
 msgid "Are you sure you want to delete line '%s' and all its flows?"
-msgstr ""
+msgstr "Você tem certeza que quer apagar a linha '%s' e todos os seus fluxos?"
 
 #. log action
 #: ../src/gebr/line.c:165
 #, c-format
 msgid "Erasing child flow '%s'"
-msgstr ""
+msgstr "Apagando fluxo filho '%s'"
 
 #. inform the user
 #: ../src/gebr/line.c:184
 #, c-format
 msgid "Erasing line '%s'"
-msgstr ""
+msgstr "Apagando linha '%s'"
 
 #: ../src/gebr/line.c:185
 #, c-format
 msgid "Erasing line '%s' from project '%s'"
-msgstr ""
+msgstr "Apagando a linha '%s' do projeto '%s'"
 
 #: ../src/gebr/line.c:232
 #, c-format
 msgid "Flow file %s corrupted. Ignoring"
-msgstr ""
+msgstr "O arquivo de fluxo %s está corrompido. Ignorando"
 
 #: ../src/gebr/line.c:249
 msgid "Flows loaded"
-msgstr ""
+msgstr "Fluxos carregados"
 
 #: ../src/gebr/main.c:46
 msgid "GeBR"
-msgstr ""
+msgstr "GeBR"
 
 #: ../src/gebr/main.c:48
 msgid "a seismic processing environment"
-msgstr ""
+msgstr "Um ambiente de processamento sísmico"
 
 #: ../src/gebr/main.c:56
 #, c-format
 msgid "%s:syntaxerror\n"
-msgstr ""
+msgstr "%s:erro de sintaxe\n"
 
 #: ../src/gebr/main.c:57
-#, c-format
+#, fuzzy, c-format
 msgid "Try%s--help\n"
-msgstr ""
+msgstr "Tente%s--help\n"
 
 #: ../src/gebr/main.c:62
 #, c-format
 msgid "%s\n"
-msgstr ""
+msgstr "%s\n"
 
 #: ../src/gebr/menu.c:316
 msgid "Unable to write menus' index"
-msgstr ""
+msgstr "Não foi possível escrever o índice do menu"
 
 #: ../src/gebr/project.c:41
 msgid "No project selected"
-msgstr ""
+msgstr "Nenhum projeto selecionado"
 
 #: ../src/gebr/project.c:57
 msgid "New project"
-msgstr ""
+msgstr "Novo projeto"
 
 #. feedback
 #: ../src/gebr/project.c:72
 msgid "New project created"
-msgstr ""
+msgstr "Um novo projeto foi criado"
 
 #: ../src/gebr/project.c:128
 #, c-format
 msgid "Project '%s' still has %i lines"
-msgstr ""
+msgstr "O projeto '%s' ainda tem %i linhas"
 
 #. message user
 #: ../src/gebr/project.c:133
 #, c-format
 msgid "Erasing project '%s'"
-msgstr ""
+msgstr "Apagando o projeto '%s'"
 
 #: ../src/gebr/project.c:162
 msgid "Unable to access data directory"
-msgstr ""
+msgstr "Não foi possível acessar o diretório de dados"
 
 #: ../src/gebr/project.c:203
 #, c-format
 msgid "Line file %s corrupted. Ignoring."
-msgstr ""
+msgstr "Arquivo de linhas %s está corrompido. Ignorando."
 
 #: ../src/gebr/server.c:86
 msgid "SSH question:"
-msgstr ""
+msgstr "Questão do SSH:"
 
 #: ../src/gebr/server.c:126
 msgid "Local server"
-msgstr ""
+msgstr "Servidor local"
 
 #: ../src/gebr/ui_document.c:77
 #, c-format
 msgid "Properties for project '%s'"
-msgstr ""
+msgstr "Propriedades para o projeto '%s'"
 
 #: ../src/gebr/ui_document.c:80
 #, c-format
 msgid "Properties for line '%s'"
-msgstr ""
+msgstr "Propriedades para a linha '%s'"
 
 #: ../src/gebr/ui_document.c:83
 #, c-format
 msgid "Properties for flow '%s'"
-msgstr ""
+msgstr "Propriedades para o fluxo '%s'"
 
 #: ../src/gebr/ui_document.c:86
 #, c-format
 msgid "Properties for document '%s'"
-msgstr ""
+msgstr "Propriedades para o document '%s'"
 
 #. Title
 #: ../src/gebr/ui_document.c:107
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 #. Description
 #: ../src/gebr/ui_document.c:116
 msgid "Description"
-msgstr ""
+msgstr "Descrição"
 
 #. Report
 #: ../src/gebr/ui_document.c:125
 msgid "Report"
-msgstr ""
+msgstr "Notificação"
 
 #. Author
 #: ../src/gebr/ui_document.c:134
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 #. User email
 #.
@@ -542,471 +544,480 @@ msgstr ""
 #.
 #: ../src/gebr/ui_document.c:143 ../src/gebr/ui_preferences.c:111
 msgid "Email"
-msgstr ""
+msgstr "E-mail"
 
 #: ../src/gebr/ui_document.c:229
 #, c-format
 msgid "Properties of %s '%s' updated"
-msgstr ""
+msgstr "As propriedades de %s '%s' foram atualizadas."
 
 #: ../src/gebr/ui_document.c:232
 #, c-format
 msgid "Renaming %s '%s' to '%s'"
-msgstr ""
+msgstr "Renomeando %s '%s' para '%s'"
 
 #: ../src/gebr/ui_flow_browse.c:135 ../src/gebr/ui_project_line.c:138
 msgid "Details"
-msgstr ""
+msgstr "Detalhes"
 
 #. Date labels
 #: ../src/gebr/ui_flow_browse.c:260 ../src/gebr/ui_project_line.c:422
 msgid "Created:"
-msgstr ""
+msgstr "Criado:"
 
 #: ../src/gebr/ui_flow_browse.c:263 ../src/gebr/ui_project_line.c:425
 msgid "Modified:"
-msgstr ""
+msgstr "Alterado:"
 
 #: ../src/gebr/ui_flow_browse.c:266
 msgid "Last run:"
-msgstr ""
+msgstr "Última execução:"
 
 #. I/O labels
 #: ../src/gebr/ui_flow_browse.c:279
 msgid "Input:"
-msgstr ""
+msgstr "Entrada:"
 
 #: ../src/gebr/ui_flow_browse.c:285
 msgid "Error log:"
-msgstr ""
+msgstr "Log de erro:"
 
 #: ../src/gebr/ui_flow_browse.c:293 ../src/gebr/ui_flow_browse.c:298
 #: ../src/gebr/ui_flow_browse.c:303
 msgid "(none)"
-msgstr ""
+msgstr "(nenhum)"
 
 #: ../src/gebr/ui_flow_browse.c:333
 msgid "Any flow selected"
-msgstr ""
+msgstr "Qualquer fluxo selecionado"
 
 #: ../src/gebr/ui_flow_browse.c:422
 #, c-format
 msgid "Unable to load flow '%s'"
-msgstr ""
+msgstr "Não foi possível carregar o fluxo '%s'"
 
 #: ../src/gebr/ui_flow_browse.c:423
 #, c-format
 msgid "Unable to load flow '%s' from file '%s'"
-msgstr ""
+msgstr "Não foi possível carregar o fluxo '%s' do arquivo '%s'"
 
 #: ../src/gebr/ui_flow_browse.c:448
 msgid "Flow help"
-msgstr ""
+msgstr "Ajuda do fluxo"
 
 #: ../src/gebr/ui_flow_browse.c:522
+#, fuzzy
 msgid "Backup current state?"
-msgstr ""
+msgstr "Fazer backup do estado atual?"
 
 #: ../src/gebr/ui_flow_browse.c:523
 msgid ""
 "You are about to revert to a previous state.The current flow will be lost "
 "after this action.Do you want to save the current flow state?"
 msgstr ""
+"Você está prestes a reverter a um estado anterior. O fluxo atual será perdido depois dessa ação.Você quer salvar o estado do fluxo atual?"
 
 #: ../src/gebr/ui_flow_browse.c:533
 #, c-format
 msgid "Changed to state '%s' ('%s')"
-msgstr ""
+msgstr "Modificado para o estado '%s' ('%s')"
 
 #: ../src/gebr/ui_flow_browse.c:535
 #, c-format
 msgid "Could not change to state '%s' ('%s')"
-msgstr ""
+msgstr "Não foi possível mudar para o estado '%s' ('%s')"
 
 #: ../src/gebr/ui_flow.c:75
 msgid "Flow input/output"
-msgstr ""
+msgstr "Entrada/Saída do fluxo"
 
 #. Input
 #: ../src/gebr/ui_flow.c:95
 msgid "Input file"
-msgstr ""
+msgstr "Arquivo de entrada"
 
 #. Output
 #: ../src/gebr/ui_flow.c:106
 msgid "Output file"
-msgstr ""
+msgstr "Arquivo de saída"
 
 #. Error
 #: ../src/gebr/ui_flow.c:116
 msgid "Error log file"
-msgstr ""
+msgstr "Arquivo de log de erro"
 
 #: ../src/gebr/ui_flow.c:186
-#, c-format
+#, fuzzy, c-format
 msgid "Unknown flow program '%s' status"
-msgstr ""
+msgstr "Estado de programa de fluxo '%s' desconhecido"
 
 #.
 #. * Left side: flow components
 #.
 #: ../src/gebr/ui_flow_edition.c:101
 msgid "Flow sequence"
-msgstr ""
+msgstr "Sequência de fluxo"
 
 #.
 #. * Right side: Menu list
 #.
 #: ../src/gebr/ui_flow_edition.c:146
 msgid "Flow components"
-msgstr ""
+msgstr "Componentes do fluxo"
 
 #: ../src/gebr/ui_flow_edition.c:247
 #, c-format
 msgid "Configuring flow component '%s'"
-msgstr ""
+msgstr "Configurando a componente do fluxo '%s'"
 
 #: ../src/gebr/ui_flow_edition.c:317 ../src/gebr/ui_help.c:64
 msgid "No flow component selected"
-msgstr ""
+msgstr "Nenhuma componente de fluxo selecionada"
 
 #: ../src/gebr/ui_flow_edition.c:337
 msgid "No menu selected"
-msgstr ""
+msgstr "Nenhum menu selecionado"
 
 #: ../src/gebr/ui_flow_edition.c:341
 msgid "Select a menu instead of a category"
-msgstr ""
+msgstr "Selecione um menu ao invés de uma categoria"
 
 #: ../src/gebr/ui_flow_edition.c:508
 msgid "Menu help"
-msgstr ""
+msgstr "Ajuda do menu"
 
 #: ../src/gebr/ui_help.c:41
 msgid "Unable to write help in temporary file"
-msgstr ""
+msgstr "Não foi possível escrever a ajuda em um arquivo temporário"
 
 #: ../src/gebr/ui_help.c:71
 msgid "Program help"
-msgstr ""
+msgstr "Ajuda do programa"
 
 #: ../src/gebr/ui_help.c:91 ../src/gebr/ui_help.c:155
 msgid "No editor defined. Choose one at Configure/Preferences"
-msgstr ""
+msgstr "Nenhum editor foi definido. Selecione um em Configurar/Preferências"
 
 #: ../src/gebr/ui_help.c:180
 msgid "Could not read created temporary file."
-msgstr ""
+msgstr "Não foi possível ler arquivo temporário criado"
 
 #: ../src/gebr/ui_help.c:200
 msgid "Please change the report encoding to UTF-8"
-msgstr ""
+msgstr "Por favor modifique a codificação da notificaçãopara UTF-8"
 
 #.
 #. * Left side
 #.
 #: ../src/gebr/ui_job_control.c:80
 msgid "Jobs"
-msgstr ""
+msgstr "Trabalhos"
 
 #: ../src/gebr/ui_job_control.c:206
 msgid "Text (*.txt)"
-msgstr ""
+msgstr "Texto (*.txt)"
 
 #: ../src/gebr/ui_job_control.c:219
 msgid "Could not write file"
-msgstr ""
+msgstr "Não foi possível escrever arquivo"
 
 #: ../src/gebr/ui_job_control.c:228
 #, c-format
 msgid "Saved job information at '%s'"
-msgstr ""
+msgstr "Salvar informação do trabalho em '%s'"
 
 #: ../src/gebr/ui_job_control.c:256 ../src/gebr/ui_job_control.c:352
 msgid "Job is not running"
-msgstr ""
+msgstr "O trabalho não está sendo executado"
 
 #: ../src/gebr/ui_job_control.c:260 ../src/gebr/ui_job_control.c:356
 msgid "You are not connected to job's server"
-msgstr ""
+msgstr "Você não está conectado ao servidor do trabalho"
 
 #: ../src/gebr/ui_job_control.c:263
 msgid "Terminate job"
-msgstr ""
+msgstr "Terminar trabalho"
 
 #: ../src/gebr/ui_job_control.c:263
 #, c-format
 msgid "Are you sure you want to terminate job '%s'?"
-msgstr ""
+msgstr "Você tem certeza que quer terminar o trabalho '%s'?"
 
 #: ../src/gebr/ui_job_control.c:266
 msgid "Asking server to terminate job"
-msgstr ""
+msgstr "Pedindo para o servidor terminar o trabalho"
 
 #: ../src/gebr/ui_job_control.c:268
 #, c-format
 msgid "Asking server '%s' to terminate job '%s'"
-msgstr ""
+msgstr "Pedindo para o servidor '%s' terminar o trabalho '%s'"
 
 #: ../src/gebr/ui_job_control.c:271
 #, c-format
 msgid "Asking local server to terminate job '%s'"
-msgstr ""
+msgstr "Pedindo para o servidor local terminar o trabalho '%s'"
 
 #: ../src/gebr/ui_job_control.c:297
 msgid "Clear job "
-msgstr ""
+msgstr "Limpar trabalho"
 
 #: ../src/gebr/ui_job_control.c:297
 #, c-format
 msgid "Are you sure you want to clear job '%s'?"
-msgstr ""
+msgstr "Você tem certeza que quer limpar o trabalho '%s'?"
 
 #: ../src/gebr/ui_job_control.c:314
 msgid "Clear all jobs"
-msgstr ""
+msgstr "Limpar todos os trabalhos"
 
 #: ../src/gebr/ui_job_control.c:314
 msgid "Are you sure you want to clear all jobs from all servers?"
-msgstr ""
+msgstr "Você tem certeza que quer limpar todos os trabalhos de todos os servidores?"
 
 #: ../src/gebr/ui_job_control.c:359
 msgid "Kill job"
-msgstr ""
+msgstr "Matar o trabalho"
 
 #: ../src/gebr/ui_job_control.c:359
 #, c-format
 msgid "Are you sure you want to kill job '%s'?"
-msgstr ""
+msgstr "Você tem certeza que quer matar o trabalho '%s'?"
 
 #: ../src/gebr/ui_job_control.c:362
 msgid "Asking server to kill job"
-msgstr ""
+msgstr "Pedindo para o servidor matar o trabalho"
 
 #: ../src/gebr/ui_job_control.c:364
 #, c-format
 msgid "Asking server '%s' to kill job '%s'"
-msgstr ""
+msgstr "Pedindo para o servidor '%s' matar o trabalho '%s'"
 
 #: ../src/gebr/ui_job_control.c:367
 #, c-format
 msgid "Asking local server to kill job '%s'"
-msgstr ""
+msgstr "Pedindo para o servidor local matar o trabalho '%s'"
 
 #: ../src/gebr/ui_job_control.c:421
+#, fuzzy
 msgid "Word-wrap"
-msgstr ""
+msgstr "Quebra de palavra"
 
 #: ../src/gebr/ui_log.c:89
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: ../src/gebr/ui_log.c:94
 msgid "Message"
-msgstr ""
+msgstr "Mensagem"
 
 #: ../src/gebr/ui_parameters.c:115
 msgid "Parameters"
-msgstr ""
+msgstr "Parâmetros"
 
 #: ../src/gebr/ui_parameters.c:120
 msgid "Default"
-msgstr ""
+msgstr "Padrão"
 
 #: ../src/gebr/ui_parameters.c:163
+#, fuzzy
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: ../src/gebr/ui_paths.c:92
 #, c-format
 msgid "Path list for line '%s'"
-msgstr ""
+msgstr "Lista de caminhos para a linha '%s'"
 
 #: ../src/gebr/ui_preferences.c:74
 msgid "Preferences"
-msgstr ""
+msgstr "Preferências"
 
 #.
 #. * User name
 #.
 #: ../src/gebr/ui_preferences.c:94
 msgid "User name"
-msgstr ""
+msgstr "Nome do usuário"
 
 #: ../src/gebr/ui_preferences.c:99
 msgid "You should know your name"
-msgstr ""
+msgstr "Você deveria saber seu nome"
 
 #: ../src/gebr/ui_preferences.c:116
 msgid "Your email address"
-msgstr ""
+msgstr "Seu endereço de e-mail"
 
 #.
 #. * GeBR dir
 #.
 #: ../src/gebr/ui_preferences.c:128
 msgid "User's menus directory"
-msgstr ""
+msgstr "Diretório de menus do usuário"
 
 #: ../src/gebr/ui_preferences.c:134
 msgid "GêBR dir"
-msgstr ""
+msgstr "GêBR dir"
 
 #: ../src/gebr/ui_preferences.c:136
 msgid "Path to look for private user's menus"
-msgstr ""
+msgstr "Caminho para procurar menus de usuário privado"
 
 #.
 #. * Data dir
 #.
 #: ../src/gebr/ui_preferences.c:147
 msgid "Data directory"
-msgstr ""
+msgstr "Diretório de dados"
 
 #: ../src/gebr/ui_preferences.c:153
+#, fuzzy
 msgid "Browser data dir"
-msgstr ""
+msgstr "Navegador dados dir"
 
 #: ../src/gebr/ui_preferences.c:156
 msgid "Path to store projects, lines and flows"
-msgstr ""
+msgstr "Caminho para armazenar projetos, linhas e fluxos"
 
 #.
 #. * Editor
 #.
 #: ../src/gebr/ui_preferences.c:167
 msgid "HTML editor"
-msgstr ""
+msgstr "Editor HTML"
 
 #: ../src/gebr/ui_preferences.c:172
 msgid "An HTML capable editor to edit helps and reports"
-msgstr ""
+msgstr "Um editor HTML capaz de editar arquivos de ajuda e notificações"
 
 #. Browser
 #: ../src/gebr/ui_preferences.c:179
 msgid "Browser"
-msgstr ""
+msgstr "Navegador"
 
 #: ../src/gebr/ui_preferences.c:186
 msgid "An HTML browser to display helps and reports"
-msgstr ""
+msgstr "Um navegador HTML para exibir arquivos de ajudas e notificações"
 
 #: ../src/gebr/ui_project_line.c:118
 msgid "Index"
-msgstr ""
+msgstr "Índice"
 
 #: ../src/gebr/ui_project_line.c:257
 #, c-format
 msgid "Project '%s' renamed to '%s'"
-msgstr ""
+msgstr "O projeto '%s' foi renomeado para '%s'"
 
 #: ../src/gebr/ui_project_line.c:259
 #, c-format
 msgid "Line '%s' renamed to '%s'"
-msgstr ""
+msgstr "A linha '%s' foi renomeada para '%s'"
 
 #: ../src/gebr/ui_project_line.c:320
 #, c-format
 msgid "Unable to load project '%s'"
-msgstr ""
+msgstr "Não foi possível carregar o projeto '%s'"
 
 #: ../src/gebr/ui_project_line.c:321
 #, c-format
 msgid "Unable to load project '%s' from file '%s'"
-msgstr ""
+msgstr "Não foi possível carregar o projeto '%s' do arquivo '%s'"
 
 #: ../src/gebr/ui_project_line.c:329
 #, c-format
 msgid "Unable to load line '%s'"
-msgstr ""
+msgstr "Não foi possível carregar a linha '%s'"
 
 #: ../src/gebr/ui_project_line.c:330
 #, c-format
 msgid "Unable to load line '%s' from file '%s'"
-msgstr ""
+msgstr "Não foi possível carregar a linha '%s' da linha '%s'"
 
 #: ../src/gebr/ui_project_line.c:396
 msgid "Project"
-msgstr ""
+msgstr "Projeto"
 
 #: ../src/gebr/ui_project_line.c:397
 msgid "Line"
-msgstr ""
+msgstr "Linha"
 
 #: ../src/gebr/ui_project_line.c:412
 #, c-format
 msgid "This project has 1 line"
-msgstr ""
+msgstr "Este projeto tem 1 linha"
 
 #: ../src/gebr/ui_project_line.c:413
 #, c-format
 msgid "This project has %d lines"
-msgstr ""
+msgstr "Este projeto tem %d linhas"
 
 #: ../src/gebr/ui_project_line.c:414
 #, c-format
 msgid "This project has no line"
-msgstr ""
+msgstr "Este projeto não tem linhas"
 
 #: ../src/gebr/ui_project_line.c:437
 msgid "Paths:"
-msgstr ""
+msgstr "Caminhos:"
 
 #: ../src/gebr/ui_project_line.c:443
 msgid "None"
-msgstr ""
+msgstr "Nenhum"
 
 #: ../src/gebr/ui_project_line.c:499
 msgid "Project report"
-msgstr ""
+msgstr "Notificação do projeto"
 
 #: ../src/gebr/ui_project_line.c:499
 msgid "Line report"
-msgstr ""
+msgstr "Notificação da linha"
 
 #: ../src/gebr/ui_server.c:80
 msgid "Autoconnect ON"
-msgstr ""
+msgstr "Autoconectar ON"
 
 #: ../src/gebr/ui_server.c:82
 msgid "Autoconnect OFF"
-msgstr ""
+msgstr "Autoconectar OFF"
 
 #. autoconnect
 #: ../src/gebr/ui_server.c:170
 msgid "Autoconnect"
-msgstr ""
+msgstr "Autoconectar"
 
 #: ../src/gebr/ui_server.c:223
+#, fuzzy
 msgid "AC"
-msgstr ""
+msgstr "AC"
 
 #: ../src/gebr/ui_server.c:228
 msgid "Address"
-msgstr ""
+msgstr "Endereço"
 
 #: ../src/gebr/ui_server.c:415
 msgid "Servers configuration"
-msgstr ""
+msgstr "Configuração de servidores"
 
 #: ../src/gebr/ui_server.c:419
 msgid "Connect all"
-msgstr ""
+msgstr "Conectar todos"
 
 #: ../src/gebr/ui_server.c:422
 msgid "Disconnect all"
-msgstr ""
+msgstr "Desconectar todos"
 
 #: ../src/gebr/ui_server.c:439
 msgid "Type here [user@]serverhostname"
-msgstr ""
+msgstr "Digite aqui ·[user@]serverhostname"
 
 #: ../src/gebr/ui_server.c:523
 msgid ""
 "There are no running servers available. Please configure them in Configure/"
 "Server"
 msgstr ""
+"Não existem servidores em execução disponíveis. Por favor configure-os em Configurar/"
+"Servidor"
 
 #: ../src/gebr/ui_server.c:534
 msgid "Select server"
-msgstr ""
+msgstr "Selecione um servidor"
+

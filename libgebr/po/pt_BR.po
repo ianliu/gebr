@@ -1,7 +1,7 @@
 # LANGUAGE translation of debr.
 # Copyright (C) 2009 THE debr'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the debr package.
-# biloti <EMAIL@ADDRESS>, 2009.
+# biloti <biloti@gmail.com>, 2009.
 # , fuzzy
 #
 #
@@ -10,27 +10,27 @@ msgstr ""
 "Project-Id-Version: debr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-04-30 20:18-0300\n"
-"PO-Revision-Date: 2009-04-30 15:30-0300\n"
+"PO-Revision-Date: 2009-05-07 01:56-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
+"Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);"
 
 #: ../src/comm/comm/server.c:129
 #, c-format
 msgid "Launching server at %s"
-msgstr ""
+msgstr "Executando servidor em %s"
 
 #: ../src/comm/comm/server.c:145
 msgid "Launching local server"
-msgstr ""
+msgstr "Executando servidor local"
 
 #. log
 #: ../src/comm/comm/server.c:239
 #, c-format
 msgid "Redirecting '%s' graphical output"
-msgstr ""
+msgstr "Redirecionando saída gráfica de '%s'"
 
 #: ../src/comm/comm/server.c:316
 #, c-format
@@ -38,6 +38,8 @@ msgid ""
 "Could not launch local server: \n"
 "%s"
 msgstr ""
+"Não foi possível executar o servidor local: \n"
+"%s"
 
 #: ../src/comm/comm/server.c:357
 #, c-format
@@ -46,6 +48,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"O servidor %s precisa de login SSH.\n"
+"\n"
+"%s"
 
 #: ../src/comm/comm/server.c:360
 #, c-format
@@ -53,15 +58,17 @@ msgid ""
 "Wrong password for server %s, please try again.\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Senha incorreta para o servidor %s, por favor tente novamente.\n"
+"\n"
+"%s"
 
 #: ../src/comm/comm/server.c:363
 msgid "SSH login:"
-msgstr ""
+msgstr "Login SSH:"
 
 #: ../src/comm/comm/server.c:381
 msgid "SSH question:"
-msgstr ""
+msgstr "Pergunta SSH:"
 
 #: ../src/comm/comm/server.c:391
 #, c-format
@@ -69,6 +76,8 @@ msgid ""
 "Received SSH message: \n"
 "%s"
 msgstr ""
+"Mensagem SSH recebida: \n"
+"%s"
 
 #: ../src/comm/comm/server.c:404
 #, c-format
@@ -76,6 +85,8 @@ msgid ""
 "Error contacting server at address %s via ssh: \n"
 "%s"
 msgstr ""
+"Erro ao contactar o servidor no endereço %s via ssh: \n"
+"%s"
 
 #: ../src/comm/comm/server.c:451
 #, c-format
@@ -83,100 +94,107 @@ msgid ""
 "Could not comunicate with server %s: \n"
 "%s"
 msgstr ""
+"Não foi possível se comunicar com o servidor %s: \n"
+"%s"
 
 #: ../src/comm/comm/server.c:596
 #, c-format
 msgid "Connection error '%d' on server '%s'"
-msgstr ""
+msgstr "Erro de conexão '%d' no servidor '%s'"
 
 #: ../src/geoxml/geoxml/error.c:25
 msgid "Success."
-msgstr ""
+msgstr "Sucesso."
 
 #: ../src/geoxml/geoxml/error.c:26
 msgid "Null pointer."
-msgstr ""
+msgstr "Ponteiro nulo."
 
 #: ../src/geoxml/geoxml/error.c:27
 msgid "Not enough memory."
-msgstr ""
+msgstr "Memória insuficiente."
 
 #: ../src/geoxml/geoxml/error.c:28
 msgid "Can't find file or permission denied."
-msgstr ""
+msgstr "Não foi possível encontrar o arquivo ou permissão negada."
 
 #: ../src/geoxml/geoxml/error.c:29
 msgid "Invalid element index."
-msgstr ""
+msgstr "Índice de elementos inválido."
 
 #: ../src/geoxml/geoxml/error.c:30
 msgid "Invalid document syntax or structure."
-msgstr ""
+msgstr "Sintaxe ou estrutura do documento inválida."
 
 #: ../src/geoxml/geoxml/error.c:31
 msgid "DTD specified in XML."
-msgstr ""
+msgstr "O DTD foi especificado em XML."
 
 #: ../src/geoxml/geoxml/error.c:32
 msgid "Could not find or read DTD."
-msgstr ""
+msgstr "Não foi possível encontrar ou ler DTD."
 
 #: ../src/geoxml/geoxml/error.c:33
 msgid "Not a sequence."
-msgstr ""
+msgstr "Não é uma sequência."
 
 #: ../src/geoxml/geoxml/error.c:34 ../src/geoxml/geoxml/error.c:67
 msgid ""
 "An operation on two sequences requires that both sequences are of the same "
 "type."
 msgstr ""
+"Uma operação em duas sequências requer que ambas as sequências sejam do mesmo tipo."
 
 #: ../src/geoxml/geoxml/error.c:35
 msgid "Not an enum."
-msgstr ""
+msgstr "Não é um enum."
 
 #: ../src/geoxml/geoxml/error.c:36
 msgid "Reference to itlself"
-msgstr ""
+msgstr "Referencia a ele mesmo"
 
 #: ../src/geoxml/geoxml/error.c:37
 msgid "Not first instance of the group"
-msgstr ""
+msgstr "Não é a primeira instância do grupo"
 
 #: ../src/geoxml/geoxml/error.c:50
 msgid "The operation was done successfuly."
-msgstr ""
+msgstr "A operação foi feita com sucesso."
 
 #: ../src/geoxml/geoxml/error.c:51
 msgid "One or more mandatory function arguments were null."
-msgstr ""
+msgstr "Um ou mais argumentos obrigatórios da função foram nulos."
 
 #: ../src/geoxml/geoxml/error.c:52
 msgid ""
 "Not enough memory. The library stoped after an unsucessful memory allocation."
 msgstr ""
+"Memória insuficiente. A biblioteca parou depois de uma alocação de memória mal sucedida."
 
 #: ../src/geoxml/geoxml/error.c:54
 msgid ""
 "Can't access file. The file doesn't exist or there is not enough permission "
 "to read it."
 msgstr ""
+"Não é possível acessar o arquivo. O arquivo não existe ou não há permissão suficiente para lê-lo."
 
 #: ../src/geoxml/geoxml/error.c:56
 msgid "This element index does not exist in the sequence."
-msgstr ""
+msgstr "Este índice de elementos não existe na sequência."
 
 #: ../src/geoxml/geoxml/error.c:57
 msgid ""
 "Invalid XML syntax or it does not respect the structure defined on its "
 "corresponding document DTD."
 msgstr ""
+"Sintaxe de XML inválida ou não respeita a estrutura definida no seu documento DTD correspondente."
 
 #: ../src/geoxml/geoxml/error.c:59
 msgid ""
 "DTD was specified for the document. LibGeBR-GeoXml requires the document not "
 "to specify the DTD as it automatically find it and validate against."
 msgstr ""
+"O DTD foi especificado para este documento. LibGeBR-GeoXml requer que o documento não especifique o DTD enquanto automaticamente encontra ele e o valida."
 
 #: ../src/geoxml/geoxml/error.c:61
 msgid ""
@@ -185,38 +203,43 @@ msgid ""
 "You should verify if your installation is correct and if it supports this "
 "document version (you might need to update your software)."
 msgstr ""
+"DTD para o tipo (fluxo, linha ou projeto) e versão do documento correspondente."
 
 #: ../src/geoxml/geoxml/error.c:65
+#, fuzzy
 msgid ""
 "The argument(s) passed are not inside a sequence and therefore sequence "
 "operations doesn't apply. This is a type checking result error."
 msgstr ""
+"Os argumentos fornecidos não estão contidos em uma sequência e portanto as operaçãoes não se aplicam. Istro é um erro de resutado de checagem de tipo."
 
 #: ../src/geoxml/geoxml/error.c:68
+#, fuzzy
 msgid "The function is only for enums. This is a type checking result error."
-msgstr ""
+msgstr "A função é somente para enums. Isso é um erro de resultado de checagem de tipo."
 
 #: ../src/geoxml/geoxml/error.c:69
 msgid "The reference parameter references itself"
-msgstr ""
+msgstr "O parâmetro de referência faz referência a sí próprio"
 
 #: ../src/geoxml/geoxml/error.c:70
 msgid "The operation only applies to the first instance of the group"
-msgstr ""
+msgstr "A operação aplica-se somente a primeira instância do grupo"
 
 #: ../src/gui/gui/about.c:28
 msgid "GêBR Core Team:"
-msgstr ""
+msgstr "GêBR Core Team:"
 
 #: ../src/gui/gui/about.c:29
 msgid "Developers"
-msgstr ""
+msgstr "Desenvolvedores"
 
 #: ../src/gui/gui/about.c:44
 msgid "GêBR Core Team"
-msgstr ""
+msgstr "GêBR Core Team"
 
 #: ../src/gui/gui/about.c:47
+#, fuzzy
 msgid ""
 "Copyright (C) 2007-2009 GêBR core team (http://sites.google.com/site/"
 "gebrproject/)\n"
@@ -239,27 +262,41 @@ msgid ""
 "#9610, Feb 19, 1998, and is registered in Instituto Nacional da Propriedade "
 "Industrial (INPI) under number 70156."
 msgstr ""
+"Copyright·(C)·2007-2009·GêBR·core·team·(http://sites.google.com/site/"
+"gebrproject/)\n"
+"\n"
+"Este programa é um software livre:·você pode distribuir-lo e/ou modifica-lo de acordo com os termos da GNU General Public Licence como publicado pela Free Software Foundation, cada versão 3 da Licença, ou (como sua opção) qualquer  versão posterior."
+"\n"
+"Este programa é distribuído na esperança de ser útil, mas SEM NENHUMA GARANTIA; sem até a garantia impicita de MERCANTIBILIDADE ou ADEQUAÇÃO PARA UM OBJETIVO PARTICULAR. Veja a GNU General Public Licence para mais detalhes.\n"
+"\n"
+"Você deve ter recebido uma cópia da GNU·General·Public·License "
+"junto deste programa. Se não, visite ·<http://www.gnu.org/licenses/>."
+"\n"
+"\n"
+"No Brasil, este programa está sobre proteção contra uso não autorizado,de acordo com as leis brasileiras #9609,·19 Fev,·1998,·#2556, 20·Abr,·1998,·e #9610, 19 Fev,·1998,·e é registrado no Instituto·Nacional·da·Propriedade·"
+"Industrial·(INPI)·sob número·70156."
 
 #: ../src/gui/gui/about.c:69
 msgid "GêBR Home page"
-msgstr ""
+msgstr "Página do GêBR"
 
 #: ../src/gui/gui/gtkfileentry.c:144
 msgid "Choose file"
-msgstr ""
+msgstr "Escolha um arquivo"
 
 #: ../src/gui/gui/gtkfileentry.c:144
 msgid "Choose directory"
-msgstr ""
+msgstr "Escolha um diretório"
 
 #: ../src/gui/gui/gtksequenceedit.c:408
 msgid "<empty value>"
-msgstr ""
+msgstr "<valor.vazio>"
 
 #: ../src/gui/gui/parameter.c:549
 msgid "Edit list"
-msgstr ""
+msgstr "Editar lista"
 
 #: ../src/misc/misc/date.c:71
 msgid "Unknown"
 msgstr "Desconhecida"
+
