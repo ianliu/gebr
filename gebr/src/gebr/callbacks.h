@@ -42,10 +42,13 @@ void
 on_project_line_properties_activate(void);
 
 void
-on_project_line_refresh_activate(void);
+on_project_line_paths_activate(void);
 
 void
-on_project_line_paths_activate(void);
+on_project_line_import_activate(void);
+
+void
+on_project_line_export_activate(void);
 
 void
 on_flow_new_activate(void);

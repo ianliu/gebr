@@ -41,20 +41,18 @@
  * Prototypes
  */
 
+static gboolean
+project_line_get_selected(GtkTreeIter * iter, gboolean warn_unselected);
 static void
 project_line_rename(GtkCellRendererText * cell, gchar * path_string,
 		    gchar * new_text, struct ui_project_line * ui_project_line);
-
 static void
 project_line_load(void);
-
 static void
 project_line_show_help(void);
-
 static void
 project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	GtkTreeViewColumn * column, struct ui_project_line * ui_project_line);
-
 static GtkMenu *
 project_line_popup_menu(GtkWidget * widget, struct ui_project_line * ui_project_line);
 
@@ -122,12 +120,12 @@ project_line_setup_ui(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_project_line->view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", PL_TITLE);
 	g_signal_connect(GTK_OBJECT(renderer), "edited",
-			GTK_SIGNAL_FUNC(project_line_rename), ui_project_line);
+		GTK_SIGNAL_FUNC(project_line_rename), ui_project_line);
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_project_line->view));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
 	g_signal_connect(GTK_OBJECT(ui_project_line->view), "cursor-changed",
-			GTK_SIGNAL_FUNC(project_line_load), ui_project_line);
+		GTK_SIGNAL_FUNC(project_line_load), ui_project_line);
 
 	/* Right side */
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -205,169 +203,18 @@ project_line_setup_ui(void)
 }
 
 /*
- * Function: project_line_free
- * Frees memory related to project and line
- */
-void
-project_line_free(void)
-{
-	if (gebr.project != NULL)
-		geoxml_document_free(GEOXML_DOC(gebr.project));
-	if (gebr.line != NULL)
-		geoxml_document_free(GEOXML_DOC(gebr.line));
-	gebr.project_line = NULL;
-	gebr.project = NULL;
-	gebr.line = NULL;
-}
-
-
-/*
- * Section: Private
- * Private functions.
- */
-
-/*
- * Function: project_line_rename
- * Rename a projet or a line upon double click
- */
-static void
-project_line_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new_text, struct ui_project_line * ui_project_line)
-{
-	GtkTreeIter		iter;
-	gchar *			old_title;
-
-	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(ui_project_line->store), &iter, path_string);
-	old_title = (gchar *)geoxml_document_get_title(gebr.project_line);
-
-	/* was it really renamed? */
-	if (strcmp(old_title, new_text) == 0)
-		return;
-
-	/* change it on the xml. */
-	geoxml_document_set_title(gebr.project_line, new_text);
-	document_save(gebr.project_line);
-
-	/* store's change */
-	gtk_tree_store_set(ui_project_line->store, &iter,
-			PL_TITLE, new_text,
-			-1);
-
-	/* feedback */
-	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Project '%s' renamed to '%s'"), old_title, new_text);
-	else
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Line '%s' renamed to '%s'"), old_title, new_text);
-	project_line_info_update();
-}
-
-/*
- * Function: project_line_load
- * Load a selected project or line from file
- *
- * The selected line or project is loaded from file, upon selection.
- */
-static void
-project_line_load(void)
-{
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
-	GtkTreePath *		path;
-
-	gchar *			project_filename;
-	gchar *                 project_title;
-	gchar *			line_filename;
-	gchar *                 line_title;
-
-	gboolean		is_line;
-
-	/* Frees any previous project, line and flow loaded */
-	project_line_free();
-	flow_free();
-	line_load_flows();
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		project_line_info_update();
-		return;
-	}
-
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
-	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
-	if (is_line == TRUE) {
-		GtkTreeIter	child;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
-			PL_FILENAME, &line_filename,
-			PL_TITLE, &line_title,
-			-1);
-		child = iter;
-		gtk_tree_model_iter_parent(model, &iter, &child);
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
-			PL_FILENAME, &project_filename,
-			PL_TITLE, &project_title,
-			-1);
-
-	} else {
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
-			PL_FILENAME, &project_filename,
-			PL_TITLE, &project_title,
-			-1);
-	}
-
-	gebr.project = GEOXML_PROJECT(document_load(project_filename));
-	if (gebr.project == NULL) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load project '%s'"), project_title);
-		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load project '%s' from file '%s'"),
-			project_title, project_filename);
-		goto out;
-	}
-
-	if (is_line == TRUE) {
-		gebr.line = GEOXML_LINE(document_load(line_filename));
-		if (gebr.line == NULL) {
-			gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load line '%s'"), line_title);
-			gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load line '%s' from file '%s'"),
-				line_title, line_filename);
-			project_line_free();
-			goto out;
-		}
-
-		gebr.project_line = GEOXML_DOC(gebr.line);
-		line_load_flows();
-	} else {
-		gebr.project_line = GEOXML_DOC(gebr.project);
-		gebr.line = NULL;
-	}
-
-	project_line_info_update();
-
-out:	gtk_tree_path_free(path);
-	g_free(project_filename);
-	g_free(project_title);
-	if (is_line == TRUE) {
-		g_free(line_filename);
-		g_free(line_title);
-	}
-}
-
-/*
  * Function: project_line_info_update
  * Update information shown about the selected project or line
  */
 void
 project_line_info_update(void)
 {
-	GtkTreeSelection *		selection;
-	GtkTreeModel *			model;
-	GtkTreeIter			iter;
-
 	gchar *				markup;
 	GString *	 		text;
 
 	gboolean			is_project;
 
-	if (gebr.project_line == NULL) {
+	if (!project_line_get_selected(NULL, FALSE)) {
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.title), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.description), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created_label), "");
@@ -388,8 +235,6 @@ project_line_info_update(void)
 
 	/* initialization */
 	is_project = (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT) ? TRUE : FALSE;
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	gtk_tree_selection_get_selected(selection, &model, &iter);
 
 	/* Title in bold */
 	markup = is_project
@@ -406,7 +251,7 @@ project_line_info_update(void)
 	if (is_project) {
 		gint	nlines;
 
-		nlines = gtk_tree_model_iter_n_children(model, &iter);
+		nlines = geoxml_project_get_lines_number(gebr.project);
 		markup = nlines != 0
 			? nlines == 1
 				? g_markup_printf_escaped(_("This project has 1 line"))
@@ -490,6 +335,188 @@ project_line_info_update(void)
 	navigation_bar_update();
 }
 
+/*
+ * Function: project_line_import
+ * Import line or project
+ */
+void
+project_line_import(void)
+{
+	
+}
+
+/*
+ * Function: project_line_export
+ * Export selected line or project
+ */
+void
+project_line_export(void)
+{
+// 	if (project_line_)
+}
+
+/*
+ * Function: project_line_free
+ * Frees memory related to project and line
+ */
+void
+project_line_free(void)
+{
+	if (gebr.project != NULL)
+		geoxml_document_free(GEOXML_DOC(gebr.project));
+	if (gebr.line != NULL)
+		geoxml_document_free(GEOXML_DOC(gebr.line));
+	gebr.project_line = NULL;
+	gebr.project = NULL;
+	gebr.line = NULL;
+}
+
+
+/*
+ * Section: Private
+ * Private functions.
+ */
+
+/*
+ * Function: project_line_get_selected
+ * Put selected iter in _iter_ and return true if there is a selection.
+ */
+static gboolean
+project_line_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
+{
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
+	if (gtk_tree_selection_get_selected(selection, &model, iter) == FALSE) {
+		if (warn_unselected)
+			gebr_message(LOG_ERROR, FALSE, TRUE, _("Please selected a project"));
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+/*
+ * Function: project_line_rename
+ * Rename a projet or a line upon double click
+ */
+static void
+project_line_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new_text, struct ui_project_line * ui_project_line)
+{
+	GtkTreeIter		iter;
+	gchar *			old_title;
+
+	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(ui_project_line->store), &iter, path_string);
+	old_title = (gchar *)geoxml_document_get_title(gebr.project_line);
+
+	/* was it really renamed? */
+	if (strcmp(old_title, new_text) == 0)
+		return;
+
+	/* change it on the xml. */
+	geoxml_document_set_title(gebr.project_line, new_text);
+	document_save(gebr.project_line);
+
+	/* store's change */
+	gtk_tree_store_set(ui_project_line->store, &iter, PL_TITLE, new_text, -1);
+
+	/* feedback */
+	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Project '%s' renamed to '%s'"), old_title, new_text);
+	else
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Line '%s' renamed to '%s'"), old_title, new_text);
+	project_line_info_update();
+}
+
+/*
+ * Function: project_line_load
+ * Load a selected project or line from file
+ *
+ * The selected line or project is loaded from file, upon selection.
+ */
+static void
+project_line_load(void)
+{
+	GtkTreeIter		iter;
+	GtkTreePath *		path;
+
+	gchar *			project_filename;
+	gchar *                 project_title;
+	gchar *			line_filename;
+	gchar *                 line_title;
+
+	gboolean		is_line;
+
+	/* Frees any previous project, line and flow loaded */
+	project_line_free();
+	flow_free();
+	line_load_flows();
+
+	if (!project_line_get_selected(&iter, TRUE)) {
+		project_line_info_update();
+		return;
+	}
+
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
+	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
+	if (is_line == TRUE) {
+		GtkTreeIter	child;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
+			PL_FILENAME, &line_filename,
+			PL_TITLE, &line_title,
+			-1);
+		child = iter;
+		gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter, &child);
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
+			PL_FILENAME, &project_filename,
+			PL_TITLE, &project_title,
+			-1);
+
+	} else {
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
+			PL_FILENAME, &project_filename,
+			PL_TITLE, &project_title,
+			-1);
+	}
+
+	gebr.project = GEOXML_PROJECT(document_load(project_filename));
+	if (gebr.project == NULL) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load project '%s'"), project_title);
+		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load project '%s' from file '%s'"),
+			project_title, project_filename);
+		goto out;
+	}
+
+	if (is_line == TRUE) {
+		gebr.line = GEOXML_LINE(document_load(line_filename));
+		if (gebr.line == NULL) {
+			gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load line '%s'"), line_title);
+			gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load line '%s' from file '%s'"),
+				line_title, line_filename);
+			project_line_free();
+			goto out;
+		}
+
+		gebr.project_line = GEOXML_DOC(gebr.line);
+		line_load_flows();
+	} else {
+		gebr.project_line = GEOXML_DOC(gebr.project);
+		gebr.line = NULL;
+	}
+
+	project_line_info_update();
+
+out:	gtk_tree_path_free(path);
+	g_free(project_filename);
+	g_free(project_title);
+	if (is_line == TRUE) {
+		g_free(line_filename);
+		g_free(line_title);
+	}
+}
+
 static void
 project_line_show_help(void)
 {
@@ -512,10 +539,6 @@ project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 static GtkMenu *
 project_line_popup_menu(GtkWidget * widget, struct ui_project_line * ui_project_line)
 {
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
-
 	GtkWidget *		menu;
 
 	menu = gtk_menu_new();
@@ -524,8 +547,7 @@ project_line_popup_menu(GtkWidget * widget, struct ui_project_line * ui_project_
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(gebr.action_group, "project_line_new_project")));
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+	if (!project_line_get_selected(NULL, FALSE))
 		goto out;
 
 	/* new line */

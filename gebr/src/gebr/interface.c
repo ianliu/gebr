@@ -52,6 +52,10 @@ static const GtkActionEntry actions_entries [] = {
 		(GCallback)on_project_line_properties_activate},
 	{"project_line_line_paths", GTK_STOCK_DIRECTORY, N_("Line paths"), NULL, N_("Edit custom line paths"),
 		(GCallback)on_project_line_paths_activate},
+	{"project_line_import", "document-import", N_("Import"), NULL, N_("Import project or line"),
+		(GCallback)on_project_line_import_activate},
+	{"project_line_export", "document-export", N_("Export"), NULL, N_("Export selected project or line"),
+		(GCallback)on_project_line_export_activate},
 	/* Flow */
 	{"flow_new", GTK_STOCK_NEW, NULL, "<Control>n", N_("Create a new flow"), (GCallback)on_flow_new_activate},
 	{"flow_delete", GTK_STOCK_DELETE, NULL, NULL, N_("Delete selected flow"), (GCallback)on_flow_delete_activate},
@@ -214,6 +218,12 @@ gebr_setup_ui(void)
 		gtk_action_group_get_action(gebr.action_group, "project_line_properties"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(gebr.action_group, "project_line_line_paths"))), -1);
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "project_line_import"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "project_line_export"))), -1);
 
 	gebr.ui_project_line = project_line_setup_ui();
 	vbox = gtk_vbox_new(FALSE, 0);

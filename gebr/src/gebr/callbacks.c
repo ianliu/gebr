@@ -122,17 +122,6 @@ on_project_line_properties_activate(void)
 }
 
 /*
- * Function: on_project_line_refresh_activate
- * Call <project_list_populate> from <project.c>
- *
- */
-void
-on_project_line_refresh_activate(void)
-{
-	project_list_populate();
-}
-
-/*
  * Function: on_project_line_paths_activate
  * *Fill me in!*
  *
@@ -141,6 +130,28 @@ void
 on_project_line_paths_activate(void)
 {
 	path_list_setup_ui();
+}
+
+/*
+ * Function: on_project_line_import_activate
+ * Call <project_line_import> from <ui_project_line.c>
+ *
+ */
+void
+on_project_line_import_activate(void)
+{
+	project_line_import();
+}
+
+/*
+ * Function: on_project_line_export_activate
+ * Call <project_line_export> from <ui_project_line.c>
+ *
+ */
+void
+on_project_line_export_activate(void)
+{
+	project_line_export();
 }
 
 /*

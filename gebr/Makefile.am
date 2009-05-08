@@ -17,4 +17,4 @@
 SUBDIRS = data menus src packages po
 
 doc:
-	NaturalDocs -i src/ -p ndproj/ -o FramedHtml doc/
+	NaturalDocs -i src/ -p doc -o FramedHtml doc/

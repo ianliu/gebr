@@ -62,6 +62,12 @@ void
 project_line_info_update(void);
 
 void
+project_line_import(void);
+
+void
+project_line_export(void);
+
+void
 project_line_free(void);
 
 #endif //__UI_PROJECT_LINE_H
