@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: debr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-05-06 15:17-0300\n"
-"PO-Revision-Date: 2009-05-05 22:04-0300\n"
+"PO-Revision-Date: 2009-05-08 15:12-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -250,14 +250,14 @@ msgstr "Designer de fluxo para GêBR"
 #.
 #: ../src/interface.c:196
 msgid "_Actions"
-msgstr "A_ções"
+msgstr "_Ações"
 
 #.
 #. * Menu: Help
 #.
 #: ../src/interface.c:212
 msgid "_Help"
-msgstr "_Ajuda"
+msgstr "A_juda"
 
 #: ../src/interface.c:230 ../src/menu.c:124
 msgid "Menu"

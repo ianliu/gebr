@@ -14,7 +14,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = data menus src packages po
+SUBDIRS = data share menus src packages po
+
+desktopdir = $(datadir)/applications
+desktop_DATA = gebr.desktop
+
+EXTRA_DIST = $(desktop_DATA)
 
 doc:
-	NaturalDocs -i src/ -p doc -o FramedHtml doc/
+	naturaldocs -i src/ -p doc -o FramedHtml doc/

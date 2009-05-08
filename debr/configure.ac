@@ -81,5 +81,6 @@ AC_OUTPUT([
 packages/rpm/debr.fedora.spec packages/rpm/debr.opensuse.spec packages/rpm/debr.mandriva.spec
 data/help-template.html packages/Makefile 
 Makefile data/Makefile src/Makefile src/defines.h
+debr.desktop
 po/Makefile.in
 ])

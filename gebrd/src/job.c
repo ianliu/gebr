@@ -322,7 +322,7 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 			break;
 		default:
 			g_string_append_printf(job->issues,
-				_("Unspecified error %d. "
+				_("Unspecified error %d.\n"
 				"See library documentation at http://gebr.sf.net/doc/libgebr/geoxml.\n"), ret);
 			break;
 		}

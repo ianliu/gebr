@@ -1,4 +1,4 @@
-Format: 1.4
+Format: Development Release 12-07-2007 (1.35 base)
 
 
 # You can add a title and sub-title to your menu like this:
@@ -46,7 +46,7 @@ Format: 1.4
 # --------------------------------------------------------------------------
 
 
-Group: Gebr  {
+Group: GeBR  {
 
    File: callbacks.c  (gebr/callbacks.c)
    File: document.c  (gebr/document.c)
@@ -71,9 +71,12 @@ Group: Gebr  {
    File: ui_project_line.c  (gebr/ui_project_line.c)
    File: ui_server.c  (gebr/ui_server.c)
    File: ui_server.h  (gebr/ui_server.h)
-   }  # Group: Gebr
+   }  # Group: GeBR
 
-File: server.c  (gebr-client/server.c)
+Group: GeBR Client  {
+
+   File: server.c  (gebr-client/server.c)
+   }  # Group: GeBR Client
 
 Group: Index  {
 
@@ -82,3 +85,4 @@ Group: Index  {
    Function Index: Functions
    }  # Group: Index
 
+Link: GeBR Project  (http://sites.google.com/site/gebrproject/)

@@ -15,3 +15,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 SUBDIRS = data src packages po
+
+desktopdir = $(datadir)/applications
+desktop_DATA = debr.desktop
+
+EXTRA_DIST = $(desktop_DATA)
+
