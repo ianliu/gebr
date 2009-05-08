@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = data share menus src packages po
+SUBDIRS = data menus src packages po
 
 desktopdir = $(datadir)/applications
 desktop_DATA = gebr.desktop
