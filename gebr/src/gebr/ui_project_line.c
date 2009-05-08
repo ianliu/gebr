@@ -21,9 +21,13 @@
  * Builds the "Project and Lines" UI and distribute callbacks
  */
 
+#include <stdlib.h>
 #include <string.h>
 
+#include <glib/gstdio.h>
+
 #include <misc/date.h>
+#include <misc/utils.h>
 #include <gui/utils.h>
 
 #include "ui_project_line.h"
@@ -352,7 +356,93 @@ project_line_import(void)
 void
 project_line_export(void)
 {
-// 	if (project_line_)
+	GString *		command;
+	GString *		filename;
+	GString *		files;
+	const gchar *		extension;
+	gchar *			tmp;
+	gchar *			current_dir;
+
+	GtkWidget *		chooser_dialog;
+	GtkFileFilter *		file_filter;
+
+	GeoXmlSequence *	i;
+
+	if (!project_line_get_selected(NULL, TRUE))
+		return;
+
+	command = g_string_new("");
+	filename = g_string_new("");
+	files = g_string_new("");
+	file_filter = gtk_file_filter_new();
+
+	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT) {
+		geoxml_project_get_line(gebr.project, &i, 0);
+		for (; i != NULL; geoxml_sequence_next(&i)) {
+			const gchar *		line_filename;
+			GeoXmlLine *		line;
+			GeoXmlSequence *	j;
+
+			line_filename = geoxml_project_get_line_source(GEOXML_PROJECT_LINE(i));
+			line = GEOXML_LINE(document_load(line_filename));
+			if (line == NULL)
+				continue;
+
+			g_string_append_printf(files, "%s ", line_filename);
+			geoxml_line_get_flow(line, &j, 0);
+			for (; j != NULL; geoxml_sequence_next(&j))
+				g_string_append_printf(files, "%s ",
+					geoxml_line_get_flow_source(GEOXML_LINE_FLOW(j)));
+
+			geoxml_document_free(GEOXML_DOCUMENT(line));
+		}
+
+		gtk_file_filter_set_name(file_filter, _("Project (*.prjz)"));
+		gtk_file_filter_add_pattern(file_filter, "*.prjz");
+		extension = ".prjz";
+	} else {
+		geoxml_line_get_flow(gebr.line, &i, 0);
+		for (; i != NULL; geoxml_sequence_next(&i))
+			g_string_append_printf(files, "%s ", geoxml_line_get_flow_source(GEOXML_LINE_FLOW(i)));
+
+		gtk_file_filter_set_name(file_filter, _("Line (*.lnez)"));
+		gtk_file_filter_add_pattern(file_filter, "*.lnez");
+		extension = ".lnez";
+	}
+
+	/* run file chooser */
+	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose filename to save"),
+		GTK_WINDOW(gebr.window),
+		GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_STOCK_SAVE, GTK_RESPONSE_YES,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		NULL);
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
+
+	/* show file chooser */
+	gtk_widget_show(chooser_dialog);
+	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
+		goto out;
+	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
+	g_string_assign(filename, tmp);
+	append_filename_extension(filename, extension);
+
+	current_dir = g_get_current_dir();
+	g_chdir(gebr.config.data->str);
+	g_string_printf(command, "tar czf %s %s", filename->str, files->str);
+	if (system(command->str))
+		gebr_message(LOG_ERROR, FALSE, TRUE, _("Could not export"));
+	else
+		gebr_message(LOG_ERROR, FALSE, TRUE, _("Exported succesful"));
+	g_chdir(current_dir);
+	g_free(current_dir);
+
+out:	gtk_widget_destroy(chooser_dialog);
+	g_string_free(command, TRUE);
+	g_string_free(filename, TRUE);
+	g_string_free(files, TRUE);
+	g_free(tmp);
 }
 
 /*
