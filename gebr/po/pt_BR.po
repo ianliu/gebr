@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: gebr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-05-08 09:49-0300\n"
-"PO-Revision-Date: 2009-05-08 10:02-0300\n"
+"PO-Revision-Date: 2009-05-08 10:26-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -230,7 +230,7 @@ msgstr "Exportar como um menu"
 
 #: ../src/gebr/interface.c:64
 msgid "Export the flow as a menu"
-msgstr "Exportar o fluxo como um menu"
+msgstr "Exportar o fluxo como menu"
 
 #: ../src/gebr/interface.c:66
 msgid "Input and Output"
@@ -238,7 +238,7 @@ msgstr "Entrada e Saída"
 
 #: ../src/gebr/interface.c:66
 msgid "Edit input/output flow files"
-msgstr "Editar arquivos de fluxo de entrada/saída"
+msgstr "Editar arquivos de entrada/saída do fluxo"
 
 #: ../src/gebr/interface.c:68
 msgid "Run current flow"
@@ -537,7 +537,7 @@ msgstr "Descrição"
 #. Report
 #: ../src/gebr/ui_document.c:125
 msgid "Report"
-msgstr "Notificação"
+msgstr "Relatório"
 
 #. Author
 #: ../src/gebr/ui_document.c:134
@@ -714,7 +714,7 @@ msgstr "Não foi possível ler arquivo temporário criado"
 
 #: ../src/gebr/ui_help.c:200
 msgid "Please change the report encoding to UTF-8"
-msgstr "Por favor modifique a codificação da notificação para UTF-8"
+msgstr "Por favor modifique a codificação do relatório para UTF-8"
 
 #.
 #. * Left side
@@ -894,7 +894,7 @@ msgstr "Editor HTML"
 
 #: ../src/gebr/ui_preferences.c:172
 msgid "An HTML capable editor to edit helps and reports"
-msgstr "Um editor HTML capaz de editar arquivos de ajuda e notificações"
+msgstr "Um editor HTML capaz de editar arquivos de ajuda e relatórios"
 
 #. Browser
 #: ../src/gebr/ui_preferences.c:179
@@ -903,7 +903,7 @@ msgstr "Navegador"
 
 #: ../src/gebr/ui_preferences.c:186
 msgid "An HTML browser to display helps and reports"
-msgstr "Um navegador HTML para exibir arquivos de ajudas e notificações"
+msgstr "Um navegador HTML para exibir arquivos de ajudas e relatórios"
 
 #: ../src/gebr/ui_project_line.c:118
 msgid "Index"
@@ -972,11 +972,11 @@ msgstr "Nenhum"
 
 #: ../src/gebr/ui_project_line.c:499
 msgid "Project report"
-msgstr "Notificação do projeto"
+msgstr "Relatório do projeto"
 
 #: ../src/gebr/ui_project_line.c:499
 msgid "Line report"
-msgstr "Notificação da linha"
+msgstr "Relatório da linha"
 
 #: ../src/gebr/ui_server.c:80
 msgid "Autoconnect ON"
