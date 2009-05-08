@@ -8,7 +8,8 @@ Package: gebr
 Section: science
 Architecture: any
 Depends: ${shlibs:Depends}
-Recommends: gebrd
+Recommends: gebrd (= ${binary:Version})
+Conflicts: gebrd (<< ${binary:Version}), libgebr0 (<< ${binary:Version}), libgebr0 (>> ${binary:Version})
 Suggests: debr, gebr-menus-su
 Description: Seismic processing environment
  GeBR is an environment to seismic processing based on open-source

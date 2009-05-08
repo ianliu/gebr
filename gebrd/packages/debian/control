@@ -8,6 +8,8 @@ Build-Depends: debhelper (>= 5)
 Package: gebrd
 Architecture: any
 Depends: ${shlibs:Depends}
+Suggests: gebr (= ${binary:Version})
+Conflicts: gebr (<< ${binary:Version}), libgebr0 (<< ${binary:Version}), libgebr0 (>> ${binary:Version})
 Suggests: gebr
 Description: GeBRD is server for executing flows
  GeBR is an environment to seismic processing based on open-source
