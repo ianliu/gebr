@@ -376,6 +376,7 @@ project_line_export(void)
 	files = g_string_new("");
 	file_filter = gtk_file_filter_new();
 
+	g_string_append_printf(files, "%s ", geoxml_document_get_filename(gebr.project_line));
 	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT) {
 		geoxml_project_get_line(gebr.project, &i, 0);
 		for (; i != NULL; geoxml_sequence_next(&i)) {
@@ -434,7 +435,7 @@ project_line_export(void)
 	if (system(command->str))
 		gebr_message(LOG_ERROR, FALSE, TRUE, _("Could not export"));
 	else
-		gebr_message(LOG_ERROR, FALSE, TRUE, _("Exported succesful"));
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Exported succesful"));
 	g_chdir(current_dir);
 	g_free(current_dir);
 
