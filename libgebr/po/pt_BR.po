@@ -1,21 +1,24 @@
 # LANGUAGE translation of debr.
 # Copyright (C) 2009 THE debr'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the debr package.
-# biloti <biloti@gmail.com>, 2009.
 # , fuzzy
 #
 #
+# biloti <biloti@gmail.com>, 2009.
+# Bráulio Barros de Oliveira <brauliobo@gmail.com>, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-04-30 20:18-0300\n"
-"PO-Revision-Date: 2009-05-07 01:56-0300\n"
-"Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
-"Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
+"PO-Revision-Date: 2009-05-08 15:58-0400\n"
+"Last-Translator: Bráulio Barros de Oliveira <brauliobo@gmail.com>\n"
+"Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);"
+"X-Generator: Lokalize 0.3\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../src/comm/comm/server.c:129
 #, c-format
@@ -58,7 +61,8 @@ msgid ""
 "Wrong password for server %s, please try again.\n"
 "\n"
 "%s"
-msgstr "Senha incorreta para o servidor %s, por favor tente novamente.\n"
+msgstr ""
+"Senha incorreta para o servidor %s, por favor tente novamente.\n"
 "\n"
 "%s"
 
@@ -142,8 +146,7 @@ msgstr "Não é uma sequência."
 msgid ""
 "An operation on two sequences requires that both sequences are of the same "
 "type."
-msgstr ""
-"Uma operação em duas sequências requer que ambas as sequências sejam do mesmo tipo."
+msgstr "Uma operação em duas sequências requer que ambas as sequências sejam do mesmo tipo."
 
 #: ../src/geoxml/geoxml/error.c:35
 msgid "Not an enum."
@@ -166,17 +169,14 @@ msgid "One or more mandatory function arguments were null."
 msgstr "Um ou mais argumentos obrigatórios da função foram nulos."
 
 #: ../src/geoxml/geoxml/error.c:52
-msgid ""
-"Not enough memory. The library stoped after an unsucessful memory allocation."
-msgstr ""
-"Memória insuficiente. A biblioteca parou depois de uma alocação de memória mal sucedida."
+msgid "Not enough memory. The library stoped after an unsucessful memory allocation."
+msgstr "Memória insuficiente. A biblioteca parou depois de uma alocação de memória mal sucedida."
 
 #: ../src/geoxml/geoxml/error.c:54
 msgid ""
 "Can't access file. The file doesn't exist or there is not enough permission "
 "to read it."
-msgstr ""
-"Não é possível acessar o arquivo. O arquivo não existe ou não há permissão suficiente para lê-lo."
+msgstr "Não é possível acessar o arquivo. O arquivo não existe ou não há permissão suficiente para lê-lo."
 
 #: ../src/geoxml/geoxml/error.c:56
 msgid "This element index does not exist in the sequence."
@@ -186,15 +186,13 @@ msgstr "Este índice de elementos não existe na sequência."
 msgid ""
 "Invalid XML syntax or it does not respect the structure defined on its "
 "corresponding document DTD."
-msgstr ""
-"Sintaxe de XML inválida ou não respeita a estrutura definida no seu documento DTD correspondente."
+msgstr "Sintaxe de XML inválida ou não respeita a estrutura definida no seu documento DTD correspondente."
 
 #: ../src/geoxml/geoxml/error.c:59
 msgid ""
 "DTD was specified for the document. LibGeBR-GeoXml requires the document not "
 "to specify the DTD as it automatically find it and validate against."
-msgstr ""
-"O DTD foi especificado para este documento. LibGeBR-GeoXml requer que o documento não especifique o DTD enquanto automaticamente encontra ele e o valida."
+msgstr "O DTD foi especificado para este documento. LibGeBR-GeoXml requer que o documento não especifique o DTD dado que este é encontrado automaticamente."
 
 #: ../src/geoxml/geoxml/error.c:61
 msgid ""
@@ -202,16 +200,14 @@ msgid ""
 "could not be found or accessed on the system.\n"
 "You should verify if your installation is correct and if it supports this "
 "document version (you might need to update your software)."
-msgstr ""
-"DTD para o tipo (fluxo, linha ou projeto) e versão do documento correspondente."
+msgstr "DTD para o tipo (fluxo, linha ou projeto) e versão do documento correspondente."
 
 #: ../src/geoxml/geoxml/error.c:65
 #, fuzzy
 msgid ""
 "The argument(s) passed are not inside a sequence and therefore sequence "
 "operations doesn't apply. This is a type checking result error."
-msgstr ""
-"Os argumentos fornecidos não estão contidos em uma sequência e portanto as operaçãoes não se aplicam. Istro é um erro de resutado de checagem de tipo."
+msgstr "Os argumentos fornecidos não estão contidos em uma sequência e portanto as operaçãoes não se aplicam. Istro é um erro de resutado de checagem de tipo."
 
 #: ../src/geoxml/geoxml/error.c:68
 #, fuzzy
@@ -299,4 +295,5 @@ msgstr "Editar lista"
 #: ../src/misc/misc/date.c:71
 msgid "Unknown"
 msgstr "Desconhecida"
+
 

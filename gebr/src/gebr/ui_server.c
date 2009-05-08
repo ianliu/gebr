@@ -126,6 +126,15 @@ server_common_remove(GtkMenuItem * menu_item, struct server * server)
 	server_free(server);
 }
 
+/* Function: server_common_stop
+ * Send server command to kill daemon
+ */
+static void
+server_common_stop(GtkMenuItem * menu_item, struct server * server)
+{
+	comm_server_kill(server->comm);
+}
+
 /* Function; server_common_popup_menu
  * Context menu for server tree view
  */
@@ -179,6 +188,13 @@ server_common_popup_menu(GtkWidget * widget, struct ui_server_common * ui_server
 		g_signal_connect(menu_item, "activate",
 			(GCallback)server_common_remove, server);
 	}
+	/* stop server */
+	menu_item = gtk_image_menu_item_new_with_label(_("Stop server"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
+		gtk_image_new_from_stock(GTK_STOCK_STOP, GTK_ICON_SIZE_MENU));
+	g_signal_connect(menu_item, "activate",
+		(GCallback)server_common_stop, server);
 
 	gtk_widget_show_all(menu);
 

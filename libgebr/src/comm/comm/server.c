@@ -43,6 +43,8 @@ comm_ssh_parse_output(GTerminalProcess * process, struct comm_server * comm_serv
 static void
 comm_ssh_read(GTerminalProcess * process, struct comm_server * comm_server);
 static void
+comm_ssh_finished(GTerminalProcess * process, struct comm_server * comm_server);
+static void
 comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_server);
 static void
 comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * comm_server);
@@ -180,6 +182,27 @@ comm_server_is_local(struct comm_server * comm_server)
 {
 	return strcmp(comm_server->address->str, "127.0.0.1") == 0
 		? TRUE : FALSE;
+}
+
+void
+comm_server_kill(struct comm_server * comm_server)
+{
+	GString *		cmd_line;
+	GTerminalProcess *	process;
+
+	cmd_line = g_string_new(NULL);
+	comm_server_log_message(comm_server, LOG_INFO, _("Stoping server at %s"), comm_server->address->str);
+
+	comm_server->tried_existant_pass = FALSE;
+	process = g_terminal_process_new();
+	g_signal_connect(process, "ready-read",
+		G_CALLBACK(comm_ssh_read), comm_server);
+	g_signal_connect(process, "finished",
+		G_CALLBACK(comm_ssh_finished), comm_server);
+
+	g_string_printf(cmd_line, "ssh -x %s 'killall gebrd'", comm_server->address->str);
+	g_terminal_process_start(process, cmd_line);
+	g_string_free(cmd_line, TRUE);
 }
 
 /*
@@ -423,10 +446,16 @@ comm_ssh_read(GTerminalProcess * process, struct comm_server * comm_server)
 
 	output = g_terminal_process_read_string_all(process);
 	comm_ssh_parse_output(process, comm_server, output);
-puts("!!!!!!!!!!!!!!!!!");
+
 	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_read: %s", output->str);
 
 	g_string_free(output, TRUE);
+}
+
+static void
+comm_ssh_finished(GTerminalProcess * process, struct comm_server * comm_server)
+{
+	g_terminal_process_free(process);
 }
 
 static void
@@ -592,7 +621,7 @@ comm_server_error(GStreamSocket * stream_socket, enum GSocketError error, struct
 	comm_server->error = SERVER_ERROR_CONNECT;
 	comm_server->state = SERVER_STATE_DISCONNECTED;
 	if (error == G_SOCKET_ERROR_UNKNOWN)
-		puts("unk");
+		puts("FIXME: handle G_SOCKET_ERROR_UNKNOWN");
 	comm_server_log_message(comm_server, LOG_ERROR, _("Connection error '%d' on server '%s'"), error, comm_server->address->str);
 }
 

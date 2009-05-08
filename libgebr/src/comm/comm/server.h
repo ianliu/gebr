@@ -97,6 +97,9 @@ comm_server_is_logged(struct comm_server * comm_server);
 gboolean
 comm_server_is_local(struct comm_server * comm_server);
 
+void
+comm_server_kill(struct comm_server * comm_server);
+
 gboolean
 comm_server_forward_x11(struct comm_server * comm_server, guint16 port);
 
