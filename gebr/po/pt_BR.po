@@ -5,18 +5,17 @@
 # , fuzzy
 #
 #
-#: ../src/gebr/main.c:51
 msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 20:02-0300\n"
-"PO-Revision-Date: 2009-05-07 21:31-0300\n"
+"POT-Creation-Date: 2009-05-08 09:49-0300\n"
+"PO-Revision-Date: 2009-05-08 10:02-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);"
+"Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: ../src/gebr/client.c:61
 msgid "Connected to local server"
@@ -30,7 +29,9 @@ msgstr "Conectado ao servidor '%s'"
 #: ../src/gebr/client.c:69
 #, c-format
 msgid "Server '%s' could not send display for graphical output redirection"
-msgstr "O servidor '%s' não conseguiu enviar um display para redirecionamento de saída gráfica"
+msgstr ""
+"O servidor '%s' não conseguiu enviar um display para redirecionamento de "
+"saída gráfica"
 
 #: ../src/gebr/document.c:108
 #, c-format
@@ -133,7 +134,7 @@ msgstr "Pedindo para o servidor '%s' executar o fluxo '%s'"
 msgid "Asking local server to run flow '%s'"
 msgstr "Pedindo para o servidor local executar o fluxo '%s'"
 
-#: ../src/gebr/flow.c:578 ../src/gebr/interface.c:241
+#: ../src/gebr/flow.c:578 ../src/gebr/interface.c:242
 msgid "Save flow state"
 msgstr "Salvar estado do fluxo"
 
@@ -309,40 +310,40 @@ msgstr ""
 "Um ambiente plug-and-play para\n"
 "ferramentas de processamento sísmico"
 
-#: ../src/gebr/interface.c:221
+#: ../src/gebr/interface.c:222
 msgid "Projects and Lines"
 msgstr "Projetos e Linhas"
 
-#: ../src/gebr/interface.c:263
+#: ../src/gebr/interface.c:264
 msgid "Flows"
 msgstr "Fluxos"
 
-#: ../src/gebr/interface.c:298
+#: ../src/gebr/interface.c:299
 msgid "Flow edition"
 msgstr "Edição de fluxo"
 
-#: ../src/gebr/interface.c:322
+#: ../src/gebr/interface.c:323
 msgid "Job control"
 msgstr "Controle de tarefas"
 
-#: ../src/gebr/interface.c:346
+#: ../src/gebr/interface.c:347
 msgid "Actions menu"
 msgstr "Menu de ações"
 
 #. Server entry
-#: ../src/gebr/interface.c:355
+#: ../src/gebr/interface.c:356
 msgid "_Servers"
 msgstr "_Servidores"
 
-#: ../src/gebr/interface.c:362
+#: ../src/gebr/interface.c:363
 msgid "Actions"
 msgstr "Ações"
 
-#: ../src/gebr/interface.c:386
+#: ../src/gebr/interface.c:387
 msgid "Help menu"
 msgstr "Menu de ajuda"
 
-#: ../src/gebr/interface.c:394
+#: ../src/gebr/interface.c:395
 msgid "Help"
 msgstr "Ajuda"
 
@@ -366,7 +367,7 @@ msgstr "Data de início:"
 
 #: ../src/gebr/job.c:200
 msgid "Issues:"
-msgstr "Causas:"
+msgstr "Informes:"
 
 #: ../src/gebr/job.c:203
 msgid "Command line:"
@@ -431,27 +432,32 @@ msgid "Flows loaded"
 msgstr "Fluxos carregados"
 
 #: ../src/gebr/main.c:46
-msgid "GeBR"
-msgstr "GeBR"
+msgid " - GeBR, a seismic processing environment"
+msgstr "- Um ambiente de processamento sísmico"
 
 #: ../src/gebr/main.c:48
-msgid "a seismic processing environment"
-msgstr "Um ambiente de processamento sísmico"
+msgid ""
+"GeBR is a free-software which provides an environment to seismic\n"
+"data processing, designed to easily assemble and run processing\n"
+"flows, as well as to manage jobs."
+msgstr ""
+"GeBR é um ambiente livre de processamento de dados sísmicos,\n"
+"projetado para criar e executar fluxos de processamento facilmente,\n"
+"bem como para gerir tarefas."
 
-#: ../src/gebr/main.c:56
-#, c-format
-msgid "%s:syntaxerror\n"
-msgstr "%s:erro de sintaxe\n"
+#: ../src/gebr/main.c:53
+msgid "GeBR Project - http://sites.google.com/site/gebrproject/"
+msgstr "Projeto GeBR - http://sites.google.com/site/gebrproject/"
 
 #: ../src/gebr/main.c:57
-#, fuzzy, c-format
-msgid "Try%s--help\n"
-msgstr "Tente%s--help\n"
-
-#: ../src/gebr/main.c:62
 #, c-format
-msgid "%s\n"
-msgstr "%s\n"
+msgid "%s: syntax error\n"
+msgstr "%s: erro de sintaxe\n"
+
+#: ../src/gebr/main.c:58
+#, c-format
+msgid "Try %s --help\n"
+msgstr "Tente %s --help\n"
 
 #: ../src/gebr/menu.c:316
 msgid "Unable to write menus' index"
@@ -524,7 +530,7 @@ msgid "Title"
 msgstr "Título"
 
 #. Description
-#: ../src/gebr/ui_document.c:116
+#: ../src/gebr/ui_document.c:116 ../src/gebr/ui_flow_edition.c:175
 msgid "Description"
 msgstr "Descrição"
 
@@ -606,7 +612,6 @@ msgid "Flow help"
 msgstr "Ajuda do fluxo"
 
 #: ../src/gebr/ui_flow_browse.c:522
-#, fuzzy
 msgid "Backup current state?"
 msgstr "Fazer backup do estado atual?"
 
@@ -615,7 +620,8 @@ msgid ""
 "You are about to revert to a previous state.The current flow will be lost "
 "after this action.Do you want to save the current flow state?"
 msgstr ""
-"Você está prestes a reverter a um estado anterior. O fluxo atual será perdido depois dessa ação.Você quer salvar o estado do fluxo atual?"
+"Você está prestes a reverter a um estado anterior. O fluxo atual será "
+"perdido depois dessa ação.Você quer salvar o estado do fluxo atual?"
 
 #: ../src/gebr/ui_flow_browse.c:533
 #, c-format
@@ -647,9 +653,9 @@ msgid "Error log file"
 msgstr "Arquivo de log de erro"
 
 #: ../src/gebr/ui_flow.c:186
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown flow program '%s' status"
-msgstr "Estado de programa de fluxo '%s' desconhecido"
+msgstr "Estado de programa '%s' desconhecido"
 
 #.
 #. * Left side: flow components
@@ -664,6 +670,10 @@ msgstr "Sequência de fluxo"
 #: ../src/gebr/ui_flow_edition.c:146
 msgid "Flow components"
 msgstr "Componentes do fluxo"
+
+#: ../src/gebr/ui_flow_edition.c:168
+msgid "Flow"
+msgstr "Fluxo"
 
 #: ../src/gebr/ui_flow_edition.c:247
 #, c-format
@@ -704,7 +714,7 @@ msgstr "Não foi possível ler arquivo temporário criado"
 
 #: ../src/gebr/ui_help.c:200
 msgid "Please change the report encoding to UTF-8"
-msgstr "Por favor modifique a codificação da notificaçãopara UTF-8"
+msgstr "Por favor modifique a codificação da notificação para UTF-8"
 
 #.
 #. * Left side
@@ -764,7 +774,7 @@ msgstr "Limpar tarefa"
 #: ../src/gebr/ui_job_control.c:297
 #, c-format
 msgid "Are you sure you want to clear job '%s'?"
-msgstr "Você tem certeza que quer limpar a tarefa '%s'?"
+msgstr "Tem certeza que quer limpar a tarefa '%s'?"
 
 #: ../src/gebr/ui_job_control.c:314
 msgid "Clear all jobs"
@@ -772,7 +782,7 @@ msgstr "Limpar todas as tarefas"
 
 #: ../src/gebr/ui_job_control.c:314
 msgid "Are you sure you want to clear all jobs from all servers?"
-msgstr "Você tem certeza que quer limpar todas as tarefas de todos os servidores?"
+msgstr "Tem certeza que quer limpar todas as tarefas de todos os servidores?"
 
 #: ../src/gebr/ui_job_control.c:359
 msgid "Kill job"
@@ -781,7 +791,7 @@ msgstr "Matar a tarefa"
 #: ../src/gebr/ui_job_control.c:359
 #, c-format
 msgid "Are you sure you want to kill job '%s'?"
-msgstr "Você tem certeza que quer matar a tarefa '%s'?"
+msgstr "Tem certeza que quer matar a tarefa '%s'?"
 
 #: ../src/gebr/ui_job_control.c:362
 msgid "Asking server to kill job"
@@ -798,7 +808,6 @@ msgid "Asking local server to kill job '%s'"
 msgstr "Pedindo para o servidor local matar a tarefa '%s'"
 
 #: ../src/gebr/ui_job_control.c:421
-#, fuzzy
 msgid "Word-wrap"
 msgstr "Quebra de palavra"
 
@@ -819,7 +828,6 @@ msgid "Default"
 msgstr "Padrão"
 
 #: ../src/gebr/ui_parameters.c:163
-#, fuzzy
 msgid "Link"
 msgstr "Link"
 
@@ -870,9 +878,8 @@ msgid "Data directory"
 msgstr "Diretório de dados"
 
 #: ../src/gebr/ui_preferences.c:153
-#, fuzzy
 msgid "Browser data dir"
-msgstr "Navegador dados dir"
+msgstr "Navegadar pelos diretórios"
 
 #: ../src/gebr/ui_preferences.c:156
 msgid "Path to store projects, lines and flows"
@@ -985,7 +992,6 @@ msgid "Autoconnect"
 msgstr "Autoconectar"
 
 #: ../src/gebr/ui_server.c:223
-#, fuzzy
 msgid "AC"
 msgstr "AC"
 
@@ -1007,17 +1013,19 @@ msgstr "Desconectar todos"
 
 #: ../src/gebr/ui_server.c:439
 msgid "Type here [user@]serverhostname"
-msgstr "Digite aqui ·[usuário@]nomedoservidor"
+msgstr "Digite aqui [usuário@]nomedoservidor"
 
 #: ../src/gebr/ui_server.c:523
 msgid ""
 "There are no running servers available. Please configure them in Configure/"
 "Server"
 msgstr ""
-"Não existem servidores em execução disponíveis. Por favor configure-os em Configurar/"
-"Servidor"
+"Não existem servidores em execução disponíveis. Por favor configure-os em "
+"Configurar/Servidor"
 
 #: ../src/gebr/ui_server.c:534
 msgid "Select server"
 msgstr "Selecione um servidor"
 
+#~ msgid "%s\n"
+#~ msgstr "%s\n"

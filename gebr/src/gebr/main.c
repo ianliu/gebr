@@ -36,30 +36,31 @@ main(int argc, char ** argv, char ** env)
 {
 	gboolean		show_version;
 	GOptionEntry		entries[] = {
-		{"version", 0, 0, G_OPTION_ARG_NONE, &show_version,
+		{"version", 'V', 0, G_OPTION_ARG_NONE, &show_version,
 			"Show GeBR version", NULL},
 		{NULL}
 	};
 	GError *		error = NULL;
 	GOptionContext *	context;
 
-	context = g_option_context_new(_("GeBR"));
+	context = g_option_context_new(_(" - GeBR, a seismic processing environment"));
 	g_option_context_set_summary(context,
-		_("a seismic processing environment")
+		_("GeBR is a free-software which provides an environment to seismic\n"
+                  "data processing, designed to easily assemble and run processing\n"
+                  "flows, as well as to manage jobs.")
 	);
 	g_option_context_set_description(context,
-		_("")
-	);
+                _("GeBR Project - http://sites.google.com/site/gebrproject/"));
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
 	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE) {
-		fprintf(stderr, _("%s: syntax error\n"), argv[0]);
-		fprintf(stderr, _("Try %s --­­help\n"), argv[0]);
+		fprintf(stderr, _("%s: syntax error\n"), argv[0]);
+		fprintf(stderr, _("Try %s --help\n"), argv[0]);
 		return -1;
 	}
 
 	if (show_version == TRUE) {
-		fprintf(stdout, _("%s\n"), GEBR_VERSION);
+		fprintf(stdout, "%s\n", GEBR_VERSION);
 		return 0;
 	}
 

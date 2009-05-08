@@ -165,14 +165,14 @@ flow_edition_setup_ui(void)
 		GTK_SIGNAL_FUNC(flow_edition_menu_add), ui_flow_edition);
 
 	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes("Flow", renderer, NULL);
+	col = gtk_tree_view_column_new_with_attributes(_("Flow"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->menu_view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "markup", MENU_TITLE_COLUMN);
 	gtk_tree_view_column_set_sort_column_id(col, MENU_TITLE_COLUMN);
 	gtk_tree_view_column_set_sort_indicator(col, TRUE);
 
 	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes("Description", renderer, NULL);
+	col = gtk_tree_view_column_new_with_attributes(_("Description"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->menu_view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_DESC_COLUMN);
 
