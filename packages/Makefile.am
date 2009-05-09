@@ -14,21 +14,29 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT(configure.ac)
+SUBDIRS = su
 
-PACKAGE=gebr
-VERSION=0.9.12
-AC_SUBST(PACKAGE)
-AC_SUBST(VERSION)
-AC_SUBST(TODAY)
+EXTRA_DIST =
+	rpm/gebr.fedora.spec \
+	rpm/gebr.opensuse.spec \
+	rpm/gebr.mandriva.spec
 
-AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
-PACKAGE_NAME=$PACKAGE
-PACKAGE_VERSION=$VERSION
+packages: deb-package rpm-packages
+rpm-packages: fedora-package opensuse-package mandriva-package
 
-AC_CONFIG_SUBDIRS([libgebr gebrd gebr debr])
+deb-package:
+	cd ..; dpkg-buildpackage -kA594D681 -tc -rfakeroot; cd -
 
-AC_OUTPUT([
-Makefile
-packages/Makefile
-])
+rpm-structure:
+	cd ..; make dist; cd -
+	mkdir -p rpm/BUILD rpm/RPMS rpm/SRPMS rpm/SOURCES && cp ../@PACKAGE@-@VERSION@.tar.gz rpm/SOURCES
+
+fedora-package: rpm-structure
+	rpmbuild -ba rpm/gebr.fedora.spec
+
+opensuse-package: rpm-structure
+	rpmbuild -ba rpm/gebr.opensuse.spec
+
+mandriva-package: rpm-structure
+	rpmbuild -ba rpm/gebr.mandriva.spec
+

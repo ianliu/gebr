@@ -346,7 +346,71 @@ project_line_info_update(void)
 void
 project_line_import(void)
 {
-	
+// 	GtkWidget *		chooser_dialog;
+// 	GtkFileFilter *		file_filter;
+// 
+// 	gchar *			filename;
+// 	gboolean		is_project;
+// 
+// 	GString *		command;
+// 	gint			exit_status;
+// 	GError *		error;
+// 	gchar *			output;
+// 
+// 	gchar **		files;
+// 	int			i;
+// 	gchar *			file;
+// 
+// 	command = g_string_new(NULL);
+// 	error = NULL;
+// 
+// 	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose project/line to open"),
+// 		GTK_WINDOW(gebr.window),
+// 		GTK_FILE_CHOOSER_ACTION_OPEN,
+// 		GTK_STOCK_OPEN, GTK_RESPONSE_YES,
+// 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+// 		NULL);
+// 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
+// 	file_filter = gtk_file_filter_new();
+// 	gtk_file_filter_set_name(file_filter, _("Project or line (*.prjz *.lnez)"));
+// 	gtk_file_filter_add_pattern(file_filter, "*.prjz *.lnez");
+// 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
+// 
+// 	/* show file chooser */
+// 	gtk_widget_show(chooser_dialog);
+// 	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
+// 		goto out2;
+// 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
+// 	if (g_str_has_suffix(filename, ".prjz"))
+// 		is_project = TRUE;
+// 	else if (g_str_has_suffix(filename, ".lnez"))
+// 		is_project = FALSE;
+// 	else {
+// 		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unrecognized file type"));
+// 		goto out;
+// 	}
+// 
+// 	g_string_printf(command, "tar tzf %s", filename);
+// 	if (!g_spawn_command_line_sync(command, &output, NULL, &exit_status, &error))
+// 		goto err;
+// 	if (exit_status)
+// 		goto err;
+// 	files = g_strsplit(output, "\n", 0);
+// // 	for (i = 0, file = files[0], file[i] != NULL; ++i)
+// // 		if (is_project && g_str_has_suffix(file, ".prj"))
+// // 		else if (!is_project && g_str_has_suffix(file, ".lne"))
+// 		
+// 
+// 	gebr_message(LOG_INFO, FALSE, TRUE, _("Imported succesful"));
+// 	goto out;
+// 
+// err:	gebr_message(LOG_ERROR, FALSE, TRUE, _("Failed to import"));
+// 
+// out:	g_free(filename);
+// out2:	gtk_widget_destroy(chooser_dialog);
+// 	g_string_free(command, TRUE);
+// 	g_free(output);
+// 	g_strvfree(files);
 }
 
 /*

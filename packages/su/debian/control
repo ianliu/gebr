@@ -1,0 +1,12 @@
+Source: su
+Priority: extra
+Maintainer: Braulio Barros de Oliveira <brauliobo@gmail.com>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: su
+Section: science
+Architecture: any
+Build-Depends: gfortran lesstif2-dev libglut3-dev libxmu-dev
+Depends: ${shlibs:Depends}
+Description: Seismic Unix
