@@ -14,4 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = su
+SUBDIRS =
+
+packages: deb-package
+
+deb-package:
+	cd ..; wget -N ftp://ftp.cwp.mines.edu/pub/cwpcodes/cwp_su_all_41.tgz; tar xzf cwp_su_all_41.tgz; mv src su
+	./make-deb.sh
