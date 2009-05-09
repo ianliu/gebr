@@ -28,7 +28,7 @@ install: build
 	cd src && $(MAKE) xtinstall
 	cd src && $(MAKE) finstall
 	cd src && $(MAKE) utils
-	mkdir usr || mv bin lib usr
+	mkdir -p usr; mv bin lib usr
 
 
 # Build architecture-independent files here.
