@@ -1,27 +1,26 @@
 SHELL = /bin/sh
-CWPROOT = /usr
-ROOT = \$(CWPROOT)
+ROOT = $(CWPROOT)
 ENDIANFLAG = -DCWP_LITTLE_ENDIAN
-LARGE_FILE_FLAG =  -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -DGNU_SOURCE
+LARGE_FILE_FLAG = -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -DGNU_SOURCE
 OPTC = -O3 -Wall -Wno-long-long -ansi -pedantic -D_POSIX_SOURCE
 MAKE = make
-include \$(CWPROOT)/src/Rules/oldmake.rules
-include \$(CWPROOT)/src/Rules/gnumake.rules
+include $(CWPROOT)/src/Rules/oldmake.rules
+include $(CWPROOT)/src/Rules/gnumake.rules
 CC = cc
-CFLAGS = -I\$I \$(OPTC) \$(LARGE_FILE_FLAG) \$(ENDIANFLAG) \$(XDRFLAG) \$(LINEHDRFLAG)
+CFLAGS = -I$I $(OPTC) $(LARGE_FILE_FLAG) $(ENDIANFLAG) $(XDRFLAG) $(LINEHDRFLAG)
 C++ = c++
-C++FLAGS = -I\$I \$(OPTC) \$(LARGE_FILE_FLAG) \$(ENDIANFLAG) \$(XDRFLAG)
-LD_LIBRARY_PATH += \$(CWPROOT)/lib
+C++FLAGS = -I$I $(OPTC) $(LARGE_FILE_FLAG) $(ENDIANFLAG) $(XDRFLAG)
+LD_LIBRARY_PATH += $(CWPROOT)/lib
 AR = ar
 ARFLAGS = rv
 RANLIB = ranlib
-ICHMODLINE = chmod 664 \$@
-MCHMODLINE = chmod 775 \$@
+ICHMODLINE = chmod 664 $@
+MCHMODLINE = chmod 775 $@
 CPP = /lib/cpp
 OPTF = -O -static -fno-automatic -fno-second-underscore
 FC = gfortran
 JC = javac
-include \$(CWPROOT)/src/Rules/abbrev.rules
+include $(CWPROOT)/src/Rules/abbrev.rules
 IX11 = /usr/include
 LX11 = /usr/lib
 IMOTIF = /usr/include
@@ -30,8 +29,8 @@ IGL = /usr/include
 LGL = /usr/lib
 IGLUT = /usr/include
 LGLUT = /usr/lib
-include \$(CWPROOT)/src/Rules/cflags.rules
-include \$(CWPROOT)/src/Rules/newmesa.rules
-include \$(CWPROOT)/src/Rules/opengl.rules
-include \$(CWPROOT)/src/Rules/suffix.rules
-include \$(CWPROOT)/src/Rules/misc.rules
+include $(CWPROOT)/src/Rules/cflags.rules
+include $(CWPROOT)/src/Rules/newmesa.rules
+include $(CWPROOT)/src/Rules/opengl.rules
+include $(CWPROOT)/src/Rules/suffix.rules
+include $(CWPROOT)/src/Rules/misc.rules

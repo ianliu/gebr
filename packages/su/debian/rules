@@ -9,32 +9,12 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-CFLAGS = -O3 -Wall -Wno-long-long -ansi -pedantic -D_POSIX_SOURCE
-
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	# commands to configure the package.
-	export CWPROOT=/usr
-	touch configure-stamp
-
-build: build-stamp
-build-stamp: configure-stamp
-	dh_testdir
-
-	# commands to compile the package.
-	cd src
-	$(MAKE)
-
-	touch $@
-
 clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp configure-stamp
 
-	# Add here commands to clean up after the build process.
-	-$(MAKE) clean
+	rm -fr usr include
 
 	dh_clean 
 
@@ -44,8 +24,11 @@ install: build
 	dh_clean -k 
 	dh_installdirs
 
-	# Add here commands to install the package into debian/tmp
-	$(MAKE) DESTDIR=$(CURDIR)/debian/tmp install
+	cd src && $(MAKE) install
+	cd src && $(MAKE) xtinstall
+	cd src && $(MAKE) finstall
+	cd src && $(MAKE) utils
+	mkdir usr || mv bin lib usr
 
 
 # Build architecture-independent files here.
@@ -56,10 +39,7 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs ChangeLog
-	dh_install --sourcedir=debian/tmp
-	dh_installinfo
-	dh_installman
+	dh_install --sourcedir=${CWPROOT}
 	dh_link
 	dh_strip
 	dh_compress

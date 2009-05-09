@@ -1,5 +1,6 @@
 #!/bin/sh
-touch LICENSE_41_ACCEPTED
-touch MAILHOME_41
-cp Makefile.config.deb Makefile.config
+touch src/LICENSE_41_ACCEPTED
+touch src/MAILHOME_41
+cp Makefile.config.deb src/Makefile.config
+export CWPROOT=`pwd`
 dpkg-buildpackage -kA594D681 -tc -rfakeroot
