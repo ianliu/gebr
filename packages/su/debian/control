@@ -1,10 +1,10 @@
-Source: su
+Source: seismicunix
 Priority: extra
 Maintainer: Braulio Barros de Oliveira <brauliobo@gmail.com>
-Build-Depends: debhelper (>= 5), gfortran, lesstif2-dev, libxmu-dev
+Build-Depends: debhelper (>= 5), gfortran, lesstif2-dev, libxmu-dev, libglut3-dev
 Standards-Version: 3.7.2
 
-Package: su
+Package: seismicunix
 Section: science
 Architecture: any
 Depends: ${shlibs:Depends}

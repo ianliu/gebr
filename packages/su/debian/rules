@@ -27,9 +27,12 @@ install: build
 	cd src && $(MAKE) install
 	cd src && $(MAKE) xtinstall
 	cd src && $(MAKE) finstall
+	cd src && $(MAKE) mglinstall
 	cd src && $(MAKE) utils
+	cd src && $(MAKE) xminstall
+	cd src && $(MAKE) sfinstall
 	mkdir -p usr; mv bin lib usr
-
+	mkdir -p etc/profile.d; echo "CWPROOT=/usr" > etc/profile.d/seismicunix; chmod +x etc/profile.d/seismicunix
 
 # Build architecture-independent files here.
 binary-indep: build install
