@@ -1,3 +1,4 @@
 etc/profile.d/*
 usr/bin/*
 usr/lib/*
+usr/include/*
