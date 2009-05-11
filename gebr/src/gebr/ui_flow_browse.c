@@ -24,12 +24,12 @@
 
 #include <string.h>
 
+#include <libgebrintl.h>
 #include <misc/date.h>
 #include <gui/utils.h>
 
 #include "ui_flow_browse.h"
 #include "gebr.h"
-#include "support.h"
 #include "document.h"
 #include "line.h"
 #include "flow.h"

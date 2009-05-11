@@ -28,12 +28,12 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
+#include <libgebrintl.h>
 #include <misc/utils.h>
 
 #include "ui_help.h"
 #include "gebr.h"
 #include "../defines.h"
-#include "support.h"
 #include "menu.h"
 
 #define BUFFER_SIZE 1024

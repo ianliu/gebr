@@ -19,6 +19,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <libgebrintl.h>
 #include <comm/protocol.h>
 #include <comm/gstreamsocket.h>
 #include <comm/gsocketaddress.h>
@@ -27,7 +28,6 @@
 
 #include "job.h"
 #include "gebrd.h"
-#include "support.h"
 
 /*
  * Internal functions

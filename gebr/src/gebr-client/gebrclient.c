@@ -17,8 +17,10 @@
 
 #include <stdio.h>
 
+#include <libgebr.h>
+#include <libgebrintl.h>
+
 #include "gebrclient.h"
-#include "support.h"
 #include "server.h"
 
 struct gebr_client gebr_client;
@@ -26,6 +28,8 @@ struct gebr_client gebr_client;
 gboolean
 gebr_client_init(const gchar * server_address)
 {
+	libgebr_init();
+
 	gebr_client.server = server_new(server_address);
 
 	return TRUE;

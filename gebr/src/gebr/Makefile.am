@@ -16,7 +16,7 @@
 
 bin_PROGRAMS = gebr
 
-#TODO: remove cmdline.{c,h} in future versions (or remove old config support)
+#TODO: remove cmdline.{c,h} in future versions (remove old config format support)
 
 gebr_SOURCES = main.c \
 	cmdline.c \
@@ -29,7 +29,6 @@ gebr_SOURCES = main.c \
 	job.c \
 	server.c client.c \
 	menu.c \
-	support.c \
 	interface.c \
 	ui_document.c \
 	ui_flow.c \
@@ -54,7 +53,6 @@ noinst_HEADERS = \
 	job.h \
 	server.h client.h \
 	menu.h \
-	support.h \
 	interface.h \
 	ui_document.h \
 	ui_flow.h \
@@ -72,5 +70,5 @@ EXTRA_DIST = ${noinst_HEADERS}
 
 INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
-AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GTK_CFLAGS) $(LIBGEBR_CFLAGS)
-gebr_LDADD = $(GTK_LIBS) $(LIBGEBR_LIBS)
+AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GTK_CFLAGS) $(LIBGEBR_CFLAGS) $(LIBGEBR_MISC_CFLAGS) $(LIBGEBR_GEOXML_CFLAGS) $(LIBGEBR_COMM_CFLAGS) $(LIBGEBR_GUI_CFLAGS)
+gebr_LDADD = $(GTK_LIBS) $(LIBGEBR_LIBS) $(LIBGEBR_MISC_LIBS) $(LIBGEBR_GEOXML_LIBS) $(LIBGEBR_COMM_LIBS) $(LIBGEBR_GUI_LIBS)

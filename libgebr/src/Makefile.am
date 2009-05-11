@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = misc geoxml comm gui
+SUBDIRS = @CONFIG_SUBDIRS@
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr.pc
@@ -23,12 +23,13 @@ lib_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES = libgebr.c
 
 libgebrincludedir = $(includedir)/libgebr
-libgebrinclude_HEADERS = libgebr.h
+libgebrinclude_HEADERS = libgebr.h libgebrintl.h
 noinst_HEADERS = defines.h
 
 EXTRADIST = ${pkgconfig_DATA} $(noinst_HEADERS)
 
-INCLUDES = -Igeoxml -Icomm -Igui -Imisc
+INCLUDES = \
+	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GTK_CFLAGS) $(GDOME2_CFLAGS)
-libgebr_la_LIBADD = geoxml/geoxml/libgebr_geoxml.la comm/comm/libgebr_comm.la gui/gui/libgebr_gui.la misc/misc/libgebr_misc.la
+libgebr_la_LIBADD = -lutil $(INTLLIBS) $(GLIB_LIBS)
 libgebr_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@

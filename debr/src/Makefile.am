@@ -28,8 +28,7 @@ debr_SOURCES = \
 	enumoptionedit.c \
 	validate.c \
 	help.c \
-	preferences.c \
-	support.c
+	preferences.c
 noinst_HEADERS = \
 	interface.h \
 	callbacks.h \
@@ -41,13 +40,10 @@ noinst_HEADERS = \
 	enumoptionedit.h \
 	validate.h \
 	help.h \
-	preferences.h \
-	support.h
+	preferences.h
 EXTRA_DIST = $(noinst_HEADERS)
 
-LIBGEBR_CFLAGS = $(LIBGEBR_GEOXML_CFLAGS) $(LIBGEBR_GUI_CFLAGS) $(LIBGEBR_MISC_CFLAGS)
-LIBGEBR_LIBS = $(LIBGEBR_GEOXML_LIBS) $(LIBGEBR_GUI_LIBS) $(LIBGEBR_MISC_LIBS)
 INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
-AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GTK_CFLAGS) ${LIBGEBR_CFLAGS}
-debr_LDADD = $(INTLLIBS) $(GTK_LIBS) $(LIBGEBR_LIBS)
+AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GTK_CFLAGS) $(LIBGEBR_CFLAGS) $(LIBGEBR_MISC_CFLAGS) $(LIBGEBR_GEOXML_CFLAGS) $(LIBGEBR_GUI_CFLAGS)
+debr_LDADD = $(INTLLIBS) $(GTK_LIBS) $(LIBGEBR_LIBS) $(LIBGEBR_MISC_LIBS) $(LIBGEBR_GEOXML_LIBS) $(LIBGEBR_GUI_LIBS)

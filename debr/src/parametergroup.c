@@ -19,11 +19,11 @@
 
 #include <gtk/gtk.h>
 
+#include <libgebrintl.h>
 #include <gui/utils.h>
 
 #include "parametergroup.h"
 #include "debr.h"
-#include "support.h"
 #include "parameter.h"
 
 /*

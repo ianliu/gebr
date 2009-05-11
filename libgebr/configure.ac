@@ -34,10 +34,8 @@ AC_SUBST(PROJECT_VERSION)
 AC_SUBST(DOCUMENT_VERSION)
 
 dnl Debug option
-AC_ARG_ENABLE(debug,
-	[AC_HELP_STRING([--enable-debug],
-	[turn on debugging])],,
-	enable_debug=yes)
+AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [turn on debugging])],, enable_debug=yes)
+AC_ARG_ENABLE(debug, [AC_HELP_STRING([--disable-debug], [turn off debugging])],, enable_debug=no)
 if test "$enable_debug" = "yes"; then
 	DEBUG_CFLAGS="-DLIBGEBR_DEBUG"
 else
@@ -45,9 +43,21 @@ else
 fi
 AC_SUBST(DEBUG_CFLAGS)
 
-dnl For create static packages
+dnl Option to turn on GUI build or not (useful for servers).
+AC_ARG_ENABLE(gui, [AC_HELP_STRING([--enable-gui], [turn on GUI build])],, enable_gui=yes)
+AC_ARG_ENABLE(gui, [AC_HELP_STRING([--disable-gui], [turn off GUI elements])],, enable_gui=no)
+if test "$enable_gui" = "yes"; then
+	CONFIG_SUBDIRS="misc geoxml comm gui"
+	CONFIG_LIBGEBR_GUI="gui/gui/libgebr_gui.la"
+else
+	CONFIG_SUBDIRS="misc geoxml comm"
+fi
+AC_SUBST(CONFIG_SUBDIRS)
+AC_SUBST(CONFIG_LIBGEBR_GUI)
+
+dnl For static build
 AC_ARG_ENABLE([static-mode],
-	[  --enable-static-mode    enables flags for generating a static package],
+	[AC_HELP_STRING([--enable-static-mode], [enables flags for generating a static package])]
 	STATIC_MODE=1, STATIC_MODE=0)
 AC_SUBST(STATIC_MODE)
 
@@ -85,15 +95,17 @@ PKG_CHECK_MODULES(GTHREAD, [gthread-2.0 >= 2.8],,AC_MSG_ERROR([Could not find gt
 AC_SUBST(GTHREAD_LIBS)
 AC_SUBST(GTHREAD_CFLAGS)
 
-dnl check for GTK
-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0.0,,AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.0.0]))
-AC_SUBST(GTK_LIBS)
-AC_SUBST(GTK_CFLAGS)
-
 dnl check for gdome >= 0.8.0 (which is thread safe)
 PKG_CHECK_MODULES(GDOME2, [gdome2 >= 0.8.0],,AC_MSG_ERROR([Could not find gdome2 >= 0.8.0]))
 AC_SUBST(GDOME2_LIBS)
 AC_SUBST(GDOME2_CFLAGS)
+
+dnl check for GTK
+if test "$enable_gui" = "yes"; then
+	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0.0,,AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.0.0]))
+	AC_SUBST(GTK_LIBS)
+	AC_SUBST(GTK_CFLAGS)
+fi
 
 AC_OUTPUT([
 packages/rpm/libgebr.fedora.spec packages/rpm/libgebr.opensuse.spec packages/rpm/libgebr.mandriva.spec

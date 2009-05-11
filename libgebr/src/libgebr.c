@@ -15,4 +15,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <locale.h>
+#ifdef ENABLE_NLS
+#	include <libintl.h>
+#endif
+
 #include "libgebr.h"
+
+void
+libgebr_init(void)
+{
+	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+}

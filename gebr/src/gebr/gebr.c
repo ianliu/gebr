@@ -30,11 +30,12 @@
 
 #include <glib/gstdio.h>
 
+#include <libgebr.h>
+#include <libgebrintl.h>
 #include <misc/utils.h>
 #include <misc/date.h>
 
 #include "gebr.h"
-#include "support.h"
 #include "project.h"
 #include "server.h"
 #include "job.h"
@@ -57,6 +58,7 @@ gebr_init(void)
 	/* initialization */
 	gebr.project_line = NULL;
 	gebr.flow = NULL;
+	libgebr_init();
 	protocol_init();
 
 	/* check/create config dir */

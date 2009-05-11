@@ -60,16 +60,18 @@ PKG_CHECK_MODULES(GTHREAD, [gthread-2.0 >= 2.8],,AC_MSG_ERROR([Could not find gt
 AC_SUBST(GTHREAD_LIBS)
 AC_SUBST(GTHREAD_CFLAGS)
 
+dnl check for libgebr
+PKG_CHECK_MODULES(LIBGEBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
+AC_SUBST(LIBGEBR_CFLAGS)
+AC_SUBST(LIBGEBR_LIBS)
 dnl check for libgebr_geoxml
 PKG_CHECK_MODULES(LIBGEBR_GEOXML, gebr-geoxml,,AC_MSG_ERROR([Could not find libgebr_geoxml]))
 AC_SUBST(LIBGEBR_GEOXML_CFLAGS)
 AC_SUBST(LIBGEBR_GEOXML_LIBS)
-
 dnl check for libgebr_comm
 PKG_CHECK_MODULES(LIBGEBR_COMM, gebr-comm,,AC_MSG_ERROR([Could not find libgebr_comm]))
 AC_SUBST(LIBGEBR_COMM_CFLAGS)
 AC_SUBST(LIBGEBR_COMM_LIBS)
-
 dnl check for libgebr_misc
 PKG_CHECK_MODULES(LIBGEBR_MISC, gebr-misc,,AC_MSG_ERROR([Could not find libgebr_misc]))
 AC_SUBST(LIBGEBR_MISC_CFLAGS)

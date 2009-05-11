@@ -23,12 +23,12 @@
 
 #include <string.h>
 
+#include <libgebrintl.h>
 #include <gui/utils.h>
 #include <misc/date.h>
 
 #include "ui_log.h"
 #include "gebr.h"
-#include "support.h"
 
 /*
  * Prototypes

@@ -23,9 +23,10 @@
 
 #include <glib.h>
 
+#include <libgebrintl.h>
+
 #include "gebrd.h"
 #include "defines.h"
-#include "support.h"
 
 int
 main(int argc, char ** argv)
@@ -33,9 +34,9 @@ main(int argc, char ** argv)
 	gboolean		show_version;
 	GOptionEntry		entries[] = {
 		{"interactive", 'i', 0, G_OPTION_ARG_NONE, &gebrd.options.foreground,
-			"Run server in interactive mode, not as a daemon", NULL},
+			_("Run server in interactive mode, not as a daemon"), NULL},
 		{"version", 0, 0, G_OPTION_ARG_NONE, &show_version,
-			"Show GeBR daemon version", NULL},
+			_("Show GeBR daemon version"), NULL},
 		{NULL}
 	};
 	GError *		error = NULL;

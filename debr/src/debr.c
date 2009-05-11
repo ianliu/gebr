@@ -21,10 +21,11 @@
 
 #include <glib/gstdio.h>
 
+#include <libgebr.h>
+#include <libgebrintl.h>
 #include <misc/utils.h>
 
 #include "debr.h"
-#include "support.h"
 #include "menu.h"
 #include "preferences.h"
 
@@ -34,6 +35,8 @@ struct debr debr;
 void
 debr_init(void)
 {
+	libgebr_init();
+
 	debr_config_load();
 
 	debr.menu = NULL;

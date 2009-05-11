@@ -23,13 +23,13 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <libgebrintl.h>
 #include <gui/utils.h>
 #include <misc/utils.h>
 #include <misc/date.h>
 
 #include "job.h"
 #include "gebr.h"
-#include "support.h"
 #include "ui_job_control.h"
 
 /*

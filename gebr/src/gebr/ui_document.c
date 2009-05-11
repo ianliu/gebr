@@ -22,9 +22,10 @@
 
 #include <string.h>
 
+#include <libgebrintl.h>
+
 #include "ui_document.h"
 #include "gebr.h"
-#include "support.h"
 #include "flow.h"
 #include "ui_help.h"
 #include "document.h"

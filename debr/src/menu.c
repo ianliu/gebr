@@ -22,12 +22,12 @@
 #include <dirent.h>
 #include <fnmatch.h>
 
+#include <libgebrintl.h>
 #include <gui/utils.h>
 #include <gui/valuesequenceedit.h>
 #include <misc/date.h>
 
 #include "menu.h"
-#include "support.h"
 #include "debr.h"
 #include "callbacks.h"
 #include "help.h"

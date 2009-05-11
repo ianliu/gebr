@@ -22,13 +22,12 @@
 
 #include <glib/gstdio.h>
 
+#include <libgebrintl.h>
 #include <misc/utils.h>
 #include <misc/date.h>
 
 #include "document.h"
 #include "gebr.h"
-#include "support.h"
-
 
 /*
  * Function: document_new

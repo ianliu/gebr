@@ -25,12 +25,12 @@
 
 #include <string.h>
 
-#include "ui_server.h"
-#include "gebr.h"
-#include "support.h"
-
+#include <libgebrintl.h>
 #include <gui/utils.h>
 #include <gui/gtkenhancedentry.h>
+
+#include "ui_server.h"
+#include "gebr.h"
 
 #define RESPONSE_CONNECT_ALL	101
 #define RESPONSE_DISCONNECT_ALL	102

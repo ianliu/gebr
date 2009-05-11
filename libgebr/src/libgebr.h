@@ -15,8 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* all libgebr modules */
-#include <geoxml.h>
-#include <comm.h>
-#include <gui.h>
-#include <misc.h>
+#ifndef __LIBGEBR_H
+#define __LIBGEBR_H
+
+void
+libgebr_init(void);
+
+#endif // __LIBGEBR_H

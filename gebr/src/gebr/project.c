@@ -28,11 +28,11 @@
 
 #include <glib/gstdio.h>
 
+#include <libgebrintl.h>
 #include <gui/utils.h>
 
 #include "project.h"
 #include "gebr.h"
-#include "support.h"
 #include "document.h"
 #include "flow.h"
 #include "line.h"

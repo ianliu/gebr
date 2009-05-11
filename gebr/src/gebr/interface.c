@@ -27,12 +27,12 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include <libgebrintl.h>
 #include <gui/pixmaps.h>
 #include <gui/utils.h>
 
 #include "interface.h"
 #include "gebr.h"
-#include "support.h"
 #include "callbacks.h"
 
 /*

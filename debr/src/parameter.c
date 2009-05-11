@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <libgebrintl.h>
 #include <gui/gtkfileentry.h>
 #include <gui/gtkenhancedentry.h>
 #include <gui/utils.h>

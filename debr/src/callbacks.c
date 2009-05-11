@@ -19,12 +19,12 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
+#include <libgebrintl.h>
 #include <gui/utils.h>
 #include <misc/utils.h>
 
 #include "callbacks.h"
 #include "debr.h"
-#include "support.h"
 #include "preferences.h"
 
 /*

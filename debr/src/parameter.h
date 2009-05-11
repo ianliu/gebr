@@ -23,8 +23,6 @@
 
 #include <gui/parameter.h>
 
-#include "support.h"
-
 extern const GtkRadioActionEntry parameter_type_radio_actions_entries [];
 extern const gsize combo_type_map_size;
 

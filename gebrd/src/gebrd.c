@@ -22,8 +22,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include <libgebrintl.h>
+
 #include "gebrd.h"
-#include "support.h"
 #include "server.h"
 #include "client.h"
 

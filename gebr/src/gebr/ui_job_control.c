@@ -18,11 +18,11 @@
 
 #include <string.h>
 
+#include <libgebrintl.h>
 #include <gui/utils.h>
 
 #include "ui_job_control.h"
 #include "gebr.h"
-#include "support.h"
 #include "job.h"
 
 /*

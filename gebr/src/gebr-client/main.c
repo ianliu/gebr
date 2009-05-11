@@ -24,12 +24,11 @@
 
 #include <glib.h>
 
-//remove
+#include <libgebrintl.h>
 #include <comm.h>
 
 #include "gebrclient.h"
 #include "../defines.h"
-#include "support.h"
 
 int
 main(int argc, char ** argv, char ** env)

@@ -20,12 +20,12 @@
 #include <string.h>
 #include <regex.h>
 
+#include <libgebrintl.h>
 #include <misc.h>
 #include <gui/utils.h>
 
 #include "validate.h"
 #include "debr.h"
-#include "support.h"
 
 /*
  * Prototypes

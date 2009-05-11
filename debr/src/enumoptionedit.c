@@ -18,8 +18,9 @@
 #include <gui/gtkenhancedentry.h>
 #include <gui/utils.h>
 
+#include <libgebrintl.h>
+
 #include "enumoptionedit.h"
-#include "support.h"
 
 /*
  * Prototypes

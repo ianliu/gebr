@@ -20,10 +20,11 @@
 #include <gui/utils.h>
 #include <gui/valuesequenceedit.h>
 
+#include <libgebrintl.h>
+
 #include "interface.h"
 #include "debr.h"
 #include "callbacks.h"
-#include "support.h"
 #include "menu.h"
 #include "program.h"
 #include "parameter.h"

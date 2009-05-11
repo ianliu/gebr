@@ -28,6 +28,8 @@
 
 #include <glib/gstdio.h>
 
+#include <libgebr.h>
+#include <libgebrintl.h>
 #include <comm.h>
 #include <geoxml.h>
 
@@ -35,7 +37,6 @@
 
 #include "server.h"
 #include "gebrd.h"
-#include "support.h"
 #include "job.h"
 #include "client.h"
 
@@ -52,6 +53,8 @@ server_init(void)
 
 	GString *		log_filename;
 	FILE *			run_fp;
+
+	libgebr_init();
 
 	/* from libgebr-misc */
 	if (gebr_create_config_dirs() == FALSE) {

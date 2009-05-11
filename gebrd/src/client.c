@@ -22,11 +22,11 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
+#include <libgebrintl.h>
 #include <comm/protocol.h>
 
 #include "client.h"
 #include "gebrd.h"
-#include "support.h"
 #include "server.h"
 
 /*

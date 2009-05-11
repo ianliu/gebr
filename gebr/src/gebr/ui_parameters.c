@@ -27,12 +27,12 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 
+#include <libgebrintl.h>
 #include <geoxml.h>
 #include <gui/utils.h>
 
 #include "ui_parameters.h"
 #include "gebr.h"
-#include "support.h"
 #include "menu.h"
 #include "flow.h"
 #include "ui_help.h"

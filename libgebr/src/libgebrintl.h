@@ -1,4 +1,4 @@
-/*   GeBR Daemon - Process and control execution of flows
+/*   libgebr - GeBR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,30 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <time.h>
+#ifndef __LIBGEBR_INTL_H
+#define __LIBGEBR_INTL_H
 
-#include "support.h"
+#include <glib.h>
+
+#ifdef ENABLE_NLS
+#	include <libintl.h>
+#	undef _
+#	define _(String) g_dgettext (PACKAGE, String)
+#	define Q_(String) g_strip_context ((String), gettext (String))
+#	ifdef gettext_noop
+#		define N_(String) gettext_noop (String)
+#	else
+#		define N_(String) (String)
+#	endif
+#else
+#	define textdomain(String) (String)
+#	define gettext(String) (String)
+#	define dgettext(Domain,Message) (Message)
+#	define dcgettext(Domain,Message,Type) (Message)
+#	define bindtextdomain(Domain,Directory) (Domain)
+#	define _(String) (String)
+#	define Q_(String) g_strip_context ((String), (String))
+#	define N_(String) (String)
+#endif
+
+#endif // __LIBGEBR_INTL_H

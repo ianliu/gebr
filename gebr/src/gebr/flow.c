@@ -27,6 +27,7 @@
 
 #include <gtk/gtk.h>
 
+#include <libgebrintl.h>
 #include <geoxml.h>
 #include <comm.h>
 #include <gui/utils.h>
@@ -37,7 +38,6 @@
 #include "line.h"
 #include "gebr.h"
 #include "menu.h"
-#include "support.h"
 #include "document.h"
 #include "server.h"
 #include "callbacks.h"

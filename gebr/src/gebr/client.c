@@ -17,11 +17,11 @@
 
 #include <stdlib.h>
 
+#include <libgebrintl.h>
 #include <comm/protocol.h>
 
 #include "client.h"
 #include "gebr.h"
-#include "support.h"
 #include "server.h"
 #include "job.h"
 

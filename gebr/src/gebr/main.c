@@ -17,18 +17,17 @@
 
 #include <stdlib.h>
 #include <locale.h>
-/* TODO: Check for libintl on configure */
 #ifdef ENABLE_NLS
-#  include <libintl.h>
+#	include <libintl.h>
 #endif
 
 #include <gtk/gtk.h>
 
+#include <libgebrintl.h>
 #include <gui/icons.h>
 
 #include "gebr.h"
 #include "../defines.h"
-#include "support.h"
 #include "interface.h"
 
 int
@@ -37,7 +36,7 @@ main(int argc, char ** argv, char ** env)
 	gboolean		show_version;
 	GOptionEntry		entries[] = {
 		{"version", 'V', 0, G_OPTION_ARG_NONE, &show_version,
-			"Show GeBR version", NULL},
+			_("Show GeBR version"), NULL},
 		{NULL}
 	};
 	GError *		error = NULL;

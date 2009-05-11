@@ -22,11 +22,11 @@
 
 #include <string.h>
 
+#include <libgebrintl.h>
 #include <gui/gtkfileentry.h>
 
 #include "ui_flow.h"
 #include "gebr.h"
-#include "support.h"
 #include "flow.h"
 #include "ui_flow_browse.h"
 

@@ -18,12 +18,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <libgebrintl.h>
 #include <gui/utils.h>
 
 #include "program.h"
 #include "debr.h"
 #include "callbacks.h"
-#include "support.h"
 #include "help.h"
 
 /*

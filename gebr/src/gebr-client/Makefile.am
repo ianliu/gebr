@@ -21,12 +21,11 @@ gebr_client_SOURCES = main.c \
 	server.c client.c
 noinst_HEADERS = \
 	gebrclient.h \
-	server.h client.h \
-	support.h
+	server.h client.h
 EXTRA_DIST = ${noinst_HEADERS}
 
 INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GLIB_CFLAGS) \
-	$(LIBGEBR_COMM_CFLAGS) $(LIBGEBR_MISC_CFLAGS)
-gebr_client_LDADD = $(GLIB_LIBS) $(LIBGEBR_COMM_LIBS) $(LIBGEBR_MISC_LIBS)
+	$(LIBGEBR_CFLAGS) $(LIBGEBR_MISC_CFLAGS) $(LIBGEBR_COMM_CFLAGS)
+gebr_client_LDADD = $(GLIB_LIBS) $(LIBGEBR_LIBS) $(LIBGEBR_MISC_LIBS) $(LIBGEBR_COMM_LIBS)

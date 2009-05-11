@@ -26,13 +26,13 @@
 
 #include <glib/gstdio.h>
 
+#include <libgebrintl.h>
 #include <misc/date.h>
 #include <misc/utils.h>
 #include <gui/utils.h>
 
 #include "ui_project_line.h"
 #include "gebr.h"
-#include "support.h"
 #include "line.h"
 #include "document.h"
 #include "project.h"

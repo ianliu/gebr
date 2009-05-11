@@ -31,12 +31,12 @@
 
 #include <glib/gstdio.h>
 
+#include <libgebrintl.h>
 #include <misc/utils.h>
 
 #include "menu.h"
 #include "../defines.h"
 #include "gebr.h"
-#include "support.h"
 #include "document.h"
 
 /*

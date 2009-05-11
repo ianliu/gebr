@@ -20,13 +20,13 @@
 
 #include <glib.h>
 
+#include <libgebrintl.h>
 #include <geoxml.h>
 #include <comm/gstreamsocket.h>
 #include <comm/protocol.h>
 
 #include "server.h"
 #include "gebrclient.h"
-#include "support.h"
 #include "client.h"
 
 /*

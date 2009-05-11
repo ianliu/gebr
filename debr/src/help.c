@@ -22,12 +22,12 @@
 
 #include <glib/gstdio.h>
 
+#include <libgebrintl.h>
 #include <misc/utils.h>
 
 #include "help.h"
 #include "debr.h"
 #include "defines.h"
-#include "support.h"
 
 void
 help_fix_css(GString * help)

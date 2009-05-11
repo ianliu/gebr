@@ -21,11 +21,11 @@
 
 #include <string.h>
 
+#include <libgebrintl.h>
 #include <gui/utils.h>
 
 #include "ui_flow_edition.h"
 #include "gebr.h"
-#include "support.h"
 #include "flow.h"
 #include "document.h"
 #include "menu.h"

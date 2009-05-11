@@ -19,11 +19,11 @@
 
 #include <gtk/gtk.h>
 
+#include <libgebrintl.h>
 #include <comm/gstreamsocket.h>
 
 #include "server.h"
 #include "gebr.h"
-#include "support.h"
 #include "client.h"
 #include "job.h"
 #include "callbacks.h"

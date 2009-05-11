@@ -25,11 +25,11 @@
 
 #include <string.h>
 
+#include <libgebrintl.h>
 #include <gui/utils.h>
 
 #include "ui_preferences.h"
 #include "gebr.h"
-#include "support.h"
 
 /* Pre-defined browser options */
 #define NBROWSER 5
