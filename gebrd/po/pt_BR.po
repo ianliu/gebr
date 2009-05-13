@@ -1,0 +1,184 @@
+# LANGUAGE translation of gebrd.
+# Copyright (C) 2009 THE gebrd'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the debr package.
+# biloti <biloti@gmail.com>, 2009.
+#
+#: ../src/main.c:47 ../src/main.c:50
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: gebrd 0.9.12\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-05-13 16:59-0300\n"
+"PO-Revision-Date: 2009-05-13 17:03-0300\n"
+"Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
+"Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../src/client.c:113
+#, c-format
+msgid "Connection error '%s' on client '%s'"
+msgstr ""
+
+#: ../src/gebrd.c:91
+msgid "Server quited"
+msgstr ""
+
+#: ../src/job.c:84
+#, c-format
+msgid "Required parameter '%s' of program '%s' not provided.\n"
+msgstr ""
+
+#: ../src/job.c:102
+#, c-format
+msgid "Unknown parameter type.\n"
+msgstr "Tipo de parâmetro desconhecido.\n"
+
+#: ../src/job.c:164
+#, c-format
+msgid "Job '%s' sent output not in UTF-8."
+msgstr ""
+
+#: ../src/job.c:300
+#, c-format
+msgid ""
+"DTD specified. The <DOCTYPE ...> must not appear in XML.\n"
+"libgeoxml will find the appriate DTD installed from version.\n"
+msgstr ""
+
+#: ../src/job.c:305
+#, c-format
+msgid ""
+"Invalid document. The has a sintax error or doesn't match the DTD.\n"
+"In this case see the errors above\n"
+msgstr ""
+
+#: ../src/job.c:310
+#, c-format
+msgid ""
+"Can't access file. The file doesn't exist or there is not enough permission "
+"to read it.\n"
+msgstr ""
+
+#: ../src/job.c:315
+#, c-format
+msgid ""
+"Can't access dtd. The file's DTD couldn't not be found.\n"
+"It may be a newer version not support by this version of libgeoxml or there "
+"is an installation problem.\n"
+msgstr ""
+
+#: ../src/job.c:321
+#, c-format
+msgid ""
+"Not enough memory. The library stoped after an unsucessful memory "
+"allocation.\n"
+msgstr ""
+
+#: ../src/job.c:325
+#, c-format
+msgid ""
+"Unspecified error %d.\n"
+"See library documentation at http://gebr.sf.net/doc/libgebr/geoxml.\n"
+msgstr ""
+
+#: ../src/job.c:337
+#, c-format
+msgid "Empty flow.\n"
+msgstr ""
+
+#: ../src/job.c:344
+#, c-format
+msgid "%u) Skiping disabled/unconfigured program '%s.'\n"
+msgstr ""
+
+#: ../src/job.c:350
+#, c-format
+msgid "No configured programs.\n"
+msgstr ""
+
+#: ../src/job.c:360
+#, c-format
+msgid "No input file selected.\n"
+msgstr ""
+
+#: ../src/job.c:384
+#, c-format
+msgid "%u) Skipped disabled/unconfigured program '%s'.\n"
+msgstr ""
+
+#. Previous does not write to stdin but current expect something
+#: ../src/job.c:398
+#, c-format
+msgid "Broken flow before %s (no input).\n"
+msgstr ""
+
+#. Previous does write to stdin but current does not carry about
+#: ../src/job.c:402
+#, c-format
+msgid "Broken flow before %s (unexpected output).\n"
+msgstr ""
+
+#: ../src/job.c:423
+#, c-format
+msgid "No error file selected; error output merged with standard output.\n"
+msgstr ""
+
+#: ../src/job.c:426
+#, c-format
+msgid "Proceeding without output file.\n"
+msgstr ""
+
+#: ../src/main.c:37
+msgid "Run server in interactive mode, not as a daemon"
+msgstr ""
+
+#: ../src/main.c:39
+msgid "Show GeBR daemon version"
+msgstr ""
+
+#: ../src/main.c:45
+msgid "GeBR daemon"
+msgstr ""
+
+#: ../src/main.c:55
+#, c-format
+msgid "%s: syntax error\n"
+msgstr ""
+
+#: ../src/main.c:56
+#, c-format
+msgid "Try %s --help\n"
+msgstr ""
+
+#: ../src/main.c:61
+#, c-format
+msgid "%s\n"
+msgstr ""
+
+#: ../src/server.c:61
+msgid "Could not access GêBR configuration directories.\n"
+msgstr ""
+
+#: ../src/server.c:83
+msgid "Cannot run interactive server, GêBR daemon is already running"
+msgstr ""
+
+#: ../src/server.c:100
+msgid "Could not listen for connections.\n"
+msgstr ""
+
+#: ../src/server.c:109
+msgid "Could not write run file."
+msgstr ""
+
+#: ../src/server.c:131
+#, c-format
+msgid "Server started at %u port"
+msgstr ""
+
+#: ../src/server.c:140
+msgid "Could not init server. Quiting..."
+msgstr ""

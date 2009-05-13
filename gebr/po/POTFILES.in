@@ -12,7 +12,6 @@ src/gebr/main.c
 src/gebr/menu.c
 src/gebr/project.c
 src/gebr/server.c
-src/gebr/support.c
 src/gebr/ui_document.c
 src/gebr/ui_flow_browse.c
 src/gebr/ui_flow.c

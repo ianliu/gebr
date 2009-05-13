@@ -10,5 +10,4 @@ src/parameter.c
 src/parametergroup.c
 src/preferences.c
 src/program.c
-src/support.c
 src/validate.c

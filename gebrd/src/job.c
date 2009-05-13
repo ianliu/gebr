@@ -425,7 +425,7 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 		if (strlen(geoxml_flow_io_get_output(flow)) == 0)
 			g_string_append_printf(job->issues, _("Proceeding without output file.\n"));
 		else
-			g_string_append_printf(job->cmd_line, ">%s", geoxml_flow_io_get_output(flow));
+			g_string_append_printf(job->cmd_line, ">\"%s\"", geoxml_flow_io_get_output(flow));
 	}
 
 	/* success exit */

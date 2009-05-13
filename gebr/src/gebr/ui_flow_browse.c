@@ -520,8 +520,8 @@ static void
 flow_browse_on_revision_activate(GtkMenuItem * menu_item, GeoXmlRevision * revision)
 {
 	if (confirm_action_dialog(_("Backup current state?"),
-	_("You are about to revert to a previous state."
-	"The current flow will be lost after this action."
+	_("You are about to revert to a previous state. "
+	"The current flow will be lost after this action. "
 	"Do you want to save the current flow state?")) && !flow_revision_save())
 		return;
 

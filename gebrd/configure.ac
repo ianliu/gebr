@@ -26,6 +26,8 @@ AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 PACKAGE_NAME=$PACKAGE
 PACKAGE_VERSION=$VERSION
 
+IT_PROG_INTLTOOL
+
 AC_PROG_CC
 AM_PROG_CC_STDC
 AC_PROG_INSTALL
@@ -44,11 +46,11 @@ fi
 AC_SUBST(DEBUG_CFLAGS)
 
 dnl gettext stuff
-dnl GETTEXT_PACKAGE=$PACKAGE
-dnl AC_SUBST(GETTEXT_PACKAGE)
-dnl AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package.])
-dnl ALL_LINGUAS=""
-dnl AM_GLIB_GNU_GETTEXT
+GETTEXT_PACKAGE=$PACKAGE
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package])
+
+AM_GLIB_GNU_GETTEXT
 
 dnl check for GLIB >= 2.8 (which is thread safe)
 PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.8],,AC_MSG_ERROR([Could not find glib >= 2.8]))
@@ -79,5 +81,5 @@ AC_SUBST(LIBGEBR_MISC_LIBS)
 
 AC_OUTPUT([
 packages/rpm/gebrd.fedora.spec packages/rpm/gebrd.opensuse.spec packages/rpm/gebrd.mandriva.spec
-Makefile src/Makefile src/defines.h packages/Makefile
+Makefile src/Makefile src/defines.h packages/Makefile po/Makefile.in
 ])

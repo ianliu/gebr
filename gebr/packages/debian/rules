@@ -73,10 +73,9 @@ binary-arch: build install
 	dh_testroot
 	dh_installchangelogs ChangeLog
 	dh_install --sourcedir=debian/tmp
-	dh_installinfo
-	dh_installman
+	#dh_installinfo
+	#dh_installman
 	dh_desktop
-	dh_link
 	dh_strip
 	dh_compress
 	dh_fixperms
