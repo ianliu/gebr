@@ -30,5 +30,4 @@ AC_CONFIG_SUBDIRS([libgebr gebrd gebr debr])
 
 AC_OUTPUT([
 Makefile
-packages/Makefile packages/su/Makefile
 ])
