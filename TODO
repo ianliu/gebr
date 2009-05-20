@@ -1,32 +1,14 @@
 1.0 roadmap:
 
-Beta:
-+	Import/export de projetos e linhas
-+	Categorias do usuário na DéBR, lidas a partir dos menus
-        em edição e salvas no arquivo de conf da DéBR
-+	Na tela de edição de parâmetros, manter mesma altura das linhas.
-+	Seleção multipla
-+	Link para o site do projeto na dialog de about "clicável"
-
 RC:
 +	Reiniciar ou avisar o usuário de daemons antigos ao instalar o gebrd
-+       Mais checagens antes de executar um daemon, como: a existência
-	e acessibilidade de arquivos de entrada e saída, permissões de
-	escrita em diretórios, e se consegue de fato encontrar todos
-	os binários
-+	OK/Cancel para dialogs da DéBR
-+	Internacionalização (português, espanhol, alemão, etc)
-+	Suporte a help
 +	"Enter" adiciona em GtkSequenceEdit
-+	Acrescentar uma quantidade especificada de parâmetros de um
-        mesmo tipo de uma única vez
-+	Multiline com tags gays gtk_text_buffer_insert_with_tags ()
++	Copy/paste de projetos, linhas, fluxos, componentes de fluxos (*****)
 
 =====================
 
 1.x:
 
-+	Copy/paste de projetos, linhas, fluxos, componentes de fluxos (*****)
 +	Opção de customização do CSS para relatórios
 +	Execução de fluxo e gerência de jobs no cluster (pensar)
 ++	Execução programada de um fluxo (**)
@@ -36,11 +18,9 @@ RC:
 
 ++	Ordenação de fluxos em ordem alfabética, por data de criação, atualização ou execução
 ++	Servidor preservando dados em disco
-++   	Ler/gravar XML compactado (zlib)
 ++	Suporte a programas com MPI
 
 ++	Cliente texto para GeBR
-++      Validador sintático para menus
 
 +++	Segurança (1)
 +++	Cliente web usando XUL
