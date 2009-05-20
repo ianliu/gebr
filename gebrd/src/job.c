@@ -29,6 +29,7 @@
 #include "job.h"
 #include "gebrd.h"
 
+
 /*
  * Internal functions
  */
@@ -271,6 +272,7 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 	gboolean		previous_stdout;
 	guint			issue_number;
 	gboolean		success;
+        gsize                   bytes_written;
 
 	/* initialization */
 	issue_number = 0;
@@ -362,8 +364,8 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 		}
 
 		/* Input file */
-		g_string_append_printf(job->cmd_line, "<\"%s\" ",
-			geoxml_flow_io_get_input(flow));
+		g_string_append_printf(job->cmd_line, "<\"%s\" ", geoxml_flow_io_get_input(flow));
+
 	}
 	/* Binary followed by an space */
 	g_string_append_printf(job->cmd_line, "%s ", geoxml_program_get_binary(GEOXML_PROGRAM(program)));
@@ -476,22 +478,23 @@ job_run_flow(struct job * job, struct client * client)
 {
 	GString *		cmd_line;
 	GeoXmlSequence *	program;
-	gchar *                 escaped_str;
+	gchar *                 locale_str;
+        gsize                   __attribute__ ((unused)) bytes_written;
 
 	/* initialization */
 	cmd_line = g_string_new(NULL);
-	escaped_str = g_strescape(job->cmd_line->str, "");
+        locale_str = g_filename_from_utf8(job->cmd_line->str, -1, NULL, &bytes_written, NULL);
 
 	/* command-line */
 	if (client->display->len) {
 		if (client->is_local)
-			g_string_printf(cmd_line, "bash -l -c \"export DISPLAY=%s; %s\"",
-				client->display->str, escaped_str);
+			g_string_printf(cmd_line, "bash -l -c 'export DISPLAY=%s; %s'",
+				client->display->str, locale_str);
 		else
-			g_string_printf(cmd_line, "bash -l -c \"export DISPLAY=127.0.0.1%s; %s\"",
-				client->display->str, escaped_str);
+			g_string_printf(cmd_line, "bash -l -c 'export DISPLAY=127.0.0.1%s; %s'",
+				client->display->str, locale_str);
 	} else {
-		g_string_printf(cmd_line, "bash -l -c \"%s\"", escaped_str);
+		g_string_printf(cmd_line, "bash -l -c '%s'", locale_str);
 	}
 	gebrd_message(LOG_DEBUG, "Client '%s' flow about to run: %s",
 		client->protocol->hostname->str, cmd_line->str);
@@ -513,7 +516,7 @@ job_run_flow(struct job * job, struct client * client)
 
 	/* frees */
 	g_string_free(cmd_line, TRUE);
-	g_free(escaped_str);
+        g_free(locale_str);
 }
 
 struct job *
