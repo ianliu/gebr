@@ -124,15 +124,9 @@ menu_setup_ui(void)
 	col = gtk_tree_view_column_new_with_attributes(_("Menu"), renderer, NULL);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_FILENAME);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), col);
-	gtk_tree_view_column_set_sort_column_id(col, MENU_FILENAME);
-	gtk_tree_view_column_set_sort_indicator(col, TRUE);
-	gtk_tree_view_column_clicked(col);
-	renderer = gtk_cell_renderer_text_new();
-	g_object_set(renderer, "visible", FALSE, NULL);
-	col = gtk_tree_view_column_new_with_attributes(_("Modified"), renderer, NULL);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_MODIFIED_DATE);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), col);
-	gtk_tree_view_column_set_sort_column_id(col, MENU_MODIFIED_DATE);
+
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(debr.ui_menu.list_store),
+			MENU_MODIFIED_DATE, GTK_SORT_ASCENDING);
 
 	/*
 	 * Info Panel
@@ -900,10 +894,8 @@ menu_details_update(void)
 static void
 menu_sort_by_name(GtkMenuItem * menu_item)
 {
-	GtkTreeViewColumn *	column;
-
-	column = gtk_tree_view_get_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), 1);
-	gtk_tree_view_column_clicked(column);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
+			MENU_FILENAME, GTK_SORT_ASCENDING);
 }
 
 /*
@@ -913,10 +905,8 @@ menu_sort_by_name(GtkMenuItem * menu_item)
 static void
 menu_sort_by_modified_date(GtkMenuItem * menu_item)
 {
-	GtkTreeViewColumn *	column;
-
-	column = gtk_tree_view_get_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), 2);
-	gtk_tree_view_column_clicked(column);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
+			MENU_MODIFIED_DATE, GTK_SORT_DESCENDING);
 }
 
 /*
