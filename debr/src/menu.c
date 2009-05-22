@@ -302,6 +302,7 @@ menu_open(const gchar * path, gboolean select)
 	gboolean		valid;
 
 	gchar *			filename;
+        gchar *                 date;
 	gchar *			tmp;
 	GeoXmlFlow *		menu;
 
@@ -330,8 +331,14 @@ menu_open(const gchar * path, gboolean select)
 
 	/* add to the view */
 	filename = g_path_get_basename(path);
-	tmp = g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(
-		geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu))).tv_sec);
+        date = geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu));
+        
+        if (strlen(date)){
+                tmp = g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(date).tv_sec);
+        }else{
+                tmp = g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
+        }
+
 	gtk_list_store_append(debr.ui_menu.list_store, &iter);
 	gtk_list_store_set(debr.ui_menu.list_store, &iter,
 		MENU_FILENAME, filename,
