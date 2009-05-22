@@ -894,8 +894,22 @@ menu_details_update(void)
 static void
 menu_sort_by_name(GtkMenuItem * menu_item)
 {
+	gint id;
+	GtkSortType order;
+
+	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
+			&id, &order);
+
+	// Swap ordering
+	if (id == MENU_FILENAME) {
+		order = (order == GTK_SORT_ASCENDING)?
+			GTK_SORT_DESCENDING : GTK_SORT_ASCENDING;
+	} else {
+		order = GTK_SORT_ASCENDING;
+	}
+
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
-			MENU_FILENAME, GTK_SORT_ASCENDING);
+			MENU_FILENAME, order);
 }
 
 /*
@@ -905,8 +919,22 @@ menu_sort_by_name(GtkMenuItem * menu_item)
 static void
 menu_sort_by_modified_date(GtkMenuItem * menu_item)
 {
+	gint id;
+	GtkSortType order;
+
+	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
+			&id, &order);
+
+	// Swap ordering
+	if (id == MENU_MODIFIED_DATE) {
+		order = (order == GTK_SORT_ASCENDING)?
+			GTK_SORT_DESCENDING : GTK_SORT_ASCENDING;
+	} else {
+		order = GTK_SORT_DESCENDING;
+	}
+
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
-			MENU_MODIFIED_DATE, GTK_SORT_DESCENDING);
+			MENU_MODIFIED_DATE, order);
 }
 
 /*
@@ -919,6 +947,9 @@ menu_popup_menu(GtkTreeView * tree_view)
 	GtkWidget *	menu;
 	GtkWidget *	menu_item;
 	GtkWidget *	sub_menu;
+	GtkWidget * image;
+	GtkSortType order;
+	gint column_id;
 
 	menu = gtk_menu_new();
 
@@ -947,13 +978,31 @@ menu_popup_menu(GtkTreeView * tree_view)
 	menu_item = gtk_menu_item_new_with_label(_("Sort by"));
 	gtk_container_add(GTK_CONTAINER(menu), menu_item);
 
+	// Get informations to create menu
+	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
+			&column_id, &order);
+	if (order == GTK_SORT_ASCENDING)
+		image = gtk_image_new_from_stock (
+				GTK_STOCK_SORT_ASCENDING,
+				GTK_ICON_SIZE_MENU);
+	else
+		image = gtk_image_new_from_stock (
+				GTK_STOCK_SORT_DESCENDING,
+				GTK_ICON_SIZE_MENU);
+
 	sub_menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), sub_menu);
-	menu_item = gtk_menu_item_new_with_label(_("Name"));
+
+	menu_item = gtk_image_menu_item_new_with_label(_("Name"));
+	if (column_id == MENU_FILENAME)
+		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM(menu_item), image);
 	g_signal_connect(menu_item, "activate",
 		(GCallback)menu_sort_by_name, NULL);
 	gtk_container_add(GTK_CONTAINER(sub_menu), menu_item);
-	menu_item = gtk_menu_item_new_with_label(_("Modified date"));
+
+	menu_item = gtk_image_menu_item_new_with_label(_("Modified date"));
+	if (column_id == MENU_MODIFIED_DATE)
+		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM(menu_item), image);
 	g_signal_connect(menu_item, "activate",
 		(GCallback)menu_sort_by_modified_date, NULL);
 	gtk_container_add(GTK_CONTAINER(sub_menu), menu_item);
