@@ -52,11 +52,9 @@ project_new(void)
 	GtkTreeIter		iter;
 
 	GeoXmlDocument *	project;
-	gchar *			title;
 
-	title = _("New project");
 	project = document_new(GEOXML_DOCUMENT_TYPE_PROJECT);
-	geoxml_document_set_title(project, title);
+	geoxml_document_set_title(project, _("New project"));
 	geoxml_document_set_author(project, gebr.config.username->str);
 	geoxml_document_set_email(project, gebr.config.email->str);
 	document_save(project);
@@ -64,7 +62,7 @@ project_new(void)
 
 	gtk_tree_store_append(gebr.ui_project_line->store, &iter, NULL);
 	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
-		PL_TITLE, title,
+		PL_TITLE, geoxml_document_get_title(project),
 		PL_FILENAME, geoxml_document_get_filename(project),
 		-1);
 

@@ -59,7 +59,6 @@ line_new(void)
 	GtkTreeIter		project_iter, line_iter;
 	GtkTreePath *		path;
 
-	gchar *			line_title;
 	gchar *			project_filename;
 	gchar *                 project_title;
 
@@ -81,7 +80,9 @@ line_new(void)
 
 	/* create it */
 	line = GEOXML_LINE(document_new(GEOXML_DOCUMENT_TYPE_LINE));
-	line_title = _("New Line");
+	geoxml_document_set_title(GEOXML_DOC(line), _("New Line"));
+	geoxml_document_set_author(GEOXML_DOC(line), gebr.config.username->str);
+	geoxml_document_set_email(GEOXML_DOC(line), gebr.config.email->str);
 
 	/* gtk stuff */
 	gtk_tree_model_get(model, &project_iter,
@@ -90,7 +91,7 @@ line_new(void)
 		-1);
 	gtk_tree_store_append(gebr.ui_project_line->store, &line_iter, &project_iter);
 	gtk_tree_store_set(gebr.ui_project_line->store, &line_iter,
-		PL_TITLE, line_title,
+		PL_TITLE, geoxml_document_get_title(GEOXML_DOC(line)),
 		PL_FILENAME, geoxml_document_get_filename(GEOXML_DOC(line)),
 		-1);
 
@@ -98,10 +99,7 @@ line_new(void)
 	geoxml_project_append_line(gebr.project, geoxml_document_get_filename(GEOXML_DOC(line)));
 	document_save(GEOXML_DOC(gebr.project));
 
-	/* set line stuff, save and free */
-	geoxml_document_set_title(GEOXML_DOC(line), line_title);
-	geoxml_document_set_author(GEOXML_DOC(line), gebr.config.username->str);
-	geoxml_document_set_email(GEOXML_DOC(line), gebr.config.email->str);
+	/* save and free */
 	document_save(GEOXML_DOC(line));
 	geoxml_document_free(GEOXML_DOC(line));
 

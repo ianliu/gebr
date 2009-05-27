@@ -250,8 +250,8 @@ menu_list_populate(void)
 				gchar *	category;
 
 				gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), parent_iter,
-						MENU_TITLE_COLUMN, &category,
-						-1);
+					MENU_TITLE_COLUMN, &category,
+					-1);
 
 				/* different category? */
 				if (strcmp(category, titlebf->str)) {

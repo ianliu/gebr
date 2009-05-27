@@ -675,13 +675,9 @@ out:	gtk_tree_path_free(path);
 static void
 project_line_show_help(void)
 {
-	gchar * title;
-
-	title = (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
-		? _("Project report") : _("Line report");
-	help_show(geoxml_document_get_help(gebr.project_line), title);
-
-	return;
+	help_show(geoxml_document_get_help(gebr.project_line),
+		geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT
+			? _("Project report") : _("Line report"));
 }
 
 static void

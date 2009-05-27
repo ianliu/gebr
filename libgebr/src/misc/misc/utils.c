@@ -140,6 +140,15 @@ gebr_create_config_dirs(void)
 		}
 	}
 
+	/* Test for .gebr/gebrdata conf dir */
+	g_string_printf(aux, "%s/gebrdata", gebr->str);
+	if (g_file_test(aux->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {
+		if (g_mkdir(aux->str, home_mode())) {
+			ret = FALSE;
+			goto out;
+		}
+	}
+
 out:	g_string_free(gebr, TRUE);
 	g_string_free(aux, TRUE);
 	return ret;

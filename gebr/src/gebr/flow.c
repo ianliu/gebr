@@ -64,7 +64,6 @@ flow_new(void)
 	GtkTreeSelection *	selection;
 	GtkTreeIter		iter;
 
-	gchar *			flow_title;
 	gchar *			line_title;
 	gchar *			line_filename;
 
@@ -74,25 +73,18 @@ flow_new(void)
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Select a line to which a flow will be added to"));
 		return FALSE;
 	}
-
-	flow_title = _("New Flow");
 	line_title = (gchar *)geoxml_document_get_title(GEOXML_DOCUMENT(gebr.line));
 	line_filename = (gchar *)geoxml_document_get_filename(GEOXML_DOCUMENT(gebr.line));
 
 	/* Create a new flow */
 	flow = GEOXML_FLOW(document_new(GEOXML_DOCUMENT_TYPE_FLOW));
-	geoxml_document_set_title(GEOXML_DOC(flow), flow_title);
+	geoxml_document_set_title(GEOXML_DOC(flow), _("New Flow"));
 	geoxml_document_set_author(GEOXML_DOC(flow), gebr.config.username->str);
 	geoxml_document_set_email(GEOXML_DOC(flow), gebr.config.email->str);
-	/* and add to current line */
-	geoxml_line_append_flow(gebr.line, geoxml_document_get_filename(GEOXML_DOC(flow)));
-	line_save();
-	document_save(GEOXML_DOC(flow));
-	geoxml_document_free(GEOXML_DOC(flow));
 	/* and add to the GUI */
 	gtk_list_store_append(gebr.ui_flow_browse->store, &iter);
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
-		FB_TITLE, flow_title,
+		FB_TITLE, geoxml_document_get_title(GEOXML_DOC(flow)),
 		FB_FILENAME, geoxml_document_get_filename(GEOXML_DOC(flow)),
 		-1);
 	/* select it */
@@ -101,9 +93,15 @@ flow_new(void)
 	g_signal_emit_by_name(gebr.ui_flow_browse->view, "cursor-changed");
 	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), &iter);
 
-        on_flow_properties_activate();
+	/* and add to current line */
+	geoxml_line_append_flow(gebr.line, geoxml_document_get_filename(GEOXML_DOC(flow)));
+	line_save();
+	document_save(GEOXML_DOC(flow));
+	geoxml_document_free(GEOXML_DOC(flow));
+
 	/* feedback */
 	gebr_message(LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'"), line_title);
+	on_flow_properties_activate();
 
 	return TRUE;
 }

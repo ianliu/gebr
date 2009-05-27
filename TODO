@@ -1,6 +1,7 @@
 1.0 roadmap:
 
 RC:
++	Mudar nome da libgebr_misc para libgebr_common
 +	Reiniciar ou avisar o usuário de daemons antigos ao instalar o gebrd
 +	"Enter" adiciona em GtkSequenceEdit
 +	Copy/paste de projetos, linhas, fluxos, componentes de fluxos (*****)
