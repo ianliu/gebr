@@ -639,46 +639,25 @@ show_program_parameter(struct validate * validate, GeoXmlProgramParameter * pp, 
 
 	if (isubpar) {
 		validate_append_text(validate,  "       %2d.%02d: ", ipar, isubpar);
-		validate_append_check(validate, geoxml_parameter_get_label(GEOXML_PARAMETER(pp)),
-			EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, "\n");
 	} else {
 		validate_append_text(validate,  "    %2d: ", ipar);
-		validate_append_check(validate, geoxml_parameter_get_label(GEOXML_PARAMETER(pp)),
-			EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, "\n");
 	}
+
+        
+        validate_append_check(validate, geoxml_parameter_get_label(GEOXML_PARAMETER(pp)),
+                              EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, "\n");
 
 	validate_append_text(validate,  "        ");
 	if (isubpar)
-		validate_append_text(validate,  "        ");
+		validate_append_text(validate,  "      ");      
 
-	switch (geoxml_parameter_get_type(GEOXML_PARAMETER(pp))) {
-	case GEOXML_PARAMETERTYPE_STRING:
-		validate_append_text(validate,  "[string]     ");
-		break;
-	case GEOXML_PARAMETERTYPE_INT:
-		validate_append_text(validate,  "[integer]    ");
-		break;
-	case GEOXML_PARAMETERTYPE_FILE:
-		validate_append_text(validate,  "[file]       ");
-		break;
-	case GEOXML_PARAMETERTYPE_FLAG:
-		validate_append_text(validate,  "[flag]       ");
-		break;
-	case GEOXML_PARAMETERTYPE_FLOAT:
-		validate_append_text(validate,  "[real number]");
-		break;
-	case GEOXML_PARAMETERTYPE_RANGE:
-		validate_append_text(validate,  "[range]      ");
-		break;
-	case GEOXML_PARAMETERTYPE_ENUM:
-		validate_append_text(validate,  "[enum]       ");
-		break;
-	default:
-		validate_append_text(validate,  "[UNKNOWN]    ");
-		break;
-	}
-
-	validate_append_text(validate,  " '");
+        validate_append_text(validate, "[");
+        validate_append_text(validate, geoxml_parameter_get_type_name(GEOXML_PARAMETER(pp)));
+        if (geoxml_program_parameter_get_is_list(GEOXML_PROGRAM_PARAMETER(pp)))
+                validate_append_text(validate, "(s)");
+        validate_append_text(validate, "] ");
+        
+	validate_append_text(validate,  "'");
 	validate_append_check(validate, geoxml_program_parameter_get_keyword(pp), EMPTY, "'");
 
 	default_value = geoxml_program_parameter_get_string_value(pp, TRUE);

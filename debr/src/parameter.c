@@ -884,6 +884,7 @@ parameter_load_iter(GtkTreeIter * iter)
 	GtkTreeIter		parent;
 	GeoXmlParameter *	parameter;
 	GString *		keyword_label;
+        GString *               parameter_type;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter,
 		PARAMETER_XMLPOINTER, &parameter,
@@ -912,14 +913,22 @@ parameter_load_iter(GtkTreeIter * iter)
 			geoxml_parameter_group_get_instances_number(GEOXML_PARAMETER_GROUP(parameter)));
 	}
 
+        parameter_type = g_string_new(combo_type_map_get_title(geoxml_parameter_get_type(parameter)));
+        
+        if (geoxml_parameter_get_is_program_parameter(parameter) && 
+            geoxml_program_parameter_get_is_list(GEOXML_PROGRAM_PARAMETER(parameter)))
+                g_string_append(parameter_type, "(s)");
+        
 	gtk_tree_store_set(debr.ui_parameter.tree_store, iter,
-		PARAMETER_TYPE, combo_type_map_get_title(geoxml_parameter_get_type(parameter)),
+		PARAMETER_TYPE, parameter_type->str,
 		PARAMETER_KEYWORD, keyword_label->str,
 		PARAMETER_LABEL, geoxml_parameter_get_label(parameter),
 		-1);
+
 	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, iter))
 		parameter_load_iter(&parent);
 
+	g_string_free(parameter_type, TRUE);
 	g_string_free(keyword_label, TRUE);
 }
 
