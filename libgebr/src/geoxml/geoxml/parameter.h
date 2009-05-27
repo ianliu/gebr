@@ -185,6 +185,14 @@ enum GEOXML_PARAMETERTYPE
 geoxml_parameter_get_type(GeoXmlParameter * parameter);
 
 /**
+ * Return the type name of \p parameter
+ *
+ * Return NULL if \p parameter is NULL
+ */
+const gchar *
+geoxml_parameter_get_type_name(GeoXmlParameter * parameter);
+
+/**
  * Return TRUE if \p parameter is a reference
  *
  * If \p parameter is NULL return FALSE
