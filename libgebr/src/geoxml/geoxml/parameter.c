@@ -29,6 +29,7 @@
 #include "parameter_group_p.h"
 #include "program_parameter.h"
 #include "program_parameter_p.h"
+#include "../libgebrintl.h"
 
 /*
  * internal stuff
@@ -211,6 +212,21 @@ geoxml_parameter_get_type(GeoXmlParameter * parameter)
 		return GEOXML_PARAMETERTYPE_UNKNOWN;
 
 	return __geoxml_parameter_get_type(parameter, TRUE);
+}
+
+const gchar *
+geoxml_parameter_get_type_name(GeoXmlParameter * parameter)
+{
+	if (parameter == NULL)
+		return NULL;
+
+	static const gchar * type_names [] = {
+		NULL, N_("string"), N_("integer"), N_("file"), N_("flag"),
+		N_("real number"), N_("range"), N_("enum"),
+		N_("group"), N_("reference")
+	};
+
+	return type_names[__geoxml_parameter_get_type(parameter, TRUE)];
 }
 
 gboolean
