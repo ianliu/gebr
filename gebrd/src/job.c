@@ -18,6 +18,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <glib.h>
+#include <glib/gstdio.h>
+
 
 #include <libgebrintl.h>
 #include <comm/protocol.h>
@@ -29,13 +32,19 @@
 #include "job.h"
 #include "gebrd.h"
 
-
 /*
  * Internal functions
  */
 
 static gboolean
 job_parse_parameters(struct job * job, GeoXmlParameters * parameters, GeoXmlProgram * program);
+gboolean
+check_for_readable_file(const gchar *file);
+gboolean
+check_for_write_permission(const gchar *file);
+gboolean
+check_for_binary(const gchar *binary);
+
 
 static gboolean
 job_parse_parameter(struct job * job, GeoXmlParameter * parameter, GeoXmlProgram * program)
@@ -364,6 +373,13 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 		}
 
 		/* Input file */
+                if (check_for_readable_file(geoxml_flow_io_get_input(flow))){
+                                g_string_append_printf(job->issues,
+                                                       _("Input file %s not present or not accessable.\n"),
+                                                       geoxml_flow_io_get_input(flow));
+                                goto err;
+                        }
+                    
 		g_string_append_printf(job->cmd_line, "<\"%s\" ", geoxml_flow_io_get_input(flow));
 
 	}
@@ -372,8 +388,17 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 	if (job_add_program_parameters(job, GEOXML_PROGRAM(program)) == FALSE)
 		goto err;
 	/* check for error file output */
-	if (has_error_output_file && geoxml_program_get_stderr(GEOXML_PROGRAM(program)))
+	if (has_error_output_file && geoxml_program_get_stderr(GEOXML_PROGRAM(program))){
+
+                if(check_for_write_permission(geoxml_flow_io_get_error(flow))){
+                     g_string_append_printf(job->issues,
+                                       _("Write permission to %s not granted.\n"),
+                                       geoxml_flow_io_get_error(flow));
+                goto err;   
+                }
+
 		g_string_append_printf(job->cmd_line, "2>> \"%s\" ", geoxml_flow_io_get_error(flow));
+        }
 
 	/*
 	 * Others programs
@@ -426,9 +451,17 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 	if (previous_stdout) {
 		if (strlen(geoxml_flow_io_get_output(flow)) == 0)
 			g_string_append_printf(job->issues, _("Proceeding without output file.\n"));
-		else
+		else{
+                        if(check_for_write_permission(geoxml_flow_io_get_output(flow))){
+                                g_string_append_printf(job->issues,
+                                                       _("Write permission to %s not granted.\n"),
+                                                       geoxml_flow_io_get_output(flow));
+                                goto err;   
+                        }
+
 			g_string_append_printf(job->cmd_line, ">\"%s\"", geoxml_flow_io_get_output(flow));
-	}
+                }
+        }
 
 	/* success exit */
 	success = TRUE;
@@ -436,6 +469,7 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 
 err:	g_string_assign(job->jid, "0");
 	g_string_assign(job->status, "failed");
+        g_string_assign(job->cmd_line, "");
 	success = FALSE;
 
 out:
@@ -599,4 +633,33 @@ job_send_clients_job_notify(struct job * job)
 
 		link = g_list_next(link);
 	}
+}
+
+/* Several tests to ensure flow executability */
+/* All of them return TRUE upon error */
+gboolean
+check_for_readable_file(const gchar *file)
+{
+        return (g_access(file, F_OK | R_OK) == -1 ? TRUE: FALSE);
+        
+}
+
+gboolean
+check_for_write_permission(const gchar *file)
+{
+
+        gboolean  ret;
+        gchar *   dir;
+
+        dir = g_path_get_dirname(file);
+        ret = (g_access(dir, W_OK) == -1 ? TRUE: FALSE);
+        g_free(dir);
+        
+        return ret;
+}
+
+gboolean
+check_for_binary(const gchar *binary)
+{
+        return (g_find_program_in_path(binary) == NULL ? TRUE : FALSE);
 }
