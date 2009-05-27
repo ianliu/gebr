@@ -27,6 +27,8 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <dirent.h>
+#include <fnmatch.h>
 
 #include <glib/gstdio.h>
 
@@ -261,31 +263,41 @@ static void
 gebr_migrate_data_dir(void)
 {
 	GtkWidget *	dialog;
+	GString *	new_data_dir;
 	GString *	command_line;
-	GString *	data_dir;
+	struct dirent *	file;
+	DIR *		dir;
+	gboolean	empty;
 
-	data_dir = g_key_file_load_string_key(gebr.config.key_file,
-		"general", "data", getenv("HOME"));
+	new_data_dir = g_string_new(NULL);
+	g_string_printf(new_data_dir, "%s/.gebr/gebrdata", getenv("HOME"));
 
-	command_line = g_string_new(NULL);
-	g_string_printf(command_line, "cp -f %s/*.prj %s/*.lne %s/*.flw %s",
-		data_dir->str, data_dir->str, data_dir->str, gebr.config.data->str);
-	if (!system(command_line->str)) {
+	command_line = g_string_new("");
+	if (g_access(gebr.config.data->str, F_OK | R_OK)|| (dir = opendir(gebr.config.data->str)) == NULL)
+		return;
+	while ((file = readdir(dir)) != NULL)
+		if (!fnmatch("*.prj", file->d_name, 1) || !fnmatch("*.lne", file->d_name, 1) ||
+		!fnmatch("*.flw", file->d_name, 1))
+			g_string_append_printf(command_line, "%s/%s ", gebr.config.data->str, file->d_name);
+	empty = command_line->len == 0 ? TRUE : FALSE;
+	g_string_prepend(command_line, "cp -f ");
+	g_string_append(command_line, new_data_dir->str);
+
+	if (empty || !system(command_line->str)) {
 		dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
 			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-			GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("GêBR now stores data files on its own directory. You may now delete GêBR's files at %s."), data_dir->str);
-		g_key_file_remove_key(gebr.config.key_file, "general", "data", NULL);
+			GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("GêBR now stores data files on its own directory. You may now delete GêBR's files at %s."), gebr.config.data->str);
+		g_string_assign(gebr.config.data, new_data_dir->str);
 	} else {
 		dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
 			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Cannot copy data files to GêBR's dir. Please check your write permissions to your home directory."));
-		g_string_assign(gebr.config.data, data_dir->str);
 	}
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
 	g_string_free(command_line, TRUE);
-	g_string_free(data_dir, TRUE);
+	g_string_free(new_data_dir, TRUE);
 	gtk_widget_destroy(dialog);
 }
 
@@ -321,9 +333,9 @@ gebr_config_load(void)
 		gebr.config.usermenus = g_key_file_load_string_key(gebr.config.key_file,
 			"general", "usermenus", getenv("HOME"));
 
-		gebr.config.data = g_string_new(NULL);
-		g_string_printf(gebr.config.data, "%s/.gebr/gebrdata", getenv("HOME"));
-		if (g_key_file_has_key(gebr.config.key_file, "general", "data", NULL))
+		gebr.config.data = g_key_file_load_string_key(gebr.config.key_file,
+			"general", "data", getenv("HOME"));
+		if (!g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))
 			gebr_migrate_data_dir();
 		gebr.config.browser = g_key_file_load_string_key(gebr.config.key_file, "general", "browser", "firefox");
 		gebr.config.editor = g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "gedit");
@@ -405,6 +417,7 @@ gebr_config_save(gboolean verbose)
 	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "usermenus", gebr.config.usermenus->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "data", gebr.config.data->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "browser", gebr.config.browser->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
 
