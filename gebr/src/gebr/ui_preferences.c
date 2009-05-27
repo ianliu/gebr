@@ -23,6 +23,7 @@
  * according to user's change
  */
 
+#include <stdlib.h>
 #include <string.h>
 
 #include <libgebrintl.h>
@@ -77,7 +78,7 @@ preferences_setup_ui(gboolean first_run)
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		NULL);
-	gtk_widget_set_size_request(ui_preferences->dialog, 400, 280);
+	gtk_widget_set_size_request(ui_preferences->dialog, 460, 280);
 	g_signal_connect(ui_preferences->dialog, "delete-event",
 		G_CALLBACK(preferences_on_delete_event), ui_preferences);
 
@@ -162,6 +163,9 @@ preferences_setup_ui(gboolean first_run)
 			gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(ui_preferences->data),
 				gebr.config.data->str);
 	}
+        else{
+                ui_preferences->data = NULL;
+        }
 
 	/*
 	 * Editor
@@ -229,12 +233,24 @@ preferences_actions(GtkDialog * dialog, gint arg1, struct ui_preferences * ui_pr
 {
 	switch (arg1) {
 	case GTK_RESPONSE_OK: {
-		gchar *	tmp;
-		gchar *	tmp2;
-		gchar *	tmp3;
+		gchar *	   tmp;
+		gchar *	   tmp3;
+		GString *  datadir;
 
 		tmp = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(ui_preferences->usermenus));
-		tmp2 = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(ui_preferences->data));
+
+                datadir = g_string_new(NULL);
+                if  (ui_preferences->data != NULL){
+                        gchar * tmp2;
+
+                        tmp2 = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(ui_preferences->data));
+                        g_string_assign(datadir, tmp2);
+                        g_free(tmp2);
+                }
+                else{
+                        g_string_printf(datadir, "%s/.gebr/gebrdata", getenv("HOME"));
+                }
+                        
 		tmp3 = gtk_combo_box_get_active_text(GTK_COMBO_BOX(ui_preferences->browser));
 		if (tmp3 == NULL)
 			tmp3 = "";
@@ -246,7 +262,7 @@ preferences_actions(GtkDialog * dialog, gint arg1, struct ui_preferences * ui_pr
 		g_string_assign(gebr.config.usermenus,
 				tmp);
 		g_string_assign(gebr.config.data,
-				tmp2);
+				datadir->str);
 		g_string_assign(gebr.config.editor,
 				gtk_entry_get_text(GTK_ENTRY(ui_preferences->editor)));
 		g_string_assign(gebr.config.browser,
@@ -256,8 +272,9 @@ preferences_actions(GtkDialog * dialog, gint arg1, struct ui_preferences * ui_pr
 		gebr_config_apply();
 
 		g_free(tmp);
-		g_free(tmp2);
 		g_free(tmp3);
+                g_string_free(datadir, TRUE);
+
 		break;
 	} case GTK_RESPONSE_CANCEL: /* does nothing */
 		if (ui_preferences->first_run == TRUE)
