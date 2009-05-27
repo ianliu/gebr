@@ -60,6 +60,9 @@ void
 flow_edition_load_components(void);
 
 void
+flow_edition_set_io(void);
+
+void
 flow_edition_component_activated(void);
 
 void

@@ -180,24 +180,18 @@ flow_edition_setup_ui(void)
 }
 
 /*
- * Function: flow_edition_load_components
- * Load current flow's (gebr.flow) programs
+ * Function: flow_edition_set_io
+ * Set the XML IO into iterators
  */
 void
-flow_edition_load_components(void)
+flow_edition_set_io(void)
 {
-	GeoXmlSequence *	first_program;
 	gchar *			input_file;
 	gchar *			output_file;
-
-	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
-	if (!flow_browse_get_selected(NULL, FALSE))
-		return;
 
 	/* input iter */
 	input_file = strlen(geoxml_flow_io_get_input(gebr.flow))
 		? g_path_get_basename(geoxml_flow_io_get_input(gebr.flow)) : strdup("");
-	gtk_list_store_append(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter);
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
 		FSEQ_TITLE_COLUMN, input_file,
 		FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_go_back,
@@ -205,18 +199,35 @@ flow_edition_load_components(void)
 	/* output iter */
 	output_file = strlen(geoxml_flow_io_get_output(gebr.flow))
 		? g_path_get_basename(geoxml_flow_io_get_output(gebr.flow)) : strdup("");
-	gtk_list_store_append(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter);
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
 		FSEQ_TITLE_COLUMN, output_file,
 		FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_go_forward,
 		-1);
 
+	g_free(input_file);
+	g_free(output_file);
+}
+
+/*
+ * Function: flow_edition_load_components
+ * Load current flow's (gebr.flow) programs
+ */
+void
+flow_edition_load_components(void)
+{
+	GeoXmlSequence *	first_program;
+
+	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
+	if (!flow_browse_get_selected(NULL, FALSE))
+		return;
+
+	gtk_list_store_append(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter);
+	gtk_list_store_append(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter);
+	flow_edition_set_io();
+
 	/* now into GUI */
 	geoxml_flow_get_program(gebr.flow, &first_program, 0);
 	flow_add_program_sequence_to_view(first_program);
-
-	g_free(input_file);
-	g_free(output_file);
 }
 
 /*
