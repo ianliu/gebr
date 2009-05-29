@@ -28,6 +28,8 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
+#include <webkit/webkit.h>
+
 #include <libgebrintl.h>
 #include <misc/utils.h>
 
@@ -80,23 +82,13 @@ program_help_show(void)
 void
 help_show(const gchar * help, const gchar * title)
 {
-	FILE *		html_fp;
-	GString *	html_path;
-
+        GtkWidget *     window;
+        GtkWidget *     scrolled_window;
+        GtkWidget *     web_view;
 	GString *	ghelp;
-	GString *	url;
-	GString *	cmd_line;
-
-	if (!gebr.config.browser->len) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("No editor defined. Choose one at Configure/Preferences"));
-		return;
-	}
 
 	/* initialization */
-	html_path = make_temp_filename("gebr_XXXXXX.html");
 	ghelp = g_string_new(NULL);
-	url = g_string_new(NULL);
-	cmd_line = g_string_new(NULL);
 
 	/* Gambiarra */
 	{
@@ -112,27 +104,23 @@ help_show(const gchar * help, const gchar * title)
 		}
 	}
 
-	html_fp = fopen(html_path->str, "w");
-	if (html_fp == NULL) {
-		gebr_message(LOG_ERROR, TRUE, TRUE, unable_to_write_help_error);
-		goto out;
-	}
-	fwrite(ghelp->str, sizeof(char), strlen(ghelp->str), html_fp);
-	fclose(html_fp);
+        window = gtk_dialog_new ();
+        scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+        web_view = webkit_web_view_new ();
 
-	/* Add file to list of files to be removed */
-	gebr.tmpfiles = g_slist_append(gebr.tmpfiles, html_path->str);
+        /* Place the WebKitWebView in the GtkScrolledWindow */
+        gtk_container_add (GTK_CONTAINER (scrolled_window), web_view);
+        gtk_box_pack_start (GTK_BOX (GTK_DIALOG(window)->vbox), scrolled_window, TRUE, TRUE, 0);
 
-	/* Launch an external browser */
-	g_string_printf(url, "file://%s", html_path->str);
-	g_string_printf(cmd_line, "%s %s &", gebr.config.browser->str, url->str);
-	system(cmd_line->str);
+        /* Open a webpage */
+        webkit_web_view_load_html_string(WEBKIT_WEB_VIEW (web_view), ghelp->str, NULL);
 
-	/* frees */
-out:	g_string_free(html_path, FALSE);
+        /* Show the result */
+        gtk_window_set_title (GTK_WINDOW (window), title);
+        gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
+        gtk_widget_show_all (window);
+
 	g_string_free(ghelp, TRUE);
-	g_string_free(url, TRUE);
-	g_string_free(cmd_line, TRUE);
 }
 
 /* Function: help_edit

@@ -21,6 +21,7 @@
 #include <regex.h>
 
 #include <glib/gstdio.h>
+#include <webkit/webkit.h>
 
 #include <libgebrintl.h>
 #include <misc/utils.h>
@@ -155,39 +156,30 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 void
 help_show(const gchar * help)
 {
-	FILE *		html_fp;
-	GString *	html_path;
-	GString *	cmdline;
+        GtkWidget *     window;
+        GtkWidget *     scrolled_window;
+        GtkWidget *     web_view;
 	GString *	prepared_html;
 
 	prepared_html = g_string_new(help);
 	help_fix_css(prepared_html);
 
-	/* create temporary filename */
-	html_path = make_temp_filename("debr_XXXXXX.html");
+        window = gtk_dialog_new ();
+        scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+        web_view = webkit_web_view_new ();
 
-	/* open temporary file with help from XML */
-	html_fp = fopen(html_path->str, "w");
-	if (html_fp == NULL) {
-		debr_message(LOG_ERROR, _("Could not create an temporary file."));
-		goto out;
-	}
-	fputs(prepared_html->str, html_fp);
-	fclose(html_fp);
+        /* Place the WebKitWebView in the GtkScrolledWindow */
+        gtk_container_add (GTK_CONTAINER (scrolled_window), web_view);
+        gtk_box_pack_start (GTK_BOX (GTK_DIALOG(window)->vbox), scrolled_window, TRUE, TRUE, 0);
 
-	/* Add file to list of files to be removed */
-	debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
+        /* Open a webpage */
+        webkit_web_view_load_html_string(WEBKIT_WEB_VIEW (web_view), prepared_html->str, NULL);
 
-	/* Launch an external browser */
-	cmdline = g_string_new (debr.config.browser->str);
-	g_string_append(cmdline, " file://");
-	g_string_append(cmdline, html_path->str);
-	g_string_append(cmdline, " &");
-	system(cmdline->str);
+        /* Show the result */
+        gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
+        gtk_widget_show_all (window);
 
-	g_string_free(cmdline, TRUE);
-out:	g_string_free(html_path, FALSE);
-	g_string_free(prepared_html, TRUE);
+        g_string_free(prepared_html, TRUE);
 }
 
 GString *

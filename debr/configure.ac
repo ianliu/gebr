@@ -78,6 +78,10 @@ dnl check for libgebr_misc
 PKG_CHECK_MODULES(LIBGEBR_MISC, gebr-misc,,AC_MSG_ERROR([Could not find libgebr_misc]))
 AC_SUBST(LIBGEBR_MISC_CFLAGS)
 AC_SUBST(LIBGEBR_MISC_LIBS)
+dnl check for webkit
+PKG_CHECK_MODULES(WEBKIT, webkit-1.0,,AC_MSG_ERROR([Could not find webkit]))
+AC_SUBST(WEBKIT_CFLAGS)
+AC_SUBST(WEBKIT_LIBS)
 
 AC_OUTPUT([
 packages/rpm/debr.fedora.spec packages/rpm/debr.opensuse.spec packages/rpm/debr.mandriva.spec
