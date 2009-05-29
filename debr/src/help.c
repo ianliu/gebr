@@ -21,7 +21,10 @@
 #include <regex.h>
 
 #include <glib/gstdio.h>
+
+#ifdef WEBKIT_ENABLED
 #include <webkit/webkit.h>
+#endif
 
 #include <libgebrintl.h>
 #include <misc/utils.h>
@@ -156,10 +159,13 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 void
 help_show(const gchar * help)
 {
-        GtkWidget *     window;
-        GtkWidget *     scrolled_window;
-        GtkWidget *     web_view;
-	GString *	prepared_html;
+
+#ifdef WEBKIT_ENABLED
+        GtkWidget *       window;
+        GtkWidget *       scrolled_window;
+        GtkWidget *       web_view;
+        WebKitWebFrame*   frame;
+	GString *	  prepared_html;
 
 	prepared_html = g_string_new(help);
 	help_fix_css(prepared_html);
@@ -167,6 +173,7 @@ help_show(const gchar * help)
         window = gtk_dialog_new ();
         scrolled_window = gtk_scrolled_window_new (NULL, NULL);
         web_view = webkit_web_view_new ();
+        frame = webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(web_view));
 
         /* Place the WebKitWebView in the GtkScrolledWindow */
         gtk_container_add (GTK_CONTAINER (scrolled_window), web_view);
@@ -180,6 +187,42 @@ help_show(const gchar * help)
         gtk_widget_show_all (window);
 
         g_string_free(prepared_html, TRUE);
+#else
+	FILE *		html_fp;
+	GString *	html_path;
+	GString *	cmdline;
+	GString *	prepared_html;
+
+	prepared_html = g_string_new(help);
+	help_fix_css(prepared_html);
+
+	/* create temporary filename */
+	html_path = make_temp_filename("debr_XXXXXX.html");
+
+	/* open temporary file with help from XML */
+	html_fp = fopen(html_path->str, "w");
+	if (html_fp == NULL) {
+		debr_message(LOG_ERROR, _("Could not create an temporary file."));
+		goto out;
+	}
+	fputs(prepared_html->str, html_fp);
+	fclose(html_fp);
+
+	/* Add file to list of files to be removed */
+	debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
+
+	/* Launch an external browser */
+	cmdline = g_string_new (debr.config.browser->str);
+	g_string_append(cmdline, " file://");
+	g_string_append(cmdline, html_path->str);
+	g_string_append(cmdline, " &");
+	system(cmdline->str);
+
+	g_string_free(cmdline, TRUE);
+out:	g_string_free(html_path, FALSE);
+	g_string_free(prepared_html, TRUE);
+
+#endif
 }
 
 GString *
