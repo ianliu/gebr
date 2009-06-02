@@ -20,6 +20,14 @@
 #include "pixmaps.h"
 #include "../../defines.h"
 
+void __dummy__ (GtkAboutDialog *about, const gchar *link, gpointer data)
+{
+	// Esta funcao eh vazia pois o GtkLinkButton interno
+	// do GtkAboutDialog ja chama o link. Entretanto, ele soh
+	// eh configurado quando esta funcao eh "instalada"
+	// atravez do gtk_about_dialog_set_url_hook. Veja abaixo.
+}
+
 struct about
 about_setup_ui(const gchar * program, const gchar * description)
 {
@@ -34,6 +42,10 @@ about_setup_ui(const gchar * program, const gchar * description)
 		"  Rodrigo Portugal <rosoport@gmail.com>",
 		NULL
 	};
+
+	// Instala a funcao que nada faz. Este bug ja foi
+	// corrigido no trunk do Gtk+, eu acredito.
+	gtk_about_dialog_set_url_hook (__dummy__, NULL, NULL);
 
 	about.dialog = gtk_about_dialog_new();
 
