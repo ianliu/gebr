@@ -27,10 +27,10 @@
 
 #ifdef WEBKIT_ENABLED
 static WebKitNavigationResponse
-libgebr_gui_help_show_navigation_response(WebKitWebView * web_view, WebKitWebFrame * frame,
+libgebr_gui_help_show_navigation_resquested(WebKitWebView * web_view, WebKitWebFrame * frame,
 	WebKitNetworkRequest * request);
 static GtkWidget *
-libgebr_gui_help_show_create_web_view(void);
+libgebr_gui_help_show_create_web_view(gboolean filter_links);
 #endif
 
 /*
@@ -43,7 +43,7 @@ libgebr_gui_help_show(const gchar * help)
 #ifdef WEBKIT_ENABLED
 	GtkWidget *	web_view;
 
-	web_view = libgebr_gui_help_show_create_web_view();
+	web_view = libgebr_gui_help_show_create_web_view(TRUE);
 	webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(web_view), help, NULL);
 #endif
 }
@@ -54,7 +54,7 @@ libgebr_gui_help_show(const gchar * help)
 
 #ifdef WEBKIT_ENABLED
 static GtkWidget *
-libgebr_gui_help_show_create_web_view(void)
+libgebr_gui_help_show_create_web_view(gboolean filter_links)
 {
 	static GtkWindowGroup *	window_group = NULL;
 	GtkWidget *		window;
@@ -72,8 +72,9 @@ libgebr_gui_help_show_create_web_view(void)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	web_view = webkit_web_view_new();
-	g_signal_connect(web_view, "navigation-requested",
-		G_CALLBACK(libgebr_gui_help_show_navigation_response), NULL);
+	if (filter_links)
+		g_signal_connect(web_view, "navigation-requested",
+			G_CALLBACK(libgebr_gui_help_show_navigation_resquested), NULL);
 
 	/* Place the WebKitWebView in the GtkScrolledWindow */
 	gtk_container_add(GTK_CONTAINER (scrolled_window), web_view);
@@ -87,18 +88,18 @@ libgebr_gui_help_show_create_web_view(void)
 }
 
 static WebKitNavigationResponse
-libgebr_gui_help_show_navigation_response(WebKitWebView * web_view, WebKitWebFrame * frame,
+libgebr_gui_help_show_navigation_resquested(WebKitWebView * web_view, WebKitWebFrame * frame,
 	WebKitNetworkRequest * request)
 {
 	const gchar *	uri;
 	GtkWidget *	new_web_view;
 
 	uri = webkit_network_request_get_uri(request);
-	if (!g_str_has_prefix(uri, "#"))
+	if (g_str_has_prefix(uri, "#"))
 		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 
-	new_web_view = libgebr_gui_help_show_create_web_view();
-	webkit_web_view_load_uri(WEBKIT_WEB_VIEW(new_web_view), uri);
+	new_web_view = libgebr_gui_help_show_create_web_view(FALSE);
+	webkit_web_view_open(WEBKIT_WEB_VIEW(new_web_view), uri);
 
 	return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 }
