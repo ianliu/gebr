@@ -18,6 +18,7 @@
 #ifdef WEBKIT_ENABLED
 #include <webkit/webkit.h>
 #endif
+#include <gdk/gdk.h>
 
 #include "help.h"
 
@@ -92,15 +93,21 @@ libgebr_gui_help_show_navigation_resquested(WebKitWebView * web_view, WebKitWebF
 	WebKitNetworkRequest * request)
 {
 	const gchar *	uri;
-	GtkWidget *	new_web_view;
+	GError *	error = NULL;
 
 	uri = webkit_network_request_get_uri(request);
 	if (g_str_has_prefix(uri, "#"))
 		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 
+#ifdef GTK_CHECK_VERSION(2,14,0)
+	gtk_show_uri(gdk_screen_get_default(), uri, GDK_CURRENT_TIME, &error);
+#else
+	GtkWidget *	new_web_view;
+
 	new_web_view = libgebr_gui_help_show_create_web_view(FALSE);
 	webkit_web_view_open(WEBKIT_WEB_VIEW(new_web_view), uri);
-
+#endif
+	
 	return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 }
 #endif //WEBKIT_ENABLED
