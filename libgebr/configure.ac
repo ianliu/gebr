@@ -87,28 +87,36 @@ dnl check for GLIB >= 2.8.0 (needed for g_access)
 PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.8.0],,AC_MSG_ERROR([Could not find glib >= 2.8.0]))
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GLIB_CFLAGS)
-
 dnl check for GOBJECT >= 2.8 (which is thread safe)
 PKG_CHECK_MODULES(GOBJECT, [gobject-2.0 >= 2.8],,AC_MSG_ERROR([Could not find gobject >= 2.8]))
 AC_SUBST(GOBJECT_LIBS)
 AC_SUBST(GOBJECT_CFLAGS)
-
 dnl check for GTHREAD >= 2.8 (which is thread safe)
 PKG_CHECK_MODULES(GTHREAD, [gthread-2.0 >= 2.8],,AC_MSG_ERROR([Could not find gthread >= 2.8]))
 AC_SUBST(GTHREAD_LIBS)
 AC_SUBST(GTHREAD_CFLAGS)
-
 dnl check for gdome >= 0.8.0 (which is thread safe)
 PKG_CHECK_MODULES(GDOME2, [gdome2 >= 0.8.0],,AC_MSG_ERROR([Could not find gdome2 >= 0.8.0]))
 AC_SUBST(GDOME2_LIBS)
 AC_SUBST(GDOME2_CFLAGS)
-
 dnl check for GTK
 if test "$enable_gui" = "yes"; then
 	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0.0,,AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.0.0]))
 	AC_SUBST(GTK_LIBS)
 	AC_SUBST(GTK_CFLAGS)
 fi
+dnl webkit option
+AC_ARG_ENABLE(webkit,
+	[AC_HELP_STRING([--enable-webkit],
+	[turn on webkit html viewer])],,
+	enable_webkit=no)
+if test "$enable_webkit" = "yes"; then
+   PKG_CHECK_MODULES(WEBKIT, webkit-1.0,,AC_MSG_ERROR([Could not find webkit]))
+   WEBKIT_ENABLED=-DWEBKIT_ENABLED
+fi
+AC_SUBST(WEBKIT_CFLAGS)
+AC_SUBST(WEBKIT_LIBS)
+AC_SUBST(WEBKIT_ENABLED)
 
 AC_OUTPUT([
 packages/rpm/libgebr.fedora.spec packages/rpm/libgebr.opensuse.spec packages/rpm/libgebr.mandriva.spec

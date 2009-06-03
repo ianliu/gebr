@@ -22,12 +22,9 @@
 
 #include <glib/gstdio.h>
 
-#ifdef WEBKIT_ENABLED
-#include <webkit/webkit.h>
-#endif
-
 #include <libgebrintl.h>
 #include <misc/utils.h>
+#include <gui/help.h>
 
 #include "help.h"
 #include "debr.h"
@@ -124,7 +121,7 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 		npar = geoxml_parameters_get_number(parameters);
 		
 		label = g_string_new(NULL);
-		for (ipar = 0; ipar < npar; ipar++){
+		for (ipar = 0; ipar < npar; ipar++) {
 			g_string_append_printf(label, "              "
 					       "<li><span class=\"label\">[%s]</span>"
 					       " detailed description comes here.</li>\n\n",
@@ -132,19 +129,19 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 			geoxml_sequence_next(&parameter);
 		}
 		if ((ptr = strstr(help->str, "              "
-				  "<li><span class=\"label\">[label for parameter]</span>")) != NULL){
+				  "<li><span class=\"label\">[label for parameter]</span>")) != NULL) {
 			pos = (ptr - help->str)/sizeof(char);
 			g_string_erase(help, pos, 96);
 			g_string_insert(help, pos, label->str);
 		}
 		g_string_free(label, TRUE);
 	}
-	else{ /* strip parameter section for flow help */
-		if( (ptr = strstr(help->str, "          <div class=\"parameters\">")) != NULL){
+	else { /* strip parameter section for flow help */
+		if ((ptr = strstr(help->str, "          <div class=\"parameters\">")) != NULL) {
 			pos = (ptr - help->str)/sizeof(char);
 			g_string_erase(help, pos, 1317);
 		}
-		if( (ptr = strstr(help->str, "            <li><a href=\"#par\">Parameters</a></li>")) != NULL){
+		if ((ptr = strstr(help->str, "            <li><a href=\"#par\">Parameters</a></li>")) != NULL) {
 			pos = (ptr - help->str)/sizeof(char);
 			g_string_erase(help, pos, 52);
 		}
@@ -159,34 +156,13 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 void
 help_show(const gchar * help)
 {
-
-#ifdef WEBKIT_ENABLED
-        GtkWidget *       window;
-        GtkWidget *       scrolled_window;
-        GtkWidget *       web_view;
-        WebKitWebFrame*   frame;
 	GString *	  prepared_html;
 
 	prepared_html = g_string_new(help);
 	help_fix_css(prepared_html);
 
-        window = gtk_dialog_new ();
-        gtk_window_group_add_window(debr.help_group, GTK_WINDOW(window));
-        scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-        web_view = webkit_web_view_new ();
-
-        /* Place the WebKitWebView in the GtkScrolledWindow */
-        gtk_container_add (GTK_CONTAINER (scrolled_window), web_view);
-        gtk_box_pack_start (GTK_BOX (GTK_DIALOG(window)->vbox), scrolled_window, TRUE, TRUE, 0);
-
-        /* Open a webpage */
-        webkit_web_view_load_html_string(WEBKIT_WEB_VIEW (web_view), prepared_html->str, NULL);
-
-        /* Show the result */
-        gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
-        gtk_widget_show_all (window);
-
-        g_string_free(prepared_html, TRUE);
+#ifdef WEBKIT_ENABLED
+	libgebr_gui_help_show(prepared_html->str);
 #else
 	FILE *		html_fp;
 	GString *	html_path;
@@ -220,9 +196,8 @@ help_show(const gchar * help)
 
 	g_string_free(cmdline, TRUE);
 out:	g_string_free(html_path, FALSE);
-	g_string_free(prepared_html, TRUE);
-
 #endif
+	g_string_free(prepared_html, TRUE);
 }
 
 GString *

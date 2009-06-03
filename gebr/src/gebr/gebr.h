@@ -52,7 +52,6 @@ struct gebr {
 	struct about			about;
 	GtkAccelGroup *			accel_group;
 	GtkActionGroup *		action_group;
-        GtkWindowGroup *                help_group;
 
 	/* for strange things ;) */
 	GtkWidget *			invisible;

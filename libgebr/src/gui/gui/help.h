@@ -1,4 +1,4 @@
-/*   DeBR - GeBR Designer
+/*   libgebr - GeBR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -15,38 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <locale.h>
-#ifdef ENABLE_NLS
-#  include <libintl.h>
-#endif
+#ifndef __LIBGEBR_GUI_HELP_H
+#define __LIBGEBR_GUI_HELP_H
 
-#include <gtk/gtk.h>
+#include <glib.h>
 
-#include <gui/icons.h>
+void
+libgebr_gui_help_show(const gchar * help);
 
-#include "interface.h"
-#include "debr.h"
-
-int
-main(int argc, char *argv[])
-{
-#ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
-#endif
-
-	gtk_set_locale();
- 	gtk_init(&argc, &argv);
-
-	/* temporary: necessary for representing fractional numbers only with comma */
-	setlocale(LC_NUMERIC, "C");
-
-	gui_setup_icons();
-	gui_setup_theme();
-	debr_setup_ui();
-	gtk_widget_show(debr.window);
-	gtk_main();
-
-	return 0;
-}
+#endif //__LIBGEBR_GUI_HELP_H

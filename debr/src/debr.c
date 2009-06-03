@@ -44,7 +44,6 @@ debr_init(void)
 	debr.parameter = NULL;
 	debr.clipboard = NULL;
 	debr.unsaved_count = 0;
-        debr.help_group = gtk_window_group_new();
 
 	/* list of temporaries files */
 	debr.tmpfiles = g_slist_alloc();

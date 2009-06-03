@@ -84,17 +84,10 @@ program_help_show(void)
 void
 help_show(const gchar * help, const gchar * title)
 {
-
-#ifdef WEBKIT_ENABLED
-
-        GtkWidget *     window;
-        GtkWidget *     scrolled_window;
-        GtkWidget *     web_view;
 	GString *	ghelp;
 
 	/* initialization */
 	ghelp = g_string_new(NULL);
-
 	/* Gambiarra */
 	{
 		gchar *	gebrcsspos;
@@ -109,24 +102,8 @@ help_show(const gchar * help, const gchar * title)
 		}
 	}
 
-        window = gtk_dialog_new ();
-        gtk_window_group_add_window(gebr.help_group, GTK_WINDOW(window));
-        scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-        web_view = webkit_web_view_new ();
-
-        /* Place the WebKitWebView in the GtkScrolledWindow */
-        gtk_container_add (GTK_CONTAINER (scrolled_window), web_view);
-        gtk_box_pack_start (GTK_BOX (GTK_DIALOG(window)->vbox), scrolled_window, TRUE, TRUE, 0);
-
-        /* Open a webpage */
-        webkit_web_view_load_html_string(WEBKIT_WEB_VIEW (web_view), ghelp->str, NULL);
-
-        /* Show the result */
-        gtk_window_set_title (GTK_WINDOW (window), title);
-        gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
-        gtk_widget_show_all (window);
-
-	g_string_free(ghelp, TRUE);
+#ifdef WEBKIT_ENABLED
+	libgebr_gui_help_show(ghelp->str);
 #else
 	FILE *		html_fp;
 	GString *	html_path;
@@ -142,23 +119,8 @@ help_show(const gchar * help, const gchar * title)
 
 	/* initialization */
 	html_path = make_temp_filename("gebr_XXXXXX.html");
-	ghelp = g_string_new(NULL);
 	url = g_string_new(NULL);
 	cmd_line = g_string_new(NULL);
-
-	/* Gambiarra */
-	{
-		gchar *	gebrcsspos;
-		int	pos;
-
-		g_string_assign(ghelp, help);
-
-		if ((gebrcsspos = strstr(ghelp->str, "gebr.css")) != NULL) {
-			pos = (gebrcsspos - ghelp->str)/sizeof(char);
-			g_string_erase(ghelp, pos, 8);
-			g_string_insert(ghelp, pos, "file://" GEBR_DATA_DIR "/gebr.css");
-		}
-	}
 
 	html_fp = fopen(html_path->str, "w");
 	if (html_fp == NULL) {
@@ -178,10 +140,11 @@ help_show(const gchar * help, const gchar * title)
 
 	/* frees */
 out:	g_string_free(html_path, FALSE);
-	g_string_free(ghelp, TRUE);
 	g_string_free(url, TRUE);
 	g_string_free(cmd_line, TRUE);
 #endif
+
+	g_string_free(ghelp, TRUE);
 }
 
 /* Function: help_edit

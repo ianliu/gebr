@@ -60,7 +60,6 @@ gebr_init(void)
 	/* initialization */
 	gebr.project_line = NULL;
 	gebr.flow = NULL;
-        gebr.help_group = gtk_window_group_new();
 	libgebr_init();
 	protocol_init();
 
