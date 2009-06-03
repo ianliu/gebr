@@ -55,6 +55,7 @@ struct debr {
 	GtkWidget *		invisible;
 	GtkAccelGroup *		accel_group;
 	GtkActionGroup *	action_group;
+        GtkWindowGroup *        help_group;
 
 	/* notebook's widgets */
 	struct ui_menu		ui_menu;

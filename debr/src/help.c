@@ -171,9 +171,9 @@ help_show(const gchar * help)
 	help_fix_css(prepared_html);
 
         window = gtk_dialog_new ();
+        gtk_window_group_add_window(debr.help_group, GTK_WINDOW(window));
         scrolled_window = gtk_scrolled_window_new (NULL, NULL);
         web_view = webkit_web_view_new ();
-        frame = webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(web_view));
 
         /* Place the WebKitWebView in the GtkScrolledWindow */
         gtk_container_add (GTK_CONTAINER (scrolled_window), web_view);

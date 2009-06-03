@@ -37,7 +37,9 @@ main(int argc, char *argv[])
 #endif
 
 	gtk_set_locale();
-	gtk_init(&argc, &argv);
+        if (!g_thread_supported())
+                g_thread_init (NULL);
+ 	gtk_init(&argc, &argv);
 
 	/* temporary: necessary for representing fractional numbers only with comma */
 	setlocale(LC_NUMERIC, "C");

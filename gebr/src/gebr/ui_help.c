@@ -110,6 +110,7 @@ help_show(const gchar * help, const gchar * title)
 	}
 
         window = gtk_dialog_new ();
+        gtk_window_group_add_window(gebr.help_group, GTK_WINDOW(window));
         scrolled_window = gtk_scrolled_window_new (NULL, NULL);
         web_view = webkit_web_view_new ();
 
