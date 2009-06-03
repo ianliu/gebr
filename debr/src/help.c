@@ -167,7 +167,6 @@ help_show(const gchar * help)
 	FILE *		html_fp;
 	GString *	html_path;
 	GString *	cmdline;
-	GString *	prepared_html;
 
 	prepared_html = g_string_new(help);
 	help_fix_css(prepared_html);

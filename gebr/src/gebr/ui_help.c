@@ -84,31 +84,30 @@ program_help_show(void)
 void
 help_show(const gchar * help, const gchar * title)
 {
-	GString *	ghelp;
+	GString *	prepared_html;
 
 	/* initialization */
-	ghelp = g_string_new(NULL);
+	prepared_html = g_string_new(NULL);
 	/* Gambiarra */
 	{
 		gchar *	gebrcsspos;
 		int	pos;
 
-		g_string_assign(ghelp, help);
+		g_string_assign(prepared_html, help);
 
-		if ((gebrcsspos = strstr(ghelp->str, "gebr.css")) != NULL) {
-			pos = (gebrcsspos - ghelp->str)/sizeof(char);
-			g_string_erase(ghelp, pos, 8);
-			g_string_insert(ghelp, pos, "file://" GEBR_DATA_DIR "/gebr.css");
+		if ((gebrcsspos = strstr(prepared_html->str, "gebr.css")) != NULL) {
+			pos = (gebrcsspos - prepared_html->str)/sizeof(char);
+			g_string_erase(prepared_html, pos, 8);
+			g_string_insert(prepared_html, pos, "file://" GEBR_DATA_DIR "/gebr.css");
 		}
 	}
 
 #ifdef WEBKIT_ENABLED
-	libgebr_gui_help_show(ghelp->str);
+	libgebr_gui_help_show(prepared_html->str);
 #else
 	FILE *		html_fp;
 	GString *	html_path;
 
-	GString *	ghelp;
 	GString *	url;
 	GString *	cmd_line;
 
@@ -127,7 +126,7 @@ help_show(const gchar * help, const gchar * title)
 		gebr_message(LOG_ERROR, TRUE, TRUE, unable_to_write_help_error);
 		goto out;
 	}
-	fwrite(ghelp->str, sizeof(char), strlen(ghelp->str), html_fp);
+	fwrite(prepared_html->str, sizeof(char), strlen(prepared_html->str), html_fp);
 	fclose(html_fp);
 
 	/* Add file to list of files to be removed */
@@ -143,8 +142,7 @@ out:	g_string_free(html_path, FALSE);
 	g_string_free(url, TRUE);
 	g_string_free(cmd_line, TRUE);
 #endif
-
-	g_string_free(ghelp, TRUE);
+	g_string_free(prepared_html, TRUE);
 }
 
 /* Function: help_edit
