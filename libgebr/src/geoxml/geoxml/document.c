@@ -18,6 +18,7 @@
 #include <glib/gstdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <zlib.h>
 #include <gdome.h>
 #include <libxml/parser.h>
 
@@ -526,21 +527,23 @@ geoxml_document_validate(const gchar * filename)
 int
 geoxml_document_save(GeoXmlDocument * document, const gchar * path)
 {
+        gzFile    zfp;
+        char *    xml;
+        int       ret;
+ 
 	if (document == NULL)
 		return FALSE;
-	if (g_access(path, F_OK) < 0) {
-		FILE *	fp;
 
-		fp = fopen(path, "w");
-		if (fp == NULL)
-			return GEOXML_RETV_CANT_ACCESS_FILE;
-		fclose(fp);
-	}
+        zfp = gzopen (path, "w");
+        if (zfp == NULL)
+                return GEOXML_RETV_CANT_ACCESS_FILE;
 
-	return gdome_di_saveDocToFileEnc(dom_implementation, (GdomeDocument*)document,
-		path, ENCODING, GDOME_SAVE_LIBXML_INDENT, &exception)
-			? GEOXML_RETV_SUCCESS
-			: GEOXML_RETV_CANT_ACCESS_FILE;
+        geoxml_document_to_string(document, &xml);
+        ret = gzwrite (zfp, xml, strlen(xml)+1); 
+        gzclose(zfp);
+
+	return ret ? GEOXML_RETV_SUCCESS
+                : GEOXML_RETV_CANT_ACCESS_FILE;
 }
 
 int

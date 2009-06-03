@@ -73,6 +73,9 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_HEADER_STDC
 
+dnl check for zlib
+AC_CHECK_LIB(z,main,, [AC_MSG_ERROR(zlib required)])
+
 dnl Gettext stuff.
 GETTEXT_PACKAGE=$PACKAGE
 AC_SUBST(GETTEXT_PACKAGE)
