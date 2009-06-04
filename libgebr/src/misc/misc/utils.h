@@ -24,6 +24,11 @@ void
 append_filename_extension(GString * filename, const gchar * extension);
 
 GString *
+libgebr_make_temp_directory(void);
+void
+libgebr_destroy_temp_directory(GString * path);
+
+GString *
 make_unique_filename(const gchar * template);
 GString *
 make_temp_filename(const gchar * template);

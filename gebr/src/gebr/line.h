@@ -30,6 +30,8 @@ line_delete(void);
 
 void
 line_save(void);
+GeoXmlLine *
+line_import(const gchar * line_filename, const gchar * at_dir);
 
 void
 line_load_flows(void);

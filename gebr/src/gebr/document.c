@@ -94,6 +94,24 @@ document_load(const gchar * filename)
 }
 
 /*
+ * Function: document_load_at
+ * Load a document (flow, line or project) from its filename, handling errors
+ */
+GeoXmlDocument *
+document_load_at(const gchar * filename, const gchar * directory)
+{
+	GeoXmlDocument *	document;
+	GString *		path;
+
+	path = g_string_new("");
+	g_string_printf(path, "%s/%s", directory, filename);
+	document = document_load_path(path->str);
+	g_string_free(path, TRUE);
+
+	return document;
+}
+
+/*
  * Function: document_load_path
  * Load a document from its path, handling errors
  */
@@ -127,6 +145,41 @@ document_save(GeoXmlDocument * document)
 	geoxml_document_save(document, path->str);
 
 	g_string_free(path, TRUE);
+}
+
+/*
+ * Function: document_import
+ * Import _document_ into data directory, saving it with a new filename.
+ */
+void
+document_import(GeoXmlDocument * document)
+{
+	GString *	path;
+	GString *	new_filename;
+	const gchar *	extension;
+
+	switch (geoxml_document_get_type(document)) {
+	case GEOXML_DOCUMENT_TYPE_FLOW:
+		extension = "flw";
+		break;
+	case GEOXML_DOCUMENT_TYPE_LINE:
+		extension = "lne";
+		break;
+	case GEOXML_DOCUMENT_TYPE_PROJECT:
+		extension = "prj";
+		break;
+	default:
+		return;
+	}
+	new_filename = document_assembly_filename(extension);
+
+	/* TODO: check save */
+	path = document_get_path(new_filename->str);
+	geoxml_document_set_filename(document, new_filename->str);
+	geoxml_document_save(document, path->str);
+
+	g_string_free(path, TRUE);
+	g_string_free(new_filename, TRUE);
 }
 
 /*

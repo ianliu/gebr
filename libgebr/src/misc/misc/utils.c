@@ -59,6 +59,40 @@ make_unique_filename(const gchar * template)
 }
 
 /**
+ * Create a temporary directory inside GeBR's temporary diretory.
+ * Use \ref libgebr_destroy_temp_directory after use to free string memory and
+ * delete directory's contents
+ */
+GString *
+libgebr_make_temp_directory(void)
+{
+	GString *	path;
+
+	/* assembly dir path */
+	path = g_string_new(NULL);
+	g_string_printf(path, "%s/.gebr/tmp/XXXXXX", getenv("HOME"));
+
+	/* create a temporary file. */
+	close(g_mkstemp(path->str));
+	unlink(path->str);
+
+	g_mkdir(path->str, home_mode());
+
+	return path;
+}
+
+/**
+ * Delete dir at \p path and free it.
+ */
+void
+libgebr_destroy_temp_directory(GString * path)
+{
+	g_string_prepend(path, "rm -fr ");
+	system(path->str);
+	g_string_free(path, TRUE);
+}
+
+/**
  * Create a file based on \p template.
  *
  * \p template must have a XXXXXX that will be replaced to random
@@ -140,8 +174,17 @@ gebr_create_config_dirs(void)
 		}
 	}
 
-	/* Test for .gebr/gebrdata conf dir */
+	/* Test for .gebr/gebrdata */
 	g_string_printf(aux, "%s/gebrdata", gebr->str);
+	if (g_file_test(aux->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {
+		if (g_mkdir(aux->str, home_mode())) {
+			ret = FALSE;
+			goto out;
+		}
+	}
+
+	/* Test for .gebr/tmp conf dir */
+	g_string_printf(aux, "%s/tmp", gebr->str);
 	if (g_file_test(aux->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {
 		if (g_mkdir(aux->str, home_mode())) {
 			ret = FALSE;

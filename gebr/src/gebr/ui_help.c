@@ -34,6 +34,7 @@
 
 #include <libgebrintl.h>
 #include <misc/utils.h>
+#include <gui/help.h>
 
 #include "ui_help.h"
 #include "gebr.h"

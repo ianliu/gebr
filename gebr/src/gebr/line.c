@@ -203,6 +203,40 @@ line_save(void)
 }
 
 /*
+ * Function: line_import
+ * Import line with basename _line_filename_ inside _at_dir_.
+ * Also import its flows.
+ */
+GeoXmlLine *
+line_import(const gchar * line_filename, const gchar * at_dir)
+{
+	GeoXmlLine *		line;
+	GeoXmlSequence *	i;
+
+	line = GEOXML_LINE(document_load_at(line_filename, at_dir));
+	if (line == NULL)
+		return NULL;
+	document_import(GEOXML_DOCUMENT(line));
+
+	geoxml_line_get_flow(line, &i, 0);
+	for (; i != NULL; geoxml_sequence_next(&i)) {
+		GeoXmlFlow *		flow;
+
+		flow = GEOXML_FLOW(document_load_at(
+			geoxml_line_get_flow_source(GEOXML_LINE_FLOW(i)), at_dir));
+		if (flow == NULL)
+			continue;
+		document_import(GEOXML_DOCUMENT(flow));
+		geoxml_line_set_flow_source(GEOXML_LINE_FLOW(i),
+			geoxml_document_get_filename(GEOXML_DOCUMENT(flow)));
+		document_save(GEOXML_DOCUMENT(flow));
+		geoxml_document_free(GEOXML_DOCUMENT(flow));
+	}
+
+	return line;
+}
+
+/*
  * Function: line_load_flows
  * Load flows associated to the selected line.
  * Called only by project_line_load

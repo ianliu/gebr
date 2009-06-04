@@ -147,6 +147,40 @@ out:	g_free(title);
 }
 
 /*
+ * Function: project_append_iter
+ * Add _project_ to the list of projects.
+ */
+GtkTreeIter
+project_append_iter(GeoXmlProject * project)
+{
+	GtkTreeIter	iter;
+
+	gtk_tree_store_append(gebr.ui_project_line->store, &iter, NULL);
+	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
+		PL_TITLE, geoxml_document_get_title(GEOXML_DOCUMENT(project)),
+		PL_FILENAME, geoxml_document_get_filename(GEOXML_DOCUMENT(project)),
+		-1);
+
+	return iter;
+}
+
+/*
+ * Function: project_append_line_iter
+ * Add _line_ to _project_iter_.
+ */
+void
+project_append_line_iter(GtkTreeIter * project_iter, GeoXmlLine * line)
+{
+	GtkTreeIter	iter;
+
+	gtk_tree_store_append(gebr.ui_project_line->store, &iter, project_iter);
+	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
+		PL_TITLE, geoxml_document_get_title(GEOXML_DOCUMENT(line)),
+		PL_FILENAME, geoxml_document_get_filename(GEOXML_DOCUMENT(line)),
+		-1);
+}
+
+/*
  * Function: project_list_populate
  * Reload the projets from the data directory
  */
@@ -171,7 +205,7 @@ project_list_populate(void)
 	flow_free();
 
 	while ((file = readdir(dir)) != NULL) {
-		GtkTreeIter		project_iter, line_iter;
+		GtkTreeIter		project_iter;
 
 		GeoXmlProject *		project;
 		GeoXmlSequence *	project_line;
@@ -182,16 +216,10 @@ project_list_populate(void)
 		project = GEOXML_PROJECT(document_load(file->d_name));
 		if (project == NULL)
 			continue;
-
-		/* Gtk stuff */
-		gtk_tree_store_append(gebr.ui_project_line->store, &project_iter, NULL);
-		gtk_tree_store_set(gebr.ui_project_line->store, &project_iter,
-				PL_TITLE, geoxml_document_get_title(GEOXML_DOC(project)),
-				PL_FILENAME, geoxml_document_get_filename(GEOXML_DOC(project)),
-				-1);
+		project_iter = project_append_iter(project);
 
 		geoxml_project_get_line(project, &project_line, 0);
-		while (project_line != NULL) {
+		for (; project_line != NULL; geoxml_sequence_next(&project_line)) {
 			GeoXmlLine *	line;
 			const gchar *	line_source;
 
@@ -199,19 +227,11 @@ project_list_populate(void)
 			line = GEOXML_LINE(document_load(line_source));
 			if (line == NULL) {
 				gebr_message(LOG_ERROR, TRUE, TRUE, _("Line file %s corrupted. Ignoring."),
-					     line_source);
-				geoxml_sequence_next(&project_line);
+					line_source);
 				continue;
 			}
-
-			gtk_tree_store_append(gebr.ui_project_line->store, &line_iter, &project_iter);
-			gtk_tree_store_set(gebr.ui_project_line->store, &line_iter,
-					PL_TITLE, geoxml_document_get_title(GEOXML_DOC(line)),
-					PL_FILENAME, line_source,
-					-1);
-
+			project_append_line_iter(&project_iter, line);
 			geoxml_document_free(GEOXML_DOC(line));
-			geoxml_sequence_next(&project_line);
 		}
 
 		geoxml_document_free(GEOXML_DOC(project));

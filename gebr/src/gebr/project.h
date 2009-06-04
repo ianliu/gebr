@@ -28,6 +28,11 @@ project_new(void);
 gboolean
 project_delete(void);
 
+GtkTreeIter
+project_append_iter(GeoXmlProject * project);
+void
+project_append_line_iter(GtkTreeIter * project_iter, GeoXmlLine * line);
+
 void
 project_list_populate(void);
 

@@ -27,12 +27,15 @@ document_new(enum GEOXML_DOCUMENT_TYPE type);
 
 GeoXmlDocument *
 document_load(const gchar * filename);
-
+GeoXmlDocument *
+document_load_at(const gchar * filename, const gchar * directory);
 GeoXmlDocument *
 document_load_path(const gchar * path);
 
 void
 document_save(GeoXmlDocument * document);
+void
+document_import(GeoXmlDocument * document);
 
 GString *
 document_assembly_filename(const gchar * extension);
