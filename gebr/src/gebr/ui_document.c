@@ -197,38 +197,23 @@ document_properties_actions(GtkDialog * dialog, gint arg1, struct ui_document_pr
 		switch ((type = geoxml_document_get_type(ui_document_properties->document))) {
 		case GEOXML_DOCUMENT_TYPE_PROJECT:
 		case GEOXML_DOCUMENT_TYPE_LINE:
-			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
-			gtk_tree_selection_get_selected(selection, &model, &iter);
-			gtk_tree_store_set(gebr.ui_project_line->store, &iter,
-					   PL_TITLE, geoxml_document_get_title(ui_document_properties->document),
-					   -1);
-			project_line_info_update();
-
-			/* SAVE IT! */
-			if (type == GEOXML_DOCUMENT_TYPE_PROJECT){
-				document_save(GEOXML_DOC(gebr.project));
-				doc_type = "project";
-			}
-			else {
-				document_save(GEOXML_DOC(gebr.line));
-				doc_type = "line";
-			}
+			project_line_set_selected(&iter, ui_document_properties->document);
+			doc_type = (type == GEOXML_DOCUMENT_TYPE_PROJECT) ? "project" : "line";
 			break;
 		case GEOXML_DOCUMENT_TYPE_FLOW:
 			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 			gtk_tree_selection_get_selected(selection, &model, &iter);
 			gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
-					   FB_TITLE, geoxml_document_get_title(ui_document_properties->document),
-					   -1);
-			flow_save();
+				FB_TITLE, geoxml_document_get_title(ui_document_properties->document),
+				-1);
 			doc_type = "flow";
 			break;
 		default:
 			goto out;
 		}
+		document_save(ui_document_properties->document);
 
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Properties of %s '%s' updated"), doc_type,
-			old_title);
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Properties of %s '%s' updated"), doc_type, old_title);
 		if (strcmp(old_title, new_title) != 0)
 			gebr_message(LOG_INFO, FALSE, TRUE, _("Renaming %s '%s' to '%s'"),
 				doc_type, old_title, new_title);

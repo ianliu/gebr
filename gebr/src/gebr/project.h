@@ -30,7 +30,7 @@ project_delete(void);
 
 GtkTreeIter
 project_append_iter(GeoXmlProject * project);
-void
+GtkTreeIter
 project_append_line_iter(GtkTreeIter * project_iter, GeoXmlLine * line);
 
 void

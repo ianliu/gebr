@@ -168,7 +168,7 @@ project_append_iter(GeoXmlProject * project)
  * Function: project_append_line_iter
  * Add _line_ to _project_iter_.
  */
-void
+GtkTreeIter
 project_append_line_iter(GtkTreeIter * project_iter, GeoXmlLine * line)
 {
 	GtkTreeIter	iter;
@@ -178,6 +178,8 @@ project_append_line_iter(GtkTreeIter * project_iter, GeoXmlLine * line)
 		PL_TITLE, geoxml_document_get_title(GEOXML_DOCUMENT(line)),
 		PL_FILENAME, geoxml_document_get_filename(GEOXML_DOCUMENT(line)),
 		-1);
+
+	return iter;
 }
 
 /*

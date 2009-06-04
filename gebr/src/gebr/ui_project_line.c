@@ -341,6 +341,32 @@ project_line_info_update(void)
 }
 
 /*
+ * Function: project_line_set_selected
+ * Select _iter_ associated with _document_
+ */
+void
+project_line_set_selected(GtkTreeIter * iter, GeoXmlDocument * document)
+{
+	GtkTreeSelection *	selection;
+	GtkTreePath *		tree_path;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
+	tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), iter);
+	
+	gtk_tree_view_expand_to_path(GTK_TREE_VIEW(gebr.ui_project_line->view), tree_path);
+	gtk_tree_selection_select_iter(selection, iter);
+	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
+
+	gtk_tree_store_set(gebr.ui_project_line->store, iter,
+		PL_TITLE, geoxml_document_get_title(document),
+		PL_FILENAME, geoxml_document_get_filename(document),
+		-1);
+	project_line_load();
+
+	gtk_tree_path_free(tree_path);
+}
+
+/*
  * Function: project_line_import
  * Import line or project
  */
@@ -359,6 +385,8 @@ project_line_import(void)
 	GError *		error;
 	gchar *			output;
 
+	GeoXmlDocument *	document;
+	GtkTreeIter		iter;
 	gchar **		files;
 	int			i;
 
@@ -405,7 +433,6 @@ project_line_import(void)
 		if (is_project && g_str_has_suffix(files[i], ".prj")) {
 			GeoXmlProject *		project;
 			GeoXmlSequence *	project_line;
-			GtkTreeIter		iter;
 
 			project = GEOXML_PROJECT(document_load_at(files[i], tmp_dir->str));
 			if (project == NULL)
@@ -427,25 +454,39 @@ project_line_import(void)
 				document_save(GEOXML_DOCUMENT(line));
 				geoxml_document_free(GEOXML_DOCUMENT(line));
 			}
-			document_save(GEOXML_DOCUMENT(project));
-			geoxml_document_free(GEOXML_DOCUMENT(project));
+
+			document = GEOXML_DOCUMENT(project);
 		} else if (!is_project && g_str_has_suffix(files[i], ".lne")) {
 			GeoXmlLine *	line;
-			GtkTreeIter	iter, parent;
+			GtkTreeIter	parent;
 
 			line = line_import(files[i], tmp_dir->str);
 			if (line == NULL)
 				continue;
-			geoxml_project_append_line(gebr.project, files[i]);
-			document_save(GEOXML_PROJECT(gebr.project));
+			geoxml_project_append_line(gebr.project,
+				geoxml_document_get_filename(GEOXML_DOCUMENT(line)));
+			document_save(GEOXML_DOCUMENT(gebr.project));
 
 			project_line_get_selected(&iter, FALSE);
 			parent = iter;
 			if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &parent, &iter))
 				parent = iter;
-			project_append_line_iter(&parent, line);
+			iter = project_append_line_iter(&parent, line);
 
-			geoxml_document_free(GEOXML_DOCUMENT(line));
+			document = GEOXML_DOCUMENT(line);
+		} else
+			document = NULL;
+		if (document != NULL) {
+			GString *	new_title;
+
+			new_title = g_string_new(NULL);
+			g_string_printf(new_title, _("%s (Imported)"), geoxml_document_get_title(document));
+			geoxml_document_set_title(document, new_title->str);
+			document_save(document);
+			project_line_set_selected(&iter, document);
+
+			geoxml_document_free(document);
+			g_string_free(new_title, TRUE);
 		}
 	}
 
@@ -456,10 +497,10 @@ project_line_import(void)
 err:	gebr_message(LOG_ERROR, FALSE, TRUE, _("Failed to import"));
 
 out:	g_strfreev(files);
-	g_string_free(command, TRUE);
 	g_free(output);
 out2:	g_free(filename);
 out3:	gtk_widget_destroy(chooser_dialog);
+	g_string_free(command, TRUE);
 }
 
 /*

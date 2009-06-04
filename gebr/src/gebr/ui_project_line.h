@@ -62,6 +62,9 @@ void
 project_line_info_update(void);
 
 void
+project_line_set_selected(GtkTreeIter * iter, GeoXmlDocument * document);
+
+void
 project_line_import(void);
 
 void

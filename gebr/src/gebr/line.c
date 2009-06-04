@@ -37,6 +37,7 @@
 #include "project.h"
 #include "flow.h"
 #include "callbacks.h"
+#include "ui_project_line.h"
 
 gchar * no_line_selected_error =		N_("No line selected");
 gchar * no_selection_error =			N_("Nothing selected");
@@ -57,7 +58,6 @@ line_new(void)
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 	GtkTreeIter		project_iter, line_iter;
-	GtkTreePath *		path;
 
 	gchar *			project_filename;
 	gchar *                 project_title;
@@ -94,29 +94,19 @@ line_new(void)
 		PL_TITLE, geoxml_document_get_title(GEOXML_DOC(line)),
 		PL_FILENAME, geoxml_document_get_filename(GEOXML_DOC(line)),
 		-1);
-
-	/* add to project */
 	geoxml_project_append_line(gebr.project, geoxml_document_get_filename(GEOXML_DOC(line)));
 	document_save(GEOXML_DOC(gebr.project));
-
-	/* save and free */
 	document_save(GEOXML_DOC(line));
-	geoxml_document_free(GEOXML_DOC(line));
 
 	/* feedback */
 	gebr_message(LOG_INFO, FALSE, TRUE, _("New line created in project '%s'"), project_title);
+	project_line_set_selected(&line_iter, GEOXML_DOCUMENT(line));
 
-	/* UI: select it expand parent */
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &line_iter);
-	gtk_tree_view_expand_to_path(GTK_TREE_VIEW(gebr.ui_project_line->view), path);
-	gtk_tree_selection_select_iter(selection, &line_iter);
-	g_signal_emit_by_name(gebr.ui_project_line->view, "cursor-changed");
-	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), &line_iter);
-
-        on_project_line_properties_activate();
+	on_project_line_properties_activate();
 
 	g_free(project_title);
 	g_free(project_filename);
+	geoxml_document_free(GEOXML_DOC(line));
 
 	return TRUE;
 }
