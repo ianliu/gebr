@@ -401,14 +401,9 @@ flow_browse_load(void)
 
 	GeoXmlSequence *	revision;
 
-	gtk_container_foreach(GTK_CONTAINER(gebr.ui_flow_browse->revisions_menu),
-		(GtkCallback)gtk_widget_destroy, NULL);
-	if (!flow_browse_get_selected(&iter, FALSE)) {
-		gebr.flow = NULL;
-		flow_edition_load_components();
-		flow_browse_info_update();
+	flow_free();
+	if (!flow_browse_get_selected(&iter, FALSE))
 		return;
-	}
 
 	/* load its filename and title */
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
@@ -416,14 +411,9 @@ flow_browse_load(void)
 		FB_TITLE, &title,
 		-1);
 	/* free previous flow and load it */
-	flow_free();
 	gebr.flow = GEOXML_FLOW(document_load(filename));
-	if (gebr.flow == NULL) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load flow '%s'"), title);
-		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load flow '%s' from file '%s'"), title, filename);
-		flow_browse_select_iter(NULL);
+	if (gebr.flow == NULL)
 		goto out;
-	}
 
 	/* load into UI */
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
@@ -533,7 +523,7 @@ flow_browse_on_revision_activate(GtkMenuItem * menu_item, GeoXmlRevision * revis
 		gebr_message(LOG_INFO, TRUE, FALSE, _("Changed to state '%s' ('%s')"), comment, date);
 	else
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Could not change to state '%s' ('%s')"), comment, date);
+	document_save(GEOXML_DOCUMENT(gebr.flow));
 
-	flow_save();
 	flow_browse_load();
 }

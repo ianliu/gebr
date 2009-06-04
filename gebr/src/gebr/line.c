@@ -140,7 +140,7 @@ line_delete(void)
 
 	/* Removes its flows */
 	geoxml_line_get_flow(gebr.line, &line_flow, 0);
-	while (line_flow != NULL) {
+	for (; line_flow != NULL; geoxml_sequence_next(&line_flow)) {
 		GString *	path;
 		const gchar *	flow_source;
 
@@ -151,21 +151,17 @@ line_delete(void)
 
 		/* log action */
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Erasing child flow '%s'"), flow_source);
-
-		geoxml_sequence_next(&line_flow);
 	}
 
 	/* Remove the line from its project */
 	line_filename = geoxml_document_get_filename(GEOXML_DOC(gebr.line));
 	geoxml_project_get_line(gebr.project, &project_line, 0);
-	while (project_line != NULL) {
+	for (; project_line != NULL; geoxml_sequence_next(&project_line)) {
 		if (strcmp(line_filename, geoxml_project_get_line_source(GEOXML_PROJECT_LINE(project_line))) == 0) {
 			geoxml_sequence_remove(project_line);
 			document_save(GEOXML_DOC(gebr.project));
 			break;
 		}
-
-		geoxml_sequence_next(&project_line);
 	}
 
 	/* inform the user */
@@ -222,6 +218,7 @@ line_import(const gchar * line_filename, const gchar * at_dir)
 		document_save(GEOXML_DOCUMENT(flow));
 		geoxml_document_free(GEOXML_DOCUMENT(flow));
 	}
+	document_save(GEOXML_DOCUMENT(line));
 
 	return line;
 }
@@ -237,24 +234,18 @@ line_load_flows(void)
 	GtkTreeIter		flow_iter;
 	GeoXmlSequence *	line_flow;
 
-	/* reset flow parts of GUI */
-	gtk_list_store_clear(gebr.ui_flow_browse->store);
-	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
 	flow_free();
 
 	/* iterate over its flows */
 	geoxml_line_get_flow(gebr.line, &line_flow, 0);
-	while (line_flow != NULL) {
+	for (; line_flow != NULL; geoxml_sequence_next(&line_flow)) {
 		GeoXmlFlow *	flow;
-		gchar *		flow_filename;
+		const gchar *	flow_filename;
 
-		flow_filename = (gchar*)geoxml_line_get_flow_source(GEOXML_LINE_FLOW(line_flow));
+		flow_filename = geoxml_line_get_flow_source(GEOXML_LINE_FLOW(line_flow));
 		flow = GEOXML_FLOW(document_load(flow_filename));
-		if (flow == NULL) {
-			gebr_message(LOG_ERROR, TRUE, TRUE, _("Flow file %s corrupted. Ignoring"), flow_filename);
-			geoxml_sequence_next(&line_flow);
+		if (flow == NULL)
 			continue;
-		}
 
 		/* add to the flow browser. */
 		gtk_list_store_append(gebr.ui_flow_browse->store, &flow_iter);
@@ -265,7 +256,6 @@ line_load_flows(void)
 			-1);
 
 		geoxml_document_free(GEOXML_DOC(flow));
-		geoxml_sequence_next(&line_flow);
 	}
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Flows loaded"));

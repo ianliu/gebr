@@ -303,7 +303,7 @@ flow_edition_status_changed(void)
 		FSEQ_STATUS_COLUMN, pixbuf,
 		-1);
 
-	flow_save();
+	document_save(GEOXML_DOCUMENT(gebr.flow));
 }
 
 /*
@@ -402,7 +402,7 @@ flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * 
 		geoxml_sequence_move_after(program, position_program);
 		gtk_list_store_move_after(gebr.ui_flow_edition->fseq_store, iter, position);
 	}
-	flow_save();
+	document_save(GEOXML_DOCUMENT(gebr.flow));
 
 	return FALSE;
 }
@@ -467,7 +467,6 @@ flow_edition_menu_add(void)
 		MENU_TITLE_COLUMN, &name,
 		MENU_FILE_NAME_COLUMN, &filename,
 		-1);
-
 	menu = menu_load(filename);
 	if (menu == NULL)
 		goto out;
@@ -476,21 +475,19 @@ flow_edition_menu_add(void)
 	 * note that menu changes aren't saved to disk
 	 */
 	geoxml_flow_get_program(menu, &program, 0);
-	while (program != NULL) {
+	for (; program != NULL; geoxml_sequence_next(&program))
 		parameters_reset_to_default(geoxml_program_get_parameters(GEOXML_PROGRAM(program)));
-		geoxml_sequence_next(&program);
-	}
 
 	menu_programs_index = geoxml_flow_get_programs_number(gebr.flow);
 	/* add it to the file */
 	geoxml_flow_add_flow(gebr.flow, menu);
-	geoxml_document_free(GEOXML_DOC(menu));
-	flow_save();
+	document_save(GEOXML_DOCUMENT(gebr.flow));
 
 	/* and to the GUI */
 	geoxml_flow_get_program(gebr.flow, &menu_programs, menu_programs_index);
 	flow_add_program_sequence_to_view(menu_programs);
 
+	geoxml_document_free(GEOXML_DOC(menu));
 out:	g_free(name);
 	g_free(filename);
 }

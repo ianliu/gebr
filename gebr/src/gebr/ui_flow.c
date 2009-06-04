@@ -233,10 +233,9 @@ flow_io_actions(GtkDialog * dialog, gint arg1, struct ui_flow_io * ui_flow_io)
 			gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->output)));
 		geoxml_flow_io_set_error(gebr.flow,
 			gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->error)));
+		document_save(GEOXML_DOCUMENT(gebr.flow));
 
 		flow_edition_set_io();
-
-		flow_save();
 		break;
 	default:
 		break;

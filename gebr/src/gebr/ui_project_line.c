@@ -450,6 +450,7 @@ project_line_import(void)
 					continue;
 				geoxml_project_set_line_source(GEOXML_PROJECT_LINE(project_line),
 					geoxml_document_get_filename(GEOXML_DOCUMENT(line)));
+
 				project_append_line_iter(&iter, line);
 				document_save(GEOXML_DOCUMENT(line));
 				geoxml_document_free(GEOXML_DOCUMENT(line));
@@ -614,6 +615,11 @@ project_line_free(void)
 	gebr.project_line = NULL;
 	gebr.project = NULL;
 	gebr.line = NULL;
+
+	gtk_list_store_clear(gebr.ui_flow_browse->store);
+	flow_free();
+
+	project_line_info_update();
 }
 
 
@@ -686,22 +692,13 @@ project_line_load(void)
 	GtkTreeIter		iter;
 	GtkTreePath *		path;
 
-	gchar *			project_filename;
-	gchar *                 project_title;
-	gchar *			line_filename;
-	gchar *                 line_title;
-
 	gboolean		is_line;
+	gchar *			project_filename;
+	gchar *			line_filename;
 
-	/* Frees any previous project, line and flow loaded */
 	project_line_free();
-	flow_free();
-	line_load_flows();
-
-	if (!project_line_get_selected(&iter, TRUE)) {
-		project_line_info_update();
+	if (!project_line_get_selected(&iter, TRUE))
 		return;
-	}
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
 	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
@@ -710,56 +707,41 @@ project_line_load(void)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 			PL_FILENAME, &line_filename,
-			PL_TITLE, &line_title,
 			-1);
 		child = iter;
 		gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter, &child);
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 			PL_FILENAME, &project_filename,
-			PL_TITLE, &project_title,
 			-1);
-
 	} else {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 			PL_FILENAME, &project_filename,
-			PL_TITLE, &project_title,
 			-1);
 	}
 
 	gebr.project = GEOXML_PROJECT(document_load(project_filename));
-	if (gebr.project == NULL) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load project '%s'"), project_title);
-		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load project '%s' from file '%s'"),
-			project_title, project_filename);
+	if (gebr.project == NULL)
 		goto out;
-	}
-
 	if (is_line == TRUE) {
 		gebr.line = GEOXML_LINE(document_load(line_filename));
-		if (gebr.line == NULL) {
-			gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to load line '%s'"), line_title);
-			gebr_message(LOG_ERROR, FALSE, TRUE, _("Unable to load line '%s' from file '%s'"),
-				line_title, line_filename);
-			project_line_free();
+		if (gebr.line == NULL)
 			goto out;
-		}
 
 		gebr.project_line = GEOXML_DOC(gebr.line);
 		line_load_flows();
 	} else {
 		gebr.project_line = GEOXML_DOC(gebr.project);
 		gebr.line = NULL;
+		gtk_list_store_clear(gebr.ui_flow_browse->store);
+		flow_free();
 	}
 
 	project_line_info_update();
 
 out:	gtk_tree_path_free(path);
 	g_free(project_filename);
-	g_free(project_title);
-	if (is_line == TRUE) {
+	if (is_line == TRUE)
 		g_free(line_filename);
-		g_free(line_title);
-	}
 }
 
 static void

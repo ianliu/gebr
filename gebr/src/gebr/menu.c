@@ -397,14 +397,12 @@ menu_scan_directory(const gchar * directory, FILE * index_fp)
 			continue;
 
 		geoxml_flow_get_category(GEOXML_FLOW(menu), &category, 0);
-		while (category != NULL) {
+		for (; category != NULL; geoxml_sequence_next(&category)) {
 			fprintf(index_fp, "%s|%s|%s|%s\n",
 				geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)),
 				geoxml_document_get_title(menu),
 				geoxml_document_get_description(menu),
 				file->d_name);
-
-			geoxml_sequence_next(&category);
 		}
 
 		geoxml_document_free(menu);

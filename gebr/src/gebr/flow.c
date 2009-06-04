@@ -116,12 +116,13 @@ void
 flow_free(void)
 {
 	if (gebr.flow != NULL) {
-		gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
 		geoxml_document_free(GEOXML_DOC(gebr.flow));
 		gebr.flow = NULL;
-
-		flow_browse_info_update();
 	}
+	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
+	gtk_container_foreach(GTK_CONTAINER(gebr.ui_flow_browse->revisions_menu),
+		(GtkCallback)gtk_widget_destroy, NULL);
+	flow_browse_info_update();
 }
 
 /*
@@ -162,13 +163,12 @@ flow_delete(void)
 
 	/* Seek and destroy */
 	geoxml_line_get_flow(gebr.line, &line_flow, 0);
-	while (line_flow != NULL) {
+	for (; line_flow != NULL; geoxml_sequence_next(&line_flow)) {
 		if (strcmp(filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(line_flow))) == 0) {
 			geoxml_sequence_remove(line_flow);
 			line_save();
 			break;
 		}
-		geoxml_sequence_next(&line_flow);
 	}
 
 	/* Free and delete flow from the disk */
@@ -181,18 +181,6 @@ flow_delete(void)
 
 out:	g_free(title);
 	g_free(filename);
-}
-
-/*
- * Function: flow_save
- * Save the current flow
- */
-void
-flow_save(void)
-{
-	/* TODO: report errors on document_save */
-	document_save(GEOXML_DOC(gebr.flow));
-	flow_browse_info_update();
 }
 
 /*
@@ -454,7 +442,7 @@ flow_export_as_menu(void)
 	geoxml_flow_get_program(flow, &program, 0);
 	use_value = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES ? TRUE : FALSE;
 	i = 0;
-	while (program != NULL) {
+	for (; program != NULL; geoxml_sequence_next(&program)) {
 		GString *	menu_help;
 
 		menu_help = menu_get_help_from_program_ref(GEOXML_PROGRAM(program));
@@ -466,7 +454,6 @@ flow_export_as_menu(void)
 		geoxml_program_set_menu(GEOXML_PROGRAM(program), filename, i++);
 		geoxml_program_set_status(GEOXML_PROGRAM(program), "unconfigured");
 
-		geoxml_sequence_next(&program);
 		g_string_free(menu_help, TRUE);
 	}
 
@@ -593,8 +580,8 @@ flow_revision_save(void)
 		GeoXmlRevision *	revision;
 
 		revision = geoxml_flow_append_revision(gebr.flow, gtk_entry_get_text(GTK_ENTRY(entry)));
+		document_save(GEOXML_DOCUMENT(gebr.flow));
 		flow_browse_load_revision(revision, TRUE);
-		flow_save();
 		ret = TRUE;
 
 		break;
@@ -631,8 +618,8 @@ flow_program_duplicate(void)
 		FSEQ_GEOXML_POINTER, &program,
 		-1);
 	program = geoxml_sequence_append_clone(program);
+	document_save(GEOXML_DOCUMENT(gebr.flow));
 	flow_add_program_sequence_to_view(program);
-	flow_save();
 }
 
 /*
@@ -662,7 +649,7 @@ flow_program_remove(void)
 		FSEQ_GEOXML_POINTER, &program,
 		-1);
 	geoxml_sequence_remove(program);
-	flow_save();
+	document_save(GEOXML_DOCUMENT(gebr.flow));
 	/* from GUI... */
 	gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 	gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
@@ -689,7 +676,7 @@ flow_program_move_top(void)
 		FSEQ_GEOXML_POINTER, &program,
 		-1);
 	geoxml_sequence_move_after(program, NULL);
-	flow_save();
+	document_save(GEOXML_DOCUMENT(gebr.flow));
 	/* Update GUI */
 	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store),
 		&iter, &gebr.ui_flow_edition->input_iter);
@@ -716,7 +703,7 @@ flow_program_move_bottom(void)
 		FSEQ_GEOXML_POINTER, &program,
 		-1);
 	geoxml_sequence_move_before(program, NULL);
-	flow_save();
+	document_save(GEOXML_DOCUMENT(gebr.flow));
 	/* Update GUI */
 	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store),
 		&iter, &gebr.ui_flow_edition->output_iter);

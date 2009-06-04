@@ -198,11 +198,8 @@ gebr_log_load(void)
 	gebr.log = log_open(log_filename->str);
 
 	messages = log_messages_read(gebr.log);
-	i = messages;
-	while (i != NULL) {
+	for (i = messages; i != NULL; i = g_list_next(i))
 		log_add_message_to_list(gebr.ui_log, (struct log_message *)i->data);
-		i = g_list_next(i);
-	}
 
 	/* frees */
 	g_string_free(log_filename, TRUE);

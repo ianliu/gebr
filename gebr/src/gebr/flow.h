@@ -28,9 +28,6 @@ void
 flow_delete(void);
 
 void
-flow_save(void);
-
-void
 flow_import(void);
 
 void

@@ -35,6 +35,7 @@
 #include "gebr.h"
 #include "menu.h"
 #include "flow.h"
+#include "document.h"
 #include "ui_help.h"
 #include "ui_flow.h"
 
@@ -542,6 +543,7 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 		geoxml_program_set_status(GEOXML_PROGRAM(ui_parameters->program), "configured");
 		geoxml_sequence_move_before(GEOXML_SEQUENCE(ui_parameters->program), program);
 		geoxml_sequence_remove(program);
+		document_save(GEOXML_DOCUMENT(gebr.flow));
 
 		/* Update interface */
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
@@ -551,7 +553,6 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(
 			gebr.action_group, "flow_edition_status_configured")), TRUE);
 
-		flow_save();
 		break;
 	} case GTK_RESPONSE_DEFAULT: {
 		parameters_reset_to_default(geoxml_program_get_parameters(ui_parameters->program));
