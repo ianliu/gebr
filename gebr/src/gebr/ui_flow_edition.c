@@ -345,11 +345,13 @@ flow_edition_get_selected_menu(GtkTreeIter * iter, gboolean warn_unselected)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->menu_view));
 	if (gtk_tree_selection_get_selected(selection, &model, iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("No menu selected"));
+		if (warn_unselected)
+			gebr_message(LOG_ERROR, TRUE, FALSE, _("No menu selected"));
 		return FALSE;
 	}
 	if (!gtk_tree_store_iter_depth(gebr.ui_flow_edition->menu_store, iter)) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("Select a menu instead of a category"));
+		if (warn_unselected)
+			gebr_message(LOG_ERROR, TRUE, FALSE, _("Select a menu instead of a category"));
 		return FALSE;
 	}
 

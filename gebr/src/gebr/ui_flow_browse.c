@@ -453,6 +453,7 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 
 	GtkTreeIter		iter;
 
+	/* no line, no new flow possible */
 	if (gebr.line == NULL)
 		return NULL;
 
