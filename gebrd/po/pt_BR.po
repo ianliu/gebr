@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: gebrd 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-05-13 16:59-0300\n"
-"PO-Revision-Date: 2009-05-13 17:03-0300\n"
+"PO-Revision-Date: 2009-06-02 23:28-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -20,16 +20,16 @@ msgstr ""
 #: ../src/client.c:113
 #, c-format
 msgid "Connection error '%s' on client '%s'"
-msgstr ""
+msgstr "Erro '%s' na conexão com o servidor '%s'"
 
 #: ../src/gebrd.c:91
 msgid "Server quited"
-msgstr ""
+msgstr "Servidor finalizado"
 
 #: ../src/job.c:84
 #, c-format
 msgid "Required parameter '%s' of program '%s' not provided.\n"
-msgstr ""
+msgstr "O parâmetro '%s' do programa '%s' não foi fornecido. \\n"
 
 #: ../src/job.c:102
 #, c-format
@@ -39,7 +39,7 @@ msgstr "Tipo de parâmetro desconhecido.\n"
 #: ../src/job.c:164
 #, c-format
 msgid "Job '%s' sent output not in UTF-8."
-msgstr ""
+msgstr "Tarefa '%s' não enviou a saida no formato UTF-8"
 
 #: ../src/job.c:300
 #, c-format

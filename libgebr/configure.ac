@@ -106,14 +106,7 @@ if test "$enable_gui" = "yes"; then
 	AC_SUBST(GTK_CFLAGS)
 fi
 dnl webkit option
-AC_ARG_ENABLE(webkit,
-	[AC_HELP_STRING([--enable-webkit],
-	[turn on webkit html viewer])],,
-	enable_webkit=no)
-if test "$enable_webkit" = "yes"; then
-   PKG_CHECK_MODULES(WEBKIT, webkit-1.0,,AC_MSG_ERROR([Could not find webkit]))
-   WEBKIT_ENABLED=-DWEBKIT_ENABLED
-fi
+PKG_CHECK_MODULES(WEBKIT, webkit-1.0, WEBKIT_ENABLED=-DWEBKIT_ENABLED, AC_MSG_WARN([you will miss some new awesome features]))
 AC_SUBST(WEBKIT_CFLAGS)
 AC_SUBST(WEBKIT_LIBS)
 AC_SUBST(WEBKIT_ENABLED)
