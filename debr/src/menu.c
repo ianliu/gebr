@@ -302,7 +302,7 @@ menu_open(const gchar * path, gboolean select)
 	gboolean		valid;
 
 	gchar *			filename;
-        gchar *                 date;
+        const gchar *		date;
 	gchar *			tmp;
 	GeoXmlFlow *		menu;
 
@@ -331,13 +331,10 @@ menu_open(const gchar * path, gboolean select)
 
 	/* add to the view */
 	filename = g_path_get_basename(path);
-        date = geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu));
-        
-        if (strlen(date)){
-                tmp = g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(date).tv_sec);
-        }else{
-                tmp = g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
-        }
+	date = geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu));
+	tmp = (strlen(date))
+		? g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(date).tv_sec)
+		: g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
 
 	gtk_list_store_append(debr.ui_menu.list_store, &iter);
 	gtk_list_store_set(debr.ui_menu.list_store, &iter,
@@ -1141,11 +1138,13 @@ menu_category_add(ValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
 
 	name = gtk_combo_box_get_active_text(combo_box);
 	if (!strlen(name))
-		name = _("New category");
+		name = g_strdup(_("New category"));
 	value_sequence_edit_add(VALUE_SEQUENCE_EDIT(sequence_edit),
 		GEOXML_SEQUENCE(geoxml_flow_append_category(debr.menu, name)));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
+
+	g_free(name);
 }
 
 /*

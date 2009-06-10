@@ -108,7 +108,7 @@ make_temp_filename(const gchar * template)
 
 	/* assembly file path */
 	path = g_string_new(NULL);
-	g_string_printf(path, "%s/%s", g_get_tmp_dir(), template);
+	g_string_printf(path, "%s/.gebr/tmp/%s", getenv("HOME"), template);
 
 	/* create a temporary file. */
 	close(g_mkstemp(path->str));
@@ -155,7 +155,6 @@ gebr_create_config_dirs(void)
 			goto out;
 		}
 	}
-
 	/* Test for .gebr/run conf dir */
 	g_string_printf(aux, "%s/run", gebr->str);
 	if (g_file_test(aux->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {
@@ -164,7 +163,6 @@ gebr_create_config_dirs(void)
 			goto out;
 		}
 	}
-
 	/* Test for .gebr/log conf dir */
 	g_string_printf(aux, "%s/log", gebr->str);
 	if (g_file_test(aux->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {
@@ -173,7 +171,6 @@ gebr_create_config_dirs(void)
 			goto out;
 		}
 	}
-
 	/* Test for .gebr/gebrdata */
 	g_string_printf(aux, "%s/gebrdata", gebr->str);
 	if (g_file_test(aux->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {
@@ -182,7 +179,6 @@ gebr_create_config_dirs(void)
 			goto out;
 		}
 	}
-
 	/* Test for .gebr/tmp conf dir */
 	g_string_printf(aux, "%s/tmp", gebr->str);
 	if (g_file_test(aux->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {

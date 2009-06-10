@@ -493,12 +493,12 @@ project_line_import(void)
 
 	libgebr_destroy_temp_directory(tmp_dir);
 	gebr_message(LOG_INFO, FALSE, TRUE, _("Imported successful"));
+	g_strfreev(files);
 	goto out;
 
 err:	gebr_message(LOG_ERROR, FALSE, TRUE, _("Failed to import"));
 
-out:	g_strfreev(files);
-	g_free(output);
+out:	g_free(output);
 out2:	g_free(filename);
 out3:	gtk_widget_destroy(chooser_dialog);
 	g_string_free(command, TRUE);
@@ -594,11 +594,11 @@ project_line_export(void)
 	g_chdir(current_dir);
 	g_free(current_dir);
 
+	g_free(tmp);
 out:	gtk_widget_destroy(chooser_dialog);
 	g_string_free(command, TRUE);
 	g_string_free(filename, TRUE);
 	g_string_free(files, TRUE);
-	g_free(tmp);
 }
 
 /*

@@ -156,17 +156,9 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 void
 help_show(const gchar * help)
 {
-	GString *	  prepared_html;
-
-	prepared_html = g_string_new(help);
-	help_fix_css(prepared_html);
-
-#ifdef WEBKIT_ENABLED
-	libgebr_gui_help_show(prepared_html->str);
-#else
+	GString *	prepared_html;
 	FILE *		html_fp;
 	GString *	html_path;
-	GString *	cmdline;
 
 	prepared_html = g_string_new(help);
 	help_fix_css(prepared_html);
@@ -186,16 +178,21 @@ help_show(const gchar * help)
 	/* Add file to list of files to be removed */
 	debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
 
-	/* Launch an external browser */
-	cmdline = g_string_new (debr.config.browser->str);
-	g_string_append(cmdline, " file://");
+	g_string_prepend(html_path, "file://");
+#ifdef WEBKIT_ENABLED
+	libgebr_gui_help_show(html_path->str);
+#else
+	GString *	cmdline;
+
+	cmdline = g_string_new(debr.config.browser->str);
 	g_string_append(cmdline, html_path->str);
 	g_string_append(cmdline, " &");
 	system(cmdline->str);
 
 	g_string_free(cmdline, TRUE);
-out:	g_string_free(html_path, FALSE);
 #endif
+
+out:	g_string_free(html_path, FALSE);
 	g_string_free(prepared_html, TRUE);
 }
 

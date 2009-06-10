@@ -236,6 +236,12 @@ flow_browse_info_update(void)
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.author), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.created), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.created_label), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.modified), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.modified_label), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun_label), "");
 
 		g_object_set(gebr.ui_flow_browse->info.help, "sensitive", FALSE, NULL);
 
@@ -250,12 +256,10 @@ flow_browse_info_update(void)
 	markup = g_markup_printf_escaped("<b>%s</b>", geoxml_document_get_title(GEOXML_DOC(gebr.flow)));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.title), markup);
 	g_free(markup);
-
 	/* Description in italic */
 	markup = g_markup_printf_escaped("<i>%s</i>", geoxml_document_get_description(GEOXML_DOC(gebr.flow)));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.description), markup);
 	g_free(markup);
-
 	/* Date labels */
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Created:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.created_label), markup);
@@ -266,7 +270,6 @@ flow_browse_info_update(void)
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Last run:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun_label), markup);
 	g_free(markup);
-
 	/* Dates */
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.created),
 			   localized_date(geoxml_document_get_date_created(GEOXML_DOC(gebr.flow))));
@@ -274,7 +277,6 @@ flow_browse_info_update(void)
 			   localized_date(geoxml_document_get_date_modified(GEOXML_DOC(gebr.flow))));
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun),
 			   localized_date(geoxml_flow_get_date_last_run(gebr.flow)));
-
 	/* I/O labels */
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Input:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.input_label), markup);
@@ -285,7 +287,6 @@ flow_browse_info_update(void)
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Error log:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.error_label), markup);
 	g_free(markup);
-
 	/* Input file */
 	if (strlen(geoxml_flow_io_get_input(gebr.flow)))
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input), geoxml_flow_io_get_input(gebr.flow));

@@ -86,6 +86,8 @@ void
 help_show(const gchar * help, const gchar * title)
 {
 	GString *	prepared_html;
+	FILE *		html_fp;
+	GString *	html_path;
 
 	/* initialization */
 	prepared_html = g_string_new(NULL);
@@ -103,15 +105,6 @@ help_show(const gchar * help, const gchar * title)
 		}
 	}
 
-#ifdef WEBKIT_ENABLED
-	libgebr_gui_help_show(prepared_html->str);
-#else
-	FILE *		html_fp;
-	GString *	html_path;
-
-	GString *	url;
-	GString *	cmd_line;
-
 	if (!gebr.config.browser->len) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("No editor defined. Choose one at Configure/Preferences"));
 		return;
@@ -119,8 +112,6 @@ help_show(const gchar * help, const gchar * title)
 
 	/* initialization */
 	html_path = make_temp_filename("gebr_XXXXXX.html");
-	url = g_string_new(NULL);
-	cmd_line = g_string_new(NULL);
 
 	html_fp = fopen(html_path->str, "w");
 	if (html_fp == NULL) {
@@ -133,16 +124,21 @@ help_show(const gchar * help, const gchar * title)
 	/* Add file to list of files to be removed */
 	gebr.tmpfiles = g_slist_append(gebr.tmpfiles, html_path->str);
 
-	/* Launch an external browser */
-	g_string_printf(url, "file://%s", html_path->str);
-	g_string_printf(cmd_line, "%s %s &", gebr.config.browser->str, url->str);
+	g_string_prepend(html_path, "file://");
+#ifdef WEBKIT_ENABLED
+	libgebr_gui_help_show(html_path->str);
+#else
+	GString *	cmd_line;
+
+	cmd_line = g_string_new(NULL);
+	g_string_printf(cmd_line, "%s %s &", gebr.config.browser->str, html_path->str);
 	system(cmd_line->str);
+
+	g_string_free(cmd_line, TRUE);
+#endif
 
 	/* frees */
 out:	g_string_free(html_path, FALSE);
-	g_string_free(url, TRUE);
-	g_string_free(cmd_line, TRUE);
-#endif
 	g_string_free(prepared_html, TRUE);
 }
 

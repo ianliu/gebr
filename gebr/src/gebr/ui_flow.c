@@ -28,6 +28,7 @@
 #include "ui_flow.h"
 #include "gebr.h"
 #include "flow.h"
+#include "document.h"
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
 
