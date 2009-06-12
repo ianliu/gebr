@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebrd 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-13 16:59-0300\n"
-"PO-Revision-Date: 2009-06-02 23:28-0300\n"
+"POT-Creation-Date: 2009-06-12 11:35-0300\n"
+"PO-Revision-Date: 2009-06-12 11:37-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -26,159 +26,187 @@ msgstr "Erro '%s' na conexão com o servidor '%s'"
 msgid "Server quited"
 msgstr "Servidor finalizado"
 
-#: ../src/job.c:84
+#: ../src/job.c:94
 #, c-format
 msgid "Required parameter '%s' of program '%s' not provided.\n"
-msgstr "O parâmetro '%s' do programa '%s' não foi fornecido. \\n"
+msgstr "O parâmetro '%s' do programa '%s' não foi fornecido.\n"
 
-#: ../src/job.c:102
+#: ../src/job.c:112
 #, c-format
 msgid "Unknown parameter type.\n"
 msgstr "Tipo de parâmetro desconhecido.\n"
 
-#: ../src/job.c:164
+#: ../src/job.c:174
 #, c-format
 msgid "Job '%s' sent output not in UTF-8."
 msgstr "Tarefa '%s' não enviou a saida no formato UTF-8"
 
-#: ../src/job.c:300
+#: ../src/job.c:311
 #, c-format
 msgid ""
 "DTD specified. The <DOCTYPE ...> must not appear in XML.\n"
-"libgeoxml will find the appriate DTD installed from version.\n"
+"libgeoxml will find the appopriated DTD installed from version.\n"
 msgstr ""
+"DTD especificado. <DOCTYPE ...> não deve aparecer no XML.\n"
+"libgeoxml encontrará o DTD apropriado a partir da versão.\n"
 
-#: ../src/job.c:305
+#: ../src/job.c:316
 #, c-format
 msgid ""
-"Invalid document. The has a sintax error or doesn't match the DTD.\n"
-"In this case see the errors above\n"
+"Invalid document. It has a sintax error or doesn't match the DTD.\n"
+"In this case see the errors above.\n"
 msgstr ""
+"Documento inválido. Ele contém um erro de sintaxe ou não respeita o DTD.\n"
+"Neste caso, veja os erros acima.\n"
 
-#: ../src/job.c:310
+#: ../src/job.c:321
 #, c-format
 msgid ""
 "Can't access file. The file doesn't exist or there is not enough permission "
 "to read it.\n"
 msgstr ""
+"Impossível acessar o arquivo. Ele não existe ou não há permissão de "
+"leitura.\n"
 
-#: ../src/job.c:315
+#: ../src/job.c:326
 #, c-format
 msgid ""
 "Can't access dtd. The file's DTD couldn't not be found.\n"
 "It may be a newer version not support by this version of libgeoxml or there "
 "is an installation problem.\n"
 msgstr ""
+"Impossível acessar o DTD. O arquivo de DTD não pode ser encontrado.\n"
+"Pode ser uma versão mais nova, não suportada por esta versão da libgeoxml\n"
+"ou então um problema de instalação.\n"
 
-#: ../src/job.c:321
+#: ../src/job.c:332
 #, c-format
 msgid ""
 "Not enough memory. The library stoped after an unsucessful memory "
 "allocation.\n"
 msgstr ""
+"Sem memória suficiente. A biblioteca abortou depois de uma alocação de "
+"memória mal-sucedida.\n"
 
-#: ../src/job.c:325
+#: ../src/job.c:336
 #, c-format
 msgid ""
 "Unspecified error %d.\n"
-"See library documentation at http://gebr.sf.net/doc/libgebr/geoxml.\n"
+"See library documentation at http://sites.google.com/site/gebrproject.\n"
 msgstr ""
+"Erro não especificado %d.\n"
+"Veja a documentação da biblioteca em http://sites.google.com/site/gebrproject.\n"
 
-#: ../src/job.c:337
+#: ../src/job.c:348
 #, c-format
 msgid "Empty flow.\n"
-msgstr ""
+msgstr "Fluxo vazio.\n"
 
-#: ../src/job.c:344
+#: ../src/job.c:355
 #, c-format
 msgid "%u) Skiping disabled/unconfigured program '%s.'\n"
-msgstr ""
+msgstr "%u) Desconsiderando programa '%s' desabilidato/não configurado.\n"
 
-#: ../src/job.c:350
+#: ../src/job.c:361
 #, c-format
 msgid "No configured programs.\n"
-msgstr ""
+msgstr "Sem programas configurados.\n"
 
-#: ../src/job.c:360
+#: ../src/job.c:371
 #, c-format
 msgid "No input file selected.\n"
-msgstr ""
+msgstr "Sem arquivo de entrada selecionado.\n"
 
-#: ../src/job.c:384
+#: ../src/job.c:378
 #, c-format
-msgid "%u) Skipped disabled/unconfigured program '%s'.\n"
-msgstr ""
+msgid "Input file %s not present or not accessable.\n"
+msgstr "Arquivo de entrada %s não encontrado ou não acessível.\n"
+
+#: ../src/job.c:395 ../src/job.c:457
+#, c-format
+msgid "Write permission to %s not granted.\n"
+msgstr "Permissão de escrita para %s não concedida.\n"
+
+#: ../src/job.c:411
+#, c-format
+msgid "%u) Skiping disabled/unconfigured program '%s'.\n"
+msgstr "%u) Desconsiderando programa '%s' desabilidato/não configurado.\n"
 
 #. Previous does not write to stdin but current expect something
-#: ../src/job.c:398
+#: ../src/job.c:425
 #, c-format
 msgid "Broken flow before %s (no input).\n"
-msgstr ""
+msgstr "Fluxo interrompido depois de %s (sem entrada).\n"
 
 #. Previous does write to stdin but current does not carry about
-#: ../src/job.c:402
+#: ../src/job.c:429
 #, c-format
 msgid "Broken flow before %s (unexpected output).\n"
-msgstr ""
+msgstr "Fluxo interrompido antes de %s (saída inesperada).\n"
 
-#: ../src/job.c:423
+#: ../src/job.c:450
 #, c-format
 msgid "No error file selected; error output merged with standard output.\n"
 msgstr ""
+"Sem arquivo de erro selecionado; saída de erro será mesclada com a saída "
+"padrão.\n"
 
-#: ../src/job.c:426
+#: ../src/job.c:453
 #, c-format
 msgid "Proceeding without output file.\n"
-msgstr ""
+msgstr "Prosseguindo sem arquivo de saída.\n"
 
 #: ../src/main.c:37
 msgid "Run server in interactive mode, not as a daemon"
-msgstr ""
+msgstr "Executando servidor em modo iterativo e não com daemon"
 
 #: ../src/main.c:39
 msgid "Show GeBR daemon version"
-msgstr ""
+msgstr "Exibe a versão do daemon"
 
 #: ../src/main.c:45
 msgid "GeBR daemon"
-msgstr ""
+msgstr "Daemon GeBR"
 
 #: ../src/main.c:55
 #, c-format
 msgid "%s: syntax error\n"
-msgstr ""
+msgstr "%s: erro de sintaxe"
 
 #: ../src/main.c:56
 #, c-format
 msgid "Try %s --help\n"
-msgstr ""
-
-#: ../src/main.c:61
-#, c-format
-msgid "%s\n"
-msgstr ""
+msgstr "Tente %s --help\n"
 
 #: ../src/server.c:61
 msgid "Could not access GêBR configuration directories.\n"
-msgstr ""
+msgstr "Não foi possível acessar os diretórios de configuração da GêBR.\n"
 
 #: ../src/server.c:83
 msgid "Cannot run interactive server, GêBR daemon is already running"
 msgstr ""
+"Não é possível executar o servidor iterativavmente. Daemon GêBR já está em "
+"execução"
 
 #: ../src/server.c:100
 msgid "Could not listen for connections.\n"
-msgstr ""
+msgstr "Não foi possível escutar por conexões.\n"
 
 #: ../src/server.c:109
 msgid "Could not write run file."
-msgstr ""
+msgstr "Não foi possível escrever arquivo de trava de execução."
 
 #: ../src/server.c:131
 #, c-format
 msgid "Server started at %u port"
-msgstr ""
+msgstr "Servidor inicializado na porta %u"
 
 #: ../src/server.c:140
 msgid "Could not init server. Quiting..."
-msgstr ""
+msgstr "Não foi possível inicializar o servidor. Abortando..."
+
+#~ msgid "%u) Skipped disabled/unconfigured program '%s'.\n"
+#~ msgstr "%u) Desconsiderando programa '%s' desabilidato/não configurado.\n"
+
+#~ msgid "%s\n"
+#~ msgstr "%s\\n"

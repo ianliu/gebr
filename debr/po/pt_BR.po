@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-13 14:23-0300\n"
+"POT-Creation-Date: 2009-06-12 11:37-0300\n"
 "PO-Revision-Date: 2009-05-08 15:12-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
@@ -65,7 +65,7 @@ msgstr "Não foi possível deletar o menu '%s'"
 msgid "'%s' flow has unsaved changes. Do you want to save it?"
 msgstr "Fluxo '%s' tem modificações não salvas. Quer salva-las?"
 
-#: ../src/callbacks.c:412 ../src/menu.c:509
+#: ../src/callbacks.c:412 ../src/menu.c:507
 msgid "Don't save"
 msgstr "Não salvar"
 
@@ -81,23 +81,23 @@ msgstr "rótulo"
 msgid "Could not create an temporary file."
 msgstr "Não foi possível criar um arquivo temporário."
 
-#: ../src/help.c:211
+#: ../src/help.c:217
 msgid "Could not open template. Please check your installation."
 msgstr "Não foi possível abir o modelo. Por favor verifique sua instalação."
 
-#: ../src/help.c:231
+#: ../src/help.c:237
 msgid "Could not create a temporary file."
 msgstr "Não foi possível criar um arquivo temporário."
 
-#: ../src/help.c:244
+#: ../src/help.c:250
 msgid "Could not launch editor"
 msgstr "Não foi possível executar o editor"
 
-#: ../src/help.c:252
+#: ../src/help.c:258
 msgid "Could not read created temporary file."
 msgstr "Não foi possível ler o arquivo temporário criado."
 
-#: ../src/help.c:268
+#: ../src/help.c:274
 msgid "Please change the help encoding to UTF-8"
 msgstr "Por favor modifique a codificação da ajuda para UTF-8"
 
@@ -271,122 +271,118 @@ msgstr "Programa"
 msgid "Parameter"
 msgstr "Parâmetro"
 
-#: ../src/menu.c:132
-msgid "Modified"
-msgstr "Modificado"
-
-#: ../src/menu.c:145 ../src/program.c:139
+#: ../src/menu.c:139 ../src/program.c:139
 msgid "Details"
 msgstr "Detalhes"
 
-#: ../src/menu.c:222
+#: ../src/menu.c:216
 msgid "untitled"
 msgstr "sem título"
 
-#: ../src/menu.c:255
+#: ../src/menu.c:249
 #, c-format
 msgid "Could not load menu at '%s': %s"
 msgstr "Não foi possível carregar menu em '%s': %s"
 
-#: ../src/menu.c:278
+#: ../src/menu.c:272
 msgid "Could not open menus' directory"
 msgstr "Não foi possível abrir o diretório do menu"
 
-#: ../src/menu.c:508
+#: ../src/menu.c:506
 msgid "There are flows unsaved. Do you want to save them?"
 msgstr "Existem fluxos não salvos. Deseja salva-los?"
 
-#: ../src/menu.c:582
+#: ../src/menu.c:580
 msgid "Edit menu"
 msgstr "Editar menu"
 
 #.
 #. * Title
 #.
-#: ../src/menu.c:598 ../src/program.c:438
+#: ../src/menu.c:596 ../src/program.c:438
 msgid "Title:"
 msgstr "Título:"
 
 #.
 #. * Description
 #.
-#: ../src/menu.c:616 ../src/program.c:474
+#: ../src/menu.c:614 ../src/program.c:474
 msgid "Description:"
 msgstr "Descrição:"
 
 #.
 #. * Help
 #.
-#: ../src/menu.c:634 ../src/program.c:492
+#: ../src/menu.c:632 ../src/program.c:492
 msgid "Help"
 msgstr "Ajuda"
 
 #.
 #. * Author
 #.
-#: ../src/menu.c:663
+#: ../src/menu.c:661
 msgid "Author:"
 msgstr "Autor:"
 
 #.
 #. * Email
 #.
-#: ../src/menu.c:681
+#: ../src/menu.c:679
 msgid "Email:"
 msgstr "E-mail:"
 
 #.
 #. * Categories
 #.
-#: ../src/menu.c:699
+#: ../src/menu.c:697
 msgid "Categories:"
 msgstr "Categorias:"
 
-#: ../src/menu.c:827
+#: ../src/menu.c:825
 #, c-format
 msgid "This menu has no programs"
 msgstr "Este menu não tem programas"
 
-#: ../src/menu.c:830
+#: ../src/menu.c:828
 #, c-format
 msgid "This menu has 1 program"
 msgstr "Este menu tem 1 programa"
 
-#: ../src/menu.c:833
+#: ../src/menu.c:831
 #, c-format
 msgid "This menu has %li programs"
 msgstr "Este menu tem %li programas"
 
-#: ../src/menu.c:839
+#: ../src/menu.c:837
 msgid "Created: "
 msgstr "Criado: "
 
-#: ../src/menu.c:843
+#: ../src/menu.c:841
 msgid "Modified: "
 msgstr "Modificado: "
 
-#: ../src/menu.c:852
+#: ../src/menu.c:850
 msgid "Categories: "
 msgstr "Categorias: "
 
-#: ../src/menu.c:872
+#: ../src/menu.c:870
 msgid "None"
 msgstr "Nenhum"
 
-#: ../src/menu.c:957
+#: ../src/menu.c:982
 msgid "Sort by"
 msgstr "Ordenado por"
 
 #. Name
-#: ../src/menu.c:962 ../src/preferences.c:75
+#: ../src/menu.c:1000 ../src/preferences.c:75
 msgid "Name"
 msgstr "Nome"
 
-#: ../src/menu.c:966
+#: ../src/menu.c:1007
 msgid "Modified date"
 msgstr "Data em que foi modificado"
 
-#: ../src/menu.c:1098
+#: ../src/menu.c:1141
 msgid "New category"
 msgstr "Nova categoria"
 
@@ -554,7 +550,7 @@ msgstr "Opções:"
 msgid "Default value:"
 msgstr "Valor padrão:"
 
-#: ../src/parameter.c:960
+#: ../src/parameter.c:969
 msgid "No parameter is selected"
 msgstr "Nenhum parâmetro está selecionado"
 
@@ -837,10 +833,13 @@ msgstr "%d erro(s) potencial(is)"
 msgid "UNSET"
 msgstr "Não definida"
 
-#: ../src/validate.c:690
+#: ../src/validate.c:669
 msgid "  REQUIRED "
 msgstr "  OBRIGATÓRIO"
 
-#: ../src/validate.c:728
+#: ../src/validate.c:707
 msgid "   [Instanciable]\n"
 msgstr "   [Instanciável]\n"
+
+#~ msgid "Modified"
+#~ msgstr "Modificado"

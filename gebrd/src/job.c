@@ -309,12 +309,12 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 		case GEOXML_RETV_DTD_SPECIFIED:
 			g_string_append_printf(job->issues,
 				_("DTD specified. The <DOCTYPE ...> must not appear in XML.\n"
-				"libgeoxml will find the appriate DTD installed from version.\n"));
+				"libgeoxml will find the appopriated DTD installed from version.\n"));
 			break;
 		case GEOXML_RETV_INVALID_DOCUMENT:
 			g_string_append_printf(job->issues,
-				_("Invalid document. The has a sintax error or doesn't match the DTD.\n"
-				"In this case see the errors above\n"));
+				_("Invalid document. It has a sintax error or doesn't match the DTD.\n"
+				"In this case see the errors above.\n"));
 			break;
 		case GEOXML_RETV_CANT_ACCESS_FILE:
 			g_string_append_printf(job->issues,
@@ -334,7 +334,7 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 		default:
 			g_string_append_printf(job->issues,
 				_("Unspecified error %d.\n"
-				"See library documentation at http://gebr.sf.net/doc/libgebr/geoxml.\n"), ret);
+				"See library documentation at http://sites.google.com/site/gebrproject.\n"), ret);
 			break;
 		}
 		goto err;
@@ -408,7 +408,7 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 	while (program != NULL) {
 		/* Skiping disabled/unconfigured programs */
 		if (strcmp(geoxml_program_get_status(GEOXML_PROGRAM(program)), "configured") != 0) {
-			g_string_append_printf(job->issues, _("%u) Skipped disabled/unconfigured program '%s'.\n"),
+			g_string_append_printf(job->issues, _("%u) Skiping disabled/unconfigured program '%s'.\n"),
 				++issue_number, geoxml_program_get_title(GEOXML_PROGRAM(program)));
 
 			geoxml_sequence_next(&program);

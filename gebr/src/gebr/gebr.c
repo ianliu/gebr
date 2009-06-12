@@ -85,7 +85,7 @@ gebr_init(void)
 
 	/* log */
 	gebr_log_load();
-	gebr_message(LOG_START, TRUE, TRUE, _("GÃªBR Initiating..."));
+	gebr_message(LOG_START, TRUE, TRUE, _("GêBR Initiating..."));
 
 	/* finally the config. file */
 	gebr_config_load();
@@ -129,7 +129,7 @@ gebr_quit(void)
 	g_slist_foreach(gebr.tmpfiles, (GFunc)g_free, NULL);
 	g_slist_free(gebr.tmpfiles);
 
-	gebr_message(LOG_END, TRUE, TRUE, _("GÃªBR Finalizing..."));
+	gebr_message(LOG_END, TRUE, TRUE, _("GêBR Finalizing..."));
 	log_close(gebr.log);
 
 	/* Free servers structs */
