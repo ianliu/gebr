@@ -34,9 +34,11 @@ int
 main(int argc, char ** argv, char ** env)
 {
 	gboolean		show_version;
+        gchar **                menus = NULL;
 	GOptionEntry		entries[] = {
 		{"version", 'V', 0, G_OPTION_ARG_NONE, &show_version,
 			_("Show GeBR version"), NULL},
+                {"install-menu", 'I', 0, G_OPTION_ARG_FILENAME_ARRAY, &menus, _("Install menus into private menu directory"), NULL},
 		{NULL}
 	};
 	GError *		error = NULL;
@@ -62,6 +64,10 @@ main(int argc, char ** argv, char ** env)
 		fprintf(stdout, "%s\n", GEBR_VERSION);
 		return 0;
 	}
+
+        if (menus != NULL) {
+                return gebr_install_private_menus(menus);
+        }
 
 	gtk_init(&argc, &argv);
 

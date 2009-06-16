@@ -88,7 +88,7 @@ gebr_init(void)
 	gebr_message(LOG_START, TRUE, TRUE, _("GêBR Initiating..."));
 
 	/* finally the config. file */
-	gebr_config_load();
+	(void) gebr_config_load(FALSE);
 
 	/* check for a menu list change */
 	if (menu_refresh_needed() == TRUE) {
@@ -302,8 +302,8 @@ gebr_migrate_data_dir(void)
  * Function: gebr_config_load
  * Initialize configuration for GeBR
  */
-void
-gebr_config_load(void)
+gint
+gebr_config_load(gboolean nox)
 {
 	gboolean	new_config;
 	gboolean	done_by_gengetopt;
@@ -344,18 +344,24 @@ gebr_config_load(void)
 			"general", "job_log_word_wrap", FALSE);
 	}
 	if (new_config) {
+                if (nox){
+                        return 1;
+                } else {
 		server_new("127.0.0.1", TRUE);
 		preferences_setup_ui(TRUE);
-		return;
+		return 0;
+                }
 	}
+        
+        if (nox) return 0;
 
-	gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
-	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
-	g_object_set(G_OBJECT(gebr.ui_job_control->text_view), "wrap-mode",
-		gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
-
-	menu_list_populate();
-	project_list_populate();
+        gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
+        gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
+        g_object_set(G_OBJECT(gebr.ui_job_control->text_view), "wrap-mode",
+                     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
+        
+        menu_list_populate();
+        project_list_populate();
 
 	groups = g_key_file_get_groups(gebr.config.key_file, NULL);
 	for (i = 0; groups[i] != NULL; ++i) {
@@ -376,6 +382,8 @@ gebr_config_load(void)
 
 	/* frees */
 	g_strfreev(groups);
+
+        return 0;
 }
 
 /*
@@ -499,4 +507,39 @@ gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_
 	}
 
 	g_free(string);
+}
+
+int
+gebr_install_private_menus(gchar **menu)
+{
+
+        GString * cmdline;
+
+	/* check/create config dir */
+	gebr_create_config_dirs();
+	gebr.config.path = g_string_new(NULL);
+	g_string_printf(gebr.config.path, "%s/.gebr/gebr.conf", getenv("HOME"));
+
+        if (gebr_config_load(TRUE)){
+                fprintf(stderr, _("Unable to load GêBR configuration. Try run GêBR once.\n"));
+                return 1;
+        }
+        
+        cmdline = g_string_new(NULL);
+
+        while (*menu != NULL){
+
+                g_string_printf(cmdline, "cp %s %s 2>/dev/null", *menu, gebr.config.usermenus->str);
+                printf(_("Installing %s \t"), *menu);
+                if (system(cmdline->str))
+                        printf(_(" FAILED\n"));
+                else
+                        printf(_(" OK\n"));
+
+                *menu++;
+        }
+        
+        g_string_free(cmdline, TRUE);
+
+        return 0;
 }

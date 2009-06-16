@@ -116,8 +116,8 @@ gebr_quit(void);
 void
 gebr_log_load(void);
 
-void
-gebr_config_load(void);
+int
+gebr_config_load(gboolean nox);
 
 void
 gebr_config_apply(void);
@@ -127,5 +127,8 @@ gebr_config_save(gboolean verbose);
 
 void
 gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...);
+
+int
+gebr_install_private_menus(gchar **menu);
 
 #endif //__GEBR_H
