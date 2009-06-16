@@ -27,6 +27,9 @@ program_help_show(void);
 void
 help_show(const gchar * help, const gchar * title);
 
+void 
+help_show_callback(GtkButton *button, GeoXmlDocument *document);
+
 void
 help_edit(GtkButton * button, GeoXmlDocument * document);
 

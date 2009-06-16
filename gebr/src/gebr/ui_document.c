@@ -61,7 +61,10 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	GtkWidget *			dialog;
 	GtkWidget *			table;
 	GtkWidget *			label;
+        GtkWidget *			help_show_button;
+	GtkWidget *			help_hbox;
 	GString *                       dialog_title;
+
 
 	if (document == NULL) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Nothing selected"));
@@ -125,11 +128,22 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	/* Report */
 	label = gtk_label_new(_("Report"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	ui_document_properties->help = gtk_button_new_from_stock(GTK_STOCK_EDIT);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), ui_document_properties->help, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
+	help_hbox = gtk_hbox_new(FALSE,0);
+	gtk_table_attach(GTK_TABLE(table), help_hbox, 1, 2, 2, 3,
+		(GtkAttachOptions)(GTK_FILL),
+		(GtkAttachOptions)(0), 0, 0);
+	help_show_button = gtk_button_new_from_stock(GTK_STOCK_OPEN);
+	gtk_box_pack_start(GTK_BOX(help_hbox), help_show_button, FALSE, FALSE, 0);
+	g_signal_connect(GTK_OBJECT(help_show_button), "clicked",
+                         (GCallback)help_show_callback, document);
+	g_object_set(G_OBJECT(help_show_button), "relief", GTK_RELIEF_NONE, NULL);
+
+	ui_document_properties->help = gtk_button_new_from_stock(GTK_STOCK_EDIT);
+	gtk_box_pack_start(GTK_BOX(help_hbox), ui_document_properties->help, FALSE, FALSE, 0);
 	g_signal_connect(GTK_OBJECT(ui_document_properties->help), "clicked",
 			GTK_SIGNAL_FUNC(help_edit), document);
+	g_object_set(G_OBJECT(ui_document_properties->help), "relief", GTK_RELIEF_NONE, NULL);
 
 	/* Author */
 	label = gtk_label_new(_("Author"));

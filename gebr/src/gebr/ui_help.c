@@ -77,7 +77,7 @@ program_help_show(void)
 	
 	g_string_free(help, TRUE);
 }
-		
+
 /*
  * Function: help_show
  * Open user's browser with _help_
@@ -141,6 +141,17 @@ help_show(const gchar * help, const gchar * title)
 out:	g_string_free(html_path, FALSE);
 	g_string_free(prepared_html, TRUE);
 }
+
+/*
+Help show
+*/
+	
+void 
+help_show_callback(GtkButton *button, GeoXmlDocument *document)
+{
+	help_show(geoxml_document_get_help(document),
+                  geoxml_document_get_title(document));
+}	
 
 /* Function: help_edit
  * Edit help in editor.
