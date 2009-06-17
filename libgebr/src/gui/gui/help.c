@@ -27,9 +27,9 @@
  */
 
 #ifdef WEBKIT_ENABLED
-static WebKitNavigationResponse
-libgebr_gui_help_show_navigation_resquested(WebKitWebView * web_view, WebKitWebFrame * frame,
-	WebKitNetworkRequest * request);
+static void
+libgebr_gui_help_show_on_title_changed(WebKitWebView * web_view,
+	WebKitWebFrame * frame, gchar * title, GtkWindow * window);
 static GtkWidget *
 libgebr_gui_help_show_create_web_view(void);
 #endif
@@ -58,6 +58,7 @@ static GtkWidget *
 libgebr_gui_help_show_create_web_view(void)
 {
 	static GtkWindowGroup *	window_group = NULL;
+	static WebKitWebView *	work_around_web_view = NULL;
 	GtkWidget *		window;
 	GtkWidget *		scrolled_window;
 	GtkWidget *		web_view;
@@ -66,6 +67,10 @@ libgebr_gui_help_show_create_web_view(void)
 		window_group = gtk_window_group_new();
 	if (!g_thread_supported())
 		g_thread_init(NULL);
+	/* WORKAROUND: Newer WebKitGtk versions crash on last WebKitWebView destroy,
+	so we always keep one instance of it. */
+	if (work_around_web_view == NULL)
+		work_around_web_view = webkit_web_view_new();
 
 	window = gtk_dialog_new();
 	gtk_window_group_add_window(window_group, GTK_WINDOW(window));
@@ -73,6 +78,10 @@ libgebr_gui_help_show_create_web_view(void)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	web_view = webkit_web_view_new();
+	g_signal_connect(web_view, "create-web-view",
+		G_CALLBACK(libgebr_gui_help_show_create_web_view), NULL);
+	g_signal_connect(web_view, "title-changed",
+		G_CALLBACK(libgebr_gui_help_show_on_title_changed), window);
 
 	/* Place the WebKitWebView in the GtkScrolledWindow */
 	gtk_container_add(GTK_CONTAINER (scrolled_window), web_view);
@@ -83,6 +92,13 @@ libgebr_gui_help_show_create_web_view(void)
 	gtk_widget_show_all(window);
 
 	return web_view;
+}
+
+static void
+libgebr_gui_help_show_on_title_changed(WebKitWebView * web_view,
+	WebKitWebFrame * frame, gchar * title, GtkWindow * window)
+{
+	gtk_window_set_title(window, title);
 }
 
 #endif //WEBKIT_ENABLED

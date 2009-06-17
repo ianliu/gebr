@@ -17,6 +17,7 @@
 bin_PROGRAMS = gebr-geoxml-upgrade
 gebr_geoxml_upgrade_SOURCES = upgrade.c
 
-INCLUDES = -I..
+INCLUDES = -I.. \
+	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
 AM_CFLAGS = -Wall $(GDOME2_CFLAGS)
 gebr_geoxml_upgrade_LDADD = ../geoxml/libgebr_geoxml.la

@@ -16,6 +16,12 @@
  */
 
 #include <stdio.h>
+#include <locale.h>
+#ifdef ENABLE_NLS
+#	include <libintl.h>
+#endif
+
+#include "../../libgebrintl.h"
 #include "../geoxml.h"
 
 int
@@ -24,7 +30,7 @@ main(int argc, char ** argv)
 	static gchar **		files;
 	static GOptionEntry	entries[] = {
 		{ G_OPTION_REMAINING, 0, G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME_ARRAY, &files, "",
-			"arq1.flw arq2.mnu arq3.prj arq4.lne ..." },
+			N_("file1.flw file2.mnu file3.prj file4.lne ...") },
 		{NULL}
 	};
 	gint			ret = 0;
@@ -32,48 +38,54 @@ main(int argc, char ** argv)
 	GError *		error = NULL;
 	GOptionContext *	context;
 
+#ifdef ENABLE_NLS
+	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	textdomain(GETTEXT_PACKAGE);
+#endif
+        setlocale(LC_ALL, "");
+
 	context = g_option_context_new(NULL);
 	g_option_context_set_summary(context,
-		"LibGeoXml XML validator"
+		_("LibGeoXml XML validator")
 	);
 	g_option_context_set_description(context,
-		""
+		_("")
 	);
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
 	/* Parse command line */
 	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE) {
-		fprintf(stderr, "%s: syntax error\n", argv[0]);
-		fprintf(stderr, "Try %s --help\n", argv[0]);
+		fprintf(stderr, _("%s: syntax error\n"), argv[0]);
+		fprintf(stderr, _("Try %s --help\n"), argv[0]);
 		ret = -1;
 		goto out;
 	}
 
-        if (files == NULL) {
+	if (files == NULL) {
 #if GLIB_CHECK_VERSION(2,14,0)
-                fprintf(stderr, "%s", 
-                        g_option_context_get_help(context, FALSE, NULL));
+		fprintf(stderr, "%s", g_option_context_get_help(context, FALSE, NULL));
 #else
-                fprintf(stderr,"Try %s --help\n", argv[0]);
+		fprintf(stderr, _("Try %s --help\n"), argv[0]);
 #endif
-                goto out;
-        }
+		goto out;
+	}
 
 	for (i = 0; files[i] != NULL; ++i) {
 		GeoXmlDocument *	document;
 
 		ret = geoxml_document_load(&document, files[i]);
 		if (ret < 0) {
-			fprintf(stderr, "Could not load file %s\n", files[i]);
+			fprintf(stderr, _("Could not load file %s\n"), files[i]);
 			continue;
 		}
 		ret = geoxml_document_save(document, files[i]);
 		if (ret < 0) {
-			fprintf(stderr, "Could not save file %s\n", files[i]);
+			fprintf(stderr, _("Could not save file %s\n"), files[i]);
 			geoxml_document_free(document);
 			continue;
 		}
-		printf("Upgraded file %s to version %s!\n", files[i], geoxml_document_get_version(document));
+		printf(_("Upgraded file %s to version %s!\n"), files[i], geoxml_document_get_version(document));
 
 		geoxml_document_free(document);
 	}

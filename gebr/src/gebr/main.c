@@ -49,17 +49,17 @@ main(int argc, char ** argv, char ** env)
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 	textdomain(GETTEXT_PACKAGE);
 #endif
-        setlocale(LC_ALL, "");
+	setlocale(LC_ALL, "");
 	setlocale(LC_NUMERIC, "C");
 
 	context = g_option_context_new(_(" - GeBR, a seismic processing environment"));
 	g_option_context_set_summary(context,
 		_("GeBR is a free-software which provides an environment to seismic\n"
-                  "data processing, designed to easily assemble and run processing\n"
-                  "flows, as well as to manage jobs.")
+			"data processing, designed to easily assemble and run processing\n"
+			"flows, as well as to manage jobs.")
 	);
 	g_option_context_set_description(context,
-                _("GeBR Project - http://sites.google.com/site/gebrproject/"));
+		_("GeBR Project - http://sites.google.com/site/gebrproject/"));
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
 	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE) {
@@ -67,15 +67,12 @@ main(int argc, char ** argv, char ** env)
 		fprintf(stderr, _("Try %s --help\n"), argv[0]);
 		return -1;
 	}
-
 	if (show_version == TRUE) {
 		fprintf(stdout, "%s\n", GEBR_VERSION);
 		return 0;
 	}
-
-        if (menus != NULL) {
-                return gebr_install_private_menus(menus);
-        }
+	if (menus != NULL)
+		return gebr_install_private_menus(menus);
 
 	gtk_init(&argc, &argv);
 

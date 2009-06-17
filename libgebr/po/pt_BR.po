@@ -6,11 +6,12 @@
 #
 # biloti <biloti@gmail.com>, 2009.
 # Bráulio Barros de Oliveira <brauliobo@gmail.com>, 2009.
+#: ../src/geoxml/upgrade/upgrade.c:53
 msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-12 11:38-0300\n"
+"POT-Creation-Date: 2009-06-17 16:00-0300\n"
 "PO-Revision-Date: 2009-06-12 11:52-0300\n"
 "Last-Translator: Bráulio Barros de Oliveira <brauliobo@gmail.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -215,18 +216,24 @@ msgid ""
 "You should verify if your installation is correct and if it supports this "
 "document version (you might need to update your software)."
 msgstr ""
-"DTD para o documento correspondente (fluxo, linha ou projeto) e não pode ser encontrado ou acessado no sistema.\n"
-"Verifique se sua instalação está correta e se ela suporta esta versão de documento (atualização pode ser necessária)."
+"DTD para o documento correspondente (fluxo, linha ou projeto) e não pode ser "
+"encontrado ou acessado no sistema.\n"
+"Verifique se sua instalação está correta e se ela suporta esta versão de "
+"documento (atualização pode ser necessária)."
 
 #: ../src/geoxml/geoxml/error.c:65
 msgid ""
 "The argument(s) passed are not inside a sequence and therefore sequence "
 "operations doesn't apply. This is a type checking result error."
-msgstr "Os argumentos fornecidos não estão contidos em uma sequência e portanto as operações não se aplicam. Isto é um erro resutante de checagem de tipo."
+msgstr ""
+"Os argumentos fornecidos não estão contidos em uma sequência e portanto as "
+"operações não se aplicam. Isto é um erro resutante de checagem de tipo."
 
 #: ../src/geoxml/geoxml/error.c:68
 msgid "The function is only for enums. This is a type checking result error."
-msgstr "A função é somente para enums. Isso é um erro de resultante de checagem de tipo."
+msgstr ""
+"A função é somente para enums. Isso é um erro de resultante de checagem de "
+"tipo."
 
 #: ../src/geoxml/geoxml/error.c:69
 msgid "The reference parameter references itself"
@@ -272,6 +279,54 @@ msgstr "grupo"
 msgid "reference"
 msgstr "referência"
 
+#: ../src/geoxml/upgrade/upgrade.c:33 ../src/geoxml/validate/validate.c:33
+msgid "file1.flw file2.mnu file3.prj file4.lne ..."
+msgstr ""
+
+#: ../src/geoxml/upgrade/upgrade.c:50 ../src/geoxml/validate/validate.c:50
+msgid "LibGeoXml XML validator"
+msgstr "Validador XML da LibGeoXml"
+
+#: ../src/geoxml/upgrade/upgrade.c:59 ../src/geoxml/validate/validate.c:59
+#, c-format
+msgid "%s: syntax error\n"
+msgstr ""
+
+#: ../src/geoxml/upgrade/upgrade.c:60 ../src/geoxml/upgrade/upgrade.c:69
+#: ../src/geoxml/validate/validate.c:60
+#, c-format
+msgid "Try %s --help\n"
+msgstr ""
+
+#: ../src/geoxml/upgrade/upgrade.c:79
+#, fuzzy, c-format
+msgid "Could not load file %s\n"
+msgstr ""
+"Não foi possível executar o servidor local: \n"
+"%s"
+
+#: ../src/geoxml/upgrade/upgrade.c:84
+#, fuzzy, c-format
+msgid "Could not save file %s\n"
+msgstr ""
+"Não foi possível se comunicar com o servidor %s: \n"
+"%s"
+
+#: ../src/geoxml/upgrade/upgrade.c:88
+#, c-format
+msgid "Upgraded file %s to version %s!\n"
+msgstr ""
+
+#: ../src/geoxml/validate/validate.c:68
+#, c-format
+msgid "%s INVALID: %s"
+msgstr ""
+
+#: ../src/geoxml/validate/validate.c:72
+#, c-format
+msgid "%s valid!\n"
+msgstr ""
+
 #: ../src/gui/gui/about.c:36
 msgid "GêBR Core Team:"
 msgstr "GêBR Core Team:"
@@ -308,14 +363,25 @@ msgid ""
 "#9610, Feb 19, 1998, and is registered in Instituto Nacional da Propriedade "
 "Industrial (INPI) under number 70156."
 msgstr ""
-"Copyright·(C)·2007-2009·GêBR·core·team·(http://sites.google.com/site/gebrproject/)\n"
+"Copyright·(C)·2007-2009·GêBR·core·team·(http://sites.google.com/site/"
+"gebrproject/)\n"
 "\n"
-"Este programa é um software livre: você pode distribuí-lo e/ou modifica-lo de acordo com os termos da GNU General Public Licence como publicado pela Free Software Foundation, versão 3 da Licença, ou (à sua escolha) qualquer  versão posterior.\n"
-"Este programa é distribuído na esperança de ser útil, mas SEM NENHUMA GARANTIA; sem até a garantia implícita de MERCANTIBILIDADE ou ADEQUAÇÃO PARA UM OBJETIVO PARTICULAR. Veja a GNU General Public Licence para mais detalhes.\n"
+"Este programa é um software livre: você pode distribuí-lo e/ou modifica-lo "
+"de acordo com os termos da GNU General Public Licence como publicado pela "
+"Free Software Foundation, versão 3 da Licença, ou (à sua escolha) qualquer  "
+"versão posterior.\n"
+"Este programa é distribuído na esperança de ser útil, mas SEM NENHUMA "
+"GARANTIA; sem até a garantia implícita de MERCANTIBILIDADE ou ADEQUAÇÃO PARA "
+"UM OBJETIVO PARTICULAR. Veja a GNU General Public Licence para mais "
+"detalhes.\n"
 "\n"
-"Você deve ter recebido uma cópia da GNU General Public License junto deste programa. Se não, visite <http://www.gnu.org/licenses/>.\n"
+"Você deve ter recebido uma cópia da GNU General Public License junto deste "
+"programa. Se não, visite <http://www.gnu.org/licenses/>.\n"
 "\n"
-"No Brasil, este programa está sobre proteção contra uso não autorizado,de acordo com as leis brasileiras #9609, 19 de fevereio de 1998, #2556, 20 de abrl de 1998, e #9610, 19 de fevereiro de 1998, e é registrado no Instituto Nacional de Propriedade Industrial (INPI) sob número 70156."
+"No Brasil, este programa está sobre proteção contra uso não autorizado,de "
+"acordo com as leis brasileiras #9609, 19 de fevereio de 1998, #2556, 20 de "
+"abrl de 1998, e #9610, 19 de fevereiro de 1998, e é registrado no Instituto "
+"Nacional de Propriedade Industrial (INPI) sob número 70156."
 
 #: ../src/gui/gui/about.c:81
 msgid "GêBR Home page"

@@ -16,6 +16,12 @@
  */
 
 #include <stdio.h>
+#include <locale.h>
+#ifdef ENABLE_NLS
+#	include <libintl.h>
+#endif
+
+#include "../../libgebrintl.h"
 #include "../geoxml.h"
 
 int
@@ -24,7 +30,7 @@ main(int argc, char ** argv)
 	static gchar **		files;
 	static GOptionEntry	entries[] = {
 		{ G_OPTION_REMAINING, 0, G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME_ARRAY, &files, "",
-			"arq1.flw arq2.mnu arq3.prj arq34.lne ..." },
+			N_("file1.flw file2.mnu file3.prj file4.lne ...") },
 		{NULL}
 	};
 	gint			ret;
@@ -32,9 +38,16 @@ main(int argc, char ** argv)
 	GError *		error = NULL;
 	GOptionContext *	context;
 
+#ifdef ENABLE_NLS
+	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	textdomain(GETTEXT_PACKAGE);
+#endif
+	setlocale(LC_ALL, "");
+
 	context = g_option_context_new(NULL);
 	g_option_context_set_summary(context,
-		"LibGeoXml XML validator"
+		_("LibGeoXml XML validator")
 	);
 	g_option_context_set_description(context,
 		""
@@ -43,8 +56,8 @@ main(int argc, char ** argv)
 	g_option_context_set_ignore_unknown_options(context, FALSE);
 	/* Parse command line*/
 	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE) {
-		fprintf(stderr, "%s: syntax error\n", argv[0]);
-		fprintf(stderr, "Try %s --help\n", argv[0]);
+		fprintf(stderr, _("%s: syntax error\n"), argv[0]);
+		fprintf(stderr, _("Try %s --help\n"), argv[0]);
 		ret = -1;
 		goto out;
 	}
@@ -52,11 +65,11 @@ main(int argc, char ** argv)
 	for (i = 0; files[i] != NULL; ++i) {
 		ret = geoxml_document_validate(files[i]);
 		if (ret < 0) {
-			printf("%s INVALID: %s", files[i], geoxml_error_explained_string((enum GEOXML_RETV)ret));
+			printf(_("%s INVALID: %s"), files[i], geoxml_error_explained_string((enum GEOXML_RETV)ret));
 			continue;
 		}
 
-		printf("%s valid!\n", files[i]);
+		printf(_("%s valid!\n"), files[i]);
 	}
 
 	ret = 0;

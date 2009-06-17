@@ -69,7 +69,6 @@ main(int argc, char ** argv)
 		return 0;
 	}
 
-
 	gebrd_init();
 
 	return 0;

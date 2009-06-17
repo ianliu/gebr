@@ -17,6 +17,7 @@
 bin_PROGRAMS = gebr-geoxml-validate
 gebr_geoxml_validate_SOURCES = validate.c
 
-INCLUDES = -I..
+INCLUDES = -I.. \
+	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
 AM_CFLAGS = -Wall $(GDOME2_CFLAGS)
 gebr_geoxml_validate_LDADD = ../geoxml/libgebr_geoxml.la
