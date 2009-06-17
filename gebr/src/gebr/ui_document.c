@@ -212,7 +212,10 @@ document_properties_actions(GtkDialog * dialog, gint arg1, struct ui_document_pr
 		switch ((type = geoxml_document_get_type(ui_document_properties->document))) {
 		case GEOXML_DOCUMENT_TYPE_PROJECT:
 		case GEOXML_DOCUMENT_TYPE_LINE:
-			project_line_set_selected(&iter, ui_document_properties->document);
+			project_line_get_selected(&iter, FALSE);
+                        gtk_tree_store_set(gebr.ui_project_line->store, &iter,
+                                           PL_TITLE, geoxml_document_get_title(ui_document_properties->document),
+                                           -1);
 			doc_type = (type == GEOXML_DOCUMENT_TYPE_PROJECT) ? "project" : "line";
 			project_line_info_update();
 			break;

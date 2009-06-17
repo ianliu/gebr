@@ -45,8 +45,6 @@
  * Prototypes
  */
 
-static gboolean
-project_line_get_selected(GtkTreeIter * iter, gboolean warn_unselected);
 static void
 project_line_rename(GtkCellRendererText * cell, gchar * path_string,
 		    gchar * new_text, struct ui_project_line * ui_project_line);
@@ -624,15 +622,10 @@ project_line_free(void)
 
 
 /*
- * Section: Private
- * Private functions.
- */
-
-/*
  * Function: project_line_get_selected
  * Put selected iter in _iter_ and return true if there is a selection.
  */
-static gboolean
+gboolean
 project_line_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 {
 	GtkTreeSelection *	selection;
@@ -647,6 +640,11 @@ project_line_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 
 	return TRUE;
 }
+
+/*
+ * Section: Private
+ * Private functions.
+ */
 
 /*
  * Function: project_line_rename

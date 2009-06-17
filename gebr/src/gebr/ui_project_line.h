@@ -61,6 +61,9 @@ project_line_setup_ui(void);
 void
 project_line_info_update(void);
 
+gboolean
+project_line_get_selected(GtkTreeIter * iter, gboolean warn_unselected);
+
 void
 project_line_set_selected(GtkTreeIter * iter, GeoXmlDocument * document);
 
