@@ -171,7 +171,7 @@ msgstr "Daemon GeBR"
 #: ../src/main.c:55
 #, c-format
 msgid "%s: syntax error\n"
-msgstr "%s: erro de sintaxe"
+msgstr "%s: erro de sintaxe\n"
 
 #: ../src/main.c:56
 #, c-format

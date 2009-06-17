@@ -36,10 +36,9 @@ main(int argc, char *argv[])
 	textdomain(GETTEXT_PACKAGE);
 #endif
 
-	gtk_set_locale();
  	gtk_init(&argc, &argv);
 
-	/* temporary: necessary for representing fractional numbers only with comma */
+	setlocale(LC_ALL, "");
 	setlocale(LC_NUMERIC, "C");
 
 	gui_setup_icons();

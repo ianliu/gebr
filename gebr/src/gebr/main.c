@@ -44,6 +44,14 @@ main(int argc, char ** argv, char ** env)
 	GError *		error = NULL;
 	GOptionContext *	context;
 
+#ifdef ENABLE_NLS
+	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	textdomain(GETTEXT_PACKAGE);
+#endif
+        setlocale(LC_ALL, "");
+	setlocale(LC_NUMERIC, "C");
+
 	context = g_option_context_new(_(" - GeBR, a seismic processing environment"));
 	g_option_context_set_summary(context,
 		_("GeBR is a free-software which provides an environment to seismic\n"
@@ -71,13 +79,7 @@ main(int argc, char ** argv, char ** env)
 
 	gtk_init(&argc, &argv);
 
-#ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
-#endif
 	/* FIXME: necessary for representing fractional numbers only with comma */
-	setlocale(LC_NUMERIC, "C");
 	gui_setup_theme();
 	gui_setup_icons();
 	gebr_setup_ui();

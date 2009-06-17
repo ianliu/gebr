@@ -16,7 +16,6 @@
  */
 
 #include <locale.h>
-/* TODO: Check for libintl on configure */
 #ifdef ENABLE_NLS
 #  include <libintl.h>
 #endif
@@ -42,6 +41,14 @@ main(int argc, char ** argv)
 	GError *		error = NULL;
 	GOptionContext *	context;
 
+
+#ifdef ENABLE_NLS
+	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	textdomain(GETTEXT_PACKAGE);
+#endif
+        setlocale(LC_ALL, "");
+
 	context = g_option_context_new(_("GeBR daemon"));
 	g_option_context_set_summary(context,
 		_("")
@@ -62,11 +69,6 @@ main(int argc, char ** argv)
 		return 0;
 	}
 
-#ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
-#endif
 
 	gebrd_init();
 
