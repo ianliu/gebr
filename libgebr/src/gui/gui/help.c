@@ -58,7 +58,7 @@ static GtkWidget *
 libgebr_gui_help_show_create_web_view(void)
 {
 	static GtkWindowGroup *	window_group = NULL;
-	static WebKitWebView *	work_around_web_view = NULL;
+	static GtkWidget *	work_around_web_view = NULL;
 	GtkWidget *		window;
 	GtkWidget *		scrolled_window;
 	GtkWidget *		web_view;
@@ -78,8 +78,9 @@ libgebr_gui_help_show_create_web_view(void)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	web_view = webkit_web_view_new();
-	g_signal_connect(web_view, "create-web-view",
-		G_CALLBACK(libgebr_gui_help_show_create_web_view), NULL);
+	if (g_signal_lookup("create-web-view", WEBKIT_TYPE_WEB_VIEW))
+		g_signal_connect(web_view, "create-web-view",
+			G_CALLBACK(libgebr_gui_help_show_create_web_view), NULL);
 	g_signal_connect(web_view, "title-changed",
 		G_CALLBACK(libgebr_gui_help_show_on_title_changed), window);
 
