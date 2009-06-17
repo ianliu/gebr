@@ -23,7 +23,11 @@
 #ifdef ENABLE_NLS
 #	include <libintl.h>
 #	undef _
-#	define _(String) g_dgettext (PACKAGE, String)
+#	if GLIB_CHECK_VERSION(2,18,0)
+#		define _(String) g_dgettext (PACKAGE, String)
+#	else
+#		define _(String) dgettext (PACKAGE, String)
+#	endif
 #	define Q_(String) g_strip_context ((String), gettext (String))
 #	ifdef gettext_noop
 #		define N_(String) gettext_noop (String)
