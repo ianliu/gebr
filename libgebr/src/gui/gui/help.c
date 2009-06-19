@@ -16,6 +16,7 @@
  */
 
 #ifdef WEBKIT_ENABLED
+#include <gtk/gtk.h>
 #include <webkit/webkit.h>
 #endif
 #include <gdk/gdk.h>

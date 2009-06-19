@@ -28,10 +28,6 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
-#ifdef WEBKIT_ENABLED
-#include <webkit/webkit.h>
-#endif
-
 #include <libgebrintl.h>
 #include <misc/utils.h>
 #include <gui/help.h>
