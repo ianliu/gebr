@@ -1,5 +1,7 @@
 usr/bin
 usr/share
+usr/share/libgebr
+usr/share/locale
 usr/lib
 usr/lib/pkgconfig
 usr/include

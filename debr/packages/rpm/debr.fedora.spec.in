@@ -11,7 +11,7 @@ Group: Application/Misc
 URL: http://groups.google.com/group/gebr
 Packager: Br√°ulio Barros de Oliveira <brauliobo@gmail.com>
 Source: %{name}-%{version}.tar.gz
-Requires: libgebr, glib2, gtk2
+Requires: libgebr, glib2, gtk2, WebKit
 BuildRoot: /tmp/%{name}-%{version}
 Summary: Flow editor to seismic processing software.
 %description
@@ -29,7 +29,7 @@ DÈBR is the flow editor to seismic processing software.
 
 %prep
 %setup -q
-aclocal;automake --add-missing;autoconf
+aclocal; mkdir -p m4;  intltoolize --copy --force;automake --add-missing;autoconf
 
 %configure --disable-debug
 

@@ -1,3 +1,4 @@
 usr/bin/*
 usr/lib/lib*.so.*
 usr/share/libgebr/*
+usr/share/locale/*

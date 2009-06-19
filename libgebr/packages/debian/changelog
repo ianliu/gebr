@@ -1,46 +1,52 @@
-libgebr (0.9.12) unstable; urgency=low
+libgebr (0.9.13) lenny; urgency=low
+
+  * Release 0.9.13 (1.0.0 beta 7)
+
+ -- Ricardo Biloti <biloti@gmail.com>  Mon, 17 Jun 2009  17:04:00 -0300
+
+libgebr (0.9.12) lenny; urgency=low
 
   * Release 0.9.12 (1.0.0 beta 6)
 
  -- Ricardo Biloti <biloti@gmail.com>  Mon, 02 Apr 2009  18:29:00 -0300
 
-libgebr (0.9.11) unstable; urgency=low
+libgebr (0.9.11) lenny; urgency=low
 
   * Release 0.9.11 (1.0.0 beta 5)
 
  -- Ricardo Biloti <biloti@gmail.com>  Mon, 21 Mar 2009  20:36:00 -0300
 
-libgebr (0.9.10) unstable; urgency=low
+libgebr (0.9.10) lenny; urgency=low
 
   * Release 0.9.10 (1.0.0 beta 4)
 
  -- Ricardo Biloti <biloti@gmail.com>  Mon, 09 Mar 2009  16:19:00 -0300
 
-libgebr (0.9.9) unstable; urgency=low
+libgebr (0.9.9) lenny; urgency=low
 
   * Release 0.9.9 (1.0.0 beta 3)
 
  -- Ricardo Biloti <biloti@gmail.com>  Mon, 02 Mar 2009  17:03:00 -0300
 
-libgebr (0.9.8) unstable; urgency=low
+libgebr (0.9.8) lenny; urgency=low
 
   * Release 0.9.8 (1.0.0 beta 2)
 
  -- Ricardo Biloti <biloti@gmail.com>  Fri, 30 Jan 2009  14:00:00 -0200
 
-libgebr (0.9.7) unstable; urgency=low
+libgebr (0.9.7) lenny; urgency=low
 
   * Release 0.9.7 (1.0.0 beta 1)
 
  -- Ricardo Biloti <biloti@gmail.com>  Thu, 15 Jan 2009  14:00:00 -0200
 
-libgebr (0.9.3) unstable; urgency=low
+libgebr (0.9.3) lenny; urgency=low
 
   * Release 0.9.3 with many improvements
 
  -- Ricardo Biloti <biloti@gmail.com>  Thu, 13 Dec 2007 14:00:00 -0200
 
-libgebr (0.9.1-1) unstable; urgency=low
+libgebr (0.9.1-1) lenny; urgency=low
 
   * Initial release
 

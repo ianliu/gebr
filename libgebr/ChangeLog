@@ -1,6 +1,94 @@
-2009-04-03  Ricardo Biloti <biloti@gmail.com>
+2009-06-17  Ricardo Biloti <biloti@gmail.com>
 
-	* Release 0.9.12
+	* Tag for Release 0.9.13 created
+
+2009-06-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - open in a new window feature for newer webkitgtk versions
+	* - fixes to webkit help viewer
+	  - internationalize geoxml-{upgrade,validate}
+
+2009-06-12  Ricardo Biloti <biloti@gmail.com>
+
+	* Portuguese translation update
+
+2009-06-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fixed use of newer webkit
+	  - use tmp folder inside home dir
+
+2009-06-10  Ricardo Biloti <biloti@gmail.com>
+
+	* webkit enabled by default
+
+2009-06-04  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - import/export support on gebr
+	  - fix crash on project delete
+	  - added tmp dir to gebr's directory
+	  - minor fixes/cleanups
+
+2009-06-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* use gtk_show_uri if available
+	* fix webkit link opening
+	* use libgebr_gui_help_show
+
+2009-06-03  Ricardo Biloti <biloti@gmail.com>
+
+	* compressed files support
+
+2009-06-02  Ricardo Biloti <biloti@gmail.com>
+
+	* activate gebr project link in about dialogs
+
+2009-05-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* use $HOME/.gebr/gebrdata as data dir
+	* added geoxml_parameter_get_type_name in parameter.h
+	* added geoxml_parameter_get_type_name
+
+2009-05-13  Ricardo Biloti <biloti@gmail.com>
+
+	* - gebrd internationalization
+	  - killall for local servers
+	  - Portuguese translation fixes
+
+2009-05-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - replaced support.h to libgebrintl.h
+	  - libgebr is now and independent library
+	  - option to build libgebr with no GUI linkage
+	  - fixed libgebr internacionalization with the introduction of
+	  libgebr_init
+
+2009-05-08  Ricardo Biloti <biloti@gmail.com>
+
+	* desktop menu fix and intltool version dependency relaxed
+
+2009-05-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* added option to kill daemon on server
+	* - added documentation for gebr and libgebr to the repository
+	  - prototypes for project/line import/export
+
+2009-05-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - gebr translated to pt_BR
+	  - libgebr translated to pt_BR (but yet not using gettext
+	  properly)
+
+2009-04-30  Ricardo Biloti <biloti@gmail.com>
+
+	* internationalization support for LibGeBR
+
+2009-04-09  Ricardo Biloti <biloti@gmail.com>
+
+	* configure.ac backported to trunk
+
+2009-04-08  Ricardo Biloti <biloti@gmail.com>
+
+	* changelogs backported to trunk
 
 2009-04-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
 

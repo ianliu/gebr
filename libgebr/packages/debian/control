@@ -8,7 +8,7 @@ Package: libgebr-dev
 Section: libdevel
 Architecture: any
 Depends: ${shlibs:Depends}
-Description: GeBR library collecion
+Description: GeBR library collection
  GeBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.
  .
@@ -34,7 +34,7 @@ Package: libgebr0
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
-Description: GeBR library collecion
+Description: GeBR library collection
  GeBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.
  .

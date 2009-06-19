@@ -1,6 +1,140 @@
-2009-04-03  Ricardo Biloti <biloti@gmail.com>
+2009-06-17  Ricardo Biloti <biloti@gmail.com>
 
-	* Release 0.9.12
+	* Tag for Release 0.9.13 created
+
+2009-06-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fixes to webkit help viewer
+	  - internationalize geoxml-{upgrade,validate}
+
+2009-06-17  Ricardo Biloti <biloti@gmail.com>
+
+	* set locale even independently of GTK
+	* title update for project and lines fixed
+
+2009-06-16  Ricardo Biloti <biloti@gmail.com>
+
+	* open/edit help buttons in preferences for gebr a la debr
+	* - install-menu command line option for gebr
+	  - Portuguese translantion update
+
+2009-06-12  Ricardo Biloti <biloti@gmail.com>
+
+	* Portuguese translation update
+
+2009-06-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fixed use of newer webkit
+	  - use tmp folder inside home dir
+
+2009-06-10  Ricardo Biloti <biloti@gmail.com>
+
+	* webkit enabled by default
+
+2009-06-05  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* honor warn_unselected in flow_edition_get_selected_menu
+
+2009-06-04  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - code clenups
+	  - fixed flow selection
+	* - fix to project/line import
+	  - use project_line_set_selected
+	  - small cleanups
+	* - import/export support on gebr
+	  - fix crash on project delete
+	  - added tmp dir to gebr's directory
+	  - minor fixes/cleanups
+
+2009-06-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fixed help_show when webkit is not used
+	* use libgebr_gui_help_show
+
+2009-06-03  Ricardo Biloti <biloti@gmail.com>
+
+	* window group to contain help windows from webkit
+
+2009-05-29  Ricardo Biloti <biloti@gmail.com>
+
+	* webkit usage controlled by configure option
+	* First step toward an HTML viewer for gebr and debr
+
+2009-05-27  Ricardo Biloti <biloti@gmail.com>
+
+	* protect against undefined ui_preferences->data
+
+2009-05-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fixed IO in flow components tab when came from IO dialog
+	* fixed feature added in last commit
+	* fix bizarre bug!
+	* use $HOME/.gebr/gebrdata as data dir
+
+2009-05-13  Ricardo Biloti <biloti@gmail.com>
+
+	* - gebrd internationalization
+	  - killall for local servers
+	  - Portuguese translation fixes
+
+2009-05-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - replaced support.h to libgebrintl.h
+	  - libgebr is now and independent library
+	  - option to build libgebr with no GUI linkage
+	  - fixed libgebr internacionalization with the introduction of
+	  libgebr_init
+
+2009-05-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* SU debian packaging structure
+
+2009-05-08  Ricardo Biloti <biloti@gmail.com>
+
+	* version matches enhancenments
+	* desktop menu fix and intltool version dependency relaxed
+	* desktop menus added to gebr and debr
+
+2009-05-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* added option to kill daemon on server
+	* added the project/line for exporting
+	* - export project/line
+	* - added documentation for gebr and libgebr to the repository
+	  - prototypes for project/line import/export
+
+2009-05-08  Ricardo Biloti <biloti@gmail.com>
+
+	* futher fixes to pt_BR translation
+	* more fixes to pt_BR translation of gebr
+
+2009-05-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fixed pt_BR translation of gebr
+
+2009-05-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - gebr translated to pt_BR
+	  - libgebr translated to pt_BR (but yet not using gettext
+	  properly)
+
+2009-05-04  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - updated pt_BR.po of debr
+	  - fix translation within action groups
+
+2009-04-30  Ricardo Biloti <biloti@gmail.com>
+
+	* internationalization support to GeBR
+
+2009-04-09  Ricardo Biloti <biloti@gmail.com>
+
+	* configure.ac backported to trunk
+
+2009-04-08  Ricardo Biloti <biloti@gmail.com>
+
+	* changelogs backported to trunk
 
 2009-04-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
 

@@ -31,7 +31,7 @@ libgebr is the collection of libraries of GeBR:
 
 %prep
 %setup -q
-libtoolize --copy --force;aclocal;automake --add-missing;autoconf
+aclocal; mkdir -p m4;  intltoolize --copy --force; libtoolize --copy --force;automake --add-missing;autoconf
 
 %configure --disable-debug
 

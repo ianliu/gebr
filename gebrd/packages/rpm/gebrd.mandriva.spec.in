@@ -29,7 +29,7 @@ GÍBRD is server for executing flows
 
 %prep
 %setup -q
-aclocal;automake --add-missing;autoconf
+aclocal; mkdir -p m4;  intltoolize --copy --force;automake --add-missing;autoconf
 
 %configure --disable-debug
 
