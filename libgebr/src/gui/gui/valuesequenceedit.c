@@ -15,8 +15,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../intl.h"
+
 #include "valuesequenceedit.h"
-#include "support.h"
 #include "utils.h"
 
 /*

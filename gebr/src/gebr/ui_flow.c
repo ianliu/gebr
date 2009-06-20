@@ -22,8 +22,8 @@
 
 #include <string.h>
 
-#include <libgebrintl.h>
-#include <gui/gtkfileentry.h>
+#include <libgebr/intl.h>
+#include <libgebr/gui/gtkfileentry.h>
 
 #include "ui_flow.h"
 #include "gebr.h"

@@ -19,7 +19,7 @@
 #define __PROGRAM_H
 
 #include <gtk/gtk.h>
-#include <geoxml.h>
+#include <libgebr/geoxml.h>
 
 enum {
 	PROGRAM_STATUS,

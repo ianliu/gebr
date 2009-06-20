@@ -20,7 +20,7 @@
 #define __DOCUMENT_H
 
 #include <glib.h>
-#include <geoxml.h>
+#include <libgebr/geoxml.h>
 
 GeoXmlDocument *
 document_new(enum GEOXML_DOCUMENT_TYPE type);

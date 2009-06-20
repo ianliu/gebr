@@ -19,10 +19,10 @@
 #define __DEBR_H
 
 #include <gtk/gtk.h>
-#include <geoxml.h>
+#include <libgebr/geoxml.h>
 
-#include <gui/about.h>
-#include <misc/log.h>
+#include <libgebr/gui/about.h>
+#include <libgebr/log.h>
 
 #include "menu.h"
 #include "program.h"

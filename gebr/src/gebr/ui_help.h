@@ -19,7 +19,7 @@
 #define __UI_HELP_H
 
 #include <gtk/gtk.h>
-#include <geoxml.h>
+#include <libgebr/geoxml.h>
 
 void
 program_help_show(void);

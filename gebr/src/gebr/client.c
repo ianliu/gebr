@@ -17,8 +17,8 @@
 
 #include <stdlib.h>
 
-#include <libgebrintl.h>
-#include <comm/protocol.h>
+#include <libgebr/intl.h>
+#include <libgebr/comm/protocol.h>
 
 #include "client.h"
 #include "gebr.h"

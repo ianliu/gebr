@@ -15,12 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gui/pixmaps.h>
+#include <libgebr/gui/pixmaps.h>
 
-#include <gui/utils.h>
-#include <gui/valuesequenceedit.h>
+#include <libgebr/gui/utils.h>
+#include <libgebr/gui/valuesequenceedit.h>
 
-#include <libgebrintl.h>
+#include <libgebr/intl.h>
 
 #include "interface.h"
 #include "debr.h"

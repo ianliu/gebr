@@ -21,7 +21,7 @@
 #	include <libintl.h>
 #endif
 
-#include "../../libgebrintl.h"
+#include "../../intl.h"
 #include "../geoxml.h"
 
 int

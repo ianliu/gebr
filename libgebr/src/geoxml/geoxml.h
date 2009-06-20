@@ -139,7 +139,7 @@
  */
 
 /* For more information, go to libgebr-geoxml's documentation at
- * http://gebr.sf.net/doc/libgebr/geoxml
+ * http://gebr.sf.net/doc/geoxml
  */
 
 /* include all geoxml library's headers. */

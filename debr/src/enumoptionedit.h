@@ -20,8 +20,8 @@
 
 #include <gtk/gtk.h>
 
-#include <geoxml.h>
-#include <gui/gtksequenceedit.h>
+#include <libgebr/geoxml.h>
+#include <libgebr/gui/gtksequenceedit.h>
 
 G_BEGIN_DECLS
 

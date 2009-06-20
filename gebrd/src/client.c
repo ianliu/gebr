@@ -22,8 +22,8 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-#include <libgebrintl.h>
-#include <comm/protocol.h>
+#include <libgebr/intl.h>
+#include <libgebr/comm/protocol.h>
 
 #include "client.h"
 #include "gebrd.h"

@@ -20,7 +20,7 @@
 #include <string.h>
 
 #include "date.h"
-#include "support.h"
+#include "intl.h"
 #include "utils.h"
 
 /*

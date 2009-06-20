@@ -19,6 +19,8 @@
 
 #include <gdome.h>
 
+#include "../../intl.h"
+
 #include "parameter.h"
 #include "parameter_p.h"
 #include "xml.h"
@@ -29,7 +31,6 @@
 #include "parameter_group_p.h"
 #include "program_parameter.h"
 #include "program_parameter_p.h"
-#include "../libgebrintl.h"
 
 /*
  * internal stuff

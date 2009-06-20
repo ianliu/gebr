@@ -18,8 +18,8 @@
 #ifndef __GEBRD_H
 #define __GEBRD_H
 
-#include <comm/glistensocket.h>
-#include <misc/log.h>
+#include <libgebr/comm/glistensocket.h>
+#include <libgebr/log.h>
 #include <netdb.h>
 
 extern struct gebrd	gebrd;

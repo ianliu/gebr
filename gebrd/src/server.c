@@ -29,11 +29,11 @@
 #include <glib/gstdio.h>
 
 #include <libgebr.h>
-#include <libgebrintl.h>
-#include <comm.h>
-#include <geoxml.h>
+#include <libgebr/intl.h>
+#include <libgebr/comm.h>
+#include <libgebr/geoxml.h>
 
-#include <misc/utils.h>
+#include <libgebr/utils.h>
 
 #include "server.h"
 #include "gebrd.h"

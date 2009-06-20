@@ -22,6 +22,6 @@ includedir=@includedir@
 Name: gebr-gui
 Description: GeBR common gui interfaces
 Version: @VERSION@
-Reqguires: gtk-2.0
+Reqguires: gebr, gtk-2.0, webkit-1.0
 Libs: -L${libdir} -lgebr_gui
-Cflags: -I${includedir}/libgebr
+Cflags: -I${includedir} -I${includedir}/libgebr

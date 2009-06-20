@@ -23,8 +23,8 @@
 
 #include <gtk/gtk.h>
 
-#include <libgebrintl.h>
-#include <gui/icons.h>
+#include <libgebr/intl.h>
+#include <libgebr/gui/icons.h>
 
 #include "gebr.h"
 #include "../defines.h"

@@ -20,7 +20,7 @@
 
 #include <glib.h>
 
-#include <comm/server.h>
+#include <libgebr/comm/server.h>
 
 struct server {
 	struct comm_server *	comm;

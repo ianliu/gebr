@@ -22,9 +22,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../../intl.h"
+
 #include "server.h"
 #include "glistensocket.h"
-#include "support.h"
 
 /*
  * Declarations
@@ -200,12 +201,11 @@ comm_server_kill(struct comm_server * comm_server)
 	g_signal_connect(process, "finished",
 		G_CALLBACK(comm_ssh_finished), comm_server);
 
-        if (comm_server_is_local(comm_server) == FALSE)
-                g_string_printf(cmd_line, "ssh -x %s 'killall gebrd'", comm_server->address->str);
-        else
-                g_string_printf(cmd_line, "killall gebrd", comm_server->address->str);
-                
-                
+	if (comm_server_is_local(comm_server) == FALSE)
+		g_string_printf(cmd_line, "ssh -x %s 'killall gebrd'", comm_server->address->str);
+	else
+		g_string_printf(cmd_line, "killall gebrd");
+
 	g_terminal_process_start(process, cmd_line);
 	g_string_free(cmd_line, TRUE);
 }

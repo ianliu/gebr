@@ -14,22 +14,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = @CONFIG_SUBDIRS@
+SUBDIRS = . @CONFIG_SUBDIRS@
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr.pc
 
 lib_LTLIBRARIES = libgebr.la
-libgebr_la_SOURCES = libgebr.c
+libgebr_la_SOURCES = libgebr.c \
+	date.c log.c utils.c
 
 libgebrincludedir = $(includedir)/libgebr
-libgebrinclude_HEADERS = libgebr.h libgebrintl.h
+libgebrinclude_HEADERS = libgebr.h \
+	intl.h date.h log.h utils.h
 noinst_HEADERS = defines.h
 
 EXTRADIST = ${pkgconfig_DATA} $(noinst_HEADERS)
 
 INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
-AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GTK_CFLAGS) $(GDOME2_CFLAGS)
+AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GLIB_CFLAGS)
 libgebr_la_LIBADD = -lutil $(INTLLIBS) $(GLIB_LIBS)
 libgebr_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@

@@ -20,9 +20,9 @@
 #include <string.h>
 #include <regex.h>
 
-#include <libgebrintl.h>
-#include <misc.h>
-#include <gui/utils.h>
+#include <libgebr/intl.h>
+#include <libgebr/date.h>
+#include <libgebr/gui/utils.h>
 
 #include "validate.h"
 #include "debr.h"
@@ -323,7 +323,7 @@ validate_append_text_with_tag(struct validate * validate, GtkTextTag * text_tag,
 }
 
 static void
-validate_append_text_with_property_list(struct validate * validate, const char * text,
+validate_append_text_with_property_list(struct validate * validate, const gchar * text,
 	const gchar * first_property_name, ...)
 {
 	GtkTextTag *	text_tag;
@@ -339,7 +339,7 @@ validate_append_text_with_property_list(struct validate * validate, const char *
 }
 
 static void
-validate_append_text_emph(struct validate * validate, const char * format, ...)
+validate_append_text_emph(struct validate * validate, const gchar * format, ...)
 {
 	gchar *		string;
 	va_list         argp;
@@ -352,7 +352,7 @@ validate_append_text_emph(struct validate * validate, const char * format, ...)
 }
 
 static void
-validate_append_text(struct validate * validate, const char * format, ...)
+validate_append_text(struct validate * validate, const gchar * format, ...)
 {
 	gchar *		string;
         va_list         argp;
@@ -365,7 +365,7 @@ validate_append_text(struct validate * validate, const char * format, ...)
 }
 
 static void
-validate_append_text_error(struct validate * validate, const char * format, ...)
+validate_append_text_error(struct validate * validate, const gchar * format, ...)
 {
 	gchar *		string;
         va_list         argp;
@@ -378,13 +378,13 @@ validate_append_text_error(struct validate * validate, const char * format, ...)
 }
 
 static void
-validate_append_item(struct validate * validate, const char * item)
+validate_append_item(struct validate * validate, const gchar * item)
 {
 	validate_append_text_emph(validate, item);
 }
 
 static void
-validate_append_item_with_check(struct validate * validate, const char * item, const gchar * value, int flags)
+validate_append_item_with_check(struct validate * validate, const gchar * item, const gchar * value, int flags)
 {
 	validate_append_item(validate, item);
 	validate_append_check(validate, value, flags, "\n");
@@ -432,9 +432,9 @@ validate_do(struct validate * validate)
                 validate_append_text(validate, "\n");
 	}
 	if (dates || all) {
-		validate_append_item_with_check(validate,_("Created:       "),
+		validate_append_item_with_check(validate, _("Created:       "),
 			localized_date(geoxml_document_get_date_created(GEOXML_DOCUMENT(validate->menu))), EMPTY);
-		validate_append_item_with_check(validate,_("Modified:      "),
+		validate_append_item_with_check(validate, _("Modified:      "),
 			localized_date(geoxml_document_get_date_modified(GEOXML_DOCUMENT(validate->menu))), EMPTY);
 	}
 	if (mhelp || all) {

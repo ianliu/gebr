@@ -22,7 +22,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <libgebrintl.h>
+#include <libgebr/intl.h>
 
 #include "gebrd.h"
 #include "server.h"

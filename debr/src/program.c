@@ -18,8 +18,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libgebrintl.h>
-#include <gui/utils.h>
+#include <libgebr/intl.h>
+#include <libgebr/gui/utils.h>
 
 #include "program.h"
 #include "debr.h"

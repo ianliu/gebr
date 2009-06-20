@@ -27,9 +27,9 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 
-#include <libgebrintl.h>
-#include <geoxml.h>
-#include <gui/utils.h>
+#include <libgebr/intl.h>
+#include <libgebr/geoxml.h>
+#include <libgebr/gui/utils.h>
 
 #include "ui_parameters.h"
 #include "gebr.h"

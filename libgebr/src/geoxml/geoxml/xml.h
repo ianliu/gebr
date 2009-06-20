@@ -22,7 +22,7 @@
 #include <gdome-xpath.h>
 #include <glib.h>
 
-#include <misc/utils.h>
+#include "../../utils.h"
 
 /**
  * \internal

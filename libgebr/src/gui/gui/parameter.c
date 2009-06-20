@@ -21,8 +21,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "../../intl.h"
+
 #include "parameter.h"
-#include "support.h"
 
 #define DOUBLE_MAX +999999999
 #define DOUBLE_MIN -999999999

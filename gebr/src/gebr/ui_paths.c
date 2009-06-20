@@ -25,9 +25,9 @@
 #include <string.h>
 #include <gtk/gtk.h>
 
-#include <libgebrintl.h>
-#include <gui/valuesequenceedit.h>
-#include <gui/gtkfileentry.h>
+#include <libgebr/intl.h>
+#include <libgebr/gui/valuesequenceedit.h>
+#include <libgebr/gui/gtkfileentry.h>
 
 #include "ui_paths.h"
 #include "gebr.h"

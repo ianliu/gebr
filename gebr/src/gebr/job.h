@@ -19,7 +19,7 @@
 #define __JOB_H
 
 #include <gtk/gtk.h>
-#include <geoxml.h>
+#include <libgebr/geoxml.h>
 
 #include "server.h"
 

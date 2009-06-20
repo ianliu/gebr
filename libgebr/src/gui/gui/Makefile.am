@@ -27,16 +27,15 @@ libgebr_guisubinclude_HEADERS = \
 	gtkfileentry.h gtkenhancedentry.h \
 	gtksequenceedit.h valuesequenceedit.h \
 	parameter.h
-noinst_HEADERS = \
-	support.h
+noinst_HEADERS =
 EXTRA_DIST = ${noinst_HEADERS}
 
-INCLUDES = -I../../misc -I../../geoxml \
+INCLUDES = -I../.. -I../../geoxml $(WEBKIT_ENABLED) \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" \
 	-DPIXMAPS_DIR=\"$(datadir)/libgebr/pixmaps/\" \
 	-DICONS_DIR=\"$(datadir)/libgebr/icons/\"
-AM_CFLAGS = -Wall -std=gnu99 -fPIC @DEBUG_CFLAGS@ $(GTK_CFLAGS) $(WEBKIT_CFLAGS) $(WEBKIT_ENABLED)
-libgebr_gui_la_LIBADD = $(INTLLIBS) $(GTK_LIBS) $(WEBKIT_LIBS) \
-	../../misc/misc/libgebr_misc.la \
+AM_CFLAGS = -Wall -std=gnu99 -fPIC @DEBUG_CFLAGS@ $(GTK_CFLAGS) $(GTHREAD_CFLAGS) $(WEBKIT_CFLAGS)
+libgebr_gui_la_LIBADD = $(INTLLIBS) $(GTK_LIBS) $(GTHREAD_LIBS) $(WEBKIT_LIBS) \
+	../../libgebr.la \
 	../../geoxml/geoxml/libgebr_geoxml.la
 libgebr_gui_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@

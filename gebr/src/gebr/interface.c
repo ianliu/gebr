@@ -27,9 +27,9 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#include <libgebrintl.h>
-#include <gui/pixmaps.h>
-#include <gui/utils.h>
+#include <libgebr/intl.h>
+#include <libgebr/gui/pixmaps.h>
+#include <libgebr/gui/utils.h>
 
 #include "interface.h"
 #include "gebr.h"

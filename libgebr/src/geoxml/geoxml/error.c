@@ -15,8 +15,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../intl.h"
+
 #include "error.h"
-#include "support.h"
 
 const gchar *
 geoxml_error_string(enum GEOXML_RETV error)

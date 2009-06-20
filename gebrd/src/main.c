@@ -22,7 +22,7 @@
 
 #include <glib.h>
 
-#include <libgebrintl.h>
+#include <libgebr/intl.h>
 
 #include "gebrd.h"
 #include "defines.h"

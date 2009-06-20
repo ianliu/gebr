@@ -18,7 +18,7 @@
 #ifndef __PARAMETER_GROUP_H
 #define __PARAMETER_GROUP_H
 
-#include <geoxml.h>
+#include <libgebr/geoxml.h>
 
 struct ui_parameter_group_dialog {
 	GtkWidget *		dialog;

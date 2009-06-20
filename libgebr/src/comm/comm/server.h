@@ -20,8 +20,8 @@
 
 #include <glib.h>
 
+#include <log.h>
 #include <geoxml.h>
-#include <misc/log.h>
 
 #include "gstreamsocket.h"
 #include "protocol.h"

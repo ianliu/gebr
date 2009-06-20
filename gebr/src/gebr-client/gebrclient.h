@@ -20,7 +20,7 @@
 
 #include <glib.h>
 
-#include <misc/log.h>
+#include <libgebr/log.h>
 
 #include "server.h"
 

@@ -15,10 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gui/gtkenhancedentry.h>
-#include <gui/utils.h>
+#include <libgebr/gui/gtkenhancedentry.h>
+#include <libgebr/gui/utils.h>
 
-#include <libgebrintl.h>
+#include <libgebr/intl.h>
 
 #include "enumoptionedit.h"
 

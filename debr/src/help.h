@@ -19,7 +19,7 @@
 #define __HELP_H
 
 #include <glib.h>
-#include <geoxml.h>
+#include <libgebr/geoxml.h>
 
 void
 help_fix_css(GString * help);

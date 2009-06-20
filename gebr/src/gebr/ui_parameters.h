@@ -21,7 +21,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-#include <gui/parameter.h>
+#include <libgebr/gui/parameter.h>
 
 /*
  *

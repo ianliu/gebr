@@ -20,7 +20,7 @@
 
 #include <glib.h>
 
-#include <geoxml.h>
+#include <libgebr/geoxml.h>
 
 typedef enum {
         MENU_STATUS_SAVED,

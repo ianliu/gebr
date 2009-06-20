@@ -20,8 +20,8 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: gebr
-Description: All GeBR library modules
+Description: Common library of GeBR
 Version: @VERSION@
-Requires: gebr-geoxml gebr-comm gebr-gui gebr-misc
+Requires: glib-2.0 >= 2.8
 Libs: -L${libdir} -lgebr
-Cflags: -I${includedir}/libgebr
+Cflags: -I${includedir}

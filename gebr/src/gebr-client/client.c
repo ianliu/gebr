@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <comm/protocol.h>
+#include <libgebr/comm/protocol.h>
 
 #include "client.h"
 #include "gebrclient.h"

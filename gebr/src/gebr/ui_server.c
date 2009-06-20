@@ -25,9 +25,9 @@
 
 #include <string.h>
 
-#include <libgebrintl.h>
-#include <gui/utils.h>
-#include <gui/gtkenhancedentry.h>
+#include <libgebr/intl.h>
+#include <libgebr/gui/utils.h>
+#include <libgebr/gui/gtkenhancedentry.h>
 
 #include "ui_server.h"
 #include "gebr.h"

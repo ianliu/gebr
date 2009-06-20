@@ -20,7 +20,7 @@
 
 #include <gtk/gtk.h>
 
-#include <geoxml.h>
+#include <libgebr/geoxml.h>
 
 enum {
 	VALIDATE_ICON = 0,

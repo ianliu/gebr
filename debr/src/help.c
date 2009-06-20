@@ -22,9 +22,9 @@
 
 #include <glib/gstdio.h>
 
-#include <libgebrintl.h>
-#include <misc/utils.h>
-#include <gui/help.h>
+#include <libgebr/intl.h>
+#include <libgebr/utils.h>
+#include <libgebr/gui/help.h>
 
 #include "help.h"
 #include "debr.h"

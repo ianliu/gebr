@@ -24,7 +24,7 @@ libgebr_geoxml_la_SOURCES = \
 
 libgebr_geoxmlsubincludedir=$(includedir)/libgebr/geoxml
 libgebr_geoxmlsubinclude_HEADERS = \
-	defines.h error.h macros.h object.h support.h \
+	defines.h error.h macros.h object.h \
 	sequence.h value_sequence.h \
 	enum_option.h program.h \
 	parameters.h parameter.h program_parameter.h parameter_group.h \
@@ -35,8 +35,8 @@ noinst_HEADERS = \
 	types.h
 EXTRA_DIST = ${noinst_HEADERS}
 
-INCLUDES = -I../../misc
+INCLUDES = -I../..
 AM_CFLAGS = -Wall -std=gnu99 -fPIC @DEBUG_CFLAGS@ $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
 libgebr_geoxml_la_LIBADD = $(GLIB_LIBS) $(GDOME2_LIBS) \
-	../../misc/misc/libgebr_misc.la
+	../../libgebr.la
 libgebr_geoxml_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@

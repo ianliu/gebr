@@ -33,9 +33,9 @@
 #include <glib/gstdio.h>
 
 #include <libgebr.h>
-#include <libgebrintl.h>
-#include <misc/utils.h>
-#include <misc/date.h>
+#include <libgebr/intl.h>
+#include <libgebr/utils.h>
+#include <libgebr/date.h>
 
 #include "gebr.h"
 #include "project.h"

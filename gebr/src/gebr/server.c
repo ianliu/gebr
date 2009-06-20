@@ -19,8 +19,8 @@
 
 #include <gtk/gtk.h>
 
-#include <libgebrintl.h>
-#include <comm/gstreamsocket.h>
+#include <libgebr/intl.h>
+#include <libgebr/comm/gstreamsocket.h>
 
 #include "server.h"
 #include "gebr.h"

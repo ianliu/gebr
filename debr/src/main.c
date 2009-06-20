@@ -22,7 +22,7 @@
 
 #include <gtk/gtk.h>
 
-#include <gui/icons.h>
+#include <libgebr/gui/icons.h>
 
 #include "interface.h"
 #include "debr.h"

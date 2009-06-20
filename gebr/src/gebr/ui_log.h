@@ -20,7 +20,7 @@
 
 #include <gtk/gtk.h>
 
-#include <misc/log.h>
+#include <libgebr/log.h>
 
 /* Store fields */
 enum {

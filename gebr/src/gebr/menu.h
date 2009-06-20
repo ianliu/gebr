@@ -20,7 +20,7 @@
 
 #include <glib.h>
 
-#include <geoxml.h>
+#include <libgebr/geoxml.h>
 
 GeoXmlFlow *
 menu_load(const gchar * filename);

@@ -20,7 +20,7 @@
 #define __PROJECT_H
 
 #include <gtk/gtk.h>
-#include <geoxml.h>
+#include <libgebr/geoxml.h>
 
 void
 project_new(void);

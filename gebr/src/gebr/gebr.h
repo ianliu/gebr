@@ -21,9 +21,9 @@
 
 #include <gtk/gtk.h>
 
-#include <geoxml.h>
-#include <gui/about.h>
-#include <misc/log.h>
+#include <libgebr/geoxml.h>
+#include <libgebr/gui/about.h>
+#include <libgebr/log.h>
 
 #include "cmdline.h"
 #include "interface.h"

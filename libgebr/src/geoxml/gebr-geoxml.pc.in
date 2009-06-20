@@ -22,6 +22,6 @@ includedir=@includedir@
 Name: gebr-geoxml
 Description: GeBR XML Abstraction to seismic processing softwares
 Version: @VERSION@
-Requires: glib-2.0 >= 2.8, gdome2 >= 0.8, gebr-misc
+Requires: gebr, gdome2 >= 0.8
 Libs: -L${libdir} -lgebr_geoxml
-Cflags: -I${includedir}/libgebr
+Cflags: -I${includedir} -I${includedir}/libgebr

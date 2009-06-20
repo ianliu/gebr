@@ -15,10 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <glib/gstdio.h>
 #include <unistd.h>
 #include <string.h>
 #include <zlib.h>
+
+#include <glib/gstdio.h>
 #include <gdome.h>
 #include <libxml/parser.h>
 

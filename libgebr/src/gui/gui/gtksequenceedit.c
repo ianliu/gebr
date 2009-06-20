@@ -17,8 +17,9 @@
 
 #include <string.h>
 
+#include "../../intl.h"
+
 #include "gtksequenceedit.h"
-#include "support.h"
 #include "utils.h"
 
 /*

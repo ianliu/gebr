@@ -19,7 +19,7 @@
 #define __CLIENT_H
 
 #include <glib.h>
-#include <comm/gstreamsocket.h>
+#include <libgebr/comm/gstreamsocket.h>
 
 struct protocol;
 

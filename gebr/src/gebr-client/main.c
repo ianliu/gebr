@@ -24,8 +24,8 @@
 
 #include <glib.h>
 
-#include <libgebrintl.h>
-#include <comm.h>
+#include <libgebr/intl.h>
+#include <libgebr/comm.h>
 
 #include "gebrclient.h"
 #include "../defines.h"

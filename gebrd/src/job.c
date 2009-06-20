@@ -22,12 +22,12 @@
 #include <glib/gstdio.h>
 
 
-#include <libgebrintl.h>
-#include <comm/protocol.h>
-#include <comm/gstreamsocket.h>
-#include <comm/gsocketaddress.h>
-#include <misc/utils.h>
-#include <misc/date.h>
+#include <libgebr/intl.h>
+#include <libgebr/comm/protocol.h>
+#include <libgebr/comm/gstreamsocket.h>
+#include <libgebr/comm/gsocketaddress.h>
+#include <libgebr/utils.h>
+#include <libgebr/date.h>
 
 #include "job.h"
 #include "gebrd.h"
@@ -281,7 +281,6 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 	gboolean		previous_stdout;
 	guint			issue_number;
 	gboolean		success;
-        gsize                   bytes_written;
 
 	/* initialization */
 	issue_number = 0;
@@ -365,7 +364,7 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 	/*
 	 * First program
 	 */
-	/* Start with/without stdin */
+	/* Start wi.hwithout stdin */
 	if (geoxml_program_get_stdin(GEOXML_PROGRAM(program))) {
 		if (strlen(geoxml_flow_io_get_input(flow)) == 0) {
 			g_string_append_printf(job->issues, _("No input file selected.\n"));
@@ -373,13 +372,13 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 		}
 
 		/* Input file */
-                if (check_for_readable_file(geoxml_flow_io_get_input(flow))){
-                                g_string_append_printf(job->issues,
-                                                       _("Input file %s not present or not accessable.\n"),
-                                                       geoxml_flow_io_get_input(flow));
-                                goto err;
-                        }
-                    
+		if (check_for_readable_file(geoxml_flow_io_get_input(flow))) {
+			g_string_append_printf(job->issues,
+						_("Input file %s not present or not accessable.\n"),
+						geoxml_flow_io_get_input(flow));
+			goto err;
+		}
+
 		g_string_append_printf(job->cmd_line, "<\"%s\" ", geoxml_flow_io_get_input(flow));
 
 	}
@@ -388,14 +387,13 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 	if (job_add_program_parameters(job, GEOXML_PROGRAM(program)) == FALSE)
 		goto err;
 	/* check for error file output */
-	if (has_error_output_file && geoxml_program_get_stderr(GEOXML_PROGRAM(program))){
-
-                if(check_for_write_permission(geoxml_flow_io_get_error(flow))){
-                     g_string_append_printf(job->issues,
-                                       _("Write permission to %s not granted.\n"),
-                                       geoxml_flow_io_get_error(flow));
-                goto err;   
-                }
+	if (has_error_output_file && geoxml_program_get_stderr(GEOXML_PROGRAM(program))) {
+		if (check_for_write_permission(geoxml_flow_io_get_error(flow))) {
+			g_string_append_printf(job->issues,
+				_("Write permission to %s not granted.\n"),
+				geoxml_flow_io_get_error(flow));
+			goto err;
+		}
 
 		g_string_append_printf(job->cmd_line, "2>> \"%s\" ", geoxml_flow_io_get_error(flow));
         }
@@ -451,14 +449,13 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 	if (previous_stdout) {
 		if (strlen(geoxml_flow_io_get_output(flow)) == 0)
 			g_string_append_printf(job->issues, _("Proceeding without output file.\n"));
-		else{
-                        if(check_for_write_permission(geoxml_flow_io_get_output(flow))){
-                                g_string_append_printf(job->issues,
-                                                       _("Write permission to %s not granted.\n"),
-                                                       geoxml_flow_io_get_output(flow));
-                                goto err;   
-                        }
-
+		else {
+                        if (check_for_write_permission(geoxml_flow_io_get_output(flow))) {
+				g_string_append_printf(job->issues,
+					_("Write permission to %s not granted.\n"),
+					geoxml_flow_io_get_output(flow));
+				goto err;
+			}
 			g_string_append_printf(job->cmd_line, ">\"%s\"", geoxml_flow_io_get_output(flow));
                 }
         }

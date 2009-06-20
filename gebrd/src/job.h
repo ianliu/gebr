@@ -18,8 +18,8 @@
 #ifndef __JOB_H
 #define __JOB_H
 
-#include <geoxml.h>
-#include <comm/gprocess.h>
+#include <libgebr/geoxml.h>
+#include <libgebr/comm/gprocess.h>
 
 #include "client.h"
 

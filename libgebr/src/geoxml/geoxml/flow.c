@@ -17,7 +17,7 @@
 
 #include <gdome.h>
 
-#include <misc/date.h>
+#include "../../date.h"
 
 #include "flow.h"
 #include "defines.h"

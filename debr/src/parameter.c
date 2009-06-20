@@ -18,11 +18,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libgebrintl.h>
-#include <gui/gtkfileentry.h>
-#include <gui/gtkenhancedentry.h>
-#include <gui/utils.h>
-#include <gui/valuesequenceedit.h>
+#include <libgebr/intl.h>
+#include <libgebr/gui/gtkfileentry.h>
+#include <libgebr/gui/gtkenhancedentry.h>
+#include <libgebr/gui/utils.h>
+#include <libgebr/gui/valuesequenceedit.h>
 
 #include "parameter.h"
 #include "debr.h"

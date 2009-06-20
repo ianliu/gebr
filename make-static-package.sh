@@ -27,7 +27,7 @@ export CFLAGS="-g"
 #GeBR libray
 cd libgebr
 aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR --enable-static-mode
-cat src/geoxml/geoxml/defines.h.in | sed 's/@prefix@/../' > src/geoxml/geoxml/defines.h
+cat src/libgebr/libgebr/geoxml/libgebr/libgebr/geoxml/defines.h.in | sed 's/@prefix@/../' > src/libgebr/libgebr/geoxml/libgebr/libgebr/geoxml/defines.h
 # make -j5 clean install
 make -j5 install
 cd ..

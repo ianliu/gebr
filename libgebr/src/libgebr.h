@@ -18,6 +18,11 @@
 #ifndef __LIBGEBR_H
 #define __LIBGEBR_H
 
+#include "date.h"
+#include "intl.h"
+#include "log.h"
+#include "utils.h"
+
 void
 libgebr_init(void);
 

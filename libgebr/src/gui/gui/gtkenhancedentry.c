@@ -17,8 +17,9 @@
 
 #include <string.h>
 
+#include "../../intl.h"
+
 #include "gtkenhancedentry.h"
-#include "support.h"
 
 /*
  * Prototypes

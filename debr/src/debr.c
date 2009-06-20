@@ -22,8 +22,8 @@
 #include <glib/gstdio.h>
 
 #include <libgebr.h>
-#include <libgebrintl.h>
-#include <misc/utils.h>
+#include <libgebr/intl.h>
+#include <libgebr/utils.h>
 
 #include "debr.h"
 #include "menu.h"

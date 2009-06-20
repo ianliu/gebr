@@ -24,9 +24,9 @@
 
 #include <string.h>
 
-#include <libgebrintl.h>
-#include <misc/date.h>
-#include <gui/utils.h>
+#include <libgebr/intl.h>
+#include <libgebr/date.h>
+#include <libgebr/gui/utils.h>
 
 #include "ui_flow_browse.h"
 #include "gebr.h"

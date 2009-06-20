@@ -19,9 +19,9 @@
 #define __PARAMETER_H
 
 #include <gtk/gtk.h>
-#include <geoxml.h>
+#include <libgebr/geoxml.h>
 
-#include <gui/parameter.h>
+#include <libgebr/gui/parameter.h>
 
 extern const GtkRadioActionEntry parameter_type_radio_actions_entries [];
 extern const gsize combo_type_map_size;

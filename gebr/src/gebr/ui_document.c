@@ -22,7 +22,7 @@
 
 #include <string.h>
 
-#include <libgebrintl.h>
+#include <libgebr/intl.h>
 
 #include "ui_document.h"
 #include "gebr.h"

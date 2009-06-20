@@ -47,10 +47,10 @@ dnl Option to turn on GUI build or not (useful for servers).
 AC_ARG_ENABLE(gui, [AC_HELP_STRING([--enable-gui], [turn on GUI build])],, enable_gui=yes)
 AC_ARG_ENABLE(gui, [AC_HELP_STRING([--disable-gui], [turn off GUI elements])],, enable_gui=no)
 if test "$enable_gui" = "yes"; then
-	CONFIG_SUBDIRS="misc geoxml comm gui"
+	CONFIG_SUBDIRS="geoxml comm gui"
 	CONFIG_LIBGEBR_GUI="gui/gui/libgebr_gui.la"
 else
-	CONFIG_SUBDIRS="misc geoxml comm"
+	CONFIG_SUBDIRS="geoxml comm"
 fi
 AC_SUBST(CONFIG_SUBDIRS)
 AC_SUBST(CONFIG_LIBGEBR_GUI)
@@ -117,6 +117,5 @@ Makefile src/gebr.pc src/Makefile src/defines.h packages/Makefile
 src/geoxml/Makefile src/geoxml/gebr-geoxml.pc src/geoxml/geoxml/Makefile src/geoxml/geoxml/defines.h src/geoxml/data/Makefile src/geoxml/validate/Makefile src/geoxml/upgrade/Makefile src/geoxml/doc/Makefile
 src/comm/Makefile src/comm/gebr-comm.pc src/comm/comm/Makefile
 src/gui/Makefile src/gui/gebr-gui.pc src/gui/gui/Makefile src/gui/pixmaps/Makefile src/gui/icons/Makefile src/gui/icons/gebr-theme/Makefile
-src/misc/Makefile src/misc/gebr-misc.pc src/misc/misc/Makefile
 po/Makefile.in
 ])

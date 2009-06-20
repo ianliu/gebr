@@ -28,13 +28,13 @@ libgebr_commsubinclude_HEADERS = \
 	gprocess.h gterminalprocess.h \
 	protocol.h server.h
 noinst_HEADERS = \
-	support.h \
 	gsocketaddressprivate.h gsocketprivate.h gstreamsocketprivate.h
 EXTRA_DIST = ${noinst_HEADERS}
 
-INCLUDES = -I../../misc -I../../geoxml
+INCLUDES = -I../.. -I../../geoxml
 AM_CFLAGS = -Wall -std=gnu99 -fPIC @DEBUG_CFLAGS@ $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(GTHREAD_CFLAGS)
 libgebr_comm_la_LIBADD = -lutil $(INTLLIBS) \
 	$(GLIB_LIBS) $(GOBJECT_LIBS) $(GTHREAD_LIBS) \
+	../../libgebr.la \
 	../../geoxml/geoxml/libgebr_geoxml.la
 libgebr_comm_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@
