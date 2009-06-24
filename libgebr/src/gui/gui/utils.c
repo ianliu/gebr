@@ -332,6 +332,8 @@ libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter)
 {
 	GtkTreeSelection *	tree_selection;
 
+	if (iter == NULL)
+		return FALSE;
 	tree_selection = gtk_tree_view_get_selection(tree_view);
 	if (gtk_tree_selection_get_mode(tree_selection) != GTK_SELECTION_MULTIPLE)
 		return gtk_tree_selection_get_selected(tree_selection, NULL, iter);

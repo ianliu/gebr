@@ -106,6 +106,8 @@ program_setup_ui(void)
 		G_TYPE_STRING,
 		G_TYPE_POINTER);
 	debr.ui_program.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_program.list_store));
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view)),
+		GTK_SELECTION_MULTIPLE);
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_program.tree_view),
 		(GtkPopupCallback)program_popup_menu, NULL);
 	gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(debr.ui_program.tree_view), PROGRAM_XMLPOINTER,
@@ -158,27 +160,26 @@ program_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.binary_label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.binary_label, FALSE, TRUE, 0);
 
-        {
-                GtkWidget *label;
-                GtkWidget *hbox;
-                gchar     *markup;
+	{
+		GtkWidget *label;
+		GtkWidget *hbox;
+		gchar     *markup;
 
-                label = gtk_label_new(NULL);
-                markup = g_markup_printf_escaped("<b>%s</b>:", _("URL"));
-                gtk_label_set_markup(GTK_LABEL(label), markup);
-                g_free(markup);
-                gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-                gtk_box_pack_start(GTK_BOX(details), label, FALSE, TRUE, 10);
-                
-                hbox = gtk_hbox_new(FALSE, 0);                
-                gtk_box_pack_start(GTK_BOX(details), hbox, FALSE, TRUE, 0);
+		label = gtk_label_new(NULL);
+		markup = g_markup_printf_escaped("<b>%s</b>:", _("URL"));
+		gtk_label_set_markup(GTK_LABEL(label), markup);
+		g_free(markup);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_box_pack_start(GTK_BOX(details), label, FALSE, TRUE, 10);
 
-                debr.ui_program.details.url_button = gtk_button_new_with_label( _("URL not set"));
-                gtk_box_pack_start(GTK_BOX(hbox),debr.ui_program.details.url_button, FALSE, TRUE, 0);
-                g_signal_connect(GTK_OBJECT(debr.ui_program.details.url_button), "clicked",
-                                 GTK_SIGNAL_FUNC(program_url_open), debr.program);
-        }
-                
+		hbox = gtk_hbox_new(FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(details), hbox, FALSE, TRUE, 0);
+
+		debr.ui_program.details.url_button = gtk_button_new_with_label( _("URL not set"));
+		gtk_box_pack_start(GTK_BOX(hbox),debr.ui_program.details.url_button, FALSE, TRUE, 0);
+		g_signal_connect(GTK_OBJECT(debr.ui_program.details.url_button), "clicked",
+					GTK_SIGNAL_FUNC(program_url_open), debr.program);
+	}
 
         debr.ui_program.details.help_button = gtk_button_new_from_stock(GTK_STOCK_INFO);
 	gtk_box_pack_end(GTK_BOX(details), debr.ui_program.details.help_button, FALSE, TRUE, 0);
@@ -246,26 +247,21 @@ program_new(gboolean edit)
 void
 program_remove(void)
 {
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
 	GtkTreeIter		iter;
 
-	if (debr.program == NULL) {
-		debr_message(LOG_ERROR, _("No program is selected"));
+	if (!program_get_selected(NULL, TRUE))
 		return;
+	if (confirm_action_dialog(_("Delete program"), _("Are you sure you want to delete selected(s) program(s)?"))
+	== FALSE)
+		return;
+
+	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_program.tree_view) {
+		geoxml_sequence_remove(GEOXML_SEQUENCE(debr.program));
+		debr.program = NULL;
+		gtk_list_store_remove(debr.ui_program.list_store, &iter);
 	}
-	if (confirm_action_dialog(_("Delete program"), _("Are you sure you want to delete program '%s'?"),
-	geoxml_program_get_title(debr.program)) == FALSE)
-		return;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
-	gtk_tree_selection_get_selected(selection, &model, &iter);
-
-	geoxml_sequence_remove(GEOXML_SEQUENCE(debr.program));
-	debr.program = NULL;
 	gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_program.tree_view));
-	gtk_list_store_remove(debr.ui_program.list_store, &iter);
-
 	menu_details_update();
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -566,58 +562,51 @@ program_dialog_setup_ui(void)
 static void
 program_details_update(void)
 {
-        GString *               text;
-        GeoXmlParameters *      parameters;
+	GString *               text;
+	GeoXmlParameters *      parameters;
 	gchar *		        markup;
 
-        if (debr.program == NULL)
-                return;
+	if (debr.program == NULL)
+		return;
 
 	markup = g_markup_printf_escaped("<b>%s</b>", geoxml_program_get_title(debr.program));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.title_label), markup);
 	g_free(markup);
-
 	markup = g_markup_printf_escaped("<i>%s</i>", geoxml_program_get_description(debr.program));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.description_label), markup);
 	g_free(markup);
-        
-        parameters = geoxml_program_get_parameters(debr.program);
 
-        text = g_string_new(NULL);
-        switch (geoxml_parameters_get_number(parameters)){
-        case 0:
-                g_string_printf(text, _("This program has no parameters"));
-                break;
-        case 1:
-                g_string_printf(text, _("This program has 1 parameter"));
-                break;
-        default:
-                g_string_printf(text, _("This program has %li parameters"),
-                                geoxml_parameters_get_number(parameters));
-        }
-        gtk_label_set_text(GTK_LABEL(debr.ui_program.details.nparams_label), text->str);
+	parameters = geoxml_program_get_parameters(debr.program);
+	text = g_string_new(NULL);
+	switch (geoxml_parameters_get_number(parameters)){
+	case 0:
+		g_string_printf(text, _("This program has no parameters"));
+		break;
+	case 1:
+		g_string_printf(text, _("This program has 1 parameter"));
+		break;
+	default:
+		g_string_printf(text, _("This program has %li parameters"),
+			geoxml_parameters_get_number(parameters));
+	}
+	gtk_label_set_text(GTK_LABEL(debr.ui_program.details.nparams_label), text->str);
 	g_string_free(text, TRUE);
 
-        markup = g_markup_printf_escaped("<b>%s</b>: %s", _("Binary"), geoxml_program_get_binary(debr.program));
+	markup = g_markup_printf_escaped("<b>%s</b>: %s", _("Binary"), geoxml_program_get_binary(debr.program));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.binary_label), markup);
 	g_free(markup);
 
-        if(strlen(geoxml_program_get_url(debr.program))>0){
-                gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button),
-                                     geoxml_program_get_url(debr.program));
-        }
-        else {
-                gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button),
-                                     _("URL not set"));
+	if (strlen(geoxml_program_get_url(debr.program)) > 0)
+		gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button),
+			geoxml_program_get_url(debr.program));
+	else
+		gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button),
+			_("URL not set"));
 
-        }
-
-        g_object_set(G_OBJECT(debr.ui_program.details.url_button), "sensitive",
-                     (strlen(geoxml_program_get_url(debr.program))>0) ? TRUE : FALSE, NULL);
-        
-        g_object_set(G_OBJECT(debr.ui_program.details.help_button),
-                     "sensitive", (strlen(geoxml_program_get_help(debr.program))>1) ? TRUE : FALSE, NULL);
-
+	g_object_set(G_OBJECT(debr.ui_program.details.url_button), "sensitive",
+		(strlen(geoxml_program_get_url(debr.program))>0) ? TRUE : FALSE, NULL);
+	g_object_set(G_OBJECT(debr.ui_program.details.help_button),
+		"sensitive", (strlen(geoxml_program_get_help(debr.program))>1) ? TRUE : FALSE, NULL);
 }
 
 /*
@@ -629,11 +618,10 @@ static gboolean
 program_check_selected(gboolean warn_user)
 {
 	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
 	GtkTreeIter		iter;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
+	if (libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_program.tree_view), &iter) == FALSE) {
 		if (warn_user)
 			debr_message(LOG_ERROR, _("No program is selected"));
 		return FALSE;
@@ -649,12 +637,13 @@ static gboolean
 program_get_selected(GtkTreeIter * iter, gboolean warn_user)
 {
 	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
 
+	if (iter == NULL)
+		return program_check_selected(warn_user);
 	if (program_check_selected(warn_user) == FALSE)
 		return FALSE;
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
-	gtk_tree_selection_get_selected(selection, &model, iter);
+	libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_program.tree_view), iter);
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), iter,
 		PROGRAM_XMLPOINTER, &debr.program,
@@ -744,6 +733,7 @@ program_select_iter(GtkTreeIter iter)
 	GtkTreeSelection *	tree_selection;
 
 	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
+	gtk_tree_selection_unselect_all(tree_selection);
 	gtk_tree_selection_select_iter(tree_selection, &iter);
 	program_selected();
 }
