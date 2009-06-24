@@ -145,7 +145,7 @@ preferences_setup_ui(gboolean first_run)
 	/*
 	 * Data dir
 	 */
-	if (!g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata")) {
+	if (!g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata") && first_run == FALSE) {
 		label = gtk_label_new(_("Data directory"));
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 		gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
