@@ -229,7 +229,7 @@ g_key_file_load_string_key(GKeyFile * key_file, const gchar * group, const gchar
 	value = g_string_new(NULL);
 	tmp = g_key_file_get_string(key_file, group, key, &error);
 	g_string_assign(value, ((error != NULL && error->code == G_KEY_FILE_ERROR_KEY_NOT_FOUND) ||
-                                ((tmp != NULL)  && strlen(tmp) == 0))
+                                ((tmp != NULL) && (strlen(tmp) == 0)))
 		? default_value : tmp);
 
 	g_free(tmp);

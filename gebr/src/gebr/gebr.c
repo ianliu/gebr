@@ -64,7 +64,14 @@ gebr_init(void)
 	protocol_init();
 
 	/* check/create config dir */
-	gebr_create_config_dirs();
+        if (gebr_create_config_dirs() == FALSE){
+                fprintf(stderr, _("Unable to create GêBR configuration files.\n"
+                                  "Perhaps you do not have write permission to your own\n"
+                                  "home directory or there is no space left on device.\n"));
+                protocol_destroy();
+                exit (-1);
+        }
+                
 	gebr.config.path = g_string_new(NULL);
 	g_string_printf(gebr.config.path, "%s/.gebr/gebr.conf", getenv("HOME"));
 
@@ -332,8 +339,7 @@ gebr_config_load(gboolean nox)
 
 		gebr.config.data = g_key_file_load_string_key(gebr.config.key_file,
 			"general", "data", getenv("HOME"));
-		if (!g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))
-			gebr_migrate_data_dir();
+                gebr_migrate_data_dir();
 		gebr.config.browser = g_key_file_load_string_key(gebr.config.key_file, "general", "browser", "firefox");
 		gebr.config.editor = g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "gedit");
 		gebr.config.width = g_key_file_load_int_key(gebr.config.key_file, "general", "width", 700);

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-16 16:55-0300\n"
-"PO-Revision-Date: 2009-06-16 16:56-0300\n"
+"POT-Creation-Date: 2009-06-24 15:32-0300\n"
+"PO-Revision-Date: 2009-06-24 15:33-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -97,7 +97,7 @@ msgstr "O fluxo '%s' foi importado para a linha '%s' da linha '%s'"
 
 #. run file chooser
 #: ../src/gebr/flow.c:290 ../src/gebr/flow.c:409
-#: ../src/gebr/ui_job_control.c:198 ../src/gebr/ui_project_line.c:570
+#: ../src/gebr/ui_job_control.c:198 ../src/gebr/ui_project_line.c:568
 msgid "Choose filename to save"
 msgstr "Escolha o nome do arquivo para salvar"
 
@@ -142,15 +142,26 @@ msgstr "Salvar estado do fluxo"
 msgid "Make a comment for this state:"
 msgstr "Criar um comentário para este estado:"
 
-#: ../src/gebr/gebr.c:88
+#: ../src/gebr/gebr.c:68
+#, c-format
+msgid ""
+"Unable to create GêBR configuration files.\n"
+"Perhaps you do not have write permission to your own\n"
+"home directory or there is no space left on device.\n"
+msgstr ""
+"Incapaz de criar os arquivos de configuração da GêBR.\n"
+"Talvez você não tenha permissão de escrita no seu\n"
+"próprio diretório ou não haja espaço no dispositivo.\n"
+
+#: ../src/gebr/gebr.c:94
 msgid "GêBR Initiating..."
 msgstr "GêBR Inicializando..."
 
-#: ../src/gebr/gebr.c:132
+#: ../src/gebr/gebr.c:138
 msgid "GêBR Finalizing..."
 msgstr "GêBR Finalizando..."
 
-#: ../src/gebr/gebr.c:286
+#: ../src/gebr/gebr.c:292
 #, c-format
 msgid ""
 "GêBR now stores data files on its own directory. You may now delete GêBR's "
@@ -159,7 +170,7 @@ msgstr ""
 "GêBR agora armazena arquivos de dados em um diretório próprio. Você pode\n"
 "apagar os arquivos da GêBR em %s."
 
-#: ../src/gebr/gebr.c:291
+#: ../src/gebr/gebr.c:297
 msgid ""
 "Cannot copy data files to GêBR's dir. Please check your write permissions to "
 "your home directory."
@@ -168,30 +179,31 @@ msgstr ""
 "favor\n"
 "confira as permissões de escrita para o seu diretório pessoal."
 
-#: ../src/gebr/gebr.c:461
+#: ../src/gebr/gebr.c:466
 msgid "Could not save configuration"
 msgstr "Não foi possível salvar a configuração"
 
-#: ../src/gebr/gebr.c:468
+#: ../src/gebr/gebr.c:473
 msgid "Configuration saved"
 msgstr "A configuração foi salva"
 
-#: ../src/gebr/gebr.c:524
+#: ../src/gebr/gebr.c:529
 #, c-format
 msgid "Unable to load GêBR configuration. Try run GêBR once.\n"
-msgstr "Incapaz de carregar as configurações da GêBR. Tente rodar a GêBR um vez.\n"
+msgstr ""
+"Incapaz de carregar as configurações da GêBR. Tente rodar a GêBR um vez.\n"
 
-#: ../src/gebr/gebr.c:533
+#: ../src/gebr/gebr.c:538
 #, c-format
 msgid "Installing %s \t"
 msgstr "Instalando %s \t"
 
-#: ../src/gebr/gebr.c:535
+#: ../src/gebr/gebr.c:540
 #, c-format
 msgid " FAILED\n"
 msgstr "FALHOU\n"
 
-#: ../src/gebr/gebr.c:537
+#: ../src/gebr/gebr.c:542
 #, c-format
 msgid " OK\n"
 msgstr "OK\n"
@@ -432,7 +444,7 @@ msgstr "Saída:"
 msgid "No line selected"
 msgstr "Nenhuma linha selecionada"
 
-#: ../src/gebr/line.c:43 ../src/gebr/ui_document.c:67
+#: ../src/gebr/line.c:43 ../src/gebr/ui_document.c:70
 msgid "Nothing selected"
 msgstr "Nada foi selecionado"
 
@@ -480,11 +492,11 @@ msgstr "Exibe a versão da GeBR"
 msgid "Install menus into private menu directory"
 msgstr "Instala menus no diretório de menus privados"
 
-#: ../src/gebr/main.c:47
+#: ../src/gebr/main.c:55
 msgid " - GeBR, a seismic processing environment"
 msgstr "- GeBR, um ambiente de processamento sísmico"
 
-#: ../src/gebr/main.c:49
+#: ../src/gebr/main.c:57
 msgid ""
 "GeBR is a free-software which provides an environment to seismic\n"
 "data processing, designed to easily assemble and run processing\n"
@@ -494,16 +506,16 @@ msgstr ""
 "projetado para criar e executar fluxos de processamento facilmente,\n"
 "bem como para gerir tarefas."
 
-#: ../src/gebr/main.c:54
+#: ../src/gebr/main.c:62
 msgid "GeBR Project - http://sites.google.com/site/gebrproject/"
 msgstr "Projeto GeBR - http://sites.google.com/site/gebrproject/"
 
-#: ../src/gebr/main.c:58
+#: ../src/gebr/main.c:66
 #, c-format
 msgid "%s: syntax error\n"
 msgstr "%s: erro de sintaxe\n"
 
-#: ../src/gebr/main.c:59
+#: ../src/gebr/main.c:67
 #, c-format
 msgid "Try %s --help\n"
 msgstr "Tente %s --help\n"
@@ -553,43 +565,43 @@ msgstr "Questão do SSH:"
 msgid "Local server"
 msgstr "Servidor local"
 
-#: ../src/gebr/ui_document.c:78
+#: ../src/gebr/ui_document.c:81
 #, c-format
 msgid "Properties for project '%s'"
 msgstr "Propriedades para o projeto '%s'"
 
-#: ../src/gebr/ui_document.c:81
+#: ../src/gebr/ui_document.c:84
 #, c-format
 msgid "Properties for line '%s'"
 msgstr "Propriedades para a linha '%s'"
 
-#: ../src/gebr/ui_document.c:84
+#: ../src/gebr/ui_document.c:87
 #, c-format
 msgid "Properties for flow '%s'"
 msgstr "Propriedades para o fluxo '%s'"
 
-#: ../src/gebr/ui_document.c:87
+#: ../src/gebr/ui_document.c:90
 #, c-format
 msgid "Properties for document '%s'"
 msgstr "Propriedades para o document '%s'"
 
 #. Title
-#: ../src/gebr/ui_document.c:108
+#: ../src/gebr/ui_document.c:111
 msgid "Title"
 msgstr "Título"
 
 #. Description
-#: ../src/gebr/ui_document.c:117 ../src/gebr/ui_flow_edition.c:175
+#: ../src/gebr/ui_document.c:120 ../src/gebr/ui_flow_edition.c:175
 msgid "Description"
 msgstr "Descrição"
 
 #. Report
-#: ../src/gebr/ui_document.c:126
+#: ../src/gebr/ui_document.c:129
 msgid "Report"
 msgstr "Relatório"
 
 #. Author
-#: ../src/gebr/ui_document.c:135
+#: ../src/gebr/ui_document.c:149
 msgid "Author"
 msgstr "Autor"
 
@@ -597,30 +609,30 @@ msgstr "Autor"
 #.
 #. * User email
 #.
-#: ../src/gebr/ui_document.c:144 ../src/gebr/ui_preferences.c:112
+#: ../src/gebr/ui_document.c:158 ../src/gebr/ui_preferences.c:112
 msgid "Email"
 msgstr "E-mail"
 
-#: ../src/gebr/ui_document.c:218
+#: ../src/gebr/ui_document.c:235
 #, c-format
 msgid "Properties of %s '%s' updated"
 msgstr "As propriedades de %s '%s' foram atualizadas."
 
-#: ../src/gebr/ui_document.c:220
+#: ../src/gebr/ui_document.c:237
 #, c-format
 msgid "Renaming %s '%s' to '%s'"
 msgstr "Renomeando %s '%s' para '%s'"
 
-#: ../src/gebr/ui_flow_browse.c:135 ../src/gebr/ui_project_line.c:140
+#: ../src/gebr/ui_flow_browse.c:135 ../src/gebr/ui_project_line.c:138
 msgid "Details"
 msgstr "Detalhes"
 
 #. Date labels
-#: ../src/gebr/ui_flow_browse.c:264 ../src/gebr/ui_project_line.c:271
+#: ../src/gebr/ui_flow_browse.c:264 ../src/gebr/ui_project_line.c:269
 msgid "Created:"
 msgstr "Criado:"
 
-#: ../src/gebr/ui_flow_browse.c:267 ../src/gebr/ui_project_line.c:274
+#: ../src/gebr/ui_flow_browse.c:267 ../src/gebr/ui_project_line.c:272
 msgid "Modified:"
 msgstr "Alterado:"
 
@@ -719,7 +731,7 @@ msgstr "Fluxo"
 msgid "Configuring flow component '%s'"
 msgstr "Configurando a componente do fluxo '%s'"
 
-#: ../src/gebr/ui_flow_edition.c:328 ../src/gebr/ui_help.c:69
+#: ../src/gebr/ui_flow_edition.c:328 ../src/gebr/ui_help.c:65
 msgid "No flow component selected"
 msgstr "Nenhuma componente de fluxo selecionada"
 
@@ -735,23 +747,23 @@ msgstr "Selecione um menu ao invés de uma categoria"
 msgid "Menu help"
 msgstr "Ajuda do menu"
 
-#: ../src/gebr/ui_help.c:46
+#: ../src/gebr/ui_help.c:42
 msgid "Unable to write help in temporary file"
 msgstr "Não foi possível escrever a ajuda em um arquivo temporário"
 
-#: ../src/gebr/ui_help.c:76
+#: ../src/gebr/ui_help.c:72
 msgid "Program help"
 msgstr "Ajuda do programa"
 
-#: ../src/gebr/ui_help.c:109 ../src/gebr/ui_help.c:162
+#: ../src/gebr/ui_help.c:105 ../src/gebr/ui_help.c:169
 msgid "No editor defined. Choose one at Configure/Preferences"
 msgstr "Nenhum editor foi definido. Selecione um em Configurar/Preferências"
 
-#: ../src/gebr/ui_help.c:187
+#: ../src/gebr/ui_help.c:194
 msgid "Could not read created temporary file."
 msgstr "Não foi possível ler arquivo temporário criado"
 
-#: ../src/gebr/ui_help.c:207
+#: ../src/gebr/ui_help.c:214
 msgid "Please change the report encoding to UTF-8"
 msgstr "Por favor modifique a codificação do relatório para UTF-8"
 
@@ -941,101 +953,101 @@ msgstr "Navegador"
 msgid "An HTML browser to display helps and reports"
 msgstr "Um navegador HTML para exibir arquivos de ajudas e relatórios"
 
-#: ../src/gebr/ui_project_line.c:120
+#: ../src/gebr/ui_project_line.c:118
 msgid "Index"
 msgstr "Índice"
 
-#: ../src/gebr/ui_project_line.c:245
+#: ../src/gebr/ui_project_line.c:243
 msgid "Project"
 msgstr "Projeto"
 
-#: ../src/gebr/ui_project_line.c:246
+#: ../src/gebr/ui_project_line.c:244
 msgid "Line"
 msgstr "Linha"
 
-#: ../src/gebr/ui_project_line.c:261
+#: ../src/gebr/ui_project_line.c:259
 #, c-format
 msgid "This project has 1 line"
 msgstr "Este projeto tem 1 linha"
 
-#: ../src/gebr/ui_project_line.c:262
+#: ../src/gebr/ui_project_line.c:260
 #, c-format
 msgid "This project has %d lines"
 msgstr "Este projeto tem %d linhas"
 
-#: ../src/gebr/ui_project_line.c:263
+#: ../src/gebr/ui_project_line.c:261
 #, c-format
 msgid "This project has no line"
 msgstr "Este projeto não tem linhas"
 
-#: ../src/gebr/ui_project_line.c:286
+#: ../src/gebr/ui_project_line.c:284
 msgid "Paths:"
 msgstr "Caminhos:"
 
-#: ../src/gebr/ui_project_line.c:292
+#: ../src/gebr/ui_project_line.c:290
 msgid "None"
 msgstr "Nenhum"
 
-#: ../src/gebr/ui_project_line.c:396
+#: ../src/gebr/ui_project_line.c:394
 msgid "Choose project/line to open"
 msgstr "Escolha o projeto ou linha para abrir"
 
-#: ../src/gebr/ui_project_line.c:404
+#: ../src/gebr/ui_project_line.c:402
 msgid "Project or line (*.prjz *.lnez)"
 msgstr "Projeto ou linha (*.prjz *.lnez)"
 
-#: ../src/gebr/ui_project_line.c:421
+#: ../src/gebr/ui_project_line.c:419
 msgid "Unrecognized file type"
 msgstr "Tipo de arquivo desconhecido"
 
-#: ../src/gebr/ui_project_line.c:484
+#: ../src/gebr/ui_project_line.c:482
 #, c-format
 msgid "%s (Imported)"
 msgstr "%s (importado)"
 
-#: ../src/gebr/ui_project_line.c:495
+#: ../src/gebr/ui_project_line.c:493
 msgid "Imported successful"
 msgstr "Exportação bem-sucedida"
 
-#: ../src/gebr/ui_project_line.c:499
+#: ../src/gebr/ui_project_line.c:497
 msgid "Failed to import"
 msgstr "Falha ao importar"
 
-#: ../src/gebr/ui_project_line.c:556
+#: ../src/gebr/ui_project_line.c:554
 msgid "Project (*.prjz)"
 msgstr "Projeto (*.prjz)"
 
-#: ../src/gebr/ui_project_line.c:564
+#: ../src/gebr/ui_project_line.c:562
 msgid "Line (*.lnez)"
 msgstr "Linha (*.lnez)"
 
-#: ../src/gebr/ui_project_line.c:591
+#: ../src/gebr/ui_project_line.c:589
 msgid "Could not export"
 msgstr "Impossível exportar"
 
-#: ../src/gebr/ui_project_line.c:593
+#: ../src/gebr/ui_project_line.c:591
 msgid "Exported succesful"
 msgstr "Exportação bem-sucedida"
 
-#: ../src/gebr/ui_project_line.c:644
+#: ../src/gebr/ui_project_line.c:637
 msgid "Please selected a project"
 msgstr "Por favor, selecione um projeto"
 
-#: ../src/gebr/ui_project_line.c:677
+#: ../src/gebr/ui_project_line.c:675
 #, c-format
 msgid "Project '%s' renamed to '%s'"
 msgstr "O projeto '%s' foi renomeado para '%s'"
 
-#: ../src/gebr/ui_project_line.c:679
+#: ../src/gebr/ui_project_line.c:677
 #, c-format
 msgid "Line '%s' renamed to '%s'"
 msgstr "A linha '%s' foi renomeada para '%s'"
 
-#: ../src/gebr/ui_project_line.c:752
+#: ../src/gebr/ui_project_line.c:750
 msgid "Project report"
 msgstr "Relatório do projeto"
 
-#: ../src/gebr/ui_project_line.c:752
+#: ../src/gebr/ui_project_line.c:750
 msgid "Line report"
 msgstr "Relatório da linha"
 
@@ -1092,6 +1104,11 @@ msgstr ""
 #: ../src/gebr/ui_server.c:550
 msgid "Select server"
 msgstr "Selecione um servidor"
+
+#, fuzzy
+#~ msgid "Unable to create GêBR configuration directory.\n"
+#~ msgstr ""
+#~ "Incapaz de carregar as configurações da GêBR. Tente rodar a GêBR um vez.\n"
 
 #~ msgid "Flow file %s corrupted. Ignoring"
 #~ msgstr "O arquivo de fluxo %s está corrompido. Ignorando"
