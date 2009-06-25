@@ -61,6 +61,7 @@ struct gebr {
 	GeoXmlProject *			project;
 	GeoXmlLine *			line;
 	GeoXmlFlow *			flow;
+	GeoXmlProgram *			program;
 
 	/* log file */
 	struct log *			log;

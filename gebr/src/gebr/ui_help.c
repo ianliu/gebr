@@ -146,7 +146,7 @@ void
 help_show_callback(GtkButton *button, GeoXmlDocument *document)
 {
 	help_show(geoxml_document_get_help(document),
-                  geoxml_document_get_title(document));
+		geoxml_document_get_title(document));
 }	
 
 /* Function: help_edit

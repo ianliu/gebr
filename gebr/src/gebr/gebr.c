@@ -59,19 +59,22 @@ gebr_init(void)
 {
 	/* initialization */
 	gebr.project_line = NULL;
+	gebr.project = NULL;
+	gebr.line = NULL;
 	gebr.flow = NULL;
+	gebr.program = NULL;
 	libgebr_init();
 	protocol_init();
 
 	/* check/create config dir */
-        if (gebr_create_config_dirs() == FALSE){
-                fprintf(stderr, _("Unable to create GêBR configuration files.\n"
-                                  "Perhaps you do not have write permission to your own\n"
-                                  "home directory or there is no space left on device.\n"));
-                protocol_destroy();
-                exit (-1);
-        }
-                
+	if (gebr_create_config_dirs() == FALSE){
+		fprintf(stderr, _("Unable to create GêBR configuration files.\n"
+			"Perhaps you do not have write permission to your own\n"
+			"home directory or there is no space left on device.\n"));
+		protocol_destroy();
+		exit (-1);
+	}
+
 	gebr.config.path = g_string_new(NULL);
 	g_string_printf(gebr.config.path, "%s/.gebr/gebr.conf", getenv("HOME"));
 
@@ -517,36 +520,33 @@ gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_
 }
 
 int
-gebr_install_private_menus(gchar **menu)
+gebr_install_private_menus(gchar ** menu)
 {
-
-        GString * cmdline;
+	GString * cmdline;
 
 	/* check/create config dir */
 	gebr_create_config_dirs();
 	gebr.config.path = g_string_new(NULL);
 	g_string_printf(gebr.config.path, "%s/.gebr/gebr.conf", getenv("HOME"));
 
-        if (gebr_config_load(TRUE)){
-                fprintf(stderr, _("Unable to load GêBR configuration. Try run GêBR once.\n"));
-                return 1;
-        }
-        
-        cmdline = g_string_new(NULL);
+	if (gebr_config_load(TRUE)) {
+		fprintf(stderr, _("Unable to load GêBR configuration. Try run GêBR once.\n"));
+		return 1;
+	}
 
-        while (*menu != NULL){
+	cmdline = g_string_new(NULL);
+	while (*menu != NULL) {
+		g_string_printf(cmdline, "cp %s %s 2>/dev/null", *menu, gebr.config.usermenus->str);
+		printf(_("Installing %s \t"), *menu);
+		if (system(cmdline->str))
+			printf(_(" FAILED\n"));
+		else
+			printf(_(" OK\n"));
 
-                g_string_printf(cmdline, "cp %s %s 2>/dev/null", *menu, gebr.config.usermenus->str);
-                printf(_("Installing %s \t"), *menu);
-                if (system(cmdline->str))
-                        printf(_(" FAILED\n"));
-                else
-                        printf(_(" OK\n"));
+		menu++;
+	}
 
-                *menu++;
-        }
-        
-        g_string_free(cmdline, TRUE);
+	g_string_free(cmdline, TRUE);
 
-        return 0;
+	return 0;
 }

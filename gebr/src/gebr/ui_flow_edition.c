@@ -47,9 +47,6 @@ flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * 
 
 static void
 flow_edition_component_selected(void);
-
-static gboolean
-flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected);
 static gboolean
 flow_edition_get_selected_menu(GtkTreeIter * iter, gboolean warn_unselected);
 
@@ -180,6 +177,51 @@ flow_edition_setup_ui(void)
 }
 
 /*
+ * Function: flow_edition_load_components
+ * Load current flow's (gebr.flow) programs
+ */
+void
+flow_edition_load_components(void)
+{
+	GeoXmlSequence *	first_program;
+
+	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
+	if (!flow_browse_get_selected(NULL, FALSE))
+		return;
+
+	gtk_list_store_append(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter);
+	gtk_list_store_append(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter);
+	flow_edition_set_io();
+
+	/* now into GUI */
+	geoxml_flow_get_program(gebr.flow, &first_program, 0);
+	flow_add_program_sequence_to_view(first_program);
+}
+
+/*
+ * Fuction: flow_edition_get_selected_component
+ * Return TRUE if there is a selected component (program) and put it into _iter_
+ * If _warn_unselected_ is TRUE then a error message is displayed if the FALSE is returned
+ */
+gboolean
+flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected)
+{
+	GtkTreeSelection *	selection;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+	if (gtk_tree_selection_get_selected(selection, NULL, iter) == FALSE) {
+		if (warn_unselected)
+			gebr_message(LOG_ERROR, TRUE, FALSE, _("No flow component selected"));
+		gebr.program = NULL;
+		return FALSE;
+	}
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), iter,
+		FSEQ_GEOXML_POINTER, &gebr.program, -1);
+
+	return TRUE;
+}
+
+/*
  * Function: flow_edition_set_io
  * Set the XML IO into iterators
  */
@@ -206,28 +248,6 @@ flow_edition_set_io(void)
 
 	g_free(input_file);
 	g_free(output_file);
-}
-
-/*
- * Function: flow_edition_load_components
- * Load current flow's (gebr.flow) programs
- */
-void
-flow_edition_load_components(void)
-{
-	GeoXmlSequence *	first_program;
-
-	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
-	if (!flow_browse_get_selected(NULL, FALSE))
-		return;
-
-	gtk_list_store_append(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter);
-	gtk_list_store_append(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter);
-	flow_edition_set_io();
-
-	/* now into GUI */
-	geoxml_flow_get_program(gebr.flow, &first_program, 0);
-	flow_add_program_sequence_to_view(first_program);
 }
 
 /*
@@ -312,30 +332,9 @@ flow_edition_status_changed(void)
  */
 
 /*
- * Fuction: flow_edition_get_selected_component
- *
- *
- */
-static gboolean
-flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected)
-{
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-	if (gtk_tree_selection_get_selected(selection, &model, iter) == FALSE) {
-		if (warn_unselected)
-			gebr_message(LOG_ERROR, TRUE, FALSE, _("No flow component selected"));
-		return FALSE;
-	}
-	
-	return TRUE;
-}
-
-/*
  * Fuction: flow_edition_get_selected_menu
- *
- *
+ * Return TRUE if there is a selected menu and put it into _iter_
+ * If _warn_unselected_ is TRUE then a error message is displayed if the FALSE is returned
  */
 static gboolean
 flow_edition_get_selected_menu(GtkTreeIter * iter, gboolean warn_unselected)

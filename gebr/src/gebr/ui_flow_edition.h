@@ -59,6 +59,9 @@ flow_edition_setup_ui(void);
 void
 flow_edition_load_components(void);
 
+gboolean
+flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected);
+
 void
 flow_edition_set_io(void);
 

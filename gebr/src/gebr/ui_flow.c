@@ -32,8 +32,6 @@
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
 
-extern gchar * no_flow_selected_error;
-
 /*
  * Declarations
  */
@@ -65,10 +63,8 @@ flow_io_setup_ui(gboolean focus_output)
 	GtkWidget *		table;
 	GtkWidget *		label;
 
-	if (gebr.flow == NULL) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_flow_selected_error);
-		return NULL;
-	}
+	if (!flow_browse_get_selected(NULL, TRUE))
+		return;
 
 	/* alloc */
 	ui_flow_io = g_malloc(sizeof(struct ui_flow_io));
