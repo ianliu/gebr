@@ -38,8 +38,6 @@
 static void
 program_details_update(void);
 static gboolean
-program_check_selected(gboolean warn_user);
-static gboolean
 program_get_selected(GtkTreeIter * iter, gboolean warn_user);
 static void
 program_load_iter(GtkTreeIter * iter);
@@ -375,7 +373,7 @@ program_dialog_setup_ui(void)
 	GtkWidget *     url_label;
 	GtkWidget *     url_entry;
 
-	if (program_check_selected(TRUE) == FALSE)
+	if (program_get_selected(NULL, TRUE) == FALSE)
 		return;
 
 	dialog = gtk_dialog_new_with_buttons(_("Edit program"),
@@ -610,41 +608,17 @@ program_details_update(void)
 }
 
 /*
- * Function: program_check_selected
- * Returns true if there is a program selected. Othewise,
- * returns false and show a message on the status bar.
- */
-static gboolean
-program_check_selected(gboolean warn_user)
-{
-	GtkTreeSelection *	selection;
-	GtkTreeIter		iter;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
-	if (libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_program.tree_view), &iter) == FALSE) {
-		if (warn_user)
-			debr_message(LOG_ERROR, _("No program is selected"));
-		return FALSE;
-	}
-	return TRUE;
-}
-
-/*
  * Function: program_get_selected
  * Return true if there is a program selected and write it to _iter_
  */
 static gboolean
 program_get_selected(GtkTreeIter * iter, gboolean warn_user)
 {
-	GtkTreeSelection *	selection;
-
-	if (iter == NULL)
-		return program_check_selected(warn_user);
-	if (program_check_selected(warn_user) == FALSE)
+	if (libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_program.tree_view), iter) == FALSE) {
+		if (warn_user)
+			debr_message(LOG_ERROR, _("No program is selected"));
 		return FALSE;
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
-	libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_program.tree_view), iter);
-
+	}
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), iter,
 		PROGRAM_XMLPOINTER, &debr.program,
 		-1);

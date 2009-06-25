@@ -64,22 +64,17 @@ project_line_popup_menu(GtkWidget * widget, struct ui_project_line * ui_project_
  * Public functions.
  */
 
-/*
- * Function: project_line_setup_ui
+/* Function: project_line_setup_ui
  * Assembly the project/lines widget.
  *
  * Return:
  * The structure containing relevant data.
- *
- * TODO:
- * Add an info summary about the project/line.
  */
 struct ui_project_line *
 project_line_setup_ui(void)
 {
 	struct ui_project_line *	ui_project_line;
 
-	GtkTreeSelection *		selection;
 	GtkTreeViewColumn *		col;
 	GtkCellRenderer *		renderer;
 
@@ -123,9 +118,6 @@ project_line_setup_ui(void)
 	gtk_tree_view_column_add_attribute(col, renderer, "text", PL_TITLE);
 	g_signal_connect(GTK_OBJECT(renderer), "edited",
 		GTK_SIGNAL_FUNC(project_line_rename), ui_project_line);
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_project_line->view));
-	gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
 	g_signal_connect(GTK_OBJECT(ui_project_line->view), "cursor-changed",
 		GTK_SIGNAL_FUNC(project_line_load), ui_project_line);
 

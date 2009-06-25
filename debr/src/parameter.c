@@ -93,8 +93,6 @@ parameter_load_iter(GtkTreeIter * iter);
 static void
 parameter_select_iter(GtkTreeIter iter);
 static gboolean
-parameter_check_selected(gboolean show_warning);
-static gboolean
 parameter_get_selected(GtkTreeIter * iter, gboolean show_warning);
 static void
 parameter_selected(void);
@@ -470,10 +468,10 @@ out:	parameter_select_iter(copy_iter);
 void
 parameter_change_type(enum GEOXML_PARAMETERTYPE type)
 {
-	if (parameter_check_selected(TRUE) == FALSE)
-		return;
-
 	const gchar *	keyword;
+
+	if (parameter_get_selected(NULL, TRUE) == FALSE)
+		return;
 
 	/* save keyword */
 	keyword = (geoxml_parameter_get_is_program_parameter(debr.parameter))
@@ -520,7 +518,7 @@ parameter_dialog_setup_ui(void)
 	GeoXmlProgramParameter *	program_parameter;
 	struct parameter_widget *	parameter_widget;
 
-	if (parameter_check_selected(TRUE) == FALSE)
+	if (parameter_get_selected(NULL, TRUE) == FALSE)
 		return;
 
 	ui = g_malloc(sizeof(struct ui_parameter_dialog));
@@ -959,41 +957,18 @@ parameter_select_iter(GtkTreeIter iter)
 }
 
 /*
- * Function: parameter_check_selected
- * Returns true if there is a parameter selected. Othewise,
- * returns false and show a message on the status bar.
- */
-static gboolean
-parameter_check_selected(gboolean show_warning)
-{
-	GtkTreeSelection *	selection;
-	GtkTreeIter		iter;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
-	if (libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &iter) == FALSE) {
-		if (show_warning)
-			debr_message(LOG_ERROR, _("No parameter is selected"));
-		debr.parameter = NULL;
-		return FALSE;
-	}
-	return TRUE;
-}
-
-/*
  * Function: parameter_get_selected
  * Return true if there is a parameter selected and write it to _iter_
  */
 static gboolean
 parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
 {
-	GtkTreeSelection *	selection;
-
-	if (iter == NULL)
-		return parameter_check_selected(show_warning);
-	if (parameter_check_selected(show_warning) == FALSE)
+	if (libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), iter) == FALSE) {
+		if (show_warning)
+			debr_message(LOG_ERROR, _("No parameter is selected"));
+		debr.parameter = NULL;
 		return FALSE;
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
-	libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), iter);
+	}
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter,
 		PARAMETER_XMLPOINTER, &debr.parameter,
 		-1);

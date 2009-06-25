@@ -179,15 +179,6 @@ line_delete(void)
 	return TRUE;
 }
 
-/* Function: line_save
- * Save current line
- */
-void
-line_save(void)
-{
-	document_save(GEOXML_DOC(gebr.line));
-}
-
 /*
  * Function: line_import
  * Import line with basename _line_filename_ inside _at_dir_.
@@ -284,7 +275,7 @@ line_move_flow_top(void)
 	geoxml_line_get_flow(gebr.line, &line_flow,
 		gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
 	geoxml_sequence_move_after(line_flow, NULL);
-	line_save();
+	document_save(GEOXML_DOC(gebr.line));
 	/* GUI */
 	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
 }
@@ -309,7 +300,7 @@ line_move_flow_bottom(void)
 	geoxml_line_get_flow(gebr.line, &line_flow,
 		gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
 	geoxml_sequence_move_before(line_flow, NULL);
-	line_save();
+	document_save(GEOXML_DOC(gebr.line));
 	/* GUI */
 	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
 }

@@ -656,7 +656,7 @@ msgstr "(nenhum)"
 
 #: ../src/gebr/ui_flow_browse.c:334
 msgid "Any flow selected"
-msgstr "Qualquer fluxo selecionado"
+msgstr "Nenhum fluxo selecionado"
 
 #: ../src/gebr/ui_flow_browse.c:439
 msgid "Flow help"

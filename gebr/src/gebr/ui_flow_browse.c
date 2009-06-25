@@ -41,6 +41,7 @@
  * Prototypes
  */
 
+
 static void
 flow_browse_load(void);
 static void
@@ -52,6 +53,8 @@ static GtkMenu *
 flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_browse);
 static void
 flow_browse_on_revision_activate(GtkMenuItem * menu_item, GeoXmlRevision * revision);
+static void
+flow_browse_on_flow_move(void);
 
 /*
  * Section: Public
@@ -70,7 +73,6 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 {
 	struct ui_flow_browse *		ui_flow_browse;
 
-	GtkTreeSelection *		selection;
 	GtkTreeViewColumn *		col;
 	GtkCellRenderer *		renderer;
 
@@ -100,15 +102,18 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gtk_widget_set_size_request(scrolled_window, 300, -1);
 
 	ui_flow_browse->store = gtk_list_store_new(FB_N_COLUMN,
-		G_TYPE_STRING, /* Name(title for libgeoxml) */
+		G_TYPE_STRING, /* Name (title for libgeoxml) */
 		G_TYPE_STRING, /* Filename */
 		G_TYPE_POINTER /* GeoXmlLineFlow pointer */);
 	ui_flow_browse->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->store));
+	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->view);
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view)),
+		GTK_SELECTION_MULTIPLE);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_browse->view), FALSE);
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view),
 		(GtkPopupCallback)flow_browse_popup_menu, ui_flow_browse);
 	gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(ui_flow_browse->view), FB_LINE_FLOW_POINTER,
-		(GtkTreeViewMoveSequenceCallback)line_save, NULL);
+		(GtkTreeViewMoveSequenceCallback)flow_browse_on_flow_move, NULL);
 	g_signal_connect(ui_flow_browse->view, "row-activated",
 		GTK_SIGNAL_FUNC(flow_browse_on_row_activated), ui_flow_browse);
 
@@ -116,10 +121,6 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", FB_TITLE);
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view));
-	gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
-	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->view);
 
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->view), "cursor-changed",
 		GTK_SIGNAL_FUNC(flow_browse_load), ui_flow_browse);
@@ -325,11 +326,7 @@ flow_browse_info_update(void)
 gboolean
 flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 {
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	if (!gtk_tree_selection_get_selected(selection, &model, iter)) {
+	if (!libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_flow_browse->view), iter)) {
 		if (warn_unselected)
 			gebr_message(LOG_ERROR, TRUE, FALSE, _("Any flow selected"));
 		return FALSE;
@@ -339,7 +336,7 @@ flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 }
 
 /* Function: flow_browse_select_iter
- * Select flow at _iter_
+  * Select flow at _iter_
  */
 void
 flow_browse_select_iter(GtkTreeIter * iter)
@@ -347,10 +344,11 @@ flow_browse_select_iter(GtkTreeIter * iter)
 	GtkTreeSelection *	selection;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	if (iter != NULL)
-		gtk_tree_selection_select_iter(selection, iter);
-	else
-		gtk_tree_selection_unselect_all(selection);
+	gtk_tree_selection_unselect_all(selection);
+	if (iter == NULL)
+		return;
+	gtk_tree_selection_select_iter(selection, iter);
+	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), iter);
 
 	flow_browse_load();
 }
@@ -388,8 +386,7 @@ flow_browse_load_revision(GeoXmlRevision * revision, gboolean new)
  * Private functions.
  */
 
-/*
- * Function: flow_browse_load
+/* Function: flow_browse_load
  * Load a selected flow from file when selected in "Flow Browse"
  */
 static void
@@ -433,12 +430,18 @@ out:	g_free(filename);
 	g_free(title);
 }
 
+/* Function: flow_browse_show_help
+ * Obvious
+ */
 static void
 flow_browse_show_help(void)
 {
 	help_show(geoxml_document_get_help(GEOXML_DOC(gebr.flow)), _("Flow help"));
 }
 
+/* Function: flow_browse_on_row_activated
+ * Go to flow components tab
+ */
 static void
 flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	GtkTreeViewColumn * column, struct ui_flow_browse * ui_flow_browse)
@@ -446,6 +449,9 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 2);
 }
 
+/* Function: flow_browse_popup_menu
+ * Build popup menu
+ */
 static GtkMenu *
 flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_browse)
 {
@@ -508,6 +514,9 @@ out:	gtk_widget_show_all(menu);
 	return GTK_MENU(menu);
 }
 
+/* Function: flow_browse_on_revision_activate
+ * Change flow to selected revision
+ */
 static void
 flow_browse_on_revision_activate(GtkMenuItem * menu_item, GeoXmlRevision * revision)
 {
@@ -528,4 +537,13 @@ flow_browse_on_revision_activate(GtkMenuItem * menu_item, GeoXmlRevision * revis
 	document_save(GEOXML_DOCUMENT(gebr.flow));
 
 	flow_browse_load();
+}
+
+/* Function: flow_browse_on_flow_move
+ * Obvious
+ */
+static void
+flow_browse_on_flow_move(void)
+{
+	document_save(GEOXML_DOC(gebr.line));
 }

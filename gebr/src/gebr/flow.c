@@ -52,14 +52,12 @@ static const gchar * no_line_selected = N_("Select a line to which a flow will b
  * Public functions.
  */
 
-/*
- * Function: flow_new
+/* Function: flow_new
  * Create a new flow
  */
 gboolean
 flow_new(void)
 {
-	GtkTreeSelection *	selection;
 	GtkTreeIter		iter;
 
 	gchar *			line_title;
@@ -88,17 +86,11 @@ flow_new(void)
 
 	/* and add to current line */
 	geoxml_line_append_flow(gebr.line, geoxml_document_get_filename(GEOXML_DOC(flow)));
-	line_save();
+	document_save(GEOXML_DOC(gebr.line));
 	document_save(GEOXML_DOC(flow));
 	geoxml_document_free(GEOXML_DOC(flow));
 
-	/* select it */
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	gtk_tree_selection_select_iter(selection, &iter);
-	g_signal_emit_by_name(gebr.ui_flow_browse->view, "cursor-changed");
-	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), &iter);
-
-	/* feedback */
+	flow_browse_select_iter(&iter);
 	gebr_message(LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'"), line_title);
 	on_flow_properties_activate();
 
@@ -107,7 +99,6 @@ flow_new(void)
 
 /* Function: flow_free
  * Frees the memory allocated to a flow
- *
  * Besides, update the detailed view of a flow in the interface.
  */
 void
@@ -123,15 +114,13 @@ flow_free(void)
 	flow_browse_info_update();
 }
 
-/*
- * Function: flow_delete
+/* Function: flow_delete
  * Delete the selected flow in flow browser
- *
  */
 void
 flow_delete(void)
 {
-	GtkTreeIter		flow_iter;
+	GtkTreeIter		iter;
 
 	gchar *			title;
 	gchar *			filename;
@@ -140,50 +129,48 @@ flow_delete(void)
 
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
+	if (confirm_action_dialog(_("Delete flow"),
+	_("Are you sure you want to delete selected(s) flow(s)?")) == FALSE)
+		return;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &flow_iter,
-		FB_TITLE, &title,
-		FB_FILENAME, &filename,
-		-1);
+	libgebr_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+			FB_TITLE, &title,
+			FB_FILENAME, &filename,
+			-1);
 
-	if (confirm_action_dialog(_("Delete flow"), _("Are you sure you want to delete flow '%s'?"), title) == FALSE)
-		goto out;
+		/* Some feedback */
+		gebr_message(LOG_INFO, TRUE, FALSE, _("Erasing flow '%s'"), title);
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Erasing flow '%s' from line '%s'"),
+			title, geoxml_document_get_title(GEOXML_DOCUMENT(gebr.line)));
 
-	/* Some feedback */
-	gebr_message(LOG_INFO, TRUE, FALSE, _("Erasing flow '%s'"), title);
-	gebr_message(LOG_INFO, FALSE, TRUE, _("Erasing flow '%s' from line '%s'"),
-		title, geoxml_document_get_title(GEOXML_DOCUMENT(gebr.line)));
-
-	/* Seek and destroy */
-	geoxml_line_get_flow(gebr.line, &line_flow, 0);
-	for (; line_flow != NULL; geoxml_sequence_next(&line_flow)) {
-		if (strcmp(filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(line_flow))) == 0) {
-			geoxml_sequence_remove(line_flow);
-			line_save();
-			break;
+		/* Seek and destroy */
+		geoxml_line_get_flow(gebr.line, &line_flow, 0);
+		for (; line_flow != NULL; geoxml_sequence_next(&line_flow)) {
+			if (strcmp(filename, geoxml_line_get_flow_source(GEOXML_LINE_FLOW(line_flow))) == 0) {
+				geoxml_sequence_remove(line_flow);
+				document_save(GEOXML_DOC(gebr.line));
+				break;
+			}
 		}
+
+		/* Free and delete flow from the disk */
+		gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter);
+		flow_free();
+		document_delete(filename);
+
+		g_free(title);
+		g_free(filename);
 	}
-
-	/* Free and delete flow from the disk */
-	flow_free();
-	document_delete(filename);
-
-	/* Finally, from the GUI */
 	gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_browse->store), &flow_iter);
-
-out:	g_free(title);
-	g_free(filename);
 }
 
-/*
- * Function: flow_import
+/* Function: flow_import
  * Import flow from file to the current line
  */
 void
 flow_import(void)
 {
-	GtkTreeSelection *	selection;
 	GtkTreeIter		iter;
 
 	GtkWidget *		chooser_dialog;
@@ -238,19 +225,14 @@ flow_import(void)
 	geoxml_document_free(GEOXML_DOC(imported_flow));
 	/* and add it to the line */
 	geoxml_line_append_flow(gebr.line, flow_filename->str);
-	line_save();
+	document_save(GEOXML_DOC(gebr.line));
 	/* and to the GUI */
 	gtk_list_store_append(gebr.ui_flow_browse->store, &iter);
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
 		FB_TITLE, flow_title,
 		FB_FILENAME, flow_filename->str,
 		-1);
-
-	/* select it */
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	gtk_tree_selection_select_iter(selection, &iter);
-	g_signal_emit_by_name(gebr.ui_flow_browse->view, "cursor-changed");
-	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), &iter);
+	flow_browse_select_iter(&iter);
 
 	/* frees */
 	g_string_free(flow_filename, TRUE);

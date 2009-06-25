@@ -278,6 +278,8 @@ gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_path, GtkTr
 	gchar *		path_string;
 	gboolean	ret;
 
+	if (iter == NULL)
+		return FALSE;
 	path_string = gtk_tree_path_to_string(tree_path);
 	ret = gtk_tree_model_get_iter_from_string(model, iter, path_string);
 	g_free(path_string);
@@ -332,8 +334,6 @@ libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter)
 {
 	GtkTreeSelection *	tree_selection;
 
-	if (iter == NULL)
-		return FALSE;
 	tree_selection = gtk_tree_view_get_selection(tree_view);
 	if (gtk_tree_selection_get_mode(tree_selection) != GTK_SELECTION_MULTIPLE)
 		return gtk_tree_selection_get_selected(tree_selection, NULL, iter);
@@ -344,7 +344,7 @@ libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter)
 		list = gtk_tree_selection_get_selected_rows(
 			gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view)), &model);
 		first = g_list_first(list);
-		if (first == NULL)
+		if (first == NULL || first->data == NULL)
 			return FALSE;
 		gtk_tree_model_path_to_iter(model, (GtkTreePath*)first->data, iter);
 
