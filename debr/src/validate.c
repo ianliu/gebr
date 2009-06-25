@@ -637,26 +637,24 @@ show_program_parameter(struct validate * validate, GeoXmlProgramParameter * pp, 
 {
 	GString *	default_value;
 
-	if (isubpar) {
+	if (isubpar)
 		validate_append_text(validate,  "       %2d.%02d: ", ipar, isubpar);
-	} else {
+	else
 		validate_append_text(validate,  "    %2d: ", ipar);
-	}
 
-        
-        validate_append_check(validate, geoxml_parameter_get_label(GEOXML_PARAMETER(pp)),
-                              EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, "\n");
+	validate_append_check(validate, geoxml_parameter_get_label(GEOXML_PARAMETER(pp)),
+		EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, "\n");
 
 	validate_append_text(validate,  "        ");
 	if (isubpar)
-		validate_append_text(validate,  "      ");      
+		validate_append_text(validate,  "      ");
 
-        validate_append_text(validate, "[");
-        validate_append_text(validate, geoxml_parameter_get_type_name(GEOXML_PARAMETER(pp)));
-        if (geoxml_program_parameter_get_is_list(GEOXML_PROGRAM_PARAMETER(pp)))
-                validate_append_text(validate, "(s)");
-        validate_append_text(validate, "] ");
-        
+	validate_append_text(validate, "[");
+	validate_append_text(validate, geoxml_parameter_get_type_name(GEOXML_PARAMETER(pp)));
+	if (geoxml_program_parameter_get_is_list(GEOXML_PROGRAM_PARAMETER(pp)))
+		validate_append_text(validate, "(s)");
+	validate_append_text(validate, "] ");
+
 	validate_append_text(validate,  "'");
 	validate_append_check(validate, geoxml_program_parameter_get_keyword(pp), EMPTY, "'");
 

@@ -157,6 +157,8 @@ parameter_setup_ui(void)
 		G_TYPE_STRING,
 		G_TYPE_POINTER);
 	debr.ui_parameter.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_parameter.tree_store));
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view)),
+		GTK_SELECTION_MULTIPLE);
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
 		(GtkPopupCallback)parameter_popup_menu, NULL);
 	gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
@@ -290,19 +292,23 @@ parameter_remove(void)
 
 	if (parameter_get_selected(&iter, TRUE) == FALSE)
 		return;
-	if (confirm_action_dialog(_("Delete parameter"), _("Are you sure you want to delete parameter '%s'?"),
-	geoxml_parameter_get_label(debr.parameter)) == FALSE)
+	if (confirm_action_dialog(_("Delete parameter"),
+	_("Are you sure you want to delete selected(s) parameter(s)?")) == FALSE)
 		return;
 
-	in_group = gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &iter);
+	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_parameter.tree_view) {
+		if (debr.parameter == NULL)
+			continue;
+		in_group = gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &iter);
 
-	geoxml_sequence_remove(GEOXML_SEQUENCE(debr.parameter));
-	gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
-	gtk_tree_store_remove(debr.ui_parameter.tree_store, &iter);
+		geoxml_sequence_remove(GEOXML_SEQUENCE(debr.parameter));
+		gtk_tree_store_remove(debr.ui_parameter.tree_store, &iter);
+
+		if (in_group)
+			parameter_load_iter(&parent);
+	}
 	debr.parameter = NULL;
-
-	if (in_group)
-		parameter_load_iter(&parent);
+	gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -945,6 +951,7 @@ parameter_select_iter(GtkTreeIter iter)
 		PARAMETER_XMLPOINTER, &debr.parameter,
 		-1);
 	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
+	gtk_tree_selection_unselect_all(tree_selection);
 	gtk_tree_selection_select_iter(tree_selection, &iter);
 	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &iter);
 
@@ -960,13 +967,13 @@ static gboolean
 parameter_check_selected(gboolean show_warning)
 {
 	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
 	GtkTreeIter		iter;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
+	if (libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &iter) == FALSE) {
 		if (show_warning)
 			debr_message(LOG_ERROR, _("No parameter is selected"));
+		debr.parameter = NULL;
 		return FALSE;
 	}
 	return TRUE;
@@ -980,12 +987,13 @@ static gboolean
 parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
 {
 	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
 
+	if (iter == NULL)
+		return parameter_check_selected(show_warning);
 	if (parameter_check_selected(show_warning) == FALSE)
 		return FALSE;
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
-	gtk_tree_selection_get_selected(selection, &model, iter);
+	libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter,
 		PARAMETER_XMLPOINTER, &debr.parameter,
 		-1);
@@ -1002,10 +1010,8 @@ parameter_selected(void)
 {
 	GtkTreeIter	iter;
 
-	if (parameter_get_selected(&iter, FALSE) == FALSE) {
-		debr.parameter = NULL;
+	if (parameter_get_selected(&iter, FALSE) == FALSE)
 		return;
-	}
 
 	do_navigation_bar_update();
 

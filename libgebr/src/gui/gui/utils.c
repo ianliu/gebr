@@ -577,10 +577,7 @@ gtk_tree_view_reorder_weak_ref(struct reorder_data * data, GtkTreeView * tree_vi
 static void
 on_gtk_tree_view_drag_begin(GtkTreeView * tree_view, GdkDragContext * drag_context, struct reorder_data * data)
 {
-	GtkTreeSelection *	selection;
-
-	selection = gtk_tree_view_get_selection(tree_view);
-	gtk_tree_selection_get_selected(selection, NULL, &data->iter);
+	libgebr_gtk_tree_view_get_selected(tree_view, &data->iter);
 }
 
 static gboolean
