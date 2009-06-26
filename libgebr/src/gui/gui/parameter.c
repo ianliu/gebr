@@ -569,6 +569,7 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 			gtk_widget_show(sequence_edit);
 			g_object_set(sequence_edit, "may-rename", FALSE, NULL);
 			gtk_button_clicked(GTK_BUTTON(button));
+			gtk_widget_hide(hbox);
 		}
 
 		parameter_widget->widget = vbox;

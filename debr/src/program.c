@@ -619,9 +619,6 @@ program_get_selected(GtkTreeIter * iter, gboolean warn_user)
 			debr_message(LOG_ERROR, _("No program is selected"));
 		return FALSE;
 	}
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), iter,
-		PROGRAM_XMLPOINTER, &debr.program,
-		-1);
 
 	return TRUE;
 }
@@ -685,12 +682,15 @@ program_append_to_ui(GeoXmlProgram * program)
 static void
 program_selected(void)
 {
-	GtkTreeIter		iter;
+	GtkTreeIter	iter;
 
 	if (program_get_selected(&iter, FALSE) == FALSE) {
 		debr.program = NULL;
 		return;
 	}
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), &iter,
+		PROGRAM_XMLPOINTER, &debr.program,
+		-1);
 
 	parameter_load_program();
 	program_details_update();

@@ -966,12 +966,8 @@ parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
 	if (libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), iter) == FALSE) {
 		if (show_warning)
 			debr_message(LOG_ERROR, _("No parameter is selected"));
-		debr.parameter = NULL;
 		return FALSE;
 	}
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter,
-		PARAMETER_XMLPOINTER, &debr.parameter,
-		-1);
 
 	return TRUE;
 }
@@ -985,8 +981,13 @@ parameter_selected(void)
 {
 	GtkTreeIter	iter;
 
-	if (parameter_get_selected(&iter, FALSE) == FALSE)
+	if (parameter_get_selected(&iter, FALSE) == FALSE) {
+		debr.parameter = NULL;
 		return;
+	}
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
+		PARAMETER_XMLPOINTER, &debr.parameter,
+		-1);
 
 	do_navigation_bar_update();
 
