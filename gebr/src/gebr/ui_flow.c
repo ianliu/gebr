@@ -64,7 +64,7 @@ flow_io_setup_ui(gboolean focus_output)
 	GtkWidget *		label;
 
 	if (!flow_browse_get_selected(NULL, TRUE))
-		return;
+		return NULL;
 
 	/* alloc */
 	ui_flow_io = g_malloc(sizeof(struct ui_flow_io));

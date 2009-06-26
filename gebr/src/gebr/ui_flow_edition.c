@@ -110,6 +110,8 @@ flow_edition_setup_ui(void)
 		G_TYPE_STRING,
 		G_TYPE_ULONG);
 	ui_flow_edition->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->fseq_store));
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_edition->fseq_view)),
+		GTK_SELECTION_MULTIPLE);
 	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
 		(GtkPopupCallback)flow_edition_component_popup_menu, ui_flow_edition);
 	gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
@@ -206,17 +208,11 @@ flow_edition_load_components(void)
 gboolean
 flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected)
 {
-	GtkTreeSelection *	selection;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-	if (gtk_tree_selection_get_selected(selection, NULL, iter) == FALSE) {
+	if (!libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter)) {
 		if (warn_unselected)
 			gebr_message(LOG_ERROR, TRUE, FALSE, _("No flow component selected"));
-		gebr.program = NULL;
 		return FALSE;
 	}
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), iter,
-		FSEQ_GEOXML_POINTER, &gebr.program, -1);
 
 	return TRUE;
 }
@@ -258,7 +254,6 @@ void
 flow_edition_component_activated(void)
 {
 	GtkTreeIter		iter;
-
 	gchar *			title;
 
 	if (!flow_edition_get_selected_component(&iter, FALSE))
@@ -420,17 +415,18 @@ flow_edition_component_selected(void)
 {
 	GtkTreeIter		iter;
 
-	GeoXmlSequence *	program;
 	const gchar *		status;
 
+	gebr.program = NULL;
 	if (!flow_edition_get_selected_component(&iter, FALSE))
 		return;
 	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
 	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
 		return;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, FSEQ_GEOXML_POINTER, &program, -1);
-	status = geoxml_program_get_status(GEOXML_PROGRAM(program));
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+		FSEQ_GEOXML_POINTER, &gebr.program, -1);
+	status = geoxml_program_get_status(gebr.program);
 
 	if (!strcmp(status, "configured"))
 		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,

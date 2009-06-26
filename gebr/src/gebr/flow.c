@@ -468,8 +468,7 @@ flow_run(void)
 	/* check for a flow selected */
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
-	server = server_select_setup_ui();
-	if (server == NULL)
+	if ((server = server_select_setup_ui()) == NULL)
 		return;
 
 	flow = GEOXML_FLOW(geoxml_document_clone(GEOXML_DOCUMENT(gebr.flow)));
@@ -564,21 +563,19 @@ flow_revision_save(void)
 	return ret;
 }
 
-/*
- * Function: flow_program_duplicate
+/* Function: flow_program_duplicate
  * Remove selected program from flow process
  */
 void
 flow_program_duplicate(void)
 {
-	GeoXmlSequence *	program;
 
 	if (!flow_edition_get_selected_component(NULL, TRUE))
 		return;
 
-	program = geoxml_sequence_append_clone(GEOXML_SEQUENCE(gebr.program));
+	flow_add_program_sequence_to_view(
+		geoxml_sequence_append_clone(GEOXML_SEQUENCE(gebr.program)));
 	document_save(GEOXML_DOCUMENT(gebr.flow));
-	flow_add_program_sequence_to_view(program);
 }
 
 /*
@@ -588,25 +585,18 @@ flow_program_duplicate(void)
 void
 flow_program_remove(void)
 {
-	GtkTreeIter		iter;
+	GtkTreeIter	iter;
 
-	GeoXmlSequence *	program;
+	libgebr_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
+		if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+		gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
+			continue;
 
-	if (!flow_edition_get_selected_component(&iter, TRUE))
-		return;
-	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
-		return;
-
-	/* SEEK AND DESTROY */
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
-		FSEQ_GEOXML_POINTER, &program,
-		-1);
-	geoxml_sequence_remove(program);
-	document_save(GEOXML_DOCUMENT(gebr.flow));
-	/* from GUI... */
+		geoxml_sequence_remove(GEOXML_SEQUENCE(gebr.program));
+		document_save(GEOXML_DOCUMENT(gebr.flow));
+		gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
+	}
 	gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-	gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
 }
 
 /*
