@@ -233,6 +233,7 @@ flow_io_actions(GtkDialog * dialog, gint arg1, struct ui_flow_io * ui_flow_io)
 		document_save(GEOXML_DOCUMENT(gebr.flow));
 
 		flow_edition_set_io();
+                flow_browse_info_update();
 		break;
 	default:
 		break;
