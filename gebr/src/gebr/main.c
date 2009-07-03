@@ -33,12 +33,13 @@
 int
 main(int argc, char ** argv, char ** env)
 {
-	gboolean		show_version;
+	gboolean		show_version = FALSE;
+        gboolean                overwrite = FALSE;
         gchar **                menus = NULL;
 	GOptionEntry		entries[] = {
-		{"version", 'V', 0, G_OPTION_ARG_NONE, &show_version,
-			_("Show GeBR version"), NULL},
+		{"version", 'V', 0, G_OPTION_ARG_NONE, &show_version, _("Show GeBR version"), NULL},
                 {"install-menu", 'I', 0, G_OPTION_ARG_FILENAME_ARRAY, &menus, _("Install menus into private menu directory"), NULL},
+                {"force-overwrite", 'f', 0, G_OPTION_ARG_NONE, &overwrite, _("Force overwriting when installing menus"), NULL},
 		{NULL}
 	};
 	GError *		error = NULL;
@@ -71,8 +72,9 @@ main(int argc, char ** argv, char ** env)
 		fprintf(stdout, "%s\n", GEBR_VERSION);
 		return 0;
 	}
+        
 	if (menus != NULL)
-		return gebr_install_private_menus(menus);
+		return gebr_install_private_menus(menus, overwrite);
 
 	gtk_init(&argc, &argv);
 

@@ -130,6 +130,6 @@ void
 gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...);
 
 int
-gebr_install_private_menus(gchar **menu);
+gebr_install_private_menus(gchar **menu, gboolean overwrite);
 
 #endif //__GEBR_H

@@ -520,9 +520,10 @@ gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_
 }
 
 int
-gebr_install_private_menus(gchar ** menu)
+gebr_install_private_menus(gchar ** menu, gboolean overwrite)
 {
 	GString * cmdline;
+        GString * target;
 
 	/* check/create config dir */
 	gebr_create_config_dirs();
@@ -534,14 +535,26 @@ gebr_install_private_menus(gchar ** menu)
 		return 1;
 	}
 
+        target = g_string_new(NULL);
 	cmdline = g_string_new(NULL);
 	while (*menu != NULL) {
-		g_string_printf(cmdline, "cp %s %s 2>/dev/null", *menu, gebr.config.usermenus->str);
-		printf(_("Installing %s \t"), *menu);
-		if (system(cmdline->str))
-			printf(_(" FAILED\n"));
-		else
-			printf(_(" OK\n"));
+		printf(_("Installing %s "), *menu);
+                printf("\t");
+
+                /* Verifies if there is already a menu with the prescribed name */
+                g_string_printf(target, "%s/%s", gebr.config.usermenus->str,
+                                g_path_get_basename(*menu));
+
+                if((!overwrite)){
+                   // && (g_access(target->str, F_OK) == 0)){
+                        printf(_(" SKIPPING (or use --overwrite)\n"));
+                } else {
+                        g_string_printf(cmdline, "cp %s %s 2>/dev/null", *menu, gebr.config.usermenus->str);
+                        if (system(cmdline->str))
+                                printf(_(" FAILED\n"));
+                        else
+                                printf(_(" OK\n"));
+                }
 
 		menu++;
 	}
