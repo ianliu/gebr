@@ -274,6 +274,7 @@ parameter_new(void)
 	parameter_select_iter(iter);
 	parameter_change_type_setup_ui();
 	parameter_activated();
+	do_navigation_bar_update();
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
