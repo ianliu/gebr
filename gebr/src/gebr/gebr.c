@@ -547,7 +547,7 @@ gebr_install_private_menus(gchar ** menu, gboolean overwrite)
 		g_string_printf(target, "%s/%s", gebr.config.usermenus->str,
 			g_path_get_basename(*menu));
 
-		if (!overwrite /* && g_access(target->str, F_OK) == 0 */) {
+		if (!overwrite && (g_access(target->str, F_OK) == 0) ) {
 			printf(_(" SKIPPING (or use --overwrite)\n"));
 			ret = -3;
 		} else {

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-03 18:36-0300\n"
+"POT-Creation-Date: 2009-07-14 19:43-0300\n"
 "PO-Revision-Date: 2009-07-03 18:39-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
@@ -177,29 +177,28 @@ msgstr "Não foi possível salvar a configuração"
 msgid "Configuration saved"
 msgstr "A configuração foi salva"
 
-#: ../src/gebr/gebr.c:534
+#: ../src/gebr/gebr.c:535
 #, c-format
 msgid "Unable to load GêBR configuration. Try run GêBR once.\n"
 msgstr ""
 "Incapaz de carregar as configurações da GêBR. Tente rodar a GêBR um vez.\n"
 
-#: ../src/gebr/gebr.c:541
+#: ../src/gebr/gebr.c:543
 #, c-format
 msgid "Installing %s "
 msgstr "Instalando %s "
 
-#. && (g_access(target->str, F_OK) == 0)){
-#: ../src/gebr/gebr.c:550
+#: ../src/gebr/gebr.c:551
 #, c-format
 msgid " SKIPPING (or use --overwrite)\n"
 msgstr " IGNORANDO (ou utilize --overwrite)\n"
 
-#: ../src/gebr/gebr.c:554
+#: ../src/gebr/gebr.c:556
 #, c-format
 msgid " FAILED\n"
 msgstr " FALHOU\n"
 
-#: ../src/gebr/gebr.c:556
+#: ../src/gebr/gebr.c:559
 #, c-format
 msgid " OK\n"
 msgstr " OK\n"
@@ -492,11 +491,11 @@ msgstr "Instala menus no diretório de menus privados"
 msgid "Force overwriting when installing menus"
 msgstr "Força a sobrescrita quando instalando menus"
 
-#: ../src/gebr/main.c:56
+#: ../src/gebr/main.c:57
 msgid " - GeBR, a seismic processing environment"
 msgstr "- GeBR, um ambiente de processamento sísmico"
 
-#: ../src/gebr/main.c:58
+#: ../src/gebr/main.c:59
 msgid ""
 "GeBR is a free-software which provides an environment to seismic\n"
 "data processing, designed to easily assemble and run processing\n"
@@ -506,16 +505,16 @@ msgstr ""
 "projetado para criar e executar fluxos de processamento facilmente,\n"
 "bem como para gerir tarefas."
 
-#: ../src/gebr/main.c:63
+#: ../src/gebr/main.c:64
 msgid "GeBR Project - http://sites.google.com/site/gebrproject/"
 msgstr "Projeto GeBR - http://sites.google.com/site/gebrproject/"
 
-#: ../src/gebr/main.c:67
+#: ../src/gebr/main.c:68
 #, c-format
 msgid "%s: syntax error\n"
 msgstr "%s: erro de sintaxe\n"
 
-#: ../src/gebr/main.c:68
+#: ../src/gebr/main.c:69
 #, c-format
 msgid "Try %s --help\n"
 msgstr "Tente %s --help\n"

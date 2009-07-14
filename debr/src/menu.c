@@ -475,7 +475,7 @@ menu_install(void)
 			break;
 		case -1:
 			libgebr_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-				_("Failed to run GêBR. Please check if GêBR is installed"));
+				_("Failed to run GÃªBR. Please check if GÃªBR is installed"));
 			break;
 		case -2:
 			libgebr_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
@@ -487,7 +487,7 @@ menu_install(void)
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 				GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 				GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
-				_("Menu '%s' already exists, do you want to overwrite it?"), menu_filename);
+				_("Menu '%s' already exists. Do you want to overwrite it?"), menu_filename);
 			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't overwrite"), GTK_RESPONSE_NO);
 			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Overwrite"), GTK_RESPONSE_YES);
 			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Overwrite all"), GTK_RESPONSE_OK);
