@@ -380,6 +380,16 @@ on_menu_validate_activate(void)
 }
 
 /*
+ * Function: on_menu_install_activate
+ * Call <menu_install>
+ */
+void
+on_menu_install_activate(void)
+{
+	menu_install();
+}
+
+/*
  * Function: on_menu_new_activate
  * Delete menu from the view.
  */

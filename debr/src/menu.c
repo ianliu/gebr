@@ -15,6 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//for WEXITSTATUS
+#define _XOPEN_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -433,8 +435,7 @@ menu_save_all(void)
         menu_details_update();
 }
 
-/*
- * Function: menu_validate
+/* Function: menu_validate
  * Validate selected menus
  */
 void
@@ -446,6 +447,80 @@ menu_validate(GtkTreeIter * iter)
 	validate_menu(iter, menu);
 }
 
+/* Function: menu_install
+ * Call GeBR to install selected(s) menus.
+ */
+void
+menu_install(void)
+{
+	GtkTreeIter	iter;
+	GString *	cmd_line;
+	gboolean	overwrite_all;
+
+	cmd_line = g_string_new(NULL);
+	overwrite_all = FALSE;
+	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
+		gchar *		menu_filename;
+		gchar *		menu_path;
+		GtkWidget *	dialog;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+			MENU_FILENAME, &menu_filename,
+			MENU_PATH, &menu_path,
+			-1);
+
+		g_string_printf(cmd_line, "gebr %s -I %s", overwrite_all ? "-f" : "", menu_path);
+		switch ((char)WEXITSTATUS(system(cmd_line->str))) {
+		case 0:
+			break;
+		case -1:
+			libgebr_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
+				_("Failed to run GêBR. Please check if GêBR is installed"));
+			break;
+		case -2:
+			libgebr_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
+				_("Failed to install menu '%s'"), menu_filename);
+			break;
+		case -3: {
+			gint		response;
+
+			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
+				GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+				GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
+				_("Menu '%s' already exists, do you want to overwrite it?"), menu_filename);
+			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't overwrite"), GTK_RESPONSE_NO);
+			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Overwrite"), GTK_RESPONSE_YES);
+			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Overwrite all"), GTK_RESPONSE_OK);
+			switch ((response = gtk_dialog_run(GTK_DIALOG(dialog)))) {
+			case GTK_RESPONSE_YES:
+			case GTK_RESPONSE_OK:
+				g_string_printf(cmd_line, "gebr -f -I %s", menu_path);
+				if ((char)WEXITSTATUS(system(cmd_line->str)))
+					libgebr_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
+						_("Failed to install menu '%s'"), menu_filename);
+				if (response == GTK_RESPONSE_OK)
+					overwrite_all = TRUE;
+				break;
+			default:
+				break;
+			}
+
+			gtk_widget_destroy(dialog);
+			break;
+		} default:
+			break;
+		}
+
+		g_free(menu_filename);
+		g_free(menu_path);
+	}
+
+	g_string_free(cmd_line, TRUE);
+}
+
+/* Function: menu_validate
+ * Validate selected menus
+ */
 void
 menu_close(GtkTreeIter * iter)
 {
@@ -502,9 +577,7 @@ menu_cleanup(void)
 		return TRUE;
 
 	dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_MESSAGE_QUESTION,
-		GTK_BUTTONS_NONE,
+		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
 		_("There are flows unsaved. Do you want to save them?"));
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
 	g_object_set(G_OBJECT(button),
@@ -948,9 +1021,9 @@ menu_popup_menu(GtkTreeView * tree_view)
 	GtkWidget *	menu;
 	GtkWidget *	menu_item;
 	GtkWidget *	sub_menu;
-	GtkWidget * image;
-	GtkSortType order;
-	gint column_id;
+	GtkWidget *	image;
+	GtkSortType	order;
+	gint		column_id;
 
 	menu = gtk_menu_new();
 
@@ -972,6 +1045,8 @@ menu_popup_menu(GtkTreeView * tree_view)
 	if (gtk_action_get_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert")))
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 			gtk_action_group_get_action(debr.action_group, "menu_revert")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "menu_install")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "menu_delete")));
 

@@ -51,6 +51,7 @@ main(int argc, char ** argv, char ** env)
 	textdomain(GETTEXT_PACKAGE);
 #endif
 	setlocale(LC_ALL, "");
+	/* FIXME: necessary for representing fractional numbers only with comma */
 	setlocale(LC_NUMERIC, "C");
 
 	context = g_option_context_new(_(" - GeBR, a seismic processing environment"));
@@ -72,13 +73,10 @@ main(int argc, char ** argv, char ** env)
 		fprintf(stdout, "%s\n", GEBR_VERSION);
 		return 0;
 	}
-        
 	if (menus != NULL)
 		return gebr_install_private_menus(menus, overwrite);
 
 	gtk_init(&argc, &argv);
-
-	/* FIXME: necessary for representing fractional numbers only with comma */
 	gui_setup_theme();
 	gui_setup_icons();
 	gebr_setup_ui();

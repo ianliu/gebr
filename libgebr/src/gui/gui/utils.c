@@ -655,35 +655,65 @@ gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GtkTreeViewReorderCa
 		(GWeakNotify)gtk_tree_view_reorder_weak_ref, data);
 }
 
-/*
- * Function: confirm_action_dialog
- * Show an action confirmation dialog with formated _message_
+/* Function: _libgebr_message_dialog
+ * See _libgebr_message_dialog_
  */
-gboolean
-confirm_action_dialog(const gchar * title, const gchar * message, ...)
+static gboolean
+_libgebr_message_dialog(GtkMessageType type, GtkButtonsType buttons,
+	const gchar * title, const gchar * message, va_list args)
 {
 	GtkWidget *	dialog;
 
 	gchar *		string;
-	va_list		argp;
 	gboolean	confirmed;
 
-	va_start(argp, message);
-	string = g_strdup_vprintf(message, argp);
-	va_end(argp);
-
+	string = g_strdup_vprintf(message, args);
 	dialog = gtk_message_dialog_new(NULL,
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_MESSAGE_QUESTION,
-		GTK_BUTTONS_YES_NO,
-		string);
-	gtk_window_set_title(GTK_WINDOW(dialog), title);
-	confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES ? TRUE : FALSE;
+		type, buttons, string);
+	if (title != NULL)
+		gtk_window_set_title(GTK_WINDOW(dialog), title);
+	confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES || GTK_RESPONSE_OK ? TRUE : FALSE;
 
 	gtk_widget_destroy(dialog);
 	g_free(string);
 
 	return confirmed;
+}
+
+/* Function: libgebr_message_dialog
+ * Create a modal message dialog.
+ * Return TRUE if response was GTK_RESPONSE_YES or GTK_RESPONSE_OK.
+ */
+gboolean
+libgebr_message_dialog(GtkMessageType type, GtkButtonsType buttons,
+	const gchar * title, const gchar * message, ...)
+{
+	va_list		argp;
+	gboolean	ret;
+
+	va_start(argp, message);
+	ret = _libgebr_message_dialog(type, buttons, title, message, argp);
+	va_end(argp);
+
+	return ret;
+}
+
+
+/* Function: confirm_action_dialog
+ * Show an action confirmation dialog with formated _message_
+ */
+gboolean
+confirm_action_dialog(const gchar * title, const gchar * message, ...)
+{
+	va_list		argp;
+	gboolean	ret;
+
+	va_start(argp, message);
+	ret = _libgebr_message_dialog(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, title, message, argp);
+	va_end(argp);
+
+	return ret;
 }
 
 /*

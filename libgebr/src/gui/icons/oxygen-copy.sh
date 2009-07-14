@@ -9,7 +9,8 @@ ICONS=" \
 	actions/folder-new \
 	actions/svn_add \
 	actions/system-switch-user \
-	actions/tab-new-background"
+	actions/tab-new-background \
+	actions/window-new"
 SIZES="16x16 22x22 48x48"
 
 for SIZE in $SIZES; do

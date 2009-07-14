@@ -118,6 +118,9 @@ gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GtkTreeViewReorderCa
 	GtkTreeViewReorderCallback may_reorder_callback, gpointer user_data);
 
 gboolean
+libgebr_message_dialog(GtkMessageType type, GtkButtonsType buttons,
+	const gchar * title, const gchar * message, ...);
+gboolean
 confirm_action_dialog(const gchar * title, const gchar * message, ...);
 
 void

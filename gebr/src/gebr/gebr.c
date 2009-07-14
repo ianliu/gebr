@@ -522,8 +522,9 @@ gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_
 int
 gebr_install_private_menus(gchar ** menu, gboolean overwrite)
 {
-	GString * cmdline;
-        GString * target;
+	GString *	cmdline;
+	GString *	target;
+	gboolean	ret;
 
 	/* check/create config dir */
 	gebr_create_config_dirs();
@@ -532,34 +533,37 @@ gebr_install_private_menus(gchar ** menu, gboolean overwrite)
 
 	if (gebr_config_load(TRUE)) {
 		fprintf(stderr, _("Unable to load GêBR configuration. Try run GêBR once.\n"));
-		return 1;
+		return -2;
 	}
 
-        target = g_string_new(NULL);
+	target = g_string_new(NULL);
 	cmdline = g_string_new(NULL);
+	ret = 0;
 	while (*menu != NULL) {
 		printf(_("Installing %s "), *menu);
-                printf("\t");
+		printf("\t");
 
-                /* Verifies if there is already a menu with the prescribed name */
-                g_string_printf(target, "%s/%s", gebr.config.usermenus->str,
-                                g_path_get_basename(*menu));
+		/* Verifies if there is already a menu with the prescribed name */
+		g_string_printf(target, "%s/%s", gebr.config.usermenus->str,
+			g_path_get_basename(*menu));
 
-                if((!overwrite)){
-                   // && (g_access(target->str, F_OK) == 0)){
-                        printf(_(" SKIPPING (or use --overwrite)\n"));
-                } else {
-                        g_string_printf(cmdline, "cp %s %s 2>/dev/null", *menu, gebr.config.usermenus->str);
-                        if (system(cmdline->str))
-                                printf(_(" FAILED\n"));
-                        else
-                                printf(_(" OK\n"));
-                }
+		if (!overwrite /* && g_access(target->str, F_OK) == 0 */) {
+			printf(_(" SKIPPING (or use --overwrite)\n"));
+			ret = -3;
+		} else {
+			g_string_printf(cmdline, "cp %s %s 2>/dev/null", *menu, gebr.config.usermenus->str);
+			if (system(cmdline->str)) {
+				printf(_(" FAILED\n"));
+				ret = -2;
+			} else
+				printf(_(" OK\n"));
+		}
 
 		menu++;
 	}
 
+	g_string_free(target, TRUE);
 	g_string_free(cmdline, TRUE);
 
-	return 0;
+	return ret;
 }

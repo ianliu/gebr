@@ -75,6 +75,8 @@ menu_save_all(void);
 void
 menu_validate(GtkTreeIter * iter);
 void
+menu_install(void);
+void
 menu_close(GtkTreeIter * iter);
 void
 menu_selected(void);

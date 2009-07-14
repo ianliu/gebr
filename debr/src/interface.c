@@ -47,6 +47,8 @@ static const GtkActionEntry actions_entries [] = {
 		(GCallback)on_menu_properties_activate},
 	{"menu_validate", GTK_STOCK_APPLY, N_("Validate"), NULL, N_("Validate menu"),
 		(GCallback)on_menu_validate_activate},
+	{"menu_install", "window-new", N_("Install"), NULL, N_("Make this menu visible for GêBR"),
+		(GCallback)on_menu_install_activate},
 	{"menu_close", GTK_STOCK_CLOSE, NULL, NULL, N_("Remove selecteds menus from list"),
 		(GCallback)on_menu_close_activate},
 	{"menu_open", GTK_STOCK_OPEN, NULL, NULL, N_("Open an existing menu"),
@@ -254,6 +256,8 @@ debr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "menu_revert"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(debr.action_group, "menu_install"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "menu_delete"))), -1);
 
 	gtk_widget_show_all(toolbar);
@@ -345,6 +349,8 @@ debr_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 	validate_setup_ui();
 	gtk_box_pack_start(GTK_BOX(vbox), debr.ui_validate.widget, TRUE, TRUE, 0);
+
+	gtk_widget_show(debr.window);
 }
 
 /*

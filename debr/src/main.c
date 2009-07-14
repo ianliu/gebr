@@ -44,7 +44,6 @@ main(int argc, char *argv[])
 	gui_setup_icons();
 	gui_setup_theme();
 	debr_setup_ui();
-	gtk_widget_show(debr.window);
 	gtk_main();
 
 	return 0;
