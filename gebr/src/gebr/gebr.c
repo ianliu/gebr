@@ -342,8 +342,8 @@ gebr_config_load(gboolean nox)
 
 		gebr.config.data = g_key_file_load_string_key(gebr.config.key_file,
 			"general", "data", getenv("HOME"));
-                if (!g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))
-                        gebr_migrate_data_dir();
+		if (!g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))
+			gebr_migrate_data_dir();
 		gebr.config.browser = g_key_file_load_string_key(gebr.config.key_file, "general", "browser", "firefox");
 		gebr.config.editor = g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "gedit");
 		gebr.config.width = g_key_file_load_int_key(gebr.config.key_file, "general", "width", 700);

@@ -272,8 +272,12 @@ parameter_new(void)
 	}
 
 	parameter_select_iter(iter);
-	parameter_change_type_setup_ui();
-	parameter_activated();
+	do_navigation_bar_update();
+	if (!parameter_change_type_setup_ui())
+		parameter_remove(FALSE);
+	else
+		parameter_activated();
+
 	do_navigation_bar_update();
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -283,7 +287,7 @@ parameter_new(void)
  * Confirm action and if confirmed removed selected parameter from XML and UI
  */
 void
-parameter_remove(void)
+parameter_remove(gboolean confirm)
 {
 	GtkTreeIter		parent;
 	GtkTreeIter		iter;
@@ -291,7 +295,7 @@ parameter_remove(void)
 
 	if (parameter_get_selected(&iter, TRUE) == FALSE)
 		return;
-	if (confirm_action_dialog(_("Delete parameter"),
+	if (confirm && confirm_action_dialog(_("Delete parameter"),
 	_("Are you sure you want to delete selected(s) parameter(s)?")) == FALSE)
 		return;
 
@@ -352,7 +356,7 @@ parameter_bottom(void)
  * Function: parameter_change_type_setup_ui
  * Open dialog to change type of current selected parameter
  */
-void
+gboolean
 parameter_change_type_setup_ui(void)
 {
 	GtkWidget *	dialog;
@@ -361,9 +365,10 @@ parameter_change_type_setup_ui(void)
 	GtkWidget *	type_combo;
 
 	GtkTreeIter	iter;
+	gboolean	ret = TRUE;
 
 	if (parameter_get_selected(&iter, TRUE) == FALSE)
-		return;
+		return FALSE;
 
 	dialog = gtk_dialog_new_with_buttons(_("Parameter's type"),
 		GTK_WINDOW(debr.window),
@@ -408,13 +413,17 @@ parameter_change_type_setup_ui(void)
 		gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), 0);
 
 	gtk_widget_show(dialog);
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK)
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
+		ret = FALSE;
 		goto out;
+	}
 
 	parameter_change_type(combo_type_map_get_type(gtk_combo_box_get_active(GTK_COMBO_BOX(type_combo))));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 
 out:	gtk_widget_destroy(dialog);
+
+	return ret;
 }
 
 /*

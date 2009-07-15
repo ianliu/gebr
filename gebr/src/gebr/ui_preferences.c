@@ -143,31 +143,6 @@ preferences_setup_ui(gboolean first_run)
 			gebr.config.usermenus->str);
 
 	/*
-	 * Data dir
-	 */
-	if (!g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata") && first_run == FALSE) {
-		label = gtk_label_new(_("Data directory"));
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
-
-		/* Browse button for ui_preferences->data */
-		eventbox = gtk_event_box_new();
-		ui_preferences->data = gtk_file_chooser_button_new(_("Browser data dir"),
-			GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-		gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->data);
-		set_tooltip(eventbox, _("Path to store projects, lines and flows"));
-		gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
-
-		/* read config */
-		if (gebr.config.data->len > 0)
-			gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(ui_preferences->data),
-				gebr.config.data->str);
-	}
-        else{
-                ui_preferences->data = NULL;
-        }
-
-	/*
 	 * Editor
 	 */
 	label = gtk_label_new(_("HTML editor"));

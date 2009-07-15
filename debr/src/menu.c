@@ -231,9 +231,7 @@ menu_new(void)
 
 	/* select it */
 	menu_select_iter(&iter);
-	
-	/* add a new program for the user to play with */
-	program_new(FALSE);
+
 	/* new menu with no changes shouldn't be save */
 	menu_saved_status_set(MENU_STATUS_SAVED);
 	menu_dialog_setup_ui();
@@ -1046,8 +1044,6 @@ menu_popup_menu(GtkTreeView * tree_view)
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 			gtk_action_group_get_action(debr.action_group, "menu_revert")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
-		gtk_action_group_get_action(debr.action_group, "menu_install")));
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "menu_delete")));
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
@@ -1058,13 +1054,9 @@ menu_popup_menu(GtkTreeView * tree_view)
 	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
 			&column_id, &order);
 	if (order == GTK_SORT_ASCENDING)
-		image = gtk_image_new_from_stock (
-				GTK_STOCK_SORT_ASCENDING,
-				GTK_ICON_SIZE_MENU);
+		image = gtk_image_new_from_stock(GTK_STOCK_SORT_ASCENDING, GTK_ICON_SIZE_MENU);
 	else
-		image = gtk_image_new_from_stock (
-				GTK_STOCK_SORT_DESCENDING,
-				GTK_ICON_SIZE_MENU);
+		image = gtk_image_new_from_stock(GTK_STOCK_SORT_DESCENDING, GTK_ICON_SIZE_MENU);
 
 	sub_menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), sub_menu);
@@ -1082,6 +1074,10 @@ menu_popup_menu(GtkTreeView * tree_view)
 	g_signal_connect(menu_item, "activate",
 		(GCallback)menu_sort_by_modified_date, NULL);
 	gtk_container_add(GTK_CONTAINER(sub_menu), menu_item);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "menu_install")));
 
 	gtk_widget_show_all(menu);
 

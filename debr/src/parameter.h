@@ -64,7 +64,7 @@ void
 parameter_new(void);
 
 void
-parameter_remove(void);
+parameter_remove(gboolean confirm);
 
 void
 parameter_top(void);
@@ -72,7 +72,7 @@ parameter_top(void);
 void
 parameter_bottom(void);
 
-void
+gboolean
 parameter_change_type_setup_ui(void);
 
 void

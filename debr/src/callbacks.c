@@ -543,7 +543,7 @@ on_parameter_new_activate(void)
 void
 on_parameter_delete_activate(void)
 {
-	parameter_remove();
+	parameter_remove(TRUE);
 }
 
 /*
