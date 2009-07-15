@@ -354,24 +354,25 @@ gebr_config_load(gboolean nox)
 			"general", "job_log_word_wrap", FALSE);
 	}
 	if (new_config) {
-                if (nox){
-                        return 1;
-                } else {
-		server_new("127.0.0.1", TRUE);
-		preferences_setup_ui(TRUE);
-		return 0;
-                }
+		if (nox) {
+			return 1;
+		} else {
+			server_new("127.0.0.1", TRUE);
+			preferences_setup_ui(TRUE);
+			return 0;
+		}
 	}
-        
-        if (nox) return 0;
 
-        gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
-        gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
-        g_object_set(G_OBJECT(gebr.ui_job_control->text_view), "wrap-mode",
-                     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
-        
-        menu_list_populate();
-        project_list_populate();
+	if (nox)
+		return 0;
+
+	gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
+	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
+	g_object_set(G_OBJECT(gebr.ui_job_control->text_view), "wrap-mode",
+		gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
+
+	menu_list_populate();
+	project_list_populate();
 
 	groups = g_key_file_get_groups(gebr.config.key_file, NULL);
 	for (i = 0; groups[i] != NULL; ++i) {
@@ -393,7 +394,7 @@ gebr_config_load(gboolean nox)
 	/* frees */
 	g_strfreev(groups);
 
-        return 0;
+	return 0;
 }
 
 /*

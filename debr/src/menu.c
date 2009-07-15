@@ -383,7 +383,7 @@ menu_save(const gchar * path)
 		geoxml_sequence_next(&program);
 	}
 
-        geoxml_document_set_date_modified(GEOXML_DOC(debr.menu), iso_date());
+	geoxml_document_set_date_modified(GEOXML_DOC(debr.menu), iso_date());
 	geoxml_document_save(GEOXML_DOC(debr.menu), path);
 
 	tmp = g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(
@@ -391,12 +391,15 @@ menu_save(const gchar * path)
 	gtk_list_store_set(debr.ui_menu.list_store, &iter,
 		MENU_MODIFIED_DATE, tmp, -1);
 	menu_saved_status_set(MENU_STATUS_SAVED);
-        menu_details_update();
+	menu_details_update();
 
 	g_free(filename);
 	g_free(tmp);
 }
 
+/* Function: menu_save_all
+ * Save all modified menus.
+ */
 void
 menu_save_all(void)
 {
@@ -421,8 +424,8 @@ menu_save_all(void)
 				MENU_XMLPOINTER, &menu,
 				MENU_PATH, &path,
 				-1);
-                        geoxml_document_set_date_modified(GEOXML_DOC(menu), iso_date());
-			geoxml_document_save(GEOXML_DOC(menu), path);
+			if (strlen(path))
+				menu_save(path);
 			menu_saved_status_set_from_iter(&iter, MENU_STATUS_SAVED);
 
 			g_free(path);
@@ -865,6 +868,7 @@ menu_select_iter(GtkTreeIter * iter)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 	gtk_tree_selection_unselect_all(selection);
 	gtk_tree_selection_select_iter(selection, iter);
+	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
 	menu_selected();
 }
 
