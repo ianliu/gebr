@@ -299,48 +299,49 @@ program_bottom(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: program_paste
- * Paste debr.clipboard
+/* Function: program_copy
+ * Copy selected(s) program to clipboard
+ */
+void
+program_copy(void)
+{
+	GtkTreeIter		iter;
+
+	geoxml_clipboard_clear();
+	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_program.tree_view) {
+		GeoXmlObject *	program;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), &iter,
+			PROGRAM_XMLPOINTER, &program,
+			-1);
+		geoxml_clipboard_copy(GEOXML_OBJECT(program));
+	}
+}
+
+/* Function: program_paste
+ * Paste programs on clipboard
  */
 void
 program_paste(void)
 {
-	if (geoxml_object_get_type(GEOXML_OBJECT(debr.clipboard)) != GEOXML_OBJECT_TYPE_PROGRAM) {
-		debr_message(LOG_ERROR, _("Clipboard doesn't keep a program"));
-		return;
-	}
+	GeoXmlSequence *	pasted;
+	GtkTreeIter		pasted_iter;
 
-	GeoXmlSequence *	copy;
-	GtkTreeIter		copy_iter;
-	GtkTreeIter		iter;
-
-	copy = geoxml_sequence_copy(GEOXML_SEQUENCE(debr.program), debr.clipboard);
-	if (copy == NULL) {
+	pasted = GEOXML_SEQUENCE(geoxml_clipboard_paste(GEOXML_OBJECT(debr.menu)));
+	if (pasted == NULL) {
 		debr_message(LOG_ERROR, _("Could not paste program"));
 		return;
 	}
 
-	if (debr.program == NULL) {
-		gint		n_children;
+	do {
+		gtk_list_store_append(debr.ui_program.list_store, &pasted_iter);
+		gtk_list_store_set(debr.ui_program.list_store, &pasted_iter,
+			PROGRAM_XMLPOINTER, pasted,
+			-1);
+		program_load_iter(&pasted_iter);
+	} while (!geoxml_sequence_next(&pasted));
 
-		if (!(n_children = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_program.list_store), NULL))) {
-			copy_iter = program_append_to_ui(GEOXML_PROGRAM(copy));
-			goto out;
-		}
-
-		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(debr.ui_program.list_store),
-			&iter, NULL, n_children-1);
-	} else
-		program_get_selected(&iter, FALSE);
-
-	gtk_list_store_insert_after(debr.ui_program.list_store, &copy_iter, &iter);
-	gtk_list_store_set(debr.ui_program.list_store, &copy_iter,
-		PROGRAM_XMLPOINTER, copy,
-		-1);
-	program_load_iter(&copy_iter);
-
-out:	program_select_iter(copy_iter);
+	program_select_iter(pasted_iter);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -824,12 +825,12 @@ program_description_changed(GtkEntry * entry)
 static void
 program_url_open(GtkButton * button)
 {
-        GString * cmdline;
-        
-        cmdline = g_string_new(NULL);
-        g_string_printf(cmdline, "%s %s&", debr.config.browser->str, geoxml_program_get_url(debr.program));
-        system(cmdline->str);
-        g_string_free(cmdline, TRUE);
+	GString * cmdline;
+
+	cmdline = g_string_new(NULL);
+	g_string_printf(cmdline, "%s %s&", debr.config.browser->str, geoxml_program_get_url(debr.program));
+	system(cmdline->str);
+	g_string_free(cmdline, TRUE);
 }
 
 static void

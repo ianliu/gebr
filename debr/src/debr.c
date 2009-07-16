@@ -42,7 +42,6 @@ debr_init(void)
 	debr.menu = NULL;
 	debr.program = NULL;
 	debr.parameter = NULL;
-	debr.clipboard = NULL;
 	debr.unsaved_count = 0;
 
 	/* list of temporaries files */

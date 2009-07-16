@@ -428,48 +428,49 @@ out:	gtk_widget_destroy(dialog);
 	return ret;
 }
 
-/*
- * Function: parameter_paste
- * Paste debr.clipboard
+/* Function: parameter_copy
+ * Copy selected(s) parameter to clipboard
+ */
+void
+parameter_copy(void)
+{
+	GtkTreeIter		iter;
+
+	geoxml_clipboard_clear();
+	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_parameter.tree_view) {
+		GeoXmlObject *	parameter;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
+			PARAMETER_XMLPOINTER, &parameter,
+			-1);
+		geoxml_clipboard_copy(GEOXML_OBJECT(parameter));
+	}
+}
+
+/* Function: parameter_paste
+ * Paste parameters on clipboard
  */
 void
 parameter_paste(void)
 {
-	if (geoxml_object_get_type(GEOXML_OBJECT(debr.clipboard)) != GEOXML_OBJECT_TYPE_PARAMETER) {
-		debr_message(LOG_ERROR, _("Clipboard doesn't keep a parameter"));
-		return;
-	}
+	GeoXmlObject *		pasted;
+	GtkTreeIter		pasted_iter;
 
-	GeoXmlSequence *	copy;
-	GtkTreeIter		copy_iter;
-	GtkTreeIter		iter;
-
-	copy = geoxml_sequence_copy(GEOXML_SEQUENCE(debr.parameter), debr.clipboard);
-	if (copy == NULL) {
+	pasted = geoxml_clipboard_paste(GEOXML_OBJECT(debr.program));
+	if (pasted == NULL) {
 		debr_message(LOG_ERROR, _("Could not paste parameter"));
 		return;
 	}
 
-	if (debr.parameter == NULL) {
-		gint		n_children;
+	do {
+		gtk_tree_store_append(debr.ui_parameter.tree_store, &pasted_iter, NULL);
+		gtk_tree_store_set(debr.ui_parameter.tree_store, &pasted_iter,
+			PARAMETER_XMLPOINTER, pasted,
+			-1);
+		parameter_load_iter(&pasted_iter);
+	} while (!geoxml_sequence_next(&pasted));
 
-		if (!(n_children = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_parameter.tree_store), NULL))) {
-			copy_iter = parameter_append_to_ui(GEOXML_PARAMETER(copy), NULL);
-			goto out;
-		}
-
-		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(debr.ui_parameter.tree_store),
-			&iter, NULL, n_children-1);
-	} else
-		parameter_get_selected(&iter, FALSE);
-
-	gtk_tree_store_insert_after(debr.ui_parameter.tree_store, &copy_iter, NULL, &iter);
-	gtk_tree_store_set(debr.ui_parameter.tree_store, &copy_iter,
-		PARAMETER_XMLPOINTER, copy,
-		-1);
-	parameter_load_iter(&copy_iter);
-
-out:	parameter_select_iter(copy_iter);
+	parameter_select_iter(pasted_iter);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 

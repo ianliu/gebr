@@ -298,29 +298,6 @@ geoxml_sequence_append_clone(GeoXmlSequence * sequence)
 	return clone;
 }
 
-GeoXmlSequence *
-geoxml_sequence_copy(GeoXmlSequence * sequence, GeoXmlSequence * other)
-{
-	if (sequence == NULL || other == NULL)
-		return NULL;
-	if (!geoxml_sequence_is_same_sequence(sequence, other))
-		return NULL;
-
-	GdomeNode *	copy;
-
-	if (gdome_n_ownerDocument((GdomeNode*)sequence, &exception) ==
-	gdome_n_ownerDocument((GdomeNode*)other, &exception))
-		copy = gdome_n_cloneNode((GdomeNode*)other, TRUE, &exception);
-	else
-		copy = gdome_doc_importNode(
-			gdome_n_ownerDocument((GdomeNode*)sequence, &exception),
-			(GdomeNode*)other, TRUE, &exception);
-	__geoxml_element_reassign_ids((GdomeElement*)copy);
-	__geoxml_sequence_move_after_before((GeoXmlSequence*)copy, sequence, __geoxml_sequence_move_after);
-
-	return (GeoXmlSequence*)copy;
-}
-
 gint
 geoxml_sequence_get_index(GeoXmlSequence * sequence)
 {

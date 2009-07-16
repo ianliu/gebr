@@ -135,15 +135,6 @@ GeoXmlSequence *
 geoxml_sequence_append_clone(GeoXmlSequence * sequence);
 
 /**
- * Append a copy of \p other to after \p sequence and return the copied sequence.
- *
- * If \p sequence is NULL or \p other is NULL, NULL is returned.
- *
- */
-GeoXmlSequence *
-geoxml_sequence_copy(GeoXmlSequence * sequence, GeoXmlSequence * other);
-
-/**
  * Get the index of \p sequence.
  *
  * If \p sequence is NULL returns -1.

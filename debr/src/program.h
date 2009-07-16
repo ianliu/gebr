@@ -63,6 +63,9 @@ void
 program_bottom(void);
 
 void
+program_copy(void);
+
+void
 program_paste(void);
 
 void

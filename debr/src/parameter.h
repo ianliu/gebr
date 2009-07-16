@@ -76,6 +76,9 @@ gboolean
 parameter_change_type_setup_ui(void);
 
 void
+parameter_copy(void);
+
+void
 parameter_paste(void);
 
 void

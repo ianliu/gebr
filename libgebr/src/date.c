@@ -59,7 +59,7 @@ iso_date(void)
  * Returns an (static allocated) string with _iso_date_ converted to a localized date
  * If _iso_date_ is NULL, current date is used.
  */
-gchar *
+const gchar *
 localized_date(const gchar * iso_date)
 {
 	static gchar	date[100];

@@ -15,18 +15,30 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_MISC_DATE_H
-#define __LIBGEBR_MISC_DATE_H
+#ifndef __LIBGEBR_GEOXML_CLIPBOARD_H
+#define __LIBGEBR_GEOXML_CLIPBOARD_H
 
 #include <glib.h>
 
-gchar *
-iso_date(void);
+#include "object.h"
 
-const gchar *
-localized_date(const gchar * iso_date);
+/**
+ * Clear clipboard
+ */
+void
+geoxml_clipboard_clear(void);
 
-GTimeVal
-libgebr_iso_date_to_g_time_val(const gchar * iso_date);
+/**
+ * Add \p object to the clipboard
+ */
+void
+geoxml_clipboard_copy(GeoXmlObject * object);
 
-#endif //__LIBGEBR_MISC_DATE_H
+/**
+ * Paste all clipboard into \p object
+ * Return the first pasted parameter, or NULL if failed.
+ */
+GeoXmlObject *
+geoxml_clipboard_paste(GeoXmlObject * object);
+
+#endif //__LIBGEBR_GEOXML_CLIPBOARD_H

@@ -16,7 +16,7 @@
 
 lib_LTLIBRARIES = libgebr_geoxml.la
 libgebr_geoxml_la_SOURCES = \
-	xml.c error.c object.c \
+	xml.c error.c object.c clipboard.c \
 	sequence.c value_sequence.c \
 	enum_option.c program.c \
 	parameters.c parameter.c program_parameter.c parameter_group.c \
@@ -24,7 +24,7 @@ libgebr_geoxml_la_SOURCES = \
 
 libgebr_geoxmlsubincludedir=$(includedir)/libgebr/geoxml
 libgebr_geoxmlsubinclude_HEADERS = \
-	defines.h error.h macros.h object.h \
+	defines.h error.h macros.h object.h clipboard.h \
 	sequence.h value_sequence.h \
 	enum_option.h program.h \
 	parameters.h parameter.h program_parameter.h parameter_group.h \

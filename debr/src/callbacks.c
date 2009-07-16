@@ -508,12 +508,12 @@ on_program_bottom_activate(void)
 
 /*
  * Function: on_program_copy_activate
- * Set debr.clipboard to selected program
+ * Call <program_copy>
  */
 void
 on_program_copy_activate(void)
 {
-	debr.clipboard = GEOXML_SEQUENCE(debr.program);
+	program_copy();
 }
 
 /*
@@ -598,12 +598,12 @@ on_parameter_type_activate(GtkRadioAction * first_action)
 
 /*
  * Function: on_parameter_copy_activate
- * Set debr.clipboard to selected parameter
+ * Call <parameter_copy>
  */
 void
 on_parameter_copy_activate(void)
 {
-	debr.clipboard = GEOXML_SEQUENCE(debr.parameter);
+	parameter_copy();
 }
 
 /*

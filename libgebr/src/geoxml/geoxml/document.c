@@ -50,6 +50,29 @@ typedef GdomeDocument *
 
 static GdomeDOMImplementation*	dom_implementation;
 static gint			dom_implementation_ref_count = 0;
+GdomeDocument *			clipboard_document = NULL;
+
+static void
+__geoxml_ref(void)
+{
+	if (!dom_implementation_ref_count) {
+		dom_implementation = gdome_di_mkref();
+		clipboard_document = gdome_di_createDocument(dom_implementation, NULL,
+			gdome_str_mkref("gebr-geoxml-clipboard"), NULL, &exception);
+	} else
+		gdome_di_ref(dom_implementation, &exception);
+	++dom_implementation_ref_count;
+}
+
+static void
+__geoxml_unref(void)
+{
+	gdome_di_unref(dom_implementation, &exception);
+	--dom_implementation_ref_count;
+	if (!dom_implementation)
+		clipboard_document = NULL;
+}
+
 
 static GdomeDocument *
 __geoxml_document_clone_doc(GdomeDocument * source, GdomeDocumentType * document_type)
@@ -361,11 +384,7 @@ __geoxml_document_load(GeoXmlDocument ** document, const gchar * src, createDoc_
 	int		ret;
 
 	/* create the implementation. */
-	if (!dom_implementation_ref_count) {
-		dom_implementation = gdome_di_mkref();
-	} else
-		gdome_di_ref(dom_implementation, &exception);
-	++dom_implementation_ref_count;
+	__geoxml_ref();
 
 	/* load */
 	doc = func(dom_implementation, (gchar*)src, GDOME_LOAD_PARSING, &exception);
@@ -384,8 +403,7 @@ __geoxml_document_load(GeoXmlDocument ** document, const gchar * src, createDoc_
 	*document = (GeoXmlDocument*)doc;
 	return GEOXML_RETV_SUCCESS;
 
-err:	gdome_di_unref(dom_implementation, &exception);
-	--dom_implementation_ref_count;
+err:	__geoxml_unref();
 	*document = NULL;
 	return ret;
 }
@@ -402,11 +420,7 @@ geoxml_document_new(const gchar * name, const gchar * version)
 	GdomeElement *	element;
 
 	/* create the implementation. */
-	if (!dom_implementation_ref_count)
-		dom_implementation = gdome_di_mkref();
-	else
-		gdome_di_ref(dom_implementation, &exception);
-	++dom_implementation_ref_count;
+	__geoxml_ref();
 
 	/* doc */
 	document = gdome_di_createDocument(dom_implementation,
@@ -460,8 +474,7 @@ geoxml_document_free(GeoXmlDocument * document)
 		return;
 
 	gdome_doc_unref((GdomeDocument*)document, &exception);
-	gdome_di_unref(dom_implementation, &exception);
-	--dom_implementation_ref_count;
+	__geoxml_unref();
 }
 
 GeoXmlDocument *
@@ -474,9 +487,7 @@ geoxml_document_clone(GeoXmlDocument * source)
 
 	document = __geoxml_document_clone_doc((GdomeDocument*)source, NULL);
 
-	/* increase reference count */
-	gdome_di_ref(dom_implementation, &exception);
-	++dom_implementation_ref_count;
+	__geoxml_ref();
 
 	return (GeoXmlDocument*)document;
 }

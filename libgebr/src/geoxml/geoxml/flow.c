@@ -377,7 +377,7 @@ geoxml_flow_get_revision_data(GeoXmlRevision * revision, gchar ** flow, gchar **
 	if (flow != NULL)
 		*flow = (gchar*)__geoxml_get_element_value((GdomeElement*)revision);
 	if (date != NULL)
-		*date = localized_date(__geoxml_get_attr_value((GdomeElement*)revision, "date"));
+		*date = (gchar*)localized_date(__geoxml_get_attr_value((GdomeElement*)revision, "date"));
 	if (comment != NULL)
 		*comment = (gchar*)__geoxml_get_attr_value((GdomeElement*)revision, "comment");
 }
