@@ -316,10 +316,8 @@ on_flow_component_status_activate(GtkRadioAction * action, GtkRadioAction * curr
 	flow_edition_status_changed();
 }
 
-/*
- * Function: on_job_control_save
+/* Function: on_job_control_save
  * Call <job_control_save>
- *
  */
 void
 on_job_control_save(void)

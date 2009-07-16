@@ -276,39 +276,39 @@ on_menu_revert_activate(void)
 {
 	GtkTreeIter		iter;
 
-	gchar *			path;
-	GeoXmlFlow *		menu;
-
-	if (confirm_action_dialog(_("Revert changes"), _("All unsaved changes will be lost. Are you sure you want to revert flow '%s'?"),
-	geoxml_document_get_filename(GEOXML_DOC(debr.menu))) == FALSE)
+	if (confirm_action_dialog(_("Revert changes"), _("All unsaved changes will be lost. Are you sure you want to revert selected(s) flow(s)?")) == FALSE)
 		return;
 
-	/* get path of selection */
-	menu_get_selected(&iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
-		MENU_PATH, &path,
-		-1);
+	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
+		GeoXmlFlow *		menu, * old_menu;
+		gchar *			path;
 
-	/* is this a new menu? */
-	if (!strlen(path)) {
-		debr_message(LOG_ERROR, _("Menu was not saved yet."));
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+			MENU_XMLPOINTER, &old_menu,
+			MENU_PATH, &path,
+			-1);
+
+		/* is this a new menu? */
+		if (!strlen(path)) {
+			debr_message(LOG_ERROR, _("Menu was not saved yet."));
+			g_free(path);
+			return;
+		}
+
+		menu = menu_load(path);
+		if (menu == NULL)
+			return;
+		/* revert to the one in disk */
+		geoxml_document_free(GEOXML_DOC(old_menu));
+		gtk_list_store_set(debr.ui_menu.list_store, &iter,
+			MENU_XMLPOINTER, menu,
+			-1);
+		menu_saved_status_set_from_iter(&iter, MENU_STATUS_SAVED);
+
+		/* frees */
 		g_free(path);
-		return;
 	}
-
-	menu = menu_load(path);
-	if (menu == NULL)
-		return;
-	/* revert to the one in disk */
-	geoxml_document_free(GEOXML_DOC(debr.menu));
-	gtk_list_store_set(debr.ui_menu.list_store, &iter,
-		MENU_XMLPOINTER, menu,
-		-1);
 	menu_selected();
-	menu_saved_status_set(MENU_STATUS_SAVED);
-
-	/* frees */
-	g_free(path);
 }
 
 /*

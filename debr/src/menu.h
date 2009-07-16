@@ -85,6 +85,8 @@ menu_cleanup(void);
 void
 menu_saved_status_set(MenuStatus status);
 void
+menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status);
+void
 menu_saved_status_set_unsaved(void);
 void
 menu_dialog_setup_ui(void);

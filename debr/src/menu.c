@@ -47,8 +47,6 @@ enum {
 
 static GtkMenu *
 menu_popup_menu(GtkTreeView * tree_view);
-static void
-menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status);
 
 static void
 menu_title_changed(GtkEntry * entry);
@@ -615,6 +613,43 @@ menu_saved_status_set(MenuStatus status)
 		menu_saved_status_set_from_iter(&iter, status);
 }
 
+/* Function: menu_saved_status_set_from_iter
+ * Change the status of the menu (saved or unsaved)
+ */
+void
+menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
+{
+	GdkPixbuf *		pixbuf;
+	gboolean		enable;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter,
+		MENU_STATUS, &pixbuf,
+		-1);
+	switch (status) {
+	case MENU_STATUS_SAVED:
+		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.list_store), iter,
+			MENU_STATUS, NULL,
+			-1);
+		enable = FALSE;
+		if (pixbuf == debr.pixmaps.stock_no)
+			--debr.unsaved_count;
+		break;
+	case MENU_STATUS_UNSAVED:
+		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.list_store), iter,
+			MENU_STATUS, debr.pixmaps.stock_no,
+			-1);
+		enable = TRUE;
+		if (pixbuf == NULL)
+			++debr.unsaved_count;
+		break;
+	default:
+		enable = FALSE;
+	}
+
+	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save"), enable);
+	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert"), enable);
+}
+
 /*
  * Function: menu_saved_status_set_unsaved
  * Connected to signal of components which change the menu
@@ -881,8 +916,8 @@ void
 menu_details_update(void)
 {
 	gchar *		markup;
-	GString *       text;
-        glong           icmax;
+	GString *	text;
+        glong		icmax;
 
 	markup = g_markup_printf_escaped("<b>%s</b>", geoxml_document_get_title(GEOXML_DOC(debr.menu)));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), markup);
@@ -892,62 +927,62 @@ menu_details_update(void)
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.description_label), markup);
 	g_free(markup);
 
-        text = g_string_new(NULL);
-        switch (geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu))){
-        case 0:
-                g_string_printf(text, _("This menu has no programs"));
-                break;
-        case 1:
-                g_string_printf(text, _("This menu has 1 program"));
-                break;
-        default:
-                g_string_printf(text, _("This menu has %li programs"),
-                                geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu)));
-        }
-        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.nprogs_label), text->str);
+	text = g_string_new(NULL);
+	switch (geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu))){
+	case 0:
+		g_string_printf(text, _("This menu has no programs"));
+		break;
+	case 1:
+		g_string_printf(text, _("This menu has 1 program"));
+		break;
+	default:
+		g_string_printf(text, _("This menu has %li programs"),
+				geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu)));
+	}
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.nprogs_label), text->str);
 	g_string_free(text, TRUE);
 
-        markup = g_markup_printf_escaped("<b>%s</b>", _("Created: "));
-        gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.created_label), markup);
+	markup = g_markup_printf_escaped("<b>%s</b>", _("Created: "));
+	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.created_label), markup);
 	g_free(markup);
 
-        markup = g_markup_printf_escaped("<b>%s</b>", _("Modified: "));
-        gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.modified_label), markup);
+	markup = g_markup_printf_escaped("<b>%s</b>", _("Modified: "));
+	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.modified_label), markup);
 	g_free(markup);
 
-        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.created_date_label),
-                           localized_date(geoxml_document_get_date_created(GEOXML_DOCUMENT(debr.menu))));
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.created_date_label),
+		localized_date(geoxml_document_get_date_created(GEOXML_DOCUMENT(debr.menu))));
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.modified_date_label),
-                           localized_date(geoxml_document_get_date_modified(GEOXML_DOCUMENT(debr.menu))));
+		localized_date(geoxml_document_get_date_modified(GEOXML_DOCUMENT(debr.menu))));
 
-        markup = g_markup_printf_escaped("<b>%s</b>", _("Categories: "));
-        gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.category_label), markup);
+	markup = g_markup_printf_escaped("<b>%s</b>", _("Categories: "));
+	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.category_label), markup);
 	g_free(markup);
 
-        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[0]), NULL);
-        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[1]), NULL);
-        gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]), NULL);
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[0]), NULL);
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[1]), NULL);
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]), NULL);
 
-        icmax = MIN(geoxml_flow_get_categories_number(GEOXML_FLOW(debr.menu)), 2);
-        for (long int ic = 0; ic < icmax; ic++) {
+	icmax = MIN(geoxml_flow_get_categories_number(GEOXML_FLOW(debr.menu)), 2);
+	for (long int ic = 0; ic < icmax; ic++) {
 		GeoXmlSequence *  	category;
 
-                geoxml_flow_get_category(GEOXML_FLOW(debr.menu), &category, ic);
+		geoxml_flow_get_category(GEOXML_FLOW(debr.menu), &category, ic);
 
-                text = g_string_new(NULL);
-                g_string_printf(text, "%s", geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)));
-                gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[ic]),text->str);
-                g_string_free(text, TRUE);                
-        }
-        if (icmax == 0){
-                markup = g_markup_printf_escaped("<i>%s</i>", _("None"));
-                gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.categories_label[0]), markup);
-                g_free(markup);
-        }
-        
-        if (geoxml_flow_get_categories_number(GEOXML_FLOW(debr.menu)) > 2)
-                gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]),"...");
-        
+		text = g_string_new(NULL);
+		g_string_printf(text, "%s", geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)));
+		gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[ic]),text->str);
+		g_string_free(text, TRUE);
+	}
+	if (icmax == 0) {
+		markup = g_markup_printf_escaped("<i>%s</i>", _("None"));
+		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.categories_label[0]), markup);
+		g_free(markup);
+	}
+
+	if (geoxml_flow_get_categories_number(GEOXML_FLOW(debr.menu)) > 2)
+		gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]), "...");
+
 	text = g_string_new(NULL);
 	g_string_printf(text, "%s <%s>",
 		geoxml_document_get_author(GEOXML_DOC(debr.menu)),
@@ -955,9 +990,8 @@ menu_details_update(void)
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.author_label), text->str);
 	g_string_free(text, TRUE);
 
-        g_object_set(G_OBJECT(debr.ui_menu.details.help_button),
-                     "sensitive", (strlen(geoxml_document_get_help(GEOXML_DOC(debr.menu)))>1) ? TRUE : FALSE, NULL);
-
+	g_object_set(G_OBJECT(debr.ui_menu.details.help_button),
+		"sensitive", (strlen(geoxml_document_get_help(GEOXML_DOC(debr.menu)))>1) ? TRUE : FALSE, NULL);
 }
 
 /*
@@ -1089,43 +1123,6 @@ menu_popup_menu(GtkTreeView * tree_view)
 	return GTK_MENU(menu);
 }
 
-/*
- * Function: menu_saved_status_set_from_iter
- * Change the status of the menu (saved or unsaved)
- */
-static void
-menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
-{
-	GdkPixbuf *		pixbuf;
-	gboolean		enable;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter,
-		MENU_STATUS, &pixbuf,
-		-1);
-	switch (status) {
-	case MENU_STATUS_SAVED:
-		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.list_store), iter,
-			MENU_STATUS, NULL,
-			-1);
-		enable = FALSE;
-		if (pixbuf == debr.pixmaps.stock_no)
-			--debr.unsaved_count;
-		break;
-	case MENU_STATUS_UNSAVED:
-		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.list_store), iter,
-			MENU_STATUS, debr.pixmaps.stock_no,
-			-1);
-		enable = TRUE;
-		if (pixbuf == NULL)
-			++debr.unsaved_count;
-		break;
-	default:
-		enable = FALSE;
-	}
-
-	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save"), enable);
-	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert"), enable);
-}
 /*
  * Function: menu_title_changed
  * Keep XML in sync with widget
