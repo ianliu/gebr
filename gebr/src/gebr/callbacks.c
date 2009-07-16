@@ -307,13 +307,11 @@ on_flow_component_refresh_activate(void)
 	menu_list_populate();
 }
 
-/*
- * Function: on_flow_component_status_activate
- * *Fill me in!*
- *
+/* Function: on_flow_component_status_activate
+ * Call <flow_edition_status_changed>
  */
 void
-on_flow_component_status_activate(void)
+on_flow_component_status_activate(GtkRadioAction * action, GtkRadioAction * current)
 {
 	flow_edition_status_changed();
 }

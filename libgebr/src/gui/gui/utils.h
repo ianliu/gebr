@@ -66,8 +66,7 @@ libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
 	GList * __i = g_list_first(__list); \
 	if (__i != NULL || (g_list_free(__list), 0)) \
 		for (*iter = *(GtkTreeIter*)__i->data; \
-		(__i != NULL && (*iter = *(GtkTreeIter*)__i->data, \
-		g_signal_emit_by_name(tree_view, "cursor-changed"), 1)) || \
+		(__i != NULL && (*iter = *(GtkTreeIter*)__i->data, 1)) || \
 			(g_list_foreach(__list, (GFunc)gtk_tree_iter_free, NULL), g_list_free(__list), 0); \
 		__i = g_list_next(__i))
 

@@ -309,6 +309,8 @@ parameter_remove(gboolean confirm)
 
 		if (in_group)
 			parameter_load_iter(&parent);
+
+		g_signal_emit_by_name(debr.ui_parameter.tree_view, "cursor-changed");
 	}
 	debr.parameter = NULL;
 	gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_parameter.tree_view));

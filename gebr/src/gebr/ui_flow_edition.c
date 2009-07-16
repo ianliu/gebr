@@ -284,40 +284,43 @@ void
 flow_edition_status_changed(void)
 {
 	GtkTreeIter		iter;
-	GeoXmlSequence *	program;
-
 	GtkRadioAction *	radio_action;
 	GdkPixbuf *		pixbuf;
+	const gchar *		status;
 
-	if (!flow_edition_get_selected_component(&iter, FALSE))
-		return;
-	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
-		return;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, FSEQ_GEOXML_POINTER, &program, -1);
 	radio_action = GTK_RADIO_ACTION(gtk_action_group_get_action(
 		gebr.action_group, "flow_edition_status_configured"));
 	switch (gtk_radio_action_get_current_value(radio_action)) {
 	case 0:
 		pixbuf = gebr.pixmaps.stock_apply;
-		geoxml_program_set_status(GEOXML_PROGRAM(program), "configured");
+		status = "configured";
 		break;
 	case 1:
 		pixbuf = gebr.pixmaps.stock_cancel;
-		geoxml_program_set_status(GEOXML_PROGRAM(program), "disabled");
+		status = "disabled";
 		break;
 	case 2:
 		pixbuf = gebr.pixmaps.stock_warning;
-		geoxml_program_set_status(GEOXML_PROGRAM(program), "unconfigured");
+		status =  "unconfigured";
 		break;
 	default:
-		pixbuf = NULL;
+		return;
 	}
-	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
-		FSEQ_STATUS_COLUMN, pixbuf,
-		-1);
 
+	libgebr_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
+		GeoXmlSequence *	program;
+
+		if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+		gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
+			continue;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+			FSEQ_GEOXML_POINTER, &program, -1);
+		geoxml_program_set_status(GEOXML_PROGRAM(program), status);
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
+			FSEQ_STATUS_COLUMN, pixbuf,
+			-1);
+	}
 	document_save(GEOXML_DOCUMENT(gebr.flow));
 }
 

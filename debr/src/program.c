@@ -257,6 +257,7 @@ program_remove(void)
 		geoxml_sequence_remove(GEOXML_SEQUENCE(debr.program));
 		debr.program = NULL;
 		gtk_list_store_remove(debr.ui_program.list_store, &iter);
+		g_signal_emit_by_name(debr.ui_program.tree_view, "cursor-changed");
 	}
 
 	gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_program.tree_view));

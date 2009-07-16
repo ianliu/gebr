@@ -158,6 +158,7 @@ flow_delete(void)
 		gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter);
 		flow_free();
 		document_delete(filename);
+		g_signal_emit_by_name(gebr.ui_flow_browse->view, "cursor-changed");
 
 		g_free(title);
 		g_free(filename);
@@ -607,6 +608,7 @@ flow_program_remove(void)
 		geoxml_sequence_remove(GEOXML_SEQUENCE(gebr.program));
 		document_save(GEOXML_DOCUMENT(gebr.flow));
 		gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
+		g_signal_emit_by_name(gebr.ui_flow_edition->fseq_view, "cursor-changed");
 	}
 	gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 }

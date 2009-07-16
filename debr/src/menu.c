@@ -530,6 +530,7 @@ menu_close(GtkTreeIter * iter)
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter, MENU_XMLPOINTER, &menu, -1);
 	geoxml_document_free(GEOXML_DOC(menu));
 	gtk_list_store_remove(debr.ui_menu.list_store, iter);
+	g_signal_emit_by_name(debr.ui_menu.tree_view, "cursor-changed");
 }
 
 /*

@@ -93,7 +93,7 @@ void
 on_flow_component_refresh_activate(void);
 
 void
-on_flow_component_status_activate(void);
+on_flow_component_status_activate(GtkRadioAction * action, GtkRadioAction * current);
 
 void
 on_job_control_save(void);
