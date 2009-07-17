@@ -73,9 +73,9 @@ static const GtkActionEntry actions_entries [] = {
 		(GCallback)on_program_top_activate},
 	{"program_bottom", GTK_STOCK_GOTO_BOTTOM, NULL, NULL,
 		N_("Move program to the bottom of the list"), (GCallback)on_program_bottom_activate},
-	{"program_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy program to clipboard"),
+	{"program_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy selected(s) program(s) to clipboard"),
 		(GCallback)on_program_copy_activate},
-	{"program_paste", GTK_STOCK_PASTE, N_("Paste"), NULL, N_("Paste program from clipboard"),
+	{"program_paste", GTK_STOCK_PASTE, N_("Paste"), NULL, N_("Paste program(s) from clipboard"),
 		(GCallback)on_program_paste_activate},
 	/* parameter */
 	{"parameter_new", GTK_STOCK_NEW, NULL, NULL, N_("Create new parameter"), (GCallback)on_parameter_new_activate},
@@ -89,9 +89,9 @@ static const GtkActionEntry actions_entries [] = {
 		N_("Move parameter to the bottom of the list"), (GCallback)on_parameter_bottom_activate},
 	{"parameter_change_type", GTK_STOCK_CONVERT, N_("Change type"), NULL, N_("Change parameter type"),
 		(GCallback)on_parameter_change_type_activate},
-	{"parameter_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy parameter to clipboard"),
+	{"parameter_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy selected(s) parameter(s) to clipboard"),
 		(GCallback)on_parameter_copy_activate},
-	{"parameter_paste", GTK_STOCK_PASTE, N_("Paste"), NULL, N_("Paste parameter from clipboard"),
+	{"parameter_paste", GTK_STOCK_PASTE, N_("Paste"), NULL, N_("Paste parameter(s) from clipboard"),
 		(GCallback)on_parameter_paste_activate},
 	/* validate */
 	{"validate_close", "edit-clear", NULL, NULL, N_("Clear selecteds validations reports"),

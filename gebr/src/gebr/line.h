@@ -24,19 +24,18 @@
 
 gboolean
 line_new(void);
-
 gboolean
 line_delete(void);
-
 GeoXmlLine *
 line_import(const gchar * line_filename, const gchar * at_dir);
 
+GtkTreeIter
+line_append_flow(GeoXmlLineFlow * line_flow);
 void
 line_load_flows(void);
 
 void
 line_move_flow_top(void);
-
 void
 line_move_flow_bottom(void);
 

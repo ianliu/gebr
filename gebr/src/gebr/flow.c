@@ -45,8 +45,6 @@
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
 
-static const gchar * no_line_selected = N_("Select a line to which a flow will be added to");
-
 /*
  * Section: Public
  * Public functions.
@@ -60,17 +58,16 @@ flow_new(void)
 {
 	GtkTreeIter		iter;
 
-	gchar *			line_title;
-	gchar *			line_filename;
+	const gchar *		line_title;
+	const gchar *		line_filename;
 
 	GeoXmlFlow *		flow;
 
-	if (gebr.line == NULL) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_line_selected);
+	if (!project_line_get_selected(NULL, LineSelection))
 		return FALSE;
-	}
-	line_title = (gchar *)geoxml_document_get_title(GEOXML_DOCUMENT(gebr.line));
-	line_filename = (gchar *)geoxml_document_get_filename(GEOXML_DOCUMENT(gebr.line));
+
+	line_title = geoxml_document_get_title(GEOXML_DOCUMENT(gebr.line));
+	line_filename = geoxml_document_get_filename(GEOXML_DOCUMENT(gebr.line));
 
 	/* Create a new flow */
 	flow = GEOXML_FLOW(document_new(GEOXML_DOCUMENT_TYPE_FLOW));
@@ -183,10 +180,8 @@ flow_import(void)
 
 	GeoXmlFlow *		imported_flow;
 
-	if (gebr.line == NULL) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_line_selected);
+	if (!project_line_get_selected(NULL, LineSelection))
 		return;
-	}
 
 	/* assembly a file chooser dialog */
 	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose filename to open"),
@@ -218,7 +213,7 @@ flow_import(void)
 
 	/* feedback */
 	gebr_message(LOG_INFO, TRUE, TRUE, _("Flow '%s' imported to line '%s' from file '%s'"),
-		     flow_title, geoxml_document_get_title(GEOXML_DOC(gebr.line)), dir);
+		flow_title, geoxml_document_get_title(GEOXML_DOC(gebr.line)), dir);
 
 	/* change filename */
 	geoxml_document_set_filename(GEOXML_DOC(imported_flow), flow_filename->str);
@@ -576,21 +571,6 @@ flow_revision_save(void)
 	return ret;
 }
 
-/* Function: flow_program_duplicate
- * Remove selected program from flow process
- */
-void
-flow_program_duplicate(void)
-{
-
-	if (!flow_edition_get_selected_component(NULL, TRUE))
-		return;
-
-	flow_add_program_sequence_to_view(
-		geoxml_sequence_append_clone(GEOXML_SEQUENCE(gebr.program)));
-	document_save(GEOXML_DOCUMENT(gebr.flow));
-}
-
 /*
  * Function: flow_program_remove
  * Remove selected program from flow process
@@ -631,8 +611,7 @@ flow_program_move_top(void)
 		&iter, &gebr.ui_flow_edition->input_iter);
 }
 
-/*
- * Function: flow_program_move_bottom
+/* Function: flow_program_move_bottom
  * Move selected program to bottom in the processing flow
  */
 void
@@ -647,4 +626,92 @@ flow_program_move_bottom(void)
 	/* Update GUI */
 	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store),
 		&iter, &gebr.ui_flow_edition->output_iter);
+}
+
+/* Function: flow_copy
+ * Copy selected(s) flows(s) to clipboard
+ */
+void
+flow_copy(void)
+{
+	GtkTreeIter		iter;
+
+	if (gebr.flow_clipboard != NULL) {
+		g_list_foreach(gebr.flow_clipboard, (GFunc)g_free, NULL);
+		g_list_free(gebr.flow_clipboard);
+		gebr.flow_clipboard = NULL;
+	}
+
+	libgebr_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
+		gchar *	filename;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+			FB_FILENAME, &filename,
+			-1);
+		gebr.flow_clipboard = g_list_prepend(gebr.flow_clipboard, filename);
+	}
+	gebr.flow_clipboard = g_list_reverse(gebr.flow_clipboard);
+}
+
+/* Function: flow_program_paste
+ * Paste flow(s) from clipboard
+ */
+void
+flow_paste(void)
+{
+	GList *	i;
+
+	if (!project_line_get_selected(NULL, LineSelection))
+		return;
+
+	for (i = g_list_first(gebr.flow_clipboard); i != NULL; i = g_list_next(i)) {
+		GeoXmlDocument *	flow;
+
+		flow = document_load((gchar*)i->data);
+		if (flow == NULL)
+			continue;
+
+		document_import(flow);
+		line_append_flow(geoxml_line_append_flow(gebr.line, geoxml_document_get_filename(flow)));
+		document_save(GEOXML_DOCUMENT(gebr.line));
+
+		geoxml_document_free(flow);
+	}
+}
+
+/* Function: flow_program_copy
+ * Copy selected(s) program(s) to clipboard
+ */
+void
+flow_program_copy(void)
+{
+	GtkTreeIter		iter;
+
+	geoxml_clipboard_clear();
+	libgebr_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
+		GeoXmlObject *	program;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+			FSEQ_GEOXML_POINTER, &program,
+			-1);
+		geoxml_clipboard_copy(GEOXML_OBJECT(program));
+	}
+}
+
+/* Function: flow_program_paste
+ * Paste program(s) from clipboard
+ */
+void
+flow_program_paste(void)
+{
+	GeoXmlSequence *	pasted;
+
+	pasted = GEOXML_SEQUENCE(geoxml_clipboard_paste(GEOXML_OBJECT(gebr.flow)));
+	if (pasted == NULL) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Could not paste component"));
+		return;
+	}
+
+	flow_add_program_sequence_to_view(GEOXML_SEQUENCE(pasted));
+	document_save(GEOXML_DOCUMENT(gebr.flow));
 }

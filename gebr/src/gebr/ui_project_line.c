@@ -208,7 +208,7 @@ project_line_info_update(void)
 
 	gboolean			is_project;
 
-	if (!project_line_get_selected(NULL, FALSE)) {
+	if (!project_line_get_selected(NULL, DontWarnUnselection)) {
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.title), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.description), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created_label), "");
@@ -405,7 +405,7 @@ project_line_import(void)
 		is_project = TRUE;
 	else if (g_str_has_suffix(filename, ".lnez")) {
 		is_project = FALSE;
-		if (!project_line_get_selected(NULL, TRUE))
+		if (!project_line_get_selected(NULL, LineSelection))
 			goto out2;
 	} else {
 		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unrecognized file type"));
@@ -458,7 +458,7 @@ project_line_import(void)
 				geoxml_document_get_filename(GEOXML_DOCUMENT(line)));
 			document_save(GEOXML_DOCUMENT(gebr.project));
 
-			project_line_get_selected(&iter, FALSE);
+			project_line_get_selected(&iter, DontWarnUnselection);
 			parent = iter;
 			if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &parent, &iter))
 				parent = iter;
@@ -513,7 +513,7 @@ project_line_export(void)
 
 	GeoXmlSequence *	i;
 
-	if (!project_line_get_selected(NULL, TRUE))
+	if (!project_line_get_selected(NULL, ProjectLineSelection))
 		return;
 
 	command = g_string_new("");
@@ -618,16 +618,43 @@ project_line_free(void)
  * Put selected iter in _iter_ and return true if there is a selection.
  */
 gboolean
-project_line_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
+project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectionType check_type)
 {
+	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
+	const gchar *		no_line_selected;
 
+	no_line_selected = _("Please select a line");
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	if (gtk_tree_selection_get_selected(selection, &model, iter) == FALSE) {
-		if (warn_unselected)
-			gebr_message(LOG_ERROR, TRUE, FALSE, _("Please selected a project"));
+	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
+		switch (check_type) {
+		case DontWarnUnselection:
+			break;
+		case ProjectSelection:
+			gebr_message(LOG_ERROR, TRUE, FALSE, _("Please select a project"));
+			break;
+		case LineSelection:
+			gebr_message(LOG_ERROR, TRUE, FALSE, no_line_selected);
+			break;
+		case ProjectLineSelection:
+			gebr_message(LOG_ERROR, TRUE, FALSE, _("Please select a project or a line"));
+			break;
+		}
 		return FALSE;
+	}
+	if (_iter != NULL)
+		*_iter = iter;
+	if (check_type == LineSelection) {
+		GtkTreePath *	path;
+		gboolean	is_line;
+
+		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
+		is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
+		if (!is_line)
+			gebr_message(LOG_ERROR, TRUE, FALSE, no_line_selected);
+
+		return is_line;
 	}
 
 	return TRUE;

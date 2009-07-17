@@ -63,6 +63,7 @@ gebr_init(void)
 	gebr.line = NULL;
 	gebr.flow = NULL;
 	gebr.program = NULL;
+	gebr.flow_clipboard = NULL;
 	libgebr_init();
 	protocol_init();
 
@@ -118,6 +119,10 @@ gebr_quit(void)
 	gboolean	valid;
 
 	gebr_config_save(FALSE);
+	if (gebr.flow_clipboard != NULL) {
+		g_list_foreach(gebr.flow_clipboard, (GFunc)g_free, NULL);
+		g_list_free(gebr.flow_clipboard);
+	}
 	/*
 	 * Data frees and cleanups
 	 */

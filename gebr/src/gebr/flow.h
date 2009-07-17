@@ -20,38 +20,35 @@
 
 gboolean
 flow_new(void);
-
 void
 flow_free(void);
-
 void
 flow_delete(void);
-
 void
 flow_import(void);
-
 void
 flow_export(void);
-
 void
 flow_export_as_menu(void);
-
 void
 flow_run(void);
-
 gboolean
 flow_revision_save(void);
 
 void
-flow_program_duplicate(void);
-
-void
 flow_program_remove(void);
-
 void
 flow_program_move_top(void);
-
 void
 flow_program_move_bottom(void);
+
+void
+flow_copy(void);
+void
+flow_paste(void);
+void
+flow_program_copy(void);
+void
+flow_program_paste(void);
 
 #endif //__FLOW_H

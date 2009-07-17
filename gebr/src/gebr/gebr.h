@@ -56,17 +56,14 @@ struct gebr {
 	/* for strange things ;) */
 	GtkWidget *			invisible;
 
-	/* the project or the line selected */
 	GeoXmlDocument *		project_line;
 	GeoXmlProject *			project;
 	GeoXmlLine *			line;
 	GeoXmlFlow *			flow;
 	GeoXmlProgram *			program;
 
-	/* log file */
+	GList *				flow_clipboard;
 	struct log *			log;
-
-	/* List of temporary file to be deleted */
 	GSList *			tmpfiles;
 
 	/* Persistant GUI */

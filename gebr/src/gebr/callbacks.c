@@ -40,16 +40,16 @@
 void
 on_copy_activate(void)
 {
-// 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
-// 	case NOTEBOOK_PAGE_PROJECT_LINE:
-// 
-// 		break;
-// 	case NOTEBOOK_PAGE_FLOW_BROWSE:
-// 
-// 		break;
-// 	default:
-// 		break;
-// 	}
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+	case NOTEBOOK_PAGE_FLOW_BROWSE:
+		on_flow_copy_activate();
+		break;
+	case NOTEBOOK_PAGE_FLOW_EDITION:
+		on_flow_component_copy_activate();
+		break;
+	default:
+		break;
+	}
 }
 
 /*
@@ -59,6 +59,16 @@ on_copy_activate(void)
 void
 on_paste_activate(void)
 {
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+	case NOTEBOOK_PAGE_FLOW_BROWSE:
+		on_flow_paste_activate();
+		break;
+	case NOTEBOOK_PAGE_FLOW_EDITION:
+		on_flow_component_paste_activate();
+		break;
+	default:
+		break;
+	}
 }
 
 /*
@@ -241,15 +251,31 @@ on_flow_execute_activate(void)
 	flow_run();
 }
 
-/*
- * Function: on_flow_revision_save_activate
- * Call <flow_revision_save> from <flow.c>
- *
+/* Function: on_flow_revision_save_activate
+ * Call <flow_revision_save>
  */
 void
 on_flow_revision_save_activate(void)
 {
 	flow_revision_save();
+}
+
+/* Function: on_flow_copy_activate
+ * Call <flow_copy>
+ */
+void
+on_flow_copy_activate(void)
+{
+	flow_copy();
+}
+
+/* Function: on_flow_paste_activate
+ * Call <flow_paste>
+ */
+void
+on_flow_paste_activate(void)
+{
+	flow_paste();
 }
 
 /*
@@ -262,17 +288,6 @@ on_flow_component_help_activate(void)
 {
 	program_help_show();
 }
-
-/*
- * Function: on_flow_component_duplicate_activate
- * Call <flow_program_duplicate>
- */
-void
-on_flow_component_duplicate_activate(void)
-{
-	flow_program_duplicate();
-}
-
 
 /*
  * Function: on_flow_component_delete_activate
@@ -314,6 +329,24 @@ void
 on_flow_component_status_activate(GtkRadioAction * action, GtkRadioAction * current)
 {
 	flow_edition_status_changed();
+}
+
+/* Function: on_flow_copy_activate
+ * Call <flow_edition_component_copy>
+ */
+void
+on_flow_component_copy_activate(void)
+{
+	flow_program_copy();
+}
+
+/* Function: on_flow_paste_activate
+ * Call <flow_edition_component_paste>
+ */
+void
+on_flow_component_paste_activate(void)
+{
+	flow_program_paste();
 }
 
 /* Function: on_job_control_save

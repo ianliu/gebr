@@ -21,6 +21,13 @@
 
 #include <gtk/gtk.h>
 
+enum ProjectLineSelectionType {
+	DontWarnUnselection,
+	ProjectSelection,
+	LineSelection,
+	ProjectLineSelection
+};
+
 /* Store fields */
 enum {
 	PL_TITLE = 0,
@@ -62,7 +69,7 @@ void
 project_line_info_update(void);
 
 gboolean
-project_line_get_selected(GtkTreeIter * iter, gboolean warn_unselected);
+project_line_get_selected(GtkTreeIter * iter, enum ProjectLineSelectionType check_type);
 
 void
 project_line_set_selected(GtkTreeIter * iter, GeoXmlDocument * document);

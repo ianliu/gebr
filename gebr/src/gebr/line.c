@@ -214,45 +214,56 @@ line_import(const gchar * line_filename, const gchar * at_dir)
 	return line;
 }
 
-/*
- * Function: line_load_flows
+/* Function: line_append_flow
+ * Append _line_flow_ to flow browse
+ */
+GtkTreeIter
+line_append_flow(GeoXmlLineFlow * line_flow)
+{
+	GeoXmlFlow *	flow;
+	const gchar *	flow_filename;
+
+	GtkTreeIter	iter;
+
+	flow_filename = geoxml_line_get_flow_source(GEOXML_LINE_FLOW(line_flow));
+	flow = GEOXML_FLOW(document_load(flow_filename));
+	if (flow == NULL)
+		return iter;
+
+	/* add to the flow browser. */
+	gtk_list_store_append(gebr.ui_flow_browse->store, &iter);
+	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
+		FB_TITLE, geoxml_document_get_title(GEOXML_DOC(flow)),
+		FB_FILENAME, flow_filename,
+		FB_LINE_FLOW_POINTER, line_flow,
+		-1);
+
+	geoxml_document_free(GEOXML_DOC(flow));
+
+	return iter;
+}
+
+/* Function: line_load_flows
  * Load flows associated to the selected line.
  * Called only by project_line_load
  */
 void
 line_load_flows(void)
 {
-	GtkTreeIter		flow_iter;
 	GeoXmlSequence *	line_flow;
+	GtkTreeIter		iter;
 
 	flow_free();
 
 	/* iterate over its flows */
 	geoxml_line_get_flow(gebr.line, &line_flow, 0);
-	for (; line_flow != NULL; geoxml_sequence_next(&line_flow)) {
-		GeoXmlFlow *	flow;
-		const gchar *	flow_filename;
-
-		flow_filename = geoxml_line_get_flow_source(GEOXML_LINE_FLOW(line_flow));
-		flow = GEOXML_FLOW(document_load(flow_filename));
-		if (flow == NULL)
-			continue;
-
-		/* add to the flow browser. */
-		gtk_list_store_append(gebr.ui_flow_browse->store, &flow_iter);
-		gtk_list_store_set(gebr.ui_flow_browse->store, &flow_iter,
-			FB_TITLE, geoxml_document_get_title(GEOXML_DOC(flow)),
-			FB_FILENAME, flow_filename,
-			FB_LINE_FLOW_POINTER, line_flow,
-			-1);
-
-		geoxml_document_free(GEOXML_DOC(flow));
-	}
+	for (; line_flow != NULL; geoxml_sequence_next(&line_flow))
+		iter = line_append_flow(GEOXML_LINE_FLOW(line_flow));
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Flows loaded"));
 
-	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &flow_iter) == TRUE)
-		flow_browse_select_iter(&flow_iter);
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter) == TRUE)
+		flow_browse_select_iter(&iter);
 }
 
 /*

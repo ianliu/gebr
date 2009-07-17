@@ -186,8 +186,6 @@ document_properties_actions(GtkDialog * dialog, gint arg1, struct ui_document_pr
 {
 	switch (arg1) {
 	case GTK_RESPONSE_OK: {
-		GtkTreeSelection *		selection;
-		GtkTreeModel *			model;
 		GtkTreeIter			iter;
 
 		const gchar *			old_title;
@@ -212,7 +210,7 @@ document_properties_actions(GtkDialog * dialog, gint arg1, struct ui_document_pr
 		switch ((type = geoxml_document_get_type(ui_document_properties->document))) {
 		case GEOXML_DOCUMENT_TYPE_PROJECT:
 		case GEOXML_DOCUMENT_TYPE_LINE:
-			project_line_get_selected(&iter, FALSE);
+			project_line_get_selected(&iter, DontWarnUnselection);
 			gtk_tree_store_set(gebr.ui_project_line->store, &iter,
 				PL_TITLE, geoxml_document_get_title(ui_document_properties->document),
 				-1);
@@ -220,8 +218,7 @@ document_properties_actions(GtkDialog * dialog, gint arg1, struct ui_document_pr
 			project_line_info_update();
 			break;
 		case GEOXML_DOCUMENT_TYPE_FLOW:
-			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-			gtk_tree_selection_get_selected(selection, &model, &iter);
+			flow_browse_get_selected(&iter, FALSE);
 			gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
 				FB_TITLE, geoxml_document_get_title(ui_document_properties->document),
 				-1);

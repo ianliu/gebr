@@ -469,6 +469,8 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 	if (!flow_browse_get_selected(&iter, FALSE)) {
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 			gtk_action_group_get_action(gebr.action_group, "flow_new")));
+		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+			gtk_action_group_get_action(gebr.action_group, "flow_paste")));
 		goto out;
 	}
 
@@ -493,6 +495,10 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_new")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_copy")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_paste")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_delete")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
