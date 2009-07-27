@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-20 15:30-0300\n"
-"PO-Revision-Date: 2009-07-20 15:33-0300\n"
+"POT-Creation-Date: 2009-07-27 09:50-0300\n"
+"PO-Revision-Date: 2009-07-27 09:50-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -39,7 +39,9 @@ msgstr "Reverter alterações"
 msgid ""
 "All unsaved changes will be lost. Are you sure you want to revert selected"
 "(s) flow(s)?"
-msgstr "Todas as modificações não salvar serão perdidas. Tem certeza que quer reverter o(s) fluxo(s) selecionado(s)?"
+msgstr ""
+"Todas as modificações não salvar serão perdidas. Tem certeza que quer "
+"reverter o(s) fluxo(s) selecionado(s)?"
 
 #: ../src/callbacks.c:293
 msgid "Menu was not saved yet."
@@ -716,8 +718,8 @@ msgstr "acrescenta à saída de erro padrão"
 #. * Binary
 #.
 #: ../src/program.c:452
-msgid "Binary:"
-msgstr "Binário:"
+msgid "Executable:"
+msgstr "Executável:"
 
 #.
 #. * URL
@@ -866,6 +868,9 @@ msgstr "  OBRIGATÓRIO"
 #: ../src/validate.c:705
 msgid "   [Instanciable]\n"
 msgstr "   [Instanciável]\n"
+
+#~ msgid "Binary:"
+#~ msgstr "Binário:"
 
 #~ msgid "Clipboard doesn't keep a parameter"
 #~ msgstr "Área de transferência não contém um parâmetro"

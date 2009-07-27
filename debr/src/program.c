@@ -449,7 +449,7 @@ program_dialog_setup_ui(void)
 	/*
 	 * Binary
 	 */
-	binary_label = gtk_label_new(_("Binary:"));
+	binary_label = gtk_label_new(_("Executable:"));
 	gtk_widget_show(binary_label);
 	gtk_table_attach(GTK_TABLE(table), binary_label, 0, 1, 2, 3,
 		(GtkAttachOptions)(GTK_FILL),
