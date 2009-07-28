@@ -31,6 +31,10 @@
 #include "defines.h"
 
 void
+add_program_parameter_item(GString *str, GeoXmlParameter *par);
+
+
+void
 help_fix_css(GString * help)
 {
 	gchar *		gebrcsspos;
@@ -46,6 +50,23 @@ help_fix_css(GString * help)
 }
 
 void
+add_program_parameter_item(GString *str, GeoXmlParameter *par)
+{
+        if (geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(par))){
+                g_string_append_printf(str, "              "
+                                       "<li class=\"req\"><span class=\"reqlabel\">%s</span>"
+                                       " detailed description comes here.</li>\n\n",
+                                       geoxml_parameter_get_label(par));
+        }else{
+                g_string_append_printf(str, "              "
+                                       "<li><span class=\"label\">%s</span>"
+                                       " detailed description comes here.</li>\n\n",
+                                       geoxml_parameter_get_label(par));
+        }
+}
+
+
+void
 help_subst_fields(GString * help, GeoXmlProgram * program)
 {
 	gchar *		        content;
@@ -53,8 +74,6 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 	gsize		        pos;
 	GeoXmlParameters *	parameters;
 	GeoXmlSequence *	parameter;
-	int                     npar;
-        int                     ipar;
 
 	/* Title replacement */
 	if (program != NULL)
@@ -118,20 +137,41 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 
 		parameters = geoxml_program_get_parameters(program);
 		parameter = geoxml_parameters_get_first_parameter(parameters);
-		npar = geoxml_parameters_get_number(parameters);
 		
 		label = g_string_new(NULL);
-		for (ipar = 0; ipar < npar; ipar++) {
-			g_string_append_printf(label, "              "
-					       "<li><span class=\"label\">[%s]</span>"
-					       " detailed description comes here.</li>\n\n",
-					       geoxml_parameter_get_label(GEOXML_PARAMETER(parameter)));
+		while (parameter != NULL) {
+                        
+                        if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE){
+                                add_program_parameter_item(label, GEOXML_PARAMETER(parameter));
+                        }else{
+                                GeoXmlSequence  *	instance;
+                                GeoXmlSequence  *	subpar;
+
+                                g_string_append_printf(label, "              "
+                                                       "<li class=\"group\"><span class=\"grouplabel\">%s</span>"
+                                                       " detailed description comes here.\n\n",
+                                                       geoxml_parameter_get_label(GEOXML_PARAMETER(parameter))); 
+
+                                g_string_append_printf(label, "              <ul>\n");
+
+                                geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+                                subpar = geoxml_parameters_get_first_parameter(GEOXML_PARAMETERS(instance));
+                                while (subpar != NULL) {
+                                        add_program_parameter_item(label, GEOXML_PARAMETER(subpar));
+                                        geoxml_sequence_next(&subpar);
+                                }
+                                g_string_append_printf(label, "              </ul></li>\n\n");
+
+                                
+                        }
+
 			geoxml_sequence_next(&parameter);
 		}
+
 		if ((ptr = strstr(help->str, "              "
-				  "<li><span class=\"label\">[label for parameter]</span>")) != NULL) {
+				  "<li class=\"req\">")) != NULL) {
 			pos = (ptr - help->str)/sizeof(char);
-			g_string_erase(help, pos, 96);
+			g_string_erase(help, pos, 338);
 			g_string_insert(help, pos, label->str);
 		}
 		g_string_free(label, TRUE);
@@ -139,7 +179,7 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 	else { /* strip parameter section for flow help */
 		if ((ptr = strstr(help->str, "          <div class=\"parameters\">")) != NULL) {
 			pos = (ptr - help->str)/sizeof(char);
-			g_string_erase(help, pos, 1317);
+			g_string_erase(help, pos, 1350);
 		}
 		if ((ptr = strstr(help->str, "            <li><a href=\"#par\">Parameters</a></li>")) != NULL) {
 			pos = (ptr - help->str)/sizeof(char);
