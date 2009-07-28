@@ -453,10 +453,10 @@ parameter_copy(void)
 void
 parameter_paste(void)
 {
-	GeoXmlObject *		pasted;
+	GeoXmlSequence *	pasted;
 	GtkTreeIter		pasted_iter;
 
-	pasted = geoxml_clipboard_paste(GEOXML_OBJECT(debr.program));
+	pasted = (GeoXmlSequence*)geoxml_clipboard_paste(GEOXML_OBJECT(debr.program));
 	if (pasted == NULL) {
 		debr_message(LOG_ERROR, _("Could not paste parameter"));
 		return;
@@ -601,23 +601,25 @@ parameter_dialog_setup_ui(void)
 	/* skip default */
 	++row;
 
-	/*
-	 * Required
-	 */
-	required_label = gtk_label_new(_("Required:"));
-	gtk_widget_show(required_label);
-	gtk_table_attach(GTK_TABLE(table), required_label, 0, 1, row, row+1,
-		(GtkAttachOptions)(GTK_FILL),
-		(GtkAttachOptions)(0), 0, 0);
-	gtk_misc_set_alignment(GTK_MISC(required_label), 0, 0.5);
+	if (type != GEOXML_PARAMETERTYPE_FLAG) {
+		/*
+		* Required
+		*/
+		required_label = gtk_label_new(_("Required:"));
+		gtk_widget_show(required_label);
+		gtk_table_attach(GTK_TABLE(table), required_label, 0, 1, row, row+1,
+			(GtkAttachOptions)(GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(required_label), 0, 0.5);
 
-	required_check_button = gtk_check_button_new();
-	gtk_widget_show(required_check_button);
-	gtk_table_attach(GTK_TABLE(table), required_check_button, 1, 2, row, row+1,
-		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
-		(GtkAttachOptions)(0), 0, 0), ++row;
-	g_signal_connect(required_check_button, "toggled",
-		(GCallback)parameter_required_toggled, ui);
+		required_check_button = gtk_check_button_new();
+		gtk_widget_show(required_check_button);
+		gtk_table_attach(GTK_TABLE(table), required_check_button, 1, 2, row, row+1,
+			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0), ++row;
+		g_signal_connect(required_check_button, "toggled",
+			(GCallback)parameter_required_toggled, ui);
+	}
 
 	/*
 	 * Is List
@@ -828,7 +830,17 @@ parameter_dialog_setup_ui(void)
 	gtk_widget_show(default_widget_hbox);
 	default_widget = parameter_widget->widget;
 	gtk_widget_show(default_widget);
-	gtk_box_pack_start(GTK_BOX(ui->default_widget_hbox), default_widget, TRUE, TRUE, 0);
+	
+	if (type == GEOXML_PARAMETERTYPE_FLAG) {
+		GtkWidget *	label;
+
+		label = gtk_label_new(_("enabled by default"));
+		gtk_widget_show(label);
+		gtk_box_pack_start(GTK_BOX(ui->default_widget_hbox), default_widget, FALSE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(ui->default_widget_hbox), label, TRUE, TRUE, 0);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	} else
+		gtk_box_pack_start(GTK_BOX(ui->default_widget_hbox), default_widget, TRUE, TRUE, 0);
 	gtk_table_attach(GTK_TABLE(table), default_widget_hbox, 1, 2, 2, 3,
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0);
@@ -839,8 +851,9 @@ parameter_dialog_setup_ui(void)
 	gtk_entry_set_text(GTK_ENTRY(label_entry), geoxml_parameter_get_label(ui->parameter));
 	gtk_entry_set_text(GTK_ENTRY(keyword_entry),
 		geoxml_program_parameter_get_keyword(program_parameter));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(required_check_button),
-		geoxml_program_parameter_get_required(program_parameter));
+	if (type != GEOXML_PARAMETERTYPE_FLAG)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(required_check_button),
+			geoxml_program_parameter_get_required(program_parameter));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(is_list_check_button),
 		geoxml_program_parameter_get_is_list(program_parameter));
 	gtk_widget_set_sensitive(separator_entry, geoxml_program_parameter_get_is_list(program_parameter));
@@ -854,8 +867,9 @@ parameter_dialog_setup_ui(void)
 	geoxml_parameter_set_label(ui->parameter, gtk_entry_get_text(GTK_ENTRY(label_entry)));
 	geoxml_program_parameter_set_keyword(GEOXML_PROGRAM_PARAMETER(ui->parameter),
 		gtk_entry_get_text(GTK_ENTRY(keyword_entry)));
-	geoxml_program_parameter_set_required(GEOXML_PROGRAM_PARAMETER(ui->parameter),
-		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(required_check_button)));
+	if (type != GEOXML_PARAMETERTYPE_FLAG)
+		geoxml_program_parameter_set_required(GEOXML_PROGRAM_PARAMETER(ui->parameter),
+			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(required_check_button)));
 	geoxml_program_parameter_set_be_list(GEOXML_PROGRAM_PARAMETER(ui->parameter),
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button)));
 	if (geoxml_program_parameter_get_is_list(program_parameter) == TRUE)
