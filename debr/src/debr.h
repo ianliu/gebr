@@ -81,6 +81,8 @@ struct debr {
 		GString *	browser;
 	} config;
 
+	GList *			categories_list;
+
 	/* temporary files removed when GeBRME quits */
 	GSList *		tmpfiles;
 };
@@ -99,5 +101,8 @@ debr_config_save(void);
 
 void
 debr_message(enum log_message_type type, const gchar * message, ...);
+
+gboolean
+debr_has_category(const gchar * category, gboolean add);
 
 #endif //__DEBR_H

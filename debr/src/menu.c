@@ -201,8 +201,7 @@ menu_setup_ui(void)
 	gtk_widget_show_all(debr.ui_menu.widget);
 }
 
-/*
- * Function: menu_new
+/* Function: menu_new
  * Create a new (unsaved) menu and add it to the tree view
  */
 void
@@ -237,6 +236,9 @@ menu_new(void)
 	g_string_free(new_menu_str, TRUE);
 }
 
+/* Function: menu_load
+ * Load XML at _path_ and return it.
+ */
 GeoXmlFlow *
 menu_load(const gchar * path)
 {
@@ -246,11 +248,25 @@ menu_load(const gchar * path)
 	if ((ret = geoxml_document_load(&menu, path))) {
 		debr_message(LOG_ERROR, _("Could not load menu at '%s': %s"), path,
 			geoxml_error_string((enum GEOXML_RETV)ret));
-
 		return NULL;
 	}
 
+	menu_read_categories(GEOXML_FLOW(menu));
+
 	return GEOXML_FLOW(menu);
+}
+
+/* Function: menu_read_categories
+ * Read the list of categories in _menu
+ */
+void
+menu_read_categories(GeoXmlFlow * menu)
+{
+	GeoXmlSequence *	category;
+
+	geoxml_flow_get_category(menu, &category, 0);
+	for (; category != NULL; geoxml_sequence_next(&category))
+		debr_has_category(geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)), TRUE);
 }
 
 /*
@@ -818,18 +834,8 @@ menu_dialog_setup_ui(void)
 
 	categories_combo = gtk_combo_box_entry_new_text();
 	gtk_widget_show(categories_combo);
-	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Data Compression");
-	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Editing, Sorting and Manipulation");
-	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Filtering, Transforms and Attributes");
-	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Gain, NMO, Stack and Standard Processes");
-	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Graphics");
-	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Import/Export");
-	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Inversion");
-	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Migration and Dip Moveout");
-	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Multiple Supression");
-	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Seismic Unix");
-	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Simulation and Model Building");
-	gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), "Utilities");
+	for (GList * i = debr.categories_list; i != NULL; i = g_list_next(i))
+		gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), (gchar*)i->data);
 	/* TODO: GtkComboBoxEntry doesn't have activate signal */
 // 	g_signal_connect(GTK_OBJECT(categories_combo), "activate",
 // 		GTK_SIGNAL_FUNC(category_add), NULL);
@@ -1009,18 +1015,14 @@ menu_sort_by_name(GtkMenuItem * menu_item)
 	GtkSortType order;
 
 	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
-			&id, &order);
+		&id, &order);
 
-	// Swap ordering
-	if (id == MENU_FILENAME) {
-		order = (order == GTK_SORT_ASCENDING)?
-			GTK_SORT_DESCENDING : GTK_SORT_ASCENDING;
-	} else {
-		order = GTK_SORT_ASCENDING;
-	}
+	order = (id == MENU_FILENAME)
+		? (order == GTK_SORT_ASCENDING) ? GTK_SORT_DESCENDING : GTK_SORT_ASCENDING
+		: GTK_SORT_ASCENDING;
 
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
-			MENU_FILENAME, order);
+		MENU_FILENAME, order);
 }
 
 /*
@@ -1211,6 +1213,7 @@ menu_category_add(ValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
 		name = g_strdup(_("New category"));
 	value_sequence_edit_add(VALUE_SEQUENCE_EDIT(sequence_edit),
 		GEOXML_SEQUENCE(geoxml_flow_append_category(debr.menu, name)));
+	debr_has_category(name, TRUE);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 
@@ -1224,5 +1227,6 @@ menu_category_add(ValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
 static void
 menu_category_changed(void)
 {
+	menu_read_categories(debr.menu);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }

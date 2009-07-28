@@ -39,6 +39,7 @@ debr_init(void)
 
 	debr_config_load();
 
+	debr.categories_list = NULL;
 	debr.menu = NULL;
 	debr.program = NULL;
 	debr.parameter = NULL;
@@ -85,6 +86,9 @@ debr_quit(void)
 	g_slist_foreach(debr.tmpfiles, (GFunc)g_unlink, NULL);
 	g_slist_foreach(debr.tmpfiles, (GFunc)g_free, NULL);
 	g_slist_free(debr.tmpfiles);
+
+	g_list_foreach(debr.categories_list, (GFunc)g_free, NULL);
+	g_list_free(debr.categories_list);
 
 	g_object_unref(debr.pixmaps.stock_apply);
 	g_object_unref(debr.pixmaps.stock_cancel);
@@ -141,10 +145,8 @@ debr_config_save(void)
 	fclose(configfp);
 }
 
-/*
- * Function: debr_message
+/* Function: debr_message
  * Log a message. If in_statusbar is TRUE it is writen to status bar.
- *
  */
 void
 debr_message(enum log_message_type type, const gchar * message, ...)
@@ -166,4 +168,24 @@ debr_message(enum log_message_type type, const gchar * message, ...)
 	gtk_statusbar_push(GTK_STATUSBAR(debr.statusbar), 0, string);
 
 	g_free(string);
+}
+
+/* Function: debr_has_category
+ * Return TRUE if _category_ is present in the list of categories
+ * If _category_ doesn't belong to the list and _add_ is TRUE, then it is added
+ */
+gboolean
+debr_has_category(const gchar * category, gboolean add)
+{
+	GList *		i;
+
+	for (i = debr.categories_list; i != NULL; i = g_list_next(i))
+		if (strcmp((gchar*)i->data, category) == 0)
+			return TRUE;
+	if (add) {
+		debr.categories_list = g_list_append(debr.categories_list, g_strdup(category));
+		debr.categories_list = g_list_sort(debr.categories_list, (GCompareFunc)strcasecmp);
+	}
+
+	return FALSE;
 }
