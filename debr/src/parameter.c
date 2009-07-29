@@ -174,7 +174,7 @@ parameter_setup_ui(void)
 	gtk_tree_view_column_add_attribute(col, renderer, "text", PARAMETER_TYPE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_parameter.tree_view), col);
 	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes(_("Keyword"), renderer, NULL);
+	col = gtk_tree_view_column_new_with_attributes(_("Keyword / default value"), renderer, NULL);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", PARAMETER_KEYWORD);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_parameter.tree_view), col);
 	renderer = gtk_cell_renderer_text_new();
@@ -923,6 +923,7 @@ parameter_load_iter(GtkTreeIter * iter)
 
 	if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE) {
 		GString *		keyword;
+                GString *               default_value;
 
 		keyword = g_string_new(NULL);
 		g_string_assign(keyword, geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(parameter)));
@@ -930,9 +931,15 @@ parameter_load_iter(GtkTreeIter * iter)
 		if (keyword->str[keyword->len-1] ==  ' ') {
 			keyword_label = g_string_new_len(keyword->str, keyword->len - 1);
 			g_string_append_printf(keyword_label, "%lc", 0x02FD);
-		} else
+		} else {
 			keyword_label = g_string_new(keyword->str);
+                }
+                
+                default_value = geoxml_program_parameter_get_string_value(GEOXML_PROGRAM_PARAMETER(parameter), TRUE);
+                if (default_value->len)
+                        g_string_append_printf(keyword_label,  " [%s]", default_value->str);
 
+                g_string_free(default_value, TRUE);
 		g_string_free(keyword, TRUE);
 	} else {
 		GeoXmlSequence *	instance;
@@ -952,8 +959,8 @@ parameter_load_iter(GtkTreeIter * iter)
         
 	gtk_tree_store_set(debr.ui_parameter.tree_store, iter,
 		PARAMETER_TYPE, parameter_type->str,
-		PARAMETER_KEYWORD, keyword_label->str,
-		PARAMETER_LABEL, geoxml_parameter_get_label(parameter),
+                PARAMETER_KEYWORD, keyword_label->str,
+                PARAMETER_LABEL, geoxml_parameter_get_label(parameter),
 		-1);
 
 	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, iter))
