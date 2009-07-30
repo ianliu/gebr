@@ -24,6 +24,7 @@
 #include <libgebr.h>
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
+#include <libgebr/gui/utils.h>
 
 #include "debr.h"
 #include "menu.h"
@@ -174,14 +175,34 @@ debr_message(enum log_message_type type, const gchar * message, ...)
 gboolean
 debr_has_category(const gchar * category, gboolean add)
 {
-	GList *		i;
+	GtkTreeIter	iter;
 
-// 	for (i = debr.categories_list; i != NULL; i = g_list_next(i))
-// 		if (strcmp((gchar*)i->data, category) == 0)
-// 			return TRUE;
+	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.categories_model)) {
+		gchar *	i;
+		gint	ref_count;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.categories_model), &iter,
+			CATEGORY_NAME, &i,
+			CATEGORY_REF_COUNT, &ref_count,
+			-1);
+		if (strcmp(i, category) == 0) {
+			if (add)
+				gtk_list_store_set(debr.categories_model, &iter,
+					CATEGORY_REF_COUNT, ref_count+1,
+					-1);
+			g_free(i);
+			return TRUE;
+		}
+
+		g_free(i);
+	}
 	if (add) {
-// 		debr.categories_list = g_list_append(debr.categories_list, g_strdup(category));
-// 		debr.categories_list = g_list_sort(debr.categories_list, (GCompareFunc)strcasecmp);
+		gtk_list_store_append(debr.categories_model, &iter);
+		gtk_list_store_set(debr.categories_model, &iter,
+			CATEGORY_NAME, category,
+			CATEGORY_REF_COUNT, 1,
+			-1);
+		return TRUE;
 	}
 
 	return FALSE;

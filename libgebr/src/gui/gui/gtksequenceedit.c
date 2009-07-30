@@ -162,7 +162,7 @@ gtk_sequence_edit_class_init(GtkSequenceEditClass * class)
 		G_SIGNAL_RUN_LAST,
 		G_STRUCT_OFFSET(GtkSequenceEditClass, removed),
 		NULL, NULL,
-		_libgebr_marshal_VOID__STRING,
+		_libgebr_marshal_VOID__STRING_STRING,
 		G_TYPE_NONE, 2,
 		G_TYPE_STRING,
 		G_TYPE_STRING);
@@ -310,7 +310,7 @@ __gtk_sequence_edit_on_remove_activated(GtkWidget * button, GtkSequenceEdit * se
 		0, &old_text,
 		-1);
 
-	g_signal_emit(sequence_edit, object_signals[REMOVED], 0, old_text);
+	g_signal_emit(sequence_edit, object_signals[REMOVED], 0, old_text, "");
 	__gtk_sequence_edit_button_clicked(sequence_edit, GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->remove);
 
 	g_free(old_text);

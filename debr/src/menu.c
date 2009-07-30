@@ -58,6 +58,10 @@ static void
 menu_category_add(ValueSequenceEdit * sequence_edit, GtkComboBox * combo_box);
 static void
 menu_category_changed(void);
+static void
+menu_category_renamed(ValueSequenceEdit * sequence_edit, const gchar * old_text, const gchar * new_text);
+static void
+menu_category_removed(ValueSequenceEdit * sequence_edit, const gchar * old_text);
 
 /*
  * Section: Public
@@ -238,6 +242,7 @@ menu_load(const gchar * path)
 {
 	GeoXmlDocument *	menu;
 	int			ret;
+	GeoXmlSequence *	category;
 
 	if ((ret = geoxml_document_load(&menu, path))) {
 		debr_message(LOG_ERROR, _("Could not load menu at '%s': %s"), path,
@@ -245,22 +250,11 @@ menu_load(const gchar * path)
 		return NULL;
 	}
 
-	menu_read_categories(GEOXML_FLOW(menu));
-
-	return GEOXML_FLOW(menu);
-}
-
-/* Function: menu_read_categories
- * Read the list of categories in _menu
- */
-void
-menu_read_categories(GeoXmlFlow * menu)
-{
-	GeoXmlSequence *	category;
-
-	geoxml_flow_get_category(menu, &category, 0);
+	geoxml_flow_get_category(GEOXML_FLOW(menu), &category, 0);
 	for (; category != NULL; geoxml_sequence_next(&category))
 		debr_has_category(geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)), TRUE);
+
+	return GEOXML_FLOW(menu);
 }
 
 /*
@@ -822,13 +816,8 @@ menu_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_FILL), 0, 0);
 	gtk_misc_set_alignment(GTK_MISC(categories_label), 0, 0.5);
 
-	categories_combo = gtk_combo_box_entry_new_text();
+	categories_combo = gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(debr.categories_model), CATEGORY_NAME);
 	gtk_widget_show(categories_combo);
-// 	for (GList * i = debr.categories_list; i != NULL; i = g_list_next(i))
-// 		gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), (gchar*)i->data);
-	/* TODO: GtkComboBoxEntry doesn't have activate signal */
-// 	g_signal_connect(GTK_OBJECT(categories_combo), "activate",
-// 		GTK_SIGNAL_FUNC(category_add), NULL);
 
 	categories_sequence_edit = value_sequence_edit_new(categories_combo);
 	gtk_widget_show(categories_sequence_edit);
@@ -836,6 +825,10 @@ menu_dialog_setup_ui(void)
 		GTK_SIGNAL_FUNC(menu_category_add), categories_combo);
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "changed",
 		GTK_SIGNAL_FUNC(menu_category_changed), NULL);
+	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "renamed",
+		GTK_SIGNAL_FUNC(menu_category_renamed), NULL);
+	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "removed",
+		GTK_SIGNAL_FUNC(menu_category_removed), NULL);
 	gtk_table_attach(GTK_TABLE(table), categories_sequence_edit, 1, 2, 5, 6,
 		(GtkAttachOptions)(GTK_FILL),
 		(GtkAttachOptions)(GTK_FILL), 0, 0);
@@ -1211,13 +1204,51 @@ menu_category_add(ValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
 	g_free(name);
 }
 
-/*
- * Function: menu_category_changed
+/* Function: menu_category_changed
  * Just wrap signal to notify an unsaved status
  */
 static void
 menu_category_changed(void)
 {
-	menu_read_categories(debr.menu);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
+}
+
+/* Function: menu_category_renamed
+ * Update category list upon rename
+ */
+static void
+menu_category_renamed(ValueSequenceEdit * sequence_edit, const gchar * old_text, const gchar * new_text)
+{
+	menu_category_removed(sequence_edit, old_text);
+	debr_has_category(new_text, TRUE);
+}
+
+/* Function: menu_category_removed
+ * Update category list upon removal
+ */
+static void
+menu_category_removed(ValueSequenceEdit * sequence_edit, const gchar * old_text)
+{
+	GtkTreeIter	iter;
+
+	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.categories_model)) {
+		gchar *	i;
+		gint	ref_count;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.categories_model), &iter,
+			CATEGORY_NAME, &i,
+			CATEGORY_REF_COUNT, &ref_count,
+			-1);
+		if (strcmp(i, old_text) == 0) {
+			ref_count--;
+			if (ref_count == 0)
+				gtk_list_store_remove(debr.categories_model, &iter);
+			else
+				gtk_list_store_set(debr.categories_model, &iter, CATEGORY_REF_COUNT, ref_count, -1);
+			g_free(i);
+			break;
+		}
+
+		g_free(i);
+	}
 }

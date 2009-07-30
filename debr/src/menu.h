@@ -65,8 +65,6 @@ menu_new(void);
 GeoXmlFlow *
 menu_load(const gchar * path);
 void
-menu_read_categories(GeoXmlFlow * menu);
-void
 menu_load_user_directory(void);
 void
 menu_open(const gchar * path, gboolean select);
