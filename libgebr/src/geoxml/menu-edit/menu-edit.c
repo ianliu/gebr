@@ -21,7 +21,8 @@
 #include <glib.h>
 #include <geoxml.h>
 
-gboolean             filename = FALSE;
+gboolean             fixfname = FALSE;
+gchar*               setfname = NULL;
 gchar*               title    = NULL;
 gchar*               desc     = NULL;
 gchar*               author   = NULL;
@@ -36,7 +37,8 @@ gboolean             capt     = FALSE;
 /* Command-line parameters definition */
 static GOptionEntry entries[] =    {
 	{ "iprog", 'i', 0, G_OPTION_ARG_INT, &iprog, "index of program to edit", NULL},
-	{ "filename", 'f', 0, G_OPTION_ARG_NONE, &filename, "fix filename", NULL},
+	{ "fixfname", 'f', 0, G_OPTION_ARG_NONE, &fixfname, "fix filename", NULL},
+        { "setfname", 'F', 0, G_OPTION_ARG_FILENAME, &setfname, "set filename", NULL},
 	{ "title", 't', 0, G_OPTION_ARG_STRING, &title, "set title", ""},	
 	{ "desc", 'd', 0, G_OPTION_ARG_STRING, &desc, "set description", "one line description"},
 	{ "author", 'A', 0, G_OPTION_ARG_STRING, &author, "set authors", "name"},
@@ -104,7 +106,7 @@ int main (int argc, char** argv)
 		
 		nprog = geoxml_flow_get_programs_number(flow);
 			
-		if (filename){
+		if (fixfname){
 			geoxml_document_set_filename(doc, menu[imenu]);
 			geoxml_flow_get_program (flow, &seq, 0);
 			prog = GEOXML_PROGRAM(seq);
@@ -113,6 +115,16 @@ int main (int argc, char** argv)
 				geoxml_sequence_next(&seq);
 			}
 		}
+
+                if (setfname != NULL){
+                        geoxml_document_set_filename(doc, setfname);
+			geoxml_flow_get_program (flow, &seq, 0);
+			prog = GEOXML_PROGRAM(seq);
+			for (iprog=0; iprog < nprog; iprog++){
+				geoxml_program_set_menu(prog, setfname, iprog);
+				geoxml_sequence_next(&seq);
+			}
+                }
 
 		if (author != NULL)
 			geoxml_document_set_author(doc, author);
