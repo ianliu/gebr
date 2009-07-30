@@ -29,7 +29,6 @@ struct ui_preferences {
 	GtkWidget *		username;
 	GtkWidget *		email;
 	GtkWidget *		usermenus;
-	GtkWidget *		data;
 	GtkWidget *		editor;
 	GtkWidget *		browser;
 };

@@ -183,7 +183,7 @@ preferences_setup_ui(gboolean first_run)
 		}
 		if (gebr.config.browser->len > 0 && new_browser) {
 			gtk_combo_box_append_text(GTK_COMBO_BOX(ui_preferences->browser), gebr.config.browser->str);
-			gtk_combo_box_set_active(GTK_COMBO_BOX(ui_preferences->browser), NBROWSER );
+			gtk_combo_box_set_active(GTK_COMBO_BOX(ui_preferences->browser), NBROWSER);
 		}
 	}
 
@@ -210,44 +210,28 @@ preferences_actions(GtkDialog * dialog, gint arg1, struct ui_preferences * ui_pr
 	case GTK_RESPONSE_OK: {
 		gchar *		tmp;
 		gchar *		tmp3;
-		GString *	datadir;
 
 		tmp = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(ui_preferences->usermenus));
-
-		datadir = g_string_new(NULL);
-		if  (ui_preferences->data != NULL) {
-			gchar * tmp2;
-
-			tmp2 = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(ui_preferences->data));
-			g_string_assign(datadir, tmp2);
-			g_free(tmp2);
-		}
-		else
-			g_string_printf(datadir, "%s/.gebr/gebr/data", getenv("HOME"));
-
 		tmp3 = gtk_combo_box_get_active_text(GTK_COMBO_BOX(ui_preferences->browser));
 		if (tmp3 == NULL)
 			tmp3 = "";
 
 		g_string_assign(gebr.config.username,
-				gtk_entry_get_text(GTK_ENTRY(ui_preferences->username)));
+			gtk_entry_get_text(GTK_ENTRY(ui_preferences->username)));
 		g_string_assign(gebr.config.email,
-				gtk_entry_get_text(GTK_ENTRY(ui_preferences->email)));
+			gtk_entry_get_text(GTK_ENTRY(ui_preferences->email)));
 		g_string_assign(gebr.config.usermenus,
-				tmp);
-		g_string_assign(gebr.config.data,
-				datadir->str);
+			tmp);
 		g_string_assign(gebr.config.editor,
-				gtk_entry_get_text(GTK_ENTRY(ui_preferences->editor)));
+			gtk_entry_get_text(GTK_ENTRY(ui_preferences->editor)));
 		g_string_assign(gebr.config.browser,
-				tmp3);
+			tmp3);
 
 		gebr_config_save(TRUE);
 		gebr_config_apply();
 
 		g_free(tmp);
 		g_free(tmp3);
-		g_string_free(datadir, TRUE);
 
 		break;
 	} case GTK_RESPONSE_CANCEL: /* does nothing */
