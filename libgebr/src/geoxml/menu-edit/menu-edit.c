@@ -18,9 +18,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
 #include <glib.h>
-
 #include <geoxml.h>
 
 gboolean             filename = FALSE;

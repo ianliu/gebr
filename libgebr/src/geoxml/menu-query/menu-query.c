@@ -25,7 +25,7 @@
 #include <geoxml.h>
 #include <libgebr.h>
 
-enum FLAGS {
+enum FLAGS{
 	EMPTY   =  1 << 0,
 	CAPIT   =  1 << 1,
 	NOBLK   =  1 << 2,
@@ -493,25 +493,6 @@ show_program_parameter(GeoXmlProgramParameter *pp, gint ipar, guint isubpar)
 	
 	if (geoxml_program_parameter_get_required(pp))
 		printf("  REQUIRED ");
-
-        /* enum details */
-        if (geoxml_parameter_get_type(GEOXML_PARAMETER(pp)) == GEOXML_PARAMETERTYPE_ENUM){
-                GeoXmlSequence *enum_option;
-
-                geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
-                
-                for (; enum_option != NULL; geoxml_sequence_next(&enum_option)){
-                        printf("\n");
-                        if (isubpar) 
-                                printf("      ");
-
-                        printf("        %s (%s)",
-                               geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(enum_option)),
-                               geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(enum_option)));
-                }
-        }
-        
-
 	printf("\n\n");
 }
 
