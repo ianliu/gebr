@@ -16,17 +16,15 @@
 
 marshalers.c:
 	glib-genmarshal --prefix=_libgebr_marshal marshalers.list --body >marshalers.c
-marshalers.h:
 	glib-genmarshal --prefix=_libgebr_marshal marshalers.list --header >marshalers.h
-marshalers.o: marshalers.c marshalers.h
 
 lib_LTLIBRARIES = libgebr_gui.la
 libgebr_gui_la_SOURCES = \
+	marshalers.c \
 	about.c utils.c pixmaps.c icons.c help.c \
 	gtkfileentry.c gtkenhancedentry.c \
 	gtksequenceedit.c valuesequenceedit.c \
-	parameter.c \
-	marshalers.c
+	parameter.c
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = \
