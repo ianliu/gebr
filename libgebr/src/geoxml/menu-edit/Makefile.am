@@ -1,5 +1,5 @@
-# libgebr - GeBR Library
-# Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
+# libgebr - GÍBR Library
+# Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,18 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = geoxml data validate upgrade menu-edit menu-query doc
+bin_PROGRAMS = gebr-geoxml-menu-edit
+gebr_geoxml_menu_edit_SOURCES = menu-edit.c
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = gebr-geoxml.pc
-
-info_TEXINFOS = gebr-geoxml.texinfo
-man_MANS = gebr-geoxml.1
-EXTRA_DIST =					\
-	gebr-geoxml.pc				\
-	gebr-geoxml.1 gebr-geoxml.texinfo
-
-libgebr_geoxmlincludedir=$(includedir)/libgebr
-libgebr_geoxmlinclude_HEADERS=geoxml.h
-
-
+INCLUDES = -I.. \
+	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
+AM_CFLAGS = -Wall $(GDOME2_CFLAGS)
+gebr_geoxml_menu_edit_LDADD = ../geoxml/libgebr_geoxml.la
