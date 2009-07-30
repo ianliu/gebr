@@ -107,7 +107,7 @@ debr_config_load(void)
 
 	gebr_create_config_dirs();
 	debr.config.path = g_string_new(getenv("HOME"));
-	g_string_append(debr.config.path, "/.gebr/debr.conf");
+	g_string_append(debr.config.path, "/.gebr/debr/debr.conf");
 
 	error = NULL;
 	debr.config.key_file = g_key_file_new();

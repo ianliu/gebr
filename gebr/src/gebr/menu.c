@@ -77,11 +77,7 @@ menu_load(const gchar * filename)
 GeoXmlFlow *
 menu_load_path(const gchar * path)
 {
-	GeoXmlFlow *	menu;
-
-	menu = GEOXML_FLOW(document_load_path(path));
-
-	return menu;
+	return GEOXML_FLOW(document_load_path(path));
 }
 
 /*
@@ -162,7 +158,7 @@ menu_refresh_needed(void)
 
 	/* index path string */
 	index_path = g_string_new(NULL);
-	g_string_printf(index_path, "%s/.gebr/menus.idx", getenv("HOME"));
+	g_string_printf(index_path, "%s/.gebr/gebr/menus.idx", getenv("HOME"));
 	if (g_access(index_path->str, F_OK | R_OK) && menu_list_create_index() == FALSE)
 		goto out;
 
@@ -217,13 +213,11 @@ menu_list_populate(void)
 	error = NULL;
 	index_path = g_string_new(NULL);
 	line = g_string_new(NULL);
+	gtk_tree_store_clear(gebr.ui_flow_edition->menu_store);
 
-	g_string_printf(index_path, "%s/.gebr/menus.idx", getenv("HOME"));
+	g_string_printf(index_path, "%s/.gebr/gebr/menus.idx", getenv("HOME"));
 	if (g_access(index_path->str, F_OK | R_OK) && menu_list_create_index() == FALSE)
 		goto out;
-
-	/* Remove any previous menus from the list */
-	gtk_tree_store_clear(gebr.ui_flow_edition->menu_store);
 
 	index_io_channel = g_io_channel_new_file(index_path->str, "r", &error);
 	parent_iter = NULL;
@@ -257,8 +251,8 @@ menu_list_populate(void)
 				if (strcmp(category, titlebf->str)) {
 					gtk_tree_store_append(gebr.ui_flow_edition->menu_store, &category_iter, NULL);
 					gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &category_iter,
-							MENU_TITLE_COLUMN, titlebf->str,
-							-1);
+						MENU_TITLE_COLUMN, titlebf->str,
+						-1);
 					parent_iter = &category_iter;
 				}
 
@@ -266,8 +260,8 @@ menu_list_populate(void)
 			} else {
 				gtk_tree_store_append(gebr.ui_flow_edition->menu_store, &category_iter, NULL);
 				gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &category_iter,
-							MENU_TITLE_COLUMN, titlebf->str,
-							-1);
+					MENU_TITLE_COLUMN, titlebf->str,
+					-1);
 				parent_iter = &category_iter;
 			}
 
@@ -276,10 +270,10 @@ menu_list_populate(void)
 
 		gtk_tree_store_append(gebr.ui_flow_edition->menu_store, &iter, parent_iter);
 		gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &iter,
-				MENU_TITLE_COLUMN, parts[1],
-				MENU_DESC_COLUMN, parts[2],
-				MENU_FILE_NAME_COLUMN, parts[3],
-				-1);
+			MENU_TITLE_COLUMN, parts[1],
+			MENU_DESC_COLUMN, parts[2],
+			MENU_FILE_NAME_COLUMN, parts[3],
+			-1);
 
 		g_string_free(path, TRUE);
 cont:		g_strfreev(parts);
@@ -311,7 +305,7 @@ menu_list_create_index(void)
 	sort_file = g_string_new(NULL);
 	sort_cmd_line = g_string_new(NULL);
 
-	g_string_printf(path, "%s/.gebr/menus.idx", getenv("HOME"));
+	g_string_printf(path, "%s/.gebr/gebr/menus.idx", getenv("HOME"));
 	if ((index_fp = fopen(path->str, "w")) == NULL) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to write menus' index"));
 		ret = FALSE;

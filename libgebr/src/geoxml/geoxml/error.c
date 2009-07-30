@@ -22,22 +22,22 @@
 const gchar *
 geoxml_error_string(enum GEOXML_RETV error)
 {
-	gchar * 	error_string_array [] = {
-		_("Success."),
-		_("Null pointer."),
-		_("Not enough memory."),
-		_("Can't find file or permission denied."),
-		_("Invalid element index."),
-		_("Invalid document syntax or structure."),
-		_("DTD specified in XML."),
-		_("Could not find or read DTD."),
-		_("Not a sequence."),
-		_("An operation on two sequences requires that both sequences are of the same type."),
-		_("Not an enum."),
-		_("Reference to itlself"),
-		_("Not first instance of the group"),
+	static const gchar * 	error_string_array [] = {
+		N_("Success."),
+		N_("Null pointer."),
+		N_("Not enough memory."),
+		N_("Can't find file or permission denied."),
+		N_("Invalid element index."),
+		N_("Invalid document syntax or structure."),
+		N_("DTD specified in XML."),
+		N_("Could not find or read DTD."),
+		N_("Not a sequence."),
+		N_("An operation on two sequences requires that both sequences are of the same type."),
+		N_("Not an enum."),
+		N_("Reference to itlself"),
+		N_("Not first instance of the group"),
 	};
-	guint		index = -(guint)error;
+	guint			index = -(guint)error;
 
 	if (index > 11)
 		return NULL;
@@ -47,30 +47,30 @@ geoxml_error_string(enum GEOXML_RETV error)
 const gchar *
 geoxml_error_explained_string(enum GEOXML_RETV error)
 {
-	gchar * 	error_string_array [] = {
-		_("The operation was done successfuly."),
-		_("One or more mandatory function arguments were null."),
-		_("Not enough memory. "
+	static const gchar * 	error_string_array [] = {
+		N_("The operation was done successfuly."),
+		N_("One or more mandatory function arguments were null."),
+		N_("Not enough memory. "
 			"The library stoped after an unsucessful memory allocation."),
-		_("Can't access file. The file doesn't exist or there is not enough "
+		N_("Can't access file. The file doesn't exist or there is not enough "
 			"permission to read it."),
-		_("This element index does not exist in the sequence."),
-		_("Invalid XML syntax or it does not respect the structure "
+		N_("This element index does not exist in the sequence."),
+		N_("Invalid XML syntax or it does not respect the structure "
 			"defined on its corresponding document DTD."),
-		_("DTD was specified for the document. LibGeBR-GeoXml requires the document "
+		N_("DTD was specified for the document. LibGeBR-GeoXml requires the document "
 			"not to specify the DTD as it automatically find it and validate against."),
-		_("DTD for the corresponding document type (flow, line or project) and version "
+		N_("DTD for the corresponding document type (flow, line or project) and version "
 			"could not be found or accessed on the system.\n"
 			"You should verify if your installation is correct and if it supports "
 			"this document version (you might need to update your software)."),
-		_("The argument(s) passed are not inside a sequence and therefore sequence operations "
+		N_("The argument(s) passed are not inside a sequence and therefore sequence operations "
 			"doesn't apply. This is a type checking result error."),
-		_("An operation on two sequences requires that both sequences are of the same type."),
-		_("The function is only for enums. This is a type checking result error."),
-		_("The reference parameter references itself"),
-		_("The operation only applies to the first instance of the group")
+		N_("An operation on two sequences requires that both sequences are of the same type."),
+		N_("The function is only for enums. This is a type checking result error."),
+		N_("The reference parameter references itself"),
+		N_("The operation only applies to the first instance of the group")
 	};
-	guint		index = -(guint)error;
+	guint			index = -(guint)error;
 
 	if (index > 11)
 		return NULL;

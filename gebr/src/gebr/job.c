@@ -352,8 +352,8 @@ job_update_status(struct job * job)
 		return;
 	}
 	gtk_list_store_set(gebr.ui_job_control->store, &job->iter,
-			JC_ICON, pixbuf,
-			-1);
+		JC_ICON, pixbuf,
+		-1);
 
 	if (job_is_active(job) == FALSE || job->status == JOB_STATUS_RUNNING)
 		return;

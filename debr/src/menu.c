@@ -1211,9 +1211,10 @@ menu_category_add(ValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
 	name = gtk_combo_box_get_active_text(combo_box);
 	if (!strlen(name))
 		name = g_strdup(_("New category"));
+	else
+		debr_has_category(name, TRUE);
 	value_sequence_edit_add(VALUE_SEQUENCE_EDIT(sequence_edit),
 		GEOXML_SEQUENCE(geoxml_flow_append_category(debr.menu, name)));
-	debr_has_category(name, TRUE);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 

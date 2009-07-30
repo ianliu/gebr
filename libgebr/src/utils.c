@@ -132,6 +132,22 @@ home_mode(void)
 	return home_stat.st_mode;
 }
 
+static gboolean
+gebr_make_config_dir(const gchar * dirname)
+{
+	GString *	path;
+	gboolean	ret = TRUE;
+
+	path = g_string_new(NULL);
+	g_string_printf(path, "%s/.gebr/%s", getenv("HOME"), dirname);
+	if (g_file_test(path->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE)
+		if (g_mkdir(path->str, home_mode()))
+			ret = FALSE;
+	g_string_free(path, TRUE);
+
+	return ret;
+}
+
 /**
  * Create all configurations directories for all GeBR programs.
  * Used by GeBR programs before read/write config..
@@ -139,58 +155,62 @@ home_mode(void)
 gboolean
 gebr_create_config_dirs(void)
 {
-	GString *	gebr;
-	GString *	aux;
-	gboolean	ret;
+	GString *	string;
+	gboolean	ret = TRUE;
 
-	ret = TRUE;
-	gebr = g_string_new(NULL);
-	aux = g_string_new(NULL);
+	string = g_string_new(NULL);
 
-	/* Test for gebr conf dir */
-	g_string_printf(gebr, "%s/.gebr", getenv("HOME"));
-	if (g_file_test(gebr->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {
-		if (g_mkdir(gebr->str, home_mode())) {
-			ret = FALSE;
-			goto out;
-		}
+	/* Test for gebr conf dir and subdirs */
+	if (!gebr_make_config_dir(""))
+		goto err;
+	if (!gebr_make_config_dir("run"))
+		goto err;
+	if (!gebr_make_config_dir("log"))
+		goto err;
+	if (!gebr_make_config_dir("tmp"))
+		goto err;
+	if (!gebr_make_config_dir("debr"))
+		goto err;
+	if (!gebr_make_config_dir("gebr"))
+		goto err;
+	if (!gebr_make_config_dir("gebr/data"))
+		goto err;
+
+	/* DEPRECATED: migration from old structure */
+	g_string_printf(string, "%s/.gebr/gebrdata", getenv("HOME"));
+	if (g_file_test(string->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == TRUE) {
+		g_string_printf(string, "mv %s/.gebr/gebrdata/* %s/.gebr/gebr/data; rmdir %s/.gebr/gebrdata/",
+			getenv("HOME"), getenv("HOME"), getenv("HOME"));
+		if (system(string->str))
+			goto err;
 	}
-	/* Test for .gebr/run conf dir */
-	g_string_printf(aux, "%s/run", gebr->str);
-	if (g_file_test(aux->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {
-		if (g_mkdir(aux->str, home_mode())) {
-			ret = FALSE;
-			goto out;
-		}
+	g_string_printf(string, "%s/.gebr/menus.idx", getenv("HOME"));
+	if (g_file_test(string->str, G_FILE_TEST_EXISTS) == TRUE) {
+		g_string_printf(string, "mv %s/.gebr/menus.idx %s/.gebr/gebr",
+			getenv("HOME"), getenv("HOME"));
+		if (system(string->str))
+			goto err;
 	}
-	/* Test for .gebr/log conf dir */
-	g_string_printf(aux, "%s/log", gebr->str);
-	if (g_file_test(aux->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {
-		if (g_mkdir(aux->str, home_mode())) {
-			ret = FALSE;
-			goto out;
-		}
+	g_string_printf(string, "%s/.gebr/gebr.conf", getenv("HOME"));
+	if (g_file_test(string->str, G_FILE_TEST_EXISTS) == TRUE) {
+		g_string_printf(string, "mv %s/.gebr/gebr.conf %s/.gebr/gebr",
+			getenv("HOME"), getenv("HOME"));
+		if (system(string->str))
+			goto err;
 	}
-	/* Test for .gebr/gebrdata */
-	g_string_printf(aux, "%s/gebrdata", gebr->str);
-	if (g_file_test(aux->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {
-		if (g_mkdir(aux->str, home_mode())) {
-			ret = FALSE;
-			goto out;
-		}
-	}
-	/* Test for .gebr/tmp conf dir */
-	g_string_printf(aux, "%s/tmp", gebr->str);
-	if (g_file_test(aux->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == FALSE) {
-		if (g_mkdir(aux->str, home_mode())) {
-			ret = FALSE;
-			goto out;
-		}
+	g_string_printf(string, "%s/.gebr/debr.conf", getenv("HOME"));
+	if (g_file_test(string->str, G_FILE_TEST_EXISTS) == TRUE) {
+		g_string_printf(string, "mv %s/.gebr/debr.conf %s/.gebr/debr",
+			getenv("HOME"), getenv("HOME"));
+		if (system(string->str))
+			goto err;
 	}
 
-out:	g_string_free(gebr, TRUE);
-	g_string_free(aux, TRUE);
-	return ret;
+	goto out;
+err:	ret = FALSE;
+out:	g_string_free(string, TRUE);
+
+return ret;
 }
 
 /**

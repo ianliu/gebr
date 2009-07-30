@@ -68,16 +68,16 @@ gebr_init(void)
 	protocol_init();
 
 	/* check/create config dir */
-	if (gebr_create_config_dirs() == FALSE){
+	if (gebr_create_config_dirs() == FALSE) {
 		fprintf(stderr, _("Unable to create GêBR configuration files.\n"
 			"Perhaps you do not have write permission to your own\n"
 			"home directory or there is no space left on device.\n"));
 		protocol_destroy();
-		exit (-1);
+		exit(-1);
 	}
 
 	gebr.config.path = g_string_new(NULL);
-	g_string_printf(gebr.config.path, "%s/.gebr/gebr.conf", getenv("HOME"));
+	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", getenv("HOME"));
 
 	/* allocating list of temporary files */
 	gebr.tmpfiles = g_slist_alloc();
@@ -282,7 +282,7 @@ gebr_migrate_data_dir(void)
 	gboolean	empty;
 
 	new_data_dir = g_string_new(NULL);
-	g_string_printf(new_data_dir, "%s/.gebr/gebrdata", getenv("HOME"));
+	g_string_printf(new_data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
 
 	command_line = g_string_new("");
 	if (g_access(gebr.config.data->str, F_OK | R_OK)|| (dir = opendir(gebr.config.data->str)) == NULL)
@@ -347,7 +347,10 @@ gebr_config_load(gboolean nox)
 
 		gebr.config.data = g_key_file_load_string_key(gebr.config.key_file,
 			"general", "data", getenv("HOME"));
-		if (!g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))
+		/* DEPRECATED: old config structure */
+		if (g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))
+			g_string_printf(gebr.config.data, "%s/.gebr/gebr/data", getenv("HOME"));
+		else if (!g_str_has_suffix(gebr.config.data->str, ".gebr/gebr/data"))
 			gebr_migrate_data_dir();
 		gebr.config.browser = g_key_file_load_string_key(gebr.config.key_file, "general", "browser", "firefox");
 		gebr.config.editor = g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "gedit");
@@ -532,11 +535,9 @@ gebr_install_private_menus(gchar ** menu, gboolean overwrite)
 	GString *	target;
 	gboolean	ret;
 
-	/* check/create config dir */
-	gebr_create_config_dirs();
 	gebr.config.path = g_string_new(NULL);
-	g_string_printf(gebr.config.path, "%s/.gebr/gebr.conf", getenv("HOME"));
-
+	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", getenv("HOME"));
+	gebr_create_config_dirs();
 	if (gebr_config_load(TRUE)) {
 		fprintf(stderr, _("Unable to load GêBR configuration. Try run GêBR once.\n"));
 		return -2;

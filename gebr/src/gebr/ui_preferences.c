@@ -208,24 +208,23 @@ preferences_actions(GtkDialog * dialog, gint arg1, struct ui_preferences * ui_pr
 {
 	switch (arg1) {
 	case GTK_RESPONSE_OK: {
-		gchar *	   tmp;
-		gchar *	   tmp3;
-		GString *  datadir;
+		gchar *		tmp;
+		gchar *		tmp3;
+		GString *	datadir;
 
 		tmp = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(ui_preferences->usermenus));
 
-                datadir = g_string_new(NULL);
-                if  (ui_preferences->data != NULL){
-                        gchar * tmp2;
+		datadir = g_string_new(NULL);
+		if  (ui_preferences->data != NULL) {
+			gchar * tmp2;
 
-                        tmp2 = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(ui_preferences->data));
-                        g_string_assign(datadir, tmp2);
-                        g_free(tmp2);
-                }
-                else{
-                        g_string_printf(datadir, "%s/.gebr/gebrdata", getenv("HOME"));
-                }
-                        
+			tmp2 = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(ui_preferences->data));
+			g_string_assign(datadir, tmp2);
+			g_free(tmp2);
+		}
+		else
+			g_string_printf(datadir, "%s/.gebr/gebr/data", getenv("HOME"));
+
 		tmp3 = gtk_combo_box_get_active_text(GTK_COMBO_BOX(ui_preferences->browser));
 		if (tmp3 == NULL)
 			tmp3 = "";
@@ -248,7 +247,7 @@ preferences_actions(GtkDialog * dialog, gint arg1, struct ui_preferences * ui_pr
 
 		g_free(tmp);
 		g_free(tmp3);
-                g_string_free(datadir, TRUE);
+		g_string_free(datadir, TRUE);
 
 		break;
 	} case GTK_RESPONSE_CANCEL: /* does nothing */
