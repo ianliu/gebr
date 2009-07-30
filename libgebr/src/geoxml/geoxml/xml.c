@@ -296,34 +296,14 @@ __geoxml_get_element_index(GdomeElement * element)
 gulong
 __geoxml_get_elements_number(GdomeElement * parent_element, const gchar * tag_name)
 {
-	GdomeNodeList *		node_list;
-	GdomeDOMString *	string;
-	gulong			number;
+	GdomeElement *		child;
+	gulong			elements_number;
 
-	string = gdome_str_mkref(tag_name);
-	node_list = gdome_el_getElementsByTagName(parent_element, string, &exception);
-	number = gdome_nl_length(node_list, &exception);
-
-	gdome_str_unref(string);
-	gdome_nl_unref(node_list, &exception);
-
-	return number;
-
-// 	GString *		expression;
-// 	GdomeElement *		child;
-// 	gulong			elements_number;
-// 
-// 	expression = g_string_new(NULL);
-// 	elements_number = 0;
-// 
-// 	g_string_printf(expression, "child::%s", tag_name);
-// 	/* TODO: use an expression instead */
-// 	__geoxml_foreach_xpath_result(child, __geoxml_xpath_evaluate(parent_element, expression->str))
-// 		elements_number++;
-// 
-// 	g_string_free(expression, TRUE);
-// 
-// 	return elements_number;
+	elements_number = 0;
+	for (child = __geoxml_get_first_element(parent_element, tag_name); child != NULL; elements_number++)
+		child = __geoxml_next_same_element(child);
+	
+	return elements_number;
 }
 
 const gchar *
