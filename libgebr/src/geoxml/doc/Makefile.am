@@ -1,5 +1,5 @@
-# libgebr - GêBR Library
-# Copyright (C) 2007  Bráulio Barros de Oliveira (brauliobo@gmail.com)
+# libgebr - GÃªBR Library
+# Copyright (C) 2007  BrÃ¡ulio Barros de Oliveira (brauliobo@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

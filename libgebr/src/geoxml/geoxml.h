@@ -133,9 +133,9 @@
  * 	"GeoXmlValueSequence" -> "GeoXmlPropertyValue";
  * }
  * \enddot
- * Discussions group: http://groups.google.com/group/gebr and http://groups.google.com/group/gebr-devel
+ * Project home page: http://www.gebrproject.com/
  * \author
- * Br�ulio Barros de Oliveira (brauliobo@gmail.com)
+ * Braulio Barros de Oliveira (brauliobo@gmail.com)
  */
 
 /* For more information, go to libgebr-geoxml's documentation at
