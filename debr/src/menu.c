@@ -39,12 +39,6 @@
  * Declarations
  */
 
-enum {
-	CATEGORY_NAME,
-	CATEGORY_XMLPOINTER,
-	CATEGORY_N_COLUMN
-};
-
 static GtkMenu *
 menu_popup_menu(GtkTreeView * tree_view);
 
@@ -313,16 +307,13 @@ void
 menu_open(const gchar * path, gboolean select)
 {
 	GtkTreeIter		iter;
-	gboolean		valid;
 
 	gchar *			filename;
         const gchar *		date;
 	gchar *			tmp;
 	GeoXmlFlow *		menu;
 
-	/* check if it is already open */
-	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter);
-	while (valid) {
+	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.list_store)) {
 		gchar *	ipath;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
@@ -336,7 +327,6 @@ menu_open(const gchar * path, gboolean select)
 			return;
 		}
 		g_free(ipath);
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter);
 	}
 
 	menu = menu_load(path);
@@ -834,8 +824,8 @@ menu_dialog_setup_ui(void)
 
 	categories_combo = gtk_combo_box_entry_new_text();
 	gtk_widget_show(categories_combo);
-	for (GList * i = debr.categories_list; i != NULL; i = g_list_next(i))
-		gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), (gchar*)i->data);
+// 	for (GList * i = debr.categories_list; i != NULL; i = g_list_next(i))
+// 		gtk_combo_box_append_text(GTK_COMBO_BOX(categories_combo), (gchar*)i->data);
 	/* TODO: GtkComboBoxEntry doesn't have activate signal */
 // 	g_signal_connect(GTK_OBJECT(categories_combo), "activate",
 // 		GTK_SIGNAL_FUNC(category_add), NULL);

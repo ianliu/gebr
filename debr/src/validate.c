@@ -200,15 +200,11 @@ void
 validate_clear(void)
 {
 	GtkTreeIter		iter;
-	gboolean		valid;
 
-	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_validate.list_store), &iter);
-	while (valid) {
+	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_validate.list_store)) {
 		struct validate *	validate;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_validate.list_store), &iter, VALIDATE_POINTER, &validate, -1);
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_validate.list_store), &iter);
-
 		validate_free(validate);
 	}
 }

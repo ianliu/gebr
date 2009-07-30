@@ -309,20 +309,17 @@ void
 job_control_clear(void)
 {
 	GtkTreeIter		iter;
-	gboolean		valid;
 
-	if (confirm_action_dialog(_("Clear all jobs"), _("Are you sure you want to clear all jobs from all servers?")) == FALSE)
+	if (confirm_action_dialog(_("Clear all jobs"),
+	_("Are you sure you want to clear all jobs from all servers?")) == FALSE)
 		return;
 
-	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
-	while (valid) {
+	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_job_control->store)) {
 		struct job *	job;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
-				JC_STRUCT, &job,
-				-1);
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
-
+			JC_STRUCT, &job,
+			-1);
 		job_close(job);
 	}
 	job_control_clear_or_select_first();

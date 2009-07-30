@@ -14,12 +14,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+marshalers.c:
+	glib-genmarshal --prefix=_libgebr_marshal marshalers.list --body >marshalers.c
+marshalers.h:
+	glib-genmarshal --prefix=_libgebr_marshal marshalers.list --header >marshalers.h
+marshalers.o: marshalers.c marshalers.h
+
 lib_LTLIBRARIES = libgebr_gui.la
 libgebr_gui_la_SOURCES = \
 	about.c utils.c pixmaps.c icons.c help.c \
 	gtkfileentry.c gtkenhancedentry.c \
 	gtksequenceedit.c valuesequenceedit.c \
-	parameter.c
+	parameter.c \
+	marshalers.c
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = \
@@ -27,8 +34,8 @@ libgebr_guisubinclude_HEADERS = \
 	gtkfileentry.h gtkenhancedentry.h \
 	gtksequenceedit.h valuesequenceedit.h \
 	parameter.h
-noinst_HEADERS =
-EXTRA_DIST = ${noinst_HEADERS}
+noinst_HEADERS = marshalers.h
+EXTRA_DIST = ${noinst_HEADERS} marshalers.list 
 
 INCLUDES = -I../.. -I../../geoxml $(WEBKIT_ENABLED) \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" \

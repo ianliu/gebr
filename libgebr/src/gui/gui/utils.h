@@ -70,6 +70,19 @@ libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
 			(g_list_foreach(__list, (GFunc)gtk_tree_iter_free, NULL), g_list_free(__list), 0); \
 		__i = g_list_next(__i))
 
+#define libgebr_gtk_tree_model_foreach(iter, tree_model) \
+	libgebr_gtk_tree_model_foreach_hyg(iter, tree_model, __nohyg)
+/* iterates over all toplevel iters in a treemodel
+ * made with iter removal protection
+ */
+#define libgebr_gtk_tree_model_foreach_hyg(iter, tree_model, hygid) \
+	gboolean valid##hygid; \
+	GtkTreeIter iter##hygid; \
+	for (valid##hygid = gtk_tree_model_get_iter_first(tree_model, &iter), iter##hygid = iter; \
+	valid##hygid == TRUE && ((valid##hygid = gtk_tree_model_iter_next(tree_model, &iter##hygid)), 1); \
+	iter = iter##hygid)
+
+
 typedef GtkMenu * (*GtkPopupCallback)(GtkWidget *, gpointer);
 gboolean
 gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpointer user_data);

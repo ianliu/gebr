@@ -38,6 +38,12 @@ enum NOTEBOOK_PAGE {
 	NOTEBOOK_PAGE_VALIDATE,
 };
 
+enum CategoryModel {
+	CATEGORY_NAME,
+	CATEGORY_REF_COUNT,
+	CATEGORY_N_COLUMN
+};
+
 struct debr {
 	/* current stuff being edited */
 	GeoXmlFlow *		menu;
@@ -81,7 +87,7 @@ struct debr {
 		GString *	browser;
 	} config;
 
-	GList *			categories_list;
+	GtkListStore *		categories_model;
 
 	/* temporary files removed when GeBRME quits */
 	GSList *		tmpfiles;

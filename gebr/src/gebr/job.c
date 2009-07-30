@@ -148,26 +148,21 @@ struct job *
 job_find(GString * address, GString * jid)
 {
 	GtkTreeIter	iter;
-	gboolean	valid;
-
 	struct job *	job;
 
 	job = NULL;
-	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
-	while (valid) {
+	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_job_control->store)) {
 		struct job *	i;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
-				JC_STRUCT, &i,
-				-1);
+			JC_STRUCT, &i,
+			-1);
 
 		if (!strcmp(i->server->comm->address->str, address->str) &&
-			!strcmp(i->jid->str, jid->str)) {
+		!strcmp(i->jid->str, jid->str)) {
 			job = i;
 			break;
 		}
-
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
 	}
 
 	return job;

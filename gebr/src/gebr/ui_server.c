@@ -257,10 +257,8 @@ server_common_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * u
 	switch (arg1) {
 	case RESPONSE_CONNECT_ALL: {
 		GtkTreeIter	iter;
-		gboolean	valid;
 
-		valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(ui_server_common->store), &iter);
-		while (valid) {
+		libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->store)) {
 			struct server *	server;
 
 			gtk_tree_model_get(GTK_TREE_MODEL(ui_server_common->store), &iter,
@@ -269,17 +267,13 @@ server_common_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * u
 
 			if (comm_server_is_logged(server->comm) == FALSE)
 				comm_server_connect(server->comm);
-
-			valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(ui_server_common->store), &iter);
 		}
 
 		break;
 	} case RESPONSE_DISCONNECT_ALL: {
 		GtkTreeIter	iter;
-		gboolean	valid;
 
-		valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(ui_server_common->store), &iter);
-		while (valid) {
+		libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->store)) {
 			struct server *	server;
 
 			gtk_tree_model_get(GTK_TREE_MODEL(ui_server_common->store), &iter,
@@ -288,8 +282,6 @@ server_common_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * u
 
 			if (comm_server_is_logged(server->comm) == TRUE)
 				comm_server_disconnect(server->comm);
-
-			valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(ui_server_common->store), &iter);
 		}
 
 		break;
@@ -313,11 +305,9 @@ static void
 server_list_add(struct ui_server_list * ui_server_list, const gchar * address)
 {
 	GtkTreeIter	iter;
-	gboolean	valid;
 
 	/* check if it is already in list */
-	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(ui_server_list->common.store), &iter);
-	while (valid) {
+	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_list->common.store)) {
 		struct server *	server;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(ui_server_list->common.store), &iter,
@@ -332,8 +322,6 @@ server_list_add(struct ui_server_list * ui_server_list, const gchar * address)
 
 			return;
 		}
-
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(ui_server_list->common.store), &iter);
 	}
 
 	/* finally */
@@ -511,7 +499,6 @@ server_select_setup_ui(void)
 
 	GtkTreeSelection *		selection;
 	GtkTreeIter			iter;
-	gboolean			valid;
 	gulong				handler_id;
 
 	GtkTreeIter			first_connected_iter;
@@ -521,8 +508,7 @@ server_select_setup_ui(void)
 	/* initializations */
 	server = NULL;
 	connected = 0;
-	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
-	while (valid) {
+	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
 		struct server *	server;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
@@ -531,8 +517,6 @@ server_select_setup_ui(void)
 		if (comm_server_is_logged(server->comm) == TRUE)
 			if (connected++ == 0)
 				first_connected_iter = iter;
-
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
 	}
 	if (connected == 0) {
 		gebr_message(LOG_ERROR, TRUE, FALSE,

@@ -36,6 +36,7 @@
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
+#include <libgebr/gui/utils.h>
 
 #include "gebr.h"
 #include "project.h"
@@ -116,7 +117,6 @@ gboolean
 gebr_quit(void)
 {
 	GtkTreeIter	iter;
-	gboolean	valid;
 
 	gebr_config_save(FALSE);
 	if (gebr.flow_clipboard != NULL) {
@@ -148,25 +148,21 @@ gebr_quit(void)
 	log_close(gebr.log);
 
 	/* Free servers structs */
-	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
-	while (valid) {
+	libgebr_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
 		struct server *	server;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 			SERVER_POINTER, &server,
 			-1);
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
 		server_free(server);
 	}
 	/* Free jobs structs */
-	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
-	while (valid) {
+	libgebr_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_job_control->store), 2) {
 		struct job *	job;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
 			JC_STRUCT, &job,
 			-1);
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
 		job_free(job);
 	}
 	protocol_destroy();
@@ -427,7 +423,6 @@ void
 gebr_config_save(gboolean verbose)
 {
 	GtkTreeIter	iter;
-	gboolean	valid;
 
 	gsize		length;
 	gchar *		string;
@@ -453,8 +448,7 @@ gebr_config_save(gboolean verbose)
 	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_word_wrap", gebr.config.job_log_word_wrap);
 
 	/* Save list of servers */
-	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
-	while (valid) {
+	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
 		struct server *	server;
 		GString *	group;
 		gboolean	autoconnect;
@@ -469,7 +463,6 @@ gebr_config_save(gboolean verbose)
 		g_key_file_set_string(gebr.config.key_file, group->str, "address", server->comm->address->str);
 		g_key_file_set_boolean(gebr.config.key_file, group->str, "autoconnect", autoconnect);
 
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter);
 		g_string_free(group, TRUE);
 	}
 

@@ -53,6 +53,8 @@ struct _GtkSequenceEditClass {
 	/* signals */
 	void		(*add_request)(GtkSequenceEdit * self);
 	void		(*changed)(GtkSequenceEdit * self);
+	void		(*renamed)(GtkSequenceEdit * self, const gchar * old_text, const gchar * new_text);
+	void		(*removed)(GtkSequenceEdit * self, const gchar * old_text);
 	/* virtual */
 	void		(*add)(GtkSequenceEdit * self);
 	void		(*remove)(GtkSequenceEdit * self, GtkTreeIter * iter);

@@ -39,7 +39,7 @@ debr_init(void)
 
 	debr_config_load();
 
-	debr.categories_list = NULL;
+	debr.categories_model = gtk_list_store_new(CATEGORY_N_COLUMN, G_TYPE_STRING, G_TYPE_INT);
 	debr.menu = NULL;
 	debr.program = NULL;
 	debr.parameter = NULL;
@@ -86,9 +86,6 @@ debr_quit(void)
 	g_slist_foreach(debr.tmpfiles, (GFunc)g_unlink, NULL);
 	g_slist_foreach(debr.tmpfiles, (GFunc)g_free, NULL);
 	g_slist_free(debr.tmpfiles);
-
-	g_list_foreach(debr.categories_list, (GFunc)g_free, NULL);
-	g_list_free(debr.categories_list);
 
 	g_object_unref(debr.pixmaps.stock_apply);
 	g_object_unref(debr.pixmaps.stock_cancel);
@@ -179,12 +176,12 @@ debr_has_category(const gchar * category, gboolean add)
 {
 	GList *		i;
 
-	for (i = debr.categories_list; i != NULL; i = g_list_next(i))
-		if (strcmp((gchar*)i->data, category) == 0)
-			return TRUE;
+// 	for (i = debr.categories_list; i != NULL; i = g_list_next(i))
+// 		if (strcmp((gchar*)i->data, category) == 0)
+// 			return TRUE;
 	if (add) {
-		debr.categories_list = g_list_append(debr.categories_list, g_strdup(category));
-		debr.categories_list = g_list_sort(debr.categories_list, (GCompareFunc)strcasecmp);
+// 		debr.categories_list = g_list_append(debr.categories_list, g_strdup(category));
+// 		debr.categories_list = g_list_sort(debr.categories_list, (GCompareFunc)strcasecmp);
 	}
 
 	return FALSE;

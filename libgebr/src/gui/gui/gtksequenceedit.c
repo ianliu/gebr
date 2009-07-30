@@ -21,6 +21,7 @@
 
 #include "gtksequenceedit.h"
 #include "utils.h"
+#include "marshalers.h"
 
 /*
  * Prototypes
@@ -57,6 +58,8 @@ enum {
 enum {
 	ADD_REQUEST = 0,
 	CHANGED,
+	RENAMED,
+	REMOVED,
 	LAST_SIGNAL
 };
 static guint object_signals[LAST_SIGNAL];
@@ -145,6 +148,24 @@ gtk_sequence_edit_class_init(GtkSequenceEditClass * class)
 		NULL, NULL, /* acumulators */
 		g_cclosure_marshal_VOID__VOID,
 		G_TYPE_NONE, 0);
+	object_signals[RENAMED] = g_signal_new(("renamed"),
+		GTK_TYPE_SEQUENCE_EDIT,
+		G_SIGNAL_RUN_LAST,
+		G_STRUCT_OFFSET(GtkSequenceEditClass, renamed),
+		NULL, NULL,
+		_libgebr_marshal_VOID__STRING_STRING,
+		G_TYPE_NONE, 2,
+		G_TYPE_STRING,
+		G_TYPE_STRING);
+	object_signals[REMOVED] = g_signal_new(("removed"),
+		GTK_TYPE_SEQUENCE_EDIT,
+		G_SIGNAL_RUN_LAST,
+		G_STRUCT_OFFSET(GtkSequenceEditClass, removed),
+		NULL, NULL,
+		_libgebr_marshal_VOID__STRING,
+		G_TYPE_NONE, 2,
+		G_TYPE_STRING,
+		G_TYPE_STRING);
 
 	/* virtual definition */
 	class->add = NULL;
@@ -278,7 +299,21 @@ __gtk_sequence_edit_on_add_clicked(GtkWidget * button, GtkSequenceEdit * sequenc
 static void
 __gtk_sequence_edit_on_remove_activated(GtkWidget * button, GtkSequenceEdit * sequence_edit)
 {
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+	gchar *			old_text;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(sequence_edit->tree_view));
+	gtk_tree_selection_get_selected(selection, &model, &iter);
+	gtk_tree_model_get(GTK_TREE_MODEL(sequence_edit->list_store), &iter,
+		0, &old_text,
+		-1);
+
+	g_signal_emit(sequence_edit, object_signals[REMOVED], 0, old_text);
 	__gtk_sequence_edit_button_clicked(sequence_edit, GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->remove);
+
+	g_free(old_text);
 }
 
 static gboolean
@@ -308,11 +343,18 @@ __gtk_sequence_edit_on_edited(GtkCellRendererText * cell, gchar * path_string, g
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
 	GtkTreeIter		iter;
+	gchar *			old_text;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(sequence_edit->tree_view));
 	gtk_tree_selection_get_selected(selection, &model, &iter);
+	gtk_tree_model_get(GTK_TREE_MODEL(sequence_edit->list_store), &iter,
+		0, &old_text,
+		-1);
 
+	g_signal_emit(sequence_edit, object_signals[RENAMED], 0, old_text, new_text);
 	GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->rename(sequence_edit, &iter, new_text);
+
+	g_free(old_text);
 }
 
 static void
