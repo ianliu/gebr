@@ -25,7 +25,7 @@
 gboolean
 line_new(void);
 gboolean
-line_delete(void);
+line_delete(gboolean confirm);
 GeoXmlLine *
 line_import(const gchar * line_filename, const gchar * at_dir);
 

@@ -24,9 +24,8 @@
 
 void
 project_new(void);
-
 gboolean
-project_delete(void);
+project_delete(gboolean confirm);
 
 GtkTreeIter
 project_append_iter(GeoXmlProject * project);

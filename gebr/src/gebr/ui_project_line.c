@@ -623,16 +623,20 @@ project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectionType che
 	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
-	const gchar *		no_line_selected;
+	GtkTreePath *		path;
+	gboolean		is_line;
+	static const gchar *	no_line_selected;
+	static const gchar *	no_project_selected;
 
 	no_line_selected = _("Please select a line");
+	no_project_selected = _("Please select a project");
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
 		switch (check_type) {
 		case DontWarnUnselection:
 			break;
 		case ProjectSelection:
-			gebr_message(LOG_ERROR, TRUE, FALSE, _("Please select a project"));
+			gebr_message(LOG_ERROR, TRUE, FALSE, no_project_selected);
 			break;
 		case LineSelection:
 			gebr_message(LOG_ERROR, TRUE, FALSE, no_line_selected);
@@ -645,16 +649,16 @@ project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectionType che
 	}
 	if (_iter != NULL)
 		*_iter = iter;
-	if (check_type == LineSelection) {
-		GtkTreePath *	path;
-		gboolean	is_line;
-
-		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
-		is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
-		if (!is_line)
-			gebr_message(LOG_ERROR, TRUE, FALSE, no_line_selected);
-
-		return is_line;
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
+	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
+	gtk_tree_path_free(path);
+	if (check_type == LineSelection && !is_line) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_line_selected);
+		return FALSE;
+	}
+	if (check_type == ProjectSelection && is_line) {
+		gebr_message(LOG_ERROR, TRUE, FALSE, no_project_selected);
+		return FALSE;
 	}
 
 	return TRUE;
@@ -714,7 +718,7 @@ project_line_load(void)
 	gchar *			line_filename;
 
 	project_line_free();
-	if (!project_line_get_selected(&iter, TRUE))
+	if (!project_line_get_selected(&iter, DontWarnUnselection))
 		return;
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
@@ -787,7 +791,7 @@ project_line_popup_menu(GtkWidget * widget, struct ui_project_line * ui_project_
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(gebr.action_group, "project_line_new_project")));
 
-	if (!project_line_get_selected(NULL, FALSE))
+	if (!project_line_get_selected(NULL, DontWarnUnselection))
 		goto out;
 
 	/* new line */

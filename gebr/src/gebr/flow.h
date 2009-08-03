@@ -23,7 +23,7 @@ flow_new(void);
 void
 flow_free(void);
 void
-flow_delete(void);
+flow_delete(gboolean confirm);
 void
 flow_import(void);
 void

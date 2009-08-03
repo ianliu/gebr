@@ -665,6 +665,7 @@ _libgebr_message_dialog(GtkMessageType type, GtkButtonsType buttons,
 	GtkWidget *	dialog;
 
 	gchar *		string;
+	gint		ret;
 	gboolean	confirmed;
 
 	string = g_strdup_vprintf(message, args);
@@ -673,7 +674,8 @@ _libgebr_message_dialog(GtkMessageType type, GtkButtonsType buttons,
 		type, buttons, string);
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
-	confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES || GTK_RESPONSE_OK ? TRUE : FALSE;
+	ret = gtk_dialog_run(GTK_DIALOG(dialog));
+	confirmed = (ret == GTK_RESPONSE_YES || ret == GTK_RESPONSE_OK) ? TRUE : FALSE;
 
 	gtk_widget_destroy(dialog);
 	g_free(string);

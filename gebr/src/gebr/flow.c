@@ -89,7 +89,8 @@ flow_new(void)
 
 	flow_browse_select_iter(&iter);
 	gebr_message(LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'"), line_title);
-	on_flow_properties_activate();
+	if (!on_flow_properties_activate())
+		flow_delete(FALSE);
 
 	return TRUE;
 }
@@ -115,7 +116,7 @@ flow_free(void)
  * Delete the selected flow in flow browser
  */
 void
-flow_delete(void)
+flow_delete(gboolean confirm)
 {
 	GtkTreeIter		iter;
 
@@ -126,7 +127,7 @@ flow_delete(void)
 
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
-	if (confirm_action_dialog(_("Delete flow"),
+	if (confirm && confirm_action_dialog(_("Delete flow"),
 	_("Are you sure you want to delete selected(s) flow(s)?")) == FALSE)
 		return;
 
@@ -137,9 +138,11 @@ flow_delete(void)
 			-1);
 
 		/* Some feedback */
-		gebr_message(LOG_INFO, TRUE, FALSE, _("Erasing flow '%s'"), title);
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Erasing flow '%s' from line '%s'"),
-			title, geoxml_document_get_title(GEOXML_DOCUMENT(gebr.line)));
+		if (confirm) {
+			gebr_message(LOG_INFO, TRUE, FALSE, _("Erasing flow '%s'"), title);
+			gebr_message(LOG_INFO, FALSE, TRUE, _("Erasing flow '%s' from line '%s'"),
+				title, geoxml_document_get_title(GEOXML_DOCUMENT(gebr.line)));
+		}
 
 		/* Seek and destroy */
 		geoxml_line_get_flow(gebr.line, &line_flow, 0);

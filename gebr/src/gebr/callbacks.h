@@ -33,7 +33,7 @@ void
 on_project_line_new_line_activate(void);
 void
 on_project_line_delete_activate(void);
-void
+gboolean
 on_project_line_properties_activate(void);
 void
 on_project_line_paths_activate(void);
@@ -52,7 +52,7 @@ void
 on_flow_export_as_menu_activate(void);
 void
 on_flow_delete_activate(void);
-void
+gboolean
 on_flow_properties_activate(void);
 void
 on_flow_io_activate(void);

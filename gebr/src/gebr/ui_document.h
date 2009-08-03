@@ -22,19 +22,7 @@
 
 #include <libgebr/geoxml.h>
 
-struct ui_document_properties {
-	GtkWidget *		dialog;
-
-	GeoXmlDocument *	document;
-
-	GtkWidget *		title;
-	GtkWidget *		description;
-	GtkWidget *		help;
-	GtkWidget *		author;
-	GtkWidget *		email;
-};
-
-struct ui_document_properties *
+gboolean
 document_properties_setup_ui(GeoXmlDocument * document);
 
 #endif //__UI_DOCUMENT_H

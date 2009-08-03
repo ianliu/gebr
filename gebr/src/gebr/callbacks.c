@@ -84,7 +84,6 @@ on_quit_activate(void)
 /*
  * Function: on_project_line_new_project_activate
  * Call <project_new> from <project.c>
- *
  */
 void
 on_project_line_new_project_activate(void)
@@ -95,7 +94,6 @@ on_project_line_new_project_activate(void)
 /*
  * Function: on_project_line_new_line_activate
  * Call <project_new> from <project.c>
- *
  */
 void
 on_project_line_new_line_activate(void)
@@ -106,35 +104,32 @@ on_project_line_new_line_activate(void)
 /*
  * Function: on_project_line_delete_activate
  * Call <project_delete> from <project.c>
- *
  */
 void
 on_project_line_delete_activate(void)
 {
 	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
-		project_delete();
+		project_delete(TRUE);
 	else
-		line_delete();
+		line_delete(TRUE);
 }
 
-/*
- * Function: on_project_line_properties_activate
- * *Fill me in!*
- *
+/* Function: on_project_line_properties_activate
+ * Open properties for current selected project or line.
+ * Return TRUE if dialog was confirmed.
  */
-void
+gboolean
 on_project_line_properties_activate(void)
 {
 	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
-		document_properties_setup_ui(GEOXML_DOC(gebr.project));
+		return document_properties_setup_ui(GEOXML_DOC(gebr.project));
 	else
-		document_properties_setup_ui(GEOXML_DOC(gebr.line));
+		return document_properties_setup_ui(GEOXML_DOC(gebr.line));
 }
 
 /*
  * Function: on_project_line_paths_activate
  * *Fill me in!*
- *
  */
 void
 on_project_line_paths_activate(void)
@@ -145,7 +140,6 @@ on_project_line_paths_activate(void)
 /*
  * Function: on_project_line_import_activate
  * Call <project_line_import> from <ui_project_line.c>
- *
  */
 void
 on_project_line_import_activate(void)
@@ -156,7 +150,6 @@ on_project_line_import_activate(void)
 /*
  * Function: on_project_line_export_activate
  * Call <project_line_export> from <ui_project_line.c>
- *
  */
 void
 on_project_line_export_activate(void)
@@ -167,7 +160,6 @@ on_project_line_export_activate(void)
 /*
  * Function: on_flow_new_activate
  * Call <flow_new> from <flow.c>
- *
  */
 void
 on_flow_new_activate(void)
@@ -178,7 +170,6 @@ on_flow_new_activate(void)
 /*
  * Function: on_flow_import_activate
  * Call <flow_import> from <flow.c>
- *
  */
 void
 on_flow_import_activate(void)
@@ -189,7 +180,6 @@ on_flow_import_activate(void)
 /*
  * Function: on_flow_export_activate
  * Call <flow_export> from <flow.c>
- *
  */
 void
 on_flow_export_activate(void)
@@ -210,12 +200,11 @@ on_flow_export_as_menu_activate(void)
 /*
  * Function: on_flow_delete_activate
  * Call <flow_delete> from <flow.c>
- *
  */
 void
 on_flow_delete_activate(void)
 {
-	flow_delete();
+	flow_delete(TRUE);
 }
 
 /*
@@ -223,10 +212,10 @@ on_flow_delete_activate(void)
  * Call <flow_new> from <flow.c>
  *
  */
-void
+gboolean
 on_flow_properties_activate(void)
 {
-	document_properties_setup_ui(GEOXML_DOC(gebr.flow));
+	return document_properties_setup_ui(GEOXML_DOC(gebr.flow));
 }
 
 /*

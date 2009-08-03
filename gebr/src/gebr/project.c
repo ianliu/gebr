@@ -37,8 +37,7 @@
 #include "flow.h"
 #include "line.h"
 #include "callbacks.h"
-
-gchar * no_project_selected_error = N_("No project selected");
+#include "ui_project_line.h"
 
 /*
  * Function: project_new
@@ -48,7 +47,6 @@ gchar * no_project_selected_error = N_("No project selected");
 void
 project_new(void)
 {
-	GtkTreeSelection *	selection;
 	GtkTreeIter		iter;
 
 	GeoXmlDocument *	project;
@@ -58,24 +56,19 @@ project_new(void)
 	geoxml_document_set_author(project, gebr.config.username->str);
 	geoxml_document_set_email(project, gebr.config.email->str);
 	document_save(project);
-	geoxml_document_free(project);
 
 	gtk_tree_store_append(gebr.ui_project_line->store, &iter, NULL);
 	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
 		PL_TITLE, geoxml_document_get_title(project),
 		PL_FILENAME, geoxml_document_get_filename(project),
 		-1);
-
-	/* feedback */
+	project_line_set_selected(&iter, GEOXML_DOCUMENT(project));
 	gebr_message(LOG_INFO, FALSE, TRUE, _("New project created"));
 
-	/* select it */
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	gtk_tree_selection_select_iter(selection, &iter);
-	g_signal_emit_by_name(gebr.ui_project_line->view, "cursor-changed");
-	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), &iter);
+	if (!on_project_line_properties_activate())
+		project_delete(FALSE);
 
-	on_project_line_properties_activate();
+	geoxml_document_free(project);
 }
 
 /*
@@ -89,46 +82,32 @@ project_new(void)
  * * Project's line files should be deleted as well.
  */
 gboolean
-project_delete(void)
+project_delete(gboolean confirm)
 {
 	GtkTreeIter		iter;
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreePath *		path;
-
 	gchar *			title;
 	gchar *			filename;
+	gint			nlines;
 
-	int			nlines;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (gebr.ui_project_line->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_project_selected_error);
+	if (!project_line_get_selected(&iter, ProjectSelection))
 		return FALSE;
-	}
 
-	gtk_tree_model_get(model, &iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 		PL_TITLE, &title,
 		PL_FILENAME, &filename,
 		-1);
-	path = gtk_tree_model_get_path(model, &iter);
-
-	if (gtk_tree_path_get_depth(path) == 2) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_project_selected_error);
-		goto out;
-	}
 
 	/* TODO: If this project is not empty,
 	   prompt the user to take about erasing its lines */
 	/* Delete each line of the project */
-
-	if ((nlines = gtk_tree_model_iter_n_children(model, &iter)) > 0) {
+	if ((nlines = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter)) > 0) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Project '%s' still has %i lines"), title, nlines);
 		goto out;
 	}
 
 	/* message user */
-	gebr_message(LOG_INFO, TRUE, TRUE, _("Erasing project '%s'"), title);
+	if (confirm)
+		gebr_message(LOG_INFO, TRUE, TRUE, _("Erasing project '%s'"), title);
 
 	/* finally, remove it from the disk */
 	document_delete(filename);
@@ -141,7 +120,6 @@ project_delete(void)
 
 out:	g_free(title);
 	g_free(filename);
-	gtk_tree_path_free(path);
 
 	return TRUE;
 }
