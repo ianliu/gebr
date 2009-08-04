@@ -528,11 +528,13 @@ parameter_dialog_setup_ui(void)
 	GtkWidget *			default_widget;
 	GtkWidget *			default_widget_hbox;
 
+	GtkTreeIter			iter;
 	GeoXmlProgramParameter *	program_parameter;
 	struct parameter_widget *	parameter_widget;
 
-	if (parameter_get_selected(NULL, TRUE) == FALSE)
+	if (parameter_get_selected(&iter, TRUE) == FALSE)
 		return;
+	parameter_select_iter(iter);
 
 	ui = g_malloc(sizeof(struct ui_parameter_dialog));
 	ui->parameter = debr.parameter;
@@ -925,7 +927,7 @@ parameter_load_iter(GtkTreeIter * iter)
 
 	if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE) {
 		GString *		keyword;
-                GString *               default_value;
+		GString *               default_value;
 
 		keyword = g_string_new(NULL);
 		g_string_assign(keyword, geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(parameter)));
@@ -933,15 +935,14 @@ parameter_load_iter(GtkTreeIter * iter)
 		if (keyword->str[keyword->len-1] ==  ' ') {
 			keyword_label = g_string_new_len(keyword->str, keyword->len - 1);
 			g_string_append_printf(keyword_label, "%lc", 0x02FD);
-		} else {
+		} else
 			keyword_label = g_string_new(keyword->str);
-                }
-                
-                default_value = geoxml_program_parameter_get_string_value(GEOXML_PROGRAM_PARAMETER(parameter), TRUE);
-                if (default_value->len)
-                        g_string_append_printf(keyword_label,  " [%s]", default_value->str);
 
-                g_string_free(default_value, TRUE);
+		default_value = geoxml_program_parameter_get_string_value(GEOXML_PROGRAM_PARAMETER(parameter), TRUE);
+		if (default_value->len)
+			g_string_append_printf(keyword_label,  " [%s]", default_value->str);
+
+		g_string_free(default_value, TRUE);
 		g_string_free(keyword, TRUE);
 	} else {
 		GeoXmlSequence *	instance;
@@ -953,16 +954,15 @@ parameter_load_iter(GtkTreeIter * iter)
 			geoxml_parameter_group_get_instances_number(GEOXML_PARAMETER_GROUP(parameter)));
 	}
 
-        parameter_type = g_string_new(combo_type_map_get_title(geoxml_parameter_get_type(parameter)));
-        
-        if (geoxml_parameter_get_is_program_parameter(parameter) && 
-            geoxml_program_parameter_get_is_list(GEOXML_PROGRAM_PARAMETER(parameter)))
-                g_string_append(parameter_type, "(s)");
-        
+	parameter_type = g_string_new(combo_type_map_get_title(geoxml_parameter_get_type(parameter)));
+	if (geoxml_parameter_get_is_program_parameter(parameter) &&
+	geoxml_program_parameter_get_is_list(GEOXML_PROGRAM_PARAMETER(parameter)))
+		g_string_append(parameter_type, "(s)");
+
 	gtk_tree_store_set(debr.ui_parameter.tree_store, iter,
 		PARAMETER_TYPE, parameter_type->str,
-                PARAMETER_KEYWORD, keyword_label->str,
-                PARAMETER_LABEL, geoxml_parameter_get_label(parameter),
+		PARAMETER_KEYWORD, keyword_label->str,
+		PARAMETER_LABEL, geoxml_parameter_get_label(parameter),
 		-1);
 
 	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, iter))

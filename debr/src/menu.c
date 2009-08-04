@@ -677,8 +677,12 @@ menu_dialog_setup_ui(void)
 	GtkWidget *		categories_label;
 	GtkWidget *		categories_combo;
 	GtkWidget *		categories_sequence_edit;
-
 	GtkWidget *		widget;
+
+	GtkTreeIter		iter;
+
+	menu_get_selected(&iter);
+	menu_select_iter(&iter);
 
 	dialog = gtk_dialog_new_with_buttons(_("Edit menu"),
 		GTK_WINDOW(debr.window),

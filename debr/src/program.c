@@ -375,8 +375,11 @@ program_dialog_setup_ui(void)
 	GtkWidget *     url_label;
 	GtkWidget *     url_entry;
 
-	if (program_get_selected(NULL, TRUE) == FALSE)
+	GtkTreeIter	iter;
+
+	if (program_get_selected(&iter, TRUE) == FALSE)
 		return;
+	program_select_iter(iter);
 
 	dialog = gtk_dialog_new_with_buttons(_("Edit program"),
 		GTK_WINDOW(debr.window),
