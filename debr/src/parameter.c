@@ -619,43 +619,43 @@ parameter_dialog_setup_ui(void)
 			(GtkAttachOptions)(0), 0, 0), ++row;
 		g_signal_connect(required_check_button, "toggled",
 			(GCallback)parameter_required_toggled, ui);
+
+		/*
+		* Is List
+		*/
+		is_list_label = gtk_label_new(_("Is list?:"));
+		gtk_widget_show(is_list_label);
+		gtk_table_attach(GTK_TABLE(table), is_list_label, 0, 1, row, row+1,
+			(GtkAttachOptions)(GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(is_list_label), 0, 0.5);
+
+		is_list_check_button = gtk_check_button_new();
+		gtk_widget_show(is_list_check_button);
+		gtk_table_attach(GTK_TABLE(table), is_list_check_button, 1, 2, row, row+1,
+			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0), ++row;
+		g_signal_connect(is_list_check_button, "toggled",
+			(GCallback)parameter_is_list_changed, ui);
+
+		/*
+		* List separator
+		*/
+		separator_label = gtk_label_new(_("List separator:"));
+		gtk_widget_show(separator_label);
+		gtk_table_attach(GTK_TABLE(table), separator_label, 0, 1, row, row+1,
+			(GtkAttachOptions)(GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(separator_label), 0, 0.5);
+
+		ui->separator_entry = separator_entry = gtk_entry_new();
+		gtk_widget_show(separator_entry);
+		gtk_table_attach(GTK_TABLE(table), separator_entry, 1, 2, row, row+1,
+			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0), ++row;
+		g_signal_connect(separator_entry, "changed",
+			(GCallback)parameter_separator_changed, ui);
 	}
-
-	/*
-	 * Is List
-	 */
-	is_list_label = gtk_label_new(_("Is list?:"));
-	gtk_widget_show(is_list_label);
-	gtk_table_attach(GTK_TABLE(table), is_list_label, 0, 1, row, row+1,
-		(GtkAttachOptions)(GTK_FILL),
-		(GtkAttachOptions)(0), 0, 0);
-	gtk_misc_set_alignment(GTK_MISC(is_list_label), 0, 0.5);
-
-	is_list_check_button = gtk_check_button_new();
-	gtk_widget_show(is_list_check_button);
-	gtk_table_attach(GTK_TABLE(table), is_list_check_button, 1, 2, row, row+1,
-		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
-		(GtkAttachOptions)(0), 0, 0), ++row;
-	g_signal_connect(is_list_check_button, "toggled",
-		(GCallback)parameter_is_list_changed, ui);
-
-	/*
-	 * List separator
-	 */
-	separator_label = gtk_label_new(_("List separator:"));
-	gtk_widget_show(separator_label);
-	gtk_table_attach(GTK_TABLE(table), separator_label, 0, 1, row, row+1,
-		(GtkAttachOptions)(GTK_FILL),
-		(GtkAttachOptions)(0), 0, 0);
-	gtk_misc_set_alignment(GTK_MISC(separator_label), 0, 0.5);
-
-	ui->separator_entry = separator_entry = gtk_entry_new();
-	gtk_widget_show(separator_entry);
-	gtk_table_attach(GTK_TABLE(table), separator_entry, 1, 2, row, row+1,
-		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
-		(GtkAttachOptions)(0), 0, 0), ++row;
-	g_signal_connect(separator_entry, "changed",
-		(GCallback)parameter_separator_changed, ui);
 
 	parameter_widget = parameter_widget_new(ui->parameter, TRUE, NULL);
 	switch (type) {
@@ -851,15 +851,16 @@ parameter_dialog_setup_ui(void)
 	gtk_entry_set_text(GTK_ENTRY(label_entry), geoxml_parameter_get_label(ui->parameter));
 	gtk_entry_set_text(GTK_ENTRY(keyword_entry),
 		geoxml_program_parameter_get_keyword(program_parameter));
-	if (type != GEOXML_PARAMETERTYPE_FLAG)
+	if (type != GEOXML_PARAMETERTYPE_FLAG) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(required_check_button),
 			geoxml_program_parameter_get_required(program_parameter));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(is_list_check_button),
-		geoxml_program_parameter_get_is_list(program_parameter));
-	gtk_widget_set_sensitive(separator_entry, geoxml_program_parameter_get_is_list(program_parameter));
-	if (geoxml_program_parameter_get_is_list(program_parameter) == TRUE)
-		gtk_entry_set_text(GTK_ENTRY(separator_entry),
-			geoxml_program_parameter_get_list_separator(program_parameter));
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(is_list_check_button),
+			geoxml_program_parameter_get_is_list(program_parameter));
+		gtk_widget_set_sensitive(separator_entry, geoxml_program_parameter_get_is_list(program_parameter));
+		if (geoxml_program_parameter_get_is_list(program_parameter) == TRUE)
+			gtk_entry_set_text(GTK_ENTRY(separator_entry),
+				geoxml_program_parameter_get_list_separator(program_parameter));
+	}
 
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
@@ -867,14 +868,15 @@ parameter_dialog_setup_ui(void)
 	geoxml_parameter_set_label(ui->parameter, gtk_entry_get_text(GTK_ENTRY(label_entry)));
 	geoxml_program_parameter_set_keyword(GEOXML_PROGRAM_PARAMETER(ui->parameter),
 		gtk_entry_get_text(GTK_ENTRY(keyword_entry)));
-	if (type != GEOXML_PARAMETERTYPE_FLAG)
+	if (type != GEOXML_PARAMETERTYPE_FLAG) {
 		geoxml_program_parameter_set_required(GEOXML_PROGRAM_PARAMETER(ui->parameter),
 			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(required_check_button)));
-	geoxml_program_parameter_set_be_list(GEOXML_PROGRAM_PARAMETER(ui->parameter),
-		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button)));
-	if (geoxml_program_parameter_get_is_list(program_parameter) == TRUE)
-		geoxml_program_parameter_set_list_separator(GEOXML_PROGRAM_PARAMETER(ui->parameter),
-			gtk_entry_get_text(GTK_ENTRY(separator_entry)));
+		geoxml_program_parameter_set_be_list(GEOXML_PROGRAM_PARAMETER(ui->parameter),
+			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button)));
+		if (geoxml_program_parameter_get_is_list(program_parameter) == TRUE)
+			geoxml_program_parameter_set_list_separator(GEOXML_PROGRAM_PARAMETER(ui->parameter),
+				gtk_entry_get_text(GTK_ENTRY(separator_entry)));
+	}
 
 	parameter_load_selected();
 

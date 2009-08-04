@@ -80,7 +80,8 @@ g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * 
 	if ((dir##hygid = opendir(directory)) != NULL) \
 		while (((file##hygid = readdir(dir##hygid)) != NULL && \
 		(filename = file##hygid->d_name, 1)) || \
-		(closedir(dir##hygid), 0))
+		(closedir(dir##hygid), 0)) \
+			if (strcmp(filename, "."))
 #define libgebr_directory_foreach_file(filename, directory) \
 	libgebr_directory_foreach_file_hyg(filename, directory, nohyg)
 
