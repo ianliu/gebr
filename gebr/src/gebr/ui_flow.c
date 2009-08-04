@@ -193,7 +193,7 @@ flow_add_program_sequence_to_view(GeoXmlSequence * program)
 			FSEQ_TITLE_COLUMN, geoxml_program_get_title(GEOXML_PROGRAM(program)),
 			FSEQ_STATUS_COLUMN, pixbuf,
 			FSEQ_GEOXML_POINTER, program,
-			FSEQ_MENU_FILE_NAME_COLUMN, menu,
+			FSEQ_MENU_FILENAME_COLUMN, menu,
 			FSEQ_MENU_INDEX, prog_index,
 			-1);
 	}

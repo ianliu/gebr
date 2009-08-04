@@ -21,13 +21,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <dirent.h>
-#include <fnmatch.h>
 
 #include <libgebr/intl.h>
+#include <libgebr/date.h>
+#include <libgebr/utils.h>
 #include <libgebr/gui/utils.h>
 #include <libgebr/gui/valuesequenceedit.h>
-#include <libgebr/date.h>
 
 #include "menu.h"
 #include "debr.h"
@@ -203,7 +202,7 @@ menu_setup_ui(void)
  * Create a new (unsaved) menu and add it to the tree view
  */
 void
-menu_new(void)
+menu_new(gboolean edit)
 {
 	static int		new_count = 0;
 	GString *		new_menu_str;
@@ -229,7 +228,8 @@ menu_new(void)
 
 	/* new menu with no changes shouldn't be save */
 	menu_saved_status_set(MENU_STATUS_SAVED);
-	menu_dialog_setup_ui();
+	if (edit)
+		menu_dialog_setup_ui();
 
 	g_string_free(new_menu_str, TRUE);
 }
@@ -265,32 +265,23 @@ void
 menu_load_user_directory(void)
 {
 	GtkTreeIter		iter;
-
-	DIR *			dir;
-	struct dirent *		file;
+	gchar *			filename;
 	GString *		path;
 
-	if ((dir = opendir(debr.config.menu_dir->str)) == NULL) {
-		debr_message(LOG_ERROR, _("Could not open menus' directory"));
-		return;
-	}
-
-	while ((file = readdir(dir)) != NULL){
-		if (fnmatch ("*.mnu", file->d_name, 1))
+	path = g_string_new(NULL);
+	libgebr_directory_foreach_file(filename, debr.config.menu_dir->str) {
+		if (fnmatch ("*.mnu", filename, 1))
 			continue;
 
-		path = g_string_new(debr.config.menu_dir->str);
-		g_string_append(path, "/");
-		g_string_append(path, file->d_name);
+		g_string_printf(path, "%s/%s", debr.config.menu_dir->str, filename);
 		menu_open(path->str, FALSE);
-
-		g_string_free(path, TRUE);
 	}
-	closedir(dir);
 
 	/* select first menu */
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter) == TRUE)
 		menu_select_iter(&iter);
+
+	g_string_free(path, TRUE);
 }
 
 /*

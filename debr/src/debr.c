@@ -64,7 +64,7 @@ debr_init(void)
 	else
 		menu_load_user_directory();
 	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.list_store), NULL) == 0)
-		menu_new();
+		menu_new(FALSE);
 }
 
 gboolean

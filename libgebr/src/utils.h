@@ -18,6 +18,9 @@
 #ifndef __LIBGEBR_MISC_UTILS_H
 #define __LIBGEBR_MISC_UTILS_H
 
+#include <dirent.h>
+#include <fnmatch.h>
+
 #include <glib.h>
 
 void
@@ -70,5 +73,20 @@ g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * 
 
 #define libgebr_glist_foreach(element, list) \
 	libgebr_gslist_foreach_hyg(element, list, nohyg)
+
+#define libgebr_directory_foreach_file_hyg(filename, directory, hygid) \
+	DIR *		dir##hygid; \
+	struct dirent *	file##hygid; \
+	if ((dir##hygid = opendir(directory)) != NULL) \
+		while (((file##hygid = readdir(dir##hygid)) != NULL && \
+		(filename = file##hygid->d_name, 1)) || \
+		(closedir(dir##hygid), 0))
+#define libgebr_directory_foreach_file(filename, directory) \
+	libgebr_directory_foreach_file_hyg(filename, directory, nohyg)
+
+#define libgebr_directory_foreach_subdir_hyg(subdir, directory, hygid) \
+	libgebr_directory_foreach_file_hyg(subdir, directory, hygid) \
+		if (g_file_test(path->str, G_FILE_TEST_IS_DIR))
+#define libgebr_directory_foreach_subdir(subdir, directory, nohyg) \
 
 #endif //__LIBGEBR_MISC_UTILS_H

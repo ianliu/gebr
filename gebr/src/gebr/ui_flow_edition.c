@@ -417,7 +417,6 @@ static void
 flow_edition_component_selected(void)
 {
 	GtkTreeIter		iter;
-
 	const gchar *		status;
 
 	gebr.program = NULL;
@@ -442,10 +441,8 @@ flow_edition_component_selected(void)
 			"flow_edition_status_unconfigured")), TRUE);
 }
 
-/*
- * Function: flow_edition_menu_add
+/* Function: flow_edition_menu_add
  * Add selected menu to flow sequence
- *
  */
 static void
 flow_edition_menu_add(void)
@@ -465,7 +462,7 @@ flow_edition_menu_add(void)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &iter,
 		MENU_TITLE_COLUMN, &name,
-		MENU_FILE_NAME_COLUMN, &filename,
+		MENU_FILENAME_COLUMN, &filename,
 		-1);
 	menu = menu_load(filename);
 	if (menu == NULL)
@@ -492,8 +489,7 @@ out:	g_free(name);
 	g_free(filename);
 }
 
-/*
- * Function: menus_show_help
+/* Function: menus_show_help
  * Show's menus help
  */
 static void
@@ -507,7 +503,7 @@ flow_edition_menu_show_help(void)
 		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &iter,
-		MENU_FILE_NAME_COLUMN, &menu_filename,
+		MENU_FILENAME_COLUMN, &menu_filename,
 		-1);
 
 	menu = menu_load(menu_filename);
@@ -518,6 +514,9 @@ flow_edition_menu_show_help(void)
 out:	g_free(menu_filename);
 }
 
+/* Function: flow_edition_component_popup_menu
+ * Show popup menu for flow component
+ */
 static GtkMenu *
 flow_edition_component_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edition)
 {
@@ -583,6 +582,9 @@ out:	gtk_widget_show_all(menu);
 	return GTK_MENU(menu);
 }
 
+/* Function: flow_edition_component_popup_menu
+ * Show popup menu for menu list
+ */
 static GtkMenu *
 flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edition)
 {

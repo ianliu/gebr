@@ -61,7 +61,7 @@ struct ui_menu {
 void
 menu_setup_ui(void);
 void
-menu_new(void);
+menu_new(gboolean edit);
 GeoXmlFlow *
 menu_load(const gchar * path);
 void

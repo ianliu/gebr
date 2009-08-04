@@ -134,7 +134,7 @@ on_quit_activate(void)
 void
 on_menu_new_activate(void)
 {
-	menu_new();
+	menu_new(TRUE);
 }
 
 /*
@@ -350,7 +350,7 @@ on_menu_delete_activate(void)
 	}
 
 	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.list_store), NULL) == 0)
-		menu_new();
+		menu_new(FALSE);
 	else
 		gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 }
@@ -451,7 +451,7 @@ on_menu_close_activate(void)
 	}
 
 	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.list_store), NULL) == 0)
-		menu_new();
+		menu_new(FALSE);
 	else
 		gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 }

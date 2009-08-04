@@ -27,8 +27,6 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <dirent.h>
-#include <fnmatch.h>
 
 #include <glib/gstdio.h>
 
@@ -273,20 +271,17 @@ gebr_migrate_data_dir(void)
 	GtkWidget *	dialog;
 	GString *	new_data_dir;
 	GString *	command_line;
-	struct dirent *	file;
-	DIR *		dir;
+	gchar *		filename;
 	gboolean	empty;
 
 	new_data_dir = g_string_new(NULL);
 	g_string_printf(new_data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
 
 	command_line = g_string_new("");
-	if (g_access(gebr.config.data->str, F_OK | R_OK)|| (dir = opendir(gebr.config.data->str)) == NULL)
-		return;
-	while ((file = readdir(dir)) != NULL)
-		if (!fnmatch("*.prj", file->d_name, 1) || !fnmatch("*.lne", file->d_name, 1) ||
-		!fnmatch("*.flw", file->d_name, 1))
-			g_string_append_printf(command_line, "%s/%s ", gebr.config.data->str, file->d_name);
+	libgebr_directory_foreach_file(filename, gebr.config.data->str)
+		if (!fnmatch("*.prj", filename, 1) || !fnmatch("*.lne", filename, 1) ||
+		!fnmatch("*.flw", filename, 1))
+			g_string_append_printf(command_line, "%s/%s ", gebr.config.data->str, filename);
 	empty = command_line->len == 0 ? TRUE : FALSE;
 	g_string_prepend(command_line, "cp -f ");
 	g_string_append(command_line, new_data_dir->str);

@@ -26,8 +26,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <dirent.h>
-#include <fnmatch.h>
 
 #include <glib/gstdio.h>
 
@@ -43,7 +41,7 @@
  * Prototypes
  */
 static void
-menu_scan_directory(const gchar * directory, FILE * index_fp);
+menu_scan_directory(const gchar * directory, gboolean scan_subdirs, FILE * index_fp);
 
 /*
  * Section: Public
@@ -89,12 +87,18 @@ menu_get_path(const gchar * filename)
 {
 	GString *	path;
 
-	/* system directory */
 	path = g_string_new(NULL);
+
+	/* system directory, for newer menus */
+	if (strstr(filename, "/") != NULL) {
+		g_string_printf(path, "%s/%s", GEBR_SYS_MENUS_DIR, filename);
+		if (g_access((path)->str, F_OK) == 0)
+			goto out;
+	}
+	/* system directory */
 	g_string_printf(path, "%s/%s", GEBR_SYS_MENUS_DIR, filename);
 	if (g_access((path)->str, F_OK) == 0)
 		goto out;
-
 	/* user's menus directory */
 	g_string_printf(path, "%s/%s", gebr.config.usermenus->str, filename);
 	if (g_access((path)->str, F_OK) == 0)
@@ -114,28 +118,23 @@ out:	return path;
 void
 menu_ls(const gchar * directory, time_t * mod_time)
 {
-	DIR *		dir;
-	struct dirent *	file;
+	gchar *		filename;
 	GString *	path;
 
 	/* initialization */
 	path = g_string_new(NULL);
-	if ((dir = opendir(directory)) == NULL)
-		return;
-
-	while ((file = readdir(dir)) != NULL) {
+	libgebr_directory_foreach_file(filename, directory) {
 		struct stat	file_stat;
 
-		if (fnmatch("*.mnu", file->d_name, 1))
+		if (fnmatch("*.mnu", filename, 1))
 			continue;
 
-		g_string_printf(path, "%s/%s", directory, file->d_name);
+		g_string_printf(path, "%s/%s", directory, filename);
 		stat(path->str, &file_stat);
 		if (*mod_time < file_stat.st_mtime)
 			*mod_time = file_stat.st_mtime;
 	}
 
-	closedir(dir);
 	g_string_free(path, TRUE);
 }
 
@@ -272,7 +271,7 @@ menu_list_populate(void)
 		gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &iter,
 			MENU_TITLE_COLUMN, parts[1],
 			MENU_DESC_COLUMN, parts[2],
-			MENU_FILE_NAME_COLUMN, parts[3],
+			MENU_FILENAME_COLUMN, parts[3],
 			-1);
 
 		g_string_free(path, TRUE);
@@ -311,8 +310,8 @@ menu_list_create_index(void)
 		ret = FALSE;
 		goto out;
 	}
-	menu_scan_directory(GEBR_SYS_MENUS_DIR, index_fp);
-	menu_scan_directory(gebr.config.usermenus->str, index_fp);
+	menu_scan_directory(GEBR_SYS_MENUS_DIR, TRUE, index_fp);
+	menu_scan_directory(gebr.config.usermenus->str, FALSE, index_fp);
 	fclose(index_fp);
 
 	/* Sort index */
@@ -366,43 +365,39 @@ menu_get_help_from_program_ref(GeoXmlProgram * program)
  * Scans _directory_ for menus
  */
 static void
-menu_scan_directory(const gchar * directory, FILE * index_fp)
+menu_scan_directory(const gchar * directory, gboolean scan_subdirs, FILE * index_fp)
 {
-	DIR *			dir;
-	struct dirent *		file;
+	gchar *			filename;
 	GString *		path;
 
-	/* initialization */
-	if ((dir = opendir(directory)) == NULL)
-		return;
 	path = g_string_new(NULL);
-
-	while ((file = readdir(dir)) != NULL) {
-		if (fnmatch("*.mnu", file->d_name, 1))
-			continue;
-
+	libgebr_directory_foreach_file(filename, directory) {
 		GeoXmlDocument *	menu;
 		GeoXmlSequence *	category;
 
-		g_string_printf(path, "%s/%s", directory, file->d_name);
+		g_string_printf(path, "%s/%s", directory, filename);
+		if (scan_subdirs && g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
+			menu_scan_directory(path->str, FALSE, index_fp);
+			continue;
+		}
+		if (fnmatch("*.mnu", filename, 1))
+			continue;
 
 		menu = document_load_path(path->str);
 		if (menu == NULL)
 			continue;
 
 		geoxml_flow_get_category(GEOXML_FLOW(menu), &category, 0);
-		for (; category != NULL; geoxml_sequence_next(&category)) {
+		for (; category != NULL; geoxml_sequence_next(&category))
 			fprintf(index_fp, "%s|%s|%s|%s\n",
 				geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)),
 				geoxml_document_get_title(menu),
 				geoxml_document_get_description(menu),
-				file->d_name);
-		}
+				geoxml_document_get_filename(menu));
 
 		geoxml_document_free(menu);
 	}
 
 	/* frees */
-	closedir(dir);
 	g_string_free(path, TRUE);
 }

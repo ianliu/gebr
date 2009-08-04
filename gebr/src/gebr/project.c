@@ -22,13 +22,12 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <dirent.h>
 #include <unistd.h>
-#include <fnmatch.h>
 
 #include <glib/gstdio.h>
 
 #include <libgebr/intl.h>
+#include <libgebr/utils.h>
 #include <libgebr/gui/utils.h>
 
 #include "project.h"
@@ -167,15 +166,7 @@ project_append_line_iter(GtkTreeIter * project_iter, GeoXmlLine * line)
 void
 project_list_populate(void)
 {
-	struct dirent *	file;
-	DIR *		dir;
-
-	if (g_access(gebr.config.data->str, F_OK | R_OK)) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to access data directory"));
-		return;
-	}
-	if ((dir = opendir(gebr.config.data->str)) == NULL)
-		return;
+	gchar *	filename;
 
 	/* free previous selection path */
 	gtk_tree_store_clear(gebr.ui_project_line->store);
@@ -184,16 +175,16 @@ project_list_populate(void)
 	project_line_free();
 	flow_free();
 
-	while ((file = readdir(dir)) != NULL) {
+	libgebr_directory_foreach_file(filename, gebr.config.data->str) {
 		GtkTreeIter		project_iter;
 
 		GeoXmlProject *		project;
 		GeoXmlSequence *	project_line;
 
-		if (fnmatch("*.prj", file->d_name, 1))
+		if (fnmatch("*.prj", filename, 1))
 			continue;
 
-		project = GEOXML_PROJECT(document_load(file->d_name));
+		project = GEOXML_PROJECT(document_load(filename));
 		if (project == NULL)
 			continue;
 		project_iter = project_append_iter(project);
@@ -217,6 +208,5 @@ project_list_populate(void)
 		geoxml_document_free(GEOXML_DOC(project));
 	}
 
-	closedir (dir);
 	project_line_info_update();
 }
