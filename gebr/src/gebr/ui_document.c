@@ -80,6 +80,7 @@ document_properties_setup_ui(GeoXmlDocument * document)
 		g_string_printf(dialog_title, _("Properties for line '%s'"), geoxml_document_get_title(document));
 		break;
 	case GEOXML_DOCUMENT_TYPE_FLOW:
+		flow_browse_single_selection();
 		g_string_printf(dialog_title, _("Properties for flow '%s'"), geoxml_document_get_title(document));
 		break;
 	default:

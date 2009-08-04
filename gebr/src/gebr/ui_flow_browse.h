@@ -73,6 +73,9 @@ void
 flow_browse_select_iter(GtkTreeIter * iter);
 
 void
+flow_browse_single_selection(void);
+
+void
 flow_browse_load_revision(GeoXmlRevision * revision, gboolean new);
 
 #endif //__UI_FLOW_BROWSE_H

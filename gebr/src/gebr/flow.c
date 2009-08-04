@@ -239,8 +239,7 @@ out2:	g_free(dir);
 out:	gtk_widget_destroy(chooser_dialog);
 }
 
-/*
- * Function: flow_export
+/* Function: flow_export
  * Export selected(s) flow(s)
  */
 void
@@ -249,63 +248,64 @@ flow_export(void)
 	GString *		path;
 	GtkTreeIter		iter;
 
+	GtkWidget *		chooser_dialog;
+	GtkFileFilter *		file_filter;
+	GString *		title;
+	gchar *			tmp;
+	gchar *			filename;
+
+	GeoXmlDocument *	flow;
+	gchar *			flow_filename;
+
+	if (!flow_browse_get_selected(&iter, TRUE))
+		return;
+	flow_browse_single_selection();
+
 	path = g_string_new(NULL);
-	libgebr_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
-		GtkWidget *		chooser_dialog;
-		GtkFileFilter *		file_filter;
-		GString *		title;
-		gchar *			tmp;
-		gchar *			filename;
+	title = g_string_new(NULL);
 
-		GeoXmlDocument *	flow;
-		gchar *			flow_filename;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		FB_FILENAME, &flow_filename,
+		-1);
+	flow = document_load(flow_filename);
+	if (flow == NULL)
+		goto cont2;
 
-		title = g_string_new(NULL);
+	/* run file chooser */
+	g_string_printf(title, _("Choose filename to save flow '%s'"), geoxml_document_get_title(flow));
+	chooser_dialog = gtk_file_chooser_dialog_new(title->str,
+		GTK_WINDOW(gebr.window), GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_STOCK_SAVE, GTK_RESPONSE_YES, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		NULL);
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
+	file_filter = gtk_file_filter_new();
+	gtk_file_filter_set_name(file_filter, _("Flow files (*.flw)"));
+	gtk_file_filter_add_pattern(file_filter, "*.flw");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
-			FB_FILENAME, &flow_filename,
-			-1);
-		flow = document_load(flow_filename);
-		if (flow == NULL)
-			goto cont2;
+	/* show file chooser */
+	gtk_widget_show(chooser_dialog);
+	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
+		goto cont1;
+	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
+	g_string_assign(path, tmp);
+	append_filename_extension(path, ".flw");
+	filename = g_path_get_basename(path->str);
 
-		/* run file chooser */
-		g_string_printf(title, _("Choose filename to save flow '%s'"), geoxml_document_get_title(flow));
-		chooser_dialog = gtk_file_chooser_dialog_new(title->str,
-			GTK_WINDOW(gebr.window), GTK_FILE_CHOOSER_ACTION_SAVE,
-			GTK_STOCK_SAVE, GTK_RESPONSE_YES, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-			NULL);
-		gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
-		file_filter = gtk_file_filter_new();
-		gtk_file_filter_set_name(file_filter, _("Flow files (*.flw)"));
-		gtk_file_filter_add_pattern(file_filter, "*.flw");
-		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
+	/* export current flow to disk */
+	geoxml_document_set_filename(flow, filename);
+	geoxml_document_save(flow, path->str);
 
-		/* show file chooser */
-		gtk_widget_show(chooser_dialog);
-		if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
-			goto cont1;
-		tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
-		g_string_assign(path, tmp);
-		append_filename_extension(path, ".flw");
-		filename = g_path_get_basename(path->str);
+	gebr_message(LOG_INFO, TRUE, TRUE, _("Flow '%s' exported to %s"),
+		(gchar*)geoxml_document_get_title(GEOXML_DOC(flow)), path->str);
 
-		/* export current flow to disk */
-		geoxml_document_set_filename(flow, filename);
-		geoxml_document_save(flow, path->str);
-
-		gebr_message(LOG_INFO, TRUE, TRUE, _("Flow '%s' exported to %s"),
-			(gchar*)geoxml_document_get_title(GEOXML_DOC(flow)), path->str);
-
-		/* frees */
-		g_free(tmp);
-		g_free(filename);
-cont1:		gtk_widget_destroy(chooser_dialog);
-cont2:		geoxml_document_free(flow);
-		g_free(flow_filename);
-		g_string_free(title, TRUE);
-	}
-
+	/* frees */
+	g_free(tmp);
+	g_free(filename);
+cont1:	gtk_widget_destroy(chooser_dialog);
+cont2:	geoxml_document_free(flow);
+	g_free(flow_filename);
+	g_string_free(title, TRUE);
 	g_string_free(path, TRUE);
 }
 
@@ -386,6 +386,7 @@ flow_export_as_menu(void)
 
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
+	flow_browse_single_selection();
 
 	/* run file chooser */
 	dialog = gtk_file_chooser_dialog_new(_("Choose filename to save"),

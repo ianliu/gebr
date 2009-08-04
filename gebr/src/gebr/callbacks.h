@@ -61,6 +61,8 @@ on_flow_execute_activate(void);
 void
 on_flow_revision_save_activate(void);
 void
+on_flow_revision_show_menu(void);
+void
 on_flow_copy_activate(void);
 void
 on_flow_paste_activate(void);

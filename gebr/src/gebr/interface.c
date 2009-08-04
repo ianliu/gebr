@@ -264,6 +264,8 @@ gebr_setup_ui(void)
 	tool_item = gtk_menu_tool_button_new_from_stock("document-open-recent");
 	g_signal_connect(GTK_OBJECT(tool_item), "clicked",
 		G_CALLBACK(on_flow_revision_save_activate), NULL);
+	g_signal_connect(GTK_OBJECT(tool_item), "show-menu",
+		G_CALLBACK(on_flow_revision_show_menu), NULL);
 	set_tooltip(GTK_WIDGET(tool_item), _("Save flow state"));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
 	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);

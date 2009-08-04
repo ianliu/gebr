@@ -336,7 +336,7 @@ flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 }
 
 /* Function: flow_browse_select_iter
-  * Select flow at _iter_
+ * Select flow at _iter_
  */
 void
 flow_browse_select_iter(GtkTreeIter * iter)
@@ -351,6 +351,19 @@ flow_browse_select_iter(GtkTreeIter * iter)
 	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), iter);
 
 	flow_browse_load();
+}
+
+/* Function: flow_browse_single_selection
+ * Turn multiple selection into single
+ */
+void
+flow_browse_single_selection(void)
+{
+	GtkTreeIter	iter;
+	GtkTreeIter	component_iter;
+
+	flow_browse_get_selected(&iter, FALSE);
+	flow_browse_select_iter(&iter);
 }
 
 /*
@@ -402,6 +415,10 @@ flow_browse_load(void)
 	flow_free();
 	if (!flow_browse_get_selected(&iter, FALSE))
 		return;
+
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_change_revision"),
+		gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(
+			GTK_TREE_VIEW(gebr.ui_flow_browse->view))) > 1 ? FALSE : TRUE);
 
 	/* load its filename and title */
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,

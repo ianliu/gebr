@@ -218,14 +218,13 @@ on_flow_properties_activate(void)
 	return document_properties_setup_ui(GEOXML_DOC(gebr.flow));
 }
 
-/*
- * Function: on_flow_io_activate
- * *Fill me in!*
- *
+/* Function: on_flow_io_activate
+ * Adjust selection and show flow IO dialog
  */
 void
 on_flow_io_activate(void)
 {
+	flow_browse_single_selection();
 	flow_io_setup_ui(FALSE);
 }
 
@@ -247,6 +246,15 @@ void
 on_flow_revision_save_activate(void)
 {
 	flow_revision_save();
+}
+
+/* Function: on_flow_revision_show_menu
+ * Call <flow_browse_single_selection>
+ */
+void
+on_flow_revision_show_menu(void)
+{
+	flow_browse_single_selection();
 }
 
 /* Function: on_flow_copy_activate

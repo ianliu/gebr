@@ -218,6 +218,25 @@ flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected
 }
 
 /*
+ * Fuction: flow_edition_select_component_iter
+ * Select _iter_ and scroll to it.
+ */
+void
+flow_edition_select_component_iter(GtkTreeIter * iter)
+{
+	GtkTreeSelection *	selection;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+	gtk_tree_selection_unselect_all(selection);
+	if (iter == NULL)
+		return;
+	gtk_tree_selection_select_iter(selection, iter);
+	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter);
+
+	flow_edition_component_selected();
+}
+
+/*
  * Function: flow_edition_set_io
  * Set the XML IO into iterators
  */
@@ -258,6 +277,7 @@ flow_edition_component_activated(void)
 
 	if (!flow_edition_get_selected_component(&iter, FALSE))
 		return;
+	flow_edition_select_component_iter(&iter);
 	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter)) {
 		flow_io_setup_ui(FALSE);
 		return;

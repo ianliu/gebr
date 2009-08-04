@@ -63,6 +63,9 @@ gboolean
 flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected);
 
 void
+flow_edition_select_component_iter(GtkTreeIter * iter);
+
+void
 flow_edition_set_io(void);
 
 void
