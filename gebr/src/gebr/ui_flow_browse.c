@@ -360,7 +360,6 @@ void
 flow_browse_single_selection(void)
 {
 	GtkTreeIter	iter;
-	GtkTreeIter	component_iter;
 
 	flow_browse_get_selected(&iter, FALSE);
 	flow_browse_select_iter(&iter);

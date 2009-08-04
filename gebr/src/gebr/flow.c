@@ -716,6 +716,6 @@ flow_program_paste(void)
 		return;
 	}
 
-	flow_add_program_sequence_to_view(GEOXML_SEQUENCE(pasted));
+	flow_add_program_sequence_to_view(GEOXML_SEQUENCE(pasted), TRUE);
 	document_save(GEOXML_DOCUMENT(gebr.flow));
 }

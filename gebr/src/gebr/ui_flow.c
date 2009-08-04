@@ -160,7 +160,7 @@ flow_io_customized_paths_from_line(GtkFileChooser * chooser)
  *
  */
 void
-flow_add_program_sequence_to_view(GeoXmlSequence * program)
+flow_add_program_sequence_to_view(GeoXmlSequence * program, gboolean select_last)
 {
 	GtkTreeIter		iter;
 
@@ -196,9 +196,10 @@ flow_add_program_sequence_to_view(GeoXmlSequence * program)
 			FSEQ_MENU_FILENAME_COLUMN, menu,
 			FSEQ_MENU_INDEX, prog_index,
 			-1);
-	}
 
-	flow_edition_select_component_iter(&iter);
+		if (select_last)
+			flow_edition_select_component_iter(&iter);
+	}
 }
 
 /*

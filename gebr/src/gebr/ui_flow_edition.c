@@ -197,7 +197,7 @@ flow_edition_load_components(void)
 
 	/* now into GUI */
 	geoxml_flow_get_program(gebr.flow, &first_program, 0);
-	flow_add_program_sequence_to_view(first_program);
+	flow_add_program_sequence_to_view(first_program, FALSE);
 }
 
 /*
@@ -502,7 +502,7 @@ flow_edition_menu_add(void)
 
 	/* and to the GUI */
 	geoxml_flow_get_program(gebr.flow, &menu_programs, menu_programs_index);
-	flow_add_program_sequence_to_view(menu_programs);
+	flow_add_program_sequence_to_view(menu_programs, TRUE);
 
 	geoxml_document_free(GEOXML_DOC(menu));
 out:	g_free(name);
