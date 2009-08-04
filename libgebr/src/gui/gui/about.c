@@ -1,5 +1,5 @@
 /*   libgebr - GeBR Library
- *   Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
+ *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ about_setup_ui(const gchar * program, const gchar * description)
 		"  Bráulio Oliveira <brauliobo@gmail.com>",
 		"  Eduardo Filpo <efilpo@gmail.com>",
 		"  Fernando Roxo <roxo@roxo.org>",
+		"  Ian Liu <ian.liu88@gmail.com>",
 		"  Ricardo Biloti <biloti@gmail.com>",
 		"  Rodrigo Portugal <rosoport@gmail.com>",
 		NULL
@@ -58,7 +59,7 @@ about_setup_ui(const gchar * program, const gchar * description)
 					_("GêBR Core Team"));
 
 	gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about.dialog), _(
-		"Copyright (C) 2007-2009 GêBR core team (http://sites.google.com/site/gebrproject/)\n"
+		"Copyright (C) 2007-2009 GêBR core team (http://www.gebrproject.com/)\n"
 		"\n"
 		"This program is free software: you can redistribute it and/or modify "
 		"it under the terms of the GNU General Public License as published by "
@@ -79,7 +80,7 @@ about_setup_ui(const gchar * program, const gchar * description)
 		"Instituto Nacional da Propriedade Industrial (INPI) under number 70156."));
 	gtk_about_dialog_set_wrap_license(GTK_ABOUT_DIALOG(about.dialog), TRUE);
 
-	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about.dialog), "http://sites.google.com/site/gebrproject/");
+	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about.dialog), "http://www.gebrproject.com/");
 	gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(about.dialog), _("GêBR Home page"));
 	gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(about.dialog), authors);
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about.dialog), description);

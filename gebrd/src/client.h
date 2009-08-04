@@ -1,5 +1,5 @@
 /*   GeBR Daemon - Process and control execution of flows
- *   Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
+ *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

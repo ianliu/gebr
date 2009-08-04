@@ -506,8 +506,8 @@ msgstr ""
 "bem como para gerir tarefas."
 
 #: ../src/gebr/main.c:64
-msgid "GeBR Project - http://sites.google.com/site/gebrproject/"
-msgstr "Projeto GeBR - http://sites.google.com/site/gebrproject/"
+msgid "GeBR Project - http://www.gebrproject.com/"
+msgstr "Projeto GeBR - http://www.gebrproject.com/"
 
 #: ../src/gebr/main.c:68
 #, c-format

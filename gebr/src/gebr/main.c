@@ -1,5 +1,5 @@
 /*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
+ *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ main(int argc, char ** argv, char ** env)
 			"flows, as well as to manage jobs.")
 	);
 	g_option_context_set_description(context,
-		_("GeBR Project - http://sites.google.com/site/gebrproject/"));
+		_("GeBR Project - http://www.gebrproject.com/"));
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
 	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE) {

@@ -85,4 +85,4 @@ Group: Index  {
    Function Index: Functions
    }  # Group: Index
 
-Link: GeBR Project  (http://sites.google.com/site/gebrproject/)
+Link: GeBR Project  (http://www.gebrproject.com/)
