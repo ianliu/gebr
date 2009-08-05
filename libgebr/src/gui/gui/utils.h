@@ -25,46 +25,46 @@
 #include <geoxml.h>
 
 gboolean
-gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter);
+libgebr_gui_gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter);
 gboolean
-gtk_list_store_can_move_down(GtkListStore * store, GtkTreeIter * iter);
+libgebr_gui_gtk_list_store_can_move_down(GtkListStore * store, GtkTreeIter * iter);
 gboolean
-gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter);
+libgebr_gui_gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter);
 gboolean
-gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter);
+libgebr_gui_gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter);
 gulong
-gtk_list_store_get_iter_index(GtkListStore * list_store, GtkTreeIter * iter);
+libgebr_gui_gtk_list_store_get_iter_index(GtkListStore * list_store, GtkTreeIter * iter);
 
 gboolean
-gtk_tree_store_can_move_up(GtkTreeStore * store, GtkTreeIter * iter);
+libgebr_gui_gtk_tree_store_can_move_up(GtkTreeStore * store, GtkTreeIter * iter);
 gboolean
-gtk_tree_store_can_move_down(GtkTreeStore * store, GtkTreeIter * iter);
+libgebr_gui_gtk_tree_store_can_move_down(GtkTreeStore * store, GtkTreeIter * iter);
 gboolean
-gtk_tree_store_move_up(GtkTreeStore * store, GtkTreeIter * iter);
+libgebr_gui_gtk_tree_store_move_up(GtkTreeStore * store, GtkTreeIter * iter);
 gboolean
-gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter);
+libgebr_gui_gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter);
 
-#define gtk_tree_model_iter_is_valid(iter) \
+#define libgebr_gui_gtk_tree_model_iter_is_valid(iter) \
 	((gboolean)(iter)->stamp)
-#define gtk_tree_model_iter_equal_to(iter1, iter2) \
+#define libgebr_gui_gtk_tree_model_iter_equal_to(iter1, iter2) \
 	((iter1 == NULL || !(iter1)->stamp) && (iter2 == NULL || !(iter2)->stamp) \
 		? TRUE : (iter1 == NULL || !(iter1)->stamp) || (iter2 == NULL || !(iter2)->stamp) \
 			? FALSE : (gboolean)((iter1)->user_data == (iter2)->user_data))
 void
-gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source);
+libgebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source);
 gboolean
-gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_path, GtkTreeIter * iter);
+libgebr_gui_gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_path, GtkTreeIter * iter);
 
 void
-libgebr_gtk_tree_view_scroll_to_iter_cell(GtkTreeView * tree_view, GtkTreeIter * iter);
+libgebr_gui_gtk_tree_view_scroll_to_iter_cell(GtkTreeView * tree_view, GtkTreeIter * iter);
 GList *
-libgebr_gtk_tree_view_get_selected_iters(GtkTreeView * tree_view);
+libgebr_gui_gtk_tree_view_get_selected_iters(GtkTreeView * tree_view);
 void
-libgebr_gtk_tree_view_turn_to_single_selection(GtkTreeView * tree_view);
+libgebr_gui_gtk_tree_view_turn_to_single_selection(GtkTreeView * tree_view);
 gboolean
 libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
 #define libgebr_gtk_tree_view_foreach_selected(iter, tree_view) \
-	GList * __list = libgebr_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(tree_view)); \
+	GList * __list = libgebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(tree_view)); \
 	GList * __i = g_list_first(__list); \
 	if (__i != NULL || (g_list_free(__list), 0)) \
 		for (*iter = *(GtkTreeIter*)__i->data; \
@@ -72,12 +72,12 @@ libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
 			(g_list_foreach(__list, (GFunc)gtk_tree_iter_free, NULL), g_list_free(__list), 0); \
 		__i = g_list_next(__i))
 
-#define libgebr_gtk_tree_model_foreach(iter, tree_model) \
-	libgebr_gtk_tree_model_foreach_hyg(iter, tree_model, __nohyg)
+#define libgebr_gui_gtk_tree_model_foreach(iter, tree_model) \
+	libgebr_gui_gtk_tree_model_foreach_hyg(iter, tree_model, __nohyg)
 /* iterates over all toplevel iters in a treemodel
  * made with iter removal protection
  */
-#define libgebr_gtk_tree_model_foreach_hyg(iter, tree_model, hygid) \
+#define libgebr_gui_gtk_tree_model_foreach_hyg(iter, tree_model, hygid) \
 	gboolean valid##hygid; \
 	GtkTreeIter iter##hygid; \
 	for (valid##hygid = gtk_tree_model_get_iter_first(tree_model, &iter), iter##hygid = iter; \
@@ -87,9 +87,9 @@ libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
 
 typedef GtkMenu * (*GtkPopupCallback)(GtkWidget *, gpointer);
 gboolean
-gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpointer user_data);
+libgebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpointer user_data);
 void
-gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback, gpointer user_data);
+libgebr_gui_gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callback, gpointer user_data);
 
 /**
  * Used when the selected iter is about to be removed
@@ -99,25 +99,25 @@ gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GtkPopupCallback callb
  * can be used just to select the first iter.
  */
 void
-gtk_tree_view_select_sibling(GtkTreeView * tree_view);
+libgebr_gui_gtk_tree_view_select_sibling(GtkTreeView * tree_view);
 
 #if GTK_CHECK_VERSION(2,12,0)
-typedef gboolean (*GtkTreeViewTooltipCallback)(GtkTreeView * tree_view, GtkTooltip * tooltip,
+typedef gboolean (*LibGeBRGUIGtkTreeViewTooltipCallback)(GtkTreeView * tree_view, GtkTooltip * tooltip,
 	GtkTreeIter * iter, GtkTreeViewColumn * column, gpointer user_data);
 void
-gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GtkTreeViewTooltipCallback callback, gpointer user_data);
+libgebr_gui_gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, LibGeBRGUIGtkTreeViewTooltipCallback callback, gpointer user_data);
 #endif
 
-typedef void (*GtkTreeViewMoveSequenceCallback)(GtkTreeModel * tree_model, GeoXmlSequence * sequence,
+typedef void (*LibGeBRGUIGtkTreeViewMoveSequenceCallback)(GtkTreeModel * tree_model, GeoXmlSequence * sequence,
 	GeoXmlSequence * before, gpointer user_data);
 void
-gtk_tree_view_set_geoxml_sequence_moveable(GtkTreeView * tree_view, gint geoxml_sequence_pointer_column,
-	GtkTreeViewMoveSequenceCallback callback, gpointer user_data);
+libgebr_gui_gtk_tree_view_set_geoxml_sequence_moveable(GtkTreeView * tree_view, gint geoxml_sequence_pointer_column,
+	LibGeBRGUIGtkTreeViewMoveSequenceCallback callback, gpointer user_data);
 
 /**
- * Callback for \ref gtk_tree_view_set_reorder_callback
+ * Callback for \ref libgebr_gui_gtk_tree_view_set_reorder_callback
  */
-typedef gboolean (*GtkTreeViewReorderCallback)(GtkTreeView * tree_view, GtkTreeIter * iter,
+typedef gboolean (*LibGeBRGUIGtkTreeViewReorderCallback)(GtkTreeView * tree_view, GtkTreeIter * iter,
 	GtkTreeIter * position, GtkTreeViewDropPosition drop_position, gpointer user_data);
 /**
  * Make \p tree_view reorderable.
@@ -128,36 +128,34 @@ typedef gboolean (*GtkTreeViewReorderCallback)(GtkTreeView * tree_view, GtkTreeI
  * If \p may_reorder_callback is NULL every movement will be accepted.
  */
 void
-gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GtkTreeViewReorderCallback reorder_callback,
-	GtkTreeViewReorderCallback may_reorder_callback, gpointer user_data);
+libgebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, LibGeBRGUIGtkTreeViewReorderCallback reorder_callback,
+	LibGeBRGUIGtkTreeViewReorderCallback may_reorder_callback, gpointer user_data);
 
 gboolean
-libgebr_message_dialog(GtkMessageType type, GtkButtonsType buttons,
+libgebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons,
 	const gchar * title, const gchar * message, ...);
 gboolean
-confirm_action_dialog(const gchar * title, const gchar * message, ...);
+libgebr_gui_confirm_action_dialog(const gchar * title, const gchar * message, ...);
 
 void
-libgebr_gtk_action_group_set_accel_group(GtkActionGroup * action_group, GtkAccelGroup * accel_group);
+libgebr_gui_gtk_action_group_set_accel_group(GtkActionGroup * action_group, GtkAccelGroup * accel_group);
 
 void
 set_tooltip(GtkWidget * widget, const gchar * tip);
 
 GtkWidget *
-gtk_container_add_depth_hbox(GtkWidget * container);
+libgebr_gui_gtk_container_add_depth_hbox(GtkWidget * container);
 
-#define gtk_expander_hacked_define(expander, label_widget)			\
-	g_signal_connect_after ((gpointer) label_widget, "expose-event",	\
-			(GCallback)gtk_expander_hacked_idle,			\
-			expander);						\
-	g_signal_connect((gpointer) expander, "unmap",				\
-			(GCallback)gtk_expander_hacked_visible,			\
-			label_widget)
-
+#define libgebr_gui_gtk_expander_hacked_define(expander, label_widget) \
+	g_signal_connect_after(label_widget, "expose-event", \
+		(GCallback)libgebr_gui_gtk_expander_hacked_idle, \
+		expander); \
+	g_signal_connect(expander, "unmap", \
+		(GCallback)libgebr_gui_gtk_expander_hacked_visible, \
+		label_widget)
 void
-gtk_expander_hacked_visible(GtkWidget * parent_expander, GtkWidget * hbox);
-
+libgebr_gui_gtk_expander_hacked_visible(GtkWidget * parent_expander, GtkWidget * hbox);
 gboolean
-gtk_expander_hacked_idle(GtkWidget * hbox, GdkEventExpose *event, GtkWidget * expander);
+libgebr_gui_gtk_expander_hacked_idle(GtkWidget * hbox, GdkEventExpose *event, GtkWidget * expander);
 
 #endif //__LIBGEBR_GUI_UTILS_H

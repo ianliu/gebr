@@ -276,7 +276,7 @@ on_menu_revert_activate(void)
 {
 	GtkTreeIter		iter;
 
-	if (confirm_action_dialog(_("Revert changes"), _("All unsaved changes will be lost. Are you sure you want to revert selected(s) flow(s)?")) == FALSE)
+	if (libgebr_gui_confirm_action_dialog(_("Revert changes"), _("All unsaved changes will be lost. Are you sure you want to revert selected(s) flow(s)?")) == FALSE)
 		return;
 
 	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
@@ -320,7 +320,7 @@ on_menu_delete_activate(void)
 {
 	GtkTreeIter		iter;
 
-	if (confirm_action_dialog(_("Delete flow"), _("Are you sure you want to delete selected menus?")) == FALSE)
+	if (libgebr_gui_confirm_action_dialog(_("Delete flow"), _("Are you sure you want to delete selected menus?")) == FALSE)
 		return;
 
 	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
@@ -352,7 +352,7 @@ on_menu_delete_activate(void)
 	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.list_store), NULL) == 0)
 		menu_new(FALSE);
 	else
-		gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
+		libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 }
 
 /*
@@ -453,7 +453,7 @@ on_menu_close_activate(void)
 	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.list_store), NULL) == 0)
 		menu_new(FALSE);
 	else
-		gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
+		libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 }
 
 /*
@@ -484,6 +484,16 @@ void
 on_program_properties_activate(void)
 {
 	program_dialog_setup_ui();
+}
+
+/*
+ * Function: on_program_preview_activate
+ * Call <program_preview>
+ */
+void
+on_program_preview_activate(void)
+{
+	program_preview();
 }
 
 /*

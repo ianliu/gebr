@@ -223,11 +223,11 @@ server_common_setup(struct ui_server_common * ui_server_common)
 	view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_server_common->store));
 	gtk_container_add(GTK_CONTAINER(scrolled_window), view);
 	ui_server_common->view = view;
-	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
+	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
 		(GtkPopupCallback)server_common_popup_menu, ui_server_common);
 #if GTK_CHECK_VERSION(2,12,0)
-	gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(view),
-		(GtkTreeViewTooltipCallback)server_common_tooltip_callback, ui_server_common);
+	libgebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(view),
+		(LibGeBRGUIGtkTreeViewTooltipCallback)server_common_tooltip_callback, ui_server_common);
 #endif
 
 	renderer = gtk_cell_renderer_pixbuf_new();
@@ -258,7 +258,7 @@ server_common_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * u
 	case RESPONSE_CONNECT_ALL: {
 		GtkTreeIter	iter;
 
-		libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->store)) {
+		libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->store)) {
 			struct server *	server;
 
 			gtk_tree_model_get(GTK_TREE_MODEL(ui_server_common->store), &iter,
@@ -273,7 +273,7 @@ server_common_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * u
 	} case RESPONSE_DISCONNECT_ALL: {
 		GtkTreeIter	iter;
 
-		libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->store)) {
+		libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->store)) {
 			struct server *	server;
 
 			gtk_tree_model_get(GTK_TREE_MODEL(ui_server_common->store), &iter,
@@ -307,7 +307,7 @@ server_list_add(struct ui_server_list * ui_server_list, const gchar * address)
 	GtkTreeIter	iter;
 
 	/* check if it is already in list */
-	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_list->common.store)) {
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_list->common.store)) {
 		struct server *	server;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(ui_server_list->common.store), &iter,
@@ -508,7 +508,7 @@ server_select_setup_ui(void)
 	/* initializations */
 	server = NULL;
 	connected = 0;
-	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
 		struct server *	server;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,

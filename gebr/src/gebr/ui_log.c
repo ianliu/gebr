@@ -188,7 +188,7 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 	/* select it on view */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_log->view));
 	gtk_tree_selection_select_iter(selection, &iter);
-	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(ui_log->view), &iter);
+	libgebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(ui_log->view), &iter);
 
 	/* frees */
 	g_string_free(markuped_date, TRUE);

@@ -112,11 +112,11 @@ flow_edition_setup_ui(void)
 	ui_flow_edition->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->fseq_store));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_edition->fseq_view)),
 		GTK_SELECTION_MULTIPLE);
-	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
+	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
 		(GtkPopupCallback)flow_edition_component_popup_menu, ui_flow_edition);
-	gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
-		(GtkTreeViewReorderCallback)flow_edition_reorder,
-		(GtkTreeViewReorderCallback)flow_edition_may_reorder,
+	libgebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
+		(LibGeBRGUIGtkTreeViewReorderCallback)flow_edition_reorder,
+		(LibGeBRGUIGtkTreeViewReorderCallback)flow_edition_may_reorder,
 		ui_flow_edition);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_edition->fseq_view), FALSE);
 
@@ -158,7 +158,7 @@ flow_edition_setup_ui(void)
 		G_TYPE_STRING);
 	ui_flow_edition->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->menu_store));
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_edition->menu_view);
-	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->menu_view),
+	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->menu_view),
 		(GtkPopupCallback)flow_edition_menu_popup_menu, ui_flow_edition);
 	g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated",
 		GTK_SIGNAL_FUNC(flow_edition_menu_add), ui_flow_edition);
@@ -231,7 +231,7 @@ flow_edition_select_component_iter(GtkTreeIter * iter)
 	if (iter == NULL)
 		return;
 	gtk_tree_selection_select_iter(selection, iter);
-	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter);
+	libgebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter);
 
 	flow_edition_component_selected();
 }
@@ -275,14 +275,14 @@ flow_edition_component_activated(void)
 	GtkTreeIter		iter;
 	gchar *			title;
 
-	libgebr_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+	libgebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 	if (!flow_edition_get_selected_component(&iter, FALSE))
 		return;
-	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter)) {
+	if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter)) {
 		flow_io_setup_ui(FALSE);
 		return;
 	}
-	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
+	if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
 		flow_io_setup_ui(TRUE);
 		return;
 	}
@@ -330,8 +330,8 @@ flow_edition_status_changed(void)
 	libgebr_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
 		GeoXmlSequence *	program;
 
-		if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-		gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
+		if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+		libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
 			continue;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
@@ -384,14 +384,14 @@ static gboolean
 flow_edition_may_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
 	GtkTreeViewDropPosition drop_position, struct ui_flow_edition * ui_flow_edition)
 {
-	if (gtk_tree_model_iter_equal_to(iter, &ui_flow_edition->input_iter) ||
-	gtk_tree_model_iter_equal_to(iter, &ui_flow_edition->output_iter))
+	if (libgebr_gui_gtk_tree_model_iter_equal_to(iter, &ui_flow_edition->input_iter) ||
+	libgebr_gui_gtk_tree_model_iter_equal_to(iter, &ui_flow_edition->output_iter))
 		return FALSE;
 	if (drop_position != GTK_TREE_VIEW_DROP_AFTER &&
-	gtk_tree_model_iter_equal_to(position, &ui_flow_edition->input_iter))
+	libgebr_gui_gtk_tree_model_iter_equal_to(position, &ui_flow_edition->input_iter))
 		return FALSE;
 	if (drop_position == GTK_TREE_VIEW_DROP_AFTER &&
-	gtk_tree_model_iter_equal_to(position, &ui_flow_edition->output_iter))
+	libgebr_gui_gtk_tree_model_iter_equal_to(position, &ui_flow_edition->output_iter))
 		return FALSE;
 
 	return TRUE;
@@ -442,8 +442,8 @@ flow_edition_component_selected(void)
 	gebr.program = NULL;
 	if (!flow_edition_get_selected_component(&iter, FALSE))
 		return;
-	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
+	if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+	libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
 		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
@@ -549,30 +549,30 @@ flow_edition_component_popup_menu(GtkWidget * widget, struct ui_flow_edition * u
 
 	menu = gtk_menu_new();
 
-	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-	gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
+	if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+	libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 			gtk_action_group_get_action(gebr.action_group, "flow_edition_properties")));
 		goto out;
 	}
 
 	/* Move top */
-	if (gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter) == TRUE) {
+	if (libgebr_gui_gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
 			(GCallback)flow_program_move_top, NULL);
 	}
 	/* Move bottom */
-	if (gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter) == TRUE) {
+	if (libgebr_gui_gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
 			(GCallback)flow_program_move_bottom, NULL);
 	}
 	/* separator */
-	if (gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter) == TRUE ||
-	gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter) == TRUE)
+	if (libgebr_gui_gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter) == TRUE ||
+	libgebr_gui_gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter) == TRUE)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
 	/* status */

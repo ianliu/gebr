@@ -69,6 +69,8 @@ static const GtkActionEntry actions_entries [] = {
 		(GCallback)on_program_delete_activate},
 	{"program_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit program properties"),
 		(GCallback)on_program_properties_activate},
+	{"program_preview", GTK_STOCK_MEDIA_PLAY, N_("Preview edition in GêBR"), NULL, N_("Show program programs' edition as in GêBR"),
+		(GCallback)on_program_preview_activate},
 	{"program_top", GTK_STOCK_GOTO_TOP, NULL, NULL, N_("Move program to the top of the list"),
 		(GCallback)on_program_top_activate},
 	{"program_bottom", GTK_STOCK_GOTO_BOTTOM, NULL, NULL,
@@ -178,7 +180,7 @@ debr_setup_ui(void)
 		combo_type_map_size, -1, (GCallback)on_parameter_type_activate, NULL);
 	debr.accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(debr.window), debr.accel_group);
-	libgebr_gtk_action_group_set_accel_group(debr.action_group, debr.accel_group);
+	libgebr_gui_gtk_action_group_set_accel_group(debr.action_group, debr.accel_group);
 
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "menu_new"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "program_new"));
@@ -191,7 +193,7 @@ debr_setup_ui(void)
 	common_action_group = gtk_action_group_new("Common");
 	gtk_action_group_add_actions(common_action_group, common_actions_entries,
 		G_N_ELEMENTS(common_actions_entries), NULL);
-	libgebr_gtk_action_group_set_accel_group(common_action_group, debr.accel_group);
+	libgebr_gui_gtk_action_group_set_accel_group(common_action_group, debr.accel_group);
 
 	/*
 	 * Menu: Actions
@@ -288,6 +290,8 @@ debr_setup_ui(void)
         gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "program_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(debr.action_group, "program_preview"))), -1);
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);

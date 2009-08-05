@@ -20,6 +20,7 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/gui/utils.h>
+#include <libgebr/gui/programedit.h>
 
 #include "program.h"
 #include "debr.h"
@@ -106,10 +107,10 @@ program_setup_ui(void)
 	debr.ui_program.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_program.list_store));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view)),
 		GTK_SELECTION_MULTIPLE);
-	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_program.tree_view),
+	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_program.tree_view),
 		(GtkPopupCallback)program_popup_menu, NULL);
-	gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(debr.ui_program.tree_view), PROGRAM_XMLPOINTER,
-		(GtkTreeViewMoveSequenceCallback)menu_saved_status_set_unsaved, NULL);
+	libgebr_gui_gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(debr.ui_program.tree_view), PROGRAM_XMLPOINTER,
+		(LibGeBRGUIGtkTreeViewMoveSequenceCallback)menu_saved_status_set_unsaved, NULL);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_program.tree_view);
 	g_signal_connect(debr.ui_program.tree_view, "cursor-changed",
 		(GCallback)program_selected, NULL);
@@ -239,6 +240,37 @@ program_new(gboolean edit)
 }
 
 /*
+ * Function: program_preview
+ * Show GeBR's program edit view
+ */
+void
+program_preview(void)
+{
+	GtkWidget *				dialog;
+	struct libgebr_gui_program_edit		program_edit;
+
+	if (!program_get_selected(NULL, TRUE))
+		return;
+
+	dialog = gtk_dialog_new_with_buttons(_("Program edition preview"),
+		GTK_WINDOW(debr.window),
+		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
+		NULL);
+	gtk_widget_set_size_request(dialog, 630, 400);
+
+	program_edit = libgebr_gui_program_edit_setup_ui(
+		GEOXML_PROGRAM(geoxml_sequence_append_clone(GEOXML_SEQUENCE(debr.program))),
+		NULL, TRUE);
+		
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), program_edit.widget, TRUE, TRUE, 0);
+	gtk_dialog_run(GTK_DIALOG(dialog));
+
+	gtk_widget_destroy(dialog);
+	geoxml_sequence_remove(GEOXML_SEQUENCE(program_edit.program));
+}
+
+/*
  * Function: program_remove
  * Confirm action and if confirmed removed selected program from XML and UI
  */
@@ -249,7 +281,7 @@ program_remove(void)
 
 	if (!program_get_selected(NULL, TRUE))
 		return;
-	if (confirm_action_dialog(_("Delete program"), _("Are you sure you want to delete selected(s) program(s)?"))
+	if (libgebr_gui_confirm_action_dialog(_("Delete program"), _("Are you sure you want to delete selected(s) program(s)?"))
 	== FALSE)
 		return;
 
@@ -260,7 +292,7 @@ program_remove(void)
 		g_signal_emit_by_name(debr.ui_program.tree_view, "cursor-changed");
 	}
 
-	gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_program.tree_view));
+	libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_program.tree_view));
 	menu_details_update();
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -375,7 +407,7 @@ program_dialog_setup_ui(void)
 	GtkWidget *     url_label;
 	GtkWidget *     url_entry;
 
-	libgebr_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
+	libgebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
 	if (program_get_selected(NULL, TRUE) == FALSE)
 		return;
 
@@ -406,7 +438,7 @@ program_dialog_setup_ui(void)
 	gtk_widget_show(io_label);
 	gtk_box_pack_start(GTK_BOX(io_vbox), io_label, FALSE, FALSE, 0);
 
-	io_depth_hbox = gtk_container_add_depth_hbox(io_vbox);
+	io_depth_hbox = libgebr_gui_gtk_container_add_depth_hbox(io_vbox);
 	io_vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(io_vbox);
 	gtk_box_pack_start(GTK_BOX(io_depth_hbox), io_vbox, FALSE, TRUE, 0);
@@ -734,14 +766,14 @@ program_popup_menu(GtkWidget * tree_view)
 		goto out;
 	}
 
-	if (gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE)
+	if (libgebr_gui_gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE)
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "program_top")));
-	if (gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
+	if (libgebr_gui_gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "program_bottom")));
-	if (gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE ||
-	gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
+	if (libgebr_gui_gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE ||
+	libgebr_gui_gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
@@ -750,6 +782,8 @@ program_popup_menu(GtkWidget * tree_view)
 		gtk_action_group_get_action(debr.action_group, "program_delete")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "program_properties")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "program_preview")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "program_copy")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(

@@ -1,4 +1,4 @@
-/*   GeBR - An environment for seismic processing.
+/*   libgebr - GeBR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -15,23 +15,25 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __PARAMETERS_H
-#define __PARAMETERS_H
+#ifndef __LIBGEBR_GUI_PROGRAM_EDIT_H
+#define __LIBGEBR_GUI_PROGRAM_EDIT_H
 
-#include <glib.h>
 #include <gtk/gtk.h>
 
-#include <libgebr/gui/programedit.h>
+#include <geoxml.h>
 
-struct ui_parameters {
-	GtkWidget *				dialog;
-	struct libgebr_gui_program_edit		program_edit;
+struct libgebr_gui_program_edit {
+	GeoXmlProgram *		program;
+
+	GtkWidget *		widget;
+	gpointer		file_parameter_widget_data;
+	gboolean		use_default;
 };
 
-struct ui_parameters *
-parameters_configure_setup_ui(void);
-
+struct libgebr_gui_program_edit
+libgebr_gui_program_edit_setup_ui(GeoXmlProgram * program, gpointer file_parameter_widget_data,
+gboolean use_default);
 void
-parameters_reset_to_default(GeoXmlParameters * parameters);
+libgebr_gui_program_edit_reload(struct libgebr_gui_program_edit * program_edit);
 
-#endif //__PARAMETERS_H
+#endif //__LIBGEBR_GUI_PROGRAM_EDIT_H

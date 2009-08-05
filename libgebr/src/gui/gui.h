@@ -23,5 +23,6 @@
 #include <gui/icons.h>
 #include <gui/pixmaps.h>
 #include <gui/parameter.h>
+#include <gui/program_edit.h>
 #include <gui/valuesequenceedit.h>
 #include <gui/utils.h>

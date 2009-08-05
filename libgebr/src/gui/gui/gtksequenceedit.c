@@ -87,12 +87,12 @@ gtk_sequence_edit_set_property(GtkSequenceEdit * sequence_edit, guint property_i
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 		tree_view = GTK_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->create_tree_view(sequence_edit);
-		gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(tree_view),
-			(GtkTreeViewReorderCallback)__gtk_sequence_edit_on_reorder, NULL, sequence_edit);
+		libgebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(tree_view),
+			(LibGeBRGUIGtkTreeViewReorderCallback)__gtk_sequence_edit_on_reorder, NULL, sequence_edit);
 		sequence_edit->tree_view = tree_view;
 		gtk_widget_show(tree_view);
 		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), tree_view);
-		gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(tree_view),
+		libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(tree_view),
 			(GtkPopupCallback)__gtk_sequence_edit_popup_menu, sequence_edit);
 
 		break;
@@ -250,14 +250,14 @@ __gtk_sequence_edit_popup_menu(GtkTreeView * tree_view, GtkSequenceEdit * sequen
 		goto out;
 
 	/* Move top */
-	if (gtk_list_store_can_move_up(sequence_edit->list_store, &iter) == TRUE) {
+	if (libgebr_gui_gtk_list_store_can_move_up(sequence_edit->list_store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
 			(GCallback)__gtk_sequence_edit_on_move_top_activated, sequence_edit);
 	}
 	/* Move bottom */
-	if (gtk_list_store_can_move_down(sequence_edit->list_store, &iter) == TRUE) {
+	if (libgebr_gui_gtk_list_store_can_move_down(sequence_edit->list_store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",

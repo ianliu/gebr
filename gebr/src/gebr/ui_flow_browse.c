@@ -110,10 +110,10 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view)),
 		GTK_SELECTION_MULTIPLE);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_browse->view), FALSE);
-	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view),
+	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view),
 		(GtkPopupCallback)flow_browse_popup_menu, ui_flow_browse);
-	gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(ui_flow_browse->view), FB_LINE_FLOW_POINTER,
-		(GtkTreeViewMoveSequenceCallback)flow_browse_on_flow_move, NULL);
+	libgebr_gui_gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(ui_flow_browse->view), FB_LINE_FLOW_POINTER,
+		(LibGeBRGUIGtkTreeViewMoveSequenceCallback)flow_browse_on_flow_move, NULL);
 	g_signal_connect(ui_flow_browse->view, "row-activated",
 		GTK_SIGNAL_FUNC(flow_browse_on_row_activated), ui_flow_browse);
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->view), "cursor-changed",
@@ -345,7 +345,7 @@ flow_browse_select_iter(GtkTreeIter * iter)
 	if (iter == NULL)
 		return;
 	gtk_tree_selection_select_iter(selection, iter);
-	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), iter);
+	libgebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), iter);
 
 	flow_browse_load();
 }
@@ -356,7 +356,7 @@ flow_browse_select_iter(GtkTreeIter * iter)
 void
 flow_browse_single_selection(void)
 {
-	libgebr_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	libgebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 }
 
 /*
@@ -485,22 +485,22 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 	}
 
 	/* Move top */
-	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE) {
+	if (libgebr_gui_gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
 			(GCallback)line_move_flow_top, NULL);
 	}
 	/* Move bottom */
-	if (gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE) {
+	if (libgebr_gui_gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
 			(GCallback)line_move_flow_bottom, NULL);
 	}
 	/* separator */
-	if (gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE ||
-	gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE)
+	if (libgebr_gui_gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE ||
+	libgebr_gui_gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
@@ -536,7 +536,7 @@ out:	gtk_widget_show_all(menu);
 static void
 flow_browse_on_revision_activate(GtkMenuItem * menu_item, GeoXmlRevision * revision)
 {
-	if (confirm_action_dialog(_("Backup current state?"),
+	if (libgebr_gui_confirm_action_dialog(_("Backup current state?"),
 	_("You are about to revert to a previous state. "
 	"The current flow will be lost after this action. "
 	"Do you want to save the current flow state?")) && !flow_revision_save())

@@ -127,7 +127,7 @@ flow_delete(gboolean confirm)
 
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
-	if (confirm && confirm_action_dialog(_("Delete flow"),
+	if (confirm && libgebr_gui_confirm_action_dialog(_("Delete flow"),
 	_("Are you sure you want to delete selected(s) flow(s)?")) == FALSE)
 		return;
 
@@ -163,7 +163,7 @@ flow_delete(gboolean confirm)
 		g_free(title);
 		g_free(filename);
 	}
-	gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 }
 
 /* Function: flow_import
@@ -585,8 +585,8 @@ flow_program_remove(void)
 	GtkTreeIter	iter;
 
 	libgebr_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
-		if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-		gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
+		if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+		libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
 			continue;
 
 		geoxml_sequence_remove(GEOXML_SEQUENCE(gebr.program));
@@ -594,7 +594,7 @@ flow_program_remove(void)
 		gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
 		g_signal_emit_by_name(gebr.ui_flow_edition->fseq_view, "cursor-changed");
 	}
-	gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+	libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 }
 
 /*

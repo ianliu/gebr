@@ -173,7 +173,7 @@ validate_menu(GtkTreeIter * iter, GeoXmlFlow * menu)
 		VALIDATE_POINTER, validate,
 		-1);
 	validate_set_selected(iter);
-	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_validate.tree_view), iter);
+	libgebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_validate.tree_view), iter);
 }
 
 /*
@@ -201,7 +201,7 @@ validate_clear(void)
 {
 	GtkTreeIter		iter;
 
-	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_validate.list_store)) {
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_validate.list_store)) {
 		struct validate *	validate;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_validate.list_store), &iter, VALIDATE_POINTER, &validate, -1);

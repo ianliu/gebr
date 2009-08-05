@@ -157,11 +157,11 @@ parameter_setup_ui(void)
 	debr.ui_parameter.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_parameter.tree_store));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view)),
 		GTK_SELECTION_MULTIPLE);
-	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
+	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
 		(GtkPopupCallback)parameter_popup_menu, NULL);
-	gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
-		(GtkTreeViewReorderCallback)parameter_reorder,
-		(GtkTreeViewReorderCallback)parameter_can_reorder, NULL);
+	libgebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
+		(LibGeBRGUIGtkTreeViewReorderCallback)parameter_reorder,
+		(LibGeBRGUIGtkTreeViewReorderCallback)parameter_can_reorder, NULL);
 	gtk_widget_show(debr.ui_parameter.tree_view);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_parameter.tree_view);
 	g_signal_connect(debr.ui_parameter.tree_view, "cursor-changed",
@@ -295,7 +295,7 @@ parameter_remove(gboolean confirm)
 
 	if (parameter_get_selected(&iter, TRUE) == FALSE)
 		return;
-	if (confirm && confirm_action_dialog(_("Delete parameter"),
+	if (confirm && libgebr_gui_confirm_action_dialog(_("Delete parameter"),
 	_("Are you sure you want to delete selected(s) parameter(s)?")) == FALSE)
 		return;
 
@@ -313,7 +313,7 @@ parameter_remove(gboolean confirm)
 		g_signal_emit_by_name(debr.ui_parameter.tree_view, "cursor-changed");
 	}
 	debr.parameter = NULL;
-	gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
+	libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -531,7 +531,7 @@ parameter_dialog_setup_ui(void)
 	GeoXmlProgramParameter *	program_parameter;
 	struct parameter_widget *	parameter_widget;
 
-	libgebr_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
+	libgebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	if (parameter_get_selected(NULL, TRUE) == FALSE)
 		return;
 
@@ -986,7 +986,7 @@ parameter_select_iter(GtkTreeIter iter)
 	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	gtk_tree_selection_unselect_all(tree_selection);
 	gtk_tree_selection_select_iter(tree_selection, &iter);
-	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &iter);
+	libgebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &iter);
 
 	parameter_selected();
 }
@@ -1077,14 +1077,14 @@ parameter_popup_menu(GtkWidget * tree_view)
 	if (parameter_get_selected(&iter, FALSE) == FALSE)
 		goto out;
 
-	if (gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE)
+	if (libgebr_gui_gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE)
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 			gtk_action_group_get_action(debr.action_group, "parameter_top")));
-	if (gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE)
+	if (libgebr_gui_gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE)
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 			gtk_action_group_get_action(debr.action_group, "parameter_bottom")));
-	if (gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE ||
-	gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE)
+	if (libgebr_gui_gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE ||
+	libgebr_gui_gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
@@ -1137,7 +1137,7 @@ parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * pos
 		geoxml_sequence_move_into_group(GEOXML_SEQUENCE(parameter), GEOXML_PARAMETER_GROUP(position_parameter));
 
 		gtk_tree_store_append(debr.ui_parameter.tree_store, &new, position);
-		gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &new, iter);
+		libgebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &new, iter);
 		gtk_tree_store_remove(debr.ui_parameter.tree_store, iter);
 
 		parameter_load_iter(position);
@@ -1147,7 +1147,7 @@ parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * pos
 		else
 			geoxml_sequence_move_before(GEOXML_SEQUENCE(parameter), GEOXML_SEQUENCE(position_parameter));
 
-		if (gtk_tree_model_iter_equal_to(&parent, &position_parent)) {
+		if (libgebr_gui_gtk_tree_model_iter_equal_to(&parent, &position_parent)) {
 			new = *iter;
 			if (drop_position == GTK_TREE_VIEW_DROP_AFTER)
 				gtk_tree_store_move_after(debr.ui_parameter.tree_store, iter, position);
@@ -1158,14 +1158,14 @@ parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * pos
 				gtk_tree_store_insert_after(debr.ui_parameter.tree_store, &new, NULL, position);
 			else
 				gtk_tree_store_insert_before(debr.ui_parameter.tree_store, &new, NULL, position);
-			gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &new, iter);
+			libgebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &new, iter);
 			gtk_tree_store_remove(debr.ui_parameter.tree_store, iter);
 		}
 
-		if (gtk_tree_model_iter_is_valid(&position_parent))
+		if (libgebr_gui_gtk_tree_model_iter_is_valid(&position_parent))
 			parameter_load_iter(&position_parent);
 	}
-	if (gtk_tree_model_iter_is_valid(&parent))
+	if (libgebr_gui_gtk_tree_model_iter_is_valid(&parent))
 		parameter_load_iter(&parent);
 
 	parameter_select_iter(new);

@@ -24,14 +24,14 @@ libgebr_gui_la_SOURCES = \
 	about.c utils.c pixmaps.c icons.c help.c \
 	gtkfileentry.c gtkenhancedentry.c \
 	gtksequenceedit.c valuesequenceedit.c \
-	parameter.c
+	programedit.c parameter.c
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = \
 	about.h utils.h pixmaps.h icons.h help.h \
 	gtkfileentry.h gtkenhancedentry.h \
 	gtksequenceedit.h valuesequenceedit.h \
-	parameter.h
+	programedit.h parameter.h
 noinst_HEADERS = marshalers.h
 EXTRA_DIST = ${noinst_HEADERS} marshalers.list 
 

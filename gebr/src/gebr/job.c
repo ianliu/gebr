@@ -82,7 +82,7 @@ job_add(struct server * server, GString * jid,
 	job_update_status(job);
 	job_append_output(job, output);
 
-	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter);
+	libgebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter);
 
 	return job;
 }
@@ -151,7 +151,7 @@ job_find(GString * address, GString * jid)
 	struct job *	job;
 
 	job = NULL;
-	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_job_control->store)) {
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_job_control->store)) {
 		struct job *	i;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,

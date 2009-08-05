@@ -146,7 +146,7 @@ gebr_quit(void)
 	log_close(gebr.log);
 
 	/* Free servers structs */
-	libgebr_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
+	libgebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
 		struct server *	server;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
@@ -155,7 +155,7 @@ gebr_quit(void)
 		server_free(server);
 	}
 	/* Free jobs structs */
-	libgebr_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_job_control->store), 2) {
+	libgebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_job_control->store), 2) {
 		struct job *	job;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
@@ -443,7 +443,7 @@ gebr_config_save(gboolean verbose)
 	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_word_wrap", gebr.config.job_log_word_wrap);
 
 	/* Save list of servers */
-	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
 		struct server *	server;
 		GString *	group;
 		gboolean	autoconnect;

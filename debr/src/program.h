@@ -49,22 +49,18 @@ program_setup_ui(void);
 
 void
 program_load_menu(void);
-
 void
 program_new(gboolean edit);
-
+void
+program_preview(void);
 void
 program_remove(void);
-
 void
 program_top(void);
-
 void
 program_bottom(void);
-
 void
 program_copy(void);
-
 void
 program_paste(void);
 

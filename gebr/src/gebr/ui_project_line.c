@@ -101,7 +101,7 @@ project_line_setup_ui(void)
 		G_TYPE_STRING,  /* Name (title for libgeoxml) */
 		G_TYPE_STRING); /* Filename */
 	ui_project_line->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_project_line->store));
-	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_project_line->view),
+	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_project_line->view),
 	        (GtkPopupCallback)project_line_popup_menu, ui_project_line);
 	g_signal_connect(ui_project_line->view, "row-activated",
 		GTK_SIGNAL_FUNC(project_line_on_row_activated), ui_project_line);
@@ -345,7 +345,7 @@ project_line_set_selected(GtkTreeIter * iter, GeoXmlDocument * document)
 	
 	gtk_tree_view_expand_to_path(GTK_TREE_VIEW(gebr.ui_project_line->view), tree_path);
 	gtk_tree_selection_select_iter(selection, iter);
-	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
+	libgebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
 
 	gtk_tree_store_set(gebr.ui_project_line->store, iter,
 		PL_TITLE, geoxml_document_get_title(document),

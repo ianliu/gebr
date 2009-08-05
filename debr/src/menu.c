@@ -101,7 +101,7 @@ menu_setup_ui(void)
 	debr.ui_menu.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_menu.list_store));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view)),
 		GTK_SELECTION_MULTIPLE);
-	gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_menu.tree_view),
+	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_menu.tree_view),
 		(GtkPopupCallback)menu_popup_menu, NULL);
 	gtk_widget_show(debr.ui_menu.tree_view);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_menu.tree_view);
@@ -298,7 +298,7 @@ menu_open(const gchar * path, gboolean select)
 	gchar *			tmp;
 	GeoXmlFlow *		menu;
 
-	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.list_store)) {
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.list_store)) {
 		gchar *	ipath;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
@@ -464,11 +464,11 @@ menu_install(void)
 		case 0:
 			break;
 		case -1:
-			libgebr_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
+			libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 				_("Failed to run GêBR. Please check if GêBR is installed"));
 			break;
 		case -2:
-			libgebr_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
+			libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 				_("Failed to install menu '%s'"), menu_filename);
 			break;
 		case -3: {
@@ -486,7 +486,7 @@ menu_install(void)
 			case GTK_RESPONSE_OK:
 				g_string_printf(cmd_line, "gebr -f -I %s", menu_path);
 				if ((char)WEXITSTATUS(system(cmd_line->str)))
-					libgebr_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
+					libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 						_("Failed to install menu '%s'"), menu_filename);
 				if (response == GTK_RESPONSE_OK)
 					overwrite_all = TRUE;
@@ -679,7 +679,7 @@ menu_dialog_setup_ui(void)
 	GtkWidget *		categories_sequence_edit;
 	GtkWidget *		widget;
 
-	libgebr_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
+	libgebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 	menu_get_selected(NULL);
 
 	dialog = gtk_dialog_new_with_buttons(_("Edit menu"),
@@ -886,7 +886,7 @@ menu_select_iter(GtkTreeIter * iter)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 	gtk_tree_selection_unselect_all(selection);
 	gtk_tree_selection_select_iter(selection, iter);
-	libgebr_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
+	libgebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
 	menu_selected();
 }
 
@@ -910,7 +910,7 @@ menu_details_update(void)
 	g_free(markup);
 
 	text = g_string_new(NULL);
-	switch (geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu))){
+	switch (geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu))) {
 	case 0:
 		g_string_printf(text, _("This menu has no programs"));
 		break;
@@ -973,7 +973,7 @@ menu_details_update(void)
 	g_string_free(text, TRUE);
 
 	g_object_set(G_OBJECT(debr.ui_menu.details.help_button),
-		"sensitive", (strlen(geoxml_document_get_help(GEOXML_DOC(debr.menu)))>1) ? TRUE : FALSE, NULL);
+		"sensitive", strlen(geoxml_document_get_help(GEOXML_DOC(debr.menu))) > 1 ? TRUE : FALSE, NULL);
 }
 
 /*
@@ -1224,7 +1224,7 @@ menu_category_removed(ValueSequenceEdit * sequence_edit, const gchar * old_text)
 {
 	GtkTreeIter	iter;
 
-	libgebr_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.categories_model)) {
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.categories_model)) {
 		gchar *	i;
 		gint	ref_count;
 
