@@ -528,13 +528,12 @@ parameter_dialog_setup_ui(void)
 	GtkWidget *			default_widget;
 	GtkWidget *			default_widget_hbox;
 
-	GtkTreeIter			iter;
 	GeoXmlProgramParameter *	program_parameter;
 	struct parameter_widget *	parameter_widget;
 
-	if (parameter_get_selected(&iter, TRUE) == FALSE)
+	libgebr_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
+	if (parameter_get_selected(NULL, TRUE) == FALSE)
 		return;
-	parameter_select_iter(iter);
 
 	ui = g_malloc(sizeof(struct ui_parameter_dialog));
 	ui->parameter = debr.parameter;

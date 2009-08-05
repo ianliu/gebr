@@ -679,10 +679,8 @@ menu_dialog_setup_ui(void)
 	GtkWidget *		categories_sequence_edit;
 	GtkWidget *		widget;
 
-	GtkTreeIter		iter;
-
-	menu_get_selected(&iter);
-	menu_select_iter(&iter);
+	libgebr_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
+	menu_get_selected(NULL);
 
 	dialog = gtk_dialog_new_with_buttons(_("Edit menu"),
 		GTK_WINDOW(debr.window),

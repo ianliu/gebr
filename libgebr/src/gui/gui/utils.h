@@ -59,6 +59,8 @@ void
 libgebr_gtk_tree_view_scroll_to_iter_cell(GtkTreeView * tree_view, GtkTreeIter * iter);
 GList *
 libgebr_gtk_tree_view_get_selected_iters(GtkTreeView * tree_view);
+void
+libgebr_gtk_tree_view_turn_to_single_selection(GtkTreeView * tree_view);
 gboolean
 libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
 #define libgebr_gtk_tree_view_foreach_selected(iter, tree_view) \

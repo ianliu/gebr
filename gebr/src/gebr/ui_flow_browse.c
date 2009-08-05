@@ -116,14 +116,13 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 		(GtkTreeViewMoveSequenceCallback)flow_browse_on_flow_move, NULL);
 	g_signal_connect(ui_flow_browse->view, "row-activated",
 		GTK_SIGNAL_FUNC(flow_browse_on_row_activated), ui_flow_browse);
+	g_signal_connect(GTK_OBJECT(ui_flow_browse->view), "cursor-changed",
+		GTK_SIGNAL_FUNC(flow_browse_load), ui_flow_browse);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", FB_TITLE);
-
-	g_signal_connect(GTK_OBJECT(ui_flow_browse->view), "cursor-changed",
-		GTK_SIGNAL_FUNC(flow_browse_load), ui_flow_browse);
 
 	/*
 	 * Right side: flow info
@@ -132,10 +131,8 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_paned_pack2(GTK_PANED(hpanel), scrolled_window, TRUE, FALSE);
-
 	frame = gtk_frame_new(_("Details"));
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), frame);
-
 	infopage = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(frame), infopage);
 
@@ -210,7 +207,7 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 	g_object_set(ui_flow_browse->info.help, "sensitive", FALSE, NULL);
 	gtk_box_pack_end(GTK_BOX(infopage), ui_flow_browse->info.help, FALSE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->info.help), "clicked",
-			GTK_SIGNAL_FUNC(flow_browse_show_help), ui_flow_browse);
+		GTK_SIGNAL_FUNC(flow_browse_show_help), ui_flow_browse);
 
 	/* Author */
 	ui_flow_browse->info.author = gtk_label_new("");
@@ -359,10 +356,7 @@ flow_browse_select_iter(GtkTreeIter * iter)
 void
 flow_browse_single_selection(void)
 {
-	GtkTreeIter	iter;
-
-	flow_browse_get_selected(&iter, FALSE);
-	flow_browse_select_iter(&iter);
+	libgebr_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 }
 
 /*

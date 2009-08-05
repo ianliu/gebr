@@ -275,9 +275,9 @@ flow_edition_component_activated(void)
 	GtkTreeIter		iter;
 	gchar *			title;
 
+	libgebr_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 	if (!flow_edition_get_selected_component(&iter, FALSE))
 		return;
-	flow_edition_select_component_iter(&iter);
 	if (gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter)) {
 		flow_io_setup_ui(FALSE);
 		return;

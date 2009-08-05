@@ -329,6 +329,23 @@ libgebr_gtk_tree_view_get_selected_iters(GtkTreeView * tree_view)
 	return list;
 }
 
+void
+libgebr_gtk_tree_view_turn_to_single_selection(GtkTreeView * tree_view)
+{
+	GList *			selected_iters, * i;
+	GtkTreeSelection *	tree_selection;
+
+	tree_selection = gtk_tree_view_get_selection(tree_view);
+	selected_iters = libgebr_gtk_tree_view_get_selected_iters(tree_view);
+	i = g_list_first(selected_iters);
+	i = g_list_next(i);
+	for (; i != NULL; i = g_list_next(i))
+		gtk_tree_selection_unselect_iter(tree_selection, (GtkTreeIter*)i->data);
+
+	g_list_foreach(selected_iters, (GFunc)gtk_tree_iter_free, NULL);
+	g_list_free(selected_iters);
+}
+
 gboolean
 libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter)
 {
@@ -700,7 +717,6 @@ libgebr_message_dialog(GtkMessageType type, GtkButtonsType buttons,
 
 	return ret;
 }
-
 
 /* Function: confirm_action_dialog
  * Show an action confirmation dialog with formated _message_

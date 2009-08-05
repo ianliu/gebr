@@ -375,11 +375,9 @@ program_dialog_setup_ui(void)
 	GtkWidget *     url_label;
 	GtkWidget *     url_entry;
 
-	GtkTreeIter	iter;
-
-	if (program_get_selected(&iter, TRUE) == FALSE)
+	libgebr_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
+	if (program_get_selected(NULL, TRUE) == FALSE)
 		return;
-	program_select_iter(iter);
 
 	dialog = gtk_dialog_new_with_buttons(_("Edit program"),
 		GTK_WINDOW(debr.window),
