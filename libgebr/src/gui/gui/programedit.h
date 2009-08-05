@@ -34,6 +34,6 @@ struct libgebr_gui_program_edit
 libgebr_gui_program_edit_setup_ui(GeoXmlProgram * program, gpointer file_parameter_widget_data,
 gboolean use_default);
 void
-libgebr_gui_program_edit_reload(struct libgebr_gui_program_edit * program_edit);
+libgebr_gui_program_edit_reload(struct libgebr_gui_program_edit * program_edit, GeoXmlProgram * program);
 
 #endif //__LIBGEBR_GUI_PROGRAM_EDIT_H

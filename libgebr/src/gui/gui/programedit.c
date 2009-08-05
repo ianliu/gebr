@@ -59,18 +59,20 @@ gboolean use_default)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-	libgebr_gui_program_edit_reload(&program_edit);
+	libgebr_gui_program_edit_reload(&program_edit, NULL);
 
 	return program_edit;
 }
 
 /*
  * Function: program_edit_reload
- * Setup UI for _program_
+ * Reload UI of _program_edit_. If _program_ is not NULL, then use it as new program
  */
 void
-libgebr_gui_program_edit_reload(struct libgebr_gui_program_edit * program_edit)
+libgebr_gui_program_edit_reload(struct libgebr_gui_program_edit * program_edit, GeoXmlProgram * program)
 {
+	if (program != NULL)
+		program_edit->program = program;
 	gtk_container_foreach(GTK_CONTAINER(program_edit->widget), (GtkCallback)gtk_widget_destroy, NULL);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(program_edit->widget),
 		program_edit_load(program_edit, geoxml_program_get_parameters(program_edit->program)));

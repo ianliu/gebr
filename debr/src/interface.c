@@ -69,8 +69,8 @@ static const GtkActionEntry actions_entries [] = {
 		(GCallback)on_program_delete_activate},
 	{"program_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit program properties"),
 		(GCallback)on_program_properties_activate},
-	{"program_preview", GTK_STOCK_MEDIA_PLAY, N_("Preview edition in GêBR"), NULL, N_("Show program programs' edition as in GêBR"),
-		(GCallback)on_program_preview_activate},
+	{"program_preview", GTK_STOCK_MEDIA_PLAY, N_("Preview parameters in GêBR"), NULL,
+		N_("Preview parameters in GêBR"), (GCallback)on_program_preview_activate},
 	{"program_top", GTK_STOCK_GOTO_TOP, NULL, NULL, N_("Move program to the top of the list"),
 		(GCallback)on_program_top_activate},
 	{"program_bottom", GTK_STOCK_GOTO_BOTTOM, NULL, NULL,
@@ -290,8 +290,6 @@ debr_setup_ui(void)
         gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "program_properties"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "program_preview"))), -1);
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -319,6 +317,8 @@ debr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(debr.action_group, "parameter_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(debr.action_group, "program_preview"))), -1);
 
 	debr.parameter_type_menu = menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_CONVERT);

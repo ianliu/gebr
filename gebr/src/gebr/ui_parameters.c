@@ -69,18 +69,15 @@ struct ui_parameters *
 parameters_configure_setup_ui(void)
 {
 	struct ui_parameters *		ui_parameters;
-
 	GtkWidget *			dialog;
-	GtkWidget *			button;
-	GtkWidget *			label;
 	GtkWidget *			hbox;
+	GtkWidget *			label;
+	GtkWidget *			button;
 
 	if (flow_edition_get_selected_component(NULL, FALSE) == FALSE)
 		return NULL;
 
-	/* alloc struct */
 	ui_parameters = g_malloc(sizeof(struct ui_parameters));
-
 	dialog = gtk_dialog_new_with_buttons(_("Parameters"),
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -236,7 +233,7 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 		break;
 	} case GTK_RESPONSE_DEFAULT:
 		parameters_reset_to_default(geoxml_program_get_parameters(ui_parameters->program_edit.program));
-		libgebr_gui_program_edit_reload(&ui_parameters->program_edit);
+		libgebr_gui_program_edit_reload(&ui_parameters->program_edit, NULL);
 		return;
 	case GTK_RESPONSE_HELP:
 		program_help_show();

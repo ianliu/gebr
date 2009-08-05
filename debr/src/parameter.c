@@ -1097,6 +1097,8 @@ parameter_popup_menu(GtkWidget * tree_view)
 		gtk_action_group_get_action(debr.action_group, "parameter_delete")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "parameter_properties")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "program_preview")));
 
 	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_change_type"));
 	gtk_action_block_activate_from(gtk_action_group_get_action(debr.action_group,

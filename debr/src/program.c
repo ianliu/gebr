@@ -36,6 +36,12 @@
  * Declarations
  */
 
+#define RESPONSE_REFRESH	101
+
+struct program_preview_data {
+	struct libgebr_gui_program_edit	program_edit;
+};
+
 static void
 program_details_update(void);
 static gboolean
@@ -73,6 +79,11 @@ static void
 program_help_edit(GtkButton * button);
 static gboolean
 program_url_changed(GtkEntry * entry);
+
+static void
+program_preview_on_response(GtkWidget * dialog, gint arg1, struct program_preview_data * data);
+static gboolean
+program_preview_on_delete_event(GtkWidget * dialog, GdkEventAny * event, struct program_preview_data * data);
 
 /*
  * Section: Public
@@ -246,28 +257,68 @@ program_new(gboolean edit)
 void
 program_preview(void)
 {
+	struct program_preview_data *		data;
 	GtkWidget *				dialog;
-	struct libgebr_gui_program_edit		program_edit;
+	GtkWidget *				hbox;
+	GtkWidget *				label;
 
 	if (!program_get_selected(NULL, TRUE))
 		return;
 
+	data = g_malloc(sizeof(struct program_preview_data));
 	dialog = gtk_dialog_new_with_buttons(_("Program edition preview"),
 		GTK_WINDOW(debr.window),
-		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_STOCK_REFRESH, RESPONSE_REFRESH,
 		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 		NULL);
 	gtk_widget_set_size_request(dialog, 630, 400);
+	g_signal_connect(dialog, "response",
+		G_CALLBACK(program_preview_on_response), data);
+	g_signal_connect(dialog, "delete-event",
+		G_CALLBACK(program_preview_on_delete_event), data);
 
-	program_edit = libgebr_gui_program_edit_setup_ui(
+	/* program title in bold */
+	label = gtk_label_new(NULL);
+	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, TRUE, 5);
+	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0);
+	{
+		gchar *	markup;
+
+		markup = g_markup_printf_escaped("<big><b>%s</b></big>",
+			geoxml_program_get_title(debr.program));
+		gtk_label_set_markup(GTK_LABEL(label), markup);
+		g_free(markup);
+	}
+	hbox = gtk_hbox_new(FALSE, 3);
+	gtk_widget_show(hbox);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, TRUE, 5);
+	label = gtk_label_new(geoxml_program_get_description(debr.program));
+	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 5);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	if (strlen(geoxml_program_get_url(debr.program))) {
+		GtkWidget *	alignment;
+		GtkWidget *	button;
+
+		alignment = gtk_alignment_new(1, 0, 0, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), alignment, TRUE, TRUE, 5);
+		button = gtk_button_new_with_label(_("Link"));
+		gtk_container_add(GTK_CONTAINER(alignment), button);
+		gtk_widget_show_all(alignment);
+		gtk_misc_set_alignment(GTK_MISC(label), 1, 0);
+
+		g_signal_connect(button, "clicked",
+			G_CALLBACK(program_help_view), NULL);
+	}
+
+	data->program_edit = libgebr_gui_program_edit_setup_ui(
 		GEOXML_PROGRAM(geoxml_sequence_append_clone(GEOXML_SEQUENCE(debr.program))),
 		NULL, TRUE);
 		
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), program_edit.widget, TRUE, TRUE, 0);
-	gtk_dialog_run(GTK_DIALOG(dialog));
-
-	gtk_widget_destroy(dialog);
-	geoxml_sequence_remove(GEOXML_SEQUENCE(program_edit.program));
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), data->program_edit.widget, TRUE, TRUE, 0);
+	gtk_widget_show(dialog);
 }
 
 /*
@@ -783,8 +834,6 @@ program_popup_menu(GtkWidget * tree_view)
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "program_properties")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
-		gtk_action_group_get_action(debr.action_group, "program_preview")));
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "program_copy")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "program_paste")));
@@ -892,5 +941,28 @@ program_url_changed(GtkEntry * entry)
 	geoxml_program_set_url(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
+	return FALSE;
+}
+
+static void
+program_preview_on_response(GtkWidget * dialog, gint response, struct program_preview_data * data)
+{
+	geoxml_sequence_remove(GEOXML_SEQUENCE(data->program_edit.program));
+	switch (response) {
+	case RESPONSE_REFRESH:
+		libgebr_gui_program_edit_reload(&data->program_edit,
+			GEOXML_PROGRAM(geoxml_sequence_append_clone(GEOXML_SEQUENCE(debr.program))));
+		return;
+	case GTK_RESPONSE_CLOSE: default:
+		break;
+	}
+
+	gtk_widget_destroy(dialog);
+}
+
+static gboolean
+program_preview_on_delete_event(GtkWidget * dialog, GdkEventAny * event, struct program_preview_data * data)
+{
+	program_preview_on_response(dialog, GTK_RESPONSE_CLOSE, data);
 	return FALSE;
 }
