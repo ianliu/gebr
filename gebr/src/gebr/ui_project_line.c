@@ -405,7 +405,7 @@ project_line_import(void)
 		is_project = TRUE;
 	else if (g_str_has_suffix(filename, ".lnez")) {
 		is_project = FALSE;
-		if (!project_line_get_selected(NULL, LineSelection))
+		if (!project_line_get_selected(NULL, ProjectLineSelection))
 			goto out2;
 	} else {
 		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unrecognized file type"));
