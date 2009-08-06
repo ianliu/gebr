@@ -267,7 +267,7 @@ program_preview(void)
 
 	data = g_malloc(sizeof(struct program_preview_data));
 	dialog = gtk_dialog_new_with_buttons(_("Program edition preview"),
-		GTK_WINDOW(debr.window),
+		GTK_WINDOW(NULL),
 		GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_REFRESH, RESPONSE_REFRESH,
 		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
@@ -952,12 +952,12 @@ program_preview_on_response(GtkWidget * dialog, gint response, struct program_pr
 	case RESPONSE_REFRESH:
 		libgebr_gui_program_edit_reload(&data->program_edit,
 			GEOXML_PROGRAM(geoxml_sequence_append_clone(GEOXML_SEQUENCE(debr.program))));
-		return;
+		break;
 	case GTK_RESPONSE_CLOSE: default:
+		gtk_widget_destroy(dialog);
+		g_free(data);
 		break;
 	}
-
-	gtk_widget_destroy(dialog);
 }
 
 static gboolean
