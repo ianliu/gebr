@@ -7,7 +7,9 @@
   "text/html; charset=utf-8" />
   <link rel="stylesheet" type="text/css" href="gebr.css" />
 
+  <!-- begin ttl -->
   <title>G&ecirc;BR - Flow/Program Title</title>
+  <!-- end ttl -->
 </head>
 
 <body>
@@ -15,16 +17,22 @@
     <div class="inner-container">
       <div class="header">
         <div class="title">
+	  <!-- begin tt2 -->
           <span class="flowtitle">Flow/Program Title</span>
+	  <!-- end tt2 -->
 
           <div class="description">
+	    <!-- begin des -->
             Put here an one-line description
+	    <!-- end des -->
           </div>
         </div>
       </div>
 
       <div class="category">
+	<!-- begin cat -->
         First category | Second category | ...
+	<!-- end cat -->
       </div>
 
       <div class="main">
@@ -38,41 +46,44 @@
           the flow purpose but not the internals of each program.
           This should be detailed inside each program's help.</p>
 
+	  <!-- begin par -->
           <div class="parameters">
 
             <a name="par" id="par"></a>
-            <h2>Required parameters</h2>
+            <h2>Parameters</h2>
 
             <p>This section should be present only for program
             helps. You should describe each parameter the user must
             specify to properly configure the program. It can be
-            suppressed in case the program has not required
-            parameters.</p>
+            suppressed in case the program has not parameters.</p>
 
-	    <!-- List of required parameters -->
+	    <p>The HTML code for inclusion of an optional parameter is<br/>
+	      &nbsp;&nbsp;&lt;li&gt;&lt;span class="label"&gt;label&lt;/span&gt;&lt;br/&gt;<br/>
+	      &nbsp;&nbsp;description&lt;/li&gt;</p>
+	      
+	    <p>The HTML code for inclusion of a required parameter is<br/>
+	      &nbsp;&nbsp;&lt;li class="req"&gt;&lt;span class="reqlabel"&gt;label&lt;/span&gt;&lt;br/&gt;<br/>
+	      &nbsp;&nbsp;description&lt;/li&gt;</p>
+
+	    <p>The HTML code for inclusion of a group parameter is<br/>
+	      &nbsp;&nbsp;&lt;li class="group"&gt;&lt;span class="grouplabel"&gt;label&lt;/span&gt;&lt;br/&gt;<br/>
+	      &nbsp;&nbsp;description&lt;/li&gt;</p>
+	      
+	    <!-- begin lst -->
+	    <!-- List of parameters -->
             <ul>
-              <li><span class="label">[text used as label for first
-              parameter]</span> detailed description for this
+              <li><span class="label">text used as label for first
+              parameter</span> detailed description for this
               parameter.</li>
 
-              <li><span class="label">[text used as label for
-              second parameter]</span> detailed description for
+              <li><span class="label">text used as label for
+              second parameter</span> detailed description for
               this parameter.</li>
             </ul>
-
-            <h2>Optional parameters</h2>
-
-            <p>This section should be present only for program
-            helps. You should describe each parameter the user may
-            specify to properly configure the program. It can be
-            suppressed in case the program has not optional
-            parameters.</p>
-
-	    <!-- List of optional parameters -->
-            <ul>
-              <li><span class="label">[label for parameter]</span> detailed description.</li>
-            </ul>
+	    <!-- end lst -->
+            
           </div>
+	  <!-- end par -->
 	    
 	  <a name="details" id="details"></a>
           <h2>Description</h2>
@@ -111,6 +122,10 @@
           <p>In case of a program, credit each developer of the
           program. In case of a flow credit the author of the
           flow.</p>
+
+	  <!-- begin cpy -->
+	  <!-- end cpy -->
+	  
         </div>
 
         <div class="navigation">
@@ -119,7 +134,9 @@
           <ul>
             <li><a href="#intro">Introduction</a></li>
 
+	    <!-- begin mpr -->
             <li><a href="#par">Parameters</a></li>
+	    <!-- end mpr -->
 
             <li><a href="#details">Description</a></li>
 

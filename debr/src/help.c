@@ -33,6 +33,8 @@
 void
 add_program_parameter_item(GString *str, GeoXmlParameter *par);
 
+gsize
+strip_block(GString *buffer, const gchar *tag);
 
 void
 help_fix_css(GString * help)
@@ -54,12 +56,12 @@ add_program_parameter_item(GString *str, GeoXmlParameter *par)
 {
         if (geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(par))){
                 g_string_append_printf(str, "              "
-                                       "<li class=\"req\"><span class=\"reqlabel\">%s</span>"
+                                       "<li class=\"req\"><span class=\"reqlabel\">%s</span><br/>"
                                        " detailed description comes here.</li>\n\n",
                                        geoxml_parameter_get_label(par));
         }else{
                 g_string_append_printf(str, "              "
-                                       "<li><span class=\"label\">%s</span>"
+                                       "<li><span class=\"label\">%s</span><br/>"
                                        " detailed description comes here.</li>\n\n",
                                        geoxml_parameter_get_label(par));
         }
@@ -70,10 +72,12 @@ void
 help_subst_fields(GString * help, GeoXmlProgram * program)
 {
 	gchar *		        content;
-	gchar *		        ptr;
-	gsize		        pos;
+        GString *               text;
 	GeoXmlParameters *	parameters;
 	GeoXmlSequence *	parameter;
+
+
+        text = g_string_new (NULL);
 
 	/* Title replacement */
 	if (program != NULL)
@@ -81,14 +85,11 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 	else
 		content = (gchar*)geoxml_document_get_title(GEOXML_DOC(debr.menu));
 	if (strlen(content)) {
-		ptr = strstr(help->str, "Flow/Program Title");
+                g_string_printf(text, "<title>G&ecirc;BR - %s</title>", content);
+                g_string_insert(help, strip_block(help, "ttl"), text->str);
 
-		while (ptr != NULL){
-			pos = (ptr - help->str)/sizeof(gchar);
-			g_string_erase(help, pos, 18);
-			g_string_insert(help, pos, content);
-			ptr = strstr(help->str, "Flow/Program Title");
-		}
+                g_string_printf(text, "<span class=\"flowtitle\">%s</span>", content);
+                g_string_insert(help, strip_block(help, "tt2"), text->str);
 	}
 
 	/* Description replacement */
@@ -97,14 +98,7 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 	else
 		content = (gchar*)geoxml_document_get_description(GEOXML_DOC(debr.menu));
 	if (strlen(content)) {
-		ptr = strstr(help->str, "Put here an one-line description");
-
-		while (ptr != NULL){
-			pos = (ptr - help->str)/sizeof(gchar);
-			g_string_erase(help, pos, 32);
-			g_string_insert(help, pos, content);
-			ptr = strstr(help->str, "Put here an one-line description");
-		}
+                g_string_insert(help, strip_block(help, "des"), content);
 	}
 
 	/* Categories replacement */
@@ -122,12 +116,7 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 			geoxml_sequence_next(&category);
 		}
 
-		while ((ptr = strstr(help->str, "First category | Second category | ...")) != NULL) {
-			pos = (ptr - help->str)/sizeof(char);
-			g_string_erase(help, pos, 38);
-			g_string_insert(help, pos, catstr->str);
-		}
-
+                g_string_insert(help, strip_block(help, "cat"), catstr->str);
 		g_string_free(catstr, TRUE);
 	}
 
@@ -139,6 +128,7 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 		parameter = geoxml_parameters_get_first_parameter(parameters);
 		
 		label = g_string_new(NULL);
+                g_string_assign(label,"<ul>\n");
 		while (parameter != NULL) {
                         
                         if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE){
@@ -148,7 +138,7 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
                                 GeoXmlSequence  *	subpar;
 
                                 g_string_append_printf(label, "              "
-                                                       "<li class=\"group\"><span class=\"grouplabel\">%s</span>"
+                                                       "<li class=\"group\"><span class=\"grouplabel\">%s</span><br/>"
                                                        " detailed description comes here.\n\n",
                                                        geoxml_parameter_get_label(GEOXML_PARAMETER(parameter))); 
 
@@ -167,26 +157,36 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 
 			geoxml_sequence_next(&parameter);
 		}
+                g_string_append(label,"            </ul>\n");
 
-		if ((ptr = strstr(help->str, "              "
-				  "<li class=\"req\">")) != NULL) {
-			pos = (ptr - help->str)/sizeof(char);
-			g_string_erase(help, pos, 338);
-			g_string_insert(help, pos, label->str);
-		}
+                g_string_insert(help, strip_block(help, "lst"), label->str); 
 		g_string_free(label, TRUE);
 	}
 	else { /* strip parameter section for flow help */
-		if ((ptr = strstr(help->str, "          <div class=\"parameters\">")) != NULL) {
-			pos = (ptr - help->str)/sizeof(char);
-			g_string_erase(help, pos, 1350);
-		}
-		if ((ptr = strstr(help->str, "            <li><a href=\"#par\">Parameters</a></li>")) != NULL) {
-			pos = (ptr - help->str)/sizeof(char);
-			g_string_erase(help, pos, 52);
-		}
+                strip_block(help, "par");
+                strip_block(help, "mpr");
 	}
-	
+
+
+        /* Credits for menu */
+	if (program == NULL) {
+                GDate * date;
+                gchar   buffer[13];
+
+                date = g_date_new();
+                g_date_set_time_t(date, time(NULL));
+                g_date_strftime(buffer, 13, "%b %d, %Y", date);
+
+                g_string_printf(text, "<p>%s: written by %s &lt;%s&gt;</p>",
+                                buffer,
+                                geoxml_document_get_author(GEOXML_DOC(debr.menu)),
+                                geoxml_document_get_email(GEOXML_DOC(debr.menu)));
+                g_string_insert(help, strip_block(help, "cpy"), text->str);
+                
+                g_date_free(date);
+	}
+        
+        g_string_free(text, TRUE);
 }
 
 /*
@@ -350,4 +350,47 @@ help_edit(const gchar * help, GeoXmlProgram * program)
 err:	g_string_free(html_path, FALSE);
 err2:	g_string_free(prepared_html, TRUE);
 	return NULL;
+}
+
+/* Strips a block delimited by
+       <!-- begin tag -->
+       <!-- end tag -->
+   and returns the position of the
+   begining of the block, suitable for
+   text insertion.
+*/
+gsize
+strip_block(GString *buffer, const gchar *tag)
+{
+
+        static GString       *mark = NULL;
+        gchar                *ptr;
+        gsize                 pos;
+        gsize                 len;
+
+        if (mark == NULL)
+                mark = g_string_new(NULL);
+
+        g_string_printf(mark, "<!-- begin %s -->", tag);
+        ptr = strstr(buffer->str, mark->str);
+
+	if (ptr != NULL){
+                pos = (ptr - buffer->str)/sizeof(gchar);
+        } else {
+                return 0;
+        }
+
+        g_string_printf(mark, "<!-- end %s -->", tag);
+        ptr = strstr(buffer->str, mark->str);
+
+        if (ptr != NULL){
+                len = (ptr - buffer->str)/sizeof(gchar) - pos + 13 + strlen(tag);
+        } else {
+                return 0;
+        }
+
+        g_string_erase(buffer, pos, len);
+        
+        return pos;
+                        
 }
