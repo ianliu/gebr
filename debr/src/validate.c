@@ -584,9 +584,9 @@ check_menu_filename(const gchar * str)
 }
 
 /* VALID if str xxx@yyy, with xxx  composed    */
-/* by letter, digits, underscore or dot and    */
-/* yyy composed by at least one dot, letter    */
-/* digits and hiffen                           */
+/* by letter, digits, underscores, dots and    */
+/* dashes, and yyy composed by at least one    */
+/* dot, letter digits and dashes.              */
 /*                                             */
 /* To do something right, take a look at       */
 /* http://en.wikipedia.org/wiki/E-mail_address */
@@ -594,7 +594,7 @@ static gboolean
 check_is_email(const gchar * str)
 {
 	regex_t	pattern;
-	regcomp(&pattern, "^[a-z0-9_.][a-z0-9_.]*@[a-z0-9.-]*\\.[a-z0-9-][a-z0-9-]*$", REG_NOSUB | REG_ICASE);
+	regcomp(&pattern, "^[a-z0-9_.-][a-z0-9_.-]*@[a-z0-9.-]*\\.[a-z0-9-][a-z0-9-]*$", REG_NOSUB | REG_ICASE);
 	return (!regexec(&pattern, str, 0, 0, 0) ? VALID : INVALID);
 }
 
