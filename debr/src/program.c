@@ -266,7 +266,7 @@ program_preview(void)
 		return;
 
 	data = g_malloc(sizeof(struct program_preview_data));
-	dialog = gtk_dialog_new_with_buttons(_("Program edition preview"),
+	dialog = gtk_dialog_new_with_buttons(_("Parameter's dialog preview"),
 		GTK_WINDOW(NULL),
 		GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_REFRESH, RESPONSE_REFRESH,

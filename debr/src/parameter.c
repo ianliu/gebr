@@ -171,7 +171,7 @@ parameter_setup_ui(void)
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Type"), renderer, NULL);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", PARAMETER_TYPE);
+	gtk_tree_view_column_add_attribute(col, renderer, "markup", PARAMETER_TYPE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_parameter.tree_view), col);
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Keyword / default value"), renderer, NULL);
@@ -948,9 +948,24 @@ parameter_load_iter(GtkTreeIter * iter)
 
 		keyword_label = g_string_new(NULL);
 		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-		g_string_printf(keyword_label, "%lu parameter(s) and %lu instance(s)",
-			geoxml_parameters_get_number(GEOXML_PARAMETERS(instance)),
-			geoxml_parameter_group_get_instances_number(GEOXML_PARAMETER_GROUP(parameter)));
+                
+                if (geoxml_parameter_group_get_is_instanciable(GEOXML_PARAMETER_GROUP(parameter))){
+                        if ( geoxml_parameter_group_get_instances_number(GEOXML_PARAMETER_GROUP(parameter)) == 1){
+                                g_string_printf(keyword_label, _("with 1 instance"));
+                        } else {
+                                g_string_printf(keyword_label,
+                                                _("with %lu instances"),
+                                                geoxml_parameter_group_get_instances_number(GEOXML_PARAMETER_GROUP(parameter)));
+                        }
+                } else {
+                        g_string_printf(keyword_label, _("not instanciable"));
+                }
+
+                if (geoxml_parameters_get_exclusive(GEOXML_PARAMETERS(instance)) != NULL){
+                        g_string_append_printf(keyword_label, _(" and exclusive"));
+                } else {
+                        g_string_append_printf(keyword_label, _(" and not exclusive"));
+                }
 	}
 
 	parameter_type = g_string_new(combo_type_map_get_title(geoxml_parameter_get_type(parameter)));
@@ -959,10 +974,25 @@ parameter_load_iter(GtkTreeIter * iter)
 		g_string_append(parameter_type, "(s)");
 
 	gtk_tree_store_set(debr.ui_parameter.tree_store, iter,
-		PARAMETER_TYPE, parameter_type->str,
 		PARAMETER_KEYWORD, keyword_label->str,
 		PARAMETER_LABEL, geoxml_parameter_get_label(parameter),
 		-1);
+        
+        if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE &&
+            geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(parameter))){
+                        GString *markup;
+                        markup = g_string_new(NULL);
+                        
+                        g_string_append(markup, g_markup_printf_escaped("<b>%s</b>", parameter_type->str));
+                        gtk_tree_store_set(debr.ui_parameter.tree_store, iter,
+                                           PARAMETER_TYPE, markup->str,
+                                           -1);
+                        g_string_free(markup, TRUE);
+        } else {
+                gtk_tree_store_set(debr.ui_parameter.tree_store, iter,
+                                   PARAMETER_TYPE, parameter_type->str,
+                                   -1);
+        }
 
 	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, iter))
 		parameter_load_iter(&parent);
