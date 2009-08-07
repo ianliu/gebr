@@ -180,23 +180,10 @@ void
 on_menu_save_activate(void)
 {
 	GtkTreeIter		iter;
-	gchar *			path;
 
-	/* get path of selection */
 	menu_get_selected(&iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
-		MENU_PATH, &path,
-		-1);
-
-	/* is this a new menu? */
-	if (strlen(path)) {
-		menu_save(path);
-		g_free(path);
-		return;
-	}
-
-	g_free(path);
-	on_menu_save_as_activate();
+	if (!menu_save(&iter))
+		on_menu_save_as_activate();
 }
 
 /*
@@ -247,7 +234,7 @@ on_menu_save_as_activate(void)
 		MENU_PATH, path->str,
 		-1);
 	geoxml_document_set_filename(GEOXML_DOC(debr.menu), filename);
-	menu_save(path->str);
+	menu_save(&iter);
 
 	/* frees */
 	g_string_free(path, TRUE);

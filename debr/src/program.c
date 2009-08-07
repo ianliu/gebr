@@ -272,7 +272,6 @@ program_preview(void)
 		GTK_STOCK_REFRESH, RESPONSE_REFRESH,
 		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 		NULL);
-        gtk_window_group_add_window(gtk_window_group_new(), GTK_WINDOW(dialog));
 	gtk_widget_set_size_request(dialog, 630, 400);
 	g_signal_connect(dialog, "response",
 		G_CALLBACK(program_preview_on_response), data);

@@ -68,8 +68,8 @@ void
 menu_load_user_directory(void);
 void
 menu_open(const gchar * path, gboolean select);
-void
-menu_save(const gchar * path);
+gboolean
+menu_save(GtkTreeIter * iter);
 void
 menu_save_all(void);
 void

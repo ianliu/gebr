@@ -52,17 +52,16 @@ geoxml_clipboard_paste(GeoXmlObject * object)
 	if (object == NULL)
 		return NULL;
 
-	static const gchar *		child_parent [][2] = {
-		{"program", "flow"},
-		{"parameter", "program"},
-		{NULL, NULL}
+	static const gchar *		child_parent [][3] = {
+		{"program", "flow", ""},
+		{"parameter", "program", "parameters"},
+		{NULL, NULL, NULL}
 	};
 	GdomeElement *			paste_element;
 	GdomeElement *			container_element;
 	GeoXmlObject *			first_paste = NULL;
 
-	container_element = gdome_n_nodeType((GdomeNode*)object, &exception) == GDOME_DOCUMENT_NODE
-		? gdome_doc_documentElement((GdomeDocument*)object, &exception) : (GdomeElement*)object;
+	container_element = (GdomeElement*)object;
 	paste_element = __geoxml_get_first_element(
 		gdome_doc_documentElement(clipboard_document, &exception), "*");
 	for (; paste_element != NULL; paste_element = __geoxml_next_element(paste_element)) {
@@ -74,10 +73,16 @@ geoxml_clipboard_paste(GeoXmlObject * object)
 				imported = gdome_doc_importNode(
 					gdome_el_ownerDocument(container_element, &exception),
 					(GdomeNode*)paste_element, TRUE, &exception);
-				gdome_el_appendChild(container_element, imported, &exception);
+				if (!strlen(child_parent[i][2]))
+					gdome_el_appendChild(container_element, imported, &exception);
+				else
+					gdome_el_appendChild(__geoxml_get_first_element(
+						container_element, child_parent[i][2]),
+						imported, &exception);
 				__geoxml_element_reassign_ids((GdomeElement*)imported);
 				if (first_paste == NULL)
 					first_paste = GEOXML_OBJECT(imported);
+				break;
 			}
 		}
 	}

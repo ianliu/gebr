@@ -345,45 +345,56 @@ menu_open(const gchar * path, gboolean select)
 
 /*
  * Function: menu_save
- * Save current menu with a given _path_
+ * Save menu at _iter_
  */
-void
-menu_save(const gchar * path)
+gboolean
+menu_save(GtkTreeIter * iter)
 {
-	GtkTreeIter		iter;
+	GtkTreeIter		selected_iter;
+	GeoXmlFlow *		menu;
 	GeoXmlSequence *	program;
 	gulong			index;
+	gchar *			path;
 	gchar *			filename;
 	gchar *			tmp;
 
-	if (!menu_get_selected(&iter))
-		return;
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter,
+		MENU_XMLPOINTER, &menu,
+		MENU_PATH, &path,
+		-1);
+	/* is this a new menu? */
+	if (!strlen(path)) {
+		g_free(path);
+		return FALSE;
+	}
 
 	filename = g_path_get_basename(path);
-	geoxml_document_set_filename(GEOXML_DOC(debr.menu), filename);
-
-	/* Write menu tag for each program
-	 * TODO: make it on the fly?
-	 */
+	geoxml_document_set_filename(GEOXML_DOC(menu), filename);
+	/* Write menu tag for each program */
 	index = 0;
-	geoxml_flow_get_program(debr.menu, &program, index);
+	geoxml_flow_get_program(menu, &program, index);
 	while (program != NULL) {
 		geoxml_program_set_menu(GEOXML_PROGRAM(program), filename, index++);
 		geoxml_sequence_next(&program);
 	}
+	geoxml_document_set_date_modified(GEOXML_DOC(menu), iso_date());
+	geoxml_document_save(GEOXML_DOC(menu), path);
 
-	geoxml_document_set_date_modified(GEOXML_DOC(debr.menu), iso_date());
-	geoxml_document_save(GEOXML_DOC(debr.menu), path);
-
+	/* update modified date */
 	tmp = g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(
-		geoxml_document_get_date_modified(GEOXML_DOCUMENT(debr.menu))).tv_sec);
-	gtk_list_store_set(debr.ui_menu.list_store, &iter,
-		MENU_MODIFIED_DATE, tmp, -1);
-	menu_saved_status_set(MENU_STATUS_SAVED);
-	menu_details_update();
+		geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu))).tv_sec);
+	gtk_list_store_set(debr.ui_menu.list_store, iter, MENU_MODIFIED_DATE, tmp, -1);
+	menu_get_selected(&selected_iter);
+	if (libgebr_gui_gtk_tree_model_iter_equal_to(iter, &selected_iter))
+		menu_details_update();
 
+	menu_saved_status_set_from_iter(iter, MENU_STATUS_SAVED);
+
+	g_free(path);
 	g_free(filename);
 	g_free(tmp);
+
+	return TRUE;
 }
 
 /* Function: menu_save_all
@@ -393,34 +404,18 @@ void
 menu_save_all(void)
 {
 	GtkTreeIter	iter;
-	gboolean	has_next;
 
 	if (!debr.unsaved_count)
 		return;
 
-	has_next = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter);
-	while (has_next) {
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.list_store)) {
 		GdkPixbuf *	pixbuf;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
 			MENU_STATUS, &pixbuf,
 			-1);
-		if (pixbuf == debr.pixmaps.stock_no) {
-			GeoXmlFlow *	menu;
-			gchar *		path;
-
-			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
-				MENU_XMLPOINTER, &menu,
-				MENU_PATH, &path,
-				-1);
-			if (strlen(path))
-				menu_save(path);
-			menu_saved_status_set_from_iter(&iter, MENU_STATUS_SAVED);
-
-			g_free(path);
-		}
-
-		has_next = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter);
+		if (pixbuf == debr.pixmaps.stock_no)
+			menu_save(&iter);
 	}
         menu_details_update();
 }

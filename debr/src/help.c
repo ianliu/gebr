@@ -245,12 +245,12 @@ help_edit(const gchar * help, GeoXmlProgram * program)
 	GString *	cmdline;
 	gchar		buffer[100];
 
-        /* check if there is an html editor in preferences */
-        if (!strlen(debr.config.htmleditor->str)){
-                debr_message(LOG_ERROR, _("No HTML editor specified in preferences."));
-                return NULL;
-        }
-        
+	/* check if there is an html editor in preferences */
+	if (!strlen(debr.config.htmleditor->str)) {
+		debr_message(LOG_ERROR, _("No HTML editor specified in preferences."));
+		return NULL;
+	}
+
 	/* initialization */
 	prepared_html = g_string_new(NULL);
 
