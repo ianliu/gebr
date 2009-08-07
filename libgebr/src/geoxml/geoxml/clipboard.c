@@ -61,7 +61,8 @@ geoxml_clipboard_paste(GeoXmlObject * object)
 	GdomeElement *			container_element;
 	GeoXmlObject *			first_paste = NULL;
 
-	container_element = (GdomeElement*)object;
+	container_element = gdome_n_nodeType((GdomeNode*)object, &exception) == GDOME_DOCUMENT_NODE
+		? gdome_doc_documentElement((GdomeDocument*)object, &exception) : (GdomeElement*)object;
 	paste_element = __geoxml_get_first_element(
 		gdome_doc_documentElement(clipboard_document, &exception), "*");
 	for (; paste_element != NULL; paste_element = __geoxml_next_element(paste_element)) {
