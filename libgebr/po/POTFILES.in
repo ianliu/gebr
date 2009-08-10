@@ -36,6 +36,6 @@ src/gui/gui/pixmaps.c
 src/gui/gui/utils.c
 src/gui/gui/valuesequenceedit.c
 src/libgebr.c
-src/misc/misc/date.c
-src/misc/misc/log.c
-src/misc/misc/utils.c
+src/date.c
+src/log.c
+src/utils.c
