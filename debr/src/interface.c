@@ -141,7 +141,7 @@ debr_setup_ui(void)
 	debr.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(debr.window), "DéBR");
 	gtk_widget_set_size_request(debr.window, 600, 450);
-	debr.about = about_setup_ui("DéBR", _("Flow designer for GêBR"));
+	debr.about = about_setup_ui("DéBR", _("Menu designer for GêBR"));
 
 	g_signal_connect(debr.window, "delete_event",
 		GTK_SIGNAL_FUNC(debr_quit), NULL);

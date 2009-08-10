@@ -564,7 +564,7 @@ menu_cleanup(void)
 
 	dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
-		_("There are flows unsaved. Do you want to save them?"));
+		_("There are menus unsaved. Do you want to save them?"));
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
 	g_object_set(G_OBJECT(button),
 		"image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);

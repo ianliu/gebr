@@ -149,13 +149,13 @@ on_menu_open_activate(void)
 	gchar *			path;
 
 	/* create file chooser */
-	chooser_dialog = gtk_file_chooser_dialog_new(_("Open flow"), NULL,
+	chooser_dialog = gtk_file_chooser_dialog_new(_("Open menu"), NULL,
 		GTK_FILE_CHOOSER_ACTION_OPEN,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_OPEN, GTK_RESPONSE_YES,
 		NULL);
 	filefilter = gtk_file_filter_new();
-	gtk_file_filter_set_name(filefilter, _("System flow files (*.mnu)"));
+	gtk_file_filter_set_name(filefilter, _("Menu files (*.mnu)"));
 	gtk_file_filter_add_pattern(filefilter, "*.mnu");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), filefilter);
 
@@ -210,7 +210,7 @@ on_menu_save_as_activate(void)
 		NULL);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
 	filefilter = gtk_file_filter_new();
-	gtk_file_filter_set_name(filefilter, _("System flow files (*.mnu)"));
+	gtk_file_filter_set_name(filefilter, _("Menu files (*.mnu)"));
 	gtk_file_filter_add_pattern(filefilter, "*.mnu");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), filefilter);
 	if (debr.config.menu_dir != NULL && strlen(debr.config.menu_dir->str) > 0)
@@ -263,7 +263,7 @@ on_menu_revert_activate(void)
 {
 	GtkTreeIter		iter;
 
-	if (libgebr_gui_confirm_action_dialog(_("Revert changes"), _("All unsaved changes will be lost. Are you sure you want to revert selected(s) flow(s)?")) == FALSE)
+	if (libgebr_gui_confirm_action_dialog(_("Revert changes"), _("All unsaved changes will be lost. Are you sure you want to revert selected menu(s)?")) == FALSE)
 		return;
 
 	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
@@ -307,7 +307,7 @@ on_menu_delete_activate(void)
 {
 	GtkTreeIter		iter;
 
-	if (libgebr_gui_confirm_action_dialog(_("Delete flow"), _("Are you sure you want to delete selected menus?")) == FALSE)
+	if (libgebr_gui_confirm_action_dialog(_("Delete menu"), _("Are you sure you want to delete selected menu(s)?")) == FALSE)
 		return;
 
 	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
@@ -400,12 +400,16 @@ on_menu_close_activate(void)
 			gboolean	cancel;
 
 			cancel = FALSE;
+
+                        /* FIX-ME: geoxml_document_get_title returns empty string for never saved menus.
+                           However, dialog should display temporary filename set.                        */
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 				GTK_DIALOG_MODAL,
 				GTK_MESSAGE_QUESTION,
 				GTK_BUTTONS_NONE,
-				_("'%s' flow has unsaved changes. Do you want to save it?"),
-					geoxml_document_get_filename(GEOXML_DOCUMENT(menu)));
+				_("'%s' menu has unsaved changes. Do you want to save it?"),
+                                                        (strlen(geoxml_document_get_filename(GEOXML_DOCUMENT(menu))) ?  
+                                                         geoxml_document_get_filename(GEOXML_DOCUMENT(menu)) : _("Untitled")));
 			button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
 			g_object_set(G_OBJECT(button),
 				"image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);

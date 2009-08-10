@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-05 23:24-0300\n"
-"PO-Revision-Date: 2009-08-05 22:58-0300\n"
+"POT-Creation-Date: 2009-08-10 11:26-0300\n"
+"PO-Revision-Date: 2009-08-10 11:29-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -19,53 +19,55 @@ msgstr ""
 
 #. create file chooser
 #: ../src/callbacks.c:152
-msgid "Open flow"
-msgstr "Abrir fluxo"
+msgid "Open menu"
+msgstr "Abrir menu"
 
-#: ../src/callbacks.c:158 ../src/callbacks.c:226
-msgid "System flow files (*.mnu)"
-msgstr "Arquivos de fluxo do sistema (*.mnu)"
+#: ../src/callbacks.c:158 ../src/callbacks.c:213
+msgid "Menu files (*.mnu)"
+msgstr "Arquivos de menu (*.mnu)"
 
 #. run file chooser
-#: ../src/callbacks.c:219
+#: ../src/callbacks.c:206
 msgid "Choose file"
 msgstr "Escolher arquivo"
 
-#: ../src/callbacks.c:279
+#: ../src/callbacks.c:266
 msgid "Revert changes"
 msgstr "Reverter alterações"
 
-#: ../src/callbacks.c:279
+#: ../src/callbacks.c:266
 msgid ""
-"All unsaved changes will be lost. Are you sure you want to revert selected"
-"(s) flow(s)?"
-msgstr ""
-"Todas as modificações não salvar serão perdidas. Tem certeza que quer "
-"reverter o(s) fluxo(s) selecionado(s)?"
+"All unsaved changes will be lost. Are you sure you want to revert selected "
+"menu(s)?"
+msgstr "Todas as modificações não salvar serão perdidas. Tem certeza que quer reverter o(s) menu(s) selecionado(s)?"
 
-#: ../src/callbacks.c:293
+#: ../src/callbacks.c:280
 msgid "Menu was not saved yet."
 msgstr "O menu ainda não foi salvo."
 
-#: ../src/callbacks.c:323
-msgid "Delete flow"
-msgstr "Apagar fluxo"
+#: ../src/callbacks.c:310
+msgid "Delete menu"
+msgstr "Apagar menu"
 
-#: ../src/callbacks.c:323
-msgid "Are you sure you want to delete selected menus?"
-msgstr "Tem certeza que quer apagar os menus selecionados?"
+#: ../src/callbacks.c:310
+msgid "Are you sure you want to delete selected menu(s)?"
+msgstr "Tem certeza que quer apagar o(s) menu(s) selecionado(s)?"
 
-#: ../src/callbacks.c:342
+#: ../src/callbacks.c:329
 #, c-format
 msgid "Could not delete menu '%s'"
 msgstr "Não foi possível deletar o menu '%s'"
 
-#: ../src/callbacks.c:420
+#: ../src/callbacks.c:410
 #, c-format
-msgid "'%s' flow has unsaved changes. Do you want to save it?"
-msgstr "Fluxo '%s' tem modificações não salvas. Quer salva-las?"
+msgid "'%s' menu has unsaved changes. Do you want to save it?"
+msgstr "Menu '%s' tem modificações não salvas. Quer salva-lo?"
 
-#: ../src/callbacks.c:422 ../src/menu.c:573
+#: ../src/callbacks.c:412
+msgid "Untitled"
+msgstr "Sem título"
+
+#: ../src/callbacks.c:413 ../src/menu.c:568
 msgid "Don't save"
 msgstr "Não salvar"
 
@@ -258,8 +260,8 @@ msgid "Clear all validations reports"
 msgstr "Limpar todas as notificações de validação"
 
 #: ../src/interface.c:144
-msgid "Flow designer for GêBR"
-msgstr "Designer de fluxo para GêBR"
+msgid "Menu designer for GêBR"
+msgstr "Designer de menu para GêBR"
 
 #.
 #. * Menu: Actions
@@ -300,127 +302,127 @@ msgstr "sem título"
 msgid "Could not load menu at '%s': %s"
 msgstr "Não foi possível carregar menu em '%s': %s"
 
-#: ../src/menu.c:468
+#: ../src/menu.c:463
 msgid "Failed to run GêBR. Please check if GêBR is installed"
 msgstr "Falha ao executar a GêBR. Por favor, confira se a GêBR está instalada"
 
-#: ../src/menu.c:472 ../src/menu.c:490
+#: ../src/menu.c:467 ../src/menu.c:485
 #, c-format
 msgid "Failed to install menu '%s'"
 msgstr "Falha ao instalar o menu '%s'"
 
-#: ../src/menu.c:480
+#: ../src/menu.c:475
 #, c-format
 msgid "Menu '%s' already exists. Do you want to overwrite it?"
 msgstr "Menu '%s' já existe. Deseja sobrescreve-lo?"
 
-#: ../src/menu.c:481
+#: ../src/menu.c:476
 msgid "Don't overwrite"
 msgstr "Não sobrescreva"
 
-#: ../src/menu.c:482
+#: ../src/menu.c:477
 msgid "Overwrite"
 msgstr "Sobrescrever"
 
-#: ../src/menu.c:483
+#: ../src/menu.c:478
 msgid "Overwrite all"
 msgstr "Sobrescrever todos"
 
-#: ../src/menu.c:572
-msgid "There are flows unsaved. Do you want to save them?"
-msgstr "Existem fluxos não salvos. Deseja salva-los?"
+#: ../src/menu.c:567
+msgid "There are menus unsaved. Do you want to save them?"
+msgstr "Existem menus não salvos. Deseja salva-los?"
 
-#: ../src/menu.c:685
+#: ../src/menu.c:680
 msgid "Edit menu"
 msgstr "Editar menu"
 
 #.
 #. * Title
 #.
-#: ../src/menu.c:701 ../src/program.c:519
+#: ../src/menu.c:696 ../src/program.c:518
 msgid "Title:"
 msgstr "Título:"
 
 #.
 #. * Description
 #.
-#: ../src/menu.c:719 ../src/program.c:555
+#: ../src/menu.c:714 ../src/program.c:554
 msgid "Description:"
 msgstr "Descrição:"
 
 #.
 #. * Help
 #.
-#: ../src/menu.c:737 ../src/program.c:573
+#: ../src/menu.c:732 ../src/program.c:572
 msgid "Help"
 msgstr "Ajuda"
 
 #.
 #. * Author
 #.
-#: ../src/menu.c:766
+#: ../src/menu.c:761
 msgid "Author:"
 msgstr "Autor:"
 
 #.
 #. * Email
 #.
-#: ../src/menu.c:784
+#: ../src/menu.c:779
 msgid "Email:"
 msgstr "E-mail:"
 
 #.
 #. * Categories
 #.
-#: ../src/menu.c:802
+#: ../src/menu.c:797
 msgid "Categories:"
 msgstr "Categorias:"
 
-#: ../src/menu.c:915
+#: ../src/menu.c:910
 #, c-format
 msgid "This menu has no programs"
 msgstr "Este menu não tem programas"
 
-#: ../src/menu.c:918
+#: ../src/menu.c:913
 #, c-format
 msgid "This menu has 1 program"
 msgstr "Este menu tem 1 programa"
 
-#: ../src/menu.c:921
+#: ../src/menu.c:916
 #, c-format
 msgid "This menu has %li programs"
 msgstr "Este menu tem %li programas"
 
-#: ../src/menu.c:927
+#: ../src/menu.c:922
 msgid "Created: "
 msgstr "Criado: "
 
-#: ../src/menu.c:931
+#: ../src/menu.c:926
 msgid "Modified: "
 msgstr "Modificado: "
 
-#: ../src/menu.c:940
+#: ../src/menu.c:935
 msgid "Categories: "
 msgstr "Categorias: "
 
-#: ../src/menu.c:960
+#: ../src/menu.c:955
 msgid "None"
 msgstr "Nenhum"
 
-#: ../src/menu.c:1067
+#: ../src/menu.c:1062
 msgid "Sort by"
 msgstr "Ordenado por"
 
 #. Name
-#: ../src/menu.c:1081 ../src/preferences.c:75
+#: ../src/menu.c:1076 ../src/preferences.c:75
 msgid "Name"
 msgstr "Nome"
 
-#: ../src/menu.c:1088
+#: ../src/menu.c:1083
 msgid "Modified date"
 msgstr "Data em que foi modificado"
 
-#: ../src/menu.c:1189
+#: ../src/menu.c:1184
 msgid "New category"
 msgstr "Nova categoria"
 
@@ -702,7 +704,7 @@ msgstr "Um editor HTML para editar arquivos de ajuda e notificações"
 msgid "URL"
 msgstr "URL"
 
-#: ../src/program.c:188 ../src/program.c:689
+#: ../src/program.c:188 ../src/program.c:688
 msgid "URL not set"
 msgstr "URL não definida"
 
@@ -715,76 +717,76 @@ msgstr "Novo programa"
 msgid "Parameter's dialog preview"
 msgstr "Previsualização da janela de parâmetros"
 
-#: ../src/program.c:308
+#: ../src/program.c:307
 msgid "Link"
 msgstr "Link"
 
-#: ../src/program.c:336
+#: ../src/program.c:335
 msgid "Delete program"
 msgstr "Apagar programa"
 
-#: ../src/program.c:336
+#: ../src/program.c:335
 msgid "Are you sure you want to delete selected(s) program(s)?"
 msgstr "Tem certeza que quer apagar o(s) programa(s) selecionado(s)?"
 
-#: ../src/program.c:416
+#: ../src/program.c:415
 msgid "Could not paste program"
 msgstr "Não foi possível colar o programa"
 
-#: ../src/program.c:466
+#: ../src/program.c:465
 msgid "Edit program"
 msgstr "Editar programa"
 
-#: ../src/program.c:488
+#: ../src/program.c:487
 msgid "This program:"
 msgstr "Este programa"
 
-#: ../src/program.c:498
+#: ../src/program.c:497
 msgid "reads from standard input"
 msgstr "lê da entrada padrão"
 
-#: ../src/program.c:504
+#: ../src/program.c:503
 msgid "writes to standard output"
 msgstr "escreve na saída padrão"
 
-#: ../src/program.c:510
+#: ../src/program.c:509
 msgid "appends to standard error"
 msgstr "acrescenta à saída de erro padrão"
 
 #.
 #. * Binary
 #.
-#: ../src/program.c:537
+#: ../src/program.c:536
 msgid "Executable:"
 msgstr "Executável:"
 
 #.
 #. * URL
 #.
-#: ../src/program.c:603
+#: ../src/program.c:602
 msgid "URL:"
 msgstr "URL:"
 
-#: ../src/program.c:668
+#: ../src/program.c:667
 #, c-format
 msgid "This program has no parameters"
 msgstr "Este programa não tem parâmetros"
 
-#: ../src/program.c:671
+#: ../src/program.c:670
 #, c-format
 msgid "This program has 1 parameter"
 msgstr "Este programa tem 1 parâmetro"
 
-#: ../src/program.c:674
+#: ../src/program.c:673
 #, c-format
 msgid "This program has %li parameters"
 msgstr "Este programa tem %li parâmetros"
 
-#: ../src/program.c:680
+#: ../src/program.c:679
 msgid "Binary"
 msgstr "Binário"
 
-#: ../src/program.c:706
+#: ../src/program.c:705
 msgid "No program is selected"
 msgstr "Nenhum programa está selecionado"
 
@@ -905,6 +907,12 @@ msgstr "  OBRIGATÓRIO"
 #: ../src/validate.c:701
 msgid "   [Instanciable]\n"
 msgstr "   [Instanciável]\n"
+
+#~ msgid "Open flow"
+#~ msgstr "Abrir fluxo"
+
+#~ msgid "Delete flow"
+#~ msgstr "Apagar fluxo"
 
 #~ msgid "Could not open menus' directory"
 #~ msgstr "Não foi possível abrir o diretório do menu"
