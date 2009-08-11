@@ -225,6 +225,7 @@ help_show(const gchar * help)
 	GString *	cmdline;
 
 	cmdline = g_string_new(debr.config.browser->str);
+        g_string_append(cmdline, " ");
 	g_string_append(cmdline, html_path->str);
 	g_string_append(cmdline, " &");
 	system(cmdline->str);
