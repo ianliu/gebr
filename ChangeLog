@@ -1,9 +1,202 @@
-2009-06-17  Ricardo Biloti <biloti@gmail.com>
+2009-08-10  Ricardo Biloti <biloti@gmail.com>
 
-	* .: Tag for Release 0.9.13 created
+	* .: Tag for Release 0.9.14 created
+	* Portuguese translation updated and small fix in POTFILES.in for
+	  libgebr
+	* Fixes issue 40
+
+2009-08-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fix regression: program paste
+	* - fix save all action in debr
+	  - fix parameter paste
+
+2009-08-06  Ricardo Biloti <biloti@gmail.com>
+
+	* Fixes issue 42
+	* Fixes issue 43
+	* help template cleanup
+
+2009-08-06  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* small fixes to program preview
+
+2009-08-05  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* parameters preview improved and moved to 'parameter' tab
+	* - functions of utils at libgebr_gui prefixed
+	  - feature preview program edition in debr
+	* for line import, fix selection check
+	* - less intrusive multiple to single selection (Fixes issue 45)
+	  - added libgebr_gtk_tree_view_turn_to_single_selection
+
+2009-08-04  Ricardo Biloti <biloti@gmail.com>
+
+	* enum details displayed
+
+2009-08-04  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fixed flow component selection
+	* multiple/single selection fixes to gebr (Fixes issue 17)
+
+2009-08-04  Ricardo Biloti <biloti@gmail.com>
+
+	* GeBR Project site update
+
+2009-08-04  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* adjust multiple selection to single selection in debr properties
+	  actions
+	* flags can't be list anymore in debr (Fixes issue 38)
+	* - added libgebr_directory_foreach_file
+	  - support for new system menu filename (Fixes issue 33)
+
+2009-08-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* repect cancel/no actions in gebr (Fixes issue 44)
+
+2009-07-30  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fix preferences dialog crash: don't try to read data dir
+
+2009-07-30  Ricardo Biloti <biloti@gmail.com>
+
+	* new set-filename option added
+	* upgrade to latest version
+	* Fix rules for marshalers.{c,h}
+
+2009-07-30  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* fixes element counting (Fixes issue 4)
+	* category sorting
+	* debr category list with reference count (Fixes issue 14)
+	* - signals renamed and removed added to gtksequenceedit
+	  - added libgebr_gtk_tree_model_foreach
+	* added menu-edit and menu-query to libgebr_geoxml
+	* gebr config directory structure organized
+
+2009-07-30  Ricardo Biloti <biloti@gmail.com>
+
+	* Portuguese translation update
+	* html doc stripped from svn
+	* html doc stripped from svn and project site reference update
+
+2009-07-29  Ricardo Biloti <biloti@gmail.com>
+
+	* Display default values by keywords in DéBR
+
+2009-07-28  Ricardo Biloti <biloti@gmail.com>
+
+	* Template generation for program's help was fixed to accomplish
+	  group parameters. Besides, two new classes were added to format
+	  required parameters and group parameters. (Fixes issue 3)
+
+2009-07-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* categories exchangeable between menus in debr
+	* - label with default check button for flags in debr
+	  - don't show required for flags in debr
+
+2009-07-27  Ricardo Biloti <biloti@gmail.com>
+
+	* Fixes issus 35
+
+2009-07-20  Ricardo Biloti <biloti@gmail.com>
+
+	* Portuguese translation update
+	* Fixes issue 34
+
+2009-07-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - copy/paste for gebr
+	  - fixes edition of flow properties in gebr
+	  - more robust project/line selection
+	  - minor cleanups
+
+2009-07-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* refactored copy/pasted in debr, supporting multiple selection
+	  copies/pastes
+	* multiple selection for revert to saved in debr
+	* support for settings status with multiple selection in gebr
+
+2009-07-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* multiple selection for flow export
+	* - save only modified (not new) menus in action save all
+	  - scroll to iter for new menus
+	* - cancel ignored for parameter new action
+	  - data dir in preferences is not necessary
+	  - new position for install menu
+
+2009-07-14  Ricardo Biloti <biloti@gmail.com>
+
+	* - Fix test for already-installed menus
+	  - Fix string enconde
+	  - Update Portuguese translation
+
+2009-07-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* install menu feature in debr (issue 32)
+
+2009-07-03  Ricardo Biloti <biloti@gmail.com>
+
+	* install menu complains about overwriting, and overwrite
+	  command-line option added
+	* update navigation bar whenever a new parameter is created
+
+2009-06-28  Ricardo Biloti <biloti@gmail.com>
+
+	* update flow details upon i/o change
+
+2009-06-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - fixes to multiple selection in debr
+	  - do not show manual list value edit for enums lists
+	* multiple selection for flow components
+
+2009-06-25  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* - multiple selection for flow browse (gebr)
+	  - various small clenups/fixes
+	* flow selection refactored (gebr)
+	* multiple selection for parameters in debr
+
+2009-06-24  Ricardo Biloti <biloti@gmail.com>
+
+	* don't ask for data dir from now on
+	* recovers accidentally deleted line
+	* ensures that gebr conf files could be created
+	* prevent null pointer handling
+	* empty keys are treated as not defined
+
+2009-06-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* multiple selection for programs in debr
+
+2009-06-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* remove misc dir
+	* - removal of libgebr_misc which were moved to libgebr
+	  - final removal of support.h
+	  - libgebr refactored
+	  - minor cleanups
+	* little fix in gebr/po/pt_BR.po
+
+2009-06-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
+
+	* missing stuff from tag 0.9.13 to trunk
+
+2009-06-19  Ricardo Biloti <biloti@gmail.com>
+
+	* Makefile.in.in deleted since they are generated by intltoolize
+	  (really?)
+	* Makefile.in.in deleted since they are generated by intltoolize
+	* backported to trunk changes from tag 0.9.13
 
 2009-06-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
+	* only use g_dgettext if available
 	* - open in a new window feature for newer webkitgtk versions
 	* - fixes to webkit help viewer
 	  - internationalize geoxml-{upgrade,validate}
