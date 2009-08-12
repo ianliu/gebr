@@ -111,15 +111,17 @@ menu_setup_ui(void)
 		GTK_SIGNAL_FUNC(menu_dialog_setup_ui), NULL);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(debr.ui_menu.tree_view), FALSE);
-	renderer = gtk_cell_renderer_pixbuf_new();
-	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
-	gtk_tree_view_column_set_sizing(col, GTK_TREE_VIEW_COLUMN_FIXED);
-	gtk_tree_view_column_set_fixed_width(col, 24);
-	gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", MENU_STATUS);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), col);
-	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes(_("Menu"), renderer, NULL);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_FILENAME);
+	col = gtk_tree_view_column_new ();
+	gtk_tree_view_column_set_title (col, _("Menu"));
+
+	renderer = gtk_cell_renderer_pixbuf_new ();
+	gtk_tree_view_column_pack_start (col, renderer, FALSE);
+	gtk_tree_view_column_add_attribute (col, renderer, "pixbuf", MENU_STATUS);
+
+	renderer = gtk_cell_renderer_text_new ();
+	gtk_tree_view_column_pack_start (col, renderer, FALSE);
+	gtk_tree_view_column_add_attribute (col, renderer, "text", MENU_FILENAME);
+
 	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), col);
 
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(debr.ui_menu.list_store),
