@@ -360,6 +360,7 @@ __on_sequence_edit_add_request(ValueSequenceEdit * value_sequence_edit, struct p
 	value_sequence_edit_add(value_sequence_edit, sequence);
 
 	__parameter_list_value_widget_update(parameter_widget);
+	__parameter_widget_set_non_list_widget_value(parameter_widget, "");
 
 	g_string_free(value, TRUE);
 }
