@@ -112,10 +112,32 @@ AC_SUBST(WEBKIT_LIBS)
 AC_SUBST(WEBKIT_ENABLED)
 
 AC_OUTPUT([
-packages/rpm/libgebr.fedora.spec packages/rpm/libgebr.opensuse.spec packages/rpm/libgebr.mandriva.spec
-Makefile src/gebr.pc src/Makefile src/defines.h packages/Makefile
-src/geoxml/Makefile src/geoxml/gebr-geoxml.pc src/geoxml/geoxml/Makefile src/geoxml/geoxml/defines.h src/geoxml/data/Makefile src/geoxml/validate/Makefile src/geoxml/upgrade/Makefile src/geoxml/menu-edit/Makefile src/geoxml/menu-query/Makefile src/geoxml/doc/Makefile
-src/comm/Makefile src/comm/gebr-comm.pc src/comm/comm/Makefile
-src/gui/Makefile src/gui/gebr-gui.pc src/gui/gui/Makefile src/gui/pixmaps/Makefile src/gui/icons/Makefile src/gui/icons/gebr-theme/Makefile
+Makefile
+packages/Makefile
+packages/rpm/libgebr.fedora.spec
+packages/rpm/libgebr.mandriva.spec
+packages/rpm/libgebr.opensuse.spec
 po/Makefile.in
+src/Makefile
+src/comm/Makefile src/comm/gebr-comm.pc
+src/comm/comm/Makefile
+src/defines.h
+src/gebr.pc
+src/geoxml/Makefile
+src/geoxml/data/Makefile
+src/geoxml/doc/Makefile
+src/geoxml/gebr-geoxml.pc
+src/geoxml/geoxml/Makefile
+src/geoxml/geoxml/defines.h
+src/geoxml/menu-diff/Makefile
+src/geoxml/menu-edit/Makefile
+src/geoxml/menu-query/Makefile
+src/geoxml/upgrade/Makefile
+src/geoxml/validate/Makefile
+src/gui/Makefile
+src/gui/gebr-gui.pc
+src/gui/gui/Makefile
+src/gui/icons/Makefile
+src/gui/icons/gebr-theme/Makefile
+src/gui/pixmaps/Makefile
 ])
