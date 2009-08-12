@@ -262,8 +262,6 @@ program_preview(void)
 {
 	struct program_preview_data *		data;
 	GtkWidget *				dialog;
-	GtkWidget *				hbox;
-	GtkWidget *				label;
 
 	if (!program_get_selected(NULL, TRUE))
 		return;

@@ -187,6 +187,7 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 			FSEQ_GEOXML_POINTER, ui_parameters->program_edit.program,
 			FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_apply,
 			-1);
+		flow_edition_select_component_iter(&iter);
 		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(
 			gebr.action_group, "flow_edition_status_configured")), TRUE);
 
