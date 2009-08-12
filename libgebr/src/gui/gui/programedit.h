@@ -22,17 +22,23 @@
 
 #include <geoxml.h>
 
+typedef void (*LibGeBRGUIShowHelpCallback)(GtkWidget * button, GeoXmlProgram * program);
 struct libgebr_gui_program_edit {
-	GeoXmlProgram *		program;
+	GeoXmlProgram *			program;
 
-	GtkWidget *		widget;
-	gpointer		file_parameter_widget_data;
-	gboolean		use_default;
+	GtkWidget *			widget;
+	gpointer			file_parameter_widget_data;
+	LibGeBRGUIShowHelpCallback	show_help_callback;
+	gboolean			use_default;
+
+	GtkWidget *			scrolled_window;
+	GtkWidget *			title_label;
+	GtkWidget *			hbox;
 };
 
 struct libgebr_gui_program_edit
 libgebr_gui_program_edit_setup_ui(GeoXmlProgram * program, gpointer file_parameter_widget_data,
-gboolean use_default);
+LibGeBRGUIShowHelpCallback show_help_callback, gboolean use_default);
 void
 libgebr_gui_program_edit_reload(struct libgebr_gui_program_edit * program_edit, GeoXmlProgram * program);
 

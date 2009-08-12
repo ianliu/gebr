@@ -70,3 +70,11 @@ geoxml_object_get_user_data(GeoXmlObject * object)
 		return NULL;
 	return ((GdomeNode*)object)->user_data;
 }
+
+GeoXmlObject *
+geoxml_object_copy(GeoXmlObject * object)
+{
+	if (object == NULL)
+		return NULL;
+	return (GeoXmlObject*)gdome_el_cloneNode((GdomeElement*)object, TRUE, &exception);
+}

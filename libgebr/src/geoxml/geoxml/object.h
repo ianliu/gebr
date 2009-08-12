@@ -89,6 +89,7 @@ enum GEOXML_OBJECT_TYPE
 geoxml_object_get_type(GeoXmlObject * object);
 
 /**
+ * Set the user pointer data associated with _object_
  *
  * \see geoxml_object_get_user_data
  */
@@ -96,10 +97,20 @@ void
 geoxml_object_set_user_data(GeoXmlObject * object, gpointer user_data);
 
 /**
+ * Get the user pointer data associated with _object_
  *
+ * Returns NULL if _object_ is NULL
  * \see geoxml_object_set_user_data
  */
 gpointer
 geoxml_object_get_user_data(GeoXmlObject * object);
+
+/**
+ * Copy _object_  for parallel use (e.g. when you don't want to modify _object_)
+ *
+ * Returns NULL if _object_ is NULL
+ */
+GeoXmlObject *
+geoxml_object_copy(GeoXmlObject * object);
 
 #endif //__LIBGEBR_GEOXML_OBJECT_H

@@ -15,6 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../intl.h"
+
 #include "programedit.h"
 #include "parameter.h"
 #include "utils.h"
@@ -46,16 +48,31 @@ program_edit_deinstanciate(GtkButton * button, struct libgebr_gui_program_edit *
  */
 struct libgebr_gui_program_edit
 libgebr_gui_program_edit_setup_ui(GeoXmlProgram * program, gpointer file_parameter_widget_data,
-gboolean use_default)
+LibGeBRGUIShowHelpCallback show_help_callback, gboolean use_default)
 {
 	struct libgebr_gui_program_edit		program_edit;
+	GtkWidget *				vbox;
+	GtkWidget *				title_label;
+	GtkWidget *				hbox;
 	GtkWidget *				scrolled_window;
 
 	program_edit.program = program;
 	program_edit.file_parameter_widget_data = file_parameter_widget_data;
+	program_edit.show_help_callback = show_help_callback;
 	program_edit.use_default = use_default;
-	program_edit.widget = scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	program_edit.widget = vbox = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(vbox);
+	program_edit.title_label = title_label = gtk_label_new(NULL);
+	gtk_widget_show(title_label);
+	gtk_box_pack_start(GTK_BOX(vbox), title_label, FALSE, TRUE, 5);
+	gtk_misc_set_alignment(GTK_MISC(title_label), 0.5, 0);
+	program_edit.hbox = hbox = gtk_hbox_new(FALSE, 3);
+	gtk_widget_show(hbox);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 5);
+
+	program_edit.scrolled_window = scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_widget_show(scrolled_window);
+	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 5);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
@@ -71,10 +88,40 @@ gboolean use_default)
 void
 libgebr_gui_program_edit_reload(struct libgebr_gui_program_edit * program_edit, GeoXmlProgram * program)
 {
+	GtkWidget *	label;
+		gchar *		markup;
+
 	if (program != NULL)
 		program_edit->program = program;
-	gtk_container_foreach(GTK_CONTAINER(program_edit->widget), (GtkCallback)gtk_widget_destroy, NULL);
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(program_edit->widget),
+
+	markup = g_markup_printf_escaped("<big><b>%s</b></big>",
+		geoxml_program_get_title(program_edit->program));
+	gtk_label_set_markup(GTK_LABEL(program_edit->title_label), markup);
+	g_free(markup);
+
+	gtk_container_foreach(GTK_CONTAINER(program_edit->hbox), (GtkCallback)gtk_widget_destroy, NULL);
+	label = gtk_label_new(geoxml_program_get_description(program_edit->program));
+	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(program_edit->hbox), label, FALSE, TRUE, 5);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	if (strlen(geoxml_program_get_url(program_edit->program))) {
+		GtkWidget *	alignment;
+		GtkWidget *	button;
+
+		alignment = gtk_alignment_new(1, 0, 0, 0);
+		gtk_box_pack_start(GTK_BOX(program_edit->hbox), alignment, TRUE, TRUE, 5);
+		button = gtk_button_new_with_label(_("Link"));
+		gtk_container_add(GTK_CONTAINER(alignment), button);
+		gtk_widget_show_all(alignment);
+		gtk_misc_set_alignment(GTK_MISC(label), 1, 0);
+
+		if (program_edit->show_help_callback != NULL)
+			g_signal_connect(button, "clicked",
+				G_CALLBACK(program_edit->show_help_callback), program_edit->program);
+	}
+
+	gtk_container_foreach(GTK_CONTAINER(program_edit->scrolled_window), (GtkCallback)gtk_widget_destroy, NULL);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(program_edit->scrolled_window),
 		program_edit_load(program_edit, geoxml_program_get_parameters(program_edit->program)));
 }
 

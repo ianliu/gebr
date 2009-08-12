@@ -70,8 +70,6 @@ parameters_configure_setup_ui(void)
 {
 	struct ui_parameters *		ui_parameters;
 	GtkWidget *			dialog;
-	GtkWidget *			hbox;
-	GtkWidget *			label;
 	GtkWidget *			button;
 
 	if (flow_edition_get_selected_component(NULL, FALSE) == FALSE)
@@ -95,49 +93,11 @@ parameters_configure_setup_ui(void)
 	g_signal_connect(dialog, "delete-event",
 		G_CALLBACK(parameters_on_delete_event), ui_parameters);
 
-	/* program title in bold */
-	label = gtk_label_new(NULL);
-	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, TRUE, 5);
-	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0);
-	{
-		gchar *	markup;
-
-		markup = g_markup_printf_escaped("<big><b>%s</b></big>",
-			geoxml_program_get_title(gebr.program));
-		gtk_label_set_markup(GTK_LABEL(label), markup);
-		g_free(markup);
-	}
-
-	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_widget_show(hbox);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, TRUE, 5);
-	/* program description */
-	label = gtk_label_new(geoxml_program_get_description(gebr.program));
-	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 5);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	/* program URL */
-	if (strlen(geoxml_program_get_url(gebr.program))) {
-		GtkWidget *	alignment;
-		GtkWidget *	button;
-
-		alignment = gtk_alignment_new(1, 0, 0, 0);
-		gtk_box_pack_start(GTK_BOX(hbox), alignment, TRUE, TRUE, 5);
-		button = gtk_button_new_with_label(_("Link"));
-		gtk_container_add(GTK_CONTAINER(alignment), button);
-		gtk_widget_show_all(alignment);
-		gtk_misc_set_alignment(GTK_MISC(label), 1, 0);
-
-		g_signal_connect(button, "clicked",
-			G_CALLBACK(parameters_on_link_button_clicked), gebr.program);
-	}
-
 	*ui_parameters = (struct ui_parameters) {
 		.dialog = dialog,
 		.program_edit = libgebr_gui_program_edit_setup_ui(
 			GEOXML_PROGRAM(geoxml_sequence_append_clone(GEOXML_SEQUENCE(gebr.program))),
-			flow_io_customized_paths_from_line, FALSE)
+			flow_io_customized_paths_from_line, parameters_on_link_button_clicked, FALSE)
 	};
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_parameters->program_edit.widget, TRUE, TRUE, 0);
 

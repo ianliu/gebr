@@ -40,6 +40,9 @@
 
 struct program_preview_data {
 	struct libgebr_gui_program_edit	program_edit;
+	GeoXmlProgram *			program;
+	GtkWidget *			title_label;
+	GtkWidget *			hbox;
 };
 
 static void
@@ -74,7 +77,7 @@ program_description_changed(GtkEntry * entry);
 static void
 program_url_open(GtkButton * button);
 static void
-program_help_view(GtkButton * button);
+program_help_view(GtkButton * button, GeoXmlProgram * program);
 static void
 program_help_edit(GtkButton * button);
 static gboolean
@@ -266,6 +269,7 @@ program_preview(void)
 		return;
 
 	data = g_malloc(sizeof(struct program_preview_data));
+	data->program = debr.program;
 	dialog = gtk_dialog_new_with_buttons(_("Parameter's dialog preview"),
 		GTK_WINDOW(NULL),
 		GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -278,45 +282,10 @@ program_preview(void)
 	g_signal_connect(dialog, "delete-event",
 		G_CALLBACK(program_preview_on_delete_event), data);
 
-	/* program title in bold */
-	label = gtk_label_new(NULL);
-	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, TRUE, 5);
-	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0);
-	{
-		gchar *	markup;
-
-		markup = g_markup_printf_escaped("<big><b>%s</b></big>",
-			geoxml_program_get_title(debr.program));
-		gtk_label_set_markup(GTK_LABEL(label), markup);
-		g_free(markup);
-	}
-	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_widget_show(hbox);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, TRUE, 5);
-	label = gtk_label_new(geoxml_program_get_description(debr.program));
-	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 5);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	if (strlen(geoxml_program_get_url(debr.program))) {
-		GtkWidget *	alignment;
-		GtkWidget *	button;
-
-		alignment = gtk_alignment_new(1, 0, 0, 0);
-		gtk_box_pack_start(GTK_BOX(hbox), alignment, TRUE, TRUE, 5);
-		button = gtk_button_new_with_label(_("Link"));
-		gtk_container_add(GTK_CONTAINER(alignment), button);
-		gtk_widget_show_all(alignment);
-		gtk_misc_set_alignment(GTK_MISC(label), 1, 0);
-
-		g_signal_connect(button, "clicked",
-			G_CALLBACK(program_help_view), NULL);
-	}
-
 	data->program_edit = libgebr_gui_program_edit_setup_ui(
-		GEOXML_PROGRAM(geoxml_sequence_append_clone(GEOXML_SEQUENCE(debr.program))),
-		NULL, TRUE);
-		
+		GEOXML_PROGRAM(geoxml_object_copy(GEOXML_OBJECT(debr.program))),
+		NULL, program_help_view, TRUE);
+
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), data->program_edit.widget, TRUE, TRUE, 0);
 	gtk_widget_show(dialog);
 }
@@ -918,9 +887,9 @@ program_url_open(GtkButton * button)
 }
 
 static void
-program_help_view(GtkButton * button)
+program_help_view(GtkButton * button, GeoXmlProgram * program)
 {
-	help_show(geoxml_program_get_help(debr.program));
+	help_show(geoxml_program_get_help(program));
 }
 
 static void
@@ -947,11 +916,10 @@ program_url_changed(GtkEntry * entry)
 static void
 program_preview_on_response(GtkWidget * dialog, gint response, struct program_preview_data * data)
 {
-	geoxml_sequence_remove(GEOXML_SEQUENCE(data->program_edit.program));
 	switch (response) {
 	case RESPONSE_REFRESH:
 		libgebr_gui_program_edit_reload(&data->program_edit,
-			GEOXML_PROGRAM(geoxml_sequence_append_clone(GEOXML_SEQUENCE(debr.program))));
+			GEOXML_PROGRAM(geoxml_object_copy(GEOXML_OBJECT(data->program))));
 		break;
 	case GTK_RESPONSE_CLOSE: default:
 		gtk_widget_destroy(dialog);

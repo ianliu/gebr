@@ -83,30 +83,25 @@ int main (int argc, char** argv)
 		fprintf(stderr, "Try %s --help\n", argv[0]);
 		return EXIT_FAILURE;
 	}
-	
-	g_option_context_free (context);
-	
+	g_option_context_free(context);
+
 	/* End of command line parse */
-	
 	if (menu == NULL)
 		return 0;
-	
 	nmenu = 0;
 	while (menu[++nmenu] != NULL);
-	
-	for (imenu=0; imenu<nmenu; imenu++){
+
+	for (imenu=0; imenu<nmenu; imenu++) {
 		GeoXmlDocument *     doc;
 		GeoXmlFlow *         flow;
 		GeoXmlSequence *     seq;
 		GeoXmlProgram *      prog;
 		gint                 nprog;
-		
+
 		geoxml_document_load((GeoXmlDocument**) (&flow), menu[imenu]);
 		doc = GEOXML_DOC(flow);
-		
 		nprog = geoxml_flow_get_programs_number(flow);
-			
-		if (fixfname){
+		if (fixfname) {
 			geoxml_document_set_filename(doc, menu[imenu]);
 			geoxml_flow_get_program (flow, &seq, 0);
 			prog = GEOXML_PROGRAM(seq);
@@ -116,66 +111,51 @@ int main (int argc, char** argv)
 			}
 		}
 
-                if (setfname != NULL){
-                        geoxml_document_set_filename(doc, setfname);
+		if (setfname != NULL) {
+			geoxml_document_set_filename(doc, setfname);
 			geoxml_flow_get_program (flow, &seq, 0);
 			prog = GEOXML_PROGRAM(seq);
-			for (iprog=0; iprog < nprog; iprog++){
+			for (iprog=0; iprog < nprog; iprog++) {
 				geoxml_program_set_menu(prog, setfname, iprog);
 				geoxml_sequence_next(&seq);
 			}
-                }
+		}
 
 		if (author != NULL)
 			geoxml_document_set_author(doc, author);
-
 		if (email != NULL)
 			geoxml_document_set_email(doc, email);
-
-
-		if (iprog == 0){
-			
+		if (iprog == 0) {
 			if (title != NULL)
 				geoxml_document_set_title(doc, title);
-			
 			if (desc != NULL)
 				geoxml_document_set_description(doc, desc);
-
 			if (helpdel)
 				geoxml_document_set_help(doc, "");				
-
 			if (url || binary)
 				printf("To set URL ou binary, you must specify iprog\n");
-		}
-		else{	
-			if (iprog > nprog){
+		} else {
+			if (iprog > nprog) {
 				printf("Invalid program index for menu %s\n", menu[imenu]);
 				goto out;
 			}
 		
-			geoxml_flow_get_program (flow, &seq, iprog-1);
-
+			geoxml_flow_get_program(flow, &seq, iprog-1);
 			prog = GEOXML_PROGRAM(seq);
 
 			if (title != NULL)
 				geoxml_program_set_title(prog, title);
-			
 			if (desc != NULL)
 				geoxml_program_set_description(prog, desc);
-			
 			if (binary != NULL)
 				geoxml_program_set_binary(prog, binary);
-
 			if (url != NULL)
 				geoxml_program_set_url(prog, url);
-
 			if (helpdel)
 				geoxml_program_set_help(prog, "");
+		}
 
-		}	
-	
-	out:
-		geoxml_document_save(doc, menu[imenu]);
+out:		geoxml_document_save(doc, menu[imenu]);
 		geoxml_document_free(doc);
 	}
 
