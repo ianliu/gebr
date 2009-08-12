@@ -75,7 +75,7 @@ int main (int argc, char** argv)
 	nmenu = 0;
 	while (fnmenu[++nmenu] != NULL);
 
-        if (nmenu != 2){
+        if (nmenu < 2){
                 fprintf(stderr, "You should provide two menus to compare.\n");
                 exit(EXIT_FAILURE);
         }
@@ -85,13 +85,13 @@ int main (int argc, char** argv)
         prefix = g_string_new(NULL);
         offset = g_string_new(NULL);
         
-        geoxml_document_load((GeoXmlDocument**) (&menu[0]), fnmenu[0]);
-        geoxml_document_load((GeoXmlDocument**) (&menu[1]), fnmenu[1]);
+        geoxml_document_load((GeoXmlDocument**) (&menu[0]), fnmenu[nmenu-2]);
+        geoxml_document_load((GeoXmlDocument**) (&menu[1]), fnmenu[nmenu-1]);
 
         doc[0] = GEOXML_DOC(menu[0]);
         doc[1] = GEOXML_DOC(menu[1]);
 
-        report("Comparing files", fnmenu[0], fnmenu[1]);
+        report("Comparing files", fnmenu[nmenu-2], fnmenu[nmenu-1]);
         diff_count--;
 
         report("Filename",
@@ -236,8 +236,7 @@ int main (int argc, char** argv)
         g_string_free(prefix, TRUE);
         g_string_free(offset, TRUE);
 
-
-	return diff_count;
+	return EXIT_SUCCESS;
 }
 
 void
@@ -258,7 +257,7 @@ parse_command_line(int argc, char **argv)
 	g_option_context_add_main_entries (context, entries, NULL);
 	
 	/* Complain about unknown options */
-	g_option_context_set_ignore_unknown_options (context, FALSE);
+	g_option_context_set_ignore_unknown_options (context, TRUE);
 	
 	/* Parse command line */
 	if (g_option_context_parse (context, &argc, &argv, &error) == FALSE){
