@@ -283,6 +283,7 @@ GSList ** radio_group)
 
 			gtk_box_pack_start(GTK_BOX(hbox), radio_button, FALSE, FALSE, 15);
 
+			gtk_widget_set_sensitive(parameter_widget->widget, selected == parameter ? TRUE : FALSE);
 			if (type != GEOXML_PARAMETERTYPE_FLAG)
 				gtk_box_pack_end(GTK_BOX(hbox), parameter_widget->widget, FALSE, TRUE, 0);
 			else

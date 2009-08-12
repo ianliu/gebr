@@ -45,7 +45,6 @@ check_for_write_permission(const gchar *file);
 gboolean
 check_for_binary(const gchar *binary);
 
-
 static gboolean
 job_parse_parameter(struct job * job, GeoXmlParameter * parameter, GeoXmlProgram * program)
 {

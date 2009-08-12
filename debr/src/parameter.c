@@ -918,7 +918,7 @@ parameter_load_iter(GtkTreeIter * iter)
 	GtkTreeIter		parent;
 	GeoXmlParameter *	parameter;
 	GString *		keyword_label;
-        GString *               parameter_type;
+	GString *		parameter_type;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter,
 		PARAMETER_XMLPOINTER, &parameter,
@@ -948,24 +948,22 @@ parameter_load_iter(GtkTreeIter * iter)
 
 		keyword_label = g_string_new(NULL);
 		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-                
-                if (geoxml_parameter_group_get_is_instanciable(GEOXML_PARAMETER_GROUP(parameter))){
-                        if ( geoxml_parameter_group_get_instances_number(GEOXML_PARAMETER_GROUP(parameter)) == 1){
-                                g_string_printf(keyword_label, _("with 1 instance"));
-                        } else {
-                                g_string_printf(keyword_label,
-                                                _("with %lu instances"),
-                                                geoxml_parameter_group_get_instances_number(GEOXML_PARAMETER_GROUP(parameter)));
-                        }
-                } else {
-                        g_string_printf(keyword_label, _("not instanciable"));
-                }
 
-                if (geoxml_parameters_get_exclusive(GEOXML_PARAMETERS(instance)) != NULL){
-                        g_string_append_printf(keyword_label, _(" and exclusive"));
-                } else {
-                        g_string_append_printf(keyword_label, _(" and not exclusive"));
-                }
+		if (geoxml_parameter_group_get_is_instanciable(GEOXML_PARAMETER_GROUP(parameter))){
+			if ( geoxml_parameter_group_get_instances_number(GEOXML_PARAMETER_GROUP(parameter)) == 1)
+				g_string_printf(keyword_label, _("with 1 instance"));
+			else {
+				g_string_printf(keyword_label,
+					_("with %lu instances"),
+					geoxml_parameter_group_get_instances_number(GEOXML_PARAMETER_GROUP(parameter)));
+			}
+		} else
+			g_string_printf(keyword_label, _("not instanciable"));
+
+		if (geoxml_parameters_get_exclusive(GEOXML_PARAMETERS(instance)) != NULL)
+			g_string_append_printf(keyword_label, _(" and exclusive"));
+		else
+			g_string_append_printf(keyword_label, _(" and not exclusive"));
 	}
 
 	parameter_type = g_string_new(combo_type_map_get_title(geoxml_parameter_get_type(parameter)));
@@ -977,22 +975,22 @@ parameter_load_iter(GtkTreeIter * iter)
 		PARAMETER_KEYWORD, keyword_label->str,
 		PARAMETER_LABEL, geoxml_parameter_get_label(parameter),
 		-1);
-        
-        if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE &&
-            geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(parameter))){
-                        GString *markup;
-                        markup = g_string_new(NULL);
-                        
-                        g_string_append(markup, g_markup_printf_escaped("<b>%s</b>", parameter_type->str));
-                        gtk_tree_store_set(debr.ui_parameter.tree_store, iter,
-                                           PARAMETER_TYPE, markup->str,
-                                           -1);
-                        g_string_free(markup, TRUE);
-        } else {
-                gtk_tree_store_set(debr.ui_parameter.tree_store, iter,
-                                   PARAMETER_TYPE, parameter_type->str,
-                                   -1);
-        }
+
+	if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE &&
+	geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(parameter))){
+		GString *	markup;
+
+		markup = g_string_new(NULL);
+		g_string_append(markup, g_markup_printf_escaped("<b>%s</b>", parameter_type->str));
+		gtk_tree_store_set(debr.ui_parameter.tree_store, iter,
+			PARAMETER_TYPE, markup->str,
+			-1);
+		g_string_free(markup, TRUE);
+	} else {
+		gtk_tree_store_set(debr.ui_parameter.tree_store, iter,
+			PARAMETER_TYPE, parameter_type->str,
+			-1);
+	}
 
 	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, iter))
 		parameter_load_iter(&parent);
@@ -1266,6 +1264,8 @@ parameter_is_list_changed(GtkToggleButton * toggle_button, struct ui_parameter_d
 	gtk_widget_set_sensitive(ui->separator_entry, gtk_toggle_button_get_active(toggle_button));
 
 	parameter_reconfigure_default_widget(ui);
+	if (gtk_toggle_button_get_active(toggle_button))
+		parameter_separator_changed(GTK_ENTRY(ui->separator_entry), ui);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
