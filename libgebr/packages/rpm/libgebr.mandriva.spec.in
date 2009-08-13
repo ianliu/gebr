@@ -49,10 +49,6 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%{_bindir}/*
-%{_libdir}/*
-%{_includedir}/%{name}/*
-%{_datadir}/%{name}/*
-%{_mandir}/*
+/*
 
 %changelog
