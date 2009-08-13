@@ -18,6 +18,7 @@
 #include <string.h>
 
 #include <libgebr/intl.h>
+#include <libgebr/gui/gtkdirectorychooser.h>
 
 #include "preferences.h"
 #include "debr.h"
@@ -48,7 +49,7 @@ preferences_dialog_setup_ui(void)
 	GtkWidget *	table;
 	GtkWidget *	name_entry;
 	GtkWidget *	email_entry;
-	GtkWidget *	menudir_filechooser;
+	GtkWidget *	menudir_dirchooser;
 	GtkWidget *	browser_combo;
 	GtkWidget *	htmleditor_entry;
 	GtkWidget *	label;
@@ -93,17 +94,16 @@ preferences_dialog_setup_ui(void)
 	label = gtk_label_new(_("Menus directory"));
 	gtk_misc_set_alignment( GTK_MISC(label), 0, 0);
 	/* Browse button for user's menus dir */
-	menudir_filechooser = gtk_file_chooser_button_new("GêBR dir",
-						GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+	menudir_dirchooser = gtk_directory_chooser_new ();
+	// menudir_dirchooser = gtk_file_chooser_button_new("GêBR dir",
+	//					GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
 	eventbox = gtk_event_box_new();
-	gtk_container_add(GTK_CONTAINER(eventbox), menudir_filechooser);
+	gtk_container_add(GTK_CONTAINER(eventbox), menudir_dirchooser);
 	gtk_tooltips_set_tip(tips, eventbox, _("Path to look for private user's menus"), "");
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 	/* read config */
-	if (strlen(debr.config.menu_dir->str))
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(menudir_filechooser),
-			debr.config.menu_dir->str);
+	gtk_directory_chooser_set_paths (GTK_DIRECTORY_CHOOSER(menudir_dirchooser), debr.config.menu_dir);
 
 	/* Browser */
 	label = gtk_label_new(_("Browser"));
@@ -140,13 +140,12 @@ preferences_dialog_setup_ui(void)
 	gtk_widget_show_all(window);
 	switch (gtk_dialog_run(GTK_DIALOG(window))) {
 	case GTK_RESPONSE_OK: {
-		gchar *	tmp;
+		g_strfreev (debr.config.menu_dir);
 
-		tmp = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER (menudir_filechooser));
 		/* update settings */
+		debr.config.menu_dir = gtk_directory_chooser_get_paths (GTK_DIRECTORY_CHOOSER (menudir_dirchooser));
 		g_string_assign(debr.config.name, gtk_entry_get_text(GTK_ENTRY(name_entry)));
 		g_string_assign(debr.config.email, gtk_entry_get_text(GTK_ENTRY(email_entry)));
-		g_string_assign(debr.config.menu_dir, tmp);
 		g_string_assign(debr.config.browser, gtk_combo_box_get_active_text(GTK_COMBO_BOX(browser_combo)));
 		g_string_assign(debr.config.htmleditor, gtk_entry_get_text(GTK_ENTRY(htmleditor_entry)));
 
@@ -156,7 +155,6 @@ preferences_dialog_setup_ui(void)
 		/* apply settings */
 		menu_load_user_directory();
 
-		g_free(tmp);
 		break;
 	}
 	case GTK_RESPONSE_CANCEL:

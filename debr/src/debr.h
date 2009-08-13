@@ -82,9 +82,9 @@ struct debr {
 
 		GString *	name;
 		GString *	email;
-		GString *	menu_dir;
 		GString *	htmleditor;
 		GString *	browser;
+		gchar **	menu_dir;
 	} config;
 
 	GtkListStore *		categories_model;

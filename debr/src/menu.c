@@ -264,22 +264,26 @@ menu_load_user_directory(void)
 {
 	GtkTreeIter		iter;
 	gchar *			filename;
-	GString *		path;
+	gint			i;
 
-	path = g_string_new(NULL);
-	libgebr_directory_foreach_file(filename, debr.config.menu_dir->str) {
-		if (fnmatch ("*.mnu", filename, 1))
-			continue;
+	i = 0;
+	while (debr.config.menu_dir[i]) {
+		GString * path;
+		path = g_string_new(NULL);
+		libgebr_directory_foreach_file(filename, debr.config.menu_dir[i]) {
+			if (fnmatch ("*.mnu", filename, 1))
+				continue;
 
-		g_string_printf(path, "%s/%s", debr.config.menu_dir->str, filename);
-		menu_open(path->str, FALSE);
+			g_string_printf(path, "%s/%s", debr.config.menu_dir[i], filename);
+			menu_open(path->str, FALSE);
+		}
+		g_string_free(path, TRUE);
+		i++;
 	}
 
 	/* select first menu */
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter) == TRUE)
 		menu_select_iter(&iter);
-
-	g_string_free(path, TRUE);
 }
 
 /*

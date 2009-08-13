@@ -213,8 +213,8 @@ on_menu_save_as_activate(void)
 	gtk_file_filter_set_name(filefilter, _("Menu files (*.mnu)"));
 	gtk_file_filter_add_pattern(filefilter, "*.mnu");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), filefilter);
-	if (debr.config.menu_dir != NULL && strlen(debr.config.menu_dir->str) > 0)
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir->str);
+	if (debr.config.menu_dir != NULL && debr.config.menu_dir[0] != NULL)
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir[0]);
 
 	/* show file chooser */
 	gtk_widget_show(chooser_dialog);
