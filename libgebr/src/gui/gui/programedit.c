@@ -272,8 +272,7 @@ GSList ** radio_group)
 		if (selected != NULL) {
 			GtkWidget *	radio_button;
 
-			radio_button = gtk_radio_button_new_with_label(*radio_group,
-				geoxml_parameter_get_label(parameter));
+			radio_button = gtk_radio_button_new(*radio_group);
 			gtk_widget_show(radio_button);
 			*radio_group = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button));
 
@@ -282,13 +281,9 @@ GSList ** radio_group)
 				(GCallback)program_edit_change_selected, parameter_widget);
 
 			gtk_box_pack_start(GTK_BOX(hbox), radio_button, FALSE, FALSE, 15);
-
 			gtk_widget_set_sensitive(parameter_widget->widget, selected == parameter ? TRUE : FALSE);
-			if (type != GEOXML_PARAMETERTYPE_FLAG)
-				gtk_box_pack_end(GTK_BOX(hbox), parameter_widget->widget, FALSE, TRUE, 0);
-			else
-				gtk_box_pack_start(GTK_BOX(hbox), parameter_widget->widget, FALSE, FALSE, 0);
-		} else if (type != GEOXML_PARAMETERTYPE_FLAG) {
+		}
+		if (type != GEOXML_PARAMETERTYPE_FLAG) {
 			GtkWidget *	label;
 			gchar *		label_str;
 			GtkWidget *	align_vbox;

@@ -483,6 +483,8 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 		min = !strlen(min_str) ? DOUBLE_MIN : atof(min_str);
 		max = !strlen(max_str) ? DOUBLE_MAX : atof(max_str);
 		inc = !strlen(inc_str) ? 1.0 : atof(inc_str);
+		if (inc == 0)
+			inc = 1.0;
 
 		parameter_widget->value_widget = spin = gtk_spin_button_new_with_range(min, max, inc);
 		gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), atoi(digits_str));

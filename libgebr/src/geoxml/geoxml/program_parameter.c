@@ -95,6 +95,9 @@ geoxml_program_parameter_get_required(GeoXmlProgramParameter * program_parameter
 		return FALSE;
 	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) == GEOXML_PARAMETERTYPE_FLAG)
 		return FALSE;
+	if (geoxml_parameter_get_is_reference((GeoXmlParameter*)program_parameter))
+		return geoxml_program_parameter_get_required((GeoXmlProgramParameter*)
+			geoxml_parameter_get_referencee((GeoXmlParameter*)program_parameter));
 	return (!strcmp(__geoxml_get_attr_value(
 			__geoxml_get_first_element((GdomeElement*)program_parameter, "property"),
 			"required"), "yes"))
