@@ -19,7 +19,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <glib.h>
+
 #include <geoxml.h>
+#include "../../utils.h"
 
 gboolean             fixfname = FALSE;
 gchar*               setfname = NULL;
@@ -28,6 +30,7 @@ gchar*               desc     = NULL;
 gchar*               author   = NULL;
 gchar*               email    = NULL;
 gboolean             helpdel  = FALSE;
+gchar *              fnhelp   = NULL;
 gint                 iprog    = 0;
 gchar*               binary   = NULL;
 gchar*               url      = NULL;
@@ -44,12 +47,16 @@ static GOptionEntry entries[] =    {
 	{ "author", 'A', 0, G_OPTION_ARG_STRING, &author, "set authors", "name"},
 	{ "email", 'e', 0, G_OPTION_ARG_STRING, &email, "set email", "email address"},
 	{ "helpdel", 0, 0, G_OPTION_ARG_NONE, &helpdel, "delete help text", NULL},
+        { "sethelp", 'H', 0, G_OPTION_ARG_FILENAME, &fnhelp, "replace help by an HTML file", NULL}, 
 	{ "binary", 'b', 0, G_OPTION_ARG_STRING, &binary, "Binary command (without path)", "program/script"},
 	{ "url", 'u', 0, G_OPTION_ARG_STRING, &url, "URL for a program", "http://www.../"},
 	//{ "capitalize", 'c', 0, G_OPTION_ARG_NONE, &capt, "capitalize descriptions and labels", NULL},
 	{ G_OPTION_REMAINING, 0, G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME_ARRAY, &menu, "", "menu1.mnu menu2.mnu ..." },
 	{ NULL }
 };
+
+
+GString * help_load(const gchar *fname);
 
 int main (int argc, char** argv)
 {
@@ -70,7 +77,7 @@ int main (int argc, char** argv)
 	g_option_context_set_description (context,
 					  "If iprog is 0, then title and description options refers to menu's\n"
 					  "title and description. If iprog > 0, then ith program is edited.\n"
-					  "Copyright (C) 2008 Ricardo Biloti <biloti@gmail.com>");
+					  "Copyright (C) 2008-2009 Ricardo Biloti <biloti@gmail.com>");
 	
 	g_option_context_add_main_entries (context, entries, NULL);
 	
@@ -130,10 +137,22 @@ int main (int argc, char** argv)
 				geoxml_document_set_title(doc, title);
 			if (desc != NULL)
 				geoxml_document_set_description(doc, desc);
-			if (helpdel)
-				geoxml_document_set_help(doc, "");				
 			if (url || binary)
 				printf("To set URL ou binary, you must specify iprog\n");
+			if (helpdel)
+				geoxml_document_set_help(doc, "");				
+                        if (fnhelp){
+                                GString *   html_content;
+                                
+                                html_content = help_load(fnhelp);
+                                if (html_content == NULL){
+                                        return EXIT_FAILURE;
+                                }
+
+                                geoxml_document_set_help(doc, html_content->str);
+
+                                g_string_free(html_content, TRUE);
+                        }
 		} else {
 			if (iprog > nprog) {
 				printf("Invalid program index for menu %s\n", menu[imenu]);
@@ -153,6 +172,19 @@ int main (int argc, char** argv)
 				geoxml_program_set_url(prog, url);
 			if (helpdel)
 				geoxml_program_set_help(prog, "");
+
+                        if (fnhelp){
+                                GString *   html_content;
+                                
+                                html_content = help_load(fnhelp);
+                                if (html_content == NULL){
+                                        return EXIT_FAILURE;
+                                }
+                                
+                                geoxml_program_set_help(prog, html_content->str);
+                                
+                                g_string_free(html_content, TRUE);   
+                        }
 		}
 
 out:		geoxml_document_save(doc, menu[imenu]);
@@ -160,4 +192,44 @@ out:		geoxml_document_save(doc, menu[imenu]);
 	}
 
 	return 0;
+}
+
+GString *
+help_load(const gchar *fname)
+{
+
+        GString *   html_content;
+        FILE *      fp;
+        gchar       buffer[1000];
+
+
+        if ((fp = fopen(fnhelp, "r")) == NULL){
+                fprintf(stderr, "Unable to open %s\n", fname);
+                return NULL;
+        }
+                      
+        html_content = g_string_new(NULL);
+        g_string_assign(html_content, "");
+        while (fgets(buffer, sizeof(buffer), fp))
+                g_string_append(html_content, buffer);
+        fclose(fp);
+                                
+        /* ensure UTF-8 encoding */
+        if (g_utf8_validate(html_content->str, -1, NULL) == FALSE) {
+                gchar *	converted;
+                                        
+                /* TODO: what else should be tried? */
+                converted = g_simple_locale_to_utf8(html_content->str);
+                if (converted == NULL) {
+                        g_free(converted);
+                        fprintf(stderr, "Please change the help encoding to UTF-8");
+                        g_string_free(html_content, TRUE);
+                        return NULL;
+                }
+
+                g_string_assign(html_content, converted);
+                g_free(converted);
+        }
+        
+        return html_content;
 }
