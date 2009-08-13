@@ -121,6 +121,27 @@ __gtk_enhanced_entry_text_changed(GtkEntry * entry, GtkEnhancedEntry * enhanced_
 	enhanced_entry->empty = (gboolean)!strlen(gtk_entry_get_text(entry));
 }
 
+static void
+__gtk_enhanced_entry_check_empty(GtkEnhancedEntry * enhanced_entry)
+{
+	if (enhanced_entry->empty && !GTK_WIDGET_HAS_FOCUS(enhanced_entry) && enhanced_entry->empty_text != NULL) {
+		GtkEntry *	entry = GTK_ENTRY(enhanced_entry);
+
+		gtk_widget_modify_text(GTK_WIDGET(entry), GTK_STATE_NORMAL,
+			&(GdkColor){0xFFFF, 200, 200, 200});
+		gtk_widget_modify_text(GTK_WIDGET(entry), GTK_STATE_ACTIVE,
+			&(GdkColor){0xFFFF, 200, 200, 200});
+
+		g_signal_handlers_block_matched(G_OBJECT(enhanced_entry),
+			G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+			(GCallback)__gtk_enhanced_entry_text_changed, NULL);
+		gtk_entry_set_text(entry, enhanced_entry->empty_text);
+		g_signal_handlers_unblock_matched(G_OBJECT(enhanced_entry),
+			G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+			(GCallback)__gtk_enhanced_entry_text_changed, NULL);
+	}
+}
+
 static gboolean
 __gtk_enhanced_entry_focus_in(GtkEntry * entry, GdkEventFocus * event, GtkEnhancedEntry * enhanced_entry)
 {
@@ -145,20 +166,7 @@ __gtk_enhanced_entry_focus_in(GtkEntry * entry, GdkEventFocus * event, GtkEnhanc
 static gboolean
 __gtk_enhanced_entry_focus_out(GtkEntry * entry, GdkEventFocus * event, GtkEnhancedEntry * enhanced_entry)
 {
-	if (enhanced_entry->empty && enhanced_entry->empty_text != NULL) {
-		gtk_widget_modify_text(GTK_WIDGET(entry), GTK_STATE_NORMAL,
-			&(GdkColor){0xFFFF, 200, 200, 200});
-		gtk_widget_modify_text(GTK_WIDGET(entry), GTK_STATE_ACTIVE,
-			&(GdkColor){0xFFFF, 200, 200, 200});
-
-		g_signal_handlers_block_matched(G_OBJECT(entry),
-			G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-			(GCallback)__gtk_enhanced_entry_text_changed, NULL);
-		gtk_entry_set_text(entry, enhanced_entry->empty_text);
-		g_signal_handlers_unblock_matched(G_OBJECT(entry),
-			G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-			(GCallback)__gtk_enhanced_entry_text_changed, NULL);
-	}
+	__gtk_enhanced_entry_check_empty(enhanced_entry);
 
 	return FALSE;
 }
@@ -181,6 +189,13 @@ gtk_enhanced_entry_new_with_empty_text(const gchar * empty_text)
 	return g_object_new(GTK_TYPE_ENHANCED_ENTRY,
 		"empty-text", empty_text,
 		NULL);
+}
+
+void
+gtk_enhanced_entry_set_text(GtkEnhancedEntry * enhanced_entry, const gchar * text)
+{
+	gtk_entry_set_text(GTK_ENTRY(enhanced_entry), text);
+	__gtk_enhanced_entry_check_empty(enhanced_entry);
 }
 
 const gchar *

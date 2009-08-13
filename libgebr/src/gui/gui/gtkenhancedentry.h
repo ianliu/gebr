@@ -51,6 +51,9 @@ gtk_enhanced_entry_new();
 GtkWidget *
 gtk_enhanced_entry_new_with_empty_text(const gchar * empty_text);
 
+void
+gtk_enhanced_entry_set_text(GtkEnhancedEntry * enhanced_entry, const gchar * text);
+
 const gchar *
 gtk_enhanced_entry_get_text(GtkEnhancedEntry * enhanced_entry);
 

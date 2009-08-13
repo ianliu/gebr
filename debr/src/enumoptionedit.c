@@ -51,12 +51,8 @@ enum_option_edit_set_property(EnumOptionEdit * enum_option_edit, guint property_
 		gtk_list_store_clear(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store);
 		enum_option_edit->enum_option = g_value_get_pointer(value);
 		enum_option = (GeoXmlSequence*)enum_option_edit->enum_option;
-
-		while (enum_option != NULL) {
+		for (; enum_option != NULL; geoxml_sequence_next(&enum_option))
 			__enum_option_edit_add(enum_option_edit, GEOXML_ENUM_OPTION(enum_option));
-
-			geoxml_sequence_next(&enum_option);
-		}
 
 		break;
 	} default:
@@ -126,6 +122,9 @@ enum_option_edit_add_request(EnumOptionEdit * enum_option_edit)
 		gtk_enhanced_entry_get_text(GTK_ENHANCED_ENTRY(enum_option_edit->label_entry)),
 		gtk_enhanced_entry_get_text(GTK_ENHANCED_ENTRY(enum_option_edit->value_entry)));
 	__enum_option_edit_add(enum_option_edit, enum_option);
+
+	gtk_enhanced_entry_set_text(GTK_ENHANCED_ENTRY(enum_option_edit->label_entry), "");
+	gtk_enhanced_entry_set_text(GTK_ENHANCED_ENTRY(enum_option_edit->value_entry), "");
 
 	g_signal_emit_by_name(enum_option_edit, "changed");
 }
@@ -315,7 +314,7 @@ enum_option_edit_new(GeoXmlEnumOption * enum_option, GeoXmlProgramParameter * pr
 		"enum-option", enum_option,
 		NULL);
 
-		enum_option_edit->program_parameter = program_parameter;
+	enum_option_edit->program_parameter = program_parameter;
 	enum_option_edit->label_entry = label_entry;
 	enum_option_edit->value_entry = value_entry;
 	g_signal_connect(GTK_OBJECT(enum_option_edit), "add-request",

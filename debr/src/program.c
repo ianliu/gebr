@@ -174,9 +174,9 @@ program_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.binary_label, FALSE, TRUE, 0);
 
 	{
-		GtkWidget *label;
-		GtkWidget *hbox;
-		gchar     *markup;
+		GtkWidget *	label;
+		GtkWidget *	hbox;
+		gchar *		markup;
 
 		label = gtk_label_new(NULL);
 		markup = g_markup_printf_escaped("<b>%s</b>:", _("URL"));
@@ -194,10 +194,8 @@ program_setup_ui(void)
 					GTK_SIGNAL_FUNC(program_url_open), debr.program);
 	}
 
-        debr.ui_program.details.help_button = gtk_button_new_from_stock(GTK_STOCK_INFO);
+	debr.ui_program.details.help_button = gtk_button_new_from_stock(GTK_STOCK_INFO);
 	gtk_box_pack_end(GTK_BOX(details), debr.ui_program.details.help_button, FALSE, TRUE, 0);
-	g_signal_connect(GTK_OBJECT(debr.ui_program.details.help_button), "clicked",
-			 GTK_SIGNAL_FUNC(program_help_view), debr.program);
 
 	debr.ui_program.widget = hpanel;
 	gtk_widget_show_all(debr.ui_program.widget);
@@ -282,7 +280,7 @@ program_preview(void)
 
 	data->program_edit = libgebr_gui_program_edit_setup_ui(
 		GEOXML_PROGRAM(geoxml_object_copy(GEOXML_OBJECT(debr.program))),
-		NULL, program_help_view, TRUE);
+		NULL, (LibGeBRGUIShowHelpCallback)program_help_view, TRUE);
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), data->program_edit.widget, TRUE, TRUE, 0);
 	gtk_widget_show(dialog);
@@ -656,8 +654,13 @@ program_details_update(void)
 
 	g_object_set(G_OBJECT(debr.ui_program.details.url_button), "sensitive",
 		(strlen(geoxml_program_get_url(debr.program))>0) ? TRUE : FALSE, NULL);
+
+	g_signal_handlers_disconnect_matched(G_OBJECT(debr.ui_program.details.help_button),
+		G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (GCallback)program_help_view, NULL);
+	g_signal_connect(GTK_OBJECT(debr.ui_program.details.help_button), "clicked",
+		GTK_SIGNAL_FUNC(program_help_view), debr.program);
 	g_object_set(G_OBJECT(debr.ui_program.details.help_button),
-		"sensitive", (strlen(geoxml_program_get_help(debr.program))>1) ? TRUE : FALSE, NULL);
+		"sensitive", (strlen(geoxml_program_get_help(debr.program)) > 1) ? TRUE : FALSE, NULL);
 }
 
 /*
