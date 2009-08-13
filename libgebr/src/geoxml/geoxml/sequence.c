@@ -72,8 +72,7 @@ __geoxml_sequence_check(GeoXmlSequence * sequence, gboolean check_master_instanc
 	return strcmp(tag->str, "value") &&
 		strcmp(tag->str, "default") &&
 		strcmp(tag->str, "option") &&
-		(strcmp(tag->str, "parameters") &&
-			geoxml_parameters_get_is_in_group((GeoXmlParameters*)sequence)) &&
+		!strcmp(tag->str, "parameters") &&
 		strcmp(tag->str, "program") &&
 		strcmp(tag->str, "category") &&
 		strcmp(tag->str, "revision") &&
