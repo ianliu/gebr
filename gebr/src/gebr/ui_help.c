@@ -52,23 +52,12 @@ gchar * unable_to_write_help_error = N_("Unable to write help in temporary file"
 void
 program_help_show(void)
 {
-
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
-
-	GeoXmlSequence *	program;
 	GString *		help;
 
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("No flow component selected"));
+	if (!flow_edition_get_selected_component(NULL, TRUE))
 		return;
-	}
 
-	/* get the program and its path on menu */
-	gtk_tree_model_get(model, &iter, FSEQ_GEOXML_POINTER, &program, -1);
-	help = menu_get_help_from_program_ref(GEOXML_PROGRAM(program));
+	help = menu_get_help_from_program_ref(gebr.program);
 	help_show(help->str, _("Program help"));
 	
 	g_string_free(help, TRUE);
