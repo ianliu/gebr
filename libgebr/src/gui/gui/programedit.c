@@ -89,7 +89,7 @@ void
 libgebr_gui_program_edit_reload(struct libgebr_gui_program_edit * program_edit, GeoXmlProgram * program)
 {
 	GtkWidget *	label;
-		gchar *		markup;
+	gchar *		markup;
 
 	if (program != NULL)
 		program_edit->program = program;

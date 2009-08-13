@@ -81,13 +81,8 @@ g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * 
 		while (((file##hygid = readdir(dir##hygid)) != NULL && \
 		(filename = file##hygid->d_name, 1)) || \
 		(closedir(dir##hygid), 0)) \
-			if (strcmp(filename, "."))
+			if (strcmp(filename, ".") && strcmp(filename, ".."))
 #define libgebr_directory_foreach_file(filename, directory) \
 	libgebr_directory_foreach_file_hyg(filename, directory, nohyg)
-
-#define libgebr_directory_foreach_subdir_hyg(subdir, directory, hygid) \
-	libgebr_directory_foreach_file_hyg(subdir, directory, hygid) \
-		if (g_file_test(path->str, G_FILE_TEST_IS_DIR))
-#define libgebr_directory_foreach_subdir(subdir, directory, nohyg) \
 
 #endif //__LIBGEBR_MISC_UTILS_H

@@ -112,30 +112,40 @@ out:	return path;
 }
 
 /*
- * Function: menu_refresh_needed
- * Create a list of filenames in _directory_
+ * Function: menu_compare_times
+ * 
  */
-void
-menu_ls(const gchar * directory, time_t * mod_time)
+static gboolean
+menu_compare_times(const gchar * directory, time_t index_time, gboolean recursive)
 {
 	gchar *		filename;
 	GString *	path;
+	gboolean	refresh_needed;
 
-	/* initialization */
+	refresh_needed = FALSE;
 	path = g_string_new(NULL);
 	libgebr_directory_foreach_file(filename, directory) {
 		struct stat	file_stat;
 
+		g_string_printf(path, "%s/%s", directory, filename);
+		if (recursive && g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
+			if (menu_compare_times(path->str, index_time, TRUE)) {
+				refresh_needed = TRUE;
+				goto out;
+			}
+		}
 		if (fnmatch("*.mnu", filename, 1))
 			continue;
 
-		g_string_printf(path, "%s/%s", directory, filename);
 		stat(path->str, &file_stat);
-		if (*mod_time < file_stat.st_mtime)
-			*mod_time = file_stat.st_mtime;
+		if (index_time < file_stat.st_mtime) {
+			refresh_needed = TRUE;
+			goto out;
+		}
 	}
 
-	g_string_free(path, TRUE);
+out:	g_string_free(path, TRUE);
+	return refresh_needed;
 }
 
 /*
@@ -148,47 +158,51 @@ menu_refresh_needed(void)
 	gboolean	needed;
 	GString *	index_path;
 
-	time_t		ls_time;
+	gchar *		subdir;
+	GString *	menudir_path;
+	struct stat	_stat;
 	time_t		index_time;
 	time_t		menudirs_time;
-	struct stat	_stat;
 
 	needed = FALSE;
+	index_path = g_string_new(NULL);
+	menudir_path = g_string_new(NULL);
 
 	/* index path string */
-	index_path = g_string_new(NULL);
 	g_string_printf(index_path, "%s/.gebr/gebr/menus.idx", getenv("HOME"));
 	if (g_access(index_path->str, F_OK | R_OK) && menu_list_create_index() == FALSE)
 		goto out;
 
-	/*
-	 * Get menu directories and index modification times
-	 */
+	/* Time for index */
 	stat(index_path->str, &_stat);
 	index_time = _stat.st_mtime;
+	/* Times for system menus directories */
 	stat(GEBR_SYS_MENUS_DIR, &_stat);
 	menudirs_time = _stat.st_mtime;
-	stat(gebr.config.usermenus->str, &_stat);
-	if (menudirs_time < _stat.st_mtime)
-		menudirs_time = _stat.st_mtime;
-
-	/* compare modification times */
+	libgebr_directory_foreach_file(subdir, GEBR_SYS_MENUS_DIR) {
+		g_string_printf(menudir_path, "%s/%s", GEBR_SYS_MENUS_DIR, subdir);
+		if (!g_file_test(menudir_path->str, G_FILE_TEST_IS_DIR))
+			continue;
+		stat(menudir_path->str, &_stat);
+		if (menudirs_time < _stat.st_mtime)
+			menudirs_time = _stat.st_mtime;
+	}
 	if (menudirs_time > index_time) {
 		needed = TRUE;
 		goto out;
 	}
-
-	/*
-	 * List menus and get the most recent modification time
-	 */
-	ls_time = 0;
-	menu_ls(GEBR_SYS_MENUS_DIR, &ls_time);
-	menu_ls(gebr.config.usermenus->str, &ls_time);
-
-	if (ls_time > index_time)
+	/* Times for all menus */
+	if (menu_compare_times(GEBR_SYS_MENUS_DIR, index_time, TRUE)) {
 		needed = TRUE;
+		goto out;
+	}
+	if (menu_compare_times(gebr.config.usermenus->str, index_time, FALSE)) {
+		needed = TRUE;
+		goto out;
+	}
 
 out:	g_string_free(index_path, TRUE);
+	g_string_free(menudir_path, TRUE);
 
 	return needed;
 }

@@ -162,9 +162,8 @@ flow_io_customized_paths_from_line(GtkFileChooser * chooser)
 void
 flow_add_program_sequence_to_view(GeoXmlSequence * program, gboolean select_last)
 {
-	GtkTreeIter		iter;
-
 	for (; program != NULL; geoxml_sequence_next(&program)) {
+		GtkTreeIter		iter;
 		gchar *			menu;
 		gulong			prog_index;
 		const gchar *		status;

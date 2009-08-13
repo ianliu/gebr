@@ -409,10 +409,10 @@ flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * 
 	GeoXmlSequence *	program;
 	GeoXmlSequence *	position_program;
 
-	gtk_tree_model_get(gtk_tree_view_get_model(tree_view),
-		iter, FSEQ_GEOXML_POINTER, &program, -1);
-	gtk_tree_model_get(gtk_tree_view_get_model(tree_view),
-		position, FSEQ_GEOXML_POINTER, &position_program, -1);
+	gtk_tree_model_get(gtk_tree_view_get_model(tree_view), iter,
+		FSEQ_GEOXML_POINTER, &program, -1);
+	gtk_tree_model_get(gtk_tree_view_get_model(tree_view), position,
+		FSEQ_GEOXML_POINTER, &position_program, -1);
 
 	if (drop_position != GTK_TREE_VIEW_DROP_AFTER) {
 		geoxml_sequence_move_before(program, position_program);
