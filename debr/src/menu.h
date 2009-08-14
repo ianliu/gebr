@@ -39,7 +39,7 @@ enum {
 struct ui_menu {
 	GtkWidget *		widget;
 
-	GtkListStore *		list_store;
+	GtkListStore *		model;
 	GtkWidget *		tree_view;
 	
 	struct ui_menu_details {

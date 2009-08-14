@@ -229,7 +229,7 @@ on_menu_save_as_activate(void)
 
 	/* get selection, change the view and save to disk */
 	menu_get_selected(&iter);
-	gtk_list_store_set(debr.ui_menu.list_store, &iter,
+	gtk_list_store_set(debr.ui_menu.model, &iter,
 		MENU_FILENAME, filename,
 		MENU_PATH, path->str,
 		-1);
@@ -270,7 +270,7 @@ on_menu_revert_activate(void)
 		GeoXmlFlow *		menu, * old_menu;
 		gchar *			path;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 			MENU_XMLPOINTER, &old_menu,
 			MENU_PATH, &path,
 			-1);
@@ -287,7 +287,7 @@ on_menu_revert_activate(void)
 			return;
 		/* revert to the one in disk */
 		geoxml_document_free(GEOXML_DOC(old_menu));
-		gtk_list_store_set(debr.ui_menu.list_store, &iter,
+		gtk_list_store_set(debr.ui_menu.model, &iter,
 			MENU_XMLPOINTER, menu,
 			-1);
 		menu_saved_status_set_from_iter(&iter, MENU_STATUS_SAVED);
@@ -316,7 +316,7 @@ on_menu_delete_activate(void)
 
 		/* get path of selection */
 		menu_get_selected(&iter);
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 			MENU_XMLPOINTER, &menu,
 			MENU_PATH, &path,
 			-1);
@@ -336,7 +336,7 @@ on_menu_delete_activate(void)
 		g_free(path);
 	}
 
-	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.list_store), NULL) == 0)
+	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.model), NULL) == 0)
 		menu_new(FALSE);
 	else
 		libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
@@ -390,7 +390,7 @@ on_menu_close_activate(void)
 		GdkPixbuf *	pixbuf;
 		GtkWidget *	button;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 			MENU_XMLPOINTER, &menu,
 			MENU_STATUS, &pixbuf,
 			-1);
@@ -419,7 +419,7 @@ on_menu_close_activate(void)
 			case GTK_RESPONSE_YES: {
 				gchar *	path;
 
-				gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+				gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 					MENU_PATH, &path,
 					-1);
 				geoxml_document_save(GEOXML_DOC(debr.menu), path);
@@ -441,7 +441,7 @@ on_menu_close_activate(void)
 		menu_close(&iter);
 	}
 
-	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.list_store), NULL) == 0)
+	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.model), NULL) == 0)
 		menu_new(FALSE);
 	else
 		libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));

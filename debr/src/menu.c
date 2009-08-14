@@ -92,13 +92,13 @@ menu_setup_ui(void)
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_IN);	
 
-	debr.ui_menu.list_store = gtk_list_store_new(MENU_N_COLUMN,
+	debr.ui_menu.model = gtk_list_store_new(MENU_N_COLUMN,
 		GDK_TYPE_PIXBUF,
 		G_TYPE_STRING,
 		G_TYPE_STRING,
 		G_TYPE_POINTER,
 		G_TYPE_STRING);
-	debr.ui_menu.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_menu.list_store));
+	debr.ui_menu.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_menu.model));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view)),
 		GTK_SELECTION_MULTIPLE);
 	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_menu.tree_view),
@@ -124,7 +124,7 @@ menu_setup_ui(void)
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), col);
 
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(debr.ui_menu.list_store),
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(debr.ui_menu.model),
 			MENU_MODIFIED_DATE, GTK_SORT_ASCENDING);
 
 	/*
@@ -218,8 +218,8 @@ menu_new(gboolean edit)
 	geoxml_document_set_email(GEOXML_DOC(debr.menu), debr.config.email->str);
         geoxml_document_set_date_created(GEOXML_DOC(debr.menu), iso_date());
 
-	gtk_list_store_append(debr.ui_menu.list_store, &iter);
-	gtk_list_store_set(debr.ui_menu.list_store, &iter,
+	gtk_list_store_append(debr.ui_menu.model, &iter);
+	gtk_list_store_set(debr.ui_menu.model, &iter,
 		MENU_FILENAME, new_menu_str->str,
 		MENU_XMLPOINTER, (gpointer)debr.menu,
 		MENU_PATH, "",
@@ -282,7 +282,7 @@ menu_load_user_directory(void)
 	}
 
 	/* select first menu */
-	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter) == TRUE)
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_menu.model), &iter) == TRUE)
 		menu_select_iter(&iter);
 }
 
@@ -300,10 +300,10 @@ menu_open(const gchar * path, gboolean select)
 	gchar *			tmp;
 	GeoXmlFlow *		menu;
 
-	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.list_store)) {
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
 		gchar *	ipath;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 			MENU_PATH, &ipath,
 			-1);
 
@@ -327,8 +327,8 @@ menu_open(const gchar * path, gboolean select)
 		? g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(date).tv_sec)
 		: g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
 
-	gtk_list_store_append(debr.ui_menu.list_store, &iter);
-	gtk_list_store_set(debr.ui_menu.list_store, &iter,
+	gtk_list_store_append(debr.ui_menu.model, &iter);
+	gtk_list_store_set(debr.ui_menu.model, &iter,
 		MENU_FILENAME, filename,
 		MENU_MODIFIED_DATE, tmp,
 		MENU_XMLPOINTER, menu,
@@ -360,7 +360,7 @@ menu_save(GtkTreeIter * iter)
 	gchar *			filename;
 	gchar *			tmp;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter,
 		MENU_XMLPOINTER, &menu,
 		MENU_PATH, &path,
 		-1);
@@ -385,7 +385,7 @@ menu_save(GtkTreeIter * iter)
 	/* update modified date */
 	tmp = g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(
 		geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu))).tv_sec);
-	gtk_list_store_set(debr.ui_menu.list_store, iter, MENU_MODIFIED_DATE, tmp, -1);
+	gtk_list_store_set(debr.ui_menu.model, iter, MENU_MODIFIED_DATE, tmp, -1);
 	menu_get_selected(&selected_iter);
 	if (libgebr_gui_gtk_tree_model_iter_equal_to(iter, &selected_iter))
 		menu_details_update();
@@ -410,10 +410,10 @@ menu_save_all(void)
 	if (!debr.unsaved_count)
 		return;
 
-	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.list_store)) {
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
 		GdkPixbuf *	pixbuf;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 			MENU_STATUS, &pixbuf,
 			-1);
 		if (pixbuf == debr.pixmaps.stock_no)
@@ -430,7 +430,7 @@ menu_validate(GtkTreeIter * iter)
 {
 	GeoXmlFlow *	menu;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter, MENU_XMLPOINTER, &menu, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &menu, -1);
 	validate_menu(iter, menu);
 }
 
@@ -451,7 +451,7 @@ menu_install(void)
 		gchar *		menu_path;
 		GtkWidget *	dialog;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 			MENU_FILENAME, &menu_filename,
 			MENU_PATH, &menu_path,
 			-1);
@@ -513,9 +513,9 @@ menu_close(GtkTreeIter * iter)
 {
 	GeoXmlFlow *	menu;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter, MENU_XMLPOINTER, &menu, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &menu, -1);
 	geoxml_document_free(GEOXML_DOC(menu));
-	gtk_list_store_remove(debr.ui_menu.list_store, iter);
+	gtk_list_store_remove(debr.ui_menu.model, iter);
 	g_signal_emit_by_name(debr.ui_menu.tree_view, "cursor-changed");
 }
 
@@ -533,7 +533,7 @@ menu_selected(void)
 		debr.menu = NULL;
                 return;
 	}
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), &iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 		MENU_STATUS, &icon,
 		MENU_XMLPOINTER, &debr.menu,
 		-1);
@@ -610,12 +610,12 @@ menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 	GdkPixbuf *		pixbuf;
 	gboolean		enable;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter,
 		MENU_STATUS, &pixbuf,
 		-1);
 	switch (status) {
 	case MENU_STATUS_SAVED:
-		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.list_store), iter,
+		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.model), iter,
 			MENU_STATUS, NULL,
 			-1);
 		enable = FALSE;
@@ -623,7 +623,7 @@ menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 			--debr.unsaved_count;
 		break;
 	case MENU_STATUS_UNSAVED:
-		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.list_store), iter,
+		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.model), iter,
 			MENU_STATUS, debr.pixmaps.stock_no,
 			-1);
 		enable = TRUE;
@@ -987,14 +987,14 @@ menu_sort_by_name(GtkMenuItem * menu_item)
 	gint id;
 	GtkSortType order;
 
-	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
+	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model),
 		&id, &order);
 
 	order = (id == MENU_FILENAME)
 		? (order == GTK_SORT_ASCENDING) ? GTK_SORT_DESCENDING : GTK_SORT_ASCENDING
 		: GTK_SORT_ASCENDING;
 
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model),
 		MENU_FILENAME, order);
 }
 
@@ -1008,7 +1008,7 @@ menu_sort_by_modified_date(GtkMenuItem * menu_item)
 	gint id;
 	GtkSortType order;
 
-	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
+	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model),
 			&id, &order);
 
 	// Swap ordering
@@ -1019,7 +1019,7 @@ menu_sort_by_modified_date(GtkMenuItem * menu_item)
 		order = GTK_SORT_DESCENDING;
 	}
 
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model),
 			MENU_MODIFIED_DATE, order);
 }
 
@@ -1065,7 +1065,7 @@ menu_popup_menu(GtkTreeView * tree_view)
 	gtk_container_add(GTK_CONTAINER(menu), menu_item);
 
 	// Get informations to create menu
-	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.list_store),
+	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model),
 			&column_id, &order);
 	if (order == GTK_SORT_ASCENDING)
 		image = gtk_image_new_from_stock(GTK_STOCK_SORT_ASCENDING, GTK_ICON_SIZE_MENU);
