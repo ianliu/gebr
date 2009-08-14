@@ -95,8 +95,6 @@ gtk_directory_chooser_get_paths(GtkDirectoryChooser * widget)
 	g_object_get(widget->sequence_edit, "list-store", &store, NULL);
 
 	length = gtk_tree_model_iter_n_children (store, NULL);
-	if (length == 0)
-		return NULL;
 	paths = (gchar **) g_malloc (sizeof(gchar*) * (length + 1));
 
 	gint i = 0;
