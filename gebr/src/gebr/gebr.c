@@ -543,7 +543,7 @@ gebr_install_private_menus(gchar ** menu, gboolean overwrite)
 			g_path_get_basename(*menu));
 
 		if (!overwrite && (g_access(target->str, F_OK) == 0) ) {
-			printf(_(" SKIPPING (or use --overwrite)\n"));
+			printf(_(" SKIPPING (or use --force-overwrite)\n"));
 			ret = -3;
 		} else {
 			g_string_printf(cmdline, "cp %s %s 2>/dev/null", *menu, gebr.config.usermenus->str);

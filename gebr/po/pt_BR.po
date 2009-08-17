@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-10 20:02-0300\n"
-"PO-Revision-Date: 2009-08-10 20:08-0300\n"
+"POT-Creation-Date: 2009-08-17 10:58-0300\n"
+"PO-Revision-Date: 2009-08-17 10:58-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -195,8 +195,8 @@ msgstr "Instalando %s "
 
 #: ../src/gebr/gebr.c:546
 #, c-format
-msgid " SKIPPING (or use --overwrite)\n"
-msgstr " IGNORANDO (ou utilize --overwrite)\n"
+msgid " SKIPPING (or use --force-overwrite)\n"
+msgstr " IGNORANDO (ou utilize --force-overwrite)\n"
 
 #: ../src/gebr/gebr.c:551
 #, c-format
@@ -531,7 +531,7 @@ msgstr "%s: erro de sintaxe\n"
 msgid "Try %s --help\n"
 msgstr "Tente %s --help\n"
 
-#: ../src/gebr/menu.c:309
+#: ../src/gebr/menu.c:323
 msgid "Unable to write menus' index"
 msgstr "Não foi possível escrever o índice do menu"
 
@@ -708,7 +708,7 @@ msgstr "Arquivo de saída"
 msgid "Error log file"
 msgstr "Arquivo de log de erro"
 
-#: ../src/gebr/ui_flow.c:184
+#: ../src/gebr/ui_flow.c:183
 #, c-format
 msgid "Unknown flow program '%s' status"
 msgstr "Estado de programa '%s' desconhecido"
@@ -731,7 +731,7 @@ msgstr "Componentes do fluxo"
 msgid "Flow"
 msgstr "Fluxo"
 
-#: ../src/gebr/ui_flow_edition.c:213 ../src/gebr/ui_help.c:65
+#: ../src/gebr/ui_flow_edition.c:213
 msgid "No flow component selected"
 msgstr "Nenhuma componente de fluxo selecionada"
 
@@ -756,19 +756,19 @@ msgstr "Ajuda do menu"
 msgid "Unable to write help in temporary file"
 msgstr "Não foi possível escrever a ajuda em um arquivo temporário"
 
-#: ../src/gebr/ui_help.c:72
+#: ../src/gebr/ui_help.c:61
 msgid "Program help"
 msgstr "Ajuda do programa"
 
-#: ../src/gebr/ui_help.c:105 ../src/gebr/ui_help.c:169
+#: ../src/gebr/ui_help.c:94 ../src/gebr/ui_help.c:158
 msgid "No editor defined. Choose one at Configure/Preferences"
 msgstr "Nenhum editor foi definido. Selecione um em Configurar/Preferências"
 
-#: ../src/gebr/ui_help.c:194
+#: ../src/gebr/ui_help.c:183
 msgid "Could not read created temporary file."
 msgstr "Não foi possível ler arquivo temporário criado"
 
-#: ../src/gebr/ui_help.c:214
+#: ../src/gebr/ui_help.c:203
 msgid "Please change the report encoding to UTF-8"
 msgstr "Por favor modifique a codificação do relatório para UTF-8"
 
@@ -875,17 +875,13 @@ msgstr "Data"
 msgid "Message"
 msgstr "Mensagem"
 
-#: ../src/gebr/ui_parameters.c:81
+#: ../src/gebr/ui_parameters.c:79
 msgid "Parameters"
 msgstr "Parâmetros"
 
-#: ../src/gebr/ui_parameters.c:86
+#: ../src/gebr/ui_parameters.c:84
 msgid "Default"
 msgstr "Padrão"
-
-#: ../src/gebr/ui_parameters.c:127
-msgid "Link"
-msgstr "Link"
 
 #: ../src/gebr/ui_paths.c:87
 msgid "No line selected"
@@ -1109,6 +1105,9 @@ msgstr ""
 #: ../src/gebr/ui_server.c:534
 msgid "Select server"
 msgstr "Selecione um servidor"
+
+#~ msgid "Link"
+#~ msgstr "Link"
 
 #~ msgid "Select a line to which a flow will be added to"
 #~ msgstr "Selecione a linha na qual um fluxo será adicionado"
