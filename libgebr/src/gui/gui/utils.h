@@ -84,7 +84,6 @@ libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
 	valid##hygid == TRUE && ((valid##hygid = gtk_tree_model_iter_next(tree_model, &iter##hygid)), 1); \
 	iter = iter##hygid)
 
-
 typedef GtkMenu * (*GtkPopupCallback)(GtkWidget *, gpointer);
 gboolean
 libgebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GtkPopupCallback callback, gpointer user_data);

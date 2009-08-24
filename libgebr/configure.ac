@@ -87,6 +87,15 @@ dnl check for GLIB >= 2.8.0 (needed for g_access)
 PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.8.0],,AC_MSG_ERROR([Could not find glib >= 2.8.0]))
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GLIB_CFLAGS)
+dnl check for JSON-GLIB
+PKG_CHECK_MODULES(JSONGLIB, json-glib-1.0,,
+	[JSONGLIB_SUBDIR=json-glib
+	JSONGLIB_LDADD=json-glib/libjson-glib-1.0.la
+	AC_MSG_WARN([Could not find json-glib, building builtin])])
+AC_SUBST(JSONGLIB_LIBS)
+AC_SUBST(JSONGLIB_CFLAGS)
+AC_SUBST(JSONGLIB_SUBDIR)
+AC_SUBST(JSONGLIB_LDADD)
 dnl check for GOBJECT >= 2.8 (which is thread safe)
 PKG_CHECK_MODULES(GOBJECT, [gobject-2.0 >= 2.8],,AC_MSG_ERROR([Could not find gobject >= 2.8]))
 AC_SUBST(GOBJECT_LIBS)
@@ -121,6 +130,7 @@ po/Makefile.in
 src/Makefile
 src/comm/Makefile src/comm/gebr-comm.pc
 src/comm/comm/Makefile
+src/comm/comm/json-glib/Makefile
 src/defines.h
 src/gebr.pc
 src/geoxml/Makefile
