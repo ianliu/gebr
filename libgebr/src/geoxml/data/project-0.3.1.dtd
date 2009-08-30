@@ -1,0 +1,30 @@
+<!ELEMENT project (filename, title, description, help, author, email, date, line*)>
+<!ATTLIST project
+   version CDATA #FIXED "0.3.1"
+   nextid  ID #REQUIRED>
+
+<!-- Name of the XML file -->
+<!ELEMENT filename         (#PCDATA)>
+
+<!-- Short title -->
+<!ELEMENT title	           (#PCDATA)>
+
+<!-- One line description -->
+<!ELEMENT description      (#PCDATA)>
+
+<!-- Detailed text used as help message -->
+<!ELEMENT help             (#PCDATA)>
+
+<!-- Author of the line and his/her email -->
+<!ELEMENT author           (#PCDATA)>
+<!ELEMENT email            (#PCDATA)>
+
+<!-- Dates associated to the line -->
+<!ELEMENT date (created, modified)>
+
+<!ELEMENT created          (#PCDATA)>
+<!ELEMENT modified         (#PCDATA)>
+
+<!-- Line reference -->
+<!ELEMENT line EMPTY>
+<!ATTLIST line source CDATA #REQUIRED>

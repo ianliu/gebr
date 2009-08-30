@@ -265,8 +265,7 @@ line_move_flow_top(void)
 	GtkTreeIter		iter;
 	GeoXmlSequence *	line_flow;
 
-	project_line_get_selected(&iter, DontWarnUnselection);
-
+	flow_browse_get_selected(&iter, FALSE);
 	/* Update line XML */
 	geoxml_line_get_flow(gebr.line, &line_flow,
 		libgebr_gui_gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
@@ -285,7 +284,7 @@ line_move_flow_bottom(void)
 	GtkTreeIter		iter;
 	GeoXmlSequence *	line_flow;
 
-	project_line_get_selected(&iter, DontWarnUnselection);
+	flow_browse_get_selected(&iter, FALSE);
 	/* Update line XML */
 	geoxml_line_get_flow(gebr.line, &line_flow,
 		libgebr_gui_gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));

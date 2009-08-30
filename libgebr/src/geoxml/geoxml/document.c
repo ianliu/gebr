@@ -33,6 +33,7 @@
 #include "flow.h"
 #include "parameter.h"
 #include "program_parameter.h"
+#include "parameters_p.h"
 
 /* global variables */
 GdomeException			exception;
@@ -367,6 +368,18 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 
 				geoxml_sequence_next(&program);
 			}
+		}
+	}
+	/* flow 0.3.0 to 0.3.1 */
+	if (strcmp(version, "0.3.1") < 0) {
+		__geoxml_set_attr_value(root_element, "version", "0.3.1");
+
+		if (geoxml_document_get_type(((GeoXmlDocument*)document)) == GEOXML_DOCUMENT_TYPE_FLOW) {
+			GdomeElement *	dict_element;
+
+			dict_element = __geoxml_insert_new_element(root_element, "dict",
+				__geoxml_get_first_element(root_element, "date"));
+			__geoxml_parameters_append_new(dict_element);
 		}
 	}
 

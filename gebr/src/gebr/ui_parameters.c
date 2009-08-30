@@ -48,7 +48,7 @@
 static void
 parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_parameters);
 static void
-parameters_on_link_button_clicked(GtkButton * button, GeoXmlProgram * program);
+parameters_on_link_button_clicked(GtkWidget * button, GeoXmlProgram * program);
 static gboolean
 parameters_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_parameters * ui_parameters);
 
@@ -211,7 +211,7 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 }
 
 static void
-parameters_on_link_button_clicked(GtkButton * button, GeoXmlProgram * program)
+parameters_on_link_button_clicked(GtkWidget * button, GeoXmlProgram * program)
 {
 	GString * cmd_line;
 
