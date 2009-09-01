@@ -372,15 +372,13 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 	}
 	/* flow 0.3.0 to 0.3.1 */
 	if (strcmp(version, "0.3.1") < 0) {
+		GdomeElement *	dict_element;
+
 		__geoxml_set_attr_value(root_element, "version", "0.3.1");
 
-		if (geoxml_document_get_type(((GeoXmlDocument*)document)) == GEOXML_DOCUMENT_TYPE_FLOW) {
-			GdomeElement *	dict_element;
-
-			dict_element = __geoxml_insert_new_element(root_element, "dict",
-				__geoxml_get_first_element(root_element, "date"));
-			__geoxml_parameters_append_new(dict_element);
-		}
+		dict_element = __geoxml_insert_new_element(root_element, "dict",
+			__geoxml_get_first_element(root_element, "date"));
+		__geoxml_parameters_append_new(dict_element);
 	}
 
 	ret = GEOXML_RETV_SUCCESS;
@@ -451,6 +449,8 @@ geoxml_document_new(const gchar * name, const gchar * version)
 	__geoxml_insert_new_element(root_element, "help", NULL);
 	__geoxml_insert_new_element(root_element, "author", NULL);
 	__geoxml_insert_new_element(root_element, "email", NULL);
+	element = __geoxml_insert_new_element(root_element, "dict", NULL);
+	__geoxml_parameters_append_new(element);
 	element = __geoxml_insert_new_element(root_element, "date", NULL);
 	__geoxml_insert_new_element(element, "created", NULL);
 	__geoxml_insert_new_element(element, "modified", NULL);
@@ -617,6 +617,15 @@ geoxml_document_set_email(GeoXmlDocument * document, const gchar * email)
 		return;
 	__geoxml_set_tag_value(geoxml_document_root_element(document),
 		"email", email, __geoxml_create_TextNode);
+}
+
+GeoXmlParameters *
+geoxml_document_get_dict_parameters(GeoXmlDocument * document)
+{
+	if (document == NULL)
+		return NULL;
+	return (GeoXmlParameters*)__geoxml_get_first_element(__geoxml_get_first_element(
+		geoxml_document_root_element(document), "dict"), "parameters");
 }
 
 void

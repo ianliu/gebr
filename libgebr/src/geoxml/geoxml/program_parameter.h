@@ -124,6 +124,7 @@ typedef struct geoxml_property_value GeoXmlPropertyValue;
 #include "program.h"
 #include "enum_option.h"
 #include "value_sequence.h"
+#include "document.h"
 #include "macros.h"
 
 /**
@@ -293,6 +294,27 @@ GString *
 geoxml_program_parameter_get_string_value(GeoXmlProgramParameter * program_parameter, gboolean default_value);
 
 /**
+ * Find the dictionary parameter from \p dict_document
+ * that \p program_parameter uses for its value.
+ *
+ * If \p program_parameter or \p dict_document is NULL returns NULL.
+ */
+GeoXmlProgramParameter *
+geoxml_program_parameter_find_dict_parameter(GeoXmlProgramParameter * program_parameter,
+GeoXmlDocument * dict_document);
+
+/**
+ * Copies the value of \p source to \p program_parameter
+ * They must be of the same type and both must be list or not.
+ * If not returnfs FALSE, otherwise TRUE.
+ *
+ * If \p program_parameter or \p source is NULL returns FALSE.
+ */
+gboolean
+geoxml_program_parameter_copy_value(GeoXmlProgramParameter * program_parameter,
+GeoXmlProgramParameter * source, gboolean default_value);
+
+/**
  * Split \p value using \p program_parameter's separator to
  * create a list of values or default values for it
  *
@@ -300,6 +322,15 @@ geoxml_program_parameter_get_string_value(GeoXmlProgramParameter * program_param
  */
 void
 geoxml_program_parameter_set_parse_list_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, const gchar * value);
+
+/**
+ * Indicates that \p program_parameter will use \p dict_parameter's value as its value-
+ *
+ * If \p program_parameter or \p dict_parameter nothing is done.
+ */
+void
+geoxml_program_parameter_set_value_from_dict(GeoXmlProgramParameter * program_parameter,
+GeoXmlProgramParameter * dict_parameter);
 
 /**
  *

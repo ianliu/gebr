@@ -202,14 +202,6 @@ const gchar *
 geoxml_flow_io_get_error(GeoXmlFlow * flow);
 
 /**
- * Retrieves from \p flow. the parameters dictionary for use with program's parameters.
- *
- * If \p flow is NULL returns NULL.
- */
-GeoXmlParameters *
-geoxml_flow_get_dict_parameters(GeoXmlFlow * flow);
-
-/**
  * Creates a new program associated and append to the list of programs
  * Provided for convenience
  *

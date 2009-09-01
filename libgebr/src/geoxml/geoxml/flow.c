@@ -170,15 +170,6 @@ geoxml_flow_io_get_error(GeoXmlFlow * flow)
 	return __geoxml_get_tag_value(__geoxml_get_first_element(geoxml_document_root_element(GEOXML_DOC(flow)), "io"), "error");
 }
 
-GeoXmlParameters *
-geoxml_flow_get_dict_parameters(GeoXmlFlow * flow)
-{
-	if (flow == NULL)
-		return NULL;
-	return __geoxml_get_first_element(__geoxml_get_first_element(
-		geoxml_document_root_element(GEOXML_DOC(flow)), "dict"), "parameters");
-}
-
 GeoXmlProgram *
 geoxml_flow_append_program(GeoXmlFlow * flow)
 {

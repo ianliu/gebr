@@ -52,6 +52,38 @@ __geoxml_program_parameter_set_all_value(GeoXmlProgramParameter * program_parame
 	}
 }
 
+void
+__geoxml_program_parameter_remove_value_elements(GeoXmlProgramParameter * program_parameter,
+gboolean default_value)
+{
+	GdomeElement *	element;
+
+	/* remove all value/default elements */
+	element = __geoxml_get_first_element((GdomeElement*)program_parameter,
+		default_value == FALSE ? "value" : "default");
+	while (element != NULL) {
+		GdomeElement *	tmp;
+
+		tmp = __geoxml_next_same_element(element);
+		gdome_n_removeChild(gdome_el_parentNode(element, &exception), (GdomeNode*)element, &exception);
+		element = tmp;
+	}
+}
+
+gboolean
+__geoxml_program_parameter_check_compatibily(GeoXmlProgramParameter * program_parameter,
+GeoXmlProgramParameter * other)
+{
+	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) !=
+	geoxml_parameter_get_type(GEOXML_PARAMETER(other)))
+		return FALSE;
+	if (geoxml_program_parameter_get_is_list(program_parameter) !=
+	geoxml_program_parameter_get_is_list(other))
+		return FALSE;
+
+	return TRUE;
+}
+
 /*
  * library functions.
  */
@@ -323,6 +355,63 @@ geoxml_program_parameter_get_string_value(GeoXmlProgramParameter * program_param
 	return value;
 }
 
+GeoXmlProgramParameter *
+geoxml_program_parameter_find_dict_parameter(GeoXmlProgramParameter * program_parameter,
+GeoXmlDocument * dict_document)
+{
+	GeoXmlProgramParameter *	dict_parameter, * i;
+	const gchar *			dict_keyword;
+
+	if (program_parameter == NULL || dict_document == NULL)
+		return FALSE;
+
+	dict_keyword = __geoxml_get_attr_value(
+		__geoxml_get_first_element((GdomeElement*)program_parameter, "property"),
+		"dictkeyword");
+	dict_parameter = NULL;
+	i = geoxml_parameters_get_first_parameter(
+	geoxml_document_get_dict_parameters(dict_document));
+	for (; i != NULL; geoxml_sequence_next(&i)) {
+		if (!strcmp(dict_keyword, geoxml_program_parameter_get_keyword((GeoXmlProgramParameter*)i))) {
+			dict_parameter = (GeoXmlProgramParameter*)i;
+			break;
+		}
+	}
+	if (dict_parameter == NULL ||
+	!__geoxml_program_parameter_check_compatibily(program_parameter, dict_parameter))
+		return NULL;
+
+	return dict_parameter;
+}
+
+gboolean
+geoxml_program_parameter_copy_value(GeoXmlProgramParameter * program_parameter,
+GeoXmlProgramParameter * source, gboolean default_value)
+{
+	if (program_parameter == NULL || source == NULL)
+		return FALSE;
+	if (!__geoxml_program_parameter_check_compatibily(program_parameter, source))
+		return FALSE;
+
+	GdomeDocument *	document;
+	GdomeElement *	insert_position;
+	GdomeElement *	element;
+
+	__geoxml_program_parameter_remove_value_elements(program_parameter, default_value);
+
+	document = gdome_el_ownerDocument((GdomeElement*)program_parameter, &exception);
+	insert_position = default_value ? NULL
+		: __geoxml_get_first_element((GdomeElement*)program_parameter, "default");
+	element = __geoxml_get_first_element((GdomeElement*)source,
+		default_value == FALSE ? "value" : "default");
+	for (; element != NULL; element = __geoxml_next_same_element(element))
+		gdome_n_insertBefore(gdome_el_parentNode(insert_position, &exception),
+			gdome_doc_importNode(document, (GdomeNode*)element, TRUE, &exception),
+			(GdomeNode*)insert_position, &exception);
+
+	return TRUE;
+}
+
 void
 geoxml_program_parameter_set_parse_list_value(GeoXmlProgramParameter * program_parameter, gboolean default_value, const gchar * value)
 {
@@ -331,19 +420,9 @@ geoxml_program_parameter_set_parse_list_value(GeoXmlProgramParameter * program_p
 	if (geoxml_program_parameter_get_is_list(program_parameter) == FALSE)
 		return;
 
-	GdomeElement *	element;
 	const gchar *	separator;
 
-	/* remove all value/default elements */
-	element = __geoxml_get_first_element((GdomeElement*)program_parameter,
-		default_value == FALSE ? "value" : "default");
-	while (element != NULL) {
-		GdomeElement *	tmp;
-
-		tmp = __geoxml_next_same_element(element);
-		gdome_n_removeChild(gdome_el_parentNode(element, &exception), (GdomeNode*)element, &exception);
-		element = tmp;
-	}
+	__geoxml_program_parameter_remove_value_elements(program_parameter, default_value);
 
 	separator = geoxml_program_parameter_get_list_separator(program_parameter);
 	if (!strlen(value) || !strlen(separator))
@@ -359,6 +438,20 @@ geoxml_program_parameter_set_parse_list_value(GeoXmlProgramParameter * program_p
 				splits[i]);
 		g_strfreev(splits);
 	}
+}
+
+void
+geoxml_program_parameter_set_value_from_dict(GeoXmlProgramParameter * program_parameter,
+GeoXmlProgramParameter * dict_parameter)
+{
+	if (program_parameter == NULL || dict_parameter == NULL)
+		return;
+	if (!__geoxml_program_parameter_check_compatibily(program_parameter, dict_parameter))
+		return;
+
+	__geoxml_set_attr_value(
+		__geoxml_get_first_element((GdomeElement*)program_parameter, "property"),
+		"dictkeyword", geoxml_program_parameter_get_keyword(dict_parameter));
 }
 
 void

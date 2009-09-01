@@ -77,6 +77,8 @@
  */
 typedef struct geoxml_document GeoXmlDocument;
 
+#include "parameters.h"
+
 /**
  * Document type: flow, line or project
  *
@@ -223,6 +225,14 @@ geoxml_document_set_author(GeoXmlDocument * document, const gchar * author);
  */
 void
 geoxml_document_set_email(GeoXmlDocument * document, const gchar * email);
+
+/**
+ * Retrieves from \p document. the parameters dictionary for use with program's parameters.
+ *
+ * If \p document is NULL returns NULL.
+ */
+GeoXmlParameters *
+geoxml_document_get_dict_parameters(GeoXmlDocument * document);
 
 /**
  * Change the \p document 's creation date to \p created
