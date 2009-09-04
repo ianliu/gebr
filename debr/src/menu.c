@@ -92,7 +92,7 @@ menu_setup_ui(void)
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_IN);	
 
-	debr.ui_menu.model = gtk_list_store_new(MENU_N_COLUMN,
+	debr.ui_menu.model = gtk_tree_store_new(MENU_N_COLUMN,
 		GDK_TYPE_PIXBUF,
 		G_TYPE_STRING,
 		G_TYPE_STRING,
@@ -218,8 +218,8 @@ menu_new(gboolean edit)
 	geoxml_document_set_email(GEOXML_DOC(debr.menu), debr.config.email->str);
         geoxml_document_set_date_created(GEOXML_DOC(debr.menu), iso_date());
 
-	gtk_list_store_append(debr.ui_menu.model, &iter);
-	gtk_list_store_set(debr.ui_menu.model, &iter,
+	gtk_tree_store_append(debr.ui_menu.model, &iter, NULL);
+	gtk_tree_store_set(debr.ui_menu.model, &iter,
 		MENU_FILENAME, new_menu_str->str,
 		MENU_XMLPOINTER, (gpointer)debr.menu,
 		MENU_PATH, "",
@@ -327,8 +327,8 @@ menu_open(const gchar * path, gboolean select)
 		? g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(date).tv_sec)
 		: g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
 
-	gtk_list_store_append(debr.ui_menu.model, &iter);
-	gtk_list_store_set(debr.ui_menu.model, &iter,
+	gtk_tree_store_append(debr.ui_menu.model, &iter, NULL);
+	gtk_tree_store_set(debr.ui_menu.model, &iter,
 		MENU_FILENAME, filename,
 		MENU_MODIFIED_DATE, tmp,
 		MENU_XMLPOINTER, menu,
@@ -385,7 +385,7 @@ menu_save(GtkTreeIter * iter)
 	/* update modified date */
 	tmp = g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(
 		geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu))).tv_sec);
-	gtk_list_store_set(debr.ui_menu.model, iter, MENU_MODIFIED_DATE, tmp, -1);
+	gtk_tree_store_set(debr.ui_menu.model, iter, MENU_MODIFIED_DATE, tmp, -1);
 	menu_get_selected(&selected_iter);
 	if (libgebr_gui_gtk_tree_model_iter_equal_to(iter, &selected_iter))
 		menu_details_update();
@@ -515,7 +515,7 @@ menu_close(GtkTreeIter * iter)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &menu, -1);
 	geoxml_document_free(GEOXML_DOC(menu));
-	gtk_list_store_remove(debr.ui_menu.model, iter);
+	gtk_tree_store_remove(debr.ui_menu.model, iter);
 	g_signal_emit_by_name(debr.ui_menu.tree_view, "cursor-changed");
 }
 
@@ -615,7 +615,7 @@ menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 		-1);
 	switch (status) {
 	case MENU_STATUS_SAVED:
-		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.model), iter,
+		gtk_tree_store_set(debr.ui_menu.model, iter,
 			MENU_STATUS, NULL,
 			-1);
 		enable = FALSE;
@@ -623,7 +623,7 @@ menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 			--debr.unsaved_count;
 		break;
 	case MENU_STATUS_UNSAVED:
-		gtk_list_store_set(GTK_LIST_STORE(debr.ui_menu.model), iter,
+		gtk_tree_store_set(debr.ui_menu.model, iter,
 			MENU_STATUS, debr.pixmaps.stock_no,
 			-1);
 		enable = TRUE;

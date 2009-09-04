@@ -229,7 +229,7 @@ on_menu_save_as_activate(void)
 
 	/* get selection, change the view and save to disk */
 	menu_get_selected(&iter);
-	gtk_list_store_set(debr.ui_menu.model, &iter,
+	gtk_tree_store_set(debr.ui_menu.model, &iter,
 		MENU_FILENAME, filename,
 		MENU_PATH, path->str,
 		-1);
@@ -287,7 +287,7 @@ on_menu_revert_activate(void)
 			return;
 		/* revert to the one in disk */
 		geoxml_document_free(GEOXML_DOC(old_menu));
-		gtk_list_store_set(debr.ui_menu.model, &iter,
+		gtk_tree_store_set(debr.ui_menu.model, &iter,
 			MENU_XMLPOINTER, menu,
 			-1);
 		menu_saved_status_set_from_iter(&iter, MENU_STATUS_SAVED);
