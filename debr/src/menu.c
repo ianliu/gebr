@@ -224,10 +224,10 @@ menu_new(gboolean edit)
 		MENU_XMLPOINTER, (gpointer)debr.menu,
 		MENU_PATH, "",
 		-1);
+	menu_select_iter(&iter);
 	menu_saved_status_set(MENU_STATUS_SAVED);
 	if (edit)
 		menu_dialog_setup_ui();
-	menu_select_iter(&iter);
 
 	g_string_free(new_menu_str, TRUE);
 }
