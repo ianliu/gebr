@@ -434,10 +434,15 @@ struct dict_edit_data * data)
 {
 	GtkTreeIter		iter;
 	GeoXmlParameter *	parameter;
+	const gchar *		keyword, * value;
 
 	gtk_tree_model_get_iter_from_string(data->tree_model, &iter, path_string);
 	gtk_tree_model_get(data->tree_model, &iter,
 		DICT_EDIT_GEOXML_PARAMETER, &parameter, -1);
+
+	keyword = geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(parameter));
+	value = geoxml_program_parameter_get_first_value(GEOXML_PROGRAM_PARAMETER(parameter), FALSE);
+
 	if (!strcmp(new_text, "string"))
 		geoxml_parameter_set_type(parameter, GEOXML_PARAMETERTYPE_STRING);
 	else if (!strcmp(new_text, "integer"))
@@ -446,6 +451,10 @@ struct dict_edit_data * data)
 		geoxml_parameter_set_type(parameter, GEOXML_PARAMETERTYPE_FLOAT);
 	else
 		return;
+
+	/* restore */
+	geoxml_program_parameter_set_keyword(GEOXML_PROGRAM_PARAMETER(parameter), keyword);
+	geoxml_program_parameter_set_first_value(GEOXML_PROGRAM_PARAMETER(parameter), FALSE, value);
 
 	dict_edit_load_iter(data, &iter, parameter);
 }
@@ -563,7 +572,7 @@ on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_data * data)
 	g_signal_connect(menu_item, "activate",
 		(GCallback)on_dict_edit_add_clicked, data);
 
-	if (dict_edit_get_selected(data, NULL))
+	if (!dict_edit_get_selected(data, NULL))
 		goto out;
 
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
