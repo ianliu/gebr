@@ -226,8 +226,10 @@ menu_new(gboolean edit)
 		-1);
 	menu_select_iter(&iter);
 	menu_saved_status_set(MENU_STATUS_SAVED);
-	if (edit)
+	if (edit) {
 		menu_dialog_setup_ui();
+		menu_saved_status_set(MENU_STATUS_UNSAVED);
+	}
 
 	g_string_free(new_menu_str, TRUE);
 }

@@ -35,6 +35,38 @@
  * Prototypes
  */
 
+enum {
+	DICT_EDIT_TYPE,
+	DICT_EDIT_KEYWORD,
+	DICT_EDIT_VALUE,
+	DICT_EDIT_COMMENT,
+	DICT_EDIT_N_COLUMN,
+};
+
+struct dict_edit_data {
+	GeoXmlDocument *	document;
+	GtkTreeView *		tree_view;
+	GtkTreeModel *		tree_model;
+	GtkCellRenderer *	cell_renderer_array[4];
+};
+
+static void
+on_dict_edit_clicked(GtkButton * button, GeoXmlDocument * document);
+static void
+on_dict_edit_add_clicked(GtkButton * button, GtkListStore * list_store);
+static void
+on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_data * data);
+static void
+on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+GtkTreeModel * tree_model);
+static void
+on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+struct dict_edit_data * data);
+static gboolean
+dict_edit_get_selected(struct dict_edit_data * data, GtkTreeIter * iter);
+static GtkMenu *
+on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_data * data);
+
 /*
  * Section: Public
  * Public functions.
@@ -58,6 +90,7 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	GString *	dialog_title;
 	GtkWidget *	table;
 	GtkWidget *	label;
+	GtkWidget *	button;
 	GtkWidget *	help_show_button;
 	GtkWidget *	help_hbox;
 	GtkWidget *	title;
@@ -89,12 +122,10 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	}
 
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
-		GTK_WINDOW(gebr.window),
-		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_WINDOW(gebr.window), GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		NULL);
-	dialog = GTK_WIDGET(dialog);
 	gtk_widget_set_size_request(dialog, 390, 260);
 
 	table = gtk_table_new(5, 2, FALSE);
@@ -155,6 +186,16 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	gtk_table_attach(GTK_TABLE(table), email, 1, 2, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 	/* read */
 	gtk_entry_set_text(GTK_ENTRY(email), geoxml_document_get_email(document));
+
+	/* User email */
+	label = gtk_label_new(_("Parameters' dictionary"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
+	g_object_set(G_OBJECT(button), "relief", GTK_RELIEF_NONE, NULL);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+		(GCallback)on_dict_edit_clicked, document);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), button, 1, 2, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
 
 	gtk_widget_show_all(dialog);
 	switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
@@ -220,3 +261,220 @@ document_properties_setup_ui(GeoXmlDocument * document)
  * Section: Private
  * Private functions.
  */
+
+/* Function: on_dict_edit_clicked
+ * Open dialog for parameters's edition
+ */
+static void
+on_dict_edit_clicked(GtkButton * _button, GeoXmlDocument * document)
+{
+	GtkWidget *		dialog;
+	GtkWidget *		hbox;
+	GtkWidget *		button;
+	
+	GtkWidget *		scrolled_window;
+	GtkWidget *		tree_view;
+	GtkCellRenderer *	cell_renderer;
+	GtkTreeViewColumn *	column;
+	GtkListStore *		list_store;
+	GtkListStore *		type_model;
+	GtkTreeIter		iter;
+
+	struct dict_edit_data *	data;
+
+	data = g_malloc(sizeof(struct dict_edit_data));
+	data->document = document;
+	dialog = gtk_dialog_new_with_buttons(_("Edit parameters' dictionary"),
+		GTK_WINDOW(gebr.window),
+		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
+		NULL);
+	gtk_widget_set_size_request(dialog, 500, 340);
+
+	list_store = gtk_list_store_new(4,
+		G_TYPE_STRING, /* type */
+		G_TYPE_STRING, /* keyword */
+		G_TYPE_STRING, /* value */
+		G_TYPE_STRING, /* comment */
+		G_TYPE_POINTER /* GeoXmlParameter */);
+	data->tree_model = GTK_TREE_MODEL(list_store);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, TRUE, 0);
+	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 0);
+	g_object_set(G_OBJECT(button), "relief", GTK_RELIEF_NONE, NULL);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+		(GCallback)on_dict_edit_add_clicked, data);
+
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), scrolled_window);
+	gtk_widget_set_size_request(scrolled_window, 300, -1);
+
+	tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list_store));
+	data->tree_view = tree_view;
+	gtk_container_add(GTK_CONTAINER(scrolled_window), tree_view);
+	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(tree_viewview),
+		(GtkPopupCallback)on_dict_edit_popup_menu, data);
+
+	type_model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
+	gtk_list_store_append(type_model, &iter);
+	gtk_list_store_set(type_model, &iter,
+		0, "string", 1, GEOXML_PARAMETERTYPE_STRING, -1);
+	gtk_list_store_append(type_model, &iter);
+	gtk_list_store_set(type_model, &iter,
+		0, "integer", 1, GEOXML_PARAMETERTYPE_INT);
+	gtk_list_store_append(type_model, &iter);
+	gtk_list_store_set(type_model, &iter,
+		0, "real", 1, GEOXML_PARAMETERTYPE_INT);
+	cell_renderer = gtk_cell_renderer_combo_new();
+	column = gtk_tree_view_column_new_with_attributes(_("Type"), cell_renderer, NULL);
+	g_object_set(cell_renderer, "has-entry", FALSE, "editable", TRUE, 
+		"model", type_model, "text-column", 0, NULL);
+	g_signal_connect(cell_renderer, "edited",
+		(GCallback)on_dict_edit_type_cell_edited, type_model);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", 0);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
+
+	cell_renderer = gtk_cell_renderer_text_new();
+	data->cell_renderer_array[1] = cell_renderer;
+	g_object_set(cell_renderer, "editable", TRUE, NULL);
+	g_signal_connect(cell_renderer, "edited",
+		(GCallback)on_dict_edit_cell_edited, data);
+	column = gtk_tree_view_column_new_with_attributes(_("Keyword"), cell_renderer, NULL);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", 1);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
+	cell_renderer = gtk_cell_renderer_text_new();
+	data->cell_renderer_array[2] = cell_renderer;
+	g_object_set(cell_renderer, "editable", TRUE, NULL);
+	g_signal_connect(cell_renderer, "edited",
+		(GCallback)on_dict_edit_cell_edited, data);
+	column = gtk_tree_view_column_new_with_attributes(_("Value"), cell_renderer, NULL);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", 2);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
+	cell_renderer = gtk_cell_renderer_text_new();
+	data->cell_renderer_array[3] = cell_renderer;
+	g_object_set(cell_renderer, "editable", TRUE, NULL);
+	g_signal_connect(cell_renderer, "edited",
+		(GCallback)on_dict_edit_cell_edited, data);
+	column = gtk_tree_view_column_new_with_attributes(_("Comment"), cell_renderer, NULL);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", 3);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
+
+	gtk_widget_show_all(GTK_WIDGET(dialog));
+	switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
+	case GTK_RESPONSE_CLOSE:
+		
+		break;
+	default:
+		break;
+	}
+
+	g_free(data);
+	gtk_widget_destroy(GTK_WIDGET(dialog));
+}
+
+/* Function: on_dict_edit_add_clicked
+ * Add new parameter
+ */
+static void
+on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data)
+{
+	GtkTreeIter		iter;
+	GeoXmlParameter *	parameter;
+
+	parameter = geoxml_parameters_append_parameter(
+		geoxml_document_get_dict_parameters(data->document),
+		GEOXML_PARAMETERTYPE_STRING);
+
+	gtk_list_store_append(GTK_LIST_STORE(data->list_store), &iter);
+	gtk_list_store_set(GTK_LIST_STORE(list_store), &iter, 0, "string", -1);
+}
+
+/* Function: on_dict_edit_remove_clicked
+ * Remove parameter
+ */
+static void
+on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_data * data)
+{
+	GtkTreeIter	iter;
+
+	if (!dict_edit_get_selected(data, &iter))
+		return;
+
+	gtk_tree_model_get(data->)
+
+	gtk_list_store_remove(GTK_LIST_STORE(data->tree_model), &iter);
+}
+
+/* Function: on_dict_edit_type_cell_edited
+ * Edit type of parameter
+ */
+static void
+on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+GtkTreeModel * tree_model)
+{
+	GtkTreeIter	iter;
+
+	gtk_tree_model_get_iter_from_string(tree_model, &iter, path_string);
+	gtk_list_store_set(GTK_LIST_STORE(tree_model), 0, new_text, -1);
+}
+
+/* Function: on_dict_edit_cell_edited
+ * Edit keyword, value and comment of parameter
+ */
+static void
+on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+struct dict_edit_data * data)
+{
+	GtkTreeIter	iter;
+	gint		index;
+
+	for (index = 1; index < 3; index++)
+		if (cell == data->cell_renderer_array[index])
+			break;
+
+	gtk_tree_model_get_iter_from_string(data->tree_model, &iter, path_string);
+	gtk_list_store_set(GTK_LIST_STORE(data->tree_model), &iter, index, new_text, -1);
+}
+
+static gboolean
+dict_edit_get_selected(struct dict_edit_data * data, GtkTreeIter * iter)
+{
+	GtkTreeSelection *	selection;
+	GtkTreeModel *		model;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(data->tree_view));
+	return gtk_tree_selection_get_selected(selection, &model, iter);
+}
+
+/* Function: on_dict_edit_popup_menu
+ * Popup menu for parameter removal, etc
+ */
+static GtkMenu *
+on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_data * data)
+{
+	GtkWidget *		menu;
+	GtkWidget *		menu_item;
+
+	menu = gtk_menu_new();
+
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ADD, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(menu_item, "activate",
+		(GCallback)on_dict_edit_add_clicked, data);
+
+	if (dict_edit_get_selected(data, NULL))
+		goto out;
+
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(menu_item, "activate",
+		(GCallback)on_dict_edit_remove_clicked, data);
+
+out:	gtk_widget_show_all(menu);
+
+	return GTK_MENU(menu);
+}

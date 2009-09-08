@@ -338,7 +338,7 @@ __gtk_sequence_edit_on_move_bottom_activated(GtkWidget * button, GtkSequenceEdit
 
 static void
 __gtk_sequence_edit_on_edited(GtkCellRendererText * cell, gchar * path_string, gchar * new_text,
-	GtkSequenceEdit * sequence_edit)
+GtkSequenceEdit * sequence_edit)
 {
 	GtkTreeSelection *	selection;
 	GtkTreeModel *		model;
@@ -366,7 +366,7 @@ __gtk_sequence_edit_remove(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter)
 
 static void
 __gtk_sequence_edit_move(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter, GtkTreeIter * position,
-	GtkTreeViewDropPosition drop_position)
+GtkTreeViewDropPosition drop_position)
 {
 	if (drop_position == GTK_TREE_VIEW_DROP_AFTER)
 		gtk_list_store_move_after(sequence_edit->list_store, iter, position);
