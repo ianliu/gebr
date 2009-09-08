@@ -216,7 +216,7 @@ menu_new(gboolean edit)
 	debr.menu = geoxml_flow_new();
 	geoxml_document_set_author(GEOXML_DOC(debr.menu), debr.config.name->str);
 	geoxml_document_set_email(GEOXML_DOC(debr.menu), debr.config.email->str);
-        geoxml_document_set_date_created(GEOXML_DOC(debr.menu), iso_date());
+	geoxml_document_set_date_created(GEOXML_DOC(debr.menu), iso_date());
 
 	gtk_tree_store_append(debr.ui_menu.model, &iter, NULL);
 	gtk_tree_store_set(debr.ui_menu.model, &iter,
