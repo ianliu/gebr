@@ -23,12 +23,13 @@
 #include <libgebr/geoxml.h>
 
 typedef enum {
-        MENU_STATUS_SAVED,
-        MENU_STATUS_UNSAVED
+	MENU_STATUS_SAVED,
+	MENU_STATUS_UNSAVED
 } MenuStatus;
 
 enum {
-        MENU_STATUS = 0,
+	MENU_STATUS = 0,
+	MENU_IMAGE,
 	MENU_FILENAME,
 	MENU_MODIFIED_DATE,
 	MENU_XMLPOINTER,
@@ -41,6 +42,7 @@ struct ui_menu {
 
 	GtkTreeStore *		model;
 	GtkWidget *		tree_view;
+	GtkTreeIter		iter_other;
 	
 	struct ui_menu_details {
 		GtkWidget *	title_label;
@@ -53,7 +55,7 @@ struct ui_menu {
 		GtkWidget *	modified_date_label;
 		GtkWidget *	category_label;
 		GtkWidget *	categories_label[3];
-                GtkWidget *     help_button;
+		GtkWidget *     help_button;
 
 	} details;
 };
@@ -66,6 +68,8 @@ GeoXmlFlow *
 menu_load(const gchar * path);
 void
 menu_load_user_directory(void);
+void
+menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select);
 void
 menu_open(const gchar * path, gboolean select);
 gboolean
@@ -90,6 +94,8 @@ void
 menu_saved_status_set_unsaved(void);
 void
 menu_dialog_setup_ui(void);
+void
+menu_reset(void);
 
 gboolean
 menu_get_selected(GtkTreeIter * iter);

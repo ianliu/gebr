@@ -153,7 +153,8 @@ preferences_dialog_setup_ui(void)
 		debr_config_save();
 
 		/* apply settings */
-		menu_load_user_directory();
+		// menu_load_user_directory();
+		menu_reset();
 
 		break;
 	}

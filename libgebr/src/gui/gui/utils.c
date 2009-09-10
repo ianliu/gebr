@@ -251,6 +251,42 @@ libgebr_gui_gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter)
 	return TRUE;
 }
 
+/**
+ * libgebr_gui_gtk_tree_store_reparent:
+ * @store: The TreeStore
+ * Reparent the child %iter if %parent isn't already its father
+ */
+gboolean
+libgebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * iter, GtkTreeIter * parent)
+{
+	gint n;
+	GtkTreeIter new;
+
+	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(store), &new, iter)) {
+		if (libgebr_gui_gtk_tree_model_iter_equal_to(&new, parent)) {
+			return FALSE;
+		}
+	} else {
+		return FALSE;
+	}
+
+	n = gtk_tree_model_get_n_columns(GTK_TREE_MODEL(store));
+	gtk_tree_store_append(store, &new, parent);
+	while (n--) {
+		gpointer value;
+		gtk_tree_model_get(GTK_TREE_MODEL(store), iter, n, &value, -1);
+		gtk_tree_store_set(store, &new, n, value, -1);
+		switch (gtk_tree_model_get_column_type(GTK_TREE_MODEL(store), n)) {
+			case G_TYPE_STRING:
+				g_free(value);
+				break;
+		}
+	}
+	gtk_tree_store_remove(store, iter);
+	*iter = new;
+	return TRUE;
+}
+
 void
 libgebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source)
 {
@@ -370,6 +406,15 @@ libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter)
 
 		return TRUE;
 	}
+}
+
+void
+libgebr_gui_gtk_tree_view_expand(GtkTreeView * view, GtkTreeIter * iter, gboolean open_all)
+{
+	GtkTreePath * path;
+	path = gtk_tree_model_get_path(gtk_tree_view_get_model(view), iter);
+	gtk_tree_view_expand_row(view, path, open_all);
+	gtk_tree_path_free(path);
 }
 
 gboolean
