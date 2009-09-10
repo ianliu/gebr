@@ -64,7 +64,7 @@ project_new(void)
 	project_line_set_selected(&iter, GEOXML_DOCUMENT(project));
 	gebr_message(LOG_INFO, FALSE, TRUE, _("New project created"));
 
-	if (!on_project_line_properties_activate())
+	if (!on_document_properties_activate())
 		project_delete(FALSE);
 
 	geoxml_document_free(project);

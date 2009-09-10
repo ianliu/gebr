@@ -1342,21 +1342,22 @@ menu_path_get_parent(const gchar * path, GtkTreeIter * parent)
 	gchar *		dirname;
 	GtkTreeIter	iter;
 
-	dirname = g_path_get_dirname (path);
-
-	libgebr_gui_gtk_tree_model_foreach (iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
+	dirname = g_path_get_dirname(path);
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
 		gchar * dirpath;
 
 		gtk_tree_model_get (GTK_TREE_MODEL(debr.ui_menu.model), &iter,
-				MENU_PATH, &dirpath, -1);
-
-		if (!dirpath) continue;
+			MENU_PATH, &dirpath, -1);
+		if (!dirpath)
+			continue;
 
 		if (strcmp(dirpath, dirname) == 0) {
 			*parent = iter;
-			return;
+			goto out;
 		}
 	}
 	*parent = debr.ui_menu.iter_other;
+
+out:	g_free(dirname);
 }
 

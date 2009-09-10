@@ -31,5 +31,22 @@ libgebr_gui_icons_48x48_actionsdir = $(datadir)/libgebr/icons/48x48/actions
 libgebr_gui_icons_48x48_actions_DATA = \
 	48x48/actions/document-open-recent.png 48x48/actions/document-import.png 48x48/actions/document-export.png 48x48/actions/document-save-all.png 48x48/actions/edit-clear.png 48x48/actions/folder-new.png 48x48/actions/svn-add.png 48x48/actions/system-switch-user.png 48x48/actions/tab-new-background.png 48x48/actions/window-new.png
 
-EXTRA_DIST = $(libgebr_gui_icons_DATA) ${libgebr_gui_icons_16x16_actions_DATA} ${libgebr_gui_icons_22x22_actions_DATA} \
-	${libgebr_gui_icons_48x48_actions_DATA}
+libgebr_gui_icons_16x16_appsdir = $(datadir)/libgebr/icons/16x16/apps
+libgebr_gui_icons_16x16_apps_DATA = \
+	16x16/apps/accessories-dictionary.png
+
+libgebr_gui_icons_22x22_appsdir = $(datadir)/libgebr/icons/22x22/apps
+libgebr_gui_icons_22x22_apps_DATA = \
+	22x22/apps/accessories-dictionary.png
+
+libgebr_gui_icons_48x48_appsdir = $(datadir)/libgebr/icons/48x48/apps
+libgebr_gui_icons_48x48_apps_DATA = \
+	48x48/apps/accessories-dictionary.png
+
+EXTRA_DIST = $(libgebr_gui_icons_DATA)
+	${libgebr_gui_icons_16x16_actions_DATA} \
+	${libgebr_gui_icons_22x22_actions_DATA} \
+	${libgebr_gui_icons_48x48_actions_DATA} \
+	${libgebr_gui_icons_16x16_apps_DATA} \
+	${libgebr_gui_icons_22x22_apps_DATA} \
+	${libgebr_gui_icons_48x48_apps_DATA}

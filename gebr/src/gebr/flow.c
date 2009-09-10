@@ -89,7 +89,7 @@ flow_new(void)
 
 	flow_browse_select_iter(&iter);
 	gebr_message(LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'"), line_title);
-	if (!on_flow_properties_activate())
+	if (!on_document_properties_activate())
 		flow_delete(FALSE);
 
 	return TRUE;

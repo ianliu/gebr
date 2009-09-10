@@ -27,14 +27,17 @@ on_paste_activate(void);
 void
 on_quit_activate(void);
 
+gboolean
+on_document_properties_activate(void);
+void
+on_document_dict_edit_activate(void);
+
 void
 on_project_line_new_project_activate(void);
 void
 on_project_line_new_line_activate(void);
 void
 on_project_line_delete_activate(void);
-gboolean
-on_project_line_properties_activate(void);
 void
 on_project_line_paths_activate(void);
 void
@@ -52,8 +55,6 @@ void
 on_flow_export_as_menu_activate(void);
 void
 on_flow_delete_activate(void);
-gboolean
-on_flow_properties_activate(void);
 void
 on_flow_io_activate(void);
 void

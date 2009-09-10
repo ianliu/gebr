@@ -94,7 +94,7 @@ line_new(void)
 	gebr_message(LOG_INFO, FALSE, TRUE, _("New line created in project '%s'"), project_title);
 	project_line_set_selected(&line_iter, GEOXML_DOCUMENT(line));
 
-	if (!on_project_line_properties_activate())
+	if (!on_document_properties_activate())
 		line_delete(FALSE);
 
 	g_free(project_title);

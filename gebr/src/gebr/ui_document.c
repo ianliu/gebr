@@ -45,21 +45,16 @@ enum {
 	DICT_EDIT_N_COLUMN,
 };
 
-struct ui_document_data {
+struct dict_edit_data {
+	GtkWidget *		widget;
+
 	GeoXmlDocument *	document;
+	GtkActionGroup *	action_group;
+	GtkWidget *		tree_view;
+	GtkTreeModel *		tree_model;
+	GtkCellRenderer *	cell_renderer_array[4];
+} * dict_edit_data;
 
-	struct dict_edit_data {
-		GtkWidget *		widget;
-
-		GeoXmlDocument *	document; /* lazyness duplicated */
-		GtkWidget *		tree_view;
-		GtkTreeModel *		tree_model;
-		GtkCellRenderer *	cell_renderer_array[4];
-	} * dict_edit_data;
-};
-
-static struct dict_edit_data *
-dict_edit_setup_ui(struct ui_document_data * ui_document_data);
 static void
 on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data);
 static void
@@ -77,13 +72,37 @@ dict_edit_get_selected(struct dict_edit_data * data, GtkTreeIter * iter);
 static GtkMenu *
 on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_data * data);
 
+static const GtkActionEntry dict_actions_entries [] = {
+	{"add",  GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter"),
+		(GCallback)on_dict_edit_add_clicked},
+	{"remove", GTK_STOCK_REMOVE, NULL, NULL, N_("Remove current parameters"),
+		(GCallback)on_dict_edit_remove_clicked},
+};
+
 /*
  * Section: Public
  * Public functions.
  */
 
-/*
- * Function: document_properties_setup_ui
+/* Function: document_get_current
+ * Return current selected and active project, line or flow
+ */
+GeoXmlDocument *
+document_get_current(void)
+{
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+	case NOTEBOOK_PAGE_PROJECT_LINE:
+		project_line_get_selected(NULL, ProjectLineSelection);
+		return gebr.project_line;
+	case NOTEBOOK_PAGE_FLOW_BROWSE:
+		flow_browse_get_selected(NULL, TRUE);
+		return GEOXML_DOCUMENT(gebr.flow);
+	default:
+		return NULL;
+	}
+}
+
+/* Function: document_properties_setup_ui
  * Show the _document_ properties in a dialog
  * Create the user interface for editing _document_(flow, line or project) properties,
  * like author, email, report, etc.
@@ -109,13 +128,8 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	GtkWidget *		author;
 	GtkWidget *		email;
 
-	struct ui_document_data	data;
-
-	if (document == NULL) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("Nothing selected"));
+	if (document == NULL)
 		return FALSE;
-	}
-	data.document = document;
 
 	dialog_title = g_string_new(NULL);
 	switch (geoxml_document_get_type(document)) {
@@ -200,11 +214,6 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	/* read */
 	gtk_entry_set_text(GTK_ENTRY(email), geoxml_document_get_email(document));
 
-	/* Parameters' dictionary */
-	data.dict_edit_data = dict_edit_setup_ui(&data);
-	gtk_table_attach(GTK_TABLE(table), data.dict_edit_data->widget,
-		0, 2, 5, 6, GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 3, 3);
-
 	gtk_widget_show_all(dialog);
 	switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
 	case GTK_RESPONSE_OK: {
@@ -261,41 +270,36 @@ document_properties_setup_ui(GeoXmlDocument * document)
 
 	gtk_widget_destroy(GTK_WIDGET(dialog));
 	g_string_free(dialog_title, TRUE);
-	g_free(data.dict_edit_data);
 
 	return ret;
 }
 
-/*
- * Section: Private
- * Private functions.
- */
-
-/* Function: dict_edit_setup_ui
+/* Function: document_dict_edit_setup_ui
  * Open dialog for parameters's edition
  */
-static struct dict_edit_data *
-dict_edit_setup_ui(struct ui_document_data * ui_document_data)
+void
+document_dict_edit_setup_ui(GeoXmlDocument * document)
 {
-	GtkWidget *		expander;
-	GtkWidget *		hbox;
-	GtkWidget *		label;
-	GtkWidget *		button;
-
-	GtkWidget *		depth_hbox;
+	GtkWidget *		dialog;
+	GtkWidget *		toolbar;
 	GtkWidget *		scrolled_window;
 	GtkWidget *		tree_view;
+	GtkActionGroup *	action_group;
+	GtkAccelGroup *		accel_group;
 	GtkCellRenderer *	cell_renderer;
 	GtkTreeViewColumn *	column;
 	GtkListStore *		list_store;
 	GtkListStore *		type_model;
 	GtkTreeIter		iter;
 
-	struct dict_edit_data *	data;
 	GeoXmlSequence *	parameter;
+	struct dict_edit_data *	data;
+
+	if (document == NULL)
+		return;
 
 	data = g_malloc(sizeof(struct dict_edit_data));
-	data->document = ui_document_data->document;
+	data->document = document;
 	list_store = gtk_list_store_new(DICT_EDIT_N_COLUMN,
 		G_TYPE_STRING, /* type */
 		G_TYPE_STRING, /* keyword */
@@ -304,34 +308,41 @@ dict_edit_setup_ui(struct ui_document_data * ui_document_data)
 		G_TYPE_POINTER /* GeoXmlParameter */);
 	data->tree_model = GTK_TREE_MODEL(list_store);
 
-	expander = gtk_expander_new("");
-	data->widget = expander;
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_expander_set_label_widget(GTK_EXPANDER(expander), hbox);
-	libgebr_gui_gtk_expander_hacked_define(expander, hbox);
-	label = gtk_label_new(_("Parameters' dictionary"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
-	button = gtk_button_new();
-	g_object_set(G_OBJECT(button),
-		"image", gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_SMALL_TOOLBAR),
-		"relief", GTK_RELIEF_NONE,
-		NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 10);
-	g_signal_connect(GTK_OBJECT(button), "clicked",
-		(GCallback)on_dict_edit_add_clicked, data);
+	action_group = gtk_action_group_new("dict_edit");
+	data->action_group = action_group;
+	gtk_action_group_set_translation_domain(action_group, PACKAGE);
+	gtk_action_group_add_actions(action_group, dict_actions_entries, G_N_ELEMENTS(dict_actions_entries), NULL);
+	accel_group = gtk_accel_group_new();
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), accel_group);
+	libgebr_gui_gtk_action_group_set_accel_group(action_group, accel_group);
 
-	depth_hbox = libgebr_gui_gtk_container_add_depth_hbox(expander);
+	dialog = gtk_dialog_new_with_buttons(_("Edit parameters' dictionary"),
+		GTK_WINDOW(gebr.window),
+		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
+		NULL);
+
+	toolbar = gtk_toolbar_new();
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), toolbar);
+	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(action_group, "add"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(action_group, "remove"))), -1);
+
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-	gtk_container_add(GTK_CONTAINER(depth_hbox), scrolled_window);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), scrolled_window);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 	tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list_store));
-	gtk_widget_set_size_request(tree_view, 350, 150);
+	gtk_widget_set_size_request(tree_view, 350, 140);
 	data->tree_view = tree_view;
 	gtk_container_add(GTK_CONTAINER(scrolled_window), tree_view);
 	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(tree_view),
 		(GtkPopupCallback)on_dict_edit_popup_menu, data);
+	libgebr_gui_gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(tree_view),
+		DICT_EDIT_GEOXML_PARAMETER, NULL, NULL);
 
 	type_model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
 	gtk_list_store_append(type_model, &iter);
@@ -346,7 +357,7 @@ dict_edit_setup_ui(struct ui_document_data * ui_document_data)
 	cell_renderer = gtk_cell_renderer_combo_new();
 	data->cell_renderer_array[DICT_EDIT_TYPE] = cell_renderer;
 	column = gtk_tree_view_column_new_with_attributes(_("Type"), cell_renderer, NULL);
-	g_object_set(cell_renderer, "has-entry", FALSE, "editable", TRUE, 
+	g_object_set(cell_renderer, "has-entry", FALSE, "editable", TRUE,
 		"model", type_model, "text-column", 0, NULL);
 	g_signal_connect(cell_renderer, "edited",
 		(GCallback)on_dict_edit_type_cell_edited, data);
@@ -384,10 +395,19 @@ dict_edit_setup_ui(struct ui_document_data * ui_document_data)
 		dict_edit_load_iter(data, &iter, GEOXML_PARAMETER(parameter));
 	}
 
+	gtk_widget_show_all(dialog);
+	gtk_dialog_run(GTK_DIALOG(dialog));
+
 	document_save(data->document);
 
-	return data;
+	g_free(data);
+	gtk_widget_destroy(dialog);
 }
+
+/*
+ * Section: Private
+ * Private functions.
+ */
 
 /* Function: on_dict_edit_add_clicked
  * Add new parameter
@@ -563,22 +583,17 @@ static GtkMenu *
 on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_data * data)
 {
 	GtkWidget *		menu;
-	GtkWidget *		menu_item;
 
 	menu = gtk_menu_new();
 
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ADD, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(menu_item, "activate",
-		(GCallback)on_dict_edit_add_clicked, data);
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(data->action_group, "add")));
 
 	if (!dict_edit_get_selected(data, NULL))
 		goto out;
 
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(menu_item, "activate",
-		(GCallback)on_dict_edit_remove_clicked, data);
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(data->action_group, "remove")));
 
 out:	gtk_widget_show_all(menu);
 

@@ -71,8 +71,7 @@ on_paste_activate(void)
 	}
 }
 
-/*
- * Function: on_quit_activate
+/* Function: on_quit_activate
  * Call <gebr_quit>
  */
 void
@@ -81,8 +80,25 @@ on_quit_activate(void)
 	gebr_quit();
 }
 
-/*
- * Function: on_project_line_new_project_activate
+/* Function: on_document_properties_activate
+ * Call <document_properties_setup_ui>
+ */
+gboolean
+on_document_properties_activate(void)
+{
+	return document_properties_setup_ui(document_get_current());
+}
+
+/* Function: on_document_dict_edit_activate
+ * Call <document_dict_edit_setup_ui>
+ */
+void
+on_document_dict_edit_activate(void)
+{
+	document_dict_edit_setup_ui(document_get_current());
+}
+
+/* Function: on_project_line_new_project_activate
  * Call <project_new> from <project.c>
  */
 void
@@ -112,19 +128,6 @@ on_project_line_delete_activate(void)
 		project_delete(TRUE);
 	else
 		line_delete(TRUE);
-}
-
-/* Function: on_project_line_properties_activate
- * Open properties for current selected project or line.
- * Return TRUE if dialog was confirmed.
- */
-gboolean
-on_project_line_properties_activate(void)
-{
-	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
-		return document_properties_setup_ui(GEOXML_DOC(gebr.project));
-	else
-		return document_properties_setup_ui(GEOXML_DOC(gebr.line));
 }
 
 /*
@@ -205,17 +208,6 @@ void
 on_flow_delete_activate(void)
 {
 	flow_delete(TRUE);
-}
-
-/*
- * Function:
- * Call <flow_new> from <flow.c>
- *
- */
-gboolean
-on_flow_properties_activate(void)
-{
-	return document_properties_setup_ui(GEOXML_DOC(gebr.flow));
 }
 
 /* Function: on_flow_io_activate
