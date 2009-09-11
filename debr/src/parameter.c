@@ -89,7 +89,7 @@ const GtkRadioActionEntry parameter_type_radio_actions_entries [] = {
 static GtkTreeIter
 parameter_append_to_ui(GeoXmlParameter * parameter, GtkTreeIter * parent);
 static void
-parameter_load_iter(GtkTreeIter * iter);
+parameter_load_iter(GtkTreeIter * iter, gboolean load_group);
 static void
 parameter_select_iter(GtkTreeIter iter);
 static gboolean
@@ -198,21 +198,8 @@ parameter_load_program(void)
 	gtk_tree_store_clear(debr.ui_parameter.tree_store);
 
 	geoxml_parameters_get_parameter(geoxml_program_get_parameters(debr.program), &parameter, 0);
-	for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
-		GtkTreeIter		iter;
-
-		iter = parameter_append_to_ui(GEOXML_PARAMETER(parameter), NULL);
-
-		if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == FALSE) {
-			GeoXmlSequence *	first_instance;
-			GeoXmlSequence *	group_parameter;
-
-			geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &first_instance, 0);
-			geoxml_parameters_get_parameter(GEOXML_PARAMETERS(first_instance), &group_parameter, 0);
-			for (; group_parameter != NULL; geoxml_sequence_next(&group_parameter))
-				parameter_append_to_ui(GEOXML_PARAMETER(group_parameter), &iter);
-		}
-	}
+	for (; parameter != NULL; geoxml_sequence_next(&parameter))
+		parameter_append_to_ui(GEOXML_PARAMETER(parameter), NULL);
 
 	debr.parameter = NULL;
 }
@@ -227,7 +214,7 @@ parameter_load_selected(void)
 	GtkTreeIter	iter;
 
 	parameter_get_selected(&iter, FALSE);
-	parameter_load_iter(&iter);
+	parameter_load_iter(&iter, FALSE);
 }
 
 /*
@@ -308,7 +295,7 @@ parameter_remove(gboolean confirm)
 		gtk_tree_store_remove(debr.ui_parameter.tree_store, &iter);
 
 		if (in_group)
-			parameter_load_iter(&parent);
+			parameter_load_iter(&parent, FALSE);
 
 		g_signal_emit_by_name(debr.ui_parameter.tree_view, "cursor-changed");
 	}
@@ -467,7 +454,7 @@ parameter_paste(void)
 		gtk_tree_store_set(debr.ui_parameter.tree_store, &pasted_iter,
 			PARAMETER_XMLPOINTER, pasted,
 			-1);
-		parameter_load_iter(&pasted_iter);
+		parameter_load_iter(&pasted_iter, TRUE);
 	} while (!geoxml_sequence_next(&pasted));
 
 	parameter_select_iter(pasted_iter);
@@ -903,7 +890,7 @@ parameter_append_to_ui(GeoXmlParameter * parameter, GtkTreeIter * parent)
 	gtk_tree_store_set(debr.ui_parameter.tree_store, &iter,
 		PARAMETER_XMLPOINTER, parameter,
 		-1);
-	parameter_load_iter(&iter);
+	parameter_load_iter(&iter, TRUE);
 
 	return iter;
 }
@@ -913,7 +900,7 @@ parameter_append_to_ui(GeoXmlParameter * parameter, GtkTreeIter * parent)
  * Load _iter_ columns from its parameter
  */
 static void
-parameter_load_iter(GtkTreeIter * iter)
+parameter_load_iter(GtkTreeIter * iter, gboolean load_group)
 {
 	GtkTreeIter		parent;
 	GeoXmlParameter *	parameter;
@@ -964,6 +951,32 @@ parameter_load_iter(GtkTreeIter * iter)
 			g_string_append_printf(keyword_label, _(" and exclusive"));
 		else
 			g_string_append_printf(keyword_label, _(" and not exclusive"));
+
+		if (load_group) {
+			GeoXmlSequence *	first_instance;
+			GeoXmlSequence *	group_parameter;
+
+			/* remove all childs for reload */
+// 			if (gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(debr.ui_parameter.tree_store),
+// 			iter, NULL, 0)) {
+// 				GtkTreeIter	child = *iter;
+// 				gboolean	has_next;
+// 				do {
+// 					GtkTreeIter	tmp;
+// 
+// 					tmp = child;
+// 					has_next = gtk_tree_model_iter_next(
+// 						GTK_TREE_MODEL(debr.ui_parameter.tree_store), &tmp);
+// 					gtk_tree_store_remove(debr.ui_parameter.tree_store, &child);
+// 					child = tmp;
+// 				} while (has_next);
+// 			}
+
+			geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &first_instance, 0);
+			geoxml_parameters_get_parameter(GEOXML_PARAMETERS(first_instance), &group_parameter, 0);
+			for (; group_parameter != NULL; geoxml_sequence_next(&group_parameter))
+				parameter_append_to_ui(GEOXML_PARAMETER(group_parameter), iter);
+		}
 	}
 
 	parameter_type = g_string_new(combo_type_map_get_title(geoxml_parameter_get_type(parameter)));
@@ -993,7 +1006,7 @@ parameter_load_iter(GtkTreeIter * iter)
 	}
 
 	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, iter))
-		parameter_load_iter(&parent);
+		parameter_load_iter(&parent, FALSE);
 
 	g_string_free(parameter_type, TRUE);
 	g_string_free(keyword_label, TRUE);
@@ -1170,7 +1183,7 @@ parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * pos
 		libgebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &new, iter);
 		gtk_tree_store_remove(debr.ui_parameter.tree_store, iter);
 
-		parameter_load_iter(position);
+		parameter_load_iter(position, FALSE);
 	} else {
 		if (drop_position == GTK_TREE_VIEW_DROP_AFTER)
 			geoxml_sequence_move_after(GEOXML_SEQUENCE(parameter), GEOXML_SEQUENCE(position_parameter));
@@ -1193,10 +1206,10 @@ parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * pos
 		}
 
 		if (libgebr_gui_gtk_tree_model_iter_is_valid(&position_parent))
-			parameter_load_iter(&position_parent);
+			parameter_load_iter(&position_parent, FALSE);
 	}
 	if (libgebr_gui_gtk_tree_model_iter_is_valid(&parent))
-		parameter_load_iter(&parent);
+		parameter_load_iter(&parent, FALSE);
 
 	parameter_select_iter(new);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
