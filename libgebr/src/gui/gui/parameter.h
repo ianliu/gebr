@@ -26,6 +26,8 @@
 
 struct parameter_widget;
 typedef void (*changed_callback)(struct parameter_widget * parameter_widget, gpointer user_data);
+struct parameter_widget;
+typedef void (*value_context_menu_callback)(struct parameter_widget * parameter_widget, gpointer user_data);
 
 struct parameter_widget {
 	GeoXmlParameter *	parameter;

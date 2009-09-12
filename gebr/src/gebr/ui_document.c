@@ -54,7 +54,6 @@ struct dict_edit_data {
 	GtkWidget *		tree_view;
 	GtkTreeModel *		tree_model;
 	GtkCellRenderer *	cell_renderer_array[4];
-	gint			new_parameter_count;
 } * dict_edit_data;
 
 static void
@@ -69,6 +68,9 @@ on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * ne
 struct dict_edit_data * data);
 static void
 dict_edit_load_iter(struct dict_edit_data * data, GtkTreeIter * iter, GeoXmlParameter * parameter);
+static gboolean
+dict_edit_check_duplicate_keyword(struct dict_edit_data * data, GeoXmlProgramParameter * parameter,
+const gchar * keyword);
 static gboolean
 dict_edit_get_selected(struct dict_edit_data * data, GtkTreeIter * iter);
 static GtkMenu *
@@ -303,7 +305,6 @@ document_dict_edit_setup_ui(GeoXmlDocument * document)
 
 	data = g_malloc(sizeof(struct dict_edit_data));
 	data->document = document;
-	data->new_parameter_count = 0;
 	list_store = gtk_list_store_new(DICT_EDIT_N_COLUMN,
 		G_TYPE_STRING, /* type */
 		G_TYPE_STRING, /* keyword */
@@ -423,20 +424,24 @@ on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data)
 {
 	GtkTreeIter		iter;
 	GeoXmlParameter *	parameter;
-	GString *		label;
+	GString *		keyword;
+	gint			new_parameter_count;
 
-	label = g_string_new(NULL);
+	keyword = g_string_new(NULL);
+	new_parameter_count = 0;
 
 	parameter = geoxml_parameters_append_parameter(
 		geoxml_document_get_dict_parameters(data->document),
 		GEOXML_PARAMETERTYPE_STRING);
-	g_string_printf(label, "par%d", ++data->new_parameter_count);
-	geoxml_parameter_set_label(parameter, label->str);
+	do
+		g_string_printf(keyword, "par%d", ++new_parameter_count);
+	while (dict_edit_check_duplicate_keyword(data, GEOXML_PROGRAM_PARAMETER(parameter), keyword->str));
+	geoxml_program_parameter_set_keyword(GEOXML_PROGRAM_PARAMETER(parameter), keyword->str);
 
 	gtk_list_store_append(GTK_LIST_STORE(data->tree_model), &iter);
 	dict_edit_load_iter(data, &iter, parameter);
 
-	g_string_free(label, TRUE);
+	g_string_free(keyword, TRUE);
 }
 
 /* Function: on_dict_edit_remove_clicked
@@ -511,34 +516,23 @@ struct dict_edit_data * data)
 	gtk_tree_model_get(data->tree_model, &iter,
 		DICT_EDIT_GEOXML_PARAMETER, &parameter, -1);
 	switch (index) {
-	case DICT_EDIT_KEYWORD: {
-		GtkTreeIter			i_iter;
-		GeoXmlProgramParameter *	i_parameter;
-
+	case DICT_EDIT_KEYWORD:
 		if (!strlen(new_text)) {
 			libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 				_("Empty keyword"),
 				_("Please select a keyword."));
 			return;
 		}
-
-		/* check if there is a keyword with the same name */
-		libgebr_gui_gtk_tree_model_foreach(i_iter, data->tree_model) {
-			gtk_tree_model_get(data->tree_model, &i_iter,
-				DICT_EDIT_GEOXML_PARAMETER, &i_parameter, -1);
-			if (i_parameter == parameter)
-				continue;
-			if (!strcmp(geoxml_program_parameter_get_keyword(i_parameter), new_text)) {
-				libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-					_("Duplicate keyword"),
-					_("Another parameter already uses this keyword, please choose other."));
-				return;
-			}
+		if (dict_edit_check_duplicate_keyword(data, parameter, new_text)) {
+			libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				_("Duplicate keyword"),
+				_("Another parameter already uses this keyword, please choose other."));
+			return;
 		}
 
 		geoxml_program_parameter_set_keyword(parameter, new_text);
 		break;
-	} case DICT_EDIT_VALUE:
+	case DICT_EDIT_VALUE:
 		switch (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter))) {
 		case GEOXML_PARAMETERTYPE_INT:
 			new_text = (gchar*)libgebr_validate_int(new_text);
@@ -591,6 +585,28 @@ dict_edit_load_iter(struct dict_edit_data * data, GtkTreeIter * iter, GeoXmlPara
 		DICT_EDIT_COMMENT, geoxml_parameter_get_label(GEOXML_PARAMETER(parameter)),
 		DICT_EDIT_GEOXML_PARAMETER, parameter,
 		-1);
+}
+
+/* Function: dict_edit_check_duplicate_keyword
+ * Check if _keyword_ intended to be used by _parameter_ is already being used
+ */
+static gboolean
+dict_edit_check_duplicate_keyword(struct dict_edit_data * data, GeoXmlProgramParameter * parameter,
+const gchar * keyword)
+{
+	GtkTreeIter			i_iter;
+	GeoXmlProgramParameter *	i_parameter;
+
+	libgebr_gui_gtk_tree_model_foreach(i_iter, data->tree_model) {
+		gtk_tree_model_get(data->tree_model, &i_iter,
+			DICT_EDIT_GEOXML_PARAMETER, &i_parameter, -1);
+		if (i_parameter == parameter)
+			continue;
+		if (!strcmp(geoxml_program_parameter_get_keyword(i_parameter), keyword))
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
 /* Function: dict_edit_get_selected
