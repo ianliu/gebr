@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include <libgebr/intl.h>
+#include <libgebr/utils.h>
 #include <libgebr/gui/utils.h>
 
 #include "ui_document.h"
@@ -311,7 +312,7 @@ document_dict_edit_setup_ui(GeoXmlDocument * document)
 	action_group = gtk_action_group_new("dict_edit");
 	data->action_group = action_group;
 	gtk_action_group_set_translation_domain(action_group, PACKAGE);
-	gtk_action_group_add_actions(action_group, dict_actions_entries, G_N_ELEMENTS(dict_actions_entries), NULL);
+	gtk_action_group_add_actions(action_group, dict_actions_entries, G_N_ELEMENTS(dict_actions_entries), data);
 	accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), accel_group);
 	libgebr_gui_gtk_action_group_set_accel_group(action_group, accel_group);
@@ -519,6 +520,16 @@ struct dict_edit_data * data)
 		geoxml_program_parameter_set_keyword(parameter, new_text);
 		break;
 	} case DICT_EDIT_VALUE:
+		switch (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter))) {
+		case GEOXML_PARAMETERTYPE_INT:
+			new_text = (gchar*)libgebr_validate_int(new_text);
+			break;
+		case GEOXML_PARAMETERTYPE_FLOAT:
+			new_text = (gchar*)libgebr_validate_float(new_text);
+			break;
+		default:
+			break;
+		}
 		geoxml_program_parameter_set_first_value(parameter, FALSE, new_text);
 		break;
 	case DICT_EDIT_COMMENT:

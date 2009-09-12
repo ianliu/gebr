@@ -15,6 +15,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//remove round warning
+#define _ISOC99_SOURCE
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -286,3 +289,51 @@ g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * 
 
 	return value;
 }
+
+/*
+ * Function: libgebr_validate_int
+ * Validate an int parameter
+ */
+const gchar *
+libgebr_validate_int(const gchar * text_value)
+{
+	static gchar	number[31];
+	gdouble		value;
+
+	if (strlen(text_value) == 0)
+		return "";
+
+	value = g_ascii_strtod(text_value, NULL);
+	g_ascii_dtostr(number, 30, round(value));
+
+	return number;
+}
+
+/*
+ * Function: libgebr_validate_float
+ * Validate a float parameter
+ */
+const gchar *
+libgebr_validate_float(const gchar * text_value)
+{
+	static gchar	number[31];
+	gchar *		last;
+	GString *	value;
+
+	if (strlen(text_value) == 0)
+		return "";
+
+	/* initialization */
+	value = g_string_new(NULL);
+
+	g_ascii_strtod(text_value, &last);
+	g_string_assign(value, text_value);
+	g_string_truncate(value, strlen(text_value) - strlen(last));
+	strncpy(number, value->str, 30);
+
+	/* frees */
+	g_string_free(value, TRUE);
+
+	return number;
+}
+

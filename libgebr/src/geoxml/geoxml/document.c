@@ -74,7 +74,6 @@ __geoxml_unref(void)
 		clipboard_document = NULL;
 }
 
-
 static GdomeDocument *
 __geoxml_document_clone_doc(GdomeDocument * source, GdomeDocumentType * document_type)
 {

@@ -15,13 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//remove round warning
-#define _ISOC99_SOURCE
-#include <math.h>
 #include <string.h>
 #include <stdlib.h>
 
 #include "../../intl.h"
+#include "../../utils.h"
 
 #include "parameter.h"
 
@@ -378,16 +376,7 @@ __on_sequence_edit_changed(GtkSequenceEdit * sequence_edit, struct parameter_wid
 static void
 __validate_int(GtkEntry * entry)
 {
-	gchar		number[15];
-	gchar *		valuestr;
-	gdouble		value;
-
-	valuestr = (gchar*)gtk_entry_get_text(entry);
-	if (strlen(valuestr) == 0)
-		return;
-
-	value = g_ascii_strtod(valuestr, NULL);
-	gtk_entry_set_text(entry, g_ascii_dtostr(number, 15, round(value)));
+	gtk_entry_set_text(entry, libgebr_validate_int(gtk_entry_get_text(entry)));
 }
 
 /*
@@ -397,24 +386,7 @@ __validate_int(GtkEntry * entry)
 static void
 __validate_float(GtkEntry * entry)
 {
-	gchar *		valuestr;
-	gchar *		last;
-	GString *	value;
-
-	valuestr = (gchar*)gtk_entry_get_text(entry);
-	if (strlen(valuestr) == 0)
-		return;
-
-	/* initialization */
-	value = g_string_new(NULL);
-
-	g_ascii_strtod(valuestr, &last);
-	g_string_assign(value, valuestr);
-	g_string_truncate(value, strlen(valuestr) - strlen(last));
-	gtk_entry_set_text(entry, value->str);
-
-	/* frees */
-	g_string_free(value, TRUE);
+	gtk_entry_set_text(entry, libgebr_validate_float(gtk_entry_get_text(entry)));
 }
 
 /*
