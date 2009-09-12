@@ -359,7 +359,8 @@ GeoXmlProgramParameter *
 geoxml_program_parameter_find_dict_parameter(GeoXmlProgramParameter * program_parameter,
 GeoXmlDocument * dict_document)
 {
-	GeoXmlProgramParameter *	dict_parameter, * i;
+	GeoXmlProgramParameter *	dict_parameter;
+	GeoXmlSequence *		i;
 	const gchar *			dict_keyword;
 
 	if (program_parameter == NULL || dict_document == NULL)
@@ -369,8 +370,8 @@ GeoXmlDocument * dict_document)
 		__geoxml_get_first_element((GdomeElement*)program_parameter, "property"),
 		"dictkeyword");
 	dict_parameter = NULL;
-	i = geoxml_parameters_get_first_parameter(
-	geoxml_document_get_dict_parameters(dict_document));
+	i = GEOXML_SEQUENCE(geoxml_parameters_get_first_parameter(
+	geoxml_document_get_dict_parameters(dict_document)));
 	for (; i != NULL; geoxml_sequence_next(&i)) {
 		if (!strcmp(dict_keyword, geoxml_program_parameter_get_keyword((GeoXmlProgramParameter*)i))) {
 			dict_parameter = (GeoXmlProgramParameter*)i;

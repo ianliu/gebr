@@ -42,11 +42,11 @@ typedef struct _SexyIconEntryPriv  SexyIconEntryPriv;
 		(G_TYPE_CHECK_CLASS_TYPE((klass), SEXY_TYPE_ICON_ENTRY))
 #define SEXY_ICON_ENTRY_GET_CLASS(obj) \
 		(G_TYPE_INSTANCE_GET_CLASS ((obj), SEXY_TYPE_ICON_ENTRY, SexyIconEntryClass))
-/*
+
 typedef enum {
 	GTK_ENTRY_ICON_PRIMARY,
 	GTK_ENTRY_ICON_SECONDARY
-} GtkEntryIconPosition;*/
+} GtkEntryIconPosition;
 
 struct _SexyIconEntry
 {

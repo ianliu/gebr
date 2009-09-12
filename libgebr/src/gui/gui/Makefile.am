@@ -28,12 +28,11 @@ libgebr_gui_la_SOURCES = \
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = \
-	sexy-icon-entry.h \
 	about.h utils.h pixmaps.h icons.h help.h \
 	gtkfileentry.h gtkenhancedentry.h \
 	gtksequenceedit.h valuesequenceedit.h \
 	programedit.h parameter.h gtkdirectorychooser.h
-noinst_HEADERS = marshalers.h
+noinst_HEADERS = marshalers.h sexy-icon-entry.h
 EXTRA_DIST = ${noinst_HEADERS} marshalers.list 
 
 INCLUDES = -I../.. -I../../geoxml $(WEBKIT_ENABLED) \
