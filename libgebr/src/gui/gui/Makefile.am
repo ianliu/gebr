@@ -20,7 +20,7 @@ marshalers.c:
 
 lib_LTLIBRARIES = libgebr_gui.la
 libgebr_gui_la_SOURCES = \
-	marshalers.c \
+	marshalers.c sexy-icon-entry.c \
 	about.c utils.c pixmaps.c icons.c help.c \
 	gtkfileentry.c gtkenhancedentry.c \
 	gtksequenceedit.c valuesequenceedit.c \
@@ -28,6 +28,7 @@ libgebr_gui_la_SOURCES = \
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = \
+	sexy-icon-entry.h \
 	about.h utils.h pixmaps.h icons.h help.h \
 	gtkfileentry.h gtkenhancedentry.h \
 	gtksequenceedit.h valuesequenceedit.h \
