@@ -54,6 +54,7 @@ struct dict_edit_data {
 	GtkWidget *		tree_view;
 	GtkTreeModel *		tree_model;
 	GtkCellRenderer *	cell_renderer_array[4];
+	gint			new_parameter_count;
 } * dict_edit_data;
 
 static void
@@ -283,6 +284,7 @@ document_dict_edit_setup_ui(GeoXmlDocument * document)
 {
 	GtkWidget *		dialog;
 	GtkWidget *		toolbar;
+	GtkWidget *		frame;
 	GtkWidget *		scrolled_window;
 	GtkWidget *		tree_view;
 	GtkActionGroup *	action_group;
@@ -301,6 +303,7 @@ document_dict_edit_setup_ui(GeoXmlDocument * document)
 
 	data = g_malloc(sizeof(struct dict_edit_data));
 	data->document = document;
+	data->new_parameter_count = 0;
 	list_store = gtk_list_store_new(DICT_EDIT_N_COLUMN,
 		G_TYPE_STRING, /* type */
 		G_TYPE_STRING, /* keyword */
@@ -331,8 +334,10 @@ document_dict_edit_setup_ui(GeoXmlDocument * document)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(action_group, "remove"))), -1);
 
+	frame = gtk_frame_new("");
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), frame);
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), scrolled_window);
+	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
@@ -418,13 +423,20 @@ on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data)
 {
 	GtkTreeIter		iter;
 	GeoXmlParameter *	parameter;
+	GString *		label;
+
+	label = g_string_new(NULL);
 
 	parameter = geoxml_parameters_append_parameter(
 		geoxml_document_get_dict_parameters(data->document),
 		GEOXML_PARAMETERTYPE_STRING);
+	g_string_printf(label, "par%d", ++data->new_parameter_count);
+	geoxml_parameter_set_label(parameter, label->str);
 
 	gtk_list_store_append(GTK_LIST_STORE(data->tree_model), &iter);
 	dict_edit_load_iter(data, &iter, parameter);
+
+	g_string_free(label, TRUE);
 }
 
 /* Function: on_dict_edit_remove_clicked
@@ -503,6 +515,13 @@ struct dict_edit_data * data)
 		GtkTreeIter			i_iter;
 		GeoXmlProgramParameter *	i_parameter;
 
+		if (!strlen(new_text)) {
+			libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				_("Empty keyword"),
+				_("Please select a keyword."));
+			return;
+		}
+
 		/* check if there is a keyword with the same name */
 		libgebr_gui_gtk_tree_model_foreach(i_iter, data->tree_model) {
 			gtk_tree_model_get(data->tree_model, &i_iter,
@@ -512,7 +531,7 @@ struct dict_edit_data * data)
 			if (!strcmp(geoxml_program_parameter_get_keyword(i_parameter), new_text)) {
 				libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 					_("Duplicate keyword"),
-					_("Another parameter already uses this keyword, please choose other"));
+					_("Another parameter already uses this keyword, please choose other."));
 				return;
 			}
 		}
