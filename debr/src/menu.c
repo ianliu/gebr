@@ -61,8 +61,6 @@ static void
 menu_category_renamed(ValueSequenceEdit * sequence_edit, const gchar * old_text, const gchar * new_text);
 static void
 menu_category_removed(ValueSequenceEdit * sequence_edit, const gchar * old_text);
-static void
-menu_path_get_parent(const gchar * path, GtkTreeIter * parent);
 
 /*
  * Section: Public
@@ -237,8 +235,7 @@ menu_new(gboolean edit)
 			MENU_XMLPOINTER, (gpointer)debr.menu,
 			MENU_PATH, "",
 			-1);
-	libgebr_gui_gtk_tree_view_expand(GTK_TREE_VIEW(debr.ui_menu.tree_view),
-			&debr.ui_menu.iter_other, FALSE);
+	libgebr_gui_gtk_tree_view_expand(GTK_TREE_VIEW(debr.ui_menu.tree_view), &iter);
 
 	menu_select_iter(&iter);
 	menu_saved_status_set(MENU_STATUS_SAVED);
@@ -355,7 +352,7 @@ menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select)
 	if (menu == NULL)
 		return;
 
-	filename = g_string_new(g_path_get_basename(path));
+	filename = g_string_new(g_markup_escape_text(g_path_get_basename(path), -1));
 	date = geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu));
 	tmp = (strlen(date))
 		? g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(date).tv_sec)
@@ -459,18 +456,23 @@ void
 menu_save_all(void)
 {
 	GtkTreeIter	iter;
+	gboolean	valid;
+	GtkTreeIter	child;
 
 	if (!debr.unsaved_count)
 		return;
 
 	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
-		MenuStatus 	status;
+		valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, &iter);
+		while (valid) {
+			MenuStatus status;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
-			MENU_STATUS, &status,
-			-1);
-		if (status == MENU_STATUS_UNSAVED)
-			menu_save(&iter);
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child,
+				MENU_STATUS, &status, -1);
+			if (status == MENU_STATUS_UNSAVED)
+				menu_save(&child);
+			valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);
+		}
 	}
 	menu_details_update();
 }
@@ -927,7 +929,15 @@ menu_dialog_setup_ui(void)
 gboolean
 menu_get_selected(GtkTreeIter * iter)
 {
-	return libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
+	gboolean selected;
+
+	selected = libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
+
+	// TODO: How to handle directories selections?
+	if (gtk_tree_store_iter_depth(debr.ui_menu.model, iter) != 1)
+		return FALSE;
+
+	return selected;
 }
 
 /*
@@ -951,12 +961,8 @@ void
 menu_select_iter(GtkTreeIter * iter)
 {
 	GtkTreeSelection *	selection;
-	GtkTreePath *		path;
 
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_menu.model), iter);
-	gtk_tree_view_expand_to_path(GTK_TREE_VIEW(debr.ui_menu.tree_view), path);
-	gtk_tree_path_free(path);
-
+	libgebr_gui_gtk_tree_view_expand(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 	gtk_tree_selection_unselect_all(selection);
 	gtk_tree_selection_select_iter(selection, iter);
@@ -1053,13 +1059,41 @@ menu_details_update(void)
 void
 menu_reset()
 {
-	gtk_tree_store_clear(debr.ui_menu.model);
-	gtk_tree_store_append(debr.ui_menu.model, &debr.ui_menu.iter_other, NULL);
-	gtk_tree_store_set(debr.ui_menu.model, &debr.ui_menu.iter_other,
-			MENU_IMAGE, GTK_STOCK_DIRECTORY,
-			MENU_FILENAME, "<i>Others</i>",
-			-1);
+	GtkTreeIter	iter;
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
+		if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &debr.ui_menu.iter_other))
+			continue;
+		gtk_tree_store_remove(debr.ui_menu.model, &iter);
+	}
 	menu_load_user_directory();
+}
+
+/* menu_path_get_parent:
+ * Given the _path_ of the menu, assigns the correct parent
+ * item so the menu can be appended
+ */
+void
+menu_path_get_parent(const gchar * path, GtkTreeIter * parent)
+{
+	gchar *		dirname;
+	GtkTreeIter	iter;
+
+	dirname = g_path_get_dirname (path);
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
+		gchar * dirpath;
+
+		gtk_tree_model_get (GTK_TREE_MODEL(debr.ui_menu.model), &iter,
+				MENU_PATH, &dirpath, -1);
+		if (!dirpath)
+			continue;
+
+		if (strcmp(dirpath, dirname) == 0) {
+			*parent = iter;
+			goto out:
+		}
+	}
+	*parent = debr.ui_menu.iter_other;
+out:	g_free(dirname);
 }
 
 /*
@@ -1330,34 +1364,5 @@ menu_category_removed(ValueSequenceEdit * sequence_edit, const gchar * old_text)
 
 		g_free(i);
 	}
-}
-
-/* menu_path_get_parent:
- * Given the _path_ of the menu, assigns the correct parent
- * item so the menu can be appended
- */
-static void
-menu_path_get_parent(const gchar * path, GtkTreeIter * parent)
-{
-	gchar *		dirname;
-	GtkTreeIter	iter;
-
-	dirname = g_path_get_dirname(path);
-	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
-		gchar * dirpath;
-
-		gtk_tree_model_get (GTK_TREE_MODEL(debr.ui_menu.model), &iter,
-			MENU_PATH, &dirpath, -1);
-		if (!dirpath)
-			continue;
-
-		if (strcmp(dirpath, dirname) == 0) {
-			*parent = iter;
-			goto out;
-		}
-	}
-	*parent = debr.ui_menu.iter_other;
-
-out:	g_free(dirname);
 }
 

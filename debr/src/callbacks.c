@@ -194,13 +194,17 @@ void
 on_menu_save_as_activate(void)
 {
 	GtkTreeIter		iter;
+	GtkTreeIter		copy;
+	GtkTreeIter		parent;
 
 	GtkWidget *		chooser_dialog;
 	GtkFileFilter *		filefilter;
 
 	GString *		path;
+	GString *		filename;
 	gchar *			tmp;
-	gchar *			filename;
+	gchar *			dirname;
+	gchar *			current_path;
 
 	/* run file chooser */
 	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose file"), GTK_WINDOW(debr.window),
@@ -225,21 +229,41 @@ on_menu_save_as_activate(void)
 	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 	path = g_string_new(tmp);
 	append_filename_extension(path, ".mnu");
-	filename = g_path_get_basename(path->str);
+	g_free(tmp);
 
-	/* get selection, change the view and save to disk */
+	dirname = g_path_get_dirname(path->str);
+	filename = g_string_new(g_path_get_basename(path->str));
+	g_string_append_printf(filename, " <span color='#666666'><i>%s</i></span>", dirname);
+	g_free(dirname);
+
 	menu_get_selected(&iter);
-	gtk_tree_store_set(debr.ui_menu.model, &iter,
-		MENU_FILENAME, filename,
-		MENU_PATH, path->str,
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
+		MENU_PATH, &current_path,
 		-1);
-	geoxml_document_set_filename(GEOXML_DOC(debr.menu), filename);
-	menu_save(&iter);
+
+	// if the user saved on top of the same file
+	if (strcmp(current_path, path->str) == 0)
+		menu_save(&iter);
+	// else, append another iterator in the correct location
+	else {
+		menu_path_get_parent(path->str, &parent);
+		gtk_tree_store_append(debr.ui_menu.model, &copy, &parent);
+		libgebr_gui_gtk_tree_model_iter_copy_values(
+			GTK_TREE_MODEL(debr.ui_menu.model), &copy, &iter);
+		gtk_tree_store_set(debr.ui_menu.model, &copy,
+			MENU_FILENAME, filename->str,
+			MENU_PATH, path->str,
+			-1);
+		// if the item was an unsaved item, remove it
+		if (!menu_save(&iter))
+			gtk_tree_store_remove(debr.ui_menu.model, &iter);
+		menu_save(&copy);
+		menu_select_iter(&copy);
+	}
 
 	/* frees */
 	g_string_free(path, TRUE);
-	g_free(tmp);
-	g_free(filename);
+	g_string_free(filename, TRUE);
 
 out:	gtk_widget_destroy(chooser_dialog);
 }

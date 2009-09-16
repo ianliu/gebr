@@ -105,5 +105,7 @@ void
 menu_select_iter(GtkTreeIter * iter);
 void
 menu_details_update(void);
+void
+menu_path_get_parent(const gchar * path, GtkTreeIter * parent);
 
 #endif //__MENU_H
