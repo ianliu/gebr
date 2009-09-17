@@ -323,10 +323,13 @@ menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select)
 	GtkTreeIter		child;
 	gboolean		valid;
 
-	GString *		filename;
 	const gchar *		date;
 	gchar *			tmp;
 	GeoXmlFlow *		menu;
+
+	gchar *			label;
+	gchar *			dirname;
+	gchar *			filename;
 
 	valid = gtk_tree_model_iter_children (
 			GTK_TREE_MODEL(debr.ui_menu.model), &child, parent);
@@ -352,22 +355,25 @@ menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select)
 	if (menu == NULL)
 		return;
 
-	filename = g_string_new(g_markup_escape_text(g_path_get_basename(path), -1));
+	filename = g_path_get_basename(path);
 	date = geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu));
 	tmp = (strlen(date))
 		? g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(date).tv_sec)
 		: g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
 
 	if (libgebr_gui_gtk_tree_model_iter_equal_to(&debr.ui_menu.iter_other, parent)) {
-		g_string_append_printf(filename,
-			" <span color='#666666'><i>%s</i></span>", g_path_get_dirname(path));
-	}
+		dirname = g_path_get_dirname(path);
+		label = g_markup_printf_escaped("%s <span color='#666666'><i>%s</i></span>",
+			filename, dirname);
+		g_free(dirname);
+	} else
+		label = g_markup_printf_escaped("%s", filename);
 
 	gtk_tree_store_append(debr.ui_menu.model, &child, parent);
 	gtk_tree_store_set(debr.ui_menu.model, &child,
 		MENU_STATUS, MENU_STATUS_SAVED,
 		MENU_IMAGE, GTK_STOCK_FILE,
-		MENU_FILENAME, filename->str,
+		MENU_FILENAME, label,
 		MENU_MODIFIED_DATE, tmp,
 		MENU_XMLPOINTER, menu,
 		MENU_PATH, path,
@@ -379,7 +385,8 @@ menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select)
 		menu_load_selected();
 	}
 
-	g_string_free(filename, TRUE);
+	g_free(filename);
+	g_free(label);
 	g_free(tmp);
 }
 
@@ -1089,7 +1096,7 @@ menu_path_get_parent(const gchar * path, GtkTreeIter * parent)
 
 		if (strcmp(dirpath, dirname) == 0) {
 			*parent = iter;
-			goto out:
+			goto out;
 		}
 	}
 	*parent = debr.ui_menu.iter_other;

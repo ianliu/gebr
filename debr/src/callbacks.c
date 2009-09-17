@@ -201,9 +201,10 @@ on_menu_save_as_activate(void)
 	GtkFileFilter *		filefilter;
 
 	GString *		path;
-	GString *		filename;
 	gchar *			tmp;
+	gchar *			label;
 	gchar *			dirname;
+	gchar *			filename;
 	gchar *			current_path;
 
 	/* run file chooser */
@@ -225,16 +226,13 @@ on_menu_save_as_activate(void)
 	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
 		goto out;
 
-	/* path and file */
+	/* Build path */
 	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 	path = g_string_new(tmp);
 	append_filename_extension(path, ".mnu");
-	g_free(tmp);
 
-	dirname = g_path_get_dirname(path->str);
-	filename = g_string_new(g_path_get_basename(path->str));
-	g_string_append_printf(filename, " <span color='#666666'><i>%s</i></span>", dirname);
-	g_free(dirname);
+	/* Get filename */
+	filename = g_path_get_basename(path->str);
 
 	menu_get_selected(&iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
@@ -247,11 +245,20 @@ on_menu_save_as_activate(void)
 	// else, append another iterator in the correct location
 	else {
 		menu_path_get_parent(path->str, &parent);
+		if (libgebr_gui_gtk_tree_model_iter_equal_to(&parent, &debr.ui_menu.iter_other)) {
+			dirname = g_path_get_dirname(path->str);
+			label = g_markup_printf_escaped(
+				"%s <span color='#666666'><i>%s</i></span>",
+				filename, dirname);
+			g_free(dirname);
+		} else
+			label = g_markup_printf_escaped("%s", filename);
+		
 		gtk_tree_store_append(debr.ui_menu.model, &copy, &parent);
 		libgebr_gui_gtk_tree_model_iter_copy_values(
 			GTK_TREE_MODEL(debr.ui_menu.model), &copy, &iter);
 		gtk_tree_store_set(debr.ui_menu.model, &copy,
-			MENU_FILENAME, filename->str,
+			MENU_FILENAME, label,
 			MENU_PATH, path->str,
 			-1);
 		// if the item was an unsaved item, remove it
@@ -263,7 +270,10 @@ on_menu_save_as_activate(void)
 
 	/* frees */
 	g_string_free(path, TRUE);
-	g_string_free(filename, TRUE);
+	g_free(tmp);
+	g_free(label);
+	g_free(filename);
+	g_free(current_path);
 
 out:	gtk_widget_destroy(chooser_dialog);
 }
