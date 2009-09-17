@@ -409,11 +409,11 @@ libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter)
 }
 
 void
-libgebr_gui_gtk_tree_view_expand(GtkTreeView * view, GtkTreeIter * iter, gboolean open_all)
+libgebr_gui_gtk_tree_view_expand(GtkTreeView * view, GtkTreeIter * iter)
 {
 	GtkTreePath * path;
 	path = gtk_tree_model_get_path(gtk_tree_view_get_model(view), iter);
-	gtk_tree_view_expand_row(view, path, open_all);
+	gtk_tree_view_expand_to_path(view, path);
 	gtk_tree_path_free(path);
 }
 

@@ -66,7 +66,7 @@ libgebr_gui_gtk_tree_view_turn_to_single_selection(GtkTreeView * tree_view);
 gboolean
 libgebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
 void
-libgebr_gui_gtk_tree_view_expand(GtkTreeView * view, GtkTreeIter * iter, gboolean open_all);
+libgebr_gui_gtk_tree_view_expand(GtkTreeView * view, GtkTreeIter * iter);
 #define libgebr_gtk_tree_view_foreach_selected(iter, tree_view) \
 	GList * __list = libgebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(tree_view)); \
 	GList * __i = g_list_first(__list); \
