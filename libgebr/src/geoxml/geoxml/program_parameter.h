@@ -296,6 +296,7 @@ geoxml_program_parameter_get_string_value(GeoXmlProgramParameter * program_param
 /**
  * Find the dictionary parameter from \p dict_document
  * that \p program_parameter uses for its value.
+ * If \p program_parameter don't use a dictionary parameter value, then NULL is returned.
  *
  * If \p program_parameter or \p dict_document is NULL returns NULL.
  */
@@ -325,6 +326,7 @@ geoxml_program_parameter_set_parse_list_value(GeoXmlProgramParameter * program_p
 
 /**
  * Indicates that \p program_parameter will use \p dict_parameter's value as its value-
+ * If \p dict_parameter then \p program_parameter will use its own value.
  *
  * If \p program_parameter or \p dict_parameter nothing is done.
  */

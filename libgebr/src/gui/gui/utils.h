@@ -162,12 +162,12 @@ gboolean
 libgebr_gui_gtk_expander_hacked_idle(GtkWidget * hbox, GdkEventExpose *event, GtkWidget * expander);
 
 #if !GTK_CHECK_VERSION(2,16,0)
-/* Symbols name compatibility with GTK 2.16 */
-#define GtkEntry	SexyIconEntry
-#define gtk_entry_new	sexy_icon_entry_new
+#include "sexy-icon-entry.h"
+/* Symbols name compatibility with GTK 2.16 using SexyIconEntry */
+#define gtk_entry_new sexy_icon_entry_new
 #define gtk_entry_set_icon_from_stock(entry, icon_pos, stock_id) \
 	sexy_icon_entry_set_icon(SEXY_ICON_ENTRY(entry), icon_pos, \
-	gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU))
+	GTK_IMAGE(gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU)))
 #endif // !GTK_CHECK_VERSION(2,16,0)
 
 #endif //__LIBGEBR_GUI_UTILS_H

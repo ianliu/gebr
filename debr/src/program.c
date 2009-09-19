@@ -39,10 +39,10 @@
 #define RESPONSE_REFRESH	101
 
 struct program_preview_data {
-	struct libgebr_gui_program_edit	program_edit;
-	GeoXmlProgram *			program;
-	GtkWidget *			title_label;
-	GtkWidget *			hbox;
+	struct libgebr_gui_program_edit *	program_edit;
+	GeoXmlProgram *				program;
+	GtkWidget *				title_label;
+	GtkWidget *				hbox;
 };
 
 static void
@@ -282,7 +282,7 @@ program_preview(void)
 		GEOXML_PROGRAM(geoxml_object_copy(GEOXML_OBJECT(debr.program))),
 		NULL, (LibGeBRGUIShowHelpCallback)program_help_view, TRUE);
 
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), data->program_edit.widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), data->program_edit->widget, TRUE, TRUE, 0);
 	gtk_widget_show(dialog);
 }
 
@@ -919,10 +919,11 @@ program_preview_on_response(GtkWidget * dialog, gint response, struct program_pr
 {
 	switch (response) {
 	case RESPONSE_REFRESH:
-		libgebr_gui_program_edit_reload(&data->program_edit,
+		libgebr_gui_program_edit_reload(data->program_edit,
 			GEOXML_PROGRAM(geoxml_object_copy(GEOXML_OBJECT(data->program))));
 		break;
 	case GTK_RESPONSE_CLOSE: default:
+		libgebr_gui_program_edit_destroy(data->program_edit);
 		gtk_widget_destroy(dialog);
 		g_free(data);
 		break;

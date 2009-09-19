@@ -65,8 +65,7 @@ struct _SexyIconEntryClass
 	GtkEntryClass parent_class;
 
 	/* Signals */
-	void (*icon_press)(SexyIconEntry *entry, GtkEntryIconPosition icon_pos,
-						 int button);
+	void (*icon_press)(SexyIconEntry *entry, GtkEntryIconPosition icon_pos, GdkEvent *event);
 
 	void (*gtk_reserved1)(void);
 	void (*gtk_reserved2)(void);

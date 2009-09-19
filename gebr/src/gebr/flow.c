@@ -454,7 +454,7 @@ flow_export_as_menu(void)
 	geoxml_document_free(GEOXML_DOC(flow));
 
 	gebr_message(LOG_INFO, TRUE, TRUE, _("Flow '%s' exported as menu to %s"),
-		     (gchar*)geoxml_document_get_title(GEOXML_DOC(gebr.flow)), path);
+		(gchar*)geoxml_document_get_title(GEOXML_DOC(gebr.flow)), path);
 
 	/* frees */
 	g_string_free(path, TRUE);
@@ -464,8 +464,42 @@ flow_export_as_menu(void)
 out:	gtk_widget_destroy(dialog);
 }
 
-/*
- * Function: flow_run
+/* Function: flow_copy_from_dicts
+ * Copy all values of parameters linked to dictionaries' parameters
+ */
+void
+flow_copy_from_dicts(GeoXmlFlow * flow)
+{
+	GeoXmlSequence *	program;
+	GeoXmlSequence *	parameter;
+	GeoXmlDocument *	documents [] = {
+		GEOXML_DOCUMENT(gebr.project), GEOXML_DOCUMENT(gebr.line),
+		GEOXML_DOCUMENT(gebr.flow), NULL
+	};
+
+	geoxml_flow_get_program(flow, &program, 0);
+	for (; program != NULL; geoxml_sequence_next(&program)) {
+		parameter = GEOXML_SEQUENCE(geoxml_parameters_get_first_parameter(
+			geoxml_program_get_parameters(GEOXML_PROGRAM(program))));
+		for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
+			GeoXmlProgramParameter *	dict_parameter;
+
+			for (int i = 0; documents[i] != NULL; i++) {
+				dict_parameter = geoxml_program_parameter_find_dict_parameter(
+					GEOXML_PROGRAM_PARAMETER(parameter), documents[i]);
+				if (dict_parameter != NULL)
+					geoxml_program_parameter_set_first_value(
+						GEOXML_PROGRAM_PARAMETER(parameter), FALSE,
+						geoxml_program_parameter_get_first_value(dict_parameter, FALSE));
+			}
+
+			geoxml_program_parameter_set_value_from_dict(
+				GEOXML_PROGRAM_PARAMETER(parameter), NULL);
+		}
+	}
+}
+
+/* Function: flow_run
  * Runs a flow
  */
 void
@@ -498,6 +532,9 @@ flow_run(void)
 		geoxml_sequence_remove(i);
 		i = tmp;
 	}
+
+	flow_copy_from_dicts(flow);
+
 	/* RUN */
 	comm_server_run_flow(server->comm, flow);
 

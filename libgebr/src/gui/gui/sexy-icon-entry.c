@@ -51,7 +51,6 @@ struct _SexyIconEntryPriv
 enum
 {
 	ICON_PRESS,
-	ICON_RELEASED,
 	LAST_SIGNAL
 };
 
@@ -75,8 +74,6 @@ static gint sexy_icon_entry_leave_notify(GtkWidget *widget,
 											   GdkEventCrossing *event);
 static gint sexy_icon_entry_button_press(GtkWidget *widget,
 											   GdkEventButton *event);
-static gint sexy_icon_entry_button_release(GtkWidget *widget,
-												 GdkEventButton *event);
 
 static GtkEntryClass *parent_class = NULL;
 static guint signals[LAST_SIGNAL] = {0};
@@ -115,7 +112,6 @@ sexy_icon_entry_class_init(SexyIconEntryClass *klass)
 	widget_class->enter_notify_event = sexy_icon_entry_enter_notify;
 	widget_class->leave_notify_event = sexy_icon_entry_leave_notify;
 	widget_class->button_press_event = sexy_icon_entry_button_press;
-	widget_class->button_release_event = sexy_icon_entry_button_release;
 
 	/**
 	 * SexyIconEntry::icon-press:
@@ -713,7 +709,7 @@ sexy_icon_entry_button_press(GtkWidget *widget, GdkEventButton *event)
 				update_icon(NULL, NULL, entry);
 			}
 
-			g_signal_emit(entry, signals[ICON_PRESS], 0, i, event->button);
+			g_signal_emit(entry, signals[ICON_PRESS], 0, i, event);
 
 			return TRUE;
 		}
@@ -722,44 +718,6 @@ sexy_icon_entry_button_press(GtkWidget *widget, GdkEventButton *event)
 	if (GTK_WIDGET_CLASS(parent_class)->button_press_event)
 		return GTK_WIDGET_CLASS(parent_class)->button_press_event(widget,
 																  event);
-
-	return FALSE;
-}
-
-static gint
-sexy_icon_entry_button_release(GtkWidget *widget, GdkEventButton *event)
-{
-	SexyIconEntry *entry = SEXY_ICON_ENTRY(widget);
-	int i;
-
-	for (i = 0; i < MAX_ICONS; i++)
-	{
-		GdkWindow *icon_window = entry->priv->icons[i].window;
-
-		if (event->window == icon_window)
-		{
-			int width, height;
-			gdk_drawable_get_size(icon_window, &width, &height);
-
-			if (event->button == 1 &&
-				sexy_icon_entry_get_icon_highlight(entry, i) &&
-				event->x >= 0     && event->y >= 0 &&
-				event->x <= width && event->y <= height)
-			{
-				entry->priv->icons[i].hovered = TRUE;
-
-				update_icon(NULL, NULL, entry);
-			}
-
-			g_signal_emit(entry, signals[ICON_RELEASED], 0, i, event->button);
-
-			return TRUE;
-		}
-	}
-
-	if (GTK_WIDGET_CLASS(parent_class)->button_release_event)
-		return GTK_WIDGET_CLASS(parent_class)->button_release_event(widget,
-																	event);
 
 	return FALSE;
 }

@@ -70,20 +70,6 @@ gboolean default_value)
 	}
 }
 
-gboolean
-__geoxml_program_parameter_check_compatibily(GeoXmlProgramParameter * program_parameter,
-GeoXmlProgramParameter * other)
-{
-	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) !=
-	geoxml_parameter_get_type(GEOXML_PARAMETER(other)))
-		return FALSE;
-	if (geoxml_program_parameter_get_is_list(program_parameter) !=
-	geoxml_program_parameter_get_is_list(other))
-		return FALSE;
-
-	return TRUE;
-}
-
 /*
  * library functions.
  */
@@ -364,11 +350,19 @@ GeoXmlDocument * dict_document)
 	const gchar *			dict_keyword;
 
 	if (program_parameter == NULL || dict_document == NULL)
-		return FALSE;
+		return NULL;
 
-	dict_keyword = __geoxml_get_attr_value(
-		__geoxml_get_first_element((GdomeElement*)program_parameter, "property"),
-		"dictkeyword");
+	GdomeDOMString *	string;
+	GdomeElement *		property_element;
+
+	property_element = __geoxml_get_first_element((GdomeElement*)program_parameter, "property");
+
+	string = gdome_str_mkref("dictkeyword");
+	if (!gdome_el_hasAttribute(property_element, string, &exception))
+		return NULL;
+	gdome_str_unref(string);
+
+	dict_keyword = __geoxml_get_attr_value(property_element, "dictkeyword");
 	dict_parameter = NULL;
 	i = GEOXML_SEQUENCE(geoxml_parameters_get_first_parameter(
 	geoxml_document_get_dict_parameters(dict_document)));
@@ -378,9 +372,6 @@ GeoXmlDocument * dict_document)
 			break;
 		}
 	}
-	if (dict_parameter == NULL ||
-	!__geoxml_program_parameter_check_compatibily(program_parameter, dict_parameter))
-		return NULL;
 
 	return dict_parameter;
 }
@@ -390,8 +381,6 @@ geoxml_program_parameter_copy_value(GeoXmlProgramParameter * program_parameter,
 GeoXmlProgramParameter * source, gboolean default_value)
 {
 	if (program_parameter == NULL || source == NULL)
-		return FALSE;
-	if (!__geoxml_program_parameter_check_compatibily(program_parameter, source))
 		return FALSE;
 
 	GdomeDocument *	document;
@@ -445,14 +434,23 @@ void
 geoxml_program_parameter_set_value_from_dict(GeoXmlProgramParameter * program_parameter,
 GeoXmlProgramParameter * dict_parameter)
 {
-	if (program_parameter == NULL || dict_parameter == NULL)
-		return;
-	if (!__geoxml_program_parameter_check_compatibily(program_parameter, dict_parameter))
+	if (program_parameter == NULL)
 		return;
 
-	__geoxml_set_attr_value(
-		__geoxml_get_first_element((GdomeElement*)program_parameter, "property"),
-		"dictkeyword", geoxml_program_parameter_get_keyword(dict_parameter));
+	GdomeElement *	property_element;
+
+	property_element = __geoxml_get_first_element((GdomeElement*)program_parameter, "property");
+
+	if (dict_parameter == NULL) {
+		GdomeDOMString *	string;
+
+		string = gdome_str_mkref("dictkeyword");
+		gdome_el_removeAttribute(property_element, string, &exception);
+	
+		gdome_str_unref(string);
+	} else
+		__geoxml_set_attr_value(property_element, "dictkeyword",
+			geoxml_program_parameter_get_keyword(dict_parameter));
 }
 
 void

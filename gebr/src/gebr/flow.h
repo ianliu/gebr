@@ -31,6 +31,8 @@ flow_export(void);
 void
 flow_export_as_menu(void);
 void
+flow_copy_from_dicts(GeoXmlFlow * flow);
+void
 flow_run(void);
 gboolean
 flow_revision_save(void);

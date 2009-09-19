@@ -46,43 +46,57 @@ program_edit_deinstanciate(GtkButton * button, struct libgebr_gui_program_edit *
  * Function: program_edit_setup_ui
  * Setup UI for _program_ 
  */
-struct libgebr_gui_program_edit
+struct libgebr_gui_program_edit *
 libgebr_gui_program_edit_setup_ui(GeoXmlProgram * program, gpointer file_parameter_widget_data,
 LibGeBRGUIShowHelpCallback show_help_callback, gboolean use_default)
 {
-	struct libgebr_gui_program_edit		program_edit;
+	struct libgebr_gui_program_edit *	program_edit;
 	GtkWidget *				vbox;
 	GtkWidget *				title_label;
 	GtkWidget *				hbox;
 	GtkWidget *				scrolled_window;
 
-	program_edit.program = program;
-	program_edit.file_parameter_widget_data = file_parameter_widget_data;
-	program_edit.show_help_callback = show_help_callback;
-	program_edit.use_default = use_default;
-	program_edit.widget = vbox = gtk_vbox_new(FALSE, 0);
+	program_edit = g_malloc(sizeof(struct libgebr_gui_program_edit));
+	program_edit->program = program;
+	program_edit->file_parameter_widget_data = file_parameter_widget_data;
+	program_edit->show_help_callback = show_help_callback;
+	program_edit->use_default = use_default;
+	program_edit->widget = vbox = gtk_vbox_new(FALSE, 0);
+	program_edit->dicts = (struct libgebr_gui_program_edit_dicts) {
+		.project = NULL, .line = NULL, .flow = NULL
+	};
 	gtk_widget_show(vbox);
-	program_edit.title_label = title_label = gtk_label_new(NULL);
+	program_edit->title_label = title_label = gtk_label_new(NULL);
 	gtk_widget_show(title_label);
 	gtk_box_pack_start(GTK_BOX(vbox), title_label, FALSE, TRUE, 5);
 	gtk_misc_set_alignment(GTK_MISC(title_label), 0.5, 0);
-	program_edit.hbox = hbox = gtk_hbox_new(FALSE, 3);
+	program_edit->hbox = hbox = gtk_hbox_new(FALSE, 3);
 	gtk_widget_show(hbox);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 5);
 
-	program_edit.scrolled_window = scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	program_edit->scrolled_window = scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_widget_show(scrolled_window);
 	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 5);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-	libgebr_gui_program_edit_reload(&program_edit, NULL);
+	libgebr_gui_program_edit_reload(program_edit, NULL);
 
 	return program_edit;
 }
 
+/* Function: libgebr_gui_program_edit_destroy
+ * Just free
+ */
+void
+libgebr_gui_program_edit_destroy(struct libgebr_gui_program_edit * program_edit)
+{
+	gtk_widget_destroy(program_edit->widget);
+	g_free(program_edit);
+}
+
 /*
- * Function: program_edit_reload
+ * Function: libgebr_gui_program_edit_reload
  * Reload UI of _program_edit_. If _program_ is not NULL, then use it as new program
  */
 void
@@ -265,6 +279,8 @@ GSList ** radio_group)
 		else
 			parameter_widget = parameter_widget_new(parameter, program_edit->use_default,
 				program_edit->file_parameter_widget_data);
+		if (program_edit->dicts.project != NULL)
+			parameter_widget_set_dicts(parameter_widget, &program_edit->dicts);
 		gtk_widget_show(parameter_widget->widget);
 
 		/* exclusive? */

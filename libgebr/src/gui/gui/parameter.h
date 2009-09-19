@@ -21,31 +21,41 @@
 #include <gtk/gtk.h>
 
 #include <geoxml.h>
+
 #include "gtkfileentry.h"
 #include "valuesequenceedit.h"
+#include "programedit.h"
 
 struct parameter_widget;
 typedef void (*changed_callback)(struct parameter_widget * parameter_widget, gpointer user_data);
 
 struct parameter_widget {
-	GeoXmlParameter *	parameter;
-	gboolean		use_default_value;
-	gpointer		data;
+	GeoXmlParameter *			parameter;
+	gboolean				use_default_value;
+	gpointer				data;
 
-	GtkWidget *		widget;
-	GtkWidget *		value_widget;
+	GtkWidget *				widget;
+	GtkWidget *				value_widget;
+
+	/* dict stuff */
+	GeoXmlProgramParameter *		dict_parameter;
+	struct libgebr_gui_program_edit_dicts *	dicts;
 
 	/* for lists */
-	GtkWidget *		list_value_widget;
-	ValueSequenceEdit *	value_sequence_edit;
+	GtkWidget *				list_value_widget;
+	ValueSequenceEdit *			value_sequence_edit;
 
 	/* auto submit stuff */
-	changed_callback	callback;
-	gpointer		user_data;
+	changed_callback			callback;
+	gpointer				user_data;
 };
 
 struct parameter_widget *
 parameter_widget_new(GeoXmlParameter * parameter, gboolean use_default_value, gpointer data);
+
+void
+parameter_widget_set_dicts(struct parameter_widget * parameter_widget,
+struct libgebr_gui_program_edit_dicts *	dicts);
 
 GString *
 parameter_widget_get_widget_value(struct parameter_widget * parameter_widget);
