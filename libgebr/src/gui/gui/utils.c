@@ -253,40 +253,41 @@ libgebr_gui_gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter)
 
 /**
  * libgebr_gui_gtk_tree_store_reparent:
- * @store: The TreeStore
- * Reparent the child %iter if %parent isn't already its father
+ * @store:  The #GtkTreeStore to be operated on.
+ * @iter:   The iterator to be copied.
+ * @parent: The new parent iterator of _iter_.
+ *
+ * Change _iter_s parent by copying its values to a new item created as a child of _parent_.
+ * The original item is removed and _iter_ is updated to point to the new item. If _parent_
+ * is already _iter_s parent, then do nothing and return %FALSE.
+ *
+ * Returns: %TRUE if reparenting was needed, %FALSE otherwise.
  */
 gboolean
 libgebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * iter, GtkTreeIter * parent)
 {
-	gint n;
 	GtkTreeIter new;
 
-	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(store), &new, iter)) {
-		if (libgebr_gui_gtk_tree_model_iter_equal_to(&new, parent)) {
+	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(store), &new, iter))
+		if (libgebr_gui_gtk_tree_model_iter_equal_to(&new, parent))
 			return FALSE;
-		}
-	} else {
-		return FALSE;
-	}
 
-	n = gtk_tree_model_get_n_columns(GTK_TREE_MODEL(store));
 	gtk_tree_store_append(store, &new, parent);
-	while (n--) {
-		gpointer value;
-		gtk_tree_model_get(GTK_TREE_MODEL(store), iter, n, &value, -1);
-		gtk_tree_store_set(store, &new, n, value, -1);
-		switch (gtk_tree_model_get_column_type(GTK_TREE_MODEL(store), n)) {
-			case G_TYPE_STRING:
-				g_free(value);
-				break;
-		}
-	}
+	libgebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(store), &new, iter);
 	gtk_tree_store_remove(store, iter);
 	*iter = new;
+
 	return TRUE;
 }
 
+/**
+ * libgebr_gui_gtk_tree_model_iter_copy_values:
+ * @model:  The #GtkTreeModel to be operated on.
+ * @iter:   The iterator to receive the copied values.
+ * @source: The iterator to be copied.
+ *
+ * Copy the values from _source_ into _iter_.
+ */
 void
 libgebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source)
 {

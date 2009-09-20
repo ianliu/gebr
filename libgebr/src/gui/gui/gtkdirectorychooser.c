@@ -112,7 +112,12 @@ gtk_directory_chooser_get_paths(GtkDirectoryChooser * widget)
 void
 gtk_directory_chooser_set_paths (GtkDirectoryChooser * widget, gchar ** paths)
 {
-	gint i = 0;
+	gint i;
+
+	if (!paths)
+		return;
+
+	i = 0;
 	while (paths[i] != NULL) {
 		gtk_sequence_edit_add(GTK_SEQUENCE_EDIT(widget->sequence_edit),
 				paths[i], FALSE);
