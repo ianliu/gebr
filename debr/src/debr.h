@@ -99,7 +99,7 @@ debr_init(void);
 gboolean
 debr_quit(void);
 
-void
+gboolean
 debr_config_load(void);
 
 void

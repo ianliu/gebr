@@ -202,7 +202,6 @@ on_menu_save_as_activate(void)
 
 	GString *		path;
 	gchar *			tmp;
-	gchar *			label;
 	gchar *			dirname;
 	gchar *			filename;
 	gchar *			current_path;
@@ -244,6 +243,7 @@ on_menu_save_as_activate(void)
 		menu_save(&iter);
 	// else, append another iterator in the correct location
 	else {
+		gchar * label;
 		menu_path_get_parent(path->str, &parent);
 		if (libgebr_gui_gtk_tree_model_iter_equal_to(&parent, &debr.ui_menu.iter_other)) {
 			dirname = g_path_get_dirname(path->str);
@@ -261,17 +261,18 @@ on_menu_save_as_activate(void)
 			MENU_FILENAME, label,
 			MENU_PATH, path->str,
 			-1);
-		// if the item was an unsaved item, remove it
-		if (!menu_save(&iter))
+		// if the item was a never saved file, remove it
+		if (!strlen(current_path))
 			gtk_tree_store_remove(debr.ui_menu.model, &iter);
 		menu_save(&copy);
 		menu_select_iter(&copy);
+
+		g_free(label);
 	}
 
 	/* frees */
 	g_string_free(path, TRUE);
 	g_free(tmp);
-	g_free(label);
 	g_free(filename);
 	g_free(current_path);
 
@@ -421,21 +422,21 @@ on_menu_close_activate(void)
 
 	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
 		GeoXmlFlow *	menu;
-		GdkPixbuf *	pixbuf;
 		GtkWidget *	button;
+		MenuStatus	status;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 			MENU_XMLPOINTER, &menu,
-			MENU_STATUS, &pixbuf,
+			MENU_STATUS, &status,
 			-1);
 
-		if (pixbuf == debr.pixmaps.stock_no) {
+		if (status == MENU_STATUS_UNSAVED) {
 			GtkWidget *	dialog;
 			gboolean	cancel;
 
 			cancel = FALSE;
 
-                        /* FIX-ME: geoxml_document_get_title returns empty string for never saved menus.
+                        /* FIXME: geoxml_document_get_title returns empty string for never saved menus.
                            However, dialog should display temporary filename set.                        */
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 				GTK_DIALOG_MODAL,
@@ -475,10 +476,11 @@ on_menu_close_activate(void)
 		menu_close(&iter);
 	}
 
-	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.model), NULL) == 0)
-		menu_new(FALSE);
-	else
-		libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
+	// FIXME: Selecionar o próximo menu após fechar
+	// if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.model), NULL) == 0)
+	// 	menu_new(FALSE);
+	// else
+	// 	libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 }
 
 /*

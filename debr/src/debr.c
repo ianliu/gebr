@@ -36,9 +36,11 @@ struct debr debr;
 void
 debr_init(void)
 {
+	gboolean configured;
+
 	libgebr_init();
 
-	debr_config_load();
+	configured = debr_config_load();
 
 	debr.categories_model = gtk_list_store_new(CATEGORY_N_COLUMN, G_TYPE_STRING, G_TYPE_INT);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.categories_model),
@@ -59,7 +61,7 @@ debr_init(void)
 		GTK_STOCK_CANCEL, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 	debr.pixmaps.stock_no = gtk_widget_render_icon(debr.invisible, GTK_STOCK_NO, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
-	if (debr.config.menu_dir == NULL || debr.config.menu_dir[0] == NULL)
+	if (!configured)
 		preferences_dialog_setup_ui();
 	else
 		menu_load_user_directory();
@@ -100,7 +102,18 @@ debr_quit(void)
 	return FALSE;
 }
 
-void
+
+/**
+ * debr_config_load:
+ *
+ * Load the configuration file into debr.config structure.
+ * DeBR is not considered configured if there is no configuration
+ * file or there is no searching path defined on the configuration
+ * file.
+ *
+ * Return: %TRUE if debr is configured, %FALSE otherwise.
+ */
+gboolean
 debr_config_load(void)
 {
 	GError *	error;
@@ -118,6 +131,11 @@ debr_config_load(void)
 	debr.config.menu_dir = g_key_file_get_string_list(debr.config.key_file, "general", "menu_dir", NULL, NULL);
 	debr.config.browser = g_key_file_load_string_key(debr.config.key_file, "general", "browser", "firefox");
 	debr.config.htmleditor = g_key_file_load_string_key(debr.config.key_file, "general", "htmleditor", "gedit");
+
+	if (debr.config.menu_dir == NULL || debr.config.menu_dir[0] == NULL)
+		return FALSE;
+
+	return TRUE;
 }
 
 void

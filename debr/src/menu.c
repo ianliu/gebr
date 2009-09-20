@@ -281,6 +281,10 @@ menu_load_user_directory(void)
 	gchar *			filename;
 
 	gint i = 0;
+
+	if (!debr.config.menu_dir)
+		return;
+
 	while (debr.config.menu_dir[i]) {
 		GString * path;
 		GString * dirname;
@@ -941,7 +945,7 @@ menu_get_selected(GtkTreeIter * iter)
 	selected = libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
 
 	// TODO: How to handle directories selections?
-	if (gtk_tree_store_iter_depth(debr.ui_menu.model, iter) != 1)
+	if (selected && iter && gtk_tree_store_iter_depth(debr.ui_menu.model, iter) != 1)
 		return FALSE;
 
 	return selected;

@@ -844,9 +844,9 @@ parameter_dialog_setup_ui(void)
 			geoxml_program_parameter_get_required(program_parameter));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(is_list_check_button),
 			geoxml_program_parameter_get_is_list(program_parameter));
-		gtk_widget_set_sensitive(separator_entry, geoxml_program_parameter_get_is_list(program_parameter));
+		gtk_widget_set_sensitive(ui->separator_entry, geoxml_program_parameter_get_is_list(program_parameter));
 		if (geoxml_program_parameter_get_is_list(program_parameter) == TRUE)
-			gtk_entry_set_text(GTK_ENTRY(separator_entry),
+			gtk_entry_set_text(GTK_ENTRY(ui->separator_entry),
 				geoxml_program_parameter_get_list_separator(program_parameter));
 	}
 
@@ -863,7 +863,7 @@ parameter_dialog_setup_ui(void)
 			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button)));
 		if (geoxml_program_parameter_get_is_list(program_parameter) == TRUE)
 			geoxml_program_parameter_set_list_separator(GEOXML_PROGRAM_PARAMETER(ui->parameter),
-				gtk_entry_get_text(GTK_ENTRY(separator_entry)));
+				gtk_entry_get_text(GTK_ENTRY(ui->separator_entry)));
 	}
 
 	parameter_load_selected();
