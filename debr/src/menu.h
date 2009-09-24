@@ -96,6 +96,8 @@ void
 menu_dialog_setup_ui(void);
 void
 menu_reset(void);
+gint
+menu_get_n_menus(void);
 
 gboolean
 menu_get_selected(GtkTreeIter * iter);

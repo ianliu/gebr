@@ -65,7 +65,7 @@ debr_init(void)
 		preferences_dialog_setup_ui();
 	else
 		menu_load_user_directory();
-	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.model), NULL) == 0)
+	if (menu_get_n_menus() == 0)
 		menu_new(FALSE);
 }
 

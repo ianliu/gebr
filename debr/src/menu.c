@@ -247,8 +247,13 @@ menu_new(gboolean edit)
 	g_string_free(new_menu_str, TRUE);
 }
 
-/* Function: menu_load
+/**
+ * menu_load:
+ * @path: The path to the file.
+ *
  * Load XML at _path_ and return it.
+ *
+ * Returns: A #GeoXmlFlow containing the information about the flow.
  */
 GeoXmlFlow *
 menu_load(const gchar * path)
@@ -270,8 +275,8 @@ menu_load(const gchar * path)
 	return GEOXML_FLOW(menu);
 }
 
-/*
- * Function: menu_load_user_directory
+/**
+ * menu_load_user_directory:
  * Read each menu on user's menus directory.
  */
 void
@@ -287,16 +292,19 @@ menu_load_user_directory(void)
 
 	while (debr.config.menu_dir[i]) {
 		GString * path;
-		GString * dirname;
+		gchar   * dirname;
+		gchar   * dname;
+		gchar   * dpath;
 
-		dirname = g_string_new(g_path_get_basename(debr.config.menu_dir[i]));
-		g_string_append_printf(dirname, " <i><span color=\"#666666\">%s</span></i>",
-				g_path_get_dirname(debr.config.menu_dir[i]));
+		dname = g_path_get_basename(debr.config.menu_dir[i]);
+		dpath = g_path_get_dirname(debr.config.menu_dir[i]);
+		dirname = g_markup_printf_escaped("%s <i><span color=\"#666666\">%s</span></i>",
+			dname, dpath);
 
 		gtk_tree_store_append(debr.ui_menu.model, &iter, NULL);
 		gtk_tree_store_set(debr.ui_menu.model, &iter,
 				MENU_IMAGE, GTK_STOCK_DIRECTORY,
-				MENU_FILENAME, dirname->str,
+				MENU_FILENAME, dirname,
 				MENU_PATH, debr.config.menu_dir[i],
 				-1);
 
@@ -308,7 +316,11 @@ menu_load_user_directory(void)
 			g_string_printf(path, "%s/%s", debr.config.menu_dir[i], filename);
 			menu_open_with_parent(path->str, &iter, FALSE);
 		}
+
 		g_string_free(path, TRUE);
+		g_free(dirname);
+		g_free(dname);
+		g_free(dpath);
 		i++;
 	}
 
@@ -952,8 +964,8 @@ menu_get_selected(GtkTreeIter * iter)
 }
 
 /*
- * Function: menu_load_selected
- * Reload selected menu contents to the interface
+ * menu_load_selected:
+ * Reload selected menu contents to the interface.
  */
 void
 menu_load_selected(void)
@@ -965,8 +977,10 @@ menu_load_selected(void)
 }
 
 /*
- * Function: menu_select_iter
- * Select _iter_ for menu's tree view
+ * menu_select_iter:
+ * @iter: The #GtkTreeIter to be selected.
+ *
+ * Selects _iter_ from the menu's tree view, expanding folders if necessary.
  */
 void
 menu_select_iter(GtkTreeIter * iter)
@@ -981,9 +995,9 @@ menu_select_iter(GtkTreeIter * iter)
 	menu_selected();
 }
 
-/*
- * Function: menu_details_update
- * Load details of selected menu to the details view
+/**
+ * menu_details_update:
+ * Load details of selected menu to the details view.
  */
 void
 menu_details_update(void)
@@ -1067,6 +1081,10 @@ menu_details_update(void)
 		"sensitive", strlen(geoxml_document_get_help(GEOXML_DOC(debr.menu))) > 1 ? TRUE : FALSE, NULL);
 }
 
+/**
+ * menu_reset:
+ * Reload all menus, but the ones inside "Other" folder.
+ */
 void
 menu_reset()
 {
@@ -1079,9 +1097,30 @@ menu_reset()
 	menu_load_user_directory();
 }
 
+/**
+ * menu_get_n_menus:
+ * Calculates the number of opened menus.
+ *
+ * Returns: The number of opened menus.
+ */
+gint
+menu_get_n_menus()
+{
+	GtkTreeIter	iter;
+	gint		n;
+
+	n = 0;
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model))
+		n += gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.model), &iter);
+	return n;
+}
+
 /* menu_path_get_parent:
+ * @path: The menu system path.
+ * @parent: The #GtkTreeIter to be set as the correct parent.
+ *
  * Given the _path_ of the menu, assigns the correct parent
- * item so the menu can be appended
+ * item so the menu can be appended.
  */
 void
 menu_path_get_parent(const gchar * path, GtkTreeIter * parent)
@@ -1111,9 +1150,11 @@ out:	g_free(dirname);
  * Section: Private
  */
 
-/*
- * Function: menu_sort_by_name
- * Sort the list of menus alphabetically
+/**
+ * menu_sort_by_name:
+ * @menu_item: 
+ *
+ * Sort the list of menus alphabetically.
  */
 static void
 menu_sort_by_name(GtkMenuItem * menu_item)
