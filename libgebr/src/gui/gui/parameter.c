@@ -33,9 +33,16 @@
 
 static void
 parameter_widget_find_dict_parameter(struct parameter_widget * widget);
+static GtkWidget *
+parameter_widget_dict_popup_menu(struct parameter_widget * widget);
 static void
-on_dict_clicked(GtkEntry * entry, GtkEntryIconPosition icon_pos, GdkEvent * event,
+on_dict_clicked(GtkEntry * entry, GtkEntryIconPosition icon_pos, GdkEventButton * event,
 struct parameter_widget * widget);
+static void
+parameter_widget_value_entry_on_populate_popup(GtkEntry *entry, GtkMenu  *menu,
+struct parameter_widget * widget);
+static gboolean
+parameter_widget_can_use_dict(struct parameter_widget * widget);
 static void
 on_dict_parameter_toggled(GtkMenuItem * menu_item, struct parameter_widget * widget);
 
@@ -98,17 +105,9 @@ __parameter_widget_set_non_list_widget_value(struct parameter_widget * parameter
 		return;
 	}
 
-	type = geoxml_parameter_get_type(parameter_widget->parameter);
-	switch (type) {
-	case GEOXML_PARAMETERTYPE_FLOAT:
-	case GEOXML_PARAMETERTYPE_INT:
-	case GEOXML_PARAMETERTYPE_STRING:
-	case GEOXML_PARAMETERTYPE_RANGE:
+	if (parameter_widget_can_use_dict(parameter_widget))
 		gtk_editable_set_editable(GTK_EDITABLE(parameter_widget->value_widget), TRUE);
-		break;
-	default:
-		break;
-	}
+	type = geoxml_parameter_get_type(parameter_widget->parameter);
 	switch (type) {
 	case GEOXML_PARAMETERTYPE_FLOAT:
 	case GEOXML_PARAMETERTYPE_INT:
@@ -309,16 +308,12 @@ __parameter_list_value_widget_update(struct parameter_widget * parameter_widget)
 		parameter_widget->use_default_value);
 
 	g_signal_handlers_block_matched(G_OBJECT(parameter_widget->list_value_widget),
-		G_SIGNAL_MATCH_FUNC,
-		0, 0, NULL,
-		(GCallback)__parameter_on_list_value_widget_changed,
-		NULL);
+		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+		(GCallback)__parameter_on_list_value_widget_changed, NULL);
 	gtk_entry_set_text(GTK_ENTRY(parameter_widget->list_value_widget), value->str);
 	g_signal_handlers_unblock_matched(G_OBJECT(parameter_widget->list_value_widget),
-		G_SIGNAL_MATCH_FUNC,
-		0, 0, NULL,
-		(GCallback)__parameter_on_list_value_widget_changed,
-		NULL);
+		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+		(GCallback)__parameter_on_list_value_widget_changed, NULL);
 
 	g_string_free(value, TRUE);
 }
@@ -418,28 +413,29 @@ __on_sequence_edit_changed(GtkSequenceEdit * sequence_edit, struct parameter_wid
 	__parameter_list_value_widget_update(parameter_widget);
 }
 
-/*
- * Function: __validate_int
+/* Function: __validate_int
  * Validate an int parameter
  */
 static void
-__validate_int(GtkEntry * entry)
+__validate_int(GtkEntry * entry, struct parameter_widget * parameter_widget)
 {
+	if (parameter_widget->dict_parameter != NULL)
+		return;
 	gtk_entry_set_text(entry, libgebr_validate_int(gtk_entry_get_text(entry)));
 }
 
-/*
- * Function: __validate_float
+/* Function: __validate_float
  * Validate a float parameter
  */
 static void
-__validate_float(GtkEntry * entry)
+__validate_float(GtkEntry * entry, struct parameter_widget * parameter_widget)
 {
+	if (parameter_widget->dict_parameter != NULL)
+		return;
 	gtk_entry_set_text(entry, libgebr_validate_float(gtk_entry_get_text(entry)));
 }
 
-/*
- * Function: __validate_on_leaving
+/* Function: __validate_on_leaving
  * Call a validation function
  */
 static gboolean
@@ -450,8 +446,7 @@ __validate_on_leaving(GtkWidget * widget, GdkEventFocus * event, void (*function
 	return FALSE;
 }
 
-/*
- * Function: __parameter_widget_configure
+/* Function: __parameter_widget_configure
  * Create UI
  */
 static void
@@ -468,7 +463,7 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 		gtk_widget_set_size_request(entry, 90, 30);
 
 		g_signal_connect(entry, "activate",
-			GTK_SIGNAL_FUNC(__validate_float), NULL);
+			GTK_SIGNAL_FUNC(__validate_float), parameter_widget);
 		g_signal_connect(entry, "focus-out-event",
 			GTK_SIGNAL_FUNC(__validate_on_leaving), &__validate_float);
 
@@ -480,7 +475,7 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 		gtk_widget_set_size_request(entry, 90, 30);
 
 		g_signal_connect(entry, "activate",
-			GTK_SIGNAL_FUNC(__validate_int), NULL);
+			GTK_SIGNAL_FUNC(__validate_int), parameter_widget);
 		g_signal_connect(entry, "focus-out-event",
 			GTK_SIGNAL_FUNC(__validate_on_leaving), &__validate_int);
 
@@ -625,21 +620,24 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 			break;
 		}
 	}
-	if (parameter_widget->dicts != NULL) {
-		switch (type) {
-		case GEOXML_PARAMETERTYPE_STRING:
-		case GEOXML_PARAMETERTYPE_INT:
-		case GEOXML_PARAMETERTYPE_FLOAT:
-		case GEOXML_PARAMETERTYPE_RANGE:
-			gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget),
-				GTK_ENTRY_ICON_SECONDARY, "accessories-dictionary");
-			g_signal_connect(parameter_widget->value_widget, "icon-press",
-				(GCallback)on_dict_clicked, parameter_widget);
-			parameter_widget_find_dict_parameter(parameter_widget);
-			break;
-		default:
-			break;
+	if (parameter_widget->dicts != NULL && parameter_widget_can_use_dict(parameter_widget)) {
+		GeoXmlDocument *		documents [] = {
+			parameter_widget->dicts->project, parameter_widget->dicts->line,
+			parameter_widget->dicts->flow, NULL};
+
+		parameter_widget->dict_parameter = NULL;
+		for (int i = 0; documents[i] != NULL; i++) {
+			GeoXmlProgramParameter *	dict_parameter;
+
+			dict_parameter = geoxml_program_parameter_find_dict_parameter(
+				GEOXML_PROGRAM_PARAMETER(parameter_widget->parameter), documents[i]);
+			if (dict_parameter != NULL)
+				parameter_widget->dict_parameter = dict_parameter;
 		}
+
+		parameter_widget_find_dict_parameter(parameter_widget);
+		g_signal_connect(parameter_widget->value_widget, "populate-popup",
+			(GCallback)parameter_widget_value_entry_on_populate_popup, parameter_widget);
 	}
 
 	parameter_widget_update(parameter_widget);
@@ -656,18 +654,17 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 static void
 parameter_widget_find_dict_parameter(struct parameter_widget * widget)
 {
-	GeoXmlDocument *		documents [] = {
-		widget->dicts->project, widget->dicts->line,
-		widget->dicts->flow, NULL};
-
-	widget->dict_parameter = NULL;
-	for (int i = 0; documents[i] != NULL; i++) {
-		GeoXmlProgramParameter *	dict_parameter;
-
-		dict_parameter = geoxml_program_parameter_find_dict_parameter(
-			GEOXML_PROGRAM_PARAMETER(widget->parameter), documents[i]);
-		if (dict_parameter != NULL)
-			widget->dict_parameter = dict_parameter;
+	g_signal_handlers_disconnect_matched(G_OBJECT(widget->value_widget),
+		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+		(GCallback)on_dict_clicked, NULL);
+	if (widget->dict_parameter != NULL) {
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(widget->value_widget),
+			GTK_ENTRY_ICON_SECONDARY, "accessories-dictionary");
+		g_signal_connect(widget->value_widget, "icon-press",
+			(GCallback)on_dict_clicked, widget);
+	} else {
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(widget->value_widget),
+			GTK_ENTRY_ICON_SECONDARY, NULL);
 	}
 }
 
@@ -681,22 +678,24 @@ compare_parameters_by_keyword(GeoXmlProgramParameter * parameter1, GeoXmlProgram
 		geoxml_program_parameter_get_keyword(parameter2));
 }
 
-/* Function: on_dict_clicked
- * Read dictionaries and display compatible parameters in a popup menu
+/* Function: parameter_widget_dict_popup_menu
+ * Read dictionaries and build a popup menu
  */
-static void
-on_dict_clicked(GtkEntry * entry, GtkEntryIconPosition icon_pos, GdkEvent * event,
-struct parameter_widget * widget)
+static GtkWidget *
+parameter_widget_dict_popup_menu(struct parameter_widget * widget)
 {
 	enum GEOXML_PARAMETERTYPE	type;
-	enum GEOXML_PARAMETERTYPE	compatibles_types[4] = {
+	enum GEOXML_PARAMETERTYPE	compatibles_types[5] = {
 		GEOXML_PARAMETERTYPE_UNKNOWN, GEOXML_PARAMETERTYPE_UNKNOWN,
-		GEOXML_PARAMETERTYPE_UNKNOWN, GEOXML_PARAMETERTYPE_UNKNOWN};
+		GEOXML_PARAMETERTYPE_UNKNOWN, GEOXML_PARAMETERTYPE_UNKNOWN,
+		GEOXML_PARAMETERTYPE_UNKNOWN
+	};
 
 	GList *				compatible_parameters, * cp;
 	GeoXmlDocument *		documents[4] = {
 		widget->dicts->project, widget->dicts->line,
-		widget->dicts->flow, NULL};
+		widget->dicts->flow, NULL
+	};
 
 	GtkWidget *			menu;
 	GtkWidget *			menu_item;
@@ -705,6 +704,10 @@ struct parameter_widget * widget)
 	type = geoxml_parameter_get_type(widget->parameter);
 	compatibles_types[0] = type;
 	switch (type) {
+	case GEOXML_PARAMETERTYPE_STRING:
+		compatibles_types[1] = GEOXML_PARAMETERTYPE_INT;
+		compatibles_types[2] = GEOXML_PARAMETERTYPE_FLOAT;
+		compatibles_types[3] = GEOXML_PARAMETERTYPE_RANGE;
 	case GEOXML_PARAMETERTYPE_FLOAT:
 		compatibles_types[1] = GEOXML_PARAMETERTYPE_INT;
 		break;
@@ -752,7 +755,7 @@ struct parameter_widget * widget)
 
 	menu_item = gtk_radio_menu_item_new_with_label(NULL, _("Do not use dictionary"));
 	g_object_set(menu_item, "user-data", NULL, NULL);
-	g_signal_connect(menu_item, "toggled",
+	g_signal_connect(menu_item, "activate",
 		G_CALLBACK(on_dict_parameter_toggled), widget);
 	group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
 	gtk_container_add(GTK_CONTAINER(menu), menu_item);
@@ -782,9 +785,53 @@ struct parameter_widget * widget)
 	}
 
 	gtk_widget_show_all(menu);
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, 0);
-
 	g_list_free(compatible_parameters);
+
+	return menu;
+}
+
+/* Function: on_dict_clicked
+ * Popup menu upon dictionary icon click
+ */
+static void
+on_dict_clicked(GtkEntry * entry, GtkEntryIconPosition icon_pos, GdkEventButton * event,
+struct parameter_widget * widget)
+{
+	gtk_menu_popup(GTK_MENU(parameter_widget_dict_popup_menu(widget)), NULL, NULL, NULL, NULL, event->button, event->time);
+}
+
+/* Function: parameter_widget_value_entry_on_populate_popup
+ * Add dictionary submenu into entry popup menu
+ */
+static void
+parameter_widget_value_entry_on_populate_popup(GtkEntry * entry, GtkMenu * menu,
+struct parameter_widget * widget)
+{
+	GtkWidget *	menu_item;
+
+	menu_item = gtk_separator_menu_item_new();
+	gtk_widget_show(menu_item);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
+
+	menu_item = gtk_menu_item_new_with_label(_("Dictionary"));
+	gtk_widget_show(menu_item);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), parameter_widget_dict_popup_menu(widget));
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
+}
+
+/* Function: parameter_widget_can_use_dict
+ * Return TRUE if parameter is of an compatible type to use an dictionary value
+ */
+static gboolean
+parameter_widget_can_use_dict(struct parameter_widget * widget)
+{
+	switch (geoxml_parameter_get_type(widget->parameter)) {
+	case GEOXML_PARAMETERTYPE_FLOAT: case GEOXML_PARAMETERTYPE_INT:
+	case GEOXML_PARAMETERTYPE_STRING: case GEOXML_PARAMETERTYPE_RANGE:
+		return TRUE;
+	default:
+		return FALSE;
+	}
 }
 
 /* Function: on_dict_parameter_toggled
@@ -802,6 +849,8 @@ on_dict_parameter_toggled(GtkMenuItem * menu_item, struct parameter_widget * wid
 
 	geoxml_program_parameter_set_value_from_dict(GEOXML_PROGRAM_PARAMETER(widget->parameter), dict_parameter);
 	widget->dict_parameter = dict_parameter;
+	parameter_widget_find_dict_parameter(widget);
+
 	parameter_widget_update(widget);
 }
 

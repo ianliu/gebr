@@ -264,13 +264,12 @@ job_control_cancel(void)
 		return;
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to terminate job"));
-	if (comm_server_is_local(job->server->comm) == FALSE) {
+	if (comm_server_is_local(job->server->comm) == FALSE)
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to terminate job '%s'"),
 			job->server->comm->address->str, job->title->str);
-	} else {
+	else
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking local server to terminate job '%s'"),
 			job->title->str);
-	}
 
 	protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
 		protocol_defs.end_def, 1, job->jid->str);
@@ -342,8 +341,8 @@ job_control_stop(void)
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
 		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
-			JC_STRUCT, &job,
-			-1);
+		JC_STRUCT, &job,
+		-1);
 
 	if (job->status != JOB_STATUS_RUNNING) {
 		gebr_message(LOG_WARNING, TRUE, FALSE, _("Job is not running"));
@@ -392,8 +391,8 @@ job_control_clicked(void)
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
 		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
-			JC_STRUCT, &job,
-			-1);
+		JC_STRUCT, &job,
+		-1);
 
 	job_fill_info(job);
 }

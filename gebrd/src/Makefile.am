@@ -20,7 +20,7 @@ gebrd_SOURCES = \
 	gebrd.c \
 	server.c \
 	client.c \
-	job.c \
+	job.c
 noinst_HEADERS = \
 	gebrd.h \
 	server.h \

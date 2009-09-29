@@ -59,7 +59,7 @@ struct dict_edit_data {
 	GtkWidget *		tree_view;
 	GtkTreeModel *		tree_model;
 	GtkCellRenderer *	cell_renderer_array[4];
-} * dict_edit_data;
+};
 
 static void
 on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data);
@@ -356,13 +356,13 @@ document_dict_edit_setup_ui(GeoXmlDocument * document)
 	type_model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
 	gtk_list_store_append(type_model, &iter);
 	gtk_list_store_set(type_model, &iter,
+		0, "integer", 1, GEOXML_PARAMETERTYPE_INT, -1);
+	gtk_list_store_append(type_model, &iter);
+	gtk_list_store_set(type_model, &iter,
+		0, "real", 1, GEOXML_PARAMETERTYPE_FLOAT, -1);
+	gtk_list_store_append(type_model, &iter);
+	gtk_list_store_set(type_model, &iter,
 		0, "string", 1, GEOXML_PARAMETERTYPE_STRING, -1);
-	gtk_list_store_append(type_model, &iter);
-	gtk_list_store_set(type_model, &iter,
-		0, "integer", 1, GEOXML_PARAMETERTYPE_INT);
-	gtk_list_store_append(type_model, &iter);
-	gtk_list_store_set(type_model, &iter,
-		0, "real", 1, GEOXML_PARAMETERTYPE_INT);
 	cell_renderer = gtk_cell_renderer_combo_new();
 	data->cell_renderer_array[DICT_EDIT_TYPE] = cell_renderer;
 	column = gtk_tree_view_column_new_with_attributes(_("Type"), cell_renderer, NULL);
