@@ -337,14 +337,9 @@ project_line_info_update(void)
 void
 project_line_set_selected(GtkTreeIter * iter, GeoXmlDocument * document)
 {
-	GtkTreeSelection *	selection;
-	GtkTreePath *		tree_path;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), iter);
-	
-	gtk_tree_view_expand_to_path(GTK_TREE_VIEW(gebr.ui_project_line->view), tree_path);
-	gtk_tree_selection_select_iter(selection, iter);
+	libgebr_gui_gtk_tree_view_expand(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
+	gtk_tree_selection_select_iter(gtk_tree_view_get_selection(
+		GTK_TREE_VIEW(gebr.ui_project_line->view)), iter);
 	libgebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
 
 	gtk_tree_store_set(gebr.ui_project_line->store, iter,
@@ -352,8 +347,6 @@ project_line_set_selected(GtkTreeIter * iter, GeoXmlDocument * document)
 		PL_FILENAME, geoxml_document_get_filename(document),
 		-1);
 	project_line_load();
-
-	gtk_tree_path_free(tree_path);
 }
 
 /*

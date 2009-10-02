@@ -37,7 +37,6 @@ main(int argc, char *argv[])
 #endif
 
 	gtk_init(&argc, &argv);
-
 	setlocale(LC_ALL, "");
 	setlocale(LC_NUMERIC, "C");
 

@@ -29,6 +29,6 @@ gboolean
 document_properties_setup_ui(GeoXmlDocument * document);
 
 void
-document_dict_edit_setup_ui(GeoXmlDocument * document);
+document_dict_edit_setup_ui(void);
 
 #endif //__UI_DOCUMENT_H

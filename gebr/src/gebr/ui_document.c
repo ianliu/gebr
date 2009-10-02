@@ -38,18 +38,24 @@
  */
 
 enum {
+	DICT_EDIT_DOCUMENT,
 	DICT_EDIT_TYPE,
+	DICT_EDIT_KEYWORD_IMAGE,
 	DICT_EDIT_KEYWORD,
 	DICT_EDIT_VALUE,
 	DICT_EDIT_COMMENT,
-	DICT_EDIT_GEOXML_PARAMETER,
+	DICT_EDIT_GEOXML_POINTER,
+	DICT_EDIT_EDITABLE,
 	DICT_EDIT_N_COLUMN,
 };
 
 struct dict_edit_data {
 	GtkWidget *		widget;
-	GeoXmlDocument *	document;
 
+	GeoXmlDocument *	documents[4];
+	GtkTreeIter		iters[3];
+
+	GtkWidget *		document_combo;
 	GtkWidget *		type_combo;
 	GtkWidget *		keyword_entry;
 	GtkWidget *		value_entry;
@@ -58,7 +64,8 @@ struct dict_edit_data {
 	GtkActionGroup *	action_group;
 	GtkWidget *		tree_view;
 	GtkTreeModel *		tree_model;
-	GtkCellRenderer *	cell_renderer_array[4];
+	GtkTreeModel *		document_model;
+	GtkCellRenderer *	cell_renderer_array[6];
 };
 
 static void
@@ -73,6 +80,8 @@ on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * ne
 struct dict_edit_data * data);
 static void
 dict_edit_load_iter(struct dict_edit_data * data, GtkTreeIter * iter, GeoXmlParameter * parameter);
+static void
+dict_edit_check_duplicates(struct dict_edit_data * data, GeoXmlDocument * document, const gchar * keyword);
 static gboolean
 dict_edit_check_duplicate_keyword(struct dict_edit_data * data, GeoXmlProgramParameter * parameter,
 const gchar * keyword, gboolean show_error);
@@ -84,6 +93,11 @@ static enum GEOXML_PARAMETERTYPE
 dict_edit_type_text_to_geoxml_type(const gchar * text);
 static gboolean
 dict_edit_check_empty_keyword(const gchar * keyword);
+static GtkTreeIter
+dict_edit_append_iter(struct dict_edit_data * data, GeoXmlObject * object, GtkTreeIter * document_iter);
+
+static const gchar *
+document_get_name_from_type(GeoXmlDocument * document);
 
 static const GtkActionEntry dict_actions_entries [] = {
 	{"add",  GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter"),
@@ -143,23 +157,12 @@ document_properties_setup_ui(GeoXmlDocument * document)
 
 	if (document == NULL)
 		return FALSE;
+	if (geoxml_document_get_type(document) == GEOXML_DOCUMENT_TYPE_FLOW)
+		flow_browse_single_selection();
 
 	dialog_title = g_string_new(NULL);
-	switch (geoxml_document_get_type(document)) {
-	case GEOXML_DOCUMENT_TYPE_PROJECT:
-		g_string_printf(dialog_title, _("Properties for project '%s'"), geoxml_document_get_title(document));
-		break;
-	case GEOXML_DOCUMENT_TYPE_LINE:
-		g_string_printf(dialog_title, _("Properties for line '%s'"), geoxml_document_get_title(document));
-		break;
-	case GEOXML_DOCUMENT_TYPE_FLOW:
-		flow_browse_single_selection();
-		g_string_printf(dialog_title, _("Properties for flow '%s'"), geoxml_document_get_title(document));
-		break;
-	default:
-		goto out;
-	}
-
+	g_string_printf(dialog_title, _("Properties for %s '%s'"),
+		document_get_name_from_type(document), geoxml_document_get_title(document));
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 		GTK_WINDOW(gebr.window), GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -281,7 +284,7 @@ document_properties_setup_ui(GeoXmlDocument * document)
 	}
 
 	gtk_widget_destroy(GTK_WIDGET(dialog));
-out:	g_string_free(dialog_title, TRUE);
+	g_string_free(dialog_title, TRUE);
 
 	return ret;
 }
@@ -290,7 +293,7 @@ out:	g_string_free(dialog_title, TRUE);
  * Open dialog for parameters's edition
  */
 void
-document_dict_edit_setup_ui(GeoXmlDocument * document)
+document_dict_edit_setup_ui(void)
 {
 	GtkWidget *		dialog;
 	GtkWidget *		frame;
@@ -302,40 +305,49 @@ document_dict_edit_setup_ui(GeoXmlDocument * document)
 	GtkActionGroup *	action_group;
 	GtkAccelGroup *		accel_group;
 	GtkCellRenderer *	cell_renderer;
+	GtkCellRenderer *	pixbuf_cell_renderer;
 	GtkTreeViewColumn *	column;
-	GtkListStore *		list_store;
+	GtkTreeStore *		tree_store;
 	GtkListStore *		type_model;
+	GtkListStore *		document_model;
 	GtkTreeIter		iter;
 
+	GString *		dialog_title;
+	GeoXmlDocument *	document;
 	GeoXmlSequence *	parameter;
 	struct dict_edit_data *	data;
 
-	if (document == NULL)
-		return;
-
+	document = document_get_current();
 	data = g_malloc(sizeof(struct dict_edit_data));
-	data->document = document;
-	list_store = gtk_list_store_new(DICT_EDIT_N_COLUMN,
-		G_TYPE_STRING, /* type */
-		G_TYPE_STRING, /* keyword */
-		G_TYPE_STRING, /* value */
-		G_TYPE_STRING, /* comment */
-		G_TYPE_POINTER /* GeoXmlParameter */);
-	data->tree_model = GTK_TREE_MODEL(list_store);
+	tree_store = gtk_tree_store_new(DICT_EDIT_N_COLUMN,
+		G_TYPE_STRING,  /* document */
+		G_TYPE_STRING,  /* type */
+		G_TYPE_STRING,  /* keyword stock */
+		G_TYPE_STRING,  /* keyword */
+		G_TYPE_STRING,  /* value */
+		G_TYPE_STRING,  /* comment */
+		G_TYPE_POINTER, /* GeoXmlParameter */
+		G_TYPE_BOOLEAN  /* editable */);
+	data->tree_model = GTK_TREE_MODEL(tree_store);
 
 	action_group = gtk_action_group_new("dict_edit");
 	data->action_group = action_group;
 	gtk_action_group_set_translation_domain(action_group, PACKAGE);
-	gtk_action_group_add_actions(action_group, dict_actions_entries, G_N_ELEMENTS(dict_actions_entries), data);
+	gtk_action_group_add_actions(action_group, dict_actions_entries,
+		G_N_ELEMENTS(dict_actions_entries), data);
 	accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), accel_group);
 	libgebr_gui_gtk_action_group_set_accel_group(action_group, accel_group);
 
-	dialog = gtk_dialog_new_with_buttons(_("Edit parameters' dictionary"),
+	dialog_title = g_string_new(NULL);
+	g_string_printf(dialog_title, _("Parameters' dictionary for %s '%s'"),
+		document_get_name_from_type(document), geoxml_document_get_title(document));
+	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 		NULL);
+	gtk_widget_set_size_request(dialog, -1, 400);
 
 	frame = gtk_frame_new("");
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), frame);
@@ -344,14 +356,22 @@ document_dict_edit_setup_ui(GeoXmlDocument * document)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-	tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list_store));
+	tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(tree_store));
 	gtk_widget_set_size_request(tree_view, 350, 140);
 	data->tree_view = tree_view;
 	gtk_container_add(GTK_CONTAINER(scrolled_window), tree_view);
 	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(tree_view),
 		(GtkPopupCallback)on_dict_edit_popup_menu, data);
-	libgebr_gui_gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(tree_view),
-		DICT_EDIT_GEOXML_PARAMETER, NULL, NULL);
+
+	cell_renderer = gtk_cell_renderer_text_new();
+	data->cell_renderer_array[DICT_EDIT_DOCUMENT] = cell_renderer;
+	column = gtk_tree_view_column_new_with_attributes("", cell_renderer, NULL);
+	g_object_set(G_OBJECT(column), "sizing", GTK_TREE_VIEW_COLUMN_FIXED, NULL);
+	gtk_tree_view_column_set_fixed_width(column, 93);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_DOCUMENT);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
+	document_model = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_POINTER);
+	data->document_model = GTK_TREE_MODEL(document_model);
 
 	type_model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
 	gtk_list_store_append(type_model, &iter);
@@ -373,18 +393,27 @@ document_dict_edit_setup_ui(GeoXmlDocument * document)
 	g_signal_connect(cell_renderer, "edited",
 		(GCallback)on_dict_edit_type_cell_edited, data);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_TYPE);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
 
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(column, _("Keyword"));
+	pixbuf_cell_renderer = gtk_cell_renderer_pixbuf_new();
+	data->cell_renderer_array[DICT_EDIT_KEYWORD_IMAGE] = pixbuf_cell_renderer;
+	gtk_tree_view_column_pack_start(column, pixbuf_cell_renderer, FALSE);
+	gtk_tree_view_column_add_attribute(column, pixbuf_cell_renderer, "stock-id", DICT_EDIT_KEYWORD_IMAGE);
 	cell_renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(column, cell_renderer, FALSE);
 	data->cell_renderer_array[DICT_EDIT_KEYWORD] = cell_renderer;
 	g_object_set(cell_renderer, "editable", TRUE, NULL);
 	g_signal_connect(cell_renderer, "edited",
 		(GCallback)on_dict_edit_cell_edited, data);
-	column = gtk_tree_view_column_new_with_attributes(_("Keyword"), cell_renderer, NULL);
 	g_object_set(G_OBJECT(column), "sizing", GTK_TREE_VIEW_COLUMN_FIXED, NULL);
 	gtk_tree_view_column_set_fixed_width(column, 103);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_KEYWORD);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
+
 	cell_renderer = gtk_cell_renderer_text_new();
 	data->cell_renderer_array[DICT_EDIT_VALUE] = cell_renderer;
 	g_object_set(cell_renderer, "editable", TRUE, NULL);
@@ -394,6 +423,7 @@ document_dict_edit_setup_ui(GeoXmlDocument * document)
 	g_object_set(G_OBJECT(column), "sizing", GTK_TREE_VIEW_COLUMN_FIXED, NULL);
 	gtk_tree_view_column_set_fixed_width(column, 103);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_VALUE);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
 	cell_renderer = gtk_cell_renderer_text_new();
 	data->cell_renderer_array[DICT_EDIT_COMMENT] = cell_renderer;
@@ -402,10 +432,22 @@ document_dict_edit_setup_ui(GeoXmlDocument * document)
 		(GCallback)on_dict_edit_cell_edited, data);
 	column = gtk_tree_view_column_new_with_attributes(_("Comment"), cell_renderer, NULL);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_COMMENT);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
 
-	add_hbox = gtk_hbox_new(FALSE, 5);
+	/*
+	 * Add data widgets
+	 */ 
+	add_hbox = gtk_hbox_new(FALSE, 4);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), add_hbox, FALSE, TRUE, 0);
+
+	data->document_combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(document_model));
+	cell_renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(data->document_combo), cell_renderer, TRUE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(data->document_combo), cell_renderer, "text", NULL);
+	gtk_widget_set_size_request(data->document_combo, 90, -1);
+	gtk_box_pack_start(GTK_BOX(add_hbox), data->document_combo, FALSE, FALSE, 0);
+
 	data->type_combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(type_model));
 	cell_renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(data->type_combo), cell_renderer, TRUE);
@@ -413,6 +455,7 @@ document_dict_edit_setup_ui(GeoXmlDocument * document)
 	gtk_combo_box_set_active(GTK_COMBO_BOX(data->type_combo), 0);
 	gtk_widget_set_size_request(data->type_combo, 90, -1);
 	gtk_box_pack_start(GTK_BOX(add_hbox), data->type_combo, FALSE, FALSE, 0);
+
 	data->keyword_entry = gtk_entry_new();
 	g_signal_connect(data->keyword_entry, "activate",
 		G_CALLBACK(on_dict_edit_add_clicked), data);
@@ -430,18 +473,64 @@ document_dict_edit_setup_ui(GeoXmlDocument * document)
 	widget = gtk_action_create_tool_item(gtk_action_group_get_action(action_group, "add"));
 	gtk_box_pack_start(GTK_BOX(add_hbox), widget, FALSE, FALSE, 0);
 
-	parameter = geoxml_parameters_get_first_parameter(geoxml_document_get_dict_parameters(data->document));
-	for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
-		gtk_list_store_append(GTK_LIST_STORE(data->tree_model), &iter);
-		dict_edit_load_iter(data, &iter, GEOXML_PARAMETER(parameter));
+	data->documents[0] = GEOXML_DOCUMENT(gebr.project);
+	data->documents[1] = GEOXML_DOCUMENT(gebr.line);
+	data->documents[2] = GEOXML_DOCUMENT(gebr.flow);
+	data->documents[3] = NULL;
+
+	for (int i = 0; data->documents[i] != NULL; ++i) {
+		GtkTreeIter	document_iter;
+		const gchar *	document_name;
+
+		document_name = document_get_name_from_type(data->documents[i]);
+
+		gtk_tree_store_append(GTK_TREE_STORE(data->tree_model), &document_iter, NULL);
+		data->iters[i] = document_iter;
+		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &document_iter,
+			DICT_EDIT_DOCUMENT, document_name,
+			DICT_EDIT_GEOXML_POINTER, parameter,
+			DICT_EDIT_EDITABLE, FALSE,
+			-1);
+
+		parameter = geoxml_parameters_get_first_parameter(
+			geoxml_document_get_dict_parameters(data->documents[i]));
+		for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
+			iter = dict_edit_append_iter(data, GEOXML_OBJECT(parameter), &document_iter);
+			dict_edit_load_iter(data, &iter, GEOXML_PARAMETER(parameter));
+			if (i == 0)
+				continue;
+			dict_edit_check_duplicates(data, data->documents[i],
+				geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(parameter)));
+		}
+		if (document == data->documents[i]) {
+			gtk_combo_box_set_active(GTK_COMBO_BOX(data->document_combo), i);
+			libgebr_gui_gtk_tree_view_expand(GTK_TREE_VIEW(tree_view), &document_iter);
+			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(
+				GTK_TREE_VIEW(tree_view)), &document_iter);
+		}
+
+		/* document combo box */
+		gtk_list_store_append(document_model, &iter);
+		gtk_list_store_set(document_model, &iter,
+			0, document_name, 1, data->documents[i], 2, &data->iters[i], -1);
 	}
 
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
-	document_save(data->document);
+	for (int i = 0; data->documents[i] != NULL; ++i)
+		document_save(data->documents[i]);
 
+	for (int i = 0; data->documents[i] != NULL; ++i) {
+		GeoXmlSequence *	i_parameter;
+
+		i_parameter = geoxml_parameters_get_first_parameter(
+			geoxml_document_get_dict_parameters(data->documents[i]));
+		for (; i_parameter != NULL; geoxml_sequence_next(&i_parameter))
+			gtk_tree_iter_free(geoxml_object_get_user_data(GEOXML_OBJECT(i_parameter)));
+	}
 	g_free(data);
+	g_string_free(dialog_title, TRUE);
 	gtk_widget_destroy(dialog);
 }
 
@@ -457,11 +546,15 @@ static void
 on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data)
 {
 	GtkTreeIter			iter;
+	GtkTreeIter			document_iter;
 	GeoXmlProgramParameter *	parameter;
 	const gchar *			keyword;
+	GeoXmlDocument *		document;
 
+	document = data->documents[gtk_combo_box_get_active(GTK_COMBO_BOX(data->document_combo))];
+	document_iter = data->iters[gtk_combo_box_get_active(GTK_COMBO_BOX(data->document_combo))];
 	parameter = GEOXML_PROGRAM_PARAMETER(geoxml_parameters_append_parameter(
-		geoxml_document_get_dict_parameters(data->document),
+		geoxml_document_get_dict_parameters(document),
 		dict_edit_type_text_to_geoxml_type(
 			gtk_combo_box_get_active_text(GTK_COMBO_BOX(data->type_combo)))));
 
@@ -498,8 +591,11 @@ on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data)
 	gtk_entry_set_text(GTK_ENTRY(data->comment_entry), "");
 	gtk_widget_grab_focus(data->keyword_entry);
 
-	gtk_list_store_append(GTK_LIST_STORE(data->tree_model), &iter);
+	iter = dict_edit_append_iter(data, GEOXML_OBJECT(parameter), &document_iter);
 	dict_edit_load_iter(data, &iter, GEOXML_PARAMETER(parameter));
+	libgebr_gui_gtk_tree_view_expand(GTK_TREE_VIEW(data->tree_view), &document_iter);
+	gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(data->tree_view)), &iter);
+	libgebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(data->tree_view), &iter);
 }
 
 /* Function: on_dict_edit_remove_clicked
@@ -515,10 +611,10 @@ on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_data * data)
 		return;
 
 	gtk_tree_model_get(data->tree_model, &iter,
-		DICT_EDIT_GEOXML_PARAMETER, &parameter, -1);
+		DICT_EDIT_GEOXML_POINTER, &parameter, -1);
 
 	geoxml_sequence_remove(parameter);
-	gtk_list_store_remove(GTK_LIST_STORE(data->tree_model), &iter);
+	gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &iter);
 }
 
 /* Function: on_dict_edit_type_cell_edited
@@ -534,7 +630,7 @@ struct dict_edit_data * data)
 
 	gtk_tree_model_get_iter_from_string(data->tree_model, &iter, path_string);
 	gtk_tree_model_get(data->tree_model, &iter,
-		DICT_EDIT_GEOXML_PARAMETER, &parameter, -1);
+		DICT_EDIT_GEOXML_POINTER, &parameter, -1);
 
 	keyword = geoxml_program_parameter_get_keyword(GEOXML_PROGRAM_PARAMETER(parameter));
 	value = geoxml_program_parameter_get_first_value(GEOXML_PROGRAM_PARAMETER(parameter), FALSE);
@@ -565,7 +661,7 @@ struct dict_edit_data * data)
 
 	gtk_tree_model_get_iter_from_string(data->tree_model, &iter, path_string);
 	gtk_tree_model_get(data->tree_model, &iter,
-		DICT_EDIT_GEOXML_PARAMETER, &parameter, -1);
+		DICT_EDIT_GEOXML_POINTER, &parameter, -1);
 	switch (index) {
 	case DICT_EDIT_KEYWORD:
 		if (!dict_edit_check_empty_keyword(new_text) ||
@@ -593,7 +689,7 @@ struct dict_edit_data * data)
 	default:
 		return;
 	}
-	gtk_list_store_set(GTK_LIST_STORE(data->tree_model), &iter, index, new_text, -1);
+	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter, index, new_text, -1);
 }
 
 /* Function: dict_edit_load_iter
@@ -618,15 +714,42 @@ dict_edit_load_iter(struct dict_edit_data * data, GtkTreeIter * iter, GeoXmlPara
 		return;
 	}
 
-	gtk_list_store_set(GTK_LIST_STORE(data->tree_model), iter,
+	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
 		DICT_EDIT_TYPE, type_string,
+		DICT_EDIT_KEYWORD_IMAGE, "",
 		DICT_EDIT_KEYWORD, geoxml_program_parameter_get_keyword(
 			GEOXML_PROGRAM_PARAMETER(parameter)),
 		DICT_EDIT_VALUE, geoxml_program_parameter_get_first_value(
 			GEOXML_PROGRAM_PARAMETER(parameter), FALSE),
 		DICT_EDIT_COMMENT, geoxml_parameter_get_label(GEOXML_PARAMETER(parameter)),
-		DICT_EDIT_GEOXML_PARAMETER, parameter,
+		DICT_EDIT_GEOXML_POINTER, parameter,
+		DICT_EDIT_EDITABLE, TRUE,
 		-1);
+}
+
+/* Function: dict_edit_check_duplicates
+ * Check for duplicates keywords for parameters of higher hierarchical documents levels
+ */
+static void
+dict_edit_check_duplicates(struct dict_edit_data * data, GeoXmlDocument * document, const gchar * keyword)
+{
+	GeoXmlSequence *	i_parameter;
+
+	for (int i = 0; data->documents[i] != document; ++i) {
+		i_parameter = geoxml_parameters_get_first_parameter(
+			geoxml_document_get_dict_parameters(data->documents[i]));
+		for (; i_parameter != NULL; geoxml_sequence_next(&i_parameter)) {
+			GtkTreeIter *	iter;
+			const gchar*	pixbuf;
+
+			pixbuf = (strcmp(geoxml_program_parameter_get_keyword(
+			GEOXML_PROGRAM_PARAMETER(i_parameter)), keyword))
+				? NULL : GTK_STOCK_DIALOG_WARNING;
+			iter = (GtkTreeIter*)geoxml_object_get_user_data(GEOXML_OBJECT(i_parameter));
+			gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
+				DICT_EDIT_KEYWORD_IMAGE, pixbuf, -1);
+		}
+	}
 }
 
 /* Function: dict_edit_check_duplicate_keyword
@@ -636,21 +759,25 @@ static gboolean
 dict_edit_check_duplicate_keyword(struct dict_edit_data * data, GeoXmlProgramParameter * parameter,
 const gchar * keyword, gboolean show_error)
 {
-	GtkTreeIter			i_iter;
-	GeoXmlProgramParameter *	i_parameter;
+	GeoXmlDocument *	document;
+	GeoXmlSequence *	i_parameter;
 
-	libgebr_gui_gtk_tree_model_foreach(i_iter, data->tree_model) {
-		gtk_tree_model_get(data->tree_model, &i_iter,
-			DICT_EDIT_GEOXML_PARAMETER, &i_parameter, -1);
-		if (i_parameter == parameter)
+	document = geoxml_object_get_owner_document(GEOXML_OBJECT(parameter));
+	i_parameter = geoxml_parameters_get_first_parameter(
+		geoxml_document_get_dict_parameters(document));
+	for (; i_parameter != NULL; geoxml_sequence_next(&i_parameter )) {
+		dict_edit_check_duplicates(data, document, keyword);
+
+		if (i_parameter == GEOXML_SEQUENCE(parameter))
 			continue;
-		if (!strcmp(geoxml_program_parameter_get_keyword(i_parameter), keyword)) {
-			if (show_error)
-				libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-					_("Duplicate keyword"),
-					_("Another parameter already uses this keyword, please choose other."));
-			return TRUE;
-		}
+		if (strcmp(geoxml_program_parameter_get_keyword(
+		GEOXML_PROGRAM_PARAMETER(i_parameter)), keyword))
+			continue;
+		if (show_error)
+			libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				_("Duplicate keyword"),
+				_("Another parameter already uses this keyword, please choose other."));
+		return TRUE;
 	}
 
 	return FALSE;
@@ -719,4 +846,39 @@ dict_edit_check_empty_keyword(const gchar * keyword)
 		return FALSE;
 	}
 	return TRUE;
+}
+
+/* Function: dict_edit_append_iter
+ * Append iter and references it on the libgebr_geoxml's object
+ */
+static GtkTreeIter
+dict_edit_append_iter(struct dict_edit_data * data, GeoXmlObject * object, GtkTreeIter * document_iter)
+{
+	GtkTreeIter	iter;
+
+	gtk_tree_store_append(GTK_TREE_STORE(data->tree_model), &iter, document_iter);
+	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter,
+		DICT_EDIT_KEYWORD_IMAGE, GTK_STOCK_DIALOG_WARNING, -1);
+	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter,
+		DICT_EDIT_KEYWORD_IMAGE, NULL, -1);
+	geoxml_object_set_user_data(object, gtk_tree_iter_copy(&iter));
+
+	return iter;
+}
+
+/* Function: document_get_name_from_type
+ * Return the document name given its type
+ */
+static const gchar *
+document_get_name_from_type(GeoXmlDocument * document)
+{
+	switch (geoxml_document_get_type(document)) {
+	case GEOXML_DOCUMENT_TYPE_PROJECT:
+		return _("project");
+	case GEOXML_DOCUMENT_TYPE_LINE:
+		return _("line");
+	case GEOXML_DOCUMENT_TYPE_FLOW:
+		return _("flow");
+	}
+	return "";
 }

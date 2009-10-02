@@ -63,6 +63,8 @@
  */
 #define GEOXML_OBJECT(object) ((GeoXmlObject*)(object))
 
+#include "document.h"
+
 /**
  * The GeoXmlObject struct contains private data only, and should be accessed using the functions below.
  */
@@ -104,6 +106,14 @@ geoxml_object_set_user_data(GeoXmlObject * object, gpointer user_data);
  */
 gpointer
 geoxml_object_get_user_data(GeoXmlObject * object);
+
+/**
+ * Get the owner document of \p object
+ *
+ * Returns NULL if _object_ is NULL
+ */
+GeoXmlDocument *
+geoxml_object_get_owner_document(GeoXmlObject * object);
 
 /**
  * Copy _object_  for parallel use (e.g. when you don't want to modify _object_)

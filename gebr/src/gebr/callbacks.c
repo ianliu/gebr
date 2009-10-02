@@ -95,7 +95,7 @@ on_document_properties_activate(void)
 void
 on_document_dict_edit_activate(void)
 {
-	document_dict_edit_setup_ui(document_get_current());
+	document_dict_edit_setup_ui();
 }
 
 /* Function: on_project_line_new_project_activate

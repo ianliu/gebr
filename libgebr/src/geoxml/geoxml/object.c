@@ -71,6 +71,14 @@ geoxml_object_get_user_data(GeoXmlObject * object)
 	return ((GdomeNode*)object)->user_data;
 }
 
+GeoXmlDocument *
+geoxml_object_get_owner_document(GeoXmlObject * object)
+{
+	if (object == NULL)
+		return NULL;
+	return (GeoXmlDocument*)gdome_el_ownerDocument((GdomeElement*)object, &exception);
+}
+
 GeoXmlObject *
 geoxml_object_copy(GeoXmlObject * object)
 {
