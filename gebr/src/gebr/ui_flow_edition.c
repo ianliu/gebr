@@ -243,26 +243,12 @@ flow_edition_select_component_iter(GtkTreeIter * iter)
 void
 flow_edition_set_io(void)
 {
-	gchar *			input_file;
-	gchar *			output_file;
-
-	/* input iter */
-	/*input_file = strlen(geoxml_flow_io_get_input(gebr.flow))
-		? g_path_get_basename(geoxml_flow_io_get_input(gebr.flow)) : strdup("");*/
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
-		FSEQ_TITLE_COLUMN, ""/*input_file*/,
 		FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_go_back,
 		-1);
-	/* output iter */
-	/*output_file = strlen(geoxml_flow_io_get_output(gebr.flow))
-		? g_path_get_basename(geoxml_flow_io_get_output(gebr.flow)) : strdup("");*/
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
-		FSEQ_TITLE_COLUMN, ""/*output_file*/,
 		FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_go_forward,
 		-1);
-
-	// g_free(input_file);
-	// g_free(output_file);
 }
 
 /*

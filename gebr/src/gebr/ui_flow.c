@@ -417,8 +417,6 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 			FLOW_IO_POINTER, server_io,
 			-1);
 
-		if (strcmp());
-
 		geoxml_sequence_next(&server_io);
 	}
 }
@@ -482,7 +480,6 @@ flow_io_actions(gint response, struct ui_flow_io * ui_flow_io)
 	}
 
 out:	document_save(GEOXML_DOCUMENT(gebr.flow));
-	flow_edition_set_io();
 	flow_browse_info_update();
 }
 
