@@ -50,7 +50,9 @@ flow_io_setup_ui			(void);
 gboolean
 flow_io_get_selected			(struct ui_flow_io *	ui_flow_io,
 					 GtkTreeIter *		iter);
-
+void
+flow_io_select_iter			(struct ui_flow_io *	ui_flow_io,
+					 GtkTreeIter *		iter);
 void
 flow_io_customized_paths_from_line	(GtkFileChooser *	chooser);
 

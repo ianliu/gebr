@@ -372,14 +372,15 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 	/* flow 0.3.0 to 0.3.1 */
 	if (strcmp(version, "0.3.1") < 0) {
 		GdomeElement *	dict_element;
+		GdomeElement *	pivot;
 
 		__geoxml_set_attr_value(root_element, "version", "0.3.1");
 
 		dict_element = __geoxml_insert_new_element(root_element, "dict",
 			__geoxml_get_first_element(root_element, "date"));
 		__geoxml_parameters_append_new(dict_element);
-		__geoxml_insert_new_element(root_element, "servers",
-			__geoxml_get_first_element(root_element, "io"));
+		pivot = __geoxml_next_element(__geoxml_get_first_element(root_element, "io"));
+		__geoxml_insert_new_element(root_element, "servers", pivot);
 	}
 
 	ret = GEOXML_RETV_SUCCESS;

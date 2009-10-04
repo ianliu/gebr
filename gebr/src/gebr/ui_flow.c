@@ -278,6 +278,14 @@ flow_io_get_selected(struct ui_flow_io * ui_flow_io, GtkTreeIter * iter)
 			GTK_TREE_VIEW(ui_flow_io->treeview)), NULL, iter);
 }
 
+void
+flow_io_select_iter(struct ui_flow_io * ui_flow_io, GtkTreeIter * iter)
+{
+	gtk_tree_selection_select_iter(
+		gtk_tree_view_get_selection(
+			GTK_TREE_VIEW(ui_flow_io->treeview)), iter);
+}
+
 /**
  * customize_paths_from_line:
  * @chooser: A #GtkFileChooser.
@@ -372,15 +380,16 @@ static void
 flow_io_populate(struct ui_flow_io * ui_flow_io)
 {
 	GeoXmlSequence *	server_io;
+	GtkTreeIter		iter;
 	GtkTreeIter		server_iter;
 	GtkTreeIter		last_run_iter;
-	GtkTreeIter		iter;
 	GdkPixbuf *		icon;
 
 	const gchar *		last_run;
 
-	last_run = "";
+	last_run = "/"; // Start with a string that is always lowet than any date
 	geoxml_flow_get_server(gebr.flow, &server_io, 0);
+
 	while (server_io) {
 		const gchar *	address;
 		const gchar *	input;
@@ -402,7 +411,8 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 		if (!server_find_address(address, &server_iter))
 			continue;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server_iter,
+		gtk_tree_model_get(GTK_TREE_MODEL(
+			gebr.ui_server_list->common.store), &server_iter,
 			SERVER_STATUS_ICON, &icon,
 			-1);
 
@@ -417,8 +427,17 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 			FLOW_IO_POINTER, server_io,
 			-1);
 
+		if (strlen(date) && strcmp(date, last_run) < 0) {
+			last_run = date;
+			last_run_iter = iter;
+		}
 		geoxml_sequence_next(&server_io);
 	}
+
+	if (last_run[0] == '/')
+		gtk_tree_model_get_iter_first(
+			GTK_TREE_MODEL(ui_flow_io->store), &last_run_iter);
+	flow_io_select_iter(ui_flow_io, &last_run_iter);
 }
 
 /*
@@ -435,52 +454,57 @@ flow_io_actions(gint response, struct ui_flow_io * ui_flow_io)
 	GdkPixbuf *		icon;
 	struct server *		server;
 	GeoXmlFlowServer *	flow_server;
-	
-	switch (response) {
-		case GEBR_FLOW_UI_RESPONSE_EXECUTE:
 
-			if (!flow_io_get_selected(ui_flow_io, &iter))
-				goto out;
+	document_save(GEOXML_DOCUMENT(gebr.flow));
 
-			gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
+	if (response == GEBR_FLOW_UI_RESPONSE_EXECUTE) {
+		if (!flow_io_get_selected(ui_flow_io, &iter))
+			goto out;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
 				FLOW_IO_ICON, &icon,
 				FLOW_IO_ADDRESS, &address,
 				FLOW_IO_POINTER, &flow_server,
 				-1);
 
-			if (!server_find_address(address, &server_iter)) {
-				g_free(address);
-				goto out;
-			}
+		if (!server_find_address(address, &server_iter)) {
 			g_free(address);
+			goto out;
+		}
+		g_free(address);
 
-			if (icon != gebr.pixmaps.stock_connect) {
-				GtkWidget * dialog;
-				dialog = gtk_message_dialog_new(
-					GTK_WINDOW(gebr.window),
-					GTK_DIALOG_DESTROY_WITH_PARENT,
-					GTK_MESSAGE_QUESTION,
-					GTK_BUTTONS_YES_NO,
-					_("This server is disconnected."
-					" Do you want to connect?"));
-				gtk_dialog_run(GTK_DIALOG(dialog));
-				gtk_widget_destroy(dialog);
-				goto out;
-			}
+		if (icon != gebr.pixmaps.stock_connect) {
+			GtkWidget * dialog;
+			dialog = gtk_message_dialog_new(
+				GTK_WINDOW(gebr.window),
+				GTK_DIALOG_DESTROY_WITH_PARENT,
+				GTK_MESSAGE_QUESTION,
+				GTK_BUTTONS_YES_NO,
+				_("This server is disconnected."
+				" Do you want to connect?"));
+			gtk_dialog_run(GTK_DIALOG(dialog));
+			gtk_widget_destroy(dialog);
+			goto out;
+		}
 
-			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server_iter,
-				SERVER_POINTER, &server,
-				-1); 
+		gtk_tree_model_get(GTK_TREE_MODEL(
+			gebr.ui_server_list->common.store), &server_iter,
+			SERVER_POINTER, &server,
+			-1); 
 
-			geoxml_flow_server_set_date_last_run(flow_server, iso_date());
+		geoxml_flow_server_set_date_last_run(flow_server,
+			iso_date());
+		geoxml_flow_io_set_input(gebr.flow,
+			geoxml_flow_server_io_get_input(flow_server));
+		geoxml_flow_io_set_output(gebr.flow,
+			geoxml_flow_server_io_get_output(flow_server));
+		geoxml_flow_io_set_error(gebr.flow,
+			geoxml_flow_server_io_get_error(flow_server));
 
-			flow_run(server);
-
-			break;
+		flow_run(server);
 	}
 
-out:	document_save(GEOXML_DOCUMENT(gebr.flow));
-	flow_browse_info_update();
+out:	flow_browse_info_update();
 }
 
 static void
@@ -586,6 +610,8 @@ on_button_add_clicked		(GtkButton *		button,
 		FLOW_IO_OUTPUT, output,
 		FLOW_IO_ERROR, error,
 		-1);
+
+	document_save(GEOXML_DOCUMENT(gebr.flow));
 }
 
 static void

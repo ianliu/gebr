@@ -61,11 +61,12 @@ geoxml_flow_new()
 {
 	GeoXmlDocument *	document;
 	GdomeElement *		element;
+	GdomeElement *		servers;
 
 	document = geoxml_document_new("flow", GEOXML_FLOW_VERSION);
 
-	__geoxml_insert_new_element(geoxml_document_root_element(document), "servers", NULL);
-	element = __geoxml_insert_new_element(geoxml_document_root_element(document), "io", NULL);
+	servers = __geoxml_insert_new_element(geoxml_document_root_element(document), "servers", NULL);
+	element = __geoxml_insert_new_element(geoxml_document_root_element(document), "io", servers);
 	__geoxml_insert_new_element(element, "input", NULL);
 	__geoxml_insert_new_element(element, "output", NULL);
 	__geoxml_insert_new_element(element, "error", NULL);
@@ -363,7 +364,7 @@ geoxml_flow_append_category(GeoXmlFlow * flow, const gchar * name)
 
 	category = (GeoXmlCategory*)__geoxml_insert_new_element(
 		geoxml_document_root_element(GEOXML_DOC(flow)), "category",
-		__geoxml_get_first_element(geoxml_document_root_element(GEOXML_DOC(flow)), "servers"));
+		__geoxml_get_first_element(geoxml_document_root_element(GEOXML_DOC(flow)), "io"));
 	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(category), name);
 
 	return category;
