@@ -161,8 +161,8 @@ int main (int argc, char** argv)
                 str[0] = g_string_new(NULL);
                 str[1] = g_string_new(NULL);
                 
-                g_string_printf(str[0], "It has %d program(s)", geoxml_flow_get_programs_number(menu[0]));
-                g_string_printf(str[1], "It has %d program(s)", geoxml_flow_get_programs_number(menu[1]));
+                g_string_printf(str[0], "It has %ld program(s)", geoxml_flow_get_programs_number(menu[0]));
+                g_string_printf(str[1], "It has %ld program(s)", geoxml_flow_get_programs_number(menu[1]));
 
                 report("Programs", str[0]->str, str[1]->str);
                 

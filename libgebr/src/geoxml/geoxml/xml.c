@@ -344,11 +344,7 @@ __geoxml_set_element_value(GdomeElement * element, const gchar * tag_value,
 	value_str = (create_func == __geoxml_create_TextNode)
 		? __geoxml_remove_line_break(tag_value) : tag_value;
 
-	value_node = gdome_el_firstChild(element, &exception);
-	if (value_node == NULL)
-		create_func(element, value_str);
-	else
-		gdome_n_set_nodeValue(value_node, gdome_str_mkref_dup(value_str), &exception);
+	create_func(element, value_str);
 }
 
 const gchar *

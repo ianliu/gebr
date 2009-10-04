@@ -40,6 +40,10 @@ struct geoxml_flow {
 	GeoXmlDocument * document;
 };
 
+struct geoxml_server {
+	GdomeElement * element;
+};
+
 struct geoxml_category {
 	GdomeElement * element;
 };
@@ -60,6 +64,7 @@ geoxml_flow_new()
 
 	document = geoxml_document_new("flow", GEOXML_FLOW_VERSION);
 
+	__geoxml_insert_new_element(geoxml_document_root_element(document), "servers", NULL);
 	element = __geoxml_insert_new_element(geoxml_document_root_element(document), "io", NULL);
 	__geoxml_insert_new_element(element, "input", NULL);
 	__geoxml_insert_new_element(element, "output", NULL);
@@ -111,6 +116,142 @@ geoxml_flow_set_date_last_run(GeoXmlFlow * flow, const gchar * last_run)
 		"lastrun", last_run, __geoxml_create_TextNode);
 }
 
+const gchar *
+geoxml_flow_get_date_last_run(GeoXmlFlow * flow)
+{
+	if (flow == NULL)
+		return NULL;
+	return __geoxml_get_tag_value(__geoxml_get_first_element(geoxml_document_root_element(GEOXML_DOC(flow)), "date"), "lastrun");
+}
+
+GeoXmlFlowServer *
+geoxml_flow_append_server(GeoXmlFlow * flow)
+{
+	GdomeElement *	server;
+	GdomeElement *	element;
+
+	server = __geoxml_insert_new_element(
+		__geoxml_get_first_element(geoxml_document_root_element(GEOXML_DOC(flow)), "servers"),
+		"server", NULL);
+	__geoxml_set_attr_value((GdomeElement*)server, "address", "");
+
+	element = __geoxml_insert_new_element(server, "io", NULL);
+	__geoxml_insert_new_element(element, "input", NULL);
+	__geoxml_insert_new_element(element, "output", NULL);
+	__geoxml_insert_new_element(element, "error", NULL);
+	__geoxml_insert_new_element(server, "lastrun", NULL);
+
+	return (GeoXmlFlowServer*)server;
+}
+
+int
+geoxml_flow_get_server(GeoXmlFlow * flow, GeoXmlSequence ** server, gulong index)
+{
+	GdomeElement *	element;
+
+	if (flow == NULL) {
+		*server = NULL;
+		return GEOXML_RETV_NULL_PTR;
+	}
+
+	element = __geoxml_get_first_element(
+		geoxml_document_root_element(GEOXML_DOC(flow)), "servers");
+	*server = (GeoXmlSequence*)__geoxml_get_element_at(element, "server", index, FALSE);
+
+	return (*server == NULL)
+		? GEOXML_RETV_INVALID_INDEX
+		: GEOXML_RETV_SUCCESS;
+}
+
+void
+geoxml_flow_server_set_address(GeoXmlFlowServer * server, const gchar * address)
+{
+	__geoxml_set_attr_value((GdomeElement*)server, "address", address);
+}
+
+const gchar *
+geoxml_flow_server_get_address(GeoXmlFlowServer * server)
+{
+	return __geoxml_get_attr_value((GdomeElement*)server, "address");
+}
+
+glong
+geoxml_flow_get_servers_number(GeoXmlFlow * flow)
+{
+	if (flow == NULL)
+		return -1;
+	return __geoxml_get_elements_number(geoxml_document_root_element(GEOXML_DOC(flow)), "server");
+}
+
+void
+geoxml_flow_server_io_set_input(GeoXmlFlowServer * server, const gchar * input)
+{
+	if (server == NULL || input == NULL)
+		return;
+	__geoxml_set_tag_value(__geoxml_get_first_element((GdomeElement*) server, "io"),
+		"input", input, __geoxml_create_TextNode);
+}
+
+void
+geoxml_flow_server_io_set_output(GeoXmlFlowServer * server, const gchar * output)
+{
+	if (server == NULL || output == NULL)
+		return;
+	__geoxml_set_tag_value(__geoxml_get_first_element((GdomeElement*) server, "io"),
+		"output", output, __geoxml_create_TextNode);
+}
+
+void
+geoxml_flow_server_io_set_error(GeoXmlFlowServer * server, const gchar * error)
+{
+	if (server == NULL || error == NULL)
+		return;
+	__geoxml_set_tag_value(__geoxml_get_first_element((GdomeElement*) server, "io"),
+		"error", error, __geoxml_create_TextNode);
+}
+
+const gchar *
+geoxml_flow_server_io_get_input(GeoXmlFlowServer * server)
+{
+	if (server == NULL)
+		return NULL;
+	return __geoxml_get_tag_value(__geoxml_get_first_element((GdomeElement*) server, "io"), "input");
+}
+
+const gchar *
+geoxml_flow_server_io_get_output(GeoXmlFlowServer * server)
+{
+	if (server == NULL)
+		return NULL;
+	return __geoxml_get_tag_value(__geoxml_get_first_element((GdomeElement*) server, "io"), "output");
+}
+
+const gchar *
+geoxml_flow_server_io_get_error(GeoXmlFlowServer * server)
+{
+	if (server == NULL)
+		return NULL;
+	return __geoxml_get_tag_value(__geoxml_get_first_element((GdomeElement*) server, "io"), "error");
+}
+
+void
+geoxml_flow_server_set_date_last_run(GeoXmlFlowServer * server, const gchar * date)
+{
+	if (server == NULL || date == NULL)
+		return;
+	__geoxml_set_tag_value((GdomeElement*)server, "lastrun",
+		date, __geoxml_create_TextNode);
+}
+
+const gchar *
+geoxml_flow_server_get_date_last_run(GeoXmlFlowServer * server)
+{
+	if (server == NULL)
+		return;
+
+	return __geoxml_get_tag_value((GdomeElement*)server, "lastrun");
+}
+
 void
 geoxml_flow_io_set_input(GeoXmlFlow * flow, const gchar * input)
 {
@@ -136,14 +277,6 @@ geoxml_flow_io_set_error(GeoXmlFlow * flow, const gchar * error)
 		return;
 	__geoxml_set_tag_value(__geoxml_get_first_element(geoxml_document_root_element(GEOXML_DOC(flow)), "io"),
 		"error", error, __geoxml_create_TextNode);
-}
-
-const gchar *
-geoxml_flow_get_date_last_run(GeoXmlFlow * flow)
-{
-	if (flow == NULL)
-		return NULL;
-	return __geoxml_get_tag_value(__geoxml_get_first_element(geoxml_document_root_element(GEOXML_DOC(flow)), "date"), "lastrun");
 }
 
 const gchar *
@@ -230,7 +363,7 @@ geoxml_flow_append_category(GeoXmlFlow * flow, const gchar * name)
 
 	category = (GeoXmlCategory*)__geoxml_insert_new_element(
 		geoxml_document_root_element(GEOXML_DOC(flow)), "category",
-		__geoxml_get_first_element(geoxml_document_root_element(GEOXML_DOC(flow)), "io"));
+		__geoxml_get_first_element(geoxml_document_root_element(GEOXML_DOC(flow)), "servers"));
 	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(category), name);
 
 	return category;

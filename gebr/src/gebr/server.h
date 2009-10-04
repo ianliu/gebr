@@ -35,6 +35,9 @@ struct server {
 struct server *
 server_new(const gchar * address, gboolean autoconnect);
 
+gboolean
+server_find_address(const gchar * address, GtkTreeIter * iter);
+
 void
 server_free(struct server * server);
 

@@ -18,6 +18,8 @@
 #ifndef __FLOW_H
 #define __FLOW_H
 
+#include "server.h"
+
 gboolean
 flow_new(void);
 void
@@ -33,7 +35,7 @@ flow_export_as_menu(void);
 void
 flow_copy_from_dicts(GeoXmlFlow * flow);
 void
-flow_run(void);
+flow_run(struct server * server);
 gboolean
 flow_revision_save(void);
 

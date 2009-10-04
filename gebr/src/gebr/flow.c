@@ -503,18 +503,20 @@ flow_copy_from_dicts(GeoXmlFlow * flow)
  * Runs a flow
  */
 void
-flow_run(void)
+flow_run(struct server * server)
 {
 	GeoXmlFlow *		flow;
 	GeoXmlSequence *	i;
 	GString *		path;
 
-	struct server *		server;
+	// struct server *		server;
 
 	/* check for a flow selected */
-	if (!flow_browse_get_selected(NULL, TRUE))
-		return;
-	if ((server = server_select_setup_ui()) == NULL)
+	// if (!flow_browse_get_selected(NULL, TRUE))
+	//	return;
+	// if ((server = server_select_setup_ui()) == NULL)
+	// 	return;
+	if (!server)
 		return;
 
 	flow = GEOXML_FLOW(geoxml_document_clone(GEOXML_DOCUMENT(gebr.flow)));

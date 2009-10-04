@@ -83,6 +83,11 @@
 #define GEOXML_REVISION(seq) ((GeoXmlRevision*)(seq))
 
 /**
+ * Cast from GeoXmlSequence at \p seq to GeoXmlFlowServer
+ */
+#define GEOXML_FLOW_SERVER(seq) ((GeoXmlFlowServer*)(seq))
+
+/**
  * The GeoXmlFlow struct contains private data only, and should be accessed using the functions below.
  */
 typedef struct geoxml_flow GeoXmlFlow;
@@ -96,6 +101,11 @@ typedef struct geoxml_category GeoXmlCategory;
  * The GeoXmlRevision struct contains private data only, and should be accessed using the functions below.
  */
 typedef struct geoxml_revision GeoXmlRevision;
+
+/**
+ * The GeoXmlFlowServer struct contains private data only, and should be accessed using the functions below.
+ */
+typedef struct geoxml_flow_server GeoXmlFlowServer;
 
 #include "program.h"
 #include "macros.h"
@@ -129,12 +139,135 @@ void
 geoxml_flow_set_date_last_run(GeoXmlFlow * flow, const gchar * last_run);
 
 /**
- * Set the \p flow input file path to \p input. The input file
- * is used to start the flow, by loading it on the first program of \p flow.
+ * Get the \p flow 's last modification date
  *
- * If \p flow or \p input is NULL nothing is done.
+ * If \p flow is NULL returns NULL.
  *
- * \see geoxml_flow_io_get_input
+ * \see geoxml_flow_set_date_modified
+ */
+const gchar *
+geoxml_flow_get_date_last_run(GeoXmlFlow * flow);
+
+/**
+ * Creates a new server as a child of servers tag.
+ *
+ * \see geoxml_flow_new_server
+ */
+GeoXmlFlowServer *
+geoxml_flow_append_server(GeoXmlFlow * flow);
+
+/**
+ * Writes into server the ieth server from 'servers' tag.
+ * If an error ocurred, the content of server is assigned to NULL.
+ * If flow is NULL nothing is done.
+ * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR
+ */
+int
+geoxml_flow_get_server(GeoXmlFlow * flow, GeoXmlSequence ** server, gulong index);
+
+/**
+ * Sets the address of this flow server.
+ */
+void
+geoxml_flow_server_set_address(GeoXmlFlowServer * server, const gchar * address);
+
+/**
+ * Returns the address of this flow server.
+ * The string must be freed with g_free() .
+ */
+const gchar *
+geoxml_flow_server_get_address(GeoXmlFlowServer * server);
+
+/**
+ * Get the number of servers \p flow has.
+ *
+ * If \p flow is NULL returns -1.
+ */
+glong
+geoxml_flow_get_servers_number(GeoXmlFlow * flow);
+
+/**
+ * Set the flow \p server input file path to \p input.
+ *
+ * If \p server or \p input is NULL nothing is done.
+ *
+ * \see geoxml_flow_server_io_get_input geoxml_flow_io_get_input
+ */
+void
+geoxml_flow_server_io_set_input(GeoXmlFlowServer * server, const gchar * input);
+
+/**
+ * Set the flow \p server output file path to \p output.
+ *
+ * If \p server or \p output is NULL nothing is done.
+ *
+ * \see geoxml_flow_server_io_get_output geoxml_flow_io_get_output
+ */
+void
+geoxml_flow_server_io_set_output(GeoXmlFlowServer * server, const gchar * output);
+
+/**
+ * Set the \p server error file path to \p error.
+ *
+ * If \p server or \p error is NULL nothing is done.
+ *
+ * \see geoxml_flow_server_io_get_error geoxml_flow_io_get_error geoxml_program_set_stderr
+ */
+void
+geoxml_flow_server_io_set_error(GeoXmlFlowServer * server, const gchar * error);
+
+/**
+ * Retrieves the input file path of \p server.
+ *
+ * If \p server is NULL returns NULL.
+ *
+ * \see geoxml_flow_io_set_input
+ */
+const gchar *
+geoxml_flow_server_io_get_input(GeoXmlFlowServer * server);
+
+/**
+ * Retrieves the output file path of \p server.
+ *
+ * If \p server is NULL returns NULL.
+ *
+ * \see geoxml_flow_io_set_output
+ */
+const gchar *
+geoxml_flow_server_io_get_output(GeoXmlFlowServer * server);
+
+/**
+ * Retrieves the error file path of \p server.
+ *
+ * If \p server is NULL returns NULL.
+ *
+ * \see geoxml_flow_server_io_set_error
+ */
+const gchar *
+geoxml_flow_server_io_get_error(GeoXmlFlowServer * server);
+
+/**
+ * Sets the last run date for this server.
+ *
+ * \see geoxml_flow_server_get_date_last_run
+ */
+void
+geoxml_flow_server_set_date_last_run(GeoXmlFlowServer * server, const gchar * date);
+
+/**
+ * Retrieve the last run date for this server.
+ *
+ * \see geoxml_flow_server_get_date_last_run
+ */
+const gchar *
+geoxml_flow_server_get_date_last_run(GeoXmlFlowServer * server);
+
+/**
+ * Retrieves the \p server input file path*
+ *
+ * If \p server or \p input is NULL nothing is done.
+ *
+ * \see geoxml_flow_server_io_get_input
  */
 void
 geoxml_flow_io_set_input(GeoXmlFlow * flow, const gchar * input);
@@ -160,16 +293,6 @@ geoxml_flow_io_set_output(GeoXmlFlow * flow, const gchar * output);
  */
 void
 geoxml_flow_io_set_error(GeoXmlFlow * flow, const gchar * error);
-
-/**
- * Get the \p flow 's last modification date
- *
- * If \p flow is NULL returns NULL.
- *
- * \see geoxml_flow_set_date_modified
- */
-const gchar *
-geoxml_flow_get_date_last_run(GeoXmlFlow * flow);
 
 /**
  * Retrieves the input file path of \p flow.

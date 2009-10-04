@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include <libgebr/intl.h>
+#include <libgebr/date.h>
 #include <libgebr/gui/gtkfileentry.h>
 
 #include "ui_flow.h"
@@ -31,15 +32,45 @@
 #include "document.h"
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
+#include "ui_server.h"
+
+#define GEBR_FLOW_UI_RESPONSE_EXECUTE 1
 
 /*
  * Declarations
  */
 
 static void
-flow_io_on_show(GtkDialog * dialog, struct ui_flow_io * ui);
+flow_io_populate		(struct ui_flow_io *	ui_flow_io);
+
 static void
-flow_io_actions(GtkDialog * dialog, gint arg1, struct ui_flow_io * ui_flow_io);
+flow_io_actions			(gint			response,
+				 struct ui_flow_io *	ui_flow_io);
+
+static void
+on_renderer_output_edited	(GtkCellRendererText *	renderer,
+				 gchar *		path,
+				 gchar *		new_text,
+				 struct ui_flow_io *	ui_flow_io);
+static void
+on_renderer_input_edited	(GtkCellRendererText *	renderer,
+				 gchar *		path,
+				 gchar *		new_text,
+				 struct ui_flow_io *	ui_flow_io);
+static void
+on_renderer_error_edited	(GtkCellRendererText *	renderer,
+				 gchar *		path,
+				 gchar *		new_text,
+				 struct ui_flow_io *	ui_flow_io);
+
+static void
+on_button_add_clicked		(GtkButton *		button,
+				 struct ui_flow_io *	ui_flow_io);
+
+static void
+on_entry_activate		(GtkEntry *		entry,
+				 struct ui_flow_io *	ui_flow_io);
+
 
 /*
  * Section: Public
@@ -51,84 +82,207 @@ flow_io_actions(GtkDialog * dialog, gint arg1, struct ui_flow_io * ui_flow_io);
  * A dialog for user selection of the flow IO files
  *
  * Return:
- * The structure containing relevant data. It will be automatically freed when the
+ * The structure containing relevant data.
+ * It will be automatically freed when the
  * dialog closes.
  */
-struct ui_flow_io *
-flow_io_setup_ui(gboolean focus_output)
+void
+flow_io_setup_ui()
 {
 	struct ui_flow_io *	ui_flow_io;
 
 	GtkWidget *		dialog;
-	GtkWidget *		table;
-	GtkWidget *		label;
+	GtkWidget *		treeview;
+	GtkListStore *		store;
 
-	if (!flow_browse_get_selected(NULL, TRUE))
-		return NULL;
+	GtkWidget *		address;
+	GtkWidget *		input;
+	GtkWidget *		output;
+	GtkWidget *		error;
 
-	/* alloc */
-	ui_flow_io = g_malloc(sizeof(struct ui_flow_io));
-	ui_flow_io->focus_output = focus_output;
+	GtkWidget *		content;
+	GtkWidget *		button_add;
+	GtkWidget *		box;
+	GtkSizeGroup *		size_group;
+	GtkCellRenderer *	renderer;
+	GtkTreeViewColumn *	column;
+	GtkTreeSelection *	selection;
 
-	dialog = gtk_dialog_new_with_buttons(_("Flow input/output"),
+	gint			response;
+
+	// Sizes for columns
+	const gint size_addr   = 150;
+	const gint size_input  = 70;
+	const gint size_output = 70;
+	const gint size_error  = 70;
+
+	ui_flow_io = (struct ui_flow_io*)g_malloc(sizeof(struct ui_flow_io));
+
+	store = gtk_list_store_new(FLOW_IO_N,
+		GDK_TYPE_PIXBUF,	// Icon
+		G_TYPE_STRING,  	// Address
+		G_TYPE_STRING,  	// Input
+		G_TYPE_STRING,  	// Output
+		G_TYPE_STRING,  	// Error
+		G_TYPE_STRING,  	// Date
+		G_TYPE_POINTER);	// GeoXmlFlowServer
+	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+	dialog = gtk_dialog_new_with_buttons(_("Server IO configuration"),
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-		GTK_STOCK_OK, GTK_RESPONSE_OK,
+		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
+		GTK_STOCK_EXECUTE, GEBR_FLOW_UI_RESPONSE_EXECUTE,
 		NULL);
-	ui_flow_io->dialog = dialog;
-	gtk_widget_set_size_request(dialog, 390, 160);
+	content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+	gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
+	gtk_window_set_default_size(GTK_WINDOW(dialog), -1, 300);
 
-	g_signal_connect(dialog, "response",
-		G_CALLBACK(flow_io_actions), ui_flow_io);
-	g_signal_connect(GTK_OBJECT(dialog), "show",
-		GTK_SIGNAL_FUNC(flow_io_on_show), ui_flow_io);
-	g_signal_connect(GTK_OBJECT(dialog), "delete_event",
-		GTK_SIGNAL_FUNC(gtk_widget_destroy), NULL);
+	//---------------------------------------
+	// Setting up the GtkTreeView
+	//---------------------------------------
+	
+	// Server column
+	column = gtk_tree_view_column_new();
+	renderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(column, renderer, FALSE);
+	gtk_tree_view_column_add_attribute(column, renderer,
+		"pixbuf", FLOW_IO_ICON);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(column, renderer, FALSE);
+	gtk_tree_view_column_add_attribute(column, renderer,
+		"text", FLOW_IO_ADDRESS);
+	g_object_set(column, "sizing", GTK_TREE_VIEW_COLUMN_FIXED, NULL);
+	gtk_tree_view_column_set_title(column, _("Server"));
+	gtk_tree_view_column_set_fixed_width(column, size_addr);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
-	table = gtk_table_new(5, 2, FALSE);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 0);
+	// Input column
+	renderer = gtk_cell_renderer_text_new();
+	g_object_set(renderer, "editable", TRUE, NULL);
+	g_signal_connect(renderer, "edited",
+		G_CALLBACK(on_renderer_input_edited), ui_flow_io);
+	column = gtk_tree_view_column_new_with_attributes(_("Input"), renderer,
+		"text", FLOW_IO_INPUT, NULL);
+	g_object_set(column, "sizing", GTK_TREE_VIEW_COLUMN_FIXED, NULL);
+	gtk_tree_view_column_set_fixed_width(column, size_input);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
-	/* Input */
-	label = gtk_label_new(_("Input file"));
-	gtk_misc_set_alignment( GTK_MISC(label), 0, 0);
-	ui_flow_io->input = gtk_file_entry_new(flow_io_customized_paths_from_line);
-	gtk_widget_set_size_request(ui_flow_io->input, 140, 30);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_io->input, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL,  3, 3);
-	/* read */
-	gtk_file_entry_set_path(GTK_FILE_ENTRY(ui_flow_io->input), geoxml_flow_io_get_input(gebr.flow));
-	gtk_file_entry_set_do_overwrite_confirmation(GTK_FILE_ENTRY(ui_flow_io->input), FALSE);
+	// Output column
+	renderer = gtk_cell_renderer_text_new();
+	g_object_set(renderer, "editable", TRUE, NULL);
+	g_signal_connect(renderer, "edited",
+		G_CALLBACK(on_renderer_output_edited), ui_flow_io);
+	column = gtk_tree_view_column_new_with_attributes(_("Output"), renderer,
+		"text", FLOW_IO_OUTPUT, NULL);
+	g_object_set(column, "sizing", GTK_TREE_VIEW_COLUMN_FIXED, NULL);
+	gtk_tree_view_column_set_fixed_width(column, size_output);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
-	/* Output */
-	label = gtk_label_new(_("Output file"));
-	gtk_misc_set_alignment( GTK_MISC(label), 0, 0);
-	ui_flow_io->output = gtk_file_entry_new(flow_io_customized_paths_from_line);
-	gtk_widget_set_size_request(ui_flow_io->output, 140, 30);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_io->output, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
-	/* read */
-	gtk_file_entry_set_path(GTK_FILE_ENTRY(ui_flow_io->output), geoxml_flow_io_get_output(gebr.flow));
+	// Error column
+	renderer = gtk_cell_renderer_text_new();
+	g_object_set(renderer, "editable", TRUE, NULL);
+	g_signal_connect(renderer, "edited",
+		G_CALLBACK(on_renderer_error_edited), ui_flow_io);
+	column = gtk_tree_view_column_new_with_attributes(_("Error"), renderer,
+		"text", FLOW_IO_ERROR, NULL);
+	g_object_set(column, "sizing", GTK_TREE_VIEW_COLUMN_FIXED, NULL);
+	gtk_tree_view_column_set_fixed_width(column, size_error);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
-	/* Error */
-	label = gtk_label_new(_("Error log file"));
-	gtk_misc_set_alignment( GTK_MISC(label), 0, 0);
-	ui_flow_io->error = gtk_file_entry_new(flow_io_customized_paths_from_line);
-	gtk_widget_set_size_request(ui_flow_io->error, 140, 30);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_io->error, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
-	/* read */
-	gtk_file_entry_set_path(GTK_FILE_ENTRY(ui_flow_io->error), geoxml_flow_io_get_error(gebr.flow));
+	//---------------------------------------
+	// Setting up the edition area
+	//---------------------------------------
+
+	// |____|^| Address combo box
+	address  = gtk_combo_box_new_with_model(
+		GTK_TREE_MODEL(gebr.ui_server_list->common.store));
+	renderer = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(address), renderer, FALSE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(address), renderer,
+		"pixbuf", SERVER_STATUS_ICON);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(address), renderer, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(address), renderer,
+		"text", SERVER_ADDRESS);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(address), 0);
+	gtk_widget_set_size_request(address, size_addr, -1);
+
+	// |______| Input, Output and Error entries
+	input  = gtk_entry_new();
+	output = gtk_entry_new();
+	error  = gtk_entry_new();
+	gtk_widget_set_size_request(input, size_input, -1);
+	gtk_widget_set_size_request(output, size_output, -1);
+	gtk_widget_set_size_request(error, size_error, -1);
+	g_signal_connect(input, "activate",
+		G_CALLBACK(on_entry_activate), ui_flow_io);
+	g_signal_connect(output, "activate",
+		G_CALLBACK(on_entry_activate), ui_flow_io);
+	g_signal_connect(error, "activate",
+		G_CALLBACK(on_entry_activate), ui_flow_io);
+
+	// [+] Add button
+	box = gtk_hbox_new(FALSE, 0);
+	button_add = gtk_button_new();
+	gtk_button_set_image(GTK_BUTTON(button_add),
+		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON));
+	g_signal_connect(button_add, "clicked",
+		G_CALLBACK(on_button_add_clicked), ui_flow_io);
+
+	//---------------------------------------
+	// Packing the widgets
+	//---------------------------------------
+
+	gtk_box_pack_start(GTK_BOX(box), address, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box), input, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box), output, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box), error, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box), button_add, FALSE, TRUE, 0);
+
+	size_group = gtk_size_group_new(GTK_SIZE_GROUP_VERTICAL);
+	gtk_size_group_add_widget(size_group, address);
+	gtk_size_group_add_widget(size_group, input);
+	gtk_size_group_add_widget(size_group, output);
+	gtk_size_group_add_widget(size_group, error);
+
+	gtk_box_pack_start(GTK_BOX(content), treeview, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(content), box, FALSE, TRUE, 0);
+
+	ui_flow_io->dialog   = dialog;
+	ui_flow_io->store    = store;
+	ui_flow_io->treeview = treeview;
+	ui_flow_io->address  = address;
+	ui_flow_io->input    = input;
+	ui_flow_io->output   = output;
+	ui_flow_io->error    = error;
+
+	// Fill the GtkListStore with the configurations available
+	flow_io_populate(ui_flow_io);
 
 	gtk_widget_show_all(dialog);
+	response = gtk_dialog_run(GTK_DIALOG(dialog));
+	flow_io_actions(response, ui_flow_io);
 
-	return ui_flow_io;
+	// Clean up
+	gtk_list_store_clear(store);
+	gtk_widget_destroy(dialog);
+	g_free(ui_flow_io);
 }
 
-/*
- * Function: customize_paths_from_line
- * Set line's path to input/output/error files
+gboolean
+flow_io_get_selected(struct ui_flow_io * ui_flow_io, GtkTreeIter * iter)
+{
+	return gtk_tree_selection_get_selected(
+		gtk_tree_view_get_selection(
+			GTK_TREE_VIEW(ui_flow_io->treeview)), NULL, iter);
+}
+
+/**
+ * customize_paths_from_line:
+ * @chooser: A #GtkFileChooser.
  *
+ * Set line's path to input/output/error files.
  */
 void
 flow_io_customized_paths_from_line(GtkFileChooser * chooser)
@@ -154,10 +308,12 @@ flow_io_customized_paths_from_line(GtkFileChooser * chooser)
 	}
 }
 
-/*
- * Function: flow_add_program_sequence_to_view
- * Add _program_ sequence (from it to the end of sequence) to flow sequence view
+/**
+ * flow_add_program_sequence_to_view:
+ * @program:
+ * @select_last:
  *
+ * Add @program sequence (from it to the end of sequence) to flow sequence view.
  */
 void
 flow_add_program_sequence_to_view(GeoXmlSequence * program, gboolean select_last)
@@ -206,15 +362,65 @@ flow_add_program_sequence_to_view(GeoXmlSequence * program, gboolean select_last
  * Private functions.
  */
 
-/*
- * Function: flow_io_on_show
- * Actions for Flow IO files edition dialog
+/**
+ * flow_io_populate:
+ * @ui_flow_io: The structure to be filled with data.
+ *
+ * Fills the #GtkListStore of @ui_flow_io with data.
  */
 static void
-flow_io_on_show(GtkDialog * dialog, struct ui_flow_io * ui)
+flow_io_populate(struct ui_flow_io * ui_flow_io)
 {
-	if (ui->focus_output)
-		gtk_widget_grab_focus(ui->output);
+	GeoXmlSequence *	server_io;
+	GtkTreeIter		server_iter;
+	GtkTreeIter		last_run_iter;
+	GtkTreeIter		iter;
+	GdkPixbuf *		icon;
+
+	const gchar *		last_run;
+
+	last_run = "";
+	geoxml_flow_get_server(gebr.flow, &server_io, 0);
+	while (server_io) {
+		const gchar *	address;
+		const gchar *	input;
+		const gchar *	output;
+		const gchar *	error;
+		const gchar *	date;
+
+		address = geoxml_flow_server_get_address(
+			GEOXML_FLOW_SERVER(server_io));
+		input   = geoxml_flow_server_io_get_input(
+			GEOXML_FLOW_SERVER(server_io));
+		output  = geoxml_flow_server_io_get_output(
+			GEOXML_FLOW_SERVER(server_io));
+		error   = geoxml_flow_server_io_get_error(
+			GEOXML_FLOW_SERVER(server_io));
+		date    = geoxml_flow_server_get_date_last_run(
+			GEOXML_FLOW_SERVER(server_io));
+
+		if (!server_find_address(address, &server_iter))
+			continue;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server_iter,
+			SERVER_STATUS_ICON, &icon,
+			-1);
+
+		gtk_list_store_append(ui_flow_io->store, &iter);
+		gtk_list_store_set(ui_flow_io->store, &iter,
+			FLOW_IO_ICON, icon,
+			FLOW_IO_ADDRESS, address,
+			FLOW_IO_INPUT, input,
+			FLOW_IO_OUTPUT, output,
+			FLOW_IO_ERROR, error,
+			FLOW_IO_DATE, date,
+			FLOW_IO_POINTER, server_io,
+			-1);
+
+		if (strcmp());
+
+		geoxml_sequence_next(&server_io);
+	}
 }
 
 /*
@@ -222,25 +428,172 @@ flow_io_on_show(GtkDialog * dialog, struct ui_flow_io * ui)
  * Actions for Flow IO files edition dialog
  */
 static void
-flow_io_actions(GtkDialog * dialog, gint arg1, struct ui_flow_io * ui_flow_io)
+flow_io_actions(gint response, struct ui_flow_io * ui_flow_io)
 {
-	switch (arg1) {
-	case GTK_RESPONSE_OK:
-		geoxml_flow_io_set_input(gebr.flow,
-			gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->input)));
-		geoxml_flow_io_set_output(gebr.flow,
-			gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->output)));
-		geoxml_flow_io_set_error(gebr.flow,
-			gtk_file_entry_get_path(GTK_FILE_ENTRY(ui_flow_io->error)));
-		document_save(GEOXML_DOCUMENT(gebr.flow));
+	GtkTreeIter		iter;
+	GtkTreeIter		server_iter;
 
-		flow_edition_set_io();
-                flow_browse_info_update();
-		break;
-	default:
-		break;
+	gchar *			address;
+	GdkPixbuf *		icon;
+	struct server *		server;
+	GeoXmlFlowServer *	flow_server;
+	
+	switch (response) {
+		case GEBR_FLOW_UI_RESPONSE_EXECUTE:
+
+			if (!flow_io_get_selected(ui_flow_io, &iter))
+				goto out;
+
+			gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
+				FLOW_IO_ICON, &icon,
+				FLOW_IO_ADDRESS, &address,
+				FLOW_IO_POINTER, &flow_server,
+				-1);
+
+			if (!server_find_address(address, &server_iter)) {
+				g_free(address);
+				goto out;
+			}
+			g_free(address);
+
+			if (icon != gebr.pixmaps.stock_connect) {
+				GtkWidget * dialog;
+				dialog = gtk_message_dialog_new(
+					GTK_WINDOW(gebr.window),
+					GTK_DIALOG_DESTROY_WITH_PARENT,
+					GTK_MESSAGE_QUESTION,
+					GTK_BUTTONS_YES_NO,
+					_("This server is disconnected."
+					" Do you want to connect?"));
+				gtk_dialog_run(GTK_DIALOG(dialog));
+				gtk_widget_destroy(dialog);
+				goto out;
+			}
+
+			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server_iter,
+				SERVER_POINTER, &server,
+				-1); 
+
+			geoxml_flow_server_set_date_last_run(flow_server, iso_date());
+
+			flow_run(server);
+
+			break;
 	}
 
-	gtk_widget_destroy(GTK_WIDGET(ui_flow_io->dialog));
-	g_free(ui_flow_io);
+out:	document_save(GEOXML_DOCUMENT(gebr.flow));
+	flow_edition_set_io();
+	flow_browse_info_update();
+}
+
+static void
+on_renderer_input_edited	(GtkCellRendererText *	renderer,
+				 gchar *		path,
+				 gchar *		new_text,
+				 struct ui_flow_io *	ui_flow_io)
+{
+	GtkTreeIter		iter;
+	GeoXmlFlowServer *	server;
+
+	if (!flow_io_get_selected(ui_flow_io, &iter))
+		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
+		FLOW_IO_POINTER, &server,
+		-1);
+	gtk_list_store_set(ui_flow_io->store, &iter,
+		FLOW_IO_INPUT, new_text,
+		-1);
+	geoxml_flow_server_io_set_input(server, new_text);
+}
+
+static void
+on_renderer_output_edited	(GtkCellRendererText *	renderer,
+				 gchar *		path,
+				 gchar *		new_text,
+				 struct ui_flow_io *	ui_flow_io)
+{
+	GtkTreeIter		iter;
+	GeoXmlFlowServer *	server;
+
+	if (!flow_io_get_selected(ui_flow_io, &iter))
+		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
+		FLOW_IO_POINTER, &server,
+		-1);
+	gtk_list_store_set(ui_flow_io->store, &iter,
+		FLOW_IO_OUTPUT, new_text,
+		-1);
+	geoxml_flow_server_io_set_output(server, new_text);
+}
+
+static void
+on_renderer_error_edited	(GtkCellRendererText *	renderer,
+				 gchar *		path,
+				 gchar *		new_text,
+				 struct ui_flow_io *	ui_flow_io)
+{
+	GtkTreeIter		iter;
+	GeoXmlFlowServer *	server;
+
+	if (!flow_io_get_selected(ui_flow_io, &iter))
+		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
+		FLOW_IO_POINTER, &server,
+		-1);
+	gtk_list_store_set(ui_flow_io->store, &iter,
+		FLOW_IO_ERROR, new_text,
+		-1);
+	geoxml_flow_server_io_set_error(server, new_text);
+}
+
+static void
+on_button_add_clicked		(GtkButton *		button,
+				 struct ui_flow_io *	ui_flow_io)
+{
+	GeoXmlFlowServer *	server;
+	GdkPixbuf *		icon;
+	GtkTreeIter		iter;
+
+	gchar *			address;
+	const gchar *		input;
+	const gchar *		output;
+	const gchar *		error;
+
+	// Fetch data
+	gtk_combo_box_get_active_iter(
+		GTK_COMBO_BOX(ui_flow_io->address), &iter);
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+		SERVER_STATUS_ICON, &icon,
+		SERVER_ADDRESS, &address,
+		-1);
+	input  = gtk_entry_get_text(GTK_ENTRY(ui_flow_io->input));
+	output = gtk_entry_get_text(GTK_ENTRY(ui_flow_io->output));
+	error  = gtk_entry_get_text(GTK_ENTRY(ui_flow_io->error));
+
+	// Append data to XML
+	server = geoxml_flow_append_server(gebr.flow);
+	geoxml_flow_server_set_address(server, address);
+	geoxml_flow_server_io_set_input(server, input);
+	geoxml_flow_server_io_set_output(server, output);
+	geoxml_flow_server_io_set_error(server, error);
+
+	// Append data to Dialog
+	gtk_list_store_append(ui_flow_io->store, &iter);
+	gtk_list_store_set(ui_flow_io->store, &iter,
+		FLOW_IO_ICON, icon,
+		FLOW_IO_ADDRESS, address,
+		FLOW_IO_INPUT, input,
+		FLOW_IO_OUTPUT, output,
+		FLOW_IO_ERROR, error,
+		-1);
+}
+
+static void
+on_entry_activate		(GtkEntry *		entry,
+				 struct ui_flow_io *	ui_flow_io)
+{
+	on_button_add_clicked(NULL, ui_flow_io);
 }

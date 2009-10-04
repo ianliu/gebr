@@ -378,6 +378,8 @@ __geoxml_document_validate_doc(GdomeDocument * document)
 		dict_element = __geoxml_insert_new_element(root_element, "dict",
 			__geoxml_get_first_element(root_element, "date"));
 		__geoxml_parameters_append_new(dict_element);
+		__geoxml_insert_new_element(root_element, "servers",
+			__geoxml_get_first_element(root_element, "io"));
 	}
 
 	ret = GEOXML_RETV_SUCCESS;

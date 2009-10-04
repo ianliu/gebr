@@ -22,23 +22,40 @@
 
 #include <libgebr/geoxml.h>
 
+enum {
+	FLOW_IO_ICON,
+	FLOW_IO_ADDRESS,
+	FLOW_IO_INPUT,
+	FLOW_IO_OUTPUT,
+	FLOW_IO_ERROR,
+	FLOW_IO_DATE,
+	FLOW_IO_POINTER,
+	FLOW_IO_N
+};
+
 struct ui_flow_io {
 	GtkWidget *		dialog;
+	GtkWidget *		treeview;
+	GtkListStore *		store;
 
-	gboolean		focus_output;
-
+	GtkWidget *		address;
 	GtkWidget *		input;
 	GtkWidget *		output;
 	GtkWidget *		error;
 };
 
-struct ui_flow_io *
-flow_io_setup_ui(gboolean focus_output);
+void
+flow_io_setup_ui			(void);
+
+gboolean
+flow_io_get_selected			(struct ui_flow_io *	ui_flow_io,
+					 GtkTreeIter *		iter);
 
 void
-flow_io_customized_paths_from_line(GtkFileChooser * chooser);
+flow_io_customized_paths_from_line	(GtkFileChooser *	chooser);
 
 void
-flow_add_program_sequence_to_view(GeoXmlSequence * program, gboolean select_last);
+flow_add_program_sequence_to_view	(GeoXmlSequence *	program,
+					 gboolean		select_last);
 
 #endif //__UI_FLOW_H

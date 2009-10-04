@@ -65,6 +65,7 @@ struct gebr {
 	GList *				flow_clipboard;
 	struct log *			log;
 	GSList *			tmpfiles;
+	struct server *			server;
 
 	/* Persistant GUI */
 	GtkWidget *			navigation_box_label;

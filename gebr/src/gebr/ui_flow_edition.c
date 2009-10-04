@@ -132,9 +132,9 @@ flow_edition_setup_ui(void)
 
 	/* Double click on flow component open its parameter window */
 	g_signal_connect(ui_flow_edition->fseq_view, "row-activated",
-		GTK_SIGNAL_FUNC(flow_edition_component_activated), ui_flow_edition);
+		G_CALLBACK(flow_edition_component_activated), ui_flow_edition);
 	g_signal_connect(GTK_OBJECT(ui_flow_edition->fseq_view), "cursor-changed",
-		GTK_SIGNAL_FUNC(flow_edition_component_selected), ui_flow_edition);
+		G_CALLBACK(flow_edition_component_selected), ui_flow_edition);
 
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_edition->fseq_view);
 	gtk_widget_set_size_request(GTK_WIDGET(scrolled_window), 180, 30);
@@ -247,22 +247,22 @@ flow_edition_set_io(void)
 	gchar *			output_file;
 
 	/* input iter */
-	input_file = strlen(geoxml_flow_io_get_input(gebr.flow))
-		? g_path_get_basename(geoxml_flow_io_get_input(gebr.flow)) : strdup("");
+	/*input_file = strlen(geoxml_flow_io_get_input(gebr.flow))
+		? g_path_get_basename(geoxml_flow_io_get_input(gebr.flow)) : strdup("");*/
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
-		FSEQ_TITLE_COLUMN, input_file,
+		FSEQ_TITLE_COLUMN, ""/*input_file*/,
 		FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_go_back,
 		-1);
 	/* output iter */
-	output_file = strlen(geoxml_flow_io_get_output(gebr.flow))
-		? g_path_get_basename(geoxml_flow_io_get_output(gebr.flow)) : strdup("");
+	/*output_file = strlen(geoxml_flow_io_get_output(gebr.flow))
+		? g_path_get_basename(geoxml_flow_io_get_output(gebr.flow)) : strdup("");*/
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
-		FSEQ_TITLE_COLUMN, output_file,
+		FSEQ_TITLE_COLUMN, ""/*output_file*/,
 		FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_go_forward,
 		-1);
 
-	g_free(input_file);
-	g_free(output_file);
+	// g_free(input_file);
+	// g_free(output_file);
 }
 
 /*
@@ -279,11 +279,11 @@ flow_edition_component_activated(void)
 	if (!flow_edition_get_selected_component(&iter, FALSE))
 		return;
 	if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter)) {
-		flow_io_setup_ui(FALSE);
+		flow_io_setup_ui();
 		return;
 	}
 	if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
-		flow_io_setup_ui(TRUE);
+		flow_io_setup_ui();
 		return;
 	}
 

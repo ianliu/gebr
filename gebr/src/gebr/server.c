@@ -21,6 +21,7 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/comm/gstreamsocket.h>
+#include <libgebr/gui/utils.h>
 
 #include "server.h"
 #include "gebr.h"
@@ -101,6 +102,15 @@ server_disconnected(GStreamSocket * stream_socket, struct server * server)
  * Public functions
  */
 
+/**
+ * server_new:
+ * @address: The server address.
+ * @autoconnect: The server will connect whenever GêBR starts.
+ *
+ * Creates a new server.
+ *
+ * Returns: A server structure.
+ */
 struct server *
 server_new(const gchar * address, gboolean autoconnect)
 {
@@ -135,6 +145,41 @@ server_new(const gchar * address, gboolean autoconnect)
 		comm_server_connect(server->comm);
 
 	return server;
+}
+
+/**
+ * server_find_address:
+ * @address: The server to be found.
+ * @iter: A #GtkTreeIter that will hold the corresponding iterator.
+ *
+ * Searches for the @address server and fill @iter with the correct
+ * iterator for the gebr.ui_server_list->common.store model.
+ *
+ * Returns: %TRUE if the server was found, %FALSE otherwise.
+ */
+gboolean
+server_find_address(const gchar * address, GtkTreeIter * iter)
+{
+	GtkTreeIter	i;
+
+	if (!address)
+		return FALSE;
+
+	libgebr_gui_gtk_tree_model_foreach(i, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
+		gchar * addr;
+		gtk_tree_model_get(
+			GTK_TREE_MODEL(gebr.ui_server_list->common.store), &i,
+			SERVER_ADDRESS, &addr,
+			-1);
+		if (!strcmp(address, addr)) {
+			g_free(addr);
+			*iter = i;
+			return TRUE;
+		}
+		g_free(addr);
+	}
+
+	return FALSE;
 }
 
 void
