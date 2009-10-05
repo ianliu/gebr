@@ -39,6 +39,9 @@
  * Declarations
  */
 
+static void	interface_set_actions_sensitive	(gchar **	names,
+						 gboolean	sensitive);
+
 static const GtkActionEntry actions_entries [] = {
 	{"quit", GTK_STOCK_QUIT, N_("Quit"), NULL, N_("Quit DéBR"), (GCallback)on_quit_activate},
 	/* menu */
@@ -359,6 +362,30 @@ debr_setup_ui(void)
 	gtk_widget_show(debr.window);
 }
 
+/**
+ * interface_set_actions_sensitive:
+ * @names: A %NULL terminated array of strings.
+ * @sensitive: Wether to set or unset the sensitivity of the actions.
+ *
+ * Sets the sensitivity of the actions whose name is in @names array
+ * to @sensitive.
+ */
+void
+debr_set_actions_sensitive(gchar ** names, gboolean sensitive)
+{
+	gint i;
+
+	if (!names)
+		return;
+
+	i = 0;
+	while (names[i])
+		gtk_action_set_sensitive(gtk_action_group_get_action(
+			debr.action_group, names[i++]), sensitive);
+}
+
+
 /*
  * Section: Private
  */
+

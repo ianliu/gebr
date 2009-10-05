@@ -49,7 +49,6 @@ struct debr {
 	GeoXmlFlow *		menu;
 	GeoXmlProgram *		program;
 	GeoXmlParameter *	parameter;
-	guint			unsaved_count;
 
 	/* diverse widgets */
 	GtkWidget *		window;

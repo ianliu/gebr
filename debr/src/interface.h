@@ -20,7 +20,9 @@
 
 #include <gtk/gtk.h>
 
-void
-debr_setup_ui(void);
+void	debr_setup_ui			(void);
+
+void	debr_set_actions_sensitive	(gchar **	names,
+					 gboolean	sensitive);
 
 #endif //__INTERFACE_H

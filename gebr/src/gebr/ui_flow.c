@@ -386,8 +386,11 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 	GdkPixbuf *		icon;
 
 	const gchar *		last_run;
+	gboolean		has_server;
 
-	last_run = "/"; // Start with a string that is always lowet than any date
+	/* Start with a string that is always lower than any date */
+	last_run = "/"; 
+	has_server = FALSE;
 	geoxml_flow_get_server(gebr.flow, &server_io, 0);
 
 	while (server_io) {
@@ -396,6 +399,8 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 		const gchar *	output;
 		const gchar *	error;
 		const gchar *	date;
+
+		has_server = TRUE;
 
 		address = geoxml_flow_server_get_address(
 			GEOXML_FLOW_SERVER(server_io));
@@ -434,10 +439,12 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 		geoxml_sequence_next(&server_io);
 	}
 
-	if (last_run[0] == '/')
-		gtk_tree_model_get_iter_first(
-			GTK_TREE_MODEL(ui_flow_io->store), &last_run_iter);
-	flow_io_select_iter(ui_flow_io, &last_run_iter);
+	if (has_server) {
+		if (last_run[0] == '/')
+			gtk_tree_model_get_iter_first(
+				GTK_TREE_MODEL(ui_flow_io->store), &last_run_iter);
+		flow_io_select_iter(ui_flow_io, &last_run_iter);
+	}
 }
 
 /*

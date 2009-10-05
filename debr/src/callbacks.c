@@ -181,7 +181,9 @@ on_menu_save_activate(void)
 {
 	GtkTreeIter		iter;
 
-	menu_get_selected(&iter);
+	if (menu_get_selected(&iter) != ITER_FILE)
+		return;
+
 	if (!menu_save(&iter))
 		on_menu_save_as_activate();
 }
@@ -205,6 +207,9 @@ on_menu_save_as_activate(void)
 	gchar *			dirname;
 	gchar *			filename;
 	gchar *			current_path;
+
+	if (menu_get_selected(&iter) != ITER_FILE)
+		return;
 
 	/* run file chooser */
 	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose file"), GTK_WINDOW(debr.window),
@@ -233,7 +238,6 @@ on_menu_save_as_activate(void)
 	/* Get filename */
 	filename = g_path_get_basename(path->str);
 
-	menu_get_selected(&iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 		MENU_PATH, &current_path,
 		-1);
@@ -350,11 +354,9 @@ on_menu_delete_activate(void)
 		gchar *		path;
 
 		/* if this is not a menu item, pass */
-		if (gtk_tree_store_iter_depth(debr.ui_menu.model, &iter) != 1)
+		if (menu_get_selected(&iter) != ITER_FILE)
 			continue;
 
-		/* get path of selection */
-		menu_get_selected(&iter);
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 			MENU_XMLPOINTER, &menu,
 			MENU_PATH, &path,
@@ -465,7 +467,6 @@ on_menu_close_activate(void)
 				g_free(path);
 				break;
 			} case GTK_RESPONSE_NO:
-				--debr.unsaved_count;
 				break;
 			default: /* cancel or dialog destroy */
 				cancel = TRUE;

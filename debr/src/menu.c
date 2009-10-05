@@ -33,34 +33,37 @@
 #include "callbacks.h"
 #include "help.h"
 #include "program.h"
+#include "interface.h"
 
 /*
  * Declarations
  */
 
-static GtkMenu *
-menu_popup_menu(GtkTreeView * tree_view);
+static GtkMenu *	menu_popup_menu			(GtkTreeView *		tree_view);
 
-static void
-menu_title_changed(GtkEntry * entry);
-static void
-menu_description_changed(GtkEntry * entry);
-static void
-menu_help_view(void);
-static void
-menu_help_edit(void);
-static void
-menu_author_changed(GtkEntry * entry);
-static void
-menu_email_changed(GtkEntry * entry);
-static void
-menu_category_add(ValueSequenceEdit * sequence_edit, GtkComboBox * combo_box);
-static void
-menu_category_changed(void);
-static void
-menu_category_renamed(ValueSequenceEdit * sequence_edit, const gchar * old_text, const gchar * new_text);
-static void
-menu_category_removed(ValueSequenceEdit * sequence_edit, const gchar * old_text);
+static void		menu_title_changed		(GtkEntry *		entry);
+
+static void		menu_description_changed	(GtkEntry *		entry);
+
+static void		menu_help_view			(void);
+
+static void		menu_help_edit			(void);
+
+static void		menu_author_changed		(GtkEntry *		entry);
+
+static void		menu_email_changed		(GtkEntry *		entry);
+
+static void		menu_category_add		(ValueSequenceEdit *	sequence_edit,
+							 GtkComboBox *		combo_box);
+
+static void		menu_category_changed		(void);
+
+static void		menu_category_renamed		(ValueSequenceEdit *	sequence_edit,
+							 const gchar *		old_text,
+							 const gchar *		new_text);
+
+static void		menu_category_removed		(ValueSequenceEdit *	sequence_edit,
+							 const gchar *		old_text);
 
 /*
  * Section: Public
@@ -107,9 +110,9 @@ menu_setup_ui(void)
 	gtk_widget_show(debr.ui_menu.tree_view);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_menu.tree_view);
 	g_signal_connect(debr.ui_menu.tree_view, "cursor-changed",
-		(GCallback)menu_selected, NULL);
+		G_CALLBACK(menu_selected), NULL);
 	g_signal_connect(debr.ui_menu.tree_view, "row-activated",
-		GTK_SIGNAL_FUNC(menu_dialog_setup_ui), NULL);
+		G_CALLBACK(menu_dialog_setup_ui), NULL);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(debr.ui_menu.tree_view), FALSE);
 	col = gtk_tree_view_column_new ();
@@ -406,9 +409,12 @@ menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select)
 	g_free(tmp);
 }
 
-/*
- * Function: menu_open
- * Load menu at _path_ and select it according to _select_
+/**
+ * menu_open:
+ * @path: Path to the menu to be opened.
+ * @select: Whether to select it or not, after loading.
+ *
+ * Load menu at @path and select it according to @select.
  */
 void
 menu_open(const gchar * path, gboolean select)
@@ -419,9 +425,16 @@ menu_open(const gchar * path, gboolean select)
 	menu_open_with_parent (path, &parent, select);
 }
 
-/*
- * Function: menu_save
- * Save menu at _iter_
+/**
+ * menu_save:
+ * @iter: Save the menu pointed by @iter.
+ *
+ * Save the menu on #debr.ui_menu.model pointed by @iter.
+ * Note that the menu must be already saved, otherwise
+ * this functions returns %FALSE and nothing is done.
+ *
+ * Returns: %TRUE if the menu was saved and %FALSE if
+ * it has never been saved.
  */
 gboolean
 menu_save(GtkTreeIter * iter)
@@ -433,6 +446,9 @@ menu_save(GtkTreeIter * iter)
 	gchar *			path;
 	gchar *			filename;
 	gchar *			tmp;
+
+	if (menu_get_iter_type(iter) != ITER_FILE)
+		return FALSE;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter,
 		MENU_XMLPOINTER, &menu,
@@ -482,7 +498,7 @@ menu_save_all(void)
 	gboolean	valid;
 	GtkTreeIter	child;
 
-	if (!debr.unsaved_count)
+	if (!menu_count_unsaved())
 		return;
 
 	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
@@ -597,23 +613,27 @@ menu_close(GtkTreeIter * iter)
 	g_signal_emit_by_name(debr.ui_menu.tree_view, "cursor-changed");
 }
 
-/*
- * Function: menu_selected
- * Propagate the UI for a selected menu on the view
+/**
+ * menu_selected:
+ *
+ * Propagate the UI for a selected item on the view.
  */
 void
 menu_selected(void)
 {
-	GtkTreeIter		iter;
-	MenuStatus		status;
+	GtkTreeIter	iter;
+	MenuStatus	status;
+	IterType	type;
 
-	if (!menu_get_selected(&iter)) {
+	type = menu_get_selected(&iter);
+
+	if (type == ITER_FOLDER) {
 		debr.menu = NULL;
+		menu_folder_details_update(&iter);
 		return;
 	}
 
-	if (gtk_tree_store_iter_depth(debr.ui_menu.model, &iter) == 0) {
-		/* Call folder visualization here! */
+	if (type != ITER_FILE) {
 		debr.menu = NULL;
 		return;
 	}
@@ -634,9 +654,10 @@ menu_selected(void)
 	do_navigation_bar_update();
 }
 
-/*
- * Function: menu_clenup
- * Asks for save unsaved menus. If yes, free memory allocated for menus
+/**
+ * menu_clenup:
+ *
+ * Asks for save unsaved menus. If yes, free memory allocated for menus.
  */
 gboolean
 menu_cleanup(void)
@@ -645,7 +666,7 @@ menu_cleanup(void)
 	GtkWidget *	button;
 	gboolean	ret;
 
-	if (!debr.unsaved_count)
+	if (!menu_count_unsaved())
 		return TRUE;
 
 	dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
@@ -672,21 +693,29 @@ menu_cleanup(void)
 	return ret;
 }
 
-/*
- * Function: menu_saved_status_set
- * Change the status of the menu (saved or unsaved)
+/**
+ * menu_saved_status_set:
+ * @status: Status the current selected menu will be set.
+ *
+ * Change the status of the currently selected menu will be set.
+ * This can be either %MENU_STATUS_SAVED or %MENU_STATUS_UNSAVED.
  */
 void
 menu_saved_status_set(MenuStatus status)
 {
 	GtkTreeIter		iter;
 
-	if (menu_get_selected(&iter))
+	if (menu_get_selected(&iter) == ITER_FILE)
 		menu_saved_status_set_from_iter(&iter, status);
 }
 
-/* Function: menu_saved_status_set_from_iter
- * Change the status of the menu (saved or unsaved)
+/**
+ * menu_saved_status_set_from_iter:
+ * @iter: The iterator to have its status changed.
+ * @status: The new status to be set to @iter.
+ *
+ * Change the status of @iter to either %MENU_STATUS_SAVED
+ * or %MENU_STATUS_USAVED.
  */
 void
 menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
@@ -705,7 +734,7 @@ menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 	case MENU_STATUS_SAVED:
 		menu_path_get_parent(path, &new_parent);
 		if (libgebr_gui_gtk_tree_store_reparent(
-			debr.ui_menu.model, iter, &new_parent)) {
+				debr.ui_menu.model, iter, &new_parent)) {
 			menu_select_iter(iter);
 		}
 
@@ -714,9 +743,6 @@ menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 			MENU_IMAGE, GTK_STOCK_FILE,
 			-1);
 		enable = FALSE;
-		if (current_status == MENU_STATUS_UNSAVED) {
-			--debr.unsaved_count;
-		}
 		break;
 	case MENU_STATUS_UNSAVED:
 		gtk_tree_store_set(debr.ui_menu.model, iter,
@@ -724,8 +750,6 @@ menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 			MENU_IMAGE, GTK_STOCK_NO,
 			-1);
 		enable = TRUE;
-		if (current_status == MENU_STATUS_SAVED)
-			++debr.unsaved_count;
 		break;
 	default:
 		enable = FALSE;
@@ -735,9 +759,10 @@ menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert"), enable);
 }
 
-/*
- * Function: menu_saved_status_set_unsaved
- * Connected to signal of components which change the menu
+/**
+ * menu_saved_status_set_unsaved:
+ *
+ * Connected to signal of components which change the menu.
  */
 void
 menu_saved_status_set_unsaved(void)
@@ -746,9 +771,11 @@ menu_saved_status_set_unsaved(void)
 }
 
 
-/*
- * Function: menu_dialog_setup_ui
- * Create a dialog to edit information about menu, like title, description, categories, etc
+/**
+ * menu_dialog_setup_ui:
+ *
+ * Create a dialog to edit information about menu,
+ * like title, description, categories, etc.
  */
 void
 menu_dialog_setup_ui(void)
@@ -774,7 +801,7 @@ menu_dialog_setup_ui(void)
 	GtkWidget *		widget;
 
 	libgebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
-	menu_get_selected(NULL);
+	// menu_get_selected(NULL);
 
 	dialog = gtk_dialog_new_with_buttons(_("Edit menu"),
 		GTK_WINDOW(debr.window),
@@ -946,25 +973,53 @@ menu_dialog_setup_ui(void)
 	menu_load_selected();
 }
 
-/* Function: menu_get_selected
- * Return true if there is a menu selected and write it to _iter_
+/**
+ * menu_get_selected:
+ * @iter: The iterator that will point to the selected item.
+ *
+ * Sets @iter to the selected item in debr.ui_menu.tree_view.
+ *
+ * Returns: One of %MENU_NONE, %MENU_FOLDER or %MENU_FILE,
+ * representing the various types of an item.
  */
-gboolean
+IterType
 menu_get_selected(GtkTreeIter * iter)
 {
-	gboolean selected;
+	GtkTreeIter	selection;
+	gboolean	selected;
 
-	selected = libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
+	selected = libgebr_gtk_tree_view_get_selected(
+		GTK_TREE_VIEW(debr.ui_menu.tree_view), &selection);
 
-	// TODO: How to handle directories selections?
-	if (selected && iter && gtk_tree_store_iter_depth(debr.ui_menu.model, iter) != 1)
-		return FALSE;
+	if (!selected)
+		return ITER_NONE;
 
-	return selected;
+	*iter = selection;
+	return menu_get_iter_type(iter);
 }
 
-/*
+/**
+ * menu_get_iter_type:
+ * @iter: The iterator for #debr.ui_menu.model to get the type.
+ *
+ * You <emphasis>must</emphasis> be sure that @iter is
+ * valid to #debr.ui_menu.model.
+ *
+ * Returns: a #IterType.
+ */
+IterType
+menu_get_iter_type(GtkTreeIter * iter)
+{
+	switch (gtk_tree_store_iter_depth(debr.ui_menu.model, iter)) {
+		case 0: return ITER_FOLDER; break;
+		case 1: return ITER_FILE;   break;
+	}
+	return ITER_NONE;
+}
+
+/**
  * menu_load_selected:
+ *
  * Reload selected menu contents to the interface.
  */
 void
@@ -976,7 +1031,7 @@ menu_load_selected(void)
 	menu_details_update();
 }
 
-/*
+/**
  * menu_select_iter:
  * @iter: The #GtkTreeIter to be selected.
  *
@@ -997,6 +1052,7 @@ menu_select_iter(GtkTreeIter * iter)
 
 /**
  * menu_details_update:
+ *
  * Load details of selected menu to the details view.
  */
 void
@@ -1077,12 +1133,52 @@ menu_details_update(void)
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.author_label), text->str);
 	g_string_free(text, TRUE);
 
+	gchar * names[] = {
+		"menu_properties",
+		"menu_validate",
+		"menu_install",
+		"menu_close",
+		"menu_save",
+		"menu_save_as",
+		"menu_revert",
+		"menu_delete",
+		NULL
+	};
+	debr_set_actions_sensitive(names, TRUE);
+
 	g_object_set(G_OBJECT(debr.ui_menu.details.help_button),
 		"sensitive", strlen(geoxml_document_get_help(GEOXML_DOC(debr.menu))) > 1 ? TRUE : FALSE, NULL);
 }
 
 /**
+ * menu_folder_details_update:
+ * @iter: The folder iterator for #debr.ui_menu.model.
+ *
+ * Updates the details for the folder pointed by @iter.
+ */
+void
+menu_folder_details_update(GtkTreeIter * iter)
+{
+	if (menu_get_iter_type(iter) != ITER_FOLDER)
+		return;
+
+	gchar * names[] = {
+		"menu_properties",
+		"menu_validate",
+		"menu_install",
+		"menu_close",
+		"menu_save",
+		"menu_save_as",
+		"menu_revert",
+		"menu_delete",
+		NULL
+	};
+	debr_set_actions_sensitive(names, FALSE);
+}
+
+/**
  * menu_reset:
+ *
  * Reload all menus, but the ones inside "Other" folder.
  */
 void
@@ -1115,7 +1211,8 @@ menu_get_n_menus()
 	return n;
 }
 
-/* menu_path_get_parent:
+/**
+ * menu_path_get_parent:
  * @path: The menu system path.
  * @parent: The #GtkTreeIter to be set as the correct parent.
  *
@@ -1146,6 +1243,42 @@ menu_path_get_parent(const gchar * path, GtkTreeIter * parent)
 out:	g_free(dirname);
 }
 
+/**
+ * menu_count_unsaved:
+ *
+ * Counts the number of unsaved menus and return it.
+ * 
+ * Returns: The number of unsaved menus.
+ */
+glong
+menu_count_unsaved()
+{
+	GtkTreeIter	iter;
+	gboolean	valid;
+	glong		count;
+
+	count = 0;
+
+	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
+		GtkTreeIter	child;
+		MenuStatus	status;
+
+		valid = gtk_tree_model_iter_children(
+				GTK_TREE_MODEL(debr.ui_menu.model), &child, &iter);
+		while (valid)
+		{
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child,
+				MENU_STATUS, &status,
+				-1);
+			if (status == MENU_STATUS_UNSAVED)
+				count++;
+			valid = gtk_tree_model_iter_next(
+					GTK_TREE_MODEL(debr.ui_menu.model), &child);
+		}
+	}
+	return count;
+}
+
 /*
  * Section: Private
  */
@@ -1173,9 +1306,11 @@ menu_sort_by_name(GtkMenuItem * menu_item)
 		MENU_FILENAME, order);
 }
 
-/*
- * Function: menu_sort_by_modified_date
- * Sort the list of menus by the newest modified date
+/**
+ * menu_sort_by_modified_date:
+ * @menu_item:
+ *
+ * Sort the list of menus by the newest modified date.
  */
 static void
 menu_sort_by_modified_date(GtkMenuItem * menu_item)
@@ -1198,8 +1333,10 @@ menu_sort_by_modified_date(GtkMenuItem * menu_item)
 			MENU_MODIFIED_DATE, order);
 }
 
-/*
- * Function: menu_popup_menu
+/**
+ * menu_popup_menu:
+ * @tree_view:
+ *
  * Agregate action to the popup menu and shows it.
  */
 static GtkMenu *
@@ -1273,9 +1410,11 @@ menu_popup_menu(GtkTreeView * tree_view)
 	return GTK_MENU(menu);
 }
 
-/*
- * Function: menu_title_changed
- * Keep XML in sync with widget
+/**
+ * menu_title_changed:
+ * @entry:
+ *
+ * Keep XML in sync with widget.
  */
 static void
 menu_title_changed(GtkEntry * entry)
@@ -1284,9 +1423,11 @@ menu_title_changed(GtkEntry * entry)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: menu_description_changed
- * Keep XML in sync with widget
+/**
+ * menu_description_changed:
+ * @entry:
+ *
+ * Keep XML in sync with widget.
  */
 static void
 menu_description_changed(GtkEntry * entry)
@@ -1295,9 +1436,10 @@ menu_description_changed(GtkEntry * entry)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: menu_help_view
- * Call <help_show> with menu's help
+/**
+ * menu_help_view:
+ *
+ * Call help_show() with menu's help.
  */
 static void
 menu_help_view(void)
@@ -1305,10 +1447,11 @@ menu_help_view(void)
 	help_show(geoxml_document_get_help(GEOXML_DOC(debr.menu)));
 }
 
-/*
- * Function: menu_help_edit
- * Call <help_edit> with menu's help. After help was edited in
- * a external browser, save it back to XML
+/**
+ * menu_help_edit:
+ *
+ * Call help_edit() with menu's help. After help was edited in
+ * a external browser, save it back to XML.
  */
 static void
 menu_help_edit(void)
@@ -1325,9 +1468,11 @@ menu_help_edit(void)
 	g_string_free(help, TRUE);
 }
 
-/*
- * Function: menu_author_changed
- * Keep XML in sync with widget
+/**
+ * menu_author_changed:
+ * @entry:
+ *
+ * Keep XML in sync with widget.
  */
 static void
 menu_author_changed(GtkEntry * entry)
@@ -1336,9 +1481,11 @@ menu_author_changed(GtkEntry * entry)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: menu_email_changed
- * Keep XML in sync with widget
+/**
+ * menu_email_changed:
+ * @entry:
+ *
+ * Keep XML in sync with widget.
  */
 static void
 menu_email_changed(GtkEntry * entry)
@@ -1347,9 +1494,12 @@ menu_email_changed(GtkEntry * entry)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: menu_category_add
- * Add a category
+/**
+ * menu_category_add:
+ * @sequence_edit:
+ * @combo_box:
+ *
+ * Add a category.
  */
 static void
 menu_category_add(ValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
@@ -1369,8 +1519,10 @@ menu_category_add(ValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
 	g_free(name);
 }
 
-/* Function: menu_category_changed
- * Just wrap signal to notify an unsaved status
+/**
+ * menu_category_changed:
+ *
+ * Just wrap signal to notify an unsaved status.
  */
 static void
 menu_category_changed(void)
@@ -1378,8 +1530,13 @@ menu_category_changed(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/* Function: menu_category_renamed
- * Update category list upon rename
+/**
+ * menu_category_renamed:
+ * @sequence_edit:
+ * @old_text:
+ * @new_text:
+ *
+ * Update category list upon rename.
  */
 static void
 menu_category_renamed(ValueSequenceEdit * sequence_edit, const gchar * old_text, const gchar * new_text)
@@ -1388,8 +1545,12 @@ menu_category_renamed(ValueSequenceEdit * sequence_edit, const gchar * old_text,
 	debr_has_category(new_text, TRUE);
 }
 
-/* Function: menu_category_removed
- * Update category list upon removal
+/**
+ * menu_category_removed:
+ * @sequence_edit:
+ * @old_text:
+ *
+ * Update category list upon removal.
  */
 static void
 menu_category_removed(ValueSequenceEdit * sequence_edit, const gchar * old_text)

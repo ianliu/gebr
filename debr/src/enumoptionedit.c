@@ -270,7 +270,7 @@ __enum_option_edit_create_tree_view(EnumOptionEdit * enum_option_edit)
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(renderer, "editable", TRUE, NULL);
 	g_signal_connect(renderer, "edited",
-		(GCallback)__enum_option_edit_on_value_edited, enum_option_edit);
+		G_CALLBACK(__enum_option_edit_on_value_edited), enum_option_edit);
 	col = gtk_tree_view_column_new_with_attributes(_("value"), renderer, NULL);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
@@ -278,7 +278,7 @@ __enum_option_edit_create_tree_view(EnumOptionEdit * enum_option_edit)
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(renderer, "editable", TRUE, NULL);
 	g_signal_connect(renderer, "edited",
-		(GCallback)__enum_option_edit_on_label_edited, enum_option_edit);
+		G_CALLBACK(__enum_option_edit_on_label_edited), enum_option_edit);
 	col = gtk_tree_view_column_new_with_attributes(_("label"), renderer, NULL);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", 1);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);

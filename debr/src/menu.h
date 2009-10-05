@@ -22,10 +22,31 @@
 
 #include <libgebr/geoxml.h>
 
+/**
+ * MenuStatus:
+ * %MENU_STATUS_SAVED: The menu is saved.
+ * %MENU_STATUS_UNSAVED: The menu is unsaved.
+ *
+ * Indicates the status of a menu.
+ */
 typedef enum {
 	MENU_STATUS_SAVED,
 	MENU_STATUS_UNSAVED
 } MenuStatus;
+
+/**
+ * IterType:
+ * %ITER_NONE: The iter is either invalid or unknown.
+ * %ITER_FOLDER: The iter represents a folder.
+ * %ITER_FILE: The iter represents a file.
+ *
+ * A classification for an iterator of DeBR tree model.
+ */
+typedef enum {
+	ITER_NONE = 0,
+	ITER_FOLDER,
+	ITER_FILE
+} IterType;
 
 enum {
 	MENU_STATUS = 0,
@@ -60,54 +81,63 @@ struct ui_menu {
 	} details;
 };
 
-void
-menu_setup_ui(void);
-void
-menu_new(gboolean edit);
-GeoXmlFlow *
-menu_load(const gchar * path);
-void
-menu_load_user_directory(void);
-void
-menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select);
-void
-menu_open(const gchar * path, gboolean select);
-gboolean
-menu_save(GtkTreeIter * iter);
-void
-menu_save_all(void);
-void
-menu_validate(GtkTreeIter * iter);
-void
-menu_install(void);
-void
-menu_close(GtkTreeIter * iter);
-void
-menu_selected(void);
-gboolean
-menu_cleanup(void);
-void
-menu_saved_status_set(MenuStatus status);
-void
-menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status);
-void
-menu_saved_status_set_unsaved(void);
-void
-menu_dialog_setup_ui(void);
-void
-menu_reset(void);
-gint
-menu_get_n_menus(void);
+void		menu_setup_ui			(void);
 
-gboolean
-menu_get_selected(GtkTreeIter * iter);
-void
-menu_load_selected(void);
-void
-menu_select_iter(GtkTreeIter * iter);
-void
-menu_details_update(void);
-void
-menu_path_get_parent(const gchar * path, GtkTreeIter * parent);
+void		menu_new			(gboolean	edit);
+
+GeoXmlFlow *	menu_load			(const gchar *	path);
+
+void		menu_load_user_directory	(void);
+
+void		menu_open_with_parent		(const gchar *	path,
+						 GtkTreeIter *	parent,
+						 gboolean	select);
+
+void		menu_open			(const gchar *	path,
+						 gboolean	select);
+
+gboolean	menu_save			(GtkTreeIter *	iter);
+
+void		menu_save_all			(void);
+
+void		menu_validate			(GtkTreeIter *	iter);
+
+void		menu_install			(void);
+
+void		menu_close			(GtkTreeIter *	iter);
+
+void		menu_selected			(void);
+
+gboolean	menu_cleanup			(void);
+
+void		menu_saved_status_set		(MenuStatus	status);
+
+void		menu_saved_status_set_from_iter	(GtkTreeIter *	iter,
+						 MenuStatus	status);
+
+void		menu_saved_status_set_unsaved	(void);
+
+void		menu_dialog_setup_ui		(void);
+
+void		menu_reset			(void);
+
+gint		menu_get_n_menus		(void);
+
+IterType	menu_get_selected		(GtkTreeIter *	iter);
+
+IterType	menu_get_iter_type		(GtkTreeIter *	iter);
+
+void		menu_load_selected		(void);
+
+void		menu_select_iter		(GtkTreeIter *	iter);
+
+void		menu_details_update		(void);
+
+void		menu_folder_details_update	(GtkTreeIter *	iter);
+
+void		menu_path_get_parent		(const gchar *	path,
+						 GtkTreeIter *	parent);
+
+glong		menu_count_unsaved		(void);
 
 #endif //__MENU_H
