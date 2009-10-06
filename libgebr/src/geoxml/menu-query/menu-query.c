@@ -429,7 +429,7 @@ parse_command_line(int argc, char **argv)
 	
 	g_option_context_free (context);
 
-	if ( !(all || filename || title || desc || author || mhelp || (ehelp != -1) || category || progs) )
+	if ( !(all || filename || title || desc || author || dates || mhelp || (ehelp != -1) || category || progs) )
 		all = TRUE;
 
 
