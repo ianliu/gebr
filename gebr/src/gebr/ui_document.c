@@ -97,7 +97,7 @@ static GtkTreeIter
 dict_edit_append_iter(struct dict_edit_data * data, GeoXmlObject * object, GtkTreeIter * document_iter);
 
 static const gchar *
-document_get_name_from_type(GeoXmlDocument * document);
+document_get_name_from_type(GeoXmlDocument * document, gboolean upper);
 
 static const GtkActionEntry dict_actions_entries [] = {
 	{"add",  GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter"),
@@ -162,7 +162,7 @@ document_properties_setup_ui(GeoXmlDocument * document)
 
 	dialog_title = g_string_new(NULL);
 	g_string_printf(dialog_title, _("Properties for %s '%s'"),
-		document_get_name_from_type(document), geoxml_document_get_title(document));
+		document_get_name_from_type(document, FALSE), geoxml_document_get_title(document));
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 		GTK_WINDOW(gebr.window), GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -236,7 +236,6 @@ document_properties_setup_ui(GeoXmlDocument * document)
 
 		const gchar *			old_title;
 		const gchar *			new_title;
-		gchar *				doc_type;
 
 		enum GEOXML_DOCUMENT_TYPE	type;
 
@@ -257,7 +256,6 @@ document_properties_setup_ui(GeoXmlDocument * document)
 			gtk_tree_store_set(gebr.ui_project_line->store, &iter,
 				PL_TITLE, geoxml_document_get_title(document),
 				-1);
-			doc_type = (type == GEOXML_DOCUMENT_TYPE_PROJECT) ? "project" : "line";
 			project_line_info_update();
 			break;
 		case GEOXML_DOCUMENT_TYPE_FLOW:
@@ -265,17 +263,17 @@ document_properties_setup_ui(GeoXmlDocument * document)
 			gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
 				FB_TITLE, geoxml_document_get_title(document),
 				-1);
-			doc_type = "flow";
 			flow_browse_info_update();
 			break;
 		default:
 			break;
 		}
 
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Properties of %s '%s' updated"), doc_type, old_title);
+		gebr_message(LOG_INFO, FALSE, TRUE, _("Properties of %s '%s' updated"),
+			document_get_name_from_type(document, FALSE), old_title);
 		if (strcmp(old_title, new_title) != 0)
 			gebr_message(LOG_INFO, FALSE, TRUE, _("Renaming %s '%s' to '%s'"),
-				doc_type, old_title, new_title);
+				document_get_name_from_type(document, FALSE), old_title, new_title);
 
 		ret = TRUE;
 		break;
@@ -341,7 +339,7 @@ document_dict_edit_setup_ui(void)
 
 	dialog_title = g_string_new(NULL);
 	g_string_printf(dialog_title, _("Parameters' dictionary for %s '%s'"),
-		document_get_name_from_type(document), geoxml_document_get_title(document));
+		document_get_name_from_type(document, FALSE), geoxml_document_get_title(document));
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -475,14 +473,15 @@ document_dict_edit_setup_ui(void)
 
 	data->documents[0] = GEOXML_DOCUMENT(gebr.project);
 	data->documents[1] = GEOXML_DOCUMENT(gebr.line);
-	data->documents[2] = GEOXML_DOCUMENT(gebr.flow);
+	data->documents[2] = geoxml_document_get_type(document) == GEOXML_DOCUMENT_TYPE_LINE
+		? NULL : GEOXML_DOCUMENT(gebr.flow);
 	data->documents[3] = NULL;
 
 	for (int i = 0; data->documents[i] != NULL; ++i) {
 		GtkTreeIter	document_iter;
 		const gchar *	document_name;
 
-		document_name = document_get_name_from_type(data->documents[i]);
+		document_name = document_get_name_from_type(data->documents[i], TRUE);
 
 		gtk_tree_store_append(GTK_TREE_STORE(data->tree_model), &document_iter, NULL);
 		data->iters[i] = document_iter;
@@ -491,6 +490,11 @@ document_dict_edit_setup_ui(void)
 			DICT_EDIT_GEOXML_POINTER, parameter,
 			DICT_EDIT_EDITABLE, FALSE,
 			-1);
+
+		/* document combo box */
+		gtk_list_store_append(document_model, &iter);
+		gtk_list_store_set(document_model, &iter,
+			0, document_name, 1, data->documents[i], 2, &data->iters[i], -1);
 
 		parameter = geoxml_parameters_get_first_parameter(
 			geoxml_document_get_dict_parameters(data->documents[i]));
@@ -508,11 +512,6 @@ document_dict_edit_setup_ui(void)
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(
 				GTK_TREE_VIEW(tree_view)), &document_iter);
 		}
-
-		/* document combo box */
-		gtk_list_store_append(document_model, &iter);
-		gtk_list_store_set(document_model, &iter,
-			0, document_name, 1, data->documents[i], 2, &data->iters[i], -1);
 	}
 
 	gtk_widget_show_all(dialog);
@@ -870,15 +869,15 @@ dict_edit_append_iter(struct dict_edit_data * data, GeoXmlObject * object, GtkTr
  * Return the document name given its type
  */
 static const gchar *
-document_get_name_from_type(GeoXmlDocument * document)
+document_get_name_from_type(GeoXmlDocument * document, gboolean upper)
 {
 	switch (geoxml_document_get_type(document)) {
 	case GEOXML_DOCUMENT_TYPE_PROJECT:
-		return _("project");
+		return upper ? _("Project") : _("project");
 	case GEOXML_DOCUMENT_TYPE_LINE:
-		return _("line");
+		return upper ? _("Line") : _("line");
 	case GEOXML_DOCUMENT_TYPE_FLOW:
-		return _("flow");
+		return upper ? _("Flow") : _("flow");
 	}
 	return "";
 }
