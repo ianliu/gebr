@@ -528,7 +528,9 @@ menu_validate(GtkTreeIter * iter)
 	validate_menu(iter, menu);
 }
 
-/* Function: menu_install
+/**
+ * menu_install:
+ *
  * Call GeBR to install selected(s) menus.
  */
 void
@@ -544,11 +546,31 @@ menu_install(void)
 		gchar *		menu_filename;
 		gchar *		menu_path;
 		GtkWidget *	dialog;
+		MenuStatus	status;
+
+		if (menu_get_iter_type(&iter) != ITER_FILE)
+			continue;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 			MENU_FILENAME, &menu_filename,
+			MENU_STATUS, &status,
 			MENU_PATH, &menu_path,
 			-1);
+
+		if (status == MENU_STATUS_UNSAVED) {
+			gint response;
+			dialog = gtk_message_dialog_new(
+				GTK_WINDOW(debr.window),
+				GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+				GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+				_("Menu %s is unsaved. This means that "
+				  "you are installing an older state of it. "
+				  "Would you like to save if first?"), menu_filename);
+			response = gtk_dialog_run(GTK_DIALOG(dialog));
+			if (response == GTK_RESPONSE_YES)
+				menu_save(&iter);
+			gtk_widget_destroy(dialog);
+		}
 
 		g_string_printf(cmd_line, "gebr %s -I %s", overwrite_all ? "-f" : "", menu_path);
 		switch ((char)WEXITSTATUS(system(cmd_line->str))) {
@@ -715,7 +737,7 @@ menu_saved_status_set(MenuStatus status)
  * @status: The new status to be set to @iter.
  *
  * Change the status of @iter to either %MENU_STATUS_SAVED
- * or %MENU_STATUS_USAVED.
+ * or %MENU_STATUS_UNSAVED.
  */
 void
 menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
