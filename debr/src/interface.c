@@ -39,9 +39,6 @@
  * Declarations
  */
 
-static void	interface_set_actions_sensitive	(gchar **	names,
-						 gboolean	sensitive);
-
 static const GtkActionEntry actions_entries [] = {
 	{"quit", GTK_STOCK_QUIT, N_("Quit"), NULL, N_("Quit DéBR"), (GCallback)on_quit_activate},
 	/* menu */

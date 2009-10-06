@@ -137,7 +137,7 @@ menu_setup_ui(void)
 	gtk_tree_store_append(debr.ui_menu.model, &debr.ui_menu.iter_other, NULL);
 	gtk_tree_store_set(debr.ui_menu.model, &debr.ui_menu.iter_other,
 			MENU_IMAGE, GTK_STOCK_DIRECTORY,
-			MENU_FILENAME, "<i>Others</i>",
+			MENU_FILENAME, _("<i>Others</i>"),
 			-1);
 
 	/*
@@ -158,6 +158,7 @@ menu_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(details), debr.ui_menu.details.title_label, FALSE, TRUE, 0);
 
 	debr.ui_menu.details.description_label = gtk_label_new(NULL);
+	g_object_set(G_OBJECT(debr.ui_menu.details.description_label), "wrap", TRUE, NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.description_label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(details), debr.ui_menu.details.description_label, FALSE, TRUE, 0);
 
@@ -203,7 +204,7 @@ menu_setup_ui(void)
 	debr.ui_menu.details.help_button = gtk_button_new_from_stock(GTK_STOCK_INFO);
 	gtk_box_pack_end(GTK_BOX(details), debr.ui_menu.details.help_button, FALSE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(debr.ui_menu.details.help_button), "clicked",
-			 GTK_SIGNAL_FUNC(menu_help_view), debr.menu);
+			 G_CALLBACK(menu_help_view), debr.menu);
 
 	debr.ui_menu.details.author_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.author_label), 0, 0);
@@ -822,8 +823,23 @@ menu_dialog_setup_ui(void)
 	GtkWidget *		categories_sequence_edit;
 	GtkWidget *		widget;
 
+	IterType		type;
+	GtkTreeIter		iter;
+
 	libgebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
-	// menu_get_selected(NULL);
+	
+	type = menu_get_selected(&iter);
+
+	if (type == ITER_FOLDER) {
+		GtkTreePath * path;
+		path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_menu.model), &iter);
+		gtk_tree_view_expand_row(GTK_TREE_VIEW(debr.ui_menu.tree_view), path, FALSE);
+		gtk_tree_path_free(path);
+		return;
+	}
+
+	if (type != ITER_FILE)
+		return;
 
 	dialog = gtk_dialog_new_with_buttons(_("Edit menu"),
 		GTK_WINDOW(debr.window),
@@ -854,7 +870,7 @@ menu_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0);
 	g_signal_connect(title_entry, "changed",
-		(GCallback)menu_title_changed, NULL);
+		G_CALLBACK(menu_title_changed), NULL);
 
 	/*
 	 * Description
@@ -872,7 +888,7 @@ menu_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0);
 	g_signal_connect(description_entry, "changed",
-		(GCallback)menu_description_changed, NULL);
+		G_CALLBACK(menu_description_changed), NULL);
 
 	/*
 	 * Help
@@ -893,14 +909,14 @@ menu_dialog_setup_ui(void)
 	gtk_widget_show(menuhelp_view_button);
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_view_button, FALSE, FALSE, 0);
 	g_signal_connect(menuhelp_view_button, "clicked",
-		GTK_SIGNAL_FUNC(menu_help_view), NULL);
+		G_CALLBACK(menu_help_view), NULL);
 	g_object_set(G_OBJECT(menuhelp_view_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	menuhelp_edit_button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
 	gtk_widget_show(menuhelp_edit_button);
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_edit_button, FALSE, FALSE, 5);
 	g_signal_connect(menuhelp_edit_button, "clicked",
-		GTK_SIGNAL_FUNC(menu_help_edit), NULL);
+		G_CALLBACK(menu_help_edit), NULL);
 	g_object_set(G_OBJECT(menuhelp_edit_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	/*
@@ -919,7 +935,7 @@ menu_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0);
 	g_signal_connect(author_entry, "changed",
-		(GCallback)menu_author_changed, NULL);
+		G_CALLBACK(menu_author_changed), NULL);
 
 	/*
 	 * Email
@@ -937,7 +953,7 @@ menu_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0);
 	g_signal_connect(email_entry, "changed",
-		(GCallback)menu_email_changed, NULL);
+		G_CALLBACK(menu_email_changed), NULL);
 
 	/*
 	 * Categories
@@ -958,13 +974,13 @@ menu_dialog_setup_ui(void)
 	categories_sequence_edit = value_sequence_edit_new(categories_combo);
 	gtk_widget_show(categories_sequence_edit);
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "add-request",
-		GTK_SIGNAL_FUNC(menu_category_add), categories_combo);
+		G_CALLBACK(menu_category_add), categories_combo);
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "changed",
-		GTK_SIGNAL_FUNC(menu_category_changed), NULL);
+		G_CALLBACK(menu_category_changed), NULL);
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "renamed",
-		GTK_SIGNAL_FUNC(menu_category_renamed), NULL);
+		G_CALLBACK(menu_category_renamed), NULL);
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "removed",
-		GTK_SIGNAL_FUNC(menu_category_removed), NULL);
+		G_CALLBACK(menu_category_removed), NULL);
 	gtk_table_attach(GTK_TABLE(table), categories_sequence_edit, 1, 2, 5, 6,
 		(GtkAttachOptions)(GTK_FILL),
 		(GtkAttachOptions)(GTK_FILL), 0, 0);
@@ -1181,8 +1197,18 @@ menu_details_update(void)
 void
 menu_folder_details_update(GtkTreeIter * iter)
 {
+	gchar *		folder_name;
+	gchar *		folder_path;
+	gchar *		markup;
+	gint		n_menus;
+	GString *	text;
+
 	if (menu_get_iter_type(iter) != ITER_FOLDER)
 		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter,
+		MENU_PATH, &folder_path,
+		-1);
 
 	gchar * names[] = {
 		"menu_properties",
@@ -1196,6 +1222,61 @@ menu_folder_details_update(GtkTreeIter * iter)
 		NULL
 	};
 	debr_set_actions_sensitive(names, FALSE);
+
+	if (libgebr_gui_gtk_tree_model_iter_equal_to(iter, &debr.ui_menu.iter_other))
+	{
+		gtk_label_set_markup(
+			GTK_LABEL(debr.ui_menu.details.title_label), _("<b>Others</b>"));
+		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.description_label),
+			_("<i>This special folder shows the menus which are "
+			  "not placed in any configured folder through "
+			  "Preferences button in Actions menu.</i>"));
+	} else {
+		folder_name = g_path_get_basename(folder_path);
+		markup = g_markup_printf_escaped(_("<b>%s</b>"), folder_name);
+		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label),
+			markup);
+		g_free(markup);
+
+		markup = g_markup_printf_escaped(
+			_("Full folder path: <i>%s</i>"), folder_path);
+		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.description_label),
+			markup);
+		g_free(markup);
+		g_free(folder_name);
+	}
+
+	text = g_string_new(NULL);
+	n_menus = gtk_tree_model_iter_n_children(
+		GTK_TREE_MODEL(debr.ui_menu.model), iter);
+	switch (n_menus) {
+		case 0:
+			g_string_printf(text, _("This folder has no menu"));
+			break;
+		case 1:
+			g_string_printf(text, _("This folder has 1 menu"));
+			break;
+		default:
+			g_string_printf(text, _("This folder has %d menus"),
+				n_menus);
+			break;
+	}
+	gtk_label_set_markup(
+		GTK_LABEL(debr.ui_menu.details.nprogs_label), text->str);
+	g_string_free(text, TRUE);
+
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.created_label), "");
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.created_date_label), "");
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.modified_label), "");
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.modified_date_label), "");
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.category_label), "");
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[0]), "");
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[1]), "");
+	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]), "");
+
+	g_object_set(G_OBJECT(debr.ui_menu.details.help_button), FALSE, NULL);
+
+	g_free(folder_path);
 }
 
 /**
@@ -1413,14 +1494,14 @@ menu_popup_menu(GtkTreeView * tree_view)
 	if (column_id == MENU_FILENAME)
 		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM(menu_item), image);
 	g_signal_connect(menu_item, "activate",
-		(GCallback)menu_sort_by_name, NULL);
+		G_CALLBACK(menu_sort_by_name), NULL);
 	gtk_container_add(GTK_CONTAINER(sub_menu), menu_item);
 
 	menu_item = gtk_image_menu_item_new_with_label(_("Modified date"));
 	if (column_id == MENU_MODIFIED_DATE)
 		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM(menu_item), image);
 	g_signal_connect(menu_item, "activate",
-		(GCallback)menu_sort_by_modified_date, NULL);
+		G_CALLBACK(menu_sort_by_modified_date), NULL);
 	gtk_container_add(GTK_CONTAINER(sub_menu), menu_item);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
