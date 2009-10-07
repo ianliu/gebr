@@ -96,8 +96,14 @@
 	idref IDREF #REQUIRED>
 <!-- Integer -->
 <!ELEMENT int (property)>
+<!ATTLIST int
+        min     CDATA   #IMPLIED
+        max     CDATA   #IMPLIED>  
 <!-- Real number -->
 <!ELEMENT float (property)>
+<!ATTLIST float
+        min     CDATA   #IMPLIED
+        max     CDATA   #IMPLIED>  
 <!-- String -->
 <!ELEMENT string (property)>
 <!-- Flag -->
@@ -105,7 +111,8 @@
 <!-- File -->
 <!ELEMENT file (property)>
 <!ATTLIST file
-	directory (yes | no) #REQUIRED>
+	directory (yes | no) #REQUIRED
+        filter    CDATA      #IMPLIED>
 <!-- Range -->
 <!ELEMENT range (property)>
 <!ATTLIST range
