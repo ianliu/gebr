@@ -267,7 +267,7 @@ __parameter_widget_sync_non_list(struct parameter_widget * parameter_widget)
 static void
 __parameter_widget_on_value_widget_changed(GtkWidget * widget, struct parameter_widget * parameter_widget)
 {
-	if (parameter_widget->dict_parameter != NULL)
+	if (parameter_widget->dict_parameter == NULL)
 		return;
 
 	__parameter_widget_sync_non_list(parameter_widget);
@@ -419,7 +419,7 @@ __on_sequence_edit_changed(GtkSequenceEdit * sequence_edit, struct parameter_wid
 static void
 __validate_int(GtkEntry * entry, struct parameter_widget * parameter_widget)
 {
-	if (parameter_widget->dict_parameter != NULL)
+	if (parameter_widget->dict_parameter == NULL)
 		return;
 	gtk_entry_set_text(entry, libgebr_validate_int(gtk_entry_get_text(entry)));
 }
@@ -430,7 +430,7 @@ __validate_int(GtkEntry * entry, struct parameter_widget * parameter_widget)
 static void
 __validate_float(GtkEntry * entry, struct parameter_widget * parameter_widget)
 {
-	if (parameter_widget->dict_parameter != NULL)
+	if (parameter_widget->dict_parameter == NULL)
 		return;
 	gtk_entry_set_text(entry, libgebr_validate_float(gtk_entry_get_text(entry)));
 }

@@ -548,6 +548,7 @@ on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data)
 	GtkTreeIter			document_iter;
 	GeoXmlProgramParameter *	parameter;
 	const gchar *			keyword;
+	gchar *				value;
 	GeoXmlDocument *		document;
 
 	document = data->documents[gtk_combo_box_get_active(GTK_COMBO_BOX(data->document_combo))];
@@ -580,8 +581,18 @@ on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data)
 		g_string_free(keyword, TRUE);
 	}
 
-	geoxml_program_parameter_set_first_value(parameter,
-		FALSE, gtk_entry_get_text(GTK_ENTRY(data->value_entry)));
+	value = (gchar*)gtk_entry_get_text(GTK_ENTRY(data->value_entry));
+	switch (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter))) {
+	case GEOXML_PARAMETERTYPE_INT:
+		value = (gchar*)libgebr_validate_int(value);
+		break;
+	case GEOXML_PARAMETERTYPE_FLOAT:
+		value = (gchar*)libgebr_validate_float(value);
+		break;
+	default:
+		break;
+	}
+	geoxml_program_parameter_set_first_value(parameter, FALSE, value);
 	geoxml_parameter_set_label(GEOXML_PARAMETER(parameter),
 		gtk_entry_get_text(GTK_ENTRY(data->comment_entry)));
 
@@ -670,6 +681,7 @@ struct dict_edit_data * data)
 		geoxml_program_parameter_set_keyword(parameter, new_text);
 		break;
 	case DICT_EDIT_VALUE:
+		puts("here");
 		switch (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter))) {
 		case GEOXML_PARAMETERTYPE_INT:
 			new_text = (gchar*)libgebr_validate_int(new_text);
