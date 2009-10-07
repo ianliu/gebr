@@ -17,8 +17,11 @@
 AC_INIT(configure.ac)
 
 PACKAGE=libgebr
+
 VERSION=0.9.14
 GEOXML_VERSION_INFO=`echo $VERSION | awk -F. '{ printf "%d:%d:%d", $1+$2, $3, $2 }'`
+VERSION="SVN "`svnversion`
+
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
 AC_SUBST(TODAY)
