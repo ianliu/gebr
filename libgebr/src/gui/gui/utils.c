@@ -457,30 +457,30 @@ libgebr_gui_gtk_tree_view_select_sibling(GtkTreeView * tree_view)
 
 	model = gtk_tree_view_get_model(tree_view);
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
-	if (gtk_tree_selection_get_mode(selection) != GTK_SELECTION_MULTIPLE) {
-		if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
-			GtkTreeIter	next_iter;
+	if (gtk_tree_selection_get_mode(selection) != GTK_SELECTION_MULTIPLE &&
+	gtk_tree_selection_get_selected(selection, NULL, &iter)) {
+		GtkTreeIter	next_iter;
 
-			next_iter = iter;
-			if (gtk_tree_model_iter_next(model, &next_iter)) {
-				gtk_tree_selection_select_iter(selection, &next_iter);
+		next_iter = iter;
+		if (gtk_tree_model_iter_next(model, &next_iter)) {
+			gtk_tree_selection_select_iter(selection, &next_iter);
+			g_signal_emit_by_name(tree_view, "cursor-changed");
+		} else {
+			GtkTreePath *	path;
+
+			path = gtk_tree_model_get_path(model, &iter);
+			if (gtk_tree_path_prev(path)) {
+				gtk_tree_selection_select_path(selection, path);
 				g_signal_emit_by_name(tree_view, "cursor-changed");
-			} else {
-				GtkTreePath *	path;
+			} else
+					goto none;
 
-				path = gtk_tree_model_get_path(model, &iter);
-				if (gtk_tree_path_prev(path)) {
-					gtk_tree_selection_select_path(selection, path);
-					g_signal_emit_by_name(tree_view, "cursor-changed");
-				} else
-					 goto none;
-
-				gtk_tree_path_free(path);
-			}
-
-			return;
+			gtk_tree_path_free(path);
 		}
-	}
+
+		return;
+	} else
+		gtk_tree_selection_unselect_all(selection);
 
 	if (gtk_tree_model_get_iter_first(model, &iter)) {
 		gtk_tree_selection_select_iter(selection, &iter);

@@ -622,17 +622,19 @@ void
 flow_program_remove(void)
 {
 	GtkTreeIter	iter;
+	GeoXmlProgram *	program;
 
 	libgebr_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
 		if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
 		libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
 			continue;
 
-		geoxml_sequence_remove(GEOXML_SEQUENCE(gebr.program));
-		document_save(GEOXML_DOCUMENT(gebr.flow));
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+			FSEQ_GEOXML_POINTER, &program, -1);
+		geoxml_sequence_remove(GEOXML_SEQUENCE(program));
 		gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
-		g_signal_emit_by_name(gebr.ui_flow_edition->fseq_view, "cursor-changed");
 	}
+	document_save(GEOXML_DOCUMENT(gebr.flow));
 	libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 }
 
