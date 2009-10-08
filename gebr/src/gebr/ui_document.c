@@ -681,7 +681,6 @@ struct dict_edit_data * data)
 		geoxml_program_parameter_set_keyword(parameter, new_text);
 		break;
 	case DICT_EDIT_VALUE:
-		puts("here");
 		switch (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter))) {
 		case GEOXML_PARAMETERTYPE_INT:
 			new_text = (gchar*)libgebr_validate_int(new_text);

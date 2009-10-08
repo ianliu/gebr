@@ -196,6 +196,10 @@ parameter_load_program(void)
 	GeoXmlSequence *		parameter;
 
 	gtk_tree_store_clear(debr.ui_parameter.tree_store);
+	if (debr.program == NULL) {
+		debr.parameter = NULL;
+		return;
+	}
 
 	geoxml_parameters_get_parameter(geoxml_program_get_parameters(debr.program), &parameter, 0);
 	for (; parameter != NULL; geoxml_sequence_next(&parameter))

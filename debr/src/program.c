@@ -101,8 +101,8 @@ program_setup_ui(void)
 {
 	GtkWidget *		hpanel;
 	GtkWidget *		scrolled_window;
-	GtkWidget *		frame;
 	GtkWidget *		details;
+	GtkWidget *		hbox;
 	GtkTreeViewColumn *	col;
 	GtkCellRenderer *	renderer;
 
@@ -151,11 +151,12 @@ program_setup_ui(void)
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_paned_pack2(GTK_PANED(hpanel), scrolled_window, TRUE, FALSE);
 
-	frame = gtk_frame_new(_("Details"));
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), frame);
+	debr.ui_program.details.frame = gtk_frame_new(NULL);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window),
+		debr.ui_program.details.frame);
 
 	details = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(frame), details);
+	gtk_container_add(GTK_CONTAINER(debr.ui_program.details.frame), details);
 
 	debr.ui_program.details.title_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.title_label), 0, 0);
@@ -173,32 +174,25 @@ program_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.binary_label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.binary_label, FALSE, TRUE, 0);
 
-	{
-		GtkWidget *	label;
-		GtkWidget *	hbox;
-		gchar *		markup;
+	debr.ui_program.details.url_label = gtk_label_new(NULL);
+	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.url_label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.url_label, FALSE, TRUE, 10);
 
-		label = gtk_label_new(NULL);
-		markup = g_markup_printf_escaped("<b>%s</b>:", _("URL"));
-		gtk_label_set_markup(GTK_LABEL(label), markup);
-		g_free(markup);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_box_pack_start(GTK_BOX(details), label, FALSE, TRUE, 10);
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(details), hbox, FALSE, TRUE, 0);
 
-		hbox = gtk_hbox_new(FALSE, 0);
-		gtk_box_pack_start(GTK_BOX(details), hbox, FALSE, TRUE, 0);
-
-		debr.ui_program.details.url_button = gtk_button_new_with_label( _("URL not set"));
-		gtk_box_pack_start(GTK_BOX(hbox),debr.ui_program.details.url_button, FALSE, TRUE, 0);
-		g_signal_connect(GTK_OBJECT(debr.ui_program.details.url_button), "clicked",
-					GTK_SIGNAL_FUNC(program_url_open), debr.program);
-	}
+	debr.ui_program.details.url_button = gtk_button_new();
+	gtk_box_pack_start(GTK_BOX(hbox),debr.ui_program.details.url_button, FALSE, TRUE, 0);
+	g_signal_connect(GTK_OBJECT(debr.ui_program.details.url_button), "clicked",
+		GTK_SIGNAL_FUNC(program_url_open), debr.program);
 
 	debr.ui_program.details.help_button = gtk_button_new_from_stock(GTK_STOCK_INFO);
 	gtk_box_pack_end(GTK_BOX(details), debr.ui_program.details.help_button, FALSE, TRUE, 0);
 
 	debr.ui_program.widget = hpanel;
 	gtk_widget_show_all(debr.ui_program.widget);
+
+	program_details_update();
 }
 
 /*
@@ -212,6 +206,12 @@ program_load_menu(void)
 	GtkTreeIter			iter;
 
 	gtk_list_store_clear(debr.ui_program.list_store);
+	if (debr.menu == NULL) {
+		debr.program = NULL;
+		parameter_load_program();
+		program_details_update();
+		return;
+	}
 
 	geoxml_flow_get_program(debr.menu, &program, 0);
 	for (; program != NULL; geoxml_sequence_next(&program))
@@ -615,8 +615,19 @@ program_details_update(void)
 	GeoXmlParameters *      parameters;
 	gchar *		        markup;
 
-	if (debr.program == NULL)
+	g_object_set(debr.ui_program.details.url_button, "visible", debr.program != NULL, NULL);
+	gtk_widget_set_sensitive(debr.ui_program.details.help_button, debr.program != NULL);
+	if (debr.program == NULL) {
+		gtk_frame_set_label(GTK_FRAME(debr.ui_program.details.frame), NULL);
+		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.title_label), "");
+		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.description_label), "");
+		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.nparams_label), "");
+		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.binary_label), "");
+		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.url_label), "");
 		return;
+	}
+
+	gtk_frame_set_label(GTK_FRAME(debr.ui_program.details.frame), _("Details"));
 
 	markup = g_markup_printf_escaped("<b>%s</b>", geoxml_program_get_title(debr.program));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.title_label), markup);
@@ -643,6 +654,10 @@ program_details_update(void)
 
 	markup = g_markup_printf_escaped("<b>%s</b>: %s", _("Binary"), geoxml_program_get_binary(debr.program));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.binary_label), markup);
+	g_free(markup);
+
+	markup = g_markup_printf_escaped("<b>%s</b>:", _("URL"));
+	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.url_label), markup);
 	g_free(markup);
 
 	if (strlen(geoxml_program_get_url(debr.program)) > 0)

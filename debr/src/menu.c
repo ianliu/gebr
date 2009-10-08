@@ -649,17 +649,14 @@ menu_selected(void)
 	IterType	type;
 
 	type = menu_get_selected(&iter);
-
+	debr.menu = NULL;
+	program_load_menu();
 	if (type == ITER_FOLDER) {
-		debr.menu = NULL;
 		menu_folder_details_update(&iter);
 		return;
 	}
-
-	if (type != ITER_FILE) {
-		debr.menu = NULL;
+	if (type != ITER_FILE)
 		return;
-	}
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 		MENU_STATUS, &status,

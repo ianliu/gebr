@@ -35,10 +35,12 @@ struct ui_program {
 	GtkWidget *		tree_view;
 
 	struct ui_program_details {
+		GtkWidget *	frame;
 		GtkWidget *	title_label;
 		GtkWidget *	description_label;
 		GtkWidget *	nparams_label;
 		GtkWidget *	binary_label;
+		GtkWidget *	url_label;
 		GtkWidget *	url_button;
 		GtkWidget *	help_button;
 	} details;
