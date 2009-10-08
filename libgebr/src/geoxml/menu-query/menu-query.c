@@ -500,6 +500,10 @@ show_program_parameter(GeoXmlProgramParameter *pp, gint ipar, guint isubpar)
                 
 		geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
                 
+                if (enum_option == NULL){
+                        printf("\n        %s", report("missing options", FILEN));
+                }
+
 		for (; enum_option != NULL; geoxml_sequence_next(&enum_option)){
 			printf("\n");
 			if (isubpar)

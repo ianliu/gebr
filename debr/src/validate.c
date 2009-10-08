@@ -668,6 +668,11 @@ show_program_parameter(struct validate * validate, GeoXmlProgramParameter * pp, 
 
 		geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
 
+                if (enum_option == NULL){
+                        validate_append_text_error(validate, "\n        missing options");
+                        validate->error_count++;
+                }
+
 		for (; enum_option != NULL; geoxml_sequence_next(&enum_option)){
 			validate_append_text(validate,  "\n");
 			if (isubpar)
