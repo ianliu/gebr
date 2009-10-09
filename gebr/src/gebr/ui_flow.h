@@ -45,7 +45,7 @@ struct ui_flow_io {
 };
 
 void
-flow_io_setup_ui			(void);
+flow_io_setup_ui			(gboolean		executable);
 
 gboolean
 flow_io_get_selected			(struct ui_flow_io *	ui_flow_io,

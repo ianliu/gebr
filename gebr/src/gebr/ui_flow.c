@@ -87,7 +87,7 @@ on_entry_activate		(GtkEntry *		entry,
  * dialog closes.
  */
 void
-flow_io_setup_ui()
+flow_io_setup_ui(gboolean executable)
 {
 	struct ui_flow_io *	ui_flow_io;
 
@@ -132,8 +132,10 @@ flow_io_setup_ui()
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
-		GTK_STOCK_EXECUTE, GEBR_FLOW_UI_RESPONSE_EXECUTE,
 		NULL);
+	if (executable)
+		gtk_dialog_add_button(GTK_DIALOG(dialog),
+			GTK_STOCK_EXECUTE, GEBR_FLOW_UI_RESPONSE_EXECUTE);
 	content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
 	gtk_window_set_default_size(GTK_WINDOW(dialog), -1, 300);
@@ -270,6 +272,17 @@ flow_io_setup_ui()
 	g_free(ui_flow_io);
 }
 
+/**
+ * flow_io_get_selected:
+ * @ui_flow_io: The structure containing the #GtkTreeView.
+ * @iter: The iterator that will point to the selected item.
+ *
+ * Makes @iter point to the selected item in the #GtkTreeView
+ * of @ui_flow_io structure.
+ *
+ * Returns: %TRUE if there is a selection, %FALSE otherwise.
+ * In case of %FALSE, @iter is invalid.
+ */
 gboolean
 flow_io_get_selected(struct ui_flow_io * ui_flow_io, GtkTreeIter * iter)
 {
@@ -278,6 +291,14 @@ flow_io_get_selected(struct ui_flow_io * ui_flow_io, GtkTreeIter * iter)
 			GTK_TREE_VIEW(ui_flow_io->treeview)), NULL, iter);
 }
 
+/**
+ * flow_io_select_iter:
+ * @ui_flow_io: The structure containing the #GtkTreeView.
+ * @iter: A valid iterator the @ui_flow_io 's model to.
+ *
+ * Sets the selection of the #GtkTreeView of @ui_flow_io to
+ * @iter. You must garantee that @iter is valid.
+ */
 void
 flow_io_select_iter(struct ui_flow_io * ui_flow_io, GtkTreeIter * iter)
 {

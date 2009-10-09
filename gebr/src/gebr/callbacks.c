@@ -217,7 +217,7 @@ void
 on_flow_io_activate(void)
 {
 	flow_browse_single_selection();
-	flow_io_setup_ui();
+	flow_io_setup_ui(FALSE);
 }
 
 /*
@@ -228,7 +228,7 @@ on_flow_io_activate(void)
 void
 on_flow_execute_activate(void)
 {
-	flow_io_setup_ui();
+	flow_io_setup_ui(TRUE);
 }
 
 /* Function: on_flow_revision_save_activate

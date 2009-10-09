@@ -265,11 +265,11 @@ flow_edition_component_activated(void)
 	if (!flow_edition_get_selected_component(&iter, FALSE))
 		return;
 	if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter)) {
-		flow_io_setup_ui();
+		flow_io_setup_ui(FALSE);
 		return;
 	}
 	if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
-		flow_io_setup_ui();
+		flow_io_setup_ui(FALSE);
 		return;
 	}
 
