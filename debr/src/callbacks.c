@@ -222,8 +222,17 @@ on_menu_save_as_activate(void)
 	gtk_file_filter_set_name(filefilter, _("Menu files (*.mnu)"));
 	gtk_file_filter_add_pattern(filefilter, "*.mnu");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), filefilter);
-	if (debr.config.menu_dir != NULL && debr.config.menu_dir[0] != NULL)
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir[0]);
+	tmp = NULL;
+	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_menu.model),
+		&parent, &iter);
+	if (!libgebr_gui_gtk_tree_model_iter_equal_to(&parent, &debr.ui_menu.iter_other))
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &parent,
+			MENU_PATH, &tmp,
+			-1);
+	else if (debr.config.menu_dir && debr.config.menu_dir[0])
+		tmp = debr.config.menu_dir[0];
+	if (tmp)
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), tmp);
 
 	/* show file chooser */
 	gtk_widget_show(chooser_dialog);

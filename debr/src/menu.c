@@ -214,8 +214,11 @@ menu_setup_ui(void)
 	gtk_widget_show_all(debr.ui_menu.widget);
 }
 
-/* Function: menu_new
- * Create a new (unsaved) menu and add it to the tree view
+/**
+ * menu_new:
+ * @edit: Whether to edit it or not.
+ *
+ * Create a new (unsaved) menu and add it to the tree view.
  */
 void
 menu_new(gboolean edit)
@@ -223,6 +226,7 @@ menu_new(gboolean edit)
 	static int		new_count = 0;
 	GString *		new_menu_str;
 	GtkTreeIter		iter;
+	GtkTreeIter		target;
 
 	new_menu_str = g_string_new(NULL);
 	g_string_printf(new_menu_str, "%s%d.mnu", _("untitled"), ++new_count);
@@ -232,8 +236,22 @@ menu_new(gboolean edit)
 	geoxml_document_set_email(GEOXML_DOC(debr.menu), debr.config.email->str);
 	geoxml_document_set_date_created(GEOXML_DOC(debr.menu), iso_date());
 
-	gtk_tree_store_append(debr.ui_menu.model, &iter, &debr.ui_menu.iter_other);
+	switch (menu_get_selected(&iter)) {
+		case ITER_FILE:
+			gtk_tree_model_iter_parent(
+				GTK_TREE_MODEL(debr.ui_menu.model), &target, &iter);
+			break;
+		case ITER_FOLDER:
+			target = iter;
+			break;
+		default:
+			target = debr.ui_menu.iter_other;
+			break;
+	}
+
+	gtk_tree_store_append(debr.ui_menu.model, &iter, &target);
 	gtk_tree_store_set(debr.ui_menu.model, &iter,
+			MENU_STATUS, MENU_STATUS_UNSAVED,
 			MENU_IMAGE, GTK_STOCK_NO,
 			MENU_FILENAME, new_menu_str->str,
 			MENU_XMLPOINTER, (gpointer)debr.menu,
@@ -242,7 +260,7 @@ menu_new(gboolean edit)
 	libgebr_gui_gtk_tree_view_expand(GTK_TREE_VIEW(debr.ui_menu.tree_view), &iter);
 
 	menu_select_iter(&iter);
-	menu_saved_status_set(MENU_STATUS_SAVED);
+
 	if (edit) {
 		menu_dialog_setup_ui();
 		menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -517,8 +535,11 @@ menu_save_all(void)
 	menu_details_update();
 }
 
-/* Function: menu_validate
- * Validate selected menus
+/**
+ * menu_validate:
+ * @iter: The iterator pointing the menu to be validated.
+ *
+ * Validates the menu pointed by @iter.
  */
 void
 menu_validate(GtkTreeIter * iter)
@@ -622,8 +643,11 @@ menu_install(void)
 	g_string_free(cmd_line, TRUE);
 }
 
-/* Function: menu_validate
- * Validate selected menus
+/**
+ * menu_close:
+ * @iter: The iterator pointing the menu to be closed.
+ *
+ * Closes the menu pointed by @iter.
  */
 void
 menu_close(GtkTreeIter * iter)
@@ -866,8 +890,6 @@ menu_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), title_entry, 1, 2, 0, 1,
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0);
-	g_signal_connect(title_entry, "changed",
-		G_CALLBACK(menu_title_changed), NULL);
 
 	/*
 	 * Description
@@ -884,8 +906,6 @@ menu_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), description_entry, 1, 2, 1, 2,
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0);
-	g_signal_connect(description_entry, "changed",
-		G_CALLBACK(menu_description_changed), NULL);
 
 	/*
 	 * Help
@@ -905,15 +925,11 @@ menu_dialog_setup_ui(void)
 	menuhelp_view_button = gtk_button_new_from_stock(GTK_STOCK_OPEN);
 	gtk_widget_show(menuhelp_view_button);
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_view_button, FALSE, FALSE, 0);
-	g_signal_connect(menuhelp_view_button, "clicked",
-		G_CALLBACK(menu_help_view), NULL);
 	g_object_set(G_OBJECT(menuhelp_view_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	menuhelp_edit_button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
 	gtk_widget_show(menuhelp_edit_button);
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_edit_button, FALSE, FALSE, 5);
-	g_signal_connect(menuhelp_edit_button, "clicked",
-		G_CALLBACK(menu_help_edit), NULL);
 	g_object_set(G_OBJECT(menuhelp_edit_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	/*
@@ -931,8 +947,6 @@ menu_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), author_entry, 1, 2, 3, 4,
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0);
-	g_signal_connect(author_entry, "changed",
-		G_CALLBACK(menu_author_changed), NULL);
 
 	/*
 	 * Email
@@ -949,8 +963,6 @@ menu_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), email_entry, 1, 2, 4, 5,
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0);
-	g_signal_connect(email_entry, "changed",
-		G_CALLBACK(menu_email_changed), NULL);
 
 	/*
 	 * Categories
@@ -970,14 +982,6 @@ menu_dialog_setup_ui(void)
 
 	categories_sequence_edit = value_sequence_edit_new(categories_combo);
 	gtk_widget_show(categories_sequence_edit);
-	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "add-request",
-		G_CALLBACK(menu_category_add), categories_combo);
-	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "changed",
-		G_CALLBACK(menu_category_changed), NULL);
-	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "renamed",
-		G_CALLBACK(menu_category_renamed), NULL);
-	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "removed",
-		G_CALLBACK(menu_category_removed), NULL);
 	gtk_table_attach(GTK_TABLE(table), categories_sequence_edit, 1, 2, 5, 6,
 		(GtkAttachOptions)(GTK_FILL),
 		(GtkAttachOptions)(GTK_FILL), 0, 0);
@@ -994,6 +998,28 @@ menu_dialog_setup_ui(void)
 		geoxml_document_get_author(GEOXML_DOC(debr.menu)));
 	gtk_entry_set_text(GTK_ENTRY(email_entry),
 		geoxml_document_get_email(GEOXML_DOC(debr.menu)));
+
+	g_signal_connect(title_entry, "changed",
+		G_CALLBACK(menu_title_changed), NULL);
+	g_signal_connect(description_entry, "changed",
+		G_CALLBACK(menu_description_changed), NULL);
+	g_signal_connect(menuhelp_view_button, "clicked",
+		G_CALLBACK(menu_help_view), NULL);
+	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "add-request",
+		G_CALLBACK(menu_category_add), categories_combo);
+	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "changed",
+		G_CALLBACK(menu_category_changed), NULL);
+	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "renamed",
+		G_CALLBACK(menu_category_renamed), NULL);
+	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "removed",
+		G_CALLBACK(menu_category_removed), NULL);
+	g_signal_connect(email_entry, "changed",
+		G_CALLBACK(menu_email_changed), NULL);
+	g_signal_connect(menuhelp_edit_button, "clicked",
+		G_CALLBACK(menu_help_edit), NULL);
+	g_signal_connect(author_entry, "changed",
+		G_CALLBACK(menu_author_changed), NULL);
+
 	/* categories */
 	GeoXmlSequence * category;
 	geoxml_flow_get_category(debr.menu, &category, 0);
@@ -1225,8 +1251,8 @@ menu_folder_details_update(GtkTreeIter * iter)
 		gtk_label_set_markup(
 			GTK_LABEL(debr.ui_menu.details.title_label), _("<b>Others</b>"));
 		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.description_label),
-			_("<i>This special folder shows the menus which are "
-			  "not placed in any configured folder through "
+			_("<i>This folder lists the menus which are "
+			  "not in any configured folder through "
 			  "Preferences button in Actions menu.</i>"));
 	} else {
 		folder_name = g_path_get_basename(folder_path);
@@ -1235,8 +1261,7 @@ menu_folder_details_update(GtkTreeIter * iter)
 			markup);
 		g_free(markup);
 
-		markup = g_markup_printf_escaped(
-			_("Full folder path: <i>%s</i>"), folder_path);
+		markup = g_markup_printf_escaped(_("<i>%s</i>"), folder_path);
 		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.description_label),
 			markup);
 		g_free(markup);
