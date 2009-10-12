@@ -89,6 +89,14 @@ static void
 on_delete_server_io_activate	(GtkWidget *		menu_item,
 				 struct ui_flow_io *	ui_flow_io);
 
+static gboolean
+on_tree_view_tooltip		(GtkTreeView *		treeview,
+				 gint			x,
+				 gint			y,
+				 gboolean		keyboard_mode,
+				 GtkTooltip *		tooltip,
+				 struct ui_flow_io *	ui_flow_io);
+
 /*
  * Section: Public
  * Public functions.
@@ -157,6 +165,10 @@ flow_io_setup_ui(gboolean executable)
 	content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 	gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
 	gtk_window_set_default_size(GTK_WINDOW(dialog), -1, 300);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), 2);
+	g_object_set(G_OBJECT(treeview), "has-tooltip", TRUE, NULL);
+	g_signal_connect(G_OBJECT(treeview), "query-tooltip",
+		G_CALLBACK(on_tree_view_tooltip), ui_flow_io);
 	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(treeview),
 		(GtkPopupCallback)on_menu_popup, ui_flow_io);
 
@@ -639,6 +651,7 @@ on_renderer_editing_started	(GtkCellRenderer *	renderer,
 
 	data = g_object_get_data(G_OBJECT(renderer), "column");
 	g_object_set_data(G_OBJECT(editable), "column", data);
+	g_object_set_data(G_OBJECT(editable), "renderer", (gpointer)renderer);
 
 	gtk_entry_set_icon_from_stock(
 		GTK_ENTRY(editable),
@@ -657,10 +670,9 @@ on_renderer_entry_icon_release	(GtkEntry *		widget,
 	GtkWidget *	dialog;
 	gint		response;
 	gchar *		filename;
-	GtkTreeIter	iter;
 	gint		column;
 
-	if (!flow_io_get_selected(ui_flow_io, &iter))
+	if (!flow_io_get_selected(ui_flow_io, NULL))
 		return;
 
 	column = (gint)g_object_get_data(G_OBJECT(widget), "column");
@@ -676,8 +688,10 @@ on_renderer_entry_icon_release	(GtkEntry *		widget,
 		goto out;
 
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-	gtk_list_store_set(ui_flow_io->store, &iter,
-		column, filename, -1);
+	on_renderer_edited(
+		GTK_CELL_RENDERER_TEXT(
+			g_object_get_data(G_OBJECT(widget), "renderer")),
+		NULL, filename, ui_flow_io);
 	g_free(filename);
 
 out:	gtk_widget_destroy(dialog);
@@ -818,5 +832,67 @@ on_menu_popup			(GtkTreeView *		treeview,
 	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
+}
+
+static gboolean
+on_tree_view_tooltip		(GtkTreeView *		treeview,
+				 gint			x,
+				 gint			y,
+				 gboolean		keyboard_tip,
+				 GtkTooltip *		tooltip,
+				 struct ui_flow_io *	ui_flow_io)
+{
+	GtkTreeModel *		model;
+	GtkTreeIter		iter;
+	GtkTreeViewColumn *	column;
+	gchar *			text;
+
+	if (!gtk_tree_view_get_tooltip_context(treeview, &x, &y, keyboard_tip,
+			&model, NULL, &iter))
+		return FALSE;
+
+	if (keyboard_tip)
+		gtk_tree_view_convert_widget_to_bin_window_coords(treeview,
+				x, y, &x, &y);
+
+	if (!gtk_tree_view_get_path_at_pos(treeview, x, y, NULL,
+			&column, NULL, NULL)) {
+		return FALSE;
+	}
+
+	if (gtk_tree_view_get_column(treeview, 1) == column) {
+		gtk_tree_model_get(model, &iter,
+			FLOW_IO_INPUT, &text, -1);
+		if (!strlen(text)) {
+			g_free(text);
+			return FALSE;
+		}
+		gtk_tooltip_set_text(tooltip, text);
+		g_free(text);
+	} else
+	if (gtk_tree_view_get_column(treeview, 2) == column) {
+		gtk_tree_model_get(model, &iter,
+			FLOW_IO_OUTPUT, &text, -1);
+		if (!strlen(text)) {
+			g_free(text);
+			return FALSE;
+		}
+		gtk_tooltip_set_text(tooltip, text);
+		g_free(text);
+	} else
+	if (gtk_tree_view_get_column(treeview, 3) == column) {
+		gtk_tree_model_get(model, &iter,
+			FLOW_IO_ERROR, &text, -1);
+		if (!strlen(text)) {
+			g_free(text);
+			return FALSE;
+		}
+		gtk_tooltip_set_text(tooltip, text);
+		g_free(text);
+	} else {
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
