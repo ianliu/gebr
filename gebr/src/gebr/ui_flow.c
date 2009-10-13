@@ -127,7 +127,7 @@ flow_io_setup_ui(gboolean executable)
 
 	GtkWidget *		content;
 	GtkWidget *		button_add;
-	GtkWidget *		box;
+	GtkWidget *		table;
 	GtkSizeGroup *		size_group;
 	GtkCellRenderer *	renderer;
 	GtkTreeViewColumn *	column;
@@ -281,7 +281,6 @@ flow_io_setup_ui(gboolean executable)
 		GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIRECTORY);
 
 	// [+] Add button
-	box = gtk_hbox_new(FALSE, 0);
 	button_add = gtk_button_new();
 	gtk_button_set_image(GTK_BUTTON(button_add),
 		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON));
@@ -292,11 +291,25 @@ flow_io_setup_ui(gboolean executable)
 	// Packing the widgets
 	//---------------------------------------
 
-	gtk_box_pack_start(GTK_BOX(box), address, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(box), input, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(box), output, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(box), error, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(box), button_add, FALSE, TRUE, 0);
+	table = gtk_table_new(2, 5, FALSE);
+	gtk_table_attach(GTK_TABLE(table), gtk_label_new("Address"),
+		0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), gtk_label_new("Input"),
+		1, 2, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), gtk_label_new("Output"),
+		2, 3, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), gtk_label_new("Error"),
+		3, 4, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), address,
+		0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), input,
+		1, 2, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), output,
+		2, 3, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), error,
+		3, 4, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), button_add,
+		4, 5, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
 
 	size_group = gtk_size_group_new(GTK_SIZE_GROUP_VERTICAL);
 	gtk_size_group_add_widget(size_group, address);
@@ -305,7 +318,7 @@ flow_io_setup_ui(gboolean executable)
 	gtk_size_group_add_widget(size_group, error);
 
 	gtk_box_pack_start(GTK_BOX(content), treeview, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(content), box, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(content), table, FALSE, TRUE, 0);
 
 	ui_flow_io->dialog     = dialog;
 	ui_flow_io->store      = store;
