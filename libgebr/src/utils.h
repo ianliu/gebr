@@ -86,8 +86,8 @@ g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * 
 	libgebr_directory_foreach_file_hyg(filename, directory, nohyg)
 
 const gchar *
-libgebr_validate_int(const gchar * text_value);
+libgebr_validate_int(const gchar * text_value, const gchar * min, const gchar * max);
 const gchar *
-libgebr_validate_float(const gchar * text_value);
+libgebr_validate_float(const gchar * text_value, const gchar * min, const gchar * max);
 
 #endif //__LIBGEBR_MISC_UTILS_H

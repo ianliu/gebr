@@ -31,6 +31,8 @@ typedef void (*changed_callback)(struct parameter_widget * parameter_widget, gpo
 
 struct parameter_widget {
 	GeoXmlParameter *			parameter;
+	GeoXmlProgramParameter *		program_parameter;
+	enum GEOXML_PARAMETERTYPE		parameter_type;
 	gboolean				use_default_value;
 	gpointer				data;
 
@@ -66,6 +68,9 @@ parameter_widget_set_auto_submit_callback(struct parameter_widget * parameter_wi
 
 void
 parameter_widget_update(struct parameter_widget * parameter_widget);
+
+void
+parameter_widget_validate(struct parameter_widget * parameter_widget);
 
 void
 parameter_widget_update_list_separator(struct parameter_widget * parameter_widget);

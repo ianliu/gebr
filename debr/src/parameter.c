@@ -118,13 +118,21 @@ parameter_separator_changed(GtkEntry * entry, struct ui_parameter_dialog * ui);
 static void
 parameter_file_type_changed(GtkComboBox * combo, struct parameter_widget * widget);
 static void
-parameter_range_min_changed(GtkEntry * entry, struct parameter_widget * widget);
+parameter_number_min_on_activate(GtkEntry * entry, struct parameter_widget * widget);
+static gboolean
+parameter_number_min_on_focus_out(GtkEntry * entry, GdkEvent * event, struct parameter_widget * widget);
 static void
-parameter_range_max_changed(GtkEntry * entry, struct parameter_widget * widget);
+parameter_number_max_on_activate(GtkEntry * entry, struct parameter_widget * widget);
+static gboolean
+parameter_number_max_on_focus_out(GtkEntry * entry, GdkEvent * event, struct parameter_widget * widget);
 static void
-parameter_range_inc_changed(GtkEntry * entry, struct parameter_widget * widget);
+parameter_range_inc_on_activate(GtkEntry * entry, struct parameter_widget * widget);
+static gboolean
+parameter_range_inc_on_focus_out(GtkEntry * entry, GdkEvent * event, struct parameter_widget * widget);
 static void
-parameter_range_digits_changed(GtkEntry * entry, struct parameter_widget * widget);
+parameter_range_digits_on_activate(GtkEntry * entry, struct parameter_widget * widget);
+static gboolean
+parameter_range_digits_on_focus_out(GtkEntry * entry, GdkEvent * event, struct parameter_widget * widget);
 static void
 parameter_enum_options_changed(EnumOptionEdit * enum_option_edit, struct ui_parameter_dialog * ui);
 
@@ -679,7 +687,8 @@ parameter_dialog_setup_ui(void)
 		gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo),
 			geoxml_program_parameter_get_file_be_directory(program_parameter) == TRUE ? 1 : 0);
 		break;
-	} case GEOXML_PARAMETERTYPE_RANGE: {
+	} case GEOXML_PARAMETERTYPE_INT: case GEOXML_PARAMETERTYPE_FLOAT:
+	case GEOXML_PARAMETERTYPE_RANGE: {
 		GtkWidget *	min_label;
 		GtkWidget *	min_entry;
 		GtkWidget *	max_label;
@@ -693,8 +702,8 @@ parameter_dialog_setup_ui(void)
 		gchar *		inc_str;
 		gchar *		digits_str;
 
-		geoxml_program_parameter_get_range_properties(program_parameter,
-			&min_str, &max_str, &inc_str, &digits_str);
+		geoxml_program_parameter_get_number_min_max(program_parameter,
+			&min_str, &max_str);
 
 		/*
 		 * Minimum
@@ -710,8 +719,10 @@ parameter_dialog_setup_ui(void)
 		gtk_table_attach(GTK_TABLE(table), min_entry, 1, 2, row, row+1,
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0), ++row;
-		g_signal_connect(min_entry, "changed",
-			(GCallback)parameter_range_min_changed, parameter_widget);
+		g_signal_connect(min_entry, "activate",
+			(GCallback)parameter_number_min_on_activate, parameter_widget);
+		g_signal_connect(min_entry, "focus-out-event",
+			(GCallback)parameter_number_min_on_focus_out, parameter_widget);
 
 		/*
 		 * Maximum
@@ -727,8 +738,16 @@ parameter_dialog_setup_ui(void)
 		gtk_table_attach(GTK_TABLE(table), max_entry, 1, 2, row, row+1,
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0), ++row;
-		g_signal_connect(max_entry, "changed",
-			(GCallback)parameter_range_max_changed, parameter_widget);
+		g_signal_connect(max_entry, "activate",
+			(GCallback)parameter_number_max_on_activate, parameter_widget);
+		g_signal_connect(max_entry, "focus-out-event",
+			(GCallback)parameter_number_max_on_focus_out, parameter_widget);
+
+		if (type != GEOXML_PARAMETERTYPE_RANGE)
+			break;
+
+		geoxml_program_parameter_get_range_properties(program_parameter,
+			&min_str, &max_str, &inc_str, &digits_str);
 
 		/*
 		 * Increment
@@ -744,8 +763,10 @@ parameter_dialog_setup_ui(void)
 		gtk_table_attach(GTK_TABLE(table), inc_entry, 1, 2, row, row+1,
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0), ++row;
-		g_signal_connect(inc_entry, "changed",
-			(GCallback)parameter_range_inc_changed, parameter_widget);
+		g_signal_connect(inc_entry, "activate",
+			(GCallback)parameter_range_inc_on_activate, parameter_widget);
+		g_signal_connect(inc_entry, "focus-out-event",
+			(GCallback)parameter_range_inc_on_focus_out, parameter_widget);
 
 		/*
 		 * Digits
@@ -761,8 +782,10 @@ parameter_dialog_setup_ui(void)
 		gtk_table_attach(GTK_TABLE(table), digits_entry, 1, 2, row, row+1,
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0), ++row;
-		g_signal_connect(digits_entry, "changed",
-			(GCallback)parameter_range_digits_changed, parameter_widget);
+		g_signal_connect(digits_entry, "activate",
+			(GCallback)parameter_range_digits_on_activate, parameter_widget);
+		g_signal_connect(digits_entry, "focus-out-event",
+			(GCallback)parameter_range_digits_on_focus_out, parameter_widget);
 
 		gtk_entry_set_text(GTK_ENTRY(min_entry), min_str);
 		gtk_entry_set_text(GTK_ENTRY(max_entry), max_str);
@@ -1310,57 +1333,73 @@ parameter_file_type_changed(GtkComboBox * combo, struct parameter_widget * widge
 }
 
 static void
-parameter_range_min_changed(GtkEntry * entry, struct parameter_widget * widget)
+parameter_number_min_on_activate(GtkEntry * entry, struct parameter_widget * widget)
 {
 	gchar *		min_str;
-	gchar *		max_str;
-	gchar *		inc_str;
-	gchar *		digits_str;
-	gdouble		min, max;
-	GtkSpinButton *	spin_button;
-
-	spin_button = GTK_SPIN_BUTTON(widget->value_widget);
-	geoxml_program_parameter_get_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
-		&min_str, &max_str, &inc_str, &digits_str);
-	gtk_spin_button_get_range(spin_button, &min, &max);
+	gdouble		min;
 
 	min_str = (gchar*)gtk_entry_get_text(GTK_ENTRY(entry));
 	min = atof(min_str);
 
-	gtk_spin_button_set_range(spin_button, min, max);
-	geoxml_program_parameter_set_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
-		min_str, max_str, inc_str, digits_str);
+	if (widget->parameter_type == GEOXML_PARAMETERTYPE_RANGE) {
+		gdouble		max;
+		GtkSpinButton *	spin_button;
+
+		spin_button = GTK_SPIN_BUTTON(widget->value_widget);
+		
+		gtk_spin_button_get_range(spin_button, NULL, &max);
+		gtk_spin_button_set_range(spin_button, min, max);
+	} else
+		parameter_widget_validate(widget);
+
+	geoxml_program_parameter_set_number_min_max(GEOXML_PROGRAM_PARAMETER(widget->parameter),
+		min_str, NULL);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-static void
-parameter_range_max_changed(GtkEntry * entry, struct parameter_widget * widget)
+static gboolean
+parameter_number_min_on_focus_out(GtkEntry * entry, GdkEvent * event, struct parameter_widget * widget)
 {
-	gchar *		min_str;
-	gchar *		max_str;
-	gchar *		inc_str;
-	gchar *		digits_str;
-	gdouble		min, max;
-	GtkSpinButton *	spin_button;
+	parameter_number_min_on_activate(entry, widget);
+	return FALSE;
+}
 
-	spin_button = GTK_SPIN_BUTTON(widget->value_widget);
-	geoxml_program_parameter_get_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
-		&min_str, &max_str, &inc_str, &digits_str);
-	gtk_spin_button_get_range(spin_button, &min, &max);
+static void
+parameter_number_max_on_activate(GtkEntry * entry, struct parameter_widget * widget)
+{
+	gchar *		max_str;
+	gdouble		max;
 
 	max_str = (gchar*)gtk_entry_get_text(GTK_ENTRY(entry));
 	max = atof(max_str);
 
-	gtk_spin_button_set_range(spin_button, min, max);
-	geoxml_program_parameter_set_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
-		min_str, max_str, inc_str, digits_str);
+	if (widget->parameter_type == GEOXML_PARAMETERTYPE_RANGE) {
+		gdouble		min;
+		GtkSpinButton *	spin_button;
+
+		spin_button = GTK_SPIN_BUTTON(widget->value_widget);
+
+		gtk_spin_button_get_range(spin_button, &min, NULL);
+		gtk_spin_button_set_range(spin_button, min, max);
+	} else
+		parameter_widget_validate(widget);
+
+	geoxml_program_parameter_set_number_min_max(GEOXML_PROGRAM_PARAMETER(widget->parameter),
+		NULL, max_str);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
+static gboolean
+parameter_number_max_on_focus_out(GtkEntry * entry, GdkEvent * event, struct parameter_widget * widget)
+{
+	parameter_number_max_on_activate(entry, widget);
+	return FALSE;
+}
+
 static void
-parameter_range_inc_changed(GtkEntry * entry, struct parameter_widget * widget)
+parameter_range_inc_on_activate(GtkEntry * entry, struct parameter_widget * widget)
 {
 	gchar *		min_str;
 	gchar *		max_str;
@@ -1383,8 +1422,15 @@ parameter_range_inc_changed(GtkEntry * entry, struct parameter_widget * widget)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
+static gboolean
+parameter_range_inc_on_focus_out(GtkEntry * entry, GdkEvent * event, struct parameter_widget * widget)
+{
+	parameter_range_inc_on_activate(entry, widget);
+	return FALSE;
+}
+
 static void
-parameter_range_digits_changed(GtkEntry * entry, struct parameter_widget * widget)
+parameter_range_digits_on_activate(GtkEntry * entry, struct parameter_widget * widget)
 {
 	gchar *		min_str;
 	gchar *		max_str;
@@ -1405,6 +1451,13 @@ parameter_range_digits_changed(GtkEntry * entry, struct parameter_widget * widge
 		min_str, max_str, inc_str, digits_str);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
+}
+
+static gboolean
+parameter_range_digits_on_focus_out(GtkEntry * entry, GdkEvent * event, struct parameter_widget * widget)
+{
+	parameter_range_digits_on_activate(entry, widget);
+	return FALSE;
 }
 
 static void

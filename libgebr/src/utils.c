@@ -292,7 +292,7 @@ g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * 
  * Validate an int parameter
  */
 const gchar *
-libgebr_validate_int(const gchar * text_value)
+libgebr_validate_int(const gchar * text_value, const gchar * min, const gchar * max)
 {
 	static gchar	number[31];
 	gdouble		value;
@@ -303,6 +303,10 @@ libgebr_validate_int(const gchar * text_value)
 	value = g_ascii_strtod(text_value, NULL);
 	g_ascii_dtostr(number, 30, round(value));
 
+	if (min != NULL && strlen(min) && value < atof(min))
+		return min;
+	if (max != NULL && strlen(max) && value > atof(max))
+		return max;
 	return number;
 }
 
@@ -311,26 +315,31 @@ libgebr_validate_int(const gchar * text_value)
  * Validate a float parameter
  */
 const gchar *
-libgebr_validate_float(const gchar * text_value)
+libgebr_validate_float(const gchar * text_value, const gchar * min, const gchar * max)
 {
 	static gchar	number[31];
 	gchar *		last;
-	GString *	value;
+	gdouble		value;
+	GString *	value_str;
 
 	if (strlen(text_value) == 0)
 		return "";
 
 	/* initialization */
-	value = g_string_new(NULL);
+	value_str = g_string_new(NULL);
 
-	g_ascii_strtod(text_value, &last);
-	g_string_assign(value, text_value);
-	g_string_truncate(value, strlen(text_value) - strlen(last));
-	strncpy(number, value->str, 30);
+	value = g_ascii_strtod(text_value, &last);
+	g_string_assign(value_str, text_value);
+	g_string_truncate(value_str, strlen(text_value) - strlen(last));
+	strncpy(number, value_str->str, 30);
 
 	/* frees */
-	g_string_free(value, TRUE);
+	g_string_free(value_str, TRUE);
 
+	if (min != NULL && strlen(min) && value < atof(min))
+		return min;
+	if (max != NULL && strlen(max) && value > atof(max))
+		return max;
 	return number;
 }
 
