@@ -335,22 +335,68 @@ geoxml_program_parameter_set_value_from_dict(GeoXmlProgramParameter * program_pa
 GeoXmlProgramParameter * dict_parameter);
 
 /**
- *
+ * Change wheter this parameter keeps a file or a directory.
  *
  * If \p program_parameter is NULL nothing is done.
+ * @see geoxml_program_parameter_get_file_be_directory
  */
 void
 geoxml_program_parameter_set_file_be_directory(GeoXmlProgramParameter * program_parameter, gboolean is_directory);
 
 /**
- *
+ * Return TRUE directory indicador is enabled.
+ * Default: FALSE
  *
  * If \p program_parameter is NULL returns NULL.
  *
- * @see GEOXML_PARAMETERTYPE_FILE
+ * @see GEOXML_PARAMETERTYPE_FILE, geoxml_program_parameter_set_file_be_directory
  */
 gboolean
 geoxml_program_parameter_get_file_be_directory(GeoXmlProgramParameter * program_parameter);
+
+/**
+ * Filter file system view to show only selected file types.
+ * Example: "*jpg *png"
+ *
+ * If \p program_parameter or \p filter is NULL nothing is done.
+ * @see geoxml_program_parameter_get_file_filter
+ */
+void
+geoxml_program_parameter_set_file_filter(GeoXmlProgramParameter * program_parameter,
+	const gchar * name, const gchar * pattern);
+
+/**
+ * Set \p name and \p pattern the currently set filter
+ *
+ * If \p program_parameter is NULL nothing is done.
+ *
+ * @see GEOXML_PARAMETERTYPE_FILE, geoxml_program_parameter_set_file_filter
+ */
+void
+geoxml_program_parameter_get_file_filter(GeoXmlProgramParameter * program_parameter,
+	gchar ** name, gchar ** pattern);
+
+/**
+ * For integer, float and range parameters type, set mininimum
+ * and maximum boundaries
+ *
+ * If \p program_parameter is NULL nothing is done.
+ * @see geoxml_program_parameter_get_number_min_max
+ */
+void
+geoxml_program_parameter_set_number_min_max(GeoXmlProgramParameter * program_parameter,
+	const gchar * min, const gchar * max);
+
+/**
+ * For integer, float and range parameters type, get mininimum
+ * and maximum boundaries
+ *
+ * If \p program_parameter is NULL nothing is done.
+ * @see geoxml_program_parameter_set_number_min_max
+ */
+void
+geoxml_program_parameter_get_number_min_max(GeoXmlProgramParameter * program_parameter,
+	gchar ** min, gchar ** max);
 
 /**
  *

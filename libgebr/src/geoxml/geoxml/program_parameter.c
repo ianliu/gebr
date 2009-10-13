@@ -483,6 +483,98 @@ geoxml_program_parameter_get_file_be_directory(GeoXmlProgramParameter * program_
 }
 
 void
+geoxml_program_parameter_set_file_filter(GeoXmlProgramParameter * program_parameter,
+	const gchar * name, const gchar * pattern)
+{
+	if (program_parameter == NULL)
+		return;
+	if (geoxml_parameter_get_is_reference(GEOXML_PARAMETER(program_parameter)))
+		return;
+	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) != GEOXML_PARAMETERTYPE_FILE)
+		return;
+	__geoxml_set_attr_value(
+		__geoxml_parameter_get_type_element(GEOXML_PARAMETER(program_parameter), FALSE),
+		"filter-name", name);
+	__geoxml_set_attr_value(
+		__geoxml_parameter_get_type_element(GEOXML_PARAMETER(program_parameter), FALSE),
+		"filter-pattern", pattern);
+}
+
+void
+geoxml_program_parameter_get_file_filter(GeoXmlProgramParameter * program_parameter,
+	gchar ** name, gchar ** pattern)
+{
+	if (program_parameter == NULL)
+		return;
+	if (geoxml_parameter_get_is_reference(GEOXML_PARAMETER(program_parameter)))
+		return geoxml_program_parameter_get_file_filter((GeoXmlProgramParameter*)
+			geoxml_parameter_get_referencee((GeoXmlParameter*)program_parameter),
+			name, pattern);
+	if (geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter)) != GEOXML_PARAMETERTYPE_FILE)
+		return;
+	if (name != NULL)
+		*name = (gchar*)__geoxml_get_attr_value(
+		__geoxml_parameter_get_type_element(GEOXML_PARAMETER(program_parameter), TRUE),
+			"filter-name");
+	if (pattern != NULL)
+		*pattern = (gchar*)__geoxml_get_attr_value(
+		__geoxml_parameter_get_type_element(GEOXML_PARAMETER(program_parameter), TRUE),
+			"filter-pattern");
+}
+
+void
+geoxml_program_parameter_set_number_min_max(GeoXmlProgramParameter * program_parameter,
+	const gchar * min, const gchar * max)
+{
+	enum GEOXML_PARAMETERTYPE	type;
+
+	if (program_parameter == NULL)
+		return;
+	if (geoxml_parameter_get_is_reference(GEOXML_PARAMETER(program_parameter)))
+		return;
+	type = geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter));
+	if (type != GEOXML_PARAMETERTYPE_INT &&
+	type != GEOXML_PARAMETERTYPE_FLOAT &&
+	type != GEOXML_PARAMETERTYPE_RANGE)
+		return;
+
+	GdomeElement *	type_element;
+
+	type_element = __geoxml_parameter_get_type_element(GEOXML_PARAMETER(program_parameter), FALSE);
+	if (min != NULL)
+		__geoxml_set_attr_value(type_element, "min", min);
+	if (max != NULL)
+		__geoxml_set_attr_value(type_element, "max", max);
+}
+
+void
+geoxml_program_parameter_get_number_min_max(GeoXmlProgramParameter * program_parameter,
+	gchar ** min, gchar ** max)
+{
+	enum GEOXML_PARAMETERTYPE	type;
+
+	if (program_parameter == NULL)
+		return;
+	if (geoxml_parameter_get_is_reference(GEOXML_PARAMETER(program_parameter)))
+		return geoxml_program_parameter_get_number_min_max((GeoXmlProgramParameter*)
+			geoxml_parameter_get_referencee((GeoXmlParameter*)program_parameter),
+			min, max);
+	type = geoxml_parameter_get_type(GEOXML_PARAMETER(program_parameter));
+	if (type != GEOXML_PARAMETERTYPE_INT &&
+	type != GEOXML_PARAMETERTYPE_FLOAT &&
+	type != GEOXML_PARAMETERTYPE_RANGE)
+		return;
+
+	GdomeElement *	type_element;
+
+	type_element = __geoxml_parameter_get_type_element(GEOXML_PARAMETER(program_parameter), TRUE);
+	if (min != NULL)
+		*min = (gchar*)__geoxml_get_attr_value(type_element, "min");
+	if (max != NULL)
+		*max = (gchar*)__geoxml_get_attr_value(type_element, "max");
+}
+
+void
 geoxml_program_parameter_set_range_properties(GeoXmlProgramParameter * program_parameter,
 	const gchar * min, const gchar * max, const gchar * inc, const gchar * digits)
 {

@@ -97,13 +97,13 @@
 <!-- Integer -->
 <!ELEMENT int (property)>
 <!ATTLIST int
-        min     CDATA   #IMPLIED
-        max     CDATA   #IMPLIED>  
+	min	CDATA	#IMPLIED
+	max	CDATA	#IMPLIED>
 <!-- Real number -->
 <!ELEMENT float (property)>
 <!ATTLIST float
-        min     CDATA   #IMPLIED
-        max     CDATA   #IMPLIED>  
+	min	CDATA	#IMPLIED
+	max	CDATA	#IMPLIED>
 <!-- String -->
 <!ELEMENT string (property)>
 <!-- Flag -->
@@ -111,8 +111,9 @@
 <!-- File -->
 <!ELEMENT file (property)>
 <!ATTLIST file
-	directory (yes | no) #REQUIRED
-        filter    CDATA      #IMPLIED>
+	directory	(yes | no)	#REQUIRED
+	filter-name	CDATA		#IMPLIED
+	filter-pattern	CDATA		#IMPLIED>
 <!-- Range -->
 <!ELEMENT range (property)>
 <!ATTLIST range

@@ -248,7 +248,7 @@ const gchar *
 geoxml_flow_server_get_date_last_run(GeoXmlFlowServer * server)
 {
 	if (server == NULL)
-		return;
+		return NULL;
 
 	return __geoxml_get_tag_value((GdomeElement*)server, "lastrun");
 }
