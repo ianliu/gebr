@@ -154,7 +154,7 @@ flow_io_setup_ui(gboolean executable)
 		G_TYPE_POINTER);	// GeoXmlFlowServer
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
-	dialog = gtk_dialog_new_with_buttons(_("Server IO configuration"),
+	dialog = gtk_dialog_new_with_buttons(_("Server and I/O setup"),
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
@@ -587,8 +587,7 @@ flow_io_actions(gint response, struct ui_flow_io * ui_flow_io)
 				GTK_BUTTONS_CLOSE,
 				_("This server is disconnected. "
 				  "To use this server, you must "
-				  "connect it in Preferences "
-				  "dialog from Actions menu."));
+				  "connect it first."));
 			gtk_dialog_run(GTK_DIALOG(dialog));
 			gtk_widget_destroy(dialog);
 			return FALSE;

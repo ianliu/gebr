@@ -786,7 +786,7 @@ const gchar * keyword, gboolean show_error)
 		if (show_error)
 			libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 				_("Duplicate keyword"),
-				_("Another parameter already uses this keyword, please choose other."));
+				_("Another parameter already uses this keyword. Please choose other."));
 		return TRUE;
 	}
 

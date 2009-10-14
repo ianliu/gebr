@@ -1253,15 +1253,15 @@ menu_folder_details_update(GtkTreeIter * iter)
 		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.description_label),
 			_("<i>This folder lists the menus which are "
 			  "not in any configured folder through "
-			  "Preferences button in Actions menu.</i>"));
+			  "users' preferences.</i>"));
 	} else {
 		folder_name = g_path_get_basename(folder_path);
-		markup = g_markup_printf_escaped(_("<b>%s</b>"), folder_name);
+		markup = g_markup_printf_escaped("<b>%s</b>", folder_name);
 		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label),
 			markup);
 		g_free(markup);
 
-		markup = g_markup_printf_escaped(_("<i>%s</i>"), folder_path);
+		markup = g_markup_printf_escaped("<i>%s</i>", folder_path);
 		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.description_label),
 			markup);
 		g_free(markup);
@@ -1583,7 +1583,7 @@ menu_help_edit(void)
 {
 	GString *	help;
 
-	help = help_edit(geoxml_document_get_help(GEOXML_DOC(debr.menu)), NULL);
+	help = help_edit(geoxml_document_get_help(GEOXML_DOC(debr.menu)), NULL, FALSE);
 	if (help == NULL)
 		return;
 

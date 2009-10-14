@@ -31,6 +31,9 @@
 #include "defines.h"
 
 void
+help_insert_parameters_list(GString *help, GeoXmlProgram * program);
+
+void
 add_program_parameter_item(GString *str, GeoXmlParameter *par);
 
 gsize
@@ -67,15 +70,92 @@ add_program_parameter_item(GString *str, GeoXmlParameter *par)
         }
 }
 
+void
+help_insert_parameters_list(GString *help, GeoXmlProgram * program)
+{
+        GString          *      label;
+	GeoXmlParameters *	parameters;
+	GeoXmlSequence *	parameter;
+        gsize                   pos;
+
+        if (program == NULL)
+                return;
+        
+        parameters = geoxml_program_get_parameters(program);
+        parameter = geoxml_parameters_get_first_parameter(parameters);
+	
+        label = g_string_new(NULL);
+        g_string_assign(label,"<ul>\n");
+        while (parameter != NULL) {
+                
+                if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE){
+                        add_program_parameter_item(label, GEOXML_PARAMETER(parameter));
+                }else{
+                        GeoXmlSequence  *	instance;
+                        GeoXmlSequence  *	subpar;
+                        
+                        g_string_append_printf(label, "              "
+                                               "<li class=\"group\"><span class=\"grouplabel\">%s</span><br/>"
+                                                       " detailed description comes here.\n\n",
+                                               geoxml_parameter_get_label(GEOXML_PARAMETER(parameter))); 
+                        
+                        g_string_append_printf(label, "              <ul>\n");
+                        
+                        geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+                        subpar = geoxml_parameters_get_first_parameter(GEOXML_PARAMETERS(instance));
+                        while (subpar != NULL) {
+                                add_program_parameter_item(label, GEOXML_PARAMETER(subpar));
+                                geoxml_sequence_next(&subpar);
+                        }
+                        g_string_append_printf(label, "              </ul></li>\n\n");
+                        
+                        
+                }
+                
+                geoxml_sequence_next(&parameter);
+        }
+        g_string_append(label,
+                        "            </ul>\n"
+                        "	    <!-- begin lst -->\n"
+                        "	    <!-- Keep this block for futher insertions -->\n"
+                        "	    <!-- end lst -->\n");
+
+        pos = strip_block(help, "lst");
+        
+        if (pos > 0)
+                g_string_insert(help, pos, label->str);
+        else {
+                /* Try to find a parameter's block, for */
+                /* helps generated before this function */
+                GString       *mark;
+                gchar         *ptr1;
+                gchar         *ptr2;
+                gsize          pos;
+                
+                mark = g_string_new(NULL);
+                
+                g_string_printf(mark, "<div class=\"parameters\">");
+                ptr1 = strstr(help->str, mark->str);
+                
+                if (ptr1 != NULL){
+                        g_string_printf(mark, "</div>");
+                        ptr2 = strstr(ptr1, mark->str);
+                        pos = (ptr2 - help->str)/sizeof(gchar);
+                        g_string_insert(help, pos, label->str);
+                }
+                else{
+                        debr_message(LOG_WARNING, "Unable to reinsert parameter's list");
+                }
+        }
+
+        g_string_free(label, TRUE);
+}
 
 void
 help_subst_fields(GString * help, GeoXmlProgram * program)
 {
 	gchar *		        content;
         GString *               text;
-	GeoXmlParameters *	parameters;
-	GeoXmlSequence *	parameter;
-
 
         text = g_string_new (NULL);
 
@@ -122,51 +202,12 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 
 	/* Parameter's description replacement */
 	if (program != NULL) {
-		GString *      label;
-
-		parameters = geoxml_program_get_parameters(program);
-		parameter = geoxml_parameters_get_first_parameter(parameters);
-		
-		label = g_string_new(NULL);
-                g_string_assign(label,"<ul>\n");
-		while (parameter != NULL) {
-                        
-                        if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE){
-                                add_program_parameter_item(label, GEOXML_PARAMETER(parameter));
-                        }else{
-                                GeoXmlSequence  *	instance;
-                                GeoXmlSequence  *	subpar;
-
-                                g_string_append_printf(label, "              "
-                                                       "<li class=\"group\"><span class=\"grouplabel\">%s</span><br/>"
-                                                       " detailed description comes here.\n\n",
-                                                       geoxml_parameter_get_label(GEOXML_PARAMETER(parameter))); 
-
-                                g_string_append_printf(label, "              <ul>\n");
-
-                                geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-                                subpar = geoxml_parameters_get_first_parameter(GEOXML_PARAMETERS(instance));
-                                while (subpar != NULL) {
-                                        add_program_parameter_item(label, GEOXML_PARAMETER(subpar));
-                                        geoxml_sequence_next(&subpar);
-                                }
-                                g_string_append_printf(label, "              </ul></li>\n\n");
-
-                                
-                        }
-
-			geoxml_sequence_next(&parameter);
-		}
-                g_string_append(label,"            </ul>\n");
-
-                g_string_insert(help, strip_block(help, "lst"), label->str); 
-		g_string_free(label, TRUE);
+                help_insert_parameters_list(help, program);
 	}
 	else { /* strip parameter section for flow help */
                 strip_block(help, "par");
                 strip_block(help, "mpr");
 	}
-
 
         /* Credits for menu */
 	if (program == NULL) {
@@ -238,7 +279,7 @@ out:	g_string_free(html_path, FALSE);
 }
 
 GString *
-help_edit(const gchar * help, GeoXmlProgram * program)
+help_edit(const gchar * help, GeoXmlProgram * program, gboolean reinsert_params)
 {
 	FILE *		fp;
 	GString *	html_path;
@@ -273,6 +314,10 @@ help_edit(const gchar * help, GeoXmlProgram * program)
 		/* Substitute title, description and categories */
 		help_subst_fields(prepared_html, program);
 	}
+
+        if (reinsert_params){
+                help_insert_parameters_list(prepared_html, program);
+        }
 
 	/* CSS fix */
 	help_fix_css(prepared_html);
@@ -358,7 +403,7 @@ err2:	g_string_free(prepared_html, TRUE);
        <!-- end tag -->
    and returns the position of the
    begining of the block, suitable for
-   text insertion.
+   text insertion. "tag" must have 3 letters.
 */
 gsize
 strip_block(GString *buffer, const gchar *tag)
