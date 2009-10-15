@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = data src packages po
+SUBDIRS = data src packages po doc
 
 desktopdir = $(datadir)/applications
 desktop_DATA = debr.desktop

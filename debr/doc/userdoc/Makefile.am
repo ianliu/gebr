@@ -1,4 +1,4 @@
-# GeBR - An environment for seismic processing.
+# DeBR - GeBR Designer
 # Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
 #
 # This program is free software: you can redistribute it and/or modify
@@ -14,9 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = data menus src packages po doc
+userdoc:
+	gnome-doc-tool html ../debr.docbook
+*.html:
 
-desktopdir = $(datadir)/applications
-desktop_DATA = gebr.desktop
-
-EXTRA_DIST = $(desktop_DATA)
+debrdocdir = $(datadir)/debr/userdoc
+debrdoc_DATA = *.html

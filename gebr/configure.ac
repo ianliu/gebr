@@ -84,4 +84,5 @@ Makefile data/Makefile menus/Makefile packages/Makefile
 src/Makefile src/defines.h src/gebr/Makefile src/gebr-client/Makefile
 gebr.desktop
 po/Makefile.in
+doc/Makefile doc/userdoc/Makefile doc/develdoc/Makefile
 ])

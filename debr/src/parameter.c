@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include <libgebr/intl.h>
+#include <libgebr/utils.h>
 #include <libgebr/gui/gtkfileentry.h>
 #include <libgebr/gui/gtkenhancedentry.h>
 #include <libgebr/gui/utils.h>
@@ -1335,10 +1336,11 @@ parameter_file_type_changed(GtkComboBox * combo, struct parameter_widget * widge
 static void
 parameter_number_min_on_activate(GtkEntry * entry, struct parameter_widget * widget)
 {
-	gchar *		min_str;
+	const gchar *	min_str;
 	gdouble		min;
 
-	min_str = (gchar*)gtk_entry_get_text(GTK_ENTRY(entry));
+	min_str = libgebr_validate_float((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
+	gtk_entry_set_text(entry, min_str);
 	min = atof(min_str);
 
 	if (widget->parameter_type == GEOXML_PARAMETERTYPE_RANGE) {
@@ -1368,10 +1370,11 @@ parameter_number_min_on_focus_out(GtkEntry * entry, GdkEvent * event, struct par
 static void
 parameter_number_max_on_activate(GtkEntry * entry, struct parameter_widget * widget)
 {
-	gchar *		max_str;
+	const gchar *	max_str;
 	gdouble		max;
 
-	max_str = (gchar*)gtk_entry_get_text(GTK_ENTRY(entry));
+	max_str = libgebr_validate_float((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
+	gtk_entry_set_text(entry, max_str);
 	max = atof(max_str);
 
 	if (widget->parameter_type == GEOXML_PARAMETERTYPE_RANGE) {
@@ -1412,7 +1415,8 @@ parameter_range_inc_on_activate(GtkEntry * entry, struct parameter_widget * widg
 	geoxml_program_parameter_get_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
 		&min_str, &max_str, &inc_str, &digits_str);
 
-	inc_str = (gchar*)gtk_entry_get_text(GTK_ENTRY(entry));
+	inc_str = (gchar*)libgebr_validate_float((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
+	gtk_entry_set_text(entry, inc_str);
 	inc = atof(inc_str);
 
 	gtk_spin_button_set_increments(spin_button, inc, 0);
@@ -1443,7 +1447,8 @@ parameter_range_digits_on_activate(GtkEntry * entry, struct parameter_widget * w
 	geoxml_program_parameter_get_range_properties(GEOXML_PROGRAM_PARAMETER(widget->parameter),
 		&min_str, &max_str, &inc_str, &digits_str);
 
-	digits_str = (gchar*)gtk_entry_get_text(GTK_ENTRY(entry));
+	digits_str = (gchar*)libgebr_validate_int((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
+	gtk_entry_set_text(entry, digits_str);
 	digits = atof(digits_str);
 
 	gtk_spin_button_set_digits(spin_button, digits);
