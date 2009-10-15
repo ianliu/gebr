@@ -690,7 +690,7 @@ on_renderer_entry_icon_release	(GtkEntry *		widget,
 	column = (gint)g_object_get_data(G_OBJECT(widget), "column");
 	dialog = gtk_file_chooser_dialog_new(_("Choose a file"),
 		GTK_WINDOW(gebr.window),
-		GTK_FILE_CHOOSER_ACTION_OPEN,
+		GTK_FILE_CHOOSER_ACTION_SAVE,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_OPEN, GTK_RESPONSE_APPLY,
 		NULL);
@@ -769,7 +769,7 @@ on_entry_icon_release		(GtkEntry *		entry)
 
 	dialog = gtk_file_chooser_dialog_new(_("Choose a file"),
 		GTK_WINDOW(gebr.window),
-		GTK_FILE_CHOOSER_ACTION_OPEN,
+		GTK_FILE_CHOOSER_ACTION_SAVE,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_OPEN, GTK_RESPONSE_APPLY,
 		NULL);

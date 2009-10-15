@@ -316,12 +316,9 @@ menu_load_user_directory(void)
 		GString * path;
 		gchar   * dirname;
 		gchar   * dname;
-		gchar   * dpath;
 
 		dname = g_path_get_basename(debr.config.menu_dir[i]);
-		dpath = g_path_get_dirname(debr.config.menu_dir[i]);
-		dirname = g_markup_printf_escaped("%s <i><span color=\"#666666\">%s</span></i>",
-			dname, dpath);
+		dirname = g_markup_printf_escaped("%s", dname);
 
 		gtk_tree_store_append(debr.ui_menu.model, &iter, NULL);
 		gtk_tree_store_set(debr.ui_menu.model, &iter,
@@ -342,7 +339,6 @@ menu_load_user_directory(void)
 		g_string_free(path, TRUE);
 		g_free(dirname);
 		g_free(dname);
-		g_free(dpath);
 		i++;
 	}
 
