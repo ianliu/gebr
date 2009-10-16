@@ -49,6 +49,8 @@ static void		menu_help_view			(void);
 
 static void		menu_help_edit			(void);
 
+static void		menu_help_refresh		(void);
+
 static void		menu_author_changed		(GtkEntry *		entry);
 
 static void		menu_email_changed		(GtkEntry *		entry);
@@ -831,6 +833,7 @@ menu_dialog_setup_ui(void)
 	GtkWidget *		menuhelp_hbox;
 	GtkWidget *		menuhelp_view_button;
 	GtkWidget *		menuhelp_edit_button;
+        GtkWidget *             menuhelp_refresh_button;
 	GtkWidget *		author_label;
 	GtkWidget *		author_entry;
 	GtkWidget *		email_label;
@@ -925,8 +928,14 @@ menu_dialog_setup_ui(void)
 
 	menuhelp_edit_button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
 	gtk_widget_show(menuhelp_edit_button);
-	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_edit_button, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_edit_button, FALSE, FALSE, 0);
 	g_object_set(G_OBJECT(menuhelp_edit_button), "relief", GTK_RELIEF_NONE, NULL);
+
+	menuhelp_refresh_button = gtk_button_new_from_stock(GTK_STOCK_REFRESH);
+        set_tooltip(menuhelp_refresh_button, _("Help edition with all possible information refreshed"));
+	gtk_widget_show(menuhelp_refresh_button);
+	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_refresh_button, FALSE, FALSE, 0);
+	g_object_set(G_OBJECT(menuhelp_refresh_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	/*
 	 * Author
@@ -1012,7 +1021,9 @@ menu_dialog_setup_ui(void)
 	g_signal_connect(email_entry, "changed",
 		G_CALLBACK(menu_email_changed), NULL);
 	g_signal_connect(menuhelp_edit_button, "clicked",
-		G_CALLBACK(menu_help_edit), NULL);
+                         G_CALLBACK(menu_help_edit), NULL);
+	g_signal_connect(menuhelp_refresh_button, "clicked",
+                         G_CALLBACK(menu_help_refresh), NULL);
 	g_signal_connect(author_entry, "changed",
 		G_CALLBACK(menu_author_changed), NULL);
 
@@ -1565,7 +1576,13 @@ menu_description_changed(GtkEntry * entry)
 static void
 menu_help_view(void)
 {
-	help_show(geoxml_document_get_help(GEOXML_DOC(debr.menu)));
+        gchar * help;
+
+        help = (gchar *) geoxml_document_get_help(GEOXML_DOC(debr.menu));
+        if (strlen(help) > 1)
+                help_show(help);
+        else
+                help_show(" ");
 }
 
 /**
@@ -1578,8 +1595,31 @@ static void
 menu_help_edit(void)
 {
 	GString *	help;
+        
+        help = help_edit(geoxml_document_get_help(GEOXML_DOC(debr.menu)), NULL, FALSE);
+                
+	if (help == NULL)
+		return;
 
-	help = help_edit(geoxml_document_get_help(GEOXML_DOC(debr.menu)), NULL, FALSE);
+	geoxml_document_set_help(GEOXML_DOC(debr.menu), help->str);
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+
+	g_string_free(help, TRUE);
+}
+
+/**
+ * menu_help_refresh:
+ *
+ * Call help_refresg() with menu's help. After help was edited in
+ * a external browser, with fields updated, save it back to XML.
+ */
+static void
+menu_help_refresh(void)
+{
+	GString *	help;
+        
+        help = help_edit(geoxml_document_get_help(GEOXML_DOC(debr.menu)), NULL, TRUE);
+                
 	if (help == NULL)
 		return;
 

@@ -31,7 +31,7 @@
 #include "defines.h"
 
 void
-help_insert_parameters_list(GString *help, GeoXmlProgram * program);
+help_insert_parameters_list(GString *help, GeoXmlProgram * program, gboolean refresh);
 
 void
 add_program_parameter_item(GString *str, GeoXmlParameter *par);
@@ -71,11 +71,12 @@ add_program_parameter_item(GString *str, GeoXmlParameter *par)
 }
 
 void
-help_insert_parameters_list(GString *help, GeoXmlProgram * program)
+help_insert_parameters_list(GString *help, GeoXmlProgram * program, gboolean refresh)
 {
         GString          *      label;
 	GeoXmlParameters *	parameters;
 	GeoXmlSequence *	parameter;
+        gchar *                 ptr;
         gsize                   pos;
 
         if (program == NULL)
@@ -109,21 +110,23 @@ help_insert_parameters_list(GString *help, GeoXmlProgram * program)
                         }
                         g_string_append_printf(label, "              </ul></li>\n\n");
                         
-                        
                 }
                 
                 geoxml_sequence_next(&parameter);
         }
-        g_string_append(label,
-                        "            </ul>\n"
-                        "	    <!-- begin lst -->\n"
-                        "	    <!-- Keep this block for futher insertions -->\n"
-                        "	    <!-- end lst -->\n");
+        g_string_append(label,"            </ul>\n            ");
 
-        pos = strip_block(help, "lst");
-        
-        if (pos > 0)
+        if (refresh){
+                ptr = strstr(help->str, "<!-- end lst -->");
+                pos = (ptr != NULL) ? (ptr - help->str)/sizeof(gchar) : 0;
+        }
+        else{
+                pos = strip_block(help, "lst");
+        }
+
+        if (pos > 0){
                 g_string_insert(help, pos, label->str);
+        }
         else {
                 /* Try to find a parameter's block, for */
                 /* helps generated before this function */
@@ -152,7 +155,7 @@ help_insert_parameters_list(GString *help, GeoXmlProgram * program)
 }
 
 void
-help_subst_fields(GString * help, GeoXmlProgram * program)
+help_subst_fields(GString * help, GeoXmlProgram * program, gboolean refresh)
 {
 	gchar *		        content;
         GString *               text;
@@ -165,10 +168,11 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 	else
 		content = (gchar*)geoxml_document_get_title(GEOXML_DOC(debr.menu));
 	if (strlen(content)) {
-                g_string_printf(text, "<title>G&ecirc;BR - %s</title>", content);
+                g_string_printf(text,"\n  <title>G&ecirc;BR - %s</title>\n  ", content);
                 g_string_insert(help, strip_block(help, "ttl"), text->str);
 
-                g_string_printf(text, "<span class=\"flowtitle\">%s</span>", content);
+                g_string_printf(text,"\n         <span class=\"flowtitle\">%s</span>\n         ",
+                                content);
                 g_string_insert(help, strip_block(help, "tt2"), text->str);
 	}
 
@@ -178,7 +182,8 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 	else
 		content = (gchar*)geoxml_document_get_description(GEOXML_DOC(debr.menu));
 	if (strlen(content)) {
-                g_string_insert(help, strip_block(help, "des"), content);
+                g_string_printf(text,"\n            %s\n            ", content);
+                g_string_insert(help, strip_block(help, "des"), text->str);
 	}
 
 	/* Categories replacement */
@@ -187,7 +192,9 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 		GString *		catstr;
 
 		geoxml_flow_get_category(debr.menu, &category, 0);
-		catstr = g_string_new(geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)));
+                
+		catstr = g_string_new("\n       "); 
+                g_string_append(catstr, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)));
 		geoxml_sequence_next(&category);
 		while (category != NULL) {
 			g_string_append(catstr, " | ");
@@ -195,6 +202,7 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 
 			geoxml_sequence_next(&category);
 		}
+                g_string_append(catstr, "\n       ");
 
                 g_string_insert(help, strip_block(help, "cat"), catstr->str);
 		g_string_free(catstr, TRUE);
@@ -202,7 +210,7 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 
 	/* Parameter's description replacement */
 	if (program != NULL) {
-                help_insert_parameters_list(help, program);
+                help_insert_parameters_list(help, program, refresh);
 	}
 	else { /* strip parameter section for flow help */
                 strip_block(help, "par");
@@ -213,20 +221,36 @@ help_subst_fields(GString * help, GeoXmlProgram * program)
 	if (program == NULL) {
                 GDate * date;
                 gchar   buffer[13];
-
+                gchar * ptr1;
+                gchar * ptr2;
+                gsize   pos;
+                                
                 date = g_date_new();
                 g_date_set_time_t(date, time(NULL));
                 g_date_strftime(buffer, 13, "%b %d, %Y", date);
 
-                g_string_printf(text, "<p>%s: written by %s &lt;%s&gt;</p>",
+                g_string_printf(text, "\n          <p>%s: written by %s &lt;%s&gt;</p>\n          ",
                                 buffer,
                                 geoxml_document_get_author(GEOXML_DOC(debr.menu)),
                                 geoxml_document_get_email(GEOXML_DOC(debr.menu)));
-                g_string_insert(help, strip_block(help, "cpy"), text->str);
+                
+                ptr1 = strstr(help->str, "<!-- begin cpy -->");
+                ptr2 = strstr(help->str, "<!-- end cpy -->");
+
+                if (ptr1 != NULL && ptr2 != NULL){
+                        gsize len;
+                        len = (ptr2-ptr1)/sizeof(gchar);
+                        
+                        if ((refresh) || (len < 40)){
+
+                                pos = (ptr2 - help->str)/sizeof(gchar);
+                                g_string_insert(help, pos, text->str);
+                        }
+                }
                 
                 g_date_free(date);
 	}
-        
+
         g_string_free(text, TRUE);
 }
 
@@ -279,7 +303,7 @@ out:	g_string_free(html_path, FALSE);
 }
 
 GString *
-help_edit(const gchar * help, GeoXmlProgram * program, gboolean reinsert_params)
+help_edit(const gchar * help, GeoXmlProgram * program, gboolean refresh)
 {
 	FILE *		fp;
 	GString *	html_path;
@@ -312,13 +336,23 @@ help_edit(const gchar * help, GeoXmlProgram * program, gboolean reinsert_params)
 		fclose(fp);
 
 		/* Substitute title, description and categories */
-		help_subst_fields(prepared_html, program);
+		help_subst_fields(prepared_html, program, refresh);
 	}
-
-        if (reinsert_params){
-                help_insert_parameters_list(prepared_html, program);
+        else {
+                if (refresh){
+                        help_subst_fields(prepared_html, program, refresh);
+                }
         }
 
+        /* Always fix DTD version */
+        {
+                gsize pos;
+                
+                pos = strip_block(prepared_html, "dtd");
+                if (pos)
+                        g_string_insert(prepared_html, pos, geoxml_document_get_version(GEOXML_DOCUMENT(debr.menu)));
+        }
+        
 	/* CSS fix */
 	help_fix_css(prepared_html);
 
@@ -421,7 +455,7 @@ strip_block(GString *buffer, const gchar *tag)
         ptr = strstr(buffer->str, mark->str);
 
 	if (ptr != NULL){
-                pos = (ptr - buffer->str)/sizeof(gchar);
+                pos = (ptr - buffer->str)/sizeof(gchar) + 18;
         } else {
                 return 0;
         }
@@ -430,7 +464,7 @@ strip_block(GString *buffer, const gchar *tag)
         ptr = strstr(buffer->str, mark->str);
 
         if (ptr != NULL){
-                len = (ptr - buffer->str)/sizeof(gchar) - pos + 13 + strlen(tag);
+                len = (ptr - buffer->str)/sizeof(gchar) - pos;
         } else {
                 return 0;
         }

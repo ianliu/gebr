@@ -152,7 +152,7 @@
       </div>
 
       <div class="footer">
-        <span class="left">G&ecirc;BR @VERSION@ (@FLOW_VERSION@) |
+        <span class="left">G&ecirc;BR @VERSION@ (<!-- begin dtd --><!--end dtd -->) |
         Version of the program</span>
 
         <div class="clearer"></div>

@@ -81,7 +81,7 @@ program_help_view(GtkButton * button, GeoXmlProgram * program);
 static void
 program_help_edit(GtkButton * button);
 static void
-program_help_reedit(GtkButton * button);
+program_help_refresh(GtkButton * button);
 static gboolean
 program_url_changed(GtkEntry * entry);
 
@@ -422,7 +422,7 @@ program_dialog_setup_ui(void)
 	GtkWidget *	help_label;
 	GtkWidget *	help_view_button;
 	GtkWidget *	help_edit_button;
-	GtkWidget *	help_reedit_button;
+	GtkWidget *	help_refresh_button;
 	GtkWidget *     url_label;
 	GtkWidget *     url_entry;
 
@@ -564,13 +564,13 @@ program_dialog_setup_ui(void)
 		GTK_SIGNAL_FUNC(program_help_edit), debr.program);
 	g_object_set(G_OBJECT(help_edit_button), "relief", GTK_RELIEF_NONE, NULL);
 
-	help_reedit_button = gtk_button_new_from_stock(GTK_STOCK_REFRESH);
-        set_tooltip(help_reedit_button, _("Help edition with parameters' list appended" ));
-	gtk_widget_show(help_reedit_button);
-	gtk_box_pack_start(GTK_BOX(help_hbox), help_reedit_button, FALSE, FALSE, 0);
-	g_signal_connect(help_reedit_button, "clicked",
-		GTK_SIGNAL_FUNC(program_help_reedit), debr.program);
-	g_object_set(G_OBJECT(help_reedit_button), "relief", GTK_RELIEF_NONE, NULL);
+	help_refresh_button = gtk_button_new_from_stock(GTK_STOCK_REFRESH);
+        set_tooltip(help_refresh_button, _("Help edition with all possible information refreshed"));
+	gtk_widget_show(help_refresh_button);
+	gtk_box_pack_start(GTK_BOX(help_hbox), help_refresh_button, FALSE, FALSE, 0);
+	g_signal_connect(help_refresh_button, "clicked",
+		GTK_SIGNAL_FUNC(program_help_refresh), debr.program);
+	g_object_set(G_OBJECT(help_refresh_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	/*
 	 * URL
@@ -916,7 +916,14 @@ program_url_open(GtkButton * button)
 static void
 program_help_view(GtkButton * button, GeoXmlProgram * program)
 {
-	help_show(geoxml_program_get_help(program));
+        gchar * help;
+
+        help = (gchar *) geoxml_program_get_help(program);
+        if (strlen(help) > 1)
+                help_show(help);
+        else
+                help_show(" ");
+
 }
 
 static void
@@ -932,7 +939,7 @@ program_help_edit(GtkButton * button)
 }
 
 static void
-program_help_reedit(GtkButton * button)
+program_help_refresh(GtkButton * button)
 {
 	GString *	help;
 
