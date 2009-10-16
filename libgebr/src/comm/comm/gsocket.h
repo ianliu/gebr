@@ -29,19 +29,19 @@
 G_BEGIN_DECLS
 
 GType
-g_socket_get_type(void);
+gebr_comm_socket_get_type(void);
 
-#define G_SOCKET_TYPE			(g_socket_get_type())
-#define G_SOCKET(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_SOCKET_TYPE, GSocket))
-#define G_SOCKET_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), G_SOCKET_TYPE, GSocketClass))
-#define G_IS_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), G_SOCKET_TYPE))
-#define G_IS_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), G_SOCKET_TYPE))
-#define G_SOCKET_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS ((obj), G_SOCKET_TYPE, GSocketClass))
+#define GEBR_COMM_SOCKET_TYPE			(gebr_comm_socket_get_type())
+#define GEBR_COMM_SOCKET(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_SOCKET_TYPE, GebrCommSocket))
+#define GEBR_COMM_SOCKET_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_COMM_SOCKET_TYPE, GebrCommSocketClass))
+#define GEBR_COMM_IS_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_COMM_SOCKET_TYPE))
+#define GEBR_COMM_IS_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_COMM_SOCKET_TYPE))
+#define GEBR_COMM_SOCKET_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_SOCKET_TYPE, GebrCommSocketClass))
 
-typedef struct _GSocket	GSocket;
-typedef struct _GSocketClass	GSocketClass;
+typedef struct _GebrCommSocket	GebrCommSocket;
+typedef struct _GebrCommSocketClass	GebrCommSocketClass;
 
-enum GSocketError {
+enum GebrCommSocketError {
 	G_SOCKET_ERROR_NONE,
 	G_SOCKET_ERROR_CONNECTION_REFUSED,
 	G_SOCKET_ERROR_SERVER_TIMED_OUT,
@@ -49,7 +49,7 @@ enum GSocketError {
 	G_SOCKET_ERROR_UNKNOWN,
 };
 
-enum GSocketState {
+enum GebrCommSocketState {
 	G_SOCKET_STATE_NONE,
 	G_SOCKET_STATE_UNCONNECTED,
 	G_SOCKET_STATE_NOTLISTENING,
@@ -59,7 +59,7 @@ enum GSocketState {
 	G_SOCKET_STATE_LISTENING,
 };
 
-struct _GSocket {
+struct _GebrCommSocket {
 	GObject			parent;
 
 	GIOChannel *		io_channel;
@@ -67,20 +67,20 @@ struct _GSocket {
 	GByteArray *		queue_write_bytes;
 
 	enum GSocketAddressType	address_type;
-	enum GSocketState	state;
-	enum GSocketError	last_error;
+	enum GebrCommSocketState	state;
+	enum GebrCommSocketError	last_error;
 };
-struct _GSocketClass {
+struct _GebrCommSocketClass {
 	GObjectClass		parent;
 
 	/* virtual */
-	void			(*connected)(GSocket * self);
-	void			(*disconnected)(GSocket * self);
-	void			(*new_connection)(GSocket * self);
+	void			(*connected)(GebrCommSocket * self);
+	void			(*disconnected)(GebrCommSocket * self);
+	void			(*new_connection)(GebrCommSocket * self);
 	/* signals */
-	void			(*ready_read)(GSocket * self);
-	void			(*ready_write)(GSocket * self);
-	void			(*error)(GSocket * self, enum GSocketError error);
+	void			(*ready_read)(GebrCommSocket * self);
+	void			(*ready_write)(GebrCommSocket * self);
+	void			(*error)(GebrCommSocket * self, enum GebrCommSocketError error);
 };
 
 /*
@@ -88,40 +88,40 @@ struct _GSocketClass {
  */
 
 void
-g_socket_close(GSocket *);
+gebr_comm_socket_close(GebrCommSocket *);
 
-enum GSocketState
-g_socket_get_state(GSocket *);
+enum GebrCommSocketState
+gebr_comm_socket_get_state(GebrCommSocket *);
 
-enum GSocketError
-g_socket_get_last_error(GSocket *);
+enum GebrCommSocketError
+gebr_comm_socket_get_last_error(GebrCommSocket *);
 
 GSocketAddress
-g_socket_get_address(GSocket *);
+gebr_comm_socket_get_address(GebrCommSocket *);
 
 gulong
-g_socket_bytes_available(GSocket *);
+gebr_comm_socket_bytes_available(GebrCommSocket *);
 
 gulong
-g_socket_bytes_to_write(GSocket *);
+gebr_comm_socket_bytes_to_write(GebrCommSocket *);
 
 GByteArray *
-g_socket_read(GSocket *, gsize);
+gebr_comm_socket_read(GebrCommSocket *, gsize);
 
 GString *
-g_socket_read_string(GSocket *, gsize);
+gebr_comm_socket_read_string(GebrCommSocket *, gsize);
 
 GByteArray *
-g_socket_read_all(GSocket *);
+gebr_comm_socket_read_all(GebrCommSocket *);
 
 GString *
-g_socket_read_string_all(GSocket *);
+gebr_comm_socket_read_string_all(GebrCommSocket *);
 
 void
-g_socket_write(GSocket *, GByteArray *);
+gebr_comm_socket_write(GebrCommSocket *, GByteArray *);
 
 void
-g_socket_write_string(GSocket *, GString *);
+gebr_comm_socket_write_string(GebrCommSocket *, GString *);
 
 G_END_DECLS
 

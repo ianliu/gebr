@@ -59,7 +59,7 @@ g_channel_socket_init(GChannelSocket * channel_socket)
 	channel_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
 }
 
-G_DEFINE_TYPE(GChannelSocket, g_channel_socket, G_SOCKET_TYPE)
+G_DEFINE_TYPE(GChannelSocket, g_channel_socket, GEBR_COMM_SOCKET_TYPE)
 
 /*
  * internal functions
@@ -68,8 +68,8 @@ G_DEFINE_TYPE(GChannelSocket, g_channel_socket, G_SOCKET_TYPE)
 static void
 __g_channel_socket_source_disconnected(GStreamSocket * source_socket, GStreamSocket * forward_socket)
 {
-	g_socket_close(G_SOCKET(source_socket));
-	g_socket_close(G_SOCKET(forward_socket));
+	gebr_comm_socket_close(GEBR_COMM_SOCKET(source_socket));
+	gebr_comm_socket_close(GEBR_COMM_SOCKET(forward_socket));
 }
 
 static void
@@ -77,14 +77,14 @@ __g_channel_socket_source_read(GStreamSocket * source_socket, GStreamSocket * fo
 {
 	GByteArray *	byte_array;
 
-	byte_array = g_socket_read_all(G_SOCKET(source_socket));
-	g_socket_write(G_SOCKET(forward_socket), byte_array);
+	byte_array = gebr_comm_socket_read_all(GEBR_COMM_SOCKET(source_socket));
+	gebr_comm_socket_write(GEBR_COMM_SOCKET(forward_socket), byte_array);
 
 	g_byte_array_free(byte_array, TRUE);
 }
 
 static void
-__g_channel_socket_source_error(GStreamSocket * source_socket, enum GSocketError error, GStreamSocket * forward_socket)
+__g_channel_socket_source_error(GStreamSocket * source_socket, enum GebrCommSocketError error, GStreamSocket * forward_socket)
 {
 	__g_channel_socket_source_disconnected(source_socket, forward_socket);
 }
@@ -102,7 +102,7 @@ __g_channel_socket_forward_read(GStreamSocket * forward_socket, GStreamSocket * 
 }
 
 static void
-__g_channel_socket_forward_error(GStreamSocket * forward_socket, enum GSocketError error, GStreamSocket * source_socket)
+__g_channel_socket_forward_error(GStreamSocket * forward_socket, enum GebrCommSocketError error, GStreamSocket * source_socket)
 {
 	__g_channel_socket_source_error(source_socket, error, forward_socket);
 }
@@ -152,7 +152,7 @@ g_channel_socket_new(void)
 void
 g_channel_socket_free(GChannelSocket * channel_socket)
 {
-	g_socket_close(&channel_socket->parent);
+	gebr_comm_socket_close(&channel_socket->parent);
 	g_object_unref(channel_socket);
 }
 

@@ -59,7 +59,7 @@ comm_server_disconnected(GStreamSocket * stream_socket, struct comm_server * com
 static void
 comm_server_read(GStreamSocket * stream_socket, struct comm_server * comm_server);
 static void
-comm_server_error(GStreamSocket * stream_socket, enum GSocketError error, struct comm_server * comm_server);
+comm_server_error(GStreamSocket * stream_socket, enum GebrCommSocketError error, struct comm_server * comm_server);
 
 static void
 comm_server_free_x11_forward(struct comm_server * comm_server);
@@ -105,7 +105,7 @@ comm_server_new(const gchar * _address, const struct comm_server_ops * ops)
 void
 comm_server_free(struct comm_server * comm_server)
 {
-	g_socket_close(G_SOCKET(comm_server->stream_socket));
+	gebr_comm_socket_close(GEBR_COMM_SOCKET(comm_server->stream_socket));
 	protocol_free(comm_server->protocol);
 	g_string_free(comm_server->address, TRUE);
 	g_string_free(comm_server->password, TRUE);
@@ -607,7 +607,7 @@ comm_server_read(GStreamSocket * stream_socket, struct comm_server * comm_server
 	GString *	data;
 	gchar *		data_stripped;
 
-	data = g_socket_read_string_all(G_SOCKET(stream_socket));
+	data = gebr_comm_socket_read_string_all(GEBR_COMM_SOCKET(stream_socket));
 	protocol_receive_data(comm_server->protocol, data);
 	comm_server->ops->parse_messages(comm_server, comm_server->user_data);
 
@@ -621,7 +621,7 @@ comm_server_read(GStreamSocket * stream_socket, struct comm_server * comm_server
 }
 
 static void
-comm_server_error(GStreamSocket * stream_socket, enum GSocketError error, struct comm_server * comm_server)
+comm_server_error(GStreamSocket * stream_socket, enum GebrCommSocketError error, struct comm_server * comm_server)
 {
 	comm_server->error = SERVER_ERROR_CONNECT;
 	comm_server->state = SERVER_STATE_DISCONNECTED;
@@ -643,7 +643,7 @@ comm_server_free_x11_forward(struct comm_server * comm_server)
 		comm_server->x11_forward_process = NULL;
 	}
 	if (comm_server->x11_forward_channel != NULL) {
-		g_socket_close(G_SOCKET(comm_server->x11_forward_channel));
+		gebr_comm_socket_close(GEBR_COMM_SOCKET(comm_server->x11_forward_channel));
 		comm_server->x11_forward_channel = NULL;
 	}
 }

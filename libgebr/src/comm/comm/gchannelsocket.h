@@ -40,12 +40,12 @@ typedef struct _GChannelSocket	GChannelSocket;
 typedef struct _GChannelSocketClass	GChannelSocketClass;
 
 struct _GChannelSocket {
-	GSocket			parent;
+	GebrCommSocket			parent;
 
 	GSocketAddress		forward_address;
 };
 struct _GChannelSocketClass {
-	GSocketClass		parent;
+	GebrCommSocketClass		parent;
 };
 
 /*

@@ -44,7 +44,7 @@ enum {
 static guint object_signals[LAST_SIGNAL];
 
 static void
-g_socket_class_init(GSocketClass * class)
+gebr_comm_socket_class_init(GebrCommSocketClass * class)
 {
 	/* virtual */
 	class->connected = NULL;
@@ -53,42 +53,42 @@ g_socket_class_init(GSocketClass * class)
 
 	/* signals */
 	object_signals[READY_READ] = g_signal_new ("ready-read",
-		G_SOCKET_TYPE,
+		GEBR_COMM_SOCKET_TYPE,
 		(GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-		G_STRUCT_OFFSET (GSocketClass, ready_read),
+		G_STRUCT_OFFSET (GebrCommSocketClass, ready_read),
 		NULL, NULL, /* acumulators */
 		g_cclosure_marshal_VOID__VOID,
 		G_TYPE_NONE, 0);
 	object_signals[READY_WRITE] = g_signal_new ("ready-write",
-		G_SOCKET_TYPE,
+		GEBR_COMM_SOCKET_TYPE,
 		(GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-		G_STRUCT_OFFSET (GSocketClass, ready_write),
+		G_STRUCT_OFFSET (GebrCommSocketClass, ready_write),
 		NULL, NULL, /* acumulators */
 		g_cclosure_marshal_VOID__VOID,
 		G_TYPE_NONE, 0);
 	object_signals[ERROR] = g_signal_new ("error",
-		G_SOCKET_TYPE,
+		GEBR_COMM_SOCKET_TYPE,
 		(GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-		G_STRUCT_OFFSET (GSocketClass, error),
+		G_STRUCT_OFFSET (GebrCommSocketClass, error),
 		NULL, NULL, /* acumulators */
 		g_cclosure_marshal_VOID__INT,
 		G_TYPE_NONE, 1, G_TYPE_INT);
 }
 
 static void
-g_socket_init(GSocket * socket)
+gebr_comm_socket_init(GebrCommSocket * socket)
 {
 	socket->io_channel = NULL;
 }
 
-G_DEFINE_TYPE(GSocket, g_socket, G_TYPE_OBJECT)
+G_DEFINE_TYPE(GebrCommSocket, gebr_comm_socket, G_TYPE_OBJECT)
 
 /*
  * internal functions
  */
 
 static gboolean
-__g_socket_read(GIOChannel * source, GIOCondition condition, GSocket * socket)
+__g_socket_read(GIOChannel * source, GIOCondition condition, GebrCommSocket * socket)
 {
 	if (condition & G_IO_NVAL) {
 		/* probably a fd change */
@@ -99,9 +99,9 @@ __g_socket_read(GIOChannel * source, GIOCondition condition, GSocket * socket)
 		return FALSE;
 	}
 	if (condition & G_IO_HUP) {
-		GSocketClass *	class;
+		GebrCommSocketClass *	class;
 
-		class = G_SOCKET_GET_CLASS(socket);
+		class = GEBR_COMM_SOCKET_GET_CLASS(socket);
 		switch (socket->state) {
 		case G_SOCKET_STATE_CONNECTED:
 			socket->state = G_SOCKET_STATE_UNCONNECTED;
@@ -114,11 +114,11 @@ __g_socket_read(GIOChannel * source, GIOCondition condition, GSocket * socket)
 
 		return FALSE;
 	}
-	if (!g_socket_bytes_available(socket)) {
-		GSocketClass *	class;
+	if (!gebr_comm_socket_bytes_available(socket)) {
+		GebrCommSocketClass *	class;
 		gboolean	ret;
 
-		class = G_SOCKET_GET_CLASS(socket);
+		class = GEBR_COMM_SOCKET_GET_CLASS(socket);
 		switch (socket->state) {
 		case G_SOCKET_STATE_LISTENING:
 			if (class->new_connection != NULL)
@@ -148,7 +148,7 @@ __g_socket_read(GIOChannel * source, GIOCondition condition, GSocket * socket)
 
 
 void
-__g_socket_write_queue(GSocket * socket)
+__g_socket_write_queue(GebrCommSocket * socket)
 {
 	if (socket->state != G_SOCKET_STATE_CONNECTED)
 		return;
@@ -168,7 +168,7 @@ __g_socket_write_queue(GSocket * socket)
 }
 
 static gboolean
-__g_socket_write(GIOChannel * source, GIOCondition condition, GSocket * socket)
+__g_socket_write(GIOChannel * source, GIOCondition condition, GebrCommSocket * socket)
 {
 	if (condition & G_IO_NVAL) {
 		/* probably a fd change */
@@ -188,9 +188,9 @@ __g_socket_write(GIOChannel * source, GIOCondition condition, GSocket * socket)
 			break;
 		}
 		if (socket->state == G_SOCKET_STATE_CONNECTED) {
-			GSocketClass *	class;
+			GebrCommSocketClass *	class;
 
-			class = G_SOCKET_GET_CLASS(socket);
+			class = GEBR_COMM_SOCKET_GET_CLASS(socket);
 			socket->state = G_SOCKET_STATE_UNCONNECTED;
 			if (class->disconnected != NULL)
 				class->disconnected(socket);
@@ -201,10 +201,10 @@ __g_socket_write(GIOChannel * source, GIOCondition condition, GSocket * socket)
 		/* TODO: */
 		goto out;
 	}
-	if (socket->state != G_SOCKET_STATE_CONNECTED && !g_socket_bytes_available(socket)) {
-		GSocketClass *	class;
+	if (socket->state != G_SOCKET_STATE_CONNECTED && !gebr_comm_socket_bytes_available(socket)) {
+		GebrCommSocketClass *	class;
 
-		class = G_SOCKET_GET_CLASS(socket);
+		class = GEBR_COMM_SOCKET_GET_CLASS(socket);
 		switch (socket->state) {
 		case G_SOCKET_STATE_CONNECTING:
 			socket->state = G_SOCKET_STATE_CONNECTED;
@@ -228,7 +228,7 @@ out:	return FALSE;
  */
 
 void
-_g_socket_init(GSocket * socket, int fd, enum GSocketAddressType address_type)
+_g_socket_init(GebrCommSocket * socket, int fd, enum GSocketAddressType address_type)
 {
 	GError *	error;
 
@@ -249,7 +249,7 @@ _g_socket_init(GSocket * socket, int fd, enum GSocketAddressType address_type)
 }
 
 void
-_g_socket_close(GSocket * socket)
+_g_socket_close(GebrCommSocket * socket)
 {
 	if (socket->io_channel != NULL) {
 		GError *	error;
@@ -266,27 +266,27 @@ _g_socket_close(GSocket * socket)
 }
 
 int
-_g_socket_get_fd(GSocket * socket)
+_g_socket_get_fd(GebrCommSocket * socket)
 {
 	return g_io_channel_unix_get_fd(socket->io_channel);
 }
 
 void
-_g_socket_enable_read_watch(GSocket * socket)
+_g_socket_enable_read_watch(GebrCommSocket * socket)
 {
 	g_io_add_watch(socket->io_channel, G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
 		(GIOFunc)__g_socket_read, socket);
 }
 
 void
-_g_socket_enable_write_watch(GSocket * socket)
+_g_socket_enable_write_watch(GebrCommSocket * socket)
 {
 	socket->write_watch_id = g_io_add_watch(socket->io_channel, G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
 		(GIOFunc)__g_socket_write, socket);
 }
 
 void
-_g_socket_emit_error(GSocket * socket, enum GSocketError error)
+_g_socket_emit_error(GebrCommSocket * socket, enum GebrCommSocketError error)
 {
 	socket->last_error = error;
 	g_signal_emit(socket, object_signals[ERROR], 0, error);
@@ -297,27 +297,27 @@ _g_socket_emit_error(GSocket * socket, enum GSocketError error)
  */
 
 void
-g_socket_close(GSocket * socket)
+gebr_comm_socket_close(GebrCommSocket * socket)
 {
 	_g_socket_close(socket);
 
 	g_object_unref(G_OBJECT(socket));
 }
 
-enum GSocketState
-g_socket_get_state(GSocket * socket)
+enum GebrCommSocketState
+gebr_comm_socket_get_state(GebrCommSocket * socket)
 {
 	return socket->state;
 }
 
-enum GSocketError
-g_socket_get_last_error(GSocket * socket)
+enum GebrCommSocketError
+gebr_comm_socket_get_last_error(GebrCommSocket * socket)
 {
 	return socket->last_error;
 }
 
 GSocketAddress
-g_socket_get_address(GSocket * socket)
+gebr_comm_socket_get_address(GebrCommSocket * socket)
 {
 	GSocketAddress	address;
 
@@ -327,7 +327,7 @@ g_socket_get_address(GSocket * socket)
 }
 
 gulong
-g_socket_bytes_available(GSocket * socket)
+gebr_comm_socket_bytes_available(GebrCommSocket * socket)
 {
 	/* Adapted from QNativeSocketEnginePrivate::nativeBytesAvailable()
 	 * (qnativesocketengine_unix.cpp:528 of Qt 4.3.0)
@@ -342,13 +342,13 @@ g_socket_bytes_available(GSocket * socket)
 }
 
 gulong
-g_socket_bytes_to_write(GSocket * socket)
+gebr_comm_socket_bytes_to_write(GebrCommSocket * socket)
 {
 	return socket->queue_write_bytes->len;
 }
 
 GByteArray *
-g_socket_read(GSocket * socket, gsize max_size)
+gebr_comm_socket_read(GebrCommSocket * socket, gsize max_size)
 {
 	if (socket->state != G_SOCKET_STATE_CONNECTED)
 		return NULL;
@@ -368,7 +368,7 @@ g_socket_read(GSocket * socket, gsize max_size)
 }
 
 GString *
-g_socket_read_string(GSocket * socket, gsize max_size)
+gebr_comm_socket_read_string(GebrCommSocket * socket, gsize max_size)
 {
 	if (socket->state != G_SOCKET_STATE_CONNECTED)
 		return NULL;
@@ -389,21 +389,21 @@ g_socket_read_string(GSocket * socket, gsize max_size)
 }
 
 GByteArray *
-g_socket_read_all(GSocket * socket)
+gebr_comm_socket_read_all(GebrCommSocket * socket)
 {
 	/* trick for lazyness */
-	return g_socket_read(socket, g_socket_bytes_available(socket));
+	return gebr_comm_socket_read(socket, gebr_comm_socket_bytes_available(socket));
 }
 
 GString *
-g_socket_read_string_all(GSocket * socket)
+gebr_comm_socket_read_string_all(GebrCommSocket * socket)
 {
 	/* trick for lazyness */
-	return g_socket_read_string(socket, g_socket_bytes_available(socket));
+	return gebr_comm_socket_read_string(socket, gebr_comm_socket_bytes_available(socket));
 }
 
 void
-g_socket_write(GSocket * socket, GByteArray * byte_array)
+gebr_comm_socket_write(GebrCommSocket * socket, GByteArray * byte_array)
 {
 	g_byte_array_append(socket->queue_write_bytes,
 		byte_array->data, byte_array->len);
@@ -412,7 +412,7 @@ _g_socket_enable_write_watch(socket);
 }
 
 void
-g_socket_write_string(GSocket * socket, GString * string)
+gebr_comm_socket_write_string(GebrCommSocket * socket, GString * string)
 {
 	GByteArray	byte_array;
 
@@ -421,5 +421,5 @@ g_socket_write_string(GSocket * socket, GString * string)
 		.len = string->len
 	};
 
-	g_socket_write(socket, &byte_array);
+	gebr_comm_socket_write(socket, &byte_array);
 }

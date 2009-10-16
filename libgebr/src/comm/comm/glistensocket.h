@@ -40,13 +40,13 @@ typedef struct _GListenSocket	GListenSocket;
 typedef struct _GListenSocketClass	GListenSocketClass;
 
 struct _GListenSocket {
-	GSocket		parent;
+	GebrCommSocket		parent;
 
 	guint		max_pending_connections;
 	GSList *	pending_connections;
 };
 struct _GListenSocketClass {
-	GSocketClass	parent;
+	GebrCommSocketClass	parent;
 
 	/* signals */
 	void		(*new_connection)(GListenSocket * self);

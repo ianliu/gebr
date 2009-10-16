@@ -39,10 +39,10 @@ typedef struct _GStreamSocket	GStreamSocket;
 typedef struct _GStreamSocketClass	GStreamSocketClass;
 
 struct _GStreamSocket {
-	GSocket		parent;
+	GebrCommSocket		parent;
 };
 struct _GStreamSocketClass {
-	GSocketClass	parent;
+	GebrCommSocketClass	parent;
 
 	/* signals */
 	void		(*connected)(GStreamSocket * self);

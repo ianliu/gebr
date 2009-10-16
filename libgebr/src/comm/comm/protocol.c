@@ -237,7 +237,7 @@ protocol_send_data(struct protocol * protocol, GStreamSocket * stream_socket,
 	message = g_string_new(NULL);
 	g_string_printf(message, "%s %zu %s\n", message_def.string, data->len, data->str);
 	/* send it */
-	g_socket_write_string(G_SOCKET(stream_socket), message);
+	gebr_comm_socket_write_string(GEBR_COMM_SOCKET(stream_socket), message);
 
 	g_string_free(data, TRUE);
 	g_string_free(message, TRUE);

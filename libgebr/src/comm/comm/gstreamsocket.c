@@ -81,7 +81,7 @@ g_stream_socket_init(GStreamSocket * stream_socket)
 	stream_socket->parent.state = G_SOCKET_STATE_UNCONNECTED;
 }
 
-G_DEFINE_TYPE(GStreamSocket, g_stream_socket, G_SOCKET_TYPE)
+G_DEFINE_TYPE(GStreamSocket, g_stream_socket, GEBR_COMM_SOCKET_TYPE)
 
 /*
  * internal functions

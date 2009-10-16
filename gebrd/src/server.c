@@ -100,7 +100,7 @@ server_init(void)
 		gebrd_message(LOG_ERROR, _("Could not listen for connections.\n"));
 		goto err;
 	}
-	socket_address = g_socket_get_address(G_SOCKET(gebrd.listen_socket));
+	socket_address = gebr_comm_socket_get_address(GEBR_COMM_SOCKET(gebrd.listen_socket));
 	g_signal_connect(gebrd.listen_socket, "new-connection",
 		G_CALLBACK(server_new_connection), NULL);
 

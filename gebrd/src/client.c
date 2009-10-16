@@ -40,7 +40,7 @@ static void
 client_read(GStreamSocket * stream_socket, struct client * client);
 
 static void
-client_error(GStreamSocket * stream_socket, enum GSocketError error, struct client * client);
+client_error(GStreamSocket * stream_socket, enum GebrCommSocketError error, struct client * client);
 
 /*
  * Public functions
@@ -72,7 +72,7 @@ client_add(GStreamSocket * stream_socket)
 void
 client_free(struct client * client)
 {
-	g_socket_close(G_SOCKET(client->stream_socket));
+	gebr_comm_socket_close(GEBR_COMM_SOCKET(client->stream_socket));
 	protocol_free(client->protocol);
 	g_string_free(client->display, TRUE);
 	g_free(client);
@@ -92,7 +92,7 @@ client_read(GStreamSocket * stream_socket, struct client * client)
 {
 	GString *	data;
 
-	data = g_socket_read_string_all(G_SOCKET(stream_socket));
+	data = gebr_comm_socket_read_string_all(GEBR_COMM_SOCKET(stream_socket));
 	if (protocol_receive_data(client->protocol, data) == FALSE) {
 		client_disconnected(stream_socket, client);
 		goto out;
@@ -108,7 +108,7 @@ out:	g_string_free(data, TRUE);
 }
 
 static void
-client_error(GStreamSocket * stream_socket, enum GSocketError error, struct client * client)
+client_error(GStreamSocket * stream_socket, enum GebrCommSocketError error, struct client * client)
 {
 	gebrd_message(LOG_ERROR, _("Connection error '%s' on client '%s'"), error, strerror(error), client->protocol->hostname->str);
 }

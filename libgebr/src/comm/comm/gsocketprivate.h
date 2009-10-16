@@ -24,21 +24,21 @@
 #include "gsocketaddress.h"
 
 void
-_g_socket_init(GSocket * socket, int fd, enum GSocketAddressType address_type);
+_g_socket_init(GebrCommSocket * socket, int fd, enum GSocketAddressType address_type);
 
 void
-_g_socket_close(GSocket * socket);
+_g_socket_close(GebrCommSocket * socket);
 
 int
-_g_socket_get_fd(GSocket * socket);
+_g_socket_get_fd(GebrCommSocket * socket);
 
 void
-_g_socket_enable_read_watch(GSocket * socket);
+_g_socket_enable_read_watch(GebrCommSocket * socket);
 
 void
-_g_socket_enable_write_watch(GSocket * socket);
+_g_socket_enable_write_watch(GebrCommSocket * socket);
 
 void
-_g_socket_emit_error(GSocket * socket, enum GSocketError error);
+_g_socket_emit_error(GebrCommSocket * socket, enum GebrCommSocketError error);
 
 #endif //__LIBGEBR_COMM_GSOCKETPRIVATE_H

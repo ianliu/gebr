@@ -125,7 +125,7 @@ g_listen_socket_init(GListenSocket * listen_socket)
 	listen_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
 }
 
-G_DEFINE_TYPE(GListenSocket, g_listen_socket, G_SOCKET_TYPE)
+G_DEFINE_TYPE(GListenSocket, g_listen_socket, GEBR_COMM_SOCKET_TYPE)
 
 /*
  * internal functions
@@ -188,7 +188,7 @@ g_listen_socket_free(GListenSocket * listen_socket)
 {
 	g_slist_foreach(listen_socket->pending_connections, (GFunc)g_object_unref, NULL);
 	g_slist_free(listen_socket->pending_connections);
-	g_socket_close(&listen_socket->parent);
+	gebr_comm_socket_close(&listen_socket->parent);
 	g_free(listen_socket);
 }
 
