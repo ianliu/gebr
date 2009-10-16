@@ -211,7 +211,7 @@ GSList ** radio_group)
 		label_widget = gtk_hbox_new(FALSE, 0);
 		gtk_widget_show(label_widget);
 		gtk_expander_set_label_widget(GTK_EXPANDER(expander), label_widget);
-		libgebr_gui_gtk_expander_hacked_define(expander, label_widget);
+		gebr_gui_gtk_expander_hacked_define(expander, label_widget);
 
 		label = gtk_label_new(geoxml_parameter_get_label(parameter));
 		gtk_widget_show(label);
@@ -245,7 +245,7 @@ GSList ** radio_group)
 		} else
 			deinstanciate_button = NULL;
 
-		depth_hbox = libgebr_gui_gtk_container_add_depth_hbox(expander);
+		depth_hbox = gebr_gui_gtk_container_add_depth_hbox(expander);
 		gtk_widget_show(depth_hbox);
 		group_vbox = gtk_vbox_new(FALSE, 3);
 		gtk_widget_show(group_vbox);

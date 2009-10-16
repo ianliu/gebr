@@ -121,7 +121,7 @@ line_delete(gboolean confirm)
 	if (!project_line_get_selected(&iter, LineSelection))
 		return FALSE;
 
-	if (confirm && libgebr_gui_confirm_action_dialog(_("Delete line"), _("Are you sure you want to delete line '%s' and all its flows?"),
+	if (confirm && gebr_gui_confirm_action_dialog(_("Delete line"), _("Are you sure you want to delete line '%s' and all its flows?"),
 		geoxml_document_get_title(GEOXML_DOC(gebr.line))) == FALSE)
 		return FALSE;
 
@@ -163,7 +163,7 @@ line_delete(gboolean confirm)
 	/* finally, remove it from the disk */
 	document_delete(line_filename);
 	/* and from the GUI */
-	libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_project_line->view));
+	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), &iter);
 
 	return TRUE;
@@ -268,7 +268,7 @@ line_move_flow_top(void)
 	flow_browse_get_selected(&iter, FALSE);
 	/* Update line XML */
 	geoxml_line_get_flow(gebr.line, &line_flow,
-		libgebr_gui_gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
+		gebr_gui_gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
 	geoxml_sequence_move_after(line_flow, NULL);
 	document_save(GEOXML_DOC(gebr.line));
 	/* GUI */
@@ -287,7 +287,7 @@ line_move_flow_bottom(void)
 	flow_browse_get_selected(&iter, FALSE);
 	/* Update line XML */
 	geoxml_line_get_flow(gebr.line, &line_flow,
-		libgebr_gui_gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
+		gebr_gui_gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
 	geoxml_sequence_move_before(line_flow, NULL);
 	document_save(GEOXML_DOC(gebr.line));
 	/* GUI */

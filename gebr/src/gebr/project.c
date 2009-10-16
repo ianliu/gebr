@@ -114,7 +114,7 @@ project_delete(gboolean confirm)
 	project_line_info_update();
 
 	/* Remove the project from the store (and its children) */
-	libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_project_line->view));
+	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), &iter);
 
 out:	g_free(title);

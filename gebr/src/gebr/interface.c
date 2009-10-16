@@ -170,7 +170,7 @@ gebr_setup_ui(void)
 		(GCallback)on_flow_component_status_activate, NULL);
 	gebr.accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group);
-	libgebr_gui_gtk_action_group_set_accel_group(gebr.action_group, gebr.accel_group);
+	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group, gebr.accel_group);
 
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(gebr.action_group, "flow_copy"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(gebr.action_group, "flow_paste"));
@@ -180,7 +180,7 @@ gebr_setup_ui(void)
 	common_action_group = gtk_action_group_new("Common");
 	gtk_action_group_add_actions(common_action_group, common_actions_entries,
 		G_N_ELEMENTS(common_actions_entries), NULL);
-	libgebr_gui_gtk_action_group_set_accel_group(common_action_group, gebr.accel_group);
+	gebr_gui_gtk_action_group_set_accel_group(common_action_group, gebr.accel_group);
 
 	/* Signals */
 	g_signal_connect(GTK_OBJECT(gebr.window), "delete_event",
@@ -276,7 +276,7 @@ gebr_setup_ui(void)
 		G_CALLBACK(on_flow_revision_save_activate), NULL);
 	g_signal_connect(GTK_OBJECT(tool_item), "show-menu",
 		G_CALLBACK(on_flow_revision_show_menu), NULL);
-	set_tooltip(GTK_WIDGET(tool_item), _("Save flow state"));
+	gebr_gui_gtk_widget_set_tooltip(GTK_WIDGET(tool_item), _("Save flow state"));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
 	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
 

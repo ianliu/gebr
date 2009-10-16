@@ -169,8 +169,8 @@ flow_io_setup_ui(gboolean executable)
 	g_object_set(G_OBJECT(treeview), "has-tooltip", TRUE, NULL);
 	g_signal_connect(G_OBJECT(treeview), "query-tooltip",
 		G_CALLBACK(on_tree_view_tooltip), ui_flow_io);
-	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(treeview),
-		(GtkPopupCallback)on_menu_popup, ui_flow_io);
+	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(treeview),
+		(GebrGuiGtkPopupCallback)on_menu_popup, ui_flow_io);
 
 
 	//---------------------------------------

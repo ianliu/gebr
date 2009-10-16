@@ -165,7 +165,7 @@ server_find_address(const gchar * address, GtkTreeIter * iter)
 	if (!address)
 		return FALSE;
 
-	libgebr_gui_gtk_tree_model_foreach(i, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
+	gebr_gui_gtk_tree_model_foreach(i, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
 		gchar * addr;
 		gtk_tree_model_get(
 			GTK_TREE_MODEL(gebr.ui_server_list->common.store), &i,

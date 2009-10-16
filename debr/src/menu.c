@@ -107,8 +107,8 @@ menu_setup_ui(void)
 	debr.ui_menu.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_menu.model));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view)),
 		GTK_SELECTION_MULTIPLE);
-	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_menu.tree_view),
-		(GtkPopupCallback)menu_popup_menu, NULL);
+	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_menu.tree_view),
+		(GebrGuiGtkPopupCallback)menu_popup_menu, NULL);
 	gtk_widget_show(debr.ui_menu.tree_view);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_menu.tree_view);
 	g_signal_connect(debr.ui_menu.tree_view, "cursor-changed",
@@ -259,7 +259,7 @@ menu_new(gboolean edit)
 			MENU_XMLPOINTER, (gpointer)debr.menu,
 			MENU_PATH, "",
 			-1);
-	libgebr_gui_gtk_tree_view_expand(GTK_TREE_VIEW(debr.ui_menu.tree_view), &iter);
+	gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(debr.ui_menu.tree_view), &iter);
 
 	menu_select_iter(&iter);
 
@@ -397,7 +397,7 @@ menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select)
 		? g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(date).tv_sec)
 		: g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
 
-	if (libgebr_gui_gtk_tree_model_iter_equal_to(&debr.ui_menu.iter_other, parent)) {
+	if (gebr_gui_gtk_tree_iter_equal_to(&debr.ui_menu.iter_other, parent)) {
 		dirname = g_path_get_dirname(path);
 		label = g_markup_printf_escaped("%s <span color='#666666'><i>%s</i></span>",
 			filename, dirname);
@@ -493,7 +493,7 @@ menu_save(GtkTreeIter * iter)
 		geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu))).tv_sec);
 	gtk_tree_store_set(debr.ui_menu.model, iter, MENU_MODIFIED_DATE, tmp, -1);
 	menu_get_selected(&selected_iter);
-	if (libgebr_gui_gtk_tree_model_iter_equal_to(iter, &selected_iter))
+	if (gebr_gui_gtk_tree_iter_equal_to(iter, &selected_iter))
 		menu_details_update();
 
 	menu_saved_status_set_from_iter(iter, MENU_STATUS_SAVED);
@@ -518,7 +518,7 @@ menu_save_all(void)
 	if (!menu_count_unsaved())
 		return;
 
-	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
 		valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, &iter);
 		while (valid) {
 			MenuStatus status;
@@ -562,7 +562,7 @@ menu_install(void)
 
 	cmd_line = g_string_new(NULL);
 	overwrite_all = FALSE;
-	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
 		gchar *		menu_filename;
 		gchar *		menu_path;
 		GtkWidget *	dialog;
@@ -597,11 +597,11 @@ menu_install(void)
 		case 0:
 			break;
 		case -1:
-			libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 				_("Failed to run GêBR. Please check if GêBR is installed"));
 			break;
 		case -2:
-			libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 				_("Failed to install menu '%s'"), menu_filename);
 			break;
 		case -3: {
@@ -619,7 +619,7 @@ menu_install(void)
 			case GTK_RESPONSE_OK:
 				g_string_printf(cmd_line, "gebr -f -I %s", menu_path);
 				if ((char)WEXITSTATUS(system(cmd_line->str)))
-					libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
+					gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 						_("Failed to install menu '%s'"), menu_filename);
 				if (response == GTK_RESPONSE_OK)
 					overwrite_all = TRUE;
@@ -775,7 +775,7 @@ menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 	switch (status) {
 	case MENU_STATUS_SAVED:
 		menu_path_get_parent(path, &new_parent);
-		if (libgebr_gui_gtk_tree_store_reparent(
+		if (gebr_gui_gtk_tree_store_reparent(
 				debr.ui_menu.model, iter, &new_parent)) {
 			menu_select_iter(iter);
 		}
@@ -846,7 +846,7 @@ menu_dialog_setup_ui(void)
 	IterType		type;
 	GtkTreeIter		iter;
 
-	libgebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
+	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 	
 	type = menu_get_selected(&iter);
 
@@ -932,7 +932,7 @@ menu_dialog_setup_ui(void)
 	g_object_set(G_OBJECT(menuhelp_edit_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	menuhelp_refresh_button = gtk_button_new_from_stock(GTK_STOCK_REFRESH);
-        set_tooltip(menuhelp_refresh_button, _("Help edition with all possible information refreshed"));
+        gebr_gui_gtk_widget_set_tooltip(menuhelp_refresh_button, _("Help edition with all possible information refreshed"));
 	gtk_widget_show(menuhelp_refresh_button);
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_refresh_button, FALSE, FALSE, 0);
 	g_object_set(G_OBJECT(menuhelp_refresh_button), "relief", GTK_RELIEF_NONE, NULL);
@@ -1056,7 +1056,7 @@ menu_get_selected(GtkTreeIter * iter)
 	GtkTreeIter	selection;
 	gboolean	selected;
 
-	selected = libgebr_gtk_tree_view_get_selected(
+	selected = gebr_gtk_tree_view_get_selected(
 		GTK_TREE_VIEW(debr.ui_menu.tree_view), &selection);
 
 	if (!selected)
@@ -1110,11 +1110,11 @@ menu_select_iter(GtkTreeIter * iter)
 {
 	GtkTreeSelection *	selection;
 
-	libgebr_gui_gtk_tree_view_expand(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
+	gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 	gtk_tree_selection_unselect_all(selection);
 	gtk_tree_selection_select_iter(selection, iter);
-	libgebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
+	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
 	menu_selected();
 }
 
@@ -1253,7 +1253,7 @@ menu_folder_details_update(GtkTreeIter * iter)
 	};
 	debr_set_actions_sensitive(names, FALSE);
 
-	if (libgebr_gui_gtk_tree_model_iter_equal_to(iter, &debr.ui_menu.iter_other))
+	if (gebr_gui_gtk_tree_iter_equal_to(iter, &debr.ui_menu.iter_other))
 	{
 		gtk_label_set_markup(
 			GTK_LABEL(debr.ui_menu.details.title_label), _("<b>Others</b>"));
@@ -1317,8 +1317,8 @@ void
 menu_reset()
 {
 	GtkTreeIter	iter;
-	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
-		if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &debr.ui_menu.iter_other))
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
+		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &debr.ui_menu.iter_other))
 			continue;
 		gtk_tree_store_remove(debr.ui_menu.model, &iter);
 	}
@@ -1338,7 +1338,7 @@ menu_get_n_menus()
 	gint		n;
 
 	n = 0;
-	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model))
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model))
 		n += gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.model), &iter);
 	return n;
 }
@@ -1358,7 +1358,7 @@ menu_path_get_parent(const gchar * path, GtkTreeIter * parent)
 	GtkTreeIter	iter;
 
 	dirname = g_path_get_dirname (path);
-	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
 		gchar * dirpath;
 
 		gtk_tree_model_get (GTK_TREE_MODEL(debr.ui_menu.model), &iter,
@@ -1391,7 +1391,7 @@ menu_count_unsaved()
 
 	count = 0;
 
-	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
 		GtkTreeIter	child;
 		MenuStatus	status;
 
@@ -1718,7 +1718,7 @@ menu_category_removed(ValueSequenceEdit * sequence_edit, const gchar * old_text)
 {
 	GtkTreeIter	iter;
 
-	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.categories_model)) {
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.categories_model)) {
 		gchar *	i;
 		gint	ref_count;
 

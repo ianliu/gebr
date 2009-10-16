@@ -225,7 +225,7 @@ on_menu_save_as_activate(void)
 	tmp = NULL;
 	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_menu.model),
 		&parent, &iter);
-	if (!libgebr_gui_gtk_tree_model_iter_equal_to(&parent, &debr.ui_menu.iter_other))
+	if (!gebr_gui_gtk_tree_iter_equal_to(&parent, &debr.ui_menu.iter_other))
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &parent,
 			MENU_PATH, &tmp,
 			-1);
@@ -258,7 +258,7 @@ on_menu_save_as_activate(void)
 	else {
 		gchar * label;
 		menu_path_get_parent(path->str, &parent);
-		if (libgebr_gui_gtk_tree_model_iter_equal_to(&parent, &debr.ui_menu.iter_other)) {
+		if (gebr_gui_gtk_tree_iter_equal_to(&parent, &debr.ui_menu.iter_other)) {
 			dirname = g_path_get_dirname(path->str);
 			label = g_markup_printf_escaped(
 				"%s <span color='#666666'><i>%s</i></span>",
@@ -268,7 +268,7 @@ on_menu_save_as_activate(void)
 			label = g_markup_printf_escaped("%s", filename);
 		
 		gtk_tree_store_append(debr.ui_menu.model, &copy, &parent);
-		libgebr_gui_gtk_tree_model_iter_copy_values(
+		gebr_gui_gtk_tree_model_iter_copy_values(
 			GTK_TREE_MODEL(debr.ui_menu.model), &copy, &iter);
 		gtk_tree_store_set(debr.ui_menu.model, &copy,
 			MENU_FILENAME, label,
@@ -311,10 +311,10 @@ on_menu_revert_activate(void)
 {
 	GtkTreeIter		iter;
 
-	if (libgebr_gui_confirm_action_dialog(_("Revert changes"), _("All unsaved changes will be lost. Are you sure you want to revert selected menu(s)?")) == FALSE)
+	if (gebr_gui_confirm_action_dialog(_("Revert changes"), _("All unsaved changes will be lost. Are you sure you want to revert selected menu(s)?")) == FALSE)
 		return;
 
-	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
 		GeoXmlFlow *		menu, * old_menu;
 		gchar *			path;
 
@@ -355,10 +355,10 @@ on_menu_delete_activate(void)
 {
 	GtkTreeIter		iter;
 
-	if (libgebr_gui_confirm_action_dialog(_("Delete menu"), _("Are you sure you want to delete selected menu(s)?")) == FALSE)
+	if (gebr_gui_confirm_action_dialog(_("Delete menu"), _("Are you sure you want to delete selected menu(s)?")) == FALSE)
 		return;
 
-	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
 		GeoXmlFlow *	menu;
 		gchar *		path;
 
@@ -389,7 +389,7 @@ on_menu_delete_activate(void)
 	if (menu_get_n_menus() == 0)
 		menu_new(FALSE);
 	// else
-	//	libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
+	//	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 }
 
 /*
@@ -411,7 +411,7 @@ on_menu_validate_activate(void)
 {
 	GtkTreeIter	iter;
 
-	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view)
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view)
 		menu_validate(&iter);
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(debr.notebook), NOTEBOOK_PAGE_VALIDATE);
 }
@@ -435,7 +435,7 @@ on_menu_close_activate(void)
 {
 	GtkTreeIter		iter;
 
-	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
 		GeoXmlFlow *	menu;
 		GtkWidget *	button;
 		MenuStatus	status;
@@ -494,7 +494,7 @@ on_menu_close_activate(void)
 	// if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.model), NULL) == 0)
 	// 	menu_new(FALSE);
 	// else
-	// 	libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
+	// 	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 }
 
 /*

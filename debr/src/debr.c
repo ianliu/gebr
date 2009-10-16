@@ -197,7 +197,7 @@ debr_has_category(const gchar * category, gboolean add)
 {
 	GtkTreeIter	iter;
 
-	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.categories_model)) {
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.categories_model)) {
 		gchar *	i;
 		gint	ref_count;
 

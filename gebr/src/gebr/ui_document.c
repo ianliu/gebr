@@ -335,7 +335,7 @@ document_dict_edit_setup_ui(void)
 		G_N_ELEMENTS(dict_actions_entries), data);
 	accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), accel_group);
-	libgebr_gui_gtk_action_group_set_accel_group(action_group, accel_group);
+	gebr_gui_gtk_action_group_set_accel_group(action_group, accel_group);
 
 	dialog_title = g_string_new(NULL);
 	g_string_printf(dialog_title, _("Parameters' dictionary for %s '%s'"),
@@ -358,8 +358,8 @@ document_dict_edit_setup_ui(void)
 	gtk_widget_set_size_request(tree_view, 350, 140);
 	data->tree_view = tree_view;
 	gtk_container_add(GTK_CONTAINER(scrolled_window), tree_view);
-	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(tree_view),
-		(GtkPopupCallback)on_dict_edit_popup_menu, data);
+	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(tree_view),
+		(GebrGuiGtkPopupCallback)on_dict_edit_popup_menu, data);
 
 	cell_renderer = gtk_cell_renderer_text_new();
 	data->cell_renderer_array[DICT_EDIT_DOCUMENT] = cell_renderer;
@@ -508,7 +508,7 @@ document_dict_edit_setup_ui(void)
 		}
 		if (document == data->documents[i]) {
 			gtk_combo_box_set_active(GTK_COMBO_BOX(data->document_combo), i);
-			libgebr_gui_gtk_tree_view_expand(GTK_TREE_VIEW(tree_view), &document_iter);
+			gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(tree_view), &document_iter);
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(
 				GTK_TREE_VIEW(tree_view)), &document_iter);
 		}
@@ -603,9 +603,9 @@ on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data)
 
 	iter = dict_edit_append_iter(data, GEOXML_OBJECT(parameter), &document_iter);
 	dict_edit_load_iter(data, &iter, GEOXML_PARAMETER(parameter));
-	libgebr_gui_gtk_tree_view_expand(GTK_TREE_VIEW(data->tree_view), &document_iter);
+	gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(data->tree_view), &document_iter);
 	gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(data->tree_view)), &iter);
-	libgebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(data->tree_view), &iter);
+	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(data->tree_view), &iter);
 }
 
 /* Function: on_dict_edit_remove_clicked
@@ -784,7 +784,7 @@ const gchar * keyword, gboolean show_error)
 		GEOXML_PROGRAM_PARAMETER(i_parameter)), keyword))
 			continue;
 		if (show_error)
-			libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 				_("Duplicate keyword"),
 				_("Another parameter already uses this keyword. Please choose other."));
 		return TRUE;
@@ -850,7 +850,7 @@ static gboolean
 dict_edit_check_empty_keyword(const gchar * keyword)
 {
 	if (!strlen(keyword)) {
-		libgebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 			_("Empty keyword"),
 			_("Please select a keyword."));
 		return FALSE;

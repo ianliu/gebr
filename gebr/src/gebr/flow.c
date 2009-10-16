@@ -127,11 +127,11 @@ flow_delete(gboolean confirm)
 
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
-	if (confirm && libgebr_gui_confirm_action_dialog(_("Delete flow"),
+	if (confirm && gebr_gui_confirm_action_dialog(_("Delete flow"),
 	_("Are you sure you want to delete selected(s) flow(s)?")) == FALSE)
 		return;
 
-	libgebr_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 			FB_TITLE, &title,
 			FB_FILENAME, &filename,
@@ -163,7 +163,7 @@ flow_delete(gboolean confirm)
 		g_free(title);
 		g_free(filename);
 	}
-	libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 }
 
 /* Function: flow_import
@@ -624,9 +624,9 @@ flow_program_remove(void)
 	GtkTreeIter	iter;
 	GeoXmlProgram *	program;
 
-	libgebr_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
-		if (libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-		libgebr_gui_gtk_tree_model_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
+		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+		gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
 			continue;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
@@ -635,7 +635,7 @@ flow_program_remove(void)
 		gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
 	}
 	document_save(GEOXML_DOCUMENT(gebr.flow));
-	libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 }
 
 /*
@@ -687,7 +687,7 @@ flow_copy(void)
 		gebr.flow_clipboard = NULL;
 	}
 
-	libgebr_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
 		gchar *	filename;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
@@ -733,7 +733,7 @@ flow_program_copy(void)
 	GtkTreeIter		iter;
 
 	geoxml_clipboard_clear();
-	libgebr_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
 		GeoXmlObject *	program;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,

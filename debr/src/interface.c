@@ -180,7 +180,7 @@ debr_setup_ui(void)
 		combo_type_map_size, -1, (GCallback)on_parameter_type_activate, NULL);
 	debr.accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(debr.window), debr.accel_group);
-	libgebr_gui_gtk_action_group_set_accel_group(debr.action_group, debr.accel_group);
+	gebr_gui_gtk_action_group_set_accel_group(debr.action_group, debr.accel_group);
 
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "menu_new"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "program_new"));
@@ -193,7 +193,7 @@ debr_setup_ui(void)
 	common_action_group = gtk_action_group_new("Common");
 	gtk_action_group_add_actions(common_action_group, common_actions_entries,
 		G_N_ELEMENTS(common_actions_entries), NULL);
-	libgebr_gui_gtk_action_group_set_accel_group(common_action_group, debr.accel_group);
+	gebr_gui_gtk_action_group_set_accel_group(common_action_group, debr.accel_group);
 
 	/*
 	 * Menu: Actions

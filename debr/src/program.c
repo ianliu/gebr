@@ -123,10 +123,10 @@ program_setup_ui(void)
 	debr.ui_program.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_program.list_store));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view)),
 		GTK_SELECTION_MULTIPLE);
-	libgebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_program.tree_view),
-		(GtkPopupCallback)program_popup_menu, NULL);
-	libgebr_gui_gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(debr.ui_program.tree_view), PROGRAM_XMLPOINTER,
-		(LibGeBRGUIGtkTreeViewMoveSequenceCallback)menu_saved_status_set_unsaved, NULL);
+	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_program.tree_view),
+		(GebrGuiGtkPopupCallback)program_popup_menu, NULL);
+	gebr_gui_gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(debr.ui_program.tree_view), PROGRAM_XMLPOINTER,
+		(GebrGuiGtkTreeViewMoveSequenceCallback)menu_saved_status_set_unsaved, NULL);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_program.tree_view);
 	g_signal_connect(debr.ui_program.tree_view, "cursor-changed",
 		(GCallback)program_selected, NULL);
@@ -299,18 +299,18 @@ program_remove(void)
 
 	if (!program_get_selected(NULL, TRUE))
 		return;
-	if (libgebr_gui_confirm_action_dialog(_("Delete program"), _("Are you sure you want to delete selected(s) program(s)?"))
+	if (gebr_gui_confirm_action_dialog(_("Delete program"), _("Are you sure you want to delete selected(s) program(s)?"))
 	== FALSE)
 		return;
 
-	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_program.tree_view) {
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_program.tree_view) {
 		geoxml_sequence_remove(GEOXML_SEQUENCE(debr.program));
 		debr.program = NULL;
 		gtk_list_store_remove(debr.ui_program.list_store, &iter);
 		g_signal_emit_by_name(debr.ui_program.tree_view, "cursor-changed");
 	}
 
-	libgebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_program.tree_view));
+	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_program.tree_view));
 	menu_details_update();
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -358,7 +358,7 @@ program_copy(void)
 	GtkTreeIter		iter;
 
 	geoxml_clipboard_clear();
-	libgebr_gtk_tree_view_foreach_selected(&iter, debr.ui_program.tree_view) {
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_program.tree_view) {
 		GeoXmlObject *	program;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), &iter,
@@ -426,7 +426,7 @@ program_dialog_setup_ui(void)
 	GtkWidget *     url_label;
 	GtkWidget *     url_entry;
 
-	libgebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
+	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
 	if (program_get_selected(NULL, TRUE) == FALSE)
 		return;
 
@@ -457,7 +457,7 @@ program_dialog_setup_ui(void)
 	gtk_widget_show(io_label);
 	gtk_box_pack_start(GTK_BOX(io_vbox), io_label, FALSE, FALSE, 0);
 
-	io_depth_hbox = libgebr_gui_gtk_container_add_depth_hbox(io_vbox);
+	io_depth_hbox = gebr_gui_gtk_container_add_depth_hbox(io_vbox);
 	io_vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(io_vbox);
 	gtk_box_pack_start(GTK_BOX(io_depth_hbox), io_vbox, FALSE, TRUE, 0);
@@ -565,7 +565,7 @@ program_dialog_setup_ui(void)
 	g_object_set(G_OBJECT(help_edit_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	help_refresh_button = gtk_button_new_from_stock(GTK_STOCK_REFRESH);
-        set_tooltip(help_refresh_button, _("Help edition with all possible information refreshed"));
+        gebr_gui_gtk_widget_set_tooltip(help_refresh_button, _("Help edition with all possible information refreshed"));
 	gtk_widget_show(help_refresh_button);
 	gtk_box_pack_start(GTK_BOX(help_hbox), help_refresh_button, FALSE, FALSE, 0);
 	g_signal_connect(help_refresh_button, "clicked",
@@ -696,7 +696,7 @@ program_details_update(void)
 static gboolean
 program_get_selected(GtkTreeIter * iter, gboolean warn_user)
 {
-	if (libgebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_program.tree_view), iter) == FALSE) {
+	if (gebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_program.tree_view), iter) == FALSE) {
 		if (warn_user)
 			debr_message(LOG_ERROR, _("No program is selected"));
 		return FALSE;
@@ -813,14 +813,14 @@ program_popup_menu(GtkWidget * tree_view)
 		goto out;
 	}
 
-	if (libgebr_gui_gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE)
+	if (gebr_gui_gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE)
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "program_top")));
-	if (libgebr_gui_gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
+	if (gebr_gui_gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
 		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(debr.action_group, "program_bottom")));
-	if (libgebr_gui_gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE ||
-	libgebr_gui_gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
+	if (gebr_gui_gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE ||
+	gebr_gui_gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(

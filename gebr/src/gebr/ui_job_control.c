@@ -260,7 +260,7 @@ job_control_cancel(void)
 		gebr_message(LOG_WARNING, TRUE, FALSE, _("You are not connected to job's server"));
 		return;
 	}
-	if (libgebr_gui_confirm_action_dialog(_("Terminate job"), _("Are you sure you want to terminate job '%s'?"), job->title->str) == FALSE)
+	if (gebr_gui_confirm_action_dialog(_("Terminate job"), _("Are you sure you want to terminate job '%s'?"), job->title->str) == FALSE)
 		return;
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to terminate job"));
@@ -293,7 +293,7 @@ job_control_close(void)
 		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
-	if (libgebr_gui_confirm_action_dialog(_("Clear job "), _("Are you sure you want to clear job '%s'?"), job->title->str) == FALSE)
+	if (gebr_gui_confirm_action_dialog(_("Clear job "), _("Are you sure you want to clear job '%s'?"), job->title->str) == FALSE)
 		return;
 
 	job_close(job);
@@ -309,11 +309,11 @@ job_control_clear(void)
 {
 	GtkTreeIter		iter;
 
-	if (libgebr_gui_confirm_action_dialog(_("Clear all jobs"),
+	if (gebr_gui_confirm_action_dialog(_("Clear all jobs"),
 	_("Are you sure you want to clear all jobs from all servers?")) == FALSE)
 		return;
 
-	libgebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_job_control->store)) {
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_job_control->store)) {
 		struct job *	job;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter,
@@ -352,7 +352,7 @@ job_control_stop(void)
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("You are not connected to job's server"));
 		return;
 	}
-	if (libgebr_gui_confirm_action_dialog(_("Kill job"), _("Are you sure you want to kill job '%s'?"), job->title->str) == FALSE)
+	if (gebr_gui_confirm_action_dialog(_("Kill job"), _("Are you sure you want to kill job '%s'?"), job->title->str) == FALSE)
 		return;
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to kill job"));

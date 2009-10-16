@@ -97,7 +97,7 @@ preferences_setup_ui(gboolean first_run)
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
 
 	ui_preferences->username = gtk_entry_new();
-	set_tooltip(ui_preferences->username, _("You should know your name"));
+	gebr_gui_gtk_widget_set_tooltip(ui_preferences->username, _("You should know your name"));
 	gtk_table_attach(GTK_TABLE(table), ui_preferences->username, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3);
 
 	/* read config */
@@ -114,7 +114,7 @@ preferences_setup_ui(gboolean first_run)
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 
 	ui_preferences->email = gtk_entry_new();
-	set_tooltip(ui_preferences->email, _("Your email address"));
+	gebr_gui_gtk_widget_set_tooltip(ui_preferences->email, _("Your email address"));
 	gtk_table_attach(GTK_TABLE(table), ui_preferences->email, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* read config */
@@ -134,7 +134,7 @@ preferences_setup_ui(gboolean first_run)
 	eventbox = gtk_event_box_new();
 	ui_preferences->usermenus = gtk_file_chooser_button_new(_("GêBR dir"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
 	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->usermenus);
-	set_tooltip(eventbox, _("Path to look for private user's menus"));
+	gebr_gui_gtk_widget_set_tooltip(eventbox, _("Path to look for private user's menus"));
 	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* read config */
@@ -150,7 +150,7 @@ preferences_setup_ui(gboolean first_run)
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 
 	ui_preferences->editor = gtk_entry_new();
-	set_tooltip(ui_preferences->editor, _("An HTML capable editor to edit helps and reports"));
+	gebr_gui_gtk_widget_set_tooltip(ui_preferences->editor, _("An HTML capable editor to edit helps and reports"));
 	gtk_table_attach(GTK_TABLE(table), ui_preferences->editor, 1, 2, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* read config */
@@ -164,7 +164,7 @@ preferences_setup_ui(gboolean first_run)
 	eventbox = gtk_event_box_new();
 	ui_preferences->browser = gtk_combo_box_entry_new_text();
 	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->browser);
-	set_tooltip(eventbox, _("An HTML browser to display helps and reports"));
+	gebr_gui_gtk_widget_set_tooltip(eventbox, _("An HTML browser to display helps and reports"));
 	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
 	/* read config */
 	{
