@@ -27,24 +27,24 @@
 G_BEGIN_DECLS
 
 GType
-g_channel_socket_get_type(void);
+gebr_comm_channel_socket_get_type(void);
 
-#define G_CHANNEL_SOCKET_TYPE		(g_channel_socket_get_type())
-#define G_CHANNEL_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_CHANNEL_SOCKET_TYPE, GChannelSocket))
-#define G_CHANNEL_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), G_CHANNEL_SOCKET_TYPE, GChannelSocketClass))
-#define G_IS_CHANNEL_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), G_CHANNEL_SOCKET_TYPE))
-#define G_IS_CHANNEL_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), G_CHANNEL_SOCKET_TYPE))
-#define G_CHANNEL_SOCKET_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), G_CHANNEL_SOCKET_TYPE, GChannelSocketClass))
+#define GEBR_COMM_CHANNEL_SOCKET_TYPE		(gebr_comm_channel_socket_get_type())
+#define GEBR_COMM_CHANNEL_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_CHANNEL_SOCKET_TYPE, GebrCommChannelSocket))
+#define GEBR_COMM_CHANNEL_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_COMM_CHANNEL_SOCKET_TYPE, GebrCommChannelSocketClass))
+#define GEBR_COMM_IS_CHANNEL_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_COMM_CHANNEL_SOCKET_TYPE))
+#define GEBR_COMM_IS_CHANNEL_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_COMM_CHANNEL_SOCKET_TYPE))
+#define GEBR_COMM_CHANNEL_SOCKET_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_CHANNEL_SOCKET_TYPE, GebrCommChannelSocketClass))
 
-typedef struct _GChannelSocket	GChannelSocket;
-typedef struct _GChannelSocketClass	GChannelSocketClass;
+typedef struct _GebrCommChannelSocket	GebrCommChannelSocket;
+typedef struct _GebrCommChannelSocketClass	GebrCommChannelSocketClass;
 
-struct _GChannelSocket {
+struct _GebrCommChannelSocket {
 	GebrCommSocket			parent;
 
-	GSocketAddress		forward_address;
+	GebrCommSocketAddress		forward_address;
 };
-struct _GChannelSocketClass {
+struct _GebrCommChannelSocketClass {
 	GebrCommSocketClass		parent;
 };
 
@@ -52,18 +52,18 @@ struct _GChannelSocketClass {
  * user functions
  */
 
-GChannelSocket *
-g_channel_socket_new(void);
+GebrCommChannelSocket *
+gebr_comm_channel_socket_new(void);
 
 void
-g_channel_socket_free(GChannelSocket *);
+gebr_comm_channel_socket_free(GebrCommChannelSocket *);
 
 gboolean
-g_channel_socket_start(GChannelSocket * channel_socket, GSocketAddress * listen_address,
-	GSocketAddress * forward_address);
+gebr_comm_channel_socket_start(GebrCommChannelSocket * channel_socket, GebrCommSocketAddress * listen_address,
+	GebrCommSocketAddress * forward_address);
 
-GSocketAddress
-g_channel_socket_get_forward_address(GChannelSocket * channel_socket);
+GebrCommSocketAddress
+gebr_comm_channel_socket_get_forward_address(GebrCommChannelSocket * channel_socket);
 
 G_END_DECLS
 

@@ -32,52 +32,52 @@
  */
 
 static void
-comm_server_log_message(struct comm_server * comm_server, enum log_message_type type, const gchar * message, ...);
+comm_server_log_message(struct gebr_comm_server * comm_server, enum log_message_type type, const gchar * message, ...);
 
 static void
-local_run_server_read(GProcess * process, struct comm_server * comm_server);
+local_run_server_read(GProcess * process, struct gebr_comm_server * comm_server);
 static void
-local_run_server_finished(GProcess * process, struct comm_server * comm_server);
+local_run_server_finished(GProcess * process, struct gebr_comm_server * comm_server);
 
 static gboolean
-comm_ssh_parse_output(GTerminalProcess * process, struct comm_server * comm_server, GString * output);
+comm_ssh_parse_output(GTerminalProcess * process, struct gebr_comm_server * comm_server, GString * output);
 static void
-comm_ssh_read(GTerminalProcess * process, struct comm_server * comm_server);
+comm_ssh_read(GTerminalProcess * process, struct gebr_comm_server * comm_server);
 static void
-comm_ssh_finished(GTerminalProcess * process, struct comm_server * comm_server);
+comm_ssh_finished(GTerminalProcess * process, struct gebr_comm_server * comm_server);
 static void
-comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_server);
+comm_ssh_run_server_read(GTerminalProcess * process, struct gebr_comm_server * comm_server);
 static void
-comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * comm_server);
+comm_ssh_run_server_finished(GTerminalProcess * process, struct gebr_comm_server * comm_server);
 static void
-comm_ssh_open_tunnel_finished(GTerminalProcess * process, struct comm_server * comm_server);
+comm_ssh_open_tunnel_finished(GTerminalProcess * process, struct gebr_comm_server * comm_server);
 
 static void
-comm_server_connected(GStreamSocket * stream_socket, struct comm_server * comm_server);
+comm_server_connected(GStreamSocket * stream_socket, struct gebr_comm_server * comm_server);
 static void
-comm_server_disconnected(GStreamSocket * stream_socket, struct comm_server * comm_server);
+comm_server_disconnected(GStreamSocket * stream_socket, struct gebr_comm_server * comm_server);
 static void
-comm_server_read(GStreamSocket * stream_socket, struct comm_server * comm_server);
+comm_server_read(GStreamSocket * stream_socket, struct gebr_comm_server * comm_server);
 static void
-comm_server_error(GStreamSocket * stream_socket, enum GebrCommSocketError error, struct comm_server * comm_server);
+comm_server_error(GStreamSocket * stream_socket, enum GebrCommSocketError error, struct gebr_comm_server * comm_server);
 
 static void
-comm_server_free_x11_forward(struct comm_server * comm_server);
+comm_server_free_x11_forward(struct gebr_comm_server * comm_server);
 static void
-comm_server_free_for_reuse(struct comm_server * comm_server);
+comm_server_free_for_reuse(struct gebr_comm_server * comm_server);
 
 /*
  * Section: Public
  */
 
-struct comm_server *
-comm_server_new(const gchar * _address, const struct comm_server_ops * ops)
+struct gebr_comm_server *
+gebr_comm_server_new(const gchar * _address, const struct comm_server_ops * ops)
 {
-	struct comm_server *	comm_server;
+	struct gebr_comm_server *	comm_server;
 
 	/* initialize */
-	comm_server = g_malloc(sizeof(struct comm_server));
-	*comm_server = (struct comm_server) {
+	comm_server = g_malloc(sizeof(struct gebr_comm_server));
+	*comm_server = (struct gebr_comm_server) {
 		.stream_socket = g_stream_socket_new(),
 		.protocol = protocol_new(),
 		.address = g_string_new(_address),
@@ -103,7 +103,7 @@ comm_server_new(const gchar * _address, const struct comm_server_ops * ops)
 }
 
 void
-comm_server_free(struct comm_server * comm_server)
+gebr_comm_server_free(struct gebr_comm_server * comm_server)
 {
 	gebr_comm_socket_close(GEBR_COMM_SOCKET(comm_server->stream_socket));
 	protocol_free(comm_server->protocol);
@@ -114,7 +114,7 @@ comm_server_free(struct comm_server * comm_server)
 }
 
 void
-comm_server_connect(struct comm_server * comm_server)
+gebr_comm_server_connect(struct gebr_comm_server * comm_server)
 {
 	GString *	cmd_line;
 
@@ -125,7 +125,7 @@ comm_server_connect(struct comm_server * comm_server)
 	cmd_line = g_string_new(NULL);
 
 	/* initiate the marathon to communicate to server */
-	if (comm_server_is_local(comm_server) == FALSE) {
+	if (gebr_comm_server_is_local(comm_server) == FALSE) {
 		GTerminalProcess *	process;
 
 		comm_server->state = SERVER_STATE_RUN;
@@ -166,27 +166,27 @@ comm_server_connect(struct comm_server * comm_server)
 }
 
 void
-comm_server_disconnect(struct comm_server * comm_server)
+gebr_comm_server_disconnect(struct gebr_comm_server * comm_server)
 {
 	comm_server->state = SERVER_STATE_DISCONNECTED;
 	g_stream_socket_disconnect(comm_server->stream_socket);
 }
 
 gboolean
-comm_server_is_logged(struct comm_server * comm_server)
+gebr_comm_server_is_logged(struct gebr_comm_server * comm_server)
 {
 	return comm_server->protocol->logged;
 }
 
 gboolean
-comm_server_is_local(struct comm_server * comm_server)
+gebr_comm_server_is_local(struct gebr_comm_server * comm_server)
 {
 	return strcmp(comm_server->address->str, "127.0.0.1") == 0
 		? TRUE : FALSE;
 }
 
 void
-comm_server_kill(struct comm_server * comm_server)
+gebr_comm_server_kill(struct gebr_comm_server * comm_server)
 {
 	GString *		cmd_line;
 	GTerminalProcess *	process;
@@ -201,7 +201,7 @@ comm_server_kill(struct comm_server * comm_server)
 	g_signal_connect(process, "finished",
 		G_CALLBACK(comm_ssh_finished), comm_server);
 
-	if (comm_server_is_local(comm_server) == FALSE)
+	if (gebr_comm_server_is_local(comm_server) == FALSE)
 		g_string_printf(cmd_line, "ssh -x %s 'killall gebrd'", comm_server->address->str);
 	else
 		g_string_printf(cmd_line, "killall gebrd");
@@ -211,20 +211,20 @@ comm_server_kill(struct comm_server * comm_server)
 }
 
 /*
- * Function: comm_server_forward_x11
+ * Function: gebr_comm_server_forward_x11
  * For the logged _comm_server_ forward x11 server _port_ to user display
  * Fail if user's display is not set, returning FALSE.
  * If any other x11 redirect was previously made it is unmade
  */
 gboolean
-comm_server_forward_x11(struct comm_server * comm_server, guint16 port)
+gebr_comm_server_forward_x11(struct gebr_comm_server * comm_server, guint16 port)
 {
 	gchar *		display;
 	guint16		display_number;
 	guint16		redirect_display_port;
 
-	GSocketAddress	listen_address;
-	GSocketAddress	forward_address;
+	GebrCommSocketAddress	listen_address;
+	GebrCommSocketAddress	forward_address;
 
 	gboolean	ret;
 	GString *	string;
@@ -240,18 +240,18 @@ comm_server_forward_x11(struct comm_server * comm_server, guint16 port)
 
 	/* set redirection port */
 	redirect_display_port = (display_number+6000 > 6010) ? display_number+6000 : 6010;
-	while (!g_listen_socket_is_local_port_available(redirect_display_port))
+	while (!gebr_comm_listen_socket_is_local_port_available(redirect_display_port))
 		++redirect_display_port;
 
 	/* free previous forward */
 	comm_server_free_x11_forward(comm_server);
 
 	/* redirect_display_port tcp port to X11 unix socket */
-	listen_address = g_socket_address_ipv4_local(redirect_display_port);
+	listen_address = gebr_comm_socket_address_ipv4_local(redirect_display_port);
 	g_string_printf(string, "/tmp/.X11-unix/X%hu", display_number);
-	forward_address = g_socket_address_unix(string->str);
-	comm_server->x11_forward_channel = g_channel_socket_new();
-	if (!(ret = g_channel_socket_start(comm_server->x11_forward_channel, &listen_address, &forward_address)))
+	forward_address = gebr_comm_socket_address_unix(string->str);
+	comm_server->x11_forward_channel = gebr_comm_channel_socket_new();
+	if (!(ret = gebr_comm_channel_socket_start(comm_server->x11_forward_channel, &listen_address, &forward_address)))
 		goto out;
 
 	/* now ssh from server to redirect_display_port */
@@ -274,12 +274,12 @@ out:	g_string_free(string, TRUE);
 }
 
 /*
- * Function: comm_server_run_flow
+ * Function: gebr_comm_server_run_flow
  * Ask _comm_server_ to run the current _flow_
  *
  */
 void
-comm_server_run_flow(struct comm_server * comm_server, GeoXmlFlow * flow)
+gebr_comm_server_run_flow(struct gebr_comm_server * comm_server, GeoXmlFlow * flow)
 {
 	GeoXmlFlow *		flow_wnh; /* wnh: with no help */
 	GeoXmlSequence *	program;
@@ -312,7 +312,7 @@ comm_server_run_flow(struct comm_server * comm_server, GeoXmlFlow * flow)
  */
 
 static void
-comm_server_log_message(struct comm_server * comm_server, enum log_message_type type, const gchar * message, ...)
+comm_server_log_message(struct gebr_comm_server * comm_server, enum log_message_type type, const gchar * message, ...)
 {
 	gchar *		string;
 	va_list		argp;
@@ -327,7 +327,7 @@ comm_server_log_message(struct comm_server * comm_server, enum log_message_type 
 }
 
 static void
-local_run_server_read(GProcess * process, struct comm_server * comm_server)
+local_run_server_read(GProcess * process, struct gebr_comm_server * comm_server)
 {
 	GString *	output;
 	gchar *		strtol_endptr;
@@ -349,9 +349,9 @@ local_run_server_read(GProcess * process, struct comm_server * comm_server)
 }
 
 static void
-local_run_server_finished(GProcess * process, struct comm_server * comm_server)
+local_run_server_finished(GProcess * process, struct gebr_comm_server * comm_server)
 {
-	GSocketAddress	socket_address;
+	GebrCommSocketAddress	socket_address;
 
 	comm_server->process.use = COMM_SERVER_PROCESS_NONE;
 	g_process_free(process);
@@ -361,12 +361,12 @@ local_run_server_finished(GProcess * process, struct comm_server * comm_server)
 		return;
 
 	comm_server->state = SERVER_STATE_CONNECT;
-	socket_address = g_socket_address_ipv4_local(comm_server->port);
+	socket_address = gebr_comm_socket_address_ipv4_local(comm_server->port);
 	g_stream_socket_connect(comm_server->stream_socket, &socket_address, FALSE);
 }
 
 static gboolean
-comm_ssh_parse_output(GTerminalProcess * process, struct comm_server * comm_server, GString * output)
+comm_ssh_parse_output(GTerminalProcess * process, struct gebr_comm_server * comm_server, GString * output)
 {
 	if (output->len <= 2)
 		return TRUE;
@@ -445,7 +445,7 @@ out:	return TRUE;
  * Simple ssh messages parser, like login questions and warnings
  */
 static void
-comm_ssh_read(GTerminalProcess * process, struct comm_server * comm_server)
+comm_ssh_read(GTerminalProcess * process, struct gebr_comm_server * comm_server)
 {
 	GString *	output;
 
@@ -458,13 +458,13 @@ comm_ssh_read(GTerminalProcess * process, struct comm_server * comm_server)
 }
 
 static void
-comm_ssh_finished(GTerminalProcess * process, struct comm_server * comm_server)
+comm_ssh_finished(GTerminalProcess * process, struct gebr_comm_server * comm_server)
 {
 	g_terminal_process_free(process);
 }
 
 static void
-comm_ssh_run_server_read(GTerminalProcess * process, struct comm_server * comm_server)
+comm_ssh_run_server_read(GTerminalProcess * process, struct gebr_comm_server * comm_server)
 {
 	gchar *		strtol_endptr;
 	guint16		port;
@@ -490,7 +490,7 @@ out:	g_string_free(output, TRUE);
 }
 
 static void
-comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * comm_server)
+comm_ssh_run_server_finished(GTerminalProcess * process, struct gebr_comm_server * comm_server)
 {
 	GString *	cmd_line;
 
@@ -515,7 +515,7 @@ comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * co
 
 	comm_server->state = SERVER_STATE_OPEN_TUNNEL;
 	comm_server->tunnel_port = 2125;
-	while (!g_listen_socket_is_local_port_available(comm_server->tunnel_port))
+	while (!gebr_comm_listen_socket_is_local_port_available(comm_server->tunnel_port))
 		++comm_server->tunnel_port;
 
 	g_string_printf(cmd_line, "ssh -x -f -L %d:127.0.0.1:%d %s 'sleep 300'",
@@ -527,9 +527,9 @@ comm_ssh_run_server_finished(GTerminalProcess * process, struct comm_server * co
 }
 
 static void
-comm_ssh_open_tunnel_finished(GTerminalProcess * process, struct comm_server * comm_server)
+comm_ssh_open_tunnel_finished(GTerminalProcess * process, struct gebr_comm_server * comm_server)
 {
-	GSocketAddress	socket_address;
+	GebrCommSocketAddress	socket_address;
 
 	comm_server_log_message(comm_server, LOG_DEBUG, "comm_ssh_open_tunnel_finished");
 
@@ -537,7 +537,7 @@ comm_ssh_open_tunnel_finished(GTerminalProcess * process, struct comm_server * c
 		goto out;
 
 	comm_server->state = SERVER_STATE_CONNECT;
-	socket_address = g_socket_address_ipv4_local(comm_server->tunnel_port);
+	socket_address = gebr_comm_socket_address_ipv4_local(comm_server->tunnel_port);
 	g_stream_socket_connect(comm_server->stream_socket, &socket_address, FALSE);
 
 out:	comm_server->process.use = COMM_SERVER_PROCESS_NONE;
@@ -545,7 +545,7 @@ out:	comm_server->process.use = COMM_SERVER_PROCESS_NONE;
 }
 
 static void
-comm_server_connected(GStreamSocket * stream_socket, struct comm_server * comm_server)
+comm_server_connected(GStreamSocket * stream_socket, struct gebr_comm_server * comm_server)
 {
 	gchar		hostname[256];
 	gchar *		display;
@@ -556,7 +556,7 @@ comm_server_connected(GStreamSocket * stream_socket, struct comm_server * comm_s
 	if (display == NULL)
 		display = "";
 
-	if (comm_server_is_local(comm_server) == FALSE) {
+	if (gebr_comm_server_is_local(comm_server) == FALSE) {
 		GString *	cmd_line;
 		gchar		mcookie_str[33];
 
@@ -589,7 +589,7 @@ comm_server_connected(GStreamSocket * stream_socket, struct comm_server * comm_s
 }
 
 static void
-comm_server_disconnected(GStreamSocket * stream_socket, struct comm_server * comm_server)
+comm_server_disconnected(GStreamSocket * stream_socket, struct gebr_comm_server * comm_server)
 {
 	comm_server->port = 0;
 	comm_server->protocol->logged = FALSE;
@@ -602,7 +602,7 @@ comm_server_disconnected(GStreamSocket * stream_socket, struct comm_server * com
 }
 
 static void
-comm_server_read(GStreamSocket * stream_socket, struct comm_server * comm_server)
+comm_server_read(GStreamSocket * stream_socket, struct gebr_comm_server * comm_server)
 {
 	GString *	data;
 	gchar *		data_stripped;
@@ -621,7 +621,7 @@ comm_server_read(GStreamSocket * stream_socket, struct comm_server * comm_server
 }
 
 static void
-comm_server_error(GStreamSocket * stream_socket, enum GebrCommSocketError error, struct comm_server * comm_server)
+comm_server_error(GStreamSocket * stream_socket, enum GebrCommSocketError error, struct gebr_comm_server * comm_server)
 {
 	comm_server->error = SERVER_ERROR_CONNECT;
 	comm_server->state = SERVER_STATE_DISCONNECTED;
@@ -632,10 +632,10 @@ comm_server_error(GStreamSocket * stream_socket, enum GebrCommSocketError error,
 
 /*
  * Function: comm_server_free_x11_forward
- * Free (if necessary) comm_server->x11_forward_process for reuse
+ * Free (if necessary) gebr_comm_server->x11_forward_process for reuse
  */
 static void
-comm_server_free_x11_forward(struct comm_server * comm_server)
+comm_server_free_x11_forward(struct gebr_comm_server * comm_server)
 {
 	if (comm_server->x11_forward_process != NULL) {
 		g_terminal_process_kill(comm_server->x11_forward_process);
@@ -649,7 +649,7 @@ comm_server_free_x11_forward(struct comm_server * comm_server)
 }
 
 static void
-comm_server_free_for_reuse(struct comm_server * comm_server)
+comm_server_free_for_reuse(struct gebr_comm_server * comm_server)
 {
 	comm_server_free_x11_forward(comm_server);
 	switch (comm_server->process.use) {

@@ -256,7 +256,7 @@ job_control_cancel(void)
 		gebr_message(LOG_WARNING, TRUE, FALSE, _("Job is not running"));
 		return;
 	}
-	if (comm_server_is_logged(job->server->comm) == FALSE) {
+	if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
 		gebr_message(LOG_WARNING, TRUE, FALSE, _("You are not connected to job's server"));
 		return;
 	}
@@ -264,7 +264,7 @@ job_control_cancel(void)
 		return;
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to terminate job"));
-	if (comm_server_is_local(job->server->comm) == FALSE)
+	if (gebr_comm_server_is_local(job->server->comm) == FALSE)
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to terminate job '%s'"),
 			job->server->comm->address->str, job->title->str);
 	else
@@ -348,7 +348,7 @@ job_control_stop(void)
 		gebr_message(LOG_WARNING, TRUE, FALSE, _("Job is not running"));
 		return;
 	}
-	if (comm_server_is_logged(job->server->comm) == FALSE) {
+	if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("You are not connected to job's server"));
 		return;
 	}
@@ -356,7 +356,7 @@ job_control_stop(void)
 		return;
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to kill job"));
-	if (comm_server_is_local(job->server->comm) == FALSE) {
+	if (gebr_comm_server_is_local(job->server->comm) == FALSE) {
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to kill job '%s'"),
 			job->server->comm->address->str, job->title->str);
 	} else {

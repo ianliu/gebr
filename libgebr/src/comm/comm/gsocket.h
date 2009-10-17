@@ -66,7 +66,7 @@ struct _GebrCommSocket {
 	guint			write_watch_id;
 	GByteArray *		queue_write_bytes;
 
-	enum GSocketAddressType	address_type;
+	enum GebrCommSocketAddressType	address_type;
 	enum GebrCommSocketState	state;
 	enum GebrCommSocketError	last_error;
 };
@@ -96,7 +96,7 @@ gebr_comm_socket_get_state(GebrCommSocket *);
 enum GebrCommSocketError
 gebr_comm_socket_get_last_error(GebrCommSocket *);
 
-GSocketAddress
+GebrCommSocketAddress
 gebr_comm_socket_get_address(GebrCommSocket *);
 
 gulong

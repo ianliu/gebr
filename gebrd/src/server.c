@@ -47,7 +47,7 @@
 gboolean
 server_init(void)
 {
-	GSocketAddress		socket_address;
+	GebrCommSocketAddress		socket_address;
 	struct sigaction	act;
 	gboolean		ret;
 
@@ -76,7 +76,7 @@ server_init(void)
 		fscanf(run_fp, "%hu", &port);
 		fclose(run_fp);
 
-		if (g_listen_socket_is_local_port_available(port) == FALSE) {
+		if (gebr_comm_listen_socket_is_local_port_available(port) == FALSE) {
 			if (gebrd.options.foreground == TRUE) {
 				ret = FALSE;
 				gebrd_message(LOG_ERROR,
@@ -94,9 +94,9 @@ server_init(void)
 	g_random_set_seed((guint32)time(NULL));
 
 	/* init the server socket and listen */
-	socket_address = g_socket_address_ipv4_local(0);
-	gebrd.listen_socket = g_listen_socket_new();
-	if (g_listen_socket_listen(gebrd.listen_socket, &socket_address) == FALSE) {
+	socket_address = gebr_comm_socket_address_ipv4_local(0);
+	gebrd.listen_socket = gebr_comm_listen_socket_new();
+	if (gebr_comm_listen_socket_listen(gebrd.listen_socket, &socket_address) == FALSE) {
 		gebrd_message(LOG_ERROR, _("Could not listen for connections.\n"));
 		goto err;
 	}
@@ -109,7 +109,7 @@ server_init(void)
 		gebrd_message(LOG_ERROR, _("Could not write run file."));
 		goto err;
 	}
-	fprintf(run_fp, "%d\n", g_socket_address_get_ip_port(&socket_address));
+	fprintf(run_fp, "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
 	fclose(run_fp);
 
 	/* log */
@@ -128,8 +128,8 @@ server_init(void)
 
 	/* success */
 	ret = TRUE;
-	gebrd_message(LOG_START, _("Server started at %u port"), g_socket_address_get_ip_port(&socket_address));
-	dprintf(gebrd.finished_starting_pipe[1], "%d\n", g_socket_address_get_ip_port(&socket_address));
+	gebrd_message(LOG_START, _("Server started at %u port"), gebr_comm_socket_address_get_ip_port(&socket_address));
+	dprintf(gebrd.finished_starting_pipe[1], "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
 
 	/* frees */
 	g_string_free(log_filename, TRUE);
@@ -173,7 +173,7 @@ server_new_connection(void)
 {
 	GStreamSocket *	client_socket;
 
-	while ((client_socket = g_listen_socket_get_next_pending_connection(gebrd.listen_socket)) != NULL)
+	while ((client_socket = gebr_comm_listen_socket_get_next_pending_connection(gebrd.listen_socket)) != NULL)
 		client_add(client_socket);
 
 	gebrd_message(LOG_DEBUG, "server_new_connection");

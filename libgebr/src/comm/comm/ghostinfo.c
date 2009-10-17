@@ -34,23 +34,23 @@ extern int h_errno;
 
 // struct thread_data {
 // 	GString *	hostname;
-// 	GHostInfoFunc	callback;
+// 	GebrCommHostInfoFunc	callback;
 // 	gpointer	user_data;
 // };
 // 
 // void
-// __g_host_info_init(GHostInfo * host_info)
+// __g_host_info_init(GebrCommHostInfo * host_info)
 // {
-// 	host_info->error = G_HOST_INFO_ERROR_NONE;
+// 	host_info->error = GEBR_COMM_HOST_INFO_ERROR_NONE;
 // 	host_info->addresses = NULL;
 // }
 // 
-// GHostInfo *
+// GebrCommHostInfo *
 // __g_host_info_new(void)
 // {
-// 	GHostInfo *	new;
+// 	GebrCommHostInfo *	new;
 // 
-// 	new = g_malloc(sizeof(GHostInfo));
+// 	new = g_malloc(sizeof(GebrCommHostInfo));
 // 	if (new == NULL)
 // 		return NULL;
 // 	__g_host_info_init(new);
@@ -58,10 +58,10 @@ extern int h_errno;
 // 	return new;
 // }
 // 
-// GHostInfo *
+// GebrCommHostInfo *
 // __g_host_info_lookup_thread(struct thread_data * thread_data)
 // {
-// 	GHostInfo *		new;
+// 	GebrCommHostInfo *		new;
 // 	struct hostent *	hostent;
 // 	gchar *			address;
 // 	gint			i;
@@ -70,34 +70,34 @@ extern int h_errno;
 // 	if ((hostent = gethostbyname(thread_data->hostname->str)) == NULL) {
 // 		switch (h_errno) {
 // 		case HOST_NOT_FOUND:
-// 			new->error = G_HOST_INFO_ERROR_NOT_FOUND;
+// 			new->error = GEBR_COMM_HOST_INFO_ERROR_NOT_FOUND;
 // 			break;
 // 		case NO_ADDRESS:
-// 			new->error = G_HOST_INFO_ERROR_NO_ADDRESS;
+// 			new->error = GEBR_COMM_HOST_INFO_ERROR_NO_ADDRESS;
 // 			break;
 // 		case TRY_AGAIN:
-// 			new->error = G_HOST_INFO_ERROR_TRY_AGAIN;
+// 			new->error = GEBR_COMM_HOST_INFO_ERROR_TRY_AGAIN;
 // 			break;
 // // 		case NO_RECOVERY:
 // 		default:
-// 			new->error = G_HOST_INFO_ERROR_UNKNOWN;
+// 			new->error = GEBR_COMM_HOST_INFO_ERROR_UNKNOWN;
 // 			break;
 // 		}
 // 		goto out;
 // 	}
-// 	new->error = G_HOST_INFO_ERROR_NONE;
+// 	new->error = GEBR_COMM_HOST_INFO_ERROR_NONE;
 // 
-// 	/* create list of GSocketAddress */
+// 	/* create list of GebrCommSocketAddress */
 // 	i = 0;
 // 	while (1) {
 // 		address = hostent->h_addr_list[i++];
 // 		if (address == NULL)
 // 			break;
 // 
-// 		GSocketAddress *	socket_address;
+// 		GebrCommSocketAddress *	socket_address;
 // 
 // 		/* TODO: check _address_ family */
-// 		socket_address = g_socket_address_new("", G_SOCKET_ADDRESS_TYPE_IPV4);
+// 		socket_address = g_socket_address_new("", GEBR_COMM_SOCKET_ADDRESS_TYPE_IPV4);
 // 		g_socket_address_set_ipv4(socket_address, address.s_addr);
 // 		new->addresses = g_list_append(new->addresses, socket_address);
 // 	}
@@ -110,8 +110,8 @@ extern int h_errno;
 // 	return new;
 // }
 // 
-// GHostInfo *
-// __g_host_info_lookup(GString * hostname, GHostInfoFunc callback, gpointer user_data)
+// GebrCommHostInfo *
+// __g_host_info_lookup(GString * hostname, GebrCommHostInfoFunc callback, gpointer user_data)
 // {
 // 	struct thread_data *	thread_data;
 // 	GThread *		thread;
@@ -134,7 +134,7 @@ extern int h_errno;
 // 	thread = g_thread_create((GThreadFunc)__g_host_info_lookup_thread,
 // 		thread_data, joinable, &error);
 // 	if (joinable)
-// 		return (GHostInfo*)g_thread_join(thread);
+// 		return (GebrCommHostInfo*)g_thread_join(thread);
 // 
 // 	return NULL;
 // }
@@ -144,33 +144,33 @@ extern int h_errno;
 //  */
 // 
 // void
-// g_host_info_lookup(GString * hostname, GHostInfoFunc callback, gpointer user_data)
+// gebr_comm_host_info_lookup(GString * hostname, GebrCommHostInfoFunc callback, gpointer user_data)
 // {
 // 	__g_host_info_lookup(hostname, callback, user_data);
 // }
 // 
 // void
-// g_host_info_free(GHostInfo * host_info)
+// gebr_comm_host_info_free(GebrCommHostInfo * host_info)
 // {
 // 	g_list_foreach(host_info->addresses, (GFunc)g_socket_address_free, NULL);
 // 	g_list_free(host_info->addresses);
 // 	g_free(host_info);
 // }
 // 
-// enum GHostInfoError
-// g_host_info_error(GHostInfo * host_info)
+// enum GebrCommHostInfoError
+// gebr_comm_host_info_error(GebrCommHostInfo * host_info)
 // {
 // 	return host_info->error;
 // }
 // 
 // GList *
-// g_host_info_addesses(GHostInfo * host_info)
+// gebr_comm_host_info_addesses(GebrCommHostInfo * host_info)
 // {
 // 	return host_info->addresses;
 // }
 // 
-// GSocketAddress *
-// g_host_info_first_address(GHostInfo * host_info)
+// GebrCommSocketAddress *
+// gebr_comm_host_info_first_address(GebrCommHostInfo * host_info)
 // {
 // 	GList *	link;
 // 
@@ -178,19 +178,19 @@ extern int h_errno;
 // 	if (link == NULL)
 // 		return NULL;
 // 
-// 	return (GSocketAddress*)link->data;
+// 	return (GebrCommSocketAddress*)link->data;
 // }
 // 
-// GHostInfo *
-// g_host_info_lookup_blocking(GString * hostname)
+// GebrCommHostInfo *
+// gebr_comm_host_info_lookup_blocking(GString * hostname)
 // {
 // 	return __g_host_info_lookup(hostname, NULL, NULL);
 // }
 // 
-// GHostInfo *
-// g_host_info_lookup_local(void)
+// GebrCommHostInfo *
+// gebr_comm_host_info_lookup_local(void)
 // {
-// 	GHostInfo *	host_info;
+// 	GebrCommHostInfo *	host_info;
 // 	GString *	hostname;
 // 	char		name[512];
 // 

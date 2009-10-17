@@ -88,7 +88,7 @@ G_DEFINE_TYPE(GStreamSocket, g_stream_socket, GEBR_COMM_SOCKET_TYPE)
  */
 
 static void
-__g_stream_socket_init(GStreamSocket * stream_socket, int sockfd, enum GSocketAddressType type, gboolean nonblocking)
+__g_stream_socket_init(GStreamSocket * stream_socket, int sockfd, enum GebrCommSocketAddressType type, gboolean nonblocking)
 {
 	/* initialization */
 	_g_socket_init(&stream_socket->parent, sockfd, type);
@@ -118,18 +118,18 @@ __g_stream_socket_disconnected(GStreamSocket * stream_socket)
 // static void
 // __g_stream_socket_lookup(GSocketInfo * host_info, GStreamSocket * stream_socket)
 // {
-// 	GSocketAddress *	socket_address;
+// 	GebrCommSocketAddress *	socket_address;
 // 
-// 	if (g_host_info_error(host_info)) {
+// 	if (gebr_comm_host_info_error(host_info)) {
 // 		_g_socket_emit_error(&stream_socket->parent, G_SOCKET_ERROR_LOOKUP);
 // 		stream_socket->parent.state = G_SOCKET_STATE_UNCONNECTED;
 // 		goto out;
 // 	}
 // 
-// 	socket_address = g_host_info_first_address(host_info);
+// 	socket_address = gebr_comm_host_info_first_address(host_info);
 // 	g_stream_socket_connect(stream_socket, socket_address, ntohs(stream_socket->parent.sockaddr_in.sin_port), FALSE);
 // 
-// out:	g_host_info_free(host_info);
+// out:	gebr_comm_host_info_free(host_info);
 // }
 
 /*
@@ -137,7 +137,7 @@ __g_stream_socket_disconnected(GStreamSocket * stream_socket)
  */
 
 GStreamSocket *
-_g_stream_socket_new_connected(int fd, enum GSocketAddressType address_type)
+_g_stream_socket_new_connected(int fd, enum GebrCommSocketAddressType address_type)
 {
 	GStreamSocket *	stream_socket;
 
@@ -161,19 +161,19 @@ g_stream_socket_new(void)
 }
 
 gboolean
-g_stream_socket_connect(GStreamSocket * stream_socket, GSocketAddress * socket_address, gboolean wait)
+g_stream_socket_connect(GStreamSocket * stream_socket, GebrCommSocketAddress * socket_address, gboolean wait)
 {
 	struct sockaddr *	sockaddr;
 	gsize			sockaddr_size;
 	int			sockfd;
 	gboolean		ret;
 
-	if (!g_socket_address_get_is_valid(socket_address))
+	if (!gebr_comm_socket_address_get_is_valid(socket_address))
 		return FALSE;
 
 	/* initialization */
 	ret = TRUE;
-	sockfd = socket(_g_socket_address_get_family(socket_address), SOCK_STREAM, 0);
+	sockfd = socket(_gebr_comm_socket_address_get_family(socket_address), SOCK_STREAM, 0);
 	__g_stream_socket_init(stream_socket, sockfd, socket_address->type, !wait);
 	stream_socket->parent.state = G_SOCKET_STATE_UNCONNECTED;
 	stream_socket->parent.last_error = G_SOCKET_ERROR_NONE;
@@ -182,7 +182,7 @@ g_stream_socket_connect(GStreamSocket * stream_socket, GSocketAddress * socket_a
 	_g_socket_enable_read_watch(&stream_socket->parent);
 	_g_socket_enable_write_watch(&stream_socket->parent);
 
-	_g_socket_address_get_sockaddr(socket_address, &sockaddr, &sockaddr_size);
+	_gebr_comm_socket_address_get_sockaddr(socket_address, &sockaddr, &sockaddr_size);
 	if (!connect(sockfd, sockaddr, sockaddr_size)) {
 		stream_socket->parent.state = G_SOCKET_STATE_CONNECTED;
 		__g_stream_socket_connected(stream_socket);
@@ -219,7 +219,7 @@ g_stream_socket_connect(GStreamSocket * stream_socket, GSocketAddress * socket_a
 // 
 // 	stream_socket->parent.state = G_SOCKET_STATE_LOOKINGUP;
 // 	stream_socket->parent.last_error = G_SOCKET_ERROR_NONE;
-// 	g_host_info_lookup(hostname, (GSocketInfoFunc)__g_stream_socket_lookup, stream_socket);
+// 	gebr_comm_host_info_lookup(hostname, (GSocketInfoFunc)__g_stream_socket_lookup, stream_socket);
 // }
 
 void
@@ -231,15 +231,15 @@ g_stream_socket_disconnect(GStreamSocket * stream_socket)
 	stream_socket->parent.last_error = G_SOCKET_ERROR_NONE;
 }
 
-GSocketAddress
+GebrCommSocketAddress
 g_stream_socket_peer_address(GStreamSocket * stream_socket)
 {
 	if (stream_socket->parent.state != G_SOCKET_STATE_CONNECTED)
-		return _g_socket_address_unknown();
+		return _gebr_comm_socket_address_unknown();
 
-	GSocketAddress	peer_address;
+	GebrCommSocketAddress	peer_address;
 
-	_g_socket_address_getpeername(&peer_address, stream_socket->parent.address_type,
+	_gebr_comm_socket_address_getpeername(&peer_address, stream_socket->parent.address_type,
 		_g_socket_get_fd(&stream_socket->parent));
 
 	return peer_address;

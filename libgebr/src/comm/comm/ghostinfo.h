@@ -26,43 +26,43 @@
 
 G_BEGIN_DECLS
 
-typedef struct _GHostInfo	GHostInfo;
+typedef struct _GebrCommHostInfo	GebrCommHostInfo;
 
-enum GHostInfoError {
-	G_HOST_INFO_ERROR_NONE = 0,
-	G_HOST_INFO_ERROR_NOT_FOUND,
-	G_HOST_INFO_ERROR_NO_ADDRESS,
-	G_HOST_INFO_ERROR_TRY_AGAIN,
-	G_HOST_INFO_ERROR_UNKNOWN,
+enum GebrCommHostInfoError {
+	GEBR_COMM_HOST_INFO_ERROR_NONE = 0,
+	GEBR_COMM_HOST_INFO_ERROR_NOT_FOUND,
+	GEBR_COMM_HOST_INFO_ERROR_NO_ADDRESS,
+	GEBR_COMM_HOST_INFO_ERROR_TRY_AGAIN,
+	GEBR_COMM_HOST_INFO_ERROR_UNKNOWN,
 };
 
-struct _GHostInfo {
-	enum GHostInfoError	error;
+struct _GebrCommHostInfo {
+	enum GebrCommHostInfoError	error;
 	GList *			addresses;
 };
 
-typedef void (*GHostInfoFunc)(GHostInfo * host_info, gpointer user_data);
+typedef void (*GebrCommHostInfoFunc)(GebrCommHostInfo * host_info, gpointer user_data);
 
 void
-g_host_info_lookup(GString * hostname, GHostInfoFunc callback, gpointer user_data);
+gebr_comm_host_info_lookup(GString * hostname, GebrCommHostInfoFunc callback, gpointer user_data);
 
 void
-g_host_info_free(GHostInfo * host_info);
+gebr_comm_host_info_free(GebrCommHostInfo * host_info);
 
-enum GHostInfoError
-g_host_info_error(GHostInfo * host_info);
+enum GebrCommHostInfoError
+gebr_comm_host_info_error(GebrCommHostInfo * host_info);
 
 GList *
-g_host_info_addesses(GHostInfo * host_info);
+gebr_comm_host_info_addesses(GebrCommHostInfo * host_info);
 
-GSocketAddress *
-g_host_info_first_address(GHostInfo * host_info);
+GebrCommSocketAddress *
+gebr_comm_host_info_first_address(GebrCommHostInfo * host_info);
 
-GHostInfo *
-g_host_info_lookup_blocking(GString * hostname);
+GebrCommHostInfo *
+gebr_comm_host_info_lookup_blocking(GString * hostname);
 
-GHostInfo *
-g_host_info_lookup_local(void);
+GebrCommHostInfo *
+gebr_comm_host_info_lookup_local(void);
 
 G_END_DECLS
 

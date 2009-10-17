@@ -26,7 +26,7 @@
 #include "job.h"
 
 gboolean
-client_parse_server_messages(struct comm_server * comm_server, struct server * server)
+client_parse_server_messages(struct gebr_comm_server * comm_server, struct server * server)
 {
 	GList *			link;
 	struct message *	message;
@@ -57,14 +57,14 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 				comm_server->protocol->logged = TRUE;
 				server_list_updated_status(server);
 				g_string_assign(comm_server->protocol->hostname, hostname->str);
-				if (comm_server_is_local(comm_server) == TRUE)
+				if (gebr_comm_server_is_local(comm_server) == TRUE)
 					gebr_message(LOG_INFO, TRUE, TRUE, _("Connected to local server"),
 						comm_server->address->str);
 				else {
 					gebr_message(LOG_INFO, TRUE, TRUE, _("Connected to server '%s'"),
 						comm_server->address->str);
 					if (display_port->len)
-						comm_server_forward_x11(comm_server, atoi(display_port->str));
+						gebr_comm_server_forward_x11(comm_server, atoi(display_port->str));
 					else
 						gebr_message(LOG_ERROR, TRUE, TRUE, _("Server '%s' could not send display for graphical output redirection"),
 							comm_server->address->str);

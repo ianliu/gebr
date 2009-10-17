@@ -79,7 +79,7 @@ server_disconnected(GStreamSocket * stream_socket, struct server * server)
 /*
  * Function: server_new
  * Create a new server from _address_
- * Setup comm_server with its function pointer operators
+ * Setup gebr_comm_server with its function pointer operators
  */
 struct server *
 server_new(const gchar * address)
@@ -93,25 +93,25 @@ server_new(const gchar * address)
 	struct server *				server;
 
 	server = g_malloc(sizeof(struct server));
-	server->comm = comm_server_new(address, &ops);
+	server->comm = gebr_comm_server_new(address, &ops);
 	server->comm->user_data = server;
 
 	g_signal_connect(server->comm->stream_socket, "disconnected",
 		G_CALLBACK(server_disconnected), server);
 
-	comm_server_connect(server->comm);
+	gebr_comm_server_connect(server->comm);
 
 	return server;
 }
 
 /*
  * Function: server_free
- * Just free _server_ structure and its comm_server
+ * Just free _server_ structure and its gebr_comm_server
  */
 void
 server_free(struct server * server)
 {
-	comm_server_free(server->comm);
+	gebr_comm_server_free(server->comm);
 	g_free(server);
 }
 
@@ -137,7 +137,7 @@ server_run_flow(struct server * server, const gchar * flow_path)
 	}
 
 	flow = GEOXML_FLOW(document);
-	comm_server_run_flow(server->comm, flow);
+	gebr_comm_server_run_flow(server->comm, flow);
 
 	return TRUE;
 }

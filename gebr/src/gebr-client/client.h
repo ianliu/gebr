@@ -21,6 +21,6 @@
 #include "server.h"
 
 gboolean
-client_parse_server_messages(struct comm_server * comm_server, struct server * server);
+client_parse_server_messages(struct gebr_comm_server * comm_server, struct server * server);
 
 #endif //__CLIENT_H

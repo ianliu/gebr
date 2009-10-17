@@ -22,7 +22,7 @@
 #include "server.h"
 
 gboolean
-client_parse_server_messages(struct comm_server * comm_server, struct server * server)
+client_parse_server_messages(struct gebr_comm_server * comm_server, struct server * server)
 {
 	GList *			link;
 	struct message *	message;
@@ -90,7 +90,7 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 			output = g_list_nth_data(arguments, 8);
 
 // 			TODO:
-// 			job = job_find(comm_server->address, jid);
+// 			job = job_find(gebr_comm_server->address, jid);
 // 			if (job == NULL)
 // 				job = job_add(server, jid, status, title, start_date, finish_date,
 // 					hostname, issues, cmd_line, output);
@@ -106,7 +106,7 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 			output = g_list_nth_data(arguments, 1);
 
 // 			TODO:
-// 			job = job_find(comm_server->address, jid);
+// 			job = job_find(gebr_comm_server->address, jid);
 // 			if (job != NULL) {
 // 				job_append_output(job, output);
 // 			}
@@ -123,7 +123,7 @@ client_parse_server_messages(struct comm_server * comm_server, struct server * s
 			finish_date = g_list_nth_data(arguments, 2);
 
 // 			TODO:
-// 			job = job_find(comm_server->address, jid);
+// 			job = job_find(gebr_comm_server->address, jid);
 // 			if (job != NULL) {
 // 				g_string_assign(job->finish_date, finish_date->str);
 // 				job->status = job_translate_status(status);

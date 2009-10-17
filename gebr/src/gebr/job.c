@@ -131,7 +131,7 @@ job_close(struct job * job)
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Can't close running job"));
 		return;
 	}
-	if (comm_server_is_logged(job->server->comm) == FALSE) {
+	if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
 		/* TODO */
 	} else if (strcmp(job->jid->str, "0"))
 		protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,

@@ -26,23 +26,23 @@
 
 G_BEGIN_DECLS
 
-GSocketAddress
-_g_socket_address_unknown(void);
+GebrCommSocketAddress
+_gebr_comm_socket_address_unknown(void);
 
 gboolean
-_g_socket_address_get_sockaddr(GSocketAddress * socket_address, struct sockaddr ** sockaddr, gsize * size);
+_gebr_comm_socket_address_get_sockaddr(GebrCommSocketAddress * socket_address, struct sockaddr ** sockaddr, gsize * size);
 
 int
-_g_socket_address_get_family(GSocketAddress * socket_address);
+_gebr_comm_socket_address_get_family(GebrCommSocketAddress * socket_address);
 
 int
-_g_socket_address_getsockname(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd);
+_gebr_comm_socket_address_getsockname(GebrCommSocketAddress * socket_address, enum GebrCommSocketAddressType type, int sockfd);
 
 int
-_g_socket_address_getpeername(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd);
+_gebr_comm_socket_address_getpeername(GebrCommSocketAddress * socket_address, enum GebrCommSocketAddressType type, int sockfd);
 
 int
-_g_socket_address_accept(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd);
+_gebr_comm_socket_address_accept(GebrCommSocketAddress * socket_address, enum GebrCommSocketAddressType type, int sockfd);
 
 G_END_DECLS
 

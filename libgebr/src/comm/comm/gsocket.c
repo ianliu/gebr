@@ -228,7 +228,7 @@ out:	return FALSE;
  */
 
 void
-_g_socket_init(GebrCommSocket * socket, int fd, enum GSocketAddressType address_type)
+_g_socket_init(GebrCommSocket * socket, int fd, enum GebrCommSocketAddressType address_type)
 {
 	GError *	error;
 
@@ -316,12 +316,12 @@ gebr_comm_socket_get_last_error(GebrCommSocket * socket)
 	return socket->last_error;
 }
 
-GSocketAddress
+GebrCommSocketAddress
 gebr_comm_socket_get_address(GebrCommSocket * socket)
 {
-	GSocketAddress	address;
+	GebrCommSocketAddress	address;
 
-	_g_socket_address_getsockname(&address, socket->address_type, _g_socket_get_fd(socket));
+	_gebr_comm_socket_address_getsockname(&address, socket->address_type, _g_socket_get_fd(socket));
 
 	return address;
 }

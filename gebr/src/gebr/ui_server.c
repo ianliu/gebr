@@ -94,7 +94,7 @@ server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 static void
 server_common_connect(GtkMenuItem * menu_item, struct server * server)
 {
-	comm_server_connect(server->comm);
+	gebr_comm_server_connect(server->comm);
 }
 
 /* Function: server_common_disconnect
@@ -103,7 +103,7 @@ server_common_connect(GtkMenuItem * menu_item, struct server * server)
 static void
 server_common_disconnect(GtkMenuItem * menu_item, struct server * server)
 {
-	comm_server_disconnect(server->comm);
+	gebr_comm_server_disconnect(server->comm);
 }
 
 /* Function: server_common_autoconnect
@@ -132,7 +132,7 @@ server_common_remove(GtkMenuItem * menu_item, struct server * server)
 static void
 server_common_stop(GtkMenuItem * menu_item, struct server * server)
 {
-	comm_server_kill(server->comm);
+	gebr_comm_server_kill(server->comm);
 }
 
 /* Function; server_common_popup_menu
@@ -182,7 +182,7 @@ server_common_popup_menu(GtkWidget * widget, struct ui_server_common * ui_server
 		(GCallback)server_common_autoconnect_changed, server);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), autoconnect);
 	/* remove */
-	if (!comm_server_is_local(server->comm)) {
+	if (!gebr_comm_server_is_local(server->comm)) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_REMOVE, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
@@ -265,8 +265,8 @@ server_common_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * u
 				SERVER_POINTER, &server,
 				-1);
 
-			if (comm_server_is_logged(server->comm) == FALSE)
-				comm_server_connect(server->comm);
+			if (gebr_comm_server_is_logged(server->comm) == FALSE)
+				gebr_comm_server_connect(server->comm);
 		}
 
 		break;
@@ -280,8 +280,8 @@ server_common_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * u
 				SERVER_POINTER, &server,
 				-1);
 
-			if (comm_server_is_logged(server->comm) == TRUE)
-				comm_server_disconnect(server->comm);
+			if (gebr_comm_server_is_logged(server->comm) == TRUE)
+				gebr_comm_server_disconnect(server->comm);
 		}
 
 		break;
@@ -514,7 +514,7 @@ server_select_setup_ui(void)
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 				SERVER_POINTER, &server,
 				-1);
-		if (comm_server_is_logged(server->comm) == TRUE)
+		if (gebr_comm_server_is_logged(server->comm) == TRUE)
 			if (connected++ == 0)
 				first_connected_iter = iter;
 	}

@@ -538,7 +538,7 @@ flow_run(struct server * server)
 	flow_copy_from_dicts(flow);
 
 	/* RUN */
-	comm_server_run_flow(server->comm, flow);
+	gebr_comm_server_run_flow(server->comm, flow);
 
 	/* TODO: check save */
 	/* Save manualy to preserve run date */
@@ -549,7 +549,7 @@ flow_run(struct server * server)
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'"),
 		geoxml_document_get_title(GEOXML_DOC(flow)));
-	if (comm_server_is_local(server->comm) == FALSE) {
+	if (gebr_comm_server_is_local(server->comm) == FALSE) {
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'"),
 			server->comm->address->str,
 			geoxml_document_get_title(GEOXML_DOC(flow)));

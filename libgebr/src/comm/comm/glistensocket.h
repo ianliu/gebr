@@ -27,29 +27,29 @@
 G_BEGIN_DECLS
 
 GType
-g_listen_socket_get_type(void);
+gebr_comm_listen_socket_get_type(void);
 
-#define G_LISTEN_SOCKET_TYPE		(g_listen_socket_get_type())
-#define G_LISTEN_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_LISTEN_SOCKET_TYPE, GListenSocket))
-#define G_LISTEN_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), G_LISTEN_SOCKET_TYPE, GListenSocketClass))
-#define G_IS_LISTEN_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), G_LISTEN_SOCKET_TYPE))
-#define G_IS_LISTEN_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), G_LISTEN_SOCKET_TYPE))
-#define G_LISTEN_SOCKET_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), G_LISTEN_SOCKET_TYPE, GListenSocketClass))
+#define GEBR_COMM_LISTEN_SOCKET_TYPE		(gebr_comm_listen_socket_get_type())
+#define GEBR_COMM_LISTEN_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_LISTEN_SOCKET_TYPE, GebrCommListenSocket))
+#define GEBR_COMM_LISTEN_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_COMM_LISTEN_SOCKET_TYPE, GebrCommListenSocketClass))
+#define GEBR_COMM_IS_LISTEN_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_COMM_LISTEN_SOCKET_TYPE))
+#define GEBR_COMM_IS_LISTEN_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_COMM_LISTEN_SOCKET_TYPE))
+#define GEBR_COMM_LISTEN_SOCKET_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_LISTEN_SOCKET_TYPE, GebrCommListenSocketClass))
 
-typedef struct _GListenSocket	GListenSocket;
-typedef struct _GListenSocketClass	GListenSocketClass;
+typedef struct _GebrCommListenSocket	GebrCommListenSocket;
+typedef struct _GebrCommListenSocketClass	GebrCommListenSocketClass;
 
-struct _GListenSocket {
+struct _GebrCommListenSocket {
 	GebrCommSocket		parent;
 
 	guint		max_pending_connections;
 	GSList *	pending_connections;
 };
-struct _GListenSocketClass {
+struct _GebrCommListenSocketClass {
 	GebrCommSocketClass	parent;
 
 	/* signals */
-	void		(*new_connection)(GListenSocket * self);
+	void		(*new_connection)(GebrCommListenSocket * self);
 };
 
 /*
@@ -57,28 +57,28 @@ struct _GListenSocketClass {
  */
 
 gboolean
-g_listen_socket_is_local_port_available(guint16 port);
+gebr_comm_listen_socket_is_local_port_available(guint16 port);
 
-GListenSocket *
-g_listen_socket_new(void);
+GebrCommListenSocket *
+gebr_comm_listen_socket_new(void);
 
 void
-g_listen_socket_free(GListenSocket *);
+gebr_comm_listen_socket_free(GebrCommListenSocket *);
 
 gboolean
-g_listen_socket_listen(GListenSocket * listen_socket, GSocketAddress * socket_address);
+gebr_comm_listen_socket_listen(GebrCommListenSocket * listen_socket, GebrCommSocketAddress * socket_address);
 
 void
-g_listen_socket_set_max_pending_connections(GListenSocket * listen_socket, guint number);
+gebr_comm_listen_socket_set_max_pending_connections(GebrCommListenSocket * listen_socket, guint number);
 
 guint
-g_listen_socket_get_max_pending_connections(GListenSocket * listen_socket);
+gebr_comm_listen_socket_get_max_pending_connections(GebrCommListenSocket * listen_socket);
 
 GStreamSocket *
-g_listen_socket_get_next_pending_connection(GListenSocket * listen_socket);
+gebr_comm_listen_socket_get_next_pending_connection(GebrCommListenSocket * listen_socket);
 
 gboolean
-g_listen_socket_get_has_pending_connections(GListenSocket * listen_socket);
+gebr_comm_listen_socket_get_has_pending_connections(GebrCommListenSocket * listen_socket);
 
 G_END_DECLS
 

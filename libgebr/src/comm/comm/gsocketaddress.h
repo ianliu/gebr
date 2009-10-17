@@ -28,39 +28,39 @@
 
 G_BEGIN_DECLS
 
-typedef struct _GSocketAddress	GSocketAddress;
+typedef struct _GebrCommSocketAddress	GebrCommSocketAddress;
 
-enum GSocketAddressType {
-	G_SOCKET_ADDRESS_TYPE_UNKNOWN = 0,
-	G_SOCKET_ADDRESS_TYPE_IPV4,
-	G_SOCKET_ADDRESS_TYPE_UNIX
+enum GebrCommSocketAddressType {
+	GEBR_COMM_SOCKET_ADDRESS_TYPE_UNKNOWN = 0,
+	GEBR_COMM_SOCKET_ADDRESS_TYPE_IPV4,
+	GEBR_COMM_SOCKET_ADDRESS_TYPE_UNIX
 };
 
-struct _GSocketAddress {
-	enum GSocketAddressType		type;
+struct _GebrCommSocketAddress {
+	enum GebrCommSocketAddressType		type;
 	union {
 		struct sockaddr_un	unix_sockaddr;
 		struct sockaddr_in	inet_sockaddr;
 	} address;
 };
 
-GSocketAddress
-g_socket_address_unix(const gchar * string);
+GebrCommSocketAddress
+gebr_comm_socket_address_unix(const gchar * string);
 
-GSocketAddress
-g_socket_address_ipv4(const gchar * string, guint16 port);
+GebrCommSocketAddress
+gebr_comm_socket_address_ipv4(const gchar * string, guint16 port);
 
-GSocketAddress
-g_socket_address_ipv4_local(guint16 port);
+GebrCommSocketAddress
+gebr_comm_socket_address_ipv4_local(guint16 port);
 
 gboolean
-g_socket_address_get_is_valid(GSocketAddress * socket_address);
+gebr_comm_socket_address_get_is_valid(GebrCommSocketAddress * socket_address);
 
 const gchar *
-g_socket_address_get_string(GSocketAddress * socket_address);
+gebr_comm_socket_address_get_string(GebrCommSocketAddress * socket_address);
 
 guint16
-g_socket_address_get_ip_port(GSocketAddress * socket_address);
+gebr_comm_socket_address_get_ip_port(GebrCommSocketAddress * socket_address);
 
 G_END_DECLS
 

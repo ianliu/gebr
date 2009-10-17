@@ -126,7 +126,7 @@ server_new(const gchar * address, gboolean autoconnect)
 	gtk_list_store_append(gebr.ui_server_list->common.store, &iter);
 	server = g_malloc(sizeof(struct server));
 	*server = (struct server){
-		.comm = comm_server_new(address, &ops),
+		.comm = gebr_comm_server_new(address, &ops),
 		.iter = iter,
 		.last_error = g_string_new("")
 	};
@@ -142,7 +142,7 @@ server_new(const gchar * address, gboolean autoconnect)
 		G_CALLBACK(server_disconnected), server);
 
 	if (autoconnect)
-		comm_server_connect(server->comm);
+		gebr_comm_server_connect(server->comm);
 
 	return server;
 }
@@ -204,7 +204,7 @@ server_free(struct server * server)
 			job_delete(job);
 	}
 
-	comm_server_free(server->comm);
+	gebr_comm_server_free(server->comm);
 	g_string_free(server->last_error, TRUE);
 	g_free(server);
 }

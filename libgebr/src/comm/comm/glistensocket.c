@@ -33,7 +33,7 @@
  */
 
 static void
-__g_listen_socket_new_connection(GListenSocket * listen_socket);
+__gebr_comm_listen_socket_new_connection(GebrCommListenSocket * listen_socket);
 
 /*
  * gobject stuff
@@ -50,16 +50,16 @@ enum {
 static guint object_signals[LAST_SIGNAL];
 
 static void
-g_listen_socket_set_property(GObject * object,
+gebr_comm_listen_socket_set_property(GObject * object,
                           guint property_id,
                           const GValue * value,
                           GParamSpec * pspec)
 {
-	GListenSocket *	self = (GListenSocket *)object;
+	GebrCommListenSocket *	self = (GebrCommListenSocket *)object;
 
 	switch (property_id) {
 	case MAX_PENDING_CONNECTIONS:
-		g_listen_socket_set_max_pending_connections(self, g_value_get_uint(value));
+		gebr_comm_listen_socket_set_max_pending_connections(self, g_value_get_uint(value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
@@ -68,16 +68,16 @@ g_listen_socket_set_property(GObject * object,
 }
 
 static void
-g_listen_socket_get_property(GObject * object,
+gebr_comm_listen_socket_get_property(GObject * object,
 			guint property_id,
 			GValue * value,
 			GParamSpec * pspec)
 {
-	GListenSocket *	self = (GListenSocket *)object;
+	GebrCommListenSocket *	self = (GebrCommListenSocket *)object;
 
 	switch (property_id) {
 	case MAX_PENDING_CONNECTIONS:
-		g_value_set_uint(value, g_listen_socket_get_max_pending_connections(self));
+		g_value_set_uint(value, gebr_comm_listen_socket_get_max_pending_connections(self));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
@@ -86,26 +86,26 @@ g_listen_socket_get_property(GObject * object,
 }
 
 static void
-g_listen_socket_class_init(GListenSocketClass * class)
+gebr_comm_listen_socket_class_init(GebrCommListenSocketClass * class)
 {
 	GObjectClass *	gobject_class = G_OBJECT_CLASS(class);
 	GParamSpec *	pspec;
 
 	/* virtual */
-	class->parent.new_connection = (typeof(class->parent.new_connection))__g_listen_socket_new_connection;
+	class->parent.new_connection = (typeof(class->parent.new_connection))__gebr_comm_listen_socket_new_connection;
 
 	/* signals */
 	object_signals[NEW_CONNECTION] = g_signal_new("new-connection",
-		G_LISTEN_SOCKET_TYPE,
+		GEBR_COMM_LISTEN_SOCKET_TYPE,
 		(GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-		G_STRUCT_OFFSET (GListenSocketClass, new_connection),
+		G_STRUCT_OFFSET (GebrCommListenSocketClass, new_connection),
 		NULL, NULL, /* acumulators */
 		g_cclosure_marshal_VOID__VOID,
 		G_TYPE_NONE, 0);
 
 	/* properties */
-	gobject_class->set_property = g_listen_socket_set_property;
-	gobject_class->get_property = g_listen_socket_get_property;
+	gobject_class->set_property = gebr_comm_listen_socket_set_property;
+	gobject_class->get_property = gebr_comm_listen_socket_get_property;
 
 	pspec = g_param_spec_uint("max-pending-connections",
 				"Max pending connections",
@@ -120,25 +120,25 @@ g_listen_socket_class_init(GListenSocketClass * class)
 }
 
 static void
-g_listen_socket_init(GListenSocket * listen_socket)
+gebr_comm_listen_socket_init(GebrCommListenSocket * listen_socket)
 {
 	listen_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
 }
 
-G_DEFINE_TYPE(GListenSocket, g_listen_socket, GEBR_COMM_SOCKET_TYPE)
+G_DEFINE_TYPE(GebrCommListenSocket, gebr_comm_listen_socket, GEBR_COMM_SOCKET_TYPE)
 
 /*
  * internal functions
  */
 
 static void
-__g_listen_socket_new_connection(GListenSocket * listen_socket)
+__gebr_comm_listen_socket_new_connection(GebrCommListenSocket * listen_socket)
 {
-	GSocketAddress	peer_address;
+	GebrCommSocketAddress	peer_address;
 	int		client_sockfd, sockfd;
 
 	sockfd = _g_socket_get_fd(&listen_socket->parent);
-	while ((client_sockfd = _g_socket_address_accept(&peer_address,
+	while ((client_sockfd = _gebr_comm_socket_address_accept(&peer_address,
 	listen_socket->parent.address_type, sockfd)) != -1) {
 		GStreamSocket * stream_socket;
 
@@ -159,7 +159,7 @@ __g_listen_socket_new_connection(GListenSocket * listen_socket)
  */
 
 gboolean
-g_listen_socket_is_local_port_available(guint16 port)
+gebr_comm_listen_socket_is_local_port_available(guint16 port)
 {
 	int			sockfd;
 	struct sockaddr_in	sockaddr_in;
@@ -177,14 +177,14 @@ g_listen_socket_is_local_port_available(guint16 port)
 	return available;
 }
 
-GListenSocket *
-g_listen_socket_new(void)
+GebrCommListenSocket *
+gebr_comm_listen_socket_new(void)
 {
-	return (GListenSocket*)g_object_new(G_LISTEN_SOCKET_TYPE, NULL);
+	return (GebrCommListenSocket*)g_object_new(GEBR_COMM_LISTEN_SOCKET_TYPE, NULL);
 }
 
 void
-g_listen_socket_free(GListenSocket * listen_socket)
+gebr_comm_listen_socket_free(GebrCommListenSocket * listen_socket)
 {
 	g_slist_foreach(listen_socket->pending_connections, (GFunc)g_object_unref, NULL);
 	g_slist_free(listen_socket->pending_connections);
@@ -193,29 +193,29 @@ g_listen_socket_free(GListenSocket * listen_socket)
 }
 
 gboolean
-g_listen_socket_listen(GListenSocket * listen_socket, GSocketAddress * socket_address)
+gebr_comm_listen_socket_listen(GebrCommListenSocket * listen_socket, GebrCommSocketAddress * socket_address)
 {
 	int			sockfd;
 	struct sockaddr	*	sockaddr;
 	gsize			sockaddr_size;
 	GError *		error;
 
-	if (!g_socket_address_get_is_valid(socket_address))
+	if (!gebr_comm_socket_address_get_is_valid(socket_address))
 		return FALSE;
 
 	/* initialization */
 	error = NULL;
-	sockfd = socket(_g_socket_address_get_family(socket_address), SOCK_STREAM, 0);
+	sockfd = socket(_gebr_comm_socket_address_get_family(socket_address), SOCK_STREAM, 0);
 	_g_socket_init(&listen_socket->parent, sockfd, socket_address->type);
 	listen_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
 	g_io_channel_set_flags(listen_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
 	_g_socket_enable_read_watch(&listen_socket->parent);
 	/* pending connections */
 	listen_socket->pending_connections = g_slist_alloc();
-	g_listen_socket_set_max_pending_connections(listen_socket, 30);
+	gebr_comm_listen_socket_set_max_pending_connections(listen_socket, 30);
 
 	/* bind and listen */
-	_g_socket_address_get_sockaddr(socket_address, &sockaddr, &sockaddr_size);
+	_gebr_comm_socket_address_get_sockaddr(socket_address, &sockaddr, &sockaddr_size);
 	if (bind(sockfd, sockaddr, sockaddr_size))
 		return FALSE;
 	if (listen(sockfd, listen_socket->max_pending_connections)) {
@@ -228,7 +228,7 @@ g_listen_socket_listen(GListenSocket * listen_socket, GSocketAddress * socket_ad
 }
 
 void
-g_listen_socket_set_max_pending_connections(GListenSocket * listen_socket, guint number)
+gebr_comm_listen_socket_set_max_pending_connections(GebrCommListenSocket * listen_socket, guint number)
 {
 	if (!number)
 		return;
@@ -236,13 +236,13 @@ g_listen_socket_set_max_pending_connections(GListenSocket * listen_socket, guint
 }
 
 guint
-g_listen_socket_get_max_pending_connections(GListenSocket * listen_socket)
+gebr_comm_listen_socket_get_max_pending_connections(GebrCommListenSocket * listen_socket)
 {
 	return listen_socket->max_pending_connections;
 }
 
 GStreamSocket *
-g_listen_socket_get_next_pending_connection(GListenSocket * listen_socket)
+gebr_comm_listen_socket_get_next_pending_connection(GebrCommListenSocket * listen_socket)
 {
 	GStreamSocket * stream_socket;
 	GSList * link;
@@ -260,7 +260,7 @@ g_listen_socket_get_next_pending_connection(GListenSocket * listen_socket)
 }
 
 gboolean
-g_listen_socket_get_has_pending_connections(GListenSocket * listen_socket)
+gebr_comm_listen_socket_get_has_pending_connections(GebrCommListenSocket * listen_socket)
 {
 	return (gboolean)g_slist_length(listen_socket->pending_connections);
 }

@@ -29,7 +29,7 @@
 #include "gprocess.h"
 #include "gchannelsocket.h"
 
-struct comm_server {
+struct gebr_comm_server {
 	/* the communication channel. */
 	GStreamSocket *		stream_socket;
 	/* protocol parsing stuff */
@@ -42,7 +42,7 @@ struct comm_server {
 	gint16			tunnel_port;
 	gboolean		tried_existant_pass;
 	GTerminalProcess *	x11_forward_process;
-	GChannelSocket *	x11_forward_channel;
+	GebrCommChannelSocket *	x11_forward_channel;
 
 	enum comm_server_state {
 		SERVER_STATE_DISCONNECTED,
@@ -61,7 +61,7 @@ struct comm_server {
 		void		(*log_message)(enum log_message_type type, const gchar * message);
 		GString *	(*ssh_login)(const gchar * title, const gchar * message);
 		gboolean	(*ssh_question)(const gchar * title, const gchar * message);
-		void		(*parse_messages)(struct comm_server * comm_server, gpointer user_data);
+		void		(*parse_messages)(struct gebr_comm_server * gebr_comm_server, gpointer user_data);
 	} * ops;
 	gpointer		user_data;
 
@@ -79,31 +79,31 @@ struct comm_server {
 	} process;
 };
 
-struct comm_server *
-comm_server_new(const gchar * _address, const struct comm_server_ops * ops);
+struct gebr_comm_server *
+gebr_comm_server_new(const gchar * _address, const struct comm_server_ops * ops);
 
 void
-comm_server_free(struct comm_server * comm_server);
+gebr_comm_server_free(struct gebr_comm_server * comm_server);
 
 void
-comm_server_connect(struct comm_server * comm_server);
+gebr_comm_server_connect(struct gebr_comm_server * comm_server);
 
 void
-comm_server_disconnect(struct comm_server * comm_server);
+gebr_comm_server_disconnect(struct gebr_comm_server * comm_server);
 
 gboolean
-comm_server_is_logged(struct comm_server * comm_server);
+gebr_comm_server_is_logged(struct gebr_comm_server * comm_server);
 
 gboolean
-comm_server_is_local(struct comm_server * comm_server);
+gebr_comm_server_is_local(struct gebr_comm_server * comm_server);
 
 void
-comm_server_kill(struct comm_server * comm_server);
+gebr_comm_server_kill(struct gebr_comm_server * comm_server);
 
 gboolean
-comm_server_forward_x11(struct comm_server * comm_server, guint16 port);
+gebr_comm_server_forward_x11(struct gebr_comm_server * comm_server, guint16 port);
 
 void
-comm_server_run_flow(struct comm_server * comm_server, GeoXmlFlow * flow);
+gebr_comm_server_run_flow(struct gebr_comm_server * comm_server, GeoXmlFlow * flow);
 
 #endif //__LIBGEBR_COMM_SERVER_H

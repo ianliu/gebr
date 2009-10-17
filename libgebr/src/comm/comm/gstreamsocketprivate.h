@@ -27,6 +27,6 @@
  * Used by GTcpServer when a new connection is accepted.
  */
 GStreamSocket *
-_g_stream_socket_new_connected(int fd, enum GSocketAddressType address_type);
+_g_stream_socket_new_connected(int fd, enum GebrCommSocketAddressType address_type);
 
 #endif //__LIBGEBR_COMM_G_TCP_SOCKET_PRIVATE_H

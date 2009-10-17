@@ -41,23 +41,23 @@ static const int type_enum_to_family [] = {
 	0, AF_INET, AF_UNIX
 };
 
-GSocketAddress
-_g_socket_address_unknown(void)
+GebrCommSocketAddress
+_gebr_comm_socket_address_unknown(void)
 {
-	return (GSocketAddress) {
-		.type = G_SOCKET_ADDRESS_TYPE_UNKNOWN
+	return (GebrCommSocketAddress) {
+		.type = GEBR_COMM_SOCKET_ADDRESS_TYPE_UNKNOWN
 	};
 }
 
 gboolean
-_g_socket_address_get_sockaddr(GSocketAddress * socket_address, struct sockaddr ** sockaddr, gsize * size)
+_gebr_comm_socket_address_get_sockaddr(GebrCommSocketAddress * socket_address, struct sockaddr ** sockaddr, gsize * size)
 {
 	switch (socket_address->type) {
-	case G_SOCKET_ADDRESS_TYPE_UNIX:
+	case GEBR_COMM_SOCKET_ADDRESS_TYPE_UNIX:
 		*sockaddr = (struct sockaddr *)&socket_address->address.unix_sockaddr;
 		*size = sizeof(socket_address->address.unix_sockaddr);
 		return TRUE;
-	case G_SOCKET_ADDRESS_TYPE_IPV4:
+	case GEBR_COMM_SOCKET_ADDRESS_TYPE_IPV4:
 		*sockaddr = (struct sockaddr *)&socket_address->address.inet_sockaddr;
 		*size = sizeof(socket_address->address.inet_sockaddr);
 		return TRUE;
@@ -69,24 +69,24 @@ _g_socket_address_get_sockaddr(GSocketAddress * socket_address, struct sockaddr 
 }
 
 int
-_g_socket_address_get_family(GSocketAddress * socket_address)
+_gebr_comm_socket_address_get_family(GebrCommSocketAddress * socket_address)
 {
 	return type_enum_to_family[socket_address->type];
 }
 
 typedef int (*sockname_function)(int sockfd, struct sockaddr * addr, socklen_t * addrlen);
 static int
-__g_socket_address_sockname_function(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd,
+__gebr_comm_socket_address_sockname_function(GebrCommSocketAddress * socket_address, enum GebrCommSocketAddressType type, int sockfd,
 	sockname_function function)
 {
 	struct sockaddr *	sockaddr;
 	socklen_t		addrlen;
 
 	switch ((socket_address->type = type)) {
-	case G_SOCKET_ADDRESS_TYPE_UNIX:
+	case GEBR_COMM_SOCKET_ADDRESS_TYPE_UNIX:
 		sockaddr = (struct sockaddr *)&socket_address->address.unix_sockaddr;
 		break;
-	case G_SOCKET_ADDRESS_TYPE_IPV4:
+	case GEBR_COMM_SOCKET_ADDRESS_TYPE_IPV4:
 		sockaddr = (struct sockaddr *)&socket_address->address.inet_sockaddr;
 		break;
 	default:
@@ -98,34 +98,34 @@ __g_socket_address_sockname_function(GSocketAddress * socket_address, enum GSock
 }
 
 int
-_g_socket_address_getsockname(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd)
+_gebr_comm_socket_address_getsockname(GebrCommSocketAddress * socket_address, enum GebrCommSocketAddressType type, int sockfd)
 {
-	return __g_socket_address_sockname_function(socket_address, type, sockfd, getsockname);
+	return __gebr_comm_socket_address_sockname_function(socket_address, type, sockfd, getsockname);
 }
 
 int
-_g_socket_address_getpeername(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd)
+_gebr_comm_socket_address_getpeername(GebrCommSocketAddress * socket_address, enum GebrCommSocketAddressType type, int sockfd)
 {
-	return __g_socket_address_sockname_function(socket_address, type, sockfd, getpeername);
+	return __gebr_comm_socket_address_sockname_function(socket_address, type, sockfd, getpeername);
 }
 
 int
-_g_socket_address_accept(GSocketAddress * socket_address, enum GSocketAddressType type, int sockfd)
+_gebr_comm_socket_address_accept(GebrCommSocketAddress * socket_address, enum GebrCommSocketAddressType type, int sockfd)
 {
-	return __g_socket_address_sockname_function(socket_address, type, sockfd, accept);
+	return __gebr_comm_socket_address_sockname_function(socket_address, type, sockfd, accept);
 }
 
 /*
  * library functions
  */
 
-GSocketAddress
-g_socket_address_unix(const gchar * path)
+GebrCommSocketAddress
+gebr_comm_socket_address_unix(const gchar * path)
 {
-	GSocketAddress	socket_address;
+	GebrCommSocketAddress	socket_address;
 
-	socket_address = (GSocketAddress) {
-		.type = G_SOCKET_ADDRESS_TYPE_UNIX,
+	socket_address = (GebrCommSocketAddress) {
+		.type = GEBR_COMM_SOCKET_ADDRESS_TYPE_UNIX,
 		.address.unix_sockaddr.sun_family = AF_UNIX,
 	};
 	strncpy(socket_address.address.unix_sockaddr.sun_path, path, UNIX_PATH_MAX);
@@ -133,19 +133,19 @@ g_socket_address_unix(const gchar * path)
 	return socket_address;
 }
 
-GSocketAddress
-g_socket_address_ipv4(const gchar * string, guint16 port)
+GebrCommSocketAddress
+gebr_comm_socket_address_ipv4(const gchar * string, guint16 port)
 {
-	GSocketAddress	socket_address;
+	GebrCommSocketAddress	socket_address;
 	struct in_addr	in_addr;
 
 	if (inet_aton(string, &in_addr) == 0) {
-		socket_address.type = G_SOCKET_ADDRESS_TYPE_UNKNOWN;
+		socket_address.type = GEBR_COMM_SOCKET_ADDRESS_TYPE_UNKNOWN;
 		goto out;
 	}
 
-	socket_address = (GSocketAddress) {
-		.type = G_SOCKET_ADDRESS_TYPE_IPV4,
+	socket_address = (GebrCommSocketAddress) {
+		.type = GEBR_COMM_SOCKET_ADDRESS_TYPE_IPV4,
 		.address.inet_sockaddr = (struct sockaddr_in) {
 			.sin_family = AF_INET,
 			.sin_port = htons(port),
@@ -156,25 +156,25 @@ g_socket_address_ipv4(const gchar * string, guint16 port)
 out:	return socket_address;
 }
 
-GSocketAddress
-g_socket_address_ipv4_local(guint16 port)
+GebrCommSocketAddress
+gebr_comm_socket_address_ipv4_local(guint16 port)
 {
-	return g_socket_address_ipv4("127.0.0.1", port);
+	return gebr_comm_socket_address_ipv4("127.0.0.1", port);
 }
 
 gboolean
-g_socket_address_get_is_valid(GSocketAddress * socket_address)
+gebr_comm_socket_address_get_is_valid(GebrCommSocketAddress * socket_address)
 {
-	return (gboolean)(socket_address->type != G_SOCKET_ADDRESS_TYPE_UNKNOWN);
+	return (gboolean)(socket_address->type != GEBR_COMM_SOCKET_ADDRESS_TYPE_UNKNOWN);
 }
 
 const gchar *
-g_socket_address_get_string(GSocketAddress * socket_address)
+gebr_comm_socket_address_get_string(GebrCommSocketAddress * socket_address)
 {
 	switch (socket_address->type) {
-	case G_SOCKET_ADDRESS_TYPE_UNIX:
+	case GEBR_COMM_SOCKET_ADDRESS_TYPE_UNIX:
 		return inet_ntoa(socket_address->address.inet_sockaddr.sin_addr);
-	case G_SOCKET_ADDRESS_TYPE_IPV4:
+	case GEBR_COMM_SOCKET_ADDRESS_TYPE_IPV4:
 		return socket_address->address.unix_sockaddr.sun_path;
 	default:
 		return NULL;
@@ -182,10 +182,10 @@ g_socket_address_get_string(GSocketAddress * socket_address)
 }
 
 guint16
-g_socket_address_get_ip_port(GSocketAddress * socket_address)
+gebr_comm_socket_address_get_ip_port(GebrCommSocketAddress * socket_address)
 {
 	switch (socket_address->type) {
-	case G_SOCKET_ADDRESS_TYPE_IPV4:
+	case GEBR_COMM_SOCKET_ADDRESS_TYPE_IPV4:
 		return ntohs(socket_address->address.inet_sockaddr.sin_port);
 	default:
 		return 0;

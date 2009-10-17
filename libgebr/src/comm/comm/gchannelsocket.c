@@ -31,7 +31,7 @@
  */
 
 static void
-__g_channel_socket_new_connection(GChannelSocket * channel_socket);
+__g_channel_socket_new_connection(GebrCommChannelSocket * channel_socket);
 
 /*
  * gobject stuff
@@ -47,19 +47,19 @@ enum {
 // static guint object_signals[LAST_SIGNAL];
 
 static void
-g_channel_socket_class_init(GChannelSocketClass * class)
+gebr_comm_channel_socket_class_init(GebrCommChannelSocketClass * class)
 {
 	/* virtual */
 	class->parent.new_connection = (typeof(class->parent.new_connection))__g_channel_socket_new_connection;
 }
 
 static void
-g_channel_socket_init(GChannelSocket * channel_socket)
+gebr_comm_channel_socket_init(GebrCommChannelSocket * channel_socket)
 {
 	channel_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
 }
 
-G_DEFINE_TYPE(GChannelSocket, g_channel_socket, GEBR_COMM_SOCKET_TYPE)
+G_DEFINE_TYPE(GebrCommChannelSocket, gebr_comm_channel_socket, GEBR_COMM_SOCKET_TYPE)
 
 /*
  * internal functions
@@ -108,13 +108,13 @@ __g_channel_socket_forward_error(GStreamSocket * forward_socket, enum GebrCommSo
 }
 
 static void
-__g_channel_socket_new_connection(GChannelSocket * channel_socket)
+__g_channel_socket_new_connection(GebrCommChannelSocket * channel_socket)
 {
-	GSocketAddress	peer_address;
+	GebrCommSocketAddress	peer_address;
 	int		client_sockfd, sockfd;
 
 	sockfd = _g_socket_get_fd(&channel_socket->parent);
-	while ((client_sockfd = _g_socket_address_accept(&peer_address,
+	while ((client_sockfd = _gebr_comm_socket_address_accept(&peer_address,
 	channel_socket->parent.address_type, sockfd)) != -1) {
 		GStreamSocket *	source_socket;
 		GStreamSocket *	forward_socket;
@@ -143,24 +143,24 @@ __g_channel_socket_new_connection(GChannelSocket * channel_socket)
  * user functions
  */
 
-GChannelSocket *
-g_channel_socket_new(void)
+GebrCommChannelSocket *
+gebr_comm_channel_socket_new(void)
 {
-	return (GChannelSocket*)g_object_new(G_CHANNEL_SOCKET_TYPE, NULL);
+	return (GebrCommChannelSocket*)g_object_new(GEBR_COMM_CHANNEL_SOCKET_TYPE, NULL);
 }
 
 void
-g_channel_socket_free(GChannelSocket * channel_socket)
+gebr_comm_channel_socket_free(GebrCommChannelSocket * channel_socket)
 {
 	gebr_comm_socket_close(&channel_socket->parent);
 	g_object_unref(channel_socket);
 }
 
 gboolean
-g_channel_socket_start(GChannelSocket * channel_socket, GSocketAddress * listen_address,
-	GSocketAddress * forward_address)
+gebr_comm_channel_socket_start(GebrCommChannelSocket * channel_socket, GebrCommSocketAddress * listen_address,
+	GebrCommSocketAddress * forward_address)
 {
-	if (!g_socket_address_get_is_valid(listen_address) || !g_socket_address_get_is_valid(forward_address))
+	if (!gebr_comm_socket_address_get_is_valid(listen_address) || !gebr_comm_socket_address_get_is_valid(forward_address))
 		return FALSE;
 
 	int			sockfd;
@@ -170,14 +170,14 @@ g_channel_socket_start(GChannelSocket * channel_socket, GSocketAddress * listen_
 
 	/* initialization */
 	error = NULL;
-	sockfd = socket(_g_socket_address_get_family(listen_address), SOCK_STREAM, 0);
+	sockfd = socket(_gebr_comm_socket_address_get_family(listen_address), SOCK_STREAM, 0);
 	_g_socket_init(&channel_socket->parent, sockfd, listen_address->type);
 	channel_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
 	g_io_channel_set_flags(channel_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
 	_g_socket_enable_read_watch(&channel_socket->parent);
 
 	/* bind and listen */
-	_g_socket_address_get_sockaddr(listen_address, &sockaddr, &sockaddr_size);
+	_gebr_comm_socket_address_get_sockaddr(listen_address, &sockaddr, &sockaddr_size);
 	if (bind(sockfd, sockaddr, sockaddr_size))
 		return FALSE;
 	if (listen(sockfd, 1024)) {
@@ -190,8 +190,8 @@ g_channel_socket_start(GChannelSocket * channel_socket, GSocketAddress * listen_
 	return TRUE;
 }
 
-GSocketAddress
-g_channel_socket_get_forward_address(GChannelSocket * channel_socket)
+GebrCommSocketAddress
+gebr_comm_channel_socket_get_forward_address(GebrCommChannelSocket * channel_socket)
 {
 	return channel_socket->forward_address;
 }

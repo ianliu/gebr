@@ -57,12 +57,12 @@ GStreamSocket *
 g_stream_socket_new(void);
 
 gboolean
-g_stream_socket_connect(GStreamSocket * stream_socket, GSocketAddress * socket_address, gboolean wait);
+g_stream_socket_connect(GStreamSocket * stream_socket, GebrCommSocketAddress * socket_address, gboolean wait);
 
 void
 g_stream_socket_disconnect(GStreamSocket * stream_socket);
 
-GSocketAddress
+GebrCommSocketAddress
 g_stream_socket_peer_address(GStreamSocket * stream_socket);
 
 G_END_DECLS

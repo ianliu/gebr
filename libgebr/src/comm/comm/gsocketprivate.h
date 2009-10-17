@@ -24,7 +24,7 @@
 #include "gsocketaddress.h"
 
 void
-_g_socket_init(GebrCommSocket * socket, int fd, enum GSocketAddressType address_type);
+_g_socket_init(GebrCommSocket * socket, int fd, enum GebrCommSocketAddressType address_type);
 
 void
 _g_socket_close(GebrCommSocket * socket);
