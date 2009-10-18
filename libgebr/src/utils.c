@@ -335,8 +335,7 @@ libgebr_validate_float(const gchar * text_value, const gchar * min, const gchar 
 
 	/* frees */
 	g_string_free(value_str, TRUE);
-if (min != NULL) puts(min);
-puts(number);
+
 	if (min != NULL && strlen(min) && value < atof(min))
 		return min;
 	if (max != NULL && strlen(max) && value > atof(max))

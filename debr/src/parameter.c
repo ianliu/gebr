@@ -744,6 +744,9 @@ parameter_dialog_setup_ui(void)
 		g_signal_connect(max_entry, "focus-out-event",
 			(GCallback)parameter_number_max_on_focus_out, parameter_widget);
 
+		gtk_entry_set_text(GTK_ENTRY(min_entry), min_str);
+		gtk_entry_set_text(GTK_ENTRY(max_entry), max_str);
+
 		if (type != GEOXML_PARAMETERTYPE_RANGE)
 			break;
 
@@ -788,8 +791,6 @@ parameter_dialog_setup_ui(void)
 		g_signal_connect(digits_entry, "focus-out-event",
 			(GCallback)parameter_range_digits_on_focus_out, parameter_widget);
 
-		gtk_entry_set_text(GTK_ENTRY(min_entry), min_str);
-		gtk_entry_set_text(GTK_ENTRY(max_entry), max_str);
 		gtk_entry_set_text(GTK_ENTRY(inc_entry), inc_str);
 		gtk_entry_set_text(GTK_ENTRY(digits_entry), digits_str);
 
@@ -1174,7 +1175,6 @@ parameter_popup_menu(GtkWidget * tree_view)
 		"parameter_change_type"), menu_item);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), debr.parameter_type_menu);
 	gtk_container_add(GTK_CONTAINER(menu), menu_item);
-
 
 out:	gtk_widget_show_all(menu);
 
