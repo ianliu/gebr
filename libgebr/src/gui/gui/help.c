@@ -39,14 +39,25 @@ libgebr_gui_help_show_create_web_view(void);
  * Public functions
  */
 
+/* Function: gebr_gui_help_show
+ * Show HTML at _uri_ with WebKit (if enabled) or with _browser_ executable specified
+ */
 void
-libgebr_gui_help_show(const gchar * uri)
+gebr_gui_help_show(const gchar * uri, const gchar * browser)
 {
 #ifdef WEBKIT_ENABLED
 	GtkWidget *	web_view;
 
 	web_view = libgebr_gui_help_show_create_web_view();
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), uri);
+#else
+	GString *	cmd_line;
+
+	cmd_line = g_string_new(NULL);
+	g_string_printf(cmd_line, "%s %s &", browser, html_path->str);
+	system(cmd_line->str);
+
+	g_string_free(cmd_line, TRUE);
 #endif
 }
 

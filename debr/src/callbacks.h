@@ -31,10 +31,6 @@ void
 on_paste_activate(void);
 void
 on_quit_activate(void);
-void
-on_configure_preferences_activate(void);
-void
-on_help_about_activate(void);
 
 void
 on_menu_new_activate(void);
@@ -99,5 +95,13 @@ void
 on_validate_close_activate(void);
 void
 on_validate_clear_activate(void);
+
+void
+on_configure_preferences_activate(void);
+void
+on_help_contents_activate(void);
+void
+on_help_about_activate(void);
+
 
 #endif //__CALLBACKS_H

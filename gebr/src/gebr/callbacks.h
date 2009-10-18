@@ -102,6 +102,8 @@ void
 on_configure_servers_activate(void);
 
 void
+on_help_contents_activate(void);
+void
 on_help_about_activate(void);
 
 void

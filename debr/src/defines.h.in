@@ -20,4 +20,6 @@
 
 #define DEBR_DATA_DIR		"@prefix@/share/debr/"
 
+#define DEBR_USERDOC_HTML	DEBR_DATA_DIR"userdoc/debr.html"
+
 #endif //__DEFINES_H

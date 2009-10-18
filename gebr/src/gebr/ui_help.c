@@ -110,17 +110,7 @@ help_show(const gchar * help, const gchar * title)
 	gebr.tmpfiles = g_slist_append(gebr.tmpfiles, html_path->str);
 
 	g_string_prepend(html_path, "file://");
-#ifdef WEBKIT_ENABLED
-	libgebr_gui_help_show(html_path->str);
-#else
-	GString *	cmd_line;
-
-	cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s %s &", gebr.config.browser->str, html_path->str);
-	system(cmd_line->str);
-
-	g_string_free(cmd_line, TRUE);
-#endif
+	gebr_gui_help_show(html_path->str, gebr.config.browser->str);
 
 	/* frees */
 out:	g_string_free(html_path, FALSE);

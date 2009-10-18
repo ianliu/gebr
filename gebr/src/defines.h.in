@@ -18,8 +18,10 @@
 #ifndef __DEFINES_H
 #define __DEFINES_H
 
-#define GEBR_SYS_MENUS_DIR	"@prefix@/share/gebr/menus/"
 #define GEBR_DATA_DIR		"@prefix@/share/gebr/"
+#define GEBR_SYS_MENUS_DIR	GEBR_DATA_DIR"menus/"
+
+#define GEBR_USERDOC_HTML	GEBR_DATA_DIR"userdoc/gebr.html"
 
 #define GEBR_VERSION		"@VERSION@"
 

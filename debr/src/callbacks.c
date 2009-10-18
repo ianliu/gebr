@@ -21,9 +21,11 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/gui/utils.h>
+#include <libgebr/gui/help.h>
 #include <libgebr/utils.h>
 
 #include "callbacks.h"
+#include "defines.h"
 #include "debr.h"
 #include "preferences.h"
 
@@ -695,6 +697,15 @@ void
 on_configure_preferences_activate(void)
 {
 	preferences_dialog_setup_ui();
+}
+
+/* Function: on_help_contents_activate
+ *
+ */
+void
+on_help_contents_activate(void)
+{
+	gebr_gui_help_show(DEBR_USERDOC_HTML, debr.config.browser->str);
 }
 
 /*

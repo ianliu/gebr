@@ -21,7 +21,10 @@
  * Callbacks for notebook and menus items
  */
 
+#include <libgebr/gui/help.h>
+
 #include "callbacks.h"
+#include "../defines.h"
 #include "gebr.h"
 #include "project.h"
 #include "line.h"
@@ -402,10 +405,8 @@ on_configure_preferences_activate(void)
 	preferences_setup_ui(FALSE);
 }
 
-/*
- * Function: on_configure_servers_activate
- * *Fill me in!*
- *
+/* Function: on_configure_servers_activate
+ * Show servers's configuration dialog
  */
 void
 on_configure_servers_activate(void)
@@ -413,10 +414,17 @@ on_configure_servers_activate(void)
 	server_list_show(gebr.ui_server_list);
 }
 
-/*
- * Function: on_help_about_activate
+/* Function: on_help_contents_activate
  * *Fill me in!*
- *
+ */
+void
+on_help_contents_activate(void)
+{
+	gebr_gui_help_show(GEBR_USERDOC_HTML, gebr.config.browser->str);
+}
+
+/* Function: on_help_about_activate
+ * Show about dialog
  */
 void
 on_help_about_activate(void)

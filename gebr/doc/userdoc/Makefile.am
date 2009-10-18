@@ -16,7 +16,7 @@
 
 userdoc:
 	gnome-doc-tool html ../gebr.docbook
-*.html:
+*.html: userdoc
 
 gebrdocdir = $(datadir)/gebr/userdoc
 gebrdoc_DATA = *.html

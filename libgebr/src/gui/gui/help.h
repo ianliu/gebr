@@ -21,6 +21,6 @@
 #include <glib.h>
 
 void
-libgebr_gui_help_show(const gchar * help);
+gebr_gui_help_show(const gchar * uri, const gchar * browser);
 
 #endif //__LIBGEBR_GUI_HELP_H

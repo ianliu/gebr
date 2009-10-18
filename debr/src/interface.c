@@ -41,6 +41,8 @@
 
 static const GtkActionEntry actions_entries [] = {
 	{"quit", GTK_STOCK_QUIT, N_("Quit"), NULL, N_("Quit DéBR"), (GCallback)on_quit_activate},
+	{"help_contents", GTK_STOCK_HELP, NULL, NULL, NULL, (GCallback)on_help_contents_activate},
+	{"help_about", GTK_STOCK_ABOUT, NULL, NULL, NULL, (GCallback)on_help_about_activate},
 	/* menu */
 	{"menu_new", GTK_STOCK_NEW, NULL, NULL, N_("Create new menu"), (GCallback)on_menu_new_activate},
 	{"menu_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit menu properties"),
@@ -220,10 +222,10 @@ debr_setup_ui(void)
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
 
-	child_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT, debr.accel_group);
-	gtk_container_add(GTK_CONTAINER(menu), child_menu_item);
-	g_signal_connect(child_menu_item, "activate",
-		(GCallback)on_help_about_activate, NULL);
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "help_contents")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(debr.action_group, "help_about")));
 
 	gtk_widget_show_all(menu_bar);
 

@@ -15,4 +15,4 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 develdoc:
-	naturaldocs -i ../../src/ -p . -o FramedHtml .
+	naturaldocs -i ../../src/ -p . -o FramedHtml

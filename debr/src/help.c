@@ -299,19 +299,7 @@ help_show(const gchar * help)
 	debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
 
 	g_string_prepend(html_path, "file://");
-#ifdef WEBKIT_ENABLED
-	libgebr_gui_help_show(html_path->str);
-#else
-	GString *	cmdline;
-
-	cmdline = g_string_new(debr.config.browser->str);
-        g_string_append(cmdline, " ");
-	g_string_append(cmdline, html_path->str);
-	g_string_append(cmdline, " &");
-	system(cmdline->str);
-
-	g_string_free(cmdline, TRUE);
-#endif
+	gebr_gui_help_show(html_path->str, debr.config.browser->str);
 
 out:	g_string_free(html_path, FALSE);
 	g_string_free(prepared_html, TRUE);

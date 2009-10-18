@@ -72,11 +72,6 @@ dnl check for libgebr_comm
 PKG_CHECK_MODULES(LIBGEBR_COMM, gebr-comm,,AC_MSG_ERROR([Could not find libgebr_comm]))
 AC_SUBST(LIBGEBR_COMM_CFLAGS)
 AC_SUBST(LIBGEBR_COMM_LIBS)
-dnl webkit option
-PKG_CHECK_MODULES(WEBKIT, webkit-1.0, WEBKIT_ENABLED=-DWEBKIT_ENABLED, AC_MSG_WARN([you will miss some new awesome features]))
-AC_SUBST(WEBKIT_CFLAGS)
-AC_SUBST(WEBKIT_LIBS)
-AC_SUBST(WEBKIT_ENABLED)
 
 AC_OUTPUT([
 packages/rpm/gebr.fedora.spec packages/rpm/gebr.opensuse.spec packages/rpm/gebr.mandriva.spec

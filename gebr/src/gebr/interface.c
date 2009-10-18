@@ -40,7 +40,13 @@
  */
 
 static const GtkActionEntry actions_entries [] = {
-	{"quit",  GTK_STOCK_QUIT, NULL, "<Control>q", NULL, (GCallback)on_quit_activate},
+	{"actions_preferences",  GTK_STOCK_PREFERENCES, NULL, NULL, NULL,
+		(GCallback)on_configure_preferences_activate},
+	{"actions_servers",  GTK_STOCK_NETWORK, N_("_Servers"), NULL, NULL,
+		(GCallback)on_configure_servers_activate},
+	{"actions_quit",  GTK_STOCK_QUIT, NULL, "<Control>q", NULL, (GCallback)on_quit_activate},
+	{"help_contents", GTK_STOCK_HELP, NULL, NULL, NULL, (GCallback)on_help_contents_activate},
+	{"help_about", GTK_STOCK_ABOUT, NULL, NULL, NULL, (GCallback)on_help_about_activate},
 	/* Project/Line */
 	{"project_line_new_project", "folder-new", N_("New Project"), NULL, N_("Create a new project"),
 		(GCallback)on_project_line_new_project_activate},
@@ -123,11 +129,8 @@ static const GtkActionEntry common_actions_entries [] = {
  * Prototypes functions
  */
 
-static GtkWidget *
-assembly_config_menu(void);
-
-static GtkWidget *
-assembly_help_menu(void);
+static void
+assembly_menus(GtkMenuBar * menu_bar);
 
 /*
  * Public functions
@@ -196,9 +199,7 @@ gebr_setup_ui(void)
 	 */
 	menu_bar = gtk_menu_bar_new();
 	gtk_box_pack_start(GTK_BOX(main_vbox), menu_bar, FALSE, FALSE, 0);
-	gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), assembly_config_menu());
-	gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), assembly_help_menu());
-
+	assembly_menus(GTK_MENU_BAR(menu_bar));
 	gtk_widget_show_all(menu_bar);
 
 	/*
@@ -371,69 +372,37 @@ gebr_setup_ui(void)
 }
 
 /*
- * Function: assembly_config_menu
- * Assembly the config menu
+ * Function: assembly_menus
+ * Assembly menus
  *
  */
-static GtkWidget *
-assembly_config_menu(void)
+static void
+assembly_menus(GtkMenuBar * menu_bar)
 {
 	GtkWidget *	menu_item;
 	GtkWidget *	menu;
-	GtkWidget *	child_menu_item;
-
-	menu = gtk_menu_new();
-	gtk_menu_set_title(GTK_MENU(menu), _("Actions menu"));
-
-	/* Preferences entry */
-	child_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PREFERENCES, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), child_menu_item);
-	g_signal_connect(GTK_OBJECT(child_menu_item), "activate",
-		G_CALLBACK(on_configure_preferences_activate), NULL);
-
-	/* Server entry */
-	child_menu_item =  gtk_image_menu_item_new_with_mnemonic(_("_Servers"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(child_menu_item),
-		gtk_image_new_from_stock(GTK_STOCK_NETWORK, 1));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), child_menu_item);
-	g_signal_connect(GTK_OBJECT(child_menu_item), "activate",
-		GTK_SIGNAL_FUNC(on_configure_servers_activate), NULL);
 
 	menu_item = gtk_menu_item_new_with_label(_("Actions"));
+	gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), menu_item);
+	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
 
-	/* Quit entry */
-	gtk_container_add(GTK_CONTAINER(menu),gtk_separator_menu_item_new());
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
-		gtk_action_group_get_action(gebr.action_group, "quit")));
-
-	return menu_item;
-}
-
-/*
- * Function: assembly_help_menu
- * Assembly the help menu
- *
- */
-static GtkWidget *
-assembly_help_menu(void)
-{
-	GtkWidget *	menu_item;
-	GtkWidget *	menu;
-	GtkWidget *	child_menu_item;
-
-	menu = gtk_menu_new();
-	gtk_menu_set_title(GTK_MENU(menu), _("Help menu"));
-
-	/* About entry */
-	child_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), child_menu_item);
-	g_signal_connect(GTK_OBJECT(child_menu_item), "activate",
-			GTK_SIGNAL_FUNC(on_help_about_activate), NULL);
+		gtk_action_group_get_action(gebr.action_group, "actions_preferences")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "actions_servers")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_separator_menu_item_new());
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "actions_quit")));
 
 	menu_item = gtk_menu_item_new_with_label(_("Help"));
+	gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), menu_item);
+	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
 	gtk_menu_item_right_justify(GTK_MENU_ITEM(menu_item));
 
-	return menu_item;
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "help_contents")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(gebr.action_group, "help_about")));
 }

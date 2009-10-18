@@ -16,7 +16,7 @@
 
 userdoc:
 	gnome-doc-tool html ../debr.docbook
-*.html:
+*.html: userdoc
 
 debrdocdir = $(datadir)/debr/userdoc
 debrdoc_DATA = *.html
