@@ -260,7 +260,7 @@ __parameter_widget_sync_non_list(struct parameter_widget * parameter_widget)
 static void
 __parameter_widget_on_value_widget_changed(GtkWidget * widget, struct parameter_widget * parameter_widget)
 {
-	if (parameter_widget->dict_parameter == NULL)
+	if (parameter_widget->dict_parameter != NULL)
 		return;
 
 	__parameter_widget_sync_non_list(parameter_widget);

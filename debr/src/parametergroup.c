@@ -283,6 +283,7 @@ parameter_group_instances_setup_ui(struct ui_parameter_group_dialog * ui)
 					(GCallback)on_parameter_group_exclusive_toggled, ui);
 				g_object_set(label_widget, "user-data", parameter, NULL);
 			}
+			gtk_misc_set_alignment(GTK_MISC(label_widget), 0, 0.5);
 			gtk_widget_show(label_widget);
 			gtk_table_attach(GTK_TABLE(table), label_widget, 0, 1, j, j+1,
 				(GtkAttachOptions)(GTK_FILL),
