@@ -85,6 +85,6 @@ void
 parameter_change_type(enum GEOXML_PARAMETERTYPE type);
 
 void
-parameter_dialog_setup_ui(void);
+parameter_properties(void);
 
 #endif //__PARAMETER_H

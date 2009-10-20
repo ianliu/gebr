@@ -606,7 +606,7 @@ on_parameter_delete_activate(void)
 void
 on_parameter_properties_activate(void)
 {
-	parameter_dialog_setup_ui();
+	parameter_properties();
 }
 
 /*

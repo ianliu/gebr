@@ -87,6 +87,8 @@ const GtkRadioActionEntry parameter_type_radio_actions_entries [] = {
 	{"parameter_type_group", NULL, N_("group"), NULL, NULL, GEOXML_PARAMETERTYPE_GROUP},
 };
 
+static void
+parameter_dialog_setup_ui(void);
 static GtkTreeIter
 parameter_append_to_ui(GeoXmlParameter * parameter, GtkTreeIter * parent);
 static void
@@ -499,11 +501,23 @@ parameter_change_type(enum GEOXML_PARAMETERTYPE type)
 	parameter_load_selected();
 }
 
-/*
- * Function: parameter_dialog_setup_ui
- * Create an dialog to configure the current selected parameter (not a group)
+/* Function: parameter_properties
+ * Show parameter's properties according to its type
  */
 void
+parameter_properties(void)
+{
+	parameter_activated();
+}
+
+/*
+ * Section: Private
+ */
+
+/* Function: parameter_dialog_setup_ui
+ * Create an dialog to configure the current selected parameter (not a group)
+ */
+static void
 parameter_dialog_setup_ui(void)
 {
 	struct ui_parameter_dialog *	ui;
@@ -847,7 +861,7 @@ parameter_dialog_setup_ui(void)
 	gtk_widget_show(default_widget_hbox);
 	default_widget = parameter_widget->widget;
 	gtk_widget_show(default_widget);
-	
+
 	if (type == GEOXML_PARAMETERTYPE_FLAG) {
 		GtkWidget *	label;
 
@@ -902,9 +916,6 @@ parameter_dialog_setup_ui(void)
 	g_free(ui);
 }
 
-/*
- * Section: Private
- */
 
 /*
  * Function: parameter_append_to_ui
