@@ -1303,7 +1303,7 @@ menu_folder_details_update(GtkTreeIter * iter)
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[1]), "");
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]), "");
 
-	g_object_set(G_OBJECT(debr.ui_menu.details.help_button), FALSE, NULL);
+	g_object_set(G_OBJECT(debr.ui_menu.details.help_button), "sensitive", FALSE, NULL);
 
 	g_free(folder_path);
 }
