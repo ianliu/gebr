@@ -157,6 +157,7 @@ document_properties_setup_ui(GeoXmlDocument * document)
 
 	if (document == NULL)
 		return FALSE;
+
 	if (geoxml_document_get_type(document) == GEOXML_DOCUMENT_TYPE_FLOW)
 		flow_browse_single_selection();
 
@@ -316,6 +317,9 @@ document_dict_edit_setup_ui(void)
 	struct dict_edit_data *	data;
 
 	document = document_get_current();
+        if (document == NULL)
+                return;
+
 	data = g_malloc(sizeof(struct dict_edit_data));
 	tree_store = gtk_tree_store_new(DICT_EDIT_N_COLUMN,
 		G_TYPE_STRING,  /* document */
