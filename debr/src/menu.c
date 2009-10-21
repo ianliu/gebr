@@ -1130,6 +1130,8 @@ menu_details_update(void)
 	GString *	text;
 	glong		icmax;
 
+	gtk_widget_set_sensitive(debr.ui_menu.details.help_button, TRUE);
+
 	markup = g_markup_printf_escaped("<b>%s</b>", geoxml_document_get_title(GEOXML_DOC(debr.menu)));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), markup);
 	g_free(markup);
@@ -1252,6 +1254,7 @@ menu_folder_details_update(GtkTreeIter * iter)
 		NULL
 	};
 	debr_set_actions_sensitive(names, FALSE);
+	gtk_widget_set_sensitive(debr.ui_menu.details.help_button, FALSE);
 
 	if (gebr_gui_gtk_tree_iter_equal_to(iter, &debr.ui_menu.iter_other))
 	{
