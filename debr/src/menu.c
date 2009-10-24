@@ -71,10 +71,8 @@ static void		menu_category_removed		(ValueSequenceEdit *	sequence_edit,
  * Section: Public
  */
 
-/*
- * Function: menu_setup_ui
+/* Function: menu_setup_ui
  * Setup menu view
- *
  */
 void
 menu_setup_ui(void)
@@ -138,9 +136,9 @@ menu_setup_ui(void)
 	 */
 	gtk_tree_store_append(debr.ui_menu.model, &debr.ui_menu.iter_other, NULL);
 	gtk_tree_store_set(debr.ui_menu.model, &debr.ui_menu.iter_other,
-			MENU_IMAGE, GTK_STOCK_DIRECTORY,
-			MENU_FILENAME, _("<i>Others</i>"),
-			-1);
+		MENU_IMAGE, GTK_STOCK_DIRECTORY,
+		MENU_FILENAME, _("<i>Others</i>"),
+		-1);
 
 	/*
 	 * Info Panel

@@ -52,7 +52,7 @@ gtk_directory_chooser_init(GtkDirectoryChooser * directory_chooser)
 	GtkWidget *		file_entry;
 	GtkWidget *		sequence_edit;
 
-	file_entry = gtk_file_entry_new (NULL);
+	file_entry = gtk_file_entry_new(NULL, NULL);
 	gtk_file_entry_set_choose_directory(GTK_FILE_ENTRY(file_entry), TRUE);
 	sequence_edit = gtk_sequence_edit_new (file_entry);
 

@@ -82,7 +82,44 @@ enum_value_to_label_get(GeoXmlSequence * sequence, struct parameter_widget * par
 }
 
 static void
-__parameter_widget_set_non_list_widget_value(struct parameter_widget * parameter_widget, const gchar * value)
+parameter_widget_file_entry_customize_function(GtkFileChooser * file_chooser, struct parameter_widget * parameter_widget)
+{
+	gchar *		filter_name;
+	gchar *		filter_pattern;
+
+	geoxml_program_parameter_get_file_filter(parameter_widget->program_parameter,
+		&filter_name, &filter_pattern);
+	if (filter_name != NULL && strlen(filter_name)
+	&& filter_pattern != NULL && strlen(filter_pattern)) {
+		GString *	name;
+		GtkFileFilter *	file_filter;
+		gchar **	patterns;
+
+		file_filter = gtk_file_filter_new();
+		name = g_string_new(NULL);
+		patterns = g_strsplit_set(filter_pattern, " ,", -1);
+
+		g_string_printf(name, "%s (%s)", filter_name, filter_pattern);
+		gtk_file_filter_set_name(file_filter, name->str);
+		for (int i = 0; patterns[i] != NULL; ++i)
+			gtk_file_filter_add_pattern(file_filter, patterns[i]);
+
+		gtk_file_chooser_add_filter(file_chooser, file_filter);
+		file_filter = gtk_file_filter_new();
+		gtk_file_filter_set_name(file_filter, _("Todos"));
+		gtk_file_filter_add_pattern(file_filter, _("*"));
+		gtk_file_chooser_add_filter(file_chooser, file_filter);
+
+		g_string_free(name, TRUE);
+		g_strfreev(patterns);
+	}
+
+	if (parameter_widget->data != NULL)
+		((GtkFileEntryCustomize)parameter_widget->data)(file_chooser, NULL);
+}
+
+static void
+parameter_widget_set_non_list_widget_value(struct parameter_widget * parameter_widget, const gchar * value)
 {
 	if (parameter_widget->dict_parameter != NULL) {
 		GString *			value;
@@ -149,7 +186,7 @@ __parameter_widget_set_non_list_widget_value(struct parameter_widget * parameter
 }
 
 static GString *
-__parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, gboolean check_list)
+parameter_widget_get_widget_value_full(struct parameter_widget * parameter_widget, gboolean check_list)
 {
 	GString *			value;
 
@@ -220,7 +257,7 @@ __parameter_widget_get_widget_value(struct parameter_widget * parameter_widget, 
 }
 
 static void
-__parameter_widget_report_change(struct parameter_widget * parameter_widget)
+parameter_widget_report_change(struct parameter_widget * parameter_widget)
 {
 	if (parameter_widget->callback != NULL)
 		parameter_widget->callback(parameter_widget, parameter_widget->user_data);
@@ -238,19 +275,19 @@ __parameter_on_list_value_widget_changed(GtkEntry * entry, struct parameter_widg
 		parameter_widget->use_default_value,
 		gtk_entry_get_text(entry));
 
-	__parameter_widget_report_change(parameter_widget);
+	parameter_widget_report_change(parameter_widget);
 }
 
 /*
- * Function: __parameter_widget_sync_non_list
+ * Function: parameter_widget_sync_non_list
  * Syncronize input widget value with the parameter
  */
 static void
-__parameter_widget_sync_non_list(struct parameter_widget * parameter_widget)
+parameter_widget_sync_non_list(struct parameter_widget * parameter_widget)
 {
 	GString *	value;
 
-	value = __parameter_widget_get_widget_value(parameter_widget, FALSE);
+	value = parameter_widget_get_widget_value_full(parameter_widget, FALSE);
 	geoxml_program_parameter_set_first_value(parameter_widget->program_parameter,
 		parameter_widget->use_default_value, value->str);
 
@@ -258,28 +295,28 @@ __parameter_widget_sync_non_list(struct parameter_widget * parameter_widget)
 }
 
 static void
-__parameter_widget_on_value_widget_changed(GtkWidget * widget, struct parameter_widget * parameter_widget)
+parameter_widget_on_value_widget_changed(GtkWidget * widget, struct parameter_widget * parameter_widget)
 {
 	if (parameter_widget->dict_parameter != NULL)
 		return;
 
-	__parameter_widget_sync_non_list(parameter_widget);
-	__parameter_widget_report_change(parameter_widget);
+	parameter_widget_sync_non_list(parameter_widget);
+	parameter_widget_report_change(parameter_widget);
 }
 
 static gboolean
-__parameter_widget_on_range_changed(GtkSpinButton * spinbutton, struct parameter_widget * parameter_widget)
+parameter_widget_on_range_changed(GtkSpinButton * spinbutton, struct parameter_widget * parameter_widget)
 {
-	__parameter_widget_on_value_widget_changed(GTK_WIDGET(spinbutton), parameter_widget);
+	parameter_widget_on_value_widget_changed(GTK_WIDGET(spinbutton), parameter_widget);
 	return FALSE;
 }
 
 /*
- * Function: __parameter_widget_weak_ref
+ * Function: parameter_widget_weak_ref
  * Free struct before widget deletion
  */
 static void
-__parameter_widget_weak_ref(struct parameter_widget * parameter_widget, GtkWidget * widget)
+parameter_widget_weak_ref(struct parameter_widget * parameter_widget, GtkWidget * widget)
 {
 	g_free(parameter_widget);
 }
@@ -314,7 +351,7 @@ __parameter_list_value_widget_update(struct parameter_widget * parameter_widget)
 static void
 __on_sequence_edit_changed(GtkSequenceEdit * sequence_edit, struct parameter_widget * parameter_widget);
 static void
-__parameter_widget_on_value_widget_changed(GtkWidget * widget, struct parameter_widget * parameter_widget);
+parameter_widget_on_value_widget_changed(GtkWidget * widget, struct parameter_widget * parameter_widget);
 
 /*
  * Function: __on_edit_list_toggled
@@ -376,7 +413,7 @@ __on_sequence_edit_add_request(ValueSequenceEdit * value_sequence_edit, struct p
 	GtkListStore *			list_store;
 
 	g_object_get(value_sequence_edit, "list-store", &list_store, NULL);
-	value = __parameter_widget_get_widget_value(parameter_widget, FALSE);
+	value = parameter_widget_get_widget_value_full(parameter_widget, FALSE);
 	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(list_store), NULL) == 0) {
 		GeoXmlSequence *	first_sequence;
 
@@ -391,7 +428,7 @@ __on_sequence_edit_add_request(ValueSequenceEdit * value_sequence_edit, struct p
 	value_sequence_edit_add(value_sequence_edit, sequence);
 
 	__parameter_list_value_widget_update(parameter_widget);
-	__parameter_widget_set_non_list_widget_value(parameter_widget, "");
+	parameter_widget_set_non_list_widget_value(parameter_widget, "");
 
 	g_string_free(value, TRUE);
 }
@@ -445,11 +482,11 @@ struct parameter_widget * parameter_widget)
 	return FALSE;
 }
 
-/* Function: __parameter_widget_configure
+/* Function: parameter_widget_configure
  * Create UI
  */
 static void
-__parameter_widget_configure(struct parameter_widget * parameter_widget)
+parameter_widget_configure(struct parameter_widget * parameter_widget)
 {
 	switch (parameter_widget->parameter_type) {
 	case GEOXML_PARAMETERTYPE_FLOAT: {
@@ -507,8 +544,9 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 		GtkWidget *		file_entry;
 
 		/* file entry */
-		parameter_widget->value_widget =
-			file_entry = gtk_file_entry_new((GtkFileEntryCustomize)parameter_widget->data);
+		parameter_widget->value_widget = file_entry = gtk_file_entry_new(
+			(GtkFileEntryCustomize)parameter_widget_file_entry_customize_function,
+			parameter_widget);
 		gtk_widget_set_size_request(file_entry, 220, 30);
 
 		gtk_file_entry_set_choose_directory(GTK_FILE_ENTRY(file_entry),
@@ -568,7 +606,7 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 		g_signal_connect(button, "toggled",
 			GTK_SIGNAL_FUNC(__on_edit_list_toggled), parameter_widget);
 
-		__parameter_widget_set_non_list_widget_value(parameter_widget, "");
+		parameter_widget_set_non_list_widget_value(parameter_widget, "");
 		gtk_widget_show(parameter_widget->value_widget);
 
 		sequence_edit = value_sequence_edit_new(parameter_widget->value_widget);
@@ -598,19 +636,19 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 		case GEOXML_PARAMETERTYPE_STRING:
 		case GEOXML_PARAMETERTYPE_ENUM:
 			g_signal_connect(parameter_widget->value_widget, "changed",
-				(GCallback)__parameter_widget_on_value_widget_changed, parameter_widget);
+				(GCallback)parameter_widget_on_value_widget_changed, parameter_widget);
 			break;
 		case GEOXML_PARAMETERTYPE_RANGE:
 			g_signal_connect(parameter_widget->value_widget, "output",
-				(GCallback)__parameter_widget_on_range_changed, parameter_widget);
+				(GCallback)parameter_widget_on_range_changed, parameter_widget);
 			break;
 		case GEOXML_PARAMETERTYPE_FILE:
 			g_signal_connect(parameter_widget->value_widget, "path-changed",
-				(GCallback)__parameter_widget_on_value_widget_changed, parameter_widget);
+				(GCallback)parameter_widget_on_value_widget_changed, parameter_widget);
 			break;
 		case GEOXML_PARAMETERTYPE_FLAG:
 			g_signal_connect(parameter_widget->value_widget, "toggled",
-				(GCallback)__parameter_widget_on_value_widget_changed, parameter_widget);
+				(GCallback)parameter_widget_on_value_widget_changed, parameter_widget);
 			break;
 		default:
 			break;
@@ -641,7 +679,7 @@ __parameter_widget_configure(struct parameter_widget * parameter_widget)
 		parameter_widget->callback, parameter_widget->user_data);
 
 	/* delete struct */
-	g_object_weak_ref(G_OBJECT(parameter_widget->widget), (GWeakNotify)__parameter_widget_weak_ref, parameter_widget);
+	g_object_weak_ref(G_OBJECT(parameter_widget->widget), (GWeakNotify)parameter_widget_weak_ref, parameter_widget);
 }
 
 /* Function: compare_parameters_by_keyword
@@ -875,7 +913,7 @@ parameter_widget_new(GeoXmlParameter * parameter, gboolean use_default_value, gp
 		.user_data = NULL
 	};
 
-	__parameter_widget_configure(parameter_widget);
+	parameter_widget_configure(parameter_widget);
 
 	return parameter_widget;
 }
@@ -897,7 +935,7 @@ struct libgebr_gui_program_edit_dicts *	dicts)
 GString *
 parameter_widget_get_widget_value(struct parameter_widget * parameter_widget)
 {
-	return __parameter_widget_get_widget_value(parameter_widget, TRUE);
+	return parameter_widget_get_widget_value_full(parameter_widget, TRUE);
 }
 
 /*
@@ -922,7 +960,7 @@ parameter_widget_update(struct parameter_widget * parameter_widget)
 	if (geoxml_program_parameter_get_is_list(parameter_widget->program_parameter) == TRUE)
 		__parameter_list_value_widget_update(parameter_widget);
 	else
-		__parameter_widget_set_non_list_widget_value(parameter_widget,
+		parameter_widget_set_non_list_widget_value(parameter_widget,
 			geoxml_program_parameter_get_first_value(
 				parameter_widget->program_parameter,
 				parameter_widget->use_default_value));
@@ -964,8 +1002,8 @@ parameter_widget_reconfigure(struct parameter_widget * parameter_widget)
 	parameter_widget->parameter_type = geoxml_parameter_get_type(parameter_widget->parameter);
 
 	g_object_weak_unref(G_OBJECT(parameter_widget->widget),
-		(GWeakNotify)__parameter_widget_weak_ref, parameter_widget);
+		(GWeakNotify)parameter_widget_weak_ref, parameter_widget);
 	gtk_widget_destroy(parameter_widget->widget);
 
-	__parameter_widget_configure(parameter_widget);
+	parameter_widget_configure(parameter_widget);
 }

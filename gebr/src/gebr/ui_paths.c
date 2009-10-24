@@ -97,7 +97,7 @@ path_list_setup_ui(void)
 		GTK_STOCK_CLOSE, GTK_RESPONSE_OK, NULL);
 	gtk_widget_set_size_request(dialog, 380, 260);
 
-	file_entry = gtk_file_entry_new(NULL);
+	file_entry = gtk_file_entry_new(NULL, NULL);
 	gtk_file_entry_set_choose_directory(GTK_FILE_ENTRY(file_entry), TRUE);
 	gtk_widget_set_size_request(file_entry, 220, 30);
 

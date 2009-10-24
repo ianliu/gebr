@@ -35,7 +35,7 @@ gtk_file_entry_get_type(void);
 typedef struct _GtkFileEntry		GtkFileEntry;
 typedef struct _GtkFileEntryClass	GtkFileEntryClass;
 
-typedef void (*GtkFileEntryCustomize)(GtkFileChooser *);
+typedef void (*GtkFileEntryCustomize)(GtkFileChooser *, gpointer);
 
 struct _GtkFileEntry {
 	GtkHBox			parent;
@@ -43,9 +43,11 @@ struct _GtkFileEntry {
 	GdkWindow *		event_window;
 	GtkWidget *		entry;
 
-	GtkFileEntryCustomize	customize_function;
 	gboolean		choose_directory;
 	gboolean		do_overwrite_confirmation;
+
+	GtkFileEntryCustomize	customize_function;
+	gpointer		customize_user_data;
 };
 struct _GtkFileEntryClass {
 	GtkHBoxClass		parent;
@@ -55,7 +57,7 @@ struct _GtkFileEntryClass {
 };
 
 GtkWidget *
-gtk_file_entry_new(GtkFileEntryCustomize customize_function);
+gtk_file_entry_new(GtkFileEntryCustomize customize_function, gpointer user_data);
 
 void
 gtk_file_entry_set_choose_directory(GtkFileEntry * file_entry, gboolean choose_directory);

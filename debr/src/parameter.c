@@ -121,6 +121,10 @@ parameter_separator_changed(GtkEntry * entry, struct ui_parameter_dialog * ui);
 static void
 parameter_file_type_changed(GtkComboBox * combo, struct parameter_widget * widget);
 static void
+parameter_file_filter_name_changed(GtkEnhancedEntry * entry, struct parameter_widget * widget);
+static void
+parameter_file_filter_pattern_changed(GtkEnhancedEntry * entry, struct parameter_widget * widget);
+static void
 parameter_number_min_on_activate(GtkEntry * entry, struct parameter_widget * widget);
 static gboolean
 parameter_number_min_on_focus_out(GtkEntry * entry, GdkEvent * event, struct parameter_widget * widget);
@@ -677,6 +681,12 @@ parameter_dialog_setup_ui(void)
 	case GEOXML_PARAMETERTYPE_FILE: {
 		GtkWidget *		type_label;
 		GtkWidget *		type_combo;
+		GtkWidget *		filter_label;
+		GtkWidget *		hbox;
+		GtkWidget *		filter_name_entry;
+		GtkWidget *		filter_pattern_entry;
+		gchar *			filter_name;
+		gchar *			filter_pattern;
 
 		/*
 		 * Type
@@ -701,6 +711,36 @@ parameter_dialog_setup_ui(void)
 		/* file or directory? */
 		gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo),
 			geoxml_program_parameter_get_file_be_directory(program_parameter) == TRUE ? 1 : 0);
+
+		/*
+		 * Filter
+		 */
+		filter_label = gtk_label_new(_("Filter file types:"));
+		gtk_widget_show(filter_label);
+		gtk_table_attach(GTK_TABLE(table), filter_label, 0, 1, row, row+1,
+			(GtkAttachOptions)(GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(filter_label), 0, 0.5);
+		hbox = gtk_hbox_new(FALSE, 0);
+		gtk_widget_show(hbox);
+		gtk_table_attach(GTK_TABLE(table), hbox, 1, 2, row, row+1,
+			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+			(GtkAttachOptions)(0), 0, 0), ++row;
+		filter_name_entry = gtk_enhanced_entry_new_with_empty_text(_("name"));
+		gtk_widget_show(filter_name_entry);
+		gtk_box_pack_start(GTK_BOX(hbox), filter_name_entry, FALSE, FALSE, 0);
+		g_signal_connect(filter_name_entry, "changed",
+			(GCallback)parameter_file_filter_name_changed, parameter_widget);
+		filter_pattern_entry = gtk_enhanced_entry_new_with_empty_text(_("pattern (eg. *.jpg *.png)"));
+		gtk_widget_show(filter_pattern_entry);
+		gtk_box_pack_start(GTK_BOX(hbox), filter_pattern_entry, FALSE, FALSE, 0);
+		g_signal_connect(filter_pattern_entry, "changed",
+			(GCallback)parameter_file_filter_pattern_changed, parameter_widget);
+
+		geoxml_program_parameter_get_file_filter(program_parameter, &filter_name, &filter_pattern);
+		gtk_enhanced_entry_set_text(GTK_ENHANCED_ENTRY(filter_name_entry), filter_name);
+		gtk_enhanced_entry_set_text(GTK_ENHANCED_ENTRY(filter_pattern_entry), filter_pattern);
+
 		break;
 	} case GEOXML_PARAMETERTYPE_INT: case GEOXML_PARAMETERTYPE_FLOAT:
 	case GEOXML_PARAMETERTYPE_RANGE: {
@@ -1341,6 +1381,22 @@ parameter_file_type_changed(GtkComboBox * combo, struct parameter_widget * widge
 	gtk_file_entry_set_choose_directory(GTK_FILE_ENTRY(widget->value_widget), is_directory);
 	geoxml_program_parameter_set_file_be_directory(GEOXML_PROGRAM_PARAMETER(widget->parameter), is_directory);
 
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+}
+
+static void
+parameter_file_filter_name_changed(GtkEnhancedEntry * entry, struct parameter_widget * widget)
+{
+	geoxml_program_parameter_set_file_filter(widget->program_parameter,
+		gtk_enhanced_entry_get_text(entry), NULL);
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+}
+
+static void
+parameter_file_filter_pattern_changed(GtkEnhancedEntry * entry, struct parameter_widget * widget)
+{
+	geoxml_program_parameter_set_file_filter(widget->program_parameter,
+		NULL, gtk_enhanced_entry_get_text(entry));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 

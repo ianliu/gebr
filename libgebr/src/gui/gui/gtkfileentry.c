@@ -18,6 +18,7 @@
 #include "../../intl.h"
 
 #include "gtkfileentry.h"
+#include "utils.h"
 
 /*
  * Prototypes
@@ -27,7 +28,7 @@ static void
 __gtk_file_entry_entry_changed(GtkEntry * entry, GtkFileEntry * file_entry);
 
 static void
-__gtk_file_entry_browse_button_clicked(GtkButton * button, GtkFileEntry * file_entry);
+__gtk_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIconPosition icon_pos, GdkEvent *event, GtkFileEntry * file_entry);
 
 /*
  * gobject stuff
@@ -101,7 +102,6 @@ static void
 gtk_file_entry_init(GtkFileEntry * file_entry)
 {
 	GtkWidget *	entry;
-	GtkWidget *	browse_button;
 
 	/* entry */
 	entry = gtk_entry_new();
@@ -110,15 +110,10 @@ gtk_file_entry_init(GtkFileEntry * file_entry)
 	gtk_box_pack_start(GTK_BOX(file_entry), entry, TRUE, TRUE, 0);
 	g_signal_connect(GTK_ENTRY(entry), "changed",
 		G_CALLBACK(__gtk_file_entry_entry_changed), file_entry);
-
-	/* browse button */
-	browse_button = gtk_button_new();
-	gtk_container_add(GTK_CONTAINER(browse_button), gtk_image_new_from_stock(GTK_STOCK_OPEN, 1));
-	g_object_set(G_OBJECT(browse_button), "relief", GTK_RELIEF_NONE, NULL);
-	gtk_widget_show_all(browse_button);
-	gtk_box_pack_start(GTK_BOX(file_entry), browse_button, FALSE, TRUE, 0);
-	g_signal_connect(GTK_OBJECT(browse_button), "clicked",
+	g_signal_connect(entry, "icon-release",
 		G_CALLBACK(__gtk_file_entry_browse_button_clicked), file_entry);
+	gtk_entry_set_icon_from_stock(GTK_ENTRY(entry),
+		GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
 
 	file_entry->choose_directory = FALSE;
 	file_entry->do_overwrite_confirmation = TRUE;
@@ -137,14 +132,15 @@ __gtk_file_entry_entry_changed(GtkEntry * entry, GtkFileEntry * file_entry)
 }
 
 static void
-__gtk_file_entry_browse_button_clicked(GtkButton * button, GtkFileEntry * file_entry)
+__gtk_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIconPosition icon_pos, GdkEvent *event, GtkFileEntry * file_entry)
 {
 	GtkWidget *	chooser_dialog;
 
 	chooser_dialog = gtk_file_chooser_dialog_new(
-		file_entry->choose_directory == FALSE ? _("Choose file") : _("Choose directory"),
-		NULL,
-		file_entry->choose_directory == FALSE ? GTK_FILE_CHOOSER_ACTION_SAVE : GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+		file_entry->choose_directory == FALSE
+			? _("Choose file") : _("Choose directory"), NULL,
+		file_entry->choose_directory == FALSE
+			? GTK_FILE_CHOOSER_ACTION_SAVE : GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_OK, GTK_RESPONSE_OK,
 		NULL);
@@ -153,7 +149,8 @@ __gtk_file_entry_browse_button_clicked(GtkButton * button, GtkFileEntry * file_e
 
 	/* call customize funtion for user changes */
 	if (file_entry->customize_function != NULL)
-		file_entry->customize_function(GTK_FILE_CHOOSER(chooser_dialog));
+		file_entry->customize_function(GTK_FILE_CHOOSER(chooser_dialog),
+			file_entry->customize_user_data);
 	switch (gtk_dialog_run(GTK_DIALOG(chooser_dialog))) {
 	case GTK_RESPONSE_OK:
 		gtk_entry_set_text(GTK_ENTRY(file_entry->entry), gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog)));
@@ -171,11 +168,16 @@ __gtk_file_entry_browse_button_clicked(GtkButton * button, GtkFileEntry * file_e
  */
 
 GtkWidget *
-gtk_file_entry_new(GtkFileEntryCustomize customize_function)
+gtk_file_entry_new(GtkFileEntryCustomize customize_function, gpointer user_data)
 {
-	return g_object_new(GTK_TYPE_FILE_ENTRY,
+	GtkFileEntry *	file_entry;
+
+	file_entry = g_object_new(GTK_TYPE_FILE_ENTRY,
 		"customize-function", customize_function,
 		NULL);
+	file_entry->customize_user_data = user_data;
+
+	return GTK_WIDGET(file_entry);
 }
 
 void
