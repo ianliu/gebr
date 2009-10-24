@@ -200,6 +200,8 @@ GSList ** radio_group)
 
 		GeoXmlParameterGroup *	parameter_group;
 		GeoXmlSequence *	instance;
+		GeoXmlSequence *	param;
+		gboolean		required;
 
 		parameter_group = GEOXML_PARAMETER_GROUP(parameter);
 
@@ -213,7 +215,25 @@ GSList ** radio_group)
 		gtk_expander_set_label_widget(GTK_EXPANDER(expander), label_widget);
 		gebr_gui_gtk_expander_hacked_define(expander, label_widget);
 
-		label = gtk_label_new(geoxml_parameter_get_label(parameter));
+		required = FALSE;
+		geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
+		geoxml_parameters_get_parameter(GEOXML_PARAMETERS(instance), &param, 0);
+		for (; param != NULL; geoxml_sequence_next(&param)) {
+			if (geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(param))) {
+				required = TRUE;
+				break;
+			}
+		}
+
+		if (required) {
+			gchar * markup;
+			markup = g_markup_printf_escaped("<b>%s*</b>",
+				geoxml_parameter_get_label(GEOXML_PARAMETER(param)));
+			label = gtk_label_new(markup);
+			gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
+			g_free(markup);
+		} else
+			label = gtk_label_new(geoxml_parameter_get_label(parameter));
 		gtk_widget_show(label);
 		gtk_box_pack_start(GTK_BOX(label_widget), label, FALSE, TRUE, 0);
 
@@ -222,7 +242,7 @@ GSList ** radio_group)
 			gtk_widget_show(instanciate_button);
 			gtk_box_pack_start(GTK_BOX(label_widget), instanciate_button, FALSE, TRUE, 2);
 			g_signal_connect(instanciate_button, "clicked",
-				GTK_SIGNAL_FUNC(program_edit_instanciate), program_edit);
+				G_CALLBACK(program_edit_instanciate), program_edit);
 			g_object_set(G_OBJECT(instanciate_button),
 				"image", gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_SMALL_TOOLBAR),
 				"relief", GTK_RELIEF_NONE,
@@ -233,7 +253,7 @@ GSList ** radio_group)
 			gtk_widget_show(deinstanciate_button);
 			gtk_box_pack_start(GTK_BOX(label_widget), deinstanciate_button, FALSE, TRUE, 2);
 			g_signal_connect(deinstanciate_button, "clicked",
-				GTK_SIGNAL_FUNC(program_edit_deinstanciate), program_edit);
+				G_CALLBACK(program_edit_deinstanciate), program_edit);
 			g_object_set(G_OBJECT(deinstanciate_button),
 				"image", gtk_image_new_from_stock(GTK_STOCK_REMOVE, GTK_ICON_SIZE_SMALL_TOOLBAR),
 				"relief", GTK_RELIEF_NONE,
