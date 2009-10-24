@@ -19,11 +19,10 @@ SUBDIRS = geoxml data validate upgrade menu-diff menu-edit menu-query doc
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr-geoxml.pc
 
-info_TEXINFOS = gebr-geoxml.texinfo
 man_MANS = gebr-geoxml.1
 EXTRA_DIST =					\
 	gebr-geoxml.pc				\
-	gebr-geoxml.1 gebr-geoxml.texinfo
+	gebr-geoxml.1
 
 libgebr_geoxmlincludedir=$(includedir)/libgebr
 libgebr_geoxmlinclude_HEADERS=geoxml.h

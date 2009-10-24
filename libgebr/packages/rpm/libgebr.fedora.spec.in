@@ -11,7 +11,8 @@ Group: Application/Misc
 URL: http://groups.google.com/group/gebr
 Packager: Bráulio Barros de Oliveira <brauliobo@gmail.com>
 Source: %{name}-%{version}.tar.gz
-Requires: glib2 >= 2.8.0, gdome2, WebKit
+Requires: glib2 >= 2.8.0, gdome2, WebKit-gtk
+BuildRequires: glib2-devel >= 2.8.0, gdome2-devel, WebKit-gtk-devel, intltool
 BuildRoot: /tmp/%{name}-%{version}
 Summary: GeBR library collecion
 %description
@@ -31,7 +32,6 @@ libgebr is the collection of libraries of GeBR:
 
 %prep
 %setup -q
-aclocal; mkdir -p m4;  intltoolize --copy --force; libtoolize --copy --force;automake --add-missing;autoconf
 
 %configure --disable-debug
 
