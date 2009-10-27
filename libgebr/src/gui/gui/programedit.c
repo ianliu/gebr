@@ -134,7 +134,8 @@ libgebr_gui_program_edit_reload(struct libgebr_gui_program_edit * program_edit, 
 				G_CALLBACK(program_edit->show_help_callback), program_edit->program);
 	}
 
-	gtk_container_foreach(GTK_CONTAINER(program_edit->scrolled_window), (GtkCallback)gtk_widget_destroy, NULL);
+	gtk_container_foreach(GTK_CONTAINER(program_edit->scrolled_window),
+		(GtkCallback)gtk_widget_destroy, NULL);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(program_edit->scrolled_window),
 		program_edit_load(program_edit, geoxml_program_get_parameters(program_edit->program)));
 }

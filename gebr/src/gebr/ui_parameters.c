@@ -87,7 +87,6 @@ parameters_configure_setup_ui(void)
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_OK, GTK_RESPONSE_OK);
 
-	gtk_widget_set_size_request(dialog, 630, 400);
 	g_signal_connect(dialog, "response",
 		G_CALLBACK(parameters_actions), ui_parameters);
 	g_signal_connect(dialog, "delete-event",
@@ -106,6 +105,14 @@ parameters_configure_setup_ui(void)
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_parameters->program_edit->widget, TRUE, TRUE, 0);
 	gtk_widget_show(dialog);
+
+	/* adjust window size as larger as possible */
+	gdouble width;
+	width = GTK_BIN(GTK_BIN(ui_parameters->program_edit->scrolled_window)->child)->child->allocation.width + 30;
+	if (width >= gdk_screen_get_width(gdk_screen_get_default()))
+		gtk_window_maximize(GTK_WINDOW(dialog));
+	else
+		gtk_widget_set_size_request(dialog, width, 500);
 
 	return ui_parameters;
 }
