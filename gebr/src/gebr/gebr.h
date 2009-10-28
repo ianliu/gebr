@@ -89,6 +89,7 @@ struct gebr {
 		int			height;
 		gboolean		log_expander_state;
 		gboolean		job_log_word_wrap;
+		gboolean		job_log_auto_scroll;
 	} config;
 
 	/* Pixmaps */

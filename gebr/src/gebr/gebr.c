@@ -351,6 +351,8 @@ gebr_config_load(gboolean nox)
 			"general", "logexpand", FALSE);
 		gebr.config.job_log_word_wrap = g_key_file_load_boolean_key(gebr.config.key_file,
 			"general", "job_log_word_wrap", FALSE);
+		gebr.config.job_log_auto_scroll = g_key_file_load_boolean_key(gebr.config.key_file,
+			"general", "job_log_auto_scroll", FALSE);
 	}
 	if (new_config) {
 		if (nox) {
@@ -441,6 +443,7 @@ gebr_config_save(gboolean verbose)
 	g_key_file_set_integer(gebr.config.key_file, "general", "height", gebr.config.height);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "log_expander_state", gebr.config.log_expander_state);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_word_wrap", gebr.config.job_log_word_wrap);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_auto_scroll", gebr.config.job_log_auto_scroll);
 
 	/* Save list of servers */
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {

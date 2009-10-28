@@ -248,6 +248,7 @@ job_append_output(struct job * job, GString * output)
 {
 	GtkTextIter	iter;
 	GString *	text;
+	GtkTextMark *	mark;
 
 	if (!output->len)
 		return;
@@ -261,6 +262,10 @@ job_append_output(struct job * job, GString * output)
 	if (job_is_active(job) == TRUE) {
 		gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
 		gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, text->str, text->len);
+		if (gebr.config.job_log_auto_scroll) {
+			mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
+			gtk_text_view_scroll_mark_onscreen(gebr.ui_job_control->text_view, mark);
+		}
 	}
 }
 
@@ -330,6 +335,7 @@ job_update_status(struct job * job)
 	GdkPixbuf *	pixbuf;
 	GtkTextIter	iter;
 	GString *	finish_date;
+	GtkTextMark *	mark;
 
 	/* Select and set icon */
 	switch (job->status) {
@@ -362,6 +368,10 @@ job_update_status(struct job * job)
 	g_string_printf(finish_date, "\n%s %s", _("Finish date:"), localized_date(job->finish_date->str));
 	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
 	gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, finish_date->str, finish_date->len);
+	if (gebr.config.job_log_auto_scroll) {
+		mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
+		gtk_text_view_scroll_mark_onscreen(gebr.ui_job_control->text_view, mark);
+	}
 
 	/* frees */
 	g_string_free(finish_date, TRUE);
