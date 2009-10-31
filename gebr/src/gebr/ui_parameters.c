@@ -106,7 +106,7 @@ parameters_configure_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_parameters->program_edit->widget, TRUE, TRUE, 0);
 	gtk_widget_show(dialog);
 
-	/* adjust window size as larger as possible */
+	/* adjust window size to fit parameters horizontally */
 	gdouble width;
 	width = GTK_BIN(GTK_BIN(ui_parameters->program_edit->scrolled_window)->child)->child->allocation.width + 30;
 	if (width >= gdk_screen_get_width(gdk_screen_get_default()))

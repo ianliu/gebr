@@ -41,7 +41,7 @@
  * Prototypes
  */
 static void
-menu_scan_directory(const gchar * directory, gboolean scan_subdirs, FILE * index_fp);
+menu_scan_directory(const gchar * directory, gboolean system_dir, FILE * index_fp);
 
 /*
  * Section: Public
@@ -379,7 +379,7 @@ menu_get_help_from_program_ref(GeoXmlProgram * program)
  * Scans _directory_ for menus
  */
 static void
-menu_scan_directory(const gchar * directory, gboolean scan_subdirs, FILE * index_fp)
+menu_scan_directory(const gchar * directory, gboolean system_dir, FILE * index_fp)
 {
 	gchar *			filename;
 	GString *		path;
@@ -390,8 +390,8 @@ menu_scan_directory(const gchar * directory, gboolean scan_subdirs, FILE * index
 		GeoXmlSequence *	category;
 
 		g_string_printf(path, "%s/%s", directory, filename);
-		if (scan_subdirs && g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
-			menu_scan_directory(path->str, FALSE, index_fp);
+		if (system_dir && g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
+			menu_scan_directory(path->str, TRUE, index_fp);
 			continue;
 		}
 		if (fnmatch("*.mnu", filename, 1))
@@ -400,6 +400,20 @@ menu_scan_directory(const gchar * directory, gboolean scan_subdirs, FILE * index
 		menu = document_load_path(path->str);
 		if (menu == NULL)
 			continue;
+		/* verify if filename is correct */
+		if (system_dir) {
+			gchar *	rel_filename;
+
+			rel_filename = path->str + strlen(GEBR_SYS_MENUS_DIR);
+			while (*rel_filename == '/')
+				rel_filename++;
+			if (strcmp(geoxml_document_get_filename(menu), rel_filename)) {
+				gebr_message(LOG_ERROR, TRUE, TRUE, _("Invalid menu '%s'"),
+					path->str);
+				geoxml_document_free(menu);
+				continue;
+			}
+		}
 
 		geoxml_flow_get_category(GEOXML_FLOW(menu), &category, 0);
 		for (; category != NULL; geoxml_sequence_next(&category))
