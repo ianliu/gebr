@@ -274,7 +274,7 @@ program_preview(void)
 		GTK_STOCK_REFRESH, RESPONSE_REFRESH,
 		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 		NULL);
-	gtk_widget_set_size_request(dialog, 630, 400);
+	g_object_set(dialog, "type-hint", GDK_WINDOW_TYPE_HINT_NORMAL, NULL);
 	g_signal_connect(dialog, "response",
 		G_CALLBACK(program_preview_on_response), data);
 	g_signal_connect(dialog, "delete-event",
@@ -286,6 +286,14 @@ program_preview(void)
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), data->program_edit->widget, TRUE, TRUE, 0);
 	gtk_widget_show(dialog);
+
+	/* adjust window size to fit parameters horizontally */
+	gdouble width;
+	width = GTK_BIN(GTK_BIN(data->program_edit->scrolled_window)->child)->child->allocation.width + 30;
+	if (width >= gdk_screen_get_width(gdk_screen_get_default()))
+		gtk_window_maximize(GTK_WINDOW(dialog));
+	else
+		gtk_widget_set_size_request(dialog, width, 500);
 }
 
 /*
