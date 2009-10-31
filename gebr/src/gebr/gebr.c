@@ -98,7 +98,7 @@ gebr_init(void)
 	gebr_message(LOG_START, TRUE, TRUE, _("GêBR Initiating..."));
 
 	/* finally the config. file */
-	(void) gebr_config_load(FALSE);
+	gebr_config_load(FALSE);
 
 	/* check for a menu list change */
 	if (menu_refresh_needed() == TRUE) {
@@ -199,20 +199,24 @@ void
 gebr_log_load(void)
 {
 	GString *	log_filename;
-	GList *		messages;
 	GList *		i;
 
 	log_filename = g_string_new(NULL);
 	g_string_printf(log_filename, "%s/.gebr/log/gebr.log", getenv("HOME"));
 	gebr.log = log_open(log_filename->str);
 
-	messages = log_messages_read(gebr.log);
-	for (i = messages; i != NULL; i = g_list_next(i))
-		log_add_message_to_list(gebr.ui_log, (struct log_message *)i->data);
+	if (gebr.config.log_load) {
+		GList *		messages;
+
+		messages = log_messages_read(gebr.log);
+		for (i = messages; i != NULL; i = g_list_next(i))
+			log_add_message_to_list(gebr.ui_log, (struct log_message *)i->data);
+
+		log_messages_free(messages);
+	}
 
 	/* frees */
 	g_string_free(log_filename, TRUE);
-	log_messages_free(messages);
 }
 
 /* Function: gebr_config_load_from_gengetopt
@@ -237,6 +241,7 @@ gebr_config_load_from_gengetopt(void)
 	gebr.config.width = ggopt.width_arg;
 	gebr.config.height = ggopt.height_arg;
 	gebr.config.log_expander_state = (gboolean)ggopt.logexpand_given;
+	gebr.config.log_load = FALSE;
 
 	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
@@ -348,7 +353,9 @@ gebr_config_load(gboolean nox)
 		gebr.config.width = g_key_file_load_int_key(gebr.config.key_file, "general", "width", 700);
 		gebr.config.height = g_key_file_load_int_key(gebr.config.key_file, "general", "height", 400);
 		gebr.config.log_expander_state = g_key_file_load_boolean_key(gebr.config.key_file,
-			"general", "logexpand", FALSE);
+			"general", "log_expander_state", FALSE);
+		gebr.config.log_load = g_key_file_load_boolean_key(gebr.config.key_file,
+			"general", "log_load", FALSE);
 		gebr.config.job_log_word_wrap = g_key_file_load_boolean_key(gebr.config.key_file,
 			"general", "job_log_word_wrap", FALSE);
 		gebr.config.job_log_auto_scroll = g_key_file_load_boolean_key(gebr.config.key_file,
@@ -442,6 +449,7 @@ gebr_config_save(gboolean verbose)
 	g_key_file_set_integer(gebr.config.key_file, "general", "width", gebr.config.width);
 	g_key_file_set_integer(gebr.config.key_file, "general", "height", gebr.config.height);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "log_expander_state", gebr.config.log_expander_state);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "log_load", gebr.config.log_load);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_word_wrap", gebr.config.job_log_word_wrap);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_auto_scroll", gebr.config.job_log_auto_scroll);
 

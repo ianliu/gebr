@@ -31,6 +31,7 @@ struct ui_preferences {
 	GtkWidget *		usermenus;
 	GtkWidget *		editor;
 	GtkWidget *		browser;
+	GtkWidget *		log_load;
 };
 
 struct ui_preferences *

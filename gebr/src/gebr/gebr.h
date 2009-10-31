@@ -88,6 +88,7 @@ struct gebr {
 		int			width;
 		int			height;
 		gboolean		log_expander_state;
+		gboolean		log_load;
 		gboolean		job_log_word_wrap;
 		gboolean		job_log_auto_scroll;
 	} config;
