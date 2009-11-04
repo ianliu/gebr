@@ -47,6 +47,9 @@ struct ui_flow_io {
 void
 flow_io_setup_ui			(gboolean		executable);
 
+void
+flow_io_run_last			(void);
+
 gboolean
 flow_io_get_selected			(struct ui_flow_io *	ui_flow_io,
 					 GtkTreeIter *		iter);

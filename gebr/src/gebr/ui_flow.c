@@ -49,6 +49,9 @@ flow_io_actions			(gint			response,
 				 struct ui_flow_io *	ui_flow_io);
 
 static void
+flow_io_run			(GeoXmlFlowServer *	server);
+
+static void
 on_renderer_edited		(GtkCellRendererText *	renderer,
 				 gchar *		path,
 				 gchar *		new_text,
@@ -345,6 +348,34 @@ flow_io_setup_ui(gboolean executable)
 }
 
 /**
+ * flow_io_run_last:
+ * Run with the last ran server/io.
+ */
+void
+flow_io_run_last()
+{
+	GeoXmlSequence * server_io;
+	GeoXmlSequence * last_run;
+	const gchar * aux;
+
+	aux = "\255";
+	last_run = NULL;
+	geoxml_flow_get_server(gebr.flow, &server_io, 0);
+	while (server_io) {
+		const gchar * date;
+		date = geoxml_flow_server_get_date_last_run(GEOXML_FLOW_SERVER(server_io));
+		if (strlen(date) && strcmp(date, aux) < 0) {
+			aux = date;
+			last_run = server_io;
+		}
+		geoxml_sequence_next(&server_io);
+	}
+	if (last_run)
+		flow_io_run(GEOXML_FLOW_SERVER(last_run));
+}
+
+
+/**
  * flow_io_get_selected:
  * @ui_flow_io: The structure containing the #GtkTreeView.
  * @iter: The iterator that will point to the selected item.
@@ -482,7 +513,7 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 	gboolean		has_server;
 
 	/* Start with a string that is always lower than any date */
-	last_run = "/"; 
+	last_run = "\255"; 
 	has_server = FALSE;
 	geoxml_flow_get_server(gebr.flow, &server_io, 0);
 
@@ -553,11 +584,7 @@ static gboolean
 flow_io_actions(gint response, struct ui_flow_io * ui_flow_io)
 {
 	GtkTreeIter		iter;
-	GtkTreeIter		server_iter;
-
-	gchar *			address;
 	GdkPixbuf *		icon;
-	struct server *		server;
 	GeoXmlFlowServer *	flow_server;
 
 	document_save(GEOXML_DOCUMENT(gebr.flow));
@@ -568,15 +595,8 @@ flow_io_actions(gint response, struct ui_flow_io * ui_flow_io)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
 				FLOW_IO_ICON, &icon,
-				FLOW_IO_ADDRESS, &address,
 				FLOW_IO_POINTER, &flow_server,
 				-1);
-
-		if (!server_find_address(address, &server_iter)) {
-			g_free(address);
-			return TRUE;
-		}
-		g_free(address);
 
 		if (icon != gebr.pixmaps.stock_connect) {
 			GtkWidget * dialog;
@@ -592,27 +612,47 @@ flow_io_actions(gint response, struct ui_flow_io * ui_flow_io)
 			gtk_widget_destroy(dialog);
 			return FALSE;
 		}
-
-		gtk_tree_model_get(GTK_TREE_MODEL(
-			gebr.ui_server_list->common.store), &server_iter,
-			SERVER_POINTER, &server,
-			-1); 
-
-		geoxml_flow_server_set_date_last_run(flow_server,
-			iso_date());
-		geoxml_flow_io_set_input(gebr.flow,
-			geoxml_flow_server_io_get_input(flow_server));
-		geoxml_flow_io_set_output(gebr.flow,
-			geoxml_flow_server_io_get_output(flow_server));
-		geoxml_flow_io_set_error(gebr.flow,
-			geoxml_flow_server_io_get_error(flow_server));
-
-		flow_run(server);
+		flow_io_run(flow_server);
 		flow_browse_info_update();
 	}
 
 	return TRUE;
 }
+
+/**
+ * flow_io_run:
+ * @server: a #GeoXmlFlowServer
+ *
+ * Copies the IO informations to the flow and run it.
+ */
+static void
+flow_io_run(GeoXmlFlowServer * server_io)
+{
+	GtkTreeIter	iter;
+	const gchar *	address;
+	struct server *	server;
+
+	address = geoxml_flow_server_get_address(server_io);
+
+	if (!server_find_address(address, &iter))
+		return;
+
+	geoxml_flow_server_set_date_last_run(server_io,
+		iso_date());
+	geoxml_flow_io_set_input(gebr.flow,
+		geoxml_flow_server_io_get_input(server_io));
+	geoxml_flow_io_set_output(gebr.flow,
+		geoxml_flow_server_io_get_output(server_io));
+	geoxml_flow_io_set_error(gebr.flow,
+		geoxml_flow_server_io_get_error(server_io));
+
+	gtk_tree_model_get(GTK_TREE_MODEL(
+		gebr.ui_server_list->common.store), &iter,
+		SERVER_POINTER, &server,
+		-1); 
+	flow_run(server);
+}
+
 
 static void
 on_renderer_edited		(GtkCellRendererText *	renderer,

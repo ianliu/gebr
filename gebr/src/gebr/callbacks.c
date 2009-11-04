@@ -220,7 +220,7 @@ void
 on_flow_io_activate(void)
 {
 	flow_browse_single_selection();
-	flow_io_setup_ui(FALSE);
+	flow_io_setup_ui(TRUE);
 }
 
 /*
@@ -231,7 +231,8 @@ on_flow_io_activate(void)
 void
 on_flow_execute_activate(void)
 {
-	flow_io_setup_ui(TRUE);
+	// flow_io_setup_ui(TRUE);
+	flow_io_run_last();
 }
 
 /* Function: on_flow_revision_save_activate
