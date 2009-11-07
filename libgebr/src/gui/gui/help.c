@@ -54,7 +54,7 @@ gebr_gui_help_show(const gchar * uri, const gchar * browser)
 	GString *	cmd_line;
 
 	cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s %s &", browser, html_path->str);
+	g_string_printf(cmd_line, "%s %s &", browser, uri);
 	system(cmd_line->str);
 
 	g_string_free(cmd_line, TRUE);

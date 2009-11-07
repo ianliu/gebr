@@ -93,10 +93,6 @@ gebr_init(void)
 	gebr.pixmaps.stock_go_forward = gtk_widget_render_icon(gebr.invisible, GTK_STOCK_GO_FORWARD, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 	gebr.pixmaps.stock_info = gtk_widget_render_icon(gebr.invisible, GTK_STOCK_INFO, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
-	/* log */
-	gebr_log_load();
-	gebr_message(LOG_START, TRUE, TRUE, _("GêBR Initiating..."));
-
 	/* finally the config. file */
 	gebr_config_load(FALSE);
 
@@ -334,6 +330,10 @@ gebr_config_load(gboolean nox)
 			fprintf(stderr, "Error parsing config file; reseting it.");
 	}
 	if (!done_by_gengetopt) {
+		GString *	data_dir;
+
+		data_dir = g_string_new(NULL);
+
 		gebr.config.username = g_key_file_load_string_key(gebr.config.key_file,
 			"general", "name", g_get_real_name());
 		gebr.config.email = g_key_file_load_string_key(gebr.config.key_file,
@@ -341,8 +341,9 @@ gebr_config_load(gboolean nox)
 		gebr.config.usermenus = g_key_file_load_string_key(gebr.config.key_file,
 			"general", "usermenus", getenv("HOME"));
 
+		g_string_printf(data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
 		gebr.config.data = g_key_file_load_string_key(gebr.config.key_file,
-			"general", "data", getenv("HOME"));
+			"general", "data", data_dir->str);
 		/* DEPRECATED: old config structure */
 		if (g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))
 			g_string_printf(gebr.config.data, "%s/.gebr/gebr/data", getenv("HOME"));
@@ -360,7 +361,16 @@ gebr_config_load(gboolean nox)
 			"general", "job_log_word_wrap", FALSE);
 		gebr.config.job_log_auto_scroll = g_key_file_load_boolean_key(gebr.config.key_file,
 			"general", "job_log_auto_scroll", FALSE);
+
+		g_string_free(data_dir, TRUE);
 	}
+	if (nox)
+		return 0;
+
+	/* log */
+	gebr_log_load();
+	gebr_message(LOG_START, TRUE, TRUE, _("GêBR Initiating..."));
+	
 	if (new_config) {
 		if (nox) {
 			return 1;
@@ -370,9 +380,6 @@ gebr_config_load(gboolean nox)
 			return 0;
 		}
 	}
-
-	if (nox)
-		return 0;
 
 	gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
 	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);

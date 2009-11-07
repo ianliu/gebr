@@ -113,9 +113,6 @@ gebr_init(void);
 gboolean
 gebr_quit(void);
 
-void
-gebr_log_load(void);
-
 int
 gebr_config_load(gboolean nox);
 
