@@ -101,7 +101,7 @@ flow_edition_setup_ui(void)
 
 	vbox = gtk_vbox_new(FALSE, 0);
 
-	combobox = gtk_combo_box_new_with_model(gebr.ui_server_list->common.store);
+	combobox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(gebr.ui_server_list->common.store));
 	renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "text", SERVER_ADDRESS);

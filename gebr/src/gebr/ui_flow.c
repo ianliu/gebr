@@ -363,13 +363,8 @@ flow_io_run_last()
 	gebr_geoxml_flow_get_server(gebr.flow, &server_io, 0);
 	while (server_io) {
 		const gchar * date;
-<<<<<<< HEAD:gebr/src/gebr/ui_flow.c
-		date = geoxml_flow_server_get_date_last_run(GEOXML_FLOW_SERVER(server_io));
-		if (strcmp(aux, date) < 0) {
-=======
 		date = gebr_geoxml_flow_server_get_date_last_run(GEBR_GEOXML_FLOW_SERVER(server_io));
-		if (strlen(date) && strcmp(date, aux) < 0) {
->>>>>>> geoxml name refactoring:gebr/src/gebr/ui_flow.c
+		if (strcmp(aux, date) < 0) {
 			aux = date;
 			last_run = server_io;
 		}
