@@ -358,13 +358,13 @@ flow_io_run_last()
 	GeoXmlSequence * last_run;
 	const gchar * aux;
 
-	aux = "\255";
+	aux = "";
 	last_run = NULL;
 	geoxml_flow_get_server(gebr.flow, &server_io, 0);
 	while (server_io) {
 		const gchar * date;
 		date = geoxml_flow_server_get_date_last_run(GEOXML_FLOW_SERVER(server_io));
-		if (strlen(date) && strcmp(date, aux) < 0) {
+		if (strcmp(aux, date) < 0) {
 			aux = date;
 			last_run = server_io;
 		}
@@ -512,8 +512,7 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 	const gchar *		last_run;
 	gboolean		has_server;
 
-	/* Start with a string that is always lower than any date */
-	last_run = "\255"; 
+	last_run = ""; 
 	has_server = FALSE;
 	geoxml_flow_get_server(gebr.flow, &server_io, 0);
 
@@ -556,7 +555,7 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 			FLOW_IO_POINTER, server_io,
 			-1);
 
-		if (strlen(date) && strcmp(date, last_run) < 0) {
+		if (strcmp(date, last_run) < 0) {
 			last_run = date;
 			last_run_iter = iter;
 		}
@@ -564,7 +563,7 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 	}
 
 	if (has_server) {
-		if (last_run[0] == '/')
+		if (strlen(last_run))
 			gtk_tree_model_get_iter_first(
 				GTK_TREE_MODEL(ui_flow_io->store), &last_run_iter);
 		flow_io_select_iter(ui_flow_io, &last_run_iter);

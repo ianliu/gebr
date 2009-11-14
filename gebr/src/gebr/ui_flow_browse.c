@@ -115,9 +115,9 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gebr_gui_gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(ui_flow_browse->view), FB_LINE_FLOW_POINTER,
 		(GebrGuiGtkTreeViewMoveSequenceCallback)flow_browse_on_flow_move, NULL);
 	g_signal_connect(ui_flow_browse->view, "row-activated",
-		GTK_SIGNAL_FUNC(flow_browse_on_row_activated), ui_flow_browse);
+		G_CALLBACK(flow_browse_on_row_activated), ui_flow_browse);
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->view), "cursor-changed",
-		GTK_SIGNAL_FUNC(flow_browse_load), ui_flow_browse);
+		G_CALLBACK(flow_browse_load), ui_flow_browse);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -207,7 +207,7 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 	g_object_set(ui_flow_browse->info.help, "sensitive", FALSE, NULL);
 	gtk_box_pack_end(GTK_BOX(infopage), ui_flow_browse->info.help, FALSE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->info.help), "clicked",
-		GTK_SIGNAL_FUNC(flow_browse_show_help), ui_flow_browse);
+		G_CALLBACK(flow_browse_show_help), ui_flow_browse);
 
 	/* Author */
 	ui_flow_browse->info.author = gtk_label_new("");
@@ -422,6 +422,13 @@ flow_browse_load(void)
 	gebr.flow = GEOXML_FLOW(document_load(filename));
 	if (gebr.flow == NULL)
 		goto out;
+
+	/* if there are no servers, introduce local server */
+	if (!geoxml_flow_get_servers_number(gebr.flow)) {
+		GeoXmlFlowServer * local_server;
+		local_server = geoxml_flow_append_server(gebr.flow);
+		geoxml_flow_server_set_address(local_server, "Local server");
+	}
 
 	/* load into UI */
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,

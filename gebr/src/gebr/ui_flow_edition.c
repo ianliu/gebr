@@ -81,6 +81,7 @@ flow_edition_setup_ui(void)
 	GtkWidget *			hpanel;
 	GtkWidget *			scrolled_window;
 	GtkWidget *			vbox;
+	GtkWidget *			combobox;
 	GtkTreeViewColumn *		col;
 	GtkCellRenderer *		renderer;
 
@@ -98,10 +99,19 @@ flow_edition_setup_ui(void)
 	frame = gtk_frame_new(_("Flow sequence"));
 	gtk_paned_pack1(GTK_PANED(hpanel), frame, FALSE, FALSE);
 
+	vbox = gtk_vbox_new(FALSE, 0);
+
+	combobox = gtk_combo_box_new_with_model(gebr.ui_server_list->common.store);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "text", SERVER_ADDRESS);
+	gtk_box_pack_start(GTK_BOX(vbox), combobox, FALSE, TRUE, 0);
+
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
+	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	ui_flow_edition->fseq_store = gtk_list_store_new(FSEQ_N_COLUMN,
 		GDK_TYPE_PIXBUF,
