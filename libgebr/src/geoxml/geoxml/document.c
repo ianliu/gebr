@@ -197,7 +197,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument * document)
 	 */
 
 	version = (gchar*)gebr_geoxml_document_get_version((GebrGeoXmlDocument*)document);
-	/* 0.1.x to 0.2.0 */
+	/* document 0.1.x to 0.2.0 */
 	if (strcmp(version, "0.2.0") < 0) {
 		GdomeElement *		element;
 		GdomeElement *		before;
@@ -212,7 +212,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument * document)
 		if (gebr_geoxml_document_get_type((GebrGeoXmlDocument*)document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
 			__gebr_geoxml_insert_new_element(element, "lastrun", NULL);
 	}
-	/* 0.2.0 to 0.2.1 */
+	/* document 0.2.0 to 0.2.1 */
 	if (strcmp(version, "0.2.1") < 0) {
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument*)document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			GebrGeoXmlSequence *	program;
@@ -227,7 +227,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument * document)
 			}
 		}
 	}
-	/* flow 0.2.1 to 0.2.2 */
+	/* document 0.2.1 to 0.2.2 */
 	if (strcmp(version, "0.2.2") < 0) {
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument*)document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			GdomeElement *		element;
@@ -251,12 +251,12 @@ __gebr_geoxml_document_validate_doc(GdomeDocument * document)
 				__gebr_geoxml_set_attr_value(element, "digits", "");
 		}
 	}
-	/* flow 0.2.2 to 0.2.3
+	/* document 0.2.2 to 0.2.3
 	 * nothing changed. why? because the changes were about the removed group support
 	 */
 	if (strcmp(version, "0.2.3") < 0)
 		__gebr_geoxml_set_attr_value(root_element, "version", "0.2.3");
-	/* flow 0.2.3 to 0.3.0 */
+	/* document 0.2.3 to 0.3.0 */
 	if (strcmp(version, "0.3.0") < 0) {
 		__gebr_geoxml_set_attr_value(root_element, "version", "0.3.0");
 		__gebr_geoxml_set_attr_value(root_element, "nextid", "n0");
@@ -369,18 +369,21 @@ __gebr_geoxml_document_validate_doc(GdomeDocument * document)
 			}
 		}
 	}
-	/* flow 0.3.0 to 0.3.1 */
+	/* document 0.3.0 to 0.3.1 */
 	if (strcmp(version, "0.3.1") < 0) {
 		GdomeElement *	dict_element;
-		GdomeElement *	pivot;
 
 		__gebr_geoxml_set_attr_value(root_element, "version", "0.3.1");
 
 		dict_element = __gebr_geoxml_insert_new_element(root_element, "dict",
 			__gebr_geoxml_get_first_element(root_element, "date"));
 		__gebr_geoxml_parameters_append_new(dict_element);
-		pivot = __gebr_geoxml_next_element(__gebr_geoxml_get_first_element(root_element, "io"));
-		__gebr_geoxml_insert_new_element(root_element, "servers", pivot);
+
+		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument*)document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+			GdomeElement *	pivot;
+			pivot = __gebr_geoxml_next_element(__gebr_geoxml_get_first_element(root_element, "io"));
+			__gebr_geoxml_insert_new_element(root_element, "servers", pivot);
+		}
 	}
 
 	ret = GEBR_GEOXML_RETV_SUCCESS;

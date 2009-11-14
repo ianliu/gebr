@@ -25,7 +25,7 @@
 extern struct gebrd	gebrd;
 
 struct gebrd {
-	GebrCommListenSocket *		listen_socket;
+	GebrCommListenSocket *	listen_socket;
 	GList *			clients;
 	GList *			jobs;
 	struct log *		log;

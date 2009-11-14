@@ -36,7 +36,7 @@ gebr_comm_listen_socket_get_type(void);
 #define GEBR_COMM_IS_LISTEN_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_COMM_LISTEN_SOCKET_TYPE))
 #define GEBR_COMM_LISTEN_SOCKET_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_LISTEN_SOCKET_TYPE, GebrCommListenSocketClass))
 
-typedef struct _GebrCommListenSocket	GebrCommListenSocket;
+typedef struct _GebrCommListenSocket		GebrCommListenSocket;
 typedef struct _GebrCommListenSocketClass	GebrCommListenSocketClass;
 
 struct _GebrCommListenSocket {

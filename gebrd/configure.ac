@@ -63,17 +63,17 @@ AC_SUBST(GTHREAD_LIBS)
 AC_SUBST(GTHREAD_CFLAGS)
 
 dnl check for libgebr
-PKG_CHECK_MODULES(LIBGEBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
-AC_SUBST(CFLAGS)
-AC_SUBST(LIBS)
+PKG_CHECK_MODULES(GEBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
+AC_SUBST(GEBR_CFLAGS)
+AC_SUBST(GEBR_LIBS)
 dnl check for libgebr_geoxml
 PKG_CHECK_MODULES(GEOXML, gebr-geoxml,,AC_MSG_ERROR([Could not find libgebr_geoxml]))
 AC_SUBST(GEBR_GEOXML_CFLAGS)
 AC_SUBST(GEBR_GEOXML_LIBS)
 dnl check for libgebr_comm
-PKG_CHECK_MODULES(COMM, gebr-comm,,AC_MSG_ERROR([Could not find libgebr_comm]))
-AC_SUBST(COMM_CFLAGS)
-AC_SUBST(COMM_LIBS)
+PKG_CHECK_MODULES(GEBR_COMM, gebr-comm,,AC_MSG_ERROR([Could not find libgebr_comm]))
+AC_SUBST(GEBR_COMM_CFLAGS)
+AC_SUBST(GEBR_COMM_LIBS)
 
 AC_OUTPUT([
 packages/rpm/gebrd.fedora.spec packages/rpm/gebrd.opensuse.spec packages/rpm/gebrd.mandriva.spec
