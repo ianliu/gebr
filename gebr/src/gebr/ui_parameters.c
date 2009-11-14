@@ -95,14 +95,14 @@ parameters_configure_setup_ui(void)
 
 	*ui_parameters = (struct ui_parameters) {
 		.dialog = dialog,
-		.program_edit = libgebr_gui_program_edit_setup_ui(
+		.program_edit = gebr_gui_gebr_gui_program_edit_setup_ui(
 			GEBR_GEOXML_PROGRAM(gebr_geoxml_sequence_append_clone(GEBR_GEOXML_SEQUENCE(gebr.program))),
 			flow_io_customized_paths_from_line, parameters_on_link_button_clicked, FALSE)
 	};
 	ui_parameters->program_edit->dicts.project = GEBR_GEOXML_DOCUMENT(gebr.project);
 	ui_parameters->program_edit->dicts.line = GEBR_GEOXML_DOCUMENT(gebr.line);
 	ui_parameters->program_edit->dicts.flow = GEBR_GEOXML_DOCUMENT(gebr.flow);
-	libgebr_gui_program_edit_reload(ui_parameters->program_edit, NULL);
+	gebr_gui_gebr_gui_program_edit_reload(ui_parameters->program_edit, NULL);
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_parameters->program_edit->widget, TRUE, TRUE, 0);
 	gtk_widget_show(dialog);
@@ -130,7 +130,7 @@ parameters_reset_to_default(GebrGeoXmlParameters * parameters)
 
 	parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
 	for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter)) {
-		if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter)) == GEBR_GEOXML_PARAMETERTYPE_GROUP) {
+		if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter)) == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
 			GebrGeoXmlSequence *	instance;
 
 			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
@@ -206,7 +206,7 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 		break;
 	} case GTK_RESPONSE_DEFAULT:
 		parameters_reset_to_default(gebr_geoxml_program_get_parameters(ui_parameters->program_edit->program));
-		libgebr_gui_program_edit_reload(ui_parameters->program_edit, NULL);
+		gebr_gui_gebr_gui_program_edit_reload(ui_parameters->program_edit, NULL);
 		return;
 	case GTK_RESPONSE_HELP:
 		program_help_show();
@@ -218,7 +218,7 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 	}
 
 	/* gui free */
-	libgebr_gui_program_edit_destroy(ui_parameters->program_edit);
+	gebr_gui_gebr_gui_program_edit_destroy(ui_parameters->program_edit);
 	gtk_widget_destroy(GTK_WIDGET(dialog));
 	g_free(ui_parameters);
 }

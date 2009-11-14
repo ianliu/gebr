@@ -581,7 +581,7 @@
 	  - really fix the problem with list parameter (now for all types)
 	* fix last commit: really fixed list parameter editing
 	* - valuesequenceedit refactored
-	  - fix parameter_widget's on_edit_list_toggled
+	  - fix gebr_gui_parameter_widget's on_edit_list_toggled
 
 2009-01-29  Ricardo Biloti <biloti@gmail.com>
 
@@ -938,7 +938,7 @@
 	* the saga of list parameters ended!
 	  - changed DTD to make value and default values independets
 	  - refactoring of GebrGeoXmlProgramParameter functions
-	  - general refacte on parameter_widget function:
+	  - general refacte on gebr_gui_parameter_widget function:
 	  - every change is auto submited
 	  - ability to auto rebuild the ui to match new parameter
 	  properties
@@ -1454,13 +1454,13 @@
 2008-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
 	* support for parameters with list of values
-	* use parameter_widget_set_auto_submit_callback in gebrme
+	* use gebr_gui_parameter_widget_set_auto_submit_callback in gebrme
 	* - fix program popup menu appearence
 	  - initial code for enums ands lists
 	* enable protection to avoid flag parameters to hold a list of
 	  values
 	* fixed gui.h
-	* added ValueSequenceEdit and use it on gebrme for categories
+	* added GebrGuiValueSequenceEdit and use it on gebrme for categories
 	* add category to sequence (fix)
 
 2008-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
@@ -1520,7 +1520,7 @@
 	* add support for user data in popup callback
 	* added gtk_widget_set_popup_callback
 	* ask for overwrite confirmation
-	* ask for overwrite confirmation on GtkFileEntry
+	* ask for overwrite confirmation on GebrGuiGtkFileEntry
 
 2008-01-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
 

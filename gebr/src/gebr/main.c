@@ -88,8 +88,8 @@ main(int argc, char ** argv, char ** env)
 	setlocale(LC_ALL, "");
 	setlocale(LC_NUMERIC, "C");
 
-	gui_setup_theme();
-	gui_setup_icons();
+	gebr_gui_setup_theme();
+	gebr_gui_setup_icons();
 	gebr_setup_ui();
 	gebr_init();
 

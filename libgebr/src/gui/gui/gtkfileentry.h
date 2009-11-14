@@ -15,29 +15,29 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GUI_GTK_FILE_ENTRY_H
-#define __GUI_GTK_FILE_ENTRY_H
+#ifndef __GEBR_GUI_GTK_FILE_ENTRY_H
+#define __GEBR_GUI_GTK_FILE_ENTRY_H
 
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
 GType
-gtk_file_entry_get_type(void);
+gebr_gui_gtk_file_entry_get_type(void);
 
-#define GTK_TYPE_FILE_ENTRY		(gtk_file_entry_get_type())
-#define GTK_FILE_ENTRY(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FILE_ENTRY, GtkFileEntry))
-#define GTK_FILE_ENTRY_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_FILE_ENTRY, GtkFileEntryClass))
-#define GTK_IS_FILE_ENTRY(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FILE_ENTRY))
-#define GTK_IS_FILE_ENTRY_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_FILE_ENTRY))
-#define GTK_FILE_ENTRY_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_FILE_ENTRY, GtkFileEntryClass))
+#define GEBR_GUI_GTK_TYPE_FILE_ENTRY		(gebr_gui_gtk_file_entry_get_type())
+#define GEBR_GUI_GTK_FILE_ENTRY(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_GTK_TYPE_FILE_ENTRY, GebrGuiGtkFileEntry))
+#define GEBR_GUI_GTK_FILE_ENTRY_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_GUI_GTK_TYPE_FILE_ENTRY, GebrGuiGtkFileEntryClass))
+#define GEBR_GUI_GTK_IS_FILE_ENTRY(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_GUI_GTK_TYPE_FILE_ENTRY))
+#define GEBR_GUI_GTK_IS_FILE_ENTRY_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_GUI_GTK_TYPE_FILE_ENTRY))
+#define GEBR_GUI_GTK_FILE_ENTRY_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_GTK_TYPE_FILE_ENTRY, GebrGuiGtkFileEntryClass))
 
-typedef struct _GtkFileEntry		GtkFileEntry;
-typedef struct _GtkFileEntryClass	GtkFileEntryClass;
+typedef struct _GebrGuiGtkFileEntry		GebrGuiGtkFileEntry;
+typedef struct _GebrGuiGtkFileEntryClass	GebrGuiGtkFileEntryClass;
 
-typedef void (*GtkFileEntryCustomize)(GtkFileChooser *, gpointer);
+typedef void (*GebrGuiGtkFileEntryCustomize)(GtkFileChooser *, gpointer);
 
-struct _GtkFileEntry {
+struct _GebrGuiGtkFileEntry {
 	GtkHBox			parent;
 
 	GdkWindow *		event_window;
@@ -46,37 +46,37 @@ struct _GtkFileEntry {
 	gboolean		choose_directory;
 	gboolean		do_overwrite_confirmation;
 
-	GtkFileEntryCustomize	customize_function;
+	GebrGuiGtkFileEntryCustomize	customize_function;
 	gpointer		customize_user_data;
 };
-struct _GtkFileEntryClass {
+struct _GebrGuiGtkFileEntryClass {
 	GtkHBoxClass		parent;
 
 	/* signals */
-	void			(*path_changed)(GtkFileEntry * self);
+	void			(*path_changed)(GebrGuiGtkFileEntry * self);
 };
 
 GtkWidget *
-gtk_file_entry_new(GtkFileEntryCustomize customize_function, gpointer user_data);
+gebr_gui_gtk_file_entry_new(GebrGuiGtkFileEntryCustomize customize_function, gpointer user_data);
 
 void
-gtk_file_entry_set_choose_directory(GtkFileEntry * file_entry, gboolean choose_directory);
+gebr_gui_gtk_file_entry_set_choose_directory(GebrGuiGtkFileEntry * file_entry, gboolean choose_directory);
 
 gboolean
-gtk_file_entry_get_choose_directory(GtkFileEntry * file_entry);
+gebr_gui_gtk_file_entry_get_choose_directory(GebrGuiGtkFileEntry * file_entry);
 
 void
-gtk_file_entry_set_do_overwrite_confirmation(GtkFileEntry * file_entry, gboolean do_overwrite_confirmation);
+gebr_gui_gtk_file_entry_set_do_overwrite_confirmation(GebrGuiGtkFileEntry * file_entry, gboolean do_overwrite_confirmation);
 
 gboolean
-gtk_file_entry_get_do_overwrite_confirmation(GtkFileEntry * file_entry);
+gebr_gui_gtk_file_entry_get_do_overwrite_confirmation(GebrGuiGtkFileEntry * file_entry);
 
 void
-gtk_file_entry_set_path(GtkFileEntry * file_entry, const gchar * path);
+gebr_gui_gtk_file_entry_set_path(GebrGuiGtkFileEntry * file_entry, const gchar * path);
 
 gchar *
-gtk_file_entry_get_path(GtkFileEntry * file_entry);
+gebr_gui_gtk_file_entry_get_path(GebrGuiGtkFileEntry * file_entry);
 
 G_END_DECLS
 
-#endif //__GUI_GTK_FILE_ENTRY_H
+#endif //__GEBR_GUI_GTK_FILE_ENTRY_H

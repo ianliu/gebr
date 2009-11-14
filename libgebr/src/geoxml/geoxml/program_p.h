@@ -28,6 +28,6 @@
  * Used by gebr_geoxml_program_new_parameter and gebr_geoxml_program_parameter_set_type
  */
 GebrGeoXmlProgramParameter *
-__gebr_geoxml_program_new_parameter(GebrGeoXmlProgram * program, GdomeElement * before, enum GEBR_GEOXML_PARAMETERTYPE parameter_type);
+__gebr_geoxml_program_new_parameter(GebrGeoXmlProgram * program, GdomeElement * before, enum GEBR_GEOXML_PARAMETER_TYPE parameter_type);
 
 #endif //__GEBR_GEOXML_PROGRAM_P_H

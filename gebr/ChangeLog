@@ -320,7 +320,7 @@
 2009-01-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
 	* - valuesequenceedit refactored
-	  - fix parameter_widget's on_edit_list_toggled
+	  - fix gebr_gui_parameter_widget's on_edit_list_toggled
 
 2009-01-28  Ricardo Biloti <biloti@gmail.com>
 
@@ -526,7 +526,7 @@
 	* the saga of list parameters ended!
 	  - changed DTD to make value and default values independets
 	  - refactoring of GebrGeoXmlProgramParameter functions
-	  - general refacte on parameter_widget function:
+	  - general refacte on gebr_gui_parameter_widget function:
 	  - every change is auto submited
 	  - ability to auto rebuild the ui to match new parameter
 	  properties

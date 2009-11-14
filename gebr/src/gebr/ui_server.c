@@ -334,7 +334,7 @@ server_list_add(struct ui_server_list * ui_server_list, const gchar * address)
 static void
 on_entry_activate(GtkEntry * entry, struct ui_server_list * ui_server_list)
 {
-	server_list_add(ui_server_list, gtk_enhanced_entry_get_text(GTK_ENHANCED_ENTRY(entry)));
+	server_list_add(ui_server_list, gebr_gui_gtk_enhanced_entry_get_text(GEBR_GUI_GTK_ENHANCED_ENTRY(entry)));
 	gtk_entry_set_text(entry, "");
 }
 
@@ -440,7 +440,7 @@ server_list_setup_ui(void)
 	hbox = gtk_hbox_new(FALSE, 3);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, TRUE, 0);
 
-	entry = gtk_enhanced_entry_new_with_empty_text(_("Type here [user@]serverhostname"));
+	entry = gebr_gui_gtk_enhanced_entry_new_with_empty_text(_("Type here [user@]serverhostname"));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(entry), "activate",
 		GTK_SIGNAL_FUNC(on_entry_activate), ui_server_list);

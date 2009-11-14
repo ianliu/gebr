@@ -15,15 +15,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GUI_ICONS_H
-#define __GUI_ICONS_H
+#ifndef __GEBR_GUI_ICONS_H
+#define __GEBR_GUI_ICONS_H
 
 void
-gui_setup_icons(void);
+gebr_gui_setup_icons(void);
 
 void
-gui_setup_theme(void);
+gebr_gui_setup_theme(void);
 
-#endif //__GUI_ICONS_H
+#endif //__GEBR_GUI_ICONS_H
 
 

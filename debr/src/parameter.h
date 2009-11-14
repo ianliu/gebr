@@ -47,7 +47,7 @@ struct ui_parameter_dialog {
 	GebrGeoXmlParameter *		parameter;
 
 	GtkWidget *			default_widget_hbox;
-	struct parameter_widget *	parameter_widget;
+	struct gebr_gui_parameter_widget *	gebr_gui_parameter_widget;
 	GtkWidget *			separator_entry;
 };
 
@@ -82,7 +82,7 @@ void
 parameter_paste(void);
 
 void
-parameter_change_type(enum GEBR_GEOXML_PARAMETERTYPE type);
+parameter_change_type(enum GEBR_GEOXML_PARAMETER_TYPE type);
 
 void
 parameter_properties(void);

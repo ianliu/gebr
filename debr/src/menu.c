@@ -55,16 +55,16 @@ static void		menu_author_changed		(GtkEntry *		entry);
 
 static void		menu_email_changed		(GtkEntry *		entry);
 
-static void		menu_category_add		(ValueSequenceEdit *	sequence_edit,
+static void		menu_category_add		(GebrGuiValueSequenceEdit *	sequence_edit,
 							 GtkComboBox *		combo_box);
 
 static void		menu_category_changed		(void);
 
-static void		menu_category_renamed		(ValueSequenceEdit *	sequence_edit,
+static void		menu_category_renamed		(GebrGuiValueSequenceEdit *	sequence_edit,
 							 const gchar *		old_text,
 							 const gchar *		new_text);
 
-static void		menu_category_removed		(ValueSequenceEdit *	sequence_edit,
+static void		menu_category_removed		(GebrGuiValueSequenceEdit *	sequence_edit,
 							 const gchar *		old_text);
 
 /*
@@ -983,7 +983,7 @@ menu_dialog_setup_ui(void)
 	categories_combo = gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(debr.categories_model), CATEGORY_NAME);
 	gtk_widget_show(categories_combo);
 
-	categories_sequence_edit = value_sequence_edit_new(categories_combo);
+	categories_sequence_edit = gebr_gui_value_sequence_edit_new(categories_combo);
 	gtk_widget_show(categories_sequence_edit);
 	gtk_table_attach(GTK_TABLE(table), categories_sequence_edit, 1, 2, 5, 6,
 		(GtkAttachOptions)(GTK_FILL),
@@ -1028,7 +1028,7 @@ menu_dialog_setup_ui(void)
 	/* categories */
 	GebrGeoXmlSequence * category;
 	gebr_geoxml_flow_get_category(debr.menu, &category, 0);
-	value_sequence_edit_load(VALUE_SEQUENCE_EDIT(categories_sequence_edit), category,
+	gebr_gui_value_sequence_edit_load(GEBR_GUI_VALUE_SEQUENCE_EDIT(categories_sequence_edit), category,
 		(ValueSequenceSetFunction)gebr_geoxml_value_sequence_set,
 		(ValueSequenceGetFunction)gebr_geoxml_value_sequence_get, NULL);
 
@@ -1664,7 +1664,7 @@ menu_email_changed(GtkEntry * entry)
  * Add a category.
  */
 static void
-menu_category_add(ValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
+menu_category_add(GebrGuiValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
 {
 	gchar *	name;
 
@@ -1673,7 +1673,7 @@ menu_category_add(ValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
 		name = g_strdup(_("New category"));
 	else
 		debr_has_category(name, TRUE);
-	value_sequence_edit_add(VALUE_SEQUENCE_EDIT(sequence_edit),
+	gebr_gui_value_sequence_edit_add(GEBR_GUI_VALUE_SEQUENCE_EDIT(sequence_edit),
 		GEBR_GEOXML_SEQUENCE(gebr_geoxml_flow_append_category(debr.menu, name)));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -1701,7 +1701,7 @@ menu_category_changed(void)
  * Update category list upon rename.
  */
 static void
-menu_category_renamed(ValueSequenceEdit * sequence_edit, const gchar * old_text, const gchar * new_text)
+menu_category_renamed(GebrGuiValueSequenceEdit * sequence_edit, const gchar * old_text, const gchar * new_text)
 {
 	menu_category_removed(sequence_edit, old_text);
 	debr_has_category(new_text, TRUE);
@@ -1715,7 +1715,7 @@ menu_category_renamed(ValueSequenceEdit * sequence_edit, const gchar * old_text,
  * Update category list upon removal.
  */
 static void
-menu_category_removed(ValueSequenceEdit * sequence_edit, const gchar * old_text)
+menu_category_removed(GebrGuiValueSequenceEdit * sequence_edit, const gchar * old_text)
 {
 	GtkTreeIter	iter;
 

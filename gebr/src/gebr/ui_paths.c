@@ -45,19 +45,19 @@
  */
 
 void
-path_add(ValueSequenceEdit * sequence_edit)
+path_add(GebrGuiValueSequenceEdit * sequence_edit)
 {
-	GtkFileEntry *      file_entry;
+	GebrGuiGtkFileEntry *      file_entry;
 	gchar *	            path;
 
 
 	g_object_get(G_OBJECT(sequence_edit),  "value-widget", &file_entry, NULL);
-	path = gtk_file_entry_get_path(file_entry);
+	path = gebr_gui_gtk_file_entry_get_path(file_entry);
 
 	if (!strlen(path))
 		return;
 
-	value_sequence_edit_add(sequence_edit, GEBR_GEOXML_SEQUENCE(gebr_geoxml_line_append_path(gebr.line, path)));
+	gebr_gui_value_sequence_edit_add(sequence_edit, GEBR_GEOXML_SEQUENCE(gebr_geoxml_line_append_path(gebr.line, path)));
 }
 
 gboolean
@@ -97,13 +97,13 @@ path_list_setup_ui(void)
 		GTK_STOCK_CLOSE, GTK_RESPONSE_OK, NULL);
 	gtk_widget_set_size_request(dialog, 380, 260);
 
-	file_entry = gtk_file_entry_new(NULL, NULL);
-	gtk_file_entry_set_choose_directory(GTK_FILE_ENTRY(file_entry), TRUE);
+	file_entry = gebr_gui_gtk_file_entry_new(NULL, NULL);
+	gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_GTK_FILE_ENTRY(file_entry), TRUE);
 	gtk_widget_set_size_request(file_entry, 220, 30);
 
 	gebr_geoxml_line_get_path(gebr.line, &path_sequence, 0);
-	path_sequence_edit = value_sequence_edit_new(file_entry);
-	value_sequence_edit_load(VALUE_SEQUENCE_EDIT(path_sequence_edit), path_sequence,
+	path_sequence_edit = gebr_gui_value_sequence_edit_new(file_entry);
+	gebr_gui_value_sequence_edit_load(GEBR_GUI_VALUE_SEQUENCE_EDIT(path_sequence_edit), path_sequence,
 		(ValueSequenceSetFunction)gebr_geoxml_value_sequence_set,
 		(ValueSequenceGetFunction)gebr_geoxml_value_sequence_get, NULL);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), path_sequence_edit, TRUE, TRUE, 0);

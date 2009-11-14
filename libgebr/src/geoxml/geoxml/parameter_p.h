@@ -24,7 +24,7 @@
  *
  */
 GdomeElement *
-__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * parameter, enum GEBR_GEOXML_PARAMETERTYPE type);
+__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * parameter, enum GEBR_GEOXML_PARAMETER_TYPE type);
 
 /**
  * \internal
@@ -39,7 +39,7 @@ __gebr_geoxml_parameter_get_type_element(GebrGeoXmlParameter * parameter, gboole
  * Return type of \p parameter, according to \p resolve_references
  *
  */
-enum GEBR_GEOXML_PARAMETERTYPE
+enum GEBR_GEOXML_PARAMETER_TYPE
 __gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter, gboolean resolve_references);
 
 /**

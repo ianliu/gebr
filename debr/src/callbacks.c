@@ -646,7 +646,7 @@ on_parameter_change_type_activate(void)
 void
 on_parameter_type_activate(GtkRadioAction * first_action)
 {
-	parameter_change_type((enum GEBR_GEOXML_PARAMETERTYPE)gtk_radio_action_get_current_value(first_action));
+	parameter_change_type((enum GEBR_GEOXML_PARAMETER_TYPE)gtk_radio_action_get_current_value(first_action));
 }
 
 /*

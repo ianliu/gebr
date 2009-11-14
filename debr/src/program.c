@@ -39,7 +39,7 @@
 #define RESPONSE_REFRESH	101
 
 struct program_preview_data {
-	struct libgebr_gui_program_edit *	program_edit;
+	struct gebr_gui_program_edit *	program_edit;
 	GebrGeoXmlProgram *				program;
 	GtkWidget *				title_label;
 	GtkWidget *				hbox;
@@ -280,9 +280,9 @@ program_preview(void)
 	g_signal_connect(dialog, "delete-event",
 		G_CALLBACK(program_preview_on_delete_event), data);
 
-	data->program_edit = libgebr_gui_program_edit_setup_ui(
+	data->program_edit = gebr_gui_gebr_gui_program_edit_setup_ui(
 		GEBR_GEOXML_PROGRAM(gebr_geoxml_object_copy(GEBR_GEOXML_OBJECT(debr.program))),
-		NULL, (LibGeBRGUIShowHelpCallback)program_help_view, TRUE);
+		NULL, (GebrGuiShowHelpCallback)program_help_view, TRUE);
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), data->program_edit->widget, TRUE, TRUE, 0);
 	gtk_widget_show(dialog);
@@ -972,11 +972,11 @@ program_preview_on_response(GtkWidget * dialog, gint response, struct program_pr
 {
 	switch (response) {
 	case RESPONSE_REFRESH:
-		libgebr_gui_program_edit_reload(data->program_edit,
+		gebr_gui_gebr_gui_program_edit_reload(data->program_edit,
 			GEBR_GEOXML_PROGRAM(gebr_geoxml_object_copy(GEBR_GEOXML_OBJECT(data->program))));
 		break;
 	case GTK_RESPONSE_CLOSE: default:
-		libgebr_gui_program_edit_destroy(data->program_edit);
+		gebr_gui_gebr_gui_program_edit_destroy(data->program_edit);
 		gtk_widget_destroy(dialog);
 		g_free(data);
 		break;

@@ -15,8 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 marshalers.c:
-	glib-genmarshal --prefix=_libgebr_marshal marshalers.list --body >marshalers.c
-	glib-genmarshal --prefix=_libgebr_marshal marshalers.list --header >marshalers.h
+	glib-genmarshal --prefix=_gebr_gui_marshal marshalers.list --body >marshalers.c
+	glib-genmarshal --prefix=_gebr_gui_marshal marshalers.list --header >marshalers.h
 
 lib_LTLIBRARIES = libgebr_gui.la
 libgebr_gui_la_SOURCES = \

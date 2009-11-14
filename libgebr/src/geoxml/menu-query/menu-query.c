@@ -458,25 +458,25 @@ show_program_parameter(GebrGeoXmlProgramParameter *pp, gint ipar, guint isubpar)
                 printf("      ");
 
 	switch (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp))){
-	case GEBR_GEOXML_PARAMETERTYPE_STRING:
+	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 		printf("[string]     ");
 		break;
-	case GEBR_GEOXML_PARAMETERTYPE_INT:
+	case GEBR_GEOXML_PARAMETER_TYPE_INT:
 		printf("[integer]    ");
 		break;
-	case GEBR_GEOXML_PARAMETERTYPE_FILE:
+	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 		printf("[file]       ");
 		break;
-	case GEBR_GEOXML_PARAMETERTYPE_FLAG:
+	case GEBR_GEOXML_PARAMETER_TYPE_FLAG:
 		printf("[flag]       ");
 		break;
-	case GEBR_GEOXML_PARAMETERTYPE_FLOAT:
+	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 		printf("[real number]");
 		break;
-	case GEBR_GEOXML_PARAMETERTYPE_RANGE:
+	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
 		printf("[range]      ");
 		break;
-	case GEBR_GEOXML_PARAMETERTYPE_ENUM:
+	case GEBR_GEOXML_PARAMETER_TYPE_ENUM:
 		printf("[enum]       ");
 		break;
 	default:
@@ -495,7 +495,7 @@ show_program_parameter(GebrGeoXmlProgramParameter *pp, gint ipar, guint isubpar)
 		printf("  REQUIRED ");
 
         /* enum details */
-	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETERTYPE_ENUM){
+	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_ENUM){
 		GebrGeoXmlSequence *enum_option;
                 
 		gebr_geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);

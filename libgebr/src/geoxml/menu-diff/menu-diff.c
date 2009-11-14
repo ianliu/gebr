@@ -376,7 +376,7 @@ compare_program_parameter (GebrGeoXmlProgramParameter *ppar1, GebrGeoXmlProgramP
                (ppar2 != NULL ? default2->str : ""));
 
         switch (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(ppar1))){
-	case GEBR_GEOXML_PARAMETERTYPE_FILE:
+	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 		compare_file(ppar1, ppar2);
                 break;
         default:
@@ -407,21 +407,21 @@ par_type_str (GebrGeoXmlParameter *par)
                 return "";
 
  	switch (gebr_geoxml_parameter_get_type(par)){
-	case GEBR_GEOXML_PARAMETERTYPE_STRING:
+	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 		return "string";
-	case GEBR_GEOXML_PARAMETERTYPE_INT:
+	case GEBR_GEOXML_PARAMETER_TYPE_INT:
 		return "integer";
-	case GEBR_GEOXML_PARAMETERTYPE_FILE:
+	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 		return "file";
-	case GEBR_GEOXML_PARAMETERTYPE_FLAG:
+	case GEBR_GEOXML_PARAMETER_TYPE_FLAG:
 		return "flag";
-	case GEBR_GEOXML_PARAMETERTYPE_FLOAT:
+	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 		return "real number";
-	case GEBR_GEOXML_PARAMETERTYPE_RANGE:
+	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
 		return "range";
-	case GEBR_GEOXML_PARAMETERTYPE_ENUM:
+	case GEBR_GEOXML_PARAMETER_TYPE_ENUM:
 		return "enum";
-	case GEBR_GEOXML_PARAMETERTYPE_GROUP:
+	case GEBR_GEOXML_PARAMETER_TYPE_GROUP:
 		return "group";
 	default:
 		return "UNKNOWN";

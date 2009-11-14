@@ -69,17 +69,17 @@ AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 
 dnl check for libgebr
-PKG_CHECK_MODULES(LIBGEBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
-AC_SUBST(CFLAGS)
-AC_SUBST(LIBS)
+PKG_CHECK_MODULES(GEBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
+AC_SUBST(GEBR_CFLAGS)
+AC_SUBST(GEBR_LIBS)
 dnl check for libgebr_geoxml
-PKG_CHECK_MODULES(GEOXML, gebr-geoxml,,AC_MSG_ERROR([Could not find libgebr_geoxml]))
+PKG_CHECK_MODULES(GEBR_GEOXML, gebr-geoxml,,AC_MSG_ERROR([Could not find libgebr_geoxml]))
 AC_SUBST(GEBR_GEOXML_CFLAGS)
 AC_SUBST(GEBR_GEOXML_LIBS)
 dnl check for libgebr_gui
-PKG_CHECK_MODULES(GUI, gebr-gui,,AC_MSG_ERROR([Could not find libgebr_gui]))
-AC_SUBST(GUI_CFLAGS)
-AC_SUBST(GUI_LIBS)
+PKG_CHECK_MODULES(GEBR_GUI, gebr-gui,,AC_MSG_ERROR([Could not find libgebr_gui]))
+AC_SUBST(GEBR_GUI_CFLAGS)
+AC_SUBST(GEBR_GUI_LIBS)
 
 AC_OUTPUT([
 packages/rpm/debr.fedora.spec packages/rpm/debr.opensuse.spec packages/rpm/debr.mandriva.spec

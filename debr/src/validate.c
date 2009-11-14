@@ -663,7 +663,7 @@ show_program_parameter(struct validate * validate, GebrGeoXmlProgramParameter * 
 		validate_append_text(validate, _("  REQUIRED "));
 
         /* enum details */
-	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETERTYPE_ENUM){
+	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_ENUM){
 		GebrGeoXmlSequence *enum_option;
 
 		gebr_geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);

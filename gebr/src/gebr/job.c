@@ -264,7 +264,7 @@ job_append_output(struct job * job, GString * output)
 		gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, text->str, text->len);
 		if (gebr.config.job_log_auto_scroll) {
 			mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
-			gtk_text_view_scroll_mark_onscreen(gebr.ui_job_control->text_view, mark);
+			gtk_text_view_scroll_mark_onscreen(GTK_TREE_VIEW(gebr.ui_job_control->text_view), mark);
 		}
 	}
 }
@@ -370,7 +370,7 @@ job_update_status(struct job * job)
 	gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, finish_date->str, finish_date->len);
 	if (gebr.config.job_log_auto_scroll) {
 		mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
-		gtk_text_view_scroll_mark_onscreen(gebr.ui_job_control->text_view, mark);
+		gtk_text_view_scroll_mark_onscreen(GTK_TREE_VIEW(gebr.ui_job_control->text_view), mark);
 	}
 
 	/* frees */

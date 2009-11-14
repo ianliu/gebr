@@ -182,7 +182,7 @@
 	* the saga of list parameters ended!
 	  - changed DTD to make value and default values independets
 	  - refactoring of GebrGeoXmlProgramParameter functions
-	  - general refacte on parameter_widget function:
+	  - general refacte on gebr_gui_parameter_widget function:
 	  - every change is auto submited
 	  - ability to auto rebuild the ui to match new parameter
 	  properties

@@ -25,7 +25,7 @@
 
 struct ui_parameters {
 	GtkWidget *				dialog;
-	struct libgebr_gui_program_edit *	program_edit;
+	struct gebr_gui_program_edit *	program_edit;
 };
 
 struct ui_parameters *

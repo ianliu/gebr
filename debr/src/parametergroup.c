@@ -270,7 +270,7 @@ parameter_group_instances_setup_ui(struct ui_parameter_group_dialog * ui)
 		exclusive = GEBR_GEOXML_SEQUENCE(gebr_geoxml_parameters_get_exclusive(GEBR_GEOXML_PARAMETERS(instance)));
 		gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &parameter, 0);
 		for (j = 0; parameter != NULL; ++j, gebr_geoxml_sequence_next(&parameter)) {
-			struct parameter_widget *	widget;
+			struct gebr_gui_parameter_widget *	widget;
 
 			if (exclusive == NULL)
 				label_widget = gtk_label_new(gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)));
@@ -289,7 +289,7 @@ parameter_group_instances_setup_ui(struct ui_parameter_group_dialog * ui)
 				(GtkAttachOptions)(GTK_FILL),
 				(GtkAttachOptions)(0), 0, 0);
 
-			widget = parameter_widget_new(GEBR_GEOXML_PARAMETER(parameter), TRUE, NULL);
+			widget = gebr_gui_parameter_widget_new(GEBR_GEOXML_PARAMETER(parameter), TRUE, NULL);
 			gtk_widget_show(widget->widget);
 			gtk_table_attach(GTK_TABLE(table), widget->widget, 1, 2, j, j+1,
 				(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),

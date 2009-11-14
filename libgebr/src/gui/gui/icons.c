@@ -36,7 +36,7 @@
  */
 
 void
-gui_setup_icons(void)
+gebr_gui_setup_icons(void)
 {
 	static GtkIconFactory *	icon_factory = NULL;
 	static const gchar *	sizes [] = {
@@ -122,7 +122,7 @@ gui_setup_icons(void)
 }
 
 void
-gui_setup_theme(void)
+gebr_gui_setup_theme(void)
 {
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), ICONS_DIR);
 	g_object_set(gtk_settings_get_default(), "gtk-icon-theme-name", "gebr-theme", NULL);

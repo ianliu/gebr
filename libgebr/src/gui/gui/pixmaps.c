@@ -18,7 +18,7 @@
 #include "pixmaps.h"
 
 GdkPixbuf *
-pixmaps_gebr_icon_16x16(void)
+gebr_gui_pixmaps_gebr_icon_16x16(void)
 {
 	static GdkPixbuf *	gebr_icon_16x16 = NULL;
 
@@ -32,7 +32,7 @@ pixmaps_gebr_icon_16x16(void)
 }
 
 GdkPixbuf *
-pixmaps_gebr_icon_32x32(void)
+gebr_gui_pixmaps_gebr_icon_32x32(void)
 {
 	static GdkPixbuf *	gebr_icon_32x32 = NULL;
 
@@ -46,7 +46,7 @@ pixmaps_gebr_icon_32x32(void)
 }
 
 GdkPixbuf *
-pixmaps_gebr_icon_64x64(void)
+gebr_gui_pixmaps_gebr_icon_64x64(void)
 {
 	static GdkPixbuf *	gebr_icon_64x64 = NULL;
 
@@ -60,7 +60,7 @@ pixmaps_gebr_icon_64x64(void)
 }
 
 GdkPixbuf *
-pixmaps_gebr_logo(void)
+gebr_gui_pixmaps_gebr_logo(void)
 {
 	static GdkPixbuf *	gebr_logo = NULL;
 

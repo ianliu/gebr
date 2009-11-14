@@ -277,15 +277,15 @@ __gebr_geoxml_document_validate_doc(GdomeDocument * document)
 					GdomeElement *			parameter;
 					GdomeElement *			property;
 
-					enum GEBR_GEOXML_PARAMETERTYPE	type;
+					enum GEBR_GEOXML_PARAMETER_TYPE	type;
 					GdomeDOMString*			tag_name;
 					int				i;
 
-					type = GEBR_GEOXML_PARAMETERTYPE_UNKNOWN;
+					type = GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN;
 					tag_name = gdome_el_tagName(old_parameter, &exception);
 					for (i = 1; i <= parameter_type_to_str_len; ++i)
 						if (!strcmp(parameter_type_to_str[i], tag_name->str)) {
-							type = (enum GEBR_GEOXML_PARAMETERTYPE)i;
+							type = (enum GEBR_GEOXML_PARAMETER_TYPE)i;
 							break;
 						}
 
@@ -304,7 +304,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument * document)
 					gdome_el_insertBefore(property,
 						(GdomeNode*)__gebr_geoxml_get_first_element(old_parameter, "keyword"),
 						NULL, &exception);
-					if (type != GEBR_GEOXML_PARAMETERTYPE_FLAG) {
+					if (type != GEBR_GEOXML_PARAMETER_TYPE_FLAG) {
 						GdomeElement *		value;
 						GdomeDOMString *	string;
 						GdomeDOMString *	separator;

@@ -27,7 +27,7 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 
-G_DEFINE_TYPE(GtkDirectoryChooser, gtk_directory_chooser, GTK_TYPE_VBOX);
+G_DEFINE_TYPE(GebrGuiGtkDirectoryChooser, gebr_gui_gtk_directory_chooser, GTK_TYPE_VBOX);
 
 /*
  * Prototypes
@@ -35,25 +35,25 @@ G_DEFINE_TYPE(GtkDirectoryChooser, gtk_directory_chooser, GTK_TYPE_VBOX);
 
 static void
 __gtk_sequence_edit_add_request (GtkSequenceEdit *sequence_edit,
-		GtkDirectoryChooser *dir_chooser);
+		GebrGuiGtkDirectoryChooser *dir_chooser);
 
 /*
  * gobject
  */
 
 static void
-gtk_directory_chooser_class_init(GtkDirectoryChooserClass * class)
+gebr_gui_gtk_directory_chooser_class_init(GebrGuiGtkDirectoryChooserClass * class)
 {
 }
 
 static void
-gtk_directory_chooser_init(GtkDirectoryChooser * directory_chooser)
+gebr_gui_gtk_directory_chooser_init(GebrGuiGtkDirectoryChooser * directory_chooser)
 {
 	GtkWidget *		file_entry;
 	GtkWidget *		sequence_edit;
 
-	file_entry = gtk_file_entry_new(NULL, NULL);
-	gtk_file_entry_set_choose_directory(GTK_FILE_ENTRY(file_entry), TRUE);
+	file_entry = gebr_gui_gtk_file_entry_new(NULL, NULL);
+	gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_GTK_FILE_ENTRY(file_entry), TRUE);
 	sequence_edit = gtk_sequence_edit_new (file_entry);
 
 	directory_chooser->sequence_edit = sequence_edit;
@@ -71,20 +71,20 @@ gtk_directory_chooser_init(GtkDirectoryChooser * directory_chooser)
  */
 
 GtkWidget *
-gtk_directory_chooser_new()
+gebr_gui_gtk_directory_chooser_new()
 {
-	return g_object_new(GTK_TYPE_DIRECTORY_CHOOSER, NULL);
+	return g_object_new(GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER, NULL);
 }
 
 /**
- * gtk_directory_chooser_get_paths:
+ * gebr_gui_gtk_directory_chooser_get_paths:
  *
  * Returns a NULL-terminated array of C strings corresponding
  * to the values contained in this widget. If there is no path
  * for this widget, returns NULL.
  */
 gchar **
-gtk_directory_chooser_get_paths(GtkDirectoryChooser * widget)
+gebr_gui_gtk_directory_chooser_get_paths(GebrGuiGtkDirectoryChooser * widget)
 {
 	GtkTreeModel *		store;
 	GtkTreeIter		iter;
@@ -110,7 +110,7 @@ gtk_directory_chooser_get_paths(GtkDirectoryChooser * widget)
 }
 
 void
-gtk_directory_chooser_set_paths (GtkDirectoryChooser * widget, gchar ** paths)
+gebr_gui_gtk_directory_chooser_set_paths (GebrGuiGtkDirectoryChooser * widget, gchar ** paths)
 {
 	gint i;
 
@@ -119,7 +119,7 @@ gtk_directory_chooser_set_paths (GtkDirectoryChooser * widget, gchar ** paths)
 
 	i = 0;
 	while (paths[i] != NULL) {
-		gtk_sequence_edit_add(GTK_SEQUENCE_EDIT(widget->sequence_edit),
+		gtk_sequence_edit_add(GEBR_GUI_GTK_SEQUENCE_EDIT(widget->sequence_edit),
 				paths[i], FALSE);
 		i++;
 	}
@@ -131,13 +131,13 @@ gtk_directory_chooser_set_paths (GtkDirectoryChooser * widget, gchar ** paths)
 
 static void
 __gtk_sequence_edit_add_request (GtkSequenceEdit *sequence_edit,
-		GtkDirectoryChooser *dir_chooser)
+		GebrGuiGtkDirectoryChooser *dir_chooser)
 {
 	GtkWidget *		file_entry;
 	gchar *			path;
 
 	g_object_get(sequence_edit, "value-widget", &file_entry, NULL);
-	path = gtk_file_entry_get_path(GTK_FILE_ENTRY(file_entry));
+	path = gebr_gui_gtk_file_entry_get_path(GEBR_GUI_GTK_FILE_ENTRY(file_entry));
 	gtk_sequence_edit_add(sequence_edit, path, TRUE);
 }
 

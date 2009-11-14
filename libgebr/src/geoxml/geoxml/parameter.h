@@ -92,54 +92,54 @@
 typedef struct gebr_geoxml_parameter GebrGeoXmlParameter;
 
 /**
- * \p GEBR_GEOXML_PARAMETERTYPE lists the program's parameters types
+ * \p GEBR_GEOXML_PARAMETER_TYPE lists the program's parameters types
  * supported by libgeoxml. They were made to create a properly
  * link between the seismic processing softwares and this library.
  *
  * \see gebr_geoxml_parameter_get_is_program_parameter
  */
-enum GEBR_GEOXML_PARAMETERTYPE {
+enum GEBR_GEOXML_PARAMETER_TYPE {
 	/**
 	 * In case of error.
 	 */
-	GEBR_GEOXML_PARAMETERTYPE_UNKNOWN = 0,
+	GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN = 0,
 	/**
 	 * A parameter able to store a string on it.
 	 */
-	GEBR_GEOXML_PARAMETERTYPE_STRING,
+	GEBR_GEOXML_PARAMETER_TYPE_STRING,
 	/**
 	 * A parameter able to store an integer number on it.
 	 */
-	GEBR_GEOXML_PARAMETERTYPE_INT,
+	GEBR_GEOXML_PARAMETER_TYPE_INT,
 	/**
 	 * A parameter able to store a file/directory path on it.
 	 */
-	GEBR_GEOXML_PARAMETERTYPE_FILE,
+	GEBR_GEOXML_PARAMETER_TYPE_FILE,
 	/**
 	 * A parameter able to store the state of a flag on it.
 	 */
-	GEBR_GEOXML_PARAMETERTYPE_FLAG,
+	GEBR_GEOXML_PARAMETER_TYPE_FLAG,
 	/**
 	 * A parameter able to store a floating point number on it.
 	 */
-	GEBR_GEOXML_PARAMETERTYPE_FLOAT,
+	GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	/**
 	 * A parameter able to store a number with maximum and minimum values on it.
 	 */
-	GEBR_GEOXML_PARAMETERTYPE_RANGE,
+	GEBR_GEOXML_PARAMETER_TYPE_RANGE,
 	/**
 	 * A parameter able to store a value in a list options.
 	 */
-	GEBR_GEOXML_PARAMETERTYPE_ENUM,
+	GEBR_GEOXML_PARAMETER_TYPE_ENUM,
 	/**
 	 * A sequence of parameters.
 	 */
-	GEBR_GEOXML_PARAMETERTYPE_GROUP,
+	GEBR_GEOXML_PARAMETER_TYPE_GROUP,
 	/**
 	 * A reference to other parameter. If the referenced parameter is a program parameter,
 	 * then this parameter will only have its value as a difference.
 	 */
-	GEBR_GEOXML_PARAMETERTYPE_REFERENCE,
+	GEBR_GEOXML_PARAMETER_TYPE_REFERENCE,
 };
 
 #include <glib.h>
@@ -162,7 +162,7 @@ gebr_geoxml_parameter_get_parameters(GebrGeoXmlParameter * parameter);
  * If \p parameter is NULL nothing is done.
  */
 gboolean
-gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, enum GEBR_GEOXML_PARAMETERTYPE type);
+gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, enum GEBR_GEOXML_PARAMETER_TYPE type);
 
 /**
  * Change \p parameter to reference \p reference.
@@ -174,14 +174,14 @@ gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, GebrGeoX
 
 /**
  * Returns \p parameter 's type.
- * GEBR_GEOXML_PARAMETERTYPE_REFERENCE is not returned here. The "true" type
+ * GEBR_GEOXML_PARAMETER_TYPE_REFERENCE is not returned here. The "true" type
  * of the parameter is returned instead.
  *
- * If \p parameter is NULL returns \ref GEBR_GEOXML_PARAMETERTYPE_UNKNOWN.
+ * If \p parameter is NULL returns \ref GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN.
  *
- * \see GEBR_GEOXML_PARAMETERTYPE
+ * \see GEBR_GEOXML_PARAMETER_TYPE
  */
-enum GEBR_GEOXML_PARAMETERTYPE
+enum GEBR_GEOXML_PARAMETER_TYPE
 gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter);
 
 /**
@@ -209,7 +209,7 @@ GSList *
 gebr_geoxml_parameter_get_references_list(GebrGeoXmlParameter * parameter);
 
 /**
- * If \p parameter_reference is of the type GEBR_GEOXML_PARAMETERTYPE_REFERENCE
+ * If \p parameter_reference is of the type GEBR_GEOXML_PARAMETER_TYPE_REFERENCE
  * returns the parameter that it references. Otherwise, returns NULL.
  *
  * If \p parameter_reference is NULL returns NULL.
@@ -219,7 +219,7 @@ gebr_geoxml_parameter_get_referencee(GebrGeoXmlParameter * parameter_reference);
 
 /**
  * Return TRUE if \p parameter is a GebrGeoXmlProgramParameter.
- * All parameters of any GEBR_GEOXML_PARAMETERTYPE's types except GEBR_GEOXML_PARAMETERTYPE_GROUP
+ * All parameters of any GEBR_GEOXML_PARAMETER_TYPE's types except GEBR_GEOXML_PARAMETER_TYPE_GROUP
  * are GebrGeoXmlProgramParameter.
  *
  * If \p parameter is NULL returns FALSE.

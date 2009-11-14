@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GUI_VALUE_SEQUENCE_EDIT_H
-#define __GUI_VALUE_SEQUENCE_EDIT_H
+#ifndef __GEBR_GUI_VALUE_SEQUENCE_EDIT_H
+#define __GEBR_GUI_VALUE_SEQUENCE_EDIT_H
 
 #include <gtk/gtk.h>
 
@@ -27,22 +27,22 @@
 G_BEGIN_DECLS
 
 GType
-value_sequence_edit_get_type(void);
+gebr_gui_value_sequence_edit_get_type(void);
 
-#define TYPE_VALUE_SEQUENCE_EDIT		(value_sequence_edit_get_type())
-#define VALUE_SEQUENCE_EDIT(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_VALUE_SEQUENCE_EDIT, ValueSequenceEdit))
-#define VALUE_SEQUENCE_EDIT_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_VALUE_SEQUENCE_EDIT, ValueSequenceEditClass))
-#define IS_VALUE_SEQUENCE_EDIT(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_VALUE_SEQUENCE_EDIT))
-#define IS_VALUE_SEQUENCE_EDIT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_VALUE_SEQUENCE_EDIT))
-#define VALUE_SEQUENCE_EDIT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_VALUE_SEQUENCE_EDIT, ValueSequenceEditClass))
+#define TYPE_GEBR_GUI_VALUE_SEQUENCE_EDIT		(gebr_gui_value_sequence_edit_get_type())
+#define GEBR_GUI_VALUE_SEQUENCE_EDIT(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_GEBR_GUI_VALUE_SEQUENCE_EDIT, GebrGuiValueSequenceEdit))
+#define GEBR_GUI_VALUE_SEQUENCE_EDIT_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_GEBR_GUI_VALUE_SEQUENCE_EDIT, GebrGuiValueSequenceEditClass))
+#define IS_GEBR_GUI_VALUE_SEQUENCE_EDIT(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_GEBR_GUI_VALUE_SEQUENCE_EDIT))
+#define IS_GEBR_GUI_VALUE_SEQUENCE_EDIT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_GEBR_GUI_VALUE_SEQUENCE_EDIT))
+#define GEBR_GUI_VALUE_SEQUENCE_EDIT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_GEBR_GUI_VALUE_SEQUENCE_EDIT, GebrGuiValueSequenceEditClass))
 
-typedef struct _ValueSequenceEdit	ValueSequenceEdit;
-typedef struct _ValueSequenceEditClass	ValueSequenceEditClass;
+typedef struct _GebrGuiValueSequenceEdit	GebrGuiValueSequenceEdit;
+typedef struct _GebrGuiValueSequenceEditClass	GebrGuiValueSequenceEditClass;
 
 typedef void (*ValueSequenceSetFunction)(GebrGeoXmlSequence *, const gchar *, gpointer);
 typedef const gchar * (*ValueSequenceGetFunction)(GebrGeoXmlSequence *, gpointer);
 
-struct _ValueSequenceEdit {
+struct _GebrGuiValueSequenceEdit {
 	GtkSequenceEdit			parent;
 
 	gboolean			minimum_one;
@@ -50,20 +50,20 @@ struct _ValueSequenceEdit {
 	ValueSequenceGetFunction	get_function;
 	gpointer			user_data;
 };
-struct _ValueSequenceEditClass {
+struct _GebrGuiValueSequenceEditClass {
 	GtkSequenceEditClass		parent;
 };
 
 GtkWidget *
-value_sequence_edit_new(GtkWidget * widget);
+gebr_gui_value_sequence_edit_new(GtkWidget * widget);
 
 void
-value_sequence_edit_add(ValueSequenceEdit * value_sequence_edit, GebrGeoXmlSequence * sequence);
+gebr_gui_value_sequence_edit_add(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit, GebrGeoXmlSequence * sequence);
 
 void
-value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit, GebrGeoXmlSequence * sequence,
+gebr_gui_value_sequence_edit_load(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit, GebrGeoXmlSequence * sequence,
 	ValueSequenceSetFunction set_function, ValueSequenceGetFunction get_function, gpointer user_data);
 
 G_END_DECLS
 
-#endif //__GUI_VALUE_SEQUENCE_EDIT_H
+#endif //__GEBR_GUI_VALUE_SEQUENCE_EDIT_H

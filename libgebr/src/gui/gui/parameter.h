@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GUI_PARAMETER_H
-#define __GUI_PARAMETER_H
+#ifndef __GEBR_GUI_PARAMETER_H
+#define __GEBR_GUI_PARAMETER_H
 
 #include <gtk/gtk.h>
 
@@ -26,13 +26,13 @@
 #include "valuesequenceedit.h"
 #include "programedit.h"
 
-struct parameter_widget;
-typedef void (*changed_callback)(struct parameter_widget * parameter_widget, gpointer user_data);
+struct gebr_gui_parameter_widget;
+typedef void (*changed_callback)(struct gebr_gui_parameter_widget * gebr_gui_parameter_widget, gpointer user_data);
 
-struct parameter_widget {
+struct gebr_gui_parameter_widget {
 	GebrGeoXmlParameter *			parameter;
 	GebrGeoXmlProgramParameter *		program_parameter;
-	enum GEBR_GEOXML_PARAMETERTYPE		parameter_type;
+	enum GEBR_GEOXML_PARAMETER_TYPE		parameter_type;
 	gboolean				use_default_value;
 	gpointer				data;
 
@@ -41,41 +41,41 @@ struct parameter_widget {
 
 	/* dict stuff */
 	GebrGeoXmlProgramParameter *		dict_parameter;
-	struct libgebr_gui_program_edit_dicts *	dicts;
+	struct gebr_gui_gebr_gui_program_edit_dicts *	dicts;
 
 	/* for lists */
 	GtkWidget *				list_value_widget;
-	ValueSequenceEdit *			value_sequence_edit;
+	GebrGuiValueSequenceEdit *			gebr_gui_value_sequence_edit;
 
 	/* auto submit stuff */
 	changed_callback			callback;
 	gpointer				user_data;
 };
 
-struct parameter_widget *
-parameter_widget_new(GebrGeoXmlParameter * parameter, gboolean use_default_value, gpointer data);
+struct gebr_gui_parameter_widget *
+gebr_gui_parameter_widget_new(GebrGeoXmlParameter * parameter, gboolean use_default_value, gpointer data);
 
 void
-parameter_widget_set_dicts(struct parameter_widget * parameter_widget,
-struct libgebr_gui_program_edit_dicts *	dicts);
+gebr_gui_parameter_widget_set_dicts(struct gebr_gui_parameter_widget * gebr_gui_parameter_widget,
+struct gebr_gui_gebr_gui_program_edit_dicts *	dicts);
 
 GString *
-parameter_widget_get_widget_value(struct parameter_widget * parameter_widget);
+gebr_gui_parameter_widget_get_widget_value(struct gebr_gui_parameter_widget * gebr_gui_parameter_widget);
 
 void
-parameter_widget_set_auto_submit_callback(struct parameter_widget * parameter_widget,
+gebr_gui_parameter_widget_set_auto_submit_callback(struct gebr_gui_parameter_widget * gebr_gui_parameter_widget,
 	changed_callback callback, gpointer user_data);
 
 void
-parameter_widget_update(struct parameter_widget * parameter_widget);
+gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget * gebr_gui_parameter_widget);
 
 void
-parameter_widget_validate(struct parameter_widget * parameter_widget);
+gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget * gebr_gui_parameter_widget);
 
 void
-parameter_widget_update_list_separator(struct parameter_widget * parameter_widget);
+gebr_gui_parameter_widget_update_list_separator(struct gebr_gui_parameter_widget * gebr_gui_parameter_widget);
 
 void
-parameter_widget_reconfigure(struct parameter_widget * parameter_widget);
+gebr_gui_parameter_widget_reconfigure(struct gebr_gui_parameter_widget * gebr_gui_parameter_widget);
 
-#endif //__GUI_PARAMETER_H
+#endif //__GEBR_GUI_PARAMETER_H

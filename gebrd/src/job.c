@@ -48,11 +48,11 @@ check_for_binary(const gchar *binary);
 static gboolean
 job_parse_parameter(struct job * job, GebrGeoXmlParameter * parameter, GebrGeoXmlProgram * program)
 {
-	enum GEBR_GEOXML_PARAMETERTYPE	type;
+	enum GEBR_GEOXML_PARAMETER_TYPE	type;
 	GebrGeoXmlProgramParameter *	program_parameter;
 
 	type = gebr_geoxml_parameter_get_type(parameter);
-	if (type == GEBR_GEOXML_PARAMETERTYPE_GROUP) {
+	if (type == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
 		GebrGeoXmlSequence *	instance;
 		gboolean		ret;
 
@@ -73,12 +73,12 @@ job_parse_parameter(struct job * job, GebrGeoXmlParameter * parameter, GebrGeoXm
 
 	program_parameter = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 	switch (type) {
-	case GEBR_GEOXML_PARAMETERTYPE_STRING:
-	case GEBR_GEOXML_PARAMETERTYPE_INT:
-	case GEBR_GEOXML_PARAMETERTYPE_FLOAT:
-	case GEBR_GEOXML_PARAMETERTYPE_RANGE:
-	case GEBR_GEOXML_PARAMETERTYPE_FILE:
-	case GEBR_GEOXML_PARAMETERTYPE_ENUM: {
+	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+	case GEBR_GEOXML_PARAMETER_TYPE_INT:
+	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
+	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
+	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
+	case GEBR_GEOXML_PARAMETER_TYPE_ENUM: {
 		GString *	value;
 
 		value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
@@ -102,7 +102,7 @@ job_parse_parameter(struct job * job, GebrGeoXmlParameter * parameter, GebrGeoXm
 
 		break;
 	}
-	case GEBR_GEOXML_PARAMETERTYPE_FLAG:
+	case GEBR_GEOXML_PARAMETER_TYPE_FLAG:
 		if (gebr_geoxml_program_parameter_get_first_boolean_value(program_parameter, FALSE) == TRUE)
 			g_string_append_printf(job->cmd_line, "%s ", gebr_geoxml_program_parameter_get_keyword(program_parameter));
 

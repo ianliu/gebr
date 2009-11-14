@@ -15,41 +15,41 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GUI_PROGRAM_EDIT_H
-#define __GUI_PROGRAM_EDIT_H
+#ifndef __GEBR_GUI_PROGRAM_EDIT_H
+#define __GEBR_GUI_PROGRAM_EDIT_H
 
 #include <gtk/gtk.h>
 
 #include <geoxml.h>
 
-typedef void (*LibGeBRGUIShowHelpCallback)(GtkWidget * button, GebrGeoXmlProgram * program);
-struct libgebr_gui_program_edit {
+typedef void (*GebrGuiShowHelpCallback)(GtkWidget * button, GebrGeoXmlProgram * program);
+struct gebr_gui_program_edit {
 	GebrGeoXmlProgram *			program;
 
 	GtkWidget *			widget;
-	gpointer			file_parameter_widget_data;
-	LibGeBRGUIShowHelpCallback	show_help_callback;
+	gpointer			file_gebr_gui_parameter_widget_data;
+	GebrGuiShowHelpCallback	show_help_callback;
 	gboolean			use_default;
 
 	GtkWidget *			scrolled_window;
 	GtkWidget *			title_label;
 	GtkWidget *			hbox;
 
-	struct libgebr_gui_program_edit_dicts {
+	struct gebr_gui_gebr_gui_program_edit_dicts {
 		GebrGeoXmlDocument *	project;
 		GebrGeoXmlDocument *	line;
 		GebrGeoXmlDocument *	flow;
 	} dicts;
 };
 
-struct libgebr_gui_program_edit *
-libgebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer file_parameter_widget_data,
-LibGeBRGUIShowHelpCallback show_help_callback, gboolean use_default);
+struct gebr_gui_program_edit *
+gebr_gui_gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer file_gebr_gui_parameter_widget_data,
+GebrGuiShowHelpCallback show_help_callback, gboolean use_default);
 
 void
-libgebr_gui_program_edit_destroy(struct libgebr_gui_program_edit * program_edit);
+gebr_gui_gebr_gui_program_edit_destroy(struct gebr_gui_program_edit * program_edit);
 
 void
-libgebr_gui_program_edit_reload(struct libgebr_gui_program_edit * program_edit, GebrGeoXmlProgram * program);
+gebr_gui_gebr_gui_program_edit_reload(struct gebr_gui_program_edit * program_edit, GebrGeoXmlProgram * program);
 
-#endif //__GUI_PROGRAM_EDIT_H
+#endif //__GEBR_GUI_PROGRAM_EDIT_H

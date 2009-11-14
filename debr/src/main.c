@@ -40,8 +40,8 @@ main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	setlocale(LC_NUMERIC, "C");
 
-	gui_setup_icons();
-	gui_setup_theme();
+	gebr_gui_setup_icons();
+	gebr_gui_setup_theme();
 	debr_setup_ui();
 	gtk_main();
 

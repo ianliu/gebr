@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GUI_UTILS_H
-#define __GUI_UTILS_H
+#ifndef __GEBR_GUI_UTILS_H
+#define __GEBR_GUI_UTILS_H
 
 #include <string.h>
 
@@ -170,4 +170,4 @@ gebr_gui_gtk_expander_hacked_idle(GtkWidget * hbox, GdkEventExpose *event, GtkWi
 	GTK_IMAGE(gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU)))
 #endif // !GTK_CHECK_VERSION(2,16,0)
 
-#endif //__GUI_UTILS_H
+#endif //__GEBR_GUI_UTILS_H

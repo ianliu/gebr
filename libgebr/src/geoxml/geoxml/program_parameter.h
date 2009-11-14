@@ -238,7 +238,7 @@ gebr_geoxml_program_parameter_get_first_value(GebrGeoXmlProgramParameter * progr
  *
  * If \p program_parameter is NULL returns FALSE.
  *
- * @see GEBR_GEOXML_PARAMETERTYPE_FLAG
+ * @see GEBR_GEOXML_PARAMETER_TYPE_FLAG
  */
 gboolean
 gebr_geoxml_program_parameter_get_first_boolean_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value);
@@ -349,7 +349,7 @@ gebr_geoxml_program_parameter_set_file_be_directory(GebrGeoXmlProgramParameter *
  *
  * If \p program_parameter is NULL returns NULL.
  *
- * @see GEBR_GEOXML_PARAMETERTYPE_FILE, gebr_geoxml_program_parameter_set_file_be_directory
+ * @see GEBR_GEOXML_PARAMETER_TYPE_FILE, gebr_geoxml_program_parameter_set_file_be_directory
  */
 gboolean
 gebr_geoxml_program_parameter_get_file_be_directory(GebrGeoXmlProgramParameter * program_parameter);
@@ -370,7 +370,7 @@ gebr_geoxml_program_parameter_set_file_filter(GebrGeoXmlProgramParameter * progr
  *
  * If \p program_parameter is NULL nothing is done.
  *
- * @see GEBR_GEOXML_PARAMETERTYPE_FILE, gebr_geoxml_program_parameter_set_file_filter
+ * @see GEBR_GEOXML_PARAMETER_TYPE_FILE, gebr_geoxml_program_parameter_set_file_filter
  */
 void
 gebr_geoxml_program_parameter_get_file_filter(GebrGeoXmlProgramParameter * program_parameter,
@@ -412,7 +412,7 @@ gebr_geoxml_program_parameter_set_range_properties(GebrGeoXmlProgramParameter * 
  *
  * If \p program_parameter is NULL nothing is done.
  *
- * @see GEBR_GEOXML_PARAMETERTYPE_RANGE
+ * @see GEBR_GEOXML_PARAMETER_TYPE_RANGE
  */
 void
 gebr_geoxml_program_parameter_get_range_properties(GebrGeoXmlProgramParameter * program_parameter,

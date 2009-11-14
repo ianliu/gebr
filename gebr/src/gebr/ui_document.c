@@ -89,7 +89,7 @@ static gboolean
 dict_edit_get_selected(struct dict_edit_data * data, GtkTreeIter * iter);
 static GtkMenu *
 on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_data * data);
-static enum GEBR_GEOXML_PARAMETERTYPE
+static enum GEBR_GEOXML_PARAMETER_TYPE
 dict_edit_type_text_to_gebr_geoxml_type(const gchar * text);
 static gboolean
 dict_edit_check_empty_keyword(const gchar * keyword);
@@ -378,13 +378,13 @@ document_dict_edit_setup_ui(void)
 	type_model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
 	gtk_list_store_append(type_model, &iter);
 	gtk_list_store_set(type_model, &iter,
-		0, "integer", 1, GEBR_GEOXML_PARAMETERTYPE_INT, -1);
+		0, "integer", 1, GEBR_GEOXML_PARAMETER_TYPE_INT, -1);
 	gtk_list_store_append(type_model, &iter);
 	gtk_list_store_set(type_model, &iter,
-		0, "real", 1, GEBR_GEOXML_PARAMETERTYPE_FLOAT, -1);
+		0, "real", 1, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, -1);
 	gtk_list_store_append(type_model, &iter);
 	gtk_list_store_set(type_model, &iter,
-		0, "string", 1, GEBR_GEOXML_PARAMETERTYPE_STRING, -1);
+		0, "string", 1, GEBR_GEOXML_PARAMETER_TYPE_STRING, -1);
 	cell_renderer = gtk_cell_renderer_combo_new();
 	data->cell_renderer_array[DICT_EDIT_TYPE] = cell_renderer;
 	column = gtk_tree_view_column_new_with_attributes(_("Type"), cell_renderer, NULL);
@@ -587,10 +587,10 @@ on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data)
 
 	value = (gchar*)gtk_entry_get_text(GTK_ENTRY(data->value_entry));
 	switch (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter))) {
-	case GEBR_GEOXML_PARAMETERTYPE_INT:
+	case GEBR_GEOXML_PARAMETER_TYPE_INT:
 		value = (gchar*)libgebr_validate_int(value, NULL, NULL);
 		break;
-	case GEBR_GEOXML_PARAMETERTYPE_FLOAT:
+	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 		value = (gchar*)libgebr_validate_float(value, NULL, NULL);
 		break;
 	default:
@@ -686,10 +686,10 @@ struct dict_edit_data * data)
 		break;
 	case DICT_EDIT_VALUE:
 		switch (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter))) {
-		case GEBR_GEOXML_PARAMETERTYPE_INT:
+		case GEBR_GEOXML_PARAMETER_TYPE_INT:
 			new_text = (gchar*)libgebr_validate_int(new_text, NULL, NULL);
 			break;
-		case GEBR_GEOXML_PARAMETERTYPE_FLOAT:
+		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 			new_text = (gchar*)libgebr_validate_float(new_text, NULL, NULL);
 			break;
 		default:
@@ -715,13 +715,13 @@ dict_edit_load_iter(struct dict_edit_data * data, GtkTreeIter * iter, GebrGeoXml
 	const gchar *	type_string;
 
 	switch (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter))) {
-	case GEBR_GEOXML_PARAMETERTYPE_STRING:
+	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 		type_string = "string";
 		break;
-	case GEBR_GEOXML_PARAMETERTYPE_INT:
+	case GEBR_GEOXML_PARAMETER_TYPE_INT:
 		type_string = "integer";
 		break;
-	case GEBR_GEOXML_PARAMETERTYPE_FLOAT:
+	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 		type_string = "real";
 		break;
 	default:
@@ -835,19 +835,19 @@ out:	gtk_widget_show_all(menu);
 }
 
 /* Function: dict_edit_type_text_to_gebr_geoxml_type
- * Convert type combo box text to a GEBR_GEOXML_PARAMETERTYPE
+ * Convert type combo box text to a GEBR_GEOXML_PARAMETER_TYPE
  */
-static enum GEBR_GEOXML_PARAMETERTYPE
+static enum GEBR_GEOXML_PARAMETER_TYPE
 dict_edit_type_text_to_gebr_geoxml_type(const gchar * text)
 {
 	if (!strcmp(text, "string"))
-		return GEBR_GEOXML_PARAMETERTYPE_STRING;
+		return GEBR_GEOXML_PARAMETER_TYPE_STRING;
 	else if (!strcmp(text, "integer"))
-		return GEBR_GEOXML_PARAMETERTYPE_INT;
+		return GEBR_GEOXML_PARAMETER_TYPE_INT;
 	else if (!strcmp(text, "real"))
-		return GEBR_GEOXML_PARAMETERTYPE_FLOAT;
+		return GEBR_GEOXML_PARAMETER_TYPE_FLOAT;
 	else
-		return GEBR_GEOXML_PARAMETERTYPE_UNKNOWN;
+		return GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN;
 }
 
 static gboolean

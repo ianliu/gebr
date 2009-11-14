@@ -15,21 +15,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GUI_PIXMAPS_H
-#define __GUI_PIXMAPS_H
+#ifndef __GEBR_GUI_PIXMAPS_H
+#define __GEBR_GUI_PIXMAPS_H
 
 #include <gtk/gtk.h>
 
 GdkPixbuf *
-pixmaps_gebr_icon_16x16(void);
+gebr_gui_pixmaps_gebr_icon_16x16(void);
 
 GdkPixbuf *
-pixmaps_gebr_icon_32x32(void);
+gebr_gui_pixmaps_gebr_icon_32x32(void);
 
 GdkPixbuf *
-pixmaps_gebr_icon_64x64(void);
+gebr_gui_pixmaps_gebr_icon_64x64(void);
 
 GdkPixbuf *
-pixmaps_gebr_logo(void);
+gebr_gui_pixmaps_gebr_logo(void);
 
-#endif //__GUI_PIXMAPS_H
+#endif //__GEBR_GUI_PIXMAPS_H

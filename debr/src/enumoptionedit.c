@@ -48,7 +48,7 @@ enum_option_edit_set_property(EnumOptionEdit * enum_option_edit, guint property_
 	case ENUM_OPTION: {
 		GebrGeoXmlSequence *	enum_option;
 
-		gtk_list_store_clear(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store);
+		gtk_list_store_clear(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store);
 		enum_option_edit->enum_option = g_value_get_pointer(value);
 		enum_option = (GebrGeoXmlSequence*)enum_option_edit->enum_option;
 		for (; enum_option != NULL; gebr_geoxml_sequence_next(&enum_option))
@@ -84,7 +84,7 @@ enum_option_edit_class_init(EnumOptionEditClass * class)
 	GParamSpec *		param_spec;
 
 	/* virtual */
-	enum_option_edit_class = GTK_SEQUENCE_EDIT_CLASS(class);
+	enum_option_edit_class = GEBR_GUI_GTK_SEQUENCE_EDIT_CLASS(class);
 	enum_option_edit_class->remove = (typeof(enum_option_edit_class->remove))__enum_option_edit_remove;
 	enum_option_edit_class->move = (typeof(enum_option_edit_class->move))__enum_option_edit_move;
 	enum_option_edit_class->move_top = (typeof(enum_option_edit_class->move_top))__enum_option_edit_move_top;
@@ -107,7 +107,7 @@ enum_option_edit_init(EnumOptionEdit * enum_option_edit)
 {
 }
 
-G_DEFINE_TYPE(EnumOptionEdit, enum_option_edit, GTK_TYPE_SEQUENCE_EDIT);
+G_DEFINE_TYPE(EnumOptionEdit, enum_option_edit, GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT);
 
 /*
  * Internal functions
@@ -119,12 +119,12 @@ enum_option_edit_add_request(EnumOptionEdit * enum_option_edit)
 	GebrGeoXmlEnumOption *		enum_option;
 
 	enum_option = gebr_geoxml_program_parameter_append_enum_option(enum_option_edit->program_parameter,
-		gtk_enhanced_entry_get_text(GTK_ENHANCED_ENTRY(enum_option_edit->label_entry)),
-		gtk_enhanced_entry_get_text(GTK_ENHANCED_ENTRY(enum_option_edit->value_entry)));
+		gebr_gui_gtk_enhanced_entry_get_text(GEBR_GUI_GTK_ENHANCED_ENTRY(enum_option_edit->label_entry)),
+		gebr_gui_gtk_enhanced_entry_get_text(GEBR_GUI_GTK_ENHANCED_ENTRY(enum_option_edit->value_entry)));
 	__enum_option_edit_add(enum_option_edit, enum_option);
 
-	gtk_enhanced_entry_set_text(GTK_ENHANCED_ENTRY(enum_option_edit->label_entry), "");
-	gtk_enhanced_entry_set_text(GTK_ENHANCED_ENTRY(enum_option_edit->value_entry), "");
+	gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_GTK_ENHANCED_ENTRY(enum_option_edit->label_entry), "");
+	gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_GTK_ENHANCED_ENTRY(enum_option_edit->value_entry), "");
 
 	g_signal_emit_by_name(enum_option_edit, "changed");
 }
@@ -182,8 +182,8 @@ __enum_option_edit_add(EnumOptionEdit * enum_option_edit, GebrGeoXmlEnumOption *
 {
 	GtkTreeIter	iter;
 
-	gtk_list_store_append(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, &iter);
-	gtk_list_store_set(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, &iter,
+	gtk_list_store_append(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, &iter);
+	gtk_list_store_set(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, &iter,
 		0, gebr_geoxml_enum_option_get_value(enum_option),
 		1, gebr_geoxml_enum_option_get_label(enum_option),
 		2, enum_option,
@@ -195,12 +195,12 @@ __enum_option_edit_remove(EnumOptionEdit * enum_option_edit, GtkTreeIter * iter)
 {
 	GebrGeoXmlSequence *	sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store), iter,
 		2, &sequence,
 		-1);
 
 	gebr_geoxml_sequence_remove(sequence);
-	gtk_list_store_remove(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter);
+	gtk_list_store_remove(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter);
 
 	g_signal_emit_by_name(enum_option_edit, "changed");
 }
@@ -212,17 +212,17 @@ __enum_option_edit_move(EnumOptionEdit * enum_option_edit, GtkTreeIter * iter, G
 	GebrGeoXmlSequence *	sequence;
 	GebrGeoXmlSequence *	position_sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store), iter,
 		2, &sequence, -1);
-	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store), position,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store), position,
 		2, &position_sequence, -1);
 
 	if (drop_position == GTK_TREE_VIEW_DROP_AFTER) {
 		gebr_geoxml_sequence_move_after(sequence, position_sequence);
-		gtk_list_store_move_after(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, position);
+		gtk_list_store_move_after(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, position);
 	} else {
 		gebr_geoxml_sequence_move_before(sequence, position_sequence);
-		gtk_list_store_move_before(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, position);
+		gtk_list_store_move_before(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, position);
 	}
 
 	g_signal_emit_by_name(enum_option_edit, "changed");
@@ -233,12 +233,12 @@ __enum_option_edit_move_top(EnumOptionEdit * enum_option_edit, GtkTreeIter * ite
 {
 	GebrGeoXmlSequence *	sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store), iter,
 		2, &sequence,
 		-1);
 
 	gebr_geoxml_sequence_move_after(sequence, NULL);
-	gtk_list_store_move_after(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, NULL);
+	gtk_list_store_move_after(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, NULL);
 
 	g_signal_emit_by_name(enum_option_edit, "changed");
 }
@@ -248,12 +248,12 @@ __enum_option_edit_move_bottom(EnumOptionEdit * enum_option_edit, GtkTreeIter * 
 {
 	GebrGeoXmlSequence *	sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store), iter,
 		2, &sequence,
 		-1);
 
 	gebr_geoxml_sequence_move_before(sequence, NULL);
-	gtk_list_store_move_before(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, NULL);
+	gtk_list_store_move_before(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter, NULL);
 
 	g_signal_emit_by_name(enum_option_edit, "changed");
 }
@@ -265,7 +265,7 @@ __enum_option_edit_create_tree_view(EnumOptionEdit * enum_option_edit)
 	GtkTreeViewColumn *	col;
 	GtkCellRenderer *	renderer;
 
-	tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(enum_option_edit)->list_store));
+	tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store));
 
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(renderer, "editable", TRUE, NULL);
@@ -301,8 +301,8 @@ enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParame
 
 	list_store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER, -1);
 	hbox = gtk_hbox_new(TRUE, 0);
-	label_entry = gtk_enhanced_entry_new_with_empty_text(_("label"));
-	value_entry = gtk_enhanced_entry_new_with_empty_text(_("value"));
+	label_entry = gebr_gui_gtk_enhanced_entry_new_with_empty_text(_("label"));
+	value_entry = gebr_gui_gtk_enhanced_entry_new_with_empty_text(_("value"));
 	gtk_widget_set_size_request(value_entry, 20, -1);
 	gtk_box_pack_start(GTK_BOX(hbox), value_entry, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label_entry, TRUE, TRUE, 2);
