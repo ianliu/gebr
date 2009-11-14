@@ -99,48 +99,48 @@ int main (int argc, char** argv)
 	while (menu[++nmenu] != NULL);
 
 	for (imenu=0; imenu<nmenu; imenu++) {
-		GeoXmlDocument *     doc;
-		GeoXmlFlow *         flow;
-		GeoXmlSequence *     seq;
-		GeoXmlProgram *      prog;
+		GebrGeoXmlDocument *     doc;
+		GebrGeoXmlFlow *         flow;
+		GebrGeoXmlSequence *     seq;
+		GebrGeoXmlProgram *      prog;
 		gint                 nprog;
 
-		geoxml_document_load((GeoXmlDocument**) (&flow), menu[imenu]);
-		doc = GEOXML_DOC(flow);
-		nprog = geoxml_flow_get_programs_number(flow);
+		gebr_geoxml_document_load((GebrGeoXmlDocument**) (&flow), menu[imenu]);
+		doc = GEBR_GEOXML_DOC(flow);
+		nprog = gebr_geoxml_flow_get_programs_number(flow);
 		if (fixfname) {
-			geoxml_document_set_filename(doc, menu[imenu]);
-			geoxml_flow_get_program (flow, &seq, 0);
-			prog = GEOXML_PROGRAM(seq);
+			gebr_geoxml_document_set_filename(doc, menu[imenu]);
+			gebr_geoxml_flow_get_program (flow, &seq, 0);
+			prog = GEBR_GEOXML_PROGRAM(seq);
 			for (iprog=0; iprog < nprog; iprog++){
-				geoxml_program_set_menu(prog, menu[imenu], iprog);
-				geoxml_sequence_next(&seq);
+				gebr_geoxml_program_set_menu(prog, menu[imenu], iprog);
+				gebr_geoxml_sequence_next(&seq);
 			}
 		}
 
 		if (setfname != NULL) {
-			geoxml_document_set_filename(doc, setfname);
-			geoxml_flow_get_program (flow, &seq, 0);
-			prog = GEOXML_PROGRAM(seq);
+			gebr_geoxml_document_set_filename(doc, setfname);
+			gebr_geoxml_flow_get_program (flow, &seq, 0);
+			prog = GEBR_GEOXML_PROGRAM(seq);
 			for (iprog=0; iprog < nprog; iprog++) {
-				geoxml_program_set_menu(prog, setfname, iprog);
-				geoxml_sequence_next(&seq);
+				gebr_geoxml_program_set_menu(prog, setfname, iprog);
+				gebr_geoxml_sequence_next(&seq);
 			}
 		}
 
 		if (author != NULL)
-			geoxml_document_set_author(doc, author);
+			gebr_geoxml_document_set_author(doc, author);
 		if (email != NULL)
-			geoxml_document_set_email(doc, email);
+			gebr_geoxml_document_set_email(doc, email);
 		if (iprog == 0) {
 			if (title != NULL)
-				geoxml_document_set_title(doc, title);
+				gebr_geoxml_document_set_title(doc, title);
 			if (desc != NULL)
-				geoxml_document_set_description(doc, desc);
+				gebr_geoxml_document_set_description(doc, desc);
 			if (url || binary)
 				printf("To set URL ou binary, you must specify iprog\n");
 			if (helpdel)
-				geoxml_document_set_help(doc, "");				
+				gebr_geoxml_document_set_help(doc, "");				
                         if (fnhelp){
                                 GString *   html_content;
                                 
@@ -149,7 +149,7 @@ int main (int argc, char** argv)
                                         return EXIT_FAILURE;
                                 }
 
-                                geoxml_document_set_help(doc, html_content->str);
+                                gebr_geoxml_document_set_help(doc, html_content->str);
 
                                 g_string_free(html_content, TRUE);
                         }
@@ -159,19 +159,19 @@ int main (int argc, char** argv)
 				goto out;
 			}
 		
-			geoxml_flow_get_program(flow, &seq, iprog-1);
-			prog = GEOXML_PROGRAM(seq);
+			gebr_geoxml_flow_get_program(flow, &seq, iprog-1);
+			prog = GEBR_GEOXML_PROGRAM(seq);
 
 			if (title != NULL)
-				geoxml_program_set_title(prog, title);
+				gebr_geoxml_program_set_title(prog, title);
 			if (desc != NULL)
-				geoxml_program_set_description(prog, desc);
+				gebr_geoxml_program_set_description(prog, desc);
 			if (binary != NULL)
-				geoxml_program_set_binary(prog, binary);
+				gebr_geoxml_program_set_binary(prog, binary);
 			if (url != NULL)
-				geoxml_program_set_url(prog, url);
+				gebr_geoxml_program_set_url(prog, url);
 			if (helpdel)
-				geoxml_program_set_help(prog, "");
+				gebr_geoxml_program_set_help(prog, "");
 
                         if (fnhelp){
                                 GString *   html_content;
@@ -181,14 +181,14 @@ int main (int argc, char** argv)
                                         return EXIT_FAILURE;
                                 }
                                 
-                                geoxml_program_set_help(prog, html_content->str);
+                                gebr_geoxml_program_set_help(prog, html_content->str);
                                 
                                 g_string_free(html_content, TRUE);   
                         }
 		}
 
-out:		geoxml_document_save(doc, menu[imenu]);
-		geoxml_document_free(doc);
+out:		gebr_geoxml_document_save(doc, menu[imenu]);
+		gebr_geoxml_document_free(doc);
 	}
 
 	return 0;

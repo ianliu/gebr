@@ -17,8 +17,8 @@
  *   Inspired on Qt 4.3 version of QListenSocket, by Trolltech
  */
 
-#ifndef __LIBGEBR_COMM_GLISTENSOCKET_H
-#define __LIBGEBR_COMM_GLISTENSOCKET_H
+#ifndef __COMM_GLISTENSOCKET_H
+#define __COMM_GLISTENSOCKET_H
 
 #include "gsocket.h"
 #include "gstreamsocket.h"
@@ -82,4 +82,4 @@ gebr_comm_listen_socket_get_has_pending_connections(GebrCommListenSocket * liste
 
 G_END_DECLS
 
-#endif //__LIBGEBR_COMM_GLISTENSOCKET_H
+#endif //__COMM_GLISTENSOCKET_H

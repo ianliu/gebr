@@ -561,13 +561,13 @@ gebr_gui_gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GebrGuiGtkT
 #endif
 
 struct reorderable_data {
-	gint				geoxml_sequence_pointer_column;
+	gint				gebr_geoxml_sequence_pointer_column;
 	GebrGuiGtkTreeViewMoveSequenceCallback	callback;
 	gpointer			user_data;
 };
 
 static void
-libgebr_gui_gtk_tree_view_set_geoxml_sequence_moveable_weak_ref(struct reorderable_data * data, GtkTreeView * tree_view)
+libgebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable_weak_ref(struct reorderable_data * data, GtkTreeView * tree_view)
 {
 	g_free(data);
 }
@@ -577,22 +577,22 @@ gtk_tree_view_reorder_callback(GtkTreeView * tree_view, GtkTreeIter * iter, GtkT
 	GtkTreeViewDropPosition drop_position, struct reorderable_data * data)
 {
 	GtkTreeModel *		tree_model;
-	GeoXmlSequence *	sequence;
-	GeoXmlSequence *	position_sequence;
+	GebrGeoXmlSequence *	sequence;
+	GebrGeoXmlSequence *	position_sequence;
 
 	tree_model = gtk_tree_view_get_model(tree_view);
 	gtk_tree_model_get(tree_model, iter,
-		data->geoxml_sequence_pointer_column, &sequence, -1);
+		data->gebr_geoxml_sequence_pointer_column, &sequence, -1);
 	gtk_tree_model_get(tree_model, position,
-		data->geoxml_sequence_pointer_column, &position_sequence, -1);
+		data->gebr_geoxml_sequence_pointer_column, &position_sequence, -1);
 
 	if (drop_position == GTK_TREE_VIEW_DROP_AFTER) {
-		geoxml_sequence_move_after(sequence, position_sequence);
+		gebr_geoxml_sequence_move_after(sequence, position_sequence);
 		gtk_list_store_move_after(GTK_LIST_STORE(tree_model), iter, position);
 
-		geoxml_sequence_next(&position_sequence);
+		gebr_geoxml_sequence_next(&position_sequence);
 	} else {
-		geoxml_sequence_move_before(sequence, position_sequence);
+		gebr_geoxml_sequence_move_before(sequence, position_sequence);
 		gtk_list_store_move_before(GTK_LIST_STORE(tree_model), iter, position);
 	}
 
@@ -603,14 +603,14 @@ gtk_tree_view_reorder_callback(GtkTreeView * tree_view, GtkTreeIter * iter, GtkT
 }
 
 void
-gebr_gui_gtk_tree_view_set_geoxml_sequence_moveable(GtkTreeView * tree_view, gint geoxml_sequence_pointer_column,
+gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GtkTreeView * tree_view, gint gebr_geoxml_sequence_pointer_column,
 	GebrGuiGtkTreeViewMoveSequenceCallback callback, gpointer user_data)
 {
 	struct reorderable_data * data;
 
 	data = g_malloc(sizeof(struct reorderable_data));
 	*data = (struct reorderable_data) {
-		.geoxml_sequence_pointer_column = geoxml_sequence_pointer_column,
+		.gebr_geoxml_sequence_pointer_column = gebr_geoxml_sequence_pointer_column,
 		.callback = callback,
 		.user_data = user_data,
 	};
@@ -619,7 +619,7 @@ gebr_gui_gtk_tree_view_set_geoxml_sequence_moveable(GtkTreeView * tree_view, gin
 		(GebrGuiGtkTreeViewReorderCallback)gtk_tree_view_reorder_callback, NULL, data);
 
 	g_object_weak_ref(G_OBJECT(tree_view),
-		(GWeakNotify)libgebr_gui_gtk_tree_view_set_geoxml_sequence_moveable_weak_ref, data);
+		(GWeakNotify)libgebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable_weak_ref, data);
 }
 
 struct reorder_data {

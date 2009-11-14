@@ -15,15 +15,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_PARAMETERS_P_H
-#define __LIBGEBR_GEOXML_PARAMETERS_P_H
+#ifndef __GEBR_GEOXML_PARAMETERS_P_H
+#define __GEBR_GEOXML_PARAMETERS_P_H
 
 /**
  * \internal
  * Create new parameters element into the end of \p parent
  */
-GeoXmlParameters *
-__geoxml_parameters_append_new(GdomeElement * parent);
+GebrGeoXmlParameters *
+__gebr_geoxml_parameters_append_new(GdomeElement * parent);
 
 /**
  * \internal
@@ -33,13 +33,13 @@ __geoxml_parameters_append_new(GdomeElement * parent);
  * it is reflected on all others. The slaves can't be changed directly.
  */
 gboolean
-__geoxml_parameters_group_check(GeoXmlParameters * parameters);
+__gebr_geoxml_parameters_group_check(GebrGeoXmlParameters * parameters);
 
 /**
  * \internal
  * If \p parameters is in a group, append references of parameter in group instances
  */
 void
-__geoxml_parameters_do_insert_in_group_stuff(GeoXmlParameters * parameters, GeoXmlParameter * parameter);
+__gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter);
 
-#endif //__LIBGEBR_GEOXML_PARAMETERS_P_H
+#endif //__GEBR_GEOXML_PARAMETERS_P_H

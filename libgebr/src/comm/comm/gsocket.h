@@ -17,8 +17,8 @@
  *   Inspired on Qt 4.3 version of QAbstractSocket, by Trolltech
  */
 
-#ifndef __LIBGEBR_COMM_GSOCKET_H
-#define __LIBGEBR_COMM_GSOCKET_H
+#ifndef __COMM_GSOCKET_H
+#define __COMM_GSOCKET_H
 
 #include <glib.h>
 #include <glib-object.h>
@@ -125,4 +125,4 @@ gebr_comm_socket_write_string(GebrCommSocket *, GString *);
 
 G_END_DECLS
 
-#endif //__LIBGEBR_COMM_GSOCKET_H
+#endif //__COMM_GSOCKET_H

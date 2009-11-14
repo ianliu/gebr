@@ -41,8 +41,8 @@ typedef struct _EnumOptionEditClass	EnumOptionEditClass;
 struct _EnumOptionEdit {
 	GtkSequenceEdit			parent;
 
-	GeoXmlEnumOption *		enum_option;
-	GeoXmlProgramParameter *	program_parameter;
+	GebrGeoXmlEnumOption *		enum_option;
+	GebrGeoXmlProgramParameter *	program_parameter;
 	GtkWidget *			label_entry;
 	GtkWidget *			value_entry;
 };
@@ -51,6 +51,6 @@ struct _EnumOptionEditClass {
 };
 
 GtkWidget *
-enum_option_edit_new(GeoXmlEnumOption * enum_option, GeoXmlProgramParameter * program_parameter);
+enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter);
 
 #endif //__ENUM_OPTION_EDIT_H

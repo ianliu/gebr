@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GUI_UTILS_H
-#define __LIBGEBR_GUI_UTILS_H
+#ifndef __GUI_UTILS_H
+#define __GUI_UTILS_H
 
 #include <string.h>
 
@@ -111,10 +111,10 @@ void
 gebr_gui_gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GebrGuiGtkTreeViewTooltipCallback callback, gpointer user_data);
 #endif
 
-typedef void (*GebrGuiGtkTreeViewMoveSequenceCallback)(GtkTreeModel * tree_model, GeoXmlSequence * sequence,
-	GeoXmlSequence * before, gpointer user_data);
+typedef void (*GebrGuiGtkTreeViewMoveSequenceCallback)(GtkTreeModel * tree_model, GebrGeoXmlSequence * sequence,
+	GebrGeoXmlSequence * before, gpointer user_data);
 void
-gebr_gui_gtk_tree_view_set_geoxml_sequence_moveable(GtkTreeView * tree_view, gint geoxml_sequence_pointer_column,
+gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GtkTreeView * tree_view, gint gebr_geoxml_sequence_pointer_column,
 	GebrGuiGtkTreeViewMoveSequenceCallback callback, gpointer user_data);
 
 /**
@@ -170,4 +170,4 @@ gebr_gui_gtk_expander_hacked_idle(GtkWidget * hbox, GdkEventExpose *event, GtkWi
 	GTK_IMAGE(gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU)))
 #endif // !GTK_CHECK_VERSION(2,16,0)
 
-#endif //__LIBGEBR_GUI_UTILS_H
+#endif //__GUI_UTILS_H

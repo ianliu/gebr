@@ -48,7 +48,7 @@
 static void
 parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_parameters);
 static void
-parameters_on_link_button_clicked(GtkWidget * button, GeoXmlProgram * program);
+parameters_on_link_button_clicked(GtkWidget * button, GebrGeoXmlProgram * program);
 static gboolean
 parameters_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_parameters * ui_parameters);
 
@@ -96,12 +96,12 @@ parameters_configure_setup_ui(void)
 	*ui_parameters = (struct ui_parameters) {
 		.dialog = dialog,
 		.program_edit = libgebr_gui_program_edit_setup_ui(
-			GEOXML_PROGRAM(geoxml_sequence_append_clone(GEOXML_SEQUENCE(gebr.program))),
+			GEBR_GEOXML_PROGRAM(gebr_geoxml_sequence_append_clone(GEBR_GEOXML_SEQUENCE(gebr.program))),
 			flow_io_customized_paths_from_line, parameters_on_link_button_clicked, FALSE)
 	};
-	ui_parameters->program_edit->dicts.project = GEOXML_DOCUMENT(gebr.project);
-	ui_parameters->program_edit->dicts.line = GEOXML_DOCUMENT(gebr.line);
-	ui_parameters->program_edit->dicts.flow = GEOXML_DOCUMENT(gebr.flow);
+	ui_parameters->program_edit->dicts.project = GEBR_GEOXML_DOCUMENT(gebr.project);
+	ui_parameters->program_edit->dicts.line = GEBR_GEOXML_DOCUMENT(gebr.line);
+	ui_parameters->program_edit->dicts.flow = GEBR_GEOXML_DOCUMENT(gebr.flow);
 	libgebr_gui_program_edit_reload(ui_parameters->program_edit, NULL);
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_parameters->program_edit->widget, TRUE, TRUE, 0);
@@ -124,47 +124,47 @@ parameters_configure_setup_ui(void)
  *
  */
 void
-parameters_reset_to_default(GeoXmlParameters * parameters)
+parameters_reset_to_default(GebrGeoXmlParameters * parameters)
 {
-	GeoXmlSequence *	parameter;
+	GebrGeoXmlSequence *	parameter;
 
-	parameter = geoxml_parameters_get_first_parameter(parameters);
-	for (; parameter != NULL; geoxml_sequence_next(&parameter)) {
-		if (geoxml_parameter_get_type(GEOXML_PARAMETER(parameter)) == GEOXML_PARAMETERTYPE_GROUP) {
-			GeoXmlSequence *	instance;
+	parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
+	for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter)) {
+		if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter)) == GEBR_GEOXML_PARAMETERTYPE_GROUP) {
+			GebrGeoXmlSequence *	instance;
 
-			geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-			for (; instance != NULL; geoxml_sequence_next(&instance)) {
-				parameters_reset_to_default(GEOXML_PARAMETERS(instance));
-				geoxml_parameters_set_selected(GEOXML_PARAMETERS(instance),
-					geoxml_parameters_get_exclusive(GEOXML_PARAMETERS(instance)));
+			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+			for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
+				parameters_reset_to_default(GEBR_GEOXML_PARAMETERS(instance));
+				gebr_geoxml_parameters_set_selected(GEBR_GEOXML_PARAMETERS(instance),
+					gebr_geoxml_parameters_get_exclusive(GEBR_GEOXML_PARAMETERS(instance)));
 			}
 
 			continue;
 		}
 
-		GeoXmlSequence *	value;
-		GeoXmlSequence *	default_value;
+		GebrGeoXmlSequence *	value;
+		GebrGeoXmlSequence *	default_value;
 
-		geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter),
+		gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
 			FALSE, &value, 0);
-		geoxml_program_parameter_get_value(GEOXML_PROGRAM_PARAMETER(parameter),
+		gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
 			TRUE, &default_value, 0);
-		for (; default_value != NULL; geoxml_sequence_next(&default_value), geoxml_sequence_next(&value)) {
+		for (; default_value != NULL; gebr_geoxml_sequence_next(&default_value), gebr_geoxml_sequence_next(&value)) {
 			if (value == NULL)
-				value = GEOXML_SEQUENCE(geoxml_program_parameter_append_value(
-					GEOXML_PROGRAM_PARAMETER(parameter), FALSE));
-			geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(value),
-				geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(default_value)));
+				value = GEBR_GEOXML_SEQUENCE(gebr_geoxml_program_parameter_append_value(
+					GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE));
+			gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value),
+				gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(default_value)));
 		}
 
 		/* remove extras values */
 		while (value != NULL) {
-			GeoXmlSequence *	tmp;
+			GebrGeoXmlSequence *	tmp;
 
 			tmp = value;
-			geoxml_sequence_next(&tmp);
-			geoxml_sequence_remove(value);
+			gebr_geoxml_sequence_next(&tmp);
+			gebr_geoxml_sequence_remove(value);
 			value = tmp;
 		}
 	}
@@ -187,16 +187,16 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 	case GTK_RESPONSE_OK: {
 		GtkTreeIter		iter;
 
-		geoxml_program_set_status(GEOXML_PROGRAM(ui_parameters->program_edit->program), "configured");
-		geoxml_sequence_move_before(GEOXML_SEQUENCE(ui_parameters->program_edit->program),
-			GEOXML_SEQUENCE(gebr.program));
-		geoxml_sequence_remove(GEOXML_SEQUENCE(gebr.program));
-		document_save(GEOXML_DOCUMENT(gebr.flow));
+		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(ui_parameters->program_edit->program), "configured");
+		gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(ui_parameters->program_edit->program),
+			GEBR_GEOXML_SEQUENCE(gebr.program));
+		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(gebr.program));
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
 		/* Update interface */
 		flow_edition_get_selected_component(&iter, FALSE);
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
-			FSEQ_GEOXML_POINTER, ui_parameters->program_edit->program,
+			FSEQ_GEBR_GEOXML_POINTER, ui_parameters->program_edit->program,
 			FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_apply,
 			-1);
 		flow_edition_select_component_iter(&iter);
@@ -205,7 +205,7 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 
 		break;
 	} case GTK_RESPONSE_DEFAULT:
-		parameters_reset_to_default(geoxml_program_get_parameters(ui_parameters->program_edit->program));
+		parameters_reset_to_default(gebr_geoxml_program_get_parameters(ui_parameters->program_edit->program));
 		libgebr_gui_program_edit_reload(ui_parameters->program_edit, NULL);
 		return;
 	case GTK_RESPONSE_HELP:
@@ -213,7 +213,7 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 		return;
 	case GTK_RESPONSE_CANCEL:
 	default:
-		geoxml_sequence_remove(GEOXML_SEQUENCE(ui_parameters->program_edit->program));
+		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(ui_parameters->program_edit->program));
 		break;
 	}
 
@@ -224,12 +224,12 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 }
 
 static void
-parameters_on_link_button_clicked(GtkWidget * button, GeoXmlProgram * program)
+parameters_on_link_button_clicked(GtkWidget * button, GebrGeoXmlProgram * program)
 {
 	GString * cmd_line;
 
 	cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s %s &", gebr.config.browser->str, geoxml_program_get_url(program));
+	g_string_printf(cmd_line, "%s %s &", gebr.config.browser->str, gebr_geoxml_program_get_url(program));
 	system(cmd_line->str);
 
 	g_string_free(cmd_line, TRUE);

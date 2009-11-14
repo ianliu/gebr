@@ -72,7 +72,7 @@ gboolean
 project_line_get_selected(GtkTreeIter * iter, enum ProjectLineSelectionType check_type);
 
 void
-project_line_set_selected(GtkTreeIter * iter, GeoXmlDocument * document);
+project_line_set_selected(GtkTreeIter * iter, GebrGeoXmlDocument * document);
 
 void
 project_line_import(void);

@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GUI_PIXMAPS_H
-#define __LIBGEBR_GUI_PIXMAPS_H
+#ifndef __GUI_PIXMAPS_H
+#define __GUI_PIXMAPS_H
 
 #include <gtk/gtk.h>
 
@@ -32,4 +32,4 @@ pixmaps_gebr_icon_64x64(void);
 GdkPixbuf *
 pixmaps_gebr_logo(void);
 
-#endif //__LIBGEBR_GUI_PIXMAPS_H
+#endif //__GUI_PIXMAPS_H

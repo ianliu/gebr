@@ -19,13 +19,13 @@ AC_INIT(configure.ac)
 PACKAGE=libgebr
 
 VERSION=0.9.14
-GEOXML_VERSION_INFO=`echo $VERSION | awk -F. '{ printf "%d:%d:%d", $1+$2, $3, $2 }'`
+GEBR_GEOXML_VERSION_INFO=`echo $VERSION | awk -F. '{ printf "%d:%d:%d", $1+$2, $3, $2 }'`
 VERSION="SVN "`svnversion`
 
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
 AC_SUBST(TODAY)
-AC_SUBST(GEOXML_VERSION_INFO)
+AC_SUBST(GEBR_GEOXML_VERSION_INFO)
 
 DOCUMENT_VERSION=0.3.1
 PROJECT_VERSION=0.3.1
@@ -40,7 +40,7 @@ dnl Debug option
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [turn on debugging])],, enable_debug=yes)
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--disable-debug], [turn off debugging])],, enable_debug=no)
 if test "$enable_debug" = "yes"; then
-	DEBUG_CFLAGS="-DLIBGEBR_DEBUG"
+	DEBUG_CFLAGS="-DDEBUG"
 else
 	DEBUG_CFLAGS=""
 fi
@@ -51,12 +51,12 @@ AC_ARG_ENABLE(gui, [AC_HELP_STRING([--enable-gui], [turn on GUI build])],, enabl
 AC_ARG_ENABLE(gui, [AC_HELP_STRING([--disable-gui], [turn off GUI elements])],, enable_gui=no)
 if test "$enable_gui" = "yes"; then
 	CONFIG_SUBDIRS="geoxml comm gui"
-	CONFIG_LIBGEBR_GUI="gui/gui/libgebr_gui.la"
+	CONFIG_GUI="gui/gui/libgebr_gui.la"
 else
 	CONFIG_SUBDIRS="geoxml comm"
 fi
 AC_SUBST(CONFIG_SUBDIRS)
-AC_SUBST(CONFIG_LIBGEBR_GUI)
+AC_SUBST(CONFIG_GUI)
 
 dnl For static build
 AC_ARG_ENABLE([static-mode],

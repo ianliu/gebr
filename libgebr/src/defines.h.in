@@ -15,10 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_DEFINES_H
-#define __LIBGEBR_DEFINES_H
+#ifndef __DEFINES_H
+#define __DEFINES_H
 
-#define LIBGEBR_STATIC_MODE	@STATIC_MODE@
-#define LIBGEBR_VERSION         "@VERSION@"
+#define STATIC_MODE	@STATIC_MODE@
+#define VERSION         "@VERSION@"
 
-#endif //__LIBGEBR_DEFINES_H
+#endif //__DEFINES_H

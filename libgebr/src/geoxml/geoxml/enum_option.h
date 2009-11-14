@@ -15,13 +15,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_ENUM_OPTION_H
-#define __LIBGEBR_GEOXML_ENUM_OPTION_H
+#ifndef __GEBR_GEOXML_ENUM_OPTION_H
+#define __GEBR_GEOXML_ENUM_OPTION_H
 
 #include <glib.h>
 
 /**
- * \struct GeoXmlEnumOption enum_option.h geoxml/enum_option.h
+ * \struct GebrGeoXmlEnumOption enum_option.h geoxml/enum_option.h
  * \brief
  * A flow enum_option.
  * \dot
@@ -40,15 +40,15 @@
  *   fontsize = 9
  * 	]
  *
- * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
- * 	"GeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
- * 	"GeoXmlEnumOption" [ URL = "\ref enum_option.h" ];
+ * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
+ * 	"GebrGeoXmlEnumOption" [ URL = "\ref enum_option.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
- * 	"GeoXmlSequence" -> "GeoXmlEnumOption"
- * 	"GeoXmlProgramParameter" -> "GeoXmlEnumOption"
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlEnumOption"
+ * 	"GebrGeoXmlProgramParameter" -> "GebrGeoXmlEnumOption"
  * }
  * \enddot
  * \see enum_option.h
@@ -61,12 +61,12 @@
 /**
  * Promote a sequence to a enum option.
  */
-#define GEOXML_ENUM_OPTION(seq) ((GeoXmlEnumOption*)(seq))
+#define GEBR_GEOXML_ENUM_OPTION(seq) ((GebrGeoXmlEnumOption*)(seq))
 
 /**
- * The GeoXmlEnumOption struct contains private data only, and should be accessed using the functions below.
+ * The GebrGeoXmlEnumOption struct contains private data only, and should be accessed using the functions below.
  */
-typedef struct geoxml_enum_option GeoXmlEnumOption;
+typedef struct gebr_geoxml_enum_option GebrGeoXmlEnumOption;
 
 #include "macros.h"
 
@@ -74,24 +74,24 @@ typedef struct geoxml_enum_option GeoXmlEnumOption;
  *
  */
 void
-geoxml_enum_option_set_label(GeoXmlEnumOption * enum_option, const gchar * label);
+gebr_geoxml_enum_option_set_label(GebrGeoXmlEnumOption * enum_option, const gchar * label);
 
 /**
  *
  */
 const gchar *
-geoxml_enum_option_get_label(GeoXmlEnumOption * enum_option);
+gebr_geoxml_enum_option_get_label(GebrGeoXmlEnumOption * enum_option);
 
 /**
  *
  */
 void
-geoxml_enum_option_set_value(GeoXmlEnumOption * enum_option, const gchar * value);
+gebr_geoxml_enum_option_set_value(GebrGeoXmlEnumOption * enum_option, const gchar * value);
 
 /**
  *
  */
 const gchar *
-geoxml_enum_option_get_value(GeoXmlEnumOption * enum_option);
+gebr_geoxml_enum_option_get_value(GebrGeoXmlEnumOption * enum_option);
 
-#endif //__LIBGEBR_GEOXML_ENUM_OPTION_H
+#endif //__GEBR_GEOXML_ENUM_OPTION_H

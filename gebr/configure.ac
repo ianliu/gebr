@@ -58,20 +58,20 @@ AC_SUBST(GTK_CFLAGS)
 
 dnl check for libgebr
 PKG_CHECK_MODULES(LIBGEBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
-AC_SUBST(LIBGEBR_CFLAGS)
-AC_SUBST(LIBGEBR_LIBS)
+AC_SUBST(CFLAGS)
+AC_SUBST(LIBS)
 dnl check for libgebr_geoxml
-PKG_CHECK_MODULES(LIBGEBR_GEOXML, gebr-geoxml,,AC_MSG_ERROR([Could not find libgebr_geoxml]))
-AC_SUBST(LIBGEBR_GEOXML_CFLAGS)
-AC_SUBST(LIBGEBR_GEOXML_LIBS)
+PKG_CHECK_MODULES(GEOXML, gebr-geoxml,,AC_MSG_ERROR([Could not find libgebr_geoxml]))
+AC_SUBST(GEBR_GEOXML_CFLAGS)
+AC_SUBST(GEBR_GEOXML_LIBS)
 dnl check for libgebr_gui
-PKG_CHECK_MODULES(LIBGEBR_GUI, gebr-gui,,AC_MSG_ERROR([Could not find libgebr_gui]))
-AC_SUBST(LIBGEBR_GUI_CFLAGS)
-AC_SUBST(LIBGEBR_GUI_LIBS)
+PKG_CHECK_MODULES(GUI, gebr-gui,,AC_MSG_ERROR([Could not find libgebr_gui]))
+AC_SUBST(GUI_CFLAGS)
+AC_SUBST(GUI_LIBS)
 dnl check for libgebr_comm
-PKG_CHECK_MODULES(LIBGEBR_COMM, gebr-comm,,AC_MSG_ERROR([Could not find libgebr_comm]))
-AC_SUBST(LIBGEBR_COMM_CFLAGS)
-AC_SUBST(LIBGEBR_COMM_LIBS)
+PKG_CHECK_MODULES(COMM, gebr-comm,,AC_MSG_ERROR([Could not find libgebr_comm]))
+AC_SUBST(COMM_CFLAGS)
+AC_SUBST(COMM_LIBS)
 
 AC_OUTPUT([
 packages/rpm/gebr.fedora.spec packages/rpm/gebr.opensuse.spec packages/rpm/gebr.mandriva.spec

@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GUI_PARAMETER_H
-#define __LIBGEBR_GUI_PARAMETER_H
+#ifndef __GUI_PARAMETER_H
+#define __GUI_PARAMETER_H
 
 #include <gtk/gtk.h>
 
@@ -30,9 +30,9 @@ struct parameter_widget;
 typedef void (*changed_callback)(struct parameter_widget * parameter_widget, gpointer user_data);
 
 struct parameter_widget {
-	GeoXmlParameter *			parameter;
-	GeoXmlProgramParameter *		program_parameter;
-	enum GEOXML_PARAMETERTYPE		parameter_type;
+	GebrGeoXmlParameter *			parameter;
+	GebrGeoXmlProgramParameter *		program_parameter;
+	enum GEBR_GEOXML_PARAMETERTYPE		parameter_type;
 	gboolean				use_default_value;
 	gpointer				data;
 
@@ -40,7 +40,7 @@ struct parameter_widget {
 	GtkWidget *				value_widget;
 
 	/* dict stuff */
-	GeoXmlProgramParameter *		dict_parameter;
+	GebrGeoXmlProgramParameter *		dict_parameter;
 	struct libgebr_gui_program_edit_dicts *	dicts;
 
 	/* for lists */
@@ -53,7 +53,7 @@ struct parameter_widget {
 };
 
 struct parameter_widget *
-parameter_widget_new(GeoXmlParameter * parameter, gboolean use_default_value, gpointer data);
+parameter_widget_new(GebrGeoXmlParameter * parameter, gboolean use_default_value, gpointer data);
 
 void
 parameter_widget_set_dicts(struct parameter_widget * parameter_widget,
@@ -78,4 +78,4 @@ parameter_widget_update_list_separator(struct parameter_widget * parameter_widge
 void
 parameter_widget_reconfigure(struct parameter_widget * parameter_widget);
 
-#endif //__LIBGEBR_GUI_PARAMETER_H
+#endif //__GUI_PARAMETER_H

@@ -17,8 +17,8 @@
  *   Inspired on Qt 4.3 version of QStreamSocket, by Trolltech
  */
 
-#ifndef __LIBGEBR_COMM_G_STREAM_SOCKET_H
-#define __LIBGEBR_COMM_G_STREAM_SOCKET_H
+#ifndef __COMM_G_STREAM_SOCKET_H
+#define __COMM_G_STREAM_SOCKET_H
 
 #include "gsocket.h"
 #include "gsocketaddress.h"
@@ -67,4 +67,4 @@ g_stream_socket_peer_address(GStreamSocket * stream_socket);
 
 G_END_DECLS
 
-#endif //__LIBGEBR_COMM_G_STREAM_SOCKET_H
+#endif //__COMM_G_STREAM_SOCKET_H

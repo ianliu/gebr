@@ -15,10 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_PARAMETER_GROUP_P_H
-#define __LIBGEBR_GEOXML_PARAMETER_GROUP_P_H
+#ifndef __GEBR_GEOXML_PARAMETER_GROUP_P_H
+#define __GEBR_GEOXML_PARAMETER_GROUP_P_H
 
 void
-__geoxml_parameter_group_turn_to_reference(GeoXmlParameterGroup * parameter_group);
+__gebr_geoxml_parameter_group_turn_to_reference(GebrGeoXmlParameterGroup * parameter_group);
 
-#endif //__LIBGEBR_GEOXML_PARAMETER_GROUP_H
+#endif //__GEBR_GEOXML_PARAMETER_GROUP_H

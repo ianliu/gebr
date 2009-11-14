@@ -17,8 +17,8 @@
  *   Inspired on Qt 4.3 version of QSocketAddress, by Trolltech
  */
 
-#ifndef __LIBGEBR_COMM_GSOCKETADDRESSPRIVATE_H
-#define __LIBGEBR_COMM_GSOCKETADDRESSPRIVATE_H
+#ifndef __COMM_GSOCKETADDRESSPRIVATE_H
+#define __COMM_GSOCKETADDRESSPRIVATE_H
 
 #include <glib.h>
 

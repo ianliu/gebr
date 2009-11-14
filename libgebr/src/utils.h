@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_MISC_UTILS_H
-#define __LIBGEBR_MISC_UTILS_H
+#ifndef __MISC_UTILS_H
+#define __MISC_UTILS_H
 
 #include <dirent.h>
 #include <fnmatch.h>
@@ -90,4 +90,4 @@ libgebr_validate_int(const gchar * text_value, const gchar * min, const gchar * 
 const gchar *
 libgebr_validate_float(const gchar * text_value, const gchar * min, const gchar * max);
 
-#endif //__LIBGEBR_MISC_UTILS_H
+#endif //__MISC_UTILS_H

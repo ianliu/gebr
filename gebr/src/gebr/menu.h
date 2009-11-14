@@ -22,10 +22,10 @@
 
 #include <libgebr/geoxml.h>
 
-GeoXmlFlow *
+GebrGeoXmlFlow *
 menu_load(const gchar * filename);
 
-GeoXmlFlow *
+GebrGeoXmlFlow *
 menu_load_path(const gchar * path);
 
 GString *
@@ -41,6 +41,6 @@ gboolean
 menu_list_create_index(void);
 
 GString *
-menu_get_help_from_program_ref(GeoXmlProgram * program);
+menu_get_help_from_program_ref(GebrGeoXmlProgram * program);
 
 #endif //__MENU_H_

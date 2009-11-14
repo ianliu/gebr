@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_H
-#define __LIBGEBR_H
+#ifndef __H
+#define __H
 
 #include "date.h"
 #include "intl.h"
@@ -26,4 +26,4 @@
 void
 libgebr_init(void);
 
-#endif // __LIBGEBR_H
+#endif // __H

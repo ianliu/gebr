@@ -31,7 +31,7 @@ const static gchar *	id_tags [] = {
 };
 
 static gchar *
-__geoxml_remove_line_break(const gchar * tag_value)
+__gebr_geoxml_remove_line_break(const gchar * tag_value)
 {
 	gchar *		linebreak;
 	GString *	value;
@@ -54,7 +54,7 @@ __geoxml_remove_line_break(const gchar * tag_value)
  */
 
 void
-__geoxml_create_CDATASection(GdomeElement * parent_element, const gchar * value)
+__gebr_geoxml_create_CDATASection(GdomeElement * parent_element, const gchar * value)
 {
 	GdomeNode *	node;
 
@@ -64,7 +64,7 @@ __geoxml_create_CDATASection(GdomeElement * parent_element, const gchar * value)
 }
 
 void
-__geoxml_create_TextNode(GdomeElement * parent_element, const gchar * value)
+__gebr_geoxml_create_TextNode(GdomeElement * parent_element, const gchar * value)
 {
 	GdomeNode *	node;
 
@@ -74,7 +74,7 @@ __geoxml_create_TextNode(GdomeElement * parent_element, const gchar * value)
 }
 
 GdomeElement *
-__geoxml_new_element(GdomeElement * parent_element, const gchar * tag_name)
+__gebr_geoxml_new_element(GdomeElement * parent_element, const gchar * tag_name)
 {
 	GdomeElement *	element;
 
@@ -85,18 +85,18 @@ __geoxml_new_element(GdomeElement * parent_element, const gchar * tag_name)
 }
 
 GdomeElement *
-__geoxml_insert_new_element(GdomeElement * parent_element, const gchar * tag_name, GdomeElement * before_element)
+__gebr_geoxml_insert_new_element(GdomeElement * parent_element, const gchar * tag_name, GdomeElement * before_element)
 {
 	GdomeElement *	element;
 
-	element = __geoxml_new_element(parent_element, tag_name);
+	element = __gebr_geoxml_new_element(parent_element, tag_name);
 	gdome_el_insertBefore(parent_element, (GdomeNode*)element, (GdomeNode*)before_element, &exception);
 
 	return element;
 }
 
 GdomeElement *
-__geoxml_get_first_element(GdomeElement * parent_element, const gchar * tag_name)
+__gebr_geoxml_get_first_element(GdomeElement * parent_element, const gchar * tag_name)
 {
 	GdomeNode *		node;
 	GdomeNodeList *		node_list;
@@ -115,7 +115,7 @@ __geoxml_get_first_element(GdomeElement * parent_element, const gchar * tag_name
 }
 
 GdomeElement *
-__geoxml_get_element_at(GdomeElement * parent_element, const gchar * tag_name, gulong index, gboolean recursive)
+__gebr_geoxml_get_element_at(GdomeElement * parent_element, const gchar * tag_name, gulong index, gboolean recursive)
 {
 	if (recursive == FALSE) {
 		GString *		expression;
@@ -125,7 +125,7 @@ __geoxml_get_element_at(GdomeElement * parent_element, const gchar * tag_name, g
 		expression = g_string_new(NULL);
 
 		g_string_printf(expression, "child::%s[%lu]", tag_name, index+1);
-		xpath_result = __geoxml_xpath_evaluate(parent_element, expression->str);
+		xpath_result = __gebr_geoxml_xpath_evaluate(parent_element, expression->str);
 		child = (GdomeElement*)gdome_xpresult_singleNodeValue(xpath_result, &exception);
 
 		g_string_free(expression, TRUE);
@@ -152,7 +152,7 @@ __geoxml_get_element_at(GdomeElement * parent_element, const gchar * tag_name, g
 }
 
 GdomeElement *
-__geoxml_get_element_by_id(GdomeElement * base, const gchar * id)
+__gebr_geoxml_get_element_by_id(GdomeElement * base, const gchar * id)
 {
 	GdomeElement *		document_element;
 	gint			i;
@@ -172,7 +172,7 @@ __geoxml_get_element_by_id(GdomeElement * base, const gchar * id)
 			GdomeElement *		element;
 
 			element = (GdomeElement*)gdome_nl_item(node_list, j, &exception);
-			if (!strcmp(__geoxml_get_attr_value(element, "id"), id))
+			if (!strcmp(__gebr_geoxml_get_attr_value(element, "id"), id))
 				return element;
 		}
 
@@ -192,7 +192,7 @@ __geoxml_get_element_by_id(GdomeElement * base, const gchar * id)
 // 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(base, &exception), &exception);
 // 	g_string_printf(expression, "id('%s')", id);
 
-// 	xpath_result = __geoxml_xpath_evaluate(document_element, expression->str);
+// 	xpath_result = __gebr_geoxml_xpath_evaluate(document_element, expression->str);
 // 	element = (GdomeElement*)gdome_xpresult_singleNodeValue(xpath_result, &exception);
 // 
 // 	/* frees */
@@ -212,7 +212,7 @@ __geoxml_get_element_by_id(GdomeElement * base, const gchar * id)
 }
 
 GSList *
-__geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref, gboolean global)
+__gebr_geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref, gboolean global)
 {
 	const static gchar *	reference_tags [] = {
 		"reference", NULL,
@@ -254,7 +254,7 @@ __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref, gboolea
 
 /* XPath 2.0 support waiting version */
 // GdomeXPathResult *
-// __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref)
+// __gebr_geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref)
 // {
 // 	GString *		expression;
 // 	GdomeXPathResult *	xpath_result;
@@ -264,7 +264,7 @@ __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref, gboolea
 // 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(base, &exception), &exception);
 // 
 // 	g_string_printf(expression, "idref(('%s'))", idref);
-// 	xpath_result = __geoxml_xpath_evaluate(document_element, expression->str);
+// 	xpath_result = __gebr_geoxml_xpath_evaluate(document_element, expression->str);
 // 
 // 	/* the result may contain document's element because of nextid attribute
 // 	 * if so, ignore it */
@@ -278,7 +278,7 @@ __geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref, gboolea
 // }
 
 gulong
-__geoxml_get_element_index(GdomeElement * element)
+__gebr_geoxml_get_element_index(GdomeElement * element)
 {
 	gulong		index;
 	GdomeElement *	i;
@@ -287,27 +287,27 @@ __geoxml_get_element_index(GdomeElement * element)
 
 	index = 0;
 	i = element;
-	while ((i = __geoxml_previous_same_element(i)) != NULL)
+	while ((i = __gebr_geoxml_previous_same_element(i)) != NULL)
 		++index;
 
 	return index;
 }
 
 gulong
-__geoxml_get_elements_number(GdomeElement * parent_element, const gchar * tag_name)
+__gebr_geoxml_get_elements_number(GdomeElement * parent_element, const gchar * tag_name)
 {
 	GdomeElement *		child;
 	gulong			elements_number;
 
 	elements_number = 0;
-	for (child = __geoxml_get_first_element(parent_element, tag_name); child != NULL; elements_number++)
-		child = __geoxml_next_same_element(child);
+	for (child = __gebr_geoxml_get_first_element(parent_element, tag_name); child != NULL; elements_number++)
+		child = __gebr_geoxml_next_same_element(child);
 	
 	return elements_number;
 }
 
 const gchar *
-__geoxml_get_element_value(GdomeElement * element)
+__gebr_geoxml_get_element_value(GdomeElement * element)
 {
 	GdomeDOMString *	string;
 	GdomeNode *		child;
@@ -319,7 +319,7 @@ __geoxml_get_element_value(GdomeElement * element)
 	if (gdome_n_nodeType(child, &exception) == GDOME_TEXT_NODE) {
 		gchar *		protected_str;
 
-		protected_str = __geoxml_remove_line_break(string->str);
+		protected_str = __gebr_geoxml_remove_line_break(string->str);
 		if (protected_str != string->str)
 			gdome_n_set_nodeValue(child, gdome_str_mkref(protected_str), &exception);
 
@@ -330,7 +330,7 @@ __geoxml_get_element_value(GdomeElement * element)
 }
 
 void
-__geoxml_set_element_value(GdomeElement * element, const gchar * tag_value,
+__gebr_geoxml_set_element_value(GdomeElement * element, const gchar * tag_value,
 	createValueNode_function create_func)
 {
 	GdomeNode *		value_node;
@@ -341,27 +341,27 @@ __geoxml_set_element_value(GdomeElement * element, const gchar * tag_value,
 		gdome_el_removeChild(element, value_node, &exception);
 
 	/* Protection agains line-breaks inside text nodes */
-	value_str = (create_func == __geoxml_create_TextNode)
-		? __geoxml_remove_line_break(tag_value) : tag_value;
+	value_str = (create_func == __gebr_geoxml_create_TextNode)
+		? __gebr_geoxml_remove_line_break(tag_value) : tag_value;
 
 	create_func(element, value_str);
 }
 
 const gchar *
-__geoxml_get_tag_value(GdomeElement * parent_element, const gchar * tag_name)
+__gebr_geoxml_get_tag_value(GdomeElement * parent_element, const gchar * tag_name)
 {
-	return __geoxml_get_element_value(__geoxml_get_first_element(parent_element, tag_name));
+	return __gebr_geoxml_get_element_value(__gebr_geoxml_get_first_element(parent_element, tag_name));
 }
 
 void
-__geoxml_set_tag_value(GdomeElement * parent_element, const gchar * tag_name, const gchar * tag_value,
+__gebr_geoxml_set_tag_value(GdomeElement * parent_element, const gchar * tag_name, const gchar * tag_value,
 	createValueNode_function create_func)
 {
-	__geoxml_set_element_value(__geoxml_get_first_element(parent_element, tag_name), tag_value, create_func);
+	__gebr_geoxml_set_element_value(__gebr_geoxml_get_first_element(parent_element, tag_name), tag_value, create_func);
 }
 
 void
-__geoxml_set_attr_value(GdomeElement * element, const gchar * name, const gchar * value)
+__gebr_geoxml_set_attr_value(GdomeElement * element, const gchar * name, const gchar * value)
 {
 	GdomeDOMString *	string;
 
@@ -371,7 +371,7 @@ __geoxml_set_attr_value(GdomeElement * element, const gchar * name, const gchar 
 }
 
 const gchar *
-__geoxml_get_attr_value(GdomeElement * element, const gchar * name)
+__gebr_geoxml_get_attr_value(GdomeElement * element, const gchar * name)
 {
 	GdomeDOMString *	string;
 	GdomeDOMString *	attr_value;
@@ -384,7 +384,7 @@ __geoxml_get_attr_value(GdomeElement * element, const gchar * name)
 }
 
 void
-__geoxml_remove_attr(GdomeElement * element, const gchar * name)
+__gebr_geoxml_remove_attr(GdomeElement * element, const gchar * name)
 {
 	GdomeDOMString *	string;
 
@@ -394,7 +394,7 @@ __geoxml_remove_attr(GdomeElement * element, const gchar * name)
 }
 
 GdomeElement *
-__geoxml_previous_element(GdomeElement * element)
+__gebr_geoxml_previous_element(GdomeElement * element)
 {
 	GdomeNode *	node;
 
@@ -407,7 +407,7 @@ __geoxml_previous_element(GdomeElement * element)
 }
 
 GdomeElement *
-__geoxml_next_element(GdomeElement * element)
+__gebr_geoxml_next_element(GdomeElement * element)
 {
 	GdomeNode *	node;
 
@@ -420,11 +420,11 @@ __geoxml_next_element(GdomeElement * element)
 }
 
 GdomeElement *
-__geoxml_previous_same_element(GdomeElement * element)
+__gebr_geoxml_previous_same_element(GdomeElement * element)
 {
 	GdomeElement *	previous_element;
 
-	previous_element = __geoxml_previous_element(element);
+	previous_element = __gebr_geoxml_previous_element(element);
 	if (previous_element != NULL &&
 	gdome_str_equal(gdome_el_nodeName(element, &exception), gdome_el_nodeName(previous_element, &exception)))
 		return previous_element;
@@ -433,11 +433,11 @@ __geoxml_previous_same_element(GdomeElement * element)
 }
 
 GdomeElement *
-__geoxml_next_same_element(GdomeElement * element)
+__gebr_geoxml_next_same_element(GdomeElement * element)
 {
 	GdomeElement *	next_element;
 
-	next_element = __geoxml_next_element(element);
+	next_element = __gebr_geoxml_next_element(element);
 	if (next_element != NULL &&
 	gdome_str_equal(gdome_el_nodeName(element, &exception), gdome_el_nodeName(next_element, &exception)))
 		return next_element;
@@ -446,7 +446,7 @@ __geoxml_next_same_element(GdomeElement * element)
 }
 
 void
-__geoxml_element_assign_new_id(GdomeElement * element, GdomeElement * reassign_context, gboolean reassign_refereceds)
+__gebr_geoxml_element_assign_new_id(GdomeElement * element, GdomeElement * reassign_context, gboolean reassign_refereceds)
 {
 	GdomeElement *	document_element;
 	gulong		nextid;
@@ -455,7 +455,7 @@ __geoxml_element_assign_new_id(GdomeElement * element, GdomeElement * reassign_c
 	GdomeElement *	reference_element;
 
 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(element, &exception), &exception);
-        nextid_str = (gchar*)__geoxml_get_attr_value(document_element, "nextid");
+        nextid_str = (gchar*)__gebr_geoxml_get_attr_value(document_element, "nextid");
 	if (strlen(nextid_str))
 		sscanf(nextid_str, "n%lu", &nextid);
 	else
@@ -463,27 +463,27 @@ __geoxml_element_assign_new_id(GdomeElement * element, GdomeElement * reassign_c
 
 	newid = g_strdup(nextid_str);
 	nextid_str = g_strdup_printf("n%lu", ++nextid);
-	__geoxml_set_attr_value(document_element, "nextid", nextid_str);
+	__gebr_geoxml_set_attr_value(document_element, "nextid", nextid_str);
 
 	/* change referenced elements */
 	if (reassign_refereceds) {
 		const gchar *	oldid;
 
-		oldid = __geoxml_get_attr_value(element, "id");
+		oldid = __gebr_geoxml_get_attr_value(element, "id");
 		if (reassign_context == NULL)
 			reassign_context = document_element;
-		__geoxml_foreach_element(reference_element,
-		__geoxml_get_elements_by_idref(reassign_context, oldid, FALSE)) 
-			__geoxml_set_attr_value(reference_element, "idref", newid);
+		__gebr_geoxml_foreach_element(reference_element,
+		__gebr_geoxml_get_elements_by_idref(reassign_context, oldid, FALSE)) 
+			__gebr_geoxml_set_attr_value(reference_element, "idref", newid);
 	}
-	__geoxml_set_attr_value(element, "id", newid);
+	__gebr_geoxml_set_attr_value(element, "id", newid);
 
 	g_free(nextid_str);
 	g_free(newid);
 }
 
 void
-__geoxml_element_reassign_ids(GdomeElement * element)
+__gebr_geoxml_element_reassign_ids(GdomeElement * element)
 {
 	gint			i;
 
@@ -493,7 +493,7 @@ __geoxml_element_reassign_ids(GdomeElement * element)
 		gint			j, l;
 
 		if (!strcmp(gdome_el_tagName(element, &exception)->str, id_tags[i]))
-			__geoxml_element_assign_new_id(element, element, TRUE);
+			__gebr_geoxml_element_assign_new_id(element, element, TRUE);
 
 		string = gdome_str_mkref(id_tags[i]);
 		node_list = gdome_el_getElementsByTagName(element, string, &exception);
@@ -501,7 +501,7 @@ __geoxml_element_reassign_ids(GdomeElement * element)
 		l = gdome_nl_length(node_list, &exception);
 		/* get the list of elements with this tag_name. */
 		for (j = 0; j < l; ++j)
-			__geoxml_element_assign_new_id(
+			__gebr_geoxml_element_assign_new_id(
 				(GdomeElement*)gdome_nl_item(node_list, j, &exception),
 				element, TRUE);
 
@@ -511,14 +511,14 @@ __geoxml_element_reassign_ids(GdomeElement * element)
 }
 
 void
-__geoxml_element_assign_reference_id(GdomeElement * element, GdomeElement * referencee)
+__gebr_geoxml_element_assign_reference_id(GdomeElement * element, GdomeElement * referencee)
 {
-	__geoxml_set_attr_value(element, "idref",
-		__geoxml_get_attr_value(referencee, "id"));
+	__gebr_geoxml_set_attr_value(element, "idref",
+		__gebr_geoxml_get_attr_value(referencee, "id"));
 }
 
 GdomeXPathResult *
-__geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression)
+__gebr_geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression)
 {
 	GdomeDOMString *	string;
 	GdomeXPathEvaluator *	xpath_evaluator;

@@ -85,7 +85,7 @@ void		menu_setup_ui			(void);
 
 void		menu_new			(gboolean	edit);
 
-GeoXmlFlow *	menu_load			(const gchar *	path);
+GebrGeoXmlFlow *	menu_load			(const gchar *	path);
 
 void		menu_load_user_directory	(void);
 

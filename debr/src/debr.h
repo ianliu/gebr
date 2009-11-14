@@ -46,9 +46,9 @@ enum CategoryModel {
 
 struct debr {
 	/* current stuff being edited */
-	GeoXmlFlow *		menu;
-	GeoXmlProgram *		program;
-	GeoXmlParameter *	parameter;
+	GebrGeoXmlFlow *		menu;
+	GebrGeoXmlProgram *		program;
+	GebrGeoXmlParameter *	parameter;
 
 	/* diverse widgets */
 	GtkWidget *		window;

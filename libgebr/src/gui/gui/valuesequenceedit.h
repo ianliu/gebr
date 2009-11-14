@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GUI_VALUE_SEQUENCE_EDIT_H
-#define __LIBGEBR_GUI_VALUE_SEQUENCE_EDIT_H
+#ifndef __GUI_VALUE_SEQUENCE_EDIT_H
+#define __GUI_VALUE_SEQUENCE_EDIT_H
 
 #include <gtk/gtk.h>
 
@@ -39,8 +39,8 @@ value_sequence_edit_get_type(void);
 typedef struct _ValueSequenceEdit	ValueSequenceEdit;
 typedef struct _ValueSequenceEditClass	ValueSequenceEditClass;
 
-typedef void (*ValueSequenceSetFunction)(GeoXmlSequence *, const gchar *, gpointer);
-typedef const gchar * (*ValueSequenceGetFunction)(GeoXmlSequence *, gpointer);
+typedef void (*ValueSequenceSetFunction)(GebrGeoXmlSequence *, const gchar *, gpointer);
+typedef const gchar * (*ValueSequenceGetFunction)(GebrGeoXmlSequence *, gpointer);
 
 struct _ValueSequenceEdit {
 	GtkSequenceEdit			parent;
@@ -58,12 +58,12 @@ GtkWidget *
 value_sequence_edit_new(GtkWidget * widget);
 
 void
-value_sequence_edit_add(ValueSequenceEdit * value_sequence_edit, GeoXmlSequence * sequence);
+value_sequence_edit_add(ValueSequenceEdit * value_sequence_edit, GebrGeoXmlSequence * sequence);
 
 void
-value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit, GeoXmlSequence * sequence,
+value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit, GebrGeoXmlSequence * sequence,
 	ValueSequenceSetFunction set_function, ValueSequenceGetFunction get_function, gpointer user_data);
 
 G_END_DECLS
 
-#endif //__LIBGEBR_GUI_VALUE_SEQUENCE_EDIT_H
+#endif //__GUI_VALUE_SEQUENCE_EDIT_H

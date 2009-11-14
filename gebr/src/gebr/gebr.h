@@ -56,11 +56,11 @@ struct gebr {
 	/* for strange things ;) */
 	GtkWidget *			invisible;
 
-	GeoXmlDocument *		project_line;
-	GeoXmlProject *			project;
-	GeoXmlLine *			line;
-	GeoXmlFlow *			flow;
-	GeoXmlProgram *			program;
+	GebrGeoXmlDocument *		project_line;
+	GebrGeoXmlProject *			project;
+	GebrGeoXmlLine *			line;
+	GebrGeoXmlFlow *			flow;
+	GebrGeoXmlProgram *			program;
 
 	GList *				flow_clipboard;
 	struct log *			log;

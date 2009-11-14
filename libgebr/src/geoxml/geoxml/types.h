@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_TYPES_H
-#define __LIBGEBR_GEOXML_TYPES_H
+#ifndef __GEBR_GEOXML_TYPES_H
+#define __GEBR_GEOXML_TYPES_H
 
 /**
  * \internal
@@ -39,4 +39,4 @@ extern const int 	parameter_type_to_str_len;
  */
 extern GdomeException	exception;
 
-#endif // __LIBGEBR_GEOXML_TYPES_H
+#endif // __GEBR_GEOXML_TYPES_H

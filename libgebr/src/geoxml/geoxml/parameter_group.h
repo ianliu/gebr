@@ -15,11 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_PARAMETER_GROUP_H
-#define __LIBGEBR_GEOXML_PARAMETER_GROUP_H
+#ifndef __GEBR_GEOXML_PARAMETER_GROUP_H
+#define __GEBR_GEOXML_PARAMETER_GROUP_H
 
 /**
- * \struct GeoXmlParameterGroup parameter_group.h geoxml/parameter_group.h
+ * \struct GebrGeoXmlParameterGroup parameter_group.h geoxml/parameter_group.h
  * \brief
  * A group of parameters.
  * \dot
@@ -38,50 +38,50 @@
  *   fontsize = 9
  * 	]
  *
- * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
- * 	"GeoXmlFlow" [ URL = "\ref flow.h" ];
- * 	"GeoXmlProgram" [ URL = "\ref program.h" ];
- * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
- * 	"GeoXmlParameter" [ URL = "\ref parameter.h" ];
- * 	"GeoXmlParameters" [ URL = "\ref parameters.h" ];
- * 	"GeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
- * 	"GeoXmlParameterGroup" [ URL = "\ref parameter_group.h" ];
+ * 	"GebrGeoXmlDocument" [ URL = "\ref document.h" ];
+ * 	"GebrGeoXmlFlow" [ URL = "\ref flow.h" ];
+ * 	"GebrGeoXmlProgram" [ URL = "\ref program.h" ];
+ * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GebrGeoXmlParameter" [ URL = "\ref parameter.h" ];
+ * 	"GebrGeoXmlParameters" [ URL = "\ref parameters.h" ];
+ * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
+ * 	"GebrGeoXmlParameterGroup" [ URL = "\ref parameter_group.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
- * 	"GeoXmlDocument" -> "GeoXmlFlow";
- * 	"GeoXmlSequence" -> "GeoXmlParameter";
- * 	"GeoXmlParameter" -> "GeoXmlProgramParameter";
- * 	"GeoXmlParameter" -> "GeoXmlParameterGroup";
+ * 	"GebrGeoXmlDocument" -> "GebrGeoXmlFlow";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlParameter";
+ * 	"GebrGeoXmlParameter" -> "GebrGeoXmlProgramParameter";
+ * 	"GebrGeoXmlParameter" -> "GebrGeoXmlParameterGroup";
  *
  * 	edge [
  * 		arrowhead = "none"
  * 		taillabel = "0..*"
  * 	]
- * 	"GeoXmlFlow" -> "GeoXmlProgram";
- * 	"GeoXmlParameters" -> "GeoXmlParameter";
+ * 	"GebrGeoXmlFlow" -> "GebrGeoXmlProgram";
+ * 	"GebrGeoXmlParameters" -> "GebrGeoXmlParameter";
  *
  * 	edge [
  * 		arrowhead = "none"
  * 		taillabel = "1"
  * 	]
- * 	"GeoXmlProgram" -> "GeoXmlParameters";
- * 	"GeoXmlParameterGroup" -> "GeoXmlParameters";
+ * 	"GebrGeoXmlProgram" -> "GebrGeoXmlParameters";
+ * 	"GebrGeoXmlParameterGroup" -> "GebrGeoXmlParameters";
  * }
  * \enddot
  * \see parameter_group.h
  */
 
 /**
- * The GeoXmlParameterGroup struct contains private data only, and should be accessed using the functions below.
+ * The GebrGeoXmlParameterGroup struct contains private data only, and should be accessed using the functions below.
  */
-typedef struct geoxml_parameter_group GeoXmlParameterGroup;
+typedef struct gebr_geoxml_parameter_group GebrGeoXmlParameterGroup;
 
 /**
- * Cast from a GeoXmlSequence to a GeoXmlParameterGroup
+ * Cast from a GebrGeoXmlSequence to a GebrGeoXmlParameterGroup
  */
-#define GEOXML_PARAMETER_GROUP(seq) ((GeoXmlParameterGroup*)(seq))
+#define GEBR_GEOXML_PARAMETER_GROUP(seq) ((GebrGeoXmlParameterGroup*)(seq))
 
 #include <glib.h>
 
@@ -92,23 +92,23 @@ typedef struct geoxml_parameter_group GeoXmlParameterGroup;
  * Instanciate \p parameter_group, appending a new instances
  * (which is a clone of the first instance) to the list of instances.
  */
-GeoXmlParameters *
-geoxml_parameter_group_instanciate(GeoXmlParameterGroup * parameter_group);
+GebrGeoXmlParameters *
+gebr_geoxml_parameter_group_instanciate(GebrGeoXmlParameterGroup * parameter_group);
 
 /**
  * Remove the last instance.
  */
 gboolean
-geoxml_parameter_group_deinstanciate(GeoXmlParameterGroup * parameter_group);
+gebr_geoxml_parameter_group_deinstanciate(GebrGeoXmlParameterGroup * parameter_group);
 
 /**
  * Get \p group's parameters list.
  *
- * \see \ref parameters.h "GeoXmlParameters"
+ * \see \ref parameters.h "GebrGeoXmlParameters"
  */
 int
-geoxml_parameter_group_get_instance(GeoXmlParameterGroup * parameter_group,
-	GeoXmlSequence ** parameters, gulong index);
+gebr_geoxml_parameter_group_get_instance(GebrGeoXmlParameterGroup * parameter_group,
+	GebrGeoXmlSequence ** parameters, gulong index);
 
 /**
  * Get the number of instances of \p parameter_group
@@ -116,7 +116,7 @@ geoxml_parameter_group_get_instance(GeoXmlParameterGroup * parameter_group,
  * If \p parameter_group is NULL returns 0.
  */
 glong
-geoxml_parameter_group_get_instances_number(GeoXmlParameterGroup * parameter_group);
+gebr_geoxml_parameter_group_get_instances_number(GebrGeoXmlParameterGroup * parameter_group);
 
 /**
  * Return the list of the parameters at \p index position in
@@ -125,7 +125,7 @@ geoxml_parameter_group_get_instances_number(GeoXmlParameterGroup * parameter_gro
  * If \p parameter_group is NULL returns NULL.
  */
 GSList *
-geoxml_parameter_group_get_parameter_in_all_instances(GeoXmlParameterGroup * parameter_group, guint index);
+gebr_geoxml_parameter_group_get_parameter_in_all_instances(GebrGeoXmlParameterGroup * parameter_group, guint index);
 
 /**
  * Set wheter \p parameter_group can have more than one instance.
@@ -134,7 +134,7 @@ geoxml_parameter_group_get_parameter_in_all_instances(GeoXmlParameterGroup * par
  *
  */
 void
-geoxml_parameter_group_set_is_instanciable(GeoXmlParameterGroup * parameter_group, gboolean enable);
+gebr_geoxml_parameter_group_set_is_instanciable(GebrGeoXmlParameterGroup * parameter_group, gboolean enable);
 
 /**
  * Set it \p parameter_group should be expanded by default, according to \p enable.
@@ -142,7 +142,7 @@ geoxml_parameter_group_set_is_instanciable(GeoXmlParameterGroup * parameter_grou
  * If \p parameter_group is NULL nothing is done.
  */
 void
-geoxml_parameter_group_set_expand(GeoXmlParameterGroup * parameter_group, const gboolean enable);
+gebr_geoxml_parameter_group_set_expand(GebrGeoXmlParameterGroup * parameter_group, const gboolean enable);
 
 /**
  * Get wheter \p parameter_group can have more than one instance.
@@ -150,7 +150,7 @@ geoxml_parameter_group_set_expand(GeoXmlParameterGroup * parameter_group, const 
  * If \p parameter_group is NULL returns FALSE.
  */
 gboolean
-geoxml_parameter_group_get_is_instanciable(GeoXmlParameterGroup * parameter_group);
+gebr_geoxml_parameter_group_get_is_instanciable(GebrGeoXmlParameterGroup * parameter_group);
 
 /**
  * Return TRUE if \p parameter_group should be expanded by default, otherwise returns FALSE.
@@ -158,6 +158,6 @@ geoxml_parameter_group_get_is_instanciable(GeoXmlParameterGroup * parameter_grou
  * If \p parameter_group is NULL returns FALSE.
  */
 gboolean
-geoxml_parameter_group_get_expand(GeoXmlParameterGroup * parameter_group);
+gebr_geoxml_parameter_group_get_expand(GebrGeoXmlParameterGroup * parameter_group);
 
-#endif //__LIBGEBR_GEOXML_PARAMETER_GROUP_H
+#endif //__GEBR_GEOXML_PARAMETER_GROUP_H

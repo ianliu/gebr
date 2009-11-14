@@ -122,10 +122,10 @@ Help show
 */
 	
 void 
-help_show_callback(GtkButton *button, GeoXmlDocument *document)
+help_show_callback(GtkButton *button, GebrGeoXmlDocument *document)
 {
-	help_show(geoxml_document_get_help(document),
-		geoxml_document_get_title(document));
+	help_show(gebr_geoxml_document_get_help(document),
+		gebr_geoxml_document_get_title(document));
 }	
 
 /* Function: help_edit
@@ -134,7 +134,7 @@ help_show_callback(GtkButton *button, GeoXmlDocument *document)
  * Edit help in editor as reponse to button clicks.
  */
 void
-help_edit(GtkButton * button, GeoXmlDocument * document)
+help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 {
 	FILE *		html_fp;
 	GString *	html_path;
@@ -160,7 +160,7 @@ help_edit(GtkButton * button, GeoXmlDocument * document)
 		gebr_message(LOG_ERROR, TRUE, TRUE, unable_to_write_help_error);
 		goto out;
 	}
-	fputs(geoxml_document_get_help(document), html_fp);
+	fputs(gebr_geoxml_document_get_help(document), html_fp);
 	fclose(html_fp);
 
 	/* Run editor and wait for user... */
@@ -199,7 +199,7 @@ help_edit(GtkButton * button, GeoXmlDocument * document)
 	}
 
 	/* Finally, the edited help back to the document */
-	geoxml_document_set_help(document, help->str);
+	gebr_geoxml_document_set_help(document, help->str);
 
 	/* frees */
 out:	g_string_free(html_path, TRUE);

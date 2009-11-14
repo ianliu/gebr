@@ -40,7 +40,7 @@
 
 struct program_preview_data {
 	struct libgebr_gui_program_edit *	program_edit;
-	GeoXmlProgram *				program;
+	GebrGeoXmlProgram *				program;
 	GtkWidget *				title_label;
 	GtkWidget *				hbox;
 };
@@ -54,7 +54,7 @@ program_load_iter(GtkTreeIter * iter);
 static void
 program_load_selected(void);
 static GtkTreeIter
-program_append_to_ui(GeoXmlProgram * program);
+program_append_to_ui(GebrGeoXmlProgram * program);
 static void
 program_selected(void);
 static void
@@ -77,7 +77,7 @@ program_description_changed(GtkEntry * entry);
 static void
 program_url_open(GtkButton * button);
 static void
-program_help_view(GtkButton * button, GeoXmlProgram * program);
+program_help_view(GtkButton * button, GebrGeoXmlProgram * program);
 static void
 program_help_edit(GtkButton * button);
 static void
@@ -125,7 +125,7 @@ program_setup_ui(void)
 		GTK_SELECTION_MULTIPLE);
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_program.tree_view),
 		(GebrGuiGtkPopupCallback)program_popup_menu, NULL);
-	gebr_gui_gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(debr.ui_program.tree_view), PROGRAM_XMLPOINTER,
+	gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GTK_TREE_VIEW(debr.ui_program.tree_view), PROGRAM_XMLPOINTER,
 		(GebrGuiGtkTreeViewMoveSequenceCallback)menu_saved_status_set_unsaved, NULL);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_program.tree_view);
 	g_signal_connect(debr.ui_program.tree_view, "cursor-changed",
@@ -204,7 +204,7 @@ program_setup_ui(void)
 void
 program_load_menu(void)
 {
-	GeoXmlSequence *		program;
+	GebrGeoXmlSequence *		program;
 	GtkTreeIter			iter;
 
 	gtk_list_store_clear(debr.ui_program.list_store);
@@ -215,9 +215,9 @@ program_load_menu(void)
 		return;
 	}
 
-	geoxml_flow_get_program(debr.menu, &program, 0);
-	for (; program != NULL; geoxml_sequence_next(&program))
-		program_append_to_ui(GEOXML_PROGRAM(program));
+	gebr_geoxml_flow_get_program(debr.menu, &program, 0);
+	for (; program != NULL; gebr_geoxml_sequence_next(&program))
+		program_append_to_ui(GEBR_GEOXML_PROGRAM(program));
 
 	debr.program = NULL;
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_program.list_store), &iter) == TRUE)
@@ -231,15 +231,15 @@ program_load_menu(void)
 void
 program_new(gboolean edit)
 {
-	GeoXmlProgram *		program;
+	GebrGeoXmlProgram *		program;
 	GtkTreeIter		iter;
 
-	program = geoxml_flow_append_program(debr.menu);
+	program = gebr_geoxml_flow_append_program(debr.menu);
 	/* default settings */
-	geoxml_program_set_title(program, _("New program"));
-	geoxml_program_set_stdin(program, TRUE);
-	geoxml_program_set_stdout(program, TRUE);
-	geoxml_program_set_stderr(program, TRUE);
+	gebr_geoxml_program_set_title(program, _("New program"));
+	gebr_geoxml_program_set_stdin(program, TRUE);
+	gebr_geoxml_program_set_stdout(program, TRUE);
+	gebr_geoxml_program_set_stderr(program, TRUE);
 
 	iter = program_append_to_ui(program);
 	gtk_list_store_set(debr.ui_program.list_store, &iter,
@@ -281,7 +281,7 @@ program_preview(void)
 		G_CALLBACK(program_preview_on_delete_event), data);
 
 	data->program_edit = libgebr_gui_program_edit_setup_ui(
-		GEOXML_PROGRAM(geoxml_object_copy(GEOXML_OBJECT(debr.program))),
+		GEBR_GEOXML_PROGRAM(gebr_geoxml_object_copy(GEBR_GEOXML_OBJECT(debr.program))),
 		NULL, (LibGeBRGUIShowHelpCallback)program_help_view, TRUE);
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), data->program_edit->widget, TRUE, TRUE, 0);
@@ -312,7 +312,7 @@ program_remove(void)
 		return;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_program.tree_view) {
-		geoxml_sequence_remove(GEOXML_SEQUENCE(debr.program));
+		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(debr.program));
 		debr.program = NULL;
 		gtk_list_store_remove(debr.ui_program.list_store, &iter);
 		g_signal_emit_by_name(debr.ui_program.tree_view, "cursor-changed");
@@ -335,7 +335,7 @@ program_top(void)
 	program_get_selected(&iter, TRUE);
 
 	gtk_list_store_move_after(debr.ui_program.list_store, &iter, NULL);
-	geoxml_sequence_move_after(GEOXML_SEQUENCE(debr.program), NULL);
+	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(debr.program), NULL);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -352,7 +352,7 @@ program_bottom(void)
 	program_get_selected(&iter, TRUE);
 
 	gtk_list_store_move_before(debr.ui_program.list_store, &iter, NULL);
-	geoxml_sequence_move_before(GEOXML_SEQUENCE(debr.program), NULL);
+	gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(debr.program), NULL);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -365,14 +365,14 @@ program_copy(void)
 {
 	GtkTreeIter		iter;
 
-	geoxml_clipboard_clear();
+	gebr_geoxml_clipboard_clear();
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_program.tree_view) {
-		GeoXmlObject *	program;
+		GebrGeoXmlObject *	program;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), &iter,
 			PROGRAM_XMLPOINTER, &program,
 			-1);
-		geoxml_clipboard_copy(GEOXML_OBJECT(program));
+		gebr_geoxml_clipboard_copy(GEBR_GEOXML_OBJECT(program));
 	}
 }
 
@@ -382,10 +382,10 @@ program_copy(void)
 void
 program_paste(void)
 {
-	GeoXmlSequence *	pasted;
+	GebrGeoXmlSequence *	pasted;
 	GtkTreeIter		pasted_iter;
 
-	pasted = GEOXML_SEQUENCE(geoxml_clipboard_paste(GEOXML_OBJECT(debr.menu)));
+	pasted = GEBR_GEOXML_SEQUENCE(gebr_geoxml_clipboard_paste(GEBR_GEOXML_OBJECT(debr.menu)));
 	if (pasted == NULL) {
 		debr_message(LOG_ERROR, _("Could not paste program"));
 		return;
@@ -397,7 +397,7 @@ program_paste(void)
 			PROGRAM_XMLPOINTER, pasted,
 			-1);
 		program_load_iter(&pasted_iter);
-	} while (!geoxml_sequence_next(&pasted));
+	} while (!gebr_geoxml_sequence_next(&pasted));
 
 	program_select_iter(pasted_iter);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -602,15 +602,15 @@ program_dialog_setup_ui(void)
 	 * Load program into UI
 	 */
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(io_stdin_checkbutton),
-		geoxml_program_get_stdin(debr.program));
+		gebr_geoxml_program_get_stdin(debr.program));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(io_stdout_checkbutton),
-		geoxml_program_get_stdout(debr.program));
+		gebr_geoxml_program_get_stdout(debr.program));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(io_stderr_checkbutton),
-		geoxml_program_get_stderr(debr.program));
-	gtk_entry_set_text(GTK_ENTRY(title_entry), geoxml_program_get_title(debr.program));
-	gtk_entry_set_text(GTK_ENTRY(binary_entry), geoxml_program_get_binary(debr.program));
-	gtk_entry_set_text(GTK_ENTRY(description_entry), geoxml_program_get_description(debr.program));
-	gtk_entry_set_text(GTK_ENTRY(url_entry), geoxml_program_get_url(debr.program));
+		gebr_geoxml_program_get_stderr(debr.program));
+	gtk_entry_set_text(GTK_ENTRY(title_entry), gebr_geoxml_program_get_title(debr.program));
+	gtk_entry_set_text(GTK_ENTRY(binary_entry), gebr_geoxml_program_get_binary(debr.program));
+	gtk_entry_set_text(GTK_ENTRY(description_entry), gebr_geoxml_program_get_description(debr.program));
+	gtk_entry_set_text(GTK_ENTRY(url_entry), gebr_geoxml_program_get_url(debr.program));
 
 	gtk_widget_show(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
@@ -631,7 +631,7 @@ static void
 program_details_update(void)
 {
 	GString *               text;
-	GeoXmlParameters *      parameters;
+	GebrGeoXmlParameters *      parameters;
 	gchar *		        markup;
 
 	g_object_set(debr.ui_program.details.url_button, "visible", debr.program != NULL, NULL);
@@ -648,16 +648,16 @@ program_details_update(void)
 
 	gtk_frame_set_label(GTK_FRAME(debr.ui_program.details.frame), _("Details"));
 
-	markup = g_markup_printf_escaped("<b>%s</b>", geoxml_program_get_title(debr.program));
+	markup = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_program_get_title(debr.program));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.title_label), markup);
 	g_free(markup);
-	markup = g_markup_printf_escaped("<i>%s</i>", geoxml_program_get_description(debr.program));
+	markup = g_markup_printf_escaped("<i>%s</i>", gebr_geoxml_program_get_description(debr.program));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.description_label), markup);
 	g_free(markup);
 
-	parameters = geoxml_program_get_parameters(debr.program);
+	parameters = gebr_geoxml_program_get_parameters(debr.program);
 	text = g_string_new(NULL);
-	switch (geoxml_parameters_get_number(parameters)){
+	switch (gebr_geoxml_parameters_get_number(parameters)){
 	case 0:
 		g_string_printf(text, _("This program has no parameters"));
 		break;
@@ -666,12 +666,12 @@ program_details_update(void)
 		break;
 	default:
 		g_string_printf(text, _("This program has %li parameters"),
-			geoxml_parameters_get_number(parameters));
+			gebr_geoxml_parameters_get_number(parameters));
 	}
 	gtk_label_set_text(GTK_LABEL(debr.ui_program.details.nparams_label), text->str);
 	g_string_free(text, TRUE);
 
-	markup = g_markup_printf_escaped("<b>%s</b>: %s", _("Binary"), geoxml_program_get_binary(debr.program));
+	markup = g_markup_printf_escaped("<b>%s</b>: %s", _("Binary"), gebr_geoxml_program_get_binary(debr.program));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.binary_label), markup);
 	g_free(markup);
 
@@ -679,22 +679,22 @@ program_details_update(void)
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.url_label), markup);
 	g_free(markup);
 
-	if (strlen(geoxml_program_get_url(debr.program)) > 0)
+	if (strlen(gebr_geoxml_program_get_url(debr.program)) > 0)
 		gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button),
-			geoxml_program_get_url(debr.program));
+			gebr_geoxml_program_get_url(debr.program));
 	else
 		gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button),
 			_("URL not set"));
 
 	g_object_set(G_OBJECT(debr.ui_program.details.url_button), "sensitive",
-		(strlen(geoxml_program_get_url(debr.program))>0) ? TRUE : FALSE, NULL);
+		(strlen(gebr_geoxml_program_get_url(debr.program))>0) ? TRUE : FALSE, NULL);
 
 	g_signal_handlers_disconnect_matched(G_OBJECT(debr.ui_program.details.help_button),
 		G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (GCallback)program_help_view, NULL);
 	g_signal_connect(GTK_OBJECT(debr.ui_program.details.help_button), "clicked",
 		GTK_SIGNAL_FUNC(program_help_view), debr.program);
 	g_object_set(G_OBJECT(debr.ui_program.details.help_button),
-		"sensitive", (strlen(geoxml_program_get_help(debr.program)) > 1) ? TRUE : FALSE, NULL);
+		"sensitive", (strlen(gebr_geoxml_program_get_help(debr.program)) > 1) ? TRUE : FALSE, NULL);
 }
 
 /*
@@ -720,14 +720,14 @@ program_get_selected(GtkTreeIter * iter, gboolean warn_user)
 static void
 program_load_iter(GtkTreeIter * iter)
 {
-	GeoXmlProgram *	program;
+	GebrGeoXmlProgram *	program;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), iter,
 		PROGRAM_XMLPOINTER, &program,
 		-1);
 
 	gtk_list_store_set(debr.ui_program.list_store, iter,
-		PROGRAM_TITLE, geoxml_program_get_title(program),
+		PROGRAM_TITLE, gebr_geoxml_program_get_title(program),
 		-1);
 	program_details_update();
 }
@@ -752,7 +752,7 @@ program_load_selected(void)
 }
 
 static GtkTreeIter
-program_append_to_ui(GeoXmlProgram * program)
+program_append_to_ui(GebrGeoXmlProgram * program)
 {
 	GtkTreeIter	iter;
 
@@ -854,7 +854,7 @@ out:	gtk_widget_show_all(menu);
 static void
 program_stdin_changed(GtkToggleButton * togglebutton)
 {
-	geoxml_program_set_stdin(debr.program, gtk_toggle_button_get_active(togglebutton));
+	gebr_geoxml_program_set_stdin(debr.program, gtk_toggle_button_get_active(togglebutton));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -866,7 +866,7 @@ program_stdin_changed(GtkToggleButton * togglebutton)
 static void
 program_stdout_changed(GtkToggleButton * togglebutton)
 {
-	geoxml_program_set_stdout(debr.program, gtk_toggle_button_get_active(togglebutton));
+	gebr_geoxml_program_set_stdout(debr.program, gtk_toggle_button_get_active(togglebutton));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -878,7 +878,7 @@ program_stdout_changed(GtkToggleButton * togglebutton)
 static void
 program_stderr_changed(GtkToggleButton * togglebutton)
 {
-	geoxml_program_set_stderr(debr.program, gtk_toggle_button_get_active(togglebutton));
+	gebr_geoxml_program_set_stderr(debr.program, gtk_toggle_button_get_active(togglebutton));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -886,7 +886,7 @@ program_stderr_changed(GtkToggleButton * togglebutton)
 static gboolean
 program_title_changed(GtkEntry * entry)
 {
-	geoxml_program_set_title(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
+	gebr_geoxml_program_set_title(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 	return FALSE;
@@ -895,7 +895,7 @@ program_title_changed(GtkEntry * entry)
 static gboolean
 program_binary_changed(GtkEntry * entry)
 {
-	geoxml_program_set_binary(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
+	gebr_geoxml_program_set_binary(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 	return FALSE;
@@ -904,7 +904,7 @@ program_binary_changed(GtkEntry * entry)
 static gboolean
 program_description_changed(GtkEntry * entry)
 {
-	geoxml_program_set_description(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
+	gebr_geoxml_program_set_description(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 	return FALSE;
@@ -916,17 +916,17 @@ program_url_open(GtkButton * button)
 	GString * cmdline;
 
 	cmdline = g_string_new(NULL);
-	g_string_printf(cmdline, "%s %s&", debr.config.browser->str, geoxml_program_get_url(debr.program));
+	g_string_printf(cmdline, "%s %s&", debr.config.browser->str, gebr_geoxml_program_get_url(debr.program));
 	system(cmdline->str);
 	g_string_free(cmdline, TRUE);
 }
 
 static void
-program_help_view(GtkButton * button, GeoXmlProgram * program)
+program_help_view(GtkButton * button, GebrGeoXmlProgram * program)
 {
         gchar * help;
 
-        help = (gchar *) geoxml_program_get_help(program);
+        help = (gchar *) gebr_geoxml_program_get_help(program);
         if (strlen(help) > 1)
                 help_show(help);
         else
@@ -939,8 +939,8 @@ program_help_edit(GtkButton * button)
 {
 	GString *	help;
 
-	help = help_edit(geoxml_program_get_help(debr.program), debr.program, FALSE);
-	geoxml_program_set_help(debr.program, help->str);
+	help = help_edit(gebr_geoxml_program_get_help(debr.program), debr.program, FALSE);
+	gebr_geoxml_program_set_help(debr.program, help->str);
 	g_string_free(help, TRUE);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -951,8 +951,8 @@ program_help_refresh(GtkButton * button)
 {
 	GString *	help;
 
-	help = help_edit(geoxml_program_get_help(debr.program), debr.program, TRUE);
-	geoxml_program_set_help(debr.program, help->str);
+	help = help_edit(gebr_geoxml_program_get_help(debr.program), debr.program, TRUE);
+	gebr_geoxml_program_set_help(debr.program, help->str);
 	g_string_free(help, TRUE);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -961,7 +961,7 @@ program_help_refresh(GtkButton * button)
 static gboolean
 program_url_changed(GtkEntry * entry)
 {
-	geoxml_program_set_url(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
+	gebr_geoxml_program_set_url(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 	return FALSE;
@@ -973,7 +973,7 @@ program_preview_on_response(GtkWidget * dialog, gint response, struct program_pr
 	switch (response) {
 	case RESPONSE_REFRESH:
 		libgebr_gui_program_edit_reload(data->program_edit,
-			GEOXML_PROGRAM(geoxml_object_copy(GEOXML_OBJECT(data->program))));
+			GEBR_GEOXML_PROGRAM(gebr_geoxml_object_copy(GEBR_GEOXML_OBJECT(data->program))));
 		break;
 	case GTK_RESPONSE_CLOSE: default:
 		libgebr_gui_program_edit_destroy(data->program_edit);

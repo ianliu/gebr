@@ -76,6 +76,6 @@ void
 flow_browse_single_selection(void);
 
 void
-flow_browse_load_revision(GeoXmlRevision * revision, gboolean new);
+flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new);
 
 #endif //__UI_FLOW_BROWSE_H

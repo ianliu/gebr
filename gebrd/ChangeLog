@@ -112,7 +112,7 @@
 2009-01-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
 	* - various bugfixes to handle reference parameters
-	  - geoxml_parameter_get_type resolve references
+	  - gebr_geoxml_parameter_get_type resolve references
 	  - a lot of fixes to geoxmlsequence functions
 	  - rewritten dran n' drop API
 	  - full drag n' drop support in debr's parameter page
@@ -181,7 +181,7 @@
 
 	* the saga of list parameters ended!
 	  - changed DTD to make value and default values independets
-	  - refactoring of GeoXmlProgramParameter functions
+	  - refactoring of GebrGeoXmlProgramParameter functions
 	  - general refacte on parameter_widget function:
 	  - every change is auto submited
 	  - ability to auto rebuild the ui to match new parameter
@@ -329,7 +329,7 @@
 
 2008-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* - use LIBGEBR_{CFLAGS, LIBS} in gebrd and gebrme
+	* - use {CFLAGS, LIBS} in gebrd and gebrme
 	  - disable file overwrite confirmation on gtkfileentry
 
 2008-01-08  Braulio Barros de Oliveira <brauliobo@gmail.com>

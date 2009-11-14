@@ -26,11 +26,11 @@ gboolean
 line_new(void);
 gboolean
 line_delete(gboolean confirm);
-GeoXmlLine *
+GebrGeoXmlLine *
 line_import(const gchar * line_filename, const gchar * at_dir);
 
 GtkTreeIter
-line_append_flow(GeoXmlLineFlow * line_flow);
+line_append_flow(GebrGeoXmlLineFlow * line_flow);
 void
 line_load_flows(void);
 

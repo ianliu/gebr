@@ -28,6 +28,6 @@ void
 help_show(const gchar * help);
 
 GString *
-help_edit(const gchar * help, GeoXmlProgram * program, gboolean refresh);
+help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh);
 
 #endif //__HELP_H

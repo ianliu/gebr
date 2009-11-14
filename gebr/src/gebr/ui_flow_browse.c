@@ -52,7 +52,7 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 static GtkMenu *
 flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_browse);
 static void
-flow_browse_on_revision_activate(GtkMenuItem * menu_item, GeoXmlRevision * revision);
+flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * revision);
 static void
 flow_browse_on_flow_move(void);
 
@@ -104,7 +104,7 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 	ui_flow_browse->store = gtk_list_store_new(FB_N_COLUMN,
 		G_TYPE_STRING, /* Name (title for libgeoxml) */
 		G_TYPE_STRING, /* Filename */
-		G_TYPE_POINTER /* GeoXmlLineFlow pointer */);
+		G_TYPE_POINTER /* GebrGeoXmlLineFlow pointer */);
 	ui_flow_browse->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->store));
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->view);
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view)),
@@ -112,7 +112,7 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_browse->view), FALSE);
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view),
 		(GebrGuiGtkPopupCallback)flow_browse_popup_menu, ui_flow_browse);
-	gebr_gui_gtk_tree_view_set_geoxml_sequence_moveable(GTK_TREE_VIEW(ui_flow_browse->view), FB_LINE_FLOW_POINTER,
+	gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GTK_TREE_VIEW(ui_flow_browse->view), FB_LINE_FLOW_POINTER,
 		(GebrGuiGtkTreeViewMoveSequenceCallback)flow_browse_on_flow_move, NULL);
 	g_signal_connect(ui_flow_browse->view, "row-activated",
 		G_CALLBACK(flow_browse_on_row_activated), ui_flow_browse);
@@ -251,11 +251,11 @@ flow_browse_info_update(void)
 	GString *	text;
 
 	/* Title in bold */
-	markup = g_markup_printf_escaped("<b>%s</b>", geoxml_document_get_title(GEOXML_DOC(gebr.flow)));
+	markup = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.title), markup);
 	g_free(markup);
 	/* Description in italic */
-	markup = g_markup_printf_escaped("<i>%s</i>", geoxml_document_get_description(GEOXML_DOC(gebr.flow)));
+	markup = g_markup_printf_escaped("<i>%s</i>", gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(gebr.flow)));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.description), markup);
 	g_free(markup);
 	/* Date labels */
@@ -270,11 +270,11 @@ flow_browse_info_update(void)
 	g_free(markup);
 	/* Dates */
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.created),
-			   localized_date(geoxml_document_get_date_created(GEOXML_DOC(gebr.flow))));
+			   localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOC(gebr.flow))));
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.modified),
-			   localized_date(geoxml_document_get_date_modified(GEOXML_DOC(gebr.flow))));
+			   localized_date(gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOC(gebr.flow))));
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun),
-			   localized_date(geoxml_flow_get_date_last_run(gebr.flow)));
+			   localized_date(gebr_geoxml_flow_get_date_last_run(gebr.flow)));
 	/* I/O labels */
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Input:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.input_label), markup);
@@ -286,32 +286,32 @@ flow_browse_info_update(void)
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.error_label), markup);
 	g_free(markup);
 	/* Input file */
-	if (strlen(geoxml_flow_io_get_input(gebr.flow)))
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input), geoxml_flow_io_get_input(gebr.flow));
+	if (strlen(gebr_geoxml_flow_io_get_input(gebr.flow)))
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input), gebr_geoxml_flow_io_get_input(gebr.flow));
 	else
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input), _("(none)"));
 	/* Output file */
-	if (strlen(geoxml_flow_io_get_output(gebr.flow)))
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output), geoxml_flow_io_get_output(gebr.flow));
+	if (strlen(gebr_geoxml_flow_io_get_output(gebr.flow)))
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output), gebr_geoxml_flow_io_get_output(gebr.flow));
 	else
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output), _("(none)"));
 	/* Error file */
-	if(strlen(geoxml_flow_io_get_error(gebr.flow)))
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error), geoxml_flow_io_get_error(gebr.flow));
+	if(strlen(gebr_geoxml_flow_io_get_error(gebr.flow)))
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error), gebr_geoxml_flow_io_get_error(gebr.flow));
 	else
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error), _("(none)"));
 
 	/* Author and email */
 	text = g_string_new(NULL);
 	g_string_printf(text, "%s <%s>",
-		geoxml_document_get_author(GEOXML_DOC(gebr.flow)),
-		geoxml_document_get_email(GEOXML_DOC(gebr.flow)));
+		gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(gebr.flow)),
+		gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(gebr.flow)));
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.author), text->str);
 	g_string_free(text, TRUE);
 
 	/* Info button */
 	g_object_set(gebr.ui_flow_browse->info.help,
-		"sensitive", strlen(geoxml_document_get_help(GEOXML_DOC(gebr.flow))) ? TRUE : FALSE,
+		"sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(gebr.flow))) ? TRUE : FALSE,
 		NULL);
 
 	navigation_bar_update();
@@ -365,7 +365,7 @@ flow_browse_single_selection(void)
  * If _new_ is true, then it is prepended; otherwise, appended
  */
 void
-flow_browse_load_revision(GeoXmlRevision * revision, gboolean new)
+flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
 {
 	GString *	label;
 	gchar *		date;
@@ -373,7 +373,7 @@ flow_browse_load_revision(GeoXmlRevision * revision, gboolean new)
 
 	GtkWidget *	menu_item;
 
-	geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
+	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
 	label = g_string_new(NULL);
 	g_string_printf(label, "%s: %s", date, comment);
 
@@ -403,7 +403,7 @@ flow_browse_load(void)
 	gchar *			filename;
 	gchar *			title;
 
-	GeoXmlSequence *	revision;
+	GebrGeoXmlSequence *	revision;
 
 	flow_free();
 	if (!flow_browse_get_selected(&iter, FALSE))
@@ -419,7 +419,7 @@ flow_browse_load(void)
 		FB_TITLE, &title,
 		-1);
 	/* free previous flow and load it */
-	gebr.flow = GEOXML_FLOW(document_load(filename));
+	gebr.flow = GEBR_GEOXML_FLOW(document_load(filename));
 	if (gebr.flow == NULL)
 		goto out;
 
@@ -432,16 +432,16 @@ flow_browse_load(void)
 
 	/* load into UI */
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
-		FB_FILENAME, geoxml_document_get_filename(GEOXML_DOCUMENT(gebr.flow)),
-		FB_TITLE, geoxml_document_get_title(GEOXML_DOCUMENT(gebr.flow)),
+		FB_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.flow)),
+		FB_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow)),
 		-1);
 	flow_edition_load_components();
 	flow_browse_info_update();
 
 	/* load revisions */
-	geoxml_flow_get_revision(gebr.flow, &revision, 0);
-	for (; revision != NULL; geoxml_sequence_next(&revision))
-		flow_browse_load_revision(GEOXML_REVISION(revision), FALSE);
+	gebr_geoxml_flow_get_revision(gebr.flow, &revision, 0);
+	for (; revision != NULL; gebr_geoxml_sequence_next(&revision))
+		flow_browse_load_revision(GEBR_GEOXML_REVISION(revision), FALSE);
 
 out:	g_free(filename);
 	g_free(title);
@@ -453,7 +453,7 @@ out:	g_free(filename);
 static void
 flow_browse_show_help(void)
 {
-	help_show(geoxml_document_get_help(GEOXML_DOC(gebr.flow)), _("Flow help"));
+	help_show(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(gebr.flow)), _("Flow help"));
 }
 
 /* Function: flow_browse_on_row_activated
@@ -541,7 +541,7 @@ out:	gtk_widget_show_all(menu);
  * Change flow to selected revision
  */
 static void
-flow_browse_on_revision_activate(GtkMenuItem * menu_item, GeoXmlRevision * revision)
+flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * revision)
 {
 	if (gebr_gui_confirm_action_dialog(_("Backup current state?"),
 	_("You are about to revert to a previous state. "
@@ -552,12 +552,12 @@ flow_browse_on_revision_activate(GtkMenuItem * menu_item, GeoXmlRevision * revis
 	gchar *		date;
 	gchar *		comment;
 
-	geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
-	if (geoxml_flow_change_to_revision(gebr.flow, revision))
+	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
+	if (gebr_geoxml_flow_change_to_revision(gebr.flow, revision))
 		gebr_message(LOG_INFO, TRUE, FALSE, _("Changed to state '%s' ('%s')"), comment, date);
 	else
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Could not change to state '%s' ('%s')"), comment, date);
-	document_save(GEOXML_DOCUMENT(gebr.flow));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
 	flow_browse_load();
 }
@@ -568,5 +568,5 @@ flow_browse_on_revision_activate(GtkMenuItem * menu_item, GeoXmlRevision * revis
 static void
 flow_browse_on_flow_move(void)
 {
-	document_save(GEOXML_DOC(gebr.line));
+	document_save(GEBR_GEOXML_DOC(gebr.line));
 }

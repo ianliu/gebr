@@ -17,8 +17,8 @@
  *   Inspired on Qt 4.3 version of QTcpSocket, by Trolltech
  */
 
-#ifndef __LIBGEBR_COMM_G_TCP_SOCKET_PRIVATE_H
-#define __LIBGEBR_COMM_G_TCP_SOCKET_PRIVATE_H
+#ifndef __COMM_G_TCP_SOCKET_PRIVATE_H
+#define __COMM_G_TCP_SOCKET_PRIVATE_H
 
 #include "gstreamsocket.h"
 
@@ -29,4 +29,4 @@
 GStreamSocket *
 _g_stream_socket_new_connected(int fd, enum GebrCommSocketAddressType address_type);
 
-#endif //__LIBGEBR_COMM_G_TCP_SOCKET_PRIVATE_H
+#endif //__COMM_G_TCP_SOCKET_PRIVATE_H

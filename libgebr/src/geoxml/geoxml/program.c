@@ -32,7 +32,7 @@
  * internal structures and funcionts
  */
 
-struct geoxml_program {
+struct gebr_geoxml_program {
 	GdomeElement * element;
 };
 
@@ -40,191 +40,191 @@ struct geoxml_program {
  * library functions.
  */
 
-GeoXmlFlow *
-geoxml_program_flow(GeoXmlProgram * program)
+GebrGeoXmlFlow *
+gebr_geoxml_program_flow(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;
-	return (GeoXmlFlow*)gdome_n_parentNode((GdomeNode*)program, &exception);
+	return (GebrGeoXmlFlow*)gdome_n_parentNode((GdomeNode*)program, &exception);
 }
 
-GeoXmlParameters *
-geoxml_program_get_parameters(GeoXmlProgram * program)
+GebrGeoXmlParameters *
+gebr_geoxml_program_get_parameters(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;
-	return (GeoXmlParameters*)__geoxml_get_first_element((GdomeElement*)program, "parameters");
+	return (GebrGeoXmlParameters*)__gebr_geoxml_get_first_element((GdomeElement*)program, "parameters");
 }
 
 void
-geoxml_program_set_stdin(GeoXmlProgram * program, const gboolean enable)
+gebr_geoxml_program_set_stdin(GebrGeoXmlProgram * program, const gboolean enable)
 {
 	if (program == NULL)
 		return;
-	__geoxml_set_attr_value((GdomeElement*)program, "stdin", (enable == TRUE ? "yes" : "no"));
+	__gebr_geoxml_set_attr_value((GdomeElement*)program, "stdin", (enable == TRUE ? "yes" : "no"));
 }
 
 void
-geoxml_program_set_stdout(GeoXmlProgram * program, const gboolean enable)
+gebr_geoxml_program_set_stdout(GebrGeoXmlProgram * program, const gboolean enable)
 {
 	if (program == NULL)
 		return;
-	__geoxml_set_attr_value((GdomeElement*)program, "stdout", (enable == TRUE ? "yes" : "no"));
+	__gebr_geoxml_set_attr_value((GdomeElement*)program, "stdout", (enable == TRUE ? "yes" : "no"));
 }
 
 void
-geoxml_program_set_stderr(GeoXmlProgram * program, const gboolean enable)
+gebr_geoxml_program_set_stderr(GebrGeoXmlProgram * program, const gboolean enable)
 {
 	if (program == NULL)
 		return;
-	__geoxml_set_attr_value((GdomeElement*)program, "stderr", (enable == TRUE ? "yes" : "no"));
+	__gebr_geoxml_set_attr_value((GdomeElement*)program, "stderr", (enable == TRUE ? "yes" : "no"));
 }
 
 void
-geoxml_program_set_status(GeoXmlProgram * program, const gchar * status)
+gebr_geoxml_program_set_status(GebrGeoXmlProgram * program, const gchar * status)
 {
 	if (program == NULL)
 		return;
-	__geoxml_set_attr_value((GdomeElement*)program, "status", status);
+	__gebr_geoxml_set_attr_value((GdomeElement*)program, "status", status);
 }
 
 void
-geoxml_program_set_title(GeoXmlProgram * program, const gchar * title)
+gebr_geoxml_program_set_title(GebrGeoXmlProgram * program, const gchar * title)
 {
 	if (program == NULL || title == NULL)
 		return;
-	__geoxml_set_tag_value((GdomeElement*)program, "title", title, __geoxml_create_TextNode);
+	__gebr_geoxml_set_tag_value((GdomeElement*)program, "title", title, __gebr_geoxml_create_TextNode);
 }
 
 void
-geoxml_program_set_menu(GeoXmlProgram * program, const gchar * menu, gulong index)
+gebr_geoxml_program_set_menu(GebrGeoXmlProgram * program, const gchar * menu, gulong index)
 {
 	if (program == NULL || menu == NULL)
 		return;
 
 	gchar * tmp;
 
-	__geoxml_set_tag_value((GdomeElement*)program, "menu", menu, __geoxml_create_TextNode);
+	__gebr_geoxml_set_tag_value((GdomeElement*)program, "menu", menu, __gebr_geoxml_create_TextNode);
 	tmp = g_strdup_printf("%ld", index);
-	__geoxml_set_attr_value(
-		__geoxml_get_first_element((GdomeElement*)program, "menu"), "index", tmp);
+	__gebr_geoxml_set_attr_value(
+		__gebr_geoxml_get_first_element((GdomeElement*)program, "menu"), "index", tmp);
 
 	g_free(tmp);
 }
 
 void
-geoxml_program_set_binary(GeoXmlProgram * program, const gchar * binary)
+gebr_geoxml_program_set_binary(GebrGeoXmlProgram * program, const gchar * binary)
 {
 	if (program == NULL || binary == NULL)
 		return;
-	__geoxml_set_tag_value((GdomeElement*)program, "binary", binary, __geoxml_create_TextNode);
+	__gebr_geoxml_set_tag_value((GdomeElement*)program, "binary", binary, __gebr_geoxml_create_TextNode);
 }
 
 void
-geoxml_program_set_description(GeoXmlProgram * program, const gchar * description)
+gebr_geoxml_program_set_description(GebrGeoXmlProgram * program, const gchar * description)
 {
 	if (program == NULL || description == NULL)
 		return;
-	__geoxml_set_tag_value((GdomeElement*)program, "description", description, __geoxml_create_TextNode);
+	__gebr_geoxml_set_tag_value((GdomeElement*)program, "description", description, __gebr_geoxml_create_TextNode);
 }
 
 void
-geoxml_program_set_help(GeoXmlProgram * program, const gchar * help)
+gebr_geoxml_program_set_help(GebrGeoXmlProgram * program, const gchar * help)
 {
 	if (program == NULL || help == NULL)
 		return;
-	__geoxml_set_tag_value((GdomeElement*)program, "help", help, __geoxml_create_CDATASection);
+	__gebr_geoxml_set_tag_value((GdomeElement*)program, "help", help, __gebr_geoxml_create_CDATASection);
 }
 
 void
-geoxml_program_set_url(GeoXmlProgram * program, const gchar * url)
+gebr_geoxml_program_set_url(GebrGeoXmlProgram * program, const gchar * url)
 {
 	if (program == NULL || url == NULL)
 		return;
-	__geoxml_set_tag_value((GdomeElement*)program, "url", url, __geoxml_create_TextNode);
+	__gebr_geoxml_set_tag_value((GdomeElement*)program, "url", url, __gebr_geoxml_create_TextNode);
 }
 
 gboolean
-geoxml_program_get_stdin(GeoXmlProgram * program)
+gebr_geoxml_program_get_stdin(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return FALSE;
-	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)program, "stdin"), "yes"))
+	return (!strcmp(__gebr_geoxml_get_attr_value((GdomeElement*)program, "stdin"), "yes"))
 		? TRUE : FALSE;
 }
 
 gboolean
-geoxml_program_get_stdout(GeoXmlProgram * program)
+gebr_geoxml_program_get_stdout(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return FALSE;
-	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)program, "stdout"), "yes"))
+	return (!strcmp(__gebr_geoxml_get_attr_value((GdomeElement*)program, "stdout"), "yes"))
 		? TRUE : FALSE;
 }
 
 gboolean
-geoxml_program_get_stderr(GeoXmlProgram * program)
+gebr_geoxml_program_get_stderr(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return FALSE;
-	return (!strcmp(__geoxml_get_attr_value((GdomeElement*)program, "stderr"), "yes"))
+	return (!strcmp(__gebr_geoxml_get_attr_value((GdomeElement*)program, "stderr"), "yes"))
 		? TRUE : FALSE;
 }
 
 const gchar *
-geoxml_program_get_status(GeoXmlProgram * program)
+gebr_geoxml_program_get_status(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;
-	return __geoxml_get_attr_value((GdomeElement*)program, "status");
+	return __gebr_geoxml_get_attr_value((GdomeElement*)program, "status");
 }
 
 const gchar *
-geoxml_program_get_title(GeoXmlProgram * program)
+gebr_geoxml_program_get_title(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;
-	return __geoxml_get_tag_value((GdomeElement*)program, "title");
+	return __gebr_geoxml_get_tag_value((GdomeElement*)program, "title");
 }
 
 void
-geoxml_program_get_menu(GeoXmlProgram * program, gchar ** menu, gulong * index)
+gebr_geoxml_program_get_menu(GebrGeoXmlProgram * program, gchar ** menu, gulong * index)
 {
 	if (program == NULL)
 		return;
-	*menu = (gchar *)__geoxml_get_tag_value((GdomeElement*)program, "menu");
-	*index = (gulong)atol(__geoxml_get_attr_value(
-		__geoxml_get_first_element((GdomeElement*)program, "menu"), "index"));
+	*menu = (gchar *)__gebr_geoxml_get_tag_value((GdomeElement*)program, "menu");
+	*index = (gulong)atol(__gebr_geoxml_get_attr_value(
+		__gebr_geoxml_get_first_element((GdomeElement*)program, "menu"), "index"));
 }
 
 const gchar *
-geoxml_program_get_binary(GeoXmlProgram * program)
+gebr_geoxml_program_get_binary(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;
-	return __geoxml_get_tag_value((GdomeElement*)program, "binary");
+	return __gebr_geoxml_get_tag_value((GdomeElement*)program, "binary");
 }
 
 const gchar *
-geoxml_program_get_description(GeoXmlProgram * program)
+gebr_geoxml_program_get_description(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;
-	return __geoxml_get_tag_value((GdomeElement*)program, "description");
+	return __gebr_geoxml_get_tag_value((GdomeElement*)program, "description");
 }
 
 const gchar *
-geoxml_program_get_help(GeoXmlProgram * program)
+gebr_geoxml_program_get_help(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;
-	return __geoxml_get_tag_value((GdomeElement*)program, "help");
+	return __gebr_geoxml_get_tag_value((GdomeElement*)program, "help");
 }
 
 const gchar *
-geoxml_program_get_url(GeoXmlProgram * program)
+gebr_geoxml_program_get_url(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;
-	return __geoxml_get_tag_value((GdomeElement*)program, "url");
+	return __gebr_geoxml_get_tag_value((GdomeElement*)program, "url");
 }

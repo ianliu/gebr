@@ -32,6 +32,6 @@ struct ui_parameters *
 parameters_configure_setup_ui(void);
 
 void
-parameters_reset_to_default(GeoXmlParameters * parameters);
+parameters_reset_to_default(GebrGeoXmlParameters * parameters);
 
 #endif //__PARAMETERS_H

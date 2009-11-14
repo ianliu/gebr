@@ -20,7 +20,7 @@
 #include "error.h"
 
 const gchar *
-geoxml_error_string(enum GEOXML_RETV error)
+gebr_geoxml_error_string(enum GEBR_GEOXML_RETV error)
 {
 	static const gchar * 	error_string_array [] = {
 		N_("Success."),
@@ -45,7 +45,7 @@ geoxml_error_string(enum GEOXML_RETV error)
 }
 
 const gchar *
-geoxml_error_explained_string(enum GEOXML_RETV error)
+gebr_geoxml_error_explained_string(enum GEBR_GEOXML_RETV error)
 {
 	static const gchar * 	error_string_array [] = {
 		N_("The operation was done successfuly."),
@@ -57,7 +57,7 @@ geoxml_error_explained_string(enum GEOXML_RETV error)
 		N_("This element index does not exist in the sequence."),
 		N_("Invalid XML syntax or it does not respect the structure "
 			"defined on its corresponding document DTD."),
-		N_("DTD was specified for the document. LibGeBR-GeoXml requires the document "
+		N_("DTD was specified for the document. LibGeBR-GebrGeoXml requires the document "
 			"not to specify the DTD as it automatically find it and validate against."),
 		N_("DTD for the corresponding document type (flow, line or project) and version "
 			"could not be found or accessed on the system.\n"

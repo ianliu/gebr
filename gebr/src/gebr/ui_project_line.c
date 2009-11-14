@@ -228,24 +228,24 @@ project_line_info_update(void)
 	}
 
 	/* initialization */
-	is_project = (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT) ? TRUE : FALSE;
+	is_project = (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) ? TRUE : FALSE;
 
 	/* Title in bold */
 	markup = is_project
-		? g_markup_printf_escaped("<b>%s %s</b>", _("Project"), geoxml_document_get_title(gebr.project_line))
-		: g_markup_printf_escaped("<b>%s %s</b>", _("Line"), geoxml_document_get_title(gebr.project_line));
+		? g_markup_printf_escaped("<b>%s %s</b>", _("Project"), gebr_geoxml_document_get_title(gebr.project_line))
+		: g_markup_printf_escaped("<b>%s %s</b>", _("Line"), gebr_geoxml_document_get_title(gebr.project_line));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.title), markup);
 	g_free(markup);
 
 	/* Description in italic */
-	markup = g_markup_printf_escaped("<i>%s</i>", geoxml_document_get_description(GEOXML_DOC(gebr.project_line)));
+	markup = g_markup_printf_escaped("<i>%s</i>", gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(gebr.project_line)));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.description), markup);
 	g_free(markup);
 
 	if (is_project) {
 		gint	nlines;
 
-		nlines = geoxml_project_get_lines_number(gebr.project);
+		nlines = gebr_geoxml_project_get_lines_number(gebr.project);
 		markup = nlines != 0
 			? nlines == 1
 				? g_markup_printf_escaped(_("This project has 1 line"))
@@ -266,44 +266,44 @@ project_line_info_update(void)
 	g_free(markup);
 
 	/* Dates */
-	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created), localized_date(geoxml_document_get_date_created(gebr.project_line)));
-	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified), localized_date(geoxml_document_get_date_modified(gebr.project_line)));
+	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created), localized_date(gebr_geoxml_document_get_date_created(gebr.project_line)));
+	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified), localized_date(gebr_geoxml_document_get_date_modified(gebr.project_line)));
 
 	/* Line's paths */
 	if (!is_project) {
-		GeoXmlSequence *	path;
+		GebrGeoXmlSequence *	path;
 
 		markup = g_markup_printf_escaped("<b>%s</b>", _("Paths:"));
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.path_label), markup);
 		g_free(markup);
 
-		switch (geoxml_line_get_paths_number(gebr.line)) {
+		switch (gebr_geoxml_line_get_paths_number(gebr.line)) {
 		case 0:
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1), _("None"));
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");
 
 			break;
 		case 1:
-			geoxml_line_get_path(gebr.line, &path, 0);
+			gebr_geoxml_line_get_path(gebr.line, &path, 0);
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
-					   geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
+					   gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path)));
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");
 
 			break;
 		case 2:
-			geoxml_line_get_path(gebr.line, &path, 0);
+			gebr_geoxml_line_get_path(gebr.line, &path, 0);
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
-				geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
+				gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path)));
 
-			geoxml_line_get_path(gebr.line, &path, 1);
+			gebr_geoxml_line_get_path(gebr.line, &path, 1);
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2),
-				geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
+				gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path)));
 
 			break;
 		default:
-			geoxml_line_get_path(gebr.line, &path, 0);
+			gebr_geoxml_line_get_path(gebr.line, &path, 0);
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
-					   geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(path)));
+					   gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path)));
 			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "...");
 
 			break;
@@ -317,14 +317,14 @@ project_line_info_update(void)
 	/* Author and email */
 	text = g_string_new(NULL);
 	g_string_printf(text, "%s <%s>",
-			geoxml_document_get_author(GEOXML_DOC(gebr.project_line)),
-			geoxml_document_get_email(GEOXML_DOC(gebr.project_line)));
+			gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(gebr.project_line)),
+			gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(gebr.project_line)));
 	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.author), text->str);
 	g_string_free(text, TRUE);
 
 	/* Info button */
 	g_object_set(gebr.ui_project_line->info.help,
-		"sensitive", gebr.project_line != NULL && strlen(geoxml_document_get_help(gebr.project_line))
+		"sensitive", gebr.project_line != NULL && strlen(gebr_geoxml_document_get_help(gebr.project_line))
 			? TRUE : FALSE, NULL);
 
 	navigation_bar_update();
@@ -335,7 +335,7 @@ project_line_info_update(void)
  * Select _iter_ associated with _document_
  */
 void
-project_line_set_selected(GtkTreeIter * iter, GeoXmlDocument * document)
+project_line_set_selected(GtkTreeIter * iter, GebrGeoXmlDocument * document)
 {
 	gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
 	gtk_tree_selection_select_iter(gtk_tree_view_get_selection(
@@ -343,8 +343,8 @@ project_line_set_selected(GtkTreeIter * iter, GeoXmlDocument * document)
 	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
 
 	gtk_tree_store_set(gebr.ui_project_line->store, iter,
-		PL_TITLE, geoxml_document_get_title(document),
-		PL_FILENAME, geoxml_document_get_filename(document),
+		PL_TITLE, gebr_geoxml_document_get_title(document),
+		PL_FILENAME, gebr_geoxml_document_get_filename(document),
 		-1);
 	project_line_load();
 }
@@ -368,7 +368,7 @@ project_line_import(void)
 	GError *		error;
 	gchar *			output;
 
-	GeoXmlDocument *	document;
+	GebrGeoXmlDocument *	document;
 	GtkTreeIter		iter;
 	gchar **		files;
 	int			i;
@@ -414,42 +414,42 @@ project_line_import(void)
 	files = g_strsplit(output, "\n", 0);
 	for (i = 0; files[i] != NULL; ++i) {
 		if (is_project && g_str_has_suffix(files[i], ".prj")) {
-			GeoXmlProject *		project;
-			GeoXmlSequence *	project_line;
+			GebrGeoXmlProject *		project;
+			GebrGeoXmlSequence *	project_line;
 
-			project = GEOXML_PROJECT(document_load_at(files[i], tmp_dir->str));
+			project = GEBR_GEOXML_PROJECT(document_load_at(files[i], tmp_dir->str));
 			if (project == NULL)
 				continue;
-			document_import(GEOXML_DOCUMENT(project));
+			document_import(GEBR_GEOXML_DOCUMENT(project));
 			iter = project_append_iter(project);
 
-			geoxml_project_get_line(project, &project_line, 0);
-			for (; project_line != NULL; geoxml_sequence_next(&project_line)) {
-				GeoXmlLine *		line;
+			gebr_geoxml_project_get_line(project, &project_line, 0);
+			for (; project_line != NULL; gebr_geoxml_sequence_next(&project_line)) {
+				GebrGeoXmlLine *		line;
 
-				line = line_import(geoxml_project_get_line_source(
-					GEOXML_PROJECT_LINE(project_line)), tmp_dir->str);
+				line = line_import(gebr_geoxml_project_get_line_source(
+					GEBR_GEOXML_PROJECT_LINE(project_line)), tmp_dir->str);
 				if (line == NULL)
 					continue;
-				geoxml_project_set_line_source(GEOXML_PROJECT_LINE(project_line),
-					geoxml_document_get_filename(GEOXML_DOCUMENT(line)));
+				gebr_geoxml_project_set_line_source(GEBR_GEOXML_PROJECT_LINE(project_line),
+					gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)));
 
 				project_append_line_iter(&iter, line);
-				document_save(GEOXML_DOCUMENT(line));
-				geoxml_document_free(GEOXML_DOCUMENT(line));
+				document_save(GEBR_GEOXML_DOCUMENT(line));
+				gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(line));
 			}
 
-			document = GEOXML_DOCUMENT(project);
+			document = GEBR_GEOXML_DOCUMENT(project);
 		} else if (!is_project && g_str_has_suffix(files[i], ".lne")) {
-			GeoXmlLine *	line;
+			GebrGeoXmlLine *	line;
 			GtkTreeIter	parent;
 
 			line = line_import(files[i], tmp_dir->str);
 			if (line == NULL)
 				continue;
-			geoxml_project_append_line(gebr.project,
-				geoxml_document_get_filename(GEOXML_DOCUMENT(line)));
-			document_save(GEOXML_DOCUMENT(gebr.project));
+			gebr_geoxml_project_append_line(gebr.project,
+				gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)));
+			document_save(GEBR_GEOXML_DOCUMENT(gebr.project));
 
 			project_line_get_selected(&iter, DontWarnUnselection);
 			parent = iter;
@@ -457,19 +457,19 @@ project_line_import(void)
 				parent = iter;
 			iter = project_append_line_iter(&parent, line);
 
-			document = GEOXML_DOCUMENT(line);
+			document = GEBR_GEOXML_DOCUMENT(line);
 		} else
 			document = NULL;
 		if (document != NULL) {
 			GString *	new_title;
 
 			new_title = g_string_new(NULL);
-			g_string_printf(new_title, _("%s (Imported)"), geoxml_document_get_title(document));
-			geoxml_document_set_title(document, new_title->str);
+			g_string_printf(new_title, _("%s (Imported)"), gebr_geoxml_document_get_title(document));
+			gebr_geoxml_document_set_title(document, new_title->str);
 			document_save(document);
 			project_line_set_selected(&iter, document);
 
-			geoxml_document_free(document);
+			gebr_geoxml_document_free(document);
 			g_string_free(new_title, TRUE);
 		}
 	}
@@ -504,7 +504,7 @@ project_line_export(void)
 	GtkWidget *		chooser_dialog;
 	GtkFileFilter *		file_filter;
 
-	GeoXmlSequence *	i;
+	GebrGeoXmlSequence *	i;
 
 	if (!project_line_get_selected(NULL, ProjectLineSelection))
 		return;
@@ -514,35 +514,35 @@ project_line_export(void)
 	files = g_string_new("");
 	file_filter = gtk_file_filter_new();
 
-	g_string_append_printf(files, "%s ", geoxml_document_get_filename(gebr.project_line));
-	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT) {
-		geoxml_project_get_line(gebr.project, &i, 0);
-		for (; i != NULL; geoxml_sequence_next(&i)) {
+	g_string_append_printf(files, "%s ", gebr_geoxml_document_get_filename(gebr.project_line));
+	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
+		gebr_geoxml_project_get_line(gebr.project, &i, 0);
+		for (; i != NULL; gebr_geoxml_sequence_next(&i)) {
 			const gchar *		line_filename;
-			GeoXmlLine *		line;
-			GeoXmlSequence *	j;
+			GebrGeoXmlLine *		line;
+			GebrGeoXmlSequence *	j;
 
-			line_filename = geoxml_project_get_line_source(GEOXML_PROJECT_LINE(i));
-			line = GEOXML_LINE(document_load(line_filename));
+			line_filename = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(i));
+			line = GEBR_GEOXML_LINE(document_load(line_filename));
 			if (line == NULL)
 				continue;
 
 			g_string_append_printf(files, "%s ", line_filename);
-			geoxml_line_get_flow(line, &j, 0);
-			for (; j != NULL; geoxml_sequence_next(&j))
+			gebr_geoxml_line_get_flow(line, &j, 0);
+			for (; j != NULL; gebr_geoxml_sequence_next(&j))
 				g_string_append_printf(files, "%s ",
-					geoxml_line_get_flow_source(GEOXML_LINE_FLOW(j)));
+					gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(j)));
 
-			geoxml_document_free(GEOXML_DOCUMENT(line));
+			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(line));
 		}
 
 		gtk_file_filter_set_name(file_filter, _("Project (*.prjz)"));
 		gtk_file_filter_add_pattern(file_filter, "*.prjz");
 		extension = ".prjz";
 	} else {
-		geoxml_line_get_flow(gebr.line, &i, 0);
-		for (; i != NULL; geoxml_sequence_next(&i))
-			g_string_append_printf(files, "%s ", geoxml_line_get_flow_source(GEOXML_LINE_FLOW(i)));
+		gebr_geoxml_line_get_flow(gebr.line, &i, 0);
+		for (; i != NULL; gebr_geoxml_sequence_next(&i))
+			g_string_append_printf(files, "%s ", gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(i)));
 
 		gtk_file_filter_set_name(file_filter, _("Line (*.lnez)"));
 		gtk_file_filter_add_pattern(file_filter, "*.lnez");
@@ -592,9 +592,9 @@ void
 project_line_free(void)
 {
 	if (gebr.project != NULL)
-		geoxml_document_free(GEOXML_DOC(gebr.project));
+		gebr_geoxml_document_free(GEBR_GEOXML_DOC(gebr.project));
 	if (gebr.line != NULL)
-		geoxml_document_free(GEOXML_DOC(gebr.line));
+		gebr_geoxml_document_free(GEBR_GEOXML_DOC(gebr.line));
 	gebr.project_line = NULL;
 	gebr.project = NULL;
 	gebr.line = NULL;
@@ -673,21 +673,21 @@ project_line_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new
 	gchar *			old_title;
 
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(ui_project_line->store), &iter, path_string);
-	old_title = (gchar *)geoxml_document_get_title(gebr.project_line);
+	old_title = (gchar *)gebr_geoxml_document_get_title(gebr.project_line);
 
 	/* was it really renamed? */
 	if (strcmp(old_title, new_text) == 0)
 		return;
 
 	/* change it on the xml. */
-	geoxml_document_set_title(gebr.project_line, new_text);
+	gebr_geoxml_document_set_title(gebr.project_line, new_text);
 	document_save(gebr.project_line);
 
 	/* store's change */
 	gtk_tree_store_set(ui_project_line->store, &iter, PL_TITLE, new_text, -1);
 
 	/* feedback */
-	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
+	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Project '%s' renamed to '%s'"), old_title, new_text);
 	else
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Line '%s' renamed to '%s'"), old_title, new_text);
@@ -733,18 +733,18 @@ project_line_load(void)
 			-1);
 	}
 
-	gebr.project = GEOXML_PROJECT(document_load(project_filename));
+	gebr.project = GEBR_GEOXML_PROJECT(document_load(project_filename));
 	if (gebr.project == NULL)
 		goto out;
 	if (is_line == TRUE) {
-		gebr.line = GEOXML_LINE(document_load(line_filename));
+		gebr.line = GEBR_GEOXML_LINE(document_load(line_filename));
 		if (gebr.line == NULL)
 			goto out;
 
-		gebr.project_line = GEOXML_DOC(gebr.line);
+		gebr.project_line = GEBR_GEOXML_DOC(gebr.line);
 		line_load_flows();
 	} else {
-		gebr.project_line = GEOXML_DOC(gebr.project);
+		gebr.project_line = GEBR_GEOXML_DOC(gebr.project);
 		gebr.line = NULL;
 		gtk_list_store_clear(gebr.ui_flow_browse->store);
 		flow_free();
@@ -761,8 +761,8 @@ out:	gtk_tree_path_free(path);
 static void
 project_line_show_help(void)
 {
-	help_show(geoxml_document_get_help(gebr.project_line),
-		geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT
+	help_show(gebr_geoxml_document_get_help(gebr.project_line),
+		gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT
 			? _("Project report") : _("Line report"));
 }
 

@@ -27,12 +27,12 @@
  * internal stuff
  */
 
-struct geoxml_value_sequence {
+struct gebr_geoxml_value_sequence {
 	GdomeElement * element;
 };
 
 static gboolean
-__geoxml_value_sequence_check(GeoXmlValueSequence * value_sequence)
+__gebr_geoxml_value_sequence_check(GebrGeoXmlValueSequence * value_sequence)
 {
 	GdomeDOMString *	name;
 
@@ -49,43 +49,43 @@ __geoxml_value_sequence_check(GeoXmlValueSequence * value_sequence)
  */
 
 void
-geoxml_value_sequence_set(GeoXmlValueSequence * value_sequence, const gchar * value)
+gebr_geoxml_value_sequence_set(GebrGeoXmlValueSequence * value_sequence, const gchar * value)
 {
 	if (value_sequence == NULL || value == NULL)
 		return;
-	if (__geoxml_value_sequence_check(value_sequence) == FALSE)
+	if (__gebr_geoxml_value_sequence_check(value_sequence) == FALSE)
 		return;
-	__geoxml_set_element_value((GdomeElement*)value_sequence, value, __geoxml_create_TextNode);
+	__gebr_geoxml_set_element_value((GdomeElement*)value_sequence, value, __gebr_geoxml_create_TextNode);
 }
 
 // void
-// geoxml_value_sequence_set_boolean(GeoXmlValueSequence * value_sequence, gboolean state)
+// gebr_geoxml_value_sequence_set_boolean(GebrGeoXmlValueSequence * value_sequence, gboolean state)
 // {
 // 	if (value_sequence == NULL)
 // 		return;
-// 	if (__geoxml_value_sequence_check(value_sequence) == FALSE)
+// 	if (__gebr_geoxml_value_sequence_check(value_sequence) == FALSE)
 // 		return;
-// 	__geoxml_set_element_value((GdomeElement*)value_sequence,
-// 		state == TRUE ? "on" : "off", __geoxml_create_TextNode);
+// 	__gebr_geoxml_set_element_value((GdomeElement*)value_sequence,
+// 		state == TRUE ? "on" : "off", __gebr_geoxml_create_TextNode);
 // }
 
 const gchar *
-geoxml_value_sequence_get(GeoXmlValueSequence * value_sequence)
+gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequence)
 {
 	if (value_sequence == NULL)
 		return NULL;
-	if (__geoxml_value_sequence_check(value_sequence) == FALSE)
+	if (__gebr_geoxml_value_sequence_check(value_sequence) == FALSE)
 		return NULL;
-	return __geoxml_get_element_value((GdomeElement*)value_sequence);
+	return __gebr_geoxml_get_element_value((GdomeElement*)value_sequence);
 }
 
 // gboolean
-// geoxml_value_sequence_get_boolean(GeoXmlValueSequence * value_sequence)
+// gebr_geoxml_value_sequence_get_boolean(GebrGeoXmlValueSequence * value_sequence)
 // {
 // 	if (value_sequence == NULL)
 // 		return NULL;
-// 	if (__geoxml_value_sequence_check(value_sequence) == FALSE)
+// 	if (__gebr_geoxml_value_sequence_check(value_sequence) == FALSE)
 // 		return NULL;
-// 	return !strcmp(__geoxml_get_element_value((GdomeElement*)value_sequence), "on")
+// 	return !strcmp(__gebr_geoxml_get_element_value((GdomeElement*)value_sequence), "on")
 // 		? TRUE : FALSE;
 // }

@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_H
-#define __LIBGEBR_GEOXML_H
+#ifndef __GEBR_GEOXML_H
+#define __GEBR_GEOXML_H
 
 /**
  * \mainpage
@@ -44,49 +44,49 @@
  *		fontsize = 9
  * 	]
  *
- * 	"GeoXmlObject" [ URL = "\ref object.h" ];
- * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
- * 	"GeoXmlProject" [ URL = "\ref project.h" ];
- * 	"GeoXmlProjectLine" [ URL = "\ref GeoXmlProjectLine" ];
- * 	"GeoXmlLine" [ URL = "\ref line.h" ];
- * 	"GeoXmlLineFlow" [ URL = "\ref GeoXmlLineFlow" ];
- * 	"GeoXmlFlow" [ URL = "\ref flow.h" ];
- * 	"GeoXmlProgram" [ URL = "\ref program.h" ];
- * 	"GeoXmlParameters" [ URL = "\ref parameters.h" ];
- * 	"GeoXmlParameter" [ URL = "\ref parameter.h" ];
- * 	"GeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
- * 	"GeoXmlPropertyValue" [ URL = "\ref GeoXmlPropertyValue" ];
- * 	"GeoXmlParameterGroup" [ URL = "\ref parameter_group.h" ];
+ * 	"GebrGeoXmlObject" [ URL = "\ref object.h" ];
+ * 	"GebrGeoXmlDocument" [ URL = "\ref document.h" ];
+ * 	"GebrGeoXmlProject" [ URL = "\ref project.h" ];
+ * 	"GebrGeoXmlProjectLine" [ URL = "\ref GebrGeoXmlProjectLine" ];
+ * 	"GebrGeoXmlLine" [ URL = "\ref line.h" ];
+ * 	"GebrGeoXmlLineFlow" [ URL = "\ref GebrGeoXmlLineFlow" ];
+ * 	"GebrGeoXmlFlow" [ URL = "\ref flow.h" ];
+ * 	"GebrGeoXmlProgram" [ URL = "\ref program.h" ];
+ * 	"GebrGeoXmlParameters" [ URL = "\ref parameters.h" ];
+ * 	"GebrGeoXmlParameter" [ URL = "\ref parameter.h" ];
+ * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
+ * 	"GebrGeoXmlPropertyValue" [ URL = "\ref GebrGeoXmlPropertyValue" ];
+ * 	"GebrGeoXmlParameterGroup" [ URL = "\ref parameter_group.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
- * 	"GeoXmlObject" -> "GeoXmlDocument"
- * 	"GeoXmlDocument" -> { "GeoXmlFlow" "GeoXmlLine" "GeoXmlProject" };
- * 	"GeoXmlParameter" -> "GeoXmlProgramParameter";
- * 	"GeoXmlParameter" -> "GeoXmlParameterGroup";
+ * 	"GebrGeoXmlObject" -> "GebrGeoXmlDocument"
+ * 	"GebrGeoXmlDocument" -> { "GebrGeoXmlFlow" "GebrGeoXmlLine" "GebrGeoXmlProject" };
+ * 	"GebrGeoXmlParameter" -> "GebrGeoXmlProgramParameter";
+ * 	"GebrGeoXmlParameter" -> "GebrGeoXmlParameterGroup";
  *
  * 	edge [
  * 		arrowhead = "none"
  * 		taillabel = "0..*"
  * 	]
- * 	"GeoXmlFlow" -> { "GeoXmlCategory" "GeoXmlProgram" };
- * 	"GeoXmlLine" -> "GeoXmlLineFlow";
- * 	"GeoXmlProject" -> "GeoXmlProjectLine";
- * 	"GeoXmlParameters" -> "GeoXmlParameter";
+ * 	"GebrGeoXmlFlow" -> { "GebrGeoXmlCategory" "GebrGeoXmlProgram" };
+ * 	"GebrGeoXmlLine" -> "GebrGeoXmlLineFlow";
+ * 	"GebrGeoXmlProject" -> "GebrGeoXmlProjectLine";
+ * 	"GebrGeoXmlParameters" -> "GebrGeoXmlParameter";
  *
  * 	edge [
  * 		arrowhead = "none"
  * 		taillabel = "1"
  * 	]
- * 	"GeoXmlProgram" -> "GeoXmlParameters";
- * 	"GeoXmlParameterGroup" -> "GeoXmlParameters";
+ * 	"GebrGeoXmlProgram" -> "GebrGeoXmlParameters";
+ * 	"GebrGeoXmlParameterGroup" -> "GebrGeoXmlParameters";
  *
  * 	edge [
  * 		arrowhead = "none"
  * 		taillabel = "1..*"
  * 	]
- * 	"GeoXmlProgramParameter" -> "GeoXmlPropertyValue";
+ * 	"GebrGeoXmlProgramParameter" -> "GebrGeoXmlPropertyValue";
  * }
  * \enddot
  * \dot
@@ -105,32 +105,32 @@
  * 		fontsize = 9
  * 	]
  *
- * 	"GeoXmlObject" [ URL = "\ref object.h" ];
- * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
- * 	"GeoXmlProjectLine" [ URL = "\ref GeoXmlProjectLine" ];
- * 	"GeoXmlLineFlow" [ URL = "\ref GeoXmlLineFlow" ];
- * 	"GeoXmlProgram" [ URL = "\ref program.h" ];
- * 	"GeoXmlParameters" [ URL = "\ref parameters.h" ];
- * 	"GeoXmlParameter" [ URL = "\ref parameter.h" ];
- * 	"GeoXmlPropertyValue" [ URL = "\ref GeoXmlPropertyValue" ];
- * 	"GeoXmlEnumOption" [ URL = "\ref enum_option.h" ];
- * 	"GeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
+ * 	"GebrGeoXmlObject" [ URL = "\ref object.h" ];
+ * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GebrGeoXmlProjectLine" [ URL = "\ref GebrGeoXmlProjectLine" ];
+ * 	"GebrGeoXmlLineFlow" [ URL = "\ref GebrGeoXmlLineFlow" ];
+ * 	"GebrGeoXmlProgram" [ URL = "\ref program.h" ];
+ * 	"GebrGeoXmlParameters" [ URL = "\ref parameters.h" ];
+ * 	"GebrGeoXmlParameter" [ URL = "\ref parameter.h" ];
+ * 	"GebrGeoXmlPropertyValue" [ URL = "\ref GebrGeoXmlPropertyValue" ];
+ * 	"GebrGeoXmlEnumOption" [ URL = "\ref enum_option.h" ];
+ * 	"GebrGeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
- * 	"GeoXmlObject" -> "GeoXmlSequence"
- * 	"GeoXmlSequence" -> "GeoXmlProjectLine";
- * 	"GeoXmlSequence" -> "GeoXmlLineFlow";
- * 	"GeoXmlSequence" -> "GeoXmlProgram";
- * 	"GeoXmlSequence" -> "GeoXmlParameters";
- * 	"GeoXmlSequence" -> "GeoXmlParameter";
- * 	"GeoXmlSequence" -> "GeoXmlPropertyValue";
- * 	"GeoXmlSequence" -> "GeoXmlEnumOption";
- * 	"GeoXmlSequence" -> "GeoXmlValueSequence";
- * 	"GeoXmlValueSequence" -> "GeoXmlCategory";
- * 	"GeoXmlValueSequence" -> "GeoXmlLinePath";
- * 	"GeoXmlValueSequence" -> "GeoXmlPropertyValue";
+ * 	"GebrGeoXmlObject" -> "GebrGeoXmlSequence"
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlProjectLine";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlLineFlow";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlProgram";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlParameters";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlParameter";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlPropertyValue";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlEnumOption";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlValueSequence";
+ * 	"GebrGeoXmlValueSequence" -> "GebrGeoXmlCategory";
+ * 	"GebrGeoXmlValueSequence" -> "GebrGeoXmlLinePath";
+ * 	"GebrGeoXmlValueSequence" -> "GebrGeoXmlPropertyValue";
  * }
  * \enddot
  * Project home page: http://www.gebrproject.com/
@@ -161,4 +161,4 @@
 #include <geoxml/parameter_group.h>
 #include <geoxml/clipboard.h>
 
-#endif //__LIBGEBR_GEOXML_H
+#endif //__GEBR_GEOXML_H

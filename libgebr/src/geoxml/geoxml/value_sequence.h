@@ -15,11 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_VALUE_SEQUENCE_H
-#define __LIBGEBR_GEOXML_VALUE_SEQUENCE_H
+#ifndef __GEBR_GEOXML_VALUE_SEQUENCE_H
+#define __GEBR_GEOXML_VALUE_SEQUENCE_H
 
 /**
- * \struct GeoXmlValueSequence value_sequence.h geoxml/value_sequence.h
+ * \struct GebrGeoXmlValueSequence value_sequence.h geoxml/value_sequence.h
  * \brief
  * Abstract class for elements of a sequence in libgeoxml
  * \dot
@@ -38,17 +38,17 @@
  *   fontsize = 9
  * 	]
  *
- * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
- * 	"GeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
- * 	"GeoXmlLinePath" [ URL = "\ref GeoXmlLinePath" ];
+ * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GebrGeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
+ * 	"GebrGeoXmlLinePath" [ URL = "\ref GebrGeoXmlLinePath" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
- * 	"GeoXmlSequence" -> "GeoXmlValueSequence";
- * 	"GeoXmlValueSequence" -> "GeoXmlLinePath";
- * 	"GeoXmlValueSequence" -> "GeoXmlCategory";
- * 	"GeoXmlValueSequence" -> "GeoXmlPropertyValue";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlValueSequence";
+ * 	"GebrGeoXmlValueSequence" -> "GebrGeoXmlLinePath";
+ * 	"GebrGeoXmlValueSequence" -> "GebrGeoXmlCategory";
+ * 	"GebrGeoXmlValueSequence" -> "GebrGeoXmlPropertyValue";
  * }
  * \enddot
  * \see value_sequence.h
@@ -58,18 +58,18 @@
  * \file value_sequence.h
  * Abstract class for elements of a sequence in libgeoxml
  *
- * GeoXmlEnumOption and GeoXmlCategory inherits GeoXmlValueSequence.
+ * GebrGeoXmlEnumOption and GebrGeoXmlCategory inherits GebrGeoXmlValueSequence.
  */
 
 /**
- * Cast to super types of GeoXmlValueSequence to it.
+ * Cast to super types of GebrGeoXmlValueSequence to it.
  */
-#define GEOXML_VALUE_SEQUENCE(seq) ((GeoXmlValueSequence*)(seq))
+#define GEBR_GEOXML_VALUE_SEQUENCE(seq) ((GebrGeoXmlValueSequence*)(seq))
 
 /**
- * The GeoXmlValueSequence struct contains private data only, and should be accessed using the functions below.
+ * The GebrGeoXmlValueSequence struct contains private data only, and should be accessed using the functions below.
  */
-typedef struct geoxml_value_sequence GeoXmlValueSequence;
+typedef struct gebr_geoxml_value_sequence GebrGeoXmlValueSequence;
 
 #include <glib.h>
 
@@ -79,7 +79,7 @@ typedef struct geoxml_value_sequence GeoXmlValueSequence;
  * If \p value_sequence or \p value is NULL nothing is done.
  */
 void
-geoxml_value_sequence_set(GeoXmlValueSequence * value_sequence, const gchar * value);
+gebr_geoxml_value_sequence_set(GebrGeoXmlValueSequence * value_sequence, const gchar * value);
 
 /**
  * Set the \p value_sequence element's value to a boolean \p state.
@@ -87,7 +87,7 @@ geoxml_value_sequence_set(GeoXmlValueSequence * value_sequence, const gchar * va
  * If \p value_sequence is NULL nothing is done.
  */
 // void
-// geoxml_value_sequence_set_boolean(GeoXmlValueSequence * value_sequence, gboolean state);
+// gebr_geoxml_value_sequence_set_boolean(GebrGeoXmlValueSequence * value_sequence, gboolean state);
 
 /**
  * Get the \p value_sequence element's value.
@@ -95,7 +95,7 @@ geoxml_value_sequence_set(GeoXmlValueSequence * value_sequence, const gchar * va
  * If \p value_sequence is NULL returns NULL.
  */
 const gchar *
-geoxml_value_sequence_get(GeoXmlValueSequence * value_sequence);
+gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequence);
 
 /**
  * Get the \p value_sequence element's value.
@@ -103,6 +103,6 @@ geoxml_value_sequence_get(GeoXmlValueSequence * value_sequence);
  * If \p value_sequence is NULL returns FALSE.
  */
 // gboolean
-// geoxml_value_sequence_get_boolean(GeoXmlValueSequence * value_sequence);
+// gebr_geoxml_value_sequence_get_boolean(GebrGeoXmlValueSequence * value_sequence);
 
-#endif //__LIBGEBR_GEOXML_VALUE_SEQUENCE_H
+#endif //__GEBR_GEOXML_VALUE_SEQUENCE_H

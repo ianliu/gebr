@@ -15,14 +15,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_DEFINES_H
-#define __LIBGEBR_GEOXML_DEFINES_H
+#ifndef __GEBR_GEOXML_DEFINES_H
+#define __GEBR_GEOXML_DEFINES_H
 
-#define GEOXML_FLOW_VERSION		"@FLOW_VERSION@"
-#define GEOXML_LINE_VERSION		"@LINE_VERSION@"
-#define GEOXML_PROJECT_VERSION		"@PROJECT_VERSION@"
-#define GEOXML_DOCUMENT_VERSION		"@DOCUMENT_VERSION@"
+#define GEBR_GEOXML_FLOW_VERSION		"@FLOW_VERSION@"
+#define GEBR_GEOXML_LINE_VERSION		"@LINE_VERSION@"
+#define GEBR_GEOXML_PROJECT_VERSION		"@PROJECT_VERSION@"
+#define GEBR_GEOXML_DOCUMENT_VERSION		"@DOCUMENT_VERSION@"
 
-#define GEOXML_DTD_DIR			"@prefix@/share/libgebr/geoxml"
+#define GEBR_GEOXML_DTD_DIR			"@prefix@/share/libgebr/geoxml"
 
-#endif //__LIBGEBR_GEOXML_DEFINES_H
+#endif //__GEBR_GEOXML_DEFINES_H

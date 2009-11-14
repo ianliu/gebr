@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_MISC_DATE_H
-#define __LIBGEBR_MISC_DATE_H
+#ifndef __MISC_DATE_H
+#define __MISC_DATE_H
 
 #include <glib.h>
 
@@ -29,4 +29,4 @@ localized_date(const gchar * iso_date);
 GTimeVal
 libgebr_iso_date_to_g_time_val(const gchar * iso_date);
 
-#endif //__LIBGEBR_MISC_DATE_H
+#endif //__MISC_DATE_H

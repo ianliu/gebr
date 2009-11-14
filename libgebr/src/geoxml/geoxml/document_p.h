@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEOXML_DOCUMENT_P_H
-#define __GEOXML_DOCUMENT_P_H
+#ifndef __GEBR_GEOXML_DOCUMENT_P_H
+#define __GEBR_GEOXML_DOCUMENT_P_H
 
 /**
  * \internal
@@ -24,14 +24,14 @@
  * @param name refer to the root element (flow, line or project) @param version
  * to its corresponding last version (support by this version of libgeoxml)
  */
-GeoXmlDocument *
-geoxml_document_new(const gchar * name, const gchar * version);
+GebrGeoXmlDocument *
+gebr_geoxml_document_new(const gchar * name, const gchar * version);
 
 /**
  * \internal
  *
  */
-#define geoxml_document_root_element(document)	\
+#define gebr_geoxml_document_root_element(document)	\
 	gdome_doc_documentElement((GdomeDocument*)document, &exception)
 
-#endif //__GEOXML_DOCUMENT_P_H
+#endif //__GEBR_GEOXML_DOCUMENT_P_H

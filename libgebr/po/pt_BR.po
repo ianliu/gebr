@@ -203,10 +203,10 @@ msgstr "Sintaxe de XML inválida ou em desacordo o DTD correspondente."
 
 #: ../src/geoxml/geoxml/error.c:60
 msgid ""
-"DTD was specified for the document. LibGeBR-GeoXml requires the document not "
+"DTD was specified for the document. LibGeBR-GebrGeoXml requires the document not "
 "to specify the DTD as it automatically find it and validate against."
 msgstr ""
-"O DTD foi especificado para este documento. LibGeBR-GeoXml requer que o "
+"O DTD foi especificado para este documento. LibGeBR-GebrGeoXml requer que o "
 "documento não especifique o DTD dado que este é encontrado automaticamente."
 
 #: ../src/geoxml/geoxml/error.c:62
@@ -284,8 +284,8 @@ msgid "file1.flw file2.mnu file3.prj file4.lne ..."
 msgstr ""
 
 #: ../src/geoxml/upgrade/upgrade.c:50 ../src/geoxml/validate/validate.c:50
-msgid "LibGeoXml XML validator"
-msgstr "Validador XML da LibGeoXml"
+msgid "LibGebrGeoXml XML validator"
+msgstr "Validador XML da LibGebrGeoXml"
 
 #: ../src/geoxml/upgrade/upgrade.c:59 ../src/geoxml/validate/validate.c:59
 #, c-format

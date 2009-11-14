@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GUI_ICONS_H
-#define __LIBGEBR_GUI_ICONS_H
+#ifndef __GUI_ICONS_H
+#define __GUI_ICONS_H
 
 void
 gui_setup_icons(void);
@@ -24,6 +24,6 @@ gui_setup_icons(void);
 void
 gui_setup_theme(void);
 
-#endif //__LIBGEBR_GUI_ICONS_H
+#endif //__GUI_ICONS_H
 
 

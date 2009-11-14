@@ -25,7 +25,7 @@
 
 struct job {
 	GProcess *	process;
-	GeoXmlFlow *	flow;
+	GebrGeoXmlFlow *	flow;
 	gboolean	user_finished;
 
 	/* the hostname of the client that ran it */

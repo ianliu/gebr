@@ -46,13 +46,13 @@ do_navigation_bar_update(void)
 
 	markup = g_string_new(NULL);
 	g_string_append(markup, g_markup_printf_escaped("<i>%s</i>",
-		geoxml_document_get_title(GEOXML_DOC(debr.menu))));
+		gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu))));
 	if (debr.program != NULL)
 		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
-			geoxml_program_get_title(debr.program)));
+			gebr_geoxml_program_get_title(debr.program)));
 	if (debr.parameter != NULL)
 		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
-			geoxml_parameter_get_label(debr.parameter)));
+			gebr_geoxml_parameter_get_label(debr.parameter)));
 
 	gtk_label_set_markup(GTK_LABEL(debr.navigation_box_label), markup->str);
 
@@ -317,7 +317,7 @@ on_menu_revert_activate(void)
 		return;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
-		GeoXmlFlow *		menu, * old_menu;
+		GebrGeoXmlFlow *		menu, * old_menu;
 		gchar *			path;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
@@ -336,7 +336,7 @@ on_menu_revert_activate(void)
 		if (menu == NULL)
 			return;
 		/* revert to the one in disk */
-		geoxml_document_free(GEOXML_DOC(old_menu));
+		gebr_geoxml_document_free(GEBR_GEOXML_DOC(old_menu));
 		gtk_tree_store_set(debr.ui_menu.model, &iter,
 			MENU_XMLPOINTER, menu,
 			-1);
@@ -361,7 +361,7 @@ on_menu_delete_activate(void)
 		return;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
-		GeoXmlFlow *	menu;
+		GebrGeoXmlFlow *	menu;
 		gchar *		path;
 
 		/* if this is not a menu item, pass */
@@ -379,7 +379,7 @@ on_menu_delete_activate(void)
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 				GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 				_("Could not delete menu '%s'"),
-					geoxml_document_get_filename(GEOXML_DOCUMENT(menu)));
+					gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)));
 			gtk_dialog_run(GTK_DIALOG(dialog));
 			gtk_widget_destroy(dialog);
 		} else
@@ -438,7 +438,7 @@ on_menu_close_activate(void)
 	GtkTreeIter		iter;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
-		GeoXmlFlow *	menu;
+		GebrGeoXmlFlow *	menu;
 		GtkWidget *	button;
 		MenuStatus	status;
 
@@ -453,15 +453,15 @@ on_menu_close_activate(void)
 
 			cancel = FALSE;
 
-                        /* FIXME: geoxml_document_get_title returns empty string for never saved menus.
+                        /* FIXME: gebr_geoxml_document_get_title returns empty string for never saved menus.
                            However, dialog should display temporary filename set.                        */
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 				GTK_DIALOG_MODAL,
 				GTK_MESSAGE_QUESTION,
 				GTK_BUTTONS_NONE,
 				_("'%s' menu has unsaved changes. Do you want to save it?"),
-                                                        (strlen(geoxml_document_get_filename(GEOXML_DOCUMENT(menu))) ?  
-                                                         geoxml_document_get_filename(GEOXML_DOCUMENT(menu)) : _("Untitled")));
+                                                        (strlen(gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu))) ?  
+                                                         gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)) : _("Untitled")));
 			button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
 			g_object_set(G_OBJECT(button),
 				"image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);
@@ -474,7 +474,7 @@ on_menu_close_activate(void)
 				gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 					MENU_PATH, &path,
 					-1);
-				geoxml_document_save(GEOXML_DOC(debr.menu), path);
+				gebr_geoxml_document_save(GEBR_GEOXML_DOC(debr.menu), path);
 				g_free(path);
 				break;
 			} case GTK_RESPONSE_NO:
@@ -646,7 +646,7 @@ on_parameter_change_type_activate(void)
 void
 on_parameter_type_activate(GtkRadioAction * first_action)
 {
-	parameter_change_type((enum GEOXML_PARAMETERTYPE)gtk_radio_action_get_current_value(first_action));
+	parameter_change_type((enum GEBR_GEOXML_PARAMETERTYPE)gtk_radio_action_get_current_value(first_action));
 }
 
 /*

@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_PARAMETER_P_H
-#define __LIBGEBR_GEOXML_PARAMETER_P_H
+#ifndef __GEBR_GEOXML_PARAMETER_P_H
+#define __GEBR_GEOXML_PARAMETER_P_H
 
 /**
  * \internal
@@ -24,7 +24,7 @@
  *
  */
 GdomeElement *
-__geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETERTYPE type);
+__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * parameter, enum GEBR_GEOXML_PARAMETERTYPE type);
 
 /**
  * \internal
@@ -32,15 +32,15 @@ __geoxml_parameter_insert_type(GeoXmlParameter * parameter, enum GEOXML_PARAMETE
  * Return the type element of \p parameter, according to \p resolve_references
  */
 GdomeElement *
-__geoxml_parameter_get_type_element(GeoXmlParameter * parameter, gboolean resolve_references);
+__gebr_geoxml_parameter_get_type_element(GebrGeoXmlParameter * parameter, gboolean resolve_references);
 
 /**
  * \internal
  * Return type of \p parameter, according to \p resolve_references
  *
  */
-enum GEOXML_PARAMETERTYPE
-__geoxml_parameter_get_type(GeoXmlParameter * parameter, gboolean resolve_references);
+enum GEBR_GEOXML_PARAMETERTYPE
+__gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter, gboolean resolve_references);
 
 /**
  * \internal
@@ -48,14 +48,14 @@ __geoxml_parameter_get_type(GeoXmlParameter * parameter, gboolean resolve_refere
  * If \p new is TRUE indicate that it was previously cloned.
  */
 void
-__geoxml_parameter_set_be_reference(GeoXmlParameter * parameter, GeoXmlParameter * reference);
+__gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, GebrGeoXmlParameter * reference);
 
 /**
  * \internal
- * Get the list of GeoXmlParameter referencees of \p id, inside the element
+ * Get the list of GebrGeoXmlParameter referencees of \p id, inside the element
  * _context_
  */
 GSList *
-__geoxml_parameter_get_referencee_list(GdomeElement * context, const gchar * id);
+__gebr_geoxml_parameter_get_referencee_list(GdomeElement * context, const gchar * id);
 
-#endif //__LIBGEBR_GEOXML_PARAMETER_P_H
+#endif //__GEBR_GEOXML_PARAMETER_P_H

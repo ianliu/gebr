@@ -26,18 +26,18 @@
 extern GdomeDocument *	clipboard_document;
 
 void
-geoxml_clipboard_clear(void)
+gebr_geoxml_clipboard_clear(void)
 {
 	GdomeElement *	document_element;
 	GdomeElement *	element;
 
 	document_element = gdome_doc_documentElement(clipboard_document, &exception);
-	while ((element = __geoxml_get_first_element(document_element, "*")))
+	while ((element = __gebr_geoxml_get_first_element(document_element, "*")))
 		gdome_el_removeChild(document_element, (GdomeNode*)element, &exception);
 }
 
 void
-geoxml_clipboard_copy(GeoXmlObject * object)
+gebr_geoxml_clipboard_copy(GebrGeoXmlObject * object)
 {
 	if (object == NULL)
 		return;
@@ -46,8 +46,8 @@ geoxml_clipboard_copy(GeoXmlObject * object)
 		gdome_doc_importNode(clipboard_document, (GdomeNode*)object, TRUE, &exception), &exception);
 }
 
-GeoXmlObject *
-geoxml_clipboard_paste(GeoXmlObject * object)
+GebrGeoXmlObject *
+gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object)
 {
 	if (object == NULL)
 		return NULL;
@@ -59,13 +59,13 @@ geoxml_clipboard_paste(GeoXmlObject * object)
 	};
 	GdomeElement *			paste_element;
 	GdomeElement *			container_element;
-	GeoXmlObject *			first_paste = NULL;
+	GebrGeoXmlObject *			first_paste = NULL;
 
 	container_element = gdome_n_nodeType((GdomeNode*)object, &exception) == GDOME_DOCUMENT_NODE
 		? gdome_doc_documentElement((GdomeDocument*)object, &exception) : (GdomeElement*)object;
-	paste_element = __geoxml_get_first_element(
+	paste_element = __gebr_geoxml_get_first_element(
 		gdome_doc_documentElement(clipboard_document, &exception), "*");
-	for (; paste_element != NULL; paste_element = __geoxml_next_element(paste_element)) {
+	for (; paste_element != NULL; paste_element = __gebr_geoxml_next_element(paste_element)) {
 		for (int i = 0; child_parent[i][0] != NULL; ++i) {
 			if (!strcmp(gdome_el_tagName(paste_element, &exception)->str, child_parent[i][0]) &&
 			!strcmp(gdome_el_tagName(container_element, &exception)->str, child_parent[i][1])) {
@@ -77,12 +77,12 @@ geoxml_clipboard_paste(GeoXmlObject * object)
 				if (!strlen(child_parent[i][2]))
 					gdome_el_appendChild(container_element, imported, &exception);
 				else
-					gdome_el_appendChild(__geoxml_get_first_element(
+					gdome_el_appendChild(__gebr_geoxml_get_first_element(
 						container_element, child_parent[i][2]),
 						imported, &exception);
-				__geoxml_element_reassign_ids((GdomeElement*)imported);
+				__gebr_geoxml_element_reassign_ids((GdomeElement*)imported);
 				if (first_paste == NULL)
-					first_paste = GEOXML_OBJECT(imported);
+					first_paste = GEBR_GEOXML_OBJECT(imported);
 				break;
 			}
 		}

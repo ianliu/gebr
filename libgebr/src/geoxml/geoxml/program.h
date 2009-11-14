@@ -15,11 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_PROGRAM_H
-#define __LIBGEBR_GEOXML_PROGRAM_H
+#ifndef __GEBR_GEOXML_PROGRAM_H
+#define __GEBR_GEOXML_PROGRAM_H
 
 /**
- * \struct GeoXmlProgram program.h geoxml/program.h
+ * \struct GebrGeoXmlProgram program.h geoxml/program.h
  * \brief
  * Represents a program and its parameters.
  * \dot
@@ -38,24 +38,24 @@
  *   fontsize = 9
  * 	]
  *
- * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
- * 	"GeoXmlFlow" [ URL = "\ref flow.h" ];
- * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
- * 	"GeoXmlProgram" [ URL = "\ref program.h" ];
- * 	"GeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
+ * 	"GebrGeoXmlDocument" [ URL = "\ref document.h" ];
+ * 	"GebrGeoXmlFlow" [ URL = "\ref flow.h" ];
+ * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GebrGeoXmlProgram" [ URL = "\ref program.h" ];
+ * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
- * 	"GeoXmlDocument" -> "GeoXmlFlow";
- * 	"GeoXmlSequence" -> "GeoXmlProgram";
+ * 	"GebrGeoXmlDocument" -> "GebrGeoXmlFlow";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlProgram";
  *
  * 	edge [
  * 		arrowhead = "none"
  * 		taillabel = "0..*"
  * 	]
- * 	"GeoXmlFlow" -> { "GeoXmlProgram" };
- * 	"GeoXmlProgram" -> "GeoXmlProgramParameter";
+ * 	"GebrGeoXmlFlow" -> { "GebrGeoXmlProgram" };
+ * 	"GebrGeoXmlProgram" -> "GebrGeoXmlProgramParameter";
  * }
  * \enddot
  * \see program.h
@@ -66,7 +66,7 @@
  * Represents a program and its parameters.
  *
  * A flow is compounded of multiple programs. Each one treat the
- * that and send its output to next program. GeoXmlProgram intends
+ * that and send its output to next program. GebrGeoXmlProgram intends
  * to keep all the data necessary to deal with seismic processing
  * softwares like Seismic Unix (SU) and Madagascar.
  *
@@ -83,12 +83,12 @@
 /**
  * Promote a sequence to a program.
  */
-#define GEOXML_PROGRAM(seq) ((GeoXmlProgram*)(seq))
+#define GEBR_GEOXML_PROGRAM(seq) ((GebrGeoXmlProgram*)(seq))
 
 /**
- * The GeoXmlProgram struct contains private data only, and should be accessed using the functions below.
+ * The GebrGeoXmlProgram struct contains private data only, and should be accessed using the functions below.
  */
-typedef struct geoxml_program GeoXmlProgram;
+typedef struct gebr_geoxml_program GebrGeoXmlProgram;
 
 #include <glib.h>
 
@@ -103,144 +103,144 @@ typedef struct geoxml_program GeoXmlProgram;
  *
  * If \p program is NULL nothing is done.
  */
-GeoXmlFlow *
-geoxml_program_flow(GeoXmlProgram * program);
+GebrGeoXmlFlow *
+gebr_geoxml_program_flow(GebrGeoXmlProgram * program);
 
 /**
  * Get \p program 's parameters list.
  *
- * \see \ref parameters.h "GeoXmlParameters"
+ * \see \ref parameters.h "GebrGeoXmlParameters"
  */
-GeoXmlParameters *
-geoxml_program_get_parameters(GeoXmlProgram * program);
+GebrGeoXmlParameters *
+gebr_geoxml_program_get_parameters(GebrGeoXmlProgram * program);
 
 /**
  * Specify wheter \p program accepts standard input or not,
  * depending on \p enable
  *
- * \see geoxml_program_get_stdin
+ * \see gebr_geoxml_program_get_stdin
  */
 void
-geoxml_program_set_stdin(GeoXmlProgram * program, const gboolean enable);
+gebr_geoxml_program_set_stdin(GebrGeoXmlProgram * program, const gboolean enable);
 
 /**
  * Specify wheter \p program writes standard output or not,
  * depending on \p enable
  *
- * \see geoxml_program_get_stdout
+ * \see gebr_geoxml_program_get_stdout
  */
 void
-geoxml_program_set_stdout(GeoXmlProgram * program, const gboolean enable);
+gebr_geoxml_program_set_stdout(GebrGeoXmlProgram * program, const gboolean enable);
 
 /**
  * Specify wheter \p program writes standard error or not,
  * depending on \p enable
  *
- * \see geoxml_program_get_stderr
+ * \see gebr_geoxml_program_get_stderr
  */
 void
-geoxml_program_set_stderr(GeoXmlProgram * program, const gboolean enable);
+gebr_geoxml_program_set_stderr(GebrGeoXmlProgram * program, const gboolean enable);
 
 /**
  *
  */
 void
-geoxml_program_set_status(GeoXmlProgram * program, const gchar * status);
+gebr_geoxml_program_set_status(GebrGeoXmlProgram * program, const gchar * status);
 
 /**
  *
  */
 void
-geoxml_program_set_title(GeoXmlProgram * program, const gchar * title);
+gebr_geoxml_program_set_title(GebrGeoXmlProgram * program, const gchar * title);
 
 /**
  *
  */
 void
-geoxml_program_set_menu(GeoXmlProgram * program, const gchar * menu, gulong index);
+gebr_geoxml_program_set_menu(GebrGeoXmlProgram * program, const gchar * menu, gulong index);
 
 /**
  *
  */
 void
-geoxml_program_set_binary(GeoXmlProgram * program, const gchar * binary);
+gebr_geoxml_program_set_binary(GebrGeoXmlProgram * program, const gchar * binary);
 
 /**
  *
  */
 void
-geoxml_program_set_description(GeoXmlProgram * program, const gchar * description);
+gebr_geoxml_program_set_description(GebrGeoXmlProgram * program, const gchar * description);
 
 /**
  *
  */
 void
-geoxml_program_set_help(GeoXmlProgram * program, const gchar * help);
+gebr_geoxml_program_set_help(GebrGeoXmlProgram * program, const gchar * help);
 
 /**
  *
  */
 void
-geoxml_program_set_url(GeoXmlProgram * program, const gchar * url);
+gebr_geoxml_program_set_url(GebrGeoXmlProgram * program, const gchar * url);
 
 /**
  *
  */
 gboolean
-geoxml_program_get_stdin(GeoXmlProgram * program);
+gebr_geoxml_program_get_stdin(GebrGeoXmlProgram * program);
 
 /**
  *
  */
 gboolean
-geoxml_program_get_stdout(GeoXmlProgram * program);
+gebr_geoxml_program_get_stdout(GebrGeoXmlProgram * program);
 
 /**
  *
  */
 gboolean
-geoxml_program_get_stderr(GeoXmlProgram * program);
+gebr_geoxml_program_get_stderr(GebrGeoXmlProgram * program);
 
 /**
  *
  */
 const gchar *
-geoxml_program_get_status(GeoXmlProgram * program);
+gebr_geoxml_program_get_status(GebrGeoXmlProgram * program);
 
 /**
  *
  */
 const gchar *
-geoxml_program_get_title(GeoXmlProgram * program);
+gebr_geoxml_program_get_title(GebrGeoXmlProgram * program);
 
 /**
  *
  */
 void
-geoxml_program_get_menu(GeoXmlProgram * program, gchar ** menu, gulong * index);
+gebr_geoxml_program_get_menu(GebrGeoXmlProgram * program, gchar ** menu, gulong * index);
 
 /**
  *
  */
 const gchar *
-geoxml_program_get_binary(GeoXmlProgram * program);
+gebr_geoxml_program_get_binary(GebrGeoXmlProgram * program);
 
 /**
  *
  */
 const gchar *
-geoxml_program_get_description(GeoXmlProgram * program);
+gebr_geoxml_program_get_description(GebrGeoXmlProgram * program);
 
 /**
  *
  */
 const gchar *
-geoxml_program_get_help(GeoXmlProgram * program);
+gebr_geoxml_program_get_help(GebrGeoXmlProgram * program);
 
 /**
  *
  */
 const gchar *
-geoxml_program_get_url(GeoXmlProgram * program);
+gebr_geoxml_program_get_url(GebrGeoXmlProgram * program);
 
-#endif //__LIBGEBR_GEOXML_PROGRAM_H
+#endif //__GEBR_GEOXML_PROGRAM_H

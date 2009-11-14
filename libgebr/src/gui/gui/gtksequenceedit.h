@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GUI_GTK_SEQUENCE_EDIT_H
-#define __LIBGEBR_GUI_GTK_SEQUENCE_EDIT_H
+#ifndef __GUI_GTK_SEQUENCE_EDIT_H
+#define __GUI_GTK_SEQUENCE_EDIT_H
 
 #include <gtk/gtk.h>
 
@@ -79,4 +79,4 @@ gtk_sequence_edit_clear(GtkSequenceEdit * sequence_edit);
 
 G_END_DECLS
 
-#endif //__LIBGEBR_GUI_GTK_SEQUENCE_EDIT_H
+#endif //__GUI_GTK_SEQUENCE_EDIT_H

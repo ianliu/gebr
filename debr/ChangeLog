@@ -399,7 +399,7 @@
 	  - fix help edit in debr: a empty file can be a file with a return
 	  char. (length 1)
 	* - various bugfixes to handle reference parameters
-	  - geoxml_parameter_get_type resolve references
+	  - gebr_geoxml_parameter_get_type resolve references
 	  - a lot of fixes to geoxmlsequence functions
 	  - rewritten dran n' drop API
 	  - full drag n' drop support in debr's parameter page
@@ -414,7 +414,7 @@
 2009-01-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
 	* fixed parameter group creation and deletion (debr)
-	* - fix __geoxml_sequence_move_before with position NULL
+	* - fix __gebr_geoxml_sequence_move_before with position NULL
 	  - fixes to top/bottom at gtksequenceedit and derivatives
 
 2009-01-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
@@ -571,7 +571,7 @@
 
 	* the saga of list parameters ended!
 	  - changed DTD to make value and default values independets
-	  - refactoring of GeoXmlProgramParameter functions
+	  - refactoring of GebrGeoXmlProgramParameter functions
 	  - general refacte on parameter_widget function:
 	  - every change is auto submited
 	  - ability to auto rebuild the ui to match new parameter

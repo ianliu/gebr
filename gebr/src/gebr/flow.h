@@ -33,7 +33,7 @@ flow_export(void);
 void
 flow_export_as_menu(void);
 void
-flow_copy_from_dicts(GeoXmlFlow * flow);
+flow_copy_from_dicts(GebrGeoXmlFlow * flow);
 void
 flow_run(struct server * server);
 gboolean

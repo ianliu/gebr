@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_INTL_H
-#define __LIBGEBR_INTL_H
+#ifndef __INTL_H
+#define __INTL_H
 
 #include <glib.h>
 
@@ -45,4 +45,4 @@
 #	define N_(String) (String)
 #endif
 
-#endif // __LIBGEBR_INTL_H
+#endif // __INTL_H

@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_COMM_SERVER_H
-#define __LIBGEBR_COMM_SERVER_H
+#ifndef __COMM_SERVER_H
+#define __COMM_SERVER_H
 
 #include <glib.h>
 
@@ -104,6 +104,6 @@ gboolean
 gebr_comm_server_forward_x11(struct gebr_comm_server * comm_server, guint16 port);
 
 void
-gebr_comm_server_run_flow(struct gebr_comm_server * comm_server, GeoXmlFlow * flow);
+gebr_comm_server_run_flow(struct gebr_comm_server * comm_server, GebrGeoXmlFlow * flow);
 
-#endif //__LIBGEBR_COMM_SERVER_H
+#endif //__COMM_SERVER_H

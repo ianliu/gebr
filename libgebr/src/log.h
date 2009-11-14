@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_MISC_LOG_H
-#define __LIBGEBR_MISC_LOG_H
+#ifndef __MISC_LOG_H
+#define __MISC_LOG_H
 
 #include <stdio.h>
 
@@ -57,4 +57,4 @@ log_messages_free(GList * messages);
 void
 log_add_message(struct log * log, enum log_message_type type, const gchar * message);
 
-#endif //__LIBGEBR_MISC_LOG_H
+#endif //__MISC_LOG_H

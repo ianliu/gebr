@@ -52,10 +52,10 @@ menu_scan_directory(const gchar * directory, gboolean system_dir, FILE * index_f
  * Function: menu_load
  * Look for a given menu _filename_ and load it if found
  */
-GeoXmlFlow *
+GebrGeoXmlFlow *
 menu_load(const gchar * filename)
 {
-	GeoXmlFlow *	menu;
+	GebrGeoXmlFlow *	menu;
 	GString *	path;
 
 	path = menu_get_path(filename);
@@ -72,10 +72,10 @@ menu_load(const gchar * filename)
  * Function: menu_load_path
  * Load menu at the given _path_
  */
-GeoXmlFlow *
+GebrGeoXmlFlow *
 menu_load_path(const gchar * path)
 {
-	return GEOXML_FLOW(document_load_path(path));
+	return GEBR_GEOXML_FLOW(document_load_path(path));
 }
 
 /*
@@ -346,25 +346,25 @@ out:	g_string_free(path, TRUE);
  * Scans _directory_ for menus
  */
 GString *
-menu_get_help_from_program_ref(GeoXmlProgram * program)
+menu_get_help_from_program_ref(GebrGeoXmlProgram * program)
 {
-	GeoXmlFlow *		menu;
+	GebrGeoXmlFlow *		menu;
 	gchar *			filename;
 	gulong			index;
 	GString *		help;
 
-	GeoXmlSequence *	menu_program;
+	GebrGeoXmlSequence *	menu_program;
 
-	geoxml_program_get_menu(GEOXML_PROGRAM(program), &filename, &index);
+	gebr_geoxml_program_get_menu(GEBR_GEOXML_PROGRAM(program), &filename, &index);
 	menu = menu_load(filename);
 	if (menu == NULL)
 		return g_string_new("");
 
 	/* go to menu's program index specified in flow */
-	geoxml_flow_get_program(menu, &menu_program, index);
-	help = g_string_new(geoxml_program_get_help(GEOXML_PROGRAM(menu_program)));
+	gebr_geoxml_flow_get_program(menu, &menu_program, index);
+	help = g_string_new(gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(menu_program)));
 
-	geoxml_document_free(GEOXML_DOC(menu));
+	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
 
 	return help;
 }
@@ -386,8 +386,8 @@ menu_scan_directory(const gchar * directory, gboolean system_dir, FILE * index_f
 
 	path = g_string_new(NULL);
 	libgebr_directory_foreach_file(filename, directory) {
-		GeoXmlDocument *	menu;
-		GeoXmlSequence *	category;
+		GebrGeoXmlDocument *	menu;
+		GebrGeoXmlSequence *	category;
 
 		g_string_printf(path, "%s/%s", directory, filename);
 		if (system_dir && g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
@@ -407,23 +407,23 @@ menu_scan_directory(const gchar * directory, gboolean system_dir, FILE * index_f
 			rel_filename = path->str + strlen(GEBR_SYS_MENUS_DIR);
 			while (*rel_filename == '/')
 				rel_filename++;
-			if (strcmp(geoxml_document_get_filename(menu), rel_filename)) {
+			if (strcmp(gebr_geoxml_document_get_filename(menu), rel_filename)) {
 				gebr_message(LOG_ERROR, TRUE, TRUE, _("Invalid menu '%s'"),
 					path->str);
-				geoxml_document_free(menu);
+				gebr_geoxml_document_free(menu);
 				continue;
 			}
 		}
 
-		geoxml_flow_get_category(GEOXML_FLOW(menu), &category, 0);
-		for (; category != NULL; geoxml_sequence_next(&category))
+		gebr_geoxml_flow_get_category(GEBR_GEOXML_FLOW(menu), &category, 0);
+		for (; category != NULL; gebr_geoxml_sequence_next(&category))
 			fprintf(index_fp, "%s|%s|%s|%s\n",
-				geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)),
-				geoxml_document_get_title(menu),
-				geoxml_document_get_description(menu),
-				geoxml_document_get_filename(menu));
+				gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)),
+				gebr_geoxml_document_get_title(menu),
+				gebr_geoxml_document_get_description(menu),
+				gebr_geoxml_document_get_filename(menu));
 
-		geoxml_document_free(menu);
+		gebr_geoxml_document_free(menu);
 	}
 
 	/* frees */

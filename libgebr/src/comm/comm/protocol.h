@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_COMM_PROTOCOL_H
-#define __LIBGEBR_COMM_PROTOCOL_H
+#ifndef __COMM_PROTOCOL_H
+#define __COMM_PROTOCOL_H
 
 #include <glib.h>
 
@@ -106,4 +106,4 @@ protocol_split_new(GString * arguments, guint parts);
 void
 protocol_split_free(GList * split);
 
-#endif //__LIBGEBR_COMM_PROTOCOL_H
+#endif //__COMM_PROTOCOL_H

@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GUI_ABOUT_H
-#define __LIBGEBR_GUI_ABOUT_H
+#ifndef __GUI_ABOUT_H
+#define __GUI_ABOUT_H
 
 #include <gtk/gtk.h>
 
@@ -27,4 +27,4 @@ struct about {
 struct about
 about_setup_ui(const gchar * program, const gchar * description);
 
-#endif //__LIBGEBR_GUI_ABOUT_H
+#endif //__GUI_ABOUT_H

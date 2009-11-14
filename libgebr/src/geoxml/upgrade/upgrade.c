@@ -47,7 +47,7 @@ main(int argc, char ** argv)
 
 	context = g_option_context_new(NULL);
 	g_option_context_set_summary(context,
-		_("LibGeoXml XML validator")
+		_("LibGebrGeoXml XML validator")
 	);
 	g_option_context_set_description(context,
 		_("")
@@ -72,22 +72,22 @@ main(int argc, char ** argv)
 	}
 
 	for (i = 0; files[i] != NULL; ++i) {
-		GeoXmlDocument *	document;
+		GebrGeoXmlDocument *	document;
 
-		ret = geoxml_document_load(&document, files[i]);
+		ret = gebr_geoxml_document_load(&document, files[i]);
 		if (ret < 0) {
 			fprintf(stderr, _("Could not load file %s\n"), files[i]);
 			continue;
 		}
-		ret = geoxml_document_save(document, files[i]);
+		ret = gebr_geoxml_document_save(document, files[i]);
 		if (ret < 0) {
 			fprintf(stderr, _("Could not save file %s\n"), files[i]);
-			geoxml_document_free(document);
+			gebr_geoxml_document_free(document);
 			continue;
 		}
-		printf(_("Upgraded file %s to version %s!\n"), files[i], geoxml_document_get_version(document));
+		printf(_("Upgraded file %s to version %s!\n"), files[i], gebr_geoxml_document_get_version(document));
 
-		geoxml_document_free(document);
+		gebr_geoxml_document_free(document);
 	}
 
 	ret = 0;

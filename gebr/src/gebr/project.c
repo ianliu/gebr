@@ -48,26 +48,26 @@ project_new(void)
 {
 	GtkTreeIter		iter;
 
-	GeoXmlDocument *	project;
+	GebrGeoXmlDocument *	project;
 
-	project = document_new(GEOXML_DOCUMENT_TYPE_PROJECT);
-	geoxml_document_set_title(project, _("New project"));
-	geoxml_document_set_author(project, gebr.config.username->str);
-	geoxml_document_set_email(project, gebr.config.email->str);
+	project = document_new(GEBR_GEOXML_DOCUMENT_TYPE_PROJECT);
+	gebr_geoxml_document_set_title(project, _("New project"));
+	gebr_geoxml_document_set_author(project, gebr.config.username->str);
+	gebr_geoxml_document_set_email(project, gebr.config.email->str);
 	document_save(project);
 
 	gtk_tree_store_append(gebr.ui_project_line->store, &iter, NULL);
 	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
-		PL_TITLE, geoxml_document_get_title(project),
-		PL_FILENAME, geoxml_document_get_filename(project),
+		PL_TITLE, gebr_geoxml_document_get_title(project),
+		PL_FILENAME, gebr_geoxml_document_get_filename(project),
 		-1);
-	project_line_set_selected(&iter, GEOXML_DOCUMENT(project));
+	project_line_set_selected(&iter, GEBR_GEOXML_DOCUMENT(project));
 	gebr_message(LOG_INFO, FALSE, TRUE, _("New project created"));
 
 	if (!on_document_properties_activate())
 		project_delete(FALSE);
 
-	geoxml_document_free(project);
+	gebr_geoxml_document_free(project);
 }
 
 /*
@@ -128,14 +128,14 @@ out:	g_free(title);
  * Add _project_ to the list of projects.
  */
 GtkTreeIter
-project_append_iter(GeoXmlProject * project)
+project_append_iter(GebrGeoXmlProject * project)
 {
 	GtkTreeIter	iter;
 
 	gtk_tree_store_append(gebr.ui_project_line->store, &iter, NULL);
 	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
-		PL_TITLE, geoxml_document_get_title(GEOXML_DOCUMENT(project)),
-		PL_FILENAME, geoxml_document_get_filename(GEOXML_DOCUMENT(project)),
+		PL_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(project)),
+		PL_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(project)),
 		-1);
 
 	return iter;
@@ -146,14 +146,14 @@ project_append_iter(GeoXmlProject * project)
  * Add _line_ to _project_iter_.
  */
 GtkTreeIter
-project_append_line_iter(GtkTreeIter * project_iter, GeoXmlLine * line)
+project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine * line)
 {
 	GtkTreeIter	iter;
 
 	gtk_tree_store_append(gebr.ui_project_line->store, &iter, project_iter);
 	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
-		PL_TITLE, geoxml_document_get_title(GEOXML_DOCUMENT(line)),
-		PL_FILENAME, geoxml_document_get_filename(GEOXML_DOCUMENT(line)),
+		PL_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line)),
+		PL_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)),
 		-1);
 
 	return iter;
@@ -178,34 +178,34 @@ project_list_populate(void)
 	libgebr_directory_foreach_file(filename, gebr.config.data->str) {
 		GtkTreeIter		project_iter;
 
-		GeoXmlProject *		project;
-		GeoXmlSequence *	project_line;
+		GebrGeoXmlProject *		project;
+		GebrGeoXmlSequence *	project_line;
 
 		if (fnmatch("*.prj", filename, 1))
 			continue;
 
-		project = GEOXML_PROJECT(document_load(filename));
+		project = GEBR_GEOXML_PROJECT(document_load(filename));
 		if (project == NULL)
 			continue;
 		project_iter = project_append_iter(project);
 
-		geoxml_project_get_line(project, &project_line, 0);
-		for (; project_line != NULL; geoxml_sequence_next(&project_line)) {
-			GeoXmlLine *	line;
+		gebr_geoxml_project_get_line(project, &project_line, 0);
+		for (; project_line != NULL; gebr_geoxml_sequence_next(&project_line)) {
+			GebrGeoXmlLine *	line;
 			const gchar *	line_source;
 
-			line_source = geoxml_project_get_line_source(GEOXML_PROJECT_LINE(project_line));
-			line = GEOXML_LINE(document_load(line_source));
+			line_source = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line));
+			line = GEBR_GEOXML_LINE(document_load(line_source));
 			if (line == NULL) {
 				gebr_message(LOG_ERROR, TRUE, TRUE, _("Line file %s corrupted. Ignoring."),
 					line_source);
 				continue;
 			}
 			project_append_line_iter(&project_iter, line);
-			geoxml_document_free(GEOXML_DOC(line));
+			gebr_geoxml_document_free(GEBR_GEOXML_DOC(line));
 		}
 
-		geoxml_document_free(GEOXML_DOC(project));
+		gebr_geoxml_document_free(GEBR_GEOXML_DOC(project));
 	}
 
 	project_line_info_update();

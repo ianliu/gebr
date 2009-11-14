@@ -15,15 +15,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_OBJECT_H
-#define __LIBGEBR_GEOXML_OBJECT_H
+#ifndef __GEBR_GEOXML_OBJECT_H
+#define __GEBR_GEOXML_OBJECT_H
 
 #include <glib.h>
 
 /**
- * \struct GeoXmlObject object.h geoxml/object.h
+ * \struct GebrGeoXmlObject object.h geoxml/object.h
  * \brief
- * The base class for all GeoXml.
+ * The base class for all GebrGeoXml.
  * \dot
  * digraph enum_option {
  * 	fontlabel = "Bitstream Vera Sans"
@@ -40,15 +40,15 @@
  * 		fontsize = 9
  * 	]
  *
- * 	"GeoXmlObject" [ URL = "\ref object.h" ];
- * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
- * 	"GeoXmlDocument" [ URL = "\ref flow.h" ];
+ * 	"GebrGeoXmlObject" [ URL = "\ref object.h" ];
+ * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GebrGeoXmlDocument" [ URL = "\ref flow.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
- * 	"GeoXmlObject" -> "GeoXmlSequence"
- * 	"GeoXmlObject" -> "GeoXmlDocument"
+ * 	"GebrGeoXmlObject" -> "GebrGeoXmlSequence"
+ * 	"GebrGeoXmlObject" -> "GebrGeoXmlDocument"
  * }
  * \enddot
  * \see object.h
@@ -61,66 +61,66 @@
 /**
  * Get base object class from a sequence or a document.
  */
-#define GEOXML_OBJECT(object) ((GeoXmlObject*)(object))
+#define GEBR_GEOXML_OBJECT(object) ((GebrGeoXmlObject*)(object))
 
 #include "document.h"
 
 /**
- * The GeoXmlObject struct contains private data only, and should be accessed using the functions below.
+ * The GebrGeoXmlObject struct contains private data only, and should be accessed using the functions below.
  */
-typedef struct geoxml_object GeoXmlObject;
+typedef struct gebr_geoxml_object GebrGeoXmlObject;
 
 /**
- * GeoXml basic object types
+ * GebrGeoXml basic object types
  */
-enum GEOXML_OBJECT_TYPE {
-	GEOXML_OBJECT_TYPE_UNKNOWN = 0,
-	GEOXML_OBJECT_TYPE_PROJECT,
-	GEOXML_OBJECT_TYPE_LINE,
-	GEOXML_OBJECT_TYPE_FLOW,
-	GEOXML_OBJECT_TYPE_PROGRAM,
-	GEOXML_OBJECT_TYPE_PARAMETERS,
-	GEOXML_OBJECT_TYPE_PARAMETER,
-	GEOXML_OBJECT_TYPE_ENUM_OPTION,
+enum GEBR_GEOXML_OBJECT_TYPE {
+	GEBR_GEOXML_OBJECT_TYPE_UNKNOWN = 0,
+	GEBR_GEOXML_OBJECT_TYPE_PROJECT,
+	GEBR_GEOXML_OBJECT_TYPE_LINE,
+	GEBR_GEOXML_OBJECT_TYPE_FLOW,
+	GEBR_GEOXML_OBJECT_TYPE_PROGRAM,
+	GEBR_GEOXML_OBJECT_TYPE_PARAMETERS,
+	GEBR_GEOXML_OBJECT_TYPE_PARAMETER,
+	GEBR_GEOXML_OBJECT_TYPE_ENUM_OPTION,
 };
 
 /**
  * Return the type of \p object
  */
-enum GEOXML_OBJECT_TYPE
-geoxml_object_get_type(GeoXmlObject * object);
+enum GEBR_GEOXML_OBJECT_TYPE
+gebr_geoxml_object_get_type(GebrGeoXmlObject * object);
 
 /**
  * Set the user pointer data associated with _object_
  *
- * \see geoxml_object_get_user_data
+ * \see gebr_geoxml_object_get_user_data
  */
 void
-geoxml_object_set_user_data(GeoXmlObject * object, gpointer user_data);
+gebr_geoxml_object_set_user_data(GebrGeoXmlObject * object, gpointer user_data);
 
 /**
  * Get the user pointer data associated with _object_
  *
  * Returns NULL if _object_ is NULL
- * \see geoxml_object_set_user_data
+ * \see gebr_geoxml_object_set_user_data
  */
 gpointer
-geoxml_object_get_user_data(GeoXmlObject * object);
+gebr_geoxml_object_get_user_data(GebrGeoXmlObject * object);
 
 /**
  * Get the owner document of \p object
  *
  * Returns NULL if _object_ is NULL
  */
-GeoXmlDocument *
-geoxml_object_get_owner_document(GeoXmlObject * object);
+GebrGeoXmlDocument *
+gebr_geoxml_object_get_owner_document(GebrGeoXmlObject * object);
 
 /**
  * Copy _object_  for parallel use (e.g. when you don't want to modify _object_)
  *
  * Returns NULL if _object_ is NULL
  */
-GeoXmlObject *
-geoxml_object_copy(GeoXmlObject * object);
+GebrGeoXmlObject *
+gebr_geoxml_object_copy(GebrGeoXmlObject * object);
 
-#endif //__LIBGEBR_GEOXML_OBJECT_H
+#endif //__GEBR_GEOXML_OBJECT_H

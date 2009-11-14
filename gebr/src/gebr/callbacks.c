@@ -127,7 +127,7 @@ on_project_line_new_line_activate(void)
 void
 on_project_line_delete_activate(void)
 {
-	if (geoxml_document_get_type(gebr.project_line) == GEOXML_DOCUMENT_TYPE_PROJECT)
+	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
 		project_delete(TRUE);
 	else
 		line_delete(TRUE);
@@ -449,13 +449,13 @@ navigation_bar_update(void)
 
 	markup = g_string_new(NULL);
 	g_string_append(markup, g_markup_printf_escaped("<i>%s</i>",
-		geoxml_document_get_title(GEOXML_DOC(gebr.project))));
+		gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.project))));
 	if (gebr.line != NULL)
 		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
-			geoxml_document_get_title(GEOXML_DOC(gebr.line))));
+			gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.line))));
 	if (gebr.flow != NULL)
 		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
-			geoxml_document_get_title(GEOXML_DOC(gebr.flow))));
+			gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow))));
 	
 	gtk_label_set_markup(GTK_LABEL(gebr.navigation_box_label), markup->str);
 

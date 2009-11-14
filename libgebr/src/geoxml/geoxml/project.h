@@ -15,11 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_PROJECT_H
-#define __LIBGEBR_GEOXML_PROJECT_H
+#ifndef __GEBR_GEOXML_PROJECT_H
+#define __GEBR_GEOXML_PROJECT_H
 
 /**
- * \struct GeoXmlProject project.h geoxml/project.h
+ * \struct GebrGeoXmlProject project.h geoxml/project.h
  * \brief
  * Project compounds a list of lines references.
  * \dot
@@ -38,22 +38,22 @@
  *   fontsize = 9
  * 	]
  *
- * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
- * 	"GeoXmlProject" [ URL = "\ref project.h" ];
- * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
- * 	"GeoXmlProjectLine" [ URL = "\ref GeoXmlProjectLine" ];
+ * 	"GebrGeoXmlDocument" [ URL = "\ref document.h" ];
+ * 	"GebrGeoXmlProject" [ URL = "\ref project.h" ];
+ * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GebrGeoXmlProjectLine" [ URL = "\ref GebrGeoXmlProjectLine" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
- * 	"GeoXmlDocument" -> { "GeoXmlProject" };
- * 	"GeoXmlSequence" -> { "GeoXmlProjectLine" };
+ * 	"GebrGeoXmlDocument" -> { "GebrGeoXmlProject" };
+ * 	"GebrGeoXmlSequence" -> { "GebrGeoXmlProjectLine" };
  *
  * 	edge [
  * 		arrowhead = "none"
  * 		taillabel = "0..*"
  * 	]
- * 	"GeoXmlProject" -> { "GeoXmlProjectLine" };
+ * 	"GebrGeoXmlProject" -> { "GebrGeoXmlProjectLine" };
  * }
  * \enddot
  * \see project.h
@@ -68,37 +68,37 @@
  *
  * Projects references lines using their path.
  * Therefore, a project is a list of lines files. When a line needs to be
- * read or edited you ask the project for its path (see \ref geoxml_project_get_line_source) and then
- * load it with \ref geoxml_document_load. New liness can be added to a project using
- * \ref geoxml_project_append_line.
+ * read or edited you ask the project for its path (see \ref gebr_geoxml_project_get_line_source) and then
+ * load it with \ref gebr_geoxml_document_load. New liness can be added to a project using
+ * \ref gebr_geoxml_project_append_line.
  *
  * \see line.h
  */
 
 /**
- * Cast project's document \p doc to GeoXmlProject
+ * Cast project's document \p doc to GebrGeoXmlProject
  */
-#define GEOXML_PROJECT(doc) ((GeoXmlProject*)(doc))
+#define GEBR_GEOXML_PROJECT(doc) ((GebrGeoXmlProject*)(doc))
 
 /**
  * Promote a sequence to a project line.
  */
-#define GEOXML_PROJECT_LINE(seq) ((GeoXmlProjectLine*)(seq))
+#define GEBR_GEOXML_PROJECT_LINE(seq) ((GebrGeoXmlProjectLine*)(seq))
 
 /**
- * Project class. Inherits GeoXmlDocument
+ * Project class. Inherits GebrGeoXmlDocument
  *
- * The GeoXmlProject struct contains private data only, and should be accessed using the functions below.
+ * The GebrGeoXmlProject struct contains private data only, and should be accessed using the functions below.
  */
-typedef struct geoxml_project GeoXmlProject;
+typedef struct gebr_geoxml_project GebrGeoXmlProject;
 
 /**
  * Represents a reference to a line inside a project.
  * It contains the path of the line.
  *
- * The GeoXmlProjectLine struct contains private data only, and should be accessed using the functions below.
+ * The GebrGeoXmlProjectLine struct contains private data only, and should be accessed using the functions below.
  */
-typedef struct geoxml_project_line GeoXmlProjectLine;
+typedef struct gebr_geoxml_project_line GebrGeoXmlProjectLine;
 
 #include "sequence.h"
 #include "macros.h"
@@ -108,16 +108,16 @@ typedef struct geoxml_project_line GeoXmlProjectLine;
  *
  * Returns NULL if memory couldn't be allocated.
  */
-GeoXmlProject *
-geoxml_project_new();
+GebrGeoXmlProject *
+gebr_geoxml_project_new();
 
 /**
  * Create a new line and append it to list of flows references.
  *
  * If \p project or \p source is NULL returns NULL.
  */
-GeoXmlProjectLine *
-geoxml_project_append_line(GeoXmlProject * project, const gchar * source);
+GebrGeoXmlProjectLine *
+gebr_geoxml_project_append_line(GebrGeoXmlProject * project, const gchar * source);
 
 /**
  * Writes to \p project_line the \p index ieth line reference that \p project belong.
@@ -125,10 +125,10 @@ geoxml_project_append_line(GeoXmlProject * project, const gchar * source);
  *
  * If \p project is NULL nothing is done.
  *
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR
  */
 int
-geoxml_project_get_line(GeoXmlProject * project, GeoXmlSequence ** project_line, gulong index);
+gebr_geoxml_project_get_line(GebrGeoXmlProject * project, GebrGeoXmlSequence ** project_line, gulong index);
 
 /**
  * Get the number of lines that \p project has.
@@ -136,7 +136,7 @@ geoxml_project_get_line(GeoXmlProject * project, GeoXmlSequence ** project_line,
  * If \p project is NULL returns -1.
  */
 glong
-geoxml_project_get_lines_number(GeoXmlProject * project);
+gebr_geoxml_project_get_lines_number(GebrGeoXmlProject * project);
 
 /**
  * Set the location of \p project_line to \p source.
@@ -144,7 +144,7 @@ geoxml_project_get_lines_number(GeoXmlProject * project);
  * If \p project_line is NULL nothing is done.
  */
 void
-geoxml_project_set_line_source(GeoXmlProjectLine * project_line, const gchar * source);
+gebr_geoxml_project_set_line_source(GebrGeoXmlProjectLine * project_line, const gchar * source);
 
 /**
  * Returns the location of the line reference \p project_line.
@@ -152,6 +152,6 @@ geoxml_project_set_line_source(GeoXmlProjectLine * project_line, const gchar * s
  * If \p project_line is NULL returns NULL.
  */
 const gchar *
-geoxml_project_get_line_source(GeoXmlProjectLine * project_line);
+gebr_geoxml_project_get_line_source(GebrGeoXmlProjectLine * project_line);
 
-#endif //__LIBGEBR_GEOXML_PROJECT_H
+#endif //__GEBR_GEOXML_PROJECT_H

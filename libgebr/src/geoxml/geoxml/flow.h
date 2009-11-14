@@ -15,13 +15,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_FLOW_H
-#define __LIBGEBR_GEOXML_FLOW_H
+#ifndef __GEBR_GEOXML_FLOW_H
+#define __GEBR_GEOXML_FLOW_H
 
 #include <glib.h>
 
 /**
- * \struct GeoXmlFlow flow.h geoxml/flow.h
+ * \struct GebrGeoXmlFlow flow.h geoxml/flow.h
  * \brief
  * A sequence of programs.
  * \dot
@@ -40,23 +40,23 @@
  *   fontsize = 9
  * 	]
  *
- * 	"GeoXmlDocument" [ URL = "\ref document.h" ];
- * 	"GeoXmlFlow" [ URL = "\ref flow.h" ];
- * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
- * 	"GeoXmlProgram" [ URL = "\ref program.h" ];
+ * 	"GebrGeoXmlDocument" [ URL = "\ref document.h" ];
+ * 	"GebrGeoXmlFlow" [ URL = "\ref flow.h" ];
+ * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GebrGeoXmlProgram" [ URL = "\ref program.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
- * 	"GeoXmlDocument" -> "GeoXmlFlow";
- * 	"GeoXmlSequence" -> "GeoXmlCategory";
- * 	"GeoXmlSequence" -> "GeoXmlProgram";
+ * 	"GebrGeoXmlDocument" -> "GebrGeoXmlFlow";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlCategory";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlProgram";
  *
  * 	edge [
  * 		arrowhead = "none"
  * 		taillabel = "0..*"
  * 	]
- * 	"GeoXmlFlow" -> { "GeoXmlCategory" "GeoXmlProgram" };
+ * 	"GebrGeoXmlFlow" -> { "GebrGeoXmlCategory" "GebrGeoXmlProgram" };
  * }
  * \enddot
  * \see flow.h
@@ -73,39 +73,39 @@
  */
 
 /**
- * Cast flow's document \p doc to GeoXmlFlow
+ * Cast flow's document \p doc to GebrGeoXmlFlow
  */
-#define GEOXML_FLOW(doc) ((GeoXmlFlow*)(doc))
+#define GEBR_GEOXML_FLOW(doc) ((GebrGeoXmlFlow*)(doc))
 
 /**
- * Cast from GeoXmlSequence at \p seq to GeoXmlRevision
+ * Cast from GebrGeoXmlSequence at \p seq to GebrGeoXmlRevision
  */
-#define GEOXML_REVISION(seq) ((GeoXmlRevision*)(seq))
+#define GEBR_GEOXML_REVISION(seq) ((GebrGeoXmlRevision*)(seq))
 
 /**
- * Cast from GeoXmlSequence at \p seq to GeoXmlFlowServer
+ * Cast from GebrGeoXmlSequence at \p seq to GebrGeoXmlFlowServer
  */
-#define GEOXML_FLOW_SERVER(seq) ((GeoXmlFlowServer*)(seq))
+#define GEBR_GEOXML_FLOW_SERVER(seq) ((GebrGeoXmlFlowServer*)(seq))
 
 /**
- * The GeoXmlFlow struct contains private data only, and should be accessed using the functions below.
+ * The GebrGeoXmlFlow struct contains private data only, and should be accessed using the functions below.
  */
-typedef struct geoxml_flow GeoXmlFlow;
+typedef struct gebr_geoxml_flow GebrGeoXmlFlow;
 
 /**
- * The GeoXmlCategory struct contains private data only, and should be accessed using the functions below.
+ * The GebrGeoXmlCategory struct contains private data only, and should be accessed using the functions below.
  */
-typedef struct geoxml_category GeoXmlCategory;
+typedef struct gebr_geoxml_category GebrGeoXmlCategory;
 
 /**
- * The GeoXmlRevision struct contains private data only, and should be accessed using the functions below.
+ * The GebrGeoXmlRevision struct contains private data only, and should be accessed using the functions below.
  */
-typedef struct geoxml_revision GeoXmlRevision;
+typedef struct gebr_geoxml_revision GebrGeoXmlRevision;
 
 /**
- * The GeoXmlFlowServer struct contains private data only, and should be accessed using the functions below.
+ * The GebrGeoXmlFlowServer struct contains private data only, and should be accessed using the functions below.
  */
-typedef struct geoxml_flow_server GeoXmlFlowServer;
+typedef struct gebr_geoxml_flow_server GebrGeoXmlFlowServer;
 
 #include "program.h"
 #include "macros.h"
@@ -116,8 +116,8 @@ typedef struct geoxml_flow_server GeoXmlFlowServer;
  *
  * Returns NULL if memory couldn't be allocated.
  */
-GeoXmlFlow *
-geoxml_flow_new();
+GebrGeoXmlFlow *
+gebr_geoxml_flow_new();
 
 /**
  * Add all \p flow2's programs to the end of \p flow.
@@ -126,57 +126,57 @@ geoxml_flow_new();
  * If \p flow or \p flow2 is NULL nothing is done.
  */
 void
-geoxml_flow_add_flow(GeoXmlFlow * flow, GeoXmlFlow * flow2);
+gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2);
 
 /**
  * Change the \p flow 's modified date to \p last_run
  *
  * If \p flow or \p last_run is NULL nothing is done.
  *
- * \see geoxml_document_get_date_modified
+ * \see gebr_geoxml_document_get_date_modified
  */
 void
-geoxml_flow_set_date_last_run(GeoXmlFlow * flow, const gchar * last_run);
+gebr_geoxml_flow_set_date_last_run(GebrGeoXmlFlow * flow, const gchar * last_run);
 
 /**
  * Get the \p flow 's last modification date
  *
  * If \p flow is NULL returns NULL.
  *
- * \see geoxml_flow_set_date_modified
+ * \see gebr_geoxml_flow_set_date_modified
  */
 const gchar *
-geoxml_flow_get_date_last_run(GeoXmlFlow * flow);
+gebr_geoxml_flow_get_date_last_run(GebrGeoXmlFlow * flow);
 
 /**
  * Creates a new server as a child of servers tag.
  *
- * \see geoxml_flow_new_server
+ * \see gebr_geoxml_flow_new_server
  */
-GeoXmlFlowServer *
-geoxml_flow_append_server(GeoXmlFlow * flow);
+GebrGeoXmlFlowServer *
+gebr_geoxml_flow_append_server(GebrGeoXmlFlow * flow);
 
 /**
  * Writes into server the ieth server from 'servers' tag.
  * If an error ocurred, the content of server is assigned to NULL.
  * If flow is NULL nothing is done.
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR
  */
 int
-geoxml_flow_get_server(GeoXmlFlow * flow, GeoXmlSequence ** server, gulong index);
+gebr_geoxml_flow_get_server(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** server, gulong index);
 
 /**
  * Sets the address of this flow server.
  */
 void
-geoxml_flow_server_set_address(GeoXmlFlowServer * server, const gchar * address);
+gebr_geoxml_flow_server_set_address(GebrGeoXmlFlowServer * server, const gchar * address);
 
 /**
  * Returns the address of this flow server.
  * The string must be freed with g_free() .
  */
 const gchar *
-geoxml_flow_server_get_address(GeoXmlFlowServer * server);
+gebr_geoxml_flow_server_get_address(GebrGeoXmlFlowServer * server);
 
 /**
  * Get the number of servers \p flow has.
@@ -184,93 +184,93 @@ geoxml_flow_server_get_address(GeoXmlFlowServer * server);
  * If \p flow is NULL returns -1.
  */
 glong
-geoxml_flow_get_servers_number(GeoXmlFlow * flow);
+gebr_geoxml_flow_get_servers_number(GebrGeoXmlFlow * flow);
 
 /**
  * Set the flow \p server input file path to \p input.
  *
  * If \p server or \p input is NULL nothing is done.
  *
- * \see geoxml_flow_server_io_get_input geoxml_flow_io_get_input
+ * \see gebr_geoxml_flow_server_io_get_input gebr_geoxml_flow_io_get_input
  */
 void
-geoxml_flow_server_io_set_input(GeoXmlFlowServer * server, const gchar * input);
+gebr_geoxml_flow_server_io_set_input(GebrGeoXmlFlowServer * server, const gchar * input);
 
 /**
  * Set the flow \p server output file path to \p output.
  *
  * If \p server or \p output is NULL nothing is done.
  *
- * \see geoxml_flow_server_io_get_output geoxml_flow_io_get_output
+ * \see gebr_geoxml_flow_server_io_get_output gebr_geoxml_flow_io_get_output
  */
 void
-geoxml_flow_server_io_set_output(GeoXmlFlowServer * server, const gchar * output);
+gebr_geoxml_flow_server_io_set_output(GebrGeoXmlFlowServer * server, const gchar * output);
 
 /**
  * Set the \p server error file path to \p error.
  *
  * If \p server or \p error is NULL nothing is done.
  *
- * \see geoxml_flow_server_io_get_error geoxml_flow_io_get_error geoxml_program_set_stderr
+ * \see gebr_geoxml_flow_server_io_get_error gebr_geoxml_flow_io_get_error gebr_geoxml_program_set_stderr
  */
 void
-geoxml_flow_server_io_set_error(GeoXmlFlowServer * server, const gchar * error);
+gebr_geoxml_flow_server_io_set_error(GebrGeoXmlFlowServer * server, const gchar * error);
 
 /**
  * Retrieves the input file path of \p server.
  *
  * If \p server is NULL returns NULL.
  *
- * \see geoxml_flow_io_set_input
+ * \see gebr_geoxml_flow_io_set_input
  */
 const gchar *
-geoxml_flow_server_io_get_input(GeoXmlFlowServer * server);
+gebr_geoxml_flow_server_io_get_input(GebrGeoXmlFlowServer * server);
 
 /**
  * Retrieves the output file path of \p server.
  *
  * If \p server is NULL returns NULL.
  *
- * \see geoxml_flow_io_set_output
+ * \see gebr_geoxml_flow_io_set_output
  */
 const gchar *
-geoxml_flow_server_io_get_output(GeoXmlFlowServer * server);
+gebr_geoxml_flow_server_io_get_output(GebrGeoXmlFlowServer * server);
 
 /**
  * Retrieves the error file path of \p server.
  *
  * If \p server is NULL returns NULL.
  *
- * \see geoxml_flow_server_io_set_error
+ * \see gebr_geoxml_flow_server_io_set_error
  */
 const gchar *
-geoxml_flow_server_io_get_error(GeoXmlFlowServer * server);
+gebr_geoxml_flow_server_io_get_error(GebrGeoXmlFlowServer * server);
 
 /**
  * Sets the last run date for this server.
  *
- * \see geoxml_flow_server_get_date_last_run
+ * \see gebr_geoxml_flow_server_get_date_last_run
  */
 void
-geoxml_flow_server_set_date_last_run(GeoXmlFlowServer * server, const gchar * date);
+gebr_geoxml_flow_server_set_date_last_run(GebrGeoXmlFlowServer * server, const gchar * date);
 
 /**
  * Retrieve the last run date for this server.
  *
- * \see geoxml_flow_server_get_date_last_run
+ * \see gebr_geoxml_flow_server_get_date_last_run
  */
 const gchar *
-geoxml_flow_server_get_date_last_run(GeoXmlFlowServer * server);
+gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlowServer * server);
 
 /**
  * Retrieves the \p server input file path*
  *
  * If \p server or \p input is NULL nothing is done.
  *
- * \see geoxml_flow_server_io_get_input
+ * \see gebr_geoxml_flow_server_io_get_input
  */
 void
-geoxml_flow_io_set_input(GeoXmlFlow * flow, const gchar * input);
+gebr_geoxml_flow_io_set_input(GebrGeoXmlFlow * flow, const gchar * input);
 
 /**
  * Set the \p flow output file path to \p output. The output file is
@@ -278,10 +278,10 @@ geoxml_flow_io_set_input(GeoXmlFlow * flow, const gchar * input);
  *
  * If \p flow or \p output is NULL nothing is done.
  *
- * \see geoxml_flow_io_get_output
+ * \see gebr_geoxml_flow_io_get_output
  */
 void
-geoxml_flow_io_set_output(GeoXmlFlow * flow, const gchar * output);
+gebr_geoxml_flow_io_set_output(GebrGeoXmlFlow * flow, const gchar * output);
 
 /**
  * Set the \p flow error file path to \p error. This should be the file
@@ -289,49 +289,49 @@ geoxml_flow_io_set_output(GeoXmlFlow * flow, const gchar * output);
  *
  * If \p flow or \p error is NULL nothing is done.
  *
- * \see geoxml_flow_io_get_error geoxml_program_set_stderr
+ * \see gebr_geoxml_flow_io_get_error gebr_geoxml_program_set_stderr
  */
 void
-geoxml_flow_io_set_error(GeoXmlFlow * flow, const gchar * error);
+gebr_geoxml_flow_io_set_error(GebrGeoXmlFlow * flow, const gchar * error);
 
 /**
  * Retrieves the input file path of \p flow.
  *
  * If \p flow is NULL returns NULL.
  *
- * \see geoxml_flow_io_set_input
+ * \see gebr_geoxml_flow_io_set_input
  */
 const gchar *
-geoxml_flow_io_get_input(GeoXmlFlow * flow);
+gebr_geoxml_flow_io_get_input(GebrGeoXmlFlow * flow);
 
 /**
  * Retrieves the output file path of \p flow.
  *
  * If \p flow is NULL returns NULL.
  *
- * \see geoxml_flow_io_set_output
+ * \see gebr_geoxml_flow_io_set_output
  */
 const gchar *
-geoxml_flow_io_get_output(GeoXmlFlow * flow);
+gebr_geoxml_flow_io_get_output(GebrGeoXmlFlow * flow);
 
 /**
  * Retrieves the error file path of \p flow.
  *
  * If \p flow is NULL returns NULL.
  *
- * \see geoxml_flow_io_set_error
+ * \see gebr_geoxml_flow_io_set_error
  */
 const gchar *
-geoxml_flow_io_get_error(GeoXmlFlow * flow);
+gebr_geoxml_flow_io_get_error(GebrGeoXmlFlow * flow);
 
 /**
  * Creates a new program associated and append to the list of programs
  * Provided for convenience
  *
- * \see geoxml_flow_new_program
+ * \see gebr_geoxml_flow_new_program
  */
-GeoXmlProgram *
-geoxml_flow_append_program(GeoXmlFlow * flow);
+GebrGeoXmlProgram *
+gebr_geoxml_flow_append_program(GebrGeoXmlFlow * flow);
 
 /**
  * Writes to \p program the \p index ieth category that \p flow belong.
@@ -339,12 +339,12 @@ geoxml_flow_append_program(GeoXmlFlow * flow);
  *
  * If \p flow is NULL nothing is done.
  *
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR
  *
- * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
+ * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
  */
 int
-geoxml_flow_get_program(GeoXmlFlow * flow, GeoXmlSequence ** program, gulong index);
+gebr_geoxml_flow_get_program(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** program, gulong index);
 
 /**
  * Get the number of programs \p flow has.
@@ -352,27 +352,27 @@ geoxml_flow_get_program(GeoXmlFlow * flow, GeoXmlSequence ** program, gulong ind
  * If \p flow is NULL returns -1.
  */
 glong
-geoxml_flow_get_programs_number(GeoXmlFlow * flow);
+gebr_geoxml_flow_get_programs_number(GebrGeoXmlFlow * flow);
 
 /**
  * Creates a new category and append it to the list of categories.
  * Provided for convenience.
  *
- * \see geoxml_flow_new_category
+ * \see gebr_geoxml_flow_new_category
  */
-GeoXmlCategory *
-geoxml_flow_append_category(GeoXmlFlow * flow, const gchar * name);
+GebrGeoXmlCategory *
+gebr_geoxml_flow_append_category(GebrGeoXmlFlow * flow, const gchar * name);
 
 /**
  * Writes to \p category the \p index ieth category that belongs to \p flow.
  * If an error ocurred, the content of \p category is assigned to NULL.
  *
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR
  *
- * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
+ * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
  */
 int
-geoxml_flow_get_category(GeoXmlFlow * flow, GeoXmlSequence ** category, gulong index);
+gebr_geoxml_flow_get_category(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** category, gulong index);
 
 /**
  * Get the number of categories that \p flow has.
@@ -380,30 +380,30 @@ geoxml_flow_get_category(GeoXmlFlow * flow, GeoXmlSequence ** category, gulong i
  * If \p flow is NULL returns -1.
  */
 glong
-geoxml_flow_get_categories_number(GeoXmlFlow * flow);
+gebr_geoxml_flow_get_categories_number(GebrGeoXmlFlow * flow);
 
 /**
  * Change all the flow data to the one stored at revision, except, of course,
  * the list of revisions.
  * Be aware that all \p flow data will be lost. If you don't want that, call
- * \ref geoxml_flow_append_revision before.
+ * \ref gebr_geoxml_flow_append_revision before.
  *
  * If \p flow or \p revision is NULL nothing is done.
  * If it fails because the revision could not be loaded, returns FALSE.
  * On success, return TRUE.
  */
 gboolean
-geoxml_flow_change_to_revision(GeoXmlFlow * flow, GeoXmlRevision * revision);
+gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRevision * revision);
 
 /**
  * Creates a new revision with the current time append to the list of revisions
  * An revision is a way to keep the history of the flow changes. You can then restore
- * one revision with \ref geoxml_flow_change_to_revision
+ * one revision with \ref gebr_geoxml_flow_change_to_revision
  *
  * If \p flow is NULL nothing is done.
  */
-GeoXmlRevision *
-geoxml_flow_append_revision(GeoXmlFlow * flow, const gchar * comment);
+GebrGeoXmlRevision *
+gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, const gchar * comment);
 
 /**
  * Writes to \p revision the \p index ieth revision that \p flow has.
@@ -411,23 +411,23 @@ geoxml_flow_append_revision(GeoXmlFlow * flow, const gchar * comment);
  *
  * If \p flow is NULL nothing is done.
  *
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR
  *
- * \see geoxml_sequence_move geoxml_sequence_move_up geoxml_sequence_move_down geoxml_sequence_remove
+ * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
  */
 int
-geoxml_flow_get_revision(GeoXmlFlow * flow, GeoXmlSequence ** revision, gulong index);
+gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** revision, gulong index);
 
 /**
  * Get information of \p revision. The flow is stored at \p flow and can be
- * loaded with geoxml_document_load_buffer. \p receive the date of creation of \p revision.
+ * loaded with gebr_geoxml_document_load_buffer. \p receive the date of creation of \p revision.
  * A NULL value of \p flow or \p date or \p comment mean not set.
  * Any of the string should be freed.
  *
  * If \p revision in NULL nothing is done.
  */
 void
-geoxml_flow_get_revision_data(GeoXmlRevision * revision, gchar ** flow, gchar ** date, gchar ** comment);
+gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** flow, gchar ** date, gchar ** comment);
 
 /**
  * Get the number of revisions \p flow has.
@@ -435,6 +435,6 @@ geoxml_flow_get_revision_data(GeoXmlRevision * revision, gchar ** flow, gchar **
  * If \p flow is NULL returns -1.
  */
 glong
-geoxml_flow_get_revisions_number(GeoXmlFlow * flow);
+gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow);
 
-#endif //__LIBGEBR_GEOXML_FLOW_H
+#endif //__GEBR_GEOXML_FLOW_H

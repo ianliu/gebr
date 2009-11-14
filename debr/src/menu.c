@@ -231,10 +231,10 @@ menu_new(gboolean edit)
 	new_menu_str = g_string_new(NULL);
 	g_string_printf(new_menu_str, "%s%d.mnu", _("untitled"), ++new_count);
 
-	debr.menu = geoxml_flow_new();
-	geoxml_document_set_author(GEOXML_DOC(debr.menu), debr.config.name->str);
-	geoxml_document_set_email(GEOXML_DOC(debr.menu), debr.config.email->str);
-	geoxml_document_set_date_created(GEOXML_DOC(debr.menu), iso_date());
+	debr.menu = gebr_geoxml_flow_new();
+	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(debr.menu), debr.config.name->str);
+	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(debr.menu), debr.config.email->str);
+	gebr_geoxml_document_set_date_created(GEBR_GEOXML_DOC(debr.menu), iso_date());
 
 	switch (menu_get_selected(&iter)) {
 		case ITER_FILE:
@@ -275,26 +275,26 @@ menu_new(gboolean edit)
  *
  * Load XML at _path_ and return it.
  *
- * Returns: A #GeoXmlFlow containing the information about the flow.
+ * Returns: A #GebrGeoXmlFlow containing the information about the flow.
  */
-GeoXmlFlow *
+GebrGeoXmlFlow *
 menu_load(const gchar * path)
 {
-	GeoXmlDocument *	menu;
+	GebrGeoXmlDocument *	menu;
 	int			ret;
-	GeoXmlSequence *	category;
+	GebrGeoXmlSequence *	category;
 
-	if ((ret = geoxml_document_load(&menu, path))) {
+	if ((ret = gebr_geoxml_document_load(&menu, path))) {
 		debr_message(LOG_ERROR, _("Could not load menu at '%s': %s"), path,
-			geoxml_error_string((enum GEOXML_RETV)ret));
+			gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		return NULL;
 	}
 
-	geoxml_flow_get_category(GEOXML_FLOW(menu), &category, 0);
-	for (; category != NULL; geoxml_sequence_next(&category))
-		debr_has_category(geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)), TRUE);
+	gebr_geoxml_flow_get_category(GEBR_GEOXML_FLOW(menu), &category, 0);
+	for (; category != NULL; gebr_geoxml_sequence_next(&category))
+		debr_has_category(gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)), TRUE);
 
-	return GEOXML_FLOW(menu);
+	return GEBR_GEOXML_FLOW(menu);
 }
 
 /**
@@ -359,7 +359,7 @@ menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select)
 
 	const gchar *		date;
 	gchar *			tmp;
-	GeoXmlFlow *		menu;
+	GebrGeoXmlFlow *		menu;
 
 	gchar *			label;
 	gchar *			dirname;
@@ -390,7 +390,7 @@ menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select)
 		return;
 
 	filename = g_path_get_basename(path);
-	date = geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu));
+	date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(menu));
 	tmp = (strlen(date))
 		? g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(date).tv_sec)
 		: g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
@@ -455,8 +455,8 @@ gboolean
 menu_save(GtkTreeIter * iter)
 {
 	GtkTreeIter		selected_iter;
-	GeoXmlFlow *		menu;
-	GeoXmlSequence *	program;
+	GebrGeoXmlFlow *		menu;
+	GebrGeoXmlSequence *	program;
 	gulong			index;
 	gchar *			path;
 	gchar *			filename;
@@ -476,19 +476,19 @@ menu_save(GtkTreeIter * iter)
 	}
 
 	filename = g_path_get_basename(path);
-	geoxml_document_set_filename(GEOXML_DOC(menu), filename);
+	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(menu), filename);
 	/* Write menu tag for each program */
 	index = 0;
-	geoxml_flow_get_program(menu, &program, index);
+	gebr_geoxml_flow_get_program(menu, &program, index);
 	while (program != NULL) {
-		geoxml_program_set_menu(GEOXML_PROGRAM(program), filename, index++);
-		geoxml_sequence_next(&program);
+		gebr_geoxml_program_set_menu(GEBR_GEOXML_PROGRAM(program), filename, index++);
+		gebr_geoxml_sequence_next(&program);
 	}
-	geoxml_document_set_date_modified(GEOXML_DOC(menu), iso_date());
-	geoxml_document_save(GEOXML_DOC(menu), path);
+	gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(menu), iso_date());
+	gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path);
 
 	tmp = g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(
-		geoxml_document_get_date_modified(GEOXML_DOCUMENT(menu))).tv_sec);
+		gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(menu))).tv_sec);
 	gtk_tree_store_set(debr.ui_menu.model, iter, MENU_MODIFIED_DATE, tmp, -1);
 	menu_get_selected(&selected_iter);
 	if (gebr_gui_gtk_tree_iter_equal_to(iter, &selected_iter))
@@ -540,7 +540,7 @@ menu_save_all(void)
 void
 menu_validate(GtkTreeIter * iter)
 {
-	GeoXmlFlow *	menu;
+	GebrGeoXmlFlow *	menu;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &menu, -1);
 	validate_menu(iter, menu);
@@ -648,10 +648,10 @@ menu_install(void)
 void
 menu_close(GtkTreeIter * iter)
 {
-	GeoXmlFlow *	menu;
+	GebrGeoXmlFlow *	menu;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &menu, -1);
-	geoxml_document_free(GEOXML_DOC(menu));
+	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
 	gtk_tree_store_remove(debr.ui_menu.model, iter);
 	g_signal_emit_by_name(debr.ui_menu.tree_view, "cursor-changed");
 }
@@ -994,13 +994,13 @@ menu_dialog_setup_ui(void)
 	 * Load menu into widgets
 	 */
 	gtk_entry_set_text(GTK_ENTRY(title_entry),
-		geoxml_document_get_title(GEOXML_DOC(debr.menu)));
+		gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_entry_set_text(GTK_ENTRY(description_entry),
-		geoxml_document_get_description(GEOXML_DOC(debr.menu)));
+		gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_entry_set_text(GTK_ENTRY(author_entry),
-		geoxml_document_get_author(GEOXML_DOC(debr.menu)));
+		gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_entry_set_text(GTK_ENTRY(email_entry),
-		geoxml_document_get_email(GEOXML_DOC(debr.menu)));
+		gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu)));
 
 	g_signal_connect(title_entry, "changed",
 		G_CALLBACK(menu_title_changed), NULL);
@@ -1026,11 +1026,11 @@ menu_dialog_setup_ui(void)
 		G_CALLBACK(menu_author_changed), NULL);
 
 	/* categories */
-	GeoXmlSequence * category;
-	geoxml_flow_get_category(debr.menu, &category, 0);
+	GebrGeoXmlSequence * category;
+	gebr_geoxml_flow_get_category(debr.menu, &category, 0);
 	value_sequence_edit_load(VALUE_SEQUENCE_EDIT(categories_sequence_edit), category,
-		(ValueSequenceSetFunction)geoxml_value_sequence_set,
-		(ValueSequenceGetFunction)geoxml_value_sequence_get, NULL);
+		(ValueSequenceSetFunction)gebr_geoxml_value_sequence_set,
+		(ValueSequenceGetFunction)gebr_geoxml_value_sequence_get, NULL);
 
 	gtk_widget_show(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
@@ -1130,16 +1130,16 @@ menu_details_update(void)
 
 	gtk_widget_set_sensitive(debr.ui_menu.details.help_button, TRUE);
 
-	markup = g_markup_printf_escaped("<b>%s</b>", geoxml_document_get_title(GEOXML_DOC(debr.menu)));
+	markup = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), markup);
 	g_free(markup);
 
-	markup = g_markup_printf_escaped("<i>%s</i>", geoxml_document_get_description(GEOXML_DOC(debr.menu)));
+	markup = g_markup_printf_escaped("<i>%s</i>", gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.description_label), markup);
 	g_free(markup);
 
 	text = g_string_new(NULL);
-	switch (geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu))) {
+	switch (gebr_geoxml_flow_get_programs_number(GEBR_GEOXML_FLOW(debr.menu))) {
 	case 0:
 		g_string_printf(text, _("This menu has no programs"));
 		break;
@@ -1148,7 +1148,7 @@ menu_details_update(void)
 		break;
 	default:
 		g_string_printf(text, _("This menu has %li programs"),
-				geoxml_flow_get_programs_number(GEOXML_FLOW(debr.menu)));
+				gebr_geoxml_flow_get_programs_number(GEBR_GEOXML_FLOW(debr.menu)));
 	}
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.nprogs_label), text->str);
 	g_string_free(text, TRUE);
@@ -1162,9 +1162,9 @@ menu_details_update(void)
 	g_free(markup);
 
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.created_date_label),
-		localized_date(geoxml_document_get_date_created(GEOXML_DOCUMENT(debr.menu))));
+		localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOCUMENT(debr.menu))));
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.modified_date_label),
-		localized_date(geoxml_document_get_date_modified(GEOXML_DOCUMENT(debr.menu))));
+		localized_date(gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(debr.menu))));
 
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Categories: "));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.category_label), markup);
@@ -1174,14 +1174,14 @@ menu_details_update(void)
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[1]), NULL);
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]), NULL);
 
-	icmax = MIN(geoxml_flow_get_categories_number(GEOXML_FLOW(debr.menu)), 2);
+	icmax = MIN(gebr_geoxml_flow_get_categories_number(GEBR_GEOXML_FLOW(debr.menu)), 2);
 	for (long int ic = 0; ic < icmax; ic++) {
-		GeoXmlSequence *	category;
+		GebrGeoXmlSequence *	category;
 
-		geoxml_flow_get_category(GEOXML_FLOW(debr.menu), &category, ic);
+		gebr_geoxml_flow_get_category(GEBR_GEOXML_FLOW(debr.menu), &category, ic);
 
 		text = g_string_new(NULL);
-		g_string_printf(text, "%s", geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)));
+		g_string_printf(text, "%s", gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)));
 		gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[ic]),text->str);
 		g_string_free(text, TRUE);
 	}
@@ -1191,13 +1191,13 @@ menu_details_update(void)
 		g_free(markup);
 	}
 
-	if (geoxml_flow_get_categories_number(GEOXML_FLOW(debr.menu)) > 2)
+	if (gebr_geoxml_flow_get_categories_number(GEBR_GEOXML_FLOW(debr.menu)) > 2)
 		gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label[2]), "...");
 
 	text = g_string_new(NULL);
 	g_string_printf(text, "%s <%s>",
-		geoxml_document_get_author(GEOXML_DOC(debr.menu)),
-		geoxml_document_get_email(GEOXML_DOC(debr.menu)));
+		gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(debr.menu)),
+		gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.author_label), text->str);
 	g_string_free(text, TRUE);
 
@@ -1215,7 +1215,7 @@ menu_details_update(void)
 	debr_set_actions_sensitive(names, TRUE);
 
 	g_object_set(G_OBJECT(debr.ui_menu.details.help_button),
-		"sensitive", strlen(geoxml_document_get_help(GEOXML_DOC(debr.menu))) > 1 ? TRUE : FALSE, NULL);
+		"sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu))) > 1 ? TRUE : FALSE, NULL);
 }
 
 /**
@@ -1552,7 +1552,7 @@ menu_popup_menu(GtkTreeView * tree_view)
 static void
 menu_title_changed(GtkEntry * entry)
 {
-	geoxml_document_set_title(GEOXML_DOC(debr.menu), gtk_entry_get_text(entry));
+	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(debr.menu), gtk_entry_get_text(entry));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -1565,7 +1565,7 @@ menu_title_changed(GtkEntry * entry)
 static void
 menu_description_changed(GtkEntry * entry)
 {
-	geoxml_document_set_description(GEOXML_DOC(debr.menu), gtk_entry_get_text(entry));
+	gebr_geoxml_document_set_description(GEBR_GEOXML_DOC(debr.menu), gtk_entry_get_text(entry));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -1579,7 +1579,7 @@ menu_help_view(void)
 {
         gchar * help;
 
-        help = (gchar *) geoxml_document_get_help(GEOXML_DOC(debr.menu));
+        help = (gchar *) gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu));
         if (strlen(help) > 1)
                 help_show(help);
         else
@@ -1597,12 +1597,12 @@ menu_help_edit(void)
 {
 	GString *	help;
         
-        help = help_edit(geoxml_document_get_help(GEOXML_DOC(debr.menu)), NULL, FALSE);
+        help = help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, FALSE);
                 
 	if (help == NULL)
 		return;
 
-	geoxml_document_set_help(GEOXML_DOC(debr.menu), help->str);
+	gebr_geoxml_document_set_help(GEBR_GEOXML_DOC(debr.menu), help->str);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 
 	g_string_free(help, TRUE);
@@ -1619,12 +1619,12 @@ menu_help_refresh(void)
 {
 	GString *	help;
         
-        help = help_edit(geoxml_document_get_help(GEOXML_DOC(debr.menu)), NULL, TRUE);
+        help = help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, TRUE);
                 
 	if (help == NULL)
 		return;
 
-	geoxml_document_set_help(GEOXML_DOC(debr.menu), help->str);
+	gebr_geoxml_document_set_help(GEBR_GEOXML_DOC(debr.menu), help->str);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 
 	g_string_free(help, TRUE);
@@ -1639,7 +1639,7 @@ menu_help_refresh(void)
 static void
 menu_author_changed(GtkEntry * entry)
 {
-	geoxml_document_set_author(GEOXML_DOC(debr.menu), gtk_entry_get_text(entry));
+	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(debr.menu), gtk_entry_get_text(entry));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -1652,7 +1652,7 @@ menu_author_changed(GtkEntry * entry)
 static void
 menu_email_changed(GtkEntry * entry)
 {
-	geoxml_document_set_email(GEOXML_DOC(debr.menu), gtk_entry_get_text(entry));
+	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(debr.menu), gtk_entry_get_text(entry));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -1674,7 +1674,7 @@ menu_category_add(ValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
 	else
 		debr_has_category(name, TRUE);
 	value_sequence_edit_add(VALUE_SEQUENCE_EDIT(sequence_edit),
-		GEOXML_SEQUENCE(geoxml_flow_append_category(debr.menu, name)));
+		GEBR_GEOXML_SEQUENCE(gebr_geoxml_flow_append_category(debr.menu, name)));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 

@@ -59,8 +59,8 @@ gchar**              menu     = NULL;
 gboolean     check (const gchar *str, int flags);
 const gchar* report(const gchar *str, int flags);
 void         parse_command_line(int argc, char **argv);
-void         show_parameter(GeoXmlParameter *parameter, gint ipar);
-void         show_program_parameter(GeoXmlProgramParameter *pp, gint ipar, guint isubpar);
+void         show_parameter(GebrGeoXmlParameter *parameter, gint ipar);
+void         show_program_parameter(GebrGeoXmlProgramParameter *pp, gint ipar, guint isubpar);
 
 
 /* Command-line parameters definition */
@@ -85,9 +85,9 @@ static GOptionEntry entries[] =    {
 int main (int argc, char** argv)
 {
 	
-	GeoXmlDocument *     doc;
-	GeoXmlFlow *         flow;
-	GeoXmlSequence *     seq;
+	GebrGeoXmlDocument *     doc;
+	GebrGeoXmlFlow *         flow;
+	GebrGeoXmlSequence *     seq;
 	int                  nprog;
 	int                  iprog;
 	int                  nmenu;
@@ -105,27 +105,27 @@ int main (int argc, char** argv)
 	for (imenu=0; imenu<nmenu; imenu++){
 		error_count = 0;
 
-		geoxml_document_load((GeoXmlDocument**) (&flow), menu[imenu]);
-		doc = GEOXML_DOC(flow);
+		gebr_geoxml_document_load((GebrGeoXmlDocument**) (&flow), menu[imenu]);
+		doc = GEBR_GEOXML_DOC(flow);
 		
 		if (filename || all){
 			gchar *   filename;
 			filename = g_path_get_basename (menu[imenu]);
-			if (strcmp(geoxml_document_get_filename(doc), filename)){
+			if (strcmp(gebr_geoxml_document_get_filename(doc), filename)){
                                 if (nocolors){
                                         printf("Filename:      %s **DIFFERS FROM SET** %s\n",
                                                filename, 
-                                               report(geoxml_document_get_filename(doc), EMPTY));
+                                               report(gebr_geoxml_document_get_filename(doc), EMPTY));
                                 }else{
                                         printf("Filename:      %s %c[0;31;40mDIFFERS FROM SET%c[1;37;40m %s\n",
                                                filename, 0x1B, 0x1B,
-                                               report(geoxml_document_get_filename(doc), EMPTY));
+                                               report(gebr_geoxml_document_get_filename(doc), EMPTY));
                                 }
 				error_count++;
 			}
 			else{
 				printf("Filename:      %s\n",
-				       report(geoxml_document_get_filename(doc),
+				       report(gebr_geoxml_document_get_filename(doc),
 					      NOBLK | MTBLK | FILEN));
 			}
 			g_free(filename);
@@ -133,64 +133,64 @@ int main (int argc, char** argv)
 
 		if (title || all)
 			printf("Title:         %s\n",
-			       report(geoxml_document_get_title(doc),
+			       report(gebr_geoxml_document_get_title(doc),
 				      EMPTY | NOBLK | NOPNT | MTBLK));
 			       
 		if (desc || all)
 			printf("Description:   %s\n",
-			       report(geoxml_document_get_description(doc),
+			       report(gebr_geoxml_document_get_description(doc),
 				      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT) );
 
 		if (author || all)
 			printf("Author:        %s <%s>\n",
-			       report(geoxml_document_get_author(doc),
+			       report(gebr_geoxml_document_get_author(doc),
 				      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT),
-			       report(geoxml_document_get_email(doc), EMAIL));
+			       report(gebr_geoxml_document_get_email(doc), EMAIL));
 
                 if (dates || all){
                         printf("Created:       %s\n",
-                               strlen(geoxml_document_get_date_created(doc)) ? 
-                               localized_date(geoxml_document_get_date_created(doc)) :
+                               strlen(gebr_geoxml_document_get_date_created(doc)) ? 
+                               localized_date(gebr_geoxml_document_get_date_created(doc)) :
                                report("", EMPTY));
 
                         printf("Modified:      %s\n",
-                               strlen(geoxml_document_get_date_modified(doc)) ? 
-                               localized_date(geoxml_document_get_date_modified(doc)) :
+                               strlen(gebr_geoxml_document_get_date_modified(doc)) ? 
+                               localized_date(gebr_geoxml_document_get_date_modified(doc)) :
                                report("", EMPTY));
                 }
 		
 		if (mhelp || all)
 			printf("Help:          %s\n",
-			       strlen(geoxml_document_get_help(doc))?"Defined":report("", EMPTY));
+			       strlen(gebr_geoxml_document_get_help(doc))?"Defined":report("", EMPTY));
 
 		if (ehelp == 0){
-			printf("%s",geoxml_document_get_help(doc));
+			printf("%s",gebr_geoxml_document_get_help(doc));
 			goto out2;
 		}
 		
 		if (category || all){
 			int              icat;
 			int              ncat;
-			ncat = geoxml_flow_get_categories_number(flow);
+			ncat = gebr_geoxml_flow_get_categories_number(flow);
 			
 			if (ncat == 0)
 				printf("Category:      %s\n", report("", EMPTY));
 			
 			for (icat = 0; icat < ncat; icat++){
-				GeoXmlSequence *cat;
+				GebrGeoXmlSequence *cat;
 
-				geoxml_flow_get_category(flow, &cat, icat);
+				gebr_geoxml_flow_get_category(flow, &cat, icat);
 				printf("Category:      %s\n",
-				       report(geoxml_value_sequence_get (GEOXML_VALUE_SEQUENCE(cat)),
+				       report(gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE(cat)),
 					      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT));
 				
 			}
 		}
 
-		nprog = geoxml_flow_get_programs_number(flow);
+		nprog = gebr_geoxml_flow_get_programs_number(flow);
 		if (ehelp > 0 && ehelp <= nprog){
-			geoxml_flow_get_program (flow, &seq, ehelp-1);
-			printf("%s", geoxml_program_get_help(GEOXML_PROGRAM(seq)));
+			gebr_geoxml_flow_get_program (flow, &seq, ehelp-1);
+			printf("%s", gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(seq)));
 			goto out2;
 		}
 			
@@ -199,50 +199,50 @@ int main (int argc, char** argv)
 
 		printf("Menu with:     %d program(s)\n", nprog);
 		
-		geoxml_flow_get_program (flow, &seq, 0);
+		gebr_geoxml_flow_get_program (flow, &seq, 0);
 		for (iprog = 0; iprog < nprog; iprog++){
-			GeoXmlProgram *    prog;
-			GeoXmlParameter *  parameter;
+			GebrGeoXmlProgram *    prog;
+			GebrGeoXmlParameter *  parameter;
 			gint               ipar = 0;
 			
-			prog = GEOXML_PROGRAM(seq);
+			prog = GEBR_GEOXML_PROGRAM(seq);
 			
 			printf(">>Program:     %d\n", iprog+1);
 			printf("  Title:       %s\n",
-			       report(geoxml_program_get_title(prog),
+			       report(gebr_geoxml_program_get_title(prog),
 				      EMPTY | NOBLK | MTBLK));
 			printf("  Description: %s\n",
-			       report(geoxml_program_get_description(prog),
+			       report(gebr_geoxml_program_get_description(prog),
 				       EMPTY | CAPIT | NOBLK | MTBLK | NOPNT));
 			printf("  In/out/err:  %s/%s/%s\n",
-			       (geoxml_program_get_stdin(prog)?"Read":"Ignore"),
-			       (geoxml_program_get_stdout(prog)?"Write":"Ignore"),
-			       (geoxml_program_get_stdin(prog)?"Append":"Ignore"));
+			       (gebr_geoxml_program_get_stdin(prog)?"Read":"Ignore"),
+			       (gebr_geoxml_program_get_stdout(prog)?"Write":"Ignore"),
+			       (gebr_geoxml_program_get_stdin(prog)?"Append":"Ignore"));
 			printf("  Binary:      %s\n",
-			       report(geoxml_program_get_binary(prog), EMPTY));
+			       report(gebr_geoxml_program_get_binary(prog), EMPTY));
 			printf("  URL:         %s\n",
-			       report(geoxml_program_get_url(prog), EMPTY));
+			       report(gebr_geoxml_program_get_url(prog), EMPTY));
 			printf("  Help:        %s\n",
-			       strlen(geoxml_program_get_help(prog))?"Defined":report("", EMPTY));
+			       strlen(gebr_geoxml_program_get_help(prog))?"Defined":report("", EMPTY));
 
 			if (params || all){
 				printf("  >>Parameters:\n");
 
-				parameter = GEOXML_PARAMETER(geoxml_parameters_get_first_parameter(geoxml_program_get_parameters(prog)));
+				parameter = GEBR_GEOXML_PARAMETER(gebr_geoxml_parameters_get_first_parameter(gebr_geoxml_program_get_parameters(prog)));
 
 				while (parameter != NULL){
 
 					show_parameter(parameter, ++ipar);
 				
-					geoxml_sequence_next((GeoXmlSequence **) &parameter);
+					gebr_geoxml_sequence_next((GebrGeoXmlSequence **) &parameter);
 				}
 			}
 		
-			geoxml_sequence_next(&seq);
+			gebr_geoxml_sequence_next(&seq);
 		}
 	
 	out:    printf("%d potencial error(s)\n\n", error_count);
-	out2:	geoxml_document_free(doc);
+	out2:	gebr_geoxml_document_free(doc);
 		global_error_count += error_count;
 	}
 
@@ -437,7 +437,7 @@ parse_command_line(int argc, char **argv)
 }
 
 void
-show_program_parameter(GeoXmlProgramParameter *pp, gint ipar, guint isubpar)
+show_program_parameter(GebrGeoXmlProgramParameter *pp, gint ipar, guint isubpar)
 {
 
         GString *default_value;
@@ -445,11 +445,11 @@ show_program_parameter(GeoXmlProgramParameter *pp, gint ipar, guint isubpar)
  
         if (isubpar) {
                 printf("       %2d.%02d: %s\n", ipar, isubpar,
-                       report(geoxml_parameter_get_label(GEOXML_PARAMETER(pp)),
+                       report(gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp)),
                               EMPTY | CAPIT | NOBLK | MTBLK | NOPNT));
         }else{
                 printf("    %2d: %s\n", ipar,
-                       report(geoxml_parameter_get_label(GEOXML_PARAMETER(pp)),
+                       report(gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp)),
                               EMPTY | CAPIT | NOBLK | MTBLK | NOPNT));
         }
 
@@ -457,26 +457,26 @@ show_program_parameter(GeoXmlProgramParameter *pp, gint ipar, guint isubpar)
         if (isubpar) 
                 printf("      ");
 
-	switch (geoxml_parameter_get_type(GEOXML_PARAMETER(pp))){
-	case GEOXML_PARAMETERTYPE_STRING:
+	switch (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp))){
+	case GEBR_GEOXML_PARAMETERTYPE_STRING:
 		printf("[string]     ");
 		break;
-	case GEOXML_PARAMETERTYPE_INT:
+	case GEBR_GEOXML_PARAMETERTYPE_INT:
 		printf("[integer]    ");
 		break;
-	case GEOXML_PARAMETERTYPE_FILE:
+	case GEBR_GEOXML_PARAMETERTYPE_FILE:
 		printf("[file]       ");
 		break;
-	case GEOXML_PARAMETERTYPE_FLAG:
+	case GEBR_GEOXML_PARAMETERTYPE_FLAG:
 		printf("[flag]       ");
 		break;
-	case GEOXML_PARAMETERTYPE_FLOAT:
+	case GEBR_GEOXML_PARAMETERTYPE_FLOAT:
 		printf("[real number]");
 		break;
-	case GEOXML_PARAMETERTYPE_RANGE:
+	case GEBR_GEOXML_PARAMETERTYPE_RANGE:
 		printf("[range]      ");
 		break;
-	case GEOXML_PARAMETERTYPE_ENUM:
+	case GEBR_GEOXML_PARAMETERTYPE_ENUM:
 		printf("[enum]       ");
 		break;
 	default:
@@ -484,34 +484,34 @@ show_program_parameter(GeoXmlProgramParameter *pp, gint ipar, guint isubpar)
 		break;
 	}
 
-	printf(" '%s'", report(geoxml_program_parameter_get_keyword(pp), EMPTY));
+	printf(" '%s'", report(gebr_geoxml_program_parameter_get_keyword(pp), EMPTY));
 
-        default_value = geoxml_program_parameter_get_string_value(pp,TRUE);
+        default_value = gebr_geoxml_program_parameter_get_string_value(pp,TRUE);
 	if ( strlen(default_value->str))
 		printf(" [%s]", report(default_value->str, EMPTY));
         g_string_free(default_value, TRUE);
 	
-	if (geoxml_program_parameter_get_required(pp))
+	if (gebr_geoxml_program_parameter_get_required(pp))
 		printf("  REQUIRED ");
 
         /* enum details */
-	if (geoxml_parameter_get_type(GEOXML_PARAMETER(pp)) == GEOXML_PARAMETERTYPE_ENUM){
-		GeoXmlSequence *enum_option;
+	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETERTYPE_ENUM){
+		GebrGeoXmlSequence *enum_option;
                 
-		geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
+		gebr_geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
                 
                 if (enum_option == NULL){
                         printf("\n        %s", report("missing options", FILEN));
                 }
 
-		for (; enum_option != NULL; geoxml_sequence_next(&enum_option)){
+		for (; enum_option != NULL; gebr_geoxml_sequence_next(&enum_option)){
 			printf("\n");
 			if (isubpar)
 				printf("      ");
                         
 			printf("        %s (%s)",
-                               geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(enum_option)),
-                               geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(enum_option)));
+                               gebr_geoxml_enum_option_get_label(GEBR_GEOXML_ENUM_OPTION(enum_option)),
+                               gebr_geoxml_enum_option_get_value(GEBR_GEOXML_ENUM_OPTION(enum_option)));
 		}
 	}
         
@@ -520,30 +520,30 @@ show_program_parameter(GeoXmlProgramParameter *pp, gint ipar, guint isubpar)
 }
 
 void
-show_parameter(GeoXmlParameter *parameter, gint ipar)
+show_parameter(GebrGeoXmlParameter *parameter, gint ipar)
 {
         
-        if (geoxml_parameter_get_is_program_parameter(parameter))
-                show_program_parameter(GEOXML_PROGRAM_PARAMETER(parameter), ipar, 0);
+        if (gebr_geoxml_parameter_get_is_program_parameter(parameter))
+                show_program_parameter(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), ipar, 0);
 
         else{
-                GeoXmlSequence  *subpar;
-                GeoXmlSequence  *instance;
+                GebrGeoXmlSequence  *subpar;
+                GebrGeoXmlSequence  *instance;
 
                 gint subipar = 0;
 
                 printf("    %2d: %s\n", ipar,
-                       report(geoxml_parameter_get_label(parameter), 
+                       report(gebr_geoxml_parameter_get_label(parameter), 
                               EMPTY | CAPIT | NOBLK | MTBLK | NOPNT));
 
-		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-                subpar = geoxml_parameters_get_first_parameter(GEOXML_PARAMETERS(instance));
+		gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+                subpar = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance));
 
                 while (subpar != NULL){
 
-                        show_program_parameter(GEOXML_PROGRAM_PARAMETER(subpar), ipar, ++subipar);
+                        show_program_parameter(GEBR_GEOXML_PROGRAM_PARAMETER(subpar), ipar, ++subipar);
                         
-                        geoxml_sequence_next(&subpar);
+                        gebr_geoxml_sequence_next(&subpar);
                 }
 
         }

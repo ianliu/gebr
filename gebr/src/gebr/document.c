@@ -36,27 +36,27 @@
  * Create a new document in the user's data diretory
  * with _type_ and set its filename.
  */
-GeoXmlDocument *
-document_new(enum GEOXML_DOCUMENT_TYPE type)
+GebrGeoXmlDocument *
+document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
 {
 	gchar *			extension;
 	GString *		filename;
 
-	GeoXmlDocument *	document;
-	GeoXmlDocument *	(*new_func)();
+	GebrGeoXmlDocument *	document;
+	GebrGeoXmlDocument *	(*new_func)();
 
 	switch (type) {
-	case GEOXML_DOCUMENT_TYPE_FLOW:
+	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
 		extension = "flw";
-		new_func = (typeof(new_func))geoxml_flow_new;
+		new_func = (typeof(new_func))gebr_geoxml_flow_new;
 		break;
-	case GEOXML_DOCUMENT_TYPE_LINE:
+	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
 		extension = "lne";
-		new_func = (typeof(new_func))geoxml_line_new;
+		new_func = (typeof(new_func))gebr_geoxml_line_new;
 		break;
-	case GEOXML_DOCUMENT_TYPE_PROJECT:
+	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
 		extension = "prj";
-		new_func = (typeof(new_func))geoxml_project_new;
+		new_func = (typeof(new_func))gebr_geoxml_project_new;
 		break;
 	default:
 		return NULL;
@@ -67,11 +67,11 @@ document_new(enum GEOXML_DOCUMENT_TYPE type)
 
 	/* then set filename */
 	filename = document_assembly_filename(extension);
-	geoxml_document_set_filename(document, filename->str);
+	gebr_geoxml_document_set_filename(document, filename->str);
 	g_string_free(filename, TRUE);
 
 	/* get today's date */
-	geoxml_document_set_date_created(document, iso_date());
+	gebr_geoxml_document_set_date_created(document, iso_date());
 
 	return document;
 }
@@ -80,10 +80,10 @@ document_new(enum GEOXML_DOCUMENT_TYPE type)
  * Function: document_load
  * Load a document (flow, line or project) from its filename, handling errors
  */
-GeoXmlDocument *
+GebrGeoXmlDocument *
 document_load(const gchar * filename)
 {
-	GeoXmlDocument *	document;
+	GebrGeoXmlDocument *	document;
 	GString *		path;
 
 	path = document_get_path(filename);
@@ -97,10 +97,10 @@ document_load(const gchar * filename)
  * Function: document_load_at
  * Load a document (flow, line or project) from its filename, handling errors
  */
-GeoXmlDocument *
+GebrGeoXmlDocument *
 document_load_at(const gchar * filename, const gchar * directory)
 {
-	GeoXmlDocument *	document;
+	GebrGeoXmlDocument *	document;
 	GString *		path;
 
 	path = g_string_new("");
@@ -115,15 +115,15 @@ document_load_at(const gchar * filename, const gchar * directory)
  * Function: document_load_path
  * Load a document from its path, handling errors
  */
-GeoXmlDocument *
+GebrGeoXmlDocument *
 document_load_path(const gchar * path)
 {
-	GeoXmlDocument *	document;
+	GebrGeoXmlDocument *	document;
 	int			ret;
 
-	if ((ret = geoxml_document_load(&document, path)) < 0)
+	if ((ret = gebr_geoxml_document_load(&document, path)) < 0)
 		gebr_message(LOG_ERROR, TRUE, TRUE, _("Can't load document at %s: %s"), path,
-			geoxml_error_string((enum GEOXML_RETV)ret));
+			gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 
 	return document;
 }
@@ -133,16 +133,16 @@ document_load_path(const gchar * path)
  * Save _document_ using its filename field at data directory.
  */
 void
-document_save(GeoXmlDocument * document)
+document_save(GebrGeoXmlDocument * document)
 {
 	GString *	path;
 
 	/* get today's date */
-	geoxml_document_set_date_modified(document, iso_date());
+	gebr_geoxml_document_set_date_modified(document, iso_date());
 
 	/* TODO: check save */
-	path = document_get_path(geoxml_document_get_filename(document));
-	geoxml_document_save(document, path->str);
+	path = document_get_path(gebr_geoxml_document_get_filename(document));
+	gebr_geoxml_document_save(document, path->str);
 
 	g_string_free(path, TRUE);
 }
@@ -152,20 +152,20 @@ document_save(GeoXmlDocument * document)
  * Import _document_ into data directory, saving it with a new filename.
  */
 void
-document_import(GeoXmlDocument * document)
+document_import(GebrGeoXmlDocument * document)
 {
 	GString *	path;
 	GString *	new_filename;
 	const gchar *	extension;
 
-	switch (geoxml_document_get_type(document)) {
-	case GEOXML_DOCUMENT_TYPE_FLOW:
+	switch (gebr_geoxml_document_get_type(document)) {
+	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
 		extension = "flw";
 		break;
-	case GEOXML_DOCUMENT_TYPE_LINE:
+	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
 		extension = "lne";
 		break;
-	case GEOXML_DOCUMENT_TYPE_PROJECT:
+	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
 		extension = "prj";
 		break;
 	default:
@@ -175,8 +175,8 @@ document_import(GeoXmlDocument * document)
 
 	/* TODO: check save */
 	path = document_get_path(new_filename->str);
-	geoxml_document_set_filename(document, new_filename->str);
-	geoxml_document_save(document, path->str);
+	gebr_geoxml_document_set_filename(document, new_filename->str);
+	gebr_geoxml_document_save(document, path->str);
 
 	g_string_free(path, TRUE);
 	g_string_free(new_filename, TRUE);

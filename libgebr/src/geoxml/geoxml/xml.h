@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_XML_H
-#define __LIBGEBR_GEOXML_XML_H
+#ifndef __GEBR_GEOXML_XML_H
+#define __GEBR_GEOXML_XML_H
 
 #include <gdome.h>
 #include <gdome-xpath.h>
@@ -34,13 +34,13 @@ typedef void (*createValueNode_function)(GdomeElement *, const gchar *);
  * \internal
  *
  */
-void __geoxml_create_CDATASection(GdomeElement * parent_element, const gchar * value);
+void __gebr_geoxml_create_CDATASection(GdomeElement * parent_element, const gchar * value);
 
 /**
  * \internal
  *
  */
-void __geoxml_create_TextNode(GdomeElement * parent_element, const gchar * value);
+void __gebr_geoxml_create_TextNode(GdomeElement * parent_element, const gchar * value);
 
 /**
  * \internal
@@ -48,16 +48,16 @@ void __geoxml_create_TextNode(GdomeElement * parent_element, const gchar * value
  * \p parent_element is only used to know the associated document.
  */
 GdomeElement *
-__geoxml_new_element(GdomeElement * parent_element, const gchar * tag_name);
+__gebr_geoxml_new_element(GdomeElement * parent_element, const gchar * tag_name);
 
 /**
  * \internal
  * Create a new element and insert it before \p before_element.
  * If \p before_element the element is appended.
- * \see __geoxml_insert_new_element
+ * \see __gebr_geoxml_insert_new_element
  */
 GdomeElement *
-__geoxml_insert_new_element(GdomeElement * parent_element, const gchar * tag_name, GdomeElement * before_element);
+__gebr_geoxml_insert_new_element(GdomeElement * parent_element, const gchar * tag_name, GdomeElement * before_element);
 
 /**
  * \internal
@@ -66,7 +66,7 @@ __geoxml_insert_new_element(GdomeElement * parent_element, const gchar * tag_nam
  * (the search done is recursive)
  */
 GdomeElement *
-__geoxml_get_first_element(GdomeElement * parent_element, const gchar * tag_name);
+__gebr_geoxml_get_first_element(GdomeElement * parent_element, const gchar * tag_name);
 
 /**
  * \internal
@@ -74,49 +74,49 @@ __geoxml_get_first_element(GdomeElement * parent_element, const gchar * tag_name
  * all the childs (direct or not) are considered
  */
 GdomeElement *
-__geoxml_get_element_at(GdomeElement * parent_element, const gchar * tag_name, gulong index, gboolean recursive);
+__gebr_geoxml_get_element_at(GdomeElement * parent_element, const gchar * tag_name, gulong index, gboolean recursive);
 
 /**
  * \internal
  *
  */
 GdomeElement *
-__geoxml_get_element_by_id(GdomeElement * base, const gchar * id);
+__gebr_geoxml_get_element_by_id(GdomeElement * base, const gchar * id);
 
 /**
  * \internal
  *
  */
 GSList *
-__geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref, gboolean global);
+__gebr_geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref, gboolean global);
 
 /**
  * \internal
  *
  */
 gulong
-__geoxml_get_element_index(GdomeElement * element);
+__gebr_geoxml_get_element_index(GdomeElement * element);
 
 /**
  * \internal
  * Search only for childs elements named \p tag_name of \p parent_element, not recursevely
  */
 gulong
-__geoxml_get_elements_number(GdomeElement * parent_element, const gchar * tag_name);
+__gebr_geoxml_get_elements_number(GdomeElement * parent_element, const gchar * tag_name);
 
 /**
  * \internal
  *
  */
 const gchar *
-__geoxml_get_element_value(GdomeElement * element);
+__gebr_geoxml_get_element_value(GdomeElement * element);
 
 /**
  * \internal
  *
  */
 void
-__geoxml_set_element_value(GdomeElement * element, const gchar * tag_value,
+__gebr_geoxml_set_element_value(GdomeElement * element, const gchar * tag_value,
 	createValueNode_function create_func);
 
 /**
@@ -124,14 +124,14 @@ __geoxml_set_element_value(GdomeElement * element, const gchar * tag_value,
  *
  */
 const gchar *
-__geoxml_get_tag_value(GdomeElement * parent_element, const gchar * tag_name);
+__gebr_geoxml_get_tag_value(GdomeElement * parent_element, const gchar * tag_name);
 
 /**
  * \internal
  *
  */
 void
-__geoxml_set_tag_value(GdomeElement * parent_element, const gchar * tag_name, const gchar * tag_value,
+__gebr_geoxml_set_tag_value(GdomeElement * parent_element, const gchar * tag_name, const gchar * tag_value,
 	createValueNode_function create_func);
 
 /**
@@ -140,7 +140,7 @@ __geoxml_set_tag_value(GdomeElement * parent_element, const gchar * tag_name, co
  * If it doesn't exist it is created.
  */
 void
-__geoxml_set_attr_value(GdomeElement * element, const gchar * name, const gchar * value);
+__gebr_geoxml_set_attr_value(GdomeElement * element, const gchar * name, const gchar * value);
 
 /**
  * \internal
@@ -148,41 +148,41 @@ __geoxml_set_attr_value(GdomeElement * element, const gchar * name, const gchar 
  * If it doesn't exist it an empty string is returned.
  */
 const gchar *
-__geoxml_get_attr_value(GdomeElement * element, const gchar * name);
+__gebr_geoxml_get_attr_value(GdomeElement * element, const gchar * name);
 
 /**
  * \internal
  */
 void
-__geoxml_remove_attr(GdomeElement * element, const gchar * name);
+__gebr_geoxml_remove_attr(GdomeElement * element, const gchar * name);
 
 /**
  * \internal
  *
  */
 GdomeElement *
-__geoxml_previous_element(GdomeElement * element);
+__gebr_geoxml_previous_element(GdomeElement * element);
 
 /**
  * \internal
  *
  */
 GdomeElement *
-__geoxml_next_element(GdomeElement * element);
+__gebr_geoxml_next_element(GdomeElement * element);
 
 /**
  * \internal
  *
  */
 GdomeElement *
-__geoxml_previous_same_element(GdomeElement * element);
+__gebr_geoxml_previous_same_element(GdomeElement * element);
 
 /**
  * \internal
  *
  */
 GdomeElement *
-__geoxml_next_same_element(GdomeElement * element);
+__gebr_geoxml_next_same_element(GdomeElement * element);
 
 /**
  * \internal
@@ -191,39 +191,39 @@ __geoxml_next_same_element(GdomeElement * element);
  * Automatically change references ids.
  */
 void
-__geoxml_element_assign_new_id(GdomeElement * element, GdomeElement * context, gboolean reassign_refereceds);
+__gebr_geoxml_element_assign_new_id(GdomeElement * element, GdomeElement * context, gboolean reassign_refereceds);
 
 /**
  * \internal
  * Recursively reassign all elements in \p element (including it)
- * using __geoxml_element_assign_new_id.
+ * using __gebr_geoxml_element_assign_new_id.
  */
 void
-__geoxml_element_reassign_ids(GdomeElement * element);
+__gebr_geoxml_element_reassign_ids(GdomeElement * element);
 
 /**
  * \internal
  * Assign \p reference's ID to \p element
  */
 void
-__geoxml_element_assign_reference_id(GdomeElement * element, GdomeElement * referencee);
+__gebr_geoxml_element_assign_reference_id(GdomeElement * element, GdomeElement * referencee);
 
 /**
  * \internal
  * Easy function to evaluate a XPath expression. Use in combination with
- * \ref __geoxml_foreach_xpath_result or use .
+ * \ref __gebr_geoxml_foreach_xpath_result or use .
  */
 GdomeXPathResult *
-__geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
+__gebr_geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
 
 /**
  * \internal
  * Iterates elements of a GdomeXPathResult at \p result
  * This macro will auto free \p result and you can use it
- * as __geoxml_foreach_xpath_result(element, __geoxml_xpath_evaluate(context, expression)).
+ * as __gebr_geoxml_foreach_xpath_result(element, __gebr_geoxml_xpath_evaluate(context, expression)).
  * If you use 'break' then you have to free it yourself.
  */
-#define __geoxml_foreach_xpath_result(element, xpath_result) \
+#define __gebr_geoxml_foreach_xpath_result(element, xpath_result) \
 	GdomeXPathResult * __xpath_result = xpath_result; \
 	if (__xpath_result != NULL) \
 		for (element = (GdomeElement*)gdome_xpresult_singleNodeValue(__xpath_result, &exception); \
@@ -234,10 +234,10 @@ __geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
  * \internal
  * Iterates elements of a GSList at \p list
  * This macro will auto free \p list and you can use it
- * as __geoxml_foreach_element(element, __geoxml_get_elements_by_idref(base, id)).
+ * as __gebr_geoxml_foreach_element(element, __gebr_geoxml_get_elements_by_idref(base, id)).
  * If you use 'break' then you have to free it yourself.
  */
-#define __geoxml_foreach_element(element, list) \
+#define __gebr_geoxml_foreach_element(element, list) \
 	libgebr_foreach_gslist(element, list)
 
 /**
@@ -246,7 +246,7 @@ __geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
  * and with tag name _tagname_
  * A break in the loop will leak memory
  */
-#define __geoxml_foreach_element_with_tagname_r(base, tagname, element, hygid) \
+#define __gebr_geoxml_foreach_element_with_tagname_r(base, tagname, element, hygid) \
 	GdomeNodeList *		__node_list##hygid; \
 	GdomeDOMString *	__string##hygid; \
 	int			__i##hygid, __l##hygid; \
@@ -258,4 +258,4 @@ __geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
 		__i##hygid < __l##hygid || (gdome_nl_unref(__node_list##hygid, &exception), 0); \
 		element = (GdomeElement*)gdome_nl_item(__node_list##hygid, ++__i##hygid, &exception))
 
-#endif //__LIBGEBR_GEOXML_XML_H
+#endif //__GEBR_GEOXML_XML_H

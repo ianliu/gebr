@@ -15,11 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_SEQUENCE_H
-#define __LIBGEBR_GEOXML_SEQUENCE_H
+#ifndef __GEBR_GEOXML_SEQUENCE_H
+#define __GEBR_GEOXML_SEQUENCE_H
 
 /**
- * \struct GeoXmlSequence sequence.h geoxml/sequence.h
+ * \struct GebrGeoXmlSequence sequence.h geoxml/sequence.h
  * \brief
  * Abstract class for elements of a sequence in libgeoxml
  * \dot
@@ -38,32 +38,32 @@
  * 		fontsize = 9
  * 	]
  *
- * 	"GeoXmlObject" [ URL = "\ref object.h" ];
- * 	"GeoXmlSequence" [ URL = "\ref sequence.h" ];
- * 	"GeoXmlProjectLine" [ URL = "\ref GeoXmlProjectLine" ];
- * 	"GeoXmlLineFlow" [ URL = "\ref GeoXmlLineFlow" ];
- * 	"GeoXmlProgram" [ URL = "\ref program.h" ];
- * 	"GeoXmlParameters" [ URL = "\ref parameters.h" ];
- * 	"GeoXmlParameter" [ URL = "\ref parameter.h" ];
- * 	"GeoXmlPropertyValue" [ URL = "\ref GeoXmlPropertyValue" ];
- * 	"GeoXmlEnumOption" [ URL = "\ref enum_option.h" ];
- * 	"GeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
+ * 	"GebrGeoXmlObject" [ URL = "\ref object.h" ];
+ * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
+ * 	"GebrGeoXmlProjectLine" [ URL = "\ref GebrGeoXmlProjectLine" ];
+ * 	"GebrGeoXmlLineFlow" [ URL = "\ref GebrGeoXmlLineFlow" ];
+ * 	"GebrGeoXmlProgram" [ URL = "\ref program.h" ];
+ * 	"GebrGeoXmlParameters" [ URL = "\ref parameters.h" ];
+ * 	"GebrGeoXmlParameter" [ URL = "\ref parameter.h" ];
+ * 	"GebrGeoXmlPropertyValue" [ URL = "\ref GebrGeoXmlPropertyValue" ];
+ * 	"GebrGeoXmlEnumOption" [ URL = "\ref enum_option.h" ];
+ * 	"GebrGeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
  * 	]
- * 	"GeoXmlObject" -> "GeoXmlSequence"
- * 	"GeoXmlSequence" -> "GeoXmlProjectLine";
- * 	"GeoXmlSequence" -> "GeoXmlLineFlow";
- * 	"GeoXmlSequence" -> "GeoXmlProgram";
- * 	"GeoXmlSequence" -> "GeoXmlParameters";
- * 	"GeoXmlSequence" -> "GeoXmlParameter";
- * 	"GeoXmlSequence" -> "GeoXmlPropertyValue";
- * 	"GeoXmlSequence" -> "GeoXmlEnumOption";
- * 	"GeoXmlSequence" -> "GeoXmlValueSequence";
- * 	"GeoXmlValueSequence" -> "GeoXmlCategory";
- * 	"GeoXmlValueSequence" -> "GeoXmlLinePath";
- * 	"GeoXmlValueSequence" -> "GeoXmlPropertyValue";
+ * 	"GebrGeoXmlObject" -> "GebrGeoXmlSequence"
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlProjectLine";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlLineFlow";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlProgram";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlParameters";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlParameter";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlPropertyValue";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlEnumOption";
+ * 	"GebrGeoXmlSequence" -> "GebrGeoXmlValueSequence";
+ * 	"GebrGeoXmlValueSequence" -> "GebrGeoXmlCategory";
+ * 	"GebrGeoXmlValueSequence" -> "GebrGeoXmlLinePath";
+ * 	"GebrGeoXmlValueSequence" -> "GebrGeoXmlPropertyValue";
  * }
  * \enddot
  * \see sequence.h
@@ -73,35 +73,35 @@
  * \file sequence.h
  * Abstract class for elements of a sequence in libgeoxml
  *
- * GeoXmlProjectLine, GeoXmlLineFlow, GeoXmlProgram, GeoXmlProgramParameter and GeoXmlCategory
- * can be treated as a super class of GeoXmlSequence.
+ * GebrGeoXmlProjectLine, GebrGeoXmlLineFlow, GebrGeoXmlProgram, GebrGeoXmlProgramParameter and GebrGeoXmlCategory
+ * can be treated as a super class of GebrGeoXmlSequence.
  */
 
 /**
- * Cast to super types of GeoXmlSequence to it.
+ * Cast to super types of GebrGeoXmlSequence to it.
  */
-#define GEOXML_SEQUENCE(seq) ((GeoXmlSequence*)(seq))
+#define GEBR_GEOXML_SEQUENCE(seq) ((GebrGeoXmlSequence*)(seq))
 
 /**
- * The GeoXmlSequence struct contains private data only, and should be accessed using the functions below.
+ * The GebrGeoXmlSequence struct contains private data only, and should be accessed using the functions below.
  */
-typedef struct geoxml_sequence GeoXmlSequence;
+typedef struct gebr_geoxml_sequence GebrGeoXmlSequence;
 
 #include <glib.h>
 
 #include "parameter_group.h"
 
 /**
- * Use as an auxiliary function to geoxml_sequence_next.
+ * Use as an auxiliary function to gebr_geoxml_sequence_next.
  * Assign \p sequence to the previous sequence sequenced
  * or NULL if there isn't.
  *
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_NULL_PTR, GEOXML_RETV_NOT_A_SEQUENCE
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NULL_PTR, GEBR_GEOXML_RETV_NOT_A_SEQUENCE
  *
- * \see geoxml_sequence_next
+ * \see gebr_geoxml_sequence_next
  */
 int
-geoxml_sequence_previous(GeoXmlSequence ** sequence);
+gebr_geoxml_sequence_previous(GebrGeoXmlSequence ** sequence);
 
 /**
  * Use to iterate over sequences.
@@ -109,20 +109,20 @@ geoxml_sequence_previous(GeoXmlSequence ** sequence);
  * or NULL if there isn't.
  * Example:
  * \code
- * GeoXmlSequence * i;
- * geoxml_[parent]_get_[sequence]([parent], &i, 0);
+ * GebrGeoXmlSequence * i;
+ * gebr_geoxml_[parent]_get_[sequence]([parent], &i, 0);
  * while (i != NULL) {
  * 	...
- * 	geoxml_sequence_next(&i);
+ * 	gebr_geoxml_sequence_next(&i);
  * }
  * \endcode
  *
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_NULL_PTR, GEOXML_RETV_NOT_A_SEQUENCE
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NULL_PTR, GEBR_GEOXML_RETV_NOT_A_SEQUENCE
  *
- * \see geoxml_sequence_previous
+ * \see gebr_geoxml_sequence_previous
  */
 int
-geoxml_sequence_next(GeoXmlSequence ** sequence);
+gebr_geoxml_sequence_next(GebrGeoXmlSequence ** sequence);
 
 /**
  * Clone \p sequence element and add it to the end of the sequence.
@@ -131,8 +131,8 @@ geoxml_sequence_next(GeoXmlSequence ** sequence);
  * If \p sequence is NULL or is not a sequence, NULL is returned.
  *
  */
-GeoXmlSequence *
-geoxml_sequence_append_clone(GeoXmlSequence * sequence);
+GebrGeoXmlSequence *
+gebr_geoxml_sequence_append_clone(GebrGeoXmlSequence * sequence);
 
 /**
  * Get the index of \p sequence.
@@ -140,29 +140,29 @@ geoxml_sequence_append_clone(GeoXmlSequence * sequence);
  * If \p sequence is NULL returns -1.
  */
 gint
-geoxml_sequence_get_index(GeoXmlSequence * sequence);
+gebr_geoxml_sequence_get_index(GebrGeoXmlSequence * sequence);
 
 /**
  * Returns the sequence at index in \p sequence.
  *
  * If \p sequence is NULL returns NULL.
  */
-GeoXmlSequence *
-geoxml_sequence_get_at(GeoXmlSequence * sequence, gulong index);
+GebrGeoXmlSequence *
+gebr_geoxml_sequence_get_at(GebrGeoXmlSequence * sequence, gulong index);
 
 /**
  * Removes \p sequence from its sequence. It is not deleted and can be reinserted
- * into sequence using geoxml_sequence_prepend or geoxml_sequence_append.
+ * into sequence using gebr_geoxml_sequence_prepend or gebr_geoxml_sequence_append.
  *
  * A special case are the parameter. It cannot be removed if it belongs to an
  * instanciated group. Also, if it is removed, all referenced parameters are
  * automatically removed
  *
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_NULL_PTR,
- * GEOXML_RETV_NOT_A_SEQUENCE, GEOXML_RETV_MORE_THAN_ONE_INSTANCES
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NULL_PTR,
+ * GEBR_GEOXML_RETV_NOT_A_SEQUENCE, GEBR_GEOXML_RETV_MORE_THAN_ONE_INSTANCES
  */
 int
-geoxml_sequence_remove(GeoXmlSequence * sequence);
+gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence);
 
 /**
  * Return TRUE if \p sequence and \p other are the same sequences.
@@ -171,54 +171,54 @@ geoxml_sequence_remove(GeoXmlSequence * sequence);
  * If \p sequence or \p other is NULL, returns FALSE.
  */
 gboolean
-geoxml_sequence_is_same_sequence(GeoXmlSequence * sequence, GeoXmlSequence * other);
+gebr_geoxml_sequence_is_same_sequence(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * other);
 
 /**
  * Move \p sequence to \p parameter_group, appending it to the list of is parameters.
  * \p sequence is removed from wherever it belonged.
  *
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_NULL_PTR,
- * GEOXML_RETV_NOT_A_SEQUENCE, GEOXML_RETV_MORE_THAN_ONE_INSTANCES
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NULL_PTR,
+ * GEBR_GEOXML_RETV_NOT_A_SEQUENCE, GEBR_GEOXML_RETV_MORE_THAN_ONE_INSTANCES
  */
 int
-geoxml_sequence_move_into_group(GeoXmlSequence * sequence, GeoXmlParameterGroup * parameter_group);
+gebr_geoxml_sequence_move_into_group(GebrGeoXmlSequence * sequence, GebrGeoXmlParameterGroup * parameter_group);
 
 /**
  * Moves \p sequence to the position before \p position. If \p position is NULL then
  * moves to the end of the sequence
  *
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_NULL_PTR,
- * GEOXML_RETV_NOT_A_SEQUENCE, GEOXML_RETV_DIFFERENT_SEQUENCES
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NULL_PTR,
+ * GEBR_GEOXML_RETV_NOT_A_SEQUENCE, GEBR_GEOXML_RETV_DIFFERENT_SEQUENCES
  */
 int
-geoxml_sequence_move_before(GeoXmlSequence * sequence, GeoXmlSequence * position);
+gebr_geoxml_sequence_move_before(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position);
 
 /**
  * Moves \p sequence to the position after \p position. If \p position is NULL then
  * moves to the beggining of the sequence
  *
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_NULL_PTR,
- * GEOXML_RETV_NOT_A_SEQUENCE, GEOXML_RETV_DIFFERENT_SEQUENCES
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NULL_PTR,
+ * GEBR_GEOXML_RETV_NOT_A_SEQUENCE, GEBR_GEOXML_RETV_DIFFERENT_SEQUENCES
  */
 int
-geoxml_sequence_move_after(GeoXmlSequence * sequence, GeoXmlSequence * position);
+gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position);
 
 /**
  * Exchange positions of the sequence above \p sequence with \p sequence in \p sequence.
  * \p sequence must belong to \p sequence.
  *
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR, GEOXML_RETV_NOT_A_SEQUENCE
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR, GEBR_GEOXML_RETV_NOT_A_SEQUENCE
  */
 int
-geoxml_sequence_move_up(GeoXmlSequence * sequence);
+gebr_geoxml_sequence_move_up(GebrGeoXmlSequence * sequence);
 
 /**
  * Exchange positions of the sequence below \p sequence with \p sequence in \p sequence.
  * \p sequence must belong to \p sequence.
  *
- * Returns one of: GEOXML_RETV_SUCCESS, GEOXML_RETV_INVALID_INDEX, GEOXML_RETV_NULL_PTR, GEOXML_RETV_NOT_A_SEQUENCE
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR, GEBR_GEOXML_RETV_NOT_A_SEQUENCE
  */
 int
-geoxml_sequence_move_down(GeoXmlSequence * sequence);
+gebr_geoxml_sequence_move_down(GebrGeoXmlSequence * sequence);
 
-#endif //__LIBGEBR_GEOXML_SEQUENCE_H
+#endif //__GEBR_GEOXML_SEQUENCE_H

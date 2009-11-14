@@ -25,7 +25,7 @@ struct ui_parameter_group_dialog {
 
 	GtkWidget *		instances_edit_vbox;
 
-	GeoXmlParameterGroup *	parameter_group;
+	GebrGeoXmlParameterGroup *	parameter_group;
 };
 
 void

@@ -42,11 +42,11 @@ void   parse_command_line(int argc, char **argv);
 void   make_prefix(void);
 void   report (const gchar *label, const gchar *str1, const gchar *str2);
 void   report_help (const gchar *label, const gchar *str1, const gchar *str2);
-void   compare_parameters(GeoXmlProgram *prog1, GeoXmlProgram *prog2);
-void   compare_parameter(GeoXmlParameter *par1, GeoXmlParameter *par2);
-void   compare_program_parameter(GeoXmlProgramParameter *ppar1, GeoXmlProgramParameter *ppar2);
-void   compare_file (GeoXmlProgramParameter *ppar1, GeoXmlProgramParameter *ppar2);
-const gchar* par_type_str (GeoXmlParameter *par);
+void   compare_parameters(GebrGeoXmlProgram *prog1, GebrGeoXmlProgram *prog2);
+void   compare_parameter(GebrGeoXmlParameter *par1, GebrGeoXmlParameter *par2);
+void   compare_program_parameter(GebrGeoXmlProgramParameter *ppar1, GebrGeoXmlProgramParameter *ppar2);
+void   compare_file (GebrGeoXmlProgramParameter *ppar1, GebrGeoXmlProgramParameter *ppar2);
+const gchar* par_type_str (GebrGeoXmlParameter *par);
 
 
 
@@ -60,9 +60,9 @@ static GOptionEntry entries[] =    {
 
 int main (int argc, char** argv)
 {
-	GeoXmlDocument *     doc[2];
-	GeoXmlFlow *         menu[2];
-	GeoXmlSequence *     seq[2];
+	GebrGeoXmlDocument *     doc[2];
+	GebrGeoXmlFlow *         menu[2];
+	GebrGeoXmlSequence *     seq[2];
         int                  nmenu;
 	
 	parse_command_line(argc, argv);
@@ -85,46 +85,46 @@ int main (int argc, char** argv)
         prefix = g_string_new(NULL);
         offset = g_string_new(NULL);
         
-        geoxml_document_load((GeoXmlDocument**) (&menu[0]), fnmenu[nmenu-2]);
-        geoxml_document_load((GeoXmlDocument**) (&menu[1]), fnmenu[nmenu-1]);
+        gebr_geoxml_document_load((GebrGeoXmlDocument**) (&menu[0]), fnmenu[nmenu-2]);
+        gebr_geoxml_document_load((GebrGeoXmlDocument**) (&menu[1]), fnmenu[nmenu-1]);
 
-        doc[0] = GEOXML_DOC(menu[0]);
-        doc[1] = GEOXML_DOC(menu[1]);
+        doc[0] = GEBR_GEOXML_DOC(menu[0]);
+        doc[1] = GEBR_GEOXML_DOC(menu[1]);
 
         report("Comparing files", fnmenu[nmenu-2], fnmenu[nmenu-1]);
         diff_count--;
 
         report("Filename",
-               geoxml_document_get_filename(doc[0]),
-               geoxml_document_get_filename(doc[1]));
+               gebr_geoxml_document_get_filename(doc[0]),
+               gebr_geoxml_document_get_filename(doc[1]));
         
         report("Title",
-               geoxml_document_get_title(doc[0]),
-               geoxml_document_get_title(doc[1]));
+               gebr_geoxml_document_get_title(doc[0]),
+               gebr_geoxml_document_get_title(doc[1]));
         
         report("Description",
-               geoxml_document_get_description(doc[0]),
-               geoxml_document_get_description(doc[1]));
+               gebr_geoxml_document_get_description(doc[0]),
+               gebr_geoxml_document_get_description(doc[1]));
         
         report("Author",
-               geoxml_document_get_author(doc[0]),
-               geoxml_document_get_author(doc[1]));
+               gebr_geoxml_document_get_author(doc[0]),
+               gebr_geoxml_document_get_author(doc[1]));
         
         report("Email",
-               geoxml_document_get_email(doc[0]),
-               geoxml_document_get_email(doc[1]));
+               gebr_geoxml_document_get_email(doc[0]),
+               gebr_geoxml_document_get_email(doc[1]));
         
         report("Created date",
-               geoxml_document_get_date_created(doc[0]),
-               geoxml_document_get_date_created(doc[1]));
+               gebr_geoxml_document_get_date_created(doc[0]),
+               gebr_geoxml_document_get_date_created(doc[1]));
         
         report("Modified date",
-               geoxml_document_get_date_modified(doc[0]),
-               geoxml_document_get_date_modified(doc[1]));
+               gebr_geoxml_document_get_date_modified(doc[0]),
+               gebr_geoxml_document_get_date_modified(doc[1]));
         
         report_help("Help",
-               geoxml_document_get_help(doc[0]),
-               geoxml_document_get_help(doc[1]));
+               gebr_geoxml_document_get_help(doc[0]),
+               gebr_geoxml_document_get_help(doc[1]));
         
         {
                 GString *cat[2];
@@ -132,21 +132,21 @@ int main (int argc, char** argv)
                 cat[0] = g_string_new(NULL);
                 cat[1] = g_string_new(NULL);
                 
-                geoxml_flow_get_category(menu[0], &seq[0], 0);
-                geoxml_flow_get_category(menu[1], &seq[1], 0);
+                gebr_geoxml_flow_get_category(menu[0], &seq[0], 0);
+                gebr_geoxml_flow_get_category(menu[1], &seq[1], 0);
 
                 while (seq[0] != NULL){
-                        g_string_append(cat[0], geoxml_value_sequence_get (GEOXML_VALUE_SEQUENCE(seq[0])));
+                        g_string_append(cat[0], gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE(seq[0])));
                         g_string_append(cat[0], "   ");
 
-                        geoxml_sequence_next((GeoXmlSequence **) &seq[0]);
+                        gebr_geoxml_sequence_next((GebrGeoXmlSequence **) &seq[0]);
                 }
 
                 while (seq[1] != NULL){
-                        g_string_append(cat[1], geoxml_value_sequence_get (GEOXML_VALUE_SEQUENCE(seq[1])));
+                        g_string_append(cat[1], gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE(seq[1])));
                         g_string_append(cat[1], "   ");
 
-                        geoxml_sequence_next((GeoXmlSequence **) &seq[1]);
+                        gebr_geoxml_sequence_next((GebrGeoXmlSequence **) &seq[1]);
                 }
 
                 report("Categories", cat[0]->str, cat[1]->str);
@@ -161,27 +161,27 @@ int main (int argc, char** argv)
                 str[0] = g_string_new(NULL);
                 str[1] = g_string_new(NULL);
                 
-                g_string_printf(str[0], "It has %ld program(s)", geoxml_flow_get_programs_number(menu[0]));
-                g_string_printf(str[1], "It has %ld program(s)", geoxml_flow_get_programs_number(menu[1]));
+                g_string_printf(str[0], "It has %ld program(s)", gebr_geoxml_flow_get_programs_number(menu[0]));
+                g_string_printf(str[1], "It has %ld program(s)", gebr_geoxml_flow_get_programs_number(menu[1]));
 
                 report("Programs", str[0]->str, str[1]->str);
                 
                 g_string_free(str[0], TRUE);
                 g_string_free(str[1], TRUE);
 
-                if (geoxml_flow_get_programs_number(menu[0]) != geoxml_flow_get_programs_number(menu[1]))
+                if (gebr_geoxml_flow_get_programs_number(menu[0]) != gebr_geoxml_flow_get_programs_number(menu[1]))
                         goto out;
         }
 
-        geoxml_flow_get_program (menu[0], &seq[0], 0);
-        geoxml_flow_get_program (menu[1], &seq[1], 0);
+        gebr_geoxml_flow_get_program (menu[0], &seq[0], 0);
+        gebr_geoxml_flow_get_program (menu[1], &seq[1], 0);
 
         while (seq[0] != NULL){
 
-                GeoXmlProgram *    prog[2];
+                GebrGeoXmlProgram *    prog[2];
                 
-                prog[0] = GEOXML_PROGRAM(seq[0]);
-                prog[1] = GEOXML_PROGRAM(seq[1]);
+                prog[0] = GEBR_GEOXML_PROGRAM(seq[0]);
+                prog[1] = GEBR_GEOXML_PROGRAM(seq[1]);
                 
                 iprog++;
 
@@ -189,49 +189,49 @@ int main (int argc, char** argv)
                 printf("|  Program %02i\n|\n", iprog);
                 
                 report("Title",
-                       geoxml_program_get_title(prog[0]),
-                       geoxml_program_get_title(prog[1]));
+                       gebr_geoxml_program_get_title(prog[0]),
+                       gebr_geoxml_program_get_title(prog[1]));
 
                 report("Description",
-                       geoxml_program_get_description(prog[0]),
-                       geoxml_program_get_description(prog[1]));
+                       gebr_geoxml_program_get_description(prog[0]),
+                       gebr_geoxml_program_get_description(prog[1]));
 
                 report("stdin treatment",
-                       (geoxml_program_get_stdin(prog[0])?"Read":"Ignore"),
-                       (geoxml_program_get_stdin(prog[1])?"Read":"Ignore"));
+                       (gebr_geoxml_program_get_stdin(prog[0])?"Read":"Ignore"),
+                       (gebr_geoxml_program_get_stdin(prog[1])?"Read":"Ignore"));
 
                 report("stdout treatment",
-                       (geoxml_program_get_stdout(prog[0])?"Write":"Ignore"),
-                       (geoxml_program_get_stdout(prog[1])?"Write":"Ignore"));
+                       (gebr_geoxml_program_get_stdout(prog[0])?"Write":"Ignore"),
+                       (gebr_geoxml_program_get_stdout(prog[1])?"Write":"Ignore"));
 
                 report("stderr treatment",
-                       (geoxml_program_get_stderr(prog[0])?"Append":"Ignore"),
-                       (geoxml_program_get_stderr(prog[1])?"Append":"Ignore"));
+                       (gebr_geoxml_program_get_stderr(prog[0])?"Append":"Ignore"),
+                       (gebr_geoxml_program_get_stderr(prog[1])?"Append":"Ignore"));
 
                 report("Executable",
-                       geoxml_program_get_binary(prog[0]),
-                       geoxml_program_get_binary(prog[1]));
+                       gebr_geoxml_program_get_binary(prog[0]),
+                       gebr_geoxml_program_get_binary(prog[1]));
 
                 report("URL",
-                       geoxml_program_get_url(prog[0]),
-                       geoxml_program_get_url(prog[1]));
+                       gebr_geoxml_program_get_url(prog[0]),
+                       gebr_geoxml_program_get_url(prog[1]));
 
                 report_help("Help",
-                            geoxml_program_get_help(prog[0]),
-                            geoxml_program_get_help(prog[1]));
+                            gebr_geoxml_program_get_help(prog[0]),
+                            gebr_geoxml_program_get_help(prog[1]));
 
                 compare_parameters(prog[0], prog[1]);
 
                 printf("+------------------------------------------------------------------------------\n");
 
-                geoxml_sequence_next((GeoXmlSequence **) &seq[0]);
-                geoxml_sequence_next((GeoXmlSequence **) &seq[1]); 
+                gebr_geoxml_sequence_next((GebrGeoXmlSequence **) &seq[0]);
+                gebr_geoxml_sequence_next((GebrGeoXmlSequence **) &seq[1]); 
         }
         
    out:
         printf("%d difference(s)\n\n", diff_count);
-        geoxml_document_free(doc[0]);
-        geoxml_document_free(doc[1]);
+        gebr_geoxml_document_free(doc[0]);
+        gebr_geoxml_document_free(doc[1]);
 
         g_string_free(prefix, TRUE);
         g_string_free(offset, TRUE);
@@ -271,13 +271,13 @@ parse_command_line(int argc, char **argv)
 }
 
 void
-compare_parameters(GeoXmlProgram *prog1, GeoXmlProgram *prog2)
+compare_parameters(GebrGeoXmlProgram *prog1, GebrGeoXmlProgram *prog2)
 {
-        GeoXmlParameter *       par1;
-        GeoXmlParameter *       par2;
+        GebrGeoXmlParameter *       par1;
+        GebrGeoXmlParameter *       par2;
 
-        par1 = GEOXML_PARAMETER(geoxml_parameters_get_first_parameter(geoxml_program_get_parameters(prog1)));
-        par2 = GEOXML_PARAMETER(geoxml_parameters_get_first_parameter(geoxml_program_get_parameters(prog2)));
+        par1 = GEBR_GEOXML_PARAMETER(gebr_geoxml_parameters_get_first_parameter(gebr_geoxml_program_get_parameters(prog1)));
+        par2 = GEBR_GEOXML_PARAMETER(gebr_geoxml_parameters_get_first_parameter(gebr_geoxml_program_get_parameters(prog2)));
 
         report ("Parameters",
                 ((par1 == NULL) ? "It has no parameters" : "It has parameters"),
@@ -293,8 +293,8 @@ compare_parameters(GeoXmlProgram *prog1, GeoXmlProgram *prog2)
                         ipar++;
                         compare_parameter(par1, par2);
                         
-                        geoxml_sequence_next((GeoXmlSequence **) &par1);
-                        geoxml_sequence_next((GeoXmlSequence **) &par2);                
+                        gebr_geoxml_sequence_next((GebrGeoXmlSequence **) &par1);
+                        gebr_geoxml_sequence_next((GebrGeoXmlSequence **) &par2);                
                 }
 
                 printf("|  |\n|  +...........................................................................\n");
@@ -303,7 +303,7 @@ compare_parameters(GeoXmlProgram *prog1, GeoXmlProgram *prog2)
 }
 
 void
-compare_parameter (GeoXmlParameter *par1, GeoXmlParameter *par2)
+compare_parameter (GebrGeoXmlParameter *par1, GebrGeoXmlParameter *par2)
 {
 
         report("Type",
@@ -313,31 +313,31 @@ compare_parameter (GeoXmlParameter *par1, GeoXmlParameter *par2)
         if (!strcmp(par_type_str(par1), par_type_str(par2))){
                 
                 report("Label", 
-                       geoxml_parameter_get_label(par1),
-                       geoxml_parameter_get_label(par2));
-                if (geoxml_parameter_get_is_program_parameter(par1)){
-                        compare_program_parameter(GEOXML_PROGRAM_PARAMETER(par1),
-                                                  GEOXML_PROGRAM_PARAMETER(par2));
+                       gebr_geoxml_parameter_get_label(par1),
+                       gebr_geoxml_parameter_get_label(par2));
+                if (gebr_geoxml_parameter_get_is_program_parameter(par1)){
+                        compare_program_parameter(GEBR_GEOXML_PROGRAM_PARAMETER(par1),
+                                                  GEBR_GEOXML_PROGRAM_PARAMETER(par2));
                 } else { /* They are groups */
 
-                        GeoXmlSequence  *instance1;
-                        GeoXmlSequence  *instance2;
-                        GeoXmlSequence  *subpar1;
-                        GeoXmlSequence  *subpar2;
+                        GebrGeoXmlSequence  *instance1;
+                        GebrGeoXmlSequence  *instance2;
+                        GebrGeoXmlSequence  *subpar1;
+                        GebrGeoXmlSequence  *subpar2;
                         
-                        geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(par1), &instance1, 0);
-                        geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(par2), &instance2, 0);
+                        gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(par1), &instance1, 0);
+                        gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(par2), &instance2, 0);
                         
-                        subpar1 = geoxml_parameters_get_first_parameter(GEOXML_PARAMETERS(instance1));
-                        subpar2 = geoxml_parameters_get_first_parameter(GEOXML_PARAMETERS(instance2));
+                        subpar1 = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance1));
+                        subpar2 = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance2));
                         
                         while (subpar1 != NULL || subpar2 != NULL){
                                 isubpar++;
                                 
-                                compare_program_parameter(GEOXML_PROGRAM_PARAMETER(subpar1),GEOXML_PROGRAM_PARAMETER(subpar2));
+                                compare_program_parameter(GEBR_GEOXML_PROGRAM_PARAMETER(subpar1),GEBR_GEOXML_PROGRAM_PARAMETER(subpar2));
 
-                                geoxml_sequence_next(&subpar1);
-                                geoxml_sequence_next(&subpar2);
+                                gebr_geoxml_sequence_next(&subpar1);
+                                gebr_geoxml_sequence_next(&subpar2);
                         }
                         
                         
@@ -348,7 +348,7 @@ compare_parameter (GeoXmlParameter *par1, GeoXmlParameter *par2)
 }
 
 void
-compare_program_parameter (GeoXmlProgramParameter *ppar1, GeoXmlProgramParameter *ppar2)
+compare_program_parameter (GebrGeoXmlProgramParameter *ppar1, GebrGeoXmlProgramParameter *ppar2)
 {
         GString *default1;
         GString *default2;
@@ -361,22 +361,22 @@ compare_program_parameter (GeoXmlProgramParameter *ppar1, GeoXmlProgramParameter
         }
 
         report("Keyword",
-               (ppar1 != NULL ? geoxml_program_parameter_get_keyword(ppar1) : ""),
-               (ppar2 != NULL ? geoxml_program_parameter_get_keyword(ppar2) : ""));
+               (ppar1 != NULL ? gebr_geoxml_program_parameter_get_keyword(ppar1) : ""),
+               (ppar2 != NULL ? gebr_geoxml_program_parameter_get_keyword(ppar2) : ""));
 
         report("Required",
-               (ppar1 != NULL ? (geoxml_program_parameter_get_required(ppar1)?"Yes":"No") : ""),
-               (ppar2 != NULL ? (geoxml_program_parameter_get_required(ppar2)?"Yes":"No") : ""));
+               (ppar1 != NULL ? (gebr_geoxml_program_parameter_get_required(ppar1)?"Yes":"No") : ""),
+               (ppar2 != NULL ? (gebr_geoxml_program_parameter_get_required(ppar2)?"Yes":"No") : ""));
 
-        default1 = (ppar1 != NULL ? geoxml_program_parameter_get_string_value(ppar1,TRUE) : NULL );
-        default2 = (ppar2 != NULL ? geoxml_program_parameter_get_string_value(ppar2,TRUE) : NULL );
+        default1 = (ppar1 != NULL ? gebr_geoxml_program_parameter_get_string_value(ppar1,TRUE) : NULL );
+        default2 = (ppar2 != NULL ? gebr_geoxml_program_parameter_get_string_value(ppar2,TRUE) : NULL );
 
         report("Default value", 
                (ppar1 != NULL ? default1->str : ""), 
                (ppar2 != NULL ? default2->str : ""));
 
-        switch (geoxml_parameter_get_type(GEOXML_PARAMETER(ppar1))){
-	case GEOXML_PARAMETERTYPE_FILE:
+        switch (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(ppar1))){
+	case GEBR_GEOXML_PARAMETERTYPE_FILE:
 		compare_file(ppar1, ppar2);
                 break;
         default:
@@ -392,36 +392,36 @@ compare_program_parameter (GeoXmlProgramParameter *ppar1, GeoXmlProgramParameter
 }
 
 void
-compare_file (GeoXmlProgramParameter *ppar1, GeoXmlProgramParameter *ppar2)
+compare_file (GebrGeoXmlProgramParameter *ppar1, GebrGeoXmlProgramParameter *ppar2)
 {
         report("Accept directory?",
-               (geoxml_program_parameter_get_file_be_directory(ppar1) ? "Yes" : "No"),
-               (geoxml_program_parameter_get_file_be_directory(ppar2) ? "Yes" : "No"));
+               (gebr_geoxml_program_parameter_get_file_be_directory(ppar1) ? "Yes" : "No"),
+               (gebr_geoxml_program_parameter_get_file_be_directory(ppar2) ? "Yes" : "No"));
         
 }
 const gchar*
-par_type_str (GeoXmlParameter *par)
+par_type_str (GebrGeoXmlParameter *par)
 {
 
         if (par == NULL)
                 return "";
 
- 	switch (geoxml_parameter_get_type(par)){
-	case GEOXML_PARAMETERTYPE_STRING:
+ 	switch (gebr_geoxml_parameter_get_type(par)){
+	case GEBR_GEOXML_PARAMETERTYPE_STRING:
 		return "string";
-	case GEOXML_PARAMETERTYPE_INT:
+	case GEBR_GEOXML_PARAMETERTYPE_INT:
 		return "integer";
-	case GEOXML_PARAMETERTYPE_FILE:
+	case GEBR_GEOXML_PARAMETERTYPE_FILE:
 		return "file";
-	case GEOXML_PARAMETERTYPE_FLAG:
+	case GEBR_GEOXML_PARAMETERTYPE_FLAG:
 		return "flag";
-	case GEOXML_PARAMETERTYPE_FLOAT:
+	case GEBR_GEOXML_PARAMETERTYPE_FLOAT:
 		return "real number";
-	case GEOXML_PARAMETERTYPE_RANGE:
+	case GEBR_GEOXML_PARAMETERTYPE_RANGE:
 		return "range";
-	case GEOXML_PARAMETERTYPE_ENUM:
+	case GEBR_GEOXML_PARAMETERTYPE_ENUM:
 		return "enum";
-	case GEOXML_PARAMETERTYPE_GROUP:
+	case GEBR_GEOXML_PARAMETERTYPE_GROUP:
 		return "group";
 	default:
 		return "UNKNOWN";

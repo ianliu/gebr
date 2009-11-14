@@ -22,20 +22,20 @@
 #include <glib.h>
 #include <libgebr/geoxml.h>
 
-GeoXmlDocument *
-document_new(enum GEOXML_DOCUMENT_TYPE type);
+GebrGeoXmlDocument *
+document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type);
 
-GeoXmlDocument *
+GebrGeoXmlDocument *
 document_load(const gchar * filename);
-GeoXmlDocument *
+GebrGeoXmlDocument *
 document_load_at(const gchar * filename, const gchar * directory);
-GeoXmlDocument *
+GebrGeoXmlDocument *
 document_load_path(const gchar * path);
 
 void
-document_save(GeoXmlDocument * document);
+document_save(GebrGeoXmlDocument * document);
 void
-document_import(GeoXmlDocument * document);
+document_import(GebrGeoXmlDocument * document);
 
 GString *
 document_assembly_filename(const gchar * extension);

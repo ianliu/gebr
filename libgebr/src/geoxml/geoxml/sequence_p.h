@@ -15,63 +15,63 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_SEQUENCE_P_H
-#define __LIBGEBR_GEOXML_SEQUENCE_P_H
+#ifndef __GEBR_GEOXML_SEQUENCE_P_H
+#define __GEBR_GEOXML_SEQUENCE_P_H
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
 int
-__geoxml_sequence_previous(GeoXmlSequence ** sequence);
+__gebr_geoxml_sequence_previous(GebrGeoXmlSequence ** sequence);
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
 int
-__geoxml_sequence_next(GeoXmlSequence ** sequence);
+__gebr_geoxml_sequence_next(GebrGeoXmlSequence ** sequence);
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
 int
-__geoxml_sequence_remove(GeoXmlSequence * sequence);
+__gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence);
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
-GeoXmlSequence *
-__geoxml_sequence_append_clone(GeoXmlSequence * sequence);
-
-/**
- * \internal
- * Do operation without checks, for library use
- */
-int
-__geoxml_sequence_move_before(GeoXmlSequence * sequence, GeoXmlSequence * position);
+GebrGeoXmlSequence *
+__gebr_geoxml_sequence_append_clone(GebrGeoXmlSequence * sequence);
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
 int
-__geoxml_sequence_move_after(GeoXmlSequence * sequence, GeoXmlSequence * position);
+__gebr_geoxml_sequence_move_before(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position);
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
 int
-__geoxml_sequence_move_up(GeoXmlSequence * sequence);
+__gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position);
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
 int
-__geoxml_sequence_move_down(GeoXmlSequence * sequence);
+__gebr_geoxml_sequence_move_up(GebrGeoXmlSequence * sequence);
 
-#endif //__LIBGEBR_GEOXML_SEQUENCE_P_H
+/**
+ * \internal
+ * Do operation without checks, for library use
+ */
+int
+__gebr_geoxml_sequence_move_down(GebrGeoXmlSequence * sequence);
+
+#endif //__GEBR_GEOXML_SEQUENCE_P_H

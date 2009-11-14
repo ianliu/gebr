@@ -154,7 +154,7 @@ gebr_comm_server_connect(struct gebr_comm_server * comm_server)
 		g_signal_connect(process, "finished",
 			G_CALLBACK(local_run_server_finished), comm_server);
 
-#if (!LIBGEBR_STATIC_MODE)
+#if (!STATIC_MODE)
 		g_string_printf(cmd_line, "bash -c \"bash -l -c 'gebrd >&3' 3>&1 >/dev/null\"");
 #else
 		g_string_printf(cmd_line, "bash -c \"bash -l -c './gebrd >&3' 3>&1 >/dev/null\"");
@@ -279,32 +279,32 @@ out:	g_string_free(string, TRUE);
  *
  */
 void
-gebr_comm_server_run_flow(struct gebr_comm_server * comm_server, GeoXmlFlow * flow)
+gebr_comm_server_run_flow(struct gebr_comm_server * comm_server, GebrGeoXmlFlow * flow)
 {
-	GeoXmlFlow *		flow_wnh; /* wnh: with no help */
-	GeoXmlSequence *	program;
+	GebrGeoXmlFlow *		flow_wnh; /* wnh: with no help */
+	GebrGeoXmlSequence *	program;
 	gchar *			xml;
 
 	/* removes flow's help */
-	flow_wnh = GEOXML_FLOW(geoxml_document_clone(GEOXML_DOC(flow)));
-	geoxml_document_set_help(GEOXML_DOC(flow_wnh), "");
+	flow_wnh = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(flow)));
+	gebr_geoxml_document_set_help(GEBR_GEOXML_DOC(flow_wnh), "");
 	/* removes programs' help */
-	geoxml_flow_get_program(flow_wnh, &program, 0);
+	gebr_geoxml_flow_get_program(flow_wnh, &program, 0);
 	while (program != NULL) {
-		geoxml_program_set_help(GEOXML_PROGRAM(program), "");
+		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(program), "");
 
-		geoxml_sequence_next(&program);
+		gebr_geoxml_sequence_next(&program);
 	}
 
 	/* get the xml */
-	geoxml_document_to_string(GEOXML_DOC(flow_wnh), &xml);
+	gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(flow_wnh), &xml);
 
 	/* finally... */
 	protocol_send_data(comm_server->protocol, comm_server->stream_socket, protocol_defs.run_def, 1, xml);
 
 	/* frees */
 	g_free(xml);
-	geoxml_document_free(GEOXML_DOC(flow_wnh));
+	gebr_geoxml_document_free(GEBR_GEOXML_DOC(flow_wnh));
 }
 
 /*

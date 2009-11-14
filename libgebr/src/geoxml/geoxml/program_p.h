@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEOXML_PROGRAM_P_H
-#define __GEOXML_PROGRAM_P_H
+#ifndef __GEBR_GEOXML_PROGRAM_P_H
+#define __GEBR_GEOXML_PROGRAM_P_H
 
 #include <gdome.h>
 
@@ -25,9 +25,9 @@
 
 /**
  * \internal
- * Used by geoxml_program_new_parameter and geoxml_program_parameter_set_type
+ * Used by gebr_geoxml_program_new_parameter and gebr_geoxml_program_parameter_set_type
  */
-GeoXmlProgramParameter *
-__geoxml_program_new_parameter(GeoXmlProgram * program, GdomeElement * before, enum GEOXML_PARAMETERTYPE parameter_type);
+GebrGeoXmlProgramParameter *
+__gebr_geoxml_program_new_parameter(GebrGeoXmlProgram * program, GdomeElement * before, enum GEBR_GEOXML_PARAMETERTYPE parameter_type);
 
-#endif //__GEOXML_PROGRAM_P_H
+#endif //__GEBR_GEOXML_PROGRAM_P_H

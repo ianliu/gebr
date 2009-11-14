@@ -15,14 +15,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEOXML_MACROS_H
-#define __GEOXML_MACROS_H
+#ifndef __GEBR_GEOXML_MACROS_H
+#define __GEBR_GEOXML_MACROS_H
 
 /**
  * \internal
  */
 #if  __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
-#  define GEOXML_DEPRECATED __attribute__((__deprecated__))
+#  define GEBR_GEOXML_DEPRECATED __attribute__((__deprecated__))
 #endif
 
-#endif //__GEOXML_MACROS_H
+#endif //__GEBR_GEOXML_MACROS_H

@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GUI_GTK_ENHANCED_ENTRY_H
-#define __LIBGEBR_GUI_GTK_ENHANCED_ENTRY_H
+#ifndef __GUI_GTK_ENHANCED_ENTRY_H
+#define __GUI_GTK_ENHANCED_ENTRY_H
 
 #include <gtk/gtk.h>
 
@@ -65,4 +65,4 @@ gtk_enhanced_entry_get_empty_text(GtkEnhancedEntry * enhanced_entry);
 
 G_END_DECLS
 
-#endif //__LIBGEBR_GUI_GTK_ENHANCED_ENTRY_H
+#endif //__GUI_GTK_ENHANCED_ENTRY_H

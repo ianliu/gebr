@@ -149,8 +149,8 @@
 2009-05-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
 	* use $HOME/.gebr/gebrdata as data dir
-	* added geoxml_parameter_get_type_name in parameter.h
-	* added geoxml_parameter_get_type_name
+	* added gebr_geoxml_parameter_get_type_name in parameter.h
+	* added gebr_geoxml_parameter_get_type_name
 
 2009-05-13  Ricardo Biloti <biloti@gmail.com>
 
@@ -303,14 +303,14 @@
 	  - fix help edit in debr: a empty file can be a file with a return
 	  char. (length 1)
 	* - various bugfixes to handle reference parameters
-	  - geoxml_parameter_get_type resolve references
+	  - gebr_geoxml_parameter_get_type resolve references
 	  - a lot of fixes to geoxmlsequence functions
 	  - rewritten dran n' drop API
 	  - full drag n' drop support in debr's parameter page
 
 2009-01-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* fix geoxml_parameter_set_type, fixing wrong range parameter
+	* fix gebr_geoxml_parameter_set_type, fixing wrong range parameter
 	  creation
 
 2009-01-26  Ricardo Biloti <biloti@gmail.com>
@@ -325,13 +325,13 @@
 
 2009-01-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* - fix __geoxml_sequence_move_before with position NULL
+	* - fix __gebr_geoxml_sequence_move_before with position NULL
 	  - fixes to top/bottom at gtksequenceedit and derivatives
 
 2009-01-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
 	* don't show empty option in enum when it is required
-	* fix __geoxml_foreach_element_with_tagname_r, fixing conversion
+	* fix __gebr_geoxml_foreach_element_with_tagname_r, fixing conversion
 	  from flow 0.2.1 to 0.2.2
 
 2009-01-22  Ricardo Biloti <biloti@gmail.com>
@@ -543,7 +543,7 @@
 
 	* the saga of list parameters ended!
 	  - changed DTD to make value and default values independets
-	  - refactoring of GeoXmlProgramParameter functions
+	  - refactoring of GebrGeoXmlProgramParameter functions
 	  - general refacte on parameter_widget function:
 	  - every change is auto submited
 	  - ability to auto rebuild the ui to match new parameter
@@ -640,32 +640,32 @@
 
 	* removed type group from gebrme and from 0.2 DTDs. it will be
 	  refacted and readded at flow 0.3
-	* delete all childs elements on __geoxml_set_element_value
+	* delete all childs elements on __gebr_geoxml_set_element_value
 
 2008-04-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* protect geoxml_parameter_group_get_{exclusive,selected} against
+	* protect gebr_geoxml_parameter_group_get_{exclusive,selected} against
 	  deleted/deinstaciated parameter indexes
 
 2008-04-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* __geoxml_program_parameter_reset_default should not change
+	* __gebr_geoxml_program_parameter_reset_default should not change
 	  anything but default
-	* geoxml_parameter_reset made invalid flows
+	* gebr_geoxml_parameter_reset made invalid flows
 	* missing stuff to be commited
 	* don't adjust npar when changing the parameter type
 
 2008-04-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
 	* don't leave selected blank/invalid on
-	  geoxml_parameter_group_set_exclusive
-	* - remove geoxml_parameters_new_parameter as it is nonsense for
+	  gebr_geoxml_parameter_group_set_exclusive
+	* - remove gebr_geoxml_parameters_new_parameter as it is nonsense for
 	  group npar
-	  - fixed geoxml_sequence_append_clone to adjust npar
+	  - fixed gebr_geoxml_sequence_append_clone to adjust npar
 	  - fixed adjust type
-	* GeoXmlObject class introduced
-	* fixed geoxml_parameter_group_set_{exclusive,selected}
-	* fixed geoxml_parameter_group_get_{exclusive,selected}
+	* GebrGeoXmlObject class introduced
+	* fixed gebr_geoxml_parameter_group_set_{exclusive,selected}
+	* fixed gebr_geoxml_parameter_group_get_{exclusive,selected}
 
 2008-04-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
@@ -677,7 +677,7 @@
 
 2008-04-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* added geoxml_sequence_append_clone
+	* added gebr_geoxml_sequence_append_clone
 
 2008-04-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
@@ -821,7 +821,7 @@
 
 2008-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* - use LIBGEBR_{CFLAGS, LIBS} in gebrd and gebrme
+	* - use {CFLAGS, LIBS} in gebrd and gebrme
 	  - disable file overwrite confirmation on gtkfileentry
 	* fixed some printfs formats
 
@@ -878,8 +878,8 @@
 
 2008-01-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* fix bug in geoxml_program_parameter_set_value for flag parameters
-	* - fixed bug in geoxml_sequence_move_down
+	* fix bug in gebr_geoxml_program_parameter_set_value for flag parameters
+	* - fixed bug in gebr_geoxml_sequence_move_down
 	  - minor cleanups
 	* improved popup selection handling
 	* decent popup menu support for GtkTreeView
@@ -1085,7 +1085,7 @@
 
 	* - more documentation
 	  - TODO enlanged
-	* fixed geoxml_program_set_title: cddatasection to textnode
+	* fixed gebr_geoxml_program_set_title: cddatasection to textnode
 
 2007-09-15  Ricardo Biloti <biloti@gmail.com>
 
@@ -1107,11 +1107,11 @@
 	* set required parameters when creating new programs or parameters
 	* change parameters order
 	* document type recognition
-	* added geoxml_program_parameter_set_type
+	* added gebr_geoxml_program_parameter_set_type
 
 2007-09-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* added geoxml_program_parameter_delete
+	* added gebr_geoxml_program_parameter_delete
 	* fix bug when handling categories
 
 2007-09-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
@@ -1149,11 +1149,11 @@
 
 2007-08-06  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* clear help of programs during copy on geoxml_flow_add_flow
+	* clear help of programs during copy on gebr_geoxml_flow_add_flow
 	* fix again next/previous
 	* - fix value of element filename in menus
-	  - W_OK -> R_OK in geoxml_document_load
-	* fix __geoxml_(next&previous)_element
+	  - W_OK -> R_OK in gebr_geoxml_document_load
+	* fix __gebr_geoxml_(next&previous)_element
 	* - created changelog using svn2cl
 	  - fix most next and previous functions
 
@@ -1172,7 +1172,7 @@
 
 2007-07-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* - add prefix get in geoxml_program_first_parameter
+	* - add prefix get in gebr_geoxml_program_first_parameter
 	  - makes possible only to get the first parameter
 	  - bugfixes
 
@@ -1180,7 +1180,7 @@
 
 	* fix the last fix ;)
 	* fix document free on load in case of an error
-	* fix stupid geoxml_flow_get_program
+	* fix stupid gebr_geoxml_flow_get_program
 
 2007-07-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
@@ -1209,7 +1209,7 @@
 
 	* - minor bugfixes and cleanups
 	  - more documentation
-	* fixed free on geoxml_document_validate_doc
+	* fixed free on gebr_geoxml_document_validate_doc
 	* - initial documentation (finally)
 	  - moved free from flow, line and project to document
 	  - fixed order when appending categories to match DTD

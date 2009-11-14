@@ -105,7 +105,7 @@ G_DEFINE_TYPE(ValueSequenceEdit, value_sequence_edit, GTK_TYPE_SEQUENCE_EDIT);
 static void
 __value_sequence_edit_remove(ValueSequenceEdit * value_sequence_edit, GtkTreeIter * iter)
 {
-	GeoXmlSequence *	sequence;
+	GebrGeoXmlSequence *	sequence;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store), iter,
 		1, &sequence,
@@ -115,7 +115,7 @@ __value_sequence_edit_remove(ValueSequenceEdit * value_sequence_edit, GtkTreeIte
 	gtk_tree_model_iter_n_children(GTK_TREE_MODEL(value_sequence_edit->parent.list_store), NULL) == 1)
 		value_sequence_edit->set_function(sequence, "", value_sequence_edit->user_data);
 	else
-		geoxml_sequence_remove(sequence);
+		gebr_geoxml_sequence_remove(sequence);
 
 	gtk_list_store_remove(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store, iter);
 
@@ -126,8 +126,8 @@ static void
 __value_sequence_edit_move(ValueSequenceEdit * value_sequence_edit, GtkTreeIter * iter, GtkTreeIter * position,
 	GtkTreeViewDropPosition drop_position)
 {
-	GeoXmlSequence *	sequence;
-	GeoXmlSequence *	position_sequence;
+	GebrGeoXmlSequence *	sequence;
+	GebrGeoXmlSequence *	position_sequence;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store), iter,
 		1, &sequence, -1);
@@ -135,10 +135,10 @@ __value_sequence_edit_move(ValueSequenceEdit * value_sequence_edit, GtkTreeIter 
 		1, &position_sequence, -1);
 
 	if (drop_position == GTK_TREE_VIEW_DROP_AFTER) {
-		geoxml_sequence_move_after(sequence, position_sequence);
+		gebr_geoxml_sequence_move_after(sequence, position_sequence);
 		gtk_list_store_move_after(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store, iter, position);
 	} else {
-		geoxml_sequence_move_before(sequence, position_sequence);
+		gebr_geoxml_sequence_move_before(sequence, position_sequence);
 		gtk_list_store_move_before(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store, iter, position);
 	}
 
@@ -148,13 +148,13 @@ __value_sequence_edit_move(ValueSequenceEdit * value_sequence_edit, GtkTreeIter 
 static void
 __value_sequence_edit_move_top(ValueSequenceEdit * value_sequence_edit, GtkTreeIter * iter)
 {
-	GeoXmlSequence *	sequence;
+	GebrGeoXmlSequence *	sequence;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store), iter,
 		1, &sequence,
 		-1);
 
-	geoxml_sequence_move_after(sequence, NULL);
+	gebr_geoxml_sequence_move_after(sequence, NULL);
 	gtk_list_store_move_after(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store, iter, NULL);
 
 	g_signal_emit_by_name(value_sequence_edit, "changed");
@@ -163,13 +163,13 @@ __value_sequence_edit_move_top(ValueSequenceEdit * value_sequence_edit, GtkTreeI
 static void
 __value_sequence_edit_move_bottom(ValueSequenceEdit * value_sequence_edit, GtkTreeIter * iter)
 {
-	GeoXmlSequence *	sequence;
+	GebrGeoXmlSequence *	sequence;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store), iter,
 		1, &sequence,
 		-1);
 
-	geoxml_sequence_move_before(sequence, NULL);
+	gebr_geoxml_sequence_move_before(sequence, NULL);
 	gtk_list_store_move_before(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store, iter, NULL);
 
 	g_signal_emit_by_name(value_sequence_edit, "changed");
@@ -178,7 +178,7 @@ __value_sequence_edit_move_bottom(ValueSequenceEdit * value_sequence_edit, GtkTr
 static void
 __value_sequence_edit_rename(ValueSequenceEdit * value_sequence_edit, GtkTreeIter * iter, const gchar * new_text)
 {
-	GeoXmlSequence *	sequence;
+	GebrGeoXmlSequence *	sequence;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store), iter,
 		1, &sequence,
@@ -215,7 +215,7 @@ value_sequence_edit_new(GtkWidget * widget)
 }
 
 void
-value_sequence_edit_add(ValueSequenceEdit * value_sequence_edit, GeoXmlSequence * sequence)
+value_sequence_edit_add(ValueSequenceEdit * value_sequence_edit, GebrGeoXmlSequence * sequence)
 {
 	GtkTreeIter	iter;
 
@@ -227,7 +227,7 @@ value_sequence_edit_add(ValueSequenceEdit * value_sequence_edit, GeoXmlSequence 
 }
 
 void
-value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit, GeoXmlSequence * sequence,
+value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit, GebrGeoXmlSequence * sequence,
 	ValueSequenceSetFunction set_function, ValueSequenceGetFunction get_function, gpointer user_data)
 {
 	if (set_function == NULL || get_function == NULL)
@@ -239,15 +239,15 @@ value_sequence_edit_load(ValueSequenceEdit * value_sequence_edit, GeoXmlSequence
 	gtk_list_store_clear(GTK_SEQUENCE_EDIT(value_sequence_edit)->list_store);
 
 	if (value_sequence_edit->minimum_one) {
-		GeoXmlSequence *	next;
+		GebrGeoXmlSequence *	next;
 
 		next = sequence;
-		geoxml_sequence_next(&next);
+		gebr_geoxml_sequence_next(&next);
 		if (next == NULL &&
 		!strlen(value_sequence_edit->get_function(sequence, value_sequence_edit->user_data)))
 			return;
 	}
 
-	for (; sequence != NULL; geoxml_sequence_next(&sequence))
+	for (; sequence != NULL; gebr_geoxml_sequence_next(&sequence))
 		value_sequence_edit_add(value_sequence_edit, sequence);
 }

@@ -31,10 +31,10 @@
 #include "defines.h"
 
 void
-help_insert_parameters_list(GString *help, GeoXmlProgram * program, gboolean refresh);
+help_insert_parameters_list(GString *help, GebrGeoXmlProgram * program, gboolean refresh);
 
 void
-add_program_parameter_item(GString *str, GeoXmlParameter *par);
+add_program_parameter_item(GString *str, GebrGeoXmlParameter *par);
 
 gsize
 strip_block(GString *buffer, const gchar *tag);
@@ -55,64 +55,64 @@ help_fix_css(GString * help)
 }
 
 void
-add_program_parameter_item(GString *str, GeoXmlParameter *par)
+add_program_parameter_item(GString *str, GebrGeoXmlParameter *par)
 {
-        if (geoxml_program_parameter_get_required(GEOXML_PROGRAM_PARAMETER(par))){
+        if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(par))){
                 g_string_append_printf(str, "              "
                                        "<li class=\"req\"><span class=\"reqlabel\">%s</span><br/>"
                                        " detailed description comes here.</li>\n\n",
-                                       geoxml_parameter_get_label(par));
+                                       gebr_geoxml_parameter_get_label(par));
         }else{
                 g_string_append_printf(str, "              "
                                        "<li><span class=\"label\">%s</span><br/>"
                                        " detailed description comes here.</li>\n\n",
-                                       geoxml_parameter_get_label(par));
+                                       gebr_geoxml_parameter_get_label(par));
         }
 }
 
 void
-help_insert_parameters_list(GString *help, GeoXmlProgram * program, gboolean refresh)
+help_insert_parameters_list(GString *help, GebrGeoXmlProgram * program, gboolean refresh)
 {
         GString          *      label;
-	GeoXmlParameters *	parameters;
-	GeoXmlSequence *	parameter;
+	GebrGeoXmlParameters *	parameters;
+	GebrGeoXmlSequence *	parameter;
         gchar *                 ptr;
         gsize                   pos;
 
         if (program == NULL)
                 return;
         
-        parameters = geoxml_program_get_parameters(program);
-        parameter = geoxml_parameters_get_first_parameter(parameters);
+        parameters = gebr_geoxml_program_get_parameters(program);
+        parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
 	
         label = g_string_new(NULL);
         g_string_assign(label,"<ul>\n");
         while (parameter != NULL) {
                 
-                if (geoxml_parameter_get_is_program_parameter(GEOXML_PARAMETER(parameter)) == TRUE){
-                        add_program_parameter_item(label, GEOXML_PARAMETER(parameter));
+                if (gebr_geoxml_parameter_get_is_program_parameter(GEBR_GEOXML_PARAMETER(parameter)) == TRUE){
+                        add_program_parameter_item(label, GEBR_GEOXML_PARAMETER(parameter));
                 }else{
-                        GeoXmlSequence  *	instance;
-                        GeoXmlSequence  *	subpar;
+                        GebrGeoXmlSequence  *	instance;
+                        GebrGeoXmlSequence  *	subpar;
                         
                         g_string_append_printf(label, "              "
                                                "<li class=\"group\"><span class=\"grouplabel\">%s</span><br/>"
                                                        " detailed description comes here.\n\n",
-                                               geoxml_parameter_get_label(GEOXML_PARAMETER(parameter))); 
+                                               gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter))); 
                         
                         g_string_append_printf(label, "              <ul>\n");
                         
-                        geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-                        subpar = geoxml_parameters_get_first_parameter(GEOXML_PARAMETERS(instance));
+                        gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+                        subpar = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance));
                         while (subpar != NULL) {
-                                add_program_parameter_item(label, GEOXML_PARAMETER(subpar));
-                                geoxml_sequence_next(&subpar);
+                                add_program_parameter_item(label, GEBR_GEOXML_PARAMETER(subpar));
+                                gebr_geoxml_sequence_next(&subpar);
                         }
                         g_string_append_printf(label, "              </ul></li>\n\n");
                         
                 }
                 
-                geoxml_sequence_next(&parameter);
+                gebr_geoxml_sequence_next(&parameter);
         }
         g_string_append(label,"            </ul>\n            ");
 
@@ -155,7 +155,7 @@ help_insert_parameters_list(GString *help, GeoXmlProgram * program, gboolean ref
 }
 
 void
-help_subst_fields(GString * help, GeoXmlProgram * program, gboolean refresh)
+help_subst_fields(GString * help, GebrGeoXmlProgram * program, gboolean refresh)
 {
 	gchar *		        content;
         GString *               text;
@@ -165,9 +165,9 @@ help_subst_fields(GString * help, GeoXmlProgram * program, gboolean refresh)
 
 	/* Title replacement */
 	if (program != NULL)
-		content = (gchar*)geoxml_program_get_title(program);
+		content = (gchar*)gebr_geoxml_program_get_title(program);
 	else
-		content = (gchar*)geoxml_document_get_title(GEOXML_DOC(debr.menu));
+		content = (gchar*)gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu));
 	if (strlen(content)) {
 
                 pos = strip_block(help, "ttl");
@@ -186,9 +186,9 @@ help_subst_fields(GString * help, GeoXmlProgram * program, gboolean refresh)
 
 	/* Description replacement */
 	if (program != NULL)
-		content = (gchar*)geoxml_program_get_description(program);
+		content = (gchar*)gebr_geoxml_program_get_description(program);
 	else
-		content = (gchar*)geoxml_document_get_description(GEOXML_DOC(debr.menu));
+		content = (gchar*)gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu));
 	if (strlen(content)) {
                 pos = strip_block(help, "des");
                 if (pos){
@@ -198,22 +198,22 @@ help_subst_fields(GString * help, GeoXmlProgram * program, gboolean refresh)
 	}
 
 	/* Categories replacement */
-	if (geoxml_flow_get_categories_number(debr.menu)) {
-		GeoXmlSequence *	category;
+	if (gebr_geoxml_flow_get_categories_number(debr.menu)) {
+		GebrGeoXmlSequence *	category;
 		GString *		catstr;
 
                 pos = strip_block(help, "cat");
                 if (pos){
-                        geoxml_flow_get_category(debr.menu, &category, 0);
+                        gebr_geoxml_flow_get_category(debr.menu, &category, 0);
                         
                         catstr = g_string_new("\n       "); 
-                        g_string_append(catstr, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)));
-                        geoxml_sequence_next(&category);
+                        g_string_append(catstr, gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)));
+                        gebr_geoxml_sequence_next(&category);
                         while (category != NULL) {
                                 g_string_append(catstr, " | ");
-                                g_string_append(catstr, geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(category)));
+                                g_string_append(catstr, gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)));
                                 
-                                geoxml_sequence_next(&category);
+                                gebr_geoxml_sequence_next(&category);
                         }
                         g_string_append(catstr, "\n       ");
                         
@@ -246,8 +246,8 @@ help_subst_fields(GString * help, GeoXmlProgram * program, gboolean refresh)
 
                 g_string_printf(text, "\n          <p>%s: written by %s &lt;%s&gt;</p>\n          ",
                                 buffer,
-                                geoxml_document_get_author(GEOXML_DOC(debr.menu)),
-                                geoxml_document_get_email(GEOXML_DOC(debr.menu)));
+                                gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(debr.menu)),
+                                gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu)));
                 
                 ptr1 = strstr(help->str, "<!-- begin cpy -->");
                 ptr2 = strstr(help->str, "<!-- end cpy -->");
@@ -306,7 +306,7 @@ out:	g_string_free(html_path, FALSE);
 }
 
 GString *
-help_edit(const gchar * help, GeoXmlProgram * program, gboolean refresh)
+help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 {
 	FILE *		fp;
 	GString *	html_path;
@@ -353,7 +353,7 @@ help_edit(const gchar * help, GeoXmlProgram * program, gboolean refresh)
                 
                 pos = strip_block(prepared_html, "dtd");
                 if (pos)
-                        g_string_insert(prepared_html, pos, geoxml_document_get_version(GEOXML_DOCUMENT(debr.menu)));
+                        g_string_insert(prepared_html, pos, gebr_geoxml_document_get_version(GEBR_GEOXML_DOCUMENT(debr.menu)));
         }
         
 	/* CSS fix */

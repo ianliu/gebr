@@ -53,7 +53,7 @@ about_setup_ui(const gchar * program, const gchar * description)
 	about.dialog = gtk_about_dialog_new();
 
 	gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about.dialog), program);
-	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about.dialog), LIBGEBR_VERSION);
+	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about.dialog), VERSION);
 	gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about.dialog), pixmaps_gebr_logo());
 	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about.dialog),
 					_("GêBR Core Team"));

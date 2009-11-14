@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GEOXML_PROGRAM_PARAMETER_P_H
-#define __LIBGEBR_GEOXML_PROGRAM_PARAMETER_P_H
+#ifndef __GEBR_GEOXML_PROGRAM_PARAMETER_P_H
+#define __GEBR_GEOXML_PROGRAM_PARAMETER_P_H
 
 #include "program_parameter.h"
 
@@ -26,7 +26,7 @@
  * An empty value means reset.
  */
 void
-__geoxml_program_parameter_set_all_value(GeoXmlProgramParameter * program_parameter,
+__gebr_geoxml_program_parameter_set_all_value(GebrGeoXmlProgramParameter * program_parameter,
 	gboolean default_value, const gchar * value);
 
-#endif //__LIBGEBR_GEOXML_PROGRAM_PARAMETER_P_H
+#endif //__GEBR_GEOXML_PROGRAM_PARAMETER_P_H

@@ -44,4 +44,4 @@ AM_CFLAGS = -Wall -std=gnu99 -fPIC @DEBUG_CFLAGS@ $(GTK_CFLAGS) $(GTHREAD_CFLAGS
 libgebr_gui_la_LIBADD = $(INTLLIBS) $(GTK_LIBS) $(GTHREAD_LIBS) $(WEBKIT_LIBS) \
 	../../libgebr.la \
 	../../geoxml/geoxml/libgebr_geoxml.la
-libgebr_gui_la_LDFLAGS = -version-info @GEOXML_VERSION_INFO@
+libgebr_gui_la_LDFLAGS = -version-info @GEBR_GEOXML_VERSION_INFO@

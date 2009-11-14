@@ -121,22 +121,22 @@ server_free(struct server * server)
 gboolean
 server_run_flow(struct server * server, const gchar * flow_path)
 {
-	GeoXmlDocument *	document;
-	GeoXmlFlow *		flow;
+	GebrGeoXmlDocument *	document;
+	GebrGeoXmlFlow *		flow;
 	int			ret;
 
-	ret = geoxml_document_load(&document, flow_path);
+	ret = gebr_geoxml_document_load(&document, flow_path);
 	if (ret) {
 		gebr_client_message(LOG_ERROR, _("Could not load flow: %s"),
-			geoxml_error_string((enum GEOXML_RETV)ret));
+			gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		return FALSE;
 	}
-	if (geoxml_document_get_type(document) != GEOXML_DOCUMENT_TYPE_FLOW) {
+	if (gebr_geoxml_document_get_type(document) != GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 		gebr_client_message(LOG_ERROR, _("The document is not a flow."));
 		return FALSE;
 	}
 
-	flow = GEOXML_FLOW(document);
+	flow = GEBR_GEOXML_FLOW(document);
 	gebr_comm_server_run_flow(server->comm, flow);
 
 	return TRUE;

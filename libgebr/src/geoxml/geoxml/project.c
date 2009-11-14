@@ -29,11 +29,11 @@
  * internal structures and funcionts
  */
 
-struct geoxml_project {
-	GeoXmlDocument *	document;
+struct gebr_geoxml_project {
+	GebrGeoXmlDocument *	document;
 };
 
-struct geoxml_project_line {
+struct gebr_geoxml_project_line {
 	GdomeElement *		element;
 };
 
@@ -41,64 +41,64 @@ struct geoxml_project_line {
  * library functions.
  */
 
-GeoXmlProject *
-geoxml_project_new()
+GebrGeoXmlProject *
+gebr_geoxml_project_new()
 {
-	GeoXmlDocument * document = geoxml_document_new("project", GEOXML_PROJECT_VERSION);
-	return GEOXML_PROJECT(document);
+	GebrGeoXmlDocument * document = gebr_geoxml_document_new("project", GEBR_GEOXML_PROJECT_VERSION);
+	return GEBR_GEOXML_PROJECT(document);
 }
 
-GeoXmlProjectLine *
-geoxml_project_append_line(GeoXmlProject * project, const gchar * source)
+GebrGeoXmlProjectLine *
+gebr_geoxml_project_append_line(GebrGeoXmlProject * project, const gchar * source)
 {
 	if (project == NULL)
 		return NULL;
 
-	GeoXmlProjectLine* project_line;
+	GebrGeoXmlProjectLine* project_line;
 
-	project_line = (GeoXmlProjectLine*)__geoxml_insert_new_element(
-		geoxml_document_root_element(GEOXML_DOC(project)), "line", NULL);
-	__geoxml_set_attr_value((GdomeElement*)project_line, "source", source);
+	project_line = (GebrGeoXmlProjectLine*)__gebr_geoxml_insert_new_element(
+		gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(project)), "line", NULL);
+	__gebr_geoxml_set_attr_value((GdomeElement*)project_line, "source", source);
 
 	return project_line;
 }
 
 int
-geoxml_project_get_line(GeoXmlProject * project, GeoXmlSequence ** project_line, gulong index)
+gebr_geoxml_project_get_line(GebrGeoXmlProject * project, GebrGeoXmlSequence ** project_line, gulong index)
 {
 	if (project == NULL) {
 		*project_line = NULL;
-		return GEOXML_RETV_NULL_PTR;
+		return GEBR_GEOXML_RETV_NULL_PTR;
 	}
 
-	*project_line = (GeoXmlSequence*)__geoxml_get_element_at(
-		geoxml_document_root_element(GEOXML_DOC(project)), "line", index, FALSE);
+	*project_line = (GebrGeoXmlSequence*)__gebr_geoxml_get_element_at(
+		gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(project)), "line", index, FALSE);
 
 	return (*project_line == NULL)
-		? GEOXML_RETV_INVALID_INDEX
-		: GEOXML_RETV_SUCCESS;
+		? GEBR_GEOXML_RETV_INVALID_INDEX
+		: GEBR_GEOXML_RETV_SUCCESS;
 }
 
 glong
-geoxml_project_get_lines_number(GeoXmlProject * project)
+gebr_geoxml_project_get_lines_number(GebrGeoXmlProject * project)
 {
 	if (project == NULL)
 		return -1;
-	return __geoxml_get_elements_number(geoxml_document_root_element(GEOXML_DOC(project)), "line");
+	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(project)), "line");
 }
 
 void
-geoxml_project_set_line_source(GeoXmlProjectLine * project_line, const gchar * source)
+gebr_geoxml_project_set_line_source(GebrGeoXmlProjectLine * project_line, const gchar * source)
 {
 	if (project_line == NULL)
 		return;
-	__geoxml_set_attr_value((GdomeElement*)project_line, "source", source);
+	__gebr_geoxml_set_attr_value((GdomeElement*)project_line, "source", source);
 }
 
 const gchar *
-geoxml_project_get_line_source(GeoXmlProjectLine * project_line)
+gebr_geoxml_project_get_line_source(GebrGeoXmlProjectLine * project_line)
 {
 	if (project_line == NULL)
 		return NULL;
-	return __geoxml_get_attr_value((GdomeElement*)project_line, "source");
+	return __gebr_geoxml_get_attr_value((GdomeElement*)project_line, "source");
 }

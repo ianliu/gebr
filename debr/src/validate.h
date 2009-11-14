@@ -42,7 +42,7 @@ void
 validate_setup_ui(void);
 
 void
-validate_menu(GtkTreeIter * iter, GeoXmlFlow * menu);
+validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu);
 
 void
 validate_close(void);

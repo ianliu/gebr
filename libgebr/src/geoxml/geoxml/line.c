@@ -30,15 +30,15 @@
  * internal structures and funcionts
  */
 
-struct geoxml_line {
-	GeoXmlDocument *	document;
+struct gebr_geoxml_line {
+	GebrGeoXmlDocument *	document;
 };
 
-struct geoxml_line_flow {
+struct gebr_geoxml_line_flow {
 	GdomeElement *		element;
 };
 
-struct geoxml_line_path {
+struct gebr_geoxml_line_path {
 	GdomeElement *		element;
 };
 
@@ -46,104 +46,104 @@ struct geoxml_line_path {
  * library functions.
  */
 
-GeoXmlLine *
-geoxml_line_new()
+GebrGeoXmlLine *
+gebr_geoxml_line_new()
 {
-	GeoXmlDocument * document = geoxml_document_new("line", GEOXML_LINE_VERSION);
-	return GEOXML_LINE(document);
+	GebrGeoXmlDocument * document = gebr_geoxml_document_new("line", GEBR_GEOXML_LINE_VERSION);
+	return GEBR_GEOXML_LINE(document);
 }
 
-GeoXmlLineFlow *
-geoxml_line_append_flow(GeoXmlLine * line, const gchar * source)
+GebrGeoXmlLineFlow *
+gebr_geoxml_line_append_flow(GebrGeoXmlLine * line, const gchar * source)
 {
 	if (line == NULL)
 		return NULL;
 
-	GeoXmlLineFlow *	line_flow;
+	GebrGeoXmlLineFlow *	line_flow;
 
-	line_flow = (GeoXmlLineFlow*)__geoxml_insert_new_element(
-		geoxml_document_root_element(GEOXML_DOC(line)), "flow", NULL);
-	__geoxml_set_attr_value((GdomeElement*)line_flow, "source", source);
+	line_flow = (GebrGeoXmlLineFlow*)__gebr_geoxml_insert_new_element(
+		gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "flow", NULL);
+	__gebr_geoxml_set_attr_value((GdomeElement*)line_flow, "source", source);
 
 	return line_flow;
 }
 
 int
-geoxml_line_get_flow(GeoXmlLine * line, GeoXmlSequence ** line_flow, gulong index)
+gebr_geoxml_line_get_flow(GebrGeoXmlLine * line, GebrGeoXmlSequence ** line_flow, gulong index)
 {
 	if (line == NULL) {
 		*line_flow = NULL;
-		return GEOXML_RETV_NULL_PTR;
+		return GEBR_GEOXML_RETV_NULL_PTR;
 	}
 
-	*line_flow = (GeoXmlSequence*)__geoxml_get_element_at(
-		geoxml_document_root_element(GEOXML_DOC(line)), "flow", index, FALSE);
+	*line_flow = (GebrGeoXmlSequence*)__gebr_geoxml_get_element_at(
+		gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "flow", index, FALSE);
 
 	return (*line_flow == NULL)
-		? GEOXML_RETV_INVALID_INDEX
-		: GEOXML_RETV_SUCCESS;
+		? GEBR_GEOXML_RETV_INVALID_INDEX
+		: GEBR_GEOXML_RETV_SUCCESS;
 }
 
 glong
-geoxml_line_get_flows_number(GeoXmlLine * line)
+gebr_geoxml_line_get_flows_number(GebrGeoXmlLine * line)
 {
 	if (line == NULL)
 		return -1;
-	return __geoxml_get_elements_number(geoxml_document_root_element(GEOXML_DOC(line)), "flow");
+	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "flow");
 }
 
 void
-geoxml_line_set_flow_source(GeoXmlLineFlow * line_flow, const gchar * source)
+gebr_geoxml_line_set_flow_source(GebrGeoXmlLineFlow * line_flow, const gchar * source)
 {
 	if (line_flow == NULL)
 		return;
-	__geoxml_set_attr_value((GdomeElement*)line_flow, "source", source);
+	__gebr_geoxml_set_attr_value((GdomeElement*)line_flow, "source", source);
 }
 
 const gchar *
-geoxml_line_get_flow_source(GeoXmlLineFlow * line_flow)
+gebr_geoxml_line_get_flow_source(GebrGeoXmlLineFlow * line_flow)
 {
 	if (line_flow == NULL)
 		return NULL;
-	return __geoxml_get_attr_value((GdomeElement*)line_flow, "source");
+	return __gebr_geoxml_get_attr_value((GdomeElement*)line_flow, "source");
 }
 
-GeoXmlLinePath *
-geoxml_line_append_path(GeoXmlLine * line, const gchar * path)
+GebrGeoXmlLinePath *
+gebr_geoxml_line_append_path(GebrGeoXmlLine * line, const gchar * path)
 {
 	if (line == NULL || path == NULL)
 		return NULL;
 
-	GeoXmlLinePath *	line_path;
+	GebrGeoXmlLinePath *	line_path;
 
-	line_path = (GeoXmlLinePath*)__geoxml_insert_new_element(
-		geoxml_document_root_element(GEOXML_DOC(line)), "path",
-		__geoxml_get_first_element(geoxml_document_root_element(GEOXML_DOC(line)), "flow"));
-	geoxml_value_sequence_set(GEOXML_VALUE_SEQUENCE(line_path), path);
+	line_path = (GebrGeoXmlLinePath*)__gebr_geoxml_insert_new_element(
+		gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "path",
+		__gebr_geoxml_get_first_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "flow"));
+	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(line_path), path);
 
 	return line_path;
 }
 
 int
-geoxml_line_get_path(GeoXmlLine * line, GeoXmlSequence ** path, gulong index)
+gebr_geoxml_line_get_path(GebrGeoXmlLine * line, GebrGeoXmlSequence ** path, gulong index)
 {
 	if (line == NULL) {
 		*path = NULL;
-		return GEOXML_RETV_NULL_PTR;
+		return GEBR_GEOXML_RETV_NULL_PTR;
 	}
 
-	*path = (GeoXmlSequence*)__geoxml_get_element_at(
-		geoxml_document_root_element(GEOXML_DOC(line)), "path", index, FALSE);
+	*path = (GebrGeoXmlSequence*)__gebr_geoxml_get_element_at(
+		gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "path", index, FALSE);
 
 	return (*path == NULL)
-		? GEOXML_RETV_INVALID_INDEX
-		: GEOXML_RETV_SUCCESS;
+		? GEBR_GEOXML_RETV_INVALID_INDEX
+		: GEBR_GEOXML_RETV_SUCCESS;
 }
 
 glong
-geoxml_line_get_paths_number(GeoXmlLine * line)
+gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line)
 {
 	if (line == NULL)
 		return -1;
-	return __geoxml_get_elements_number(geoxml_document_root_element(GEOXML_DOC(line)), "path");
+	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "path");
 }

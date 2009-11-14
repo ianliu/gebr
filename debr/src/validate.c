@@ -38,7 +38,7 @@ struct validate {
 
 	GtkTextBuffer *		text_buffer;
 	GtkTreeIter		iter;
-	GeoXmlFlow *		menu;
+	GebrGeoXmlFlow *		menu;
 
 	guint			error_count;
 };
@@ -127,7 +127,7 @@ validate_setup_ui(void)
  * _iter_ is the item on the menu list
  */
 void
-validate_menu(GtkTreeIter * iter, GeoXmlFlow * menu)
+validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 {
 	struct validate *	validate;
 	GtkWidget *		scrolled_window;
@@ -169,7 +169,7 @@ validate_menu(GtkTreeIter * iter, GeoXmlFlow * menu)
 	validate_do(validate);
 	gtk_list_store_set(debr.ui_validate.list_store, iter,
 		VALIDATE_ICON, !validate->error_count ? debr.pixmaps.stock_apply : debr.pixmaps.stock_cancel,
-		VALIDATE_FILENAME, geoxml_document_get_filename(GEOXML_DOCUMENT(menu)),
+		VALIDATE_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)),
 		VALIDATE_POINTER, validate,
 		-1);
 	validate_set_selected(iter);
@@ -277,8 +277,8 @@ validate_clicked(void)
 
 /* Prototypes */
 static void validate_append_check(struct validate * validate, const gchar * value, int flags, const gchar * format, ...);
-static void show_parameter(struct validate * validate, GeoXmlParameter * parameter, gint ipar);
-static void show_program_parameter(struct validate * validate, GeoXmlProgramParameter *pp, gint ipar, guint isubpar);
+static void show_parameter(struct validate * validate, GebrGeoXmlParameter * parameter, gint ipar);
+static void show_program_parameter(struct validate * validate, GebrGeoXmlProgramParameter *pp, gint ipar, guint isubpar);
 
 #define VALID		TRUE
 #define INVALID		FALSE
@@ -404,50 +404,50 @@ validate_do(struct validate * validate)
 	gboolean		progs    = FALSE;
 	gboolean		params   = FALSE;
 
-	GeoXmlSequence *	seq;
+	GebrGeoXmlSequence *	seq;
 	gint			i;
 
 	validate->error_count = 0;
 	if (filename || all)
 		validate_append_item_with_check(validate, _("Filename:      "),
-			geoxml_document_get_filename(GEOXML_DOCUMENT(validate->menu)),
+			gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(validate->menu)),
 			NOBLK | MTBLK | FILEN);
 	if (title || all)
 		validate_append_item_with_check(validate,_("Title:         "),
-			geoxml_document_get_title(GEOXML_DOCUMENT(validate->menu)),
+			gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(validate->menu)),
 			EMPTY | NOBLK | NOPNT | MTBLK);
 	if (desc || all)
 		validate_append_item_with_check(validate,_("Description:   "),
-			geoxml_document_get_description(GEOXML_DOCUMENT(validate->menu)),
+			gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT(validate->menu)),
 			EMPTY | CAPIT | NOBLK | MTBLK | NOPNT);
 	if (author || all) {
 		validate_append_item(validate,_("Author:        "));
-		validate_append_check(validate, geoxml_document_get_author(GEOXML_DOCUMENT(validate->menu)),
+		validate_append_check(validate, gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(validate->menu)),
 			EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, " <");
-		validate_append_check(validate, geoxml_document_get_email(GEOXML_DOCUMENT(validate->menu)), EMAIL, ">");
+		validate_append_check(validate, gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(validate->menu)), EMAIL, ">");
                 validate_append_text(validate, "\n");
 	}
 	if (dates || all) {
 		validate_append_item_with_check(validate, _("Created:       "),
-			localized_date(geoxml_document_get_date_created(GEOXML_DOCUMENT(validate->menu))), EMPTY);
+			localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOCUMENT(validate->menu))), EMPTY);
 		validate_append_item_with_check(validate, _("Modified:      "),
-			localized_date(geoxml_document_get_date_modified(GEOXML_DOCUMENT(validate->menu))), EMPTY);
+			localized_date(gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(validate->menu))), EMPTY);
 	}
 	if (mhelp || all) {
 		validate_append_item(validate,_("Help:          "));
-		if (strlen(geoxml_document_get_help(GEOXML_DOCUMENT(validate->menu))) >= 1)
+		if (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(validate->menu))) >= 1)
 			validate_append_text(validate, _("Defined"));
 		else
 			validate_append_check(validate, "", EMPTY, "");
                 validate_append_text(validate,  "\n");
 	}
 	if (category || all) {
-		geoxml_flow_get_category(validate->menu, &seq, 0);
+		gebr_geoxml_flow_get_category(validate->menu, &seq, 0);
 		if (seq == NULL)
 			validate_append_item_with_check(validate,_("Category:      "), "", EMPTY);
-		else for (; seq != NULL; geoxml_sequence_next(&seq))
+		else for (; seq != NULL; gebr_geoxml_sequence_next(&seq))
 			validate_append_item_with_check(validate,_("Category:      "),
-				geoxml_value_sequence_get(GEOXML_VALUE_SEQUENCE(seq)),
+				gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq)),
 				EMPTY | CAPIT | NOBLK | MTBLK | NOPNT);
 	}
 
@@ -456,34 +456,34 @@ validate_do(struct validate * validate)
 
 	validate_append_text_emph(validate,_("Menu with:     "));
 	validate_append_text(validate, _("%ld program(s)\n"),
-		geoxml_flow_get_programs_number(validate->menu));
-	geoxml_flow_get_program(validate->menu, &seq, 0);
-	for (i = 0; seq != NULL; i++, geoxml_sequence_next(&seq)) {
-		GeoXmlProgram *		prog;
-		GeoXmlParameter *	parameter;
+		gebr_geoxml_flow_get_programs_number(validate->menu));
+	gebr_geoxml_flow_get_program(validate->menu, &seq, 0);
+	for (i = 0; seq != NULL; i++, gebr_geoxml_sequence_next(&seq)) {
+		GebrGeoXmlProgram *		prog;
+		GebrGeoXmlParameter *	parameter;
 		gint			j = 0;
 
-		prog = GEOXML_PROGRAM(seq);
+		prog = GEBR_GEOXML_PROGRAM(seq);
 
 		validate_append_text_emph(validate,_("\n>>Program:     "));
 		validate_append_text(validate,  "%d\n", i+1);
 		validate_append_item_with_check(validate,_("  Title:       "),
-			geoxml_program_get_title(prog), EMPTY | NOBLK | MTBLK);
+			gebr_geoxml_program_get_title(prog), EMPTY | NOBLK | MTBLK);
 		validate_append_item_with_check(validate,_("  Description: "),
-			geoxml_program_get_description(prog), EMPTY | CAPIT | NOBLK | MTBLK | NOPNT);
+			gebr_geoxml_program_get_description(prog), EMPTY | CAPIT | NOBLK | MTBLK | NOPNT);
 
                 validate_append_text_emph(validate,_("  In/out/err:  "));
                 validate_append_text(validate, "%s/%s/%s\n",
-			geoxml_program_get_stdin(prog) ?_("Read") :_("Ignore"),
-			geoxml_program_get_stdout(prog) ?_("Write") :_("Ignore"),
-			geoxml_program_get_stdin(prog) ?_("Append") :_("Ignore"));
+			gebr_geoxml_program_get_stdin(prog) ?_("Read") :_("Ignore"),
+			gebr_geoxml_program_get_stdout(prog) ?_("Write") :_("Ignore"),
+			gebr_geoxml_program_get_stdin(prog) ?_("Append") :_("Ignore"));
 
 		validate_append_item_with_check(validate,_("  Binary:      "),
-			geoxml_program_get_binary(prog), EMPTY);
+			gebr_geoxml_program_get_binary(prog), EMPTY);
 		validate_append_item_with_check(validate,_("  URL:         "),
-			geoxml_program_get_url(prog), EMPTY);
+			gebr_geoxml_program_get_url(prog), EMPTY);
 		validate_append_item(validate,_("  Help:        "));
-		if (strlen(geoxml_program_get_help(prog)) >= 1)
+		if (strlen(gebr_geoxml_program_get_help(prog)) >= 1)
 			validate_append_text(validate, _("Defined"));
 		else
 			validate_append_check(validate, "", EMPTY, "");
@@ -493,11 +493,11 @@ validate_do(struct validate * validate)
 		if (params || all) {
 			validate_append_text_emph(validate,_("  >>Parameters:\n"));
 
-			parameter = GEOXML_PARAMETER(geoxml_parameters_get_first_parameter(geoxml_program_get_parameters(prog)));
+			parameter = GEBR_GEOXML_PARAMETER(gebr_geoxml_parameters_get_first_parameter(gebr_geoxml_program_get_parameters(prog)));
 
 			while (parameter != NULL) {
 				show_parameter(validate, parameter, ++j);
-				geoxml_sequence_next((GeoXmlSequence **) &parameter);
+				gebr_geoxml_sequence_next((GebrGeoXmlSequence **) &parameter);
 			}
 		}
 	}
@@ -629,7 +629,7 @@ validate_append_check(struct validate * validate, const gchar * value, int flags
 }
 
 static void
-show_program_parameter(struct validate * validate, GeoXmlProgramParameter * pp, gint ipar, guint isubpar)
+show_program_parameter(struct validate * validate, GebrGeoXmlProgramParameter * pp, gint ipar, guint isubpar)
 {
 	GString *	default_value;
 
@@ -638,7 +638,7 @@ show_program_parameter(struct validate * validate, GeoXmlProgramParameter * pp, 
 	else
 		validate_append_text(validate,  "    %2d: ", ipar);
 
-	validate_append_check(validate, geoxml_parameter_get_label(GEOXML_PARAMETER(pp)),
+	validate_append_check(validate, gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp)),
 		EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, "\n");
 
 	validate_append_text(validate,  "        ");
@@ -646,41 +646,41 @@ show_program_parameter(struct validate * validate, GeoXmlProgramParameter * pp, 
 		validate_append_text(validate,  "      ");
 
 	validate_append_text(validate, "[");
-	validate_append_text(validate, geoxml_parameter_get_type_name(GEOXML_PARAMETER(pp)));
-	if (geoxml_program_parameter_get_is_list(GEOXML_PROGRAM_PARAMETER(pp)))
+	validate_append_text(validate, gebr_geoxml_parameter_get_type_name(GEBR_GEOXML_PARAMETER(pp)));
+	if (gebr_geoxml_program_parameter_get_is_list(GEBR_GEOXML_PROGRAM_PARAMETER(pp)))
 		validate_append_text(validate, "(s)");
 	validate_append_text(validate, "] ");
 
 	validate_append_text(validate,  "'");
-	validate_append_check(validate, geoxml_program_parameter_get_keyword(pp), EMPTY, "'");
+	validate_append_check(validate, gebr_geoxml_program_parameter_get_keyword(pp), EMPTY, "'");
 
-	default_value = geoxml_program_parameter_get_string_value(pp, TRUE);
+	default_value = gebr_geoxml_program_parameter_get_string_value(pp, TRUE);
 	if (default_value->len)
 		validate_append_text(validate,  " [%s]", default_value->str);
 	g_string_free(default_value, TRUE);
 
-	if (geoxml_program_parameter_get_required(pp))
+	if (gebr_geoxml_program_parameter_get_required(pp))
 		validate_append_text(validate, _("  REQUIRED "));
 
         /* enum details */
-	if (geoxml_parameter_get_type(GEOXML_PARAMETER(pp)) == GEOXML_PARAMETERTYPE_ENUM){
-		GeoXmlSequence *enum_option;
+	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETERTYPE_ENUM){
+		GebrGeoXmlSequence *enum_option;
 
-		geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
+		gebr_geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
 
                 if (enum_option == NULL){
                         validate_append_text_error(validate, "\n        missing options");
                         validate->error_count++;
                 }
 
-		for (; enum_option != NULL; geoxml_sequence_next(&enum_option)){
+		for (; enum_option != NULL; gebr_geoxml_sequence_next(&enum_option)){
 			validate_append_text(validate,  "\n");
 			if (isubpar)
 				validate_append_text(validate,  "      ");
 
 			validate_append_text(validate,  "        %s (%s)",
-				geoxml_enum_option_get_label(GEOXML_ENUM_OPTION(enum_option)),
-				geoxml_enum_option_get_value(GEOXML_ENUM_OPTION(enum_option)));
+				gebr_geoxml_enum_option_get_label(GEBR_GEOXML_ENUM_OPTION(enum_option)),
+				gebr_geoxml_enum_option_get_value(GEBR_GEOXML_ENUM_OPTION(enum_option)));
 		}
 	}
 
@@ -688,30 +688,30 @@ show_program_parameter(struct validate * validate, GeoXmlProgramParameter * pp, 
 }
 
 static void
-show_parameter(struct validate * validate, GeoXmlParameter * parameter, gint ipar)
+show_parameter(struct validate * validate, GebrGeoXmlParameter * parameter, gint ipar)
 {
-	if (geoxml_parameter_get_is_program_parameter(parameter))
-		show_program_parameter(validate, GEOXML_PROGRAM_PARAMETER(parameter), ipar, 0);
+	if (gebr_geoxml_parameter_get_is_program_parameter(parameter))
+		show_program_parameter(validate, GEBR_GEOXML_PROGRAM_PARAMETER(parameter), ipar, 0);
 	else {
-		GeoXmlSequence  *	subpar;
-		GeoXmlSequence  *	instance;
+		GebrGeoXmlSequence  *	subpar;
+		GebrGeoXmlSequence  *	instance;
 
 		gint subipar = 0;
 
 		validate_append_text(validate,  "    %2d: ", ipar);
-		validate_append_check(validate, geoxml_parameter_get_label(parameter),
+		validate_append_check(validate, gebr_geoxml_parameter_get_label(parameter),
 				EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, NULL);
 
-                if (geoxml_parameter_group_get_is_instanciable(GEOXML_PARAMETER_GROUP(parameter)))
+                if (gebr_geoxml_parameter_group_get_is_instanciable(GEBR_GEOXML_PARAMETER_GROUP(parameter)))
                         validate_append_text(validate,  _("   [Instanciable]\n"));
                 else
                         validate_append_text(validate,  "\n");
 
-		geoxml_parameter_group_get_instance(GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-		subpar = geoxml_parameters_get_first_parameter(GEOXML_PARAMETERS(instance));
+		gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+		subpar = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance));
 		while (subpar != NULL) {
-			show_program_parameter(validate, GEOXML_PROGRAM_PARAMETER(subpar), ipar, ++subipar);
-			geoxml_sequence_next(&subpar);
+			show_program_parameter(validate, GEBR_GEOXML_PROGRAM_PARAMETER(subpar), ipar, ++subipar);
+			gebr_geoxml_sequence_next(&subpar);
 		}
         }
 }

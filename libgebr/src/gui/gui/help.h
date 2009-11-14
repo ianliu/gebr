@@ -15,12 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBGEBR_GUI_HELP_H
-#define __LIBGEBR_GUI_HELP_H
+#ifndef __GUI_HELP_H
+#define __GUI_HELP_H
 
 #include <glib.h>
 
 void
 gebr_gui_help_show(const gchar * uri, const gchar * browser);
 
-#endif //__LIBGEBR_GUI_HELP_H
+#endif //__GUI_HELP_H

@@ -17,8 +17,8 @@
  *   Partly inspired on Qt 4.3 version of QProcess, by Trolltech
  */
 
-#ifndef __LIBGEBR_COMM_GPROCESS_H
-#define __LIBGEBR_COMM_GPROCESS_H
+#ifndef __COMM_GPROCESS_H
+#define __COMM_GPROCESS_H
 
 #include <glib.h>
 #include <glib-object.h>
@@ -134,4 +134,4 @@ g_process_write_stdin_string(GProcess *, GString *);
 
 G_END_DECLS
 
-#endif //__LIBGEBR_COMM_GPROCESS_H
+#endif //__COMM_GPROCESS_H

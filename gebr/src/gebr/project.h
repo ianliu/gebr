@@ -28,9 +28,9 @@ gboolean
 project_delete(gboolean confirm);
 
 GtkTreeIter
-project_append_iter(GeoXmlProject * project);
+project_append_iter(GebrGeoXmlProject * project);
 GtkTreeIter
-project_append_line_iter(GtkTreeIter * project_iter, GeoXmlLine * line);
+project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine * line);
 
 void
 project_list_populate(void);

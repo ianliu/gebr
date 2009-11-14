@@ -57,13 +57,13 @@ path_add(ValueSequenceEdit * sequence_edit)
 	if (!strlen(path))
 		return;
 
-	value_sequence_edit_add(sequence_edit, GEOXML_SEQUENCE(geoxml_line_append_path(gebr.line, path)));
+	value_sequence_edit_add(sequence_edit, GEBR_GEOXML_SEQUENCE(gebr_geoxml_line_append_path(gebr.line, path)));
 }
 
 gboolean
 path_save(void)
 {
-	document_save(GEOXML_DOCUMENT(gebr.line));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.line));
 	project_line_info_update();
 	return TRUE;
 }
@@ -80,7 +80,7 @@ path_list_setup_ui(void)
 	GtkWidget *		dialog;
 	GtkWidget *		file_entry;
 	GtkWidget *		path_sequence_edit;
-	GeoXmlSequence *	path_sequence;
+	GebrGeoXmlSequence *	path_sequence;
 	GString *		dialog_title;
 
 	if (gebr.line == NULL) {
@@ -89,7 +89,7 @@ path_list_setup_ui(void)
 	}
 
 	dialog_title = g_string_new(NULL);
-	g_string_printf(dialog_title, _("Path list for line '%s'"), geoxml_document_get_title(GEOXML_DOCUMENT(gebr.line)));
+	g_string_printf(dialog_title, _("Path list for line '%s'"), gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line)));
 
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 		GTK_WINDOW(gebr.window),
@@ -101,11 +101,11 @@ path_list_setup_ui(void)
 	gtk_file_entry_set_choose_directory(GTK_FILE_ENTRY(file_entry), TRUE);
 	gtk_widget_set_size_request(file_entry, 220, 30);
 
-	geoxml_line_get_path(gebr.line, &path_sequence, 0);
+	gebr_geoxml_line_get_path(gebr.line, &path_sequence, 0);
 	path_sequence_edit = value_sequence_edit_new(file_entry);
 	value_sequence_edit_load(VALUE_SEQUENCE_EDIT(path_sequence_edit), path_sequence,
-		(ValueSequenceSetFunction)geoxml_value_sequence_set,
-		(ValueSequenceGetFunction)geoxml_value_sequence_get, NULL);
+		(ValueSequenceSetFunction)gebr_geoxml_value_sequence_set,
+		(ValueSequenceGetFunction)gebr_geoxml_value_sequence_get, NULL);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), path_sequence_edit, TRUE, TRUE, 0);
 
 	g_signal_connect(GTK_OBJECT(path_sequence_edit), "add-request",
@@ -115,7 +115,7 @@ path_list_setup_ui(void)
 
   	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
-	document_save(GEOXML_DOCUMENT(gebr.line));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.line));
 	project_line_info_update();
 
 	/* frees */

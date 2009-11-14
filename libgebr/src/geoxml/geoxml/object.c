@@ -27,7 +27,7 @@
  * internal structures and funcionts
  */
 
-struct geoxml_object {
+struct gebr_geoxml_object {
 	GdomeElement * element;
 };
 
@@ -35,8 +35,8 @@ struct geoxml_object {
  * library functions.
  */
 
-enum GEOXML_OBJECT_TYPE
-geoxml_object_get_type(GeoXmlObject * object)
+enum GEBR_GEOXML_OBJECT_TYPE
+gebr_geoxml_object_get_type(GebrGeoXmlObject * object)
 {
 	static const gchar *	tag_map [] = { "",
 		"project", "line", "flow",
@@ -46,17 +46,17 @@ geoxml_object_get_type(GeoXmlObject * object)
 	guint			i;
 
 	if (object == NULL)
-		return GEOXML_OBJECT_TYPE_UNKNOWN;
+		return GEBR_GEOXML_OBJECT_TYPE_UNKNOWN;
 
 	for (i = 1; i <= 7; ++i)
 		if (!strcmp(gdome_el_tagName((GdomeElement*)object, &exception)->str, tag_map[i]))
-			return (enum GEOXML_OBJECT_TYPE)i;
+			return (enum GEBR_GEOXML_OBJECT_TYPE)i;
 
-	return GEOXML_OBJECT_TYPE_UNKNOWN;
+	return GEBR_GEOXML_OBJECT_TYPE_UNKNOWN;
 }
 
 void
-geoxml_object_set_user_data(GeoXmlObject * object, gpointer user_data)
+gebr_geoxml_object_set_user_data(GebrGeoXmlObject * object, gpointer user_data)
 {
 	if (object == NULL)
 		return;
@@ -64,25 +64,25 @@ geoxml_object_set_user_data(GeoXmlObject * object, gpointer user_data)
 }
 
 gpointer
-geoxml_object_get_user_data(GeoXmlObject * object)
+gebr_geoxml_object_get_user_data(GebrGeoXmlObject * object)
 {
 	if (object == NULL)
 		return NULL;
 	return ((GdomeNode*)object)->user_data;
 }
 
-GeoXmlDocument *
-geoxml_object_get_owner_document(GeoXmlObject * object)
+GebrGeoXmlDocument *
+gebr_geoxml_object_get_owner_document(GebrGeoXmlObject * object)
 {
 	if (object == NULL)
 		return NULL;
-	return (GeoXmlDocument*)gdome_el_ownerDocument((GdomeElement*)object, &exception);
+	return (GebrGeoXmlDocument*)gdome_el_ownerDocument((GdomeElement*)object, &exception);
 }
 
-GeoXmlObject *
-geoxml_object_copy(GeoXmlObject * object)
+GebrGeoXmlObject *
+gebr_geoxml_object_copy(GebrGeoXmlObject * object)
 {
 	if (object == NULL)
 		return NULL;
-	return (GeoXmlObject*)gdome_el_cloneNode((GdomeElement*)object, TRUE, &exception);
+	return (GebrGeoXmlObject*)gdome_el_cloneNode((GdomeElement*)object, TRUE, &exception);
 }

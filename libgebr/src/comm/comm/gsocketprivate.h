@@ -17,8 +17,8 @@
  *   Inspired on Qt 4.3 version of QAbstractSocket, by Trolltech
  */
 
-#ifndef __LIBGEBR_COMM_GSOCKETPRIVATE_H
-#define __LIBGEBR_COMM_GSOCKETPRIVATE_H
+#ifndef __COMM_GSOCKETPRIVATE_H
+#define __COMM_GSOCKETPRIVATE_H
 
 #include "gsocket.h"
 #include "gsocketaddress.h"
@@ -41,4 +41,4 @@ _g_socket_enable_write_watch(GebrCommSocket * socket);
 void
 _g_socket_emit_error(GebrCommSocket * socket, enum GebrCommSocketError error);
 
-#endif //__LIBGEBR_COMM_GSOCKETPRIVATE_H
+#endif //__COMM_GSOCKETPRIVATE_H
