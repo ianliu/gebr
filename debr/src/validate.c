@@ -429,9 +429,9 @@ validate_do(struct validate * validate)
 	}
 	if (dates || all) {
 		validate_append_item_with_check(validate, _("Created:       "),
-			localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOCUMENT(validate->menu))), EMPTY);
+			gebr_localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOCUMENT(validate->menu))), EMPTY);
 		validate_append_item_with_check(validate, _("Modified:      "),
-			localized_date(gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(validate->menu))), EMPTY);
+			gebr_localized_date(gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(validate->menu))), EMPTY);
 	}
 	if (mhelp || all) {
 		validate_append_item(validate,_("Help:          "));

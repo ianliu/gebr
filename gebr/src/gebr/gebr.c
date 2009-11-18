@@ -63,7 +63,7 @@ gebr_init(void)
 	gebr.flow = NULL;
 	gebr.program = NULL;
 	gebr.flow_clipboard = NULL;
-	libgebr_init();
+	gebr_libinit();
 	gebr_comm_protocol_init();
 
 	/* check/create config dir */
@@ -139,7 +139,7 @@ gebr_quit(void)
 	g_slist_free(gebr.tmpfiles);
 
 	gebr_message(LOG_END, TRUE, TRUE, _("GêBR Finalizing..."));
-	log_close(gebr.log);
+	gebr_log_close(gebr.log);
 
 	/* Free servers structs */
 	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
@@ -199,16 +199,16 @@ gebr_log_load(void)
 
 	log_filename = g_string_new(NULL);
 	g_string_printf(log_filename, "%s/.gebr/log/gebr.log", getenv("HOME"));
-	gebr.log = log_open(log_filename->str);
+	gebr.log = gebr_log_open(log_filename->str);
 
 	if (gebr.config.log_load) {
 		GList *		messages;
 
-		messages = log_messages_read(gebr.log);
+		messages = gebr_log_messages_read(gebr.log);
 		for (i = messages; i != NULL; i = g_list_next(i))
-			log_add_message_to_list(gebr.ui_log, (struct log_message *)i->data);
+			gebr_log_add_message_to_list(gebr.ui_log, (struct gebr_log_message *)i->data);
 
-		log_messages_free(messages);
+		gebr_log_messages_free(messages);
 	}
 
 	/* frees */
@@ -279,7 +279,7 @@ gebr_migrate_data_dir(void)
 	g_string_printf(new_data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
 
 	command_line = g_string_new("");
-	libgebr_directory_foreach_file(filename, gebr.config.data->str)
+	gebr_directory_foreach_file(filename, gebr.config.data->str)
 		if (!fnmatch("*.prj", filename, 1) || !fnmatch("*.lne", filename, 1) ||
 		!fnmatch("*.flw", filename, 1))
 			g_string_append_printf(command_line, "%s/%s ", gebr.config.data->str, filename);
@@ -334,32 +334,32 @@ gebr_config_load(gboolean nox)
 
 		data_dir = g_string_new(NULL);
 
-		gebr.config.username = g_key_file_load_string_key(gebr.config.key_file,
+		gebr.config.username = gebr_g_key_file_load_string_key(gebr.config.key_file,
 			"general", "name", g_get_real_name());
-		gebr.config.email = g_key_file_load_string_key(gebr.config.key_file,
+		gebr.config.email = gebr_g_key_file_load_string_key(gebr.config.key_file,
 			"general", "email", g_get_user_name());
-		gebr.config.usermenus = g_key_file_load_string_key(gebr.config.key_file,
+		gebr.config.usermenus = gebr_g_key_file_load_string_key(gebr.config.key_file,
 			"general", "usermenus", getenv("HOME"));
 
 		g_string_printf(data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
-		gebr.config.data = g_key_file_load_string_key(gebr.config.key_file,
+		gebr.config.data = gebr_g_key_file_load_string_key(gebr.config.key_file,
 			"general", "data", data_dir->str);
 		/* DEPRECATED: old config structure */
 		if (g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))
 			g_string_printf(gebr.config.data, "%s/.gebr/gebr/data", getenv("HOME"));
 		else if (!g_str_has_suffix(gebr.config.data->str, ".gebr/gebr/data"))
 			gebr_migrate_data_dir();
-		gebr.config.browser = g_key_file_load_string_key(gebr.config.key_file, "general", "browser", "firefox");
-		gebr.config.editor = g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "gedit");
-		gebr.config.width = g_key_file_load_int_key(gebr.config.key_file, "general", "width", 700);
-		gebr.config.height = g_key_file_load_int_key(gebr.config.key_file, "general", "height", 400);
-		gebr.config.log_expander_state = g_key_file_load_boolean_key(gebr.config.key_file,
+		gebr.config.browser = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "browser", "firefox");
+		gebr.config.editor = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "gedit");
+		gebr.config.width = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "width", 700);
+		gebr.config.height = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "height", 400);
+		gebr.config.log_expander_state = gebr_g_key_file_load_boolean_key(gebr.config.key_file,
 			"general", "log_expander_state", FALSE);
-		gebr.config.log_load = g_key_file_load_boolean_key(gebr.config.key_file,
+		gebr.config.log_load = gebr_g_key_file_load_boolean_key(gebr.config.key_file,
 			"general", "log_load", FALSE);
-		gebr.config.job_log_word_wrap = g_key_file_load_boolean_key(gebr.config.key_file,
+		gebr.config.job_log_word_wrap = gebr_g_key_file_load_boolean_key(gebr.config.key_file,
 			"general", "job_log_word_wrap", FALSE);
-		gebr.config.job_log_auto_scroll = g_key_file_load_boolean_key(gebr.config.key_file,
+		gebr.config.job_log_auto_scroll = gebr_g_key_file_load_boolean_key(gebr.config.key_file,
 			"general", "job_log_auto_scroll", FALSE);
 
 		g_string_free(data_dir, TRUE);
@@ -396,10 +396,10 @@ gebr_config_load(gboolean nox)
 
 		GString * address;
 
-		address = g_key_file_load_string_key(gebr.config.key_file, groups[i], "address", "");
+		address = gebr_g_key_file_load_string_key(gebr.config.key_file, groups[i], "address", "");
 		if (address->len)
 			server_new(address->str,
-				g_key_file_load_boolean_key(gebr.config.key_file, groups[i], "autoconnect", TRUE));
+				gebr_g_key_file_load_boolean_key(gebr.config.key_file, groups[i], "autoconnect", TRUE));
 
 		g_string_free(address, TRUE);
 	}
@@ -504,7 +504,7 @@ out:	g_free(string);
  *
  */
 void
-gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...)
+gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...)
 {
 	gchar *			string;
 	va_list			argp;
@@ -522,13 +522,13 @@ gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_
 	else if (in_statusbar)
 		log_set_message(gebr.ui_log, string);
 	if (in_log_file) {
-		struct log_message *	log_message;
+		struct gebr_log_message *	log_message;
 
-		log_message = log_gebr_comm_message_new(type, iso_date(), string);
-		log_add_message(gebr.log, type, string);
-		log_add_message_to_list(gebr.ui_log, log_message);
+		log_message = gebr_log_message_new(type, gebr_iso_date(), string);
+		gebr_log_add_message(gebr.log, type, string);
+		gebr_log_add_message_to_list(gebr.ui_log, log_message);
 
-		log_gebr_comm_message_free(log_message);
+		gebr_log_message_free(log_message);
 	}
 
 	g_free(string);

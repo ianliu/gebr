@@ -15,46 +15,46 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MISC_LOG_H
-#define __MISC_LOG_H
+#ifndef __GEBR_LOG_H
+#define __GEBR_LOG_H
 
 #include <stdio.h>
 
 #include <glib.h>
 
-enum log_message_type {
+enum gebr_log_message_type {
 	LOG_START, LOG_END, LOG_INFO, LOG_ERROR, LOG_WARNING, LOG_DEBUG, LOG_MSG
 };
 
-struct log_message {
-	enum log_message_type	type;
+struct gebr_log_message {
+	enum gebr_log_message_type	type;
 	GString *		date;
 	GString *		message;
 };
 
-struct log {
+struct gebr_log {
 	GIOChannel *	io_channel;
 };
 
-struct log *
-log_open(const gchar * path);
+struct gebr_log *
+gebr_log_open(const gchar * path);
 
 void
-log_close(struct log * log);
+gebr_log_close(struct gebr_log * log);
 
-struct log_message *
-log_gebr_comm_message_new(enum log_message_type type, const gchar * date, const gchar * message);
+struct gebr_log_message *
+gebr_log_message_new(enum gebr_log_message_type type, const gchar * date, const gchar * message);
 
 void
-log_gebr_comm_message_free(struct log_message * message);
+gebr_log_message_free(struct gebr_log_message * message);
 
 GList *
-log_messages_read(struct log * log);
+gebr_log_messages_read(struct gebr_log * log);
 
 void
-log_messages_free(GList * messages);
+gebr_log_messages_free(GList * messages);
 
 void
-log_add_message(struct log * log, enum log_message_type type, const gchar * message);
+gebr_log_add_message(struct gebr_log * log, enum gebr_log_message_type type, const gchar * message);
 
-#endif //__MISC_LOG_H
+#endif //__GEBR_LOG_H

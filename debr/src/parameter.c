@@ -1406,7 +1406,7 @@ parameter_number_min_on_activate(GtkEntry * entry, struct gebr_gui_parameter_wid
 	const gchar *	min_str;
 	gdouble		min;
 
-	min_str = libgebr_validate_float((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
+	min_str = gebr_validate_float((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
 	gtk_entry_set_text(entry, min_str);
 	min = atof(min_str);
 
@@ -1440,7 +1440,7 @@ parameter_number_max_on_activate(GtkEntry * entry, struct gebr_gui_parameter_wid
 	const gchar *	max_str;
 	gdouble		max;
 
-	max_str = libgebr_validate_float((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
+	max_str = gebr_validate_float((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
 	gtk_entry_set_text(entry, max_str);
 	max = atof(max_str);
 
@@ -1482,7 +1482,7 @@ parameter_range_inc_on_activate(GtkEntry * entry, struct gebr_gui_parameter_widg
 	gebr_geoxml_program_parameter_get_range_properties(GEBR_GEOXML_PROGRAM_PARAMETER(widget->parameter),
 		&min_str, &max_str, &inc_str, &digits_str);
 
-	inc_str = (gchar*)libgebr_validate_float((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
+	inc_str = (gchar*)gebr_validate_float((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
 	gtk_entry_set_text(entry, inc_str);
 	inc = atof(inc_str);
 
@@ -1514,7 +1514,7 @@ parameter_range_digits_on_activate(GtkEntry * entry, struct gebr_gui_parameter_w
 	gebr_geoxml_program_parameter_get_range_properties(GEBR_GEOXML_PROGRAM_PARAMETER(widget->parameter),
 		&min_str, &max_str, &inc_str, &digits_str);
 
-	digits_str = (gchar*)libgebr_validate_int((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
+	digits_str = (gchar*)gebr_validate_int((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
 	gtk_entry_set_text(entry, digits_str);
 	digits = atof(digits_str);
 

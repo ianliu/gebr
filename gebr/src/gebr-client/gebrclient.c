@@ -28,7 +28,7 @@ struct gebr_client gebr_client;
 gboolean
 gebr_client_init(const gchar * server_address)
 {
-	libgebr_init();
+	gebr_libinit();
 
 	gebr_client.server = server_new(server_address);
 
@@ -44,7 +44,7 @@ gebr_client_quit(void)
 }
 
 void
-gebr_client_message(enum log_message_type type, const gchar * message, ...)
+gebr_client_message(enum gebr_log_message_type type, const gchar * message, ...)
 {
 	gchar *		string;
 	va_list		argp;

@@ -150,12 +150,12 @@ int main (int argc, char** argv)
                 if (dates || all){
                         printf("Created:       %s\n",
                                strlen(gebr_geoxml_document_get_date_created(doc)) ? 
-                               localized_date(gebr_geoxml_document_get_date_created(doc)) :
+                               gebr_localized_date(gebr_geoxml_document_get_date_created(doc)) :
                                report("", EMPTY));
 
                         printf("Modified:      %s\n",
                                strlen(gebr_geoxml_document_get_date_modified(doc)) ? 
-                               localized_date(gebr_geoxml_document_get_date_modified(doc)) :
+                               gebr_localized_date(gebr_geoxml_document_get_date_modified(doc)) :
                                report("", EMPTY));
                 }
 		

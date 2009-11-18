@@ -284,7 +284,7 @@ help_show(const gchar * help)
 	help_fix_css(prepared_html);
 
 	/* create temporary filename */
-	html_path = make_temp_filename("debr_XXXXXX.html");
+	html_path = gebr_make_temp_filename("debr_XXXXXX.html");
 
 	/* open temporary file with help from XML */
 	html_fp = fopen(html_path->str, "w");
@@ -360,7 +360,7 @@ help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 	help_fix_css(prepared_html);
 
 	/* load html into a temporary file */
-	html_path = make_temp_filename("debr_XXXXXX.html");
+	html_path = gebr_make_temp_filename("debr_XXXXXX.html");
 	fp = fopen(html_path->str, "w");
 	if (fp == NULL) {
 		debr_message(LOG_ERROR, _("Could not create a temporary file."));
@@ -397,7 +397,7 @@ help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 		gchar *	converted;
 
 		/* TODO: what else should be tried? */
-		converted = g_simple_locale_to_utf8(prepared_html->str);
+		converted = gebr_locale_to_utf8(prepared_html->str);
 		if (converted == NULL) {
 			g_free(converted);
 			debr_message(LOG_ERROR, _("Please change the help encoding to UTF-8"));

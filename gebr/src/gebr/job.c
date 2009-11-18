@@ -189,7 +189,7 @@ job_fill_info(struct job * job)
 	g_string_append_printf(info, _("Job executed at %s by %s\n"),
 		job->server->gebr_comm->protocol->hostname->str, job->hostname->str);
 	/* start date */
-	g_string_append_printf(info, "%s %s\n", _("Start date:"), localized_date(job->start_date->str));
+	g_string_append_printf(info, "%s %s\n", _("Start date:"), gebr_localized_date(job->start_date->str));
 	/* issues */
 	if (job->issues->len)
 		g_string_append_printf(info, "\n%s\n%s", _("Issues:"), job->issues->str);
@@ -201,7 +201,7 @@ job_fill_info(struct job * job)
 		g_string_append(info, job->output->str);
 	/* finish date*/
 	if (job->finish_date->len)
-		g_string_append_printf(info, "\n%s %s", _("Finish date:"), localized_date(job->finish_date->str));
+		g_string_append_printf(info, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
 	/* to view */
 	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, info->str, info->len);
 
@@ -293,10 +293,10 @@ job_update_label(struct job * job)
 	/* initialization */
 	label = g_string_new(NULL);
 
-	g_string_printf(label, "job at %s: %s", job->hostname->str, localized_date(job->start_date->str));
+	g_string_printf(label, "job at %s: %s", job->hostname->str, gebr_localized_date(job->start_date->str));
 	if (job->status != JOB_STATUS_RUNNING) {
 		g_string_append(label, " - ");
-		g_string_append(label, localized_date(job->finish_date->str));
+		g_string_append(label, gebr_localized_date(job->finish_date->str));
 	}
 	gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), label->str);
 
@@ -365,7 +365,7 @@ job_update_status(struct job * job)
 	/* job label */
 	job_update_label(job);
 	/* job info */
-	g_string_printf(finish_date, "\n%s %s", _("Finish date:"), localized_date(job->finish_date->str));
+	g_string_printf(finish_date, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
 	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
 	gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, finish_date->str, finish_date->len);
 	if (gebr.config.job_log_auto_scroll) {

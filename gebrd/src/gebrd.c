@@ -100,7 +100,7 @@ gebrd_quit(void)
  *
  */
 void
-gebrd_message(enum log_message_type type, const gchar * message, ...)
+gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
 {
 	gchar *		string;
 	va_list		argp;
@@ -114,7 +114,7 @@ gebrd_message(enum log_message_type type, const gchar * message, ...)
 	string = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
-	log_add_message(gebrd.log, type, string);
+	gebr_log_add_message(gebrd.log, type, string);
 	if (gebrd.options.foreground == TRUE) {
 		if (type != LOG_ERROR)
 			fprintf(stdout, "%s\n", string);

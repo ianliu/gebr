@@ -63,7 +63,7 @@ struct gebr {
 	GebrGeoXmlProgram *			program;
 
 	GList *				flow_clipboard;
-	struct log *			log;
+	struct gebr_log *			log;
 	GSList *			tmpfiles;
 
 	/* Persistant GUI */
@@ -123,7 +123,7 @@ void
 gebr_config_save(gboolean verbose);
 
 void
-gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...);
+gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...);
 
 int
 gebr_install_private_menus(gchar **menu, gboolean overwrite);

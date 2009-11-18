@@ -30,7 +30,7 @@
 2009-08-04  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
 	* flags can't be list anymore in debr (Fixes issue 38)
-	* - added libgebr_directory_foreach_file
+	* - added gebr_directory_foreach_file
 	  - support for new system menu filename (Fixes issue 33)
 
 2009-08-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
@@ -164,7 +164,7 @@
 	  - libgebr is now and independent library
 	  - option to build libgebr with no GUI linkage
 	  - fixed libgebr internacionalization with the introduction of
-	  libgebr_init
+	  gebr_libinit
 
 2009-05-08  Ricardo Biloti <biloti@gmail.com>
 
@@ -788,7 +788,7 @@
 	* remove system code (the strange error desapeared when server code
 	  went to libgebr)
 	* - added define.h in libgebr for static mode support
-	  - changed names of enum log_message_type
+	  - changed names of enum gebr_log_message_type
 	  - ported server infrastruture to libgebr-gebr_comm for further use in
 	  gebr-run
 
@@ -870,7 +870,7 @@
 	  - minor changes
 	* - fix header encoding problems and copyright
 	  - moved date, tooltip and confirm_action_dialog to libgebr
-	  - added g_simple_locale_to_utf8 to libgebr
+	  - added gebr_locale_to_utf8 to libgebr
 	  - improved set_tooltip
 	* add support for user data in popup callback
 	* added gtk_widget_set_popup_callback

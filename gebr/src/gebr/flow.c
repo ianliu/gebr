@@ -289,7 +289,7 @@ flow_export(void)
 		goto cont1;
 	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 	g_string_assign(path, tmp);
-	append_filename_extension(path, ".flw");
+	gebr_append_filename_extension(path, ".flw");
 	filename = g_path_get_basename(path->str);
 
 	/* export current flow to disk */
@@ -408,7 +408,7 @@ flow_export_as_menu(void)
 		goto out;
 	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
 	path = g_string_new(tmp);
-	append_filename_extension(path, ".mnu");
+	gebr_append_filename_extension(path, ".mnu");
 	filename = g_path_get_basename(path->str);
 
 	/* first clone it */
@@ -445,8 +445,8 @@ flow_export_as_menu(void)
 	gebr_geoxml_flow_io_set_error(flow, "");
 
 	gebr_geoxml_flow_set_date_last_run(flow, "");
-	gebr_geoxml_document_set_date_created(GEBR_GEOXML_DOC(flow), iso_date());
-	gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(flow), iso_date());
+	gebr_geoxml_document_set_date_created(GEBR_GEOXML_DOC(flow), gebr_iso_date());
+	gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(flow), gebr_iso_date());
 
 	gebr_geoxml_document_set_help(GEBR_GEOXML_DOC(flow), "");
 	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(flow), filename);
@@ -542,7 +542,7 @@ flow_run(struct server * server)
 
 	/* TODO: check save */
 	/* Save manualy to preserve run date */
-	gebr_geoxml_flow_set_date_last_run(gebr.flow, iso_date());
+	gebr_geoxml_flow_set_date_last_run(gebr.flow, gebr_iso_date());
 	path = document_get_path(gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(gebr.flow)));
 	gebr_geoxml_document_save(GEBR_GEOXML_DOC(gebr.flow), path->str);
 	flow_browse_info_update();

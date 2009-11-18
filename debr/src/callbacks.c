@@ -244,7 +244,7 @@ on_menu_save_as_activate(void)
 	/* Build path */
 	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 	path = g_string_new(tmp);
-	append_filename_extension(path, ".mnu");
+	gebr_append_filename_extension(path, ".mnu");
 
 	/* Get filename */
 	filename = g_path_get_basename(path->str);

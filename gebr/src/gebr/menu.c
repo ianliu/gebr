@@ -124,7 +124,7 @@ menu_compare_times(const gchar * directory, time_t index_time, gboolean recursiv
 
 	refresh_needed = FALSE;
 	path = g_string_new(NULL);
-	libgebr_directory_foreach_file(filename, directory) {
+	gebr_directory_foreach_file(filename, directory) {
 		struct stat	file_stat;
 
 		g_string_printf(path, "%s/%s", directory, filename);
@@ -179,7 +179,7 @@ menu_refresh_needed(void)
 	/* Times for system menus directories */
 	stat(GEBR_SYS_MENUS_DIR, &_stat);
 	menudirs_time = _stat.st_mtime;
-	libgebr_directory_foreach_file(subdir, GEBR_SYS_MENUS_DIR) {
+	gebr_directory_foreach_file(subdir, GEBR_SYS_MENUS_DIR) {
 		g_string_printf(menudir_path, "%s/%s", GEBR_SYS_MENUS_DIR, subdir);
 		if (!g_file_test(menudir_path->str, G_FILE_TEST_IS_DIR))
 			continue;
@@ -329,7 +329,7 @@ menu_list_create_index(void)
 	fclose(index_fp);
 
 	/* Sort index */
-	sort_file = make_temp_filename("gebrmenusXXXXXX.tmp");
+	sort_file = gebr_make_temp_filename("gebrmenusXXXXXX.tmp");
 	g_string_printf(sort_cmd_line, "sort %s >%s; mv %s %s",
 		path->str, sort_file->str, sort_file->str, path->str);
 	system(sort_cmd_line->str);
@@ -385,7 +385,7 @@ menu_scan_directory(const gchar * directory, gboolean system_dir, FILE * index_f
 	GString *		path;
 
 	path = g_string_new(NULL);
-	libgebr_directory_foreach_file(filename, directory) {
+	gebr_directory_foreach_file(filename, directory) {
 		GebrGeoXmlDocument *	menu;
 		GebrGeoXmlSequence *	category;
 

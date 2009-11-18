@@ -43,6 +43,6 @@ void
 gebr_client_quit(void);
 
 void
-gebr_client_message(enum log_message_type type, const gchar * message, ...);
+gebr_client_message(enum gebr_log_message_type type, const gchar * message, ...);
 
 #endif //__GEBR_CLIENT_H

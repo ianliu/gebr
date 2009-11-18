@@ -238,7 +238,7 @@ __gebr_geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
  * If you use 'break' then you have to free it yourself.
  */
 #define __gebr_geoxml_foreach_element(element, list) \
-	libgebr_foreach_gslist(element, list)
+	gebr_foreach_gslist(element, list)
 
 /**
  * \internal

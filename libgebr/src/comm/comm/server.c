@@ -32,7 +32,7 @@
  */
 
 static void
-gebr_comm_server_log_message(struct gebr_comm_server * gebr_comm_server, enum log_message_type type, const gchar * message, ...);
+gebr_comm_server_log_message(struct gebr_comm_server * gebr_comm_server, enum gebr_log_message_type type, const gchar * message, ...);
 
 static void
 local_run_server_read(GebrCommProcess * process, struct gebr_comm_server * gebr_comm_server);
@@ -312,7 +312,7 @@ gebr_comm_server_run_flow(struct gebr_comm_server * gebr_comm_server, GebrGeoXml
  */
 
 static void
-gebr_comm_server_log_message(struct gebr_comm_server * gebr_comm_server, enum log_message_type type, const gchar * message, ...)
+gebr_comm_server_log_message(struct gebr_comm_server * gebr_comm_server, enum gebr_log_message_type type, const gchar * message, ...)
 {
 	gchar *		string;
 	va_list		argp;

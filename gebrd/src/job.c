@@ -167,7 +167,7 @@ job_process_add_output(struct job * job, GString * destination, GString * output
 		gchar *	converted;
 
 		/* TODO: what else should be tried? */
-		converted = g_simple_locale_to_utf8(output->str);
+		converted = gebr_locale_to_utf8(output->str);
 		if (converted == NULL) {
 			g_string_assign(final_output, converted);
 			gebrd_message(LOG_ERROR, _("Job '%s' sent output not in UTF-8."), job->title->str);
@@ -212,7 +212,7 @@ job_process_finished(GebrCommProcess * process, struct job * job)
 	GList *	link;
 
 	/* set the finish date */
-	g_string_assign(job->finish_date, iso_date());
+	g_string_assign(job->finish_date, gebr_iso_date());
 
 	/* what make it quit? */
 	g_string_assign(job->status, (job->user_finished == FALSE) ? "finished" : "canceled");
@@ -473,7 +473,7 @@ out:
 	g_string_assign(job->hostname, client->protocol->hostname->str);
 	g_string_assign(job->title, gebr_geoxml_document_get_title(document));
 	/* set the start date */
-	g_string_assign(job->start_date, iso_date());
+	g_string_assign(job->start_date, gebr_iso_date());
 
 	return success;
 }

@@ -58,7 +58,7 @@ struct gebr_comm_server {
 		SERVER_ERROR_SSH,
 	} error;
 	const struct gebr_comm_server_ops {
-		void		(*log_message)(enum log_message_type type, const gchar * message);
+		void		(*log_message)(enum gebr_log_message_type type, const gchar * message);
 		GString *	(*ssh_login)(const gchar * title, const gchar * message);
 		gboolean	(*ssh_question)(const gchar * title, const gchar * message);
 		void		(*parse_messages)(struct gebr_comm_server * gebr_comm_server, gpointer user_data);

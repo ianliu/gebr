@@ -588,10 +588,10 @@ on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data)
 	value = (gchar*)gtk_entry_get_text(GTK_ENTRY(data->value_entry));
 	switch (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter))) {
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
-		value = (gchar*)libgebr_validate_int(value, NULL, NULL);
+		value = (gchar*)gebr_validate_int(value, NULL, NULL);
 		break;
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
-		value = (gchar*)libgebr_validate_float(value, NULL, NULL);
+		value = (gchar*)gebr_validate_float(value, NULL, NULL);
 		break;
 	default:
 		break;
@@ -687,10 +687,10 @@ struct dict_edit_data * data)
 	case DICT_EDIT_VALUE:
 		switch (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter))) {
 		case GEBR_GEOXML_PARAMETER_TYPE_INT:
-			new_text = (gchar*)libgebr_validate_int(new_text, NULL, NULL);
+			new_text = (gchar*)gebr_validate_int(new_text, NULL, NULL);
 			break;
 		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
-			new_text = (gchar*)libgebr_validate_float(new_text, NULL, NULL);
+			new_text = (gchar*)gebr_validate_float(new_text, NULL, NULL);
 			break;
 		default:
 			break;

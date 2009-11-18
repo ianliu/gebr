@@ -23,7 +23,7 @@
 #include "libgebr.h"
 
 void
-libgebr_init(void)
+gebr_libinit(void)
 {
 	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");

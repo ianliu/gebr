@@ -451,7 +451,7 @@ __validate_int(GtkEntry * entry, struct gebr_gui_parameter_widget * gebr_gui_par
 	gchar *	min, * max;
 
 	gebr_geoxml_program_parameter_get_number_min_max(gebr_gui_parameter_widget->program_parameter, &min, &max);
-	gtk_entry_set_text(entry, libgebr_validate_int(
+	gtk_entry_set_text(entry, gebr_validate_int(
 		gtk_entry_get_text(entry), min, max));
 }
 
@@ -467,7 +467,7 @@ __validate_float(GtkEntry * entry, struct gebr_gui_parameter_widget * gebr_gui_p
 	gchar *	min, * max;
 
 	gebr_geoxml_program_parameter_get_number_min_max(gebr_gui_parameter_widget->program_parameter, &min, &max);
-	gtk_entry_set_text(entry, libgebr_validate_float(
+	gtk_entry_set_text(entry, gebr_validate_float(
 		gtk_entry_get_text(entry), min, max));
 }
 

@@ -175,7 +175,7 @@ project_list_populate(void)
 	project_line_free();
 	flow_free();
 
-	libgebr_directory_foreach_file(filename, gebr.config.data->str) {
+	gebr_directory_foreach_file(filename, gebr.config.data->str) {
 		GtkTreeIter		project_iter;
 
 		GebrGeoXmlProject *		project;

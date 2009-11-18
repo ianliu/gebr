@@ -105,7 +105,7 @@ void
 debr_config_save(void);
 
 void
-debr_message(enum log_message_type type, const gchar * message, ...);
+debr_message(enum gebr_log_message_type type, const gchar * message, ...);
 
 gboolean
 debr_has_category(const gchar * category, gboolean add);

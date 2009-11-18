@@ -266,8 +266,8 @@ project_line_info_update(void)
 	g_free(markup);
 
 	/* Dates */
-	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created), localized_date(gebr_geoxml_document_get_date_created(gebr.project_line)));
-	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified), localized_date(gebr_geoxml_document_get_date_modified(gebr.project_line)));
+	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created), gebr_localized_date(gebr_geoxml_document_get_date_created(gebr.project_line)));
+	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified), gebr_localized_date(gebr_geoxml_document_get_date_modified(gebr.project_line)));
 
 	/* Line's paths */
 	if (!is_project) {
@@ -405,7 +405,7 @@ project_line_import(void)
 		goto out2;
 	}
 
-	tmp_dir = libgebr_make_temp_directory();
+	tmp_dir = gebr_temp_directory_create();
 	g_string_printf(command, "bash -c 'cd %s; tar xzfv %s'", tmp_dir->str, filename);
 	if (!g_spawn_command_line_sync(command->str, &output, NULL, &exit_status, &error))
 		goto err;
@@ -474,7 +474,7 @@ project_line_import(void)
 		}
 	}
 
-	libgebr_destroy_temp_directory(tmp_dir);
+	gebr_temp_directory_destroy(tmp_dir);
 	gebr_message(LOG_INFO, FALSE, TRUE, _("Imported successful"));
 	g_strfreev(files);
 	goto out;
@@ -565,7 +565,7 @@ project_line_export(void)
 		goto out;
 	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 	g_string_assign(filename, tmp);
-	append_filename_extension(filename, extension);
+	gebr_append_filename_extension(filename, extension);
 
 	current_dir = g_get_current_dir();
 	g_chdir(gebr.config.data->str);

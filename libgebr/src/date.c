@@ -24,12 +24,12 @@
 #include "utils.h"
 
 /*
- * Function: iso_date
+ * Function: gebr_iso_date
  * Returns an (static allocated) string with the current date in ISO-8601 format
  *
  */
 gchar *
-iso_date(void)
+gebr_iso_date(void)
 {
 	static gchar	date[100];
 	GTimeVal	time_val;
@@ -43,7 +43,7 @@ iso_date(void)
 
 	/* convert to utf-8 if necessary */
 	if (g_utf8_validate(date, -1, NULL) == FALSE) {
-		tmp = g_simple_locale_to_utf8(date);
+		tmp = gebr_locale_to_utf8(date);
 		if (tmp != NULL) {
 			strcpy(date, tmp);
 			g_free(tmp);
@@ -55,12 +55,12 @@ iso_date(void)
 }
 
 /*
- * Function: localized_date
- * Returns an (static allocated) string with _iso_date_ converted to a localized date
- * If _iso_date_ is NULL, current date is used.
+ * Function: gebr_localized_date
+ * Returns an (static allocated) string with _gebr_iso_date_ converted to a localized date
+ * If _gebr_iso_date_ is NULL, current date is used.
  */
 const gchar *
-localized_date(const gchar * iso_date)
+gebr_localized_date(const gchar * iso_date)
 {
 	static gchar	date[100];
 	GTimeVal	time_val;
@@ -79,7 +79,7 @@ localized_date(const gchar * iso_date)
 	if (g_utf8_validate(date, -1, NULL) == FALSE) {
 		gchar *	tmp;
 
-		tmp = g_simple_locale_to_utf8(date);
+		tmp = gebr_locale_to_utf8(date);
 		if (tmp != NULL) {
 			strcpy(date, tmp);
 			g_free(tmp);
@@ -91,7 +91,7 @@ localized_date(const gchar * iso_date)
 }
 
 GTimeVal
-libgebr_iso_date_to_g_time_val(const gchar * iso_date)
+gebr_iso_date_to_g_time_val(const gchar * iso_date)
 {
 	GTimeVal	time_val;
 

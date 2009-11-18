@@ -15,18 +15,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MISC_DATE_H
-#define __MISC_DATE_H
+#ifndef __GEBR_DATE_H
+#define __GEBR_DATE_H
 
 #include <glib.h>
 
 gchar *
-iso_date(void);
+gebr_iso_date(void);
 
 const gchar *
-localized_date(const gchar * iso_date);
+gebr_localized_date(const gchar * iso_date);
 
 GTimeVal
-libgebr_iso_date_to_g_time_val(const gchar * iso_date);
+gebr_iso_date_to_g_time_val(const gchar * iso_date);
 
-#endif //__MISC_DATE_H
+#endif //__GEBR_DATE_H

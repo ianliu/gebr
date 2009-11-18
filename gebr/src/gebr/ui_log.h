@@ -44,6 +44,6 @@ void
 log_set_message(struct ui_log * ui_log, const gchar * message);
 
 void
-log_add_message_to_list(struct ui_log * ui_log, struct log_message * message);
+gebr_log_add_message_to_list(struct ui_log * ui_log, struct gebr_log_message * message);
 
 #endif //__UI_LOG_H

@@ -34,7 +34,7 @@
  */
 
 static void
-server_log_message(enum log_message_type type, const gchar * message)
+server_log_message(enum gebr_log_message_type type, const gchar * message)
 {
 	gebr_client_message(type, message);
 }

@@ -219,7 +219,7 @@ help_load(const gchar *fname)
                 gchar *	converted;
                                         
                 /* TODO: what else should be tried? */
-                converted = g_simple_locale_to_utf8(html_content->str);
+                converted = gebr_locale_to_utf8(html_content->str);
                 if (converted == NULL) {
                         g_free(converted);
                         fprintf(stderr, "Please change the help encoding to UTF-8");

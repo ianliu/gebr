@@ -33,7 +33,7 @@
  * \p extension must include the dot (e.g. ".mnu")
  */
 void
-append_filename_extension(GString * filename, const gchar * extension)
+gebr_append_filename_extension(GString * filename, const gchar * extension)
 {
 	if (!g_str_has_suffix(filename->str, extension))
 		g_string_append(filename, extension);
@@ -47,7 +47,7 @@ append_filename_extension(GString * filename, const gchar * extension)
  * \p template should be the absolute path of the file.
  */
 GString *
-make_unique_filename(const gchar * template)
+gebr_make_unique_filename(const gchar * template)
 {
 	GString *	path;
 
@@ -63,11 +63,11 @@ make_unique_filename(const gchar * template)
 
 /**
  * Create a temporary directory inside GeBR's temporary diretory.
- * Use \ref libgebr_destroy_temp_directory after use to free string memory and
+ * Use \ref gebr_temp_directory_destroy after use to free string memory and
  * delete directory's contents
  */
 GString *
-libgebr_make_temp_directory(void)
+gebr_temp_directory_create(void)
 {
 	GString *	path;
 
@@ -79,7 +79,7 @@ libgebr_make_temp_directory(void)
 	close(g_mkstemp(path->str));
 	unlink(path->str);
 
-	g_mkdir(path->str, home_mode());
+	g_mkdir(path->str, gebr_home_mode());
 
 	return path;
 }
@@ -88,7 +88,7 @@ libgebr_make_temp_directory(void)
  * Delete dir at \p path and free it.
  */
 void
-libgebr_destroy_temp_directory(GString * path)
+gebr_temp_directory_destroy(GString * path)
 {
 	g_string_prepend(path, "rm -fr ");
 	system(path->str);
@@ -105,7 +105,7 @@ libgebr_destroy_temp_directory(GString * path)
  * The string returned is a path to the file on the temporary directory.
  */
 GString *
-make_temp_filename(const gchar * template)
+gebr_make_temp_filename(const gchar * template)
 {
 	GString *	path;
 
@@ -124,7 +124,7 @@ make_temp_filename(const gchar * template)
  * preserving permissions when creating files
  */
 int
-home_mode(void)
+gebr_home_mode(void)
 {
 	struct stat	home_stat;
 	gchar *		home;
@@ -144,7 +144,7 @@ gebr_make_config_dir(const gchar * dirname)
 	path = g_string_new(NULL);
 	g_string_printf(path, "%s/.gebr/%s", getenv("HOME"), dirname);
 	if (g_file_test(path->str, G_FILE_TEST_IS_DIR) == FALSE)
-		if (g_mkdir(path->str, home_mode()))
+		if (g_mkdir(path->str, gebr_home_mode()))
 			ret = FALSE;
 	g_string_free(path, TRUE);
 
@@ -220,7 +220,7 @@ return ret;
  * Simplified version of g_locale_to_utf8
  */
 gchar *
-g_simple_locale_to_utf8(const gchar * string)
+gebr_locale_to_utf8(const gchar * string)
 {
 	gchar *		output;
 	gsize		bytes_read;
@@ -242,7 +242,7 @@ g_key_file_has_key_woe(GKeyFile * key_file, const gchar * group, const gchar * k
 }
 
 GString *
-g_key_file_load_string_key(GKeyFile * key_file, const gchar * group, const gchar * key, const gchar * default_value)
+gebr_g_key_file_load_string_key(GKeyFile * key_file, const gchar * group, const gchar * key, const gchar * default_value)
 {
 	GString *	value;
 	gchar *		tmp;
@@ -258,7 +258,7 @@ g_key_file_load_string_key(GKeyFile * key_file, const gchar * group, const gchar
 }
 
 gboolean
-g_key_file_load_boolean_key(GKeyFile * key_file, const gchar * group, const gchar * key, gboolean default_value)
+gebr_g_key_file_load_boolean_key(GKeyFile * key_file, const gchar * group, const gchar * key, gboolean default_value)
 {
 	gboolean	value;
 	gboolean	tmp;
@@ -273,7 +273,7 @@ g_key_file_load_boolean_key(GKeyFile * key_file, const gchar * group, const gcha
 }
 
 int
-g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * key, int default_value)
+gebr_g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * key, int default_value)
 {
 	int		value;
 	int		tmp;
@@ -288,11 +288,11 @@ g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * 
 }
 
 /*
- * Function: libgebr_validate_int
+ * Function: gebr_validate_int
  * Validate an int parameter
  */
 const gchar *
-libgebr_validate_int(const gchar * text_value, const gchar * min, const gchar * max)
+gebr_validate_int(const gchar * text_value, const gchar * min, const gchar * max)
 {
 	static gchar	number[31];
 	gdouble		value;
@@ -311,11 +311,11 @@ libgebr_validate_int(const gchar * text_value, const gchar * min, const gchar * 
 }
 
 /*
- * Function: libgebr_validate_float
+ * Function: gebr_validate_float
  * Validate a float parameter
  */
 const gchar *
-libgebr_validate_float(const gchar * text_value, const gchar * min, const gchar * max)
+gebr_validate_float(const gchar * text_value, const gchar * min, const gchar * max)
 {
 	static gchar	number[31];
 	gchar *		last;

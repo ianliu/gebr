@@ -637,7 +637,7 @@ flow_io_run(GebrGeoXmlFlowServer * server_io)
 		return;
 
 	gebr_geoxml_flow_server_set_date_last_run(server_io,
-		iso_date());
+		gebr_iso_date());
 	gebr_geoxml_flow_io_set_input(gebr.flow,
 		gebr_geoxml_flow_server_io_get_input(server_io));
 	gebr_geoxml_flow_io_set_output(gebr.flow,

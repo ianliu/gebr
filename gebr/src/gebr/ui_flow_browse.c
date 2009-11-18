@@ -270,11 +270,11 @@ flow_browse_info_update(void)
 	g_free(markup);
 	/* Dates */
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.created),
-			   localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOC(gebr.flow))));
+			   gebr_localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOC(gebr.flow))));
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.modified),
-			   localized_date(gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOC(gebr.flow))));
+			   gebr_localized_date(gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOC(gebr.flow))));
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun),
-			   localized_date(gebr_geoxml_flow_get_date_last_run(gebr.flow)));
+			   gebr_localized_date(gebr_geoxml_flow_get_date_last_run(gebr.flow)));
 	/* I/O labels */
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Input:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.input_label), markup);

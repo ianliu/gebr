@@ -234,7 +234,7 @@ menu_new(gboolean edit)
 	debr.menu = gebr_geoxml_flow_new();
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(debr.menu), debr.config.name->str);
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(debr.menu), debr.config.email->str);
-	gebr_geoxml_document_set_date_created(GEBR_GEOXML_DOC(debr.menu), iso_date());
+	gebr_geoxml_document_set_date_created(GEBR_GEOXML_DOC(debr.menu), gebr_iso_date());
 
 	switch (menu_get_selected(&iter)) {
 		case ITER_FILE:
@@ -328,7 +328,7 @@ menu_load_user_directory(void)
 				-1);
 
 		path = g_string_new(NULL);
-		libgebr_directory_foreach_file(filename, debr.config.menu_dir[i]) {
+		gebr_directory_foreach_file(filename, debr.config.menu_dir[i]) {
 			if (fnmatch ("*.mnu", filename, 1))
 				continue;
 
@@ -392,8 +392,8 @@ menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select)
 	filename = g_path_get_basename(path);
 	date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(menu));
 	tmp = (strlen(date))
-		? g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(date).tv_sec)
-		: g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
+		? g_strdup_printf("%ld", gebr_iso_date_to_g_time_val(date).tv_sec)
+		: g_strdup_printf("%ld", gebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
 
 	if (gebr_gui_gtk_tree_iter_equal_to(&debr.ui_menu.iter_other, parent)) {
 		dirname = g_path_get_dirname(path);
@@ -484,10 +484,10 @@ menu_save(GtkTreeIter * iter)
 		gebr_geoxml_program_set_menu(GEBR_GEOXML_PROGRAM(program), filename, index++);
 		gebr_geoxml_sequence_next(&program);
 	}
-	gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(menu), iso_date());
+	gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(menu), gebr_iso_date());
 	gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path);
 
-	tmp = g_strdup_printf("%ld", libgebr_iso_date_to_g_time_val(
+	tmp = g_strdup_printf("%ld", gebr_iso_date_to_g_time_val(
 		gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(menu))).tv_sec);
 	gtk_tree_store_set(debr.ui_menu.model, iter, MENU_MODIFIED_DATE, tmp, -1);
 	menu_get_selected(&selected_iter);
@@ -1162,9 +1162,9 @@ menu_details_update(void)
 	g_free(markup);
 
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.created_date_label),
-		localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOCUMENT(debr.menu))));
+		gebr_localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOCUMENT(debr.menu))));
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.modified_date_label),
-		localized_date(gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(debr.menu))));
+		gebr_localized_date(gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(debr.menu))));
 
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Categories: "));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.category_label), markup);

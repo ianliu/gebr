@@ -146,7 +146,7 @@ log_set_message(struct ui_log * ui_log, const gchar * message)
 }
 
 void
-log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
+gebr_log_add_message_to_list(struct ui_log * ui_log, struct gebr_log_message * message)
 {
 	GtkTreeIter		iter;
 	GtkTreeSelection *	selection;
@@ -155,7 +155,7 @@ log_add_message_to_list(struct ui_log * ui_log, struct log_message * message)
 
 	/* date */
 	markuped_date = g_string_new(NULL);
-	g_string_printf(markuped_date, "<small>%s</small>", localized_date(message->date->str));
+	g_string_printf(markuped_date, "<small>%s</small>", gebr_localized_date(message->date->str));
 	/* icon type */
 	switch (message->type) {
 	case LOG_START:

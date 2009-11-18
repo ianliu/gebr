@@ -24,6 +24,6 @@
 #include "utils.h"
 
 void
-libgebr_init(void);
+gebr_libinit(void);
 
 #endif // __H

@@ -28,7 +28,7 @@ struct gebrd {
 	GebrCommListenSocket *	listen_socket;
 	GList *			clients;
 	GList *			jobs;
-	struct log *		log;
+	struct gebr_log *		log;
 	gchar			hostname[256];
 
 	GString *		run_filename;
@@ -48,7 +48,7 @@ void
 gebrd_quit(void);
 
 void
-gebrd_message(enum log_message_type type, const gchar * message, ...);
+gebrd_message(enum gebr_log_message_type type, const gchar * message, ...);
 
 guint8
 gebrd_get_x11_redirect_display(void);

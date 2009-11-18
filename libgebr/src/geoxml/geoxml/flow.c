@@ -456,7 +456,7 @@ gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, const gchar * comment)
 	revision = (GebrGeoXmlRevision*)__gebr_geoxml_insert_new_element(
 		gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(flow)),
 		"revision", (GdomeElement*)first_revision);
-	__gebr_geoxml_set_attr_value((GdomeElement*)revision, "date", iso_date());
+	__gebr_geoxml_set_attr_value((GdomeElement*)revision, "date", gebr_iso_date());
 	__gebr_geoxml_set_attr_value((GdomeElement*)revision, "comment", comment);
 
 	revision_flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
@@ -511,7 +511,7 @@ gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** flow,
 	if (flow != NULL)
 		*flow = (gchar*)__gebr_geoxml_get_element_value((GdomeElement*)revision);
 	if (date != NULL)
-		*date = (gchar*)localized_date(__gebr_geoxml_get_attr_value((GdomeElement*)revision, "date"));
+		*date = (gchar*)gebr_localized_date(__gebr_geoxml_get_attr_value((GdomeElement*)revision, "date"));
 	if (comment != NULL)
 		*comment = (gchar*)__gebr_geoxml_get_attr_value((GdomeElement*)revision, "comment");
 }

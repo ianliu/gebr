@@ -38,7 +38,7 @@ debr_init(void)
 {
 	gboolean configured;
 
-	libgebr_init();
+	gebr_libinit();
 
 	configured = debr_config_load();
 
@@ -125,11 +125,11 @@ debr_config_load(void)
 	debr.config.key_file = g_key_file_new();
 	g_key_file_load_from_file(debr.config.key_file, debr.config.path->str, G_KEY_FILE_NONE, &error);
 
-	debr.config.name = g_key_file_load_string_key(debr.config.key_file, "general", "name", g_get_real_name());
-	debr.config.email = g_key_file_load_string_key(debr.config.key_file, "general", "email", g_get_user_name());
+	debr.config.name = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "name", g_get_real_name());
+	debr.config.email = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "email", g_get_user_name());
 	debr.config.menu_dir = g_key_file_get_string_list(debr.config.key_file, "general", "menu_dir", NULL, NULL);
-	debr.config.browser = g_key_file_load_string_key(debr.config.key_file, "general", "browser", "firefox");
-	debr.config.htmleditor = g_key_file_load_string_key(debr.config.key_file, "general", "htmleditor", "gedit");
+	debr.config.browser = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "browser", "firefox");
+	debr.config.htmleditor = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "htmleditor", "gedit");
 
 	if (debr.config.menu_dir == NULL || debr.config.menu_dir[0] == NULL)
 		return FALSE;
@@ -167,7 +167,7 @@ debr_config_save(void)
  * Log a message. If in_statusbar is TRUE it is writen to status bar.
  */
 void
-debr_message(enum log_message_type type, const gchar * message, ...)
+debr_message(enum gebr_log_message_type type, const gchar * message, ...)
 {
 	gchar *		string;
 	va_list		argp;

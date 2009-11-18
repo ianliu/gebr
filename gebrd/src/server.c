@@ -54,7 +54,7 @@ server_init(void)
 	GString *		log_filename;
 	FILE *			run_fp;
 
-	libgebr_init();
+	gebr_libinit();
 
 	/* from libgebr-misc */
 	if (gebr_create_config_dirs() == FALSE) {
@@ -115,7 +115,7 @@ server_init(void)
 	/* log */
 	log_filename = g_string_new(NULL);
 	g_string_printf(log_filename, "%s/.gebr/log/gebrd-%s.log", getenv("HOME"), gebrd.hostname);
-	gebrd.log = log_open(log_filename->str);
+	gebrd.log = gebr_log_open(log_filename->str);
 
 	/* connecting signal TERM */
 	act.sa_sigaction = (typeof(act.sa_sigaction))&gebrd_quit;
@@ -159,7 +159,7 @@ server_free(void)
 void
 server_quit(void)
 {
-	log_close(gebrd.log);
+	gebr_log_close(gebrd.log);
 
 	/* delete lock */
 	g_unlink(gebrd.run_filename->str);

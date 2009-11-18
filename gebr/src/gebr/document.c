@@ -71,7 +71,7 @@ document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
 	g_string_free(filename, TRUE);
 
 	/* get today's date */
-	gebr_geoxml_document_set_date_created(document, iso_date());
+	gebr_geoxml_document_set_date_created(document, gebr_iso_date());
 
 	return document;
 }
@@ -138,7 +138,7 @@ document_save(GebrGeoXmlDocument * document)
 	GString *	path;
 
 	/* get today's date */
-	gebr_geoxml_document_set_date_modified(document, iso_date());
+	gebr_geoxml_document_set_date_modified(document, gebr_iso_date());
 
 	/* TODO: check save */
 	path = document_get_path(gebr_geoxml_document_get_filename(document));
@@ -212,7 +212,7 @@ document_assembly_filename(const gchar * extension)
 
 	/* create it */
 	g_string_printf(aux, "%s/%s_XXXXXX.%s", gebr.config.data->str, date, extension);
-	path = make_unique_filename(aux->str);
+	path = gebr_make_unique_filename(aux->str);
 
 	/* get only what matters: the filename */
 	basename = g_path_get_basename(path->str);

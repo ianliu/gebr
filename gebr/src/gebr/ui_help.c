@@ -96,7 +96,7 @@ help_show(const gchar * help, const gchar * title)
 	}
 
 	/* initialization */
-	html_path = make_temp_filename("gebr_XXXXXX.html");
+	html_path = gebr_make_temp_filename("gebr_XXXXXX.html");
 
 	html_fp = fopen(html_path->str, "w");
 	if (html_fp == NULL) {
@@ -150,7 +150,7 @@ help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 	}
 
 	/* initialization */
-	html_path = make_temp_filename("gebr_XXXXXX.html");
+	html_path = gebr_make_temp_filename("gebr_XXXXXX.html");
 	cmd_line = g_string_new(NULL);
 	help = g_string_new(NULL);
 
