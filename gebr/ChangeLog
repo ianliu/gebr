@@ -72,7 +72,7 @@
 2009-07-03  Ricardo Biloti <biloti@gmail.com>
 
 	* install menu complains about overwriting, and overwrite
-	  command-line option added
+	  gebr_command-line option added
 
 2009-06-28  Ricardo Biloti <biloti@gmail.com>
 
@@ -124,7 +124,7 @@
 2009-06-16  Ricardo Biloti <biloti@gmail.com>
 
 	* open/edit help buttons in preferences for gebr a la debr
-	* - install-menu command line option for gebr
+	* - install-menu gebr_command line option for gebr
 	  - Portuguese translantion update
 
 2009-06-12  Ricardo Biloti <biloti@gmail.com>
@@ -177,7 +177,7 @@
 2009-05-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
 	* fixed IO in flow components tab when came from IO dialog
-	* fixed feature added in last commit
+	* fixed feature added in last gebr_commit
 	* fix bizarre bug!
 	* use $HOME/.gebr/gebrdata as data dir
 
@@ -260,7 +260,7 @@
 
 	* - fixed write in gsocket
 	  - more robust protocol error handling using a hash table for
-	  commands
+	  gebr_commands
 
 2009-03-25  Ricardo Biloti <biloti@gmail.com>
 
@@ -268,7 +268,7 @@
 
 2009-03-25  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* - reapply missed commit 1035
+	* - reapply missed gebr_commit 1035
 	  - strip flow to send to server
 
 2009-03-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
@@ -289,7 +289,7 @@
 	* selection for exclusive parameters in gebr was ignored
 	* no manual editing and value is hidden for list of enum value
 	  parameter
-	* fix errors in last commit
+	* fix errors in last gebr_commit
 	* use libgebr_gtk_tree_view_scroll_to_iter_cell
 	* fix filename tag bugs
 
@@ -329,7 +329,7 @@
 
 2009-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* ¡commit 1000! several UI tweaks
+	* ¡gebr_commit 1000! several UI tweaks
 
 2009-01-28  Ricardo Biloti <biloti@gmail.com>
 
@@ -361,8 +361,8 @@
 2009-01-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
 	* - first working version o gchannelsocket
-	  - g_stream_socket_connect
-	* - fixed _g_socket_address_get_sockaddr
+	  - gebr_comm_stream_socket_connect
+	* - fixed _gebr_comm_socket_address_get_sockaddr
 	  - fixes to gchannelsocket
 	* general refactoring in libgebr_comm to really support unix
 	  sockets
@@ -539,7 +539,7 @@
 
 2008-11-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* last commit with git commit's -a option
+	* last gebr_commit with git gebr_commit's -a option
 
 2008-08-11  Ricardo Biloti <biloti@gmail.com>
 
@@ -584,7 +584,7 @@
 
 2008-06-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* - added version commandline option to gebr and gebrd
+	* - added version gebr_commandline option to gebr and gebrd
 	  - gebrd: added defines.h and change foreground option name to
 	  interactive
 	* fix yes/no ssh message handling
@@ -611,7 +611,7 @@
 
 2008-04-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* missing stuff to be commited
+	* missing stuff to be gebr_commited
 	* initial refactoring work to support exclusive groups
 
 2008-04-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
@@ -669,7 +669,7 @@
 2008-03-12  Ricardo Biloti <biloti@gmail.com>
 
 	* - fix a case insensitive string comparison
-	  - escape command line string
+	  - escape gebr_command line string
 
 2008-03-07  Ricardo Biloti <biloti@gmail.com>
 
@@ -793,7 +793,7 @@
 	* fixed ssh login dialog
 	* - added define.h in libgebr for static mode support
 	  - changed names of enum log_message_type
-	  - ported server infrastruture to libgebr-comm for further use in
+	  - ported server infrastruture to libgebr-gebr_comm for further use in
 	  gebr-run
 
 2008-02-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
@@ -822,7 +822,7 @@
 
 	* - introduced misterious magic code that brings stability!
 	  - report ssh errors
-	* rollback to last commit's server.{c,h} in gebr
+	* rollback to last gebr_commit's server.{c,h} in gebr
 	* - improved client/server archtecture (still unstable)
 	  - general fixes
 
@@ -851,7 +851,7 @@
 
 2008-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* common code reuse of parameters for gebr and gebrme
+	* gebr_common code reuse of parameters for gebr and gebrme
 	* moved back parameters.* to gebr
 
 2008-01-11  Ricardo Biloti <biloti@gmail.com>
@@ -888,7 +888,7 @@
 	  - fix asking password twice
 	* - more reliable retrieve o magic cookie
 	  - enabled add local server button
-	* - common server structure
+	* - gebr_common server structure
 	  - better support for ssh login
 	* preliminary support login in with passwords and passphares on SSH
 
@@ -1013,7 +1013,7 @@
 
 2007-11-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* show error or warnings when assemblying flow command line
+	* show error or warnings when assemblying flow gebr_command line
 	* - fixed sockets behaviour on libgebr_misc
 	  - more run stuff
 
@@ -1030,9 +1030,9 @@
 2007-11-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
 	* second ssh try
-	* - fixes on GProcess
+	* - fixes on GebrCommProcess
 	  - more ssh work on gebr
-	  - fixes command QUT on gebrd
+	  - fixes gebr_command QUT on gebrd
 
 2007-11-12  Ricardo Biloti <biloti@gmail.com>
 
@@ -1241,7 +1241,7 @@
 	* sutivel added
 	* sutihalednmo added
 	* TODO enlarged again
-	* fake commit just to store a code to gebrme. Please ignore me
+	* fake gebr_commit just to store a code to gebrme. Please ignore me
 	* directory structure update and template for program/flow help
 	* directory structure of share changed
 	* single pngs shared through the code
@@ -1336,7 +1336,7 @@
 2007-08-26  Ricardo Biloti <biloti@gmail.com>
 
 	* clip parameter fixed
-	* command line options merged into a single parser
+	* gebr_command line options merged into a single parser
 	* Log to save configuration
 
 2007-08-26  Braulio Barros de Oliveira <brauliobo@gmail.com>

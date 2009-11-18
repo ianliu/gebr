@@ -44,7 +44,7 @@
 
 2009-05-20  Ricardo Biloti <biloti@gmail.com>
 
-	* fix escaped command-line string conflict with localed filenames
+	* fix escaped gebr_command-line string conflict with localed filenames
 	  fixed
 
 2009-05-13  Ricardo Biloti <biloti@gmail.com>
@@ -86,7 +86,7 @@
 
 	* - fixed write in gsocket
 	  - more robust protocol error handling using a hash table for
-	  commands
+	  gebr_commands
 
 2009-03-25  Ricardo Biloti <biloti@gmail.com>
 
@@ -230,7 +230,7 @@
 
 2008-06-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* - added version commandline option to gebr and gebrd
+	* - added version gebr_commandline option to gebr and gebrd
 	  - gebrd: added defines.h and change foreground option name to
 	  interactive
 	* fix ini receive message
@@ -249,7 +249,7 @@
 
 2008-04-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* flow to command genereration:
+	* flow to gebr_command genereration:
 	  - support for exclusive group
 	  - more reliable error handling
 
@@ -270,7 +270,7 @@
 2008-03-12  Ricardo Biloti <biloti@gmail.com>
 
 	* - fix a case insensitive string comparison
-	  - escape command line string
+	  - escape gebr_command line string
 
 2008-03-07  Ricardo Biloti <biloti@gmail.com>
 
@@ -292,7 +292,7 @@
 
 2008-02-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* fixed generation of commandline for list parameters
+	* fixed generation of gebr_commandline for list parameters
 	* - fixed icon of gtkfileentry and gtksequenceedit
 	  - merged enum-impl and improved show on combo box
 	  - quote each value when parameter accepts a list of parameters
@@ -309,7 +309,7 @@
 	  - minor code and pontuation cleanups
 	* - added define.h in libgebr for static mode support
 	  - changed names of enum log_message_type
-	  - ported server infrastruture to libgebr-comm for further use in
+	  - ported server infrastruture to libgebr-gebr_comm for further use in
 	  gebr-run
 
 2008-02-08  Ricardo Biloti <biloti@gmail.com>
@@ -388,9 +388,9 @@
 
 2007-11-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* undo last commit
-	* run xauth on every command execution
-	* fixed DISPLAY for remote command execution
+	* undo last gebr_commit
+	* run xauth on every gebr_command execution
+	* fixed DISPLAY for remote gebr_command execution
 	* - added protocol version in INI
 	  - added finish date in FIN
 	  - append output instead of regenerate all job info buffer
@@ -442,7 +442,7 @@
 
 	* fix the last fix
 	* fix deletion of lock file on wrong time
-	* show error or warnings when assemblying flow command line
+	* show error or warnings when assemblying flow gebr_command line
 	* - fixed sockets behaviour on libgebr_misc
 	  - more run stuff
 
@@ -457,9 +457,9 @@
 
 2007-11-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* - fixes on GProcess
+	* - fixes on GebrCommProcess
 	  - more ssh work on gebr
-	  - fixes command QUT on gebrd
+	  - fixes gebr_command QUT on gebrd
 	* some process work
 
 2007-11-11  Ricardo Biloti <biloti@gmail.com>

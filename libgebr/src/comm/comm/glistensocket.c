@@ -137,7 +137,7 @@ __gebr_comm_listen_socket_new_connection(GebrCommListenSocket * listen_socket)
 	GebrCommSocketAddress	peer_address;
 	int		client_sockfd, sockfd;
 
-	sockfd = _g_socket_get_fd(&listen_socket->parent);
+	sockfd = _gebr_comm_socket_get_fd(&listen_socket->parent);
 	while ((client_sockfd = _gebr_comm_socket_address_accept(&peer_address,
 	listen_socket->parent.address_type, sockfd)) != -1) {
 		GStreamSocket * stream_socket;
@@ -146,7 +146,7 @@ __gebr_comm_listen_socket_new_connection(GebrCommListenSocket * listen_socket)
 			break;
 
 		/* create GStreamSocket */
-		stream_socket = _g_stream_socket_new_connected(client_sockfd, listen_socket->parent.address_type);
+		stream_socket = _gebr_comm_stream_socket_new_connected(client_sockfd, listen_socket->parent.address_type);
 
 		/* add to the list of pending connections and notify user */
 		listen_socket->pending_connections = g_slist_append(listen_socket->pending_connections, stream_socket);
@@ -206,10 +206,10 @@ gebr_comm_listen_socket_listen(GebrCommListenSocket * listen_socket, GebrCommSoc
 	/* initialization */
 	error = NULL;
 	sockfd = socket(_gebr_comm_socket_address_get_family(socket_address), SOCK_STREAM, 0);
-	_g_socket_init(&listen_socket->parent, sockfd, socket_address->type);
+	_gebr_comm_socket_init(&listen_socket->parent, sockfd, socket_address->type);
 	listen_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
 	g_io_channel_set_flags(listen_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
-	_g_socket_enable_read_watch(&listen_socket->parent);
+	_gebr_comm_socket_enable_read_watch(&listen_socket->parent);
 	/* pending connections */
 	listen_socket->pending_connections = g_slist_alloc();
 	gebr_comm_listen_socket_set_max_pending_connections(listen_socket, 30);

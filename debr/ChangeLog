@@ -215,7 +215,7 @@
 2009-05-06  Ricardo Biloti <biloti@gmail.com>
 
 	* minor fixes to Portuguese translation
-	* fix last commit
+	* fix last gebr_commit
 
 2009-05-06  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
@@ -261,7 +261,7 @@
 
 2009-03-25  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* - reapply missed commit 1035
+	* - reapply missed gebr_commit 1035
 	  - strip flow to send to server
 
 2009-03-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
@@ -299,7 +299,7 @@
 	* do not use debr.para for parameter_dialog_setup_ui
 	* no manual editing and value is hidden for list of enum value
 	  parameter
-	* fix errors in last commit
+	* fix errors in last gebr_commit
 	* use libgebr_gtk_tree_view_scroll_to_iter_cell
 	* silly bug! debr parameters in a group were writing to value
 	  instead of default value
@@ -382,7 +382,7 @@
 
 	* - fix drag n' drop on gtksequenceedit and devivates
 	  - fix save on exit dialog on debr
-	* ¡commit 1000! several UI tweaks
+	* ¡gebr_commit 1000! several UI tweaks
 
 2009-01-28  Ricardo Biloti <biloti@gmail.com>
 
@@ -587,6 +587,6 @@
 
 2008-11-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* last commit with git commit's -a option
+	* last gebr_commit with git gebr_commit's -a option
 	* merged flow0.3 into trunk
 

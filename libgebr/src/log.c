@@ -57,7 +57,7 @@ log_open(const gchar * path)
 }
 
 struct log_message *
-log_message_new(enum log_message_type type, const gchar * date, const gchar * message)
+log_gebr_comm_message_new(enum log_message_type type, const gchar * date, const gchar * message)
 {
 	struct log_message *	log_message;
 
@@ -72,7 +72,7 @@ log_message_new(enum log_message_type type, const gchar * date, const gchar * me
 }
 
 void
-log_message_free(struct log_message * message)
+log_gebr_comm_message_free(struct log_message * message)
 {
 	g_string_free(message->date, TRUE);
 	g_string_free(message->message, TRUE);
@@ -125,7 +125,7 @@ log_messages_read(struct log * log)
 		}
 		/* remove end of line */
 		splits[2][strlen(splits[2])-1] = '\0';
-		message = log_message_new(type, splits[1], splits[2]);
+		message = log_gebr_comm_message_new(type, splits[1], splits[2]);
 		messages = g_list_prepend(messages, message);
 
 		g_strfreev(splits);
@@ -141,7 +141,7 @@ log_messages_read(struct log * log)
 void
 log_messages_free(GList * messages)
 {
-	g_list_foreach(messages, (GFunc)log_message_free, NULL);
+	g_list_foreach(messages, (GFunc)log_gebr_comm_message_free, NULL);
 	g_list_free(messages);
 }
 

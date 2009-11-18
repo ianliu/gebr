@@ -17,40 +17,40 @@
  *   Partly inspired on Qt 4.3 version of QProcess, by Trolltech
  */
 
-#ifndef __COMM_GPROCESS_H
-#define __COMM_GPROCESS_H
+#ifndef __GEBR_COMM_PROCESS_H
+#define __GEBR_COMM_PROCESS_H
 
 #include <glib.h>
 #include <glib-object.h>
 #include <netinet/in.h>
 
-typedef struct _GProcess	GProcess;
-typedef struct _GProcessClass	GProcessClass;
+typedef struct _GebrCommProcess	GebrCommProcess;
+typedef struct _GebrCommProcessClass	GebrCommProcessClass;
 
 G_BEGIN_DECLS
 
 GType
-g_process_get_type(void);
+gebr_comm_process_get_type(void);
 
-#define G_PROCESS_TYPE			(g_process_get_type())
-#define G_PROCESS(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_PROCESS_TYPE, GProcess))
-#define G_PROCESS_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), G_PROCESS_TYPE, GProcessClass))
-#define G_IS_PROCESS(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), G_PROCESS_TYPE))
-#define G_IS_PROCESS_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), G_PROCESS_TYPE))
-#define G_PROCESS_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), G_PROCESS_TYPE, GProcessClass))
+#define GEBR_COMM_PROCESS_TYPE			(gebr_comm_process_get_type())
+#define GEBR_COMM_PROCESS(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_PROCESS_TYPE, GebrCommProcess))
+#define GEBR_COMM_PROCESS_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_COMM_PROCESS_TYPE, GebrCommProcessClass))
+#define GEBR_COMM_IS_PROCESS(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_COMM_PROCESS_TYPE))
+#define GEBR_COMM_IS_PROCESS_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_COMM_PROCESS_TYPE))
+#define GEBR_COMM_PROCESS_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_PROCESS_TYPE, GebrCommProcessClass))
 
-enum GProcessExitStatus {
-	G_PROCESS_NORMAL_EXIT,
-	G_PROCESS_CRASH_EXIT
+enum GebrCommProcessExitStatus {
+	GEBR_COMM_PROCESS_NORMAL_EXIT,
+	GEBR_COMM_PROCESS_CRASH_EXIT
 };
 
-struct _GProcess {
+struct _GebrCommProcess {
 	GObject			parent;
 
 	GPid			pid;
 	gboolean		is_running;
 	gint			exit_code;
-	enum GProcessExitStatus	exit_status;
+	enum GebrCommProcessExitStatus	exit_status;
 
 	GIOChannel *		stdin_io_channel;
 	GIOChannel *		stdout_io_channel;
@@ -59,79 +59,79 @@ struct _GProcess {
 	guint			stderr_watch_id;
 	guint			finish_watch_id;
 };
-struct _GProcessClass {
+struct _GebrCommProcessClass {
 	GObjectClass		parent;
 
 	/* signals */
-	void			(*ready_read_stdout)(GProcess * self);
-	void			(*ready_read_stderr)(GProcess * self);
-	void			(*finished)(GProcess * self);
+	void			(*ready_read_stdout)(GebrCommProcess * self);
+	void			(*ready_read_stderr)(GebrCommProcess * self);
+	void			(*finished)(GebrCommProcess * self);
 };
 
 /*
  * user functions
  */
 
-GProcess *
-g_process_new(void);
+GebrCommProcess *
+gebr_comm_process_new(void);
 
 void
-g_process_free(GProcess *);
+gebr_comm_process_free(GebrCommProcess *);
 
 gboolean
-g_process_is_running(GProcess *);
+gebr_comm_process_is_running(GebrCommProcess *);
 
 gboolean
-g_process_start(GProcess *, GString *);
+gebr_comm_process_start(GebrCommProcess *, GString *);
 
 GPid
-g_process_get_pid(GProcess *);
+gebr_comm_process_get_pid(GebrCommProcess *);
 
 void
-g_process_kill(GProcess *);
+gebr_comm_process_kill(GebrCommProcess *);
 
 void
-g_process_terminate(GProcess *);
+gebr_comm_process_terminate(GebrCommProcess *);
 
 void
-g_process_close_stdin(GProcess *);
+gebr_comm_process_close_stdin(GebrCommProcess *);
 
 gulong
-g_process_stdout_bytes_available(GProcess *);
+gebr_comm_process_stdout_bytes_available(GebrCommProcess *);
 
 gulong
-g_process_stderr_bytes_available(GProcess *);
+gebr_comm_process_stderr_bytes_available(GebrCommProcess *);
 
 GByteArray *
-g_process_read_stdout(GProcess *, gsize);
+gebr_comm_process_read_stdout(GebrCommProcess *, gsize);
 
 GString *
-g_process_read_stdout_string(GProcess *, gsize);
+gebr_comm_process_read_stdout_string(GebrCommProcess *, gsize);
 
 GByteArray *
-g_process_read_stdout_all(GProcess *);
+gebr_comm_process_read_stdout_all(GebrCommProcess *);
 
 GString *
-g_process_read_stdout_string_all(GProcess *);
+gebr_comm_process_read_stdout_string_all(GebrCommProcess *);
 
 GByteArray *
-g_process_read_stderr(GProcess *, gsize);
+gebr_comm_process_read_stderr(GebrCommProcess *, gsize);
 
 GString *
-g_process_read_stderr_string(GProcess *, gsize);
+gebr_comm_process_read_stderr_string(GebrCommProcess *, gsize);
 
 GByteArray *
-g_process_read_stderr_all(GProcess *);
+gebr_comm_process_read_stderr_all(GebrCommProcess *);
 
 GString *
-g_process_read_stderr_string_all(GProcess *);
+gebr_comm_process_read_stderr_string_all(GebrCommProcess *);
 
 gsize
-g_process_write_stdin(GProcess *, GByteArray *);
+gebr_comm_process_write_stdin(GebrCommProcess *, GByteArray *);
 
 gsize
-g_process_write_stdin_string(GProcess *, GString *);
+gebr_comm_process_write_stdin_string(GebrCommProcess *, GString *);
 
 G_END_DECLS
 
-#endif //__COMM_GPROCESS_H
+#endif //__GEBR_COMM_PROCESS_H

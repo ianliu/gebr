@@ -17,8 +17,8 @@
  *   Inspired on Qt 4.3 version of QHostInfo, by Trolltech
  */
 
-#ifndef __COMM_G_HOST_INFO_H
-#define __COMM_G_HOST_INFO_H
+#ifndef __GEBR_COMM_HOST_INFO_H
+#define __GEBR_COMM_HOST_INFO_H
 
 #include <glib.h>
 
@@ -66,4 +66,4 @@ gebr_comm_host_info_lookup_local(void);
 
 G_END_DECLS
 
-#endif //__COMM_G_HOST_INFO_H
+#endif //__GEBR_COMM_HOST_INFO_H

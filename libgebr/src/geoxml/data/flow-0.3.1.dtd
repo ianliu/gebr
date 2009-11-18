@@ -48,7 +48,7 @@
 <!ELEMENT revision (#PCDATA)>
 <!ATTLIST revision
 	date	CDATA	#REQUIRED
-	comment	CDATA	#REQUIRED>
+	gebr_comment	CDATA	#REQUIRED>
 
 <!-- Menu file from which this program belong -->
 <!ELEMENT menu (#PCDATA)>
@@ -82,7 +82,7 @@
 	required	(yes | no)	#IMPLIED
 	separator	CDATA		#IMPLIED>
 
-<!-- Keyword to build the command line -->
+<!-- Keyword to build the gebr_command line -->
 <!ELEMENT keyword (#PCDATA)>
 <!-- Actual value of a parameter -->
 <!ELEMENT value (#PCDATA)>

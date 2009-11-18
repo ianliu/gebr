@@ -24,7 +24,7 @@
 #include "client.h"
 
 struct job {
-	GProcess *		process;
+	GebrCommProcess *	process;
 	GebrGeoXmlFlow *	flow;
 	gboolean		user_finished;
 

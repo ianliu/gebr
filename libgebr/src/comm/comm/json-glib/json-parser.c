@@ -335,7 +335,7 @@ json_parse_array (JsonParser *parser,
 
       if (token == G_TOKEN_COMMA)
         {
-          /* swallow the comma */
+          /* swallow the gebr_comma */
           token = json_scanner_get_next_token (scanner);
           continue;
         }
@@ -514,7 +514,7 @@ json_parse_object (JsonParser *parser,
 
       if (token == G_TOKEN_COMMA)
         {
-          /* swallow the comma */
+          /* swallow the gebr_comma */
           token = json_scanner_get_next_token (scanner);
           continue;
         }

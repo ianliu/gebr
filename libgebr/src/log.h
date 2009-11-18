@@ -43,10 +43,10 @@ void
 log_close(struct log * log);
 
 struct log_message *
-log_message_new(enum log_message_type type, const gchar * date, const gchar * message);
+log_gebr_comm_message_new(enum log_message_type type, const gchar * date, const gchar * message);
 
 void
-log_message_free(struct log_message * message);
+log_gebr_comm_message_free(struct log_message * message);
 
 GList *
 log_messages_read(struct log * log);

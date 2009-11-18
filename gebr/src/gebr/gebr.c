@@ -64,14 +64,14 @@ gebr_init(void)
 	gebr.program = NULL;
 	gebr.flow_clipboard = NULL;
 	libgebr_init();
-	protocol_init();
+	gebr_comm_protocol_init();
 
 	/* check/create config dir */
 	if (gebr_create_config_dirs() == FALSE) {
 		fprintf(stderr, _("Unable to create GêBR configuration files.\n"
 			"Perhaps you do not have write permission to your own\n"
 			"home directory or there is no space left on device.\n"));
-		protocol_destroy();
+		gebr_comm_protocol_destroy();
 		exit(-1);
 	}
 
@@ -142,10 +142,10 @@ gebr_quit(void)
 	log_close(gebr.log);
 
 	/* Free servers structs */
-	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
+	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->gebr_common.store), 1) {
 		struct server *	server;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->gebr_common.store), &iter,
 			SERVER_POINTER, &server,
 			-1);
 		server_free(server);
@@ -159,7 +159,7 @@ gebr_quit(void)
 			-1);
 		job_free(job);
 	}
-	protocol_destroy();
+	gebr_comm_protocol_destroy();
 
 	/*
 	 * Interface frees
@@ -271,23 +271,23 @@ gebr_migrate_data_dir(void)
 {
 	GtkWidget *	dialog;
 	GString *	new_data_dir;
-	GString *	command_line;
+	GString *	gebr_command_line;
 	gchar *		filename;
 	gboolean	empty;
 
 	new_data_dir = g_string_new(NULL);
 	g_string_printf(new_data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
 
-	command_line = g_string_new("");
+	gebr_command_line = g_string_new("");
 	libgebr_directory_foreach_file(filename, gebr.config.data->str)
 		if (!fnmatch("*.prj", filename, 1) || !fnmatch("*.lne", filename, 1) ||
 		!fnmatch("*.flw", filename, 1))
-			g_string_append_printf(command_line, "%s/%s ", gebr.config.data->str, filename);
-	empty = command_line->len == 0 ? TRUE : FALSE;
-	g_string_prepend(command_line, "cp -f ");
-	g_string_append(command_line, new_data_dir->str);
+			g_string_append_printf(gebr_command_line, "%s/%s ", gebr.config.data->str, filename);
+	empty = gebr_command_line->len == 0 ? TRUE : FALSE;
+	g_string_prepend(gebr_command_line, "cp -f ");
+	g_string_append(gebr_command_line, new_data_dir->str);
 
-	if (empty || !system(command_line->str)) {
+	if (empty || !system(gebr_command_line->str)) {
 		dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
 			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("GêBR now stores data files on its own directory. You may now delete GêBR's files at %s."), gebr.config.data->str);
@@ -300,7 +300,7 @@ gebr_migrate_data_dir(void)
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
-	g_string_free(command_line, TRUE);
+	g_string_free(gebr_command_line, TRUE);
 	g_string_free(new_data_dir, TRUE);
 	gtk_widget_destroy(dialog);
 }
@@ -461,19 +461,19 @@ gebr_config_save(gboolean verbose)
 	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_auto_scroll", gebr.config.job_log_auto_scroll);
 
 	/* Save list of servers */
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->gebr_common.store)) {
 		struct server *	server;
 		GString *	group;
 		gboolean	autoconnect;
 
 		group = g_string_new(NULL);
 
-		gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+		gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_server_list->gebr_common.store), &iter,
 			SERVER_POINTER, &server,
 			SERVER_AUTOCONNECT, &autoconnect,
 			-1);
-		g_string_printf(group, "server-%s", server->comm->address->str);
-		g_key_file_set_string(gebr.config.key_file, group->str, "address", server->comm->address->str);
+		g_string_printf(group, "server-%s", server->gebr_comm->address->str);
+		g_key_file_set_string(gebr.config.key_file, group->str, "address", server->gebr_comm->address->str);
 		g_key_file_set_boolean(gebr.config.key_file, group->str, "autoconnect", autoconnect);
 
 		g_string_free(group, TRUE);
@@ -524,11 +524,11 @@ gebr_message(enum log_message_type type, gboolean in_statusbar, gboolean in_log_
 	if (in_log_file) {
 		struct log_message *	log_message;
 
-		log_message = log_message_new(type, iso_date(), string);
+		log_message = log_gebr_comm_message_new(type, iso_date(), string);
 		log_add_message(gebr.log, type, string);
 		log_add_message_to_list(gebr.ui_log, log_message);
 
-		log_message_free(log_message);
+		log_gebr_comm_message_free(log_message);
 	}
 
 	g_free(string);

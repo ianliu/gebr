@@ -107,7 +107,7 @@ feature that (1) displays an appropriate copyright notice, and (2)
 tells the user that there is no warranty for the work (except to the
 extent that warranties are provided), that licensees may convey the
 work under this License, and how to view a copy of this License.  If
-the interface presents a list of user commands or options, such as a
+the interface presents a list of user gebr_commands or options, such as a
 menu, a prominent item in the list meets this criterion.
 
   1. Source Code.
@@ -142,7 +142,7 @@ which are not part of the work.  For example, Corresponding Source
 includes interface definition files associated with source files for
 the work, and the source code for shared libraries and dynamically
 linked subprograms that the work is specifically designed to require,
-such as by intimate data communication or control flow between those
+such as by intimate data gebr_communication or control flow between those
 subprograms and other parts of the work.
 
   The Corresponding Source need not include anything that users
@@ -269,7 +269,7 @@ in one of these ways:
 
     c) Convey individual copies of the object code with a copy of the
     written offer to provide the Corresponding Source.  This
-    alternative is allowed only occasionally and noncommercially, and
+    alternative is allowed only occasionally and nongebr_commercially, and
     only if you received the object code with such an offer, in accord
     with subsection 6b.
 
@@ -301,11 +301,11 @@ or household purposes, or (2) anything designed or sold for incorporation
 into a dwelling.  In determining whether a product is a consumer product,
 doubtful cases shall be resolved in favor of coverage.  For a particular
 product received by a particular user, "normally used" refers to a
-typical or common use of that class of product, regardless of the status
+typical or gebr_common use of that class of product, regardless of the status
 of the particular user or of the way in which the particular user
 actually uses, or expects or is expected to use, the product.  A product
 is a consumer product regardless of whether the product has substantial
-commercial, industrial or non-consumer uses, unless such uses represent
+gebr_commercial, industrial or non-consumer uses, unless such uses represent
 the only significant mode of use of the product.
 
   "Installation Information" for a User Product means any methods,
@@ -333,7 +333,7 @@ for a work that has been modified or installed by the recipient, or for
 the User Product in which it has been modified or installed.  Access to a
 network may be denied when the modification itself materially and
 adversely affects the operation of the network or violates the rules and
-protocols for communication across the network.
+protocols for gebr_communication across the network.
 
   Corresponding Source conveyed, and Installation Information provided,
 in accord with this section must be in a format that is publicly
@@ -491,10 +491,10 @@ make, use, sell, offer for sale, import and otherwise run, modify and
 propagate the contents of its contributor version.
 
   In the following three paragraphs, a "patent license" is any express
-agreement or commitment, however denominated, not to enforce a patent
+agreement or gebr_commitment, however denominated, not to enforce a patent
 (such as an express permission to practice a patent or covenant not to
 sue for patent infringement).  To "grant" such a patent license to a
-party means to make such an agreement or commitment not to enforce a
+party means to make such an agreement or gebr_commitment not to enforce a
 patent against the party.
 
   If you convey a covered work, knowingly relying on a patent license,
@@ -658,8 +658,8 @@ notice like this when it starts in an interactive mode:
     This is free software, and you are welcome to redistribute it
     under certain conditions; type `show c' for details.
 
-The hypothetical commands `show w' and `show c' should show the appropriate
-parts of the General Public License.  Of course, your program's commands
+The hypothetical gebr_commands `show w' and `show c' should show the appropriate
+parts of the General Public License.  Of course, your program's gebr_commands
 might be different; for a GUI interface, you would use an "about box".
 
   You should also get your employer (if you work as a programmer) or school,

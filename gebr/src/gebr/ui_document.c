@@ -59,7 +59,7 @@ struct dict_edit_data {
 	GtkWidget *		type_combo;
 	GtkWidget *		keyword_entry;
 	GtkWidget *		value_entry;
-	GtkWidget *		comment_entry;
+	GtkWidget *		gebr_comment_entry;
 
 	GtkActionGroup *	action_group;
 	GtkWidget *		tree_view;
@@ -327,7 +327,7 @@ document_dict_edit_setup_ui(void)
 		G_TYPE_STRING,  /* keyword stock */
 		G_TYPE_STRING,  /* keyword */
 		G_TYPE_STRING,  /* value */
-		G_TYPE_STRING,  /* comment */
+		G_TYPE_STRING,  /* gebr_comment */
 		G_TYPE_POINTER, /* GebrGeoXmlParameter */
 		G_TYPE_BOOLEAN  /* editable */);
 	data->tree_model = GTK_TREE_MODEL(tree_store);
@@ -468,9 +468,9 @@ document_dict_edit_setup_ui(void)
 	g_signal_connect(data->value_entry, "activate",
 		G_CALLBACK(on_dict_edit_add_clicked), data);
 	gtk_box_pack_start(GTK_BOX(add_hbox), data->value_entry, FALSE, FALSE, 0);
-	data->comment_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(add_hbox), data->comment_entry, TRUE, TRUE, 0);
-	g_signal_connect(data->comment_entry, "activate",
+	data->gebr_comment_entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(add_hbox), data->gebr_comment_entry, TRUE, TRUE, 0);
+	g_signal_connect(data->gebr_comment_entry, "activate",
 		G_CALLBACK(on_dict_edit_add_clicked), data);
 	widget = gtk_action_create_tool_item(gtk_action_group_get_action(action_group, "add"));
 	gtk_box_pack_start(GTK_BOX(add_hbox), widget, FALSE, FALSE, 0);
@@ -598,11 +598,11 @@ on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data)
 	}
 	gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, value);
 	gebr_geoxml_parameter_set_label(GEBR_GEOXML_PARAMETER(parameter),
-		gtk_entry_get_text(GTK_ENTRY(data->comment_entry)));
+		gtk_entry_get_text(GTK_ENTRY(data->gebr_comment_entry)));
 
 	gtk_entry_set_text(GTK_ENTRY(data->keyword_entry), "");
 	gtk_entry_set_text(GTK_ENTRY(data->value_entry), "");
-	gtk_entry_set_text(GTK_ENTRY(data->comment_entry), "");
+	gtk_entry_set_text(GTK_ENTRY(data->gebr_comment_entry), "");
 	gtk_widget_grab_focus(data->keyword_entry);
 
 	iter = dict_edit_append_iter(data, GEBR_GEOXML_OBJECT(parameter), &document_iter);
@@ -659,7 +659,7 @@ struct dict_edit_data * data)
 }
 
 /* Function: on_dict_edit_cell_edited
- * Edit keyword, value and comment of parameter
+ * Edit keyword, value and gebr_comment of parameter
  */
 static void
 on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,

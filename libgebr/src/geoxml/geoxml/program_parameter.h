@@ -154,7 +154,7 @@ gebr_geoxml_program_parameter_get_required(GebrGeoXmlProgramParameter * program_
 /**
  * Set \p program_parameter keyword to \p keyword.
  * The keyword is the identifier of the program_parameter in program. For example,
- * if keyword is 'infile' and value is 'data.su' a command line with
+ * if keyword is 'infile' and value is 'data.su' a gebr_command line with
  * 'infile=data.su' will be generated to run the program.
  * If \p program_parameter is a flag, you should set \p keyword to the string
  * that activates it on the program (e.g. style=normal in SU ximage).

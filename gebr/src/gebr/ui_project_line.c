@@ -363,7 +363,7 @@ project_line_import(void)
 	gboolean		is_project;
 
 	GString *		tmp_dir;
-	GString *		command;
+	GString *		gebr_command;
 	gint			exit_status;
 	GError *		error;
 	gchar *			output;
@@ -373,7 +373,7 @@ project_line_import(void)
 	gchar **		files;
 	int			i;
 
-	command = g_string_new(NULL);
+	gebr_command = g_string_new(NULL);
 	error = NULL;
 
 	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose project/line to open"),
@@ -406,8 +406,8 @@ project_line_import(void)
 	}
 
 	tmp_dir = libgebr_make_temp_directory();
-	g_string_printf(command, "bash -c 'cd %s; tar xzfv %s'", tmp_dir->str, filename);
-	if (!g_spawn_command_line_sync(command->str, &output, NULL, &exit_status, &error))
+	g_string_printf(gebr_command, "bash -c 'cd %s; tar xzfv %s'", tmp_dir->str, filename);
+	if (!g_spawn_command_line_sync(gebr_command->str, &output, NULL, &exit_status, &error))
 		goto err;
 	if (exit_status)
 		goto err;
@@ -484,7 +484,7 @@ err:	gebr_message(LOG_ERROR, FALSE, TRUE, _("Failed to import"));
 out:	g_free(output);
 out2:	g_free(filename);
 out3:	gtk_widget_destroy(chooser_dialog);
-	g_string_free(command, TRUE);
+	g_string_free(gebr_command, TRUE);
 }
 
 /*
@@ -494,7 +494,7 @@ out3:	gtk_widget_destroy(chooser_dialog);
 void
 project_line_export(void)
 {
-	GString *		command;
+	GString *		gebr_command;
 	GString *		filename;
 	GString *		files;
 	const gchar *		extension;
@@ -509,7 +509,7 @@ project_line_export(void)
 	if (!project_line_get_selected(NULL, ProjectLineSelection))
 		return;
 
-	command = g_string_new("");
+	gebr_command = g_string_new("");
 	filename = g_string_new("");
 	files = g_string_new("");
 	file_filter = gtk_file_filter_new();
@@ -569,8 +569,8 @@ project_line_export(void)
 
 	current_dir = g_get_current_dir();
 	g_chdir(gebr.config.data->str);
-	g_string_printf(command, "tar czf %s %s", filename->str, files->str);
-	if (system(command->str))
+	g_string_printf(gebr_command, "tar czf %s %s", filename->str, files->str);
+	if (system(gebr_command->str))
 		gebr_message(LOG_ERROR, FALSE, TRUE, _("Could not export"));
 	else
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Exported succesful"));
@@ -579,7 +579,7 @@ project_line_export(void)
 
 	g_free(tmp);
 out:	gtk_widget_destroy(chooser_dialog);
-	g_string_free(command, TRUE);
+	g_string_free(gebr_command, TRUE);
 	g_string_free(filename, TRUE);
 	g_string_free(files, TRUE);
 }

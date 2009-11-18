@@ -8,7 +8,7 @@ Package: gebr
 Section: science
 Architecture: any
 Depends: ${shlibs:Depends}
-Recommends: gebrd (= ${binary:Version})
+Regebr_commends: gebrd (= ${binary:Version})
 Conflicts: gebrd (<< ${binary:Version}), libgebr0 (<< ${binary:Version}), libgebr0 (>> ${binary:Version})
 Suggests: debr, gebr-menus-su
 Description: Seismic processing environment

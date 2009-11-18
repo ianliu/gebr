@@ -20,7 +20,7 @@ Description: GeBR library collection
        packages (Seismic Unix, Madagascar, etc)
  .
  libgebr is the collection of libraries of GeBR:
-     * libgebr_comm deals with client-server communication
+     * libgebr_comm deals with client-server gebr_communication
      * libgebr_geoxml is the XML engine of GeBR
      * libgebr_gui extends GTK+ functionalities
      * libgebr_misc is where everything else is
@@ -46,7 +46,7 @@ Description: GeBR library collection
        packages (Seismic Unix, Madagascar, etc)
  .
  libgebr is the collection of libraries of GeBR:
-     * libgebr_comm deals with client-server communication
+     * libgebr_comm deals with client-server gebr_communication
      * libgebr_geoxml is the XML engine of GeBR
      * libgebr_gui extends GTK+ functionalities
      * libgebr_misc is where everything else is

@@ -48,7 +48,7 @@ static GOptionEntry entries[] =    {
 	{ "email", 'e', 0, G_OPTION_ARG_STRING, &email, "set email", "email address"},
 	{ "helpdel", 0, 0, G_OPTION_ARG_NONE, &helpdel, "delete help text", NULL},
         { "sethelp", 'H', 0, G_OPTION_ARG_FILENAME, &fnhelp, "replace help by an HTML file", NULL}, 
-	{ "binary", 'b', 0, G_OPTION_ARG_STRING, &binary, "Binary command (without path)", "program/script"},
+	{ "binary", 'b', 0, G_OPTION_ARG_STRING, &binary, "Binary gebr_command (without path)", "program/script"},
 	{ "url", 'u', 0, G_OPTION_ARG_STRING, &url, "URL for a program", "http://www.../"},
 	//{ "capitalize", 'c', 0, G_OPTION_ARG_NONE, &capt, "capitalize descriptions and labels", NULL},
 	{ G_OPTION_REMAINING, 0, G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME_ARRAY, &menu, "", "menu1.mnu menu2.mnu ..." },
@@ -84,7 +84,7 @@ int main (int argc, char** argv)
 	/* Complain about unknown options */
 	g_option_context_set_ignore_unknown_options (context, FALSE);
 	
-	/* Parse command line */
+	/* Parse gebr_command line */
 	if (g_option_context_parse (context, &argc, &argv, &error) == FALSE){
 		fprintf(stderr, "%s: syntax error\n", argv[0]);
 		fprintf(stderr, "Try %s --help\n", argv[0]);
@@ -92,7 +92,7 @@ int main (int argc, char** argv)
 	}
 	g_option_context_free(context);
 
-	/* End of command line parse */
+	/* End of gebr_command line parse */
 	if (menu == NULL)
 		return 0;
 	nmenu = 0;

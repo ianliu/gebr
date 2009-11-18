@@ -17,99 +17,99 @@
  *   Partly inspired on Qt 4.3 version of QProcess, by Trolltech
  */
 
-#ifndef __COMM_GTERMINAL_PROCESS_H
-#define __COMM_GTERMINAL_PROCESS_H
+#ifndef __GEBR_COMM_TERMINAL_PROCESS_H
+#define __GEBR_COMM_TERMINAL_PROCESS_H
 
 #include <glib.h>
 #include <glib-object.h>
 #include <netinet/in.h>
 
-typedef struct _GTerminalProcess	GTerminalProcess;
-typedef struct _GTerminalProcessClass	GTerminalProcessClass;
+typedef struct _GebrCommTerminalProcess	GebrCommTerminalProcess;
+typedef struct _GebrCommTerminalProcessClass	GebrCommTerminalProcessClass;
 
 G_BEGIN_DECLS
 
 GType
-g_terminal_process_get_type(void);
+gebr_comm_terminal_process_get_type(void);
 
-#define G_TERMINAL_PROCESS_TYPE			(g_terminal_process_get_type())
-#define G_TERMINAL_PROCESS(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TERMINAL_PROCESS_TYPE, GTerminalProcess))
-#define G_TERMINAL_PROCESS_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), G_TERMINAL_PROCESS_TYPE, GTerminalProcessClass))
-#define G_IS_TERMINAL_PROCESS(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), G_TERMINAL_PROCESS_TYPE))
-#define G_IS_TERMINAL_PROCESS_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), G_TERMINAL_PROCESS_TYPE))
-#define G_TERMINAL_PROCESS_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), G_TERMINAL_PROCESS_TYPE, GTerminalProcessClass))
+#define GEBR_COMM_TERMINAL_PROCESS_TYPE			(gebr_comm_terminal_process_get_type())
+#define GEBR_COMM_TERMINAL_PROCESS(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_TERMINAL_PROCESS_TYPE, GebrCommTerminalProcess))
+#define GEBR_COMM_TERMINAL_PROCESS_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_COMM_TERMINAL_PROCESS_TYPE, GebrCommTerminalProcessClass))
+#define GEBR_COMM_IS_TERMINAL_PROCESS(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_COMM_TERMINAL_PROCESS_TYPE))
+#define GEBR_COMM_IS_TERMINAL_PROCESS_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_COMM_TERMINAL_PROCESS_TYPE))
+#define GEBR_COMM_TERMINAL_PROCESS_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_TERMINAL_PROCESS_TYPE, GebrCommTerminalProcessClass))
 
-enum GTerminalProcessExitStatus {
-	G_TERMINAL_PROCESS_NORMAL_EXIT,
-	G_TERMINAL_PROCESS_CRASH_EXIT
+enum GebrCommTerminalProcessExitStatus {
+	GEBR_COMM_TERMINAL_PROCESS_NORMAL_EXIT,
+	GEBR_COMM_TERMINAL_PROCESS_CRASH_EXIT
 };
 
-struct _GTerminalProcess {
+struct _GebrCommTerminalProcess {
 	GObject				parent;
 
 	GPid				pid;
 	gboolean			is_running;
 	gint				exit_code;
-	enum GTerminalProcessExitStatus	exit_status;
+	enum GebrCommTerminalProcessExitStatus	exit_status;
 
 	GIOChannel *			ptm_io_channel;
 	guint				ptm_watch_id;
 	guint				finish_watch_id;
 };
-struct _GTerminalProcessClass {
+struct _GebrCommTerminalProcessClass {
 	GObjectClass			parent;
 
 	/* signals */
-	void				(*ready_read)(GTerminalProcess * self);
-	void				(*finished)(GTerminalProcess * self);
+	void				(*ready_read)(GebrCommTerminalProcess * self);
+	void				(*finished)(GebrCommTerminalProcess * self);
 };
 
 /*
  * user functions
  */
 
-GTerminalProcess *
-g_terminal_process_new(void);
+GebrCommTerminalProcess *
+gebr_comm_terminal_process_new(void);
 
 void
-g_terminal_process_free(GTerminalProcess *);
+gebr_comm_terminal_process_free(GebrCommTerminalProcess *);
 
 gboolean
-g_terminal_process_is_running(GTerminalProcess *);
+gebr_comm_terminal_process_is_running(GebrCommTerminalProcess *);
 
 gboolean
-g_terminal_process_start(GTerminalProcess *, GString *);
+gebr_comm_terminal_process_start(GebrCommTerminalProcess *, GString *);
 
 GPid
-g_terminal_process_get_pid(GTerminalProcess *);
+gebr_comm_terminal_process_get_pid(GebrCommTerminalProcess *);
 
 void
-g_terminal_process_kill(GTerminalProcess *);
+gebr_comm_terminal_process_kill(GebrCommTerminalProcess *);
 
 void
-g_terminal_process_terminate(GTerminalProcess *);
+gebr_comm_terminal_process_terminate(GebrCommTerminalProcess *);
 
 gulong
-g_terminal_process_bytes_available(GTerminalProcess *);
+gebr_comm_terminal_process_bytes_available(GebrCommTerminalProcess *);
 
 GByteArray *
-g_terminal_process_read(GTerminalProcess *, gsize);
+gebr_comm_terminal_process_read(GebrCommTerminalProcess *, gsize);
 
 GString *
-g_terminal_process_read_string(GTerminalProcess *, gsize);
+gebr_comm_terminal_process_read_string(GebrCommTerminalProcess *, gsize);
 
 GByteArray *
-g_terminal_process_read_all(GTerminalProcess *);
+gebr_comm_terminal_process_read_all(GebrCommTerminalProcess *);
 
 GString *
-g_terminal_process_read_string_all(GTerminalProcess *);
+gebr_comm_terminal_process_read_string_all(GebrCommTerminalProcess *);
 
 gsize
-g_terminal_process_write(GTerminalProcess *, GByteArray *);
+gebr_comm_terminal_process_write(GebrCommTerminalProcess *, GByteArray *);
 
 gsize
-g_terminal_process_write_string(GTerminalProcess *, GString *);
+gebr_comm_terminal_process_write_string(GebrCommTerminalProcess *, GString *);
 
 G_END_DECLS
 
-#endif //__COMM_GTERMINAL_PROCESS_H
+#endif //__GEBR_COMM_TERMINAL_PROCESS_H

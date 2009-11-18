@@ -27,10 +27,10 @@
  * Internal variables and variables
  */
 
-struct protocol_defs protocol_defs;
+struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
 
 void
-protocol_split_free_each(GString * string)
+gebr_comm_protocol_split_free_each(GString * string)
 {
 	g_string_free(string, TRUE);
 }
@@ -39,13 +39,13 @@ protocol_split_free_each(GString * string)
  * Public functions
  */
 
-struct message *
-message_new(void)
+struct gebr_comm_message *
+gebr_comm_message_new(void)
 {
-	struct message * message;
+	struct gebr_comm_message * message;
 
-	message = g_malloc(sizeof(struct message));
-	*message = (struct message) {
+	message = g_malloc(sizeof(struct gebr_comm_message));
+	*message = (struct gebr_comm_message) {
 		.hash = 0,
 		.argument_size = 0,
 		.argument = g_string_new(NULL)
@@ -55,69 +55,69 @@ message_new(void)
 }
 
 void
-message_free(struct message * message)
+gebr_comm_message_free(struct gebr_comm_message * message)
 {
 	g_string_free(message->argument, TRUE);
 	g_free(message);
 }
 
-#define create_message_def(str, resp) ((struct message_def){g_str_hash(str), str, resp})
+#define create_gebr_comm_message_def(str, resp) ((struct gebr_comm_message_def){g_str_hash(str), str, resp})
 
 void
-protocol_init(void)
+gebr_comm_protocol_init(void)
 {
 	/* create messages hashes */
-	protocol_defs = (struct protocol_defs) {
-		.ret_def = create_message_def("RET", FALSE),
-		.err_def = create_message_def("ERR", FALSE),
-		.ini_def = create_message_def("INI", TRUE),
-		.qut_def = create_message_def("QUT", FALSE),
-		.lst_def = create_message_def("LST", FALSE), /* return, but it is not a ret */
-		.job_def = create_message_def("JOB", FALSE),
-		.run_def = create_message_def("RUN", TRUE),
-		.flw_def = create_message_def("FLW", TRUE),
-		.clr_def = create_message_def("CLR", FALSE),
-		.end_def = create_message_def("END", FALSE),
-		.kil_def = create_message_def("KIL", FALSE),
-		.out_def = create_message_def("OUT", FALSE),
-		.fin_def = create_message_def("FIN", FALSE)
+	gebr_comm_protocol_defs = (struct gebr_comm_protocol_defs) {
+		.ret_def = create_gebr_comm_message_def("RET", FALSE),
+		.err_def = create_gebr_comm_message_def("ERR", FALSE),
+		.ini_def = create_gebr_comm_message_def("INI", TRUE),
+		.qut_def = create_gebr_comm_message_def("QUT", FALSE),
+		.lst_def = create_gebr_comm_message_def("LST", FALSE), /* return, but it is not a ret */
+		.job_def = create_gebr_comm_message_def("JOB", FALSE),
+		.run_def = create_gebr_comm_message_def("RUN", TRUE),
+		.flw_def = create_gebr_comm_message_def("FLW", TRUE),
+		.clr_def = create_gebr_comm_message_def("CLR", FALSE),
+		.end_def = create_gebr_comm_message_def("END", FALSE),
+		.kil_def = create_gebr_comm_message_def("KIL", FALSE),
+		.out_def = create_gebr_comm_message_def("OUT", FALSE),
+		.fin_def = create_gebr_comm_message_def("FIN", FALSE)
 	};
 
-	protocol_defs.hash_table = g_hash_table_new(g_str_hash, g_str_equal);
-	g_hash_table_insert(protocol_defs.hash_table, "RET", &protocol_defs.ret_def);
-	g_hash_table_insert(protocol_defs.hash_table, "ERR", &protocol_defs.err_def);
-	g_hash_table_insert(protocol_defs.hash_table, "INI", &protocol_defs.ini_def);
-	g_hash_table_insert(protocol_defs.hash_table, "QUT", &protocol_defs.qut_def);
-	g_hash_table_insert(protocol_defs.hash_table, "LST", &protocol_defs.lst_def);
-	g_hash_table_insert(protocol_defs.hash_table, "JOB", &protocol_defs.job_def);
-	g_hash_table_insert(protocol_defs.hash_table, "RUN", &protocol_defs.run_def);
-	g_hash_table_insert(protocol_defs.hash_table, "FLW", &protocol_defs.flw_def);
-	g_hash_table_insert(protocol_defs.hash_table, "CLR", &protocol_defs.clr_def);
-	g_hash_table_insert(protocol_defs.hash_table, "END", &protocol_defs.end_def);
-	g_hash_table_insert(protocol_defs.hash_table, "KIL", &protocol_defs.kil_def);
-	g_hash_table_insert(protocol_defs.hash_table, "OUT", &protocol_defs.out_def);
-	g_hash_table_insert(protocol_defs.hash_table, "FIN", &protocol_defs.fin_def);
+	gebr_comm_protocol_defs.hash_table = g_hash_table_new(g_str_hash, g_str_equal);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "RET", &gebr_comm_protocol_defs.ret_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "ERR", &gebr_comm_protocol_defs.err_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "INI", &gebr_comm_protocol_defs.ini_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "QUT", &gebr_comm_protocol_defs.qut_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "LST", &gebr_comm_protocol_defs.lst_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "JOB", &gebr_comm_protocol_defs.job_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "RUN", &gebr_comm_protocol_defs.run_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "FLW", &gebr_comm_protocol_defs.flw_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "CLR", &gebr_comm_protocol_defs.clr_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "END", &gebr_comm_protocol_defs.end_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "KIL", &gebr_comm_protocol_defs.kil_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "OUT", &gebr_comm_protocol_defs.out_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "FIN", &gebr_comm_protocol_defs.fin_def);
 	
 }
 
 void
-protocol_destroy(void)
+gebr_comm_protocol_destroy(void)
 {
-	g_hash_table_unref(protocol_defs.hash_table);
+	g_hash_table_unref(gebr_comm_protocol_defs.hash_table);
 }
 
-struct protocol *
-protocol_new(void)
+struct gebr_comm_protocol *
+gebr_comm_protocol_new(void)
 {
-	struct protocol *	new;
+	struct gebr_comm_protocol *	new;
 
-	new = g_malloc(sizeof(struct protocol));
+	new = g_malloc(sizeof(struct gebr_comm_protocol));
 	if (new == NULL)
 		return NULL;
 
-	*new = (struct protocol) {
+	*new = (struct gebr_comm_protocol) {
 		.data = g_string_new(NULL),
-		.message = message_new(),
+		.message = gebr_comm_message_new(),
 		.messages = NULL,
 		.logged = FALSE,
 		.hostname = g_string_new(NULL)
@@ -127,17 +127,17 @@ protocol_new(void)
 }
 
 void
-protocol_free(struct protocol * protocol)
+gebr_comm_protocol_free(struct gebr_comm_protocol * protocol)
 {
-	message_free(protocol->message);
-	g_list_foreach(protocol->messages, (GFunc)message_free, NULL);
+	gebr_comm_message_free(protocol->message);
+	g_list_foreach(protocol->messages, (GFunc)gebr_comm_message_free, NULL);
 	g_list_free(protocol->messages);
 	g_string_free(protocol->hostname, TRUE);
 	g_free(protocol);
 }
 
 gboolean
-protocol_receive_data(struct protocol * protocol, GString * data)
+gebr_comm_protocol_receive_data(struct gebr_comm_protocol * protocol, GString * data)
 {
 	gchar **	splits;
 	gint		n_tokens;
@@ -163,7 +163,7 @@ protocol_receive_data(struct protocol * protocol, GString * data)
 				goto err;
 
 			/* code */
-			if (g_hash_table_lookup(protocol_defs.hash_table, splits[0]) == NULL) {
+			if (g_hash_table_lookup(gebr_comm_protocol_defs.hash_table, splits[0]) == NULL) {
 				g_string_assign(protocol->data, "");
 				goto err;
 			}
@@ -190,7 +190,7 @@ protocol_receive_data(struct protocol * protocol, GString * data)
 		 * using > because there must be a line break.
 		 */
 		if (protocol->data->len > missing) {
-			struct message *	queued;
+			struct gebr_comm_message *	queued;
 
 			g_string_append_len(protocol->message->argument, protocol->data->str, missing);
 			g_string_erase(protocol->data, 0, missing+1);
@@ -198,7 +198,7 @@ protocol_receive_data(struct protocol * protocol, GString * data)
 			/* add to the list of messages */
 			queued = protocol->message;
 			protocol->messages = g_list_prepend(protocol->messages, queued);
-			protocol->message = message_new();
+			protocol->message = gebr_comm_message_new();
 		} else {
 			g_string_append(protocol->message->argument, protocol->data->str);
 			g_string_erase(protocol->data, 0, -1);
@@ -212,8 +212,8 @@ err:	g_strfreev(splits);
 }
 
 void
-protocol_send_data(struct protocol * protocol, GStreamSocket * stream_socket,
-		struct message_def message_def, guint n_params, ...)
+gebr_comm_protocol_send_data(struct gebr_comm_protocol * protocol, GStreamSocket * stream_socket,
+		struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...)
 {
 	GString *	message;
 	va_list		ap;
@@ -232,10 +232,10 @@ protocol_send_data(struct protocol * protocol, GStreamSocket * stream_socket,
 	va_end(ap);
 
 	/* does this message need return? */
-	protocol->waiting_ret_hash = (message_def.returns == TRUE) ? message_def.hash : 0;
+	protocol->waiting_ret_hash = (gebr_comm_message_def.returns == TRUE) ? gebr_comm_message_def.hash : 0;
 	/* assembly message */
 	message = g_string_new(NULL);
-	g_string_printf(message, "%s %zu %s\n", message_def.string, data->len, data->str);
+	g_string_printf(message, "%s %zu %s\n", gebr_comm_message_def.string, data->len, data->str);
 	/* send it */
 	gebr_comm_socket_write_string(GEBR_COMM_SOCKET(stream_socket), message);
 
@@ -244,7 +244,7 @@ protocol_send_data(struct protocol * protocol, GStreamSocket * stream_socket,
 }
 
 GList *
-protocol_split_new(GString * arguments, guint parts)
+gebr_comm_protocol_split_new(GString * arguments, guint parts)
 {
 	guint		i;
 	gchar *		iarg;
@@ -261,7 +261,7 @@ protocol_split_new(GString * arguments, guint parts)
 
 		/* get the argument size */
 		if (sscanf(iarg, "%zu|", &arg_size) == EOF) {
-			protocol_split_free(split);
+			gebr_comm_protocol_split_free(split);
 			break;
 		}
 
@@ -285,8 +285,8 @@ protocol_split_new(GString * arguments, guint parts)
 }
 
 void
-protocol_split_free(GList * split)
+gebr_comm_protocol_split_free(GList * split)
 {
-	g_list_foreach(split, (GFunc)protocol_split_free_each, NULL);
+	g_list_foreach(split, (GFunc)gebr_comm_protocol_split_free_each, NULL);
 	g_list_free(split);
 }

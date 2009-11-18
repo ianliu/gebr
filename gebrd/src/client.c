@@ -54,7 +54,7 @@ client_add(GStreamSocket * stream_socket)
 	client = g_malloc(sizeof(struct client));
 	*client = (struct client) {
 		.stream_socket = stream_socket,
-		.protocol = protocol_new(),
+		.protocol = gebr_comm_protocol_new(),
 		.display = g_string_new(NULL),
 	};
 
@@ -73,7 +73,7 @@ void
 client_free(struct client * client)
 {
 	gebr_comm_socket_close(GEBR_COMM_SOCKET(client->stream_socket));
-	protocol_free(client->protocol);
+	gebr_comm_protocol_free(client->protocol);
 	g_string_free(client->display, TRUE);
 	g_free(client);
 }
@@ -93,7 +93,7 @@ client_read(GStreamSocket * stream_socket, struct client * client)
 	GString *	data;
 
 	data = gebr_comm_socket_read_string_all(GEBR_COMM_SOCKET(stream_socket));
-	if (protocol_receive_data(client->protocol, data) == FALSE) {
+	if (gebr_comm_protocol_receive_data(client->protocol, data) == FALSE) {
 		client_disconnected(stream_socket, client);
 		goto out;
 	}

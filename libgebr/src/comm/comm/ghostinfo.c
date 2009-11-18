@@ -97,8 +97,8 @@ extern int h_errno;
 // 		GebrCommSocketAddress *	socket_address;
 // 
 // 		/* TODO: check _address_ family */
-// 		socket_address = g_socket_address_new("", GEBR_COMM_SOCKET_ADDRESS_TYPE_IPV4);
-// 		g_socket_address_set_ipv4(socket_address, address.s_addr);
+// 		socket_address = gebr_comm_socket_address_new("", GEBR_COMM_SOCKET_ADDRESS_TYPE_IPV4);
+// 		gebr_comm_socket_address_set_ipv4(socket_address, address.s_addr);
 // 		new->addresses = g_list_append(new->addresses, socket_address);
 // 	}
 // 
@@ -152,7 +152,7 @@ extern int h_errno;
 // void
 // gebr_comm_host_info_free(GebrCommHostInfo * host_info)
 // {
-// 	g_list_foreach(host_info->addresses, (GFunc)g_socket_address_free, NULL);
+// 	g_list_foreach(host_info->addresses, (GFunc)gebr_comm_socket_address_free, NULL);
 // 	g_list_free(host_info->addresses);
 // 	g_free(host_info);
 // }

@@ -90,7 +90,7 @@ server_init(void)
 	}
 
 	/* protocol */
-	protocol_init();
+	gebr_comm_protocol_init();
 	g_random_set_seed((guint32)time(NULL));
 
 	/* init the server socket and listen */
@@ -153,7 +153,7 @@ server_free(void)
 	g_list_foreach(gebrd.clients, (GFunc)client_free, NULL);
 	g_list_free(gebrd.clients);
 
-	protocol_destroy();
+	gebr_comm_protocol_destroy();
 }
 
 void
@@ -183,28 +183,28 @@ gboolean
 server_parse_client_messages(struct client * client)
 {
 	GList *			link;
-	struct message *	message;
+	struct gebr_comm_message *	message;
 
 	while ((link = g_list_last(client->protocol->messages)) != NULL) {
-		message = (struct message *)link->data;
+		message = (struct gebr_comm_message *)link->data;
 
 		/* check login */
-		if (message->hash == protocol_defs.ini_def.hash) {
+		if (message->hash == gebr_comm_protocol_defs.ini_def.hash) {
 			GList *		arguments;
 			GString *	version, * hostname, * place, * x11;
 			GString *	display_port;
 
 			display_port = g_string_new("");
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 4);
+			arguments = gebr_comm_protocol_split_new(message->argument, 4);
 			version = g_list_nth_data(arguments, 0);
 			hostname = g_list_nth_data(arguments, 1);
 			place = g_list_nth_data(arguments, 2);
 			x11 = g_list_nth_data(arguments, 3);
 
 			if (strcmp(version->str, PROTOCOL_VERSION)) {
-				protocol_send_data(client->protocol, client->stream_socket,
-					protocol_defs.err_def, 1, "Client/server version mismatch");
+				gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
+					gebr_comm_protocol_defs.err_def, 1, "Client/server version mismatch");
 				goto err;
 			}
 
@@ -243,35 +243,35 @@ server_parse_client_messages(struct client * client)
 			}
 
 			/* send return */
-			protocol_send_data(client->protocol, client->stream_socket,
-				protocol_defs.ret_def, 2, gebrd.hostname, display_port->str);
+			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
+				gebr_comm_protocol_defs.ret_def, 2, gebrd.hostname, display_port->str);
 
 			/* frees */
-			protocol_split_free(arguments);
+			gebr_comm_protocol_split_free(arguments);
 			g_string_free(display_port, TRUE);
 		} else if (client->protocol->logged == FALSE) {
 			/* not logged! */
 			goto err;
-		} else if (message->hash == protocol_defs.qut_def.hash) {
+		} else if (message->hash == gebr_comm_protocol_defs.qut_def.hash) {
 			client_free(client);
-			message_free(message);
+			gebr_comm_message_free(message);
 			return TRUE;
-		} else if (message->hash == protocol_defs.lst_def.hash) {
+		} else if (message->hash == gebr_comm_protocol_defs.lst_def.hash) {
 			job_list(client);
-		} else if (message->hash == protocol_defs.run_def.hash) {
+		} else if (message->hash == gebr_comm_protocol_defs.run_def.hash) {
 			GList *			arguments;
 			GString *		xml;
 			struct job *		job;
 			gboolean		success;
 
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 1);
+			arguments = gebr_comm_protocol_split_new(message->argument, 1);
 			xml = g_list_nth_data(arguments, 0);
 
 			/* try to run and send return */
 			if ((success = job_new(&job, client, xml)) == TRUE)
 				job_run_flow(job, client);
-			protocol_send_data(client->protocol, client->stream_socket, protocol_defs.ret_def,
+			gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.ret_def,
 				7, job->jid->str, job->status->str, job->title->str,
 				job->start_date->str, job->issues->str,
 				job->cmd_line->str, job->output->str);
@@ -284,16 +284,16 @@ server_parse_client_messages(struct client * client)
 				job_free(job);
 
 			/* frees */
-			protocol_split_free(arguments);
-		} else if (message->hash == protocol_defs.flw_def.hash) {
+			gebr_comm_protocol_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.flw_def.hash) {
 			/* TODO: */
-		} else if (message->hash == protocol_defs.clr_def.hash) {
+		} else if (message->hash == gebr_comm_protocol_defs.clr_def.hash) {
 			GList *			arguments;
 			GString *		jid;
 			struct job *		job;
 
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 1);
+			arguments = gebr_comm_protocol_split_new(message->argument, 1);
 			jid = g_list_nth_data(arguments, 0);
 
 			/* try to run and send return */
@@ -303,14 +303,14 @@ server_parse_client_messages(struct client * client)
 			}
 
 			/* frees */
-			protocol_split_free(arguments);
-		} else if (message->hash == protocol_defs.end_def.hash) {
+			gebr_comm_protocol_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.end_def.hash) {
 			GList *			arguments;
 			GString *		jid;
 			struct job *		job;
 
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 1);
+			arguments = gebr_comm_protocol_split_new(message->argument, 1);
 			jid = g_list_nth_data(arguments, 0);
 
 			/* try to run and send return */
@@ -320,14 +320,14 @@ server_parse_client_messages(struct client * client)
 			}
 
 			/* frees */
-			protocol_split_free(arguments);
-		} else if (message->hash == protocol_defs.kil_def.hash) {
+			gebr_comm_protocol_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.kil_def.hash) {
 			GList *			arguments;
 			GString *		jid;
 			struct job *		job;
 
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 1);
+			arguments = gebr_comm_protocol_split_new(message->argument, 1);
 			jid = g_list_nth_data(arguments, 0);
 
 			/* try to run and send return */
@@ -337,19 +337,19 @@ server_parse_client_messages(struct client * client)
 			}
 
 			/* frees */
-			protocol_split_free(arguments);
+			gebr_comm_protocol_split_free(arguments);
 		} else {
 			/* unknown message! */
 			goto err;
 		}
 
-		message_free(message);
+		gebr_comm_message_free(message);
 		client->protocol->messages = g_list_delete_link(client->protocol->messages, link);
 	}
 
 	return TRUE;
 
-err:	message_free(message);
+err:	gebr_comm_message_free(message);
 	return FALSE;
 }
 

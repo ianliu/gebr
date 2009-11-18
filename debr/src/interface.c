@@ -104,7 +104,7 @@ static const GtkActionEntry actions_entries [] = {
 		(GCallback)on_validate_clear_activate},
 };
 
-static const GtkActionEntry common_actions_entries [] = {
+static const GtkActionEntry gebr_common_actions_entries [] = {
 	{"new", GTK_STOCK_NEW, "new", NULL, "new", (GCallback)on_new_activate},
 	{"copy", GTK_STOCK_COPY, "copy", NULL, "copy", (GCallback)on_copy_activate},
 	{"paste", GTK_STOCK_PASTE, "paste", NULL, "paste", (GCallback)on_paste_activate},
@@ -134,7 +134,7 @@ debr_setup_ui(void)
 	GtkWidget *		toolbar;
 	GtkToolItem *		tool_item;
 
-	GtkActionGroup *	common_action_group;
+	GtkActionGroup *	gebr_common_action_group;
 
 	/*
 	 * Main window and its vbox contents
@@ -192,10 +192,10 @@ debr_setup_ui(void)
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "program_paste"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "parameter_paste"));
 
-	common_action_group = gtk_action_group_new("Common");
-	gtk_action_group_add_actions(common_action_group, common_actions_entries,
-		G_N_ELEMENTS(common_actions_entries), NULL);
-	gebr_gui_gtk_action_group_set_accel_group(common_action_group, debr.accel_group);
+	gebr_common_action_group = gtk_action_group_new("Common");
+	gtk_action_group_add_actions(gebr_common_action_group, gebr_common_actions_entries,
+		G_N_ELEMENTS(gebr_common_actions_entries), NULL);
+	gebr_gui_gtk_action_group_set_accel_group(gebr_common_action_group, debr.accel_group);
 
 	/*
 	 * Menu: Actions

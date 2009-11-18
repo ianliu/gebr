@@ -24,7 +24,7 @@
 #include <libgebr/comm/server.h>
 
 struct server {
-	struct gebr_comm_server *	comm;
+	struct gebr_comm_server *	gebr_comm;
 
 	GtkTreeIter		iter;
 

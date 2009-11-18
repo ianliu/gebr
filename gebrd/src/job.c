@@ -149,8 +149,8 @@ job_send_clients_output(struct job * job, GString * output)
 		struct client *	client;
 
 		client = (struct client *)link->data;
-		protocol_send_data(client->protocol, client->stream_socket,
-			protocol_defs.out_def, 2, job->jid->str, output->str);
+		gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
+			gebr_comm_protocol_defs.out_def, 2, job->jid->str, output->str);
 
 		link = g_list_next(link);
 	}
@@ -185,29 +185,29 @@ job_process_add_output(struct job * job, GString * destination, GString * output
 }
 
 static void
-job_process_read_stdout(GProcess * process, struct job * job)
+job_process_read_stdout(GebrCommProcess * process, struct job * job)
 {
 	GString *	stdout;
 
-	stdout = g_process_read_stdout_string_all(process);
+	stdout = gebr_comm_process_read_stdout_string_all(process);
 	job_process_add_output(job, job->output, stdout);
 
 	g_string_free(stdout, TRUE);
 }
 
 static void
-job_process_read_stderr(GProcess * process, struct job * job)
+job_process_read_stderr(GebrCommProcess * process, struct job * job)
 {
 	GString *	stderr;
 
-	stderr = g_process_read_stderr_string_all(process);
+	stderr = gebr_comm_process_read_stderr_string_all(process);
 	job_process_add_output(job, job->output, stderr);
 
 	g_string_free(stderr, TRUE);
 }
 
 static void
-job_process_finished(GProcess * process, struct job * job)
+job_process_finished(GebrCommProcess * process, struct job * job)
 {
 	GList *	link;
 
@@ -223,7 +223,7 @@ job_process_finished(GProcess * process, struct job * job)
 		struct client * client;
 
 		client = (struct client *)link->data;
-		protocol_send_data(client->protocol, client->stream_socket, protocol_defs.fin_def,
+		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.fin_def,
 			3, job->jid->str, job->status->str, job->finish_date->str);
 
 		link = g_list_next(link);
@@ -285,7 +285,7 @@ job_new(struct job ** _job, struct client * client, GString * xml)
 	issue_number = 0;
 	job = g_malloc(sizeof(struct job));
 	*job = (struct job) {
-		.process = g_process_new(),
+		.process = gebr_comm_process_new(),
 		.flow = NULL,
 		.user_finished = FALSE,
 		.hostname = g_string_new(""),
@@ -489,7 +489,7 @@ job_free(struct job * job)
 		gebrd.jobs = g_list_delete_link(gebrd.jobs, link);
 
 	/* free data */
-	g_process_free(job->process);
+	gebr_comm_process_free(job->process);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(job->flow));
 	g_string_free(job->hostname, TRUE);
 	g_string_free(job->status, TRUE);
@@ -515,7 +515,7 @@ job_run_flow(struct job * job, struct client * client)
 	cmd_line = g_string_new(NULL);
         locale_str = g_filename_from_utf8(job->cmd_line->str, -1, NULL, &bytes_written, NULL);
 
-	/* command-line */
+	/* gebr_command-line */
 	if (client->display->len) {
 		if (client->is_local)
 			g_string_printf(cmd_line, "bash -l -c 'export DISPLAY=%s; %s'",
@@ -536,13 +536,13 @@ job_run_flow(struct job * job, struct client * client)
 			G_CALLBACK(job_process_read_stderr), job);
 	g_signal_connect(job->process, "finished",
 			G_CALLBACK(job_process_finished), job);
-	g_process_start(job->process, cmd_line);
+	gebr_comm_process_start(job->process, cmd_line);
 	g_string_assign(job->status, "running");
 
 	/* for program that waits stdin EOF (like sfmath) */
 	gebr_geoxml_flow_get_program(job->flow, &program, 0);
 	if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program)) == FALSE)
-		g_process_close_stdin(job->process);
+		gebr_comm_process_close_stdin(job->process);
 
 	/* frees */
 	g_string_free(cmd_line, TRUE);
@@ -575,7 +575,7 @@ job_find(GString * jid)
 void
 job_clear(struct job * job)
 {
-	if (g_process_is_running(job->process) == FALSE)
+	if (gebr_comm_process_is_running(job->process) == FALSE)
 		job_free(job);
 }
 
@@ -583,14 +583,14 @@ void
 job_end(struct job * job)
 {
 	job->user_finished = TRUE;
-	g_process_terminate(job->process);
+	gebr_comm_process_terminate(job->process);
 }
 
 void
 job_kill(struct job * job)
 {
 	job->user_finished = TRUE;
-	g_process_kill(job->process);
+	gebr_comm_process_kill(job->process);
 }
 
 void
@@ -603,7 +603,7 @@ job_list(struct client * client)
 		struct job *	job;
 
 		job = (struct job *)link->data;
-		protocol_send_data(client->protocol, client->stream_socket, protocol_defs.job_def, 9,
+		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.job_def, 9,
 			job->jid->str, job->status->str, job->title->str,
 			job->start_date->str, job->finish_date->str, job->hostname->str,
 			job->issues->str, job->cmd_line->str, job->output->str);
@@ -622,7 +622,7 @@ job_send_clients_job_notify(struct job * job)
 		struct client * client;
 
 		client = (struct client *)link->data;
-		protocol_send_data(client->protocol, client->stream_socket, protocol_defs.job_def, 9,
+		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.job_def, 9,
 			job->jid->str, job->status->str, job->title->str,
 			job->start_date->str, job->finish_date->str, job->hostname->str,
 			job->issues->str, job->cmd_line->str, job->output->str);

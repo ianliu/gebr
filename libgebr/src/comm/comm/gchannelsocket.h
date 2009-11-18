@@ -17,8 +17,8 @@
  *   Inspired on Qt 4.3 version of QChannelSocket, by Trolltech
  */
 
-#ifndef __COMM_GCHANNELSOCKET_H
-#define __COMM_GCHANNELSOCKET_H
+#ifndef __GEBR_COMM_CHANNEL_SOCKET_H
+#define __GEBR_COMM_CHANNEL_SOCKET_H
 
 #include "gsocket.h"
 #include "gstreamsocket.h"
@@ -67,4 +67,4 @@ gebr_comm_channel_socket_get_forward_address(GebrCommChannelSocket * channel_soc
 
 G_END_DECLS
 
-#endif //__COMM_GCHANNELSOCKET_H
+#endif //__GEBR_COMM_CHANNEL_SOCKET_H

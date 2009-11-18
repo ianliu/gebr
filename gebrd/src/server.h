@@ -19,7 +19,7 @@
 #define __SERVER_H
 
 struct client;
-struct protocol;
+struct gebr_comm_protocol;
 
 gboolean
 server_init(void);

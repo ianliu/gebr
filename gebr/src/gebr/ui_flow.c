@@ -243,7 +243,7 @@ flow_io_setup_ui(gboolean executable)
 
 	// |____|^| Address combo box
 	address  = gtk_combo_box_new_with_model(
-		GTK_TREE_MODEL(gebr.ui_server_list->common.store));
+		GTK_TREE_MODEL(gebr.ui_server_list->gebr_common.store));
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(address), renderer, FALSE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(address), renderer,
@@ -540,7 +540,7 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 			continue;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(
-			gebr.ui_server_list->common.store), &server_iter,
+			gebr.ui_server_list->gebr_common.store), &server_iter,
 			SERVER_STATUS_ICON, &icon,
 			-1);
 
@@ -646,7 +646,7 @@ flow_io_run(GebrGeoXmlFlowServer * server_io)
 		gebr_geoxml_flow_server_io_get_error(server_io));
 
 	gtk_tree_model_get(GTK_TREE_MODEL(
-		gebr.ui_server_list->common.store), &iter,
+		gebr.ui_server_list->gebr_common.store), &iter,
 		SERVER_POINTER, &server,
 		-1); 
 	flow_run(server);
@@ -764,7 +764,7 @@ on_button_add_clicked		(GtkButton *		button,
 	// Fetch data
 	gtk_combo_box_get_active_iter(
 		GTK_COMBO_BOX(ui_flow_io->address), &iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->gebr_common.store), &iter,
 		SERVER_STATUS_ICON, &icon,
 		SERVER_ADDRESS, &address,
 		-1);
@@ -834,7 +834,7 @@ on_combo_changed		(GtkComboBox *		combo,
 
 	if (!gtk_combo_box_get_active_iter(combo, &iter))
 		return;
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store),
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->gebr_common.store),
 		&iter, SERVER_ADDRESS, &addr, -1);
 	activatable = strcmp(addr, _("Local server")) == 0;
 	gtk_entry_set_icon_sensitive(GTK_ENTRY(ui_flow_io->input),

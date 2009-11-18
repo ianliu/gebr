@@ -259,7 +259,7 @@ job_control_cancel(void)
 		gebr_message(LOG_WARNING, TRUE, FALSE, _("Job is not running"));
 		return;
 	}
-	if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
+	if (gebr_comm_server_is_logged(job->server->gebr_comm) == FALSE) {
 		gebr_message(LOG_WARNING, TRUE, FALSE, _("You are not connected to job's server"));
 		return;
 	}
@@ -267,15 +267,15 @@ job_control_cancel(void)
 		return;
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to terminate job"));
-	if (gebr_comm_server_is_local(job->server->comm) == FALSE)
+	if (gebr_comm_server_is_local(job->server->gebr_comm) == FALSE)
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to terminate job '%s'"),
-			job->server->comm->address->str, job->title->str);
+			job->server->gebr_comm->address->str, job->title->str);
 	else
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking local server to terminate job '%s'"),
 			job->title->str);
 
-	protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
-		protocol_defs.end_def, 1, job->jid->str);
+	gebr_comm_protocol_send_data(job->server->gebr_comm->protocol, job->server->gebr_comm->stream_socket,
+		gebr_comm_protocol_defs.end_def, 1, job->jid->str);
 }
 
 /*
@@ -351,7 +351,7 @@ job_control_stop(void)
 		gebr_message(LOG_WARNING, TRUE, FALSE, _("Job is not running"));
 		return;
 	}
-	if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
+	if (gebr_comm_server_is_logged(job->server->gebr_comm) == FALSE) {
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("You are not connected to job's server"));
 		return;
 	}
@@ -359,16 +359,16 @@ job_control_stop(void)
 		return;
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to kill job"));
-	if (gebr_comm_server_is_local(job->server->comm) == FALSE) {
+	if (gebr_comm_server_is_local(job->server->gebr_comm) == FALSE) {
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to kill job '%s'"),
-			job->server->comm->address->str, job->title->str);
+			job->server->gebr_comm->address->str, job->title->str);
 	} else {
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking local server to kill job '%s'"),
 			job->title->str);
 	}
 
-	protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
-		protocol_defs.kil_def, 1, job->jid->str);
+	gebr_comm_protocol_send_data(job->server->gebr_comm->protocol, job->server->gebr_comm->stream_socket,
+		gebr_comm_protocol_defs.kil_def, 1, job->jid->str);
 }
 
 

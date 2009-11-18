@@ -114,7 +114,7 @@ server_disconnected(GStreamSocket * stream_socket, struct server * server)
 struct server *
 server_new(const gchar * address, gboolean autoconnect)
 {
-	static const struct comm_server_ops	ops = {
+	static const struct gebr_comm_server_ops	ops = {
 		.log_message = server_log_message,
 		.ssh_login = server_ssh_login,
 		.ssh_question = server_ssh_question,
@@ -123,26 +123,26 @@ server_new(const gchar * address, gboolean autoconnect)
 	GtkTreeIter				iter;
 	struct server *				server;
 
-	gtk_list_store_append(gebr.ui_server_list->common.store, &iter);
+	gtk_list_store_append(gebr.ui_server_list->gebr_common.store, &iter);
 	server = g_malloc(sizeof(struct server));
 	*server = (struct server){
-		.comm = gebr_comm_server_new(address, &ops),
+		.gebr_comm = gebr_comm_server_new(address, &ops),
 		.iter = iter,
 		.last_error = g_string_new("")
 	};
-	server->comm->user_data = server;
-	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
+	server->gebr_comm->user_data = server;
+	gtk_list_store_set(gebr.ui_server_list->gebr_common.store, &iter,
 		SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
 		SERVER_ADDRESS, !strcmp(address, "127.0.0.1") ? _("Local server") : address,
 		SERVER_POINTER, server,
 		SERVER_AUTOCONNECT, autoconnect,
 		-1);
 
-	g_signal_connect(server->comm->stream_socket, "disconnected",
+	g_signal_connect(server->gebr_comm->stream_socket, "disconnected",
 		G_CALLBACK(server_disconnected), server);
 
 	if (autoconnect)
-		gebr_comm_server_connect(server->comm);
+		gebr_comm_server_connect(server->gebr_comm);
 
 	return server;
 }
@@ -153,7 +153,7 @@ server_new(const gchar * address, gboolean autoconnect)
  * @iter: A #GtkTreeIter that will hold the corresponding iterator.
  *
  * Searches for the @address server and fill @iter with the correct
- * iterator for the gebr.ui_server_list->common.store model.
+ * iterator for the gebr.ui_server_list->gebr_common.store model.
  *
  * Returns: %TRUE if the server was found, %FALSE otherwise.
  */
@@ -165,10 +165,10 @@ server_find_address(const gchar * address, GtkTreeIter * iter)
 	if (!address)
 		return FALSE;
 
-	gebr_gui_gtk_tree_model_foreach(i, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
+	gebr_gui_gtk_tree_model_foreach(i, GTK_TREE_MODEL(gebr.ui_server_list->gebr_common.store)) {
 		gchar * addr;
 		gtk_tree_model_get(
-			GTK_TREE_MODEL(gebr.ui_server_list->common.store), &i,
+			GTK_TREE_MODEL(gebr.ui_server_list->gebr_common.store), &i,
 			SERVER_ADDRESS, &addr,
 			-1);
 		if (!strcmp(address, addr)) {
@@ -188,7 +188,7 @@ server_free(struct server * server)
 	GtkTreeIter	iter;
 	gboolean	valid;
 
-	gtk_list_store_remove(gebr.ui_server_list->common.store, &server->iter);
+	gtk_list_store_remove(gebr.ui_server_list->gebr_common.store, &server->iter);
 
 	/* delete all jobs at server */
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
@@ -204,7 +204,7 @@ server_free(struct server * server)
 			job_delete(job);
 	}
 
-	gebr_comm_server_free(server->comm);
+	gebr_comm_server_free(server->gebr_comm);
 	g_string_free(server->last_error, TRUE);
 	g_free(server);
 }

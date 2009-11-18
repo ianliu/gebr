@@ -72,7 +72,7 @@
    max           CDATA #REQUIRED
    inc           CDATA #REQUIRED>
 
-<!-- Keyword to build the command line -->
+<!-- Keyword to build the gebr_command line -->
 <!ELEMENT keyword          (#PCDATA)>
 <!-- Short text to be displayed as label for an input parameter -->
 <!ELEMENT label            (#PCDATA)>

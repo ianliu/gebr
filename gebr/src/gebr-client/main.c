@@ -42,9 +42,9 @@ main(int argc, char ** argv, char ** env)
 	GError *		error = NULL;
 	GOptionContext *	context;
 
-	context = g_option_context_new(_("serveraddress command [args]}"));
+	context = g_option_context_new(_("serveraddress gebr_command [args]}"));
 	g_option_context_set_summary(context,
-		_("GeBR commandline client")
+		_("GeBR gebr_commandline client")
 	);
 	g_option_context_set_description(context,
 		_("a seismic processing environment")

@@ -1,4 +1,4 @@
-/*   GeBR Daemon - Process and control execution of flows
+/*   libgebr - GeBR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* include all comm library's headers. */
+/* include all gebr_comm library's headers. */
 #include <comm/gsocketaddress.h>
 #include <comm/ghostinfo.h>
 #include <comm/gsocket.h>

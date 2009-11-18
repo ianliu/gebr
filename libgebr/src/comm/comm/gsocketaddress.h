@@ -17,8 +17,8 @@
  *   Inspired on Qt 4.3 version of QSocketAddress, by Trolltech
  */
 
-#ifndef __COMM_GSOCKETADDRESS_H
-#define __COMM_GSOCKETADDRESS_H
+#ifndef __GEBR_COMM_SOCKET_ADDRESS_H
+#define __GEBR_COMM_SOCKET_ADDRESS_H
 
 #include <glib.h>
 
@@ -64,4 +64,4 @@ gebr_comm_socket_address_get_ip_port(GebrCommSocketAddress * socket_address);
 
 G_END_DECLS
 
-#endif // __COMM_GSOCKETADDRESS_H
+#endif // __GEBR_COMM_SOCKET_ADDRESS_H

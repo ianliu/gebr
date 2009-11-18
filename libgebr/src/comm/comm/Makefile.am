@@ -39,4 +39,4 @@ libgebr_comm_la_LIBADD = -lutil $(INTLLIBS) $(GLIB_LIBS) $(GOBJECT_LIBS) $(GTHRE
 	../../libgebr.la \
 	../../geoxml/geoxml/libgebr_geoxml.la \
 	@JSONGLIB_LDADD@
-libgebr_comm_la_LDFLAGS = -version-info @GEBR_GEOXML_VERSION_INFO@
+libgebr_comm_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@

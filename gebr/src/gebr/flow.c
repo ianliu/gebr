@@ -538,7 +538,7 @@ flow_run(struct server * server)
 	flow_copy_from_dicts(flow);
 
 	/* RUN */
-	gebr_comm_server_run_flow(server->comm, flow);
+	gebr_comm_server_run_flow(server->gebr_comm, flow);
 
 	/* TODO: check save */
 	/* Save manualy to preserve run date */
@@ -549,9 +549,9 @@ flow_run(struct server * server)
 
 	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'"),
 		gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
-	if (gebr_comm_server_is_local(server->comm) == FALSE) {
+	if (gebr_comm_server_is_local(server->gebr_comm) == FALSE) {
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'"),
-			server->comm->address->str,
+			server->gebr_comm->address->str,
 			gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
 	} else {
 		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking local server to run flow '%s'"),
@@ -566,7 +566,7 @@ flow_run(struct server * server)
 /*
  * Function: flow_revision_save
  * Make a revision from current flow.
- * Opens a dialog asking the user for a comment of it.
+ * Opens a dialog asking the user for a gebr_comment of it.
  */
 gboolean
 flow_revision_save(void)
@@ -588,7 +588,7 @@ flow_revision_save(void)
 		NULL);
 	vbox = GTK_BOX(GTK_DIALOG(dialog)->vbox);
 
-	label = gtk_label_new(_("Make a comment for this state:"));
+	label = gtk_label_new(_("Make a gebr_comment for this state:"));
 	gtk_box_pack_start(vbox, label, FALSE, TRUE, 0);
 	entry = gtk_entry_new();
 	gtk_box_pack_start(vbox, entry, FALSE, TRUE, 0);

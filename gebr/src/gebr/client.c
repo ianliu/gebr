@@ -26,62 +26,62 @@
 #include "job.h"
 
 gboolean
-client_parse_server_messages(struct gebr_comm_server * comm_server, struct server * server)
+client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct server * server)
 {
 	GList *			link;
-	struct message *	message;
+	struct gebr_comm_message *	message;
 
-	while ((link = g_list_last(comm_server->protocol->messages)) != NULL) {
-		message = (struct message *)link->data;
+	while ((link = g_list_last(gebr_comm_server->protocol->messages)) != NULL) {
+		message = (struct gebr_comm_message *)link->data;
 
-		if (message->hash == protocol_defs.err_def.hash) {
+		if (message->hash == gebr_comm_protocol_defs.err_def.hash) {
 			GList *		arguments;
 
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 1);
+			arguments = gebr_comm_protocol_split_new(message->argument, 1);
 			g_string_assign(server->last_error, ((GString *)g_list_nth_data(arguments, 0))->str);
 
-			protocol_split_free(arguments);
-		} else if (message->hash == protocol_defs.ret_def.hash) {
-			if (comm_server->protocol->waiting_ret_hash == protocol_defs.ini_def.hash) {
+			gebr_comm_protocol_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.ret_def.hash) {
+			if (gebr_comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.hash) {
 				GList *		arguments;
 				GString *	hostname, * display_port;
 
 				/* organize message data */
-				arguments = protocol_split_new(message->argument, 2);
+				arguments = gebr_comm_protocol_split_new(message->argument, 2);
 				hostname = g_list_nth_data(arguments, 0);
 				display_port = g_list_nth_data(arguments, 1);
 
 				/* say we are logged */
 				g_string_assign(server->last_error, "");
-				comm_server->protocol->logged = TRUE;
+				gebr_comm_server->protocol->logged = TRUE;
 				server_list_updated_status(server);
-				g_string_assign(comm_server->protocol->hostname, hostname->str);
-				if (gebr_comm_server_is_local(comm_server) == TRUE)
+				g_string_assign(gebr_comm_server->protocol->hostname, hostname->str);
+				if (gebr_comm_server_is_local(gebr_comm_server) == TRUE)
 					gebr_message(LOG_INFO, TRUE, TRUE, _("Connected to local server"),
-						comm_server->address->str);
+						gebr_comm_server->address->str);
 				else {
 					gebr_message(LOG_INFO, TRUE, TRUE, _("Connected to server '%s'"),
-						comm_server->address->str);
+						gebr_comm_server->address->str);
 					if (display_port->len)
-						gebr_comm_server_forward_x11(comm_server, atoi(display_port->str));
+						gebr_comm_server_forward_x11(gebr_comm_server, atoi(display_port->str));
 					else
 						gebr_message(LOG_ERROR, TRUE, TRUE, _("Server '%s' could not send display for graphical output redirection"),
-							comm_server->address->str);
+							gebr_comm_server->address->str);
 				}
 
 				/* request list of jobs */
-				protocol_send_data(comm_server->protocol, comm_server->stream_socket,
-					protocol_defs.lst_def, 0);
+				gebr_comm_protocol_send_data(gebr_comm_server->protocol, gebr_comm_server->stream_socket,
+					gebr_comm_protocol_defs.lst_def, 0);
 
-				protocol_split_free(arguments);
-			} else if (comm_server->protocol->waiting_ret_hash == protocol_defs.run_def.hash) {
+				gebr_comm_protocol_split_free(arguments);
+			} else if (gebr_comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.run_def.hash) {
 				GList *		arguments;
 				GString *	jid, *status, * title, * start_date, * issues, * cmd_line, * output;
 				struct job *	job;
 
 				/* organize message data */
-				arguments = protocol_split_new(message->argument, 7);
+				arguments = gebr_comm_protocol_split_new(message->argument, 7);
 				jid = g_list_nth_data(arguments, 0);
 				status = g_list_nth_data(arguments, 1);
 				title = g_list_nth_data(arguments, 2);
@@ -95,17 +95,17 @@ client_parse_server_messages(struct gebr_comm_server * comm_server, struct serve
 				job_set_active(job);
 				gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 3);
 
-				protocol_split_free(arguments);
-			} else if (comm_server->protocol->waiting_ret_hash == protocol_defs.flw_def.hash) {
+				gebr_comm_protocol_split_free(arguments);
+			} else if (gebr_comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.flw_def.hash) {
 
 			}
-		} else if (message->hash == protocol_defs.job_def.hash) {
+		} else if (message->hash == gebr_comm_protocol_defs.job_def.hash) {
 			GList *		arguments;
 			GString *	jid, * hostname, * status, * title, * start_date, * finish_date, * issues, * cmd_line, * output;
 			struct job *	job;
 
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 9);
+			arguments = gebr_comm_protocol_split_new(message->argument, 9);
 			jid = g_list_nth_data(arguments, 0);
 			status = g_list_nth_data(arguments, 1);
 			title = g_list_nth_data(arguments, 2);
@@ -116,51 +116,51 @@ client_parse_server_messages(struct gebr_comm_server * comm_server, struct serve
 			cmd_line = g_list_nth_data(arguments, 7);
 			output = g_list_nth_data(arguments, 8);
 
-			job = job_find(comm_server->address, jid);
+			job = job_find(gebr_comm_server->address, jid);
 			if (job == NULL)
 				job = job_add(server, jid, status, title, start_date, finish_date,
 					hostname, issues, cmd_line, output);
 
-			protocol_split_free(arguments);
-		} else if (message->hash == protocol_defs.out_def.hash) {
+			gebr_comm_protocol_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.out_def.hash) {
 			GList *		arguments;
 			GString *	jid, * output;
 			struct job *	job;
 
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 2);
+			arguments = gebr_comm_protocol_split_new(message->argument, 2);
 			jid = g_list_nth_data(arguments, 0);
 			output = g_list_nth_data(arguments, 1);
 
-			job = job_find(comm_server->address, jid);
+			job = job_find(gebr_comm_server->address, jid);
 			if (job != NULL) {
 				job_append_output(job, output);
 			}
 
-			protocol_split_free(arguments);
-		} else if (message->hash == protocol_defs.fin_def.hash) {
+			gebr_comm_protocol_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.fin_def.hash) {
 			GList *		arguments;
 			GString *	jid, * status, * finish_date;
 			struct job *	job;
 
 			/* organize message data */
-			arguments = protocol_split_new(message->argument, 3);
+			arguments = gebr_comm_protocol_split_new(message->argument, 3);
 			jid = g_list_nth_data(arguments, 0);
 			status = g_list_nth_data(arguments, 1);
 			finish_date = g_list_nth_data(arguments, 2);
 
-			job = job_find(comm_server->address, jid);
+			job = job_find(gebr_comm_server->address, jid);
 			if (job != NULL) {
 				g_string_assign(job->finish_date, finish_date->str);
 				job->status = job_translate_status(status);
 				job_update_status(job);
 			}
 
-			protocol_split_free(arguments);
+			gebr_comm_protocol_split_free(arguments);
 		}
 
-		message_free(message);
-		comm_server->protocol->messages = g_list_delete_link(comm_server->protocol->messages, link);
+		gebr_comm_message_free(message);
+		gebr_comm_server->protocol->messages = g_list_delete_link(gebr_comm_server->protocol->messages, link);
 	}
 
 	return TRUE;

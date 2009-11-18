@@ -119,7 +119,7 @@ static const GtkRadioActionEntry status_radio_actions_entries [] = {
 	{"flow_edition_status_unconfigured", NULL, N_("Unconfigured"), NULL, NULL, 2}
 };
 
-static const GtkActionEntry common_actions_entries [] = {
+static const GtkActionEntry gebr_common_actions_entries [] = {
 	{"copy", GTK_STOCK_COPY, "copy", NULL, "copy", (GCallback)on_copy_activate},
 	{"paste", GTK_STOCK_PASTE, "paste", NULL, "paste", (GCallback)on_paste_activate},
 };
@@ -154,7 +154,7 @@ gebr_setup_ui(void)
 	GtkWidget *		menu;
 	GtkWidget *		revisions_menu;
 
-	GtkActionGroup *	common_action_group;
+	GtkActionGroup *	gebr_common_action_group;
 
 	gebr.about = gebr_gui_about_setup_ui("GêBR", _("A plug-and-play environment to\nseismic processing tools"));
 	gebr.ui_server_list = server_list_setup_ui();
@@ -180,10 +180,10 @@ gebr_setup_ui(void)
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(gebr.action_group, "flow_edition_copy"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(gebr.action_group, "flow_edition_paste"));
 
-	common_action_group = gtk_action_group_new("Common");
-	gtk_action_group_add_actions(common_action_group, common_actions_entries,
-		G_N_ELEMENTS(common_actions_entries), NULL);
-	gebr_gui_gtk_action_group_set_accel_group(common_action_group, gebr.accel_group);
+	gebr_common_action_group = gtk_action_group_new("Common");
+	gtk_action_group_add_actions(gebr_common_action_group, gebr_common_actions_entries,
+		G_N_ELEMENTS(gebr_common_actions_entries), NULL);
+	gebr_gui_gtk_action_group_set_accel_group(gebr_common_action_group, gebr.accel_group);
 
 	/* Signals */
 	g_signal_connect(GTK_OBJECT(gebr.window), "delete_event",

@@ -17,28 +17,28 @@
  *   Inspired on Qt 4.3 version of QAbstractSocket, by Trolltech
  */
 
-#ifndef __COMM_GSOCKETPRIVATE_H
-#define __COMM_GSOCKETPRIVATE_H
+#ifndef __GEBR_COMM_SOCKETPRIVATE_H
+#define __GEBR_COMM_SOCKETPRIVATE_H
 
 #include "gsocket.h"
 #include "gsocketaddress.h"
 
 void
-_g_socket_init(GebrCommSocket * socket, int fd, enum GebrCommSocketAddressType address_type);
+_gebr_comm_socket_init(GebrCommSocket * socket, int fd, enum GebrCommSocketAddressType address_type);
 
 void
-_g_socket_close(GebrCommSocket * socket);
+_gebr_comm_socket_close(GebrCommSocket * socket);
 
 int
-_g_socket_get_fd(GebrCommSocket * socket);
+_gebr_comm_socket_get_fd(GebrCommSocket * socket);
 
 void
-_g_socket_enable_read_watch(GebrCommSocket * socket);
+_gebr_comm_socket_enable_read_watch(GebrCommSocket * socket);
 
 void
-_g_socket_enable_write_watch(GebrCommSocket * socket);
+_gebr_comm_socket_enable_write_watch(GebrCommSocket * socket);
 
 void
-_g_socket_emit_error(GebrCommSocket * socket, enum GebrCommSocketError error);
+_gebr_comm_socket_emit_error(GebrCommSocket * socket, enum GebrCommSocketError error);
 
-#endif //__COMM_GSOCKETPRIVATE_H
+#endif //__GEBR_COMM_SOCKETPRIVATE_H

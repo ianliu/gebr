@@ -64,7 +64,7 @@
  * Project compounds a list of lines references.
  *
  * Project's idea in analogous to the concept of lines as a container of flows.
- * It groups a number of lines that has some objective in common.
+ * It groups a number of lines that has some objective in gebr_common.
  *
  * Projects references lines using their path.
  * Therefore, a project is a list of lines files. When a line needs to be

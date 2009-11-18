@@ -131,11 +131,11 @@ job_close(struct job * job)
 		gebr_message(LOG_ERROR, TRUE, FALSE, _("Can't close running job"));
 		return;
 	}
-	if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
+	if (gebr_comm_server_is_logged(job->server->gebr_comm) == FALSE) {
 		/* TODO */
 	} else if (strcmp(job->jid->str, "0"))
-		protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
-			protocol_defs.clr_def, 1, job->jid->str);
+		gebr_comm_protocol_send_data(job->server->gebr_comm->protocol, job->server->gebr_comm->stream_socket,
+			gebr_comm_protocol_defs.clr_def, 1, job->jid->str);
 
 	job_delete(job);
 }
@@ -158,7 +158,7 @@ job_find(GString * address, GString * jid)
 			JC_STRUCT, &i,
 			-1);
 
-		if (!strcmp(i->server->comm->address->str, address->str) &&
+		if (!strcmp(i->server->gebr_comm->address->str, address->str) &&
 		!strcmp(i->jid->str, jid->str)) {
 			job = i;
 			break;
@@ -187,13 +187,13 @@ job_fill_info(struct job * job)
 	 */
 	/* who and where */
 	g_string_append_printf(info, _("Job executed at %s by %s\n"),
-		job->server->comm->protocol->hostname->str, job->hostname->str);
+		job->server->gebr_comm->protocol->hostname->str, job->hostname->str);
 	/* start date */
 	g_string_append_printf(info, "%s %s\n", _("Start date:"), localized_date(job->start_date->str));
 	/* issues */
 	if (job->issues->len)
 		g_string_append_printf(info, "\n%s\n%s", _("Issues:"), job->issues->str);
-	/* command line */
+	/* gebr_command line */
 	if (job->cmd_line->len)
 		g_string_append_printf(info, "\n%s\n%s\n", _("Command line:"), job->cmd_line->str);
 	/* output */

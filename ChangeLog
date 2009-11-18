@@ -142,7 +142,7 @@
 2009-07-03  Ricardo Biloti <biloti@gmail.com>
 
 	* install menu complains about overwriting, and overwrite
-	  command-line option added
+	  gebr_command-line option added
 	* update navigation bar whenever a new parameter is created
 
 2009-06-28  Ricardo Biloti <biloti@gmail.com>
@@ -209,7 +209,7 @@
 2009-06-16  Ricardo Biloti <biloti@gmail.com>
 
 	* open/edit help buttons in preferences for gebr a la debr
-	* - install-menu command line option for gebr
+	* - install-menu gebr_command line option for gebr
 	  - Portuguese translantion update
 
 2009-06-12  Ricardo Biloti <biloti@gmail.com>
@@ -276,7 +276,7 @@
 
 2009-05-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* fixed feature added in last commit
+	* fixed feature added in last gebr_commit
 	* fix bizarre bug!
 	* use $HOME/.gebr/gebrdata as data dir
 
@@ -301,7 +301,7 @@
 
 2009-05-20  Ricardo Biloti <biloti@gmail.com>
 
-	* fix escaped command-line string conflict with localed filenames
+	* fix escaped gebr_command-line string conflict with localed filenames
 	  fixed
 	* sorting refurbished
 
@@ -368,7 +368,7 @@
 2009-05-06  Ricardo Biloti <biloti@gmail.com>
 
 	* minor fixes to Portuguese translation
-	* fix last commit
+	* fix last gebr_commit
 
 2009-05-06  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
@@ -424,7 +424,7 @@
 
 	* - fixed write in gsocket
 	  - more robust protocol error handling using a hash table for
-	  commands
+	  gebr_commands
 
 2009-03-25  Ricardo Biloti <biloti@gmail.com>
 
@@ -432,7 +432,7 @@
 
 2009-03-25  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* - reapply missed commit 1035
+	* - reapply missed gebr_commit 1035
 	  - strip flow to send to server
 
 2009-03-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
@@ -485,7 +485,7 @@
 	* selection for exclusive parameters in gebr was ignored
 	* no manual editing and value is hidden for list of enum value
 	  parameter
-	* fix errors in last commit
+	* fix errors in last gebr_commit
 	* use libgebr_gtk_tree_view_scroll_to_iter_cell
 	* silly bug! debr parameters in a group were writing to value
 	  instead of default value
@@ -553,7 +553,7 @@
 
 2009-03-02  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* fix bash login message removal for ssh command
+	* fix bash login message removal for ssh gebr_command
 	* - removed changelog.in from debian packages
 	  - fixed VERSION in configure.ac's
 	* protect against login messages when running servers
@@ -579,7 +579,7 @@
 	* - reconfigure parameter widget if required changed (needed for
 	  enum parameter)
 	  - really fix the problem with list parameter (now for all types)
-	* fix last commit: really fixed list parameter editing
+	* fix last gebr_commit: really fixed list parameter editing
 	* - valuesequenceedit refactored
 	  - fix gebr_gui_parameter_widget's on_edit_list_toggled
 
@@ -596,7 +596,7 @@
 
 	* - fix drag n' drop on gtksequenceedit and devivates
 	  - fix save on exit dialog on debr
-	* ¡commit 1000! several UI tweaks
+	* ¡gebr_commit 1000! several UI tweaks
 
 2009-01-28  Ricardo Biloti <biloti@gmail.com>
 
@@ -670,12 +670,12 @@
 
 2009-01-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* return value and comment fix for comm_server_forward_x11
-	* more beautiful and robust comm_server_forward_x11
+	* return value and gebr_comment fix for gebr_comm_server_forward_x11
+	* more beautiful and robust gebr_comm_server_forward_x11
 	* first working version of x11 full redirect!
 	* - first working version o gchannelsocket
-	  - g_stream_socket_connect
-	* - fixed _g_socket_address_get_sockaddr
+	  - gebr_comm_stream_socket_connect
+	* - fixed _gebr_comm_socket_address_get_sockaddr
 	  - fixes to gchannelsocket
 	* general refactoring in libgebr_comm to really support unix
 	  sockets
@@ -812,7 +812,7 @@
 	* - add some scrolled windows
 	  - minor fixes
 	* fix parameter_{top,bottom}
-	* fix last commit
+	* fix last gebr_commit
 	* don't use tooltip on tree view if gtk version < 2.12
 	* workaround for id lookup
 	* fix connect after disconnect on server dialog
@@ -966,7 +966,7 @@
 
 2008-11-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* last commit with git commit's -a option
+	* last gebr_commit with git gebr_commit's -a option
 	* - imported geoxml from branch flow0.3
 	  - use actions in gebr
 	  - gebr now uses geoxml 0.3 functions
@@ -1016,8 +1016,8 @@
 	  - only show asking server ... (for running flows) message for
 	  remote servers
 	* - process classes remove child finish watch
-	  - comm_server reorganization
-	  - comm_server keep track and free temporary process
+	  - gebr_comm_server reorganization
+	  - gebr_comm_server keep track and free temporary process
 	* more robust display port discovery
 
 2008-06-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
@@ -1052,7 +1052,7 @@
 
 2008-06-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* - added version commandline option to gebr and gebrd
+	* - added version gebr_commandline option to gebr and gebrd
 	  - gebrd: added defines.h and change foreground option name to
 	  interactive
 	* fix yes/no ssh message handling
@@ -1108,7 +1108,7 @@
 	* __gebr_geoxml_program_parameter_reset_default should not change
 	  anything but default
 	* gebr_geoxml_parameter_reset made invalid flows
-	* missing stuff to be commited
+	* missing stuff to be gebr_commited
 	* don't adjust npar when changing the parameter type
 	* initial refactoring work to support exclusive groups
 	* - reset exclusive if it was deleted when deinstaciated
@@ -1117,7 +1117,7 @@
 
 	* don't leave selected blank/invalid on
 	  gebr_geoxml_parameter_group_set_exclusive
-	* flow to command genereration:
+	* flow to gebr_command genereration:
 	  - support for exclusive group
 	  - more reliable error handling
 	* - disable up, down, duplicate and delete for multi-instaciated
@@ -1140,7 +1140,7 @@
 	* - flow 0.2.3: exclusive not anymore value based and make possible
 	  to keep a default exclusive parameter
 	  - upgrade utily for upgrading documents to latest version
-	  - use glib command line parse for utilies
+	  - use glib gebr_command line parse for utilies
 
 2008-04-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
@@ -1203,7 +1203,7 @@
 2008-03-12  Ricardo Biloti <biloti@gmail.com>
 
 	* - fix a case insensitive string comparison
-	  - escape command line string
+	  - escape gebr_command line string
 
 2008-03-07  Ricardo Biloti <biloti@gmail.com>
 
@@ -1264,7 +1264,7 @@
 
 	* added enum_option.{c,h}
 	* added changelog
-	* fixed generation of commandline for list parameters
+	* fixed generation of gebr_commandline for list parameters
 	* - fixed icon of gtkfileentry and gtksequenceedit
 	  - merged enum-impl and improved show on combo box
 	  - quote each value when parameter accepts a list of parameters
@@ -1368,7 +1368,7 @@
 	* fixed ssh login dialog
 	* - added define.h in libgebr for static mode support
 	  - changed names of enum log_message_type
-	  - ported server infrastruture to libgebr-comm for further use in
+	  - ported server infrastruture to libgebr-gebr_comm for further use in
 	  gebr-run
 
 2008-02-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
@@ -1410,7 +1410,7 @@
 	* prevent libgeoxml to crash on invalid documents
 	* - avoid crash by making url optional (again) in flow 0.2.0
 	  - fixed flows DTDs
-	* rollback to last commit's server.{c,h} in gebr
+	* rollback to last gebr_commit's server.{c,h} in gebr
 	* fixed EINPROGRESS in GSocket
 	* fixed version of flow
 	* - improved client/server archtecture (still unstable)
@@ -1466,7 +1466,7 @@
 2008-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
 	* category inherits valuesequence
-	* common code reuse of parameters for gebr and gebrme
+	* gebr_common code reuse of parameters for gebr and gebrme
 	* moved back parameters.* to gebr
 	* added missing files
 
@@ -1542,7 +1542,7 @@
 	  - minor cleanups
 	* improved popup selection handling
 	* decent popup menu support for GtkTreeView
-	* fixed last commit
+	* fixed last gebr_commit
 	* gtk_list_store_can_move_{up,down}
 	* gtk_list_store_move_{up,down}
 	* renamed info to summary
@@ -1551,12 +1551,12 @@
 	  - fix asking password twice
 	* - more reliable retrieve o magic cookie
 	  - enabled add local server button
-	* - common server structure
+	* - gebr_common server structure
 	  - better support for ssh login
-	* fixed child watch in GTerminalProcess
+	* fixed child watch in GebrCommTerminalProcess
 	* preliminary support login in with passwords and passphares on SSH
 	* fix include deletion
-	* added GTerminalProcess to handle process which communicate via
+	* added GebrCommTerminalProcess to handle process which gebr_communicate via
 	  terminal, like SSH
 
 2008-01-06  Braulio Barros de Oliveira <brauliobo@gmail.com>
