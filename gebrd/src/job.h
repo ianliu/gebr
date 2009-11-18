@@ -24,21 +24,21 @@
 #include "client.h"
 
 struct job {
-	GProcess *	process;
+	GProcess *		process;
 	GebrGeoXmlFlow *	flow;
-	gboolean	user_finished;
+	gboolean		user_finished;
 
 	/* the hostname of the client that ran it */
-	GString *	hostname;
-	GString *	status;
-	GString *	jid;
+	GString *		hostname;
+	GString *		status;
+	GString *		jid;
 
-	GString *	title;
-	GString *	start_date;
-	GString *	finish_date;
-	GString *	issues;
-	GString *	cmd_line;
-	GString *	output;
+	GString *		title;
+	GString *		start_date;
+	GString *		finish_date;
+	GString *		issues;
+	GString *		cmd_line;
+	GString *		output;
 };
 
 gboolean
