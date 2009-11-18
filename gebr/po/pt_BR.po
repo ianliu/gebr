@@ -130,7 +130,7 @@ msgid "Save flow state"
 msgstr "Salvar estado do fluxo"
 
 #: ../src/gebr/flow.c:591
-msgid "Make a gebr_comment for this state:"
+msgid "Make a comment for this state:"
 msgstr "Criar um comentário para este estado:"
 
 #: ../src/gebr/flow.c:756

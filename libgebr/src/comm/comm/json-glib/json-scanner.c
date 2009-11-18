@@ -51,7 +51,7 @@ struct _JsonScannerConfig
   gchar *cset_skip_characters; /* default: " \t\n" */
   gchar *cset_identifier_first;
   gchar *cset_identifier_nth;
-  gchar *cpair_gebr_comment_single; /* default: "#\n" */
+  gchar *cpair_comment_single; /* default: "#\n" */
   
   /* Should symbol lookup work case sensitive? */
   guint case_sensitive : 1;
@@ -59,9 +59,9 @@ struct _JsonScannerConfig
   /* Boolean values to be adjusted "on the fly"
    * to configure scanning behaviour.
    */
-  guint skip_gebr_comment_multi : 1;  /* C like gebr_comment */
-  guint skip_gebr_comment_single : 1; /* single line gebr_comment */
-  guint scan_gebr_comment_multi : 1;  /* scan multi line gebr_comments? */
+  guint skip_comment_multi : 1;  /* C like comment */
+  guint skip_comment_single : 1; /* single line comment */
+  guint scan_comment_multi : 1;  /* scan multi line comments? */
   guint scan_identifier : 1;
   guint scan_identifier_1char : 1;
   guint scan_identifier_NULL : 1;
@@ -97,11 +97,11 @@ static JsonScannerConfig json_scanner_config_template =
    G_CSET_a_2_z
    G_CSET_A_2_Z
   )			/* cset_identifier_nth */,
-  ( "//\n" )		/* cpair_gebr_comment_single */,
+  ( "//\n" )		/* cpair_comment_single */,
   TRUE			/* case_sensitive */,
-  TRUE			/* skip_gebr_comment_multi */,
-  TRUE			/* skip_gebr_comment_single */,
-  FALSE			/* scan_gebr_comment_multi */,
+  TRUE			/* skip_comment_multi */,
+  TRUE			/* skip_comment_single */,
+  FALSE			/* scan_comment_multi */,
   TRUE			/* scan_identifier */,
   TRUE			/* scan_identifier_1char */,
   FALSE			/* scan_identifier_NULL */,
@@ -237,10 +237,10 @@ json_scanner_new (void)
     scanner->config->cset_skip_characters = "";
   scanner->config->cset_identifier_first = config_templ->cset_identifier_first;
   scanner->config->cset_identifier_nth	 = config_templ->cset_identifier_nth;
-  scanner->config->cpair_gebr_comment_single	 = config_templ->cpair_gebr_comment_single;
-  scanner->config->skip_gebr_comment_multi	 = config_templ->skip_gebr_comment_multi;
-  scanner->config->skip_gebr_comment_single	 = config_templ->skip_gebr_comment_single;
-  scanner->config->scan_gebr_comment_multi	 = config_templ->scan_gebr_comment_multi;
+  scanner->config->cpair_comment_single	 = config_templ->cpair_comment_single;
+  scanner->config->skip_comment_multi	 = config_templ->skip_comment_multi;
+  scanner->config->skip_comment_single	 = config_templ->skip_comment_single;
+  scanner->config->scan_comment_multi	 = config_templ->scan_comment_multi;
   scanner->config->scan_identifier	 = config_templ->scan_identifier;
   scanner->config->scan_identifier_1char = config_templ->scan_identifier_1char;
   scanner->config->scan_identifier_NULL	 = config_templ->scan_identifier_NULL;
@@ -986,7 +986,7 @@ json_scanner_unexp_token (JsonScanner *scanner,
 	  break;
 	  
 	case G_ERR_UNEXP_EOF_IN_COMMENT:
-	  g_snprintf (token_string, token_string_len, "scanner: unterminated gebr_comment");
+	  g_snprintf (token_string, token_string_len, "scanner: unterminated comment");
 	  break;
 	  
 	case G_ERR_NON_DIGIT_IN_CONST:
@@ -1056,13 +1056,13 @@ json_scanner_unexp_token (JsonScanner *scanner,
       
     case G_TOKEN_COMMENT_SINGLE:
     case G_TOKEN_COMMENT_MULTI:
-      g_snprintf (token_string, token_string_len, "gebr_comment");
+      g_snprintf (token_string, token_string_len, "comment");
       break;
       
     case G_TOKEN_NONE:
       /* somehow the user's parsing code is screwed, there isn't much
        * we can do about it.
-       * Note, a gebr_common case to trigger this is
+       * Note, a common case to trigger this is
        * json_scanner_peek_next_token(); json_scanner_unexp_token();
        * without an intermediate json_scanner_get_next_token().
        */
@@ -1152,12 +1152,12 @@ json_scanner_unexp_token (JsonScanner *scanner,
       break;
     case G_TOKEN_COMMENT_SINGLE:
       tstring = "single-line";
-      g_snprintf (expected_string, expected_string_len, "%sgebr_comment (%s)",
+      g_snprintf (expected_string, expected_string_len, "%scomment (%s)",
 		  scanner->token == expected_token ? "valid " : "", tstring);
       break;
     case G_TOKEN_COMMENT_MULTI:
       tstring = "multi-line";
-      g_snprintf (expected_string, expected_string_len, "%sgebr_comment (%s)",
+      g_snprintf (expected_string, expected_string_len, "%scomment (%s)",
 		  scanner->token == expected_token ? "valid " : "", tstring);
       break;
     case G_TOKEN_NONE:
@@ -1235,9 +1235,9 @@ json_scanner_get_token_i (JsonScanner	*scanner,
 	 (*token_p == G_TOKEN_CHAR &&
 	  strchr (scanner->config->cset_skip_characters, value_p->v_char)) ||
 	 (*token_p == G_TOKEN_COMMENT_MULTI &&
-	  scanner->config->skip_gebr_comment_multi) ||
+	  scanner->config->skip_comment_multi) ||
 	 (*token_p == G_TOKEN_COMMENT_SINGLE &&
-	  scanner->config->skip_gebr_comment_single));
+	  scanner->config->skip_comment_single));
   
   switch (*token_p)
     {
@@ -1291,8 +1291,8 @@ json_scanner_get_token_ll (JsonScanner *scanner,
 {
   JsonScannerConfig *config;
   GTokenType	   token;
-  gboolean	   in_gebr_comment_multi;
-  gboolean	   in_gebr_comment_single;
+  gboolean	   in_comment_multi;
+  gboolean	   in_comment_single;
   gboolean	   in_string_sq;
   gboolean	   in_string_dq;
   GString	  *gstring;
@@ -1309,8 +1309,8 @@ json_scanner_get_token_ll (JsonScanner *scanner,
       return;
     }
   
-  in_gebr_comment_multi = FALSE;
-  in_gebr_comment_single = FALSE;
+  in_comment_multi = FALSE;
+  in_comment_single = FALSE;
   in_string_sq = FALSE;
   in_string_dq = FALSE;
   gstring = NULL;
@@ -1341,19 +1341,19 @@ json_scanner_get_token_ll (JsonScanner *scanner,
 	  break;
 	  
 	case '/':
-	  if (!config->scan_gebr_comment_multi ||
+	  if (!config->scan_comment_multi ||
 	      json_scanner_peek_next_char (scanner) != '*')
 	    goto default_case;
 	  json_scanner_get_char (scanner, line_p, position_p);
 	  token = G_TOKEN_COMMENT_MULTI;
-	  in_gebr_comment_multi = TRUE;
+	  in_comment_multi = TRUE;
 	  gstring = g_string_new (NULL);
 	  while ((ch = json_scanner_get_char (scanner, line_p, position_p)) != 0)
 	    {
 	      if (ch == '*' && json_scanner_peek_next_char (scanner) == '/')
 		{
 		  json_scanner_get_char (scanner, line_p, position_p);
-		  in_gebr_comment_multi = FALSE;
+		  in_comment_multi = FALSE;
 		  break;
 		}
 	      else
@@ -1698,18 +1698,18 @@ json_scanner_get_token_ll (JsonScanner *scanner,
 	default:
 	default_case:
 	{
-	  if (config->cpair_gebr_comment_single &&
-	      ch == config->cpair_gebr_comment_single[0])
+	  if (config->cpair_comment_single &&
+	      ch == config->cpair_comment_single[0])
 	    {
 	      token = G_TOKEN_COMMENT_SINGLE;
-	      in_gebr_comment_single = TRUE;
+	      in_comment_single = TRUE;
 	      gstring = g_string_new (NULL);
 	      ch = json_scanner_get_char (scanner, line_p, position_p);
 	      while (ch != 0)
 		{
-		  if (ch == config->cpair_gebr_comment_single[1])
+		  if (ch == config->cpair_comment_single[1])
 		    {
-		      in_gebr_comment_single = FALSE;
+		      in_comment_single = FALSE;
 		      ch = 0;
 		      break;
 		    }
@@ -1717,10 +1717,10 @@ json_scanner_get_token_ll (JsonScanner *scanner,
 		  gstring = g_string_append_c (gstring, ch);
 		  ch = json_scanner_get_char (scanner, line_p, position_p);
 		}
-	      /* ignore a missing newline at EOF for single line gebr_comments */
-	      if (in_gebr_comment_single &&
-		  config->cpair_gebr_comment_single[1] == '\n')
-		in_gebr_comment_single = FALSE;
+	      /* ignore a missing newline at EOF for single line comments */
+	      if (in_comment_single &&
+		  config->cpair_comment_single[1] == '\n')
+		in_comment_single = FALSE;
 	    }
 	  else if (config->scan_identifier && ch &&
 		   strchr (config->cset_identifier_first, ch))
@@ -1769,7 +1769,7 @@ json_scanner_get_token_ll (JsonScanner *scanner,
     }
   while (ch != 0);
   
-  if (in_gebr_comment_multi || in_gebr_comment_single ||
+  if (in_comment_multi || in_comment_single ||
       in_string_sq || in_string_dq)
     {
       token = G_TOKEN_ERROR;
@@ -1779,7 +1779,7 @@ json_scanner_get_token_ll (JsonScanner *scanner,
 	  gstring = NULL;
 	}
       (*position_p)++;
-      if (in_gebr_comment_multi || in_gebr_comment_single)
+      if (in_comment_multi || in_comment_single)
 	value.v_error = G_ERR_UNEXP_EOF_IN_COMMENT;
       else /* (in_string_sq || in_string_dq) */
 	value.v_error = G_ERR_UNEXP_EOF_IN_STRING;

@@ -28,14 +28,14 @@ This manual page documents briefly the
 .B libgebr
 and
 .B bar
-gebr_commands.
+commands.
 .PP
 .\" TeX users may be more comfortable with the \fB<whatever>\fP and
 .\" \fI<whatever>\fP escape sequences to invode bold face and italics,
 .\" respectively.
 \fBlibgebr\fP is a program that...
 .SH OPTIONS
-These programs follow the usual GNU gebr_command line syntax, with long
+These programs follow the usual GNU command line syntax, with long
 options starting with two dashes (`-').
 A summary of options is included below.
 For a complete description, see the Info files.

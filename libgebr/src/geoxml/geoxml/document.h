@@ -23,7 +23,7 @@
 /**
  * \struct GebrGeoXmlDocument document.h geoxml/document.h
  * \brief
- * An abstraction to gebr_common data and functions found in flows, lines and projects.
+ * An abstraction to common data and functions found in flows, lines and projects.
  * \dot
  * digraph document {
  * 	fontname = "Bitstream Vera Sans"
@@ -58,7 +58,7 @@
 
 /**
  * \file document.h
- * An abstraction to gebr_common data and functions found in flows, lines and projects.
+ * An abstraction to common data and functions found in flows, lines and projects.
  * The data is things like author, help stuff, filename, etc. See methods below for more info.
  *
  * GebrGeoXmlFlow, GebrGeoXmlLine and GebrGeoXmlProject XML files can all be loaded using gebr_geoxml_document_load.

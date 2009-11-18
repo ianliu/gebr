@@ -38,7 +38,7 @@ GString *            prefix;
 
 
 /* Prototypes */
-void   parse_gebr_command_line(int argc, char **argv);
+void   parse_command_line(int argc, char **argv);
 void   make_prefix(void);
 void   report (const gchar *label, const gchar *str1, const gchar *str2);
 void   report_help (const gchar *label, const gchar *str1, const gchar *str2);
@@ -65,7 +65,7 @@ int main (int argc, char** argv)
 	GebrGeoXmlSequence *     seq[2];
         int                  nmenu;
 	
-	parse_gebr_command_line(argc, argv);
+	parse_command_line(argc, argv);
 
 	if (fnmenu == NULL){
                 fprintf(stderr, "You should provide two menus to compare.\n");
@@ -240,7 +240,7 @@ int main (int argc, char** argv)
 }
 
 void
-parse_gebr_command_line(int argc, char **argv)
+parse_command_line(int argc, char **argv)
 {
 	GError *error = NULL;
 	GOptionContext *context;
@@ -259,7 +259,7 @@ parse_gebr_command_line(int argc, char **argv)
 	/* Complain about unknown options */
 	g_option_context_set_ignore_unknown_options (context, TRUE);
 	
-	/* Parse gebr_command line */
+	/* Parse command line */
 	if (g_option_context_parse (context, &argc, &argv, &error) == FALSE){
 		fprintf(stderr, "%s: syntax error\n", argv[0]);
 		fprintf(stderr, "Try %s --help\n", argv[0]);

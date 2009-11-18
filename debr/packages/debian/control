@@ -8,7 +8,7 @@ Package: debr
 Section: science
 Architecture: any
 Depends: ${shlibs:Depends}
-Regebr_commends: gebr
+Recommends: gebr
 Conflicts: libgebr0 (<< ${binary:Version}), libgebr0 (>> ${binary:Version})
 Description: Menu Designer for GeBR
  GeBR is an environment to seismic processing based on open-source

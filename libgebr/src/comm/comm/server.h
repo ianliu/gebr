@@ -30,7 +30,7 @@
 #include "gchannelsocket.h"
 
 struct gebr_comm_server {
-	/* the gebr_communication channel. */
+	/* the communication channel. */
 	GStreamSocket *		stream_socket;
 	/* protocol parsing stuff */
 	struct gebr_comm_protocol *	protocol;

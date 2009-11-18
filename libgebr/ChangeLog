@@ -211,7 +211,7 @@
 
 	* - fixed write in gsocket
 	  - more robust protocol error handling using a hash table for
-	  gebr_commands
+	  commands
 
 2009-03-25  Ricardo Biloti <biloti@gmail.com>
 
@@ -267,7 +267,7 @@
 
 2009-03-02  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* fix bash login message removal for ssh gebr_command
+	* fix bash login message removal for ssh command
 	* - removed changelog.in from debian packages
 	  - fixed VERSION in configure.ac's
 	* protect against login messages when running servers
@@ -284,7 +284,7 @@
 	* - reconfigure parameter widget if required changed (needed for
 	  enum parameter)
 	  - really fix the problem with list parameter (now for all types)
-	* fix last gebr_commit: really fixed list parameter editing
+	* fix last commit: really fixed list parameter editing
 	* - valuesequenceedit refactored
 	  - fix gebr_gui_parameter_widget's on_edit_list_toggled
 
@@ -292,7 +292,7 @@
 
 	* - fix drag n' drop on gtksequenceedit and devivates
 	  - fix save on exit dialog on debr
-	* ¡gebr_commit 1000! several UI tweaks
+	* ¡commit 1000! several UI tweaks
 	* follow required condition for enums when reading its value
 
 2009-01-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
@@ -345,7 +345,7 @@
 
 2009-01-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* return value and gebr_comment fix for gebr_comm_server_forward_x11
+	* return value and comment fix for gebr_comm_server_forward_x11
 	* more beautiful and robust gebr_comm_server_forward_x11
 	* first working version of x11 full redirect!
 	* - first working version o gchannelsocket
@@ -439,7 +439,7 @@
 
 2008-12-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* fix last gebr_commit
+	* fix last commit
 	* don't use tooltip on tree view if gtk version < 2.12
 	* workaround for id lookup
 	* fix connect after disconnect on server dialog
@@ -569,7 +569,7 @@
 
 2008-11-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* last gebr_commit with git gebr_commit's -a option
+	* last commit with git commit's -a option
 	* - imported geoxml from branch flow0.3
 	  - use actions in gebr
 	  - gebr now uses geoxml 0.3 functions
@@ -652,7 +652,7 @@
 	* __gebr_geoxml_program_parameter_reset_default should not change
 	  anything but default
 	* gebr_geoxml_parameter_reset made invalid flows
-	* missing stuff to be gebr_commited
+	* missing stuff to be commited
 	* don't adjust npar when changing the parameter type
 
 2008-04-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
@@ -673,7 +673,7 @@
 	* - flow 0.2.3: exclusive not anymore value based and make possible
 	  to keep a default exclusive parameter
 	  - upgrade utily for upgrading documents to latest version
-	  - use glib gebr_command line parse for utilies
+	  - use glib command line parse for utilies
 
 2008-04-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
@@ -849,7 +849,7 @@
 2008-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
 	* category inherits valuesequence
-	* gebr_common code reuse of parameters for gebr and gebrme
+	* common code reuse of parameters for gebr and gebrme
 	* moved back parameters.* to gebr
 	* added missing files
 
@@ -883,12 +883,12 @@
 	  - minor cleanups
 	* improved popup selection handling
 	* decent popup menu support for GtkTreeView
-	* fixed last gebr_commit
+	* fixed last commit
 	* gtk_list_store_can_move_{up,down}
 	* gtk_list_store_move_{up,down}
 	* fixed child watch in GebrCommTerminalProcess
 	* fix include deletion
-	* added GebrCommTerminalProcess to handle process which gebr_communicate via
+	* added GebrCommTerminalProcess to handle process which communicate via
 	  terminal, like SSH
 
 2008-01-05  Ricardo Biloti <biloti@gmail.com>
@@ -959,7 +959,7 @@
 
 2007-11-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
 
-	* show error or warnings when assemblying flow gebr_command line
+	* show error or warnings when assemblying flow command line
 	* - fixed sockets behaviour on libgebr_misc
 	  - more run stuff
 
@@ -976,7 +976,7 @@
 	* second ssh try
 	* - fixes on GebrCommProcess
 	  - more ssh work on gebr
-	  - fixes gebr_command QUT on gebrd
+	  - fixes command QUT on gebrd
 	* some process work
 
 2007-11-11  Braulio Barros de Oliveira <brauliobo@gmail.com>

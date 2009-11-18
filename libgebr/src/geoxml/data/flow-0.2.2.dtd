@@ -86,7 +86,7 @@
 
 <!-- Options for a enum -->
 <!ELEMENT option (label, value)>
-<!-- Keyword to build the gebr_command line -->
+<!-- Keyword to build the command line -->
 <!ELEMENT keyword          (#PCDATA)>
 <!-- Short text to be displayed as label for an input parameter -->
 <!ELEMENT label            (#PCDATA)>

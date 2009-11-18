@@ -566,7 +566,7 @@ flow_run(struct server * server)
 /*
  * Function: flow_revision_save
  * Make a revision from current flow.
- * Opens a dialog asking the user for a gebr_comment of it.
+ * Opens a dialog asking the user for a comment of it.
  */
 gboolean
 flow_revision_save(void)
@@ -588,7 +588,7 @@ flow_revision_save(void)
 		NULL);
 	vbox = GTK_BOX(GTK_DIALOG(dialog)->vbox);
 
-	label = gtk_label_new(_("Make a gebr_comment for this state:"));
+	label = gtk_label_new(_("Make a comment for this state:"));
 	gtk_box_pack_start(vbox, label, FALSE, TRUE, 0);
 	entry = gtk_entry_new();
 	gtk_box_pack_start(vbox, entry, FALSE, TRUE, 0);

@@ -515,7 +515,7 @@ job_run_flow(struct job * job, struct client * client)
 	cmd_line = g_string_new(NULL);
         locale_str = g_filename_from_utf8(job->cmd_line->str, -1, NULL, &bytes_written, NULL);
 
-	/* gebr_command-line */
+	/* command-line */
 	if (client->display->len) {
 		if (client->is_local)
 			g_string_printf(cmd_line, "bash -l -c 'export DISPLAY=%s; %s'",

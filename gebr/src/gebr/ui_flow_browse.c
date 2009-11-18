@@ -369,13 +369,13 @@ flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
 {
 	GString *	label;
 	gchar *		date;
-	gchar *		gebr_comment;
+	gchar *		comment;
 
 	GtkWidget *	menu_item;
 
-	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &gebr_comment);
+	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
 	label = g_string_new(NULL);
-	g_string_printf(label, "%s: %s", date, gebr_comment);
+	g_string_printf(label, "%s: %s", date, comment);
 
 	menu_item = gtk_menu_item_new_with_label(label->str);
 	gtk_widget_show(menu_item);
@@ -550,13 +550,13 @@ flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * r
 		return;
 
 	gchar *		date;
-	gchar *		gebr_comment;
+	gchar *		comment;
 
-	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &gebr_comment);
+	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
 	if (gebr_geoxml_flow_change_to_revision(gebr.flow, revision))
-		gebr_message(LOG_INFO, TRUE, FALSE, _("Changed to state '%s' ('%s')"), gebr_comment, date);
+		gebr_message(LOG_INFO, TRUE, FALSE, _("Changed to state '%s' ('%s')"), comment, date);
 	else
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("Could not change to state '%s' ('%s')"), gebr_comment, date);
+		gebr_message(LOG_ERROR, TRUE, FALSE, _("Could not change to state '%s' ('%s')"), comment, date);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
 	flow_browse_load();

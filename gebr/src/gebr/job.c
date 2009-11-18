@@ -193,7 +193,7 @@ job_fill_info(struct job * job)
 	/* issues */
 	if (job->issues->len)
 		g_string_append_printf(info, "\n%s\n%s", _("Issues:"), job->issues->str);
-	/* gebr_command line */
+	/* command line */
 	if (job->cmd_line->len)
 		g_string_append_printf(info, "\n%s\n%s\n", _("Command line:"), job->cmd_line->str);
 	/* output */

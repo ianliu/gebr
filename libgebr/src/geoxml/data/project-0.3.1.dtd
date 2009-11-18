@@ -44,7 +44,7 @@
 	required	(yes | no)	#IMPLIED
 	separator	CDATA		#IMPLIED>
 
-<!-- Keyword to build the gebr_command line -->
+<!-- Keyword to build the command line -->
 <!ELEMENT keyword (#PCDATA)>
 <!-- Actual value of a parameter -->
 <!ELEMENT value (#PCDATA)>

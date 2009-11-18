@@ -42,7 +42,7 @@
           <h2>Introduction</h2>
 
           <p>A short one or two paragraphs describing the purpose
-          of the program or flow. In case of flow, try to gebr_comment
+          of the program or flow. In case of flow, try to comment
           the flow purpose but not the internals of each program.
           This should be detailed inside each program's help.</p>
 
@@ -94,7 +94,7 @@
 	  <a name="notes" id="notes"></a>
           <h2>Notes</h2>
 
-          <p>Any first gebr_comment or detailed information might be
+          <p>Any first comment or detailed information might be
           given here.</p>
 
 	  <a name="ref" id="ref"></a>

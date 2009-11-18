@@ -35,7 +35,7 @@ enum {
 	SERVER_N_COLUMN
 };
 
-struct ui_server_gebr_common {
+struct ui_server_common {
 	GtkWidget *			dialog;
 	GtkWidget *			widget;
 
@@ -46,7 +46,7 @@ struct ui_server_gebr_common {
 };
 
 struct ui_server_list {
-	struct ui_server_gebr_common		gebr_common;
+	struct ui_server_common		common;
 };
 
 struct ui_server_list *
@@ -59,7 +59,7 @@ void
 server_list_updated_status(struct server * server);
 
 struct ui_server_select {
-	struct ui_server_gebr_common		gebr_common;
+	struct ui_server_common		common;
 
 	struct server *			selected;
 

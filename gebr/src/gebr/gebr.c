@@ -142,10 +142,10 @@ gebr_quit(void)
 	log_close(gebr.log);
 
 	/* Free servers structs */
-	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->gebr_common.store), 1) {
+	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
 		struct server *	server;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->gebr_common.store), &iter,
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 			SERVER_POINTER, &server,
 			-1);
 		server_free(server);
@@ -271,23 +271,23 @@ gebr_migrate_data_dir(void)
 {
 	GtkWidget *	dialog;
 	GString *	new_data_dir;
-	GString *	gebr_command_line;
+	GString *	command_line;
 	gchar *		filename;
 	gboolean	empty;
 
 	new_data_dir = g_string_new(NULL);
 	g_string_printf(new_data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
 
-	gebr_command_line = g_string_new("");
+	command_line = g_string_new("");
 	libgebr_directory_foreach_file(filename, gebr.config.data->str)
 		if (!fnmatch("*.prj", filename, 1) || !fnmatch("*.lne", filename, 1) ||
 		!fnmatch("*.flw", filename, 1))
-			g_string_append_printf(gebr_command_line, "%s/%s ", gebr.config.data->str, filename);
-	empty = gebr_command_line->len == 0 ? TRUE : FALSE;
-	g_string_prepend(gebr_command_line, "cp -f ");
-	g_string_append(gebr_command_line, new_data_dir->str);
+			g_string_append_printf(command_line, "%s/%s ", gebr.config.data->str, filename);
+	empty = command_line->len == 0 ? TRUE : FALSE;
+	g_string_prepend(command_line, "cp -f ");
+	g_string_append(command_line, new_data_dir->str);
 
-	if (empty || !system(gebr_command_line->str)) {
+	if (empty || !system(command_line->str)) {
 		dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
 			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("GêBR now stores data files on its own directory. You may now delete GêBR's files at %s."), gebr.config.data->str);
@@ -300,7 +300,7 @@ gebr_migrate_data_dir(void)
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
-	g_string_free(gebr_command_line, TRUE);
+	g_string_free(command_line, TRUE);
 	g_string_free(new_data_dir, TRUE);
 	gtk_widget_destroy(dialog);
 }
@@ -461,14 +461,14 @@ gebr_config_save(gboolean verbose)
 	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_auto_scroll", gebr.config.job_log_auto_scroll);
 
 	/* Save list of servers */
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->gebr_common.store)) {
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
 		struct server *	server;
 		GString *	group;
 		gboolean	autoconnect;
 
 		group = g_string_new(NULL);
 
-		gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_server_list->gebr_common.store), &iter,
+		gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 			SERVER_POINTER, &server,
 			SERVER_AUTOCONNECT, &autoconnect,
 			-1);

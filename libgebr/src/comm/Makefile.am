@@ -21,5 +21,5 @@ pkgconfig_DATA = gebr-comm.pc
 
 EXTRA_DIST = gebr-comm.pc
 
-libgebr_commincludedir=$(includedir)/libgebr
-libgebr_comminclude_HEADERS=comm.h
+libcommincludedir=$(includedir)/libgebr
+libcomminclude_HEADERS=comm.h

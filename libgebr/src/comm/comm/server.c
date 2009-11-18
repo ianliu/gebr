@@ -124,7 +124,7 @@ gebr_comm_server_connect(struct gebr_comm_server * gebr_comm_server)
 	gebr_comm_server->tried_existant_pass = FALSE;
 	cmd_line = g_string_new(NULL);
 
-	/* initiate the marathon to gebr_communicate to server */
+	/* initiate the marathon to communicate to server */
 	if (gebr_comm_server_is_local(gebr_comm_server) == FALSE) {
 		GebrCommTerminalProcess *	process;
 

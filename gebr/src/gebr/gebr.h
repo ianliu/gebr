@@ -42,7 +42,7 @@ enum NOTEBOOK_PAGE {
 	NOTEBOOK_PAGE_JOB_CONTROL,
 };
 
-/* global variable of gebr_common needed stuff */
+/* global variable of common needed stuff */
 extern struct gebr gebr;
 
 struct gebr {

@@ -403,7 +403,7 @@ gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRevision * 
  * If \p flow is NULL nothing is done.
  */
 GebrGeoXmlRevision *
-gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, const gchar * gebr_comment);
+gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, const gchar * comment);
 
 /**
  * Writes to \p revision the \p index ieth revision that \p flow has.
@@ -421,13 +421,13 @@ gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** revis
 /**
  * Get information of \p revision. The flow is stored at \p flow and can be
  * loaded with gebr_geoxml_document_load_buffer. \p receive the date of creation of \p revision.
- * A NULL value of \p flow or \p date or \p gebr_comment mean not set.
+ * A NULL value of \p flow or \p date or \p comment mean not set.
  * Any of the string should be freed.
  *
  * If \p revision in NULL nothing is done.
  */
 void
-gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** flow, gchar ** date, gchar ** gebr_comment);
+gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** flow, gchar ** date, gchar ** comment);
 
 /**
  * Get the number of revisions \p flow has.

@@ -29,7 +29,7 @@ extern struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
 struct gebr_comm_message_def {
 	guint		hash;
 	gchar *		string;
-	/* does this message send return (RET) gebr_command? */
+	/* does this message send return (RET) command? */
 	gboolean	returns;
 };
 

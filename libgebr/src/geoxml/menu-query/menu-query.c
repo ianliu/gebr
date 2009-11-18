@@ -58,7 +58,7 @@ gchar**              menu     = NULL;
 /* Private functions */
 gboolean     check (const gchar *str, int flags);
 const gchar* report(const gchar *str, int flags);
-void         parse_gebr_command_line(int argc, char **argv);
+void         parse_command_line(int argc, char **argv);
 void         show_parameter(GebrGeoXmlParameter *parameter, gint ipar);
 void         show_program_parameter(GebrGeoXmlProgramParameter *pp, gint ipar, guint isubpar);
 
@@ -93,7 +93,7 @@ int main (int argc, char** argv)
 	int                  nmenu;
 	int                  imenu;
 	
-	parse_gebr_command_line(argc, argv);
+	parse_command_line(argc, argv);
 
 	if (menu == NULL)
 		return 0;
@@ -392,7 +392,7 @@ report(const gchar *str, int flags)
 }
 
 void
-parse_gebr_command_line(int argc, char **argv)
+parse_command_line(int argc, char **argv)
 {
 	GError *error = NULL;
 	GOptionContext *context;
@@ -420,7 +420,7 @@ parse_gebr_command_line(int argc, char **argv)
 	/* Complain about unknown options */
 	g_option_context_set_ignore_unknown_options (context, FALSE);
 	
-	/* Parse gebr_command line */
+	/* Parse command line */
 	if (g_option_context_parse (context, &argc, &argv, &error) == FALSE){
 		fprintf(stderr, "%s: syntax error\n", argv[0]);
 		fprintf(stderr, "Try %s --help\n", argv[0]);
