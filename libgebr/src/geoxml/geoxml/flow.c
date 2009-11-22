@@ -16,6 +16,7 @@
  */
 
 #include <gdome.h>
+#include <string.h>
 
 #include "../../date.h"
 
@@ -33,7 +34,7 @@
 #include "value_sequence.h"
 
 /*
- * internal structures and funcionts
+ * internal structures and functions
  */
 
 struct gebr_geoxml_flow {
@@ -176,6 +177,54 @@ gebr_geoxml_flow_server_get_address(GebrGeoXmlFlowServer * server)
 	return __gebr_geoxml_get_attr_value((GdomeElement*)server, "address");
 }
 
+GebrGeoXmlFlowServer *
+gebr_geoxml_flow_servers_get_last_run(GebrGeoXmlFlow * flow)
+{
+	GebrGeoXmlSequence *	server;
+	GebrGeoXmlSequence *	last_server;
+	const gchar *		last_date;
+
+	last_date = "";
+	last_server = NULL;
+	gebr_geoxml_flow_get_server(flow, &server, 0);
+
+	while (server) {
+		const gchar * date;
+		date = gebr_geoxml_flow_server_get_date_last_run(GEBR_GEOXML_FLOW_SERVER(server));
+		if (strcmp(last_date, date) <= 0) {
+			last_date = date;
+			last_server = server;
+		}
+		gebr_geoxml_sequence_next(&server);
+	}
+	g_assert(last_server != NULL);
+	return GEBR_GEOXML_FLOW_SERVER(last_server);
+}
+
+GebrGeoXmlFlowServer *
+gebr_geoxml_flow_servers_query(GebrGeoXmlFlow * flow, const gchar * address,
+		const gchar * input, const gchar * output, const gchar * error)
+{
+	GebrGeoXmlSequence * server;
+	gebr_geoxml_flow_get_server(flow, &server, 0);
+	while(server)
+	{
+		const gchar * addr = gebr_geoxml_flow_server_get_address(GEBR_GEOXML_FLOW_SERVER(server));
+		const gchar * inpt = gebr_geoxml_flow_server_io_get_input(GEBR_GEOXML_FLOW_SERVER(server));
+		const gchar * outp = gebr_geoxml_flow_server_io_get_output(GEBR_GEOXML_FLOW_SERVER(server));
+		const gchar * errr = gebr_geoxml_flow_server_io_get_error(GEBR_GEOXML_FLOW_SERVER(server));
+
+		if ((!strcmp(address, addr) || !address)
+			&& (!strcmp(input, inpt) || !input)
+			&& (!strcmp(output, outp) || !output)
+			&& (!strcmp(error, errr) || !error))
+			return server;
+
+		gebr_geoxml_sequence_next(&server);
+	}
+	return NULL;
+}
+
 glong
 gebr_geoxml_flow_get_servers_number(GebrGeoXmlFlow * flow)
 {
@@ -251,6 +300,14 @@ gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlowServer * server)
 		return NULL;
 
 	return __gebr_geoxml_get_tag_value((GdomeElement*)server, "lastrun");
+}
+
+void
+gebr_geoxml_flow_io_set_from_server(GebrGeoXmlFlow * flow, GebrGeoXmlFlowServer * server)
+{
+	gebr_geoxml_flow_io_set_input(flow, gebr_geoxml_flow_server_io_get_input(server));
+	gebr_geoxml_flow_io_set_output(flow, gebr_geoxml_flow_server_io_get_output(server));
+	gebr_geoxml_flow_io_set_error(flow, gebr_geoxml_flow_server_io_get_error(server));
 }
 
 void

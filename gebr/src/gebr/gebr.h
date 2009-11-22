@@ -28,6 +28,7 @@
 #include "cmdline.h"
 #include "interface.h"
 #include "ui_project_line.h"
+#include "ui_flow.h"
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
 #include "ui_job_control.h"
@@ -57,16 +58,18 @@ struct gebr {
 	GtkWidget *			invisible;
 
 	GebrGeoXmlDocument *		project_line;
-	GebrGeoXmlProject *			project;
-	GebrGeoXmlLine *			line;
-	GebrGeoXmlFlow *			flow;
-	GebrGeoXmlProgram *			program;
+	GebrGeoXmlProject *		project;
+	GebrGeoXmlLine *		line;
+	GebrGeoXmlFlow *		flow;
+	GebrGeoXmlProgram *		program;
+
+	struct server_io_info		server_io_info;
 
 	GList *				flow_clipboard;
-	struct gebr_log *			log;
+	struct gebr_log *		log;
 	GSList *			tmpfiles;
 
-	/* Persistant GUI */
+	/* Persistent GUI */
 	GtkWidget *			navigation_box_label;
 	struct ui_project_line *	ui_project_line;
 	struct ui_flow_browse *		ui_flow_browse;

@@ -40,6 +40,7 @@ enum {
 
 struct ui_flow_edition {
 	GtkWidget *	widget;
+	GtkWidget *	combobox;
 
 	GtkTreeIter	input_iter;
 	GtkTreeIter	output_iter;
@@ -73,5 +74,8 @@ flow_edition_component_activated(void);
 
 void
 flow_edition_status_changed(void);
+
+void
+flow_edition_set_io_iters(const gchar * input, const gchar * output);
 
 #endif //__UI_FLOW_COMPONENT_H

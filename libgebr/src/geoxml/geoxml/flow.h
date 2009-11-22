@@ -179,6 +179,21 @@ const gchar *
 gebr_geoxml_flow_server_get_address(GebrGeoXmlFlowServer * server);
 
 /**
+ * Gets the last ran server.
+ */
+GebrGeoXmlFlowServer *
+gebr_geoxml_flow_servers_get_last_run(GebrGeoXmlFlow * flow);
+
+/**
+ * Returns the GebrGeoXmlFlowServer that has exactly the same properties
+ * given by \p address, \p input, \p output and \p error. If any of these
+ * parameters are NULL, that field is ignored by the query.
+ */
+GebrGeoXmlFlowServer *
+gebr_geoxml_flow_servers_query(GebrGeoXmlFlow * flow, const gchar * address,
+		const gchar * input, const gchar * output, const gchar * error);
+
+/**
  * Get the number of servers \p flow has.
  *
  * If \p flow is NULL returns -1.
@@ -261,6 +276,14 @@ gebr_geoxml_flow_server_set_date_last_run(GebrGeoXmlFlowServer * server, const g
  */
 const gchar *
 gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlowServer * server);
+
+/**
+ * Sets the flow io tag from the corresponding server tag.
+ * This is done by copying all values from the server io tag
+ * to the flow io.
+ */
+void
+gebr_geoxml_flow_io_set_from_server(GebrGeoXmlFlow * flow, GebrGeoXmlFlowServer * server);
 
 /**
  * Retrieves the \p server input file path*

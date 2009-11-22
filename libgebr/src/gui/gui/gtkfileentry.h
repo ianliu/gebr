@@ -74,7 +74,7 @@ gebr_gui_gtk_file_entry_get_do_overwrite_confirmation(GebrGuiGtkFileEntry * file
 void
 gebr_gui_gtk_file_entry_set_path(GebrGuiGtkFileEntry * file_entry, const gchar * path);
 
-gchar *
+const gchar *
 gebr_gui_gtk_file_entry_get_path(GebrGuiGtkFileEntry * file_entry);
 
 G_END_DECLS

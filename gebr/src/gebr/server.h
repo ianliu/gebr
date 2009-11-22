@@ -26,10 +26,10 @@
 struct server {
 	struct gebr_comm_server *	gebr_comm;
 
-	GtkTreeIter		iter;
+	GtkTreeIter			iter;
 
 	/* last error showed on tooltip */
-	GString *		last_error;
+	GString *			last_error;
 };
 
 struct server *

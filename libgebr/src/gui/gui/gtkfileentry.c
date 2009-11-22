@@ -210,8 +210,8 @@ gebr_gui_gtk_file_entry_set_path(GebrGuiGtkFileEntry * file_entry, const gchar *
 	gtk_entry_set_text(GTK_ENTRY(file_entry->entry), path);
 }
 
-gchar *
+const gchar *
 gebr_gui_gtk_file_entry_get_path(GebrGuiGtkFileEntry * file_entry)
 {
-	return (gchar*)gtk_entry_get_text(GTK_ENTRY(file_entry->entry));
+	return gtk_entry_get_text(GTK_ENTRY(file_entry->entry));
 }

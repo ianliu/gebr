@@ -142,6 +142,7 @@ gebr_quit(void)
 	gebr_log_close(gebr.log);
 
 	/* Free servers structs */
+	server_io_info_set(&(gebr.server_io_info), NULL, NULL, NULL, NULL);
 	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
 		struct server *	server;
 
