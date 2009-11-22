@@ -182,7 +182,7 @@ parameter_setup_ui(void)
 	g_signal_connect(debr.ui_parameter.tree_view, "cursor-changed",
 		(GCallback)parameter_selected, NULL);
 	g_signal_connect(debr.ui_parameter.tree_view, "row-activated",
-		GTK_SIGNAL_FUNC(parameter_activated), NULL);
+		G_CALLBACK(parameter_activated), NULL);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Type"), renderer, NULL);
@@ -876,7 +876,7 @@ parameter_dialog_setup_ui(void)
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0), ++row;
 		g_signal_connect(GTK_OBJECT(enum_option_edit), "changed",
-			GTK_SIGNAL_FUNC(parameter_enum_options_changed), ui);
+			G_CALLBACK(parameter_enum_options_changed), ui);
 
 		break;
 	} default:

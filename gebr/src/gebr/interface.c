@@ -187,7 +187,7 @@ gebr_setup_ui(void)
 
 	/* Signals */
 	g_signal_connect(GTK_OBJECT(gebr.window), "delete_event",
-		GTK_SIGNAL_FUNC(gebr_quit), NULL);
+		G_CALLBACK(gebr_quit), NULL);
 
 	/* Create the main vbox to hold menu, notebook and status bar */
 	main_vbox = gtk_vbox_new(FALSE, 1);
@@ -329,6 +329,8 @@ gebr_setup_ui(void)
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_status_unconfigured")));
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_io"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
 

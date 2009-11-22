@@ -209,7 +209,7 @@ document_properties_setup_ui(GebrGeoXmlDocument * document)
 	help = gtk_button_new_from_stock(GTK_STOCK_EDIT);
 	gtk_box_pack_start(GTK_BOX(help_hbox), help, FALSE, FALSE, 0);
 	g_signal_connect(GTK_OBJECT(help), "clicked",
-		GTK_SIGNAL_FUNC(help_edit), document);
+		G_CALLBACK(help_edit), document);
 	g_object_set(G_OBJECT(help), "relief", GTK_RELIEF_NONE, NULL);
 
 	/* Author */

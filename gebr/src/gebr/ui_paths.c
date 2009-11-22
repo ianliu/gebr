@@ -109,9 +109,9 @@ path_list_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), path_sequence_edit, TRUE, TRUE, 0);
 
 	g_signal_connect(GTK_OBJECT(path_sequence_edit), "add-request",
-		GTK_SIGNAL_FUNC(path_add), NULL);
+		G_CALLBACK(path_add), NULL);
 	g_signal_connect(GTK_OBJECT(dialog), "delete-event",
-		GTK_SIGNAL_FUNC(path_save), NULL);
+		G_CALLBACK(path_save), NULL);
 
   	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));

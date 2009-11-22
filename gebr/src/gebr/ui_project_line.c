@@ -104,7 +104,7 @@ project_line_setup_ui(void)
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_project_line->view),
 	        (GebrGuiGtkPopupCallback)project_line_popup_menu, ui_project_line);
 	g_signal_connect(ui_project_line->view, "row-activated",
-		GTK_SIGNAL_FUNC(project_line_on_row_activated), ui_project_line);
+		G_CALLBACK(project_line_on_row_activated), ui_project_line);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_project_line->view);
 
 	/* Projects/lines column */
@@ -117,9 +117,9 @@ project_line_setup_ui(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_project_line->view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", PL_TITLE);
 	g_signal_connect(GTK_OBJECT(renderer), "edited",
-		GTK_SIGNAL_FUNC(project_line_rename), ui_project_line);
+		G_CALLBACK(project_line_rename), ui_project_line);
 	g_signal_connect(GTK_OBJECT(ui_project_line->view), "cursor-changed",
-		GTK_SIGNAL_FUNC(project_line_load), ui_project_line);
+		G_CALLBACK(project_line_load), ui_project_line);
 
 	/* Right side */
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -186,7 +186,7 @@ project_line_setup_ui(void)
 	ui_project_line->info.help = gtk_button_new_from_stock(GTK_STOCK_INFO);
 	gtk_box_pack_end(GTK_BOX(infopage), ui_project_line->info.help, FALSE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(ui_project_line->info.help), "clicked",
-			 GTK_SIGNAL_FUNC(project_line_show_help), ui_project_line);
+			 G_CALLBACK(project_line_show_help), ui_project_line);
 
 	/* Author */
 	ui_project_line->info.author = gtk_label_new("");

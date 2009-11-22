@@ -146,9 +146,9 @@ debr_setup_ui(void)
 	debr.about = gebr_gui_about_setup_ui("DéBR", _("Menu designer for GêBR"));
 
 	g_signal_connect(debr.window, "delete_event",
-		GTK_SIGNAL_FUNC(debr_quit), NULL);
+		G_CALLBACK(debr_quit), NULL);
 	g_signal_connect(debr.window, "show",
-		GTK_SIGNAL_FUNC(debr_init), NULL);
+		G_CALLBACK(debr_init), NULL);
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(vbox);

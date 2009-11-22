@@ -100,7 +100,7 @@ validate_setup_ui(void)
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_validate.tree_view)),
 		GTK_SELECTION_MULTIPLE);
 	g_signal_connect(GTK_OBJECT(debr.ui_validate.tree_view), "cursor-changed",
-		GTK_SIGNAL_FUNC(validate_clicked), NULL);
+		G_CALLBACK(validate_clicked), NULL);
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);

@@ -218,7 +218,7 @@ gtk_sequence_edit_init(GtkSequenceEdit * sequence_edit)
 	gtk_widget_show_all(button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 	g_signal_connect(button, "clicked",
-		GTK_SIGNAL_FUNC(__gtk_sequence_edit_on_add_clicked), sequence_edit);
+		G_CALLBACK(__gtk_sequence_edit_on_add_clicked), sequence_edit);
 }
 
 G_DEFINE_TYPE(GtkSequenceEdit, gtk_sequence_edit, GTK_TYPE_VBOX);

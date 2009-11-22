@@ -78,7 +78,7 @@ log_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(scrolled_win), ui_log->view);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_log->view), FALSE);
 	g_signal_connect(GTK_OBJECT(ui_log->view), "cursor-changed",
-		GTK_SIGNAL_FUNC(log_clicked), NULL);
+		G_CALLBACK(log_clicked), NULL);
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);

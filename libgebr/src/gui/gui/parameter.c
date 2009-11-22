@@ -496,9 +496,9 @@ gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget * gebr_gui_
 		gtk_widget_set_size_request(entry, 90, 30);
 
 		g_signal_connect(entry, "activate",
-			GTK_SIGNAL_FUNC(__validate_float), gebr_gui_parameter_widget);
+			G_CALLBACK(__validate_float), gebr_gui_parameter_widget);
 		g_signal_connect(entry, "focus-out-event",
-			GTK_SIGNAL_FUNC(__validate_on_leaving), gebr_gui_parameter_widget);
+			G_CALLBACK(__validate_on_leaving), gebr_gui_parameter_widget);
 
 		break;
 	} case GEBR_GEOXML_PARAMETER_TYPE_INT: {
@@ -508,9 +508,9 @@ gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget * gebr_gui_
 		gtk_widget_set_size_request(entry, 90, 30);
 
 		g_signal_connect(entry, "activate",
-			GTK_SIGNAL_FUNC(__validate_int), gebr_gui_parameter_widget);
+			G_CALLBACK(__validate_int), gebr_gui_parameter_widget);
 		g_signal_connect(entry, "focus-out-event",
-			GTK_SIGNAL_FUNC(__validate_on_leaving), gebr_gui_parameter_widget);
+			G_CALLBACK(__validate_on_leaving), gebr_gui_parameter_widget);
 
 		break;
 	} case GEBR_GEOXML_PARAMETER_TYPE_STRING: {
@@ -604,7 +604,7 @@ gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget * gebr_gui_
 		gtk_widget_show(button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 0);
 		g_signal_connect(button, "toggled",
-			GTK_SIGNAL_FUNC(__on_edit_list_toggled), gebr_gui_parameter_widget);
+			G_CALLBACK(__on_edit_list_toggled), gebr_gui_parameter_widget);
 
 		gebr_gui_parameter_widget_set_non_list_widget_value(gebr_gui_parameter_widget, "");
 		gtk_widget_show(gebr_gui_parameter_widget->value_widget);
@@ -614,10 +614,10 @@ gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget * gebr_gui_
 		gebr_gui_parameter_widget->gebr_gui_value_sequence_edit = GEBR_GUI_VALUE_SEQUENCE_EDIT(sequence_edit);
 		g_object_set(G_OBJECT(sequence_edit), "minimum-one", TRUE, NULL);
 		g_signal_connect(sequence_edit, "add-request",
-			GTK_SIGNAL_FUNC(__on_sequence_edit_add_request), gebr_gui_parameter_widget);
+			G_CALLBACK(__on_sequence_edit_add_request), gebr_gui_parameter_widget);
 		if (gebr_gui_parameter_widget->parameter_type != GEBR_GEOXML_PARAMETER_TYPE_ENUM)
 			g_signal_connect(sequence_edit, "changed",
-				GTK_SIGNAL_FUNC(__on_sequence_edit_changed), gebr_gui_parameter_widget);
+				G_CALLBACK(__on_sequence_edit_changed), gebr_gui_parameter_widget);
 		else {
 			gtk_widget_show(sequence_edit);
 			g_object_set(sequence_edit, "may-rename", FALSE, NULL);

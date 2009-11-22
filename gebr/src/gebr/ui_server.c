@@ -443,12 +443,12 @@ server_list_setup_ui(void)
 	entry = gebr_gui_gtk_enhanced_entry_new_with_empty_text(_("Type here [user@]serverhostname"));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(entry), "activate",
-		GTK_SIGNAL_FUNC(on_entry_activate), ui_server_list);
+		G_CALLBACK(on_entry_activate), ui_server_list);
 
 	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	g_signal_connect(GTK_OBJECT(button), "clicked",
-		GTK_SIGNAL_FUNC(on_add_clicked), ui_server_list);
+		G_CALLBACK(on_add_clicked), ui_server_list);
 	g_object_set(button, "user-data", entry, NULL);
 
 	return ui_server_list;
@@ -545,14 +545,14 @@ server_select_setup_ui(void)
 
 	ui_server_select->common.store = gebr.ui_server_list->common.store;
 	handler_id = g_signal_connect(G_OBJECT(ui_server_select->common.store), "row-changed",
-		GTK_SIGNAL_FUNC(server_select_row_changed), ui_server_select);
+		G_CALLBACK(server_select_row_changed), ui_server_select);
 
 	server_common_setup(&ui_server_select->common);
 	gtk_tree_view_column_set_visible(
 		gtk_tree_view_get_column(GTK_TREE_VIEW(ui_server_select->common.view), SERVER_AUTOCONNECT), FALSE);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(ui_server_select->common.dialog)->vbox), ui_server_select->common.widget, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(ui_server_select->common.view), "cursor-changed",
-		GTK_SIGNAL_FUNC(server_select_cursor_changed), ui_server_select);
+		G_CALLBACK(server_select_cursor_changed), ui_server_select);
 
 	/* select the first running server */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_server_select->common.view));

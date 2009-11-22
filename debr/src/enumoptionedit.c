@@ -318,7 +318,7 @@ enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParame
 	enum_option_edit->label_entry = label_entry;
 	enum_option_edit->value_entry = value_entry;
 	g_signal_connect(GTK_OBJECT(enum_option_edit), "add-request",
-		GTK_SIGNAL_FUNC(enum_option_edit_add_request), NULL);
+		G_CALLBACK(enum_option_edit_add_request), NULL);
 
 	gtk_widget_set_size_request(GTK_WIDGET(enum_option_edit), -1, 150);
 

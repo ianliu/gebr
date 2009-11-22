@@ -131,7 +131,7 @@ program_setup_ui(void)
 	g_signal_connect(debr.ui_program.tree_view, "cursor-changed",
 		(GCallback)program_selected, NULL);
 	g_signal_connect(debr.ui_program.tree_view, "row-activated",
-		GTK_SIGNAL_FUNC(program_dialog_setup_ui), NULL);
+		G_CALLBACK(program_dialog_setup_ui), NULL);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(debr.ui_program.tree_view), FALSE);
 	renderer = gtk_cell_renderer_pixbuf_new();
@@ -186,7 +186,7 @@ program_setup_ui(void)
 	debr.ui_program.details.url_button = gtk_button_new();
 	gtk_box_pack_start(GTK_BOX(hbox),debr.ui_program.details.url_button, FALSE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(debr.ui_program.details.url_button), "clicked",
-		GTK_SIGNAL_FUNC(program_url_open), debr.program);
+		G_CALLBACK(program_url_open), debr.program);
 
 	debr.ui_program.details.help_button = gtk_button_new_from_stock(GTK_STOCK_INFO);
 	gtk_box_pack_end(GTK_BOX(details), debr.ui_program.details.help_button, FALSE, TRUE, 0);
@@ -474,19 +474,19 @@ program_dialog_setup_ui(void)
 	gtk_widget_show(io_stdin_checkbutton);
 	gtk_box_pack_start(GTK_BOX(io_vbox), io_stdin_checkbutton, FALSE, TRUE, 0);
 	g_signal_connect(io_stdin_checkbutton, "clicked",
-		GTK_SIGNAL_FUNC(program_stdin_changed), debr.program);
+		G_CALLBACK(program_stdin_changed), debr.program);
 
 	io_stdout_checkbutton = gtk_check_button_new_with_label(_("writes to standard output"));
 	gtk_widget_show(io_stdout_checkbutton);
 	gtk_box_pack_start(GTK_BOX(io_vbox), io_stdout_checkbutton, FALSE, TRUE, 0);
 	g_signal_connect(io_stdout_checkbutton, "clicked",
-		GTK_SIGNAL_FUNC(program_stdout_changed), debr.program);
+		G_CALLBACK(program_stdout_changed), debr.program);
 
 	io_stderr_checkbutton = gtk_check_button_new_with_label(_("appends to standard error"));
 	gtk_widget_show(io_stderr_checkbutton);
 	gtk_box_pack_start(GTK_BOX(io_vbox), io_stderr_checkbutton, FALSE, TRUE, 0);
 	g_signal_connect(io_stderr_checkbutton, "clicked",
-		GTK_SIGNAL_FUNC(program_stderr_changed), debr.program);
+		G_CALLBACK(program_stderr_changed), debr.program);
 
 	/*
 	 * Title
@@ -562,14 +562,14 @@ program_dialog_setup_ui(void)
 	gtk_widget_show(help_view_button);
 	gtk_box_pack_start(GTK_BOX(help_hbox), help_view_button, FALSE, FALSE, 0);
 	g_signal_connect(help_view_button, "clicked",
-		GTK_SIGNAL_FUNC(program_help_view), debr.program);
+		G_CALLBACK(program_help_view), debr.program);
 	g_object_set(G_OBJECT(help_view_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	help_edit_button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
 	gtk_widget_show(help_edit_button);
 	gtk_box_pack_start(GTK_BOX(help_hbox), help_edit_button, FALSE, FALSE, 0);
 	g_signal_connect(help_edit_button, "clicked",
-		GTK_SIGNAL_FUNC(program_help_edit), debr.program);
+		G_CALLBACK(program_help_edit), debr.program);
 	g_object_set(G_OBJECT(help_edit_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	help_refresh_button = gtk_button_new_from_stock(GTK_STOCK_REFRESH);
@@ -577,7 +577,7 @@ program_dialog_setup_ui(void)
 	gtk_widget_show(help_refresh_button);
 	gtk_box_pack_start(GTK_BOX(help_hbox), help_refresh_button, FALSE, FALSE, 0);
 	g_signal_connect(help_refresh_button, "clicked",
-		GTK_SIGNAL_FUNC(program_help_refresh), debr.program);
+		G_CALLBACK(program_help_refresh), debr.program);
 	g_object_set(G_OBJECT(help_refresh_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	/*
@@ -692,7 +692,7 @@ program_details_update(void)
 	g_signal_handlers_disconnect_matched(G_OBJECT(debr.ui_program.details.help_button),
 		G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (GCallback)program_help_view, NULL);
 	g_signal_connect(GTK_OBJECT(debr.ui_program.details.help_button), "clicked",
-		GTK_SIGNAL_FUNC(program_help_view), debr.program);
+		G_CALLBACK(program_help_view), debr.program);
 	g_object_set(G_OBJECT(debr.ui_program.details.help_button),
 		"sensitive", (strlen(gebr_geoxml_program_get_help(debr.program)) > 1) ? TRUE : FALSE, NULL);
 }
