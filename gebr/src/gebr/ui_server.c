@@ -472,6 +472,7 @@ void
 server_list_updated_status(struct server * server)
 {
 	GdkPixbuf *	status_icon;
+	GtkTreePath *	path;
 
 	status_icon = (server->last_error->len)
 		? gebr.pixmaps.stock_warning
@@ -483,7 +484,10 @@ server_list_updated_status(struct server * server)
 		-1);
 
 	/* update view */
-	g_signal_emit_by_name(gebr.ui_server_list->common.store, "row-changed", NULL, &server->iter);
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_server_list->common.store),
+		&server->iter);
+	gtk_tree_model_row_changed(GTK_TREE_MODEL(gebr.ui_server_list->common.store),
+		path, &server->iter);
 }
 
 /*
