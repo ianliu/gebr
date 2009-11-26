@@ -187,7 +187,7 @@ preferences_setup_ui(gboolean first_run)
 	}
 
 	/* Load log */
-	ui_preferences->log_load = label = gtk_check_button_new_with_label(_("Load past executions log"));
+	ui_preferences->log_load = label = gtk_check_button_new_with_label(_("Load past-execution log"));
 	gtk_table_attach(GTK_TABLE(table), label, 0, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3), ++row;
 
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(label), gebr.config.log_load);

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-14 16:17-0300\n"
-"PO-Revision-Date: 2009-10-14 16:17-0300\n"
+"POT-Creation-Date: 2009-11-26 14:44-0200\n"
+"PO-Revision-Date: 2009-11-26 14:46-0200\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -18,24 +18,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. create file chooser
-#: ../src/callbacks.c:152
+#: ../src/callbacks.c:154
 msgid "Open menu"
 msgstr "Abrir menu"
 
-#: ../src/callbacks.c:158 ../src/callbacks.c:222
+#: ../src/callbacks.c:160 ../src/callbacks.c:224
 msgid "Menu files (*.mnu)"
 msgstr "Arquivos de menu (*.mnu)"
 
 #. run file chooser
-#: ../src/callbacks.c:215
+#: ../src/callbacks.c:217
 msgid "Choose file"
 msgstr "Escolher arquivo"
 
-#: ../src/callbacks.c:314
+#: ../src/callbacks.c:316
 msgid "Revert changes"
 msgstr "Reverter alterações"
 
-#: ../src/callbacks.c:314
+#: ../src/callbacks.c:316
 msgid ""
 "All unsaved changes will be lost. Are you sure you want to revert selected "
 "menu(s)?"
@@ -43,33 +43,33 @@ msgstr ""
 "Todas as modificações não salvar serão perdidas. Tem certeza que quer "
 "reverter o(s) menu(s) selecionado(s)?"
 
-#: ../src/callbacks.c:328
+#: ../src/callbacks.c:330
 msgid "Menu was not saved yet."
 msgstr "O menu ainda não foi salvo."
 
-#: ../src/callbacks.c:358
+#: ../src/callbacks.c:360
 msgid "Delete menu"
 msgstr "Apagar menu"
 
-#: ../src/callbacks.c:358
+#: ../src/callbacks.c:360
 msgid "Are you sure you want to delete selected menu(s)?"
 msgstr "Tem certeza que quer apagar o(s) menu(s) selecionado(s)?"
 
-#: ../src/callbacks.c:379
+#: ../src/callbacks.c:381
 #, c-format
 msgid "Could not delete menu '%s'"
 msgstr "Não foi possível deletar o menu '%s'"
 
-#: ../src/callbacks.c:460
+#: ../src/callbacks.c:462
 #, c-format
 msgid "'%s' menu has unsaved changes. Do you want to save it?"
 msgstr "Menu '%s' tem modificações não salvas. Quer salva-lo?"
 
-#: ../src/callbacks.c:462
+#: ../src/callbacks.c:464
 msgid "Untitled"
 msgstr "Sem título"
 
-#: ../src/callbacks.c:463 ../src/menu.c:719
+#: ../src/callbacks.c:465 ../src/menu.c:715
 msgid "Don't save"
 msgstr "Não salvar"
 
@@ -81,31 +81,31 @@ msgstr "valor"
 msgid "label"
 msgstr "rótulo"
 
-#: ../src/help.c:253
+#: ../src/help.c:292
 msgid "Could not create an temporary file."
 msgstr "Não foi possível criar um arquivo temporário."
 
-#: ../src/help.c:292
+#: ../src/help.c:319
 msgid "No HTML editor specified in preferences."
 msgstr "Nenhum editor HTML especificado nas preferências."
 
-#: ../src/help.c:305
+#: ../src/help.c:332
 msgid "Could not open template. Please check your installation."
 msgstr "Não foi possível abir o modelo. Por favor verifique sua instalação."
 
-#: ../src/help.c:329
+#: ../src/help.c:366
 msgid "Could not create a temporary file."
 msgstr "Não foi possível criar um arquivo temporário."
 
-#: ../src/help.c:342
+#: ../src/help.c:379
 msgid "Could not launch editor"
 msgstr "Não foi possível executar o editor"
 
-#: ../src/help.c:350
+#: ../src/help.c:387
 msgid "Could not read created temporary file."
 msgstr "Não foi possível ler o arquivo temporário criado."
 
-#: ../src/help.c:366
+#: ../src/help.c:403
 msgid "Please change the help encoding to UTF-8"
 msgstr "Por favor modifique a codificação da ajuda para UTF-8"
 
@@ -118,176 +118,176 @@ msgid "Quit DéBR"
 msgstr "Fechar DéBR"
 
 #. menu
-#: ../src/interface.c:45
+#: ../src/interface.c:47
 msgid "Create new menu"
 msgstr "Criar um novo menu"
 
-#: ../src/interface.c:46
+#: ../src/interface.c:48
 msgid "Edit menu properties"
 msgstr "Editar propriedades do menu"
 
-#: ../src/interface.c:48 ../src/interface.c:344
+#: ../src/interface.c:50 ../src/interface.c:346
 msgid "Validate"
 msgstr "Validar"
 
-#: ../src/interface.c:48
+#: ../src/interface.c:50
 msgid "Validate menu"
 msgstr "Validar menu"
 
-#: ../src/interface.c:50
+#: ../src/interface.c:52
 msgid "Install"
 msgstr "Instalar"
 
-#: ../src/interface.c:50
+#: ../src/interface.c:52
 msgid "Make this menu visible for GêBR"
 msgstr "Tornar este menu visível para a GêBR"
 
-#: ../src/interface.c:52
+#: ../src/interface.c:54
 msgid "Remove selecteds menus from list"
 msgstr "Remover menus selecionados da lista"
 
-#: ../src/interface.c:54
+#: ../src/interface.c:56
 msgid "Open an existing menu"
 msgstr "Abrir um menu existente"
 
-#: ../src/interface.c:56
+#: ../src/interface.c:58
 msgid "Save selecteds menus"
 msgstr "Salvar menus selecionados"
 
-#: ../src/interface.c:57
+#: ../src/interface.c:59
 msgid "Save current menu to another file"
 msgstr "Salvar o menu atual em outro arquivo"
 
-#: ../src/interface.c:59
+#: ../src/interface.c:61
 msgid "Save all"
 msgstr "Salvar todos"
 
-#: ../src/interface.c:59
+#: ../src/interface.c:61
 msgid "Save all unsaved menus"
 msgstr "Salvar todos os menus não salvos"
 
-#: ../src/interface.c:61
+#: ../src/interface.c:63
 msgid "Revert current menu to last saved version"
 msgstr "Reverter menu atual para a última versão salva"
 
-#: ../src/interface.c:63
+#: ../src/interface.c:65
 msgid "Delete selecteds menus files"
 msgstr "Apagar arquivos de menu selecionados"
 
 #. program
-#: ../src/interface.c:66
+#: ../src/interface.c:68
 msgid "Create new program"
 msgstr "Criar um novo programa"
 
-#: ../src/interface.c:68
+#: ../src/interface.c:70
 msgid "Delete current program"
 msgstr "Apagar programa atual"
 
-#: ../src/interface.c:70
+#: ../src/interface.c:72
 msgid "Edit program properties"
 msgstr "Editar propriedades do programa"
 
-#: ../src/interface.c:72 ../src/interface.c:73
+#: ../src/interface.c:74 ../src/interface.c:75
 msgid "Preview parameters in GêBR"
 msgstr "Prévisualização de parâmetros na GêBR"
 
-#: ../src/interface.c:74
+#: ../src/interface.c:76
 msgid "Move program to the top of the list"
 msgstr "Mover o programa para o topo da lista"
 
-#: ../src/interface.c:77
+#: ../src/interface.c:79
 msgid "Move program to the bottom of the list"
 msgstr "Mover o programa para o final da lista"
 
-#: ../src/interface.c:78 ../src/interface.c:94
+#: ../src/interface.c:80 ../src/interface.c:96
 msgid "Copy"
 msgstr "Copiar"
 
-#: ../src/interface.c:78
+#: ../src/interface.c:80
 msgid "Copy selected(s) program(s) to clipboard"
 msgstr "Copiar programa(s) selecionado(s) para a área de transferência"
 
-#: ../src/interface.c:80 ../src/interface.c:96
+#: ../src/interface.c:82 ../src/interface.c:98
 msgid "Paste"
 msgstr "Colar"
 
-#: ../src/interface.c:80
+#: ../src/interface.c:82
 msgid "Paste program(s) from clipboard"
 msgstr "Colar programa(s) da área de transferência"
 
 #. parameter
-#: ../src/interface.c:83
+#: ../src/interface.c:85
 msgid "Create new parameter"
 msgstr "Criar um novo parâmetro"
 
-#: ../src/interface.c:84
+#: ../src/interface.c:86
 msgid "Delete current parameter"
 msgstr "Apagar parâmetro atual"
 
-#: ../src/interface.c:86
+#: ../src/interface.c:88
 msgid "Edit parameter properties"
 msgstr "Editar propriedades do parâmetro"
 
-#: ../src/interface.c:88
+#: ../src/interface.c:90
 msgid "Move parameter to the top of the list"
 msgstr "Mover o parâmetro para o topo da lista"
 
-#: ../src/interface.c:91
+#: ../src/interface.c:93
 msgid "Move parameter to the bottom of the list"
 msgstr "Mover o parâmetro para o final da lista"
 
-#: ../src/interface.c:92
+#: ../src/interface.c:94
 msgid "Change type"
 msgstr "Mudar tipo"
 
-#: ../src/interface.c:92
+#: ../src/interface.c:94
 msgid "Change parameter type"
 msgstr "Mudar tipo do parâmetro"
 
-#: ../src/interface.c:94
+#: ../src/interface.c:96
 msgid "Copy selected(s) parameter(s) to clipboard"
 msgstr "Copiar parâmetro(s) selecioado(s) para a área de transferência"
 
-#: ../src/interface.c:96
+#: ../src/interface.c:98
 msgid "Paste parameter(s) from clipboard"
 msgstr "Colar parâmetro(s) da área de transferência"
 
 #. validate
-#: ../src/interface.c:99
+#: ../src/interface.c:101
 msgid "Clear selecteds validations reports"
 msgstr "Limpar notificações de validação selecionadas"
 
-#: ../src/interface.c:101
+#: ../src/interface.c:103
 msgid "Clear all validations reports"
 msgstr "Limpar todas as notificações de validação"
 
-#: ../src/interface.c:144
+#: ../src/interface.c:146
 msgid "Menu designer for GêBR"
 msgstr "Designer de menu para GêBR"
 
 #.
 #. * Menu: Actions
 #.
-#: ../src/interface.c:201
+#: ../src/interface.c:203
 msgid "_Actions"
 msgstr "_Ações"
 
 #.
 #. * Menu: Help
 #.
-#: ../src/interface.c:217
+#: ../src/interface.c:219
 msgid "_Help"
 msgstr "A_juda"
 
-#: ../src/interface.c:235 ../src/menu.c:119
+#: ../src/interface.c:237 ../src/menu.c:119
 msgid "Menu"
 msgstr "Menu"
 
-#: ../src/interface.c:277
+#: ../src/interface.c:279
 msgid "Program"
 msgstr "Programa"
 
-#: ../src/interface.c:304
+#: ../src/interface.c:306
 msgid "Parameter"
 msgstr "Parâmetro"
 
@@ -295,7 +295,7 @@ msgstr "Parâmetro"
 msgid "<i>Others</i>"
 msgstr "<i>Outros</i>"
 
-#: ../src/menu.c:151 ../src/program.c:641
+#: ../src/menu.c:151 ../src/program.c:649
 msgid "Details"
 msgstr "Detalhes"
 
@@ -308,7 +308,7 @@ msgstr "sem título"
 msgid "Could not load menu at '%s': %s"
 msgstr "Não foi possível carregar menu em '%s': %s"
 
-#: ../src/menu.c:588
+#: ../src/menu.c:584
 #, c-format
 msgid ""
 "Menu %s is unsaved. This means that you are installing an older state of it. "
@@ -317,118 +317,122 @@ msgstr ""
 "Menu %s não está salvo. Isto significa que você está instalando um versão "
 "antiga dele. Gostaria de salva-lo antes?"
 
-#: ../src/menu.c:603
+#: ../src/menu.c:599
 msgid "Failed to run GêBR. Please check if GêBR is installed"
 msgstr "Falha ao executar a GêBR. Por favor, confira se a GêBR está instalada"
 
-#: ../src/menu.c:607 ../src/menu.c:625
+#: ../src/menu.c:603 ../src/menu.c:621
 #, c-format
 msgid "Failed to install menu '%s'"
 msgstr "Falha ao instalar o menu '%s'"
 
-#: ../src/menu.c:615
+#: ../src/menu.c:611
 #, c-format
 msgid "Menu '%s' already exists. Do you want to overwrite it?"
 msgstr "Menu '%s' já existe. Deseja sobrescreve-lo?"
 
-#: ../src/menu.c:616
+#: ../src/menu.c:612
 msgid "Don't overwrite"
 msgstr "Não sobrescreva"
 
-#: ../src/menu.c:617
+#: ../src/menu.c:613
 msgid "Overwrite"
 msgstr "Sobrescrever"
 
-#: ../src/menu.c:618
+#: ../src/menu.c:614
 msgid "Overwrite all"
 msgstr "Sobrescrever todos"
 
-#: ../src/menu.c:718
+#: ../src/menu.c:714
 msgid "There are menus unsaved. Do you want to save them?"
 msgstr "Existem menus não salvos. Deseja salva-los?"
 
-#: ../src/menu.c:865
+#: ../src/menu.c:862
 msgid "Edit menu"
 msgstr "Editar menu"
 
 #.
 #. * Title
 #.
-#: ../src/menu.c:881 ../src/program.c:486
+#: ../src/menu.c:878 ../src/program.c:494
 msgid "Title:"
 msgstr "Título:"
 
 #.
 #. * Description
 #.
-#: ../src/menu.c:897 ../src/program.c:522
+#: ../src/menu.c:894 ../src/program.c:530
 msgid "Description:"
 msgstr "Descrição:"
 
 #.
 #. * Help
 #.
-#: ../src/menu.c:913 ../src/program.c:540
+#: ../src/menu.c:910 ../src/program.c:548
 msgid "Help"
 msgstr "Ajuda"
+
+#: ../src/menu.c:933 ../src/program.c:576
+msgid "Help edition with all possible information refreshed"
+msgstr "Edição da ajuda com todas as possíveis informações atualizadas"
 
 #.
 #. * Author
 #.
-#: ../src/menu.c:938
+#: ../src/menu.c:941
 msgid "Author:"
 msgstr "Autor:"
 
 #.
 #. * Email
 #.
-#: ../src/menu.c:954
+#: ../src/menu.c:957
 msgid "Email:"
 msgstr "E-mail:"
 
 #.
 #. * Categories
 #.
-#: ../src/menu.c:970
+#: ../src/menu.c:973
 msgid "Categories:"
 msgstr "Categorias:"
 
-#: ../src/menu.c:1137
+#: ../src/menu.c:1144
 #, c-format
 msgid "This menu has no programs"
 msgstr "Este menu não tem programas"
 
-#: ../src/menu.c:1140
+#: ../src/menu.c:1147
 #, c-format
 msgid "This menu has 1 program"
 msgstr "Este menu tem 1 programa"
 
-#: ../src/menu.c:1143
+#: ../src/menu.c:1150
 #, c-format
 msgid "This menu has %li programs"
 msgstr "Este menu tem %li programas"
 
-#: ../src/menu.c:1149
+#: ../src/menu.c:1156
 msgid "Created: "
 msgstr "Criado: "
 
-#: ../src/menu.c:1153
+#: ../src/menu.c:1160
 msgid "Modified: "
 msgstr "Modificado: "
 
-#: ../src/menu.c:1162
+#: ../src/menu.c:1169
 msgid "Categories: "
 msgstr "Categorias: "
 
-#: ../src/menu.c:1182
+#: ../src/menu.c:1189
 msgid "None"
 msgstr "Nenhum"
 
-#: ../src/menu.c:1252
+#: ../src/menu.c:1260
 msgid "<b>Others</b>"
 msgstr "<b>Outros</b>"
 
-#: ../src/menu.c:1254
+#: ../src/menu.c:1262
 msgid ""
 "<i>This folder lists the menus which are not in any configured folder "
 "through users' preferences.</i>"
@@ -436,227 +440,242 @@ msgstr ""
 "<i>Esta pasta lista os menus que não estão em qualquer pasta configurada "
 "pelas preferências do usuário.</i>"
 
-#: ../src/menu.c:1276
+#: ../src/menu.c:1284
 #, c-format
 msgid "This folder has no menu"
 msgstr "Esta pasta não tem menus"
 
-#: ../src/menu.c:1279
+#: ../src/menu.c:1287
 #, c-format
 msgid "This folder has 1 menu"
 msgstr "Esta pasta tem 1 menu"
 
-#: ../src/menu.c:1282
+#: ../src/menu.c:1290
 #, c-format
 msgid "This folder has %d menus"
 msgstr "Esta pasta tem %li menus"
 
-#: ../src/menu.c:1501
+#: ../src/menu.c:1509
 msgid "Sort by"
 msgstr "Ordenado por"
 
 #. Name
-#: ../src/menu.c:1515 ../src/preferences.c:76
+#: ../src/menu.c:1523 ../src/preferences.c:76
 msgid "Name"
 msgstr "Nome"
 
-#: ../src/menu.c:1522
+#: ../src/menu.c:1530
 msgid "Modified date"
 msgstr "Data em que foi modificado"
 
-#: ../src/menu.c:1636
+#: ../src/menu.c:1673
 msgid "New category"
 msgstr "Nova categoria"
 
-#: ../src/parameter.c:50 ../src/parameter.c:79
+#: ../src/parameter.c:51 ../src/parameter.c:80
 msgid "real"
 msgstr "real"
 
-#: ../src/parameter.c:51 ../src/parameter.c:80
+#: ../src/parameter.c:52 ../src/parameter.c:81
 msgid "integer"
 msgstr "inteiro"
 
-#: ../src/parameter.c:52 ../src/parameter.c:81
+#: ../src/parameter.c:53 ../src/parameter.c:82
 msgid "range"
 msgstr "intervalo"
 
-#: ../src/parameter.c:53 ../src/parameter.c:82
+#: ../src/parameter.c:54 ../src/parameter.c:83
 msgid "flag"
 msgstr "flag"
 
-#: ../src/parameter.c:54 ../src/parameter.c:83
+#: ../src/parameter.c:55 ../src/parameter.c:84
 msgid "text"
 msgstr "texto"
 
-#: ../src/parameter.c:55 ../src/parameter.c:84
+#: ../src/parameter.c:56 ../src/parameter.c:85
 msgid "enum"
 msgstr "enum"
 
-#: ../src/parameter.c:56 ../src/parameter.c:85
+#: ../src/parameter.c:57 ../src/parameter.c:86
 msgid "file"
 msgstr "arquivo"
 
-#: ../src/parameter.c:57 ../src/parameter.c:86
+#: ../src/parameter.c:58 ../src/parameter.c:87
 msgid "group"
 msgstr "grupo"
 
-#: ../src/parameter.c:181
+#: ../src/parameter.c:188
 msgid "Type"
 msgstr "Tipo"
 
-#: ../src/parameter.c:185
+#: ../src/parameter.c:192
 msgid "Keyword / default value"
 msgstr "Palavra-chave / valor padrão"
 
-#: ../src/parameter.c:189
+#: ../src/parameter.c:196
 msgid "Label"
 msgstr "Rótulo"
 
-#: ../src/parameter.c:297
+#: ../src/parameter.c:304
 msgid "Delete parameter"
 msgstr "Apagar parâmetro"
 
-#: ../src/parameter.c:298
+#: ../src/parameter.c:305
 msgid "Are you sure you want to delete selected(s) parameter(s)?"
 msgstr "Tem certeza que quer apagar o(s) parâmetro(s) selecionado(s)?"
 
-#: ../src/parameter.c:374
+#: ../src/parameter.c:381
 msgid "Parameter's type"
 msgstr "Tipo do parâmetro"
 
 #.
 #. * Type
 #.
-#: ../src/parameter.c:388 ../src/parameter.c:669
+#: ../src/parameter.c:395 ../src/parameter.c:694
 msgid "Type:"
 msgstr "Tipo:"
 
-#: ../src/parameter.c:460
+#: ../src/parameter.c:467
 msgid "Could not paste parameter"
 msgstr "Não foi possível colar o parâmetro"
 
 #.
 #. * Dialog and table
 #.
-#: ../src/parameter.c:545
+#: ../src/parameter.c:564
 msgid "Edit parameter"
 msgstr "Editar parâmetro"
 
 #.
 #. * Label
 #.
-#: ../src/parameter.c:568 ../src/parametergroup.c:108
+#: ../src/parameter.c:587 ../src/parametergroup.c:108
 msgid "Label:"
 msgstr "Rótulo:"
 
 #.
 #. * Keyword
 #.
-#: ../src/parameter.c:586
+#: ../src/parameter.c:605
 msgid "Keyword:"
 msgstr "Palavra-chave:"
 
 #.
 #. * Required
 #.
-#: ../src/parameter.c:608
+#: ../src/parameter.c:627
 msgid "Required:"
 msgstr "Obrigatório:"
 
 #.
 #. * Is List
 #.
-#: ../src/parameter.c:626
+#: ../src/parameter.c:645
 msgid "Is list?:"
 msgstr "É lista?:"
 
 #.
 #. * List separator
 #.
-#: ../src/parameter.c:644
+#: ../src/parameter.c:663
 msgid "List separator:"
 msgstr "Separador de listas:"
 
-#: ../src/parameter.c:681
+#: ../src/parameter.c:706
 msgid "File"
 msgstr "Arquivo"
 
-#: ../src/parameter.c:682
+#: ../src/parameter.c:707
 msgid "Directory"
 msgstr "Diretório"
 
 #.
+#. * Filter
+#.
+#: ../src/parameter.c:718
+msgid "Filter file types:"
+msgstr "Tipos de filtros de arquivos:"
+
+#: ../src/parameter.c:729
+msgid "name"
+msgstr "nome"
+
+#: ../src/parameter.c:734
+msgid "pattern (eg. *.jpg *.png)"
+msgstr "padrão (ex. *.jpg *.png)"
+
+#.
 #. * Minimum
 #.
-#: ../src/parameter.c:711
+#: ../src/parameter.c:766
 msgid "Minimum:"
 msgstr "Mínimo:"
 
 #.
 #. * Maximum
 #.
-#: ../src/parameter.c:730
+#: ../src/parameter.c:785
 msgid "Maximum:"
 msgstr "Máximo:"
 
 #.
 #. * Increment
 #.
-#: ../src/parameter.c:755
+#: ../src/parameter.c:813
 msgid "Increment:"
 msgstr "Incremento:"
 
 #.
 #. * Digits
 #.
-#: ../src/parameter.c:774
+#: ../src/parameter.c:832
 msgid "Digits:"
 msgstr "Dígitos:"
 
 #.
 #. * Options
 #.
-#: ../src/parameter.c:806
+#: ../src/parameter.c:862
 msgid "Options:"
 msgstr "Opções:"
 
 #.
 #. * Default value
 #.
-#: ../src/parameter.c:835
+#: ../src/parameter.c:891
 msgid "Default value:"
 msgstr "Valor padrão:"
 
-#: ../src/parameter.c:852
+#: ../src/parameter.c:908
 msgid "enabled by default"
 msgstr "habilitado por padrão"
 
-#: ../src/parameter.c:968
+#: ../src/parameter.c:1021
 #, c-format
 msgid "with 1 instance"
 msgstr "com 1 instância"
 
-#: ../src/parameter.c:971
+#: ../src/parameter.c:1024
 #, c-format
 msgid "with %lu instances"
 msgstr "com %lu instâncias"
 
-#: ../src/parameter.c:975
+#: ../src/parameter.c:1028
 #, c-format
 msgid "not instanciable"
 msgstr "não instanciável"
 
-#: ../src/parameter.c:978
+#: ../src/parameter.c:1031
 #, c-format
 msgid " and exclusive"
 msgstr " e exclusivo"
 
-#: ../src/parameter.c:980
+#: ../src/parameter.c:1033
 #, c-format
 msgid " and not exclusive"
 msgstr " e não exclusivo"
 
-#: ../src/parameter.c:1071
+#: ../src/parameter.c:1124
 msgid "No parameter is selected"
 msgstr "Nenhum parâmetro está selecionado"
 
@@ -692,7 +711,7 @@ msgstr "É exclusivo:"
 msgid "Instances:"
 msgstr "Instâncias:"
 
-#: ../src/parametergroup.c:298
+#: ../src/parametergroup.c:299
 #, c-format
 msgid "Instance #%d"
 msgstr "Instância #%d"
@@ -751,84 +770,80 @@ msgstr "Novo programa"
 msgid "Parameter's dialog preview"
 msgstr "Previsualização da janela de parâmetros"
 
-#: ../src/program.c:302
+#: ../src/program.c:310
 msgid "Delete program"
 msgstr "Apagar programa"
 
-#: ../src/program.c:302
+#: ../src/program.c:310
 msgid "Are you sure you want to delete selected(s) program(s)?"
 msgstr "Tem certeza que quer apagar o(s) programa(s) selecionado(s)?"
 
-#: ../src/program.c:382
+#: ../src/program.c:390
 msgid "Could not paste program"
 msgstr "Não foi possível colar o programa"
 
-#: ../src/program.c:433
+#: ../src/program.c:441
 msgid "Edit program"
 msgstr "Editar programa"
 
-#: ../src/program.c:455
+#: ../src/program.c:463
 msgid "This program:"
 msgstr "Este programa"
 
-#: ../src/program.c:465
+#: ../src/program.c:473
 msgid "reads from standard input"
 msgstr "lê da entrada padrão"
 
-#: ../src/program.c:471
+#: ../src/program.c:479
 msgid "writes to standard output"
 msgstr "escreve na saída padrão"
 
-#: ../src/program.c:477
+#: ../src/program.c:485
 msgid "appends to standard error"
 msgstr "acrescenta à saída de erro padrão"
 
 #.
 #. * Binary
 #.
-#: ../src/program.c:504
+#: ../src/program.c:512
 msgid "Executable:"
 msgstr "Executável:"
-
-#: ../src/program.c:568
-msgid "Help edition with parameters' list appended"
-msgstr "Edição do texto de ajuda com lista de parâmetros acrescentada"
 
 #.
 #. * URL
 #.
-#: ../src/program.c:578
+#: ../src/program.c:586
 msgid "URL:"
 msgstr "URL:"
 
-#: ../src/program.c:654
+#: ../src/program.c:662
 #, c-format
 msgid "This program has no parameters"
 msgstr "Este programa não tem parâmetros"
 
-#: ../src/program.c:657
+#: ../src/program.c:665
 #, c-format
 msgid "This program has 1 parameter"
 msgstr "Este programa tem 1 parâmetro"
 
-#: ../src/program.c:660
+#: ../src/program.c:668
 #, c-format
 msgid "This program has %li parameters"
 msgstr "Este programa tem %li parâmetros"
 
-#: ../src/program.c:666
+#: ../src/program.c:674
 msgid "Binary"
 msgstr "Binário"
 
-#: ../src/program.c:670
+#: ../src/program.c:678
 msgid "URL"
 msgstr "URL"
 
-#: ../src/program.c:679
+#: ../src/program.c:687
 msgid "URL not set"
 msgstr "URL não definida"
 
-#: ../src/program.c:701
+#: ../src/program.c:709
 msgid "No program is selected"
 msgstr "Nenhum programa está selecionado"
 
@@ -949,6 +964,9 @@ msgstr "  OBRIGATÓRIO"
 #: ../src/validate.c:706
 msgid "   [Instanciable]\n"
 msgstr "   [Instanciável]\n"
+
+#~ msgid "Help edition with parameters' list appended"
+#~ msgstr "Edição do texto de ajuda com lista de parâmetros acrescentada"
 
 #~ msgid "<b>%s</b>"
 #~ msgstr "<b>%s</b>"
