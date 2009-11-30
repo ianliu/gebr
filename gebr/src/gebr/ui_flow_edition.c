@@ -79,8 +79,10 @@ flow_edition_setup_ui(void)
 {
 	struct ui_flow_edition *	ui_flow_edition;
 
-	GtkWidget *			frame;
 	GtkWidget *			hpanel;
+	GtkWidget *			frame;
+	GtkWidget *			label;
+	GtkWidget *			left_vbox;
 	GtkWidget *			scrolled_window;
 	GtkWidget *			vbox;
 	GtkWidget *			combobox;
@@ -98,10 +100,14 @@ flow_edition_setup_ui(void)
 	/*
 	 * Left side: flow components
 	 */
-	frame = gtk_frame_new(_("Flow sequence"));
-	gtk_paned_pack1(GTK_PANED(hpanel), frame, FALSE, FALSE);
-
+	left_vbox = gtk_vbox_new(FALSE, 5);
+	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, FALSE, FALSE);
+	label = gtk_label_new_with_mnemonic(_("Server"));
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
+	gtk_box_pack_start(GTK_BOX(left_vbox), frame, FALSE, TRUE, 0);
 	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	combobox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(gebr.ui_server_list->common.store));
 	renderer = gtk_cell_renderer_text_new();
@@ -112,11 +118,15 @@ flow_edition_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(vbox), gtk_hseparator_new(), FALSE, TRUE, 0);
 	ui_flow_edition->combobox = combobox;
 
+	frame = gtk_frame_new(_("Flow sequence"));
+	gtk_box_pack_start(GTK_BOX(left_vbox), frame, TRUE, TRUE, 0);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	ui_flow_edition->fseq_store = gtk_list_store_new(FSEQ_N_COLUMN,
 		GDK_TYPE_PIXBUF,
