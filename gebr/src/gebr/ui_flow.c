@@ -521,6 +521,21 @@ out:	gtk_widget_destroy(dialog);
 void
 flow_fast_run()
 {
+	/* Add server if it doesn't yet exist on flow */
+	if (gebr.flow_server == NULL) {
+		GtkTreeIter	iter;
+		gchar *		address;
+
+		gtk_combo_box_get_active_iter(
+			GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &iter);
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+			SERVER_ADDRESS, &address,
+			-1);
+
+		flow_io_set_server(address, "", "", "");
+
+		g_free(address);
+	}
 	flow_io_run(gebr.flow_server);
 }
 
@@ -705,7 +720,8 @@ flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	struct server *	server;
 
 	address = gebr_geoxml_flow_server_get_address(flow_server);
-	server_find_address(address, &iter);
+	if (!server_find_address(address, &iter))
+		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, "Server should be present on list!");
 
 	gebr_geoxml_flow_server_set_date_last_run(flow_server, gebr_iso_date());
 	gebr_geoxml_flow_io_set_from_server(gebr.flow, flow_server);

@@ -505,19 +505,21 @@ flow_copy_from_dicts(GebrGeoXmlFlow * flow)
 void
 flow_run(struct server * server)
 {
-	GebrGeoXmlFlow *		flow;
+	GebrGeoXmlFlow *	flow;
 	GebrGeoXmlSequence *	i;
 	GString *		path;
 
-	// struct server *		server;
-
-	/* check for a flow selected */
-	// if (!flow_browse_get_selected(NULL, TRUE))
-	//	return;
-	// if ((server = server_select_setup_ui()) == NULL)
-	// 	return;
-	if (!server)
+	if (!gebr_comm_server_is_logged(server->gebr_comm)) {
+		if (gebr_comm_server_is_local(server->gebr_comm))
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
+				_("You're not connected to the local server"),
+				server->gebr_comm->address->str);
+		else
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
+				_("You're not connected to server '%s'"),
+				server->gebr_comm->address->str);
 		return;
+	}
 
 	flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(gebr.flow)));
 	/* Strip flow: remove helps and revisions */

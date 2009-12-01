@@ -519,7 +519,7 @@ gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in
 	va_end(argp);
 
 	if (type == GEBR_LOG_DEBUG)
-		g_print("%s\n", string);
+		g_print("DEBUG: %s\n", string);
 	else if (in_statusbar)
 		log_set_message(gebr.ui_log, string);
 	if (in_log_file) {
