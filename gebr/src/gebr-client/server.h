@@ -23,7 +23,7 @@
 #include <libgebr/comm/server.h>
 
 struct server {
-	struct gebr_comm_server *	gebr_comm;
+	struct gebr_comm_server *	comm;
 
 	
 };

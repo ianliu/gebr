@@ -509,15 +509,15 @@ flow_run(struct server * server)
 	GebrGeoXmlSequence *	i;
 	GString *		path;
 
-	if (!gebr_comm_server_is_logged(server->gebr_comm)) {
-		if (gebr_comm_server_is_local(server->gebr_comm))
+	if (!gebr_comm_server_is_logged(server->comm)) {
+		if (gebr_comm_server_is_local(server->comm))
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
 				_("You're not connected to the local server"),
-				server->gebr_comm->address->str);
+				server->comm->address->str);
 		else
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
 				_("You're not connected to server '%s'"),
-				server->gebr_comm->address->str);
+				server->comm->address->str);
 		return;
 	}
 
@@ -540,7 +540,7 @@ flow_run(struct server * server)
 	flow_copy_from_dicts(flow);
 
 	/* RUN */
-	gebr_comm_server_run_flow(server->gebr_comm, flow);
+	gebr_comm_server_run_flow(server->comm, flow);
 
 	/* TODO: check save */
 	/* Save manualy to preserve run date */
@@ -551,9 +551,9 @@ flow_run(struct server * server)
 
 	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'"),
 		gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
-	if (gebr_comm_server_is_local(server->gebr_comm) == FALSE) {
+	if (gebr_comm_server_is_local(server->comm) == FALSE) {
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'"),
-			server->gebr_comm->address->str,
+			server->comm->address->str,
 			gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
 	} else {
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to run flow '%s'"),

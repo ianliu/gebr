@@ -124,11 +124,11 @@ server_new(const gchar * address, gboolean autoconnect)
 	gtk_list_store_append(gebr.ui_server_list->common.store, &iter);
 	server = g_malloc(sizeof(struct server));
 	*server = (struct server){
-		.gebr_comm = gebr_comm_server_new(address, &ops),
+		.comm = gebr_comm_server_new(address, &ops),
 		.iter = iter,
 		.last_error = g_string_new("")
 	};
-	server->gebr_comm->user_data = server;
+	server->comm->user_data = server;
 	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
 		SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
 		SERVER_ADDRESS, !strcmp(address, "127.0.0.1") ? _("Local server") : address,
@@ -136,11 +136,11 @@ server_new(const gchar * address, gboolean autoconnect)
 		SERVER_AUTOCONNECT, autoconnect,
 		-1);
 
-	g_signal_connect(server->gebr_comm->stream_socket, "disconnected",
+	g_signal_connect(server->comm->stream_socket, "disconnected",
 		G_CALLBACK(server_disconnected), server);
 
 	if (autoconnect)
-		gebr_comm_server_connect(server->gebr_comm);
+		gebr_comm_server_connect(server->comm);
 
 	return server;
 }
@@ -202,7 +202,7 @@ server_free(struct server * server)
 			job_delete(job);
 	}
 
-	gebr_comm_server_free(server->gebr_comm);
+	gebr_comm_server_free(server->comm);
 	g_string_free(server->last_error, TRUE);
 	g_free(server);
 }

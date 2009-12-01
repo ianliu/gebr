@@ -94,7 +94,7 @@ server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 static void
 server_common_connect(GtkMenuItem * menu_item, struct server * server)
 {
-	gebr_comm_server_connect(server->gebr_comm);
+	gebr_comm_server_connect(server->comm);
 }
 
 /* Function: server_common_disconnect
@@ -103,7 +103,7 @@ server_common_connect(GtkMenuItem * menu_item, struct server * server)
 static void
 server_common_disconnect(GtkMenuItem * menu_item, struct server * server)
 {
-	gebr_comm_server_disconnect(server->gebr_comm);
+	gebr_comm_server_disconnect(server->comm);
 }
 
 /* Function: server_common_autoconnect
@@ -132,7 +132,7 @@ server_common_remove(GtkMenuItem * menu_item, struct server * server)
 static void
 server_common_stop(GtkMenuItem * menu_item, struct server * server)
 {
-	gebr_comm_server_kill(server->gebr_comm);
+	gebr_comm_server_kill(server->comm);
 }
 
 /* Function; server_common_popup_menu
@@ -162,14 +162,14 @@ server_common_popup_menu(GtkWidget * widget, struct ui_server_common * ui_server
 	menu = gtk_menu_new();
 
 	/* connect */
-	if (server->gebr_comm->state == SERVER_STATE_DISCONNECTED) {
+	if (server->comm->state == SERVER_STATE_DISCONNECTED) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_CONNECT, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
 			(GCallback)server_common_connect, server);
 	}
 	/* disconnect */
-	if (server->gebr_comm->state != SERVER_STATE_DISCONNECTED) {
+	if (server->comm->state != SERVER_STATE_DISCONNECTED) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DISCONNECT, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
@@ -182,7 +182,7 @@ server_common_popup_menu(GtkWidget * widget, struct ui_server_common * ui_server
 		(GCallback)server_common_autoconnect_changed, server);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), autoconnect);
 	/* remove */
-	if (!gebr_comm_server_is_local(server->gebr_comm)) {
+	if (!gebr_comm_server_is_local(server->comm)) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_REMOVE, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
@@ -265,8 +265,8 @@ server_common_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * u
 				SERVER_POINTER, &server,
 				-1);
 
-			if (gebr_comm_server_is_logged(server->gebr_comm) == FALSE)
-				gebr_comm_server_connect(server->gebr_comm);
+			if (gebr_comm_server_is_logged(server->comm) == FALSE)
+				gebr_comm_server_connect(server->comm);
 		}
 
 		break;
@@ -280,8 +280,8 @@ server_common_actions(GtkDialog * dialog, gint arg1, struct ui_server_common * u
 				SERVER_POINTER, &server,
 				-1);
 
-			if (gebr_comm_server_is_logged(server->gebr_comm) == TRUE)
-				gebr_comm_server_disconnect(server->gebr_comm);
+			if (gebr_comm_server_is_logged(server->comm) == TRUE)
+				gebr_comm_server_disconnect(server->comm);
 		}
 
 		break;
@@ -314,7 +314,7 @@ server_list_add(struct ui_server_list * ui_server_list, const gchar * address)
 			SERVER_POINTER, &server,
 			-1);
 
-		if (!strcmp(server->gebr_comm->address->str, address)) {
+		if (!strcmp(server->comm->address->str, address)) {
 			GtkTreeSelection *	selection;
 
 			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_server_list->common.view));
@@ -370,7 +370,7 @@ server_select_cursor_changed(GtkTreeView * tree_view, struct ui_server_select * 
 		SERVER_POINTER, &server,
 		-1);
 
-	if (server->gebr_comm->protocol->logged == FALSE)
+	if (server->comm->protocol->logged == FALSE)
 		g_object_set(ui_server_select->ok_button, "sensitive", FALSE, NULL);
 	else {
 		g_object_set(ui_server_select->ok_button, "sensitive", TRUE, NULL);
@@ -476,7 +476,7 @@ server_list_updated_status(struct server * server)
 
 	status_icon = (server->last_error->len)
 		? gebr.pixmaps.stock_warning
-		: (server->gebr_comm->protocol->logged == TRUE)
+		: (server->comm->protocol->logged == TRUE)
 			? gebr.pixmaps.stock_connect : gebr.pixmaps.stock_disconnect;
 
 	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter,
@@ -518,7 +518,7 @@ server_select_setup_ui(void)
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 				SERVER_POINTER, &server,
 				-1);
-		if (gebr_comm_server_is_logged(server->gebr_comm) == TRUE)
+		if (gebr_comm_server_is_logged(server->comm) == TRUE)
 			if (connected++ == 0)
 				first_connected_iter = iter;
 	}

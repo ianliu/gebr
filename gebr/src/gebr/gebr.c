@@ -473,8 +473,8 @@ gebr_config_save(gboolean verbose)
 			SERVER_POINTER, &server,
 			SERVER_AUTOCONNECT, &autoconnect,
 			-1);
-		g_string_printf(group, "server-%s", server->gebr_comm->address->str);
-		g_key_file_set_string(gebr.config.key_file, group->str, "address", server->gebr_comm->address->str);
+		g_string_printf(group, "server-%s", server->comm->address->str);
+		g_key_file_set_string(gebr.config.key_file, group->str, "address", server->comm->address->str);
 		g_key_file_set_boolean(gebr.config.key_file, group->str, "autoconnect", autoconnect);
 
 		g_string_free(group, TRUE);

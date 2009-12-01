@@ -93,13 +93,13 @@ server_new(const gchar * address)
 	struct server *				server;
 
 	server = g_malloc(sizeof(struct server));
-	server->gebr_comm = gebr_comm_server_new(address, &ops);
-	server->gebr_comm->user_data = server;
+	server->comm = gebr_comm_server_new(address, &ops);
+	server->comm->user_data = server;
 
-	g_signal_connect(server->gebr_comm->stream_socket, "disconnected",
+	g_signal_connect(server->comm->stream_socket, "disconnected",
 		G_CALLBACK(server_disconnected), server);
 
-	gebr_comm_server_connect(server->gebr_comm);
+	gebr_comm_server_connect(server->comm);
 
 	return server;
 }
@@ -111,7 +111,7 @@ server_new(const gchar * address)
 void
 server_free(struct server * server)
 {
-	gebr_comm_server_free(server->gebr_comm);
+	gebr_comm_server_free(server->comm);
 	g_free(server);
 }
 
@@ -137,7 +137,7 @@ server_run_flow(struct server * server, const gchar * flow_path)
 	}
 
 	flow = GEBR_GEOXML_FLOW(document);
-	gebr_comm_server_run_flow(server->gebr_comm, flow);
+	gebr_comm_server_run_flow(server->comm, flow);
 
 	return TRUE;
 }
