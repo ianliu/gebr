@@ -59,9 +59,8 @@ static GtkMenu *
 flow_edition_component_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edition);
 static GtkMenu *
 flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_edition * ui_flow_edition);
-
 static void
-flow_edition_on_combobox_changed(GtkComboBox * combobox, gpointer data);
+flow_edition_on_combobox_changed(GtkComboBox * combobox);
 
 /*
  * Section: Public
@@ -110,13 +109,13 @@ flow_edition_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	combobox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(gebr.ui_server_list->common.store));
+	ui_flow_edition->server_combobox = combobox;
 	renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "text", SERVER_ADDRESS);
 	g_signal_connect(combobox, "changed", G_CALLBACK(flow_edition_on_combobox_changed), NULL);
 	gtk_box_pack_start(GTK_BOX(vbox), combobox, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gtk_hseparator_new(), FALSE, TRUE, 0);
-	ui_flow_edition->combobox = combobox;
 
 	frame = gtk_frame_new(_("Flow sequence"));
 	gtk_box_pack_start(GTK_BOX(left_vbox), frame, TRUE, TRUE, 0);
@@ -235,7 +234,7 @@ flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected
 {
 	if (!gebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter)) {
 		if (warn_unselected)
-			gebr_message(LOG_ERROR, TRUE, FALSE, _("No flow component selected"));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow component selected"));
 		return FALSE;
 	}
 
@@ -268,28 +267,21 @@ flow_edition_select_component_iter(GtkTreeIter * iter)
 void
 flow_edition_set_io(void)
 {
-	GebrGeoXmlFlowServer *	server;
-	GtkTreeIter		iter;
+	gchar *	input;
+	gchar *	output;
 
-	server = gebr_geoxml_flow_servers_get_last_run(gebr.flow);
-	server_io_info_set(&(gebr.server_io_info),
-		gebr_geoxml_flow_server_get_address(server),
-		gebr_geoxml_flow_server_io_get_input(server),
-		gebr_geoxml_flow_server_io_get_output(server),
-		gebr_geoxml_flow_server_io_get_error(server));
-
-	if (!server_find_address(gebr.server_io_info.address, &iter))
-		return; // this should never happen, because a server should always exist!
-
-	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->combobox), &iter);
+	if ((input = (gchar*)gebr_geoxml_flow_server_io_get_input(gebr.flow_server)) == NULL)
+		input = "";
+	if ((output = (gchar*)gebr_geoxml_flow_server_io_get_output(gebr.flow_server)) == NULL)
+		output = "";
 
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
 		FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_go_back,
-		FSEQ_TITLE_COLUMN, gebr.server_io_info.input,
+		FSEQ_TITLE_COLUMN, input,
 		-1);
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
 		FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_go_forward,
-		FSEQ_TITLE_COLUMN, gebr.server_io_info.output,
+		FSEQ_TITLE_COLUMN, output,
 		-1);
 }
 
@@ -318,7 +310,7 @@ flow_edition_component_activated(void)
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
 		FSEQ_TITLE_COLUMN, &title,
 		-1);
-	gebr_message(LOG_ERROR, TRUE, FALSE, _("Configuring flow component '%s'"), title);
+	gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Configuring flow component '%s'"), title);
 	parameters_configure_setup_ui();
 
 	g_free(title);
@@ -391,12 +383,12 @@ flow_edition_get_selected_menu(GtkTreeIter * iter, gboolean warn_unselected)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->menu_view));
 	if (gtk_tree_selection_get_selected(selection, &model, iter) == FALSE) {
 		if (warn_unselected)
-			gebr_message(LOG_ERROR, TRUE, FALSE, _("No menu selected"));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No menu selected"));
 		return FALSE;
 	}
 	if (!gtk_tree_store_iter_depth(gebr.ui_flow_edition->menu_store, iter)) {
 		if (warn_unselected)
-			gebr_message(LOG_ERROR, TRUE, FALSE, _("Select a menu instead of a category"));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Select a menu instead of a category"));
 		return FALSE;
 	}
 
@@ -668,52 +660,29 @@ out:	gtk_widget_show_all(menu);
  *
  */
 static void
-flow_edition_on_combobox_changed(GtkComboBox * combobox, gpointer data)
+flow_edition_on_combobox_changed(GtkComboBox * combobox)
 {
-	// Selects the first configuration present
-	// in 'servers' tag from gebr.flow which has
-	// address equal to the combobox selection.
-
-	gchar *			addr;
+	gchar *			address;
 	GtkTreeIter		iter;
 	GebrGeoXmlSequence *	server;
 
+	gebr.flow_server = NULL;
+	if (!flow_browse_get_selected(NULL, TRUE))
+		return;
 	if (!gtk_combo_box_get_active_iter(combobox, &iter))
 		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
-		SERVER_ADDRESS, &addr, -1);
+		SERVER_ADDRESS, &address, -1);
 
 	gebr_geoxml_flow_get_server(gebr.flow, &server, 0);
-	while (server) {
-		const gchar * tmp;
-		tmp = gebr_geoxml_flow_server_get_address(GEBR_GEOXML_FLOW_SERVER(server));
-		if (!strcmp(tmp, addr))
+	for (; server != NULL; gebr_geoxml_sequence_next(&server))
+		if (!strcmp(address,
+		gebr_geoxml_flow_server_get_address(GEBR_GEOXML_FLOW_SERVER(server))))
 			break;
-		gebr_geoxml_sequence_next(&server);
-	}
+	gebr.flow_server = GEBR_GEOXML_FLOW_SERVER(server);
 
-	if (server)	// if there is a configuration, select it
-		server_io_info_set(&(gebr.server_io_info),
-			gebr_geoxml_flow_server_get_address(GEBR_GEOXML_FLOW_SERVER(server)),
-			gebr_geoxml_flow_server_io_get_input(GEBR_GEOXML_FLOW_SERVER(server)),
-			gebr_geoxml_flow_server_io_get_output(GEBR_GEOXML_FLOW_SERVER(server)),
-			gebr_geoxml_flow_server_io_get_error(GEBR_GEOXML_FLOW_SERVER(server)));
-	else		// otherwise, copy the server address only
-		server_io_info_set(&(gebr.server_io_info), addr, NULL, NULL, NULL);
+	flow_edition_set_io();
 
-	flow_edition_set_io_iters(gebr.server_io_info.input, gebr.server_io_info.output);
-	g_free(addr);
+	g_free(address);
 }
-
-void
-flow_edition_set_io_iters(const gchar * input, const gchar * output)
-{
-	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
-		FSEQ_TITLE_COLUMN, input,
-		-1);
-	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
-		FSEQ_TITLE_COLUMN, output,
-		-1);
-}
-

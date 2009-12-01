@@ -202,26 +202,19 @@ gebr_geoxml_flow_servers_get_last_run(GebrGeoXmlFlow * flow)
 }
 
 GebrGeoXmlFlowServer *
-gebr_geoxml_flow_servers_query(GebrGeoXmlFlow * flow, const gchar * address,
-		const gchar * input, const gchar * output, const gchar * error)
+gebr_geoxml_flow_servers_query(GebrGeoXmlFlow * flow, const gchar * address)
 {
-	GebrGeoXmlSequence * server;
+	if (flow == NULL || address == NULL)
+		return NULL;
+
+	GebrGeoXmlSequence *	server;
+
 	gebr_geoxml_flow_get_server(flow, &server, 0);
-	while(server)
-	{
-		const gchar * addr = gebr_geoxml_flow_server_get_address(GEBR_GEOXML_FLOW_SERVER(server));
-		const gchar * inpt = gebr_geoxml_flow_server_io_get_input(GEBR_GEOXML_FLOW_SERVER(server));
-		const gchar * outp = gebr_geoxml_flow_server_io_get_output(GEBR_GEOXML_FLOW_SERVER(server));
-		const gchar * errr = gebr_geoxml_flow_server_io_get_error(GEBR_GEOXML_FLOW_SERVER(server));
+	for (; server != NULL; gebr_geoxml_sequence_next(&server))
+		if (!strcmp(address,
+		gebr_geoxml_flow_server_get_address(GEBR_GEOXML_FLOW_SERVER(server))))
+			return (GebrGeoXmlFlowServer*)server;
 
-		if ((!strcmp(address, addr) || !address)
-			&& (!strcmp(input, inpt) || !input)
-			&& (!strcmp(output, outp) || !output)
-			&& (!strcmp(error, errr) || !error))
-			return server;
-
-		gebr_geoxml_sequence_next(&server);
-	}
 	return NULL;
 }
 

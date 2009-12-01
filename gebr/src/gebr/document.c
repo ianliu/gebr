@@ -122,7 +122,7 @@ document_load_path(const gchar * path)
 	int			ret;
 
 	if ((ret = gebr_geoxml_document_load(&document, path)) < 0)
-		gebr_message(LOG_ERROR, TRUE, TRUE, _("Can't load document at %s: %s"), path,
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load document at %s: %s"), path,
 			gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 
 	return document;

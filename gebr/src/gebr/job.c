@@ -128,7 +128,7 @@ void
 job_close(struct job * job)
 {
 	if (job->status == JOB_STATUS_RUNNING) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("Can't close running job"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Can't close running job"));
 		return;
 	}
 	if (gebr_comm_server_is_logged(job->server->gebr_comm) == FALSE) {

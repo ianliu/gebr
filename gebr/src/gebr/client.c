@@ -58,15 +58,15 @@ client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct 
 				server_list_updated_status(server);
 				g_string_assign(gebr_comm_server->protocol->hostname, hostname->str);
 				if (gebr_comm_server_is_local(gebr_comm_server) == TRUE)
-					gebr_message(LOG_INFO, TRUE, TRUE, _("Connected to local server"),
+					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to local server"),
 						gebr_comm_server->address->str);
 				else {
-					gebr_message(LOG_INFO, TRUE, TRUE, _("Connected to server '%s'"),
+					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to server '%s'"),
 						gebr_comm_server->address->str);
 					if (display_port->len)
 						gebr_comm_server_forward_x11(gebr_comm_server, atoi(display_port->str));
 					else
-						gebr_message(LOG_ERROR, TRUE, TRUE, _("Server '%s' could not send display for graphical output redirection"),
+						gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Server '%s' could not send display for graphical output redirection"),
 							gebr_comm_server->address->str);
 				}
 

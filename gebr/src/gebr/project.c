@@ -62,7 +62,7 @@ project_new(void)
 		PL_FILENAME, gebr_geoxml_document_get_filename(project),
 		-1);
 	project_line_set_selected(&iter, GEBR_GEOXML_DOCUMENT(project));
-	gebr_message(LOG_INFO, FALSE, TRUE, _("New project created"));
+	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New project created"));
 
 	if (!on_document_properties_activate())
 		project_delete(FALSE);
@@ -100,13 +100,13 @@ project_delete(gboolean confirm)
 	   prompt the user to take about erasing its lines */
 	/* Delete each line of the project */
 	if ((nlines = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter)) > 0) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("Project '%s' still has %i lines"), title, nlines);
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Project '%s' still has %i lines"), title, nlines);
 		goto out;
 	}
 
 	/* message user */
 	if (confirm)
-		gebr_message(LOG_INFO, TRUE, TRUE, _("Erasing project '%s'"), title);
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Erasing project '%s'"), title);
 
 	/* finally, remove it from the disk */
 	document_delete(filename);
@@ -197,7 +197,7 @@ project_list_populate(void)
 			line_source = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line));
 			line = GEBR_GEOXML_LINE(document_load(line_source));
 			if (line == NULL) {
-				gebr_message(LOG_ERROR, TRUE, TRUE, _("Line file %s corrupted. Ignoring."),
+				gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Line file %s corrupted. Ignoring."),
 					line_source);
 				continue;
 			}

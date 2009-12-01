@@ -15,15 +15,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEBR_LOG_H
-#define __GEBR_LOG_H
+#ifndef __GEBR_GEBR_LOG_H
+#define __GEBR_GEBR_LOG_H
 
 #include <stdio.h>
 
 #include <glib.h>
 
 enum gebr_log_message_type {
-	LOG_START, LOG_END, LOG_INFO, LOG_ERROR, LOG_WARNING, LOG_DEBUG, LOG_MSG
+	GEBR_LOG_START, GEBR_LOG_END, GEBR_LOG_INFO, GEBR_LOG_ERROR, GEBR_LOG_WARNING, GEBR_LOG_DEBUG, GEBR_LOG_MSG
 };
 
 struct gebr_log_message {
@@ -57,4 +57,4 @@ gebr_log_messages_free(GList * messages);
 void
 gebr_log_add_message(struct gebr_log * log, enum gebr_log_message_type type, const gchar * message);
 
-#endif //__GEBR_LOG_H
+#endif //__GEBR_GEBR_LOG_H

@@ -219,7 +219,7 @@ job_control_save(void)
 	/* save to file */
 	fp = fopen(path, "w");
 	if (fp == NULL) {
-		gebr_message(LOG_ERROR, TRUE, TRUE, _("Could not write file"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not write file"));
 		goto out;
 	}
 	gtk_text_buffer_get_start_iter(gebr.ui_job_control->text_buffer, &start_iter);
@@ -228,7 +228,7 @@ job_control_save(void)
 	fputs(text, fp);
 	fclose(fp);
 
-	gebr_message(LOG_INFO, TRUE, TRUE, _("Saved job information at '%s'"), path);
+	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Saved job information at '%s'"), path);
 
 	g_free(text);
 out:	g_free(path);
@@ -256,22 +256,22 @@ job_control_cancel(void)
 			-1);
 
 	if (job->status != JOB_STATUS_RUNNING) {
-		gebr_message(LOG_WARNING, TRUE, FALSE, _("Job is not running"));
+		gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("Job is not running"));
 		return;
 	}
 	if (gebr_comm_server_is_logged(job->server->gebr_comm) == FALSE) {
-		gebr_message(LOG_WARNING, TRUE, FALSE, _("You are not connected to job's server"));
+		gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("You are not connected to job's server"));
 		return;
 	}
 	if (gebr_gui_confirm_action_dialog(_("Terminate job"), _("Are you sure you want to terminate job '%s'?"), job->title->str) == FALSE)
 		return;
 
-	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to terminate job"));
+	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to terminate job"));
 	if (gebr_comm_server_is_local(job->server->gebr_comm) == FALSE)
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to terminate job '%s'"),
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to terminate job '%s'"),
 			job->server->gebr_comm->address->str, job->title->str);
 	else
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking local server to terminate job '%s'"),
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to terminate job '%s'"),
 			job->title->str);
 
 	gebr_comm_protocol_send_data(job->server->gebr_comm->protocol, job->server->gebr_comm->stream_socket,
@@ -348,22 +348,22 @@ job_control_stop(void)
 		-1);
 
 	if (job->status != JOB_STATUS_RUNNING) {
-		gebr_message(LOG_WARNING, TRUE, FALSE, _("Job is not running"));
+		gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("Job is not running"));
 		return;
 	}
 	if (gebr_comm_server_is_logged(job->server->gebr_comm) == FALSE) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("You are not connected to job's server"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("You are not connected to job's server"));
 		return;
 	}
 	if (gebr_gui_confirm_action_dialog(_("Kill job"), _("Are you sure you want to kill job '%s'?"), job->title->str) == FALSE)
 		return;
 
-	gebr_message(LOG_INFO, TRUE, FALSE, _("Asking server to kill job"));
+	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to kill job"));
 	if (gebr_comm_server_is_local(job->server->gebr_comm) == FALSE) {
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking server '%s' to kill job '%s'"),
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to kill job '%s'"),
 			job->server->gebr_comm->address->str, job->title->str);
 	} else {
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Asking local server to kill job '%s'"),
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to kill job '%s'"),
 			job->title->str);
 	}
 

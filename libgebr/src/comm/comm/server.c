@@ -129,7 +129,7 @@ gebr_comm_server_connect(struct gebr_comm_server * gebr_comm_server)
 		GebrCommTerminalProcess *	process;
 
 		gebr_comm_server->state = SERVER_STATE_RUN;
-		gebr_comm_server_log_message(gebr_comm_server, LOG_INFO, _("Launching server at %s"), gebr_comm_server->address->str);
+		gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_INFO, _("Launching server at %s"), gebr_comm_server->address->str);
 
 		gebr_comm_server->process.use = COMM_SERVER_PROCESS_TERMINAL;
 		gebr_comm_server->process.data.terminal = process = gebr_comm_terminal_process_new();
@@ -145,7 +145,7 @@ gebr_comm_server_connect(struct gebr_comm_server * gebr_comm_server)
 		GebrCommProcess *		process;
 
 		gebr_comm_server->state = SERVER_STATE_RUN;
-		gebr_comm_server_log_message(gebr_comm_server, LOG_INFO, _("Launching local server"));
+		gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_INFO, _("Launching local server"));
 
 		gebr_comm_server->process.use = COMM_SERVER_PROCESS_REGULAR;
 		gebr_comm_server->process.data.regular = process = gebr_comm_process_new();
@@ -192,7 +192,7 @@ gebr_comm_server_kill(struct gebr_comm_server * gebr_comm_server)
 	GebrCommTerminalProcess *	process;
 
 	cmd_line = g_string_new(NULL);
-	gebr_comm_server_log_message(gebr_comm_server, LOG_INFO, _("Stoping server at %s"), gebr_comm_server->address->str);
+	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_INFO, _("Stoping server at %s"), gebr_comm_server->address->str);
 
 	gebr_comm_server->tried_existant_pass = FALSE;
 	process = gebr_comm_terminal_process_new();
@@ -264,7 +264,7 @@ gebr_comm_server_forward_x11(struct gebr_comm_server * gebr_comm_server, guint16
 	gebr_comm_terminal_process_start(gebr_comm_server->x11_forward_process, string);
 
 	/* log */
-	gebr_comm_server_log_message(gebr_comm_server, LOG_INFO, _("Redirecting '%s' graphical output"),
+	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_INFO, _("Redirecting '%s' graphical output"),
 		gebr_comm_server->address->str);
 
 	/* frees */
@@ -337,11 +337,11 @@ local_run_server_read(GebrCommProcess * process, struct gebr_comm_server * gebr_
 	port = strtol(output->str, &strtol_endptr, 10);
 	if (port) {
 		gebr_comm_server->port = port;
-		gebr_comm_server_log_message(gebr_comm_server, LOG_DEBUG, "local_run_server_read: %d", port);
+		gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_DEBUG, "local_run_server_read: %d", port);
 	} else {
 		gebr_comm_server->error = SERVER_ERROR_SERVER;
 		gebr_comm_server->state = SERVER_STATE_DISCONNECTED;
-		gebr_comm_server_log_message(gebr_comm_server, LOG_ERROR, _("Could not launch local server: \n%s"),
+		gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_ERROR, _("Could not launch local server: \n%s"),
 			output->str);
 	}
 
@@ -356,7 +356,7 @@ local_run_server_finished(GebrCommProcess * process, struct gebr_comm_server * g
 	gebr_comm_server->process.use = COMM_SERVER_PROCESS_NONE;
 	gebr_comm_process_free(process);
 
-	gebr_comm_server_log_message(gebr_comm_server, LOG_DEBUG, "local_run_server_finished");
+	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_DEBUG, "local_run_server_finished");
 	if (gebr_comm_server->error != SERVER_ERROR_NONE)
 		return;
 
@@ -416,7 +416,7 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_s
 
 		g_string_free(answer, TRUE);
 	} else if (output->str[output->len-4] == '.') {
-		gebr_comm_server_log_message(gebr_comm_server, LOG_WARNING, _("Received SSH message: \n%s"),
+		gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_WARNING, _("Received SSH message: \n%s"),
 			output->str);
 	} else if (!strcmp(output->str, "yes\r\n")) {
 		goto out;
@@ -428,7 +428,7 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_s
 		if (str == output->str) {
 			gebr_comm_server->error = SERVER_ERROR_SSH;
 			gebr_comm_server->state = SERVER_STATE_DISCONNECTED;
-			gebr_comm_server_log_message(gebr_comm_server, LOG_ERROR,
+			gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_ERROR,
 				_("Error contacting server at address %s via ssh: \n%s"),
 				gebr_comm_server->address->str, output->str);
 			return TRUE;
@@ -452,7 +452,7 @@ gebr_comm_ssh_read(GebrCommTerminalProcess * process, struct gebr_comm_server * 
 	output = gebr_comm_terminal_process_read_string_all(process);
 	gebr_comm_ssh_parse_output(process, gebr_comm_server, output);
 
-	gebr_comm_server_log_message(gebr_comm_server, LOG_DEBUG, "gebr_comm_ssh_read: %s", output->str);
+	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_DEBUG, "gebr_comm_ssh_read: %s", output->str);
 
 	g_string_free(output, TRUE);
 }
@@ -471,18 +471,18 @@ gebr_comm_ssh_run_server_read(GebrCommTerminalProcess * process, struct gebr_com
 	GString *	output;
 
 	output = gebr_comm_terminal_process_read_string_all(process);
-	gebr_comm_server_log_message(gebr_comm_server, LOG_DEBUG, "gebr_comm_ssh_run_server_read: %s", output->str);
+	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_DEBUG, "gebr_comm_ssh_run_server_read: %s", output->str);
 	if (gebr_comm_ssh_parse_output(process, gebr_comm_server, output) == TRUE)
 		goto out;
 
 	port = strtol(output->str, &strtol_endptr, 10);
 	if (port) {
 		gebr_comm_server->port = port;
-		gebr_comm_server_log_message(gebr_comm_server, LOG_DEBUG, "gebr_comm_ssh_run_server_read: %d", port);
+		gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_DEBUG, "gebr_comm_ssh_run_server_read: %d", port);
 	} else {
 		gebr_comm_server->error = SERVER_ERROR_SERVER;
 		gebr_comm_server->state = SERVER_STATE_DISCONNECTED;
-		gebr_comm_server_log_message(gebr_comm_server, LOG_ERROR, _("Could not comunicate with server %s: \n%s"),
+		gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_ERROR, _("Could not comunicate with server %s: \n%s"),
 			gebr_comm_server->address->str, output->str);
 	}
 
@@ -494,7 +494,7 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, struct gebr
 {
 	GString *	cmd_line;
 
-	gebr_comm_server_log_message(gebr_comm_server, LOG_DEBUG, "gebr_comm_ssh_run_server_finished");
+	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_DEBUG, "gebr_comm_ssh_run_server_finished");
 
 	gebr_comm_server->process.use = COMM_SERVER_PROCESS_NONE;
 	gebr_comm_terminal_process_free(process);
@@ -531,7 +531,7 @@ gebr_comm_ssh_open_tunnel_finished(GebrCommTerminalProcess * process, struct geb
 {
 	GebrCommSocketAddress	socket_address;
 
-	gebr_comm_server_log_message(gebr_comm_server, LOG_DEBUG, "gebr_comm_ssh_open_tunnel_finished");
+	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_DEBUG, "gebr_comm_ssh_open_tunnel_finished");
 
 	if (gebr_comm_server->error != SERVER_ERROR_NONE)
 		goto out;
@@ -595,7 +595,7 @@ gebr_comm_server_disconnected(GStreamSocket * stream_socket, struct gebr_comm_se
 	gebr_comm_server->protocol->logged = FALSE;
 	gebr_comm_server->state = SERVER_STATE_DISCONNECTED;
 
-	gebr_comm_server_log_message(gebr_comm_server, LOG_WARNING, "Server '%s' disconnected",
+	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_WARNING, "Server '%s' disconnected",
 		     gebr_comm_server->address->str);
 
 	gebr_comm_server_free_for_reuse(gebr_comm_server);
@@ -613,7 +613,7 @@ gebr_comm_server_read(GStreamSocket * stream_socket, struct gebr_comm_server * g
 
 	/* we don't want a giant output */
 	data_stripped = g_strndup(data->str, 50);
-	gebr_comm_server_log_message(gebr_comm_server, LOG_DEBUG, "Read from server '%s': %s",
+	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_DEBUG, "Read from server '%s': %s",
 		gebr_comm_server->address->str, data_stripped);
 
 	g_string_free(data, TRUE);
@@ -627,7 +627,7 @@ gebr_comm_server_error(GStreamSocket * stream_socket, enum GebrCommSocketError e
 	gebr_comm_server->state = SERVER_STATE_DISCONNECTED;
 	if (error == G_SOCKET_ERROR_UNKNOWN)
 		puts("FIXME: handle G_SOCKET_ERROR_UNKNOWN");
-	gebr_comm_server_log_message(gebr_comm_server, LOG_ERROR, _("Connection error '%d' on server '%s'"), error, gebr_comm_server->address->str);
+	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_ERROR, _("Connection error '%d' on server '%s'"), error, gebr_comm_server->address->str);
 }
 
 /*

@@ -235,7 +235,7 @@ validate_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 {
 	if (gebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_validate.tree_view), iter) == FALSE) {
 		if (warn_unselected)
-			debr_message(LOG_ERROR, _("No menu selected"));
+			debr_message(GEBR_LOG_ERROR, _("No menu selected"));
 		return FALSE;
 	}
 

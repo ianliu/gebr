@@ -91,7 +91,7 @@ help_show(const gchar * help, const gchar * title)
 	}
 
 	if (!gebr.config.browser->len) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("No editor defined. Choose one at Configure/Preferences"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No editor defined. Choose one at Configure/Preferences"));
 		return;
 	}
 
@@ -100,7 +100,7 @@ help_show(const gchar * help, const gchar * title)
 
 	html_fp = fopen(html_path->str, "w");
 	if (html_fp == NULL) {
-		gebr_message(LOG_ERROR, TRUE, TRUE, unable_to_write_help_error);
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, unable_to_write_help_error);
 		goto out;
 	}
 	fwrite(prepared_html->str, sizeof(char), strlen(prepared_html->str), html_fp);
@@ -145,7 +145,7 @@ help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 
 	/* Check for editor */
 	if (!gebr.config.editor->len) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("No editor defined. Choose one at Configure/Preferences"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No editor defined. Choose one at Configure/Preferences"));
 		return;
 	}
 
@@ -157,7 +157,7 @@ help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 	/* Write current help to temporary file */
 	html_fp = fopen(html_path->str, "w");
 	if (html_fp == NULL) {
-		gebr_message(LOG_ERROR, TRUE, TRUE, unable_to_write_help_error);
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, unable_to_write_help_error);
 		goto out;
 	}
 	fputs(gebr_geoxml_document_get_help(document), html_fp);
@@ -165,12 +165,15 @@ help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 
 	/* Run editor and wait for user... */
 	g_string_printf(cmd_line, "%s %s", gebr.config.editor->str, html_path->str);
-	system(cmd_line->str);
+	if (system(cmd_line->str)) {
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not run editor."));
+		goto out;
+	}
 
 	/* Read back the help from file */
 	html_fp = fopen(html_path->str, "r");
 	if (html_fp == NULL) {
-		gebr_message(LOG_ERROR, TRUE, TRUE, _("Could not read created temporary file."));
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not read created temporary file."));
 		goto out;
 	}
 	while (fgets(buffer, BUFFER_SIZE, html_fp) != NULL)
@@ -190,7 +193,7 @@ help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 		/* TODO: what else should be tried? */
 		if (converted == NULL) {
 			g_free(converted);
-			gebr_message(LOG_ERROR, TRUE, TRUE, _("Please change the report encoding to UTF-8"));
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Please change the report encoding to UTF-8"));
 			goto out;
 		}
 

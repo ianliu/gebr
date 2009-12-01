@@ -185,13 +185,13 @@ GebrGeoXmlFlowServer *
 gebr_geoxml_flow_servers_get_last_run(GebrGeoXmlFlow * flow);
 
 /**
- * Returns the GebrGeoXmlFlowServer that has exactly the same properties
- * given by \p address, \p input, \p output and \p error. If any of these
- * parameters are NULL, that field is ignored by the query.
+ * Returns the GebrGeoXmlFlowServer that has \p address
+ * If not found returns NULL.
+ *
+ * If \p flow or \p address is NULL returns NULL.
  */
 GebrGeoXmlFlowServer *
-gebr_geoxml_flow_servers_query(GebrGeoXmlFlow * flow, const gchar * address,
-		const gchar * input, const gchar * output, const gchar * error);
+gebr_geoxml_flow_servers_query(GebrGeoXmlFlow * flow, const gchar * address);
 
 /**
  * Get the number of servers \p flow has.

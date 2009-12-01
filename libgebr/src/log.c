@@ -110,15 +110,15 @@ gebr_log_messages_read(struct gebr_log * log)
 		}
 
 		if (!strcmp(splits[0], "[ERR]"))
-			type = LOG_ERROR;
+			type = GEBR_LOG_ERROR;
 		else if (!strcmp(splits[0], "[WARN]"))
-			type = LOG_WARNING;
+			type = GEBR_LOG_WARNING;
 		else if (!strcmp(splits[0], "[INFO]"))
-			type = LOG_INFO;
+			type = GEBR_LOG_INFO;
 		else if (!strcmp(splits[0], "[STR]"))
-			type = LOG_START;
+			type = GEBR_LOG_START;
 		else if (!strcmp(splits[0], "[END]"))
-			type = LOG_END;
+			type = GEBR_LOG_END;
 		else {
 			g_strfreev(splits);
 			continue;
@@ -158,22 +158,22 @@ gebr_log_add_message(struct gebr_log * log, enum gebr_log_message_type type, con
 	error = NULL;
 
 	switch (type) {
-	case LOG_START:
+	case GEBR_LOG_START:
 		ident_str = "[STR]";
 		break;
-	case LOG_END:
+	case GEBR_LOG_END:
 		ident_str = "[END]";
 		break;
-	case LOG_INFO:
+	case GEBR_LOG_INFO:
 		ident_str = "[INFO]";
 		break;
-	case LOG_ERROR:
+	case GEBR_LOG_ERROR:
 		ident_str = "[ERR]";
 		break;
-	case LOG_WARNING:
+	case GEBR_LOG_WARNING:
 		ident_str = "[WARN]";
 		break;
-	case LOG_DEBUG:
+	case GEBR_LOG_DEBUG:
 #ifdef DEBUG
 		ident_str = "[DEB]";
 		break;

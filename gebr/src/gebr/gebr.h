@@ -62,8 +62,7 @@ struct gebr {
 	GebrGeoXmlLine *		line;
 	GebrGeoXmlFlow *		flow;
 	GebrGeoXmlProgram *		program;
-
-	struct server_io_info		server_io_info;
+	GebrGeoXmlFlowServer *		flow_server;
 
 	GList *				flow_clipboard;
 	struct gebr_log *		log;

@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __UI_LOG_H
-#define __UI_LOG_H
+#ifndef __UI_GEBR_LOG_H
+#define __UI_GEBR_LOG_H
 
 #include <gtk/gtk.h>
 
@@ -24,10 +24,10 @@
 
 /* Store fields */
 enum {
-	LOG_TYPE_ICON = 0,
-	LOG_DATE,
-	LOG_MESSAGE,
-	LOG_N_COLUMN
+	GEBR_LOG_TYPE_ICON = 0,
+	GEBR_LOG_DATE,
+	GEBR_LOG_MESSAGE,
+	GEBR_LOG_N_COLUMN
 };
 
 struct ui_log {
@@ -46,4 +46,4 @@ log_set_message(struct ui_log * ui_log, const gchar * message);
 void
 gebr_log_add_message_to_list(struct ui_log * ui_log, struct gebr_log_message * message);
 
-#endif //__UI_LOG_H
+#endif //__UI_GEBR_LOG_H

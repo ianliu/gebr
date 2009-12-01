@@ -61,36 +61,9 @@ struct ui_flow_simple {
 	GtkWidget *		error;
 };
 
-/* server io info */
-void
-server_io_info_set			(struct server_io_info *	info,
-					 const gchar *			address,
-					 const gchar *			input,
-					 const gchar *			output,
-					 const gchar *			error);
-
-void
-server_io_info_set_address		(struct server_io_info *	info,
-					 const gchar *			address);
-
-void
-server_io_info_set_input		(struct server_io_info *	info,
-					 const gchar *			input);
-
-void
-server_io_info_set_output		(struct server_io_info *	info,
-					 const gchar *			output);
-
-void
-server_io_info_set_error		(struct server_io_info *	info,
-					 const gchar *			error);
-
 /*  */
 void
 flow_io_setup_ui			(gboolean		executable);
-
-void
-flow_io_fast_run			(void);
 
 gboolean
 flow_io_get_selected			(struct ui_flow_io *	ui_flow_io,
@@ -99,15 +72,17 @@ void
 flow_io_select_iter			(struct ui_flow_io *	ui_flow_io,
 					 GtkTreeIter *		iter);
 void
-flow_io_customized_paths_from_line	(GtkFileChooser *	chooser,
-					 gpointer		user_data);
+flow_io_customized_paths_from_line	(GtkFileChooser *	chooser);
+void
+flow_io_set_server(const gchar * address, const gchar * input, const gchar * output,
+const gchar * error);
+void
+flow_io_simple_setup_ui			(gboolean		focus_output);
 
+void
+flow_fast_run				(void);
 void
 flow_add_program_sequence_to_view	(GebrGeoXmlSequence *	program,
 					 gboolean		select_last);
-
-/* flow io simple */
-void
-flow_io_simple_setup_ui			(gboolean		focus_output);
 
 #endif //__UI_FLOW_H

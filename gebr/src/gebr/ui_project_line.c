@@ -401,7 +401,7 @@ project_line_import(void)
 		if (!project_line_get_selected(NULL, ProjectLineSelection))
 			goto out2;
 	} else {
-		gebr_message(LOG_ERROR, FALSE, TRUE, _("Unrecognized file type"));
+		gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Unrecognized file type"));
 		goto out2;
 	}
 
@@ -475,11 +475,11 @@ project_line_import(void)
 	}
 
 	gebr_temp_directory_destroy(tmp_dir);
-	gebr_message(LOG_INFO, FALSE, TRUE, _("Imported successful"));
+	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Imported successful"));
 	g_strfreev(files);
 	goto out;
 
-err:	gebr_message(LOG_ERROR, FALSE, TRUE, _("Failed to import"));
+err:	gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Failed to import"));
 
 out:	g_free(output);
 out2:	g_free(filename);
@@ -571,9 +571,9 @@ project_line_export(void)
 	g_chdir(gebr.config.data->str);
 	g_string_printf(command, "tar czf %s %s", filename->str, files->str);
 	if (system(command->str))
-		gebr_message(LOG_ERROR, FALSE, TRUE, _("Could not export"));
+		gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Could not export"));
 	else
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Exported succesful"));
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Exported succesful"));
 	g_chdir(current_dir);
 	g_free(current_dir);
 
@@ -629,13 +629,13 @@ project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectionType che
 		case DontWarnUnselection:
 			break;
 		case ProjectSelection:
-			gebr_message(LOG_ERROR, TRUE, FALSE, no_project_selected);
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, no_project_selected);
 			break;
 		case LineSelection:
-			gebr_message(LOG_ERROR, TRUE, FALSE, no_line_selected);
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, no_line_selected);
 			break;
 		case ProjectLineSelection:
-			gebr_message(LOG_ERROR, TRUE, FALSE, _("Please select a project or a line"));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a project or a line"));
 			break;
 		}
 		return FALSE;
@@ -646,11 +646,11 @@ project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectionType che
 	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
 	gtk_tree_path_free(path);
 	if (check_type == LineSelection && !is_line) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_line_selected);
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, no_line_selected);
 		return FALSE;
 	}
 	if (check_type == ProjectSelection && is_line) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, no_project_selected);
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, no_project_selected);
 		return FALSE;
 	}
 
@@ -688,9 +688,9 @@ project_line_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new
 
 	/* feedback */
 	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Project '%s' renamed to '%s'"), old_title, new_text);
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Project '%s' renamed to '%s'"), old_title, new_text);
 	else
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Line '%s' renamed to '%s'"), old_title, new_text);
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Line '%s' renamed to '%s'"), old_title, new_text);
 	project_line_info_update();
 }
 

@@ -54,9 +54,9 @@ gebr_client_message(enum gebr_log_message_type type, const gchar * message, ...)
 	va_end(argp);
 
 #ifndef GEBR_DEBUG
-	if (type != LOG_DEBUG) {
+	if (type != GEBR_LOG_DEBUG) {
 #endif
-	if (type == LOG_ERROR)
+	if (type == GEBR_LOG_ERROR)
 		fprintf(stderr, "%s\n", string);
 	else
 		fprintf(stdout, "%s\n", string);

@@ -320,7 +320,7 @@ menu_list_create_index(void)
 
 	g_string_printf(path, "%s/.gebr/gebr/menus.idx", getenv("HOME"));
 	if ((index_fp = fopen(path->str, "w")) == NULL) {
-		gebr_message(LOG_ERROR, TRUE, FALSE, _("Unable to write menus' index"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Unable to write menus' index"));
 		ret = FALSE;
 		goto out;
 	}
@@ -332,7 +332,8 @@ menu_list_create_index(void)
 	sort_file = gebr_make_temp_filename("gebrmenusXXXXXX.tmp");
 	g_string_printf(sort_cmd_line, "sort %s >%s; mv %s %s",
 		path->str, sort_file->str, sort_file->str, path->str);
-	system(sort_cmd_line->str);
+	if (system(sort_cmd_line->str))
+		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, _("Could not sort menu index"));
 
 	/* frees */
 out:	g_string_free(path, TRUE);
@@ -408,7 +409,7 @@ menu_scan_directory(const gchar * directory, gboolean system_dir, FILE * index_f
 			while (*rel_filename == '/')
 				rel_filename++;
 			if (strcmp(gebr_geoxml_document_get_filename(menu), rel_filename)) {
-				gebr_message(LOG_ERROR, TRUE, TRUE, _("Invalid menu '%s'"),
+				gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Invalid menu '%s'"),
 					path->str);
 				gebr_geoxml_document_free(menu);
 				continue;

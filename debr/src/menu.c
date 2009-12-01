@@ -285,7 +285,7 @@ menu_load(const gchar * path)
 	GebrGeoXmlSequence *	category;
 
 	if ((ret = gebr_geoxml_document_load(&menu, path))) {
-		debr_message(LOG_ERROR, _("Could not load menu at '%s': %s"), path,
+		debr_message(GEBR_LOG_ERROR, _("Could not load menu at '%s': %s"), path,
 			gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		return NULL;
 	}

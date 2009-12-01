@@ -523,7 +523,7 @@ server_select_setup_ui(void)
 				first_connected_iter = iter;
 	}
 	if (connected == 0) {
-		gebr_message(LOG_ERROR, TRUE, FALSE,
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE,
 			_("There are no running servers available. Please configure them in Configure/Server"));
 		goto out;
 	}

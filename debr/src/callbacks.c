@@ -327,7 +327,7 @@ on_menu_revert_activate(void)
 
 		/* is this a new menu? */
 		if (!strlen(path)) {
-			debr_message(LOG_ERROR, _("Menu was not saved yet."));
+			debr_message(GEBR_LOG_ERROR, _("Menu was not saved yet."));
 			g_free(path);
 			return;
 		}

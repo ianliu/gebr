@@ -226,13 +226,7 @@ parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters * ui_para
 static void
 parameters_on_link_button_clicked(GtkWidget * button, GebrGeoXmlProgram * program)
 {
-	GString * cmd_line;
-
-	cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s %s &", gebr.config.browser->str, gebr_geoxml_program_get_url(program));
-	system(cmd_line->str);
-
-	g_string_free(cmd_line, TRUE);
+	gebr_gui_help_show(gebr_geoxml_program_get_url(program), gebr.config.browser->str);
 }
 
 static gboolean

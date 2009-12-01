@@ -52,13 +52,13 @@ main(int argc, char ** argv, char ** env)
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
 	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE || argv == NULL) {
-		gebr_client_message(LOG_ERROR, _("%s: syntax error"), argv[0]);
-		gebr_client_message(LOG_ERROR, _("Try %s --­­help"), argv[0]);
+		gebr_client_message(GEBR_LOG_ERROR, _("%s: syntax error"), argv[0]);
+		gebr_client_message(GEBR_LOG_ERROR, _("Try %s --­­help"), argv[0]);
 		return -1;
 	}
 
 	if (show_version == TRUE) {
-		gebr_client_message(LOG_INFO, _("%s"), GEBR_VERSION);
+		gebr_client_message(GEBR_LOG_INFO, _("%s"), GEBR_VERSION);
 		return 0;
 	}
 
@@ -69,7 +69,7 @@ main(int argc, char ** argv, char ** env)
 #endif
 
 	if (argc < 2) {
-		gebr_client_message(LOG_ERROR, _("No server address specified"));
+		gebr_client_message(GEBR_LOG_ERROR, _("No server address specified"));
 		return -1;
 	}
 

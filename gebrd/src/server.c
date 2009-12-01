@@ -58,7 +58,7 @@ server_init(void)
 
 	/* from libgebr-misc */
 	if (gebr_create_config_dirs() == FALSE) {
-		gebrd_message(LOG_ERROR, _("Could not access GêBR configuration directories.\n"));
+		gebrd_message(GEBR_LOG_ERROR, _("Could not access GêBR configuration directories.\n"));
 		goto err;
 	}
 
@@ -79,7 +79,7 @@ server_init(void)
 		if (gebr_comm_listen_socket_is_local_port_available(port) == FALSE) {
 			if (gebrd.options.foreground == TRUE) {
 				ret = FALSE;
-				gebrd_message(LOG_ERROR,
+				gebrd_message(GEBR_LOG_ERROR,
 					_("Cannot run interactive server, GêBR daemon is already running"));
 				goto out;
 			}
@@ -97,7 +97,7 @@ server_init(void)
 	socket_address = gebr_comm_socket_address_ipv4_local(0);
 	gebrd.listen_socket = gebr_comm_listen_socket_new();
 	if (gebr_comm_listen_socket_listen(gebrd.listen_socket, &socket_address) == FALSE) {
-		gebrd_message(LOG_ERROR, _("Could not listen for connections.\n"));
+		gebrd_message(GEBR_LOG_ERROR, _("Could not listen for connections.\n"));
 		goto err;
 	}
 	socket_address = gebr_comm_socket_get_address(GEBR_COMM_SOCKET(gebrd.listen_socket));
@@ -106,7 +106,7 @@ server_init(void)
 
 	/* write on run directory a file with the port */
 	if ((run_fp = fopen(gebrd.run_filename->str, "w")) == NULL) {
-		gebrd_message(LOG_ERROR, _("Could not write run file."));
+		gebrd_message(GEBR_LOG_ERROR, _("Could not write run file."));
 		goto err;
 	}
 	fprintf(run_fp, "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
@@ -128,7 +128,7 @@ server_init(void)
 
 	/* success */
 	ret = TRUE;
-	gebrd_message(LOG_START, _("Server started at %u port"), gebr_comm_socket_address_get_ip_port(&socket_address));
+	gebrd_message(GEBR_LOG_START, _("Server started at %u port"), gebr_comm_socket_address_get_ip_port(&socket_address));
 	dprintf(gebrd.finished_starting_pipe[1], "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
 
 	/* frees */
@@ -137,7 +137,7 @@ server_init(void)
 	goto out;
 
 err:	ret = FALSE;
-	gebrd_message(LOG_ERROR, _("Could not init server. Quiting..."));
+	gebrd_message(GEBR_LOG_ERROR, _("Could not init server. Quiting..."));
 	dprintf(gebrd.finished_starting_pipe[1], "0\n");
 
 out:	return ret;
@@ -176,7 +176,7 @@ server_new_connection(void)
 	while ((client_socket = gebr_comm_listen_socket_get_next_pending_connection(gebrd.listen_socket)) != NULL)
 		client_add(client_socket);
 
-	gebrd_message(LOG_DEBUG, "server_new_connection");
+	gebrd_message(GEBR_LOG_DEBUG, "server_new_connection");
 }
 
 gboolean
@@ -233,7 +233,7 @@ server_parse_client_messages(struct client * client)
 						display, x11->str);
 					system(cmd_line->str);
 
-					gebrd_message(LOG_DEBUG, "xauth ran: %s", cmd_line->str);
+					gebrd_message(GEBR_LOG_DEBUG, "xauth ran: %s", cmd_line->str);
 
 					g_string_free(cmd_line, TRUE);
 				} else

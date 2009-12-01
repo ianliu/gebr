@@ -170,7 +170,7 @@ job_process_add_output(struct job * job, GString * destination, GString * output
 		converted = gebr_locale_to_utf8(output->str);
 		if (converted == NULL) {
 			g_string_assign(final_output, converted);
-			gebrd_message(LOG_ERROR, _("Job '%s' sent output not in UTF-8."), job->title->str);
+			gebrd_message(GEBR_LOG_ERROR, _("Job '%s' sent output not in UTF-8."), job->title->str);
 		} else {
 			g_string_assign(final_output, converted);
 			g_free(converted);
@@ -526,7 +526,7 @@ job_run_flow(struct job * job, struct client * client)
 	} else {
 		g_string_printf(cmd_line, "bash -l -c '%s'", locale_str);
 	}
-	gebrd_message(LOG_DEBUG, "Client '%s' flow about to run: %s",
+	gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
 		client->protocol->hostname->str, cmd_line->str);
 
 	gebrd.jobs = g_list_append(gebrd.jobs, job);

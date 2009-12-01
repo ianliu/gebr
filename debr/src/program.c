@@ -387,7 +387,7 @@ program_paste(void)
 
 	pasted = GEBR_GEOXML_SEQUENCE(gebr_geoxml_clipboard_paste(GEBR_GEOXML_OBJECT(debr.menu)));
 	if (pasted == NULL) {
-		debr_message(LOG_ERROR, _("Could not paste program"));
+		debr_message(GEBR_LOG_ERROR, _("Could not paste program"));
 		return;
 	}
 
@@ -706,7 +706,7 @@ program_get_selected(GtkTreeIter * iter, gboolean warn_user)
 {
 	if (gebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_program.tree_view), iter) == FALSE) {
 		if (warn_user)
-			debr_message(LOG_ERROR, _("No program is selected"));
+			debr_message(GEBR_LOG_ERROR, _("No program is selected"));
 		return FALSE;
 	}
 

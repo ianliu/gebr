@@ -55,7 +55,7 @@ server_ssh_question(const gchar * title, const gchar * message)
 	gchar		answer[10];
 
 	while (1) {
-		gebr_client_message(LOG_INFO, _("%s: %s"), title, message);
+		gebr_client_message(GEBR_LOG_INFO, _("%s: %s"), title, message);
 		fgets(answer, 10, stdin);
 		if (!strcmp(answer, "yes\n"))
 			return TRUE;
@@ -127,12 +127,12 @@ server_run_flow(struct server * server, const gchar * flow_path)
 
 	ret = gebr_geoxml_document_load(&document, flow_path);
 	if (ret) {
-		gebr_client_message(LOG_ERROR, _("Could not load flow: %s"),
+		gebr_client_message(GEBR_LOG_ERROR, _("Could not load flow: %s"),
 			gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		return FALSE;
 	}
 	if (gebr_geoxml_document_get_type(document) != GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
-		gebr_client_message(LOG_ERROR, _("The document is not a flow."));
+		gebr_client_message(GEBR_LOG_ERROR, _("The document is not a flow."));
 		return FALSE;
 	}
 

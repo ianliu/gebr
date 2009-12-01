@@ -270,10 +270,10 @@ document_properties_setup_ui(GebrGeoXmlDocument * document)
 			break;
 		}
 
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Properties of %s '%s' updated"),
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Properties of %s '%s' updated"),
 			document_get_name_from_type(document, FALSE), old_title);
 		if (strcmp(old_title, new_title) != 0)
-			gebr_message(LOG_INFO, FALSE, TRUE, _("Renaming %s '%s' to '%s'"),
+			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Renaming %s '%s' to '%s'"),
 				document_get_name_from_type(document, FALSE), old_title, new_title);
 
 		ret = TRUE;

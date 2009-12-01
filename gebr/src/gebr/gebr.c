@@ -62,6 +62,7 @@ gebr_init(void)
 	gebr.line = NULL;
 	gebr.flow = NULL;
 	gebr.program = NULL;
+	gebr.flow_server = NULL;
 	gebr.flow_clipboard = NULL;
 	gebr_libinit();
 	gebr_comm_protocol_init();
@@ -138,11 +139,10 @@ gebr_quit(void)
 	g_slist_foreach(gebr.tmpfiles, (GFunc)g_free, NULL);
 	g_slist_free(gebr.tmpfiles);
 
-	gebr_message(LOG_END, TRUE, TRUE, _("GêBR Finalizing..."));
+	gebr_message(GEBR_LOG_END, TRUE, TRUE, _("GêBR Finalizing..."));
 	gebr_log_close(gebr.log);
 
 	/* Free servers structs */
-	server_io_info_set(&(gebr.server_io_info), NULL, NULL, NULL, NULL);
 	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
 		struct server *	server;
 
@@ -370,7 +370,7 @@ gebr_config_load(gboolean nox)
 
 	/* log */
 	gebr_log_load();
-	gebr_message(LOG_START, TRUE, TRUE, _("GêBR Initiating..."));
+	gebr_message(GEBR_LOG_START, TRUE, TRUE, _("GêBR Initiating..."));
 	
 	if (new_config) {
 		if (nox) {
@@ -484,14 +484,14 @@ gebr_config_save(gboolean verbose)
 	string = g_key_file_to_data(gebr.config.key_file, &length, &error);
 	configfp = fopen(gebr.config.path->str, "w");
 	if (configfp == NULL) {
-		gebr_message(LOG_ERROR, TRUE, TRUE, _("Could not save configuration"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not save configuration"));
 		goto out;
 	}
 	fwrite(string, sizeof(gchar), length, configfp);
 	fclose(configfp);
 
 	if (verbose)
-		gebr_message(LOG_INFO, FALSE, TRUE, _("Configuration saved"));
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Configuration saved"));
 
 	/* frees */
 out:	g_free(string);
@@ -511,14 +511,14 @@ gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in
 	va_list			argp;
 
 #ifndef GEBR_DEBUG
-	if (type == LOG_DEBUG)
+	if (type == GEBR_LOG_DEBUG)
 		return;
 #endif
 	va_start(argp, message);
 	string = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
-	if (type == LOG_DEBUG)
+	if (type == GEBR_LOG_DEBUG)
 		g_print("%s\n", string);
 	else if (in_statusbar)
 		log_set_message(gebr.ui_log, string);

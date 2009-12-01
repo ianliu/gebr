@@ -88,7 +88,7 @@ gebrd_init(void)
 void
 gebrd_quit(void)
 {
-	gebrd_message(LOG_END, _("Server quited"));
+	gebrd_message(GEBR_LOG_END, _("Server quited"));
 
 	server_quit();
 	g_main_loop_quit(gebrd.main_loop);
@@ -106,7 +106,7 @@ gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
 	va_list		argp;
 
 #ifndef GEBRD_DEBUG
-	if (type == LOG_DEBUG)
+	if (type == GEBR_LOG_DEBUG)
 		return;
 #endif
 
@@ -116,7 +116,7 @@ gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
 
 	gebr_log_add_message(gebrd.log, type, string);
 	if (gebrd.options.foreground == TRUE) {
-		if (type != LOG_ERROR)
+		if (type != GEBR_LOG_ERROR)
 			fprintf(stdout, "%s\n", string);
 		else
 			fprintf(stderr, "%s\n", string);

@@ -173,7 +173,7 @@ debr_message(enum gebr_log_message_type type, const gchar * message, ...)
 	va_list		argp;
 
 #ifndef DEBR_DEBUG
-	if (type == LOG_DEBUG)
+	if (type == GEBR_LOG_DEBUG)
 		return;
 #endif
 
@@ -181,7 +181,7 @@ debr_message(enum gebr_log_message_type type, const gchar * message, ...)
 	string = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
-	if (type == LOG_DEBUG)
+	if (type == GEBR_LOG_DEBUG)
 		g_print("%s\n", string);
 	gtk_statusbar_push(GTK_STATUSBAR(debr.statusbar), 0, string);
 

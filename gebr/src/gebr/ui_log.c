@@ -70,7 +70,7 @@ log_setup_ui(void)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_win), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_container_add(GTK_CONTAINER(ui_log->widget), scrolled_win);
 
-	ui_log->store = gtk_list_store_new(LOG_N_COLUMN,
+	ui_log->store = gtk_list_store_new(GEBR_LOG_N_COLUMN,
 		GDK_TYPE_PIXBUF,	/* Icon		*/
 		G_TYPE_STRING,		/* Date		*/
 		G_TYPE_STRING);		/* struct job	*/
@@ -83,17 +83,17 @@ log_setup_ui(void)
 	renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_log->view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", LOG_TYPE_ICON);
+	gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", GEBR_LOG_TYPE_ICON);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Date"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_log->view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "markup", LOG_DATE);
+	gtk_tree_view_column_add_attribute(col, renderer, "markup", GEBR_LOG_DATE);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Message"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_log->view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", LOG_MESSAGE);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", GEBR_LOG_MESSAGE);
 
 	return ui_log;
 }
@@ -158,19 +158,19 @@ gebr_log_add_message_to_list(struct ui_log * ui_log, struct gebr_log_message * m
 	g_string_printf(markuped_date, "<small>%s</small>", gebr_localized_date(message->date->str));
 	/* icon type */
 	switch (message->type) {
-	case LOG_START:
+	case GEBR_LOG_START:
 		pixbuf = gebr.pixmaps.stock_go_forward;
 		break;
-	case LOG_END:
+	case GEBR_LOG_END:
 		pixbuf = gebr.pixmaps.stock_go_back;
 		break;
-	case LOG_INFO:
+	case GEBR_LOG_INFO:
 		pixbuf = gebr.pixmaps.stock_info;
 		break;
-	case LOG_ERROR:
+	case GEBR_LOG_ERROR:
 		pixbuf = gebr.pixmaps.stock_cancel;
 		break;
-	case LOG_WARNING:
+	case GEBR_LOG_WARNING:
 		pixbuf = gebr.pixmaps.stock_warning;
 		break;
 	default:
@@ -179,9 +179,9 @@ gebr_log_add_message_to_list(struct ui_log * ui_log, struct gebr_log_message * m
 	/* add */
 	gtk_list_store_append(ui_log->store, &iter);
 	gtk_list_store_set(ui_log->store, &iter,
-		LOG_TYPE_ICON, pixbuf,
-		LOG_DATE, markuped_date->str,
-		LOG_MESSAGE, message->message->str,
+		GEBR_LOG_TYPE_ICON, pixbuf,
+		GEBR_LOG_DATE, markuped_date->str,
+		GEBR_LOG_MESSAGE, message->message->str,
 		-1);
 
 	/* select it on view */

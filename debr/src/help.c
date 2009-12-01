@@ -147,7 +147,7 @@ help_insert_parameters_list(GString *help, GebrGeoXmlProgram * program, gboolean
                         g_string_insert(help, pos, label->str);
                 }
                 else{
-                        debr_message(LOG_WARNING, "Unable to reinsert parameter's list");
+                        debr_message(GEBR_LOG_WARNING, "Unable to reinsert parameter's list");
                 }
         }
 
@@ -289,7 +289,7 @@ help_show(const gchar * help)
 	/* open temporary file with help from XML */
 	html_fp = fopen(html_path->str, "w");
 	if (html_fp == NULL) {
-		debr_message(LOG_ERROR, _("Could not create an temporary file."));
+		debr_message(GEBR_LOG_ERROR, _("Could not create an temporary file."));
 		goto out;
 	}
 	fputs(prepared_html->str, html_fp);
@@ -316,7 +316,7 @@ help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 
 	/* check if there is an html editor in preferences */
 	if (!strlen(debr.config.htmleditor->str)) {
-		debr_message(LOG_ERROR, _("No HTML editor specified in preferences."));
+		debr_message(GEBR_LOG_ERROR, _("No HTML editor specified in preferences."));
 		return NULL;
 	}
 
@@ -329,7 +329,7 @@ help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 		/* Read back the help from file */
 		fp = fopen(DEBR_DATA_DIR "help-template.html", "r");
 		if (fp == NULL) {
-			debr_message(LOG_ERROR, _("Could not open template. Please check your installation."));
+			debr_message(GEBR_LOG_ERROR, _("Could not open template. Please check your installation."));
 			return prepared_html;
 		}
 
@@ -363,7 +363,7 @@ help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 	html_path = gebr_make_temp_filename("debr_XXXXXX.html");
 	fp = fopen(html_path->str, "w");
 	if (fp == NULL) {
-		debr_message(LOG_ERROR, _("Could not create a temporary file."));
+		debr_message(GEBR_LOG_ERROR, _("Could not create a temporary file."));
 		goto err2;
 	}
 	fputs(prepared_html->str, fp);
@@ -376,7 +376,7 @@ help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 	cmdline = g_string_new("");
 	g_string_printf(cmdline, "%s %s", debr.config.htmleditor->str, html_path->str);
 	if (system(cmdline->str)) {
-		debr_message(LOG_ERROR, _("Could not launch editor"));
+		debr_message(GEBR_LOG_ERROR, _("Could not launch editor"));
 		goto err;
 	}
 	g_string_free(cmdline, TRUE);
@@ -384,7 +384,7 @@ help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 	/* read back the help from file */
 	fp = fopen(html_path->str, "r");
 	if (fp == NULL) {
-		debr_message(LOG_ERROR, _("Could not read created temporary file."));
+		debr_message(GEBR_LOG_ERROR, _("Could not read created temporary file."));
 		goto err;
 	}
 	g_string_assign(prepared_html, "");
@@ -400,7 +400,7 @@ help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 		converted = gebr_locale_to_utf8(prepared_html->str);
 		if (converted == NULL) {
 			g_free(converted);
-			debr_message(LOG_ERROR, _("Please change the help encoding to UTF-8"));
+			debr_message(GEBR_LOG_ERROR, _("Please change the help encoding to UTF-8"));
 			goto err;
 		}
 
