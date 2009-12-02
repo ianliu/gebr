@@ -110,6 +110,10 @@ flow_edition_setup_ui(void)
 
 	combobox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(gebr.ui_server_list->common.store));
 	ui_flow_edition->server_combobox = combobox;
+	renderer = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, FALSE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer,
+		"pixbuf", SERVER_STATUS_ICON);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "text", SERVER_NAME);

@@ -399,11 +399,13 @@ static void
 flow_browse_load(void)
 {
 	GtkTreeIter		iter;
+	GtkTreeIter		server_iter;
 
 	gchar *			filename;
 	gchar *			title;
 
 	GebrGeoXmlSequence *	revision;
+	GebrGeoXmlFlowServer *	last_runned_server;
 
 	flow_free();
 	if (!flow_browse_get_selected(&iter, FALSE))
@@ -445,9 +447,17 @@ flow_browse_load(void)
 		FB_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow)),
 		-1);
 	flow_edition_load_components();
-	gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), -1);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), 0);
 	flow_browse_info_update();
+
+	/* select last runned/edited server */
+	gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), -1);
+	last_runned_server = gebr_geoxml_flow_server_get_last_runned_server(gebr.flow);
+	if (last_runned_server != NULL && server_find_address(
+	gebr_geoxml_flow_server_get_address(last_runned_server), &server_iter))
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(
+			gebr.ui_flow_edition->server_combobox), &server_iter);
+	else
+		gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), 0);
 
 	/* load revisions */
 	gebr_geoxml_flow_get_revision(gebr.flow, &revision, 0);

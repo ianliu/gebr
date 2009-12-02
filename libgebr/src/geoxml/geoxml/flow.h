@@ -279,6 +279,13 @@ const gchar *
 gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlowServer * server);
 
 /**
+ * Retrieve from the list of servers the server which
+ * has the newest the last run date.
+ */
+GebrGeoXmlFlowServer *
+gebr_geoxml_flow_server_get_last_runned_server(GebrGeoXmlFlow * flow);
+
+/**
  * Sets the flow io tag from the corresponding server tag.
  * This is done by copying all values from the server io tag
  * to the flow io.

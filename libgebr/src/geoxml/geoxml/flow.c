@@ -302,6 +302,31 @@ gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlowServer * server)
 	return __gebr_geoxml_get_tag_value((GdomeElement*)server, "lastrun");
 }
 
+GebrGeoXmlFlowServer *
+gebr_geoxml_flow_server_get_last_runned_server(GebrGeoXmlFlow * flow)
+{
+	if (flow == NULL)
+		return NULL;
+
+	GebrGeoXmlSequence *	server_io;
+	GebrGeoXmlSequence *	last_run;
+	const gchar *		aux;
+
+	aux = "";
+	last_run = NULL;
+	gebr_geoxml_flow_get_server(flow, &server_io, 0);
+	for (; server_io != NULL; gebr_geoxml_sequence_next(&server_io)) {
+		const gchar * date;
+		date = gebr_geoxml_flow_server_get_date_last_run(GEBR_GEOXML_FLOW_SERVER(server_io));
+		if (strcmp(aux, date) < 0) {
+			aux = date;
+			last_run = server_io;
+		}
+	}
+
+	return (GebrGeoXmlFlowServer*)last_run;
+}
+
 void
 gebr_geoxml_flow_io_set_from_server(GebrGeoXmlFlow * flow, GebrGeoXmlFlowServer * server)
 {
