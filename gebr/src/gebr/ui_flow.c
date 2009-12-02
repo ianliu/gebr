@@ -249,7 +249,7 @@ flow_io_setup_ui(gboolean executable)
 	renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(address), renderer, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(address), renderer,
-		"text", SERVER_ADDRESS);
+		"text", SERVER_NAME);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(address), 0);
 	gtk_widget_set_size_request(address, size_addr, -1);
 	g_signal_connect(address, "changed",
@@ -413,12 +413,18 @@ flow_io_customized_paths_from_line(GtkFileChooser * chooser)
  * Write server to current flow
  */
 void
-flow_io_set_server(const gchar * address, const gchar * input, const gchar * output,
+flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gchar * output,
 const gchar * error)
 {
+	struct server *	server;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), server_iter,
+		SERVER_POINTER, &server,
+		-1);
+
 	if (!gebr.flow_server)
 		gebr.flow_server = gebr_geoxml_flow_append_server(gebr.flow);
-	gebr_geoxml_flow_server_set_address(gebr.flow_server, address);
+	gebr_geoxml_flow_server_set_address(gebr.flow_server, server->comm->address->str);
 	gebr_geoxml_flow_server_io_set_input(gebr.flow_server, input);
 	gebr_geoxml_flow_server_io_set_output(gebr.flow_server, output);
 	gebr_geoxml_flow_server_io_set_error(gebr.flow_server, error);
@@ -436,16 +442,12 @@ flow_io_simple_setup_ui(gboolean focus_output)
 	gchar *			tmp;
 
 	GtkTreeIter		server_iter;
-	gchar *			server_address;
 
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
 
 	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(
 		gebr.ui_flow_edition->server_combobox), &server_iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server_iter,
-		SERVER_ADDRESS, &server_address,
-		-1);
 
 	simple = (struct ui_flow_simple*)g_malloc(sizeof(struct ui_flow_simple));
 	simple->focus_output = focus_output;
@@ -505,14 +507,13 @@ GTK_FILL, 3, 3);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK)
 		goto out;
 
-	flow_io_set_server(server_address,
+	flow_io_set_server(&server_iter,
 		gebr_gui_gtk_file_entry_get_path(GEBR_GUI_GTK_FILE_ENTRY(simple->input)),
 		gebr_gui_gtk_file_entry_get_path(GEBR_GUI_GTK_FILE_ENTRY(simple->output)),
 		gebr_gui_gtk_file_entry_get_path(GEBR_GUI_GTK_FILE_ENTRY(simple->error)));
 	flow_edition_set_io();
 
 out:	gtk_widget_destroy(dialog);
-	g_free(server_address);
 }
 
 /**
@@ -524,17 +525,10 @@ flow_fast_run()
 	/* Add server if it doesn't yet exist on flow */
 	if (gebr.flow_server == NULL) {
 		GtkTreeIter	iter;
-		gchar *		address;
 
 		gtk_combo_box_get_active_iter(
 			GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &iter);
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
-			SERVER_ADDRESS, &address,
-			-1);
-
-		flow_io_set_server(address, "", "", "");
-
-		g_free(address);
+		flow_io_set_server(&iter, "", "", "");
 	}
 	flow_io_run(gebr.flow_server);
 }
@@ -835,7 +829,7 @@ on_button_add_clicked		(GtkButton *		button,
 	GdkPixbuf *		icon;
 	GtkTreeIter		iter;
 
-	gchar *			address;
+	gchar *			name;
 	const gchar *		input;
 	const gchar *		output;
 	const gchar *		error;
@@ -845,24 +839,26 @@ on_button_add_clicked		(GtkButton *		button,
 		GTK_COMBO_BOX(ui_flow_io->address), &iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 		SERVER_STATUS_ICON, &icon,
-		SERVER_ADDRESS, &address,
+		SERVER_NAME, &name,
 		-1);
 	input  = gtk_entry_get_text(GTK_ENTRY(ui_flow_io->input));
 	output = gtk_entry_get_text(GTK_ENTRY(ui_flow_io->output));
 	error  = gtk_entry_get_text(GTK_ENTRY(ui_flow_io->error));
-	flow_io_set_server(address, input, output, error);
+	flow_io_set_server(&iter, input, output, error);
 
 	// Append data to Dialog
 	gtk_list_store_append(ui_flow_io->store, &iter);
 	gtk_list_store_set(ui_flow_io->store, &iter,
 		FLOW_IO_ICON, icon,
-		FLOW_IO_ADDRESS, address,
+		FLOW_IO_ADDRESS, name,
 		FLOW_IO_INPUT, input,
 		FLOW_IO_OUTPUT, output,
 		FLOW_IO_ERROR, error,
 		-1);
 
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+
+	g_free(name);
 }
 
 static void
@@ -903,14 +899,16 @@ on_combo_changed		(GtkComboBox *		combo,
 				 struct ui_flow_io *	ui_flow_io)
 {
 	GtkTreeIter	iter;
-	gchar *		addr;
+	struct server *	server;
 	gboolean	activatable;
 
 	if (!gtk_combo_box_get_active_iter(combo, &iter))
 		return;
+
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store),
-		&iter, SERVER_ADDRESS, &addr, -1);
-	activatable = strcmp(addr, _("Local server")) == 0;
+		&iter, SERVER_POINTER, &server, -1);
+	activatable = gebr_comm_server_is_local(server->comm);
+
 	gtk_entry_set_icon_sensitive(GTK_ENTRY(ui_flow_io->input),
 		GTK_ENTRY_ICON_SECONDARY, activatable);
 	gtk_entry_set_icon_sensitive(GTK_ENTRY(ui_flow_io->output),

@@ -422,12 +422,21 @@ flow_browse_load(void)
 	gebr.flow = GEBR_GEOXML_FLOW(document_load(filename));
 	if (gebr.flow == NULL)
 		goto out;
-
+	
 	/* if there are no servers, introduce local server */
-	if (!gebr_geoxml_flow_get_servers_number(gebr.flow)) {
-		GebrGeoXmlFlowServer * local_server;
+	if (gebr_geoxml_flow_servers_query(gebr.flow, "127.0.0.1") == NULL) {
+		GebrGeoXmlFlowServer *	local_server;
+
 		local_server = gebr_geoxml_flow_append_server(gebr.flow);
 		gebr_geoxml_flow_server_set_address(local_server, "127.0.0.1");
+		gebr_geoxml_flow_server_io_set_input(local_server,
+			gebr_geoxml_flow_io_get_input(gebr.flow));
+		gebr_geoxml_flow_server_io_set_output(local_server,
+			gebr_geoxml_flow_io_get_output(gebr.flow));
+		gebr_geoxml_flow_server_io_set_error(local_server,
+			gebr_geoxml_flow_io_get_error(gebr.flow));
+
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 	}
 
 	/* load into UI */
@@ -436,6 +445,7 @@ flow_browse_load(void)
 		FB_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow)),
 		-1);
 	flow_edition_load_components();
+	gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), -1);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), 0);
 	flow_browse_info_update();
 

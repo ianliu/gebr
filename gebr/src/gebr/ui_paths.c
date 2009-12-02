@@ -47,13 +47,11 @@
 void
 path_add(GebrGuiValueSequenceEdit * sequence_edit)
 {
-	GebrGuiGtkFileEntry *      file_entry;
-	gchar *	            path;
+	GebrGuiGtkFileEntry *	file_entry;
+	const gchar *		path;
 
-
-	g_object_get(G_OBJECT(sequence_edit),  "value-widget", &file_entry, NULL);
+	g_object_get(G_OBJECT(sequence_edit), "value-widget", &file_entry, NULL);
 	path = gebr_gui_gtk_file_entry_get_path(file_entry);
-
 	if (!strlen(path))
 		return;
 

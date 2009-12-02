@@ -243,7 +243,7 @@ server_common_setup(struct ui_server_common * ui_server_common)
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Address"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_ADDRESS);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_NAME);
 }
 
 /*

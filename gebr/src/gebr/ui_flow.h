@@ -74,7 +74,7 @@ flow_io_select_iter			(struct ui_flow_io *	ui_flow_io,
 void
 flow_io_customized_paths_from_line	(GtkFileChooser *	chooser);
 void
-flow_io_set_server(const gchar * address, const gchar * input, const gchar * output,
+flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gchar * output,
 const gchar * error);
 void
 flow_io_simple_setup_ui			(gboolean		focus_output);

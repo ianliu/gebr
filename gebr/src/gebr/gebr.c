@@ -264,7 +264,7 @@ gebr_config_load_from_gengetopt(void)
 }
 
 /*
- * Function: gebr_config_load
+ * Function: gebr_migrate_data_dir
  * Initialize configuration for GeBR
  */
 static void
@@ -390,12 +390,13 @@ gebr_config_load(gboolean nox)
 	menu_list_populate();
 	project_list_populate();
 
+	/* parse server list */
 	groups = g_key_file_get_groups(gebr.config.key_file, NULL);
 	for (i = 0; groups[i] != NULL; ++i) {
 		if (!g_str_has_prefix(groups[i], "server-"))
 			continue;
 
-		GString * address;
+		GString *	address;
 
 		address = gebr_g_key_file_load_string_key(gebr.config.key_file, groups[i], "address", "");
 		if (address->len)
@@ -469,7 +470,7 @@ gebr_config_save(gboolean verbose)
 
 		group = g_string_new(NULL);
 
-		gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 			SERVER_POINTER, &server,
 			SERVER_AUTOCONNECT, &autoconnect,
 			-1);

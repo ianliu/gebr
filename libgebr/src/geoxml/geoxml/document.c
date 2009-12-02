@@ -380,24 +380,8 @@ __gebr_geoxml_document_validate_doc(GdomeDocument * document)
 		__gebr_geoxml_parameters_append_new(dict_element);
 
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument*)document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
-			GdomeElement * pivot;
-			GdomeElement * server;
-
-			// insert the 'server' tag
-			pivot = __gebr_geoxml_get_first_element(root_element, "io");
-			server = __gebr_geoxml_insert_new_element(root_element, "servers",
-					__gebr_geoxml_next_element(pivot));
-
-			// create a 'server' tag in 'servers' with address = Local server
-			server = __gebr_geoxml_insert_new_element(server, "server", NULL);
-			__gebr_geoxml_set_attr_value(server, "address", "Local server");
-
-			// copy 'io' and 'lastrun' into server
-			gdome_el_insertBefore(server,
-				gdome_el_cloneNode(pivot, TRUE, &exception), NULL, &exception);
-			pivot = __gebr_geoxml_get_first_element(root_element, "lastrun");
-			gdome_el_insertBefore(server,
-				gdome_el_cloneNode(pivot, TRUE, &exception), NULL, &exception);
+			__gebr_geoxml_insert_new_element(root_element, "servers",
+				__gebr_geoxml_next_element(__gebr_geoxml_get_first_element(root_element, "io")));
 		}
 	}
 

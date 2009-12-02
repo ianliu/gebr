@@ -112,7 +112,7 @@ flow_edition_setup_ui(void)
 	ui_flow_edition->server_combobox = combobox;
 	renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "text", SERVER_ADDRESS);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "text", SERVER_NAME);
 	g_signal_connect(combobox, "changed", G_CALLBACK(flow_edition_on_combobox_changed), NULL);
 	gtk_box_pack_start(GTK_BOX(vbox), combobox, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gtk_hseparator_new(), FALSE, TRUE, 0);
@@ -662,9 +662,8 @@ out:	gtk_widget_show_all(menu);
 static void
 flow_edition_on_combobox_changed(GtkComboBox * combobox)
 {
-	gchar *			address;
+	struct server *		server;
 	GtkTreeIter		iter;
-	GebrGeoXmlSequence *	server;
 
 	gebr.flow_server = NULL;
 	if (!flow_browse_get_selected(NULL, TRUE))
@@ -673,16 +672,8 @@ flow_edition_on_combobox_changed(GtkComboBox * combobox)
 		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
-		SERVER_ADDRESS, &address, -1);
+		SERVER_POINTER, &server, -1);
 
-	gebr_geoxml_flow_get_server(gebr.flow, &server, 0);
-	for (; server != NULL; gebr_geoxml_sequence_next(&server))
-		if (!strcmp(address,
-		gebr_geoxml_flow_server_get_address(GEBR_GEOXML_FLOW_SERVER(server))))
-			break;
-	gebr.flow_server = GEBR_GEOXML_FLOW_SERVER(server);
-
+	gebr.flow_server = gebr_geoxml_flow_servers_query(gebr.flow, server->comm->address->str);
 	flow_edition_set_io();
-
-	g_free(address);
 }

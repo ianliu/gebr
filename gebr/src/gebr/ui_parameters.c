@@ -30,6 +30,7 @@
 #include <libgebr/intl.h>
 #include <libgebr/geoxml.h>
 #include <libgebr/gui/utils.h>
+#include <libgebr/gui/help.h>
 
 #include "ui_parameters.h"
 #include "gebr.h"
