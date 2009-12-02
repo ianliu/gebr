@@ -664,6 +664,7 @@ flow_edition_on_combobox_changed(GtkComboBox * combobox)
 {
 	struct server *		server;
 	GtkTreeIter		iter;
+	GebrGeoXmlSequence *	flow_server;
 
 	gebr.flow_server = NULL;
 	if (!flow_browse_get_selected(NULL, TRUE))
@@ -674,6 +675,15 @@ flow_edition_on_combobox_changed(GtkComboBox * combobox)
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 		SERVER_POINTER, &server, -1);
 
-	gebr.flow_server = gebr_geoxml_flow_servers_query(gebr.flow, server->comm->address->str);
+	/* select the last server, which is the last edited one */
+	gebr.flow_server = gebr_geoxml_flow_servers_query(gebr.flow, server->comm->address->str, NULL, NULL, NULL);
+	flow_server = GEBR_GEOXML_SEQUENCE(gebr.flow_server);
+	for (; flow_server != NULL; gebr_geoxml_sequence_next(&flow_server))
+		if (!strcmp(server->comm->address->str,
+		gebr_geoxml_flow_server_get_address(GEBR_GEOXML_FLOW_SERVER(flow_server))))
+			gebr.flow_server = GEBR_GEOXML_FLOW_SERVER(flow_server);
+		else
+			break;
+
 	flow_edition_set_io();
 }

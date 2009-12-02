@@ -187,7 +187,7 @@ flow_io_setup_ui(gboolean executable)
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_add_attribute(column, renderer,
-		"text", FLOW_IO_ADDRESS);
+		"text", FLOW_IO_SERVER_NAME);
 	g_object_set(column, "sizing", GTK_TREE_VIEW_COLUMN_FIXED, NULL);
 	gtk_tree_view_column_set_title(column, _("Server"));
 	gtk_tree_view_column_set_fixed_width(column, size_addr);
@@ -335,9 +335,9 @@ flow_io_setup_ui(gboolean executable)
 	on_combo_changed(GTK_COMBO_BOX(address), ui_flow_io);
 
 	gtk_widget_show_all(dialog);
-	response = gtk_dialog_run(GTK_DIALOG(dialog));
-	while (!flow_io_actions(response, ui_flow_io))
+	do
 		response = gtk_dialog_run(GTK_DIALOG(dialog));
+	while (!flow_io_actions(response, ui_flow_io));
 
 	// Clean up
 	gtk_list_store_clear(store);
@@ -608,11 +608,12 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 	gebr_geoxml_flow_get_server(gebr.flow, &server_io, 0);
 
 	for (; server_io != NULL; gebr_geoxml_sequence_next(&server_io)) {
-		const gchar * address;
-		const gchar * input;
-		const gchar * output;
-		const gchar * error;
-		const gchar * date;
+		const gchar *	address;
+		gchar *		name;
+		const gchar *	input;
+		const gchar *	output;
+		const gchar *	error;
+		const gchar *	date;
 
 		address = gebr_geoxml_flow_server_get_address(GEBR_GEOXML_FLOW_SERVER(server_io));
 		input = gebr_geoxml_flow_server_io_get_input(GEBR_GEOXML_FLOW_SERVER(server_io));
@@ -625,12 +626,13 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 			SERVER_STATUS_ICON, &icon,
+			SERVER_NAME, &name,
 			-1);
 
 		gtk_list_store_append(ui_flow_io->store, &iter);
 		gtk_list_store_set(ui_flow_io->store, &iter,
 			FLOW_IO_ICON, icon,
-			FLOW_IO_ADDRESS, address,
+			FLOW_IO_SERVER_NAME, name,
 			FLOW_IO_INPUT, input,
 			FLOW_IO_OUTPUT, output,
 			FLOW_IO_ERROR, error,
@@ -642,6 +644,8 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 			last_run = date;
 			path = gtk_tree_model_get_path(GTK_TREE_MODEL(ui_flow_io->store), &iter);
 		}
+
+		g_free(name);
 	}
 	if (path) {
 		if (!strlen(last_run))
@@ -850,7 +854,7 @@ on_button_add_clicked		(GtkButton *		button,
 	gtk_list_store_append(ui_flow_io->store, &iter);
 	gtk_list_store_set(ui_flow_io->store, &iter,
 		FLOW_IO_ICON, icon,
-		FLOW_IO_ADDRESS, name,
+		FLOW_IO_SERVER_NAME, name,
 		FLOW_IO_INPUT, input,
 		FLOW_IO_OUTPUT, output,
 		FLOW_IO_ERROR, error,

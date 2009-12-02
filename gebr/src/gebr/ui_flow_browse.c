@@ -423,8 +423,8 @@ flow_browse_load(void)
 	if (gebr.flow == NULL)
 		goto out;
 	
-	/* if there are no servers, introduce local server */
-	if (gebr_geoxml_flow_servers_query(gebr.flow, "127.0.0.1") == NULL) {
+	/* if there are no local servers, introduce local server */
+	if (!gebr_geoxml_flow_get_servers_number(gebr.flow)) {
 		GebrGeoXmlFlowServer *	local_server;
 
 		local_server = gebr_geoxml_flow_append_server(gebr.flow);

@@ -191,7 +191,8 @@ gebr_geoxml_flow_servers_get_last_run(GebrGeoXmlFlow * flow);
  * If \p flow or \p address is NULL returns NULL.
  */
 GebrGeoXmlFlowServer *
-gebr_geoxml_flow_servers_query(GebrGeoXmlFlow * flow, const gchar * address);
+gebr_geoxml_flow_servers_query(GebrGeoXmlFlow * flow, const gchar * address,
+const gchar * input, const gchar * output, const gchar * error);
 
 /**
  * Get the number of servers \p flow has.
