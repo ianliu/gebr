@@ -838,6 +838,7 @@ on_button_add_clicked		(GtkButton *		button,
 	input  = gtk_entry_get_text(GTK_ENTRY(ui_flow_io->input));
 	output = gtk_entry_get_text(GTK_ENTRY(ui_flow_io->output));
 	error  = gtk_entry_get_text(GTK_ENTRY(ui_flow_io->error));
+	gebr.flow_server = gebr_geoxml_flow_append_server(gebr.flow);
 	flow_io_set_server(&iter, input, output, error);
 
 	// Append data to Dialog
