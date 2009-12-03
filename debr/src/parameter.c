@@ -925,12 +925,13 @@ parameter_dialog_setup_ui(void)
 	if (type != GEBR_GEOXML_PARAMETER_TYPE_FLAG) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(required_check_button),
 			gebr_geoxml_program_parameter_get_required(program_parameter));
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(is_list_check_button),
-			gebr_geoxml_program_parameter_get_is_list(program_parameter));
-		gtk_widget_set_sensitive(ui->separator_entry, gebr_geoxml_program_parameter_get_is_list(program_parameter));
 		if (gebr_geoxml_program_parameter_get_is_list(program_parameter) == TRUE)
 			gtk_entry_set_text(GTK_ENTRY(ui->separator_entry),
 				gebr_geoxml_program_parameter_get_list_separator(program_parameter));
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(is_list_check_button),
+			gebr_geoxml_program_parameter_get_is_list(program_parameter));
+		gtk_widget_set_sensitive(ui->separator_entry, gebr_geoxml_program_parameter_get_is_list(program_parameter));
+
 	}
 
 	gtk_dialog_run(GTK_DIALOG(dialog));
