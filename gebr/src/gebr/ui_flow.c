@@ -133,7 +133,6 @@ flow_io_setup_ui(gboolean executable)
 	GtkTreeIter		server_iter;
 	GebrGeoXmlFlowServer *	flow_server;
 	struct server *		server;
-	GebrGeoXmlFlowServer *	query_flow_server;
 
 	gint			response;
 
@@ -341,18 +340,19 @@ flow_io_setup_ui(gboolean executable)
 		response = gtk_dialog_run(GTK_DIALOG(dialog));
 	while (!flow_io_actions(response, ui_flow_io));
 
-	/* move selected server/IO to the first server/IO of the server */
-	flow_io_get_selected(ui_flow_io, &iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
-		FLOW_IO_FLOW_SERVER_POINTER, &flow_server,
-		FLOW_IO_SERVER_POINTER, &server, -1);
-	server_find(server, &server_iter);
-
-	/* select current server on flow edition */
-	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(flow_server), NULL);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
-	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox),
-		&server_iter);
+	if (flow_io_get_selected(ui_flow_io, &iter)) {
+		gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
+			FLOW_IO_FLOW_SERVER_POINTER, &flow_server,
+			FLOW_IO_SERVER_POINTER, &server, -1);
+		/* move selected server/IO to the first server/IO of the server */
+		gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(flow_server), NULL);
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+		/* select current server on flow edition */
+		server_find(server, &server_iter);
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox),
+			&server_iter);
+	} else
+		gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), 0);
 	flow_edition_on_server_changed();
 
 	// Clean up
@@ -764,7 +764,7 @@ on_renderer_edited		(GtkCellRendererText *	renderer,
 {
 	gint			column;
 	GtkTreeIter		iter;
-	GebrGeoXmlFlowServer *	server;
+	GebrGeoXmlFlowServer *	flow_server;
 
 	if (!flow_io_get_selected(ui_flow_io, &iter))
 		return;
@@ -772,25 +772,24 @@ on_renderer_edited		(GtkCellRendererText *	renderer,
 	column = (gint)g_object_get_data(G_OBJECT(renderer), "column");
 
 	gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
-		FLOW_IO_FLOW_SERVER_POINTER, &server,
-		-1);
+		FLOW_IO_FLOW_SERVER_POINTER, &flow_server, -1);
 	gtk_list_store_set(ui_flow_io->store, &iter,
 		column, new_text,
 		-1);
 	switch (column) {
 		case FLOW_IO_INPUT:
-			gebr_geoxml_flow_server_io_set_input(server, new_text);
+			gebr_geoxml_flow_server_io_set_input(flow_server, new_text);
 			break;
 		case FLOW_IO_OUTPUT:
-			gebr_geoxml_flow_server_io_set_output(server, new_text);
+			gebr_geoxml_flow_server_io_set_output(flow_server, new_text);
 			break;
 		case FLOW_IO_ERROR:
-			gebr_geoxml_flow_server_io_set_error(server, new_text);
+			gebr_geoxml_flow_server_io_set_error(flow_server, new_text);
 			break;
 	}
 
 	gtk_list_store_move_after(ui_flow_io->store, &iter, NULL);
-	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(server), NULL);
+	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(flow_server), NULL);
 	
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 }
@@ -886,7 +885,6 @@ on_button_add_clicked		(GtkButton *		button,
 	gebr_geoxml_flow_server_io_set_input(flow_server, input);
 	gebr_geoxml_flow_server_io_set_output(flow_server, output);
 	gebr_geoxml_flow_server_io_set_error(flow_server, error);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
 	// Append data to Dialog
 	gtk_list_store_append(ui_flow_io->store, &iter);
@@ -900,6 +898,11 @@ on_button_add_clicked		(GtkButton *		button,
 		FLOW_IO_FLOW_SERVER_POINTER, flow_server,
 		FLOW_IO_SERVER_POINTER, server,
 		-1);
+
+	gtk_list_store_move_after(ui_flow_io->store, &iter, NULL);
+	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(flow_server), NULL);
+
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
 	g_free(name);
 }
