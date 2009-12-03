@@ -378,14 +378,14 @@ GtkTreeViewDropPosition drop_position)
 static void
 __gtk_sequence_edit_move_top(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter)
 {
-	gtk_list_store_move_before(sequence_edit->list_store, iter, NULL);
+	gtk_list_store_move_after(sequence_edit->list_store, iter, NULL);
 	g_signal_emit(sequence_edit, object_signals[CHANGED], 0);
 }
 
 static void
 __gtk_sequence_edit_move_bottom(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter)
 {
-	gtk_list_store_move_after(sequence_edit->list_store, iter, NULL);
+	gtk_list_store_move_before(sequence_edit->list_store, iter, NULL);
 	g_signal_emit(sequence_edit, object_signals[CHANGED], 0);
 }
 
