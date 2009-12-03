@@ -299,7 +299,6 @@ document_dict_edit_setup_ui(void)
 	GtkWidget *		scrolled_window;
 	GtkWidget *		tree_view;
 	GtkWidget *		add_hbox;
-	GtkWidget *		widget;
 
 	GtkActionGroup *	action_group;
 	GtkAccelGroup *		accel_group;
@@ -317,8 +316,8 @@ document_dict_edit_setup_ui(void)
 	struct dict_edit_data *	data;
 
 	document = document_get_current();
-        if (document == NULL)
-                return;
+	if (document == NULL)
+		return;
 
 	data = g_malloc(sizeof(struct dict_edit_data));
 	tree_store = gtk_tree_store_new(DICT_EDIT_N_COLUMN,
@@ -370,7 +369,7 @@ document_dict_edit_setup_ui(void)
 	column = gtk_tree_view_column_new_with_attributes("", cell_renderer, NULL);
 	g_object_set(G_OBJECT(column), "sizing", GTK_TREE_VIEW_COLUMN_FIXED, NULL);
 	gtk_tree_view_column_set_fixed_width(column, 93);
-	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_DOCUMENT);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "markup", DICT_EDIT_DOCUMENT);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
 	document_model = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_POINTER);
 	data->document_model = GTK_TREE_MODEL(document_model);
@@ -443,57 +442,28 @@ document_dict_edit_setup_ui(void)
 	add_hbox = gtk_hbox_new(FALSE, 4);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), add_hbox, FALSE, TRUE, 0);
 
-	data->document_combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(document_model));
-	cell_renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(data->document_combo), cell_renderer, TRUE);
-	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(data->document_combo), cell_renderer, "text", NULL);
-	gtk_widget_set_size_request(data->document_combo, 90, -1);
-	gtk_box_pack_start(GTK_BOX(add_hbox), data->document_combo, FALSE, FALSE, 0);
-
-	data->type_combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(type_model));
-	cell_renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(data->type_combo), cell_renderer, TRUE);
-	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(data->type_combo), cell_renderer, "text", NULL);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(data->type_combo), 0);
-	gtk_widget_set_size_request(data->type_combo, 90, -1);
-	gtk_box_pack_start(GTK_BOX(add_hbox), data->type_combo, FALSE, FALSE, 0);
-
-	data->keyword_entry = gtk_entry_new();
-	g_signal_connect(data->keyword_entry, "activate",
-		G_CALLBACK(on_dict_edit_add_clicked), data);
-	gtk_widget_set_size_request(data->keyword_entry, 100, -1);
-	gtk_box_pack_start(GTK_BOX(add_hbox), data->keyword_entry, FALSE, FALSE, 0);
-	data->value_entry = gtk_entry_new();
-	gtk_widget_set_size_request(data->value_entry, 100, -1);
-	g_signal_connect(data->value_entry, "activate",
-		G_CALLBACK(on_dict_edit_add_clicked), data);
-	gtk_box_pack_start(GTK_BOX(add_hbox), data->value_entry, FALSE, FALSE, 0);
-	data->comment_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(add_hbox), data->comment_entry, TRUE, TRUE, 0);
-	g_signal_connect(data->comment_entry, "activate",
-		G_CALLBACK(on_dict_edit_add_clicked), data);
-	widget = gtk_action_create_tool_item(gtk_action_group_get_action(action_group, "add"));
-	gtk_box_pack_start(GTK_BOX(add_hbox), widget, FALSE, FALSE, 0);
-
-	data->documents[0] = GEBR_GEOXML_DOCUMENT(gebr.project);
-	data->documents[1] = GEBR_GEOXML_DOCUMENT(gebr.line);
-	data->documents[2] = gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE
-		? NULL : GEBR_GEOXML_DOCUMENT(gebr.flow);
-	data->documents[3] = NULL;
+	int i = 0;
+	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
+		data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.flow);
+	data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.line);
+	data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.project);
+	data->documents[i] = NULL;
 
 	for (int i = 0; data->documents[i] != NULL; ++i) {
 		GtkTreeIter	document_iter;
-		const gchar *	document_name;
+		GString *	document_name;
 
-		document_name = document_get_name_from_type(data->documents[i], TRUE);
-
+		document_name = g_string_new(NULL);
+		g_string_printf(document_name, "<b>%s</b>",
+			document_get_name_from_type(data->documents[i], TRUE));
 		gtk_tree_store_append(GTK_TREE_STORE(data->tree_model), &document_iter, NULL);
 		data->iters[i] = document_iter;
 		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &document_iter,
-			DICT_EDIT_DOCUMENT, document_name,
+			DICT_EDIT_DOCUMENT, document_name->str,
 			DICT_EDIT_GEBR_GEOXML_POINTER, parameter,
 			DICT_EDIT_EDITABLE, FALSE,
 			-1);
+		g_string_free(document_name, TRUE);
 
 		/* document combo box */
 		gtk_list_store_append(document_model, &iter);
@@ -511,7 +481,6 @@ document_dict_edit_setup_ui(void)
 				gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter)));
 		}
 		if (document == data->documents[i]) {
-			gtk_combo_box_set_active(GTK_COMBO_BOX(data->document_combo), i);
 			gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(tree_view), &document_iter);
 			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(
 				GTK_TREE_VIEW(tree_view)), &document_iter);

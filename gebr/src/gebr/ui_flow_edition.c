@@ -368,6 +368,16 @@ flow_edition_status_changed(void)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 }
 
+/* Function: flow_edition_on_server_changed
+ * Update flow edition interface with information of the
+ * current selected server
+ */
+void
+flow_edition_on_server_changed(void)
+{
+	flow_edition_on_combobox_changed(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox));
+}
+
 /*
  * Section: Private
  * Private functions
@@ -668,7 +678,6 @@ flow_edition_on_combobox_changed(GtkComboBox * combobox)
 {
 	struct server *		server;
 	GtkTreeIter		iter;
-	GebrGeoXmlSequence *	flow_server;
 
 	gebr.flow_server = NULL;
 	if (!flow_browse_get_selected(NULL, TRUE))
@@ -679,20 +688,15 @@ flow_edition_on_combobox_changed(GtkComboBox * combobox)
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 		SERVER_POINTER, &server, -1);
 
-	/* select the last server, which is the last edited one */
+	/* select the first server entry, which is the last edited one */
 	gebr.flow_server = gebr_geoxml_flow_servers_query(gebr.flow, server->comm->address->str, NULL, NULL, NULL);
-	flow_server = GEBR_GEOXML_SEQUENCE(gebr.flow_server);
-	for (; flow_server != NULL; gebr_geoxml_sequence_next(&flow_server))
-		if (!strcmp(server->comm->address->str,
-		gebr_geoxml_flow_server_get_address(GEBR_GEOXML_FLOW_SERVER(flow_server))))
-			gebr.flow_server = GEBR_GEOXML_FLOW_SERVER(flow_server);
-		else
-			break;
 	/* Add server if it doesn't yet exist on flow */
 	if (gebr.flow_server == NULL) {
 		gebr.flow_server = gebr_geoxml_flow_append_server(gebr.flow);
 		flow_io_set_server(&iter, "", "", "");
 	}
+	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(gebr.flow_server), NULL);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
 	flow_edition_set_io();
 }

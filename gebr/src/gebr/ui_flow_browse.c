@@ -41,7 +41,6 @@
  * Prototypes
  */
 
-
 static void
 flow_browse_load(void);
 static void

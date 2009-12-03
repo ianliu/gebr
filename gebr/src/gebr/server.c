@@ -145,32 +145,20 @@ server_new(const gchar * address, gboolean autoconnect)
 	return server;
 }
 
-/**
- * server_find_address:
- * @address: The server to be found.
- * @iter: A #GtkTreeIter that will hold the corresponding iterator.
- *
- * Searches for the @address server and fill @iter with the correct
- * iterator for the gebr.ui_server_list->common.store model.
- *
- * Returns: %TRUE if the server was found, %FALSE otherwise.
+/* Function: server_find
+ * Find _server_ and put on _iter_
  */
 gboolean
-server_find_address(const gchar * address, GtkTreeIter * iter)
+server_find(struct server * server, GtkTreeIter * iter)
 {
 	GtkTreeIter	i;
 
-	if (!address)
-		return FALSE;
-
 	gebr_gui_gtk_tree_model_foreach(i, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
-		struct server *	server;
+		struct server *	i_server;
 
-		gtk_tree_model_get(
-			GTK_TREE_MODEL(gebr.ui_server_list->common.store), &i,
-			SERVER_POINTER, &server,
-			-1);
-		if (!strcmp(address, server->comm->address->str)) {
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &i,
+			SERVER_POINTER, &i_server, -1);
+		if (i_server == server) {
 			*iter = i;
 			return TRUE;
 		}
@@ -179,6 +167,9 @@ server_find_address(const gchar * address, GtkTreeIter * iter)
 	return FALSE;
 }
 
+/* Function: server_free
+ * Free _server_ structure
+ */
 void
 server_free(struct server * server)
 {
@@ -204,4 +195,33 @@ server_free(struct server * server)
 	gebr_comm_server_free(server->comm);
 	g_string_free(server->last_error, TRUE);
 	g_free(server);
+}
+
+/**
+ * server_find_address:
+ * @address: The server to be found.
+ * @iter: A #GtkTreeIter that will hold the corresponding iterator.
+ *
+ * Searches for the @address server and fill @iter with the correct
+ * iterator for the gebr.ui_server_list->common.store model.
+ *
+ * Returns: %TRUE if the server was found, %FALSE otherwise.
+ */
+gboolean
+server_find_address(const gchar * address, GtkTreeIter * iter)
+{
+	GtkTreeIter	i;
+
+	gebr_gui_gtk_tree_model_foreach(i, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
+		struct server *	server;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &i,
+			SERVER_POINTER, &server, -1);
+		if (!strcmp(address, server->comm->address->str)) {
+			*iter = i;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
 }

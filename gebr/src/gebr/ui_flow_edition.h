@@ -75,4 +75,7 @@ flow_edition_component_activated(void);
 void
 flow_edition_status_changed(void);
 
+void
+flow_edition_on_server_changed(void);
+
 #endif //__UI_FLOW_COMPONENT_H
