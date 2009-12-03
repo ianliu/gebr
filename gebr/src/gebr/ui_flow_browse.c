@@ -437,6 +437,9 @@ flow_browse_load(void)
 			gebr_geoxml_flow_io_get_output(gebr.flow));
 		gebr_geoxml_flow_server_io_set_error(local_server,
 			gebr_geoxml_flow_io_get_error(gebr.flow));
+		gebr_geoxml_flow_io_set_input(gebr.flow, "");
+		gebr_geoxml_flow_io_set_output(gebr.flow, "");
+		gebr_geoxml_flow_io_set_error(gebr.flow, "");
 
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 	}
