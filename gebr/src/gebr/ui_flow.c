@@ -422,8 +422,6 @@ const gchar * error)
 		SERVER_POINTER, &server,
 		-1);
 
-	if (!gebr.flow_server)
-		gebr.flow_server = gebr_geoxml_flow_append_server(gebr.flow);
 	gebr_geoxml_flow_server_set_address(gebr.flow_server, server->comm->address->str);
 	gebr_geoxml_flow_server_io_set_input(gebr.flow_server, input);
 	gebr_geoxml_flow_server_io_set_output(gebr.flow_server, output);
@@ -522,14 +520,6 @@ out:	gtk_widget_destroy(dialog);
 void
 flow_fast_run()
 {
-	/* Add server if it doesn't yet exist on flow */
-	if (gebr.flow_server == NULL) {
-		GtkTreeIter	iter;
-
-		gtk_combo_box_get_active_iter(
-			GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &iter);
-		flow_io_set_server(&iter, "", "", "");
-	}
 	flow_io_run(gebr.flow_server);
 }
 

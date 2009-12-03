@@ -688,6 +688,11 @@ flow_edition_on_combobox_changed(GtkComboBox * combobox)
 			gebr.flow_server = GEBR_GEOXML_FLOW_SERVER(flow_server);
 		else
 			break;
+	/* Add server if it doesn't yet exist on flow */
+	if (gebr.flow_server == NULL) {
+		gebr.flow_server = gebr_geoxml_flow_append_server(gebr.flow);
+		flow_io_set_server(&iter, "", "", "");
+	}
 
 	flow_edition_set_io();
 }

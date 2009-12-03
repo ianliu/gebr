@@ -452,8 +452,7 @@ flow_browse_load(void)
 	/* select last runned/edited server */
 	gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), -1);
 	last_runned_server = gebr_geoxml_flow_server_get_last_runned_server(gebr.flow);
-	if (last_runned_server != NULL && server_find_address(
-	gebr_geoxml_flow_server_get_address(last_runned_server), &server_iter))
+	if (last_runned_server != NULL)
 		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(
 			gebr.ui_flow_edition->server_combobox), &server_iter);
 	else
