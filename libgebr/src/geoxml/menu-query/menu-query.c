@@ -457,40 +457,29 @@ show_program_parameter(GebrGeoXmlProgramParameter *pp, gint ipar, guint isubpar)
         if (isubpar) 
                 printf("      ");
 
-	switch (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp))){
-	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
-		printf("[string]     ");
-		break;
-	case GEBR_GEOXML_PARAMETER_TYPE_INT:
-		printf("[integer]    ");
-		break;
-	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
-		printf("[file]       ");
-		break;
-	case GEBR_GEOXML_PARAMETER_TYPE_FLAG:
-		printf("[flag]       ");
-		break;
-	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
-		printf("[real number]");
-		break;
-	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
-		printf("[range]      ");
-		break;
-	case GEBR_GEOXML_PARAMETER_TYPE_ENUM:
-		printf("[enum]       ");
-		break;
-	default:
-		printf("[UNKNOWN]    ");
-		break;
-	}
+        printf("[%s",gebr_geoxml_parameter_get_type_name(GEBR_GEOXML_PARAMETER(pp)));
+	if (gebr_geoxml_program_parameter_get_is_list(pp))
+		printf("(s)");
+	printf("] ");
 
-	printf(" '%s'", report(gebr_geoxml_program_parameter_get_keyword(pp), EMPTY));
+	printf( "'%s'", report(gebr_geoxml_program_parameter_get_keyword(pp), EMPTY));
 
+                
         default_value = gebr_geoxml_program_parameter_get_string_value(pp,TRUE);
-	if ( strlen(default_value->str))
+        if ( strlen(default_value->str))
 		printf(" [%s]", report(default_value->str, EMPTY));
         g_string_free(default_value, TRUE);
 	
+        if (gebr_geoxml_program_parameter_get_is_list(pp)){
+                printf(" ");
+                if (strlen(gebr_geoxml_program_parameter_get_list_separator(pp)))
+                        printf("(entries separeted by '%s')",
+                               gebr_geoxml_program_parameter_get_list_separator(pp));
+                else{
+                        printf("%s", report("(missing entries' separator)", FILEN));
+                }
+        }
+
 	if (gebr_geoxml_program_parameter_get_required(pp))
 		printf("  REQUIRED ");
 
