@@ -659,6 +659,16 @@ show_program_parameter(struct validate * validate, GebrGeoXmlProgramParameter * 
 		validate_append_text(validate,  " [%s]", default_value->str);
 	g_string_free(default_value, TRUE);
 
+        if (gebr_geoxml_program_parameter_get_is_list(GEBR_GEOXML_PROGRAM_PARAMETER(pp))){
+                if (strlen(gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(pp))))
+                        validate_append_text(validate, _(" (entries separeted by '%s')"),
+                                             gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(pp)));
+                else{
+                        validate_append_text_error(validate, _(" (missing entries' separator)"));
+                        validate->error_count++;
+                }
+        }
+
 	if (gebr_geoxml_program_parameter_get_required(pp))
 		validate_append_text(validate, _("  REQUIRED "));
 
@@ -669,7 +679,7 @@ show_program_parameter(struct validate * validate, GebrGeoXmlProgramParameter * 
 		gebr_geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
 
                 if (enum_option == NULL){
-                        validate_append_text_error(validate, "\n        missing options");
+                        validate_append_text_error(validate, _("\n        missing options"));
                         validate->error_count++;
                 }
 
