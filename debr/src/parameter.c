@@ -931,10 +931,20 @@ parameter_dialog_setup_ui(void)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(is_list_check_button),
 			gebr_geoxml_program_parameter_get_is_list(program_parameter));
 		gtk_widget_set_sensitive(ui->separator_entry, gebr_geoxml_program_parameter_get_is_list(program_parameter));
-
 	}
 
-	gtk_dialog_run(GTK_DIALOG(dialog));
+	/* dialog actions loop and checks */
+	do {
+		gtk_dialog_run(GTK_DIALOG(dialog));
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button))
+		&& !strlen(gtk_entry_get_text(GTK_ENTRY(separator_entry)))) {
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Separator"),
+				_("You've marked this parameter as a list but no separator was selected.\n"
+				"Please select the list separator."));
+			gtk_widget_grab_focus(separator_entry);
+		} else
+			break;
+	} while (1);
 
 	/* save not automatically synced changes */
 	gebr_geoxml_parameter_set_label(ui->parameter, gtk_entry_get_text(GTK_ENTRY(label_entry)));

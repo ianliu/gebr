@@ -188,7 +188,8 @@ __gebr_geoxml_sequence_move_before(GebrGeoXmlSequence * sequence, GebrGeoXmlSequ
 			last_element = (GebrGeoXmlSequence*)__gebr_geoxml_next_element((GdomeElement*)last_element);
 			gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
 				(GdomeNode*)sequence, (GdomeNode*)last_element, &exception);
-		}
+		} else
+			exception = GEBR_GEOXML_RETV_SUCCESS;
 	} else
 		gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)position, &exception),
 			(GdomeNode*)sequence, (GdomeNode*)position, &exception);
@@ -209,6 +210,8 @@ __gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlSeque
 		if (first_element != sequence)
 			gdome_n_insertBefore(gdome_el_parentNode((GdomeElement*)sequence, &exception),
 				(GdomeNode*)sequence, (GdomeNode*)first_element, &exception);
+		else
+			exception = GEBR_GEOXML_RETV_SUCCESS;
 	} else {
 		GdomeElement *		next_element;
 

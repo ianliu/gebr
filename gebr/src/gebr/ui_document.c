@@ -55,12 +55,6 @@ struct dict_edit_data {
 	GebrGeoXmlDocument *	documents[4];
 	GtkTreeIter		iters[3];
 
-	GtkWidget *		document_combo;
-	GtkWidget *		type_combo;
-	GtkWidget *		keyword_entry;
-	GtkWidget *		value_entry;
-	GtkWidget *		comment_entry;
-
 	GtkActionGroup *	action_group;
 	GtkWidget *		tree_view;
 	GtkTreeModel *		tree_model;
@@ -465,11 +459,6 @@ document_dict_edit_setup_ui(void)
 			-1);
 		g_string_free(document_name, TRUE);
 
-		/* document combo box */
-		gtk_list_store_append(document_model, &iter);
-		gtk_list_store_set(document_model, &iter,
-			0, document_name, 1, data->documents[i], 2, &data->iters[i], -1);
-
 		parameter = gebr_geoxml_parameters_get_first_parameter(
 			gebr_geoxml_document_get_dict_parameters(data->documents[i]));
 		for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter)) {
@@ -518,11 +507,16 @@ static void
 on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data)
 {
 	GtkTreeIter			iter;
-	GtkTreeIter			document_iter;
 	GebrGeoXmlProgramParameter *	parameter;
 	const gchar *			keyword;
 	gchar *				value;
 	GebrGeoXmlDocument *		document;
+
+	if (!dict_edit_get_selected(data, &iter))
+		return;
+
+	gtk_tree_model_get(data->tree_model, &iter,
+		DICT_EDIT_GEBR_GEOXML_POINTER, &document, -1);
 
 	document = data->documents[gtk_combo_box_get_active(GTK_COMBO_BOX(data->document_combo))];
 	document_iter = data->iters[gtk_combo_box_get_active(GTK_COMBO_BOX(data->document_combo))];
@@ -789,12 +783,13 @@ on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_data * data)
 
 	menu = gtk_menu_new();
 
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
-		gtk_action_group_get_action(data->action_group, "add")));
-
 	if (!dict_edit_get_selected(data, NULL))
 		goto out;
 
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
+		gtk_action_group_get_action(data->action_group, "add")));
+
+	if ()
 	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
 		gtk_action_group_get_action(data->action_group, "remove")));
 
