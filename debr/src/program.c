@@ -20,6 +20,7 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/gui/utils.h>
+#include <libgebr/gui/help.h>
 #include <libgebr/gui/programedit.h>
 
 #include "program.h"
@@ -913,12 +914,7 @@ program_description_changed(GtkEntry * entry)
 static void
 program_url_open(GtkButton * button)
 {
-	GString * cmdline;
-
-	cmdline = g_string_new(NULL);
-	g_string_printf(cmdline, "%s %s&", debr.config.browser->str, gebr_geoxml_program_get_url(debr.program));
-	system(cmdline->str);
-	g_string_free(cmdline, TRUE);
+	gebr_gui_help_show(gebr_geoxml_program_get_url(debr.program), debr.config.browser->str);
 }
 
 static void

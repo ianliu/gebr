@@ -85,6 +85,14 @@ __gebr_geoxml_get_element_by_id(GdomeElement * base, const gchar * id);
 
 /**
  * \internal
+ * Use with gebr_foreach_gslist, e.g.
+ * gebr_foreach_gslist(element, __gebr_geoxml_get_elements_by_tag) { }
+ */
+GSList *
+__gebr_geoxml_get_elements_by_tag(GdomeElement * base, const gchar * tag);
+
+/**
+ * \internal
  *
  */
 GSList *

@@ -487,8 +487,7 @@ validate_do(struct validate * validate)
 			validate_append_text(validate, _("Defined"));
 		else
 			validate_append_check(validate, "", EMPTY, "");
-                validate_append_text(validate,  "\n");
-
+		validate_append_text(validate,  "\n");
 
 		if (params || all) {
 			validate_append_text_emph(validate,_("  >>Parameters:\n"));

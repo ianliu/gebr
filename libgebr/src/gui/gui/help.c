@@ -22,6 +22,7 @@
 #include <gdk/gdk.h>
 
 #include "help.h"
+#include "utils.h"
 
 /*
  * Declarations
@@ -55,7 +56,10 @@ gebr_gui_help_show(const gchar * uri, const gchar * browser)
 
 	cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s %s &", browser, uri);
-	system(cmd_line->str);
+	if (system(cmd_line->str))
+		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't open browser"),
+			_("Cannot open your web browser.\n"
+			"Please select it on 'Preferences'."));
 
 	g_string_free(cmd_line, TRUE);
 #endif

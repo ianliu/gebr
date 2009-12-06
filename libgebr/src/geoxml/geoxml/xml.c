@@ -212,6 +212,31 @@ __gebr_geoxml_get_element_by_id(GdomeElement * base, const gchar * id)
 }
 
 GSList *
+__gebr_geoxml_get_elements_by_tag(GdomeElement * base, const gchar * tag)
+{
+	GSList *		element_list;
+	GdomeDOMString *	string;
+	GdomeNodeList *		node_list;
+	gint			l;
+
+	element_list = NULL;
+	string = gdome_str_mkref(tag);
+	node_list = gdome_el_getElementsByTagName(base, string, &exception);
+	l = gdome_nl_length(node_list, &exception);
+	for (int i = 0; i < l; ++i) {
+		GdomeElement *	element;
+
+		element = (GdomeElement*)gdome_nl_item(node_list, i, &exception);
+		element_list = g_slist_prepend(element_list, element);
+	}
+
+	gdome_str_unref(string);
+	gdome_nl_unref(node_list, &exception);
+
+	return element_list;
+}
+
+GSList *
 __gebr_geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref, gboolean global)
 {
 	const static gchar *	reference_tags [] = {

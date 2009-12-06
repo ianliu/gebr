@@ -936,7 +936,8 @@ parameter_dialog_setup_ui(void)
 	/* dialog actions loop and checks */
 	do {
 		gtk_dialog_run(GTK_DIALOG(dialog));
-		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button))
+		if (type != GEBR_GEOXML_PARAMETER_TYPE_FLAG
+		&& gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button))
 		&& !strlen(gtk_entry_get_text(GTK_ENTRY(separator_entry)))) {
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Separator"),
 				_("You've marked this parameter as a list but no separator was selected.\n"

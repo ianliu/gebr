@@ -111,11 +111,13 @@ __gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * parameter, enum GEBR_G
 		gebr_geoxml_parameter_group_set_expand((GebrGeoXmlParameterGroup*)type_element, TRUE);
 	} else {
 		GdomeElement *		property_element;
+		GdomeElement *		value_element;
+		GdomeElement *		default_value_element;
 
 		property_element = __gebr_geoxml_insert_new_element(type_element, "property", NULL);
 		__gebr_geoxml_insert_new_element(property_element, "keyword", NULL);
-		__gebr_geoxml_insert_new_element(property_element, "value", NULL);
-		__gebr_geoxml_insert_new_element(property_element, "default", NULL);
+		value_element = __gebr_geoxml_insert_new_element(property_element, "value", NULL);
+		default_value_element = __gebr_geoxml_insert_new_element(property_element, "default", NULL);
 		__gebr_geoxml_set_attr_value(property_element, "required", "no");
 
 		switch (type) {
@@ -126,6 +128,10 @@ __gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * parameter, enum GEBR_G
 		case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
 			gebr_geoxml_program_parameter_set_range_properties((GebrGeoXmlProgramParameter*)parameter
 				, "", "", "", "");
+			break;
+		case GEBR_GEOXML_PARAMETER_TYPE_FLAG:
+			__gebr_geoxml_set_element_value(value_element, "off" ,__gebr_geoxml_create_TextNode);
+			__gebr_geoxml_set_element_value(default_value_element, "off" ,__gebr_geoxml_create_TextNode);
 			break;
 		default:
 			break;
