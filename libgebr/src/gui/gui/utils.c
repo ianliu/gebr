@@ -280,6 +280,19 @@ gebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * iter, GtkTr
 	return TRUE;
 }
 
+gint
+gebr_gui_gtk_tree_model_get_iter_depth(GtkTreeModel * model, GtkTreeIter * iter)
+{
+	GtkTreePath *	tree_path;
+	gint		depth;
+
+	tree_path = gtk_tree_model_get_path(model, iter);
+	depth = gtk_tree_path_get_depth(tree_path);
+	gtk_tree_path_free(tree_path);
+
+	return depth;
+}
+
 /**
  * gebr_gui_gtk_tree_model_iter_copy_values:
  * @model:  The #GtkTreeModel to be operated on.

@@ -46,6 +46,9 @@ gebr_gui_gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter);
 gboolean
 gebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * iter, GtkTreeIter * parent);
 
+gint
+gebr_gui_gtk_tree_model_get_iter_depth(GtkTreeModel * model, GtkTreeIter * iter);
+
 #define gebr_gui_gtk_tree_model_iter_is_valid(iter) \
 	((gboolean)(iter)->stamp)
 #define gebr_gui_gtk_tree_iter_equal_to(iter1, iter2) \
