@@ -446,7 +446,8 @@ document_dict_edit_setup_ui(void)
 	int i = 0;
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
 		data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.flow);
-	data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.line);
+	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
+		data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.line);
 	data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.project);
 	data->documents[i] = NULL;
 
@@ -546,6 +547,8 @@ on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data)
 		GEBR_GEOXML_PARAMETER_TYPE_INT));
 
 	iter = dict_edit_append_iter(data, GEBR_GEOXML_OBJECT(parameter), &data->current_document_iter);
+	/* before special parameter for add */
+	gebr_gui_gtk_tree_store_move_up(GTK_TREE_STORE(data->tree_model), &iter);
 	dict_edit_load_iter(data, &iter, GEBR_GEOXML_PARAMETER(parameter));
 	gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(data->tree_view), &iter);
 	gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(data->tree_view)), &iter);
