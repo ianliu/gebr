@@ -446,7 +446,7 @@ document_dict_edit_setup_ui(void)
 	int i = 0;
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
 		data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.flow);
-	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
+	if (gebr_geoxml_document_get_type(document) != GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
 		data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.line);
 	data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.project);
 	data->documents[i] = NULL;
