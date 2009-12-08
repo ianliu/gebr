@@ -22,6 +22,8 @@
 
 #include <string.h>
 
+#include <gdk/gdkkeysyms.h>
+
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
 #include <libgebr/gui/utils.h>
@@ -63,7 +65,7 @@ struct dict_edit_data {
 	GtkWidget *		tree_view;
 	GtkTreeModel *		tree_model;
 	GtkTreeModel *		document_model;
-	GtkCellRenderer *	cell_renderer_array[6];
+	GtkCellRenderer *	cell_renderer_array[10];
 };
 
 static void
@@ -72,6 +74,9 @@ static void
 on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data * data);
 static void
 on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_data * data);
+static void
+on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
+	GtkCellEditable * editable, gchar * path, struct dict_edit_data * data);
 static void
 on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
 struct dict_edit_data * data);
@@ -398,7 +403,7 @@ document_dict_edit_setup_ui(void)
 		"model", type_model, "text-column", 0, NULL);
 	g_signal_connect(cell_renderer, "edited",
 		G_CALLBACK(on_dict_edit_type_cell_edited), data);
-	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_TYPE);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "markup", DICT_EDIT_TYPE);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_KEYWORD_EDITABLE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
 
@@ -414,6 +419,8 @@ document_dict_edit_setup_ui(void)
 	g_object_set(cell_renderer, "editable", TRUE, NULL);
 	g_signal_connect(cell_renderer, "edited",
 		G_CALLBACK(on_dict_edit_cell_edited), data);
+	g_signal_connect(cell_renderer, "editing-started",
+		G_CALLBACK(on_dict_edit_renderer_editing_started), data);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_KEYWORD);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
@@ -423,15 +430,20 @@ document_dict_edit_setup_ui(void)
 	g_object_set(cell_renderer, "editable", TRUE, NULL);
 	g_signal_connect(cell_renderer, "edited",
 		G_CALLBACK(on_dict_edit_cell_edited), data);
+	g_signal_connect(cell_renderer, "editing-started",
+		G_CALLBACK(on_dict_edit_renderer_editing_started), data);
 	column = gtk_tree_view_column_new_with_attributes(_("Value"), cell_renderer, NULL);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_VALUE);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
+
 	cell_renderer = gtk_cell_renderer_text_new();
 	data->cell_renderer_array[DICT_EDIT_COMMENT] = cell_renderer;
 	g_object_set(cell_renderer, "editable", TRUE, NULL);
 	g_signal_connect(cell_renderer, "edited",
 		G_CALLBACK(on_dict_edit_cell_edited), data);
+	g_signal_connect(cell_renderer, "editing-started",
+		G_CALLBACK(on_dict_edit_renderer_editing_started), data);
 	column = gtk_tree_view_column_new_with_attributes(_("Comment"), cell_renderer, NULL);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_COMMENT);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
@@ -573,6 +585,49 @@ on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_data * data)
 
 	gebr_geoxml_sequence_remove(parameter);
 	gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &iter);
+}
+
+static gboolean
+on_renderer_entry_key_release_event(GtkEntry * entry, GdkEventKey * event,
+struct dict_edit_data * data)
+{
+	switch (event->keyval) {
+		case GDK_Tab: case GDK_Return: {
+			GtkCellRenderer *	renderer;
+			GtkTreeViewColumn *	column;
+			GtkTreeIter		iter;
+
+			dict_edit_get_selected(data, &iter);
+
+			g_object_get(entry, "user-data", &renderer, NULL);
+			column = gebr_gui_gtk_tree_view_get_next_column(GTK_TREE_VIEW(data->tree_view),
+				gebr_gui_gtk_tree_view_get_column_from_renderer(
+					GTK_TREE_VIEW(data->tree_view), renderer));
+			if (column != NULL)
+				gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view),
+					&iter, column, TRUE);
+			break;
+		} default:
+			break;
+	}
+
+	return TRUE;
+}
+
+/* Function: on_dict_edit_renderer_editing_started
+ * 
+ */
+static void
+on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
+	GtkCellEditable * editable, gchar * path, struct dict_edit_data * data)
+{
+	GtkEntry *	entry;
+
+	entry = GTK_ENTRY(editable);
+	gtk_widget_set_events(GTK_WIDGET(entry), GDK_KEY_RELEASE_MASK);
+// 	g_signal_connect(GTK_OBJECT(entry), "key-release-event",
+// 		G_CALLBACK(on_renderer_entry_key_release_event), data);
+	g_object_set(renderer, "user-data", renderer, NULL);
 }
 
 /* Function: on_dict_edit_type_cell_edited
@@ -779,13 +834,8 @@ dict_edit_get_selected(struct dict_edit_data * data, GtkTreeIter * iter)
 static void
 dict_edit_start_keyword_editing(struct dict_edit_data * data, GtkTreeIter * iter)
 {
-	GtkTreePath *		tree_path;
-
-	tree_path = gtk_tree_model_get_path(data->tree_model, iter);
-	gtk_tree_view_set_cursor_on_cell(GTK_TREE_VIEW(data->tree_view), tree_path,
-		gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 2),
-		data->cell_renderer_array[DICT_EDIT_KEYWORD], TRUE);
-	gtk_tree_path_free(tree_path);
+	gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view), iter,
+		gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 2), TRUE);
 }
 
 /* Function: dict_edit_append_add_parameter
@@ -798,7 +848,7 @@ dict_edit_append_add_parameter(struct dict_edit_data * data, GtkTreeIter * docum
 
 	gtk_tree_store_append(GTK_TREE_STORE(data->tree_model), &iter, document_iter);
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter,
-		DICT_EDIT_TYPE, _("New"),
+		DICT_EDIT_TYPE, _("<i>New</i>"),
 		DICT_EDIT_IS_ADD_PARAMETER, TRUE,
 		DICT_EDIT_KEYWORD_EDITABLE, TRUE,
 		DICT_EDIT_EDITABLE, FALSE,
@@ -813,8 +863,14 @@ on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_data * data)
 {
 	GtkWidget *		menu;
 	GtkTreeIter		iter;
+	gboolean		is_add_parameter;
 
 	if (!dict_edit_get_selected(data, &iter))
+		return NULL;
+	gtk_tree_model_get(data->tree_model, &iter,
+		DICT_EDIT_IS_ADD_PARAMETER, &is_add_parameter,
+		-1);
+	if (is_add_parameter)
 		return NULL;
 
 	menu = gtk_menu_new();

@@ -431,6 +431,90 @@ gebr_gui_gtk_tree_view_expand_to_iter(GtkTreeView * view, GtkTreeIter * iter)
 	gtk_tree_path_free(path);
 }
 
+GtkTreeViewColumn *
+gebr_gui_gtk_tree_view_get_column_from_renderer(GtkTreeView * tree_view, GtkCellRenderer * renderer)
+{
+	GList *			column_list;
+	GtkTreeViewColumn *	column = NULL;
+
+	column_list = gtk_tree_view_get_columns(tree_view);
+	for (GList * i = column_list; i != NULL; i = g_list_next(i)) {
+		GtkTreeViewColumn *	i_column = (GtkTreeViewColumn*)i->data;
+		GList *			renderer_list;
+
+		renderer_list = gtk_tree_view_column_get_cell_renderers(i_column);
+		for (GList * j = renderer_list; j != NULL; j = g_list_next(j)) {
+			GtkCellRenderer *	i_renderer = (GtkCellRenderer*)j->data;
+
+			if (i_renderer == renderer) {
+				column = i_column;
+				goto out;
+			}
+		}
+		g_free(renderer_list);
+	}
+
+out:	g_free(column_list);
+
+	return column;
+}
+
+GtkTreeViewColumn *
+gebr_gui_gtk_tree_view_get_next_column(GtkTreeView * tree_view, GtkTreeViewColumn * column)
+{
+	GList *			column_list;
+	GtkTreeViewColumn *	next_column = NULL;
+
+	column_list = gtk_tree_view_get_columns(tree_view);
+	for (GList * i = column_list; i != NULL; i = g_list_next(i)) {
+		GtkTreeViewColumn *	i_column = (GtkTreeViewColumn*)i->data;
+
+		if (i_column == column) {
+			if ((i = g_list_next(i)) != NULL)
+				next_column = (GtkTreeViewColumn*)i->data;
+			break;
+		}
+	}
+
+	g_free(column_list);
+
+	return next_column;
+}
+
+void
+gebr_gui_gtk_tree_view_set_cursor(GtkTreeView * tree_view, GtkTreeIter * iter,
+GtkTreeViewColumn * column, gboolean start_editing)
+{
+	GtkTreePath *		tree_path;
+
+	tree_path = gtk_tree_model_get_path(gtk_tree_view_get_model(tree_view), iter);
+	gtk_tree_view_set_cursor(tree_view, tree_path, column, start_editing);
+	gtk_tree_path_free(tree_path);
+}
+
+GtkCellRenderer *
+gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkTreeViewColumn * column, GtkCellRendererMode mode)
+{
+	GList *			renderer_list;
+	GtkCellRenderer *	renderer = NULL;
+
+	renderer_list = gtk_tree_view_column_get_cell_renderers(column);
+	for (GList * j = renderer_list; j != NULL; j = g_list_next(j)) {
+		GtkCellRenderer *	i_renderer = (GtkCellRenderer*)j->data;
+		GtkCellRendererMode	i_mode;
+
+		g_object_get(i_renderer, "mode", &i_mode, NULL);
+
+		if (i_mode == mode) {
+			renderer = i_renderer;
+			break;
+		}
+	}
+	g_free(renderer_list);
+
+	return renderer;
+}
+
 gboolean
 gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPopupCallback callback, gpointer user_data)
 {
