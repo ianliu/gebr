@@ -134,11 +134,11 @@ __gebr_gui_gtk_enhanced_entry_check_empty(GebrGuiGtkEnhancedEntry * enhanced_ent
 
 		g_signal_handlers_block_matched(G_OBJECT(enhanced_entry),
 			G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-			(GCallback)__gebr_gui_gtk_enhanced_entry_text_changed, NULL);
+			G_CALLBACK(__gebr_gui_gtk_enhanced_entry_text_changed), NULL);
 		gtk_entry_set_text(entry, enhanced_entry->empty_text);
 		g_signal_handlers_unblock_matched(G_OBJECT(enhanced_entry),
 			G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-			(GCallback)__gebr_gui_gtk_enhanced_entry_text_changed, NULL);
+			G_CALLBACK(__gebr_gui_gtk_enhanced_entry_text_changed), NULL);
 	}
 }
 
@@ -153,11 +153,11 @@ __gebr_gui_gtk_enhanced_entry_focus_in(GtkEntry * entry, GdkEventFocus * event, 
 	if (enhanced_entry->empty) {
 		g_signal_handlers_block_matched(G_OBJECT(entry),
 			G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-			(GCallback)__gebr_gui_gtk_enhanced_entry_text_changed, NULL);
+			G_CALLBACK(__gebr_gui_gtk_enhanced_entry_text_changed), NULL);
 		gtk_entry_set_text(entry, "");
 		g_signal_handlers_unblock_matched(G_OBJECT(entry),
 			G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-			(GCallback)__gebr_gui_gtk_enhanced_entry_text_changed, NULL);
+			G_CALLBACK(__gebr_gui_gtk_enhanced_entry_text_changed), NULL);
 	}
 
 	return FALSE;

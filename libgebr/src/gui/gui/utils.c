@@ -442,9 +442,9 @@ gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPopupCallba
 	popup_callback = __popup_callback_init(G_OBJECT(widget), callback, user_data, NULL);
 	GTK_WIDGET_SET_FLAGS(widget, GDK_BUTTON_PRESS);
 	g_signal_connect(widget, "button-press-event",
-		(GCallback)__gtk_widget_on_button_pressed, popup_callback);
+		G_CALLBACK(__gtk_widget_on_button_pressed), popup_callback);
 	g_signal_connect(widget, "popup-menu",
-		(GCallback)__gtk_widget_on_popup_menu, popup_callback);
+		G_CALLBACK(__gtk_widget_on_popup_menu), popup_callback);
 
 	return TRUE;
 }
@@ -456,9 +456,9 @@ gebr_gui_gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GebrGuiGtkPop
 
 	popup_callback = __popup_callback_init(G_OBJECT(tree_view), callback, user_data, NULL);
 	g_signal_connect(tree_view, "button-press-event",
-		(GCallback)__gtk_tree_view_on_button_pressed, popup_callback);
+		G_CALLBACK(__gtk_tree_view_on_button_pressed), popup_callback);
 	g_signal_connect(tree_view, "popup-menu",
-		(GCallback)__gtk_widget_on_popup_menu, popup_callback);
+		G_CALLBACK(__gtk_widget_on_popup_menu), popup_callback);
 }
 
 void
@@ -568,7 +568,7 @@ gebr_gui_gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GebrGuiGtkT
 
 	g_object_set(G_OBJECT(tree_view), "has-tooltip", TRUE, NULL);
 	g_signal_connect(tree_view, "query-tooltip",
-		(GCallback)on_tooltip_query, tooltip_data);
+		G_CALLBACK(on_tooltip_query), tooltip_data);
 	g_object_weak_ref(G_OBJECT(tree_view), (GWeakNotify)tooltip_weak_ref, tooltip_data);
 }
 #endif
@@ -721,11 +721,11 @@ gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkT
 	gtk_tree_view_enable_model_drag_dest(tree_view, target_entries, 1 , GDK_ACTION_MOVE);
 
 	g_signal_connect(tree_view, "drag-begin",
-		(GCallback)on_gtk_tree_view_drag_begin, data);
+		G_CALLBACK(on_gtk_tree_view_drag_begin), data);
 	g_signal_connect(tree_view, "drag-drop",
-		(GCallback)on_gtk_tree_view_drag_drop, data);
+		G_CALLBACK(on_gtk_tree_view_drag_drop), data);
 	g_signal_connect(tree_view, "drag-motion",
-		(GCallback)on_gtk_tree_view_drag_motion, data);
+		G_CALLBACK(on_gtk_tree_view_drag_motion), data);
 
 	g_object_weak_ref(G_OBJECT(tree_view),
 		(GWeakNotify)gtk_tree_view_reorder_weak_ref, data);
@@ -852,7 +852,7 @@ gebr_gui_gtk_expander_hacked_visible(GtkWidget * expander, GtkWidget * label_wid
 	g_signal_handlers_unblock_matched(G_OBJECT(label_widget),
 		G_SIGNAL_MATCH_FUNC,
 		0, 0, NULL,
-		(GCallback)gebr_gui_gtk_expander_hacked_idle,
+		G_CALLBACK(gebr_gui_gtk_expander_hacked_idle),
 		NULL);
 }
 
@@ -862,7 +862,7 @@ gebr_gui_gtk_expander_hacked_idle(GtkWidget * label_widget, GdkEventExpose *even
 	g_signal_handlers_block_matched(G_OBJECT(label_widget),
 		G_SIGNAL_MATCH_FUNC,
 		0, 0, NULL,
-		(GCallback)gebr_gui_gtk_expander_hacked_idle,
+		G_CALLBACK(gebr_gui_gtk_expander_hacked_idle),
 		NULL);
 	g_object_ref (G_OBJECT (label_widget));
 	gtk_expander_set_label_widget (GTK_EXPANDER (expander), NULL);

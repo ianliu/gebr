@@ -126,7 +126,7 @@ job_control_setup_ui(void)
 	gtk_text_buffer_get_end_iter(ui_job_control->text_buffer, &iter_end);
 	gtk_text_buffer_create_mark(ui_job_control->text_buffer, "end", &iter_end, FALSE);
 	text_view = gtk_text_view_new_with_buffer(ui_job_control->text_buffer);
-	g_signal_connect(text_view, "populate-popup", (GCallback)on_text_view_populate_popup, ui_job_control);
+	g_signal_connect(text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), ui_job_control);
 	g_object_set(G_OBJECT(text_view),
 		"editable", FALSE,
 		"cursor-visible", FALSE,
@@ -426,13 +426,13 @@ on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
 	menu_item = gtk_check_menu_item_new_with_label(_("Word-wrap"));
 	gtk_widget_show(menu_item);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(menu_item, "toggled", (GCallback)wordwrap_toggled, text_view);
+	g_signal_connect(menu_item, "toggled", G_CALLBACK(wordwrap_toggled), text_view);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), gebr.config.job_log_word_wrap);
 
 	menu_item = gtk_check_menu_item_new_with_label(_("Auto-scroll"));
 	gtk_widget_show(menu_item);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(menu_item, "toggled", (GCallback)autoscroll_toggled, NULL);
+	g_signal_connect(menu_item, "toggled", G_CALLBACK(autoscroll_toggled), NULL);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), gebr.config.job_log_auto_scroll);
 }
 

@@ -243,7 +243,7 @@ __gtk_sequence_edit_popup_menu(GtkTreeView * tree_view, GtkSequenceEdit * sequen
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ADD, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect(menu_item, "activate",
-		(GCallback)__gtk_sequence_edit_on_add_clicked, sequence_edit);
+		G_CALLBACK(__gtk_sequence_edit_on_add_clicked), sequence_edit);
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(sequence_edit->tree_view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
@@ -254,20 +254,20 @@ __gtk_sequence_edit_popup_menu(GtkTreeView * tree_view, GtkSequenceEdit * sequen
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
-			(GCallback)__gtk_sequence_edit_on_move_top_activated, sequence_edit);
+			G_CALLBACK(__gtk_sequence_edit_on_move_top_activated), sequence_edit);
 	}
 	/* Move bottom */
 	if (gebr_gui_gtk_list_store_can_move_down(sequence_edit->list_store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
-			(GCallback)__gtk_sequence_edit_on_move_bottom_activated, sequence_edit);
+			G_CALLBACK(__gtk_sequence_edit_on_move_bottom_activated), sequence_edit);
 	}
 	/* Remove */
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_REMOVE, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect(menu_item, "activate",
-		(GCallback)__gtk_sequence_edit_on_remove_activated, sequence_edit);
+		G_CALLBACK(__gtk_sequence_edit_on_remove_activated), sequence_edit);
 
 out:	gtk_widget_show_all(menu);
 
@@ -411,7 +411,7 @@ __gtk_sequence_edit_create_tree_view(GtkSequenceEdit * sequence_edit)
 	sequence_edit->renderer = renderer = gtk_cell_renderer_text_new();
 	g_object_set(renderer, "editable", sequence_edit->may_rename, NULL);
 	g_signal_connect(renderer, "edited",
-		(GCallback)__gtk_sequence_edit_on_edited, sequence_edit);
+		G_CALLBACK(__gtk_sequence_edit_on_edited), sequence_edit);
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);

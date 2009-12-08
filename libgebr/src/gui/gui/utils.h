@@ -154,10 +154,10 @@ gebr_gui_gtk_container_add_depth_hbox(GtkWidget * container);
 
 #define gebr_gui_gtk_expander_hacked_define(expander, label_widget) \
 	g_signal_connect_after(label_widget, "expose-event", \
-		(GCallback)gebr_gui_gtk_expander_hacked_idle, \
+		G_CALLBACK(gebr_gui_gtk_expander_hacked_idle), \
 		expander); \
 	g_signal_connect(expander, "unmap", \
-		(GCallback)gebr_gui_gtk_expander_hacked_visible, \
+		G_CALLBACK(gebr_gui_gtk_expander_hacked_visible), \
 		label_widget)
 void
 gebr_gui_gtk_expander_hacked_visible(GtkWidget * parent_expander, GtkWidget * hbox);

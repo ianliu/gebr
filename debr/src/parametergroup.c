@@ -214,9 +214,9 @@ parameter_group_dialog_setup_ui(void)
 
 	/* signals */
 	g_signal_connect(instances_spin_button, "output",
-		(GCallback)on_parameter_group_instances_changed, ui);
+		G_CALLBACK(on_parameter_group_instances_changed), ui);
 	g_signal_connect(exclusive_check_button, "toggled",
-		(GCallback)on_parameter_group_is_exclusive_toggled, ui);
+		G_CALLBACK(on_parameter_group_is_exclusive_toggled), ui);
 
 	/* for DeBR it doesn't matter if it's not instanciable */
 	gebr_geoxml_parameter_group_set_is_instanciable(parameter_group, TRUE);
@@ -280,7 +280,7 @@ parameter_group_instances_setup_ui(struct ui_parameter_group_dialog * ui)
 				if (exclusive == parameter)
 					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(label_widget), TRUE);
 				g_signal_connect(label_widget, "toggled",
-					(GCallback)on_parameter_group_exclusive_toggled, ui);
+					G_CALLBACK(on_parameter_group_exclusive_toggled), ui);
 				g_object_set(label_widget, "user-data", parameter, NULL);
 			}
 			gtk_misc_set_alignment(GTK_MISC(label_widget), 0, 0.5);

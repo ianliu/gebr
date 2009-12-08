@@ -383,7 +383,7 @@ flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
 	else
 		gtk_menu_shell_append(GTK_MENU_SHELL(gebr.ui_flow_browse->revisions_menu), menu_item);
 	g_signal_connect(menu_item, "activate",
-		(GCallback)flow_browse_on_revision_activate, revision);
+		G_CALLBACK(flow_browse_on_revision_activate), revision);
 }
 
 /*
@@ -518,14 +518,14 @@ flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse * ui_flow_brows
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
-			(GCallback)line_move_flow_top, NULL);
+			G_CALLBACK(line_move_flow_top), NULL);
 	}
 	/* Move bottom */
 	if (gebr_gui_gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
-			(GCallback)line_move_flow_bottom, NULL);
+			G_CALLBACK(line_move_flow_bottom), NULL);
 	}
 	/* separator */
 	if (gebr_gui_gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE ||

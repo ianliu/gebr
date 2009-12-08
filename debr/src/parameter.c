@@ -180,7 +180,7 @@ parameter_setup_ui(void)
 	gtk_widget_show(debr.ui_parameter.tree_view);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_parameter.tree_view);
 	g_signal_connect(debr.ui_parameter.tree_view, "cursor-changed",
-		(GCallback)parameter_selected, NULL);
+		G_CALLBACK(parameter_selected), NULL);
 	g_signal_connect(debr.ui_parameter.tree_view, "row-activated",
 		G_CALLBACK(parameter_activated), NULL);
 
@@ -597,7 +597,7 @@ parameter_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0), ++row;
 	g_signal_connect(label_entry, "changed",
-		(GCallback)menu_saved_status_set_unsaved, NULL);
+		G_CALLBACK(menu_saved_status_set_unsaved), NULL);
 
 	/*
 	 * Keyword
@@ -615,7 +615,7 @@ parameter_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0), ++row;
 	g_signal_connect(keyword_entry, "changed",
-		(GCallback)menu_saved_status_set_unsaved, NULL);
+		G_CALLBACK(menu_saved_status_set_unsaved), NULL);
 
 	/* skip default */
 	++row;
@@ -637,7 +637,7 @@ parameter_dialog_setup_ui(void)
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0), ++row;
 		g_signal_connect(required_check_button, "toggled",
-			(GCallback)parameter_required_toggled, ui);
+			G_CALLBACK(parameter_required_toggled), ui);
 
 		/*
 		* Is List
@@ -655,7 +655,7 @@ parameter_dialog_setup_ui(void)
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0), ++row;
 		g_signal_connect(is_list_check_button, "toggled",
-			(GCallback)parameter_is_list_changed, ui);
+			G_CALLBACK(parameter_is_list_changed), ui);
 
 		/*
 		* List separator
@@ -673,7 +673,7 @@ parameter_dialog_setup_ui(void)
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0), ++row;
 		g_signal_connect(separator_entry, "changed",
-			(GCallback)parameter_separator_changed, ui);
+			G_CALLBACK(parameter_separator_changed), ui);
 	}
 
 	gebr_gui_parameter_widget = gebr_gui_parameter_widget_new(ui->parameter, TRUE, NULL);
@@ -706,7 +706,7 @@ parameter_dialog_setup_ui(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), _("File"));
 		gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), _("Directory"));
 		g_signal_connect(type_combo, "changed",
-			(GCallback)parameter_file_type_changed, gebr_gui_parameter_widget);
+			G_CALLBACK(parameter_file_type_changed), gebr_gui_parameter_widget);
 
 		/* file or directory? */
 		gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo),
@@ -730,12 +730,12 @@ parameter_dialog_setup_ui(void)
 		gtk_widget_show(filter_name_entry);
 		gtk_box_pack_start(GTK_BOX(hbox), filter_name_entry, FALSE, FALSE, 0);
 		g_signal_connect(filter_name_entry, "changed",
-			(GCallback)parameter_file_filter_name_changed, gebr_gui_parameter_widget);
+			G_CALLBACK(parameter_file_filter_name_changed), gebr_gui_parameter_widget);
 		filter_pattern_entry = gebr_gui_gtk_enhanced_entry_new_with_empty_text(_("pattern (eg. *.jpg *.png)"));
 		gtk_widget_show(filter_pattern_entry);
 		gtk_box_pack_start(GTK_BOX(hbox), filter_pattern_entry, FALSE, FALSE, 0);
 		g_signal_connect(filter_pattern_entry, "changed",
-			(GCallback)parameter_file_filter_pattern_changed, gebr_gui_parameter_widget);
+			G_CALLBACK(parameter_file_filter_pattern_changed), gebr_gui_parameter_widget);
 
 		gebr_geoxml_program_parameter_get_file_filter(program_parameter, &filter_name, &filter_pattern);
 		gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_GTK_ENHANCED_ENTRY(filter_name_entry), filter_name);
@@ -775,9 +775,9 @@ parameter_dialog_setup_ui(void)
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0), ++row;
 		g_signal_connect(min_entry, "activate",
-			(GCallback)parameter_number_min_on_activate, gebr_gui_parameter_widget);
+			G_CALLBACK(parameter_number_min_on_activate), gebr_gui_parameter_widget);
 		g_signal_connect(min_entry, "focus-out-event",
-			(GCallback)parameter_number_min_on_focus_out, gebr_gui_parameter_widget);
+			G_CALLBACK(parameter_number_min_on_focus_out), gebr_gui_parameter_widget);
 
 		/*
 		 * Maximum
@@ -794,9 +794,9 @@ parameter_dialog_setup_ui(void)
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0), ++row;
 		g_signal_connect(max_entry, "activate",
-			(GCallback)parameter_number_max_on_activate, gebr_gui_parameter_widget);
+			G_CALLBACK(parameter_number_max_on_activate), gebr_gui_parameter_widget);
 		g_signal_connect(max_entry, "focus-out-event",
-			(GCallback)parameter_number_max_on_focus_out, gebr_gui_parameter_widget);
+			G_CALLBACK(parameter_number_max_on_focus_out), gebr_gui_parameter_widget);
 
 		gtk_entry_set_text(GTK_ENTRY(min_entry), min_str);
 		gtk_entry_set_text(GTK_ENTRY(max_entry), max_str);
@@ -822,9 +822,9 @@ parameter_dialog_setup_ui(void)
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0), ++row;
 		g_signal_connect(inc_entry, "activate",
-			(GCallback)parameter_range_inc_on_activate, gebr_gui_parameter_widget);
+			G_CALLBACK(parameter_range_inc_on_activate), gebr_gui_parameter_widget);
 		g_signal_connect(inc_entry, "focus-out-event",
-			(GCallback)parameter_range_inc_on_focus_out, gebr_gui_parameter_widget);
+			G_CALLBACK(parameter_range_inc_on_focus_out), gebr_gui_parameter_widget);
 
 		/*
 		 * Digits
@@ -841,9 +841,9 @@ parameter_dialog_setup_ui(void)
 			(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 			(GtkAttachOptions)(0), 0, 0), ++row;
 		g_signal_connect(digits_entry, "activate",
-			(GCallback)parameter_range_digits_on_activate, gebr_gui_parameter_widget);
+			G_CALLBACK(parameter_range_digits_on_activate), gebr_gui_parameter_widget);
 		g_signal_connect(digits_entry, "focus-out-event",
-			(GCallback)parameter_range_digits_on_focus_out, gebr_gui_parameter_widget);
+			G_CALLBACK(parameter_range_digits_on_focus_out), gebr_gui_parameter_widget);
 
 		gtk_entry_set_text(GTK_ENTRY(inc_entry), inc_str);
 		gtk_entry_set_text(GTK_ENTRY(digits_entry), digits_str);
@@ -1165,7 +1165,7 @@ parameter_selected(void)
 	g_signal_handlers_block_matched(
 		G_OBJECT(gtk_action_group_get_action(debr.action_group, "parameter_type_real")),
 		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-		(GCallback)on_parameter_type_activate, NULL);
+		G_CALLBACK(on_parameter_type_activate), NULL);
 	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(debr.action_group,
 		parameter_type_radio_actions_entries[
 			combo_type_map_get_index(gebr_geoxml_parameter_get_type(debr.parameter))].name)),
@@ -1173,7 +1173,7 @@ parameter_selected(void)
 	g_signal_handlers_unblock_matched(
 		G_OBJECT(gtk_action_group_get_action(debr.action_group, "parameter_type_real")),
 		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-		(GCallback)on_parameter_type_activate, NULL);
+		G_CALLBACK(on_parameter_type_activate), NULL);
 }
 
 /*

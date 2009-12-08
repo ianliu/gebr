@@ -130,7 +130,7 @@ program_setup_ui(void)
 		(GebrGuiGtkTreeViewMoveSequenceCallback)menu_saved_status_set_unsaved, NULL);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_program.tree_view);
 	g_signal_connect(debr.ui_program.tree_view, "cursor-changed",
-		(GCallback)program_selected, NULL);
+		G_CALLBACK(program_selected), NULL);
 	g_signal_connect(debr.ui_program.tree_view, "row-activated",
 		G_CALLBACK(program_dialog_setup_ui), NULL);
 
@@ -505,7 +505,7 @@ program_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0);
 	g_signal_connect(title_entry, "changed",
-		(GCallback)program_title_changed, debr.program);
+		G_CALLBACK(program_title_changed), debr.program);
 
 	/*
 	 * Binary
@@ -523,7 +523,7 @@ program_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0);
 	g_signal_connect(binary_entry, "changed",
-		(GCallback)program_binary_changed, debr.program);
+		G_CALLBACK(program_binary_changed), debr.program);
 
 	/*
 	 * Description
@@ -541,7 +541,7 @@ program_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0);
 	g_signal_connect(description_entry, "changed",
-		(GCallback)program_description_changed, debr.program);
+		G_CALLBACK(program_description_changed), debr.program);
 
 	/*
 	 * Help
@@ -597,7 +597,7 @@ program_dialog_setup_ui(void)
 		(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
 		(GtkAttachOptions)(0), 0, 0);
 	g_signal_connect(url_entry, "changed",
-		(GCallback)program_url_changed, debr.program);
+		G_CALLBACK(program_url_changed), debr.program);
 
 	/*
 	 * Load program into UI
@@ -691,7 +691,7 @@ program_details_update(void)
 		(strlen(gebr_geoxml_program_get_url(debr.program))>0) ? TRUE : FALSE, NULL);
 
 	g_signal_handlers_disconnect_matched(G_OBJECT(debr.ui_program.details.help_button),
-		G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (GCallback)program_help_view, NULL);
+		G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(program_help_view), NULL);
 	g_signal_connect(GTK_OBJECT(debr.ui_program.details.help_button), "clicked",
 		G_CALLBACK(program_help_view), debr.program);
 	g_object_set(G_OBJECT(debr.ui_program.details.help_button),

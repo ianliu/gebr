@@ -107,9 +107,9 @@ document_get_name_from_type(GebrGeoXmlDocument * document, gboolean upper);
 
 static const GtkActionEntry dict_actions_entries [] = {
 	{"add",  GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter"),
-		(GCallback)on_dict_edit_add_clicked},
+		G_CALLBACK(on_dict_edit_add_clicked)},
 	{"remove", GTK_STOCK_REMOVE, NULL, NULL, N_("Remove current parameters"),
-		(GCallback)on_dict_edit_remove_clicked},
+		G_CALLBACK(on_dict_edit_remove_clicked)},
 };
 
 /*
@@ -209,7 +209,7 @@ document_properties_setup_ui(GebrGeoXmlDocument * document)
 	help_show_button = gtk_button_new_from_stock(GTK_STOCK_OPEN);
 	gtk_box_pack_start(GTK_BOX(help_hbox), help_show_button, FALSE, FALSE, 0);
 	g_signal_connect(GTK_OBJECT(help_show_button), "clicked",
-		(GCallback)help_show_callback, document);
+		G_CALLBACK(help_show_callback), document);
 	g_object_set(G_OBJECT(help_show_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	help = gtk_button_new_from_stock(GTK_STOCK_EDIT);
@@ -397,7 +397,7 @@ document_dict_edit_setup_ui(void)
 	g_object_set(cell_renderer, "has-entry", FALSE, "editable", TRUE,
 		"model", type_model, "text-column", 0, NULL);
 	g_signal_connect(cell_renderer, "edited",
-		(GCallback)on_dict_edit_type_cell_edited, data);
+		G_CALLBACK(on_dict_edit_type_cell_edited), data);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_TYPE);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_KEYWORD_EDITABLE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
@@ -413,7 +413,7 @@ document_dict_edit_setup_ui(void)
 	data->cell_renderer_array[DICT_EDIT_KEYWORD] = cell_renderer;
 	g_object_set(cell_renderer, "editable", TRUE, NULL);
 	g_signal_connect(cell_renderer, "edited",
-		(GCallback)on_dict_edit_cell_edited, data);
+		G_CALLBACK(on_dict_edit_cell_edited), data);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_KEYWORD);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
@@ -422,7 +422,7 @@ document_dict_edit_setup_ui(void)
 	data->cell_renderer_array[DICT_EDIT_VALUE] = cell_renderer;
 	g_object_set(cell_renderer, "editable", TRUE, NULL);
 	g_signal_connect(cell_renderer, "edited",
-		(GCallback)on_dict_edit_cell_edited, data);
+		G_CALLBACK(on_dict_edit_cell_edited), data);
 	column = gtk_tree_view_column_new_with_attributes(_("Value"), cell_renderer, NULL);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_VALUE);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
@@ -431,7 +431,7 @@ document_dict_edit_setup_ui(void)
 	data->cell_renderer_array[DICT_EDIT_COMMENT] = cell_renderer;
 	g_object_set(cell_renderer, "editable", TRUE, NULL);
 	g_signal_connect(cell_renderer, "edited",
-		(GCallback)on_dict_edit_cell_edited, data);
+		G_CALLBACK(on_dict_edit_cell_edited), data);
 	column = gtk_tree_view_column_new_with_attributes(_("Comment"), cell_renderer, NULL);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_COMMENT);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);

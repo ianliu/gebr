@@ -41,76 +41,76 @@
 
 static const GtkActionEntry actions_entries [] = {
 	{"actions_preferences",  GTK_STOCK_PREFERENCES, NULL, NULL, NULL,
-		(GCallback)on_configure_preferences_activate},
+		G_CALLBACK(on_configure_preferences_activate)},
 	{"actions_servers",  GTK_STOCK_NETWORK, N_("_Servers"), NULL, NULL,
-		(GCallback)on_configure_servers_activate},
-	{"actions_quit",  GTK_STOCK_QUIT, NULL, "<Control>q", NULL, (GCallback)on_quit_activate},
-	{"help_contents", GTK_STOCK_HELP, NULL, NULL, NULL, (GCallback)on_help_contents_activate},
-	{"help_about", GTK_STOCK_ABOUT, NULL, NULL, NULL, (GCallback)on_help_about_activate},
+		G_CALLBACK(on_configure_servers_activate)},
+	{"actions_quit",  GTK_STOCK_QUIT, NULL, "<Control>q", NULL, G_CALLBACK(on_quit_activate)},
+	{"help_contents", GTK_STOCK_HELP, NULL, NULL, NULL, G_CALLBACK(on_help_contents_activate)},
+	{"help_about", GTK_STOCK_ABOUT, NULL, NULL, NULL, G_CALLBACK(on_help_about_activate)},
 	/* Project/Line */
 	{"project_line_new_project", "folder-new", N_("New Project"), NULL, N_("Create a new project"),
-		(GCallback)on_project_line_new_project_activate},
+		G_CALLBACK(on_project_line_new_project_activate)},
 	{"project_line_new_line", "tab-new-background", N_("New Line"), NULL,  N_("Create a new line"),
-		(GCallback)on_project_line_new_line_activate},
+		G_CALLBACK(on_project_line_new_line_activate)},
 	{"project_line_delete", GTK_STOCK_DELETE, NULL, NULL, N_("Delete selected project or line"),
-		(GCallback)on_project_line_delete_activate},
+		G_CALLBACK(on_project_line_delete_activate)},
 	{"project_line_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit project or line properties"),
-		(GCallback)on_document_properties_activate},
+		G_CALLBACK(on_document_properties_activate)},
 	{"project_line_dict_edit", "accessories-dictionary", N_("Parameters' dictionary"), NULL,
 		N_("Edit parameters' dictionary of current project or line"),
-		(GCallback)on_document_dict_edit_activate},
+		G_CALLBACK(on_document_dict_edit_activate)},
 	{"project_line_line_paths", GTK_STOCK_DIRECTORY, N_("Line paths"), NULL, N_("Edit custom line paths"),
-		(GCallback)on_project_line_paths_activate},
+		G_CALLBACK(on_project_line_paths_activate)},
 	{"project_line_import", "document-import", N_("Import"), NULL, N_("Import project or line"),
-		(GCallback)on_project_line_import_activate},
+		G_CALLBACK(on_project_line_import_activate)},
 	{"project_line_export", "document-export", N_("Export"), NULL, N_("Export selected project or line"),
-		(GCallback)on_project_line_export_activate},
+		G_CALLBACK(on_project_line_export_activate)},
 	/* Flow */
-	{"flow_new", GTK_STOCK_NEW, NULL, "<Control>n", N_("Create a new flow"), (GCallback)on_flow_new_activate},
-	{"flow_delete", GTK_STOCK_DELETE, NULL, NULL, N_("Delete selected flow"), (GCallback)on_flow_delete_activate},
+	{"flow_new", GTK_STOCK_NEW, NULL, "<Control>n", N_("Create a new flow"), G_CALLBACK(on_flow_new_activate)},
+	{"flow_delete", GTK_STOCK_DELETE, NULL, NULL, N_("Delete selected flow"), G_CALLBACK(on_flow_delete_activate)},
 	{"flow_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit flow properties"),
-		(GCallback)on_document_properties_activate},
+		G_CALLBACK(on_document_properties_activate)},
 	{"flow_dict_edit", "accessories-dictionary", N_("Parameters' dictionary"), NULL,
 		N_("Edit parameters' dictionary of current flow"),
-		(GCallback)on_document_dict_edit_activate},
+		G_CALLBACK(on_document_dict_edit_activate)},
 	{"flow_change_revision", "document-open-recent", N_("Saved status"), NULL, NULL, NULL},
-	{"flow_import", "document-import", N_("Import"), NULL, N_("Import a flow"), (GCallback)on_flow_import_activate},
+	{"flow_import", "document-import", N_("Import"), NULL, N_("Import a flow"), G_CALLBACK(on_flow_import_activate)},
 	{"flow_export", "document-export", N_("Export"), NULL, N_("Export the flow"),
-		(GCallback)on_flow_export_activate},
+		G_CALLBACK(on_flow_export_activate)},
 	{"flow_export_as_menu", GTK_STOCK_CONVERT, N_("Export as menu"), NULL, N_("Export the flow as a menu"),
-		(GCallback)on_flow_export_as_menu_activate},
+		G_CALLBACK(on_flow_export_as_menu_activate)},
 	{"flow_io", "system-switch-user", N_("Input and Output"), NULL, N_("Edit input/output flow files"),
-		(GCallback)on_flow_io_activate},
+		G_CALLBACK(on_flow_io_activate)},
 	{"flow_execute", GTK_STOCK_EXECUTE, NULL, "<Control>r", N_("Run current flow"),
-		(GCallback)on_flow_execute_activate},
+		G_CALLBACK(on_flow_execute_activate)},
 	{"flow_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy selected(s) flow(s) to clipboard"),
-		(GCallback)on_flow_copy_activate},
+		G_CALLBACK(on_flow_copy_activate)},
 	{"flow_paste", GTK_STOCK_PASTE, N_("Paste"), NULL, N_("Paste flow(s) from clipboard"),
-		(GCallback)on_flow_paste_activate},
+		G_CALLBACK(on_flow_paste_activate)},
 	/* Flow Edition */
 	{"flow_edition_help", GTK_STOCK_HELP, NULL, NULL, N_("Show component's help"),
-		(GCallback)on_flow_component_help_activate},
+		G_CALLBACK(on_flow_component_help_activate)},
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL, NULL, N_("Delete component"),
-		(GCallback)on_flow_component_delete_activate},
+		G_CALLBACK(on_flow_component_delete_activate)},
 	{"flow_edition_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit component parameters"),
-		(GCallback)on_flow_component_properties_activate},
+		G_CALLBACK(on_flow_component_properties_activate)},
 	{"flow_edition_refresh", GTK_STOCK_REFRESH, NULL, NULL, N_("Refresh available components list"),
-		(GCallback)on_flow_component_refresh_activate},
+		G_CALLBACK(on_flow_component_refresh_activate)},
 	{"flow_edition_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy selected(s) component(s) to clipboard"),
-		(GCallback)on_flow_component_copy_activate},
+		G_CALLBACK(on_flow_component_copy_activate)},
 	{"flow_edition_paste", GTK_STOCK_PASTE, N_("Paste"), NULL, N_("Paste component(s) from clipboard"),
-		(GCallback)on_flow_component_paste_activate},
+		G_CALLBACK(on_flow_component_paste_activate)},
 	/* Job control */
 	{"job_control_save", GTK_STOCK_SAVE, NULL, NULL, N_("Save job information in a file"),
-		(GCallback)on_job_control_save},
+		G_CALLBACK(on_job_control_save)},
 	{"job_control_cancel", GTK_STOCK_MEDIA_STOP, NULL, NULL, N_("Ask server to terminate the job"),
-		(GCallback)on_job_control_cancel},
+		G_CALLBACK(on_job_control_cancel)},
 	{"job_control_close", "edit-clear", NULL, NULL, N_("Clear current job log"),
-		(GCallback)on_job_control_close},
+		G_CALLBACK(on_job_control_close)},
 	{"job_control_clear", GTK_STOCK_CLEAR, NULL, NULL, N_("Clear all unactive job logs"),
-		(GCallback)on_job_control_clear},
+		G_CALLBACK(on_job_control_clear)},
 	{"job_control_stop", GTK_STOCK_STOP, NULL, NULL, N_("Ask server to kill the job"),
-		(GCallback)on_job_control_stop}
+		G_CALLBACK(on_job_control_stop)}
 };
 
 static const GtkRadioActionEntry status_radio_actions_entries [] = {
@@ -120,8 +120,8 @@ static const GtkRadioActionEntry status_radio_actions_entries [] = {
 };
 
 static const GtkActionEntry common_actions_entries [] = {
-	{"copy", GTK_STOCK_COPY, "copy", NULL, "copy", (GCallback)on_copy_activate},
-	{"paste", GTK_STOCK_PASTE, "paste", NULL, "paste", (GCallback)on_paste_activate},
+	{"copy", GTK_STOCK_COPY, "copy", NULL, "copy", G_CALLBACK(on_copy_activate)},
+	{"paste", GTK_STOCK_PASTE, "paste", NULL, "paste", G_CALLBACK(on_paste_activate)},
 };
 
 
@@ -170,7 +170,7 @@ gebr_setup_ui(void)
 	gtk_action_group_set_translation_domain(gebr.action_group, PACKAGE);
 	gtk_action_group_add_actions(gebr.action_group, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
 	gtk_action_group_add_radio_actions(gebr.action_group, status_radio_actions_entries, 3, -1,
-		(GCallback)on_flow_component_status_activate, NULL);
+		G_CALLBACK(on_flow_component_status_activate), NULL);
 	gebr.accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group);
 	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group, gebr.accel_group);

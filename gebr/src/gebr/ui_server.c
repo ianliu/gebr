@@ -166,27 +166,27 @@ server_common_popup_menu(GtkWidget * widget, struct ui_server_common * ui_server
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_CONNECT, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
-			(GCallback)server_common_connect, server);
+			G_CALLBACK(server_common_connect), server);
 	}
 	/* disconnect */
 	if (server->comm->state != SERVER_STATE_DISCONNECTED) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DISCONNECT, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
-			(GCallback)server_common_disconnect, server);
+			G_CALLBACK(server_common_disconnect), server);
 	}
 	/* autoconnect */
 	menu_item = gtk_check_menu_item_new_with_label(_("Autoconnect"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect(menu_item, "toggled",
-		(GCallback)server_common_autoconnect_changed, server);
+		G_CALLBACK(server_common_autoconnect_changed), server);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), autoconnect);
 	/* remove */
 	if (!gebr_comm_server_is_local(server->comm)) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_REMOVE, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
-			(GCallback)server_common_remove, server);
+			G_CALLBACK(server_common_remove), server);
 	}
 	/* stop server */
 	menu_item = gtk_image_menu_item_new_with_label(_("Stop server"));
@@ -194,7 +194,7 @@ server_common_popup_menu(GtkWidget * widget, struct ui_server_common * ui_server
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
 		gtk_image_new_from_stock(GTK_STOCK_STOP, GTK_ICON_SIZE_MENU));
 	g_signal_connect(menu_item, "activate",
-		(GCallback)server_common_stop, server);
+		G_CALLBACK(server_common_stop), server);
 
 	gtk_widget_show_all(menu);
 

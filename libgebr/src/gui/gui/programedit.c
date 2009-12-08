@@ -315,7 +315,7 @@ GSList ** radio_group)
 
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio_button), selected == parameter);
 			g_signal_connect(radio_button, "toggled",
-				(GCallback)gebr_gui_program_edit_change_selected, gebr_gui_parameter_widget);
+				G_CALLBACK(gebr_gui_program_edit_change_selected), gebr_gui_parameter_widget);
 
 			gtk_box_pack_start(GTK_BOX(hbox), radio_button, FALSE, FALSE, 15);
 			gtk_widget_set_sensitive(gebr_gui_parameter_widget->widget, selected == parameter ? TRUE : FALSE);

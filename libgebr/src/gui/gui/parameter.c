@@ -339,11 +339,11 @@ __parameter_list_value_widget_update(struct gebr_gui_parameter_widget * gebr_gui
 
 	g_signal_handlers_block_matched(G_OBJECT(gebr_gui_parameter_widget->list_value_widget),
 		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-		(GCallback)__parameter_on_list_value_widget_changed, NULL);
+		G_CALLBACK(__parameter_on_list_value_widget_changed), NULL);
 	gtk_entry_set_text(GTK_ENTRY(gebr_gui_parameter_widget->list_value_widget), value->str);
 	g_signal_handlers_unblock_matched(G_OBJECT(gebr_gui_parameter_widget->list_value_widget),
 		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-		(GCallback)__parameter_on_list_value_widget_changed, NULL);
+		G_CALLBACK(__parameter_on_list_value_widget_changed), NULL);
 
 	g_string_free(value, TRUE);
 }
@@ -372,12 +372,12 @@ __on_edit_list_toggled(GtkToggleButton * toggle_button, struct gebr_gui_paramete
 			g_signal_handlers_block_matched(G_OBJECT(gebr_gui_parameter_widget->list_value_widget),
 				G_SIGNAL_MATCH_FUNC,
 				0, 0, NULL,
-				(GCallback)__parameter_on_list_value_widget_changed,
+				G_CALLBACK(__parameter_on_list_value_widget_changed),
 				NULL);
 			g_signal_handlers_block_matched(G_OBJECT(gebr_gui_parameter_widget->gebr_gui_value_sequence_edit),
 				G_SIGNAL_MATCH_FUNC,
 				0, 0, NULL,
-				(GCallback)__on_sequence_edit_changed,
+				G_CALLBACK(__on_sequence_edit_changed),
 				NULL);
 			gebr_gui_value_sequence_edit_load(gebr_gui_parameter_widget->gebr_gui_value_sequence_edit, first_value,
 				(ValueSequenceSetFunction)gebr_geoxml_value_sequence_set,
@@ -385,12 +385,12 @@ __on_edit_list_toggled(GtkToggleButton * toggle_button, struct gebr_gui_paramete
 			g_signal_handlers_unblock_matched(G_OBJECT(gebr_gui_parameter_widget->list_value_widget),
 				G_SIGNAL_MATCH_FUNC,
 				0, 0, NULL,
-				(GCallback)__parameter_on_list_value_widget_changed,
+				G_CALLBACK(__parameter_on_list_value_widget_changed),
 				NULL);
 			g_signal_handlers_unblock_matched(G_OBJECT(gebr_gui_parameter_widget->gebr_gui_value_sequence_edit),
 				G_SIGNAL_MATCH_FUNC,
 				0, 0, NULL,
-				(GCallback)__on_sequence_edit_changed,
+				G_CALLBACK(__on_sequence_edit_changed),
 				NULL);
 
 			gtk_widget_show(GTK_WIDGET(gebr_gui_parameter_widget->gebr_gui_value_sequence_edit));
@@ -598,7 +598,7 @@ gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget * gebr_gui_
 		gtk_box_pack_start(GTK_BOX(hbox), gebr_gui_parameter_widget->list_value_widget, TRUE, TRUE, 0);
 		if (gebr_gui_parameter_widget->parameter_type != GEBR_GEOXML_PARAMETER_TYPE_ENUM)
 			g_signal_connect(gebr_gui_parameter_widget->list_value_widget, "changed",
-				(GCallback)__parameter_on_list_value_widget_changed, gebr_gui_parameter_widget);
+				G_CALLBACK(__parameter_on_list_value_widget_changed), gebr_gui_parameter_widget);
 
 		button = gtk_toggle_button_new_with_label(_("Edit list"));
 		gtk_widget_show(button);
@@ -636,19 +636,19 @@ gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget * gebr_gui_
 		case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 		case GEBR_GEOXML_PARAMETER_TYPE_ENUM:
 			g_signal_connect(gebr_gui_parameter_widget->value_widget, "changed",
-				(GCallback)gebr_gui_parameter_widget_on_value_widget_changed, gebr_gui_parameter_widget);
+				G_CALLBACK(gebr_gui_parameter_widget_on_value_widget_changed), gebr_gui_parameter_widget);
 			break;
 		case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
 			g_signal_connect(gebr_gui_parameter_widget->value_widget, "output",
-				(GCallback)gebr_gui_parameter_widget_on_range_changed, gebr_gui_parameter_widget);
+				G_CALLBACK(gebr_gui_parameter_widget_on_range_changed), gebr_gui_parameter_widget);
 			break;
 		case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 			g_signal_connect(gebr_gui_parameter_widget->value_widget, "path-changed",
-				(GCallback)gebr_gui_parameter_widget_on_value_widget_changed, gebr_gui_parameter_widget);
+				G_CALLBACK(gebr_gui_parameter_widget_on_value_widget_changed), gebr_gui_parameter_widget);
 			break;
 		case GEBR_GEOXML_PARAMETER_TYPE_FLAG:
 			g_signal_connect(gebr_gui_parameter_widget->value_widget, "toggled",
-				(GCallback)gebr_gui_parameter_widget_on_value_widget_changed, gebr_gui_parameter_widget);
+				G_CALLBACK(gebr_gui_parameter_widget_on_value_widget_changed), gebr_gui_parameter_widget);
 			break;
 		default:
 			break;
@@ -671,7 +671,7 @@ gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget * gebr_gui_
 
 		gebr_gui_parameter_widget_find_dict_parameter(gebr_gui_parameter_widget);
 		g_signal_connect(gebr_gui_parameter_widget->value_widget, "populate-popup",
-			(GCallback)gebr_gui_parameter_widget_value_entry_on_populate_popup, gebr_gui_parameter_widget);
+			G_CALLBACK(gebr_gui_parameter_widget_value_entry_on_populate_popup), gebr_gui_parameter_widget);
 	}
 
 	gebr_gui_parameter_widget_update(gebr_gui_parameter_widget);
@@ -690,12 +690,12 @@ gebr_gui_parameter_widget_find_dict_parameter(struct gebr_gui_parameter_widget *
 {
 	g_signal_handlers_disconnect_matched(G_OBJECT(widget->value_widget),
 		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-		(GCallback)on_dict_clicked, NULL);
+		G_CALLBACK(on_dict_clicked), NULL);
 	if (widget->dict_parameter != NULL) {
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(widget->value_widget),
 			GTK_ENTRY_ICON_SECONDARY, "accessories-dictionary");
 		g_signal_connect(widget->value_widget, "icon-press",
-			(GCallback)on_dict_clicked, widget);
+			G_CALLBACK(on_dict_clicked), widget);
 	} else {
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(widget->value_widget),
 			GTK_ENTRY_ICON_SECONDARY, NULL);
