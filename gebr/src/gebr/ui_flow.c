@@ -170,9 +170,11 @@ flow_io_setup_ui(gboolean executable)
 		GTK_SELECTION_BROWSE);
 	gtk_window_set_default_size(GTK_WINDOW(dialog), -1, 300);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 2);
+#if GTK_CHECK_VERSION(2,12,0)
 	g_object_set(G_OBJECT(treeview), "has-tooltip", TRUE, NULL);
 	g_signal_connect(G_OBJECT(treeview), "query-tooltip",
 		G_CALLBACK(on_tree_view_tooltip), ui_flow_io);
+#endif
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(treeview),
 		(GebrGuiGtkPopupCallback)on_menu_popup, ui_flow_io);
 
@@ -1005,6 +1007,7 @@ on_menu_popup			(GtkTreeView *		treeview,
 	return GTK_MENU(menu);
 }
 
+#if GTK_CHECK_VERSION(2,12,0)
 static gboolean
 on_tree_view_tooltip		(GtkTreeView *		treeview,
 				 gint			x,
@@ -1066,4 +1069,5 @@ on_tree_view_tooltip		(GtkTreeView *		treeview,
 
 	return TRUE;
 }
+#endif
 
