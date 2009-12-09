@@ -1,4 +1,4 @@
-/*   libgebr - GêBR Library
+/*   libgebr - Gï¿½BR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,6 @@
 #include <gui/icons.h>
 #include <gui/pixmaps.h>
 #include <gui/parameter.h>
-#include <gui/program_edit.h>
+#include <gui/programedit.h>
 #include <gui/valuesequenceedit.h>
 #include <gui/utils.h>
