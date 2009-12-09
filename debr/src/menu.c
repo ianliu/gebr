@@ -103,12 +103,13 @@ menu_setup_ui(void)
 		G_TYPE_POINTER,
 		G_TYPE_STRING);
 	debr.ui_menu.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_menu.model));
+	gtk_widget_show(debr.ui_menu.tree_view);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_menu.tree_view);
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view)),
 		GTK_SELECTION_MULTIPLE);
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_menu.tree_view),
 		(GebrGuiGtkPopupCallback)menu_popup_menu, NULL);
-	gtk_widget_show(debr.ui_menu.tree_view);
-	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_menu.tree_view);
+	gebr_gui_gtk_tree_view_change_cursor_on_row_collapsed(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 	g_signal_connect(debr.ui_menu.tree_view, "cursor-changed",
 		G_CALLBACK(menu_selected), NULL);
 	g_signal_connect(debr.ui_menu.tree_view, "row-activated",
@@ -150,7 +151,7 @@ menu_setup_ui(void)
 
 	frame = gtk_frame_new(_("Details"));
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), frame);
-	details = gtk_vbox_new(FALSE, 0);
+	debr.ui_menu.details.vbox = details = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(frame), details);
 
 	debr.ui_menu.details.title_label = gtk_label_new(NULL);
@@ -236,17 +237,17 @@ menu_new(gboolean edit)
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(debr.menu), debr.config.email->str);
 	gebr_geoxml_document_set_date_created(GEBR_GEOXML_DOC(debr.menu), gebr_iso_date());
 
-	switch (menu_get_selected(&iter)) {
-		case ITER_FILE:
-			gtk_tree_model_iter_parent(
-				GTK_TREE_MODEL(debr.ui_menu.model), &target, &iter);
-			break;
-		case ITER_FOLDER:
-			target = iter;
-			break;
-		default:
-			target = debr.ui_menu.iter_other;
-			break;
+	switch (menu_get_selected_type(&iter, FALSE)) {
+	case ITER_FILE:
+		gtk_tree_model_iter_parent(
+			GTK_TREE_MODEL(debr.ui_menu.model), &target, &iter);
+		break;
+	case ITER_FOLDER:
+		target = iter;
+		break;
+	default:
+		target = debr.ui_menu.iter_other;
+		break;
 	}
 
 	gtk_tree_store_append(debr.ui_menu.model, &iter, &target);
@@ -416,7 +417,7 @@ menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select)
 	/* select it and load its contents into UI */
 	if (select == TRUE) {
 		menu_select_iter(&child);
-		menu_load_selected();
+		menu_selected();
 	}
 
 	g_free(filename);
@@ -462,7 +463,7 @@ menu_save(GtkTreeIter * iter)
 	gchar *			filename;
 	gchar *			tmp;
 
-	if (menu_get_iter_type(iter) != ITER_FILE)
+	if (!menu_get_selected(iter, FALSE))
 		return FALSE;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter,
@@ -490,7 +491,7 @@ menu_save(GtkTreeIter * iter)
 	tmp = g_strdup_printf("%ld", gebr_iso_date_to_g_time_val(
 		gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(menu))).tv_sec);
 	gtk_tree_store_set(debr.ui_menu.model, iter, MENU_MODIFIED_DATE, tmp, -1);
-	menu_get_selected(&selected_iter);
+	menu_get_selected(&selected_iter, FALSE);
 	if (gebr_gui_gtk_tree_iter_equal_to(iter, &selected_iter))
 		menu_details_update();
 
@@ -566,7 +567,7 @@ menu_install(void)
 		GtkWidget *	dialog;
 		MenuStatus	status;
 
-		if (menu_get_iter_type(&iter) != ITER_FILE)
+		if (!menu_get_selected(&iter, FALSE))
 			continue;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
@@ -665,31 +666,23 @@ void
 menu_selected(void)
 {
 	GtkTreeIter	iter;
-	MenuStatus	status;
 	IterType	type;
 
-	type = menu_get_selected(&iter);
+	type = menu_get_selected_type(&iter, FALSE);
 	debr.menu = NULL;
-	program_load_menu();
 	if (type == ITER_FOLDER) {
+		program_load_menu();
 		menu_folder_details_update(&iter);
 		return;
 	}
-	if (type != ITER_FILE)
-		return;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
-		MENU_STATUS, &status,
-		MENU_XMLPOINTER, &debr.menu,
-		-1);
+	if (type == ITER_FILE) {
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
+			MENU_XMLPOINTER, &debr.menu,
+			-1);
+	}
 
 	/* fire it! */
 	program_load_menu();
-
-	/* recover status set to unsaved by other functions */
-	// menu_saved_status_set(status);
-
-	/* update details view */
 	menu_details_update();
 	do_navigation_bar_update();
 }
@@ -745,7 +738,7 @@ menu_saved_status_set(MenuStatus status)
 {
 	GtkTreeIter		iter;
 
-	if (menu_get_selected(&iter) == ITER_FILE)
+	if (menu_get_selected_type(&iter, FALSE) == ITER_FILE)
 		menu_saved_status_set_from_iter(&iter, status);
 }
 
@@ -845,9 +838,7 @@ menu_dialog_setup_ui(void)
 	GtkTreeIter		iter;
 
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
-	
-	type = menu_get_selected(&iter);
-
+	type = menu_get_selected_type(&iter, TRUE);
 	if (type == ITER_FOLDER) {
 		GtkTreePath * path;
 		path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_menu.model), &iter);
@@ -855,7 +846,6 @@ menu_dialog_setup_ui(void)
 		gtk_tree_path_free(path);
 		return;
 	}
-
 	if (type != ITER_FILE)
 		return;
 
@@ -1036,7 +1026,7 @@ menu_dialog_setup_ui(void)
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
 
-	menu_load_selected();
+	menu_selected();
 }
 
 /**
@@ -1048,24 +1038,14 @@ menu_dialog_setup_ui(void)
  * Returns: One of %MENU_NONE, %MENU_FOLDER or %MENU_FILE,
  * representing the various types of an item.
  */
-IterType
-menu_get_selected(GtkTreeIter * iter)
+gboolean
+menu_get_selected(GtkTreeIter * iter, gboolean warn_unselected_menu)
 {
-	GtkTreeIter	selection;
-	gboolean	selected;
-
-	selected = gebr_gtk_tree_view_get_selected(
-		GTK_TREE_VIEW(debr.ui_menu.tree_view), &selection);
-
-	if (!selected)
-		return ITER_NONE;
-
-	*iter = selection;
-	return menu_get_iter_type(iter);
+	return menu_get_selected_type(iter, warn_unselected_menu) == ITER_FILE;
 }
 
 /**
- * menu_get_iter_type:
+ * menu_get_selected_type:
  * @iter: The iterator for #debr.ui_menu.model to get the type.
  *
  * You <emphasis>must</emphasis> be sure that @iter is
@@ -1074,27 +1054,29 @@ menu_get_selected(GtkTreeIter * iter)
  * Returns: a #IterType.
  */
 IterType
-menu_get_iter_type(GtkTreeIter * iter)
+menu_get_selected_type(GtkTreeIter * iter, gboolean warn_unselected_menu)
 {
-	switch (gtk_tree_store_iter_depth(debr.ui_menu.model, iter)) {
-		case 0: return ITER_FOLDER; break;
-		case 1: return ITER_FILE;   break;
-	}
-	return ITER_NONE;
-}
+	IterType	type;
 
-/**
- * menu_load_selected:
- *
- * Reload selected menu contents to the interface.
- */
-void
-menu_load_selected(void)
-{
-	GtkTreeIter	iter;
+	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter))
+		switch (gtk_tree_store_iter_depth(debr.ui_menu.model, iter)) {
+		case 0:
+			type = ITER_FOLDER;
+			break;
+		case 1:
+			type = ITER_FILE;
+			break;
+		default:
+			type = ITER_NONE;
+			break;
+		}
+	else
+		type = ITER_NONE;
 
-	menu_get_selected(&iter);
-	menu_details_update();
+	if (type != ITER_FILE && warn_unselected_menu)
+		debr_message(GEBR_LOG_ERROR, _("Please select a menu."));
+
+	return type;
 }
 
 /**
@@ -1127,6 +1109,13 @@ menu_details_update(void)
 	gchar *		markup;
 	GString *	text;
 	glong		icmax;
+
+	if (debr.menu == NULL) {
+		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback)gtk_widget_hide, NULL);
+		return;
+	} else
+		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback)gtk_widget_show, NULL);
+	
 
 	gtk_widget_set_sensitive(debr.ui_menu.details.help_button, TRUE);
 
@@ -1233,7 +1222,7 @@ menu_folder_details_update(GtkTreeIter * iter)
 	gint		n_menus;
 	GString *	text;
 
-	if (menu_get_iter_type(iter) != ITER_FOLDER)
+	if (menu_get_selected_type(iter, FALSE) != ITER_FOLDER)
 		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter,
@@ -1596,9 +1585,8 @@ static void
 menu_help_edit(void)
 {
 	GString *	help;
-        
-        help = help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, FALSE);
-                
+
+	help = help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, FALSE);
 	if (help == NULL)
 		return;
 

@@ -67,7 +67,7 @@ gebr_gui_gtk_tree_view_get_selected_iters(GtkTreeView * tree_view);
 void
 gebr_gui_gtk_tree_view_turn_to_single_selection(GtkTreeView * tree_view);
 gboolean
-gebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
+gebr_gui_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
 void
 gebr_gui_gtk_tree_view_expand_to_iter(GtkTreeView * view, GtkTreeIter * iter);
 GtkTreeViewColumn *
@@ -77,6 +77,8 @@ gebr_gui_gtk_tree_view_get_next_column(GtkTreeView * tree_view, GtkTreeViewColum
 void
 gebr_gui_gtk_tree_view_set_cursor(GtkTreeView * tree_view, GtkTreeIter * iter,
 GtkTreeViewColumn * column, gboolean start_editing);
+void
+gebr_gui_gtk_tree_view_change_cursor_on_row_collapsed(GtkTreeView * tree_view);
 #define gebr_gui_gtk_tree_view_foreach_selected(iter, tree_view) \
 	GList * __list = gebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(tree_view)); \
 	GList * __i = g_list_first(__list); \

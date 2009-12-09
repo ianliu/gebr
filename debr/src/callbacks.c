@@ -44,6 +44,11 @@ do_navigation_bar_update(void)
 {
 	GString *	markup;
 
+	if (debr.menu == NULL) {
+		gtk_label_set_markup(GTK_LABEL(debr.navigation_box_label), "");
+		return;
+	}
+
 	markup = g_string_new(NULL);
 	g_string_append(markup, g_markup_printf_escaped("<i>%s</i>",
 		gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu))));
@@ -183,9 +188,8 @@ on_menu_save_activate(void)
 {
 	GtkTreeIter		iter;
 
-	if (menu_get_selected(&iter) != ITER_FILE)
+	if (!menu_get_selected(&iter, TRUE))
 		return;
-
 	if (!menu_save(&iter))
 		on_menu_save_as_activate();
 }
@@ -210,7 +214,7 @@ on_menu_save_as_activate(void)
 	gchar *			filename;
 	gchar *			current_path;
 
-	if (menu_get_selected(&iter) != ITER_FILE)
+	if (!menu_get_selected(&iter, TRUE))
 		return;
 
 	/* run file chooser */
@@ -365,7 +369,7 @@ on_menu_delete_activate(void)
 		gchar *		path;
 
 		/* if this is not a menu item, pass */
-		if (menu_get_selected(&iter) != ITER_FILE)
+		if (!menu_get_selected(&iter, TRUE))
 			continue;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,

@@ -233,7 +233,7 @@ validate_free(struct validate * validate)
 static gboolean
 validate_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 {
-	if (gebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_validate.tree_view), iter) == FALSE) {
+	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_validate.tree_view), iter) == FALSE) {
 		if (warn_unselected)
 			debr_message(GEBR_LOG_ERROR, _("No menu selected"));
 		return FALSE;
@@ -658,29 +658,29 @@ show_program_parameter(struct validate * validate, GebrGeoXmlProgramParameter * 
 		validate_append_text(validate,  " [%s]", default_value->str);
 	g_string_free(default_value, TRUE);
 
-        if (gebr_geoxml_program_parameter_get_is_list(GEBR_GEOXML_PROGRAM_PARAMETER(pp))){
-                if (strlen(gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(pp))))
-                        validate_append_text(validate, _(" (entries separeted by '%s')"),
-                                             gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(pp)));
-                else{
-                        validate_append_text_error(validate, _(" (missing entries' separator)"));
-                        validate->error_count++;
-                }
-        }
+	if (gebr_geoxml_program_parameter_get_is_list(GEBR_GEOXML_PROGRAM_PARAMETER(pp))) {
+		if (strlen(gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(pp))))
+			validate_append_text(validate, _(" (entries separeted by '%s')"),
+				gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(pp)));
+		else {
+			validate_append_text_error(validate, _(" (missing entries' separator)"));
+			validate->error_count++;
+		}
+	}
 
 	if (gebr_geoxml_program_parameter_get_required(pp))
 		validate_append_text(validate, _("  REQUIRED "));
 
-        /* enum details */
+	/* enum details */
 	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_ENUM){
 		GebrGeoXmlSequence *enum_option;
 
 		gebr_geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
 
-                if (enum_option == NULL){
-                        validate_append_text_error(validate, _("\n        missing options"));
-                        validate->error_count++;
-                }
+		if (enum_option == NULL) {
+			validate_append_text_error(validate, _("\n        missing options"));
+			validate->error_count++;
+		}
 
 		for (; enum_option != NULL; gebr_geoxml_sequence_next(&enum_option)){
 			validate_append_text(validate,  "\n");

@@ -77,6 +77,11 @@ on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_data * data);
 static void
 on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
 	GtkCellEditable * editable, gchar * path, struct dict_edit_data * data);
+#if GTK_CHECK_VERSION(2,12,0)
+static gboolean
+dict_edit_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
+	GtkTreeIter * iter, GtkTreeViewColumn * column, struct dict_edit_data * data);
+#endif
 static void
 on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
 struct dict_edit_data * data);
@@ -375,6 +380,10 @@ document_dict_edit_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(scrolled_window), tree_view);
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(tree_view),
 		(GebrGuiGtkPopupCallback)on_dict_edit_popup_menu, data);
+#if GTK_CHECK_VERSION(2,12,0)
+	gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(tree_view),
+		(GebrGuiGtkTreeViewTooltipCallback)dict_edit_tooltip_callback, data);
+#endif
 	g_signal_connect(GTK_OBJECT(tree_view), "cursor-changed",
 		G_CALLBACK(on_dict_edit_cursor_changed), data);
 
@@ -399,6 +408,7 @@ document_dict_edit_setup_ui(void)
 	cell_renderer = gtk_cell_renderer_combo_new();
 	data->cell_renderer_array[DICT_EDIT_TYPE] = cell_renderer;
 	column = gtk_tree_view_column_new_with_attributes(_("Type"), cell_renderer, NULL);
+	gtk_tree_view_column_set_min_width(column, 100);
 	g_object_set(cell_renderer, "has-entry", FALSE, "editable", TRUE,
 		"model", type_model, "text-column", 0, NULL);
 	g_signal_connect(cell_renderer, "edited",
@@ -531,6 +541,7 @@ on_dict_edit_cursor_changed(GtkTreeView * tree_view, struct dict_edit_data * dat
 {
 	GtkTreeIter	iter;
 	GtkTreeIter	parent;
+	gboolean	is_add_parameter;
 
 	if (!dict_edit_get_selected(data, &iter))
 		return;
@@ -540,6 +551,20 @@ on_dict_edit_cursor_changed(GtkTreeView * tree_view, struct dict_edit_data * dat
 	gtk_tree_model_get(data->tree_model, &parent,
 		DICT_EDIT_GEBR_GEOXML_POINTER, &data->current_document, -1);
 	data->current_document_iter = parent;
+
+// 	gtk_tree_model_get(data->tree_model, &iter,
+// 		DICT_EDIT_IS_ADD_PARAMETER, &is_add_parameter,
+// 		-1);
+// 	if (is_add_parameter) {
+// 		g_signal_handlers_block_matched(G_OBJECT(data->tree_view),
+// 			G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+// 			G_CALLBACK(on_dict_edit_cursor_changed), NULL);
+// 		gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view), &iter,
+// 			gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 1), TRUE);
+// 		g_signal_handlers_unblock_matched(G_OBJECT(data->tree_view),
+// 			G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+// 			G_CALLBACK(on_dict_edit_cursor_changed), NULL);
+// 	}
 }
 
 /* Function: on_dict_edit_add_clicked
@@ -591,6 +616,7 @@ static gboolean
 on_renderer_entry_key_release_event(GtkEntry * entry, GdkEventKey * event,
 struct dict_edit_data * data)
 {
+	puts("here");
 	switch (event->keyval) {
 		case GDK_Tab: case GDK_Return: {
 			GtkCellRenderer *	renderer;
@@ -625,10 +651,32 @@ on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
 
 	entry = GTK_ENTRY(editable);
 	gtk_widget_set_events(GTK_WIDGET(entry), GDK_KEY_RELEASE_MASK);
-// 	g_signal_connect(GTK_OBJECT(entry), "key-release-event",
-// 		G_CALLBACK(on_renderer_entry_key_release_event), data);
+	g_signal_connect(GTK_OBJECT(entry), "key-release-event",
+		G_CALLBACK(on_renderer_entry_key_release_event), data);
 	g_object_set(renderer, "user-data", renderer, NULL);
 }
+
+/* Function: dict_edit_tooltip_callback
+ * Set tooltip for New iters
+ */
+#if GTK_CHECK_VERSION(2,12,0)
+static gboolean
+dict_edit_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
+	GtkTreeIter * iter, GtkTreeViewColumn * column, struct dict_edit_data * data)
+{
+	gboolean	is_add_parameter;
+
+	gtk_tree_model_get(data->tree_model, iter,
+		DICT_EDIT_IS_ADD_PARAMETER, &is_add_parameter,
+		-1);
+	if (is_add_parameter) {
+		gtk_tooltip_set_text(tooltip, _("Click to select type for a new parameter"));
+		return TRUE;
+	}
+
+	return FALSE;
+}
+#endif
 
 /* Function: on_dict_edit_type_cell_edited
  * Edit type of parameter

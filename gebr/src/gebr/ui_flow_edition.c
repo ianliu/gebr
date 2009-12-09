@@ -236,7 +236,7 @@ flow_edition_load_components(void)
 gboolean
 flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected)
 {
-	if (!gebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter)) {
+	if (!gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter)) {
 		if (warn_unselected)
 			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow component selected"));
 		return FALSE;

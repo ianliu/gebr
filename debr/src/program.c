@@ -233,7 +233,10 @@ void
 program_new(gboolean edit)
 {
 	GebrGeoXmlProgram *		program;
-	GtkTreeIter		iter;
+	GtkTreeIter			iter;
+
+	if (!menu_get_selected(NULL, TRUE))
+		return;
 
 	program = gebr_geoxml_flow_append_program(debr.menu);
 	/* default settings */
@@ -705,7 +708,7 @@ program_details_update(void)
 static gboolean
 program_get_selected(GtkTreeIter * iter, gboolean warn_user)
 {
-	if (gebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_program.tree_view), iter) == FALSE) {
+	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_program.tree_view), iter) == FALSE) {
 		if (warn_user)
 			debr_message(GEBR_LOG_ERROR, _("No program is selected"));
 		return FALSE;

@@ -397,7 +397,7 @@ gebr_gui_gtk_tree_view_turn_to_single_selection(GtkTreeView * tree_view)
 }
 
 gboolean
-gebr_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter)
+gebr_gui_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter)
 {
 	GtkTreeSelection *	tree_selection;
 
@@ -490,6 +490,20 @@ GtkTreeViewColumn * column, gboolean start_editing)
 	tree_path = gtk_tree_model_get_path(gtk_tree_view_get_model(tree_view), iter);
 	gtk_tree_view_set_cursor(tree_view, tree_path, column, start_editing);
 	gtk_tree_path_free(tree_path);
+}
+
+static void
+on_gtk_tree_view_row_collapsed(GtkTreeView * tree_view)
+{
+	g_signal_emit_by_name(tree_view, "cursor-changed");
+}
+
+void
+gebr_gui_gtk_tree_view_change_cursor_on_row_collapsed(GtkTreeView * tree_view)
+{
+	/* strange GTK... */
+	g_signal_connect(tree_view, "row-collapsed",
+		G_CALLBACK(on_gtk_tree_view_row_collapsed), NULL);
 }
 
 GtkCellRenderer *
@@ -592,7 +606,7 @@ none:	gtk_tree_selection_unselect_all(selection);
 #if GTK_CHECK_VERSION(2,12,0)
 struct tooltip_data {
 	GebrGuiGtkTreeViewTooltipCallback	callback;
-	gpointer			user_data;
+	gpointer				user_data;
 };
 
 static void
@@ -737,7 +751,7 @@ gtk_tree_view_reorder_weak_ref(struct reorder_data * data, GtkTreeView * tree_vi
 static void
 on_gtk_tree_view_drag_begin(GtkTreeView * tree_view, GdkDragContext * drag_context, struct reorder_data * data)
 {
-	gebr_gtk_tree_view_get_selected(tree_view, &data->iter);
+	gebr_gui_gtk_tree_view_get_selected(tree_view, &data->iter);
 }
 
 static gboolean
@@ -934,20 +948,16 @@ void
 gebr_gui_gtk_expander_hacked_visible(GtkWidget * expander, GtkWidget * label_widget)
 {
 	g_signal_handlers_unblock_matched(G_OBJECT(label_widget),
-		G_SIGNAL_MATCH_FUNC,
-		0, 0, NULL,
-		G_CALLBACK(gebr_gui_gtk_expander_hacked_idle),
-		NULL);
+		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+		G_CALLBACK(gebr_gui_gtk_expander_hacked_idle), NULL);
 }
 
 gboolean
 gebr_gui_gtk_expander_hacked_idle(GtkWidget * label_widget, GdkEventExpose *event, GtkWidget * expander)
 {
 	g_signal_handlers_block_matched(G_OBJECT(label_widget),
-		G_SIGNAL_MATCH_FUNC,
-		0, 0, NULL,
-		G_CALLBACK(gebr_gui_gtk_expander_hacked_idle),
-		NULL);
+		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+		G_CALLBACK(gebr_gui_gtk_expander_hacked_idle), NULL);
 	g_object_ref (G_OBJECT (label_widget));
 	gtk_expander_set_label_widget (GTK_EXPANDER (expander), NULL);
 	gtk_expander_set_label_widget (GTK_EXPANDER (expander), label_widget);

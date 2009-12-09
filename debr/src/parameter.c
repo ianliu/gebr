@@ -1131,7 +1131,10 @@ parameter_select_iter(GtkTreeIter iter)
 static gboolean
 parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
 {
-	if (gebr_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), iter) == FALSE) {
+	if (!menu_get_selected(NULL, show_warning))
+		return FALSE;
+
+	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), iter) == FALSE) {
 		if (show_warning)
 			debr_message(GEBR_LOG_ERROR, _("No parameter is selected"));
 		return FALSE;

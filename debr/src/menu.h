@@ -66,6 +66,8 @@ struct ui_menu {
 	GtkTreeIter		iter_other;
 	
 	struct ui_menu_details {
+		GtkWidget *	vbox;
+
 		GtkWidget *	title_label;
 		GtkWidget *	description_label;
 		GtkWidget *	author_label;
@@ -123,11 +125,9 @@ void		menu_reset			(void);
 
 gint		menu_get_n_menus		(void);
 
-IterType	menu_get_selected		(GtkTreeIter *	iter);
+gboolean	menu_get_selected		(GtkTreeIter *	iter, gboolean warn_unselected_menu);
 
-IterType	menu_get_iter_type		(GtkTreeIter *	iter);
-
-void		menu_load_selected		(void);
+IterType	menu_get_selected_type		(GtkTreeIter *	iter, gboolean warn_unselected_menu);
 
 void		menu_select_iter		(GtkTreeIter *	iter);
 
