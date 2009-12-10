@@ -60,6 +60,8 @@ debr_init(void)
 		GTK_STOCK_CANCEL, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 	debr.pixmaps.stock_no = gtk_widget_render_icon(debr.invisible, GTK_STOCK_NO, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model), debr.config.menu_sort_column,
+		debr.config.menu_sort_ascending? GTK_SORT_ASCENDING:GTK_SORT_DESCENDING);
 	if (!configured)
 		preferences_dialog_setup_ui();
 	else
@@ -130,6 +132,8 @@ debr_config_load(void)
 	debr.config.menu_dir = g_key_file_get_string_list(debr.config.key_file, "general", "menu_dir", NULL, NULL);
 	debr.config.browser = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "browser", "firefox");
 	debr.config.htmleditor = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "htmleditor", "gedit");
+	debr.config.menu_sort_ascending = gebr_g_key_file_load_boolean_key(debr.config.key_file, "general", "menu_sort_ascending", TRUE);
+	debr.config.menu_sort_column = gebr_g_key_file_load_int_key(debr.config.key_file, "general", "menu_sort_column", MENU_MODIFIED_DATE);
 
 	if (debr.config.menu_dir == NULL || debr.config.menu_dir[0] == NULL)
 		return FALSE;
@@ -151,6 +155,8 @@ debr_config_save(void)
 			(const gchar * const *)debr.config.menu_dir, g_strv_length(debr.config.menu_dir));
 	g_key_file_set_string(debr.config.key_file, "general", "browser", debr.config.browser->str);
 	g_key_file_set_string(debr.config.key_file, "general", "htmleditor", debr.config.htmleditor->str);
+	g_key_file_set_boolean(debr.config.key_file, "general", "menu_sort_ascending", debr.config.menu_sort_ascending);
+	g_key_file_set_integer(debr.config.key_file, "general", "menu_sort_column", debr.config.menu_sort_column);
 
 	error = NULL;
 	string = g_key_file_to_data(debr.config.key_file, &length, &error);

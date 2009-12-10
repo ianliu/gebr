@@ -116,21 +116,18 @@ menu_setup_ui(void)
 		G_CALLBACK(menu_dialog_setup_ui), NULL);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(debr.ui_menu.tree_view), FALSE);
-	col = gtk_tree_view_column_new ();
-	gtk_tree_view_column_set_title (col, _("Menu"));
+	col = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(col, _("Menu"));
 
-	renderer = gtk_cell_renderer_pixbuf_new ();
-	gtk_tree_view_column_pack_start (col, renderer, FALSE);
-	gtk_tree_view_column_add_attribute (col, renderer, "stock-id", MENU_IMAGE);
+	renderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(col, renderer, FALSE);
+	gtk_tree_view_column_add_attribute(col, renderer, "stock-id", MENU_IMAGE);
 
-	renderer = gtk_cell_renderer_text_new ();
-	gtk_tree_view_column_pack_start (col, renderer, FALSE);
-	gtk_tree_view_column_add_attribute (col, renderer, "markup", MENU_FILENAME);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(col, renderer, FALSE);
+	gtk_tree_view_column_add_attribute(col, renderer, "markup", MENU_FILENAME);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(debr.ui_menu.tree_view), col);
-
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(debr.ui_menu.model),
-			MENU_MODIFIED_DATE, GTK_SORT_ASCENDING);
 
 	/*
 	 * Add special rows
@@ -1405,6 +1402,22 @@ menu_count_unsaved()
  * Section: Private
  */
 
+static void
+debr_menu_sort_by_column_id(gint column)
+{
+	gint id;
+	GtkSortType order;
+	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model), &id, &order);
+	order = (id == column)
+		? (order == GTK_SORT_ASCENDING) ? GTK_SORT_DESCENDING : GTK_SORT_ASCENDING
+		: GTK_SORT_ASCENDING;
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model),
+		column, order);
+	debr.config.menu_sort_column = column;
+	debr.config.menu_sort_ascending = (order == GTK_SORT_ASCENDING)? TRUE:FALSE;
+	debr_config_save();
+}
+
 /**
  * menu_sort_by_name:
  * @menu_item: 
@@ -1414,18 +1427,7 @@ menu_count_unsaved()
 static void
 menu_sort_by_name(GtkMenuItem * menu_item)
 {
-	gint id;
-	GtkSortType order;
-
-	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model),
-		&id, &order);
-
-	order = (id == MENU_FILENAME)
-		? (order == GTK_SORT_ASCENDING) ? GTK_SORT_DESCENDING : GTK_SORT_ASCENDING
-		: GTK_SORT_ASCENDING;
-
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model),
-		MENU_FILENAME, order);
+	debr_menu_sort_by_column_id(MENU_FILENAME);
 }
 
 /**
@@ -1437,22 +1439,7 @@ menu_sort_by_name(GtkMenuItem * menu_item)
 static void
 menu_sort_by_modified_date(GtkMenuItem * menu_item)
 {
-	gint id;
-	GtkSortType order;
-
-	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model),
-			&id, &order);
-
-	// Swap ordering
-	if (id == MENU_MODIFIED_DATE) {
-		order = (order == GTK_SORT_ASCENDING)?
-			GTK_SORT_DESCENDING : GTK_SORT_ASCENDING;
-	} else {
-		order = GTK_SORT_DESCENDING;
-	}
-
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model),
-			MENU_MODIFIED_DATE, order);
+	debr_menu_sort_by_column_id(MENU_MODIFIED_DATE);
 }
 
 /**
