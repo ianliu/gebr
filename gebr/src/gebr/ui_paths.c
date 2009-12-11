@@ -74,7 +74,6 @@ path_save(void)
 void
 path_list_setup_ui(void)
 {
-
 	GtkWidget *		dialog;
 	GtkWidget *		file_entry;
 	GtkWidget *		path_sequence_edit;

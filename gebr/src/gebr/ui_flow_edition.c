@@ -699,4 +699,5 @@ flow_edition_on_combobox_changed(GtkComboBox * combobox)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
 	flow_edition_set_io();
+	flow_browse_info_update();
 }
