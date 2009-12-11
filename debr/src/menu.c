@@ -1051,12 +1051,13 @@ menu_get_selected(GtkTreeIter * iter, gboolean warn_unselected_menu)
  * Returns: a #IterType.
  */
 IterType
-menu_get_selected_type(GtkTreeIter * iter, gboolean warn_unselected_menu)
+menu_get_selected_type(GtkTreeIter * _iter, gboolean warn_unselected_menu)
 {
 	IterType	type;
+	GtkTreeIter	iter;
 
-	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter))
-		switch (gtk_tree_store_iter_depth(debr.ui_menu.model, iter)) {
+	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_menu.tree_view), &iter))
+		switch (gtk_tree_store_iter_depth(debr.ui_menu.model, &iter)) {
 		case 0:
 			type = ITER_FOLDER;
 			break;
@@ -1070,6 +1071,8 @@ menu_get_selected_type(GtkTreeIter * iter, gboolean warn_unselected_menu)
 	else
 		type = ITER_NONE;
 
+	if (_iter != NULL)
+		*_iter = iter;
 	if (type != ITER_FILE && warn_unselected_menu)
 		debr_message(GEBR_LOG_ERROR, _("Please select a menu."));
 
