@@ -44,8 +44,10 @@
 static gboolean
 flow_io_select_function(GtkTreeSelection * selection, GtkTreeModel * model, GtkTreePath * path,
 gboolean path_currently_selected, struct ui_flow_io * ui_flow_io);
+
 static void
 flow_io_populate		(struct ui_flow_io *	ui_flow_io);
+
 static gboolean
 flow_io_actions			(gint			response,
 				 struct ui_flow_io *	ui_flow_io);
@@ -651,7 +653,7 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 				SERVER_POINTER, &server,
 				-1);
 		else {
-			icon = NULL;
+			icon = gebr.pixmaps.stock_warning;
 			name = g_strdup(address);
 		}
 
@@ -1034,6 +1036,19 @@ on_tree_view_tooltip		(GtkTreeView *		treeview,
 		return FALSE;
 	}
 
+	if (gtk_tree_view_get_column(treeview, 0) == column) {
+		GdkPixbuf * icon;
+		gtk_tree_model_get(model, &iter,
+			FLOW_IO_ICON, &icon, -1);
+		if (icon == gebr.pixmaps.stock_warning)
+			gtk_tooltip_set_text(tooltip,
+				_("This server no longer exists in the servers list dialog."));
+		else if (icon == gebr.pixmaps.stock_disconnect)
+			gtk_tooltip_set_text(tooltip,
+				_("This server is disconnected."));
+		else
+			return FALSE;
+	} else
 	if (gtk_tree_view_get_column(treeview, 1) == column) {
 		gtk_tree_model_get(model, &iter,
 			FLOW_IO_INPUT, &text, -1);
