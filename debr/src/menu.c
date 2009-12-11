@@ -666,22 +666,19 @@ menu_selected(void)
 	IterType	type;
 
 	type = menu_get_selected_type(&iter, FALSE);
-	debr.menu = NULL;
-	if (type == ITER_FOLDER) {
-		program_load_menu();
-		menu_folder_details_update(&iter);
-		return;
-	}
 	if (type == ITER_FILE) {
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 			MENU_XMLPOINTER, &debr.menu,
 			-1);
-	}
+	} else
+		debr.menu = NULL;
 
-	/* fire it! */
-	program_load_menu();
-	menu_details_update();
 	do_navigation_bar_update();
+	program_load_menu();
+	if (type == ITER_FOLDER)
+		menu_folder_details_update(&iter);
+	else
+		menu_details_update();
 }
 
 /**
