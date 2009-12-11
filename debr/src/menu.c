@@ -735,7 +735,7 @@ menu_saved_status_set(MenuStatus status)
 {
 	GtkTreeIter		iter;
 
-	if (menu_get_selected_type(&iter, FALSE) == ITER_FILE)
+	if (menu_get_selected(&iter, FALSE))
 		menu_saved_status_set_from_iter(&iter, status);
 }
 
@@ -821,7 +821,7 @@ menu_dialog_setup_ui(void)
 	GtkWidget *		menuhelp_hbox;
 	GtkWidget *		menuhelp_view_button;
 	GtkWidget *		menuhelp_edit_button;
-        GtkWidget *             menuhelp_refresh_button;
+	GtkWidget *		menuhelp_refresh_button;
 	GtkWidget *		author_label;
 	GtkWidget *		author_entry;
 	GtkWidget *		email_label;
@@ -837,7 +837,7 @@ menu_dialog_setup_ui(void)
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 	type = menu_get_selected_type(&iter, TRUE);
 	if (type == ITER_FOLDER) {
-		GtkTreePath * path;
+		GtkTreePath *	path;
 		path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_menu.model), &iter);
 		gtk_tree_view_expand_row(GTK_TREE_VIEW(debr.ui_menu.tree_view), path, FALSE);
 		gtk_tree_path_free(path);

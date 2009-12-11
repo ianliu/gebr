@@ -407,18 +407,20 @@ gebr_gui_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter)
 	else {
 		GtkTreeModel *	model;
 		GList *		list, * first;
+		gboolean	ret = TRUE;
 
 		list = gtk_tree_selection_get_selected_rows(
 			gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view)), &model);
 		first = g_list_first(list);
 		if (first == NULL || first->data == NULL)
-			return FALSE;
-		gebr_gui_gtk_tree_model_path_to_iter(model, (GtkTreePath*)first->data, iter);
+			ret = FALSE;
+		if (iter != NULL)
+			gebr_gui_gtk_tree_model_path_to_iter(model, (GtkTreePath*)first->data, iter);
 
 		g_list_foreach(list, (GFunc)gtk_tree_path_free, NULL);
 		g_list_free(list);
 
-		return TRUE;
+		return ret;
 	}
 }
 
