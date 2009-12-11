@@ -541,7 +541,7 @@ on_dict_edit_cursor_changed(GtkTreeView * tree_view, struct dict_edit_data * dat
 {
 	GtkTreeIter	iter;
 	GtkTreeIter	parent;
-	gboolean	is_add_parameter;
+// 	gboolean	is_add_parameter;
 
 	if (!dict_edit_get_selected(data, &iter))
 		return;

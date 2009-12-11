@@ -80,7 +80,8 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 	GtkWidget *			frame;
 	GtkWidget *			scrolled_window;
 	GtkWidget *			infopage;
-	GtkWidget *                     table;
+	GtkWidget *			table;
+	gint				row;
 
 	/* alloc */
 	ui_flow_browse = g_malloc(sizeof(struct ui_flow_browse));
@@ -146,60 +147,61 @@ flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gtk_box_pack_start(GTK_BOX(infopage), ui_flow_browse->info.description, FALSE, TRUE, 10);
 
 	/* Dates */
-	table = gtk_table_new(3, 2, FALSE);
+	table = gtk_table_new(3, 2, FALSE), row = 0;
 	gtk_box_pack_start(GTK_BOX(infopage), table, FALSE, TRUE, 10);
 
 	ui_flow_browse->info.created_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.created_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.created_label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
-
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.created_label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 	ui_flow_browse->info.created = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.created), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.created, 1, 2, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.created, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3), row++;
 
 	ui_flow_browse->info.modified_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.modified_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.modified_label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
-
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.modified_label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 	ui_flow_browse->info.modified = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.modified), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.modified, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.modified, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3), row++;
 
 	ui_flow_browse->info.lastrun_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.lastrun_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.lastrun_label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
-
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.lastrun_label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 	ui_flow_browse->info.lastrun = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.lastrun), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.lastrun, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.lastrun, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* I/O */
-	table = gtk_table_new(3, 2, FALSE);
+	table = gtk_table_new(4, 2, FALSE), row = 0;
 	gtk_box_pack_start(GTK_BOX(infopage), table, FALSE, TRUE, 10);
+
+	ui_flow_browse->info.server_label = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.server_label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.server_label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
+	ui_flow_browse->info.server = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.server), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.server, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3), row++;
 
 	ui_flow_browse->info.input_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.input_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.input_label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
-
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.input_label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 	ui_flow_browse->info.input = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.input), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.input, 1, 2, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.input, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3), row++;
 
 	ui_flow_browse->info.output_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.output_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.output_label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
-
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.output_label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 	ui_flow_browse->info.output = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.output), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.output, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.output, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3), row++;
 
 	ui_flow_browse->info.error_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.error_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.error_label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
-
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.error_label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 	ui_flow_browse->info.error = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.error), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.error, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.error, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* Help */
 	ui_flow_browse->info.help = gtk_button_new_from_stock(GTK_STOCK_INFO);
@@ -226,6 +228,8 @@ flow_browse_info_update(void)
 	if (gebr.flow == NULL) {
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.title), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.description), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.server_label), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.server), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output_label), "");
@@ -246,8 +250,8 @@ flow_browse_info_update(void)
 		return;
 	}
 
-	gchar *		markup;
-	GString *	text;
+	gchar *			markup;
+	GString *		text;
 
 	/* Title in bold */
 	markup = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)));
@@ -275,6 +279,9 @@ flow_browse_info_update(void)
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun),
 			   gebr_localized_date(gebr_geoxml_flow_get_date_last_run(gebr.flow)));
 	/* I/O labels */
+	markup = g_markup_printf_escaped("<b>%s</b>", _("Server:"));
+	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.server_label), markup);
+	g_free(markup);
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Input:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.input_label), markup);
 	g_free(markup);
@@ -284,19 +291,28 @@ flow_browse_info_update(void)
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Error log:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.error_label), markup);
 	g_free(markup);
+	/* Server */
+// 	if (gebr.flow_server != NULL)
+	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.server),
+		server_get_name_from_address(gebr_geoxml_flow_server_get_address(gebr.flow_server)));
+// 	else
+// 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input), _("(none)"));
 	/* Input file */
-	if (strlen(gebr_geoxml_flow_io_get_input(gebr.flow)))
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input), gebr_geoxml_flow_io_get_input(gebr.flow));
+	if (strlen(gebr_geoxml_flow_server_io_get_input(gebr.flow_server)))
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input),
+			gebr_geoxml_flow_server_io_get_input(gebr.flow_server));
 	else
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input), _("(none)"));
 	/* Output file */
-	if (strlen(gebr_geoxml_flow_io_get_output(gebr.flow)))
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output), gebr_geoxml_flow_io_get_output(gebr.flow));
+	if (strlen(gebr_geoxml_flow_server_io_get_output(gebr.flow_server)))
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output),
+			gebr_geoxml_flow_server_io_get_output(gebr.flow_server));
 	else
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output), _("(none)"));
 	/* Error file */
-	if(strlen(gebr_geoxml_flow_io_get_error(gebr.flow)))
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error), gebr_geoxml_flow_io_get_error(gebr.flow));
+	if(strlen(gebr_geoxml_flow_server_io_get_error(gebr.flow_server)))
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error),
+			gebr_geoxml_flow_server_io_get_error(gebr.flow_server));
 	else
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error), _("(none)"));
 
@@ -423,14 +439,11 @@ flow_browse_load(void)
 	gebr.flow = GEBR_GEOXML_FLOW(document_load(filename));
 	if (gebr.flow == NULL)
 		goto out;
-
-	/* load into UI */
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
 		FB_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.flow)),
 		FB_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow)),
 		-1);
 	flow_edition_load_components();
-	flow_browse_info_update();
 
 	/* load revisions */
 	gebr_geoxml_flow_get_revision(gebr.flow, &revision, 0);
@@ -457,6 +470,7 @@ flow_browse_load(void)
 		gebr_geoxml_flow_get_server(gebr.flow, &first_server, 0);
 		flow_server = GEBR_GEOXML_FLOW_SERVER(first_server);
 	}
+
 	/* select last edited server */
 	if (server_find_address(gebr_geoxml_flow_server_get_address(flow_server), &server_iter))
 		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox),
@@ -464,6 +478,8 @@ flow_browse_load(void)
 	else
 		gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), 0);
 	flow_edition_on_server_changed();
+
+	flow_browse_info_update();
 
 out:	g_free(filename);
 	g_free(title);

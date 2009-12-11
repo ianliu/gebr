@@ -131,7 +131,7 @@ server_new(const gchar * address, gboolean autoconnect)
 	server->comm->user_data = server;
 	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
 		SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
-		SERVER_NAME, !strcmp(address, "127.0.0.1") ? _("Local server") : address,
+		SERVER_NAME, server_get_name_from_address(address),
 		SERVER_POINTER, server,
 		SERVER_AUTOCONNECT, autoconnect,
 		-1);
@@ -224,4 +224,10 @@ server_find_address(const gchar * address, GtkTreeIter * iter)
 	}
 
 	return FALSE;
+}
+
+const gchar *
+server_get_name_from_address(const gchar * address)
+{
+	return !strcmp(address, "127.0.0.1") ? _("Local server") : address;
 }

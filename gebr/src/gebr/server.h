@@ -22,6 +22,7 @@
 
 #include <libgebr/comm/protocol.h>
 #include <libgebr/comm/server.h>
+#include <libgebr/geoxml.h>
 
 struct server {
 	struct gebr_comm_server *	comm;
@@ -43,5 +44,8 @@ server_find(struct server * server, GtkTreeIter * iter);
 
 gboolean
 server_find_address(const gchar * address, GtkTreeIter * iter);
+
+const gchar *
+server_get_name_from_address(const gchar * address);
 
 #endif //__SERVER_H

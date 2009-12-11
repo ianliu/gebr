@@ -48,6 +48,8 @@ struct ui_flow_browse {
 		GtkWidget *	lastrun_label;
 		GtkWidget *	lastrun;
 
+		GtkWidget *	server_label;
+		GtkWidget *	server;
 		GtkWidget *	input_label;
 		GtkWidget *	input;
 		GtkWidget *	output_label;
