@@ -1,7 +1,7 @@
 Source: debr
 Priority: extra
 Maintainer: Ricardo Biloti <biloti@gmail.com>
-Build-Depends: debhelper (>= 5)
+Build-Depends: debhelper (>= 5), intltool, libgebr-dev, gnome-doc-utils
 Standards-Version: 3.7.2
 
 Package: debr

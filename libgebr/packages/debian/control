@@ -1,13 +1,13 @@
 Source: libgebr
 Priority: extra
 Maintainer: Ricardo Biloti <biloti@gmail.com>
-Build-Depends: debhelper (>= 5)
+Build-Depends: debhelper (>= 5), libtool, intltool, zlib1g-dev, libwebkit-dev | libgtk2.0-dev, libgdome2-dev
 Standards-Version: 3.7.2
 
 Package: libgebr-dev
 Section: libdevel
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: zlib1g-dev, libwebkit-dev | libgtk2.0-dev, libgdome2-dev, libgebr0
 Description: GeBR library collection
  GeBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.
@@ -33,7 +33,7 @@ Description: GeBR library collection
 Package: libgebr0
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: libwebkit-1.0-2 | libwebkit-1.0-1 | libgtk2.0-0, libgdome2-0
 Description: GeBR library collection
  GeBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.
