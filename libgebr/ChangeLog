@@ -1,20 +1,296 @@
-2009-08-10  Ricardo Biloti <biloti@gmail.com>
+2009-12-11  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
 
-	* Tag for Release 0.9.14 created
+	* Marking the release 0.9.15.
+	* Fixed build dependencies to build from scratch in chroots.
+
+2009-12-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix dnd bug when the item is moved to its position
+	* fixed selection again
+	* fixed gebr_gui_gtk_tree_view_get_selected
+
+2009-12-09  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - fixes selection issues in debr
+	  - minimal size for column "Type" in parameters' dictionary
+	  - tooltip for "New" in parameters' dictionary
+
+2009-12-09  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* fixed typo in header name.
+
+2009-12-08  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - put "New" in parameters dictionary in italic
+	  - some unsuccessful code for handling tab/enter in renderer's
+	  edition
+	* use G_CALLBACK instead of GCallback cast
+
+2009-12-06  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix dictionary add through popup menu
+	* - new flag parameter with value 'off'
+	  - validate on/off value for a flag parameter
+
+2009-12-05  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* check for empty list separators in debr
+
+2009-12-04  Ricardo Biloti <biloti@gebrproject.com>
+
+	* commit 1381 ported to menu-query
+
+2009-12-03  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fixed __gtk_sequence_edit_move_top and
+	  __gtk_sequence_edit_move_bottom
+	* - added server element to GeoXmlSequence type check
+	  - fixed __gebr_geoxml_sequence_move_after and
+	  __gebr_geoxml_sequence_move_before
+	  - check for emptyness in server/IO dialog
+
+2009-12-02  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - added gebr_geoxml_flow_server_get_last_runned_server
+	  - by default select last run/edited server
+	  - put server status icon on flow edition
+	* - use last edited server/IO from server selected
+	  - fixed local server visualization on server/IO edition
+	* - don't add local server in geoxml (already done in gebr)
+	  - fixes server address confusion (local server use an alias for
+	  display)
+	  - minor memory leaks fixes
+
+2009-12-01  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - removed minor warnings
+	  - refactored LOG enums names and server IO
+	  - fixed local server addess
+
+2009-11-22  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Inserted an IO button to Flow edition tab
+	  Replaced all GTK_SIGNAL_FUNC to G_CALLBACK
+	* Another interface change for Server IO
+
+2009-11-18  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* libgebr name refactoring
+	* fixed wrong renaming
+	* libgebr_comm name refactored
+
+2009-11-18  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Changed the mapping from DTD 0.3.0 to 0.3.1 (Fixes issue 88)
+
+2009-11-14  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* - Fixed a critical bug in geoxml/document.c
+
+2009-11-14  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* libgebr_gui name refactored
+	* geoxml name refactoring
+
+2009-11-07  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix load log (Fixes issue 83)
+
+2009-10-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* adjust parameters' window size to fit parameters horizontally
+	  (Fixes issue 58)
+
+2009-10-24  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - for gtkfileentry put browse button inside entry
+	  - parameter file filtering
+
+2009-10-24  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* compilation and rpm building fixes backported from tag 0.9.14.
+
+2009-10-24  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* - Groups which has required parameters are now highlighted (Fixes
+	  issue 36)
+
+2009-10-18  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix int/float limits application in debr
+	* fixes to parameter editing (Fixes issue 84) (Fixes issue 85)
+	* - build user documentation on install
+	  - added Help/Contents menu
+
+2009-10-17  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* - Renamed most of the comm library classes
+
+2009-10-16  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* - Refactored libgebr/gui/utils
+	* - Refactored GSocket class to conform with the new GLib 2.22
+
+2009-10-15  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* automake docbook and html document generation
+
+2009-10-13  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* support minimum and maximum limits for int and float parameters
+	* added support in geoxml for int/float limits and file filtering
+
+2009-10-08  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Fixes issue 51.
+
+2009-10-08  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Fix flow component removal (Fixes issue 76)
+
+2009-10-07  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix int/float validation (Fixes issue 75)
+
+2009-10-07  Ricardo Biloti <biloti@gebrproject.com>
+
+	* version inferred from svn
+	* - author's emails update
+	  - DTD upgrade concerning issue 11 and issue 12
+
+2009-10-06  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Fixes issue 69.
+
+2009-10-04  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* - IMPORTANTE: alterada a ordem de 'io' e 'servers' no DTD do
+	  flow!
+	  - Seleção do servidor usado mais recentemente.
+	* Support for multiple Server IO configurations.
+
+2009-10-02  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - fix set_locale use
+	  - parameters' dictionary now with project/line/flow view
+
+2009-09-29  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* improments for dictionary
+
+2009-09-20  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a bug with g_key_file_load_string_key where the group name
+	  doesn't exist
+	* Re factored libgebr_gui_gtk_tree_store_reparent,
+	  Fixed a bug with gtk_directory_chooser_set_paths for NULL paths,
+	  Added some documentation.
+
+2009-09-19  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* preliminar dictionary support
+
+2009-09-17  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* 
+
+2009-09-12  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix to sexy entry
+	* use sexy icon edit for old gtk versions
+	* fixes keyword for new dict parameter
+	* - fix dict add/remove (Fixes issue 73)
+	  - validate int and float dict parameters
+	  - last commit: Fixes issue 72
+
+2009-09-10  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* icons added
+	* move parameters' dictionary to project/line and flow toolbars
+
+2009-09-10  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Multiple directories!
+
+2009-09-08  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - fix invalid new document (flow, project and line) creation
+	  - parameters' dictionary edit on the way
+
+2009-09-01  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* work on dict support for projetcs and lines and impletation on
+	  libgebr_geoxml
+
+2009-08-30  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - fix top/bottom move of flows in gebr
+	  - geoxml flow code for dictionaries of parameters
+
+2009-08-24  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* added json-glib to libgebr_comm for future protocol change
+
+2009-08-14  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fix the segfault when no directories are choosen on debr
+	  preferences
+
+2009-08-13  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* more robust menu modification discovery
+
+2009-08-13  Ricardo Biloti <biloti@gebrproject.com>
+
+	* set help option to menu-edit
+
+2009-08-13  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added suport for multiple directories without changing the debr
+	  menu TreeView.
+	  It only scans all folders for menu files and open them.
+
+2009-08-13  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - fix bold style required parameters in group
+	  - fix group instaciation
+	* fix __geoxml_sequence_check
+	* fixed rpm files
+	* - fix program help view from details view
+	  - clean enum options label/value after add
+
+2009-08-12  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* clean value used after added to list (Fixes issue 52)
+	* - fix bug: separator wasn't set on list reenable (Fixes issue 54)
+	  - set sensitive properly for exclusive instances
+	* fix several bugs in debr program preview (Fixes issue 47)
+
+2009-08-12  Ricardo Biloti <biloti@gebrproject.com>
+
+	* ignore unkown options and always diff last two provided files
+	* menu-diff tool added
+
+2009-08-11  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Tag 0.9.14 updates backported to trunk
+
+2009-08-10  Ricardo Biloti <biloti@gebrproject.com>
+
 	* Portuguese translation updated and small fix in POTFILES.in for
 	  libgebr
 
-2009-08-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-08-07  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix regression: program paste
 	* - fix save all action in debr
 	  - fix parameter paste
 
-2009-08-06  Ricardo Biloti <biloti@gmail.com>
+2009-08-06  Ricardo Biloti <biloti@gebrproject.com>
 
 	* Fixes issue 43
 
-2009-08-05  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-08-05  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* parameters preview improved and moved to 'parameter' tab
 	* - functions of utils at libgebr_gui prefixed
@@ -22,28 +298,28 @@
 	* - less intrusive multiple to single selection (Fixes issue 45)
 	  - added libgebr_gtk_tree_view_turn_to_single_selection
 
-2009-08-04  Ricardo Biloti <biloti@gmail.com>
+2009-08-04  Ricardo Biloti <biloti@gebrproject.com>
 
 	* enum details displayed
 	* GeBR Project site update
 
-2009-08-04  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-08-04  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* flags can't be list anymore in debr (Fixes issue 38)
-	* - added gebr_directory_foreach_file
+	* - added libgebr_directory_foreach_file
 	  - support for new system menu filename (Fixes issue 33)
 
-2009-08-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-08-03  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* repect cancel/no actions in gebr (Fixes issue 44)
 
-2009-07-30  Ricardo Biloti <biloti@gmail.com>
+2009-07-30  Ricardo Biloti <biloti@gebrproject.com>
 
 	* new set-filename option added
 	* upgrade to latest version
 	* Fix rules for marshalers.{c,h}
 
-2009-07-30  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-07-30  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fixes element counting (Fixes issue 4)
 	* debr category list with reference count (Fixes issue 14)
@@ -52,43 +328,43 @@
 	* added menu-edit and menu-query to libgebr_geoxml
 	* gebr config directory structure organized
 
-2009-07-30  Ricardo Biloti <biloti@gmail.com>
+2009-07-30  Ricardo Biloti <biloti@gebrproject.com>
 
 	* html doc stripped from svn
 	* html doc stripped from svn and project site reference update
 
-2009-07-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-07-16  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* refactored copy/pasted in debr, supporting multiple selection
 	  copies/pastes
 	* support for settings status with multiple selection in gebr
 
-2009-07-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-07-14  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* install menu feature in debr (issue 32)
 
-2009-06-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-06-26  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - fixes to multiple selection in debr
 	  - do not show manual list value edit for enums lists
 
-2009-06-25  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-06-25  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - multiple selection for flow browse (gebr)
 	  - various small clenups/fixes
 	* multiple selection for parameters in debr
 
-2009-06-24  Ricardo Biloti <biloti@gmail.com>
+2009-06-24  Ricardo Biloti <biloti@gebrproject.com>
 
 	* ensures that gebr conf files could be created
 	* prevent null pointer handling
 	* empty keys are treated as not defined
 
-2009-06-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-06-24  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* multiple selection for programs in debr
 
-2009-06-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-06-20  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* remove misc dir
 	* - removal of libgebr_misc which were moved to libgebr
@@ -96,105 +372,105 @@
 	  - libgebr refactored
 	  - minor cleanups
 
-2009-06-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-06-19  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* missing stuff from tag 0.9.13 to trunk
 
-2009-06-19  Ricardo Biloti <biloti@gmail.com>
+2009-06-19  Ricardo Biloti <biloti@gebrproject.com>
 
 	* Makefile.in.in deleted since they are generated by intltoolize
 	* backported to trunk changes from tag 0.9.13
 
-2009-06-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-06-17  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* only use g_dgettext if available
 	* - open in a new window feature for newer webkitgtk versions
 	* - fixes to webkit help viewer
 	  - internationalize geoxml-{upgrade,validate}
 
-2009-06-12  Ricardo Biloti <biloti@gmail.com>
+2009-06-12  Ricardo Biloti <biloti@gebrproject.com>
 
 	* Portuguese translation update
 
-2009-06-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-06-10  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - fixed use of newer webkit
 	  - use tmp folder inside home dir
 
-2009-06-10  Ricardo Biloti <biloti@gmail.com>
+2009-06-10  Ricardo Biloti <biloti@gebrproject.com>
 
 	* webkit enabled by default
 
-2009-06-04  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-06-04  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - import/export support on gebr
 	  - fix crash on project delete
 	  - added tmp dir to gebr's directory
 	  - minor fixes/cleanups
 
-2009-06-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-06-03  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* use gtk_show_uri if available
 	* fix webkit link opening
 	* use libgebr_gui_help_show
 
-2009-06-03  Ricardo Biloti <biloti@gmail.com>
+2009-06-03  Ricardo Biloti <biloti@gebrproject.com>
 
 	* compressed files support
 
-2009-06-02  Ricardo Biloti <biloti@gmail.com>
+2009-06-02  Ricardo Biloti <biloti@gebrproject.com>
 
 	* activate gebr project link in about dialogs
 
-2009-05-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-05-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* use $HOME/.gebr/gebrdata as data dir
-	* added gebr_geoxml_parameter_get_type_name in parameter.h
-	* added gebr_geoxml_parameter_get_type_name
+	* added geoxml_parameter_get_type_name in parameter.h
+	* added geoxml_parameter_get_type_name
 
-2009-05-13  Ricardo Biloti <biloti@gmail.com>
+2009-05-13  Ricardo Biloti <biloti@gebrproject.com>
 
 	* - gebrd internationalization
 	  - killall for local servers
 	  - Portuguese translation fixes
 
-2009-05-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-05-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - replaced support.h to libgebrintl.h
 	  - libgebr is now and independent library
 	  - option to build libgebr with no GUI linkage
 	  - fixed libgebr internacionalization with the introduction of
-	  gebr_libinit
+	  libgebr_init
 
-2009-05-08  Ricardo Biloti <biloti@gmail.com>
+2009-05-08  Ricardo Biloti <biloti@gebrproject.com>
 
 	* desktop menu fix and intltool version dependency relaxed
 
-2009-05-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-05-08  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* added option to kill daemon on server
 	* - added documentation for gebr and libgebr to the repository
 	  - prototypes for project/line import/export
 
-2009-05-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-05-07  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - gebr translated to pt_BR
 	  - libgebr translated to pt_BR (but yet not using gettext
 	  properly)
 
-2009-04-30  Ricardo Biloti <biloti@gmail.com>
+2009-04-30  Ricardo Biloti <biloti@gebrproject.com>
 
 	* internationalization support for LibGeBR
 
-2009-04-09  Ricardo Biloti <biloti@gmail.com>
+2009-04-09  Ricardo Biloti <biloti@gebrproject.com>
 
 	* configure.ac backported to trunk
 
-2009-04-08  Ricardo Biloti <biloti@gmail.com>
+2009-04-08  Ricardo Biloti <biloti@gebrproject.com>
 
 	* changelogs backported to trunk
 
-2009-04-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-04-03  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* more clang reported erros fixed
 	* - fix errors reported by clang
@@ -203,31 +479,31 @@
 	* fix selection on removal from gtktreeview
 	* fix jid generation
 
-2009-04-02  Ricardo Biloti <biloti@gmail.com>
+2009-04-02  Ricardo Biloti <biloti@gebrproject.com>
 
 	* one less size_t instead of ssize_t
 
-2009-04-02  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-04-02  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - fixed write in gsocket
 	  - more robust protocol error handling using a hash table for
 	  commands
 
-2009-03-25  Ricardo Biloti <biloti@gmail.com>
+2009-03-25  Ricardo Biloti <biloti@gebrproject.com>
 
 	* update Changelogs and configure.ac's
 
-2009-03-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-03-24  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - fixed accelerators activation
 	  - enabled new/copy/paste accelerators on debr
 	* finnaly we have shortcuts working (on gebr for now)
 
-2009-03-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-03-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix changelog of libgebr as in 0.9.11 tag
 
-2009-03-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-03-21  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* debian changelog readded to trunk
 	* fix sort again
@@ -243,29 +519,29 @@
 	* - close/clear actions for validate (debr)
 	  - functions to handle multiple selection in libgebr_gui
 
-2009-03-13  Ricardo Biloti <biloti@gmail.com>
+2009-03-13  Ricardo Biloti <biloti@gebrproject.com>
 
 	* debian control files updated
 
-2009-03-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-03-12  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* type checking for geoxml
 
-2009-03-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-03-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* first "trashy" copy/paste support for parameter
 
-2009-03-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-03-07  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix for referenced parameter of type file and range
 	* read keyword from referencee when parameter is a reference
 
-2009-03-04  Ricardo Biloti <biloti@gmail.com>
+2009-03-04  Ricardo Biloti <biloti@gebrproject.com>
 
 	* About dialog fixed (version, url, and close button)
 	* actual version displayed in about dialog
 
-2009-03-02  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-03-02  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix bash login message removal for ssh command
 	* - removed changelog.in from debian packages
@@ -273,11 +549,11 @@
 	* protect against login messages when running servers
 	* fix list parameters on instances
 
-2009-01-29  Ricardo Biloti <biloti@gmail.com>
+2009-01-29  Ricardo Biloti <biloti@gebrproject.com>
 
 	* ChangeLogs updated
 
-2009-01-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-29  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - do not allow list rename for enums
 	  - code cleanups
@@ -286,16 +562,16 @@
 	  - really fix the problem with list parameter (now for all types)
 	* fix last commit: really fixed list parameter editing
 	* - valuesequenceedit refactored
-	  - fix gebr_gui_parameter_widget's on_edit_list_toggled
+	  - fix parameter_widget's on_edit_list_toggled
 
-2009-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-28  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - fix drag n' drop on gtksequenceedit and devivates
 	  - fix save on exit dialog on debr
 	* ¡commit 1000! several UI tweaks
 	* follow required condition for enums when reading its value
 
-2009-01-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix regression on g_listen_socket_get_next_pending_connection
 	* - fix geoxmlparametergroup
@@ -303,148 +579,148 @@
 	  - fix help edit in debr: a empty file can be a file with a return
 	  char. (length 1)
 	* - various bugfixes to handle reference parameters
-	  - gebr_geoxml_parameter_get_type resolve references
+	  - geoxml_parameter_get_type resolve references
 	  - a lot of fixes to geoxmlsequence functions
 	  - rewritten dran n' drop API
 	  - full drag n' drop support in debr's parameter page
 
-2009-01-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-26  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* fix gebr_geoxml_parameter_set_type, fixing wrong range parameter
+	* fix geoxml_parameter_set_type, fixing wrong range parameter
 	  creation
 
-2009-01-26  Ricardo Biloti <biloti@gmail.com>
+2009-01-26  Ricardo Biloti <biloti@gebrproject.com>
 
 	* fix to compile even with GLIB 2.12
 
-2009-01-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-26  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* keep parameter label synced with references in the group
 	* - initial buggy code to support drag n' drop from/to/inside a
 	  group (debr)
 
-2009-01-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-24  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* - fix __gebr_geoxml_sequence_move_before with position NULL
+	* - fix __geoxml_sequence_move_before with position NULL
 	  - fixes to top/bottom at gtksequenceedit and derivatives
 
-2009-01-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-23  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* don't show empty option in enum when it is required
-	* fix __gebr_geoxml_foreach_element_with_tagname_r, fixing conversion
+	* fix __geoxml_foreach_element_with_tagname_r, fixing conversion
 	  from flow 0.2.1 to 0.2.2
 
-2009-01-22  Ricardo Biloti <biloti@gmail.com>
+2009-01-22  Ricardo Biloti <biloti@gebrproject.com>
 
 	* fix segfault whenever no files are provided
 
-2009-01-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* geoxml flow revisions supported in gebr
 	* support for moving with drag n' drop on gktsequenceedit
 
-2009-01-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-20  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* return value and comment fix for gebr_comm_server_forward_x11
-	* more beautiful and robust gebr_comm_server_forward_x11
+	* return value and comment fix for comm_server_forward_x11
+	* more beautiful and robust comm_server_forward_x11
 	* first working version of x11 full redirect!
 	* - first working version o gchannelsocket
-	  - gebr_comm_stream_socket_connect
-	* - fixed _gebr_comm_socket_address_get_sockaddr
+	  - g_stream_socket_connect
+	* - fixed _g_socket_address_get_sockaddr
 	  - fixes to gchannelsocket
 	* general refactoring in libgebr_comm to really support unix
 	  sockets
 
-2009-01-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-16  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fixes to rpm creation
 
-2009-01-15  Ricardo Biloti <biloti@gmail.com>
+2009-01-15  Ricardo Biloti <biloti@gebrproject.com>
 
 	* preparation for release 0.9.7
 	* strip debug code
 
-2009-01-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-14  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix move_after with position=NULL
 
-2009-01-14  Ricardo Biloti <biloti@gmail.com>
+2009-01-14  Ricardo Biloti <biloti@gebrproject.com>
 
 	* copyright text fixed in about dialog
 
-2009-01-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-14  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - updated TODO
 	  - fixed enum option add and get functions
 	  - fixed program_parameter documentation
 	  - fixed bug in type change on selection (debr)
 
-2009-01-12  Ricardo Biloti <biloti@gmail.com>
+2009-01-12  Ricardo Biloti <biloti@gebrproject.com>
 
 	* - Copyright messages updated
 	  - accents suppressed
 
-2009-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-12  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fixed debug flag usage
 	* removed mkinstalldirs (also generated)
 	* removed m4 (is generated by libtoolize)
 	* select next or previous iter after delete actions
 
-2009-01-12  Ricardo Biloti <biloti@gmail.com>
+2009-01-12  Ricardo Biloti <biloti@gebrproject.com>
 
 	* delete automatically generated files
 	* - Copyright messages updated
 	  - accents suppressed
 	* package version fixed
 
-2009-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-12  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* use --disable-debug to build packages
 
-2009-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - updated TODO
 	  - fix compilation
 	  - word-wrap option at job log popup menu
 	* popup menu for parameter type change in debr
 
-2009-01-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-10  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fixed crash for disconnect & connect of a connecting server
 	* better move with drag n' drop
 
-2009-01-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2009-01-09  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - updated TODO
 	  - don't use gtk_tree_view_convert_widget_to_bin_window_coords if
 	  gtk's version is lower than 2.12
 
-2008-12-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-12-24  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - move by drag n' drop refactored
 	  - input/ouput items in flow edition view
 
-2008-12-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-12-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix set_widget_value for reference parameters
 	* bizarre bug fixes
 
-2008-12-20  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-12-20  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - fix bug in move with drag n' drop
 	  - work on support for groups in gebr
 	* final fixes to group impl. in debr
 	* fixes to group implementation
 
-2008-12-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-12-19  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix last commit
 	* don't use tooltip on tree view if gtk version < 2.12
 	* workaround for id lookup
 	* fix connect after disconnect on server dialog
 
-2008-12-18  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-12-18  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix tooltip on tree view usage
 	* - drag n' drop for debr
@@ -455,11 +731,11 @@
 	* aff, finally move with drag n' drop working (huge delay due to
 	  crappy gtk infrastructure)
 
-2008-12-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-12-17  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* first version of server dialog redesign
 
-2008-12-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-12-16  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix to client/server check
 	* gtk < 2.12 cannot set tooltips for a gtktreeview
@@ -468,11 +744,11 @@
 	* ported gengetopt in gebr to gkeyfile, keeping backwards
 	  compatibility
 
-2008-12-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-12-15  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* add proper extension if needed on save actions
 
-2008-11-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-11-29  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* a bunch of fixes to parameter group in debr implementation
 	* fixes to parameter group implementation
@@ -480,37 +756,37 @@
 	  :)
 	  - save all button in debr
 
-2008-11-29  Ricardo Biloti <biloti@gmail.com>
+2008-11-29  Ricardo Biloti <biloti@gebrproject.com>
 
 	* ltmain.sh removed (again)
 
-2008-11-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-11-28  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix libgebr's libtool
 
-2008-11-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-11-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - readded actions icons
 	  - put statuses on a menu tool button
 
-2008-11-27  Ricardo Biloti <biloti@gmail.com>
+2008-11-27  Ricardo Biloti <biloti@gebrproject.com>
 
 	* purge unused dirs
 	* edit-clear icon added
 
-2008-11-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-11-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* to satisfy git-svn
 
-2008-11-27  Ricardo Biloti <biloti@gmail.com>
+2008-11-27  Ricardo Biloti <biloti@gebrproject.com>
 
 	* system-run replaced by run
 
-2008-11-26  Ricardo Biloti <biloti@gmail.com>
+2008-11-26  Ricardo Biloti <biloti@gebrproject.com>
 
 	* ltmain.sh removed
 
-2008-11-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-11-26  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - fixes to gebr theme
 	  - fix flow edition popup menu
@@ -519,39 +795,39 @@
 	  - added index.theme
 	* added stock theme based on kde4's oxygen
 
-2008-11-25  Ricardo Biloti <biloti@gmail.com>
+2008-11-25  Ricardo Biloti <biloti@gebrproject.com>
 
 	* ltmain.sh removed from svn
 	* version updated to 0.9.6-pre
 
-2008-11-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-11-24  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - fixed geoxml's new parameter and program creation
 	  - minor fixes to gebr and debr creation
 	* add forgotten id to parameter
 
-2008-11-24  Ricardo Biloti <biloti@gmail.com>
+2008-11-24  Ricardo Biloti <biloti@gebrproject.com>
 
 	* DTD version update to 0.3.0
 
-2008-11-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-11-24  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* the last build fix?
 	* more compilation due to old installation with old headers
 
-2008-11-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-11-23  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* the saga of list parameters ended!
 	  - changed DTD to make value and default values independets
-	  - refactoring of GebrGeoXmlProgramParameter functions
-	  - general refacte on gebr_gui_parameter_widget function:
+	  - refactoring of GeoXmlProgramParameter functions
+	  - general refacte on parameter_widget function:
 	  - every change is auto submited
 	  - ability to auto rebuild the ui to match new parameter
 	  properties
 	  - adapted to the in each element value list parameter
 	  - a lot of conversion to flow 0.3.0 fixes
 
-2008-11-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-11-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* uhm, really interesting problem to fix and learn hygienic
 	  macros... that is, conversion from flow 0.2.1 to 0.2.2 fixed (the
@@ -567,7 +843,7 @@
 	  - fixes in geoxml
 	  - removal of gebrme
 
-2008-11-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-11-21  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* last commit with git commit's -a option
 	* - imported geoxml from branch flow0.3
@@ -576,37 +852,37 @@
 	  - small fixes
 	* merged flow0.3 into trunk
 
-2008-08-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-08-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* renamed GHostAddress to GSocketAddress, GTcpServer to
 	  GListenSocket and GTcpSocket to GStreamSocket to support unix
 	  sockets
 
-2008-06-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-06-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* added more libtool stuff
 
-2008-06-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-06-26  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* final merge operations
 	* branches packages_reorganization merged with trunk
 	* - created tag 0.9.5 for release, and changed trunk pre versions
 	  - created branch packages_reorganitazation
 
-2008-06-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-06-24  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* build fix: added upgrade to Makefile.am SUBDIRS
 
-2008-06-18  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-06-18  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fixed process kill and terminate
 	* protocol change: local clients now sends display
 	* minor fixes/cleanups
 	* - process classes remove child finish watch
-	  - gebr_comm_server reorganization
-	  - gebr_comm_server keep track and free temporary process
+	  - comm_server reorganization
+	  - comm_server keep track and free temporary process
 
-2008-06-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-06-17  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix ssh password ask for x11 forwarding
 	* fix x11 forward port order
@@ -614,7 +890,7 @@
 	  - fix mcookie acquire
 	* change x11 forward architecture (with protocol implications)
 
-2008-06-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-06-16  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - consider \r on ssh new lines
 	  - run ssh with -x
@@ -624,50 +900,50 @@
 	  - gebr client now send it its IP (again)
 	  - server use its hostname for lock/log files
 
-2008-06-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-06-14  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* some gebr-client progress achieved
 	* added error strings for each library error
 
-2008-06-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-06-13  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix yes/no ssh message handling
 	* fix port reception
 	* remove debugging puts
 	* don't hack on server host for the port; the daemon now returns it
 
-2008-04-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-04-16  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* removed type group from gebrme and from 0.2 DTDs. it will be
 	  refacted and readded at flow 0.3
-	* delete all childs elements on __gebr_geoxml_set_element_value
+	* delete all childs elements on __geoxml_set_element_value
 
-2008-04-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-04-14  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* protect gebr_geoxml_parameter_group_get_{exclusive,selected} against
+	* protect geoxml_parameter_group_get_{exclusive,selected} against
 	  deleted/deinstaciated parameter indexes
 
-2008-04-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-04-13  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* __gebr_geoxml_program_parameter_reset_default should not change
+	* __geoxml_program_parameter_reset_default should not change
 	  anything but default
-	* gebr_geoxml_parameter_reset made invalid flows
+	* geoxml_parameter_reset made invalid flows
 	* missing stuff to be commited
 	* don't adjust npar when changing the parameter type
 
-2008-04-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-04-12  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* don't leave selected blank/invalid on
-	  gebr_geoxml_parameter_group_set_exclusive
-	* - remove gebr_geoxml_parameters_new_parameter as it is nonsense for
+	  geoxml_parameter_group_set_exclusive
+	* - remove geoxml_parameters_new_parameter as it is nonsense for
 	  group npar
-	  - fixed gebr_geoxml_sequence_append_clone to adjust npar
+	  - fixed geoxml_sequence_append_clone to adjust npar
 	  - fixed adjust type
-	* GebrGeoXmlObject class introduced
-	* fixed gebr_geoxml_parameter_group_set_{exclusive,selected}
-	* fixed gebr_geoxml_parameter_group_get_{exclusive,selected}
+	* GeoXmlObject class introduced
+	* fixed geoxml_parameter_group_set_{exclusive,selected}
+	* fixed geoxml_parameter_group_get_{exclusive,selected}
 
-2008-04-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-04-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fixes for flow 0.2.3
 	* - flow 0.2.3: exclusive not anymore value based and make possible
@@ -675,18 +951,18 @@
 	  - upgrade utily for upgrading documents to latest version
 	  - use glib command line parse for utilies
 
-2008-04-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-04-10  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* added gebr_geoxml_sequence_append_clone
+	* added geoxml_sequence_append_clone
 
-2008-04-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-04-09  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - emit signal cursor-changed but call popup callback
 	  - fix and ported to gtkaction program status menus items
 	  - add project new and flow new to popups menus.
 	  - little code organization and cleanups
 
-2008-04-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-04-07  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - updated TODO
 	  - flow browse view column should exist anymore as now it is
@@ -694,41 +970,41 @@
 	  - implement top/bottom for the xml
 	  - cleanups on code for moving elements on the store/xml
 
-2008-04-05  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-04-05  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - groups functional on gebr and gebrme
 	  - debug flags thought --enable-debug
 
-2008-03-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-03-15  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - fixed string comparison to consider case
 	  - gebr: make accel_group a global variable
 
-2008-03-07  Ricardo Biloti <biloti@gmail.com>
+2008-03-07  Ricardo Biloti <biloti@gebrproject.com>
 
 	* revert wrong deb package rule
 
-2008-03-06  Ricardo Biloti <biloti@gmail.com>
+2008-03-06  Ricardo Biloti <biloti@gebrproject.com>
 
 	* enhancements in package generation
 
-2008-03-05  Ricardo Biloti <biloti@gmail.com>
+2008-03-05  Ricardo Biloti <biloti@gebrproject.com>
 
 	* new rule packages
 
-2008-02-29  Ricardo Biloti <biloti@gmail.com>
+2008-02-29  Ricardo Biloti <biloti@gebrproject.com>
 
 	* TODO and Copyright note updated
 
-2008-02-28  Ricardo Biloti <biloti@gmail.com>
+2008-02-28  Ricardo Biloti <biloti@gebrproject.com>
 
 	* honor range digits when retrieving parameter's value
 
-2008-02-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-02-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* various fixes to parameter of type enum
 
-2008-02-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-02-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* enable to do not use the value of an enum
 	* - put missing flow-0.2.2.dtd in Makefile.am
@@ -737,7 +1013,7 @@
 	  - first run improvementes along side with preferences dialog
 	  - a bunch of other things
 
-2008-02-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-02-21  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* added enum_option.{c,h}
 	* - fixed icon of gtkfileentry and gtksequenceedit
@@ -745,21 +1021,21 @@
 	  - quote each value when parameter accepts a list of parameters
 	  - fixed revert to default value on parameters dialog
 
-2008-02-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-02-14  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - use gtklinkbutton to show program's url
 	  - use line's path in file parameters
 
-2008-02-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-02-13  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* readd support enumoption for in sequence and valuesequence
 
-2008-02-13  Ricardo Biloti <biloti@gmail.com>
+2008-02-13  Ricardo Biloti <biloti@gebrproject.com>
 
 	* minor (but important) typo (again)
 	* minor (but important) typo
 
-2008-02-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-02-13  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* add support for a customize function in gtkfileentry
 	* layout fixes
@@ -769,12 +1045,12 @@
 	* fixed typo
 	* support for path (dtd 0.2) in lines implemented
 
-2008-02-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-02-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* don't confirm overwrite in parameters' dialog and on flow input
 	  selection
 
-2008-02-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-02-10  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fixed in log viewer
 	* initial version o log viewer for gebr
@@ -782,25 +1058,25 @@
 	* - close stdin for programs that do not use it (in gebrd)
 	  - fixed crash when clearing jobs from disconnected servers
 
-2008-02-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-02-09  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* put system back... the error persists for local servers
 	* remove system code (the strange error desapeared when server code
 	  went to libgebr)
 	* - added define.h in libgebr for static mode support
-	  - changed names of enum gebr_log_message_type
-	  - ported server infrastruture to libgebr-gebr_comm for further use in
+	  - changed names of enum log_message_type
+	  - ported server infrastruture to libgebr-comm for further use in
 	  gebr-run
 
-2008-02-08  Ricardo Biloti <biloti@gmail.com>
+2008-02-08  Ricardo Biloti <biloti@gebrproject.com>
 
 	* global TODO file and small program remove fix to gebrme
 
-2008-02-05  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-02-05  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* only add url when it is not added at flow 0.2.0
 
-2008-02-04  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-02-04  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* prevent libgeoxml to crash on invalid documents
 	* - avoid crash by making url optional (again) in flow 0.2.0
@@ -810,7 +1086,7 @@
 	* - improved client/server archtecture (still unstable)
 	  - general fixes
 
-2008-01-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-01-29  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - fixed date validation
 	  - fixed date in logs
@@ -819,50 +1095,50 @@
 	  - moved support for programs' url to 0.2.1. finished implementing
 	  full support to urls
 
-2008-01-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-01-28  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* - use {CFLAGS, LIBS} in gebrd and gebrme
+	* - use LIBGEBR_{CFLAGS, LIBS} in gebrd and gebrme
 	  - disable file overwrite confirmation on gtkfileentry
 	* fixed some printfs formats
 
-2008-01-16  Ricardo Biloti <biloti@gmail.com>
+2008-01-16  Ricardo Biloti <biloti@gebrproject.com>
 
 	* partial support to URL element of program
 
-2008-01-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-01-13  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix free order
 	* first buggy support for enums (no label support)
 
-2008-01-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-01-12  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* support for parameters with list of values
-	* use gebr_gui_parameter_widget_set_auto_submit_callback in gebrme
+	* use parameter_widget_set_auto_submit_callback in gebrme
 	* - fix program popup menu appearence
 	  - initial code for enums ands lists
 	* enable protection to avoid flag parameters to hold a list of
 	  values
 	* fixed gui.h
-	* added GebrGuiValueSequenceEdit and use it on gebrme for categories
+	* added ValueSequenceEdit and use it on gebrme for categories
 	* add category to sequence (fix)
 
-2008-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-01-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* category inherits valuesequence
 	* common code reuse of parameters for gebr and gebrme
 	* moved back parameters.* to gebr
 	* added missing files
 
-2008-01-11  Ricardo Biloti <biloti@gmail.com>
+2008-01-11  Ricardo Biloti <biloti@gebrproject.com>
 
 	* authors updated
 
-2008-01-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-01-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* moved parateters' code to libgebr_gui
 	* fixed documentation
 
-2008-01-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-01-08  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - fixed an increbile anoying bug (or maybe a libxml2 bug?)
 	  - fixed gêbr's message
@@ -870,83 +1146,83 @@
 	  - minor changes
 	* - fix header encoding problems and copyright
 	  - moved date, tooltip and confirm_action_dialog to libgebr
-	  - added gebr_locale_to_utf8 to libgebr
+	  - added g_simple_locale_to_utf8 to libgebr
 	  - improved set_tooltip
 	* add support for user data in popup callback
 	* added gtk_widget_set_popup_callback
-	* ask for overwrite confirmation on GebrGuiGtkFileEntry
+	* ask for overwrite confirmation on GtkFileEntry
 
-2008-01-07  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2008-01-07  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* fix bug in gebr_geoxml_program_parameter_set_value for flag parameters
-	* - fixed bug in gebr_geoxml_sequence_move_down
+	* fix bug in geoxml_program_parameter_set_value for flag parameters
+	* - fixed bug in geoxml_sequence_move_down
 	  - minor cleanups
 	* improved popup selection handling
 	* decent popup menu support for GtkTreeView
 	* fixed last commit
 	* gtk_list_store_can_move_{up,down}
 	* gtk_list_store_move_{up,down}
-	* fixed child watch in GebrCommTerminalProcess
+	* fixed child watch in GTerminalProcess
 	* fix include deletion
-	* added GebrCommTerminalProcess to handle process which communicate via
+	* added GTerminalProcess to handle process which communicate via
 	  terminal, like SSH
 
-2008-01-05  Ricardo Biloti <biloti@gmail.com>
+2008-01-05  Ricardo Biloti <biloti@gebrproject.com>
 
 	* Fix control
 	* Fix changelogs
 
-2007-12-13  Ricardo Biloti <biloti@gmail.com>
+2007-12-13  Ricardo Biloti <biloti@gebrproject.com>
 
 	* tooltips fixed and some other minor bugs
 
-2007-12-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-12-13  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fixed use of version define in geoxml
 
-2007-12-13  Ricardo Biloti <biloti@gmail.com>
+2007-12-13  Ricardo Biloti <biloti@gebrproject.com>
 
 	* DTD versions fixed
 
-2007-12-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-12-12  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - merged branch code-reorganization into trunk
 	  - fixed syntax error on flow DTD
 
-2007-11-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-28  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fixed trunk subdir tree
 	* recovered trunk
 
-2007-11-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-24  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - added protocol version in INI
 	  - added finish date in FIN
 	  - append output instead of regenerate all job info buffer
 	  - run bash -l
 
-2007-11-23  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-23  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* 0.9.3 will be a tag and 0.9 is a brach
 	* created the first branch, 0.9.3
 
-2007-11-23  Ricardo Biloti <biloti@gmail.com>
+2007-11-23  Ricardo Biloti <biloti@gebrproject.com>
 
 	* gprocess fixed, add localhost to prevent empty server lists
 	* down button fixed
 
-2007-11-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-17  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* change ssh functions names
 
-2007-11-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-16  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fixed gtcpserver
 	* - pid -> jid
 	  - a lot of fixes
 	* more work... II
 
-2007-11-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-15  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* more work...
 	* some work...
@@ -957,13 +1233,13 @@
 	  - protocol fixes
 	* added protocol support for sizing each argument of a message
 
-2007-11-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-14  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* show error or warnings when assemblying flow command line
 	* - fixed sockets behaviour on libgebr_misc
 	  - more run stuff
 
-2007-11-13  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-13  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* more process job support on server
 	* server auth and protocol fixes
@@ -971,15 +1247,15 @@
 	* some protocol_send changes
 	* fixes...
 
-2007-11-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-12  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* second ssh try
-	* - fixes on GebrCommProcess
+	* - fixes on GProcess
 	  - more ssh work on gebr
 	  - fixes command QUT on gebrd
 	* some process work
 
-2007-11-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* function to load from buffer
 	* - gprocess work
@@ -988,11 +1264,11 @@
 	  - removed info on debian package
 	  - fixed build error on libgebr
 
-2007-11-11  Ricardo Biloti <biloti@gmail.com>
+2007-11-11  Ricardo Biloti <biloti@gebrproject.com>
 
 	* missing glib include path
 
-2007-11-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-10  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - change name of gnetwork to misc (part II)
 	  - moved gprocess to libgebr_misc
@@ -1005,16 +1281,16 @@
 	* more robust linebreak protection
 	* server running on a random port
 
-2007-11-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-09  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - moved protocol messaging to libgebr_gnetwork
 	  - client/server files on gebr
 
-2007-11-09  Ricardo Biloti <biloti@gmail.com>
+2007-11-09  Ricardo Biloti <biloti@gebrproject.com>
 
 	* package build fixes
 
-2007-11-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-08  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* change packages description
 	* added missing Makefile.am
@@ -1027,7 +1303,7 @@
 	* struture of libgebr I
 	* initial move of libgeoxml to libgebr
 
-2007-11-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-11-03  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* include macros.h and sequence.h on libgeoxml.h
 	* fixed creation of line, project and parameter
@@ -1035,63 +1311,63 @@
 	* - sequence abstraction on libgeoxml
 	  - moved line-break protection to libgeoxml
 
-2007-10-22  Ricardo Biloti <biloti@gmail.com>
+2007-10-22  Ricardo Biloti <biloti@gebrproject.com>
 
 	* version fixed (again)
 
-2007-10-19  Ricardo Biloti <biloti@gmail.com>
+2007-10-19  Ricardo Biloti <biloti@gebrproject.com>
 
 	* make turbinated
 	* version macro fixed
 
-2007-10-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-10-19  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - changed debian stuff to enabled automatic build
 	  - relicenced gebr under GPLv3
 
-2007-10-19  Ricardo Biloti <biloti@gmail.com>
+2007-10-19  Ricardo Biloti <biloti@gebrproject.com>
 
 	* spec.in fixed
 	* minor adjustments
 
-2007-10-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-10-12  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* put DTDs in data directory
 
-2007-10-06  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-10-06  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* rpm stuff
 
-2007-10-05  Ricardo Biloti <biloti@gmail.com>
+2007-10-05  Ricardo Biloti <biloti@gebrproject.com>
 
 	* control fixed
 
-2007-09-28  Ricardo Biloti <biloti@gmail.com>
+2007-09-28  Ricardo Biloti <biloti@gebrproject.com>
 
 	* initial rpm suport
 
-2007-09-21  Ricardo Biloti <biloti@gmail.com>
+2007-09-21  Ricardo Biloti <biloti@gebrproject.com>
 
 	* m4 macro removed again
 	* m4 macro removed
 	* debian package support
 	* version meaningful
 
-2007-09-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-09-16  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* file directory: on/off -> yes/no
 
-2007-09-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-09-15  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - more documentation
 	  - TODO enlanged
-	* fixed gebr_geoxml_program_set_title: cddatasection to textnode
+	* fixed geoxml_program_set_title: cddatasection to textnode
 
-2007-09-15  Ricardo Biloti <biloti@gmail.com>
+2007-09-15  Ricardo Biloti <biloti@gebrproject.com>
 
 	* enum order fixed
 
-2007-09-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-09-14  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* make distcheck now works
 	* - general code cleanup
@@ -1100,89 +1376,89 @@
 	  cast to GdomeDocument
 	  - remove function for category, program and parameter
 
-2007-09-09  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-09-09  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fixes bug when changing parameter type and when adding a new
 	  program
 	* set required parameters when creating new programs or parameters
 	* change parameters order
 	* document type recognition
-	* added gebr_geoxml_program_parameter_set_type
+	* added geoxml_program_parameter_set_type
 
-2007-09-08  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-09-08  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* added gebr_geoxml_program_parameter_delete
+	* added geoxml_program_parameter_delete
 	* fix bug when handling categories
 
-2007-09-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-09-03  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* added TODO
 
-2007-08-31  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-08-31  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* require glib >= 2.8.0 for g_access
 
-2007-08-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-08-29  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* added mkinstalldis
 
-2007-08-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-08-26  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fixed: test is not anymore installed
 	* removed Makefile.in
 	* removed trunk
 
-2007-08-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-08-17  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* puts cdata section in menus' help
 
-2007-08-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-08-15  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix syntax error in flow's DTD
 	* add directory attribute on parameter file
 	* - default to flag work
 	  - removed required from flag
 
-2007-08-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-08-10  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix strings and return value in validate program
 
-2007-08-06  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-08-06  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* clear help of programs during copy on gebr_geoxml_flow_add_flow
+	* clear help of programs during copy on geoxml_flow_add_flow
 	* fix again next/previous
 	* - fix value of element filename in menus
-	  - W_OK -> R_OK in gebr_geoxml_document_load
-	* fix __gebr_geoxml_(next&previous)_element
+	  - W_OK -> R_OK in geoxml_document_load
+	* fix __geoxml_(next&previous)_element
 	* - created changelog using svn2cl
 	  - fix most next and previous functions
 
-2007-07-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-07-15  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* added validate/Makefile.in
 
-2007-07-12  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-07-12  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix flag attributes to on/off
 
-2007-07-11  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-07-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* relicenced under GPLv3
 	* add validation utility
 
-2007-07-10  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-07-10  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* - add prefix get in gebr_geoxml_program_first_parameter
+	* - add prefix get in geoxml_program_first_parameter
 	  - makes possible only to get the first parameter
 	  - bugfixes
 
-2007-07-04  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-07-04  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix the last fix ;)
 	* fix document free on load in case of an error
-	* fix stupid gebr_geoxml_flow_get_program
+	* fix stupid geoxml_flow_get_program
 
-2007-07-03  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-07-03  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix line_add_flow and project_add_line (really fixed)
 	* fix line_add_flow and project_add_line
@@ -1193,34 +1469,34 @@
 	* installation changes
 	* include glib.h again
 
-2007-07-01  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-07-01  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - big documentation work
 	* - code cleanup
 	  - big documentation work
 	  - fixes creation parameter of type flag
 
-2007-06-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-06-29  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix mem leak on validade
 	* more docs; doxygen stuff
 
-2007-06-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-06-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - minor bugfixes and cleanups
 	  - more documentation
-	* fixed free on gebr_geoxml_document_validate_doc
+	* fixed free on geoxml_document_validate_doc
 	* - initial documentation (finally)
 	  - moved free from flow, line and project to document
 	  - fixed order when appending categories to match DTD
 	  - load with complete_attrs gdome flag
 	  - make version attribute fixed in DTDs
 
-2007-06-26  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-06-26  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix way documents are accessed
 
-2007-06-22  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-06-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - on parameters: add state support for flags, default value work
 	  and ability to remove a parameter
@@ -1230,18 +1506,18 @@
 	  - changed enconding to iso-8859-1 in all files
 	  - changed menus to fit new changes
 
-2007-06-18  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-06-18  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - project and line methods
 	  - project and line dtd change
 
-2007-06-17  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-06-17  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* .m4 and .pc.in added to svn
 	* menu, range and dtd work (not working, need to learn autoconf
 	  first ;))
 
-2007-06-16  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-06-16  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* m4 and pkgconfig files
 	* fix: finally compile ;)
@@ -1249,18 +1525,18 @@
 	* second try...
 	* preparing for naming changes
 
-2007-06-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-06-15  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* initial document abstraction
 	* initial document abstraction
 
-2007-05-29  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-05-29  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* change include installation to glib style
 	* 
 	* 
 
-2007-05-28  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-05-28  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* folder changes to modify includes
 	* folder changes to modify includes
@@ -1273,42 +1549,42 @@
 	* category stuff
 	* category initial work; bugfixes; docs and error work
 
-2007-05-27  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-05-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* validation support and initial error handling
 
-2007-05-25  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-05-25  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* various bugfixes and api changes
 
-2007-05-24  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-05-24  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* lots of bugfixes and testing stuff; added flow_clone function
 	* fixed move up and down functions
 	* some fixes and addition of (buggy) move functions
 
-2007-05-21  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-05-21  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* new flow.dtd
 
-2007-05-19  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-05-19  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* first test release to play with ;)
 	* more work....
 
-2007-05-18  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-05-18  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* more work...; added xml.c and xml.h
 	* configure.in rename to configure.ac
 	* some work
 	* more testing getting the filename value
 
-2007-05-15  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-05-15  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* some testing
 	* some functions names defined
 
-2007-05-14  Braulio Barros de Oliveira <brauliobo@gmail.com>
+2007-05-14  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* remove old stuff
 	* initial import
