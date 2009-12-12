@@ -959,11 +959,11 @@ on_combo_changed		(GtkComboBox *		combo,
 		&iter, SERVER_POINTER, &server, -1);
 	activatable = gebr_comm_server_is_local(server->comm);
 
-	gtk_entry_set_icon_from_stock(GTK_ENTRY(ui_flow_io->input),
+	gtk_entry_set_icon_from_stock(GTK_ENTRY(ui_flow_io->input), GTK_ENTRY_ICON_SECONDARY,
 		activatable? GTK_STOCK_DIRECTORY:NULL);
-	gtk_entry_set_icon_from_stock(GTK_ENTRY(ui_flow_io->output),
+	gtk_entry_set_icon_from_stock(GTK_ENTRY(ui_flow_io->output), GTK_ENTRY_ICON_SECONDARY,
 		activatable? GTK_STOCK_DIRECTORY:NULL);
-	gtk_entry_set_icon_from_stock(GTK_ENTRY(ui_flow_io->error),
+	gtk_entry_set_icon_from_stock(GTK_ENTRY(ui_flow_io->error), GTK_ENTRY_ICON_SECONDARY,
 		activatable? GTK_STOCK_DIRECTORY:NULL);
 }
 
