@@ -30,6 +30,10 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
+	aclocal
+	intltoolize
+	automake --add-missing --copy
+	autoconf
 	./configure --prefix=/usr --disable-debug
 	touch configure-stamp
 
