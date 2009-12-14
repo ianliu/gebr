@@ -28,7 +28,7 @@ enum {
 	FLOW_IO_INPUT,
 	FLOW_IO_OUTPUT,
 	FLOW_IO_ERROR,
-	FLOW_IO_SENSITIVE,
+	FLOW_IO_SERVER_LISTED,
 	FLOW_IO_FLOW_SERVER_POINTER,
 	FLOW_IO_SERVER_POINTER,
 	FLOW_IO_N
@@ -50,6 +50,8 @@ struct ui_flow_io {
 	GtkWidget *		input;
 	GtkWidget *		output;
 	GtkWidget *		error;
+
+	GtkWidget *		execute_button;
 };
 
 struct ui_flow_simple {

@@ -41,13 +41,8 @@
  * Declarations
  */
 
-static gboolean
-flow_io_select_function(GtkTreeSelection * selection, GtkTreeModel * model, GtkTreePath * path,
-gboolean path_currently_selected, struct ui_flow_io * ui_flow_io);
-
 static void
 flow_io_populate		(struct ui_flow_io *	ui_flow_io);
-
 static gboolean
 flow_io_actions			(gint			response,
 				 struct ui_flow_io *	ui_flow_io);
@@ -89,6 +84,8 @@ static void
 on_delete_server_io_activate	(GtkWidget *		menu_item,
 				 struct ui_flow_io *	ui_flow_io);
 
+static void
+on_tree_view_cursor_changed(GtkTreeView * treeview, struct ui_flow_io * ui_flow_io);
 #if GTK_CHECK_VERSION(2,12,0)
 static gboolean
 on_tree_view_tooltip		(GtkTreeView *		treeview,
@@ -153,20 +150,16 @@ flow_io_setup_ui(gboolean executable)
 		G_TYPE_STRING,		// Input
 		G_TYPE_STRING,		// Output
 		G_TYPE_STRING,		// Error
-		G_TYPE_BOOLEAN,	 	// Sensitive
+		G_TYPE_BOOLEAN,	 	// server listed
 		G_TYPE_POINTER,		// GebrGeoXmlFlowServer
 		G_TYPE_POINTER);	// struct server
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
-	gtk_tree_selection_set_select_function(
-		gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)),
-		(GtkTreeSelectionFunc)flow_io_select_function,
-		ui_flow_io, NULL);
 	dialog = gtk_dialog_new_with_buttons(_("Server and I/O setup"),
 		GTK_WINDOW(gebr.window),
 		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 		NULL);
-	if (executable)
+	ui_flow_io->execute_button = !executable ? NULL :
 		gtk_dialog_add_button(GTK_DIALOG(dialog),
 			GTK_STOCK_EXECUTE, GEBR_FLOW_UI_RESPONSE_EXECUTE);
 	content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
@@ -179,6 +172,8 @@ flow_io_setup_ui(gboolean executable)
 	g_signal_connect(G_OBJECT(treeview), "query-tooltip",
 		G_CALLBACK(on_tree_view_tooltip), ui_flow_io);
 #endif
+	g_signal_connect(G_OBJECT(treeview), "cursor-changed",
+		G_CALLBACK(on_tree_view_cursor_changed), ui_flow_io);
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(treeview),
 		(GebrGuiGtkPopupCallback)on_menu_popup, ui_flow_io);
 
@@ -598,24 +593,6 @@ flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean select_
  * Private functions.
  */
 
-/* Function: flow_io_select_function
- * Avoid selection of server not in server list
- */
-gboolean
-flow_io_select_function(GtkTreeSelection * selection, GtkTreeModel * model, GtkTreePath * path,
-gboolean path_currently_selected, struct ui_flow_io * ui_flow_io)
-{
-	GtkTreeIter	iter;
-	gboolean	sensitive;
-
-	gtk_tree_model_get_iter(model, &iter, path);
-	gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
-		FLOW_IO_SENSITIVE, &sensitive,
-		-1);
-
-	return sensitive;
-}
-
 /**
  * flow_io_populate:
  * @ui_flow_io: The structure to be filled with data.
@@ -666,7 +643,7 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 			FLOW_IO_INPUT, input,
 			FLOW_IO_OUTPUT, output,
 			FLOW_IO_ERROR, error,
-			FLOW_IO_SENSITIVE, server_found,
+			FLOW_IO_SERVER_LISTED, server_found,
 			FLOW_IO_FLOW_SERVER_POINTER, server_io,
 			FLOW_IO_SERVER_POINTER, server,
 			-1);
@@ -679,7 +656,7 @@ flow_io_populate(struct ui_flow_io * ui_flow_io)
 		gboolean sensitive;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
-			FLOW_IO_SENSITIVE, &sensitive,
+			FLOW_IO_SERVER_LISTED, &sensitive,
 			-1);
 
 		if (sensitive) {
@@ -900,7 +877,7 @@ on_button_add_clicked		(GtkButton *		button,
 		FLOW_IO_INPUT, input,
 		FLOW_IO_OUTPUT, output,
 		FLOW_IO_ERROR, error,
-		FLOW_IO_SENSITIVE, TRUE,
+		FLOW_IO_SERVER_LISTED, TRUE,
 		FLOW_IO_FLOW_SERVER_POINTER, flow_server,
 		FLOW_IO_SERVER_POINTER, server,
 		-1);
@@ -1009,6 +986,21 @@ on_menu_popup			(GtkTreeView *		treeview,
 	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
+}
+
+static void
+on_tree_view_cursor_changed(GtkTreeView * treeview, struct ui_flow_io * ui_flow_io)
+{
+	GtkTreeIter	iter;
+	gboolean	server_listed;
+
+	if (!flow_io_get_selected(ui_flow_io, &iter))
+		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
+		FLOW_IO_SERVER_LISTED, &server_listed, -1);
+	if (ui_flow_io->execute_button != NULL)
+		gtk_widget_set_sensitive(ui_flow_io->execute_button, server_listed);
 }
 
 #if GTK_CHECK_VERSION(2,12,0)

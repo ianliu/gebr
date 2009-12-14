@@ -101,7 +101,7 @@ gebr_path_use_home_variable(GString * path)
 {
 	gchar *	home;
 
-	home = getenv("$HOME");
+	home = getenv("HOME");
 	if (home == NULL)
 		return FALSE;
 	if (gebr_g_string_starts_with(path, home)) {
@@ -117,7 +117,7 @@ gebr_path_resolve_home_variable(GString * path)
 {
 	gchar *	home;
 
-	home = getenv("$HOME");
+	home = getenv("HOME");
 	if (home == NULL)
 		return FALSE;
 	if (gebr_g_string_starts_with(path, "$HOME")) {

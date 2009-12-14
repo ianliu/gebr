@@ -341,6 +341,7 @@ gebr_config_load(gboolean nox)
 			"general", "email", g_get_user_name());
 		gebr.config.usermenus = gebr_g_key_file_load_string_key(gebr.config.key_file,
 			"general", "usermenus", getenv("HOME"));
+		gebr_path_resolve_home_variable(gebr.config.usermenus);
 
 		g_string_printf(data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
 		gebr.config.data = gebr_g_key_file_load_string_key(gebr.config.key_file,
