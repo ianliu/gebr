@@ -89,6 +89,7 @@ static void
 on_delete_server_io_activate	(GtkWidget *		menu_item,
 				 struct ui_flow_io *	ui_flow_io);
 
+#if GTK_CHECK_VERSION(2,12,0)
 static gboolean
 on_tree_view_tooltip		(GtkTreeView *		treeview,
 				 gint			x,
@@ -96,6 +97,7 @@ on_tree_view_tooltip		(GtkTreeView *		treeview,
 				 gboolean		keyboard_mode,
 				 GtkTooltip *		tooltip,
 				 struct ui_flow_io *	ui_flow_io);
+#endif
 
 /*
  * Section: Public
@@ -1085,4 +1087,3 @@ on_tree_view_tooltip		(GtkTreeView *		treeview,
 	return TRUE;
 }
 #endif
-
