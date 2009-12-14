@@ -124,7 +124,6 @@ flow_io_setup_ui(gboolean executable)
 	GtkWidget *		output;
 	GtkWidget *		error;
 
-	GtkWidget *		content;
 	GtkWidget *		button_add;
 	GtkWidget *		table;
 	GtkSizeGroup *		size_group;
@@ -162,7 +161,6 @@ flow_io_setup_ui(gboolean executable)
 	ui_flow_io->execute_button = !executable ? NULL :
 		gtk_dialog_add_button(GTK_DIALOG(dialog),
 			GTK_STOCK_EXECUTE, GEBR_FLOW_UI_RESPONSE_EXECUTE);
-	content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)),
 		GTK_SELECTION_BROWSE);
 	gtk_window_set_default_size(GTK_WINDOW(dialog), -1, 300);
@@ -321,8 +319,8 @@ flow_io_setup_ui(gboolean executable)
 	gtk_size_group_add_widget(size_group, output);
 	gtk_size_group_add_widget(size_group, error);
 
-	gtk_box_pack_start(GTK_BOX(content), treeview, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(content), table, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), treeview, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, FALSE, TRUE, 0);
 
 	ui_flow_io->dialog     = dialog;
 	ui_flow_io->store      = store;
