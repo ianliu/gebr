@@ -351,6 +351,8 @@ gebr_config_load(gboolean nox)
 			g_string_printf(gebr.config.data, "%s/.gebr/gebr/data", getenv("HOME"));
 		else if (!g_str_has_suffix(gebr.config.data->str, ".gebr/gebr/data"))
 			gebr_migrate_data_dir();
+		else
+			gebr_path_resolve_home_variable(gebr.config.data);
 		gebr.config.browser = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "browser", "firefox");
 		gebr.config.editor = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "gedit");
 		gebr.config.width = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "width", 700);
@@ -449,10 +451,18 @@ gebr_config_save(gboolean verbose)
 
 	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
-	g_key_file_set_string(gebr.config.key_file, "general", "usermenus", gebr.config.usermenus->str);
-	g_key_file_set_string(gebr.config.key_file, "general", "data", gebr.config.data->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "browser", gebr.config.browser->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
+
+	GString * home_variable;
+	home_variable = g_string_new(NULL);
+	g_string_assign(home_variable, gebr.config.data->str);
+	gebr_path_use_home_variable(home_variable);
+	g_key_file_set_string(gebr.config.key_file, "general", "data", home_variable->str);
+	g_string_assign(home_variable, gebr.config.usermenus->str);
+	gebr_path_use_home_variable(home_variable);
+	g_key_file_set_string(gebr.config.key_file, "general", "usermenus", home_variable->str);
+	g_string_free(home_variable, TRUE);
 
 	gtk_window_get_size(GTK_WINDOW(gebr.window), &gebr.config.width, &gebr.config.height);
 	gebr.config.log_expander_state = gtk_expander_get_expanded(GTK_EXPANDER(gebr.ui_log->widget));
