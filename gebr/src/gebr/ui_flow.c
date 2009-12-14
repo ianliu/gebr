@@ -185,7 +185,7 @@ flow_io_setup_ui(gboolean executable)
 	//---------------------------------------
 	// Setting up the GtkTreeView
 	//---------------------------------------
-	
+
 	// Server column
 	column = gtk_tree_view_column_new();
 	renderer = gtk_cell_renderer_pixbuf_new();
@@ -962,11 +962,11 @@ on_combo_changed		(GtkComboBox *		combo,
 	activatable = gebr_comm_server_is_local(server->comm);
 
 	gtk_entry_set_icon_from_stock(GTK_ENTRY(ui_flow_io->input), GTK_ENTRY_ICON_SECONDARY,
-		activatable? GTK_STOCK_DIRECTORY:NULL);
+		activatable ? GTK_STOCK_DIRECTORY : NULL);
 	gtk_entry_set_icon_from_stock(GTK_ENTRY(ui_flow_io->output), GTK_ENTRY_ICON_SECONDARY,
-		activatable? GTK_STOCK_DIRECTORY:NULL);
+		activatable ? GTK_STOCK_DIRECTORY : NULL);
 	gtk_entry_set_icon_from_stock(GTK_ENTRY(ui_flow_io->error), GTK_ENTRY_ICON_SECONDARY,
-		activatable? GTK_STOCK_DIRECTORY:NULL);
+		activatable ? GTK_STOCK_DIRECTORY : NULL);
 }
 
 static void

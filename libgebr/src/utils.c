@@ -29,6 +29,63 @@
 #include "utils.h"
 
 /**
+ * Replace each reference of \p oldtext in \p string
+ * with \p newtext. If \p newtext if NULL, then each reference of oldtext found is removed.
+ */
+void
+gebr_g_string_replace(GString * string, const gchar * oldtext, const gchar * newtext)
+{
+	gchar *	position;
+
+	position = string->str;
+	while ((position = strstr(position, oldtext)) != NULL) {
+		gssize	index;
+
+		index = (position - string->str)/sizeof(gchar);
+		g_string_erase(string, index, strlen(oldtext));
+
+		if (newtext != NULL) {
+			g_string_insert(string, index, newtext);
+			position = string->str + strlen(newtext);
+		} else
+			position = string->str + index + 1;
+	}
+}
+
+/**
+ * Same as \ref gebr_g_string_replace but only apply to first
+ * reference found.
+ */
+void
+gebr_g_string_replace_first_ref(GString * string, const gchar * oldtext, const gchar * newtext)
+{
+	gchar *	position;
+
+	position = string->str;
+	if ((position = strstr(position, oldtext)) != NULL) {
+		gssize	index;
+
+		index = (position - string->str)/sizeof(gchar);
+		g_string_erase(string, index, strlen(oldtext));
+
+		if (newtext != NULL)
+			g_string_insert(string, index, newtext);
+	}
+}
+
+gboolean
+gebr_g_string_starts_with(GString * string, const gchar * val)
+{
+	return g_str_has_prefix(string->str, val);
+}
+
+gboolean
+gebr_g_string_ends_with(GString * string, const gchar * val)
+{
+	return g_str_has_suffix(string->str, val);
+}
+
+/**
  * Append, if not already present, \p extension into \p filename
  * \p extension must include the dot (e.g. ".mnu")
  */
@@ -37,6 +94,38 @@ gebr_append_filename_extension(GString * filename, const gchar * extension)
 {
 	if (!g_str_has_suffix(filename->str, extension))
 		g_string_append(filename, extension);
+}
+
+gboolean
+gebr_path_use_home_variable(GString * path)
+{
+	gchar *	home;
+
+	home = getenv("$HOME");
+	if (home == NULL)
+		return FALSE;
+	if (gebr_g_string_starts_with(path, home)) {
+		gebr_g_string_replace_first_ref(path, home, "$HOME");
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+gboolean
+gebr_path_resolve_home_variable(GString * path)
+{
+	gchar *	home;
+
+	home = getenv("$HOME");
+	if (home == NULL)
+		return FALSE;
+	if (gebr_g_string_starts_with(path, "$HOME")) {
+		gebr_g_string_replace_first_ref(path, "$HOME", home);
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 /**
