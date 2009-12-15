@@ -21,6 +21,8 @@
 #endif
 #include <gdk/gdk.h>
 
+#include "../../intl.h"
+
 #include "help.h"
 #include "utils.h"
 
