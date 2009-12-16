@@ -31,6 +31,7 @@ enum {
 	FLOW_IO_SERVER_LISTED,
 	FLOW_IO_FLOW_SERVER_POINTER,
 	FLOW_IO_SERVER_POINTER,
+	FLOW_IO_IS_SERVER_ADD,
 	FLOW_IO_N
 };
 
@@ -45,6 +46,8 @@ struct ui_flow_io {
 	GtkWidget *		dialog;
 	GtkWidget *		treeview;
 	GtkListStore *		store;
+
+	GtkTreeIter		row_new_server;
 
 	GtkWidget *		address;
 	GtkWidget *		input;
