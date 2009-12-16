@@ -32,29 +32,16 @@ enum {
 	FLOW_IO_FLOW_SERVER_POINTER,
 	FLOW_IO_SERVER_POINTER,
 	FLOW_IO_IS_SERVER_ADD,
+	FLOW_IO_IS_SERVER_ADD2,
 	FLOW_IO_N
 };
 
-struct server_io_info {
-	gchar * address;
-	gchar * input;
-	gchar * output;
-	gchar * error;
-};
-
 struct ui_flow_io {
+	GtkListStore *		store;
 	GtkWidget *		dialog;
 	GtkWidget *		treeview;
-	GtkListStore *		store;
-
-	GtkTreeIter		row_new_server;
-
-	GtkWidget *		address;
-	GtkWidget *		input;
-	GtkWidget *		output;
-	GtkWidget *		error;
-
 	GtkWidget *		execute_button;
+	GtkTreeIter		row_new_server;
 };
 
 struct ui_flow_simple {

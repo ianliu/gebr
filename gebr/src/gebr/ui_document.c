@@ -637,7 +637,7 @@ struct dict_edit_data * data)
 // 			break;
 // 	}
 // 
-// 	return TRUE;
+ 	return TRUE;
 }
 
 /* Function: on_dict_edit_renderer_editing_started

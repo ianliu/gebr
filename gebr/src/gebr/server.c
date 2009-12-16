@@ -81,7 +81,7 @@ server_ssh_question(const gchar * title, const gchar * message)
 
 	dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
 		GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
-		GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, message);
+		GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "%s", message);
 	gtk_window_set_title(GTK_WINDOW(dialog), _("SSH question:"));
 
 	yes = (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES) ? TRUE : FALSE;

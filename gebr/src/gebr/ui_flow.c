@@ -78,17 +78,6 @@ on_renderer_entry_icon_release	(GtkEntry *		widget,
 				 GtkEntryIconPosition	position,
 				 GdkEvent *		event,
 				 struct ui_flow_io *	ui_flow_io);
-static void
-on_button_add_clicked		(GtkButton *		button,
-				 struct ui_flow_io *	ui_flow_io);
-static void
-on_entry_activate		(GtkEntry *		entry,
-				 struct ui_flow_io *	ui_flow_io);
-static void
-on_entry_icon_release		(GtkEntry *		entry);
-static void
-on_combo_changed		(GtkComboBox *		combo,
-				 struct ui_flow_io *	ui_flow_io);
 
 static GtkMenu *
 on_menu_popup			(GtkTreeView *		treeview,
@@ -133,15 +122,6 @@ flow_io_setup_ui(gboolean executable)
 	GtkWidget *		dialog;
 	GtkWidget *		treeview;
 	GtkListStore *		store;
-
-	GtkWidget *		address;
-	GtkWidget *		input;
-	GtkWidget *		output;
-	GtkWidget *		error;
-
-	GtkWidget *		button_add;
-	GtkWidget *		table;
-	GtkSizeGroup *		size_group;
 	GtkCellRenderer *	renderer;
 	GtkTreeViewColumn *	column;
 	GtkTreeIter		iter;
@@ -167,7 +147,8 @@ flow_io_setup_ui(gboolean executable)
 		G_TYPE_BOOLEAN,	 	// server listed
 		G_TYPE_POINTER,		// GebrGeoXmlFlowServer
 		G_TYPE_POINTER,		// struct server
-		G_TYPE_BOOLEAN);	// Is new row?
+		G_TYPE_BOOLEAN,		// Is new row? Server column
+		G_TYPE_BOOLEAN);	// Is new row? Other columns
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
 	dialog = gtk_dialog_new_with_buttons(_("Server and I/O setup"),
 		GTK_WINDOW(gebr.window),
@@ -262,103 +243,12 @@ flow_io_setup_ui(gboolean executable)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 	g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(FLOW_IO_ERROR));
 
-	//---------------------------------------
-	// Setting up the edition area
-	//---------------------------------------
-
-	// |____|^| Address combo box
-	address  = gtk_combo_box_new_with_model(
-		GTK_TREE_MODEL(gebr.ui_server_list->common.store));
-	renderer = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(address), renderer, FALSE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(address), renderer,
-		"pixbuf", SERVER_STATUS_ICON);
-	renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(address), renderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(address), renderer,
-		"text", SERVER_NAME);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(address), 0);
-	gtk_widget_set_size_request(address, size_addr, -1);
-	g_signal_connect(address, "changed",
-		G_CALLBACK(on_combo_changed), ui_flow_io);
-
-	// |______| Input, Output and Error entries
-	input  = gtk_entry_new();
-	output = gtk_entry_new();
-	error  = gtk_entry_new();
-	gtk_widget_set_size_request(input, size_input, -1);
-	gtk_widget_set_size_request(output, size_output, -1);
-	gtk_widget_set_size_request(error, size_error, -1);
-	g_signal_connect(input, "activate",
-		G_CALLBACK(on_entry_activate), ui_flow_io);
-	g_signal_connect(output, "activate",
-		G_CALLBACK(on_entry_activate), ui_flow_io);
-	g_signal_connect(error, "activate",
-		G_CALLBACK(on_entry_activate), ui_flow_io);
-	g_signal_connect(input, "icon-release",
-		G_CALLBACK(on_entry_icon_release), NULL);
-	g_signal_connect(output, "icon-release",
-		G_CALLBACK(on_entry_icon_release), NULL);
-	g_signal_connect(error, "icon-release",
-		G_CALLBACK(on_entry_icon_release), NULL);
-	gtk_entry_set_icon_from_stock(GTK_ENTRY(input),
-		GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIRECTORY);
-	gtk_entry_set_icon_from_stock(GTK_ENTRY(output),
-		GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIRECTORY);
-	gtk_entry_set_icon_from_stock(GTK_ENTRY(error),
-		GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIRECTORY);
-
-	// [+] Add button
-	button_add = gtk_button_new();
-	gtk_button_set_image(GTK_BUTTON(button_add),
-		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON));
-	g_signal_connect(button_add, "clicked",
-		G_CALLBACK(on_button_add_clicked), ui_flow_io);
-
-	//---------------------------------------
-	// Packing the widgets
-	//---------------------------------------
-
-	table = gtk_table_new(2, 5, FALSE);
-	gtk_table_attach(GTK_TABLE(table), gtk_label_new("Address"),
-		0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), gtk_label_new("Input"),
-		1, 2, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), gtk_label_new("Output"),
-		2, 3, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), gtk_label_new("Error"),
-		3, 4, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), address,
-		0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), input,
-		1, 2, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), output,
-		2, 3, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), error,
-		3, 4, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), button_add,
-		4, 5, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
-
-	size_group = gtk_size_group_new(GTK_SIZE_GROUP_VERTICAL);
-	gtk_size_group_add_widget(size_group, address);
-	gtk_size_group_add_widget(size_group, input);
-	gtk_size_group_add_widget(size_group, output);
-	gtk_size_group_add_widget(size_group, error);
-
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), treeview, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, FALSE, TRUE, 0);
 
 	ui_flow_io->dialog     = dialog;
 	ui_flow_io->store      = store;
 	ui_flow_io->treeview   = treeview;
-	ui_flow_io->address    = address;
-	ui_flow_io->input      = input;
-	ui_flow_io->output     = output;
-	ui_flow_io->error      = error;
-
-	// Fill the GtkListStore with the configurations available
 	flow_io_populate(ui_flow_io);
-	on_combo_changed(GTK_COMBO_BOX(address), ui_flow_io);
 
 	gtk_widget_show_all(dialog);
 	do
@@ -942,113 +832,6 @@ on_renderer_entry_icon_release	(GtkEntry *		widget,
 	g_free(filename);
 
 out:	gtk_widget_destroy(dialog);
-}
-
-static void
-on_button_add_clicked		(GtkButton *		button,
-				 struct ui_flow_io *	ui_flow_io)
-{
-	GdkPixbuf *		icon;
-	GtkTreeIter		iter;
-
-	gchar *			name;
-	const gchar *		input;
-	const gchar *		output;
-	const gchar *		error;
-	GebrGeoXmlFlowServer *	flow_server;
-	struct server *		server;
-
-	// Fetch data
-	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(ui_flow_io->address), &iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
-		SERVER_STATUS_ICON, &icon,
-		SERVER_NAME, &name,
-		SERVER_POINTER, &server,
-		-1);
-	input  = gtk_entry_get_text(GTK_ENTRY(ui_flow_io->input));
-	output = gtk_entry_get_text(GTK_ENTRY(ui_flow_io->output));
-	error  = gtk_entry_get_text(GTK_ENTRY(ui_flow_io->error));
-	flow_server = gebr_geoxml_flow_append_server(gebr.flow);
-	gebr_geoxml_flow_server_set_address(flow_server, server->comm->address->str);
-	gebr_geoxml_flow_server_io_set_input(flow_server, input);
-	gebr_geoxml_flow_server_io_set_output(flow_server, output);
-	gebr_geoxml_flow_server_io_set_error(flow_server, error);
-
-	// Append data to Dialog
-	gtk_list_store_append(ui_flow_io->store, &iter);
-	gtk_list_store_set(ui_flow_io->store, &iter,
-		FLOW_IO_ICON, icon,
-		FLOW_IO_SERVER_NAME, name,
-		FLOW_IO_INPUT, input,
-		FLOW_IO_OUTPUT, output,
-		FLOW_IO_ERROR, error,
-		FLOW_IO_SERVER_LISTED, TRUE,
-		FLOW_IO_FLOW_SERVER_POINTER, flow_server,
-		FLOW_IO_SERVER_POINTER, server,
-		-1);
-
-	gtk_list_store_move_after(ui_flow_io->store, &iter, NULL);
-	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(flow_server), NULL);
-
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
-
-	g_free(name);
-}
-
-static void
-on_entry_activate		(GtkEntry *		entry,
-				 struct ui_flow_io *	ui_flow_io)
-{
-	on_button_add_clicked(NULL, ui_flow_io);
-}
-
-static void
-on_entry_icon_release		(GtkEntry *		entry)
-{
-	GtkWidget *	dialog;
-	gint		response;
-	gchar *		filename;
-
-	dialog = gtk_file_chooser_dialog_new(_("Choose a file"),
-		GTK_WINDOW(gebr.window),
-		GTK_FILE_CHOOSER_ACTION_SAVE,
-		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-		GTK_STOCK_OPEN, GTK_RESPONSE_APPLY,
-		NULL);
-	flow_io_customized_paths_from_line(GTK_FILE_CHOOSER(dialog));
-
-	response = gtk_dialog_run(GTK_DIALOG(dialog));
-	if (response != GTK_RESPONSE_APPLY)
-		goto out;
-
-	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-	gtk_entry_set_text(entry, filename);
-	g_free(filename);
-
-out:	gtk_widget_destroy(dialog);
-}
-
-static void
-on_combo_changed		(GtkComboBox *		combo,
-				 struct ui_flow_io *	ui_flow_io)
-{
-	GtkTreeIter	iter;
-	struct server *	server;
-	gboolean	activatable;
-
-	if (!gtk_combo_box_get_active_iter(combo, &iter))
-		return;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store),
-		&iter, SERVER_POINTER, &server, -1);
-	activatable = gebr_comm_server_is_local(server->comm);
-
-	gtk_entry_set_icon_from_stock(GTK_ENTRY(ui_flow_io->input), GTK_ENTRY_ICON_SECONDARY,
-		activatable ? GTK_STOCK_DIRECTORY : NULL);
-	gtk_entry_set_icon_from_stock(GTK_ENTRY(ui_flow_io->output), GTK_ENTRY_ICON_SECONDARY,
-		activatable ? GTK_STOCK_DIRECTORY : NULL);
-	gtk_entry_set_icon_from_stock(GTK_ENTRY(ui_flow_io->error), GTK_ENTRY_ICON_SECONDARY,
-		activatable ? GTK_STOCK_DIRECTORY : NULL);
 }
 
 static void
