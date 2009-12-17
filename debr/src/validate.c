@@ -658,6 +658,19 @@ show_program_parameter(struct validate * validate, GebrGeoXmlProgramParameter * 
 		validate_append_text(validate,  " [%s]", default_value->str);
 	g_string_free(default_value, TRUE);
 
+
+        if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_INT  ||
+            gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_FLOAT || 
+            gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_RANGE ){
+                
+                gchar *         min_str;
+                gchar *         max_str;
+
+                gebr_geoxml_program_parameter_get_number_min_max(pp, &min_str, &max_str);
+                validate_append_text(validate, " in [%s,%s]", (strlen(min_str) <= 0 ? "*" : min_str), (strlen(max_str) <= 0 ? "*" : max_str));
+        }
+
+
 	if (gebr_geoxml_program_parameter_get_is_list(GEBR_GEOXML_PROGRAM_PARAMETER(pp))) {
 		if (strlen(gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(pp))))
 			validate_append_text(validate, _(" (entries separeted by '%s')"),

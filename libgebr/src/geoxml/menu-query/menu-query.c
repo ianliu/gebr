@@ -469,6 +469,19 @@ show_program_parameter(GebrGeoXmlProgramParameter *pp, gint ipar, guint isubpar)
         if ( strlen(default_value->str))
 		printf(" [%s]", report(default_value->str, EMPTY));
         g_string_free(default_value, TRUE);
+
+
+        if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_INT  ||
+            gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_FLOAT || 
+            gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_RANGE ){
+                
+                gchar *         min_str;
+                gchar *         max_str;
+
+                gebr_geoxml_program_parameter_get_number_min_max(pp, &min_str, &max_str);
+                printf(" in [%s,%s]", (strlen(min_str) <= 0 ? "*" : min_str), (strlen(max_str) <= 0 ? "*" : max_str));
+        }
+
 	
         if (gebr_geoxml_program_parameter_get_is_list(pp)){
                 printf(" ");
