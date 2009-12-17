@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-26 14:43-0200\n"
-"PO-Revision-Date: 2009-11-26 14:44-0200\n"
+"POT-Creation-Date: 2009-12-17 09:29-0200\n"
+"PO-Revision-Date: 2009-12-17 09:41-0200\n"
 "Last-Translator: Ricardo Biloti <biloti@gmail.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -110,34 +110,43 @@ msgstr "Valores padrão"
 msgid "Flow '%s' exported as menu to %s"
 msgstr "O fluxo '%s' foi exportado como menu para %s"
 
-#: ../src/gebr/flow.c:550
+#: ../src/gebr/flow.c:515
+msgid "You're not connected to the local server"
+msgstr "Você não está conectado ao servidor local"
+
+#: ../src/gebr/flow.c:519
+#, c-format
+msgid "You're not connected to server '%s'"
+msgstr "Você não está conectado ao servidor '%s'"
+
+#: ../src/gebr/flow.c:552
 #, c-format
 msgid "Asking server to run flow '%s'"
 msgstr "Pedindo para o servidor executar o fluxo '%s'"
 
-#: ../src/gebr/flow.c:553
+#: ../src/gebr/flow.c:555
 #, c-format
 msgid "Asking server '%s' to run flow '%s'"
 msgstr "Pedindo para o servidor '%s' executar o fluxo '%s'"
 
-#: ../src/gebr/flow.c:557
+#: ../src/gebr/flow.c:559
 #, c-format
 msgid "Asking local server to run flow '%s'"
 msgstr "Pedindo para o servidor local executar o fluxo '%s'"
 
-#: ../src/gebr/flow.c:583 ../src/gebr/interface.c:280
+#: ../src/gebr/flow.c:585 ../src/gebr/interface.c:280
 msgid "Save flow state"
 msgstr "Salvar estado do fluxo"
 
-#: ../src/gebr/flow.c:591
+#: ../src/gebr/flow.c:593
 msgid "Make a comment for this state:"
 msgstr "Criar um comentário para este estado:"
 
-#: ../src/gebr/flow.c:756
+#: ../src/gebr/flow.c:758
 msgid "Could not paste component"
 msgstr "Impossel colar componente"
 
-#: ../src/gebr/gebr.c:71
+#: ../src/gebr/gebr.c:72
 #, c-format
 msgid ""
 "Unable to create GêBR configuration files.\n"
@@ -148,7 +157,7 @@ msgstr ""
 "Talvez você não tenha permissão de escrita no seu\n"
 "próprio diretório ou não haja espaço no dispositivo.\n"
 
-#: ../src/gebr/gebr.c:141
+#: ../src/gebr/gebr.c:142
 msgid "GêBR Finalizing..."
 msgstr "GêBR Finalizando..."
 
@@ -170,40 +179,40 @@ msgstr ""
 "favor\n"
 "confira as permissões de escrita para o seu diretório pessoal."
 
-#: ../src/gebr/gebr.c:373
+#: ../src/gebr/gebr.c:376
 msgid "GêBR Initiating..."
 msgstr "GêBR Inicializando..."
 
-#: ../src/gebr/gebr.c:487
+#: ../src/gebr/gebr.c:499
 msgid "Could not save configuration"
 msgstr "Não foi possível salvar a configuração"
 
-#: ../src/gebr/gebr.c:494
+#: ../src/gebr/gebr.c:506
 msgid "Configuration saved"
 msgstr "A configuração foi salva"
 
-#: ../src/gebr/gebr.c:549
+#: ../src/gebr/gebr.c:561
 #, c-format
 msgid "Unable to load GêBR configuration. Try run GêBR once.\n"
 msgstr ""
 "Incapaz de carregar as configurações da GêBR. Tente rodar a GêBR um vez.\n"
 
-#: ../src/gebr/gebr.c:557
+#: ../src/gebr/gebr.c:569
 #, c-format
 msgid "Installing %s "
 msgstr "Instalando %s "
 
-#: ../src/gebr/gebr.c:565
+#: ../src/gebr/gebr.c:577
 #, c-format
 msgid " SKIPPING (or use --force-overwrite)\n"
 msgstr " IGNORANDO (ou utilize --force-overwrite)\n"
 
-#: ../src/gebr/gebr.c:570
+#: ../src/gebr/gebr.c:582
 #, c-format
 msgid " FAILED\n"
 msgstr " FALHOU\n"
 
-#: ../src/gebr/gebr.c:573
+#: ../src/gebr/gebr.c:585
 #, c-format
 msgid " OK\n"
 msgstr " OK\n"
@@ -455,7 +464,7 @@ msgstr "Linha de comando:"
 msgid "Finish date:"
 msgstr "Data de término:"
 
-#: ../src/gebr/job.c:256 ../src/gebr/ui_flow_browse.c:282
+#: ../src/gebr/job.c:256 ../src/gebr/ui_flow_browse.c:288
 msgid "Output:"
 msgstr "Saída:"
 
@@ -542,7 +551,11 @@ msgstr "Tente %s --help\n"
 msgid "Unable to write menus' index"
 msgstr "Não foi possível escrever o índice do menu"
 
-#: ../src/gebr/menu.c:411
+#: ../src/gebr/menu.c:336
+msgid "Could not sort menu index"
+msgstr "Não foi possível ordenar o índice de menus"
+
+#: ../src/gebr/menu.c:412
 #, c-format
 msgid "Invalid menu '%s'"
 msgstr "Menu '%s' inválido"
@@ -570,45 +583,44 @@ msgstr "Apagando o projeto '%s'"
 msgid "Line file %s corrupted. Ignoring."
 msgstr "Arquivo de linhas %s está corrompido. Ignorando."
 
-#: ../src/gebr/server.c:87
+#: ../src/gebr/server.c:85
 msgid "SSH question:"
 msgstr "Questão do SSH:"
 
-#: ../src/gebr/server.c:136 ../src/gebr/ui_flow_browse.c:430
-#: ../src/gebr/ui_flow.c:936
+#: ../src/gebr/server.c:232
 msgid "Local server"
 msgstr "Servidor local"
 
-#: ../src/gebr/ui_document.c:103
+#: ../src/gebr/ui_document.c:119
 msgid "Add new parameter"
 msgstr "Acrescentar um novo parâmetro"
 
-#: ../src/gebr/ui_document.c:105
+#: ../src/gebr/ui_document.c:121
 msgid "Remove current parameters"
 msgstr "Remover o parâmetro corrente"
 
-#: ../src/gebr/ui_document.c:165
+#: ../src/gebr/ui_document.c:181
 #, c-format
 msgid "Properties for %s '%s'"
 msgstr "Propriedades para %s '%s'"
 
 #. Title
-#: ../src/gebr/ui_document.c:178
+#: ../src/gebr/ui_document.c:194
 msgid "Title"
 msgstr "Título"
 
 #. Description
-#: ../src/gebr/ui_document.c:187 ../src/gebr/ui_flow_edition.c:189
+#: ../src/gebr/ui_document.c:203 ../src/gebr/ui_flow_edition.c:202
 msgid "Description"
 msgstr "Descrição"
 
 #. Report
-#: ../src/gebr/ui_document.c:196
+#: ../src/gebr/ui_document.c:212
 msgid "Report"
 msgstr "Relatório"
 
 #. Author
-#: ../src/gebr/ui_document.c:216
+#: ../src/gebr/ui_document.c:232
 msgid "Author"
 msgstr "Autor"
 
@@ -616,79 +628,87 @@ msgstr "Autor"
 #.
 #. * User email
 #.
-#: ../src/gebr/ui_document.c:225 ../src/gebr/ui_preferences.c:114
+#: ../src/gebr/ui_document.c:241 ../src/gebr/ui_preferences.c:114
 msgid "Email"
 msgstr "E-mail"
 
-#: ../src/gebr/ui_document.c:273
+#: ../src/gebr/ui_document.c:289
 #, c-format
 msgid "Properties of %s '%s' updated"
 msgstr "As propriedades de %s '%s' foram atualizadas."
 
-#: ../src/gebr/ui_document.c:276
+#: ../src/gebr/ui_document.c:292
 #, c-format
 msgid "Renaming %s '%s' to '%s'"
 msgstr "Renomeando %s '%s' para '%s'"
 
-#: ../src/gebr/ui_document.c:345
+#: ../src/gebr/ui_document.c:362
 #, c-format
 msgid "Parameters' dictionary for %s '%s'"
 msgstr "Dicionário de parâmetros para %s '%s'"
 
-#: ../src/gebr/ui_document.c:390
+#: ../src/gebr/ui_document.c:410
 msgid "Type"
 msgstr "Tipo"
 
-#: ../src/gebr/ui_document.c:402
+#: ../src/gebr/ui_document.c:421
 msgid "Keyword"
 msgstr "Palavra-chave"
 
-#: ../src/gebr/ui_document.c:424
+#: ../src/gebr/ui_document.c:445
 msgid "Value"
 msgstr "Valor"
 
-#: ../src/gebr/ui_document.c:435
+#: ../src/gebr/ui_document.c:457
 msgid "Comment"
 msgstr "Comentário"
 
-#: ../src/gebr/ui_document.c:792
+#: ../src/gebr/ui_document.c:673
+msgid "Click to select type for a new parameter"
+msgstr "Click para escolher o tipo de um novo parâmetro"
+
+#: ../src/gebr/ui_document.c:858
 msgid "Duplicate keyword"
 msgstr "Palavra-chave duplicada"
 
-#: ../src/gebr/ui_document.c:793
+#: ../src/gebr/ui_document.c:859
 msgid "Another parameter already uses this keyword. Please choose other."
 msgstr ""
 "Outro parâmetro já utiliza esta palavra-chave. Por favor escolha outra."
 
-#: ../src/gebr/ui_document.c:858
+#: ../src/gebr/ui_document.c:899
+msgid "<i>New</i>"
+msgstr "<i>Novo</i>"
+
+#: ../src/gebr/ui_document.c:960
 msgid "Empty keyword"
 msgstr "Palavra-chave vazia"
 
-#: ../src/gebr/ui_document.c:859
+#: ../src/gebr/ui_document.c:961
 msgid "Please select a keyword."
 msgstr "Por favor, selecione uma palavra-chave."
 
-#: ../src/gebr/ui_document.c:891 ../src/gebr/ui_project_line.c:235
+#: ../src/gebr/ui_document.c:1002 ../src/gebr/ui_project_line.c:235
 msgid "Project"
 msgstr "Projeto"
 
-#: ../src/gebr/ui_document.c:891
+#: ../src/gebr/ui_document.c:1002
 msgid "project"
 msgstr "projeto"
 
-#: ../src/gebr/ui_document.c:893 ../src/gebr/ui_project_line.c:236
+#: ../src/gebr/ui_document.c:1004 ../src/gebr/ui_project_line.c:236
 msgid "Line"
 msgstr "Linha"
 
-#: ../src/gebr/ui_document.c:893
+#: ../src/gebr/ui_document.c:1004
 msgid "line"
 msgstr "linha"
 
-#: ../src/gebr/ui_document.c:895 ../src/gebr/ui_flow_edition.c:182
+#: ../src/gebr/ui_document.c:1006 ../src/gebr/ui_flow_edition.c:195
 msgid "Flow"
 msgstr "Fluxo"
 
-#: ../src/gebr/ui_document.c:895
+#: ../src/gebr/ui_document.c:1006
 msgid "flow"
 msgstr "fluxo"
 
@@ -697,45 +717,49 @@ msgid "Details"
 msgstr "Detalhes"
 
 #. Date labels
-#: ../src/gebr/ui_flow_browse.c:262 ../src/gebr/ui_project_line.c:261
+#: ../src/gebr/ui_flow_browse.c:265 ../src/gebr/ui_project_line.c:261
 msgid "Created:"
 msgstr "Criado:"
 
-#: ../src/gebr/ui_flow_browse.c:265 ../src/gebr/ui_project_line.c:264
+#: ../src/gebr/ui_flow_browse.c:268 ../src/gebr/ui_project_line.c:264
 msgid "Modified:"
 msgstr "Alterado:"
 
-#: ../src/gebr/ui_flow_browse.c:268
+#: ../src/gebr/ui_flow_browse.c:271
 msgid "Last run:"
 msgstr "Última execução:"
 
 #. I/O labels
-#: ../src/gebr/ui_flow_browse.c:279
+#: ../src/gebr/ui_flow_browse.c:282
+msgid "Server:"
+msgstr "Servidor:"
+
+#: ../src/gebr/ui_flow_browse.c:285
 msgid "Input:"
 msgstr "Entrada:"
 
-#: ../src/gebr/ui_flow_browse.c:285
+#: ../src/gebr/ui_flow_browse.c:291
 msgid "Error log:"
 msgstr "Log de erro:"
 
-#: ../src/gebr/ui_flow_browse.c:292 ../src/gebr/ui_flow_browse.c:297
-#: ../src/gebr/ui_flow_browse.c:302
+#: ../src/gebr/ui_flow_browse.c:305 ../src/gebr/ui_flow_browse.c:311
+#: ../src/gebr/ui_flow_browse.c:317
 msgid "(none)"
 msgstr "(nenhum)"
 
-#: ../src/gebr/ui_flow_browse.c:328
+#: ../src/gebr/ui_flow_browse.c:343
 msgid "Any flow selected"
 msgstr "Nenhum fluxo selecionado"
 
-#: ../src/gebr/ui_flow_browse.c:456
+#: ../src/gebr/ui_flow_browse.c:494
 msgid "Flow help"
 msgstr "Ajuda do fluxo"
 
-#: ../src/gebr/ui_flow_browse.c:546
+#: ../src/gebr/ui_flow_browse.c:584
 msgid "Backup current state?"
 msgstr "Fazer backup do estado atual?"
 
-#: ../src/gebr/ui_flow_browse.c:547
+#: ../src/gebr/ui_flow_browse.c:585
 msgid ""
 "You are about to revert to a previous state. The current flow will be lost "
 "after this action. Do you want to save the current flow state?"
@@ -743,103 +767,112 @@ msgstr ""
 "Você está prestes a reverter a um estado anterior. O fluxo atual será "
 "perdido depois dessa ação. Você quer salvar o estado do fluxo atual?"
 
-#: ../src/gebr/ui_flow_browse.c:557
+#: ../src/gebr/ui_flow_browse.c:595
 #, c-format
 msgid "Changed to state '%s' ('%s')"
 msgstr "Modificado para o estado '%s' ('%s')"
 
-#: ../src/gebr/ui_flow_browse.c:559
+#: ../src/gebr/ui_flow_browse.c:597
 #, c-format
 msgid "Could not change to state '%s' ('%s')"
 msgstr "Não foi possível mudar para o estado '%s' ('%s')"
 
-#: ../src/gebr/ui_flow.c:204
+#: ../src/gebr/ui_flow.c:153
 msgid "Server and I/O setup"
 msgstr "Definição de servidor e E/S"
 
-#: ../src/gebr/ui_flow.c:237
+#: ../src/gebr/ui_flow.c:199 ../src/gebr/ui_flow_edition.c:104
 msgid "Server"
 msgstr "_Servidor"
 
-#: ../src/gebr/ui_flow.c:248
+#: ../src/gebr/ui_flow.c:211
 msgid "Input"
 msgstr "Entrada"
 
-#: ../src/gebr/ui_flow.c:262
+#: ../src/gebr/ui_flow.c:225
 msgid "Output"
 msgstr "Saída"
 
-#: ../src/gebr/ui_flow.c:276
+#: ../src/gebr/ui_flow.c:239
 msgid "Error"
 msgstr "Log de erro"
 
-#: ../src/gebr/ui_flow.c:512
-#, c-format
-msgid "Unknown flow program '%s' status"
-msgstr "Estado de programa '%s' desconhecido"
-
-#: ../src/gebr/ui_flow.c:547
+#: ../src/gebr/ui_flow.c:383
 msgid "Flow input/output"
 msgstr "Entrada/Saída do fluxo"
 
 #. Input
-#: ../src/gebr/ui_flow.c:559
+#: ../src/gebr/ui_flow.c:395
 msgid "Input file"
 msgstr "Arquivo de entrada"
 
 #. Output
-#: ../src/gebr/ui_flow.c:569
+#: ../src/gebr/ui_flow.c:409
 msgid "Output file"
 msgstr "Arquivo de saída"
 
 #. Error
-#: ../src/gebr/ui_flow.c:579
+#: ../src/gebr/ui_flow.c:421
 msgid "Error file"
 msgstr "Arquivo de log de erro"
 
-#: ../src/gebr/ui_flow.c:709
+#: ../src/gebr/ui_flow.c:536
+#, c-format
+msgid "Unknown flow program '%s' status"
+msgstr "Estado de programa '%s' desconhecido"
+
+#: ../src/gebr/ui_flow.c:576
+msgid "New"
+msgstr "Novo"
+
+#: ../src/gebr/ui_flow.c:631
 msgid ""
 "This server is disconnected. To use this server, you must connect it first."
 msgstr ""
 "Este servidor está desconectado. Para utiliza-lo, você precisa conecta-lo "
 "antes."
 
-#: ../src/gebr/ui_flow.c:827 ../src/gebr/ui_flow.c:906
+#: ../src/gebr/ui_flow.c:816
 msgid "Choose a file"
 msgstr "Escolha um arquivo"
 
-#.
-#. * Left side: flow components
-#.
-#: ../src/gebr/ui_flow_edition.c:101
+#: ../src/gebr/ui_flow.c:927
+msgid "This server no longer exists in the servers list dialog."
+msgstr "Este servidor não existe mais na lista de servidores."
+
+#: ../src/gebr/ui_flow.c:930
+msgid "This server is disconnected."
+msgstr "Este servidor está desconectado."
+
+#: ../src/gebr/ui_flow_edition.c:124
 msgid "Flow sequence"
 msgstr "Sequência de fluxo"
 
 #.
 #. * Right side: Menu list
 #.
-#: ../src/gebr/ui_flow_edition.c:160
+#: ../src/gebr/ui_flow_edition.c:173
 msgid "Flow components"
 msgstr "Componentes do fluxo"
 
-#: ../src/gebr/ui_flow_edition.c:228
+#: ../src/gebr/ui_flow_edition.c:241
 msgid "No flow component selected"
 msgstr "Nenhuma componente de fluxo selecionada"
 
-#: ../src/gebr/ui_flow_edition.c:311
+#: ../src/gebr/ui_flow_edition.c:317
 #, c-format
 msgid "Configuring flow component '%s'"
 msgstr "Configurando a componente do fluxo '%s'"
 
-#: ../src/gebr/ui_flow_edition.c:384
+#: ../src/gebr/ui_flow_edition.c:400
 msgid "No menu selected"
 msgstr "Nenhum menu selecionado"
 
-#: ../src/gebr/ui_flow_edition.c:389
+#: ../src/gebr/ui_flow_edition.c:405
 msgid "Select a menu instead of a category"
 msgstr "Selecione um menu ao invés de uma categoria"
 
-#: ../src/gebr/ui_flow_edition.c:550
+#: ../src/gebr/ui_flow_edition.c:566
 msgid "Menu help"
 msgstr "Ajuda do menu"
 
@@ -855,11 +888,15 @@ msgstr "Ajuda do programa"
 msgid "No editor defined. Choose one at Configure/Preferences"
 msgstr "Nenhum editor foi definido. Selecione um em Configurar/Preferências"
 
-#: ../src/gebr/ui_help.c:173
+#: ../src/gebr/ui_help.c:169
+msgid "Could not run editor."
+msgstr "Não foi possível executar o editor."
+
+#: ../src/gebr/ui_help.c:176
 msgid "Could not read created temporary file."
 msgstr "Não foi possível ler arquivo temporário criado"
 
-#: ../src/gebr/ui_help.c:193
+#: ../src/gebr/ui_help.c:196
 msgid "Please change the report encoding to UTF-8"
 msgstr "Por favor modifique a codificação do relatório para UTF-8"
 
@@ -970,19 +1007,19 @@ msgstr "Data"
 msgid "Message"
 msgstr "Mensagem"
 
-#: ../src/gebr/ui_parameters.c:79
+#: ../src/gebr/ui_parameters.c:80
 msgid "Parameters"
 msgstr "Parâmetros"
 
-#: ../src/gebr/ui_parameters.c:85
+#: ../src/gebr/ui_parameters.c:86
 msgid "Default"
 msgstr "Padrão"
 
-#: ../src/gebr/ui_paths.c:87
+#: ../src/gebr/ui_paths.c:84
 msgid "No line selected"
 msgstr "Nenhuma linha selecionada"
 
-#: ../src/gebr/ui_paths.c:92
+#: ../src/gebr/ui_paths.c:89
 #, c-format
 msgid "Path list for line '%s'"
 msgstr "Lista de caminhos para a linha '%s'"
