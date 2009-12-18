@@ -137,11 +137,11 @@ document_get_current(void)
 	case NOTEBOOK_PAGE_PROJECT_LINE:
 		project_line_get_selected(NULL, ProjectLineSelection);
 		return gebr.project_line;
-	case NOTEBOOK_PAGE_FLOW_BROWSE:
+	default:
+		if (gebr.flow == NULL)
+			return NULL;
 		flow_browse_get_selected(NULL, TRUE);
 		return GEBR_GEOXML_DOCUMENT(gebr.flow);
-	default:
-		return NULL;
 	}
 }
 

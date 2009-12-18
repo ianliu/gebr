@@ -268,8 +268,6 @@ gebr_setup_ui(void)
 		gtk_action_group_get_action(gebr.action_group, "flow_delete"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_properties"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(gebr.action_group, "flow_dict_edit"))), -1);
 
 	revisions_menu = menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock("document-open-recent");
@@ -316,6 +314,8 @@ gebr_setup_ui(void)
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_delete"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
 		gtk_action_group_get_action(gebr.action_group, "flow_edition_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
+		gtk_action_group_get_action(gebr.action_group, "flow_dict_edit"))), -1);
 
 	menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_APPLY);
