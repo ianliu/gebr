@@ -621,7 +621,7 @@ on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_data * data)
 }
 
 static gboolean
-on_renderer_entry_key_press_event(GtkEntry * entry, GdkEventKey * event,
+on_renderer_entry_key_press_event(GtkWidget * widget, GdkEventKey * event,
 struct dict_edit_data * data)
 {
 	switch (event->keyval) {
@@ -630,21 +630,39 @@ struct dict_edit_data * data)
 			GtkTreeViewColumn *	column;
 			GtkTreeIter		iter;
 
+			g_signal_handlers_disconnect_matched(G_OBJECT(widget),
+				G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+				G_CALLBACK(on_renderer_entry_key_press_event), data);
+
 			dict_edit_get_selected(data, &iter);
 
-			g_object_get(entry, "user-data", &renderer, NULL);
+			g_object_get(widget, "user-data", &renderer, NULL);
+			gtk_cell_editable_editing_done(GTK_CELL_EDITABLE(widget));
+
 			column = gebr_gui_gtk_tree_view_get_next_column(GTK_TREE_VIEW(data->tree_view),
 				gebr_gui_gtk_tree_view_get_column_from_renderer(
 					GTK_TREE_VIEW(data->tree_view), renderer));
 			if (column != NULL)
 				gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view),
 					&iter, column, TRUE);
-			break;
-		} default:
-			break;
-	}
+			else {
+				gboolean	is_add_parameter;
 
- 	return TRUE;
+				gtk_tree_model_iter_next(data->tree_model, &iter);
+				gtk_tree_model_get(data->tree_model, &iter,
+					DICT_EDIT_IS_ADD_PARAMETER, &is_add_parameter,
+					-1);
+
+				if (is_add_parameter)
+					gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view), &iter,
+						gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 1), TRUE);
+				else
+					dict_edit_start_keyword_editing(data, &iter);
+			}
+			return TRUE;
+		} default:
+			return FALSE;
+	}
 }
 
 /* Function: on_dict_edit_renderer_editing_started
@@ -654,13 +672,13 @@ static void
 on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
 	GtkCellEditable * editable, gchar * path, struct dict_edit_data * data)
 {
-	GtkEntry *	entry;
+	GtkWidget *	widget;
 
-	entry = GTK_ENTRY(editable);
-	gtk_widget_set_events(GTK_WIDGET(entry), GDK_KEY_PRESS_MASK);
-	g_signal_connect(GTK_OBJECT(entry), "key-press-event",
+	widget = GTK_WIDGET(editable);
+	gtk_widget_set_events(GTK_WIDGET(widget), GDK_KEY_PRESS_MASK);
+	g_signal_connect(widget, "key-press-event",
 		G_CALLBACK(on_renderer_entry_key_press_event), data);
-	g_object_set(renderer, "user-data", renderer, NULL);
+	g_object_set(widget, "user-data", renderer, NULL);
 }
 
 /* Function: dict_edit_tooltip_callback

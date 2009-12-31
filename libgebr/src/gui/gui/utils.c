@@ -484,10 +484,10 @@ gebr_gui_gtk_tree_view_get_column_from_renderer(GtkTreeView * tree_view, GtkCell
 				goto out;
 			}
 		}
-		g_free(renderer_list);
+		g_list_free(renderer_list);
 	}
 
-out:	g_free(column_list);
+out:	g_list_free(column_list);
 
 	return column;
 }
@@ -509,7 +509,7 @@ gebr_gui_gtk_tree_view_get_next_column(GtkTreeView * tree_view, GtkTreeViewColum
 		}
 	}
 
-	g_free(column_list);
+	g_list_free(column_list);
 
 	return next_column;
 }
