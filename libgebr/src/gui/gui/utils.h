@@ -24,6 +24,10 @@
 
 #include <geoxml.h>
 
+void
+gebr_gui_gtk_dialog_set_response_on_widget_return(GtkDialog * dialog, gint response,
+GtkWidget * widget);
+
 gboolean
 gebr_gui_gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter);
 gboolean

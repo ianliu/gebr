@@ -19,6 +19,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <gdk/gdkkeysyms.h>
+
 #include "utils.h"
 
 /*
@@ -123,6 +125,35 @@ __gtk_widget_on_popup_menu(GtkWidget * widget, struct popup_callback * popup_cal
 /*
  * Public functions
  */
+
+static gboolean
+widget_return_on_key_press_event(GtkWidget * widget, GdkEventKey * event,
+GtkDialog * dialog)
+{
+	gint	response;
+
+	switch (event->keyval) {
+	case GDK_Return:
+		response = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget), "__widget_return_dialog_response"));
+		gtk_dialog_response(dialog, response);
+		break;
+	default:
+		break;
+	}
+
+	return FALSE;
+}
+
+void
+gebr_gui_gtk_dialog_set_response_on_widget_return(GtkDialog * dialog, gint response,
+GtkWidget * widget)
+{
+	g_object_set_data(G_OBJECT(widget), "__widget_return_dialog_response", GINT_TO_POINTER(response));
+	gtk_widget_set_events(GTK_WIDGET(widget), GDK_KEY_PRESS_MASK);
+	g_signal_connect(GTK_OBJECT(widget), "key-press-event",
+		G_CALLBACK(widget_return_on_key_press_event), dialog);
+}
+
 
 gboolean
 gebr_gui_gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter)

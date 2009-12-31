@@ -194,6 +194,8 @@ document_properties_setup_ui(GebrGeoXmlDocument * document)
 	label = gtk_label_new(_("Title"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	title = gtk_entry_new();
+	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog),
+		GTK_RESPONSE_OK, title);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), title, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3);
 	/* read */
@@ -203,6 +205,8 @@ document_properties_setup_ui(GebrGeoXmlDocument * document)
 	label = gtk_label_new(_("Description"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	description = gtk_entry_new();
+	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog),
+		GTK_RESPONSE_OK, description);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), description, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 	/* read */
@@ -232,6 +236,8 @@ document_properties_setup_ui(GebrGeoXmlDocument * document)
 	label = gtk_label_new(_("Author"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	author = gtk_entry_new();
+	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog),
+		GTK_RESPONSE_OK, author);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), author, 1, 2, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
 	/* read */
@@ -241,6 +247,8 @@ document_properties_setup_ui(GebrGeoXmlDocument * document)
 	label = gtk_label_new(_("Email"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	email = gtk_entry_new();
+	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog),
+		GTK_RESPONSE_OK, email);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), email, 1, 2, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 	/* read */
@@ -613,30 +621,29 @@ on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_data * data)
 }
 
 static gboolean
-on_renderer_entry_key_release_event(GtkEntry * entry, GdkEventKey * event,
+on_renderer_entry_key_press_event(GtkEntry * entry, GdkEventKey * event,
 struct dict_edit_data * data)
 {
-// 	puts("here");
-// 	switch (event->keyval) {
-// 		case GDK_Tab: case GDK_Return: {
-// 			GtkCellRenderer *	renderer;
-// 			GtkTreeViewColumn *	column;
-// 			GtkTreeIter		iter;
-// 
-// 			dict_edit_get_selected(data, &iter);
-// 
-// 			g_object_get(entry, "user-data", &renderer, NULL);
-// 			column = gebr_gui_gtk_tree_view_get_next_column(GTK_TREE_VIEW(data->tree_view),
-// 				gebr_gui_gtk_tree_view_get_column_from_renderer(
-// 					GTK_TREE_VIEW(data->tree_view), renderer));
-// 			if (column != NULL)
-// 				gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view),
-// 					&iter, column, TRUE);
-// 			break;
-// 		} default:
-// 			break;
-// 	}
-// 
+	switch (event->keyval) {
+		case GDK_Tab: case GDK_Return: {
+			GtkCellRenderer *	renderer;
+			GtkTreeViewColumn *	column;
+			GtkTreeIter		iter;
+
+			dict_edit_get_selected(data, &iter);
+
+			g_object_get(entry, "user-data", &renderer, NULL);
+			column = gebr_gui_gtk_tree_view_get_next_column(GTK_TREE_VIEW(data->tree_view),
+				gebr_gui_gtk_tree_view_get_column_from_renderer(
+					GTK_TREE_VIEW(data->tree_view), renderer));
+			if (column != NULL)
+				gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view),
+					&iter, column, TRUE);
+			break;
+		} default:
+			break;
+	}
+
  	return TRUE;
 }
 
@@ -650,9 +657,9 @@ on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
 	GtkEntry *	entry;
 
 	entry = GTK_ENTRY(editable);
-	gtk_widget_set_events(GTK_WIDGET(entry), GDK_KEY_RELEASE_MASK);
-	g_signal_connect(GTK_OBJECT(entry), "key-release-event",
-		G_CALLBACK(on_renderer_entry_key_release_event), data);
+	gtk_widget_set_events(GTK_WIDGET(entry), GDK_KEY_PRESS_MASK);
+	g_signal_connect(GTK_OBJECT(entry), "key-press-event",
+		G_CALLBACK(on_renderer_entry_key_press_event), data);
 	g_object_set(renderer, "user-data", renderer, NULL);
 }
 
