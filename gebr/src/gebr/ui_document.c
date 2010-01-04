@@ -625,43 +625,43 @@ on_renderer_entry_key_press_event(GtkWidget * widget, GdkEventKey * event,
 struct dict_edit_data * data)
 {
 	switch (event->keyval) {
-		case GDK_Tab: case GDK_Return: {
-			GtkCellRenderer *	renderer;
-			GtkTreeViewColumn *	column;
-			GtkTreeIter		iter;
+	case GDK_Tab: case GDK_Return: {
+		GtkCellRenderer *	renderer;
+		GtkTreeViewColumn *	column;
+		GtkTreeIter		iter;
 
-			g_signal_handlers_disconnect_matched(G_OBJECT(widget),
-				G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-				G_CALLBACK(on_renderer_entry_key_press_event), data);
+		g_signal_handlers_disconnect_matched(G_OBJECT(widget),
+			G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+			G_CALLBACK(on_renderer_entry_key_press_event), data);
 
-			dict_edit_get_selected(data, &iter);
+		dict_edit_get_selected(data, &iter);
 
-			g_object_get(widget, "user-data", &renderer, NULL);
-			gtk_cell_editable_editing_done(GTK_CELL_EDITABLE(widget));
+		g_object_get(widget, "user-data", &renderer, NULL);
+		gtk_cell_editable_editing_done(GTK_CELL_EDITABLE(widget));
 
-			column = gebr_gui_gtk_tree_view_get_next_column(GTK_TREE_VIEW(data->tree_view),
-				gebr_gui_gtk_tree_view_get_column_from_renderer(
-					GTK_TREE_VIEW(data->tree_view), renderer));
-			if (column != NULL)
-				gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view),
-					&iter, column, TRUE);
-			else {
-				gboolean	is_add_parameter;
+		column = gebr_gui_gtk_tree_view_get_next_column(GTK_TREE_VIEW(data->tree_view),
+			gebr_gui_gtk_tree_view_get_column_from_renderer(
+				GTK_TREE_VIEW(data->tree_view), renderer));
+		if (column != NULL)
+			gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view),
+				&iter, column, TRUE);
+		else {
+			gboolean	is_add_parameter;
 
-				gtk_tree_model_iter_next(data->tree_model, &iter);
-				gtk_tree_model_get(data->tree_model, &iter,
-					DICT_EDIT_IS_ADD_PARAMETER, &is_add_parameter,
-					-1);
+			gtk_tree_model_iter_next(data->tree_model, &iter);
+			gtk_tree_model_get(data->tree_model, &iter,
+				DICT_EDIT_IS_ADD_PARAMETER, &is_add_parameter,
+				-1);
 
-				if (is_add_parameter)
-					gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view), &iter,
-						gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 1), TRUE);
-				else
-					dict_edit_start_keyword_editing(data, &iter);
-			}
-			return TRUE;
-		} default:
-			return FALSE;
+			if (is_add_parameter)
+				gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view), &iter,
+					gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 1), TRUE);
+			else
+				dict_edit_start_keyword_editing(data, &iter);
+		}
+		return TRUE;
+	} default:
+		return FALSE;
 	}
 }
 

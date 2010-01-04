@@ -1421,9 +1421,11 @@ parameter_number_min_on_activate(GtkEntry * entry, struct gebr_gui_parameter_wid
 	const gchar *	min_str;
 	gdouble		min;
 
-	min_str = gebr_validate_float((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
+	min_str = gebr_validate_float((gchar*)gtk_entry_get_text(entry), NULL, NULL);
 	gtk_entry_set_text(entry, min_str);
 	min = atof(min_str);
+	gebr_geoxml_program_parameter_set_number_min_max(GEBR_GEOXML_PROGRAM_PARAMETER(widget->parameter),
+		min_str, NULL);
 
 	if (widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
 		gdouble		max;
@@ -1435,9 +1437,6 @@ parameter_number_min_on_activate(GtkEntry * entry, struct gebr_gui_parameter_wid
 		gtk_spin_button_set_range(spin_button, min, max);
 	} else
 		gebr_gui_parameter_widget_validate(widget);
-
-	gebr_geoxml_program_parameter_set_number_min_max(GEBR_GEOXML_PROGRAM_PARAMETER(widget->parameter),
-		min_str, NULL);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -1458,6 +1457,8 @@ parameter_number_max_on_activate(GtkEntry * entry, struct gebr_gui_parameter_wid
 	max_str = gebr_validate_float((gchar*)gtk_entry_get_text(GTK_ENTRY(entry)), NULL, NULL);
 	gtk_entry_set_text(entry, max_str);
 	max = atof(max_str);
+	gebr_geoxml_program_parameter_set_number_min_max(GEBR_GEOXML_PROGRAM_PARAMETER(widget->parameter),
+		NULL, max_str);
 
 	if (widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
 		gdouble		min;
@@ -1469,9 +1470,6 @@ parameter_number_max_on_activate(GtkEntry * entry, struct gebr_gui_parameter_wid
 		gtk_spin_button_set_range(spin_button, min, max);
 	} else
 		gebr_gui_parameter_widget_validate(widget);
-
-	gebr_geoxml_program_parameter_set_number_min_max(GEBR_GEOXML_PROGRAM_PARAMETER(widget->parameter),
-		NULL, max_str);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
