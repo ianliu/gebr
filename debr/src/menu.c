@@ -67,6 +67,9 @@ static void		menu_category_renamed		(GebrGuiValueSequenceEdit *	sequence_edit,
 static void		menu_category_removed		(GebrGuiValueSequenceEdit *	sequence_edit,
 							 const gchar *		old_text);
 
+static gboolean 	menu_on_query_tooltip		(GtkTreeView * tree_view, GtkTooltip * tooltip,
+							 GtkTreeIter * iter, GtkTreeViewColumn * column, gpointer user_data);
+
 /*
  * Section: Public
  */
@@ -114,6 +117,7 @@ menu_setup_ui(void)
 		G_CALLBACK(menu_selected), NULL);
 	g_signal_connect(debr.ui_menu.tree_view, "row-activated",
 		G_CALLBACK(menu_dialog_setup_ui), NULL);
+	gebr_gui_gtk_tree_view_set_tooltip_callback (GTK_TREE_VIEW(debr.ui_menu.tree_view), menu_on_query_tooltip, NULL);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(debr.ui_menu.tree_view), FALSE);
 	col = gtk_tree_view_column_new();
@@ -1047,6 +1051,26 @@ menu_get_selected(GtkTreeIter * iter, gboolean warn_unselected_menu)
 }
 
 /**
+ * menu_get_type:
+ * @iter:
+ *
+ * 
+ * Returns: a #IterType.
+ */
+IterType
+menu_get_type(GtkTreeIter * iter)
+{
+	switch (gtk_tree_store_iter_depth(debr.ui_menu.model, iter)) {
+	case 0:
+		return ITER_FOLDER;
+	case 1:
+		return ITER_FILE;
+	default:
+		return ITER_NONE;
+	}
+}
+
+/**
  * menu_get_selected_type:
  * @iter: The iterator for #debr.ui_menu.model to get the type.
  *
@@ -1062,17 +1086,7 @@ menu_get_selected_type(GtkTreeIter * _iter, gboolean warn_unselected_menu)
 	GtkTreeIter	iter;
 
 	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_menu.tree_view), &iter))
-		switch (gtk_tree_store_iter_depth(debr.ui_menu.model, &iter)) {
-		case 0:
-			type = ITER_FOLDER;
-			break;
-		case 1:
-			type = ITER_FILE;
-			break;
-		default:
-			type = ITER_NONE;
-			break;
-		}
+		type = menu_get_type(&iter);
 	else
 		type = ITER_NONE;
 
@@ -1087,7 +1101,7 @@ menu_get_selected_type(GtkTreeIter * _iter, gboolean warn_unselected_menu)
 /**
  * menu_select_iter:
  * @iter: The #GtkTreeIter to be selected.
- *
+*
  * Selects _iter_ from the menu's tree view, expanding folders if necessary.
  */
 void
@@ -1722,5 +1736,30 @@ menu_category_removed(GebrGuiValueSequenceEdit * sequence_edit, const gchar * ol
 
 		g_free(i);
 	}
+}
+
+/**
+ * menu_on_query_tooltip:
+ * @sequence_edit:
+ * @old_text:
+ *
+ * TODO: comment.
+ */
+static gboolean
+menu_on_query_tooltip(GtkTreeView * tree_view, GtkTooltip * tooltip, GtkTreeIter * iter, GtkTreeViewColumn * column, gpointer user_data)
+{
+	gchar *path;	
+
+	if (menu_get_type(iter) == ITER_FOLDER)
+	{
+		if(gebr_gui_gtk_tree_iter_equal_to(iter, &debr.ui_menu.iter_other))
+			return FALSE; /* It is the "Others" folder. */
+
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_PATH, &path, -1);
+		gtk_tooltip_set_text(tooltip, path);
+		g_free(path);
+		return TRUE;
+	}
+	return FALSE;
 }
 
