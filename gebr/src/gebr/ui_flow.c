@@ -808,6 +808,7 @@ on_renderer_entry_icon_release	(GtkEntry *		widget,
 	gint		response;
 	gchar *		filename;
 	gint		column;
+	GebrGeoXmlSequence * path;
 
 	if (!flow_io_get_selected(ui_flow_io, NULL))
 		return;
@@ -819,6 +820,17 @@ on_renderer_entry_icon_release	(GtkEntry *		widget,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_OPEN, GTK_RESPONSE_APPLY,
 		NULL);
+
+	gebr_geoxml_line_get_path(gebr.line, &path, 0);
+
+	while(path){
+	  const gchar * path_string;
+
+	  path_string = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path));
+	  gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(dialog), path_string, NULL);
+	  gebr_geoxml_sequence_next(&path);
+	}
+
 
 	response = gtk_dialog_run(GTK_DIALOG(dialog));
 	if (response != GTK_RESPONSE_APPLY)
