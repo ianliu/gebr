@@ -36,37 +36,33 @@ enum {
 };
 
 struct ui_server_common {
-	GtkWidget *			dialog;
-	GtkWidget *			widget;
+	GtkWidget *dialog;
+	GtkWidget *widget;
 
-	GtkListStore *			store;
-	GtkWidget *			view;
+	GtkListStore *store;
+	GtkWidget *view;
 
-	GtkWidget *			add_local_button;
+	GtkWidget *add_local_button;
 };
 
 struct ui_server_list {
-	struct ui_server_common		common;
+	struct ui_server_common common;
 };
 
-struct ui_server_list *
-server_list_setup_ui(void);
+struct ui_server_list *server_list_setup_ui(void);
 
-void
-server_list_show(struct ui_server_list * ui_server_list);
+void server_list_show(struct ui_server_list *ui_server_list);
 
-void
-server_list_updated_status(struct server * server);
+void server_list_updated_status(struct server *server);
 
 struct ui_server_select {
-	struct ui_server_common		common;
+	struct ui_server_common common;
 
-	struct server *			selected;
+	struct server *selected;
 
-	GtkWidget *			ok_button;
+	GtkWidget *ok_button;
 };
 
-struct server *
-server_select_setup_ui(void);
+struct server *server_select_setup_ui(void);
 
-#endif //__UI_SERVER_H
+#endif				//__UI_SERVER_H

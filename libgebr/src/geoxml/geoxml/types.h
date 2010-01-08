@@ -22,8 +22,8 @@
  * \internal
  * defined in parameter.c
  */
-extern const char*	parameter_type_to_str[];
-extern const int 	parameter_type_to_str_len;
+extern const char *parameter_type_to_str[];
+extern const int parameter_type_to_str_len;
 
 /**
  * \internal
@@ -37,6 +37,6 @@ extern const int 	parameter_type_to_str_len;
  * functions in defines, like groxml_document_root_element
  * Defined in document.c.
  */
-extern GdomeException	exception;
+extern GdomeException exception;
 
-#endif // __GEBR_GEOXML_TYPES_H
+#endif				// __GEBR_GEOXML_TYPES_H

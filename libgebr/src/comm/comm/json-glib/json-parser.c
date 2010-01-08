@@ -35,109 +35,93 @@
 #include "json-parser.h"
 #include "json-scanner.h"
 
-GQuark
-json_parser_error_quark (void)
+GQuark json_parser_error_quark(void)
 {
-  return g_quark_from_static_string ("json-parser-error");
+	return g_quark_from_static_string("json-parser-error");
 }
 
 #define JSON_PARSER_GET_PRIVATE(obj) \
         (G_TYPE_INSTANCE_GET_PRIVATE ((obj), JSON_TYPE_PARSER, JsonParserPrivate))
 
-struct _JsonParserPrivate
-{
-  JsonNode *root;
-  JsonNode *current_node;
+struct _JsonParserPrivate {
+	JsonNode *root;
+	JsonNode *current_node;
 
-  JsonScanner *scanner;
+	JsonScanner *scanner;
 
-  GError *last_error;
+	GError *last_error;
 
-  guint has_assignment : 1;
-  gchar *variable_name;
+	guint has_assignment:1;
+	gchar *variable_name;
 };
 
-static const gchar symbol_names[] =
-  "true\0"
-  "false\0"
-  "null\0"
-  "var\0";
+static const gchar symbol_names[] = "true\0" "false\0" "null\0" "var\0";
 
-static const struct
-{
-  guint name_offset;
-  guint token;
+static const struct {
+	guint name_offset;
+	guint token;
 } symbols[] = {
-  {  0, JSON_TOKEN_TRUE },
-  {  5, JSON_TOKEN_FALSE },
-  { 11, JSON_TOKEN_NULL },
-  { 16, JSON_TOKEN_VAR }
+	{
+	0, JSON_TOKEN_TRUE}, {
+	5, JSON_TOKEN_FALSE}, {
+	11, JSON_TOKEN_NULL}, {
+	16, JSON_TOKEN_VAR}
 };
 
-static const guint n_symbols = G_N_ELEMENTS (symbols);
+static const guint n_symbols = G_N_ELEMENTS(symbols);
 
-enum
-{
-  PARSE_START,
-  OBJECT_START,
-  OBJECT_MEMBER,
-  OBJECT_END,
-  ARRAY_START,
-  ARRAY_ELEMENT,
-  ARRAY_END,
-  PARSE_END,
-  ERROR,
+enum {
+	PARSE_START,
+	OBJECT_START,
+	OBJECT_MEMBER,
+	OBJECT_END,
+	ARRAY_START,
+	ARRAY_ELEMENT,
+	ARRAY_END,
+	PARSE_END,
+	ERROR,
 
-  LAST_SIGNAL
+	LAST_SIGNAL
 };
 
 static guint parser_signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (JsonParser, json_parser, G_TYPE_OBJECT);
+G_DEFINE_TYPE(JsonParser, json_parser, G_TYPE_OBJECT);
 
-static guint json_parse_array  (JsonParser *parser,
-                                JsonScanner   *scanner,
-                                gboolean    nested);
-static guint json_parse_object (JsonParser *parser,
-                                JsonScanner   *scanner,
-                                gboolean    nested);
+static guint json_parse_array(JsonParser * parser, JsonScanner * scanner, gboolean nested);
+static guint json_parse_object(JsonParser * parser, JsonScanner * scanner, gboolean nested);
 
-static inline void
-json_parser_clear (JsonParser *parser)
+static inline void json_parser_clear(JsonParser * parser)
 {
-  JsonParserPrivate *priv = parser->priv;
+	JsonParserPrivate *priv = parser->priv;
 
-  g_free (priv->variable_name);
+	g_free(priv->variable_name);
 
-  if (priv->last_error)
-    {
-      g_error_free (priv->last_error);
-      priv->last_error = NULL;
-    }
+	if (priv->last_error) {
+		g_error_free(priv->last_error);
+		priv->last_error = NULL;
+	}
 
-  if (priv->root)
-    {
-      json_node_free (priv->root);
-      priv->root = NULL;
-    }
+	if (priv->root) {
+		json_node_free(priv->root);
+		priv->root = NULL;
+	}
 }
 
-static void
-json_parser_dispose (GObject *gobject)
+static void json_parser_dispose(GObject * gobject)
 {
-  json_parser_clear (JSON_PARSER (gobject));
+	json_parser_clear(JSON_PARSER(gobject));
 
-  G_OBJECT_CLASS (json_parser_parent_class)->dispose (gobject);
+	G_OBJECT_CLASS(json_parser_parent_class)->dispose(gobject);
 }
 
-static void
-json_parser_class_init (JsonParserClass *klass)
+static void json_parser_class_init(JsonParserClass * klass)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
 
-  g_type_class_add_private (klass, sizeof (JsonParserPrivate));
+	g_type_class_add_private(klass, sizeof(JsonParserPrivate));
 
-  gobject_class->dispose = json_parser_dispose;
+	gobject_class->dispose = json_parser_dispose;
 
   /**
    * JsonParser::parse-start:
@@ -146,14 +130,12 @@ json_parser_class_init (JsonParserClass *klass)
    * The ::parse-start signal is emitted when the parser began parsing
    * a JSON data stream.
    */
-  parser_signals[PARSE_START] =
-    g_signal_new ("parse-start",
-                  G_OBJECT_CLASS_TYPE (gobject_class),
-                  G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (JsonParserClass, parse_start),
-                  NULL, NULL,
-                  _json_marshal_VOID__VOID,
-                  G_TYPE_NONE, 0);
+	parser_signals[PARSE_START] =
+	    g_signal_new("parse-start",
+			 G_OBJECT_CLASS_TYPE(gobject_class),
+			 G_SIGNAL_RUN_LAST,
+			 G_STRUCT_OFFSET(JsonParserClass, parse_start),
+			 NULL, NULL, _json_marshal_VOID__VOID, G_TYPE_NONE, 0);
   /**
    * JsonParser::parse-end:
    * @parser: the #JsonParser that received the signal
@@ -161,14 +143,12 @@ json_parser_class_init (JsonParserClass *klass)
    * The ::parse-end signal is emitted when the parser successfully
    * finished parsing a JSON data stream
    */
-  parser_signals[PARSE_END] =
-    g_signal_new ("parse-end",
-                  G_OBJECT_CLASS_TYPE (gobject_class),
-                  G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (JsonParserClass, parse_end),
-                  NULL, NULL,
-                  _json_marshal_VOID__VOID,
-                  G_TYPE_NONE, 0);
+	parser_signals[PARSE_END] =
+	    g_signal_new("parse-end",
+			 G_OBJECT_CLASS_TYPE(gobject_class),
+			 G_SIGNAL_RUN_LAST,
+			 G_STRUCT_OFFSET(JsonParserClass, parse_end),
+			 NULL, NULL, _json_marshal_VOID__VOID, G_TYPE_NONE, 0);
   /**
    * JsonParser::object-start:
    * @parser: the #JsonParser that received the signal
@@ -176,14 +156,12 @@ json_parser_class_init (JsonParserClass *klass)
    * The ::object-start signal is emitted each time the #JsonParser
    * starts parsing a #JsonObject.
    */
-  parser_signals[OBJECT_START] =
-    g_signal_new ("object-start",
-                  G_OBJECT_CLASS_TYPE (gobject_class),
-                  G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (JsonParserClass, object_start),
-                  NULL, NULL,
-                  _json_marshal_VOID__VOID,
-                  G_TYPE_NONE, 0);
+	parser_signals[OBJECT_START] =
+	    g_signal_new("object-start",
+			 G_OBJECT_CLASS_TYPE(gobject_class),
+			 G_SIGNAL_RUN_LAST,
+			 G_STRUCT_OFFSET(JsonParserClass, object_start),
+			 NULL, NULL, _json_marshal_VOID__VOID, G_TYPE_NONE, 0);
   /**
    * JsonParser::object-member:
    * @parser: the #JsonParser that received the signal
@@ -194,16 +172,12 @@ json_parser_class_init (JsonParserClass *klass)
    * has successfully parsed a single member of a #JsonObject. The
    * object and member are passed to the signal handlers.
    */
-  parser_signals[OBJECT_MEMBER] =
-    g_signal_new ("object-member",
-                  G_OBJECT_CLASS_TYPE (gobject_class),
-                  G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (JsonParserClass, object_member),
-                  NULL, NULL,
-                  _json_marshal_VOID__BOXED_STRING,
-                  G_TYPE_NONE, 2,
-                  JSON_TYPE_OBJECT,
-                  G_TYPE_STRING);
+	parser_signals[OBJECT_MEMBER] =
+	    g_signal_new("object-member",
+			 G_OBJECT_CLASS_TYPE(gobject_class),
+			 G_SIGNAL_RUN_LAST,
+			 G_STRUCT_OFFSET(JsonParserClass, object_member),
+			 NULL, NULL, _json_marshal_VOID__BOXED_STRING, G_TYPE_NONE, 2, JSON_TYPE_OBJECT, G_TYPE_STRING);
   /**
    * JsonParser::object-end:
    * @parser: the #JsonParser that received the signal
@@ -212,15 +186,12 @@ json_parser_class_init (JsonParserClass *klass)
    * The ::object-end signal is emitted each time the #JsonParser
    * has successfully parsed an entire #JsonObject.
    */
-  parser_signals[OBJECT_END] =
-    g_signal_new ("object-end",
-                  G_OBJECT_CLASS_TYPE (gobject_class),
-                  G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (JsonParserClass, object_end),
-                  NULL, NULL,
-                  _json_marshal_VOID__BOXED,
-                  G_TYPE_NONE, 1,
-                  JSON_TYPE_OBJECT);
+	parser_signals[OBJECT_END] =
+	    g_signal_new("object-end",
+			 G_OBJECT_CLASS_TYPE(gobject_class),
+			 G_SIGNAL_RUN_LAST,
+			 G_STRUCT_OFFSET(JsonParserClass, object_end),
+			 NULL, NULL, _json_marshal_VOID__BOXED, G_TYPE_NONE, 1, JSON_TYPE_OBJECT);
   /**
    * JsonParser::array-start:
    * @parser: the #JsonParser that received the signal
@@ -228,14 +199,12 @@ json_parser_class_init (JsonParserClass *klass)
    * The ::array-start signal is emitted each time the #JsonParser
    * starts parsing a #JsonArray
    */
-  parser_signals[ARRAY_START] =
-    g_signal_new ("array-start",
-                  G_OBJECT_CLASS_TYPE (gobject_class),
-                  G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (JsonParserClass, array_start),
-                  NULL, NULL,
-                  _json_marshal_VOID__VOID,
-                  G_TYPE_NONE, 0);
+	parser_signals[ARRAY_START] =
+	    g_signal_new("array-start",
+			 G_OBJECT_CLASS_TYPE(gobject_class),
+			 G_SIGNAL_RUN_LAST,
+			 G_STRUCT_OFFSET(JsonParserClass, array_start),
+			 NULL, NULL, _json_marshal_VOID__VOID, G_TYPE_NONE, 0);
   /**
    * JsonParser::array-element:
    * @parser: the #JsonParser that received the signal
@@ -246,16 +215,12 @@ json_parser_class_init (JsonParserClass *klass)
    * has successfully parsed a single element of a #JsonArray. The
    * array and element index are passed to the signal handlers.
    */
-  parser_signals[ARRAY_ELEMENT] =
-    g_signal_new ("array-element",
-                  G_OBJECT_CLASS_TYPE (gobject_class),
-                  G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (JsonParserClass, array_element),
-                  NULL, NULL,
-                  _json_marshal_VOID__BOXED_INT,
-                  G_TYPE_NONE, 2,
-                  JSON_TYPE_ARRAY,
-                  G_TYPE_INT);
+	parser_signals[ARRAY_ELEMENT] =
+	    g_signal_new("array-element",
+			 G_OBJECT_CLASS_TYPE(gobject_class),
+			 G_SIGNAL_RUN_LAST,
+			 G_STRUCT_OFFSET(JsonParserClass, array_element),
+			 NULL, NULL, _json_marshal_VOID__BOXED_INT, G_TYPE_NONE, 2, JSON_TYPE_ARRAY, G_TYPE_INT);
   /**
    * JsonParser::array-end:
    * @parser: the #JsonParser that received the signal
@@ -264,15 +229,12 @@ json_parser_class_init (JsonParserClass *klass)
    * The ::array-end signal is emitted each time the #JsonParser
    * has successfully parsed an entire #JsonArray
    */
-  parser_signals[ARRAY_END] =
-    g_signal_new ("array-end",
-                  G_OBJECT_CLASS_TYPE (gobject_class),
-                  G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (JsonParserClass, array_end),
-                  NULL, NULL,
-                  _json_marshal_VOID__BOXED,
-                  G_TYPE_NONE, 1,
-                  JSON_TYPE_ARRAY);
+	parser_signals[ARRAY_END] =
+	    g_signal_new("array-end",
+			 G_OBJECT_CLASS_TYPE(gobject_class),
+			 G_SIGNAL_RUN_LAST,
+			 G_STRUCT_OFFSET(JsonParserClass, array_end),
+			 NULL, NULL, _json_marshal_VOID__BOXED, G_TYPE_NONE, 1, JSON_TYPE_ARRAY);
   /**
    * JsonParser::error:
    * @parser: the parser instance that received the signal
@@ -281,584 +243,503 @@ json_parser_class_init (JsonParserClass *klass)
    * The ::error signal is emitted each time a #JsonParser encounters
    * an error in a JSON stream.
    */
-  parser_signals[ERROR] =
-    g_signal_new ("error",
-                  G_OBJECT_CLASS_TYPE (gobject_class),
-                  G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (JsonParserClass, error),
-                  NULL, NULL,
-                  _json_marshal_VOID__POINTER,
-                  G_TYPE_NONE, 1,
-                  G_TYPE_POINTER);
+	parser_signals[ERROR] =
+	    g_signal_new("error",
+			 G_OBJECT_CLASS_TYPE(gobject_class),
+			 G_SIGNAL_RUN_LAST,
+			 G_STRUCT_OFFSET(JsonParserClass, error),
+			 NULL, NULL, _json_marshal_VOID__POINTER, G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
 
-static void
-json_parser_init (JsonParser *parser)
+static void json_parser_init(JsonParser * parser)
 {
-  JsonParserPrivate *priv;
+	JsonParserPrivate *priv;
 
-  parser->priv = priv = JSON_PARSER_GET_PRIVATE (parser);
+	parser->priv = priv = JSON_PARSER_GET_PRIVATE(parser);
 
-  priv->root = NULL;
-  priv->current_node = NULL;
+	priv->root = NULL;
+	priv->current_node = NULL;
 
-  priv->has_assignment = FALSE;
-  priv->variable_name = NULL;
+	priv->has_assignment = FALSE;
+	priv->variable_name = NULL;
 }
 
-static guint
-json_parse_array (JsonParser *parser,
-                  JsonScanner   *scanner,
-                  gboolean    nested)
+static guint json_parse_array(JsonParser * parser, JsonScanner * scanner, gboolean nested)
 {
-  JsonParserPrivate *priv = parser->priv;
-  JsonArray *array;
-  guint token;
+	JsonParserPrivate *priv = parser->priv;
+	JsonArray *array;
+	guint token;
 
-  if (!nested)
-    {
-      /* the caller already swallowed the opening '[' */
-      token = json_scanner_get_next_token (scanner);
-      if (token != G_TOKEN_LEFT_BRACE)
-        return G_TOKEN_LEFT_BRACE;
-    }
+	if (!nested) {
+		/* the caller already swallowed the opening '[' */
+		token = json_scanner_get_next_token(scanner);
+		if (token != G_TOKEN_LEFT_BRACE)
+			return G_TOKEN_LEFT_BRACE;
+	}
 
-  g_signal_emit (parser, parser_signals[ARRAY_START], 0);
+	g_signal_emit(parser, parser_signals[ARRAY_START], 0);
 
-  array = json_array_new ();
+	array = json_array_new();
 
-  token = json_scanner_get_next_token (scanner);
-  while (token != G_TOKEN_RIGHT_BRACE)
-    {
-      JsonNode *node = NULL;
-      gboolean negative = FALSE;
+	token = json_scanner_get_next_token(scanner);
+	while (token != G_TOKEN_RIGHT_BRACE) {
+		JsonNode *node = NULL;
+		gboolean negative = FALSE;
 
-      if (token == G_TOKEN_COMMA)
-        {
-          /* swallow the comma */
-          token = json_scanner_get_next_token (scanner);
-          continue;
-        }
+		if (token == G_TOKEN_COMMA) {
+			/* swallow the comma */
+			token = json_scanner_get_next_token(scanner);
+			continue;
+		}
 
-      /* nested object */
-      if (token == G_TOKEN_LEFT_CURLY)
-        {
-          JsonNode *old_node = priv->current_node;
+		/* nested object */
+		if (token == G_TOKEN_LEFT_CURLY) {
+			JsonNode *old_node = priv->current_node;
 
-          priv->current_node = json_node_new (JSON_NODE_OBJECT);
+			priv->current_node = json_node_new(JSON_NODE_OBJECT);
 
-          token = json_parse_object (parser, scanner, TRUE);
+			token = json_parse_object(parser, scanner, TRUE);
 
-          node = priv->current_node;
-          priv->current_node = old_node;
+			node = priv->current_node;
+			priv->current_node = old_node;
 
-          if (token != G_TOKEN_NONE)
-            {
-              json_node_free (node);
-              json_array_unref (array);
-              return token;
-            }
+			if (token != G_TOKEN_NONE) {
+				json_node_free(node);
+				json_array_unref(array);
+				return token;
+			}
 
-          json_array_add_element (array, node);
-          node->parent = priv->current_node;
+			json_array_add_element(array, node);
+			node->parent = priv->current_node;
 
-          g_signal_emit (parser, parser_signals[ARRAY_ELEMENT], 0,
-                         array,
-                         json_array_get_length (array));
+			g_signal_emit(parser, parser_signals[ARRAY_ELEMENT], 0, array, json_array_get_length(array));
 
-          token = json_scanner_get_next_token (scanner);
-          if (token == G_TOKEN_RIGHT_BRACE)
-            break;
+			token = json_scanner_get_next_token(scanner);
+			if (token == G_TOKEN_RIGHT_BRACE)
+				break;
 
-          if (token != G_TOKEN_COMMA)
-            return G_TOKEN_RIGHT_BRACE;
+			if (token != G_TOKEN_COMMA)
+				return G_TOKEN_RIGHT_BRACE;
 
-          continue;
-        }
+			continue;
+		}
 
-      /* nested array */
-      if (token == G_TOKEN_LEFT_BRACE)
-        {
-          JsonNode *old_node = priv->current_node;
+		/* nested array */
+		if (token == G_TOKEN_LEFT_BRACE) {
+			JsonNode *old_node = priv->current_node;
 
-          priv->current_node = json_node_new (JSON_NODE_ARRAY);
+			priv->current_node = json_node_new(JSON_NODE_ARRAY);
 
-          token = json_parse_array (parser, scanner, TRUE);
+			token = json_parse_array(parser, scanner, TRUE);
 
-          node = priv->current_node;
-          priv->current_node = old_node;
+			node = priv->current_node;
+			priv->current_node = old_node;
 
-          if (token != G_TOKEN_NONE)
-            {
-              json_node_free (node);
-              json_array_unref (array);
-              return token;
-            }
+			if (token != G_TOKEN_NONE) {
+				json_node_free(node);
+				json_array_unref(array);
+				return token;
+			}
 
-          json_array_add_element (array, node);
-          node->parent = priv->current_node;
+			json_array_add_element(array, node);
+			node->parent = priv->current_node;
 
-          g_signal_emit (parser, parser_signals[ARRAY_ELEMENT], 0,
-                         array,
-                         json_array_get_length (array));
+			g_signal_emit(parser, parser_signals[ARRAY_ELEMENT], 0, array, json_array_get_length(array));
 
-          token = json_scanner_get_next_token (scanner);
-          if (token == G_TOKEN_RIGHT_BRACE)
-            break;
+			token = json_scanner_get_next_token(scanner);
+			if (token == G_TOKEN_RIGHT_BRACE)
+				break;
 
-          if (token != G_TOKEN_COMMA)
-            return G_TOKEN_RIGHT_BRACE;
+			if (token != G_TOKEN_COMMA)
+				return G_TOKEN_RIGHT_BRACE;
 
-          continue;
-        }
+			continue;
+		}
 
-      if (token == '-')
-        {
-          guint next_token = json_scanner_peek_next_token (scanner);
+		if (token == '-') {
+			guint next_token = json_scanner_peek_next_token(scanner);
 
-          if (next_token == G_TOKEN_INT ||
-              next_token == G_TOKEN_FLOAT)
-            {
-              negative = TRUE;
-              token = json_scanner_get_next_token (scanner);
-            }
-          else
-            {
-              return G_TOKEN_INT;
-            }
-        }
+			if (next_token == G_TOKEN_INT || next_token == G_TOKEN_FLOAT) {
+				negative = TRUE;
+				token = json_scanner_get_next_token(scanner);
+			} else {
+				return G_TOKEN_INT;
+			}
+		}
 
-      switch (token)
-        {
-        case G_TOKEN_INT:
-          node = json_node_new (JSON_NODE_VALUE);
-          json_node_set_int (node, negative ? scanner->value.v_int * -1
-                                            : scanner->value.v_int);
-          break;
+		switch (token) {
+		case G_TOKEN_INT:
+			node = json_node_new(JSON_NODE_VALUE);
+			json_node_set_int(node, negative ? scanner->value.v_int * -1 : scanner->value.v_int);
+			break;
 
-        case G_TOKEN_FLOAT:
-          node = json_node_new (JSON_NODE_VALUE);
-          json_node_set_double (node, negative ? scanner->value.v_float * -1.0
-                                               : scanner->value.v_float);
-          break;
+		case G_TOKEN_FLOAT:
+			node = json_node_new(JSON_NODE_VALUE);
+			json_node_set_double(node, negative ? scanner->value.v_float * -1.0 : scanner->value.v_float);
+			break;
 
-        case G_TOKEN_STRING:
-          node = json_node_new (JSON_NODE_VALUE);
-          json_node_set_string (node, scanner->value.v_string);
-          break;
+		case G_TOKEN_STRING:
+			node = json_node_new(JSON_NODE_VALUE);
+			json_node_set_string(node, scanner->value.v_string);
+			break;
 
-        case JSON_TOKEN_TRUE:
-        case JSON_TOKEN_FALSE:
-          node = json_node_new (JSON_NODE_VALUE);
-          json_node_set_boolean (node, token == JSON_TOKEN_TRUE ? TRUE
-                                                                : FALSE);
-          break;
+		case JSON_TOKEN_TRUE:
+		case JSON_TOKEN_FALSE:
+			node = json_node_new(JSON_NODE_VALUE);
+			json_node_set_boolean(node, token == JSON_TOKEN_TRUE ? TRUE : FALSE);
+			break;
 
-        case JSON_TOKEN_NULL:
-          node = json_node_new (JSON_NODE_NULL);
-          break;
+		case JSON_TOKEN_NULL:
+			node = json_node_new(JSON_NODE_NULL);
+			break;
 
-        default:
-          return G_TOKEN_RIGHT_BRACE;
-        }
+		default:
+			return G_TOKEN_RIGHT_BRACE;
+		}
 
-      if (node)
-        {
-          json_array_add_element (array, node);
-          node->parent = priv->current_node;
+		if (node) {
+			json_array_add_element(array, node);
+			node->parent = priv->current_node;
 
-          g_signal_emit (parser, parser_signals[ARRAY_ELEMENT], 0,
-                         array,
-                         json_array_get_length (array));
-        }
+			g_signal_emit(parser, parser_signals[ARRAY_ELEMENT], 0, array, json_array_get_length(array));
+		}
 
-      token = json_scanner_get_next_token (scanner);
-      if (token != G_TOKEN_COMMA && token != G_TOKEN_RIGHT_BRACE)
-        return G_TOKEN_RIGHT_BRACE;
-    }
+		token = json_scanner_get_next_token(scanner);
+		if (token != G_TOKEN_COMMA && token != G_TOKEN_RIGHT_BRACE)
+			return G_TOKEN_RIGHT_BRACE;
+	}
 
-  json_node_take_array (priv->current_node, array);
+	json_node_take_array(priv->current_node, array);
 
-  g_signal_emit (parser, parser_signals[ARRAY_END], 0, array);
+	g_signal_emit(parser, parser_signals[ARRAY_END], 0, array);
 
-  return G_TOKEN_NONE;
+	return G_TOKEN_NONE;
 }
 
-static guint
-json_parse_object (JsonParser *parser,
-                   JsonScanner   *scanner,
-                   gboolean    nested)
+static guint json_parse_object(JsonParser * parser, JsonScanner * scanner, gboolean nested)
 {
-  JsonParserPrivate *priv = parser->priv;
-  JsonObject *object;
-  guint token;
+	JsonParserPrivate *priv = parser->priv;
+	JsonObject *object;
+	guint token;
 
-  if (!nested)
-    {
-      /* the caller already swallowed the opening '{' */
-      token = json_scanner_get_next_token (scanner);
-      if (token != G_TOKEN_LEFT_CURLY)
-        return G_TOKEN_LEFT_CURLY;
-    }
+	if (!nested) {
+		/* the caller already swallowed the opening '{' */
+		token = json_scanner_get_next_token(scanner);
+		if (token != G_TOKEN_LEFT_CURLY)
+			return G_TOKEN_LEFT_CURLY;
+	}
 
-  g_signal_emit (parser, parser_signals[OBJECT_START], 0);
+	g_signal_emit(parser, parser_signals[OBJECT_START], 0);
 
-  object = json_object_new ();
+	object = json_object_new();
 
-  token = json_scanner_get_next_token (scanner);
-  while (token != G_TOKEN_RIGHT_CURLY)
-    {
-      JsonNode *node = NULL;
-      gchar *name = NULL;
-      gboolean negative = FALSE;
+	token = json_scanner_get_next_token(scanner);
+	while (token != G_TOKEN_RIGHT_CURLY) {
+		JsonNode *node = NULL;
+		gchar *name = NULL;
+		gboolean negative = FALSE;
 
-      if (token == G_TOKEN_COMMA)
-        {
-          /* swallow the comma */
-          token = json_scanner_get_next_token (scanner);
-          continue;
-        }
+		if (token == G_TOKEN_COMMA) {
+			/* swallow the comma */
+			token = json_scanner_get_next_token(scanner);
+			continue;
+		}
 
-      if (token == G_TOKEN_STRING)
-        {
-          name = g_strdup (scanner->value.v_string);
+		if (token == G_TOKEN_STRING) {
+			name = g_strdup(scanner->value.v_string);
 
-          token = json_scanner_get_next_token (scanner);
-          if (token != ':')
-            {
-              g_free (name);
-              json_object_unref (object);
-              return ':';
-            }
-          else
-            {
-              /* swallow the colon */
-              token = json_scanner_get_next_token (scanner);
-            }
-        }
+			token = json_scanner_get_next_token(scanner);
+			if (token != ':') {
+				g_free(name);
+				json_object_unref(object);
+				return ':';
+			} else {
+				/* swallow the colon */
+				token = json_scanner_get_next_token(scanner);
+			}
+		}
 
-      if (!name)
-        {
-          json_object_unref (object);
-          return G_TOKEN_STRING;
-        }
+		if (!name) {
+			json_object_unref(object);
+			return G_TOKEN_STRING;
+		}
 
-      if (token == G_TOKEN_LEFT_CURLY)
-        {
-          JsonNode *old_node = priv->current_node;
-      
-          priv->current_node = json_node_new (JSON_NODE_OBJECT);
+		if (token == G_TOKEN_LEFT_CURLY) {
+			JsonNode *old_node = priv->current_node;
 
-          token = json_parse_object (parser, scanner, TRUE);
+			priv->current_node = json_node_new(JSON_NODE_OBJECT);
 
-          node = priv->current_node;
-          priv->current_node = old_node;
+			token = json_parse_object(parser, scanner, TRUE);
 
-          if (token != G_TOKEN_NONE)
-            {
-              g_free (name);
-              
-              if (node)
-                json_node_free (node);
+			node = priv->current_node;
+			priv->current_node = old_node;
 
-              json_object_unref (object);
-              return token;
-            }
+			if (token != G_TOKEN_NONE) {
+				g_free(name);
 
-          json_object_add_member (object, name, node);
-          node->parent = priv->current_node;
+				if (node)
+					json_node_free(node);
 
-          g_signal_emit (parser, parser_signals[OBJECT_MEMBER], 0,
-                         object,
-                         name);
+				json_object_unref(object);
+				return token;
+			}
 
-          g_free (name);
+			json_object_add_member(object, name, node);
+			node->parent = priv->current_node;
 
-          token = json_scanner_get_next_token (scanner);
-          if (token == G_TOKEN_RIGHT_CURLY)
-            break;
+			g_signal_emit(parser, parser_signals[OBJECT_MEMBER], 0, object, name);
 
-          if (token != G_TOKEN_COMMA)
-            return G_TOKEN_RIGHT_CURLY;
+			g_free(name);
 
-          continue;
-        }
-     
-      if (token == G_TOKEN_LEFT_BRACE)
-        {
-          JsonNode *old_node = priv->current_node;
+			token = json_scanner_get_next_token(scanner);
+			if (token == G_TOKEN_RIGHT_CURLY)
+				break;
 
-          priv->current_node = json_node_new (JSON_NODE_ARRAY);
+			if (token != G_TOKEN_COMMA)
+				return G_TOKEN_RIGHT_CURLY;
 
-          token = json_parse_array (parser, scanner, TRUE);
+			continue;
+		}
 
-          node = priv->current_node;
-          priv->current_node = old_node;
+		if (token == G_TOKEN_LEFT_BRACE) {
+			JsonNode *old_node = priv->current_node;
 
-          if (token != G_TOKEN_NONE)
-            {
-              g_free (name);
-              json_node_free (node);
-              json_object_unref (object);
-              return token;
-            }
+			priv->current_node = json_node_new(JSON_NODE_ARRAY);
 
-          json_object_add_member (object, name, node);
-          node->parent = priv->current_node;
-          
-          g_signal_emit (parser, parser_signals[OBJECT_MEMBER], 0,
-                         object,
-                         name);
+			token = json_parse_array(parser, scanner, TRUE);
 
-          g_free (name);
+			node = priv->current_node;
+			priv->current_node = old_node;
 
-          token = json_scanner_get_next_token (scanner);
-          if (token == G_TOKEN_RIGHT_CURLY)
-            break;
+			if (token != G_TOKEN_NONE) {
+				g_free(name);
+				json_node_free(node);
+				json_object_unref(object);
+				return token;
+			}
 
-          if (token != G_TOKEN_COMMA)
-            return G_TOKEN_RIGHT_CURLY;
+			json_object_add_member(object, name, node);
+			node->parent = priv->current_node;
 
-          continue;
-        }
+			g_signal_emit(parser, parser_signals[OBJECT_MEMBER], 0, object, name);
 
-      if (token == '-')
-        {
-          guint next_token = json_scanner_peek_next_token (scanner);
+			g_free(name);
 
-          if (next_token == G_TOKEN_INT || next_token == G_TOKEN_FLOAT)
-            {
-              negative = TRUE;
-              token = json_scanner_get_next_token (scanner);
-            }
-          else
-            {
-              return G_TOKEN_INT;
-            }
-        }
+			token = json_scanner_get_next_token(scanner);
+			if (token == G_TOKEN_RIGHT_CURLY)
+				break;
 
-      switch (token)
-        {
-        case G_TOKEN_INT:
-          node = json_node_new (JSON_NODE_VALUE);
-          json_node_set_int (node, negative ? scanner->value.v_int * -1
-                                            : scanner->value.v_int);
-          break;
+			if (token != G_TOKEN_COMMA)
+				return G_TOKEN_RIGHT_CURLY;
 
-        case G_TOKEN_FLOAT:
-          node = json_node_new (JSON_NODE_VALUE);
-          json_node_set_double (node, negative ? scanner->value.v_float * -1.0
-                                               : scanner->value.v_float);
-          break;
+			continue;
+		}
 
-        case G_TOKEN_STRING:
-          node = json_node_new (JSON_NODE_VALUE);
-          json_node_set_string (node, scanner->value.v_string);
-          break;
+		if (token == '-') {
+			guint next_token = json_scanner_peek_next_token(scanner);
 
-        case JSON_TOKEN_TRUE:
-        case JSON_TOKEN_FALSE:
-          node = json_node_new (JSON_NODE_VALUE);
-          json_node_set_boolean (node, token == JSON_TOKEN_TRUE ? TRUE
-                                                                : FALSE);
-          break;
+			if (next_token == G_TOKEN_INT || next_token == G_TOKEN_FLOAT) {
+				negative = TRUE;
+				token = json_scanner_get_next_token(scanner);
+			} else {
+				return G_TOKEN_INT;
+			}
+		}
 
-        case JSON_TOKEN_NULL:
-          node = json_node_new (JSON_NODE_NULL);
-          break;
+		switch (token) {
+		case G_TOKEN_INT:
+			node = json_node_new(JSON_NODE_VALUE);
+			json_node_set_int(node, negative ? scanner->value.v_int * -1 : scanner->value.v_int);
+			break;
 
-        default:
-          return G_TOKEN_SYMBOL;
-        }
+		case G_TOKEN_FLOAT:
+			node = json_node_new(JSON_NODE_VALUE);
+			json_node_set_double(node, negative ? scanner->value.v_float * -1.0 : scanner->value.v_float);
+			break;
 
-      if (node)
-        {
-          json_object_add_member (object, name, node);
-          node->parent = priv->current_node;
-          
-          g_signal_emit (parser, parser_signals[OBJECT_MEMBER], 0,
-                         object,
-                         name);
-        }
+		case G_TOKEN_STRING:
+			node = json_node_new(JSON_NODE_VALUE);
+			json_node_set_string(node, scanner->value.v_string);
+			break;
 
-      g_free (name);
+		case JSON_TOKEN_TRUE:
+		case JSON_TOKEN_FALSE:
+			node = json_node_new(JSON_NODE_VALUE);
+			json_node_set_boolean(node, token == JSON_TOKEN_TRUE ? TRUE : FALSE);
+			break;
 
-      token = json_scanner_get_next_token (scanner);
-      if (token != G_TOKEN_COMMA && token != G_TOKEN_RIGHT_CURLY)
-        return G_TOKEN_RIGHT_CURLY;
-    }
+		case JSON_TOKEN_NULL:
+			node = json_node_new(JSON_NODE_NULL);
+			break;
 
-  json_node_take_object (priv->current_node, object);
+		default:
+			return G_TOKEN_SYMBOL;
+		}
 
-  g_signal_emit (parser, parser_signals[OBJECT_END], 0, object);
+		if (node) {
+			json_object_add_member(object, name, node);
+			node->parent = priv->current_node;
 
-  return G_TOKEN_NONE;
+			g_signal_emit(parser, parser_signals[OBJECT_MEMBER], 0, object, name);
+		}
+
+		g_free(name);
+
+		token = json_scanner_get_next_token(scanner);
+		if (token != G_TOKEN_COMMA && token != G_TOKEN_RIGHT_CURLY)
+			return G_TOKEN_RIGHT_CURLY;
+	}
+
+	json_node_take_object(priv->current_node, object);
+
+	g_signal_emit(parser, parser_signals[OBJECT_END], 0, object);
+
+	return G_TOKEN_NONE;
 }
 
-static guint
-json_parse_statement (JsonParser *parser,
-                      JsonScanner   *scanner)
+static guint json_parse_statement(JsonParser * parser, JsonScanner * scanner)
 {
-  JsonParserPrivate *priv = parser->priv;
-  guint token;
+	JsonParserPrivate *priv = parser->priv;
+	guint token;
 
-  token = json_scanner_peek_next_token (scanner);
-  switch (token)
-    {
-    case G_TOKEN_LEFT_CURLY:
-      priv->root = priv->current_node = json_node_new (JSON_NODE_OBJECT);
-      return json_parse_object (parser, scanner, FALSE);
+	token = json_scanner_peek_next_token(scanner);
+	switch (token) {
+	case G_TOKEN_LEFT_CURLY:
+		priv->root = priv->current_node = json_node_new(JSON_NODE_OBJECT);
+		return json_parse_object(parser, scanner, FALSE);
 
-    case G_TOKEN_LEFT_BRACE:
-      priv->root = priv->current_node = json_node_new (JSON_NODE_ARRAY);
-      return json_parse_array (parser, scanner, FALSE);
+	case G_TOKEN_LEFT_BRACE:
+		priv->root = priv->current_node = json_node_new(JSON_NODE_ARRAY);
+		return json_parse_array(parser, scanner, FALSE);
 
-    /* some web APIs are not only passing the data structures: they are
-     * also passing an assigment, which makes parsing horribly complicated
-     * only because web developers are lazy, and writing "var foo = " is
-     * evidently too much to request from them.
-     */
-    case JSON_TOKEN_VAR:
-      {
-        guint next_token;
-        gchar *name;
+		/* some web APIs are not only passing the data structures: they are
+		 * also passing an assigment, which makes parsing horribly complicated
+		 * only because web developers are lazy, and writing "var foo = " is
+		 * evidently too much to request from them.
+		 */
+	case JSON_TOKEN_VAR:
+		{
+			guint next_token;
+			gchar *name;
 
-        /* swallow the 'var' token... */
-        token = json_scanner_get_next_token (scanner);
+			/* swallow the 'var' token... */
+			token = json_scanner_get_next_token(scanner);
 
-        /* ... swallow the variable name... */
-        next_token = json_scanner_get_next_token (scanner);
-        if (next_token != G_TOKEN_IDENTIFIER)
-          return G_TOKEN_IDENTIFIER;
+			/* ... swallow the variable name... */
+			next_token = json_scanner_get_next_token(scanner);
+			if (next_token != G_TOKEN_IDENTIFIER)
+				return G_TOKEN_IDENTIFIER;
 
-        name = g_strdup (scanner->value.v_identifier);
+			name = g_strdup(scanner->value.v_identifier);
 
-        /* ... and finally swallow the '=' */
-        next_token = json_scanner_get_next_token (scanner);
-        if (next_token != '=')
-          return '=';
+			/* ... and finally swallow the '=' */
+			next_token = json_scanner_get_next_token(scanner);
+			if (next_token != '=')
+				return '=';
 
-        priv->has_assignment = TRUE;
-        priv->variable_name = name;
+			priv->has_assignment = TRUE;
+			priv->variable_name = name;
 
-        token = json_parse_statement (parser, scanner);
+			token = json_parse_statement(parser, scanner);
 
-        /* remove the trailing semi-colon */
-        next_token = json_scanner_peek_next_token (scanner);
-        if (next_token == ';')
-          {
-            token = json_scanner_get_next_token (scanner);
-            return G_TOKEN_NONE;
-          }
+			/* remove the trailing semi-colon */
+			next_token = json_scanner_peek_next_token(scanner);
+			if (next_token == ';') {
+				token = json_scanner_get_next_token(scanner);
+				return G_TOKEN_NONE;
+			}
 
-        return token;
-      }
-      break;
+			return token;
+		}
+		break;
 
-    case JSON_TOKEN_NULL:
-      priv->root = priv->current_node = json_node_new (JSON_NODE_NULL);
-      return G_TOKEN_NONE;
+	case JSON_TOKEN_NULL:
+		priv->root = priv->current_node = json_node_new(JSON_NODE_NULL);
+		return G_TOKEN_NONE;
 
-    case JSON_TOKEN_TRUE:
-    case JSON_TOKEN_FALSE:
-      priv->root = priv->current_node = json_node_new (JSON_NODE_VALUE);
-      json_node_set_boolean (priv->current_node,
-                             token == JSON_TOKEN_TRUE ? TRUE : FALSE);
-      return G_TOKEN_NONE;
+	case JSON_TOKEN_TRUE:
+	case JSON_TOKEN_FALSE:
+		priv->root = priv->current_node = json_node_new(JSON_NODE_VALUE);
+		json_node_set_boolean(priv->current_node, token == JSON_TOKEN_TRUE ? TRUE : FALSE);
+		return G_TOKEN_NONE;
 
-    case '-':
-      {
-        guint next_token;
-        
-        token = json_scanner_get_next_token (scanner);
-        next_token = json_scanner_peek_next_token (scanner);
+	case '-':
+		{
+			guint next_token;
 
-        if (next_token == G_TOKEN_INT || next_token == G_TOKEN_FLOAT)
-          {
-            priv->root = priv->current_node = json_node_new (JSON_NODE_VALUE);
-            
-            token = json_scanner_get_next_token (scanner);
-            switch (token)
-              {
-              case G_TOKEN_INT:
-                json_node_set_int (priv->current_node,
-                                   scanner->value.v_int * -1);
-                break;
-              case G_TOKEN_FLOAT:
-                json_node_set_double (priv->current_node,
-                                      scanner->value.v_float * -1.0);
-                break;
-              default:
-                return G_TOKEN_INT;
-              }
+			token = json_scanner_get_next_token(scanner);
+			next_token = json_scanner_peek_next_token(scanner);
 
-            return G_TOKEN_NONE;
-          }
-        else
-          return G_TOKEN_INT;
-      }
-      break;
+			if (next_token == G_TOKEN_INT || next_token == G_TOKEN_FLOAT) {
+				priv->root = priv->current_node = json_node_new(JSON_NODE_VALUE);
 
-    case G_TOKEN_INT:
-    case G_TOKEN_FLOAT:
-    case G_TOKEN_STRING:
-      priv->root = priv->current_node = json_node_new (JSON_NODE_VALUE);
-      if (token == G_TOKEN_INT)
-        json_node_set_int (priv->current_node, scanner->value.v_int);
-      else if (token == G_TOKEN_FLOAT)
-        json_node_set_double (priv->current_node, scanner->value.v_float);
-      else
-        json_node_set_string (priv->current_node, scanner->value.v_string);
-      return G_TOKEN_NONE;
+				token = json_scanner_get_next_token(scanner);
+				switch (token) {
+				case G_TOKEN_INT:
+					json_node_set_int(priv->current_node, scanner->value.v_int * -1);
+					break;
+				case G_TOKEN_FLOAT:
+					json_node_set_double(priv->current_node, scanner->value.v_float * -1.0);
+					break;
+				default:
+					return G_TOKEN_INT;
+				}
 
-    default:
-      json_scanner_get_next_token (scanner);
-      return G_TOKEN_SYMBOL;
-    }
+				return G_TOKEN_NONE;
+			} else
+				return G_TOKEN_INT;
+		}
+		break;
+
+	case G_TOKEN_INT:
+	case G_TOKEN_FLOAT:
+	case G_TOKEN_STRING:
+		priv->root = priv->current_node = json_node_new(JSON_NODE_VALUE);
+		if (token == G_TOKEN_INT)
+			json_node_set_int(priv->current_node, scanner->value.v_int);
+		else if (token == G_TOKEN_FLOAT)
+			json_node_set_double(priv->current_node, scanner->value.v_float);
+		else
+			json_node_set_string(priv->current_node, scanner->value.v_string);
+		return G_TOKEN_NONE;
+
+	default:
+		json_scanner_get_next_token(scanner);
+		return G_TOKEN_SYMBOL;
+	}
 }
 
-static void
-json_scanner_msg_handler (JsonScanner *scanner,
-                          gchar    *message,
-                          gboolean  is_error)
+static void json_scanner_msg_handler(JsonScanner * scanner, gchar * message, gboolean is_error)
 {
-  JsonParser *parser = scanner->user_data;
+	JsonParser *parser = scanner->user_data;
 
-  if (is_error)
-    {
-      GError *error = NULL;
+	if (is_error) {
+		GError *error = NULL;
 
-      g_set_error (&error, JSON_PARSER_ERROR,
-                   JSON_PARSER_ERROR_PARSE,
-                   "Parse error on line %d: %s",
-                   scanner->line,
-                   message);
-      
-      parser->priv->last_error = error;
-      g_signal_emit (parser, parser_signals[ERROR], 0, error);
-    }
-  else
-    g_warning ("Line %d: %s", scanner->line, message);
+		g_set_error(&error, JSON_PARSER_ERROR,
+			    JSON_PARSER_ERROR_PARSE, "Parse error on line %d: %s", scanner->line, message);
+
+		parser->priv->last_error = error;
+		g_signal_emit(parser, parser_signals[ERROR], 0, error);
+	} else
+		g_warning("Line %d: %s", scanner->line, message);
 }
 
-static JsonScanner *
-json_scanner_create (JsonParser *parser)
+static JsonScanner *json_scanner_create(JsonParser * parser)
 {
-  JsonScanner *scanner;
-  gint i;
+	JsonScanner *scanner;
+	gint i;
 
-  scanner = json_scanner_new ();
-  scanner->msg_handler = json_scanner_msg_handler;
-  scanner->user_data = parser;
+	scanner = json_scanner_new();
+	scanner->msg_handler = json_scanner_msg_handler;
+	scanner->user_data = parser;
 
-  for (i = 0; i < n_symbols; i++)
-    {
-      json_scanner_scope_add_symbol (scanner, 0,
-                                     symbol_names + symbols[i].name_offset,
-                                     GINT_TO_POINTER (symbols[i].token));
-    }
+	for (i = 0; i < n_symbols; i++) {
+		json_scanner_scope_add_symbol(scanner, 0,
+					      symbol_names + symbols[i].name_offset, GINT_TO_POINTER(symbols[i].token));
+	}
 
-  return scanner;
+	return scanner;
 }
 
 /**
@@ -871,10 +752,9 @@ json_scanner_create (JsonParser *parser)
  * Return value: the newly created #JsonParser. Use g_object_unref()
  *   to release all the memory it allocates.
  */
-JsonParser *
-json_parser_new (void)
+JsonParser *json_parser_new(void)
 {
-  return g_object_new (JSON_TYPE_PARSER, NULL);
+	return g_object_new(JSON_TYPE_PARSER, NULL);
 }
 
 /**
@@ -889,35 +769,30 @@ json_parser_new (void)
  * Return value: %TRUE if the file was successfully loaded and parsed.
  *   In case of error, @error is set accordingly and %FALSE is returned
  */
-gboolean
-json_parser_load_from_file (JsonParser   *parser,
-                            const gchar  *filename,
-                            GError      **error)
+gboolean json_parser_load_from_file(JsonParser * parser, const gchar * filename, GError ** error)
 {
-  GError *internal_error;
-  gchar *data;
-  gsize length;
-  gboolean retval = TRUE;
+	GError *internal_error;
+	gchar *data;
+	gsize length;
+	gboolean retval = TRUE;
 
-  g_return_val_if_fail (JSON_IS_PARSER (parser), FALSE);
-  g_return_val_if_fail (filename != NULL, FALSE);
+	g_return_val_if_fail(JSON_IS_PARSER(parser), FALSE);
+	g_return_val_if_fail(filename != NULL, FALSE);
 
-  internal_error = NULL;
-  if (!g_file_get_contents (filename, &data, &length, &internal_error))
-    {
-      g_propagate_error (error, internal_error);
-      return FALSE;
-    }
+	internal_error = NULL;
+	if (!g_file_get_contents(filename, &data, &length, &internal_error)) {
+		g_propagate_error(error, internal_error);
+		return FALSE;
+	}
 
-  if (!json_parser_load_from_data (parser, data, length, &internal_error))
-    {
-      g_propagate_error (error, internal_error);
-      retval = FALSE;
-    }
-  
-  g_free (data);
+	if (!json_parser_load_from_data(parser, data, length, &internal_error)) {
+		g_propagate_error(error, internal_error);
+		retval = FALSE;
+	}
 
-  return retval;
+	g_free(data);
+
+	return retval;
 }
 
 /**
@@ -934,110 +809,95 @@ json_parser_load_from_file (JsonParser   *parser,
  * Return value: %TRUE if the buffer was succesfully parser. In case
  *   of error, @error is set accordingly and %FALSE is returned
  */
-gboolean
-json_parser_load_from_data (JsonParser   *parser,
-                            const gchar  *data,
-                            gssize        length,
-                            GError      **error)
+gboolean json_parser_load_from_data(JsonParser * parser, const gchar * data, gssize length, GError ** error)
 {
-  JsonParserPrivate *priv;
-  JsonScanner *scanner;
-  gboolean done;
-  gboolean retval = TRUE;
-  gint i;
+	JsonParserPrivate *priv;
+	JsonScanner *scanner;
+	gboolean done;
+	gboolean retval = TRUE;
+	gint i;
 
-  g_return_val_if_fail (JSON_IS_PARSER (parser), FALSE);
-  g_return_val_if_fail (data != NULL, FALSE);
+	g_return_val_if_fail(JSON_IS_PARSER(parser), FALSE);
+	g_return_val_if_fail(data != NULL, FALSE);
 
-  json_parser_clear (parser);
+	json_parser_clear(parser);
 
-  if (length < 0)
-    length = strlen (data);
+	if (length < 0)
+		length = strlen(data);
 
-  priv = parser->priv;
+	priv = parser->priv;
 
-  scanner = json_scanner_create (parser);
-  json_scanner_input_text (scanner, data, length);
+	scanner = json_scanner_create(parser);
+	json_scanner_input_text(scanner, data, length);
 
-  parser->priv->scanner = scanner;
+	parser->priv->scanner = scanner;
 
-  g_signal_emit (parser, parser_signals[PARSE_START], 0);
+	g_signal_emit(parser, parser_signals[PARSE_START], 0);
 
-  done = FALSE;
-  while (!done)
-    {
-      if (json_scanner_peek_next_token (scanner) == G_TOKEN_EOF)
-        done = TRUE;
-      else
-        {
-          guint expected_token;
+	done = FALSE;
+	while (!done) {
+		if (json_scanner_peek_next_token(scanner) == G_TOKEN_EOF)
+			done = TRUE;
+		else {
+			guint expected_token;
 
-          /* we try to show the expected token, if possible */
-          expected_token = json_parse_statement (parser, scanner);
-          if (expected_token != G_TOKEN_NONE)
-            {
-              const gchar *symbol_name;
-              gchar *msg;
+			/* we try to show the expected token, if possible */
+			expected_token = json_parse_statement(parser, scanner);
+			if (expected_token != G_TOKEN_NONE) {
+				const gchar *symbol_name;
+				gchar *msg;
 
-              msg = NULL;
-              symbol_name = NULL;
-              if (scanner->scope_id == 0)
-                {
-                  if (expected_token > JSON_TOKEN_INVALID &&
-                      expected_token < JSON_TOKEN_LAST)
-                    {
-                      for (i = 0; i < n_symbols; i++)
-                        if (symbols[i].token == expected_token)
-                          symbol_name = symbol_names + symbols[i].name_offset;
+				msg = NULL;
+				symbol_name = NULL;
+				if (scanner->scope_id == 0) {
+					if (expected_token > JSON_TOKEN_INVALID && expected_token < JSON_TOKEN_LAST) {
+						for (i = 0; i < n_symbols; i++)
+							if (symbols[i].token == expected_token)
+								symbol_name = symbol_names + symbols[i].name_offset;
 
-                      if (msg)
-                        msg = g_strconcat ("e.g. `", symbol_name, "'", NULL);
-                    }
+						if (msg)
+							msg = g_strconcat("e.g. `", symbol_name, "'", NULL);
+					}
 
-                  if (scanner->token > JSON_TOKEN_INVALID &&
-                      scanner->token < JSON_TOKEN_LAST)
-                    {
-                      symbol_name = "???";
+					if (scanner->token > JSON_TOKEN_INVALID && scanner->token < JSON_TOKEN_LAST) {
+						symbol_name = "???";
 
-                      for (i = 0; i < n_symbols; i++)
-                        if (symbols[i].token == scanner->token)
-                          symbol_name = symbol_names + symbols[i].name_offset;
-                    }
-                }
+						for (i = 0; i < n_symbols; i++)
+							if (symbols[i].token == scanner->token)
+								symbol_name = symbol_names + symbols[i].name_offset;
+					}
+				}
 
-              /* this will emit the ::error signal via the custom
-               * message handler we install
-               */
-              json_scanner_unexp_token (scanner, expected_token,
-                                        NULL, "keyword",
-                                        symbol_name, msg,
-                                        TRUE);
+				/* this will emit the ::error signal via the custom
+				 * message handler we install
+				 */
+				json_scanner_unexp_token(scanner, expected_token,
+							 NULL, "keyword", symbol_name, msg, TRUE);
 
-              /* and this will propagate the error we create in the
-               * same message handler
-               */
-              if (priv->last_error)
-                {
-                  g_propagate_error (error, priv->last_error);
-                  priv->last_error = NULL;
-                }
+				/* and this will propagate the error we create in the
+				 * same message handler
+				 */
+				if (priv->last_error) {
+					g_propagate_error(error, priv->last_error);
+					priv->last_error = NULL;
+				}
 
-              retval = FALSE;
+				retval = FALSE;
 
-              g_free (msg);
-              done = TRUE;
-            }
-        }
-    }
+				g_free(msg);
+				done = TRUE;
+			}
+		}
+	}
 
-  g_signal_emit (parser, parser_signals[PARSE_END], 0);
+	g_signal_emit(parser, parser_signals[PARSE_END], 0);
 
-  /* remove the scanner */
-  json_scanner_destroy (scanner);
-  priv->scanner = NULL;
-  priv->current_node = NULL;
+	/* remove the scanner */
+	json_scanner_destroy(scanner);
+	priv->scanner = NULL;
+	priv->current_node = NULL;
 
-  return retval;
+	return retval;
 }
 
 /**
@@ -1049,12 +909,11 @@ json_parser_load_from_data (JsonParser   *parser,
  * Return value: the root #JsonNode . The returned node is owned by
  *   the #JsonParser and should never be modified or freed.
  */
-JsonNode *
-json_parser_get_root (JsonParser *parser)
+JsonNode *json_parser_get_root(JsonParser * parser)
 {
-  g_return_val_if_fail (JSON_IS_PARSER (parser), NULL);
+	g_return_val_if_fail(JSON_IS_PARSER(parser), NULL);
 
-  return parser->priv->root;
+	return parser->priv->root;
 }
 
 /**
@@ -1069,15 +928,14 @@ json_parser_get_root (JsonParser *parser)
  *
  * Return value: the currently parsed line, or 0.
  */
-guint
-json_parser_get_current_line (JsonParser *parser)
+guint json_parser_get_current_line(JsonParser * parser)
 {
-  g_return_val_if_fail (JSON_IS_PARSER (parser), 0);
+	g_return_val_if_fail(JSON_IS_PARSER(parser), 0);
 
-  if (parser->priv->scanner)
-    return json_scanner_cur_line (parser->priv->scanner);
+	if (parser->priv->scanner)
+		return json_scanner_cur_line(parser->priv->scanner);
 
-  return 0;
+	return 0;
 }
 
 /**
@@ -1093,15 +951,14 @@ json_parser_get_current_line (JsonParser *parser)
  *
  * Return value: the position in the current line, or 0.
  */
-guint
-json_parser_get_current_pos (JsonParser *parser)
+guint json_parser_get_current_pos(JsonParser * parser)
 {
-  g_return_val_if_fail (JSON_IS_PARSER (parser), 0);
+	g_return_val_if_fail(JSON_IS_PARSER(parser), 0);
 
-  if (parser->priv->scanner)
-    return json_scanner_cur_line (parser->priv->scanner);
+	if (parser->priv->scanner)
+		return json_scanner_cur_line(parser->priv->scanner);
 
-  return 0;
+	return 0;
 }
 
 /**
@@ -1122,18 +979,16 @@ json_parser_get_current_pos (JsonParser *parser)
  *
  * Since: 0.4
  */
-gboolean
-json_parser_has_assignment (JsonParser  *parser,
-                            gchar      **variable_name)
+gboolean json_parser_has_assignment(JsonParser * parser, gchar ** variable_name)
 {
-  JsonParserPrivate *priv;
+	JsonParserPrivate *priv;
 
-  g_return_val_if_fail (JSON_IS_PARSER (parser), FALSE);
+	g_return_val_if_fail(JSON_IS_PARSER(parser), FALSE);
 
-  priv = parser->priv;
+	priv = parser->priv;
 
-  if (priv->has_assignment && variable_name)
-    *variable_name = priv->variable_name;
+	if (priv->has_assignment && variable_name)
+		*variable_name = priv->variable_name;
 
-  return priv->has_assignment;
+	return priv->has_assignment;
 }

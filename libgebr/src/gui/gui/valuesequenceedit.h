@@ -24,10 +24,7 @@
 
 #include "gtksequenceedit.h"
 
-G_BEGIN_DECLS
-
-GType
-gebr_gui_value_sequence_edit_get_type(void);
+G_BEGIN_DECLS GType gebr_gui_value_sequence_edit_get_type(void);
 
 #define TYPE_GEBR_GUI_VALUE_SEQUENCE_EDIT		(gebr_gui_value_sequence_edit_get_type())
 #define GEBR_GUI_VALUE_SEQUENCE_EDIT(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_GEBR_GUI_VALUE_SEQUENCE_EDIT, GebrGuiValueSequenceEdit))
@@ -36,34 +33,38 @@ gebr_gui_value_sequence_edit_get_type(void);
 #define IS_GEBR_GUI_VALUE_SEQUENCE_EDIT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_GEBR_GUI_VALUE_SEQUENCE_EDIT))
 #define GEBR_GUI_VALUE_SEQUENCE_EDIT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_GEBR_GUI_VALUE_SEQUENCE_EDIT, GebrGuiValueSequenceEditClass))
 
-typedef struct _GebrGuiValueSequenceEdit	GebrGuiValueSequenceEdit;
-typedef struct _GebrGuiValueSequenceEditClass	GebrGuiValueSequenceEditClass;
+typedef struct _GebrGuiValueSequenceEdit GebrGuiValueSequenceEdit;
+typedef struct _GebrGuiValueSequenceEditClass GebrGuiValueSequenceEditClass;
 
-typedef void (*ValueSequenceSetFunction)(GebrGeoXmlSequence *, const gchar *, gpointer);
-typedef const gchar * (*ValueSequenceGetFunction)(GebrGeoXmlSequence *, gpointer);
+typedef void (*ValueSequenceSetFunction) (GebrGeoXmlSequence *, const gchar *, gpointer);
+typedef const gchar *(*ValueSequenceGetFunction) (GebrGeoXmlSequence *, gpointer);
 
 struct _GebrGuiValueSequenceEdit {
-	GtkSequenceEdit			parent;
+	GtkSequenceEdit parent;
 
-	gboolean			minimum_one;
-	ValueSequenceSetFunction	set_function;
-	ValueSequenceGetFunction	get_function;
-	gpointer			user_data;
+	gboolean minimum_one;
+	ValueSequenceSetFunction set_function;
+	ValueSequenceGetFunction get_function;
+	gpointer user_data;
 };
 struct _GebrGuiValueSequenceEditClass {
-	GtkSequenceEditClass		parent;
+	GtkSequenceEditClass parent;
 };
 
-GtkWidget *
-gebr_gui_value_sequence_edit_new(GtkWidget * widget);
+GtkWidget *gebr_gui_value_sequence_edit_new(GtkWidget * widget);
 
 void
-gebr_gui_value_sequence_edit_add(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit, GebrGeoXmlSequence * sequence);
+
+
+gebr_gui_value_sequence_edit_add(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit,
+				 GebrGeoXmlSequence * sequence);
 
 void
-gebr_gui_value_sequence_edit_load(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit, GebrGeoXmlSequence * sequence,
-	ValueSequenceSetFunction set_function, ValueSequenceGetFunction get_function, gpointer user_data);
+
+
+gebr_gui_value_sequence_edit_load(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit,
+				  GebrGeoXmlSequence * sequence, ValueSequenceSetFunction set_function,
+				  ValueSequenceGetFunction get_function, gpointer user_data);
 
 G_END_DECLS
-
-#endif //__GEBR_GUI_VALUE_SEQUENCE_EDIT_H
+#endif				//__GEBR_GUI_VALUE_SEQUENCE_EDIT_H

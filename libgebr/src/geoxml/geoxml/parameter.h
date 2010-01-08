@@ -151,8 +151,7 @@ enum GEBR_GEOXML_PARAMETER_TYPE {
  *
  * If \p parameter is NULL returns NULL
  */
-GebrGeoXmlParameters *
-gebr_geoxml_parameter_get_parameters(GebrGeoXmlParameter * parameter);
+GebrGeoXmlParameters *gebr_geoxml_parameter_get_parameters(GebrGeoXmlParameter * parameter);
 
 /**
  * Change \p parameter type to \p type.
@@ -161,16 +160,14 @@ gebr_geoxml_parameter_get_parameters(GebrGeoXmlParameter * parameter);
  *
  * If \p parameter is NULL nothing is done.
  */
-gboolean
-gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, enum GEBR_GEOXML_PARAMETER_TYPE type);
+gboolean gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, enum GEBR_GEOXML_PARAMETER_TYPE type);
 
 /**
  * Change \p parameter to reference \p reference.
  *
  * Return one of GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_REFERENCE_TO_ITSELF, GEBR_GEOXML_RETV_NULL_PTR
  */
-int
-gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, GebrGeoXmlParameter * reference);
+int gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, GebrGeoXmlParameter * reference);
 
 /**
  * Returns \p parameter 's type.
@@ -181,32 +178,28 @@ gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, GebrGeoX
  *
  * \see GEBR_GEOXML_PARAMETER_TYPE
  */
-enum GEBR_GEOXML_PARAMETER_TYPE
-gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter);
+enum GEBR_GEOXML_PARAMETER_TYPE gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter);
 
 /**
  * Return the type name of \p parameter
  *
  * Return NULL if \p parameter is NULL
  */
-const gchar *
-gebr_geoxml_parameter_get_type_name(GebrGeoXmlParameter * parameter);
+const gchar *gebr_geoxml_parameter_get_type_name(GebrGeoXmlParameter * parameter);
 
 /**
  * Return TRUE if \p parameter is a reference
  *
  * If \p parameter is NULL return FALSE
  */
-gboolean
-gebr_geoxml_parameter_get_is_reference(GebrGeoXmlParameter * parameter);
+gboolean gebr_geoxml_parameter_get_is_reference(GebrGeoXmlParameter * parameter);
 
 /**
  * Get the list of GebrGeoXmlParameter references to \p parameter
  *
  * If \p parameter is NULL returns NULL.
  */
-GSList *
-gebr_geoxml_parameter_get_references_list(GebrGeoXmlParameter * parameter);
+GSList *gebr_geoxml_parameter_get_references_list(GebrGeoXmlParameter * parameter);
 
 /**
  * If \p parameter_reference is of the type GEBR_GEOXML_PARAMETER_TYPE_REFERENCE
@@ -214,8 +207,7 @@ gebr_geoxml_parameter_get_references_list(GebrGeoXmlParameter * parameter);
  *
  * If \p parameter_reference is NULL returns NULL.
  */
-GebrGeoXmlParameter *
-gebr_geoxml_parameter_get_referencee(GebrGeoXmlParameter * parameter_reference);
+GebrGeoXmlParameter *gebr_geoxml_parameter_get_referencee(GebrGeoXmlParameter * parameter_reference);
 
 /**
  * Return TRUE if \p parameter is a GebrGeoXmlProgramParameter.
@@ -224,8 +216,7 @@ gebr_geoxml_parameter_get_referencee(GebrGeoXmlParameter * parameter_reference);
  *
  * If \p parameter is NULL returns FALSE.
  */
-gboolean
-gebr_geoxml_parameter_get_is_program_parameter(GebrGeoXmlParameter * parameter);
+gboolean gebr_geoxml_parameter_get_is_program_parameter(GebrGeoXmlParameter * parameter);
 
 /**
  * Set \p parameter 's one line description to \p label.
@@ -234,16 +225,14 @@ gebr_geoxml_parameter_get_is_program_parameter(GebrGeoXmlParameter * parameter);
  *
  * \see gebr_geoxml_parameter_get_label
  */
-void
-gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gchar * label);
+void gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gchar * label);
 
 /**
  * Get \p parameter 's one line description.
  *
  * If \p parameter is NULL returns NULL.
  */
-const gchar *
-gebr_geoxml_parameter_get_label(GebrGeoXmlParameter * parameter);
+const gchar *gebr_geoxml_parameter_get_label(GebrGeoXmlParameter * parameter);
 
 /**
  * Return TRUE if \p parameter is part of a group
@@ -251,8 +240,7 @@ gebr_geoxml_parameter_get_label(GebrGeoXmlParameter * parameter);
  * If \p parameter is NULL returns FALSE.
  * @see gebr_geoxml_parameter_get_group
  */
-gboolean
-gebr_geoxml_parameter_get_is_in_group(GebrGeoXmlParameter * parameter);
+gboolean gebr_geoxml_parameter_get_is_in_group(GebrGeoXmlParameter * parameter);
 
 /**
  * If \p parameter is in a group, return this group;
@@ -261,13 +249,11 @@ gebr_geoxml_parameter_get_is_in_group(GebrGeoXmlParameter * parameter);
  * If \p parameter is NULL returns NULL.
  * @see gebr_geoxml_parameter_get_is_in_group
  */
-GebrGeoXmlParameterGroup *
-gebr_geoxml_parameter_get_group(GebrGeoXmlParameter * parameter);
+GebrGeoXmlParameterGroup *gebr_geoxml_parameter_get_group(GebrGeoXmlParameter * parameter);
 
 /**
  * Reset \p parameter's value and default. If \p recursive, do it for groups and do recursively.
  */
-void
-gebr_geoxml_parameter_reset(GebrGeoXmlParameter * parameter, gboolean recursive);
+void gebr_geoxml_parameter_reset(GebrGeoXmlParameter * parameter, gboolean recursive);
 
-#endif //__GEBR_GEOXML_PARAMETER_H
+#endif				//__GEBR_GEOXML_PARAMETER_H

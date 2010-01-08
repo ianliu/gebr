@@ -37,45 +37,33 @@ enum {
 };
 
 struct ui_flow_io {
-	GtkListStore *		store;
-	GtkWidget *		dialog;
-	GtkWidget *		treeview;
-	GtkWidget *		execute_button;
-	GtkTreeIter		row_new_server;
+	GtkListStore *store;
+	GtkWidget *dialog;
+	GtkWidget *treeview;
+	GtkWidget *execute_button;
+	GtkTreeIter row_new_server;
 };
 
 struct ui_flow_simple {
-	GtkWidget *		dialog;
+	GtkWidget *dialog;
 
-	gboolean		focus_output;
+	gboolean focus_output;
 
-	GtkWidget *		input;
-	GtkWidget *		output;
-	GtkWidget *		error;
+	GtkWidget *input;
+	GtkWidget *output;
+	GtkWidget *error;
 };
 
 /*  */
-void
-flow_io_setup_ui			(gboolean		executable);
+void flow_io_setup_ui(gboolean executable);
 
-gboolean
-flow_io_get_selected			(struct ui_flow_io *	ui_flow_io,
-					 GtkTreeIter *		iter);
-void
-flow_io_select_iter			(struct ui_flow_io *	ui_flow_io,
-					 GtkTreeIter *		iter);
-void
-flow_io_customized_paths_from_line	(GtkFileChooser *	chooser);
-void
-flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gchar * output,
-const gchar * error);
-void
-flow_io_simple_setup_ui			(gboolean		focus_output);
+gboolean flow_io_get_selected(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter);
+void flow_io_select_iter(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter);
+void flow_io_customized_paths_from_line(GtkFileChooser * chooser);
+void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gchar * output, const gchar * error);
+void flow_io_simple_setup_ui(gboolean focus_output);
 
-void
-flow_fast_run				(void);
-void
-flow_add_program_sequence_to_view	(GebrGeoXmlSequence *	program,
-					 gboolean		select_last);
+void flow_fast_run(void);
+void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean select_last);
 
-#endif //__UI_FLOW_H
+#endif				//__UI_FLOW_H

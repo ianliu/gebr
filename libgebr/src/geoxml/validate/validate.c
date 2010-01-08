@@ -24,19 +24,18 @@
 #include "../../intl.h"
 #include "../geoxml.h"
 
-int
-main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
-	static gchar **		files;
-	static GOptionEntry	entries[] = {
-		{ G_OPTION_REMAINING, 0, G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME_ARRAY, &files, "",
-			N_("file1.flw file2.mnu file3.prj file4.lne ...") },
+	static gchar **files;
+	static GOptionEntry entries[] = {
+		{G_OPTION_REMAINING, 0, G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME_ARRAY, &files, "",
+		 N_("file1.flw file2.mnu file3.prj file4.lne ...")},
 		{NULL}
 	};
-	gint			ret;
-	gint			i;
-	GError *		error = NULL;
-	GOptionContext *	context;
+	gint ret;
+	gint i;
+	GError *error = NULL;
+	GOptionContext *context;
 
 #ifdef ENABLE_NLS
 	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
@@ -46,15 +45,12 @@ main(int argc, char ** argv)
 	setlocale(LC_ALL, "");
 
 	context = g_option_context_new(NULL);
-	g_option_context_set_summary(context,
-		_("LibGebrGeoXml XML validator")
-	);
-	g_option_context_set_description(context,
-		""
-	);
+	g_option_context_set_summary(context, _("LibGebrGeoXml XML validator")
+	    );
+	g_option_context_set_description(context, "");
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
-	/* Parse command line*/
+	/* Parse command line */
 	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE) {
 		fprintf(stderr, _("%s: syntax error\n"), argv[0]);
 		fprintf(stderr, _("Try %s --help\n"), argv[0]);
@@ -65,7 +61,8 @@ main(int argc, char ** argv)
 	for (i = 0; files[i] != NULL; ++i) {
 		ret = gebr_geoxml_document_validate(files[i]);
 		if (ret < 0) {
-			printf(_("%s INVALID: %s"), files[i], gebr_geoxml_error_explained_string((enum GEBR_GEOXML_RETV)ret));
+			printf(_("%s INVALID: %s"), files[i],
+			       gebr_geoxml_error_explained_string((enum GEBR_GEOXML_RETV)ret));
 			continue;
 		}
 
@@ -74,7 +71,7 @@ main(int argc, char ** argv)
 
 	ret = 0;
 	g_strfreev(files);
-out:	g_option_context_free(context);
+ out:	g_option_context_free(context);
 
 	return ret;
 }

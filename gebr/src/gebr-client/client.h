@@ -20,7 +20,6 @@
 
 #include "server.h"
 
-gboolean
-client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct server * server);
+gboolean client_parse_server_messages(struct gebr_comm_server *gebr_comm_server, struct server *server);
 
-#endif //__CLIENT_H
+#endif				//__CLIENT_H

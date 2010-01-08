@@ -20,7 +20,6 @@
 
 #include <glib.h>
 
-void
-gebr_gui_help_show(const gchar * uri, const gchar * browser);
+void gebr_gui_help_show(const gchar * uri, const gchar * browser);
 
-#endif //__GEBR_GUI_HELP_H
+#endif				//__GEBR_GUI_HELP_H

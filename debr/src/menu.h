@@ -59,85 +59,80 @@ enum {
 };
 
 struct ui_menu {
-	GtkWidget *		widget;
+	GtkWidget *widget;
 
-	GtkTreeStore *		model;
-	GtkWidget *		tree_view;
-	GtkTreeIter		iter_other;
-	
+	GtkTreeStore *model;
+	GtkWidget *tree_view;
+	GtkTreeIter iter_other;
+
 	struct ui_menu_details {
-		GtkWidget *	vbox;
+		GtkWidget *vbox;
 
-		GtkWidget *	title_label;
-		GtkWidget *	description_label;
-		GtkWidget *	author_label;
-		GtkWidget *	nprogs_label;
-		GtkWidget *	created_label;
-		GtkWidget *	created_date_label;
-		GtkWidget *	modified_label;
-		GtkWidget *	modified_date_label;
-		GtkWidget *	category_label;
-		GtkWidget *	categories_label[3];
-		GtkWidget *     help_button;
+		GtkWidget *title_label;
+		GtkWidget *description_label;
+		GtkWidget *author_label;
+		GtkWidget *nprogs_label;
+		GtkWidget *created_label;
+		GtkWidget *created_date_label;
+		GtkWidget *modified_label;
+		GtkWidget *modified_date_label;
+		GtkWidget *category_label;
+		GtkWidget *categories_label[3];
+		GtkWidget *help_button;
 
 	} details;
 };
 
-void		menu_setup_ui			(void);
+void menu_setup_ui(void);
 
-void		menu_new			(gboolean	edit);
+void menu_new(gboolean edit);
 
-GebrGeoXmlFlow *	menu_load			(const gchar *	path);
+GebrGeoXmlFlow *menu_load(const gchar * path);
 
-void		menu_load_user_directory	(void);
+void menu_load_user_directory(void);
 
-void		menu_open_with_parent		(const gchar *	path,
-						 GtkTreeIter *	parent,
-						 gboolean	select);
+void menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select);
 
-void		menu_open			(const gchar *	path,
-						 gboolean	select);
+void menu_open(const gchar * path, gboolean select);
 
-gboolean	menu_save			(GtkTreeIter *	iter);
+gboolean menu_save(GtkTreeIter * iter);
 
-void		menu_save_all			(void);
+void menu_save_all(void);
 
-void		menu_validate			(GtkTreeIter *	iter);
+void menu_validate(GtkTreeIter * iter);
 
-void		menu_install			(void);
+void menu_install(void);
 
-void		menu_close			(GtkTreeIter *	iter);
+void menu_close(GtkTreeIter * iter);
 
-void		menu_selected			(void);
+void menu_selected(void);
 
-gboolean	menu_cleanup			(void);
+gboolean menu_cleanup(void);
 
-void		menu_saved_status_set		(MenuStatus	status);
+void menu_saved_status_set(MenuStatus status);
 
-void		menu_saved_status_set_from_iter	(GtkTreeIter *	iter,
-						 MenuStatus	status);
+void menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status);
 
-void		menu_saved_status_set_unsaved	(void);
+void menu_saved_status_set_unsaved(void);
 
-void		menu_dialog_setup_ui		(void);
+void menu_dialog_setup_ui(void);
 
-void		menu_reset			(void);
+void menu_reset(void);
 
-gint		menu_get_n_menus		(void);
+gint menu_get_n_menus(void);
 
-gboolean	menu_get_selected		(GtkTreeIter *	iter, gboolean warn_unselected_menu);
+gboolean menu_get_selected(GtkTreeIter * iter, gboolean warn_unselected_menu);
 
-IterType	menu_get_selected_type		(GtkTreeIter *	iter, gboolean warn_unselected_menu);
+IterType menu_get_selected_type(GtkTreeIter * iter, gboolean warn_unselected_menu);
 
-void		menu_select_iter		(GtkTreeIter *	iter);
+void menu_select_iter(GtkTreeIter * iter);
 
-void		menu_details_update		(void);
+void menu_details_update(void);
 
-void		menu_folder_details_update	(GtkTreeIter *	iter);
+void menu_folder_details_update(GtkTreeIter * iter);
 
-void		menu_path_get_parent		(const gchar *	path,
-						 GtkTreeIter *	parent);
+void menu_path_get_parent(const gchar * path, GtkTreeIter * parent);
 
-glong		menu_count_unsaved		(void);
+glong menu_count_unsaved(void);
 
-#endif //__MENU_H
+#endif				//__MENU_H

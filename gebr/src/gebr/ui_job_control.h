@@ -29,35 +29,28 @@ enum {
 };
 
 struct ui_job_control {
-	GtkWidget *		widget;
+	GtkWidget *widget;
 
-	GtkListStore *		store;
-	GtkWidget *		view;
+	GtkListStore *store;
+	GtkWidget *view;
 
-	GtkWidget *		label;
-	GtkWidget *		text_view;
-	GtkTextBuffer *		text_buffer;
+	GtkWidget *label;
+	GtkWidget *text_view;
+	GtkTextBuffer *text_buffer;
 };
 
-struct ui_job_control *
-job_control_setup_ui(void);
+struct ui_job_control *job_control_setup_ui(void);
 
-void
-job_control_clear_or_select_first(void);
+void job_control_clear_or_select_first(void);
 
-void
-job_control_save(void);
+void job_control_save(void);
 
-void
-job_control_cancel(void);
+void job_control_cancel(void);
 
-void
-job_control_close(void);
+void job_control_close(void);
 
-void
-job_control_clear(void);
+void job_control_clear(void);
 
-void
-job_control_stop(void);
+void job_control_stop(void);
 
-#endif //__UI_JOB_CONTROL_H
+#endif				//__UI_JOB_CONTROL_H

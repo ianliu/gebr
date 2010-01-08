@@ -23,16 +23,15 @@
  * Create element type and add it to \p parameter, according to \p type
  *
  */
-GdomeElement *
-__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * parameter, enum GEBR_GEOXML_PARAMETER_TYPE type);
+GdomeElement *__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * parameter,
+						  enum GEBR_GEOXML_PARAMETER_TYPE type);
 
 /**
  * \internal
  *
  * Return the type element of \p parameter, according to \p resolve_references
  */
-GdomeElement *
-__gebr_geoxml_parameter_get_type_element(GebrGeoXmlParameter * parameter, gboolean resolve_references);
+GdomeElement *__gebr_geoxml_parameter_get_type_element(GebrGeoXmlParameter * parameter, gboolean resolve_references);
 
 /**
  * \internal
@@ -47,15 +46,13 @@ __gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter, gboolean resol
  * Set \p parameter to be a reference to \p reference.
  * If \p new is TRUE indicate that it was previously cloned.
  */
-void
-__gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, GebrGeoXmlParameter * reference);
+void __gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, GebrGeoXmlParameter * reference);
 
 /**
  * \internal
  * Get the list of GebrGeoXmlParameter referencees of \p id, inside the element
  * _context_
  */
-GSList *
-__gebr_geoxml_parameter_get_referencee_list(GdomeElement * context, const gchar * id);
+GSList *__gebr_geoxml_parameter_get_referencee_list(GdomeElement * context, const gchar * id);
 
-#endif //__GEBR_GEOXML_PARAMETER_P_H
+#endif				//__GEBR_GEOXML_PARAMETER_P_H

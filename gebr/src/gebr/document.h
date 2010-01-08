@@ -22,28 +22,19 @@
 #include <glib.h>
 #include <libgebr/geoxml.h>
 
-GebrGeoXmlDocument *
-document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type);
+GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type);
 
-GebrGeoXmlDocument *
-document_load(const gchar * filename);
-GebrGeoXmlDocument *
-document_load_at(const gchar * filename, const gchar * directory);
-GebrGeoXmlDocument *
-document_load_path(const gchar * path);
+GebrGeoXmlDocument *document_load(const gchar * filename);
+GebrGeoXmlDocument *document_load_at(const gchar * filename, const gchar * directory);
+GebrGeoXmlDocument *document_load_path(const gchar * path);
 
-void
-document_save(GebrGeoXmlDocument * document);
-void
-document_import(GebrGeoXmlDocument * document);
+void document_save(GebrGeoXmlDocument * document);
+void document_import(GebrGeoXmlDocument * document);
 
-GString *
-document_assembly_filename(const gchar * extension);
+GString *document_assembly_filename(const gchar * extension);
 
-GString *
-document_get_path(const gchar * filename);
+GString *document_get_path(const gchar * filename);
 
-void
-document_delete(const gchar * filename);
+void document_delete(const gchar * filename);
 
-#endif //__DOCUMENT_H
+#endif				//__DOCUMENT_H

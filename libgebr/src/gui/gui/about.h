@@ -21,10 +21,9 @@
 #include <gtk/gtk.h>
 
 struct about {
-	GtkWidget *	dialog;
+	GtkWidget *dialog;
 };
 
-struct about
-gebr_gui_about_setup_ui(const gchar * program, const gchar * description);
+struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * description);
 
-#endif //__GEBR_GUI_ABOUT_H
+#endif				//__GEBR_GUI_ABOUT_H

@@ -18,12 +18,8 @@
 #ifndef __GEBR_GUI_ICONS_H
 #define __GEBR_GUI_ICONS_H
 
-void
-gebr_gui_setup_icons(void);
+void gebr_gui_setup_icons(void);
 
-void
-gebr_gui_setup_theme(void);
+void gebr_gui_setup_theme(void);
 
-#endif //__GEBR_GUI_ICONS_H
-
-
+#endif				//__GEBR_GUI_ICONS_H

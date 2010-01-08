@@ -46,70 +46,64 @@ enum CategoryModel {
 
 struct debr {
 	/* current stuff being edited */
-	GebrGeoXmlFlow *		menu;
-	GebrGeoXmlProgram *		program;
-	GebrGeoXmlParameter *	parameter;
+	GebrGeoXmlFlow *menu;
+	GebrGeoXmlProgram *program;
+	GebrGeoXmlParameter *parameter;
 
 	/* diverse widgets */
-	GtkWidget *		window;
-	GtkWidget *		navigation_box_label;
-	GtkWidget *		notebook;
-	GtkWidget *		statusbar;
-	struct about		about;
-	GtkWidget *		invisible;
-	GtkAccelGroup *		accel_group;
-	GtkActionGroup *	action_group;
+	GtkWidget *window;
+	GtkWidget *navigation_box_label;
+	GtkWidget *notebook;
+	GtkWidget *statusbar;
+	struct about about;
+	GtkWidget *invisible;
+	GtkAccelGroup *accel_group;
+	GtkActionGroup *action_group;
 
 	/* notebook's widgets */
-	struct ui_menu		ui_menu;
-	struct ui_program	ui_program;
-	struct ui_parameter	ui_parameter;
-	struct ui_validate	ui_validate;
-	GtkWidget *		parameter_type_menu;
+	struct ui_menu ui_menu;
+	struct ui_program ui_program;
+	struct ui_parameter ui_parameter;
+	struct ui_validate ui_validate;
+	GtkWidget *parameter_type_menu;
 
-        /* icons */
+	/* icons */
 	struct debr_pixmaps {
-		GdkPixbuf *	stock_apply;
-		GdkPixbuf *	stock_cancel;
-        	GdkPixbuf *	stock_no;
+		GdkPixbuf *stock_apply;
+		GdkPixbuf *stock_cancel;
+		GdkPixbuf *stock_no;
 	} pixmaps;
 
 	/* config file */
 	struct debr_config {
-		GKeyFile *	key_file;
-		GString *	path;
+		GKeyFile *key_file;
+		GString *path;
 
-		GString *	name;
-		GString *	email;
-		GString *	htmleditor;
-		GString *	browser;
-		gboolean	menu_sort_ascending;
-		gint		menu_sort_column;
-		gchar **	menu_dir;
+		GString *name;
+		GString *email;
+		GString *htmleditor;
+		GString *browser;
+		gboolean menu_sort_ascending;
+		gint menu_sort_column;
+		gchar **menu_dir;
 	} config;
 
-	GtkListStore *		categories_model;
+	GtkListStore *categories_model;
 
 	/* temporary files removed when DeBR quits */
-	GSList *		tmpfiles;
+	GSList *tmpfiles;
 };
 
-void
-debr_init(void);
+void debr_init(void);
 
-gboolean
-debr_quit(void);
+gboolean debr_quit(void);
 
-gboolean
-debr_config_load(void);
+gboolean debr_config_load(void);
 
-void
-debr_config_save(void);
+void debr_config_save(void);
 
-void
-debr_message(enum gebr_log_message_type type, const gchar * message, ...);
+void debr_message(enum gebr_log_message_type type, const gchar * message, ...);
 
-gboolean
-debr_has_category(const gchar * category, gboolean add);
+gboolean debr_has_category(const gchar * category, gboolean add);
 
-#endif //__DEBR_H
+#endif				//__DEBR_H

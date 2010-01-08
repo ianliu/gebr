@@ -33,26 +33,23 @@
  * Internal functions
  */
 
-static void
-server_log_message(enum gebr_log_message_type type, const gchar * message)
+static void server_log_message(enum gebr_log_message_type type, const gchar * message)
 {
 	gebr_client_message(type, message);
 }
 
-static GString *
-server_ssh_login(const gchar * title, const gchar * message)
+static GString *server_ssh_login(const gchar * title, const gchar * message)
 {
-	GString *	password;
+	GString *password;
 
 	password = g_string_new(getpass(message));
 
 	return password;
 }
 
-static gboolean
-server_ssh_question(const gchar * title, const gchar * message)
+static gboolean server_ssh_question(const gchar * title, const gchar * message)
 {
-	gchar		answer[10];
+	gchar answer[10];
 
 	while (1) {
 		gebr_client_message(GEBR_LOG_INFO, _("%s: %s"), title, message);
@@ -66,11 +63,10 @@ server_ssh_question(const gchar * title, const gchar * message)
 	return FALSE;
 }
 
-static void
-server_disconnected(GStreamSocket * stream_socket, struct server * server)
+static void server_disconnected(GStreamSocket * stream_socket, struct server *server)
 {
-// 	TODO:
-	
+//      TODO:
+
 }
 
 /*
@@ -81,23 +77,21 @@ server_disconnected(GStreamSocket * stream_socket, struct server * server)
  * Create a new server from _address_
  * Setup gebr_comm_server with its function pointer operators
  */
-struct server *
-server_new(const gchar * address)
+struct server *server_new(const gchar * address)
 {
-	static const struct gebr_comm_server_ops	ops = {
+	static const struct gebr_comm_server_ops ops = {
 		.log_message = server_log_message,
 		.ssh_login = server_ssh_login,
 		.ssh_question = server_ssh_question,
-		.parse_messages = (typeof(ops.parse_messages))client_parse_server_messages
+		.parse_messages = (typeof(ops.parse_messages)) client_parse_server_messages
 	};
-	struct server *				server;
+	struct server *server;
 
 	server = g_malloc(sizeof(struct server));
 	server->comm = gebr_comm_server_new(address, &ops);
 	server->comm->user_data = server;
 
-	g_signal_connect(server->comm->stream_socket, "disconnected",
-		G_CALLBACK(server_disconnected), server);
+	g_signal_connect(server->comm->stream_socket, "disconnected", G_CALLBACK(server_disconnected), server);
 
 	gebr_comm_server_connect(server->comm);
 
@@ -108,8 +102,7 @@ server_new(const gchar * address)
  * Function: server_free
  * Just free _server_ structure and its gebr_comm_server
  */
-void
-server_free(struct server * server)
+void server_free(struct server *server)
 {
 	gebr_comm_server_free(server->comm);
 	g_free(server);
@@ -118,17 +111,16 @@ server_free(struct server * server)
 /*
  * Function: server_run_flow
  */
-gboolean
-server_run_flow(struct server * server, const gchar * flow_path)
+gboolean server_run_flow(struct server *server, const gchar * flow_path)
 {
-	GebrGeoXmlDocument *	document;
-	GebrGeoXmlFlow *		flow;
-	int			ret;
+	GebrGeoXmlDocument *document;
+	GebrGeoXmlFlow *flow;
+	int ret;
 
 	ret = gebr_geoxml_document_load(&document, flow_path);
 	if (ret) {
 		gebr_client_message(GEBR_LOG_ERROR, _("Could not load flow: %s"),
-			gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
+				    gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		return FALSE;
 	}
 	if (gebr_geoxml_document_get_type(document) != GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {

@@ -23,18 +23,14 @@
 #include <libgebr/comm/server.h>
 
 struct server {
-	struct gebr_comm_server *	comm;
+	struct gebr_comm_server *comm;
 
-	
 };
 
-struct server *
-server_new(const gchar * address);
+struct server *server_new(const gchar * address);
 
-void
-server_free(struct server * server);
+void server_free(struct server *server);
 
-gboolean
-server_run_flow(struct server * server, const gchar * flow_path);
+gboolean server_run_flow(struct server *server, const gchar * flow_path);
 
-#endif //__SERVER_H
+#endif				//__SERVER_H

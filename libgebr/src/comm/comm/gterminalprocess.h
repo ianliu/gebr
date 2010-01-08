@@ -24,13 +24,10 @@
 #include <glib-object.h>
 #include <netinet/in.h>
 
-typedef struct _GebrCommTerminalProcess	GebrCommTerminalProcess;
-typedef struct _GebrCommTerminalProcessClass	GebrCommTerminalProcessClass;
+typedef struct _GebrCommTerminalProcess GebrCommTerminalProcess;
+typedef struct _GebrCommTerminalProcessClass GebrCommTerminalProcessClass;
 
-G_BEGIN_DECLS
-
-GType
-gebr_comm_terminal_process_get_type(void);
+G_BEGIN_DECLS GType gebr_comm_terminal_process_get_type(void);
 
 #define GEBR_COMM_TERMINAL_PROCESS_TYPE			(gebr_comm_terminal_process_get_type())
 #define GEBR_COMM_TERMINAL_PROCESS(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_TERMINAL_PROCESS_TYPE, GebrCommTerminalProcess))
@@ -45,71 +42,56 @@ enum GebrCommTerminalProcessExitStatus {
 };
 
 struct _GebrCommTerminalProcess {
-	GObject				parent;
+	GObject parent;
 
-	GPid				pid;
-	gboolean			is_running;
-	gint				exit_code;
-	enum GebrCommTerminalProcessExitStatus	exit_status;
+	GPid pid;
+	gboolean is_running;
+	gint exit_code;
+	enum GebrCommTerminalProcessExitStatus exit_status;
 
-	GIOChannel *			ptm_io_channel;
-	guint				ptm_watch_id;
-	guint				finish_watch_id;
+	GIOChannel *ptm_io_channel;
+	guint ptm_watch_id;
+	guint finish_watch_id;
 };
 struct _GebrCommTerminalProcessClass {
-	GObjectClass			parent;
+	GObjectClass parent;
 
 	/* signals */
-	void				(*ready_read)(GebrCommTerminalProcess * self);
-	void				(*finished)(GebrCommTerminalProcess * self);
+	void (*ready_read) (GebrCommTerminalProcess * self);
+	void (*finished) (GebrCommTerminalProcess * self);
 };
 
 /*
  * user functions
  */
 
-GebrCommTerminalProcess *
-gebr_comm_terminal_process_new(void);
+GebrCommTerminalProcess *gebr_comm_terminal_process_new(void);
 
-void
-gebr_comm_terminal_process_free(GebrCommTerminalProcess *);
+void gebr_comm_terminal_process_free(GebrCommTerminalProcess *);
 
-gboolean
-gebr_comm_terminal_process_is_running(GebrCommTerminalProcess *);
+gboolean gebr_comm_terminal_process_is_running(GebrCommTerminalProcess *);
 
-gboolean
-gebr_comm_terminal_process_start(GebrCommTerminalProcess *, GString *);
+gboolean gebr_comm_terminal_process_start(GebrCommTerminalProcess *, GString *);
 
-GPid
-gebr_comm_terminal_process_get_pid(GebrCommTerminalProcess *);
+GPid gebr_comm_terminal_process_get_pid(GebrCommTerminalProcess *);
 
-void
-gebr_comm_terminal_process_kill(GebrCommTerminalProcess *);
+void gebr_comm_terminal_process_kill(GebrCommTerminalProcess *);
 
-void
-gebr_comm_terminal_process_terminate(GebrCommTerminalProcess *);
+void gebr_comm_terminal_process_terminate(GebrCommTerminalProcess *);
 
-gulong
-gebr_comm_terminal_process_bytes_available(GebrCommTerminalProcess *);
+gulong gebr_comm_terminal_process_bytes_available(GebrCommTerminalProcess *);
 
-GByteArray *
-gebr_comm_terminal_process_read(GebrCommTerminalProcess *, gsize);
+GByteArray *gebr_comm_terminal_process_read(GebrCommTerminalProcess *, gsize);
 
-GString *
-gebr_comm_terminal_process_read_string(GebrCommTerminalProcess *, gsize);
+GString *gebr_comm_terminal_process_read_string(GebrCommTerminalProcess *, gsize);
 
-GByteArray *
-gebr_comm_terminal_process_read_all(GebrCommTerminalProcess *);
+GByteArray *gebr_comm_terminal_process_read_all(GebrCommTerminalProcess *);
 
-GString *
-gebr_comm_terminal_process_read_string_all(GebrCommTerminalProcess *);
+GString *gebr_comm_terminal_process_read_string_all(GebrCommTerminalProcess *);
 
-gsize
-gebr_comm_terminal_process_write(GebrCommTerminalProcess *, GByteArray *);
+gsize gebr_comm_terminal_process_write(GebrCommTerminalProcess *, GByteArray *);
 
-gsize
-gebr_comm_terminal_process_write_string(GebrCommTerminalProcess *, GString *);
+gsize gebr_comm_terminal_process_write_string(GebrCommTerminalProcess *, GString *);
 
 G_END_DECLS
-
-#endif //__GEBR_COMM_TERMINAL_PROCESS_H
+#endif				//__GEBR_COMM_TERMINAL_PROCESS_H

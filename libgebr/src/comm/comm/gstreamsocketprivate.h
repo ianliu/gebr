@@ -26,7 +26,6 @@
  * Create an already connected socket
  * Used by GTcpServer when a new connection is accepted.
  */
-GStreamSocket *
-_gebr_comm_stream_socket_new_connected(int fd, enum GebrCommSocketAddressType address_type);
+GStreamSocket *_gebr_comm_stream_socket_new_connected(int fd, enum GebrCommSocketAddressType address_type);
 
-#endif //__GEBR_COMM_TCP_SOCKET_PRIVATE_H
+#endif				//__GEBR_COMM_TCP_SOCKET_PRIVATE_H

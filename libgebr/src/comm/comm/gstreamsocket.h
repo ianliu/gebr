@@ -23,10 +23,7 @@
 #include "gsocket.h"
 #include "gsocketaddress.h"
 
-G_BEGIN_DECLS
-
-GType
-gebr_comm_stream_socket_get_type(void);
+G_BEGIN_DECLS GType gebr_comm_stream_socket_get_type(void);
 
 #define GEBR_COMM_STREAM_SOCKET_TYPE		(gebr_comm_stream_socket_get_type())
 #define GEBR_COMM_STREAM_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_STREAM_SOCKET_TYPE, GStreamSocket))
@@ -35,36 +32,32 @@ gebr_comm_stream_socket_get_type(void);
 #define GEBR_COMM_IS_STREAM_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_COMM_STREAM_SOCKET_TYPE))
 #define GEBR_COMM_STREAM_SOCKET_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_STREAM_SOCKET_TYPE, GStreamSocketClass))
 
-typedef struct _GStreamSocket	GStreamSocket;
-typedef struct _GStreamSocketClass	GStreamSocketClass;
+typedef struct _GStreamSocket GStreamSocket;
+typedef struct _GStreamSocketClass GStreamSocketClass;
 
 struct _GStreamSocket {
-	GebrCommSocket		parent;
+	GebrCommSocket parent;
 };
 struct _GStreamSocketClass {
-	GebrCommSocketClass	parent;
+	GebrCommSocketClass parent;
 
 	/* signals */
-	void		(*connected)(GStreamSocket * self);
-	void		(*disconnected)(GStreamSocket * self);
+	void (*connected) (GStreamSocket * self);
+	void (*disconnected) (GStreamSocket * self);
 };
 
 /*
  * user functions
  */
 
-GStreamSocket *
-gebr_comm_stream_socket_new(void);
+GStreamSocket *gebr_comm_stream_socket_new(void);
 
 gboolean
 gebr_comm_stream_socket_connect(GStreamSocket * stream_socket, GebrCommSocketAddress * socket_address, gboolean wait);
 
-void
-gebr_comm_stream_socket_disconnect(GStreamSocket * stream_socket);
+void gebr_comm_stream_socket_disconnect(GStreamSocket * stream_socket);
 
-GebrCommSocketAddress
-gebr_comm_stream_socket_peer_address(GStreamSocket * stream_socket);
+GebrCommSocketAddress gebr_comm_stream_socket_peer_address(GStreamSocket * stream_socket);
 
 G_END_DECLS
-
-#endif //__GEBR_COMM_STREAM_SOCKET_H
+#endif				//__GEBR_COMM_STREAM_SOCKET_H

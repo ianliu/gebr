@@ -32,16 +32,15 @@
  * Replace each reference of \p oldtext in \p string
  * with \p newtext. If \p newtext if NULL, then each reference of oldtext found is removed.
  */
-void
-gebr_g_string_replace(GString * string, const gchar * oldtext, const gchar * newtext)
+void gebr_g_string_replace(GString * string, const gchar * oldtext, const gchar * newtext)
 {
-	gchar *	position;
+	gchar *position;
 
 	position = string->str;
 	while ((position = strstr(position, oldtext)) != NULL) {
-		gssize	index;
+		gssize index;
 
-		index = (position - string->str)/sizeof(gchar);
+		index = (position - string->str) / sizeof(gchar);
 		g_string_erase(string, index, strlen(oldtext));
 
 		if (newtext != NULL) {
@@ -56,16 +55,15 @@ gebr_g_string_replace(GString * string, const gchar * oldtext, const gchar * new
  * Same as \ref gebr_g_string_replace but only apply to first
  * reference found.
  */
-void
-gebr_g_string_replace_first_ref(GString * string, const gchar * oldtext, const gchar * newtext)
+void gebr_g_string_replace_first_ref(GString * string, const gchar * oldtext, const gchar * newtext)
 {
-	gchar *	position;
+	gchar *position;
 
 	position = string->str;
 	if ((position = strstr(position, oldtext)) != NULL) {
-		gssize	index;
+		gssize index;
 
-		index = (position - string->str)/sizeof(gchar);
+		index = (position - string->str) / sizeof(gchar);
 		g_string_erase(string, index, strlen(oldtext));
 
 		if (newtext != NULL)
@@ -73,14 +71,12 @@ gebr_g_string_replace_first_ref(GString * string, const gchar * oldtext, const g
 	}
 }
 
-gboolean
-gebr_g_string_starts_with(GString * string, const gchar * val)
+gboolean gebr_g_string_starts_with(GString * string, const gchar * val)
 {
 	return g_str_has_prefix(string->str, val);
 }
 
-gboolean
-gebr_g_string_ends_with(GString * string, const gchar * val)
+gboolean gebr_g_string_ends_with(GString * string, const gchar * val)
 {
 	return g_str_has_suffix(string->str, val);
 }
@@ -89,17 +85,15 @@ gebr_g_string_ends_with(GString * string, const gchar * val)
  * Append, if not already present, \p extension into \p filename
  * \p extension must include the dot (e.g. ".mnu")
  */
-void
-gebr_append_filename_extension(GString * filename, const gchar * extension)
+void gebr_append_filename_extension(GString * filename, const gchar * extension)
 {
 	if (!g_str_has_suffix(filename->str, extension))
 		g_string_append(filename, extension);
 }
 
-gboolean
-gebr_path_use_home_variable(GString * path)
+gboolean gebr_path_use_home_variable(GString * path)
 {
-	gchar *	home;
+	gchar *home;
 
 	home = getenv("HOME");
 	if (home == NULL)
@@ -112,10 +106,9 @@ gebr_path_use_home_variable(GString * path)
 	return FALSE;
 }
 
-gboolean
-gebr_path_resolve_home_variable(GString * path)
+gboolean gebr_path_resolve_home_variable(GString * path)
 {
-	gchar *	home;
+	gchar *home;
 
 	home = getenv("HOME");
 	if (home == NULL)
@@ -135,10 +128,9 @@ gebr_path_resolve_home_variable(GString * path)
  * generated and unique string that results on a filename that doens't exists.
  * \p template should be the absolute path of the file.
  */
-GString *
-gebr_make_unique_filename(const gchar * template)
+GString *gebr_make_unique_filename(const gchar * template)
 {
-	GString *	path;
+	GString *path;
 
 	/* assembly file path */
 	path = g_string_new(NULL);
@@ -155,10 +147,9 @@ gebr_make_unique_filename(const gchar * template)
  * Use \ref gebr_temp_directory_destroy after use to free string memory and
  * delete directory's contents
  */
-GString *
-gebr_temp_directory_create(void)
+GString *gebr_temp_directory_create(void)
 {
-	GString *	path;
+	GString *path;
 
 	/* assembly dir path */
 	path = g_string_new(NULL);
@@ -176,8 +167,7 @@ gebr_temp_directory_create(void)
 /**
  * Delete dir at \p path and free it.
  */
-void
-gebr_temp_directory_destroy(GString * path)
+void gebr_temp_directory_destroy(GString * path)
 {
 	g_string_prepend(path, "rm -fr ");
 	system(path->str);
@@ -193,10 +183,9 @@ gebr_temp_directory_destroy(GString * path)
  * The returned string then is an absolute path of
  * The string returned is a path to the file on the temporary directory.
  */
-GString *
-gebr_make_temp_filename(const gchar * template)
+GString *gebr_make_temp_filename(const gchar * template)
 {
-	GString *	path;
+	GString *path;
 
 	/* assembly file path */
 	path = g_string_new(NULL);
@@ -212,11 +201,10 @@ gebr_make_temp_filename(const gchar * template)
  * Returns the home's permission mode. Useful for
  * preserving permissions when creating files
  */
-int
-gebr_home_mode(void)
+int gebr_home_mode(void)
 {
-	struct stat	home_stat;
-	gchar *		home;
+	struct stat home_stat;
+	gchar *home;
 
 	home = getenv("HOME");
 	g_stat(home, &home_stat);
@@ -224,11 +212,10 @@ gebr_home_mode(void)
 	return home_stat.st_mode;
 }
 
-static gboolean
-gebr_make_config_dir(const gchar * dirname)
+static gboolean gebr_make_config_dir(const gchar * dirname)
 {
-	GString *	path;
-	gboolean	ret = TRUE;
+	GString *path;
+	gboolean ret = TRUE;
 
 	path = g_string_new(NULL);
 	g_string_printf(path, "%s/.gebr/%s", getenv("HOME"), dirname);
@@ -244,11 +231,10 @@ gebr_make_config_dir(const gchar * dirname)
  * Create all configurations directories for all GeBR programs.
  * Used by GeBR programs before read/write config..
  */
-gboolean
-gebr_create_config_dirs(void)
+gboolean gebr_create_config_dirs(void)
 {
-	GString *	string;
-	gboolean	ret = TRUE;
+	GString *string;
+	gboolean ret = TRUE;
 
 	string = g_string_new(NULL);
 
@@ -272,49 +258,45 @@ gebr_create_config_dirs(void)
 	g_string_printf(string, "%s/.gebr/gebrdata", getenv("HOME"));
 	if (g_file_test(string->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == TRUE) {
 		g_string_printf(string, "mv %s/.gebr/gebrdata/* %s/.gebr/gebr/data; rmdir %s/.gebr/gebrdata/",
-			getenv("HOME"), getenv("HOME"), getenv("HOME"));
+				getenv("HOME"), getenv("HOME"), getenv("HOME"));
 		if (system(string->str))
 			goto err;
 	}
 	g_string_printf(string, "%s/.gebr/menus.idx", getenv("HOME"));
 	if (g_file_test(string->str, G_FILE_TEST_EXISTS) == TRUE) {
-		g_string_printf(string, "mv %s/.gebr/menus.idx %s/.gebr/gebr",
-			getenv("HOME"), getenv("HOME"));
+		g_string_printf(string, "mv %s/.gebr/menus.idx %s/.gebr/gebr", getenv("HOME"), getenv("HOME"));
 		if (system(string->str))
 			goto err;
 	}
 	g_string_printf(string, "%s/.gebr/gebr.conf", getenv("HOME"));
 	if (g_file_test(string->str, G_FILE_TEST_EXISTS) == TRUE) {
-		g_string_printf(string, "mv %s/.gebr/gebr.conf %s/.gebr/gebr",
-			getenv("HOME"), getenv("HOME"));
+		g_string_printf(string, "mv %s/.gebr/gebr.conf %s/.gebr/gebr", getenv("HOME"), getenv("HOME"));
 		if (system(string->str))
 			goto err;
 	}
 	g_string_printf(string, "%s/.gebr/debr.conf", getenv("HOME"));
 	if (g_file_test(string->str, G_FILE_TEST_EXISTS) == TRUE) {
-		g_string_printf(string, "mv %s/.gebr/debr.conf %s/.gebr/debr",
-			getenv("HOME"), getenv("HOME"));
+		g_string_printf(string, "mv %s/.gebr/debr.conf %s/.gebr/debr", getenv("HOME"), getenv("HOME"));
 		if (system(string->str))
 			goto err;
 	}
 
 	goto out;
-err:	ret = FALSE;
-out:	g_string_free(string, TRUE);
+ err:	ret = FALSE;
+ out:	g_string_free(string, TRUE);
 
-return ret;
+	return ret;
 }
 
 /**
  * Simplified version of g_locale_to_utf8
  */
-gchar *
-gebr_locale_to_utf8(const gchar * string)
+gchar *gebr_locale_to_utf8(const gchar * string)
 {
-	gchar *		output;
-	gsize		bytes_read;
-	gsize		bytes_written;
-	GError *	error;
+	gchar *output;
+	gsize bytes_read;
+	gsize bytes_written;
+	GError *error;
 
 	error = NULL;
 	output = g_locale_to_utf8(string, -1, &bytes_read, &bytes_written, &error);
@@ -322,24 +304,23 @@ gebr_locale_to_utf8(const gchar * string)
 	return output;
 }
 
-gboolean
-g_key_file_has_key_woe(GKeyFile * key_file, const gchar * group, const gchar * key)
+gboolean g_key_file_has_key_woe(GKeyFile * key_file, const gchar * group, const gchar * key)
 {
-	GError *	error = NULL;
+	GError *error = NULL;
 
 	return g_key_file_has_key(key_file, group, key, &error);
 }
 
-GString *
-gebr_g_key_file_load_string_key(GKeyFile * key_file, const gchar * group, const gchar * key, const gchar * default_value)
+GString *gebr_g_key_file_load_string_key(GKeyFile * key_file, const gchar * group, const gchar * key,
+					 const gchar * default_value)
 {
-	GString *	value;
-	gchar *		tmp;
+	GString *value;
+	gchar *tmp;
 
 	value = g_string_new(NULL);
 	tmp = g_key_file_get_string(key_file, group, key, NULL);
 	g_string_assign(value, (tmp == NULL || ((tmp != NULL) && (strlen(tmp) == 0)))
-		? default_value : tmp);
+			? default_value : tmp);
 
 	g_free(tmp);
 
@@ -349,29 +330,28 @@ gebr_g_key_file_load_string_key(GKeyFile * key_file, const gchar * group, const 
 gboolean
 gebr_g_key_file_load_boolean_key(GKeyFile * key_file, const gchar * group, const gchar * key, gboolean default_value)
 {
-	gboolean	value;
-	gboolean	tmp;
-	GError *	error;
+	gboolean value;
+	gboolean tmp;
+	GError *error;
 
 	error = NULL;
 	tmp = g_key_file_get_boolean(key_file, group, key, &error);
 	value = (error != NULL && error->code == G_KEY_FILE_ERROR_KEY_NOT_FOUND)
-		? default_value : tmp;
+	    ? default_value : tmp;
 
 	return value;
 }
 
-int
-gebr_g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * key, int default_value)
+int gebr_g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * key, int default_value)
 {
-	int		value;
-	int		tmp;
-	GError *	error;
+	int value;
+	int tmp;
+	GError *error;
 
 	error = NULL;
 	tmp = g_key_file_get_integer(key_file, group, key, &error);
 	value = (error != NULL && error->code == G_KEY_FILE_ERROR_KEY_NOT_FOUND)
-		? default_value : tmp;
+	    ? default_value : tmp;
 
 	return value;
 }
@@ -380,11 +360,10 @@ gebr_g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gch
  * Function: gebr_validate_int
  * Validate an int parameter
  */
-const gchar *
-gebr_validate_int(const gchar * text_value, const gchar * min, const gchar * max)
+const gchar *gebr_validate_int(const gchar * text_value, const gchar * min, const gchar * max)
 {
-	static gchar	number[31];
-	gdouble		value;
+	static gchar number[31];
+	gdouble value;
 
 	if (strlen(text_value) == 0)
 		return "";
@@ -403,13 +382,12 @@ gebr_validate_int(const gchar * text_value, const gchar * min, const gchar * max
  * Function: gebr_validate_float
  * Validate a float parameter
  */
-const gchar *
-gebr_validate_float(const gchar * text_value, const gchar * min, const gchar * max)
+const gchar *gebr_validate_float(const gchar * text_value, const gchar * min, const gchar * max)
 {
-	static gchar	number[31];
-	gchar *		last;
-	gdouble		value;
-	GString *	value_str;
+	static gchar number[31];
+	gchar *last;
+	gdouble value;
+	GString *value_str;
 
 	if (strlen(text_value) == 0)
 		return "";
@@ -431,4 +409,3 @@ gebr_validate_float(const gchar * text_value, const gchar * min, const gchar * m
 		return max;
 	return number;
 }
-

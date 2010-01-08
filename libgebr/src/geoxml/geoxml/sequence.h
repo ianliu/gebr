@@ -100,8 +100,7 @@ typedef struct gebr_geoxml_sequence GebrGeoXmlSequence;
  *
  * \see gebr_geoxml_sequence_next
  */
-int
-gebr_geoxml_sequence_previous(GebrGeoXmlSequence ** sequence);
+int gebr_geoxml_sequence_previous(GebrGeoXmlSequence ** sequence);
 
 /**
  * Use to iterate over sequences.
@@ -121,8 +120,7 @@ gebr_geoxml_sequence_previous(GebrGeoXmlSequence ** sequence);
  *
  * \see gebr_geoxml_sequence_previous
  */
-int
-gebr_geoxml_sequence_next(GebrGeoXmlSequence ** sequence);
+int gebr_geoxml_sequence_next(GebrGeoXmlSequence ** sequence);
 
 /**
  * Clone \p sequence element and add it to the end of the sequence.
@@ -131,24 +129,21 @@ gebr_geoxml_sequence_next(GebrGeoXmlSequence ** sequence);
  * If \p sequence is NULL or is not a sequence, NULL is returned.
  *
  */
-GebrGeoXmlSequence *
-gebr_geoxml_sequence_append_clone(GebrGeoXmlSequence * sequence);
+GebrGeoXmlSequence *gebr_geoxml_sequence_append_clone(GebrGeoXmlSequence * sequence);
 
 /**
  * Get the index of \p sequence.
  *
  * If \p sequence is NULL returns -1.
  */
-gint
-gebr_geoxml_sequence_get_index(GebrGeoXmlSequence * sequence);
+gint gebr_geoxml_sequence_get_index(GebrGeoXmlSequence * sequence);
 
 /**
  * Returns the sequence at index in \p sequence.
  *
  * If \p sequence is NULL returns NULL.
  */
-GebrGeoXmlSequence *
-gebr_geoxml_sequence_get_at(GebrGeoXmlSequence * sequence, gulong index);
+GebrGeoXmlSequence *gebr_geoxml_sequence_get_at(GebrGeoXmlSequence * sequence, gulong index);
 
 /**
  * Removes \p sequence from its sequence. It is not deleted and can be reinserted
@@ -161,8 +156,7 @@ gebr_geoxml_sequence_get_at(GebrGeoXmlSequence * sequence, gulong index);
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NULL_PTR,
  * GEBR_GEOXML_RETV_NOT_A_SEQUENCE, GEBR_GEOXML_RETV_MORE_THAN_ONE_INSTANCES
  */
-int
-gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence);
+int gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence);
 
 /**
  * Return TRUE if \p sequence and \p other are the same sequences.
@@ -170,8 +164,7 @@ gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence);
  *
  * If \p sequence or \p other is NULL, returns FALSE.
  */
-gboolean
-gebr_geoxml_sequence_is_same_sequence(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * other);
+gboolean gebr_geoxml_sequence_is_same_sequence(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * other);
 
 /**
  * Move \p sequence to \p parameter_group, appending it to the list of is parameters.
@@ -180,8 +173,7 @@ gebr_geoxml_sequence_is_same_sequence(GebrGeoXmlSequence * sequence, GebrGeoXmlS
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NULL_PTR,
  * GEBR_GEOXML_RETV_NOT_A_SEQUENCE, GEBR_GEOXML_RETV_MORE_THAN_ONE_INSTANCES
  */
-int
-gebr_geoxml_sequence_move_into_group(GebrGeoXmlSequence * sequence, GebrGeoXmlParameterGroup * parameter_group);
+int gebr_geoxml_sequence_move_into_group(GebrGeoXmlSequence * sequence, GebrGeoXmlParameterGroup * parameter_group);
 
 /**
  * Moves \p sequence to the position before \p position. If \p position is NULL then
@@ -190,8 +182,7 @@ gebr_geoxml_sequence_move_into_group(GebrGeoXmlSequence * sequence, GebrGeoXmlPa
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NULL_PTR,
  * GEBR_GEOXML_RETV_NOT_A_SEQUENCE, GEBR_GEOXML_RETV_DIFFERENT_SEQUENCES
  */
-int
-gebr_geoxml_sequence_move_before(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position);
+int gebr_geoxml_sequence_move_before(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position);
 
 /**
  * Moves \p sequence to the position after \p position. If \p position is NULL then
@@ -200,8 +191,7 @@ gebr_geoxml_sequence_move_before(GebrGeoXmlSequence * sequence, GebrGeoXmlSequen
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NULL_PTR,
  * GEBR_GEOXML_RETV_NOT_A_SEQUENCE, GEBR_GEOXML_RETV_DIFFERENT_SEQUENCES
  */
-int
-gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position);
+int gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position);
 
 /**
  * Exchange positions of the sequence above \p sequence with \p sequence in \p sequence.
@@ -209,8 +199,7 @@ gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlSequenc
  *
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR, GEBR_GEOXML_RETV_NOT_A_SEQUENCE
  */
-int
-gebr_geoxml_sequence_move_up(GebrGeoXmlSequence * sequence);
+int gebr_geoxml_sequence_move_up(GebrGeoXmlSequence * sequence);
 
 /**
  * Exchange positions of the sequence below \p sequence with \p sequence in \p sequence.
@@ -218,7 +207,6 @@ gebr_geoxml_sequence_move_up(GebrGeoXmlSequence * sequence);
  *
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR, GEBR_GEOXML_RETV_NOT_A_SEQUENCE
  */
-int
-gebr_geoxml_sequence_move_down(GebrGeoXmlSequence * sequence);
+int gebr_geoxml_sequence_move_down(GebrGeoXmlSequence * sequence);
 
-#endif //__GEBR_GEOXML_SEQUENCE_H
+#endif				//__GEBR_GEOXML_SEQUENCE_H

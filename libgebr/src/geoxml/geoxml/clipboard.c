@@ -23,64 +23,60 @@
 #include "xml.h"
 #include "types.h"
 
-extern GdomeDocument *	clipboard_document;
+extern GdomeDocument *clipboard_document;
 
-void
-gebr_geoxml_clipboard_clear(void)
+void gebr_geoxml_clipboard_clear(void)
 {
-	GdomeElement *	document_element;
-	GdomeElement *	element;
+	GdomeElement *document_element;
+	GdomeElement *element;
 
 	document_element = gdome_doc_documentElement(clipboard_document, &exception);
 	while ((element = __gebr_geoxml_get_first_element(document_element, "*")))
-		gdome_el_removeChild(document_element, (GdomeNode*)element, &exception);
+		gdome_el_removeChild(document_element, (GdomeNode *) element, &exception);
 }
 
-void
-gebr_geoxml_clipboard_copy(GebrGeoXmlObject * object)
+void gebr_geoxml_clipboard_copy(GebrGeoXmlObject * object)
 {
 	if (object == NULL)
 		return;
 
 	gdome_el_appendChild(gdome_doc_documentElement(clipboard_document, &exception),
-		gdome_doc_importNode(clipboard_document, (GdomeNode*)object, TRUE, &exception), &exception);
+			     gdome_doc_importNode(clipboard_document, (GdomeNode *) object, TRUE, &exception),
+			     &exception);
 }
 
-GebrGeoXmlObject *
-gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object)
+GebrGeoXmlObject *gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object)
 {
 	if (object == NULL)
 		return NULL;
 
-	static const gchar *		child_parent [][3] = {
+	static const gchar *child_parent[][3] = {
 		{"program", "flow", ""},
 		{"parameter", "program", "parameters"},
 		{NULL, NULL, NULL}
 	};
-	GdomeElement *			paste_element;
-	GdomeElement *			container_element;
-	GebrGeoXmlObject *			first_paste = NULL;
+	GdomeElement *paste_element;
+	GdomeElement *container_element;
+	GebrGeoXmlObject *first_paste = NULL;
 
-	container_element = gdome_n_nodeType((GdomeNode*)object, &exception) == GDOME_DOCUMENT_NODE
-		? gdome_doc_documentElement((GdomeDocument*)object, &exception) : (GdomeElement*)object;
-	paste_element = __gebr_geoxml_get_first_element(
-		gdome_doc_documentElement(clipboard_document, &exception), "*");
+	container_element = gdome_n_nodeType((GdomeNode *) object, &exception) == GDOME_DOCUMENT_NODE
+	    ? gdome_doc_documentElement((GdomeDocument *) object, &exception) : (GdomeElement *) object;
+	paste_element = __gebr_geoxml_get_first_element(gdome_doc_documentElement(clipboard_document, &exception), "*");
 	for (; paste_element != NULL; paste_element = __gebr_geoxml_next_element(paste_element)) {
 		for (int i = 0; child_parent[i][0] != NULL; ++i) {
 			if (!strcmp(gdome_el_tagName(paste_element, &exception)->str, child_parent[i][0]) &&
-			!strcmp(gdome_el_tagName(container_element, &exception)->str, child_parent[i][1])) {
-				GdomeNode *	imported;
+			    !strcmp(gdome_el_tagName(container_element, &exception)->str, child_parent[i][1])) {
+				GdomeNode *imported;
 
-				imported = gdome_doc_importNode(
-					gdome_el_ownerDocument(container_element, &exception),
-					(GdomeNode*)paste_element, TRUE, &exception);
+				imported = gdome_doc_importNode(gdome_el_ownerDocument(container_element, &exception),
+								(GdomeNode *) paste_element, TRUE, &exception);
 				if (!strlen(child_parent[i][2]))
 					gdome_el_appendChild(container_element, imported, &exception);
 				else
-					gdome_el_appendChild(__gebr_geoxml_get_first_element(
-						container_element, child_parent[i][2]),
-						imported, &exception);
-				__gebr_geoxml_element_reassign_ids((GdomeElement*)imported);
+					gdome_el_appendChild(__gebr_geoxml_get_first_element
+							     (container_element, child_parent[i][2]), imported,
+							     &exception);
+				__gebr_geoxml_element_reassign_ids((GdomeElement *) imported);
 				if (first_paste == NULL)
 					first_paste = GEBR_GEOXML_OBJECT(imported);
 				break;

@@ -37,29 +37,26 @@
  * Prototypes
  */
 
-
-
 /*
  * Section: Private
  * Private functions.
  */
 
-void
-path_add(GebrGuiValueSequenceEdit * sequence_edit)
+void path_add(GebrGuiValueSequenceEdit * sequence_edit)
 {
-	GebrGuiGtkFileEntry *	file_entry;
-	const gchar *		path;
+	GebrGuiGtkFileEntry *file_entry;
+	const gchar *path;
 
 	g_object_get(G_OBJECT(sequence_edit), "value-widget", &file_entry, NULL);
 	path = gebr_gui_gtk_file_entry_get_path(file_entry);
 	if (!strlen(path))
 		return;
 
-	gebr_gui_value_sequence_edit_add(sequence_edit, GEBR_GEOXML_SEQUENCE(gebr_geoxml_line_append_path(gebr.line, path)));
+	gebr_gui_value_sequence_edit_add(sequence_edit,
+					 GEBR_GEOXML_SEQUENCE(gebr_geoxml_line_append_path(gebr.line, path)));
 }
 
-gboolean
-path_save(void)
+gboolean path_save(void)
 {
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.line));
 	project_line_info_update();
@@ -71,14 +68,13 @@ path_save(void)
  * Private functions.
  */
 
-void
-path_list_setup_ui(void)
+void path_list_setup_ui(void)
 {
-	GtkWidget *		dialog;
-	GtkWidget *		file_entry;
-	GtkWidget *		path_sequence_edit;
-	GebrGeoXmlSequence *	path_sequence;
-	GString *		dialog_title;
+	GtkWidget *dialog;
+	GtkWidget *file_entry;
+	GtkWidget *path_sequence_edit;
+	GebrGeoXmlSequence *path_sequence;
+	GString *dialog_title;
 
 	if (gebr.line == NULL) {
 		gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("No line selected"));
@@ -86,12 +82,13 @@ path_list_setup_ui(void)
 	}
 
 	dialog_title = g_string_new(NULL);
-	g_string_printf(dialog_title, _("Path list for line '%s'"), gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line)));
+	g_string_printf(dialog_title, _("Path list for line '%s'"),
+			gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line)));
 
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
-		GTK_WINDOW(gebr.window),
-		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_STOCK_CLOSE, GTK_RESPONSE_OK, NULL);
+					     GTK_WINDOW(gebr.window),
+					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					     GTK_STOCK_CLOSE, GTK_RESPONSE_OK, NULL);
 	gtk_widget_set_size_request(dialog, 380, 260);
 
 	file_entry = gebr_gui_gtk_file_entry_new(NULL, NULL);
@@ -101,16 +98,14 @@ path_list_setup_ui(void)
 	gebr_geoxml_line_get_path(gebr.line, &path_sequence, 0);
 	path_sequence_edit = gebr_gui_value_sequence_edit_new(file_entry);
 	gebr_gui_value_sequence_edit_load(GEBR_GUI_VALUE_SEQUENCE_EDIT(path_sequence_edit), path_sequence,
-		(ValueSequenceSetFunction)gebr_geoxml_value_sequence_set,
-		(ValueSequenceGetFunction)gebr_geoxml_value_sequence_get, NULL);
+					  (ValueSequenceSetFunction) gebr_geoxml_value_sequence_set,
+					  (ValueSequenceGetFunction) gebr_geoxml_value_sequence_get, NULL);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), path_sequence_edit, TRUE, TRUE, 0);
 
-	g_signal_connect(GTK_OBJECT(path_sequence_edit), "add-request",
-		G_CALLBACK(path_add), NULL);
-	g_signal_connect(GTK_OBJECT(dialog), "delete-event",
-		G_CALLBACK(path_save), NULL);
+	g_signal_connect(GTK_OBJECT(path_sequence_edit), "add-request", G_CALLBACK(path_add), NULL);
+	g_signal_connect(GTK_OBJECT(dialog), "delete-event", G_CALLBACK(path_save), NULL);
 
-  	gtk_widget_show_all(dialog);
+	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.line));
 	project_line_info_update();

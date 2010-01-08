@@ -33,9 +33,8 @@
 #ifdef WEBKIT_ENABLED
 static void
 libgebr_gui_help_show_on_title_changed(WebKitWebView * web_view,
-	WebKitWebFrame * frame, gchar * title, GtkWindow * window);
-static GtkWidget *
-libgebr_gui_help_show_create_web_view(void);
+				       WebKitWebFrame * frame, gchar * title, GtkWindow * window);
+static GtkWidget *libgebr_gui_help_show_create_web_view(void);
 #endif
 
 /*
@@ -45,23 +44,21 @@ libgebr_gui_help_show_create_web_view(void);
 /* Function: gebr_gui_help_show
  * Show HTML at _uri_ with WebKit (if enabled) or with _browser_ executable specified
  */
-void
-gebr_gui_help_show(const gchar * uri, const gchar * browser)
+void gebr_gui_help_show(const gchar * uri, const gchar * browser)
 {
 #ifdef WEBKIT_ENABLED
-	GtkWidget *	web_view;
+	GtkWidget *web_view;
 
 	web_view = libgebr_gui_help_show_create_web_view();
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), uri);
 #else
-	GString *	cmd_line;
+	GString *cmd_line;
 
 	cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s %s &", browser, uri);
 	if (system(cmd_line->str))
 		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't open browser"),
-			_("Cannot open your web browser.\n"
-			"Please select it on 'Preferences'."));
+					_("Cannot open your web browser.\n" "Please select it on 'Preferences'."));
 
 	g_string_free(cmd_line, TRUE);
 #endif
@@ -72,21 +69,20 @@ gebr_gui_help_show(const gchar * uri, const gchar * browser)
  */
 
 #ifdef WEBKIT_ENABLED
-static GtkWidget *
-libgebr_gui_help_show_create_web_view(void)
+static GtkWidget *libgebr_gui_help_show_create_web_view(void)
 {
-	static GtkWindowGroup *	window_group = NULL;
-	static GtkWidget *	work_around_web_view = NULL;
-	GtkWidget *		window;
-	GtkWidget *		scrolled_window;
-	GtkWidget *		web_view;
+	static GtkWindowGroup *window_group = NULL;
+	static GtkWidget *work_around_web_view = NULL;
+	GtkWidget *window;
+	GtkWidget *scrolled_window;
+	GtkWidget *web_view;
 
 	if (window_group == NULL)
 		window_group = gtk_window_group_new();
 	if (!g_thread_supported())
 		g_thread_init(NULL);
 	/* WORKAROUND: Newer WebKitGtk versions crash on last WebKitWebView destroy,
-	so we always keep one instance of it. */
+	   so we always keep one instance of it. */
 	if (work_around_web_view == NULL)
 		work_around_web_view = webkit_web_view_new();
 
@@ -94,16 +90,14 @@ libgebr_gui_help_show_create_web_view(void)
 	gtk_window_group_add_window(window_group, GTK_WINDOW(window));
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	web_view = webkit_web_view_new();
 	if (g_signal_lookup("create-web-view", WEBKIT_TYPE_WEB_VIEW))
-		g_signal_connect(web_view, "create-web-view",
-			G_CALLBACK(libgebr_gui_help_show_create_web_view), NULL);
-	g_signal_connect(web_view, "title-changed",
-		G_CALLBACK(libgebr_gui_help_show_on_title_changed), window);
+		g_signal_connect(web_view, "create-web-view", G_CALLBACK(libgebr_gui_help_show_create_web_view), NULL);
+	g_signal_connect(web_view, "title-changed", G_CALLBACK(libgebr_gui_help_show_on_title_changed), window);
 
 	/* Place the WebKitWebView in the GtkScrolledWindow */
-	gtk_container_add(GTK_CONTAINER (scrolled_window), web_view);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), web_view);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(window)->vbox), scrolled_window, TRUE, TRUE, 0);
 
 	/* Show the result */
@@ -115,9 +109,9 @@ libgebr_gui_help_show_create_web_view(void)
 
 static void
 libgebr_gui_help_show_on_title_changed(WebKitWebView * web_view,
-	WebKitWebFrame * frame, gchar * title, GtkWindow * window)
+				       WebKitWebFrame * frame, gchar * title, GtkWindow * window)
 {
 	gtk_window_set_title(window, title);
 }
 
-#endif //WEBKIT_ENABLED
+#endif				//WEBKIT_ENABLED

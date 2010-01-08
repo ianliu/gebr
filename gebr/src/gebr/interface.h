@@ -29,7 +29,6 @@ enum {
 	MENUBAR_N
 };
 
-void
-gebr_setup_ui(void);
+void gebr_setup_ui(void);
 
-#endif //__INTERFACE_H
+#endif				//__INTERFACE_H

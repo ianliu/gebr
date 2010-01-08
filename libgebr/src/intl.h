@@ -45,4 +45,4 @@
 #	define N_(String) (String)
 #endif
 
-#endif // __INTL_H
+#endif				// __INTL_H

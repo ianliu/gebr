@@ -28,54 +28,51 @@
  */
 
 struct popup_callback {
-	GebrGuiGtkPopupCallback	callback;
-	gpointer		user_data;
+	GebrGuiGtkPopupCallback callback;
+	gpointer user_data;
 
-	GtkWidget *		event_box;
-	GtkWidget *		widget;
+	GtkWidget *event_box;
+	GtkWidget *widget;
 };
 
-static void
-__popup_callback_weak_notify(struct popup_callback * popup_callback, GtkObject * object)
+static void __popup_callback_weak_notify(struct popup_callback *popup_callback, GtkObject * object)
 {
 	if (popup_callback->event_box != NULL)
 		gtk_widget_destroy(popup_callback->event_box);
 	g_free(popup_callback);
 }
 
-static struct popup_callback *
-__popup_callback_init(GObject * object, GebrGuiGtkPopupCallback callback, gpointer user_data, GtkWidget * event_box)
+static struct popup_callback *__popup_callback_init(GObject * object, GebrGuiGtkPopupCallback callback,
+						    gpointer user_data, GtkWidget * event_box)
 {
-	struct popup_callback *	popup_callback;
+	struct popup_callback *popup_callback;
 
 	popup_callback = g_malloc(sizeof(struct popup_callback));
-	*popup_callback = (struct popup_callback){
-		.callback = callback,
-		.user_data = user_data,
-		.event_box = event_box,
-		.widget = GTK_WIDGET(object)
+	*popup_callback = (struct popup_callback) {
+		.callback = callback,.user_data = user_data,.event_box = event_box,.widget = GTK_WIDGET(object)
 	};
-	g_object_weak_ref(object, (GWeakNotify)__popup_callback_weak_notify, popup_callback);
+	g_object_weak_ref(object, (GWeakNotify) __popup_callback_weak_notify, popup_callback);
 
 	return popup_callback;
 }
 
 static gboolean
-__gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * event, struct popup_callback * popup_callback)
+__gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * event,
+				  struct popup_callback *popup_callback)
 {
-	GtkMenu *		menu;
-	GtkTreeSelection *	selection;
+	GtkMenu *menu;
+	GtkTreeSelection *selection;
 
 	if (event->button != 3)
 		return FALSE;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
 	if (gtk_tree_selection_count_selected_rows(selection) <= 1) {
-		GtkTreePath *	path;
+		GtkTreePath *path;
 
 		/* Get tree path for row that was clicked */
 		if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tree_view),
-			(gint)event->x, (gint)event->y, &path, NULL, NULL, NULL)) {
+						  (gint) event->x, (gint) event->y, &path, NULL, NULL, NULL)) {
 			gtk_tree_selection_unselect_all(selection);
 			gtk_tree_selection_select_path(selection, path);
 			gtk_tree_path_free(path);
@@ -87,16 +84,15 @@ __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * even
 	menu = popup_callback->callback(GTK_WIDGET(tree_view), popup_callback->user_data);
 	if (menu == NULL)
 		return TRUE;
-	gtk_menu_popup(menu, NULL, NULL, NULL, NULL,
-		event->button, gdk_event_get_time((GdkEvent*)event));
+	gtk_menu_popup(menu, NULL, NULL, NULL, NULL, event->button, gdk_event_get_time((GdkEvent *) event));
 
 	return TRUE;
 }
 
 static gboolean
-__gtk_widget_on_button_pressed(GtkWidget * widget, GdkEventButton * event, struct popup_callback * popup_callback)
+__gtk_widget_on_button_pressed(GtkWidget * widget, GdkEventButton * event, struct popup_callback *popup_callback)
 {
-	GtkMenu *		menu;
+	GtkMenu *menu;
 
 	if (event->button != 3)
 		return FALSE;
@@ -104,33 +100,28 @@ __gtk_widget_on_button_pressed(GtkWidget * widget, GdkEventButton * event, struc
 	menu = popup_callback->callback(popup_callback->widget, popup_callback->user_data);
 	if (menu == NULL)
 		return TRUE;
-	gtk_menu_popup(menu, NULL, NULL, NULL, NULL,
-		event->button, gdk_event_get_time((GdkEvent*)event));
+	gtk_menu_popup(menu, NULL, NULL, NULL, NULL, event->button, gdk_event_get_time((GdkEvent *) event));
 
 	return TRUE;
 }
 
-static void
-__gtk_widget_on_popup_menu(GtkWidget * widget, struct popup_callback * popup_callback)
+static void __gtk_widget_on_popup_menu(GtkWidget * widget, struct popup_callback *popup_callback)
 {
-	GtkMenu *	menu;
+	GtkMenu *menu;
 
 	menu = popup_callback->callback(widget, popup_callback->user_data);
 	if (menu == NULL)
 		return;
-	gtk_menu_popup(menu, NULL, NULL, NULL, NULL,
-		0, gdk_event_get_time(NULL));
+	gtk_menu_popup(menu, NULL, NULL, NULL, NULL, 0, gdk_event_get_time(NULL));
 }
 
 /*
  * Public functions
  */
 
-static gboolean
-widget_return_on_key_press_event(GtkWidget * widget, GdkEventKey * event,
-GtkDialog * dialog)
+static gboolean widget_return_on_key_press_event(GtkWidget * widget, GdkEventKey * event, GtkDialog * dialog)
 {
-	gint	response;
+	gint response;
 
 	switch (event->keyval) {
 	case GDK_Return:
@@ -144,22 +135,17 @@ GtkDialog * dialog)
 	return FALSE;
 }
 
-void
-gebr_gui_gtk_dialog_set_response_on_widget_return(GtkDialog * dialog, gint response,
-GtkWidget * widget)
+void gebr_gui_gtk_dialog_set_response_on_widget_return(GtkDialog * dialog, gint response, GtkWidget * widget)
 {
 	g_object_set_data(G_OBJECT(widget), "__widget_return_dialog_response", GINT_TO_POINTER(response));
 	gtk_widget_set_events(GTK_WIDGET(widget), GDK_KEY_PRESS_MASK);
-	g_signal_connect(GTK_OBJECT(widget), "key-press-event",
-		G_CALLBACK(widget_return_on_key_press_event), dialog);
+	g_signal_connect(GTK_OBJECT(widget), "key-press-event", G_CALLBACK(widget_return_on_key_press_event), dialog);
 }
 
-
-gboolean
-gebr_gui_gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter)
 {
-	GtkTreePath *	previous_path;
-	gboolean	ret;
+	GtkTreePath *previous_path;
+	gboolean ret;
 
 	previous_path = gtk_tree_model_get_path(GTK_TREE_MODEL(store), iter);
 	ret = gtk_tree_path_prev(previous_path);
@@ -169,20 +155,18 @@ gebr_gui_gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter)
 	return ret;
 }
 
-gboolean
-gebr_gui_gtk_list_store_can_move_down(GtkListStore * store, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_list_store_can_move_down(GtkListStore * store, GtkTreeIter * iter)
 {
-	GtkTreeIter	next;
+	GtkTreeIter next;
 
 	next = *iter;
 	return gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &next);
 }
 
-gboolean
-gebr_gui_gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter)
 {
-	GtkTreeIter 	previous;
-	GtkTreePath *	previous_path;
+	GtkTreeIter previous;
+	GtkTreePath *previous_path;
 
 	previous_path = gtk_tree_model_get_path(GTK_TREE_MODEL(store), iter);
 	if (gtk_tree_path_prev(previous_path) == FALSE) {
@@ -198,10 +182,9 @@ gebr_gui_gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter)
 	return TRUE;
 }
 
-gboolean
-gebr_gui_gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter)
 {
-	GtkTreeIter	next;
+	GtkTreeIter next;
 
 	next = *iter;
 	if (gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &next) == FALSE)
@@ -212,24 +195,22 @@ gebr_gui_gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter)
 	return TRUE;
 }
 
-gulong
-gebr_gui_gtk_list_store_get_iter_index(GtkListStore * list_store, GtkTreeIter * iter)
+gulong gebr_gui_gtk_list_store_get_iter_index(GtkListStore * list_store, GtkTreeIter * iter)
 {
-	gchar *	node;
-	gulong	index;
+	gchar *node;
+	gulong index;
 
 	node = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(list_store), iter);
-	index = (gulong)atol(node);
+	index = (gulong) atol(node);
 	g_free(node);
 
 	return index;
 }
 
-gboolean
-gebr_gui_gtk_tree_store_can_move_up(GtkTreeStore * store, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_tree_store_can_move_up(GtkTreeStore * store, GtkTreeIter * iter)
 {
-	GtkTreePath *	previous_path;
-	gboolean	ret;
+	GtkTreePath *previous_path;
+	gboolean ret;
 
 	previous_path = gtk_tree_model_get_path(GTK_TREE_MODEL(store), iter);
 	ret = gtk_tree_path_prev(previous_path);
@@ -239,20 +220,18 @@ gebr_gui_gtk_tree_store_can_move_up(GtkTreeStore * store, GtkTreeIter * iter)
 	return ret;
 }
 
-gboolean
-gebr_gui_gtk_tree_store_can_move_down(GtkTreeStore * store, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_tree_store_can_move_down(GtkTreeStore * store, GtkTreeIter * iter)
 {
-	GtkTreeIter	next;
+	GtkTreeIter next;
 
 	next = *iter;
 	return gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &next);
 }
 
-gboolean
-gebr_gui_gtk_tree_store_move_up(GtkTreeStore * store, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_tree_store_move_up(GtkTreeStore * store, GtkTreeIter * iter)
 {
-	GtkTreeIter 	previous;
-	GtkTreePath *	previous_path;
+	GtkTreeIter previous;
+	GtkTreePath *previous_path;
 
 	previous_path = gtk_tree_model_get_path(GTK_TREE_MODEL(store), iter);
 	if (gtk_tree_path_prev(previous_path) == FALSE) {
@@ -268,10 +247,9 @@ gebr_gui_gtk_tree_store_move_up(GtkTreeStore * store, GtkTreeIter * iter)
 	return TRUE;
 }
 
-gboolean
-gebr_gui_gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter)
 {
-	GtkTreeIter	next;
+	GtkTreeIter next;
 
 	next = *iter;
 	if (gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &next) == FALSE)
@@ -294,8 +272,7 @@ gebr_gui_gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter)
  *
  * Returns: %TRUE if reparenting was needed, %FALSE otherwise.
  */
-gboolean
-gebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * iter, GtkTreeIter * parent)
+gboolean gebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * iter, GtkTreeIter * parent)
 {
 	GtkTreeIter new;
 
@@ -311,11 +288,10 @@ gebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * iter, GtkTr
 	return TRUE;
 }
 
-gint
-gebr_gui_gtk_tree_model_get_iter_depth(GtkTreeModel * model, GtkTreeIter * iter)
+gint gebr_gui_gtk_tree_model_get_iter_depth(GtkTreeModel * model, GtkTreeIter * iter)
 {
-	GtkTreePath *	tree_path;
-	gint		depth;
+	GtkTreePath *tree_path;
+	gint depth;
 
 	tree_path = gtk_tree_model_get_path(model, iter);
 	depth = gtk_tree_path_get_depth(tree_path);
@@ -332,13 +308,13 @@ gebr_gui_gtk_tree_model_get_iter_depth(GtkTreeModel * model, GtkTreeIter * iter)
  *
  * Copy the values from _source_ into _iter_.
  */
-void
-gebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source)
+void gebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source)
 {
-	GValue	value;
-	guint	i, n;
+	GValue value;
+	guint i, n;
 
-	value = (GValue){0, };
+	value = (GValue) {
+	0,};
 	n = gtk_tree_model_get_n_columns(model);
 	for (i = 0; i < n; ++i) {
 		gtk_tree_model_get_value(model, source, i, &value);
@@ -353,11 +329,10 @@ gebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * ite
 	}
 }
 
-gboolean
-gebr_gui_gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_path, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_path, GtkTreeIter * iter)
 {
-	gchar *		path_string;
-	gboolean	ret;
+	gchar *path_string;
+	gboolean ret;
 
 	if (iter == NULL)
 		return FALSE;
@@ -368,16 +343,15 @@ gebr_gui_gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_pa
 	return ret;
 }
 
-static GList *
-libgebr_libgebr_gui_gtk_tree_model_path_to_iter_list(GtkTreeModel * model, GList * path_list)
+static GList *libgebr_libgebr_gui_gtk_tree_model_path_to_iter_list(GtkTreeModel * model, GList * path_list)
 {
-	GList *	iter_list, * i;
+	GList *iter_list, *i;
 
 	iter_list = NULL;
 	for (i = g_list_first(path_list); i != NULL; i = g_list_next(i)) {
-		GtkTreeIter	iter;
+		GtkTreeIter iter;
 
-		gebr_gui_gtk_tree_model_path_to_iter(model, (GtkTreePath*)i->data, &iter);
+		gebr_gui_gtk_tree_model_path_to_iter(model, (GtkTreePath *) i->data, &iter);
 		iter_list = g_list_prepend(iter_list, gtk_tree_iter_copy(&iter));
 	}
 	iter_list = g_list_reverse(iter_list);
@@ -385,99 +359,93 @@ libgebr_libgebr_gui_gtk_tree_model_path_to_iter_list(GtkTreeModel * model, GList
 	return iter_list;
 }
 
-void
-gebr_gui_gtk_tree_view_scroll_to_iter_cell(GtkTreeView * tree_view, GtkTreeIter * iter)
+void gebr_gui_gtk_tree_view_scroll_to_iter_cell(GtkTreeView * tree_view, GtkTreeIter * iter)
 {
-	GtkTreePath *	tree_path;
+	GtkTreePath *tree_path;
 
 	tree_path = gtk_tree_model_get_path(gtk_tree_view_get_model(tree_view), iter);
 	gtk_tree_view_scroll_to_cell(tree_view, tree_path, NULL, FALSE, 0, 0);
 	gtk_tree_path_free(tree_path);
 }
 
-GList *
-gebr_gui_gtk_tree_view_get_selected_iters(GtkTreeView * tree_view)
+GList *gebr_gui_gtk_tree_view_get_selected_iters(GtkTreeView * tree_view)
 {
-	GtkTreeModel *	model;
-	GList *		path_list, * list;
+	GtkTreeModel *model;
+	GList *path_list, *list;
 
 	path_list = gtk_tree_selection_get_selected_rows(gtk_tree_view_get_selection(tree_view), &model);
 	list = libgebr_libgebr_gui_gtk_tree_model_path_to_iter_list(model, path_list);
 
-	g_list_foreach(path_list, (GFunc)gtk_tree_path_free, NULL);
+	g_list_foreach(path_list, (GFunc) gtk_tree_path_free, NULL);
 	g_list_free(path_list);
 
 	return list;
 }
 
-void
-gebr_gui_gtk_tree_view_turn_to_single_selection(GtkTreeView * tree_view)
+void gebr_gui_gtk_tree_view_turn_to_single_selection(GtkTreeView * tree_view)
 {
-	GList *			selected_iters, * i;
-	GtkTreeSelection *	tree_selection;
+	GList *selected_iters, *i;
+	GtkTreeSelection *tree_selection;
 
 	tree_selection = gtk_tree_view_get_selection(tree_view);
 	selected_iters = gebr_gui_gtk_tree_view_get_selected_iters(tree_view);
 	i = g_list_first(selected_iters);
 	i = g_list_next(i);
 	for (; i != NULL; i = g_list_next(i))
-		gtk_tree_selection_unselect_iter(tree_selection, (GtkTreeIter*)i->data);
+		gtk_tree_selection_unselect_iter(tree_selection, (GtkTreeIter *) i->data);
 
-	g_list_foreach(selected_iters, (GFunc)gtk_tree_iter_free, NULL);
+	g_list_foreach(selected_iters, (GFunc) gtk_tree_iter_free, NULL);
 	g_list_free(selected_iters);
 }
 
-gboolean
-gebr_gui_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter)
 {
-	GtkTreeSelection *	tree_selection;
+	GtkTreeSelection *tree_selection;
 
 	tree_selection = gtk_tree_view_get_selection(tree_view);
 	if (gtk_tree_selection_get_mode(tree_selection) != GTK_SELECTION_MULTIPLE)
 		return gtk_tree_selection_get_selected(tree_selection, NULL, iter);
 	else {
-		GtkTreeModel *	model;
-		GList *		list, * first;
-		gboolean	ret = TRUE;
+		GtkTreeModel *model;
+		GList *list, *first;
+		gboolean ret = TRUE;
 
-		list = gtk_tree_selection_get_selected_rows(
-			gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view)), &model);
+		list =
+		    gtk_tree_selection_get_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view)), &model);
 		first = g_list_first(list);
 		if (first == NULL || first->data == NULL)
 			ret = FALSE;
 		else if (iter != NULL)
-			gebr_gui_gtk_tree_model_path_to_iter(model, (GtkTreePath*)first->data, iter);
+			gebr_gui_gtk_tree_model_path_to_iter(model, (GtkTreePath *) first->data, iter);
 
-		g_list_foreach(list, (GFunc)gtk_tree_path_free, NULL);
+		g_list_foreach(list, (GFunc) gtk_tree_path_free, NULL);
 		g_list_free(list);
 
 		return ret;
 	}
 }
 
-void
-gebr_gui_gtk_tree_view_expand_to_iter(GtkTreeView * view, GtkTreeIter * iter)
+void gebr_gui_gtk_tree_view_expand_to_iter(GtkTreeView * view, GtkTreeIter * iter)
 {
-	GtkTreePath * path;
+	GtkTreePath *path;
 	path = gtk_tree_model_get_path(gtk_tree_view_get_model(view), iter);
 	gtk_tree_view_expand_to_path(view, path);
 	gtk_tree_path_free(path);
 }
 
-GtkTreeViewColumn *
-gebr_gui_gtk_tree_view_get_column_from_renderer(GtkTreeView * tree_view, GtkCellRenderer * renderer)
+GtkTreeViewColumn *gebr_gui_gtk_tree_view_get_column_from_renderer(GtkTreeView * tree_view, GtkCellRenderer * renderer)
 {
-	GList *			column_list;
-	GtkTreeViewColumn *	column = NULL;
+	GList *column_list;
+	GtkTreeViewColumn *column = NULL;
 
 	column_list = gtk_tree_view_get_columns(tree_view);
 	for (GList * i = column_list; i != NULL; i = g_list_next(i)) {
-		GtkTreeViewColumn *	i_column = (GtkTreeViewColumn*)i->data;
-		GList *			renderer_list;
+		GtkTreeViewColumn *i_column = (GtkTreeViewColumn *) i->data;
+		GList *renderer_list;
 
 		renderer_list = gtk_tree_view_column_get_cell_renderers(i_column);
 		for (GList * j = renderer_list; j != NULL; j = g_list_next(j)) {
-			GtkCellRenderer *	i_renderer = (GtkCellRenderer*)j->data;
+			GtkCellRenderer *i_renderer = (GtkCellRenderer *) j->data;
 
 			if (i_renderer == renderer) {
 				column = i_column;
@@ -487,24 +455,23 @@ gebr_gui_gtk_tree_view_get_column_from_renderer(GtkTreeView * tree_view, GtkCell
 		g_list_free(renderer_list);
 	}
 
-out:	g_list_free(column_list);
+ out:	g_list_free(column_list);
 
 	return column;
 }
 
-GtkTreeViewColumn *
-gebr_gui_gtk_tree_view_get_next_column(GtkTreeView * tree_view, GtkTreeViewColumn * column)
+GtkTreeViewColumn *gebr_gui_gtk_tree_view_get_next_column(GtkTreeView * tree_view, GtkTreeViewColumn * column)
 {
-	GList *			column_list;
-	GtkTreeViewColumn *	next_column = NULL;
+	GList *column_list;
+	GtkTreeViewColumn *next_column = NULL;
 
 	column_list = gtk_tree_view_get_columns(tree_view);
 	for (GList * i = column_list; i != NULL; i = g_list_next(i)) {
-		GtkTreeViewColumn *	i_column = (GtkTreeViewColumn*)i->data;
+		GtkTreeViewColumn *i_column = (GtkTreeViewColumn *) i->data;
 
 		if (i_column == column) {
 			if ((i = g_list_next(i)) != NULL)
-				next_column = (GtkTreeViewColumn*)i->data;
+				next_column = (GtkTreeViewColumn *) i->data;
 			break;
 		}
 	}
@@ -516,39 +483,36 @@ gebr_gui_gtk_tree_view_get_next_column(GtkTreeView * tree_view, GtkTreeViewColum
 
 void
 gebr_gui_gtk_tree_view_set_cursor(GtkTreeView * tree_view, GtkTreeIter * iter,
-GtkTreeViewColumn * column, gboolean start_editing)
+				  GtkTreeViewColumn * column, gboolean start_editing)
 {
-	GtkTreePath *		tree_path;
+	GtkTreePath *tree_path;
 
 	tree_path = gtk_tree_model_get_path(gtk_tree_view_get_model(tree_view), iter);
 	gtk_tree_view_set_cursor(tree_view, tree_path, column, start_editing);
 	gtk_tree_path_free(tree_path);
 }
 
-static void
-on_gtk_tree_view_row_collapsed(GtkTreeView * tree_view)
+static void on_gtk_tree_view_row_collapsed(GtkTreeView * tree_view)
 {
 	g_signal_emit_by_name(tree_view, "cursor-changed");
 }
 
-void
-gebr_gui_gtk_tree_view_change_cursor_on_row_collapsed(GtkTreeView * tree_view)
+void gebr_gui_gtk_tree_view_change_cursor_on_row_collapsed(GtkTreeView * tree_view)
 {
 	/* strange GTK... */
-	g_signal_connect(tree_view, "row-collapsed",
-		G_CALLBACK(on_gtk_tree_view_row_collapsed), NULL);
+	g_signal_connect(tree_view, "row-collapsed", G_CALLBACK(on_gtk_tree_view_row_collapsed), NULL);
 }
 
-GtkCellRenderer *
-gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkTreeViewColumn * column, GtkCellRendererMode mode)
+GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkTreeViewColumn * column,
+									    GtkCellRendererMode mode)
 {
-	GList *			renderer_list;
-	GtkCellRenderer *	renderer = NULL;
+	GList *renderer_list;
+	GtkCellRenderer *renderer = NULL;
 
 	renderer_list = gtk_tree_view_column_get_cell_renderers(column);
 	for (GList * j = renderer_list; j != NULL; j = g_list_next(j)) {
-		GtkCellRenderer *	i_renderer = (GtkCellRenderer*)j->data;
-		GtkCellRendererMode	i_mode;
+		GtkCellRenderer *i_renderer = (GtkCellRenderer *) j->data;
+		GtkCellRendererMode i_mode;
 
 		g_object_get(i_renderer, "mode", &i_mode, NULL);
 
@@ -565,17 +529,15 @@ gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkTreeViewColumn * c
 gboolean
 gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPopupCallback callback, gpointer user_data)
 {
-	struct popup_callback *	popup_callback;
+	struct popup_callback *popup_callback;
 
 	if (GTK_WIDGET_FLAGS(widget) & GTK_NO_WINDOW)
 		return FALSE;
 
 	popup_callback = __popup_callback_init(G_OBJECT(widget), callback, user_data, NULL);
 	GTK_WIDGET_SET_FLAGS(widget, GDK_BUTTON_PRESS);
-	g_signal_connect(widget, "button-press-event",
-		G_CALLBACK(__gtk_widget_on_button_pressed), popup_callback);
-	g_signal_connect(widget, "popup-menu",
-		G_CALLBACK(__gtk_widget_on_popup_menu), popup_callback);
+	g_signal_connect(widget, "button-press-event", G_CALLBACK(__gtk_widget_on_button_pressed), popup_callback);
+	g_signal_connect(widget, "popup-menu", G_CALLBACK(__gtk_widget_on_popup_menu), popup_callback);
 
 	return TRUE;
 }
@@ -583,41 +545,39 @@ gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPopupCallba
 void
 gebr_gui_gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GebrGuiGtkPopupCallback callback, gpointer user_data)
 {
-	struct popup_callback *	popup_callback;
+	struct popup_callback *popup_callback;
 
 	popup_callback = __popup_callback_init(G_OBJECT(tree_view), callback, user_data, NULL);
 	g_signal_connect(tree_view, "button-press-event",
-		G_CALLBACK(__gtk_tree_view_on_button_pressed), popup_callback);
-	g_signal_connect(tree_view, "popup-menu",
-		G_CALLBACK(__gtk_widget_on_popup_menu), popup_callback);
+			 G_CALLBACK(__gtk_tree_view_on_button_pressed), popup_callback);
+	g_signal_connect(tree_view, "popup-menu", G_CALLBACK(__gtk_widget_on_popup_menu), popup_callback);
 }
 
-void
-gebr_gui_gtk_tree_view_select_sibling(GtkTreeView * tree_view)
+void gebr_gui_gtk_tree_view_select_sibling(GtkTreeView * tree_view)
 {
-	GtkTreeSelection *	selection;
-	GtkTreeModel *		model;
-	GtkTreeIter		iter;
+	GtkTreeSelection *selection;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
 
 	model = gtk_tree_view_get_model(tree_view);
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
 	if (gtk_tree_selection_get_mode(selection) != GTK_SELECTION_MULTIPLE &&
-	gtk_tree_selection_get_selected(selection, NULL, &iter)) {
-		GtkTreeIter	next_iter;
+	    gtk_tree_selection_get_selected(selection, NULL, &iter)) {
+		GtkTreeIter next_iter;
 
 		next_iter = iter;
 		if (gtk_tree_model_iter_next(model, &next_iter)) {
 			gtk_tree_selection_select_iter(selection, &next_iter);
 			g_signal_emit_by_name(tree_view, "cursor-changed");
 		} else {
-			GtkTreePath *	path;
+			GtkTreePath *path;
 
 			path = gtk_tree_model_get_path(model, &iter);
 			if (gtk_tree_path_prev(path)) {
 				gtk_tree_selection_select_path(selection, path);
 				g_signal_emit_by_name(tree_view, "cursor-changed");
 			} else
-					goto none;
+				goto none;
 
 			gtk_tree_path_free(path);
 		}
@@ -632,30 +592,29 @@ gebr_gui_gtk_tree_view_select_sibling(GtkTreeView * tree_view)
 		return;
 	}
 
-none:	gtk_tree_selection_unselect_all(selection);
+ none:	gtk_tree_selection_unselect_all(selection);
 	g_signal_emit_by_name(tree_view, "cursor-changed");
 }
 
 #if GTK_CHECK_VERSION(2,12,0)
 struct tooltip_data {
-	GebrGuiGtkTreeViewTooltipCallback	callback;
-	gpointer				user_data;
+	GebrGuiGtkTreeViewTooltipCallback callback;
+	gpointer user_data;
 };
 
-static void
-tooltip_weak_ref(struct tooltip_data * tooltip_data, GtkTreeView * tree_view)
+static void tooltip_weak_ref(struct tooltip_data *tooltip_data, GtkTreeView * tree_view)
 {
 	g_free(tooltip_data);
 }
 
 static gboolean
 on_tooltip_query(GtkTreeView * tree_view, gint x, gint y, gboolean keyboard_mode,
-	GtkTooltip * tooltip, struct tooltip_data * tooltip_data)
+		 GtkTooltip * tooltip, struct tooltip_data *tooltip_data)
 {
-	GtkTreePath *		path;
-	GtkTreeViewColumn *	column;
-	gchar *			path_string;
-	GtkTreeIter		iter;
+	GtkTreePath *path;
+	GtkTreeViewColumn *column;
+	gchar *path_string;
+	GtkTreeIter iter;
 
 #if GTK_CHECK_VERSION(2,12,0)
 	gtk_tree_view_convert_widget_to_bin_window_coords(tree_view, x, y, &x, &y);
@@ -679,10 +638,11 @@ on_tooltip_query(GtkTreeView * tree_view, gint x, gint y, gboolean keyboard_mode
 }
 
 void
-gebr_gui_gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GebrGuiGtkTreeViewTooltipCallback callback, gpointer user_data)
+gebr_gui_gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GebrGuiGtkTreeViewTooltipCallback callback,
+					    gpointer user_data)
 {
-	gulong			signal_id;
-	struct tooltip_data *	tooltip_data;
+	gulong signal_id;
+	struct tooltip_data *tooltip_data;
 
 	if ((signal_id = g_signal_handler_find(tree_view, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, on_tooltip_query, NULL))) {
 		g_object_set(G_OBJECT(tree_view), "has-tooltip", FALSE, NULL);
@@ -693,42 +653,38 @@ gebr_gui_gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GebrGuiGtkT
 
 	tooltip_data = g_malloc(sizeof(struct tooltip_data));
 	*tooltip_data = (struct tooltip_data) {
-		.callback = callback,
-		.user_data = user_data,
-	};
+	.callback = callback,.user_data = user_data,};
 
 	g_object_set(G_OBJECT(tree_view), "has-tooltip", TRUE, NULL);
-	g_signal_connect(tree_view, "query-tooltip",
-		G_CALLBACK(on_tooltip_query), tooltip_data);
-	g_object_weak_ref(G_OBJECT(tree_view), (GWeakNotify)tooltip_weak_ref, tooltip_data);
+	g_signal_connect(tree_view, "query-tooltip", G_CALLBACK(on_tooltip_query), tooltip_data);
+	g_object_weak_ref(G_OBJECT(tree_view), (GWeakNotify) tooltip_weak_ref, tooltip_data);
 }
 #endif
 
 struct reorderable_data {
-	gint				gebr_geoxml_sequence_pointer_column;
-	GebrGuiGtkTreeViewMoveSequenceCallback	callback;
-	gpointer			user_data;
+	gint gebr_geoxml_sequence_pointer_column;
+	GebrGuiGtkTreeViewMoveSequenceCallback callback;
+	gpointer user_data;
 };
 
 static void
-libgebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable_weak_ref(struct reorderable_data * data, GtkTreeView * tree_view)
+libgebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable_weak_ref(struct reorderable_data *data,
+								     GtkTreeView * tree_view)
 {
 	g_free(data);
 }
 
 gboolean
 gtk_tree_view_reorder_callback(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
-	GtkTreeViewDropPosition drop_position, struct reorderable_data * data)
+			       GtkTreeViewDropPosition drop_position, struct reorderable_data *data)
 {
-	GtkTreeModel *		tree_model;
-	GebrGeoXmlSequence *	sequence;
-	GebrGeoXmlSequence *	position_sequence;
+	GtkTreeModel *tree_model;
+	GebrGeoXmlSequence *sequence;
+	GebrGeoXmlSequence *position_sequence;
 
 	tree_model = gtk_tree_view_get_model(tree_view);
-	gtk_tree_model_get(tree_model, iter,
-		data->gebr_geoxml_sequence_pointer_column, &sequence, -1);
-	gtk_tree_model_get(tree_model, position,
-		data->gebr_geoxml_sequence_pointer_column, &position_sequence, -1);
+	gtk_tree_model_get(tree_model, iter, data->gebr_geoxml_sequence_pointer_column, &sequence, -1);
+	gtk_tree_model_get(tree_model, position, data->gebr_geoxml_sequence_pointer_column, &position_sequence, -1);
 
 	if (drop_position == GTK_TREE_VIEW_DROP_AFTER) {
 		gebr_geoxml_sequence_move_after(sequence, position_sequence);
@@ -747,52 +703,52 @@ gtk_tree_view_reorder_callback(GtkTreeView * tree_view, GtkTreeIter * iter, GtkT
 }
 
 void
-gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GtkTreeView * tree_view, gint gebr_geoxml_sequence_pointer_column,
-	GebrGuiGtkTreeViewMoveSequenceCallback callback, gpointer user_data)
+gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GtkTreeView * tree_view,
+							 gint gebr_geoxml_sequence_pointer_column,
+							 GebrGuiGtkTreeViewMoveSequenceCallback callback,
+							 gpointer user_data)
 {
-	struct reorderable_data * data;
+	struct reorderable_data *data;
 
 	data = g_malloc(sizeof(struct reorderable_data));
 	*data = (struct reorderable_data) {
-		.gebr_geoxml_sequence_pointer_column = gebr_geoxml_sequence_pointer_column,
-		.callback = callback,
-		.user_data = user_data,
-	};
+	.gebr_geoxml_sequence_pointer_column = gebr_geoxml_sequence_pointer_column,.callback =
+		    callback,.user_data = user_data,};
 
 	gebr_gui_gtk_tree_view_set_reorder_callback(tree_view,
-		(GebrGuiGtkTreeViewReorderCallback)gtk_tree_view_reorder_callback, NULL, data);
+						    (GebrGuiGtkTreeViewReorderCallback) gtk_tree_view_reorder_callback,
+						    NULL, data);
 
 	g_object_weak_ref(G_OBJECT(tree_view),
-		(GWeakNotify)libgebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable_weak_ref, data);
+			  (GWeakNotify) libgebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable_weak_ref, data);
 }
 
 struct reorder_data {
-	GtkTreeIter			iter;
-	GtkTreeIter			position;
-	GtkTreeViewDropPosition		drop_position;
-	GebrGuiGtkTreeViewReorderCallback	callback;
-	GebrGuiGtkTreeViewReorderCallback	can_callback;
-	gpointer			user_data;
+	GtkTreeIter iter;
+	GtkTreeIter position;
+	GtkTreeViewDropPosition drop_position;
+	GebrGuiGtkTreeViewReorderCallback callback;
+	GebrGuiGtkTreeViewReorderCallback can_callback;
+	gpointer user_data;
 };
 
-static void
-gtk_tree_view_reorder_weak_ref(struct reorder_data * data, GtkTreeView * tree_view)
+static void gtk_tree_view_reorder_weak_ref(struct reorder_data *data, GtkTreeView * tree_view)
 {
 	g_free(data);
 }
 
 static void
-on_gtk_tree_view_drag_begin(GtkTreeView * tree_view, GdkDragContext * drag_context, struct reorder_data * data)
+on_gtk_tree_view_drag_begin(GtkTreeView * tree_view, GdkDragContext * drag_context, struct reorder_data *data)
 {
 	gebr_gui_gtk_tree_view_get_selected(tree_view, &data->iter);
 }
 
 static gboolean
 on_gtk_tree_view_drag_motion(GtkTreeView * tree_view, GdkDragContext * drag_context, gint x, gint y,
-	guint time, struct reorder_data * data)
+			     guint time, struct reorder_data *data)
 {
-	GtkWidgetClass *	widget_class;
-	GtkTreePath *		tree_path;
+	GtkWidgetClass *widget_class;
+	GtkTreePath *tree_path;
 
 	/* to draw drop indicator */
 	widget_class = GTK_WIDGET_GET_CLASS(GTK_WIDGET(tree_view));
@@ -808,7 +764,7 @@ on_gtk_tree_view_drag_motion(GtkTreeView * tree_view, GdkDragContext * drag_cont
 	gebr_gui_gtk_tree_model_path_to_iter(gtk_tree_view_get_model(tree_view), tree_path, &data->position);
 
 	if (data->can_callback == NULL || data->can_callback(tree_view, &data->iter, &data->position,
-	data->drop_position, data->user_data))
+							     data->drop_position, data->user_data))
 		gdk_drag_status(drag_context, GDK_ACTION_MOVE, time);
 	else
 		gdk_drag_status(drag_context, 0, time);
@@ -821,7 +777,7 @@ on_gtk_tree_view_drag_motion(GtkTreeView * tree_view, GdkDragContext * drag_cont
 
 gboolean
 on_gtk_tree_view_drag_drop(GtkTreeView * tree_view, GdkDragContext * drag_context, gint x, gint y,
-	guint time, struct reorder_data * data)
+			   guint time, struct reorder_data * data)
 {
 	data->callback(tree_view, &data->iter, &data->position, data->drop_position, data->user_data);
 	gtk_drag_finish(drag_context, TRUE, FALSE, time);
@@ -831,35 +787,28 @@ on_gtk_tree_view_drag_drop(GtkTreeView * tree_view, GdkDragContext * drag_contex
 
 void
 gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkTreeViewReorderCallback callback,
-	GebrGuiGtkTreeViewReorderCallback can_callback, gpointer user_data)
+					    GebrGuiGtkTreeViewReorderCallback can_callback, gpointer user_data)
 {
-	const static GtkTargetEntry	target_entries [] = {
+	const static GtkTargetEntry target_entries[] = {
 		{"reorder", GTK_TARGET_SAME_WIDGET, 1}
 	};
-	struct reorder_data *		data;
+	struct reorder_data *data;
 
 	if (tree_view == NULL || callback == NULL)
 		return;
 
 	data = g_malloc(sizeof(struct reorder_data));
 	*data = (struct reorder_data) {
-		.callback = callback,
-		.can_callback = can_callback,
-		.user_data = user_data,
-	};
+	.callback = callback,.can_callback = can_callback,.user_data = user_data,};
 
-	gtk_tree_view_enable_model_drag_source(tree_view, GDK_MODIFIER_MASK, target_entries, 1 , GDK_ACTION_MOVE);
-	gtk_tree_view_enable_model_drag_dest(tree_view, target_entries, 1 , GDK_ACTION_MOVE);
+	gtk_tree_view_enable_model_drag_source(tree_view, GDK_MODIFIER_MASK, target_entries, 1, GDK_ACTION_MOVE);
+	gtk_tree_view_enable_model_drag_dest(tree_view, target_entries, 1, GDK_ACTION_MOVE);
 
-	g_signal_connect(tree_view, "drag-begin",
-		G_CALLBACK(on_gtk_tree_view_drag_begin), data);
-	g_signal_connect(tree_view, "drag-drop",
-		G_CALLBACK(on_gtk_tree_view_drag_drop), data);
-	g_signal_connect(tree_view, "drag-motion",
-		G_CALLBACK(on_gtk_tree_view_drag_motion), data);
+	g_signal_connect(tree_view, "drag-begin", G_CALLBACK(on_gtk_tree_view_drag_begin), data);
+	g_signal_connect(tree_view, "drag-drop", G_CALLBACK(on_gtk_tree_view_drag_drop), data);
+	g_signal_connect(tree_view, "drag-motion", G_CALLBACK(on_gtk_tree_view_drag_motion), data);
 
-	g_object_weak_ref(G_OBJECT(tree_view),
-		(GWeakNotify)gtk_tree_view_reorder_weak_ref, data);
+	g_object_weak_ref(G_OBJECT(tree_view), (GWeakNotify) gtk_tree_view_reorder_weak_ref, data);
 }
 
 /* Function: _libgebr_gui_message_dialog
@@ -867,18 +816,16 @@ gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkT
  */
 static gboolean
 _libgebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons,
-	const gchar * title, const gchar * message, va_list args)
+			    const gchar * title, const gchar * message, va_list args)
 {
-	GtkWidget *	dialog;
+	GtkWidget *dialog;
 
-	gchar *		string;
-	gint		ret;
-	gboolean	confirmed;
+	gchar *string;
+	gint ret;
+	gboolean confirmed;
 
 	string = g_strdup_vprintf(message, args);
-	dialog = gtk_message_dialog_new(NULL,
-		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-		type, buttons, string);
+	dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, string);
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
 	ret = gtk_dialog_run(GTK_DIALOG(dialog));
@@ -895,11 +842,10 @@ _libgebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons,
  * Return TRUE if response was GTK_RESPONSE_YES or GTK_RESPONSE_OK.
  */
 gboolean
-gebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons,
-	const gchar * title, const gchar * message, ...)
+gebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons, const gchar * title, const gchar * message, ...)
 {
-	va_list		argp;
-	gboolean	ret;
+	va_list argp;
+	gboolean ret;
 
 	va_start(argp, message);
 	ret = _libgebr_gui_message_dialog(type, buttons, title, message, argp);
@@ -911,11 +857,10 @@ gebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons,
 /* Function: gebr_gui_confirm_action_dialog
  * Show an action confirmation dialog with formated _message_
  */
-gboolean
-gebr_gui_confirm_action_dialog(const gchar * title, const gchar * message, ...)
+gboolean gebr_gui_confirm_action_dialog(const gchar * title, const gchar * message, ...)
 {
-	va_list		argp;
-	gboolean	ret;
+	va_list argp;
+	gboolean ret;
 
 	va_start(argp, message);
 	ret = _libgebr_gui_message_dialog(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, title, message, argp);
@@ -928,15 +873,14 @@ gebr_gui_confirm_action_dialog(const gchar * title, const gchar * message, ...)
  * Function: gebr_gui_gtk_action_group_set_accel_group
  * Set to all actions in _action_group_ the GtkAccelGroup _accel_group_
  */
-void
-gebr_gui_gtk_action_group_set_accel_group(GtkActionGroup * action_group, GtkAccelGroup * accel_group)
+void gebr_gui_gtk_action_group_set_accel_group(GtkActionGroup * action_group, GtkAccelGroup * accel_group)
 {
-	GList	* i, * list;
+	GList *i, *list;
 
 	list = gtk_action_group_list_actions(action_group);
 	for (i = g_list_first(list); i != NULL; i = g_list_next(i)) {
-		gtk_action_set_accel_group((GtkAction*)i->data, accel_group);
-		gtk_action_connect_accelerator((GtkAction*)i->data);
+		gtk_action_set_accel_group((GtkAction *) i->data, accel_group);
+		gtk_action_connect_accelerator((GtkAction *) i->data);
 	}
 
 	g_list_free(list);
@@ -946,24 +890,22 @@ gebr_gui_gtk_action_group_set_accel_group(GtkActionGroup * action_group, GtkAcce
  * Function: gebr_gui_gtk_widget_set_tooltip
  * Set tooltip all across the code.
  */
-void
-gebr_gui_gtk_widget_set_tooltip(GtkWidget * widget, const gchar * tip)
+void gebr_gui_gtk_widget_set_tooltip(GtkWidget * widget, const gchar * tip)
 {
 #if GTK_CHECK_VERSION(2,12,0)
-	g_object_set(G_OBJECT(widget), "tooltip-text",  tip, NULL);
+	g_object_set(G_OBJECT(widget), "tooltip-text", tip, NULL);
 #else
-	static GtkTooltips * tips = NULL;
+	static GtkTooltips *tips = NULL;
 	if (tips == NULL)
 		tips = gtk_tooltips_new();
 	gtk_tooltips_set_tip(tips, widget, tip, NULL);
 #endif
 }
 
-GtkWidget *
-gebr_gui_gtk_container_add_depth_hbox(GtkWidget * container)
+GtkWidget *gebr_gui_gtk_container_add_depth_hbox(GtkWidget * container)
 {
-	GtkWidget *	depth_hbox;
-	GtkWidget *	depth_widget;
+	GtkWidget *depth_hbox;
+	GtkWidget *depth_widget;
 
 	depth_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(container), depth_hbox);
@@ -977,24 +919,22 @@ gebr_gui_gtk_container_add_depth_hbox(GtkWidget * container)
 	return depth_hbox;
 }
 
-void
-gebr_gui_gtk_expander_hacked_visible(GtkWidget * expander, GtkWidget * label_widget)
+void gebr_gui_gtk_expander_hacked_visible(GtkWidget * expander, GtkWidget * label_widget)
 {
 	g_signal_handlers_unblock_matched(G_OBJECT(label_widget),
-		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-		G_CALLBACK(gebr_gui_gtk_expander_hacked_idle), NULL);
+					  G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+					  G_CALLBACK(gebr_gui_gtk_expander_hacked_idle), NULL);
 }
 
-gboolean
-gebr_gui_gtk_expander_hacked_idle(GtkWidget * label_widget, GdkEventExpose *event, GtkWidget * expander)
+gboolean gebr_gui_gtk_expander_hacked_idle(GtkWidget * label_widget, GdkEventExpose * event, GtkWidget * expander)
 {
 	g_signal_handlers_block_matched(G_OBJECT(label_widget),
-		G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-		G_CALLBACK(gebr_gui_gtk_expander_hacked_idle), NULL);
-	g_object_ref (G_OBJECT (label_widget));
-	gtk_expander_set_label_widget (GTK_EXPANDER (expander), NULL);
-	gtk_expander_set_label_widget (GTK_EXPANDER (expander), label_widget);
-	g_object_unref (G_OBJECT (label_widget));
+					G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+					G_CALLBACK(gebr_gui_gtk_expander_hacked_idle), NULL);
+	g_object_ref(G_OBJECT(label_widget));
+	gtk_expander_set_label_widget(GTK_EXPANDER(expander), NULL);
+	gtk_expander_set_label_widget(GTK_EXPANDER(expander), label_widget);
+	g_object_unref(G_OBJECT(label_widget));
 
 	return TRUE;
 }

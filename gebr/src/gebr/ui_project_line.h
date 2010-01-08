@@ -36,51 +36,44 @@ enum {
 };
 
 struct ui_project_line {
-	GtkWidget *		widget;
+	GtkWidget *widget;
 
-	GtkTreeStore *		store;
-	GtkWidget *		view;
+	GtkTreeStore *store;
+	GtkWidget *view;
 
 	struct ui_project_line_info {
-		GtkWidget *	title;
-		GtkWidget *	description;
+		GtkWidget *title;
+		GtkWidget *description;
 
-		GtkWidget *	created_label;
-		GtkWidget *	created;
-		GtkWidget *	modified_label;
-		GtkWidget *	modified;
+		GtkWidget *created_label;
+		GtkWidget *created;
+		GtkWidget *modified_label;
+		GtkWidget *modified;
 
-		GtkWidget *     path_label;
-		GtkWidget *     path1;
-		GtkWidget *     path2;
+		GtkWidget *path_label;
+		GtkWidget *path1;
+		GtkWidget *path2;
 
-		GtkWidget *	help;
-		GtkWidget *	author;
+		GtkWidget *help;
+		GtkWidget *author;
 
-		GtkWidget *     numberoflines;
+		GtkWidget *numberoflines;
 	} info;
 
 };
 
-struct ui_project_line *
-project_line_setup_ui(void);
+struct ui_project_line *project_line_setup_ui(void);
 
-void
-project_line_info_update(void);
+void project_line_info_update(void);
 
-gboolean
-project_line_get_selected(GtkTreeIter * iter, enum ProjectLineSelectionType check_type);
+gboolean project_line_get_selected(GtkTreeIter * iter, enum ProjectLineSelectionType check_type);
 
-void
-project_line_set_selected(GtkTreeIter * iter, GebrGeoXmlDocument * document);
+void project_line_set_selected(GtkTreeIter * iter, GebrGeoXmlDocument * document);
 
-void
-project_line_import(void);
+void project_line_import(void);
 
-void
-project_line_export(void);
+void project_line_export(void);
 
-void
-project_line_free(void);
+void project_line_free(void);
 
-#endif //__UI_PROJECT_LINE_H
+#endif				//__UI_PROJECT_LINE_H

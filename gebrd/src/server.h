@@ -21,19 +21,14 @@
 struct client;
 struct gebr_comm_protocol;
 
-gboolean
-server_init(void);
+gboolean server_init(void);
 
-void
-server_free(void);
+void server_free(void);
 
-void
-server_quit(void);
+void server_quit(void);
 
-void
-server_new_connection(void);
+void server_new_connection(void);
 
-gboolean
-server_parse_client_messages(struct client * client);
+gboolean server_parse_client_messages(struct client *client);
 
-#endif //__SERVER_H
+#endif				//__SERVER_H

@@ -47,87 +47,82 @@ enum NOTEBOOK_PAGE {
 extern struct gebr gebr;
 
 struct gebr {
-	GtkWidget *			window;
-	GtkWidget *			menu[MENUBAR_N];
-	GtkWidget *			notebook;
-	struct about			about;
-	GtkAccelGroup *			accel_group;
-	GtkActionGroup *		action_group;
+	GtkWidget *window;
+	GtkWidget *menu[MENUBAR_N];
+	GtkWidget *notebook;
+	struct about about;
+	GtkAccelGroup *accel_group;
+	GtkActionGroup *action_group;
 
 	/* for strange things ;) */
-	GtkWidget *			invisible;
+	GtkWidget *invisible;
 
-	GebrGeoXmlDocument *		project_line;
-	GebrGeoXmlProject *		project;
-	GebrGeoXmlLine *		line;
-	GebrGeoXmlFlow *		flow;
-	GebrGeoXmlProgram *		program;
-	GebrGeoXmlFlowServer *		flow_server;
+	GebrGeoXmlDocument *project_line;
+	GebrGeoXmlProject *project;
+	GebrGeoXmlLine *line;
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlProgram *program;
+	GebrGeoXmlFlowServer *flow_server;
 
-	GList *				flow_clipboard;
-	struct gebr_log *		log;
-	GSList *			tmpfiles;
+	GList *flow_clipboard;
+	struct gebr_log *log;
+	GSList *tmpfiles;
 
 	/* Persistent GUI */
-	GtkWidget *			navigation_box_label;
-	struct ui_project_line *	ui_project_line;
-	struct ui_flow_browse *		ui_flow_browse;
-	struct ui_flow_edition *	ui_flow_edition;
-	struct ui_job_control *		ui_job_control;
-	struct ui_log *			ui_log;
-	struct ui_server_list *		ui_server_list;
+	GtkWidget *navigation_box_label;
+	struct ui_project_line *ui_project_line;
+	struct ui_flow_browse *ui_flow_browse;
+	struct ui_flow_edition *ui_flow_edition;
+	struct ui_job_control *ui_job_control;
+	struct ui_log *ui_log;
+	struct ui_server_list *ui_server_list;
 
 	struct gebr_config {
-		GKeyFile *		key_file;
-		GString *		path;
+		GKeyFile *key_file;
+		GString *path;
 
-		GString *		username;
-		GString *		email;
-		GString *		usermenus;
-		GString *		data;
-		GString *		editor;
-		GString *		browser;
-		int			width;
-		int			height;
-		gboolean		log_expander_state;
-		gboolean		log_load;
-		gboolean		job_log_word_wrap;
-		gboolean		job_log_auto_scroll;
+		GString *username;
+		GString *email;
+		GString *usermenus;
+		GString *data;
+		GString *editor;
+		GString *browser;
+		int width;
+		int height;
+		gboolean log_expander_state;
+		gboolean log_load;
+		gboolean job_log_word_wrap;
+		gboolean job_log_auto_scroll;
 	} config;
 
 	/* Pixmaps */
 	struct gebr_pixmaps {
-		GdkPixbuf *		stock_apply;
-		GdkPixbuf *		stock_warning;
-		GdkPixbuf *		stock_cancel;
-		GdkPixbuf *		stock_execute;
-		GdkPixbuf *		stock_connect;
-		GdkPixbuf *		stock_disconnect;
-		GdkPixbuf *		stock_go_back;
-		GdkPixbuf *		stock_go_forward;
-		GdkPixbuf *		stock_info;
+		GdkPixbuf *stock_apply;
+		GdkPixbuf *stock_warning;
+		GdkPixbuf *stock_cancel;
+		GdkPixbuf *stock_execute;
+		GdkPixbuf *stock_connect;
+		GdkPixbuf *stock_disconnect;
+		GdkPixbuf *stock_go_back;
+		GdkPixbuf *stock_go_forward;
+		GdkPixbuf *stock_info;
 	} pixmaps;
 };
 
-void
-gebr_init(void);
+void gebr_init(void);
 
-gboolean
-gebr_quit(void);
+gboolean gebr_quit(void);
 
-int
-gebr_config_load(gboolean nox);
+int gebr_config_load(gboolean nox);
 
-void
-gebr_config_apply(void);
+void gebr_config_apply(void);
+
+void gebr_config_save(gboolean verbose);
 
 void
-gebr_config_save(gboolean verbose);
 
-void
-gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...);
+ gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...);
 
-int
-gebr_install_private_menus(gchar **menu, gboolean overwrite);
+int gebr_install_private_menus(gchar ** menu, gboolean overwrite);
 
-#endif //__GEBR_H
+#endif				//__GEBR_H

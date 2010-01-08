@@ -24,13 +24,10 @@
 #include <glib-object.h>
 #include <netinet/in.h>
 
-typedef struct _GebrCommProcess	GebrCommProcess;
-typedef struct _GebrCommProcessClass	GebrCommProcessClass;
+typedef struct _GebrCommProcess GebrCommProcess;
+typedef struct _GebrCommProcessClass GebrCommProcessClass;
 
-G_BEGIN_DECLS
-
-GType
-gebr_comm_process_get_type(void);
+G_BEGIN_DECLS GType gebr_comm_process_get_type(void);
 
 #define GEBR_COMM_PROCESS_TYPE			(gebr_comm_process_get_type())
 #define GEBR_COMM_PROCESS(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_PROCESS_TYPE, GebrCommProcess))
@@ -45,93 +42,72 @@ enum GebrCommProcessExitStatus {
 };
 
 struct _GebrCommProcess {
-	GObject			parent;
+	GObject parent;
 
-	GPid			pid;
-	gboolean		is_running;
-	gint			exit_code;
-	enum GebrCommProcessExitStatus	exit_status;
+	GPid pid;
+	gboolean is_running;
+	gint exit_code;
+	enum GebrCommProcessExitStatus exit_status;
 
-	GIOChannel *		stdin_io_channel;
-	GIOChannel *		stdout_io_channel;
-	GIOChannel *		stderr_io_channel;
-	guint			stdout_watch_id;
-	guint			stderr_watch_id;
-	guint			finish_watch_id;
+	GIOChannel *stdin_io_channel;
+	GIOChannel *stdout_io_channel;
+	GIOChannel *stderr_io_channel;
+	guint stdout_watch_id;
+	guint stderr_watch_id;
+	guint finish_watch_id;
 };
 struct _GebrCommProcessClass {
-	GObjectClass		parent;
+	GObjectClass parent;
 
 	/* signals */
-	void			(*ready_read_stdout)(GebrCommProcess * self);
-	void			(*ready_read_stderr)(GebrCommProcess * self);
-	void			(*finished)(GebrCommProcess * self);
+	void (*ready_read_stdout) (GebrCommProcess * self);
+	void (*ready_read_stderr) (GebrCommProcess * self);
+	void (*finished) (GebrCommProcess * self);
 };
 
 /*
  * user functions
  */
 
-GebrCommProcess *
-gebr_comm_process_new(void);
+GebrCommProcess *gebr_comm_process_new(void);
 
-void
-gebr_comm_process_free(GebrCommProcess *);
+void gebr_comm_process_free(GebrCommProcess *);
 
-gboolean
-gebr_comm_process_is_running(GebrCommProcess *);
+gboolean gebr_comm_process_is_running(GebrCommProcess *);
 
-gboolean
-gebr_comm_process_start(GebrCommProcess *, GString *);
+gboolean gebr_comm_process_start(GebrCommProcess *, GString *);
 
-GPid
-gebr_comm_process_get_pid(GebrCommProcess *);
+GPid gebr_comm_process_get_pid(GebrCommProcess *);
 
-void
-gebr_comm_process_kill(GebrCommProcess *);
+void gebr_comm_process_kill(GebrCommProcess *);
 
-void
-gebr_comm_process_terminate(GebrCommProcess *);
+void gebr_comm_process_terminate(GebrCommProcess *);
 
-void
-gebr_comm_process_close_stdin(GebrCommProcess *);
+void gebr_comm_process_close_stdin(GebrCommProcess *);
 
-gulong
-gebr_comm_process_stdout_bytes_available(GebrCommProcess *);
+gulong gebr_comm_process_stdout_bytes_available(GebrCommProcess *);
 
-gulong
-gebr_comm_process_stderr_bytes_available(GebrCommProcess *);
+gulong gebr_comm_process_stderr_bytes_available(GebrCommProcess *);
 
-GByteArray *
-gebr_comm_process_read_stdout(GebrCommProcess *, gsize);
+GByteArray *gebr_comm_process_read_stdout(GebrCommProcess *, gsize);
 
-GString *
-gebr_comm_process_read_stdout_string(GebrCommProcess *, gsize);
+GString *gebr_comm_process_read_stdout_string(GebrCommProcess *, gsize);
 
-GByteArray *
-gebr_comm_process_read_stdout_all(GebrCommProcess *);
+GByteArray *gebr_comm_process_read_stdout_all(GebrCommProcess *);
 
-GString *
-gebr_comm_process_read_stdout_string_all(GebrCommProcess *);
+GString *gebr_comm_process_read_stdout_string_all(GebrCommProcess *);
 
-GByteArray *
-gebr_comm_process_read_stderr(GebrCommProcess *, gsize);
+GByteArray *gebr_comm_process_read_stderr(GebrCommProcess *, gsize);
 
-GString *
-gebr_comm_process_read_stderr_string(GebrCommProcess *, gsize);
+GString *gebr_comm_process_read_stderr_string(GebrCommProcess *, gsize);
 
-GByteArray *
-gebr_comm_process_read_stderr_all(GebrCommProcess *);
+GByteArray *gebr_comm_process_read_stderr_all(GebrCommProcess *);
 
-GString *
-gebr_comm_process_read_stderr_string_all(GebrCommProcess *);
+GString *gebr_comm_process_read_stderr_string_all(GebrCommProcess *);
 
-gsize
-gebr_comm_process_write_stdin(GebrCommProcess *, GByteArray *);
+gsize gebr_comm_process_write_stdin(GebrCommProcess *, GByteArray *);
 
-gsize
-gebr_comm_process_write_stdin_string(GebrCommProcess *, GString *);
+gsize gebr_comm_process_write_stdin_string(GebrCommProcess *, GString *);
 
 G_END_DECLS
-
-#endif //__GEBR_COMM_PROCESS_H
+#endif				//__GEBR_COMM_PROCESS_H

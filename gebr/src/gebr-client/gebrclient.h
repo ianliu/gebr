@@ -27,22 +27,19 @@
 extern struct gebr_client gebr_client;
 
 struct gebr_client {
-	struct server *	server;
+	struct server *server;
 
 	struct gebr_client_options {
-		
+
 	} options;
 
-	GMainLoop *	main_loop;
+	GMainLoop *main_loop;
 };
 
-gboolean
-gebr_client_init(const gchar * server_address);
+gboolean gebr_client_init(const gchar * server_address);
 
-void
-gebr_client_quit(void);
+void gebr_client_quit(void);
 
-void
-gebr_client_message(enum gebr_log_message_type type, const gchar * message, ...);
+void gebr_client_message(enum gebr_log_message_type type, const gchar * message, ...);
 
-#endif //__GEBR_CLIENT_H
+#endif				//__GEBR_CLIENT_H

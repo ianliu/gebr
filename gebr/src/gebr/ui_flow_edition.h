@@ -39,43 +39,35 @@ enum {
 };
 
 struct ui_flow_edition {
-	GtkWidget *	widget;
-	GtkWidget *	server_combobox;
+	GtkWidget *widget;
+	GtkWidget *server_combobox;
 
-	GtkTreeIter	input_iter;
-	GtkTreeIter	output_iter;
+	GtkTreeIter input_iter;
+	GtkTreeIter output_iter;
 
 	/* Sequence of programs of a flow */
-	GtkListStore *	fseq_store;
-	GtkWidget *	fseq_view;
+	GtkListStore *fseq_store;
+	GtkWidget *fseq_view;
 
-	/* available system and user's menus*/
-	GtkWidget *	menu_view;
-	GtkTreeStore *	menu_store;
+	/* available system and user's menus */
+	GtkWidget *menu_view;
+	GtkTreeStore *menu_store;
 };
 
-struct ui_flow_edition *
-flow_edition_setup_ui(void);
+struct ui_flow_edition *flow_edition_setup_ui(void);
 
-void
-flow_edition_load_components(void);
+void flow_edition_load_components(void);
 
-gboolean
-flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected);
+gboolean flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected);
 
-void
-flow_edition_select_component_iter(GtkTreeIter * iter);
+void flow_edition_select_component_iter(GtkTreeIter * iter);
 
-void
-flow_edition_set_io(void);
+void flow_edition_set_io(void);
 
-void
-flow_edition_component_activated(void);
+void flow_edition_component_activated(void);
 
-void
-flow_edition_status_changed(void);
+void flow_edition_status_changed(void);
 
-void
-flow_edition_on_server_changed(void);
+void flow_edition_on_server_changed(void);
 
-#endif //__UI_FLOW_COMPONENT_H
+#endif				//__UI_FLOW_COMPONENT_H

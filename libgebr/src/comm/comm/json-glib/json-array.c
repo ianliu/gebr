@@ -40,24 +40,22 @@
  * To retrieve the length of the array, use json_array_get_length().
  */
 
-struct _JsonArray
-{
-  GPtrArray *elements;
+struct _JsonArray {
+	GPtrArray *elements;
 
-  volatile gint ref_count;
+	volatile gint ref_count;
 };
 
-GType
-json_array_get_type (void)
+GType json_array_get_type(void)
 {
-  static GType array_type = 0;
+	static GType array_type = 0;
 
-  if (G_UNLIKELY (!array_type))
-    array_type = g_boxed_type_register_static ("JsonArray",
-                                               (GBoxedCopyFunc) json_array_ref,
-                                               (GBoxedFreeFunc) json_array_unref);
+	if (G_UNLIKELY(!array_type))
+		array_type = g_boxed_type_register_static("JsonArray",
+							  (GBoxedCopyFunc) json_array_ref,
+							  (GBoxedFreeFunc) json_array_unref);
 
-  return array_type;
+	return array_type;
 }
 
 /**
@@ -67,17 +65,16 @@ json_array_get_type (void)
  *
  * Return value: the newly created #JsonArray
  */
-JsonArray *
-json_array_new (void)
+JsonArray *json_array_new(void)
 {
-  JsonArray *array;
+	JsonArray *array;
 
-  array = g_slice_new (JsonArray);
+	array = g_slice_new(JsonArray);
 
-  array->ref_count = 1;
-  array->elements = g_ptr_array_new ();
+	array->ref_count = 1;
+	array->elements = g_ptr_array_new();
 
-  return array;
+	return array;
 }
 
 /**
@@ -88,17 +85,16 @@ json_array_new (void)
  *
  * Return value: the newly created #JsonArray
  */
-JsonArray *
-json_array_sized_new (guint n_elements)
+JsonArray *json_array_sized_new(guint n_elements)
 {
-  JsonArray *array;
+	JsonArray *array;
 
-  array = g_slice_new (JsonArray);
-  
-  array->ref_count = 1;
-  array->elements = g_ptr_array_sized_new (n_elements);
+	array = g_slice_new(JsonArray);
 
-  return array;
+	array->ref_count = 1;
+	array->elements = g_ptr_array_sized_new(n_elements);
+
+	return array;
 }
 
 /**
@@ -110,15 +106,14 @@ json_array_sized_new (guint n_elements)
  * Return value: the passed #JsonArray, with the reference count
  *   increased by one.
  */
-JsonArray *
-json_array_ref (JsonArray *array)
+JsonArray *json_array_ref(JsonArray * array)
 {
-  g_return_val_if_fail (array != NULL, NULL);
-  g_return_val_if_fail (array->ref_count > 0, NULL);
+	g_return_val_if_fail(array != NULL, NULL);
+	g_return_val_if_fail(array->ref_count > 0, NULL);
 
-  g_atomic_int_exchange_and_add (&array->ref_count, 1);
+	g_atomic_int_exchange_and_add(&array->ref_count, 1);
 
-  return array;
+	return array;
 }
 
 /**
@@ -129,29 +124,27 @@ json_array_ref (JsonArray *array)
  * reference count reaches zero, the array is destroyed and all
  * its allocated resources are freed.
  */
-void
-json_array_unref (JsonArray *array)
+void json_array_unref(JsonArray * array)
 {
-  gint old_ref;
+	gint old_ref;
 
-  g_return_if_fail (array != NULL);
-  g_return_if_fail (array->ref_count > 0);
+	g_return_if_fail(array != NULL);
+	g_return_if_fail(array->ref_count > 0);
 
-  old_ref = g_atomic_int_get (&array->ref_count);
-  if (old_ref > 1)
-    g_atomic_int_compare_and_exchange (&array->ref_count, old_ref, old_ref - 1);
-  else
-    {
-      guint i;
+	old_ref = g_atomic_int_get(&array->ref_count);
+	if (old_ref > 1)
+		g_atomic_int_compare_and_exchange(&array->ref_count, old_ref, old_ref - 1);
+	else {
+		guint i;
 
-      for (i = 0; i < array->elements->len; i++)
-        json_node_free (g_ptr_array_index (array->elements, i));
+		for (i = 0; i < array->elements->len; i++)
+			json_node_free(g_ptr_array_index(array->elements, i));
 
-      g_ptr_array_free (array->elements, TRUE);
-      array->elements = NULL;
+		g_ptr_array_free(array->elements, TRUE);
+		array->elements = NULL;
 
-      g_slice_free (JsonArray, array);
-    }
+		g_slice_free(JsonArray, array);
+	}
 }
 
 /**
@@ -165,20 +158,18 @@ json_array_unref (JsonArray *array)
  *   modified or freed. Use g_list_free() on the returned list when
  *   done using it
  */
-GList *
-json_array_get_elements (JsonArray *array)
+GList *json_array_get_elements(JsonArray * array)
 {
-  GList *retval;
-  guint i;
+	GList *retval;
+	guint i;
 
-  g_return_val_if_fail (array != NULL, NULL);
+	g_return_val_if_fail(array != NULL, NULL);
 
-  retval = NULL;
-  for (i = 0; i < array->elements->len; i++)
-    retval = g_list_prepend (retval,
-                             g_ptr_array_index (array->elements, i));
+	retval = NULL;
+	for (i = 0; i < array->elements->len; i++)
+		retval = g_list_prepend(retval, g_ptr_array_index(array->elements, i));
 
-  return g_list_reverse (retval);
+	return g_list_reverse(retval);
 }
 
 /**
@@ -194,20 +185,18 @@ json_array_get_elements (JsonArray *array)
  *
  * Since: 0.6
  */
-JsonNode *
-json_array_dup_element (JsonArray *array,
-                        guint      index_)
+JsonNode *json_array_dup_element(JsonArray * array, guint index_)
 {
-  JsonNode *retval;
+	JsonNode *retval;
 
-  g_return_val_if_fail (array != NULL, NULL);
-  g_return_val_if_fail (index_ < array->elements->len, NULL);
+	g_return_val_if_fail(array != NULL, NULL);
+	g_return_val_if_fail(index_ < array->elements->len, NULL);
 
-  retval = json_array_get_element (array, index_);
-  if (!retval)
-    return NULL;
+	retval = json_array_get_element(array, index_);
+	if (!retval)
+		return NULL;
 
-  return json_node_copy (retval);
+	return json_node_copy(retval);
 }
 
 /**
@@ -220,14 +209,12 @@ json_array_dup_element (JsonArray *array,
  *
  * Return value: a pointer to the #JsonNode at the requested index
  */
-JsonNode *
-json_array_get_element (JsonArray *array,
-                        guint      index_)
+JsonNode *json_array_get_element(JsonArray * array, guint index_)
 {
-  g_return_val_if_fail (array != NULL, NULL);
-  g_return_val_if_fail (index_ < array->elements->len, NULL);
+	g_return_val_if_fail(array != NULL, NULL);
+	g_return_val_if_fail(index_ < array->elements->len, NULL);
 
-  return g_ptr_array_index (array->elements, index_);
+	return g_ptr_array_index(array->elements, index_);
 }
 
 /**
@@ -238,12 +225,11 @@ json_array_get_element (JsonArray *array,
  *
  * Return value: the length of the array
  */
-guint
-json_array_get_length (JsonArray *array)
+guint json_array_get_length(JsonArray * array)
 {
-  g_return_val_if_fail (array != NULL, 0);
+	g_return_val_if_fail(array != NULL, 0);
 
-  return array->elements->len;
+	return array->elements->len;
 }
 
 /**
@@ -254,14 +240,12 @@ json_array_get_length (JsonArray *array)
  * Appends @node inside @array. The array will take ownership of the
  * #JsonNode.
  */
-void
-json_array_add_element (JsonArray *array,
-                        JsonNode  *node)
+void json_array_add_element(JsonArray * array, JsonNode * node)
 {
-  g_return_if_fail (array != NULL);
-  g_return_if_fail (node != NULL);
+	g_return_if_fail(array != NULL);
+	g_return_if_fail(node != NULL);
 
-  g_ptr_array_add (array->elements, node);
+	g_ptr_array_add(array->elements, node);
 }
 
 /**
@@ -272,12 +256,10 @@ json_array_add_element (JsonArray *array,
  * Removes the #JsonNode inside @array at @index_ freeing its allocated
  * resources.
  */
-void
-json_array_remove_element (JsonArray *array,
-                           guint      index_)
+void json_array_remove_element(JsonArray * array, guint index_)
 {
-  g_return_if_fail (array != NULL);
-  g_return_if_fail (index_ < array->elements->len);
+	g_return_if_fail(array != NULL);
+	g_return_if_fail(index_ < array->elements->len);
 
-  json_node_free (g_ptr_array_remove_index (array->elements, index_));
+	json_node_free(g_ptr_array_remove_index(array->elements, index_));
 }

@@ -78,8 +78,7 @@ typedef struct gebr_geoxml_value_sequence GebrGeoXmlValueSequence;
  *
  * If \p value_sequence or \p value is NULL nothing is done.
  */
-void
-gebr_geoxml_value_sequence_set(GebrGeoXmlValueSequence * value_sequence, const gchar * value);
+void gebr_geoxml_value_sequence_set(GebrGeoXmlValueSequence * value_sequence, const gchar * value);
 
 /**
  * Set the \p value_sequence element's value to a boolean \p state.
@@ -94,8 +93,7 @@ gebr_geoxml_value_sequence_set(GebrGeoXmlValueSequence * value_sequence, const g
  *
  * If \p value_sequence is NULL returns NULL.
  */
-const gchar *
-gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequence);
+const gchar *gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequence);
 
 /**
  * Get the \p value_sequence element's value.
@@ -105,4 +103,4 @@ gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequence);
 // gboolean
 // gebr_geoxml_value_sequence_get_boolean(GebrGeoXmlValueSequence * value_sequence);
 
-#endif //__GEBR_GEOXML_VALUE_SEQUENCE_H
+#endif				//__GEBR_GEOXML_VALUE_SEQUENCE_H

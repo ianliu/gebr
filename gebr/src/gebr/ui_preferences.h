@@ -22,19 +22,18 @@
 #include <gtk/gtk.h>
 
 struct ui_preferences {
-	GtkWidget *		dialog;
+	GtkWidget *dialog;
 
-	gboolean		first_run;
+	gboolean first_run;
 
-	GtkWidget *		username;
-	GtkWidget *		email;
-	GtkWidget *		usermenus;
-	GtkWidget *		editor;
-	GtkWidget *		browser;
-	GtkWidget *		log_load;
+	GtkWidget *username;
+	GtkWidget *email;
+	GtkWidget *usermenus;
+	GtkWidget *editor;
+	GtkWidget *browser;
+	GtkWidget *log_load;
 };
 
-struct ui_preferences *
-preferences_setup_ui(gboolean first_run);
+struct ui_preferences *preferences_setup_ui(gboolean first_run);
 
-#endif //__UI_PREFERENCES_H
+#endif				//__UI_PREFERENCES_H

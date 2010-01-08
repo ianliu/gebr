@@ -26,7 +26,9 @@
  * An empty value means reset.
  */
 void
-__gebr_geoxml_program_parameter_set_all_value(GebrGeoXmlProgramParameter * program_parameter,
-	gboolean default_value, const gchar * value);
 
-#endif //__GEBR_GEOXML_PROGRAM_PARAMETER_P_H
+
+__gebr_geoxml_program_parameter_set_all_value(GebrGeoXmlProgramParameter * program_parameter,
+					      gboolean default_value, const gchar * value);
+
+#endif				//__GEBR_GEOXML_PROGRAM_PARAMETER_P_H

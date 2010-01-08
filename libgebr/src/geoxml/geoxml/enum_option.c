@@ -27,37 +27,33 @@
  */
 
 struct gebr_geoxml_enum_option {
-	GdomeElement * element;
+	GdomeElement *element;
 };
 
 /*
  * library functions.
  */
 
-void
-gebr_geoxml_enum_option_set_label(GebrGeoXmlEnumOption * enum_option, const gchar * label)
+void gebr_geoxml_enum_option_set_label(GebrGeoXmlEnumOption * enum_option, const gchar * label)
 {
 	if (enum_option == NULL || label == NULL)
 		return;
-	__gebr_geoxml_set_tag_value((GdomeElement*)enum_option, "label", label, __gebr_geoxml_create_TextNode);
+	__gebr_geoxml_set_tag_value((GdomeElement *) enum_option, "label", label, __gebr_geoxml_create_TextNode);
 }
 
-const gchar *
-gebr_geoxml_enum_option_get_label(GebrGeoXmlEnumOption * enum_option)
+const gchar *gebr_geoxml_enum_option_get_label(GebrGeoXmlEnumOption * enum_option)
 {
-	return __gebr_geoxml_get_tag_value((GdomeElement*)enum_option, "label");
+	return __gebr_geoxml_get_tag_value((GdomeElement *) enum_option, "label");
 }
 
-void
-gebr_geoxml_enum_option_set_value(GebrGeoXmlEnumOption * enum_option, const gchar * value)
+void gebr_geoxml_enum_option_set_value(GebrGeoXmlEnumOption * enum_option, const gchar * value)
 {
 	if (enum_option == NULL || value == NULL)
 		return;
-	__gebr_geoxml_set_tag_value((GdomeElement*)enum_option, "value", value, __gebr_geoxml_create_TextNode);
+	__gebr_geoxml_set_tag_value((GdomeElement *) enum_option, "value", value, __gebr_geoxml_create_TextNode);
 }
 
-const gchar *
-gebr_geoxml_enum_option_get_value(GebrGeoXmlEnumOption * enum_option)
+const gchar *gebr_geoxml_enum_option_get_value(GebrGeoXmlEnumOption * enum_option)
 {
-	return __gebr_geoxml_get_tag_value((GdomeElement*)enum_option, "value");
+	return __gebr_geoxml_get_tag_value((GdomeElement *) enum_option, "value");
 }

@@ -31,63 +31,49 @@ enum JobStatus {
 };
 
 struct job {
-        enum JobStatus		status;
-	GtkTreeIter		iter;
-	struct server *		server;
+	enum JobStatus status;
+	GtkTreeIter iter;
+	struct server *server;
 
-	GString *		jid;
-	GString *		title;
+	GString *jid;
+	GString *title;
 	/* appears in top label */
-	GString *		start_date;
-	GString *		finish_date;
+	GString *start_date;
+	GString *finish_date;
 	/* appears in text view */
-	GString *		hostname;
-	GString *		issues;
-	GString *		cmd_line;
-	GString *		output;
+	GString *hostname;
+	GString *issues;
+	GString *cmd_line;
+	GString *output;
 };
 
-struct job *
-job_add(struct server * server, GString * jid,
-	GString * status, GString * title,
-	GString * start_date, GString * finish_date,
-	GString * hostname, GString * issues,
-	GString * cmd_line, GString * output);
+struct job *job_add(struct server *server, GString * jid,
+		    GString * status, GString * title,
+		    GString * start_date, GString * finish_date,
+		    GString * hostname, GString * issues, GString * cmd_line, GString * output);
 
-void
-job_free(struct job * job);
+void job_free(struct job *job);
 
-void
-job_delete(struct job * job);
+void job_delete(struct job *job);
 
-void
-job_close(struct job * job);
+void job_close(struct job *job);
 
-struct job *
-job_find(GString * address, GString * jid);
+struct job *job_find(GString * address, GString * jid);
 
-void
-job_fill_info(struct job * job);
+void job_fill_info(struct job *job);
 
-void
-job_set_active(struct job * job);
+void job_set_active(struct job *job);
 
-gboolean
-job_is_active(struct job * job);
+gboolean job_is_active(struct job *job);
 
-void
-job_append_output(struct job * job, GString * output);
+void job_append_output(struct job *job, GString * output);
 
-void
-job_update(struct job * job);
+void job_update(struct job *job);
 
-void
-job_update_label(struct job * job);
+void job_update_label(struct job *job);
 
-enum JobStatus
-job_translate_status(GString * status);
+enum JobStatus job_translate_status(GString * status);
 
-void
-job_update_status(struct job * job);
+void job_update_status(struct job *job);
 
-#endif //__JOB_H
+#endif				//__JOB_H

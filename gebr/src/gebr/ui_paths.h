@@ -22,7 +22,6 @@
 #ifndef __UI_PATH_H
 #define __UI_PATH_H
 
-void
-path_list_setup_ui(void);
+void path_list_setup_ui(void);
 
-#endif //__UI_PATH_H
+#endif				//__UI_PATH_H

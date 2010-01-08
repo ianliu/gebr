@@ -21,9 +21,7 @@
 
 #include <gtk/gtk.h>
 
-G_BEGIN_DECLS
-
-GType gebr_gui_gtk_directory_chooser_get_type (void) G_GNUC_CONST;
+G_BEGIN_DECLS GType gebr_gui_gtk_directory_chooser_get_type(void) G_GNUC_CONST;
 
 #define GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER		(gebr_gui_gtk_directory_chooser_get_type())
 #define GEBR_GUI_GTK_DIRECTORY_CHOOSER(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER, GebrGuiGtkDirectoryChooser))
@@ -32,27 +30,23 @@ GType gebr_gui_gtk_directory_chooser_get_type (void) G_GNUC_CONST;
 #define GEBR_GUI_GTK_IS_DIRECTORY_CHOOSER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER))
 #define GEBR_GUI_GTK_DIRECTORY_CHOOSER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER, GebrGuiGtkDirectoryChooserClass))
 
-typedef struct _GebrGuiGtkDirectoryChooser		GebrGuiGtkDirectoryChooser;
-typedef struct _GebrGuiGtkDirectoryChooserClass	GebrGuiGtkDirectoryChooserClass;
+typedef struct _GebrGuiGtkDirectoryChooser GebrGuiGtkDirectoryChooser;
+typedef struct _GebrGuiGtkDirectoryChooserClass GebrGuiGtkDirectoryChooserClass;
 
 struct _GebrGuiGtkDirectoryChooser {
-	GtkVBox			parent;
-	GtkWidget *		sequence_edit;
+	GtkVBox parent;
+	GtkWidget *sequence_edit;
 };
 
 struct _GebrGuiGtkDirectoryChooserClass {
-	GtkVBoxClass		parent_class;
+	GtkVBoxClass parent_class;
 };
 
-GtkWidget *
-gebr_gui_gtk_directory_chooser_new ();
+GtkWidget *gebr_gui_gtk_directory_chooser_new();
 
-gchar **
-gebr_gui_gtk_directory_chooser_get_paths (GebrGuiGtkDirectoryChooser * widget);
+gchar **gebr_gui_gtk_directory_chooser_get_paths(GebrGuiGtkDirectoryChooser * widget);
 
-void
-gebr_gui_gtk_directory_chooser_set_paths (GebrGuiGtkDirectoryChooser * widget, gchar ** paths);
+void gebr_gui_gtk_directory_chooser_set_paths(GebrGuiGtkDirectoryChooser * widget, gchar ** paths);
 
 G_END_DECLS
-
-#endif //__UI_PROJECT_LINE_H
+#endif				//__UI_PROJECT_LINE_H

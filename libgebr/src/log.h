@@ -27,34 +27,28 @@ enum gebr_log_message_type {
 };
 
 struct gebr_log_message {
-	enum gebr_log_message_type	type;
-	GString *		date;
-	GString *		message;
+	enum gebr_log_message_type type;
+	GString *date;
+	GString *message;
 };
 
 struct gebr_log {
-	GIOChannel *	io_channel;
+	GIOChannel *io_channel;
 };
 
-struct gebr_log *
-gebr_log_open(const gchar * path);
+struct gebr_log *gebr_log_open(const gchar * path);
 
-void
-gebr_log_close(struct gebr_log * log);
+void gebr_log_close(struct gebr_log *log);
 
-struct gebr_log_message *
-gebr_log_message_new(enum gebr_log_message_type type, const gchar * date, const gchar * message);
+struct gebr_log_message *gebr_log_message_new(enum gebr_log_message_type type, const gchar * date,
+					      const gchar * message);
 
-void
-gebr_log_message_free(struct gebr_log_message * message);
+void gebr_log_message_free(struct gebr_log_message *message);
 
-GList *
-gebr_log_messages_read(struct gebr_log * log);
+GList *gebr_log_messages_read(struct gebr_log *log);
 
-void
-gebr_log_messages_free(GList * messages);
+void gebr_log_messages_free(GList * messages);
 
-void
-gebr_log_add_message(struct gebr_log * log, enum gebr_log_message_type type, const gchar * message);
+void gebr_log_add_message(struct gebr_log *log, enum gebr_log_message_type type, const gchar * message);
 
-#endif //__GEBR_GEBR_LOG_H
+#endif				//__GEBR_GEBR_LOG_H

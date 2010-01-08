@@ -25,4 +25,4 @@
 #  define GEBR_GEOXML_DEPRECATED __attribute__((__deprecated__))
 #endif
 
-#endif //__GEBR_GEOXML_MACROS_H
+#endif				//__GEBR_GEOXML_MACROS_H

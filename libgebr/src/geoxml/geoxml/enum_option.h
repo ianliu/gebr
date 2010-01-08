@@ -73,25 +73,21 @@ typedef struct gebr_geoxml_enum_option GebrGeoXmlEnumOption;
 /**
  *
  */
-void
-gebr_geoxml_enum_option_set_label(GebrGeoXmlEnumOption * enum_option, const gchar * label);
+void gebr_geoxml_enum_option_set_label(GebrGeoXmlEnumOption * enum_option, const gchar * label);
 
 /**
  *
  */
-const gchar *
-gebr_geoxml_enum_option_get_label(GebrGeoXmlEnumOption * enum_option);
+const gchar *gebr_geoxml_enum_option_get_label(GebrGeoXmlEnumOption * enum_option);
 
 /**
  *
  */
-void
-gebr_geoxml_enum_option_set_value(GebrGeoXmlEnumOption * enum_option, const gchar * value);
+void gebr_geoxml_enum_option_set_value(GebrGeoXmlEnumOption * enum_option, const gchar * value);
 
 /**
  *
  */
-const gchar *
-gebr_geoxml_enum_option_get_value(GebrGeoXmlEnumOption * enum_option);
+const gchar *gebr_geoxml_enum_option_get_value(GebrGeoXmlEnumOption * enum_option);
 
-#endif //__GEBR_GEOXML_ENUM_OPTION_H
+#endif				//__GEBR_GEOXML_ENUM_OPTION_H

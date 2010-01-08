@@ -92,14 +92,12 @@ typedef struct gebr_geoxml_parameter_group GebrGeoXmlParameterGroup;
  * Instanciate \p parameter_group, appending a new instances
  * (which is a clone of the first instance) to the list of instances.
  */
-GebrGeoXmlParameters *
-gebr_geoxml_parameter_group_instanciate(GebrGeoXmlParameterGroup * parameter_group);
+GebrGeoXmlParameters *gebr_geoxml_parameter_group_instanciate(GebrGeoXmlParameterGroup * parameter_group);
 
 /**
  * Remove the last instance.
  */
-gboolean
-gebr_geoxml_parameter_group_deinstanciate(GebrGeoXmlParameterGroup * parameter_group);
+gboolean gebr_geoxml_parameter_group_deinstanciate(GebrGeoXmlParameterGroup * parameter_group);
 
 /**
  * Get \p group's parameters list.
@@ -107,16 +105,17 @@ gebr_geoxml_parameter_group_deinstanciate(GebrGeoXmlParameterGroup * parameter_g
  * \see \ref parameters.h "GebrGeoXmlParameters"
  */
 int
+
+
 gebr_geoxml_parameter_group_get_instance(GebrGeoXmlParameterGroup * parameter_group,
-	GebrGeoXmlSequence ** parameters, gulong index);
+					 GebrGeoXmlSequence ** parameters, gulong index);
 
 /**
  * Get the number of instances of \p parameter_group
  *
  * If \p parameter_group is NULL returns 0.
  */
-glong
-gebr_geoxml_parameter_group_get_instances_number(GebrGeoXmlParameterGroup * parameter_group);
+glong gebr_geoxml_parameter_group_get_instances_number(GebrGeoXmlParameterGroup * parameter_group);
 
 /**
  * Return the list of the parameters at \p index position in
@@ -124,8 +123,8 @@ gebr_geoxml_parameter_group_get_instances_number(GebrGeoXmlParameterGroup * para
  *
  * If \p parameter_group is NULL returns NULL.
  */
-GSList *
-gebr_geoxml_parameter_group_get_parameter_in_all_instances(GebrGeoXmlParameterGroup * parameter_group, guint index);
+GSList *gebr_geoxml_parameter_group_get_parameter_in_all_instances(GebrGeoXmlParameterGroup * parameter_group,
+								   guint index);
 
 /**
  * Set wheter \p parameter_group can have more than one instance.
@@ -133,31 +132,27 @@ gebr_geoxml_parameter_group_get_parameter_in_all_instances(GebrGeoXmlParameterGr
  * one instance
  *
  */
-void
-gebr_geoxml_parameter_group_set_is_instanciable(GebrGeoXmlParameterGroup * parameter_group, gboolean enable);
+void gebr_geoxml_parameter_group_set_is_instanciable(GebrGeoXmlParameterGroup * parameter_group, gboolean enable);
 
 /**
  * Set it \p parameter_group should be expanded by default, according to \p enable.
  *
  * If \p parameter_group is NULL nothing is done.
  */
-void
-gebr_geoxml_parameter_group_set_expand(GebrGeoXmlParameterGroup * parameter_group, const gboolean enable);
+void gebr_geoxml_parameter_group_set_expand(GebrGeoXmlParameterGroup * parameter_group, const gboolean enable);
 
 /**
  * Get wheter \p parameter_group can have more than one instance.
  *
  * If \p parameter_group is NULL returns FALSE.
  */
-gboolean
-gebr_geoxml_parameter_group_get_is_instanciable(GebrGeoXmlParameterGroup * parameter_group);
+gboolean gebr_geoxml_parameter_group_get_is_instanciable(GebrGeoXmlParameterGroup * parameter_group);
 
 /**
  * Return TRUE if \p parameter_group should be expanded by default, otherwise returns FALSE.
  *
  * If \p parameter_group is NULL returns FALSE.
  */
-gboolean
-gebr_geoxml_parameter_group_get_expand(GebrGeoXmlParameterGroup * parameter_group);
+gboolean gebr_geoxml_parameter_group_get_expand(GebrGeoXmlParameterGroup * parameter_group);
 
-#endif //__GEBR_GEOXML_PARAMETER_GROUP_H
+#endif				//__GEBR_GEOXML_PARAMETER_GROUP_H

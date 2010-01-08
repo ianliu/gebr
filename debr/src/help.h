@@ -21,13 +21,10 @@
 #include <glib.h>
 #include <libgebr/geoxml.h>
 
-void
-help_fix_css(GString * help);
+void help_fix_css(GString * help);
 
-void
-help_show(const gchar * help);
+void help_show(const gchar * help);
 
-GString *
-help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh);
+GString *help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh);
 
-#endif //__HELP_H
+#endif				//__HELP_H

@@ -28,18 +28,17 @@
 #include "server.h"
 #include "client.h"
 
-struct gebrd	gebrd;
+struct gebrd gebrd;
 
-void
-gebrd_init(void)
+void gebrd_init(void)
 {
-	gchar	buf[10];
+	gchar buf[10];
 
 	pipe(gebrd.finished_starting_pipe);
 	if (gebrd.options.foreground == FALSE) {
 		if (fork() == 0) {
-			int		i;
-			gboolean	ret;
+			int i;
+			gboolean ret;
 
 			/* daemon stuff */
 			setsid();
@@ -47,9 +46,9 @@ gebrd_init(void)
 			close(0);
 			close(1);
 			close(2);
-			i = open("/dev/null", O_RDWR); /* open stdin */
-			dup(i); /* stdout */
-			dup(i); /* stderr */
+			i = open("/dev/null", O_RDWR);	/* open stdin */
+			dup(i);	/* stdout */
+			dup(i);	/* stderr */
 			signal(SIGCHLD, SIG_IGN);
 
 			gebrd.main_loop = g_main_loop_new(NULL, FALSE);
@@ -85,8 +84,7 @@ gebrd_init(void)
  * Function: gebrd_quit
  * 
  */
-void
-gebrd_quit(void)
+void gebrd_quit(void)
 {
 	gebrd_message(GEBR_LOG_END, _("Server quited"));
 
@@ -99,11 +97,10 @@ gebrd_quit(void)
  * Log a message. If in_stdout is TRUE it is writen to standard output.
  *
  */
-void
-gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
+void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
 {
-	gchar *		string;
-	va_list		argp;
+	gchar *string;
+	va_list argp;
 
 #ifndef GEBRD_DEBUG
 	if (type == GEBR_LOG_DEBUG)
@@ -131,12 +128,11 @@ gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
  * The server doesn't listen to it; the client is supposed to
  * do a port forward thought SSH
  */
-guint8
-gebrd_get_x11_redirect_display(void)
+guint8 gebrd_get_x11_redirect_display(void)
 {
-	static guint8	display = 10;
+	static guint8 display = 10;
 
-	while (gebr_comm_listen_socket_is_local_port_available(6000+display) == FALSE) {
+	while (gebr_comm_listen_socket_is_local_port_available(6000 + display) == FALSE) {
 		if (display == 255) {
 			display = 10;
 			return 0;

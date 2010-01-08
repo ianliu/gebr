@@ -26,10 +26,7 @@
 
 #include "gsocketaddress.h"
 
-G_BEGIN_DECLS
-
-GType
-gebr_comm_socket_get_type(void);
+G_BEGIN_DECLS GType gebr_comm_socket_get_type(void);
 
 #define GEBR_COMM_SOCKET_TYPE			(gebr_comm_socket_get_type())
 #define GEBR_COMM_SOCKET(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_SOCKET_TYPE, GebrCommSocket))
@@ -38,8 +35,8 @@ gebr_comm_socket_get_type(void);
 #define GEBR_COMM_IS_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_COMM_SOCKET_TYPE))
 #define GEBR_COMM_SOCKET_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_SOCKET_TYPE, GebrCommSocketClass))
 
-typedef struct _GebrCommSocket	GebrCommSocket;
-typedef struct _GebrCommSocketClass	GebrCommSocketClass;
+typedef struct _GebrCommSocket GebrCommSocket;
+typedef struct _GebrCommSocketClass GebrCommSocketClass;
 
 enum GebrCommSocketError {
 	G_SOCKET_ERROR_NONE,
@@ -60,69 +57,56 @@ enum GebrCommSocketState {
 };
 
 struct _GebrCommSocket {
-	GObject			parent;
+	GObject parent;
 
-	GIOChannel *		io_channel;
-	guint			write_watch_id;
-	GByteArray *		queue_write_bytes;
+	GIOChannel *io_channel;
+	guint write_watch_id;
+	GByteArray *queue_write_bytes;
 
-	enum GebrCommSocketAddressType	address_type;
-	enum GebrCommSocketState	state;
-	enum GebrCommSocketError	last_error;
+	enum GebrCommSocketAddressType address_type;
+	enum GebrCommSocketState state;
+	enum GebrCommSocketError last_error;
 };
 struct _GebrCommSocketClass {
-	GObjectClass		parent;
+	GObjectClass parent;
 
 	/* virtual */
-	void			(*connected)(GebrCommSocket * self);
-	void			(*disconnected)(GebrCommSocket * self);
-	void			(*new_connection)(GebrCommSocket * self);
+	void (*connected) (GebrCommSocket * self);
+	void (*disconnected) (GebrCommSocket * self);
+	void (*new_connection) (GebrCommSocket * self);
 	/* signals */
-	void			(*ready_read)(GebrCommSocket * self);
-	void			(*ready_write)(GebrCommSocket * self);
-	void			(*error)(GebrCommSocket * self, enum GebrCommSocketError error);
+	void (*ready_read) (GebrCommSocket * self);
+	void (*ready_write) (GebrCommSocket * self);
+	void (*error) (GebrCommSocket * self, enum GebrCommSocketError error);
 };
 
 /*
  * user functions
  */
 
-void
-gebr_comm_socket_close(GebrCommSocket *);
+void gebr_comm_socket_close(GebrCommSocket *);
 
-enum GebrCommSocketState
-gebr_comm_socket_get_state(GebrCommSocket *);
+enum GebrCommSocketState gebr_comm_socket_get_state(GebrCommSocket *);
 
-enum GebrCommSocketError
-gebr_comm_socket_get_last_error(GebrCommSocket *);
+enum GebrCommSocketError gebr_comm_socket_get_last_error(GebrCommSocket *);
 
-GebrCommSocketAddress
-gebr_comm_socket_get_address(GebrCommSocket *);
+GebrCommSocketAddress gebr_comm_socket_get_address(GebrCommSocket *);
 
-gulong
-gebr_comm_socket_bytes_available(GebrCommSocket *);
+gulong gebr_comm_socket_bytes_available(GebrCommSocket *);
 
-gulong
-gebr_comm_socket_bytes_to_write(GebrCommSocket *);
+gulong gebr_comm_socket_bytes_to_write(GebrCommSocket *);
 
-GByteArray *
-gebr_comm_socket_read(GebrCommSocket *, gsize);
+GByteArray *gebr_comm_socket_read(GebrCommSocket *, gsize);
 
-GString *
-gebr_comm_socket_read_string(GebrCommSocket *, gsize);
+GString *gebr_comm_socket_read_string(GebrCommSocket *, gsize);
 
-GByteArray *
-gebr_comm_socket_read_all(GebrCommSocket *);
+GByteArray *gebr_comm_socket_read_all(GebrCommSocket *);
 
-GString *
-gebr_comm_socket_read_string_all(GebrCommSocket *);
+GString *gebr_comm_socket_read_string_all(GebrCommSocket *);
 
-void
-gebr_comm_socket_write(GebrCommSocket *, GByteArray *);
+void gebr_comm_socket_write(GebrCommSocket *, GByteArray *);
 
-void
-gebr_comm_socket_write_string(GebrCommSocket *, GString *);
+void gebr_comm_socket_write_string(GebrCommSocket *, GString *);
 
 G_END_DECLS
-
-#endif //__GEBR_COMM_SOCKET_H
+#endif				//__GEBR_COMM_SOCKET_H

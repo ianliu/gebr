@@ -30,54 +30,48 @@ enum {
 };
 
 struct ui_flow_browse {
-	GtkWidget *		widget;
+	GtkWidget *widget;
 
-	GtkListStore *		store;
-	GtkWidget *		view;
+	GtkListStore *store;
+	GtkWidget *view;
 
-	GtkWidget *		revisions_menu;
+	GtkWidget *revisions_menu;
 
 	struct ui_flow_browse_info {
-		GtkWidget *	title;
-		GtkWidget *	description;
+		GtkWidget *title;
+		GtkWidget *description;
 
-		GtkWidget *	created_label;
-		GtkWidget *	created;
-		GtkWidget *	modified_label;
-		GtkWidget *	modified;
-		GtkWidget *	lastrun_label;
-		GtkWidget *	lastrun;
+		GtkWidget *created_label;
+		GtkWidget *created;
+		GtkWidget *modified_label;
+		GtkWidget *modified;
+		GtkWidget *lastrun_label;
+		GtkWidget *lastrun;
 
-		GtkWidget *	server_label;
-		GtkWidget *	server;
-		GtkWidget *	input_label;
-		GtkWidget *	input;
-		GtkWidget *	output_label;
-		GtkWidget *	output;
-		GtkWidget *	error_label;
-		GtkWidget *	error;
+		GtkWidget *server_label;
+		GtkWidget *server;
+		GtkWidget *input_label;
+		GtkWidget *input;
+		GtkWidget *output_label;
+		GtkWidget *output;
+		GtkWidget *error_label;
+		GtkWidget *error;
 
-		GtkWidget *	help;
-		GtkWidget *	author;
+		GtkWidget *help;
+		GtkWidget *author;
 	} info;
 };
 
-struct ui_flow_browse *
-flow_browse_setup_ui(GtkWidget * revisions_menu);
+struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu);
 
-void
-flow_browse_info_update(void);
+void flow_browse_info_update(void);
 
-gboolean
-flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected);
+gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected);
 
-void
-flow_browse_select_iter(GtkTreeIter * iter);
+void flow_browse_select_iter(GtkTreeIter * iter);
 
-void
-flow_browse_single_selection(void);
+void flow_browse_single_selection(void);
 
-void
-flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new);
+void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new);
 
-#endif //__UI_FLOW_BROWSE_H
+#endif				//__UI_FLOW_BROWSE_H

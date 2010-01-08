@@ -25,27 +25,22 @@
 #include <libgebr/geoxml.h>
 
 struct server {
-	struct gebr_comm_server *	comm;
+	struct gebr_comm_server *comm;
 
-	GtkTreeIter			iter;
+	GtkTreeIter iter;
 
 	/* last error showed on tooltip */
-	GString *			last_error;
+	GString *last_error;
 };
 
-struct server *
-server_new(const gchar * address, gboolean autoconnect);
+struct server *server_new(const gchar * address, gboolean autoconnect);
 
-void
-server_free(struct server * server);
+void server_free(struct server *server);
 
-gboolean
-server_find(struct server * server, GtkTreeIter * iter);
+gboolean server_find(struct server *server, GtkTreeIter * iter);
 
-gboolean
-server_find_address(const gchar * address, GtkTreeIter * iter);
+gboolean server_find_address(const gchar * address, GtkTreeIter * iter);
 
-const gchar *
-server_get_name_from_address(const gchar * address);
+const gchar *server_get_name_from_address(const gchar * address);
 
-#endif //__SERVER_H
+#endif				//__SERVER_H

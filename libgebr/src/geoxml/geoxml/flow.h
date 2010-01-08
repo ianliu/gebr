@@ -116,8 +116,7 @@ typedef struct gebr_geoxml_flow_server GebrGeoXmlFlowServer;
  *
  * Returns NULL if memory couldn't be allocated.
  */
-GebrGeoXmlFlow *
-gebr_geoxml_flow_new();
+GebrGeoXmlFlow *gebr_geoxml_flow_new();
 
 /**
  * Add all \p flow2's programs to the end of \p flow.
@@ -125,8 +124,7 @@ gebr_geoxml_flow_new();
  *
  * If \p flow or \p flow2 is NULL nothing is done.
  */
-void
-gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2);
+void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2);
 
 /**
  * Change the \p flow 's modified date to \p last_run
@@ -135,8 +133,7 @@ gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2);
  *
  * \see gebr_geoxml_document_get_date_modified
  */
-void
-gebr_geoxml_flow_set_date_last_run(GebrGeoXmlFlow * flow, const gchar * last_run);
+void gebr_geoxml_flow_set_date_last_run(GebrGeoXmlFlow * flow, const gchar * last_run);
 
 /**
  * Get the \p flow 's last modification date
@@ -145,16 +142,14 @@ gebr_geoxml_flow_set_date_last_run(GebrGeoXmlFlow * flow, const gchar * last_run
  *
  * \see gebr_geoxml_flow_set_date_modified
  */
-const gchar *
-gebr_geoxml_flow_get_date_last_run(GebrGeoXmlFlow * flow);
+const gchar *gebr_geoxml_flow_get_date_last_run(GebrGeoXmlFlow * flow);
 
 /**
  * Creates a new server as a child of servers tag.
  *
  * \see gebr_geoxml_flow_new_server
  */
-GebrGeoXmlFlowServer *
-gebr_geoxml_flow_append_server(GebrGeoXmlFlow * flow);
+GebrGeoXmlFlowServer *gebr_geoxml_flow_append_server(GebrGeoXmlFlow * flow);
 
 /**
  * Writes into server the ieth server from 'servers' tag.
@@ -162,27 +157,23 @@ gebr_geoxml_flow_append_server(GebrGeoXmlFlow * flow);
  * If flow is NULL nothing is done.
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR
  */
-int
-gebr_geoxml_flow_get_server(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** server, gulong index);
+int gebr_geoxml_flow_get_server(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** server, gulong index);
 
 /**
  * Sets the address of this flow server.
  */
-void
-gebr_geoxml_flow_server_set_address(GebrGeoXmlFlowServer * server, const gchar * address);
+void gebr_geoxml_flow_server_set_address(GebrGeoXmlFlowServer * server, const gchar * address);
 
 /**
  * Returns the address of this flow server.
  * The string must be freed with g_free() .
  */
-const gchar *
-gebr_geoxml_flow_server_get_address(GebrGeoXmlFlowServer * server);
+const gchar *gebr_geoxml_flow_server_get_address(GebrGeoXmlFlowServer * server);
 
 /**
  * Gets the last ran server.
  */
-GebrGeoXmlFlowServer *
-gebr_geoxml_flow_servers_get_last_run(GebrGeoXmlFlow * flow);
+GebrGeoXmlFlowServer *gebr_geoxml_flow_servers_get_last_run(GebrGeoXmlFlow * flow);
 
 /**
  * Returns the GebrGeoXmlFlowServer that has \p address
@@ -190,17 +181,15 @@ gebr_geoxml_flow_servers_get_last_run(GebrGeoXmlFlow * flow);
  *
  * If \p flow or \p address is NULL returns NULL.
  */
-GebrGeoXmlFlowServer *
-gebr_geoxml_flow_servers_query(GebrGeoXmlFlow * flow, const gchar * address,
-const gchar * input, const gchar * output, const gchar * error);
+GebrGeoXmlFlowServer *gebr_geoxml_flow_servers_query(GebrGeoXmlFlow * flow, const gchar * address,
+						     const gchar * input, const gchar * output, const gchar * error);
 
 /**
  * Get the number of servers \p flow has.
  *
  * If \p flow is NULL returns -1.
  */
-glong
-gebr_geoxml_flow_get_servers_number(GebrGeoXmlFlow * flow);
+glong gebr_geoxml_flow_get_servers_number(GebrGeoXmlFlow * flow);
 
 /**
  * Set the flow \p server input file path to \p input.
@@ -209,8 +198,7 @@ gebr_geoxml_flow_get_servers_number(GebrGeoXmlFlow * flow);
  *
  * \see gebr_geoxml_flow_server_io_get_input gebr_geoxml_flow_io_get_input
  */
-void
-gebr_geoxml_flow_server_io_set_input(GebrGeoXmlFlowServer * server, const gchar * input);
+void gebr_geoxml_flow_server_io_set_input(GebrGeoXmlFlowServer * server, const gchar * input);
 
 /**
  * Set the flow \p server output file path to \p output.
@@ -219,8 +207,7 @@ gebr_geoxml_flow_server_io_set_input(GebrGeoXmlFlowServer * server, const gchar 
  *
  * \see gebr_geoxml_flow_server_io_get_output gebr_geoxml_flow_io_get_output
  */
-void
-gebr_geoxml_flow_server_io_set_output(GebrGeoXmlFlowServer * server, const gchar * output);
+void gebr_geoxml_flow_server_io_set_output(GebrGeoXmlFlowServer * server, const gchar * output);
 
 /**
  * Set the \p server error file path to \p error.
@@ -229,8 +216,7 @@ gebr_geoxml_flow_server_io_set_output(GebrGeoXmlFlowServer * server, const gchar
  *
  * \see gebr_geoxml_flow_server_io_get_error gebr_geoxml_flow_io_get_error gebr_geoxml_program_set_stderr
  */
-void
-gebr_geoxml_flow_server_io_set_error(GebrGeoXmlFlowServer * server, const gchar * error);
+void gebr_geoxml_flow_server_io_set_error(GebrGeoXmlFlowServer * server, const gchar * error);
 
 /**
  * Retrieves the input file path of \p server.
@@ -239,8 +225,7 @@ gebr_geoxml_flow_server_io_set_error(GebrGeoXmlFlowServer * server, const gchar 
  *
  * \see gebr_geoxml_flow_io_set_input
  */
-const gchar *
-gebr_geoxml_flow_server_io_get_input(GebrGeoXmlFlowServer * server);
+const gchar *gebr_geoxml_flow_server_io_get_input(GebrGeoXmlFlowServer * server);
 
 /**
  * Retrieves the output file path of \p server.
@@ -249,8 +234,7 @@ gebr_geoxml_flow_server_io_get_input(GebrGeoXmlFlowServer * server);
  *
  * \see gebr_geoxml_flow_io_set_output
  */
-const gchar *
-gebr_geoxml_flow_server_io_get_output(GebrGeoXmlFlowServer * server);
+const gchar *gebr_geoxml_flow_server_io_get_output(GebrGeoXmlFlowServer * server);
 
 /**
  * Retrieves the error file path of \p server.
@@ -259,39 +243,34 @@ gebr_geoxml_flow_server_io_get_output(GebrGeoXmlFlowServer * server);
  *
  * \see gebr_geoxml_flow_server_io_set_error
  */
-const gchar *
-gebr_geoxml_flow_server_io_get_error(GebrGeoXmlFlowServer * server);
+const gchar *gebr_geoxml_flow_server_io_get_error(GebrGeoXmlFlowServer * server);
 
 /**
  * Sets the last run date for this server.
  *
  * \see gebr_geoxml_flow_server_get_date_last_run
  */
-void
-gebr_geoxml_flow_server_set_date_last_run(GebrGeoXmlFlowServer * server, const gchar * date);
+void gebr_geoxml_flow_server_set_date_last_run(GebrGeoXmlFlowServer * server, const gchar * date);
 
 /**
  * Retrieve the last run date for this server.
  *
  * \see gebr_geoxml_flow_server_get_date_last_run
  */
-const gchar *
-gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlowServer * server);
+const gchar *gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlowServer * server);
 
 /**
  * Retrieve from the list of servers the server which
  * has the newest the last run date.
  */
-GebrGeoXmlFlowServer *
-gebr_geoxml_flow_server_get_last_runned_server(GebrGeoXmlFlow * flow);
+GebrGeoXmlFlowServer *gebr_geoxml_flow_server_get_last_runned_server(GebrGeoXmlFlow * flow);
 
 /**
  * Sets the flow io tag from the corresponding server tag.
  * This is done by copying all values from the server io tag
  * to the flow io.
  */
-void
-gebr_geoxml_flow_io_set_from_server(GebrGeoXmlFlow * flow, GebrGeoXmlFlowServer * server);
+void gebr_geoxml_flow_io_set_from_server(GebrGeoXmlFlow * flow, GebrGeoXmlFlowServer * server);
 
 /**
  * Retrieves the \p server input file path*
@@ -300,8 +279,7 @@ gebr_geoxml_flow_io_set_from_server(GebrGeoXmlFlow * flow, GebrGeoXmlFlowServer 
  *
  * \see gebr_geoxml_flow_server_io_get_input
  */
-void
-gebr_geoxml_flow_io_set_input(GebrGeoXmlFlow * flow, const gchar * input);
+void gebr_geoxml_flow_io_set_input(GebrGeoXmlFlow * flow, const gchar * input);
 
 /**
  * Set the \p flow output file path to \p output. The output file is
@@ -311,8 +289,7 @@ gebr_geoxml_flow_io_set_input(GebrGeoXmlFlow * flow, const gchar * input);
  *
  * \see gebr_geoxml_flow_io_get_output
  */
-void
-gebr_geoxml_flow_io_set_output(GebrGeoXmlFlow * flow, const gchar * output);
+void gebr_geoxml_flow_io_set_output(GebrGeoXmlFlow * flow, const gchar * output);
 
 /**
  * Set the \p flow error file path to \p error. This should be the file
@@ -322,8 +299,7 @@ gebr_geoxml_flow_io_set_output(GebrGeoXmlFlow * flow, const gchar * output);
  *
  * \see gebr_geoxml_flow_io_get_error gebr_geoxml_program_set_stderr
  */
-void
-gebr_geoxml_flow_io_set_error(GebrGeoXmlFlow * flow, const gchar * error);
+void gebr_geoxml_flow_io_set_error(GebrGeoXmlFlow * flow, const gchar * error);
 
 /**
  * Retrieves the input file path of \p flow.
@@ -332,8 +308,7 @@ gebr_geoxml_flow_io_set_error(GebrGeoXmlFlow * flow, const gchar * error);
  *
  * \see gebr_geoxml_flow_io_set_input
  */
-const gchar *
-gebr_geoxml_flow_io_get_input(GebrGeoXmlFlow * flow);
+const gchar *gebr_geoxml_flow_io_get_input(GebrGeoXmlFlow * flow);
 
 /**
  * Retrieves the output file path of \p flow.
@@ -342,8 +317,7 @@ gebr_geoxml_flow_io_get_input(GebrGeoXmlFlow * flow);
  *
  * \see gebr_geoxml_flow_io_set_output
  */
-const gchar *
-gebr_geoxml_flow_io_get_output(GebrGeoXmlFlow * flow);
+const gchar *gebr_geoxml_flow_io_get_output(GebrGeoXmlFlow * flow);
 
 /**
  * Retrieves the error file path of \p flow.
@@ -352,8 +326,7 @@ gebr_geoxml_flow_io_get_output(GebrGeoXmlFlow * flow);
  *
  * \see gebr_geoxml_flow_io_set_error
  */
-const gchar *
-gebr_geoxml_flow_io_get_error(GebrGeoXmlFlow * flow);
+const gchar *gebr_geoxml_flow_io_get_error(GebrGeoXmlFlow * flow);
 
 /**
  * Creates a new program associated and append to the list of programs
@@ -361,8 +334,7 @@ gebr_geoxml_flow_io_get_error(GebrGeoXmlFlow * flow);
  *
  * \see gebr_geoxml_flow_new_program
  */
-GebrGeoXmlProgram *
-gebr_geoxml_flow_append_program(GebrGeoXmlFlow * flow);
+GebrGeoXmlProgram *gebr_geoxml_flow_append_program(GebrGeoXmlFlow * flow);
 
 /**
  * Writes to \p program the \p index ieth category that \p flow belong.
@@ -374,16 +346,14 @@ gebr_geoxml_flow_append_program(GebrGeoXmlFlow * flow);
  *
  * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
  */
-int
-gebr_geoxml_flow_get_program(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** program, gulong index);
+int gebr_geoxml_flow_get_program(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** program, gulong index);
 
 /**
  * Get the number of programs \p flow has.
  *
  * If \p flow is NULL returns -1.
  */
-glong
-gebr_geoxml_flow_get_programs_number(GebrGeoXmlFlow * flow);
+glong gebr_geoxml_flow_get_programs_number(GebrGeoXmlFlow * flow);
 
 /**
  * Creates a new category and append it to the list of categories.
@@ -391,8 +361,7 @@ gebr_geoxml_flow_get_programs_number(GebrGeoXmlFlow * flow);
  *
  * \see gebr_geoxml_flow_new_category
  */
-GebrGeoXmlCategory *
-gebr_geoxml_flow_append_category(GebrGeoXmlFlow * flow, const gchar * name);
+GebrGeoXmlCategory *gebr_geoxml_flow_append_category(GebrGeoXmlFlow * flow, const gchar * name);
 
 /**
  * Writes to \p category the \p index ieth category that belongs to \p flow.
@@ -402,16 +371,14 @@ gebr_geoxml_flow_append_category(GebrGeoXmlFlow * flow, const gchar * name);
  *
  * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
  */
-int
-gebr_geoxml_flow_get_category(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** category, gulong index);
+int gebr_geoxml_flow_get_category(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** category, gulong index);
 
 /**
  * Get the number of categories that \p flow has.
  *
  * If \p flow is NULL returns -1.
  */
-glong
-gebr_geoxml_flow_get_categories_number(GebrGeoXmlFlow * flow);
+glong gebr_geoxml_flow_get_categories_number(GebrGeoXmlFlow * flow);
 
 /**
  * Change all the flow data to the one stored at revision, except, of course,
@@ -423,8 +390,7 @@ gebr_geoxml_flow_get_categories_number(GebrGeoXmlFlow * flow);
  * If it fails because the revision could not be loaded, returns FALSE.
  * On success, return TRUE.
  */
-gboolean
-gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRevision * revision);
+gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRevision * revision);
 
 /**
  * Creates a new revision with the current time append to the list of revisions
@@ -433,8 +399,7 @@ gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRevision * 
  *
  * If \p flow is NULL nothing is done.
  */
-GebrGeoXmlRevision *
-gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, const gchar * comment);
+GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, const gchar * comment);
 
 /**
  * Writes to \p revision the \p index ieth revision that \p flow has.
@@ -446,8 +411,7 @@ gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, const gchar * comment);
  *
  * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
  */
-int
-gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** revision, gulong index);
+int gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** revision, gulong index);
 
 /**
  * Get information of \p revision. The flow is stored at \p flow and can be
@@ -457,15 +421,13 @@ gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** revis
  *
  * If \p revision in NULL nothing is done.
  */
-void
-gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** flow, gchar ** date, gchar ** comment);
+void gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** flow, gchar ** date, gchar ** comment);
 
 /**
  * Get the number of revisions \p flow has.
  *
  * If \p flow is NULL returns -1.
  */
-glong
-gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow);
+glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow);
 
-#endif //__GEBR_GEOXML_FLOW_H
+#endif				//__GEBR_GEOXML_FLOW_H

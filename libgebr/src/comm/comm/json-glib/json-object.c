@@ -47,24 +47,22 @@
  * json_object_get_size().
  */
 
-struct _JsonObject
-{
-  GHashTable *members;
+struct _JsonObject {
+	GHashTable *members;
 
-  volatile gint ref_count;
+	volatile gint ref_count;
 };
 
-GType
-json_object_get_type (void)
+GType json_object_get_type(void)
 {
-  static GType object_type = 0;
+	static GType object_type = 0;
 
-  if (G_UNLIKELY (!object_type))
-    object_type = g_boxed_type_register_static ("JsonObject",
-                                               (GBoxedCopyFunc) json_object_ref,
-                                               (GBoxedFreeFunc) json_object_unref);
+	if (G_UNLIKELY(!object_type))
+		object_type = g_boxed_type_register_static("JsonObject",
+							   (GBoxedCopyFunc) json_object_ref,
+							   (GBoxedFreeFunc) json_object_unref);
 
-  return object_type;
+	return object_type;
 }
 
 /**
@@ -74,19 +72,16 @@ json_object_get_type (void)
  *
  * Return value: the newly created #JsonObject
  */
-JsonObject *
-json_object_new (void)
+JsonObject *json_object_new(void)
 {
-  JsonObject *object;
+	JsonObject *object;
 
-  object = g_slice_new (JsonObject);
-  
-  object->ref_count = 1;
-  object->members = g_hash_table_new_full (g_str_hash, g_str_equal,
-                                           g_free,
-                                           (GDestroyNotify) json_node_free);
+	object = g_slice_new(JsonObject);
 
-  return object;
+	object->ref_count = 1;
+	object->members = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) json_node_free);
+
+	return object;
 }
 
 /**
@@ -98,15 +93,14 @@ json_object_new (void)
  * Return value: the passed #JsonObject, with the reference count
  *   increased by one.
  */
-JsonObject *
-json_object_ref (JsonObject *object)
+JsonObject *json_object_ref(JsonObject * object)
 {
-  g_return_val_if_fail (object != NULL, NULL);
-  g_return_val_if_fail (object->ref_count > 0, NULL);
+	g_return_val_if_fail(object != NULL, NULL);
+	g_return_val_if_fail(object->ref_count > 0, NULL);
 
-  g_atomic_int_exchange_and_add (&object->ref_count, 1);
+	g_atomic_int_exchange_and_add(&object->ref_count, 1);
 
-  return object;
+	return object;
 }
 
 /**
@@ -117,24 +111,22 @@ json_object_ref (JsonObject *object)
  * reference count reaches zero, the object is destroyed and all
  * its allocated resources are freed.
  */
-void
-json_object_unref (JsonObject *object)
+void json_object_unref(JsonObject * object)
 {
-  gint old_ref;
+	gint old_ref;
 
-  g_return_if_fail (object != NULL);
-  g_return_if_fail (object->ref_count > 0);
+	g_return_if_fail(object != NULL);
+	g_return_if_fail(object->ref_count > 0);
 
-  old_ref = g_atomic_int_get (&object->ref_count);
-  if (old_ref > 1)
-    g_atomic_int_compare_and_exchange (&object->ref_count, old_ref, old_ref - 1);
-  else
-    {
-      g_hash_table_destroy (object->members);
-      object->members = NULL;
+	old_ref = g_atomic_int_get(&object->ref_count);
+	if (old_ref > 1)
+		g_atomic_int_compare_and_exchange(&object->ref_count, old_ref, old_ref - 1);
+	else {
+		g_hash_table_destroy(object->members);
+		object->members = NULL;
 
-      g_slice_free (JsonObject, object);
-    }
+		g_slice_free(JsonObject, object);
+	}
 }
 
 /**
@@ -146,75 +138,61 @@ json_object_unref (JsonObject *object)
  * Adds a member named @member_name and containing @node into a #JsonObject.
  * The object will take ownership of the #JsonNode.
  */
-void
-json_object_add_member (JsonObject  *object,
-                        const gchar *member_name,
-                        JsonNode    *node)
+void json_object_add_member(JsonObject * object, const gchar * member_name, JsonNode * node)
 {
-  gchar *name;
+	gchar *name;
 
-  g_return_if_fail (object != NULL);
-  g_return_if_fail (member_name != NULL);
-  g_return_if_fail (node != NULL);
+	g_return_if_fail(object != NULL);
+	g_return_if_fail(member_name != NULL);
+	g_return_if_fail(node != NULL);
 
-  if (json_object_has_member (object, member_name))
-    {
-      g_warning ("JsonObject already has a `%s' member of type `%s'",
-                 member_name,
-                 json_node_type_name (node));
-      return;
-    }
+	if (json_object_has_member(object, member_name)) {
+		g_warning("JsonObject already has a `%s' member of type `%s'", member_name, json_node_type_name(node));
+		return;
+	}
 
-  name = g_strdelimit (g_strdup (member_name), G_STR_DELIMITERS, '_');
-  g_hash_table_replace (object->members, name, node);
+	name = g_strdelimit(g_strdup(member_name), G_STR_DELIMITERS, '_');
+	g_hash_table_replace(object->members, name, node);
 }
 
 /* FIXME: yuck */
 #if GLIB_MAJOR_VERSION == 2 && GLIB_MINOR_VERSION < 14
-static void
-get_keys (gpointer key,
-          gpointer value,
-          gpointer user_data)
+static void get_keys(gpointer key, gpointer value, gpointer user_data)
 {
-  GList **keys = user_data;
+	GList **keys = user_data;
 
-  *keys = g_list_prepend (*keys, key);
+	*keys = g_list_prepend(*keys, key);
 }
 
-static void
-get_values (gpointer key,
-            gpointer value,
-            gpointer user_data)
+static void get_values(gpointer key, gpointer value, gpointer user_data)
 {
-  GList **values = user_data;
+	GList **values = user_data;
 
-  *values = g_list_prepend (*values, value);
+	*values = g_list_prepend(*values, value);
 }
 
-static GList *
-g_hash_table_get_keys (GHashTable *hash_table)
+static GList *g_hash_table_get_keys(GHashTable * hash_table)
 {
-  GList *retval = NULL;
+	GList *retval = NULL;
 
-  g_return_val_if_fail (hash_table != NULL, NULL);
+	g_return_val_if_fail(hash_table != NULL, NULL);
 
-  g_hash_table_foreach (hash_table, get_keys, &retval);
+	g_hash_table_foreach(hash_table, get_keys, &retval);
 
-  return retval;
+	return retval;
 }
 
-static GList *
-g_hash_table_get_values (GHashTable *hash_table)
+static GList *g_hash_table_get_values(GHashTable * hash_table)
 {
-  GList *retval = NULL;
+	GList *retval = NULL;
 
-  g_return_val_if_fail (hash_table != NULL, NULL);
+	g_return_val_if_fail(hash_table != NULL, NULL);
 
-  g_hash_table_foreach (hash_table, get_values, &retval);
+	g_hash_table_foreach(hash_table, get_values, &retval);
 
-  return retval;
+	return retval;
 }
-#endif /* GLIB_MAJOR_VERSION == 2 && GLIB_MINOR_VERSION < 14 */
+#endif				/* GLIB_MAJOR_VERSION == 2 && GLIB_MINOR_VERSION < 14 */
 
 /**
  * json_object_get_members:
@@ -228,12 +206,11 @@ g_hash_table_get_values (GHashTable *hash_table)
  *   freed. When you have finished using the returned list, use
  *   g_list_free() to free the resources it has allocated.
  */
-GList *
-json_object_get_members (JsonObject *object)
+GList *json_object_get_members(JsonObject * object)
 {
-  g_return_val_if_fail (object != NULL, NULL);
+	g_return_val_if_fail(object != NULL, NULL);
 
-  return g_hash_table_get_keys (object->members);
+	return g_hash_table_get_keys(object->members);
 }
 
 /**
@@ -247,12 +224,11 @@ json_object_get_members (JsonObject *object)
  *   or freed. When you have finished using the returned list, use
  *   g_list_free() to free the resources it has allocated.
  */
-GList *
-json_object_get_values (JsonObject *object)
+GList *json_object_get_values(JsonObject * object)
 {
-  g_return_val_if_fail (object != NULL, NULL);
+	g_return_val_if_fail(object != NULL, NULL);
 
-  return g_hash_table_get_values (object->members);
+	return g_hash_table_get_values(object->members);
 }
 
 /**
@@ -268,20 +244,18 @@ json_object_get_values (JsonObject *object)
  *
  * Since: 0.6
  */
-JsonNode *
-json_object_dup_member (JsonObject  *object,
-                        const gchar *member_name)
+JsonNode *json_object_dup_member(JsonObject * object, const gchar * member_name)
 {
-  JsonNode *retval;
+	JsonNode *retval;
 
-  g_return_val_if_fail (object != NULL, NULL);
-  g_return_val_if_fail (member_name != NULL, NULL);
+	g_return_val_if_fail(object != NULL, NULL);
+	g_return_val_if_fail(member_name != NULL, NULL);
 
-  retval = json_object_get_member (object, member_name);
-  if (!retval)
-    return NULL;
+	retval = json_object_get_member(object, member_name);
+	if (!retval)
+		return NULL;
 
-  return json_node_copy (retval);
+	return json_node_copy(retval);
 }
 
 /**
@@ -295,21 +269,19 @@ json_object_dup_member (JsonObject  *object,
  * Return value: a pointer to the node for the requested object
  *   member, or %NULL
  */
-JsonNode *
-json_object_get_member (JsonObject *object,
-                        const gchar *member_name)
+JsonNode *json_object_get_member(JsonObject * object, const gchar * member_name)
 {
-  gchar *name;
-  JsonNode *retval;
+	gchar *name;
+	JsonNode *retval;
 
-  g_return_val_if_fail (object != NULL, NULL);
-  g_return_val_if_fail (member_name != NULL, NULL);
+	g_return_val_if_fail(object != NULL, NULL);
+	g_return_val_if_fail(member_name != NULL, NULL);
 
-  name = g_strdelimit (g_strdup (member_name), G_STR_DELIMITERS, '_');
-  retval = g_hash_table_lookup (object->members, name);
-  g_free (name);
+	name = g_strdelimit(g_strdup(member_name), G_STR_DELIMITERS, '_');
+	retval = g_hash_table_lookup(object->members, name);
+	g_free(name);
 
-  return retval;
+	return retval;
 }
 
 /**
@@ -321,21 +293,19 @@ json_object_get_member (JsonObject *object,
  *
  * Return value: %TRUE if the JSON object has the requested member
  */
-gboolean
-json_object_has_member (JsonObject *object,
-                        const gchar *member_name)
+gboolean json_object_has_member(JsonObject * object, const gchar * member_name)
 {
-  gchar *name;
-  gboolean retval;
+	gchar *name;
+	gboolean retval;
 
-  g_return_val_if_fail (object != NULL, FALSE);
-  g_return_val_if_fail (member_name != NULL, FALSE);
+	g_return_val_if_fail(object != NULL, FALSE);
+	g_return_val_if_fail(member_name != NULL, FALSE);
 
-  name = g_strdelimit (g_strdup (member_name), G_STR_DELIMITERS, '_');
-  retval = (g_hash_table_lookup (object->members, name) != NULL);
-  g_free (name);
+	name = g_strdelimit(g_strdup(member_name), G_STR_DELIMITERS, '_');
+	retval = (g_hash_table_lookup(object->members, name) != NULL);
+	g_free(name);
 
-  return retval;
+	return retval;
 }
 
 /**
@@ -346,12 +316,11 @@ json_object_has_member (JsonObject *object,
  *
  * Return value: the number of members
  */
-guint
-json_object_get_size (JsonObject *object)
+guint json_object_get_size(JsonObject * object)
 {
-  g_return_val_if_fail (object != NULL, 0);
+	g_return_val_if_fail(object != NULL, 0);
 
-  return g_hash_table_size (object->members);
+	return g_hash_table_size(object->members);
 }
 
 /**
@@ -361,16 +330,14 @@ json_object_get_size (JsonObject *object)
  *
  * Removes @member_name from @object, freeing its allocated resources.
  */
-void
-json_object_remove_member (JsonObject  *object,
-                           const gchar *member_name)
+void json_object_remove_member(JsonObject * object, const gchar * member_name)
 {
-  gchar *name;
+	gchar *name;
 
-  g_return_if_fail (object != NULL);
-  g_return_if_fail (member_name != NULL);
+	g_return_if_fail(object != NULL);
+	g_return_if_fail(member_name != NULL);
 
-  name = g_strdelimit (g_strdup (member_name), G_STR_DELIMITERS, '_');
-  g_hash_table_remove (object->members, name);
-  g_free (name);
+	name = g_strdelimit(g_strdup(member_name), G_STR_DELIMITERS, '_');
+	g_hash_table_remove(object->members, name);
+	g_free(name);
 }

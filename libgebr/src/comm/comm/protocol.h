@@ -27,83 +27,76 @@
 extern struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
 
 struct gebr_comm_message_def {
-	guint		hash;
-	gchar *		string;
+	guint hash;
+	gchar *string;
 	/* does this message send return (RET) command? */
-	gboolean	returns;
+	gboolean returns;
 };
 
 struct gebr_comm_protocol_defs {
-	GHashTable *		hash_table;
+	GHashTable *hash_table;
 
 	/* messages identifiers hashes */
-	struct gebr_comm_message_def	ret_def;
-	struct gebr_comm_message_def	ini_def;
-	struct gebr_comm_message_def	err_def;
-	struct gebr_comm_message_def	qut_def;
-	struct gebr_comm_message_def	lst_def;
-	struct gebr_comm_message_def	job_def;
-	struct gebr_comm_message_def	run_def;
-	struct gebr_comm_message_def	flw_def;
-	struct gebr_comm_message_def	clr_def;
-	struct gebr_comm_message_def	end_def;
-	struct gebr_comm_message_def	kil_def;
-	struct gebr_comm_message_def	out_def;
-	struct gebr_comm_message_def	fin_def;
+	struct gebr_comm_message_def ret_def;
+	struct gebr_comm_message_def ini_def;
+	struct gebr_comm_message_def err_def;
+	struct gebr_comm_message_def qut_def;
+	struct gebr_comm_message_def lst_def;
+	struct gebr_comm_message_def job_def;
+	struct gebr_comm_message_def run_def;
+	struct gebr_comm_message_def flw_def;
+	struct gebr_comm_message_def clr_def;
+	struct gebr_comm_message_def end_def;
+	struct gebr_comm_message_def kil_def;
+	struct gebr_comm_message_def out_def;
+	struct gebr_comm_message_def fin_def;
 };
 
 struct gebr_comm_message {
 	/* message identifier */
-	guint			hash;
+	guint hash;
 	/* argument size */
-	gsize			argument_size;
+	gsize argument_size;
 	/* message argument (can be an empty string) */
-	GString *		argument;
+	GString *argument;
 };
 
 struct gebr_comm_protocol {
 	/* the data being received is forming message(s) */
-	GString *		data;
-	struct gebr_comm_message *	message;
+	GString *data;
+	struct gebr_comm_message *message;
 	/* received messages to be parsed */
-	GList *			messages;
+	GList *messages;
 	/* waiting for return of message with "hash"; 0 if it is not waiting responses */
-	guint			waiting_ret_hash;
+	guint waiting_ret_hash;
 	/* logged in with INI and RET? */
-	gboolean		logged;
+	gboolean logged;
 	/* if we are logged, we received a host name from the client */
-	GString *		hostname;
+	GString *hostname;
 };
 
-struct gebr_comm_message *
-gebr_comm_message_new(void);
+struct gebr_comm_message *gebr_comm_message_new(void);
+
+void gebr_comm_message_free(struct gebr_comm_message *message);
+
+void gebr_comm_protocol_init(void);
+
+void gebr_comm_protocol_destroy(void);
+
+struct gebr_comm_protocol *gebr_comm_protocol_new(void);
+
+void gebr_comm_protocol_free(struct gebr_comm_protocol *protocol);
+
+gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GString * data);
 
 void
-gebr_comm_message_free(struct gebr_comm_message * message);
 
-void
-gebr_comm_protocol_init(void);
 
-void
-gebr_comm_protocol_destroy(void);
+gebr_comm_protocol_send_data(struct gebr_comm_protocol *protocol, GStreamSocket * stream_socket,
+			     struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...);
 
-struct gebr_comm_protocol *
-gebr_comm_protocol_new(void);
+GList *gebr_comm_protocol_split_new(GString * arguments, guint parts);
 
-void
-gebr_comm_protocol_free(struct gebr_comm_protocol * protocol);
+void gebr_comm_protocol_split_free(GList * split);
 
-gboolean
-gebr_comm_protocol_receive_data(struct gebr_comm_protocol * protocol, GString * data);
-
-void
-gebr_comm_protocol_send_data(struct gebr_comm_protocol * protocol, GStreamSocket * stream_socket,
-		struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...);
-
-GList *
-gebr_comm_protocol_split_new(GString * arguments, guint parts);
-
-void
-gebr_comm_protocol_split_free(GList * split);
-
-#endif //__GEBR_COMM_PROTOCOL_H
+#endif				//__GEBR_COMM_PROTOCOL_H

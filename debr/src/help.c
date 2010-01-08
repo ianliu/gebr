@@ -30,255 +30,242 @@
 #include "debr.h"
 #include "defines.h"
 
-void
-help_insert_parameters_list(GString *help, GebrGeoXmlProgram * program, gboolean refresh);
+void help_insert_parameters_list(GString * help, GebrGeoXmlProgram * program, gboolean refresh);
 
-void
-add_program_parameter_item(GString *str, GebrGeoXmlParameter *par);
+void add_program_parameter_item(GString * str, GebrGeoXmlParameter * par);
 
-gsize
-strip_block(GString *buffer, const gchar *tag);
+gsize strip_block(GString * buffer, const gchar * tag);
 
-void
-help_fix_css(GString * help)
+void help_fix_css(GString * help)
 {
-	gchar *		gebrcsspos;
+	gchar *gebrcsspos;
 
 	/* Change CSS's path to an absolute one. */
 	if ((gebrcsspos = strstr(help->str, "\"gebr.css")) != NULL) {
-		int	pos;
+		int pos;
 
-		pos = (gebrcsspos - help->str)/sizeof(char);
+		pos = (gebrcsspos - help->str) / sizeof(char);
 		g_string_erase(help, pos, 9);
 		g_string_insert(help, pos, "\"file://" DEBR_DATA_DIR "gebr.css");
 	}
 }
 
-void
-add_program_parameter_item(GString *str, GebrGeoXmlParameter *par)
+void add_program_parameter_item(GString * str, GebrGeoXmlParameter * par)
 {
-        if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(par))){
-                g_string_append_printf(str, "              "
-                                       "<li class=\"req\"><span class=\"reqlabel\">%s</span><br/>"
-                                       " detailed description comes here.</li>\n\n",
-                                       gebr_geoxml_parameter_get_label(par));
-        }else{
-                g_string_append_printf(str, "              "
-                                       "<li><span class=\"label\">%s</span><br/>"
-                                       " detailed description comes here.</li>\n\n",
-                                       gebr_geoxml_parameter_get_label(par));
-        }
+	if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(par))) {
+		g_string_append_printf(str, "              "
+				       "<li class=\"req\"><span class=\"reqlabel\">%s</span><br/>"
+				       " detailed description comes here.</li>\n\n",
+				       gebr_geoxml_parameter_get_label(par));
+	} else {
+		g_string_append_printf(str, "              "
+				       "<li><span class=\"label\">%s</span><br/>"
+				       " detailed description comes here.</li>\n\n",
+				       gebr_geoxml_parameter_get_label(par));
+	}
 }
 
-void
-help_insert_parameters_list(GString *help, GebrGeoXmlProgram * program, gboolean refresh)
+void help_insert_parameters_list(GString * help, GebrGeoXmlProgram * program, gboolean refresh)
 {
-        GString          *      label;
-	GebrGeoXmlParameters *	parameters;
-	GebrGeoXmlSequence *	parameter;
-        gchar *                 ptr;
-        gsize                   pos;
+	GString *label;
+	GebrGeoXmlParameters *parameters;
+	GebrGeoXmlSequence *parameter;
+	gchar *ptr;
+	gsize pos;
 
-        if (program == NULL)
-                return;
-        
-        parameters = gebr_geoxml_program_get_parameters(program);
-        parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
-	
-        label = g_string_new(NULL);
-        g_string_assign(label,"<ul>\n");
-        while (parameter != NULL) {
-                
-                if (gebr_geoxml_parameter_get_is_program_parameter(GEBR_GEOXML_PARAMETER(parameter)) == TRUE){
-                        add_program_parameter_item(label, GEBR_GEOXML_PARAMETER(parameter));
-                }else{
-                        GebrGeoXmlSequence  *	instance;
-                        GebrGeoXmlSequence  *	subpar;
-                        
-                        g_string_append_printf(label, "              "
-                                               "<li class=\"group\"><span class=\"grouplabel\">%s</span><br/>"
-                                                       " detailed description comes here.\n\n",
-                                               gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter))); 
-                        
-                        g_string_append_printf(label, "              <ul>\n");
-                        
-                        gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-                        subpar = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance));
-                        while (subpar != NULL) {
-                                add_program_parameter_item(label, GEBR_GEOXML_PARAMETER(subpar));
-                                gebr_geoxml_sequence_next(&subpar);
-                        }
-                        g_string_append_printf(label, "              </ul></li>\n\n");
-                        
-                }
-                
-                gebr_geoxml_sequence_next(&parameter);
-        }
-        g_string_append(label,"            </ul>\n            ");
+	if (program == NULL)
+		return;
 
-        if (refresh){
-                ptr = strstr(help->str, "<!-- end lst -->");
-                pos = (ptr != NULL) ? (ptr - help->str)/sizeof(gchar) : 0;
-        }
-        else{
-                pos = strip_block(help, "lst");
-        }
+	parameters = gebr_geoxml_program_get_parameters(program);
+	parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
 
-        if (pos > 0){
-                g_string_insert(help, pos, label->str);
-        }
-        else {
-                /* Try to find a parameter's block, for */
-                /* helps generated before this function */
-                GString       *mark;
-                gchar         *ptr1;
-                gchar         *ptr2;
-                gsize          pos;
-                
-                mark = g_string_new(NULL);
-                
-                g_string_printf(mark, "<div class=\"parameters\">");
-                ptr1 = strstr(help->str, mark->str);
-                
-                if (ptr1 != NULL){
-                        g_string_printf(mark, "</div>");
-                        ptr2 = strstr(ptr1, mark->str);
-                        pos = (ptr2 - help->str)/sizeof(gchar);
-                        g_string_insert(help, pos, label->str);
-                }
-                else{
-                        debr_message(GEBR_LOG_WARNING, "Unable to reinsert parameter's list");
-                }
-        }
+	label = g_string_new(NULL);
+	g_string_assign(label, "<ul>\n");
+	while (parameter != NULL) {
 
-        g_string_free(label, TRUE);
+		if (gebr_geoxml_parameter_get_is_program_parameter(GEBR_GEOXML_PARAMETER(parameter)) == TRUE) {
+			add_program_parameter_item(label, GEBR_GEOXML_PARAMETER(parameter));
+		} else {
+			GebrGeoXmlSequence *instance;
+			GebrGeoXmlSequence *subpar;
+
+			g_string_append_printf(label, "              "
+					       "<li class=\"group\"><span class=\"grouplabel\">%s</span><br/>"
+					       " detailed description comes here.\n\n",
+					       gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)));
+
+			g_string_append_printf(label, "              <ul>\n");
+
+			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+			subpar = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance));
+			while (subpar != NULL) {
+				add_program_parameter_item(label, GEBR_GEOXML_PARAMETER(subpar));
+				gebr_geoxml_sequence_next(&subpar);
+			}
+			g_string_append_printf(label, "              </ul></li>\n\n");
+
+		}
+
+		gebr_geoxml_sequence_next(&parameter);
+	}
+	g_string_append(label, "            </ul>\n            ");
+
+	if (refresh) {
+		ptr = strstr(help->str, "<!-- end lst -->");
+		pos = (ptr != NULL) ? (ptr - help->str) / sizeof(gchar) : 0;
+	} else {
+		pos = strip_block(help, "lst");
+	}
+
+	if (pos > 0) {
+		g_string_insert(help, pos, label->str);
+	} else {
+		/* Try to find a parameter's block, for */
+		/* helps generated before this function */
+		GString *mark;
+		gchar *ptr1;
+		gchar *ptr2;
+		gsize pos;
+
+		mark = g_string_new(NULL);
+
+		g_string_printf(mark, "<div class=\"parameters\">");
+		ptr1 = strstr(help->str, mark->str);
+
+		if (ptr1 != NULL) {
+			g_string_printf(mark, "</div>");
+			ptr2 = strstr(ptr1, mark->str);
+			pos = (ptr2 - help->str) / sizeof(gchar);
+			g_string_insert(help, pos, label->str);
+		} else {
+			debr_message(GEBR_LOG_WARNING, "Unable to reinsert parameter's list");
+		}
+	}
+
+	g_string_free(label, TRUE);
 }
 
-void
-help_subst_fields(GString * help, GebrGeoXmlProgram * program, gboolean refresh)
+void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gboolean refresh)
 {
-	gchar *		        content;
-        GString *               text;
-        gsize                   pos;
+	gchar *content;
+	GString *text;
+	gsize pos;
 
-        text = g_string_new (NULL);
+	text = g_string_new(NULL);
 
 	/* Title replacement */
 	if (program != NULL)
-		content = (gchar*)gebr_geoxml_program_get_title(program);
+		content = (gchar *) gebr_geoxml_program_get_title(program);
 	else
-		content = (gchar*)gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu));
+		content = (gchar *) gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu));
 	if (strlen(content)) {
 
-                pos = strip_block(help, "ttl");
-                if (pos){
-                        g_string_printf(text,"\n  <title>G&ecirc;BR - %s</title>\n  ", content);
-                        g_string_insert(help, pos, text->str);
-                }
+		pos = strip_block(help, "ttl");
+		if (pos) {
+			g_string_printf(text, "\n  <title>G&ecirc;BR - %s</title>\n  ", content);
+			g_string_insert(help, pos, text->str);
+		}
 
-                pos = strip_block(help, "tt2");
-                if (pos){
-                        g_string_printf(text,"\n         <span class=\"flowtitle\">%s</span>\n         ",
-                                        content);
-                        g_string_insert(help, pos, text->str);
-                }
+		pos = strip_block(help, "tt2");
+		if (pos) {
+			g_string_printf(text, "\n         <span class=\"flowtitle\">%s</span>\n         ", content);
+			g_string_insert(help, pos, text->str);
+		}
 	}
 
 	/* Description replacement */
 	if (program != NULL)
-		content = (gchar*)gebr_geoxml_program_get_description(program);
+		content = (gchar *) gebr_geoxml_program_get_description(program);
 	else
-		content = (gchar*)gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu));
+		content = (gchar *) gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu));
 	if (strlen(content)) {
-                pos = strip_block(help, "des");
-                if (pos){
-                        g_string_printf(text,"\n            %s\n            ", content);
-                        g_string_insert(help, pos, text->str);
-                }
+		pos = strip_block(help, "des");
+		if (pos) {
+			g_string_printf(text, "\n            %s\n            ", content);
+			g_string_insert(help, pos, text->str);
+		}
 	}
 
 	/* Categories replacement */
 	if (gebr_geoxml_flow_get_categories_number(debr.menu)) {
-		GebrGeoXmlSequence *	category;
-		GString *		catstr;
+		GebrGeoXmlSequence *category;
+		GString *catstr;
 
-                pos = strip_block(help, "cat");
-                if (pos){
-                        gebr_geoxml_flow_get_category(debr.menu, &category, 0);
-                        
-                        catstr = g_string_new("\n       "); 
-                        g_string_append(catstr, gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)));
-                        gebr_geoxml_sequence_next(&category);
-                        while (category != NULL) {
-                                g_string_append(catstr, " | ");
-                                g_string_append(catstr, gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)));
-                                
-                                gebr_geoxml_sequence_next(&category);
-                        }
-                        g_string_append(catstr, "\n       ");
-                        
-                        
-                        g_string_insert(help, pos, catstr->str);
-                        g_string_free(catstr, TRUE);
-                }
+		pos = strip_block(help, "cat");
+		if (pos) {
+			gebr_geoxml_flow_get_category(debr.menu, &category, 0);
+
+			catstr = g_string_new("\n       ");
+			g_string_append(catstr, gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)));
+			gebr_geoxml_sequence_next(&category);
+			while (category != NULL) {
+				g_string_append(catstr, " | ");
+				g_string_append(catstr,
+						gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)));
+
+				gebr_geoxml_sequence_next(&category);
+			}
+			g_string_append(catstr, "\n       ");
+
+			g_string_insert(help, pos, catstr->str);
+			g_string_free(catstr, TRUE);
+		}
 	}
 
 	/* Parameter's description replacement */
 	if (program != NULL) {
-                help_insert_parameters_list(help, program, refresh);
-	}
-	else { /* strip parameter section for flow help */
-                strip_block(help, "par");
-                strip_block(help, "mpr");
+		help_insert_parameters_list(help, program, refresh);
+	} else {		/* strip parameter section for flow help */
+		strip_block(help, "par");
+		strip_block(help, "mpr");
 	}
 
-        /* Credits for menu */
+	/* Credits for menu */
 	if (program == NULL) {
-                GDate * date;
-                gchar   buffer[13];
-                gchar * ptr1;
-                gchar * ptr2;
-                gsize   pos;
-                                
-                date = g_date_new();
-                g_date_set_time_t(date, time(NULL));
-                g_date_strftime(buffer, 13, "%b %d, %Y", date);
+		GDate *date;
+		gchar buffer[13];
+		gchar *ptr1;
+		gchar *ptr2;
+		gsize pos;
 
-                g_string_printf(text, "\n          <p>%s: written by %s &lt;%s&gt;</p>\n          ",
-                                buffer,
-                                gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(debr.menu)),
-                                gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu)));
-                
-                ptr1 = strstr(help->str, "<!-- begin cpy -->");
-                ptr2 = strstr(help->str, "<!-- end cpy -->");
+		date = g_date_new();
+		g_date_set_time_t(date, time(NULL));
+		g_date_strftime(buffer, 13, "%b %d, %Y", date);
 
-                if (ptr1 != NULL && ptr2 != NULL){
-                        gsize len;
-                        len = (ptr2-ptr1)/sizeof(gchar);
-                        
-                        if ((refresh) || (len < 40)){
+		g_string_printf(text, "\n          <p>%s: written by %s &lt;%s&gt;</p>\n          ",
+				buffer,
+				gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(debr.menu)),
+				gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu)));
 
-                                pos = (ptr2 - help->str)/sizeof(gchar);
-                                g_string_insert(help, pos, text->str);
-                        }
-                }
-                
-                g_date_free(date);
+		ptr1 = strstr(help->str, "<!-- begin cpy -->");
+		ptr2 = strstr(help->str, "<!-- end cpy -->");
+
+		if (ptr1 != NULL && ptr2 != NULL) {
+			gsize len;
+			len = (ptr2 - ptr1) / sizeof(gchar);
+
+			if ((refresh) || (len < 40)) {
+
+				pos = (ptr2 - help->str) / sizeof(gchar);
+				g_string_insert(help, pos, text->str);
+			}
+		}
+
+		g_date_free(date);
 	}
 
-        g_string_free(text, TRUE);
+	g_string_free(text, TRUE);
 }
 
 /*
  * Function: help_show
  * Show _help_ using user's browser
  */
-void
-help_show(const gchar * help)
+void help_show(const gchar * help)
 {
-	GString *	prepared_html;
-	FILE *		html_fp;
-	GString *	html_path;
+	GString *prepared_html;
+	FILE *html_fp;
+	GString *html_path;
 
 	prepared_html = g_string_new(help);
 	help_fix_css(prepared_html);
@@ -301,18 +288,17 @@ help_show(const gchar * help)
 	g_string_prepend(html_path, "file://");
 	gebr_gui_help_show(html_path->str, debr.config.browser->str);
 
-out:	g_string_free(html_path, FALSE);
+ out:	g_string_free(html_path, FALSE);
 	g_string_free(prepared_html, TRUE);
 }
 
-GString *
-help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
+GString *help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 {
-	FILE *		fp;
-	GString *	html_path;
-	GString *	prepared_html;
-	GString *	cmdline;
-	gchar		buffer[100];
+	FILE *fp;
+	GString *html_path;
+	GString *prepared_html;
+	GString *cmdline;
+	gchar buffer[100];
 
 	/* check if there is an html editor in preferences */
 	if (!strlen(debr.config.htmleditor->str)) {
@@ -340,22 +326,22 @@ help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 
 		/* Substitute title, description and categories */
 		help_subst_fields(prepared_html, program, refresh);
+	} else {
+		if (refresh) {
+			help_subst_fields(prepared_html, program, refresh);
+		}
 	}
-        else {
-                if (refresh){
-                        help_subst_fields(prepared_html, program, refresh);
-                }
-        }
 
-        /* Always fix DTD version */
-        {
-                gsize pos;
-                
-                pos = strip_block(prepared_html, "dtd");
-                if (pos)
-                        g_string_insert(prepared_html, pos, gebr_geoxml_document_get_version(GEBR_GEOXML_DOCUMENT(debr.menu)));
-        }
-        
+	/* Always fix DTD version */
+	{
+		gsize pos;
+
+		pos = strip_block(prepared_html, "dtd");
+		if (pos)
+			g_string_insert(prepared_html, pos,
+					gebr_geoxml_document_get_version(GEBR_GEOXML_DOCUMENT(debr.menu)));
+	}
+
 	/* CSS fix */
 	help_fix_css(prepared_html);
 
@@ -394,7 +380,7 @@ help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 
 	/* ensure UTF-8 encoding */
 	if (g_utf8_validate(prepared_html->str, -1, NULL) == FALSE) {
-		gchar *	converted;
+		gchar *converted;
 
 		/* TODO: what else should be tried? */
 		converted = gebr_locale_to_utf8(prepared_html->str);
@@ -410,28 +396,28 @@ help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 
 	/* transform css into a relative path back */
 	{
-		regex_t		regexp;
-		regmatch_t	matchptr;
+		regex_t regexp;
+		regmatch_t matchptr;
 
-		regcomp(&regexp, "<link[^<]*>", REG_NEWLINE | REG_ICASE );
-		if (!regexec (&regexp, prepared_html->str, 1, &matchptr, 0)) {
-			g_string_erase(prepared_html, (gssize) matchptr.rm_so, (gssize) matchptr.rm_eo - matchptr.rm_so);
+		regcomp(&regexp, "<link[^<]*>", REG_NEWLINE | REG_ICASE);
+		if (!regexec(&regexp, prepared_html->str, 1, &matchptr, 0)) {
+			g_string_erase(prepared_html, (gssize) matchptr.rm_so,
+				       (gssize) matchptr.rm_eo - matchptr.rm_so);
 			g_string_insert(prepared_html, (gssize) matchptr.rm_so,
-					"<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />" );
-		}
-		else {
-			regcomp (&regexp, "<head>", REG_NEWLINE | REG_ICASE );
-			if(!regexec (&regexp, prepared_html->str, 1, &matchptr, 0))
-			g_string_insert(prepared_html, (gssize) matchptr.rm_eo,
-					"\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />" );
+					"<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
+		} else {
+			regcomp(&regexp, "<head>", REG_NEWLINE | REG_ICASE);
+			if (!regexec(&regexp, prepared_html->str, 1, &matchptr, 0))
+				g_string_insert(prepared_html, (gssize) matchptr.rm_eo,
+						"\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
 		}
 	}
 
 	g_string_free(html_path, FALSE);
 	return prepared_html;
 
-err:	g_string_free(html_path, FALSE);
-err2:	g_string_free(prepared_html, TRUE);
+ err:	g_string_free(html_path, FALSE);
+ err2:	g_string_free(prepared_html, TRUE);
 	return NULL;
 }
 
@@ -442,38 +428,37 @@ err2:	g_string_free(prepared_html, TRUE);
    begining of the block, suitable for
    text insertion. "tag" must have 3 letters.
 */
-gsize
-strip_block(GString *buffer, const gchar *tag)
+gsize strip_block(GString * buffer, const gchar * tag)
 {
 
-        static GString       *mark = NULL;
-        gchar                *ptr;
-        gsize                 pos;
-        gsize                 len;
+	static GString *mark = NULL;
+	gchar *ptr;
+	gsize pos;
+	gsize len;
 
-        if (mark == NULL)
-                mark = g_string_new(NULL);
+	if (mark == NULL)
+		mark = g_string_new(NULL);
 
-        g_string_printf(mark, "<!-- begin %s -->", tag);
-        ptr = strstr(buffer->str, mark->str);
+	g_string_printf(mark, "<!-- begin %s -->", tag);
+	ptr = strstr(buffer->str, mark->str);
 
-	if (ptr != NULL){
-                pos = (ptr - buffer->str)/sizeof(gchar) + 18;
-        } else {
-                return 0;
-        }
+	if (ptr != NULL) {
+		pos = (ptr - buffer->str) / sizeof(gchar) + 18;
+	} else {
+		return 0;
+	}
 
-        g_string_printf(mark, "<!-- end %s -->", tag);
-        ptr = strstr(buffer->str, mark->str);
+	g_string_printf(mark, "<!-- end %s -->", tag);
+	ptr = strstr(buffer->str, mark->str);
 
-        if (ptr != NULL){
-                len = (ptr - buffer->str)/sizeof(gchar) - pos;
-        } else {
-                return 0;
-        }
+	if (ptr != NULL) {
+		len = (ptr - buffer->str) / sizeof(gchar) - pos;
+	} else {
+		return 0;
+	}
 
-        g_string_erase(buffer, pos, len);
-        
-        return pos;
-                        
+	g_string_erase(buffer, pos, len);
+
+	return pos;
+
 }

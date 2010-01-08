@@ -22,17 +22,12 @@
 #include <gtk/gtk.h>
 #include <libgebr/geoxml.h>
 
-void
-project_new(void);
-gboolean
-project_delete(gboolean confirm);
+void project_new(void);
+gboolean project_delete(gboolean confirm);
 
-GtkTreeIter
-project_append_iter(GebrGeoXmlProject * project);
-GtkTreeIter
-project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine * line);
+GtkTreeIter project_append_iter(GebrGeoXmlProject * project);
+GtkTreeIter project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine * line);
 
-void
-project_list_populate(void);
+void project_list_populate(void);
 
-#endif //__PROJECT_H
+#endif				//__PROJECT_H

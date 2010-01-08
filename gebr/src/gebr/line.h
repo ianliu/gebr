@@ -22,21 +22,14 @@
 
 #include <libgebr/geoxml.h>
 
-gboolean
-line_new(void);
-gboolean
-line_delete(gboolean confirm);
-GebrGeoXmlLine *
-line_import(const gchar * line_filename, const gchar * at_dir);
+gboolean line_new(void);
+gboolean line_delete(gboolean confirm);
+GebrGeoXmlLine *line_import(const gchar * line_filename, const gchar * at_dir);
 
-GtkTreeIter
-line_append_flow(GebrGeoXmlLineFlow * line_flow);
-void
-line_load_flows(void);
+GtkTreeIter line_append_flow(GebrGeoXmlLineFlow * line_flow);
+void line_load_flows(void);
 
-void
-line_move_flow_top(void);
-void
-line_move_flow_bottom(void);
+void line_move_flow_top(void);
+void line_move_flow_bottom(void);
 
-#endif //__LINE_H
+#endif				//__LINE_H

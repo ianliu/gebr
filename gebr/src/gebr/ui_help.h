@@ -21,16 +21,12 @@
 #include <gtk/gtk.h>
 #include <libgebr/geoxml.h>
 
-void
-program_help_show(void);
+void program_help_show(void);
 
-void
-help_show(const gchar * help, const gchar * title);
+void help_show(const gchar * help, const gchar * title);
 
-void 
-help_show_callback(GtkButton *button, GebrGeoXmlDocument *document);
+void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document);
 
-void
-help_edit(GtkButton * button, GebrGeoXmlDocument * document);
+void help_edit(GtkButton * button, GebrGeoXmlDocument * document);
 
-#endif //__UI_HELP_H
+#endif				//__UI_HELP_H

@@ -23,50 +23,40 @@
 
 enum {
 	PROGRAM_STATUS,
-        PROGRAM_TITLE,
+	PROGRAM_TITLE,
 	PROGRAM_XMLPOINTER,
 	PROGRAM_N_COLUMN
 };
 
 struct ui_program {
-	GtkWidget *		widget;
+	GtkWidget *widget;
 
-	GtkListStore *		list_store;
-	GtkWidget *		tree_view;
+	GtkListStore *list_store;
+	GtkWidget *tree_view;
 
 	struct ui_program_details {
-		GtkWidget *	frame;
-		GtkWidget *	title_label;
-		GtkWidget *	description_label;
-		GtkWidget *	nparams_label;
-		GtkWidget *	binary_label;
-		GtkWidget *	url_label;
-		GtkWidget *	url_button;
-		GtkWidget *	help_button;
+		GtkWidget *frame;
+		GtkWidget *title_label;
+		GtkWidget *description_label;
+		GtkWidget *nparams_label;
+		GtkWidget *binary_label;
+		GtkWidget *url_label;
+		GtkWidget *url_button;
+		GtkWidget *help_button;
 	} details;
 };
 
-void
-program_setup_ui(void);
+void program_setup_ui(void);
 
-void
-program_load_menu(void);
-void
-program_new(gboolean edit);
-void
-program_preview(void);
-void
-program_remove(void);
-void
-program_top(void);
-void
-program_bottom(void);
-void
-program_copy(void);
-void
-program_paste(void);
+void program_load_menu(void);
+void program_new(gboolean edit);
+void program_preview(void);
+void program_remove(void);
+void program_top(void);
+void program_bottom(void);
+void program_copy(void);
+void program_paste(void);
 
-void
-program_dialog_setup_ui(void);
+void program_dialog_setup_ui(void);
 
-#endif //__PROGRAM_H
+#endif				//__PROGRAM_H

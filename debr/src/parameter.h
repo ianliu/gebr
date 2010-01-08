@@ -23,7 +23,7 @@
 
 #include <libgebr/gui/parameter.h>
 
-extern const GtkRadioActionEntry parameter_type_radio_actions_entries [];
+extern const GtkRadioActionEntry parameter_type_radio_actions_entries[];
 extern const gsize combo_type_map_size;
 
 enum {
@@ -35,56 +35,44 @@ enum {
 };
 
 struct ui_parameter {
-	GtkWidget *			widget;
+	GtkWidget *widget;
 
-	GtkTreeStore *			tree_store;
-	GtkWidget *			tree_view;
+	GtkTreeStore *tree_store;
+	GtkWidget *tree_view;
 };
 
 struct ui_parameter_dialog {
-	GtkWidget *			dialog;
+	GtkWidget *dialog;
 
-	GebrGeoXmlParameter *		parameter;
+	GebrGeoXmlParameter *parameter;
 
-	GtkWidget *			default_widget_hbox;
-	struct gebr_gui_parameter_widget *	gebr_gui_parameter_widget;
-	GtkWidget *			separator_entry;
+	GtkWidget *default_widget_hbox;
+	struct gebr_gui_parameter_widget *gebr_gui_parameter_widget;
+	GtkWidget *separator_entry;
 };
 
-void
-parameter_setup_ui(void);
+void parameter_setup_ui(void);
 
-void
-parameter_load_program(void);
+void parameter_load_program(void);
 
-void
-parameter_load_selected(void);
+void parameter_load_selected(void);
 
-void
-parameter_new(void);
+void parameter_new(void);
 
-void
-parameter_remove(gboolean confirm);
+void parameter_remove(gboolean confirm);
 
-void
-parameter_top(void);
+void parameter_top(void);
 
-void
-parameter_bottom(void);
+void parameter_bottom(void);
 
-gboolean
-parameter_change_type_setup_ui(void);
+gboolean parameter_change_type_setup_ui(void);
 
-void
-parameter_copy(void);
+void parameter_copy(void);
 
-void
-parameter_paste(void);
+void parameter_paste(void);
 
-void
-parameter_change_type(enum GEBR_GEOXML_PARAMETER_TYPE type);
+void parameter_change_type(enum GEBR_GEOXML_PARAMETER_TYPE type);
 
-void
-parameter_properties(void);
+void parameter_properties(void);
 
-#endif //__PARAMETER_H
+#endif				//__PARAMETER_H

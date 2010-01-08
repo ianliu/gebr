@@ -39,72 +39,72 @@
  * Declarations
  */
 
-static const GtkActionEntry actions_entries [] = {
+static const GtkActionEntry actions_entries[] = {
 	{"quit", GTK_STOCK_QUIT, N_("Quit"), NULL, N_("Quit DéBR"), G_CALLBACK(on_quit_activate)},
 	{"help_contents", GTK_STOCK_HELP, NULL, NULL, NULL, G_CALLBACK(on_help_contents_activate)},
 	{"help_about", GTK_STOCK_ABOUT, NULL, NULL, NULL, G_CALLBACK(on_help_about_activate)},
 	/* menu */
 	{"menu_new", GTK_STOCK_NEW, NULL, NULL, N_("Create new menu"), G_CALLBACK(on_menu_new_activate)},
 	{"menu_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit menu properties"),
-		G_CALLBACK(on_menu_properties_activate)},
+	 G_CALLBACK(on_menu_properties_activate)},
 	{"menu_validate", GTK_STOCK_APPLY, N_("Validate"), NULL, N_("Validate menu"),
-		G_CALLBACK(on_menu_validate_activate)},
+	 G_CALLBACK(on_menu_validate_activate)},
 	{"menu_install", "window-new", N_("Install"), NULL, N_("Make this menu visible for GêBR"),
-		G_CALLBACK(on_menu_install_activate)},
+	 G_CALLBACK(on_menu_install_activate)},
 	{"menu_close", GTK_STOCK_CLOSE, NULL, NULL, N_("Remove selecteds menus from list"),
-		G_CALLBACK(on_menu_close_activate)},
+	 G_CALLBACK(on_menu_close_activate)},
 	{"menu_open", GTK_STOCK_OPEN, NULL, NULL, N_("Open an existing menu"),
-		G_CALLBACK(on_menu_open_activate)},
+	 G_CALLBACK(on_menu_open_activate)},
 	{"menu_save", GTK_STOCK_SAVE, NULL, NULL, N_("Save selecteds menus"), G_CALLBACK(on_menu_save_activate)},
 	{"menu_save_as", GTK_STOCK_SAVE_AS, NULL, NULL, N_("Save current menu to another file"),
-		G_CALLBACK(on_menu_save_as_activate)},
+	 G_CALLBACK(on_menu_save_as_activate)},
 	{"menu_save_all", "document-save-all", N_("Save all"), NULL, N_("Save all unsaved menus"),
-		G_CALLBACK(on_menu_save_all_activate)},
+	 G_CALLBACK(on_menu_save_all_activate)},
 	{"menu_revert", GTK_STOCK_REVERT_TO_SAVED, NULL, NULL, N_("Revert current menu to last saved version"),
-		G_CALLBACK(on_menu_revert_activate)},
+	 G_CALLBACK(on_menu_revert_activate)},
 	{"menu_delete", GTK_STOCK_DELETE, NULL, NULL, N_("Delete selecteds menus files"),
-		G_CALLBACK(on_menu_delete_activate)},
+	 G_CALLBACK(on_menu_delete_activate)},
 	/* program */
 	{"program_new", GTK_STOCK_NEW, NULL, NULL, N_("Create new program"),
-		G_CALLBACK(on_program_new_activate)},
+	 G_CALLBACK(on_program_new_activate)},
 	{"program_delete", GTK_STOCK_DELETE, NULL, NULL, N_("Delete current program"),
-		G_CALLBACK(on_program_delete_activate)},
+	 G_CALLBACK(on_program_delete_activate)},
 	{"program_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit program properties"),
-		G_CALLBACK(on_program_properties_activate)},
+	 G_CALLBACK(on_program_properties_activate)},
 	{"program_preview", GTK_STOCK_MEDIA_PLAY, N_("Preview parameters in GêBR"), NULL,
-		N_("Preview parameters in GêBR"), G_CALLBACK(on_program_preview_activate)},
+	 N_("Preview parameters in GêBR"), G_CALLBACK(on_program_preview_activate)},
 	{"program_top", GTK_STOCK_GOTO_TOP, NULL, NULL, N_("Move program to the top of the list"),
-		G_CALLBACK(on_program_top_activate)},
+	 G_CALLBACK(on_program_top_activate)},
 	{"program_bottom", GTK_STOCK_GOTO_BOTTOM, NULL, NULL,
-		N_("Move program to the bottom of the list"), G_CALLBACK(on_program_bottom_activate)},
+	 N_("Move program to the bottom of the list"), G_CALLBACK(on_program_bottom_activate)},
 	{"program_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy selected(s) program(s) to clipboard"),
-		G_CALLBACK(on_program_copy_activate)},
+	 G_CALLBACK(on_program_copy_activate)},
 	{"program_paste", GTK_STOCK_PASTE, N_("Paste"), NULL, N_("Paste program(s) from clipboard"),
-		G_CALLBACK(on_program_paste_activate)},
+	 G_CALLBACK(on_program_paste_activate)},
 	/* parameter */
 	{"parameter_new", GTK_STOCK_NEW, NULL, NULL, N_("Create new parameter"), G_CALLBACK(on_parameter_new_activate)},
 	{"parameter_delete", GTK_STOCK_DELETE, NULL, NULL, N_("Delete current parameter"),
-		G_CALLBACK(on_parameter_delete_activate)},
+	 G_CALLBACK(on_parameter_delete_activate)},
 	{"parameter_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit parameter properties"),
-		G_CALLBACK(on_parameter_properties_activate)},
+	 G_CALLBACK(on_parameter_properties_activate)},
 	{"parameter_top", GTK_STOCK_GOTO_TOP, NULL, NULL, N_("Move parameter to the top of the list"),
-		G_CALLBACK(on_parameter_top_activate)},
+	 G_CALLBACK(on_parameter_top_activate)},
 	{"parameter_bottom", GTK_STOCK_GOTO_BOTTOM, NULL, NULL,
-		N_("Move parameter to the bottom of the list"), G_CALLBACK(on_parameter_bottom_activate)},
+	 N_("Move parameter to the bottom of the list"), G_CALLBACK(on_parameter_bottom_activate)},
 	{"parameter_change_type", GTK_STOCK_CONVERT, N_("Change type"), NULL, N_("Change parameter type"),
-		G_CALLBACK(on_parameter_change_type_activate)},
+	 G_CALLBACK(on_parameter_change_type_activate)},
 	{"parameter_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy selected(s) parameter(s) to clipboard"),
-		G_CALLBACK(on_parameter_copy_activate)},
+	 G_CALLBACK(on_parameter_copy_activate)},
 	{"parameter_paste", GTK_STOCK_PASTE, N_("Paste"), NULL, N_("Paste parameter(s) from clipboard"),
-		G_CALLBACK(on_parameter_paste_activate)},
+	 G_CALLBACK(on_parameter_paste_activate)},
 	/* validate */
 	{"validate_close", "edit-clear", NULL, NULL, N_("Clear selecteds validations reports"),
-		G_CALLBACK(on_validate_close_activate)},
+	 G_CALLBACK(on_validate_close_activate)},
 	{"validate_clear", GTK_STOCK_CLEAR, NULL, NULL, N_("Clear all validations reports"),
-		G_CALLBACK(on_validate_clear_activate)},
+	 G_CALLBACK(on_validate_clear_activate)},
 };
 
-static const GtkActionEntry common_actions_entries [] = {
+static const GtkActionEntry common_actions_entries[] = {
 	{"new", GTK_STOCK_NEW, "new", NULL, "new", G_CALLBACK(on_new_activate)},
 	{"copy", GTK_STOCK_COPY, "copy", NULL, "copy", G_CALLBACK(on_copy_activate)},
 	{"paste", GTK_STOCK_PASTE, "paste", NULL, "paste", G_CALLBACK(on_paste_activate)},
@@ -118,23 +118,22 @@ static const GtkActionEntry common_actions_entries [] = {
  * Function: debr_setup_ui
  * Create DeBR's main window and its childs
  */
-void
-debr_setup_ui(void)
+void debr_setup_ui(void)
 {
-	GtkWidget *		vbox;
+	GtkWidget *vbox;
 
-	GtkWidget *		menu_bar;
-	GtkWidget *		navigation_hbox;
-	GtkWidget *		notebook;
-	GtkWidget *		statusbar;
+	GtkWidget *menu_bar;
+	GtkWidget *navigation_hbox;
+	GtkWidget *notebook;
+	GtkWidget *statusbar;
 
-	GtkWidget *		menu;
-	GtkWidget *		menu_item;
-	GtkWidget *		child_menu_item;
-	GtkWidget *		toolbar;
-	GtkToolItem *		tool_item;
+	GtkWidget *menu;
+	GtkWidget *menu_item;
+	GtkWidget *child_menu_item;
+	GtkWidget *toolbar;
+	GtkToolItem *tool_item;
 
-	GtkActionGroup *	common_action_group;
+	GtkActionGroup *common_action_group;
 
 	/*
 	 * Main window and its vbox contents
@@ -145,10 +144,8 @@ debr_setup_ui(void)
 	gtk_widget_set_size_request(debr.window, 600, 450);
 	debr.about = gebr_gui_about_setup_ui("DéBR", _("Menu designer for GêBR"));
 
-	g_signal_connect(debr.window, "delete_event",
-		G_CALLBACK(debr_quit), NULL);
-	g_signal_connect(debr.window, "show",
-		G_CALLBACK(debr_init), NULL);
+	g_signal_connect(debr.window, "delete_event", G_CALLBACK(debr_quit), NULL);
+	g_signal_connect(debr.window, "show", G_CALLBACK(debr_init), NULL);
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(vbox);
@@ -179,7 +176,7 @@ debr_setup_ui(void)
 	gtk_action_group_set_translation_domain(debr.action_group, PACKAGE);
 	gtk_action_group_add_actions(debr.action_group, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
 	gtk_action_group_add_radio_actions(debr.action_group, parameter_type_radio_actions_entries,
-		combo_type_map_size, -1, G_CALLBACK(on_parameter_type_activate), NULL);
+					   combo_type_map_size, -1, G_CALLBACK(on_parameter_type_activate), NULL);
 	debr.accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(debr.window), debr.accel_group);
 	gebr_gui_gtk_action_group_set_accel_group(debr.action_group, debr.accel_group);
@@ -194,7 +191,7 @@ debr_setup_ui(void)
 
 	common_action_group = gtk_action_group_new("Common");
 	gtk_action_group_add_actions(common_action_group, common_actions_entries,
-		G_N_ELEMENTS(common_actions_entries), NULL);
+				     G_N_ELEMENTS(common_actions_entries), NULL);
 	gebr_gui_gtk_action_group_set_accel_group(common_action_group, debr.accel_group);
 
 	/*
@@ -207,11 +204,10 @@ debr_setup_ui(void)
 
 	child_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PREFERENCES, debr.accel_group);
 	gtk_container_add(GTK_CONTAINER(menu), child_menu_item);
-	g_signal_connect(child_menu_item, "activate",
-		G_CALLBACK(on_configure_preferences_activate), NULL);
-	gtk_container_add(GTK_CONTAINER(menu),gtk_separator_menu_item_new());
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
-		gtk_action_group_get_action(debr.action_group, "quit")));
+	g_signal_connect(child_menu_item, "activate", G_CALLBACK(on_configure_preferences_activate), NULL);
+	gtk_container_add(GTK_CONTAINER(menu), gtk_separator_menu_item_new());
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "quit")));
 
 	/*
 	 * Menu: Help
@@ -222,10 +218,10 @@ debr_setup_ui(void)
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
 
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
-		gtk_action_group_get_action(debr.action_group, "help_contents")));
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
-		gtk_action_group_get_action(debr.action_group, "help_about")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "help_contents")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "help_about")));
 
 	gtk_widget_show_all(menu_bar);
 
@@ -239,32 +235,43 @@ debr_setup_ui(void)
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "menu_new"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "menu_properties"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "menu_validate"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "menu_close"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_new"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_validate"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_close"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "menu_open"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "menu_save"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "menu_save_as"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "menu_save_all"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "menu_revert"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "menu_delete"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_open"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_save"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_save_as"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_save_all"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_revert"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_delete"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "menu_install"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_install"))), -1);
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -281,17 +288,22 @@ debr_setup_ui(void)
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "program_new"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "program_copy"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "program_paste"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "program_delete"))), -1);
-        gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "program_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "program_new"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "program_copy"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "program_paste"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "program_delete"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "program_properties"))), -1);
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -308,30 +320,37 @@ debr_setup_ui(void)
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "parameter_new"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "parameter_copy"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "parameter_paste"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "parameter_delete"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "parameter_new"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "parameter_copy"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "parameter_paste"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "parameter_delete"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "parameter_properties"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "program_preview"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "parameter_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "program_preview"))), -1);
 
 	debr.parameter_type_menu = menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_CONVERT);
-	g_signal_connect(tool_item, "clicked",
-		G_CALLBACK(on_parameter_change_type_activate), NULL);
+	g_signal_connect(tool_item, "clicked", G_CALLBACK(on_parameter_change_type_activate), NULL);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
 	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
 	guint i, l = combo_type_map_size;
 	for (i = 0; i < l; ++i)
-		gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(
-			gtk_action_group_get_action(debr.action_group, parameter_type_radio_actions_entries[i].name)));
+		gtk_container_add(GTK_CONTAINER(menu),
+				  gtk_action_create_menu_item(gtk_action_group_get_action
+							      (debr.action_group,
+							       parameter_type_radio_actions_entries[i].name)));
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -348,10 +367,12 @@ debr_setup_ui(void)
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "validate_close"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(gtk_action_create_tool_item(
-		gtk_action_group_get_action(debr.action_group, "validate_clear"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "validate_close"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "validate_clear"))), -1);
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -369,8 +390,7 @@ debr_setup_ui(void)
  * Sets the sensitivity of the actions whose name is in @names array
  * to @sensitive.
  */
-void
-debr_set_actions_sensitive(gchar ** names, gboolean sensitive)
+void debr_set_actions_sensitive(gchar ** names, gboolean sensitive)
 {
 	gint i;
 
@@ -379,12 +399,9 @@ debr_set_actions_sensitive(gchar ** names, gboolean sensitive)
 
 	i = 0;
 	while (names[i])
-		gtk_action_set_sensitive(gtk_action_group_get_action(
-			debr.action_group, names[i++]), sensitive);
+		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, names[i++]), sensitive);
 }
-
 
 /*
  * Section: Private
  */
-

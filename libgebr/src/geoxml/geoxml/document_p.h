@@ -24,8 +24,7 @@
  * @param name refer to the root element (flow, line or project) @param version
  * to its corresponding last version (support by this version of libgeoxml)
  */
-GebrGeoXmlDocument *
-gebr_geoxml_document_new(const gchar * name, const gchar * version);
+GebrGeoXmlDocument *gebr_geoxml_document_new(const gchar * name, const gchar * version);
 
 /**
  * \internal
@@ -34,4 +33,4 @@ gebr_geoxml_document_new(const gchar * name, const gchar * version);
 #define gebr_geoxml_document_root_element(document)	\
 	gdome_doc_documentElement((GdomeDocument*)document, &exception)
 
-#endif //__GEBR_GEOXML_DOCUMENT_P_H
+#endif				//__GEBR_GEOXML_DOCUMENT_P_H

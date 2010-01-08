@@ -27,8 +27,7 @@
 #include "interface.h"
 #include "debr.h"
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 #ifdef ENABLE_NLS
 	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);

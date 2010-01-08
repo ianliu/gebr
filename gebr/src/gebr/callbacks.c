@@ -40,8 +40,7 @@
  * Function: on_copy_activate
  * Select copy target depending on the context
  */
-void
-on_copy_activate(void)
+void on_copy_activate(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE:
@@ -59,8 +58,7 @@ on_copy_activate(void)
  * Function: on_paste_activate
  * Select paste target depending on the context
  */
-void
-on_paste_activate(void)
+void on_paste_activate(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE:
@@ -77,8 +75,7 @@ on_paste_activate(void)
 /* Function: on_quit_activate
  * Call <gebr_quit>
  */
-void
-on_quit_activate(void)
+void on_quit_activate(void)
 {
 	gebr_quit();
 }
@@ -86,8 +83,7 @@ on_quit_activate(void)
 /* Function: on_document_properties_activate
  * Call <document_properties_setup_ui>
  */
-gboolean
-on_document_properties_activate(void)
+gboolean on_document_properties_activate(void)
 {
 	return document_properties_setup_ui(document_get_current());
 }
@@ -95,8 +91,7 @@ on_document_properties_activate(void)
 /* Function: on_document_dict_edit_activate
  * Call <document_dict_edit_setup_ui>
  */
-void
-on_document_dict_edit_activate(void)
+void on_document_dict_edit_activate(void)
 {
 	document_dict_edit_setup_ui();
 }
@@ -104,8 +99,7 @@ on_document_dict_edit_activate(void)
 /* Function: on_project_line_new_project_activate
  * Call <project_new> from <project.c>
  */
-void
-on_project_line_new_project_activate(void)
+void on_project_line_new_project_activate(void)
 {
 	project_new();
 }
@@ -114,8 +108,7 @@ on_project_line_new_project_activate(void)
  * Function: on_project_line_new_line_activate
  * Call <project_new> from <project.c>
  */
-void
-on_project_line_new_line_activate(void)
+void on_project_line_new_line_activate(void)
 {
 	line_new();
 }
@@ -124,8 +117,7 @@ on_project_line_new_line_activate(void)
  * Function: on_project_line_delete_activate
  * Call <project_delete> from <project.c>
  */
-void
-on_project_line_delete_activate(void)
+void on_project_line_delete_activate(void)
 {
 	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
 		project_delete(TRUE);
@@ -137,8 +129,7 @@ on_project_line_delete_activate(void)
  * Function: on_project_line_paths_activate
  * *Fill me in!*
  */
-void
-on_project_line_paths_activate(void)
+void on_project_line_paths_activate(void)
 {
 	path_list_setup_ui();
 }
@@ -147,8 +138,7 @@ on_project_line_paths_activate(void)
  * Function: on_project_line_import_activate
  * Call <project_line_import> from <ui_project_line.c>
  */
-void
-on_project_line_import_activate(void)
+void on_project_line_import_activate(void)
 {
 	project_line_import();
 }
@@ -157,8 +147,7 @@ on_project_line_import_activate(void)
  * Function: on_project_line_export_activate
  * Call <project_line_export> from <ui_project_line.c>
  */
-void
-on_project_line_export_activate(void)
+void on_project_line_export_activate(void)
 {
 	project_line_export();
 }
@@ -167,8 +156,7 @@ on_project_line_export_activate(void)
  * Function: on_flow_new_activate
  * Call <flow_new> from <flow.c>
  */
-void
-on_flow_new_activate(void)
+void on_flow_new_activate(void)
 {
 	flow_new();
 }
@@ -177,8 +165,7 @@ on_flow_new_activate(void)
  * Function: on_flow_import_activate
  * Call <flow_import> from <flow.c>
  */
-void
-on_flow_import_activate(void)
+void on_flow_import_activate(void)
 {
 	flow_import();
 }
@@ -187,8 +174,7 @@ on_flow_import_activate(void)
  * Function: on_flow_export_activate
  * Call <flow_export> from <flow.c>
  */
-void
-on_flow_export_activate(void)
+void on_flow_export_activate(void)
 {
 	flow_export();
 }
@@ -197,8 +183,7 @@ on_flow_export_activate(void)
  * Function: on_flow_export_as_menu_activate
  * Call <flow_export_as_menu> from <flow.c>
  */
-void
-on_flow_export_as_menu_activate(void)
+void on_flow_export_as_menu_activate(void)
 {
 	flow_export_as_menu();
 }
@@ -207,8 +192,7 @@ on_flow_export_as_menu_activate(void)
  * Function: on_flow_delete_activate
  * Call <flow_delete> from <flow.c>
  */
-void
-on_flow_delete_activate(void)
+void on_flow_delete_activate(void)
 {
 	flow_delete(TRUE);
 }
@@ -216,8 +200,7 @@ on_flow_delete_activate(void)
 /* Function: on_flow_io_activate
  * Adjust selection and show flow IO dialog
  */
-void
-on_flow_io_activate(void)
+void on_flow_io_activate(void)
 {
 	flow_browse_single_selection();
 	flow_io_setup_ui(TRUE);
@@ -228,8 +211,7 @@ on_flow_io_activate(void)
  * Call <flow_io_setup_ui> from <flow.c>
  *
  */
-void
-on_flow_execute_activate(void)
+void on_flow_execute_activate(void)
 {
 	flow_fast_run();
 }
@@ -237,8 +219,7 @@ on_flow_execute_activate(void)
 /* Function: on_flow_revision_save_activate
  * Call <flow_revision_save>
  */
-void
-on_flow_revision_save_activate(void)
+void on_flow_revision_save_activate(void)
 {
 	flow_revision_save();
 }
@@ -246,8 +227,7 @@ on_flow_revision_save_activate(void)
 /* Function: on_flow_revision_show_menu
  * Call <flow_browse_single_selection>
  */
-void
-on_flow_revision_show_menu(void)
+void on_flow_revision_show_menu(void)
 {
 	flow_browse_single_selection();
 }
@@ -255,8 +235,7 @@ on_flow_revision_show_menu(void)
 /* Function: on_flow_copy_activate
  * Call <flow_copy>
  */
-void
-on_flow_copy_activate(void)
+void on_flow_copy_activate(void)
 {
 	flow_copy();
 }
@@ -264,8 +243,7 @@ on_flow_copy_activate(void)
 /* Function: on_flow_paste_activate
  * Call <flow_paste>
  */
-void
-on_flow_paste_activate(void)
+void on_flow_paste_activate(void)
 {
 	flow_paste();
 }
@@ -275,8 +253,7 @@ on_flow_paste_activate(void)
  * *Fill me in!*
  *
  */
-void
-on_flow_component_help_activate(void)
+void on_flow_component_help_activate(void)
 {
 	program_help_show();
 }
@@ -285,8 +262,7 @@ on_flow_component_help_activate(void)
  * Function: on_flow_component_delete_activate
  * Call <flow_program_remove>
  */
-void
-on_flow_component_delete_activate(void)
+void on_flow_component_delete_activate(void)
 {
 	flow_program_remove();
 }
@@ -296,8 +272,7 @@ on_flow_component_delete_activate(void)
  * *Fill me in!*
  *
  */
-void
-on_flow_component_properties_activate(void)
+void on_flow_component_properties_activate(void)
 {
 	flow_edition_component_activated();
 }
@@ -307,8 +282,7 @@ on_flow_component_properties_activate(void)
  * *Fill me in!*
  *
  */
-void
-on_flow_component_refresh_activate(void)
+void on_flow_component_refresh_activate(void)
 {
 	menu_list_create_index();
 	menu_list_populate();
@@ -317,8 +291,7 @@ on_flow_component_refresh_activate(void)
 /* Function: on_flow_component_status_activate
  * Call <flow_edition_status_changed>
  */
-void
-on_flow_component_status_activate(GtkRadioAction * action, GtkRadioAction * current)
+void on_flow_component_status_activate(GtkRadioAction * action, GtkRadioAction * current)
 {
 	flow_edition_status_changed();
 }
@@ -326,8 +299,7 @@ on_flow_component_status_activate(GtkRadioAction * action, GtkRadioAction * curr
 /* Function: on_flow_copy_activate
  * Call <flow_edition_component_copy>
  */
-void
-on_flow_component_copy_activate(void)
+void on_flow_component_copy_activate(void)
 {
 	flow_program_copy();
 }
@@ -335,8 +307,7 @@ on_flow_component_copy_activate(void)
 /* Function: on_flow_paste_activate
  * Call <flow_edition_component_paste>
  */
-void
-on_flow_component_paste_activate(void)
+void on_flow_component_paste_activate(void)
 {
 	flow_program_paste();
 }
@@ -344,8 +315,7 @@ on_flow_component_paste_activate(void)
 /* Function: on_job_control_save
  * Call <job_control_save>
  */
-void
-on_job_control_save(void)
+void on_job_control_save(void)
 {
 	job_control_save();
 }
@@ -355,8 +325,7 @@ on_job_control_save(void)
  * Call <job_control_cancel>
  *
  */
-void
-on_job_control_cancel(void)
+void on_job_control_cancel(void)
 {
 	job_control_cancel();
 }
@@ -366,8 +335,7 @@ on_job_control_cancel(void)
  * Call <job_control_close>
  *
  */
-void
-on_job_control_close(void)
+void on_job_control_close(void)
 {
 	job_control_close();
 }
@@ -377,8 +345,7 @@ on_job_control_close(void)
  * Call <job_control_clear>
  *
  */
-void
-on_job_control_clear(void)
+void on_job_control_clear(void)
 {
 	job_control_clear();
 }
@@ -388,8 +355,7 @@ on_job_control_clear(void)
  * Call <job_control_stop>
  *
  */
-void
-on_job_control_stop(void)
+void on_job_control_stop(void)
 {
 	job_control_stop();
 }
@@ -399,8 +365,7 @@ on_job_control_stop(void)
  * *Fill me in!*
  *
  */
-void
-on_configure_preferences_activate(void)
+void on_configure_preferences_activate(void)
 {
 	preferences_setup_ui(FALSE);
 }
@@ -408,8 +373,7 @@ on_configure_preferences_activate(void)
 /* Function: on_configure_servers_activate
  * Show servers's configuration dialog
  */
-void
-on_configure_servers_activate(void)
+void on_configure_servers_activate(void)
 {
 	server_list_show(gebr.ui_server_list);
 }
@@ -417,8 +381,7 @@ on_configure_servers_activate(void)
 /* Function: on_help_contents_activate
  * *Fill me in!*
  */
-void
-on_help_contents_activate(void)
+void on_help_contents_activate(void)
 {
 	gebr_gui_help_show(GEBR_USERDOC_HTML, gebr.config.browser->str);
 }
@@ -426,8 +389,7 @@ on_help_contents_activate(void)
 /* Function: on_help_about_activate
  * Show about dialog
  */
-void
-on_help_about_activate(void)
+void on_help_about_activate(void)
 {
 	gtk_widget_show_all(gebr.about.dialog);
 }
@@ -436,10 +398,9 @@ on_help_about_activate(void)
  * Function: navigation_bar_update
  * 
  */
-void
-navigation_bar_update(void)
+void navigation_bar_update(void)
 {
-	GString *	markup;
+	GString *markup;
 
 	if (gebr.project_line == NULL) {
 		gtk_label_set_text(GTK_LABEL(gebr.navigation_box_label), "");
@@ -448,14 +409,16 @@ navigation_bar_update(void)
 
 	markup = g_string_new(NULL);
 	g_string_append(markup, g_markup_printf_escaped("<i>%s</i>",
-		gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.project))));
+							gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.project))));
 	if (gebr.line != NULL)
 		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
-			gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.line))));
+								gebr_geoxml_document_get_title(GEBR_GEOXML_DOC
+											       (gebr.line))));
 	if (gebr.flow != NULL)
 		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
-			gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow))));
-	
+								gebr_geoxml_document_get_title(GEBR_GEOXML_DOC
+											       (gebr.flow))));
+
 	gtk_label_set_markup(GTK_LABEL(gebr.navigation_box_label), markup->str);
 
 	g_string_free(markup, TRUE);

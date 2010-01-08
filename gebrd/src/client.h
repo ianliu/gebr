@@ -24,18 +24,16 @@
 struct gebr_comm_protocol;
 
 struct client {
-	GStreamSocket *		stream_socket;
-	struct gebr_comm_protocol *	protocol;
+	GStreamSocket *stream_socket;
+	struct gebr_comm_protocol *protocol;
 
-	gboolean		is_local;
+	gboolean is_local;
 	/* x11 redirected display, if server is remote. if local this is the true display */
-	GString *		display;
+	GString *display;
 };
 
-void
-client_add(GStreamSocket * stream_socket);
+void client_add(GStreamSocket * stream_socket);
 
-void
-client_free(struct client * client);
+void client_free(struct client *client);
 
-#endif //__CLIENT_H
+#endif				//__CLIENT_H

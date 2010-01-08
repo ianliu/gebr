@@ -18,7 +18,6 @@
 #ifndef __GEBR_GEOXML_PARAMETER_GROUP_P_H
 #define __GEBR_GEOXML_PARAMETER_GROUP_P_H
 
-void
-__gebr_geoxml_parameter_group_turn_to_reference(GebrGeoXmlParameterGroup * parameter_group);
+void __gebr_geoxml_parameter_group_turn_to_reference(GebrGeoXmlParameterGroup * parameter_group);
 
-#endif //__GEBR_GEOXML_PARAMETER_GROUP_H
+#endif				//__GEBR_GEOXML_PARAMETER_GROUP_H

@@ -24,48 +24,39 @@
 #include "client.h"
 
 struct job {
-	GebrCommProcess *	process;
-	GebrGeoXmlFlow *	flow;
-	gboolean		user_finished;
+	GebrCommProcess *process;
+	GebrGeoXmlFlow *flow;
+	gboolean user_finished;
 
 	/* the hostname of the client that ran it */
-	GString *		hostname;
-	GString *		status;
-	GString *		jid;
+	GString *hostname;
+	GString *status;
+	GString *jid;
 
-	GString *		title;
-	GString *		start_date;
-	GString *		finish_date;
-	GString *		issues;
-	GString *		cmd_line;
-	GString *		output;
+	GString *title;
+	GString *start_date;
+	GString *finish_date;
+	GString *issues;
+	GString *cmd_line;
+	GString *output;
 };
 
-gboolean
-job_new(struct job ** _job, struct client * client, GString * xml);
+gboolean job_new(struct job **_job, struct client *client, GString * xml);
 
-void
-job_free(struct job * job);
+void job_free(struct job *job);
 
-void
-job_run_flow(struct job * job, struct client * client);
+void job_run_flow(struct job *job, struct client *client);
 
-struct job *
-job_find(GString * jid);
+struct job *job_find(GString * jid);
 
-void
-job_clear(struct job * job);
+void job_clear(struct job *job);
 
-void
-job_end(struct job * job);
+void job_end(struct job *job);
 
-void
-job_kill(struct job * job);
+void job_kill(struct job *job);
 
-void
-job_list(struct client * client);
+void job_list(struct client *client);
 
-void
-job_send_clients_job_notify(struct job * job);
+void job_send_clients_job_notify(struct job *job);
 
-#endif //__JOB_H
+#endif				//__JOB_H

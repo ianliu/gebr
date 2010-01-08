@@ -22,56 +22,48 @@
  * \internal
  * Do operation without checks, for library use
  */
-int
-__gebr_geoxml_sequence_previous(GebrGeoXmlSequence ** sequence);
+int __gebr_geoxml_sequence_previous(GebrGeoXmlSequence ** sequence);
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
-int
-__gebr_geoxml_sequence_next(GebrGeoXmlSequence ** sequence);
+int __gebr_geoxml_sequence_next(GebrGeoXmlSequence ** sequence);
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
-int
-__gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence);
+int __gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence);
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
-GebrGeoXmlSequence *
-__gebr_geoxml_sequence_append_clone(GebrGeoXmlSequence * sequence);
+GebrGeoXmlSequence *__gebr_geoxml_sequence_append_clone(GebrGeoXmlSequence * sequence);
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
-int
-__gebr_geoxml_sequence_move_before(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position);
+int __gebr_geoxml_sequence_move_before(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position);
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
-int
-__gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position);
+int __gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position);
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
-int
-__gebr_geoxml_sequence_move_up(GebrGeoXmlSequence * sequence);
+int __gebr_geoxml_sequence_move_up(GebrGeoXmlSequence * sequence);
 
 /**
  * \internal
  * Do operation without checks, for library use
  */
-int
-__gebr_geoxml_sequence_move_down(GebrGeoXmlSequence * sequence);
+int __gebr_geoxml_sequence_move_down(GebrGeoXmlSequence * sequence);
 
-#endif //__GEBR_GEOXML_SEQUENCE_P_H
+#endif				//__GEBR_GEOXML_SEQUENCE_P_H

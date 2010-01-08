@@ -105,8 +105,7 @@ enum GEBR_GEOXML_DOCUMENT_TYPE {
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NO_MEMORY, GEBR_GEOXML_RETV_CANT_ACCESS_FILE,
  * GEBR_GEOXML_RETV_INVALID_DOCUMENT, GEBR_GEOXML_RETV_DTD_SPECIFIED, GEBR_GEOXML_RETV_CANT_ACCESS_DTD
  */
-int
-gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path);
+int gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path);
 
 /**
  * Load a document XML buffer at \p xml into \p document.
@@ -115,24 +114,21 @@ gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path);
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NO_MEMORY, GEBR_GEOXML_RETV_CANT_ACCESS_FILE,
  * GEBR_GEOXML_RETV_INVALID_DOCUMENT, GEBR_GEOXML_RETV_DTD_SPECIFIED, GEBR_GEOXML_RETV_CANT_ACCESS_DTD
  */
-int
-gebr_geoxml_document_load_buffer(GebrGeoXmlDocument ** document, const gchar * xml);
+int gebr_geoxml_document_load_buffer(GebrGeoXmlDocument ** document, const gchar * xml);
 
 /**
  * Free the memory used by the GebrGeoXmlDocument's XML structure.
  *
  * If \p document is NULL nothing is done.
  */
-void
-gebr_geoxml_document_free(GebrGeoXmlDocument * document);
+void gebr_geoxml_document_free(GebrGeoXmlDocument * document);
 
 /**
  * Create an identical copy of \p source and returns it.
  *
  * If \p source is NULL nothing is done.
  */
-GebrGeoXmlDocument *
-gebr_geoxml_document_clone(GebrGeoXmlDocument * source);
+GebrGeoXmlDocument *gebr_geoxml_document_clone(GebrGeoXmlDocument * source);
 
 /**
  * Return the type of \p document
@@ -141,8 +137,7 @@ gebr_geoxml_document_clone(GebrGeoXmlDocument * source);
  *
  * \see GEBR_GEOXML_DOCUMENT_TYPE
  */
-enum GEBR_GEOXML_DOCUMENT_TYPE
-gebr_geoxml_document_get_type(GebrGeoXmlDocument * document);
+enum GEBR_GEOXML_DOCUMENT_TYPE gebr_geoxml_document_get_type(GebrGeoXmlDocument * document);
 
 /**
  * Returns the version string of \p document.
@@ -152,8 +147,7 @@ gebr_geoxml_document_get_type(GebrGeoXmlDocument * document);
  *
  * If \p document is NULL nothing is done.
  */
-const gchar *
-gebr_geoxml_document_get_version(GebrGeoXmlDocument * document);
+const gchar *gebr_geoxml_document_get_version(GebrGeoXmlDocument * document);
 
 /**
  * Validate the document specified in \p filename.
@@ -163,8 +157,7 @@ gebr_geoxml_document_get_version(GebrGeoXmlDocument * document);
  *
  * If \p filename is NULL, GEBR_GEOXML_RETV_CANT_ACCESS_FILE is returned.
  */
-int
-gebr_geoxml_document_validate(const gchar * filename);
+int gebr_geoxml_document_validate(const gchar * filename);
 
 /**
  * Save \p document to \p path.
@@ -173,8 +166,7 @@ gebr_geoxml_document_validate(const gchar * filename);
  *
  * If \p document is NULL nothing is done.
  */
-int
-gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path);
+int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path);
 
 /**
  * Save \p document to \p xml_string. Memory needed for \p xml_string
@@ -182,8 +174,7 @@ gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path);
  *
  * If \p document is NULL nothing is done.
  */
-int
-gebr_geoxml_document_to_string(GebrGeoXmlDocument * document, gchar ** xml_string);
+int gebr_geoxml_document_to_string(GebrGeoXmlDocument * document, gchar ** xml_string);
 
 /**
  * Set the filename of \p document to \p filename
@@ -193,8 +184,7 @@ gebr_geoxml_document_to_string(GebrGeoXmlDocument * document, gchar ** xml_strin
  *
  * \see gebr_geoxml_document_get_filename
  */
-void
-gebr_geoxml_document_set_filename(GebrGeoXmlDocument * document, const gchar * filename);
+void gebr_geoxml_document_set_filename(GebrGeoXmlDocument * document, const gchar * filename);
 
 /**
  * Change the \p document 's title to \p title
@@ -203,8 +193,7 @@ gebr_geoxml_document_set_filename(GebrGeoXmlDocument * document, const gchar * f
  *
  * \see gebr_geoxml_document_get_title
  */
-void
-gebr_geoxml_document_set_title(GebrGeoXmlDocument * document, const gchar * title);
+void gebr_geoxml_document_set_title(GebrGeoXmlDocument * document, const gchar * title);
 
 /**
  * Change the \p document 's author to \p author
@@ -213,8 +202,7 @@ gebr_geoxml_document_set_title(GebrGeoXmlDocument * document, const gchar * titl
  *
  * \see gebr_geoxml_document_get_author
  */
-void
-gebr_geoxml_document_set_author(GebrGeoXmlDocument * document, const gchar * author);
+void gebr_geoxml_document_set_author(GebrGeoXmlDocument * document, const gchar * author);
 
 /**
  * Change the \p document 's author email to \p email
@@ -223,16 +211,14 @@ gebr_geoxml_document_set_author(GebrGeoXmlDocument * document, const gchar * aut
  *
  * \see gebr_geoxml_document_get_email
  */
-void
-gebr_geoxml_document_set_email(GebrGeoXmlDocument * document, const gchar * email);
+void gebr_geoxml_document_set_email(GebrGeoXmlDocument * document, const gchar * email);
 
 /**
  * Retrieves from \p document. the parameters dictionary for use with program's parameters.
  *
  * If \p document is NULL returns NULL.
  */
-GebrGeoXmlParameters *
-gebr_geoxml_document_get_dict_parameters(GebrGeoXmlDocument * document);
+GebrGeoXmlParameters *gebr_geoxml_document_get_dict_parameters(GebrGeoXmlDocument * document);
 
 /**
  * Change the \p document 's creation date to \p created
@@ -241,8 +227,7 @@ gebr_geoxml_document_get_dict_parameters(GebrGeoXmlDocument * document);
  *
  * \see gebr_geoxml_document_get_date_created
  */
-void
-gebr_geoxml_document_set_date_created(GebrGeoXmlDocument * document, const gchar * created);
+void gebr_geoxml_document_set_date_created(GebrGeoXmlDocument * document, const gchar * created);
 
 /**
  * Change the \p document 's modified date to \p created
@@ -251,8 +236,7 @@ gebr_geoxml_document_set_date_created(GebrGeoXmlDocument * document, const gchar
  *
  * \see gebr_geoxml_document_get_date_modified
  */
-void
-gebr_geoxml_document_set_date_modified(GebrGeoXmlDocument * document, const gchar * created);
+void gebr_geoxml_document_set_date_modified(GebrGeoXmlDocument * document, const gchar * created);
 
 /**
  * Set a brief description of the document, usually an one line text.
@@ -262,8 +246,7 @@ gebr_geoxml_document_set_date_modified(GebrGeoXmlDocument * document, const gcha
  *
  * \see gebr_geoxml_document_get_description
  */
-void
-gebr_geoxml_document_set_description(GebrGeoXmlDocument * document, const gchar * description);
+void gebr_geoxml_document_set_description(GebrGeoXmlDocument * document, const gchar * description);
 
 /**
  * Set a help associated with \p help equal to \p help.
@@ -280,8 +263,7 @@ gebr_geoxml_document_set_description(GebrGeoXmlDocument * document, const gchar 
  *
  * \see gebr_geoxml_document_get_help
  */
-void
-gebr_geoxml_document_set_help(GebrGeoXmlDocument * document, const gchar * help);
+void gebr_geoxml_document_set_help(GebrGeoXmlDocument * document, const gchar * help);
 
 /**
  * Get the filename of \p document as it should correctly
@@ -291,8 +273,7 @@ gebr_geoxml_document_set_help(GebrGeoXmlDocument * document, const gchar * help)
  *
  * \see gebr_geoxml_document_set_filename
  */
-const gchar *
-gebr_geoxml_document_get_filename(GebrGeoXmlDocument * document);
+const gchar *gebr_geoxml_document_get_filename(GebrGeoXmlDocument * document);
 
 /**
  * Get a brief title summarizing \p document.
@@ -301,8 +282,7 @@ gebr_geoxml_document_get_filename(GebrGeoXmlDocument * document);
  *
  * \see gebr_geoxml_document_set_title
  */
-const gchar *
-gebr_geoxml_document_get_title(GebrGeoXmlDocument * document);
+const gchar *gebr_geoxml_document_get_title(GebrGeoXmlDocument * document);
 
 /**
  * Get the \p document 's author name.
@@ -311,8 +291,7 @@ gebr_geoxml_document_get_title(GebrGeoXmlDocument * document);
  *
  * \see gebr_geoxml_document_set_author
  */
-const gchar *
-gebr_geoxml_document_get_author(GebrGeoXmlDocument * document);
+const gchar *gebr_geoxml_document_get_author(GebrGeoXmlDocument * document);
 
 /**
  * Get the \p document 's author email
@@ -321,8 +300,7 @@ gebr_geoxml_document_get_author(GebrGeoXmlDocument * document);
  *
  * \see gebr_geoxml_document_set_email
  */
-const gchar *
-gebr_geoxml_document_get_email(GebrGeoXmlDocument * document);
+const gchar *gebr_geoxml_document_get_email(GebrGeoXmlDocument * document);
 
 /**
  * Get the \p document 'c creation date
@@ -331,8 +309,7 @@ gebr_geoxml_document_get_email(GebrGeoXmlDocument * document);
  *
  * \see gebr_geoxml_document_set_date_created
  */
-const gchar *
-gebr_geoxml_document_get_date_created(GebrGeoXmlDocument * document);
+const gchar *gebr_geoxml_document_get_date_created(GebrGeoXmlDocument * document);
 
 /**
  * Get the \p document 's last modification date
@@ -341,8 +318,7 @@ gebr_geoxml_document_get_date_created(GebrGeoXmlDocument * document);
  *
  * \see gebr_geoxml_document_set_date_modified
  */
-const gchar *
-gebr_geoxml_document_get_date_modified(GebrGeoXmlDocument * document);
+const gchar *gebr_geoxml_document_get_date_modified(GebrGeoXmlDocument * document);
 
 /**
  * Get a brief description of the document, usually an one line text.
@@ -352,8 +328,7 @@ gebr_geoxml_document_get_date_modified(GebrGeoXmlDocument * document);
  *
  * \see gebr_geoxml_document_set_description
  */
-const gchar *
-gebr_geoxml_document_get_description(GebrGeoXmlDocument * document);
+const gchar *gebr_geoxml_document_get_description(GebrGeoXmlDocument * document);
 
 /**
  * Returns the help associated with this document.
@@ -366,7 +341,6 @@ gebr_geoxml_document_get_description(GebrGeoXmlDocument * document);
  *
  * \see gebr_geoxml_document_set_help
  */
-const gchar *
-gebr_geoxml_document_get_help(GebrGeoXmlDocument * document);
+const gchar *gebr_geoxml_document_get_help(GebrGeoXmlDocument * document);
 
-#endif //__GEBR_GEOXML_DOCUMENT_H
+#endif				//__GEBR_GEOXML_DOCUMENT_H

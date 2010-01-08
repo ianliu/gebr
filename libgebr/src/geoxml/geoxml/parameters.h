@@ -97,8 +97,8 @@ typedef struct gebr_geoxml_parameters GebrGeoXmlParameters;
  *
  * If \p parameters is NULL returns NULL.
  */
-GebrGeoXmlParameter *
-gebr_geoxml_parameters_append_parameter(GebrGeoXmlParameters * parameters, enum GEBR_GEOXML_PARAMETER_TYPE type);
+GebrGeoXmlParameter *gebr_geoxml_parameters_append_parameter(GebrGeoXmlParameters * parameters,
+							     enum GEBR_GEOXML_PARAMETER_TYPE type);
 
 /**
  * Set this \p parameters to be an exclusive group and \p parameter
@@ -110,15 +110,13 @@ gebr_geoxml_parameters_append_parameter(GebrGeoXmlParameters * parameters, enum 
  * \see gebr_geoxml_parameters_get_exclusive
  * gebr_geoxml_parameters_set_selected
  */
-void
-gebr_geoxml_parameters_set_exclusive(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter);
+void gebr_geoxml_parameters_set_exclusive(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter);
 
 /**
  *
  * If \p parameters is NULL returns FALSE.
  */
-GebrGeoXmlParameter *
-gebr_geoxml_parameters_get_exclusive(GebrGeoXmlParameters * parameters);
+GebrGeoXmlParameter *gebr_geoxml_parameters_get_exclusive(GebrGeoXmlParameters * parameters);
 
 /**
  * If \p parameters is a exclusive group (aka has a non-NULL exclusive parameter set)
@@ -126,8 +124,7 @@ gebr_geoxml_parameters_get_exclusive(GebrGeoXmlParameters * parameters);
  *
  * If \p parameters is NULL nothing is done.
  */
-void
-gebr_geoxml_parameters_set_selected(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter);
+void gebr_geoxml_parameters_set_selected(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter);
 
 /**
  * If \p parameters is a exclusive group (aka has a non-NULL exclusive parameter set)
@@ -135,16 +132,14 @@ gebr_geoxml_parameters_set_selected(GebrGeoXmlParameters * parameters, GebrGeoXm
  *
  * If \p parameters is NULL returns NULL.
  */
-GebrGeoXmlParameter *
-gebr_geoxml_parameters_get_selected(GebrGeoXmlParameters * parameters);
+GebrGeoXmlParameter *gebr_geoxml_parameters_get_selected(GebrGeoXmlParameters * parameters);
 
 /**
  * Get the first paramater of \p program.
  *
  * If \p parameters is NULL returns NULL.
  */
-GebrGeoXmlSequence *
-gebr_geoxml_parameters_get_first_parameter(GebrGeoXmlParameters * parameters);
+GebrGeoXmlSequence *gebr_geoxml_parameters_get_first_parameter(GebrGeoXmlParameters * parameters);
 
 /**
  * Get the parameter at \p index
@@ -152,15 +147,15 @@ gebr_geoxml_parameters_get_first_parameter(GebrGeoXmlParameters * parameters);
  *
  */
 int
-gebr_geoxml_parameters_get_parameter(GebrGeoXmlParameters * parameters, GebrGeoXmlSequence ** parameter, gulong index);
+
+ gebr_geoxml_parameters_get_parameter(GebrGeoXmlParameters * parameters, GebrGeoXmlSequence ** parameter, gulong index);
 
 /**
  * Get the number of parameters that \p parameters has.
  *
  * If \p parameters is NULL returns -1.
  */
-glong
-gebr_geoxml_parameters_get_number(GebrGeoXmlParameters * parameters);
+glong gebr_geoxml_parameters_get_number(GebrGeoXmlParameters * parameters);
 
 /**
  * Return TRUE if \p parameters is part of a group
@@ -168,8 +163,7 @@ gebr_geoxml_parameters_get_number(GebrGeoXmlParameters * parameters);
  * If \p parameters is NULL returns FALSE.
  * @see gebr_geoxml_parameters_get_group
  */
-gboolean
-gebr_geoxml_parameters_get_is_in_group(GebrGeoXmlParameters * parameters);
+gboolean gebr_geoxml_parameters_get_is_in_group(GebrGeoXmlParameters * parameters);
 
 /**
  * If \p parameters is in a group, return this group;
@@ -178,14 +172,12 @@ gebr_geoxml_parameters_get_is_in_group(GebrGeoXmlParameters * parameters);
  * If \p parameters is NULL returns NULL.
  * @see gebr_geoxml_parameters_get_is_in_group
  */
-GebrGeoXmlParameterGroup *
-gebr_geoxml_parameters_get_group(GebrGeoXmlParameters * parameters);
+GebrGeoXmlParameterGroup *gebr_geoxml_parameters_get_group(GebrGeoXmlParameters * parameters);
 
 /**
  * Reset \p parameters' values and default values.
  * If \p recursive is true also do it for group (recursively)
  */
-void
-gebr_geoxml_parameters_reset(GebrGeoXmlParameters * parameters, gboolean recursive);
+void gebr_geoxml_parameters_reset(GebrGeoXmlParameters * parameters, gboolean recursive);
 
-#endif //__GEBR_GEOXML_PARAMETERS_H
+#endif				//__GEBR_GEOXML_PARAMETERS_H

@@ -22,8 +22,7 @@
  * \internal
  * Create new parameters element into the end of \p parent
  */
-GebrGeoXmlParameters *
-__gebr_geoxml_parameters_append_new(GdomeElement * parent);
+GebrGeoXmlParameters *__gebr_geoxml_parameters_append_new(GdomeElement * parent);
 
 /**
  * \internal
@@ -32,14 +31,14 @@ __gebr_geoxml_parameters_append_new(GdomeElement * parent);
  * The first instance of a group can be said as the master and the other ones as slaves. The changes made to
  * it is reflected on all others. The slaves can't be changed directly.
  */
-gboolean
-__gebr_geoxml_parameters_group_check(GebrGeoXmlParameters * parameters);
+gboolean __gebr_geoxml_parameters_group_check(GebrGeoXmlParameters * parameters);
 
 /**
  * \internal
  * If \p parameters is in a group, append references of parameter in group instances
  */
 void
-__gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter);
 
-#endif //__GEBR_GEOXML_PARAMETERS_P_H
+ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter);
+
+#endif				//__GEBR_GEOXML_PARAMETERS_P_H

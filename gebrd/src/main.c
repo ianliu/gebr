@@ -27,35 +27,31 @@
 #include "gebrd.h"
 #include "defines.h"
 
-int
-main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
-	gboolean		show_version;
-	GOptionEntry		entries[] = {
+	gboolean show_version;
+	GOptionEntry entries[] = {
 		{"interactive", 'i', 0, G_OPTION_ARG_NONE, &gebrd.options.foreground,
-			_("Run server in interactive mode, not as a daemon"), NULL},
+		 _("Run server in interactive mode, not as a daemon"), NULL},
 		{"version", 0, 0, G_OPTION_ARG_NONE, &show_version,
-			_("Show GeBR daemon version"), NULL},
+		 _("Show GeBR daemon version"), NULL},
 		{NULL}
 	};
-	GError *		error = NULL;
-	GOptionContext *	context;
-
+	GError *error = NULL;
+	GOptionContext *context;
 
 #ifdef ENABLE_NLS
 	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 	textdomain(GETTEXT_PACKAGE);
 #endif
-        setlocale(LC_ALL, "");
+	setlocale(LC_ALL, "");
 
 	context = g_option_context_new(_("GeBR daemon"));
-	g_option_context_set_summary(context,
-		_("")
-	);
-	g_option_context_set_description(context,
-		_("")
-	);
+	g_option_context_set_summary(context, _("")
+	    );
+	g_option_context_set_description(context, _("")
+	    );
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
 	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE) {

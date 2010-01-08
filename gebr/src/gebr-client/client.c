@@ -21,19 +21,18 @@
 #include "gebrclient.h"
 #include "server.h"
 
-gboolean
-client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct server * server)
+gboolean client_parse_server_messages(struct gebr_comm_server *gebr_comm_server, struct server *server)
 {
-	GList *			link;
-	struct gebr_comm_message *	message;
+	GList *link;
+	struct gebr_comm_message *message;
 
 	while ((link = g_list_last(gebr_comm_server->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
 
 		if (message->hash == gebr_comm_protocol_defs.ret_def.hash) {
 			if (gebr_comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.hash) {
-				GList *		arguments;
-				GString *	hostname;
+				GList *arguments;
+				GString *hostname;
 
 				/* organize message data */
 				arguments = gebr_comm_protocol_split_new(message->argument, 1);
@@ -41,17 +40,18 @@ client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct 
 
 				/* say we are logged */
 				gebr_comm_server->protocol->logged = TRUE;
-// 				TODO:
+//                              TODO:
 				g_string_assign(gebr_comm_server->protocol->hostname, hostname->str);
 
 				/* request list of jobs */
-				gebr_comm_protocol_send_data(gebr_comm_server->protocol, gebr_comm_server->stream_socket,
-					gebr_comm_protocol_defs.lst_def, 0);
+				gebr_comm_protocol_send_data(gebr_comm_server->protocol,
+							     gebr_comm_server->stream_socket,
+							     gebr_comm_protocol_defs.lst_def, 0);
 
 				gebr_comm_protocol_split_free(arguments);
 			} else if (gebr_comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.run_def.hash) {
-				GList *		arguments;
-				GString *	jid, *status, * title, * start_date, * issues, * cmd_line, * output;
+				GList *arguments;
+				GString *jid, *status, *title, *start_date, *issues, *cmd_line, *output;
 
 				/* organize message data */
 				arguments = gebr_comm_protocol_split_new(message->argument, 7);
@@ -63,19 +63,20 @@ client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct 
 				cmd_line = g_list_nth_data(arguments, 5);
 				output = g_list_nth_data(arguments, 6);
 
-// 				TODO:
-// 				job = job_add(server, jid, status, title, start_date, NULL,
-// 					NULL, issues, cmd_line, output);
-// 				job_set_active(job);
-// 				gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 3);
+//                              TODO:
+//                              job = job_add(server, jid, status, title, start_date, NULL,
+//                                      NULL, issues, cmd_line, output);
+//                              job_set_active(job);
+//                              gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 3);
 
 				gebr_comm_protocol_split_free(arguments);
 			} else if (gebr_comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.flw_def.hash) {
 
 			}
 		} else if (message->hash == gebr_comm_protocol_defs.job_def.hash) {
-			GList *		arguments;
-			GString *	jid, * hostname, * status, * title, * start_date, * finish_date, * issues, * cmd_line, * output;
+			GList *arguments;
+			GString *jid, *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
+			    *output;
 
 			/* organize message data */
 			arguments = gebr_comm_protocol_split_new(message->argument, 9);
@@ -89,32 +90,32 @@ client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct 
 			cmd_line = g_list_nth_data(arguments, 7);
 			output = g_list_nth_data(arguments, 8);
 
-// 			TODO:
-// 			job = job_find(gebr_comm_server->address, jid);
-// 			if (job == NULL)
-// 				job = job_add(server, jid, status, title, start_date, finish_date,
-// 					hostname, issues, cmd_line, output);
+//                      TODO:
+//                      job = job_find(gebr_comm_server->address, jid);
+//                      if (job == NULL)
+//                              job = job_add(server, jid, status, title, start_date, finish_date,
+//                                      hostname, issues, cmd_line, output);
 
 			gebr_comm_protocol_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.hash) {
-			GList *		arguments;
-			GString *	jid, * output;
+			GList *arguments;
+			GString *jid, *output;
 
 			/* organize message data */
 			arguments = gebr_comm_protocol_split_new(message->argument, 2);
 			jid = g_list_nth_data(arguments, 0);
 			output = g_list_nth_data(arguments, 1);
 
-// 			TODO:
-// 			job = job_find(gebr_comm_server->address, jid);
-// 			if (job != NULL) {
-// 				job_append_output(job, output);
-// 			}
+//                      TODO:
+//                      job = job_find(gebr_comm_server->address, jid);
+//                      if (job != NULL) {
+//                              job_append_output(job, output);
+//                      }
 
 			gebr_comm_protocol_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.fin_def.hash) {
-			GList *		arguments;
-			GString *	jid, * status, * finish_date;
+			GList *arguments;
+			GString *jid, *status, *finish_date;
 
 			/* organize message data */
 			arguments = gebr_comm_protocol_split_new(message->argument, 3);
@@ -122,13 +123,13 @@ client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct 
 			status = g_list_nth_data(arguments, 1);
 			finish_date = g_list_nth_data(arguments, 2);
 
-// 			TODO:
-// 			job = job_find(gebr_comm_server->address, jid);
-// 			if (job != NULL) {
-// 				g_string_assign(job->finish_date, finish_date->str);
-// 				job->status = job_translate_status(status);
-// 				job_update_status(job);
-// 			}
+//                      TODO:
+//                      job = job_find(gebr_comm_server->address, jid);
+//                      if (job != NULL) {
+//                              g_string_assign(job->finish_date, finish_date->str);
+//                              job->status = job_translate_status(status);
+//                              job_update_status(job);
+//                      }
 
 			gebr_comm_protocol_split_free(arguments);
 		} else {
@@ -142,6 +143,6 @@ client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct 
 
 	return TRUE;
 
-err:	gebr_comm_message_free(message);
+ err:	gebr_comm_message_free(message);
 	return FALSE;
 }

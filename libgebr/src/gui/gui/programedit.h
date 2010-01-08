@@ -22,34 +22,33 @@
 
 #include <geoxml.h>
 
-typedef void (*GebrGuiShowHelpCallback)(GtkWidget * button, GebrGeoXmlProgram * program);
+typedef void (*GebrGuiShowHelpCallback) (GtkWidget * button, GebrGeoXmlProgram * program);
 struct gebr_gui_program_edit {
-	GebrGeoXmlProgram *			program;
+	GebrGeoXmlProgram *program;
 
-	GtkWidget *			widget;
-	gpointer			file_gebr_gui_parameter_widget_data;
-	GebrGuiShowHelpCallback	show_help_callback;
-	gboolean			use_default;
+	GtkWidget *widget;
+	gpointer file_gebr_gui_parameter_widget_data;
+	GebrGuiShowHelpCallback show_help_callback;
+	gboolean use_default;
 
-	GtkWidget *			scrolled_window;
-	GtkWidget *			title_label;
-	GtkWidget *			hbox;
+	GtkWidget *scrolled_window;
+	GtkWidget *title_label;
+	GtkWidget *hbox;
 
 	struct gebr_gui_gebr_gui_program_edit_dicts {
-		GebrGeoXmlDocument *	project;
-		GebrGeoXmlDocument *	line;
-		GebrGeoXmlDocument *	flow;
+		GebrGeoXmlDocument *project;
+		GebrGeoXmlDocument *line;
+		GebrGeoXmlDocument *flow;
 	} dicts;
 };
 
-struct gebr_gui_program_edit *
-gebr_gui_gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer file_gebr_gui_parameter_widget_data,
-GebrGuiShowHelpCallback show_help_callback, gboolean use_default);
+struct gebr_gui_program_edit *gebr_gui_gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
+								      gpointer file_gebr_gui_parameter_widget_data,
+								      GebrGuiShowHelpCallback show_help_callback,
+								      gboolean use_default);
 
-void
-gebr_gui_gebr_gui_program_edit_destroy(struct gebr_gui_program_edit * program_edit);
+void gebr_gui_gebr_gui_program_edit_destroy(struct gebr_gui_program_edit *program_edit);
 
-void
-gebr_gui_gebr_gui_program_edit_reload(struct gebr_gui_program_edit * program_edit, GebrGeoXmlProgram * program);
+void gebr_gui_gebr_gui_program_edit_reload(struct gebr_gui_program_edit *program_edit, GebrGeoXmlProgram * program);
 
-#endif //__GEBR_GUI_PROGRAM_EDIT_H
+#endif				//__GEBR_GUI_PROGRAM_EDIT_H

@@ -27,9 +27,9 @@
 #include <gtk/gtkentry.h>
 #include <gtk/gtkimage.h>
 
-typedef struct _SexyIconEntry      SexyIconEntry;
+typedef struct _SexyIconEntry SexyIconEntry;
 typedef struct _SexyIconEntryClass SexyIconEntryClass;
-typedef struct _SexyIconEntryPriv  SexyIconEntryPriv;
+typedef struct _SexyIconEntryPriv SexyIconEntryPriv;
 
 #define SEXY_TYPE_ICON_ENTRY (sexy_icon_entry_get_type())
 #define SEXY_ICON_ENTRY(obj) \
@@ -48,53 +48,42 @@ typedef enum {
 	GTK_ENTRY_ICON_SECONDARY
 } GtkEntryIconPosition;
 
-struct _SexyIconEntry
-{
+struct _SexyIconEntry {
 	GtkEntry parent_object;
 
 	SexyIconEntryPriv *priv;
 
-	void (*gtk_reserved1)(void);
-	void (*gtk_reserved2)(void);
-	void (*gtk_reserved3)(void);
-	void (*gtk_reserved4)(void);
+	void (*gtk_reserved1) (void);
+	void (*gtk_reserved2) (void);
+	void (*gtk_reserved3) (void);
+	void (*gtk_reserved4) (void);
 };
 
-struct _SexyIconEntryClass
-{
+struct _SexyIconEntryClass {
 	GtkEntryClass parent_class;
 
 	/* Signals */
-	void (*icon_press)(SexyIconEntry *entry, GtkEntryIconPosition icon_pos, GdkEvent *event);
+	void (*icon_press) (SexyIconEntry * entry, GtkEntryIconPosition icon_pos, GdkEvent * event);
 
-	void (*gtk_reserved1)(void);
-	void (*gtk_reserved2)(void);
-	void (*gtk_reserved3)(void);
-	void (*gtk_reserved4)(void);
+	void (*gtk_reserved1) (void);
+	void (*gtk_reserved2) (void);
+	void (*gtk_reserved3) (void);
+	void (*gtk_reserved4) (void);
 };
 
-G_BEGIN_DECLS
-
-GType sexy_icon_entry_get_type(void);
+G_BEGIN_DECLS GType sexy_icon_entry_get_type(void);
 
 GtkWidget *sexy_icon_entry_new(void);
 
-void sexy_icon_entry_set_icon(SexyIconEntry *entry,
-							  GtkEntryIconPosition position,
-							  GtkImage *icon);
+void sexy_icon_entry_set_icon(SexyIconEntry * entry, GtkEntryIconPosition position, GtkImage * icon);
 
-void sexy_icon_entry_set_icon_highlight(SexyIconEntry *entry,
-										GtkEntryIconPosition position,
-										gboolean highlight);
+void sexy_icon_entry_set_icon_highlight(SexyIconEntry * entry, GtkEntryIconPosition position, gboolean highlight);
 
-GtkImage *sexy_icon_entry_get_icon(const SexyIconEntry *entry,
-								   GtkEntryIconPosition position);
+GtkImage *sexy_icon_entry_get_icon(const SexyIconEntry * entry, GtkEntryIconPosition position);
 
-gboolean sexy_icon_entry_get_icon_highlight(const SexyIconEntry *entry,
-											GtkEntryIconPosition position);
-void sexy_icon_entry_add_clear_button(SexyIconEntry *icon_entry);
+gboolean sexy_icon_entry_get_icon_highlight(const SexyIconEntry * entry, GtkEntryIconPosition position);
+void sexy_icon_entry_add_clear_button(SexyIconEntry * icon_entry);
 
 G_END_DECLS
-
-#endif // !GTK_CHECK_VERSION(2,16,0)
-#endif /* _SEXY_ICON_ENTRY_H_ */
+#endif				// !GTK_CHECK_VERSION(2,16,0)
+#endif				/* _SEXY_ICON_ENTRY_H_ */

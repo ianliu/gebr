@@ -39,7 +39,7 @@
 
 #define BUFFER_SIZE 1024
 
-gchar * unable_to_write_help_error = N_("Unable to write help in temporary file");
+gchar *unable_to_write_help_error = N_("Unable to write help in temporary file");
 
 /*
  * Section: Public
@@ -49,17 +49,16 @@ gchar * unable_to_write_help_error = N_("Unable to write help in temporary file"
 /*
  * Function: program_help_show
  */
-void
-program_help_show(void)
+void program_help_show(void)
 {
-	GString *		help;
+	GString *help;
 
 	if (!flow_edition_get_selected_component(NULL, TRUE))
 		return;
 
 	help = menu_get_help_from_program_ref(gebr.program);
 	help_show(help->str, _("Program help"));
-	
+
 	g_string_free(help, TRUE);
 }
 
@@ -67,24 +66,23 @@ program_help_show(void)
  * Function: help_show
  * Open user's browser with _help_
  */
-void
-help_show(const gchar * help, const gchar * title)
+void help_show(const gchar * help, const gchar * title)
 {
-	GString *	prepared_html;
-	FILE *		html_fp;
-	GString *	html_path;
+	GString *prepared_html;
+	FILE *html_fp;
+	GString *html_path;
 
 	/* initialization */
 	prepared_html = g_string_new(NULL);
 	/* Gambiarra */
 	{
-		gchar *	gebrcsspos;
-		int	pos;
+		gchar *gebrcsspos;
+		int pos;
 
 		g_string_assign(prepared_html, help);
 
 		if ((gebrcsspos = strstr(prepared_html->str, "gebr.css")) != NULL) {
-			pos = (gebrcsspos - prepared_html->str)/sizeof(char);
+			pos = (gebrcsspos - prepared_html->str) / sizeof(char);
 			g_string_erase(prepared_html, pos, 8);
 			g_string_insert(prepared_html, pos, "file://" GEBR_DATA_DIR "/gebr.css");
 		}
@@ -113,35 +111,32 @@ help_show(const gchar * help, const gchar * title)
 	gebr_gui_help_show(html_path->str, gebr.config.browser->str);
 
 	/* frees */
-out:	g_string_free(html_path, FALSE);
+ out:	g_string_free(html_path, FALSE);
 	g_string_free(prepared_html, TRUE);
 }
 
 /*
 Help show
 */
-	
-void 
-help_show_callback(GtkButton *button, GebrGeoXmlDocument *document)
+
+void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document)
 {
-	help_show(gebr_geoxml_document_get_help(document),
-		gebr_geoxml_document_get_title(document));
-}	
+	help_show(gebr_geoxml_document_get_help(document), gebr_geoxml_document_get_title(document));
+}
 
 /* Function: help_edit
  * Edit help in editor.
  *
  * Edit help in editor as reponse to button clicks.
  */
-void
-help_edit(GtkButton * button, GebrGeoXmlDocument * document)
+void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 {
-	FILE *		html_fp;
-	GString *	html_path;
+	FILE *html_fp;
+	GString *html_path;
 
-	gchar		buffer[BUFFER_SIZE];
-	GString *	help;
-	GString *	cmd_line;
+	gchar buffer[BUFFER_SIZE];
+	GString *help;
+	GString *cmd_line;
 
 	/* Check for editor */
 	if (!gebr.config.editor->len) {
@@ -183,10 +178,10 @@ help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 
 	/* ensure UTF-8 encoding */
 	if (g_utf8_validate(help->str, -1, NULL) == FALSE) {
-		gchar *		converted;
-		gsize		bytes_read;
-		gsize		bytes_written;
-		GError *	error;
+		gchar *converted;
+		gsize bytes_read;
+		gsize bytes_written;
+		GError *error;
 
 		error = NULL;
 		converted = g_locale_to_utf8(help->str, -1, &bytes_read, &bytes_written, &error);
@@ -205,7 +200,7 @@ help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 	gebr_geoxml_document_set_help(document, help->str);
 
 	/* frees */
-out:	g_string_free(html_path, TRUE);
+ out:	g_string_free(html_path, TRUE);
 	g_string_free(cmd_line, TRUE);
 	g_string_free(help, TRUE);
 }

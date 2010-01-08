@@ -24,9 +24,7 @@
 
 #include "gsocketaddress.h"
 
-G_BEGIN_DECLS
-
-typedef struct _GebrCommHostInfo	GebrCommHostInfo;
+G_BEGIN_DECLS typedef struct _GebrCommHostInfo GebrCommHostInfo;
 
 enum GebrCommHostInfoError {
 	GEBR_COMM_HOST_INFO_ERROR_NONE = 0,
@@ -37,33 +35,25 @@ enum GebrCommHostInfoError {
 };
 
 struct _GebrCommHostInfo {
-	enum GebrCommHostInfoError	error;
-	GList *			addresses;
+	enum GebrCommHostInfoError error;
+	GList *addresses;
 };
 
-typedef void (*GebrCommHostInfoFunc)(GebrCommHostInfo * host_info, gpointer user_data);
+typedef void (*GebrCommHostInfoFunc) (GebrCommHostInfo * host_info, gpointer user_data);
 
-void
-gebr_comm_host_info_lookup(GString * hostname, GebrCommHostInfoFunc callback, gpointer user_data);
+void gebr_comm_host_info_lookup(GString * hostname, GebrCommHostInfoFunc callback, gpointer user_data);
 
-void
-gebr_comm_host_info_free(GebrCommHostInfo * host_info);
+void gebr_comm_host_info_free(GebrCommHostInfo * host_info);
 
-enum GebrCommHostInfoError
-gebr_comm_host_info_error(GebrCommHostInfo * host_info);
+enum GebrCommHostInfoError gebr_comm_host_info_error(GebrCommHostInfo * host_info);
 
-GList *
-gebr_comm_host_info_addesses(GebrCommHostInfo * host_info);
+GList *gebr_comm_host_info_addesses(GebrCommHostInfo * host_info);
 
-GebrCommSocketAddress *
-gebr_comm_host_info_first_address(GebrCommHostInfo * host_info);
+GebrCommSocketAddress *gebr_comm_host_info_first_address(GebrCommHostInfo * host_info);
 
-GebrCommHostInfo *
-gebr_comm_host_info_lookup_blocking(GString * hostname);
+GebrCommHostInfo *gebr_comm_host_info_lookup_blocking(GString * hostname);
 
-GebrCommHostInfo *
-gebr_comm_host_info_lookup_local(void);
+GebrCommHostInfo *gebr_comm_host_info_lookup_local(void);
 
 G_END_DECLS
-
-#endif //__GEBR_COMM_HOST_INFO_H
+#endif				//__GEBR_COMM_HOST_INFO_H

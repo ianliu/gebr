@@ -20,13 +20,10 @@
 
 #include <glib.h>
 
-gchar *
-gebr_iso_date(void);
+gchar *gebr_iso_date(void);
 
-const gchar *
-gebr_localized_date(const gchar * iso_date);
+const gchar *gebr_localized_date(const gchar * iso_date);
 
-GTimeVal
-gebr_iso_date_to_g_time_val(const gchar * iso_date);
+GTimeVal gebr_iso_date_to_g_time_val(const gchar * iso_date);
 
-#endif //__GEBR_DATE_H
+#endif				//__GEBR_DATE_H

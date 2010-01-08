@@ -33,8 +33,7 @@
  * Prototypes
  */
 
-static void
-__gebr_comm_process_stop_state(GebrCommProcess * process);
+static void __gebr_comm_process_stop_state(GebrCommProcess * process);
 
 /*
  * gobject stuff
@@ -48,35 +47,18 @@ enum {
 };
 static guint object_signals[LAST_SIGNAL];
 
-static void
-gebr_comm_process_class_init(GebrCommProcessClass * class)
+static void gebr_comm_process_class_init(GebrCommProcessClass * class)
 {
 	/* signals */
-	object_signals[READY_READ_STDOUT] = g_signal_new("ready-read-stdout",
-		GEBR_COMM_PROCESS_TYPE,
-		(GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-		G_STRUCT_OFFSET (GebrCommProcessClass, ready_read_stdout),
-		NULL, NULL, /* acumulators */
-		g_cclosure_marshal_VOID__VOID,
-		G_TYPE_NONE, 0);
-	object_signals[READY_READ_STDERR] = g_signal_new("ready-read-stderr",
-		GEBR_COMM_PROCESS_TYPE,
-		(GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-		G_STRUCT_OFFSET (GebrCommProcessClass, ready_read_stderr),
-		NULL, NULL, /* acumulators */
-		g_cclosure_marshal_VOID__VOID,
-		G_TYPE_NONE, 0);
-	object_signals[FINISHED] = g_signal_new("finished",
-		GEBR_COMM_PROCESS_TYPE,
-		(GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-		G_STRUCT_OFFSET (GebrCommProcessClass, finished),
-		NULL, NULL, /* acumulators */
-		g_cclosure_marshal_VOID__VOID,
-		G_TYPE_NONE, 0);
+	object_signals[READY_READ_STDOUT] = g_signal_new("ready-read-stdout", GEBR_COMM_PROCESS_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommProcessClass, ready_read_stdout), NULL, NULL,	/* acumulators */
+							 g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	object_signals[READY_READ_STDERR] = g_signal_new("ready-read-stderr", GEBR_COMM_PROCESS_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommProcessClass, ready_read_stderr), NULL, NULL,	/* acumulators */
+							 g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	object_signals[FINISHED] = g_signal_new("finished", GEBR_COMM_PROCESS_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommProcessClass, finished), NULL, NULL,	/* acumulators */
+						g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
-static void
-gebr_comm_process_init(GebrCommProcess * process)
+static void gebr_comm_process_init(GebrCommProcess * process)
 {
 	__gebr_comm_process_stop_state(process);
 	process->stdin_io_channel = NULL;
@@ -89,12 +71,10 @@ G_DEFINE_TYPE(GebrCommProcess, gebr_comm_process, G_TYPE_OBJECT)
 /*
  * internal functions
  */
-
-static void
-__gebr_comm_process_io_channel_free(GIOChannel ** io_channel)
+static void __gebr_comm_process_io_channel_free(GIOChannel ** io_channel)
 {
 	if (*io_channel != NULL) {
-		GError *	error;
+		GError *error;
 
 		error = NULL;
 		g_io_channel_shutdown(*io_channel, TRUE, &error);
@@ -103,8 +83,7 @@ __gebr_comm_process_io_channel_free(GIOChannel ** io_channel)
 	}
 }
 
-static void
-__gebr_comm_process_free(GebrCommProcess * process)
+static void __gebr_comm_process_free(GebrCommProcess * process)
 {
 	if (process->stdout_watch_id) {
 		if (gebr_comm_process_stdout_bytes_available(process))
@@ -123,8 +102,7 @@ __gebr_comm_process_free(GebrCommProcess * process)
 	__gebr_comm_process_io_channel_free(&process->stderr_io_channel);
 }
 
-static void
-__gebr_comm_process_stop_state(GebrCommProcess * process)
+static void __gebr_comm_process_stop_state(GebrCommProcess * process)
 {
 	process->pid = 0;
 	process->is_running = FALSE;
@@ -157,7 +135,7 @@ static gboolean
 __gebr_comm_process_read_stderr_watch(GIOChannel * source, GIOCondition condition, GebrCommProcess * process)
 {
 	if (gebr_comm_process_stderr_bytes_available(process) && (condition & G_IO_HUP))
-	        g_signal_emit(process, object_signals[READY_READ_STDERR], 0);
+		g_signal_emit(process, object_signals[READY_READ_STDERR], 0);
 
 	if (condition & G_IO_NVAL) {
 		/* probably a fd change */
@@ -176,8 +154,7 @@ __gebr_comm_process_read_stderr_watch(GIOChannel * source, GIOCondition conditio
 	return TRUE;
 }
 
-static void
-__gebr_comm_process_finished_watch(GPid pid, gint status, GebrCommProcess * process)
+static void __gebr_comm_process_finished_watch(GPid pid, gint status, GebrCommProcess * process)
 {
 	__gebr_comm_process_free(process);
 	__gebr_comm_process_stop_state(process);
@@ -185,12 +162,11 @@ __gebr_comm_process_finished_watch(GPid pid, gint status, GebrCommProcess * proc
 	g_signal_emit(process, object_signals[FINISHED], 0);
 }
 
-static GByteArray *
-__gebr_comm_process_read(GIOChannel * io_channel, gsize max_size)
+static GByteArray *__gebr_comm_process_read(GIOChannel * io_channel, gsize max_size)
 {
-	guint8		buffer[max_size];
-	ssize_t		read_bytes;
-	GByteArray *	byte_array;
+	guint8 buffer[max_size];
+	ssize_t read_bytes;
+	GByteArray *byte_array;
 
 	read_bytes = read(g_io_channel_unix_get_fd(io_channel), buffer, max_size);
 	if (read_bytes == -1)
@@ -202,12 +178,11 @@ __gebr_comm_process_read(GIOChannel * io_channel, gsize max_size)
 	return byte_array;
 }
 
-static GString *
-__gebr_comm_process_read_string(GIOChannel * io_channel, gsize max_size)
+static GString *__gebr_comm_process_read_string(GIOChannel * io_channel, gsize max_size)
 {
-	gchar		buffer[max_size+1];
-	ssize_t		read_bytes;
-	GString *	string;
+	gchar buffer[max_size + 1];
+	ssize_t read_bytes;
+	GString *string;
 
 	read_bytes = read(g_io_channel_unix_get_fd(io_channel), buffer, max_size);
 	if (read_bytes == -1)
@@ -224,20 +199,16 @@ __gebr_comm_process_read_string(GIOChannel * io_channel, gsize max_size)
  * private functions
  */
 
-
-
 /*
  * user functions
  */
 
-GebrCommProcess *
-gebr_comm_process_new(void)
+GebrCommProcess *gebr_comm_process_new(void)
 {
-	return (GebrCommProcess*)g_object_new(GEBR_COMM_PROCESS_TYPE, NULL);
+	return (GebrCommProcess *) g_object_new(GEBR_COMM_PROCESS_TYPE, NULL);
 }
 
-void
-gebr_comm_process_free(GebrCommProcess * process)
+void gebr_comm_process_free(GebrCommProcess * process)
 {
 	if (process->is_running)
 		gebr_comm_process_kill(process);
@@ -245,21 +216,19 @@ gebr_comm_process_free(GebrCommProcess * process)
 	g_object_unref(G_OBJECT(process));
 }
 
-gboolean
-gebr_comm_process_is_running(GebrCommProcess * process)
+gboolean gebr_comm_process_is_running(GebrCommProcess * process)
 {
 	return process->is_running;
 }
 
-gboolean
-gebr_comm_process_start(GebrCommProcess * process, GString * cmd_line)
+gboolean gebr_comm_process_start(GebrCommProcess * process, GString * cmd_line)
 {
-	gboolean	ret;
-	gchar **	argv;
-	gint		argc;
-	gint		stdin_fd, stdout_fd, stderr_fd;
-	int		stdin_pipe[2], stdout_pipe[2], stderr_pipe[2];
-	GError *	error;
+	gboolean ret;
+	gchar **argv;
+	gint argc;
+	gint stdin_fd, stdout_fd, stderr_fd;
+	int stdin_pipe[2], stdout_pipe[2], stderr_pipe[2];
+	GError *error;
 
 	/* initialization */
 	__gebr_comm_process_free(process);
@@ -294,26 +263,26 @@ gebr_comm_process_start(GebrCommProcess * process, GString * cmd_line)
 	stderr_fd = stderr_pipe[0];
 
 	process->is_running = TRUE;
-	process->finish_watch_id = g_child_watch_add(
-		process->pid, (GChildWatchFunc)__gebr_comm_process_finished_watch, process);
+	process->finish_watch_id =
+	    g_child_watch_add(process->pid, (GChildWatchFunc) __gebr_comm_process_finished_watch, process);
 	/* create io channels */
 	process->stdin_io_channel = g_io_channel_unix_new(stdin_fd);
 	process->stdout_io_channel = g_io_channel_unix_new(stdout_fd);
 	process->stderr_io_channel = g_io_channel_unix_new(stderr_fd);
 	/* watches */
 	process->stdout_watch_id = g_io_add_watch(process->stdout_io_channel,
-		G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
-		(GIOFunc)__gebr_comm_process_read_stdout_watch, process);
+						  G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
+						  (GIOFunc) __gebr_comm_process_read_stdout_watch, process);
 	process->stderr_watch_id = g_io_add_watch(process->stderr_io_channel,
-		G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
-		(GIOFunc)__gebr_comm_process_read_stderr_watch, process);
+						  G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
+						  (GIOFunc) __gebr_comm_process_read_stderr_watch, process);
 	/* nonblock operations */
 	g_io_channel_set_flags(process->stdin_io_channel,
-		g_io_channel_get_flags(process->stdin_io_channel) | G_IO_FLAG_NONBLOCK, &error);
+			       g_io_channel_get_flags(process->stdin_io_channel) | G_IO_FLAG_NONBLOCK, &error);
 	g_io_channel_set_flags(process->stdout_io_channel,
-		g_io_channel_get_flags(process->stdout_io_channel) | G_IO_FLAG_NONBLOCK, &error);
+			       g_io_channel_get_flags(process->stdout_io_channel) | G_IO_FLAG_NONBLOCK, &error);
 	g_io_channel_set_flags(process->stderr_io_channel,
-		g_io_channel_get_flags(process->stderr_io_channel) | G_IO_FLAG_NONBLOCK, &error);
+			       g_io_channel_get_flags(process->stderr_io_channel) | G_IO_FLAG_NONBLOCK, &error);
 
 	/* there is already something available now? */
 	if (gebr_comm_process_stdout_bytes_available(process))
@@ -322,149 +291,126 @@ gebr_comm_process_start(GebrCommProcess * process, GString * cmd_line)
 		g_signal_emit(process, object_signals[READY_READ_STDERR], 0);
 
 	ret = TRUE;
-out:	g_strfreev(argv);
+ out:	g_strfreev(argv);
 	return ret;
 }
 
-GPid
-gebr_comm_process_get_pid(GebrCommProcess * process)
+GPid gebr_comm_process_get_pid(GebrCommProcess * process)
 {
 	return process->pid;
 }
 
-void
-gebr_comm_process_kill(GebrCommProcess * process)
+void gebr_comm_process_kill(GebrCommProcess * process)
 {
 	if (!process->pid)
 		return;
 	killpg(process->pid, SIGKILL);
 }
 
-void
-gebr_comm_process_terminate(GebrCommProcess * process)
+void gebr_comm_process_terminate(GebrCommProcess * process)
 {
 	if (!process->pid)
 		return;
 	killpg(process->pid, SIGTERM);
 }
 
-void
-gebr_comm_process_close_stdin(GebrCommProcess * process)
+void gebr_comm_process_close_stdin(GebrCommProcess * process)
 {
 	if (process->is_running == FALSE)
 		return;
 	__gebr_comm_process_io_channel_free(&process->stdin_io_channel);
 }
 
-gulong
-gebr_comm_process_stdout_bytes_available(GebrCommProcess * process)
+gulong gebr_comm_process_stdout_bytes_available(GebrCommProcess * process)
 {
 	/* Adapted from QNativeProcessEnginePrivate::nativeBytesAvailable()
 	 * (qnativeprocessengine_unix.cpp:528 of Qt 4.3.0)
 	 */
-	size_t	nbytes = 0;
-	gulong	available = 0;
+	size_t nbytes = 0;
+	gulong available = 0;
 
-	if (ioctl(g_io_channel_unix_get_fd(process->stdout_io_channel), FIONREAD, (char *) &nbytes) >= 0)
-		available = (gulong)*((int *)&nbytes);
+	if (ioctl(g_io_channel_unix_get_fd(process->stdout_io_channel), FIONREAD, (char *)&nbytes) >= 0)
+		available = (gulong) * ((int *)&nbytes);
 
 	return available;
 }
 
-gulong
-gebr_comm_process_stderr_bytes_available(GebrCommProcess * process)
+gulong gebr_comm_process_stderr_bytes_available(GebrCommProcess * process)
 {
 	/* Adapted from QNativeProcessEnginePrivate::nativeBytesAvailable()
 	 * (qnativeprocessengine_unix.cpp:528 of Qt 4.3.0)
 	 */
-	size_t	nbytes = 0;
-	gulong	available = 0;
+	size_t nbytes = 0;
+	gulong available = 0;
 
-	if (ioctl(g_io_channel_unix_get_fd(process->stderr_io_channel), FIONREAD, (char *) &nbytes) >= 0)
-		available = (gulong)*((int *)&nbytes);
+	if (ioctl(g_io_channel_unix_get_fd(process->stderr_io_channel), FIONREAD, (char *)&nbytes) >= 0)
+		available = (gulong) * ((int *)&nbytes);
 
 	return available;
 }
 
-GByteArray *
-gebr_comm_process_read_stdout(GebrCommProcess * process, gsize max_size)
+GByteArray *gebr_comm_process_read_stdout(GebrCommProcess * process, gsize max_size)
 {
 	return __gebr_comm_process_read(process->stdout_io_channel, max_size);
 }
 
-GString *
-gebr_comm_process_read_stdout_string(GebrCommProcess * process, gsize max_size)
+GString *gebr_comm_process_read_stdout_string(GebrCommProcess * process, gsize max_size)
 {
 	return __gebr_comm_process_read_string(process->stdout_io_channel, max_size);
 }
 
-GByteArray *
-gebr_comm_process_read_stdout_all(GebrCommProcess * process)
+GByteArray *gebr_comm_process_read_stdout_all(GebrCommProcess * process)
 {
 	/* trick for lazyness */
-	return gebr_comm_process_read_stdout(
-		process, gebr_comm_process_stdout_bytes_available(process));
+	return gebr_comm_process_read_stdout(process, gebr_comm_process_stdout_bytes_available(process));
 }
 
-GString *
-gebr_comm_process_read_stdout_string_all(GebrCommProcess * process)
+GString *gebr_comm_process_read_stdout_string_all(GebrCommProcess * process)
 {
 	/* trick for lazyness */
-	return gebr_comm_process_read_stdout_string(
-		process, gebr_comm_process_stdout_bytes_available(process));
+	return gebr_comm_process_read_stdout_string(process, gebr_comm_process_stdout_bytes_available(process));
 }
 
-GByteArray *
-gebr_comm_process_read_stderr(GebrCommProcess * process, gsize max_size)
+GByteArray *gebr_comm_process_read_stderr(GebrCommProcess * process, gsize max_size)
 {
 	return __gebr_comm_process_read(process->stderr_io_channel, max_size);
 }
 
-GString *
-gebr_comm_process_read_stderr_string(GebrCommProcess * process, gsize max_size)
+GString *gebr_comm_process_read_stderr_string(GebrCommProcess * process, gsize max_size)
 {
 	return __gebr_comm_process_read_string(process->stderr_io_channel, max_size);
 }
 
-GByteArray *
-gebr_comm_process_read_stderr_all(GebrCommProcess * process)
+GByteArray *gebr_comm_process_read_stderr_all(GebrCommProcess * process)
 {
 	/* trick for lazyness */
-	return gebr_comm_process_read_stderr(
-		process, gebr_comm_process_stderr_bytes_available(process));
+	return gebr_comm_process_read_stderr(process, gebr_comm_process_stderr_bytes_available(process));
 }
 
-GString *
-gebr_comm_process_read_stderr_string_all(GebrCommProcess * process)
+GString *gebr_comm_process_read_stderr_string_all(GebrCommProcess * process)
 {
 	/* trick for lazyness */
-	return gebr_comm_process_read_stderr_string(
-		process, gebr_comm_process_stderr_bytes_available(process));
+	return gebr_comm_process_read_stderr_string(process, gebr_comm_process_stderr_bytes_available(process));
 }
 
-gsize
-gebr_comm_process_write_stdin(GebrCommProcess * process, GByteArray * byte_array)
+gsize gebr_comm_process_write_stdin(GebrCommProcess * process, GByteArray * byte_array)
 {
-	ssize_t	written_bytes;
+	ssize_t written_bytes;
 
-	written_bytes = write(g_io_channel_unix_get_fd(process->stdin_io_channel),
-		byte_array->data, byte_array->len);
+	written_bytes = write(g_io_channel_unix_get_fd(process->stdin_io_channel), byte_array->data, byte_array->len);
 	if (written_bytes == -1)
 		return 0;
 
 	return written_bytes;
 }
 
-gsize
-gebr_comm_process_write_stdin_string(GebrCommProcess * process, GString * string)
+gsize gebr_comm_process_write_stdin_string(GebrCommProcess * process, GString * string)
 {
-	GByteArray	byte_array;
-	ssize_t		written_bytes;
+	GByteArray byte_array;
+	ssize_t written_bytes;
 
 	byte_array = (GByteArray) {
-		.data = (guint8*)string->str,
-		.len = string->len
-	};
+	.data = (guint8 *) string->str,.len = string->len};
 	written_bytes = gebr_comm_process_write_stdin(process, &byte_array);
 
 	return written_bytes;

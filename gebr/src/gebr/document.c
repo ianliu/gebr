@@ -36,27 +36,26 @@
  * Create a new document in the user's data diretory
  * with _type_ and set its filename.
  */
-GebrGeoXmlDocument *
-document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
+GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
 {
-	gchar *			extension;
-	GString *		filename;
+	gchar *extension;
+	GString *filename;
 
-	GebrGeoXmlDocument *	document;
-	GebrGeoXmlDocument *	(*new_func)();
+	GebrGeoXmlDocument *document;
+	GebrGeoXmlDocument *(*new_func) ();
 
 	switch (type) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
 		extension = "flw";
-		new_func = (typeof(new_func))gebr_geoxml_flow_new;
+		new_func = (typeof(new_func)) gebr_geoxml_flow_new;
 		break;
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
 		extension = "lne";
-		new_func = (typeof(new_func))gebr_geoxml_line_new;
+		new_func = (typeof(new_func)) gebr_geoxml_line_new;
 		break;
 	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
 		extension = "prj";
-		new_func = (typeof(new_func))gebr_geoxml_project_new;
+		new_func = (typeof(new_func)) gebr_geoxml_project_new;
 		break;
 	default:
 		return NULL;
@@ -80,11 +79,10 @@ document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
  * Function: document_load
  * Load a document (flow, line or project) from its filename, handling errors
  */
-GebrGeoXmlDocument *
-document_load(const gchar * filename)
+GebrGeoXmlDocument *document_load(const gchar * filename)
 {
-	GebrGeoXmlDocument *	document;
-	GString *		path;
+	GebrGeoXmlDocument *document;
+	GString *path;
 
 	path = document_get_path(filename);
 	document = document_load_path(path->str);
@@ -97,11 +95,10 @@ document_load(const gchar * filename)
  * Function: document_load_at
  * Load a document (flow, line or project) from its filename, handling errors
  */
-GebrGeoXmlDocument *
-document_load_at(const gchar * filename, const gchar * directory)
+GebrGeoXmlDocument *document_load_at(const gchar * filename, const gchar * directory)
 {
-	GebrGeoXmlDocument *	document;
-	GString *		path;
+	GebrGeoXmlDocument *document;
+	GString *path;
 
 	path = g_string_new("");
 	g_string_printf(path, "%s/%s", directory, filename);
@@ -115,15 +112,14 @@ document_load_at(const gchar * filename, const gchar * directory)
  * Function: document_load_path
  * Load a document from its path, handling errors
  */
-GebrGeoXmlDocument *
-document_load_path(const gchar * path)
+GebrGeoXmlDocument *document_load_path(const gchar * path)
 {
-	GebrGeoXmlDocument *	document;
-	int			ret;
+	GebrGeoXmlDocument *document;
+	int ret;
 
 	if ((ret = gebr_geoxml_document_load(&document, path)) < 0)
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load document at %s: %s"), path,
-			gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
+			     gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 
 	return document;
 }
@@ -132,10 +128,9 @@ document_load_path(const gchar * path)
  * Function: document_save
  * Save _document_ using its filename field at data directory.
  */
-void
-document_save(GebrGeoXmlDocument * document)
+void document_save(GebrGeoXmlDocument * document)
 {
-	GString *	path;
+	GString *path;
 
 	/* get today's date */
 	gebr_geoxml_document_set_date_modified(document, gebr_iso_date());
@@ -151,12 +146,11 @@ document_save(GebrGeoXmlDocument * document)
  * Function: document_import
  * Import _document_ into data directory, saving it with a new filename.
  */
-void
-document_import(GebrGeoXmlDocument * document)
+void document_import(GebrGeoXmlDocument * document)
 {
-	GString *	path;
-	GString *	new_filename;
-	const gchar *	extension;
+	GString *path;
+	GString *new_filename;
+	const gchar *extension;
 
 	switch (gebr_geoxml_document_get_type(document)) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
@@ -189,17 +183,16 @@ document_import(GebrGeoXmlDocument * document)
  * Creates a filename for a document using the current date and a random
  * generated string and _extension_, ensuring that it is unique in user's data directory.
  */
-GString *
-document_assembly_filename(const gchar * extension)
+GString *document_assembly_filename(const gchar * extension)
 {
-	time_t 		t;
-	struct tm *	lt;
-	gchar		date[21];
+	time_t t;
+	struct tm *lt;
+	gchar date[21];
 
-	GString *	filename;
-	GString *	path;
-	GString *	aux;
-	gchar *		basename;
+	GString *filename;
+	GString *path;
+	GString *aux;
+	gchar *basename;
 
 	/* initialization */
 	filename = g_string_new(NULL);
@@ -230,10 +223,9 @@ document_assembly_filename(const gchar * extension)
  * Function: document_get_path
  * Prefix filename with data diretory path
  */
-GString *
-document_get_path(const gchar * filename)
+GString *document_get_path(const gchar * filename)
 {
-	GString *	path;
+	GString *path;
 
 	path = g_string_new(NULL);
 	g_string_printf(path, "%s/%s", gebr.config.data->str, filename);
@@ -245,10 +237,9 @@ document_get_path(const gchar * filename)
  * Function: document_delete
  * Delete document with _filename_ from data directory.
  */
-void
-document_delete(const gchar * filename)
+void document_delete(const gchar * filename)
 {
-	GString *	path;
+	GString *path;
 
 	path = document_get_path(filename);
 	g_unlink(path->str);

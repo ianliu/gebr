@@ -23,50 +23,34 @@
 
 #include <glib.h>
 
-void
-gebr_g_string_replace(GString * string, const gchar * oldtext, const gchar * newtext);
-void
-gebr_g_string_replace_first_ref(GString * string, const gchar * oldtext, const gchar * newtext);
-gboolean
-gebr_g_string_starts_with(GString * string, const gchar * val);
-gboolean
-gebr_g_string_ends_with(GString * string, const gchar * val);
+void gebr_g_string_replace(GString * string, const gchar * oldtext, const gchar * newtext);
+void gebr_g_string_replace_first_ref(GString * string, const gchar * oldtext, const gchar * newtext);
+gboolean gebr_g_string_starts_with(GString * string, const gchar * val);
+gboolean gebr_g_string_ends_with(GString * string, const gchar * val);
 
-void
-gebr_append_filename_extension(GString * filename, const gchar * extension);
+void gebr_append_filename_extension(GString * filename, const gchar * extension);
 
-gboolean
-gebr_path_use_home_variable(GString * path);
-gboolean
-gebr_path_resolve_home_variable(GString * path);
+gboolean gebr_path_use_home_variable(GString * path);
+gboolean gebr_path_resolve_home_variable(GString * path);
 
-GString *
-gebr_temp_directory_create(void);
-void
-gebr_temp_directory_destroy(GString * path);
+GString *gebr_temp_directory_create(void);
+void gebr_temp_directory_destroy(GString * path);
 
-GString *
-gebr_make_unique_filename(const gchar * template);
-GString *
-gebr_make_temp_filename(const gchar * template);
+GString *gebr_make_unique_filename(const gchar * template);
+GString *gebr_make_temp_filename(const gchar * template);
 
-int
-gebr_home_mode(void);
+int gebr_home_mode(void);
 
-gboolean
-gebr_create_config_dirs(void);
+gboolean gebr_create_config_dirs(void);
 
-gchar *
-gebr_locale_to_utf8(const gchar * string);
+gchar *gebr_locale_to_utf8(const gchar * string);
 
-gboolean
-g_key_file_has_key_woe(GKeyFile * key_file, const gchar * group, const gchar * key);
-GString *
-gebr_g_key_file_load_string_key(GKeyFile * key_file, const gchar * group, const gchar * key, const gchar * default_value);
-gboolean
-gebr_g_key_file_load_boolean_key(GKeyFile * key_file, const gchar * group, const gchar * key, gboolean default_value);
-int
-gebr_g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * key, int default_value);
+gboolean g_key_file_has_key_woe(GKeyFile * key_file, const gchar * group, const gchar * key);
+GString *gebr_g_key_file_load_string_key(GKeyFile * key_file, const gchar * group, const gchar * key,
+					 const gchar * default_value);
+gboolean gebr_g_key_file_load_boolean_key(GKeyFile * key_file, const gchar * group, const gchar * key,
+					  gboolean default_value);
+int gebr_g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * key, int default_value);
 
 #define gebr_foreach_gslist_hyg(element, list, hygid) \
 	GSList * __list##hygid = list, * __i##hygid = list; \
@@ -97,9 +81,7 @@ gebr_g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gch
 #define gebr_directory_foreach_file(filename, directory) \
 	gebr_directory_foreach_file_hyg(filename, directory, nohyg)
 
-const gchar *
-gebr_validate_int(const gchar * text_value, const gchar * min, const gchar * max);
-const gchar *
-gebr_validate_float(const gchar * text_value, const gchar * min, const gchar * max);
+const gchar *gebr_validate_int(const gchar * text_value, const gchar * min, const gchar * max);
+const gchar *gebr_validate_float(const gchar * text_value, const gchar * min, const gchar * max);
 
-#endif //__GEBR_UTILS_H
+#endif				//__GEBR_UTILS_H

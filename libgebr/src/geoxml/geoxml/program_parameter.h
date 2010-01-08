@@ -132,24 +132,21 @@ typedef struct gebr_geoxml_property_value GebrGeoXmlPropertyValue;
  *
  * If \p program_parameter is NULL nothing is done.
  */
-GebrGeoXmlProgram *
-gebr_geoxml_program_parameter_program(GebrGeoXmlProgramParameter * program_parameter);
+GebrGeoXmlProgram *gebr_geoxml_program_parameter_program(GebrGeoXmlProgramParameter * program_parameter);
 
 /**
  * Mark \p program_parameter as required or optional to run its program.
  *
  * If \p program_parameter is NULL nothing is done.
  */
-void
-gebr_geoxml_program_parameter_set_required(GebrGeoXmlProgramParameter * program_parameter, gboolean required);
+void gebr_geoxml_program_parameter_set_required(GebrGeoXmlProgramParameter * program_parameter, gboolean required);
 
 /**
  *
  *
  * If \p program_parameter is NULL returns FALSE.
  */
-gboolean
-gebr_geoxml_program_parameter_get_required(GebrGeoXmlProgramParameter * program_parameter);
+gboolean gebr_geoxml_program_parameter_get_required(GebrGeoXmlProgramParameter * program_parameter);
 
 /**
  * Set \p program_parameter keyword to \p keyword.
@@ -163,16 +160,14 @@ gebr_geoxml_program_parameter_get_required(GebrGeoXmlProgramParameter * program_
  *
  * \see gebr_geoxml_program_parameter_get_keyword
  */
-void
-gebr_geoxml_program_parameter_set_keyword(GebrGeoXmlProgramParameter * program_parameter, const gchar * keyword);
+void gebr_geoxml_program_parameter_set_keyword(GebrGeoXmlProgramParameter * program_parameter, const gchar * keyword);
 
 /**
  *
  *
  * If \p program_parameter is NULL returns NULL.
  */
-const gchar *
-gebr_geoxml_program_parameter_get_keyword(GebrGeoXmlProgramParameter * program_parameter);
+const gchar *gebr_geoxml_program_parameter_get_keyword(GebrGeoXmlProgramParameter * program_parameter);
 
 /**
  * Say that \p program_parameter's that this program_parameter's value is in fact a list of values
@@ -182,8 +177,7 @@ gebr_geoxml_program_parameter_get_keyword(GebrGeoXmlProgramParameter * program_p
  * \see gebr_geoxml_program_parameter_get_is_list, gebr_geoxml_program_parameter_set_list_separator,
  * gebr_geoxml_program_parameter_get_list_separator
  */
-void
-gebr_geoxml_program_parameter_set_be_list(GebrGeoXmlProgramParameter * program_parameter, gboolean is_list);
+void gebr_geoxml_program_parameter_set_be_list(GebrGeoXmlProgramParameter * program_parameter, gboolean is_list);
 
 /**
  *
@@ -192,7 +186,10 @@ gebr_geoxml_program_parameter_set_be_list(GebrGeoXmlProgramParameter * program_p
  * gebr_geoxml_program_parameter_get_list_separator
  */
 void
-gebr_geoxml_program_parameter_set_list_separator(GebrGeoXmlProgramParameter * program_parameter, const gchar * separator);
+
+
+gebr_geoxml_program_parameter_set_list_separator(GebrGeoXmlProgramParameter * program_parameter,
+						 const gchar * separator);
 
 /**
  * Set \p program_parameter 's value to \p value.
@@ -202,7 +199,10 @@ gebr_geoxml_program_parameter_set_list_separator(GebrGeoXmlProgramParameter * pr
  * @see gebr_geoxml_program_parameter_set_keyword
  */
 void
-gebr_geoxml_program_parameter_set_first_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value, const gchar * value);
+
+
+gebr_geoxml_program_parameter_set_first_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value,
+					      const gchar * value);
 
 /**
  *
@@ -210,7 +210,10 @@ gebr_geoxml_program_parameter_set_first_value(GebrGeoXmlProgramParameter * progr
  * If \p program_parameter is NULL nothing is done.
  */
 void
-gebr_geoxml_program_parameter_set_first_boolean_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value, gboolean enabled);
+
+
+gebr_geoxml_program_parameter_set_first_boolean_value(GebrGeoXmlProgramParameter * program_parameter,
+						      gboolean default_value, gboolean enabled);
 
 /**
  * If \p program_parameter is a list, then get the string used to separate
@@ -222,16 +225,15 @@ gebr_geoxml_program_parameter_set_first_boolean_value(GebrGeoXmlProgramParameter
  * \see gebr_geoxml_program_parameter_set_is_list, gebr_geoxml_program_parameter_set_list_separator,
  * gebr_geoxml_program_parameter_get_list_separator
  */
-const gchar *
-gebr_geoxml_program_parameter_get_list_separator(GebrGeoXmlProgramParameter * program_parameter);
+const gchar *gebr_geoxml_program_parameter_get_list_separator(GebrGeoXmlProgramParameter * program_parameter);
 
 /**
  *
  *
  * If \p program_parameter is NULL returns NULL.
  */
-const gchar *
-gebr_geoxml_program_parameter_get_first_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value);
+const gchar *gebr_geoxml_program_parameter_get_first_value(GebrGeoXmlProgramParameter * program_parameter,
+							   gboolean default_value);
 
 /**
  *
@@ -241,15 +243,16 @@ gebr_geoxml_program_parameter_get_first_value(GebrGeoXmlProgramParameter * progr
  * @see GEBR_GEOXML_PARAMETER_TYPE_FLAG
  */
 gboolean
-gebr_geoxml_program_parameter_get_first_boolean_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value);
+gebr_geoxml_program_parameter_get_first_boolean_value(GebrGeoXmlProgramParameter * program_parameter,
+						      gboolean default_value);
 
 /**
  * Create a new value and append it to list of values of \p program_parameter.
  *
  * If \p program_parameter is NULL returns NULL
  */
-GebrGeoXmlPropertyValue *
-gebr_geoxml_program_parameter_append_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value);
+GebrGeoXmlPropertyValue *gebr_geoxml_program_parameter_append_value(GebrGeoXmlProgramParameter * program_parameter,
+								    gboolean default_value);
 
 /**
  * Writes to \p property_value the \p index ieth value that \p program_parameter has.
@@ -262,7 +265,10 @@ gebr_geoxml_program_parameter_append_value(GebrGeoXmlProgramParameter * program_
  * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
  */
 int
-gebr_geoxml_program_parameter_get_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value, GebrGeoXmlSequence ** property_value, gulong index);
+
+
+gebr_geoxml_program_parameter_get_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value,
+					GebrGeoXmlSequence ** property_value, gulong index);
 
 /**
  * Get the number of values that \p program_parameter has.
@@ -280,7 +286,10 @@ gebr_geoxml_program_parameter_get_values_number(GebrGeoXmlProgramParameter * pro
  * If \p program_parameter or \p value is NULL nothing is done.
  */
 void
-gebr_geoxml_program_parameter_set_string_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value, const gchar * value);
+
+
+gebr_geoxml_program_parameter_set_string_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value,
+					       const gchar * value);
 
 /**
  * If \p program_parameter has a list of values, return them separated
@@ -290,8 +299,8 @@ gebr_geoxml_program_parameter_set_string_value(GebrGeoXmlProgramParameter * prog
  *
  * * If \p program_parameter is NULL returns NULL.
  */
-GString *
-gebr_geoxml_program_parameter_get_string_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value);
+GString *gebr_geoxml_program_parameter_get_string_value(GebrGeoXmlProgramParameter * program_parameter,
+							gboolean default_value);
 
 /**
  * Find the dictionary parameter from \p dict_document
@@ -300,9 +309,9 @@ gebr_geoxml_program_parameter_get_string_value(GebrGeoXmlProgramParameter * prog
  *
  * If \p program_parameter or \p dict_document is NULL returns NULL.
  */
-GebrGeoXmlProgramParameter *
-gebr_geoxml_program_parameter_find_dict_parameter(GebrGeoXmlProgramParameter * program_parameter,
-GebrGeoXmlDocument * dict_document);
+GebrGeoXmlProgramParameter *gebr_geoxml_program_parameter_find_dict_parameter(GebrGeoXmlProgramParameter *
+									      program_parameter,
+									      GebrGeoXmlDocument * dict_document);
 
 /**
  * Copies the value of \p source to \p program_parameter
@@ -313,7 +322,7 @@ GebrGeoXmlDocument * dict_document);
  */
 gboolean
 gebr_geoxml_program_parameter_copy_value(GebrGeoXmlProgramParameter * program_parameter,
-GebrGeoXmlProgramParameter * source, gboolean default_value);
+					 GebrGeoXmlProgramParameter * source, gboolean default_value);
 
 /**
  * Split \p value using \p program_parameter's separator to
@@ -322,7 +331,10 @@ GebrGeoXmlProgramParameter * source, gboolean default_value);
  * If \p program_parameter or \p value is NULL nothing is done.
  */
 void
-gebr_geoxml_program_parameter_set_parse_list_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value, const gchar * value);
+
+
+gebr_geoxml_program_parameter_set_parse_list_value(GebrGeoXmlProgramParameter * program_parameter,
+						   gboolean default_value, const gchar * value);
 
 /**
  * Indicates that \p program_parameter will use \p dict_parameter's value as its value-
@@ -331,8 +343,10 @@ gebr_geoxml_program_parameter_set_parse_list_value(GebrGeoXmlProgramParameter * 
  * If \p program_parameter or \p dict_parameter nothing is done.
  */
 void
+
+
 gebr_geoxml_program_parameter_set_value_from_dict(GebrGeoXmlProgramParameter * program_parameter,
-GebrGeoXmlProgramParameter * dict_parameter);
+						  GebrGeoXmlProgramParameter * dict_parameter);
 
 /**
  * Change wheter this parameter keeps a file or a directory.
@@ -341,7 +355,10 @@ GebrGeoXmlProgramParameter * dict_parameter);
  * @see gebr_geoxml_program_parameter_get_file_be_directory
  */
 void
-gebr_geoxml_program_parameter_set_file_be_directory(GebrGeoXmlProgramParameter * program_parameter, gboolean is_directory);
+
+
+gebr_geoxml_program_parameter_set_file_be_directory(GebrGeoXmlProgramParameter * program_parameter,
+						    gboolean is_directory);
 
 /**
  * Return TRUE directory indicador is enabled.
@@ -351,8 +368,7 @@ gebr_geoxml_program_parameter_set_file_be_directory(GebrGeoXmlProgramParameter *
  *
  * @see GEBR_GEOXML_PARAMETER_TYPE_FILE, gebr_geoxml_program_parameter_set_file_be_directory
  */
-gboolean
-gebr_geoxml_program_parameter_get_file_be_directory(GebrGeoXmlProgramParameter * program_parameter);
+gboolean gebr_geoxml_program_parameter_get_file_be_directory(GebrGeoXmlProgramParameter * program_parameter);
 
 /**
  * Filter file system view to show only selected file types.
@@ -362,8 +378,10 @@ gebr_geoxml_program_parameter_get_file_be_directory(GebrGeoXmlProgramParameter *
  * @see gebr_geoxml_program_parameter_get_file_filter
  */
 void
+
+
 gebr_geoxml_program_parameter_set_file_filter(GebrGeoXmlProgramParameter * program_parameter,
-	const gchar * name, const gchar * pattern);
+					      const gchar * name, const gchar * pattern);
 
 /**
  * Set \p name and \p pattern the currently set filter
@@ -373,8 +391,10 @@ gebr_geoxml_program_parameter_set_file_filter(GebrGeoXmlProgramParameter * progr
  * @see GEBR_GEOXML_PARAMETER_TYPE_FILE, gebr_geoxml_program_parameter_set_file_filter
  */
 void
+
+
 gebr_geoxml_program_parameter_get_file_filter(GebrGeoXmlProgramParameter * program_parameter,
-	gchar ** name, gchar ** pattern);
+					      gchar ** name, gchar ** pattern);
 
 /**
  * For integer, float and range parameters type, set mininimum
@@ -384,8 +404,10 @@ gebr_geoxml_program_parameter_get_file_filter(GebrGeoXmlProgramParameter * progr
  * @see gebr_geoxml_program_parameter_get_number_min_max
  */
 void
+
+
 gebr_geoxml_program_parameter_set_number_min_max(GebrGeoXmlProgramParameter * program_parameter,
-	const gchar * min, const gchar * max);
+						 const gchar * min, const gchar * max);
 
 /**
  * For integer, float and range parameters type, get mininimum
@@ -395,8 +417,10 @@ gebr_geoxml_program_parameter_set_number_min_max(GebrGeoXmlProgramParameter * pr
  * @see gebr_geoxml_program_parameter_set_number_min_max
  */
 void
+
+
 gebr_geoxml_program_parameter_get_number_min_max(GebrGeoXmlProgramParameter * program_parameter,
-	gchar ** min, gchar ** max);
+						 gchar ** min, gchar ** max);
 
 /**
  *
@@ -404,8 +428,11 @@ gebr_geoxml_program_parameter_get_number_min_max(GebrGeoXmlProgramParameter * pr
  * If \p program_parameter is NULL nothing is done.
  */
 void
+
+
 gebr_geoxml_program_parameter_set_range_properties(GebrGeoXmlProgramParameter * program_parameter,
-	const gchar * min, const gchar * max, const gchar * inc, const gchar * digits);
+						   const gchar * min, const gchar * max, const gchar * inc,
+						   const gchar * digits);
 
 /**
  *
@@ -415,8 +442,10 @@ gebr_geoxml_program_parameter_set_range_properties(GebrGeoXmlProgramParameter * 
  * @see GEBR_GEOXML_PARAMETER_TYPE_RANGE
  */
 void
+
+
 gebr_geoxml_program_parameter_get_range_properties(GebrGeoXmlProgramParameter * program_parameter,
-	gchar ** min, gchar ** max, gchar ** inc, gchar ** digits);
+						   gchar ** min, gchar ** max, gchar ** inc, gchar ** digits);
 
 /**
  * Return TRUE if \p program_parameter that this program_parameter's value is in fact a list of values
@@ -427,16 +456,14 @@ gebr_geoxml_program_parameter_get_range_properties(GebrGeoXmlProgramParameter * 
  * \see gebr_geoxml_program_parameter_set_is_list, gebr_geoxml_program_parameter_set_list_separator,
  * gebr_geoxml_program_parameter_get_list_separator
  */
-gboolean
-gebr_geoxml_program_parameter_get_is_list(GebrGeoXmlProgramParameter * program_parameter);
+gboolean gebr_geoxml_program_parameter_get_is_list(GebrGeoXmlProgramParameter * program_parameter);
 
 /**
  *
  * If \p program_parameter or \p label or \p value is NULL returns NULL.
  */
-GebrGeoXmlEnumOption *
-gebr_geoxml_program_parameter_append_enum_option(GebrGeoXmlProgramParameter * program_parameter,
-	const gchar * label, const gchar * value);
+GebrGeoXmlEnumOption *gebr_geoxml_program_parameter_append_enum_option(GebrGeoXmlProgramParameter * program_parameter,
+								       const gchar * label, const gchar * value);
 
 /**
  * Writes to \p enum_option the \p index ieth enum option that \p program_parameter has.
@@ -447,14 +474,16 @@ gebr_geoxml_program_parameter_append_enum_option(GebrGeoXmlProgramParameter * pr
  * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
  */
 int
-gebr_geoxml_program_parameter_get_enum_option(GebrGeoXmlProgramParameter * program_parameter, GebrGeoXmlSequence ** enum_option, gulong index);
+
+
+gebr_geoxml_program_parameter_get_enum_option(GebrGeoXmlProgramParameter * program_parameter,
+					      GebrGeoXmlSequence ** enum_option, gulong index);
 
 /**
  * Get the number of enum options in \p program_parameter
  *
  * If \p program_parameter is NULL returns 0.
  */
-glong
-gebr_geoxml_program_parameter_get_enum_options_number(GebrGeoXmlProgramParameter * program_parameter);
+glong gebr_geoxml_program_parameter_get_enum_options_number(GebrGeoXmlProgramParameter * program_parameter);
 
-#endif //__GEBR_GEOXML_PROGRAM_PARAMETER_H
+#endif				//__GEBR_GEOXML_PROGRAM_PARAMETER_H

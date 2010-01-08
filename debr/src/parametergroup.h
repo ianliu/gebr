@@ -21,14 +21,13 @@
 #include <libgebr/geoxml.h>
 
 struct ui_parameter_group_dialog {
-	GtkWidget *		dialog;
+	GtkWidget *dialog;
 
-	GtkWidget *		instances_edit_vbox;
+	GtkWidget *instances_edit_vbox;
 
-	GebrGeoXmlParameterGroup *	parameter_group;
+	GebrGeoXmlParameterGroup *parameter_group;
 };
 
-void
-parameter_group_dialog_setup_ui(void);
+void parameter_group_dialog_setup_ui(void);
 
-#endif //__PARAMETER_GROUP_H
+#endif				//__PARAMETER_GROUP_H

@@ -25,27 +25,26 @@
 #include "server.h"
 #include "job.h"
 
-gboolean
-client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct server * server)
+gboolean client_parse_server_messages(struct gebr_comm_server *gebr_comm_server, struct server *server)
 {
-	GList *			link;
-	struct gebr_comm_message *	message;
+	GList *link;
+	struct gebr_comm_message *message;
 
 	while ((link = g_list_last(gebr_comm_server->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
 
 		if (message->hash == gebr_comm_protocol_defs.err_def.hash) {
-			GList *		arguments;
+			GList *arguments;
 
 			/* organize message data */
 			arguments = gebr_comm_protocol_split_new(message->argument, 1);
-			g_string_assign(server->last_error, ((GString *)g_list_nth_data(arguments, 0))->str);
+			g_string_assign(server->last_error, ((GString *) g_list_nth_data(arguments, 0))->str);
 
 			gebr_comm_protocol_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.ret_def.hash) {
 			if (gebr_comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.hash) {
-				GList *		arguments;
-				GString *	hostname, * display_port;
+				GList *arguments;
+				GString *hostname, *display_port;
 
 				/* organize message data */
 				arguments = gebr_comm_protocol_split_new(message->argument, 2);
@@ -59,26 +58,29 @@ client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct 
 				g_string_assign(gebr_comm_server->protocol->hostname, hostname->str);
 				if (gebr_comm_server_is_local(gebr_comm_server) == TRUE)
 					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to local server"),
-						gebr_comm_server->address->str);
+						     gebr_comm_server->address->str);
 				else {
 					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to server '%s'"),
-						gebr_comm_server->address->str);
+						     gebr_comm_server->address->str);
 					if (display_port->len)
 						gebr_comm_server_forward_x11(gebr_comm_server, atoi(display_port->str));
 					else
-						gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Server '%s' could not send display for graphical output redirection"),
-							gebr_comm_server->address->str);
+						gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
+							     _
+							     ("Server '%s' could not send display for graphical output redirection"),
+							     gebr_comm_server->address->str);
 				}
 
 				/* request list of jobs */
-				gebr_comm_protocol_send_data(gebr_comm_server->protocol, gebr_comm_server->stream_socket,
-					gebr_comm_protocol_defs.lst_def, 0);
+				gebr_comm_protocol_send_data(gebr_comm_server->protocol,
+							     gebr_comm_server->stream_socket,
+							     gebr_comm_protocol_defs.lst_def, 0);
 
 				gebr_comm_protocol_split_free(arguments);
 			} else if (gebr_comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.run_def.hash) {
-				GList *		arguments;
-				GString *	jid, *status, * title, * start_date, * issues, * cmd_line, * output;
-				struct job *	job;
+				GList *arguments;
+				GString *jid, *status, *title, *start_date, *issues, *cmd_line, *output;
+				struct job *job;
 
 				/* organize message data */
 				arguments = gebr_comm_protocol_split_new(message->argument, 7);
@@ -91,7 +93,7 @@ client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct 
 				output = g_list_nth_data(arguments, 6);
 
 				job = job_add(server, jid, status, title, start_date, NULL,
-					NULL, issues, cmd_line, output);
+					      NULL, issues, cmd_line, output);
 				job_set_active(job);
 				gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 3);
 
@@ -100,9 +102,10 @@ client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct 
 
 			}
 		} else if (message->hash == gebr_comm_protocol_defs.job_def.hash) {
-			GList *		arguments;
-			GString *	jid, * hostname, * status, * title, * start_date, * finish_date, * issues, * cmd_line, * output;
-			struct job *	job;
+			GList *arguments;
+			GString *jid, *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
+			    *output;
+			struct job *job;
 
 			/* organize message data */
 			arguments = gebr_comm_protocol_split_new(message->argument, 9);
@@ -119,13 +122,13 @@ client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct 
 			job = job_find(gebr_comm_server->address, jid);
 			if (job == NULL)
 				job = job_add(server, jid, status, title, start_date, finish_date,
-					hostname, issues, cmd_line, output);
+					      hostname, issues, cmd_line, output);
 
 			gebr_comm_protocol_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.hash) {
-			GList *		arguments;
-			GString *	jid, * output;
-			struct job *	job;
+			GList *arguments;
+			GString *jid, *output;
+			struct job *job;
 
 			/* organize message data */
 			arguments = gebr_comm_protocol_split_new(message->argument, 2);
@@ -139,9 +142,9 @@ client_parse_server_messages(struct gebr_comm_server * gebr_comm_server, struct 
 
 			gebr_comm_protocol_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.fin_def.hash) {
-			GList *		arguments;
-			GString *	jid, * status, * finish_date;
-			struct job *	job;
+			GList *arguments;
+			GString *jid, *status, *finish_date;
+			struct job *job;
 
 			/* organize message data */
 			arguments = gebr_comm_protocol_split_new(message->argument, 3);

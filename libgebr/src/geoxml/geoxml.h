@@ -161,4 +161,4 @@
 #include <geoxml/parameter_group.h>
 #include <geoxml/clipboard.h>
 
-#endif //__GEBR_GEOXML_H
+#endif				//__GEBR_GEOXML_H

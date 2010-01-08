@@ -29,27 +29,24 @@
  * Private functions
  */
 
-
-
 /*
  * Library functions
  */
 
-void
-gebr_gui_setup_icons(void)
+void gebr_gui_setup_icons(void)
 {
-	static GtkIconFactory *	icon_factory = NULL;
-	static const gchar *	sizes [] = {
+	static GtkIconFactory *icon_factory = NULL;
+	static const gchar *sizes[] = {
 		"16x16", "22x22", "48x48", NULL
 	};
-	static const int	gtk_icon_sizes [] = {
+	static const int gtk_icon_sizes[] = {
 		GTK_ICON_SIZE_MENU,
 		GTK_ICON_SIZE_SMALL_TOOLBAR,
 		GTK_ICON_SIZE_LARGE_TOOLBAR
 	};
-	GString *		size_path;
-	GString *		path;
-	int			i;
+	GString *size_path;
+	GString *path;
+	int i;
 
 	if (icon_factory == NULL)
 		icon_factory = gtk_icon_factory_new();
@@ -60,16 +57,16 @@ gebr_gui_setup_icons(void)
 	path = g_string_new(NULL);
 
 	for (i = 0; sizes[i] != NULL; ++i) {
-		DIR *		dir;
-		struct dirent *	size_file;
+		DIR *dir;
+		struct dirent *size_file;
 
-		g_string_printf(size_path, "%s%s", ICONS_DIR"/", sizes[i]);
+		g_string_printf(size_path, "%s%s", ICONS_DIR "/", sizes[i]);
 		if ((dir = opendir(size_path->str)) == NULL)
 			continue;
 
 		while ((size_file = readdir(dir)) != NULL) {
-			DIR *		dir;
-			struct dirent *	file;
+			DIR *dir;
+			struct dirent *file;
 
 			/* ignore gtk stock items */
 			if (strcmp(size_file->d_name, "stock") == 0)
@@ -79,10 +76,10 @@ gebr_gui_setup_icons(void)
 				continue;
 
 			while ((file = readdir(dir)) != NULL) {
-				GtkIconSet *	icon_set;
-				GtkIconSource *	icon_source;
-				GString *	filename;
-				gchar *		stock_id;
+				GtkIconSet *icon_set;
+				GtkIconSource *icon_source;
+				GString *filename;
+				gchar *stock_id;
 
 				if (fnmatch("*.png", file->d_name, 1))
 					continue;
@@ -90,11 +87,11 @@ gebr_gui_setup_icons(void)
 				/* remove ".png" from string */
 				filename = g_string_new(NULL);
 				g_string_printf(filename, "%s/%s", path->str, file->d_name);
-				stock_id = g_strndup(file->d_name, strlen(file->d_name)-4);
+				stock_id = g_strndup(file->d_name, strlen(file->d_name) - 4);
 
 				icon_source = gtk_icon_source_new();
 				gtk_icon_source_set_filename(icon_source, filename->str);
-				gtk_icon_source_set_size(icon_source, (GtkIconSize)gtk_icon_sizes[i]);
+				gtk_icon_source_set_size(icon_source, (GtkIconSize) gtk_icon_sizes[i]);
 				gtk_icon_source_set_size_wildcarded(icon_source, TRUE);
 				gtk_icon_source_set_direction_wildcarded(icon_source, TRUE);
 				gtk_icon_source_set_state_wildcarded(icon_source, TRUE);
@@ -121,8 +118,7 @@ gebr_gui_setup_icons(void)
 	g_string_free(path, TRUE);
 }
 
-void
-gebr_gui_setup_theme(void)
+void gebr_gui_setup_theme(void)
 {
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), ICONS_DIR);
 	g_object_set(gtk_settings_get_default(), "gtk-icon-theme-name", "gebr-theme", NULL);

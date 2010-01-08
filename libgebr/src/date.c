@@ -28,12 +28,11 @@
  * Returns an (static allocated) string with the current date in ISO-8601 format
  *
  */
-gchar *
-gebr_iso_date(void)
+gchar *gebr_iso_date(void)
 {
-	static gchar	date[100];
-	GTimeVal	time_val;
-	gchar *		tmp;
+	static gchar date[100];
+	GTimeVal time_val;
+	gchar *tmp;
 
 	g_get_current_time(&time_val);
 	tmp = g_time_val_to_iso8601(&time_val);
@@ -59,12 +58,11 @@ gebr_iso_date(void)
  * Returns an (static allocated) string with _gebr_iso_date_ converted to a localized date
  * If _gebr_iso_date_ is NULL, current date is used.
  */
-const gchar *
-gebr_localized_date(const gchar * iso_date)
+const gchar *gebr_localized_date(const gchar * iso_date)
 {
-	static gchar	date[100];
-	GTimeVal	time_val;
-	struct tm *	tm;
+	static gchar date[100];
+	GTimeVal time_val;
+	struct tm *tm;
 
 	if (iso_date != NULL) {
 		if (g_time_val_from_iso8601(iso_date, &time_val) == FALSE)
@@ -77,7 +75,7 @@ gebr_localized_date(const gchar * iso_date)
 
 	/* convert to utf-8 if necessary */
 	if (g_utf8_validate(date, -1, NULL) == FALSE) {
-		gchar *	tmp;
+		gchar *tmp;
 
 		tmp = gebr_locale_to_utf8(date);
 		if (tmp != NULL) {
@@ -90,10 +88,9 @@ gebr_localized_date(const gchar * iso_date)
 	return date;
 }
 
-GTimeVal
-gebr_iso_date_to_g_time_val(const gchar * iso_date)
+GTimeVal gebr_iso_date_to_g_time_val(const gchar * iso_date)
 {
-	GTimeVal	time_val;
+	GTimeVal time_val;
 
 	if (!g_time_val_from_iso8601(iso_date, &time_val))
 		time_val.tv_sec = LONG_MIN;

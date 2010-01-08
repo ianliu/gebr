@@ -29,42 +29,41 @@
  * Preferences interface and configuration stuff
  */
 
-const gchar * browser[] = {
+const gchar *browser[] = {
 	"epiphany",
 	"firefox",
 	"galeon",
 	"konqueror",
 	"mozilla"
 };
+
 #define NBROWSER 5
 
 /*
  * Function: preferences_dialog_setup_ui
  * Create and show preferences dialog. If ok, save config.
  */
-void
-preferences_dialog_setup_ui(void)
+void preferences_dialog_setup_ui(void)
 {
-	GtkWidget *	window;
-	GtkWidget *	table;
-	GtkWidget *	name_entry;
-	GtkWidget *	email_entry;
-	GtkWidget *	menudir_dirchooser;
-	GtkWidget *	browser_combo;
-	GtkWidget *	htmleditor_entry;
-	GtkWidget *	label;
-	GtkTooltips *	tips;
-	GtkWidget *	eventbox;
-	int		i;
-	gboolean	newbrowser = TRUE;
+	GtkWidget *window;
+	GtkWidget *table;
+	GtkWidget *name_entry;
+	GtkWidget *email_entry;
+	GtkWidget *menudir_dirchooser;
+	GtkWidget *browser_combo;
+	GtkWidget *htmleditor_entry;
+	GtkWidget *label;
+	GtkTooltips *tips;
+	GtkWidget *eventbox;
+	int i;
+	gboolean newbrowser = TRUE;
 
 	/* dialog */
 	window = gtk_dialog_new_with_buttons(_("Preferences"),
-		GTK_WINDOW(debr.window),
-		GTK_DIALOG_MODAL,
-		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-		GTK_STOCK_OK, GTK_RESPONSE_OK,
-		NULL);
+					     GTK_WINDOW(debr.window),
+					     GTK_DIALOG_MODAL,
+					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	/* tooltips */
 	tips = gtk_tooltips_new();
 	gtk_widget_set_size_request(window, 380, 300);
@@ -74,7 +73,7 @@ preferences_dialog_setup_ui(void)
 
 	/* Name */
 	label = gtk_label_new(_("Name"));
-	gtk_misc_set_alignment( GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	name_entry = gtk_entry_new();
 	gtk_tooltips_set_tip(tips, name_entry, _("You should know your name"), "");
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
@@ -83,7 +82,7 @@ preferences_dialog_setup_ui(void)
 
 	/* Email */
 	label = gtk_label_new(_("Email"));
-	gtk_misc_set_alignment( GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	email_entry = gtk_entry_new();
 	gtk_tooltips_set_tip(tips, email_entry, _("Your email address"), "");
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
@@ -92,29 +91,30 @@ preferences_dialog_setup_ui(void)
 
 	/* Menus dir */
 	label = gtk_label_new(_("Menus directory"));
-	gtk_misc_set_alignment( GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	/* Browse button for user's menus dir */
-	menudir_dirchooser = gebr_gui_gtk_directory_chooser_new ();
+	menudir_dirchooser = gebr_gui_gtk_directory_chooser_new();
 	// menudir_dirchooser = gtk_file_chooser_button_new("GêBR dir",
-	//					GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+	//                                      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
 	eventbox = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(eventbox), menudir_dirchooser);
 	gtk_tooltips_set_tip(tips, eventbox, _("Path to look for private user's menus"), "");
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 	/* read config */
-	gebr_gui_gtk_directory_chooser_set_paths (GEBR_GUI_GTK_DIRECTORY_CHOOSER(menudir_dirchooser), debr.config.menu_dir);
+	gebr_gui_gtk_directory_chooser_set_paths(GEBR_GUI_GTK_DIRECTORY_CHOOSER(menudir_dirchooser),
+						 debr.config.menu_dir);
 
 	/* Browser */
 	label = gtk_label_new(_("Browser"));
-	gtk_misc_set_alignment( GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	browser_combo = gtk_combo_box_entry_new_text();
 	for (i = 0; i < NBROWSER; i++) {
 		gtk_combo_box_append_text(GTK_COMBO_BOX(browser_combo), browser[i]);
 		if (debr.config.browser && newbrowser) {
-			if (strcmp(browser[i], debr.config.browser->str) == 0){
+			if (strcmp(browser[i], debr.config.browser->str) == 0) {
 				newbrowser = FALSE;
-				gtk_combo_box_set_active (GTK_COMBO_BOX(browser_combo), i );
+				gtk_combo_box_set_active(GTK_COMBO_BOX(browser_combo), i);
 			}
 		}
 	}
@@ -130,7 +130,7 @@ preferences_dialog_setup_ui(void)
 
 	/* Editor */
 	label = gtk_label_new(_("HTML editor"));
-	gtk_misc_set_alignment( GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	htmleditor_entry = gtk_entry_new();
 	gtk_tooltips_set_tip(tips, htmleditor_entry, _("An HTML capable editor to edit helps and reports"), "");
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
@@ -139,25 +139,28 @@ preferences_dialog_setup_ui(void)
 
 	gtk_widget_show_all(window);
 	switch (gtk_dialog_run(GTK_DIALOG(window))) {
-	case GTK_RESPONSE_OK: {
-		g_strfreev (debr.config.menu_dir);
+	case GTK_RESPONSE_OK:{
+			g_strfreev(debr.config.menu_dir);
 
-		/* update settings */
-		debr.config.menu_dir = gebr_gui_gtk_directory_chooser_get_paths (GEBR_GUI_GTK_DIRECTORY_CHOOSER (menudir_dirchooser));
-		g_string_assign(debr.config.name, gtk_entry_get_text(GTK_ENTRY(name_entry)));
-		g_string_assign(debr.config.email, gtk_entry_get_text(GTK_ENTRY(email_entry)));
-		g_string_assign(debr.config.browser, gtk_combo_box_get_active_text(GTK_COMBO_BOX(browser_combo)));
-		g_string_assign(debr.config.htmleditor, gtk_entry_get_text(GTK_ENTRY(htmleditor_entry)));
+			/* update settings */
+			debr.config.menu_dir =
+			    gebr_gui_gtk_directory_chooser_get_paths(GEBR_GUI_GTK_DIRECTORY_CHOOSER
+								     (menudir_dirchooser));
+			g_string_assign(debr.config.name, gtk_entry_get_text(GTK_ENTRY(name_entry)));
+			g_string_assign(debr.config.email, gtk_entry_get_text(GTK_ENTRY(email_entry)));
+			g_string_assign(debr.config.browser,
+					gtk_combo_box_get_active_text(GTK_COMBO_BOX(browser_combo)));
+			g_string_assign(debr.config.htmleditor, gtk_entry_get_text(GTK_ENTRY(htmleditor_entry)));
 
-		/* save */
-		debr_config_save();
+			/* save */
+			debr_config_save();
 
-		/* apply settings */
-		// menu_load_user_directory();
-		menu_reset();
+			/* apply settings */
+			// menu_load_user_directory();
+			menu_reset();
 
-		break;
-	}
+			break;
+		}
 	case GTK_RESPONSE_CANCEL:
 		break;
 	}

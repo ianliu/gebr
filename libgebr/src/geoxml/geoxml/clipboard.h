@@ -25,20 +25,17 @@
 /**
  * Clear clipboard
  */
-void
-gebr_geoxml_clipboard_clear(void);
+void gebr_geoxml_clipboard_clear(void);
 
 /**
  * Add \p object to the clipboard
  */
-void
-gebr_geoxml_clipboard_copy(GebrGeoXmlObject * object);
+void gebr_geoxml_clipboard_copy(GebrGeoXmlObject * object);
 
 /**
  * Paste all clipboard into \p object
  * Return the first pasted parameter, or NULL if failed.
  */
-GebrGeoXmlObject *
-gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object);
+GebrGeoXmlObject *gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object);
 
-#endif //__GEBR_GEOXML_CLIPBOARD_H
+#endif				//__GEBR_GEOXML_CLIPBOARD_H

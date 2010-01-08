@@ -23,10 +23,7 @@
 #include <libgebr/geoxml.h>
 #include <libgebr/gui/gtksequenceedit.h>
 
-G_BEGIN_DECLS
-
-GType
-enum_option_edit_get_type(void);
+G_BEGIN_DECLS GType enum_option_edit_get_type(void);
 
 #define TYPE_ENUM_OPTION_EDIT			(enum_option_edit_get_type())
 #define ENUM_OPTION_EDIT(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_ENUM_OPTION_EDIT, EnumOptionEdit))
@@ -35,22 +32,21 @@ enum_option_edit_get_type(void);
 #define IS_ENUM_OPTION_EDIT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_ENUM_OPTION_EDIT))
 #define ENUM_OPTION_EDIT_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_ENUM_OPTION_EDIT, EnumOptionEditClass))
 
-typedef struct _EnumOptionEdit		EnumOptionEdit;
-typedef struct _EnumOptionEditClass	EnumOptionEditClass;
+typedef struct _EnumOptionEdit EnumOptionEdit;
+typedef struct _EnumOptionEditClass EnumOptionEditClass;
 
 struct _EnumOptionEdit {
-	GtkSequenceEdit			parent;
+	GtkSequenceEdit parent;
 
-	GebrGeoXmlEnumOption *		enum_option;
-	GebrGeoXmlProgramParameter *	program_parameter;
-	GtkWidget *			label_entry;
-	GtkWidget *			value_entry;
+	GebrGeoXmlEnumOption *enum_option;
+	GebrGeoXmlProgramParameter *program_parameter;
+	GtkWidget *label_entry;
+	GtkWidget *value_entry;
 };
 struct _EnumOptionEditClass {
-	GtkSequenceEditClass		parent;
+	GtkSequenceEditClass parent;
 };
 
-GtkWidget *
-enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter);
+GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter);
 
-#endif //__ENUM_OPTION_EDIT_H
+#endif				//__ENUM_OPTION_EDIT_H

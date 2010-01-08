@@ -87,16 +87,14 @@ enum GEBR_GEOXML_OBJECT_TYPE {
 /**
  * Return the type of \p object
  */
-enum GEBR_GEOXML_OBJECT_TYPE
-gebr_geoxml_object_get_type(GebrGeoXmlObject * object);
+enum GEBR_GEOXML_OBJECT_TYPE gebr_geoxml_object_get_type(GebrGeoXmlObject * object);
 
 /**
  * Set the user pointer data associated with _object_
  *
  * \see gebr_geoxml_object_get_user_data
  */
-void
-gebr_geoxml_object_set_user_data(GebrGeoXmlObject * object, gpointer user_data);
+void gebr_geoxml_object_set_user_data(GebrGeoXmlObject * object, gpointer user_data);
 
 /**
  * Get the user pointer data associated with _object_
@@ -104,23 +102,20 @@ gebr_geoxml_object_set_user_data(GebrGeoXmlObject * object, gpointer user_data);
  * Returns NULL if _object_ is NULL
  * \see gebr_geoxml_object_set_user_data
  */
-gpointer
-gebr_geoxml_object_get_user_data(GebrGeoXmlObject * object);
+gpointer gebr_geoxml_object_get_user_data(GebrGeoXmlObject * object);
 
 /**
  * Get the owner document of \p object
  *
  * Returns NULL if _object_ is NULL
  */
-GebrGeoXmlDocument *
-gebr_geoxml_object_get_owner_document(GebrGeoXmlObject * object);
+GebrGeoXmlDocument *gebr_geoxml_object_get_owner_document(GebrGeoXmlObject * object);
 
 /**
  * Copy _object_  for parallel use (e.g. when you don't want to modify _object_)
  *
  * Returns NULL if _object_ is NULL
  */
-GebrGeoXmlObject *
-gebr_geoxml_object_copy(GebrGeoXmlObject * object);
+GebrGeoXmlObject *gebr_geoxml_object_copy(GebrGeoXmlObject * object);
 
-#endif //__GEBR_GEOXML_OBJECT_H
+#endif				//__GEBR_GEOXML_OBJECT_H

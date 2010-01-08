@@ -20,10 +20,7 @@
 
 #include <gtk/gtk.h>
 
-G_BEGIN_DECLS
-
-GType
-gtk_sequence_edit_get_type(void);
+G_BEGIN_DECLS GType gtk_sequence_edit_get_type(void);
 
 #define GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT			(gtk_sequence_edit_get_type())
 #define GEBR_GUI_GTK_SEQUENCE_EDIT(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GtkSequenceEdit))
@@ -32,51 +29,47 @@ gtk_sequence_edit_get_type(void);
 #define GEBR_GUI_GTK_IS_SEQUENCE_EDIT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT))
 #define GEBR_GUI_GTK_SEQUENCE_EDIT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GtkSequenceEditClass))
 
-typedef struct _GtkSequenceEdit		GtkSequenceEdit;
-typedef struct _GtkSequenceEditClass	GtkSequenceEditClass;
+typedef struct _GtkSequenceEdit GtkSequenceEdit;
+typedef struct _GtkSequenceEditClass GtkSequenceEditClass;
 
 struct _GtkSequenceEdit {
-	GtkVBox			parent;
+	GtkVBox parent;
 
-	GtkWidget *		widget;
-	GtkWidget *		widget_hbox;
+	GtkWidget *widget;
+	GtkWidget *widget_hbox;
 
-	GtkListStore *		list_store;
-	GtkWidget *		tree_view;
-	GtkCellRenderer *	renderer;
+	GtkListStore *list_store;
+	GtkWidget *tree_view;
+	GtkCellRenderer *renderer;
 
-	gboolean		may_rename;
+	gboolean may_rename;
 };
 struct _GtkSequenceEditClass {
-	GtkVBoxClass	parent;
+	GtkVBoxClass parent;
 
 	/* signals */
-	void		(*add_request)(GtkSequenceEdit * self);
-	void		(*changed)(GtkSequenceEdit * self);
-	void		(*renamed)(GtkSequenceEdit * self, const gchar * old_text, const gchar * new_text);
-	void		(*removed)(GtkSequenceEdit * self, const gchar * old_text);
+	void (*add_request) (GtkSequenceEdit * self);
+	void (*changed) (GtkSequenceEdit * self);
+	void (*renamed) (GtkSequenceEdit * self, const gchar * old_text, const gchar * new_text);
+	void (*removed) (GtkSequenceEdit * self, const gchar * old_text);
 	/* virtual */
-	void		(*add)(GtkSequenceEdit * self);
-	void		(*remove)(GtkSequenceEdit * self, GtkTreeIter * iter);
-	void		(*move)(GtkSequenceEdit * self, GtkTreeIter * iter, GtkTreeIter * position, GtkTreeViewDropPosition drop_position);
-	void		(*move_top)(GtkSequenceEdit * self, GtkTreeIter * iter);
-	void		(*move_bottom)(GtkSequenceEdit * self, GtkTreeIter * iter);
-	void		(*rename)(GtkSequenceEdit * self, GtkTreeIter * iter, const gchar * new_text);
-	GtkWidget *	(*create_tree_view)(GtkSequenceEdit * self);
+	void (*add) (GtkSequenceEdit * self);
+	void (*remove) (GtkSequenceEdit * self, GtkTreeIter * iter);
+	void (*move) (GtkSequenceEdit * self, GtkTreeIter * iter, GtkTreeIter * position,
+		      GtkTreeViewDropPosition drop_position);
+	void (*move_top) (GtkSequenceEdit * self, GtkTreeIter * iter);
+	void (*move_bottom) (GtkSequenceEdit * self, GtkTreeIter * iter);
+	void (*rename) (GtkSequenceEdit * self, GtkTreeIter * iter, const gchar * new_text);
+	GtkWidget *(*create_tree_view) (GtkSequenceEdit * self);
 };
 
-GtkWidget *
-gtk_sequence_edit_new(GtkWidget * widget);
+GtkWidget *gtk_sequence_edit_new(GtkWidget * widget);
 
-GtkWidget *
-gtk_sequence_edit_new_from_store(GtkWidget * widget, GtkListStore * list_store);
+GtkWidget *gtk_sequence_edit_new_from_store(GtkWidget * widget, GtkListStore * list_store);
 
-GtkTreeIter
-gtk_sequence_edit_add(GtkSequenceEdit * sequence_edit, const gchar * text, gboolean show_empty_value_text);
+GtkTreeIter gtk_sequence_edit_add(GtkSequenceEdit * sequence_edit, const gchar * text, gboolean show_empty_value_text);
 
-void
-gtk_sequence_edit_clear(GtkSequenceEdit * sequence_edit);
+void gtk_sequence_edit_clear(GtkSequenceEdit * sequence_edit);
 
 G_END_DECLS
-
-#endif //__GEBR_GUI_GTK_SEQUENCE_EDIT_H
+#endif				//__GEBR_GUI_GTK_SEQUENCE_EDIT_H

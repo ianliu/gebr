@@ -32,15 +32,14 @@
  * Library functions
  */
 
-struct gebr_log *
-gebr_log_open(const gchar * path)
+struct gebr_log *gebr_log_open(const gchar * path)
 {
-	struct gebr_log *	log;
-	GError *	error;
+	struct gebr_log *log;
+	GError *error;
 
 	/* does it exist? if not, create it */
 	if (g_access(path, F_OK)) {
-		FILE *	fp;
+		FILE *fp;
 
 		fp = fopen(path, "w");
 		fclose(fp);
@@ -49,59 +48,53 @@ gebr_log_open(const gchar * path)
 	error = NULL;
 	log = g_malloc(sizeof(struct gebr_log));
 	*log = (struct gebr_log) {
-		.io_channel = g_io_channel_new_file(path, "r+", &error),
-	};
+	.io_channel = g_io_channel_new_file(path, "r+", &error),};
 	g_io_channel_seek_position(log->io_channel, 0, G_SEEK_END, &error);
 
 	return log;
 }
 
-struct gebr_log_message *
-gebr_log_message_new(enum gebr_log_message_type type, const gchar * date, const gchar * message)
+struct gebr_log_message *gebr_log_message_new(enum gebr_log_message_type type, const gchar * date,
+					      const gchar * message)
 {
-	struct gebr_log_message *	log_message;
+	struct gebr_log_message *log_message;
 
 	log_message = g_malloc(sizeof(struct gebr_log_message));
 	*log_message = (struct gebr_log_message) {
-		.type = type,
-		.date = g_string_new(date),
-		.message = g_string_new(message)
+		.type = type,.date = g_string_new(date),.message = g_string_new(message)
 	};
 
 	return log_message;
 }
 
-void
-gebr_log_message_free(struct gebr_log_message * message)
+void gebr_log_message_free(struct gebr_log_message *message)
 {
 	g_string_free(message->date, TRUE);
 	g_string_free(message->message, TRUE);
 	g_free(message);
 }
 
-void
-gebr_log_close(struct gebr_log * log)
+void gebr_log_close(struct gebr_log *log)
 {
 	g_io_channel_unref(log->io_channel);
 
 	g_free(log);
 }
 
-GList *
-gebr_log_messages_read(struct gebr_log * log)
+GList *gebr_log_messages_read(struct gebr_log *log)
 {
-	GList *		messages;
-	GString *	line;
-	GError *	error;
+	GList *messages;
+	GString *line;
+	GError *error;
 
 	error = NULL;
 	messages = NULL;
 	line = g_string_new(NULL);
 	g_io_channel_seek_position(log->io_channel, 0, G_SEEK_SET, &error);
 	while (g_io_channel_read_line_string(log->io_channel, line, NULL, &error) == G_IO_STATUS_NORMAL) {
-		struct gebr_log_message *	message;
-		enum gebr_log_message_type	type;
-		gchar **		splits;
+		struct gebr_log_message *message;
+		enum gebr_log_message_type type;
+		gchar **splits;
 
 		splits = g_strsplit(line->str, " ", 3);
 		if (splits[0][0] != '[') {
@@ -124,7 +117,7 @@ gebr_log_messages_read(struct gebr_log * log)
 			continue;
 		}
 		/* remove end of line */
-		splits[2][strlen(splits[2])-1] = '\0';
+		splits[2][strlen(splits[2]) - 1] = '\0';
 		message = gebr_log_message_new(type, splits[1], splits[2]);
 		messages = g_list_prepend(messages, message);
 
@@ -138,20 +131,18 @@ gebr_log_messages_read(struct gebr_log * log)
 	return messages;
 }
 
-void
-gebr_log_messages_free(GList * messages)
+void gebr_log_messages_free(GList * messages)
 {
-	g_list_foreach(messages, (GFunc)gebr_log_message_free, NULL);
+	g_list_foreach(messages, (GFunc) gebr_log_message_free, NULL);
 	g_list_free(messages);
 }
 
-void
-gebr_log_add_message(struct gebr_log * log, enum gebr_log_message_type type, const gchar * message)
+void gebr_log_add_message(struct gebr_log *log, enum gebr_log_message_type type, const gchar * message)
 {
-	GString *	line;
-	gchar *		ident_str;
-	gsize		bytes_written;
-	GError *	error;
+	GString *line;
+	gchar *ident_str;
+	gsize bytes_written;
+	GError *error;
 
 	/* initialization */
 	line = g_string_new(NULL);

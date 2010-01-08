@@ -24,10 +24,7 @@
 #include "gstreamsocket.h"
 #include "gsocketaddress.h"
 
-G_BEGIN_DECLS
-
-GType
-gebr_comm_channel_socket_get_type(void);
+G_BEGIN_DECLS GType gebr_comm_channel_socket_get_type(void);
 
 #define GEBR_COMM_CHANNEL_SOCKET_TYPE		(gebr_comm_channel_socket_get_type())
 #define GEBR_COMM_CHANNEL_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_CHANNEL_SOCKET_TYPE, GebrCommChannelSocket))
@@ -36,35 +33,31 @@ gebr_comm_channel_socket_get_type(void);
 #define GEBR_COMM_IS_CHANNEL_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_COMM_CHANNEL_SOCKET_TYPE))
 #define GEBR_COMM_CHANNEL_SOCKET_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_CHANNEL_SOCKET_TYPE, GebrCommChannelSocketClass))
 
-typedef struct _GebrCommChannelSocket	GebrCommChannelSocket;
-typedef struct _GebrCommChannelSocketClass	GebrCommChannelSocketClass;
+typedef struct _GebrCommChannelSocket GebrCommChannelSocket;
+typedef struct _GebrCommChannelSocketClass GebrCommChannelSocketClass;
 
 struct _GebrCommChannelSocket {
-	GebrCommSocket			parent;
+	GebrCommSocket parent;
 
-	GebrCommSocketAddress		forward_address;
+	GebrCommSocketAddress forward_address;
 };
 struct _GebrCommChannelSocketClass {
-	GebrCommSocketClass		parent;
+	GebrCommSocketClass parent;
 };
 
 /*
  * user functions
  */
 
-GebrCommChannelSocket *
-gebr_comm_channel_socket_new(void);
+GebrCommChannelSocket *gebr_comm_channel_socket_new(void);
 
-void
-gebr_comm_channel_socket_free(GebrCommChannelSocket *);
+void gebr_comm_channel_socket_free(GebrCommChannelSocket *);
 
 gboolean
 gebr_comm_channel_socket_start(GebrCommChannelSocket * channel_socket, GebrCommSocketAddress * listen_address,
-	GebrCommSocketAddress * forward_address);
+			       GebrCommSocketAddress * forward_address);
 
-GebrCommSocketAddress
-gebr_comm_channel_socket_get_forward_address(GebrCommChannelSocket * channel_socket);
+GebrCommSocketAddress gebr_comm_channel_socket_get_forward_address(GebrCommChannelSocket * channel_socket);
 
 G_END_DECLS
-
-#endif //__GEBR_COMM_CHANNEL_SOCKET_H
+#endif				//__GEBR_COMM_CHANNEL_SOCKET_H

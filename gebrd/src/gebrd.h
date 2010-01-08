@@ -22,35 +22,31 @@
 #include <libgebr/log.h>
 #include <netdb.h>
 
-extern struct gebrd	gebrd;
+extern struct gebrd gebrd;
 
 struct gebrd {
-	GebrCommListenSocket *	listen_socket;
-	GList *			clients;
-	GList *			jobs;
-	struct gebr_log *		log;
-	gchar			hostname[256];
+	GebrCommListenSocket *listen_socket;
+	GList *clients;
+	GList *jobs;
+	struct gebr_log *log;
+	gchar hostname[256];
 
-	GString *		run_filename;
+	GString *run_filename;
 
 	struct gebrd_options {
-		gboolean	foreground;
+		gboolean foreground;
 	} options;
 
-	GMainLoop *		main_loop;
-	int			finished_starting_pipe[2];
+	GMainLoop *main_loop;
+	int finished_starting_pipe[2];
 };
 
-void
-gebrd_init(void);
+void gebrd_init(void);
 
-void
-gebrd_quit(void);
+void gebrd_quit(void);
 
-void
-gebrd_message(enum gebr_log_message_type type, const gchar * message, ...);
+void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...);
 
-guint8
-gebrd_get_x11_redirect_display(void);
+guint8 gebrd_get_x11_redirect_display(void);
 
-#endif //__GEBRD_H
+#endif				//__GEBRD_H

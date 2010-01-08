@@ -25,8 +25,7 @@
 
 struct gebr_client gebr_client;
 
-gboolean
-gebr_client_init(const gchar * server_address)
+gboolean gebr_client_init(const gchar * server_address)
 {
 	gebr_libinit();
 
@@ -35,19 +34,17 @@ gebr_client_init(const gchar * server_address)
 	return TRUE;
 }
 
-void
-gebr_client_quit(void)
+void gebr_client_quit(void)
 {
 	server_free(gebr_client.server);
 
 	g_main_loop_quit(gebr_client.main_loop);
 }
 
-void
-gebr_client_message(enum gebr_log_message_type type, const gchar * message, ...)
+void gebr_client_message(enum gebr_log_message_type type, const gchar * message, ...)
 {
-	gchar *		string;
-	va_list		argp;
+	gchar *string;
+	va_list argp;
 
 	va_start(argp, message);
 	string = g_strdup_vprintf(message, argp);
@@ -56,10 +53,10 @@ gebr_client_message(enum gebr_log_message_type type, const gchar * message, ...)
 #ifndef GEBR_DEBUG
 	if (type != GEBR_LOG_DEBUG) {
 #endif
-	if (type == GEBR_LOG_ERROR)
-		fprintf(stderr, "%s\n", string);
-	else
-		fprintf(stdout, "%s\n", string);
+		if (type == GEBR_LOG_ERROR)
+			fprintf(stderr, "%s\n", string);
+		else
+			fprintf(stdout, "%s\n", string);
 #ifndef GEBR_DEBUG
 	}
 #endif

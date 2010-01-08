@@ -30,24 +30,20 @@ enum {
 };
 
 struct ui_validate {
-	GtkWidget *		widget;
+	GtkWidget *widget;
 
-	GtkListStore *		list_store;
-	GtkWidget *		tree_view;
+	GtkListStore *list_store;
+	GtkWidget *tree_view;
 
-	GtkWidget *		text_view_vbox;
+	GtkWidget *text_view_vbox;
 };
 
-void
-validate_setup_ui(void);
+void validate_setup_ui(void);
 
-void
-validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu);
+void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu);
 
-void
-validate_close(void);
+void validate_close(void);
 
-void
-validate_clear(void);
+void validate_clear(void);
 
-#endif //__VALIDATE_H
+#endif				//__VALIDATE_H

@@ -31,18 +31,18 @@
 
 struct gebr_comm_server {
 	/* the communication channel. */
-	GStreamSocket *		stream_socket;
+	GStreamSocket *stream_socket;
 	/* protocol parsing stuff */
-	struct gebr_comm_protocol *	protocol;
+	struct gebr_comm_protocol *protocol;
 	/* server address/port */
-	GString *		address;
-	guint16			port;
+	GString *address;
+	guint16 port;
 	/* ssh stuff */
-	GString *		password;
-	gint16			tunnel_port;
-	gboolean		tried_existant_pass;
-	GebrCommTerminalProcess *	x11_forward_process;
-	GebrCommChannelSocket *	x11_forward_channel;
+	GString *password;
+	gint16 tunnel_port;
+	gboolean tried_existant_pass;
+	GebrCommTerminalProcess *x11_forward_process;
+	GebrCommChannelSocket *x11_forward_channel;
 
 	enum gebr_comm_server_state {
 		SERVER_STATE_DISCONNECTED,
@@ -58,12 +58,12 @@ struct gebr_comm_server {
 		SERVER_ERROR_SSH,
 	} error;
 	const struct gebr_comm_server_ops {
-		void		(*log_message)(enum gebr_log_message_type type, const gchar * message);
-		GString *	(*ssh_login)(const gchar * title, const gchar * message);
-		gboolean	(*ssh_question)(const gchar * title, const gchar * message);
-		void		(*parse_messages)(struct gebr_comm_server * gebr_comm_server, gpointer user_data);
-	} * ops;
-	gpointer		user_data;
+		void (*log_message) (enum gebr_log_message_type type, const gchar * message);
+		GString *(*ssh_login) (const gchar * title, const gchar * message);
+		 gboolean(*ssh_question) (const gchar * title, const gchar * message);
+		void (*parse_messages) (struct gebr_comm_server * gebr_comm_server, gpointer user_data);
+	} *ops;
+	gpointer user_data;
 
 	/* temporary process for operations */
 	struct gebr_comm_server_process {
@@ -73,37 +73,28 @@ struct gebr_comm_server {
 			COMM_SERVER_PROCESS_REGULAR,
 		} use;
 		union gebr_comm_server_process_data {
-			GebrCommTerminalProcess *	terminal;
-			GebrCommProcess *		regular;
+			GebrCommTerminalProcess *terminal;
+			GebrCommProcess *regular;
 		} data;
 	} process;
 };
 
-struct gebr_comm_server *
-gebr_comm_server_new(const gchar * _address, const struct gebr_comm_server_ops * ops);
+struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const struct gebr_comm_server_ops *ops);
 
-void
-gebr_comm_server_free(struct gebr_comm_server * gebr_comm_server);
+void gebr_comm_server_free(struct gebr_comm_server *gebr_comm_server);
 
-void
-gebr_comm_server_connect(struct gebr_comm_server * gebr_comm_server);
+void gebr_comm_server_connect(struct gebr_comm_server *gebr_comm_server);
 
-void
-gebr_comm_server_disconnect(struct gebr_comm_server * gebr_comm_server);
+void gebr_comm_server_disconnect(struct gebr_comm_server *gebr_comm_server);
 
-gboolean
-gebr_comm_server_is_logged(struct gebr_comm_server * gebr_comm_server);
+gboolean gebr_comm_server_is_logged(struct gebr_comm_server *gebr_comm_server);
 
-gboolean
-gebr_comm_server_is_local(struct gebr_comm_server * gebr_comm_server);
+gboolean gebr_comm_server_is_local(struct gebr_comm_server *gebr_comm_server);
 
-void
-gebr_comm_server_kill(struct gebr_comm_server * gebr_comm_server);
+void gebr_comm_server_kill(struct gebr_comm_server *gebr_comm_server);
 
-gboolean
-gebr_comm_server_forward_x11(struct gebr_comm_server * gebr_comm_server, guint16 port);
+gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server, guint16 port);
 
-void
-gebr_comm_server_run_flow(struct gebr_comm_server * gebr_comm_server, GebrGeoXmlFlow * flow);
+void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, GebrGeoXmlFlow * flow);
 
-#endif //__GEBR_COMM_SERVER_H
+#endif				//__GEBR_COMM_SERVER_H

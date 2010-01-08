@@ -117,16 +117,14 @@ typedef struct gebr_geoxml_line_path GebrGeoXmlLinePath;
  *
  * Returns NULL if memory couldn't be allocated.
  */
-GebrGeoXmlLine *
-gebr_geoxml_line_new();
+GebrGeoXmlLine *gebr_geoxml_line_new();
 
 /**
  * Create a new flow and append it to list of flows references.
  *
  * If \p line or \p source is NULL returns NULL
  */
-GebrGeoXmlLineFlow *
-gebr_geoxml_line_append_flow(GebrGeoXmlLine * line, const gchar * source);
+GebrGeoXmlLineFlow *gebr_geoxml_line_append_flow(GebrGeoXmlLine * line, const gchar * source);
 
 /**
  * Writes to \p line_flow the \p index ieth flow reference that \p line belong.
@@ -138,40 +136,35 @@ gebr_geoxml_line_append_flow(GebrGeoXmlLine * line, const gchar * source);
  *
  * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
  */
-int
-gebr_geoxml_line_get_flow(GebrGeoXmlLine * line, GebrGeoXmlSequence ** line_flow, gulong index);
+int gebr_geoxml_line_get_flow(GebrGeoXmlLine * line, GebrGeoXmlSequence ** line_flow, gulong index);
 
 /**
  * Get the number of flows that \p line has.
  *
  * If \p line is NULL returns -1.
  */
-glong
-gebr_geoxml_line_get_flows_number(GebrGeoXmlLine * line);
+glong gebr_geoxml_line_get_flows_number(GebrGeoXmlLine * line);
 
 /**
  * Set the location of \p line_flow to \p source.
  *
  * If \p line_flow is NULL nothing is done.
  */
-void
-gebr_geoxml_line_set_flow_source(GebrGeoXmlLineFlow * line_flow, const gchar * source);
+void gebr_geoxml_line_set_flow_source(GebrGeoXmlLineFlow * line_flow, const gchar * source);
 
 /**
  * Returns the location of the flow reference \p line_flow.
  *
  * If \p line_flow is NULL returns NULL.
  */
-const gchar *
-gebr_geoxml_line_get_flow_source(GebrGeoXmlLineFlow * line_flow);
+const gchar *gebr_geoxml_line_get_flow_source(GebrGeoXmlLineFlow * line_flow);
 
 /**
  * Creates a new path and append it to the list of path.
  *
  * \see gebr_geoxml_line_new_path
  */
-GebrGeoXmlLinePath *
-gebr_geoxml_line_append_path(GebrGeoXmlLine * line, const gchar * path);
+GebrGeoXmlLinePath *gebr_geoxml_line_append_path(GebrGeoXmlLine * line, const gchar * path);
 
 /**
  * Writes to \p path the \p index ieth path that belongs to \p line.
@@ -181,15 +174,13 @@ gebr_geoxml_line_append_path(GebrGeoXmlLine * line, const gchar * path);
  *
  * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
  */
-int
-gebr_geoxml_line_get_path(GebrGeoXmlLine * line, GebrGeoXmlSequence ** path, gulong index);
+int gebr_geoxml_line_get_path(GebrGeoXmlLine * line, GebrGeoXmlSequence ** path, gulong index);
 
 /**
  * Get the number of path that \p line has.
  *
  * If \p line is NULL returns -1.
  */
-glong
-gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line);
+glong gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line);
 
-#endif //__GEBR_GEOXML_LINE_H
+#endif				//__GEBR_GEOXML_LINE_H

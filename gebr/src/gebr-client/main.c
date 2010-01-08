@@ -30,25 +30,22 @@
 #include "gebrclient.h"
 #include "../defines.h"
 
-int
-main(int argc, char ** argv, char ** env)
+int main(int argc, char **argv, char **env)
 {
-	gboolean		show_version;
-	GOptionEntry		entries[] = {
+	gboolean show_version;
+	GOptionEntry entries[] = {
 		{"version", 0, 0, G_OPTION_ARG_NONE, &show_version,
-			"Show GeBR client version", NULL},
+		 "Show GeBR client version", NULL},
 		{NULL}
 	};
-	GError *		error = NULL;
-	GOptionContext *	context;
+	GError *error = NULL;
+	GOptionContext *context;
 
 	context = g_option_context_new(_("serveraddress command [args]}"));
-	g_option_context_set_summary(context,
-		_("GeBR commandline client")
-	);
-	g_option_context_set_description(context,
-		_("a seismic processing environment")
-	);
+	g_option_context_set_summary(context, _("GeBR commandline client")
+	    );
+	g_option_context_set_description(context, _("a seismic processing environment")
+	    );
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
 	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE || argv == NULL) {
@@ -61,7 +58,6 @@ main(int argc, char ** argv, char ** env)
 		gebr_client_message(GEBR_LOG_INFO, _("%s"), GEBR_VERSION);
 		return 0;
 	}
-
 #ifdef ENABLE_NLS
 	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
@@ -77,7 +73,6 @@ main(int argc, char ** argv, char ** env)
 	g_type_init();
 
 	if (gebr_client_init(argv[1]) == TRUE) {
-		
 
 		g_main_loop_run(gebr_client.main_loop);
 		g_main_loop_unref(gebr_client.main_loop);

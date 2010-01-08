@@ -108,16 +108,14 @@ typedef struct gebr_geoxml_project_line GebrGeoXmlProjectLine;
  *
  * Returns NULL if memory couldn't be allocated.
  */
-GebrGeoXmlProject *
-gebr_geoxml_project_new();
+GebrGeoXmlProject *gebr_geoxml_project_new();
 
 /**
  * Create a new line and append it to list of flows references.
  *
  * If \p project or \p source is NULL returns NULL.
  */
-GebrGeoXmlProjectLine *
-gebr_geoxml_project_append_line(GebrGeoXmlProject * project, const gchar * source);
+GebrGeoXmlProjectLine *gebr_geoxml_project_append_line(GebrGeoXmlProject * project, const gchar * source);
 
 /**
  * Writes to \p project_line the \p index ieth line reference that \p project belong.
@@ -127,31 +125,27 @@ gebr_geoxml_project_append_line(GebrGeoXmlProject * project, const gchar * sourc
  *
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR
  */
-int
-gebr_geoxml_project_get_line(GebrGeoXmlProject * project, GebrGeoXmlSequence ** project_line, gulong index);
+int gebr_geoxml_project_get_line(GebrGeoXmlProject * project, GebrGeoXmlSequence ** project_line, gulong index);
 
 /**
  * Get the number of lines that \p project has.
  *
  * If \p project is NULL returns -1.
  */
-glong
-gebr_geoxml_project_get_lines_number(GebrGeoXmlProject * project);
+glong gebr_geoxml_project_get_lines_number(GebrGeoXmlProject * project);
 
 /**
  * Set the location of \p project_line to \p source.
  *
  * If \p project_line is NULL nothing is done.
  */
-void
-gebr_geoxml_project_set_line_source(GebrGeoXmlProjectLine * project_line, const gchar * source);
+void gebr_geoxml_project_set_line_source(GebrGeoXmlProjectLine * project_line, const gchar * source);
 
 /**
  * Returns the location of the line reference \p project_line.
  *
  * If \p project_line is NULL returns NULL.
  */
-const gchar *
-gebr_geoxml_project_get_line_source(GebrGeoXmlProjectLine * project_line);
+const gchar *gebr_geoxml_project_get_line_source(GebrGeoXmlProjectLine * project_line);
 
-#endif //__GEBR_GEOXML_PROJECT_H
+#endif				//__GEBR_GEOXML_PROJECT_H

@@ -31,19 +31,16 @@ enum {
 };
 
 struct ui_log {
-	GtkWidget *		widget;
+	GtkWidget *widget;
 
-	GtkListStore *		store;
-	GtkWidget *		view;
+	GtkListStore *store;
+	GtkWidget *view;
 };
 
-struct ui_log *
-log_setup_ui(void);
+struct ui_log *log_setup_ui(void);
 
-void
-log_set_message(struct ui_log * ui_log, const gchar * message);
+void log_set_message(struct ui_log *ui_log, const gchar * message);
 
-void
-gebr_log_add_message_to_list(struct ui_log * ui_log, struct gebr_log_message * message);
+void gebr_log_add_message_to_list(struct ui_log *ui_log, struct gebr_log_message *message);
 
-#endif //__UI_GEBR_LOG_H
+#endif				//__UI_GEBR_LOG_H

@@ -7,4 +7,4 @@
 #include <json-glib/json-version.h>
 #include <json-glib/json-enum-types.h>
 
-#endif /* __JSON_GLIB_H__ */
+#endif				/* __JSON_GLIB_H__ */

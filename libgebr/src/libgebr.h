@@ -23,7 +23,6 @@
 #include "log.h"
 #include "utils.h"
 
-void
-gebr_libinit(void);
+void gebr_libinit(void);
 
-#endif // __H
+#endif				// __H

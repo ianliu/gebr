@@ -18,7 +18,6 @@
 #ifndef __PREFERENCES_H
 #define __PREFERENCES_H
 
-void
-preferences_dialog_setup_ui(void);
+void preferences_dialog_setup_ui(void);
 
-#endif //__PREFERENCES_H
+#endif				//__PREFERENCES_H
