@@ -226,17 +226,13 @@ void on_menu_save_as_activate(void)
 	if (tmp)
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), tmp);
 
-	/* show file chooser */
 	gtk_widget_show(chooser_dialog);
 	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
 		goto out;
 
-	/* Build path */
 	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 	path = g_string_new(tmp);
 	gebr_append_filename_extension(path, ".mnu");
-
-	/* Get filename */
 	filename = g_path_get_basename(path->str);
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_PATH, &current_path, -1);
@@ -261,8 +257,9 @@ void on_menu_save_as_activate(void)
 		// if the item was a never saved file, remove it
 		if (!strlen(current_path))
 			gtk_tree_store_remove(debr.ui_menu.model, &iter);
-		menu_save(&copy);
+
 		menu_select_iter(&copy);
+		menu_save(&copy);
 
 		g_free(label);
 	}

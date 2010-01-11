@@ -438,9 +438,6 @@ gboolean menu_save(GtkTreeIter * iter)
 	gchar *filename;
 	gchar *tmp;
 
-	if (!menu_get_selected(iter, FALSE))
-		return FALSE;
-
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &menu, MENU_PATH, &path, -1);
 	/* is this a new menu? */
 	if (!strlen(path)) {
@@ -1027,7 +1024,6 @@ IterType menu_get_selected_type(GtkTreeIter * _iter, gboolean warn_unselected_me
 void menu_select_iter(GtkTreeIter * iter)
 {
 	GtkTreeSelection *selection;
-
 	gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 	gtk_tree_selection_unselect_all(selection);
