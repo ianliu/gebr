@@ -451,41 +451,66 @@ void flow_export_as_menu(void)
  out:	gtk_widget_destroy(dialog);
 }
 
+static void flow_copy_from_dicts_parse_parameters(GebrGeoXmlParameters * parameters);
+
+/* Function: flow_copy_from_dicts_parse_parameter
+ * Parse a parameter
+ */
+static void flow_copy_from_dicts_parse_parameter(GebrGeoXmlParameter * parameter)
+{
+	GebrGeoXmlDocument *documents[] = {
+		GEBR_GEOXML_DOCUMENT(gebr.project), GEBR_GEOXML_DOCUMENT(gebr.line),
+		GEBR_GEOXML_DOCUMENT(gebr.flow), NULL
+	};
+
+	if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
+		GebrGeoXmlSequence *instance;
+
+		gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+		for (; instance != NULL; gebr_geoxml_sequence_next(&instance))
+			flow_copy_from_dicts_parse_parameters(GEBR_GEOXML_PARAMETERS(instance));
+
+		return;
+	}
+
+	for (int i = 0; documents[i] != NULL; i++) {
+		GebrGeoXmlProgramParameter *dict_parameter;
+
+		dict_parameter =
+			gebr_geoxml_program_parameter_find_dict_parameter(GEBR_GEOXML_PROGRAM_PARAMETER
+									  (parameter), documents[i]);
+		if (dict_parameter != NULL)
+			gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER
+								      (parameter), FALSE,
+								      gebr_geoxml_program_parameter_get_first_value
+								      (dict_parameter, FALSE));
+	}
+	gebr_geoxml_program_parameter_set_value_from_dict(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
+							  NULL);
+}
+
+/* Function: flow_copy_from_dicts_parse_parameters
+ * Parse a set of parameter
+ */
+static void flow_copy_from_dicts_parse_parameters(GebrGeoXmlParameters * parameters)
+{
+	GebrGeoXmlSequence *parameter;
+
+	parameter = GEBR_GEOXML_SEQUENCE(gebr_geoxml_parameters_get_first_parameter(parameters));
+	for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter))
+		flow_copy_from_dicts_parse_parameter(GEBR_GEOXML_PARAMETER(parameter));
+}
+
 /* Function: flow_copy_from_dicts
  * Copy all values of parameters linked to dictionaries' parameters
  */
 void flow_copy_from_dicts(GebrGeoXmlFlow * flow)
 {
 	GebrGeoXmlSequence *program;
-	GebrGeoXmlSequence *parameter;
-	GebrGeoXmlDocument *documents[] = {
-		GEBR_GEOXML_DOCUMENT(gebr.project), GEBR_GEOXML_DOCUMENT(gebr.line),
-		GEBR_GEOXML_DOCUMENT(gebr.flow), NULL
-	};
 
 	gebr_geoxml_flow_get_program(flow, &program, 0);
-	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
-		parameter =
-		    GEBR_GEOXML_SEQUENCE(gebr_geoxml_parameters_get_first_parameter
-					 (gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program))));
-		for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter)) {
-			GebrGeoXmlProgramParameter *dict_parameter;
-
-			for (int i = 0; documents[i] != NULL; i++) {
-				dict_parameter =
-				    gebr_geoxml_program_parameter_find_dict_parameter(GEBR_GEOXML_PROGRAM_PARAMETER
-										      (parameter), documents[i]);
-				if (dict_parameter != NULL)
-					gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER
-										      (parameter), FALSE,
-										      gebr_geoxml_program_parameter_get_first_value
-										      (dict_parameter, FALSE));
-			}
-
-			gebr_geoxml_program_parameter_set_value_from_dict(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
-									  NULL);
-		}
-	}
+	for (; program != NULL; gebr_geoxml_sequence_next(&program))
+		flow_copy_from_dicts_parse_parameters(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)));
 }
 
 /* Function: flow_run
