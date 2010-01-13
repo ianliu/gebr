@@ -18,10 +18,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
+char *strptime(const char *s, const char *formato, struct tm *tm);
+
 #include <glib.h>
 
 #include <geoxml.h>
 #include "../../utils.h"
+#include "../../date.h"
 
 gboolean fixfname = FALSE;
 gchar *setfname = NULL;
@@ -29,6 +33,7 @@ gchar *title = NULL;
 gchar *desc = NULL;
 gchar *author = NULL;
 gchar *email = NULL;
+gchar *date = NULL;
 gboolean helpdel = FALSE;
 gchar *fnhelp = NULL;
 gint iprog = 0;
@@ -46,6 +51,7 @@ static GOptionEntry entries[] = {
 	{"desc", 'd', 0, G_OPTION_ARG_STRING, &desc, "set description", "one line description"},
 	{"author", 'A', 0, G_OPTION_ARG_STRING, &author, "set authors", "name"},
 	{"email", 'e', 0, G_OPTION_ARG_STRING, &email, "set email", "email address"},
+	{"created", 'D', 0, G_OPTION_ARG_STRING, &date, "set created date (see notes below)", NULL},
 	{"helpdel", 0, 0, G_OPTION_ARG_NONE, &helpdel, "delete help text", NULL},
 	{"sethelp", 'H', 0, G_OPTION_ARG_FILENAME, &fnhelp, "replace help by an HTML file", NULL},
 	{"binary", 'b', 0, G_OPTION_ARG_STRING, &binary, "Binary command (without path)", "program/script"},
@@ -75,9 +81,11 @@ int main(int argc, char **argv)
 
 	/* Description */
 	g_option_context_set_description(context,
+					 "Parameter --created set menu's creation date. It accepts \"now\" or\n"
+					 "a full qualified UTC date, like \"2008-09-23 21:12\".\n\n"
 					 "If iprog is 0, then title and description options refers to menu's\n"
 					 "title and description. If iprog > 0, then ith program is edited.\n"
-					 "Copyright (C) 2008-2009 Ricardo Biloti <biloti@gmail.com>");
+					 "Copyright (C) 2008-2010 Ricardo Biloti <biloti@gebrproject.com>");
 
 	g_option_context_add_main_entries(context, entries, NULL);
 
@@ -132,6 +140,21 @@ int main(int argc, char **argv)
 			gebr_geoxml_document_set_author(doc, author);
 		if (email != NULL)
 			gebr_geoxml_document_set_email(doc, email);
+		if (date != NULL) {
+			if (strcmp(date, "now") == 0) {
+				gebr_geoxml_document_set_date_created(doc, gebr_iso_date());
+			} else {
+				static gchar datestr[100];
+				struct tm tm;
+				if (strptime(date, "%Y-%m-%d%H:%M", &tm) == NULL) {
+					printf("Date parse error. See help for accepted formats.\n");
+					break;
+				}
+				strftime(datestr, 100, "%Y-%m-%dT%H:%M:00Z", &tm);
+				gebr_geoxml_document_set_date_created(doc, datestr);
+			}
+		}
+
 		if (iprog == 0) {
 			if (title != NULL)
 				gebr_geoxml_document_set_title(doc, title);
