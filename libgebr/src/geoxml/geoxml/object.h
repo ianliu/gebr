@@ -90,6 +90,11 @@ enum GEBR_GEOXML_OBJECT_TYPE {
 enum GEBR_GEOXML_OBJECT_TYPE gebr_geoxml_object_get_type(GebrGeoXmlObject * object);
 
 /**
+ * \see gebr_geoxml_program_foreach_parameter
+ */
+typedef void (*GebrGeoXmlCallback)(GebrGeoXmlObject * object, gpointer user_data);
+
+/**
  * Set the user pointer data associated with _object_
  *
  * \see gebr_geoxml_object_get_user_data

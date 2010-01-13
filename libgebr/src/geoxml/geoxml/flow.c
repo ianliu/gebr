@@ -110,6 +110,18 @@ void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 	gdome_nl_unref(flow2_node_list, &exception);
 }
 
+void gebr_geoxml_flow_foreach_parameter(GebrGeoXmlFlow * flow, GebrGeoXmlCallback callback, gpointer user_data)
+{
+	if (flow == NULL)
+		return;
+
+	GebrGeoXmlSequence *program;
+
+	gebr_geoxml_flow_get_program(flow, &program, 0);
+	for (; program != NULL; gebr_geoxml_sequence_next(&program))
+		gebr_geoxml_program_foreach_parameter(GEBR_GEOXML_PROGRAM(program), callback, user_data);
+}
+
 void gebr_geoxml_flow_set_date_last_run(GebrGeoXmlFlow * flow, const gchar * last_run)
 {
 	if (flow == NULL || last_run == NULL)

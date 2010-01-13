@@ -97,6 +97,14 @@ typedef struct gebr_geoxml_program GebrGeoXmlProgram;
 #include "program_parameter.h"
 #include "flow.h"
 #include "macros.h"
+#include "object.h"
+
+/**
+ * Call \p callback for each parameter of \p program
+ *
+ * If \p program is NULL nothing is done.
+ */
+void gebr_geoxml_program_foreach_parameter(GebrGeoXmlProgram * program, GebrGeoXmlCallback callback, gpointer user_data);
 
 /**
  * Get the flow to which \p program belongs to.
@@ -131,7 +139,7 @@ void gebr_geoxml_program_set_stdout(GebrGeoXmlProgram * program, const gboolean 
 /**
  * Specify wheter \p program writes standard error or not,
  * depending on \p enable
- *
+ 
  * \see gebr_geoxml_program_get_stderr
  */
 void gebr_geoxml_program_set_stderr(GebrGeoXmlProgram * program, const gboolean enable);

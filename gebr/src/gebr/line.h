@@ -25,6 +25,7 @@
 gboolean line_new(void);
 gboolean line_delete(gboolean confirm);
 GebrGeoXmlLine *line_import(const gchar * line_filename, const gchar * at_dir);
+void line_set_paths_to(GebrGeoXmlLine * line, gboolean relative);
 
 GtkTreeIter line_append_flow(GebrGeoXmlLineFlow * line_flow);
 void line_load_flows(void);

@@ -110,6 +110,7 @@ typedef struct gebr_geoxml_flow_server GebrGeoXmlFlowServer;
 #include "program.h"
 #include "macros.h"
 #include "sequence.h"
+#include "object.h"
 
 /**
  * Create a new empty flow and return a pointer to it.
@@ -125,6 +126,13 @@ GebrGeoXmlFlow *gebr_geoxml_flow_new();
  * If \p flow or \p flow2 is NULL nothing is done.
  */
 void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2);
+
+/**
+ * Call \ref gebr_geoxml_program_foreach_parameter for each program of \p flow
+ *
+ * If \p flow is NULL nothing is done.
+ */
+void gebr_geoxml_flow_foreach_parameter(GebrGeoXmlFlow * flow, GebrGeoXmlCallback callback, gpointer user_data);
 
 /**
  * Change the \p flow 's modified date to \p last_run

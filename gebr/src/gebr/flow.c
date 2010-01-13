@@ -50,7 +50,7 @@
  * Public functions.
  */
 
-/* Function: flow_new
+/** 
  * Create a new flow
  */
 gboolean flow_new(void)
@@ -93,7 +93,7 @@ gboolean flow_new(void)
 	return TRUE;
 }
 
-/* Function: flow_free
+/** 
  * Frees the memory allocated to a flow
  * Besides, update the detailed view of a flow in the interface.
  */
@@ -109,7 +109,7 @@ void flow_free(void)
 	flow_browse_info_update();
 }
 
-/* Function: flow_delete
+/** 
  * Delete the selected flow in flow browser
  */
 void flow_delete(gboolean confirm)
@@ -161,7 +161,7 @@ void flow_delete(gboolean confirm)
 	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 }
 
-/* Function: flow_import
+/** 
  * Import flow from file to the current line
  */
 void flow_import(void)
@@ -173,7 +173,6 @@ void flow_import(void)
 	gchar *dir;
 
 	gchar *flow_title;
-	GString *flow_filename;
 
 	GebrGeoXmlFlow *imported_flow;
 
@@ -205,32 +204,29 @@ void flow_import(void)
 
 	/* initialization */
 	flow_title = (gchar *) gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(imported_flow));
-	flow_filename = document_assembly_filename("flw");
 
 	/* feedback */
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' imported to line '%s' from file '%s'"),
 		     flow_title, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.line)), dir);
 
-	/* change filename */
-	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(imported_flow), flow_filename->str);
-	document_save(GEBR_GEOXML_DOC(imported_flow));
+	document_import(GEBR_GEOXML_DOCUMENT(imported_flow));
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(imported_flow));
 	/* and add it to the line */
-	gebr_geoxml_line_append_flow(gebr.line, flow_filename->str);
+	gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(imported_flow)));
 	document_save(GEBR_GEOXML_DOC(gebr.line));
 	/* and to the GUI */
 	gtk_list_store_append(gebr.ui_flow_browse->store, &iter);
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
-			   FB_TITLE, flow_title, FB_FILENAME, flow_filename->str, -1);
+			   FB_TITLE, flow_title, 
+			   FB_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(imported_flow)), -1);
 	flow_browse_select_iter(&iter);
 
 	/* frees */
-	g_string_free(flow_filename, TRUE);
  out2:	g_free(dir);
  out:	gtk_widget_destroy(chooser_dialog);
 }
 
-/* Function: flow_export
+/** 
  * Export selected(s) flow(s)
  */
 void flow_export(void)
@@ -297,8 +293,7 @@ void flow_export(void)
 	g_string_free(path, TRUE);
 }
 
-/*
- * Function: flow_export_parameters_cleanup
+/**
  * Cleanup (if group recursively) parameters value.
  * If _use_value_as_default_ is TRUE the value is made default
  */
@@ -355,8 +350,7 @@ static void flow_export_parameters_cleanup(GebrGeoXmlParameters * parameters, gb
 	}
 }
 
-/*
- * Function: flow_export_as_menu
+/**
  * Export current flow converting it to a menu.
  */
 void flow_export_as_menu(void)
@@ -453,7 +447,7 @@ void flow_export_as_menu(void)
 
 static void flow_copy_from_dicts_parse_parameters(GebrGeoXmlParameters * parameters);
 
-/* Function: flow_copy_from_dicts_parse_parameter
+/** 
  * Parse a parameter
  */
 static void flow_copy_from_dicts_parse_parameter(GebrGeoXmlParameter * parameter)
@@ -489,7 +483,7 @@ static void flow_copy_from_dicts_parse_parameter(GebrGeoXmlParameter * parameter
 							  NULL);
 }
 
-/* Function: flow_copy_from_dicts_parse_parameters
+/** 
  * Parse a set of parameter
  */
 static void flow_copy_from_dicts_parse_parameters(GebrGeoXmlParameters * parameters)
@@ -501,7 +495,7 @@ static void flow_copy_from_dicts_parse_parameters(GebrGeoXmlParameters * paramet
 		flow_copy_from_dicts_parse_parameter(GEBR_GEOXML_PARAMETER(parameter));
 }
 
-/* Function: flow_copy_from_dicts
+/**
  * Copy all values of parameters linked to dictionaries' parameters
  */
 void flow_copy_from_dicts(GebrGeoXmlFlow * flow)
@@ -513,7 +507,74 @@ void flow_copy_from_dicts(GebrGeoXmlFlow * flow)
 		flow_copy_from_dicts_parse_parameters(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)));
 }
 
-/* Function: flow_run
+static void path_set_to(GString * path, gboolean relative)
+{
+	if (relative)
+		gebr_path_use_home_variable(path);
+	else
+		gebr_path_resolve_home_variable(path);
+}
+
+static void flow_paths_foreach_parameter(GebrGeoXmlParameter * parameter, gboolean relative)
+{
+	if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
+		GebrGeoXmlSequence *value;
+
+		gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE, &value, 0);
+		for (; value != NULL; gebr_geoxml_sequence_next(&value)) {
+			GString *path;
+
+			path = g_string_new(gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(value)));
+			path_set_to(path, relative);
+			gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value), path->str);
+
+			g_string_free(path, TRUE);
+		}
+	}
+}
+
+/**
+ * Change all paths to relative or absolute according to \p relative
+ */
+void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
+{
+	GString *path;
+	GebrGeoXmlSequence *server;
+
+	path = g_string_new(NULL);
+
+	/* flow's IO */
+	g_string_assign(path, gebr_geoxml_flow_io_get_input(flow));
+	path_set_to(path, relative);
+	gebr_geoxml_flow_io_set_input(flow, path->str);
+	g_string_assign(path, gebr_geoxml_flow_io_get_output(flow));
+	path_set_to(path, relative);
+	gebr_geoxml_flow_io_set_output(flow, path->str);
+	g_string_assign(path, gebr_geoxml_flow_io_get_error(flow));
+	path_set_to(path, relative);
+	gebr_geoxml_flow_io_set_error(flow, path->str);
+
+	/* servers IO */
+	gebr_geoxml_flow_get_server(flow, &server, 0);
+	for (; server != NULL; gebr_geoxml_sequence_next(&server)) {
+		g_string_assign(path, gebr_geoxml_flow_server_io_get_input(GEBR_GEOXML_FLOW_SERVER(server)));
+		path_set_to(path, relative);
+		gebr_geoxml_flow_server_io_set_input(GEBR_GEOXML_FLOW_SERVER(server), path->str);
+		g_string_assign(path, gebr_geoxml_flow_server_io_get_output(GEBR_GEOXML_FLOW_SERVER(server)));
+		path_set_to(path, relative);
+		gebr_geoxml_flow_server_io_set_output(GEBR_GEOXML_FLOW_SERVER(server), path->str);
+		g_string_assign(path, gebr_geoxml_flow_server_io_get_error(GEBR_GEOXML_FLOW_SERVER(server)));
+		path_set_to(path, relative);
+		gebr_geoxml_flow_server_io_set_error(GEBR_GEOXML_FLOW_SERVER(server), path->str);
+	}
+
+	/* all parameters */
+	gebr_geoxml_flow_foreach_parameter(flow, (GebrGeoXmlCallback)flow_paths_foreach_parameter, (gpointer)relative);
+
+	g_string_free(path, TRUE);
+}
+
+/** 
  * Runs a flow
  */
 void flow_run(struct server *server)
@@ -575,8 +636,7 @@ void flow_run(struct server *server)
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
-/*
- * Function: flow_revision_save
+/**
  * Make a revision from current flow.
  * Opens a dialog asking the user for a comment of it.
  */
@@ -625,8 +685,7 @@ gboolean flow_revision_save(void)
 	return ret;
 }
 
-/*
- * Function: flow_program_remove
+/**
  * Remove selected program from flow process
  */
 void flow_program_remove(void)
@@ -648,8 +707,7 @@ void flow_program_remove(void)
 	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 }
 
-/*
- * Function: flow_program_move_top
+/**
  * Move selected program to top in the processing flow
  */
 void flow_program_move_top(void)
@@ -665,7 +723,7 @@ void flow_program_move_top(void)
 				  &iter, &gebr.ui_flow_edition->input_iter);
 }
 
-/* Function: flow_program_move_bottom
+/** 
  * Move selected program to bottom in the processing flow
  */
 void flow_program_move_bottom(void)
@@ -681,7 +739,7 @@ void flow_program_move_bottom(void)
 				   &iter, &gebr.ui_flow_edition->output_iter);
 }
 
-/* Function: flow_copy
+/**
  * Copy selected(s) flows(s) to clipboard
  */
 void flow_copy(void)
@@ -703,7 +761,7 @@ void flow_copy(void)
 	gebr.flow_clipboard = g_list_reverse(gebr.flow_clipboard);
 }
 
-/* Function: flow_program_paste
+/** 
  * Paste flow(s) from clipboard
  */
 void flow_paste(void)
@@ -728,7 +786,7 @@ void flow_paste(void)
 	}
 }
 
-/* Function: flow_program_copy
+/** 
  * Copy selected(s) program(s) to clipboard
  */
 void flow_program_copy(void)
@@ -745,7 +803,7 @@ void flow_program_copy(void)
 	}
 }
 
-/* Function: flow_program_paste
+/* 
  * Paste program(s) from clipboard
  */
 void flow_program_paste(void)

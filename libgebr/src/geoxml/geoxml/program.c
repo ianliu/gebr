@@ -40,6 +40,33 @@ struct gebr_geoxml_program {
  * library functions.
  */
 
+static void gebr_geoxml_parameters_foreach(GebrGeoXmlParameters * parameters, GebrGeoXmlCallback callback, gpointer user_data)
+{
+	GebrGeoXmlSequence *parameter;
+
+	gebr_geoxml_parameters_get_parameter(parameters, &parameter, 0);
+	for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter)) {
+		if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter)) == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
+			GebrGeoXmlSequence *instance;
+
+			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+			for (; instance != NULL; gebr_geoxml_sequence_next(&instance))
+				gebr_geoxml_parameters_foreach(GEBR_GEOXML_PARAMETERS(instance), callback, user_data);
+
+			continue;	
+		}
+		callback(GEBR_GEOXML_OBJECT(parameter), user_data);
+	}
+}
+
+void gebr_geoxml_program_foreach_parameter(GebrGeoXmlProgram * program, GebrGeoXmlCallback callback, gpointer user_data)
+{
+	if (program == NULL)
+		return;
+
+	gebr_geoxml_parameters_foreach(gebr_geoxml_program_get_parameters(program), callback, user_data);
+}
+
 GebrGeoXmlFlow *gebr_geoxml_program_flow(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)

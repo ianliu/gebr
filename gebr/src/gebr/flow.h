@@ -27,6 +27,7 @@ void flow_import(void);
 void flow_export(void);
 void flow_export_as_menu(void);
 void flow_copy_from_dicts(GebrGeoXmlFlow * flow);
+void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative);
 void flow_run(struct server *server);
 gboolean flow_revision_save(void);
 

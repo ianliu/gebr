@@ -16,11 +16,6 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-/* File: project.c
- * Functions for projects manipulation
- */
-
-#include <string.h>
 #include <stdio.h>
 #include <unistd.h>
 
@@ -38,10 +33,8 @@
 #include "callbacks.h"
 #include "ui_project_line.h"
 
-/*
- * Function: project_new
+/**
  * Create a new project
- *
  */
 void project_new(void)
 {
@@ -68,8 +61,7 @@ void project_new(void)
 	gebr_geoxml_document_free(project);
 }
 
-/*
- * Function: project_delete
+/**
  * Delete the selected project
  *
  * TODO:
@@ -118,8 +110,7 @@ gboolean project_delete(gboolean confirm)
 	return TRUE;
 }
 
-/*
- * Function: project_append_iter
+/**
  * Add _project_ to the list of projects.
  */
 GtkTreeIter project_append_iter(GebrGeoXmlProject * project)
@@ -134,8 +125,7 @@ GtkTreeIter project_append_iter(GebrGeoXmlProject * project)
 	return iter;
 }
 
-/*
- * Function: project_append_line_iter
+/**
  * Add _line_ to _project_iter_.
  */
 GtkTreeIter project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine * line)
@@ -150,8 +140,7 @@ GtkTreeIter project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine 
 	return iter;
 }
 
-/*
- * Function: project_list_populate
+/**
  * Reload the projets from the data directory
  */
 void project_list_populate(void)

@@ -16,11 +16,6 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-/*
- * File: callbacks.c
- * Callbacks for notebook and menus items
- */
-
 #include <libgebr/gui/help.h>
 
 #include "callbacks.h"
@@ -36,8 +31,7 @@
 #include "ui_job_control.h"
 #include "ui_help.h"
 
-/*
- * Function: on_copy_activate
+/**
  * Select copy target depending on the context
  */
 void on_copy_activate(void)
@@ -54,8 +48,7 @@ void on_copy_activate(void)
 	}
 }
 
-/*
- * Function: on_paste_activate
+/**
  * Select paste target depending on the context
  */
 void on_paste_activate(void)
@@ -72,7 +65,7 @@ void on_paste_activate(void)
 	}
 }
 
-/* Function: on_quit_activate
+/** 
  * Call <gebr_quit>
  */
 void on_quit_activate(void)
@@ -80,7 +73,7 @@ void on_quit_activate(void)
 	gebr_quit();
 }
 
-/* Function: on_document_properties_activate
+/** 
  * Call <document_properties_setup_ui>
  */
 gboolean on_document_properties_activate(void)
@@ -88,7 +81,7 @@ gboolean on_document_properties_activate(void)
 	return document_properties_setup_ui(document_get_current());
 }
 
-/* Function: on_document_dict_edit_activate
+/** 
  * Call <document_dict_edit_setup_ui>
  */
 void on_document_dict_edit_activate(void)
@@ -96,7 +89,7 @@ void on_document_dict_edit_activate(void)
 	document_dict_edit_setup_ui();
 }
 
-/* Function: on_project_line_new_project_activate
+/** 
  * Call <project_new> from <project.c>
  */
 void on_project_line_new_project_activate(void)
@@ -104,8 +97,7 @@ void on_project_line_new_project_activate(void)
 	project_new();
 }
 
-/*
- * Function: on_project_line_new_line_activate
+/**
  * Call <project_new> from <project.c>
  */
 void on_project_line_new_line_activate(void)
@@ -113,8 +105,7 @@ void on_project_line_new_line_activate(void)
 	line_new();
 }
 
-/*
- * Function: on_project_line_delete_activate
+/**
  * Call <project_delete> from <project.c>
  */
 void on_project_line_delete_activate(void)
@@ -125,8 +116,7 @@ void on_project_line_delete_activate(void)
 		line_delete(TRUE);
 }
 
-/*
- * Function: on_project_line_paths_activate
+/**
  * *Fill me in!*
  */
 void on_project_line_paths_activate(void)
@@ -134,8 +124,7 @@ void on_project_line_paths_activate(void)
 	path_list_setup_ui();
 }
 
-/*
- * Function: on_project_line_import_activate
+/**
  * Call <project_line_import> from <ui_project_line.c>
  */
 void on_project_line_import_activate(void)
@@ -143,8 +132,7 @@ void on_project_line_import_activate(void)
 	project_line_import();
 }
 
-/*
- * Function: on_project_line_export_activate
+/**
  * Call <project_line_export> from <ui_project_line.c>
  */
 void on_project_line_export_activate(void)
@@ -152,8 +140,7 @@ void on_project_line_export_activate(void)
 	project_line_export();
 }
 
-/*
- * Function: on_flow_new_activate
+/**
  * Call <flow_new> from <flow.c>
  */
 void on_flow_new_activate(void)
@@ -161,8 +148,7 @@ void on_flow_new_activate(void)
 	flow_new();
 }
 
-/*
- * Function: on_flow_import_activate
+/**
  * Call <flow_import> from <flow.c>
  */
 void on_flow_import_activate(void)
@@ -170,8 +156,7 @@ void on_flow_import_activate(void)
 	flow_import();
 }
 
-/*
- * Function: on_flow_export_activate
+/**
  * Call <flow_export> from <flow.c>
  */
 void on_flow_export_activate(void)
@@ -179,8 +164,7 @@ void on_flow_export_activate(void)
 	flow_export();
 }
 
-/*
- * Function: on_flow_export_as_menu_activate
+/**
  * Call <flow_export_as_menu> from <flow.c>
  */
 void on_flow_export_as_menu_activate(void)
@@ -188,8 +172,7 @@ void on_flow_export_as_menu_activate(void)
 	flow_export_as_menu();
 }
 
-/*
- * Function: on_flow_delete_activate
+/**
  * Call <flow_delete> from <flow.c>
  */
 void on_flow_delete_activate(void)
@@ -197,7 +180,7 @@ void on_flow_delete_activate(void)
 	flow_delete(TRUE);
 }
 
-/* Function: on_flow_io_activate
+/** 
  * Adjust selection and show flow IO dialog
  */
 void on_flow_io_activate(void)
@@ -206,8 +189,7 @@ void on_flow_io_activate(void)
 	flow_io_setup_ui(TRUE);
 }
 
-/*
- * Function: on_flow_execute_activate
+/**
  * Call <flow_io_setup_ui> from <flow.c>
  *
  */
@@ -216,7 +198,7 @@ void on_flow_execute_activate(void)
 	flow_fast_run();
 }
 
-/* Function: on_flow_revision_save_activate
+/** 
  * Call <flow_revision_save>
  */
 void on_flow_revision_save_activate(void)
@@ -224,7 +206,7 @@ void on_flow_revision_save_activate(void)
 	flow_revision_save();
 }
 
-/* Function: on_flow_revision_show_menu
+/** 
  * Call <flow_browse_single_selection>
  */
 void on_flow_revision_show_menu(void)
@@ -232,7 +214,7 @@ void on_flow_revision_show_menu(void)
 	flow_browse_single_selection();
 }
 
-/* Function: on_flow_copy_activate
+/** 
  * Call <flow_copy>
  */
 void on_flow_copy_activate(void)
@@ -240,7 +222,7 @@ void on_flow_copy_activate(void)
 	flow_copy();
 }
 
-/* Function: on_flow_paste_activate
+/** 
  * Call <flow_paste>
  */
 void on_flow_paste_activate(void)
@@ -248,8 +230,7 @@ void on_flow_paste_activate(void)
 	flow_paste();
 }
 
-/*
- * Function: on_flow_component_help_activate
+/**
  * *Fill me in!*
  *
  */
@@ -258,8 +239,7 @@ void on_flow_component_help_activate(void)
 	program_help_show();
 }
 
-/*
- * Function: on_flow_component_delete_activate
+/**
  * Call <flow_program_remove>
  */
 void on_flow_component_delete_activate(void)
@@ -267,20 +247,16 @@ void on_flow_component_delete_activate(void)
 	flow_program_remove();
 }
 
-/*
- * Function: on_flow_component_properties_activate
+/**
  * *Fill me in!*
- *
  */
 void on_flow_component_properties_activate(void)
 {
 	flow_edition_component_activated();
 }
 
-/*
- * Function: on_flow_component_refresh_activate
+/**
  * *Fill me in!*
- *
  */
 void on_flow_component_refresh_activate(void)
 {

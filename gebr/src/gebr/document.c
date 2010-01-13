@@ -28,9 +28,10 @@
 
 #include "document.h"
 #include "gebr.h"
+#include "line.h"
+#include "flow.h"
 
-/*
- * Function: document_new
+/**
  * Create a new document with _type_
  *
  * Create a new document in the user's data diretory
@@ -75,8 +76,7 @@ GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
 	return document;
 }
 
-/*
- * Function: document_load
+/**
  * Load a document (flow, line or project) from its filename, handling errors
  */
 GebrGeoXmlDocument *document_load(const gchar * filename)
@@ -91,8 +91,7 @@ GebrGeoXmlDocument *document_load(const gchar * filename)
 	return document;
 }
 
-/*
- * Function: document_load_at
+/**
  * Load a document (flow, line or project) from its filename, handling errors
  */
 GebrGeoXmlDocument *document_load_at(const gchar * filename, const gchar * directory)
@@ -108,8 +107,7 @@ GebrGeoXmlDocument *document_load_at(const gchar * filename, const gchar * direc
 	return document;
 }
 
-/*
- * Function: document_load_path
+/**
  * Load a document from its path, handling errors
  */
 GebrGeoXmlDocument *document_load_path(const gchar * path)
@@ -124,8 +122,7 @@ GebrGeoXmlDocument *document_load_path(const gchar * path)
 	return document;
 }
 
-/*
- * Function: document_save
+/**
  * Save _document_ using its filename field at data directory.
  */
 void document_save(GebrGeoXmlDocument * document)
@@ -142,8 +139,7 @@ void document_save(GebrGeoXmlDocument * document)
 	g_string_free(path, TRUE);
 }
 
-/*
- * Function: document_import
+/**
  * Import _document_ into data directory, saving it with a new filename.
  */
 void document_import(GebrGeoXmlDocument * document)
@@ -155,9 +151,11 @@ void document_import(GebrGeoXmlDocument * document)
 	switch (gebr_geoxml_document_get_type(document)) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
 		extension = "flw";
+		flow_set_paths_to(GEBR_GEOXML_FLOW(document), FALSE);
 		break;
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
 		extension = "lne";
+		line_set_paths_to(GEBR_GEOXML_LINE(document), FALSE);
 		break;
 	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
 		extension = "prj";
@@ -176,8 +174,7 @@ void document_import(GebrGeoXmlDocument * document)
 	g_string_free(new_filename, TRUE);
 }
 
-/*
- * Function: document_assembly_filename
+/**
  * Creates a filename for a document
  *
  * Creates a filename for a document using the current date and a random
@@ -219,8 +216,7 @@ GString *document_assembly_filename(const gchar * extension)
 	return filename;
 }
 
-/*
- * Function: document_get_path
+/**
  * Prefix filename with data diretory path
  */
 GString *document_get_path(const gchar * filename)
@@ -233,8 +229,7 @@ GString *document_get_path(const gchar * filename)
 	return path;
 }
 
-/*
- * Function: document_delete
+/**
  * Delete document with _filename_ from data directory.
  */
 void document_delete(const gchar * filename)

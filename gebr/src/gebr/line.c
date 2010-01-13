@@ -29,6 +29,7 @@
 #include <glib/gstdio.h>
 
 #include <libgebr/intl.h>
+#include <libgebr/utils.h>
 #include <libgebr/gui/utils.h>
 
 #include "line.h"
@@ -39,15 +40,8 @@
 #include "callbacks.h"
 #include "ui_project_line.h"
 
-/*
- * Section: Public
- * Public functions.
- */
-
-/*
- * Function: line_new
+/**
  * Create a new line
- *
  */
 gboolean line_new(void)
 {
@@ -100,10 +94,8 @@ gboolean line_new(void)
 	return TRUE;
 }
 
-/*
- * Function: line_delete
+/**
  * Delete the selected line
- *
  */
 gboolean line_delete(gboolean confirm)
 {
@@ -167,8 +159,7 @@ gboolean line_delete(gboolean confirm)
 	return TRUE;
 }
 
-/*
- * Function: line_import
+/**
  * Import line with basename _line_filename_ inside _at_dir_.
  * Also import its flows.
  */
@@ -202,7 +193,29 @@ GebrGeoXmlLine *line_import(const gchar * line_filename, const gchar * at_dir)
 	return line;
 }
 
-/* Function: line_append_flow
+/**
+ * Change all paths in \p line to relative or absolute according \p relative
+ */
+void line_set_paths_to(GebrGeoXmlLine * line, gboolean relative)
+{
+	GebrGeoXmlSequence *line_path;
+	GString *path;
+
+	path = g_string_new(NULL);
+	gebr_geoxml_line_get_path(line, &line_path, 0);
+	for (; path != NULL; gebr_geoxml_sequence_next(&line_path)) {
+		g_string_assign(path, gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path)));
+		if (relative)
+			gebr_path_use_home_variable(path);
+		else
+			gebr_path_resolve_home_variable(path);
+		gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(line_path), path->str);
+	}
+
+	g_string_free(path, TRUE);
+}
+
+/** 
  * Append _line_flow_ to flow browse
  */
 GtkTreeIter line_append_flow(GebrGeoXmlLineFlow * line_flow)
@@ -228,7 +241,7 @@ GtkTreeIter line_append_flow(GebrGeoXmlLineFlow * line_flow)
 	return iter;
 }
 
-/* Function: line_load_flows
+/** 
  * Load flows associated to the selected line.
  * Called only by project_line_load
  */
@@ -250,7 +263,7 @@ void line_load_flows(void)
 		flow_browse_select_iter(&iter);
 }
 
-/* Function: line_move_flow_top
+/** 
  * Move flow top
  */
 void line_move_flow_top(void)
@@ -268,7 +281,7 @@ void line_move_flow_top(void)
 	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
 }
 
-/* Function: line_move_flow_bottom
+/** 
  * Move flow bottom
  */
 void line_move_flow_bottom(void)
