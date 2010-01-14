@@ -356,33 +356,6 @@ gboolean menu_list_create_index(void)
 }
 
 /*
- * Function: menu_scan_directory
- * Scans _directory_ for menus
- */
-GString *menu_get_help_from_program_ref(GebrGeoXmlProgram * program)
-{
-	GebrGeoXmlFlow *menu;
-	gchar *filename;
-	gulong index;
-	GString *help;
-
-	GebrGeoXmlSequence *menu_program;
-
-	gebr_geoxml_program_get_menu(GEBR_GEOXML_PROGRAM(program), &filename, &index);
-	menu = menu_load(filename);
-	if (menu == NULL)
-		return g_string_new("");
-
-	/* go to menu's program index specified in flow */
-	gebr_geoxml_flow_get_program(menu, &menu_program, index);
-	help = g_string_new(gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(menu_program)));
-
-	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
-
-	return help;
-}
-
-/*
  * Section: Private
  * Private functions.
  */

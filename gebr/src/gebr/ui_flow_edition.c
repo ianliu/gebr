@@ -124,7 +124,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 
 	ui_flow_edition->fseq_store = gtk_list_store_new(FSEQ_N_COLUMN,
 							 GDK_TYPE_PIXBUF,
-							 G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_ULONG);
+							 G_TYPE_STRING, G_TYPE_POINTER);
 	ui_flow_edition->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->fseq_store));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_edition->fseq_view)),
 				    GTK_SELECTION_MULTIPLE);
@@ -466,6 +466,12 @@ static void flow_edition_component_selected(void)
 		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,
 											   "flow_edition_status_unconfigured")),
 					     TRUE);
+
+	if (strlen(gebr_geoxml_program_get_help(gebr.program)) == 0)	
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_edition_help"), FALSE);
+	else
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_edition_help"), TRUE);
+
 }
 
 /* Function: flow_edition_menu_add

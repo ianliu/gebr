@@ -274,7 +274,7 @@ GebrGeoXmlFlow *menu_load(const gchar * path)
 	int ret;
 	GebrGeoXmlSequence *category;
 
-	if ((ret = gebr_geoxml_document_load(&menu, path))) {
+	if ((ret = gebr_geoxml_document_load(&menu, path, NULL))) {
 		debr_message(GEBR_LOG_ERROR, _("Could not load menu at '%s': %s"), path,
 			     gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		return NULL;
@@ -432,8 +432,6 @@ gboolean menu_save(GtkTreeIter * iter)
 {
 	GtkTreeIter selected_iter;
 	GebrGeoXmlFlow *menu;
-	GebrGeoXmlSequence *program;
-	gulong index;
 	gchar *path;
 	gchar *filename;
 	gchar *tmp;
@@ -447,13 +445,7 @@ gboolean menu_save(GtkTreeIter * iter)
 
 	filename = g_path_get_basename(path);
 	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(menu), filename);
-	/* Write menu tag for each program */
-	index = 0;
-	gebr_geoxml_flow_get_program(menu, &program, index);
-	while (program != NULL) {
-		gebr_geoxml_program_set_menu(GEBR_GEOXML_PROGRAM(program), filename, index++);
-		gebr_geoxml_sequence_next(&program);
-	}
+
 	gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(menu), gebr_iso_date());
 	gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path);
 

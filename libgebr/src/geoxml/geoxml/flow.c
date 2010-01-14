@@ -103,7 +103,6 @@ void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 				      __gebr_geoxml_get_first_element(gebr_geoxml_document_root_element
 								      (GEBR_GEOXML_DOC(flow)), "revision"), &exception);
 
-		gebr_geoxml_program_set_help((GebrGeoXmlProgram *) new_node, "");
 	}
 
 	gdome_str_unref(string);
@@ -398,9 +397,6 @@ GebrGeoXmlProgram *gebr_geoxml_flow_append_program(GebrGeoXmlFlow * flow)
 	gebr_geoxml_program_set_stdout((GebrGeoXmlProgram *) element, FALSE);
 	gebr_geoxml_program_set_stderr((GebrGeoXmlProgram *) element, FALSE);
 	gebr_geoxml_program_set_status((GebrGeoXmlProgram *) element, "unconfigured");
-	__gebr_geoxml_insert_new_element(element, "menu", NULL);
-	gebr_geoxml_program_set_menu((GebrGeoXmlProgram *) element,
-				     gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)), -1);
 	__gebr_geoxml_insert_new_element(element, "title", NULL);
 	__gebr_geoxml_insert_new_element(element, "binary", NULL);
 	__gebr_geoxml_insert_new_element(element, "description", NULL);

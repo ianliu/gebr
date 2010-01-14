@@ -63,7 +63,6 @@
  */
 #define GEBR_GEOXML_OBJECT(object) ((GebrGeoXmlObject*)(object))
 
-#include "document.h"
 
 /**
  * The GebrGeoXmlObject struct contains private data only, and should be accessed using the functions below.
@@ -109,6 +108,7 @@ void gebr_geoxml_object_set_user_data(GebrGeoXmlObject * object, gpointer user_d
  */
 gpointer gebr_geoxml_object_get_user_data(GebrGeoXmlObject * object);
 
+#include "document.h"
 /**
  * Get the owner document of \p object
  *

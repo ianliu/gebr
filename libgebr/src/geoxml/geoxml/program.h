@@ -157,11 +157,6 @@ void gebr_geoxml_program_set_title(GebrGeoXmlProgram * program, const gchar * ti
 /**
  *
  */
-void gebr_geoxml_program_set_menu(GebrGeoXmlProgram * program, const gchar * menu, gulong index);
-
-/**
- *
- */
 void gebr_geoxml_program_set_binary(GebrGeoXmlProgram * program, const gchar * binary);
 
 /**
@@ -203,11 +198,6 @@ const gchar *gebr_geoxml_program_get_status(GebrGeoXmlProgram * program);
  *
  */
 const gchar *gebr_geoxml_program_get_title(GebrGeoXmlProgram * program);
-
-/**
- *
- */
-void gebr_geoxml_program_get_menu(GebrGeoXmlProgram * program, gchar ** menu, gulong * index);
 
 /**
  *

@@ -445,13 +445,10 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean se
 {
 	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
 		GtkTreeIter iter;
-		gchar *menu;
-		gulong prog_index;
 		const gchar *status;
 
 		GdkPixbuf *pixbuf;
 
-		gebr_geoxml_program_get_menu(GEBR_GEOXML_PROGRAM(program), &menu, &prog_index);
 		status = gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program));
 
 		if (strcmp(status, "unconfigured") == 0)
@@ -472,8 +469,7 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean se
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
 				   FSEQ_TITLE_COLUMN, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)),
 				   FSEQ_STATUS_COLUMN, pixbuf,
-				   FSEQ_GEBR_GEOXML_POINTER, program,
-				   FSEQ_MENU_FILENAME_COLUMN, menu, FSEQ_MENU_INDEX, prog_index, -1);
+				   FSEQ_GEBR_GEOXML_POINTER, program, -1);
 
 		if (select_last)
 			flow_edition_select_component_iter(&iter);
@@ -707,7 +703,7 @@ on_renderer_entry_icon_release(GtkEntry * widget,
 	if (!flow_io_get_selected(ui_flow_io, NULL))
 		return;
 
-	column = (gint) g_object_get_data(G_OBJECT(widget), "column");
+	column = GPOINTER_TO_INT (g_object_get_data(G_OBJECT(widget), "column"));
 	dialog = gtk_file_chooser_dialog_new(_("Choose a file"),
 					     GTK_WINDOW(gebr.window),
 					     GTK_FILE_CHOOSER_ACTION_SAVE,

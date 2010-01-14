@@ -1,6 +1,6 @@
 <!ELEMENT flow (filename, title, description, help, author, email, dict, date, category*, io, servers, program*, revision*)>
 <!ATTLIST flow
-	version CDATA #FIXED "0.3.1"
+	version CDATA #FIXED "0.3.2"
 	nextid  ID #REQUIRED>
 
 <!-- Name of the XML flow file -->
@@ -38,22 +38,18 @@
 <!-- Input/Output to run the flow -->
 <!ELEMENT io (input, output, error)>
 
-<!ELEMENT program (menu, title, binary, description, help, url, parameters)>
+<!ELEMENT program (title, binary, description, help, url, parameters)>
 <!ATTLIST program
-   stdin  (yes | no)                             #REQUIRED
-   stdout (yes | no)                             #REQUIRED
-   stderr (yes | no)                             #REQUIRED
-   status (disabled | configured | unconfigured) #REQUIRED>
+	stdin	(yes | no)				#REQUIRED
+	stdout	(yes | no)				#REQUIRED
+	stderr	(yes | no)				#REQUIRED
+	status	(disabled | configured | unconfigured)	#REQUIRED>
 
 <!ELEMENT revision (#PCDATA)>
 <!ATTLIST revision
-   date    CDATA #REQUIRED
-   comment CDATA #REQUIRED>
+	date	CDATA	#REQUIRED
+	comment	CDATA	#REQUIRED>
 
-<!-- Menu file from which this program belong -->
-<!ELEMENT menu (#PCDATA)>
-<!ATTLIST menu
-   index CDATA #REQUIRED>
 <!-- Binary to program (without path) -->
 <!ELEMENT binary (#PCDATA)>
 <!-- URL to get the program -->

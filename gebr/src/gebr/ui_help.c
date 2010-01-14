@@ -51,15 +51,10 @@ gchar *unable_to_write_help_error = N_("Unable to write help in temporary file")
  */
 void program_help_show(void)
 {
-	GString *help;
-
 	if (!flow_edition_get_selected_component(NULL, TRUE))
 		return;
 
-	help = menu_get_help_from_program_ref(gebr.program);
-	help_show(help->str, _("Program help"));
-
-	g_string_free(help, TRUE);
+	help_show(gebr_geoxml_program_get_help(gebr.program), _("Program help"));
 }
 
 /*

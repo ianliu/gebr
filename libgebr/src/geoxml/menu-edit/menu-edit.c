@@ -113,29 +113,13 @@ int main(int argc, char **argv)
 		GebrGeoXmlProgram *prog;
 		gint nprog;
 
-		gebr_geoxml_document_load((GebrGeoXmlDocument **) (&flow), menu[imenu]);
+		gebr_geoxml_document_load((GebrGeoXmlDocument **) (&flow), menu[imenu], NULL);
 		doc = GEBR_GEOXML_DOC(flow);
 		nprog = gebr_geoxml_flow_get_programs_number(flow);
-		if (fixfname) {
+		if (fixfname)
 			gebr_geoxml_document_set_filename(doc, menu[imenu]);
-			gebr_geoxml_flow_get_program(flow, &seq, 0);
-			prog = GEBR_GEOXML_PROGRAM(seq);
-			for (iprog = 0; iprog < nprog; iprog++) {
-				gebr_geoxml_program_set_menu(prog, menu[imenu], iprog);
-				gebr_geoxml_sequence_next(&seq);
-			}
-		}
-
-		if (setfname != NULL) {
+		if (setfname != NULL)
 			gebr_geoxml_document_set_filename(doc, setfname);
-			gebr_geoxml_flow_get_program(flow, &seq, 0);
-			prog = GEBR_GEOXML_PROGRAM(seq);
-			for (iprog = 0; iprog < nprog; iprog++) {
-				gebr_geoxml_program_set_menu(prog, setfname, iprog);
-				gebr_geoxml_sequence_next(&seq);
-			}
-		}
-
 		if (author != NULL)
 			gebr_geoxml_document_set_author(doc, author);
 		if (email != NULL)

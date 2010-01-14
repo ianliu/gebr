@@ -413,17 +413,10 @@ void flow_export_as_menu(void)
 	use_value = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES ? TRUE : FALSE;
 	i = 0;
 	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
-		GString *menu_help;
-
-		menu_help = menu_get_help_from_program_ref(GEBR_GEOXML_PROGRAM(program));
-		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(program), menu_help->str);
 
 		flow_export_parameters_cleanup(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)),
 					       use_value);
-		gebr_geoxml_program_set_menu(GEBR_GEOXML_PROGRAM(program), filename, i++);
 		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), "unconfigured");
-
-		g_string_free(menu_help, TRUE);
 	}
 
 	gebr_geoxml_flow_io_set_input(flow, "");
@@ -574,7 +567,7 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 	}
 
 	/* all parameters */
-	gebr_geoxml_flow_foreach_parameter(flow, (GebrGeoXmlCallback)flow_paths_foreach_parameter, (gpointer)relative);
+	gebr_geoxml_flow_foreach_parameter(flow, (GebrGeoXmlCallback)flow_paths_foreach_parameter, GINT_TO_POINTER(relative));
 
 	g_string_free(path, TRUE);
 }

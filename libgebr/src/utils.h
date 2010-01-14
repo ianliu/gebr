@@ -55,8 +55,8 @@ int gebr_g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const
 #define gebr_foreach_gslist_hyg(element, list, hygid) \
 	GSList * __list##hygid = list, * __i##hygid = list; \
 	if (__i##hygid != NULL || (g_slist_free(__list##hygid), 0)) \
-		for (element = (GdomeElement*)__i##hygid->data; \
-		(__i##hygid != NULL && (element = (GdomeElement*)__i##hygid->data, 1)) || (g_slist_free(__list##hygid), 0); \
+		for (element = (typeof(element))__i##hygid->data; \
+		(__i##hygid != NULL && (element = (typeof(element))__i##hygid->data, 1)) || (g_slist_free(__list##hygid), 0); \
 		__i##hygid = g_slist_next(__i##hygid))
 #define gebr_foreach_gslist(element, list) \
 	gebr_foreach_gslist_hyg(element, list, nohyg)
@@ -64,8 +64,8 @@ int gebr_g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const
 #define gebr_glist_foreach_hyg(element, list, hygid) \
 	GList * __list##hygid = list, * __i##hygid = list; \
 	if (g_list_next(__i##hygid) != NULL || (g_list_free(__list##hygid), 0)) \
-		for (element = (GdomeElement*)g_list_first(__i##hygid)->data; \
-		(__i##hygid != NULL && (element = (GdomeElement*)__i##hygid->data, 1)) || (g_list_free(__list##hygid), 0); \
+		for (element = (typeof(element))g_list_first(__i##hygid)->data; \
+		(__i##hygid != NULL && (element = (typeof(element))__i##hygid->data, 1)) || (g_list_free(__list##hygid), 0); \
 		__i##hygid = g_list_next(__i##hygid))
 #define gebr_glist_foreach(element, list) \
 	libgebr_gslist_foreach_hyg(element, list, nohyg)

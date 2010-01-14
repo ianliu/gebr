@@ -116,20 +116,6 @@ void gebr_geoxml_program_set_title(GebrGeoXmlProgram * program, const gchar * ti
 	__gebr_geoxml_set_tag_value((GdomeElement *) program, "title", title, __gebr_geoxml_create_TextNode);
 }
 
-void gebr_geoxml_program_set_menu(GebrGeoXmlProgram * program, const gchar * menu, gulong index)
-{
-	if (program == NULL || menu == NULL)
-		return;
-
-	gchar *tmp;
-
-	__gebr_geoxml_set_tag_value((GdomeElement *) program, "menu", menu, __gebr_geoxml_create_TextNode);
-	tmp = g_strdup_printf("%ld", index);
-	__gebr_geoxml_set_attr_value(__gebr_geoxml_get_first_element((GdomeElement *) program, "menu"), "index", tmp);
-
-	g_free(tmp);
-}
-
 void gebr_geoxml_program_set_binary(GebrGeoXmlProgram * program, const gchar * binary)
 {
 	if (program == NULL || binary == NULL)
@@ -195,16 +181,6 @@ const gchar *gebr_geoxml_program_get_title(GebrGeoXmlProgram * program)
 	if (program == NULL)
 		return NULL;
 	return __gebr_geoxml_get_tag_value((GdomeElement *) program, "title");
-}
-
-void gebr_geoxml_program_get_menu(GebrGeoXmlProgram * program, gchar ** menu, gulong * index)
-{
-	if (program == NULL)
-		return;
-	*menu = (gchar *) __gebr_geoxml_get_tag_value((GdomeElement *) program, "menu");
-	*index = (gulong)
-	    atol(__gebr_geoxml_get_attr_value
-		 (__gebr_geoxml_get_first_element((GdomeElement *) program, "menu"), "index"));
 }
 
 const gchar *gebr_geoxml_program_get_binary(GebrGeoXmlProgram * program)

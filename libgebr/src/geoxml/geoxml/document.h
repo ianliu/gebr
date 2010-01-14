@@ -98,6 +98,12 @@ enum GEBR_GEOXML_DOCUMENT_TYPE {
 	GEBR_GEOXML_DOCUMENT_TYPE_PROJECT,
 };
 
+#include "program.h"
+/**
+ * Used by \ref gebr_geoxml_document_load 
+ */
+typedef void (*GebrGeoXmlDiscardMenuRefCallback)(GebrGeoXmlProgram * program, const gchar * menu, gint index);
+
 /**
  * Load a document XML file at \p path into \p document.
  * The document is validated using the proper DTD. Invalid documents are not loaded.
@@ -105,7 +111,7 @@ enum GEBR_GEOXML_DOCUMENT_TYPE {
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NO_MEMORY, GEBR_GEOXML_RETV_CANT_ACCESS_FILE,
  * GEBR_GEOXML_RETV_INVALID_DOCUMENT, GEBR_GEOXML_RETV_DTD_SPECIFIED, GEBR_GEOXML_RETV_CANT_ACCESS_DTD
  */
-int gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path);
+int gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref);
 
 /**
  * Load a document XML buffer at \p xml into \p document.

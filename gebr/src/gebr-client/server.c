@@ -117,7 +117,7 @@ gboolean server_run_flow(struct server *server, const gchar * flow_path)
 	GebrGeoXmlFlow *flow;
 	int ret;
 
-	ret = gebr_geoxml_document_load(&document, flow_path);
+	ret = gebr_geoxml_document_load(&document, flow_path, NULL);
 	if (ret) {
 		gebr_client_message(GEBR_LOG_ERROR, _("Could not load flow: %s"),
 				    gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));

@@ -30,6 +30,8 @@
 #include "gebr.h"
 #include "line.h"
 #include "flow.h"
+#include "menu.h"
+
 
 /**
  * Create a new document with _type_
@@ -86,6 +88,7 @@ GebrGeoXmlDocument *document_load(const gchar * filename)
 
 	path = document_get_path(filename);
 	document = document_load_path(path->str);
+	document_save(document);
 	g_string_free(path, TRUE);
 
 	return document;
@@ -106,7 +109,28 @@ GebrGeoXmlDocument *document_load_at(const gchar * filename, const gchar * direc
 
 	return document;
 }
+/**
+ * Callback to remove menu reference from program to maintain backward compatibility
+ */
+static void  __document_discard_menu_ref_callback(GebrGeoXmlProgram * program, const gchar * filename, gint index)
+{
+	GebrGeoXmlFlow *menu;
 
+	GebrGeoXmlSequence *menu_program;
+
+	menu = menu_load_ancient(filename);
+	if (menu == NULL){
+		return;
+	}	
+
+	/* go to menu's program index specified in flow */
+	gebr_geoxml_flow_get_program(menu, &menu_program, index);
+	gebr_geoxml_program_set_help(program, gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(menu_program)));
+
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
+		
+}	
 /**
  * Load a document from its path, handling errors
  */
@@ -115,7 +139,8 @@ GebrGeoXmlDocument *document_load_path(const gchar * path)
 	GebrGeoXmlDocument *document;
 	int ret;
 
-	if ((ret = gebr_geoxml_document_load(&document, path)) < 0)
+	if ((ret = gebr_geoxml_document_load(&document, path, 
+	g_str_has_suffix(path, ".flw") ? __document_discard_menu_ref_callback : NULL)) < 0)
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load document at %s: %s"), path,
 			     gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 
