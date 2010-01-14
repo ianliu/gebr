@@ -38,20 +38,41 @@
 #include "document.h"
 
 /*
+ * Lists all directories to be scanned for menu files.
+ * This list is NULL terminated.
+ * GEBR_SYS_MENUS_DIR *must* be the first element.
+ */
+gchar * directory_list[] = {
+	GEBR_SYS_MENUS_DIR,
+	"/usr/share/gebr/menus",
+	"/usr/local/share/gebr/menus",
+	NULL
+};
+
+/*
  * Prototypes
  */
-static void menu_scan_directory(const gchar * directory, gboolean system_dir, FILE * index_fp);
+static void menu_scan_directory(const gchar * directory, GKeyFile * menu_key_file, GKeyFile * category_key_file);
 
 /*
  * Section: Public
  * Public functions.
  */
 
-/*
- * Function: menu_load
+/**
+ * menu_load
  * Look for a given menu _filename_ and load it if found
  */
 GebrGeoXmlFlow *menu_load(const gchar * filename)
+{
+	return menu_load_path(filename);
+}
+
+/*
+ * Look for a given menu _filename_ and load it if found
+ * \deprecated
+ */
+GebrGeoXmlFlow *menu_load_ancient(const gchar * filename)
 {
 	GebrGeoXmlFlow *menu;
 	GString *path;
@@ -75,9 +96,10 @@ GebrGeoXmlFlow *menu_load_path(const gchar * path)
 	return GEBR_GEOXML_FLOW(document_load_path(path));
 }
 
-/*
- * Function: menu_get_path
- * Look for a given menu and fill in its path
+/**
+ * Look for a given menu and fill in its path.
+ *
+ * \deprecated
  */
 GString *menu_get_path(const gchar * filename)
 {
@@ -107,8 +129,7 @@ GString *menu_get_path(const gchar * filename)
  out:	return path;
 }
 
-/*
- * Function: menu_compare_times
+/**
  * 
  */
 static gboolean menu_compare_times(const gchar * directory, time_t index_time, gboolean recursive)
@@ -207,82 +228,70 @@ gboolean menu_refresh_needed(void)
  */
 void menu_list_populate(void)
 {
-	GIOChannel *index_io_channel;
-	GError *error;
-	GString *index_path;
-	GString *line;
+	GKeyFile *menu_key_file;
+	GKeyFile *category_key_file;
+	GString *categories_path;
+	GString *menus_path;
+	gchar **category_list;
+	gsize category_list_length;
+	GtkTreeIter iter;
+	GtkTreeIter child;
 
-	GtkTreeIter category_iter;
-	GtkTreeIter *parent_iter;
+	categories_path = g_string_new(NULL);
+	menus_path = g_string_new(NULL);
+	menu_key_file = g_key_file_new();
+	category_key_file = g_key_file_new();
 
-	/* initialization */
-	error = NULL;
-	index_path = g_string_new(NULL);
-	line = g_string_new(NULL);
 	gtk_tree_store_clear(gebr.ui_flow_edition->menu_store);
 
-	g_string_printf(index_path, "%s/.gebr/gebr/menus.idx", getenv("HOME"));
-	if (g_access(index_path->str, F_OK | R_OK) && menu_list_create_index() == FALSE)
-		goto out;
-
-	index_io_channel = g_io_channel_new_file(index_path->str, "r", &error);
-	parent_iter = NULL;
-	while (g_io_channel_read_line_string(index_io_channel, line, NULL, &error) == G_IO_STATUS_NORMAL) {
-		gchar **parts;
-		GString *path;
-		GtkTreeIter iter;
-
-		parts = g_strsplit_set(line->str, "|\n", 5);
-		path = menu_get_path(parts[3]);
-		if (path == NULL)
-			goto cont;
-
-		if (!strlen(parts[0]))
-			parent_iter = NULL;
-		else {
-			GString *titlebf;
-
-			titlebf = g_string_new(NULL);
-			g_string_printf(titlebf, "<b>%s</b>", parts[0]);
-
-			/* is there a category? */
-			if (parent_iter != NULL) {
-				gchar *category;
-
-				gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), parent_iter,
-						   MENU_TITLE_COLUMN, &category, -1);
-
-				/* different category? */
-				if (strcmp(category, titlebf->str)) {
-					gtk_tree_store_append(gebr.ui_flow_edition->menu_store, &category_iter, NULL);
-					gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &category_iter,
-							   MENU_TITLE_COLUMN, titlebf->str, -1);
-					parent_iter = &category_iter;
-				}
-
-				g_free(category);
-			} else {
-				gtk_tree_store_append(gebr.ui_flow_edition->menu_store, &category_iter, NULL);
-				gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &category_iter,
-						   MENU_TITLE_COLUMN, titlebf->str, -1);
-				parent_iter = &category_iter;
-			}
-
-			g_string_free(titlebf, TRUE);
-		}
-
-		gtk_tree_store_append(gebr.ui_flow_edition->menu_store, &iter, parent_iter);
-		gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &iter,
-				   MENU_TITLE_COLUMN, parts[1],
-				   MENU_DESC_COLUMN, parts[2], MENU_FILENAME_COLUMN, parts[3], -1);
-
-		g_string_free(path, TRUE);
- cont:		g_strfreev(parts);
+	g_string_printf(categories_path, "%s/.gebr/gebr/categories.idx2", getenv("HOME"));
+	g_string_printf(menus_path, "%s/.gebr/gebr/menus.idx2", getenv("HOME"));
+	if (!g_file_test(categories_path->str, G_FILE_TEST_EXISTS) ||
+	    !g_file_test(menus_path->str, G_FILE_TEST_EXISTS)) {
+		menu_list_create_index();
 	}
 
-	g_io_channel_unref(index_io_channel);
- out:	g_string_free(index_path, TRUE);
-	g_string_free(line, TRUE);
+	if (!g_key_file_load_from_file(category_key_file, categories_path->str, G_KEY_FILE_NONE, NULL))
+		goto out;
+
+	if (!g_key_file_load_from_file(menu_key_file, menus_path->str, G_KEY_FILE_NONE, NULL))
+		goto out;
+
+	category_list = g_key_file_get_groups(category_key_file, &category_list_length);
+	for (int i = 0; category_list[i]; i++) {
+		GString *bold;
+		gchar ** menus_list;
+		gsize menus_list_length;
+		bold = g_string_new(NULL);
+		g_string_printf(bold, "<b>%s</b>", category_list[i]);
+		gtk_tree_store_append(gebr.ui_flow_edition->menu_store, &iter, NULL);
+		gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &iter,
+				   MENU_TITLE_COLUMN, bold->str,
+				   -1);
+		menus_list = g_key_file_get_string_list(category_key_file, category_list[i], "menus", &menus_list_length, NULL);
+		for (int j = 0; menus_list[j]; j++) {
+			gchar *title;
+			gchar *desc;
+			title = g_key_file_get_string(menu_key_file, menus_list[j], "title", NULL);
+			desc = g_key_file_get_string(menu_key_file, menus_list[j], "description", NULL);
+			gtk_tree_store_append(gebr.ui_flow_edition->menu_store, &child, &iter);
+			gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &child,
+					   MENU_TITLE_COLUMN, title,
+					   MENU_DESC_COLUMN, desc,
+					   MENU_FILENAME_COLUMN, menus_list[j],
+					   -1);
+			g_free(title);
+			g_free(desc);
+		}
+		g_string_free(bold, TRUE);
+		g_strfreev(menus_list);
+	}
+	g_strfreev(category_list);
+
+out:	g_key_file_free(menu_key_file);
+	g_key_file_free(category_key_file);
+	g_string_free(categories_path, TRUE);
+	g_string_free(menus_path, TRUE);
 }
 
 /*
@@ -294,36 +303,54 @@ void menu_list_populate(void)
 gboolean menu_list_create_index(void)
 {
 	GString *path;
-	FILE *index_fp;
-	GString *sort_file;
-	GString *sort_cmd_line;
+	GKeyFile *menu_key_file;
+	GKeyFile *category_key_file;
+	FILE *menu_fp;
+	FILE *category_fp;
+	gchar *key_file_data;
 	gboolean ret;
+	gsize key_file_length;
 
-	/* initialization */
 	ret = TRUE;
 	path = g_string_new(NULL);
-	sort_file = g_string_new(NULL);
-	sort_cmd_line = g_string_new(NULL);
+	menu_key_file = g_key_file_new();
+	category_key_file = g_key_file_new();
 
-	g_string_printf(path, "%s/.gebr/gebr/menus.idx", getenv("HOME"));
-	if ((index_fp = fopen(path->str, "w")) == NULL) {
+	// Verify duplicates in directory_list
+	menu_scan_directory(directory_list[0], menu_key_file, category_key_file);
+	for (int i = 1; directory_list[i]; i++)
+		if (strcmp(directory_list[i], directory_list[0]))
+			menu_scan_directory(directory_list[i], menu_key_file, category_key_file);
+
+	g_string_printf(path, "%s/.gebr/gebr/menus.idx2", getenv("HOME"));
+	if ((menu_fp = fopen(path->str, "w")) == NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Unable to write menus' index"));
 		ret = FALSE;
 		goto out;
 	}
-	menu_scan_directory(GEBR_SYS_MENUS_DIR, TRUE, index_fp);
-	menu_scan_directory(gebr.config.usermenus->str, FALSE, index_fp);
-	fclose(index_fp);
 
-	/* Sort index */
-	sort_file = gebr_make_temp_filename("gebrmenusXXXXXX.tmp");
-	g_string_printf(sort_cmd_line, "sort %s >%s; mv %s %s", path->str, sort_file->str, sort_file->str, path->str);
-	if (system(sort_cmd_line->str))
-		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, _("Could not sort menu index"));
+	key_file_data = g_key_file_to_data(menu_key_file, &key_file_length, NULL);
+	fwrite(key_file_data, sizeof(gchar), key_file_length, menu_fp);
+	g_free(key_file_data);
 
-	/* frees */
+	fclose(menu_fp);
+	
+	g_string_printf(path, "%s/.gebr/gebr/categories.idx2", getenv("HOME"));
+	if ((category_fp = fopen(path->str, "w")) == NULL) {
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Unable to write menus' index"));
+		ret = FALSE;
+		goto out;
+	}
+	
+	key_file_data = g_key_file_to_data(category_key_file, &key_file_length, NULL);
+	fwrite(key_file_data, sizeof(gchar), key_file_length, category_fp);
+	g_free(key_file_data);
+
+	fclose(category_fp);
+
  out:	g_string_free(path, TRUE);
-	g_string_free(sort_cmd_line, TRUE);
+	g_key_file_free(menu_key_file);
+	g_key_file_free(category_key_file);
 
 	return ret;
 }
@@ -360,23 +387,27 @@ GString *menu_get_help_from_program_ref(GebrGeoXmlProgram * program)
  * Private functions.
  */
 
+
 /*
  * Function: menu_scan_directory
  * Scans _directory_ for menus
  */
-static void menu_scan_directory(const gchar * directory, gboolean system_dir, FILE * index_fp)
+static void menu_scan_directory(const gchar * directory, GKeyFile * menu_key_file, GKeyFile * category_key_file)
 {
 	gchar *filename;
+	gchar **category_list;
+	glong categories_number;
 	GString *path;
 
 	path = g_string_new(NULL);
 	gebr_directory_foreach_file(filename, directory) {
+		int i;
 		GebrGeoXmlDocument *menu;
 		GebrGeoXmlSequence *category;
 
 		g_string_printf(path, "%s/%s", directory, filename);
-		if (system_dir && g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
-			menu_scan_directory(path->str, TRUE, index_fp);
+		if (g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
+			menu_scan_directory(path->str, menu_key_file, category_key_file);
 			continue;
 		}
 		if (fnmatch("*.mnu", filename, 1))
@@ -385,30 +416,45 @@ static void menu_scan_directory(const gchar * directory, gboolean system_dir, FI
 		menu = document_load_path(path->str);
 		if (menu == NULL)
 			continue;
-		/* verify if filename is correct */
-		if (system_dir) {
-			gchar *rel_filename;
-
-			rel_filename = path->str + strlen(GEBR_SYS_MENUS_DIR);
-			while (*rel_filename == '/')
-				rel_filename++;
-			if (strcmp(gebr_geoxml_document_get_filename(menu), rel_filename)) {
-				gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Invalid menu '%s'"), path->str);
-				gebr_geoxml_document_free(menu);
-				continue;
-			}
-		}
 
 		gebr_geoxml_flow_get_category(GEBR_GEOXML_FLOW(menu), &category, 0);
-		for (; category != NULL; gebr_geoxml_sequence_next(&category))
-			fprintf(index_fp, "%s|%s|%s|%s\n",
-				gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)),
-				gebr_geoxml_document_get_title(menu),
-				gebr_geoxml_document_get_description(menu), gebr_geoxml_document_get_filename(menu));
 
+		categories_number = gebr_geoxml_flow_get_categories_number(GEBR_GEOXML_FLOW(menu));
+		category_list = g_new(gchar *, categories_number+1);
+
+		for (i = 0; category != NULL; gebr_geoxml_sequence_next(&category), i++) {
+			gchar **menus_list;
+			gsize menus_list_length;
+			category_list[i] = g_strdup(gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)));
+			menus_list = g_key_file_get_string_list(category_key_file, category_list[i], "menus", &menus_list_length, NULL);
+
+			if (menus_list) {
+				gchar **menus_cpy = g_new(gchar*, menus_list_length+2);
+				for (int j = 0; j < menus_list_length; j++)
+					menus_cpy[j] = g_strdup(menus_list[j]);
+				menus_cpy[menus_list_length] = g_strdup(path->str);
+				menus_cpy[menus_list_length+1] = NULL;
+				g_strfreev(menus_list);
+				menus_list = menus_cpy;
+				menus_list_length++;
+			} else {
+				menus_list = g_new(gchar *, 2);
+				menus_list[0] = g_strdup(path->str);
+				menus_list[1] = NULL;
+				menus_list_length = 1;
+			}
+			g_key_file_set_string_list(category_key_file, category_list[i], "menus", (const gchar * const *)menus_list, menus_list_length);
+			g_strfreev(menus_list);
+		}
+		category_list[i] = NULL;
+
+		g_key_file_set_string_list(menu_key_file, path->str, "category", (const gchar * const *)category_list, categories_number);
+		g_key_file_set_string(menu_key_file, path->str, "title", gebr_geoxml_document_get_title(menu));
+		g_key_file_set_string(menu_key_file, path->str, "description", gebr_geoxml_document_get_description(menu));
+
+		g_strfreev(category_list);
 		gebr_geoxml_document_free(menu);
 	}
 
-	/* frees */
 	g_string_free(path, TRUE);
 }
