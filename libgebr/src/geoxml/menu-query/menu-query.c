@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 	for (imenu = 0; imenu < nmenu; imenu++) {
 		error_count = 0;
 
-		gebr_geoxml_document_load((GebrGeoXmlDocument **) (&flow), menu[imenu]);
+		gebr_geoxml_document_load((GebrGeoXmlDocument **) (&flow), menu[imenu], NULL);
 		doc = GEBR_GEOXML_DOC(flow);
 
 		if (filename || all) {
