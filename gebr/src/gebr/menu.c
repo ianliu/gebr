@@ -301,7 +301,7 @@ gboolean menu_list_create_index(void)
 	category_key_file = g_key_file_new();
 
 	// Verify duplicates in directory_list
-	g_string_printf(path, "%s/.gebr", getenv("HOME"));
+	g_string_printf(path, "%s/.gebr/menus", getenv("HOME"));
 	menu_scan_directory(path->str, menu_key_file, category_key_file);
 	menu_scan_directory(directory_list[0], menu_key_file, category_key_file);
 	for (int i = 1; directory_list[i]; i++)
