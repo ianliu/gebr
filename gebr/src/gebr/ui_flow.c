@@ -581,7 +581,7 @@ on_renderer_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_tex
 
 	row_new_path =
 	    gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(ui_flow_io->store), &ui_flow_io->row_new_server);
-	if (!strcmp(path, row_new_path)) {
+	if (path != NULL && !strcmp(path, row_new_path)) {
 		g_free(row_new_path);
 		return;
 	}
