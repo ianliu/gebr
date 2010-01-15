@@ -22,16 +22,12 @@
 
 #include <libgebr/geoxml.h>
 
-GebrGeoXmlFlow *menu_load(const gchar * filename);
+GebrGeoXmlFlow *menu_load(const gchar * path);
 GebrGeoXmlFlow *menu_load_ancient(const gchar * filename);
 GebrGeoXmlFlow *menu_load_path(const gchar * path);
 
-GString *menu_get_path(const gchar * filename);
-
 gboolean menu_refresh_needed(void);
-
 void menu_list_populate(void);
-
 gboolean menu_list_create_index(void);
 
 #endif				//__MENU_H_

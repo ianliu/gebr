@@ -63,9 +63,9 @@ static void menu_scan_directory(const gchar * directory, GKeyFile * menu_key_fil
  * menu_load
  * Look for a given menu _filename_ and load it if found
  */
-GebrGeoXmlFlow *menu_load(const gchar * filename)
+GebrGeoXmlFlow *menu_load(const gchar * path)
 {
-	return menu_load_path(filename);
+	return menu_load_path(path);
 }
 
 /*
@@ -77,12 +77,31 @@ GebrGeoXmlFlow *menu_load_ancient(const gchar * filename)
 	GebrGeoXmlFlow *menu;
 	GString *path;
 
-	path = menu_get_path(filename);
-	if (path == NULL)
-		return NULL;
+	path = g_string_new(NULL);
 
-	menu = menu_load_path(path->str);
-	g_string_free(path, TRUE);
+	/* system directory, for newer menus */
+	if (strstr(filename, "/") != NULL) {
+		g_string_printf(path, "%s/%s", GEBR_SYS_MENUS_DIR, filename);
+		if (g_access(path->str, F_OK) == 0)
+			goto found;
+	}
+	/* system directory */
+	g_string_printf(path, "%s/%s", GEBR_SYS_MENUS_DIR, filename);
+	if (g_access(path->str, F_OK) == 0)
+		goto found;
+	/* user's menus directory */
+	g_string_printf(path, "%s/%s", gebr.config.usermenus->str, filename);
+	if (g_access(path->str, F_OK) == 0)
+		goto found;
+
+	/* menu not found */
+	menu = NULL;
+	goto out;
+
+found:	menu = menu_load_path(path->str);
+
+	/* frees */
+out:	g_string_free(path, TRUE);
 
 	return menu;
 }
@@ -94,39 +113,6 @@ GebrGeoXmlFlow *menu_load_ancient(const gchar * filename)
 GebrGeoXmlFlow *menu_load_path(const gchar * path)
 {
 	return GEBR_GEOXML_FLOW(document_load_path(path));
-}
-
-/**
- * Look for a given menu and fill in its path.
- *
- * \deprecated
- */
-GString *menu_get_path(const gchar * filename)
-{
-	GString *path;
-
-	path = g_string_new(NULL);
-
-	/* system directory, for newer menus */
-	if (strstr(filename, "/") != NULL) {
-		g_string_printf(path, "%s/%s", GEBR_SYS_MENUS_DIR, filename);
-		if (g_access((path)->str, F_OK) == 0)
-			goto out;
-	}
-	/* system directory */
-	g_string_printf(path, "%s/%s", GEBR_SYS_MENUS_DIR, filename);
-	if (g_access((path)->str, F_OK) == 0)
-		goto out;
-	/* user's menus directory */
-	g_string_printf(path, "%s/%s", gebr.config.usermenus->str, filename);
-	if (g_access((path)->str, F_OK) == 0)
-		goto out;
-
-	/* an error occurred */
-	g_string_free(path, TRUE);
-	return NULL;
-
- out:	return path;
 }
 
 /**
@@ -164,8 +150,7 @@ static gboolean menu_compare_times(const gchar * directory, time_t index_time, g
 	return refresh_needed;
 }
 
-/*
- * Function: menu_refresh_needed
+/**
  * Return TRUE if there is change in menus' directories
  */
 gboolean menu_refresh_needed(void)
@@ -222,8 +207,7 @@ gboolean menu_refresh_needed(void)
 	return needed;
 }
 
-/*
- * Function: menu_list_populate
+/**
  * Read index and add menus from it to the view
  */
 void menu_list_populate(void)
@@ -361,8 +345,7 @@ gboolean menu_list_create_index(void)
  */
 
 
-/*
- * Function: menu_scan_directory
+/**
  * Scans _directory_ for menus
  */
 static void menu_scan_directory(const gchar * directory, GKeyFile * menu_key_file, GKeyFile * category_key_file)
