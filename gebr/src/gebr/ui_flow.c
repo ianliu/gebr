@@ -104,12 +104,6 @@ void flow_io_setup_ui(gboolean executable)
 
 	gint response;
 
-	// Sizes for columns
-	const gint size_addr = 140;
-	const gint size_input = 90;
-	const gint size_output = 90;
-	const gint size_error = 90;
-
 	ui_flow_io = g_malloc(sizeof(struct ui_flow_io));
 	store = gtk_list_store_new(FLOW_IO_N, GDK_TYPE_PIXBUF,	// Icon
 				   G_TYPE_STRING,	// Address
@@ -154,11 +148,10 @@ void flow_io_setup_ui(gboolean executable)
 	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_renderer_editing_started), ui_flow_io);
 	g_signal_connect(renderer, "edited", G_CALLBACK(on_renderer_combo_edited), ui_flow_io);
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
+	g_object_set(column, "resizable", TRUE, NULL);
 	gtk_tree_view_column_set_attributes(column, renderer,
 					    "text", FLOW_IO_SERVER_NAME, "editable", FLOW_IO_IS_SERVER_ADD, NULL);
-	g_object_set(column, "sizing", GTK_TREE_VIEW_COLUMN_FIXED, NULL);
 	gtk_tree_view_column_set_title(column, _("Server"));
-	gtk_tree_view_column_set_fixed_width(column, size_addr);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 	g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(FLOW_IO_IS_SERVER_ADD));
 
@@ -168,8 +161,7 @@ void flow_io_setup_ui(gboolean executable)
 	g_signal_connect(renderer, "edited", G_CALLBACK(on_renderer_edited), ui_flow_io);
 	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_renderer_editing_started), ui_flow_io);
 	column = gtk_tree_view_column_new_with_attributes(_("Input"), renderer, "text", FLOW_IO_INPUT, NULL);
-	g_object_set(column, "sizing", GTK_TREE_VIEW_COLUMN_FIXED, NULL);
-	gtk_tree_view_column_set_fixed_width(column, size_input);
+	g_object_set(column, "resizable", TRUE, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 	g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(FLOW_IO_INPUT));
 
@@ -179,8 +171,7 @@ void flow_io_setup_ui(gboolean executable)
 	g_signal_connect(renderer, "edited", G_CALLBACK(on_renderer_edited), ui_flow_io);
 	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_renderer_editing_started), ui_flow_io);
 	column = gtk_tree_view_column_new_with_attributes(_("Output"), renderer, "text", FLOW_IO_OUTPUT, NULL);
-	g_object_set(column, "sizing", GTK_TREE_VIEW_COLUMN_FIXED, NULL);
-	gtk_tree_view_column_set_fixed_width(column, size_output);
+	g_object_set(column, "resizable", TRUE, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 	g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(FLOW_IO_OUTPUT));
 
@@ -190,8 +181,7 @@ void flow_io_setup_ui(gboolean executable)
 	g_signal_connect(renderer, "edited", G_CALLBACK(on_renderer_edited), ui_flow_io);
 	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_renderer_editing_started), ui_flow_io);
 	column = gtk_tree_view_column_new_with_attributes(_("Error"), renderer, "text", FLOW_IO_ERROR, NULL);
-	g_object_set(column, "sizing", GTK_TREE_VIEW_COLUMN_FIXED, NULL);
-	gtk_tree_view_column_set_fixed_width(column, size_error);
+	g_object_set(column, "resizable", TRUE, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 	g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(FLOW_IO_ERROR));
 
