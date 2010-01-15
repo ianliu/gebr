@@ -262,7 +262,7 @@ void menu_list_populate(void)
 			gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &child,
 					   MENU_TITLE_COLUMN, title,
 					   MENU_DESC_COLUMN, desc,
-					   MENU_FILENAME_COLUMN, menus_list[j],
+					   MENU_FILEPATH_COLUMN, menus_list[j],
 					   -1);
 			g_free(title);
 			g_free(desc);
@@ -301,6 +301,8 @@ gboolean menu_list_create_index(void)
 	category_key_file = g_key_file_new();
 
 	// Verify duplicates in directory_list
+	g_string_printf(path, "%s/.gebr", getenv("HOME"));
+	menu_scan_directory(path->str, menu_key_file, category_key_file);
 	menu_scan_directory(directory_list[0], menu_key_file, category_key_file);
 	for (int i = 1; directory_list[i]; i++)
 		if (strcmp(directory_list[i], directory_list[0]))

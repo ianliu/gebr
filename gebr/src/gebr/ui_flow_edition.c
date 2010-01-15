@@ -171,6 +171,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(vbox), scrolled_window);
 
 	ui_flow_edition->menu_store = gtk_tree_store_new(MENU_N_COLUMN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ui_flow_edition->menu_store), MENU_TITLE_COLUMN, GTK_SORT_ASCENDING);
 	ui_flow_edition->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->menu_store));
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_edition->menu_view);
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->menu_view),
@@ -493,7 +494,7 @@ static void flow_edition_menu_add(void)
 		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &iter,
-			   MENU_TITLE_COLUMN, &name, MENU_FILENAME_COLUMN, &filename, -1);
+			   MENU_TITLE_COLUMN, &name, MENU_FILEPATH_COLUMN, &filename, -1);
 	menu = menu_load(filename);
 	if (menu == NULL)
 		goto out;
@@ -532,7 +533,7 @@ static void flow_edition_menu_show_help(void)
 		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &iter,
-			   MENU_FILENAME_COLUMN, &menu_filename, -1);
+			   MENU_FILEPATH_COLUMN, &menu_filename, -1);
 
 	menu = menu_load(menu_filename);
 	if (menu == NULL)
