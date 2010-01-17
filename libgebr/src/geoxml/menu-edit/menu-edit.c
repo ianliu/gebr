@@ -1,5 +1,5 @@
 /*   libgebr - GeBR Library
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+ *   Copyright (C) 2007-2010 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -113,7 +113,11 @@ int main(int argc, char **argv)
 		GebrGeoXmlProgram *prog;
 		gint nprog;
 
-		gebr_geoxml_document_load((GebrGeoXmlDocument **) (&flow), menu[imenu], NULL);
+		if (gebr_geoxml_document_load((GebrGeoXmlDocument **) (&flow), menu[imenu], NULL) !=
+		    GEBR_GEOXML_RETV_SUCCESS) {
+			fprintf(stderr, "Unable to load %s\n", menu[imenu]);
+			break;
+		}
 		doc = GEBR_GEOXML_DOC(flow);
 		nprog = gebr_geoxml_flow_get_programs_number(flow);
 		if (fixfname)
@@ -194,7 +198,9 @@ int main(int argc, char **argv)
 			}
 		}
 
- out:		gebr_geoxml_document_save(doc, menu[imenu]);
+ out:		gebr_geoxml_document_set_date_modified(doc, gebr_iso_date());
+		if (gebr_geoxml_document_save(doc, menu[imenu]) != GEBR_GEOXML_RETV_SUCCESS)
+			fprintf(stderr, "Unable to save %s\n", menu[imenu]);
 		gebr_geoxml_document_free(doc);
 	}
 
