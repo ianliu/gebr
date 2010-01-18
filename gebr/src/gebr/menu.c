@@ -169,7 +169,7 @@ gboolean menu_refresh_needed(void)
 	menudir_path = g_string_new(NULL);
 
 	/* index path string */
-	g_string_printf(index_path, "%s/.gebr/gebr/menus.idx", getenv("HOME"));
+	g_string_printf(index_path, "%s/.gebr/gebr/menus.idx2", getenv("HOME"));
 	if (g_access(index_path->str, F_OK | R_OK) && menu_list_create_index() == FALSE)
 		goto out;
 
@@ -191,6 +191,9 @@ gboolean menu_refresh_needed(void)
 		needed = TRUE;
 		goto out;
 	}
+
+
+
 	/* Times for all menus */
 	if (menu_compare_times(GEBR_SYS_MENUS_DIR, index_time, TRUE)) {
 		needed = TRUE;
@@ -301,7 +304,8 @@ gboolean menu_list_create_index(void)
 	category_key_file = g_key_file_new();
 
 	// Verify duplicates in directory_list
-	g_string_printf(path, "%s/.gebr/menus", getenv("HOME"));
+	g_string_printf(path, "%s/.gebr/gebr/menus", getenv("HOME"));
+	menu_scan_directory(gebr.config.usermenus->str, menu_key_file, category_key_file);
 	menu_scan_directory(path->str, menu_key_file, category_key_file);
 	menu_scan_directory(directory_list[0], menu_key_file, category_key_file);
 	for (int i = 1; directory_list[i]; i++)

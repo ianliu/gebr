@@ -343,8 +343,12 @@ gint gebr_config_load(gboolean nox)
 								       "general", "name", g_get_real_name());
 		gebr.config.email = gebr_g_key_file_load_string_key(gebr.config.key_file,
 								    "general", "email", g_get_user_name());
+		g_string_printf(data_dir, "%s/GeBR-Menus", getenv("HOME"));
 		gebr.config.usermenus = gebr_g_key_file_load_string_key(gebr.config.key_file,
-									"general", "usermenus", getenv("HOME"));
+									"general", "usermenus", data_dir->str);
+		if (!strcmp(gebr.config.usermenus->str, data_dir->str)
+		    && !g_file_test(data_dir->str, G_FILE_TEST_EXISTS))
+			g_mkdir(data_dir->str, 0755);
 		gebr_path_resolve_home_variable(gebr.config.usermenus);
 
 		g_string_printf(data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
