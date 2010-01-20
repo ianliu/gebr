@@ -213,3 +213,4 @@ const gchar *server_get_name_from_address(const gchar * address)
 {
 	return !strcmp(address, "127.0.0.1") ? _("Local server") : address;
 }
+

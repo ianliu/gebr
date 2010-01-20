@@ -576,7 +576,7 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 /** 
  * Runs a flow
  */
-void flow_run(struct server *server)
+void flow_run(struct server *server, gchar * account, gchar * class)
 {
 	GebrGeoXmlFlow *flow;
 	GebrGeoXmlSequence *i;

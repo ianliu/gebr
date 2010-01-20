@@ -41,7 +41,8 @@ gebr_SOURCES = main.c \
 	ui_job_control.c \
 	ui_paths.c \
 	ui_preferences.c \
-	ui_server.c
+	ui_server.c \
+	ui_netuno.c
 noinst_HEADERS = \
 	cmdline.h \
 	gebr.h \
@@ -65,7 +66,8 @@ noinst_HEADERS = \
 	ui_log.h \
 	ui_paths.h \
 	ui_preferences.h \
-	ui_server.h
+	ui_server.h \
+	ui_netuno.h
 EXTRA_DIST = ${noinst_HEADERS}
 
 INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" $(WEBKIT_ENABLED)

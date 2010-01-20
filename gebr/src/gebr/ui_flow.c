@@ -34,6 +34,7 @@
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
 #include "ui_server.h"
+#include "ui_netuno.h"
 
 #define GEBR_FLOW_UI_RESPONSE_EXECUTE 1
 
@@ -562,6 +563,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	GtkTreeIter iter;
 	const gchar *address;
 	struct server *server;
+	gchar * account, * class;
 
 	address = gebr_geoxml_flow_server_get_address(flow_server);
 	if (!server_find_address(address, &iter))
@@ -572,7 +574,14 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter, SERVER_POINTER, &server, -1);
-	flow_run(server);
+
+	account = class = NULL;
+	if (gebr_comm_server_is_netuno(address))
+		if (!netuno_setup_ui(&account, &class))
+			return;
+	flow_run(server, account, class);
+	g_free(account);
+	g_free(class);
 }
 
 static void

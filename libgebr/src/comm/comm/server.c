@@ -282,6 +282,31 @@ void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, GebrGe
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(flow_wnh));
 }
 
+gboolean gebr_comm_server_is_netuno(const gchar * address)
+{
+	gchar * addr;
+	
+	addr = strchr(address, '@');
+	
+	if (addr == NULL) {
+		addr = address;
+	} else {
+		addr++;
+	}
+
+	return strcmp(addr, "login.hpc.ufrj.br") == 0;
+}
+
+
+gchar * gebr_comm_server_get_user(const gchar * address)
+{
+	gchar *addr_temp;
+
+	addr_temp = g_strdup(address);
+
+	return (gchar *) strsep(&addr_temp, "@");
+}
+
 /*
  * Section: Private
  */

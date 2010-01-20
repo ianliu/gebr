@@ -97,4 +97,8 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server,
 
 void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, GebrGeoXmlFlow * flow);
 
+gboolean gebr_comm_server_is_netuno(const gchar * address);
+
+gchar * gebr_comm_server_get_user(const char * address);
+
 #endif				//__GEBR_COMM_SERVER_H
