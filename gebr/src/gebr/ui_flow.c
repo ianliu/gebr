@@ -563,7 +563,9 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	GtkTreeIter iter;
 	const gchar *address;
 	struct server *server;
-	gchar * account, * class;
+	struct gebr_comm_server_run * config;
+
+	config = g_new(struct gebr_comm_server_run, 1);
 
 	address = gebr_geoxml_flow_server_get_address(flow_server);
 	if (!server_find_address(address, &iter))
@@ -575,13 +577,18 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter, SERVER_POINTER, &server, -1);
 
-	account = class = NULL;
-	if (gebr_comm_server_is_netuno(address))
-		if (!netuno_setup_ui(&account, &class))
+	config->account = config->class = NULL;
+	config->is_netuno = gebr_comm_server_is_netuno(address); 
+
+	if (config->is_netuno)
+		if (!netuno_setup_ui(&config->account, &config->class))
 			return;
-	flow_run(server, account, class);
-	g_free(account);
-	g_free(class);
+
+	flow_run(server, config);
+	g_free(config->account);
+	g_free(config->class);
+	g_free(config);
+
 }
 
 static void

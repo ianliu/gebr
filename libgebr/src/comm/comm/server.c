@@ -253,14 +253,14 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server,
  * Ask _gebr_comm_server_ to run the current _flow_
  *
  */
-void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, GebrGeoXmlFlow * flow)
+void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, struct gebr_comm_server_run * config)
 {
 	GebrGeoXmlFlow *flow_wnh;	/* wnh: with no help */
 	GebrGeoXmlSequence *program;
 	gchar *xml;
 
 	/* removes flow's help */
-	flow_wnh = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(flow)));
+	flow_wnh = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(config->flow)));
 	gebr_geoxml_document_set_help(GEBR_GEOXML_DOC(flow_wnh), "");
 	/* removes programs' help */
 	gebr_geoxml_flow_get_program(flow_wnh, &program, 0);

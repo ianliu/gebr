@@ -576,7 +576,7 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 /** 
  * Runs a flow
  */
-void flow_run(struct server *server, gchar * account, gchar * class)
+void flow_run(struct server *server, struct gebr_comm_server_run * config)
 {
 	GebrGeoXmlFlow *flow;
 	GebrGeoXmlSequence *i;
@@ -611,7 +611,9 @@ void flow_run(struct server *server, gchar * account, gchar * class)
 	flow_copy_from_dicts(flow);
 
 	/* RUN */
-	gebr_comm_server_run_flow(server->comm, flow);
+	config->flow = flow;
+
+	gebr_comm_server_run_flow(server->comm, config);
 
 	/* TODO: check save */
 	/* Save manualy to preserve run date */
@@ -621,18 +623,18 @@ void flow_run(struct server *server, gchar * account, gchar * class)
 	flow_browse_info_update();
 
 	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'"),
-		     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
+		     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(config->flow)));
 	if (gebr_comm_server_is_local(server->comm) == FALSE) {
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'"),
-			     server->comm->address->str, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
+			     server->comm->address->str, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(config->flow)));
 	} else {
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to run flow '%s'"),
-			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
+			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(config->flow)));
 	}
 
 	/* frees */
 	g_string_free(path, TRUE);
-	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(config->flow));
 }
 
 /**

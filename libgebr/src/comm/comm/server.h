@@ -79,6 +79,12 @@ struct gebr_comm_server {
 	} process;
 };
 
+struct gebr_comm_server_run {
+	GebrGeoXmlFlow * flow;
+	gboolean is_netuno;
+	gchar * account, * class;
+};
+
 struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const struct gebr_comm_server_ops *ops);
 
 void gebr_comm_server_free(struct gebr_comm_server *gebr_comm_server);
@@ -95,7 +101,7 @@ void gebr_comm_server_kill(struct gebr_comm_server *gebr_comm_server);
 
 gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server, guint16 port);
 
-void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, GebrGeoXmlFlow * flow);
+void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, struct gebr_comm_server_run * config);
 
 gboolean gebr_comm_server_is_netuno(const gchar * address);
 
