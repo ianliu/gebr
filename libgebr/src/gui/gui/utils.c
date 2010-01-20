@@ -300,6 +300,19 @@ gint gebr_gui_gtk_tree_model_get_iter_depth(GtkTreeModel * model, GtkTreeIter * 
 	return depth;
 }
 
+gboolean gebr_gui_gtk_tree_model_iter_equal_to(GtkTreeModel * model, GtkTreeIter * iter1, GtkTreeIter * iter2)
+{
+	gchar * path1;
+	gchar * path2;
+	gboolean ret;
+	path1 = gtk_tree_model_get_string_from_iter(model, iter1);
+	path2 = gtk_tree_model_get_string_from_iter(model, iter2);
+	ret = strcmp(path1, path2) == 0;
+	g_free(path1);
+	g_free(path2);
+	return ret;
+}
+
 /**
  * gebr_gui_gtk_tree_model_iter_copy_values:
  * @model:  The #GtkTreeModel to be operated on.

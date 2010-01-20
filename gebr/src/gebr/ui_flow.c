@@ -105,7 +105,8 @@ void flow_io_setup_ui(gboolean executable)
 	gint response;
 
 	ui_flow_io = g_malloc(sizeof(struct ui_flow_io));
-	store = gtk_list_store_new(FLOW_IO_N, GDK_TYPE_PIXBUF,	// Icon
+	store = gtk_list_store_new(FLOW_IO_N,
+				   GDK_TYPE_PIXBUF,	// Icon
 				   G_TYPE_STRING,	// Address
 				   G_TYPE_STRING,	// Input
 				   G_TYPE_STRING,	// Output
@@ -157,30 +158,30 @@ void flow_io_setup_ui(gboolean executable)
 
 	// Input column
 	renderer = gtk_cell_renderer_text_new();
-	g_object_set(renderer, "editable", TRUE, NULL);
 	g_signal_connect(renderer, "edited", G_CALLBACK(on_renderer_edited), ui_flow_io);
 	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_renderer_editing_started), ui_flow_io);
-	column = gtk_tree_view_column_new_with_attributes(_("Input"), renderer, "text", FLOW_IO_INPUT, NULL);
+	column = gtk_tree_view_column_new_with_attributes(_("Input"), renderer, "text", FLOW_IO_INPUT,
+							  "editable", FLOW_IO_IS_SERVER_ADD2, NULL);
 	g_object_set(column, "resizable", TRUE, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 	g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(FLOW_IO_INPUT));
 
 	// Output column
 	renderer = gtk_cell_renderer_text_new();
-	g_object_set(renderer, "editable", TRUE, NULL);
 	g_signal_connect(renderer, "edited", G_CALLBACK(on_renderer_edited), ui_flow_io);
 	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_renderer_editing_started), ui_flow_io);
-	column = gtk_tree_view_column_new_with_attributes(_("Output"), renderer, "text", FLOW_IO_OUTPUT, NULL);
+	column = gtk_tree_view_column_new_with_attributes(_("Output"), renderer, "text", FLOW_IO_OUTPUT,
+							  "editable", FLOW_IO_IS_SERVER_ADD2, NULL);
 	g_object_set(column, "resizable", TRUE, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 	g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(FLOW_IO_OUTPUT));
 
 	// Error column
 	renderer = gtk_cell_renderer_text_new();
-	g_object_set(renderer, "editable", TRUE, NULL);
 	g_signal_connect(renderer, "edited", G_CALLBACK(on_renderer_edited), ui_flow_io);
 	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_renderer_editing_started), ui_flow_io);
-	column = gtk_tree_view_column_new_with_attributes(_("Error"), renderer, "text", FLOW_IO_ERROR, NULL);
+	column = gtk_tree_view_column_new_with_attributes(_("Error"), renderer, "text", FLOW_IO_ERROR,
+							  "editable", FLOW_IO_IS_SERVER_ADD2, NULL);
 	g_object_set(column, "resizable", TRUE, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 	g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(FLOW_IO_ERROR));
@@ -417,7 +418,10 @@ static void flow_io_insert(struct ui_flow_io *ui_flow_io, GebrGeoXmlFlowServer *
 			   FLOW_IO_ERROR, error,
 			   FLOW_IO_SERVER_LISTED, server_found,
 			   FLOW_IO_FLOW_SERVER_POINTER, flow_server,
-			   FLOW_IO_SERVER_POINTER, server, FLOW_IO_IS_SERVER_ADD, FALSE, -1);
+			   FLOW_IO_SERVER_POINTER, server,
+			   FLOW_IO_IS_SERVER_ADD, FALSE,
+			   FLOW_IO_IS_SERVER_ADD2, TRUE,
+			   -1);
 
 	if (iter)
 		*iter = iter_;
@@ -484,7 +488,10 @@ static void flow_io_populate(struct ui_flow_io *ui_flow_io)
 
 	gtk_list_store_append(ui_flow_io->store, &ui_flow_io->row_new_server);
 	gtk_list_store_set(ui_flow_io->store, &ui_flow_io->row_new_server,
-			   FLOW_IO_SERVER_NAME, _("New"), FLOW_IO_IS_SERVER_ADD, TRUE, -1);
+			   FLOW_IO_SERVER_NAME, _("New"),
+			   FLOW_IO_IS_SERVER_ADD, TRUE,
+			   FLOW_IO_IS_SERVER_ADD2, FALSE,
+			   -1);
 
 	gebr_geoxml_flow_get_server(gebr.flow, &flow_server, 0);
 	for (; flow_server != NULL; gebr_geoxml_sequence_next(&flow_server))
@@ -748,8 +755,10 @@ static GtkMenu *on_menu_popup(GtkTreeView * treeview, struct ui_flow_io *ui_flow
 {
 	GtkWidget *menu;
 	GtkWidget *menu_item;
+	GtkTreeIter iter;
 
-	if (!flow_io_get_selected(ui_flow_io, NULL))
+	if (!flow_io_get_selected(ui_flow_io, &iter)
+	    || gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(ui_flow_io->store), &ui_flow_io->row_new_server, &iter))
 		return NULL;
 
 	menu = gtk_menu_new();
@@ -793,6 +802,11 @@ on_tree_view_tooltip(GtkTreeView * treeview,
 
 	if (!gtk_tree_view_get_path_at_pos(treeview, x, y, NULL, &column, NULL, NULL)) {
 		return FALSE;
+	}
+
+	if (gebr_gui_gtk_tree_model_iter_equal_to(model, &ui_flow_io->row_new_server, &iter)) {
+		gtk_tooltip_set_text(tooltip, _("Creates a new Input/Output configuration."));
+		return TRUE;
 	}
 
 	if (gtk_tree_view_get_column(treeview, 0) == column) {
