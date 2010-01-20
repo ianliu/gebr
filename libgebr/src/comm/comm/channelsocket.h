@@ -20,9 +20,9 @@
 #ifndef __GEBR_COMM_CHANNEL_SOCKET_H
 #define __GEBR_COMM_CHANNEL_SOCKET_H
 
-#include "gsocket.h"
-#include "gstreamsocket.h"
-#include "gsocketaddress.h"
+#include "socket.h"
+#include "streamsocket.h"
+#include "socketaddress.h"
 
 G_BEGIN_DECLS GType gebr_comm_channel_socket_get_type(void);
 

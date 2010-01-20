@@ -24,19 +24,19 @@
 #include <sys/socket.h>
 #include <limits.h>
 
-#include "gstreamsocket.h"
-#include "gstreamsocketprivate.h"
-#include "gsocketprivate.h"
-#include "ghostinfo.h"
-#include "gsocketaddressprivate.h"
+#include "streamsocket.h"
+#include "streamsocketprivate.h"
+#include "socketprivate.h"
+#include "hostinfo.h"
+#include "socketaddressprivate.h"
 
 /*
  * prototypes
  */
 
-static void __gebr_comm_stream_socket_connected(GStreamSocket * stream_socket);
+static void __gebr_comm_stream_socket_connected(GebrCommStreamSocket * stream_socket);
 
-static void __gebr_comm_stream_socket_disconnected(GStreamSocket * stream_socket);
+static void __gebr_comm_stream_socket_disconnected(GebrCommStreamSocket * stream_socket);
 
 /*
  * gobject stuff
@@ -49,31 +49,31 @@ enum {
 };
 static guint object_signals[LAST_SIGNAL];
 
-static void gebr_comm_stream_socket_class_init(GStreamSocketClass * class)
+static void gebr_comm_stream_socket_class_init(GebrCommStreamSocketClass * class)
 {
 	/* virtual */
 	class->parent.connected = (typeof(class->parent.connected)) __gebr_comm_stream_socket_connected;
 	class->parent.disconnected = (typeof(class->parent.disconnected)) __gebr_comm_stream_socket_disconnected;
 
 	/* signals */
-	object_signals[CONNECTED] = g_signal_new("connected", GEBR_COMM_STREAM_SOCKET_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GStreamSocketClass, connected), NULL, NULL,	/* acumulators */
+	object_signals[CONNECTED] = g_signal_new("connected", GEBR_COMM_STREAM_SOCKET_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommStreamSocketClass, connected), NULL, NULL,	/* acumulators */
 						 g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
-	object_signals[DISCONNECTED] = g_signal_new("disconnected", GEBR_COMM_STREAM_SOCKET_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GStreamSocketClass, disconnected), NULL, NULL,	/* acumulators */
+	object_signals[DISCONNECTED] = g_signal_new("disconnected", GEBR_COMM_STREAM_SOCKET_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommStreamSocketClass, disconnected), NULL, NULL,	/* acumulators */
 						    g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
-static void gebr_comm_stream_socket_init(GStreamSocket * stream_socket)
+static void gebr_comm_stream_socket_init(GebrCommStreamSocket * stream_socket)
 {
 	stream_socket->parent.state = G_SOCKET_STATE_UNCONNECTED;
 }
 
-G_DEFINE_TYPE(GStreamSocket, gebr_comm_stream_socket, GEBR_COMM_SOCKET_TYPE)
+G_DEFINE_TYPE(GebrCommStreamSocket, gebr_comm_stream_socket, GEBR_COMM_SOCKET_TYPE)
 
 /*
  * internal functions
  */
 static void
-__gebr_comm_stream_socket_init(GStreamSocket * stream_socket, int sockfd, enum GebrCommSocketAddressType type,
+__gebr_comm_stream_socket_init(GebrCommStreamSocket * stream_socket, int sockfd, enum GebrCommSocketAddressType type,
 			       gboolean nonblocking)
 {
 	/* initialization */
@@ -87,20 +87,20 @@ __gebr_comm_stream_socket_init(GStreamSocket * stream_socket, int sockfd, enum G
 	}
 }
 
-static void __gebr_comm_stream_socket_connected(GStreamSocket * stream_socket)
+static void __gebr_comm_stream_socket_connected(GebrCommStreamSocket * stream_socket)
 {
 	stream_socket->parent.state = G_SOCKET_STATE_CONNECTED;
 	g_signal_emit(stream_socket, object_signals[CONNECTED], 0);
 }
 
-static void __gebr_comm_stream_socket_disconnected(GStreamSocket * stream_socket)
+static void __gebr_comm_stream_socket_disconnected(GebrCommStreamSocket * stream_socket)
 {
 	stream_socket->parent.state = G_SOCKET_STATE_UNCONNECTED;
 	g_signal_emit(stream_socket, object_signals[DISCONNECTED], 0);
 }
 
 // static void
-// __gebr_comm_stream_socket_lookup(GSocketInfo * host_info, GStreamSocket * stream_socket)
+// __gebr_comm_stream_socket_lookup(GSocketInfo * host_info, GebrCommStreamSocket * stream_socket)
 // {
 //      GebrCommSocketAddress * socket_address;
 // 
@@ -120,12 +120,12 @@ static void __gebr_comm_stream_socket_disconnected(GStreamSocket * stream_socket
  * private functions
  */
 
-GStreamSocket *_gebr_comm_stream_socket_new_connected(int fd, enum GebrCommSocketAddressType address_type)
+GebrCommStreamSocket *_gebr_comm_stream_socket_new_connected(int fd, enum GebrCommSocketAddressType address_type)
 {
-	GStreamSocket *stream_socket;
+	GebrCommStreamSocket *stream_socket;
 
 	/* initialization */
-	stream_socket = (GStreamSocket *) g_object_new(GEBR_COMM_STREAM_SOCKET_TYPE, NULL);
+	stream_socket = (GebrCommStreamSocket *) g_object_new(GEBR_COMM_STREAM_SOCKET_TYPE, NULL);
 	__gebr_comm_stream_socket_init(stream_socket, fd, address_type, TRUE);
 	stream_socket->parent.state = G_SOCKET_STATE_CONNECTED;
 	_gebr_comm_socket_enable_read_watch(&stream_socket->parent);
@@ -137,13 +137,13 @@ GStreamSocket *_gebr_comm_stream_socket_new_connected(int fd, enum GebrCommSocke
  * user functions
  */
 
-GStreamSocket *gebr_comm_stream_socket_new(void)
+GebrCommStreamSocket *gebr_comm_stream_socket_new(void)
 {
-	return (GStreamSocket *) g_object_new(GEBR_COMM_STREAM_SOCKET_TYPE, NULL);
+	return (GebrCommStreamSocket *) g_object_new(GEBR_COMM_STREAM_SOCKET_TYPE, NULL);
 }
 
 gboolean
-gebr_comm_stream_socket_connect(GStreamSocket * stream_socket, GebrCommSocketAddress * socket_address, gboolean wait)
+gebr_comm_stream_socket_connect(GebrCommStreamSocket * stream_socket, GebrCommSocketAddress * socket_address, gboolean wait)
 {
 	struct sockaddr *sockaddr;
 	gsize sockaddr_size;
@@ -195,7 +195,7 @@ gebr_comm_stream_socket_connect(GStreamSocket * stream_socket, GebrCommSocketAdd
 }
 
 // void
-// gebr_comm_stream_socket_connect_by_name(GStreamSocket * stream_socket, GString * hostname, guint16 port)
+// gebr_comm_stream_socket_connect_by_name(GebrCommStreamSocket * stream_socket, GString * hostname, guint16 port)
 // {
 //      stream_socket->parent.sockaddr_in.sin_port = htons(port);
 // 
@@ -204,7 +204,7 @@ gebr_comm_stream_socket_connect(GStreamSocket * stream_socket, GebrCommSocketAdd
 //      gebr_comm_host_info_lookup(hostname, (GSocketInfoFunc)__gebr_comm_stream_socket_lookup, stream_socket);
 // }
 
-void gebr_comm_stream_socket_disconnect(GStreamSocket * stream_socket)
+void gebr_comm_stream_socket_disconnect(GebrCommStreamSocket * stream_socket)
 {
 	if (stream_socket->parent.state >= G_SOCKET_STATE_CONNECTING)
 		_gebr_comm_socket_close(&stream_socket->parent);
@@ -212,7 +212,7 @@ void gebr_comm_stream_socket_disconnect(GStreamSocket * stream_socket)
 	stream_socket->parent.last_error = G_SOCKET_ERROR_NONE;
 }
 
-GebrCommSocketAddress gebr_comm_stream_socket_peer_address(GStreamSocket * stream_socket)
+GebrCommSocketAddress gebr_comm_stream_socket_peer_address(GebrCommStreamSocket * stream_socket)
 {
 	if (stream_socket->parent.state != G_SOCKET_STATE_CONNECTED)
 		return _gebr_comm_socket_address_unknown();

@@ -23,8 +23,8 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/comm/protocol.h>
-#include <libgebr/comm/gstreamsocket.h>
-#include <libgebr/comm/gsocketaddress.h>
+#include <libgebr/comm/streamsocket.h>
+#include <libgebr/comm/socketaddress.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
 

@@ -27,7 +27,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include "gprocess.h"
+#include "process.h"
 
 /*
  * Prototypes

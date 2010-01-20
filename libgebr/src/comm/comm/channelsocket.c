@@ -21,10 +21,10 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
 
-#include "gchannelsocket.h"
-#include "gsocketprivate.h"
-#include "gstreamsocketprivate.h"
-#include "gsocketaddressprivate.h"
+#include "channelsocket.h"
+#include "socketprivate.h"
+#include "streamsocketprivate.h"
+#include "socketaddressprivate.h"
 
 /*
  * prototypes
@@ -61,13 +61,13 @@ G_DEFINE_TYPE(GebrCommChannelSocket, gebr_comm_channel_socket, GEBR_COMM_SOCKET_
 /*
  * internal functions
  */
-static void __g_channel_socket_source_disconnected(GStreamSocket * source_socket, GStreamSocket * forward_socket)
+static void __g_channel_socket_source_disconnected(GebrCommStreamSocket * source_socket, GebrCommStreamSocket * forward_socket)
 {
 	gebr_comm_socket_close(GEBR_COMM_SOCKET(source_socket));
 	gebr_comm_socket_close(GEBR_COMM_SOCKET(forward_socket));
 }
 
-static void __g_channel_socket_source_read(GStreamSocket * source_socket, GStreamSocket * forward_socket)
+static void __g_channel_socket_source_read(GebrCommStreamSocket * source_socket, GebrCommStreamSocket * forward_socket)
 {
 	GByteArray *byte_array;
 
@@ -78,25 +78,25 @@ static void __g_channel_socket_source_read(GStreamSocket * source_socket, GStrea
 }
 
 static void
-__g_channel_socket_source_error(GStreamSocket * source_socket, enum GebrCommSocketError error,
-				GStreamSocket * forward_socket)
+__g_channel_socket_source_error(GebrCommStreamSocket * source_socket, enum GebrCommSocketError error,
+				GebrCommStreamSocket * forward_socket)
 {
 	__g_channel_socket_source_disconnected(source_socket, forward_socket);
 }
 
-static void __g_channel_socket_forward_disconnected(GStreamSocket * forward_socket, GStreamSocket * source_socket)
+static void __g_channel_socket_forward_disconnected(GebrCommStreamSocket * forward_socket, GebrCommStreamSocket * source_socket)
 {
 	__g_channel_socket_source_disconnected(source_socket, forward_socket);
 }
 
-static void __g_channel_socket_forward_read(GStreamSocket * forward_socket, GStreamSocket * source_socket)
+static void __g_channel_socket_forward_read(GebrCommStreamSocket * forward_socket, GebrCommStreamSocket * source_socket)
 {
 	__g_channel_socket_source_read(forward_socket, source_socket);
 }
 
 static void
-__g_channel_socket_forward_error(GStreamSocket * forward_socket, enum GebrCommSocketError error,
-				 GStreamSocket * source_socket)
+__g_channel_socket_forward_error(GebrCommStreamSocket * forward_socket, enum GebrCommSocketError error,
+				 GebrCommStreamSocket * source_socket)
 {
 	__g_channel_socket_source_error(source_socket, error, forward_socket);
 }
@@ -109,8 +109,8 @@ static void __g_channel_socket_new_connection(GebrCommChannelSocket * channel_so
 	sockfd = _gebr_comm_socket_get_fd(&channel_socket->parent);
 	while ((client_sockfd = _gebr_comm_socket_address_accept(&peer_address,
 								 channel_socket->parent.address_type, sockfd)) != -1) {
-		GStreamSocket *source_socket;
-		GStreamSocket *forward_socket;
+		GebrCommStreamSocket *source_socket;
+		GebrCommStreamSocket *forward_socket;
 
 		source_socket =
 		    _gebr_comm_stream_socket_new_connected(client_sockfd, channel_socket->parent.address_type);

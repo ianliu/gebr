@@ -18,19 +18,19 @@ SUBDIRS = @JSONGLIB_SUBDIR@
 
 lib_LTLIBRARIES = libgebr_comm.la
 libgebr_comm_la_SOURCES = \
-	gsocketaddress.c ghostinfo.c gsocket.c \
-	gstreamsocket.c glistensocket.c gchannelsocket.c \
-	gprocess.c gterminalprocess.c \
+	socketaddress.c hostinfo.c socket.c \
+	streamsocket.c listensocket.c channelsocket.c \
+	process.c terminalprocess.c \
 	protocol.c server.c
 
 libgebr_commsubincludedir = $(includedir)/libgebr/comm
 libgebr_commsubinclude_HEADERS = \
-	gsocketaddress.h ghostinfo.h gsocket.h \
-	gstreamsocket.h glistensocket.h gchannelsocket.h \
-	gprocess.h gterminalprocess.h \
+	socketaddress.h hostinfo.h socket.h \
+	streamsocket.h listensocket.h channelsocket.h \
+	process.h terminalprocess.h \
 	protocol.h server.h
 noinst_HEADERS = \
-	gsocketaddressprivate.h gsocketprivate.h gstreamsocketprivate.h
+	socketaddressprivate.h socketprivate.h streamsocketprivate.h
 EXTRA_DIST = ${noinst_HEADERS}
 
 INCLUDES = -I../.. -I../../geoxml -I .

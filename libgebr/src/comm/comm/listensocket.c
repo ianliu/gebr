@@ -23,10 +23,10 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
 
-#include "glistensocket.h"
-#include "gsocketprivate.h"
-#include "gstreamsocketprivate.h"
-#include "gsocketaddressprivate.h"
+#include "listensocket.h"
+#include "socketprivate.h"
+#include "streamsocketprivate.h"
+#include "socketaddressprivate.h"
 
 /*
  * prototypes
@@ -121,12 +121,12 @@ static void __gebr_comm_listen_socket_new_connection(GebrCommListenSocket * list
 	sockfd = _gebr_comm_socket_get_fd(&listen_socket->parent);
 	while ((client_sockfd = _gebr_comm_socket_address_accept(&peer_address,
 								 listen_socket->parent.address_type, sockfd)) != -1) {
-		GStreamSocket *stream_socket;
+		GebrCommStreamSocket *stream_socket;
 
 		if (g_slist_length(listen_socket->pending_connections) > listen_socket->max_pending_connections)
 			break;
 
-		/* create GStreamSocket */
+		/* create GebrCommStreamSocket */
 		stream_socket =
 		    _gebr_comm_stream_socket_new_connected(client_sockfd, listen_socket->parent.address_type);
 
@@ -216,16 +216,16 @@ guint gebr_comm_listen_socket_get_max_pending_connections(GebrCommListenSocket *
 	return listen_socket->max_pending_connections;
 }
 
-GStreamSocket *gebr_comm_listen_socket_get_next_pending_connection(GebrCommListenSocket * listen_socket)
+GebrCommStreamSocket *gebr_comm_listen_socket_get_next_pending_connection(GebrCommListenSocket * listen_socket)
 {
-	GStreamSocket *stream_socket;
+	GebrCommStreamSocket *stream_socket;
 	GSList *link;
 
 	/* get the first pending conn. */
 	link = g_slist_last(listen_socket->pending_connections);
 	if (link == NULL)
 		return NULL;
-	stream_socket = (GStreamSocket *) link->data;
+	stream_socket = (GebrCommStreamSocket *) link->data;
 
 	/* remove it from the list of pending */
 	listen_socket->pending_connections = g_slist_remove_link(listen_socket->pending_connections, link);

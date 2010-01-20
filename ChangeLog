@@ -1444,7 +1444,7 @@
 2008-08-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* renamed GHostAddress to GSocketAddress, GTcpServer to
-	  GListenSocket and GTcpSocket to GStreamSocket to support unix
+	  GListenSocket and GTcpSocket to GebrCommStreamSocket to support unix
 	  sockets
 
 2008-08-11  Ricardo Biloti <biloti@gebrproject.com>

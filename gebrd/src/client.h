@@ -19,12 +19,12 @@
 #define __CLIENT_H
 
 #include <glib.h>
-#include <libgebr/comm/gstreamsocket.h>
+#include <libgebr/comm/streamsocket.h>
 
 struct gebr_comm_protocol;
 
 struct client {
-	GStreamSocket *stream_socket;
+	GebrCommStreamSocket *stream_socket;
 	struct gebr_comm_protocol *protocol;
 
 	gboolean is_local;
@@ -32,7 +32,7 @@ struct client {
 	GString *display;
 };
 
-void client_add(GStreamSocket * stream_socket);
+void client_add(GebrCommStreamSocket * stream_socket);
 
 void client_free(struct client *client);
 

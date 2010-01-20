@@ -23,15 +23,15 @@
 #include <log.h>
 #include <geoxml.h>
 
-#include "gstreamsocket.h"
+#include "streamsocket.h"
 #include "protocol.h"
-#include "gterminalprocess.h"
-#include "gprocess.h"
-#include "gchannelsocket.h"
+#include "terminalprocess.h"
+#include "process.h"
+#include "channelsocket.h"
 
 struct gebr_comm_server {
 	/* the communication channel. */
-	GStreamSocket *stream_socket;
+	GebrCommStreamSocket *stream_socket;
 	/* protocol parsing stuff */
 	struct gebr_comm_protocol *protocol;
 	/* server address/port */

@@ -20,9 +20,9 @@
 #ifndef __GEBR_COMM_LISTEN_SOCKET_H
 #define __GEBR_COMM_LISTEN_SOCKET_H
 
-#include "gsocket.h"
-#include "gstreamsocket.h"
-#include "gsocketaddress.h"
+#include "socket.h"
+#include "streamsocket.h"
+#include "socketaddress.h"
 
 G_BEGIN_DECLS GType gebr_comm_listen_socket_get_type(void);
 
@@ -65,7 +65,7 @@ void gebr_comm_listen_socket_set_max_pending_connections(GebrCommListenSocket * 
 
 guint gebr_comm_listen_socket_get_max_pending_connections(GebrCommListenSocket * listen_socket);
 
-GStreamSocket *gebr_comm_listen_socket_get_next_pending_connection(GebrCommListenSocket * listen_socket);
+GebrCommStreamSocket *gebr_comm_listen_socket_get_next_pending_connection(GebrCommListenSocket * listen_socket);
 
 gboolean gebr_comm_listen_socket_get_has_pending_connections(GebrCommListenSocket * listen_socket);
 

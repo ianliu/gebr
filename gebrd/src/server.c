@@ -167,7 +167,7 @@ void server_quit(void)
 
 void server_new_connection(void)
 {
-	GStreamSocket *client_socket;
+	GebrCommStreamSocket *client_socket;
 
 	while ((client_socket = gebr_comm_listen_socket_get_next_pending_connection(gebrd.listen_socket)) != NULL)
 		client_add(client_socket);

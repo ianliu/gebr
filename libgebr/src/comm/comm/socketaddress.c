@@ -25,7 +25,7 @@
 #include <netinet/in.h>
 #include <string.h>
 
-#include "gsocketaddress.h"
+#include "socketaddress.h"
 
 /*
  * private functions

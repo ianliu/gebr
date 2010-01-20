@@ -20,44 +20,44 @@
 #ifndef __GEBR_COMM_STREAM_SOCKET_H
 #define __GEBR_COMM_STREAM_SOCKET_H
 
-#include "gsocket.h"
-#include "gsocketaddress.h"
+#include "socket.h"
+#include "socketaddress.h"
 
 G_BEGIN_DECLS GType gebr_comm_stream_socket_get_type(void);
 
 #define GEBR_COMM_STREAM_SOCKET_TYPE		(gebr_comm_stream_socket_get_type())
-#define GEBR_COMM_STREAM_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_STREAM_SOCKET_TYPE, GStreamSocket))
-#define GEBR_COMM_STREAM_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_COMM_STREAM_SOCKET_TYPE, GStreamSocketClass))
+#define GEBR_COMM_STREAM_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_STREAM_SOCKET_TYPE, GebrCommStreamSocket))
+#define GEBR_COMM_STREAM_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_COMM_STREAM_SOCKET_TYPE, GebrCommStreamSocketClass))
 #define GEBR_COMM_IS_STREAM_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_COMM_STREAM_SOCKET_TYPE))
 #define GEBR_COMM_IS_STREAM_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_COMM_STREAM_SOCKET_TYPE))
-#define GEBR_COMM_STREAM_SOCKET_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_STREAM_SOCKET_TYPE, GStreamSocketClass))
+#define GEBR_COMM_STREAM_SOCKET_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_STREAM_SOCKET_TYPE, GebrCommStreamSocketClass))
 
-typedef struct _GStreamSocket GStreamSocket;
-typedef struct _GStreamSocketClass GStreamSocketClass;
+typedef struct _GebrCommStreamSocket GebrCommStreamSocket;
+typedef struct _GebrCommStreamSocketClass GebrCommStreamSocketClass;
 
-struct _GStreamSocket {
+struct _GebrCommStreamSocket {
 	GebrCommSocket parent;
 };
-struct _GStreamSocketClass {
+struct _GebrCommStreamSocketClass {
 	GebrCommSocketClass parent;
 
 	/* signals */
-	void (*connected) (GStreamSocket * self);
-	void (*disconnected) (GStreamSocket * self);
+	void (*connected) (GebrCommStreamSocket * self);
+	void (*disconnected) (GebrCommStreamSocket * self);
 };
 
 /*
  * user functions
  */
 
-GStreamSocket *gebr_comm_stream_socket_new(void);
+GebrCommStreamSocket *gebr_comm_stream_socket_new(void);
 
 gboolean
-gebr_comm_stream_socket_connect(GStreamSocket * stream_socket, GebrCommSocketAddress * socket_address, gboolean wait);
+gebr_comm_stream_socket_connect(GebrCommStreamSocket * stream_socket, GebrCommSocketAddress * socket_address, gboolean wait);
 
-void gebr_comm_stream_socket_disconnect(GStreamSocket * stream_socket);
+void gebr_comm_stream_socket_disconnect(GebrCommStreamSocket * stream_socket);
 
-GebrCommSocketAddress gebr_comm_stream_socket_peer_address(GStreamSocket * stream_socket);
+GebrCommSocketAddress gebr_comm_stream_socket_peer_address(GebrCommStreamSocket * stream_socket);
 
 G_END_DECLS
 #endif				//__GEBR_COMM_STREAM_SOCKET_H

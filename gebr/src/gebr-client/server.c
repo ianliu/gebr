@@ -22,7 +22,7 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/geoxml.h>
-#include <libgebr/comm/gstreamsocket.h>
+#include <libgebr/comm/streamsocket.h>
 #include <libgebr/comm/protocol.h>
 
 #include "server.h"
@@ -63,7 +63,7 @@ static gboolean server_ssh_question(const gchar * title, const gchar * message)
 	return FALSE;
 }
 
-static void server_disconnected(GStreamSocket * stream_socket, struct server *server)
+static void server_disconnected(GebrCommStreamSocket * stream_socket, struct server *server)
 {
 //      TODO:
 

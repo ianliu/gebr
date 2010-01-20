@@ -18,7 +18,7 @@
 #ifndef __GEBRD_H
 #define __GEBRD_H
 
-#include <libgebr/comm/glistensocket.h>
+#include <libgebr/comm/listensocket.h>
 #include <libgebr/log.h>
 #include <netdb.h>
 

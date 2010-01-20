@@ -20,8 +20,8 @@
 #ifndef __GEBR_COMM_SOCKETPRIVATE_H
 #define __GEBR_COMM_SOCKETPRIVATE_H
 
-#include "gsocket.h"
-#include "gsocketaddress.h"
+#include "socket.h"
+#include "socketaddress.h"
 
 void _gebr_comm_socket_init(GebrCommSocket * socket, int fd, enum GebrCommSocketAddressType address_type);
 

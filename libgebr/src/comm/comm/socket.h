@@ -24,7 +24,7 @@
 #include <glib-object.h>
 #include <netinet/in.h>
 
-#include "gsocketaddress.h"
+#include "socketaddress.h"
 
 G_BEGIN_DECLS GType gebr_comm_socket_get_type(void);
 

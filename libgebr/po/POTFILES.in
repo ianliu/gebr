@@ -3,7 +3,7 @@ src/comm/comm/gchannelsocket.c
 src/comm/comm/ghostinfo.c
 src/comm/comm/glistensocket.c
 src/comm/comm/gprocess.c
-src/comm/comm/gsocket.c
+src/comm/comm/socket.c
 src/comm/comm/gsocketaddress.c
 src/comm/comm/gstreamsocket.c
 src/comm/comm/gterminalprocess.c

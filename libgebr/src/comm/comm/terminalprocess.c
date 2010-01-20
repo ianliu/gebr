@@ -27,7 +27,7 @@
 #include <sys/wait.h>
 #include <pty.h>
 
-#include "gterminalprocess.h"
+#include "terminalprocess.h"
 
 /*
  * Prototypes

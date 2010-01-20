@@ -25,7 +25,7 @@
 #include "../../intl.h"
 
 #include "server.h"
-#include "glistensocket.h"
+#include "listensocket.h"
 
 /*
  * Declarations
@@ -49,11 +49,11 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, struct gebr
 static void
 gebr_comm_ssh_open_tunnel_finished(GebrCommTerminalProcess * process, struct gebr_comm_server *gebr_comm_server);
 
-static void gebr_comm_server_connected(GStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server);
-static void gebr_comm_server_disconnected(GStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server);
-static void gebr_comm_server_read(GStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server);
+static void gebr_comm_server_connected(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server);
+static void gebr_comm_server_disconnected(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server);
+static void gebr_comm_server_read(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server);
 static void
-gebr_comm_server_error(GStreamSocket * stream_socket, enum GebrCommSocketError error,
+gebr_comm_server_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocketError error,
 		       struct gebr_comm_server *gebr_comm_server);
 
 static void gebr_comm_server_free_x11_forward(struct gebr_comm_server *gebr_comm_server);
@@ -542,7 +542,7 @@ gebr_comm_ssh_open_tunnel_finished(GebrCommTerminalProcess * process, struct geb
 	gebr_comm_terminal_process_free(process);
 }
 
-static void gebr_comm_server_connected(GStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server)
+static void gebr_comm_server_connected(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server)
 {
 	gchar hostname[256];
 	gchar *display;
@@ -587,7 +587,7 @@ static void gebr_comm_server_connected(GStreamSocket * stream_socket, struct geb
 	}
 }
 
-static void gebr_comm_server_disconnected(GStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server)
+static void gebr_comm_server_disconnected(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server)
 {
 	gebr_comm_server->port = 0;
 	gebr_comm_server->protocol->logged = FALSE;
@@ -599,7 +599,7 @@ static void gebr_comm_server_disconnected(GStreamSocket * stream_socket, struct 
 	gebr_comm_server_free_for_reuse(gebr_comm_server);
 }
 
-static void gebr_comm_server_read(GStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server)
+static void gebr_comm_server_read(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server)
 {
 	GString *data;
 	gchar *data_stripped;
@@ -618,7 +618,7 @@ static void gebr_comm_server_read(GStreamSocket * stream_socket, struct gebr_com
 }
 
 static void
-gebr_comm_server_error(GStreamSocket * stream_socket, enum GebrCommSocketError error,
+gebr_comm_server_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocketError error,
 		       struct gebr_comm_server *gebr_comm_server)
 {
 	gebr_comm_server->error = SERVER_ERROR_CONNECT;

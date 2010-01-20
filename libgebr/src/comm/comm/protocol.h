@@ -20,7 +20,7 @@
 
 #include <glib.h>
 
-#include "gstreamsocket.h"
+#include "streamsocket.h"
 
 #define PROTOCOL_VERSION	"1.0.0"
 
@@ -92,7 +92,7 @@ gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GS
 void
 
 
-gebr_comm_protocol_send_data(struct gebr_comm_protocol *protocol, GStreamSocket * stream_socket,
+gebr_comm_protocol_send_data(struct gebr_comm_protocol *protocol, GebrCommStreamSocket * stream_socket,
 			     struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...);
 
 GList *gebr_comm_protocol_split_new(GString * arguments, guint parts);

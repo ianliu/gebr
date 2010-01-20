@@ -33,17 +33,17 @@
  * Private functions
  */
 
-static void client_disconnected(GStreamSocket * stream_socket, struct client *client);
+static void client_disconnected(GebrCommStreamSocket * stream_socket, struct client *client);
 
-static void client_read(GStreamSocket * stream_socket, struct client *client);
+static void client_read(GebrCommStreamSocket * stream_socket, struct client *client);
 
-static void client_error(GStreamSocket * stream_socket, enum GebrCommSocketError error, struct client *client);
+static void client_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocketError error, struct client *client);
 
 /*
  * Public functions
  */
 
-void client_add(GStreamSocket * stream_socket)
+void client_add(GebrCommStreamSocket * stream_socket)
 {
 	struct client *client;
 
@@ -67,7 +67,7 @@ void client_free(struct client *client)
 	g_free(client);
 }
 
-static void client_disconnected(GStreamSocket * stream_socket, struct client *client)
+static void client_disconnected(GebrCommStreamSocket * stream_socket, struct client *client)
 {
 	gebrd_message(GEBR_LOG_DEBUG, "client_disconnected");
 
@@ -75,7 +75,7 @@ static void client_disconnected(GStreamSocket * stream_socket, struct client *cl
 	client_free(client);
 }
 
-static void client_read(GStreamSocket * stream_socket, struct client *client)
+static void client_read(GebrCommStreamSocket * stream_socket, struct client *client)
 {
 	GString *data;
 
@@ -94,7 +94,7 @@ static void client_read(GStreamSocket * stream_socket, struct client *client)
  out:	g_string_free(data, TRUE);
 }
 
-static void client_error(GStreamSocket * stream_socket, enum GebrCommSocketError error, struct client *client)
+static void client_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocketError error, struct client *client)
 {
 	gebrd_message(GEBR_LOG_ERROR, _("Connection error '%s' on client '%s'"), error, strerror(error),
 		      client->protocol->hostname->str);

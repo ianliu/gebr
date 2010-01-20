@@ -22,7 +22,7 @@
 
 #include <glib.h>
 
-#include "gsocketaddress.h"
+#include "socketaddress.h"
 
 G_BEGIN_DECLS typedef struct _GebrCommHostInfo GebrCommHostInfo;
 
