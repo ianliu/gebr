@@ -254,7 +254,7 @@ static GString *job_generate_id(void)
  * Public functions
  */
 
-gboolean job_new(struct job ** _job, struct client * client, GString * xml)
+gboolean job_new(struct job ** _job, struct client * client, GString * xml, GString * account, GString * class)
 {
 	struct job *job;
 

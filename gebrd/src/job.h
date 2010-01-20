@@ -41,7 +41,7 @@ struct job {
 	GString *output;
 };
 
-gboolean job_new(struct job **_job, struct client *client, GString * xml);
+gboolean job_new(struct job **_job, struct client *client, GString * xml, GString * account, GString * class);
 
 void job_free(struct job *job);
 

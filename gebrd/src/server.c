@@ -260,13 +260,16 @@ gboolean server_parse_client_messages(struct client *client)
 			GString *xml;
 			struct job *job;
 			gboolean success;
+			GString *account, *class; 
 
 			/* organize message data */
-			arguments = gebr_comm_protocol_split_new(message->argument, 1);
+			arguments = gebr_comm_protocol_split_new(message->argument, 3);
 			xml = g_list_nth_data(arguments, 0);
+			account = g_list_nth_data(arguments, 1);
+			class = g_list_nth_data(arguments, 2);
 
 			/* try to run and send return */
-			if ((success = job_new(&job, client, xml)) == TRUE)
+			if ((success = job_new(&job, client, xml, account, class)) == TRUE)
 				job_run_flow(job, client);
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
 						     gebr_comm_protocol_defs.ret_def, 7, job->jid->str,

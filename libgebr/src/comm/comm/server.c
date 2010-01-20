@@ -273,9 +273,12 @@ void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, struct
 	/* get the xml */
 	gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(flow_wnh), &xml);
 
-	/* finally... */
-	gebr_comm_protocol_send_data(gebr_comm_server->protocol, gebr_comm_server->stream_socket,
-				     gebr_comm_protocol_defs.run_def, 1, xml);
+	if (config->is_netuno)
+		gebr_comm_protocol_send_data(gebr_comm_server->protocol, gebr_comm_server->stream_socket,
+					     gebr_comm_protocol_defs.run_def, 3, xml, config->account, config->class);
+	else
+		gebr_comm_protocol_send_data(gebr_comm_server->protocol, gebr_comm_server->stream_socket,
+					     gebr_comm_protocol_defs.run_def, 3, xml, "", config->class);
 
 	/* frees */
 	g_free(xml);
