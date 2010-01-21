@@ -273,31 +273,12 @@ void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, struct
 	/* get the xml */
 	gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(flow_wnh), &xml);
 
-	if (config->is_netuno)
-		gebr_comm_protocol_send_data(gebr_comm_server->protocol, gebr_comm_server->stream_socket,
-					     gebr_comm_protocol_defs.run_def, 3, xml, config->account, config->class);
-	else
-		gebr_comm_protocol_send_data(gebr_comm_server->protocol, gebr_comm_server->stream_socket,
-					     gebr_comm_protocol_defs.run_def, 3, xml, "", config->class);
-
+	gebr_comm_protocol_send_data(gebr_comm_server->protocol, gebr_comm_server->stream_socket,
+				     gebr_comm_protocol_defs.run_def, 3, xml,
+				     config->account ? config->account : "", config->class ? config->class : "");
 	/* frees */
 	g_free(xml);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(flow_wnh));
-}
-
-gboolean gebr_comm_server_is_netuno(const gchar * address)
-{
-	gchar * addr;
-	
-	addr = strchr(address, '@');
-	
-	if (addr == NULL) {
-		addr = address;
-	} else {
-		addr++;
-	}
-
-	return strcmp(addr, "login.hpc.ufrj.br") == 0;
 }
 
 
@@ -310,9 +291,16 @@ gchar * gebr_comm_server_get_user(const gchar * address)
 	return (gchar *) strsep(&addr_temp, "@");
 }
 
-/*
- * Section: Private
- */
+
+GebrCommServerType gebr_comm_server_get_id(const gchar * name)
+{
+	if (strcmp(name, "REGULAR") == 0)
+		return GEBR_COMM_SERVER_TYPE_REGULAR;
+	else if (strcmp(name, "MOAB") == 0)
+		return GEBR_COMM_SERVER_TYPE_MOAB;
+	else
+		return GEBR_COMM_SERVER_TYPE_UNKNOWN;
+}
 
 static void
 gebr_comm_server_log_message(struct gebr_comm_server *gebr_comm_server, enum gebr_log_message_type type,

@@ -30,10 +30,15 @@
 #include "channelsocket.h"
 
 typedef enum {
-	GEBR_COMM_SERVER_LOCAL = 0,
-	GEBR_COMM_SERVER_REMOTE,
-	GEBR_COMM_SERVER_MOAB
+	GEBR_COMM_SERVER_TYPE_MOAB,
+	GEBR_COMM_SERVER_TYPE_REGULAR,
+	GEBR_COMM_SERVER_TYPE_UNKNOWN
 } GebrCommServerType;
+
+typedef enum {
+	GEBR_COMM_SERVER_LOCATION_LOCAL,
+	GEBR_COMM_SERVER_LOCATION_REMOTE
+} GebrCommServerLocation;
 
 struct gebr_comm_server {
 	/* the communication channel. */
@@ -87,7 +92,6 @@ struct gebr_comm_server {
 
 struct gebr_comm_server_run {
 	GebrGeoXmlFlow * flow;
-	gboolean is_netuno;
 	gchar * account, * class;
 };
 
@@ -109,8 +113,8 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server,
 
 void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, struct gebr_comm_server_run * config);
 
-gboolean gebr_comm_server_is_netuno(const gchar * address);
-
 gchar * gebr_comm_server_get_user(const char * address);
+
+GebrCommServerType gebr_comm_server_get_id(const gchar * name);
 
 #endif				//__GEBR_COMM_SERVER_H
