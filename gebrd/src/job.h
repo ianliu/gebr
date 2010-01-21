@@ -41,11 +41,11 @@ struct job {
 	GString *output;
 };
 
-gboolean job_new(struct job **_job, struct client *client, GString * xml, GString * account, GString * class);
+gboolean job_new(struct job **_job, struct client *client, GString * xml);
 
 void job_free(struct job *job);
 
-void job_run_flow(struct job *job, struct client *client);
+void job_run_flow(struct job *job, struct client *client, GString * account, GString * class);
 
 struct job *job_find(GString * jid);
 

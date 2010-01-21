@@ -254,7 +254,7 @@ static GString *job_generate_id(void)
  * Public functions
  */
 
-gboolean job_new(struct job ** _job, struct client * client, GString * xml, GString * account, GString * class)
+gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 {
 	struct job *job;
 
@@ -486,7 +486,7 @@ void job_free(struct job *job)
 	g_free(job);
 }
 
-void job_run_flow(struct job *job, struct client *client)
+void job_run_flow(struct job *job, struct client *client, GString * account, GString * class)
 {
 	GString *cmd_line;
 	GebrGeoXmlSequence *program;
@@ -499,7 +499,7 @@ void job_run_flow(struct job *job, struct client *client)
 
 	/* command-line */
 	if (client->display->len) {
-		if (client->is_local)
+		if (client->server_location == GEBR_COMM_SERVER_LOCATION_LOCAL)
 			g_string_printf(cmd_line, "bash -l -c 'export DISPLAY=%s; %s'",
 					client->display->str, locale_str);
 		else
@@ -508,6 +508,15 @@ void job_run_flow(struct job *job, struct client *client)
 	} else {
 		g_string_printf(cmd_line, "bash -l -c '%s'", locale_str);
 	}
+
+	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
+		GString * cmd_line_moab;
+		cmd_line_moab = g_string_new(cmd_line->str);
+
+		g_string_printf(cmd_line, "echo \"%s\" | msub -A %s -q %s", cmd_line_moab->str, account->str, class->str);
+		g_string_free(cmd_line_moab, TRUE);
+	}
+
 	gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
 		      client->protocol->hostname->str, cmd_line->str);
 

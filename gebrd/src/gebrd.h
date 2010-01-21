@@ -22,6 +22,7 @@
 #include <libgebr/comm/server.h>
 #include <libgebr/log.h>
 #include <netdb.h>
+#include <libgebr/comm/server.h>
 
 extern struct gebrd gebrd;
 

@@ -298,8 +298,8 @@ gboolean server_parse_client_messages(struct client *client)
 			class = g_list_nth_data(arguments, 2);
 
 			/* try to run and send return */
-			if ((success = job_new(&job, client, xml, account, class)) == TRUE)
-				job_run_flow(job, client);
+			if ((success = job_new(&job, client, xml)) == TRUE)
+				job_run_flow(job, client, account, class);
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
 						     gebr_comm_protocol_defs.ret_def, 7, job->jid->str,
 						     job->status->str, job->title->str, job->start_date->str,
