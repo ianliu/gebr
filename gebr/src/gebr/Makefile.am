@@ -42,7 +42,7 @@ gebr_SOURCES = main.c \
 	ui_paths.c \
 	ui_preferences.c \
 	ui_server.c \
-	ui_netuno.c
+	ui_moab.c
 noinst_HEADERS = \
 	cmdline.h \
 	gebr.h \
@@ -67,7 +67,7 @@ noinst_HEADERS = \
 	ui_paths.h \
 	ui_preferences.h \
 	ui_server.h \
-	ui_netuno.h
+	ui_moab.h
 EXTRA_DIST = ${noinst_HEADERS}
 
 INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" $(WEBKIT_ENABLED)

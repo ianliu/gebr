@@ -510,11 +510,11 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 	}
 
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
-		GString * cmd_line_moab;
-		cmd_line_moab = g_string_new(cmd_line->str);
+		gchar * cmd_line_moab;
+		cmd_line_moab = g_strdup(cmd_line->str);
 
-		g_string_printf(cmd_line, "echo \"%s\" | msub -A %s -q %s", cmd_line_moab->str, account->str, class->str);
-		g_string_free(cmd_line_moab, TRUE);
+		g_string_printf(cmd_line, "bash -l -c \"echo \\\"%s\\\" | msub -A %s -q %s\"", cmd_line_moab, account->str, class->str);
+		g_free(cmd_line_moab);
 	}
 
 	gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
@@ -524,6 +524,7 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 	g_signal_connect(job->process, "ready-read-stdout", G_CALLBACK(job_process_read_stdout), job);
 	g_signal_connect(job->process, "ready-read-stderr", G_CALLBACK(job_process_read_stderr), job);
 	g_signal_connect(job->process, "finished", G_CALLBACK(job_process_finished), job);
+
 	gebr_comm_process_start(job->process, cmd_line);
 	g_string_assign(job->status, "running");
 

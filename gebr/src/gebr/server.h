@@ -30,7 +30,14 @@ struct server {
 	GtkTreeIter iter;
 
 	/* last error showed on tooltip */
+
 	GString *last_error;
+
+	GebrCommServerType type;
+
+	gchar ** account;
+
+	gchar ** classes;
 };
 
 struct server *server_new(const gchar * address, gboolean autoconnect);

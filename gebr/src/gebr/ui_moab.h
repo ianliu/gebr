@@ -15,16 +15,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __UI_NETUNO_H
-#define __UI_NETUNO_H
+#ifndef __UI_MOAB_H
+#define __UI_MOAB_H
 
 #include <gtk/gtk.h>
 #include "server.h"
 
-struct ui_netuno {
+struct ui_moab {
 	GtkWidget * dialog;
 	GtkListStore *account, *classes;
 };
 
-gboolean netuno_setup_ui (gchar ** char_account, gchar ** char_class);
-#endif				/* __UI_NETUNO_H */
+gboolean moab_setup_ui (gchar ** char_account, gchar ** char_class, struct server * server);
+#endif				/* __UI_MOAB_H */

@@ -294,9 +294,9 @@ gchar * gebr_comm_server_get_user(const gchar * address)
 
 GebrCommServerType gebr_comm_server_get_id(const gchar * name)
 {
-	if (strcmp(name, "REGULAR") == 0)
+	if (strcmp(name, "regular") == 0)
 		return GEBR_COMM_SERVER_TYPE_REGULAR;
-	else if (strcmp(name, "MOAB") == 0)
+	else if (strcmp(name, "moab") == 0)
 		return GEBR_COMM_SERVER_TYPE_MOAB;
 	else
 		return GEBR_COMM_SERVER_TYPE_UNKNOWN;

@@ -34,7 +34,7 @@
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
 #include "ui_server.h"
-#include "ui_netuno.h"
+#include "ui_moab.h"
 
 #define GEBR_FLOW_UI_RESPONSE_EXECUTE 1
 
@@ -578,10 +578,9 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter, SERVER_POINTER, &server, -1);
 
 	config->account = config->class = NULL;
-	config->is_netuno = gebr_comm_server_is_netuno(address); 
 
-	if (config->is_netuno)
-		if (!netuno_setup_ui(&config->account, &config->class))
+	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB)
+		if (!moab_setup_ui(&config->account, &config->class, server))
 			return;
 
 	flow_run(server, config);
