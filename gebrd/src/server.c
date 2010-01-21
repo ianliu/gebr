@@ -35,10 +35,20 @@
 
 #include <libgebr/utils.h>
 
+#include <gdome.h>
+
 #include "server.h"
 #include "gebrd.h"
 #include "job.h"
 #include "client.h"
+
+
+/*
+ * Private functions
+ */
+
+static void server_moab_read_credentials(GString *accounts, GString *classes);
+
 
 /*
  * Public
@@ -188,8 +198,14 @@ gboolean server_parse_client_messages(struct client *client)
 			GList *arguments;
 			GString *version, *hostname, *place, *x11;
 			GString *display_port;
+			GString *accounts_list;
+			GString *classes_list;
+			gchar *server_type;
 
 			display_port = g_string_new("");
+			accounts_list = g_string_new("");
+			classes_list = g_string_new("");
+
 			/* organize message data */
 			arguments = gebr_comm_protocol_split_new(message->argument, 4);
 			version = g_list_nth_data(arguments, 0);
@@ -208,13 +224,13 @@ gboolean server_parse_client_messages(struct client *client)
 			client->protocol->logged = TRUE;
 			g_string_assign(client->protocol->hostname, hostname->str);
 			if (!strcmp(place->str, "local"))
-				client->is_local = TRUE;
+				client->server_location = GEBR_COMM_SERVER_LOCATION_LOCAL;
 			else if (!strcmp(place->str, "remote"))
-				client->is_local = FALSE;
+				client->server_location = GEBR_COMM_SERVER_LOCATION_REMOTE;
 			else
 				goto err;
 
-			if (client->is_local == FALSE) {
+			if (client->server_location == GEBR_COMM_SERVER_LOCATION_REMOTE) {
 				GString *cmd_line;
 				guint16 display;
 
@@ -235,17 +251,30 @@ gboolean server_parse_client_messages(struct client *client)
 				} else
 					g_string_assign(client->display, "");
 			} else {
+				/* It is a local server or a MOAB cluster. */
 				g_string_assign(client->display, x11->str);
+			}
+
+			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
+				/* Get info from the MOAB cluster */
+				server_type = "moab";
+				server_moab_read_credentials(accounts_list, classes_list);
+			} else {
+				server_type = "regular";
 			}
 
 			/* send return */
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
-						     gebr_comm_protocol_defs.ret_def, 2, gebrd.hostname,
-						     display_port->str);
+						     gebr_comm_protocol_defs.ret_def, 5,
+						     gebrd.hostname, display_port->str,
+						     accounts_list->str, classes_list->str, server_type);
 
 			/* frees */
 			gebr_comm_protocol_split_free(arguments);
 			g_string_free(display_port, TRUE);
+			g_string_free(accounts_list, TRUE);
+			g_string_free(classes_list, TRUE);
+
 		} else if (client->protocol->logged == FALSE) {
 			/* not logged! */
 			goto err;
@@ -352,3 +381,63 @@ gboolean server_parse_client_messages(struct client *client)
  err:	gebr_comm_message_free(message);
 	return FALSE;
 }
+
+
+/**
+ * Reads the list of accounts and the list of classes returned by the MOAB cluster
+ * "mcredctl" command and places them on \p accounts and \p classes, respectively.
+ */
+static void server_moab_read_credentials(GString *accounts, GString *classes)
+{
+	GString *cmd_line = NULL;
+	gchar *std_out = NULL;
+	gchar *std_err = NULL;
+	gint exit_status;
+
+	GdomeDOMImplementation *dom_impl = NULL;
+	GdomeDocument *doc = NULL;
+	GdomeElement *element = NULL;
+	GdomeException exception;
+	GdomeDOMString *attribute_name;
+
+	cmd_line = g_string_new("");
+	g_string_printf(cmd_line, "mcredctl -q accessfrom user:%s --format=xml", getenv("USER"));
+	if (g_spawn_command_line_sync(cmd_line->str, &std_out, &std_err, &exit_status, NULL) == FALSE)
+		goto err;
+
+	if ((dom_impl = gdome_di_mkref()) == NULL)
+		goto err;
+
+	if ((doc = gdome_di_createDocFromMemory(dom_impl, std_out, GDOME_LOAD_PARSING, &exception)) == NULL) {
+		gdome_di_unref(dom_impl, &exception);
+		goto err;
+	}
+
+	if ((element = gdome_doc_documentElement(doc, &exception)) == NULL) {
+		gdome_doc_unref(doc, &exception);
+		gdome_di_unref(dom_impl, &exception);
+		goto err;
+	}
+
+	if ((element = (GdomeElement *) gdome_el_firstChild(element, &exception)) == NULL) {
+		gdome_doc_unref(doc, &exception);
+		gdome_di_unref(dom_impl, &exception);
+		goto err;
+	}
+
+	attribute_name = gdome_str_mkref("AList");
+	g_string_assign(accounts, (gdome_el_getAttribute(element, attribute_name, &exception))->str);
+	gdome_str_unref(attribute_name);
+
+	attribute_name = gdome_str_mkref("CList");
+	g_string_assign(classes, (gdome_el_getAttribute(element, attribute_name, &exception))->str);
+	gdome_str_unref(attribute_name);
+
+	gdome_doc_unref(doc, &exception);
+	gdome_di_unref(dom_impl, &exception);
+
+ err:	g_string_free(cmd_line, TRUE);
+	g_free(std_out);
+	g_free(std_err);
+}
+

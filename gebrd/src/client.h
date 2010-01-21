@@ -20,14 +20,14 @@
 
 #include <glib.h>
 #include <libgebr/comm/streamsocket.h>
+#include <libgebr/comm/server.h>
 
 struct gebr_comm_protocol;
 
 struct client {
 	GebrCommStreamSocket *stream_socket;
 	struct gebr_comm_protocol *protocol;
-
-	gboolean is_local;
+	GebrCommServerLocation server_location;
 	/* x11 redirected display, if server is remote. if local this is the true display */
 	GString *display;
 };

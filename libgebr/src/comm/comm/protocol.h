@@ -71,7 +71,7 @@ struct gebr_comm_protocol {
 	guint waiting_ret_hash;
 	/* logged in with INI and RET? */
 	gboolean logged;
-	/* if we are logged, we received a host name from the client */
+	/* if we are logged, we received a host name from the peer */
 	GString *hostname;
 };
 
