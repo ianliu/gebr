@@ -29,6 +29,12 @@
 #include "process.h"
 #include "channelsocket.h"
 
+typedef enum {
+	GEBR_COMM_SERVER_LOCAL = 0,
+	GEBR_COMM_SERVER_REMOTE,
+	GEBR_COMM_SERVER_MOAB
+} GebrCommServerType;
+
 struct gebr_comm_server {
 	/* the communication channel. */
 	GebrCommStreamSocket *stream_socket;
@@ -60,7 +66,7 @@ struct gebr_comm_server {
 	const struct gebr_comm_server_ops {
 		void (*log_message) (enum gebr_log_message_type type, const gchar * message);
 		GString *(*ssh_login) (const gchar * title, const gchar * message);
-		 gboolean(*ssh_question) (const gchar * title, const gchar * message);
+		gboolean(*ssh_question) (const gchar * title, const gchar * message);
 		void (*parse_messages) (struct gebr_comm_server * gebr_comm_server, gpointer user_data);
 	} *ops;
 	gpointer user_data;
