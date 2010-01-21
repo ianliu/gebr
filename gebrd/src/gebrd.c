@@ -142,3 +142,13 @@ guint8 gebrd_get_x11_redirect_display(void)
 
 	return display++;
 }
+
+GebrCommServerType gebrd_get_server_type(void)
+{
+
+	if(g_find_program_in_path("msub") != NULL && g_find_program_in_path("mcredctl") != NULL)
+		return GEBR_COMM_SERVER_TYPE_MOAB;
+
+	return GEBR_COMM_SERVER_TYPE_REGULAR;
+}
+

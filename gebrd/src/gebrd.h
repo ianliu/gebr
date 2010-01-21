@@ -49,4 +49,5 @@ void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...);
 
 guint8 gebrd_get_x11_redirect_display(void);
 
+GebrCommServerType gebrd_get_server_type(void);
 #endif				//__GEBRD_H
