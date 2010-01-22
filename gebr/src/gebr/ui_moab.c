@@ -78,7 +78,7 @@ gboolean moab_setup_ui(gchar ** char_account, gchar ** char_class, struct server
 
 	gtk_widget_show_all(gui->dialog);
 
-	if (gtk_dialog_run(GTK_DIALOG(gui->dialog)) != GTK_RESPONSE_ACCEPT){
+	if (gtk_dialog_run(GTK_DIALOG(gui->dialog)) != GTK_RESPONSE_ACCEPT) {
 		ret = FALSE;
 		goto out;
 	}

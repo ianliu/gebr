@@ -236,7 +236,7 @@ gboolean server_parse_client_messages(struct client *client)
 
 				/* figure out a free display */
 				display = gebrd_get_x11_redirect_display();
-				if (display) {
+				if (display && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
 					g_string_printf(display_port, "%d", 6000 + display);
 					g_string_printf(client->display, ":%d", display);
 
@@ -251,7 +251,6 @@ gboolean server_parse_client_messages(struct client *client)
 				} else
 					g_string_assign(client->display, "");
 			} else {
-				/* It is a local server or a MOAB cluster. */
 				g_string_assign(client->display, x11->str);
 			}
 

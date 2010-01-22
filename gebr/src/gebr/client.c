@@ -47,6 +47,9 @@ gboolean client_parse_server_messages(struct gebr_comm_server *gebr_comm_server,
 				GList *arguments;
 				GString *hostname, *display_port;
 
+				g_strfreev(server->account);
+				g_strfreev(server->classes);
+
 				/* organize message data */
 				arguments = gebr_comm_protocol_split_new(message->argument, 5);
 				hostname = g_list_nth_data(arguments, 0);
@@ -54,10 +57,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *gebr_comm_server,
 				server->account = g_strsplit(((GString *)g_list_nth_data(arguments, 2))->str, ",", 0);
 				server->classes = g_strsplit(((GString *)g_list_nth_data(arguments, 3))->str, ",", 0);
 				server->type = gebr_comm_server_get_id(((GString*)g_list_nth_data(arguments, 4))->str);
-				g_printf("MY PRINT: [%s] %d:%s\n", ((GString*)g_list_nth_data(arguments, 4))->str,
-					 server->type,
-					 server->type == GEBR_COMM_SERVER_TYPE_MOAB? "Moabb!!" :
-					 server->type == GEBR_COMM_SERVER_TYPE_REGULAR? "Regular!!":"Unknown");
 
 				/* say we are logged */
 				g_string_assign(server->last_error, "");
@@ -74,7 +73,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *gebr_comm_server,
 						gebr_comm_server_forward_x11(gebr_comm_server, atoi(display_port->str));
 					else
 						gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
-							     _
 							     ("Server '%s' could not send display for graphical output redirection"),
 							     gebr_comm_server->address->str);
 				}

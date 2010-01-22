@@ -118,8 +118,14 @@ struct server *server_new(const gchar * address, gboolean autoconnect)
 	gtk_list_store_append(gebr.ui_server_list->common.store, &iter);
 	server = g_malloc(sizeof(struct server));
 	*server = (struct server) {
-		.comm = gebr_comm_server_new(address, &ops),.iter = iter,.last_error = g_string_new("")
+		.comm = gebr_comm_server_new(address, &ops),
+		.iter = iter,
+		.last_error = g_string_new(""),
+		.type = GEBR_COMM_SERVER_TYPE_UNKNOWN,
+		.account = NULL,
+		.classes = NULL,
 	};
+
 	server->comm->user_data = server;
 	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
 			   SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
