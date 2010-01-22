@@ -15,7 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 userdoc:
-	gnome-doc-tool html ../debr.docbook
+#	gnome-doc-tool html ../debr.docbook
+	touch debr.html
 *.html: userdoc
 
 debrdocdir = $(datadir)/debr/userdoc

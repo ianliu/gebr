@@ -15,7 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 userdoc:
-	gnome-doc-tool html ../gebr.docbook
+#	gnome-doc-tool html ../gebr.docbook
+	touch gebr.html
 *.html: userdoc
 
 gebrdocdir = $(datadir)/gebr/userdoc

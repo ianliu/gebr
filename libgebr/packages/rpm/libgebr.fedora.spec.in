@@ -1,7 +1,6 @@
 %define name @PACKAGE@
 %define version @VERSION@
-%define release fedora
-%define _topdir %(echo $PWD)/rpm
+%define release 1%{dist}
 
 Name: %{name}
 Version: %{version}
@@ -12,7 +11,7 @@ URL: http://groups.google.com/group/gebr
 Packager: Bráulio Barros de Oliveira <brauliobo@gmail.com>
 Source: %{name}-%{version}.tar.gz
 Requires: glib2 >= 2.8.0, gdome2, WebKit-gtk
-BuildRequires: glib2-devel >= 2.8.0, gdome2-devel, WebKit-gtk-devel, intltool
+BuildRequires: glib2-devel >= 2.8.0, gdome2-devel, WebKit-gtk-devel, gettext, intltool
 BuildRoot: /tmp/%{name}-%{version}
 Summary: GeBR library collecion
 %description

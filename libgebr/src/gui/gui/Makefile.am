@@ -14,9 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-marshalers.c:
-	glib-genmarshal --prefix=_gebr_gui_marshal marshalers.list --body >marshalers.c
+marshalers.h:
 	glib-genmarshal --prefix=_gebr_gui_marshal marshalers.list --header >marshalers.h
+
+marshalers.c: marshalers.h
+	glib-genmarshal --prefix=_gebr_gui_marshal marshalers.list --body >marshalers.c
 
 lib_LTLIBRARIES = libgebr_gui.la
 libgebr_gui_la_SOURCES = \
@@ -28,7 +30,7 @@ libgebr_gui_la_SOURCES = \
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = \
-	sexy-icon-entry.h \
+	marshalers.h sexy-icon-entry.h \
 	about.h utils.h pixmaps.h icons.h help.h \
 	gtkfileentry.h gtkenhancedentry.h \
 	gtksequenceedit.h valuesequenceedit.h \
