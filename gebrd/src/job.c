@@ -74,12 +74,16 @@ static gboolean job_parse_parameter(struct job *job, GebrGeoXmlParameter * param
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 	case GEBR_GEOXML_PARAMETER_TYPE_ENUM:{
 			GString *value;
-
+			
 			value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
+
 			if (strlen(value->str) > 0) {
-				g_string_append_printf(job->cmd_line, "%s\"%s\" ",
+				gchar *quoted;
+				quoted = g_shell_quote(value->str);
+				g_string_append_printf(job->cmd_line, "%s%s ",
 						       gebr_geoxml_program_parameter_get_keyword(program_parameter),
-						       value->str);
+						       quoted);
+				g_free(quoted);
 			} else {
 				/* Check if this is a required parameter */
 				if (gebr_geoxml_program_parameter_get_required(program_parameter)) {
@@ -307,8 +311,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 			break;
 		case GEBR_GEOXML_RETV_NO_MEMORY:
 			g_string_append_printf(job->issues,
-					       _
-					       ("Not enough memory. The library stoped after an unsucessful memory allocation.\n"));
+					       _("Not enough memory. The library stoped after an unsucessful memory allocation.\n"));
 			break;
 		default:
 			g_string_append_printf(job->issues,
