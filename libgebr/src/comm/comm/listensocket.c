@@ -183,7 +183,7 @@ gboolean gebr_comm_listen_socket_listen(GebrCommListenSocket * listen_socket, Ge
 	sockfd = socket(_gebr_comm_socket_address_get_family(socket_address), SOCK_STREAM, 0);
 	_gebr_comm_socket_init(&listen_socket->parent, sockfd, socket_address->type);
 	listen_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
-	gebr_comm_socket_set_blocking(&listen_socket->parent, TRUE);
+	gebr_comm_socket_set_blocking(&listen_socket->parent, FALSE);
 	_gebr_comm_socket_enable_read_watch(&listen_socket->parent);
 	/* pending connections */
 	listen_socket->pending_connections = g_slist_alloc();
