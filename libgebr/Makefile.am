@@ -16,4 +16,3 @@
 
 SUBDIRS = src packages po
 
-ACLOCAL_AMFLAGS = -I m4
