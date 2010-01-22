@@ -150,13 +150,11 @@ static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_co
 	menu = gtk_menu_new();
 
 	/* connect */
-	if (server->comm->state == SERVER_STATE_DISCONNECTED) {
+	if (server->comm->protocol->logged) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_CONNECT, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate", G_CALLBACK(server_common_connect), server);
-	}
-	/* disconnect */
-	if (server->comm->state != SERVER_STATE_DISCONNECTED) {
+	} else {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DISCONNECT, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate", G_CALLBACK(server_common_disconnect), server);
