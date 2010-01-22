@@ -279,6 +279,8 @@ gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 	*_job = job;
 
 	int ret;
+	gchar * quoted;
+
 	ret = gebr_geoxml_document_load_buffer(&document, xml->str);
 	if (ret < 0) {
 		switch (ret) {
@@ -359,7 +361,9 @@ gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 			goto err;
 		}
 
-		g_string_append_printf(job->cmd_line, "<\"%s\" ", gebr_geoxml_flow_io_get_input(flow));
+		quoted = g_shell_quote(gebr_geoxml_flow_io_get_input(flow));
+		g_string_append_printf(job->cmd_line, "<%s ", quoted);
+		g_free(quoted);
 
 	}
 	/* Binary followed by an space */
@@ -419,8 +423,12 @@ gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 
 		if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program)) == FALSE)
 			goto err;
-		if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program)))
-			g_string_append_printf(job->cmd_line, "2>> \"%s\" ", gebr_geoxml_flow_io_get_error(flow));
+		if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))){
+
+			quoted = g_shell_quote(gebr_geoxml_flow_io_get_error(flow));
+			g_string_append_printf(job->cmd_line, "2>> %s ", quoted);
+			g_free(quoted);
+		}
 
 		previous_stdout = gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(program));
 		gebr_geoxml_sequence_next(&program);
@@ -439,7 +447,10 @@ gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 						       gebr_geoxml_flow_io_get_output(flow));
 				goto err;
 			}
-			g_string_append_printf(job->cmd_line, ">\"%s\"", gebr_geoxml_flow_io_get_output(flow));
+
+			quoted = g_shell_quote(gebr_geoxml_flow_io_get_output(flow));
+			g_string_append_printf(job->cmd_line, ">%s", quoted);
+			g_free(quoted);
 		}
 	}
 
@@ -488,33 +499,52 @@ void job_free(struct job *job)
 
 void job_run_flow(struct job *job, struct client *client, GString * account, GString * class)
 {
-	GString *cmd_line;
+	GString *cmd_line, *to_quote;
 	GebrGeoXmlSequence *program;
 	gchar *locale_str;
 	gsize __attribute__ ((unused)) bytes_written;
+	gchar * quoted;
 
 	/* initialization */
 	cmd_line = g_string_new(NULL);
+	to_quote = g_string_new(NULL);
 	locale_str = g_filename_from_utf8(job->cmd_line->str, -1, NULL, &bytes_written, NULL);
 
 	/* command-line */
 	if (client->display->len) {
-		if (client->server_location == GEBR_COMM_SERVER_LOCATION_LOCAL)
-			g_string_printf(cmd_line, "bash -l -c 'export DISPLAY=%s; %s'",
-					client->display->str, locale_str);
-		else
-			g_string_printf(cmd_line, "bash -l -c 'export DISPLAY=127.0.0.1%s; %s'",
-					client->display->str, locale_str);
+		if (client->server_location == GEBR_COMM_SERVER_LOCATION_LOCAL){
+			g_string_printf(to_quote, "export DISPLAY=%s; %s", client->display->str, locale_str);
+			quoted = g_shell_quote(to_quote->str);
+			g_string_printf(cmd_line, "bash -l -c %s", quoted);
+			g_free(quoted);
+		}
+		else{
+			g_string_printf(to_quote, "export DISPLAY=127.0.0.1%s; %s", client->display->str, locale_str);
+			quoted = g_shell_quote(to_quote->str);
+			g_string_printf(cmd_line, "bash -l -c %s", quoted);
+			g_free(quoted);
+		}
 	} else {
-		g_string_printf(cmd_line, "bash -l -c '%s'", locale_str);
+		quoted = g_shell_quote(locale_str);
+		g_string_printf(cmd_line, "bash -l -c %s", quoted);
+		g_free(quoted);
 	}
 
-	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
-		gchar * cmd_line_moab;
-		cmd_line_moab = g_strdup(cmd_line->str);
+	g_string_free(to_quote, TRUE);
 
-		g_string_printf(cmd_line, "bash -l -c \"echo \\\"%s\\\" | msub -A %s -q %s\"", cmd_line_moab, account->str, class->str);
-		g_free(cmd_line_moab);
+	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
+		gchar * script;
+		gchar * moab_quoted;
+		GString * moab_script;
+		script = g_shell_quote(cmd_line->str);
+		moab_script = g_string_new(NULL);
+		/* TODO: verify if account and class need escaping*/
+		g_string_printf(moab_script, "echo %s | msub -A %s -q %s", script, account->str, class->str);
+		moab_quoted = g_shell_quote(moab_script->str);
+		g_string_printf(cmd_line, "bash -l -c %s", moab_quoted);
+		g_free(moab_quoted);
+		g_free(script);
+		g_string_free(moab_script, TRUE);
 	}
 
 	gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
