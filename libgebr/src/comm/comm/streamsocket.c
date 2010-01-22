@@ -79,12 +79,7 @@ __gebr_comm_stream_socket_init(GebrCommStreamSocket * stream_socket, int sockfd,
 	/* initialization */
 	_gebr_comm_socket_init(&stream_socket->parent, sockfd, type);
 
-	if (nonblocking == TRUE) {
-		GError *error;
-
-		error = NULL;
-		g_io_channel_set_flags(stream_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
-	}
+	gebr_comm_socket_set_blocking(&stream_socket->parent, !nonblocking);
 }
 
 static void __gebr_comm_stream_socket_connected(GebrCommStreamSocket * stream_socket)
@@ -183,13 +178,7 @@ gebr_comm_stream_socket_connect(GebrCommStreamSocket * stream_socket, GebrCommSo
 		}
 	}
 
-	/* no more blocking calls */
-	if (wait) {
-		GError *error;
-
-		error = NULL;
-		g_io_channel_set_flags(stream_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
-	}
+	gebr_comm_socket_set_blocking(&stream_socket->parent, wait);
 
 	return ret;
 }

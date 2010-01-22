@@ -88,6 +88,8 @@ void gebr_comm_socket_close(GebrCommSocket *);
 
 void gebr_comm_socket_flush(GebrCommSocket *);
 
+void gebr_comm_socket_set_blocking(GebrCommSocket *, gboolean);
+
 enum GebrCommSocketState gebr_comm_socket_get_state(GebrCommSocket *);
 
 enum GebrCommSocketError gebr_comm_socket_get_last_error(GebrCommSocket *);

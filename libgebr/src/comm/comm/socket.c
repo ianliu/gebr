@@ -292,6 +292,18 @@ void gebr_comm_socket_flush(GebrCommSocket * socket)
 	g_io_channel_set_flags(socket->io_channel, flags, &error);
 }
 
+void gebr_comm_socket_set_blocking(GebrCommSocket * socket, gboolean blocking_operations)
+{
+	GError *error;
+
+	error = NULL;
+	if (!blocking_operations)
+		g_io_channel_set_flags(socket->io_channel, g_io_channel_get_flags(socket->io_channel) | G_IO_FLAG_NONBLOCK, &error);
+	else
+		g_io_channel_set_flags(socket->io_channel, g_io_channel_get_flags(socket->io_channel) & ~G_IO_FLAG_NONBLOCK, &error);
+
+}
+
 enum GebrCommSocketState gebr_comm_socket_get_state(GebrCommSocket * socket)
 {
 	return socket->state;
