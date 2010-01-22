@@ -211,7 +211,7 @@ static void preferences_actions(GtkDialog * dialog, gint arg1, struct ui_prefere
 			gchar *tmp;
 			gchar *tmp3;
 
-			tmp = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(ui_preferences->usermenus));
+			tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(ui_preferences->usermenus));
 			tmp3 = gtk_combo_box_get_active_text(GTK_COMBO_BOX(ui_preferences->browser));
 			if (tmp3 == NULL)
 				tmp3 = "";
