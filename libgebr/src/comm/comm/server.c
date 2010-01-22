@@ -90,10 +90,10 @@ struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const stru
 void gebr_comm_server_free(struct gebr_comm_server *gebr_comm_server)
 {
 	gebr_comm_socket_close(GEBR_COMM_SOCKET(gebr_comm_server->stream_socket));
+	gebr_comm_server_free_for_reuse(gebr_comm_server);
 	gebr_comm_protocol_free(gebr_comm_server->protocol);
 	g_string_free(gebr_comm_server->address, TRUE);
 	g_string_free(gebr_comm_server->password, TRUE);
-	gebr_comm_server_free_for_reuse(gebr_comm_server);
 	g_free(gebr_comm_server);
 }
 
@@ -639,6 +639,7 @@ static void gebr_comm_server_free_x11_forward(struct gebr_comm_server *gebr_comm
 
 static void gebr_comm_server_free_for_reuse(struct gebr_comm_server *gebr_comm_server)
 {
+	gebr_comm_protocol_reset(gebr_comm_server->protocol);
 	gebr_comm_server_free_x11_forward(gebr_comm_server);
 	switch (gebr_comm_server->process.use) {
 	case COMM_SERVER_PROCESS_NONE:

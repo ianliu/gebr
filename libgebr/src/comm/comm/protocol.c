@@ -38,24 +38,6 @@ void gebr_comm_protocol_split_free_each(GString * string)
  * Public functions
  */
 
-struct gebr_comm_message *gebr_comm_message_new(void)
-{
-	struct gebr_comm_message *message;
-
-	message = g_malloc(sizeof(struct gebr_comm_message));
-	*message = (struct gebr_comm_message) {
-		.hash = 0,.argument_size = 0,.argument = g_string_new(NULL)
-	};
-
-	return message;
-}
-
-void gebr_comm_message_free(struct gebr_comm_message *message)
-{
-	g_string_free(message->argument, TRUE);
-	g_free(message);
-}
-
 #define create_gebr_comm_message_def(str, resp) ((struct gebr_comm_message_def){g_str_hash(str), str, resp})
 
 void gebr_comm_protocol_init(void)
@@ -94,26 +76,59 @@ void gebr_comm_protocol_destroy(void)
 	g_hash_table_unref(gebr_comm_protocol_defs.hash_table);
 }
 
+
+struct gebr_comm_message *gebr_comm_message_new(void)
+{
+	struct gebr_comm_message *message;
+
+	message = g_malloc(sizeof(struct gebr_comm_message));
+	*message = (struct gebr_comm_message) {
+		.hash = 0,.argument_size = 0,.argument = g_string_new(NULL)
+	};
+
+	return message;
+}
+
+void gebr_comm_message_free(struct gebr_comm_message *message)
+{
+	if (message == NULL)
+		return;
+	g_string_free(message->argument, TRUE);
+	g_free(message);
+}
+
 struct gebr_comm_protocol *gebr_comm_protocol_new(void)
 {
 	struct gebr_comm_protocol *new;
 
-	new = g_malloc(sizeof(struct gebr_comm_protocol));
-	if (new == NULL)
-		return NULL;
-
+	new = g_new(struct gebr_comm_protocol, 1);
 	*new = (struct gebr_comm_protocol) {
-		.data = g_string_new(NULL),.message = gebr_comm_message_new(),.messages = NULL,.logged =
-		    FALSE,.hostname = g_string_new(NULL)
+		.data = g_string_new(NULL),.message = NULL,.messages = NULL,.hostname = g_string_new(NULL)
 	};
+
+	gebr_comm_protocol_reset(new);
 
 	return new;
 }
 
+void gebr_comm_protocol_reset(struct gebr_comm_protocol *protocol)
+{
+	g_string_assign(protocol->data, "");
+	protocol->logged = FALSE;
+
+	gebr_comm_message_free(protocol->message);
+	protocol->message = gebr_comm_message_new();
+
+	g_list_foreach(protocol->messages, (GFunc)gebr_comm_message_free, NULL);
+	g_list_free(protocol->messages);
+	protocol->messages = NULL;
+}
+
 void gebr_comm_protocol_free(struct gebr_comm_protocol *protocol)
 {
+	g_string_free(protocol->data, TRUE);
 	gebr_comm_message_free(protocol->message);
-	g_list_foreach(protocol->messages, (GFunc) gebr_comm_message_free, NULL);
+	g_list_foreach(protocol->messages, (GFunc)gebr_comm_message_free, NULL);
 	g_list_free(protocol->messages);
 	g_string_free(protocol->hostname, TRUE);
 	g_free(protocol);
@@ -227,7 +242,6 @@ gebr_comm_protocol_send_data(struct gebr_comm_protocol *protocol, GebrCommStream
 
 GList *gebr_comm_protocol_split_new(GString * arguments, guint parts)
 {
-	guint i;
 	gchar *iarg;
 	GList *split;
 
@@ -235,38 +249,44 @@ GList *gebr_comm_protocol_split_new(GString * arguments, guint parts)
 
 	iarg = arguments->str;
 	split = NULL;
-	for (i = 1; i <= parts; ++i) {
-		gchar *sep;
+	for (guint i = 0; i < parts; ++i) {
 		GString *arg;
+		gchar *sep;
 		gsize arg_size;
 
 		/* get the argument size */
-		if (sscanf(iarg, "%zu|", &arg_size) == EOF) {
-			gebr_comm_protocol_split_free(split);
-			break;
-		}
+		if (sscanf(iarg, "%zu|", &arg_size) == EOF)
+			goto err;
 
 		/* discover the position of separator and get arg, data */
-		sep = strchr(iarg, '|');
+		sep = strchr(iarg, '|') + sizeof(gchar);
+		if (strlen(sep) < arg_size)
+			goto err;
 		arg = g_string_new("");
-		g_string_append_len(arg, sep + 1, arg_size);
+		g_string_append_len(arg, sep, arg_size);
 
 		/* add to list */
 		split = g_list_append(split, arg);
 
 		/* go to the next */
-		iarg = sep + arg_size * sizeof(gchar);
-		if (i != parts) {
+		iarg = sep + arg_size;
+		if (i != parts-1) {
 			/* jump space between args */
 			++iarg;
+
+			if (!strlen(iarg))
+				goto err;
 		}
 	}
 
 	return split;
+
+err:	gebr_comm_protocol_split_free(split);
+	return NULL;
 }
 
 void gebr_comm_protocol_split_free(GList * split)
 {
-	g_list_foreach(split, (GFunc) gebr_comm_protocol_split_free_each, NULL);
+	g_list_foreach(split, (GFunc)gebr_comm_protocol_split_free_each, NULL);
 	g_list_free(split);
 }

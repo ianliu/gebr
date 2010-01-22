@@ -22,7 +22,7 @@
 
 #include "streamsocket.h"
 
-#define PROTOCOL_VERSION	"1.0.0"
+#define PROTOCOL_VERSION "1.0.1"
 
 extern struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
 
@@ -75,23 +75,23 @@ struct gebr_comm_protocol {
 	GString *hostname;
 };
 
+void gebr_comm_protocol_init(void);
+void gebr_comm_protocol_destroy(void);
+
+
 struct gebr_comm_message *gebr_comm_message_new(void);
 
 void gebr_comm_message_free(struct gebr_comm_message *message);
 
-void gebr_comm_protocol_init(void);
-
-void gebr_comm_protocol_destroy(void);
-
 struct gebr_comm_protocol *gebr_comm_protocol_new(void);
+
+void gebr_comm_protocol_reset(struct gebr_comm_protocol *protocol);
 
 void gebr_comm_protocol_free(struct gebr_comm_protocol *protocol);
 
 gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GString * data);
 
 void
-
-
 gebr_comm_protocol_send_data(struct gebr_comm_protocol *protocol, GebrCommStreamSocket * stream_socket,
 			     struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...);
 

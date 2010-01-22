@@ -207,7 +207,8 @@ gboolean server_parse_client_messages(struct client *client)
 			classes_list = g_string_new("");
 
 			/* organize message data */
-			arguments = gebr_comm_protocol_split_new(message->argument, 4);
+			if ((arguments = gebr_comm_protocol_split_new(message->argument, 4)) == NULL)
+				goto err;
 			version = g_list_nth_data(arguments, 0);
 			hostname = g_list_nth_data(arguments, 1);
 			place = g_list_nth_data(arguments, 2);
@@ -291,7 +292,8 @@ gboolean server_parse_client_messages(struct client *client)
 			GString *account, *class; 
 
 			/* organize message data */
-			arguments = gebr_comm_protocol_split_new(message->argument, 3);
+			if ((arguments = gebr_comm_protocol_split_new(message->argument, 3)) == NULL)
+				goto err;
 			xml = g_list_nth_data(arguments, 0);
 			account = g_list_nth_data(arguments, 1);
 			class = g_list_nth_data(arguments, 2);
@@ -321,7 +323,8 @@ gboolean server_parse_client_messages(struct client *client)
 			struct job *job;
 
 			/* organize message data */
-			arguments = gebr_comm_protocol_split_new(message->argument, 1);
+			if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)
+				goto err;
 			jid = g_list_nth_data(arguments, 0);
 
 			/* try to run and send return */
@@ -338,7 +341,8 @@ gboolean server_parse_client_messages(struct client *client)
 			struct job *job;
 
 			/* organize message data */
-			arguments = gebr_comm_protocol_split_new(message->argument, 1);
+			if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)
+				goto err;
 			jid = g_list_nth_data(arguments, 0);
 
 			/* try to run and send return */
@@ -355,7 +359,8 @@ gboolean server_parse_client_messages(struct client *client)
 			struct job *job;
 
 			/* organize message data */
-			arguments = gebr_comm_protocol_split_new(message->argument, 1);
+			if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)
+				goto err;
 			jid = g_list_nth_data(arguments, 0);
 
 			/* try to run and send return */

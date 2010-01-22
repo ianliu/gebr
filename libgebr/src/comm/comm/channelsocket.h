@@ -24,6 +24,21 @@
 #include "streamsocket.h"
 #include "socketaddress.h"
 
+/**
+ * \struct GebrCommChannelSocket channelsocket.h comm/channelsocket.h
+ * \brief A socket that channel all data to another address
+ * \see channelsocket.h
+ */ 
+
+/**
+ * \file channelsocket.h
+ * \brief A socket that channel all data to another address
+ *
+ * This classes channels all data from a given #GebrCommStreamSocket to another address.
+ * At first, a connection is made to this address. If it successful, a pipe-like data flow
+ * is established between these two sockets.
+ */
+
 G_BEGIN_DECLS GType gebr_comm_channel_socket_get_type(void);
 
 #define GEBR_COMM_CHANNEL_SOCKET_TYPE		(gebr_comm_channel_socket_get_type())
@@ -36,6 +51,9 @@ G_BEGIN_DECLS GType gebr_comm_channel_socket_get_type(void);
 typedef struct _GebrCommChannelSocket GebrCommChannelSocket;
 typedef struct _GebrCommChannelSocketClass GebrCommChannelSocketClass;
 
+/**
+ * Internal struct data, should not be used directly.
+ */
 struct _GebrCommChannelSocket {
 	GebrCommSocket parent;
 
@@ -49,10 +67,22 @@ struct _GebrCommChannelSocketClass {
  * user functions
  */
 
+/**
+ * Creates a new instance of #GebrCommChannelSocket and return it.
+ * \see gebr_comm_channel_socket_start gebr_comm_channel_socket_free 
+ */
 GebrCommChannelSocket *gebr_comm_channel_socket_new(void);
 
+/**
+ * Free an instance of #GebrCommChannelSocket.
+ * Closes the socket created from the specified address.
+ * \see gebr_comm_channel_socket_new
+ */
 void gebr_comm_channel_socket_free(GebrCommChannelSocket *);
 
+/**
+ * Iniciates connection to \p forward_address 
+ */
 gboolean
 gebr_comm_channel_socket_start(GebrCommChannelSocket * channel_socket, GebrCommSocketAddress * listen_address,
 			       GebrCommSocketAddress * forward_address);
