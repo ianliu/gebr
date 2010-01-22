@@ -86,6 +86,8 @@ struct _GebrCommSocketClass {
 
 void gebr_comm_socket_close(GebrCommSocket *);
 
+void gebr_comm_socket_flush(GebrCommSocket *);
+
 enum GebrCommSocketState gebr_comm_socket_get_state(GebrCommSocket *);
 
 enum GebrCommSocketError gebr_comm_socket_get_last_error(GebrCommSocket *);

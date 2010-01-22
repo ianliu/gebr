@@ -38,8 +38,11 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 			GList *arguments;
 
 			/* organize message data */
-			arguments = gebr_comm_protocol_split_new(message->argument, 1);
-			g_string_assign(server->last_error, ((GString *) g_list_nth_data(arguments, 0))->str);
+			if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)
+				goto err;
+			g_string_assign(server->last_error, ((GString *)g_list_nth_data(arguments, 0))->str);
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Server '%s' reported error '%s'"),
+				     comm_server->address->str, server->last_error->str);
 
 			gebr_comm_protocol_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.ret_def.hash) {

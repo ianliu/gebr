@@ -17,6 +17,7 @@
  *   Inspired on Qt 4.3 version of QAbstractSocket, by Trolltech
  */
 
+#include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -273,6 +274,22 @@ void gebr_comm_socket_close(GebrCommSocket * socket)
 	_gebr_comm_socket_close(socket);
 
 	g_object_unref(G_OBJECT(socket));
+}
+
+void gebr_comm_socket_flush(GebrCommSocket * socket)
+{
+	GError *error;
+	gint flags;
+
+	flags = g_io_channel_get_flags(socket->io_channel);
+
+	error = NULL;
+	g_io_channel_set_flags(socket->io_channel, 0, &error);
+	error = NULL;
+	g_io_channel_flush(socket->io_channel, &error);
+
+	error = NULL;
+	g_io_channel_set_flags(socket->io_channel, flags, &error);
 }
 
 enum GebrCommSocketState gebr_comm_socket_get_state(GebrCommSocket * socket)

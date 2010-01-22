@@ -218,6 +218,7 @@ gboolean server_parse_client_messages(struct client *client)
 				gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
 							     gebr_comm_protocol_defs.err_def, 1,
 							     "Client/server version mismatch");
+				gebr_comm_socket_flush(GEBR_COMM_SOCKET(client->stream_socket));
 				goto err;
 			}
 
