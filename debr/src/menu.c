@@ -35,10 +35,6 @@
 #include "program.h"
 #include "interface.h"
 
-/*
- * Declarations
- */
-
 static GtkMenu *menu_popup_menu(GtkTreeView * tree_view);
 
 static void menu_title_changed(GtkEntry * entry);
@@ -67,13 +63,6 @@ static void menu_category_removed(GebrGuiValueSequenceEdit * sequence_edit, cons
 static gboolean menu_on_query_tooltip(GtkTreeView * tree_view, GtkTooltip * tooltip,
 				      GtkTreeIter * iter, GtkTreeViewColumn * column, gpointer user_data);
 
-/*
- * Section: Public
- */
-
-/* Function: menu_setup_ui
- * Setup menu view
- */
 void menu_setup_ui(void)
 {
 	GtkWidget *hpanel;
@@ -210,12 +199,6 @@ void menu_setup_ui(void)
 	gtk_widget_show_all(debr.ui_menu.widget);
 }
 
-/**
- * menu_new:
- * @edit: Whether to edit it or not.
- *
- * Create a new (unsaved) menu and add it to the tree view.
- */
 void menu_new(gboolean edit)
 {
 	static int new_count = 0;
@@ -260,14 +243,6 @@ void menu_new(gboolean edit)
 	g_string_free(new_menu_str, TRUE);
 }
 
-/**
- * menu_load:
- * @path: The path to the file.
- *
- * Load XML at _path_ and return it.
- *
- * Returns: A #GebrGeoXmlFlow containing the information about the flow.
- */
 GebrGeoXmlFlow *menu_load(const gchar * path)
 {
 	GebrGeoXmlDocument *menu;
@@ -287,10 +262,6 @@ GebrGeoXmlFlow *menu_load(const gchar * path)
 	return GEBR_GEOXML_FLOW(menu);
 }
 
-/**
- * menu_load_user_directory:
- * Read each menu on user's menus directory.
- */
 void menu_load_user_directory(void)
 {
 	GtkTreeIter iter;
@@ -334,10 +305,6 @@ void menu_load_user_directory(void)
 		menu_select_iter(&iter);
 }
 
-/*
- * menu_open_with_parent:
- * Load menu at _path_ and append it to _parent_
- */
 void menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select)
 {
 	GtkTreeIter child;
@@ -402,13 +369,6 @@ void menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean se
 	g_free(tmp);
 }
 
-/**
- * menu_open:
- * @path: Path to the menu to be opened.
- * @select: Whether to select it or not, after loading.
- *
- * Load menu at @path and select it according to @select.
- */
 void menu_open(const gchar * path, gboolean select)
 {
 	GtkTreeIter parent;
@@ -417,17 +377,6 @@ void menu_open(const gchar * path, gboolean select)
 	menu_open_with_parent(path, &parent, select);
 }
 
-/**
- * menu_save:
- * @iter: Save the menu pointed by @iter.
- *
- * Save the menu on #debr.ui_menu.model pointed by @iter.
- * Note that the menu must be already saved, otherwise
- * this functions returns %FALSE and nothing is done.
- *
- * Returns: %TRUE if the menu was saved and %FALSE if
- * it has never been saved.
- */
 gboolean menu_save(GtkTreeIter * iter)
 {
 	GtkTreeIter selected_iter;
@@ -458,7 +407,7 @@ gboolean menu_save(GtkTreeIter * iter)
 	if (gebr_gui_gtk_tree_iter_equal_to(iter, &selected_iter))
 		menu_details_update();
 
-	menu_saved_status_set_from_iter(iter, MENU_STATUS_SAVED);
+	menu_status_set_from_iter(iter, MENU_STATUS_SAVED);
 
 	g_free(path);
 	g_free(filename);
@@ -467,9 +416,6 @@ gboolean menu_save(GtkTreeIter * iter)
 	return TRUE;
 }
 
-/* Function: menu_save_all
- * Save all modified menus.
- */
 void menu_save_all(void)
 {
 	GtkTreeIter iter;
@@ -493,12 +439,6 @@ void menu_save_all(void)
 	menu_details_update();
 }
 
-/**
- * menu_validate:
- * @iter: The iterator pointing the menu to be validated.
- *
- * Validates the menu pointed by @iter.
- */
 void menu_validate(GtkTreeIter * iter)
 {
 	GebrGeoXmlFlow *menu;
@@ -507,11 +447,6 @@ void menu_validate(GtkTreeIter * iter)
 	validate_menu(iter, menu);
 }
 
-/**
- * menu_install:
- *
- * Call GeBR to install selected(s) menus.
- */
 void menu_install(void)
 {
 	GtkTreeIter iter;
@@ -599,12 +534,6 @@ void menu_install(void)
 	g_string_free(cmd_line, TRUE);
 }
 
-/**
- * menu_close:
- * @iter: The iterator pointing the menu to be closed.
- *
- * Closes the menu pointed by @iter.
- */
 void menu_close(GtkTreeIter * iter)
 {
 	GebrGeoXmlFlow *menu;
@@ -615,11 +544,6 @@ void menu_close(GtkTreeIter * iter)
 	g_signal_emit_by_name(debr.ui_menu.tree_view, "cursor-changed");
 }
 
-/**
- * menu_selected:
- *
- * Propagate the UI for a selected item on the view.
- */
 void menu_selected(void)
 {
 	GtkTreeIter iter;
@@ -639,11 +563,6 @@ void menu_selected(void)
 		menu_details_update();
 }
 
-/**
- * menu_clenup:
- *
- * Asks for save unsaved menus. If yes, free memory allocated for menus.
- */
 gboolean menu_cleanup(void)
 {
 	GtkWidget *dialog;
@@ -677,30 +596,15 @@ gboolean menu_cleanup(void)
 	return ret;
 }
 
-/**
- * menu_saved_status_set:
- * @status: Status the current selected menu will be set.
- *
- * Change the status of the currently selected menu will be set.
- * This can be either %MENU_STATUS_SAVED or %MENU_STATUS_UNSAVED.
- */
 void menu_saved_status_set(MenuStatus status)
 {
 	GtkTreeIter iter;
 
 	if (menu_get_selected(&iter, FALSE))
-		menu_saved_status_set_from_iter(&iter, status);
+		menu_status_set_from_iter(&iter, status);
 }
 
-/**
- * menu_saved_status_set_from_iter:
- * @iter: The iterator to have its status changed.
- * @status: The new status to be set to @iter.
- *
- * Change the status of @iter to either %MENU_STATUS_SAVED
- * or %MENU_STATUS_UNSAVED.
- */
-void menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
+void menu_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 {
 	MenuStatus current_status;
 	gboolean enable;
@@ -734,22 +638,11 @@ void menu_saved_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert"), enable);
 }
 
-/**
- * menu_saved_status_set_unsaved:
- *
- * Connected to signal of components which change the menu.
- */
-void menu_saved_status_set_unsaved(void)
+void menu_status_set_unsaved(void)
 {
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/**
- * menu_dialog_setup_ui:
- *
- * Create a dialog to edit information about menu,
- * like title, description, categories, etc.
- */
 void menu_dialog_setup_ui(void)
 {
 	GtkWidget *dialog;
@@ -947,27 +840,11 @@ void menu_dialog_setup_ui(void)
 	menu_selected();
 }
 
-/**
- * menu_get_selected:
- * @iter: The iterator that will point to the selected item.
- *
- * Sets @iter to the selected item in debr.ui_menu.tree_view.
- *
- * Returns: One of %MENU_NONE, %MENU_FOLDER or %MENU_FILE,
- * representing the various types of an item.
- */
 gboolean menu_get_selected(GtkTreeIter * iter, gboolean warn_unselected_menu)
 {
 	return menu_get_selected_type(iter, warn_unselected_menu) == ITER_FILE;
 }
 
-/**
- * menu_get_type:
- * @iter:
- *
- * 
- * Returns: a #IterType.
- */
 IterType menu_get_type(GtkTreeIter * iter)
 {
 	switch (gtk_tree_store_iter_depth(debr.ui_menu.model, iter)) {
@@ -980,15 +857,6 @@ IterType menu_get_type(GtkTreeIter * iter)
 	}
 }
 
-/**
- * menu_get_selected_type:
- * @iter: The iterator for #debr.ui_menu.model to get the type.
- *
- * You <emphasis>must</emphasis> be sure that @iter is
- * valid to #debr.ui_menu.model.
- *
- * Returns: a #IterType.
- */
 IterType menu_get_selected_type(GtkTreeIter * _iter, gboolean warn_unselected_menu)
 {
 	IterType type;
@@ -1007,12 +875,6 @@ IterType menu_get_selected_type(GtkTreeIter * _iter, gboolean warn_unselected_me
 	return type;
 }
 
-/**
- * menu_select_iter:
- * @iter: The #GtkTreeIter to be selected.
-*
- * Selects _iter_ from the menu's tree view, expanding folders if necessary.
- */
 void menu_select_iter(GtkTreeIter * iter)
 {
 	GtkTreeSelection *selection;
@@ -1024,11 +886,6 @@ void menu_select_iter(GtkTreeIter * iter)
 	menu_selected();
 }
 
-/**
- * menu_details_update:
- *
- * Load details of selected menu to the details view.
- */
 void menu_details_update(void)
 {
 	gchar *markup;
@@ -1133,12 +990,6 @@ void menu_details_update(void)
 		     NULL);
 }
 
-/**
- * menu_folder_details_update:
- * @iter: The folder iterator for #debr.ui_menu.model.
- *
- * Updates the details for the folder pointed by @iter.
- */
 void menu_folder_details_update(GtkTreeIter * iter)
 {
 	gchar *folder_name;
@@ -1213,11 +1064,6 @@ void menu_folder_details_update(GtkTreeIter * iter)
 	g_free(folder_path);
 }
 
-/**
- * menu_reset:
- *
- * Reload all menus, but the ones inside "Other" folder.
- */
 void menu_reset()
 {
 	GtkTreeIter iter;
@@ -1229,12 +1075,6 @@ void menu_reset()
 	menu_load_user_directory();
 }
 
-/**
- * menu_get_n_menus:
- * Calculates the number of opened menus.
- *
- * Returns: The number of opened menus.
- */
 gint menu_get_n_menus()
 {
 	GtkTreeIter iter;
@@ -1246,14 +1086,6 @@ gint menu_get_n_menus()
 	return n;
 }
 
-/**
- * menu_path_get_parent:
- * @path: The menu system path.
- * @parent: The #GtkTreeIter to be set as the correct parent.
- *
- * Given the _path_ of the menu, assigns the correct parent
- * item so the menu can be appended.
- */
 void menu_path_get_parent(const gchar * path, GtkTreeIter * parent)
 {
 	gchar *dirname;
@@ -1276,13 +1108,6 @@ void menu_path_get_parent(const gchar * path, GtkTreeIter * parent)
  out:	g_free(dirname);
 }
 
-/**
- * menu_count_unsaved:
- *
- * Counts the number of unsaved menus and return it.
- * 
- * Returns: The number of unsaved menus.
- */
 glong menu_count_unsaved()
 {
 	GtkTreeIter iter;

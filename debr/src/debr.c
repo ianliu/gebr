@@ -30,7 +30,6 @@
 #include "menu.h"
 #include "preferences.h"
 
-/* global instance for data exchange */
 struct debr debr;
 
 void debr_init(void)
@@ -38,9 +37,7 @@ void debr_init(void)
 	gboolean configured;
 
 	gebr_libinit();
-
 	configured = debr_config_load();
-
 	debr.categories_model = gtk_list_store_new(CATEGORY_N_COLUMN, G_TYPE_STRING, G_TYPE_INT);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.categories_model),
 					     CATEGORY_NAME, GTK_SORT_ASCENDING);
@@ -48,10 +45,7 @@ void debr_init(void)
 	debr.program = NULL;
 	debr.parameter = NULL;
 
-	/* list of temporaries files */
 	debr.tmpfiles = g_slist_alloc();
-
-	/* load status icons */
 	debr.invisible = gtk_invisible_new();
 	debr.pixmaps.stock_apply = gtk_widget_render_icon(debr.invisible,
 							  GTK_STOCK_APPLY, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
@@ -102,16 +96,6 @@ gboolean debr_quit(void)
 	return FALSE;
 }
 
-/**
- * debr_config_load:
- *
- * Load the configuration file into debr.config structure.
- * DeBR is not considered configured if there is no configuration
- * file or there is no searching path defined on the configuration
- * file.
- *
- * Return: %TRUE if debr is configured, %FALSE otherwise.
- */
 gboolean debr_config_load(void)
 {
 	GError *error;
@@ -169,9 +153,6 @@ void debr_config_save(void)
 	fclose(configfp);
 }
 
-/* Function: debr_message
- * Log a message. If in_statusbar is TRUE it is writen to status bar.
- */
 void debr_message(enum gebr_log_message_type type, const gchar * message, ...)
 {
 	gchar *string;
@@ -193,10 +174,6 @@ void debr_message(enum gebr_log_message_type type, const gchar * message, ...)
 	g_free(string);
 }
 
-/* Function: debr_has_category
- * Return TRUE if _category_ is present in the list of categories
- * If _category_ doesn't belong to the list and _add_ is TRUE, then it is added
- */
 gboolean debr_has_category(const gchar * category, gboolean add)
 {
 	GtkTreeIter iter;

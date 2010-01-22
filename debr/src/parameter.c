@@ -129,10 +129,6 @@ static void parameter_enum_options_changed(EnumOptionEdit * enum_option_edit, st
  * Section: Public
  */
 
-/*
- * Function: parameter_setup_ui
- * Set interface and its callbacks
- */
 void parameter_setup_ui(void)
 {
 	GtkWidget *scrolled_window;
@@ -177,10 +173,6 @@ void parameter_setup_ui(void)
 	gtk_widget_show_all(debr.ui_parameter.widget);
 }
 
-/*
- * Function: parameter_load_program
- * Load current program parameters' to the UI
- */
 void parameter_load_program(void)
 {
 	GebrGeoXmlSequence *parameter;
@@ -553,7 +545,7 @@ static void parameter_dialog_setup_ui(void)
 	gtk_widget_show(label_entry);
 	gtk_table_attach(GTK_TABLE(table), label_entry, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
-	g_signal_connect(label_entry, "changed", G_CALLBACK(menu_saved_status_set_unsaved), NULL);
+	g_signal_connect(label_entry, "changed", G_CALLBACK(menu_status_set_unsaved), NULL);
 
 	/*
 	 * Keyword
@@ -568,7 +560,7 @@ static void parameter_dialog_setup_ui(void)
 	gtk_widget_show(keyword_entry);
 	gtk_table_attach(GTK_TABLE(table), keyword_entry, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
-	g_signal_connect(keyword_entry, "changed", G_CALLBACK(menu_saved_status_set_unsaved), NULL);
+	g_signal_connect(keyword_entry, "changed", G_CALLBACK(menu_status_set_unsaved), NULL);
 
 	/* skip default */
 	++row;

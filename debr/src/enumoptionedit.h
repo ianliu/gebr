@@ -47,6 +47,9 @@ struct _EnumOptionEditClass {
 	GtkSequenceEditClass parent;
 };
 
+/**
+ * Creates a new EnumOptionEdit widget and returns it.
+ */
 GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter);
 
 #endif				//__ENUM_OPTION_EDIT_H

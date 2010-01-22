@@ -51,8 +51,14 @@ struct ui_parameter_dialog {
 	GtkWidget *separator_entry;
 };
 
+/**
+ * Set interface and its callbacks.
+ */
 void parameter_setup_ui(void);
 
+/**
+ * Load current program parameters' to the UI.
+ */
 void parameter_load_program(void);
 
 void parameter_load_selected(void);

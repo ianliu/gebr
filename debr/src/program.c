@@ -106,7 +106,7 @@ void program_setup_ui(void)
 	gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GTK_TREE_VIEW(debr.ui_program.tree_view),
 								 PROGRAM_XMLPOINTER,
 								 (GebrGuiGtkTreeViewMoveSequenceCallback)
-								 menu_saved_status_set_unsaved, NULL);
+								 menu_status_set_unsaved, NULL);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_program.tree_view);
 	g_signal_connect(debr.ui_program.tree_view, "cursor-changed", G_CALLBACK(program_selected), NULL);
 	g_signal_connect(debr.ui_program.tree_view, "row-activated", G_CALLBACK(program_dialog_setup_ui), NULL);
