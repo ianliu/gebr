@@ -102,16 +102,14 @@ static void populate_models (struct ui_moab * gui, struct server * server)
 	gsize i;
 
 	i = 0;
-	while (server->account[i] != NULL)
-	{
+	while (server && server->account && server->account[i] != NULL) {
 		gtk_list_store_append(gui->account, &iter);
 		gtk_list_store_set(gui->account, &iter, 0, server->account[i], -1);
 		i++;
 	}
 	
 	i = 0;
-	while (server->classes[i] != NULL)
-	{
+	while (server && server->classes && server->classes[i] != NULL) {
 		gtk_list_store_append(gui->classes, &iter);
 		gtk_list_store_set(gui->classes, &iter, 0, server->classes[i], -1);
 		i++;
