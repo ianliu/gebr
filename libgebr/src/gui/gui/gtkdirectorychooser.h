@@ -1,3 +1,7 @@
+/**
+ * @file gtkdirectorychooser.h Widget to choose and list directories
+ * @ingroup libgebr-gui
+ */
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
  *

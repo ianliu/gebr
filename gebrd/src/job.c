@@ -16,6 +16,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <glib.h>
@@ -36,6 +37,7 @@
  */
 
 static gboolean job_parse_parameters(struct job *job, GebrGeoXmlParameters * parameters, GebrGeoXmlProgram * program);
+static void job_process_finished(GebrCommProcess * process, struct job *job);
 gboolean check_for_readable_file(const gchar * file);
 gboolean check_for_write_permission(const gchar * file);
 gboolean check_for_binary(const gchar * binary);
@@ -185,9 +187,10 @@ static void moab_process_read_stdout(GebrCommProcess *process, struct job *job)
 {
 	GString *stdout;
 	stdout = gebr_comm_process_read_stdout_string_all(process);
+	job->bytes_read += stdout->len;
 	job_process_add_output(job, job->output, stdout);
+	g_string_free(stdout, TRUE);
 }
-
 
 static void job_process_read_stdout(GebrCommProcess * process, struct job *job)
 {
@@ -199,15 +202,20 @@ static void job_process_read_stdout(GebrCommProcess * process, struct job *job)
 	} else {
 		/* The stdout is the {job id} from MOAB. */
 		GString *cmd_line;
+		gchar ** moab_id;
+
+		moab_id = g_strsplit(stdout->str, "\n", 0);
+		g_string_assign(job->moab_jid, moab_id[1]);
+		cmd_line = g_string_new(NULL);
+
+		/* +1 to ignore a '\n' character. */
+		g_string_printf(cmd_line, "bash -c \"touch $HOME/STDIN.o%s; tail -s 0.1 -f $HOME/STDIN.o%s\"", moab_id[1], moab_id[1]);
 
 		job->tail_process = gebr_comm_process_new();
 		g_signal_connect(job->tail_process, "ready-read-stdout", G_CALLBACK(moab_process_read_stdout), job);
-		cmd_line = g_string_new(NULL);
-		g_string_printf(cmd_line, "tail -f STDIN.o%s", stdout->str+1); /* +1 to ignore a '\n' character. */
-		g_string_assign(job->moab_jid, stdout->str);
-
 		gebr_comm_process_start(job->tail_process, cmd_line);
-	
+
+		g_strfreev(moab_id);
 		g_string_free(cmd_line, TRUE);
 	}
 
@@ -219,11 +227,33 @@ static void job_process_read_stdout_moab(GebrCommProcess * process, struct job *
 	GString *stdout;
 
 	stdout = gebr_comm_process_read_stdout_string_all(process);
-	if (strcmp(stdout->str, "JobEnd") == 0){
+	if (g_str_has_prefix(stdout->str, "JobEnd")) {
 		gebr_comm_process_free(job->moab_comm_process);
 		job->moab_comm_process = NULL;
 		gebr_comm_process_free(job->tail_process);
 		job->tail_process = NULL;
+	
+		GIOChannel * file;
+		GError * error;
+		GString * output;
+		gchar * buffer;
+		gsize length;
+
+		error = NULL;
+		output = g_string_new(NULL);
+		g_string_printf(output, "%s/STDIN.o%s", getenv("HOME"), job->moab_jid->str);
+		file = g_io_channel_new_file(output->str, "r", &error);
+		if (g_io_channel_seek_position(file, job->bytes_read, G_SEEK_SET, &error) == G_IO_STATUS_EOF)
+			goto out;
+		g_io_channel_read_to_end(file, &buffer, &length, &error);
+		g_string_printf(output, "%s", buffer);
+		job_process_add_output(job, job->output, output);
+		job_process_finished(job->process, job);
+
+		g_free(buffer);
+out:
+		g_io_channel_shutdown(file, FALSE, &error);
+		g_string_free(output, TRUE);
 	}
 	g_string_free(stdout, TRUE);
 }
@@ -314,10 +344,21 @@ gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 	issue_number = 0;
 	job = g_malloc(sizeof(struct job));
 	*job = (struct job) {
-	.process = gebr_comm_process_new(),.flow = NULL,.user_finished = FALSE,.hostname =
-		    g_string_new(""),.status = g_string_new(""),.jid = job_generate_id(),.title =
-		    g_string_new(""),.start_date = g_string_new(""),.finish_date = g_string_new(""),.issues =
-		    g_string_new(""),.cmd_line = g_string_new(""),.output = g_string_new(""),};
+		.process = gebr_comm_process_new(),
+		.flow = NULL,
+		.user_finished = FALSE,
+		.hostname = g_string_new(""),
+		.status = g_string_new(""),
+		.jid = job_generate_id(),
+		.title = g_string_new(""),
+		.start_date = g_string_new(""),
+		.finish_date = g_string_new(""),
+		.issues = g_string_new(""),
+		.cmd_line = g_string_new(""),
+		.output = g_string_new(""),
+		.moab_jid = g_string_new(""),
+		.bytes_read = 0,
+	};
 	*_job = job;
 
 	int ret;
@@ -535,6 +576,7 @@ void job_free(struct job *job)
 	g_string_free(job->issues, TRUE);
 	g_string_free(job->cmd_line, TRUE);
 	g_string_free(job->output, TRUE);
+	g_string_free(job->moab_jid, TRUE);
 	
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 		g_unlink(job->moab_file_status->str);
@@ -591,7 +633,7 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 		moab_script = g_string_new(NULL);
 
 		/* TODO: verify if account and class need escaping*/
-		g_string_printf(moab_script, "echo %s | msub -A %s -q %s ", script, account->str, class->str);
+		g_string_printf(moab_script, "echo %s | msub -A %s -q %s -k oe -j oe", script, account->str, class->str);
 		moab_quoted = g_shell_quote(moab_script->str);
 		g_string_printf(cmd_line, "bash -l -c %s", moab_quoted);
 		g_free(moab_quoted);
@@ -613,7 +655,8 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 	gebrd.jobs = g_list_append(gebrd.jobs, job);
 	g_signal_connect(job->process, "ready-read-stdout", G_CALLBACK(job_process_read_stdout), job);
 	g_signal_connect(job->process, "ready-read-stderr", G_CALLBACK(job_process_read_stderr), job);
-	g_signal_connect(job->process, "finished", G_CALLBACK(job_process_finished), job);
+	if (gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB)
+		g_signal_connect(job->process, "finished", G_CALLBACK(job_process_finished), job);
 
 	gebr_comm_process_start(job->process, cmd_line);
 	g_string_assign(job->status, "running");

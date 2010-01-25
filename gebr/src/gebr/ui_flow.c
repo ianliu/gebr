@@ -16,11 +16,9 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-/*
- * File: ui_flow.c
- */
-
 #include <string.h>
+#include <gdk/gdkkeysyms.h>
+#include <stdlib.h>
 
 #include <libgebr/intl.h>
 #include <libgebr/date.h>
@@ -38,10 +36,6 @@
 
 #define GEBR_FLOW_UI_RESPONSE_EXECUTE 1
 
-/*
- * Declarations
- */
-
 static void flow_io_populate(struct ui_flow_io *ui_flow_io);
 
 static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io);
@@ -51,6 +45,9 @@ static void flow_io_insert(struct ui_flow_io *ui_flow_io, GebrGeoXmlFlowServer *
 
 static void
 on_renderer_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_text, struct ui_flow_io *ui_flow_io);
+
+static gboolean
+on_key_press_event(GtkEntry * entry, GdkEventKey * event, struct ui_flow_io * ui_flow_io);
 
 static void
 on_renderer_combo_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_text, struct ui_flow_io *ui_flow_io);
@@ -74,11 +71,6 @@ static gboolean
 on_tree_view_tooltip(GtkTreeView * treeview,
 		     gint x, gint y, gboolean keyboard_mode, GtkTooltip * tooltip, struct ui_flow_io *ui_flow_io);
 #endif
-
-/*
- * Section: Public
- * Public functions.
- */
 
 /*
  * Function: flow_io_setup_ui
@@ -410,7 +402,8 @@ static void flow_io_insert(struct ui_flow_io *ui_flow_io, GebrGeoXmlFlowServer *
 		name = g_strdup(address);
 		server = NULL;
 	}
-	gtk_list_store_insert_before(ui_flow_io->store, &iter_, &ui_flow_io->row_new_server);
+	//gtk_list_store_insert_before(ui_flow_io->store, &iter_, &ui_flow_io->row_new_server);
+	gtk_list_store_insert(ui_flow_io->store, &iter_, 0);
 	gtk_list_store_set(ui_flow_io->store, &iter_,
 			   FLOW_IO_ICON, icon,
 			   FLOW_IO_SERVER_NAME, name,
@@ -631,6 +624,43 @@ on_renderer_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_tex
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 }
 
+static gboolean
+on_key_press_event(GtkEntry * entry, GdkEventKey * event, struct ui_flow_io * ui_flow_io)
+{
+	gint column_id;
+	gint next_column;
+	gchar * path;
+	GtkTreeIter iter;
+	GtkTreePath * tree_path;
+	GtkTreeViewColumn * column;
+
+	if (event->keyval != GDK_Return && event->keyval != GDK_Tab)
+		return FALSE;
+
+	path = (gchar*)g_object_get_data(G_OBJECT(entry), "path");
+	tree_path = gtk_tree_path_new_from_string(path);
+	column_id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(entry), "column"));
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(ui_flow_io->store), &iter, tree_path);
+
+	if (column_id == FLOW_IO_ERROR &&
+	    gtk_tree_model_iter_n_children(GTK_TREE_MODEL(ui_flow_io->store), NULL)-1 == atoi(path))
+		goto out;
+
+	if (column_id == FLOW_IO_ERROR) {
+		gtk_tree_path_next(tree_path);
+		next_column = FLOW_IO_INPUT;
+	} else
+		next_column = column_id - FLOW_IO_INPUT + 2;
+
+	gtk_list_store_set(ui_flow_io->store, &iter, column_id, gtk_entry_get_text(entry), -1);
+	column = gtk_tree_view_get_column(GTK_TREE_VIEW(ui_flow_io->treeview), next_column);
+	gtk_tree_view_set_cursor_on_cell(GTK_TREE_VIEW(ui_flow_io->treeview), tree_path, column, NULL, TRUE);
+
+out:
+	gtk_tree_path_free(tree_path);
+	return FALSE;
+}
+
 static void
 on_renderer_combo_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_text, struct ui_flow_io *ui_flow_io)
 {
@@ -673,8 +703,8 @@ on_renderer_combo_edited(GtkCellRendererText * renderer, gchar * path, gchar * n
 }
 
 static void
-on_renderer_editing_started(GtkCellRenderer * renderer,
-			    GtkCellEditable * editable, gchar * path, struct ui_flow_io *ui_flow_io)
+on_renderer_editing_started(GtkCellRenderer * renderer, GtkCellEditable * editable, gchar * path,
+			    struct ui_flow_io *ui_flow_io)
 {
 	GtkTreeIter iter;
 	gint column;
@@ -696,10 +726,12 @@ on_renderer_editing_started(GtkCellRenderer * renderer,
 	}
 
 	g_object_set_data(G_OBJECT(editable), "column", GINT_TO_POINTER(column));
-	g_object_set_data(G_OBJECT(editable), "renderer", (gpointer) renderer);
+	g_object_set_data(G_OBJECT(editable), "renderer", renderer);
+	g_object_set_data(G_OBJECT(editable), "path", path);
 
 	gtk_entry_set_icon_from_stock(GTK_ENTRY(editable), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIRECTORY);
 	g_signal_connect(editable, "icon-release", G_CALLBACK(on_renderer_entry_icon_release), ui_flow_io);
+	g_signal_connect(editable, "key-press-event", G_CALLBACK(on_key_press_event), ui_flow_io);
 }
 
 static void

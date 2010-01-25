@@ -1,3 +1,8 @@
+/**
+ * @file preferences.h Preferences interface for DeBR
+ * @ingroup debr
+ */
+
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -18,6 +23,9 @@
 #ifndef __PREFERENCES_H
 #define __PREFERENCES_H
 
+/**
+ * Create and show preferences dialog; if ok, save config.
+ */
 void preferences_dialog_setup_ui(void);
 
 #endif				//__PREFERENCES_H

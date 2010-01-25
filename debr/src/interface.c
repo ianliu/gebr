@@ -385,7 +385,7 @@ void debr_setup_ui(void)
 /**
  * interface_set_actions_sensitive:
  * @names: A %NULL terminated array of strings.
- * @sensitive: Wether to set or unset the sensitivity of the actions.
+ * @sensitive: Whether to set or unset the sensitivity of the actions.
  *
  * Sets the sensitivity of the actions whose name is in @names array
  * to @sensitive.

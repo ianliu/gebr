@@ -25,9 +25,9 @@
 
 struct job {
 	GebrCommProcess *process;
-	GebrCommProcess *tail_process;
 	GebrGeoXmlFlow *flow;
 	gboolean user_finished;
+
 
 	/* the hostname of the client that ran it */
 	GString *hostname;
@@ -41,8 +41,12 @@ struct job {
 	GString *issues;
 	GString *cmd_line;
 	GString *output;
+
+	/* Moab stuff */
 	GString *moab_file_status;
 	GebrCommProcess *moab_comm_process;
+	GebrCommProcess *tail_process;
+	gsize bytes_read;
 };
 
 gboolean job_new(struct job **_job, struct client *client, GString * xml);

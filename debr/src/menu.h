@@ -93,7 +93,7 @@ void menu_setup_ui(void);
 /**
  * Creates a new (unsaved) menu and add it to the tree view.
  *
- * @param edit Wether to immediately edit the menu or not.
+ * @param edit Whether to immediately edit the menu or not.
  */
 void menu_new(gboolean edit);
 
@@ -119,7 +119,7 @@ void menu_load_user_directory(void);
  *
  * @param path The path for the menu on the file system.
  * @param parant The iterator that will hold this menu as a child.
- * @param select Wether to select this menu or not.
+ * @param select Whether to select this menu or not.
  */
 void menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select);
 
@@ -131,7 +131,7 @@ void menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean se
  * file (~/.gebr/debr/debr.conf).
  *
  * @param path The path for the menu on the file system.
- * @param select Wether to select the menu of not.
+ * @param select Whether to select the menu of not.
  *
  * \see menu_load_user_directory menu_open_with_parent
  */
@@ -222,7 +222,7 @@ void menu_dialog_setup_ui(void);
  * Sets \p iter to the selected item in \ref debr.ui_menu.tree_view.
  *
  * @param iter The iterator that will point to the selected item.
- * @param warn_unselected_menu Wether to warn the user if no menu is selected.
+ * @param warn_unselected_menu Whether to warn the user if no menu is selected.
  * @return One of #MENU_NONE, #MENU_FOLDER or #MENU_FILE, representing the various types of an item.
  *
  * @see MenuType

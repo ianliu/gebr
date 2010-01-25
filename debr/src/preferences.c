@@ -24,11 +24,6 @@
 #include "debr.h"
 #include "menu.h"
 
-/*
- * File: preferences.c
- * Preferences interface and configuration stuff
- */
-
 const gchar *browser[] = {
 	"epiphany",
 	"firefox",
@@ -39,10 +34,6 @@ const gchar *browser[] = {
 
 #define NBROWSER 5
 
-/*
- * Function: preferences_dialog_setup_ui
- * Create and show preferences dialog. If ok, save config.
- */
 void preferences_dialog_setup_ui(void)
 {
 	GtkWidget *window;

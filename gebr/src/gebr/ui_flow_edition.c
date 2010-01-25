@@ -146,6 +146,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->fseq_view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", FSEQ_TITLE_COLUMN);
+	g_object_set(renderer, "ellipsize", PANGO_ELLIPSIZE_START, NULL);
 
 	/* Double click on flow component open its parameter window */
 	g_signal_connect(ui_flow_edition->fseq_view, "row-activated",
