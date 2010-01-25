@@ -180,12 +180,36 @@ static void job_process_add_output(struct job *job, GString * destination, GStri
 	g_string_free(final_output, TRUE);
 }
 
+
+static void moab_process_read_stdout(GebrCommProcess *process, struct job *job)
+{
+	GString *stdout;
+	stdout = gebr_comm_process_read_stdout_string_all(process);
+	job_process_add_output(job, job->output, stdout);
+}
+
+
 static void job_process_read_stdout(GebrCommProcess * process, struct job *job)
 {
 	GString *stdout;
-
 	stdout = gebr_comm_process_read_stdout_string_all(process);
-	job_process_add_output(job, job->output, stdout);
+
+	if (gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
+		job_process_add_output(job, job->output, stdout);
+	} else {
+		/* The stdout is the {job id} from MOAB. */
+		GString *cmd_line;
+
+		job->tail_process = gebr_comm_process_new();
+		g_signal_connect(job->tail_process, "ready-read-stdout", G_CALLBACK(moab_process_read_stdout), job);
+		cmd_line = g_string_new(NULL);
+		g_string_printf(cmd_line, "tail -f STDIN.o%s", stdout->str+1); /* +1 to ignore a '\n' character. */
+		g_string_assign(job->moab_jid, stdout->str);
+
+		gebr_comm_process_start(job->tail_process, cmd_line);
+	
+		g_string_free(cmd_line, TRUE);
+	}
 
 	g_string_free(stdout, TRUE);
 }
@@ -386,7 +410,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 	}
 
 	/*
-	 * Others programs
+	 * Other programs
 	 */
 	previous_stdout = gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(program));
 	gebr_geoxml_sequence_next(&program);

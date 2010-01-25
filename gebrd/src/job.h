@@ -25,6 +25,7 @@
 
 struct job {
 	GebrCommProcess *process;
+	GebrCommProcess *tail_process;
 	GebrGeoXmlFlow *flow;
 	gboolean user_finished;
 
@@ -32,6 +33,7 @@ struct job {
 	GString *hostname;
 	GString *status;
 	GString *jid;
+	GString *moab_jid;
 
 	GString *title;
 	GString *start_date;
