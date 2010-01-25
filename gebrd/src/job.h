@@ -41,6 +41,8 @@ struct job {
 	GString *issues;
 	GString *cmd_line;
 	GString *output;
+	GString *moab_file_status;
+	GebrCommProcess *moab_comm_process;
 };
 
 gboolean job_new(struct job **_job, struct client *client, GString * xml);

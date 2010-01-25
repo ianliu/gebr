@@ -214,6 +214,20 @@ static void job_process_read_stdout(GebrCommProcess * process, struct job *job)
 	g_string_free(stdout, TRUE);
 }
 
+static void job_process_read_stdout_moab(GebrCommProcess * process, struct job *job)
+{
+	GString *stdout;
+
+	stdout = gebr_comm_process_read_stdout_string_all(process);
+	if (strcmp(stdout->str, "JobEnd") == 0){
+		gebr_comm_process_free(job->moab_comm_process);
+		job->moab_comm_process = NULL;
+		gebr_comm_process_free(job->tail_process);
+		job->tail_process = NULL;
+	}
+	g_string_free(stdout, TRUE);
+}
+
 static void job_process_read_stderr(GebrCommProcess * process, struct job *job)
 {
 	GString *stderr;
@@ -521,6 +535,13 @@ void job_free(struct job *job)
 	g_string_free(job->issues, TRUE);
 	g_string_free(job->cmd_line, TRUE);
 	g_string_free(job->output, TRUE);
+	
+	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
+		g_unlink(job->moab_file_status->str);
+		g_string_free(job->moab_file_status, TRUE);
+		if (job->moab_comm_process != NULL)
+			gebr_comm_process_free(job->moab_comm_process);
+	}
 	g_free(job);
 }
 
@@ -562,16 +583,28 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 		gchar * script;
 		gchar * moab_quoted;
-		GString * moab_script;
+		GString * moab_script, *moab_process;
+
+		job->moab_file_status = gebr_make_temp_filename("gebr_XXXXXX");
+		g_string_append_printf(cmd_line, "; echo JobEnd >> %s", job->moab_file_status->str);
 		script = g_shell_quote(cmd_line->str);
 		moab_script = g_string_new(NULL);
+
 		/* TODO: verify if account and class need escaping*/
-		g_string_printf(moab_script, "echo %s | msub -A %s -q %s", script, account->str, class->str);
+		g_string_printf(moab_script, "echo %s | msub -A %s -q %s ", script, account->str, class->str);
 		moab_quoted = g_shell_quote(moab_script->str);
 		g_string_printf(cmd_line, "bash -l -c %s", moab_quoted);
 		g_free(moab_quoted);
 		g_free(script);
 		g_string_free(moab_script, TRUE);
+
+		job->moab_comm_process = gebr_comm_process_new();
+
+		moab_process = g_string_new(NULL);
+		g_string_printf(moab_process, "tail -f %s", job->moab_file_status->str);
+		if (gebr_comm_process_start(job->moab_comm_process, moab_process))
+			g_signal_connect(job->moab_comm_process, "ready-read-stdout", G_CALLBACK(job_process_read_stdout_moab), job);
+		g_string_free(moab_process, TRUE);
 	}
 
 	gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
