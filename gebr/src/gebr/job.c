@@ -69,8 +69,6 @@ struct job *job_add(struct server *server, GString * jid,
 		.queue = g_string_new(queue->str), 
 		.moab_jid = g_string_new(moab_jid->str)
 	};
-	if (finish_date == NULL && job->status != JOB_STATUS_RUNNING)
-		g_string_assign(job->finish_date, job->start_date->str);
 
 	/* append to the store and select it */
 	gtk_list_store_append(gebr.ui_job_control->store, &iter);
@@ -333,7 +331,6 @@ void job_update_status(struct job *job)
 {
 	GdkPixbuf *pixbuf;
 	GtkTextIter iter;
-	GString *finish_date;
 	GtkTextMark *mark;
 
 	/* Select and set icon */
@@ -357,20 +354,23 @@ void job_update_status(struct job *job)
 	if (job_is_active(job) == FALSE || job->status == JOB_STATUS_RUNNING)
 		return;
 
-	/* initialization */
-	finish_date = g_string_new(NULL);
-
 	/* job label */
 	job_update_label(job);
 	/* job info */
-	g_string_printf(finish_date, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
-	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
-	gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, finish_date->str, finish_date->len);
+	if (job->status == JOB_STATUS_FINISHED) {
+		GString *finish_date;
+
+		finish_date = g_string_new(NULL);
+
+		g_string_printf(finish_date, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
+		gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
+		gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, finish_date->str, finish_date->len);
+
+		g_string_free(finish_date, TRUE);
+	}
+
 	if (gebr.config.job_log_auto_scroll) {
 		mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
 		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(gebr.ui_job_control->text_view), mark);
 	}
-
-	/* frees */
-	g_string_free(finish_date, TRUE);
 }
