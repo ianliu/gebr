@@ -467,6 +467,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 		.issues = g_string_new(""),
 		.cmd_line = g_string_new(""),
 		.output = g_string_new(""),
+		.queue  = g_string_new(""),
 		.moab_jid = g_string_new("")
 	};
 	*_job = job;
@@ -707,6 +708,7 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 	/* initialization */
 	cmd_line = g_string_new(NULL);
 	locale_str = g_filename_from_utf8(job->cmd_line->str, -1, NULL, &bytes_written, NULL);
+	g_string_assign(job->queue, queue->str);
 
 	/* command-line */
 	if (client->display->len) {
