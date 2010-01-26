@@ -391,6 +391,7 @@ gboolean server_parse_client_messages(struct client *client)
 	return TRUE;
 
  err:	gebr_comm_message_free(message);
+	client->protocol->messages = g_list_delete_link(client->protocol->messages, link);
 	return FALSE;
 }
 
