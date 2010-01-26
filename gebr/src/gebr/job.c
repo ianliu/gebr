@@ -44,7 +44,7 @@
 struct job *job_add(struct server *server, GString * jid,
 		    GString * _status, GString * title,
 		    GString * start_date, GString * finish_date,
-		    GString * hostname, GString * issues, GString * cmd_line, GString * output)
+		    GString * hostname, GString * issues, GString * cmd_line, GString * output, GString * queue, GString * moab_jid)
 {
 	GtkTreeIter iter;
 
@@ -56,11 +56,18 @@ struct job *job_add(struct server *server, GString * jid,
 	status = job_translate_status(_status);
 	job = g_malloc(sizeof(struct job));
 	*job = (struct job) {
-		.status = status,.server = server,.title = g_string_new(title->str),.jid =
-		    g_string_new(jid->str),.start_date = g_string_new(start_date->str),.finish_date =
-		    g_string_new(finish_date == NULL ? "" : finish_date->str),.hostname =
-		    g_string_new(hostname == NULL ? local_hostname : hostname->str),.issues =
-		    g_string_new(issues->str),.cmd_line = g_string_new(cmd_line->str),.output = g_string_new(NULL)
+		.status = status, 
+		.server = server, 
+		.title = g_string_new(title->str), 
+		.jid = g_string_new(jid->str),
+		.start_date = g_string_new(start_date->str),
+		.finish_date = g_string_new(finish_date == NULL ? "" : finish_date->str),
+		.hostname = g_string_new(hostname == NULL ? local_hostname : hostname->str),
+		.issues = g_string_new(issues->str),
+		.cmd_line = g_string_new(cmd_line->str),
+		.output = g_string_new(NULL),
+		.queue = g_string_new(queue->str), 
+		.moab_jid = g_string_new(moab_jid->str)
 	};
 	if (finish_date == NULL && job->status != JOB_STATUS_RUNNING)
 		g_string_assign(job->finish_date, job->start_date->str);
@@ -92,6 +99,8 @@ void job_free(struct job *job)
 	g_string_free(job->cmd_line, TRUE);
 	g_string_free(job->issues, TRUE);
 	g_string_free(job->output, TRUE);
+	g_string_free(job->queue, TRUE);
+	g_string_free(job->moab_jid, TRUE);
 	g_free(job);
 }
 
@@ -178,6 +187,15 @@ void job_fill_info(struct job *job)
 	/* command line */
 	if (job->cmd_line->len)
 		g_string_append_printf(info, "\n%s\n%s\n", _("Command line:"), job->cmd_line->str);
+
+	/* job id */
+	if (job->server->type == GEBR_COMM_SERVER_TYPE_MOAB && job->moab_jid->len)
+		g_string_append_printf(info, "\n%s\n%s\n", _("Moab Job ID:"), job->moab_jid->str);
+
+	/* queue */
+	if (job->queue->len)
+		g_string_append_printf(info, "\n%s\n%s\n", _("Queue:"), job->queue->str);
+
 	/* output */
 	if (job->output->len)
 		g_string_append(info, job->output->str);

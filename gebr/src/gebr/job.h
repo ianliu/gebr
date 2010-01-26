@@ -45,12 +45,16 @@ struct job {
 	GString *issues;
 	GString *cmd_line;
 	GString *output;
+	GString *queue;
+	
+	/* Moab stuff */
+	GString *moab_jid;
 };
 
 struct job *job_add(struct server *server, GString * jid,
 		    GString * status, GString * title,
 		    GString * start_date, GString * finish_date,
-		    GString * hostname, GString * issues, GString * cmd_line, GString * output);
+		    GString * hostname, GString * issues, GString * cmd_line, GString * output, GString * queue, GString * moab_jid);
 
 void job_free(struct job *job);
 
