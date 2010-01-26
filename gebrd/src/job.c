@@ -196,29 +196,9 @@ static void moab_process_read_stdout(GebrCommProcess *process, struct job *job)
 static void job_process_read_stdout(GebrCommProcess * process, struct job *job)
 {
 	GString *stdout;
+
 	stdout = gebr_comm_process_read_stdout_string_all(process);
-
-	if (gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
-		job_process_add_output(job, job->output, stdout);
-	} else {
-		/* The stdout is the {job id} from MOAB. */
-		GString *cmd_line;
-		gchar ** moab_id;
-
-		moab_id = g_strsplit(stdout->str, "\n", 0);
-		g_string_assign(job->moab_jid, moab_id[1]);
-		cmd_line = g_string_new(NULL);
-
-		/* +1 to ignore a '\n' character. */
-		g_string_printf(cmd_line, "bash -c \"touch $HOME/STDIN.o%s; tail -s 0.1 -f $HOME/STDIN.o%s\"", moab_id[1], moab_id[1]);
-
-		job->tail_process = gebr_comm_process_new();
-		g_signal_connect(job->tail_process, "ready-read-stdout", G_CALLBACK(moab_process_read_stdout), job);
-		gebr_comm_process_start(job->tail_process, cmd_line);
-
-		g_strfreev(moab_id);
-		g_string_free(cmd_line, TRUE);
-	}
+	job_process_add_output(job, job->output, stdout);
 
 	g_string_free(stdout, TRUE);
 }
@@ -292,7 +272,6 @@ static void job_set_status_finished(struct job *job)
 		g_io_channel_read_to_end(file, &buffer, &length, &error);
 		g_string_printf(output, "%s", buffer);
 		job_process_add_output(job, job->output, output);
-		job_process_finished(job->process, job);
 
 		g_free(buffer);
 out:		g_io_channel_shutdown(file, FALSE, &error);
@@ -741,6 +720,9 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 		gchar * script;
 		gchar * moab_quoted;
+		gchar * standard_output, * standard_error;
+		gint exit_status;
+		GError * error = NULL;
 		GString * moab_script;
 
 		script = g_shell_quote(cmd_line->str);
@@ -748,32 +730,46 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 		g_string_printf(moab_script, "echo %s | msub -A '%s' -q '%s' -k oe -j oe", script, account->str, queue->str);
 		moab_quoted = g_shell_quote(moab_script->str);
 		g_string_printf(cmd_line, "bash -l -c %s", moab_quoted);
+		g_spawn_command_line_sync(cmd_line->str, &standard_output, &standard_error, &exit_status, &error);
+
+		/* The stdout is the {job id} from MOAB. */
+		gchar ** moab_id;
+		moab_id = g_strsplit(standard_output, "\n", 0);
+		g_string_assign(job->moab_jid, moab_id[1]);
+		g_strfreev(moab_id);
+
+		/* run command to get script output */
+		g_string_printf(cmd_line, "bash -c \"touch $HOME/STDIN.o%s; tail -s 0.1 -f $HOME/STDIN.o%s\"", moab_id[1], moab_id[1]);
+		job->tail_process = gebr_comm_process_new();
+		g_signal_connect(job->tail_process, "ready-read-stdout", G_CALLBACK(moab_process_read_stdout), job);
+		gebr_comm_process_start(job->tail_process, cmd_line);
+
 		g_free(moab_quoted);
-		g_free(script);
 		g_string_free(moab_script, TRUE);
+		g_free(script);
+		g_free(standard_output);
+		g_free(standard_error);
 
 		/* pool for moab status */
 		g_timeout_add(1000, (GSourceFunc)job_moab_checkjob_pooling, job); 
+	} else {
+		g_signal_connect(job->process, "ready-read-stdout", G_CALLBACK(job_process_read_stdout), job);
+		g_signal_connect(job->process, "ready-read-stderr", G_CALLBACK(job_process_read_stderr), job);
+		g_signal_connect(job->process, "finished", G_CALLBACK(job_process_finished), job);
+
+		gebr_comm_process_start(job->process, cmd_line);
+		job_set_status(job, JOB_STATUS_RUNNING);
+
+		/* for program that waits stdin EOF (like sfmath) */
+		gebr_geoxml_flow_get_program(job->flow, &program, 0);
+		if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program)) == FALSE)
+			gebr_comm_process_close_stdin(job->process);
 	}
 
 	gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
 		      client->protocol->hostname->str, cmd_line->str);
-
 	gebrd.jobs = g_list_append(gebrd.jobs, job);
-	g_signal_connect(job->process, "ready-read-stdout", G_CALLBACK(job_process_read_stdout), job);
-	g_signal_connect(job->process, "ready-read-stderr", G_CALLBACK(job_process_read_stderr), job);
-	if (gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB)
-		g_signal_connect(job->process, "finished", G_CALLBACK(job_process_finished), job);
-
-	gebr_comm_process_start(job->process, cmd_line);
-	if (gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) 
-		job_set_status(job, JOB_STATUS_RUNNING);
-
-	/* for program that waits stdin EOF (like sfmath) */
-	gebr_geoxml_flow_get_program(job->flow, &program, 0);
-	if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program)) == FALSE)
-		gebr_comm_process_close_stdin(job->process);
-
+	
 	/* frees */
 	g_string_free(cmd_line, TRUE);
 	g_free(locale_str);
@@ -857,29 +853,6 @@ void job_send_clients_job_notify(struct job *job)
 
 gchar * job_get_queue_list()
 {
-	GList * list;
-	struct job * job;
-	GHashTable * hash;
-	GHashTableIter iter;
-	gpointer key, value;
-	GString * string;
-
-	hash = g_hash_table_new((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal);
-	list = g_list_first(gebrd.jobs);
-	while (list) {
-		job = (struct job*)list->data;
-		g_hash_table_insert(hash, job->queue->str, NULL);
-		list = g_list_next(list);
-	}
-
-	string = g_string_new("");
-	g_hash_table_iter_init(&iter, hash);
-	while (g_hash_table_iter_next(&iter, &key, &value))
-		g_string_append_printf(string, "%s,", (gchar*)key);
-	g_hash_table_unref(hash);
-	string->str[string->len-1] = '\0';
-
-	return g_string_free(string, FALSE);
 }
 
 /* Several tests to ensure flow executability */
