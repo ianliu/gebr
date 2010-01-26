@@ -113,7 +113,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *gebr_comm_server,
 //                      }
 
 			gebr_comm_protocol_split_free(arguments);
-		} else if (message->hash == gebr_comm_protocol_defs.fin_def.hash) {
+		} else if (message->hash == gebr_comm_protocol_defs.sta_def.hash) {
 			GList *arguments;
 			GString *jid, *status, *finish_date;
 

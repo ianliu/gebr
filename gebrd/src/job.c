@@ -743,7 +743,7 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 
 		script = g_shell_quote(cmd_line->str);
 		moab_script = g_string_new(NULL);
-		g_string_printf(moab_script, "echo %s | msub -A '%s' -q '%s' -k oe -j oe", script, account->str, class->str);
+		g_string_printf(moab_script, "echo %s | msub -A '%s' -q '%s' -k oe -j oe", script, account->str, queue->str);
 		moab_quoted = g_shell_quote(moab_script->str);
 		g_string_printf(cmd_line, "bash -l -c %s", moab_quoted);
 		g_free(moab_quoted);

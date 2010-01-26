@@ -22,7 +22,7 @@
 
 #include "streamsocket.h"
 
-#define PROTOCOL_VERSION "1.0.1"
+#define PROTOCOL_VERSION "1.0.2"
 
 extern struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
 
