@@ -25,12 +25,6 @@
 #include "socketaddress.h"
 
 /**
- * \struct GebrCommChannelSocket channelsocket.h comm/channelsocket.h
- * \brief A socket that channel all data to another address
- * \see channelsocket.h
- */ 
-
-/**
  * \file channelsocket.h
  * \brief A socket that channel all data to another address
  *
@@ -48,6 +42,11 @@ G_BEGIN_DECLS GType gebr_comm_channel_socket_get_type(void);
 #define GEBR_COMM_IS_CHANNEL_SOCKET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_COMM_CHANNEL_SOCKET_TYPE))
 #define GEBR_COMM_CHANNEL_SOCKET_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_CHANNEL_SOCKET_TYPE, GebrCommChannelSocketClass))
 
+/**
+ * \struct GebrCommChannelSocket channelsocket.h comm/channelsocket.h
+ * \brief A socket that channel all data to another address
+ * \see channelsocket.h
+ */ 
 typedef struct _GebrCommChannelSocket GebrCommChannelSocket;
 typedef struct _GebrCommChannelSocketClass GebrCommChannelSocketClass;
 

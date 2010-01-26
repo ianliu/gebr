@@ -28,10 +28,8 @@ struct job {
 	GebrGeoXmlFlow *flow;
 	gboolean user_finished;
 
-
 	/* the hostname of the client that ran it */
 	GString *hostname;
-	GString *status;
 	GString *jid;
 	GString *title;
 	GString *start_date;
@@ -43,10 +41,17 @@ struct job {
 
 	/* Moab stuff */
 	GString *moab_jid;
-	GString *moab_file_status;
-	GebrCommProcess *moab_comm_process;
 	GebrCommProcess *tail_process;
-	gsize bytes_read;
+	
+	enum JobStatus {
+		JOB_STATUS_UNKNOWN = 0,
+		JOB_STATUS_QUEUED,
+		JOB_STATUS_FAILED,
+		JOB_STATUS_RUNNING,
+		JOB_STATUS_FINISHED,
+		JOB_STATUS_CANCELED
+	} status;
+	GString * status_string;
 };
 
 gboolean job_new(struct job **_job, struct client *client, GString * xml);

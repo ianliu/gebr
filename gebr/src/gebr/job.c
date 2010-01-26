@@ -307,14 +307,20 @@ enum JobStatus job_translate_status(GString * status)
 {
 	enum JobStatus translated_status;
 
-	if (!strcmp(status->str, "running"))
+	if (!strcmp(status->str, "unknown"))
+		translated_status = JOB_STATUS_UNKNOWN;
+	else if (!strcmp(status->str, "queued"))
+		translated_status = JOB_STATUS_QUEUED;
+	else if (!strcmp(status->str, "failed"))
+		translated_status = JOB_STATUS_FAILED;
+	else if (!strcmp(status->str, "running"))
 		translated_status = JOB_STATUS_RUNNING;
 	else if (!strcmp(status->str, "finished"))
 		translated_status = JOB_STATUS_FINISHED;
 	else if (!strcmp(status->str, "canceled"))
 		translated_status = JOB_STATUS_CANCELED;
 	else
-		translated_status = JOB_STATUS_CANCELED;
+		translated_status = JOB_STATUS_UNKNOWN;
 
 	return translated_status;
 }
@@ -343,6 +349,7 @@ void job_update_status(struct job *job)
 		pixbuf = gebr.pixmaps.stock_cancel;
 		break;
 	default:
+		pixbuf = NULL;
 		return;
 	}
 	gtk_list_store_set(gebr.ui_job_control->store, &job->iter, JC_ICON, pixbuf, -1);

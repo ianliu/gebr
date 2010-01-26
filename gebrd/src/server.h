@@ -18,17 +18,31 @@
 #ifndef __SERVER_H
 #define __SERVER_H
 
-struct client;
-struct gebr_comm_protocol;
+#include "client.h"
 
+/**
+ * Init daemon log file and run lock file
+ */
 gboolean server_init(void);
 
+/**
+ * Free data allocated for clients
+ */
 void server_free(void);
 
+/**
+ * Closes log file and delete run lock
+ */
 void server_quit(void);
 
+/**
+ * Callback to #GebrCommListenSocket's new-connection signal
+ */
 void server_new_connection(void);
 
+/**
+ * Switch messages received from \p client
+ */
 gboolean server_parse_client_messages(struct client *client);
 
 #endif				//__SERVER_H

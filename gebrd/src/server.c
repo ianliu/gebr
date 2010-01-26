@@ -310,7 +310,7 @@ gboolean server_parse_client_messages(struct client *client)
 			}
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
 						     gebr_comm_protocol_defs.ret_def, 9, job->jid->str,
-						     job->status->str, job->title->str, job->start_date->str,
+						     job->status_string->str, job->title->str, job->start_date->str,
 						     job->issues->str, job->cmd_line->str, job->output->str,
 						     job->queue->str, job->moab_jid->str);
 
@@ -396,6 +396,7 @@ gboolean server_parse_client_messages(struct client *client)
 
 
 /**
+ * \internal
  * Reads the list of accounts and the list of queue_list returned by the MOAB cluster
  * "mcredctl" command and places them on \p accounts and \p queue_list, respectively.
  */

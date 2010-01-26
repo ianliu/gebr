@@ -190,9 +190,9 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 			}
 
 			gebr_comm_protocol_split_free(arguments);
-		} else if (message->hash == gebr_comm_protocol_defs.fin_def.hash) {
+		} else if (message->hash == gebr_comm_protocol_defs.sta_def.hash) {
 			GList *arguments;
-			GString *jid, *status, *finish_date;
+			GString *jid, *status, *timestamp;
 			struct job *job;
 
 			/* organize message data */
@@ -200,11 +200,12 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 			status = g_list_nth_data(arguments, 1);
-			finish_date = g_list_nth_data(arguments, 2);
+			timestamp = g_list_nth_data(arguments, 2);
 
 			job = job_find(comm_server->address, jid);
 			if (job != NULL) {
-				g_string_assign(job->finish_date, finish_date->str);
+				if (!strcmp(status->str, "finished"))
+					g_string_assign(job->finish_date, timestamp->str);
 				job->status = job_translate_status(status);
 				job_update_status(job);
 			}

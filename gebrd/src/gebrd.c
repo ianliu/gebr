@@ -80,10 +80,6 @@ void gebrd_init(void)
 	}
 }
 
-/*
- * Function: gebrd_quit
- * 
- */
 void gebrd_quit(void)
 {
 	gebrd_message(GEBR_LOG_END, _("Server quited"));
@@ -92,11 +88,6 @@ void gebrd_quit(void)
 	g_main_loop_quit(gebrd.main_loop);
 }
 
-/*
- * Function: gebrd_message
- * Log a message. If in_stdout is TRUE it is writen to standard output.
- *
- */
 void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
 {
 	gchar *string;
@@ -122,12 +113,6 @@ void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
 	g_free(string);
 }
 
-/*
- * Function: gebrd_get_x11_redirect_port
- * Return a free port to be used for X11 redirection.
- * The server doesn't listen to it; the client is supposed to
- * do a port forward thought SSH
- */
 guint8 gebrd_get_x11_redirect_display(void)
 {
 	static guint8 display = 10;
@@ -145,10 +130,18 @@ guint8 gebrd_get_x11_redirect_display(void)
 
 GebrCommServerType gebrd_get_server_type(void)
 {
+	static gboolean got_type = FALSE;
+	static GebrCommServerType server_type;
 
-	if(g_find_program_in_path("msub") != NULL && g_find_program_in_path("mcredctl") != NULL)
-		return GEBR_COMM_SERVER_TYPE_MOAB;
+	if (got_type)
+		return server_type;
 
-	return GEBR_COMM_SERVER_TYPE_REGULAR;
+	if (g_find_program_in_path("msub") != NULL && g_find_program_in_path("mcredctl") != NULL)
+		server_type = GEBR_COMM_SERVER_TYPE_MOAB;
+	else 
+		server_type = GEBR_COMM_SERVER_TYPE_REGULAR;
+
+	got_type = TRUE;
+	return server_type;
 }
 

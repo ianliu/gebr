@@ -23,17 +23,18 @@
 
 #include "server.h"
 
-enum JobStatus {
-	JOB_STATUS_RUNNING,
-	JOB_STATUS_FINISHED,
-	JOB_STATUS_CANCELED,
-	JOB_STATUS_FAILED,
-};
-
 struct job {
-	enum JobStatus status;
 	GtkTreeIter iter;
 	struct server *server;
+
+	enum JobStatus {
+		JOB_STATUS_UNKOWN = 0,
+		JOB_STATUS_QUEUED,
+		JOB_STATUS_FAILED,
+		JOB_STATUS_RUNNING,
+		JOB_STATUS_FINISHED,
+		JOB_STATUS_CANCELED
+	} status;
 
 	GString *jid;
 	GString *title;

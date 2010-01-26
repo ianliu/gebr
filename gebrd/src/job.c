@@ -19,8 +19,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <gdome.h>
 
 #include <libgebr/intl.h>
 #include <libgebr/comm/protocol.h>
@@ -187,7 +189,6 @@ static void moab_process_read_stdout(GebrCommProcess *process, struct job *job)
 {
 	GString *stdout;
 	stdout = gebr_comm_process_read_stdout_string_all(process);
-	job->bytes_read += stdout->len;
 	job_process_add_output(job, job->output, stdout);
 	g_string_free(stdout, TRUE);
 }
@@ -222,14 +223,57 @@ static void job_process_read_stdout(GebrCommProcess * process, struct job *job)
 	g_string_free(stdout, TRUE);
 }
 
-static void job_process_read_stdout_moab(GebrCommProcess * process, struct job *job)
+static void job_process_read_stderr(GebrCommProcess * process, struct job *job)
 {
-	GString *stdout;
+	GString *stderr;
 
-	stdout = gebr_comm_process_read_stdout_string_all(process);
-	if (g_str_has_prefix(stdout->str, "JobEnd")) {
-		gebr_comm_process_free(job->moab_comm_process);
-		job->moab_comm_process = NULL;
+	stderr = gebr_comm_process_read_stderr_string_all(process);
+	job_process_add_output(job, job->output, stderr);
+
+	g_string_free(stderr, TRUE);
+}
+
+/**
+ * \internal
+ * Change status in \p job structure
+ * \see job_notify_status
+ */
+static void job_set_status(struct job *job, enum JobStatus status)
+{
+	const gchar * enum_to_string [] = {
+		"unknown", "queued", "failed", "running", "finished", "canceled", NULL };
+
+	g_string_assign(job->status_string, enum_to_string[status]);
+	job->status = status;	
+}
+
+/**
+ * \internal
+ * Change status and notify clients about it
+ * \see job_set_status
+ */
+static void job_notify_status(struct job *job, enum JobStatus status, const gchar *timestamp)
+{
+	GList *link;
+
+	job_set_status(job, status);
+
+	/* warn all client of the new status */
+	link = g_list_first(gebrd.clients);
+	while (link != NULL) {
+		struct client *client;
+
+		client = (struct client *)link->data;
+		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.sta_def,
+					     3, job->jid->str, job->status_string->str, timestamp);
+
+		link = g_list_next(link);
+	}
+}
+
+static void job_set_status_finished(struct job *job)
+{
+	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 		gebr_comm_process_free(job->tail_process);
 		job->tail_process = NULL;
 	
@@ -243,7 +287,7 @@ static void job_process_read_stdout_moab(GebrCommProcess * process, struct job *
 		output = g_string_new(NULL);
 		g_string_printf(output, "%s/STDIN.o%s", getenv("HOME"), job->moab_jid->str);
 		file = g_io_channel_new_file(output->str, "r", &error);
-		if (g_io_channel_seek_position(file, job->bytes_read, G_SEEK_SET, &error) == G_IO_STATUS_EOF)
+		if (g_io_channel_seek_position(file, job->output->len, G_SEEK_SET, &error) == G_IO_STATUS_EOF)
 			goto out;
 		g_io_channel_read_to_end(file, &buffer, &length, &error);
 		g_string_printf(output, "%s", buffer);
@@ -251,44 +295,19 @@ static void job_process_read_stdout_moab(GebrCommProcess * process, struct job *
 		job_process_finished(job->process, job);
 
 		g_free(buffer);
-out:
-		g_io_channel_shutdown(file, FALSE, &error);
+out:		g_io_channel_shutdown(file, FALSE, &error);
 		g_string_free(output, TRUE);
 	}
-	g_string_free(stdout, TRUE);
-}
-
-static void job_process_read_stderr(GebrCommProcess * process, struct job *job)
-{
-	GString *stderr;
-
-	stderr = gebr_comm_process_read_stderr_string_all(process);
-	job_process_add_output(job, job->output, stderr);
-
-	g_string_free(stderr, TRUE);
-}
-
-static void job_process_finished(GebrCommProcess * process, struct job *job)
-{
-	GList *link;
 
 	/* set the finish date */
 	g_string_assign(job->finish_date, gebr_iso_date());
 
-	/* what make it quit? */
-	g_string_assign(job->status, (job->user_finished == FALSE) ? "finished" : "canceled");
+	job_notify_status(job, (job->user_finished == FALSE) ? JOB_STATUS_FINISHED : JOB_STATUS_CANCELED, job->finish_date->str);
+}
 
-	/* warn all client that this job finished */
-	link = g_list_first(gebrd.clients);
-	while (link != NULL) {
-		struct client *client;
-
-		client = (struct client *)link->data;
-		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.fin_def,
-					     3, job->jid->str, job->status->str, job->finish_date->str);
-
-		link = g_list_next(link);
-	}
+static void job_process_finished(GebrCommProcess * process, struct job *job)
+{
+	job_set_status_finished(job);
 }
 
 static GString *job_generate_id(void)
@@ -322,6 +341,98 @@ static GString *job_generate_id(void)
 	return jid;
 }
 
+/**
+ * \internal
+ */
+gboolean job_moab_checkjob_pooling(struct job * job)
+{
+	GString *cmd_line = NULL;
+	gchar *std_out = NULL;
+	gchar *std_err = NULL;
+	gint exit_status;
+	gboolean ret = FALSE;
+	GString *moab_status;
+	enum JobStatus moab_status_enum;
+
+	GdomeDOMImplementation *dom_impl = NULL;
+	GdomeDocument *doc = NULL;
+	GdomeElement *element = NULL;
+	GdomeException exception;
+	GdomeDOMString *attribute_name;
+
+	cmd_line = g_string_new("");
+	moab_status = g_string_new("");
+	g_string_printf(cmd_line, "checkjob %s --format=xml", job->moab_jid->str);
+	if (g_spawn_command_line_sync(cmd_line->str, &std_out, &std_err, &exit_status, NULL) == FALSE)
+		goto err3;
+
+	if ((dom_impl = gdome_di_mkref()) == NULL)
+		goto err3;
+	if ((doc = gdome_di_createDocFromMemory(dom_impl, std_out, GDOME_LOAD_PARSING, &exception)) == NULL) {
+		goto err2;
+	}
+	if ((element = gdome_doc_documentElement(doc, &exception)) == NULL) {
+		goto err;
+	}
+	if ((element = (GdomeElement *)gdome_el_firstChild(element, &exception)) == NULL) {
+		goto err;
+	}
+
+	attribute_name = gdome_str_mkref("EState");
+	g_string_assign(moab_status, (gdome_el_getAttribute(element, attribute_name, &exception))->str);
+	gdome_str_unref(attribute_name);
+	ret = TRUE;
+
+	moab_status_enum = JOB_STATUS_UNKNOWN;
+	if (!strcmp(moab_status->str, "Idle"))
+		moab_status_enum = JOB_STATUS_QUEUED;	
+	else if (!strcmp(moab_status->str, "Starting"));
+	else if (!strcmp(moab_status->str, "Running"))
+		moab_status_enum = JOB_STATUS_RUNNING;
+	else if (!strcmp(moab_status->str, "Completed"))
+		moab_status_enum = JOB_STATUS_FINISHED;
+
+	/* status changed */
+	if (moab_status_enum != JOB_STATUS_UNKNOWN && moab_status_enum != job->status) {
+		if (moab_status_enum == JOB_STATUS_FINISHED)
+			job_set_status_finished(job);
+		else
+			job_notify_status(job, moab_status_enum, "");
+       	}
+
+err:	gdome_doc_unref(doc, &exception);
+err2:	gdome_di_unref(dom_impl, &exception);
+
+err3:	g_string_free(cmd_line, TRUE);
+	g_string_free(moab_status, TRUE);
+	g_free(std_out);
+	g_free(std_err);
+
+	return ret;
+}
+
+enum JobStatus job_translate_status(GString * status)
+{
+	enum JobStatus translated_status;
+
+	if (!strcmp(status->str, "unknown"))
+		translated_status = JOB_STATUS_UNKNOWN;
+	else if (!strcmp(status->str, "queued"))
+		translated_status = JOB_STATUS_QUEUED;
+	else if (!strcmp(status->str, "failed"))
+		translated_status = JOB_STATUS_FAILED;
+	else if (!strcmp(status->str, "running"))
+		translated_status = JOB_STATUS_RUNNING;
+	else if (!strcmp(status->str, "finished"))
+		translated_status = JOB_STATUS_FINISHED;
+	else if (!strcmp(status->str, "canceled"))
+		translated_status = JOB_STATUS_CANCELED;
+	else
+		translated_status = JOB_STATUS_UNKNOWN;
+
+	return translated_status;
+}
+
 /*
  * Public functions
  */
@@ -348,7 +459,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 		.flow = NULL,
 		.user_finished = FALSE,
 		.hostname = g_string_new(""),
-		.status = g_string_new(""),
+		.status_string = g_string_new(""),
 		.jid = job_generate_id(),
 		.title = g_string_new(""),
 		.start_date = g_string_new(""),
@@ -356,8 +467,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 		.issues = g_string_new(""),
 		.cmd_line = g_string_new(""),
 		.output = g_string_new(""),
-		.moab_jid = g_string_new(""),
-		.bytes_read = 0,
+		.moab_jid = g_string_new("")
 	};
 	*_job = job;
 
@@ -541,7 +651,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 	goto out;
 
  err:	g_string_assign(job->jid, "0");
-	g_string_assign(job->status, "failed");
+	job_set_status(job, JOB_STATUS_FAILED);
 	g_string_assign(job->cmd_line, "");
 	success = FALSE;
 
@@ -568,7 +678,7 @@ void job_free(struct job *job)
 	gebr_comm_process_free(job->process);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(job->flow));
 	g_string_free(job->hostname, TRUE);
-	g_string_free(job->status, TRUE);
+	g_string_free(job->status_string, TRUE);
 	g_string_free(job->jid, TRUE);
 	g_string_free(job->title, TRUE);
 	g_string_free(job->start_date, TRUE);
@@ -580,17 +690,15 @@ void job_free(struct job *job)
 	g_string_free(job->queue, TRUE);
 	
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
-		g_unlink(job->moab_file_status->str);
-		g_string_free(job->moab_file_status, TRUE);
-		if (job->moab_comm_process != NULL)
-			gebr_comm_process_free(job->moab_comm_process);
+		if (job->tail_process != NULL)
+			gebr_comm_process_free(job->tail_process);
 	}
 	g_free(job);
 }
 
 void job_run_flow(struct job *job, struct client *client, GString * account, GString * queue)
 {
-	GString *cmd_line, *to_quote;
+	GString *cmd_line;
 	GebrGeoXmlSequence *program;
 	gchar *locale_str;
 	gsize __attribute__ ((unused)) bytes_written;
@@ -598,11 +706,13 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 
 	/* initialization */
 	cmd_line = g_string_new(NULL);
-	to_quote = g_string_new(NULL);
 	locale_str = g_filename_from_utf8(job->cmd_line->str, -1, NULL, &bytes_written, NULL);
 
 	/* command-line */
 	if (client->display->len) {
+		GString *to_quote;
+
+		to_quote = g_string_new(NULL);
 		if (client->server_location == GEBR_COMM_SERVER_LOCATION_LOCAL){
 			g_string_printf(to_quote, "export DISPLAY=%s; %s", client->display->str, locale_str);
 			quoted = g_shell_quote(to_quote->str);
@@ -615,39 +725,33 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
 		}
+
+		g_string_free(to_quote, TRUE);
 	} else {
 		quoted = g_shell_quote(locale_str);
 		g_string_printf(cmd_line, "bash -l -c %s", quoted);
 		g_free(quoted);
 	}
 
-	g_string_free(to_quote, TRUE);
+	/* we don't know yet the status */
+	job_set_status(job, JOB_STATUS_UNKNOWN);
 
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 		gchar * script;
 		gchar * moab_quoted;
-		GString * moab_script, *moab_process;
+		GString * moab_script;
 
-		job->moab_file_status = gebr_make_temp_filename("gebr_XXXXXX");
-		g_string_append_printf(cmd_line, "; echo JobEnd >> %s", job->moab_file_status->str);
 		script = g_shell_quote(cmd_line->str);
 		moab_script = g_string_new(NULL);
-
-		/* TODO: verify if account and queue need escaping*/
-		g_string_printf(moab_script, "echo %s | msub -A %s -q %s -k oe -j oe", script, account->str, queue->str);
+		g_string_printf(moab_script, "echo %s | msub -A '%s' -q '%s' -k oe -j oe", script, account->str, class->str);
 		moab_quoted = g_shell_quote(moab_script->str);
 		g_string_printf(cmd_line, "bash -l -c %s", moab_quoted);
 		g_free(moab_quoted);
 		g_free(script);
 		g_string_free(moab_script, TRUE);
 
-		job->moab_comm_process = gebr_comm_process_new();
-
-		moab_process = g_string_new(NULL);
-		g_string_printf(moab_process, "tail -f %s", job->moab_file_status->str);
-		if (gebr_comm_process_start(job->moab_comm_process, moab_process))
-			g_signal_connect(job->moab_comm_process, "ready-read-stdout", G_CALLBACK(job_process_read_stdout_moab), job);
-		g_string_free(moab_process, TRUE);
+		/* pool for moab status */
+		g_timeout_add(1000, (GSourceFunc)job_moab_checkjob_pooling, job); 
 	}
 
 	gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
@@ -660,7 +764,8 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 		g_signal_connect(job->process, "finished", G_CALLBACK(job_process_finished), job);
 
 	gebr_comm_process_start(job->process, cmd_line);
-	g_string_assign(job->status, "running");
+	if (gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) 
+		job_set_status(job, JOB_STATUS_RUNNING);
 
 	/* for program that waits stdin EOF (like sfmath) */
 	gebr_geoxml_flow_get_program(job->flow, &program, 0);
@@ -722,7 +827,7 @@ void job_list(struct client *client)
 
 		job = (struct job *)link->data;
 		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.job_def,
-					     11, job->jid->str, job->status->str, job->title->str, job->start_date->str,
+					     11, job->jid->str, job->status_string->str, job->title->str, job->start_date->str,
 					     job->finish_date->str, job->hostname->str, job->issues->str,
 					     job->cmd_line->str, job->output->str, job->queue->str, job->moab_jid->str);
 
@@ -740,7 +845,7 @@ void job_send_clients_job_notify(struct job *job)
 
 		client = (struct client *)link->data;
 		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.job_def,
-					     11, job->jid->str, job->status->str, job->title->str, job->start_date->str,
+					     11, job->jid->str, job->status_string->str, job->title->str, job->start_date->str,
 					     job->finish_date->str, job->hostname->str, job->issues->str,
 					     job->cmd_line->str, job->output->str, job->queue->str, job->moab_jid->str);
 

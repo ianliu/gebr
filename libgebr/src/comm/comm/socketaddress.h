@@ -42,9 +42,9 @@ struct _GebrCommSocketAddress {
 	} address;
 };
 
-GebrCommSocketAddress gebr_comm_socket_address_unix(const gchar * string);
+GebrCommSocketAddress gebr_comm_socket_address_unix(const gchar * filepath);
 
-GebrCommSocketAddress gebr_comm_socket_address_ipv4(const gchar * string, guint16 port);
+GebrCommSocketAddress gebr_comm_socket_address_ipv4(const gchar * ip, guint16 port);
 
 GebrCommSocketAddress gebr_comm_socket_address_ipv4_local(guint16 port);
 

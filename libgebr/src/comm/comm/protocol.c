@@ -51,7 +51,7 @@ void gebr_comm_protocol_init(void)
 		    create_gebr_comm_message_def("CLR", FALSE),.end_def =
 		    create_gebr_comm_message_def("END", FALSE),.kil_def =
 		    create_gebr_comm_message_def("KIL", FALSE),.out_def =
-		    create_gebr_comm_message_def("OUT", FALSE),.fin_def = create_gebr_comm_message_def("FIN", FALSE)
+		    create_gebr_comm_message_def("OUT", FALSE),.sta_def = create_gebr_comm_message_def("STA", FALSE)
 	};
 
 	gebr_comm_protocol_defs.hash_table = g_hash_table_new(g_str_hash, g_str_equal);
@@ -67,7 +67,7 @@ void gebr_comm_protocol_init(void)
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "END", &gebr_comm_protocol_defs.end_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "KIL", &gebr_comm_protocol_defs.kil_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "OUT", &gebr_comm_protocol_defs.out_def);
-	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "FIN", &gebr_comm_protocol_defs.fin_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "STA", &gebr_comm_protocol_defs.sta_def);
 
 }
 

@@ -24,8 +24,18 @@
 #include <netdb.h>
 #include <libgebr/comm/server.h>
 
+/**
+ * \file gebrd.h
+ * \brief Global access variable for date interchange 
+ */
+
 extern struct gebrd gebrd;
 
+/**
+ * \struct gebrd gebr.h
+ * \brief Global access variable for date interchange 
+ * \see gebrd.h
+ */
 struct gebrd {
 	GebrCommListenSocket *listen_socket;
 	GList *clients;
@@ -35,6 +45,9 @@ struct gebrd {
 
 	GString *run_filename;
 
+	/**
+	 * Options passed through command line
+	 */
 	struct gebrd_options {
 		gboolean foreground;
 	} options;
@@ -43,13 +56,33 @@ struct gebrd {
 	int finished_starting_pipe[2];
 };
 
+/**
+ * Init daemon routines.
+ * Called at #main.c
+ */
 void gebrd_init(void);
 
+/**
+ * Called to exit glib main loop and exit program.
+ */
 void gebrd_quit(void);
 
+/**
+ * Log a message in the gebrd log file and to standand output.
+ * The message in only shown in the stdout if gebrd is running in interative mode.
+ */
 void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...);
 
+/**
+ * Return a free port to be used for X11 redirection.
+ * The server doesn't listen to it; the client is supposed to
+ * do a port forward thought SSH
+ */
 guint8 gebrd_get_x11_redirect_display(void);
 
+/**
+ * Check wheter running on a Moab cluster.
+ */
 GebrCommServerType gebrd_get_server_type(void);
+
 #endif				//__GEBRD_H
