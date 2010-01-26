@@ -258,9 +258,13 @@ gboolean server_parse_client_messages(struct client *client)
 
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 				/* Get info from the MOAB cluster */
-				server_type = "moab";
 				server_moab_read_credentials(accounts_list, queue_list);
+				server_type = "moab";
 			} else {
+				gchar * queue_list_str;
+				queue_list_str = job_get_queue_list();
+				g_string_assign(queue_list, queue_list_str);
+				g_free(queue_list_str);
 				server_type = "regular";
 			}
 
@@ -268,7 +272,7 @@ gboolean server_parse_client_messages(struct client *client)
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
 						     gebr_comm_protocol_defs.ret_def, 5,
 						     gebrd.hostname, display_port->str,
-						     accounts_list->str, queue_list->str, server_type);
+						     queue_list->str, server_type, accounts_list->str);
 
 			/* frees */
 			gebr_comm_protocol_split_free(arguments);

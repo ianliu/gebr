@@ -20,6 +20,7 @@
 #include <libgebr/intl.h>
 #include <libgebr/comm/protocol.h>
 #include <libgebr/comm/server.h>
+#include <libgebr/gui/utils.h>
 
 #include "client.h"
 #include "gebr.h"
@@ -48,19 +49,33 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 		} else if (message->hash == gebr_comm_protocol_defs.ret_def.hash) {
 			if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.hash) {
 				GList *arguments;
-				GString *hostname, *display_port;
-
-				g_strfreev(server->account);
-				g_strfreev(server->classes);
+				GString *hostname;
+				GString *display_port;
+				gchar ** accounts;
+				gchar ** queues;
+				GtkTreeIter iter;
 
 				/* organize message data */
 				if ((arguments = gebr_comm_protocol_split_new(message->argument, 5)) == NULL)
 					goto err;
 				hostname = g_list_nth_data(arguments, 0);
 				display_port = g_list_nth_data(arguments, 1);
-				server->account = g_strsplit(((GString *)g_list_nth_data(arguments, 2))->str, ",", 0);
-				server->classes = g_strsplit(((GString *)g_list_nth_data(arguments, 3))->str, ",", 0);
-				server->type = gebr_comm_server_get_id(((GString*)g_list_nth_data(arguments, 4))->str);
+				queues = g_strsplit(((GString *)g_list_nth_data(arguments, 2))->str, ",", 0);
+				server->type = gebr_comm_server_get_id(((GString*)g_list_nth_data(arguments, 3))->str);
+				accounts = g_strsplit(((GString *)g_list_nth_data(arguments, 4))->str, ",", 0);
+
+				for (gint i = 0; accounts[i]; i++) {
+					gtk_list_store_append(server->accounts_model, &iter);
+					gtk_list_store_set(server->accounts_model, &iter, 0, accounts[i], -1);
+				}
+
+				for (gint i = 0; queues[i]; i++) {
+					gtk_list_store_append(server->queues_model, &iter);
+					gtk_list_store_set(server->queues_model, &iter, 0, queues[i], -1);
+				}
+
+				g_strfreev(accounts);
+				g_strfreev(queues);
 
 				/* say we are logged */
 				g_string_assign(server->last_error, "");
@@ -91,6 +106,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				GList *arguments;
 				GString *jid, *status, *title, *start_date, *issues, *cmd_line, *output, *queue, *moab_jid;
 				struct job *job;
+				GtkTreeIter iter;
 
 				/* organize message data */
 				if ((arguments = gebr_comm_protocol_split_new(message->argument, 9)) == NULL)
@@ -104,6 +120,22 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				output = g_list_nth_data(arguments, 6);
 				queue = g_list_nth_data(arguments, 7);
 				moab_jid = g_list_nth_data(arguments, 8);
+
+				/* If 'queue' is not in server->queues_model, add it */
+				gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(server->queues_model)) {
+					gchar * queue_iter;
+					GtkTreeIter new;
+					gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, &queue_iter, -1);
+
+					if (strcmp(queue->str, queue_iter) == 0) {
+						g_free(queue_iter);
+						continue;
+					}
+
+					gtk_list_store_append(server->queues_model, &new);
+					gtk_list_store_set(server->queues_model, &new, 0, queue, -1);
+					g_free(queue_iter);
+				}
 
 				job = job_add(server, jid, status, title, start_date, NULL,
 					      NULL, issues, cmd_line, output, queue, moab_jid);

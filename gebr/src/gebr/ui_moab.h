@@ -21,10 +21,6 @@
 #include <gtk/gtk.h>
 #include "server.h"
 
-struct ui_moab {
-	GtkWidget * dialog;
-	GtkListStore *account, *classes;
-};
+gboolean moab_setup_ui(gchar ** char_account, gchar ** char_class, struct server * server);
 
-gboolean moab_setup_ui (gchar ** char_account, gchar ** char_class, struct server * server);
 #endif				/* __UI_MOAB_H */

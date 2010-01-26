@@ -19,30 +19,26 @@
 #include <libgebr/intl.h>
 #include "ui_moab.h"
 
-static void populate_models (struct ui_moab * gui, struct server * server);
-
 gboolean moab_setup_ui(gchar ** char_account, gchar ** char_class, struct server * server)
 {
 	gboolean ret;
-	GtkWidget *label;
+	GtkWidget * box;
+	GtkWidget * hbox;
+	GtkWidget * dialog;
+	GtkWidget * label;
+	GtkWidget * cb_account;
+	GtkWidget * cb_classes;
 	GtkSizeGroup * group;
 	GtkCellRenderer * cell;
-	GtkWidget * cb_account, * cb_classes;
-	GtkWidget * box, * hbox;
-	struct ui_moab * gui;
 	GtkTreeIter iter;
 
 	ret = TRUE;
-	gui = g_new(struct ui_moab, 1);
-	gui->dialog = gtk_dialog_new_with_buttons(_("Moab Execute"), GTK_WINDOW(gebr.window), 
-						  GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT, 
-						  GTK_STOCK_EXECUTE, GTK_RESPONSE_ACCEPT,
-						  GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
-						  NULL);
-	gui->account = gtk_list_store_new(1, G_TYPE_STRING);
-	gui->classes = gtk_list_store_new(1, G_TYPE_STRING);
-
-	box = GTK_DIALOG(gui->dialog)->vbox;
+	dialog = gtk_dialog_new_with_buttons(_("Moab Execute"), GTK_WINDOW(gebr.window), 
+					     GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT, 
+					     GTK_STOCK_EXECUTE, GTK_RESPONSE_ACCEPT,
+					     GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
+					     NULL);
+	box = GTK_DIALOG(dialog)->vbox;
 
 	group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -70,48 +66,22 @@ gboolean moab_setup_ui(gchar ** char_account, gchar ** char_class, struct server
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, TRUE, 0);
 	gtk_size_group_add_widget(group, label);
 
+	gtk_combo_box_set_model(GTK_COMBO_BOX(cb_account), GTK_TREE_MODEL(server->accounts_model));
+	gtk_combo_box_set_model(GTK_COMBO_BOX(cb_classes), GTK_TREE_MODEL(server->queues_model));
 
-	gtk_combo_box_set_model(GTK_COMBO_BOX(cb_account), GTK_TREE_MODEL(gui->account));
-	gtk_combo_box_set_model(GTK_COMBO_BOX(cb_classes), GTK_TREE_MODEL(gui->classes));
+	gtk_widget_show_all(dialog);
 
-	populate_models(gui, server);
-
-	gtk_widget_show_all(gui->dialog);
-
-	if (gtk_dialog_run(GTK_DIALOG(gui->dialog)) != GTK_RESPONSE_ACCEPT) {
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_ACCEPT) {
 		ret = FALSE;
 		goto out;
 	}
 
 	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(cb_account), &iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(gui->account), &iter, 0, char_account, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(server->accounts_model), &iter, 0, char_account, -1);
 
 	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(cb_classes), &iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(gui->classes), &iter, 0, char_class, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, char_class, -1);
 out:
-	gtk_widget_destroy(gui->dialog);
-	gtk_list_store_clear(gui->account);
-	gtk_list_store_clear(gui->classes);
-	g_free(gui);
+	gtk_widget_destroy(dialog);
 	return ret;
-}
-
-static void populate_models (struct ui_moab * gui, struct server * server)
-{
-	GtkTreeIter iter;
-	gsize i;
-
-	i = 0;
-	while (server && server->account && server->account[i] != NULL) {
-		gtk_list_store_append(gui->account, &iter);
-		gtk_list_store_set(gui->account, &iter, 0, server->account[i], -1);
-		i++;
-	}
-	
-	i = 0;
-	while (server && server->classes && server->classes[i] != NULL) {
-		gtk_list_store_append(gui->classes, &iter);
-		gtk_list_store_set(gui->classes, &iter, 0, server->classes[i], -1);
-		i++;
-	}
 }

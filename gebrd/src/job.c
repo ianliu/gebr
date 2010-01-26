@@ -748,6 +748,33 @@ void job_send_clients_job_notify(struct job *job)
 	}
 }
 
+gchar * job_get_queue_list()
+{
+	GList * list;
+	struct job * job;
+	GHashTable * hash;
+	GHashTableIter iter;
+	gpointer key, value;
+	GString * string;
+
+	hash = g_hash_table_new((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal);
+	list = g_list_first(gebrd.jobs);
+	while (list) {
+		job = (struct job*)list->data;
+		g_hash_table_insert(hash, job->queue->str, NULL);
+		list = g_list_next(list);
+	}
+
+	string = g_string_new("");
+	g_hash_table_iter_init(&iter, hash);
+	while (g_hash_table_iter_next(&iter, &key, &value))
+		g_string_append_printf(string, "%s,", (gchar*)key);
+	g_hash_table_unref(hash);
+	string->str[string->len-1] = '\0';
+
+	return g_string_free(string, FALSE);
+}
+
 /* Several tests to ensure flow executability */
 /* All of them return TRUE upon error */
 gboolean check_for_readable_file(const gchar * file)

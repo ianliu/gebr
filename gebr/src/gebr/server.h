@@ -26,18 +26,14 @@
 
 struct server {
 	struct gebr_comm_server *comm;
-
 	GtkTreeIter iter;
 
 	/* last error showed on tooltip */
-
 	GString *last_error;
 
 	GebrCommServerType type;
-
-	gchar ** account;
-
-	gchar ** classes;
+	GtkListStore * queues_model;
+	GtkListStore * accounts_model;
 };
 
 struct server *server_new(const gchar * address, gboolean autoconnect);

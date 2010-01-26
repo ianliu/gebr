@@ -122,8 +122,8 @@ struct server *server_new(const gchar * address, gboolean autoconnect)
 		.iter = iter,
 		.last_error = g_string_new(""),
 		.type = GEBR_COMM_SERVER_TYPE_UNKNOWN,
-		.account = NULL,
-		.classes = NULL,
+		.accounts_model = gtk_list_store_new(1, G_TYPE_STRING),
+		.queues_model = gtk_list_store_new(1, G_TYPE_STRING),
 	};
 
 	server->comm->user_data = server;
@@ -170,6 +170,8 @@ void server_free(struct server *server)
 	gboolean valid;
 
 	gtk_list_store_remove(gebr.ui_server_list->common.store, &server->iter);
+	gtk_list_store_clear(server->accounts_model);
+	gtk_list_store_clear(server->queues_model);
 
 	/* delete all jobs at server */
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);

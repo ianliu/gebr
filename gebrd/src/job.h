@@ -67,4 +67,6 @@ void job_list(struct client *client);
 
 void job_send_clients_job_notify(struct job *job);
 
+gchar * job_get_queue_list();
+
 #endif				//__JOB_H
