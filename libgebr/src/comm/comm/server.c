@@ -150,6 +150,7 @@ void gebr_comm_server_connect(struct gebr_comm_server *gebr_comm_server)
 
 void gebr_comm_server_disconnect(struct gebr_comm_server *gebr_comm_server)
 {
+	gebr_comm_server_disconnected_state(gebr_comm_server);
 	gebr_comm_stream_socket_disconnect(gebr_comm_server->stream_socket);
 }
 
