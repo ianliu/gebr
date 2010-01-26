@@ -33,16 +33,16 @@ struct job {
 	GString *hostname;
 	GString *status;
 	GString *jid;
-	GString *moab_jid;
-
 	GString *title;
 	GString *start_date;
 	GString *finish_date;
 	GString *issues;
 	GString *cmd_line;
 	GString *output;
+	GString *queue;
 
 	/* Moab stuff */
+	GString *moab_jid;
 	GString *moab_file_status;
 	GebrCommProcess *moab_comm_process;
 	GebrCommProcess *tail_process;
@@ -53,7 +53,7 @@ gboolean job_new(struct job **_job, struct client *client, GString * xml);
 
 void job_free(struct job *job);
 
-void job_run_flow(struct job *job, struct client *client, GString * account, GString * class);
+void job_run_flow(struct job *job, struct client *client, GString * account, GString * queue);
 
 struct job *job_find(GString * jid);
 

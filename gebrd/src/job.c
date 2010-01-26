@@ -577,6 +577,7 @@ void job_free(struct job *job)
 	g_string_free(job->cmd_line, TRUE);
 	g_string_free(job->output, TRUE);
 	g_string_free(job->moab_jid, TRUE);
+	g_string_free(job->queue, TRUE);
 	
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 		g_unlink(job->moab_file_status->str);
@@ -587,7 +588,7 @@ void job_free(struct job *job)
 	g_free(job);
 }
 
-void job_run_flow(struct job *job, struct client *client, GString * account, GString * class)
+void job_run_flow(struct job *job, struct client *client, GString * account, GString * queue)
 {
 	GString *cmd_line, *to_quote;
 	GebrGeoXmlSequence *program;
@@ -632,8 +633,8 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 		script = g_shell_quote(cmd_line->str);
 		moab_script = g_string_new(NULL);
 
-		/* TODO: verify if account and class need escaping*/
-		g_string_printf(moab_script, "echo %s | msub -A %s -q %s -k oe -j oe", script, account->str, class->str);
+		/* TODO: verify if account and queue need escaping*/
+		g_string_printf(moab_script, "echo %s | msub -A %s -q %s -k oe -j oe", script, account->str, queue->str);
 		moab_quoted = g_shell_quote(moab_script->str);
 		g_string_printf(cmd_line, "bash -l -c %s", moab_quoted);
 		g_free(moab_quoted);
@@ -721,9 +722,9 @@ void job_list(struct client *client)
 
 		job = (struct job *)link->data;
 		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.job_def,
-					     9, job->jid->str, job->status->str, job->title->str, job->start_date->str,
+					     11, job->jid->str, job->status->str, job->title->str, job->start_date->str,
 					     job->finish_date->str, job->hostname->str, job->issues->str,
-					     job->cmd_line->str, job->output->str);
+					     job->cmd_line->str, job->output->str, job->queue->str, job->moab_jid->str);
 
 		link = g_list_next(link);
 	}
@@ -739,9 +740,9 @@ void job_send_clients_job_notify(struct job *job)
 
 		client = (struct client *)link->data;
 		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.job_def,
-					     9, job->jid->str, job->status->str, job->title->str, job->start_date->str,
+					     11, job->jid->str, job->status->str, job->title->str, job->start_date->str,
 					     job->finish_date->str, job->hostname->str, job->issues->str,
-					     job->cmd_line->str, job->output->str);
+					     job->cmd_line->str, job->output->str, job->queue->str, job->moab_jid->str);
 
 		link = g_list_next(link);
 	}
