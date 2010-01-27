@@ -33,16 +33,18 @@
 
 #include "job.h"
 #include "gebrd.h"
-
-/*
- * Internal functions
- */
+#include "queues.h"
 
 static gboolean job_parse_parameters(struct job *job, GebrGeoXmlParameters * parameters, GebrGeoXmlProgram * program);
+
 static void job_process_finished(GebrCommProcess * process, struct job *job);
-gboolean check_for_readable_file(const gchar * file);
-gboolean check_for_write_permission(const gchar * file);
-gboolean check_for_binary(const gchar * binary);
+
+static gboolean check_for_readable_file(const gchar * file);
+
+static gboolean check_for_write_permission(const gchar * file);
+
+static gboolean check_for_binary(const gchar * binary);
+
 
 static gboolean job_parse_parameter(struct job *job, GebrGeoXmlParameter * parameter, GebrGeoXmlProgram * program)
 {
@@ -228,11 +230,10 @@ static void job_set_status(struct job *job, enum JobStatus status)
 }
 
 /**
- * \internal
  * Change status and notify clients about it
  * \see job_set_status
  */
-static void job_notify_status(struct job *job, enum JobStatus status, const gchar *timestamp)
+void job_notify_status(struct job *job, enum JobStatus status, const gchar *timestamp)
 {
 	GList *link;
 
@@ -253,6 +254,9 @@ static void job_notify_status(struct job *job, enum JobStatus status, const gcha
 
 static void job_set_status_finished(struct job *job)
 {
+	static gint i = 0;
+	g_printf("%d times called\n", i);
+	i++;
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 		gebr_comm_process_free(job->tail_process);
 		job->tail_process = NULL;
@@ -282,6 +286,14 @@ out:		g_io_channel_shutdown(file, FALSE, &error);
 	g_string_assign(job->finish_date, gebr_iso_date());
 
 	job_notify_status(job, (job->user_finished == FALSE) ? JOB_STATUS_FINISHED : JOB_STATUS_CANCELED, job->finish_date->str);
+
+	/* Run next flow on queue */
+	if (gebrd_queues_has_next(job->queue->str)) {
+		gebrd_queues_step_queue(job->queue->str);
+	} else {
+		gebrd_queues_set_queue_busy(job->queue->str, FALSE);
+		gebrd_queues_remove(job->queue->str);
+	}
 }
 
 static void job_process_finished(GebrCommProcess * process, struct job *job)
@@ -416,7 +428,7 @@ enum JobStatus job_translate_status(GString * status)
  * Public functions
  */
 
-gboolean job_new(struct job ** _job, struct client * client, GString * xml)
+gboolean job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml)
 {
 	struct job *job;
 
@@ -437,6 +449,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 		.process = gebr_comm_process_new(),
 		.flow = NULL,
 		.user_finished = FALSE,
+		.run_client = client,
 		.hostname = g_string_new(""),
 		.status_string = g_string_new(""),
 		.jid = job_generate_id(),
@@ -446,7 +459,8 @@ gboolean job_new(struct job ** _job, struct client * client, GString * xml)
 		.issues = g_string_new(""),
 		.cmd_line = g_string_new(""),
 		.output = g_string_new(""),
-		.queue  = g_string_new(""),
+		.queue  = g_string_new(queue->str),
+		.moab_account = g_string_new(account->str),
 		.moab_jid = g_string_new("")
 	};
 	*_job = job;
@@ -676,7 +690,7 @@ void job_free(struct job *job)
 	g_free(job);
 }
 
-void job_run_flow(struct job *job, struct client *client, GString * account, GString * queue)
+void job_run_flow(struct job *job)
 {
 	GString *cmd_line;
 	GebrGeoXmlSequence *program;
@@ -687,21 +701,20 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 	/* initialization */
 	cmd_line = g_string_new(NULL);
 	locale_str = g_filename_from_utf8(job->cmd_line->str, -1, NULL, &bytes_written, NULL);
-	g_string_assign(job->queue, queue->str);
 
 	/* command-line */
-	if (client->display->len) {
+	if (job->run_client->display->len) {
 		GString *to_quote;
 
 		to_quote = g_string_new(NULL);
-		if (client->server_location == GEBR_COMM_SERVER_LOCATION_LOCAL){
-			g_string_printf(to_quote, "export DISPLAY=%s; %s", client->display->str, locale_str);
+		if (job->run_client->server_location == GEBR_COMM_SERVER_LOCATION_LOCAL){
+			g_string_printf(to_quote, "export DISPLAY=%s; %s", job->run_client->display->str, locale_str);
 			quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
 		}
 		else{
-			g_string_printf(to_quote, "export DISPLAY=127.0.0.1%s; %s", client->display->str, locale_str);
+			g_string_printf(to_quote, "export DISPLAY=127.0.0.1%s; %s", job->run_client->display->str, locale_str);
 			quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
@@ -727,7 +740,7 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 
 		script = g_shell_quote(cmd_line->str);
 		moab_script = g_string_new(NULL);
-		g_string_printf(moab_script, "echo %s | msub -A '%s' -q '%s' -k oe -j oe", script, account->str, queue->str);
+		g_string_printf(moab_script, "echo %s | msub -A '%s' -q '%s' -k oe -j oe", script, job->moab_account->str, job->queue->str);
 		moab_quoted = g_shell_quote(moab_script->str);
 		g_string_printf(cmd_line, "bash -l -c %s", moab_quoted);
 		g_spawn_command_line_sync(cmd_line->str, &standard_output, &standard_error, &exit_status, &error);
@@ -767,7 +780,7 @@ void job_run_flow(struct job *job, struct client *client, GString * account, GSt
 	}
 
 	gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
-		      client->protocol->hostname->str, cmd_line->str);
+		      job->run_client->protocol->hostname->str, cmd_line->str);
 	gebrd.jobs = g_list_append(gebrd.jobs, job);
 	
 	/* frees */
@@ -851,19 +864,15 @@ void job_send_clients_job_notify(struct job *job)
 	}
 }
 
-gchar * job_get_queue_list()
-{
-}
-
 /* Several tests to ensure flow executability */
 /* All of them return TRUE upon error */
-gboolean check_for_readable_file(const gchar * file)
+static gboolean check_for_readable_file(const gchar * file)
 {
 	return (g_access(file, F_OK | R_OK) == -1 ? TRUE : FALSE);
 
 }
 
-gboolean check_for_write_permission(const gchar * file)
+static gboolean check_for_write_permission(const gchar * file)
 {
 
 	gboolean ret;
@@ -876,7 +885,7 @@ gboolean check_for_write_permission(const gchar * file)
 	return ret;
 }
 
-gboolean check_for_binary(const gchar * binary)
+static gboolean check_for_binary(const gchar * binary)
 {
 	return (g_find_program_in_path(binary) == NULL ? TRUE : FALSE);
 }

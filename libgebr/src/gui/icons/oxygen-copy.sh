@@ -5,6 +5,7 @@ ICONS=" \
 	actions/document-import \
 	actions/document-export \
 	actions/document-save-all \
+	actions/mail-queue \
 	actions/edit-clear \
 	actions/folder-new \
 	actions/svn_add \

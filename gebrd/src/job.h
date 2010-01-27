@@ -29,6 +29,7 @@ struct job {
 	gboolean user_finished;
 
 	/* the hostname of the client that ran it */
+	struct client * run_client;
 	GString *hostname;
 	GString *jid;
 	GString *title;
@@ -40,6 +41,7 @@ struct job {
 	GString *queue;
 
 	/* Moab stuff */
+	GString *moab_account;
 	GString *moab_jid;
 	GebrCommProcess *tail_process;
 	
@@ -54,11 +56,11 @@ struct job {
 	GString * status_string;
 };
 
-gboolean job_new(struct job **_job, struct client *client, GString * xml);
+gboolean job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml);
 
 void job_free(struct job *job);
 
-void job_run_flow(struct job *job, struct client *client, GString * account, GString * queue);
+void job_run_flow(struct job *job);
 
 struct job *job_find(GString * jid);
 
@@ -72,6 +74,8 @@ void job_list(struct client *client);
 
 void job_send_clients_job_notify(struct job *job);
 
-gchar * job_get_queue_list();
+gchar * job_queue_get_list();
+
+void job_notify_status(struct job *job, enum JobStatus status, const gchar *timestamp);
 
 #endif				//__JOB_H

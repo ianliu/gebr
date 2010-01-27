@@ -20,13 +20,17 @@ gebrd_SOURCES = \
 	gebrd.c \
 	server.c \
 	client.c \
-	job.c
+	job.c \
+	job-queue.c \
+	queues.c \
 noinst_HEADERS = \
 	gebrd.h \
 	server.h \
 	client.h \
 	job.h \
-	macros.h
+	macros.h \
+	job-queue.h \
+	queues.h \
 EXTRA_DIST = $(noinst_HEADERS)
 
 INCLUDES = \

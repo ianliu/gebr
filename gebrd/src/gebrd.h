@@ -44,6 +44,7 @@ struct gebrd {
 	gchar hostname[256];
 
 	GString *run_filename;
+	GHashTable *queues;
 
 	/**
 	 * Options passed through command line

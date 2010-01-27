@@ -41,6 +41,8 @@
 #include "gebrd.h"
 #include "job.h"
 #include "client.h"
+#include "job-queue.h"
+#include "queues.h"
 
 
 /*
@@ -133,6 +135,8 @@ gboolean server_init(void)
 
 	/* client list structure */
 	gebrd.clients = NULL;
+	gebrd.queues = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal,
+					     (GDestroyNotify)g_free, (GDestroyNotify)gebrd_job_queue_free);
 
 	/* success */
 	ret = TRUE;
@@ -262,7 +266,7 @@ gboolean server_parse_client_messages(struct client *client)
 				server_type = "moab";
 			} else {
 				gchar * queue_list_str;
-				queue_list_str = job_get_queue_list();
+				queue_list_str = gebrd_queues_get_names();
 				g_string_assign(queue_list, queue_list_str);
 				g_free(queue_list_str);
 				server_type = "regular";
@@ -304,9 +308,14 @@ gboolean server_parse_client_messages(struct client *client)
 			queue = g_list_nth_data(arguments, 2);
 
 			/* try to run and send return */
-			if ((success = job_new(&job, client, xml)) == TRUE){
-				g_string_assign(job->queue, queue->str); 
-				job_run_flow(job, client, account, queue);
+			if ((success = job_new(&job, client, queue, account, xml)) == TRUE) {
+				gebrd_queues_add_job_to(queue->str, job);
+				if (!gebrd_queues_is_queue_busy(queue->str)) {
+					gebrd_queues_set_queue_busy(queue->str, TRUE);
+					gebrd_queues_step_queue(queue->str);
+				} else {
+					job_notify_status(job, JOB_STATUS_QUEUED, gebr_iso_date());
+				}
 			}
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
 						     gebr_comm_protocol_defs.ret_def, 9, job->jid->str,
