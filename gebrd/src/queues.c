@@ -36,14 +36,17 @@ void gebrd_queues_remove(const gchar * queue)
 	g_hash_table_remove(gebrd.queues, queue);
 }
 
+
 gchar * gebrd_queues_get_names()
 {
-	GList * list;
 	GString * string;
-	list = g_hash_table_get_keys(gebrd.queues);
 	string = g_string_new(NULL);
-	for (; list; list = g_list_next(list))
-		g_string_append_printf(string, "%s,", (gchar*)list->data);
+
+	void gebrd_queues_iter(const gchar * key, const gchar * value, GString * string) {
+		g_string_append_printf(string, "%s,", key);
+	}
+
+	g_hash_table_foreach(gebrd.queues, (GHFunc)gebrd_queues_iter, string);
 	string->str[string->len-1] = '\0';
 	return g_string_free(string, FALSE);
 }
