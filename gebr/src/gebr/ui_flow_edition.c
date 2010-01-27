@@ -115,7 +115,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 
 	frame = gtk_frame_new(NULL);
 	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
-	label = gtk_label_new_with_mnemonic(_("Queues"));
+	label = gtk_label_new_with_mnemonic(_("Queue"));
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
 	ui_flow_edition->queue_bin = GTK_BIN(alignment);
 	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
