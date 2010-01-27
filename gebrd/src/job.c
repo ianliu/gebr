@@ -700,10 +700,10 @@ void job_run_flow(struct job *job)
 	gchar *locale_str;
 	gsize __attribute__ ((unused)) bytes_written;
 	gchar * quoted;
-	gboolean runned;
+	gboolean may_run;
 
 	/* initialization */
-	runned = TRUE;
+	may_run = TRUE;
 	cmd_line = g_string_new(NULL);
 	locale_str = g_filename_from_utf8(job->cmd_line->str, -1, NULL, &bytes_written, NULL);
 
@@ -750,27 +750,32 @@ void job_run_flow(struct job *job)
 		moab_quoted = g_shell_quote(moab_script->str);
 		g_string_printf(cmd_line, "bash -l -c %s", moab_quoted);
 		if (!g_spawn_command_line_sync(cmd_line->str, &standard_output, &standard_error, &exit_status, &error)) {
-			runned = FALSE;
+			may_run = FALSE;
 			job_set_status(job, JOB_STATUS_FAILED);
-			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server"));
+			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server.\n"));
 			goto out;
 		}
 		exit_code = WEXITSTATUS(exit_status);
-		if (exit_code) {
-			runned = FALSE;
+		if (exit_code || (standard_error != NULL && strlen(standard_error))) {
+			may_run = FALSE;
 			job_set_status(job, JOB_STATUS_FAILED);
-			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server: %s"), standard_error);
+			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server: %s.\n"), standard_error);
 			goto out2;
 		}
 
 		/* The stdout is the {job id} from MOAB. */
-		gchar ** moab_id;
-		moab_id = g_strsplit(standard_output, "\n", 0);
-		g_string_assign(job->moab_jid, moab_id[1]);
-		g_strfreev(moab_id);
+		guint moab_id = 0;
+		sscanf(standard_output, "%u", &moab_id);
+		if (!moab_id) {
+			may_run = FALSE;
+			job_set_status(job, JOB_STATUS_FAILED);
+			g_string_append_printf(job->issues, _("Cannot get MOAB job id.\n"));
+			goto out2;
+		}
+		g_string_printf(job->moab_jid, "%u", moab_id);
 
 		/* run command to get script output */
-		g_string_printf(cmd_line, "bash -c \"touch $HOME/STDIN.o%s; tail -s 0.1 -f $HOME/STDIN.o%s\"", moab_id[1], moab_id[1]);
+		g_string_printf(cmd_line, "bash -c \"touch $HOME/STDIN.o%s; tail -s 0.1 -f $HOME/STDIN.o%s\"", job->moab_jid->str, job->moab_jid->str);
 		job->tail_process = gebr_comm_process_new();
 		g_signal_connect(job->tail_process, "ready-read-stdout", G_CALLBACK(moab_process_read_stdout), job);
 		gebr_comm_process_start(job->tail_process, cmd_line);
@@ -797,7 +802,7 @@ out:		g_free(moab_quoted);
 			gebr_comm_process_close_stdin(job->process);
 	}
 
-	if (runned) {
+	if (may_run) {
 		gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
 			      job->run_client->protocol->hostname->str, cmd_line->str);
 		gebrd.jobs = g_list_append(gebrd.jobs, job);
@@ -889,7 +894,6 @@ void job_send_clients_job_notify(struct job *job)
 static gboolean check_for_readable_file(const gchar * file)
 {
 	return (g_access(file, F_OK | R_OK) == -1 ? TRUE : FALSE);
-
 }
 
 static gboolean check_for_write_permission(const gchar * file)
