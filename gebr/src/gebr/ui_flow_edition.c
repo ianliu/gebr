@@ -669,7 +669,6 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 {
 	struct server *server;
 	GtkTreeIter iter;
-	GtkTreeIter iter_queue;
 	GtkWidget *queue_combobox;
 	GtkCellRenderer *renderer;
 
@@ -681,15 +680,16 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter, SERVER_POINTER, &server, -1);
 
-	queue_combobox = server->type == GEBR_COMM_SERVER_TYPE_REGULAR?
-		gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(server->queues_model), 0):
-		gtk_combo_box_new_with_model(GTK_TREE_MODEL(server->queues_model));
+	if (server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
+		queue_combobox = gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(server->queues_model), 0);
+	} else {
+		queue_combobox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(server->queues_model));
+		renderer = gtk_cell_renderer_text_new();
+		gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(queue_combobox), renderer, TRUE);
+		gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(queue_combobox), renderer, "text", 0);
+	}
 	gebr.ui_flow_edition->queue_combobox = queue_combobox;
-	renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(queue_combobox), renderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(queue_combobox), renderer, "text", 0);
-	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(server->queues_model), &iter_queue))
-		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(queue_combobox), &iter_queue);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(queue_combobox), 0);
 
 	if (gtk_bin_get_child(gebr.ui_flow_edition->queue_bin))
 		gtk_widget_destroy(gtk_bin_get_child(gebr.ui_flow_edition->queue_bin));

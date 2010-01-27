@@ -72,8 +72,12 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 					gtk_list_store_set(server->accounts_model, &iter, 0, accounts[i], -1);
 				}
 
-				gtk_list_store_append(server->queues_model, &iter);
-				gtk_list_store_set(server->queues_model, &iter, 0, _("Immediately"), -1);
+
+				if (server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
+					gtk_list_store_append(server->queues_model, &iter);
+					gtk_list_store_set(server->queues_model, &iter, 0, _("Immediately"), -1);
+				}
+
 				for (gint i = 0; queues[i]; i++) {
 					gtk_list_store_append(server->queues_model, &iter);
 					gtk_list_store_set(server->queues_model, &iter, 0, queues[i], -1);
