@@ -449,8 +449,9 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 		.process = gebr_comm_process_new(),
 		.flow = NULL,
 		.user_finished = FALSE,
-		.run_client = client,
-		.hostname = g_string_new(""),
+		.hostname = g_string_new(client->protocol->hostname->str),
+		.display = g_string_new(client->display->str),
+		.server_location = client->server_location,
 		.status_string = g_string_new(""),
 		.jid = job_generate_id(),
 		.title = g_string_new(""),
@@ -651,7 +652,6 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 
  out:
 	/* hostname and flow title */
-	g_string_assign(job->hostname, client->protocol->hostname->str);
 	g_string_assign(job->title, gebr_geoxml_document_get_title(document));
 	/* set the start date */
 	g_string_assign(job->start_date, gebr_iso_date());
@@ -705,18 +705,18 @@ void job_run_flow(struct job *job)
 	locale_str = g_filename_from_utf8(job->cmd_line->str, -1, NULL, &bytes_written, NULL);
 
 	/* command-line */
-	if (job->run_client->display->len) {
+	if (job->display->len) {
 		GString *to_quote;
 
 		to_quote = g_string_new(NULL);
-		if (job->run_client->server_location == GEBR_COMM_SERVER_LOCATION_LOCAL){
-			g_string_printf(to_quote, "export DISPLAY=%s; %s", job->run_client->display->str, locale_str);
+		if (job->server_location == GEBR_COMM_SERVER_LOCATION_LOCAL){
+			g_string_printf(to_quote, "export DISPLAY=%s; %s", job->display->str, locale_str);
 			quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
 		}
 		else{
-			g_string_printf(to_quote, "export DISPLAY=127.0.0.1%s; %s", job->run_client->display->str, locale_str);
+			g_string_printf(to_quote, "export DISPLAY=127.0.0.1%s; %s", job->display->str, locale_str);
 			quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
@@ -789,7 +789,7 @@ out:		g_free(moab_quoted);
 		g_signal_connect(job->process, "finished", G_CALLBACK(job_process_finished), job);
 
 		gebr_comm_process_start(job->process, cmd_line);
-		job_set_status(job, JOB_STATUS_RUNNING);
+		job_notify_status(job, JOB_STATUS_RUNNING, "");
 
 		/* for program that waits stdin EOF (like sfmath) */
 		gebr_geoxml_flow_get_program(job->flow, &program, 0);
@@ -799,7 +799,7 @@ out:		g_free(moab_quoted);
 
 	if (may_run) {
 		gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
-			      job->run_client->protocol->hostname->str, cmd_line->str);
+			      job->hostname->str, cmd_line->str);
 		gebrd.jobs = g_list_append(gebrd.jobs, job);
 	}
 	

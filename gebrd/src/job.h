@@ -28,9 +28,12 @@ struct job {
 	GebrGeoXmlFlow *flow;
 	gboolean user_finished;
 
-	/* the hostname of the client that ran it */
-	struct client * run_client;
+	/* client stuff */
 	GString *hostname;
+	GString *display;
+	GebrCommServerLocation server_location;
+
+	/* the hostname of the client that ran it */
 	GString *jid;
 	GString *title;
 	GString *start_date;

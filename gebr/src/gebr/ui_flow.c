@@ -582,8 +582,38 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB)
 		if (!moab_setup_ui(&config->account, server))
 			return;
-	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter)) {
+
+	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB
+	    && gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter)) {
 		gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, &config->class, -1);
+	} else {
+		gboolean has_queue = FALSE;
+
+		g_printf("%d %s \n", gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)),
+			 gtk_combo_box_get_active_text(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)));
+		if (gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)) == 0)
+			config->class = g_strdup("");
+		else
+			config->class = gtk_combo_box_get_active_text(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox));
+
+		if (strlen(config->class) == 0) {
+			gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
+		} else {
+			gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(server->queues_model)) {
+				gchar * queue;
+				gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, &queue, -1);
+				if (strcmp(config->class, queue) == 0) {
+					has_queue = TRUE;
+					g_free(queue);
+					break;
+				}
+				g_free(queue);
+			}
+			if (!has_queue) {
+				gtk_list_store_append(server->queues_model, &iter);
+				gtk_list_store_set(server->queues_model, &iter, 0, config->class, -1);
+			}
+		}
 	}
 
 	flow_run(server, config);
