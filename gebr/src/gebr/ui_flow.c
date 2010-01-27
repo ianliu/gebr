@@ -580,8 +580,11 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	config->account = config->class = NULL;
 
 	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB)
-		if (!moab_setup_ui(&config->account, &config->class, server))
+		if (!moab_setup_ui(&config->account, server))
 			return;
+	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter)) {
+		gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, &config->class, -1);
+	}
 
 	flow_run(server, config);
 	g_free(config->account);

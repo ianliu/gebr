@@ -39,6 +39,8 @@ enum {
 struct ui_flow_edition {
 	GtkWidget *widget;
 	GtkWidget *server_combobox;
+	GtkWidget *queue_combobox;
+	GtkBin *queue_bin;
 
 	GtkTreeIter input_iter;
 	GtkTreeIter output_iter;

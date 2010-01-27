@@ -19,7 +19,7 @@
 #include <libgebr/intl.h>
 #include "ui_moab.h"
 
-gboolean moab_setup_ui(gchar ** char_account, gchar ** char_class, struct server * server)
+gboolean moab_setup_ui(gchar ** char_account, struct server * server)
 {
 	gboolean ret;
 	GtkWidget * box;
@@ -27,8 +27,6 @@ gboolean moab_setup_ui(gchar ** char_account, gchar ** char_class, struct server
 	GtkWidget * dialog;
 	GtkWidget * label;
 	GtkWidget * cb_account;
-	GtkWidget * cb_classes;
-	GtkSizeGroup * group;
 	GtkCellRenderer * cell;
 	GtkTreeIter iter;
 
@@ -40,8 +38,6 @@ gboolean moab_setup_ui(gchar ** char_account, gchar ** char_class, struct server
 					     NULL);
 	box = GTK_DIALOG(dialog)->vbox;
 
-	group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-
 	cb_account = gtk_combo_box_new();
 	cell = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cb_account), cell, TRUE);
@@ -52,24 +48,9 @@ gboolean moab_setup_ui(gchar ** char_account, gchar ** char_class, struct server
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), cb_account, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, TRUE, 0);
-	gtk_size_group_add_widget(group, label);
-
-	cb_classes = gtk_combo_box_new();
-	cell = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cb_classes), cell, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cb_classes), cell, "text", 0);
-	hbox= gtk_hbox_new(FALSE, 5);
-
-	label = gtk_label_new(_("Queue"));
-	gtk_box_pack_start(GTK_BOX(hbox),label, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), cb_classes, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, TRUE, 0);
-	gtk_size_group_add_widget(group, label);
 
 	gtk_combo_box_set_model(GTK_COMBO_BOX(cb_account), GTK_TREE_MODEL(server->accounts_model));
 	gtk_combo_box_set_active(GTK_COMBO_BOX(cb_account), 0);
-	gtk_combo_box_set_model(GTK_COMBO_BOX(cb_classes), GTK_TREE_MODEL(server->queues_model));
-	gtk_combo_box_set_active(GTK_COMBO_BOX(cb_classes), 0);
 
 	gtk_widget_show_all(dialog);
 
@@ -80,9 +61,6 @@ gboolean moab_setup_ui(gchar ** char_account, gchar ** char_class, struct server
 
 	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(cb_account), &iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(server->accounts_model), &iter, 0, char_account, -1);
-
-	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(cb_classes), &iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, char_class, -1);
 out:
 	gtk_widget_destroy(dialog);
 	return ret;

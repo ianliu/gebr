@@ -72,6 +72,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 
 	GtkWidget *hpanel;
 	GtkWidget *frame;
+	GtkWidget *alignment;
 	GtkWidget *label;
 	GtkWidget *left_vbox;
 	GtkWidget *scrolled_window;
@@ -93,24 +94,33 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	 */
 	left_vbox = gtk_vbox_new(FALSE, 5);
 	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, FALSE, FALSE);
-	label = gtk_label_new_with_mnemonic(_("Server"));
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
-	gtk_box_pack_start(GTK_BOX(left_vbox), frame, FALSE, TRUE, 0);
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	combobox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(gebr.ui_server_list->common.store));
-	ui_flow_edition->server_combobox = combobox;
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, FALSE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "pixbuf", SERVER_STATUS_ICON);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "text", SERVER_NAME);
+	frame = gtk_frame_new(NULL);
+	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
+	label = gtk_label_new_with_mnemonic(_("Server"));
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
+	ui_flow_edition->server_combobox = combobox;
+	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
+	gtk_container_add(GTK_CONTAINER(frame), alignment);
+	gtk_container_add(GTK_CONTAINER(alignment), combobox);
+	gtk_box_pack_start(GTK_BOX(left_vbox), frame, FALSE, TRUE, 0);
 	g_signal_connect(combobox, "changed", G_CALLBACK(flow_edition_on_combobox_changed), NULL);
-	gtk_box_pack_start(GTK_BOX(vbox), combobox, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), gtk_hseparator_new(), FALSE, TRUE, 0);
+
+	frame = gtk_frame_new(NULL);
+	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
+	label = gtk_label_new_with_mnemonic(_("Queues"));
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
+	ui_flow_edition->queue_bin = GTK_BIN(alignment);
+	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
+	gtk_container_add(GTK_CONTAINER(frame), alignment);
+	gtk_box_pack_start(GTK_BOX(left_vbox), frame, FALSE, TRUE, 0);
 
 	frame = gtk_frame_new(_("Flow sequence"));
 	gtk_box_pack_start(GTK_BOX(left_vbox), frame, TRUE, TRUE, 0);
@@ -659,6 +669,9 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 {
 	struct server *server;
 	GtkTreeIter iter;
+	GtkTreeIter iter_queue;
+	GtkWidget *queue_combobox;
+	GtkCellRenderer *renderer;
 
 	gebr.flow_server = NULL;
 	if (!flow_browse_get_selected(NULL, TRUE))
@@ -667,6 +680,24 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter, SERVER_POINTER, &server, -1);
+
+	if (server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
+		queue_combobox = gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(server->queues_model), 0);
+		g_signal_connect();
+	} else {
+		queue_combobox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(server->queues_model));
+	}
+	gebr.ui_flow_edition->queue_combobox = queue_combobox;
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(queue_combobox), renderer, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(queue_combobox), renderer, "text", 0);
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(server->queues_model), &iter_queue))
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(queue_combobox), &iter_queue);
+
+	if (gtk_bin_get_child(gebr.ui_flow_edition->queue_bin))
+		gtk_widget_destroy(gtk_bin_get_child(gebr.ui_flow_edition->queue_bin));
+	gtk_container_add(GTK_CONTAINER(gebr.ui_flow_edition->queue_bin), queue_combobox);
+	gtk_widget_show(queue_combobox);
 
 	/* select the first server entry, which is the last edited one */
 	gebr.flow_server = gebr_geoxml_flow_servers_query(gebr.flow, server->comm->address->str, NULL, NULL, NULL);
