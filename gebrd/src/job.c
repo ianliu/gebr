@@ -15,8 +15,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
+#define _XOPEN_SOURCE
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -699,8 +700,10 @@ void job_run_flow(struct job *job)
 	gchar *locale_str;
 	gsize __attribute__ ((unused)) bytes_written;
 	gchar * quoted;
+	gboolean runned;
 
 	/* initialization */
+	runned = TRUE;
 	cmd_line = g_string_new(NULL);
 	locale_str = g_filename_from_utf8(job->cmd_line->str, -1, NULL, &bytes_written, NULL);
 
@@ -737,6 +740,7 @@ void job_run_flow(struct job *job)
 		gchar * moab_quoted;
 		gchar * standard_output, * standard_error;
 		gint exit_status;
+		guint8 exit_code;
 		GError * error = NULL;
 		GString * moab_script;
 
@@ -745,7 +749,19 @@ void job_run_flow(struct job *job)
 		g_string_printf(moab_script, "echo %s | msub -A '%s' -q '%s' -k oe -j oe", script, job->moab_account->str, job->queue->str);
 		moab_quoted = g_shell_quote(moab_script->str);
 		g_string_printf(cmd_line, "bash -l -c %s", moab_quoted);
-		g_spawn_command_line_sync(cmd_line->str, &standard_output, &standard_error, &exit_status, &error);
+		if (!g_spawn_command_line_sync(cmd_line->str, &standard_output, &standard_error, &exit_status, &error)) {
+			runned = FALSE;
+			job_set_status(job, JOB_STATUS_FAILED);
+			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server"));
+			goto out;
+		}
+		exit_code = WEXITSTATUS(exit_status);
+		if (exit_code) {
+			runned = FALSE;
+			job_set_status(job, JOB_STATUS_FAILED);
+			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server: %s"), standard_error);
+			goto out2;
+		}
 
 		/* The stdout is the {job id} from MOAB. */
 		gchar ** moab_id;
@@ -759,14 +775,14 @@ void job_run_flow(struct job *job)
 		g_signal_connect(job->tail_process, "ready-read-stdout", G_CALLBACK(moab_process_read_stdout), job);
 		gebr_comm_process_start(job->tail_process, cmd_line);
 
-		g_free(moab_quoted);
-		g_string_free(moab_script, TRUE);
-		g_free(script);
-		g_free(standard_output);
-		g_free(standard_error);
-
 		/* pool for moab status */
 		g_timeout_add(1000, (GSourceFunc)job_moab_checkjob_pooling, job); 
+
+out2:		g_free(standard_output);
+		g_free(standard_error);
+out:		g_free(moab_quoted);
+		g_string_free(moab_script, TRUE);
+		g_free(script);
 	} else {
 		g_signal_connect(job->process, "ready-read-stdout", G_CALLBACK(job_process_read_stdout), job);
 		g_signal_connect(job->process, "ready-read-stderr", G_CALLBACK(job_process_read_stderr), job);
@@ -781,9 +797,11 @@ void job_run_flow(struct job *job)
 			gebr_comm_process_close_stdin(job->process);
 	}
 
-	gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
-		      job->run_client->protocol->hostname->str, cmd_line->str);
-	gebrd.jobs = g_list_append(gebrd.jobs, job);
+	if (runned) {
+		gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
+			      job->run_client->protocol->hostname->str, cmd_line->str);
+		gebrd.jobs = g_list_append(gebrd.jobs, job);
+	}
 	
 	/* frees */
 	g_string_free(cmd_line, TRUE);

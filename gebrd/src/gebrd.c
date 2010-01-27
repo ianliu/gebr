@@ -136,7 +136,9 @@ GebrCommServerType gebrd_get_server_type(void)
 	if (got_type)
 		return server_type;
 
-	if (g_find_program_in_path("msub") != NULL && g_find_program_in_path("mcredctl") != NULL)
+	if (g_find_program_in_path("msub") != NULL &&
+	    g_find_program_in_path("mcredctl") != NULL &&
+	    g_find_program_in_path("checkjob") != NULL)
 		server_type = GEBR_COMM_SERVER_TYPE_MOAB;
 	else 
 		server_type = GEBR_COMM_SERVER_TYPE_REGULAR;
