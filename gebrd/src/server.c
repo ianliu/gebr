@@ -309,7 +309,7 @@ gboolean server_parse_client_messages(struct client *client)
 
 			/* try to run and send return */
 			if ((success = job_new(&job, client, queue, account, xml)) == TRUE) {
-				if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
+				if (queue->len && gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 					gebrd_queues_add_job_to(queue->str, job);
 					if (!gebrd_queues_is_queue_busy(queue->str)) {
 						gebrd_queues_set_queue_busy(queue->str, TRUE);

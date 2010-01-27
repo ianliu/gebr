@@ -255,9 +255,6 @@ void job_notify_status(struct job *job, enum JobStatus status, const gchar *time
 
 static void job_set_status_finished(struct job *job)
 {
-	static gint i = 0;
-	g_printf("%d times called\n", i);
-	i++;
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 		gebr_comm_process_free(job->tail_process);
 		job->tail_process = NULL;
