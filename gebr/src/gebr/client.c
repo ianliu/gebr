@@ -64,6 +64,9 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				server->type = gebr_comm_server_get_id(((GString*)g_list_nth_data(arguments, 3))->str);
 				accounts = g_strsplit(((GString *)g_list_nth_data(arguments, 4))->str, ",", 0);
 
+				gtk_list_store_clear(server->accounts_model);
+				gtk_list_store_clear(server->queues_model);
+
 				for (gint i = 0; accounts[i]; i++) {
 					gtk_list_store_append(server->accounts_model, &iter);
 					gtk_list_store_set(server->accounts_model, &iter, 0, accounts[i], -1);
