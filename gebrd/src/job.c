@@ -773,7 +773,7 @@ void job_run_flow(struct job *job)
 		g_string_printf(job->moab_jid, "%u", moab_id);
 
 		/* run command to get script output */
-		g_string_printf(cmd_line, "bash -c \"touch $HOME/STDIN.o%s; tail -s 0.1 -f $HOME/STDIN.o%s\"", job->moab_jid->str, job->moab_jid->str);
+		g_string_printf(cmd_line, "bash -c \"touch $HOME/STDIN.o%s; tail -f $HOME/STDIN.o%s\"", job->moab_jid->str, job->moab_jid->str);
 		job->tail_process = gebr_comm_process_new();
 		g_signal_connect(job->tail_process, "ready-read-stdout", G_CALLBACK(moab_process_read_stdout), job);
 		gebr_comm_process_start(job->tail_process, cmd_line);
