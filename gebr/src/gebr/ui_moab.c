@@ -67,7 +67,9 @@ gboolean moab_setup_ui(gchar ** char_account, gchar ** char_class, struct server
 	gtk_size_group_add_widget(group, label);
 
 	gtk_combo_box_set_model(GTK_COMBO_BOX(cb_account), GTK_TREE_MODEL(server->accounts_model));
+	gtk_combo_box_set_active(GTK_COMBO_BOX(cb_account), 0);
 	gtk_combo_box_set_model(GTK_COMBO_BOX(cb_classes), GTK_TREE_MODEL(server->queues_model));
+	gtk_combo_box_set_active(GTK_COMBO_BOX(cb_classes), 0);
 
 	gtk_widget_show_all(dialog);
 
