@@ -271,6 +271,8 @@ static void job_set_status_finished(struct job *job)
 		output = g_string_new(NULL);
 		g_string_printf(output, "%s/STDIN.o%s", getenv("HOME"), job->moab_jid->str);
 		file = g_io_channel_new_file(output->str, "r", &error);
+		if (file == NULL)
+			goto out2;
 		if (g_io_channel_seek_position(file, job->output->len, G_SEEK_SET, &error) == G_IO_STATUS_EOF)
 			goto out;
 		g_io_channel_read_to_end(file, &buffer, &length, &error);
@@ -279,7 +281,7 @@ static void job_set_status_finished(struct job *job)
 
 		g_free(buffer);
 out:		g_io_channel_shutdown(file, FALSE, &error);
-		g_string_free(output, TRUE);
+out2:		g_string_free(output, TRUE);
 	}
 
 	/* set the finish date */
@@ -874,7 +876,6 @@ static gboolean check_for_readable_file(const gchar * file)
 
 static gboolean check_for_write_permission(const gchar * file)
 {
-
 	gboolean ret;
 	gchar *dir;
 
