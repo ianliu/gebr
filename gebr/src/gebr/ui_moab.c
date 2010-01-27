@@ -60,7 +60,7 @@ gboolean moab_setup_ui(gchar ** char_account, gchar ** char_class, struct server
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cb_classes), cell, "text", 0);
 	hbox= gtk_hbox_new(FALSE, 5);
 
-	label = gtk_label_new(_("Classes"));
+	label = gtk_label_new(_("Queue"));
 	gtk_box_pack_start(GTK_BOX(hbox),label, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), cb_classes, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, TRUE, 0);
