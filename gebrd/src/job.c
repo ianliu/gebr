@@ -756,7 +756,7 @@ void job_run_flow(struct job *job)
 			goto out;
 		}
 		exit_code = WEXITSTATUS(exit_status);
-		if (exit_code || (standard_error != NULL && strlen(standard_error))) {
+		if (exit_code) {
 			may_run = FALSE;
 			job_set_status(job, JOB_STATUS_FAILED);
 			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server: %s.\n"), standard_error);
