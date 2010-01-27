@@ -740,7 +740,6 @@ void job_run_flow(struct job *job)
 		gchar * moab_quoted;
 		gchar * standard_output, * standard_error;
 		gint exit_status;
-		guint8 exit_code;
 		GError * error = NULL;
 		GString * moab_script;
 
@@ -755,8 +754,7 @@ void job_run_flow(struct job *job)
 			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server.\n"));
 			goto out;
 		}
-		exit_code = WEXITSTATUS(exit_status);
-		if (exit_code) {
+		if (standard_error != NULL && strlen(standard_error)) {
 			may_run = FALSE;
 			job_set_status(job, JOB_STATUS_FAILED);
 			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server: %s.\n"), standard_error);
