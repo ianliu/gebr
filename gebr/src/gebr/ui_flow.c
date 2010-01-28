@@ -16,10 +16,6 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-/*
- * File: ui_flow.c
- */
-
 #include <string.h>
 
 #include <libgebr/intl.h>
@@ -37,10 +33,6 @@
 #include "ui_moab.h"
 
 #define GEBR_FLOW_UI_RESPONSE_EXECUTE 1
-
-/*
- * Declarations
- */
 
 static void flow_io_populate(struct ui_flow_io *ui_flow_io);
 
@@ -75,20 +67,6 @@ on_tree_view_tooltip(GtkTreeView * treeview,
 		     gint x, gint y, gboolean keyboard_mode, GtkTooltip * tooltip, struct ui_flow_io *ui_flow_io);
 #endif
 
-/*
- * Section: Public
- * Public functions.
- */
-
-/*
- * Function: flow_io_setup_ui
- * A dialog for user selection of the flow IO files
- *
- * Return:
- * The structure containing relevant data.
- * It will be automatically freed when the
- * dialog closes.
- */
 void flow_io_setup_ui(gboolean executable)
 {
 	struct ui_flow_io *ui_flow_io;
@@ -217,42 +195,17 @@ void flow_io_setup_ui(gboolean executable)
 	g_free(ui_flow_io);
 }
 
-/**
- * flow_io_get_selected:
- * @ui_flow_io: The structure containing the #GtkTreeView.
- * @iter: The iterator that will point to the selected item.
- *
- * Makes @iter point to the selected item in the #GtkTreeView
- * of @ui_flow_io structure.
- *
- * Returns: %TRUE if there is a selection, %FALSE otherwise.
- * In case of %FALSE, @iter is invalid.
- */
 gboolean flow_io_get_selected(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
 {
 	return gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_io->treeview)), NULL,
 					       iter);
 }
 
-/**
- * flow_io_select_iter:
- * @ui_flow_io: The structure containing the #GtkTreeView.
- * @iter: A valid iterator the @ui_flow_io 's model to.
- *
- * Sets the selection of the #GtkTreeView of @ui_flow_io to
- * @iter. You must garantee that @iter is valid.
- */
 void flow_io_select_iter(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
 {
 	gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_io->treeview)), iter);
 }
 
-/**
- * customize_paths_from_line:
- * @chooser: A #GtkFileChooser.
- *
- * Set line's path to input/output/error files.
- */
 void flow_io_customized_paths_from_line(GtkFileChooser * chooser)
 {
 	GError *error;
@@ -277,10 +230,6 @@ void flow_io_customized_paths_from_line(GtkFileChooser * chooser)
 	}
 }
 
-/*
- * flow_io_set_server:
- * Write server to current flow
- */
 void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gchar * output, const gchar * error)
 {
 	struct server *server;
@@ -374,14 +323,53 @@ void flow_io_simple_setup_ui(gboolean focus_output)
  out:	gtk_widget_destroy(dialog);
 }
 
-/**
- * flow_fast_run:
- */
 void flow_fast_run()
 {
 	flow_io_run(gebr.flow_server);
 }
 
+void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean select_last)
+{
+	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
+		GtkTreeIter iter;
+		const gchar *status;
+
+		GdkPixbuf *pixbuf;
+
+		status = gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program));
+
+		if (strcmp(status, "unconfigured") == 0)
+			pixbuf = gebr.pixmaps.stock_warning;
+		else if (strcmp(status, "configured") == 0)
+			pixbuf = gebr.pixmaps.stock_apply;
+		else if (strcmp(status, "disabled") == 0)
+			pixbuf = gebr.pixmaps.stock_cancel;
+		else {
+			gebr_message(GEBR_LOG_WARNING, TRUE, TRUE, _("Unknown flow program '%s' status"),
+				     gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
+			pixbuf = NULL;
+		}
+
+		/* Add to the GUI */
+		gtk_list_store_insert_before(gebr.ui_flow_edition->fseq_store,
+					     &iter, &gebr.ui_flow_edition->output_iter);
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
+				   FSEQ_TITLE_COLUMN, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)),
+				   FSEQ_STATUS_COLUMN, pixbuf,
+				   FSEQ_GEBR_GEOXML_POINTER, program, -1);
+
+		if (select_last)
+			flow_edition_select_component_iter(&iter);
+	}
+}
+
+/**
+ * \internal
+ * Inserts a new entry in Server/IO model, respecting the special new row position.
+ * @param ui_flow_io The structure containing relevant data.
+ * @param flow_server The server/IO configuration to be added.
+ * @param iter An emtpy iterator that will point to the newly inserted row.
+ */
 static void flow_io_insert(struct ui_flow_io *ui_flow_io, GebrGeoXmlFlowServer * flow_server, GtkTreeIter * iter)
 {
 	gchar *name;
@@ -430,57 +418,9 @@ static void flow_io_insert(struct ui_flow_io *ui_flow_io, GebrGeoXmlFlowServer *
 }
 
 /**
- * flow_add_program_sequence_to_view:
- * @program:
- * @select_last:
- *
- * Add @program sequence (from it to the end of sequence) to flow sequence view.
- */
-void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean select_last)
-{
-	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
-		GtkTreeIter iter;
-		const gchar *status;
-
-		GdkPixbuf *pixbuf;
-
-		status = gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program));
-
-		if (strcmp(status, "unconfigured") == 0)
-			pixbuf = gebr.pixmaps.stock_warning;
-		else if (strcmp(status, "configured") == 0)
-			pixbuf = gebr.pixmaps.stock_apply;
-		else if (strcmp(status, "disabled") == 0)
-			pixbuf = gebr.pixmaps.stock_cancel;
-		else {
-			gebr_message(GEBR_LOG_WARNING, TRUE, TRUE, _("Unknown flow program '%s' status"),
-				     gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
-			pixbuf = NULL;
-		}
-
-		/* Add to the GUI */
-		gtk_list_store_insert_before(gebr.ui_flow_edition->fseq_store,
-					     &iter, &gebr.ui_flow_edition->output_iter);
-		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
-				   FSEQ_TITLE_COLUMN, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)),
-				   FSEQ_STATUS_COLUMN, pixbuf,
-				   FSEQ_GEBR_GEOXML_POINTER, program, -1);
-
-		if (select_last)
-			flow_edition_select_component_iter(&iter);
-	}
-}
-
-/*
- * Section: Private
- * Private functions.
- */
-
-/**
- * flow_io_populate:
- * @ui_flow_io: The structure to be filled with data.
- *
+ * \internal
  * Fills the #GtkListStore of @ui_flow_io with data.
+ * @param ui_flow_io The structure to be filled with data.
  */
 static void flow_io_populate(struct ui_flow_io *ui_flow_io)
 {
@@ -512,13 +452,12 @@ static void flow_io_populate(struct ui_flow_io *ui_flow_io)
 }
 
 /**
- * flow_io_actions:
- * @response: The response id sent by the dialog.
- * @ui_flow_io: The structure representing the servers io dialog.
- *
+ * \internal
  * Actions for Flow IO files edition dialog.
  *
- * Returns: %TRUE if the dialog should be destroyed, %FALSE otherwise.
+ * @param response The response id sent by the dialog.
+ * @param ui_flow_io The structure representing the servers io dialog.
+ * @return #TRUE if the dialog should be destroyed, #FALSE otherwise.
  */
 static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io)
 {
@@ -553,7 +492,9 @@ static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io)
 }
 
 /**
- * Check for current server and if its connected, for the queue selected
+ * \internal
+ *
+ * Check for current server and if its connected, for the queue selected.
  */
 static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 {
@@ -636,6 +577,14 @@ err:	g_free(config->account);
 	g_free(config);
 }
 
+/**
+ * \internal
+ * Updates model information based on \p renderer's "column" data and \p new_text.
+ * @param renderer Must have a "column" data (set with g_object_set_data) representing the edited column.
+ * @param path A string path pointing to the edited row.
+ * @param new_text The updated data.
+ * @param ui_flow_io Structure containing relevant data.
+ */
 static void
 on_renderer_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_text, struct ui_flow_io *ui_flow_io)
 {
@@ -677,6 +626,10 @@ on_renderer_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_tex
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 }
 
+/**
+ * \internal
+ * Called upon click on the special row to create a new Server/IO configuration.
+ */
 static void
 on_renderer_combo_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_text, struct ui_flow_io *ui_flow_io)
 {
@@ -718,6 +671,10 @@ on_renderer_combo_edited(GtkCellRendererText * renderer, gchar * path, gchar * n
 					 focus_path, focus_column, focus_cell, TRUE);
 }
 
+/**
+ * \internal
+ * Adds a clickable icon in the cell, when user starts editing it, to fire a #GtkDirectoryChooser.
+ */
 static void
 on_renderer_editing_started(GtkCellRenderer * renderer,
 			    GtkCellEditable * editable, gchar * path, struct ui_flow_io *ui_flow_io)
@@ -748,6 +705,10 @@ on_renderer_editing_started(GtkCellRenderer * renderer,
 	g_signal_connect(editable, "icon-release", G_CALLBACK(on_renderer_entry_icon_release), ui_flow_io);
 }
 
+/**
+ * \internal
+ * Fires a #GtkDirectoryChooser upon a click on icon.
+ */
 static void
 on_renderer_entry_icon_release(GtkEntry * widget,
 			       GtkEntryIconPosition position, GdkEvent * event, struct ui_flow_io *ui_flow_io)
@@ -794,6 +755,10 @@ on_renderer_entry_icon_release(GtkEntry * widget,
  out:	gtk_widget_destroy(dialog);
 }
 
+/**
+ * \internal
+ * Deletes an entry from the model.
+ */
 static void on_delete_server_io_activate(GtkWidget * menu_item, struct ui_flow_io *ui_flow_io)
 {
 	GtkTreeIter iter;
@@ -812,6 +777,10 @@ static void on_delete_server_io_activate(GtkWidget * menu_item, struct ui_flow_i
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 }
 
+/**
+ * \internal
+ * Pops a context menu to perform actions on it, such as delete.
+ */
 static GtkMenu *on_menu_popup(GtkTreeView * treeview, struct ui_flow_io *ui_flow_io)
 {
 	GtkWidget *menu;
@@ -832,6 +801,10 @@ static GtkMenu *on_menu_popup(GtkTreeView * treeview, struct ui_flow_io *ui_flow
 	return GTK_MENU(menu);
 }
 
+/**
+ * \internal
+ * Updates state of the execute button based on connectivity of selected server.
+ */
 static void on_tree_view_cursor_changed(GtkTreeView * treeview, struct ui_flow_io *ui_flow_io)
 {
 	GtkTreeIter iter;
@@ -846,6 +819,10 @@ static void on_tree_view_cursor_changed(GtkTreeView * treeview, struct ui_flow_i
 }
 
 #if GTK_CHECK_VERSION(2,12,0)
+/**
+ * \internal
+ * Shows tooltips for each cell in Server/IO tree view.
+ */
 static gboolean
 on_tree_view_tooltip(GtkTreeView * treeview,
 		     gint x, gint y, gboolean keyboard_tip, GtkTooltip * tooltip, struct ui_flow_io *ui_flow_io)
