@@ -64,14 +64,16 @@ void
 gebr_gui_gtk_tree_view_set_cursor(GtkTreeView * tree_view, GtkTreeIter * iter,
 				  GtkTreeViewColumn * column, gboolean start_editing);
 void gebr_gui_gtk_tree_view_change_cursor_on_row_collapsed(GtkTreeView * tree_view);
-#define gebr_gui_gtk_tree_view_foreach_selected(iter, tree_view) \
-	GList * __list = gebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(tree_view)); \
-	GList * __i = g_list_first(__list); \
-	if (__i != NULL || (g_list_free(__list), 0)) \
-		for (*iter = *(GtkTreeIter*)__i->data; \
-		(__i != NULL && (*iter = *(GtkTreeIter*)__i->data, 1)) || \
-			(g_list_foreach(__list, (GFunc)gtk_tree_iter_free, NULL), g_list_free(__list), 0); \
-		__i = g_list_next(__i))
+#define gebr_gui_gtk_tree_view_foreach_selected_hyg(iter, tree_view, hyg) \
+	GList * __list##hyg = gebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(tree_view)); \
+	GList * __i##hyg = g_list_first(__list##hyg); \
+	if (__i##hyg != NULL || (g_list_free(__list##hyg), 0)) \
+		for (*iter = *(GtkTreeIter*)__i##hyg->data; \
+		(__i##hyg != NULL && (*iter = *(GtkTreeIter*)__i##hyg->data, 1)) || \
+			(g_list_foreach(__list##hyg, (GFunc)gtk_tree_iter_free, NULL), g_list_free(__list##hyg), 0); \
+		__i##hyg = g_list_next(__i##hyg))
+#define gebr_gui_gtk_tree_view_foreach_selected(iter, tree_view) gebr_gui_gtk_tree_view_foreach_selected_hyg(iter, tree_view, nohyg)
+
 
 GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer(GtkTreeViewColumn * column);
 GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkTreeViewColumn * column,

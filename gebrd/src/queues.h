@@ -22,28 +22,31 @@
 
 /**
  * Adds a job at the end of \p queue.
+ * @param queue Name of queue to add \p job.
+ * @param job The job to be added.
  */
 void gebrd_queues_add_job_to(const gchar * queue, struct job * job);
 
 /**
  * Removes a queue and all its jobs.
+ * @param queue Queue to be removed.
  */
 void gebrd_queues_remove(const gchar * queue);
 
 /**
  * Returns a string containing the name of all queues separated by commas.
- * You must <em>not</em> free internal list data, only the list itself,
- * with #g_list_free.
  */
 gchar * gebrd_queues_get_names(void);
 
 /**
- * Returns TRUE if the given queue is busy, FALSE if it's not or queue doesn't exists.
+ * Returns #TRUE if the given \p queue is busy, #FALSE if it's not or \p queue doesn't exists.
  */
 gboolean gebrd_queues_is_queue_busy(const gchar * queue);
 
 /**
- * Sets \p queue to busy.
+ * Sets \p queue's busyness to \p busy.
+ * @param queue The name of the queue.
+ * @param busy New status for this queue.
  */
 void gebrd_queues_set_queue_busy(const gchar * queue, gboolean busy);
 

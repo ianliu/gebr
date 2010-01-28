@@ -1,3 +1,8 @@
+/**
+ * @file job-queue.h Job queue API
+ * @ingroup gebrd
+ */
+
 /*   GeBR Daemon - Process and control execution of flows
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -20,18 +25,37 @@
 
 #include "job.h"
 
+/**
+ * Structure representing a queue of jobs.
+ */
 typedef struct _GebrdJobQueue {
-	gchar * name;
-	gboolean is_busy;
-	GList * jobs;
+	gchar * name;		/**< The name of this queue. */
+	gboolean is_busy;	/**< Whether this queue is busy. */
+	GList * jobs;		/**< Actual list of jobs. */
 } GebrdJobQueue;
 
+/**
+ * Creates a new job queue.
+ * @param name The name of this queue.
+ * @return A newly allocated job queue. Free with #gebrd_job_queue_free.
+ */
 GebrdJobQueue * gebrd_job_queue_new(const gchar * name);
 
+/**
+ * Appends \p job in \p job_queue.
+ */
 void gebrd_job_queue_append_job(GebrdJobQueue * job_queue, struct job * job);
 
+/**
+ * Frees \p job_queue structure and members.
+ */
 void gebrd_job_queue_free(GebrdJobQueue * job_queue);
 
+/**
+ * Removes the first job in queue and returns it.
+ * @param job_queue Queue to have its first element removed.
+ * @return The first job in queue.
+ */
 struct job * gebrd_job_queue_pop(GebrdJobQueue * job_queue);
 
 #endif /* __JOB_QUEUE_H */

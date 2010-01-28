@@ -267,26 +267,29 @@ void parameter_remove(gboolean confirm)
 
 	if (parameter_get_selected(&iter, TRUE) == FALSE)
 		return;
-	if (confirm && gebr_gui_confirm_action_dialog(_("Delete parameter"),
-						      _("Are you sure you want to delete selected(s) parameter(s)?")) ==
-	    FALSE)
+	if (confirm
+	    && gebr_gui_confirm_action_dialog(_("Delete parameter"), _("Are you sure you want to delete selected(s)" \
+								       " parameter(s)?")) == FALSE)
 		return;
-
+	
 	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_parameter.tree_view) {
-		if (debr.parameter == NULL)
-			continue;
 		in_group = gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &iter);
-		if (in_group && gtk_tree_selection_iter_is_selected(tree_selection, &parent))
+		if (in_group && gtk_tree_selection_iter_is_selected(tree_selection, &parent)) {
+			gtk_tree_selection_unselect_iter(tree_selection, &iter);
 			continue;
-
-		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(debr.parameter));
+		}
+		// if (in_group)
+		//	parameter_load_iter(&parent, FALSE);
+	}
+	gebr_gui_gtk_tree_view_foreach_selected_hyg(&iter, debr.ui_parameter.tree_view, 2) {
+		GebrGeoXmlParameter * parameter;
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
+				   PARAMETER_XMLPOINTER, &parameter,
+				   -1);
+		if (parameter)
+			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(parameter));
 		gtk_tree_store_remove(debr.ui_parameter.tree_store, &iter);
-
-		if (in_group)
-			parameter_load_iter(&parent, FALSE);
-
-		g_signal_emit_by_name(debr.ui_parameter.tree_view, "cursor-changed");
 	}
 	debr.parameter = NULL;
 	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_parameter.tree_view));

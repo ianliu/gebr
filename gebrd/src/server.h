@@ -21,27 +21,28 @@
 #include "client.h"
 
 /**
- * Init daemon log file and run lock file
+ * Init daemon log file and run lock file.
  */
 gboolean server_init(void);
 
 /**
- * Free data allocated for clients
+ * Free data allocated for clients.
  */
 void server_free(void);
 
 /**
- * Closes log file and delete run lock
+ * Closes log file and delete run lock.
  */
 void server_quit(void);
 
 /**
- * Callback to #GebrCommListenSocket's new-connection signal
+ * Callback to #GebrCommListenSocket's new-connection signal.
  */
 void server_new_connection(void);
 
 /**
- * Switch messages received from \p client
+ * Switch messages received from \p client.
+ * @return #TRUE if parsing went ok, #FALSE otherwise.
  */
 gboolean server_parse_client_messages(struct client *client);
 
