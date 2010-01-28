@@ -552,11 +552,8 @@ static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io)
 	return TRUE;
 }
 
-/*
- * flow_io_run:
- * @server: a #GebrGeoXmlFlowServer
- *
- * Copies the IO informations to the flow and run it.
+/**
+ * Check for current server and if its connected, for the queue selected
  */
 static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 {
@@ -565,32 +562,44 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	struct server *server;
 	struct gebr_comm_server_run * config;
 
+	/* initialization */
 	config = g_new(struct gebr_comm_server_run, 1);
-
-	address = gebr_geoxml_flow_server_get_address(flow_server);
-	if (!server_find_address(address, &iter))
-		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, "Server should be present on list!");
-
-	gebr_geoxml_flow_server_set_date_last_run(flow_server, gebr_iso_date());
-	gebr_geoxml_flow_io_set_from_server(gebr.flow, flow_server);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter, SERVER_POINTER, &server, -1);
-
 	config->account = config->class = NULL;
 
+	/* find iter */
+	address = gebr_geoxml_flow_server_get_address(flow_server);
+	if (!server_find_address(address, &iter)) {
+		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, "Server should be present on list!");
+		goto err;
+	}
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter, SERVER_POINTER, &server, -1);
+	
+	/* check connection */
+	if (!gebr_comm_server_is_logged(server->comm)) {
+		if (gebr_comm_server_is_local(server->comm))
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
+				     _("You're not connected to the local server"), server->comm->address->str);
+		else
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
+				     _("You're not connected to server '%s'"), server->comm->address->str);
+		goto err;
+	}
+
+	/* get queue information */
 	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB)
 		if (!moab_setup_ui(&config->account, server))
-			return;
-
+			goto err;;
+	if (gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)) == -1) { 
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
+			     _("No available queue for server"));
+		goto err;
+	}
 	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB
 	    && gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter)) {
 		gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, &config->class, -1);
 	} else {
 		gboolean has_queue = FALSE;
 
-		g_printf("%d %s \n", gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)),
-			 gtk_combo_box_get_active_text(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)));
 		if (gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)) == 0)
 			config->class = g_strdup("");
 		else
@@ -616,11 +625,15 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 		}
 	}
 
+	gebr_geoxml_flow_io_set_from_server(gebr.flow, flow_server);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+
 	flow_run(server, config);
-	g_free(config->account);
+
+	/* frees */
+err:	g_free(config->account);
 	g_free(config->class);
 	g_free(config);
-
 }
 
 static void

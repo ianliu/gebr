@@ -582,16 +582,6 @@ void flow_run(struct server *server, struct gebr_comm_server_run * config)
 	GebrGeoXmlSequence *i;
 	GString *path;
 
-	if (!gebr_comm_server_is_logged(server->comm)) {
-		if (gebr_comm_server_is_local(server->comm))
-			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
-				     _("You're not connected to the local server"), server->comm->address->str);
-		else
-			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
-				     _("You're not connected to server '%s'"), server->comm->address->str);
-		return;
-	}
-
 	flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(gebr.flow)));
 	/* Strip flow: remove helps and revisions */
 	gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(flow), "");
