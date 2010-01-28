@@ -262,6 +262,7 @@ void parameter_remove(gboolean confirm)
 {
 	GtkTreeIter parent;
 	GtkTreeIter iter;
+	GtkTreeSelection *tree_selection;
 	gboolean in_group;
 
 	if (parameter_get_selected(&iter, TRUE) == FALSE)
@@ -271,10 +272,13 @@ void parameter_remove(gboolean confirm)
 	    FALSE)
 		return;
 
+	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_parameter.tree_view) {
 		if (debr.parameter == NULL)
 			continue;
 		in_group = gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &iter);
+		if (in_group && gtk_tree_selection_iter_is_selected(tree_selection, &parent))
+			continue;
 
 		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(debr.parameter));
 		gtk_tree_store_remove(debr.ui_parameter.tree_store, &iter);
@@ -400,10 +404,18 @@ gboolean parameter_change_type_setup_ui(void)
 void parameter_copy(void)
 {
 	GtkTreeIter iter;
+	GtkTreeIter parent;
+	GtkTreeSelection *tree_selection;
 
+	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	gebr_geoxml_clipboard_clear();
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_parameter.tree_view) {
 		GebrGeoXmlObject *parameter;
+		gboolean in_group;
+
+		in_group = gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &iter);
+		if (in_group && gtk_tree_selection_iter_is_selected(tree_selection, &parent))
+			continue;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
 				   PARAMETER_XMLPOINTER, &parameter, -1);
