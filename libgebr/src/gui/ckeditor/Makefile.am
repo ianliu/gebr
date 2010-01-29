@@ -14,12 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = gui pixmaps icons ckeditor
+ckeditordirectory = $(DESTDIR)/$(datadir)/libgebr
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = gebr-gui.pc
+install-data-local:
+	mkdir -p ${ckeditordirectory}
+	find ckeditor -type f -exec ${INSTALL_DATA} -D {} ${ckeditordirectory}/{} \;
 
-EXTRA_DIST = gebr-gui.pc
-
-libgebr_guiincludedir = $(includedir)/libgebr
-libgebr_guiinclude_HEADERS = gui.h
+EXTRA_DIST = ckeditor

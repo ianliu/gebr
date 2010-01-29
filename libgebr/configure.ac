@@ -153,4 +153,5 @@ src/gui/gui/Makefile
 src/gui/icons/Makefile
 src/gui/icons/gebr-theme/Makefile
 src/gui/pixmaps/Makefile
+src/gui/ckeditor/Makefile
 ])
