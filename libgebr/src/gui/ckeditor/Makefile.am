@@ -17,7 +17,6 @@
 ckeditordirectory = $(DESTDIR)/$(datadir)/libgebr
 
 install-data-local:
-	mkdir -p ${ckeditordirectory}
 	find ckeditor -type f -exec ${INSTALL_DATA} -D {} ${ckeditordirectory}/{} \;
 
 EXTRA_DIST = ckeditor

@@ -20,7 +20,7 @@ PACKAGE=libgebr
 
 VERSION=0.9.14
 GEBR_VERSION_INFO=`echo $VERSION | awk -F. '{ printf "%d:%d:%d", $1+$2, $3, $2 }'`
-VERSION="SVN "`svnversion`
+VERSION="SVN"`svnversion`
 
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
