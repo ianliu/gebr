@@ -13,6 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+include $(top_srcdir)/Makefile.decl
 
 SUBDIRS = geoxml data validate upgrade menu-diff menu-edit menu-query doc
 

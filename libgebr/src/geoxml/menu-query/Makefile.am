@@ -13,6 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+include $(top_srcdir)/Makefile.decl
 
 bin_PROGRAMS = gebr-geoxml-menu-query
 gebr_geoxml_menu_query_SOURCES = menu-query.c

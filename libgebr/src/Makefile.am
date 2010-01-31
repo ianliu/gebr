@@ -13,6 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+include $(top_srcdir)/Makefile.decl
 
 SUBDIRS = . @CONFIG_SUBDIRS@
 
@@ -28,7 +29,7 @@ libgebrinclude_HEADERS = libgebr.h \
 	intl.h date.h log.h utils.h
 noinst_HEADERS = defines.h
 
-EXTRADIST = ${pkgconfig_DATA} $(noinst_HEADERS)
+EXTRA_DIST = ${pkgconfig_DATA} $(noinst_HEADERS)
 
 INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"

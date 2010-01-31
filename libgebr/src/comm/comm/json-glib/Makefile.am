@@ -1,3 +1,5 @@
+include $(top_srcdir)/Makefile.decl
+
 BUILT_SOURCES = json-marshal.h json-marshal.c json-enum-types.h json-enum-types.c
 STAMP_FILES = stamp-json-marshal.h stamp-json-enum-types.h
 

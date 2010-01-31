@@ -13,6 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+include $(top_srcdir)/Makefile.decl
 
 libgebr_gui_iconsdir = $(datadir)/libgebr/icons/gebr-theme
 libgebr_gui_icons_DATA = index.theme

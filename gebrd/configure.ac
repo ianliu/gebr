@@ -30,6 +30,7 @@ IT_PROG_INTLTOOL
 
 AC_PROG_CC
 AM_PROG_CC_STDC
+AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_HEADER_STDC
 
@@ -78,5 +79,5 @@ AC_SUBST(GEBR_COMM_LIBS)
 
 AC_OUTPUT([
 packages/rpm/gebrd.fedora.spec packages/rpm/gebrd.opensuse.spec packages/rpm/gebrd.mandriva.spec
-Makefile src/Makefile src/defines.h packages/Makefile po/Makefile.in
+Makefile src/Makefile src/defines.h packages/Makefile po/Makefile.in tests/Makefile
 ])

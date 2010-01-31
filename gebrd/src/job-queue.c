@@ -34,7 +34,7 @@ void gebrd_job_queue_append_job(GebrdJobQueue * job_queue, struct job * job)
 
 void gebrd_job_queue_free(GebrdJobQueue * job_queue)
 {
-	g_list_foreach(job_queue->jobs, (GFunc)job_free, NULL);
+	// g_list_foreach(job_queue->jobs, (GFunc)job_free, NULL);
 	g_list_free(job_queue->jobs);
 	g_free(job_queue->name);
 	g_free(job_queue);
