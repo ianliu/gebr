@@ -1247,7 +1247,6 @@ static GtkMenu *menu_popup_menu(GtkTreeView * tree_view)
 }
 
 /**
- * menu_title_changed:
  * @entry:
  *
  * Keep XML in sync with widget.
@@ -1259,7 +1258,6 @@ static void menu_title_changed(GtkEntry * entry)
 }
 
 /**
- * menu_description_changed:
  * @entry:
  *
  * Keep XML in sync with widget.
@@ -1271,8 +1269,6 @@ static void menu_description_changed(GtkEntry * entry)
 }
 
 /**
- * menu_help_view:
- *
  * Call help_show() with menu's help.
  */
 static void menu_help_view(void)
@@ -1287,50 +1283,24 @@ static void menu_help_view(void)
 }
 
 /**
- * menu_help_edit:
- *
  * Call help_edit() with menu's help. After help was edited in
  * a external browser, save it back to XML.
  */
 static void menu_help_edit(void)
 {
-	GString *help;
-
-	help = help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, FALSE);
-	if (help == NULL)
-		return;
-
-	gebr_geoxml_document_set_help(GEBR_GEOXML_DOC(debr.menu), help->str);
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
-
-	g_string_free(help, TRUE);
+	help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, FALSE);
 }
 
 /**
- * menu_help_refresh:
- *
  * Call help_refresg() with menu's help. After help was edited in
  * a external browser, with fields updated, save it back to XML.
  */
 static void menu_help_refresh(void)
 {
-	GString *help;
-
-	help = help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, TRUE);
-
-	if (help == NULL)
-		return;
-
-	gebr_geoxml_document_set_help(GEBR_GEOXML_DOC(debr.menu), help->str);
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
-
-	g_string_free(help, TRUE);
+	help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, TRUE);
 }
 
 /**
- * menu_author_changed:
- * @entry:
- *
  * Keep XML in sync with widget.
  */
 static void menu_author_changed(GtkEntry * entry)
@@ -1340,9 +1310,6 @@ static void menu_author_changed(GtkEntry * entry)
 }
 
 /**
- * menu_email_changed:
- * @entry:
- *
  * Keep XML in sync with widget.
  */
 static void menu_email_changed(GtkEntry * entry)
@@ -1352,10 +1319,6 @@ static void menu_email_changed(GtkEntry * entry)
 }
 
 /**
- * menu_category_add:
- * @sequence_edit:
- * @combo_box:
- *
  * Add a category.
  */
 static void menu_category_add(GebrGuiValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
@@ -1376,8 +1339,6 @@ static void menu_category_add(GebrGuiValueSequenceEdit * sequence_edit, GtkCombo
 }
 
 /**
- * menu_category_changed:
- *
  * Just wrap signal to notify an unsaved status.
  */
 static void menu_category_changed(void)

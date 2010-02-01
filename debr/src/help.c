@@ -292,18 +292,53 @@ void help_show(const gchar * help)
 	g_string_free(prepared_html, TRUE);
 }
 
-GString *help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
+static void help_edit_on_finished(GebrGeoXmlObject * object, const gchar * _help)
+{	
+	GString * help;
+
+	help = g_string_new(_help);
+	/* transform css into a relative path back */
+	{
+		regex_t regexp;
+		regmatch_t matchptr;
+
+		regcomp(&regexp, "<link[^<]*>", REG_NEWLINE | REG_ICASE);
+		if (!regexec(&regexp, help->str, 1, &matchptr, 0)) {
+			g_string_erase(help, (gssize) matchptr.rm_so,
+				       (gssize) matchptr.rm_eo - matchptr.rm_so);
+			g_string_insert(help, (gssize) matchptr.rm_so,
+					"<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
+		} else {
+			regcomp(&regexp, "<head>", REG_NEWLINE | REG_ICASE);
+			if (!regexec(&regexp, help->str, 1, &matchptr, 0))
+				g_string_insert(help, (gssize) matchptr.rm_eo,
+						"\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
+		}
+	}
+
+	switch (gebr_geoxml_object_get_type(object)) {
+	case GEBR_GEOXML_OBJECT_TYPE_FLOW:
+		gebr_geoxml_document_set_help(GEBR_GEOXML_DOC(object), help->str);
+		break;
+	case GEBR_GEOXML_OBJECT_TYPE_PROGRAM:
+		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(object), help->str);
+		break;
+	default:
+		break;
+	}
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+
+	g_string_free(help, TRUE);
+}
+
+void help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
 {
-	FILE *fp;
-	GString *html_path;
 	GString *prepared_html;
-	GString *cmdline;
-	gchar buffer[100];
 
 	/* check if there is an html editor in preferences */
 	if (!strlen(debr.config.htmleditor->str)) {
 		debr_message(GEBR_LOG_ERROR, _("No HTML editor specified in preferences."));
-		return NULL;
+		return;
 	}
 
 	/* initialization */
@@ -312,6 +347,9 @@ GString *help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean ref
 	/* help empty; create from template. */
 	g_string_assign(prepared_html, help);
 	if (prepared_html->len <= 1) {
+		FILE *fp;
+		gchar buffer[1000];
+
 		/* Read back the help from file */
 		fp = fopen(DEBR_DATA_DIR "help-template.html", "r");
 		if (fp == NULL) {
@@ -326,111 +364,37 @@ GString *help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean ref
 
 		/* Substitute title, description and categories */
 		help_subst_fields(prepared_html, program, refresh);
-	} else {
-		if (refresh) {
-			help_subst_fields(prepared_html, program, refresh);
-		}
-	}
+	} else if (refresh)
+		help_subst_fields(prepared_html, program, refresh);
 
 	/* Always fix DTD version */
-	{
-		gsize pos;
-
-		pos = strip_block(prepared_html, "dtd");
-		if (pos)
-			g_string_insert(prepared_html, pos,
-					gebr_geoxml_document_get_version(GEBR_GEOXML_DOCUMENT(debr.menu)));
-	}
-
+	gsize pos = strip_block(prepared_html, "dtd");
+	if (pos)
+		g_string_insert(prepared_html, pos,
+				gebr_geoxml_document_get_version(GEBR_GEOXML_DOCUMENT(debr.menu)));
 	/* CSS fix */
 	help_fix_css(prepared_html);
 
-	/* load html into a temporary file */
-	html_path = gebr_make_temp_filename("debr_XXXXXX.html");
-	fp = fopen(html_path->str, "w");
-	if (fp == NULL) {
-		debr_message(GEBR_LOG_ERROR, _("Could not create a temporary file."));
-		goto err2;
+	/* EDIT IT */
+	if (program != NULL) {
+		gebr_geoxml_program_set_help(program, prepared_html->str);
+		gebr_gui_program_help_edit(program, debr.config.htmleditor->str, help_edit_on_finished);
+	} else {
+		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html->str);
+		gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), debr.config.htmleditor->str, help_edit_on_finished);
 	}
-	fputs(prepared_html->str, fp);
-	fclose(fp);
-
-	/* Add file to list of files to be removed */
-	debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
-
-	/* run editor */
-	cmdline = g_string_new("");
-	g_string_printf(cmdline, "%s %s", debr.config.htmleditor->str, html_path->str);
-	if (system(cmdline->str)) {
-		debr_message(GEBR_LOG_ERROR, _("Could not launch editor"));
-		goto err;
-	}
-	g_string_free(cmdline, TRUE);
-
-	/* read back the help from file */
-	fp = fopen(html_path->str, "r");
-	if (fp == NULL) {
-		debr_message(GEBR_LOG_ERROR, _("Could not read created temporary file."));
-		goto err;
-	}
-	g_string_assign(prepared_html, "");
-	while (fgets(buffer, sizeof(buffer), fp))
-		g_string_append(prepared_html, buffer);
-	fclose(fp);
-
-	/* ensure UTF-8 encoding */
-	if (g_utf8_validate(prepared_html->str, -1, NULL) == FALSE) {
-		gchar *converted;
-
-		/* TODO: what else should be tried? */
-		converted = gebr_locale_to_utf8(prepared_html->str);
-		if (converted == NULL) {
-			g_free(converted);
-			debr_message(GEBR_LOG_ERROR, _("Please change the help encoding to UTF-8"));
-			goto err;
-		}
-
-		g_string_assign(prepared_html, converted);
-		g_free(converted);
-	}
-
-	/* transform css into a relative path back */
-	{
-		regex_t regexp;
-		regmatch_t matchptr;
-
-		regcomp(&regexp, "<link[^<]*>", REG_NEWLINE | REG_ICASE);
-		if (!regexec(&regexp, prepared_html->str, 1, &matchptr, 0)) {
-			g_string_erase(prepared_html, (gssize) matchptr.rm_so,
-				       (gssize) matchptr.rm_eo - matchptr.rm_so);
-			g_string_insert(prepared_html, (gssize) matchptr.rm_so,
-					"<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
-		} else {
-			regcomp(&regexp, "<head>", REG_NEWLINE | REG_ICASE);
-			if (!regexec(&regexp, prepared_html->str, 1, &matchptr, 0))
-				g_string_insert(prepared_html, (gssize) matchptr.rm_eo,
-						"\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
-		}
-	}
-
-	g_string_free(html_path, FALSE);
-	return prepared_html;
-
- err:	g_string_free(html_path, FALSE);
- err2:	g_string_free(prepared_html, TRUE);
-	return NULL;
 }
 
-/* Strips a block delimited by
-       <!-- begin tag -->
-       <!-- end tag -->
-   and returns the position of the
-   begining of the block, suitable for
-   text insertion. "tag" must have 3 letters.
-*/
+/**
+ * Strips a block delimited by
+ *      <!-- begin tag -->
+ *      <!-- end tag -->
+ *  and returns the position of the
+ *  begining of the block, suitable for
+ *  text insertion. "tag" must have 3 letters.
+ */
 gsize strip_block(GString * buffer, const gchar * tag)
 {
-
 	static GString *mark = NULL;
 	gchar *ptr;
 	gsize pos;

@@ -26,7 +26,6 @@
 #include <string.h>
 
 #include <glib.h>
-#include <glib/gstdio.h>
 
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
@@ -119,83 +118,16 @@ void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document)
 	help_show(gebr_geoxml_document_get_help(document), gebr_geoxml_document_get_title(document));
 }
 
-/* Function: help_edit
- * Edit help in editor.
- *
+/**
  * Edit help in editor as reponse to button clicks.
  */
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 {
-	FILE *html_fp;
-	GString *html_path;
-
-	gchar buffer[BUFFER_SIZE];
-	GString *help;
-	GString *cmd_line;
-
 	/* Check for editor */
 	if (!gebr.config.editor->len) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No editor defined. Choose one at Configure/Preferences"));
 		return;
 	}
 
-	/* initialization */
-	html_path = gebr_make_temp_filename("gebr_XXXXXX.html");
-	cmd_line = g_string_new(NULL);
-	help = g_string_new(NULL);
-
-	/* Write current help to temporary file */
-	html_fp = fopen(html_path->str, "w");
-	if (html_fp == NULL) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, unable_to_write_help_error);
-		goto out;
-	}
-	fputs(gebr_geoxml_document_get_help(document), html_fp);
-	fclose(html_fp);
-
-	/* Run editor and wait for user... */
-	g_string_printf(cmd_line, "%s %s", gebr.config.editor->str, html_path->str);
-	if (system(cmd_line->str)) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not run editor."));
-		goto out;
-	}
-
-	/* Read back the help from file */
-	html_fp = fopen(html_path->str, "r");
-	if (html_fp == NULL) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not read created temporary file."));
-		goto out;
-	}
-	while (fgets(buffer, BUFFER_SIZE, html_fp) != NULL)
-		g_string_append(help, buffer);
-	fclose(html_fp);
-	g_unlink(html_path->str);
-
-	/* ensure UTF-8 encoding */
-	if (g_utf8_validate(help->str, -1, NULL) == FALSE) {
-		gchar *converted;
-		gsize bytes_read;
-		gsize bytes_written;
-		GError *error;
-
-		error = NULL;
-		converted = g_locale_to_utf8(help->str, -1, &bytes_read, &bytes_written, &error);
-		/* TODO: what else should be tried? */
-		if (converted == NULL) {
-			g_free(converted);
-			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Please change the report encoding to UTF-8"));
-			goto out;
-		}
-
-		g_string_assign(help, converted);
-		g_free(converted);
-	}
-
-	/* Finally, the edited help back to the document */
-	gebr_geoxml_document_set_help(document, help->str);
-
-	/* frees */
- out:	g_string_free(html_path, TRUE);
-	g_string_free(cmd_line, TRUE);
-	g_string_free(help, TRUE);
+	gebr_gui_help_edit(document, gebr.config.editor->str, NULL);
 }

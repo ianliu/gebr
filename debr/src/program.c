@@ -851,24 +851,12 @@ static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program)
 
 static void program_help_edit(GtkButton * button)
 {
-	GString *help;
-
-	help = help_edit(gebr_geoxml_program_get_help(debr.program), debr.program, FALSE);
-	gebr_geoxml_program_set_help(debr.program, help->str);
-	g_string_free(help, TRUE);
-
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
+	help_edit(gebr_geoxml_program_get_help(debr.program), debr.program, FALSE);
 }
 
 static void program_help_refresh(GtkButton * button)
 {
-	GString *help;
-
-	help = help_edit(gebr_geoxml_program_get_help(debr.program), debr.program, TRUE);
-	gebr_geoxml_program_set_help(debr.program, help->str);
-	g_string_free(help, TRUE);
-
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
+	help_edit(gebr_geoxml_program_get_help(debr.program), debr.program, TRUE);
 }
 
 static gboolean program_url_changed(GtkEntry * entry)

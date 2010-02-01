@@ -19,7 +19,24 @@
 #define __GEBR_GUI_HELP_H
 
 #include <glib.h>
+#include <geoxml.h>
 
+/** 
+ * Show HTML at \p uri with WebKit (if enabled) or with \p browser executable specified
+ */
 void gebr_gui_help_show(const gchar * uri, const gchar * browser);
+
+typedef void (*GebrGuiHelpEditingFinished)(GebrGeoXmlObject * object, const gchar * help);
+
+/**
+ * Edit help HTML from \p document with WebKit (if enabled) or with \p editor executable specified
+ */
+void gebr_gui_help_edit(GebrGeoXmlDocument * document, const gchar * editor, GebrGuiHelpEditingFinished finish_callback);
+
+/**
+ * Edit help HTML from \p program with WebKit (if enabled) or with \p editor executable specified
+ */
+void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, const gchar * editor, GebrGuiHelpEditingFinished finish_callback);
+
 
 #endif				//__GEBR_GUI_HELP_H
