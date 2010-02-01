@@ -84,7 +84,23 @@ void on_new_activate(void)
 	}
 }
 
-/*
+
+/**
+ * Selects cut target depending on the context.
+ */
+void on_cut_activate(void)
+{
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(debr.notebook))) {
+	case NOTEBOOK_PAGE_PARAMETER:
+		on_parameter_cut_activate();
+		break;
+	default:
+		break;
+	}
+}
+
+
+/**
  * Function: on_copy_activate
  * Select copy target depending on the context
  */
@@ -611,6 +627,16 @@ void on_parameter_copy_activate(void)
 {
 	parameter_copy();
 }
+
+
+/**
+ * Calls <parameter_cut>
+ */
+void on_parameter_cut_activate(void)
+{
+	parameter_cut();
+}
+
 
 /*
  * Function: on_parameter_paste_activate

@@ -23,6 +23,7 @@
 void do_navigation_bar_update(void);
 
 void on_new_activate(void);
+void on_cut_activate(void);
 void on_copy_activate(void);
 void on_paste_activate(void);
 void on_quit_activate(void);
@@ -56,6 +57,7 @@ void on_parameter_bottom_activate(void);
 void on_parameter_change_type_activate(void);
 void on_parameter_type_activate(GtkRadioAction * first_action);
 void on_parameter_copy_activate(void);
+void on_parameter_cut_activate(void);
 void on_parameter_paste_activate(void);
 
 void on_validate_close_activate(void);

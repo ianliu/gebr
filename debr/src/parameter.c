@@ -268,7 +268,7 @@ void parameter_remove(gboolean confirm)
 	if (parameter_get_selected(&iter, TRUE) == FALSE)
 		return;
 	if (confirm
-	    && gebr_gui_confirm_action_dialog(_("Delete parameter"), _("Are you sure you want to delete selected(s)" \
+	    && gebr_gui_confirm_action_dialog(_("Delete parameter"), _("Are you sure you want to delete selected" \
 								       " parameter(s)?")) == FALSE)
 		return;
 	
@@ -401,8 +401,19 @@ gboolean parameter_change_type_setup_ui(void)
 	return ret;
 }
 
+
+/**
+ * Cuts selected parameter(s) to clipboard.
+ */
+void parameter_cut(void)
+{
+	parameter_copy();
+	parameter_remove(FALSE);
+}
+
+
 /* Function: parameter_copy
- * Copy selected(s) parameter to clipboard
+ * Copy selected parameter(s) to clipboard
  */
 void parameter_copy(void)
 {
@@ -1165,6 +1176,9 @@ static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_new")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (debr.action_group, "parameter_cut")));
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (debr.action_group, "parameter_copy")));
