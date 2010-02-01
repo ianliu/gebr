@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "gebr-js.h"
+#include "js.h"
 
 JSValueRef gebr_js_evaluate(JSContextRef ctx, const gchar * script)
 {
@@ -25,22 +25,22 @@ JSValueRef gebr_js_evaluate(JSContextRef ctx, const gchar * script)
 
 	scr = JSStringCreateWithUTF8CString(script);
 	obj = JSContextGetGlobalObject(ctx);
-	val = JSEvaluateSript(ctx, scr, obj, NULL, 0, NULL);
+	val = JSEvaluateScript(ctx, scr, obj, NULL, 0, NULL);
 	JSStringRelease(scr);
 
 	return val;
 }
 
-gchar * gebr_js_value_to_string(JSValueRef value)
+gchar * gebr_js_value_to_string(JSContextRef ctx, JSValueRef value)
 {
 	gsize len;
 	gchar * buf;
 	JSStringRef str;
 
-	str = JSValueToString(ctx, val, NULL);
-	len = JSStringGetLength(out);
-	buf = g_new(gchar, length + 1);
-	JSStringGetUTF8CString(out, buf, len + 1);
+	str = JSValueToStringCopy(ctx, value, NULL);
+	len = JSStringGetLength(str);
+	buf = g_new(gchar, len + 1);
+	JSStringGetUTF8CString(str, buf, len + 1);
 	JSStringRelease(str);
 
 	return buf;

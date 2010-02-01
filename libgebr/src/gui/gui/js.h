@@ -15,21 +15,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEBR_JS_H__
-#define __GEBR_JS_H__
+#ifndef __GEBR_GUI_JS_H__
+#define __GEBR_GUI_JS_H__
 
 #include <JavaScriptCore/JavaScript.h>
+#include <glib.h>
 
 G_BEGIN_DECLS
 
 JSValueRef gebr_js_evaluate(JSContextRef ctx, const gchar * script);
 
-gchar * gebr_js_value_to_string(JSValueRef value);
+gchar * gebr_js_value_to_string(JSContextRef ctx, JSValueRef value);
 
-GString * gebr_js_value_get_string(JSContextRef ctx, JSValueRef val)
+GString * gebr_js_value_get_string(JSContextRef ctx, JSValueRef val);
 
 JSValueRef gebr_js_make_function(JSContextRef ctx, const gchar * name, JSObjectCallAsFunctionCallback callback);
 
 G_END_DECLS
 
-#endif /* __GEBR_JS_H__ */
+#endif /* __GEBR_GUI_JS_H__ */
