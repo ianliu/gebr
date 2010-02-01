@@ -27,7 +27,8 @@ libgebr_gui_la_SOURCES = \
 	about.c utils.c pixmaps.c icons.c help.c \
 	gtkfileentry.c gtkenhancedentry.c \
 	gtksequenceedit.c valuesequenceedit.c \
-	programedit.c parameter.c gtkdirectorychooser.c
+	programedit.c parameter.c gtkdirectorychooser.c \
+	js/gebr-js.c
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = \
@@ -36,7 +37,7 @@ libgebr_guisubinclude_HEADERS = \
 	gtkfileentry.h gtkenhancedentry.h \
 	gtksequenceedit.h valuesequenceedit.h \
 	programedit.h parameter.h gtkdirectorychooser.h
-noinst_HEADERS = marshalers.h
+noinst_HEADERS = marshalers.h js/gebr-js.h
 EXTRA_DIST = ${noinst_HEADERS} marshalers.list 
 
 INCLUDES = -I../.. -I../../geoxml $(WEBKIT_ENABLED) \

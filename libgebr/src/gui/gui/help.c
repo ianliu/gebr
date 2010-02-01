@@ -35,6 +35,24 @@ static void
 libgebr_gui_help_show_on_title_changed(WebKitWebView * web_view,
 				       WebKitWebFrame * frame, gchar * title, GtkWindow * window);
 static GtkWidget *libgebr_gui_help_show_create_web_view(void);
+
+static gchar * js_start_inline_editing =					\
+	"var editor;"								\
+	"document.body.addEventListener('dbclick', onDoubleClick, false);"	\
+	"function onDoubleClick(evt) {"						\
+	"	var element = ev.target || ev.srcElement;" 			\
+	"	element = element.parentNode;"					\
+	"	if (element.nodeName.toLowerCase() == 'div'"			\
+	"		&& element.className.indexOf('editable') != -1)"	\
+	"		replaceDiv(element);"					\
+	"	else if (editor)"						\
+	"		editor.destroy();"					\
+	"}"									\
+	"function replaceDiv(element) {"					\
+	"	if (editor)"							\
+	"		editor.destroy();"					\
+	"	editor = CKEDITOR.replace(element);"				\
+	"}";
 #endif
 
 /*
