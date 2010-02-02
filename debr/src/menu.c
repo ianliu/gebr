@@ -668,6 +668,9 @@ void menu_dialog_setup_ui(void)
 
 	IterType type;
 	GtkTreeIter iter;
+	GebrGeoXmlFlow * clone_menu;
+
+	clone_menu = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(debr.menu)));
 
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 	type = menu_get_selected_type(&iter, TRUE);
@@ -684,7 +687,8 @@ void menu_dialog_setup_ui(void)
 	dialog = gtk_dialog_new_with_buttons(_("Edit menu"),
 					     GTK_WINDOW(debr.window),
 					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					     GTK_STOCK_OK, GTK_RESPONSE_OK,NULL);
 	gtk_widget_set_size_request(dialog, 400, 350);
 
 	table = gtk_table_new(6, 2, FALSE);
@@ -834,10 +838,22 @@ void menu_dialog_setup_ui(void)
 					  (ValueSequenceGetFunction) gebr_geoxml_value_sequence_get, NULL);
 
 	gtk_widget_show(dialog);
-	gtk_dialog_run(GTK_DIALOG(dialog));
-	gtk_widget_destroy(dialog);
 
-	menu_selected();
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK){
+		menu_replace(clone_menu);
+
+		GtkTreeIter iter;
+
+		if (menu_get_selected(&iter, FALSE))
+			menu_close(&iter);
+
+		goto out;
+	}
+
+		menu_selected();
+
+out:
+	gtk_widget_destroy(dialog);
 }
 
 gboolean menu_get_selected(GtkTreeIter * iter, gboolean warn_unselected_menu)
@@ -1129,6 +1145,38 @@ glong menu_count_unsaved()
 		}
 	}
 	return count;
+}
+
+void menu_replace(GebrGeoXmlFlow * new_menu){
+
+	GtkTreeIter iter;
+	GtkTreePath * program_path, * parameter_path;
+
+	program_path = parameter_path = NULL;
+	
+	if (program_get_selected(&iter, FALSE))
+		program_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_program.list_store), &iter);
+
+	if (parameter_get_selected(&iter, FALSE))
+		parameter_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter);
+
+	if (menu_get_selected(&iter, FALSE)){
+		gtk_tree_store_set(debr.ui_menu.model, &iter, MENU_XMLPOINTER, new_menu, -1);
+		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(debr.menu));
+		menu_selected();
+	}
+
+	if ((program_path != NULL) && gtk_tree_model_get_iter(GTK_TREE_MODEL(debr.ui_program.list_store), &iter, program_path)){
+		program_select_iter(iter);
+		gtk_tree_path_free(program_path);
+	}
+
+	if ((parameter_path != NULL) && gtk_tree_model_get_iter(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter, parameter_path)){
+		gtk_tree_view_expand_to_path(GTK_TREE_VIEW(debr.ui_parameter.tree_view), parameter_path);
+		parameter_select_iter(iter);
+		gtk_tree_path_free(parameter_path);
+	}
+
 }
 
 /*

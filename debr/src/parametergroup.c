@@ -74,13 +74,17 @@ void parameter_group_dialog_setup_ui(void)
 	guint i;
 
 	struct ui_parameter_group_dialog *ui;
+	GebrGeoXmlFlow * clone_menu;
+
+	clone_menu = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(debr.menu)));
 
 	ui = g_malloc(sizeof(struct ui_parameter_group_dialog));
 	ui->parameter_group = parameter_group = GEBR_GEOXML_PARAMETER_GROUP(debr.parameter);
 	ui->dialog = dialog = gtk_dialog_new_with_buttons(_("Edit group"),
 							  GTK_WINDOW(debr.window),
 							  GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-							  GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+							  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+							  GTK_STOCK_OK, GTK_RESPONSE_OK,NULL);
 	gtk_widget_set_size_request(dialog, 400, 500);
 
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -205,7 +209,10 @@ void parameter_group_dialog_setup_ui(void)
 	/* for DeBR it doesn't matter if it's not instanciable */
 	gebr_geoxml_parameter_group_set_is_instanciable(parameter_group, TRUE);
 	/* let the user interact... */
-	gtk_dialog_run(GTK_DIALOG(dialog));
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK){
+		menu_replace(clone_menu);
+		goto out;
+	}
 
 	/* things not automatically synced to XML are synced here */
 	gebr_geoxml_parameter_set_label(debr.parameter, gtk_entry_get_text(GTK_ENTRY(label_entry)));
@@ -215,9 +222,9 @@ void parameter_group_dialog_setup_ui(void)
 							gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON
 										     (instanciable_check_button)));
 
-	parameter_load_selected();
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
-
+out:
+	parameter_load_selected();
 	/* frees */
 	gtk_widget_destroy(dialog);
 	g_free(ui);

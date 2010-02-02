@@ -22,7 +22,7 @@
 #include <libgebr/geoxml.h>
 
 enum {
-	PROGRAM_STATUS,
+	PROGRAM_STATUS = 0,
 	PROGRAM_TITLE,
 	PROGRAM_XMLPOINTER,
 	PROGRAM_N_COLUMN
@@ -51,12 +51,14 @@ void program_setup_ui(void);
 void program_load_menu(void);
 void program_new(gboolean edit);
 void program_preview(void);
-void program_remove(void);
+void program_remove(gboolean confirm);
 void program_top(void);
 void program_bottom(void);
 void program_copy(void);
 void program_paste(void);
 
 void program_dialog_setup_ui(void);
+gboolean program_get_selected(GtkTreeIter * iter, gboolean warn_user);
+void program_select_iter(GtkTreeIter iter);
 
 #endif				//__PROGRAM_H

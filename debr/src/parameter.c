@@ -90,8 +90,6 @@ const GtkRadioActionEntry parameter_type_radio_actions_entries[] = {
 static void parameter_dialog_setup_ui(void);
 static GtkTreeIter parameter_append_to_ui(GebrGeoXmlParameter * parameter, GtkTreeIter * parent);
 static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group);
-static void parameter_select_iter(GtkTreeIter iter);
-static gboolean parameter_get_selected(GtkTreeIter * iter, gboolean show_warning);
 static void parameter_selected(void);
 static void parameter_activated(void);
 static GtkMenu *parameter_popup_menu(GtkWidget * tree_view);
@@ -494,6 +492,39 @@ void parameter_properties(void)
 }
 
 /*
+ * Function: parameter_get_selected
+ * Return true if there is a parameter selected and write it to _iter_
+ */
+gboolean parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
+{
+	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), iter) == FALSE) {
+		if (show_warning)
+			debr_message(GEBR_LOG_ERROR, _("No parameter is selected"));
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+/*
+ * Function: parameter_select_iter
+ * Select _iter_ loading its pointer
+ */
+void parameter_select_iter(GtkTreeIter iter)
+{
+	GtkTreeSelection *tree_selection;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
+			   PARAMETER_XMLPOINTER, &debr.parameter, -1);
+	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
+	gtk_tree_selection_unselect_all(tree_selection);
+	gtk_tree_selection_select_iter(tree_selection, &iter);
+	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &iter);
+
+	parameter_selected();
+}
+
+/*
  * Section: Private
  */
 
@@ -526,11 +557,14 @@ static void parameter_dialog_setup_ui(void)
 
 	GebrGeoXmlProgramParameter *program_parameter;
 	struct gebr_gui_parameter_widget *gebr_gui_parameter_widget;
+	GebrGeoXmlFlow * clone_menu;
+
+	clone_menu = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(debr.menu)));
 
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	if (parameter_get_selected(NULL, TRUE) == FALSE)
 		return;
-
+			
 	ui = g_malloc(sizeof(struct ui_parameter_dialog));
 	ui->parameter = debr.parameter;
 	program_parameter = GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter);
@@ -542,7 +576,8 @@ static void parameter_dialog_setup_ui(void)
 	ui->dialog = dialog = gtk_dialog_new_with_buttons(_("Edit parameter"),
 							  GTK_WINDOW(debr.window),
 							  GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-							  GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+							  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+							  GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_widget_set_size_request(dialog, 530, 400);
 
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -895,17 +930,21 @@ static void parameter_dialog_setup_ui(void)
 
 	/* dialog actions loop and checks */
 	do {
-		gtk_dialog_run(GTK_DIALOG(dialog));
-		if (type != GEBR_GEOXML_PARAMETER_TYPE_FLAG
-		    && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button))
-		    && !strlen(gtk_entry_get_text(GTK_ENTRY(separator_entry)))) {
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Separator"),
-						_
-						("You've marked this parameter as a list but no separator was selected.\n"
-						 "Please select the list separator."));
-			gtk_widget_grab_focus(separator_entry);
-		} else
-			break;
+		if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK){
+			if (type != GEBR_GEOXML_PARAMETER_TYPE_FLAG
+			    && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button))
+			    && !strlen(gtk_entry_get_text(GTK_ENTRY(separator_entry)))) {
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Separator"),
+							_("You've marked this parameter as a list but no separator was selected.\n"
+							  "Please select the list separator."));
+				gtk_widget_grab_focus(separator_entry);
+			} else
+				break;
+		}
+		else{
+			menu_replace(clone_menu);
+			goto out;
+		}
 	} while (1);
 
 	/* save not automatically synced changes */
@@ -924,6 +963,8 @@ static void parameter_dialog_setup_ui(void)
 									 gtk_entry_get_text(GTK_ENTRY
 											    (ui->separator_entry)));
 	}
+
+out:
 
 	parameter_load_selected();
 
@@ -1062,38 +1103,7 @@ static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group)
 	g_string_free(keyword_label, TRUE);
 }
 
-/*
- * Function: parameter_select_iter
- * Select _iter_ loading its pointer
- */
-static void parameter_select_iter(GtkTreeIter iter)
-{
-	GtkTreeSelection *tree_selection;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
-			   PARAMETER_XMLPOINTER, &debr.parameter, -1);
-	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
-	gtk_tree_selection_unselect_all(tree_selection);
-	gtk_tree_selection_select_iter(tree_selection, &iter);
-	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &iter);
-
-	parameter_selected();
-}
-
-/*
- * Function: parameter_get_selected
- * Return true if there is a parameter selected and write it to _iter_
- */
-static gboolean parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
-{
-	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), iter) == FALSE) {
-		if (show_warning)
-			debr_message(GEBR_LOG_ERROR, _("No parameter is selected"));
-		return FALSE;
-	}
-
-	return TRUE;
-}
 
 /*
  * Function: parameter_selected

@@ -47,12 +47,10 @@ struct program_preview_data {
 };
 
 static void program_details_update(void);
-static gboolean program_get_selected(GtkTreeIter * iter, gboolean warn_user);
 static void program_load_iter(GtkTreeIter * iter);
 static void program_load_selected(void);
 static GtkTreeIter program_append_to_ui(GebrGeoXmlProgram * program);
 static void program_selected(void);
-static void program_select_iter(GtkTreeIter iter);
 static GtkMenu *program_popup_menu(GtkWidget * tree_view);
 
 static void program_stdin_changed(GtkToggleButton * togglebutton);
@@ -273,15 +271,14 @@ void program_preview(void)
  * Function: program_remove
  * Confirm action and if confirmed removed selected program from XML and UI
  */
-void program_remove(void)
+void program_remove(gboolean confirm)
 {
 	GtkTreeIter iter;
 
 	if (!program_get_selected(NULL, TRUE))
 		return;
-	if (gebr_gui_confirm_action_dialog
-	    (_("Delete program"), _("Are you sure you want to delete selected(s) program(s)?"))
-	    == FALSE)
+	if (confirm && 
+	    gebr_gui_confirm_action_dialog(_("Delete program"), _("Are you sure you want to delete selected(s) program(s)?")) == FALSE)
 		return;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_program.tree_view) {
@@ -398,6 +395,10 @@ void program_dialog_setup_ui(void)
 	GtkWidget *url_label;
 	GtkWidget *url_entry;
 
+	GebrGeoXmlFlow * clone_menu;
+
+	clone_menu = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(debr.menu)));
+
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
 	if (program_get_selected(NULL, TRUE) == FALSE)
 		return;
@@ -405,7 +406,8 @@ void program_dialog_setup_ui(void)
 	dialog = gtk_dialog_new_with_buttons(_("Edit program"),
 					     GTK_WINDOW(debr.window),
 					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					     GTK_STOCK_OK, GTK_RESPONSE_OK,NULL);
 	gtk_widget_set_size_request(dialog, 400, 350);
 
 	table = gtk_table_new(6, 2, FALSE);
@@ -555,12 +557,47 @@ void program_dialog_setup_ui(void)
 	gtk_entry_set_text(GTK_ENTRY(url_entry), gebr_geoxml_program_get_url(debr.program));
 
 	gtk_widget_show(dialog);
-	gtk_dialog_run(GTK_DIALOG(dialog));
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK){
+		menu_replace(clone_menu);
+		program_remove(FALSE);
+		goto out;
+	}
+
+out:
+	program_load_selected();
 	gtk_widget_destroy(dialog);
 
-	program_load_selected();
 }
 
+
+/*
+ * Function: program_get_selected
+ * Return true if there is a program selected and write it to _iter_
+ */
+gboolean program_get_selected(GtkTreeIter * iter, gboolean warn_user)
+{
+	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_program.tree_view), iter) == FALSE) {
+		if (warn_user)
+			debr_message(GEBR_LOG_ERROR, _("No program is selected"));
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+/*
+ * Function: program_select_iter
+ * Select _iter_ loading it
+ */
+void program_select_iter(GtkTreeIter iter)
+{
+	GtkTreeSelection *tree_selection;
+
+	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
+	gtk_tree_selection_unselect_all(tree_selection);
+	gtk_tree_selection_select_iter(tree_selection, &iter);
+	program_selected();
+}
 /*
  * Section: Private
  */
@@ -638,21 +675,6 @@ static void program_details_update(void)
 }
 
 /*
- * Function: program_get_selected
- * Return true if there is a program selected and write it to _iter_
- */
-static gboolean program_get_selected(GtkTreeIter * iter, gboolean warn_user)
-{
-	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_program.tree_view), iter) == FALSE) {
-		if (warn_user)
-			debr_message(GEBR_LOG_ERROR, _("No program is selected"));
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-/*
  * Function: program_load_iter
  * Load stuff into _iter_
  */
@@ -712,19 +734,6 @@ static void program_selected(void)
 	do_navigation_bar_update();
 }
 
-/*
- * Function: program_select_iter
- * Select _iter_ loading it
- */
-static void program_select_iter(GtkTreeIter iter)
-{
-	GtkTreeSelection *tree_selection;
-
-	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
-	gtk_tree_selection_unselect_all(tree_selection);
-	gtk_tree_selection_select_iter(tree_selection, &iter);
-	program_selected();
-}
 
 /*
  * Function: program_popup_menu

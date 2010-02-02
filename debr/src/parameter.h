@@ -83,4 +83,8 @@ void parameter_change_type(enum GEBR_GEOXML_PARAMETER_TYPE type);
 
 void parameter_properties(void);
 
+gboolean parameter_get_selected(GtkTreeIter * iter, gboolean show_warning);
+
+void parameter_select_iter(GtkTreeIter iter);
+
 #endif				//__PARAMETER_H

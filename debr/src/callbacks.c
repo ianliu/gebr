@@ -377,10 +377,6 @@ void on_menu_delete_activate(void)
 		g_free(path);
 	}
 
-	if (menu_get_n_menus() == 0)
-		menu_new(FALSE);
-	// else
-	//      gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 }
 
 /*
@@ -494,17 +490,17 @@ void on_program_new_activate(void)
 }
 
 /*
- * Function: on_program_new_activate
+ * Function: on_program_delete_activate
  * Call <program_remove>
  */
 void on_program_delete_activate(void)
 {
-	program_remove();
+	program_remove(TRUE);
 }
 
 /*
- * Function: on_program_new_activate
- * Call <program_remove>
+ * Function: on_program_properties_activate
+ * Call <program_dialog_setup_ui>
  */
 void on_program_properties_activate(void)
 {
