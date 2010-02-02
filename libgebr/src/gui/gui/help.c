@@ -27,6 +27,7 @@
 
 #include "help.h"
 #include "utils.h"
+#include "js.h"
 
 /*
  * Declarations
@@ -38,23 +39,45 @@ libgebr_gui_help_show_on_title_changed(WebKitWebView * web_view,
 				       WebKitWebFrame * frame, gchar * title, GtkWindow * window);
 static GtkWidget *libgebr_gui_help_show_create_web_view(void);
 
-static gchar * js_start_inline_editing =					\
-	"var editor;"								\
-	"document.body.addEventListener('dbclick', onDoubleClick, false);"	\
-	"function onDoubleClick(evt) {"						\
-	"	var element = ev.target || ev.srcElement;" 			\
-	"	element = element.parentNode;"					\
-	"	if (element.nodeName.toLowerCase() == 'div'"			\
-	"		&& element.className.indexOf('editable') != -1)"	\
-	"		replaceDiv(element);"					\
-	"	else if (editor)"						\
-	"		editor.destroy();"					\
-	"}"									\
-	"function replaceDiv(element) {"					\
-	"	if (editor)"							\
-	"		editor.destroy();"					\
-	"	editor = CKEDITOR.replace(element);"				\
-	"}";
+static void gebr_gui_web_view_on_loaded(WebKitWebView * web_view, WebKitWebFrame * frame);
+
+static GtkWidget * libgebr_gui_help_create_web_view(gboolean edit);
+
+/**
+ * Returns the HTML content of the help.
+ */
+static GString * gebr_gui_help_get_html(WebKitWebView * web_view);
+
+static gchar * js_start_inline_editing = \
+	"var editor;"
+	"var CKEDITOR_BASEPATH='file://" CKEDITOR_DIR "/';"
+	"var tag = document.createElement('script');"
+	"tag.setAttribute('type', 'text/javascript');"
+	"tag.setAttribute('src', 'file://"CKEDITOR_DIR"/ckeditor.js');"
+	"document.getElementsByTagName('head')[0].appendChild(tag);"
+	"function replaceDiv(element) {"
+	"	if (editor) {"
+	"		editor.destroy();"					
+	"		editor = null;"
+	"	}"
+	"	editor = CKEDITOR.replace(element, {"
+	"			fullpage: true,"
+	"			toolbar:[['Source','-','Bold','Italic','Underline','-',"
+	"				'Subscript','Superscript','-','Undo','Redo','-','Find','Replace', '-' ]]});"
+	"}"									
+	"function on_div_click(evt) {"						
+	"	var element = evt.target;" 			
+	"	element = element.parentNode;"					
+	"	if (element.nodeName.toLowerCase() == 'div'"			
+	"		&& element.className.indexOf('editable') != -1)"	
+	"		replaceDiv(element);"					
+	"	else if(editor) {"						
+	"		editor.destroy();"
+	"		editor = null;"
+	"	}"
+	"}"
+	"document.body.addEventListener('click', on_div_click, false);"
+	"";
 #endif
 
 /*
@@ -66,7 +89,7 @@ void gebr_gui_help_show(const gchar * uri, const gchar * browser)
 #ifdef WEBKIT_ENABLED
 	GtkWidget *web_view;
 
-	web_view = libgebr_gui_help_show_create_web_view();
+	web_view = libgebr_gui_help_create_web_view(FALSE);
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), uri);
 #else
 	GString *cmd_line;
@@ -120,7 +143,7 @@ static void _gebr_gui_help_edit(const gchar *help, const gchar * editor,
 	data->html_path = html_path;
 	data->finish_callback = finish_callback;
 
-	web_view = libgebr_gui_help_show_create_web_view();
+	web_view = libgebr_gui_help_create_web_view(TRUE);
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), html_path->str);
 	g_signal_connect(web_view, "destroy", G_CALLBACK(help_edit_on_web_view_destroy), data);
 #else
@@ -193,7 +216,16 @@ void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, const gchar * edito
  */
 
 #ifdef WEBKIT_ENABLED
-static GtkWidget *libgebr_gui_help_show_create_web_view(void)
+static GtkWidget * libgebr_gui_help_create_web_view(gboolean edit)
+{
+	GtkWidget * web_view;
+	web_view = libgebr_gui_help_show_create_web_view();
+	if (edit)
+		g_signal_connect(web_view, "load-finished", G_CALLBACK(gebr_gui_web_view_on_loaded), NULL);
+	return web_view;
+}
+
+static GtkWidget *libgebr_gui_help_show_create_web_view()
 {
 	static GtkWindowGroup *window_group = NULL;
 	static GtkWidget *work_around_web_view = NULL;
@@ -219,6 +251,7 @@ static GtkWidget *libgebr_gui_help_show_create_web_view(void)
 	if (g_signal_lookup("create-web-view", WEBKIT_TYPE_WEB_VIEW))
 		g_signal_connect(web_view, "create-web-view", G_CALLBACK(libgebr_gui_help_show_create_web_view), NULL);
 	g_signal_connect(web_view, "title-changed", G_CALLBACK(libgebr_gui_help_show_on_title_changed), window);
+	
 
 	/* Place the WebKitWebView in the GtkScrolledWindow */
 	gtk_container_add(GTK_CONTAINER(scrolled_window), web_view);
@@ -236,6 +269,27 @@ libgebr_gui_help_show_on_title_changed(WebKitWebView * web_view,
 				       WebKitWebFrame * frame, gchar * title, GtkWindow * window)
 {
 	gtk_window_set_title(window, title);
+}
+
+static GString * gebr_gui_help_get_html(WebKitWebView * web_view)
+{
+	JSValueRef html;
+	JSContextRef ctx;
+	WebKitWebFrame * frame;
+
+	frame = webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(web_view));
+	ctx = (JSContextRef)webkit_web_frame_get_global_context(frame);
+	html = gebr_js_evaluate(ctx, "document.documentElement.outerHTML;");
+	return gebr_js_value_get_string(ctx, html);
+}
+
+static void gebr_gui_web_view_on_loaded(WebKitWebView * web_view, WebKitWebFrame * frame)
+{
+	JSContextRef ctx;
+	ctx = webkit_web_frame_get_global_context(frame);
+	gebr_js_evaluate(ctx, js_start_inline_editing);
+	g_signal_handlers_disconnect_matched(G_OBJECT(web_view),
+					     G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(gebr_gui_web_view_on_loaded), NULL);
 }
 
 #endif				//WEBKIT_ENABLED

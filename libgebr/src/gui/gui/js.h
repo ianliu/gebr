@@ -25,6 +25,8 @@ G_BEGIN_DECLS
 
 JSValueRef gebr_js_evaluate(JSContextRef ctx, const gchar * script);
 
+JSValueRef gebr_js_evaluate_file(JSContextRef ctx, const gchar * file);
+
 gchar * gebr_js_value_to_string(JSContextRef ctx, JSValueRef value);
 
 GString * gebr_js_value_get_string(JSContextRef ctx, JSValueRef val);

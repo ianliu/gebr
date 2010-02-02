@@ -17,18 +17,53 @@
 
 #include "js.h"
 
-JSValueRef gebr_js_evaluate(JSContextRef ctx, const gchar * script)
+JSValueRef gebr_js_eval_with_url(JSContextRef ctx, const gchar * script, const gchar * url)
 {
 	JSObjectRef obj;
-	JSStringRef scr;
+	JSStringRef script_str;
+	JSStringRef source;
 	JSValueRef val;
+	JSValueRef except;
 
-	scr = JSStringCreateWithUTF8CString(script);
+	except = NULL;
+	script_str = JSStringCreateWithUTF8CString(script);
+	source = url? JSStringCreateWithUTF8CString(url) : NULL;
 	obj = JSContextGetGlobalObject(ctx);
-	val = JSEvaluateScript(ctx, scr, obj, NULL, 0, NULL);
-	JSStringRelease(scr);
+	val = JSEvaluateScript(ctx, script_str, obj, source, 0, &except);
+	if (except)
+		puts(gebr_js_value_to_string(ctx, except));
+	JSStringRelease(script_str);
+	if (url)
+		JSStringRelease(source);
 
 	return val;
+}
+
+JSValueRef gebr_js_evaluate(JSContextRef ctx, const gchar * script)
+{
+	return gebr_js_eval_with_url(ctx, script, NULL);
+}
+
+JSValueRef gebr_js_evaluate_file(JSContextRef ctx, const gchar * file)
+{
+	gsize size;
+	gchar * str;
+	GError * error;
+	GIOChannel * channel;
+	GString * string;
+	JSValueRef value;
+
+	error = NULL;
+	channel = g_io_channel_new_file(file, "r", &error);
+	g_io_channel_read_to_end(channel, &str, &size, &error);
+	g_io_channel_shutdown(channel, FALSE, &error);
+	string = g_string_new("file://");
+	g_string_append(string, file);
+	value = gebr_js_eval_with_url(ctx, str, string->str);
+	g_free(str);
+	g_string_free(string, TRUE);
+
+	return value;
 }
 
 gchar * gebr_js_value_to_string(JSContextRef ctx, JSValueRef value)
@@ -58,6 +93,7 @@ GString * gebr_js_value_get_string(JSContextRef ctx, JSValueRef val)
 
 	str = JSValueToStringCopy(ctx, val, NULL);
 	len = JSStringGetLength(str);
+	buf = g_new(gchar, len + 1);
 	JSStringGetUTF8CString(str, buf, len + 1);
 	JSStringRelease(str);
 	ret = g_string_new(buf);
