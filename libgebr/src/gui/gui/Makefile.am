@@ -43,7 +43,8 @@ EXTRA_DIST = ${noinst_HEADERS} marshalers.list
 INCLUDES = -I../.. -I../../geoxml $(WEBKIT_ENABLED) \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" \
 	-DPIXMAPS_DIR=\"$(datadir)/libgebr/pixmaps/\" \
-	-DICONS_DIR=\"$(datadir)/libgebr/icons/\"
+	-DICONS_DIR=\"$(datadir)/libgebr/icons/\" \
+	-DCKEDITOR_DIR=\"$(datadir)/libgebr/ckeditor/\"
 AM_CFLAGS = -Wall -std=gnu99 -fPIC @DEBUG_CFLAGS@ $(GTK_CFLAGS) $(GTHREAD_CFLAGS) $(WEBKIT_CFLAGS)
 libgebr_gui_la_LIBADD = $(INTLLIBS) $(GTK_LIBS) $(GTHREAD_LIBS) $(WEBKIT_LIBS) \
 	../../libgebr.la \

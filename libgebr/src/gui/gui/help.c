@@ -69,7 +69,7 @@ static gchar * js_start_inline_editing = \
 	"	var element = evt.target;" 			
 	"	element = element.parentNode;"					
 	"	if (element.nodeName.toLowerCase() == 'div'"			
-	"		&& element.className.indexOf('editable') != -1)"	
+	"		&& element.className.indexOf('content') != -1)"	
 	"		replaceDiv(element);"					
 	"	else if(editor) {"						
 	"		editor.destroy();"
