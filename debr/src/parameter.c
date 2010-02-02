@@ -208,7 +208,7 @@ void parameter_new(void)
 {
 	GtkTreeIter iter;
 
-	if (!menu_get_selected(NULL, TRUE))
+	if (!menu_get_selected(NULL, TRUE) || (!program_get_selected(NULL, TRUE)))
 		return;
 
 	if (parameter_get_selected(&iter, FALSE) &&
