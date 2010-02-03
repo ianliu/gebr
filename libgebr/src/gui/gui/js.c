@@ -15,6 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdio.h>
 #include "js.h"
 
 JSValueRef gebr_js_eval_with_url(JSContextRef ctx, const gchar * script, const gchar * url)
@@ -92,9 +93,9 @@ GString * gebr_js_value_get_string(JSContextRef ctx, JSValueRef val)
 		return NULL;
 
 	str = JSValueToStringCopy(ctx, val, NULL);
-	len = JSStringGetLength(str);
-	buf = g_new(gchar, len + 1);
-	JSStringGetUTF8CString(str, buf, len + 1);
+	len = JSStringGetMaximumUTF8CStringSize(str);
+	buf = g_new(gchar, len);
+	JSStringGetUTF8CString(str, buf, len);
 	JSStringRelease(str);
 	ret = g_string_new(buf);
 	g_free(buf);
@@ -102,13 +103,33 @@ GString * gebr_js_value_get_string(JSContextRef ctx, JSValueRef val)
 	return ret;
 }
 
-JSValueRef gebr_js_make_function(JSContextRef ctx, const gchar * name, JSObjectCallAsFunctionCallback callback)
+JSObjectRef gebr_js_make_function(JSContextRef ctx, const gchar * name, JSObjectCallAsFunctionCallback callback)
 {
-	JSValueRef ret;
+	JSObjectRef ret;
 	JSStringRef name_str;
 	name_str = JSStringCreateWithUTF8CString(name);
 	ret = JSObjectMakeFunctionWithCallback(ctx, name_str, callback);
 	JSStringRelease(name_str);
 	return ret;
+}
+
+gboolean gebr_js_include(JSContextRef ctx, const gchar * file)
+{
+	if (!g_file_test(file, G_FILE_TEST_EXISTS))
+		return FALSE;
+	GString * script;
+	const gchar * include_script =
+		"(function() {"
+			"var script = document.createElement('script');"
+			"script.setAttribute('type', 'text/javascript');"
+			"script.setAttribute('src', 'file://%s');"
+			"document.body.appendChild(script);"
+		"})();";
+	script = g_string_new(NULL);
+	g_string_printf(script, include_script, file);
+	gebr_js_evaluate(ctx, script->str);
+	g_string_free(script, TRUE);
+
+	return TRUE;
 }
 

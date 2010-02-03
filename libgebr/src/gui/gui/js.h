@@ -29,9 +29,29 @@ JSValueRef gebr_js_evaluate_file(JSContextRef ctx, const gchar * file);
 
 gchar * gebr_js_value_to_string(JSContextRef ctx, JSValueRef value);
 
+/**
+ *
+ */
 GString * gebr_js_value_get_string(JSContextRef ctx, JSValueRef val);
 
-JSValueRef gebr_js_make_function(JSContextRef ctx, const gchar * name, JSObjectCallAsFunctionCallback callback);
+/**
+ * Creates a JavaScript function in contect \p ctx which calls \p callback.
+ * @param name Functions name in JavaScript.
+ * @param callback A c-function which will be called upon JavaScript's function call.
+ * @return A JavaScript value representing the function.
+ */
+JSObjectRef gebr_js_make_function(JSContextRef ctx, const gchar * name, JSObjectCallAsFunctionCallback callback);
+
+/**
+ * Includes a JavaScript file into a context by appending a <script> tag into document.body.
+ * You must guarantee body tag exists, otherwise this function may fail silently. This might be done by connecting to
+ * "load-finished" signal of #WebKitWebView.
+ *
+ * @param ctx A JavaScript context to have \p file included.
+ * @param file The path of the JavaScript file to be included; 'file://' is automatically inserted in front of it.
+ * @return TRUE if \p file exists, FALSE otherwise.
+ */
+gboolean gebr_js_include(JSContextRef ctx, const gchar * file);
 
 G_END_DECLS
 

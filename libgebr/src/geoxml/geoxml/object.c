@@ -37,6 +37,8 @@ struct gebr_geoxml_object {
 
 enum GEBR_GEOXML_OBJECT_TYPE gebr_geoxml_object_get_type(GebrGeoXmlObject * object)
 {
+	GdomeElement * element;
+
 	static const gchar *tag_map[] = { "",
 		"project", "line", "flow",
 		"program", "parameters", "parameter",
@@ -47,8 +49,13 @@ enum GEBR_GEOXML_OBJECT_TYPE gebr_geoxml_object_get_type(GebrGeoXmlObject * obje
 	if (object == NULL)
 		return GEBR_GEOXML_OBJECT_TYPE_UNKNOWN;
 
+	if (gdome_n_nodeType((GdomeNode*)object, &exception) == GDOME_DOCUMENT_NODE)
+		element = gdome_doc_documentElement((GdomeDocument*)object, &exception);
+	else
+		element = (GdomeElement*)object;
+
 	for (i = 1; i <= 7; ++i)
-		if (!strcmp(gdome_el_tagName((GdomeElement *) object, &exception)->str, tag_map[i]))
+		if (!strcmp(gdome_el_tagName(element, &exception)->str, tag_map[i]))
 			return (enum GEBR_GEOXML_OBJECT_TYPE)i;
 
 	return GEBR_GEOXML_OBJECT_TYPE_UNKNOWN;

@@ -17,6 +17,13 @@ test_gebr_js_value_get_string(void)
 
 	string = gebr_js_value_get_string(ctx, value);
 	g_assert_cmpstr(string->str, ==, "test");
+
+	str = JSStringCreateWithUTF8CString("tést");
+	value = JSValueMakeString(ctx, str);
+	JSStringRelease(str);
+
+	string = gebr_js_value_get_string(ctx, value);
+	g_assert_cmpstr(string->str, ==, "tést");
 }
 
 static void
