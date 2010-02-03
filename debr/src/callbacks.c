@@ -228,6 +228,8 @@ void on_menu_save_as_activate(void)
 						     GTK_FILE_CHOOSER_ACTION_SAVE,
 						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 						     GTK_STOCK_SAVE, GTK_RESPONSE_YES, NULL);
+	for (int i = 0; debr.config.menu_dir[i]; i++)
+		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir[i], NULL);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
 	filefilter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filefilter, _("Menu files (*.mnu)"));
