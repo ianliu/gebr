@@ -101,7 +101,8 @@ static gchar * js_start_inline_editing = \
 				"fullpage: true,"
 				"toolbar:[['Source','Save', '-','Bold','Italic','Underline','-',"
 					"'Subscript','Superscript','-','Undo','Redo','-',"
-					"'NumberedList','BulletedList','Format','-','Link','Unlink','-','Find','Replace', '-' ]]});"
+					"'NumberedList','BulletedList','Blockquote','Format','-',"
+					"'Link','Unlink','-','Find','Replace', '-' ]]});"
 		"} else if (editor) {"
 			"DestroyEditor();"
 			"editor = null;"
@@ -218,7 +219,7 @@ static void _gebr_gui_help_edit(const gchar *help, const gchar * editor,
 	data->set_function = set_function;
 	data->html_path = html_path;
 	data->finish_callback = finish_callback;
-	data->web_view = web_view = libgebr_gui_help_create_web_view(data);
+	data->web_view = WEBKIT_WEB_VIEW((web_view = libgebr_gui_help_create_web_view(data)));
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), html_path->str);
 #else
 	GString *cmd_line;
