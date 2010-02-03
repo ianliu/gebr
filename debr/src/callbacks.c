@@ -182,7 +182,7 @@ void on_menu_open_activate(void)
 	/* open it */
 	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 	menu_open(path, TRUE);
-
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(debr.notebook), NOTEBOOK_PAGE_MENU);
 	g_free(path);
  out:	gtk_widget_destroy(chooser_dialog);
 }
@@ -502,9 +502,9 @@ void on_program_delete_activate(void)
  * Function: on_program_properties_activate
  * Call <program_dialog_setup_ui>
  */
-void on_program_properties_activate(void)
+gboolean on_program_properties_activate(void)
 {
-	program_dialog_setup_ui();
+	return program_dialog_setup_ui();
 }
 
 /*

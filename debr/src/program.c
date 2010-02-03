@@ -221,10 +221,15 @@ void program_new(gboolean edit)
 	gtk_list_store_set(debr.ui_program.list_store, &iter, PROGRAM_STATUS, debr.pixmaps.stock_no, -1);
 
 	program_select_iter(iter);
-	if (edit)
-		on_program_properties_activate();
-	menu_details_update();
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
+	if (edit){
+		if (on_program_properties_activate()){
+			menu_details_update();
+			menu_saved_status_set(MENU_STATUS_UNSAVED);
+		}
+		else{
+			program_remove(FALSE);
+		}
+	}
 }
 
 /*
@@ -369,7 +374,7 @@ void program_paste(void)
  * Function: program_dialog_setup_ui
  * Open dialog to configure current program
  */
-void program_dialog_setup_ui(void)
+gboolean program_dialog_setup_ui(void)
 {
 	GtkWidget *dialog;
 	GtkWidget *table;
@@ -396,12 +401,13 @@ void program_dialog_setup_ui(void)
 	GtkWidget *url_entry;
 
 	GebrGeoXmlFlow * clone_menu;
+	gboolean ret = TRUE;
 
 	clone_menu = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(debr.menu)));
 
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
 	if (program_get_selected(NULL, TRUE) == FALSE)
-		return;
+		return FALSE;
 
 	dialog = gtk_dialog_new_with_buttons(_("Edit program"),
 					     GTK_WINDOW(debr.window),
@@ -559,13 +565,14 @@ void program_dialog_setup_ui(void)
 	gtk_widget_show(dialog);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK){
 		menu_replace(clone_menu);
-		program_remove(FALSE);
+		ret = FALSE;
 		goto out;
 	}
 
 out:
 	program_load_selected();
 	gtk_widget_destroy(dialog);
+	return ret;
 
 }
 

@@ -57,7 +57,7 @@ void program_bottom(void);
 void program_copy(void);
 void program_paste(void);
 
-void program_dialog_setup_ui(void);
+gboolean program_dialog_setup_ui(void);
 gboolean program_get_selected(GtkTreeIter * iter, gboolean warn_user);
 void program_select_iter(GtkTreeIter iter);
 

@@ -42,7 +42,7 @@ void on_menu_close_activate(void);
 
 void on_program_new_activate(void);
 void on_program_delete_activate(void);
-void on_program_properties_activate(void);
+gboolean on_program_properties_activate(void);
 void on_program_preview_activate(void);
 void on_program_top_activate(void);
 void on_program_bottom_activate(void);

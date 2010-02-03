@@ -236,8 +236,16 @@ void menu_new(gboolean edit)
 	menu_select_iter(&iter);
 
 	if (edit) {
-		menu_dialog_setup_ui();
-		menu_saved_status_set(MENU_STATUS_UNSAVED);
+		if (menu_dialog_setup_ui()){
+			menu_saved_status_set(MENU_STATUS_UNSAVED);
+		}
+		else{
+		GtkTreeIter iter;
+
+		if (menu_get_selected(&iter, FALSE))
+			menu_close(&iter);
+		}
+
 	}
 
 	g_string_free(new_menu_str, TRUE);
@@ -643,7 +651,7 @@ void menu_status_set_unsaved(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-void menu_dialog_setup_ui(void)
+gboolean menu_dialog_setup_ui(void)
 {
 	GtkWidget *dialog;
 	GtkWidget *table;
@@ -669,6 +677,7 @@ void menu_dialog_setup_ui(void)
 	IterType type;
 	GtkTreeIter iter;
 	GebrGeoXmlFlow * clone_menu;
+	gboolean ret = TRUE;
 
 	clone_menu = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(debr.menu)));
 
@@ -679,10 +688,10 @@ void menu_dialog_setup_ui(void)
 		path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_menu.model), &iter);
 		gtk_tree_view_expand_row(GTK_TREE_VIEW(debr.ui_menu.tree_view), path, FALSE);
 		gtk_tree_path_free(path);
-		return;
+		return FALSE;
 	}
 	if (type != ITER_FILE)
-		return;
+		return FALSE;
 
 	dialog = gtk_dialog_new_with_buttons(_("Edit menu"),
 					     GTK_WINDOW(debr.window),
@@ -841,12 +850,7 @@ void menu_dialog_setup_ui(void)
 
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK){
 		menu_replace(clone_menu);
-
-		GtkTreeIter iter;
-
-		if (menu_get_selected(&iter, FALSE))
-			menu_close(&iter);
-
+		ret = FALSE;
 		goto out;
 	}
 
@@ -854,6 +858,7 @@ void menu_dialog_setup_ui(void)
 
 out:
 	gtk_widget_destroy(dialog);
+	return ret;
 }
 
 gboolean menu_get_selected(GtkTreeIter * iter, gboolean warn_unselected_menu)
