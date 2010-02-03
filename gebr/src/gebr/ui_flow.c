@@ -529,15 +529,13 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	/* get queue information */
 	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB)
 		if (!moab_setup_ui(&config->account, server))
-			goto err;;
-	if (gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)) == -1) { 
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
-			     _("No available queue for server"));
-		goto err;
-	}
-	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB
-	    && gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter)) {
-		gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, &config->class, -1);
+			goto err;
+	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) {
+		if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter))
+			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, &config->class, -1);
+		else
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
+				     _("No available queue for server '%s'"), server->comm->address->str);
 	} else {
 		gboolean has_queue = FALSE;
 

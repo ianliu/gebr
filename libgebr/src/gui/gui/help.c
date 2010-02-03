@@ -66,29 +66,38 @@ static gchar * js_start_inline_editing = \
 	"tag.setAttribute('type', 'text/javascript');"
 	"tag.setAttribute('src', 'file://" CKEDITOR_DIR "/ckeditor.js');"
 	"document.getElementsByTagName('head')[0].appendChild(tag);"
-	"function replaceDiv(element) {"
-	"	if (editor)"
-	"		editor.destroy();"
-	"	editing_element = element;"
-	"	editing_class = element.getAttribute('class');"
-	"	editor = CKEDITOR.replace(element, {"
+	"function on_click(evt) {"
+	"	var element = evt.target;"
+	"	var found_div = false;"
+	"	while (element) {"
+	"		if (element.nodeName.toLowerCase() == 'div'"
+	"		&& element.className.indexOf('content') != -1) {"
+	"			found_div = true;"
+	"			break;"
+	"		} else if (editor && element.nodeName.toLowerCase() == 'span') {"
+	"			var id = element.getAttribute('id');"
+	"			if (id && id.indexOf('cke_editor') == 0)"
+	"				return;"
+	"		}"
+	"		element = element.parentNode;"
+	"	}"
+	"	if (found_div) {"
+	"		if (editor)"
+	"			editor.destroy();" 
+	"		editing_element = element;"
+	"		editing_class = element.getAttribute('class');"
+	"		editor = CKEDITOR.replace(element, {"
 	"			fullpage: true,"
 	"			toolbar:[['Source','Save', '-','Bold','Italic','Underline','-',"
-	"				'Subscript','Superscript','-','Undo','Redo','-','Find','Replace', '-' ]]});"
-	"}"
-	"function on_div_click(evt) {"
-	"	var element = evt.target;"
-	"	element = element.parentNode;"
-	"	if (element.nodeName.toLowerCase() == 'div'"
-	"		&& element.className.indexOf('content') != -1)"
-	"		replaceDiv(element);"
-	"	else if(editor) {"
+	"				'Subscript','Superscript','-','Undo','Redo','-',"
+	"				'NumberedList','BulletedList','Styles','-','Link','Unlink','-','Find','Replace', '-' ]]});"
+	"	} else if (editor) {"
 	"		editor.destroy();"
 	"		editor = null;"
 	"		editing_element = null;"
 	"	}"
 	"}"
-	"document.body.addEventListener('click', on_div_click, false);"
+	"document.body.addEventListener('click', on_click, false);"
 	"";
 #endif
 
@@ -122,12 +131,11 @@ static GString *help_edit_save(WebKitWebView * web_view, struct help_edit_data *
 	GString *help;
 
 	help = gebr_gui_help_get_html(web_view);
-	puts(help->str);
 	if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(data->object), help->str);
 	else
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(data->object), help->str);
-	puts(help->str);
+
 	return help;
 }
 
@@ -135,7 +143,6 @@ static gboolean help_edit_on_web_view_destroy(GtkDialog * dialog, gint response_
 {
 	GString * help;
 
-	puts("delete event");
 	help = help_edit_save(data->web_view, data);
 	if (data->finish_callback)
 		data->finish_callback(data->object, help->str);
