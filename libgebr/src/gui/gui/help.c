@@ -21,6 +21,7 @@
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 #include <glib/gstdio.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "../../intl.h"
 #include "../../utils.h"
@@ -53,6 +54,19 @@ static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame *
 
 static GtkWidget * web_view_create(struct help_edit_data * data);
 
+static gboolean web_view_on_button_press(GtkWidget * widget, GdkEventButton * event);
+
+static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, struct help_edit_data * data);
+
+#define css_div_style 					\
+	".content {"					\
+		"border: 2px solid Transparent;"	\
+		"padding: 3px;"				\
+	"}"						\
+	".content:hover {"				\
+		"border-color: black;"			\
+	"}"
+
 static gchar * js_start_inline_editing = \
 	"var editor = null;"
 	"var editing_element = null;"
@@ -66,10 +80,18 @@ static gchar * js_start_inline_editing = \
 		"if (editor) {"
 			"editor.destroy();"
 			"GenerateNavigationIndex(document);"
+			"editor = null;"
+			"editing_element = null;"
 		"}"
 	"}"
 	"function GetEditableElements() {"
 		"return [document.getElementsByClassName('content')[0]];"
+	"}"
+	"function InsertHoverCss() {"
+		"var stl = document.createElement('style');"
+		"stl.setAttribute('type', 'text/css');"
+		"stl.appendChild(document.createTextNode('"css_div_style"'));"
+		"document.getElementsByTagName('head')[0].appendChild(stl);"
 	"}"
 	"function IsElementEditable(elt) {"
 		"return (elt.nodeName.toLowerCase() == 'div'"
@@ -95,14 +117,16 @@ static gchar * js_start_inline_editing = \
 			"editing_class = element.getAttribute('class');"
 			"editor = CKEDITOR.replace(element, {"
 				"fullpage: true,"
+				"height:450,"
+				"width: 390,"
+				"resize_enabled:false,"
+				"toolbarCanCollapse:false,"
 				"toolbar:[['Source','Save', '-','Bold','Italic','Underline','-',"
 					"'Subscript','Superscript','-','Undo','Redo','-',"
 					"'NumberedList','BulletedList','Blockquote','Format','-',"
 					"'Link','Unlink','-','Find','Replace', '-' ]]});"
-		"} else if (editor) {"
+		"} else {" 
 			"DestroyEditor();"
-			"editor = null;"
-			"editing_element = null;"
 		"}"
 	"}"
 	"function GenerateNavigationIndex(doc) {"
@@ -134,6 +158,7 @@ static gchar * js_start_inline_editing = \
 		"GenerateNavigationIndex(doc);"
 	"}"
 	"UpgradeHelpFormat(document);"
+	"InsertHoverCss();"
 	"document.body.addEventListener('click', on_click, false);"
 	"";
 #endif
@@ -207,6 +232,7 @@ static GString *help_edit_save(JSContextRef context, struct help_edit_data * dat
 	html = gebr_js_evaluate(context, script_fetch_help);
 	help = gebr_js_value_get_string(context, html);
 
+
 	if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(data->object), help->str);
 	else
@@ -230,7 +256,6 @@ static void _gebr_gui_help_edit(const gchar *help, const gchar * editor,
 	fclose(html_fp);
 	
 #ifdef WEBKIT_ENABLED
-	GtkWidget *web_view;
 	struct help_edit_data *data;
 
 	data = g_new(struct help_edit_data, 1);
@@ -238,9 +263,9 @@ static void _gebr_gui_help_edit(const gchar *help, const gchar * editor,
 	data->set_function = set_function;
 	data->html_path = html_path;
 	data->finish_callback = finish_callback;
-	data->web_view = WEBKIT_WEB_VIEW((web_view = web_view_create(data)));
+	data->web_view = WEBKIT_WEB_VIEW(web_view_create(data));
 	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
-	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), html_path->str);
+	webkit_web_view_open(WEBKIT_WEB_VIEW(data->web_view), html_path->str);
 #else
 	GString *cmd_line;
 	gchar buffer[BUFFER_SIZE];
@@ -295,11 +320,11 @@ out:	g_string_free(cmd_line, TRUE);
 }
 
 #ifdef WEBKIT_ENABLED
-static void web_view_main_frame_on_destroy(WebKitWebFrame * frame)
+static void web_view_on_destroy(WebKitWebView * web_view)
 {
 	JSContextRef context;
 
-	context = webkit_web_frame_get_global_context(frame);
+	context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(web_view));
 	g_hash_table_remove(jscontext_to_data_hash, context);
 	if (!g_hash_table_size(jscontext_to_data_hash)) {
 		g_hash_table_unref(jscontext_to_data_hash);
@@ -337,8 +362,7 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window)
 	if (g_signal_lookup("create-web-view", WEBKIT_TYPE_WEB_VIEW))
 		g_signal_connect(web_view, "create-web-view", G_CALLBACK(web_view_on_create_web_view), NULL);
 	g_signal_connect(web_view, "title-changed", G_CALLBACK(web_view_on_title_changed), window);
-	g_signal_connect(webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(web_view)), "destroy",
-			 G_CALLBACK(web_view_main_frame_on_destroy), NULL);
+	g_signal_connect(web_view, "destroy", G_CALLBACK(web_view_on_destroy), NULL);
 
 	/* Place the WebKitWebView in the GtkScrolledWindow */
 	gtk_container_add(GTK_CONTAINER(scrolled_window), web_view);
@@ -376,6 +400,8 @@ static GtkWidget * web_view_create(struct help_edit_data * data)
 	if (data) {
 		g_signal_connect(dialog, "response", G_CALLBACK(dialog_on_response), data);
 		g_signal_connect(web_view, "load-finished", G_CALLBACK(web_view_on_load_finished), data);
+		g_signal_connect(web_view, "button-press-event", G_CALLBACK(web_view_on_button_press), data);
+		g_signal_connect(web_view, "key-press-event", G_CALLBACK(web_view_on_key_press), data);
 		g_hash_table_insert(jscontext_to_data_hash, (gpointer)data->context, data);
 	}
 	return web_view;
@@ -401,13 +427,27 @@ JSValueRef js_callback_gebr_help_save(JSContextRef ctx, JSObjectRef function, JS
 static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, struct help_edit_data * data)
 {
 	JSObjectRef function;
-
 	gebr_js_evaluate(data->context, js_start_inline_editing);
 	function = gebr_js_make_function(data->context, "gebr_help_save", js_callback_gebr_help_save);
 	g_hash_table_insert(jscontext_to_data_hash, (gpointer)function, data);
-
 	g_signal_handlers_disconnect_matched(G_OBJECT(web_view),
 					     G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(web_view_on_load_finished), data);
+}
+
+static gboolean web_view_on_button_press(GtkWidget * widget, GdkEventButton * event)
+{
+	if (event->button == 3)
+		return TRUE;
+	return FALSE;
+}
+
+static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, struct help_edit_data * data)
+{
+	if (event->keyval == GDK_Escape) {
+		gebr_js_evaluate(data->context, "DestroyEditor();");
+		return TRUE;
+	}
+	return FALSE;
 }
 
 #endif				//WEBKIT_ENABLED
