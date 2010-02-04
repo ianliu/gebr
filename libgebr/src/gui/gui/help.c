@@ -16,10 +16,10 @@
  */
 
 #ifdef WEBKIT_ENABLED
-#include <gtk/gtk.h>
 #include <webkit/webkit.h>
 #endif
 #include <gdk/gdk.h>
+#include <gtk/gtk.h>
 #include <glib/gstdio.h>
 
 #include "../../intl.h"
@@ -34,28 +34,24 @@
  */
 
 #ifdef WEBKIT_ENABLED
+static GHashTable * jscontext_to_data_hash = NULL;
 typedef void (*set_help)(GebrGeoXmlObject * object, const gchar help);
 struct help_edit_data {
 	WebKitWebView * web_view;
+	JSContextRef context;
 	GebrGeoXmlObject * object;
 	set_help set_function;
 	GString *html_path;
 	GebrGuiHelpEditingFinished finish_callback;
 };
 
-static void
-libgebr_gui_help_show_on_title_changed(WebKitWebView * web_view,
-				       WebKitWebFrame * frame, gchar * title, GtkWindow * window);
-static GtkWidget *on_create_web_view(GtkDialog ** r_window);
+static void web_view_on_title_changed(WebKitWebView * web_view, WebKitWebFrame * frame, gchar * title,
+				      GtkWindow * window);
+static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window);
 
-static void gebr_gui_web_view_on_loaded(WebKitWebView * web_view, WebKitWebFrame * frame);
+static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, struct help_edit_data * data);
 
-static GtkWidget * libgebr_gui_help_create_web_view(struct help_edit_data * data);
-
-/**
- * Returns the HTML content of the help.
- */
-static GString * gebr_gui_help_get_html(WebKitWebView * web_view);
+static GtkWidget * web_view_create(struct help_edit_data * data);
 
 static gchar * js_start_inline_editing = \
 	"var editor = null;"
@@ -151,7 +147,7 @@ void gebr_gui_help_show(const gchar * uri, const gchar * browser)
 #ifdef WEBKIT_ENABLED
 	GtkWidget *web_view;
 
-	web_view = libgebr_gui_help_create_web_view(NULL);
+	web_view = web_view_create(NULL);
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), uri);
 #else
 	GString *cmd_line;
@@ -166,34 +162,57 @@ void gebr_gui_help_show(const gchar * uri, const gchar * browser)
 #endif
 }
 
+static void _gebr_gui_help_edit(const gchar *help, const gchar * editor,
+			       	GebrGeoXmlObject * object, set_help set_function,
+			       	GebrGuiHelpEditingFinished finish_callback);
 
-static GString *help_edit_save(WebKitWebView * web_view, struct help_edit_data * data)
+void gebr_gui_help_edit(GebrGeoXmlDocument * document, const gchar * editor, GebrGuiHelpEditingFinished finish_callback)
+{
+	_gebr_gui_help_edit(gebr_geoxml_document_get_help(document), editor, GEBR_GEOXML_OBJECT(document),
+			    (set_help)gebr_geoxml_document_set_help, finish_callback);
+}
+
+void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, const gchar * editor, GebrGuiHelpEditingFinished finish_callback)
+{
+	_gebr_gui_help_edit(gebr_geoxml_program_get_help(program), editor, GEBR_GEOXML_OBJECT(program),
+			    (set_help)gebr_geoxml_program_set_help, finish_callback);
+}
+
+/*
+ * Private functions
+ */
+
+static GString *help_edit_save(JSContextRef context, struct help_edit_data * data)
 {
 	GString *help;
+	JSValueRef html;
 
-	help = gebr_gui_help_get_html(web_view);
+	const gchar * script_fetch_help =
+		"(function() {"
+			"var doc_clone = document.implementation.createDocument('', '', null);"
+			"if (editor) editor.updateElement();"
+			"doc_clone.appendChild(document.documentElement.cloneNode(true));"
+			"var scripts = doc_clone.getElementsByTagName('script');"
+			"for (var i = 0; i < scripts.length; i++)"
+				"scripts[i].parentNode.removeChild(scripts[i]);"
+			"if (editor) {"
+				"var editing_element = doc_clone.getElementsByClassName(editing_class)[0];"
+				"var ed = editing_element.nextSibling;"
+				"editing_element.removeAttribute('style');"
+				"ed.parentNode.removeChild(ed);"
+			"}"
+			"return doc_clone.documentElement.outerHTML;"
+		"})();";
+
+	html = gebr_js_evaluate(context, script_fetch_help);
+	help = gebr_js_value_get_string(context, html);
+
 	if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(data->object), help->str);
 	else
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(data->object), help->str);
 
 	return help;
-}
-
-static gboolean help_edit_on_web_view_destroy(GtkDialog * dialog, gint response_id, struct help_edit_data * data)
-{
-	GString * help;
-
-	help = help_edit_save(data->web_view, data);
-	if (data->finish_callback)
-		data->finish_callback(data->object, help->str);
-
-	g_string_free(help, TRUE);
-	g_unlink(data->html_path->str);
-	g_string_free(data->html_path, TRUE);
-	g_free(data);
-
-	return TRUE;
 }
 
 static void _gebr_gui_help_edit(const gchar *help, const gchar * editor,
@@ -219,7 +238,8 @@ static void _gebr_gui_help_edit(const gchar *help, const gchar * editor,
 	data->set_function = set_function;
 	data->html_path = html_path;
 	data->finish_callback = finish_callback;
-	data->web_view = WEBKIT_WEB_VIEW((web_view = libgebr_gui_help_create_web_view(data)));
+	data->web_view = WEBKIT_WEB_VIEW((web_view = web_view_create(data)));
+	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), html_path->str);
 #else
 	GString *cmd_line;
@@ -274,36 +294,20 @@ out:	g_string_free(cmd_line, TRUE);
 #endif
 }
 
-void gebr_gui_help_edit(GebrGeoXmlDocument * document, const gchar * editor, GebrGuiHelpEditingFinished finish_callback)
-{
-	_gebr_gui_help_edit(gebr_geoxml_document_get_help(document), editor, GEBR_GEOXML_OBJECT(document),
-			    (set_help)gebr_geoxml_document_set_help, finish_callback);
-}
-
-void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, const gchar * editor, GebrGuiHelpEditingFinished finish_callback)
-{
-	_gebr_gui_help_edit(gebr_geoxml_program_get_help(program), editor, GEBR_GEOXML_OBJECT(program),
-			    (set_help)gebr_geoxml_program_set_help, finish_callback);
-}
-
-/*
- * Private functions
- */
-
 #ifdef WEBKIT_ENABLED
-static GtkWidget * libgebr_gui_help_create_web_view(struct help_edit_data * data)
+static void web_view_main_frame_on_destroy(WebKitWebFrame * frame)
 {
-	GtkWidget * web_view;
-	GtkDialog * dialog;
-	web_view = on_create_web_view(&dialog);
-	if (data) {
-		g_signal_connect(dialog, "response", G_CALLBACK(help_edit_on_web_view_destroy), data);
-		g_signal_connect(web_view, "load-finished", G_CALLBACK(gebr_gui_web_view_on_loaded), NULL);
+	JSContextRef context;
+
+	context = webkit_web_frame_get_global_context(frame);
+	g_hash_table_remove(jscontext_to_data_hash, context);
+	if (!g_hash_table_size(jscontext_to_data_hash)) {
+		g_hash_table_unref(jscontext_to_data_hash);
+		jscontext_to_data_hash = NULL;
 	}
-	return web_view;
 }
 
-static GtkWidget *on_create_web_view(GtkDialog ** r_window)
+static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window)
 {
 	static GtkWindowGroup *window_group = NULL;
 	static GtkWidget *work_around_web_view = NULL;
@@ -311,6 +315,8 @@ static GtkWidget *on_create_web_view(GtkDialog ** r_window)
 	GtkWidget *scrolled_window;
 	GtkWidget *web_view;
 
+	if (jscontext_to_data_hash == NULL)
+		jscontext_to_data_hash = g_hash_table_new(NULL, NULL);
 	if (window_group == NULL)
 		window_group = gtk_window_group_new();
 	if (!g_thread_supported())
@@ -329,8 +335,10 @@ static GtkWidget *on_create_web_view(GtkDialog ** r_window)
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	web_view = webkit_web_view_new();
 	if (g_signal_lookup("create-web-view", WEBKIT_TYPE_WEB_VIEW))
-		g_signal_connect(web_view, "create-web-view", G_CALLBACK(on_create_web_view), NULL);
-	g_signal_connect(web_view, "title-changed", G_CALLBACK(libgebr_gui_help_show_on_title_changed), window);
+		g_signal_connect(web_view, "create-web-view", G_CALLBACK(web_view_on_create_web_view), NULL);
+	g_signal_connect(web_view, "title-changed", G_CALLBACK(web_view_on_title_changed), window);
+	g_signal_connect(webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(web_view)), "destroy",
+			 G_CALLBACK(web_view_main_frame_on_destroy), NULL);
 
 	/* Place the WebKitWebView in the GtkScrolledWindow */
 	gtk_container_add(GTK_CONTAINER(scrolled_window), web_view);
@@ -343,49 +351,63 @@ static GtkWidget *on_create_web_view(GtkDialog ** r_window)
 	return web_view;
 }
 
-static void
-libgebr_gui_help_show_on_title_changed(WebKitWebView * web_view,
-				       WebKitWebFrame * frame, gchar * title, GtkWindow * window)
+static gboolean dialog_on_response(GtkDialog * dialog, gint response_id, struct help_edit_data * data)
+{
+	GString * help;
+
+	help = help_edit_save(data->context, data);
+	if (data->finish_callback)
+		data->finish_callback(data->object, help->str);
+
+	g_string_free(help, TRUE);
+	g_unlink(data->html_path->str);
+	g_string_free(data->html_path, TRUE);
+	g_free(data);
+
+	return TRUE;
+}
+
+static GtkWidget * web_view_create(struct help_edit_data * data)
+{
+	GtkWidget * web_view;
+	GtkDialog * dialog;
+
+	web_view = web_view_on_create_web_view(&dialog);
+	if (data) {
+		g_signal_connect(dialog, "response", G_CALLBACK(dialog_on_response), data);
+		g_signal_connect(web_view, "load-finished", G_CALLBACK(web_view_on_load_finished), data);
+		g_hash_table_insert(jscontext_to_data_hash, (gpointer)data->context, data);
+	}
+	return web_view;
+}
+
+static void web_view_on_title_changed(WebKitWebView * web_view, WebKitWebFrame * frame, gchar * title,
+				      GtkWindow * window)
 {
 	gtk_window_set_title(window, title);
 }
 
-static GString * gebr_gui_help_get_html(WebKitWebView * web_view)
+JSValueRef js_callback_gebr_help_save(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject,
+				      size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-	JSValueRef html;
-	JSContextRef ctx;
-	WebKitWebFrame * frame;
+	struct help_edit_data * data;
+		
+	data = g_hash_table_lookup(jscontext_to_data_hash, function);
+	help_edit_save(ctx, data);	
 
-	const gchar * script_fetch_help =
-		"(function() {"
-			"var doc_clone = document.implementation.createDocument('', '', null);"
-			"if (editor) editor.updateElement();"
-			"doc_clone.appendChild(document.documentElement.cloneNode(true));"
-			"var scripts = doc_clone.getElementsByTagName('script');"
-			"for (var i = 0; i < scripts.length; i++)"
-				"scripts[i].parentNode.removeChild(scripts[i]);"
-			"if (editor) {"
-				"var editing_element = doc_clone.getElementsByClassName(editing_class)[0];"
-				"var ed = editing_element.nextSibling;"
-				"editing_element.removeAttribute('style');"
-				"ed.parentNode.removeChild(ed);"
-			"}"
-			"return doc_clone.documentElement.outerHTML;"
-		"})();";
-
-	frame = webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(web_view));
-	ctx = (JSContextRef)webkit_web_frame_get_global_context(frame);
-	html = gebr_js_evaluate(ctx, script_fetch_help);
-	return gebr_js_value_get_string(ctx, html);
+	return JSValueMakeUndefined(ctx);
 }
 
-static void gebr_gui_web_view_on_loaded(WebKitWebView * web_view, WebKitWebFrame * frame)
+static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, struct help_edit_data * data)
 {
-	JSContextRef ctx;
-	ctx = webkit_web_frame_get_global_context(frame);
-	gebr_js_evaluate(ctx, js_start_inline_editing);
+	JSObjectRef function;
+
+	gebr_js_evaluate(data->context, js_start_inline_editing);
+	function = gebr_js_make_function(data->context, "gebr_help_save", js_callback_gebr_help_save);
+	g_hash_table_insert(jscontext_to_data_hash, (gpointer)function, data);
+
 	g_signal_handlers_disconnect_matched(G_OBJECT(web_view),
-					     G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(gebr_gui_web_view_on_loaded), NULL);
+					     G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(web_view_on_load_finished), data);
 }
 
 #endif				//WEBKIT_ENABLED

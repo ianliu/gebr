@@ -107,6 +107,7 @@ JSObjectRef gebr_js_make_function(JSContextRef ctx, const gchar * name, JSObject
 {
 	JSObjectRef ret;
 	JSStringRef name_str;
+	
 	name_str = JSStringCreateWithUTF8CString(name);
 	ret = JSObjectMakeFunctionWithCallback(ctx, name_str, callback);
 	JSObjectSetProperty(ctx, JSContextGetGlobalObject(ctx), name_str, ret, kJSPropertyAttributeNone, NULL);
