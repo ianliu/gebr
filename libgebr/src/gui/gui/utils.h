@@ -58,12 +58,25 @@ gboolean gebr_gui_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIte
 void gebr_gui_gtk_tree_view_expand_to_iter(GtkTreeView * view, GtkTreeIter * iter);
 GtkTreeViewColumn *gebr_gui_gtk_tree_view_get_column_from_renderer(GtkTreeView * tree_view, GtkCellRenderer * renderer);
 GtkTreeViewColumn *gebr_gui_gtk_tree_view_get_next_column(GtkTreeView * tree_view, GtkTreeViewColumn * column);
-void
+void gebr_gui_gtk_tree_view_set_cursor(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeViewColumn * column, gboolean start_editing);
 
-
-gebr_gui_gtk_tree_view_set_cursor(GtkTreeView * tree_view, GtkTreeIter * iter,
-				  GtkTreeViewColumn * column, gboolean start_editing);
+/**
+ *
+ */
 void gebr_gui_gtk_tree_view_change_cursor_on_row_collapsed(GtkTreeView * tree_view);
+
+/**
+ * Sets the search column for this tree view to \p column and automatically expands all rows before searching.
+ */
+void gebr_gui_gtk_tree_view_fancy_search(GtkTreeView * tree_view, gint column);
+
+/**
+ * Iterates over all selected rows in a tree view, postfixing iteration variables with \p hyg.
+ * @param iter A #GtkTreeIter that will iterate over selected rows.
+ * @param tree_view The #GtkTreeView to work with.
+ * @param hyg Postfix for iteration variables. Use this if you need to iterate two or more times in the same scope.
+ * @see gebr_gui_gtk_tree_view_foreach_selected
+ */
 #define gebr_gui_gtk_tree_view_foreach_selected_hyg(iter, tree_view, hyg) \
 	GList * __list##hyg = gebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(tree_view)); \
 	GList * __i##hyg = g_list_first(__list##hyg); \
@@ -72,6 +85,13 @@ void gebr_gui_gtk_tree_view_change_cursor_on_row_collapsed(GtkTreeView * tree_vi
 		(__i##hyg != NULL && (*iter = *(GtkTreeIter*)__i##hyg->data, 1)) || \
 			(g_list_foreach(__list##hyg, (GFunc)gtk_tree_iter_free, NULL), g_list_free(__list##hyg), 0); \
 		__i##hyg = g_list_next(__i##hyg))
+
+/**
+ * Iterates over all selected rows in a tree view.
+ * @param iter A #GtkTreeIter that will iterate over selected rows.
+ * @param tree_view The #GtkTreeView to work with.
+ * @see gebr_gui_gtk_tree_view_foreach_selected_hyg
+ */
 #define gebr_gui_gtk_tree_view_foreach_selected(iter, tree_view) gebr_gui_gtk_tree_view_foreach_selected_hyg(iter, tree_view, nohyg)
 
 

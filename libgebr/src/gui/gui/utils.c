@@ -516,6 +516,19 @@ void gebr_gui_gtk_tree_view_change_cursor_on_row_collapsed(GtkTreeView * tree_vi
 	g_signal_connect(tree_view, "row-collapsed", G_CALLBACK(on_gtk_tree_view_row_collapsed), NULL);
 }
 
+static gboolean on_gtk_tree_view_key_press(GtkTreeView * tree_view)
+{
+	gtk_tree_view_expand_all(tree_view);
+	return FALSE;
+}
+
+void gebr_gui_gtk_tree_view_fancy_search(GtkTreeView * tree_view, gint column)
+{
+	gtk_tree_view_set_enable_search(tree_view, TRUE);
+	gtk_tree_view_set_search_column(tree_view, column);
+	g_signal_connect(tree_view, "key-press-event", G_CALLBACK(on_gtk_tree_view_key_press), NULL);
+}
+
 GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkTreeViewColumn * column,
 									    GtkCellRendererMode mode)
 {
@@ -838,7 +851,7 @@ _libgebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons,
 	gboolean confirmed;
 
 	string = g_strdup_vprintf(message, args);
-	dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, string);
+	dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, "%s", string);
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
 	ret = gtk_dialog_run(GTK_DIALOG(dialog));

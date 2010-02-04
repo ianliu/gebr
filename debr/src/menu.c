@@ -95,9 +95,10 @@ void menu_setup_ui(void)
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_menu.tree_view),
 						  (GebrGuiGtkPopupCallback) menu_popup_menu, NULL);
 	gebr_gui_gtk_tree_view_change_cursor_on_row_collapsed(GTK_TREE_VIEW(debr.ui_menu.tree_view));
+	gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(debr.ui_menu.tree_view), menu_on_query_tooltip, NULL);
+	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(debr.ui_menu.tree_view), MENU_FILENAME);
 	g_signal_connect(debr.ui_menu.tree_view, "cursor-changed", G_CALLBACK(menu_selected), NULL);
 	g_signal_connect(debr.ui_menu.tree_view, "row-activated", G_CALLBACK(menu_dialog_setup_ui), NULL);
-	gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(debr.ui_menu.tree_view), menu_on_query_tooltip, NULL);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(debr.ui_menu.tree_view), FALSE);
 	col = gtk_tree_view_column_new();
@@ -1469,3 +1470,4 @@ menu_on_query_tooltip(GtkTreeView * tree_view, GtkTooltip * tooltip, GtkTreeIter
 	}
 	return FALSE;
 }
+

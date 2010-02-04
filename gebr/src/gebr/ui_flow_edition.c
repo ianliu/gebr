@@ -189,6 +189,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 						  ui_flow_edition);
 	g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated", G_CALLBACK(flow_edition_menu_add),
 			 ui_flow_edition);
+	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(ui_flow_edition->menu_view), MENU_TITLE_COLUMN);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Flow"), renderer, NULL);
