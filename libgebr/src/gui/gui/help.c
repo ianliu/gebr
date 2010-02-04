@@ -123,7 +123,7 @@ static gchar * js_start_inline_editing = \
 				"toolbarCanCollapse:false,"
 				"toolbar:[['Source','Save', '-','Bold','Italic','Underline','-',"
 					"'Subscript','Superscript','-','Undo','Redo','-',"
-					"'NumberedList','BulletedList','Blockquote','Format','-',"
+					"'NumberedList','BulletedList','Blockquote','Styles','-',"
 					"'Link','Unlink','-','Find','Replace', '-' ]]});"
 		"} else {" 
 			"DestroyEditor();"
