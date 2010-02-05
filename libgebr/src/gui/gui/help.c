@@ -319,7 +319,6 @@ static WebKitNavigationResponse web_view_on_navigation_requested(WebKitWebView *
 {
 	const gchar * uri;
 	uri = webkit_network_request_get_uri(request);
-	puts(uri);
 	if (g_str_has_prefix(uri, "file://") || g_str_has_prefix(uri, "about:"))
 		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 
