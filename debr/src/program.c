@@ -181,6 +181,7 @@ void program_load_menu(void)
 	GebrGeoXmlSequence *program;
 	GtkTreeIter iter;
 
+	gtk_tree_store_clear(debr.ui_parameter.tree_store);
 	gtk_list_store_clear(debr.ui_program.list_store);
 	if (debr.menu == NULL) {
 		debr.program = NULL;

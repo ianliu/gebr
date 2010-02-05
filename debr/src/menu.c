@@ -564,8 +564,8 @@ void menu_selected(void)
 	} else
 		debr.menu = NULL;
 
-	do_navigation_bar_update();
 	program_load_menu();
+	do_navigation_bar_update();
 	if (type == ITER_FOLDER)
 		menu_folder_details_update(&iter);
 	else
