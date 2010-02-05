@@ -47,8 +47,12 @@ struct ui_parameter_dialog {
 	GebrGeoXmlParameter *parameter;
 
 	GtkWidget *default_widget_hbox;
+	GtkWidget *list_widget_hbox;
 	struct gebr_gui_parameter_widget *gebr_gui_parameter_widget;
 	GtkWidget *separator_entry;
+	GtkWidget *comma_separator;
+	GtkWidget *space_separator;
+	GtkWidget *other_separator;
 };
 
 /**
