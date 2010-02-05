@@ -277,7 +277,6 @@ static GString *help_edit_save(JSContextRef context, struct help_edit_data * dat
 				"editing_element.removeAttribute('style');"
 				"ed.parentNode.removeChild(ed);"
 			"}"
-			"alert(doc_clone.documentElement.outerHTML);"
 			"return doc_clone.documentElement.outerHTML;"
 		"})();";
 	html = gebr_js_evaluate(context, script_fetch_help);
