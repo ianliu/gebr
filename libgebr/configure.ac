@@ -18,9 +18,9 @@ AC_INIT(configure.ac)
 
 PACKAGE=libgebr
 
-VERSION=0.9.14
+VERSION=0.9.15
 GEBR_VERSION_INFO=`echo $VERSION | awk -F. '{ printf "%d:%d:%d", $1+$2, $3, $2 }'`
-VERSION="SVN"`svnversion`
+VERSION=`if test -d .svn; then echo -n r; svnversion; else git log -1 --date=local --pretty=%cd; fi`
 
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)

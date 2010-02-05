@@ -17,7 +17,7 @@
 AC_INIT(configure.ac)
 
 PACKAGE=gebr
-VERSION="SVN "`svnversion`
+VERSION=`if test -d .svn; then echo -n r; svnversion; else git log -1 --date=local --pretty=%cd; fi`
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
 AC_SUBST(TODAY)
