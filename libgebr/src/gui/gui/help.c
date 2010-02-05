@@ -145,7 +145,7 @@ static gchar * js_start_inline_editing = \
 			"var anchor = 'header_' + i;"
 			"var link = doc.createElement('a');"
 			"link.setAttribute('href', '#' + anchor);"
-			"link.appendChild(doc.createTextNode(headers[i].innerHTML));"
+			"link.appendChild(headers[i].cloneNode(true));"
 			"var li = doc.createElement('li');"
 			"li.appendChild(link);"
 			"navlist.appendChild(li);"
