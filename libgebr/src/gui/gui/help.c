@@ -51,6 +51,10 @@ struct help_edit_data {
 
 static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window);
 
+static WebKitNavigationResponse
+web_view_on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame * frame,
+				 WebKitNetworkRequest * request, struct help_edit_data * data);
+
 /**
  * \internal
  * The CSS to highlight and editable area when the user pass
@@ -104,6 +108,7 @@ static gchar * js_start_inline_editing = \
 			"&& elt.className.indexOf('content') != -1);"
 	"}"
 	"function OpenCkEditor(element) {"
+		"if (editor) return;"
 		"DestroyEditor();" 
 		"editing_element = element;"
 		"editing_class = element.getAttribute('class');"
@@ -125,18 +130,11 @@ static gchar * js_start_inline_editing = \
 			"if (IsElementEditable(element)) {"
 				"found_editable = true;"
 				"break;"
-			"} else if (editor && element.nodeName.toLowerCase() == 'span') {"
-				"var id = element.getAttribute('id');"
-				"if (id && id.indexOf('cke_editor') == 0)"
-					"return;"
 			"}"
 			"element = element.parentNode;"
 		"}"
-		"if (found_editable) {"
+		"if (found_editable)"
 			"OpenCkEditor(element);"
-		"} else {" 
-			"DestroyEditor();"
-		"}"
 	"}"
 	"function GenerateNavigationIndex(doc) {"
 		"var navbar = doc.getElementsByClassName('navigation')[0];"
@@ -210,6 +208,7 @@ void gebr_gui_help_show(const gchar * uri, const gchar * title, const gchar * br
 
 	web_view = web_view_on_create_web_view(&dialog);
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), uri);
+	g_signal_connect(web_view, "navigation-requested", G_CALLBACK(web_view_on_navigation_requested), NULL);
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 #else
 	GString *cmd_line;
@@ -230,13 +229,13 @@ static void _gebr_gui_help_edit(gchar *help, const gchar * editor,
 
 void gebr_gui_help_edit(GebrGeoXmlDocument * document, const gchar * editor, GebrGuiHelpEdited edited_callback)
 {
-	_gebr_gui_help_edit(gebr_geoxml_document_get_help(document), editor, GEBR_GEOXML_OBJECT(document),
+	_gebr_gui_help_edit((gchar *)gebr_geoxml_document_get_help(document), editor, GEBR_GEOXML_OBJECT(document),
 			    (set_help)gebr_geoxml_document_set_help, edited_callback);
 }
 
 void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, const gchar * editor, GebrGuiHelpEdited edited_callback)
 {
-	_gebr_gui_help_edit(gebr_geoxml_program_get_help(program), editor, GEBR_GEOXML_OBJECT(program),
+	_gebr_gui_help_edit((gchar *)gebr_geoxml_program_get_help(program), editor, GEBR_GEOXML_OBJECT(program),
 			    (set_help)gebr_geoxml_program_set_help, edited_callback);
 }
 
@@ -313,6 +312,24 @@ static void web_view_on_destroy(WebKitWebView * web_view, struct help_edit_data 
 		g_hash_table_unref(jscontext_to_data_hash);
 		jscontext_to_data_hash = NULL;
 	}
+}
+
+static WebKitNavigationResponse web_view_on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame * frame,
+								 WebKitNetworkRequest * request, struct help_edit_data * data)
+{
+	const gchar * uri;
+	uri = webkit_network_request_get_uri(request);
+	puts(uri);
+	if (g_str_has_prefix(uri, "file://") || g_str_has_prefix(uri, "about:"))
+		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
+
+#if GTK_CHECK_VERSION(2,14,0)
+	if (!data) {
+		GError *error = NULL;
+		gtk_show_uri(NULL, uri, GDK_CURRENT_TIME, &error);
+	}
+#endif
+	return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 }
 
 /**
@@ -485,6 +502,7 @@ static void _gebr_gui_help_edit(gchar *help, const gchar * editor,
 	g_signal_connect(web_view, "key-press-event", G_CALLBACK(web_view_on_key_press), data);
 	g_signal_connect(web_view, "destroy", G_CALLBACK(web_view_on_destroy), data);
 	g_signal_connect(web_view, "title-changed", G_CALLBACK(web_view_on_title_changed), dialog);
+	g_signal_connect(web_view, "navigation-requested", G_CALLBACK(web_view_on_navigation_requested), data);
 	g_hash_table_insert(jscontext_to_data_hash, (gpointer)data->context, data);
 	webkit_web_view_open(WEBKIT_WEB_VIEW(data->web_view), html_path->str);
 #else
