@@ -118,6 +118,9 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	label = gtk_label_new_with_mnemonic(_("Queue"));
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
 	ui_flow_edition->queue_bin = GTK_BIN(alignment);
+	ui_flow_edition->queue_combobox = gtk_combo_box_new();
+	gtk_widget_set_sensitive(ui_flow_edition->queue_combobox, TRUE);
+	gtk_container_add(GTK_CONTAINER(ui_flow_edition->queue_bin), ui_flow_edition->queue_combobox);
 	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
 	gtk_container_add(GTK_CONTAINER(frame), alignment);
 	gtk_box_pack_start(GTK_BOX(left_vbox), frame, FALSE, TRUE, 0);
