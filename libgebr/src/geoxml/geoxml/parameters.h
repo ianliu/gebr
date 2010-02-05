@@ -92,7 +92,7 @@ typedef struct gebr_geoxml_parameters GebrGeoXmlParameters;
 /**
  * Create a new parameter and append it to \p parameters.
  *
- * If \p parameters is a from a group parameter and it has more than one instance,
+ * FIXME: If \p parameters is a from a group parameter and it has more than one instance,
  * then NULL is returned
  *
  * If \p parameters is NULL returns NULL.

@@ -148,6 +148,7 @@ void help_insert_parameters_list(GString * help, GebrGeoXmlProgram * program, gb
 void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gboolean refresh)
 {
 	gchar *content;
+	gchar *escaped_content;
 	GString *text;
 	gsize pos;
 
@@ -158,33 +159,42 @@ void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gboolean ref
 		content = (gchar *) gebr_geoxml_program_get_title(program);
 	else
 		content = (gchar *) gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu));
-	if (strlen(content)) {
 
+	escaped_content = g_markup_escape_text((const gchar *) content, -1);
+
+	if (strlen(escaped_content)) {
 		pos = strip_block(help, "ttl");
 		if (pos) {
-			g_string_printf(text, "\n  <title>G&ecirc;BR - %s</title>\n  ", content);
+			g_string_printf(text, "\n  <title>G&ecirc;BR - %s</title>\n  ", escaped_content);
 			g_string_insert(help, pos, text->str);
 		}
 
 		pos = strip_block(help, "tt2");
 		if (pos) {
-			g_string_printf(text, "\n         <span class=\"flowtitle\">%s</span>\n         ", content);
+			g_string_printf(text, "\n         <span class=\"flowtitle\">%s</span>\n         ", escaped_content);
 			g_string_insert(help, pos, text->str);
 		}
 	}
+
+	g_free(escaped_content);
 
 	/* Description replacement */
 	if (program != NULL)
 		content = (gchar *) gebr_geoxml_program_get_description(program);
 	else
 		content = (gchar *) gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu));
-	if (strlen(content)) {
+	
+	escaped_content = g_markup_escape_text((const gchar *) content, -1);
+	
+	if (strlen(escaped_content)) {
 		pos = strip_block(help, "des");
 		if (pos) {
-			g_string_printf(text, "\n            %s\n            ", content);
+			g_string_printf(text, "\n            %s\n            ", escaped_content);
 			g_string_insert(help, pos, text->str);
 		}
 	}
+	
+	g_free(escaped_content);
 
 	/* Categories replacement */
 	if (gebr_geoxml_flow_get_categories_number(debr.menu)) {
@@ -194,19 +204,25 @@ void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gboolean ref
 		pos = strip_block(help, "cat");
 		if (pos) {
 			gebr_geoxml_flow_get_category(debr.menu, &category, 0);
-
 			catstr = g_string_new("\n       ");
-			g_string_append(catstr, gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)));
+			
+			content = (gchar *) gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category));
+			escaped_content = g_markup_escape_text(content, -1);
+			g_string_append(catstr, escaped_content);
+			g_free(escaped_content);
+		
 			gebr_geoxml_sequence_next(&category);
 			while (category != NULL) {
 				g_string_append(catstr, " | ");
-				g_string_append(catstr,
-						gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)));
 
+				content = (gchar *) gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category));
+				escaped_content = g_markup_escape_text(content, -1);
+				g_string_append(catstr, escaped_content);
+				g_free(escaped_content);
+			
 				gebr_geoxml_sequence_next(&category);
 			}
 			g_string_append(catstr, "\n       ");
-
 			g_string_insert(help, pos, catstr->str);
 			g_string_free(catstr, TRUE);
 		}
@@ -227,15 +243,23 @@ void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gboolean ref
 		gchar *ptr1;
 		gchar *ptr2;
 		gsize pos;
+		const gchar *author, *email;
+		gchar *escaped_author, *escaped_email;
 
 		date = g_date_new();
 		g_date_set_time_t(date, time(NULL));
 		g_date_strftime(buffer, 13, "%b %d, %Y", date);
 
+		author = gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(debr.menu));
+		escaped_author = g_markup_escape_text(author, -1);
+		email = gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu));
+		escaped_email = g_markup_escape_text(email, -1);
+
 		g_string_printf(text, "\n          <p>%s: written by %s &lt;%s&gt;</p>\n          ",
-				buffer,
-				gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(debr.menu)),
-				gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu)));
+				buffer, escaped_author, escaped_email);
+
+		g_free(escaped_author);
+		g_free(escaped_email);
 
 		ptr1 = strstr(help->str, "<!-- begin cpy -->");
 		ptr2 = strstr(help->str, "<!-- end cpy -->");
@@ -245,7 +269,6 @@ void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gboolean ref
 			len = (ptr2 - ptr1) / sizeof(gchar);
 
 			if ((refresh) || (len < 40)) {
-
 				pos = (ptr2 - help->str) / sizeof(gchar);
 				g_string_insert(help, pos, text->str);
 			}
@@ -292,7 +315,7 @@ void help_show(const gchar * help, const gchar * title)
 	g_string_free(prepared_html, TRUE);
 }
 
-static void help_edit_on_edited(GebrGeoXmlObject * object, const gchar * _help)
+static void help_edit_on_finished(GebrGeoXmlObject * object, const gchar * _help)
 {	
 	GString * help;
 
@@ -354,7 +377,7 @@ void help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh
 		fp = fopen(DEBR_DATA_DIR "help-template.html", "r");
 		if (fp == NULL) {
 			debr_message(GEBR_LOG_ERROR, _("Could not open template. Please check your installation."));
-			return;
+			return prepared_html;
 		}
 
 		while (fgets(buffer, sizeof(buffer), fp))
@@ -378,10 +401,10 @@ void help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh
 	/* EDIT IT */
 	if (program != NULL) {
 		gebr_geoxml_program_set_help(program, prepared_html->str);
-		gebr_gui_program_help_edit(program, debr.config.htmleditor->str, help_edit_on_edited);
+		gebr_gui_program_help_edit(program, debr.config.htmleditor->str, help_edit_on_finished);
 	} else {
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html->str);
-		gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), debr.config.htmleditor->str, help_edit_on_edited);
+		gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), debr.config.htmleditor->str, help_edit_on_finished);
 	}
 }
 

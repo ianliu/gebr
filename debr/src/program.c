@@ -859,11 +859,11 @@ static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program)
 	gchar *help;
 
 	help = (gchar *) gebr_geoxml_program_get_help(program);
+
 	if (strlen(help) > 1)
 		help_show(help, gebr_geoxml_program_get_title(program));
 	else
 		help_show(" ", gebr_geoxml_program_get_title(program));
-
 }
 
 static void program_help_edit(GtkButton * button)

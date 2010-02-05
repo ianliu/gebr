@@ -1330,6 +1330,7 @@ static void menu_help_view(void)
 	gchar *help;
 
 	help = (gchar *) gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu));
+
 	if (strlen(help) > 1)
 		help_show(help, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
 	else
