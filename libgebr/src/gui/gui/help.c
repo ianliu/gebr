@@ -183,7 +183,6 @@ static gchar * js_start_inline_editing = \
 			"document.body.innerHTML = '';"
 			"document.body.appendChild(content);"
 		"}"
-		"alert(document.documentElement.outerHTML);"
 		"OpenCkEditor(content);"
 	"} else {"
 		"UpgradeHelpFormat(document);"
