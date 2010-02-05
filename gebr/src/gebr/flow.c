@@ -104,6 +104,9 @@ void flow_free(void)
 		gebr.flow = NULL;
 	}
 	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
+	gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), NULL);
+	gtk_widget_set_sensitive(gebr.ui_flow_edition->queue_combobox, FALSE);
+	gtk_widget_set_sensitive(gebr.ui_flow_edition->server_combobox, FALSE);
 	gtk_container_foreach(GTK_CONTAINER(gebr.ui_flow_browse->revisions_menu),
 			      (GtkCallback) gtk_widget_destroy, NULL);
 	flow_browse_info_update();

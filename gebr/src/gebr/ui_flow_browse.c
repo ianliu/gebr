@@ -439,6 +439,8 @@ static void flow_browse_load(void)
 	gebr.flow = GEBR_GEOXML_FLOW(document_load(filename));
 	if (gebr.flow == NULL)
 		goto out;
+	gtk_widget_set_sensitive(gebr.ui_flow_edition->queue_combobox, TRUE);
+	gtk_widget_set_sensitive(gebr.ui_flow_edition->server_combobox, TRUE);
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
 			   FB_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.flow)),
 			   FB_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow)), -1);

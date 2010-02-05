@@ -294,7 +294,7 @@ void flow_edition_component_activated(void)
 	gchar *title;
 
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-	if (!flow_edition_get_selected_component(&iter, FALSE))
+	if (!flow_edition_get_selected_component(&iter, TRUE))
 		return;
 	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter)) {
 		flow_io_simple_setup_ui(FALSE);
@@ -313,7 +313,7 @@ void flow_edition_component_activated(void)
 }
 
 /*
- * Function: flow_edition_component_activated
+ * Function: flow_edition_component_changed
  * Change the flow status when select the status from the "Flow Component" menu.
  */
 void flow_edition_status_changed(void)
