@@ -23,7 +23,7 @@
 
 void help_fix_css(GString * help);
 
-void help_show(const gchar * help);
+void help_show(const gchar * help, const gchar * title);
 
 void help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh);
 

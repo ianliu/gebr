@@ -677,7 +677,8 @@ void on_configure_preferences_activate(void)
  */
 void on_help_contents_activate(void)
 {
-	gebr_gui_help_show(DEBR_USERDOC_HTML, debr.config.browser->str);
+	gebr_gui_help_show(DEBR_USERDOC_HTML, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(debr.menu)),
+			   debr.config.browser->str);
 }
 
 /*

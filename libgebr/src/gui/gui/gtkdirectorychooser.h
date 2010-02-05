@@ -46,10 +46,21 @@ struct _GebrGuiGtkDirectoryChooserClass {
 	GtkVBoxClass parent_class;
 };
 
+/**
+ * Creates a new #GtkDirectoryChooser widget.
+ */
 GtkWidget *gebr_gui_gtk_directory_chooser_new();
 
+/**
+ * Returns a NULL-terminated array of strings, containing the directories of this widget.
+ * Memory is allocated for this operation, free with \ref g_strfreev.
+ */
 gchar **gebr_gui_gtk_directory_chooser_get_paths(GebrGuiGtkDirectoryChooser * widget);
 
+/**
+ * Sets the folders for this widget.
+ * \param paths A NULL-terminates array of strings, containing the paths that will be added to the widget.
+ */
 void gebr_gui_gtk_directory_chooser_set_paths(GebrGuiGtkDirectoryChooser * widget, gchar ** paths);
 
 G_END_DECLS

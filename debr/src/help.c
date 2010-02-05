@@ -261,7 +261,7 @@ void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gboolean ref
  * Function: help_show
  * Show _help_ using user's browser
  */
-void help_show(const gchar * help)
+void help_show(const gchar * help, const gchar * title)
 {
 	GString *prepared_html;
 	FILE *html_fp;
@@ -286,7 +286,7 @@ void help_show(const gchar * help)
 	debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
 
 	g_string_prepend(html_path, "file://");
-	gebr_gui_help_show(html_path->str, debr.config.browser->str);
+	gebr_gui_help_show(html_path->str, title, debr.config.browser->str);
 
  out:	g_string_free(html_path, FALSE);
 	g_string_free(prepared_html, TRUE);

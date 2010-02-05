@@ -29,7 +29,7 @@ void program_help_show(void);
 /**
  * Show \p help HTML. 
  */
-void help_show(const gchar * help);
+void help_show(const gchar * help, const gchar * title);
 
 /**
  * Button callback, calls #help_show.

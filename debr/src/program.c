@@ -850,7 +850,8 @@ static gboolean program_description_changed(GtkEntry * entry)
 
 static void program_url_open(GtkButton * button)
 {
-	gebr_gui_help_show(gebr_geoxml_program_get_url(debr.program), debr.config.browser->str);
+	//FIXME do not use help function to open url
+	gebr_gui_help_show(gebr_geoxml_program_get_url(debr.program), "", debr.config.browser->str);
 }
 
 static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program)
@@ -859,9 +860,9 @@ static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program)
 
 	help = (gchar *) gebr_geoxml_program_get_help(program);
 	if (strlen(help) > 1)
-		help_show(help);
+		help_show(help, gebr_geoxml_program_get_title(program));
 	else
-		help_show(" ");
+		help_show(" ", gebr_geoxml_program_get_title(program));
 
 }
 

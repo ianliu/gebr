@@ -359,7 +359,8 @@ void on_configure_servers_activate(void)
  */
 void on_help_contents_activate(void)
 {
-	gebr_gui_help_show(GEBR_USERDOC_HTML, gebr.config.browser->str);
+	gebr_gui_help_show(GEBR_USERDOC_HTML, gebr_geoxml_document_get_title(document_get_current()),
+			   gebr.config.browser->str);
 }
 
 /* Function: on_help_about_activate

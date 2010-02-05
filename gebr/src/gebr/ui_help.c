@@ -42,10 +42,10 @@ void program_help_show(void)
 	if (!flow_edition_get_selected_component(NULL, TRUE))
 		return;
 
-	help_show(gebr_geoxml_program_get_help(gebr.program));
+	help_show(gebr_geoxml_program_get_help(gebr.program), _("Program help"));
 }
 
-void help_show(const gchar * help)
+void help_show(const gchar * help, const gchar * title)
 {
 	GString *prepared_html;
 	FILE *html_fp;
@@ -87,7 +87,7 @@ void help_show(const gchar * help)
 	gebr.tmpfiles = g_slist_append(gebr.tmpfiles, html_path->str);
 
 	g_string_prepend(html_path, "file://");
-	gebr_gui_help_show(html_path->str, gebr.config.browser->str);
+	gebr_gui_help_show(html_path->str, title, gebr.config.browser->str);
 
 	/* frees */
  out:	g_string_free(html_path, FALSE);
@@ -96,7 +96,7 @@ void help_show(const gchar * help)
 
 void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document)
 {
-	help_show(gebr_geoxml_document_get_help(document));
+	help_show(gebr_geoxml_document_get_help(document), gebr_geoxml_document_get_title(document));
 }
 
 /**

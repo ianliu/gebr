@@ -229,7 +229,8 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 
 static void parameters_on_link_button_clicked(GtkWidget * button, GebrGeoXmlProgram * program)
 {
-	gebr_gui_help_show(gebr_geoxml_program_get_url(program), gebr.config.browser->str);
+	// FIXME do not open web pages with help function
+	gebr_gui_help_show(gebr_geoxml_program_get_url(program), "", gebr.config.browser->str);
 }
 
 static gboolean parameters_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_parameters *ui_parameters)

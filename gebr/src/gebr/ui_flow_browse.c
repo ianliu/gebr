@@ -485,7 +485,7 @@ static void flow_browse_load(void)
  */
 static void flow_browse_show_help(void)
 {
-	help_show(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(gebr.flow)));
+	help_show(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(gebr.flow)), _("Flow help"));
 }
 
 /* Function: flow_browse_on_row_activated
