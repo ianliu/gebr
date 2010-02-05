@@ -122,9 +122,10 @@ void gebr_gui_gtk_directory_chooser_set_paths(GebrGuiGtkDirectoryChooser * widge
 static void __gtk_sequence_edit_add_request(GtkSequenceEdit * sequence_edit, GebrGuiGtkDirectoryChooser * dir_chooser)
 {
 	GtkWidget *file_entry;
-	gchar *path;
+	const gchar *path;
 
 	g_object_get(sequence_edit, "value-widget", &file_entry, NULL);
 	path = gebr_gui_gtk_file_entry_get_path(GEBR_GUI_GTK_FILE_ENTRY(file_entry));
 	gtk_sequence_edit_add(sequence_edit, path, TRUE);
 }
+

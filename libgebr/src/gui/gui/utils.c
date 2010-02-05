@@ -35,6 +35,21 @@ struct popup_callback {
 	GtkWidget *widget;
 };
 
+struct reorderable_data {
+	gint gebr_geoxml_sequence_pointer_column;
+	GebrGuiGtkTreeViewMoveSequenceCallback callback;
+	gpointer user_data;
+};
+
+struct reorder_data {
+	GtkTreeIter iter;
+	GtkTreeIter position;
+	GtkTreeViewDropPosition drop_position;
+	GebrGuiGtkTreeViewReorderCallback callback;
+	GebrGuiGtkTreeViewReorderCallback can_callback;
+	gpointer user_data;
+};
+
 static void __popup_callback_weak_notify(struct popup_callback *popup_callback, GtkObject * object)
 {
 	if (popup_callback->event_box != NULL)
@@ -115,10 +130,6 @@ static void __gtk_widget_on_popup_menu(GtkWidget * widget, struct popup_callback
 	gtk_menu_popup(menu, NULL, NULL, NULL, NULL, 0, gdk_event_get_time(NULL));
 }
 
-/*
- * Public functions
- */
-
 static gboolean widget_return_on_key_press_event(GtkWidget * widget, GdkEventKey * event, GtkDialog * dialog)
 {
 	gint response;
@@ -134,6 +145,109 @@ static gboolean widget_return_on_key_press_event(GtkWidget * widget, GdkEventKey
 
 	return FALSE;
 }
+
+static GList *gebr_gui_gtk_tree_model_path_to_iter_list(GtkTreeModel * model, GList * path_list)
+{
+	GList *iter_list, *i;
+
+	iter_list = NULL;
+	for (i = g_list_first(path_list); i != NULL; i = g_list_next(i)) {
+		GtkTreeIter iter;
+
+		gtk_tree_model_get_iter(model, &iter, (GtkTreePath *) i->data);
+		iter_list = g_list_prepend(iter_list, gtk_tree_iter_copy(&iter));
+	}
+	iter_list = g_list_reverse(iter_list);
+
+	return iter_list;
+}
+
+static void on_gtk_tree_view_row_collapsed(GtkTreeView * tree_view)
+{
+	g_signal_emit_by_name(tree_view, "cursor-changed");
+}
+
+static gboolean on_gtk_tree_view_key_press(GtkTreeView * tree_view)
+{
+	gtk_tree_view_expand_all(tree_view);
+	return FALSE;
+}
+
+static void
+gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable_weak_ref(struct reorderable_data *data,
+								     GtkTreeView * tree_view)
+{
+	g_free(data);
+}
+
+static void gtk_tree_view_reorder_weak_ref(struct reorder_data *data, GtkTreeView * tree_view)
+{
+	g_free(data);
+}
+
+static void
+on_gtk_tree_view_drag_begin(GtkTreeView * tree_view, GdkDragContext * drag_context, struct reorder_data *data)
+{
+	gebr_gui_gtk_tree_view_get_selected(tree_view, &data->iter);
+}
+
+static gboolean
+on_gtk_tree_view_drag_motion(GtkTreeView * tree_view, GdkDragContext * drag_context, gint x, gint y,
+			     guint time, struct reorder_data *data)
+{
+	GtkWidgetClass *widget_class;
+	GtkTreePath *tree_path;
+
+	/* to draw drop indicator */
+	widget_class = GTK_WIDGET_GET_CLASS(GTK_WIDGET(tree_view));
+	if (!widget_class->drag_motion(GTK_WIDGET(tree_view), drag_context, x, y, time))
+		return TRUE;
+
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_tree_view_convert_widget_to_bin_window_coords(tree_view, x, y, &x, &y);
+#else
+	gtk_tree_view_widget_to_tree_coords(tree_view, x, y, &x, &y);
+#endif
+	gtk_tree_view_get_drag_dest_row(tree_view, &tree_path, &data->drop_position);
+	gtk_tree_model_get_iter(gtk_tree_view_get_model(tree_view), &data->position, tree_path);
+
+	if (data->can_callback == NULL || data->can_callback(tree_view, &data->iter, &data->position,
+							     data->drop_position, data->user_data))
+		gdk_drag_status(drag_context, GDK_ACTION_MOVE, time);
+	else
+		gdk_drag_status(drag_context, 0, time);
+
+	/* frees */
+	gtk_tree_path_free(tree_path);
+
+	return TRUE;
+}
+
+static gboolean gebr_gui_message_dialog_vararg(GtkMessageType type, GtkButtonsType buttons,
+					       const gchar * title, const gchar * message, va_list args)
+{
+	GtkWidget *dialog;
+
+	gchar *string;
+	gint ret;
+	gboolean confirmed;
+
+	string = g_strdup_vprintf(message, args);
+	dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, "%s", string);
+	if (title != NULL)
+		gtk_window_set_title(GTK_WINDOW(dialog), title);
+	ret = gtk_dialog_run(GTK_DIALOG(dialog));
+	confirmed = (ret == GTK_RESPONSE_YES || ret == GTK_RESPONSE_OK) ? TRUE : FALSE;
+
+	gtk_widget_destroy(dialog);
+	g_free(string);
+
+	return confirmed;
+}
+
+/*
+ * Public functions
+ */
 
 void gebr_gui_gtk_dialog_set_response_on_widget_return(GtkDialog * dialog, gint response, GtkWidget * widget)
 {
@@ -260,18 +374,6 @@ gboolean gebr_gui_gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * i
 	return TRUE;
 }
 
-/**
- * gebr_gui_gtk_tree_store_reparent:
- * @store:  The #GtkTreeStore to be operated on.
- * @iter:   The iterator to be copied.
- * @parent: The new parent iterator of _iter_.
- *
- * Change _iter_s parent by copying its values to a new item created as a child of _parent_.
- * The original item is removed and _iter_ is updated to point to the new item. If _parent_
- * is already _iter_s parent, then do nothing and return %FALSE.
- *
- * Returns: %TRUE if reparenting was needed, %FALSE otherwise.
- */
 gboolean gebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * iter, GtkTreeIter * parent)
 {
 	GtkTreeIter new;
@@ -288,18 +390,6 @@ gboolean gebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * it
 	return TRUE;
 }
 
-gint gebr_gui_gtk_tree_model_get_iter_depth(GtkTreeModel * model, GtkTreeIter * iter)
-{
-	GtkTreePath *tree_path;
-	gint depth;
-
-	tree_path = gtk_tree_model_get_path(model, iter);
-	depth = gtk_tree_path_get_depth(tree_path);
-	gtk_tree_path_free(tree_path);
-
-	return depth;
-}
-
 gboolean gebr_gui_gtk_tree_model_iter_equal_to(GtkTreeModel * model, GtkTreeIter * iter1, GtkTreeIter * iter2)
 {
 	gchar * path1;
@@ -313,14 +403,6 @@ gboolean gebr_gui_gtk_tree_model_iter_equal_to(GtkTreeModel * model, GtkTreeIter
 	return ret;
 }
 
-/**
- * gebr_gui_gtk_tree_model_iter_copy_values:
- * @model:  The #GtkTreeModel to be operated on.
- * @iter:   The iterator to receive the copied values.
- * @source: The iterator to be copied.
- *
- * Copy the values from _source_ into _iter_.
- */
 void gebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source)
 {
 	GValue value;
@@ -342,36 +424,6 @@ void gebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter 
 	}
 }
 
-gboolean gebr_gui_gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_path, GtkTreeIter * iter)
-{
-	gchar *path_string;
-	gboolean ret;
-
-	if (iter == NULL)
-		return FALSE;
-	path_string = gtk_tree_path_to_string(tree_path);
-	ret = gtk_tree_model_get_iter_from_string(model, iter, path_string);
-	g_free(path_string);
-
-	return ret;
-}
-
-static GList *libgebr_libgebr_gui_gtk_tree_model_path_to_iter_list(GtkTreeModel * model, GList * path_list)
-{
-	GList *iter_list, *i;
-
-	iter_list = NULL;
-	for (i = g_list_first(path_list); i != NULL; i = g_list_next(i)) {
-		GtkTreeIter iter;
-
-		gebr_gui_gtk_tree_model_path_to_iter(model, (GtkTreePath *) i->data, &iter);
-		iter_list = g_list_prepend(iter_list, gtk_tree_iter_copy(&iter));
-	}
-	iter_list = g_list_reverse(iter_list);
-
-	return iter_list;
-}
-
 void gebr_gui_gtk_tree_view_scroll_to_iter_cell(GtkTreeView * tree_view, GtkTreeIter * iter)
 {
 	GtkTreePath *tree_path;
@@ -387,7 +439,7 @@ GList *gebr_gui_gtk_tree_view_get_selected_iters(GtkTreeView * tree_view)
 	GList *path_list, *list;
 
 	path_list = gtk_tree_selection_get_selected_rows(gtk_tree_view_get_selection(tree_view), &model);
-	list = libgebr_libgebr_gui_gtk_tree_model_path_to_iter_list(model, path_list);
+	list = gebr_gui_gtk_tree_model_path_to_iter_list(model, path_list);
 
 	g_list_foreach(path_list, (GFunc) gtk_tree_path_free, NULL);
 	g_list_free(path_list);
@@ -429,7 +481,7 @@ gboolean gebr_gui_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIte
 		if (first == NULL || first->data == NULL)
 			ret = FALSE;
 		else if (iter != NULL)
-			gebr_gui_gtk_tree_model_path_to_iter(model, (GtkTreePath *) first->data, iter);
+			gtk_tree_model_get_iter(model, iter, (GtkTreePath *) first->data);
 
 		g_list_foreach(list, (GFunc) gtk_tree_path_free, NULL);
 		g_list_free(list);
@@ -505,21 +557,9 @@ gebr_gui_gtk_tree_view_set_cursor(GtkTreeView * tree_view, GtkTreeIter * iter,
 	gtk_tree_path_free(tree_path);
 }
 
-static void on_gtk_tree_view_row_collapsed(GtkTreeView * tree_view)
-{
-	g_signal_emit_by_name(tree_view, "cursor-changed");
-}
-
 void gebr_gui_gtk_tree_view_change_cursor_on_row_collapsed(GtkTreeView * tree_view)
 {
-	/* strange GTK... */
 	g_signal_connect(tree_view, "row-collapsed", G_CALLBACK(on_gtk_tree_view_row_collapsed), NULL);
-}
-
-static gboolean on_gtk_tree_view_key_press(GtkTreeView * tree_view)
-{
-	gtk_tree_view_expand_all(tree_view);
-	return FALSE;
 }
 
 void gebr_gui_gtk_tree_view_fancy_search(GtkTreeView * tree_view, gint column)
@@ -687,19 +727,6 @@ gebr_gui_gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GebrGuiGtkT
 }
 #endif
 
-struct reorderable_data {
-	gint gebr_geoxml_sequence_pointer_column;
-	GebrGuiGtkTreeViewMoveSequenceCallback callback;
-	gpointer user_data;
-};
-
-static void
-libgebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable_weak_ref(struct reorderable_data *data,
-								     GtkTreeView * tree_view)
-{
-	g_free(data);
-}
-
 gboolean
 gtk_tree_view_reorder_callback(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
 			       GtkTreeViewDropPosition drop_position, struct reorderable_data *data)
@@ -746,59 +773,7 @@ gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GtkTreeView * tree_view
 						    NULL, data);
 
 	g_object_weak_ref(G_OBJECT(tree_view),
-			  (GWeakNotify) libgebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable_weak_ref, data);
-}
-
-struct reorder_data {
-	GtkTreeIter iter;
-	GtkTreeIter position;
-	GtkTreeViewDropPosition drop_position;
-	GebrGuiGtkTreeViewReorderCallback callback;
-	GebrGuiGtkTreeViewReorderCallback can_callback;
-	gpointer user_data;
-};
-
-static void gtk_tree_view_reorder_weak_ref(struct reorder_data *data, GtkTreeView * tree_view)
-{
-	g_free(data);
-}
-
-static void
-on_gtk_tree_view_drag_begin(GtkTreeView * tree_view, GdkDragContext * drag_context, struct reorder_data *data)
-{
-	gebr_gui_gtk_tree_view_get_selected(tree_view, &data->iter);
-}
-
-static gboolean
-on_gtk_tree_view_drag_motion(GtkTreeView * tree_view, GdkDragContext * drag_context, gint x, gint y,
-			     guint time, struct reorder_data *data)
-{
-	GtkWidgetClass *widget_class;
-	GtkTreePath *tree_path;
-
-	/* to draw drop indicator */
-	widget_class = GTK_WIDGET_GET_CLASS(GTK_WIDGET(tree_view));
-	if (!widget_class->drag_motion(GTK_WIDGET(tree_view), drag_context, x, y, time))
-		return TRUE;
-
-#if GTK_CHECK_VERSION(2,12,0)
-	gtk_tree_view_convert_widget_to_bin_window_coords(tree_view, x, y, &x, &y);
-#else
-	gtk_tree_view_widget_to_tree_coords(tree_view, x, y, &x, &y);
-#endif
-	gtk_tree_view_get_drag_dest_row(tree_view, &tree_path, &data->drop_position);
-	gebr_gui_gtk_tree_model_path_to_iter(gtk_tree_view_get_model(tree_view), tree_path, &data->position);
-
-	if (data->can_callback == NULL || data->can_callback(tree_view, &data->iter, &data->position,
-							     data->drop_position, data->user_data))
-		gdk_drag_status(drag_context, GDK_ACTION_MOVE, time);
-	else
-		gdk_drag_status(drag_context, 0, time);
-
-	/* frees */
-	gtk_tree_path_free(tree_path);
-
-	return TRUE;
+			  (GWeakNotify) gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable_weak_ref, data);
 }
 
 gboolean
@@ -837,68 +812,31 @@ gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkT
 	g_object_weak_ref(G_OBJECT(tree_view), (GWeakNotify) gtk_tree_view_reorder_weak_ref, data);
 }
 
-/* Function: _libgebr_gui_message_dialog
- * See _libgebr_gui_message_dialog_
- */
-static gboolean
-_libgebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons,
-			    const gchar * title, const gchar * message, va_list args)
-{
-	GtkWidget *dialog;
-
-	gchar *string;
-	gint ret;
-	gboolean confirmed;
-
-	string = g_strdup_vprintf(message, args);
-	dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, "%s", string);
-	if (title != NULL)
-		gtk_window_set_title(GTK_WINDOW(dialog), title);
-	ret = gtk_dialog_run(GTK_DIALOG(dialog));
-	confirmed = (ret == GTK_RESPONSE_YES || ret == GTK_RESPONSE_OK) ? TRUE : FALSE;
-
-	gtk_widget_destroy(dialog);
-	g_free(string);
-
-	return confirmed;
-}
-
-/* Function: gebr_gui_message_dialog
- * Create a modal message dialog.
- * Return TRUE if response was GTK_RESPONSE_YES or GTK_RESPONSE_OK.
- */
-gboolean
-gebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons, const gchar * title, const gchar * message, ...)
+gboolean gebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons,
+				 const gchar * title, const gchar * message, ...)
 {
 	va_list argp;
 	gboolean ret;
 
 	va_start(argp, message);
-	ret = _libgebr_gui_message_dialog(type, buttons, title, message, argp);
+	ret = gebr_gui_message_dialog_vararg(type, buttons, title, message, argp);
 	va_end(argp);
 
 	return ret;
 }
 
-/* Function: gebr_gui_confirm_action_dialog
- * Show an action confirmation dialog with formated _message_
- */
 gboolean gebr_gui_confirm_action_dialog(const gchar * title, const gchar * message, ...)
 {
 	va_list argp;
 	gboolean ret;
 
 	va_start(argp, message);
-	ret = _libgebr_gui_message_dialog(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, title, message, argp);
+	ret = gebr_gui_message_dialog_vararg(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, title, message, argp);
 	va_end(argp);
 
 	return ret;
 }
 
-/*
- * Function: gebr_gui_gtk_action_group_set_accel_group
- * Set to all actions in _action_group_ the GtkAccelGroup _accel_group_
- */
 void gebr_gui_gtk_action_group_set_accel_group(GtkActionGroup * action_group, GtkAccelGroup * accel_group)
 {
 	GList *i, *list;
@@ -912,10 +850,6 @@ void gebr_gui_gtk_action_group_set_accel_group(GtkActionGroup * action_group, Gt
 	g_list_free(list);
 }
 
-/*
- * Function: gebr_gui_gtk_widget_set_tooltip
- * Set tooltip all across the code.
- */
 void gebr_gui_gtk_widget_set_tooltip(GtkWidget * widget, const gchar * tip)
 {
 #if GTK_CHECK_VERSION(2,12,0)
@@ -937,7 +871,7 @@ GtkWidget *gebr_gui_gtk_container_add_depth_hbox(GtkWidget * container)
 	gtk_container_add(GTK_CONTAINER(container), depth_hbox);
 	gtk_widget_show(depth_hbox);
 
-	depth_widget = gtk_label_new("");
+	depth_widget = gtk_label_new(""); //FIXME use gtk drawing area?
 	gtk_box_pack_start(GTK_BOX(depth_hbox), depth_widget, FALSE, TRUE, 0);
 	gtk_widget_set_size_request(depth_widget, 25, -1);
 	gtk_widget_show(depth_widget);

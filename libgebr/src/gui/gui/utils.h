@@ -19,49 +19,164 @@
 #define __GEBR_GUI_UTILS_H
 
 #include <string.h>
-
 #include <gtk/gtk.h>
-
 #include <geoxml.h>
 
+/**
+ * \deprecated
+ *
+ * Makes the \p dialog response when pressing Return key.
+ * This function should be avoided because the Return key behavior is done with the default widget of the dialog.
+ *
+ * \see gtk_dialog_set_default_response
+ */
 void gebr_gui_gtk_dialog_set_response_on_widget_return(GtkDialog * dialog, gint response, GtkWidget * widget);
 
+/**
+ * Checks if row pointed by \p iter can move upwards.
+ */
 gboolean gebr_gui_gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter);
+
+/**
+ * Checks if row pointed by \p iter can move downwards.
+ */
 gboolean gebr_gui_gtk_list_store_can_move_down(GtkListStore * store, GtkTreeIter * iter);
+
+/**
+ * Moves the row pointed by \p iter upwards.
+ * \return Wheter the row was moved or not.
+ */
 gboolean gebr_gui_gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter);
+
+/**
+ * Moves the row pointed by \p iter downwards.
+ * \return Wheter the row was moved or not.
+ */
 gboolean gebr_gui_gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter);
+
+/**
+ * Returns the index of the row pointed by \p iter in \p list_store.
+ */
 gulong gebr_gui_gtk_list_store_get_iter_index(GtkListStore * list_store, GtkTreeIter * iter);
 
+/**
+ * Checks if row pointed by \p iter can move upwards.
+ */
 gboolean gebr_gui_gtk_tree_store_can_move_up(GtkTreeStore * store, GtkTreeIter * iter);
+
+/**
+ * Checks if row pointed by \p iter can move downwards.
+ */
 gboolean gebr_gui_gtk_tree_store_can_move_down(GtkTreeStore * store, GtkTreeIter * iter);
+
+/**
+ * Moves the row pointed by \p iter upwards.
+ * \return Wheter the row was moved or not.
+ */
 gboolean gebr_gui_gtk_tree_store_move_up(GtkTreeStore * store, GtkTreeIter * iter);
+
+/**
+ * Moves the row pointed by \p iter downwards.
+ * \return Wheter the row was moved or not.
+ */
 gboolean gebr_gui_gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * iter);
+
+/**
+ * Reparent row pointed by \p iter as a child of \p parent.
+ *
+ * This operation is done by copying all values of row \p iter into a new row which is a child of \p parent.
+ * The \p iter value is updated to point to the new row and the last row is removed.
+ *
+ * \return In case \p iter is already a child of \p parent, this function returns FALSE. Otherwise returns TRUE.
+ */
 gboolean gebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * iter, GtkTreeIter * parent);
 
-gint gebr_gui_gtk_tree_model_get_iter_depth(GtkTreeModel * model, GtkTreeIter * iter);
+/**
+ * Compares two iterators for equality.
+ */
 gboolean gebr_gui_gtk_tree_model_iter_equal_to(GtkTreeModel * model, GtkTreeIter * iter1, GtkTreeIter * iter2);
 
+/**
+ * \deprecated
+ *
+ * Checks if \p iter is valid.
+ * If you really need this function, check #GtkListStore or #GtkTreeStore classes
+ * for their own function.
+ *
+ * \see gtk_list_store_iter_is_valid gtk_tree_store_iter_is_valid
+ */
 #define gebr_gui_gtk_tree_model_iter_is_valid(iter) \
 	((gboolean)(iter)->stamp)
 
+/**
+ * \deprecated
+ *
+ * Compares two iterators and return whether they are equal or not.
+ * You should avoid this function since it might be broken in future releases of Gtk.
+ *
+ * \see gebr_gui_gtk_tree_model_iter_equal_to
+ */
 #define gebr_gui_gtk_tree_iter_equal_to(iter1, iter2) \
 	((iter1 == NULL || !(iter1)->stamp) && (iter2 == NULL || !(iter2)->stamp) \
 		? TRUE : (iter1 == NULL || !(iter1)->stamp) || (iter2 == NULL || !(iter2)->stamp) \
 			? FALSE : (gboolean)((iter1)->user_data == (iter2)->user_data))
-void gebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source);
-gboolean gebr_gui_gtk_tree_model_path_to_iter(GtkTreeModel * model, GtkTreePath * tree_path, GtkTreeIter * iter);
 
+/**
+ * Copies the values of row pointed by \p source into \p iter.
+ *
+ * \param model The model in which \p source and \p iter are valid.
+ * \param iter The row that will hold the copy.
+ * \param source The row that will be copied.
+ */
+void gebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source);
+
+/**
+ * Scrolls \p tree_view until row pointed by \p iter is visible.
+ */
 void gebr_gui_gtk_tree_view_scroll_to_iter_cell(GtkTreeView * tree_view, GtkTreeIter * iter);
+
+/**
+ * Returns a #GList of #GtkTreeIter that point to selected rows.
+ */
 GList *gebr_gui_gtk_tree_view_get_selected_iters(GtkTreeView * tree_view);
+
+/**
+ * When the \p tree_view has multiple selections, this function restrict its number to a single selection by choosing
+ * the topmost one.
+ */
 void gebr_gui_gtk_tree_view_turn_to_single_selection(GtkTreeView * tree_view);
+
+/**
+ * Sets \p iter to point to the first selected row in \p tree_view.
+ * \param iter[out] The iterator that will point to the selected row.
+ * \return TRUE if there is a selected row, FALSE otherwise. In case FALSE is returned, \p iter is invalid.
+ */
 gboolean gebr_gui_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
+
+/**
+ * Expands the rows of \p view so that the row pointed by \p iter is visible.
+ */
 void gebr_gui_gtk_tree_view_expand_to_iter(GtkTreeView * view, GtkTreeIter * iter);
+
+/**
+ * Gets the #GtkTreeViewColumn that packs \p renderer.
+ */
 GtkTreeViewColumn *gebr_gui_gtk_tree_view_get_column_from_renderer(GtkTreeView * tree_view, GtkCellRenderer * renderer);
+
+/**
+ * Gets the column to the right of \p column.
+ */
 GtkTreeViewColumn *gebr_gui_gtk_tree_view_get_next_column(GtkTreeView * tree_view, GtkTreeViewColumn * column);
+
+/**
+ * Sets the focus on row pointed by \p iter in \p column.
+ * \param start_editing Whether to start editing the first editable #GtkCellRenderer in coordinates given by \p iter
+ * and \p column.
+ */
 void gebr_gui_gtk_tree_view_set_cursor(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeViewColumn * column, gboolean start_editing);
 
 /**
- *
+ * When collapsing a row in gtk, the selection changes but its signal is not emited; this function fixes this.
  */
 void gebr_gui_gtk_tree_view_change_cursor_on_row_collapsed(GtkTreeView * tree_view);
 
@@ -72,10 +187,10 @@ void gebr_gui_gtk_tree_view_fancy_search(GtkTreeView * tree_view, gint column);
 
 /**
  * Iterates over all selected rows in a tree view, postfixing iteration variables with \p hyg.
- * @param iter A #GtkTreeIter that will iterate over selected rows.
- * @param tree_view The #GtkTreeView to work with.
- * @param hyg Postfix for iteration variables. Use this if you need to iterate two or more times in the same scope.
- * @see gebr_gui_gtk_tree_view_foreach_selected
+ * \param iter A #GtkTreeIter that will iterate over selected rows.
+ * \param tree_view The #GtkTreeView to work with.
+ * \param hyg Postfix for iteration variables. Use this if you need to iterate two or more times in the same scope.
+ * \see gebr_gui_gtk_tree_view_foreach_selected
  */
 #define gebr_gui_gtk_tree_view_foreach_selected_hyg(iter, tree_view, hyg) \
 	GList * __list##hyg = gebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(tree_view)); \
@@ -88,21 +203,54 @@ void gebr_gui_gtk_tree_view_fancy_search(GtkTreeView * tree_view, gint column);
 
 /**
  * Iterates over all selected rows in a tree view.
- * @param iter A #GtkTreeIter that will iterate over selected rows.
- * @param tree_view The #GtkTreeView to work with.
- * @see gebr_gui_gtk_tree_view_foreach_selected_hyg
+ * \param iter A #GtkTreeIter that will iterate over selected rows.
+ * \param tree_view The #GtkTreeView to work with.
+ * \see gebr_gui_gtk_tree_view_foreach_selected_hyg
  */
 #define gebr_gui_gtk_tree_view_foreach_selected(iter, tree_view) gebr_gui_gtk_tree_view_foreach_selected_hyg(iter, tree_view, nohyg)
 
-
+/**
+ * Fetches the first #GtkCellRenderer of \p column.
+ * \see gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode
+ */
 GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer(GtkTreeViewColumn * column);
+
+/**
+ * Fetches the first #GtkCellRenderer from \p column with "mode" property equal to \p mode.
+ * \see gebr_gui_gtk_tree_view_column_get_first_renderer
+ */
 GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkTreeViewColumn * column,
 									    GtkCellRendererMode mode);
 
+/**
+ * Iterates over all toplevel iters in a treemodel.
+ *
+ * This macro is similar to #gebr_gui_gtk_tree_model_foreach_hyg, postfixing variables with '__nohyg'.
+ *
+ * \see gebr_gui_gtk_tree_model_foreach_hyg
+ */
 #define gebr_gui_gtk_tree_model_foreach(iter, tree_model) \
 	gebr_gui_gtk_tree_model_foreach_hyg(iter, tree_model, __nohyg)
-/* iterates over all toplevel iters in a treemodel
- * made with iter removal protection
+
+/**
+ * Iterates over all toplevel iters in a treemodel made with name clashing protection.
+ *
+ * This macro is meant to be used as a for loop, which iterates over all rows in a #GtkTreeModel.
+ * An example is shown below:
+ * \code
+ * GtkTreeIter iter;
+ * gebr_gui_gtk_tree_model_foreach_hyg(iter, model, loop1) { // postfix 'loop1' to avoid naming clashes
+ * 	...
+ * }
+ * gebr_gui_gtk_tree_model_foreach_hyg(iter, model, loop2) {
+ * 	...
+ * }
+ * \endcode
+ *
+ * \param iter The needle that will iterate over all rows of \p tree_model.
+ * \param hygid A postfix name for naming clashes protection.
+ *
+ * \see gebr_gui_gtk_tree_model_foreach
  */
 #define gebr_gui_gtk_tree_model_foreach_hyg(iter, tree_model, hygid) \
 	gboolean valid##hygid; \
@@ -111,72 +259,124 @@ GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkT
 	valid##hygid == TRUE && ((valid##hygid = gtk_tree_model_iter_next(tree_model, &iter##hygid)), 1); \
 	iter = iter##hygid)
 
+/**
+ * Callback called when a popup is requested.
+ * \see gebr_gui_gtk_widget_set_popup_callback
+ */
 typedef GtkMenu *(*GebrGuiGtkPopupCallback) (GtkWidget *, gpointer);
-gboolean
-gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPopupCallback callback, gpointer user_data);
+
+/**
+ * Sets \p callback to fire when user right click or request for a context menu on \p widget.
+ * \see gebr_gui_gtk_tree_view_set_popup_callback
+ */
+gboolean gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPopupCallback callback,
+						gpointer user_data);
+
+/**
+ * Sets \p callback to fire when user right click or request for a context menu on \p tree_view.
+ * \see gebr_gui_gtk_widget_set_popup_callback
+ */
 void
-
-
 gebr_gui_gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GebrGuiGtkPopupCallback callback,
 					  gpointer user_data);
 
 /**
- * Used when the selected iter is about to be removed
- * so the next or previous (if it is the last) is selected
- * If nothing is selected or the selection mode is multiple,
- * then the first iter (if exists) is selected. So this function
- * can be used just to select the first iter.
+ * Selects the next sibling of the currently selected iter.
+ *
+ * Used when the selected iter is about to be removed so the next or previous (if it is the last) is selected If nothing
+ * is selected or the selection mode is multiple, then the first iter (if exists) is selected. So this function can be
+ * used just to select the first iter.
  */
 void gebr_gui_gtk_tree_view_select_sibling(GtkTreeView * tree_view);
 
 #if GTK_CHECK_VERSION(2,12,0)
+/**
+ * Callback for \ref gebr_gui_gtk_tree_view_set_tooltip_callback.
+ * \see gebr_gui_gtk_tree_view_set_tooltip_callback
+ */
 typedef gboolean(*GebrGuiGtkTreeViewTooltipCallback) (GtkTreeView * tree_view, GtkTooltip * tooltip,
 						      GtkTreeIter * iter, GtkTreeViewColumn * column,
 						      gpointer user_data);
+/**
+ * Sets a callback for when a tooltip is requested.
+ * \see GebrGuiGtkTreeViewTooltipCallback
+ */
 void gebr_gui_gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view,
 						 GebrGuiGtkTreeViewTooltipCallback callback, gpointer user_data);
 #endif
 
+/**
+ * Callback for when \p sequence have been moved before \p item node.
+ * \see gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable
+ */
 typedef void (*GebrGuiGtkTreeViewMoveSequenceCallback) (GtkTreeModel * tree_model, GebrGeoXmlSequence * sequence,
-							GebrGeoXmlSequence * before, gpointer user_data);
+							GebrGeoXmlSequence * item, gpointer user_data);
+
+/**
+ * Make the rows of \p tree_view drag able and reorder the \ref GebrGeoXmlSequence
+ * of the model in column \p sequence_pointer_column to match the \p tree_view.
+ *
+ * #GebrGeoXmlSequence is used very often in GeBR, and it is mapped into a TreeView.
+ * This function ease the task of mantaining the order of the sequence equivalent to
+ * the order of the TreeView. The \p callback is called whenever a reordering happens.
+ * \see GebrGuiGtkTreeViewMoveSequenceCallback
+ */
 void
-
-
 gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GtkTreeView * tree_view,
-							 gint gebr_geoxml_sequence_pointer_column,
+							 gint sequence_pointer_column,
 							 GebrGuiGtkTreeViewMoveSequenceCallback callback,
 							 gpointer user_data);
 
 /**
- * Callback for \ref gebr_gui_gtk_tree_view_set_reorder_callback
+ * Callback for \ref gebr_gui_gtk_tree_view_set_reorder_callback.
  */
-typedef gboolean(*GebrGuiGtkTreeViewReorderCallback) (GtkTreeView * tree_view, GtkTreeIter * iter,
-						      GtkTreeIter * position,
+typedef gboolean(*GebrGuiGtkTreeViewReorderCallback) (GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
 						      GtkTreeViewDropPosition drop_position, gpointer user_data);
 /**
  * Make \p tree_view reorderable.
- * \p reorder_callback is responsible for reorderation. Its return value
- * is ignored.
- * \p may_reorder_callback is called at each cursor movement. If it returns TRUE, then the
- * drop is allowed; otherwise is denied.
- * If \p may_reorder_callback is NULL every movement will be accepted.
+ * \param reorder_callback Responsible for reordering. It's return value is ignored.
+ * \param may_reorder_callback Called at each cursor movement. If it returns TRUE, drop is allowed; otherwise is denied.
+ * If NULL, every movement will be accepted.
  */
 void
-
-
 gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkTreeViewReorderCallback reorder_callback,
 					    GebrGuiGtkTreeViewReorderCallback may_reorder_callback, gpointer user_data);
 
-gboolean
-gebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons, const gchar * title, const gchar * message, ...);
+/**
+ * Creates a modal message dialog of \p type; the message is a printf-like format.
+ * \param type A #GtkMessageType that will specify the icon of the dialog.
+ * \param buttons A #GtkButtonsType to place buttons in the dialog.
+ * \param title The title of the dialog.
+ * \param message A printf-like message format.
+ * \return TRUE if response was GTK_RESPONSE_YES or GTK_RESPONSE_OK.
+ */
+gboolean gebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons,
+				 const gchar * title, const gchar * message, ...);
+
+/**
+ * Show an action confirmation dialog with printf-like formated \p message.
+ * \return TRUE if user pressed YES; FALSE otherwise.
+ */
 gboolean gebr_gui_confirm_action_dialog(const gchar * title, const gchar * message, ...);
 
+/**
+ * Sets \p accel_group to all actions in \p action_group.
+ */
 void gebr_gui_gtk_action_group_set_accel_group(GtkActionGroup * action_group, GtkAccelGroup * accel_group);
 
+/**
+ * Sets \p tip as a tooltip for \p widget.
+ */
 void gebr_gui_gtk_widget_set_tooltip(GtkWidget * widget, const gchar * tip);
 
+/**
+ * Adds depth effect for expanders.
+ */
 GtkWidget *gebr_gui_gtk_container_add_depth_hbox(GtkWidget * container);
 
+/**
+ * Hacking the #GtkExpander to allow widgets other than #GtkLabel.
+ */
 #define gebr_gui_gtk_expander_hacked_define(expander, label_widget) \
 	g_signal_connect_after(label_widget, "expose-event", \
 		G_CALLBACK(gebr_gui_gtk_expander_hacked_idle), \
@@ -184,7 +384,9 @@ GtkWidget *gebr_gui_gtk_container_add_depth_hbox(GtkWidget * container);
 	g_signal_connect(expander, "unmap", \
 		G_CALLBACK(gebr_gui_gtk_expander_hacked_visible), \
 		label_widget)
+
 void gebr_gui_gtk_expander_hacked_visible(GtkWidget * parent_expander, GtkWidget * hbox);
+
 gboolean gebr_gui_gtk_expander_hacked_idle(GtkWidget * hbox, GdkEventExpose * event, GtkWidget * expander);
 
 #if !GTK_CHECK_VERSION(2,16,0)
