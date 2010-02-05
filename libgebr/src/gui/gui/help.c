@@ -221,7 +221,7 @@ void gebr_gui_help_show(const gchar * uri, const gchar * title, const gchar * br
 #endif
 }
 
-static void _gebr_gui_help_edit(const gchar *help, const gchar * editor,
+static void _gebr_gui_help_edit(gchar *help, const gchar * editor,
 			       	GebrGeoXmlObject * object, set_help set_function,
 			       	GebrGuiHelpEdited edited_callback);
 
@@ -436,12 +436,15 @@ static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, s
 /**
  * Load help into a temporary file and load with Webkit (if enabled).
  */
-static void _gebr_gui_help_edit(const gchar *help, const gchar * editor,
+static void _gebr_gui_help_edit(gchar *help, const gchar * editor,
 			       	GebrGeoXmlObject * object, set_help set_function,
 			       	GebrGuiHelpEdited edited_callback)
 {
 	FILE *html_fp;
 	GString *html_path;
+
+	if (!strlen(help))
+		help = " ";
 
 	/* write help to temporary file */
 	html_path = gebr_make_temp_filename("XXXXXX.html");
