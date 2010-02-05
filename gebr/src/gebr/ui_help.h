@@ -21,12 +21,24 @@
 #include <gtk/gtk.h>
 #include <libgebr/geoxml.h>
 
+/**
+ * Show current selected program's help.
+ */
 void program_help_show(void);
 
-void help_show(const gchar * help, const gchar * title);
+/**
+ * Show \p help HTML. 
+ */
+void help_show(const gchar * help);
 
+/**
+ * Button callback, calls #help_show.
+ */
 void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document);
 
+/**
+ * Edit help in editor as reponse to button clicks.
+ */
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document);
 
 #endif				//__UI_HELP_H

@@ -292,7 +292,7 @@ void help_show(const gchar * help)
 	g_string_free(prepared_html, TRUE);
 }
 
-static void help_edit_on_finished(GebrGeoXmlObject * object, const gchar * _help)
+static void help_edit_on_edited(GebrGeoXmlObject * object, const gchar * _help)
 {	
 	GString * help;
 
@@ -378,10 +378,10 @@ void help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh
 	/* EDIT IT */
 	if (program != NULL) {
 		gebr_geoxml_program_set_help(program, prepared_html->str);
-		gebr_gui_program_help_edit(program, debr.config.htmleditor->str, help_edit_on_finished);
+		gebr_gui_program_help_edit(program, debr.config.htmleditor->str, help_edit_on_edited);
 	} else {
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html->str);
-		gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), debr.config.htmleditor->str, help_edit_on_finished);
+		gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), debr.config.htmleditor->str, help_edit_on_edited);
 	}
 }
 

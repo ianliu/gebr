@@ -17,7 +17,10 @@
 
 #ifdef WEBKIT_ENABLED
 #include <webkit/webkit.h>
+#else
+#include <stdlib.h>
 #endif
+
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 #include <glib/gstdio.h>
@@ -36,37 +39,38 @@
 
 #ifdef WEBKIT_ENABLED
 static GHashTable * jscontext_to_data_hash = NULL;
-typedef void (*set_help)(GebrGeoXmlObject * object, const gchar help);
+typedef void (*set_help)(GebrGeoXmlObject * object, const gchar * help);
 struct help_edit_data {
 	WebKitWebView * web_view;
 	JSContextRef context;
 	GebrGeoXmlObject * object;
 	set_help set_function;
 	GString *html_path;
-	GebrGuiHelpEditingFinished finish_callback;
+	GebrGuiHelpEdited edited_callback;
 };
 
-static void web_view_on_title_changed(WebKitWebView * web_view, WebKitWebFrame * frame, gchar * title,
-				      GtkWindow * window);
 static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window);
 
-static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, struct help_edit_data * data);
-
-static GtkWidget * web_view_create(struct help_edit_data * data);
-
-static gboolean web_view_on_button_press(GtkWidget * widget, GdkEventButton * event);
-
-static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, struct help_edit_data * data);
-
-#define css_div_style 					\
-	".content {"					\
-		"border: 2px solid Transparent;"	\
-		"padding: 3px;"				\
-	"}"						\
-	".content:hover {"				\
-		"border-color: black;"			\
+/**
+ * \internal
+ * The CSS to highlight and editable area when the user pass
+ * the cursor over it.
+ */
+#define css_editable_area_style \
+	".content {"\
+		"border: 2px solid Transparent;"\
+		"padding: 3px;"\
+	"}"\
+	".content:hover {"\
+		"border-color: black;"\
 	"}"
 
+/**
+ * \internal
+ * Main JS loaded after the page has been loaded.
+ * Load CKEDITOR JS, CSS hover highlight, on click start/leave edition depending
+ * on area clicked, index generation after edition, CKEDITOR load with configuration.
+ */
 static gchar * js_start_inline_editing = \
 	"var editor = null;"
 	"var editing_element = null;"
@@ -76,9 +80,9 @@ static gchar * js_start_inline_editing = \
 	"tag.setAttribute('type', 'text/javascript');"
 	"tag.setAttribute('src', 'file://" CKEDITOR_DIR "/ckeditor.js');"
 	"document.getElementsByTagName('head')[0].appendChild(tag);"
-	"function DestroyEditor() {"
+	"function DestroyEditor(discard_changes) {"
 		"if (editor) {"
-			"editor.destroy();"
+			"editor.destroy(discard_changes);"
 			"GenerateNavigationIndex(document);"
 			"editor = null;"
 			"editing_element = null;"
@@ -90,7 +94,7 @@ static gchar * js_start_inline_editing = \
 	"function InsertHoverCss() {"
 		"var stl = document.createElement('style');"
 		"stl.setAttribute('type', 'text/css');"
-		"stl.appendChild(document.createTextNode('"css_div_style"'));"
+		"stl.appendChild(document.createTextNode('"css_editable_area_style"'));"
 		"document.getElementsByTagName('head')[0].appendChild(stl);"
 	"}"
 	"function IsElementEditable(elt) {"
@@ -167,12 +171,12 @@ static gchar * js_start_inline_editing = \
  * Public functions
  */
 
-void gebr_gui_help_show(const gchar * uri, const gchar * browser)
+void gebr_gui_help_show(const gchar * uri, const gchar * title, const gchar * browser)
 {
 #ifdef WEBKIT_ENABLED
 	GtkWidget *web_view;
 
-	web_view = web_view_create(NULL);
+	web_view = web_view_on_create_web_view(NULL);
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), uri);
 #else
 	GString *cmd_line;
@@ -189,24 +193,29 @@ void gebr_gui_help_show(const gchar * uri, const gchar * browser)
 
 static void _gebr_gui_help_edit(const gchar *help, const gchar * editor,
 			       	GebrGeoXmlObject * object, set_help set_function,
-			       	GebrGuiHelpEditingFinished finish_callback);
+			       	GebrGuiHelpEdited edited_callback);
 
-void gebr_gui_help_edit(GebrGeoXmlDocument * document, const gchar * editor, GebrGuiHelpEditingFinished finish_callback)
+void gebr_gui_help_edit(GebrGeoXmlDocument * document, const gchar * editor, GebrGuiHelpEdited edited_callback)
 {
 	_gebr_gui_help_edit(gebr_geoxml_document_get_help(document), editor, GEBR_GEOXML_OBJECT(document),
-			    (set_help)gebr_geoxml_document_set_help, finish_callback);
+			    (set_help)gebr_geoxml_document_set_help, edited_callback);
 }
 
-void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, const gchar * editor, GebrGuiHelpEditingFinished finish_callback)
+void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, const gchar * editor, GebrGuiHelpEdited edited_callback)
 {
 	_gebr_gui_help_edit(gebr_geoxml_program_get_help(program), editor, GEBR_GEOXML_OBJECT(program),
-			    (set_help)gebr_geoxml_program_set_help, finish_callback);
+			    (set_help)gebr_geoxml_program_set_help, edited_callback);
 }
 
 /*
  * Private functions
  */
-
+#ifdef WEBKIT_ENABLED
+/**
+ * \internal
+ * Save the updated HTML and call edited_callback if set.
+ * If the editor is opened remove its HTML code.
+ */
 static GString *help_edit_save(JSContextRef context, struct help_edit_data * data)
 {
 	GString *help;
@@ -228,110 +237,47 @@ static GString *help_edit_save(JSContextRef context, struct help_edit_data * dat
 			"}"
 			"return doc_clone.documentElement.outerHTML;"
 		"})();";
-
 	html = gebr_js_evaluate(context, script_fetch_help);
 	help = gebr_js_value_get_string(context, html);
-
 
 	if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(data->object), help->str);
 	else
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(data->object), help->str);
 
+	if (data->edited_callback)
+		data->edited_callback(data->object, help->str);
+
 	return help;
 }
 
-static void _gebr_gui_help_edit(const gchar *help, const gchar * editor,
-			       	GebrGeoXmlObject * object, set_help set_function,
-			       	GebrGuiHelpEditingFinished finish_callback)
+/**
+ * \internal
+ * Remove every ocurrence of \p data of #jscontext_to_data_hash
+ */
+static gboolean hash_foreach_remove(gpointer key, struct help_edit_data * value, struct help_edit_data * data)
 {
-	FILE *html_fp;
-	GString *html_path;
-
-	/* write help to temporary file */
-	html_path = gebr_make_temp_filename("XXXXXX.html");
-	/* Write current help to temporary file */
-	html_fp = fopen(html_path->str, "w");
-	fputs(help, html_fp);
-	fclose(html_fp);
-	
-#ifdef WEBKIT_ENABLED
-	struct help_edit_data *data;
-
-	data = g_new(struct help_edit_data, 1);
-	data->object = object;
-	data->set_function = set_function;
-	data->html_path = html_path;
-	data->finish_callback = finish_callback;
-	data->web_view = WEBKIT_WEB_VIEW(web_view_create(data));
-	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
-	webkit_web_view_open(WEBKIT_WEB_VIEW(data->web_view), html_path->str);
-#else
-	GString *cmd_line;
-	gchar buffer[BUFFER_SIZE];
-	GString *help;
-
-	/* initialization */
-	cmd_line = g_string_new(NULL);
-	help = g_string_new(NULL);
-
-	g_string_printf(cmd_line, "%s %s", editor, uri);
-	if (system(cmd_line->str))
-		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't open editor"),
-					_("Cannot open your HTML editor.\n" "Please select it on 'Preferences'."));
-
-	/* ensure UTF-8 encoding */
-	if (g_utf8_validate(help->str, -1, NULL) == FALSE) {
-		gchar *converted;
-		gsize bytes_read;
-		gsize bytes_written;
-		GError *error;
-
-		error = NULL;
-		converted = g_locale_to_utf8(help->str, -1, &bytes_read, &bytes_written, &error);
-		/* TODO: what else should be tried? */
-		if (converted == NULL) {
-			g_free(converted);
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't read edited file"),
-						_("Could not read edited file.\n Please change the report encoding to UTF-8"));
-			goto out;
-		}
-
-		g_string_assign(help, converted);
-		g_free(converted);
-	}
-
-	/* Read back the help from file */
-	html_fp = fopen(html_path->str, "r");
-	while (fgets(buffer, BUFFER_SIZE, html_fp) != NULL)
-		g_string_append(help, buffer);
-	fclose(html_fp);
-	g_unlink(html_path->str);
-
-	/* Finally, the edited help back to the document */
-	set_function(object, help->str);
-	if (finish_callback != NULL)
-		finish_callback(object, help->str);
-
-out:	g_string_free(cmd_line, TRUE);
-	g_string_free(html_path, TRUE);
-	g_string_free(help, TRUE);
-#endif
+	return (value == data) ? TRUE : FALSE;
 }
 
-#ifdef WEBKIT_ENABLED
-static void web_view_on_destroy(WebKitWebView * web_view)
+/**
+ * \internal
+ * Update #jscontext_to_data_hash freeing memory alocated related to \p web_view
+ */
+static void web_view_on_destroy(WebKitWebView * web_view, struct help_edit_data * data)
 {
-	JSContextRef context;
-
-	context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(web_view));
-	g_hash_table_remove(jscontext_to_data_hash, context);
+	g_hash_table_foreach_remove(jscontext_to_data_hash, (GHRFunc)hash_foreach_remove, data);
 	if (!g_hash_table_size(jscontext_to_data_hash)) {
 		g_hash_table_unref(jscontext_to_data_hash);
 		jscontext_to_data_hash = NULL;
 	}
 }
 
+/**
+ * \internal
+ * Create the webview itself. Used for both viewing and editing HTML.
+ * Returns the webview and the dialog created for it at \p r_window
+ */
 static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window)
 {
 	static GtkWindowGroup *window_group = NULL;
@@ -361,8 +307,6 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window)
 	web_view = webkit_web_view_new();
 	if (g_signal_lookup("create-web-view", WEBKIT_TYPE_WEB_VIEW))
 		g_signal_connect(web_view, "create-web-view", G_CALLBACK(web_view_on_create_web_view), NULL);
-	g_signal_connect(web_view, "title-changed", G_CALLBACK(web_view_on_title_changed), window);
-	g_signal_connect(web_view, "destroy", G_CALLBACK(web_view_on_destroy), NULL);
 
 	/* Place the WebKitWebView in the GtkScrolledWindow */
 	gtk_container_add(GTK_CONTAINER(scrolled_window), web_view);
@@ -375,13 +319,15 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window)
 	return web_view;
 }
 
+/**
+ * \internal
+ * Treat the exit response of the dialog.
+ */
 static gboolean dialog_on_response(GtkDialog * dialog, gint response_id, struct help_edit_data * data)
 {
 	GString * help;
 
 	help = help_edit_save(data->context, data);
-	if (data->finish_callback)
-		data->finish_callback(data->object, help->str);
 
 	g_string_free(help, TRUE);
 	g_unlink(data->html_path->str);
@@ -391,28 +337,21 @@ static gboolean dialog_on_response(GtkDialog * dialog, gint response_id, struct 
 	return TRUE;
 }
 
-static GtkWidget * web_view_create(struct help_edit_data * data)
-{
-	GtkWidget * web_view;
-	GtkDialog * dialog;
-
-	web_view = web_view_on_create_web_view(&dialog);
-	if (data) {
-		g_signal_connect(dialog, "response", G_CALLBACK(dialog_on_response), data);
-		g_signal_connect(web_view, "load-finished", G_CALLBACK(web_view_on_load_finished), data);
-		g_signal_connect(web_view, "button-press-event", G_CALLBACK(web_view_on_button_press), data);
-		g_signal_connect(web_view, "key-press-event", G_CALLBACK(web_view_on_key_press), data);
-		g_hash_table_insert(jscontext_to_data_hash, (gpointer)data->context, data);
-	}
-	return web_view;
-}
-
+/**
+ * \internal
+ * Change the title of the dialog according to the page title.
+ */
 static void web_view_on_title_changed(WebKitWebView * web_view, WebKitWebFrame * frame, gchar * title,
 				      GtkWindow * window)
 {
 	gtk_window_set_title(window, title);
 }
 
+/**
+ * \internal
+ * CKEDITOR save toolbar button callback
+ * Set at #web_view_on_load_finished
+ */
 JSValueRef js_callback_gebr_help_save(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject,
 				      size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
@@ -424,6 +363,10 @@ JSValueRef js_callback_gebr_help_save(JSContextRef ctx, JSObjectRef function, JS
 	return JSValueMakeUndefined(ctx);
 }
 
+/**
+ * \internal
+ * Load all page personalization for editing.
+ */
 static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, struct help_edit_data * data)
 {
 	JSObjectRef function;
@@ -434,6 +377,10 @@ static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame *
 					     G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(web_view_on_load_finished), data);
 }
 
+/**
+ * \internal
+ * Disable context menu for HTML editing.
+ */
 static gboolean web_view_on_button_press(GtkWidget * widget, GdkEventButton * event)
 {
 	if (event->button == 3)
@@ -441,13 +388,108 @@ static gboolean web_view_on_button_press(GtkWidget * widget, GdkEventButton * ev
 	return FALSE;
 }
 
+/**
+ * \internal
+ * Esc cancel CKEDITOR edition
+ */
 static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, struct help_edit_data * data)
 {
 	if (event->keyval == GDK_Escape) {
-		gebr_js_evaluate(data->context, "DestroyEditor();");
+		gebr_js_evaluate(data->context, "DestroyEditor(true);");
 		return TRUE;
 	}
 	return FALSE;
 }
-
 #endif				//WEBKIT_ENABLED
+
+/**
+ * Load help into a temporary file and load with Webkit (if enabled).
+ */
+static void _gebr_gui_help_edit(const gchar *help, const gchar * editor,
+			       	GebrGeoXmlObject * object, set_help set_function,
+			       	GebrGuiHelpEdited edited_callback)
+{
+	FILE *html_fp;
+	GString *html_path;
+
+	/* write help to temporary file */
+	html_path = gebr_make_temp_filename("XXXXXX.html");
+	/* Write current help to temporary file */
+	html_fp = fopen(html_path->str, "w");
+	fputs(help, html_fp);
+	fclose(html_fp);
+	
+#ifdef WEBKIT_ENABLED
+	struct help_edit_data *data;
+	GtkWidget * web_view;
+	GtkDialog * dialog;
+
+	web_view = web_view_on_create_web_view(&dialog);
+	data = g_new(struct help_edit_data, 1);
+	data->object = object;
+	data->set_function = set_function;
+	data->html_path = html_path;
+	data->edited_callback = edited_callback;
+	data->web_view = WEBKIT_WEB_VIEW(web_view);
+	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
+
+	g_signal_connect(dialog, "response", G_CALLBACK(dialog_on_response), data);
+	g_signal_connect(web_view, "load-finished", G_CALLBACK(web_view_on_load_finished), data);
+	g_signal_connect(web_view, "button-press-event", G_CALLBACK(web_view_on_button_press), data);
+	g_signal_connect(web_view, "key-press-event", G_CALLBACK(web_view_on_key_press), data);
+	g_signal_connect(web_view, "destroy", G_CALLBACK(web_view_on_destroy), data);
+	g_signal_connect(web_view, "title-changed", G_CALLBACK(web_view_on_title_changed), dialog);
+	g_hash_table_insert(jscontext_to_data_hash, (gpointer)data->context, data);
+	webkit_web_view_open(WEBKIT_WEB_VIEW(data->web_view), html_path->str);
+#else
+	GString *cmd_line;
+	gchar buffer[1024];
+	GString *validated_help;
+
+	/* initialization */
+	cmd_line = g_string_new(NULL);
+	validated_help = g_string_new(NULL);
+
+	g_string_printf(cmd_line, "%s %s", editor, html_path->str);
+	if (system(cmd_line->str))
+		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't open editor"),
+					_("Cannot open your HTML editor.\n" "Please select it on 'Preferences'."));
+
+	/* ensure UTF-8 encoding */
+	if (g_utf8_validate(validated_help->str, -1, NULL) == FALSE) {
+		gchar *converted;
+		gsize bytes_read;
+		gsize bytes_written;
+		GError *error;
+
+		error = NULL;
+		converted = g_locale_to_utf8(validated_help->str, -1, &bytes_read, &bytes_written, &error);
+		/* TODO: what else should be tried? */
+		if (converted == NULL) {
+			g_free(converted);
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't read edited file"),
+						_("Could not read edited file.\n Please change the report encoding to UTF-8"));
+			goto out;
+		}
+
+		g_string_assign(validated_help, converted);
+		g_free(converted);
+	}
+
+	/* Read back the help from file */
+	html_fp = fopen(html_path->str, "r");
+	while (fgets(buffer, 1024, html_fp) != NULL)
+		g_string_append(validated_help, buffer);
+	fclose(html_fp);
+	g_unlink(html_path->str);
+
+	/* Finally, the edited help back to the document */
+	set_function(object, validated_help->str);
+	if (edited_callback != NULL)
+		edited_callback(object, validated_help->str);
+
+out:	g_string_free(cmd_line, TRUE);
+	g_string_free(html_path, TRUE);
+	g_string_free(validated_help, TRUE);
+#endif
+}

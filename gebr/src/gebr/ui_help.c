@@ -16,8 +16,8 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-/*
- * File: ui_help.c
+/**
+ * \file ui_help.c
  * Responsible for help/report exibition and edition
  */
 
@@ -33,34 +33,19 @@
 
 #include "ui_help.h"
 #include "gebr.h"
+#include "document.h"
 #include "../defines.h"
 #include "menu.h"
 
-#define BUFFER_SIZE 1024
-
-gchar *unable_to_write_help_error = N_("Unable to write help in temporary file");
-
-/*
- * Section: Public
- * Public functions.
- */
-
-/*
- * Function: program_help_show
- */
 void program_help_show(void)
 {
 	if (!flow_edition_get_selected_component(NULL, TRUE))
 		return;
 
-	help_show(gebr_geoxml_program_get_help(gebr.program), _("Program help"));
+	help_show(gebr_geoxml_program_get_help(gebr.program));
 }
 
-/*
- * Function: help_show
- * Open user's browser with _help_
- */
-void help_show(const gchar * help, const gchar * title)
+void help_show(const gchar * help)
 {
 	GString *prepared_html;
 	FILE *html_fp;
@@ -68,7 +53,7 @@ void help_show(const gchar * help, const gchar * title)
 
 	/* initialization */
 	prepared_html = g_string_new(NULL);
-	/* Gambiarra */
+	/* CSS to absolute path */
 	{
 		gchar *gebrcsspos;
 		int pos;
@@ -92,7 +77,7 @@ void help_show(const gchar * help, const gchar * title)
 
 	html_fp = fopen(html_path->str, "w");
 	if (html_fp == NULL) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, unable_to_write_help_error);
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to write help in temporary file"));
 		goto out;
 	}
 	fwrite(prepared_html->str, sizeof(char), strlen(prepared_html->str), html_fp);
@@ -109,18 +94,20 @@ void help_show(const gchar * help, const gchar * title)
 	g_string_free(prepared_html, TRUE);
 }
 
-/*
-Help show
-*/
-
 void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document)
 {
-	help_show(gebr_geoxml_document_get_help(document), gebr_geoxml_document_get_title(document));
+	help_show(gebr_geoxml_document_get_help(document));
 }
 
 /**
- * Edit help in editor as reponse to button clicks.
+ * \internal
+ * Save document upon help change.
  */
+static void help_edit_on_edited(GebrGeoXmlDocument * document, const gchar * help)
+{
+	document_save(document);
+}
+
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 {
 	/* Check for editor */
@@ -129,5 +116,5 @@ void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 		return;
 	}
 
-	gebr_gui_help_edit(document, gebr.config.editor->str, NULL);
+	gebr_gui_help_edit(document, gebr.config.editor->str, (GebrGuiHelpEdited)help_edit_on_edited);
 }
