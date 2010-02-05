@@ -18,6 +18,7 @@ include $(top_srcdir)/Makefile.decl
 ckeditordirectory = $(DESTDIR)/$(datadir)/libgebr
 
 install-data-local:
-	find ckeditor -type f -exec ${INSTALL_DATA} -D {} ${ckeditordirectory}/{} \;
+	find ckeditor -type d -exec ${INSTALL_SCRIPT} -d {} ${ckeditordirectory}/{} \;
+	find ckeditor -type f -exec ${INSTALL_DATA} {} ${ckeditordirectory}/{} \;
 
 EXTRA_DIST = ckeditor
