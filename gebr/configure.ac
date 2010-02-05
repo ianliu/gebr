@@ -22,6 +22,9 @@ AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
 AC_SUBST(TODAY)
 
+INSTALL="/usr/bin/install -C"
+AC_ARG_VAR(INSTALL_DATA)
+
 dnl Debug option
 AC_ARG_ENABLE(debug,
 	[AC_HELP_STRING([--enable-debug],
