@@ -175,9 +175,11 @@ void gebr_gui_help_show(const gchar * uri, const gchar * title, const gchar * br
 {
 #ifdef WEBKIT_ENABLED
 	GtkWidget *web_view;
+	GtkDialog *dialog;
 
-	web_view = web_view_on_create_web_view(NULL);
+	web_view = web_view_on_create_web_view(&dialog);
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), uri);
+	gtk_window_set_title(GTK_WINDOW(dialog), title);
 #else
 	GString *cmd_line;
 
