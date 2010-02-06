@@ -15,6 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef WEBKIT_ENABLED
 #include <stdio.h>
 #include "js.h"
 
@@ -136,3 +137,4 @@ gboolean gebr_js_include(JSContextRef ctx, const gchar * file)
 	return TRUE;
 }
 
+#endif

@@ -37,9 +37,9 @@
  * Declarations
  */
 
+typedef void (*set_help)(GebrGeoXmlObject * object, const gchar * help);
 #ifdef WEBKIT_ENABLED
 static GHashTable * jscontext_to_data_hash = NULL;
-typedef void (*set_help)(GebrGeoXmlObject * object, const gchar * help);
 struct help_edit_data {
 	WebKitWebView * web_view;
 	JSContextRef context;
