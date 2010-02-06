@@ -1,0 +1,11 @@
+INSTALL_BIN=/usr/bin/install
+
+$INSTALL_BIN -C configure.ac __install_test 2>/dev/null
+if [[ $? -ne 0 \]]; then
+        true
+else
+        rm __install_test
+        INSTALL="$INSTALL_BIN -C"
+        AC_ARG_VAR(INSTALL)
+fi
+
