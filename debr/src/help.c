@@ -377,7 +377,7 @@ void help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh
 		fp = fopen(DEBR_DATA_DIR "help-template.html", "r");
 		if (fp == NULL) {
 			debr_message(GEBR_LOG_ERROR, _("Could not open template. Please check your installation."));
-			return prepared_html;
+			return;
 		}
 
 		while (fgets(buffer, sizeof(buffer), fp))
