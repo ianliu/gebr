@@ -1225,9 +1225,6 @@ static void menu_sort_by_modified_date(GtkMenuItem * menu_item)
 }
 
 /**
- * menu_popup_menu:
- * @tree_view:
- *
  * Agregate action to the popup menu and shows it.
  */
 static GtkMenu *menu_popup_menu(GtkTreeView * tree_view)
@@ -1266,10 +1263,15 @@ static GtkMenu *menu_popup_menu(GtkTreeView * tree_view)
 			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_delete")));
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
+	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_collapse_all), debr.ui_menu.tree_view);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	menu_item = gtk_menu_item_new_with_label(_("Expand all"));
+	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_expand_all), debr.ui_menu.tree_view);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	menu_item = gtk_menu_item_new_with_label(_("Sort by"));
 	gtk_container_add(GTK_CONTAINER(menu), menu_item);
 
-	// Get informations to create menu
 	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model), &column_id, &order);
 	if (order == GTK_SORT_ASCENDING)
 		image = gtk_image_new_from_stock(GTK_STOCK_SORT_ASCENDING, GTK_ICON_SIZE_MENU);

@@ -169,6 +169,8 @@ void on_menu_open_activate(void)
 						     GTK_FILE_CHOOSER_ACTION_OPEN,
 						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 						     GTK_STOCK_OPEN, GTK_RESPONSE_YES, NULL);
+	for (int i = 0; debr.config.menu_dir[i]; i++)
+		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir[i], NULL);
 	filefilter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filefilter, _("Menu files (*.mnu)"));
 	gtk_file_filter_add_pattern(filefilter, "*.mnu");

@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-SUBDIRS = gui pixmaps icons ckeditor
+SUBDIRS = gui pixmaps icons ckeditor tests
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr-gui.pc

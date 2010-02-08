@@ -557,8 +557,8 @@ static void flow_edition_menu_show_help(void)
  out:	g_free(menu_filename);
 }
 
-/* Function: flow_edition_component_popup_menu
- * Show popup menu for flow component
+/**
+ * Show popup menu for flow component.
  */
 static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, struct ui_flow_edition *ui_flow_edition)
 {
@@ -634,8 +634,8 @@ static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, struct ui_
 	return GTK_MENU(menu);
 }
 
-/* Function: flow_edition_component_popup_menu
- * Show popup menu for menu list
+/**
+ * Show popup menu for menu list.
  */
 static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_edition *ui_flow_edition)
 {
@@ -647,6 +647,13 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group, "flow_edition_refresh")));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_collapse_all), ui_flow_edition->menu_view);
+	menu_item = gtk_menu_item_new_with_label(_("Expand all"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_expand_all), ui_flow_edition->menu_view);
 
 	if (!flow_edition_get_selected_menu(&iter, FALSE))
 		goto out;
