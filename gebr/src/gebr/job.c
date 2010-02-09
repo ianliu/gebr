@@ -339,7 +339,7 @@ void job_update_status(struct job *job)
 		pixbuf = gebr.pixmaps.stock_execute;
 		break;
 	case JOB_STATUS_QUEUED:
-		pixbuf = NULL; /* TODO: Find an Icon! */
+		pixbuf = gebr.pixmaps.chronometer;
 		break;
 	case JOB_STATUS_FINISHED:
 		pixbuf = gebr.pixmaps.stock_apply;

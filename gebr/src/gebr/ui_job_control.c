@@ -1,3 +1,7 @@
+/**
+ * \file ui_job_control.c Responsible for UI for job management.
+ */
+
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -26,11 +30,6 @@
 #include "job.h"
 
 /*
- * File: ui_job_control.c
- * Responsible for UI for job management.
- */
-
-/*
  * Prototypes
  */
 
@@ -39,7 +38,6 @@ static void job_control_clicked(void);
 static void on_text_view_populate_popup(GtkTextView * textview, GtkMenu * menu);
 
 /*
- * Section: Public
  * Public functions.
  */
 

@@ -106,6 +106,7 @@ struct gebr {
 		GdkPixbuf *stock_go_back;
 		GdkPixbuf *stock_go_forward;
 		GdkPixbuf *stock_info;
+		GdkPixbuf *chronometer;
 	} pixmaps;
 };
 

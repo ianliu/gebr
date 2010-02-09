@@ -481,8 +481,10 @@ static void flow_edition_component_selected(void)
 
 }
 
-/* Function: flow_edition_menu_add
- * Add selected menu to flow sequence
+/**
+ * \internal
+ *
+ * Add selected menu to flow sequence.
  */
 static void flow_edition_menu_add(void)
 {

@@ -101,6 +101,8 @@ void gebr_init(void)
 	    gtk_widget_render_icon(gebr.invisible, GTK_STOCK_GO_FORWARD, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 	gebr.pixmaps.stock_info =
 	    gtk_widget_render_icon(gebr.invisible, GTK_STOCK_INFO, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
+	gebr.pixmaps.chronometer = 
+	    gtk_widget_render_icon(gebr.invisible, "chronometer", GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
 	/* finally the config. file */
 	gebr_config_load(FALSE);

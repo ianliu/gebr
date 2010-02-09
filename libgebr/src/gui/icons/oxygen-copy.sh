@@ -1,6 +1,7 @@
 #!/bin/sh
 
 ICONS=" \
+	actions/chronometer \
 	actions/document-open-recent \
 	actions/document-import \
 	actions/document-export \
