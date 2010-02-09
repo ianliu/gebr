@@ -1,3 +1,7 @@
+/**
+ * @file ui_project_line.c Builds the "Project and Lines" UI and distribute callbacks
+ */
+
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -14,11 +18,6 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see
  *   <http://www.gnu.org/licenses/>.
- */
-
-/*
- * File: ui_project_line.c
- * Builds the "Project and Lines" UI and distribute callbacks
  */
 
 #include <stdlib.h>
@@ -45,18 +44,19 @@
  * Prototypes
  */
 
-static void
-project_line_rename(GtkCellRendererText * cell, gchar * path_string,
-		    gchar * new_text, struct ui_project_line *ui_project_line);
+static void project_line_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new_text,
+				struct ui_project_line *ui_project_line);
+
 static void project_line_load(void);
+
 static void project_line_show_help(void);
-static void
-project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
-			      GtkTreeViewColumn * column, struct ui_project_line *ui_project_line);
+
+static void project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
+					  GtkTreeViewColumn * column, struct ui_project_line *ui_project_line);
+
 static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_line *ui_project_line);
 
 /*
- * Section: Public
  * Public functions.
  */
 
@@ -783,10 +783,15 @@ static void project_line_show_help(void)
 		  ? _("Project report") : _("Line report"));
 }
 
-static void
-project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
-			      GtkTreeViewColumn * column, struct ui_project_line *ui_project_line)
+static void project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
+					  GtkTreeViewColumn * column, struct ui_project_line *ui)
 {
+	GtkTreeIter iter;
+	project_line_get_selected(&iter, DontWarnUnselection);
+	if (gtk_tree_store_iter_depth(ui->store, &iter) == 0) {
+		gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(ui->view), &iter);
+		return;
+	}
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 1);
 }
 
