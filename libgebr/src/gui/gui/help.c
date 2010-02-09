@@ -53,8 +53,7 @@ web_view_on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame * fram
 
 /**
  * \internal
- * The CSS to highlight and editable area when the user pass
- * the cursor over it.
+ * The CSS to highlight and editable area when the user pass the cursor over it.
  */
 #define css_editable_area_style \
 	".content {"\
@@ -181,15 +180,33 @@ static gchar * js_start_inline_editing = \
 		"OpenCkEditor(content);"
 	"}"
 	"(function() {"
-		"if (!document.getElementsByTagName('head')[0]) {"
-			"document.documentElement.insertBefore(document.createElement('head'), document.body);"
+		"var head = document.getElementsByTagName('head')[0];"
+		"if (!head) {"
+			"head = document.createElement('head');"
+			"document.documentElement.insertBefore(head, document.body);"
 		"}"
 		"var tag = document.createElement('script');"
 		"tag.setAttribute('type', 'text/javascript');"
 		"tag.setAttribute('src', 'file://" CKEDITOR_DIR "/ckeditor.js');"
 		"document.getElementsByTagName('head')[0].appendChild(tag);"
-	"})();"
-	"";
+
+		"var meta = head.getElementsByTagName('meta');"
+		"var black_list = [];"
+		"for (var i = 0; i < meta.length; i++) {"
+			"if (meta[i].getAttribute('http-equiv').toLowerCase() == 'content-type')"
+				"black_list.push(meta[i]);"
+		"}"
+		"for (var i = 0; i < black_list.length; i++)"
+			"black_list[i].parentNode.removeChild(black_list[i]);"
+		"meta = document.createElement('meta');"
+		"meta.setAttribute('http-equiv', 'Content-Type');"
+		"meta.setAttribute('content', 'text/html; charset=UTF-8');"
+		"if (head.firstChild) {"
+			"head.insertBefore(meta, head.firstChild);"
+		"} else {"
+			"head.appendChild(meta);"
+		"}"
+	"})();";
 
 /*
  * Public functions
@@ -224,6 +241,7 @@ void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited e
 /*
  * Private functions
  */
+
 /**
  * \internal
  * Save the updated HTML and call edited_callback if set.
@@ -483,3 +501,4 @@ static void _gebr_gui_help_edit(gchar *help, GebrGeoXmlObject * object, set_help
 	g_hash_table_insert(jscontext_to_data_hash, (gpointer)data->context, data);
 	webkit_web_view_open(WEBKIT_WEB_VIEW(data->web_view), html_path->str);
 }
+
