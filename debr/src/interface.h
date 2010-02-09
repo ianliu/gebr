@@ -28,8 +28,8 @@ void debr_setup_ui(void);
 /**
  * Sets the actions sensitiveness given in the list \p names to \p sensitive.
  *
- * @param names A #NULL terminated array of strings, containing the actions names.
- * @param sensitive Whether to make the actions sensitive or not.
+ * \param names A #NULL terminated array of strings, containing the actions names.
+ * \param sensitive Whether to make the actions sensitive or not.
  */
 void debr_set_actions_sensitive(gchar ** names, gboolean sensitive);
 

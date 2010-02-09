@@ -237,16 +237,13 @@ void menu_new(gboolean edit)
 	menu_select_iter(&iter);
 
 	if (edit) {
-		if (menu_dialog_setup_ui()){
+		if (menu_dialog_setup_ui()) {
 			menu_saved_status_set(MENU_STATUS_UNSAVED);
+		} else {
+			GtkTreeIter iter;
+			if (menu_get_selected(&iter, FALSE))
+				menu_close(&iter);
 		}
-		else{
-		GtkTreeIter iter;
-
-		if (menu_get_selected(&iter, FALSE))
-			menu_close(&iter);
-		}
-
 	}
 
 	g_string_free(new_menu_str, TRUE);
@@ -698,7 +695,7 @@ gboolean menu_dialog_setup_ui(void)
 					     GTK_WINDOW(debr.window),
 					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					     GTK_STOCK_OK, GTK_RESPONSE_OK,NULL);
+					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_widget_set_size_request(dialog, 400, 350);
 
 	table = gtk_table_new(6, 2, FALSE);
@@ -717,7 +714,7 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(title_label), 0, 0.5);
 
 	title_entry = gtk_entry_new();
-	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE, title_entry);
+	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_OK, title_entry);
 	gtk_widget_show(title_entry);
 	gtk_table_attach(GTK_TABLE(table), title_entry, 1, 2, 0, 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -732,7 +729,7 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(description_label), 0, 0.5);
 
 	description_entry = gtk_entry_new();
-	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE, description_entry);
+	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_OK, description_entry);
 	gtk_widget_show(description_entry);
 	gtk_table_attach(GTK_TABLE(table), description_entry, 1, 2, 1, 2,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -777,7 +774,7 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(author_label), 0, 0.5);
 
 	author_entry = gtk_entry_new();
-	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE, author_entry);
+	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_OK, author_entry);
 	gtk_widget_show(author_entry);
 	gtk_table_attach(GTK_TABLE(table), author_entry, 1, 2, 3, 4,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -792,7 +789,7 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(email_label), 0, 0.5);
 
 	email_entry = gtk_entry_new();
-	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE, email_entry);
+	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_OK, email_entry);
 	gtk_widget_show(email_entry);
 	gtk_table_attach(GTK_TABLE(table), email_entry, 1, 2, 4, 5,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
