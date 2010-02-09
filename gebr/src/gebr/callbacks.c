@@ -360,8 +360,7 @@ void on_configure_servers_activate(void)
  */
 void on_help_contents_activate(void)
 {
-	gebr_gui_help_show(GEBR_USERDOC_HTML, _("User's Manual"),
-			   gebr.config.browser->str);
+	gebr_gui_help_show(GEBR_USERDOC_HTML, _("User's Manual"));
 }
 
 /* Function: on_help_about_activate

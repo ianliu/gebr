@@ -309,7 +309,7 @@ void help_show(const gchar * help, const gchar * title)
 	debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
 
 	g_string_prepend(html_path, "file://");
-	gebr_gui_help_show(html_path->str, title, debr.config.browser->str);
+	gebr_gui_help_show(html_path->str, title);
 
  out:	g_string_free(html_path, FALSE);
 	g_string_free(prepared_html, TRUE);
@@ -401,10 +401,10 @@ void help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh
 	/* EDIT IT */
 	if (program != NULL) {
 		gebr_geoxml_program_set_help(program, prepared_html->str);
-		gebr_gui_program_help_edit(program, debr.config.htmleditor->str, help_edit_on_finished);
+		gebr_gui_program_help_edit(program, help_edit_on_finished);
 	} else {
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html->str);
-		gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), debr.config.htmleditor->str, help_edit_on_finished);
+		gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), help_edit_on_finished);
 	}
 }
 

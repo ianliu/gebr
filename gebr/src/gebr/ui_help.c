@@ -87,7 +87,7 @@ void help_show(const gchar * help, const gchar * title)
 	gebr.tmpfiles = g_slist_append(gebr.tmpfiles, html_path->str);
 
 	g_string_prepend(html_path, "file://");
-	gebr_gui_help_show(html_path->str, title, gebr.config.browser->str);
+	gebr_gui_help_show(html_path->str, title);
 
 	/* frees */
  out:	g_string_free(html_path, FALSE);
@@ -116,5 +116,5 @@ void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 		return;
 	}
 
-	gebr_gui_help_edit(document, gebr.config.editor->str, (GebrGuiHelpEdited)help_edit_on_edited);
+	gebr_gui_help_edit(document, (GebrGuiHelpEdited)help_edit_on_edited);
 }

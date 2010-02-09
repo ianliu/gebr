@@ -852,7 +852,7 @@ static gboolean program_description_changed(GtkEntry * entry)
 static void program_url_open(GtkButton * button)
 {
 	//FIXME do not use help function to open url
-	gebr_gui_help_show(gebr_geoxml_program_get_url(debr.program), "", debr.config.browser->str);
+	gebr_gui_help_show(gebr_geoxml_program_get_url(debr.program), "");
 }
 
 static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program)

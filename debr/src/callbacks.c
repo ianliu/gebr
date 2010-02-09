@@ -679,8 +679,7 @@ void on_configure_preferences_activate(void)
  */
 void on_help_contents_activate(void)
 {
-	gebr_gui_help_show(DEBR_USERDOC_HTML, _("User's Manual"),
-			   debr.config.browser->str);
+	gebr_gui_help_show(DEBR_USERDOC_HTML, _("User's Manual"));
 }
 
 /*
