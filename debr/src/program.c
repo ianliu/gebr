@@ -599,11 +599,7 @@ gboolean program_get_selected(GtkTreeIter * iter, gboolean warn_user)
  */
 void program_select_iter(GtkTreeIter iter)
 {
-	GtkTreeSelection *tree_selection;
-
-	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
-	gtk_tree_selection_unselect_all(tree_selection);
-	gtk_tree_selection_select_iter(tree_selection, &iter);
+	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(debr.ui_program.tree_view), &iter);
 	program_selected();
 }
 /*

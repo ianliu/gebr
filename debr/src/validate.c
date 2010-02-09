@@ -227,11 +227,7 @@ static gboolean validate_get_selected(GtkTreeIter * iter, gboolean warn_unselect
  */
 static void validate_set_selected(GtkTreeIter * iter)
 {
-	GtkTreeSelection *selection;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_validate.tree_view));
-	gtk_tree_selection_unselect_all(selection);
-	gtk_tree_selection_select_iter(selection, iter);
+	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(debr.ui_validate.tree_view), iter);
 	validate_clicked();
 }
 

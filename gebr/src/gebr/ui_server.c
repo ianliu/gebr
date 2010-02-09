@@ -293,11 +293,7 @@ static void server_list_add(struct ui_server_list *ui_server_list, const gchar *
 		gtk_tree_model_get(GTK_TREE_MODEL(ui_server_list->common.store), &iter, SERVER_POINTER, &server, -1);
 
 		if (!strcmp(server->comm->address->str, address)) {
-			GtkTreeSelection *selection;
-
-			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_server_list->common.view));
-			gtk_tree_selection_select_iter(selection, &iter);
-
+			gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(ui_server_list->common.view), &iter);
 			return;
 		}
 	}
@@ -458,7 +454,6 @@ struct server *server_select_setup_ui(void)
 {
 	struct ui_server_select *ui_server_select;
 
-	GtkTreeSelection *selection;
 	GtkTreeIter iter;
 	gulong handler_id;
 
@@ -515,9 +510,8 @@ struct server *server_select_setup_ui(void)
 			 G_CALLBACK(server_select_cursor_changed), ui_server_select);
 
 	/* select the first running server */
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_server_select->common.view));
-	gtk_tree_selection_select_iter(selection, &first_connected_iter);
-	g_signal_emit_by_name(ui_server_select->common.view, "cursor-changed");
+	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(ui_server_select->common.view), &first_connected_iter);
+	server_select_cursor_changed(GTK_TREE_VIEW(ui_server_select->common.view), ui_server_select);
 
 	gtk_widget_show_all(ui_server_select->common.dialog);
 	while (1) {

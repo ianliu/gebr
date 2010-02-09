@@ -899,12 +899,7 @@ IterType menu_get_selected_type(GtkTreeIter * _iter, gboolean warn_unselected_me
 
 void menu_select_iter(GtkTreeIter * iter)
 {
-	GtkTreeSelection *selection;
-	gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
-	gtk_tree_selection_unselect_all(selection);
-	gtk_tree_selection_select_iter(selection, iter);
-	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
+	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
 	menu_selected();
 }
 

@@ -565,15 +565,7 @@ gboolean parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
  */
 void parameter_select_iter(GtkTreeIter iter)
 {
-	GtkTreeSelection *tree_selection;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
-			   PARAMETER_XMLPOINTER, &debr.parameter, -1);
-	tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
-	gtk_tree_selection_unselect_all(tree_selection);
-	gtk_tree_selection_select_iter(tree_selection, &iter);
-	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &iter);
-
+	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &iter);
 	parameter_selected();
 }
 

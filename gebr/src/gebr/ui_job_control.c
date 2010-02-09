@@ -145,12 +145,10 @@ struct ui_job_control *job_control_setup_ui(void)
 void job_control_clear_or_select_first(void)
 {
 	GtkTreeIter iter;
-	GtkTreeSelection *selection;
 
 	/* select the first job */
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter) == TRUE) {
-		gtk_tree_selection_select_iter(selection, &iter);
+		gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter);
 		job_control_clicked();
 	} else {
 		gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");

@@ -252,15 +252,7 @@ gboolean flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_u
  */
 void flow_edition_select_component_iter(GtkTreeIter * iter)
 {
-	GtkTreeSelection *selection;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-	gtk_tree_selection_unselect_all(selection);
-	if (iter == NULL)
-		return;
-	gtk_tree_selection_select_iter(selection, iter);
-	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter);
-
+	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter);
 	flow_edition_component_selected();
 }
 

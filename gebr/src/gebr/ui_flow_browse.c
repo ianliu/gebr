@@ -353,20 +353,12 @@ gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 	return TRUE;
 }
 
-/* Function: flow_browse_select_iter
+/**
  * Select flow at _iter_
  */
 void flow_browse_select_iter(GtkTreeIter * iter)
 {
-	GtkTreeSelection *selection;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	gtk_tree_selection_unselect_all(selection);
-	if (iter == NULL)
-		return;
-	gtk_tree_selection_select_iter(selection, iter);
-	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_flow_browse->view), iter);
-
+	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_flow_browse->view), iter);
 	flow_browse_load();
 }
 

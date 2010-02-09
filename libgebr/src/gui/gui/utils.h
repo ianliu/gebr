@@ -154,6 +154,12 @@ void gebr_gui_gtk_tree_view_turn_to_single_selection(GtkTreeView * tree_view);
 gboolean gebr_gui_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
 
 /**
+ * Clear all selection, expand to \p iter, scroll to it and select it, and focus the first column of it.
+ * If \p iter is NULL, selection is cleared.
+ */
+void gebr_gui_gtk_tree_view_select_iter(GtkTreeView * tree_view, GtkTreeIter * iter);
+
+/**
  * Expands the rows of \p view so that the row pointed by \p iter is visible.
  */
 void gebr_gui_gtk_tree_view_expand_to_iter(GtkTreeView * view, GtkTreeIter * iter);

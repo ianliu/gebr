@@ -332,10 +332,7 @@ void project_line_info_update(void)
  */
 void project_line_set_selected(GtkTreeIter * iter, GebrGeoXmlDocument * document)
 {
-	gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
-	gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view)), iter);
-	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
-
+	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
 	gtk_tree_store_set(gebr.ui_project_line->store, iter,
 			   PL_TITLE, gebr_geoxml_document_get_title(document),
 			   PL_FILENAME, gebr_geoxml_document_get_filename(document), -1);
