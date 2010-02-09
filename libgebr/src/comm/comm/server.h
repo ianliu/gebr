@@ -92,7 +92,8 @@ struct gebr_comm_server {
 
 struct gebr_comm_server_run {
 	GebrGeoXmlFlow * flow;
-	gchar * account, * class;
+	gchar * account
+	gchar * class;
 };
 
 struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const struct gebr_comm_server_ops *ops);
