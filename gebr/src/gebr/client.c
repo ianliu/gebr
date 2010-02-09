@@ -135,22 +135,24 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				moab_jid = g_list_nth_data(arguments, 8);
 
 				/* If 'queue' is not in server->queues_model, add it */
-				queue_exists = FALSE;
-				gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(server->queues_model)) {
-					gchar * queue_iter;
-					gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, &queue_iter, -1);
+				if (strlen(queue->str)) {
+					queue_exists = FALSE;
+					gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(server->queues_model)) {
+						gchar * queue_iter;
+						gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, &queue_iter, -1);
 
-					if (strcmp(queue->str, queue_iter) == 0) {
-						queue_exists = TRUE;
+						if (strcmp(queue->str, queue_iter) == 0) {
+							queue_exists = TRUE;
+							g_free(queue_iter);
+							break;
+						}
+
 						g_free(queue_iter);
-						break;
 					}
-
-					g_free(queue_iter);
-				}
-				if (!queue_exists) {
-					gtk_list_store_append(server->queues_model, &iter);
-					gtk_list_store_set(server->queues_model, &iter, 0, queue->str, -1);
+					if (!queue_exists) {
+						gtk_list_store_append(server->queues_model, &iter);
+						gtk_list_store_set(server->queues_model, &iter, 0, queue->str, -1);
+					}
 				}
 
 				job = job_add(server, jid, status, title, start_date, NULL,
