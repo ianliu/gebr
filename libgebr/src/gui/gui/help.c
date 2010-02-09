@@ -15,12 +15,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef WEBKIT_ENABLED
-#include <webkit/webkit.h>
-#else
 #include <stdlib.h>
-#endif
 
+#include <webkit/webkit.h>
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 #include <glib/gstdio.h>
@@ -38,7 +35,6 @@
  */
 
 typedef void (*set_help)(GebrGeoXmlObject * object, const gchar * help);
-#ifdef WEBKIT_ENABLED
 static GHashTable * jscontext_to_data_hash = NULL;
 struct help_edit_data {
 	WebKitWebView * web_view;
@@ -194,15 +190,13 @@ static gchar * js_start_inline_editing = \
 		"document.getElementsByTagName('head')[0].appendChild(tag);"
 	"})();"
 	"";
-#endif
 
 /*
  * Public functions
  */
 
-void gebr_gui_help_show(const gchar * uri, const gchar * title, const gchar * browser)
+void gebr_gui_help_show(const gchar * uri, const gchar * title)
 {
-#ifdef WEBKIT_ENABLED
 	GtkWidget *web_view;
 	GtkDialog *dialog;
 
@@ -210,39 +204,26 @@ void gebr_gui_help_show(const gchar * uri, const gchar * title, const gchar * br
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), uri);
 	g_signal_connect(web_view, "navigation-requested", G_CALLBACK(web_view_on_navigation_requested), NULL);
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
-#else
-	GString *cmd_line;
-
-	cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s %s &", browser, uri);
-	if (system(cmd_line->str))
-		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't open browser"),
-					_("Cannot open your web browser.\n" "Please select it on 'Preferences'."));
-
-	g_string_free(cmd_line, TRUE);
-#endif
 }
 
-static void _gebr_gui_help_edit(gchar *help, const gchar * editor,
-			       	GebrGeoXmlObject * object, set_help set_function,
+static void _gebr_gui_help_edit(gchar *help, GebrGeoXmlObject * object, set_help set_function,
 			       	GebrGuiHelpEdited edited_callback);
 
-void gebr_gui_help_edit(GebrGeoXmlDocument * document, const gchar * editor, GebrGuiHelpEdited edited_callback)
+void gebr_gui_help_edit(GebrGeoXmlDocument * document, GebrGuiHelpEdited edited_callback)
 {
-	_gebr_gui_help_edit((gchar *)gebr_geoxml_document_get_help(document), editor, GEBR_GEOXML_OBJECT(document),
+	_gebr_gui_help_edit((gchar *)gebr_geoxml_document_get_help(document), GEBR_GEOXML_OBJECT(document),
 			    (set_help)gebr_geoxml_document_set_help, edited_callback);
 }
 
-void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, const gchar * editor, GebrGuiHelpEdited edited_callback)
+void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited edited_callback)
 {
-	_gebr_gui_help_edit((gchar *)gebr_geoxml_program_get_help(program), editor, GEBR_GEOXML_OBJECT(program),
+	_gebr_gui_help_edit((gchar *)gebr_geoxml_program_get_help(program), GEBR_GEOXML_OBJECT(program),
 			    (set_help)gebr_geoxml_program_set_help, edited_callback);
 }
 
 /*
  * Private functions
  */
-#ifdef WEBKIT_ENABLED
 /**
  * \internal
  * Save the updated HTML and call edited_callback if set.
@@ -459,13 +440,11 @@ static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, s
 	}
 	return FALSE;
 }
-#endif				//WEBKIT_ENABLED
 
 /**
  * Load help into a temporary file and load with Webkit (if enabled).
  */
-static void _gebr_gui_help_edit(gchar *help, const gchar * editor,
-			       	GebrGeoXmlObject * object, set_help set_function,
+static void _gebr_gui_help_edit(gchar *help, GebrGeoXmlObject * object, set_help set_function,
 			       	GebrGuiHelpEdited edited_callback)
 {
 	FILE *html_fp;
@@ -481,7 +460,6 @@ static void _gebr_gui_help_edit(gchar *help, const gchar * editor,
 	fputs(help, html_fp);
 	fclose(html_fp);
 	
-#ifdef WEBKIT_ENABLED
 	struct help_edit_data *data;
 	GtkWidget * web_view;
 	GtkDialog * dialog;
@@ -504,55 +482,4 @@ static void _gebr_gui_help_edit(gchar *help, const gchar * editor,
 	g_signal_connect(web_view, "navigation-requested", G_CALLBACK(web_view_on_navigation_requested), data);
 	g_hash_table_insert(jscontext_to_data_hash, (gpointer)data->context, data);
 	webkit_web_view_open(WEBKIT_WEB_VIEW(data->web_view), html_path->str);
-#else
-	GString *cmd_line;
-	gchar buffer[1024];
-	GString *validated_help;
-
-	/* initialization */
-	cmd_line = g_string_new(NULL);
-	validated_help = g_string_new(NULL);
-
-	g_string_printf(cmd_line, "%s %s", editor, html_path->str);
-	if (system(cmd_line->str))
-		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't open editor"),
-					_("Cannot open your HTML editor.\n" "Please select it on 'Preferences'."));
-
-	/* ensure UTF-8 encoding */
-	if (g_utf8_validate(validated_help->str, -1, NULL) == FALSE) {
-		gchar *converted;
-		gsize bytes_read;
-		gsize bytes_written;
-		GError *error;
-
-		error = NULL;
-		converted = g_locale_to_utf8(validated_help->str, -1, &bytes_read, &bytes_written, &error);
-		/* TODO: what else should be tried? */
-		if (converted == NULL) {
-			g_free(converted);
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Can't read edited file"),
-						_("Could not read edited file.\n Please change the report encoding to UTF-8"));
-			goto out;
-		}
-
-		g_string_assign(validated_help, converted);
-		g_free(converted);
-	}
-
-	/* Read back the help from file */
-	html_fp = fopen(html_path->str, "r");
-	while (fgets(buffer, 1024, html_fp) != NULL)
-		g_string_append(validated_help, buffer);
-	fclose(html_fp);
-	g_unlink(html_path->str);
-
-	/* Finally, the edited help back to the document */
-	set_function(object, validated_help->str);
-	if (edited_callback != NULL)
-		edited_callback(object, validated_help->str);
-
-out:	g_string_free(cmd_line, TRUE);
-	g_string_free(html_path, TRUE);
-	g_string_free(validated_help, TRUE);
-#endif
 }

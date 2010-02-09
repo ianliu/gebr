@@ -117,12 +117,12 @@ if test "$enable_gui" = "yes"; then
 	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0.0,,AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.0.0]))
 	AC_SUBST(GTK_LIBS)
 	AC_SUBST(GTK_CFLAGS)
+
+	dnl webkit option
+	PKG_CHECK_MODULES(WEBKIT, webkit-1.0,, AC_MSG_ERROR([Could not find webkitgtk]))
+	AC_SUBST(WEBKIT_CFLAGS)
+	AC_SUBST(WEBKIT_LIBS)
 fi
-dnl webkit option
-PKG_CHECK_MODULES(WEBKIT, webkit-1.0, WEBKIT_ENABLED=-DWEBKIT_ENABLED, AC_MSG_WARN([you will miss some new awesome features]))
-AC_SUBST(WEBKIT_CFLAGS)
-AC_SUBST(WEBKIT_LIBS)
-AC_SUBST(WEBKIT_ENABLED)
 
 AC_OUTPUT([
 Makefile

@@ -40,7 +40,7 @@ libgebr_guisubinclude_HEADERS = \
 noinst_HEADERS = marshalers.h js.h
 EXTRA_DIST = ${noinst_HEADERS} marshalers.list 
 
-INCLUDES = -I../.. -I../../geoxml $(WEBKIT_ENABLED) \
+INCLUDES = -I../.. -I../../geoxml \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" \
 	-DPIXMAPS_DIR=\"$(datadir)/libgebr/pixmaps/\" \
 	-DICONS_DIR=\"$(datadir)/libgebr/icons/\" \

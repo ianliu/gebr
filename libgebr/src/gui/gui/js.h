@@ -17,7 +17,6 @@
 
 #ifndef __GEBR_GUI_JS_H__
 #define __GEBR_GUI_JS_H__
-#ifdef WEBKIT_ENABLED
 
 #include <JavaScriptCore/JavaScript.h>
 #include <glib.h>
@@ -56,5 +55,4 @@ gboolean gebr_js_include(JSContextRef ctx, const gchar * file);
 
 G_END_DECLS
 
-#endif
 #endif /* __GEBR_GUI_JS_H__ */
