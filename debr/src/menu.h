@@ -85,6 +85,7 @@ struct ui_menu {
 	} details;
 };
 
+
 /**
  * Creates the interface to display the menus list in DeBR.
  */
@@ -292,10 +293,13 @@ void menu_path_get_parent(const gchar * path, GtkTreeIter * parent);
 glong menu_count_unsaved(void);
 
 /**
- * Replace the current menu by the clone \p new_menu made on the dialog start.
- *
- * @param new_menu The clone passed to replace the current menu
- *
+ * Replace the current menu by the clone made on the dialog start, by \ref menu_archive.
  */
-void menu_replace(GebrGeoXmlFlow * new_menu);
+void menu_replace(void);
+
+/**
+ * Store the menu data and status before a dialog has chance to change it.
+ * Could be restored by \ref menu_replace 
+ */
+void menu_archive(void);
 #endif				//__MENU_H

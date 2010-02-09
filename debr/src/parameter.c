@@ -216,6 +216,8 @@ void parameter_new(void)
 		/* No menu is selected. So, we can't create any parameter. */
 		return;
 
+	menu_archive();
+
 	if ((pre_selected_param = parameter_get_selected(&iter, FALSE)) == TRUE &&
 	    (gebr_geoxml_parameter_get_is_program_parameter(debr.parameter) == FALSE ||
 	     gebr_geoxml_parameter_get_is_in_group(debr.parameter) == TRUE)) {
@@ -292,13 +294,14 @@ void parameter_new(void)
 		if (pre_selected_param) {
 			parameter_select_iter(pre_selected_iter);
 		}
+		menu_replace();
 	}
 	else {
 		parameter_activated();
+		do_navigation_bar_update();
+		menu_saved_status_set(MENU_STATUS_UNSAVED);
 	}
 
-	do_navigation_bar_update();
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
 
@@ -603,9 +606,8 @@ static void parameter_dialog_setup_ui(void)
 
 	GebrGeoXmlProgramParameter *program_parameter;
 	struct gebr_gui_parameter_widget *gebr_gui_parameter_widget;
-	GebrGeoXmlFlow * clone_menu;
 
-	clone_menu = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(debr.menu)));
+	menu_archive();
 
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
 	if (parameter_get_selected(NULL, TRUE) == FALSE)
@@ -714,29 +716,29 @@ static void parameter_dialog_setup_ui(void)
 		/*
 		 * List separator
 		 */
-		separator_label = gtk_label_new(_("Separator between list items:"));
+		separator_label = gtk_label_new(_("List-item Separator:"));
 		gtk_widget_show(separator_label);
 		gtk_box_pack_start(GTK_BOX(list_widget_hbox), separator_label, FALSE, FALSE, 0);
 		gtk_misc_set_alignment(GTK_MISC(separator_label), 0, 0.5);
 
 		/*
-		 * Space Separator
-		 */
-		ui->space_separator = gtk_radio_button_new_with_label(NULL, _("Space:"));
-		gtk_widget_show(ui->space_separator);
-		gtk_box_pack_start(GTK_BOX(list_widget_hbox),ui->space_separator, FALSE, FALSE, 2);
-
-		/*
 		 * Comma Separator
 		 */
-		ui->comma_separator = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(ui->space_separator), _("Comma:"));
+		ui->comma_separator = gtk_radio_button_new_with_label(NULL, _("Comma"));
 		gtk_widget_show(ui->comma_separator);
 		gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui->comma_separator, FALSE, FALSE, 2);
 
 		/*
+		 * Space Separator
+		 */
+		ui->space_separator = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(ui->comma_separator), _("Space"));
+		gtk_widget_show(ui->space_separator);
+		gtk_box_pack_start(GTK_BOX(list_widget_hbox),ui->space_separator, FALSE, FALSE, 2);
+
+		/*
 		 * Other Separator
 		 */
-		ui->other_separator = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(ui->space_separator), _("Other:"));
+		ui->other_separator = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(ui->comma_separator), _("Other:"));
 		gtk_widget_show(ui->other_separator);
 		gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui->other_separator, FALSE, FALSE, 2);
 
@@ -1019,7 +1021,7 @@ static void parameter_dialog_setup_ui(void)
 				break;
 		}
 		else{
-			menu_replace(clone_menu);
+			menu_replace();
 			goto out;
 		}
 	} while (1);

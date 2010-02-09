@@ -547,26 +547,50 @@ void menu_close(GtkTreeIter * iter)
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &menu, -1);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
 	gtk_tree_store_remove(debr.ui_menu.model, iter);
-	g_signal_emit_by_name(debr.ui_menu.tree_view, "cursor-changed");
 }
 
 void menu_selected(void)
 {
 	GtkTreeIter iter;
 	IterType type;
+	MenuStatus current_status;
 
 	type = menu_get_selected_type(&iter, FALSE);
 	if (type == ITER_FILE) {
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_XMLPOINTER, &debr.menu, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_XMLPOINTER, &debr.menu, MENU_STATUS, &current_status, -1);
 	} else
 		debr.menu = NULL;
 
 	program_load_menu();
 	do_navigation_bar_update();
-	if (type == ITER_FOLDER)
-		menu_folder_details_update(&iter);
-	else
+	if (type == ITER_FILE) {
 		menu_details_update();
+		gchar *names[] = {
+			"menu_properties",
+			"menu_validate",
+			"menu_install",
+			"menu_close",
+			"menu_save_as",
+			"menu_delete",
+			NULL
+		};
+		debr_set_actions_sensitive(names, TRUE);
+		menu_status_set_from_iter(&iter, current_status);
+	} else{
+		gchar *names[] = {
+			"menu_properties",
+			"menu_validate",
+			"menu_install",
+			"menu_close",
+			"menu_save",
+			"menu_save_as",
+			"menu_revert",
+			"menu_delete",
+			NULL
+		};
+		debr_set_actions_sensitive(names, FALSE);
+		menu_folder_details_update(&iter);
+	}
 }
 
 gboolean menu_cleanup(void)
@@ -626,7 +650,6 @@ void menu_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 		if (gebr_gui_gtk_tree_store_reparent(debr.ui_menu.model, iter, &new_parent)) {
 			menu_select_iter(iter);
 		}
-
 		gtk_tree_store_set(debr.ui_menu.model, iter,
 				   MENU_STATUS, MENU_STATUS_SAVED, MENU_IMAGE, GTK_STOCK_FILE, -1);
 		enable = FALSE;
@@ -642,6 +665,7 @@ void menu_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 
 	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save"), enable);
 	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert"), enable);
+	g_free(path);
 }
 
 void menu_status_set_unsaved(void)
@@ -674,10 +698,9 @@ gboolean menu_dialog_setup_ui(void)
 
 	IterType type;
 	GtkTreeIter iter;
-	GebrGeoXmlFlow * clone_menu;
 	gboolean ret = TRUE;
 
-	clone_menu = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(debr.menu)));
+	menu_archive();
 
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 	type = menu_get_selected_type(&iter, TRUE);
@@ -847,7 +870,7 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_widget_show(dialog);
 
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK){
-		menu_replace(clone_menu);
+		menu_replace();
 		ret = FALSE;
 		goto out;
 	}
@@ -986,19 +1009,6 @@ void menu_details_update(void)
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.author_label), text->str);
 	g_string_free(text, TRUE);
 
-	gchar *names[] = {
-		"menu_properties",
-		"menu_validate",
-		"menu_install",
-		"menu_close",
-		"menu_save",
-		"menu_save_as",
-		"menu_revert",
-		"menu_delete",
-		NULL
-	};
-	debr_set_actions_sensitive(names, TRUE);
-
 	g_object_set(G_OBJECT(debr.ui_menu.details.help_button),
 		     "sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu))) > 1 ? TRUE : FALSE,
 		     NULL);
@@ -1017,20 +1027,7 @@ void menu_folder_details_update(GtkTreeIter * iter)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_PATH, &folder_path, -1);
 
-	gchar *names[] = {
-		"menu_properties",
-		"menu_validate",
-		"menu_install",
-		"menu_close",
-		"menu_save",
-		"menu_save_as",
-		"menu_revert",
-		"menu_delete",
-		NULL
-	};
-	debr_set_actions_sensitive(names, FALSE);
 	gtk_widget_set_sensitive(debr.ui_menu.details.help_button, FALSE);
-
 	if (gebr_gui_gtk_tree_iter_equal_to(iter, &debr.ui_menu.iter_other)) {
 		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), _("<b>Others</b>"));
 		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.description_label),
@@ -1145,7 +1142,7 @@ glong menu_count_unsaved()
 	return count;
 }
 
-void menu_replace(GebrGeoXmlFlow * new_menu){
+void menu_replace(void){
 
 	GtkTreeIter iter;
 	GtkTreePath * program_path, * parameter_path;
@@ -1159,9 +1156,10 @@ void menu_replace(GebrGeoXmlFlow * new_menu){
 		parameter_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter);
 
 	if (menu_get_selected(&iter, FALSE)){
-		gtk_tree_store_set(debr.ui_menu.model, &iter, MENU_XMLPOINTER, new_menu, -1);
+		gtk_tree_store_set(debr.ui_menu.model, &iter, MENU_XMLPOINTER, debr.menu_recovery.clone, -1);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(debr.menu));
 		menu_selected();
+		menu_saved_status_set(debr.menu_recovery.status);
 	}
 
 	if ((program_path != NULL) && gtk_tree_model_get_iter(GTK_TREE_MODEL(debr.ui_program.list_store), &iter, program_path)){
@@ -1175,6 +1173,17 @@ void menu_replace(GebrGeoXmlFlow * new_menu){
 		gtk_tree_path_free(parameter_path);
 	}
 
+}
+
+
+void menu_archive(void){
+
+	GtkTreeIter iter;
+
+	debr.menu_recovery.clone = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(debr.menu)));
+
+	if (menu_get_selected(&iter, FALSE))
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_STATUS, &debr.menu_recovery.status, -1);
 }
 
 /*
@@ -1217,6 +1226,9 @@ static void menu_sort_by_modified_date(GtkMenuItem * menu_item)
 }
 
 /**
+ * menu_popup_menu:
+ * @tree_view:
+ *
  * Agregate action to the popup menu and shows it.
  */
 static GtkMenu *menu_popup_menu(GtkTreeView * tree_view)
@@ -1255,15 +1267,10 @@ static GtkMenu *menu_popup_menu(GtkTreeView * tree_view)
 			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_delete")));
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-	menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
-	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_collapse_all), debr.ui_menu.tree_view);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	menu_item = gtk_menu_item_new_with_label(_("Expand all"));
-	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_expand_all), debr.ui_menu.tree_view);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	menu_item = gtk_menu_item_new_with_label(_("Sort by"));
 	gtk_container_add(GTK_CONTAINER(menu), menu_item);
 
+	// Get informations to create menu
 	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model), &column_id, &order);
 	if (order == GTK_SORT_ASCENDING)
 		image = gtk_image_new_from_stock(GTK_STOCK_SORT_ASCENDING, GTK_ICON_SIZE_MENU);

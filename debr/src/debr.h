@@ -92,6 +92,15 @@ struct debr {
 
 	/* temporary files removed when DeBR quits */
 	GSList *tmpfiles;
+
+
+	/*
+	 * Structure to hold data and status to recovery menu.
+	 */
+	struct  {
+		MenuStatus status;
+		GebrGeoXmlFlow * clone;
+	} menu_recovery;
 };
 
 /**

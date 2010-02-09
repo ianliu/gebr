@@ -74,9 +74,8 @@ void parameter_group_dialog_setup_ui(void)
 	guint i;
 
 	struct ui_parameter_group_dialog *ui;
-	GebrGeoXmlFlow * clone_menu;
 
-	clone_menu = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(debr.menu)));
+	menu_archive();
 
 	ui = g_malloc(sizeof(struct ui_parameter_group_dialog));
 	ui->parameter_group = parameter_group = GEBR_GEOXML_PARAMETER_GROUP(debr.parameter);
@@ -210,7 +209,7 @@ void parameter_group_dialog_setup_ui(void)
 	gebr_geoxml_parameter_group_set_is_instanciable(parameter_group, TRUE);
 	/* let the user interact... */
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK){
-		menu_replace(clone_menu);
+		menu_replace();
 		goto out;
 	}
 
