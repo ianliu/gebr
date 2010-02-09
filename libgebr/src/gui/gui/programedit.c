@@ -224,11 +224,11 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(struct gebr_gui_program_e
 			gchar *markup;
 			markup = g_markup_printf_escaped("<b>%s*</b>",
 							 gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(param)));
-			label = gtk_label_new(markup);
-			gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
+			label = gtk_label_new("");
+			gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), markup);
 			g_free(markup);
-		} else
-			label = gtk_label_new(gebr_geoxml_parameter_get_label(parameter));
+		} else 
+			label = gtk_label_new_with_mnemonic(gebr_geoxml_parameter_get_label(parameter));
 		gtk_widget_show(label);
 		gtk_box_pack_start(GTK_BOX(label_widget), label, FALSE, TRUE, 0);
 
@@ -262,6 +262,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(struct gebr_gui_program_e
 		group_vbox = gtk_vbox_new(FALSE, 3);
 		gtk_widget_show(group_vbox);
 		gtk_container_add(GTK_CONTAINER(depth_hbox), group_vbox);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), group_vbox);
 
 		gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(parameter_group), group_vbox);
 		g_object_set(G_OBJECT(group_vbox), "user-data", deinstanciate_button, NULL);
@@ -328,10 +329,11 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(struct gebr_gui_program_e
 				gchar *markup;
 
 				markup = g_markup_printf_escaped("<b>%s</b><sup>*</sup>", label_str);
-				gtk_label_set_markup(GTK_LABEL(label), markup);
+				gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), markup);
 				g_free(markup);
 			} else
-				gtk_label_set_text(GTK_LABEL(label), label_str);
+				gtk_label_set_text_with_mnemonic(GTK_LABEL(label), label_str);
+			gtk_label_set_mnemonic_widget(GTK_LABEL(label), gebr_gui_parameter_widget->widget);
 
 			align_vbox = gtk_vbox_new(FALSE, 0);
 			gtk_widget_show(align_vbox);
