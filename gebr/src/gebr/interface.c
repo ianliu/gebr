@@ -80,8 +80,8 @@ static const GtkActionEntry actions_entries[] = {
 	 G_CALLBACK(on_flow_export_activate)},
 	{"flow_export_as_menu", GTK_STOCK_CONVERT, N_("Export as menu"), NULL, N_("Export the flow as a menu"),
 	 G_CALLBACK(on_flow_export_as_menu_activate)},
-	{"flow_io", "system-switch-user", N_("Input and Output"), NULL, N_("Edit input/output flow files"),
-	 G_CALLBACK(on_flow_io_activate)},
+	/* {"flow_io", "system-switch-user", N_("Input and Output"), NULL, N_("Edit input/output flow files"),
+	 G_CALLBACK(on_flow_io_activate)}, */
 	{"flow_execute", GTK_STOCK_EXECUTE, NULL, "<Control>r", N_("Run current flow"),
 	 G_CALLBACK(on_flow_execute_activate)},
 	{"flow_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy selected(s) flow(s) to clipboard"),
@@ -304,9 +304,9 @@ void gebr_setup_ui(void)
 					 (gtk_action_group_get_action(gebr.action_group, "flow_export_as_menu"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+	/* gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_io"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group, "flow_io"))), -1); */
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
@@ -356,9 +356,9 @@ void gebr_setup_ui(void)
 						      (gebr.action_group, "flow_edition_status_unconfigured")));
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+	/* gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_io"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group, "flow_io"))), -1); */
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);

@@ -20,6 +20,9 @@
 
 #include "server.h"
 
+/** 
+ * Creates a new flow.
+ */
 gboolean flow_new(void);
 void flow_free(void);
 void flow_delete(gboolean confirm);

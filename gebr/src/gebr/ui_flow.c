@@ -503,6 +503,11 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	struct server *server;
 	struct gebr_comm_server_run * config;
 
+	if (!flow_browse_get_selected(NULL, FALSE)) {
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected"));
+		return;
+	}
+
 	/* initialization */
 	config = g_new(struct gebr_comm_server_run, 1);
 	config->account = config->class = NULL;

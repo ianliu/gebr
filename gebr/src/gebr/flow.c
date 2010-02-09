@@ -1,3 +1,7 @@
+/**
+ * @file flow.c Flow manipulation
+ */
+
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -14,11 +18,6 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see
  *   <http://www.gnu.org/licenses/>.
- */
-
-/*
- * File: flow.c
- * Flow manipulation
  */
 
 #include <stdlib.h>
@@ -46,13 +45,9 @@
 #include "ui_flow_edition.h"
 
 /*
- * Section: Public
  * Public functions.
  */
 
-/** 
- * Create a new flow
- */
 gboolean flow_new(void)
 {
 	GtkTreeIter iter;

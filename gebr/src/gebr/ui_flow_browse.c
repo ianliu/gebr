@@ -560,8 +560,8 @@ static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse
 	gtk_container_add(GTK_CONTAINER(menu), menu_item);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_io")));
+	/* gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_io"))); */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_execute")));
 
