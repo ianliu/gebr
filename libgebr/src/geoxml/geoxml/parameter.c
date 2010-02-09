@@ -106,8 +106,8 @@ GdomeElement *__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * paramete
 	type_element = __gebr_geoxml_insert_new_element((GdomeElement *) parameter, parameter_type_to_str[type], NULL);
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
 		__gebr_geoxml_parameters_append_new(type_element);
-		gebr_geoxml_parameter_group_set_is_instanciable((GebrGeoXmlParameterGroup *) type_element, TRUE);
-		gebr_geoxml_parameter_group_set_expand((GebrGeoXmlParameterGroup *) type_element, TRUE);
+		gebr_geoxml_parameter_group_set_is_instanciable((GebrGeoXmlParameterGroup *)parameter, TRUE);
+		gebr_geoxml_parameter_group_set_expand((GebrGeoXmlParameterGroup *)parameter, TRUE);
 	} else {
 		GdomeElement *property_element;
 		GdomeElement *value_element;
