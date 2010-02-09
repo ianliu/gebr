@@ -34,8 +34,6 @@
  * Prototypes
  */
 
-static void log_clicked(void);
-
 /*
  * Section: Public
  * Public functions.
@@ -74,7 +72,6 @@ struct ui_log *log_setup_ui(void)
 	ui_log->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_log->store));
 	gtk_container_add(GTK_CONTAINER(scrolled_win), ui_log->view);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_log->view), FALSE);
-	g_signal_connect(GTK_OBJECT(ui_log->view), "cursor-changed", G_CALLBACK(log_clicked), NULL);
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -98,21 +95,6 @@ struct ui_log *log_setup_ui(void)
  * Section: Private
  * Private functions.
  */
-
-/*
- * Function: log_clicked
- * *Fill me in!*
- */
-static void log_clicked(void)
-{
-//      GtkTreeSelection *      selection;
-//      GtkTreeModel *          model;
-//      GtkTreeIter             iter;
-//
-//      selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_log->view));
-//      if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
-//              return;
-}
 
 void log_set_message(struct ui_log *ui_log, const gchar * message)
 {
@@ -174,11 +156,7 @@ void gebr_log_add_message_to_list(struct ui_log *ui_log, struct gebr_log_message
 	gtk_list_store_set(ui_log->store, &iter,
 			   GEBR_LOG_TYPE_ICON, pixbuf,
 			   GEBR_LOG_DATE, markuped_date->str, GEBR_LOG_MESSAGE, message->message->str, -1);
-
-	/* select it on view */
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_log->view));
-	gtk_tree_selection_select_iter(selection, &iter);
-	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(ui_log->view), &iter);
+	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(ui_log->view), &iter);
 
 	/* frees */
 	g_string_free(markuped_date, TRUE);

@@ -203,7 +203,7 @@ gboolean flow_io_get_selected(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
 
 void flow_io_select_iter(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
 {
-	gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_io->treeview)), iter);
+	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(ui_flow_io->treeview), iter);
 }
 
 void flow_io_customized_paths_from_line(GtkFileChooser * chooser)

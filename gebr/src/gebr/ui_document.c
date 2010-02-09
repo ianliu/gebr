@@ -473,8 +473,7 @@ void document_dict_edit_setup_ui(void)
 
 		gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(tree_view), &document_iter);
 		if (document == data->documents[i])
-			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view)),
-						       &document_iter);
+			gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(tree_view), &document_iter);
 	}
 
 	gtk_widget_show_all(dialog);
@@ -554,9 +553,7 @@ static void on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data *
 	/* before special parameter for add */
 	gebr_gui_gtk_tree_store_move_up(GTK_TREE_STORE(data->tree_model), &iter);
 	dict_edit_load_iter(data, &iter, GEBR_GEOXML_PARAMETER(parameter));
-	gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(data->tree_view), &iter);
-	gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(data->tree_view)), &iter);
-	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(data->tree_view), &iter);
+	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(data->tree_view), &iter);
 	dict_edit_start_keyword_editing(data, &iter);
 }
 
