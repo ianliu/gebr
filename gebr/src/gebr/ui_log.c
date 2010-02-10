@@ -124,7 +124,6 @@ void log_set_message(struct ui_log *ui_log, const gchar * message)
 void gebr_log_add_message_to_list(struct ui_log *ui_log, struct gebr_log_message *message)
 {
 	GtkTreeIter iter;
-	GtkTreeSelection *selection;
 	GdkPixbuf *pixbuf;
 	GString *markuped_date;
 

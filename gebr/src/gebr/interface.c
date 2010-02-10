@@ -1,3 +1,7 @@
+/**
+ * @file interface.c Assembly the main components of the interface.
+ */
+
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -16,16 +20,7 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-/*
- * File: interface.c
- * Assembly the main components of the interface
- *
- * This function assemblies the main window, preferences and menu bar.
- */
-
 #include <string.h>
-
-#include <gdk/gdkkeysyms.h>
 
 #include <libgebr/intl.h>
 #include <libgebr/gui/pixmaps.h>
@@ -136,10 +131,8 @@ static void assembly_menus(GtkMenuBar * menu_bar);
  * Public functions
  */
 
-/*
- * Function: gebr_setup_ui
+/**
  * Assembly the whole interface.
- *
  */
 void gebr_setup_ui(void)
 {
@@ -286,6 +279,7 @@ void gebr_setup_ui(void)
 					 (gtk_action_group_get_action(gebr.action_group, "flow_properties"))), -1);
 
 	revisions_menu = menu = gtk_menu_new();
+	g_signal_connect(menu, "key-press-event", G_CALLBACK(on_revisions_key_press), NULL);
 	tool_item = gtk_menu_tool_button_new_from_stock("document-open-recent");
 	g_signal_connect(GTK_OBJECT(tool_item), "clicked", G_CALLBACK(on_flow_revision_save_activate), NULL);
 	g_signal_connect(GTK_OBJECT(tool_item), "show-menu", G_CALLBACK(on_flow_revision_show_menu), NULL);

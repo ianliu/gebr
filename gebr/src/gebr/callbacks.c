@@ -16,12 +16,16 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#include <gdk/gdkkeysyms.h>
+
 #include <libgebr/gui/help.h>
+#include <libgebr/gui/utils.h>
 #include <libgebr/intl.h>
 
 #include "callbacks.h"
 #include "../defines.h"
 #include "gebr.h"
+#include "document.h"
 #include "project.h"
 #include "line.h"
 #include "flow.h"
@@ -399,4 +403,27 @@ void navigation_bar_update(void)
 	gtk_label_set_markup(GTK_LABEL(gebr.navigation_box_label), markup->str);
 
 	g_string_free(markup, TRUE);
+}
+
+/**
+ * \internal
+ */
+gboolean on_revisions_key_press(GtkWidget * menu, GdkEventKey * event)
+{
+	if (event->keyval == GDK_Delete && gebr.ui_flow_browse->revision_to_be_removed) {
+		gboolean response;
+		response = gebr_gui_confirm_action_dialog(_("Remove this revision permanently?"),
+							  _("If you choose to remove this revision, "
+							    "you will not be able to recover it later."));
+		if (response) {
+			gpointer revision;
+			revision = g_object_get_data(G_OBJECT(gebr.ui_flow_browse->revision_to_be_removed), "revision");
+			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(revision));
+			gtk_widget_destroy(gebr.ui_flow_browse->revision_to_be_removed);
+			gebr.ui_flow_browse->revision_to_be_removed = NULL;
+			document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+		}
+		return TRUE;
+	}
+	return FALSE;
 }

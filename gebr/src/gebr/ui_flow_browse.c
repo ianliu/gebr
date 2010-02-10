@@ -1,3 +1,7 @@
+/**
+ * \file ui_flow_browse.c Responsible for UI for browsing a line's flows.
+ */
+
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -16,13 +20,8 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-/*
- * File: ui_flow_browse.c
- * Responsible for UI for browsing a line's flows.
- *
- */
-
 #include <string.h>
+#include <gdk/gdkkeysyms.h>
 
 #include <libgebr/intl.h>
 #include <libgebr/date.h>
@@ -48,6 +47,7 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 			     GtkTreeViewColumn * column, struct ui_flow_browse *ui_flow_browse);
 static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse *ui_flow_browse);
 static void flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * revision);
+static void flow_browse_on_revision_select(GtkWidget * menu_item, GebrGeoXmlRevision * revision);
 static void flow_browse_on_flow_move(void);
 
 /*
@@ -80,6 +80,7 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	/* alloc */
 	ui_flow_browse = g_malloc(sizeof(struct ui_flow_browse));
 	ui_flow_browse->revisions_menu = revisions_menu;
+	ui_flow_browse->revision_to_be_removed = NULL;
 
 	/* Create flow browse page */
 	page = gtk_vbox_new(FALSE, 0);
@@ -362,18 +363,17 @@ void flow_browse_select_iter(GtkTreeIter * iter)
 	flow_browse_load();
 }
 
-/* Function: flow_browse_single_selection
- * Turn multiple selection into single
+/**
+ * Turn multiple selection into single.
  */
 void flow_browse_single_selection(void)
 {
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 }
 
-/*
- * Function: flow_browse_load_revision
- * Load _revision_ into the list of revision.
- * If _new_ is true, then it is prepended; otherwise, appended
+/**
+ * Load \p revision into the list of revision.
+ * If \p new is TRUE, then it is prepended; otherwise, appended.
  */
 void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
 {
@@ -388,12 +388,14 @@ void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
 	g_string_printf(label, "%s: %s", date, comment);
 
 	menu_item = gtk_menu_item_new_with_label(label->str);
+	gtk_widget_set_events(menu_item, GDK_KEY_PRESS_MASK);
 	gtk_widget_show(menu_item);
 	if (new)
 		gtk_menu_shell_prepend(GTK_MENU_SHELL(gebr.ui_flow_browse->revisions_menu), menu_item);
 	else
 		gtk_menu_shell_append(GTK_MENU_SHELL(gebr.ui_flow_browse->revisions_menu), menu_item);
 	g_signal_connect(menu_item, "activate", G_CALLBACK(flow_browse_on_revision_activate), revision);
+	g_signal_connect(menu_item, "select", G_CALLBACK(flow_browse_on_revision_select), revision);
 }
 
 /*
@@ -586,10 +588,21 @@ static void flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXml
 	flow_browse_load();
 }
 
-/* Function: flow_browse_on_flow_move
- * Obvious
+/**
+ * \internal
+ */
+static void flow_browse_on_revision_select(GtkWidget * menu_item, GebrGeoXmlRevision * revision)
+{
+	g_object_set_data(G_OBJECT(menu_item), "revision", revision);
+	gebr.ui_flow_browse->revision_to_be_removed = menu_item;
+}
+
+/**
+ * \internal
+ * Saves the current selected line.
  */
 static void flow_browse_on_flow_move(void)
 {
 	document_save(GEBR_GEOXML_DOC(gebr.line));
 }
+

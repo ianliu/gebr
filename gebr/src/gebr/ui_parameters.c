@@ -31,6 +31,7 @@
 #include <libgebr/geoxml.h>
 #include <libgebr/gui/utils.h>
 #include <libgebr/gui/help.h>
+#include <libgebr/gui/icons.h>
 
 #include "ui_parameters.h"
 #include "gebr.h"

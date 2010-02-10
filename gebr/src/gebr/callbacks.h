@@ -69,4 +69,6 @@ void on_help_about_activate(void);
 
 void navigation_bar_update(void);
 
+gboolean on_revisions_key_press(GtkWidget * menu, GdkEventKey * event);
+
 #endif				//__CALLBACKS_H
