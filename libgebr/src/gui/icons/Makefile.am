@@ -17,37 +17,14 @@ include $(top_srcdir)/Makefile.decl
 
 SUBDIRS = gebr-theme
 
-libgebr_gui_iconsdir = $(datadir)/libgebr/icons
-libgebr_gui_icons_DATA = 
+libgebr_gui_icons = $(DESTDIR)/$(datadir)/libgebr/icons
 
-libgebr_gui_icons_16x16_actionsdir = $(datadir)/libgebr/icons/16x16/actions
-libgebr_gui_icons_16x16_actions_DATA = \
-	16x16/actions/document-open-recent.png 16x16/actions/document-import.png 16x16/actions/document-export.png 16x16/actions/document-save-all.png 16x16/actions/edit-clear.png 16x16/actions/folder-new.png 16x16/actions/svn-add.png 16x16/actions/system-switch-user.png 16x16/actions/tab-new-background.png 16x16/actions/window-new.png 16x16/actions/chronometer.png
+install-data-local:
+	find 16x16 -type d -exec ${INSTALL_SCRIPT} -d {} ${libgebr_gui_icons}/{} \;
+	find 16x16 -type f -exec ${INSTALL_DATA} {} ${libgebr_gui_icons}/{} \;
+	find 22x22 -type d -exec ${INSTALL_SCRIPT} -d {} ${libgebr_gui_icons}/{} \;
+	find 22x22 -type f -exec ${INSTALL_DATA} {} ${libgebr_gui_icons}/{} \;
+	find 48x48 -type d -exec ${INSTALL_SCRIPT} -d {} ${libgebr_gui_icons}/{} \;
+	find 48x48 -type f -exec ${INSTALL_DATA} {} ${libgebr_gui_icons}/{} \;
 
-libgebr_gui_icons_22x22_actionsdir = $(datadir)/libgebr/icons/22x22/actions
-libgebr_gui_icons_22x22_actions_DATA = \
-	22x22/actions/document-open-recent.png 22x22/actions/document-import.png 22x22/actions/document-export.png 22x22/actions/document-save-all.png 22x22/actions/edit-clear.png 22x22/actions/folder-new.png 22x22/actions/svn-add.png 22x22/actions/system-switch-user.png 22x22/actions/tab-new-background.png 22x22/actions/window-new.png 22x22/actions/chronometer.png
-
-libgebr_gui_icons_48x48_actionsdir = $(datadir)/libgebr/icons/48x48/actions
-libgebr_gui_icons_48x48_actions_DATA = \
-	48x48/actions/document-open-recent.png 48x48/actions/document-import.png 48x48/actions/document-export.png 48x48/actions/document-save-all.png 48x48/actions/edit-clear.png 48x48/actions/folder-new.png 48x48/actions/svn-add.png 48x48/actions/system-switch-user.png 48x48/actions/tab-new-background.png 48x48/actions/window-new.png 48x48/actions/chronometer.png
-
-libgebr_gui_icons_16x16_appsdir = $(datadir)/libgebr/icons/16x16/apps
-libgebr_gui_icons_16x16_apps_DATA = \
-	16x16/apps/accessories-dictionary.png
-
-libgebr_gui_icons_22x22_appsdir = $(datadir)/libgebr/icons/22x22/apps
-libgebr_gui_icons_22x22_apps_DATA = \
-	22x22/apps/accessories-dictionary.png
-
-libgebr_gui_icons_48x48_appsdir = $(datadir)/libgebr/icons/48x48/apps
-libgebr_gui_icons_48x48_apps_DATA = \
-	48x48/apps/accessories-dictionary.png
-
-EXTRA_DIST = $(libgebr_gui_icons_DATA) \
-	${libgebr_gui_icons_16x16_actions_DATA} \
-	${libgebr_gui_icons_22x22_actions_DATA} \
-	${libgebr_gui_icons_48x48_actions_DATA} \
-	${libgebr_gui_icons_16x16_apps_DATA} \
-	${libgebr_gui_icons_22x22_apps_DATA} \
-	${libgebr_gui_icons_48x48_apps_DATA}
+EXTRA_DIST = 16x16 22x22 48x48

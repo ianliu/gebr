@@ -22,6 +22,7 @@
 #include <libgebr/date.h>
 #include <libgebr/gui/gtkfileentry.h>
 #include <libgebr/gui/utils.h>
+#include <libgebr/gui/icons.h>
 
 #include "ui_flow.h"
 #include "gebr.h"
@@ -332,30 +333,15 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean se
 {
 	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
 		GtkTreeIter iter;
-		const gchar *status;
+		const gchar *icon;
 
-		GdkPixbuf *pixbuf;
+		icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(program));
 
-		status = gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program));
-
-		if (strcmp(status, "unconfigured") == 0)
-			pixbuf = gebr.pixmaps.stock_warning;
-		else if (strcmp(status, "configured") == 0)
-			pixbuf = gebr.pixmaps.stock_apply;
-		else if (strcmp(status, "disabled") == 0)
-			pixbuf = gebr.pixmaps.stock_cancel;
-		else {
-			gebr_message(GEBR_LOG_WARNING, TRUE, TRUE, _("Unknown flow program '%s' status"),
-				     gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
-			pixbuf = NULL;
-		}
-
-		/* Add to the GUI */
 		gtk_list_store_insert_before(gebr.ui_flow_edition->fseq_store,
 					     &iter, &gebr.ui_flow_edition->output_iter);
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
 				   FSEQ_TITLE_COLUMN, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)),
-				   FSEQ_STATUS_COLUMN, pixbuf,
+				   FSEQ_ICON_COLUMN, icon,
 				   FSEQ_GEBR_GEOXML_POINTER, program, -1);
 
 		if (select_last)

@@ -123,3 +123,22 @@ void gebr_gui_setup_theme(void)
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), ICONS_DIR);
 	g_object_set(gtk_settings_get_default(), "gtk-icon-theme-name", "gebr-theme", NULL);
 }
+
+const gchar * gebr_gui_get_program_icon(GebrGeoXmlProgram * program)
+{
+	static gchar string[51];
+
+	GString * temp;
+	temp = g_string_new(NULL);
+	g_string_printf(temp, "pipe-%c%c-%s",
+			gebr_geoxml_program_get_stdin(program)? 'o' : 'c',
+			gebr_geoxml_program_get_stdout(program)? 'o' : 'c',
+			gebr_geoxml_program_get_status(program));
+	strcpy(string, temp->str);
+	if (temp->len > 50)
+		g_error("%s:%d: Icon name length is greater than 50, report to GeBR developers", __FILE__, __LINE__);
+
+	g_string_free(temp, TRUE);
+	return string;
+}
+

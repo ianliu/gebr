@@ -31,6 +31,7 @@
 #include <libgebr/gui/pixmaps.h>
 #include <libgebr/gui/utils.h>
 
+#include "ui_flow_edition.h"
 #include "interface.h"
 #include "gebr.h"
 #include "callbacks.h"
@@ -115,9 +116,9 @@ static const GtkActionEntry actions_entries[] = {
 };
 
 static const GtkRadioActionEntry status_radio_actions_entries[] = {
-	{"flow_edition_status_configured", NULL, N_("Configured"), NULL, NULL, 0},
-	{"flow_edition_status_disabled", NULL, N_("Disabled"), NULL, NULL, 1},
-	{"flow_edition_status_unconfigured", NULL, N_("Unconfigured"), NULL, NULL, 2}
+	{"flow_edition_status_configured", NULL, N_("Configured"), NULL, NULL, FSEQ_PROGRAM_CONFIGURED},
+	{"flow_edition_status_disabled", NULL, N_("Disabled"), NULL, NULL, FSEQ_PROGRAM_DISABLED},
+	{"flow_edition_status_unconfigured", NULL, N_("Unconfigured"), NULL, NULL, FSEQ_PROGRAM_UNCONFIGURED}
 };
 
 static const GtkActionEntry common_actions_entries[] = {

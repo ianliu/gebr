@@ -188,6 +188,7 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 	switch (arg1) {
 	case GTK_RESPONSE_OK:{
 			GtkTreeIter iter;
+			const gchar * icon;
 
 			gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(ui_parameters->program_edit->program),
 						       "configured");
@@ -196,11 +197,14 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(gebr.program));
 			document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
+			icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(ui_parameters->program_edit->program));
+
 			/* Update interface */
 			flow_edition_get_selected_component(&iter, FALSE);
 			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
 					   FSEQ_GEBR_GEOXML_POINTER, ui_parameters->program_edit->program,
-					   FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_apply, -1);
+					   FSEQ_ICON_COLUMN, icon,
+					   -1);
 			flow_edition_select_component_iter(&iter);
 			gtk_toggle_action_set_active(GTK_TOGGLE_ACTION
 						     (gtk_action_group_get_action

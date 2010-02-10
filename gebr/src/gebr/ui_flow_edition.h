@@ -22,10 +22,16 @@
 
 /* Flow sequence store fields */
 enum {
-	FSEQ_STATUS_COLUMN = 0,
+	FSEQ_ICON_COLUMN = 0,
 	FSEQ_TITLE_COLUMN,
 	FSEQ_GEBR_GEOXML_POINTER,
 	FSEQ_N_COLUMN
+};
+
+enum {
+	FSEQ_PROGRAM_CONFIGURED,
+	FSEQ_PROGRAM_UNCONFIGURED,
+	FSEQ_PROGRAM_DISABLED,
 };
 
 /* Menu store fields */
@@ -69,5 +75,7 @@ void flow_edition_component_activated(void);
 void flow_edition_status_changed(void);
 
 void flow_edition_on_server_changed(void);
+
+
 
 #endif				//__UI_FLOW_COMPONENT_H

@@ -1,3 +1,7 @@
+/**
+ * @file ui_flow_edition.c Interface functions and callbacks for the "Flow Edition" page.
+ */
+
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -15,14 +19,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* File: ui_flow_edition.c
- * Interface functions and callbacks for the "Flow Edition" page.
- */
-
 #include <string.h>
 
 #include <libgebr/intl.h>
 #include <libgebr/gui/utils.h>
+#include <libgebr/gui/icons.h>
 
 #include "ui_flow_edition.h"
 #include "gebr.h"
@@ -56,15 +57,13 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_
 static void flow_edition_on_combobox_changed(GtkComboBox * combobox);
 
 /*
- * Section: Public
  * Public functions
  */
 
-/* Function: flow_edition_setup_ui
+/**
  * Assembly the flow edit ui_flow_edition->widget.
  *
- * Return:
- * The structure containing relevant data.
+ * @return The structure containing relevant data.
  */
 struct ui_flow_edition *flow_edition_setup_ui(void)
 {
@@ -136,8 +135,9 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
 
 	ui_flow_edition->fseq_store = gtk_list_store_new(FSEQ_N_COLUMN,
-							 GDK_TYPE_PIXBUF,
-							 G_TYPE_STRING, G_TYPE_POINTER);
+							 G_TYPE_STRING,
+							 G_TYPE_STRING,
+							 G_TYPE_POINTER);
 	ui_flow_edition->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->fseq_store));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_edition->fseq_view)),
 				    GTK_SELECTION_MULTIPLE);
@@ -153,7 +153,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->fseq_view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", FSEQ_STATUS_COLUMN);
+	gtk_tree_view_column_add_attribute(col, renderer, "stock-id", FSEQ_ICON_COLUMN);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -209,9 +209,8 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	return ui_flow_edition;
 }
 
-/*
- * Function: flow_edition_load_components
- * Load current flow's (gebr.flow) programs
+/**
+ * Load current flow's (gebr.flow) programs.
  */
 void flow_edition_load_components(void)
 {
@@ -271,9 +270,9 @@ void flow_edition_set_io(void)
 		output = "";
 
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
-			   FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_go_back, FSEQ_TITLE_COLUMN, input, -1);
+			   FSEQ_ICON_COLUMN, GTK_STOCK_GO_BACK, FSEQ_TITLE_COLUMN, input, -1);
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
-			   FSEQ_STATUS_COLUMN, gebr.pixmaps.stock_go_forward, FSEQ_TITLE_COLUMN, output, -1);
+			   FSEQ_ICON_COLUMN, GTK_STOCK_GO_FORWARD, FSEQ_TITLE_COLUMN, output, -1);
 }
 
 /*
@@ -312,23 +311,20 @@ void flow_edition_status_changed(void)
 {
 	GtkTreeIter iter;
 	GtkRadioAction *radio_action;
-	GdkPixbuf *pixbuf;
-	const gchar *status;
+	const gchar *icon;
+	const gchar *status_str;
 
 	radio_action =
 	    GTK_RADIO_ACTION(gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured"));
 	switch (gtk_radio_action_get_current_value(radio_action)) {
-	case 0:
-		pixbuf = gebr.pixmaps.stock_apply;
-		status = "configured";
+	case FSEQ_PROGRAM_CONFIGURED:
+		status_str = "configured";
 		break;
-	case 1:
-		pixbuf = gebr.pixmaps.stock_cancel;
-		status = "disabled";
+	case FSEQ_PROGRAM_DISABLED:
+		status_str = "disabled";
 		break;
-	case 2:
-		pixbuf = gebr.pixmaps.stock_warning;
-		status = "unconfigured";
+	case FSEQ_PROGRAM_UNCONFIGURED:
+		status_str = "unconfigured";
 		break;
 	default:
 		return;
@@ -343,8 +339,9 @@ void flow_edition_status_changed(void)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
 				   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
-		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), status);
-		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_STATUS_COLUMN, pixbuf, -1);
+		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), status_str);
+		icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(program));
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_ICON_COLUMN, icon, -1);
 	}
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 }
