@@ -105,6 +105,7 @@ static void parameter_default_widget_changed(struct gebr_gui_parameter_widget *w
 static void parameter_required_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui);
 static void parameter_is_list_changed(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui);
 static void parameter_separator_changed(GtkEntry * entry, struct ui_parameter_dialog *ui);
+static void parameter_separator_changed_by_string(const gchar * separator, struct ui_parameter_dialog *ui);
 static void parameter_file_type_changed(GtkComboBox * combo, struct gebr_gui_parameter_widget *widget);
 static void
 parameter_file_filter_name_changed(GebrGuiGtkEnhancedEntry * entry, struct gebr_gui_parameter_widget *widget);
@@ -694,7 +695,7 @@ static void parameter_dialog_setup_ui(void)
 		/*
 		 * Is List
 		 */
-		is_list_label = gtk_label_new(_("Is list?:"));
+		is_list_label = gtk_label_new(_("List:"));
 		gtk_widget_show(is_list_label);
 		gtk_table_attach(GTK_TABLE(table), is_list_label, 0, 1, row, row + 1,
 				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -721,24 +722,26 @@ static void parameter_dialog_setup_ui(void)
 		gtk_box_pack_start(GTK_BOX(list_widget_hbox), separator_label, FALSE, FALSE, 0);
 		gtk_misc_set_alignment(GTK_MISC(separator_label), 0, 0.5);
 
+		ui->fake_separator = gtk_radio_button_new(NULL);
+
 		/*
 		 * Comma Separator
 		 */
-		ui->comma_separator = gtk_radio_button_new_with_label(NULL, _("Comma"));
+		ui->comma_separator = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(ui->fake_separator), _("Comma"));
 		gtk_widget_show(ui->comma_separator);
 		gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui->comma_separator, FALSE, FALSE, 2);
 
 		/*
 		 * Space Separator
 		 */
-		ui->space_separator = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(ui->comma_separator), _("Space"));
+		ui->space_separator = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(ui->fake_separator), _("Space"));
 		gtk_widget_show(ui->space_separator);
 		gtk_box_pack_start(GTK_BOX(list_widget_hbox),ui->space_separator, FALSE, FALSE, 2);
 
 		/*
 		 * Other Separator
 		 */
-		ui->other_separator = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(ui->comma_separator), _("Other:"));
+		ui->other_separator = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(ui->fake_separator), _("Other:"));
 		gtk_widget_show(ui->other_separator);
 		gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui->other_separator, FALSE, FALSE, 2);
 
@@ -1012,7 +1015,7 @@ static void parameter_dialog_setup_ui(void)
 		if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK){
 			if (type != GEBR_GEOXML_PARAMETER_TYPE_FLAG
 			    && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button))
-			    && !strlen(gtk_entry_get_text(GTK_ENTRY(separator_entry)))) {
+			    && !strlen(gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)))) {
 				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Separator"),
 							_("You've marked this parameter as a list but no separator was selected.\n"
 							  "Please select the list separator."));
@@ -1037,10 +1040,9 @@ static void parameter_dialog_setup_ui(void)
 		gebr_geoxml_program_parameter_set_be_list(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter),
 							  gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON
 										       (is_list_check_button)));
-		if (gebr_geoxml_program_parameter_get_is_list(program_parameter) == TRUE)
-			gebr_geoxml_program_parameter_set_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter),
-									 gtk_entry_get_text(GTK_ENTRY
-											    (ui->separator_entry)));
+		//if (gebr_geoxml_program_parameter_get_is_list(program_parameter) == TRUE)
+		//	gebr_geoxml_program_parameter_set_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter),
+		//							 gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)));
 	}
 
 out:
@@ -1441,31 +1443,38 @@ static void parameter_is_list_changed(GtkToggleButton * toggle_button, struct ui
 
 	gtk_widget_set_sensitive(ui->list_widget_hbox, gtk_toggle_button_get_active(toggle_button));
 	if (gebr_geoxml_program_parameter_get_is_list(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)) == TRUE) {
-		gtk_entry_set_text(GTK_ENTRY(ui->separator_entry),
-				   gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)));
 
-		if (on_start_ui || (g_strcmp0(gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)), " ") == 0))
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->space_separator), TRUE);
-		else if (g_strcmp0(gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)), ",") == 0)
+		gtk_widget_set_sensitive(ui->separator_entry, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui->other_separator)));
+
+		if (on_start_ui || (g_strcmp0(gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)), ",") == 0))
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->comma_separator), TRUE);
+		else if (g_strcmp0(gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)), " ") == 0)
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->space_separator), TRUE);
 		else
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->other_separator), TRUE);
-
-		parameter_separator_changed(GTK_ENTRY(ui->separator_entry), ui);
 	}
+	else{
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->fake_separator), TRUE);
+	}
+
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
 static void parameter_separator_changed(GtkEntry * entry, struct ui_parameter_dialog *ui)
 {
-	gebr_geoxml_program_parameter_set_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter),
-							 gtk_entry_get_text(GTK_ENTRY(entry)));
-	gebr_gui_parameter_widget_update_list_separator(ui->gebr_gui_parameter_widget);
-
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
+	parameter_separator_changed_by_string(gtk_entry_get_text(GTK_ENTRY(entry)), ui);
 }
 
+static void parameter_separator_changed_by_string(const gchar * separator, struct ui_parameter_dialog *ui)
+{
+	if (gebr_geoxml_program_parameter_get_is_list(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)) == TRUE){
+		gebr_geoxml_program_parameter_set_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter), separator);
+		gebr_gui_parameter_widget_update_list_separator(ui->gebr_gui_parameter_widget);
+	}
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+
+}
 static void parameter_file_type_changed(GtkComboBox * combo, struct gebr_gui_parameter_widget *widget)
 {
 	gboolean is_directory;
@@ -1632,10 +1641,10 @@ static void parameter_enum_options_changed(EnumOptionEdit * enum_option_edit, st
  */
 static void parameter_is_radio_button_space_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui)
 {
-	if (gtk_toggle_button_get_active(toggle_button)){
-		gtk_entry_set_text(GTK_ENTRY(ui->separator_entry), " ");/* Space as separator */ 
-		parameter_separator_changed(GTK_ENTRY(ui->separator_entry), ui);
-	}
+	if (gtk_toggle_button_get_active(toggle_button))
+		parameter_separator_changed_by_string(" ", ui);
+	else 
+		parameter_separator_changed_by_string("", ui);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -1645,10 +1654,12 @@ static void parameter_is_radio_button_space_toggled(GtkToggleButton * toggle_but
  */
 static void parameter_is_radio_button_comma_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui)
 {
-	if (gtk_toggle_button_get_active(toggle_button)){
-		gtk_entry_set_text(GTK_ENTRY(ui->separator_entry), ",");/* Comma as separator */ 
-		parameter_separator_changed(GTK_ENTRY(ui->separator_entry), ui);
-	}
+
+
+	if (gtk_toggle_button_get_active(toggle_button))
+		parameter_separator_changed_by_string(",", ui);
+	else 
+		parameter_separator_changed_by_string("", ui);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -1658,10 +1669,16 @@ static void parameter_is_radio_button_comma_toggled(GtkToggleButton * toggle_but
  */
 static void parameter_is_radio_button_other_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui)
 {
+
 	gtk_widget_set_sensitive(ui->separator_entry, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toggle_button)));
 
-	if (gtk_toggle_button_get_active(toggle_button))
+	if (gtk_toggle_button_get_active(toggle_button)){
+		gtk_entry_set_text(GTK_ENTRY(ui->separator_entry), gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)));
 		parameter_separator_changed(GTK_ENTRY(ui->separator_entry), ui);
-
+	}
+	else {
+		parameter_separator_changed_by_string("", ui);
+		gtk_entry_set_text(GTK_ENTRY(ui->separator_entry), "");
+	}
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }

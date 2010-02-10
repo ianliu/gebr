@@ -53,6 +53,7 @@ struct ui_parameter_dialog {
 	GtkWidget *comma_separator;
 	GtkWidget *space_separator;
 	GtkWidget *other_separator;
+	GtkWidget *fake_separator;
 };
 
 /**
