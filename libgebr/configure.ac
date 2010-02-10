@@ -148,6 +148,7 @@ src/geoxml/menu-edit/Makefile
 src/geoxml/menu-query/Makefile
 src/geoxml/upgrade/Makefile
 src/geoxml/validate/Makefile
+src/geoxml/tests/Makefile
 src/gui/Makefile
 src/gui/gebr-gui.pc
 src/gui/gui/Makefile
