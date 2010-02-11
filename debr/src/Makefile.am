@@ -44,8 +44,8 @@ noinst_HEADERS = \
 	preferences.h
 EXTRA_DIST = $(noinst_HEADERS)
 
-INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" $(WEBKIT_ENABLED)
-AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GTK_CFLAGS) \
+INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
+AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
 	$(GEBR_CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_GUI_CFLAGS)
-debr_LDADD = $(INTLLIBS) $(GTK_LIBS) \
+debr_LDADD = $(INTLLIBS) \
 	$(GEBR_LIBS) $(GEBR_GEOXML_LIBS) $(GEBR_GUI_LIBS)

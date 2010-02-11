@@ -56,16 +56,6 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package])
 AM_GLIB_GNU_GETTEXT
 AM_GNU_GETTEXT_VERSION([0.11])
 
-dnl check for GLIB >= 2.8 (which is thread safe)
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.8],,AC_MSG_ERROR([Could not find glib >= 2.8]))
-AC_SUBST(GLIB_LIBS)
-AC_SUBST(GLIB_CFLAGS)
-
-dnl check for GTHREAD >= 2.8
-PKG_CHECK_MODULES(GTHREAD, [gthread-2.0 >= 2.8],,AC_MSG_ERROR([Could not find gthread >= 2.8]))
-AC_SUBST(GTHREAD_LIBS)
-AC_SUBST(GTHREAD_CFLAGS)
-
 dnl check for libgebr
 PKG_CHECK_MODULES(GEBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
 AC_SUBST(GEBR_CFLAGS)

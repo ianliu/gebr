@@ -17,10 +17,8 @@
 AC_INIT(configure.ac)
 
 PACKAGE=libgebr
-
 VERSION=0.9.15
 GEBR_VERSION_INFO=`echo $VERSION | awk -F. '{ printf "%d:%d:%d", $1+$2, $3, $2 }'`
-VERSION=`if test -d .svn; then echo -n r; svnversion; else git log -1 --date=local --pretty=%cd; fi`
 
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
@@ -114,7 +112,7 @@ AC_SUBST(GDOME2_LIBS)
 AC_SUBST(GDOME2_CFLAGS)
 dnl check for GTK
 if test "$enable_gui" = "yes"; then
-	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0.0,,AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.0.0]))
+	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.12.0,,AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.12.0]))
 	AC_SUBST(GTK_LIBS)
 	AC_SUBST(GTK_CFLAGS)
 

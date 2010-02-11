@@ -53,11 +53,6 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package])
 AM_GLIB_GNU_GETTEXT
 AM_GNU_GETTEXT_VERSION([0.11])
 
-dnl check for GTK
-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0.0,,AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.0.0]))
-AC_SUBST(GTK_LIBS)
-AC_SUBST(GTK_CFLAGS)
-
 dnl check for libgebr
 PKG_CHECK_MODULES(LIBGEBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
 AC_SUBST(CFLAGS)

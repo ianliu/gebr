@@ -20,8 +20,8 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: gebr-comm
-Description: G�BR communication library
+Description: GeBR communication library
 Version: @VERSION@
-Requires: gebr-geoxml, gobject-2.0 >= 2.8
+Requires: gebr-geoxml = @VERSION@, gobject-2.0 >= 2.8
 Libs: -L${libdir} -lgebr_comm
 Cflags: -I${includedir} -I${includedir}/libgebr

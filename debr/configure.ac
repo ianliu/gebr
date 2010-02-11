@@ -24,7 +24,7 @@ AC_SUBST(TODAY)
 
 m4_include(../configure.ac.decl)
 
-FLOW_VERSION=0.3.0
+FLOW_VERSION=0.3.2
 AC_SUBST(FLOW_VERSION)
 
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
@@ -63,17 +63,6 @@ dnl check for libgebr
 PKG_CHECK_MODULES(LIBGEBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
 AC_SUBST(CFLAGS)
 AC_SUBST(LIBS)
-dnl check for libgebr_geoxml
-
-dnl check for GTK
-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0.0,,AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.0.0]))
-AC_SUBST(GTK_CFLAGS)
-AC_SUBST(GTK_LIBS)
-
-dnl check for libgebr
-PKG_CHECK_MODULES(GEBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
-AC_SUBST(GEBR_CFLAGS)
-AC_SUBST(GEBR_LIBS)
 dnl check for libgebr_geoxml
 PKG_CHECK_MODULES(GEBR_GEOXML, gebr-geoxml,,AC_MSG_ERROR([Could not find libgebr_geoxml]))
 AC_SUBST(GEBR_GEOXML_CFLAGS)
