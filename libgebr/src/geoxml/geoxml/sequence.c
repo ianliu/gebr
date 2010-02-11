@@ -215,8 +215,11 @@ int __gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlS
 		GdomeElement *next_element;
 
 		next_element = __gebr_geoxml_next_element((GdomeElement *) position);
-		gdome_n_insertBefore(gdome_el_parentNode((GdomeElement *) position, &exception),
-				     (GdomeNode *) sequence, (GdomeNode *) next_element, &exception);
+		if (next_element == (GdomeElement*)sequence)
+			exception = GDOME_NOEXCEPTION_ERR;
+		else 
+			gdome_n_insertBefore(gdome_el_parentNode((GdomeElement *) position, &exception),
+					     (GdomeNode *) sequence, (GdomeNode *) next_element, &exception);
 	} else
 		exception = GDOME_NOEXCEPTION_ERR;
 
