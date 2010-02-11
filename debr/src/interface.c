@@ -240,20 +240,6 @@ void debr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "menu_new"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "menu_properties"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "menu_validate"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "menu_close"))), -1);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(debr.action_group, "menu_open"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
@@ -270,6 +256,20 @@ void debr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(debr.action_group, "menu_delete"))), -1);
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_validate"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_new"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_close"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
@@ -293,24 +293,6 @@ void debr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "program_new"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "program_copy"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "program_paste"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "program_delete"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "program_properties"))), -1);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(debr.action_group, "menu_open"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
@@ -327,6 +309,22 @@ void debr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(debr.action_group, "menu_delete"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "program_new"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "program_copy"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "program_paste"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "program_delete"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "program_properties"))), -1);
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -345,43 +343,6 @@ void debr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "parameter_new"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "parameter_cut"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "parameter_copy"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "parameter_paste"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "parameter_delete"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "parameter_properties"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "program_preview"))), -1);
-
-
-	debr.parameter_type_menu = menu = gtk_menu_new();
-	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_CONVERT);
-	g_signal_connect(tool_item, "clicked", G_CALLBACK(on_parameter_change_type_activate), NULL);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
-	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
-	guint i, l = combo_type_map_size;
-	for (i = 0; i < l; ++i)
-		gtk_container_add(GTK_CONTAINER(menu),
-				  gtk_action_create_menu_item(gtk_action_group_get_action
-							      (debr.action_group,
-							       parameter_type_radio_actions_entries[i].name)));
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(debr.action_group, "menu_open"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
@@ -398,6 +359,42 @@ void debr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(debr.action_group, "menu_delete"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "parameter_new"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "parameter_cut"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "parameter_copy"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "parameter_paste"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "parameter_delete"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "parameter_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "program_preview"))), -1);
+
+
+	debr.parameter_type_menu = menu = gtk_menu_new();
+	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_CONVERT);
+	g_signal_connect(tool_item, "clicked", G_CALLBACK(on_parameter_change_type_activate), NULL);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
+	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
+	guint i, l = combo_type_map_size;
+	for (i = 0; i < l; ++i)
+		gtk_container_add(GTK_CONTAINER(menu),
+				  gtk_action_create_menu_item(gtk_action_group_get_action
+							      (debr.action_group,
+							       parameter_type_radio_actions_entries[i].name)));
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -416,14 +413,6 @@ void debr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "validate_close"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "validate_clear"))), -1);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(debr.action_group, "menu_open"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
@@ -440,6 +429,14 @@ void debr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(debr.action_group, "menu_delete"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "validate_close"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "validate_clear"))), -1);
+
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);

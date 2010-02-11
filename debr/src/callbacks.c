@@ -185,7 +185,9 @@ void on_menu_open_activate(void)
 	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 	menu_open(path, TRUE);
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(debr.notebook), NOTEBOOK_PAGE_MENU);
+	debr_message(GEBR_LOG_INFO, _("Menu \"%s\" opened."), path);
 	g_free(path);
+
  out:	gtk_widget_destroy(chooser_dialog);
 }
 
@@ -197,8 +199,10 @@ void on_menu_save_activate(void)
 {
 	GtkTreeIter iter;
 
-	if (!menu_get_selected(&iter, TRUE))
+	if (!menu_get_selected(&iter, TRUE)){
+		debr_message(GEBR_LOG_INFO, _("Menu not selected."));
 		return;
+	}
 	if (!menu_save(&iter))
 		on_menu_save_as_activate();
 }
@@ -219,11 +223,13 @@ void on_menu_save_as_activate(void)
 	GString *path;
 	gchar *tmp;
 	gchar *dirname;
-	gchar *filename;
+	gchar *filename_new;
 	gchar *current_path;
 
-	if (!menu_get_selected(&iter, TRUE))
+	if (!menu_get_selected(&iter, TRUE)){
+		debr_message(GEBR_LOG_INFO, _("Menu not selected."));
 		return;
+	}
 
 	/* run file chooser */
 	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose file"), GTK_WINDOW(debr.window),
@@ -253,12 +259,12 @@ void on_menu_save_as_activate(void)
 	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 	path = g_string_new(tmp);
 	gebr_append_filename_extension(path, ".mnu");
-	filename = g_path_get_basename(path->str);
+	filename_new = g_path_get_basename(path->str);
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_PATH, &current_path, -1);
 
 	// if the user saved on top of the same file
-	if (strcmp(current_path, path->str) == 0)
+	if (strcmp(current_path, path->str) == 0) 
 		menu_save(&iter);
 	// else, append another iterator in the correct location
 	else {
@@ -266,10 +272,10 @@ void on_menu_save_as_activate(void)
 		menu_path_get_parent(path->str, &parent);
 		if (gebr_gui_gtk_tree_iter_equal_to(&parent, &debr.ui_menu.iter_other)) {
 			dirname = g_path_get_dirname(path->str);
-			label = g_markup_printf_escaped("%s <span color='#666666'><i>%s</i></span>", filename, dirname);
+			label = g_markup_printf_escaped("%s <span color='#666666'><i>%s</i></span>", filename_new, dirname);
 			g_free(dirname);
 		} else
-			label = g_markup_printf_escaped("%s", filename);
+			label = g_markup_printf_escaped("%s", filename_new);
 
 		gtk_tree_store_append(debr.ui_menu.model, &copy, &parent);
 		gebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(debr.ui_menu.model), &copy, &iter);
@@ -287,7 +293,7 @@ void on_menu_save_as_activate(void)
 	/* frees */
 	g_string_free(path, TRUE);
 	g_free(tmp);
-	g_free(filename);
+	g_free(filename_new);
 	g_free(current_path);
 
  out:	gtk_widget_destroy(chooser_dialog);
@@ -337,6 +343,7 @@ void on_menu_revert_activate(void)
 		gtk_tree_store_set(debr.ui_menu.model, &iter, MENU_XMLPOINTER, menu, -1);
 		menu_status_set_from_iter(&iter, MENU_STATUS_SAVED);
 
+		debr_message(GEBR_LOG_INFO, _("Menu reverted."));
 		/* frees */
 		g_free(path);
 	}
@@ -375,8 +382,10 @@ void on_menu_delete_activate(void)
 							gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)));
 			gtk_dialog_run(GTK_DIALOG(dialog));
 			gtk_widget_destroy(dialog);
-		} else
+		} else{
 			menu_close(&iter);
+			gtk_notebook_set_current_page(GTK_NOTEBOOK(debr.notebook), NOTEBOOK_PAGE_MENU);
+		}
 
 		g_free(path);
 	}

@@ -415,6 +415,8 @@ gboolean menu_save(GtkTreeIter * iter)
 
 	menu_status_set_from_iter(iter, MENU_STATUS_SAVED);
 
+	debr_message(GEBR_LOG_INFO, _("Menu \"%s\" saved."), path);
+
 	g_free(path);
 	g_free(filename);
 	g_free(tmp);
@@ -443,6 +445,7 @@ void menu_save_all(void)
 		}
 	}
 	menu_details_update();
+	debr_message(GEBR_LOG_INFO, _("All menus were saved."));
 }
 
 void menu_validate(GtkTreeIter * iter)
@@ -543,10 +546,14 @@ void menu_install(void)
 void menu_close(GtkTreeIter * iter)
 {
 	GebrGeoXmlFlow *menu;
+	gchar *path;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &menu, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &menu, MENU_PATH, &path, -1);
+
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
 	gtk_tree_store_remove(debr.ui_menu.model, iter);
+
+	debr_message(GEBR_LOG_INFO, _("Menu \"%s\" closed."), path);
 }
 
 void menu_selected(void)
