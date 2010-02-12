@@ -105,9 +105,6 @@ __gebr_geoxml_sequence_move_after_before(GebrGeoXmlSequence * sequence, GebrGeoX
 			GSList *position_refs;
 			GSList *j;
 
-#ifdef DEBUG
-			g_debug("in_group");
-#endif
 			position_refs = __gebr_geoxml_parameter_get_referencee_list((GdomeElement *) group,
 										    __gebr_geoxml_get_attr_value((GdomeElement *) position, "id"));
 			for (i = sequence_refs, j = position_refs;

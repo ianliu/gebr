@@ -283,7 +283,7 @@ void program_preview(void)
 void program_remove(gboolean confirm)
 {
 	GtkTreeIter iter;
-	gboolean valid;
+	gboolean valid = FALSE;
 
 	if (!program_get_selected(NULL, TRUE))
 		return;

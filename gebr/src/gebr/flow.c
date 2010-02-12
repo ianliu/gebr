@@ -113,7 +113,7 @@ void flow_free(void)
 void flow_delete(gboolean confirm)
 {
 	GtkTreeIter iter;
-	gboolean valid;
+	gboolean valid = FALSE;
 
 	gchar *title;
 	gchar *filename;
@@ -682,7 +682,7 @@ gboolean flow_revision_save(void)
 void flow_program_remove(void)
 {
 	GtkTreeIter iter;
-	gboolean valid;
+	gboolean valid = FALSE;
 	GebrGeoXmlProgram *program;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
