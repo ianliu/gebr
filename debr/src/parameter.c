@@ -1,7 +1,3 @@
-/**
- * \file parameter.c Construct interfaces for parameter
- */
-
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -36,6 +32,11 @@
 #include "interface.h"
 #include "menu.h"
 #include "parametergroup.h"
+
+/*
+ * File: parameter.c
+ * Construct interfaces for parameter
+ */
 
 /*
  * Declarations
@@ -112,8 +113,8 @@ const GtkRadioActionEntry parameter_type_radio_actions_entries[] = {
 };
 
 static void parameter_dialog_setup_ui(void);
-static GtkTreeIter parameter_append_to_ui(GebrGeoXmlParameter * parameter, GtkTreeIter * parent);
-static GtkTreeIter parameter_insert_to_ui(GebrGeoXmlParameter *parameter, GtkTreeIter *sibling);
+static void parameter_append_to_ui(GebrGeoXmlParameter * parameter, GtkTreeIter * parent, GtkTreeIter *iter);
+static void parameter_insert_to_ui(GebrGeoXmlParameter *parameter, GtkTreeIter *sibling, GtkTreeIter *iter);
 static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group);
 static void parameter_selected(void);
 static void parameter_activated(void);
@@ -212,11 +213,15 @@ void parameter_load_program(void)
 
 	gebr_geoxml_parameters_get_parameter(gebr_geoxml_program_get_parameters(debr.program), &parameter, 0);
 	for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter))
-		parameter_append_to_ui(GEBR_GEOXML_PARAMETER(parameter), NULL);
+		parameter_append_to_ui(GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 
 	debr.parameter = NULL;
 }
 
+/*
+ * Function: parameter_load_selected
+ * Load selected parameter contents to its iter
+ */
 void parameter_load_selected(void)
 {
 	GtkTreeIter iter;
@@ -225,10 +230,14 @@ void parameter_load_selected(void)
 	parameter_load_iter(&iter, FALSE);
 }
 
+
+/**
+ * Creates a new parameter.
+ */
 void parameter_new(void)
 {
-	GtkTreeIter iter, pre_selected_iter;
-	gboolean pre_selected_param = FALSE;
+	GtkTreeIter iter;
+	gboolean pre_selected_param;
 
 	if (!menu_get_selected(NULL, TRUE) || (!program_get_selected(NULL, TRUE)))
 		/* No menu is selected. So, we can't create any parameter. */
@@ -236,7 +245,11 @@ void parameter_new(void)
 
 	menu_archive();
 
-	if ((pre_selected_param = parameter_get_selected(&iter, FALSE)) == TRUE &&
+	/* use the last iter selected */
+	if ((pre_selected_param = parameter_get_selected(&iter, FALSE)) == TRUE) 
+		gebr_gui_gtk_tree_view_get_last_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &iter);
+
+	if (pre_selected_param &&
 	    (gebr_geoxml_parameter_get_is_program_parameter(debr.parameter) == FALSE ||
 	     gebr_geoxml_parameter_get_is_in_group(debr.parameter) == TRUE)) {
 		/* The selected parameter is a group or is part of a group. */
@@ -244,8 +257,6 @@ void parameter_new(void)
 		GebrGeoXmlSequence *first_instance;
 		GtkTreeIter parent;
 		GtkTreePath *tree_path;
-
-		pre_selected_iter = iter;
 
 		/* Let's determine the parameter group to which iter belongs. */
 		if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &iter)) {
@@ -264,18 +275,17 @@ void parameter_new(void)
 			GebrGeoXmlSequence *xml_sequence;
 			xml_parameter = gebr_geoxml_parameters_append_parameter(GEBR_GEOXML_PARAMETERS(first_instance),
 										GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
-			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &pre_selected_iter,
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
 					   PARAMETER_XMLPOINTER, &xml_sequence, -1);
 
 			/* Insert new parameter after pre-selected one. */
 			gebr_geoxml_sequence_move_after((GebrGeoXmlSequence *)xml_parameter, xml_sequence);
-			iter = parameter_insert_to_ui(xml_parameter, &pre_selected_iter);
-
+			parameter_insert_to_ui(xml_parameter, &iter, &iter);
 		} else {
 			/* Selection is a group. Append new parameter at the end of the group's list. */
-			iter = parameter_append_to_ui(gebr_geoxml_parameters_append_parameter
-						      (GEBR_GEOXML_PARAMETERS(first_instance),
-						       GEBR_GEOXML_PARAMETER_TYPE_FLOAT), &parent);
+			parameter_append_to_ui(gebr_geoxml_parameters_append_parameter
+					       (GEBR_GEOXML_PARAMETERS(first_instance),
+						GEBR_GEOXML_PARAMETER_TYPE_FLOAT), &parent, &iter);
 		}
 
 		tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent);
@@ -287,21 +297,20 @@ void parameter_new(void)
 		if (pre_selected_param) {
 			GebrGeoXmlParameter *xml_parameter;
 			GebrGeoXmlSequence *xml_sequence;
-			pre_selected_iter = iter;
+
 			xml_parameter = gebr_geoxml_parameters_append_parameter(gebr_geoxml_program_get_parameters(debr.program),
 										GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
-			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &pre_selected_iter,
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter,
 					   PARAMETER_XMLPOINTER, &xml_sequence, -1);
 
 			/* Selection is out of groups. Insert new parameter after pre-selected one. */
 			gebr_geoxml_sequence_move_after((GebrGeoXmlSequence *)xml_parameter, xml_sequence);
-			iter = parameter_insert_to_ui(xml_parameter, &pre_selected_iter);
-
+			parameter_insert_to_ui(xml_parameter, &iter, &iter);
 		} else {
 			/* Nothing is selected. Append new parameter at the end of the list. */
-			iter = parameter_append_to_ui(gebr_geoxml_parameters_append_parameter
-						      (gebr_geoxml_program_get_parameters(debr.program),
-						       GEBR_GEOXML_PARAMETER_TYPE_FLOAT), NULL);
+			parameter_append_to_ui(gebr_geoxml_parameters_append_parameter
+					       (gebr_geoxml_program_get_parameters(debr.program),
+						GEBR_GEOXML_PARAMETER_TYPE_FLOAT), NULL, &iter);
 		}
 	}
 
@@ -310,7 +319,7 @@ void parameter_new(void)
 	if (!parameter_change_type_setup_ui()) {
 		parameter_remove(FALSE);
 		if (pre_selected_param) {
-			parameter_select_iter(pre_selected_iter);
+			parameter_select_iter(iter);
 		}
 		menu_replace();
 	}
@@ -319,15 +328,104 @@ void parameter_new(void)
 		do_navigation_bar_update();
 		menu_saved_status_set(MENU_STATUS_UNSAVED);
 	}
-
 }
 
+
+#if 0
+//
+// "New" code after issue 187. First attempt to redesign this code a bit better... 8-)
+//
+void parameter_new(void)
+{
+	GtkTreeIter pre_selected_iter, new_iter;
+	GebrGeoXmlParameter *new_parameter = NULL;
+	gboolean pre_selected_param = FALSE;
+
+	if (!menu_get_selected(NULL, TRUE) || (!program_get_selected(NULL, TRUE)))
+		/* No menu is selected. So, we can't create any parameter. */
+		return;
+
+	if ((pre_selected_param = parameter_get_selected(&pre_selected_iter, FALSE)) == TRUE)
+	{
+		/* There is a pre-selected parameter. */
+		GebrGeoXmlParameterGroup *parameter_group;
+		GebrGeoXmlSequence *first_instance;
+
+		if (!gebr_geoxml_parameter_get_is_program_parameter(debr.parameter)) {
+			//
+			// ***** IT WORKS! *****
+			//
+			/* The pre-selected parameter is a group. */
+			parameter_group = GEBR_GEOXML_PARAMETER_GROUP(debr.parameter);
+			gebr_geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
+			new_parameter = gebr_geoxml_parameters_append_parameter(GEBR_GEOXML_PARAMETERS(first_instance),
+										GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
+			parameter_append_to_ui(new_parameter, NULL, &new_iter);
+		} else {
+			/* The pre-selected parameter is not a group. */
+			/* Let's determine the group to which the pre-selected parameter (pre_selected_iter) belongs. */
+			GtkTreeIter parent;
+			GebrGeoXmlSequence *xml_sequence;
+
+			if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &pre_selected_iter)) {
+				/* pre_selected_iter is at the top level and does not have a parent. */
+				parameter_group = GEBR_GEOXML_PARAMETER_GROUP(debr.parameter);
+				parent = pre_selected_iter;
+			} else
+				/* pre_selected_iter is part (or son) of a group. Let's get its group from its parent. */ 
+				gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent,
+						   PARAMETER_XMLPOINTER, &parameter_group, -1);
+			
+			gebr_geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
+			new_parameter = gebr_geoxml_parameters_append_parameter(GEBR_GEOXML_PARAMETERS(first_instance),
+										GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &pre_selected_iter,
+					   PARAMETER_XMLPOINTER, &xml_sequence, -1);
+
+			/* Insert new parameter after pre-selected one. */
+			gebr_geoxml_sequence_move_after((GebrGeoXmlSequence *)new_parameter, xml_sequence);
+			parameter_insert_to_ui(new_parameter, &pre_selected_iter, &new_iter);
+		}
+	} else {
+		//
+		// ***** IT WORKS! *****
+		//
+		/* There is no selected parameter. Append new parameter at the end of the list. */
+		new_parameter = gebr_geoxml_parameters_append_parameter(gebr_geoxml_program_get_parameters(debr.program),
+									GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
+		parameter_append_to_ui(new_parameter, NULL, &new_iter);
+	}
+	
+	parameter_select_iter(new_iter);
+
+	if (!parameter_change_type_setup_ui()) {
+		parameter_remove(FALSE);
+		if (pre_selected_param) {
+			parameter_select_iter(pre_selected_iter);
+		}
+	}
+	else {
+		parameter_activated();
+		parameter_select_iter(new_iter);
+	}
+
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+}
+#endif
+
+
+
+/*
+ * Function: parameter_remove
+ * Confirm action and if confirmed removed selected parameter from XML and UI
+ */
 void parameter_remove(gboolean confirm)
 {
 	GtkTreeIter parent;
 	GtkTreeIter iter;
 	GtkTreeSelection *tree_selection;
 	gboolean in_group;
+	gboolean valid = FALSE;
 
 	if (parameter_get_selected(&iter, TRUE) == FALSE)
 		return;
@@ -353,10 +451,11 @@ void parameter_remove(gboolean confirm)
 				   -1);
 		if (parameter)
 			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(parameter));
-		gtk_tree_store_remove(debr.ui_parameter.tree_store, &iter);
+		valid = gtk_tree_store_remove(debr.ui_parameter.tree_store, &iter);
 	}
 	debr.parameter = NULL;
-	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_parameter.tree_view));
+	if (valid)
+		parameter_select_iter(iter);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -481,22 +580,120 @@ void parameter_copy(void)
 	}
 }
 
+/**
+ * TODO
+ */
 void parameter_paste(void)
 {
-	GebrGeoXmlSequence *pasted;
+	GebrGeoXmlSequence *pasted_sequence, *next;
 	GtkTreeIter pasted_iter;
+	
+	GtkTreeIter pre_selected_iter;
+	gboolean pre_selected_param = FALSE;
 
-	pasted = (GebrGeoXmlSequence *) gebr_geoxml_clipboard_paste(GEBR_GEOXML_OBJECT(debr.program));
-	if (pasted == NULL) {
+	pasted_sequence = (GebrGeoXmlSequence *) gebr_geoxml_clipboard_paste(GEBR_GEOXML_OBJECT(debr.program));
+	if (pasted_sequence == NULL) {
 		debr_message(GEBR_LOG_ERROR, _("Could not paste parameter"));
 		return;
 	}
 
-	do {
-		gtk_tree_store_append(debr.ui_parameter.tree_store, &pasted_iter, NULL);
-		gtk_tree_store_set(debr.ui_parameter.tree_store, &pasted_iter, PARAMETER_XMLPOINTER, pasted, -1);
-		parameter_load_iter(&pasted_iter, TRUE);
-	} while (!gebr_geoxml_sequence_next(&pasted));
+	/* use the last iter selected */
+	if ((pre_selected_param = parameter_get_selected(&pre_selected_iter, FALSE)) == TRUE) 
+		gebr_gui_gtk_tree_view_get_last_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &pre_selected_iter);
+
+	if (pre_selected_param &&
+	    (gebr_geoxml_parameter_get_is_program_parameter(debr.parameter) == FALSE ||
+	     gebr_geoxml_parameter_get_is_in_group(debr.parameter) == TRUE)) {
+		/* The pre-selected parameter is a group or is part of a group. */
+		GebrGeoXmlParameterGroup *parameter_group;
+		GebrGeoXmlSequence *first_instance;
+		GtkTreeIter parent;
+		GtkTreePath *tree_path;
+
+		/* Let's determine the parameter group to which pre_selected_iter belongs. */
+		if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, &pre_selected_iter)) {
+			/* pre_selected_iter is at the top level and does not have a parent. */
+			parameter_group = GEBR_GEOXML_PARAMETER_GROUP(debr.parameter);
+			parent = pre_selected_iter;
+		} else
+			/* pre_selected_iter is part (or son) of a group. Let's get its group from its parent. */ 
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent,
+					   PARAMETER_XMLPOINTER, &parameter_group, -1);
+
+		gebr_geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
+
+		if (gebr_geoxml_parameter_get_is_in_group(debr.parameter)) {
+			GebrGeoXmlSequence *xml_sequence;
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &pre_selected_iter,
+					   PARAMETER_XMLPOINTER, &xml_sequence, -1);
+
+			/* Insert pasted parameter after pre-selected one. */
+			do {
+				next = pasted_sequence;
+				gebr_geoxml_sequence_next(&next);
+				gebr_geoxml_sequence_move_after(pasted_sequence, xml_sequence);
+
+				gtk_tree_store_insert_after(debr.ui_parameter.tree_store, &pasted_iter, NULL, &pre_selected_iter);
+				gtk_tree_store_set(debr.ui_parameter.tree_store, &pasted_iter, PARAMETER_XMLPOINTER, pasted_sequence, -1);
+				parameter_load_iter(&pasted_iter, TRUE);
+
+				pre_selected_iter = pasted_iter;
+				xml_sequence = pasted_sequence;
+			} while ((pasted_sequence = next));
+		} else {
+			/* Selection is a group. Insert pasted parameter at the end of the group's list. */
+			do {
+				next = pasted_sequence;
+				gebr_geoxml_sequence_next(&next);
+				gebr_geoxml_sequence_move_into_group(pasted_sequence, parameter_group);
+				
+				gtk_tree_store_append(debr.ui_parameter.tree_store, &pasted_iter, &parent);
+				gtk_tree_store_set(debr.ui_parameter.tree_store, &pasted_iter, PARAMETER_XMLPOINTER, pasted_sequence, -1);
+				parameter_load_iter(&pasted_iter, TRUE);
+
+				pre_selected_iter = pasted_iter;
+			} while ((pasted_sequence = next));
+		}
+
+		tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent);
+		gtk_tree_view_expand_row(GTK_TREE_VIEW(debr.ui_parameter.tree_view), tree_path, FALSE);
+		gtk_tree_path_free(tree_path);
+	} else {
+		/* There is no pre-selected parameter or it is out of a group.
+		   If it is the first case, we paste the new parameter at the end of the list. */
+		if (pre_selected_param) {
+			GebrGeoXmlSequence *xml_sequence;
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &pre_selected_iter,
+					   PARAMETER_XMLPOINTER, &xml_sequence, -1);
+
+			/* Selection is out of groups. Paste parameter after pre-selected one. */
+			do {
+				next = pasted_sequence;
+				gebr_geoxml_sequence_next(&next);
+				gebr_geoxml_sequence_move_after(pasted_sequence, xml_sequence);
+
+				gtk_tree_store_insert_after(debr.ui_parameter.tree_store, &pasted_iter, NULL, &pre_selected_iter);
+				gtk_tree_store_set(debr.ui_parameter.tree_store, &pasted_iter, PARAMETER_XMLPOINTER, pasted_sequence, -1);
+				parameter_load_iter(&pasted_iter, TRUE);
+
+				pre_selected_iter = pasted_iter;
+				xml_sequence = pasted_sequence;
+			} while ((pasted_sequence = next));
+
+		} else {
+			/* Nothing is selected. Paste parameter at the end of the list. */
+			do {
+				next = pasted_sequence;
+				gebr_geoxml_sequence_next(&next);
+
+				gtk_tree_store_append(debr.ui_parameter.tree_store, &pasted_iter, NULL);
+				gtk_tree_store_set(debr.ui_parameter.tree_store, &pasted_iter, PARAMETER_XMLPOINTER, pasted_sequence, -1);
+				parameter_load_iter(&pasted_iter, TRUE);
+
+				pre_selected_iter = pasted_iter;
+			} while ((pasted_sequence = next));
+		}
+	}
 
 	parameter_select_iter(pasted_iter);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -1037,15 +1234,16 @@ out:
  * \internal
  * Create an item for \p parameter on parameter tree view.
  */
-static GtkTreeIter parameter_append_to_ui(GebrGeoXmlParameter * parameter, GtkTreeIter * parent)
+static void parameter_append_to_ui(GebrGeoXmlParameter * parameter, GtkTreeIter * parent, GtkTreeIter *iter)
 {
-	GtkTreeIter iter;
+	GtkTreeIter iter_;
 
-	gtk_tree_store_append(debr.ui_parameter.tree_store, &iter, parent);
-	gtk_tree_store_set(debr.ui_parameter.tree_store, &iter, PARAMETER_XMLPOINTER, parameter, -1);
-	parameter_load_iter(&iter, TRUE);
+	gtk_tree_store_append(debr.ui_parameter.tree_store, &iter_, parent);
+	gtk_tree_store_set(debr.ui_parameter.tree_store, &iter_, PARAMETER_XMLPOINTER, parameter, -1);
+	parameter_load_iter(&iter_, TRUE);
 
-	return iter;
+	if (iter)
+		*iter = iter_;
 }
 
 
@@ -1053,15 +1251,16 @@ static GtkTreeIter parameter_append_to_ui(GebrGeoXmlParameter * parameter, GtkTr
  * \internal
  * Inserts an item for \p parameter on the parameter tree view after \p sibling.
  */
-static GtkTreeIter parameter_insert_to_ui(GebrGeoXmlParameter *parameter, GtkTreeIter *sibling)
+static void parameter_insert_to_ui(GebrGeoXmlParameter *parameter, GtkTreeIter *sibling, GtkTreeIter *iter)
 {
-	GtkTreeIter iter;
+	GtkTreeIter iter_;
 
-	gtk_tree_store_insert_after(debr.ui_parameter.tree_store, &iter, NULL, sibling);
-	gtk_tree_store_set(debr.ui_parameter.tree_store, &iter, PARAMETER_XMLPOINTER, parameter, -1);
-	parameter_load_iter(&iter, TRUE);
+	gtk_tree_store_insert_after(debr.ui_parameter.tree_store, &iter_, NULL, sibling);
+	gtk_tree_store_set(debr.ui_parameter.tree_store, &iter_, PARAMETER_XMLPOINTER, parameter, -1);
+	parameter_load_iter(&iter_, TRUE);
 
-	return iter;
+	if (iter)
+		*iter = iter_;
 }
 
 
@@ -1148,7 +1347,7 @@ static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group)
 			gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(first_instance), &group_parameter,
 							     0);
 			for (; group_parameter != NULL; gebr_geoxml_sequence_next(&group_parameter))
-				parameter_append_to_ui(GEBR_GEOXML_PARAMETER(group_parameter), iter);
+				parameter_append_to_ui(GEBR_GEOXML_PARAMETER(group_parameter), iter, NULL);
 		}
 	}
 

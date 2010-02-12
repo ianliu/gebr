@@ -283,6 +283,7 @@ void program_preview(void)
 void program_remove(gboolean confirm)
 {
 	GtkTreeIter iter;
+	gboolean valid;
 
 	if (!program_get_selected(NULL, TRUE))
 		return;
@@ -293,11 +294,12 @@ void program_remove(gboolean confirm)
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_program.tree_view) {
 		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(debr.program));
 		debr.program = NULL;
-		gtk_list_store_remove(debr.ui_program.list_store, &iter);
+		valid = gtk_list_store_remove(debr.ui_program.list_store, &iter);
 		g_signal_emit_by_name(debr.ui_program.tree_view, "cursor-changed");
 	}
+	if (valid)
+		program_select_iter(iter);
 
-	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_program.tree_view));
 	menu_details_update();
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }

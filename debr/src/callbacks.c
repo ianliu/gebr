@@ -523,12 +523,6 @@ void on_menu_close_activate(void)
 
 		menu_close(&iter);
 	}
-
-	// FIXME: Selecionar o próximo menu após fechar
-	// if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(debr.ui_menu.model), NULL) == 0)
-	//      menu_new(FALSE);
-	// else
-	//      gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 }
 
 /*

@@ -154,6 +154,13 @@ void gebr_gui_gtk_tree_view_turn_to_single_selection(GtkTreeView * tree_view);
 gboolean gebr_gui_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
 
 /**
+ * Sets \p iter to point to the last selected row in \p tree_view.
+ * \param iter[out] The iterator that will point to the selected row.
+ * \return TRUE if there is a selected row, FALSE otherwise. In case FALSE is returned, \p iter is invalid.
+ */
+gboolean gebr_gui_gtk_tree_view_get_last_selected(GtkTreeView * tree_view, GtkTreeIter * iter);
+
+/**
  * Clear all selection, expand to \p iter, scroll to it and select it, and focus the first column of it.
  * If \p iter is NULL, selection is cleared.
  */

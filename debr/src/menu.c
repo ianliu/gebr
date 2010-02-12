@@ -551,7 +551,8 @@ void menu_close(GtkTreeIter * iter)
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &menu, MENU_PATH, &path, -1);
 
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
-	gtk_tree_store_remove(debr.ui_menu.model, iter);
+	if (gtk_tree_store_remove(debr.ui_menu.model, iter))
+		menu_select_iter(iter);
 
 	debr_message(GEBR_LOG_INFO, _("Menu \"%s\" closed."), path);
 }

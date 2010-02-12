@@ -490,6 +490,24 @@ gboolean gebr_gui_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIte
 	}
 }
 
+gboolean gebr_gui_gtk_tree_view_get_last_selected(GtkTreeView * tree_view, GtkTreeIter * iter)
+{
+	GList *list, *last;
+	gboolean ret = TRUE;
+
+	list = gebr_gui_gtk_tree_view_get_selected_iters(tree_view);
+	if ((last = g_list_last(list) == NULL)) {
+		ret = FALSE;
+		goto out;
+	}
+	*iter = *(GtkTreeIter*)g_list_last(list)->data;
+
+out:	g_list_foreach(list, (GFunc) gtk_tree_iter_free, NULL);
+	g_list_free(list);
+
+	return ret;
+}
+
 void gebr_gui_gtk_tree_view_select_iter(GtkTreeView * tree_view, GtkTreeIter * iter)
 {
 	GtkTreeSelection *tree_selection;
