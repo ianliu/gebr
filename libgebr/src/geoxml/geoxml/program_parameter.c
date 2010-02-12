@@ -397,7 +397,7 @@ gebr_geoxml_program_parameter_copy_value(GebrGeoXmlProgramParameter * program_pa
 	element = __gebr_geoxml_get_first_element((GdomeElement *) source,
 						  default_value == FALSE ? "value" : "default");
 	for (; element != NULL; element = __gebr_geoxml_next_same_element(element))
-		gdome_n_insertBefore(gdome_el_parentNode(insert_position, &exception),
+		gdome_n_insertBefore_protected(gdome_el_parentNode(insert_position, &exception),
 				     gdome_doc_importNode(document, (GdomeNode *) element, TRUE, &exception),
 				     (GdomeNode *) insert_position, &exception);
 
@@ -649,7 +649,7 @@ GebrGeoXmlEnumOption *gebr_geoxml_program_parameter_append_enum_option(GebrGeoXm
 	__gebr_geoxml_set_element_value(label_element, label, __gebr_geoxml_create_TextNode);
 	__gebr_geoxml_set_element_value(value_element, value, __gebr_geoxml_create_TextNode);
 
-	gdome_el_insertBefore(__gebr_geoxml_parameter_get_type_element
+	gdome_el_insertBefore_protected(__gebr_geoxml_parameter_get_type_element
 			      ((GebrGeoXmlParameter *) program_parameter, FALSE), (GdomeNode *) enum_option, NULL,
 			      &exception);
 

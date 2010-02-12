@@ -289,18 +289,18 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 					parameter = __gebr_geoxml_insert_new_element((GdomeElement *) parameters,
 										     "parameter", old_parameter);
 					__gebr_geoxml_element_assign_new_id(parameter, NULL, FALSE);
-					gdome_el_insertBefore(parameter, (GdomeNode *)
+					gdome_el_insertBefore_protected(parameter, (GdomeNode *)
 							      __gebr_geoxml_get_first_element(old_parameter, "label"),
 							      NULL, &exception);
 
 					next_parameter = __gebr_geoxml_next_element(old_parameter);
-					gdome_el_insertBefore(parameter, (GdomeNode *) old_parameter, NULL, &exception);
+					gdome_el_insertBefore_protected(parameter, (GdomeNode *) old_parameter, NULL, &exception);
 
 					property = __gebr_geoxml_insert_new_element(old_parameter, "property",
 										    (GdomeElement *)
 										    gdome_el_firstChild(old_parameter,
 													&exception));
-					gdome_el_insertBefore(property, (GdomeNode *)
+					gdome_el_insertBefore_protected(property, (GdomeNode *)
 							      __gebr_geoxml_get_first_element(old_parameter, "keyword"),
 							      NULL, &exception);
 					if (type != GEBR_GEOXML_PARAMETER_TYPE_FLAG) {

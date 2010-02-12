@@ -99,7 +99,7 @@ void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 							   &exception);
 
 		__gebr_geoxml_element_reassign_ids((GdomeElement *) new_node);
-		gdome_el_insertBefore(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), new_node, (GdomeNode *)
+		gdome_el_insertBefore_protected(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), new_node, (GdomeNode *)
 				      __gebr_geoxml_get_first_element(gebr_geoxml_document_root_element
 								      (GEBR_GEOXML_DOC(flow)), "revision"), &exception);
 
@@ -505,7 +505,7 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 		GdomeNode *new_node;
 
 		new_node = gdome_doc_importNode((GdomeDocument *) flow, (GdomeNode *) child, TRUE, &exception);
-		gdome_el_insertBefore(gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(flow)),
+		gdome_el_insertBefore_protected(gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(flow)),
 				      (GdomeNode *) new_node, (GdomeNode *) first_revision, &exception);
 	}
 

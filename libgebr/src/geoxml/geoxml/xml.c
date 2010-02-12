@@ -80,13 +80,29 @@ GdomeElement *__gebr_geoxml_new_element(GdomeElement * parent_element, const gch
 	return element;
 }
 
+GdomeNode *gdome_n_insertBefore_protected(GdomeNode * self, GdomeNode *newChild,
+					   GdomeNode *refChild, GdomeException *exc)
+{
+	if (newChild == refChild) {
+		*exc = GDOME_NOEXCEPTION_ERR;
+		return newChild;
+	}
+	return gdome_n_insertBefore(self, newChild, refChild, exc);
+}
+
+GdomeNode *gdome_el_insertBefore_protected(GdomeElement * self, GdomeNode *newChild,
+					   GdomeNode *refChild, GdomeException *exc)
+{
+	return gdome_n_insertBefore((GdomeNode*)self, newChild, refChild, exc);
+}
+
 GdomeElement *__gebr_geoxml_insert_new_element(GdomeElement * parent_element, const gchar * tag_name,
 					       GdomeElement * before_element)
 {
 	GdomeElement *element;
 
 	element = __gebr_geoxml_new_element(parent_element, tag_name);
-	gdome_el_insertBefore(parent_element, (GdomeNode *) element, (GdomeNode *) before_element, &exception);
+	gdome_el_insertBefore_protected(parent_element, (GdomeNode *) element, (GdomeNode *) before_element, &exception);
 
 	return element;
 }

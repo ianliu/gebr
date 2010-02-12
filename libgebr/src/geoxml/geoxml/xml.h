@@ -60,6 +60,15 @@ GdomeElement *__gebr_geoxml_insert_new_element(GdomeElement * parent_element, co
 
 /**
  * \internal
+ * Protect against strange behaviou of insertBefore, when \p newChild is equal to \p refChild.
+ */
+GdomeNode *gdome_n_insertBefore_protected(GdomeNode * self, GdomeNode *newChild,
+					   GdomeNode *refChild, GdomeException *exc);
+GdomeNode *gdome_el_insertBefore_protected(GdomeElement * self, GdomeNode *newChild,
+					   GdomeNode *refChild, GdomeException *exc);
+
+/**
+ * \internal
  * Get the first child element of \p parent_element with tag name
  * \p tag_name. The child might not be a direct child of \p parent_element
  * (the search done is recursive)
