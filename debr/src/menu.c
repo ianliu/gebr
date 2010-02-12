@@ -196,6 +196,7 @@ void menu_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.author_label), 0, 0);
 	gtk_box_pack_end(GTK_BOX(details), debr.ui_menu.details.author_label, FALSE, TRUE, 0);
 
+	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save_all"), FALSE);
 	debr.ui_menu.widget = hpanel;
 	gtk_widget_show_all(debr.ui_menu.widget);
 }
@@ -671,6 +672,12 @@ void menu_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 
 	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save"), enable);
 	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert"), enable);
+
+	if (menu_count_unsaved() > 0)
+		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save_all"), TRUE);
+	else
+		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save_all"), FALSE);
+
 	g_free(path);
 }
 
