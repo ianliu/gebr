@@ -50,18 +50,9 @@ static void validate_clicked(void);
 static void validate_do(struct validate *validate);
 
 /*
- * Section: Public
  * Public functions.
  */
 
-/*
- * Function: validate_setup_ui
- * Assembly the job control page.
- *
- * Return:
- * The structure containing relevant data.
- *
- */
 void validate_setup_ui(void)
 {
 	GtkWidget *hpanel;
@@ -113,11 +104,6 @@ void validate_setup_ui(void)
 
 }
 
-/*
- * Function: validate_menu
- * Validate _menu_ adding it to the validated list.
- * _iter_ is the item on the menu list
- */
 void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 {
 	struct validate *validate;
@@ -136,9 +122,14 @@ void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
 
 	gtk_list_store_insert_after(debr.ui_validate.list_store, iter, NULL);
-	validate = g_malloc(sizeof(struct validate));
+	validate = g_new(struct validate, 1);
 	*validate = (struct validate) {
-	.widget = scrolled_window,.text_view = text_view,.text_buffer = text_buffer,.iter = *iter,.menu = menu};
+		.widget = scrolled_window,
+		.text_view = text_view,
+		.text_buffer = text_buffer,
+		.iter = *iter,
+		.menu = menu
+	};
 
 	{
 		PangoFontDescription *font;
@@ -159,10 +150,6 @@ void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(debr.ui_validate.tree_view), iter);
 }
 
-/*
- * Function: validate_close
- * Clear selecteds validated menus
- */
 void validate_close(void)
 {
 	GtkTreeIter iter;
@@ -174,10 +161,6 @@ void validate_close(void)
 	}
 }
 
-/*
- * Function: validate_clear
- * Clear all the list of validated menus
- */
 void validate_clear(void)
 {
 	GtkTreeIter iter;
@@ -191,13 +174,12 @@ void validate_clear(void)
 }
 
 /*
- * Section: Private
  * Private functions.
  */
 
-/*
- * Function: validate_free
- * Frees _validate_ its iter and interface
+/**
+ * \internal
+ * Frees \p validate its iter and interface.
  */
 static void validate_free(struct validate *validate)
 {
@@ -206,9 +188,9 @@ static void validate_free(struct validate *validate)
 	g_free(validate);
 }
 
-/*
- * Function: validate_get_selected
- * Show selected menu report
+/**
+ * \internal
+ * Show selected menu report.
  */
 static gboolean validate_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 {
@@ -221,9 +203,9 @@ static gboolean validate_get_selected(GtkTreeIter * iter, gboolean warn_unselect
 	return TRUE;
 }
 
-/*
- * Function: validate_set_selected
- * Select _iter_
+/**
+ * \internal
+ * Select \p iter.
  */
 static void validate_set_selected(GtkTreeIter * iter)
 {
@@ -231,9 +213,9 @@ static void validate_set_selected(GtkTreeIter * iter)
 	validate_clicked();
 }
 
-/*
- * Function: validate_clicked
- * Show selected menu report
+/**
+ * \internal
+ * Show selected menu report.
  */
 static void validate_clicked(void)
 {
@@ -250,9 +232,10 @@ static void validate_clicked(void)
 
 /* Prototypes */
 static void validate_append_check(struct validate *validate, const gchar * value, int flags, const gchar * format, ...);
-static void show_parameter(struct validate *validate, GebrGeoXmlParameter * parameter, gint ipar);
-static void show_program_parameter(struct validate *validate, GebrGeoXmlProgramParameter * pp, gint ipar,
-				   guint isubpar);
+static void show_parameter(struct validate *validate, GebrGeoXmlParameter * parameter,
+			   GHashTable * hotkey_table, gint ipar);
+static void show_program_parameter(struct validate *validate, GebrGeoXmlProgramParameter * pp,
+				   GHashTable * hotkey_table, gint ipar, guint isubpar);
 
 #define VALID		TRUE
 #define INVALID		FALSE
@@ -266,6 +249,16 @@ enum VALIDATE_FLAGS {
 	FILEN = 1 << 6
 };
 
+/**
+ * \internal
+ * Appends text to \p validate's text buffer applying \p text_tag to it.
+ *
+ * \param text_tag A GtkTextTag determining the style for \p format.
+ * \param format Text to be inserted, in printf-like format.
+ * \param argp List of arguments for \p format.
+ *
+ * \see validate_append_text
+ */
 static void
 validate_append_text_valist(struct validate *validate, GtkTextTag * text_tag, const gchar * format, va_list argp)
 {
@@ -282,6 +275,12 @@ validate_append_text_valist(struct validate *validate, GtkTextTag * text_tag, co
 	g_free(string);
 }
 
+/**
+ * \internal
+ * Appends \p format to \p validate's text buffer, applying \p text_tag to it.
+ * 
+ * \see validate_append_text_valist
+ */
 static void validate_append_text_with_tag(struct validate *validate, GtkTextTag * text_tag, const gchar * format, ...)
 {
 	va_list argp;
@@ -291,6 +290,12 @@ static void validate_append_text_with_tag(struct validate *validate, GtkTextTag 
 	va_end(argp);
 }
 
+/**
+ * \internal
+ * Appends \p text into validate log with pair of style/values, as seen in #GtkTextTag properties.
+ *
+ * \see GtkTextTag
+ */
 static void
 validate_append_text_with_property_list(struct validate *validate, const gchar * text,
 					const gchar * first_property_name, ...)
@@ -307,6 +312,12 @@ validate_append_text_with_property_list(struct validate *validate, const gchar *
 	validate_append_text_with_tag(validate, text_tag, text);
 }
 
+/**
+ * \internal
+ * Appends emphasized text in validate log, with printf-like \p format.
+ *
+ * \see validate_append_text
+ */
 static void validate_append_text_emph(struct validate *validate, const gchar * format, ...)
 {
 	gchar *string;
@@ -319,6 +330,10 @@ static void validate_append_text_emph(struct validate *validate, const gchar * f
 	g_free(string);
 }
 
+/**
+ * \internal
+ * Appends text in validate log, with printf-like \p format.
+ */
 static void validate_append_text(struct validate *validate, const gchar * format, ...)
 {
 	gchar *string;
@@ -331,6 +346,10 @@ static void validate_append_text(struct validate *validate, const gchar * format
 	g_free(string);
 }
 
+/**
+ * \internal
+ * Appends \p format into \p validate buffer, indicating error (by setting the text color to red).
+ */
 static void validate_append_text_error(struct validate *validate, const gchar * format, ...)
 {
 	gchar *string;
@@ -343,11 +362,21 @@ static void validate_append_text_error(struct validate *validate, const gchar * 
 	g_free(string);
 }
 
+/**
+ * \internal
+ * Inserts \p item into validate log using #validate_append_text_emph.
+ */
 static void validate_append_item(struct validate *validate, const gchar * item)
 {
 	validate_append_text_emph(validate, item);
 }
 
+/**
+ * \internal
+ * Appends \p item into \p validate log and checks \p value againt \p flags.
+ *
+ * \see validate_append_check validate_append_item
+ */
 static void
 validate_append_item_with_check(struct validate *validate, const gchar * item, const gchar * value, int flags)
 {
@@ -355,9 +384,9 @@ validate_append_item_with_check(struct validate *validate, const gchar * item, c
 	validate_append_check(validate, value, flags, "\n");
 }
 
-/*
- * Function: validate_do
- * Validate menu at _validate_
+/**
+ * \internal
+ * Validate menu at \p validate.
  */
 static void validate_do(struct validate *validate)
 {
@@ -464,32 +493,38 @@ static void validate_do(struct validate *validate)
 		validate_append_text(validate, "\n");
 
 		if (params || all) {
+			GHashTable *hotkey_table;
+			hotkey_table = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal, (GDestroyNotify)g_free, NULL);
+
 			validate_append_text_emph(validate, _("  >>Parameters:\n"));
 
-			parameter =
-			    GEBR_GEOXML_PARAMETER(gebr_geoxml_parameters_get_first_parameter
-						  (gebr_geoxml_program_get_parameters(prog)));
+			parameter = GEBR_GEOXML_PARAMETER(gebr_geoxml_parameters_get_first_parameter
+							  (gebr_geoxml_program_get_parameters(prog)));
 
 			while (parameter != NULL) {
-				show_parameter(validate, parameter, ++j);
+				show_parameter(validate, parameter, hotkey_table, ++j);
 				gebr_geoxml_sequence_next((GebrGeoXmlSequence **) & parameter);
 			}
+			g_hash_table_unref(hotkey_table);
 		}
 	}
 
  out:	validate_append_text_emph(validate, _("%d potencial error(s)"), validate->error_count);
 }
 
-/* ------------------------------------------------------------*/
-/* Checks */
-
-/* VALID if str is not empty */
+/**
+ * \internal
+ * VALID if str is not empty.
+ */
 static gboolean check_is_not_empty(const gchar * str)
 {
 	return (strlen(str) ? VALID : INVALID);
 }
 
-/* VALID if str does not start with lower case letter */
+/**
+ * \internal
+ * VALID if str does not start with lower case letter.
+ */
 static gboolean check_no_lower_case(const gchar * sentence)
 {
 	if (!check_is_not_empty(sentence))
@@ -500,7 +535,10 @@ static gboolean check_no_lower_case(const gchar * sentence)
 	return VALID;
 }
 
-/* VALID if str has not consecutive blanks */
+/**
+ * \internal
+ * VALID if str has not consecutive blanks.
+ */
 static gboolean check_no_multiple_blanks(const gchar * str)
 {
 	regex_t pattern;
@@ -508,7 +546,10 @@ static gboolean check_no_multiple_blanks(const gchar * str)
 	return (regexec(&pattern, str, 0, 0, 0) ? VALID : INVALID);
 }
 
-/* VALID if str does not start or end with blanks/tabs */
+/**
+ * \internal
+ * VALID if str does not start or end with blanks/tabs.
+ */
 static gboolean check_no_blanks_at_boundaries(const gchar * str)
 {
 	int n = strlen(str);
@@ -521,7 +562,10 @@ static gboolean check_no_blanks_at_boundaries(const gchar * str)
 	return VALID;
 }
 
-/* VALID if str does not end if a punctuation mark */
+/**
+ * \internal
+ * VALID if str does not end if a punctuation mark.
+ */
 static gboolean check_no_punctuation_at_end(const gchar * str)
 {
 	int n = strlen(str);
@@ -534,7 +578,10 @@ static gboolean check_no_punctuation_at_end(const gchar * str)
 	return VALID;
 }
 
-/* VALID if str has not path and ends with .mnu */
+/**
+ * \internal
+ * VALID if str has not path and ends with .mnu
+ */
 static gboolean check_menu_filename(const gchar * str)
 {
 	gchar *base;
@@ -552,13 +599,13 @@ static gboolean check_menu_filename(const gchar * str)
 	return VALID;
 }
 
-/* VALID if str xxx@yyy, with xxx  composed    */
-/* by letter, digits, underscores, dots and    */
-/* dashes, and yyy composed by at least one    */
-/* dot, letter digits and dashes.              */
-/*                                             */
-/* To do something right, take a look at       */
-/* http://en.wikipedia.org/wiki/E-mail_address */
+/**
+ * \internal
+ * VALID if \p str is of kind <code>xxx@yyy</code>, with xxx composed by letter, digits, underscores, dots and dashes,
+ * and yyy composed by at least one dot, letter digits and dashes.
+ *
+ * \see http://en.wikipedia.org/wiki/E-mail_address
+ */
 static gboolean check_is_email(const gchar * str)
 {
 	regex_t pattern;
@@ -566,7 +613,10 @@ static gboolean check_is_email(const gchar * str)
 	return (!regexec(&pattern, str, 0, 0, 0) ? VALID : INVALID);
 }
 
-/* VALID if str passed through all selected tests */
+/**
+ * \internal
+ * VALID if str passed through all selected tests
+ */
 static void validate_append_check(struct validate *validate, const gchar * value, int flags, const gchar * format, ...)
 {
 	gboolean result = VALID;
@@ -602,17 +652,37 @@ static void validate_append_check(struct validate *validate, const gchar * value
 	va_end(argp);
 }
 
-static void show_program_parameter(struct validate *validate, GebrGeoXmlProgramParameter * pp, gint ipar, guint isubpar)
+/**
+ * \internal
+ */
+static void show_program_parameter(struct validate *validate, GebrGeoXmlProgramParameter * pp,
+				   GHashTable * hotkey_table, gint ipar, guint isubpar)
 {
 	GString *default_value;
+	GString *label_ext;
+	const gchar * label;
+	gchar * underscore;
+	gchar hotkey[6];
 
 	if (isubpar)
 		validate_append_text(validate, "       %2d.%02d: ", ipar, isubpar);
 	else
 		validate_append_text(validate, "    %2d: ", ipar);
 
-	validate_append_check(validate, gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp)),
-			      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, "\n");
+	label_ext = g_string_new("");
+	label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp));
+	underscore = strchr(label, '_');
+	if (underscore) {
+		gint length;
+		gchar * uppercase;
+		length = g_unichar_to_utf8(g_utf8_get_char(underscore + 1), hotkey);
+		uppercase = g_utf8_strup(hotkey, length);
+		g_string_printf(label_ext, " (Alt+%s%s)", uppercase,
+				g_hash_table_lookup(hotkey_table, uppercase)? _(", already used above") : "");
+		g_hash_table_insert(hotkey_table, uppercase, GINT_TO_POINTER(1));
+	}
+	validate_append_check(validate, label, EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, "%s\n", label_ext->str);
+	g_string_free(label_ext, TRUE);
 
 	validate_append_text(validate, "        ");
 	if (isubpar)
@@ -683,10 +753,14 @@ static void show_program_parameter(struct validate *validate, GebrGeoXmlProgramP
 	validate_append_text(validate, "\n\n");
 }
 
-static void show_parameter(struct validate *validate, GebrGeoXmlParameter * parameter, gint ipar)
+/**
+ * \internal
+ */
+static void show_parameter(struct validate *validate, GebrGeoXmlParameter * parameter,
+			   GHashTable * hotkey_table, gint ipar)
 {
 	if (gebr_geoxml_parameter_get_is_program_parameter(parameter))
-		show_program_parameter(validate, GEBR_GEOXML_PROGRAM_PARAMETER(parameter), ipar, 0);
+		show_program_parameter(validate, GEBR_GEOXML_PROGRAM_PARAMETER(parameter), hotkey_table, ipar, 0);
 	else {
 		GebrGeoXmlSequence *subpar;
 		GebrGeoXmlSequence *instance;
@@ -705,8 +779,9 @@ static void show_parameter(struct validate *validate, GebrGeoXmlParameter * para
 		gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
 		subpar = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance));
 		while (subpar != NULL) {
-			show_program_parameter(validate, GEBR_GEOXML_PROGRAM_PARAMETER(subpar), ipar, ++subipar);
+			show_program_parameter(validate, GEBR_GEOXML_PROGRAM_PARAMETER(subpar), hotkey_table, ipar, ++subipar);
 			gebr_geoxml_sequence_next(&subpar);
 		}
 	}
 }
+

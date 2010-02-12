@@ -610,6 +610,14 @@ GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkT
 	return renderer;
 }
 
+void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIter * ini, GtkTextIter * end,
+					      const gchar * tooltip)
+{
+	GtkTextTag * tag;
+	GtkTextBuffer * buffer;
+	buffer = gtk_text_view_get_buffer(text_view);
+}
+
 gboolean
 gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPopupCallback callback, gpointer user_data)
 {

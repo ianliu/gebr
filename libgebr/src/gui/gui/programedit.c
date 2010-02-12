@@ -25,28 +25,28 @@
  * Prototypes
  */
 
-static GtkWidget *gebr_gui_program_edit_load(struct gebr_gui_program_edit *program_edit,
-					     GebrGeoXmlParameters * parameters);
-static GtkWidget *gebr_gui_program_edit_load_parameter(struct gebr_gui_program_edit *program_edit,
-						       GebrGeoXmlParameter * parameter, GSList ** radio_group);
-static void gebr_gui_program_edit_change_selected(GtkToggleButton * toggle_button,
-						  struct gebr_gui_parameter_widget *widget);
-static void gebr_gui_program_edit_instanciate(GtkButton * button, struct gebr_gui_program_edit *program_edit);
-static void gebr_gui_program_edit_deinstanciate(GtkButton * button, struct gebr_gui_program_edit *program_edit);
+static GtkWidget *
+gebr_gui_program_edit_load(struct gebr_gui_program_edit *program_edit, GebrGeoXmlParameters * parameters);
+
+static GtkWidget *
+gebr_gui_program_edit_load_parameter(struct gebr_gui_program_edit *program_edit, GebrGeoXmlParameter * parameter, GSList ** radio_group);
+
+static void
+gebr_gui_program_edit_change_selected(GtkToggleButton * toggle_button, struct gebr_gui_parameter_widget *widget);
+
+static void
+gebr_gui_program_edit_instanciate(GtkButton * button, struct gebr_gui_program_edit *program_edit);
+
+static void
+gebr_gui_program_edit_deinstanciate(GtkButton * button, struct gebr_gui_program_edit *program_edit);
 
 /*
- * Section: Public
  * Public functions.
  */
 
-/*
- * Function: gebr_gui_program_edit_setup_ui
- * Setup UI for _program_ 
- */
-struct gebr_gui_program_edit *gebr_gui_gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
-								      gpointer file_gebr_gui_parameter_widget_data,
-								      GebrGuiShowHelpCallback show_help_callback,
-								      gboolean use_default)
+struct gebr_gui_program_edit *
+gebr_gui_gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer file_gebr_gui_parameter_widget_data,
+					GebrGuiShowHelpCallback show_help_callback, gboolean use_default)
 {
 	struct gebr_gui_program_edit *program_edit;
 	GtkWidget *vbox;
@@ -54,14 +54,17 @@ struct gebr_gui_program_edit *gebr_gui_gebr_gui_program_edit_setup_ui(GebrGeoXml
 	GtkWidget *hbox;
 	GtkWidget *scrolled_window;
 
-	program_edit = g_malloc(sizeof(struct gebr_gui_program_edit));
+	program_edit = g_new(struct gebr_gui_program_edit, 1);
 	program_edit->program = program;
 	program_edit->file_gebr_gui_parameter_widget_data = file_gebr_gui_parameter_widget_data;
 	program_edit->show_help_callback = show_help_callback;
 	program_edit->use_default = use_default;
 	program_edit->widget = vbox = gtk_vbox_new(FALSE, 0);
 	program_edit->dicts = (struct gebr_gui_gebr_gui_program_edit_dicts) {
-	.project = NULL,.line = NULL,.flow = NULL};
+		.project = NULL,
+		.line = NULL,
+		.flow = NULL,
+	};
 	gtk_widget_show(vbox);
 	program_edit->title_label = title_label = gtk_label_new(NULL);
 	gtk_widget_show(title_label);
@@ -82,22 +85,16 @@ struct gebr_gui_program_edit *gebr_gui_gebr_gui_program_edit_setup_ui(GebrGeoXml
 	return program_edit;
 }
 
-/* Function: gebr_gui_gebr_gui_program_edit_destroy
- * Just free
- */
 void gebr_gui_gebr_gui_program_edit_destroy(struct gebr_gui_program_edit *program_edit)
 {
 	gtk_widget_destroy(program_edit->widget);
 	g_free(program_edit);
 }
 
-/*
- * Function: gebr_gui_gebr_gui_program_edit_reload
- * Reload UI of _gebr_gui_program_edit_. If _program_ is not NULL, then use it as new program
- */
 void gebr_gui_gebr_gui_program_edit_reload(struct gebr_gui_program_edit *program_edit, GebrGeoXmlProgram * program)
 {
 	GtkWidget *label;
+	GtkWidget *widget;
 	gchar *markup;
 
 	if (program != NULL)
@@ -129,23 +126,19 @@ void gebr_gui_gebr_gui_program_edit_reload(struct gebr_gui_program_edit *program
 	}
 
 	gtk_container_foreach(GTK_CONTAINER(program_edit->scrolled_window), (GtkCallback) gtk_widget_destroy, NULL);
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(program_edit->scrolled_window),
-					      gebr_gui_program_edit_load(program_edit,
-									 gebr_geoxml_program_get_parameters
-									 (program_edit->program)));
+	widget = gebr_gui_program_edit_load(program_edit, gebr_geoxml_program_get_parameters(program_edit->program));
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(program_edit->scrolled_window), widget);
 }
 
 /*
- * Section: Private
  * Private functions.
  */
 
-/*
- * Function: gebr_gui_program_edit_load
- *
+/**
+ * \internal
  */
-static GtkWidget *gebr_gui_program_edit_load(struct gebr_gui_program_edit *program_edit,
-					     GebrGeoXmlParameters * parameters)
+static GtkWidget *
+gebr_gui_program_edit_load(struct gebr_gui_program_edit *program_edit, GebrGeoXmlParameters * parameters)
 {
 	GtkWidget *frame;
 	GtkWidget *vbox;
@@ -157,7 +150,7 @@ static GtkWidget *gebr_gui_program_edit_load(struct gebr_gui_program_edit *progr
 	gtk_widget_show(frame);
 	parameter_group = gebr_geoxml_parameters_get_group(parameters);
 	if (parameter_group != NULL && !gebr_geoxml_parameter_group_get_is_instanciable(parameter_group))
-		g_object_set(G_OBJECT(frame), "shadow-type", GTK_SHADOW_NONE, NULL);
+		gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(vbox);
@@ -173,9 +166,8 @@ static GtkWidget *gebr_gui_program_edit_load(struct gebr_gui_program_edit *progr
 	return frame;
 }
 
-/*
- * Function: gebr_gui_program_edit_load_parameter
- *
+/**
+ * \internal
  */
 static GtkWidget *gebr_gui_program_edit_load_parameter(struct gebr_gui_program_edit *program_edit,
 						       GebrGeoXmlParameter * parameter, GSList ** radio_group)
@@ -262,7 +254,14 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(struct gebr_gui_program_e
 		group_vbox = gtk_vbox_new(FALSE, 3);
 		gtk_widget_show(group_vbox);
 		gtk_container_add(GTK_CONTAINER(depth_hbox), group_vbox);
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), group_vbox);
+
+		/*
+		 * FIXME: mnemonic for groups should cycle through instances?
+		 */
+
+		//g_object_set_data(G_OBJECT(group_vbox), "mnemonic-nth", GINT_TO_POINTER(0));
+		//g_signal_connect(group_vbox, "mnemonic-activate", G_CALLBACK(on_group_vbox_mnemonic_activate), NULL);
+		//gtk_label_set_mnemonic_widget(GTK_LABEL(label), group_vbox);
 
 		gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(parameter_group), group_vbox);
 		g_object_set(G_OBJECT(group_vbox), "user-data", deinstanciate_button, NULL);
@@ -351,9 +350,8 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(struct gebr_gui_program_e
 	}
 }
 
-/*
- * Function: gebr_gui_program_edit_change_selected
- *
+/**
+ * \internal
  */
 static void
 gebr_gui_program_edit_change_selected(GtkToggleButton * toggle_button, struct gebr_gui_parameter_widget *widget)
@@ -364,9 +362,8 @@ gebr_gui_program_edit_change_selected(GtkToggleButton * toggle_button, struct ge
 						    widget->parameter);
 }
 
-/*
- * Function: gebr_gui_program_edit_instanciate
- *
+/**
+ * \internal
  */
 static void gebr_gui_program_edit_instanciate(GtkButton * button, struct gebr_gui_program_edit *program_edit)
 {
@@ -388,8 +385,9 @@ static void gebr_gui_program_edit_instanciate(GtkButton * button, struct gebr_gu
 	gtk_widget_set_sensitive(deinstanciate_button, TRUE);
 }
 
-/* Function: gebr_gui_program_edit_deinstanciate
- * Group deinstanciation button callback
+/**
+ * \internal
+ * Group deinstanciation button callback.
  */
 static void gebr_gui_program_edit_deinstanciate(GtkButton * button, struct gebr_gui_program_edit *program_edit)
 {
@@ -408,3 +406,4 @@ static void gebr_gui_program_edit_deinstanciate(GtkButton * button, struct gebr_
 	gtk_widget_set_sensitive(GTK_WIDGET(button),
 				 gebr_geoxml_parameter_group_get_instances_number(parameter_group) > 1);
 }
+

@@ -52,12 +52,10 @@ struct gebr_gui_parameter_widget {
 	gpointer user_data;
 };
 
-struct gebr_gui_parameter_widget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter * parameter,
-								gboolean use_default_value, gpointer data);
+struct gebr_gui_parameter_widget *
+gebr_gui_parameter_widget_new(GebrGeoXmlParameter * parameter, gboolean use_default_value, gpointer data);
 
 void
-
-
 gebr_gui_parameter_widget_set_dicts(struct gebr_gui_parameter_widget *gebr_gui_parameter_widget,
 				    struct gebr_gui_gebr_gui_program_edit_dicts *dicts);
 
@@ -76,6 +74,9 @@ void gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *gebr_g
 void gebr_gui_parameter_widget_update_list_separator(struct gebr_gui_parameter_widget
 						     *gebr_gui_parameter_widget);
 
+/**
+ * Rebuild the UI.
+ */
 void gebr_gui_parameter_widget_reconfigure(struct gebr_gui_parameter_widget *gebr_gui_parameter_widget);
 
 #endif				//__GEBR_GUI_PARAMETER_H

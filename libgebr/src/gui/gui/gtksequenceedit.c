@@ -44,6 +44,7 @@ static void __gtk_sequence_edit_move_top(GtkSequenceEdit * sequence_edit, GtkTre
 static void __gtk_sequence_edit_move_bottom(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter);
 static void __gtk_sequence_edit_rename(GtkSequenceEdit * sequence_edit, GtkTreeIter * iter, const gchar * new_text);
 static GtkWidget *__gtk_sequence_edit_create_tree_view(GtkSequenceEdit * sequence_edit);
+static gboolean gebr_sequence_edit_on_mnemonic_activate(GtkSequenceEdit * self);
 
 /*
  * gobject stuff
@@ -208,6 +209,7 @@ static void gtk_sequence_edit_init(GtkSequenceEdit * sequence_edit)
 	gtk_widget_show_all(button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 	g_signal_connect(button, "clicked", G_CALLBACK(__gtk_sequence_edit_on_add_clicked), sequence_edit);
+	g_signal_connect(sequence_edit, "mnemonic-activate", G_CALLBACK(gebr_sequence_edit_on_mnemonic_activate), NULL);
 }
 
 G_DEFINE_TYPE(GtkSequenceEdit, gtk_sequence_edit, GTK_TYPE_VBOX);
@@ -390,6 +392,12 @@ static GtkWidget *__gtk_sequence_edit_create_tree_view(GtkSequenceEdit * sequenc
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
 
 	return tree_view;
+}
+
+static gboolean gebr_sequence_edit_on_mnemonic_activate(GtkSequenceEdit * self)
+{
+	gtk_widget_mnemonic_activate(self->widget, TRUE);
+	return TRUE;
 }
 
 /*

@@ -1,3 +1,7 @@
+/**
+ * \file programedit.h
+ */
+
 /*   libgebr - GeBR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -42,13 +46,25 @@ struct gebr_gui_program_edit {
 	} dicts;
 };
 
-struct gebr_gui_program_edit *gebr_gui_gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
-								      gpointer file_gebr_gui_parameter_widget_data,
-								      GebrGuiShowHelpCallback show_help_callback,
-								      gboolean use_default);
+/**
+ * Setup UI for \p program.
+ */
+struct gebr_gui_program_edit *
+gebr_gui_gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer file_gebr_gui_parameter_widget_data,
+					GebrGuiShowHelpCallback show_help_callback, gboolean use_default);
 
+/**
+ * \internal
+ * Just free.
+ */
 void gebr_gui_gebr_gui_program_edit_destroy(struct gebr_gui_program_edit *program_edit);
 
+/**
+ * \internal
+ *
+ * Reload UI of \p gebr_gui_program_edit.
+ * \param program If not NULL, then use it as new program.
+ */
 void gebr_gui_gebr_gui_program_edit_reload(struct gebr_gui_program_edit *program_edit, GebrGeoXmlProgram * program);
 
 #endif				//__GEBR_GUI_PROGRAM_EDIT_H

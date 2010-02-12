@@ -1,3 +1,7 @@
+/**
+ * \file validate.h Validate API.
+ */
+
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -22,6 +26,9 @@
 
 #include <libgebr/geoxml.h>
 
+/**
+ * Columns for validate #GtkListStore model.
+ */
 enum {
 	VALIDATE_ICON = 0,
 	VALIDATE_FILENAME,
@@ -29,6 +36,9 @@ enum {
 	VALIDATE_N_COLUMN
 };
 
+/**
+ * Structure for validate's user interface.
+ */
 struct ui_validate {
 	GtkWidget *widget;
 
@@ -38,12 +48,27 @@ struct ui_validate {
 	GtkWidget *text_view_vbox;
 };
 
+/**
+ * Assembly the job control page.
+ *
+ * \return The structure containing relevant data.
+ */
 void validate_setup_ui(void);
 
+/**
+ * Validate \p menu adding it to the validated list.
+ * \param iter The item on the menu list.
+ */
 void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu);
 
+/**
+ * Clear selecteds validated menus.
+ */
 void validate_close(void);
 
+/**
+ * Clear all the list of validated menus.
+ */
 void validate_clear(void);
 
 #endif				//__VALIDATE_H

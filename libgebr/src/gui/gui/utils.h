@@ -266,6 +266,12 @@ GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkT
 	iter = iter##hygid)
 
 /**
+ * Sets a \p tooltip for text between \p ini and \p end.
+ */
+void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIter * ini, GtkTextIter * end,
+					      const gchar * tooltip);
+
+/**
  * Callback called when a popup is requested.
  * \see gebr_gui_gtk_widget_set_popup_callback
  */

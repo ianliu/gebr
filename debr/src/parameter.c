@@ -1,3 +1,7 @@
+/**
+ * \file parameter.c Construct interfaces for parameter
+ */
+
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -34,32 +38,37 @@
 #include "parametergroup.h"
 
 /*
- * File: parameter.c
- * Construct interfaces for parameter
- */
-
-/*
  * Declarations
  */
 
-/* bidirecional relation of combo box index and type enumerations */
+/** 
+ * \internal
+ * Bidirecional relation of combo box index and type enumerations.
+ */
 struct {
 	enum GEBR_GEOXML_PARAMETER_TYPE type;
 	guint index;
 	gchar *title;
 } combo_type_map[] = {
-	{
-	GEBR_GEOXML_PARAMETER_TYPE_FLOAT, 0, N_("real")}, {
-	GEBR_GEOXML_PARAMETER_TYPE_INT, 1, N_("integer")}, {
-	GEBR_GEOXML_PARAMETER_TYPE_RANGE, 2, N_("range")}, {
-	GEBR_GEOXML_PARAMETER_TYPE_FLAG, 3, N_("flag")}, {
-	GEBR_GEOXML_PARAMETER_TYPE_STRING, 4, N_("text")}, {
-	GEBR_GEOXML_PARAMETER_TYPE_ENUM, 5, N_("enum")}, {
-	GEBR_GEOXML_PARAMETER_TYPE_FILE, 6, N_("file")}, {
-GEBR_GEOXML_PARAMETER_TYPE_GROUP, 7, N_("group")},};
+	{ GEBR_GEOXML_PARAMETER_TYPE_FLOAT,  0, N_("real") },
+	{ GEBR_GEOXML_PARAMETER_TYPE_INT,    1, N_("integer") },
+	{ GEBR_GEOXML_PARAMETER_TYPE_RANGE,  2, N_("range") },
+	{ GEBR_GEOXML_PARAMETER_TYPE_FLAG,   3, N_("flag") },
+	{ GEBR_GEOXML_PARAMETER_TYPE_STRING, 4, N_("text") },
+	{ GEBR_GEOXML_PARAMETER_TYPE_ENUM,   5, N_("enum") },
+	{ GEBR_GEOXML_PARAMETER_TYPE_FILE,   6, N_("file") },
+	{ GEBR_GEOXML_PARAMETER_TYPE_GROUP,  7, N_("group") },
+};
 
 const gsize combo_type_map_size = 8;
 
+/**
+ * \internal
+ * Given a \p type, gets its index association.
+ *
+ * \p type A #GEBR_GEOXML_PARAMETER_TYPE.
+ * \return The associated index.
+ */
 int combo_type_map_get_index(enum GEBR_GEOXML_PARAMETER_TYPE type)
 {
 	int i;
@@ -69,9 +78,24 @@ int combo_type_map_get_index(enum GEBR_GEOXML_PARAMETER_TYPE type)
 	return -1;
 }
 
+/**
+ * \internal
+ * Gets the type given the \p index.
+ *
+ * \param index An integer.
+ * \return A #GEBR_GEOXML_PARAMETER_TYPE.
+ */
 #define combo_type_map_get_type(index) \
 	combo_type_map[index].type
 
+/**
+ * \internal
+ * Gets the title of \p type.
+ * The title is an internationalized string representation of this type.
+ *
+ * \param type A #GEBR_GEOXML_PARAMETER_TYPE.
+ * \return The index associated to this type.
+ */
 #define combo_type_map_get_title(type) \
 	combo_type_map[combo_type_map_get_index(type)].title
 
@@ -127,6 +151,7 @@ static void parameter_enum_options_changed(EnumOptionEdit * enum_option_edit, st
 static void parameter_is_radio_button_comma_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui);
 static void parameter_is_radio_button_space_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui);
 static void parameter_is_radio_button_other_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui);
+
 /*
  * Section: Public
  */
@@ -192,10 +217,6 @@ void parameter_load_program(void)
 	debr.parameter = NULL;
 }
 
-/*
- * Function: parameter_load_selected
- * Load selected parameter contents to its iter
- */
 void parameter_load_selected(void)
 {
 	GtkTreeIter iter;
@@ -204,10 +225,6 @@ void parameter_load_selected(void)
 	parameter_load_iter(&iter, FALSE);
 }
 
-
-/**
- * Creates a new parameter.
- */
 void parameter_new(void)
 {
 	GtkTreeIter iter, pre_selected_iter;
@@ -305,11 +322,6 @@ void parameter_new(void)
 
 }
 
-
-/*
- * Function: parameter_remove
- * Confirm action and if confirmed removed selected parameter from XML and UI
- */
 void parameter_remove(gboolean confirm)
 {
 	GtkTreeIter parent;
@@ -349,10 +361,6 @@ void parameter_remove(gboolean confirm)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: parameter_top
- * Move the current parameter to top
- */
 void parameter_top(void)
 {
 	GtkTreeIter iter;
@@ -366,10 +374,6 @@ void parameter_top(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: parameter_bottom
- * Move the current parameter to bottom
- */
 void parameter_bottom(void)
 {
 	GtkTreeIter iter;
@@ -383,10 +387,6 @@ void parameter_bottom(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: parameter_change_type_setup_ui
- * Open dialog to change type of current selected parameter
- */
 gboolean parameter_change_type_setup_ui(void)
 {
 	GtkWidget *dialog;
@@ -453,20 +453,12 @@ gboolean parameter_change_type_setup_ui(void)
 	return ret;
 }
 
-
-/**
- * Cuts selected parameter(s) to clipboard.
- */
 void parameter_cut(void)
 {
 	parameter_copy();
 	parameter_remove(FALSE);
 }
 
-
-/* Function: parameter_copy
- * Copy selected parameter(s) to clipboard
- */
 void parameter_copy(void)
 {
 	GtkTreeIter iter;
@@ -489,9 +481,6 @@ void parameter_copy(void)
 	}
 }
 
-/* Function: parameter_paste
- * Paste parameters on clipboard
- */
 void parameter_paste(void)
 {
 	GebrGeoXmlSequence *pasted;
@@ -513,10 +502,6 @@ void parameter_paste(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: parameter_change_type
- * Change type of selected parameter to _type_
- */
 void parameter_change_type(enum GEBR_GEOXML_PARAMETER_TYPE type)
 {
 	const gchar *keyword;
@@ -537,21 +522,11 @@ void parameter_change_type(enum GEBR_GEOXML_PARAMETER_TYPE type)
 	parameter_load_selected();
 }
 
-/* Function: parameter_properties
- * Show parameter's properties according to its type
- */
 void parameter_properties(void)
 {
 	parameter_activated();
 }
 
-/**
- * Get the selected parameter in the tree view, if any.
- *
- * @param iter Address of tree iterator to write to.
- * @param show_warning Whether to warn or not if no parameter is selected.
- * @return TRUE if there is a parameter selected and write it to \p iter; FALSE otherwise.
- */
 gboolean parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
 {
 	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), iter) == FALSE) {
@@ -563,10 +538,6 @@ gboolean parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
 	return TRUE;
 }
 
-/*
- * Function: parameter_select_iter
- * Select _iter_ loading its pointer
- */
 void parameter_select_iter(GtkTreeIter iter)
 {
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &iter);
@@ -577,7 +548,8 @@ void parameter_select_iter(GtkTreeIter iter)
  * Section: Private
  */
 
-/* Function: parameter_dialog_setup_ui
+/**
+ * \internal
  * Create an dialog to configure the current selected parameter (not a group)
  */
 static void parameter_dialog_setup_ui(void)
@@ -652,6 +624,13 @@ static void parameter_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(label_label), 0, 0.5);
 
 	label_entry = gtk_entry_new();
+	gtk_widget_set_tooltip_markup(label_entry, _("Characters preceded by an underscore will "
+						     "be underlined and used as a hot-key to focus "
+						     "this parameter. For example, if the label is "
+						     "<i>_Title</i>, then pressing ALT-T will place "
+						     "the cursor ready to start editing this parameter."
+						     "\nIf you need a literal underscore character, use "
+						     "'__' (two underscores)."));
 	gtk_widget_show(label_entry);
 	gtk_table_attach(GTK_TABLE(table), label_entry, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
@@ -1054,9 +1033,9 @@ out:
 	g_free(ui);
 }
 
-/*
- * Function: parameter_append_to_ui
- * Create an item for _parameter_ on parameter tree view
+/**
+ * \internal
+ * Create an item for \p parameter on parameter tree view.
  */
 static GtkTreeIter parameter_append_to_ui(GebrGeoXmlParameter * parameter, GtkTreeIter * parent)
 {
@@ -1071,6 +1050,7 @@ static GtkTreeIter parameter_append_to_ui(GebrGeoXmlParameter * parameter, GtkTr
 
 
 /**
+ * \internal
  * Inserts an item for \p parameter on the parameter tree view after \p sibling.
  */
 static GtkTreeIter parameter_insert_to_ui(GebrGeoXmlParameter *parameter, GtkTreeIter *sibling)
@@ -1085,9 +1065,9 @@ static GtkTreeIter parameter_insert_to_ui(GebrGeoXmlParameter *parameter, GtkTre
 }
 
 
-/*
- * Function: parameter_load_iter
- * Load _iter_ columns from its parameter
+/**
+ * \internal
+ * Load \p iter columns from its parameter.
  */
 static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group)
 {
@@ -1200,9 +1180,9 @@ static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group)
 	g_string_free(keyword_label, TRUE);
 }
 
-/*
- * Function: parameter_selected
- * Set debr.parameter to the current selected parameter
+/**
+ * \internal
+ * Set #debr.parameter to the current selected parameter.
  */
 static void parameter_selected(void)
 {
@@ -1235,8 +1215,8 @@ static void parameter_selected(void)
 					  NULL);
 }
 
-/*
- * Function: parameter_activated
+/**
+ * \internal
  * Open a dialog to configure the parameter, according to its type.
  */
 static void parameter_activated(void)
@@ -1251,21 +1231,53 @@ static void parameter_activated(void)
 		parameter_group_dialog_setup_ui();
 }
 
-/*
- * Funcion: parameter_popup_menu
- * Show a popup menu for parameter actions
+/**
+ * \internal
+ * Show a popup menu for parameter actions.
  */
 static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 {
 	GtkWidget *menu;
 	GtkWidget *menu_item;
 
+	GtkWidget *param_new;
+	GtkWidget *param_cut;
+	GtkWidget *param_copy;
+	GtkWidget *param_paste;
+	GtkWidget *param_delete;
+	GtkWidget *param_properties;
+	GtkWidget *param_preview;
+
 	GtkTreeIter iter;
 
 	menu = gtk_menu_new();
 
-	if (parameter_get_selected(&iter, FALSE) == FALSE)
+	param_new        = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_new"));
+	param_cut        = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_cut"));
+	param_copy       = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_copy"));
+	param_paste      = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_paste"));
+	param_delete     = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_delete"));
+	param_properties = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_properties"));
+	param_preview    = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "program_preview"));
+
+	if (parameter_get_selected(&iter, FALSE) == FALSE) {
+		gtk_widget_set_sensitive(param_cut, FALSE);
+		gtk_widget_set_sensitive(param_copy, FALSE);
+		gtk_widget_set_sensitive(param_paste, FALSE);
+		gtk_widget_set_sensitive(param_delete, FALSE);
+		gtk_widget_set_sensitive(param_properties, FALSE);
+		gtk_widget_set_sensitive(param_preview, FALSE);
+
+		gtk_container_add(GTK_CONTAINER(menu), param_new);
+		gtk_container_add(GTK_CONTAINER(menu), param_cut);
+		gtk_container_add(GTK_CONTAINER(menu), param_copy);
+		gtk_container_add(GTK_CONTAINER(menu), param_paste);
+		gtk_container_add(GTK_CONTAINER(menu), param_delete);
+		gtk_container_add(GTK_CONTAINER(menu), param_properties);
+		gtk_container_add(GTK_CONTAINER(menu), param_preview);
+
 		goto out;
+	}
 
 	if (gebr_gui_gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE)
 		gtk_container_add(GTK_CONTAINER(menu),
@@ -1279,43 +1291,29 @@ static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 	    || gebr_gui_gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_new")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (debr.action_group, "parameter_cut")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (debr.action_group, "parameter_copy")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (debr.action_group, "parameter_paste")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (debr.action_group, "parameter_delete")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (debr.action_group, "parameter_properties")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (debr.action_group, "program_preview")));
+	gtk_container_add(GTK_CONTAINER(menu), param_new);
+	gtk_container_add(GTK_CONTAINER(menu), param_cut);
+	gtk_container_add(GTK_CONTAINER(menu), param_copy);
+	gtk_container_add(GTK_CONTAINER(menu), param_paste);
+	gtk_container_add(GTK_CONTAINER(menu), param_delete);
+	gtk_container_add(GTK_CONTAINER(menu), param_properties);
+	gtk_container_add(GTK_CONTAINER(menu), param_preview);
 
 	menu_item =
-	    gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_change_type"));
+		gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_change_type"));
 	gtk_action_block_activate_from(gtk_action_group_get_action(debr.action_group, "parameter_change_type"),
 				       menu_item);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), debr.parameter_type_menu);
 	gtk_container_add(GTK_CONTAINER(menu), menu_item);
 
- out:	gtk_widget_show_all(menu);
+out:	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
 }
 
-/*
- * Funcion: parameter_reorder
- * Parameter reordering callback. Also responsible for putting
- * parameters in or out of a group.
+/**
+ * \internal
+ * Parameter reordering callback, responsible for putting parameters in or out of a group.
  */
 static gboolean
 parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
@@ -1379,8 +1377,8 @@ parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * pos
 	return TRUE;
 }
 
-/*
- * Funcion: parameter_can_reorder
+/**
+ * \internal
  * Parameter reordering acceptance callback.
  */
 static gboolean
@@ -1407,6 +1405,9 @@ parameter_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter *
 	return TRUE;
 }
 
+/**
+ * \internal
+ */
 static void parameter_reconfigure_default_widget(struct ui_parameter_dialog *ui)
 {
 	gebr_gui_parameter_widget_reconfigure(ui->gebr_gui_parameter_widget);
@@ -1414,11 +1415,17 @@ static void parameter_reconfigure_default_widget(struct ui_parameter_dialog *ui)
 	gtk_widget_show(ui->gebr_gui_parameter_widget->widget);
 }
 
+/**
+ * \internal
+ */
 static void parameter_default_widget_changed(struct gebr_gui_parameter_widget *widget)
 {
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
+/**
+ * \internal
+ */
 static void parameter_required_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui)
 {
 	gebr_geoxml_program_parameter_set_required(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter),
@@ -1428,6 +1435,7 @@ static void parameter_required_toggled(GtkToggleButton * toggle_button, struct u
 }
 
 /**
+ * \internal
  * Callback to signalize that a parameter was changed to list.
  * On \p ui startup the default separator are set to space
  */
@@ -1435,7 +1443,8 @@ static void parameter_is_list_changed(GtkToggleButton * toggle_button, struct ui
 {
 	gboolean on_start_ui = FALSE;
 
-	on_start_ui = (gtk_toggle_button_get_active(toggle_button) && !gebr_geoxml_program_parameter_get_is_list(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)));
+	on_start_ui = (gtk_toggle_button_get_active(toggle_button) &&
+		       !gebr_geoxml_program_parameter_get_is_list(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)));
 
 	gebr_geoxml_program_parameter_set_be_list(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter),
 						  gtk_toggle_button_get_active(toggle_button));
@@ -1461,11 +1470,17 @@ static void parameter_is_list_changed(GtkToggleButton * toggle_button, struct ui
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
+/**
+ * \internal
+ */
 static void parameter_separator_changed(GtkEntry * entry, struct ui_parameter_dialog *ui)
 {
 	parameter_separator_changed_by_string(gtk_entry_get_text(GTK_ENTRY(entry)), ui);
 }
 
+/**
+ * \internal
+ */
 static void parameter_separator_changed_by_string(const gchar * separator, struct ui_parameter_dialog *ui)
 {
 	if (gebr_geoxml_program_parameter_get_is_list(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)) == TRUE){
@@ -1475,6 +1490,10 @@ static void parameter_separator_changed_by_string(const gchar * separator, struc
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 
 }
+
+/**
+ * \internal
+ */
 static void parameter_file_type_changed(GtkComboBox * combo, struct gebr_gui_parameter_widget *widget)
 {
 	gboolean is_directory;
@@ -1488,6 +1507,9 @@ static void parameter_file_type_changed(GtkComboBox * combo, struct gebr_gui_par
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
+/**
+ * \internal
+ */
 static void
 parameter_file_filter_name_changed(GebrGuiGtkEnhancedEntry * entry, struct gebr_gui_parameter_widget *widget)
 {
@@ -1496,6 +1518,9 @@ parameter_file_filter_name_changed(GebrGuiGtkEnhancedEntry * entry, struct gebr_
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
+/**
+ * \internal
+ */
 static void
 parameter_file_filter_pattern_changed(GebrGuiGtkEnhancedEntry * entry, struct gebr_gui_parameter_widget *widget)
 {
@@ -1504,6 +1529,9 @@ parameter_file_filter_pattern_changed(GebrGuiGtkEnhancedEntry * entry, struct ge
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
+/**
+ * \internal
+ */
 static void parameter_number_min_on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *widget)
 {
 	const gchar *min_str;
@@ -1529,6 +1557,9 @@ static void parameter_number_min_on_activate(GtkEntry * entry, struct gebr_gui_p
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
+/**
+ * \internal
+ */
 static gboolean
 parameter_number_min_on_focus_out(GtkEntry * entry, GdkEvent * event, struct gebr_gui_parameter_widget *widget)
 {
@@ -1536,6 +1567,9 @@ parameter_number_min_on_focus_out(GtkEntry * entry, GdkEvent * event, struct geb
 	return FALSE;
 }
 
+/**
+ * \internal
+ */
 static void parameter_number_max_on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *widget)
 {
 	const gchar *max_str;
@@ -1561,6 +1595,9 @@ static void parameter_number_max_on_activate(GtkEntry * entry, struct gebr_gui_p
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
+/**
+ * \internal
+ */
 static gboolean
 parameter_number_max_on_focus_out(GtkEntry * entry, GdkEvent * event, struct gebr_gui_parameter_widget *widget)
 {
@@ -1568,6 +1605,9 @@ parameter_number_max_on_focus_out(GtkEntry * entry, GdkEvent * event, struct geb
 	return FALSE;
 }
 
+/**
+ * \internal
+ */
 static void parameter_range_inc_on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *widget)
 {
 	gchar *min_str;
@@ -1592,6 +1632,9 @@ static void parameter_range_inc_on_activate(GtkEntry * entry, struct gebr_gui_pa
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
+/**
+ * \internal
+ */
 static gboolean
 parameter_range_inc_on_focus_out(GtkEntry * entry, GdkEvent * event, struct gebr_gui_parameter_widget *widget)
 {
@@ -1599,6 +1642,9 @@ parameter_range_inc_on_focus_out(GtkEntry * entry, GdkEvent * event, struct gebr
 	return FALSE;
 }
 
+/**
+ * \internal
+ */
 static void parameter_range_digits_on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *widget)
 {
 	gchar *min_str;
@@ -1623,6 +1669,9 @@ static void parameter_range_digits_on_activate(GtkEntry * entry, struct gebr_gui
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
+/**
+ * \internal
+ */
 static gboolean
 parameter_range_digits_on_focus_out(GtkEntry * entry, GdkEvent * event, struct gebr_gui_parameter_widget *widget)
 {
@@ -1630,6 +1679,9 @@ parameter_range_digits_on_focus_out(GtkEntry * entry, GdkEvent * event, struct g
 	return FALSE;
 }
 
+/**
+ * \internal
+ */
 static void parameter_enum_options_changed(EnumOptionEdit * enum_option_edit, struct ui_parameter_dialog *ui)
 {
 	parameter_reconfigure_default_widget(ui);
@@ -1637,7 +1689,8 @@ static void parameter_enum_options_changed(EnumOptionEdit * enum_option_edit, st
 }
 
 /**
- * Callback function to select a space separator
+ * \internal
+ * Callback function to select a space separator.
  */
 static void parameter_is_radio_button_space_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui)
 {
@@ -1650,7 +1703,8 @@ static void parameter_is_radio_button_space_toggled(GtkToggleButton * toggle_but
 }
 
 /**
- * Callback function to select a comma separator
+ * \internal
+ * Callback function to select a comma separator.
  */
 static void parameter_is_radio_button_comma_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui)
 {
@@ -1665,7 +1719,8 @@ static void parameter_is_radio_button_comma_toggled(GtkToggleButton * toggle_but
 }
 
 /**
- * Callback function to select any other separator
+ * \internal
+ * Callback function to select any other separator.
  */
 static void parameter_is_radio_button_other_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui)
 {

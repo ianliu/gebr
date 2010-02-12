@@ -30,6 +30,8 @@ static void
 __gebr_gui_gtk_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIconPosition icon_pos, GdkEvent * event,
 						GebrGuiGtkFileEntry * file_entry);
 
+static gboolean on_mnemonic_activate(GebrGuiGtkFileEntry * file_entry);
+
 /*
  * gobject stuff
  */
@@ -106,6 +108,7 @@ static void gebr_gui_gtk_file_entry_init(GebrGuiGtkFileEntry * file_entry)
 	g_signal_connect(GTK_ENTRY(entry), "changed", G_CALLBACK(__gebr_gui_gtk_file_entry_entry_changed), file_entry);
 	g_signal_connect(entry, "icon-release",
 			 G_CALLBACK(__gebr_gui_gtk_file_entry_browse_button_clicked), file_entry);
+	g_signal_connect(file_entry, "mnemonic-activate", G_CALLBACK(on_mnemonic_activate), NULL);
 	gtk_entry_set_icon_from_stock(GTK_ENTRY(entry), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
 
 	file_entry->choose_directory = FALSE;
@@ -154,6 +157,12 @@ __gebr_gui_gtk_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIcon
 	gtk_widget_destroy(GTK_WIDGET(chooser_dialog));
 }
 
+static gboolean on_mnemonic_activate(GebrGuiGtkFileEntry * file_entry)
+{
+	gtk_widget_mnemonic_activate(file_entry->entry, TRUE);
+	return TRUE;
+}
+
 /*
  * Library functions
  */
@@ -199,3 +208,4 @@ const gchar *gebr_gui_gtk_file_entry_get_path(GebrGuiGtkFileEntry * file_entry)
 {
 	return gtk_entry_get_text(GTK_ENTRY(file_entry->entry));
 }
+

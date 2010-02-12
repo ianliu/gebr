@@ -32,18 +32,25 @@
  */
 
 static void gebr_gui_parameter_widget_find_dict_parameter(struct gebr_gui_parameter_widget *widget);
+
 static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_parameter_widget *widget);
+
 static void
 on_dict_clicked(GtkEntry * entry, GtkEntryIconPosition icon_pos, GdkEventButton * event,
 		struct gebr_gui_parameter_widget *widget);
+
 static void
 gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * entry, GtkMenu * menu,
 							struct gebr_gui_parameter_widget *widget);
+
 static gboolean gebr_gui_parameter_widget_can_use_dict(struct gebr_gui_parameter_widget *widget);
+
 static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_parameter_widget *widget);
 
+static gboolean on_list_widget_mnemonic_activate(GtkBox * box, gboolean cycle,
+						 struct gebr_gui_parameter_widget *widget);
+
 /*
- * Section: Private
  * Internal stuff
  */
 
@@ -368,9 +375,9 @@ __on_sequence_edit_changed(GtkSequenceEdit * sequence_edit,
 static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget, struct gebr_gui_parameter_widget
 							      *gebr_gui_parameter_widget);
 
-/*
- * Function: __on_edit_list_toggled
- * Take action to start/finish editing list of parameter's values
+/**
+ * \internal
+ * Take action to start/finish editing list of parameter's values.
  */
 static void
 __on_edit_list_toggled(GtkToggleButton * toggle_button, struct gebr_gui_parameter_widget *gebr_gui_parameter_widget)
@@ -496,8 +503,9 @@ __validate_on_leaving(GtkWidget * widget, GdkEventFocus * event,
 	return FALSE;
 }
 
-/* Function: gebr_gui_parameter_widget_configure
- * Create UI
+/**
+ * \internal
+ * Create UI.
  */
 static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget *gebr_gui_parameter_widget)
 {
@@ -646,6 +654,8 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		}
 
 		gebr_gui_parameter_widget->widget = vbox;
+		g_signal_connect(vbox, "mnemonic-activate",
+				 G_CALLBACK(on_list_widget_mnemonic_activate), gebr_gui_parameter_widget);
 	} else {
 		gebr_gui_parameter_widget->widget = gebr_gui_parameter_widget->value_widget;
 		gebr_gui_parameter_widget->gebr_gui_value_sequence_edit = NULL;
@@ -914,13 +924,24 @@ static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_p
 	gebr_gui_parameter_widget_update(widget);
 }
 
+/**
+ * \internal
+ */
+static gboolean on_list_widget_mnemonic_activate(GtkBox * box, gboolean cycle, struct gebr_gui_parameter_widget *widget)
+{
+	gboolean sensitive;
+	g_object_get(G_OBJECT(widget->list_value_widget), "sensitive", &sensitive, NULL);
+	gtk_widget_mnemonic_activate(sensitive? widget->list_value_widget:
+				     GTK_WIDGET(widget->gebr_gui_value_sequence_edit), TRUE);
+	return TRUE;
+}
+
 /*
  * Public functions
  */
 
-/*
- * Function: gebr_gui_parameter_widget_new
- * Create a new parameter widget
+/**
+ * Create a new parameter widget.
  */
 struct gebr_gui_parameter_widget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter * parameter,
 								gboolean use_default_value, gpointer data)
@@ -929,9 +950,16 @@ struct gebr_gui_parameter_widget *gebr_gui_parameter_widget_new(GebrGeoXmlParame
 
 	gebr_gui_parameter_widget = g_malloc(sizeof(struct gebr_gui_parameter_widget));
 	*gebr_gui_parameter_widget = (struct gebr_gui_parameter_widget) {
-	.parameter = parameter,.program_parameter = GEBR_GEOXML_PROGRAM_PARAMETER(parameter),.parameter_type =
-		    gebr_geoxml_parameter_get_type(parameter),.use_default_value = use_default_value,.data =
-		    data,.dict_parameter = NULL,.dicts = NULL,.callback = NULL,.user_data = NULL};
+		.parameter = parameter,
+		.program_parameter = GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
+		.parameter_type = gebr_geoxml_parameter_get_type(parameter),
+		.use_default_value = use_default_value,
+		.data = data,
+		.dict_parameter = NULL,
+		.dicts = NULL,
+		.callback = NULL,
+		.user_data = NULL
+	};
 
 	gebr_gui_parameter_widget_configure(gebr_gui_parameter_widget);
 
@@ -1009,9 +1037,6 @@ void gebr_gui_parameter_widget_update_list_separator(struct gebr_gui_parameter_w
 	__parameter_list_value_widget_update(gebr_gui_parameter_widget);
 }
 
-/* Function: gebr_gui_parameter_widget_reconfigure
- * Rebuild the UI
- */
 void gebr_gui_parameter_widget_reconfigure(struct gebr_gui_parameter_widget *gebr_gui_parameter_widget)
 {
 	gebr_gui_parameter_widget->parameter_type =
@@ -1023,3 +1048,4 @@ void gebr_gui_parameter_widget_reconfigure(struct gebr_gui_parameter_widget *geb
 
 	gebr_gui_parameter_widget_configure(gebr_gui_parameter_widget);
 }
+
