@@ -223,8 +223,12 @@ void on_menu_save_as_activate(void)
 	GString *path;
 	gchar *tmp;
 	gchar *dirname;
-	gchar *filename_new;
+	gchar *filename;
 	gchar *current_path;
+	GtkTreeIter iter_other;
+	GtkTreeIter child;
+	gboolean is_overwrite = FALSE;
+	gchar *dirpath;
 
 	if (!menu_get_selected(&iter, TRUE)){
 		debr_message(GEBR_LOG_INFO, _("Menu not selected."));
@@ -259,23 +263,57 @@ void on_menu_save_as_activate(void)
 	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 	path = g_string_new(tmp);
 	gebr_append_filename_extension(path, ".mnu");
-	filename_new = g_path_get_basename(path->str);
+	filename = g_path_get_basename(path->str);
+
+	/*Verify if another file with same name already exist*/
+
+	gebr_gui_gtk_tree_model_foreach(iter_other, GTK_TREE_MODEL(debr.ui_menu.model)) {
+		gboolean valid;
+
+		if (!is_overwrite){
+			valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, &iter_other);
+			while (valid) {
+				gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_PATH, &dirpath, -1);
+				if (!dirpath)
+					continue;
+
+				if (strcmp(dirpath, path->str) == 0) {
+					is_overwrite = TRUE;
+					break;
+				}
+				valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);		
+			}
+		}
+	}
+	/**/
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_PATH, &current_path, -1);
 
-	// if the user saved on top of the same file
-	if (strcmp(current_path, path->str) == 0) 
+	// if the user saved on top of the same file...
+	if (strcmp(current_path, path->str) == 0)
 		menu_save(&iter);
-	// else, append another iterator in the correct location
+	//...or saved over an other file...
+	else if (is_overwrite) {
+		GebrGeoXmlFlow * menu;
+		filename = g_path_get_basename(dirpath);
+
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_XMLPOINTER, &menu, -1);
+		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(menu));
+
+		menu = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(debr.menu)));
+		menu_load_iter(path->str, &child, menu, TRUE);
+		menu_save(&child);
+	}
+	//...or creating a new file 
 	else {
 		gchar *label;
 		menu_path_get_parent(path->str, &parent);
 		if (gebr_gui_gtk_tree_iter_equal_to(&parent, &debr.ui_menu.iter_other)) {
 			dirname = g_path_get_dirname(path->str);
-			label = g_markup_printf_escaped("%s <span color='#666666'><i>%s</i></span>", filename_new, dirname);
+			label = g_markup_printf_escaped("%s <span color='#666666'><i>%s</i></span>", filename, dirname);
 			g_free(dirname);
 		} else
-			label = g_markup_printf_escaped("%s", filename_new);
+			label = g_markup_printf_escaped("%s", filename);
 
 		gtk_tree_store_append(debr.ui_menu.model, &copy, &parent);
 		gebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(debr.ui_menu.model), &copy, &iter);
@@ -293,7 +331,7 @@ void on_menu_save_as_activate(void)
 	/* frees */
 	g_string_free(path, TRUE);
 	g_free(tmp);
-	g_free(filename_new);
+	g_free(filename);
 	g_free(current_path);
 
  out:	gtk_widget_destroy(chooser_dialog);

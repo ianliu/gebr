@@ -116,6 +116,12 @@ GebrGeoXmlFlow *menu_load(const gchar * path);
 void menu_load_user_directory(void);
 
 /**
+ * Load \p menu saved at \p path into \p iter.
+ * If \p select is TRUE then select \p iter.
+ */
+void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * menu, gboolean select);
+
+/**
  * Loads a menu at \p path and append it to \p parent.
  *
  * @param path The path for the menu on the file system.

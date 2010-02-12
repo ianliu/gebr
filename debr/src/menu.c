@@ -232,18 +232,12 @@ void menu_new(gboolean edit)
 			   MENU_STATUS, MENU_STATUS_UNSAVED,
 			   MENU_IMAGE, GTK_STOCK_NO,
 			   MENU_FILENAME, new_menu_str->str, MENU_XMLPOINTER, (gpointer) debr.menu, MENU_PATH, "", -1);
-	gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(debr.ui_menu.tree_view), &iter);
-
 	menu_select_iter(&iter);
 
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
 	if (edit) {
-		if (menu_dialog_setup_ui()) {
-			menu_saved_status_set(MENU_STATUS_UNSAVED);
-		} else {
-			GtkTreeIter iter;
-			if (menu_get_selected(&iter, FALSE))
-				menu_close(&iter);
-		}
+		if (!menu_dialog_setup_ui())
+			menu_close(&iter);
 	}
 
 	g_string_free(new_menu_str, TRUE);
@@ -311,21 +305,53 @@ void menu_load_user_directory(void)
 		menu_select_iter(&iter);
 }
 
+void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * menu, gboolean select)
+{
+	const gchar *date;
+	gchar *tmp;
+	gchar *label;
+	gchar *filename;
+	GtkTreeIter parent;
+
+	filename = g_path_get_basename(path);
+	date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(menu));
+	tmp = (strlen(date))
+	    ? g_strdup_printf("%ld", gebr_iso_date_to_g_time_val(date).tv_sec)
+	    : g_strdup_printf("%ld", gebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
+
+	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_menu.model), &parent, iter);
+	if (gebr_gui_gtk_tree_iter_equal_to(&debr.ui_menu.iter_other, &parent)) {
+		gchar *dirname;
+
+		dirname = g_path_get_dirname(path);
+		label = g_markup_printf_escaped("%s <span color='#666666'><i>%s</i></span>", filename, dirname);
+		g_free(dirname);
+	} else
+		label = g_markup_printf_escaped("%s", filename);
+
+	gtk_tree_store_set(debr.ui_menu.model, iter,
+			   MENU_STATUS, MENU_STATUS_SAVED,
+			   MENU_IMAGE, GTK_STOCK_FILE,
+			   MENU_FILENAME, label, MENU_MODIFIED_DATE, tmp, MENU_XMLPOINTER, menu, MENU_PATH, path, -1);
+	/* select it and load its contents into UI */
+	if (select == TRUE) {
+		menu_select_iter(iter);
+		menu_selected();
+	}
+
+	g_free(filename);
+	g_free(label);
+	g_free(tmp);
+}
+
 void menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select)
 {
 	GtkTreeIter child;
 	gboolean valid;
 
-	const gchar *date;
-	gchar *tmp;
 	GebrGeoXmlFlow *menu;
 
-	gchar *label;
-	gchar *dirname;
-	gchar *filename;
-
 	valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, parent);
-
 	while (valid) {
 		gchar *ipath;
 
@@ -345,34 +371,8 @@ void menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean se
 	if (menu == NULL)
 		return;
 
-	filename = g_path_get_basename(path);
-	date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(menu));
-	tmp = (strlen(date))
-	    ? g_strdup_printf("%ld", gebr_iso_date_to_g_time_val(date).tv_sec)
-	    : g_strdup_printf("%ld", gebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
-
-	if (gebr_gui_gtk_tree_iter_equal_to(&debr.ui_menu.iter_other, parent)) {
-		dirname = g_path_get_dirname(path);
-		label = g_markup_printf_escaped("%s <span color='#666666'><i>%s</i></span>", filename, dirname);
-		g_free(dirname);
-	} else
-		label = g_markup_printf_escaped("%s", filename);
-
 	gtk_tree_store_append(debr.ui_menu.model, &child, parent);
-	gtk_tree_store_set(debr.ui_menu.model, &child,
-			   MENU_STATUS, MENU_STATUS_SAVED,
-			   MENU_IMAGE, GTK_STOCK_FILE,
-			   MENU_FILENAME, label, MENU_MODIFIED_DATE, tmp, MENU_XMLPOINTER, menu, MENU_PATH, path, -1);
-
-	/* select it and load its contents into UI */
-	if (select == TRUE) {
-		menu_select_iter(&child);
-		menu_selected();
-	}
-
-	g_free(filename);
-	g_free(label);
-	g_free(tmp);
+	menu_load_iter(path, &child, menu, select);
 }
 
 void menu_open(const gchar * path, gboolean select)
@@ -400,7 +400,6 @@ gboolean menu_save(GtkTreeIter * iter)
 
 	filename = g_path_get_basename(path);
 	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(menu), filename);
-
 	gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(menu), gebr_iso_date());
 	gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path);
 
