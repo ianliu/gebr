@@ -1,7 +1,3 @@
-/**
- * @file ui_project_line.c Builds the "Project and Lines" UI and distribute callbacks
- */
-
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -326,16 +322,9 @@ void project_line_info_update(void)
 	navigation_bar_update();
 }
 
-/*
- * Function: project_line_set_selected
- * Select _iter_ associated with _document_
- */
-void project_line_set_selected(GtkTreeIter * iter, GebrGeoXmlDocument * document)
+void project_line_select_iter(GtkTreeIter * iter)
 {
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
-	gtk_tree_store_set(gebr.ui_project_line->store, iter,
-			   PL_TITLE, gebr_geoxml_document_get_title(document),
-			   PL_FILENAME, gebr_geoxml_document_get_filename(document), -1);
 	project_line_load();
 }
 
@@ -457,9 +446,10 @@ void project_line_import(void)
 			g_string_printf(new_title, _("%s (Imported)"), gebr_geoxml_document_get_title(document));
 			gebr_geoxml_document_set_title(document, new_title->str);
 			document_save(document);
-			project_line_set_selected(&iter, document);
-
 			gebr_geoxml_document_free(document);
+
+			project_line_select_iter(&iter);
+
 			g_string_free(new_title, TRUE);
 		}
 	}

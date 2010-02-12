@@ -663,49 +663,6 @@ gebr_gui_gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GebrGuiGtkPop
 	g_signal_connect(tree_view, "popup-menu", G_CALLBACK(__gtk_widget_on_popup_menu), popup_callback);
 }
 
-void gebr_gui_gtk_tree_view_select_sibling(GtkTreeView * tree_view)
-{
-	GtkTreeSelection *selection;
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-
-	model = gtk_tree_view_get_model(tree_view);
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
-	if (gtk_tree_selection_get_mode(selection) != GTK_SELECTION_MULTIPLE &&
-	    gtk_tree_selection_get_selected(selection, NULL, &iter)) {
-		GtkTreeIter next_iter;
-
-		next_iter = iter;
-		if (gtk_tree_model_iter_next(model, &next_iter)) {
-			gebr_gui_gtk_tree_view_select_iter(tree_view, &next_iter);
-			g_signal_emit_by_name(tree_view, "cursor-changed");
-		} else {
-			GtkTreePath *path;
-
-			path = gtk_tree_model_get_path(model, &iter);
-			if (gtk_tree_path_prev(path)) {
-				gtk_tree_selection_select_path(selection, path);
-				g_signal_emit_by_name(tree_view, "cursor-changed");
-			} else
-				goto none;
-
-			gtk_tree_path_free(path);
-		}
-
-		return;
-	} else
-		gtk_tree_selection_unselect_all(selection);
-
-	if (gtk_tree_model_get_iter_first(model, &iter)) {
-		gebr_gui_gtk_tree_view_select_iter(tree_view, &iter);
-		g_signal_emit_by_name(tree_view, "cursor-changed");
-		return;
-	}
-
- none:	gtk_tree_selection_unselect_all(selection);
-	g_signal_emit_by_name(tree_view, "cursor-changed");
-}
-
 #if GTK_CHECK_VERSION(2,12,0)
 struct tooltip_data {
 	GebrGuiGtkTreeViewTooltipCallback callback;

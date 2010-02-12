@@ -758,10 +758,9 @@ static void on_delete_server_io_activate(GtkWidget * menu_item, struct ui_flow_i
 
 	gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter, FLOW_IO_FLOW_SERVER_POINTER, &server, -1);
 
-	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(ui_flow_io->treeview));
-
 	gebr_geoxml_sequence_remove(server);
-	gtk_list_store_remove(ui_flow_io->store, &iter);
+	if (gtk_list_store_remove(ui_flow_io->store, &iter))
+		gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(ui_flow_io->treeview), &iter);
 
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 }

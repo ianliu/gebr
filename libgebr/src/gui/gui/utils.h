@@ -299,15 +299,6 @@ void
 gebr_gui_gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GebrGuiGtkPopupCallback callback,
 					  gpointer user_data);
 
-/**
- * Selects the next sibling of the currently selected iter.
- *
- * Used when the selected iter is about to be removed so the next or previous (if it is the last) is selected If nothing
- * is selected or the selection mode is multiple, then the first iter (if exists) is selected. So this function can be
- * used just to select the first iter.
- */
-void gebr_gui_gtk_tree_view_select_sibling(GtkTreeView * tree_view);
-
 #if GTK_CHECK_VERSION(2,12,0)
 /**
  * Callback for \ref gebr_gui_gtk_tree_view_set_tooltip_callback.

@@ -46,19 +46,19 @@ void project_new(void)
 	gebr_geoxml_document_set_title(project, _("New project"));
 	gebr_geoxml_document_set_author(project, gebr.config.username->str);
 	gebr_geoxml_document_set_email(project, gebr.config.email->str);
-	document_save(project);
 
 	gtk_tree_store_append(gebr.ui_project_line->store, &iter, NULL);
 	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
 			   PL_TITLE, gebr_geoxml_document_get_title(project),
 			   PL_FILENAME, gebr_geoxml_document_get_filename(project), -1);
-	project_line_set_selected(&iter, GEBR_GEOXML_DOCUMENT(project));
-	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New project created"));
+	document_save(project);
+	gebr_geoxml_document_free(project);
 
+	project_line_select_iter(&iter);
 	if (!on_document_properties_activate())
 		project_delete(FALSE);
 
-	gebr_geoxml_document_free(project);
+	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New project created"));
 }
 
 /**
@@ -101,10 +101,10 @@ gboolean project_delete(gboolean confirm)
 	project_line_info_update();
 
 	/* Remove the project from the store (and its children) */
-	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), &iter);
+	if (gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), &iter))
+		project_line_select_iter(&iter);
 
- out:	g_free(title);
+out:	g_free(title);
 	g_free(filename);
 
 	return TRUE;

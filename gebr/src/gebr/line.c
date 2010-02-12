@@ -79,17 +79,17 @@ gboolean line_new(void)
 	gebr_geoxml_project_append_line(gebr.project, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(line)));
 	document_save(GEBR_GEOXML_DOC(gebr.project));
 	document_save(GEBR_GEOXML_DOC(line));
+	gebr_geoxml_document_free(GEBR_GEOXML_DOC(line));
 
 	/* feedback */
 	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New line created in project '%s'"), project_title);
-	project_line_set_selected(&line_iter, GEBR_GEOXML_DOCUMENT(line));
 
+	project_line_select_iter(&line_iter);
 	if (!on_document_properties_activate())
 		line_delete(FALSE);
 
 	g_free(project_title);
 	g_free(project_filename);
-	gebr_geoxml_document_free(GEBR_GEOXML_DOC(line));
 
 	return TRUE;
 }
@@ -140,6 +140,7 @@ gboolean line_delete(gboolean confirm)
 			break;
 		}
 	}
+	document_delete(line_filename);
 
 	/* inform the user */
 	if (confirm) {
@@ -150,11 +151,9 @@ gboolean line_delete(gboolean confirm)
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.project)));
 	}
 
-	/* finally, remove it from the disk */
-	document_delete(line_filename);
-	/* and from the GUI */
-	gebr_gui_gtk_tree_view_select_sibling(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), &iter);
+	/* remove from the GUI */
+	if (gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), &iter))
+		project_line_select_iter(&iter);
 
 	return TRUE;
 }
