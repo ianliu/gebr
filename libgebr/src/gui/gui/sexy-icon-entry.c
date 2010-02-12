@@ -112,7 +112,7 @@ static void sexy_icon_entry_class_init(SexyIconEntryClass * klass)
 	 * The ::icon-press signal is emitted when an icon is clicked.
 	 */
 	signals[ICON_PRESS] =
-	    g_signal_new("icon_press",
+	    g_signal_new("icon_release",
 			 G_TYPE_FROM_CLASS(gobject_class),
 			 G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
 			 G_STRUCT_OFFSET(SexyIconEntryClass, icon_press),
