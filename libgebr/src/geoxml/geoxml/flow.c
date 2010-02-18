@@ -396,7 +396,7 @@ GebrGeoXmlProgram *gebr_geoxml_flow_append_program(GebrGeoXmlFlow * flow)
 	gebr_geoxml_program_set_stdin((GebrGeoXmlProgram *) element, FALSE);
 	gebr_geoxml_program_set_stdout((GebrGeoXmlProgram *) element, FALSE);
 	gebr_geoxml_program_set_stderr((GebrGeoXmlProgram *) element, FALSE);
-	gebr_geoxml_program_set_status((GebrGeoXmlProgram *) element, "unconfigured");
+	gebr_geoxml_program_set_status((GebrGeoXmlProgram *) element, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
 	__gebr_geoxml_insert_new_element(element, "title", NULL);
 	__gebr_geoxml_insert_new_element(element, "binary", NULL);
 	__gebr_geoxml_insert_new_element(element, "description", NULL);

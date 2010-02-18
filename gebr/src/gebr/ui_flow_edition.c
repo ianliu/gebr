@@ -96,6 +96,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 
 	combobox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(gebr.ui_server_list->common.store));
 	renderer = gtk_cell_renderer_pixbuf_new();
+	g_object_set(renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, FALSE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "pixbuf", SERVER_STATUS_ICON);
 	renderer = gtk_cell_renderer_text_new();
@@ -163,7 +164,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	/* Double click on flow component open its parameter window */
 	g_signal_connect(ui_flow_edition->fseq_view, "row-activated",
 			 G_CALLBACK(flow_edition_component_activated), ui_flow_edition);
-	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_edition->fseq_view)), "cursor-changed",
+	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_edition->fseq_view)), "changed",
 			 G_CALLBACK(flow_edition_component_selected), ui_flow_edition);
 
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_edition->fseq_view);
@@ -312,19 +313,19 @@ void flow_edition_status_changed(void)
 	GtkTreeIter iter;
 	GtkRadioAction *radio_action;
 	const gchar *icon;
-	const gchar *status_str;
+	GebrGeoXmlProgramStatus status;
 
 	radio_action =
 	    GTK_RADIO_ACTION(gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured"));
 	switch (gtk_radio_action_get_current_value(radio_action)) {
 	case FSEQ_PROGRAM_CONFIGURED:
-		status_str = "configured";
+		status = GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED;
 		break;
 	case FSEQ_PROGRAM_DISABLED:
-		status_str = "disabled";
+		status = GEBR_GEOXML_PROGRAM_STATUS_DISABLED;
 		break;
 	case FSEQ_PROGRAM_UNCONFIGURED:
-		status_str = "unconfigured";
+		status = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
 		break;
 	default:
 		return;
@@ -339,16 +340,15 @@ void flow_edition_status_changed(void)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
 				   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
-		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), status_str);
+		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), status);
 		icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(program));
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_ICON_COLUMN, icon, -1);
 	}
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 }
 
-/* Function: flow_edition_on_server_changed
- * Update flow edition interface with information of the
- * current selected server
+/**
+ * Update flow edition interface with information of the current selected server.
  */
 void flow_edition_on_server_changed(void)
 {
@@ -356,7 +356,6 @@ void flow_edition_on_server_changed(void)
 }
 
 /*
- * Section: Private
  * Private functions
  */
 
@@ -442,7 +441,7 @@ flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * 
 static void flow_edition_component_selected(void)
 {
 	GtkTreeIter iter;
-	const gchar *status;
+	GtkToggleAction *toggle_action;
 
 	gebr.program = NULL;
 	if (!flow_edition_get_selected_component(&iter, FALSE))
@@ -453,20 +452,25 @@ static void flow_edition_component_selected(void)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
 			   FSEQ_GEBR_GEOXML_POINTER, &gebr.program, -1);
-	status = gebr_geoxml_program_get_status(gebr.program);
 
-	if (!strcmp(status, "configured"))
-		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,
-											   "flow_edition_status_configured")),
-					     TRUE);
-	else if (!strcmp(status, "disabled"))
-		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,
-											   "flow_edition_status_disabled")),
-					     TRUE);
-	else if (!strcmp(status, "unconfigured"))
-		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,
-											   "flow_edition_status_unconfigured")),
-					     TRUE);
+	switch(gebr_geoxml_program_get_status(gebr.program)) {
+	case GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED:
+		toggle_action = GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,
+									      "flow_edition_status_configured"));
+		break;
+	case GEBR_GEOXML_PROGRAM_STATUS_DISABLED:
+		toggle_action = GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,
+									      "flow_edition_status_disabled"));
+		break;
+	case GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED:
+		toggle_action = GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,
+									      "flow_edition_status_unconfigured"));
+		break;
+	default:
+		return;
+	}
+
+	gtk_toggle_action_set_active(toggle_action, TRUE);
 
 	if (strlen(gebr_geoxml_program_get_help(gebr.program)) == 0)	
 		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_edition_help"), FALSE);

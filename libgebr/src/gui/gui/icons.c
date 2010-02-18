@@ -129,11 +129,30 @@ const gchar * gebr_gui_get_program_icon(GebrGeoXmlProgram * program)
 	static gchar string[51];
 
 	GString * temp;
+	const gchar * postfix;
+	GebrGeoXmlProgramStatus status;
+
+	status = gebr_geoxml_program_get_status(program);
+	if (status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED ||
+	    status == GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN)
+		return GTK_STOCK_DIALOG_WARNING;
+
+	switch(status) {
+	case GEBR_GEOXML_PROGRAM_STATUS_DISABLED:
+		postfix = "disabled";
+		break;
+	case GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED:
+		postfix = "configured";
+		break;
+	default:
+		postfix = "";
+		break;
+	}
 	temp = g_string_new(NULL);
 	g_string_printf(temp, "pipe-%c%c-%s",
 			gebr_geoxml_program_get_stdin(program)? 'o' : 'c',
 			gebr_geoxml_program_get_stdout(program)? 'o' : 'c',
-			gebr_geoxml_program_get_status(program));
+			postfix);
 	strcpy(string, temp->str);
 	if (temp->len > 50)
 		g_error("%s:%d: Icon name length is greater than 50, report to GeBR developers", __FILE__, __LINE__);

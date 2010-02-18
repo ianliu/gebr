@@ -102,11 +102,28 @@ void gebr_geoxml_program_set_stderr(GebrGeoXmlProgram * program, const gboolean 
 	__gebr_geoxml_set_attr_value((GdomeElement *) program, "stderr", (enable == TRUE ? "yes" : "no"));
 }
 
-void gebr_geoxml_program_set_status(GebrGeoXmlProgram * program, const gchar * status)
+void gebr_geoxml_program_set_status(GebrGeoXmlProgram * program, GebrGeoXmlProgramStatus status)
 {
+	const gchar * status_str;
+
 	if (program == NULL)
 		return;
-	__gebr_geoxml_set_attr_value((GdomeElement *) program, "status", status);
+
+	switch(status) {
+	case GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED:
+		status_str = "unconfigured";
+		break;
+	case GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED:
+		status_str = "configured";
+		break;
+	case GEBR_GEOXML_PROGRAM_STATUS_DISABLED:
+		status_str = "disabled";
+		break;
+	default:
+		status_str = "";
+		break;
+	}
+	__gebr_geoxml_set_attr_value((GdomeElement *) program, "status", status_str);
 }
 
 void gebr_geoxml_program_set_title(GebrGeoXmlProgram * program, const gchar * title)
@@ -169,11 +186,25 @@ gboolean gebr_geoxml_program_get_stderr(GebrGeoXmlProgram * program)
 	    ? TRUE : FALSE;
 }
 
-const gchar *gebr_geoxml_program_get_status(GebrGeoXmlProgram * program)
+GebrGeoXmlProgramStatus gebr_geoxml_program_get_status(GebrGeoXmlProgram * program)
 {
+	const gchar *status;
+
 	if (program == NULL)
-		return NULL;
-	return __gebr_geoxml_get_attr_value((GdomeElement *) program, "status");
+		return GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN;
+
+	status = __gebr_geoxml_get_attr_value((GdomeElement *) program, "status");
+
+	if (!strcmp(status, "unconfigured"))
+		return GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
+
+	if (!strcmp(status, "configured"))
+		return GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED;
+
+	if (!strcmp(status, "disabled"))
+		return GEBR_GEOXML_PROGRAM_STATUS_DISABLED;
+
+	return GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN;
 }
 
 const gchar *gebr_geoxml_program_get_title(GebrGeoXmlProgram * program)

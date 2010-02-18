@@ -417,7 +417,7 @@ void flow_export_as_menu(void)
 
 		flow_export_parameters_cleanup(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)),
 					       use_value);
-		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), "unconfigured");
+		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
 	}
 
 	gebr_geoxml_flow_io_set_input(flow, "");

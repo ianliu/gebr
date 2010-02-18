@@ -1,3 +1,7 @@
+/**
+ * \file ui_parameters.c Program's parameter window stuff.
+ */
+
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -14,11 +18,6 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see
  *   <http://www.gnu.org/licenses/>.
- */
-
-/*
- * File: ui_parameters.c
- * Program's parameter window stuff
  */
 
 #include <stdlib.h>
@@ -53,17 +52,13 @@ static gboolean
 parameters_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_parameters *ui_parameters);
 
 /*
- * Section: Public
  * Public functions.
  */
 
-/*
- * Function: parameters_configure_setup_ui
- * Assembly a dialog to configure the current selected program's parameters
+/**
+ * Assembly a dialog to configure the current selected program's parameters.
  *
- * Return:
- * The structure containing relevant data. It will be automatically freed when the
- * dialog closes.
+ * \return The structure containing relevant data. It will be automatically freed when the dialog closes.
  */
 struct ui_parameters *parameters_configure_setup_ui(void)
 {
@@ -175,14 +170,11 @@ void parameters_reset_to_default(GebrGeoXmlParameters * parameters)
 }
 
 /*
- * Section: Private
  * Private functions.
  */
 
-/*
- * Function: parameters_actions
- * Take the appropriate action when the parameter dialog emmits
- * a response signal.
+/**
+ * Take the appropriate action when the parameter dialog emmits a response signal.
  */
 static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters *ui_parameters)
 {
@@ -192,7 +184,7 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 			const gchar * icon;
 
 			gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(ui_parameters->program_edit->program),
-						       "configured");
+						       GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 			gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(ui_parameters->program_edit->program),
 							 GEBR_GEOXML_SEQUENCE(gebr.program));
 			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(gebr.program));

@@ -80,6 +80,13 @@
  * - Madagascar: http://rsf.sourceforge.net
  */
 
+typedef enum {
+	GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN = 0,
+	GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED,
+	GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED,
+	GEBR_GEOXML_PROGRAM_STATUS_DISABLED,
+} GebrGeoXmlProgramStatus;
+
 /**
  * Promote a sequence to a program.
  */
@@ -147,7 +154,7 @@ void gebr_geoxml_program_set_stderr(GebrGeoXmlProgram * program, const gboolean 
 /**
  *
  */
-void gebr_geoxml_program_set_status(GebrGeoXmlProgram * program, const gchar * status);
+void gebr_geoxml_program_set_status(GebrGeoXmlProgram * program, GebrGeoXmlProgramStatus status);
 
 /**
  *
@@ -192,7 +199,7 @@ gboolean gebr_geoxml_program_get_stderr(GebrGeoXmlProgram * program);
 /**
  *
  */
-const gchar *gebr_geoxml_program_get_status(GebrGeoXmlProgram * program);
+GebrGeoXmlProgramStatus gebr_geoxml_program_get_status(GebrGeoXmlProgram * program);
 
 /**
  *

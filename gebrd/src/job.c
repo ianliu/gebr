@@ -518,8 +518,8 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 
 	/* Check if there is configured programs */
 	gebr_geoxml_flow_get_program(flow, &program, 0);
-	while (program != NULL
-	       && strcmp(gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)), "configured") != 0) {
+	while (program != NULL &&
+	       gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
 		g_string_append_printf(job->issues, _("%u) Skiping disabled/unconfigured program '%s.'\n"),
 				       ++issue_number, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
 
@@ -576,7 +576,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 	gebr_geoxml_sequence_next(&program);
 	while (program != NULL) {
 		/* Skiping disabled/unconfigured programs */
-		if (strcmp(gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)), "configured") != 0) {
+		if (gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
 			g_string_append_printf(job->issues, _("%u) Skiping disabled/unconfigured program '%s'.\n"),
 					       ++issue_number,
 					       gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
