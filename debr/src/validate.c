@@ -40,6 +40,7 @@ struct validate {
 	GtkTreeIter iter;
 	GebrGeoXmlFlow *menu;
 
+	GHashTable *hotkey_table;
 	guint error_count;
 };
 
@@ -232,10 +233,9 @@ static void validate_clicked(void)
 
 /* Prototypes */
 static void validate_append_check(struct validate *validate, const gchar * value, int flags, const gchar * format, ...);
-static void show_parameter(struct validate *validate, GebrGeoXmlParameter * parameter,
-			   GHashTable * hotkey_table, gint ipar);
+static void show_parameter(struct validate *validate, GebrGeoXmlParameter * parameter, gint ipar);
 static void show_program_parameter(struct validate *validate, GebrGeoXmlProgramParameter * pp,
-				   GHashTable * hotkey_table, gint ipar, guint isubpar);
+				   gint ipar, guint isubpar);
 
 #define VALID		TRUE
 #define INVALID		FALSE
@@ -246,7 +246,8 @@ enum VALIDATE_FLAGS {
 	MTBLK = 1 << 3,
 	NOPNT = 1 << 4,
 	EMAIL = 1 << 5,
-	FILEN = 1 << 6
+	FILEN = 1 << 6,
+	LABEL_HOTKEY = 1 << 7,
 };
 
 /**
@@ -494,7 +495,8 @@ static void validate_do(struct validate *validate)
 
 		if (params || all) {
 			GHashTable *hotkey_table;
-			hotkey_table = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal, (GDestroyNotify)g_free, NULL);
+
+			validate->hotkey_table = hotkey_table = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal, (GDestroyNotify)g_free, NULL);
 
 			validate_append_text_emph(validate, _("  >>Parameters:\n"));
 
@@ -502,14 +504,14 @@ static void validate_do(struct validate *validate)
 							  (gebr_geoxml_program_get_parameters(prog)));
 
 			while (parameter != NULL) {
-				show_parameter(validate, parameter, hotkey_table, ++j);
+				show_parameter(validate, parameter, ++j);
 				gebr_geoxml_sequence_next((GebrGeoXmlSequence **) & parameter);
 			}
 			g_hash_table_unref(hotkey_table);
 		}
 	}
 
- out:	validate_append_text_emph(validate, _("%d potencial error(s)"), validate->error_count);
+out:	validate_append_text_emph(validate, _("%d potential error(s)"), validate->error_count);
 }
 
 /**
@@ -615,7 +617,7 @@ static gboolean check_is_email(const gchar * str)
 
 /**
  * \internal
- * VALID if str passed through all selected tests
+ * VALID if \p value passed through all selected tests
  */
 static void validate_append_check(struct validate *validate, const gchar * value, int flags, const gchar * format, ...)
 {
@@ -647,6 +649,31 @@ static void validate_append_check(struct validate *validate, const gchar * value
 		validate->error_count++;
 	}
 
+	if (flags & LABEL_HOTKEY) {
+		gchar * underscore;
+
+		underscore = strchr(value, '_');
+		if (underscore) {
+			GString *label_ext;
+			gint length;
+			gchar * uppercase;
+			gchar hotkey[6];
+
+			label_ext = g_string_new("");
+			length = g_unichar_to_utf8(g_utf8_get_char(underscore + 1), hotkey);
+			uppercase = g_utf8_strup(hotkey, length);
+			if (g_hash_table_lookup(validate->hotkey_table, uppercase)) {
+				g_string_printf(label_ext, " (Alt+%s%s)", uppercase, _(", already used above"));
+				validate_append_text_error(validate, label_ext->str);
+				++validate->error_count;
+				result = INVALID;
+			}
+			g_hash_table_insert(validate->hotkey_table, uppercase, GINT_TO_POINTER(1));
+
+			g_string_free(label_ext, TRUE);
+		}
+	}
+
 	va_start(argp, format);
 	validate_append_text_valist(validate, NULL, format, argp);
 	va_end(argp);
@@ -656,33 +683,18 @@ static void validate_append_check(struct validate *validate, const gchar * value
  * \internal
  */
 static void show_program_parameter(struct validate *validate, GebrGeoXmlProgramParameter * pp,
-				   GHashTable * hotkey_table, gint ipar, guint isubpar)
+				   gint ipar, guint isubpar)
 {
 	GString *default_value;
-	GString *label_ext;
 	const gchar * label;
-	gchar * underscore;
-	gchar hotkey[6];
 
 	if (isubpar)
 		validate_append_text(validate, "       %2d.%02d: ", ipar, isubpar);
 	else
 		validate_append_text(validate, "    %2d: ", ipar);
 
-	label_ext = g_string_new("");
 	label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp));
-	underscore = strchr(label, '_');
-	if (underscore) {
-		gint length;
-		gchar * uppercase;
-		length = g_unichar_to_utf8(g_utf8_get_char(underscore + 1), hotkey);
-		uppercase = g_utf8_strup(hotkey, length);
-		g_string_printf(label_ext, " (Alt+%s%s)", uppercase,
-				g_hash_table_lookup(hotkey_table, uppercase)? _(", already used above") : "");
-		g_hash_table_insert(hotkey_table, uppercase, GINT_TO_POINTER(1));
-	}
-	validate_append_check(validate, label, EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, "%s\n", label_ext->str);
-	g_string_free(label_ext, TRUE);
+	validate_append_check(validate, label, EMPTY | CAPIT | NOBLK | MTBLK | NOPNT | LABEL_HOTKEY, "\n");
 
 	validate_append_text(validate, "        ");
 	if (isubpar)
@@ -756,11 +768,10 @@ static void show_program_parameter(struct validate *validate, GebrGeoXmlProgramP
 /**
  * \internal
  */
-static void show_parameter(struct validate *validate, GebrGeoXmlParameter * parameter,
-			   GHashTable * hotkey_table, gint ipar)
+static void show_parameter(struct validate *validate, GebrGeoXmlParameter * parameter, gint ipar)
 {
 	if (gebr_geoxml_parameter_get_is_program_parameter(parameter))
-		show_program_parameter(validate, GEBR_GEOXML_PROGRAM_PARAMETER(parameter), hotkey_table, ipar, 0);
+		show_program_parameter(validate, GEBR_GEOXML_PROGRAM_PARAMETER(parameter), ipar, 0);
 	else {
 		GebrGeoXmlSequence *subpar;
 		GebrGeoXmlSequence *instance;
@@ -769,7 +780,7 @@ static void show_parameter(struct validate *validate, GebrGeoXmlParameter * para
 
 		validate_append_text(validate, "    %2d: ", ipar);
 		validate_append_check(validate, gebr_geoxml_parameter_get_label(parameter),
-				      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, NULL);
+				      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT | LABEL_HOTKEY, NULL);
 
 		if (gebr_geoxml_parameter_group_get_is_instanciable(GEBR_GEOXML_PARAMETER_GROUP(parameter)))
 			validate_append_text(validate, _("   [Instanciable]\n"));
@@ -779,7 +790,7 @@ static void show_parameter(struct validate *validate, GebrGeoXmlParameter * para
 		gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
 		subpar = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance));
 		while (subpar != NULL) {
-			show_program_parameter(validate, GEBR_GEOXML_PROGRAM_PARAMETER(subpar), hotkey_table, ipar, ++subipar);
+			show_program_parameter(validate, GEBR_GEOXML_PROGRAM_PARAMETER(subpar), ipar, ++subipar);
 			gebr_geoxml_sequence_next(&subpar);
 		}
 	}

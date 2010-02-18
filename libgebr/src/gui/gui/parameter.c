@@ -581,7 +581,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 
 			break;
 		}
-	case GEBR_GEOXML_PARAMETER_TYPE_ENUM:{
+	case GEBR_GEOXML_PARAMETER_TYPE_ENUM: {
 			GtkWidget *combo_box;
 			GebrGeoXmlSequence *enum_option;
 
@@ -601,8 +601,9 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 
 			break;
 		}
-	case GEBR_GEOXML_PARAMETER_TYPE_FLAG:{
+	case GEBR_GEOXML_PARAMETER_TYPE_FLAG: {
 			gebr_gui_parameter_widget->value_widget = gtk_check_button_new();
+			gtk_button_set_use_underline(GTK_BUTTON(gebr_gui_parameter_widget->value_widget), TRUE);
 			break;
 		}
 	default:
@@ -932,7 +933,7 @@ static gboolean on_list_widget_mnemonic_activate(GtkBox * box, gboolean cycle, s
 	gboolean sensitive;
 	g_object_get(G_OBJECT(widget->list_value_widget), "sensitive", &sensitive, NULL);
 	gtk_widget_mnemonic_activate(sensitive? widget->list_value_widget:
-				     GTK_WIDGET(widget->gebr_gui_value_sequence_edit), TRUE);
+				     GTK_WIDGET(widget->gebr_gui_value_sequence_edit), cycle);
 	return TRUE;
 }
 

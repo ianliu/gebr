@@ -40,6 +40,8 @@ gebr_gui_program_edit_instanciate(GtkButton * button, struct gebr_gui_program_ed
 static void
 gebr_gui_program_edit_deinstanciate(GtkButton * button, struct gebr_gui_program_edit *program_edit);
 
+static gboolean on_group_expander_mnemonic_activate(GtkExpander * expander, gboolean cycle, struct gebr_gui_program_edit *program_edit);
+
 /*
  * Public functions.
  */
@@ -165,10 +167,18 @@ gebr_gui_program_edit_load(struct gebr_gui_program_edit *program_edit, GebrGeoXm
 
 	radio_group = NULL;
 	parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
-	for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter))
-		gtk_box_pack_start(GTK_BOX(vbox),
-				   gebr_gui_program_edit_load_parameter(program_edit, GEBR_GEOXML_PARAMETER(parameter),
-									&radio_group), FALSE, TRUE, 0);
+	for (gboolean first_parameter = TRUE; parameter != NULL; gebr_geoxml_sequence_next(&parameter)) {
+		GtkWidget * widget;
+
+		widget = gebr_gui_program_edit_load_parameter(program_edit, GEBR_GEOXML_PARAMETER(parameter), &radio_group);
+		if (first_parameter) {
+			/* used in on_group_expander_mnemonic_activate */
+			g_object_set_data(G_OBJECT(frame), "first-parameter", parameter);
+			g_object_set_data(G_OBJECT(frame), "first-parameter-widget", widget);
+			first_parameter = FALSE;
+		}
+		gtk_box_pack_start(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
+	}
 
 	return frame;
 }
@@ -262,22 +272,20 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(struct gebr_gui_program_e
 		gtk_widget_show(group_vbox);
 		gtk_container_add(GTK_CONTAINER(depth_hbox), group_vbox);
 
-		/*
-		 * FIXME: mnemonic for groups should cycle through instances?
-		 */
-
-		//g_object_set_data(G_OBJECT(group_vbox), "mnemonic-nth", GINT_TO_POINTER(0));
-		//g_signal_connect(group_vbox, "mnemonic-activate", G_CALLBACK(on_group_vbox_mnemonic_activate), NULL);
-		//gtk_label_set_mnemonic_widget(GTK_LABEL(label), group_vbox);
-
 		gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(parameter_group), group_vbox);
 		g_object_set(G_OBJECT(group_vbox), "user-data", deinstanciate_button, NULL);
 
 		gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
-		for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
+		for (gboolean first_instance = TRUE; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
 			GtkWidget *widget;
 
 			widget = gebr_gui_program_edit_load(program_edit, GEBR_GEOXML_PARAMETERS(instance));
+			if (first_instance) {
+				g_signal_connect(expander, "mnemonic-activate",
+						 G_CALLBACK(on_group_expander_mnemonic_activate), program_edit);
+				g_object_set_data(G_OBJECT(expander), "first-instance-widget", widget);
+				first_instance = FALSE;
+			}
 			gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(instance), widget);
 			gtk_box_pack_start(GTK_BOX(group_vbox), widget, FALSE, TRUE, 0);
 		}
@@ -352,6 +360,8 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(struct gebr_gui_program_e
 			gtk_box_pack_start(GTK_BOX(hbox), gebr_gui_parameter_widget->widget, FALSE, FALSE, 0);
 		}
 
+		g_object_set_data(G_OBJECT(hbox), "parameter-widget", gebr_gui_parameter_widget->widget);
+
 		return hbox;
 	}
 }
@@ -411,5 +421,26 @@ static void gebr_gui_program_edit_deinstanciate(GtkButton * button, struct gebr_
 
 	gtk_widget_set_sensitive(GTK_WIDGET(button),
 				 gebr_geoxml_parameter_group_get_instances_number(parameter_group) > 1);
+}
+
+/**
+ * \internal
+ */
+static gboolean on_group_expander_mnemonic_activate(GtkExpander * expander, gboolean cycle, struct gebr_gui_program_edit *program_edit)
+{
+	if (!gtk_expander_get_expanded(expander)) {
+		GtkWidget *first_instance_widget;
+		GtkWidget *first_parameter_widget;
+		GtkWidget *parameter_widget;
+
+		first_instance_widget = g_object_get_data(G_OBJECT(expander), "first-instance-widget");
+		first_parameter_widget = g_object_get_data(G_OBJECT(first_instance_widget), "first-parameter-widget");
+		parameter_widget = g_object_get_data(G_OBJECT(first_parameter_widget), "parameter-widget");
+		gtk_widget_mnemonic_activate(parameter_widget, cycle);
+		gtk_expander_set_expanded(expander, TRUE);
+	} else
+		gtk_expander_set_expanded(expander, FALSE);
+	
+	return TRUE;
 }
 

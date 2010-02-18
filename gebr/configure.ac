@@ -52,19 +52,19 @@ AM_GLIB_GNU_GETTEXT
 AM_GNU_GETTEXT_VERSION([0.11])
 
 dnl check for libgebr
-PKG_CHECK_MODULES(LIBGEBR, [gebr = $VERSION],,AC_MSG_ERROR([Could not find libgebr]))
+PKG_CHECK_MODULES(LIBGEBR, [gebr = $VERSION],,AC_MSG_ERROR([Could not find libgebr = $VERSION]))
 AC_SUBST(CFLAGS)
 AC_SUBST(LIBS)
 dnl check for libgebr_geoxml
-PKG_CHECK_MODULES(GEBR_GEOXML, [gebr-geoxml = $VERSION],,AC_MSG_ERROR([Could not find libgebr_geoxml]))
+PKG_CHECK_MODULES(GEBR_GEOXML, [gebr-geoxml = $VERSION],,AC_MSG_ERROR([Could not find libgebr_geoxml = $VERSION]))
 AC_SUBST(GEBR_GEOXML_CFLAGS)
 AC_SUBST(GEBR_GEOXML_LIBS)
 dnl check for libgebr_gui
-PKG_CHECK_MODULES(GEBR_GUI, [gebr-gui = $VERSION],,AC_MSG_ERROR([Could not find libgebr_gui]))
+PKG_CHECK_MODULES(GEBR_GUI, [gebr-gui = $VERSION],,AC_MSG_ERROR([Could not find libgebr_gui = $VERSION]))
 AC_SUBST(GEBR_GUI_CFLAGS)
 AC_SUBST(GEBR_GUI_LIBS)
 dnl check for libgebr_comm
-PKG_CHECK_MODULES(GEBR_COMM, [gebr-comm = $VERSION],,AC_MSG_ERROR([Could not find libgebr_comm]))
+PKG_CHECK_MODULES(GEBR_COMM, [gebr-comm = $VERSION],,AC_MSG_ERROR([Could not find libgebr_comm = $VERSION]))
 AC_SUBST(GEBR_COMM_CFLAGS)
 AC_SUBST(GEBR_COMM_LIBS)
 
