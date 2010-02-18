@@ -39,7 +39,7 @@ EXTRA_DIST = $(noinst_HEADERS)
 
 INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
-AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GLIB_CFLAGS) \
+AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
 	$(GEBR_CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_COMM_CFLAGS)
-gebrd_LDADD = libjobqueue.a $(INTLLIBS) $(GLIB_LIBS) \
+gebrd_LDADD = libjobqueue.a $(INTLLIBS) \
 	$(GEBR_LIBS) $(GEBR_GEOXML_LIBS) $(GEBR_COMM_LIBS)

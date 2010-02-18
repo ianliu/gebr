@@ -75,7 +75,7 @@ AM_GLIB_GNU_GETTEXT
 AM_GNU_GETTEXT_VERSION([0.11])
 
 dnl check for GLIB >= 2.8.0 (needed for g_access)
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.8.0],,AC_MSG_ERROR([Could not find glib >= 2.8.0]))
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.16.0],,AC_MSG_ERROR([Could not find glib >= 2.16.0]))
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GLIB_CFLAGS)
 dnl check for JSON-GLIB
