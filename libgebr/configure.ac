@@ -16,7 +16,7 @@
 
 AC_INIT(configure.ac)
 
-m4_include(../configure.ac.decl)
+m4_include(configure.ac.decl)
 
 PACKAGE=libgebr
 GEBR_VERSION_INFO=`echo $VERSION | awk -F. '{ printf "%d:%d:%d", $1+$2, $3, $2 }'`

@@ -16,7 +16,7 @@
 
 AC_INIT(configure.ac)
 
-m4_include(../configure.ac.decl)
+m4_include(configure.ac.decl)
 
 PACKAGE=gebr
 AC_SUBST(PACKAGE)

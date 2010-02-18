@@ -1,5 +1,6 @@
 VERSION=0.9.16
 #VERSION=`if test -d .svn; then echo -n r; svnversion; else git log -1 --date=local --pretty=%cd; fi`
+VERSION+=~`svnversion`
 AC_SUBST(VERSION)
 
 DOCUMENT_VERSION=0.3.1

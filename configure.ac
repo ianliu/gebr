@@ -16,13 +16,12 @@
 
 AC_INIT(configure.ac)
 
+m4_include(configure.ac.decl)
+
 PACKAGE=gebr
-VERSION=`if test -d .svn; then echo -n r; svnversion; else git log -1 --date=local --pretty=%cd; fi`
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
 AC_SUBST(TODAY)
-
-m4_include(configure.ac.decl)
 
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 PACKAGE_NAME=$PACKAGE
