@@ -101,6 +101,7 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 						   G_TYPE_STRING,	/* Filename */
 						   G_TYPE_POINTER /* GebrGeoXmlLineFlow pointer */ );
 	ui_flow_browse->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->store));
+	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(ui_flow_browse->view), TRUE);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->view);
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view)),
 				    GTK_SELECTION_MULTIPLE);
@@ -113,8 +114,8 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 								 flow_browse_on_flow_move, NULL);
 	g_signal_connect(ui_flow_browse->view, "row-activated", G_CALLBACK(flow_browse_on_row_activated),
 			 ui_flow_browse);
-	g_signal_connect(GTK_OBJECT(ui_flow_browse->view), "cursor-changed", G_CALLBACK(flow_browse_load),
-			 ui_flow_browse);
+	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view)), "changed",
+			 G_CALLBACK(flow_browse_load), ui_flow_browse);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -399,12 +400,11 @@ void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
 }
 
 /*
- * Section: Private
  * Private functions.
  */
 
-/* Function: flow_browse_load
- * Load a selected flow from file when selected in "Flow Browse"
+/**
+ * Load a selected flow from file when selected in "Flow Browse".
  */
 static void flow_browse_load(void)
 {

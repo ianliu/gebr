@@ -107,8 +107,9 @@ struct ui_project_line *project_line_setup_ui(void)
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_project_line->view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", PL_TITLE);
-	g_signal_connect(GTK_OBJECT(renderer), "edited", G_CALLBACK(project_line_rename), ui_project_line);
-	g_signal_connect(GTK_OBJECT(ui_project_line->view), "cursor-changed",
+	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(ui_project_line->view), PL_TITLE);
+	g_signal_connect(renderer, "edited", G_CALLBACK(project_line_rename), ui_project_line);
+	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_project_line->view)), "changed",
 			 G_CALLBACK(project_line_load), ui_project_line);
 
 	/* Right side */
@@ -704,11 +705,8 @@ project_line_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new
 	project_line_info_update();
 }
 
-/*
- * Function: project_line_load
- * Load a selected project or line from file
- *
- * The selected line or project is loaded from file, upon selection.
+/**
+ * Load the selected project or line from file.
  */
 static void project_line_load(void)
 {
@@ -785,6 +783,7 @@ static void project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath *
 static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_line *ui_project_line)
 {
 	GtkWidget *menu;
+	GtkWidget *menu_item;
 
 	menu = gtk_menu_new();
 
@@ -793,8 +792,18 @@ static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_li
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group, "project_line_new_project")));
 
-	if (!project_line_get_selected(NULL, DontWarnUnselection))
+	if (!project_line_get_selected(NULL, DontWarnUnselection)) {
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+		menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_collapse_all), ui_project_line->view);
+
+		menu_item = gtk_menu_item_new_with_label(_("Expand all"));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_expand_all), ui_project_line->view);
 		goto out;
+	}
 
 	/* new line */
 	gtk_container_add(GTK_CONTAINER(menu),
@@ -813,6 +822,16 @@ static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_li
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group, "project_line_delete")));
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_collapse_all), ui_project_line->view);
+
+	menu_item = gtk_menu_item_new_with_label(_("Expand all"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_expand_all), ui_project_line->view);
 
  out:	gtk_widget_show_all(menu);
 

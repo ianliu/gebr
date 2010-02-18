@@ -163,7 +163,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	/* Double click on flow component open its parameter window */
 	g_signal_connect(ui_flow_edition->fseq_view, "row-activated",
 			 G_CALLBACK(flow_edition_component_activated), ui_flow_edition);
-	g_signal_connect(GTK_OBJECT(ui_flow_edition->fseq_view), "cursor-changed",
+	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_edition->fseq_view)), "cursor-changed",
 			 G_CALLBACK(flow_edition_component_selected), ui_flow_edition);
 
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_edition->fseq_view);
@@ -435,12 +435,9 @@ flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * 
 	return FALSE;
 }
 
-/* Function: flow_edition_component_selected
- * When a flow component (a program in the flow) is selected
- * this funtions get the state of the program and set it on Flow Component Menu
- *
- * PS: this function is called when the signal "cursor-changed" is triggered
- * also by hand.
+/**
+ * When a flow component (a program in the flow) is selected this funtions get the state of the program and set it on
+ * Flow Component Menu.
  */
 static void flow_edition_component_selected(void)
 {
@@ -638,6 +635,23 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group, "flow_edition_refresh")));
+
+	if (!flow_edition_get_selected_menu(&iter, FALSE)) {
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+		menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_collapse_all), ui_flow_edition->menu_view);
+		menu_item = gtk_menu_item_new_with_label(_("Expand all"));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_expand_all), ui_flow_edition->menu_view);
+		goto out;
+	}
+
+	/* add */
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ADD, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(GTK_OBJECT(menu_item), "activate", G_CALLBACK(flow_edition_menu_add), NULL);
+
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 	menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
@@ -645,15 +659,8 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_
 	menu_item = gtk_menu_item_new_with_label(_("Expand all"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_expand_all), ui_flow_edition->menu_view);
-
-	if (!flow_edition_get_selected_menu(&iter, FALSE))
-		goto out;
-
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-	/* add */
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ADD, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(GTK_OBJECT(menu_item), "activate", G_CALLBACK(flow_edition_menu_add), NULL);
+
 	/* help */
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
