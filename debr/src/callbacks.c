@@ -191,9 +191,8 @@ void on_menu_open_activate(void)
  out:	gtk_widget_destroy(chooser_dialog);
 }
 
-/*
- * Function: on_menu_save_activate
- * Save a menu. If it doesn't have a path assigned, call <on_menu_save_as_activate>
+/**
+ * Saves the selected menu; if it doesn't have a path assigned, calls \ref on_menu_save_as_activate.
  */
 void on_menu_save_activate(void)
 {
@@ -207,9 +206,8 @@ void on_menu_save_activate(void)
 		on_menu_save_as_activate();
 }
 
-/*
- * Function: on_menu_save_as_activate
- * Open a save dialog; get the path and save the menu at it
+/**
+ * Open a save dialog; get the path and save the menu at it.
  */
 void on_menu_save_as_activate(void)
 {
@@ -230,7 +228,7 @@ void on_menu_save_as_activate(void)
 	gboolean is_overwrite = FALSE;
 	gchar *dirpath;
 
-	if (!menu_get_selected(&iter, TRUE)){
+	if (!menu_get_selected(&iter, TRUE)) {
 		debr_message(GEBR_LOG_INFO, _("Menu not selected."));
 		return;
 	}
@@ -240,6 +238,8 @@ void on_menu_save_as_activate(void)
 						     GTK_FILE_CHOOSER_ACTION_SAVE,
 						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 						     GTK_STOCK_SAVE, GTK_RESPONSE_YES, NULL);
+	if (debr.config.menu_dir[0])
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir[0]);
 	for (int i = 0; debr.config.menu_dir[i]; i++)
 		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir[i], NULL);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
