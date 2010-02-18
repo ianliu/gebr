@@ -799,7 +799,7 @@ static void parameter_dialog_setup_ui(void)
 		/*
 		 * List separator
 		 */
-		separator_label = gtk_label_new(_("List-item Separator:"));
+		separator_label = gtk_label_new(_("List-item separator:"));
 		gtk_widget_show(separator_label);
 		gtk_box_pack_start(GTK_BOX(list_widget_hbox), separator_label, FALSE, FALSE, 0);
 		gtk_misc_set_alignment(GTK_MISC(separator_label), 0, 0.5);
