@@ -114,7 +114,7 @@ static gchar * js_start_inline_editing = \
 			"resize_enabled:false,"
 			"toolbarCanCollapse:false,"
 			"toolbar:[['Source','Save', '-','Bold','Italic','Underline','-',"
-				"'Subscript','Superscript','-','Undo','Redo','-',"
+				"'Subscript','Superscript','-','Undo','Redo','-','/',"
 				"'NumberedList','BulletedList','Blockquote','Styles','-',"
 				"'Link','Unlink','-','Find','Replace', '-' ]]});"
 	"}"
