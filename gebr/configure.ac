@@ -16,13 +16,11 @@
 
 AC_INIT(configure.ac)
 
-PACKAGE=gebr
-VERSION=`if test -d .svn; then echo -n r; svnversion; else git log -1 --date=local --pretty=%cd; fi`
-AC_SUBST(PACKAGE)
-AC_SUBST(VERSION)
-AC_SUBST(TODAY)
-
 m4_include(../configure.ac.decl)
+
+PACKAGE=gebr
+AC_SUBST(PACKAGE)
+AC_SUBST(TODAY)
 
 dnl Debug option
 AC_ARG_ENABLE(debug,
@@ -54,19 +52,19 @@ AM_GLIB_GNU_GETTEXT
 AM_GNU_GETTEXT_VERSION([0.11])
 
 dnl check for libgebr
-PKG_CHECK_MODULES(LIBGEBR, gebr,,AC_MSG_ERROR([Could not find libgebr]))
+PKG_CHECK_MODULES(LIBGEBR, [gebr = $VERSION],,AC_MSG_ERROR([Could not find libgebr]))
 AC_SUBST(CFLAGS)
 AC_SUBST(LIBS)
 dnl check for libgebr_geoxml
-PKG_CHECK_MODULES(GEOXML, gebr-geoxml,,AC_MSG_ERROR([Could not find libgebr_geoxml]))
+PKG_CHECK_MODULES(GEBR_GEOXML, [gebr-geoxml = $VERSION],,AC_MSG_ERROR([Could not find libgebr_geoxml]))
 AC_SUBST(GEBR_GEOXML_CFLAGS)
 AC_SUBST(GEBR_GEOXML_LIBS)
 dnl check for libgebr_gui
-PKG_CHECK_MODULES(GEBR_GUI, gebr-gui,,AC_MSG_ERROR([Could not find libgebr_gui]))
+PKG_CHECK_MODULES(GEBR_GUI, [gebr-gui = $VERSION],,AC_MSG_ERROR([Could not find libgebr_gui]))
 AC_SUBST(GEBR_GUI_CFLAGS)
 AC_SUBST(GEBR_GUI_LIBS)
 dnl check for libgebr_comm
-PKG_CHECK_MODULES(GEBR_COMM, gebr-comm,,AC_MSG_ERROR([Could not find libgebr_comm]))
+PKG_CHECK_MODULES(GEBR_COMM, [gebr-comm = $VERSION],,AC_MSG_ERROR([Could not find libgebr_comm]))
 AC_SUBST(GEBR_COMM_CFLAGS)
 AC_SUBST(GEBR_COMM_LIBS)
 

@@ -16,25 +16,14 @@
 
 AC_INIT(configure.ac)
 
+m4_include(../configure.ac.decl)
+
 PACKAGE=libgebr
-VERSION=0.9.15
 GEBR_VERSION_INFO=`echo $VERSION | awk -F. '{ printf "%d:%d:%d", $1+$2, $3, $2 }'`
 
 AC_SUBST(PACKAGE)
-AC_SUBST(VERSION)
 AC_SUBST(TODAY)
 AC_SUBST(GEBR_VERSION_INFO)
-
-m4_include(../configure.ac.decl)
-
-DOCUMENT_VERSION=0.3.1
-PROJECT_VERSION=0.3.1
-LINE_VERSION=0.3.1
-FLOW_VERSION=0.3.2
-AC_SUBST(FLOW_VERSION)
-AC_SUBST(LINE_VERSION)
-AC_SUBST(PROJECT_VERSION)
-AC_SUBST(DOCUMENT_VERSION)
 
 dnl Debug option
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [turn on debugging])],, enable_debug=yes)

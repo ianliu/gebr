@@ -46,7 +46,6 @@ INCLUDES = -I../.. -I../../geoxml \
 	-DICONS_DIR=\"$(datadir)/libgebr/icons/\" \
 	-DCKEDITOR_DIR=\"$(datadir)/libgebr/ckeditor/\"
 AM_CFLAGS = -Wall -std=gnu99 -fPIC @DEBUG_CFLAGS@ $(GTK_CFLAGS) $(GTHREAD_CFLAGS) $(WEBKIT_CFLAGS)
-libgebr_gui_la_LIBADD = $(INTLLIBS) $(GTK_LIBS) $(GTHREAD_LIBS) $(WEBKIT_LIBS) \
-	../../libgebr.la \
-	../../geoxml/geoxml/libgebr_geoxml.la
+libgebr_gui_la_LIBADD = ../../libgebr.la ../../geoxml/geoxml/libgebr_geoxml.la \
+	$(INTLLIBS) $(GTK_LIBS) $(GTHREAD_LIBS) $(WEBKIT_LIBS) 
 libgebr_gui_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@

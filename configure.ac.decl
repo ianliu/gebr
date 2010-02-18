@@ -1,5 +1,17 @@
-INSTALL_BIN=/usr/bin/install
+VERSION=0.9.16
+#VERSION=`if test -d .svn; then echo -n r; svnversion; else git log -1 --date=local --pretty=%cd; fi`
+AC_SUBST(VERSION)
 
+DOCUMENT_VERSION=0.3.1
+PROJECT_VERSION=0.3.1
+LINE_VERSION=0.3.1
+FLOW_VERSION=0.3.2
+AC_SUBST(FLOW_VERSION)
+AC_SUBST(LINE_VERSION)
+AC_SUBST(PROJECT_VERSION)
+AC_SUBST(DOCUMENT_VERSION)
+
+INSTALL_BIN=/usr/bin/install
 $INSTALL_BIN -C configure.ac __install_test 2>/dev/null
 if [[ $? -ne 0 \]]; then
         true
