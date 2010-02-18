@@ -516,6 +516,21 @@ void parameter_paste(void)
 	    (gebr_geoxml_parameter_get_is_program_parameter(debr.parameter) == FALSE ||
 	     gebr_geoxml_parameter_get_is_in_group(debr.parameter) == TRUE)) {
 		/* The pre-selected parameter is a group or is part of a group. */
+
+		if ((gebr_geoxml_parameter_get_is_program_parameter(GEBR_GEOXML_PARAMETER(pasted_sequence)) == FALSE) ||
+		    gebr_geoxml_parameter_get_is_in_group(GEBR_GEOXML_PARAMETER(pasted_sequence)) == TRUE) {
+			/* We're trying to paste a group inside another group, which is not allowed.
+			 * So, we need to delete the already pasted sequence. */
+			do {
+				next = pasted_sequence;
+				gebr_geoxml_sequence_next(&next);
+				gebr_geoxml_sequence_remove(pasted_sequence);
+			} while ((pasted_sequence = next));
+
+			debr_message(GEBR_LOG_ERROR, _("Could not paste parameter."));
+			return;
+		}
+
 		GebrGeoXmlParameterGroup *parameter_group;
 		GebrGeoXmlSequence *first_instance;
 		GtkTreeIter parent;
