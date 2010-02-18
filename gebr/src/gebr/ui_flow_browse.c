@@ -348,7 +348,7 @@ gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 {
 	if (!gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_flow_browse->view), iter)) {
 		if (warn_unselected)
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Any flow selected"));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected"));
 		return FALSE;
 	}
 
