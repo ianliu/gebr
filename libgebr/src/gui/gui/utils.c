@@ -167,9 +167,10 @@ static void on_gtk_tree_view_row_collapsed(GtkTreeView * tree_view)
 	g_signal_emit_by_name(tree_view, "cursor-changed");
 }
 
-static gboolean on_gtk_tree_view_key_press(GtkTreeView * tree_view)
+static gboolean on_gtk_tree_view_key_press(GtkTreeView * tree_view, GdkEventKey * event)
 {
-	gtk_tree_view_expand_all(tree_view);
+	if (g_unichar_isalpha(gdk_keyval_to_unicode(event->keyval)))
+		gtk_tree_view_expand_all(tree_view);
 	return FALSE;
 }
 
@@ -496,7 +497,7 @@ gboolean gebr_gui_gtk_tree_view_get_last_selected(GtkTreeView * tree_view, GtkTr
 	gboolean ret = TRUE;
 
 	list = gebr_gui_gtk_tree_view_get_selected_iters(tree_view);
-	if ((last = g_list_last(list) == NULL)) {
+	if ((last = g_list_last(list)) == NULL) {
 		ret = FALSE;
 		goto out;
 	}
@@ -628,6 +629,7 @@ GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkT
 	return renderer;
 }
 
+/*
 void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIter * ini, GtkTextIter * end,
 					      const gchar * tooltip)
 {
@@ -635,6 +637,7 @@ void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIt
 	GtkTextBuffer * buffer;
 	buffer = gtk_text_view_get_buffer(text_view);
 }
+*/
 
 gboolean
 gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPopupCallback callback, gpointer user_data)
