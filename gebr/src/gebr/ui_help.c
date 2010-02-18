@@ -67,11 +67,6 @@ void help_show(const gchar * help, const gchar * title)
 		}
 	}
 
-	if (!gebr.config.browser->len) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No editor defined. Choose one at Configure/Preferences"));
-		return;
-	}
-
 	/* initialization */
 	html_path = gebr_make_temp_filename("gebr_XXXXXX.html");
 
