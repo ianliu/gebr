@@ -1,3 +1,7 @@
+/**
+ * \file program.c Construct interfaces for programs.
+ */
+
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -29,11 +33,6 @@
 #include "help.h"
 
 /*
- * File: program.c
- * Construct interfaces for programs
- */
-
-/*
  * Declarations
  */
 
@@ -59,7 +58,6 @@ static void program_stderr_changed(GtkToggleButton * togglebutton);
 static gboolean program_title_changed(GtkEntry * entry);
 static gboolean program_binary_changed(GtkEntry * entry);
 static gboolean program_description_changed(GtkEntry * entry);
-static void program_url_open(GtkButton * button);
 static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program);
 static void program_help_edit(GtkButton * button);
 static void program_help_refresh(GtkButton * button);
@@ -70,12 +68,11 @@ static gboolean
 program_preview_on_delete_event(GtkWidget * dialog, GdkEventAny * event, struct program_preview_data *data);
 
 /*
- * Section: Public
+ * Public functions.
  */
 
-/*
- * Function: program_setup_ui
- * Set interface and its callbacks
+/**
+ * Set interface and its callbacks.
  */
 void program_setup_ui(void)
 {
@@ -97,6 +94,7 @@ void program_setup_ui(void)
 	debr.ui_program.list_store = gtk_list_store_new(PROGRAM_N_COLUMN,
 							GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
 	debr.ui_program.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_program.list_store));
+	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(debr.ui_program.tree_view), TRUE);
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view)),
 				    GTK_SELECTION_MULTIPLE);
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(debr.ui_program.tree_view),
@@ -106,7 +104,8 @@ void program_setup_ui(void)
 								 (GebrGuiGtkTreeViewMoveSequenceCallback)
 								 menu_status_set_unsaved, NULL);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_program.tree_view);
-	g_signal_connect(debr.ui_program.tree_view, "cursor-changed", G_CALLBACK(program_selected), NULL);
+	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view)), "changed",
+			 G_CALLBACK(program_selected), NULL);
 	g_signal_connect(debr.ui_program.tree_view, "row-activated", G_CALLBACK(program_dialog_setup_ui), NULL);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(debr.ui_program.tree_view), FALSE);
@@ -158,10 +157,8 @@ void program_setup_ui(void)
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(details), hbox, FALSE, TRUE, 0);
 
-	debr.ui_program.details.url_button = gtk_button_new();
+	debr.ui_program.details.url_button = gtk_link_button_new("");
 	gtk_box_pack_start(GTK_BOX(hbox), debr.ui_program.details.url_button, FALSE, TRUE, 0);
-	g_signal_connect(GTK_OBJECT(debr.ui_program.details.url_button), "clicked",
-			 G_CALLBACK(program_url_open), debr.program);
 
 	debr.ui_program.details.help_button = gtk_button_new_from_stock(GTK_STOCK_INFO);
 	gtk_box_pack_end(GTK_BOX(details), debr.ui_program.details.help_button, FALSE, TRUE, 0);
@@ -172,9 +169,8 @@ void program_setup_ui(void)
 	program_details_update();
 }
 
-/*
- * Function: program_load_menu
- * Load programs of the current menu into the tree view
+/**
+ * Load programs of the current menu into the tree view.
  */
 void program_load_menu(void)
 {
@@ -199,8 +195,7 @@ void program_load_menu(void)
 		program_select_iter(iter);
 }
 
-/*
- * Function: program_new
+/**
  * Append a new program and selects it
  */
 void program_new(gboolean edit)
@@ -260,9 +255,7 @@ void program_preview(void)
 	g_signal_connect(dialog, "delete-event", G_CALLBACK(program_preview_on_delete_event), data);
 
 	data->program_edit =
-	    gebr_gui_gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM
-						    (gebr_geoxml_object_copy(GEBR_GEOXML_OBJECT(debr.program))), NULL,
-						    (GebrGuiShowHelpCallback) program_help_view, TRUE);
+		gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM(gebr_geoxml_object_copy(GEBR_GEOXML_OBJECT(debr.program))), NULL, TRUE);
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), data->program_edit->widget, TRUE, TRUE, 0);
 	gtk_widget_show(dialog);
@@ -597,28 +590,28 @@ gboolean program_get_selected(GtkTreeIter * iter, gboolean warn_user)
 	return TRUE;
 }
 
-/*
- * Function: program_select_iter
- * Select _iter_ loading it
+/**
+ * Select \p iter loading it.
  */
 void program_select_iter(GtkTreeIter iter)
 {
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(debr.ui_program.tree_view), &iter);
 	program_selected();
 }
-/*
- * Section: Private
- */
 
 /*
- * Function: program_details_update
+ * Private functions.
+ */
+
+/**
+ * \internal
  * Load details of selected program to the details view
  */
 static void program_details_update(void)
 {
+	gchar *markup;
 	GString *text;
 	GebrGeoXmlParameters *parameters;
-	gchar *markup;
 
 	g_object_set(debr.ui_program.details.url_button, "visible", debr.program != NULL, NULL);
 	gtk_widget_set_sensitive(debr.ui_program.details.help_button, debr.program != NULL);
@@ -665,14 +658,25 @@ static void program_details_update(void)
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.url_label), markup);
 	g_free(markup);
 
-	if (strlen(gebr_geoxml_program_get_url(debr.program)) > 0)
-		gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button),
-				     gebr_geoxml_program_get_url(debr.program));
-	else
-		gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button), _("URL not set"));
+	const gchar *uri;
+	uri = gebr_geoxml_program_get_url(debr.program);
+	if (strlen(uri) > 0) {
+		GString *full_uri;
+		full_uri = g_string_new(NULL);
+		if (!g_str_has_prefix(uri, "http://"))
+			g_string_printf(full_uri, "http://%s", uri);
+		else
+			g_string_assign(full_uri, uri);
 
-	g_object_set(G_OBJECT(debr.ui_program.details.url_button), "sensitive",
-		     (strlen(gebr_geoxml_program_get_url(debr.program)) > 0) ? TRUE : FALSE, NULL);
+		gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button), full_uri->str);
+		gtk_link_button_set_uri(GTK_LINK_BUTTON(debr.ui_program.details.url_button), full_uri->str);
+		g_string_free(full_uri, TRUE);
+	} else {
+		gtk_link_button_set_uri(GTK_LINK_BUTTON(debr.ui_program.details.url_button), "");
+		gtk_button_set_label(GTK_BUTTON(debr.ui_program.details.url_button), _("URL not set"));
+	}
+
+	g_object_set(G_OBJECT(debr.ui_program.details.url_button), "sensitive", strlen(uri) > 0, NULL);
 
 	g_signal_handlers_disconnect_matched(G_OBJECT(debr.ui_program.details.help_button),
 					     G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(program_help_view), NULL);
@@ -682,9 +686,8 @@ static void program_details_update(void)
 		     "sensitive", (strlen(gebr_geoxml_program_get_help(debr.program)) > 1) ? TRUE : FALSE, NULL);
 }
 
-/*
- * Function: program_load_iter
- * Load stuff into _iter_
+/**
+ * Load stuff into \p iter.
  */
 static void program_load_iter(GtkTreeIter * iter)
 {
@@ -723,9 +726,8 @@ static GtkTreeIter program_append_to_ui(GebrGeoXmlProgram * program)
 	return iter;
 }
 
-/*
- * Function: program_selected
- * Load user selected program
+/**
+ * Load user selected program.
  */
 static void program_selected(void)
 {
@@ -847,12 +849,6 @@ static gboolean program_description_changed(GtkEntry * entry)
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 	return FALSE;
-}
-
-static void program_url_open(GtkButton * button)
-{
-	//FIXME do not use help function to open url
-	gebr_gui_help_show(gebr_geoxml_program_get_url(debr.program), "");
 }
 
 static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program)

@@ -45,8 +45,7 @@ gebr_gui_program_edit_deinstanciate(GtkButton * button, struct gebr_gui_program_
  */
 
 struct gebr_gui_program_edit *
-gebr_gui_gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer file_gebr_gui_parameter_widget_data,
-					GebrGuiShowHelpCallback show_help_callback, gboolean use_default)
+gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer parameter_widget_data, gboolean use_default)
 {
 	struct gebr_gui_program_edit *program_edit;
 	GtkWidget *vbox;
@@ -56,8 +55,7 @@ gebr_gui_gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer fi
 
 	program_edit = g_new(struct gebr_gui_program_edit, 1);
 	program_edit->program = program;
-	program_edit->file_gebr_gui_parameter_widget_data = file_gebr_gui_parameter_widget_data;
-	program_edit->show_help_callback = show_help_callback;
+	program_edit->parameter_widget_data = parameter_widget_data;
 	program_edit->use_default = use_default;
 	program_edit->widget = vbox = gtk_vbox_new(FALSE, 0);
 	program_edit->dicts = (struct gebr_gui_gebr_gui_program_edit_dicts) {
@@ -96,6 +94,7 @@ void gebr_gui_gebr_gui_program_edit_reload(struct gebr_gui_program_edit *program
 	GtkWidget *label;
 	GtkWidget *widget;
 	gchar *markup;
+	const gchar *uri;
 
 	if (program != NULL)
 		program_edit->program = program;
@@ -109,20 +108,28 @@ void gebr_gui_gebr_gui_program_edit_reload(struct gebr_gui_program_edit *program
 	gtk_widget_show(label);
 	gtk_box_pack_start(GTK_BOX(program_edit->hbox), label, FALSE, TRUE, 5);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	if (strlen(gebr_geoxml_program_get_url(program_edit->program))) {
+
+	uri = gebr_geoxml_program_get_url(program_edit->program);
+	if (strlen(uri)) {
 		GtkWidget *alignment;
 		GtkWidget *button;
+		GString *full_uri;
 
 		alignment = gtk_alignment_new(1, 0, 0, 0);
 		gtk_box_pack_start(GTK_BOX(program_edit->hbox), alignment, TRUE, TRUE, 5);
-		button = gtk_button_new_with_label(_("Link"));
+
+		full_uri = g_string_new(NULL);
+		puts(uri);
+		if (g_str_has_prefix(uri, "http://"))
+			g_string_assign(full_uri, uri);
+		else
+			g_string_printf(full_uri, "http://%s", uri);
+
+		button = gtk_link_button_new_with_label(full_uri->str, _("Link"));
 		gtk_container_add(GTK_CONTAINER(alignment), button);
 		gtk_widget_show_all(alignment);
 		gtk_misc_set_alignment(GTK_MISC(label), 1, 0);
-
-		if (program_edit->show_help_callback != NULL)
-			g_signal_connect(button, "clicked",
-					 G_CALLBACK(program_edit->show_help_callback), program_edit->program);
+		g_string_free(full_uri, TRUE);
 	}
 
 	gtk_container_foreach(GTK_CONTAINER(program_edit->scrolled_window), (GtkCallback) gtk_widget_destroy, NULL);
@@ -291,8 +298,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(struct gebr_gui_program_e
 			    gebr_gui_parameter_widget_new(parameter, program_edit->use_default, NULL);
 		else
 			gebr_gui_parameter_widget = gebr_gui_parameter_widget_new(parameter, program_edit->use_default,
-										  program_edit->
-										  file_gebr_gui_parameter_widget_data);
+										  program_edit->parameter_widget_data);
 		if (program_edit->dicts.project != NULL)
 			gebr_gui_parameter_widget_set_dicts(gebr_gui_parameter_widget, &program_edit->dicts);
 		gtk_widget_show(gebr_gui_parameter_widget->widget);

@@ -47,7 +47,6 @@
  */
 
 static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters *ui_parameters);
-static void parameters_on_link_button_clicked(GtkWidget * button, GebrGeoXmlProgram * program);
 static gboolean
 parameters_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_parameters *ui_parameters);
 
@@ -89,11 +88,8 @@ struct ui_parameters *parameters_configure_setup_ui(void)
 
 	*ui_parameters = (struct ui_parameters) {
 		.dialog = dialog,.program_edit =
-		    gebr_gui_gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM
-							    (gebr_geoxml_sequence_append_clone
-							     (GEBR_GEOXML_SEQUENCE(gebr.program))),
-							    flow_io_customized_paths_from_line,
-							    parameters_on_link_button_clicked, FALSE)
+			gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM(gebr_geoxml_sequence_append_clone(GEBR_GEOXML_SEQUENCE(gebr.program))),
+						       flow_io_customized_paths_from_line, FALSE)
 	};
 	ui_parameters->program_edit->dicts.project = GEBR_GEOXML_DOCUMENT(gebr.project);
 	ui_parameters->program_edit->dicts.line = GEBR_GEOXML_DOCUMENT(gebr.line);
@@ -114,10 +110,8 @@ struct ui_parameters *parameters_configure_setup_ui(void)
 	return ui_parameters;
 }
 
-/*
- * Function: parameters_reset_to_default
- * Change all parameters' values from _parameters_ to their default value
- *
+/**
+ * Change all parameters' values from \p parameters to their default value.
  */
 void parameters_reset_to_default(GebrGeoXmlParameters * parameters)
 {
@@ -174,6 +168,7 @@ void parameters_reset_to_default(GebrGeoXmlParameters * parameters)
  */
 
 /**
+ * \internal
  * Take the appropriate action when the parameter dialog emmits a response signal.
  */
 static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters *ui_parameters)
@@ -224,12 +219,9 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 	g_free(ui_parameters);
 }
 
-static void parameters_on_link_button_clicked(GtkWidget * button, GebrGeoXmlProgram * program)
-{
-	// FIXME do not open web pages with help function
-	gebr_gui_help_show(gebr_geoxml_program_get_url(program), "");
-}
-
+/**
+ * \internal
+ */
 static gboolean parameters_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_parameters *ui_parameters)
 {
 	parameters_actions(dialog, GTK_RESPONSE_CANCEL, ui_parameters);

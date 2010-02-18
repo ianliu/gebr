@@ -26,13 +26,11 @@
 
 #include <geoxml.h>
 
-typedef void (*GebrGuiShowHelpCallback) (GtkWidget * button, GebrGeoXmlProgram * program);
 struct gebr_gui_program_edit {
 	GebrGeoXmlProgram *program;
 
 	GtkWidget *widget;
-	gpointer file_gebr_gui_parameter_widget_data;
-	GebrGuiShowHelpCallback show_help_callback;
+	gpointer parameter_widget_data;
 	gboolean use_default;
 
 	GtkWidget *scrolled_window;
@@ -50,8 +48,7 @@ struct gebr_gui_program_edit {
  * Setup UI for \p program.
  */
 struct gebr_gui_program_edit *
-gebr_gui_gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer file_gebr_gui_parameter_widget_data,
-					GebrGuiShowHelpCallback show_help_callback, gboolean use_default);
+gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer parameter_widget_data, gboolean use_default);
 
 /**
  * \internal
