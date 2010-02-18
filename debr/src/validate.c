@@ -667,7 +667,8 @@ static void validate_append_check(struct validate *validate, const gchar * value
 				validate_append_text_error(validate, label_ext->str);
 				++validate->error_count;
 				result = INVALID;
-			}
+			} else
+				validate_append_text(validate, " (Alt+%s)", uppercase);
 			g_hash_table_insert(validate->hotkey_table, uppercase, GINT_TO_POINTER(1));
 
 			g_string_free(label_ext, TRUE);
