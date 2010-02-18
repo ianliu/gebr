@@ -1,2 +1,2 @@
-for sub in libgebr gebrd gebr debr; do cp -al configure.ac.decl Makefile.decl $sub; done
+for sub in libgebr gebrd gebr debr; do cp -a configure.ac.decl Makefile.decl $sub; done
 AUTOPOINT='intltoolize --automake --copy' autoreconf --install $*
