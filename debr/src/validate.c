@@ -653,7 +653,7 @@ static void validate_append_check(struct validate *validate, const gchar * value
 		gchar * underscore;
 
 		underscore = strchr(value, '_');
-		if (underscore) {
+		if (underscore && (strlen(underscore) > 1 && *(underscore+1) != '_')) {
 			GString *label_ext;
 			gint length;
 			gchar * uppercase;
