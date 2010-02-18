@@ -249,8 +249,11 @@ void menu_list_populate(void)
 		GString *bold;
 		gchar ** menus_list;
 		gsize menus_list_length;
+		gchar *escaped_title;
 		bold = g_string_new(NULL);
-		g_string_printf(bold, "<b>%s</b>", category_list[i]);
+		escaped_title = g_markup_escape_text(category_list[i], -1);
+		g_string_printf(bold, "<b>%s</b>", escaped_title);
+		g_free(escaped_title);
 		gtk_tree_store_append(gebr.ui_flow_edition->menu_store, &iter, NULL);
 		gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &iter,
 				   MENU_TITLE_COLUMN, bold->str,
@@ -260,13 +263,15 @@ void menu_list_populate(void)
 			gchar *title;
 			gchar *desc;
 			title = g_key_file_get_string(menu_key_file, menus_list[j], "title", NULL);
+			escaped_title = g_markup_escape_text(title, -1);
 			desc = g_key_file_get_string(menu_key_file, menus_list[j], "description", NULL);
 			gtk_tree_store_append(gebr.ui_flow_edition->menu_store, &child, &iter);
 			gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &child,
-					   MENU_TITLE_COLUMN, title,
+					   MENU_TITLE_COLUMN, escaped_title,
 					   MENU_DESC_COLUMN, desc,
 					   MENU_FILEPATH_COLUMN, menus_list[j],
 					   -1);
+			g_free(escaped_title);
 			g_free(title);
 			g_free(desc);
 		}
