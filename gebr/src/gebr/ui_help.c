@@ -110,11 +110,5 @@ static void help_edit_on_edited(GebrGeoXmlDocument * document, const gchar * hel
 
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 {
-	/* Check for editor */
-	if (!gebr.config.editor->len) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No editor defined. Choose one at Configure/Preferences"));
-		return;
-	}
-
 	gebr_gui_help_edit(document, (GebrGuiHelpEdited)help_edit_on_edited);
 }
