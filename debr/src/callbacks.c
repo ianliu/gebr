@@ -1,3 +1,7 @@
+/**
+ * \file callbacks.c General interface callbacks. See <interface.c>
+ */
+
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -29,15 +33,8 @@
 #include "debr.h"
 #include "preferences.h"
 
-/*
- * File: callbacks.c
- * General interface callbacks. See <interface.c>
- */
-
-/*
- * Function: do_navigation_bar_update
- * Callback to update navigation bar content
- * according to menu, program and parameter selected
+/**
+ * Callback to update navigation bar content according to menu, program and parameter selected.
  */
 void do_navigation_bar_update(void)
 {
@@ -213,28 +210,32 @@ void on_menu_save_as_activate(void)
 {
 	GtkTreeIter iter;
 	GtkTreeIter copy;
+	GtkTreeIter child;
 	GtkTreeIter parent;
 
 	GtkWidget *chooser_dialog;
 	GtkFileFilter *filefilter;
 
-	GString *path;
 	gchar *tmp;
 	gchar *dirname;
 	gchar *filename;
 	gchar *current_path;
-	GtkTreeIter iter_other;
-	GtkTreeIter child;
-	gboolean is_overwrite = FALSE;
 	gchar *dirpath;
+	GString *path;
+	GString *title;
+	gboolean valid;
+	gboolean is_overwrite = FALSE;
 
 	if (!menu_get_selected(&iter, TRUE)) {
 		debr_message(GEBR_LOG_INFO, _("Menu not selected."));
 		return;
 	}
 
+	title = g_string_new(NULL);
+	g_string_printf(title, _("Choose file for \"%s\""), gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(debr.menu)));
+
 	/* run file chooser */
-	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose file"), GTK_WINDOW(debr.window),
+	chooser_dialog = gtk_file_chooser_dialog_new(title->str, GTK_WINDOW(debr.window),
 						     GTK_FILE_CHOOSER_ACTION_SAVE,
 						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 						     GTK_STOCK_SAVE, GTK_RESPONSE_YES, NULL);
@@ -247,14 +248,15 @@ void on_menu_save_as_activate(void)
 	gtk_file_filter_set_name(filefilter, _("Menu files (*.mnu)"));
 	gtk_file_filter_add_pattern(filefilter, "*.mnu");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), filefilter);
-	tmp = NULL;
+
 	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_menu.model), &parent, &iter);
-	if (!gebr_gui_gtk_tree_iter_equal_to(&parent, &debr.ui_menu.iter_other))
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &parent, MENU_PATH, &tmp, -1);
-	else if (debr.config.menu_dir && debr.config.menu_dir[0])
-		tmp = debr.config.menu_dir[0];
-	if (tmp)
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), tmp);
+	if (!gebr_gui_gtk_tree_iter_equal_to(&parent, &debr.ui_menu.iter_other)) {
+		gchar *menu_path;
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &parent, MENU_PATH, &menu_path, -1);
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), menu_path);
+		g_free(menu_path);
+	} else if (debr.config.menu_dir && debr.config.menu_dir[0])
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir[0]);
 
 	gtk_widget_show(chooser_dialog);
 	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
@@ -267,25 +269,20 @@ void on_menu_save_as_activate(void)
 
 	/*Verify if another file with same name already exist*/
 
-	gebr_gui_gtk_tree_model_foreach(iter_other, GTK_TREE_MODEL(debr.ui_menu.model)) {
-		gboolean valid;
+	menu_path_get_parent(path->str, &parent);
+	valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, &parent);
+	while (valid) {
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_PATH, &dirpath, -1);
+		if (!dirpath)
+			continue;
 
-		if (!is_overwrite){
-			valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, &iter_other);
-			while (valid) {
-				gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_PATH, &dirpath, -1);
-				if (!dirpath)
-					continue;
-
-				if (strcmp(dirpath, path->str) == 0) {
-					is_overwrite = TRUE;
-					break;
-				}
-				valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);		
-			}
+		if (strcmp(dirpath, path->str) == 0) {
+			is_overwrite = TRUE;
+			break;
 		}
+		g_free(dirpath);
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);		
 	}
-	/**/
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_PATH, &current_path, -1);
 
@@ -303,6 +300,8 @@ void on_menu_save_as_activate(void)
 		menu = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(debr.menu)));
 		menu_load_iter(path->str, &child, menu, TRUE);
 		menu_save(&child);
+		if (!strlen(current_path))
+			gtk_tree_store_remove(debr.ui_menu.model, &iter);
 	}
 	//...or creating a new file 
 	else {
@@ -335,6 +334,7 @@ void on_menu_save_as_activate(void)
 	g_free(current_path);
 
  out:	gtk_widget_destroy(chooser_dialog);
+	g_string_free(title, TRUE);
 }
 
 /*

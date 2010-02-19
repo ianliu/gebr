@@ -429,11 +429,16 @@ gboolean menu_save(GtkTreeIter * iter)
 void menu_save_all(void)
 {
 	GtkTreeIter iter;
-	gboolean valid;
 	GtkTreeIter child;
+	GtkTreeIter selected;
+	gboolean valid;
+	gboolean has_selected = TRUE;
 
 	if (!menu_count_unsaved())
 		return;
+
+	if (menu_get_selected_type(&selected, FALSE) == ITER_NONE)
+		has_selected = FALSE;
 
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
 		valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, &iter);
@@ -442,10 +447,18 @@ void menu_save_all(void)
 
 			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_STATUS, &status, -1);
 			if (status == MENU_STATUS_UNSAVED)
-				menu_save(&child);
+				if (!menu_save(&child)) {
+					menu_select_iter(&child);
+					if (gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(debr.ui_menu.model),
+										  &child, &selected))
+						has_selected = FALSE;
+					on_menu_save_as_activate();
+				}
 			valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);
 		}
 	}
+	if (has_selected)
+		menu_select_iter(&selected);
 	menu_details_update();
 	debr_message(GEBR_LOG_INFO, _("All menus were saved."));
 }
