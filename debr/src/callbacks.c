@@ -306,6 +306,8 @@ void on_menu_save_as_activate(void)
 	//...or creating a new file 
 	else {
 		gchar *label;
+		GebrGeoXmlFlow * menu;
+
 		menu_path_get_parent(path->str, &parent);
 		if (gebr_gui_gtk_tree_iter_equal_to(&parent, &debr.ui_menu.iter_other)) {
 			dirname = g_path_get_dirname(path->str);
@@ -314,9 +316,15 @@ void on_menu_save_as_activate(void)
 		} else
 			label = g_markup_printf_escaped("%s", filename);
 
+		menu = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(debr.menu)));
+
 		gtk_tree_store_append(debr.ui_menu.model, &copy, &parent);
 		gebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(debr.ui_menu.model), &copy, &iter);
-		gtk_tree_store_set(debr.ui_menu.model, &copy, MENU_FILENAME, label, MENU_PATH, path->str, -1);
+		gtk_tree_store_set(debr.ui_menu.model, &copy,
+				   MENU_FILENAME, label,
+				   MENU_PATH, path->str,
+				   MENU_XMLPOINTER, menu,
+				   -1);
 		// if the item was a never saved file, remove it
 		if (!strlen(current_path))
 			gtk_tree_store_remove(debr.ui_menu.model, &iter);
