@@ -523,8 +523,7 @@ void menu_install(void)
 				dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 								GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 								GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
-								_
-								("Menu '%s' already exists. Do you want to overwrite it?"),
+								_("Menu '%s' already exists. Do you want to overwrite it?"),
 								menu_filename);
 				gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't overwrite"), GTK_RESPONSE_NO);
 				gtk_dialog_add_button(GTK_DIALOG(dialog), _("Overwrite"), GTK_RESPONSE_YES);
