@@ -39,9 +39,12 @@ static GHashTable * jscontext_to_data_hash = NULL;
 struct help_edit_data {
 	WebKitWebView * web_view;
 	JSContextRef context;
+
 	GebrGeoXmlObject * object;
 	set_help set_function;
+
 	GString *html_path;
+	gchar *raw_help;
 	GebrGuiHelpEdited edited_callback;
 };
 
@@ -50,19 +53,6 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window);
 static WebKitNavigationResponse
 web_view_on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame * frame,
 				 WebKitNetworkRequest * request, struct help_edit_data * data);
-
-/**
- * \internal
- * The CSS to highlight and editable area when the user pass the cursor over it.
- */
-#define css_editable_area_style \
-	".content {"\
-		"border: 2px solid Transparent;"\
-		"padding: 3px;"\
-	"}"\
-	".content:hover {"\
-		"border-color: black;"\
-	"}"
 
 /**
  * \internal
@@ -89,14 +79,8 @@ static gchar * js_start_inline_editing = \
 			"editing_element = null;"
 		"}"
 	"}"
-	"function GetEditableElements() {"
-		"return [document.getElementsByClassName('content')[0]];"
-	"}"
-	"function InsertHoverCss() {"
-		"var stl = document.createElement('style');"
-		"stl.setAttribute('type', 'text/css');"
-		"stl.appendChild(document.createTextNode('"css_editable_area_style"'));"
-		"document.getElementsByTagName('head')[0].appendChild(stl);"
+	"function GetEditableElements(doc) {"
+		"return [doc.getElementsByClassName('content')[0]];"
 	"}"
 	"function IsElementEditable(elt) {"
 		"return (elt.nodeName.toLowerCase() == 'div'"
@@ -104,7 +88,6 @@ static gchar * js_start_inline_editing = \
 	"}"
 	"function OpenCkEditor(element) {"
 		"if (editor) return;"
-		"DestroyEditor();" 
 		"editing_element = element;"
 		"editing_class = element.getAttribute('class');"
 		"editor = CKEDITOR.replace(element, {"
@@ -134,7 +117,7 @@ static gchar * js_start_inline_editing = \
 	"function GenerateNavigationIndex(doc) {"
 		"var navbar = doc.getElementsByClassName('navigation')[0];"
 		"var navlist = navbar.getElementsByTagName('ul')[0];"
-		"var headers = GetEditableElements()[0].getElementsByTagName('h2');"
+		"var headers = GetEditableElements(document)[0].getElementsByTagName('h2');"
 		"navlist.innerHTML = '';"
 		"for (var i = 0; i < headers.length; i++) {"
 			"var anchor = 'header_' + i;"
@@ -151,7 +134,7 @@ static gchar * js_start_inline_editing = \
 		"return document.getElementsByClassName(c)[0];"
 	"}"
 	"function UpgradeHelpFormat(doc) {"
-		"var content = GetEditableElements()[0];"
+		"var content = GetEditableElements(document)[0];"
 		"var links = content.getElementsByTagName('a');"
 		"var blacklist = [];"
 		"for (var i = 0; i < links.length; i++)"
@@ -164,7 +147,6 @@ static gchar * js_start_inline_editing = \
 	"}"
 	"function onCkEditorLoadFinished() {"
 		"var content = GetElementByClassName('content');"
-		"InsertHoverCss();"
 		"document.body.addEventListener('click', on_click, false);"
 		"if (!HasNavigation()) {" // Probably there is no content widget!
 			"if (!content) {"
@@ -250,35 +232,35 @@ void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited e
 static GString *help_edit_save(JSContextRef context, struct help_edit_data * data)
 {
 	GString *help;
+	GString *var_help;
+	gchar *escaped;
 	JSValueRef html;
 
-	const gchar * script_fetch_help =
-		"(function() {"
-			"var doc_clone = document.implementation.createDocument('', '', null);"
-			"if (editor) editor.updateElement();"
-			"doc_clone.appendChild(document.documentElement.cloneNode(true));"
-			"var scripts = doc_clone.getElementsByTagName('script');"
-			"var dellist = [];"
-			"for (var i = 0; i < scripts.length; i++) {"
-				"dellist.push(scripts[i]);"
+	escaped = g_strescape(data->raw_help, "");
+	var_help = g_string_new("(function() {");
+	g_string_append_printf(var_help, "var help = \"%s\";", escaped);
+	g_string_append(var_help,
+			"var doc_clone = (new DOMParser()).parseFromString(help, 'text/xml');"
+			"var elem = GetEditableElements(doc_clone)[0];"
+			"while (elem.firstChild) {"
+				"elem.removeChild(elem.firstChild);"
 			"}"
-			"var styles = doc_clone.getElementsByTagName('style');"
-			"for (var i = 0; i < styles.length; i++) {"
-				"dellist.push(styles[i]);"
+			"editor.updateElement();"
+			"var source_elem = GetEditableElements(document)[0];"
+			"for (i = 0; i < source_elem.childNodes.length; i++) {"
+				"elem.appendChild(source_elem.childNodes[i].cloneNode(true));"
 			"}"
-			"for (var i = 0; i < dellist.length; i++) {"
-				"dellist[i].parentNode.removeChild(dellist[i]);"
+			"if (HasNavigation()) {"
+				"GenerateNavigationIndex(doc_clone);"
+				"GenerateNavigationIndex(document);"
 			"}"
-			"if (editor) {"
-				"var editing_element = doc_clone.getElementsByClassName(editing_class)[0];"
-				"var ed = editing_element.nextSibling;"
-				"editing_element.removeAttribute('style');"
-				"ed.parentNode.removeChild(ed);"
-			"}"
-			"return doc_clone.documentElement.outerHTML;"
-		"})();";
-	html = gebr_js_evaluate(context, script_fetch_help);
-	help = gebr_js_value_get_string(context, html);
+			"return (new XMLSerializer()).serializeToString(doc_clone);"
+			"})();");
+	g_free(escaped);
+
+	html = gebr_js_evaluate(context, var_help->str);
+	help = gebr_js_value_get_string(data->context, html);
+	puts(help->str);
 
 	if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(data->object), help->str);
@@ -416,7 +398,7 @@ JSValueRef js_callback_gebr_help_save(JSContextRef ctx, JSObjectRef function, JS
 		
 	data = g_hash_table_lookup(jscontext_to_data_hash, function);
 	help_edit_save(ctx, data);	
-	gebr_js_evaluate(ctx, "DestroyEditor();");
+	//gebr_js_evaluate(ctx, "DestroyEditor();");
 
 	return JSValueMakeUndefined(ctx);
 }
@@ -453,7 +435,6 @@ static gboolean web_view_on_button_press(GtkWidget * widget, GdkEventButton * ev
 static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, struct help_edit_data * data)
 {
 	if (event->keyval == GDK_Escape) {
-		gebr_js_evaluate(data->context, "DestroyEditor(true);");
 		return TRUE;
 	}
 	return FALSE;
@@ -487,6 +468,7 @@ static void _gebr_gui_help_edit(gchar *help, GebrGeoXmlObject * object, set_help
 	data->object = object;
 	data->set_function = set_function;
 	data->html_path = html_path;
+	data->raw_help = help;
 	data->edited_callback = edited_callback;
 	data->web_view = WEBKIT_WEB_VIEW(web_view);
 	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
