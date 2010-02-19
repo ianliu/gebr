@@ -95,8 +95,7 @@ static gboolean job_parse_parameter(struct job *job, GebrGeoXmlParameter * param
 				/* Check if this is a required parameter */
 				if (gebr_geoxml_program_parameter_get_required(program_parameter)) {
 					g_string_append_printf(job->issues,
-							       _
-							       ("Required parameter '%s' of program '%s' not provided.\n"),
+							       _("Required parameter '%s' of program '%s' not provided.\n"),
 							       gebr_geoxml_parameter_get_label(parameter),
 							       gebr_geoxml_program_get_title(program));
 
