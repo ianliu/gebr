@@ -652,8 +652,25 @@ static void validate_append_check(struct validate *validate, const gchar * value
 	if (flags & LABEL_HOTKEY) {
 		gchar * underscore;
 
-		underscore = strchr(value, '_');
-		if (underscore && (strlen(underscore) > 1 && *(underscore+1) != '_')) {
+		underscore = (gchar*)value;
+		do {
+			gint len;
+
+			underscore = strchr(underscore, '_');
+			if (!underscore)
+				break;
+			len = strlen(underscore);
+			if (len == 1) //_ in the end of string	
+				underscore = NULL;
+			else if (len > 1 && *(underscore+1) == '_') {
+				if (len == 2) //__ in the end of string	
+					underscore = NULL;
+				else
+					underscore += 2;
+			} else
+				break;
+		} while (underscore); 
+		if (underscore) {
 			GString *label_ext;
 			gint length;
 			gchar * uppercase;
