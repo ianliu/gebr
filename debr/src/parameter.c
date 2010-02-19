@@ -743,10 +743,11 @@ static void parameter_dialog_setup_ui(void)
 
 	label_entry = gtk_entry_new();
 	gtk_widget_set_tooltip_markup(label_entry, _("Characters preceded by an underscore will "
-						     "be underlined and used as a hot-key to focus "
-						     "this parameter. For example, if the label is "
-						     "<i>_Title</i>, then pressing ALT-T will place "
-						     "the cursor ready to start editing this parameter."
+						     "be underlined and the first, will be used as "
+						     "a hot-key to focus this parameter. For example, "
+						     "if the label is <i>_Title</i>, then pressing " 
+						     "ALT-T will place the cursor ready to start editing "
+						     "this parameter. "
 						     "\nIf you need a literal underscore character, use "
 						     "'__' (two underscores)."));
 	gtk_widget_show(label_entry);
