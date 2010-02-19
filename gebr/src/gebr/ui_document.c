@@ -103,9 +103,9 @@ dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXmlObject * object, Gt
 static const gchar *document_get_name_from_type(GebrGeoXmlDocument * document, gboolean upper);
 
 static const GtkActionEntry dict_actions_entries[] = {
-	{"add", GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter"),
+	{"add", GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter."),
 	 G_CALLBACK(on_dict_edit_add_clicked)},
-	{"remove", GTK_STOCK_REMOVE, NULL, NULL, N_("Remove current parameters"),
+	{"remove", GTK_STOCK_REMOVE, NULL, NULL, N_("Remove current parameters."),
 	 G_CALLBACK(on_dict_edit_remove_clicked)},
 };
 
@@ -269,10 +269,10 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 				break;
 			}
 
-			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Properties of %s '%s' updated"),
+			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Properties of %s '%s' updated."),
 				     document_get_name_from_type(document, FALSE), old_title);
 			if (strcmp(old_title, new_title) != 0)
-				gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Renaming %s '%s' to '%s'"),
+				gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Renaming %s '%s' to '%s'."),
 					     document_get_name_from_type(document, FALSE), old_title, new_title);
 
 			ret = TRUE;
@@ -340,7 +340,7 @@ void document_dict_edit_setup_ui(void)
 	gebr_gui_gtk_action_group_set_accel_group(action_group, accel_group);
 
 	dialog_title = g_string_new(NULL);
-	g_string_printf(dialog_title, _("Parameters' dictionary for %s '%s'"),
+	g_string_printf(dialog_title, _("Parameter dictionary for %s '%s'"),
 			document_get_name_from_type(document, FALSE), gebr_geoxml_document_get_title(document));
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 					     GTK_WINDOW(gebr.window),
@@ -825,7 +825,7 @@ dict_edit_check_duplicate_keyword(struct dict_edit_data *data, GebrGeoXmlProgram
 		if (show_error)
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 						_("Duplicate keyword"),
-						_("Another parameter already uses this keyword. Please choose other."));
+						_("Other parameter already uses this keyword. Please choose another."));
 		return TRUE;
 	}
 

@@ -148,7 +148,7 @@ gboolean gebr_quit(void)
 	g_slist_foreach(gebr.tmpfiles, (GFunc) g_free, NULL);
 	g_slist_free(gebr.tmpfiles);
 
-	gebr_message(GEBR_LOG_END, TRUE, TRUE, _("GêBR Finalizing..."));
+	gebr_message(GEBR_LOG_END, TRUE, TRUE, _("GêBR finalizing..."));
 	gebr_log_close(gebr.log);
 
 	/* Free servers structs */
@@ -303,7 +303,7 @@ static void gebr_migrate_data_dir(void)
 						GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 						GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 						_
-						("Cannot copy data files to GêBR's dir. Please check your write permissions to your home directory."));
+						("Cannot copy data files to GêBR's directory. Please check your write permissions to your home directory."));
 	}
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
@@ -386,7 +386,7 @@ gint gebr_config_load(gboolean nox)
 
 	/* log */
 	gebr_log_load();
-	gebr_message(GEBR_LOG_START, TRUE, TRUE, _("GêBR Initiating..."));
+	gebr_message(GEBR_LOG_START, TRUE, TRUE, _("GêBR initiating..."));
 
 	if (new_config) {
 		if (nox) {
@@ -506,7 +506,7 @@ void gebr_config_save(gboolean verbose)
 	string = g_key_file_to_data(gebr.config.key_file, &length, &error);
 	configfp = fopen(gebr.config.path->str, "w");
 	if (configfp == NULL) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not save configuration"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not save configuration."));
 		goto out;
 	}
 	fwrite(string, sizeof(gchar), length, configfp);
@@ -567,7 +567,7 @@ int gebr_install_private_menus(gchar ** menu, gboolean overwrite)
 	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", getenv("HOME"));
 	gebr_create_config_dirs();
 	if (gebr_config_load(TRUE)) {
-		fprintf(stderr, _("Unable to load GêBR configuration. Try run GêBR once.\n"));
+		fprintf(stderr, _("Unable to load GêBR configuration. Try to run GêBR once.\n"));
 		return -2;
 	}
 

@@ -173,7 +173,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	/*
 	 * Right side: Menu list
 	 */
-	frame = gtk_frame_new(_("Flow components"));
+	frame = gtk_frame_new(_("Menus"));
 	gtk_paned_pack2(GTK_PANED(hpanel), frame, TRUE, TRUE);
 
 	vbox = gtk_vbox_new(FALSE, 3);
@@ -239,7 +239,7 @@ gboolean flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_u
 {
 	if (!gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter)) {
 		if (warn_unselected)
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow component selected"));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No menu selected."));
 		return FALSE;
 	}
 
@@ -298,7 +298,7 @@ void flow_edition_component_activated(void)
 	}
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, FSEQ_TITLE_COLUMN, &title, -1);
-	gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Configuring flow component '%s'"), title);
+	gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Configuring menu '%s'."), title);
 	parameters_configure_setup_ui();
 
 	g_free(title);
@@ -372,12 +372,12 @@ static gboolean flow_edition_get_selected_menu(GtkTreeIter * iter, gboolean warn
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->menu_view));
 	if (gtk_tree_selection_get_selected(selection, &model, iter) == FALSE) {
 		if (warn_unselected)
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No menu selected"));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No menu selected."));
 		return FALSE;
 	}
 	if (!gtk_tree_store_iter_depth(gebr.ui_flow_edition->menu_store, iter)) {
 		if (warn_unselected)
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Select a menu instead of a category"));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Select a menu instead of a category."));
 		return FALSE;
 	}
 

@@ -379,7 +379,7 @@ void project_line_import(void)
 		if (!project_line_get_selected(NULL, ProjectLineSelection))
 			goto out2;
 	} else {
-		gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Unrecognized file type"));
+		gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Unrecognized file type."));
 		goto out2;
 	}
 
@@ -456,11 +456,11 @@ void project_line_import(void)
 	}
 
 	gebr_temp_directory_destroy(tmp_dir);
-	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Imported successful"));
+	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Import successful."));
 	g_strfreev(files);
 	goto out;
 
- err:	gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Failed to import"));
+ err:	gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Failed to import."));
 
  out:	g_free(output);
  out2:	g_free(filename);
@@ -495,12 +495,12 @@ void project_line_export(void)
 		gtk_file_filter_set_name(file_filter, _("Project (*.prjz)"));
 		gtk_file_filter_add_pattern(file_filter, "*.prjz");
 		extension = ".prjz";
-		check_box_label = _("Make this project user independent");
+		check_box_label = _("Make this project user-independent");
 	} else {
 		gtk_file_filter_set_name(file_filter, _("Line (*.lnez)"));
 		gtk_file_filter_add_pattern(file_filter, "*.lnez");
 		extension = ".lnez";
-		check_box_label = _("Make this line user independent");
+		check_box_label = _("Make this line user-independent");
 	}
 
 	/* run file chooser */
@@ -583,9 +583,9 @@ void project_line_export(void)
 	g_chdir(tmpdir->str);
 	g_string_printf(command, "tar czf %s *", output_filename->str);
 	if (system(command->str))
-		gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Could not export"));
+		gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Could not export."));
 	else
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Exported succesful"));
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Export succesful."));
 	g_chdir(current_dir);
 	g_free(current_dir);
 
@@ -631,8 +631,8 @@ gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectio
 	static const gchar *no_line_selected;
 	static const gchar *no_project_selected;
 
-	no_line_selected = _("Please select a line");
-	no_project_selected = _("Please select a project");
+	no_line_selected = _("Please select a line.");
+	no_project_selected = _("Please select a project.");
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
 		switch (check_type) {
@@ -645,7 +645,7 @@ gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectio
 			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, no_line_selected);
 			break;
 		case ProjectLineSelection:
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a project or a line"));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a project or a line."));
 			break;
 		}
 		return FALSE;
@@ -699,9 +699,9 @@ project_line_rename(GtkCellRendererText * cell, gchar * path_string, gchar * new
 
 	/* feedback */
 	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Project '%s' renamed to '%s'"), old_title, new_text);
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Project '%s' renamed to '%s'."), old_title, new_text);
 	else
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Line '%s' renamed to '%s'"), old_title, new_text);
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Line '%s' renamed to '%s'."), old_title, new_text);
 	project_line_info_update();
 }
 

@@ -580,9 +580,9 @@ static void flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXml
 
 	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
 	if (gebr_geoxml_flow_change_to_revision(gebr.flow, revision))
-		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Changed to state '%s' ('%s')"), comment, date);
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Reverted to state '%s' ('%s')."), comment, date);
 	else
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not change to state '%s' ('%s')"), comment, date);
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not revert to state '%s' ('%s')."), comment, date);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
 	flow_browse_load();

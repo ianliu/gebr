@@ -175,7 +175,7 @@ void job_fill_info(struct job *job)
 	 * Fill job information
 	 */
 	/* who and where */
-	g_string_append_printf(info, _("Job executed at %s by %s\n"),
+	g_string_append_printf(info, _("Job executed at %s by %s.\n"),
 			       job->server->comm->protocol->hostname->str, job->hostname->str);
 	/* start date */
 	g_string_append_printf(info, "%s %s\n", _("Start date:"), gebr_localized_date(job->start_date->str));

@@ -72,7 +72,7 @@ void help_show(const gchar * help, const gchar * title)
 
 	html_fp = fopen(html_path->str, "w");
 	if (html_fp == NULL) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to write help in temporary file"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to write help in temporary file."));
 		goto out;
 	}
 	fwrite(prepared_html->str, sizeof(char), strlen(prepared_html->str), html_fp);

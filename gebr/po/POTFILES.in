@@ -19,6 +19,7 @@ src/gebr/ui_flow_edition.c
 src/gebr/ui_help.c
 src/gebr/ui_job_control.c
 src/gebr/ui_log.c
+src/gebr/ui_moab.c
 src/gebr/ui_parameters.c
 src/gebr/ui_paths.c
 src/gebr/ui_preferences.c

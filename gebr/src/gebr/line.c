@@ -82,7 +82,7 @@ gboolean line_new(void)
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(line));
 
 	/* feedback */
-	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New line created in project '%s'"), project_title);
+	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New line created in project '%s'."), project_title);
 
 	project_line_select_iter(&line_iter);
 	if (!on_document_properties_activate())
@@ -126,7 +126,7 @@ gboolean line_delete(gboolean confirm)
 		g_string_free(path, TRUE);
 
 		/* log action */
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Erasing child flow '%s'"), flow_source);
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting child flow '%s'."), flow_source);
 	}
 
 	/* Remove the line from its project */
@@ -144,9 +144,9 @@ gboolean line_delete(gboolean confirm)
 
 	/* inform the user */
 	if (confirm) {
-		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Erasing line '%s'"),
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Deleting line '%s'."),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.line)));
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Erasing line '%s' from project '%s'"),
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting line '%s' from project '%s'."),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.line)),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.project)));
 	}
@@ -256,7 +256,7 @@ void line_load_flows(void)
 	for (; line_flow != NULL; gebr_geoxml_sequence_next(&line_flow))
 		iter = line_append_flow(GEBR_GEOXML_LINE_FLOW(line_flow));
 
-	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flows loaded"));
+	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flows loaded."));
 
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter) == TRUE)
 		flow_browse_select_iter(&iter);

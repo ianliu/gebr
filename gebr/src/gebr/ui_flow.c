@@ -490,7 +490,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	struct gebr_comm_server_run * config;
 
 	if (!flow_browse_get_selected(NULL, FALSE)) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected."));
 		return;
 	}
 
@@ -510,10 +510,10 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	if (!gebr_comm_server_is_logged(server->comm)) {
 		if (gebr_comm_server_is_local(server->comm))
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
-				     _("You're not connected to the local server"), server->comm->address->str);
+				     _("You are not connected to the local server."), server->comm->address->str);
 		else
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
-				     _("You're not connected to server '%s'"), server->comm->address->str);
+				     _("You are not connected to server '%s'."), server->comm->address->str);
 		goto err;
 	}
 
@@ -526,7 +526,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, &config->class, -1);
 		else
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
-				     _("No available queue for server '%s'"), server->comm->address->str);
+				     _("No available queue for server '%s'."), server->comm->address->str);
 	} else {
 		gboolean has_queue = FALSE;
 

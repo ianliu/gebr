@@ -52,8 +52,8 @@ static const GtkActionEntry actions_entries[] = {
 	 G_CALLBACK(on_project_line_delete_activate)},
 	{"project_line_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit project or line properties"),
 	 G_CALLBACK(on_document_properties_activate)},
-	{"project_line_dict_edit", "accessories-dictionary", N_("Parameters' dictionary"), NULL,
-	 N_("Edit parameters' dictionary of current project or line"),
+	{"project_line_dict_edit", "accessories-dictionary", N_("Parameter dictionary"), NULL,
+	 N_("Edit parameter dictionary of current project or line"),
 	 G_CALLBACK(on_document_dict_edit_activate)},
 	{"project_line_line_paths", GTK_STOCK_DIRECTORY, N_("Line paths"), NULL, N_("Edit custom line paths"),
 	 G_CALLBACK(on_project_line_paths_activate)},
@@ -66,8 +66,8 @@ static const GtkActionEntry actions_entries[] = {
 	{"flow_delete", GTK_STOCK_DELETE, NULL, NULL, N_("Delete selected flow"), G_CALLBACK(on_flow_delete_activate)},
 	{"flow_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit flow properties"),
 	 G_CALLBACK(on_document_properties_activate)},
-	{"flow_dict_edit", "accessories-dictionary", N_("Parameters' dictionary"), NULL,
-	 N_("Edit parameters' dictionary of current flow"),
+	{"flow_dict_edit", "accessories-dictionary", N_("Parameter dictionary"), NULL,
+	 N_("Edit parameter dictionary of current flow"),
 	 G_CALLBACK(on_document_dict_edit_activate)},
 	{"flow_change_revision", "document-open-recent", N_("Saved status"), NULL, NULL, NULL},
 	{"flow_import", "document-import", N_("Import"), NULL, N_("Import a flow"),
@@ -80,7 +80,7 @@ static const GtkActionEntry actions_entries[] = {
 	 G_CALLBACK(on_flow_io_activate)}, */
 	{"flow_execute", GTK_STOCK_EXECUTE, NULL, "<Control>r", N_("Run current flow"),
 	 G_CALLBACK(on_flow_execute_activate)},
-	{"flow_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy selected(s) flow(s) to clipboard"),
+	{"flow_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy selected flow(s) to clipboard"),
 	 G_CALLBACK(on_flow_copy_activate)},
 	{"flow_paste", GTK_STOCK_PASTE, N_("Paste"), NULL, N_("Paste flow(s) from clipboard"),
 	 G_CALLBACK(on_flow_paste_activate)},
@@ -93,7 +93,7 @@ static const GtkActionEntry actions_entries[] = {
 	 G_CALLBACK(on_flow_component_properties_activate)},
 	{"flow_edition_refresh", GTK_STOCK_REFRESH, NULL, NULL, N_("Refresh available components list"),
 	 G_CALLBACK(on_flow_component_refresh_activate)},
-	{"flow_edition_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy selected(s) component(s) to clipboard"),
+	{"flow_edition_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy selected component(s) to clipboard"),
 	 G_CALLBACK(on_flow_component_copy_activate)},
 	{"flow_edition_paste", GTK_STOCK_PASTE, N_("Paste"), NULL, N_("Paste component(s) from clipboard"),
 	 G_CALLBACK(on_flow_component_paste_activate)},
@@ -148,7 +148,7 @@ void gebr_setup_ui(void)
 
 	GtkActionGroup *common_action_group;
 
-	gebr.about = gebr_gui_about_setup_ui("GêBR", _("A plug-and-play environment to\nseismic processing tools"));
+	gebr.about = gebr_gui_about_setup_ui("GêBR", _("A plug-and-play environment for\nseismic processing tools"));
 	gebr.ui_server_list = server_list_setup_ui();
 
 	/* Create the main window */

@@ -1,12 +1,12 @@
 # List of source files containing translatable strings.
-src/comm/comm/gchannelsocket.c
-src/comm/comm/ghostinfo.c
-src/comm/comm/glistensocket.c
-src/comm/comm/gprocess.c
+src/comm/comm/channelsocket.c
+src/comm/comm/hostinfo.c
+src/comm/comm/listensocket.c
+src/comm/comm/process.c
 src/comm/comm/socket.c
-src/comm/comm/gsocketaddress.c
-src/comm/comm/gstreamsocket.c
-src/comm/comm/gterminalprocess.c
+src/comm/comm/socketaddress.c
+src/comm/comm/streamsocket.c
+src/comm/comm/terminalprocess.c
 src/comm/comm/protocol.c
 src/comm/comm/server.c
 src/geoxml/geoxml/document.c

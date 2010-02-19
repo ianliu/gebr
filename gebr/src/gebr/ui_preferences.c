@@ -121,13 +121,13 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 		gtk_entry_set_text(GTK_ENTRY(ui_preferences->email), g_get_user_name());
 
 	/*
-	 * GeBR dir
+	 * User's menus directory
 	 */
 	label = gtk_label_new(_("User's menus directory"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 3, 3);
 	eventbox = gtk_event_box_new();
-	ui_preferences->usermenus = gtk_file_chooser_button_new(_("GêBR dir"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+	ui_preferences->usermenus = gtk_file_chooser_button_new(_("User's menus directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
 	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->usermenus);
 	gebr_gui_gtk_widget_set_tooltip(eventbox, _("Path to look for private user's menus"));
 	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3), ++row;

@@ -31,7 +31,7 @@ gboolean moab_setup_ui(gchar ** char_account, struct server * server)
 	GtkTreeIter iter;
 
 	ret = TRUE;
-	dialog = gtk_dialog_new_with_buttons(_("Moab Execute"), GTK_WINDOW(gebr.window), 
+	dialog = gtk_dialog_new_with_buttons(_("Moab execution parameters"), GTK_WINDOW(gebr.window), 
 					     GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT, 
 					     GTK_STOCK_EXECUTE, GTK_RESPONSE_ACCEPT,
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,

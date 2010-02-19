@@ -77,7 +77,7 @@ void path_list_setup_ui(void)
 	GString *dialog_title;
 
 	if (gebr.line == NULL) {
-		gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("No line selected"));
+		gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("No line selected."));
 		return;
 	}
 

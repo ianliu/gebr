@@ -58,7 +58,7 @@ void project_new(void)
 	if (!on_document_properties_activate())
 		project_delete(FALSE);
 
-	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New project created"));
+	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New project created."));
 }
 
 /**
@@ -87,13 +87,13 @@ gboolean project_delete(gboolean confirm)
 	   prompt the user to take about erasing its lines */
 	/* Delete each line of the project */
 	if ((nlines = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter)) > 0) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Project '%s' still has %i lines"), title, nlines);
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Project '%s' still has %i lines."), title, nlines);
 		goto out;
 	}
 
 	/* message user */
 	if (confirm)
-		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Erasing project '%s'"), title);
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Deleting project '%s'."), title);
 
 	/* finally, remove it from the disk */
 	document_delete(filename);

@@ -42,7 +42,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 			if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)
 				goto err;
 			g_string_assign(server->last_error, ((GString *)g_list_nth_data(arguments, 0))->str);
-			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Server '%s' reported error '%s'"),
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Server '%s' reported error '%s'."),
 				     comm_server->address->str, server->last_error->str);
 
 			gebr_comm_protocol_split_free(arguments);
@@ -95,16 +95,16 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				server_list_updated_status(server);
 				g_string_assign(comm_server->protocol->hostname, hostname->str);
 				if (gebr_comm_server_is_local(comm_server) == TRUE)
-					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to local server"),
+					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to local server."),
 						     comm_server->address->str);
 				else {
-					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to server '%s'"),
+					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to server '%s'."),
 						     comm_server->address->str);
 					if (display_port->len)
 						gebr_comm_server_forward_x11(comm_server, atoi(display_port->str));
 					else
 						gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
-							     ("Server '%s' could not send display for graphical output redirection"),
+							     _("Server '%s' could not redirect graphical output."),
 							     comm_server->address->str);
 				}
 

@@ -475,7 +475,7 @@ struct server *server_select_setup_ui(void)
 	}
 	if (connected == 0) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE,
-			     _("There are no running servers available. Please configure them in Configure/Server"));
+			     _("There are no connected servers. Please configure them in Actions/Servers."));
 		goto out;
 	}
 	if (connected == 1) {

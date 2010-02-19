@@ -81,7 +81,7 @@ gboolean flow_new(void)
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(flow));
 
 	flow_browse_select_iter(&iter);
-	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'"), line_title);
+	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'."), line_title);
 	if (!on_document_properties_activate())
 		flow_delete(FALSE);
 
@@ -123,7 +123,7 @@ void flow_delete(gboolean confirm)
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
 	if (confirm && gebr_gui_confirm_action_dialog(_("Delete flow"),
-						      _("Are you sure you want to delete selected(s) flow(s)?")) ==
+						      _("Are you sure you want to delete the selected flow(s)?")) ==
 	    FALSE)
 		return;
 
@@ -133,8 +133,8 @@ void flow_delete(gboolean confirm)
 
 		/* Some feedback */
 		if (confirm) {
-			gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Erasing flow '%s'"), title);
-			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Erasing flow '%s' from line '%s'"),
+			gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Deleting flow '%s'."), title);
+			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting flow '%s' from line '%s'."),
 				     title, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line)));
 		}
 
@@ -206,7 +206,7 @@ void flow_import(void)
 	flow_title = (gchar *) gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(imported_flow));
 
 	/* feedback */
-	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' imported to line '%s' from file '%s'"),
+	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' imported to line '%s' from file '%s'."),
 		     flow_title, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.line)), dir);
 
 	document_import(GEBR_GEOXML_DOCUMENT(imported_flow));
@@ -258,7 +258,7 @@ void flow_export(void)
 
 	/* run file chooser */
 	g_string_printf(title, _("Choose filename to save flow '%s'"), gebr_geoxml_document_get_title(flow));
-	check_box = gtk_check_button_new_with_label(_("Make this flow user-independent"));
+	check_box = gtk_check_button_new_with_label(_("Make this flow user-independent."));
 	chooser_dialog = gtk_file_chooser_dialog_new(title->str,
 						     GTK_WINDOW(gebr.window), GTK_FILE_CHOOSER_ACTION_SAVE,
 						     GTK_STOCK_SAVE, GTK_RESPONSE_YES, GTK_STOCK_CANCEL,
@@ -286,7 +286,7 @@ void flow_export(void)
 	gebr_geoxml_document_set_filename(flow, filename);
 	gebr_geoxml_document_save(flow, path->str);
 
-	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' exported to %s"),
+	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' exported to %s."),
 		     (gchar *) gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)), path->str);
 
 	/* frees */
@@ -433,7 +433,7 @@ void flow_export_as_menu(void)
 	gebr_geoxml_document_save(GEBR_GEOXML_DOC(flow), path->str);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(flow));
 
-	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' exported as menu to %s"),
+	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' exported as menu to %s."),
 		     (gchar *) gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)), path);
 
 	/* frees */
@@ -612,13 +612,13 @@ void flow_run(struct server *server, struct gebr_comm_server_run * config)
 	gebr_geoxml_document_save(GEBR_GEOXML_DOC(gebr.flow), path->str);
 	flow_browse_info_update();
 
-	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'"),
+	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'."),
 		     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(config->flow)));
 	if (gebr_comm_server_is_local(server->comm) == FALSE) {
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'"),
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'."),
 			     server->comm->address->str, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(config->flow)));
 	} else {
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to run flow '%s'"),
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to run flow '%s'."),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(config->flow)));
 	}
 
@@ -806,7 +806,7 @@ void flow_program_paste(void)
 
 	pasted = GEBR_GEOXML_SEQUENCE(gebr_geoxml_clipboard_paste(GEBR_GEOXML_OBJECT(gebr.flow)));
 	if (pasted == NULL) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not paste component"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not paste component."));
 		return;
 	}
 
