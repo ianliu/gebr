@@ -570,6 +570,7 @@ void menu_close(GtkTreeIter * iter)
 		menu_select_iter(iter);
 
 	debr_message(GEBR_LOG_INFO, _("Menu \"%s\" closed."), path);
+	g_free(path);
 }
 
 void menu_selected(void)
@@ -1144,8 +1145,10 @@ void menu_path_get_parent(const gchar * path, GtkTreeIter * parent)
 
 		if (strcmp(dirpath, dirname) == 0) {
 			*parent = iter;
+			g_free(dirpath);
 			goto out;
 		}
+		g_free(dirpath);
 	}
 	*parent = debr.ui_menu.iter_other;
  out:	g_free(dirname);
