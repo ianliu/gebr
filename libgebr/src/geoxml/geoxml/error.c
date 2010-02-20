@@ -25,16 +25,16 @@ const gchar *gebr_geoxml_error_string(enum GEBR_GEOXML_RETV error)
 		N_("Success."),
 		N_("Null pointer."),
 		N_("Not enough memory."),
-		N_("Can't find file or permission denied."),
+		N_("Can not find file or permission denied."),
 		N_("Invalid element index."),
 		N_("Invalid document syntax or structure."),
 		N_("DTD specified in XML."),
 		N_("Could not find or read DTD."),
 		N_("Not a sequence."),
-		N_("An operation on two sequences requires that both sequences are of the same type."),
+		N_("Unable to perform binary sequence operation with conflicting types."),
 		N_("Not an enum."),
-		N_("Reference to itlself"),
-		N_("Not first instance of the group"),
+		N_("Reference to itself."),
+		N_("Not first instance of the group."),
 	};
 	guint index = -(guint) error;
 
@@ -51,20 +51,19 @@ const gchar *gebr_geoxml_error_explained_string(enum GEBR_GEOXML_RETV error)
 		N_("Not enough memory. " "The library stoped after an unsucessful memory allocation."),
 		N_("Can't access file. The file doesn't exist or there is not enough " "permission to read it."),
 		N_("This element index does not exist in the sequence."),
-		N_("Invalid XML syntax or it does not respect the structure "
-		   "defined on its corresponding document DTD."),
-		N_("DTD was specified for the document. LibGeBR-GebrGeoXml requires the document "
-		   "not to specify the DTD as it automatically find it and validate against."),
+		N_("XML syntax is invalid or disagrees with DTD."),
+		N_("DTD was specified for the document. LibGeBR-GebrGeoXml requires the document does"
+		   "not to specify the DTD as it automatically finds it and validates against."),
 		N_("DTD for the corresponding document type (flow, line or project) and version "
 		   "could not be found or accessed on the system.\n"
 		   "You should verify if your installation is correct and if it supports "
-		   "this document version (you might need to update your software)."),
+		   "this document version (update might be necessary)."),
 		N_("The argument(s) passed are not inside a sequence and therefore sequence operations "
 		   "doesn't apply. This is a type checking result error."),
 		N_("An operation on two sequences requires that both sequences are of the same type."),
 		N_("The function is only for enums. This is a type checking result error."),
-		N_("The reference parameter references itself"),
-		N_("The operation only applies to the first instance of the group")
+		N_("The reference parameter references itself."),
+		N_("The operation only applies to the first instance of the group.")
 	};
 	guint index = -(guint) error;
 

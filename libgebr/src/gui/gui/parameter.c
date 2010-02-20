@@ -110,8 +110,8 @@ gebr_gui_parameter_widget_file_entry_customize_function(GtkFileChooser * file_ch
 
 		gtk_file_chooser_add_filter(file_chooser, file_filter);
 		file_filter = gtk_file_filter_new();
-		gtk_file_filter_set_name(file_filter, _("Todos"));
-		gtk_file_filter_add_pattern(file_filter, _("*"));
+		gtk_file_filter_set_name(file_filter, _("All"));
+		gtk_file_filter_add_pattern(file_filter, "*");
 		gtk_file_chooser_add_filter(file_chooser, file_filter);
 
 		g_string_free(name, TRUE);

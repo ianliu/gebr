@@ -1,20 +1,20 @@
 # LANGUAGE translation of debr.
-# Copyright (C) 2009 THE debr'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the debr package.
+# Copyright (C) 2009 THE libgebr'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the libgebr package.
 # , fuzzy
 #
 #
-# biloti <biloti@gmail.com>, 2009.
-# Bráulio Barros de Oliveira <brauliobo@gmail.com>, 2009.
+# Ricardo Biloti <biloti@gebrproject.com>, 2009-2010.
+# Bráulio Barros de Oliveira <brauliobo@gebrproject.com>, 2009.
 #: ../src/geoxml/upgrade/upgrade.c:50
 msgid ""
 msgstr ""
-"Project-Id-Version: debr 0.9.12\n"
+"Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-19 14:49-0200\n"
-"PO-Revision-Date: 2009-08-10 20:24-0300\n"
-"Last-Translator: Bráulio Barros de Oliveira <brauliobo@gmail.com>\n"
-"Language-Team: American English <kde-i18n-doc@kde.org>\n"
+"POT-Creation-Date: 2010-02-19 23:08-0200\n"
+"PO-Revision-Date: 2010-02-19 23:08-0200\n"
+"Last-Translator: Ricardo Biloti <biloti@gebrproject.com>\n"
+"Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);X-"
@@ -23,23 +23,23 @@ msgstr ""
 
 #: ../src/comm/comm/server.c:118
 #, c-format
-msgid "Launching server at %s"
-msgstr "Executando servidor em %s"
+msgid "Launching server at %s."
+msgstr "Iniciando servidor em %s."
 
 #: ../src/comm/comm/server.c:133
-msgid "Launching local server"
-msgstr "Executando servidor local"
+msgid "Launching local server."
+msgstr "Iniciando servidor local."
 
 #: ../src/comm/comm/server.c:173
 #, c-format
-msgid "Stoping server at %s"
-msgstr "Parando servidor em %s"
+msgid "Stoping server at %s."
+msgstr "Parando servidor em %s."
 
 #. log
 #: ../src/comm/comm/server.c:245
 #, c-format
-msgid "Redirecting '%s' graphical output"
-msgstr "Redirecionando saída gráfica de '%s'"
+msgid "Redirecting '%s' graphical output."
+msgstr "Redirecionando saída gráfica de '%s'."
 
 #: ../src/comm/comm/server.c:338
 #, c-format
@@ -57,7 +57,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"O servidor %s precisa de login SSH.\n"
+"Servidor %s precisa de login SSH.\n"
 "\n"
 "%s"
 
@@ -77,7 +77,7 @@ msgid "SSH login:"
 msgstr "Login SSH:"
 
 #: ../src/comm/comm/server.c:403
-msgid "SSH question:"
+msgid "SSH inquiry:"
 msgstr "Pergunta SSH:"
 
 #: ../src/comm/comm/server.c:413
@@ -109,8 +109,8 @@ msgstr ""
 
 #: ../src/comm/comm/server.c:626
 #, c-format
-msgid "Connection error '%d' on server '%s'"
-msgstr "Erro de conexão '%d' no servidor '%s'"
+msgid "Connection error '%d' on server '%s'."
+msgstr "Erro de conexão '%d' no servidor '%s'."
 
 #: ../src/geoxml/geoxml/error.c:25
 msgid "Success."
@@ -125,7 +125,7 @@ msgid "Not enough memory."
 msgstr "Memória insuficiente."
 
 #: ../src/geoxml/geoxml/error.c:28
-msgid "Can't find file or permission denied."
+msgid "Can not find file or permission denied."
 msgstr "Não foi possível encontrar o arquivo ou permissão negada."
 
 #: ../src/geoxml/geoxml/error.c:29
@@ -138,7 +138,7 @@ msgstr "Sintaxe ou estrutura do documento inválida."
 
 #: ../src/geoxml/geoxml/error.c:31
 msgid "DTD specified in XML."
-msgstr "O DTD foi especificado no XML."
+msgstr "DTD especificado no XML."
 
 #: ../src/geoxml/geoxml/error.c:32
 msgid "Could not find or read DTD."
@@ -146,27 +146,24 @@ msgstr "Não foi possível encontrar ou ler DTD."
 
 #: ../src/geoxml/geoxml/error.c:33
 msgid "Not a sequence."
-msgstr "Não é uma sequência."
+msgstr "Não é uma seqüência."
 
-#: ../src/geoxml/geoxml/error.c:34 ../src/geoxml/geoxml/error.c:64
-msgid ""
-"An operation on two sequences requires that both sequences are of the same "
-"type."
+#: ../src/geoxml/geoxml/error.c:34
+msgid "Unable to perform binary sequence operation with conflicting types."
 msgstr ""
-"Uma operação em duas sequências requer que ambas as sequências sejam do "
-"mesmo tipo."
+"Impossível realizar operação binária em seqüências de tipos conflitantes."
 
 #: ../src/geoxml/geoxml/error.c:35
 msgid "Not an enum."
 msgstr "Não é um enum."
 
 #: ../src/geoxml/geoxml/error.c:36
-msgid "Reference to itlself"
-msgstr "Referência a ele mesmo"
+msgid "Reference to itself."
+msgstr "Referência a ele mesmo."
 
 #: ../src/geoxml/geoxml/error.c:37
-msgid "Not first instance of the group"
-msgstr "Não é a primeira instância do grupo"
+msgid "Not first instance of the group."
+msgstr "Não é a primeira instância do grupo."
 
 #: ../src/geoxml/geoxml/error.c:49
 msgid "The operation was done successfuly."
@@ -193,35 +190,34 @@ msgstr ""
 
 #: ../src/geoxml/geoxml/error.c:53
 msgid "This element index does not exist in the sequence."
-msgstr "Este índice de elementos não existe na sequência."
+msgstr "Este índice de elementos não existe na seqüência."
 
 #: ../src/geoxml/geoxml/error.c:54
-msgid ""
-"Invalid XML syntax or it does not respect the structure defined on its "
-"corresponding document DTD."
-msgstr "Sintaxe de XML inválida ou em desacordo o DTD correspondente."
+msgid "XML syntax is invalid or disagrees with DTD."
+msgstr "Sintaxe do XML inválida ou em desacordo o DTD."
 
-#: ../src/geoxml/geoxml/error.c:56
+#: ../src/geoxml/geoxml/error.c:55
 msgid ""
 "DTD was specified for the document. LibGeBR-GebrGeoXml requires the document "
-"not to specify the DTD as it automatically find it and validate against."
+"doesnot to specify the DTD as it automatically finds it and validates "
+"against."
 msgstr ""
 "O DTD foi especificado para este documento. LibGeBR-GebrGeoXml requer que o "
 "documento não especifique o DTD dado que este é encontrado automaticamente."
 
-#: ../src/geoxml/geoxml/error.c:58
+#: ../src/geoxml/geoxml/error.c:57
 msgid ""
 "DTD for the corresponding document type (flow, line or project) and version "
 "could not be found or accessed on the system.\n"
 "You should verify if your installation is correct and if it supports this "
-"document version (you might need to update your software)."
+"document version (update might be necessary)."
 msgstr ""
-"DTD para o documento correspondente (fluxo, linha ou projeto) e não pode ser "
+"DTD para o documento correspondente (fluxo, linha ou projeto) não pode ser "
 "encontrado ou acessado no sistema.\n"
 "Verifique se sua instalação está correta e se ela suporta esta versão de "
 "documento (atualização pode ser necessária)."
 
-#: ../src/geoxml/geoxml/error.c:62
+#: ../src/geoxml/geoxml/error.c:61
 msgid ""
 "The argument(s) passed are not inside a sequence and therefore sequence "
 "operations doesn't apply. This is a type checking result error."
@@ -229,19 +225,27 @@ msgstr ""
 "Os argumentos fornecidos não estão contidos em uma sequência e portanto as "
 "operações não se aplicam. Isto é um erro resutante de checagem de tipo."
 
-#: ../src/geoxml/geoxml/error.c:65
+#: ../src/geoxml/geoxml/error.c:63
+msgid ""
+"An operation on two sequences requires that both sequences are of the same "
+"type."
+msgstr ""
+"Uma operação com duas seqüências requer que ambas as seqüências sejam do "
+"mesmo tipo."
+
+#: ../src/geoxml/geoxml/error.c:64
 msgid "The function is only for enums. This is a type checking result error."
 msgstr ""
 "A função é somente para enums. Isso é um erro de resultante de checagem de "
 "tipo."
 
-#: ../src/geoxml/geoxml/error.c:66
-msgid "The reference parameter references itself"
-msgstr "O parâmetro de referência faz referência a si próprio"
+#: ../src/geoxml/geoxml/error.c:65
+msgid "The reference parameter references itself."
+msgstr "O parâmetro de referência faz referência a si próprio."
 
-#: ../src/geoxml/geoxml/error.c:67
-msgid "The operation only applies to the first instance of the group"
-msgstr "A operação aplica-se somente a primeira instância do grupo"
+#: ../src/geoxml/geoxml/error.c:66
+msgid "The operation only applies to the first instance of the group."
+msgstr "A operação aplica-se somente à primeira instância do grupo."
 
 #: ../src/geoxml/geoxml/parameter.c:224
 msgid "string"
@@ -281,7 +285,7 @@ msgstr "referência"
 
 #: ../src/geoxml/upgrade/upgrade.c:32 ../src/geoxml/validate/validate.c:32
 msgid "file1.flw file2.mnu file3.prj file4.lne ..."
-msgstr ""
+msgstr "arquivo1.flw arquivo2.flw arquivo3.prj arquivo4.lne ..."
 
 #: ../src/geoxml/upgrade/upgrade.c:48 ../src/geoxml/validate/validate.c:48
 msgid "LibGebrGeoXml XML validator"
@@ -300,13 +304,13 @@ msgstr "Tente %s --help\n"
 
 #: ../src/geoxml/upgrade/upgrade.c:76
 #, c-format
-msgid "Could not load file %s\n"
-msgstr "Não foi possível carregar o arquivo %s\n"
+msgid "Could not load file %s.\n"
+msgstr "Não foi possível carregar o arquivo %s.\n"
 
 #: ../src/geoxml/upgrade/upgrade.c:81
 #, c-format
-msgid "Could not save file %s\n"
-msgstr "Não foi possível salvar o arquivo %s\n"
+msgid "Could not save file %s.\n"
+msgstr "Não foi possível salvar o arquivo %s.\n"
 
 #: ../src/geoxml/upgrade/upgrade.c:85
 #, c-format
@@ -328,16 +332,24 @@ msgid "GêBR Core Team:"
 msgstr "GêBR Core Team:"
 
 #: ../src/gui/gui/about.c:37
+msgid "Coordinator"
+msgstr "Coordenador"
+
+#: ../src/gui/gui/about.c:39
 msgid "Developers"
 msgstr "Desenvolvedores"
 
-#: ../src/gui/gui/about.c:56
+#: ../src/gui/gui/about.c:45
+msgid "Consultants"
+msgstr "Consultores"
+
+#: ../src/gui/gui/about.c:61
 msgid "GêBR Core Team"
 msgstr "GêBR Core Team"
 
-#: ../src/gui/gui/about.c:59
+#: ../src/gui/gui/about.c:64
 msgid ""
-"Copyright (C) 2007-2009 GêBR core team (http://www.gebrproject.com/)\n"
+"Copyright (C) 2007-2010 GêBR core team (http://www.gebrproject.com/)\n"
 "\n"
 "This program is free software: you can redistribute it and/or modify it "
 "under the terms of the GNU General Public License as published by the Free "
@@ -357,7 +369,7 @@ msgid ""
 "#9610, Feb 19, 1998, and is registered in Instituto Nacional da Propriedade "
 "Industrial (INPI) under number 70156."
 msgstr ""
-"Copyright (C) 2007-2009 GêBR core team (http://www.gebrproject.com/)\n"
+"Copyright (C) 2007-2010 GêBR core team (http://www.gebrproject.com/)\n"
 "\n"
 "Este programa é um software livre: você pode distribuí-lo e/ou modifica-lo "
 "de acordo com os termos da GNU General Public Licence como publicado pela "
@@ -376,7 +388,7 @@ msgstr ""
 "abrl de 1998, e #9610, 19 de fevereiro de 1998, e é registrado no Instituto "
 "Nacional de Propriedade Industrial (INPI) sob número 70156."
 
-#: ../src/gui/gui/about.c:77
+#: ../src/gui/gui/about.c:82
 msgid "GêBR Home page"
 msgstr "Página da GêBR"
 
@@ -393,26 +405,27 @@ msgid "<empty value>"
 msgstr "<valor vazio>"
 
 #: ../src/gui/gui/parameter.c:113
-msgid "Todos"
-msgstr ""
-
-#: ../src/gui/gui/parameter.c:114
-msgid "*"
-msgstr ""
+msgid "All"
+msgstr "Todos"
 
 #: ../src/gui/gui/parameter.c:633
 msgid "Edit list"
 msgstr "Editar lista"
 
 #: ../src/gui/gui/parameter.c:827
-#, fuzzy
 msgid "Do not use dictionary"
-msgstr "Escolha um diretório"
+msgstr "Não use o dicionário"
 
 #: ../src/gui/gui/parameter.c:887
 msgid "Dictionary"
-msgstr ""
+msgstr "Dicionário"
 
 #: ../src/date.c:69
 msgid "Unknown"
 msgstr "Desconhecida"
+
+#, fuzzy
+#~ msgid ""
+#~ "Invalid XML syntax or it does not respect the structure defined on its "
+#~ "corresponding document DTD."
+#~ msgstr "Sintaxe do XML inválida ou em desacordo o DTD."

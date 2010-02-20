@@ -115,7 +115,7 @@ void gebr_comm_server_connect(struct gebr_comm_server *gebr_comm_server)
 		GebrCommTerminalProcess *process;
 
 		gebr_comm_server->state = SERVER_STATE_RUN;
-		gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_INFO, _("Launching server at %s"),
+		gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_INFO, _("Launching server at %s."),
 					     gebr_comm_server->address->str);
 
 		gebr_comm_server->process.use = COMM_SERVER_PROCESS_TERMINAL;
@@ -130,7 +130,7 @@ void gebr_comm_server_connect(struct gebr_comm_server *gebr_comm_server)
 		GebrCommProcess *process;
 
 		gebr_comm_server->state = SERVER_STATE_RUN;
-		gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_INFO, _("Launching local server"));
+		gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_INFO, _("Launching local server."));
 
 		gebr_comm_server->process.use = COMM_SERVER_PROCESS_REGULAR;
 		gebr_comm_server->process.data.regular = process = gebr_comm_process_new();
@@ -170,7 +170,7 @@ void gebr_comm_server_kill(struct gebr_comm_server *gebr_comm_server)
 	GebrCommTerminalProcess *process;
 
 	cmd_line = g_string_new(NULL);
-	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_INFO, _("Stoping server at %s"),
+	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_INFO, _("Stoping server at %s."),
 				     gebr_comm_server->address->str);
 
 	gebr_comm_server->tried_existant_pass = FALSE;
@@ -242,7 +242,7 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server,
 	gebr_comm_terminal_process_start(gebr_comm_server->x11_forward_process, string);
 
 	/* log */
-	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_INFO, _("Redirecting '%s' graphical output"),
+	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_INFO, _("Redirecting '%s' graphical output."),
 				     gebr_comm_server->address->str);
 
 	/* frees */
@@ -400,7 +400,7 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_s
 		GString *answer;
 
 		answer = g_string_new(NULL);
-		if (gebr_comm_server->ops->ssh_question(_("SSH question:"), output->str) == FALSE) {
+		if (gebr_comm_server->ops->ssh_question(_("SSH inquiry:"), output->str) == FALSE) {
 			gebr_comm_server->error = SERVER_ERROR_SSH;
 			gebr_comm_server_disconnected_state(gebr_comm_server);
 			g_string_assign(answer, "no\n");
@@ -623,7 +623,7 @@ gebr_comm_server_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocket
 	gebr_comm_server_disconnected_state(gebr_comm_server);
 	if (error == G_SOCKET_ERROR_UNKNOWN)
 		puts("FIXME: handle G_SOCKET_ERROR_UNKNOWN");
-	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_ERROR, _("Connection error '%d' on server '%s'"), error,
+	gebr_comm_server_log_message(gebr_comm_server, GEBR_LOG_ERROR, _("Connection error '%d' on server '%s'."), error,
 				     gebr_comm_server->address->str);
 }
 

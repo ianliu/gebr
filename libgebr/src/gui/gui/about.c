@@ -34,12 +34,17 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
 	struct about about;
 	const gchar *authors[] = {
 		_("GêBR Core Team:"),
+                _("Coordinator"),
+		"  Ricardo Biloti <biloti@gebrproject.com>",
 		_("Developers"),
-		"  Bráulio Oliveira <brauliobo@gmail.com>",
+                "  Alexandre Baaklini <abaaklini@gebrproject.com>",
+		"  Bráulio Oliveira <brauliobo@gebrproject.com>",
+                "  Fábio Azevedo <fabioaz@gebrproject.com>",
+                "  Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>",
+		"  Ian Liu Rodrigues <ian.liu@gebrproject.com>",
+                _("Consultants"),
 		"  Eduardo Filpo <efilpo@gmail.com>",
 		"  Fernando Roxo <roxo@roxo.org>",
-		"  Ian Liu Rodrigues <ian.liu88@gmail.com>",
-		"  Ricardo Biloti <biloti@gmail.com>",
 		"  Rodrigo Portugal <rosoport@gmail.com>",
 		NULL
 	};
@@ -56,7 +61,7 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
 	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about.dialog), _("GêBR Core Team"));
 
 	gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about.dialog),
-				     _("Copyright (C) 2007-2009 GêBR core team (http://www.gebrproject.com/)\n" "\n"
+				     _("Copyright (C) 2007-2010 GêBR core team (http://www.gebrproject.com/)\n" "\n"
 				       "This program is free software: you can redistribute it and/or modify "
 				       "it under the terms of the GNU General Public License as published by "
 				       "the Free Software Foundation, either version 3 of the License, or "
