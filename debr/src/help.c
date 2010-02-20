@@ -299,7 +299,7 @@ void help_show(const gchar * help, const gchar * title)
 	/* open temporary file with help from XML */
 	html_fp = fopen(html_path->str, "w");
 	if (html_fp == NULL) {
-		debr_message(GEBR_LOG_ERROR, _("Could not create an temporary file."));
+		debr_message(GEBR_LOG_ERROR, _("Unable to create temporary file."));
 		goto out;
 	}
 	fputs(prepared_html->str, html_fp);
@@ -376,7 +376,7 @@ void help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh
 		/* Read back the help from file */
 		fp = fopen(DEBR_DATA_DIR "help-template.html", "r");
 		if (fp == NULL) {
-			debr_message(GEBR_LOG_ERROR, _("Could not open template. Please check your installation."));
+			debr_message(GEBR_LOG_ERROR, _("Unable to open template. Please check your installation."));
 			return;
 		}
 

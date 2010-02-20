@@ -253,7 +253,7 @@ GebrGeoXmlFlow *menu_load(const gchar * path)
 	GebrGeoXmlSequence *category;
 
 	if ((ret = gebr_geoxml_document_load(&menu, path, NULL))) {
-		debr_message(GEBR_LOG_ERROR, _("Could not load menu at '%s': %s"), path,
+		debr_message(GEBR_LOG_ERROR, _("Could not load menu at '%s': %s."), path,
 			     gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		return NULL;
 	}
@@ -511,11 +511,11 @@ void menu_install(void)
 			break;
 		case -1:
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-						_("Failed to run GêBR. Please check if GêBR is installed"));
+						_("Failed to run GêBR. Please check if GêBR is installed."));
 			break;
 		case -2:
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-						_("Failed to install menu '%s'"), menu_filename);
+						_("Failed to install menu '%s'."), menu_filename);
 			break;
 		case -3:{
 				gint response;

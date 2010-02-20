@@ -196,7 +196,7 @@ void on_menu_save_activate(void)
 	GtkTreeIter iter;
 
 	if (!menu_get_selected(&iter, TRUE)){
-		debr_message(GEBR_LOG_INFO, _("Menu not selected."));
+		debr_message(GEBR_LOG_INFO, _("No menu selected."));
 		return;
 	}
 	if (!menu_save(&iter))
@@ -424,7 +424,7 @@ void on_menu_delete_activate(void)
 
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 							GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-							_("Could not delete menu '%s'"),
+							_("Could not delete menu '%s'."),
 							gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)));
 			gtk_dialog_run(GTK_DIALOG(dialog));
 			gtk_widget_destroy(dialog);

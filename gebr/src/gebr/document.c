@@ -141,7 +141,7 @@ GebrGeoXmlDocument *document_load_path(const gchar * path)
 
 	if ((ret = gebr_geoxml_document_load(&document, path, 
 	g_str_has_suffix(path, ".flw") ? __document_discard_menu_ref_callback : NULL)) < 0)
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load document at %s: %s"), path,
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load document at %s: %s."), path,
 			     gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 
 	return document;

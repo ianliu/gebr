@@ -504,7 +504,7 @@ void parameter_paste(void)
 
 	pasted_sequence = (GebrGeoXmlSequence *) gebr_geoxml_clipboard_paste(GEBR_GEOXML_OBJECT(debr.program));
 	if (pasted_sequence == NULL) {
-		debr_message(GEBR_LOG_ERROR, _("Could not paste parameter"));
+		debr_message(GEBR_LOG_ERROR, _("Could not paste parameter."));
 		return;
 	}
 
@@ -649,7 +649,7 @@ gboolean parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
 {
 	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view), iter) == FALSE) {
 		if (show_warning)
-			debr_message(GEBR_LOG_ERROR, _("No parameter is selected"));
+			debr_message(GEBR_LOG_ERROR, _("No parameter is selected."));
 		return FALSE;
 	}
 

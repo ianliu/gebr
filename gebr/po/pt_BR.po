@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-19 19:21-0200\n"
-"PO-Revision-Date: 2010-02-19 14:55-0200\n"
+"POT-Creation-Date: 2010-02-19 23:17-0200\n"
+"PO-Revision-Date: 2010-02-19 23:17-0200\n"
 "Last-Translator: Fabio Azevedo <fabioaz@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -68,8 +68,8 @@ msgstr "Erro na comunicação com o servidor '%s'. Por favor, reconecte."
 
 #: ../src/gebr/document.c:144
 #, c-format
-msgid "Can't load document at %s: %s"
-msgstr "Não foi possível carregar documento em %s: %s"
+msgid "Can't load document at %s: %s."
+msgstr "Não foi possível carregar documento em %s: %s."
 
 #: ../src/gebr/flow.c:68
 msgid "New Flow"
