@@ -404,7 +404,7 @@ void help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh
 		gebr_gui_program_help_edit(program, help_edit_on_finished);
 	} else {
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html->str);
-		gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), help_edit_on_finished);
+		gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), help_edit_on_finished, TRUE);
 	}
 }
 

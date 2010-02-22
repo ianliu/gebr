@@ -34,18 +34,17 @@
  * Declarations
  */
 
-typedef void (*set_help)(GebrGeoXmlObject * object, const gchar * help);
 static GHashTable * jscontext_to_data_hash = NULL;
 struct help_edit_data {
 	WebKitWebView * web_view;
 	JSContextRef context;
 
 	GebrGeoXmlObject * object;
-	set_help set_function;
-
 	GString *html_path;
 	gchar *raw_help;
 	GebrGuiHelpEdited edited_callback;
+
+	gboolean menu_edition;
 };
 
 static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window);
@@ -65,59 +64,45 @@ static gchar * js_start_inline_editing = \
 	"var editing_element = null;"
 	"var editing_class = null;"
 	"var CKEDITOR_BASEPATH='file://" CKEDITOR_DIR "/';"
-	"function HasNavigation() {"
-		"var lists = document.getElementsByClassName('navigation');"
-		"return lists.length >= 1;"
-	"}"
-	"function DestroyEditor(discard_changes) {"
-		"if (editor) {"
-			"editor.destroy(discard_changes);"
-			"if (HasNavigation()) {"
-				"GenerateNavigationIndex(document);"
-			"}"
-			"editor = null;"
-			"editing_element = null;"
+	"function getHead(doc) {"
+		"var head = doc.getElementsByTagName('head')[0];"
+		"if (!head) {"
+			"head = doc.createElement('head');"
+			"doc.documentElement.insertBefore(head, doc.body);"
 		"}"
-	"}"
-	"function GetEditableElements(doc) {"
-		"return [doc.getElementsByClassName('content')[0]];"
+		"return head;"
 	"}"
 	"function IsElementEditable(elt) {"
 		"return (elt.nodeName.toLowerCase() == 'div'"
 			"&& elt.className.indexOf('content') != -1);"
 	"}"
-	"function OpenCkEditor(element) {"
-		"if (editor) return;"
-		"editing_element = element;"
-		"editing_class = element.getAttribute('class');"
-		"editor = CKEDITOR.replace(element, {"
-			"fullpage: true,"
-			"height:300,"
-			"width: HasNavigation()?390:'100%',"
-			"resize_enabled:false,"
-			"toolbarCanCollapse:false,"
-			"toolbar:[['Source','Save', '-','Bold','Italic','Underline','-',"
-				"'Subscript','Superscript','-','Undo','Redo','-','/',"
-				"'NumberedList','BulletedList','Blockquote','Styles','-',"
-				"'Link','Unlink','-','Find','Replace', '-' ]]});"
-	"}"
-	"function on_click(evt) {"
-		"var element = evt.target;"
-		"var found_editable = false;"
-		"while (element) {"
-			"if (IsElementEditable(element)) {"
-				"found_editable = true;"
-				"break;"
-			"}"
-			"element = element.parentNode;"
+	"function GetEditableElements(doc) {"
+		"var content = doc.getElementsByClassName('content')[0];"
+		"if (!menu_edition && !content) {"
+			"content = doc.createElement('div');"
+			"content.setAttribute('class', 'content');"
+			"content.innerHTML = doc.body.innerHTML;"
+			"doc.body.innerHTML = '';"
+			"doc.body.appendChild(content);"
 		"}"
-		"if (found_editable)"
-			"OpenCkEditor(element);"
+		"return [content];"
+	"}"
+	"function UpgradeHelpFormat(doc) {"
+		"var content = GetEditableElements(doc)[0];"
+		"var links = content.getElementsByTagName('a');"
+		"var blacklist = [];"
+		"for (var i = 0; i < links.length; i++)"
+			"if (links[i].innerHTML.search(/^\\s*$/) == 0)"
+				"blacklist.push(links[i]);"
+		"for (var i = 0; i < blacklist.length; i++)"
+			"blacklist[i].parentNode.removeChild(blacklist[i]);"
+
+		"GenerateNavigationIndex(doc);"
 	"}"
 	"function GenerateNavigationIndex(doc) {"
 		"var navbar = doc.getElementsByClassName('navigation')[0];"
 		"var navlist = navbar.getElementsByTagName('ul')[0];"
-		"var headers = GetEditableElements(document)[0].getElementsByTagName('h2');"
+		"var headers = GetEditableElements(doc)[0].getElementsByTagName('h2');"
 		"navlist.innerHTML = '';"
 		"for (var i = 0; i < headers.length; i++) {"
 			"var anchor = 'header_' + i;"
@@ -130,64 +115,32 @@ static gchar * js_start_inline_editing = \
 			"headers[i].setAttribute('id', anchor);"
 		"}"
 	"}"
-	"function GetElementByClassName(c) {"
-		"return document.getElementsByClassName(c)[0];"
-	"}"
-	"function UpgradeHelpFormat(doc) {"
-		"var content = GetEditableElements(document)[0];"
-		"var links = content.getElementsByTagName('a');"
-		"var blacklist = [];"
-		"for (var i = 0; i < links.length; i++)"
-			"if (links[i].innerHTML.search(/^\\s*$/) == 0)"
-				"blacklist.push(links[i]);"
-		"for (var i = 0; i < blacklist.length; i++)"
-			"blacklist[i].parentNode.removeChild(blacklist[i]);"
-
-		"GenerateNavigationIndex(doc);"
+	"function OpenCkEditor(element) {"
+		"if (editor) return;"
+		"editing_element = element;"
+		"editing_class = element.getAttribute('class');"
+		"editor = CKEDITOR.replace(element, {"
+			"fullpage: true,"
+			"height:300,"
+			"width: menu_edition?390:'100%',"
+			"resize_enabled:false,"
+			"toolbarCanCollapse:false,"
+			"toolbar:[['Source','Save', '-','Bold','Italic','Underline','-',"
+				"'Subscript','Superscript','-','Undo','Redo','-','/',"
+				"'NumberedList','BulletedList','Blockquote','Styles','-',"
+				"'Link','Unlink','-','Find','Replace', '-' ]]});"
 	"}"
 	"function onCkEditorLoadFinished() {"
-		"var content = GetElementByClassName('content');"
-		"document.body.addEventListener('click', on_click, false);"
-		"if (!HasNavigation()) {" // Probably there is no content widget!
-			"if (!content) {"
-				"content = document.createElement('div');"
-				"content.setAttribute('class', 'content');"
-				"content.innerHTML = document.body.innerHTML;"
-				"document.body.innerHTML = '';"
-				"document.body.appendChild(content);"
-			"}"
-		"} else {"
+		"if (menu_edition)"
 			"UpgradeHelpFormat(document);"
-		"}"
-		"OpenCkEditor(content);"
+		"OpenCkEditor(GetEditableElements(document)[0]);"
 	"}"
 	"(function() {"
-		"var head = document.getElementsByTagName('head')[0];"
-		"if (!head) {"
-			"head = document.createElement('head');"
-			"document.documentElement.insertBefore(head, document.body);"
-		"}"
+		"var head = getHead(document);"
 		"var tag = document.createElement('script');"
 		"tag.setAttribute('type', 'text/javascript');"
 		"tag.setAttribute('src', 'file://" CKEDITOR_DIR "/ckeditor.js');"
 		"document.getElementsByTagName('head')[0].appendChild(tag);"
-
-		"var meta = head.getElementsByTagName('meta');"
-		"var black_list = [];"
-		"for (var i = 0; i < meta.length; i++) {"
-			"if (meta[i].getAttribute('http-equiv').toLowerCase() == 'content-type')"
-				"black_list.push(meta[i]);"
-		"}"
-		"for (var i = 0; i < black_list.length; i++)"
-			"black_list[i].parentNode.removeChild(black_list[i]);"
-		"meta = document.createElement('meta');"
-		"meta.setAttribute('http-equiv', 'Content-Type');"
-		"meta.setAttribute('content', 'text/html; charset=UTF-8');"
-		"if (head.firstChild) {"
-			"head.insertBefore(meta, head.firstChild);"
-		"} else {"
-			"head.appendChild(meta);"
-		"}"
 	"})();";
 
 /*
@@ -205,19 +158,19 @@ void gebr_gui_help_show(const gchar * uri, const gchar * title)
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 }
 
-static void _gebr_gui_help_edit(gchar *help, GebrGeoXmlObject * object, set_help set_function,
-			       	GebrGuiHelpEdited edited_callback);
+static void _gebr_gui_help_edit(gchar *help, GebrGeoXmlObject * object, 
+					GebrGuiHelpEdited edited_callback, gboolean menu_edition);
 
-void gebr_gui_help_edit(GebrGeoXmlDocument * document, GebrGuiHelpEdited edited_callback)
+void gebr_gui_help_edit(GebrGeoXmlDocument * document, GebrGuiHelpEdited edited_callback, gboolean menu_edition)
 {
 	_gebr_gui_help_edit((gchar *)gebr_geoxml_document_get_help(document), GEBR_GEOXML_OBJECT(document),
-			    (set_help)gebr_geoxml_document_set_help, edited_callback);
+				edited_callback, menu_edition);
 }
 
 void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited edited_callback)
 {
 	_gebr_gui_help_edit((gchar *)gebr_geoxml_program_get_help(program), GEBR_GEOXML_OBJECT(program),
-			    (set_help)gebr_geoxml_program_set_help, edited_callback);
+				edited_callback, TRUE);
 }
 
 /*
@@ -236,9 +189,10 @@ static GString *help_edit_save(JSContextRef context, struct help_edit_data * dat
 	gchar *escaped;
 	JSValueRef html;
 
-	escaped = g_strescape(data->raw_help, "");
 	var_help = g_string_new("(function() {");
+	escaped = g_strescape(data->raw_help, "");
 	g_string_append_printf(var_help, "var help = \"%s\";", escaped);
+	g_free(escaped);
 	g_string_append(var_help,
 			"var doc_clone = (new DOMParser()).parseFromString(help, 'text/xml');"
 			"var elem = GetEditableElements(doc_clone)[0];"
@@ -250,17 +204,35 @@ static GString *help_edit_save(JSContextRef context, struct help_edit_data * dat
 			"for (i = 0; i < source_elem.childNodes.length; i++) {"
 				"elem.appendChild(source_elem.childNodes[i].cloneNode(true));"
 			"}"
-			"if (HasNavigation()) {"
-				"GenerateNavigationIndex(doc_clone);"
+			""
+			"if (menu_edition) {"
+				"UpgradeHelpFormat(doc_clone);"
 				"GenerateNavigationIndex(document);"
 			"}"
+			//force encode to UTF-8
+			"var head = getHead(doc_clone);"
+			"var meta = head.getElementsByTagName('meta');"
+			"var black_list = [];"
+			"for (var i = 0; i < meta.length; i++) {"
+				"if (meta[i].getAttribute('http-equiv').toLowerCase() == 'content-type')"
+					"black_list.push(meta[i]);"
+			"}"
+			"for (var i = 0; i < black_list.length; i++)"
+				"black_list[i].parentNode.removeChild(black_list[i]);"
+			"meta = document.createElement('meta');"
+			"meta.setAttribute('http-equiv', 'Content-Type');"
+			"meta.setAttribute('content', 'text/html; charset=UTF-8');"
+			"if (head.firstChild) {"
+				"head.insertBefore(meta, head.firstChild);"
+			"} else {"
+				"head.appendChild(meta);"
+			"}"
+			""
 			"return (new XMLSerializer()).serializeToString(doc_clone);"
 			"})();");
-	g_free(escaped);
 
 	html = gebr_js_evaluate(context, var_help->str);
 	help = gebr_js_value_get_string(data->context, html);
-	puts(help->str);
 
 	if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(data->object), help->str);
@@ -342,7 +314,7 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window)
 	gtk_window_group_add_window(window_group, GTK_WINDOW(window));
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+					   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	web_view = webkit_web_view_new();
 	if (g_signal_lookup("create-web-view", WEBKIT_TYPE_WEB_VIEW))
 		g_signal_connect(web_view, "create-web-view", G_CALLBACK(web_view_on_create_web_view), NULL);
@@ -381,7 +353,7 @@ static gboolean dialog_on_response(GtkDialog * dialog, gint response_id, struct 
  * Change the title of the dialog according to the page title.
  */
 static void web_view_on_title_changed(WebKitWebView * web_view, WebKitWebFrame * frame, gchar * title,
-				      GtkWindow * window)
+					  GtkWindow * window)
 {
 	gtk_window_set_title(window, title);
 }
@@ -392,13 +364,12 @@ static void web_view_on_title_changed(WebKitWebView * web_view, WebKitWebFrame *
  * Set at #web_view_on_load_finished
  */
 JSValueRef js_callback_gebr_help_save(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject,
-				      size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+					  size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
 	struct help_edit_data * data;
-		
+
 	data = g_hash_table_lookup(jscontext_to_data_hash, function);
-	help_edit_save(ctx, data);	
-	//gebr_js_evaluate(ctx, "DestroyEditor();");
+	help_edit_save(ctx, data);
 
 	return JSValueMakeUndefined(ctx);
 }
@@ -410,11 +381,19 @@ JSValueRef js_callback_gebr_help_save(JSContextRef ctx, JSObjectRef function, JS
 static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, struct help_edit_data * data)
 {
 	JSObjectRef function;
+
+	GString *var;
+	var = g_string_new(NULL);
+	g_string_printf(var, "var menu_edition = %s;", data->menu_edition ? "true" : "false");
+	gebr_js_evaluate(data->context, var->str);
+	g_string_free(var, TRUE);
+
 	gebr_js_evaluate(data->context, js_start_inline_editing);
 	function = gebr_js_make_function(data->context, "gebr_help_save", js_callback_gebr_help_save);
+
 	g_hash_table_insert(jscontext_to_data_hash, (gpointer)function, data);
 	g_signal_handlers_disconnect_matched(G_OBJECT(web_view),
-					     G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(web_view_on_load_finished), data);
+						 G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(web_view_on_load_finished), data);
 }
 
 /**
@@ -443,8 +422,8 @@ static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, s
 /**
  * Load help into a temporary file and load with Webkit (if enabled).
  */
-static void _gebr_gui_help_edit(gchar *help, GebrGeoXmlObject * object, set_help set_function,
-			       	GebrGuiHelpEdited edited_callback)
+static void _gebr_gui_help_edit(gchar *help, GebrGeoXmlObject * object,
+					GebrGuiHelpEdited edited_callback, gboolean menu_edition)
 {
 	FILE *html_fp;
 	GString *html_path;
@@ -458,20 +437,24 @@ static void _gebr_gui_help_edit(gchar *help, GebrGeoXmlObject * object, set_help
 	html_fp = fopen(html_path->str, "w");
 	fputs(help, html_fp);
 	fclose(html_fp);
-	
+
 	struct help_edit_data *data;
 	GtkWidget * web_view;
 	GtkDialog * dialog;
 
 	web_view = web_view_on_create_web_view(&dialog);
+	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
+		gtk_window_set_title(GTK_WINDOW(dialog), gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(object)));
+	else
+		gtk_window_set_title(GTK_WINDOW(dialog), gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(object)));
 	data = g_new(struct help_edit_data, 1);
 	data->object = object;
-	data->set_function = set_function;
 	data->html_path = html_path;
 	data->raw_help = help;
 	data->edited_callback = edited_callback;
 	data->web_view = WEBKIT_WEB_VIEW(web_view);
 	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
+	data->menu_edition = menu_edition;
 
 	g_signal_connect(dialog, "response", G_CALLBACK(dialog_on_response), data);
 	g_signal_connect(web_view, "load-finished", G_CALLBACK(web_view_on_load_finished), data);

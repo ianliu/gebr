@@ -163,9 +163,9 @@ void on_menu_open_activate(void)
 
 	/* create file chooser */
 	chooser_dialog = gtk_file_chooser_dialog_new(_("Open menu"), NULL,
-						     GTK_FILE_CHOOSER_ACTION_OPEN,
-						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-						     GTK_STOCK_OPEN, GTK_RESPONSE_YES, NULL);
+							 GTK_FILE_CHOOSER_ACTION_OPEN,
+							 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+							 GTK_STOCK_OPEN, GTK_RESPONSE_YES, NULL);
 	for (int i = 0; debr.config.menu_dir[i]; i++)
 		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir[i], NULL);
 	filefilter = gtk_file_filter_new();
@@ -236,9 +236,9 @@ void on_menu_save_as_activate(void)
 
 	/* run file chooser */
 	chooser_dialog = gtk_file_chooser_dialog_new(title->str, GTK_WINDOW(debr.window),
-						     GTK_FILE_CHOOSER_ACTION_SAVE,
-						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-						     GTK_STOCK_SAVE, GTK_RESPONSE_YES, NULL);
+							 GTK_FILE_CHOOSER_ACTION_SAVE,
+							 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+							 GTK_STOCK_SAVE, GTK_RESPONSE_YES, NULL);
 	if (debr.config.menu_dir[0])
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir[0]);
 	for (int i = 0; debr.config.menu_dir[i]; i++)
@@ -281,7 +281,7 @@ void on_menu_save_as_activate(void)
 			break;
 		}
 		g_free(dirpath);
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);		
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);
 	}
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_PATH, &current_path, -1);
@@ -303,7 +303,7 @@ void on_menu_save_as_activate(void)
 		if (!strlen(current_path))
 			gtk_tree_store_remove(debr.ui_menu.model, &iter);
 	}
-	//...or creating a new file 
+	//...or creating a new file
 	else {
 		gchar *label;
 		GebrGeoXmlFlow * menu;
@@ -363,8 +363,8 @@ void on_menu_revert_activate(void)
 	GtkTreeIter iter;
 
 	if (gebr_gui_confirm_action_dialog
-	    (_("Revert changes"),
-	     _("All unsaved changes will be lost. Are you sure you want to revert selected menu(s)?")) == FALSE)
+		(_("Revert changes"),
+		 _("All unsaved changes will be lost. Are you sure you want to revert selected menu(s)?")) == FALSE)
 		return;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
@@ -405,7 +405,7 @@ void on_menu_delete_activate(void)
 	GtkTreeIter iter;
 
 	if (gebr_gui_confirm_action_dialog(_("Delete menu"), _("Are you sure you want to delete selected menu(s)?")) ==
-	    FALSE)
+		FALSE)
 		return;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
@@ -456,7 +456,7 @@ void on_menu_validate_activate(void)
 	GtkTreeIter iter;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view)
-	    menu_validate(&iter);
+		menu_validate(&iter);
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(debr.notebook), NOTEBOOK_PAGE_VALIDATE);
 }
 
@@ -504,7 +504,7 @@ void on_menu_close_activate(void)
 							 : _("Untitled")));
 			button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
 			g_object_set(G_OBJECT(button),
-				     "image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);
+					 "image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);
 			gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 			gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
 			switch (gtk_dialog_run(GTK_DIALOG(dialog))) {

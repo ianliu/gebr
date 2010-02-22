@@ -105,5 +105,5 @@ static void help_edit_on_edited(GebrGeoXmlDocument * document, const gchar * hel
 
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 {
-	gebr_gui_help_edit(document, (GebrGuiHelpEdited)help_edit_on_edited);
+	gebr_gui_help_edit(document, (GebrGuiHelpEdited)help_edit_on_edited, FALSE);
 }
