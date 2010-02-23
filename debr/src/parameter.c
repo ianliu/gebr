@@ -1,3 +1,7 @@
+/**
+ * \file parameter.c Construct interfaces for parameter.
+ */
+
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -32,11 +36,6 @@
 #include "interface.h"
 #include "menu.h"
 #include "parametergroup.h"
-
-/*
- * File: parameter.c
- * Construct interfaces for parameter
- */
 
 /*
  * Declarations
@@ -152,6 +151,7 @@ static void parameter_enum_options_changed(EnumOptionEdit * enum_option_edit, st
 static void parameter_is_radio_button_comma_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui);
 static void parameter_is_radio_button_space_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui);
 static void parameter_is_radio_button_other_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui);
+static void on_parameter_menu_item_new_activate(GtkWidget * menu_item, gpointer type);
 
 /*
  * Section: Public
@@ -218,10 +218,6 @@ void parameter_load_program(void)
 	debr.parameter = NULL;
 }
 
-/*
- * Function: parameter_load_selected
- * Load selected parameter contents to its iter
- */
 void parameter_load_selected(void)
 {
 	GtkTreeIter iter;
@@ -230,10 +226,6 @@ void parameter_load_selected(void)
 	parameter_load_iter(&iter, FALSE);
 }
 
-
-/**
- * Creates a new parameter.
- */
 void parameter_new(void)
 {
 	GtkTreeIter iter;
@@ -313,23 +305,15 @@ void parameter_new(void)
 
 	parameter_select_iter(iter);
 	do_navigation_bar_update();
-	if (!parameter_change_type_setup_ui()) {
-		parameter_remove(FALSE);
-		if (pre_selected_param) 
-			parameter_select_iter(pre_selected_iter);
-		menu_replace();
-	}
-	else {
-		parameter_activated();
-		do_navigation_bar_update();
-		menu_saved_status_set(MENU_STATUS_UNSAVED);
-	}
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: parameter_remove
- * Confirm action and if confirmed removed selected parameter from XML and UI
- */
+void parameter_new_from_type(enum GEBR_GEOXML_PARAMETER_TYPE type)
+{
+	parameter_new();
+	parameter_change_type(type);
+}
+
 void parameter_remove(gboolean confirm)
 {
 	GtkTreeIter parent;
@@ -491,9 +475,6 @@ void parameter_copy(void)
 	}
 }
 
-/**
- * TODO
- */
 void parameter_paste(void)
 {
 	GebrGeoXmlSequence *pasted_sequence, *next;
@@ -660,6 +641,28 @@ void parameter_select_iter(GtkTreeIter iter)
 {
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(debr.ui_parameter.tree_view), &iter);
 	parameter_selected();
+}
+
+GtkWidget * parameter_create_menu_with_types(gboolean use_action)
+{
+	GtkWidget *menu;
+
+	menu = gtk_menu_new();
+
+	for (guint i = 0; i < combo_type_map_size; i++) {
+		GtkWidget *item;
+		if (use_action) {
+			GtkAction *action;
+			action = gtk_action_group_get_action(debr.action_group, parameter_type_radio_actions_entries[i].name);
+			item = gtk_action_create_menu_item(action);
+		} else {
+			item = gtk_menu_item_new_with_label(parameter_type_radio_actions_entries[i].label);
+			g_signal_connect(item, "activate", G_CALLBACK(on_parameter_menu_item_new_activate),
+					 GINT_TO_POINTER(parameter_type_radio_actions_entries[i].value));
+		}
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	}
+	return menu;
 }
 
 /*
@@ -1368,18 +1371,22 @@ static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 	GtkWidget *param_delete;
 	GtkWidget *param_properties;
 	GtkWidget *param_preview;
+	GtkWidget *param_top;
+	GtkWidget *param_bottom;
 
 	GtkTreeIter iter;
 
 	menu = gtk_menu_new();
 
-	param_new        = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_new"));
 	param_cut        = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_cut"));
 	param_copy       = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_copy"));
 	param_paste      = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_paste"));
 	param_delete     = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_delete"));
 	param_properties = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_properties"));
 	param_preview    = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "program_preview"));
+
+	param_new = gtk_image_menu_item_new_from_stock(GTK_STOCK_NEW, NULL);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(param_new), parameter_create_menu_with_types(FALSE));
 
 	if (parameter_get_selected(&iter, FALSE) == FALSE) {
 		gtk_widget_set_sensitive(param_cut, FALSE);
@@ -1389,25 +1396,26 @@ static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 		gtk_widget_set_sensitive(param_properties, FALSE);
 		gtk_widget_set_sensitive(param_preview, FALSE);
 
-		gtk_container_add(GTK_CONTAINER(menu), param_new);
-		gtk_container_add(GTK_CONTAINER(menu), param_cut);
-		gtk_container_add(GTK_CONTAINER(menu), param_copy);
-		gtk_container_add(GTK_CONTAINER(menu), param_paste);
-		gtk_container_add(GTK_CONTAINER(menu), param_delete);
-		gtk_container_add(GTK_CONTAINER(menu), param_properties);
-		gtk_container_add(GTK_CONTAINER(menu), param_preview);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_new);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_cut);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_copy);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_paste);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_delete);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_properties);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_preview);
 
 		goto out;
 	}
 
+	param_top    = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "program_top"));
+	param_bottom = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "program_bottom"));
+
 	if (gebr_gui_gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE)
-		gtk_container_add(GTK_CONTAINER(menu),
-				  gtk_action_create_menu_item(gtk_action_group_get_action
-							      (debr.action_group, "parameter_top")));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_top);
+
 	if (gebr_gui_gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE)
-		gtk_container_add(GTK_CONTAINER(menu),
-				  gtk_action_create_menu_item(gtk_action_group_get_action
-							      (debr.action_group, "parameter_bottom")));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_bottom);
+
 	if (gebr_gui_gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE
 	    || gebr_gui_gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
@@ -1420,14 +1428,15 @@ static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 	gtk_container_add(GTK_CONTAINER(menu), param_properties);
 	gtk_container_add(GTK_CONTAINER(menu), param_preview);
 
-	menu_item =
-		gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_change_type"));
-	gtk_action_block_activate_from(gtk_action_group_get_action(debr.action_group, "parameter_change_type"),
-				       menu_item);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), debr.parameter_type_menu);
-	gtk_container_add(GTK_CONTAINER(menu), menu_item);
+	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_change_type"));
+	gtk_action_block_activate_from(gtk_action_group_get_action(debr.action_group, "parameter_change_type"), menu_item);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), parameter_create_menu_with_types(TRUE));
 
-out:	gtk_widget_show_all(menu);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+
+out:	
+	gtk_menu_set_accel_group(GTK_MENU(menu), debr.accel_group);
+	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
 }
@@ -1558,7 +1567,7 @@ static void parameter_required_toggled(GtkToggleButton * toggle_button, struct u
 /**
  * \internal
  * Callback to signalize that a parameter was changed to list.
- * On \p ui startup the default separator are set to space
+ * On \p ui startup the default separator are set to space.
  */
 static void parameter_is_list_changed(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui)
 {
@@ -1848,13 +1857,22 @@ static void parameter_is_radio_button_other_toggled(GtkToggleButton * toggle_but
 
 	gtk_widget_set_sensitive(ui->separator_entry, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toggle_button)));
 
-	if (gtk_toggle_button_get_active(toggle_button)){
-		gtk_entry_set_text(GTK_ENTRY(ui->separator_entry), gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)));
+	if (gtk_toggle_button_get_active(toggle_button)) {
+		gtk_entry_set_text(GTK_ENTRY(ui->separator_entry),
+				   gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)));
 		parameter_separator_changed(GTK_ENTRY(ui->separator_entry), ui);
-	}
-	else {
+	} else {
 		parameter_separator_changed_by_string("", ui);
 		gtk_entry_set_text(GTK_ENTRY(ui->separator_entry), "");
 	}
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
+}
+
+/**
+ * \internal
+ * Creates a new parameter with type given by the user data.
+ */
+static void on_parameter_menu_item_new_activate(GtkWidget * menu_item, gpointer type)
+{
+	parameter_new_from_type((enum GEBR_GEOXML_PARAMETER_TYPE)GPOINTER_TO_INT(type));
 }

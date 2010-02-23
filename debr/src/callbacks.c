@@ -1,5 +1,6 @@
 /**
- * \file callbacks.c General interface callbacks. See <interface.c>
+ * \file callbacks.c General interface callbacks.
+ * \see interface.c
  */
 
 /*   DeBR - GeBR Designer
@@ -32,10 +33,8 @@
 #include "defines.h"
 #include "debr.h"
 #include "preferences.h"
+#include "parameter.h"
 
-/**
- * Callback to update navigation bar content according to menu, program and parameter selected.
- */
 void do_navigation_bar_update(void)
 {
 	GString *markup;
@@ -60,10 +59,6 @@ void do_navigation_bar_update(void)
 	g_string_free(markup, TRUE);
 }
 
-/*
- * Function: on_new_activate
- * Select new target depending on the context
- */
 void on_new_activate(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(debr.notebook))) {
@@ -74,17 +69,13 @@ void on_new_activate(void)
 		on_program_new_activate();
 		break;
 	case NOTEBOOK_PAGE_PARAMETER:
-		on_parameter_new_activate();
+		on_parameter_tool_item_new_press(GTK_WIDGET(debr.tool_item_new));
 		break;
 	default:
 		break;
 	}
 }
 
-
-/**
- * Selects cut target depending on the context.
- */
 void on_cut_activate(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(debr.notebook))) {
@@ -96,11 +87,6 @@ void on_cut_activate(void)
 	}
 }
 
-
-/**
- * Function: on_copy_activate
- * Select copy target depending on the context
- */
 void on_copy_activate(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(debr.notebook))) {
@@ -115,10 +101,6 @@ void on_copy_activate(void)
 	}
 }
 
-/*
- * Function: on_paste_activate
- * Select paste target depending on the context
- */
 void on_paste_activate(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(debr.notebook))) {
@@ -133,28 +115,16 @@ void on_paste_activate(void)
 	}
 }
 
-/*
- * Function: on_quit_activate
- * Call <debr_quit>
- */
 void on_quit_activate(void)
 {
 	debr_quit();
 }
 
-/*
- * Function: on_menu_new_activate
- * Call <menu_new>
- */
 void on_menu_new_activate(void)
 {
 	menu_new(TRUE);
 }
 
-/*
- * Function: on_menu_open_activate
- * Create a open dialog and manage it to open a menu
- */
 void on_menu_open_activate(void)
 {
 	GtkWidget *chooser_dialog;
@@ -188,9 +158,6 @@ void on_menu_open_activate(void)
  out:	gtk_widget_destroy(chooser_dialog);
 }
 
-/**
- * Saves the selected menu; if it doesn't have a path assigned, calls \ref on_menu_save_as_activate.
- */
 void on_menu_save_activate(void)
 {
 	GtkTreeIter iter;
@@ -203,9 +170,6 @@ void on_menu_save_activate(void)
 		on_menu_save_as_activate();
 }
 
-/**
- * Open a save dialog; get the path and save the menu at it.
- */
 void on_menu_save_as_activate(void)
 {
 	GtkTreeIter iter;
@@ -345,19 +309,11 @@ void on_menu_save_as_activate(void)
 	g_string_free(title, TRUE);
 }
 
-/*
- * Function: on_menu_save_all_activate
- * Call <menu_save_all>
- */
 void on_menu_save_all_activate(void)
 {
 	menu_save_all();
 }
 
-/*
- * Function: on_menu_new_activate
- * Confirm action and if confirmed reload menu from file
- */
 void on_menu_revert_activate(void)
 {
 	GtkTreeIter iter;
@@ -396,10 +352,6 @@ void on_menu_revert_activate(void)
 	menu_selected();
 }
 
-/*
- * Function: on_menu_new_activate
- * Confirm action and if confirm delete it from the disk and call <on_menu_close_activate>
- */
 void on_menu_delete_activate(void)
 {
 	GtkTreeIter iter;
@@ -438,19 +390,11 @@ void on_menu_delete_activate(void)
 
 }
 
-/*
- * Function: on_menu_properties_activate
- * Call <menu_dialog_setup_ui>
- */
 void on_menu_properties_activate(void)
 {
 	menu_dialog_setup_ui();
 }
 
-/*
- * Function: on_menu_validate_activate
- * Call <menu_validate>
- */
 void on_menu_validate_activate(void)
 {
 	GtkTreeIter iter;
@@ -460,19 +404,11 @@ void on_menu_validate_activate(void)
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(debr.notebook), NOTEBOOK_PAGE_VALIDATE);
 }
 
-/*
- * Function: on_menu_install_activate
- * Call <menu_install>
- */
 void on_menu_install_activate(void)
 {
 	menu_install();
 }
 
-/*
- * Function: on_menu_new_activate
- * Delete menu from the view.
- */
 void on_menu_close_activate(void)
 {
 	GtkTreeIter iter;
@@ -533,209 +469,148 @@ void on_menu_close_activate(void)
 	}
 }
 
-/*
- * Function: on_program_new_activate
- * Call <program_new>
- */
 void on_program_new_activate(void)
 {
 	program_new(TRUE);
 }
 
-/*
- * Function: on_program_delete_activate
- * Call <program_remove>
- */
 void on_program_delete_activate(void)
 {
 	program_remove(TRUE);
 }
 
-/*
- * Function: on_program_properties_activate
- * Call <program_dialog_setup_ui>
- */
 gboolean on_program_properties_activate(void)
 {
 	return program_dialog_setup_ui();
 }
 
-/*
- * Function: on_program_preview_activate
- * Call <program_preview>
- */
 void on_program_preview_activate(void)
 {
 	program_preview();
 }
 
-/*
- * Function: on_program_top_activate
- * Call <program_top>
- */
 void on_program_top_activate(void)
 {
 	program_top();
 }
 
-/*
- * Function: on_program_bottom_activate
- * Call <program_bottom>
- */
 void on_program_bottom_activate(void)
 {
 	program_bottom();
 }
 
-/*
- * Function: on_program_copy_activate
- * Call <program_copy>
- */
 void on_program_copy_activate(void)
 {
 	program_copy();
 }
 
-/*
- * Function: on_program_paste_activate
- * Call <program_paste>
- */
 void on_program_paste_activate(void)
 {
 	program_paste();
 }
 
-/*
- * Function: on_parameter_new_activate
- * Call <parameter_new>
- */
-void on_parameter_new_activate(void)
-{
-	parameter_new();
-}
-
-/*
- * Function: on_parameter_delete_activate
- * Call <parameter_remove>
- */
 void on_parameter_delete_activate(void)
 {
 	parameter_remove(TRUE);
 }
 
-/*
- * Function: on_parameter_new_activate
- * Call <parameter_remove>
- */
 void on_parameter_properties_activate(void)
 {
 	parameter_properties();
 }
 
-/*
- * Function: on_parameter_top_activate
- * Call <parameter_top>
- */
 void on_parameter_top_activate(void)
 {
 	parameter_top();
 }
 
-/*
- * Function: on_parameter_bottom_activate
- * Call <parameter_bottom>
- */
 void on_parameter_bottom_activate(void)
 {
 	parameter_bottom();
 }
 
-/*
- * Function: on_parameter_change_type_activate
- * Call <parameter_remove>
- */
 void on_parameter_change_type_activate(void)
 {
 	parameter_change_type_setup_ui();
 }
 
-/*
- * Function: on_parameter_type_activate
- * Call <parameter_change_type>
- */
 void on_parameter_type_activate(GtkRadioAction * first_action)
 {
-	parameter_change_type((enum GEBR_GEOXML_PARAMETER_TYPE)gtk_radio_action_get_current_value(first_action));
+	gint type;
+	type = gtk_radio_action_get_current_value(first_action);
+	parameter_change_type((enum GEBR_GEOXML_PARAMETER_TYPE)type);
 }
 
-/*
- * Function: on_parameter_copy_activate
- * Call <parameter_copy>
- */
 void on_parameter_copy_activate(void)
 {
 	parameter_copy();
 }
 
-
-/**
- * Calls <parameter_cut>
- */
 void on_parameter_cut_activate(void)
 {
 	parameter_cut();
 }
 
-
-/*
- * Function: on_parameter_paste_activate
- * Call <parameter_paste>
- */
 void on_parameter_paste_activate(void)
 {
 	parameter_paste();
 }
 
-/*
- * Function: on_validate_close_activate
- * Call <validate_close>
- */
 void on_validate_close_activate(void)
 {
 	validate_close();
 }
 
-/*
- * Function: on_validate_clear_activate
- * Call <validate_clear>
- */
 void on_validate_clear_activate(void)
 {
 	validate_clear();
 }
 
-/*
- * Function: on_configure_preferences_activate
- * Call <preferences_dialog_setup_ui>
- */
 void on_configure_preferences_activate(void)
 {
 	preferences_dialog_setup_ui();
 }
 
-/* Function: on_help_contents_activate
- *
- */
 void on_help_contents_activate(void)
 {
 	gebr_gui_help_show(DEBR_USERDOC_HTML, _("User's Manual"));
 }
 
-/*
- * Function: on_help_about_activate
- * Show debr.about.dialog
- */
 void on_help_about_activate(void)
 {
 	gtk_widget_show(debr.about.dialog);
 }
+
+gboolean on_parameter_tool_item_new_press(GtkWidget * tool_button)
+{
+	gint x, y;
+	gint xb, yb, hb;
+	GtkWidget * menu;
+
+	menu = parameter_create_menu_with_types(FALSE);
+	gdk_window_get_origin(gtk_widget_get_window(tool_button), &x, &y);
+
+#if GTK_CHECK_VERSION(2,18,0)
+	GtkAllocation allocation;
+	gtk_widget_get_allocation(tool_button, &allocation);
+	xb = allocation.x;
+	yb = allocation.y;
+	hb = allocation.height;
+#else
+	xb = tool_button->allocation.x;
+	yb = tool_button->allocation.y;
+	hb = tool_button->allocation.height;
+#endif
+
+	void popup_position(GtkMenu * menu, gint * xp, gint * yp, gboolean * push_in, gpointer user_data) {
+		*xp = x + xb;
+		*yp = y + yb + hb;
+		*push_in = TRUE;
+	}
+
+	gtk_widget_show_all(menu);
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, popup_position, NULL, 0, gtk_get_current_event_time());
+
+	return FALSE;
+}
+

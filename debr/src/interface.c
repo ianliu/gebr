@@ -1,3 +1,8 @@
+/**
+ * \file interface.c Interface creation: mainwindow, actions and callbacks assignmment.
+ * \see callbacks.c
+ */
+
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -28,12 +33,6 @@
 #include "menu.h"
 #include "program.h"
 #include "parameter.h"
-
-/*
- * File: interface.c
- * Interface creation: mainwindow, actions and callbacks assignmment.
- * See also <callbacks.c>
- */
 
 /*
  * Declarations
@@ -82,7 +81,7 @@ static const GtkActionEntry actions_entries[] = {
 	{"program_paste", GTK_STOCK_PASTE, N_("Paste"), NULL, N_("Paste program(s) from clipboard"),
 	 G_CALLBACK(on_program_paste_activate)},
 	/* parameter */
-	{"parameter_new", GTK_STOCK_NEW, NULL, NULL, N_("Create new parameter"), G_CALLBACK(on_parameter_new_activate)},
+	// "paramter_new" is a special button, where a popup menu is created on its bottom.
 	{"parameter_delete", GTK_STOCK_DELETE, NULL, NULL, N_("Delete current parameter"),
 	 G_CALLBACK(on_parameter_delete_activate)},
 	{"parameter_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit parameter properties"),
@@ -185,7 +184,7 @@ void debr_setup_ui(void)
 
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "menu_new"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "program_new"));
-	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "parameter_new"));
+	//gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "parameter_new"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "program_copy"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "parameter_cut"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "parameter_copy"));
@@ -201,30 +200,30 @@ void debr_setup_ui(void)
 	 * Menu: Actions
 	 */
 	menu_item = gtk_menu_item_new_with_mnemonic(_("_Actions"));
-	gtk_container_add(GTK_CONTAINER(menu_bar), menu_item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu_bar), menu_item);
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
 
 	child_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PREFERENCES, debr.accel_group);
-	gtk_container_add(GTK_CONTAINER(menu), child_menu_item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), child_menu_item);
 	g_signal_connect(child_menu_item, "activate", G_CALLBACK(on_configure_preferences_activate), NULL);
-	gtk_container_add(GTK_CONTAINER(menu), gtk_separator_menu_item_new());
-	gtk_container_add(GTK_CONTAINER(menu),
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "quit")));
 
 	/*
 	 * Menu: Help
 	 */
 	menu_item = gtk_menu_item_new_with_mnemonic(_("_Help"));
-	gtk_menu_item_right_justify(GTK_MENU_ITEM(menu_item));
-	gtk_container_add(GTK_CONTAINER(menu_bar), menu_item);
+	gtk_menu_item_set_right_justified(GTK_MENU_ITEM(menu_item), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu_bar), menu_item);
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
 
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "help_contents")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "help_about")));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),
+			      gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "help_contents")));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),
+			      gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "help_about")));
 
 	gtk_widget_show_all(menu_bar);
 
@@ -334,6 +333,12 @@ void debr_setup_ui(void)
 	gtk_widget_show(vbox);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox, gtk_label_new(_("Parameter")));
 
+	/* Treating the 'new' button */
+	debr.tool_item_new = gtk_tool_button_new_from_stock(GTK_STOCK_NEW);
+	gtk_tool_item_set_tooltip_text(debr.tool_item_new, _("Create new parameter"));
+	g_signal_connect(gtk_bin_get_child(GTK_BIN(debr.tool_item_new)), "button-press-event",
+			 G_CALLBACK(on_parameter_tool_item_new_press), NULL);
+
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
@@ -351,9 +356,7 @@ void debr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(debr.action_group, "menu_validate"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(debr.action_group, "parameter_new"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(debr.tool_item_new), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(debr.action_group, "parameter_cut"))), -1);
@@ -375,17 +378,10 @@ void debr_setup_ui(void)
 					 (gtk_action_group_get_action(debr.action_group, "program_preview"))), -1);
 
 
-	debr.parameter_type_menu = menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_CONVERT);
 	g_signal_connect(tool_item, "clicked", G_CALLBACK(on_parameter_change_type_activate), NULL);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
-	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
-	guint i, l = combo_type_map_size;
-	for (i = 0; i < l; ++i)
-		gtk_container_add(GTK_CONTAINER(menu),
-				  gtk_action_create_menu_item(gtk_action_group_get_action
-							      (debr.action_group,
-							       parameter_type_radio_actions_entries[i].name)));
+	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), parameter_create_menu_with_types(TRUE));
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -432,14 +428,6 @@ void debr_setup_ui(void)
 	gtk_widget_show(debr.window);
 }
 
-/**
- * interface_set_actions_sensitive:
- * @names: A %NULL terminated array of strings.
- * @sensitive: Whether to set or unset the sensitivity of the actions.
- *
- * Sets the sensitivity of the actions whose name is in @names array
- * to @sensitive.
- */
 void debr_set_actions_sensitive(gchar ** names, gboolean sensitive)
 {
 	gint i;
@@ -451,7 +439,3 @@ void debr_set_actions_sensitive(gchar ** names, gboolean sensitive)
 	while (names[i])
 		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, names[i++]), sensitive);
 }
-
-/*
- * Section: Private
- */

@@ -27,6 +27,8 @@
 
 #include <libgebr/gui/parameter.h>
 
+G_BEGIN_DECLS
+
 /** Parameter type actions */
 extern const GtkRadioActionEntry parameter_type_radio_actions_entries[];
 
@@ -95,6 +97,11 @@ void parameter_load_selected(void);
 void parameter_new(void);
 
 /**
+ * Creates a new parameter with the specified \p type.
+ */
+void parameter_new_from_type(enum GEBR_GEOXML_PARAMETER_TYPE type);
+
+/**
  * Removes the selected parameter; if \p confirm is TRUE, asks for confirmation.
  */
 void parameter_remove(gboolean confirm);
@@ -153,5 +160,13 @@ gboolean parameter_get_selected(GtkTreeIter * iter, gboolean show_warning);
  * Select \p iter loading its pointer.
  */
 void parameter_select_iter(GtkTreeIter iter);
+
+/**
+ * Populates \p menu with the available types.
+ * \param use_action Whether to use the action group or not.
+ */
+GtkWidget * parameter_create_menu_with_types(gboolean use_action);
+
+G_END_DECLS
 
 #endif				//__PARAMETER_H

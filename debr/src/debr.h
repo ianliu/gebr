@@ -59,13 +59,13 @@ struct debr {
 	GtkWidget *invisible;
 	GtkAccelGroup *accel_group;
 	GtkActionGroup *action_group;
+	GtkToolItem *tool_item_new;
 
 	/* notebook's widgets */
 	struct ui_menu ui_menu;
 	struct ui_program ui_program;
 	struct ui_parameter ui_parameter;
 	struct ui_validate ui_validate;
-	GtkWidget *parameter_type_menu;
 
 	/* icons */
 	struct debr_pixmaps {
@@ -93,10 +93,7 @@ struct debr {
 	/* temporary files removed when DeBR quits */
 	GSList *tmpfiles;
 
-
-	/*
-	 * Structure to hold data and status to recovery menu.
-	 */
+	/* Structure to hold data and status to recovery menu. */
 	struct  {
 		MenuStatus status;
 		GebrGeoXmlFlow * clone;
