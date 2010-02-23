@@ -101,9 +101,10 @@ static gchar * js_start_inline_editing = \
 	"}"
 	"function GenerateNavigationIndex(doc) {"
 		"var navbar = doc.getElementsByClassName('navigation')[0];"
-		"var navlist = navbar.getElementsByTagName('ul')[0];"
+		"if (!navbar) return;"
 		"var headers = GetEditableElements(doc)[0].getElementsByTagName('h2');"
-		"navlist.innerHTML = '';"
+		"navbar.innerHTML = '<h2>Index</h2><ul></ul>';"
+		"var navlist = navbar.getElementsByTagName('ul')[0];"
 		"for (var i = 0; i < headers.length; i++) {"
 			"var anchor = 'header_' + i;"
 			"var link = doc.createElement('a');"
@@ -182,7 +183,7 @@ void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited e
  * Save the updated HTML and call edited_callback if set.
  * If the editor is opened remove its HTML code.
  */
-static GString *help_edit_save(JSContextRef context, struct help_edit_data * data)
+static GString *help_edit_save(struct help_edit_data * data)
 {
 	GString *help;
 	GString *var_help;
@@ -231,7 +232,7 @@ static GString *help_edit_save(JSContextRef context, struct help_edit_data * dat
 			"return (new XMLSerializer()).serializeToString(doc_clone);"
 			"})();");
 
-	html = gebr_js_evaluate(context, var_help->str);
+	html = gebr_js_evaluate(data->context, var_help->str);
 	help = gebr_js_value_get_string(data->context, html);
 
 	if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
@@ -338,7 +339,7 @@ static gboolean dialog_on_response(GtkDialog * dialog, gint response_id, struct 
 {
 	GString * help;
 
-	help = help_edit_save(data->context, data);
+	help = help_edit_save(data);
 
 	g_string_free(help, TRUE);
 	g_unlink(data->html_path->str);
@@ -369,7 +370,7 @@ JSValueRef js_callback_gebr_help_save(JSContextRef ctx, JSObjectRef function, JS
 	struct help_edit_data * data;
 
 	data = g_hash_table_lookup(jscontext_to_data_hash, function);
-	help_edit_save(ctx, data);
+	help_edit_save(data);
 
 	return JSValueMakeUndefined(ctx);
 }

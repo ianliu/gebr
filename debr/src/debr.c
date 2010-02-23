@@ -111,7 +111,11 @@ gboolean debr_config_load(void)
 	debr.config.name = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "name", g_get_real_name());
 	debr.config.email =
 	    gebr_g_key_file_load_string_key(debr.config.key_file, "general", "email", g_get_user_name());
-	debr.config.menu_dir = g_key_file_get_string_list(debr.config.key_file, "general", "menu_dir", NULL, NULL);
+	if (!(debr.config.menu_dir = g_key_file_get_string_list(debr.config.key_file, "general", "menu_dir", NULL,
+								NULL))) {
+		debr.config.menu_dir = g_new(gchar *, 1);
+		debr.config.menu_dir[0] = NULL;
+	}
 	debr.config.browser = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "browser", "firefox");
 	debr.config.htmleditor =
 	    gebr_g_key_file_load_string_key(debr.config.key_file, "general", "htmleditor", "gedit");
