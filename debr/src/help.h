@@ -21,10 +21,18 @@
 #include <glib.h>
 #include <libgebr/geoxml.h>
 
+/**
+ * Ensures \p help is an absolute path.
+ */
 void help_fix_css(GString * help);
 
+/**
+ * Shows \p help using user's browser.
+ */
 void help_show(const gchar * help, const gchar * title);
 
-void help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh);
+/**
+ */
+void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh);
 
 #endif				//__HELP_H

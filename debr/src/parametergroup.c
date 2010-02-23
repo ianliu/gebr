@@ -1,3 +1,7 @@
+/**
+ * \file parametergroup.c Create dialog for editing a parameter of type group
+ */
+
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -27,11 +31,6 @@
 #include "parameter.h"
 
 /*
- * File: parametergroup.c
- * Create dialog for editing a parameter of type group
- */
-
-/*
  * Declarations
  */
 
@@ -42,13 +41,9 @@ on_parameter_group_is_exclusive_toggled(GtkToggleButton * toggle_button, struct 
 static void on_parameter_group_exclusive_toggled(GtkToggleButton * toggle_button, struct ui_parameter_group_dialog *ui);
 
 /*
- * Section: Public
+ * Public functions
  */
 
-/*
- * Function: parameter_group_setup_ui
- * Open a dialog to configure a group
- */
 void parameter_group_dialog_setup_ui(void)
 {
 	GtkWidget *dialog;
@@ -230,9 +225,13 @@ out:
 }
 
 /*
- * Section: Private
+ * Private functions
  */
 
+/**
+ * \internal
+ * Build the user interface for a group.
+ */
 static void parameter_group_instances_setup_ui(struct ui_parameter_group_dialog *ui)
 {
 	GebrGeoXmlSequence *instance;
@@ -298,6 +297,10 @@ static void parameter_group_instances_setup_ui(struct ui_parameter_group_dialog 
 	g_string_free(string, TRUE);
 }
 
+/**
+ * \internal
+ * Called when the number of instances is changed.
+ */
 static gboolean on_parameter_group_instances_changed(GtkSpinButton * spin_button, struct ui_parameter_group_dialog *ui)
 {
 	gint i, instanciate;
@@ -319,6 +322,10 @@ static gboolean on_parameter_group_instances_changed(GtkSpinButton * spin_button
 	return FALSE;
 }
 
+/**
+ * \internal
+ * Called when the 'Exclusive' toggle button is pressed.
+ */
 static void
 on_parameter_group_is_exclusive_toggled(GtkToggleButton * toggle_button, struct ui_parameter_group_dialog *ui)
 {
@@ -340,6 +347,9 @@ on_parameter_group_is_exclusive_toggled(GtkToggleButton * toggle_button, struct 
 	parameter_group_instances_setup_ui(ui);
 }
 
+/**
+ * \internal
+ */
 static void on_parameter_group_exclusive_toggled(GtkToggleButton * toggle_button, struct ui_parameter_group_dialog *ui)
 {
 	if (gtk_toggle_button_get_active(toggle_button) == FALSE)

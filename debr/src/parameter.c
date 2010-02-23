@@ -69,7 +69,7 @@ const gsize combo_type_map_size = 8;
  * \p type A #GEBR_GEOXML_PARAMETER_TYPE.
  * \return The associated index.
  */
-int combo_type_map_get_index(enum GEBR_GEOXML_PARAMETER_TYPE type)
+static int combo_type_map_get_index(enum GEBR_GEOXML_PARAMETER_TYPE type)
 {
 	int i;
 	for (i = 0; i < combo_type_map_size; ++i)
@@ -154,7 +154,7 @@ static void parameter_is_radio_button_other_toggled(GtkToggleButton * toggle_but
 static void on_parameter_menu_item_new_activate(GtkWidget * menu_item, gpointer type);
 
 /*
- * Section: Public
+ * Public functions
  */
 
 void parameter_setup_ui(void)
@@ -666,7 +666,7 @@ GtkWidget * parameter_create_menu_with_types(gboolean use_action)
 }
 
 /*
- * Section: Private
+ * Private functions
  */
 
 /**

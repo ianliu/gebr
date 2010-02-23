@@ -35,7 +35,7 @@
 #include "parameter.h"
 
 /*
- * Declarations
+ * Prototypes
  */
 
 static const GtkActionEntry actions_entries[] = {
@@ -113,7 +113,7 @@ static const GtkActionEntry common_actions_entries[] = {
 };
 
 /*
- * Section: Public
+ * Public methods
  */
 
 /**

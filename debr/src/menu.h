@@ -94,24 +94,23 @@ void menu_setup_ui(void);
 /**
  * Creates a new (unsaved) menu and add it to the tree view.
  *
- * @param edit Whether to immediately edit the menu or not.
+ * \param edit Whether to immediately edit the menu or not.
  */
 void menu_new(gboolean edit);
 
 /**
  * Loads an Xml representing a menu given by \p path and returns its structure.
  *
- * @param path The file path of the Xml file on the system.
- * @return The GebrGeoXmlFlow structure for this \p path.
+ * \param path The file path of the Xml file on the system.
+ * \return The GebrGeoXmlFlow structure for this \p path.
  */
 GebrGeoXmlFlow *menu_load(const gchar * path);
 
 /**
  * Loads all menu files from the directories specified in the configuration file.
  *
- * DeBR searches for menu files in the directories listed in debr.config.menu_dir,
- * which is filled when the configuration is loaded. This search is not recursive
- * and only the *.mnu files are loaded.
+ * DeBR searches for menu files in the directories listed in debr.config.menu_dir, which is filled when the
+ * configuration is loaded. This search is not recursive and only the *.mnu files are loaded.
  */
 void menu_load_user_directory(void);
 
@@ -124,21 +123,20 @@ void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * men
 /**
  * Loads a menu at \p path and append it to \p parent.
  *
- * @param path The path for the menu on the file system.
- * @param parant The iterator that will hold this menu as a child.
- * @param select Whether to select this menu or not.
+ * \param path The path for the menu on the file system.
+ * \param parant The iterator that will hold this menu as a child.
+ * \param select Whether to select this menu or not.
  */
 void menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean select);
 
 /**
  * Loads a menu at \p path and automatically places it on the correct folder.
  *
- * DeBR displays menus in a tree of folders, which is the direct representation of the menus
- * in the file system. The folders shown in DeBR are the ones registered in the configuration
- * file (~/.gebr/debr/debr.conf).
+ * DeBR displays menus in a tree of folders, which is the direct representation of the menus in the file system. The
+ * folders shown in DeBR are the ones registered in the configuration file (~/.gebr/debr/debr.conf).
  *
- * @param path The path for the menu on the file system.
- * @param select Whether to select the menu of not.
+ * \param path The path for the menu on the file system.
+ * \param select Whether to select the menu of not.
  *
  * \see menu_load_user_directory menu_open_with_parent
  */
@@ -147,12 +145,11 @@ void menu_open(const gchar * path, gboolean select);
 /**
  * Save the menu identified by \p iter on the file system.
  *
- * Save the menu on \ref debr.ui_menu.model pointed by \p iter.
- * Note that the file must exist on the system, otherwise this
- * function return FALSE and nothing is done.
+ * Save the menu on \ref debr.ui_menu.model pointed by \p iter.  Note that the file must exist on the system, otherwise
+ * this function return FALSE and nothing is done.
  *
- * @param iter The iterator pointing to the menu.
- * @return TRUE if the menu was successfully saved, FALSE if it has never been saved.
+ * \param iter The iterator pointing to the menu.
+ * \return TRUE if the menu was successfully saved, FALSE if it has never been saved.
  */
 gboolean menu_save(GtkTreeIter * iter);
 
@@ -164,11 +161,10 @@ void menu_save_all(void);
 /**
  * Validates the menu pointed by \p iter.
  *
- * Validation consists of checking sentences which are not capitalized, invalid
- * e-mail addresses, etc. This function reports all possible errors in a menu
- * and reports them.
+ * Validation consists of checking sentences which are not capitalized, invalid e-mail addresses, etc. This function
+ * reports all possible errors in a menu and reports them.
  *
- * @param iter The iterator pointing to the menu to be validated.
+ * \param iter The iterator pointing to the menu to be validated.
  */
 void menu_validate(GtkTreeIter * iter);
 
@@ -180,7 +176,7 @@ void menu_install(void);
 /**
  * Removes a menu pointed by \p iter and frees its memories.
  *
- * @param iter The iterator pointing to the menu.
+ * \param iter The iterator pointing to the menu.
  */
 void menu_close(GtkTreeIter * iter);
 
@@ -199,7 +195,7 @@ gboolean menu_cleanup(void);
  *
  * This affects the status of the currently selected menu by changing #MENU_STATUS
  *
- * @param status This can be either #MENU_STATUS_SAVED or #MENU_STATUS_UNSAVED.
+ * \param status This can be either #MENU_STATUS_SAVED or #MENU_STATUS_UNSAVED.
  *
  * \see MenuStatus
  */
@@ -208,8 +204,8 @@ void menu_saved_status_set(MenuStatus status);
 /**
  * Change the status of \p iter to either #MENU_STATUS_SAVED or #MENU_STATUS_UNSAVED.
  *
- * @param iter The iterator to have its status changed.
- * @param status The new status to be set to @iter.
+ * \param iter The iterator to have its status changed.
+ * \param status The new status to be set to @iter.
  */
 void menu_status_set_from_iter(GtkTreeIter * iter, MenuStatus status);
 
@@ -228,34 +224,34 @@ gboolean menu_dialog_setup_ui(void);
 /**
  * Sets \p iter to the selected item in \ref debr.ui_menu.tree_view.
  *
- * @param iter The iterator that will point to the selected item.
- * @param warn_unselected_menu Whether to warn the user if no menu is selected.
- * @return One of #MENU_NONE, #MENU_FOLDER or #MENU_FILE, representing the various types of an item.
+ * \param iter The iterator that will point to the selected item.
+ * \param warn_unselected_menu Whether to warn the user if no menu is selected.
+ * \return One of #MENU_NONE, #MENU_FOLDER or #MENU_FILE, representing the various types of an item.
  *
- * @see MenuType
+ * \see MenuType
  */
 gboolean menu_get_selected(GtkTreeIter * iter, gboolean warn_unselected_menu);
 
 /**
  * Fetches the iterator type of the row pointed by \p iter.
- * @param iter The row to get its type.
- * @return The #IterType of \p iter.
- * @see menu_get_selected_type
+ * \param iter The row to get its type.
+ * \return The #IterType of \p iter.
+ * \see menu_get_selected_type
  */
 IterType menu_get_type(GtkTreeIter * iter);
 
 /**
  * You <em>must</em> be sure that \p iter is valid to #debr.ui_menu.model.
  *
- * @param iter The iterator for #debr.ui_menu.model to get the type.
- * @return a #IterType.
+ * \param iter The iterator for #debr.ui_menu.model to get the type.
+ * \return a #IterType.
  */
 IterType menu_get_selected_type(GtkTreeIter * iter, gboolean warn_unselected_menu);
 
 /**
  * Selects \p iter from the menu's tree view, expanding folders if necessary.
  *
- * @param iter The #GtkTreeIter to be selected.
+ * \param iter The #GtkTreeIter to be selected.
  */
 void menu_select_iter(GtkTreeIter * iter);
 
@@ -267,7 +263,7 @@ void menu_details_update(void);
 /**
  * Updates the details for the folder pointed by \p iter.
  * 
- * @param iter The folder iterator for #debr.ui_menu.model.
+ * \param iter The folder iterator for #debr.ui_menu.model.
  */
 void menu_folder_details_update(GtkTreeIter * iter);
 
@@ -279,22 +275,22 @@ void menu_reset(void);
 /**
  * Calculates the number of opened menus.
  *
- * @return The number of opened menus.
+ * \return The number of opened menus.
  */
 gint menu_get_n_menus(void);
 
 /**
  * Given the \p path of the menu, assigns the correct parent item so the menu can be appended.
  *
- * @param path The menu system path.
- * @param parent The #GtkTreeIter to be set as the correct parent.
+ * \param path The menu system path.
+ * \param parent The #GtkTreeIter to be set as the correct parent.
  */
 void menu_path_get_parent(const gchar * path, GtkTreeIter * parent);
 
 /**
  * Counts the number of unsaved menus and return it.
  * 
- * @return The number of unsaved menus.
+ * \return The number of unsaved menus.
  */
 glong menu_count_unsaved(void);
 

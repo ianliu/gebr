@@ -111,13 +111,11 @@ void debr_init(void);
 gboolean debr_quit(void);
 
 /**
- * Loads the configuration file into debr.config structure.
+ * Loads the configuration file into \ref debr.config structure.
+ * DeBR is not considered configured if there is no configuration file or there is no searching path defined on the
+ * configuration file.
  *
- * DeBR is not considered configured if there is no configuration
- * file or there is no searching path defined on the configuration
- * file.
- *
- * @return #TRUE if debr is configured, #FALSE otherwise.
+ * \return #TRUE if debr is configured, #FALSE otherwise.
  */
 gboolean debr_config_load(void);
 
@@ -131,17 +129,17 @@ void debr_config_save(void);
 /**
  * Logs \p message into stdout and DeBR status bar.
  *
- * @param type The log level, for example #GEBR_LOG_ERROR.
- * @param message A printf-like formated string.
+ * \param type The log level, for example #GEBR_LOG_ERROR.
+ * \param message A printf-like formated string.
  */
 void debr_message(enum gebr_log_message_type type, const gchar * message, ...);
 
 /**
  * Tells if \p category is present in the list of categories.
  *
- * @param category The category to look for.
- * @param add If #TRUE and \p category is not present, add it.
- * @return #TRUE if \p category is not present, #FALSE otherwise.
+ * \param category The category to look for.
+ * \param add If #TRUE and \p category is not present, add it.
+ * \return #TRUE if \p category is not present, #FALSE otherwise.
  */
 gboolean debr_has_category(const gchar * category, gboolean add);
 

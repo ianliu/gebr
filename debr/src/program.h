@@ -46,19 +46,67 @@ struct ui_program {
 	} details;
 };
 
+/**
+ * Set interface and its callbacks.
+ */
 void program_setup_ui(void);
 
+/**
+ * Load programs of the current menu into the tree view.
+ */
 void program_load_menu(void);
+
+/**
+ * Append a new program and selects it
+ */
 void program_new(gboolean edit);
+
+/**
+ * Show GeBR's program edit view.
+ */
 void program_preview(void);
+
+/**
+ * Confirm action and if confirmed removed selected program from XML and UI.
+ */
 void program_remove(gboolean confirm);
+
+/**
+ * Action move top.
+ */
 void program_top(void);
+
+/**
+ * Move bottom current selected program.
+ */
 void program_bottom(void);
+
+/**
+ * Copy selected(s) program to clipboard.
+ */
 void program_copy(void);
+
+/**
+ * Paste programs on clipboard.
+ */
 void program_paste(void);
 
+/**
+ * Open dialog to configure current program.
+ */
 gboolean program_dialog_setup_ui(void);
+
+/**
+ * Sets \p iter to point to the selected program.
+ *
+ * \param warn_user Whether to warn if there is no selection.
+ * \return TRUE if there is a program selected.
+ */
 gboolean program_get_selected(GtkTreeIter * iter, gboolean warn_user);
+
+/**
+ * Selects the program pointed by \p iter, loading it into UI.
+ */
 void program_select_iter(GtkTreeIter iter);
 
 #endif				//__PROGRAM_H

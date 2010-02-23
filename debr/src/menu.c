@@ -35,6 +35,10 @@
 #include "program.h"
 #include "interface.h"
 
+/*
+ * Prototypes
+ */
+
 static GtkMenu *menu_popup_menu(GtkTreeView * tree_view);
 
 static void menu_title_changed(GtkEntry * entry);
@@ -62,6 +66,10 @@ static void menu_category_removed(GebrGuiValueSequenceEdit * sequence_edit, cons
 
 static gboolean menu_on_query_tooltip(GtkTreeView * tree_view, GtkTooltip * tooltip,
 				      GtkTreeIter * iter, GtkTreeViewColumn * column, gpointer user_data);
+
+/*
+ * Public functions
+ */
 
 void menu_setup_ui(void)
 {
@@ -1209,7 +1217,6 @@ void menu_replace(void){
 
 }
 
-
 void menu_archive(void){
 
 	GtkTreeIter iter;
@@ -1221,9 +1228,13 @@ void menu_archive(void){
 }
 
 /*
- * Section: Private
+ * Private functions
  */
 
+/**
+ * \internal
+ * Sets the sort column for menu tree view to \p column.
+ */
 static void debr_menu_sort_by_column_id(gint column)
 {
 	gint id;
@@ -1238,9 +1249,7 @@ static void debr_menu_sort_by_column_id(gint column)
 }
 
 /**
- * menu_sort_by_name:
- * @menu_item: 
- *
+ * \internal
  * Sort the list of menus alphabetically.
  */
 static void menu_sort_by_name(GtkMenuItem * menu_item)
@@ -1249,6 +1258,7 @@ static void menu_sort_by_name(GtkMenuItem * menu_item)
 }
 
 /**
+ * \internal
  * Sort the list of menus by the newest modified date.
  */
 static void menu_sort_by_modified_date(GtkMenuItem * menu_item)
@@ -1257,6 +1267,7 @@ static void menu_sort_by_modified_date(GtkMenuItem * menu_item)
 }
 
 /**
+ * \internal
  * Agregate action to the popup menu and shows it.
  */
 static GtkMenu *menu_popup_menu(GtkTreeView * tree_view)
@@ -1338,8 +1349,7 @@ static GtkMenu *menu_popup_menu(GtkTreeView * tree_view)
 }
 
 /**
- * @entry:
- *
+ * \internal
  * Keep XML in sync with widget.
  */
 static void menu_title_changed(GtkEntry * entry)
@@ -1349,8 +1359,7 @@ static void menu_title_changed(GtkEntry * entry)
 }
 
 /**
- * @entry:
- *
+ * \internal
  * Keep XML in sync with widget.
  */
 static void menu_description_changed(GtkEntry * entry)
@@ -1360,7 +1369,8 @@ static void menu_description_changed(GtkEntry * entry)
 }
 
 /**
- * Call help_show() with menu's help.
+ * \internal
+ * Calls \ref help_show with menu's help.
  */
 static void menu_help_view(void)
 {
@@ -1375,24 +1385,26 @@ static void menu_help_view(void)
 }
 
 /**
- * Call help_edit() with menu's help. After help was edited in
- * a external browser, save it back to XML.
+ * \internal
+ * Calls \ref debr_help_edit with menu's help. After help was edited in a external browser, save it back to XML.
  */
 static void menu_help_edit(void)
 {
-	help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, FALSE);
+	debr_help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, FALSE);
 }
 
 /**
- * Call help_refresg() with menu's help. After help was edited in
- * a external browser, with fields updated, save it back to XML.
+ * \internal
+ * Call \ref debr_help_edit with menu's help. After help was edited in a external browser, with fields updated, save it
+ * back to XML.
  */
 static void menu_help_refresh(void)
 {
-	help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, TRUE);
+	debr_help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, TRUE);
 }
 
 /**
+ * \internal
  * Keep XML in sync with widget.
  */
 static void menu_author_changed(GtkEntry * entry)
@@ -1402,6 +1414,7 @@ static void menu_author_changed(GtkEntry * entry)
 }
 
 /**
+ * \internal
  * Keep XML in sync with widget.
  */
 static void menu_email_changed(GtkEntry * entry)
@@ -1411,6 +1424,7 @@ static void menu_email_changed(GtkEntry * entry)
 }
 
 /**
+ * \internal
  * Add a category.
  */
 static void menu_category_add(GebrGuiValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
@@ -1431,6 +1445,7 @@ static void menu_category_add(GebrGuiValueSequenceEdit * sequence_edit, GtkCombo
 }
 
 /**
+ * \internal
  * Just wrap signal to notify an unsaved status.
  */
 static void menu_category_changed(void)
@@ -1439,11 +1454,7 @@ static void menu_category_changed(void)
 }
 
 /**
- * menu_category_renamed:
- * @sequence_edit:
- * @old_text:
- * @new_text:
- *
+ * \internal
  * Update category list upon rename.
  */
 static void
@@ -1454,10 +1465,7 @@ menu_category_renamed(GebrGuiValueSequenceEdit * sequence_edit, const gchar * ol
 }
 
 /**
- * menu_category_removed:
- * @sequence_edit:
- * @old_text:
- *
+ * \internal
  * Update category list upon removal.
  */
 static void menu_category_removed(GebrGuiValueSequenceEdit * sequence_edit, const gchar * old_text)
@@ -1485,11 +1493,8 @@ static void menu_category_removed(GebrGuiValueSequenceEdit * sequence_edit, cons
 }
 
 /**
- * menu_on_query_tooltip:
- * @sequence_edit:
- * @old_text:
- *
- * TODO: comment.
+ * \internal
+ * Sets the tooltip for the menu entries as its path on the file system.
  */
 static gboolean
 menu_on_query_tooltip(GtkTreeView * tree_view, GtkTooltip * tooltip, GtkTreeIter * iter, GtkTreeViewColumn * column,

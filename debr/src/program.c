@@ -71,9 +71,6 @@ program_preview_on_delete_event(GtkWidget * dialog, GdkEventAny * event, struct 
  * Public functions.
  */
 
-/**
- * Set interface and its callbacks.
- */
 void program_setup_ui(void)
 {
 	GtkWidget *hpanel;
@@ -169,9 +166,6 @@ void program_setup_ui(void)
 	program_details_update();
 }
 
-/**
- * Load programs of the current menu into the tree view.
- */
 void program_load_menu(void)
 {
 	GebrGeoXmlSequence *program;
@@ -195,9 +189,6 @@ void program_load_menu(void)
 		program_select_iter(iter);
 }
 
-/**
- * Append a new program and selects it
- */
 void program_new(gboolean edit)
 {
 	GebrGeoXmlProgram *program;
@@ -231,10 +222,6 @@ void program_new(gboolean edit)
 	}
 }
 
-/*
- * Function: program_preview
- * Show GeBR's program edit view
- */
 void program_preview(void)
 {
 	struct program_preview_data *data;
@@ -269,10 +256,6 @@ void program_preview(void)
 		gtk_widget_set_size_request(dialog, width, 500);
 }
 
-/*
- * Function: program_remove
- * Confirm action and if confirmed removed selected program from XML and UI
- */
 void program_remove(gboolean confirm)
 {
 	GtkTreeIter iter;
@@ -297,10 +280,6 @@ void program_remove(gboolean confirm)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: program_top
- * Action move top
- */
 void program_top(void)
 {
 	GtkTreeIter iter;
@@ -313,10 +292,6 @@ void program_top(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: program_bottom
- * Move bottom current selected program
- */
 void program_bottom(void)
 {
 	GtkTreeIter iter;
@@ -329,9 +304,6 @@ void program_bottom(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/* Function: program_copy
- * Copy selected(s) program to clipboard
- */
 void program_copy(void)
 {
 	GtkTreeIter iter;
@@ -345,9 +317,6 @@ void program_copy(void)
 	}
 }
 
-/* Function: program_paste
- * Paste programs on clipboard
- */
 void program_paste(void)
 {
 	GebrGeoXmlSequence *pasted;
@@ -369,10 +338,6 @@ void program_paste(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: program_dialog_setup_ui
- * Open dialog to configure current program
- */
 gboolean program_dialog_setup_ui(void)
 {
 	GtkWidget *dialog;
@@ -574,11 +539,6 @@ out:
 
 }
 
-
-/*
- * Function: program_get_selected
- * Return true if there is a program selected and write it to _iter_
- */
 gboolean program_get_selected(GtkTreeIter * iter, gboolean warn_user)
 {
 	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(debr.ui_program.tree_view), iter) == FALSE) {
@@ -590,9 +550,6 @@ gboolean program_get_selected(GtkTreeIter * iter, gboolean warn_user)
 	return TRUE;
 }
 
-/**
- * Select \p iter loading it.
- */
 void program_select_iter(GtkTreeIter iter)
 {
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(debr.ui_program.tree_view), &iter);
@@ -605,7 +562,7 @@ void program_select_iter(GtkTreeIter iter)
 
 /**
  * \internal
- * Load details of selected program to the details view
+ * Load details of selected program to the details view.
  */
 static void program_details_update(void)
 {
@@ -687,6 +644,7 @@ static void program_details_update(void)
 }
 
 /**
+ * \internal
  * Load stuff into \p iter.
  */
 static void program_load_iter(GtkTreeIter * iter)
@@ -699,9 +657,9 @@ static void program_load_iter(GtkTreeIter * iter)
 	program_details_update();
 }
 
-/*
- * Function: program_load_selected
- * Reload selected program contents to its iter
+/**
+ * \internal
+ * Reload selected program contents.
  */
 static void program_load_selected(void)
 {
@@ -715,6 +673,10 @@ static void program_load_selected(void)
 	gtk_list_store_set(debr.ui_program.list_store, &iter, PROGRAM_STATUS, NULL, -1);
 }
 
+/**
+ * \internal
+ * Appends \p program into user interface.
+ */
 static GtkTreeIter program_append_to_ui(GebrGeoXmlProgram * program)
 {
 	GtkTreeIter iter;
@@ -727,6 +689,7 @@ static GtkTreeIter program_append_to_ui(GebrGeoXmlProgram * program)
 }
 
 /**
+ * \internal
  * Load user selected program.
  */
 static void program_selected(void)
@@ -744,9 +707,8 @@ static void program_selected(void)
 	do_navigation_bar_update();
 }
 
-
-/*
- * Function: program_popup_menu
+/**
+ * \internal
  * Agregate action to the popup menu and shows it.
  */
 static GtkMenu *program_popup_menu(GtkWidget * tree_view)
@@ -794,9 +756,9 @@ static GtkMenu *program_popup_menu(GtkWidget * tree_view)
 	return GTK_MENU(menu);
 }
 
-/*
- * Function: program_stdin_changed
- * Sync UI to XML
+/**
+ * \internal
+ * Syncronize stdin from UI and XML.
  */
 static void program_stdin_changed(GtkToggleButton * togglebutton)
 {
@@ -805,9 +767,9 @@ static void program_stdin_changed(GtkToggleButton * togglebutton)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: program_stdout_changed
- * Sync UI to XML
+/**
+ * \internal
+ * Syncronize stdout from UI and XML.
  */
 static void program_stdout_changed(GtkToggleButton * togglebutton)
 {
@@ -816,9 +778,9 @@ static void program_stdout_changed(GtkToggleButton * togglebutton)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-/*
- * Function: program_stderr_changed
- * Sync UI to XML
+/**
+ * \internal
+ * Syncronize stderr from UI and XML.
  */
 static void program_stderr_changed(GtkToggleButton * togglebutton)
 {
@@ -827,6 +789,10 @@ static void program_stderr_changed(GtkToggleButton * togglebutton)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
+/**
+ * \internal
+ * Syncronize programs title from UI and XML.
+ */
 static gboolean program_title_changed(GtkEntry * entry)
 {
 	gebr_geoxml_program_set_title(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
@@ -835,6 +801,10 @@ static gboolean program_title_changed(GtkEntry * entry)
 	return FALSE;
 }
 
+/**
+ * \internal
+ * Syncronize programs binary from UI and XML.
+ */
 static gboolean program_binary_changed(GtkEntry * entry)
 {
 	gebr_geoxml_program_set_binary(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
@@ -843,6 +813,10 @@ static gboolean program_binary_changed(GtkEntry * entry)
 	return FALSE;
 }
 
+/**
+ * \internal
+ * Syncronize programs description from UI and XML.
+ */
 static gboolean program_description_changed(GtkEntry * entry)
 {
 	gebr_geoxml_program_set_description(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
@@ -851,6 +825,22 @@ static gboolean program_description_changed(GtkEntry * entry)
 	return FALSE;
 }
 
+/**
+ * \internal
+ * Syncronize programs url from UI and XML.
+ */
+static gboolean program_url_changed(GtkEntry * entry)
+{
+	gebr_geoxml_program_set_url(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
+
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+	return FALSE;
+}
+
+/**
+ * \internal
+ * Visualizate the programs help.
+ */
 static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program)
 {
 	gchar *help;
@@ -863,24 +853,27 @@ static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program)
 		help_show(" ", gebr_geoxml_program_get_title(program));
 }
 
+/**
+ * \internal
+ * Edits the programs help.
+ */
 static void program_help_edit(GtkButton * button)
 {
-	help_edit(gebr_geoxml_program_get_help(debr.program), debr.program, FALSE);
+	debr_help_edit(gebr_geoxml_program_get_help(debr.program), debr.program, FALSE);
 }
 
+/**
+ * \internal
+ * Refresh the programs help.
+ */
 static void program_help_refresh(GtkButton * button)
 {
-	help_edit(gebr_geoxml_program_get_help(debr.program), debr.program, TRUE);
+	debr_help_edit(gebr_geoxml_program_get_help(debr.program), debr.program, TRUE);
 }
 
-static gboolean program_url_changed(GtkEntry * entry)
-{
-	gebr_geoxml_program_set_url(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
-
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
-	return FALSE;
-}
-
+/**
+ * \internal
+ */
 static void program_preview_on_response(GtkWidget * dialog, gint response, struct program_preview_data *data)
 {
 	switch (response) {
@@ -898,6 +891,9 @@ static void program_preview_on_response(GtkWidget * dialog, gint response, struc
 	}
 }
 
+/**
+ * \internal
+ */
 static gboolean
 program_preview_on_delete_event(GtkWidget * dialog, GdkEventAny * event, struct program_preview_data *data)
 {

@@ -23,9 +23,13 @@
 #ifndef __PREFERENCES_H
 #define __PREFERENCES_H
 
+G_BEGIN_DECLS
+
 /**
  * Create and show preferences dialog; if ok, save config.
  */
 void preferences_dialog_setup_ui(void);
+
+G_END_DECLS
 
 #endif				//__PREFERENCES_H
