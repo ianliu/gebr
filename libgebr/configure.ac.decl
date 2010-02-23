@@ -21,3 +21,5 @@ else
         AC_ARG_VAR(INSTALL)
 fi
 
+GLIB_MINOR_VERSION=`pkg-config glib-2.0 --modversion | awk -F. '{ printf "%d", $2 }'`
+AM_CONDITIONAL(ENABLE_TESTS, test ${GLIB_MINOR_VERSION} -ge 16)

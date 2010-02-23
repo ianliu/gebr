@@ -15,7 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-SUBDIRS = geoxml data validate upgrade menu-diff menu-edit menu-query doc tests
+if ENABLE_TESTS
+TESTSDIR=tests
+endif
+SUBDIRS = geoxml data validate upgrade menu-diff menu-edit menu-query doc ${TESTSDIR}
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr-geoxml.pc
