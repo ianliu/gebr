@@ -60,9 +60,9 @@ web_view_on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame * fram
  * on area clicked, index generation after edition, CKEDITOR load with configuration.
  */
 static gchar * js_start_inline_editing = \
+	"var document_clone = null;"
 	"var editor = null;"
 	"var editing_element = null;"
-	"var editing_class = null;"
 	"var CKEDITOR_BASEPATH='file://" CKEDITOR_DIR "/';"
 	"function getHead(doc) {"
 		"var head = doc.getElementsByTagName('head')[0];"
@@ -119,7 +119,6 @@ static gchar * js_start_inline_editing = \
 	"function OpenCkEditor(element) {"
 		"if (editor) return;"
 		"editing_element = element;"
-		"editing_class = element.getAttribute('class');"
 		"editor = CKEDITOR.replace(element, {"
 			"fullpage: true,"
 			"height:300,"
@@ -132,16 +131,20 @@ static gchar * js_start_inline_editing = \
 				"'Link','Unlink','-','Find','Replace', '-' ]]});"
 	"}"
 	"function onCkEditorLoadFinished() {"
-		"if (menu_edition)"
+		"if (menu_edition) {"
 			"UpgradeHelpFormat(document);"
+			"UpgradeHelpFormat(document_clone);"
+		"}"
 		"OpenCkEditor(GetEditableElements(document)[0]);"
 	"}"
 	"(function() {"
 		"var head = getHead(document);"
+		"document_clone = document.implementation.createDocument('text/html', '', document.doctype);"
+		"document_clone.appendChild(document.documentElement.cloneNode(true));"
 		"var tag = document.createElement('script');"
 		"tag.setAttribute('type', 'text/javascript');"
 		"tag.setAttribute('src', 'file://" CKEDITOR_DIR "/ckeditor.js');"
-		"document.getElementsByTagName('head')[0].appendChild(tag);"
+		"head.appendChild(tag);"
 	"})();";
 
 /*
@@ -195,23 +198,15 @@ static GString *help_edit_save(struct help_edit_data * data)
 	g_string_append_printf(var_help, "var help = \"%s\";", escaped);
 	g_free(escaped);
 	g_string_append(var_help,
-			"var doc_clone = (new DOMParser()).parseFromString(help, 'text/xml');"
-			"var elem = GetEditableElements(doc_clone)[0];"
-			"while (elem.firstChild) {"
-				"elem.removeChild(elem.firstChild);"
-			"}"
 			"editor.updateElement();"
-			"var source_elem = GetEditableElements(document)[0];"
-			"for (i = 0; i < source_elem.childNodes.length; i++) {"
-				"elem.appendChild(source_elem.childNodes[i].cloneNode(true));"
-			"}"
-			""
+			"var elem = GetEditableElements(document_clone)[0];"
+			"elem.innerHTML = GetEditableElements(document)[0].innerHTML;"
 			"if (menu_edition) {"
-				"UpgradeHelpFormat(doc_clone);"
 				"GenerateNavigationIndex(document);"
+				"GenerateNavigationIndex(document_clone);"
 			"}"
 			//force encode to UTF-8
-			"var head = getHead(doc_clone);"
+			"var head = getHead(document_clone);"
 			"var meta = head.getElementsByTagName('meta');"
 			"var black_list = [];"
 			"for (var i = 0; i < meta.length; i++) {"
@@ -229,7 +224,7 @@ static GString *help_edit_save(struct help_edit_data * data)
 				"head.appendChild(meta);"
 			"}"
 			""
-			"return (new XMLSerializer()).serializeToString(doc_clone);"
+			"return document_clone.documentElement.outerHTML;"
 			"})();");
 
 	html = gebr_js_evaluate(data->context, var_help->str);
