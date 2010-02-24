@@ -32,15 +32,6 @@
 #include "gebr.h"
 #include "ui_job_control.h"
 
-/*
- * Section: Public
- * Public functions
- */
-
-/*
- * Function: job_add
- * *Fill me in!*
- */
 struct job *job_add(struct server *server, GString * jid,
 		    GString * _status, GString * title,
 		    GString * start_date, GString * finish_date,
@@ -75,18 +66,11 @@ struct job *job_add(struct server *server, GString * jid,
 	gtk_list_store_set(gebr.ui_job_control->store, &iter, JC_TITLE, job->title->str, JC_STRUCT, job, -1);
 	job->iter = iter;
 	job_update_status(job);
-	job_append_output(job, output);
-
-	gebr_gui_gtk_tree_view_scroll_to_iter_cell(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter);
+	job_set_active(job);
 
 	return job;
 }
 
-/*
- * Function: job_free
- * Frees job structure.
- * Only called when GeBR quits.
- */
 void job_free(struct job *job)
 {
 	g_string_free(job->title, TRUE);
@@ -102,11 +86,6 @@ void job_free(struct job *job)
 	g_free(job);
 }
 
-/*
- * Function: job_delete
- * Frees job structure and delete it from list of jobs.
- * Occurs when cleaned or its server is removed
- */
 void job_delete(struct job *job)
 {
 	gtk_list_store_remove(gebr.ui_job_control->store, &job->iter);
@@ -115,10 +94,6 @@ void job_delete(struct job *job)
 	job_control_clear_or_select_first();
 }
 
-/*
- * Function; job_close
- * *Fill me in!*
- */
 void job_close(struct job *job)
 {
 	if (job->status == JOB_STATUS_RUNNING) {
@@ -134,10 +109,6 @@ void job_close(struct job *job)
 	job_delete(job);
 }
 
-/*
- * Function; job_find
- * *Fill me in!*
- */
 struct job *job_find(GString * address, GString * jid)
 {
 	GtkTreeIter iter;
@@ -158,74 +129,9 @@ struct job *job_find(GString * address, GString * jid)
 	return job;
 }
 
-/*
- * Function: job_fill_info
- * *Fill me in!*
- */
-void job_fill_info(struct job *job)
-{
-	GString *info;
-
-	/* initialization */
-	info = g_string_new(NULL);
-
-	/* fill job label */
-	job_update_label(job);
-	/*
-	 * Fill job information
-	 */
-	/* who and where */
-	g_string_append_printf(info, _("Job executed at %s by %s.\n"),
-			       job->server->comm->protocol->hostname->str, job->hostname->str);
-	/* start date */
-	g_string_append_printf(info, "%s %s\n", _("Start date:"), gebr_localized_date(job->start_date->str));
-	/* issues */
-	if (job->issues->len)
-		g_string_append_printf(info, "\n%s\n%s", _("Issues:"), job->issues->str);
-	/* command line */
-	if (job->cmd_line->len)
-		g_string_append_printf(info, "\n%s\n%s\n", _("Command line:"), job->cmd_line->str);
-
-	/* job id */
-	if (job->server->type == GEBR_COMM_SERVER_TYPE_MOAB && job->moab_jid->len)
-		g_string_append_printf(info, "\n%s\n%s\n", _("Moab Job ID:"), job->moab_jid->str);
-
-	/* queue */
-	if (job->queue->len)
-		g_string_append_printf(info, "\n%s\n%s\n", _("Queue:"), job->queue->str);
-
-	/* output */
-	if (job->output->len)
-		g_string_append(info, job->output->str);
-	/* finish date */
-	if (job->finish_date->len)
-		g_string_append_printf(info, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
-	/* to view */
-	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, info->str, info->len);
-
-	/* frees */
-	g_string_free(info, TRUE);
-}
-
-/*
- * Function: job_set_active
- * *Fill me in!*
- */
 void job_set_active(struct job *job)
 {
-	GtkTreeSelection *selection;
-
-	/* select it on view */
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
-	gtk_tree_selection_select_iter(selection, &job->iter);
-
-	if (job->status == JOB_STATUS_QUEUED) {
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "job_control_stop"), FALSE);
-	}
-	else{
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "job_control_stop"), TRUE);
-	}
-	job_fill_info(job);
+ 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_job_control->view), &job->iter);
 }
 
 /*
@@ -278,7 +184,7 @@ void job_update(struct job *job)
 {
 	if (job_is_active(job) == FALSE)
 		return;
-	job_fill_info(job);
+	job_set_active(job);
 }
 
 /*
@@ -329,10 +235,6 @@ enum JobStatus job_translate_status(GString * status)
 	return translated_status;
 }
 
-/*
- * Function: job_update_status
- * *Fill me in!*
- */
 void job_update_status(struct job *job)
 {
 	GdkPixbuf *pixbuf;
@@ -359,9 +261,11 @@ void job_update_status(struct job *job)
 		return;
 	}
 	gtk_list_store_set(gebr.ui_job_control->store, &job->iter, JC_ICON, pixbuf, -1);
-
-	if (job_is_active(job) == FALSE || job->status == JOB_STATUS_RUNNING)
+	if (job_is_active(job) == FALSE) 
 		return;
+	
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "job_control_stop"),
+				 job->status != JOB_STATUS_QUEUED);
 
 	/* job label */
 	job_update_label(job);

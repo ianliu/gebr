@@ -157,7 +157,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 
 				job = job_add(server, jid, status, title, start_date, NULL,
 					      NULL, issues, cmd_line, output, queue, moab_jid);
-				job_set_active(job);
 				gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 3);
 
 				gebr_comm_protocol_split_free(arguments);
@@ -224,24 +223,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 			if (job != NULL) {
 				if (!strcmp(status->str, "finished"))
 					g_string_assign(job->finish_date, timestamp->str);
-
-				if (!strcmp(status->str, "running") && job->status == JOB_STATUS_QUEUED){
-					
-					GtkTreeSelection *selection;
-					GtkTreeModel *model;
-					GtkTreeIter iter;
-
-					struct job *job_selected;
-
-					selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
-					if (!(gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)){
-						gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job_selected, -1);
-
-						if (!strcmp(job->jid->str, job_selected->jid->str))
-							gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "job_control_stop"), TRUE);
-					}
-				}				
-
 				job->status = job_translate_status(status);
 				job_update_status(job);
 			}

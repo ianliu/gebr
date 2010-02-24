@@ -1,7 +1,3 @@
-/**
- * \file ui_job_control.c Responsible for UI for job management.
- */
-
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -23,6 +19,8 @@
 #include <string.h>
 
 #include <libgebr/intl.h>
+#include <libgebr/utils.h>
+#include <libgebr/date.h>
 #include <libgebr/gui/utils.h>
 
 #include "ui_job_control.h"
@@ -33,7 +31,7 @@
  * Prototypes
  */
 
-static void job_control_clicked(void);
+static void job_control_on_cursor_changed(void);
 
 static void on_text_view_populate_popup(GtkTextView * textview, GtkMenu * menu);
 
@@ -86,7 +84,7 @@ struct ui_job_control *job_control_setup_ui(void)
 	ui_job_control->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_job_control->store));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_job_control->view), FALSE);
 
-	g_signal_connect(GTK_OBJECT(ui_job_control->view), "cursor-changed", G_CALLBACK(job_control_clicked), NULL);
+	g_signal_connect(GTK_OBJECT(ui_job_control->view), "cursor-changed", G_CALLBACK(job_control_on_cursor_changed), NULL);
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -147,7 +145,7 @@ void job_control_clear_or_select_first(void)
 	/* select the first job */
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter) == TRUE) {
 		gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter);
-		job_control_clicked();
+		job_control_on_cursor_changed();
 	} else {
 		gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
 		gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
@@ -346,36 +344,52 @@ void job_control_stop(void)
 				     gebr_comm_protocol_defs.kil_def, 1, job->jid->str);
 }
 
-/*
- * Section: Private
- * Private functions.
- */
-
-/*
- * Function: job_control_clicked
- * *Fill me in!*
- */
-static void job_control_clicked(void)
+static void job_control_on_cursor_changed(void)
 {
-	GtkTreeSelection *selection;
-	GtkTreeModel *model;
 	GtkTreeIter iter;
-
 	struct job *job;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+ 	GString *info = g_string_new(NULL);
+  
+ 	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter) == FALSE)
 		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
-	if (job->status == JOB_STATUS_QUEUED) {
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "job_control_stop"), FALSE);
-	}
-	else{
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "job_control_stop"), TRUE);
-	}
+ 	/*
+ 	 * Fill job information
+ 	 */
+ 	/* who and where */
+ 	g_string_append_printf(info, _("Job executed at %s by %s.\n"),
+ 			       job->server->comm->protocol->hostname->str, job->hostname->str);
+ 	/* start date */
+ 	g_string_append_printf(info, "%s %s\n", _("Start date:"), gebr_localized_date(job->start_date->str));
+ 	/* issues */
+ 	if (job->issues->len)
+ 		g_string_append_printf(info, "\n%s\n%s", _("Issues:"), job->issues->str);
+	/* command line */
+ 	if (job->cmd_line->len)
+ 		g_string_append_printf(info, "\n%s\n%s\n", _("Command line:"), job->cmd_line->str);
+ 
+ 	/* job id */
+ 	if (job->server->type == GEBR_COMM_SERVER_TYPE_MOAB && job->moab_jid->len)
+ 		g_string_append_printf(info, "\n%s\n%s\n", _("Moab Job ID:"), job->moab_jid->str);
+ 
+ 	/* queue */
+ 	if (job->queue->len)
+ 		g_string_append_printf(info, "\n%s\n%s\n", _("Queue:"), job->queue->str);
+ 
+ 	/* output */
+ 	if (job->output->len)
+ 		g_string_append(info, job->output->str);
+ 	/* finish date */
+ 	if (job->finish_date->len)
+ 		g_string_append_printf(info, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
+ 	/* to view */
+ 	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, info->str, info->len);
 
-	job_fill_info(job);
+	job_update_status(job);
+ 
+ 	/* frees */
+ 	g_string_free(info, TRUE);
 }
 
 static void wordwrap_toggled(GtkCheckMenuItem * check_menu_item, GtkTextView * text_view)

@@ -15,6 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * \file ui_job_control.c Responsible for UI for job management.
+ */
+
 #ifndef __UI_JOB_CONTROL_H
 #define __UI_JOB_CONTROL_H
 

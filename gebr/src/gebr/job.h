@@ -52,21 +52,38 @@ struct job {
 	GString *moab_jid;
 };
 
+/**
+ * Create a new job (from \p server) and add it to list of jobs
+ */
 struct job *job_add(struct server *server, GString * jid,
 		    GString * status, GString * title,
 		    GString * start_date, GString * finish_date,
 		    GString * hostname, GString * issues, GString * cmd_line, GString * output, GString * queue, GString * moab_jid);
 
+/**
+ * Frees job structure.
+ */
 void job_free(struct job *job);
 
+/**
+ * Frees job structure and delete it from list of jobs.
+ * Occurs when cleaned or its server is removed.
+ */
 void job_delete(struct job *job);
 
+/**
+ * Remove job from the list. 
+ */
 void job_close(struct job *job);
 
+/**
+ * Find the job structure for the corresponding \p jid and server \p address.
+ */
 struct job *job_find(GString * address, GString * jid);
 
-void job_fill_info(struct job *job);
-
+/**
+ * Select \p job and load it. 
+ */
 void job_set_active(struct job *job);
 
 gboolean job_is_active(struct job *job);
