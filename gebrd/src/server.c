@@ -308,7 +308,13 @@ gboolean server_parse_client_messages(struct client *client)
 			queue = g_list_nth_data(arguments, 2);
 
 			/* try to run and send return */
-			if ((success = job_new(&job, client, queue, account, xml)) == TRUE) {
+			success = job_new(&job, client, queue, account, xml);
+			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
+						     gebr_comm_protocol_defs.ret_def, 9, job->jid->str,
+						     job->status_string->str, job->title->str, job->start_date->str,
+						     job->issues->str, job->cmd_line->str, job->output->str,
+						     job->queue->str, job->moab_jid->str);
+			if (success) {
 				if (queue->len && gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 					gebrd_queues_add_job_to(queue->str, job);
 					if (!gebrd_queues_is_queue_busy(queue->str)) {
@@ -317,14 +323,10 @@ gboolean server_parse_client_messages(struct client *client)
 					} else {
 						job_notify_status(job, JOB_STATUS_QUEUED, gebr_iso_date());
 					}
-				} else
+				} else {
 					job_run_flow(job);
+				}
 			}
-			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
-						     gebr_comm_protocol_defs.ret_def, 9, job->jid->str,
-						     job->status_string->str, job->title->str, job->start_date->str,
-						     job->issues->str, job->cmd_line->str, job->output->str,
-						     job->queue->str, job->moab_jid->str);
 
 			/* notify all clients of this new job */
 			if (success == TRUE) {

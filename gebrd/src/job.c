@@ -775,6 +775,7 @@ void job_run_flow(struct job *job)
 		gebr_comm_process_start(job->tail_process, cmd_line);
 
 		/* pool for moab status */
+		job_notify_status(job, JOB_STATUS_QUEUED, "");
 		g_timeout_add(1000, (GSourceFunc)job_moab_checkjob_pooling, job); 
 
 out2:		g_free(standard_output);
