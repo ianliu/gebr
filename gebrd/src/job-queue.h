@@ -47,6 +47,11 @@ GebrdJobQueue * gebrd_job_queue_new(const gchar * name);
 void gebrd_job_queue_append_job(GebrdJobQueue * job_queue, struct job * job);
 
 /**
+ * Removes \p job from \p job_queue.
+ */
+void gebrd_job_queue_remove_job(GebrdJobQueue * job_queue, struct job * job);
+
+/**
  * Frees \p job_queue structure and members.
  */
 void gebrd_job_queue_free(GebrdJobQueue * job_queue);

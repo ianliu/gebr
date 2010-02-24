@@ -813,7 +813,7 @@ struct job *job_find(GString * jid)
 	struct job *job;
 
 	job = NULL;
-	link = g_list_first(gebrd.jobs);
+	link = gebrd.jobs;
 	while (link != NULL) {
 		struct job *i;
 
@@ -837,8 +837,13 @@ void job_clear(struct job *job)
 
 void job_end(struct job *job)
 {
-	job->user_finished = TRUE;
-	gebr_comm_process_terminate(job->process);
+	if (job->status == JOB_STATUS_QUEUED){
+		gebrd_queues_remove_job_from(job->queue->str, job);
+		job_notify_status(job, JOB_STATUS_CANCELED, job->finish_date->str);
+	} else {
+		job->user_finished = TRUE;
+		gebr_comm_process_terminate(job->process);
+	}
 }
 
 void job_kill(struct job *job)

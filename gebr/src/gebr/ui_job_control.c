@@ -235,7 +235,7 @@ void job_control_cancel(void)
 		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
-	if (job->status != JOB_STATUS_RUNNING) {
+	if (job->status != JOB_STATUS_RUNNING && job->status != JOB_STATUS_QUEUED) {
 		gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("Job is not running."));
 		return;
 	}
@@ -367,6 +367,13 @@ static void job_control_clicked(void)
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
 		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
+
+	if (job->status == JOB_STATUS_QUEUED) {
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "job_control_stop"), FALSE);
+	}
+	else{
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "job_control_stop"), TRUE);
+	}
 
 	job_fill_info(job);
 }

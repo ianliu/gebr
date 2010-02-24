@@ -219,6 +219,12 @@ void job_set_active(struct job *job)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
 	gtk_tree_selection_select_iter(selection, &job->iter);
 
+	if (job->status == JOB_STATUS_QUEUED) {
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "job_control_stop"), FALSE);
+	}
+	else{
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "job_control_stop"), TRUE);
+	}
 	job_fill_info(job);
 }
 

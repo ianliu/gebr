@@ -28,6 +28,13 @@
 void gebrd_queues_add_job_to(const gchar * queue, struct job * job);
 
 /**
+ * Removes a job from \p queue.
+ * @param queue Name of queue to remove \p job.
+ * @param job The job to be removed.
+ */
+void gebrd_queues_remove_job_from(const gchar * queue, struct job * job);
+
+/**
  * Removes a queue and all its jobs.
  * @param queue Queue to be removed.
  */

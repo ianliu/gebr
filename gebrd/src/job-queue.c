@@ -32,6 +32,11 @@ void gebrd_job_queue_append_job(GebrdJobQueue * job_queue, struct job * job)
 	job_queue->jobs = g_list_append(job_queue->jobs, job);
 }
 
+void gebrd_job_queue_remove_job(GebrdJobQueue * job_queue, struct job * job)
+{
+	job_queue->jobs = g_list_remove(job_queue->jobs, job);
+}
+
 void gebrd_job_queue_free(GebrdJobQueue * job_queue)
 {
 	// g_list_foreach(job_queue->jobs, (GFunc)job_free, NULL);
