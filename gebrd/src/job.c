@@ -46,6 +46,7 @@ static gboolean check_for_write_permission(const gchar * file);
 
 static gboolean check_for_binary(const gchar * binary);
 
+static void job_send_signal_on_moab(const char * signal, struct job * job);
 
 static gboolean job_parse_parameter(struct job *job, GebrGeoXmlParameter * parameter, GebrGeoXmlProgram * program)
 {
@@ -252,11 +253,14 @@ void job_notify_status(struct job *job, enum JobStatus status, const gchar *time
 	}
 }
 
-static void job_set_status_finished(struct job *job)
+static gboolean job_set_status_finished(struct job *job)
 {
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
-		gebr_comm_process_free(job->tail_process);
-		job->tail_process = NULL;
+		if (job->tail_process != NULL){
+			gebr_comm_process_free(job->tail_process);
+			job->tail_process = NULL;
+		} else
+			return FALSE;
 	
 		GIOChannel * file;
 		GError * error;
@@ -293,6 +297,7 @@ out2:		g_string_free(output, TRUE);
 		gebrd_queues_set_queue_busy(job->queue->str, FALSE);
 		gebrd_queues_remove(job->queue->str);
 	}
+	return TRUE;
 }
 
 static void job_process_finished(GebrCommProcess * process, struct job *job)
@@ -385,7 +390,7 @@ gboolean job_moab_checkjob_pooling(struct job * job)
 	/* status changed */
 	if (moab_status_enum != JOB_STATUS_UNKNOWN && moab_status_enum != job->status) {
 		if (moab_status_enum == JOB_STATUS_FINISHED)
-			job_set_status_finished(job);
+			ret = job_set_status_finished(job);
 		else
 			job_notify_status(job, moab_status_enum, "");
        	}
@@ -838,19 +843,26 @@ void job_clear(struct job *job)
 
 void job_end(struct job *job)
 {
-	if (job->status == JOB_STATUS_QUEUED){
-		gebrd_queues_remove_job_from(job->queue->str, job);
-		job_notify_status(job, JOB_STATUS_CANCELED, job->finish_date->str);
-	} else {
-		job->user_finished = TRUE;
-		gebr_comm_process_terminate(job->process);
-	}
+	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
+
+		if (job->status == JOB_STATUS_QUEUED){
+			gebrd_queues_remove_job_from(job->queue->str, job);
+			job_notify_status(job, JOB_STATUS_CANCELED, job->finish_date->str);
+		} else {
+			job->user_finished = TRUE;
+			gebr_comm_process_terminate(job->process);
+		}
+	} else if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB)
+		job_send_signal_on_moab("SIGTERM", job);
 }
 
 void job_kill(struct job *job)
 {
-	job->user_finished = TRUE;
-	gebr_comm_process_kill(job->process);
+	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
+		job->user_finished = TRUE;
+		gebr_comm_process_kill(job->process);
+	} else if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB)
+		job_send_signal_on_moab("SIGKILL", job);
 }
 
 void job_list(struct client *client)
@@ -911,4 +923,33 @@ static gboolean check_for_write_permission(const gchar * file)
 static gboolean check_for_binary(const gchar * binary)
 {
 	return (g_find_program_in_path(binary) == NULL ? TRUE : FALSE);
+}
+
+/**
+ * \internal
+ * Send a \p signal to a given \p job on MOAB cluster.
+ */
+static void job_send_signal_on_moab(const char * signal, struct job * job)
+{
+	GString *cmd_line = NULL;
+	gchar *std_out = NULL;
+	gchar *std_err = NULL;
+	gint exit_status;
+	cmd_line = g_string_new("");
+	g_string_printf(cmd_line, "mjobctl -M signal=%s %s", signal, job->moab_jid->str);
+	if (g_spawn_command_line_sync(cmd_line->str, &std_out, &std_err, &exit_status, NULL) == FALSE){
+		g_string_append_printf(job->issues, _("Cannot cancel job at MOAB server.\n"));
+		goto err;
+	}
+	if (std_err != NULL && strlen(std_err)) {
+		g_string_append_printf(job->issues, _("Cannot cancel job at MOAB server.\n"));
+		goto err1;
+	}
+	if (job->status != JOB_STATUS_QUEUED)
+		job->user_finished = TRUE;
+
+err1:	g_free(std_out);
+	g_free(std_err);
+err:	g_string_free(cmd_line, TRUE);
+
 }
