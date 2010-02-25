@@ -1,3 +1,7 @@
+/**
+ * \file help.h API for displaying help's
+ */
+
 /*   libgebr - GeBR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -26,12 +30,15 @@
  */
 void gebr_gui_help_show(const gchar * uri, const gchar * title);
 
+/**
+ * Callback for \ref gebr_gui_help_edit and \ref gebr_gui_program_help_edit; it is called whenever the help is saved.
+ */
 typedef void (*GebrGuiHelpEdited)(GebrGeoXmlObject * object, const gchar * help);
 
 /**
  * Edit help HTML from \p document with WebKit and CKEDITOR (if enabled) or with \p editor executable specified.
- * If \p menu_edition is TRUE then enabled menu specific features edition (for DéBR)
- * \p edited_callback is called each time the content is edited. 
+ * If \p menu_edition is TRUE then enabled menu specific features edition (for DéBR) \p edited_callback is called each
+ * time the content is edited. 
  */
 void gebr_gui_help_edit(GebrGeoXmlDocument * document, GebrGuiHelpEdited edited_callback, gboolean menu_edition);
 

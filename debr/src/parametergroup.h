@@ -28,6 +28,9 @@ struct ui_parameter_group_dialog {
 	GebrGeoXmlParameterGroup *parameter_group;
 };
 
+/**
+ * Open a dialog to configure a group.
+ */
 void parameter_group_dialog_setup_ui(void);
 
 #endif				//__PARAMETER_GROUP_H

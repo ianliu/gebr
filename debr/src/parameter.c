@@ -1838,8 +1838,6 @@ static void parameter_is_radio_button_space_toggled(GtkToggleButton * toggle_but
  */
 static void parameter_is_radio_button_comma_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui)
 {
-
-
 	if (gtk_toggle_button_get_active(toggle_button))
 		parameter_separator_changed_by_string(",", ui);
 	else 

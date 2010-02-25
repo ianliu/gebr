@@ -41,23 +41,31 @@ struct help_edit_data {
 
 	GebrGeoXmlObject * object;
 	GString *html_path;
-	gchar *raw_help;
 	GebrGuiHelpEdited edited_callback;
 
 	gboolean menu_edition;
 };
 
-static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window);
+static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window, struct help_edit_data * data);
 
 static WebKitNavigationResponse
 web_view_on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame * frame,
 				 WebKitNetworkRequest * request, struct help_edit_data * data);
 
+static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, struct help_edit_data * data);
+
+static void _gebr_gui_help_edit(const gchar *help, GebrGeoXmlObject * object, 
+				GebrGuiHelpEdited edited_callback, gboolean menu_edition);
+
+static void on_help_edit_save_activate(GtkAction * action, struct help_edit_data * data);
+
+static void on_help_edit_edit_toggled(GtkToggleAction * action, struct help_edit_data * data);
+
 /**
  * \internal
  * Main JS loaded after the page has been loaded.
- * Load CKEDITOR JS, CSS hover highlight, on click start/leave edition depending
- * on area clicked, index generation after edition, CKEDITOR load with configuration.
+ * Load CKEDITOR JS, CSS hover highlight, on click start/leave edition depending on area clicked, index generation after
+ * edition, CKEDITOR load with configuration.
  */
 static gchar * js_start_inline_editing = \
 	"var document_clone = null;"
@@ -75,6 +83,16 @@ static gchar * js_start_inline_editing = \
 	"function IsElementEditable(elt) {"
 		"return (elt.nodeName.toLowerCase() == 'div'"
 			"&& elt.className.indexOf('content') != -1);"
+	"}"
+	"function ToggleVisible(element) {"
+		"var hidden = element.style.visibility == 'hidden';"
+		"if (hidden) {"
+			"element.style.visibility = 'visible';"
+			"element.style.display = 'block';"
+		"} else {"
+			"element.style.visibility = 'hidden';"
+			"element.style.display = 'none';"
+		"}"
 	"}"
 	"function GetEditableElements(doc) {"
 		"var content = doc.getElementsByClassName('content')[0];"
@@ -125,7 +143,7 @@ static gchar * js_start_inline_editing = \
 			"width: menu_edition?390:'100%',"
 			"resize_enabled:false,"
 			"toolbarCanCollapse:false,"
-			"toolbar:[['Source','Save', '-','Bold','Italic','Underline','-',"
+			"toolbar:[['Source', '-','Bold','Italic','Underline','-',"
 				"'Subscript','Superscript','-','Undo','Redo','-','/',"
 				"'NumberedList','BulletedList','Blockquote','Styles','-',"
 				"'Link','Unlink','-','Find','Replace', '-' ]]});"
@@ -176,25 +194,22 @@ void gebr_gui_help_show(const gchar * uri, const gchar * title)
 	GtkWidget *web_view;
 	GtkDialog *dialog;
 
-	web_view = web_view_on_create_web_view(&dialog);
+	web_view = web_view_on_create_web_view(&dialog, NULL);
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), uri);
 	g_signal_connect(web_view, "navigation-requested", G_CALLBACK(web_view_on_navigation_requested), NULL);
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 }
 
-static void _gebr_gui_help_edit(gchar *help, GebrGeoXmlObject * object, 
-					GebrGuiHelpEdited edited_callback, gboolean menu_edition);
-
 void gebr_gui_help_edit(GebrGeoXmlDocument * document, GebrGuiHelpEdited edited_callback, gboolean menu_edition)
 {
-	_gebr_gui_help_edit((gchar *)gebr_geoxml_document_get_help(document), GEBR_GEOXML_OBJECT(document),
-				edited_callback, menu_edition);
+	_gebr_gui_help_edit(gebr_geoxml_document_get_help(document), GEBR_GEOXML_OBJECT(document),
+			    edited_callback, menu_edition);
 }
 
 void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited edited_callback)
 {
-	_gebr_gui_help_edit((gchar *)gebr_geoxml_program_get_help(program), GEBR_GEOXML_OBJECT(program),
-				edited_callback, TRUE);
+	_gebr_gui_help_edit(gebr_geoxml_program_get_help(program), GEBR_GEOXML_OBJECT(program),
+			    edited_callback, TRUE);
 }
 
 /*
@@ -206,29 +221,25 @@ void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited e
  * Save the updated HTML and call edited_callback if set.
  * If the editor is opened remove its HTML code.
  */
-static GString *help_edit_save(struct help_edit_data * data)
+static void help_edit_save(struct help_edit_data * data)
 {
 	GString *help;
 	GString *var_help;
-	gchar *escaped;
 	JSValueRef html;
 
-	var_help = g_string_new("(function() {");
-	escaped = g_strescape(data->raw_help, "");
-	g_string_append_printf(var_help, "var help = \"%s\";", escaped);
-	g_free(escaped);
-	g_string_append(var_help,
-			"editor.updateElement();"
-			"var content = GetEditableElements(document_clone)[0];"
-			"while (content.firstChild)"
-				"content.removeChild(content.firstChild);"
-			"for (var i = GetEditableElements(document)[0].firstChild; i; i = i.nextSibling)"
-				"content.appendChild(i.cloneNode(true));"
-			"if (menu_edition) {"
-				"GenerateNavigationIndex(document);"
-				"GenerateNavigationIndex(document_clone);"
-			"}"
-			"return document_clone.documentElement.outerHTML;"
+	var_help = g_string_new(
+			"(function(){"
+				"editor.updateElement();"
+				"var content = GetEditableElements(document_clone)[0];"
+				"while (content.firstChild)"
+					"content.removeChild(content.firstChild);"
+				"for (var i = GetEditableElements(document)[0].firstChild; i; i = i.nextSibling)"
+					"content.appendChild(i.cloneNode(true));"
+				"if (menu_edition) {"
+					"GenerateNavigationIndex(document);"
+					"GenerateNavigationIndex(document_clone);"
+				"}"
+				"return document_clone.documentElement.outerHTML;"
 			"})();");
 
 	html = gebr_js_evaluate(data->context, var_help->str);
@@ -242,7 +253,7 @@ static GString *help_edit_save(struct help_edit_data * data)
 	if (data->edited_callback)
 		data->edited_callback(data->object, help->str);
 
-	return help;
+	g_string_free(help, TRUE);
 }
 
 /**
@@ -284,23 +295,45 @@ static WebKitNavigationResponse web_view_on_navigation_requested(WebKitWebView *
 	return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 }
 
+static GtkActionEntry help_edit_actions[] = {
+	{"save", GTK_STOCK_SAVE, NULL, NULL, N_("Save the current help"), G_CALLBACK(on_help_edit_save_activate)},
+};
+
+static GtkToggleActionEntry help_edit_toggle_actions[] = {
+	{"edit", GTK_STOCK_EDIT, NULL, NULL, N_("Toggles between read only and help edition"), G_CALLBACK(on_help_edit_edit_toggled), TRUE},
+};
+
+static const gchar * help_edit_ui_manager =
+"<ui>"
+	"<toolbar name='HelpToolBar'>"
+		"<toolitem name='Save' action='save' />"
+		"<separator />"
+		"<toolitem name='Edit' action='edit' />"
+	"</toolbar>"
+"</ui>";
+
 /**
  * \internal
- * Create the webview itself. Used for both viewing and editing HTML.
- * Returns the webview and the dialog created for it at \p r_window
+ * Create the webview itself.
+ * Used for both viewing and editing HTML. Returns the webview and the dialog created for it at \p r_window.
  */
-static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window)
+static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window, struct help_edit_data * data)
 {
 	static GtkWindowGroup *window_group = NULL;
 	static GtkWidget *work_around_web_view = NULL;
 	GtkWidget *window;
 	GtkWidget *scrolled_window;
 	GtkWidget *web_view;
+	GtkWidget *content_area;
+	GtkUIManager *ui;
+	GtkActionGroup *actions;
+	GError *error = NULL;
 
 	if (jscontext_to_data_hash == NULL)
 		jscontext_to_data_hash = g_hash_table_new(NULL, NULL);
 	if (window_group == NULL)
 		window_group = gtk_window_group_new();
+
 	if (!g_thread_supported())
 		g_thread_init(NULL);
 	/* WORKAROUND: Newer WebKitGtk versions crash on last WebKitWebView destroy,
@@ -317,11 +350,40 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window)
 					   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	web_view = webkit_web_view_new();
 	if (g_signal_lookup("create-web-view", WEBKIT_TYPE_WEB_VIEW))
-		g_signal_connect(web_view, "create-web-view", G_CALLBACK(web_view_on_create_web_view), NULL);
+		g_signal_connect(web_view, "create-web-view", G_CALLBACK(web_view_on_create_web_view), data);
 
 	/* Place the WebKitWebView in the GtkScrolledWindow */
 	gtk_container_add(GTK_CONTAINER(scrolled_window), web_view);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(window)->vbox), scrolled_window, TRUE, TRUE, 0);
+#if GTK_CHECK_VERSION(2,14,0)
+	content_area = gtk_dialog_get_content_area(GTK_DIALOG(window));
+#else
+	content_area = GTK_DIALOG(window)->vbox;
+#endif
+	if (data) {
+		GtkAction *action;
+
+		actions = gtk_action_group_new("HelpEdit");
+		gtk_action_group_add_actions(actions, help_edit_actions, G_N_ELEMENTS(help_edit_actions), data);
+		gtk_action_group_add_toggle_actions(actions, help_edit_toggle_actions,
+						    G_N_ELEMENTS(help_edit_toggle_actions), data);
+		action = gtk_action_group_get_action(actions, "save");
+		g_object_set(action, "is-important", TRUE, NULL);
+		g_object_set(action, "short-label", _("Save"), NULL);
+		action = gtk_action_group_get_action(actions, "edit");
+		g_object_set(action, "is-important", TRUE, NULL);
+		g_object_set(action, "short-label", _("Editing"), NULL);
+
+		ui = gtk_ui_manager_new();
+		gtk_ui_manager_insert_action_group(ui, actions, 0);
+		gtk_window_add_accel_group(GTK_WINDOW(window), gtk_ui_manager_get_accel_group(ui));
+		if (!gtk_ui_manager_add_ui_from_string(ui, help_edit_ui_manager, -1, &error)) {
+			g_message("Failed building gui: %s", error->message);
+			g_error_free(error);
+		}
+		gtk_box_pack_start(GTK_BOX(content_area), gtk_ui_manager_get_widget(ui, "/HelpToolBar"), FALSE, FALSE, 0);
+		g_object_unref(ui);
+	}
+	gtk_box_pack_start(GTK_BOX(content_area), scrolled_window, TRUE, TRUE, 0);
 
 	/* Show the result */
 	gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
@@ -336,11 +398,8 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window)
  */
 static gboolean dialog_on_response(GtkDialog * dialog, gint response_id, struct help_edit_data * data)
 {
-	GString * help;
+	help_edit_save(data);
 
-	help = help_edit_save(data);
-
-	g_string_free(help, TRUE);
 	g_unlink(data->html_path->str);
 	g_string_free(data->html_path, TRUE);
 	g_free(data);
@@ -364,7 +423,7 @@ static void web_view_on_title_changed(WebKitWebView * web_view, WebKitWebFrame *
  * Set at #web_view_on_load_finished
  */
 JSValueRef js_callback_gebr_help_save(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject,
-					  size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+				      size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
 	struct help_edit_data * data;
 
@@ -409,7 +468,7 @@ static gboolean web_view_on_button_press(GtkWidget * widget, GdkEventButton * ev
 
 /**
  * \internal
- * Esc cancel CKEDITOR edition
+ * Handle Escape key in WebView.
  */
 static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, struct help_edit_data * data)
 {
@@ -422,8 +481,8 @@ static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, s
 /**
  * Load help into a temporary file and load with Webkit (if enabled).
  */
-static void _gebr_gui_help_edit(gchar *help, GebrGeoXmlObject * object,
-					GebrGuiHelpEdited edited_callback, gboolean menu_edition)
+static void _gebr_gui_help_edit(const gchar *help, GebrGeoXmlObject * object,
+				GebrGuiHelpEdited edited_callback, gboolean menu_edition)
 {
 	FILE *html_fp;
 	GString *html_path;
@@ -442,19 +501,20 @@ static void _gebr_gui_help_edit(gchar *help, GebrGeoXmlObject * object,
 	GtkWidget * web_view;
 	GtkDialog * dialog;
 
-	web_view = web_view_on_create_web_view(&dialog);
+	data = g_new(struct help_edit_data, 1);
+	data->object = object;
+	data->html_path = html_path;
+	data->edited_callback = edited_callback;
+	data->menu_edition = menu_edition;
+
+	web_view = web_view_on_create_web_view(&dialog, data);
 	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		gtk_window_set_title(GTK_WINDOW(dialog), gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(object)));
 	else
 		gtk_window_set_title(GTK_WINDOW(dialog), gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(object)));
-	data = g_new(struct help_edit_data, 1);
-	data->object = object;
-	data->html_path = html_path;
-	data->raw_help = help;
-	data->edited_callback = edited_callback;
+
 	data->web_view = WEBKIT_WEB_VIEW(web_view);
 	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
-	data->menu_edition = menu_edition;
 
 	g_signal_connect(dialog, "response", G_CALLBACK(dialog_on_response), data);
 	g_signal_connect(web_view, "load-finished", G_CALLBACK(web_view_on_load_finished), data);
@@ -467,3 +527,23 @@ static void _gebr_gui_help_edit(gchar *help, GebrGeoXmlObject * object,
 	webkit_web_view_open(WEBKIT_WEB_VIEW(data->web_view), html_path->str);
 }
 
+static void on_help_edit_save_activate(GtkAction * action, struct help_edit_data * data)
+{
+	help_edit_save(data);
+}
+
+static void on_help_edit_edit_toggled(GtkToggleAction * action, struct help_edit_data * data)
+{
+	const gchar * label;
+	label = gtk_toggle_action_get_active(action)? _("Editing"):_("Read only");
+	g_object_set(action, "short-label", label, NULL);
+
+	gebr_js_evaluate(data->context,
+			 "(function(){"
+			 	"var content = GetEditableElements(document)[0];"
+			 	"var cke_editor = document.getElementById('cke_' + editor.name);"
+				"editor.updateElement();"
+				"ToggleVisible(content);"
+				"ToggleVisible(cke_editor);"
+			 "})();");
+}

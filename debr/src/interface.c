@@ -116,9 +116,6 @@ static const GtkActionEntry common_actions_entries[] = {
  * Public methods
  */
 
-/**
- * Creates DeBR's main window and its children.
- */
 void debr_setup_ui(void)
 {
 	GtkWidget *vbox;
