@@ -1,7 +1,3 @@
-/**
- * @file ui_flow_edition.c Interface functions and callbacks for the "Flow Edition" page.
- */
-
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *

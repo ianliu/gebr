@@ -79,12 +79,14 @@ struct ui_job_control *job_control_setup_ui(void)
 				       GTK_POLICY_AUTOMATIC);
 	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
 
-	ui_job_control->store = gtk_list_store_new(JC_N_COLUMN, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
-
+	ui_job_control->store = gtk_tree_store_new(JC_N_COLUMN, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN, G_TYPE_STRING,
+						   G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ui_job_control->store), JC_SERVER_ADDRESS,
+					     GTK_SORT_ASCENDING);
 	ui_job_control->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_job_control->store));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_job_control->view), FALSE);
-
-	g_signal_connect(GTK_OBJECT(ui_job_control->view), "cursor-changed", G_CALLBACK(job_control_on_cursor_changed), NULL);
+	g_signal_connect(GTK_OBJECT(ui_job_control->view), "cursor-changed", G_CALLBACK(job_control_on_cursor_changed),
+			 NULL);
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -348,11 +350,18 @@ static void job_control_on_cursor_changed(void)
 {
 	GtkTreeIter iter;
 	struct job *job;
+	gboolean is_job;
  	GString *info;
   
  	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter) == FALSE)
 		return;
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, JC_IS_JOB,
+			   &is_job, -1);
+	if (!is_job) {
+		gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
+		gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
+		return;
+	}
 	
 	info = g_string_new(NULL);
  	/*
@@ -365,8 +374,7 @@ static void job_control_on_cursor_changed(void)
  	g_string_append_printf(info, "%s %s\n", _("Start date:"), gebr_localized_date(job->start_date->str));
  	/* issues */
  	if (job->issues->len)
- 		g_string_append_printf(info, "\n%s\n%s", _("Issues:"), job->issues->str);
-	/* command line */
+ 		g_string_append_printf(info, "\n%s\n%s", _("Issues:"), job->issues->str); /* command line */
  	if (job->cmd_line->len)
  		g_string_append_printf(info, "\n%s\n%s\n", _("Command line:"), job->cmd_line->str);
  

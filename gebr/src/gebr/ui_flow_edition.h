@@ -15,6 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file ui_flow_edition.c Interface functions and callbacks for the "Flow Edition" page.
+ */
+
 #ifndef __UI_FLOW_COMPONENT_H
 #define __UI_FLOW_COMPONENT_H
 

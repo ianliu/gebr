@@ -112,6 +112,9 @@ struct gebr {
 
 void gebr_init(void);
 
+/**
+ * Free memory, remove temporaries files and quit.
+ */
 gboolean gebr_quit(void);
 
 int gebr_config_load(gboolean nox);

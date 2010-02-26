@@ -15,6 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * \file job.c
+ * Job callbacks
+ */
+
 #ifndef __JOB_H
 #define __JOB_H
 

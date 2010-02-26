@@ -82,9 +82,21 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 						GString *string;
 
 						string = g_string_new("");
-						g_string_printf(string, _("At '%s'"), queues[i]);
+						g_string_printf(string, _("At %s"), queues[i]);
 						gtk_list_store_append(server->queues_model, &iter);
-						gtk_list_store_set(server->queues_model, &iter, 0, string->str, 1, queues[i], -1);
+						gtk_list_store_set(server->queues_model, &iter, 0, string->str, 1,
+								   queues[i], -1);
+
+						if (queues[i][0] != 'j') {
+							/* at job control */
+							gtk_tree_store_append(gebr.ui_job_control->store, &iter, NULL);
+							gtk_tree_store_set(gebr.ui_job_control->store, &iter,
+									   JC_SERVER_ADDRESS,
+									   server->comm->address->str, JC_QUEUE_NAME,
+									   queues[i], JC_TITLE, queues[i]+1
+									   /*jump 'q' identifier*/, JC_STRUCT, NULL,
+									   JC_IS_JOB, FALSE, -1);
+						}
 
 						g_string_free(string, TRUE);
 					}

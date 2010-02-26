@@ -71,9 +71,15 @@ gboolean server_find(struct server *server, GtkTreeIter * iter);
 
 /**
  * Find the queue named \p queue_name.
- * If found, returns TRUE and set \p iter corresponding. 
+ * If found, returns TRUE and set \p iter corresponding (from the list of queues). 
  */
 gboolean server_queue_find(struct server * server, const gchar * queue_name, GtkTreeIter * iter);
+
+/**
+ * Find the queue named \p queue_name.
+ * If found, returns TRUE and set \p iter corresponding (from the job control UI). 
+ */
+gboolean server_queue_find_at_job_control(struct server * server, const gchar * queue_name, GtkTreeIter * _iter);
 
 /**
  *

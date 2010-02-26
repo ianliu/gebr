@@ -169,26 +169,31 @@ gboolean server_find(struct server * server, GtkTreeIter * iter)
 	return FALSE;
 }
 
+static gboolean server_free_foreach_job(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, struct server
+					*server)
+{
+	struct job *job;
+	gboolean is_job;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &job, JC_IS_JOB,
+			   &is_job, -1);
+	if (!is_job)
+		return FALSE;
+	if (job->server == server)
+		job_delete(job);
+
+	return FALSE;
+}
+
 void server_free(struct server *server)
 {
-	GtkTreeIter iter;
-	gboolean valid;
-
 	gtk_list_store_remove(gebr.ui_server_list->common.store, &server->iter);
 	gtk_list_store_clear(server->accounts_model);
 	gtk_list_store_clear(server->queues_model);
 
 	/* delete all jobs at server */
-	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
-	while (valid) {
-		struct job *job;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter);
-
-		if (job->server == server)
-			job_delete(job);
-	}
+	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store),
+			       (GtkTreeModelForeachFunc)server_free_foreach_job, server); 
 
 	gebr_comm_server_free(server->comm);
 	g_string_free(server->last_error, TRUE);
@@ -210,6 +215,28 @@ gboolean server_queue_find(struct server * server, const gchar * name, GtkTreeIt
 			return TRUE;
 		}
 
+		g_free(i_name);
+	}
+	return FALSE;
+}
+
+gboolean server_queue_find_at_job_control(struct server * server, const gchar * name, GtkTreeIter * _iter)
+{
+	GtkTreeIter iter;
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_job_control->store)) {
+		gchar *i_name;
+		gboolean is_job;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_QUEUE_NAME, &i_name, JC_IS_JOB,
+				   &is_job, -1);
+		if (is_job)
+			continue;
+		if (strcmp(name, i_name) == 0) {
+			if (_iter != NULL)
+				*_iter = iter;
+			g_free(i_name);
+			return TRUE;
+		}
 		g_free(i_name);
 	}
 	return FALSE;

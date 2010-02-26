@@ -27,15 +27,18 @@
 /* Store fields */
 enum {
 	JC_ICON = 0,
+	JC_IS_JOB,
+	JC_SERVER_ADDRESS, /* for ordering */
+	JC_QUEUE_NAME,
 	JC_TITLE,
-	JC_STRUCT,
+	JC_STRUCT, /* non-NULL if it is a job */
 	JC_N_COLUMN
 };
 
 struct ui_job_control {
 	GtkWidget *widget;
 
-	GtkListStore *store;
+	GtkTreeStore *store;
 	GtkWidget *view;
 
 	GtkWidget *label;

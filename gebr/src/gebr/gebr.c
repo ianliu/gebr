@@ -114,10 +114,21 @@ void gebr_init(void)
 	}
 }
 
-/*
- * Function: gebr_quit
- * Free memory, remove temporaries files and quit.
- */
+static gboolean gebr_quit_foreach_job(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
+{
+	struct job *job;
+	gboolean is_job;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &job, JC_IS_JOB,
+			   &is_job, -1);
+	if (!is_job)
+		return FALSE;
+	job_free(job);
+
+	return FALSE;
+}
+
+
 gboolean gebr_quit(void)
 {
 	GtkTreeIter iter;
@@ -159,13 +170,8 @@ gboolean gebr_quit(void)
 				   SERVER_POINTER, &server, -1);
 		server_free(server);
 	}
-	/* Free jobs structs */
-	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_job_control->store), 2) {
-		struct job *job;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
-		job_free(job);
-	}
+	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store),
+			       (GtkTreeModelForeachFunc)gebr_quit_foreach_job, NULL); 
 	gebr_comm_protocol_destroy();
 
 	/*

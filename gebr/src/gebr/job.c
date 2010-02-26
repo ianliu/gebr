@@ -15,11 +15,6 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * File: job.c
- * Job callbacks
- */
-
 #include <string.h>
 #include <unistd.h>
 
@@ -32,32 +27,60 @@
 #include "gebr.h"
 #include "ui_job_control.h"
 
+struct __job_foreach {
+	GString *address;
+	GString *jid;
+	struct job **job;
+}; 
+static gboolean job_find_foreach_func(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, struct __job_foreach
+				      * foreach)
+{
+	struct job *i;
+	gboolean is_job;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &i, JC_IS_JOB, &is_job, -1);
+	if (!is_job)
+		return FALSE;
+	if (!strcmp(i->server->comm->address->str, foreach->address->str) && !strcmp(i->jid->str, foreach->jid->str)) {
+		*foreach->job = i;
+		return TRUE;	
+	}
+	return FALSE;
+}
+
 struct job *job_find(GString * address, GString * jid)
 {
-	GtkTreeIter iter;
 	struct job *job;
 
 	job = NULL;
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_job_control->store)) {
-		struct job *i;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &i, -1);
-
-		if (!strcmp(i->server->comm->address->str, address->str) && !strcmp(i->jid->str, jid->str)) {
-			job = i;
-			break;
-		}
-	}
+	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store),
+			       (GtkTreeModelForeachFunc)job_find_foreach_func, 
+			       &(struct __job_foreach){address, jid, &job}); 
 
 	return job;
 }
 
+static GtkTreeIter job_add_jc_queue_iter(struct job * job)
+{
+	GtkTreeIter queue_jc_iter;
+
+	if (!server_queue_find_at_job_control(job->server, job->queue->str, &queue_jc_iter))
+		gtk_tree_store_append(gebr.ui_job_control->store, &queue_jc_iter, NULL);
+	gtk_tree_store_set(gebr.ui_job_control->store, &queue_jc_iter, JC_SERVER_ADDRESS,
+			   job->server->comm->address->str, JC_QUEUE_NAME, job->queue->str, JC_TITLE, job->queue->str+1
+			   /*jump 'q' identifier*/, JC_STRUCT, job, JC_IS_JOB, FALSE, -1);
+
+	return queue_jc_iter;
+}
+
 struct job *job_add(struct server *server, GString * jid,
 		    GString * _status, GString * title,
-		    GString * start_date, GString * finish_date,
-		    GString * hostname, GString * issues, GString * cmd_line, GString * output, GString * queue, GString * moab_jid)
+		    GString * start_date, GString * finish_date, GString * hostname, GString * issues, GString *
+		    cmd_line, GString * output, GString * queue, GString * moab_jid)
 {
 	GtkTreeIter iter;
+	gboolean has_queue = FALSE;
+	GtkTreeIter queue_jc_iter;
 
 	struct job *job;
 	enum JobStatus status;
@@ -65,7 +88,7 @@ struct job *job_add(struct server *server, GString * jid,
 
 	gethostname(local_hostname, 100);
 	status = job_translate_status(_status);
-	job = g_malloc(sizeof(struct job));
+	job = g_new(struct job, 1);
 	*job = (struct job) {
 		.status = status, 
 		.server = server, 
@@ -92,7 +115,7 @@ struct job *job_add(struct server *server, GString * jid,
 
 				string = g_string_new(NULL);
 
-				g_string_printf(string, _("After '%s'"), title->str);
+				g_string_printf(string, _("After %s"), title->str);
 				if (!queue_exists)
 					gtk_list_store_append(server->queues_model, &queue_iter);
 				gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, -1);
@@ -104,16 +127,21 @@ struct job *job_add(struct server *server, GString * jid,
 
 			string = g_string_new(NULL);
 
-			g_string_printf(string, _("After '%s' at %s"), title->str, queue->str+1 /* jump q identifier */);
+			g_string_printf(string, _("After %s at %s"), title->str, queue->str+1 /* jump q identifier */);
 			gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, -1);
+
+			has_queue = TRUE;
+			queue_jc_iter = job_add_jc_queue_iter(job);
 
 			g_string_free(string, TRUE);
 		}
 	}
 
 	/* append to the store and select it */
-	gtk_list_store_append(gebr.ui_job_control->store, &iter);
-	gtk_list_store_set(gebr.ui_job_control->store, &iter, JC_TITLE, job->title->str, JC_STRUCT, job, -1);
+	gtk_tree_store_append(gebr.ui_job_control->store, &iter, has_queue ? &queue_jc_iter : NULL); 
+	gtk_tree_store_set(gebr.ui_job_control->store, &iter, JC_SERVER_ADDRESS, job->server->comm->address->str,
+			   JC_QUEUE_NAME, job->queue->str, JC_TITLE, job->title->str, JC_STRUCT, job, JC_IS_JOB, TRUE,
+			   -1);
 	job->iter = iter;
 	job_set_active(job);
 
@@ -137,7 +165,7 @@ void job_free(struct job *job)
 
 void job_delete(struct job *job)
 {
-	gtk_list_store_remove(gebr.ui_job_control->store, &job->iter);
+	gtk_tree_store_remove(gebr.ui_job_control->store, &job->iter);
 	job_free(job);
 
 	job_control_clear_or_select_first();
@@ -284,7 +312,7 @@ void job_status_show(struct job *job)
 		pixbuf = NULL;
 		return;
 	}
-	gtk_list_store_set(gebr.ui_job_control->store, &job->iter, JC_ICON, pixbuf, -1);
+	gtk_tree_store_set(gebr.ui_job_control->store, &job->iter, JC_ICON, pixbuf, -1);
 
 	if (job_is_active(job) == FALSE) 
 		return;
@@ -304,8 +332,20 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 {
 	if (status == JOB_STATUS_REQUEUED) {
 		g_string_assign(job->queue, parameter);
-		if (job_is_active(job)) 
+
+		GtkTreeIter iter;
+		GtkTreeIter parent = job_add_jc_queue_iter(job);
+		gtk_tree_store_append(gebr.ui_job_control->store, &iter, &parent); 
+		gtk_tree_store_set(gebr.ui_job_control->store, &iter, JC_SERVER_ADDRESS,
+				   job->server->comm->address->str, JC_QUEUE_NAME, job->queue->str, JC_TITLE,
+				   job->title->str, JC_STRUCT, job, JC_IS_JOB, TRUE, -1);
+
+		gboolean was_selected = job_is_active(job);
+		gtk_tree_store_remove(gebr.ui_job_control->store, &job->iter);
+		job->iter = iter;
+		if (was_selected)
 			job_set_active(job);
+
 		return;
 	} else
 		job->status = status;
