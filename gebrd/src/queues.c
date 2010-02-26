@@ -41,9 +41,38 @@ void gebrd_queues_remove_job_from(const gchar * queue, struct job * job)
 
 void gebrd_queues_remove(const gchar * queue)
 {
+	GebrdJobQueue * job_queue;
+
+	job_queue = g_hash_table_lookup(gebrd.queues, queue);
 	g_hash_table_remove(gebrd.queues, queue);
+	gebrd_job_queue_free(job_queue);
 }
 
+void gebrd_queues_rename(const gchar * queue, const gchar *newname)
+{
+	GebrdJobQueue * job_queue;
+	job_queue = g_hash_table_lookup(gebrd.queues, queue);
+	if (job_queue == NULL)
+		return;
+
+	/* change queue name reference for all its jobs */
+	GList *link = gebrd.jobs;
+	while (link) {
+		struct job *job = (struct job*)link->data;
+
+		if (strcmp(queue, job->queue->str) == 0) {
+			g_string_assign(job->queue, newname);
+			job_notify_status(job, JOB_STATUS_REQUEUED, newname);
+		}
+
+		link = g_list_next(link);
+	}
+
+	g_hash_table_remove(gebrd.queues, queue);
+	g_free(job_queue->name);
+	job_queue->name = g_strdup(newname);
+	g_hash_table_insert(gebrd.queues, g_strdup(newname), job_queue);
+}
 
 gchar * gebrd_queues_get_names()
 {

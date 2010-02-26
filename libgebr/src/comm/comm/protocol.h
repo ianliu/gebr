@@ -22,7 +22,7 @@
 
 #include "streamsocket.h"
 
-#define PROTOCOL_VERSION "1.0.2"
+#define PROTOCOL_VERSION "1.0.3"
 
 extern struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
 
@@ -44,6 +44,7 @@ struct gebr_comm_protocol_defs {
 	struct gebr_comm_message_def lst_def;
 	struct gebr_comm_message_def job_def;
 	struct gebr_comm_message_def run_def;
+	struct gebr_comm_message_def rnq_def;
 	struct gebr_comm_message_def flw_def;
 	struct gebr_comm_message_def clr_def;
 	struct gebr_comm_message_def end_def;

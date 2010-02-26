@@ -23,6 +23,12 @@
 
 #include "server.h"
 
+/**
+ * Find the job structure for the corresponding \p jid and server \p address.
+ */
+struct job *job_find(GString * address, GString * jid);
+
+
 struct job {
 	GtkTreeIter iter;
 	struct server *server;
@@ -33,7 +39,8 @@ struct job {
 		JOB_STATUS_FAILED,
 		JOB_STATUS_RUNNING,
 		JOB_STATUS_FINISHED,
-		JOB_STATUS_CANCELED
+		JOB_STATUS_CANCELED,
+		JOB_STATUS_REQUEUED,
 	} status;
 
 	GString *jid;
@@ -77,11 +84,6 @@ void job_delete(struct job *job);
 void job_close(struct job *job);
 
 /**
- * Find the job structure for the corresponding \p jid and server \p address.
- */
-struct job *job_find(GString * address, GString * jid);
-
-/**
  * Select \p job and load it. 
  */
 void job_set_active(struct job *job);
@@ -94,8 +96,21 @@ void job_update(struct job *job);
 
 void job_update_label(struct job *job);
 
+/**
+ * Translate a \p status protocol string to a status enumeration 
+ */
 enum JobStatus job_translate_status(GString * status);
 
-void job_update_status(struct job *job);
+/**
+ * Set UI related with status.
+ * If \p job is not active nothing is done.
+ */
+void job_status_show(struct job *job);
+
+/**
+ * Change the status of \p job according to \p status and its \p parameter.
+ * Change the GtkTreeIter's icon and handling other status changes. Calls #job_status_show.
+ */
+void job_status_update(struct job *job, enum JobStatus status, const gchar *parameter);
 
 #endif				//__JOB_H

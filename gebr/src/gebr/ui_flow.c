@@ -102,7 +102,7 @@ void flow_io_setup_ui(gboolean executable)
 					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
 	ui_flow_io->execute_button = !executable ? NULL :
-	    gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_EXECUTE, GEBR_FLOW_UI_RESPONSE_EXECUTE);
+		gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_EXECUTE, GEBR_FLOW_UI_RESPONSE_EXECUTE);
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)), GTK_SELECTION_BROWSE);
 	gtk_window_set_default_size(GTK_WINDOW(dialog), -1, 300);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 2);
@@ -518,40 +518,67 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	}
 
 	/* get queue information */
-	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB)
+	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) {
 		if (!moab_setup_ui(&config->account, server))
 			goto err;
-	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) {
 		if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter))
-			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, &config->class, -1);
+			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &config->class, -1);
 		else
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
 				     _("No available queue for server '%s'."), server->comm->address->str);
 	} else {
-		gboolean has_queue = FALSE;
-
 		if (gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)) == 0)
 			config->class = g_strdup("");
-		else
-			config->class = gtk_combo_box_get_active_text(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox));
+		else { 
+			gchar *tmp;
+			gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter);
+			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &tmp, -1);
+			if (tmp[0] == 'j') {
+				GtkDialog *dialog;
+				GtkWidget *widget;
+				gchar *queue_name;
 
-		if (strlen(config->class) == 0) {
-			gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
-		} else {
-			gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(server->queues_model)) {
-				gchar * queue;
-				gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, &queue, -1);
-				if (strcmp(config->class, queue) == 0) {
-					has_queue = TRUE;
-					g_free(queue);
-					break;
-				}
-				g_free(queue);
-			}
-			if (!has_queue) {
-				gtk_list_store_append(server->queues_model, &iter);
-				gtk_list_store_set(server->queues_model, &iter, 0, config->class, -1);
-			}
+				dialog = GTK_DIALOG(gtk_dialog_new_with_buttons(_("Choose queue"),
+								     GTK_WINDOW(gebr.window),
+								     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+								     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+								     GTK_STOCK_OK, GTK_RESPONSE_OK,
+								     NULL));
+				widget = gtk_label_new(_("Give a name to the queue:"));
+				gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), widget, TRUE, TRUE, 0);
+				widget = gtk_entry_new();
+				gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), widget, TRUE, TRUE, 0);
+				
+				gtk_widget_show_all(GTK_WIDGET(dialog));
+				gboolean is_valid = FALSE;
+				do {
+					if (gtk_dialog_run(dialog) != GTK_RESPONSE_OK) {
+						gtk_widget_destroy(GTK_WIDGET(dialog));
+						g_free(tmp);
+						goto err;
+					}
+
+					queue_name = (gchar*)gtk_entry_get_text(GTK_ENTRY(widget));	
+					if (!strlen(queue_name))
+						gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+									_("Empty name"), _("Please type a queue name."));
+					else if (server_queue_find(server, queue_name, NULL))
+						gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+									_("Duplicate name"), _("The name given was already choosen."));
+					else
+						is_valid = TRUE;	
+				} while (!is_valid);
+				config->class = g_strdup_printf("q%s", queue_name);
+
+				gtk_list_store_set(server->queues_model, &iter, 1, config->class, -1);
+				/* send server request to rename this queue */
+				gebr_comm_protocol_send_data(server->comm->protocol, server->comm->stream_socket,
+							     gebr_comm_protocol_defs.rnq_def, 2, tmp, config->class);
+
+				gtk_widget_destroy(GTK_WIDGET(dialog));
+				g_free(tmp);
+			} else
+				config->class = tmp;
 		}
 	}
 

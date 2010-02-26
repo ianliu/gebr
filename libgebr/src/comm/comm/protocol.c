@@ -44,14 +44,20 @@ void gebr_comm_protocol_init(void)
 {
 	/* create messages hashes */
 	gebr_comm_protocol_defs = (struct gebr_comm_protocol_defs) {
-		.ret_def = create_gebr_comm_message_def("RET", FALSE),.err_def = create_gebr_comm_message_def("ERR", FALSE),.ini_def = create_gebr_comm_message_def("INI", TRUE),.qut_def = create_gebr_comm_message_def("QUT", FALSE),.lst_def = create_gebr_comm_message_def("LST", FALSE),	/* return, but it is not a ret */
-		    .job_def = create_gebr_comm_message_def("JOB", FALSE),.run_def =
-		    create_gebr_comm_message_def("RUN", TRUE),.flw_def =
-		    create_gebr_comm_message_def("FLW", TRUE),.clr_def =
-		    create_gebr_comm_message_def("CLR", FALSE),.end_def =
-		    create_gebr_comm_message_def("END", FALSE),.kil_def =
-		    create_gebr_comm_message_def("KIL", FALSE),.out_def =
-		    create_gebr_comm_message_def("OUT", FALSE),.sta_def = create_gebr_comm_message_def("STA", FALSE)
+		.ret_def = create_gebr_comm_message_def("RET", FALSE),
+		.err_def = create_gebr_comm_message_def("ERR", FALSE),
+		.ini_def = create_gebr_comm_message_def("INI", TRUE),
+		.qut_def = create_gebr_comm_message_def("QUT", FALSE),
+		.lst_def = create_gebr_comm_message_def("LST", FALSE),	/* return, but it is not a ret */
+		.job_def = create_gebr_comm_message_def("JOB", FALSE),
+		.run_def = create_gebr_comm_message_def("RUN", TRUE),
+		.rnq_def = create_gebr_comm_message_def("RNQ", FALSE),
+		.flw_def = create_gebr_comm_message_def("FLW", TRUE),
+		.clr_def = create_gebr_comm_message_def("CLR", FALSE),
+		.end_def = create_gebr_comm_message_def("END", FALSE),
+		.kil_def = create_gebr_comm_message_def("KIL", FALSE),
+		.out_def = create_gebr_comm_message_def("OUT", FALSE),
+		.sta_def = create_gebr_comm_message_def("STA", FALSE)
 	};
 
 	gebr_comm_protocol_defs.hash_table = g_hash_table_new(g_str_hash, g_str_equal);
@@ -62,6 +68,7 @@ void gebr_comm_protocol_init(void)
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "LST", &gebr_comm_protocol_defs.lst_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "JOB", &gebr_comm_protocol_defs.job_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "RUN", &gebr_comm_protocol_defs.run_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "RNQ", &gebr_comm_protocol_defs.rnq_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "FLW", &gebr_comm_protocol_defs.flw_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "CLR", &gebr_comm_protocol_defs.clr_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "END", &gebr_comm_protocol_defs.end_def);
@@ -74,8 +81,7 @@ void gebr_comm_protocol_init(void)
 void gebr_comm_protocol_destroy(void)
 {
 	g_hash_table_unref(gebr_comm_protocol_defs.hash_table);
-}
-
+} 
 
 struct gebr_comm_message *gebr_comm_message_new(void)
 {

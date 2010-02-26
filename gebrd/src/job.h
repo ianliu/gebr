@@ -54,13 +54,13 @@ struct job {
 		JOB_STATUS_FAILED,
 		JOB_STATUS_RUNNING,
 		JOB_STATUS_FINISHED,
-		JOB_STATUS_CANCELED
+		JOB_STATUS_CANCELED,
+		JOB_STATUS_REQUEUED,
 	} status;
 	GString * status_string;
 };
 
 gboolean job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml);
-
 void job_free(struct job *job);
 
 void job_run_flow(struct job *job);
@@ -68,17 +68,19 @@ void job_run_flow(struct job *job);
 struct job *job_find(GString * jid);
 
 void job_clear(struct job *job);
-
 void job_end(struct job *job);
-
 void job_kill(struct job *job);
 
+void job_notify(struct job *job, struct client *client);
 void job_list(struct client *client);
-
 void job_send_clients_job_notify(struct job *job);
 
 gchar * job_queue_get_list();
 
-void job_notify_status(struct job *job, enum JobStatus status, const gchar *timestamp);
+/**
+ * Change status and notify clients about it
+ * \see job_set_status
+ */
+void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter);
 
 #endif				//__JOB_H

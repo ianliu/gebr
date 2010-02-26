@@ -348,12 +348,13 @@ static void job_control_on_cursor_changed(void)
 {
 	GtkTreeIter iter;
 	struct job *job;
- 	GString *info = g_string_new(NULL);
+ 	GString *info;
   
  	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter) == FALSE)
 		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
-
+	
+	info = g_string_new(NULL);
  	/*
  	 * Fill job information
  	 */
@@ -374,8 +375,8 @@ static void job_control_on_cursor_changed(void)
  		g_string_append_printf(info, "\n%s\n%s\n", _("Moab Job ID:"), job->moab_jid->str);
  
  	/* queue */
- 	if (job->queue->len)
- 		g_string_append_printf(info, "\n%s\n%s\n", _("Queue:"), job->queue->str);
+ 	if (job->queue->len && job->queue->str[0] != 'j')
+ 		g_string_append_printf(info, "\n%s\n%s\n", _("Queue:"), job->queue->str+1 /* jump 'q' identifier */);
  
  	/* output */
  	if (job->output->len)
@@ -386,7 +387,7 @@ static void job_control_on_cursor_changed(void)
  	/* to view */
  	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, info->str, info->len);
 
-	job_update_status(job);
+	job_status_show(job);
  
  	/* frees */
  	g_string_free(info, TRUE);

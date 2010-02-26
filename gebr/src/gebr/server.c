@@ -95,15 +95,23 @@ static void server_disconnected(GebrCommStreamSocket * stream_socket, struct ser
  * Public functions
  */
 
-/**
- * server_new:
- * @address: The server address.
- * @autoconnect: The server will connect whenever GêBR starts.
- *
- * Creates a new server.
- *
- * Returns: A server structure.
- */
+gboolean server_find_address(const gchar * address, GtkTreeIter * iter)
+{
+	GtkTreeIter i;
+
+	gebr_gui_gtk_tree_model_foreach(i, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
+		struct server *server;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &i, SERVER_POINTER, &server, -1);
+		if (!strcmp(address, server->comm->address->str)) {
+			*iter = i;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 struct server *server_new(const gchar * address, gboolean autoconnect)
 {
 	static const struct gebr_comm_server_ops ops = {
@@ -123,7 +131,8 @@ struct server *server_new(const gchar * address, gboolean autoconnect)
 		.last_error = g_string_new(""),
 		.type = GEBR_COMM_SERVER_TYPE_UNKNOWN,
 		.accounts_model = gtk_list_store_new(1, G_TYPE_STRING),
-		.queues_model = gtk_list_store_new(1, G_TYPE_STRING),
+		.queues_model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING),
+		.ran_jid = g_string_new(""),
 	};
 
 	server->comm->user_data = server;
@@ -140,9 +149,6 @@ struct server *server_new(const gchar * address, gboolean autoconnect)
 	return server;
 }
 
-/* Function: server_find
- * Find _server_ and put on _iter_
- */
 gboolean server_find(struct server * server, GtkTreeIter * iter)
 {
 	GtkTreeIter i;
@@ -161,9 +167,6 @@ gboolean server_find(struct server * server, GtkTreeIter * iter)
 	return FALSE;
 }
 
-/* Function: server_free
- * Free _server_ structure
- */
 void server_free(struct server *server)
 {
 	GtkTreeIter iter;
@@ -187,33 +190,26 @@ void server_free(struct server *server)
 
 	gebr_comm_server_free(server->comm);
 	g_string_free(server->last_error, TRUE);
+	g_string_free(server->ran_jid, TRUE);
 	g_free(server);
 }
 
-/**
- * server_find_address:
- * @address: The server to be found.
- * @iter: A #GtkTreeIter that will hold the corresponding iterator.
- *
- * Searches for the @address server and fill @iter with the correct
- * iterator for the gebr.ui_server_list->common.store model.
- *
- * Returns: %TRUE if the server was found, %FALSE otherwise.
- */
-gboolean server_find_address(const gchar * address, GtkTreeIter * iter)
+gboolean server_queue_find(struct server * server, const gchar * name, GtkTreeIter * _iter)
 {
-	GtkTreeIter i;
+	GtkTreeIter iter;
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(server->queues_model)) {
+		gchar * i_name;
 
-	gebr_gui_gtk_tree_model_foreach(i, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
-		struct server *server;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &i, SERVER_POINTER, &server, -1);
-		if (!strcmp(address, server->comm->address->str)) {
-			*iter = i;
+		gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &i_name, -1);
+		if (strcmp(name, i_name) == 0) {
+			if (_iter != NULL)
+				*_iter = iter;
+			g_free(i_name);
 			return TRUE;
 		}
-	}
 
+		g_free(i_name);
+	}
 	return FALSE;
 }
 

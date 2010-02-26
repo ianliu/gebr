@@ -46,6 +46,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				     comm_server->address->str, server->last_error->str);
 
 			gebr_comm_protocol_split_free(arguments);
+
 		} else if (message->hash == gebr_comm_protocol_defs.ret_def.hash) {
 			if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.hash) {
 				GList *arguments;
@@ -72,22 +73,28 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 					gtk_list_store_set(server->accounts_model, &iter, 0, accounts[i], -1);
 				}
 
-
 				if (server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
 					gtk_list_store_append(server->queues_model, &iter);
-					gtk_list_store_set(server->queues_model, &iter, 0, _("Immediately"), -1);
+					gtk_list_store_set(server->queues_model, &iter, 0, _("Immediately"), 1, "", -1);
 				}
-
 				for (gint i = 0; queues[i]; i++) {
 					if (strlen(queues[i])) {
+						GString *string;
+
+						string = g_string_new("");
+						g_string_printf(string, _("At '%s'"), queues[i]);
 						gtk_list_store_append(server->queues_model, &iter);
-						gtk_list_store_set(server->queues_model, &iter, 0, queues[i], -1);
+						gtk_list_store_set(server->queues_model, &iter, 0, string->str, 1, queues[i], -1);
+
+						g_string_free(string, TRUE);
 					}
 				}
+
 				gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
 
 				g_strfreev(accounts);
 				g_strfreev(queues);
+
 
 				/* say we are logged */
 				g_string_assign(server->last_error, "");
@@ -116,48 +123,13 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				gebr_comm_protocol_split_free(arguments);
 			} else if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.run_def.hash) {
 				GList *arguments;
-				GString *jid, *status, *title, *start_date, *issues, *cmd_line, *output, *queue, *moab_jid;
-				struct job *job;
-				gboolean queue_exists;
-				GtkTreeIter iter;
+				GString *jid;
 
 				/* organize message data */
-				if ((arguments = gebr_comm_protocol_split_new(message->argument, 9)) == NULL)
+				if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)
 					goto err;
 				jid = g_list_nth_data(arguments, 0);
-				status = g_list_nth_data(arguments, 1);
-				title = g_list_nth_data(arguments, 2);
-				start_date = g_list_nth_data(arguments, 3);
-				issues = g_list_nth_data(arguments, 4);
-				cmd_line = g_list_nth_data(arguments, 5);
-				output = g_list_nth_data(arguments, 6);
-				queue = g_list_nth_data(arguments, 7);
-				moab_jid = g_list_nth_data(arguments, 8);
-
-				/* If 'queue' is not in server->queues_model, add it */
-				if (strlen(queue->str)) {
-					queue_exists = FALSE;
-					gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(server->queues_model)) {
-						gchar * queue_iter;
-						gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 0, &queue_iter, -1);
-
-						if (strcmp(queue->str, queue_iter) == 0) {
-							queue_exists = TRUE;
-							g_free(queue_iter);
-							break;
-						}
-
-						g_free(queue_iter);
-					}
-					if (!queue_exists) {
-						gtk_list_store_append(server->queues_model, &iter);
-						gtk_list_store_set(server->queues_model, &iter, 0, queue->str, -1);
-					}
-				}
-
-				job = job_add(server, jid, status, title, start_date, NULL,
-					      NULL, issues, cmd_line, output, queue, moab_jid);
-				gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 3);
+				g_string_assign(server->ran_jid, jid->str);	
 
 				gebr_comm_protocol_split_free(arguments);
 			} else if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.flw_def.hash) {
@@ -185,9 +157,16 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 			moab_jid = g_list_nth_data(arguments, 10);
 
 			job = job_find(comm_server->address, jid);
-			if (job == NULL)
+			if (job == NULL) {
 				job = job_add(server, jid, status, title, start_date, finish_date,
 					      hostname, issues, cmd_line, output, queue, moab_jid);
+
+				if (server->ran_jid->len) {
+					job_set_active(job);
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 3);
+					g_string_assign(server->ran_jid, "");
+				}
+			}
 
 			gebr_comm_protocol_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.hash) {
@@ -209,7 +188,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 			gebr_comm_protocol_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.sta_def.hash) {
 			GList *arguments;
-			GString *jid, *status, *timestamp;
+			GString *jid, *status, *parameter;
 			struct job *job;
 
 			/* organize message data */
@@ -217,14 +196,14 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 			status = g_list_nth_data(arguments, 1);
-			timestamp = g_list_nth_data(arguments, 2);
+			parameter = g_list_nth_data(arguments, 2);
 
 			job = job_find(comm_server->address, jid);
 			if (job != NULL) {
-				if (!strcmp(status->str, "finished"))
-					g_string_assign(job->finish_date, timestamp->str);
-				job->status = job_translate_status(status);
-				job_update_status(job);
+				enum JobStatus status_enum;
+
+				status_enum = job_translate_status(status);
+				job_status_update(job, status_enum, parameter->str);
 			}
 
 			gebr_comm_protocol_split_free(arguments);

@@ -32,6 +32,26 @@
 #include "gebr.h"
 #include "ui_job_control.h"
 
+struct job *job_find(GString * address, GString * jid)
+{
+	GtkTreeIter iter;
+	struct job *job;
+
+	job = NULL;
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_job_control->store)) {
+		struct job *i;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &i, -1);
+
+		if (!strcmp(i->server->comm->address->str, address->str) && !strcmp(i->jid->str, jid->str)) {
+			job = i;
+			break;
+		}
+	}
+
+	return job;
+}
+
 struct job *job_add(struct server *server, GString * jid,
 		    GString * _status, GString * title,
 		    GString * start_date, GString * finish_date,
@@ -61,11 +81,40 @@ struct job *job_add(struct server *server, GString * jid,
 		.moab_jid = g_string_new(moab_jid->str)
 	};
 
+	if (server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
+		GtkTreeIter queue_iter;
+		gboolean queue_exists = server_queue_find(job->server, queue->str, &queue_iter);
+		if (queue->str[0] == 'j') {
+			if (queue_exists && job->status != JOB_STATUS_RUNNING) 
+				gtk_list_store_remove(server->queues_model, &queue_iter);
+			else {
+				GString * string;
+
+				string = g_string_new(NULL);
+
+				g_string_printf(string, _("After '%s'"), title->str);
+				if (!queue_exists)
+					gtk_list_store_append(server->queues_model, &queue_iter);
+				gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, -1);
+
+				g_string_free(string, TRUE);
+			}
+		} else if (queue_exists) {
+			GString * string;
+
+			string = g_string_new(NULL);
+
+			g_string_printf(string, _("After '%s' at %s"), title->str, queue->str+1 /* jump q identifier */);
+			gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, -1);
+
+			g_string_free(string, TRUE);
+		}
+	}
+
 	/* append to the store and select it */
 	gtk_list_store_append(gebr.ui_job_control->store, &iter);
 	gtk_list_store_set(gebr.ui_job_control->store, &iter, JC_TITLE, job->title->str, JC_STRUCT, job, -1);
 	job->iter = iter;
-	job_update_status(job);
 	job_set_active(job);
 
 	return job;
@@ -107,26 +156,6 @@ void job_close(struct job *job)
 					     gebr_comm_protocol_defs.clr_def, 1, job->jid->str);
 
 	job_delete(job);
-}
-
-struct job *job_find(GString * address, GString * jid)
-{
-	GtkTreeIter iter;
-	struct job *job;
-
-	job = NULL;
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_job_control->store)) {
-		struct job *i;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &i, -1);
-
-		if (!strcmp(i->server->comm->address->str, address->str) && !strcmp(i->jid->str, jid->str)) {
-			job = i;
-			break;
-		}
-	}
-
-	return job;
 }
 
 void job_set_active(struct job *job)
@@ -209,10 +238,6 @@ void job_update_label(struct job *job)
 	g_string_free(label, TRUE);
 }
 
-/*
- * Function: job_translate_status
- * *Fill me in!*
- */
 enum JobStatus job_translate_status(GString * status)
 {
 	enum JobStatus translated_status;
@@ -229,19 +254,18 @@ enum JobStatus job_translate_status(GString * status)
 		translated_status = JOB_STATUS_FINISHED;
 	else if (!strcmp(status->str, "canceled"))
 		translated_status = JOB_STATUS_CANCELED;
+	else if (!strcmp(status->str, "requeued"))
+		translated_status = JOB_STATUS_REQUEUED;
 	else
 		translated_status = JOB_STATUS_UNKNOWN;
 
 	return translated_status;
 }
 
-void job_update_status(struct job *job)
+void job_status_show(struct job *job)
 {
 	GdkPixbuf *pixbuf;
-	GtkTextIter iter;
-	GtkTextMark *mark;
-
-	/* Select and set icon */
+	
 	switch (job->status) {
 	case JOB_STATUS_RUNNING:
 		pixbuf = gebr.pixmaps.stock_execute;
@@ -261,17 +285,41 @@ void job_update_status(struct job *job)
 		return;
 	}
 	gtk_list_store_set(gebr.ui_job_control->store, &job->iter, JC_ICON, pixbuf, -1);
+
 	if (job_is_active(job) == FALSE) 
 		return;
-	
+
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "job_control_stop"),
 				 job->status != JOB_STATUS_QUEUED);
-
-	/* job label */
 	job_update_label(job);
-	/* job info */
+	if (gebr.config.job_log_auto_scroll) {
+		GtkTextMark *mark;
+
+		mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
+		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(gebr.ui_job_control->text_view), mark);
+	}
+}
+
+void job_status_update(struct job *job, enum JobStatus status, const gchar *parameter)
+{
+	if (status == JOB_STATUS_REQUEUED) {
+		g_string_assign(job->queue, parameter);
+		if (job_is_active(job)) 
+			job_set_active(job);
+		return;
+	} else
+		job->status = status;
+	
+	job_status_show(job);
+
 	if (job->status == JOB_STATUS_FINISHED) {
+			g_string_assign(job->finish_date, parameter);
+
+		if (job_is_active(job) == FALSE) 
+			return;
+
 		GString *finish_date;
+		GtkTextIter iter;
 
 		finish_date = g_string_new(NULL);
 
@@ -280,10 +328,5 @@ void job_update_status(struct job *job)
 		gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, finish_date->str, finish_date->len);
 
 		g_string_free(finish_date, TRUE);
-	}
-
-	if (gebr.config.job_log_auto_scroll) {
-		mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
-		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(gebr.ui_job_control->text_view), mark);
-	}
+	} 
 }

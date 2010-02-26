@@ -224,17 +224,14 @@ static void job_process_read_stderr(GebrCommProcess * process, struct job *job)
 static void job_set_status(struct job *job, enum JobStatus status)
 {
 	const gchar * enum_to_string [] = {
-		"unknown", "queued", "failed", "running", "finished", "canceled", NULL };
+		"unknown", "queued", "failed", "running", "finished", "canceled", "requeued", NULL };
 
 	g_string_assign(job->status_string, enum_to_string[status]);
-	job->status = status;	
+	if (status != JOB_STATUS_REQUEUED)
+		job->status = status;	
 }
 
-/**
- * Change status and notify clients about it
- * \see job_set_status
- */
-void job_notify_status(struct job *job, enum JobStatus status, const gchar *timestamp)
+void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter)
 {
 	GList *link;
 
@@ -247,7 +244,7 @@ void job_notify_status(struct job *job, enum JobStatus status, const gchar *time
 
 		client = (struct client *)link->data;
 		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.sta_def,
-					     3, job->jid->str, job->status_string->str, timestamp);
+					     3, job->jid->str, job->status_string->str, parameter);
 
 		link = g_list_next(link);
 	}
@@ -291,12 +288,10 @@ out2:		g_string_free(output, TRUE);
 	job_notify_status(job, (job->user_finished == FALSE) ? JOB_STATUS_FINISHED : JOB_STATUS_CANCELED, job->finish_date->str);
 
 	/* Run next flow on queue */
-	if (gebrd_queues_has_next(job->queue->str)) {
+	if (gebrd_queues_has_next(job->queue->str)) 
 		gebrd_queues_step_queue(job->queue->str);
-	} else {
+	else
 		gebrd_queues_set_queue_busy(job->queue->str, FALSE);
-		gebrd_queues_remove(job->queue->str);
-	}
 	return TRUE;
 }
 
@@ -422,6 +417,8 @@ enum JobStatus job_translate_status(GString * status)
 		translated_status = JOB_STATUS_FINISHED;
 	else if (!strcmp(status->str, "canceled"))
 		translated_status = JOB_STATUS_CANCELED;
+	else if (!strcmp(status->str, "requeued"))
+		translated_status = JOB_STATUS_REQUEUED;
 	else
 		translated_status = JOB_STATUS_UNKNOWN;
 
@@ -865,6 +862,14 @@ void job_kill(struct job *job)
 		job_send_signal_on_moab("SIGKILL", job);
 }
 
+void job_notify(struct job *job, struct client *client)
+{
+	gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.job_def,
+				     11, job->jid->str, job->status_string->str, job->title->str, job->start_date->str,
+				     job->finish_date->str, job->hostname->str, job->issues->str,
+				     job->cmd_line->str, job->output->str, job->queue->str, job->moab_jid->str);
+}
+
 void job_list(struct client *client)
 {
 	GList *link;
@@ -874,10 +879,7 @@ void job_list(struct client *client)
 		struct job *job;
 
 		job = (struct job *)link->data;
-		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.job_def,
-					     11, job->jid->str, job->status_string->str, job->title->str, job->start_date->str,
-					     job->finish_date->str, job->hostname->str, job->issues->str,
-					     job->cmd_line->str, job->output->str, job->queue->str, job->moab_jid->str);
+		job_notify(job, client);
 
 		link = g_list_next(link);
 	}
@@ -892,10 +894,7 @@ void job_send_clients_job_notify(struct job *job)
 		struct client *client;
 
 		client = (struct client *)link->data;
-		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.job_def,
-					     11, job->jid->str, job->status_string->str, job->title->str, job->start_date->str,
-					     job->finish_date->str, job->hostname->str, job->issues->str,
-					     job->cmd_line->str, job->output->str, job->queue->str, job->moab_jid->str);
+		job_notify(job, client);
 
 		link = g_list_next(link);
 	}

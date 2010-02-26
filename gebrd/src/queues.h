@@ -41,6 +41,11 @@ void gebrd_queues_remove_job_from(const gchar * queue, struct job * job);
 void gebrd_queues_remove(const gchar * queue);
 
 /**
+ * Rename \p queue name to \p newname.
+ */
+void gebrd_queues_rename(const gchar * queue, const gchar *newname);
+
+/**
  * Returns a string containing the name of all queues separated by commas.
  */
 gchar * gebrd_queues_get_names(void);

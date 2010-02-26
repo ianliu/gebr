@@ -24,6 +24,17 @@
 #include <libgebr/comm/server.h>
 #include <libgebr/geoxml.h>
 
+/**
+ * @p address: The server to be found.
+ * @p iter: A #GtkTreeIter that will hold the corresponding iterator.
+ *
+ * Searches for the @p address server and fill @p iter with the correct
+ * iterator for the gebr.ui_server_list->common.store model.
+ *
+ * Returns: TRUE if the server was found, FALSE otherwise.
+ */
+gboolean server_find_address(const gchar * address, GtkTreeIter * iter);
+
 struct server {
 	struct gebr_comm_server *comm;
 	GtkTreeIter iter;
@@ -34,16 +45,39 @@ struct server {
 	GebrCommServerType type;
 	GtkListStore * queues_model;
 	GtkListStore * accounts_model;
+
+	GString *ran_jid;
 };
 
+/**
+ * @p address: The server address.
+ * @p autoconnect: The server will connect whenever GêBR starts.
+ *
+ * Creates a new server.
+ *
+ * Returns: A server structure.
+ */
 struct server *server_new(const gchar * address, gboolean autoconnect);
 
+/** 
+ * Free \p server structure
+ */
 void server_free(struct server *server);
 
+/** 
+ * Find \p server and put on \p iter
+ */
 gboolean server_find(struct server *server, GtkTreeIter * iter);
 
-gboolean server_find_address(const gchar * address, GtkTreeIter * iter);
+/**
+ * Find the queue named \p queue_name.
+ * If found, returns TRUE and set \p iter corresponding. 
+ */
+gboolean server_queue_find(struct server * server, const gchar * queue_name, GtkTreeIter * iter);
 
+/**
+ *
+ */
 const gchar *server_get_name_from_address(const gchar * address);
 
 #endif				//__SERVER_H

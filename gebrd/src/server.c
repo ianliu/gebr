@@ -136,7 +136,7 @@ gboolean server_init(void)
 	/* client list structure */
 	gebrd.clients = NULL;
 	gebrd.queues = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal,
-					     (GDestroyNotify)g_free, (GDestroyNotify)gebrd_job_queue_free);
+					     (GDestroyNotify)g_free, NULL);
 
 	/* success */
 	ret = TRUE;
@@ -295,10 +295,9 @@ gboolean server_parse_client_messages(struct client *client)
 			job_list(client);
 		} else if (message->hash == gebr_comm_protocol_defs.run_def.hash) {
 			GList *arguments;
-			GString *xml;
+			GString *xml, *account, *queue;
 			struct job *job;
 			gboolean success;
-			GString *account, *queue; 
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_split_new(message->argument, 3)) == NULL)
@@ -310,30 +309,41 @@ gboolean server_parse_client_messages(struct client *client)
 			/* try to run and send return */
 			success = job_new(&job, client, queue, account, xml);
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
-						     gebr_comm_protocol_defs.ret_def, 9, job->jid->str,
-						     job->status_string->str, job->title->str, job->start_date->str,
-						     job->issues->str, job->cmd_line->str, job->output->str,
-						     job->queue->str, job->moab_jid->str);
+						     gebr_comm_protocol_defs.ret_def, 1, job->jid->str);
 			if (success) {
-				if (queue->len && gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
+				if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
+					if (!queue->len) {
+						g_string_printf(queue, "j%s", job->jid->str);
+						g_string_assign(job->queue, queue->str);
+					}
 					gebrd_queues_add_job_to(queue->str, job);
 					if (!gebrd_queues_is_queue_busy(queue->str)) {
 						gebrd_queues_set_queue_busy(queue->str, TRUE);
 						gebrd_queues_step_queue(queue->str);
-					} else {
+					} else
 						job_notify_status(job, JOB_STATUS_QUEUED, gebr_iso_date());
-					}
-				} else {
+				} else 
 					job_run_flow(job);
-				}
 			}
 
-			/* notify all clients of this new job */
-			if (success == TRUE) {
-				/* emit job signal to clients */
+			if (success == TRUE) 
 				job_send_clients_job_notify(job);
-			} else
-				job_free(job);
+			else
+				job_notify(job, client); 
+
+			/* frees */
+			gebr_comm_protocol_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.rnq_def.hash) {
+			GList *arguments;
+			GString *oldname, *newname;
+
+			/* organize message data */
+			if ((arguments = gebr_comm_protocol_split_new(message->argument, 2)) == NULL)
+				goto err;
+			oldname = g_list_nth_data(arguments, 0);
+			newname = g_list_nth_data(arguments, 1);
+
+			gebrd_queues_rename(oldname->str, newname->str);
 
 			/* frees */
 			gebr_comm_protocol_split_free(arguments);
