@@ -120,9 +120,8 @@ void gebr_config_apply(void);
 
 void gebr_config_save(gboolean verbose);
 
-void
-
- gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...);
+void gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in_log_file,
+		  const gchar * message, ...);
 
 int gebr_install_private_menus(gchar ** menu, gboolean overwrite);
 

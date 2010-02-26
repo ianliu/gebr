@@ -61,7 +61,7 @@ static void on_help_edit_save_activate(GtkAction * action, struct help_edit_data
 
 static void on_help_edit_edit_toggled(GtkToggleAction * action, struct help_edit_data * data);
 
-static void dialog_on_response(struct help_edit_data * data);
+static void on_dialog_response(struct help_edit_data * data);
 
 /**
  * \internal
@@ -74,6 +74,7 @@ static gchar * js_start_inline_editing = \
 	"var editor = null;"
 	"var editing_element = null;"
 	"var CKEDITOR_BASEPATH='file://" CKEDITOR_DIR "/';"
+	"var last_saved_content = null;"
 	"function getHead(doc) {"
 		"var head = doc.getElementsByTagName('head')[0];"
 		"if (!head) {"
@@ -157,6 +158,9 @@ static gchar * js_start_inline_editing = \
 		"}"
 		"OpenCkEditor(GetEditableElements(document)[0]);"
 	"}"
+	"function isContentSaved() {"
+		"return editor.getData() == last_saved_content;"
+	"}"
 	"(function() {"
 		"var head = getHead(document);"
 		//force encode to UTF-8
@@ -231,6 +235,7 @@ static void help_edit_save(struct help_edit_data * data)
 
 	var_help = g_string_new(
 			"(function(){"
+				"last_saved_content = editor.getData();"
 				"editor.updateElement();"
 				"var content = GetEditableElements(document_clone)[0];"
 				"while (content.firstChild)"
@@ -396,9 +401,17 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window, struct help
  * \internal
  * Treat the exit response of the dialog.
  */
-static void dialog_on_response(struct help_edit_data * data)
+static void on_dialog_response(struct help_edit_data * data)
 {
-	help_edit_save(data);
+	gboolean is_content_saved;
+	is_content_saved = JSValueToBoolean(data->context, gebr_js_evaluate(data->context, "isContentSaved();"));
+	if (!is_content_saved) {
+		gboolean response;
+		response = gebr_gui_confirm_action_dialog(_("Save changes in help?"),
+							  _("This help has unsaved changes. Do you want to save it?"));
+		if (response)
+			help_edit_save(data);
+	}
 	g_unlink(data->html_path->str);
 	g_string_free(data->html_path, TRUE);
 	g_free(data);
@@ -470,9 +483,9 @@ static gboolean web_view_on_button_press(GtkWidget * widget, GdkEventButton * ev
 static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, struct help_edit_data * data)
 {
 	if (event->keyval == GDK_Escape) {
-		GtkWindow * dialog;
+		GtkWidget * dialog;
 		dialog = gtk_widget_get_toplevel(widget);
-		dialog_on_response(data);
+		on_dialog_response(data);
 		gtk_widget_destroy(dialog);
 		return TRUE;
 	}
@@ -521,7 +534,7 @@ static void _gebr_gui_help_edit(const gchar *help, GebrGeoXmlObject * object,
 	data->web_view = WEBKIT_WEB_VIEW(web_view);
 	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
 
-	g_signal_connect_swapped(dialog, "response", G_CALLBACK(dialog_on_response), data);
+	g_signal_connect_swapped(dialog, "response", G_CALLBACK(on_dialog_response), data);
 	g_signal_connect(web_view, "load-finished", G_CALLBACK(web_view_on_load_finished), data);
 	g_signal_connect(web_view, "button-press-event", G_CALLBACK(web_view_on_button_press), data);
 	g_signal_connect(web_view, "key-press-event", G_CALLBACK(web_view_on_key_press), data);
