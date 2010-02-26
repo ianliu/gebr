@@ -345,6 +345,7 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 		job->iter = iter;
 		if (was_selected)
 			job_set_active(job);
+		job_status_show(job);
 
 		return;
 	} else
