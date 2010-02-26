@@ -225,19 +225,22 @@ gboolean server_queue_find_at_job_control(struct server * server, const gchar * 
 	GtkTreeIter iter;
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_job_control->store)) {
 		gchar *i_name;
+		gchar *i_address;
 		gboolean is_job;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_QUEUE_NAME, &i_name, JC_IS_JOB,
-				   &is_job, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_SERVER_ADDRESS, &i_address,
+				   JC_QUEUE_NAME, &i_name, JC_IS_JOB, &is_job, -1);
 		if (is_job)
 			continue;
-		if (strcmp(name, i_name) == 0) {
+		if (!strcmp(server->comm->address->str, i_address) && !strcmp(name, i_name)) {
 			if (_iter != NULL)
 				*_iter = iter;
 			g_free(i_name);
+			g_free(i_address);
 			return TRUE;
 		}
 		g_free(i_name);
+		g_free(i_address);
 	}
 	return FALSE;
 }
