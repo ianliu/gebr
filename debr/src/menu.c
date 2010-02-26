@@ -49,8 +49,6 @@ static void menu_help_view(void);
 
 static void menu_help_edit(void);
 
-static void menu_help_refresh(void);
-
 static void menu_author_changed(GtkEntry * entry);
 
 static void menu_email_changed(GtkEntry * entry);
@@ -721,9 +719,7 @@ gboolean menu_dialog_setup_ui(void)
 	GtkWidget *description_entry;
 	GtkWidget *menuhelp_label;
 	GtkWidget *menuhelp_hbox;
-	GtkWidget *menuhelp_view_button;
 	GtkWidget *menuhelp_edit_button;
-	GtkWidget *menuhelp_refresh_button;
 	GtkWidget *author_label;
 	GtkWidget *author_entry;
 	GtkWidget *email_label;
@@ -760,6 +756,7 @@ gboolean menu_dialog_setup_ui(void)
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_widget_set_size_request(dialog, 400, 350);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 
 	table = gtk_table_new(6, 2, FALSE);
 	gtk_widget_show(table);
@@ -777,7 +774,7 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(title_label), 0, 0.5);
 
 	title_entry = gtk_entry_new();
-	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_OK, title_entry);
+	gtk_entry_set_activates_default(GTK_ENTRY(title_entry), TRUE);
 	gtk_widget_show(title_entry);
 	gtk_table_attach(GTK_TABLE(table), title_entry, 1, 2, 0, 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -792,7 +789,7 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(description_label), 0, 0.5);
 
 	description_entry = gtk_entry_new();
-	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_OK, description_entry);
+	gtk_entry_set_activates_default(GTK_ENTRY(description_entry), TRUE);
 	gtk_widget_show(description_entry);
 	gtk_table_attach(GTK_TABLE(table), description_entry, 1, 2, 1, 2,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -810,22 +807,11 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_widget_show(menuhelp_hbox);
 	gtk_table_attach(GTK_TABLE(table), menuhelp_hbox, 1, 2, 2, 3,
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	menuhelp_view_button = gtk_button_new_from_stock(GTK_STOCK_OPEN);
-	gtk_widget_show(menuhelp_view_button);
-	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_view_button, FALSE, FALSE, 0);
-	g_object_set(G_OBJECT(menuhelp_view_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	menuhelp_edit_button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
 	gtk_widget_show(menuhelp_edit_button);
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_edit_button, FALSE, FALSE, 0);
 	g_object_set(G_OBJECT(menuhelp_edit_button), "relief", GTK_RELIEF_NONE, NULL);
-
-	menuhelp_refresh_button = gtk_button_new_from_stock(GTK_STOCK_REFRESH);
-	gebr_gui_gtk_widget_set_tooltip(menuhelp_refresh_button,
-					_("Help edition with all possible information refreshed"));
-	gtk_widget_show(menuhelp_refresh_button);
-	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_refresh_button, FALSE, FALSE, 0);
-	g_object_set(G_OBJECT(menuhelp_refresh_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	/*
 	 * Author
@@ -837,7 +823,7 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(author_label), 0, 0.5);
 
 	author_entry = gtk_entry_new();
-	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_OK, author_entry);
+	gtk_entry_set_activates_default(GTK_ENTRY(author_entry), TRUE);
 	gtk_widget_show(author_entry);
 	gtk_table_attach(GTK_TABLE(table), author_entry, 1, 2, 3, 4,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -852,7 +838,7 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(email_label), 0, 0.5);
 
 	email_entry = gtk_entry_new();
-	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_OK, email_entry);
+	gtk_entry_set_activates_default(GTK_ENTRY(email_entry), TRUE);
 	gtk_widget_show(email_entry);
 	gtk_table_attach(GTK_TABLE(table), email_entry, 1, 2, 4, 5,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -889,7 +875,6 @@ gboolean menu_dialog_setup_ui(void)
 
 	g_signal_connect(title_entry, "changed", G_CALLBACK(menu_title_changed), NULL);
 	g_signal_connect(description_entry, "changed", G_CALLBACK(menu_description_changed), NULL);
-	g_signal_connect(menuhelp_view_button, "clicked", G_CALLBACK(menu_help_view), NULL);
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "add-request",
 			 G_CALLBACK(menu_category_add), categories_combo);
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "changed", G_CALLBACK(menu_category_changed), NULL);
@@ -897,7 +882,6 @@ gboolean menu_dialog_setup_ui(void)
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "removed", G_CALLBACK(menu_category_removed), NULL);
 	g_signal_connect(email_entry, "changed", G_CALLBACK(menu_email_changed), NULL);
 	g_signal_connect(menuhelp_edit_button, "clicked", G_CALLBACK(menu_help_edit), NULL);
-	g_signal_connect(menuhelp_refresh_button, "clicked", G_CALLBACK(menu_help_refresh), NULL);
 	g_signal_connect(author_entry, "changed", G_CALLBACK(menu_author_changed), NULL);
 
 	/* categories */
@@ -915,7 +899,7 @@ gboolean menu_dialog_setup_ui(void)
 		goto out;
 	}
 
-		menu_selected();
+	menu_selected();
 
 out:
 	gtk_widget_destroy(dialog);
@@ -1391,16 +1375,6 @@ static void menu_help_view(void)
 static void menu_help_edit(void)
 {
 	debr_help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, FALSE);
-}
-
-/**
- * \internal
- * Call \ref debr_help_edit with menu's help. After help was edited in a external browser, with fields updated, save it
- * back to XML.
- */
-static void menu_help_refresh(void)
-{
-	debr_help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, TRUE);
 }
 
 /**

@@ -61,6 +61,8 @@ static void on_help_edit_save_activate(GtkAction * action, struct help_edit_data
 
 static void on_help_edit_edit_toggled(GtkToggleAction * action, struct help_edit_data * data);
 
+static void dialog_on_response(struct help_edit_data * data);
+
 /**
  * \internal
  * Main JS loaded after the page has been loaded.
@@ -349,8 +351,6 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window, struct help
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 					   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	web_view = webkit_web_view_new();
-	if (g_signal_lookup("create-web-view", WEBKIT_TYPE_WEB_VIEW))
-		g_signal_connect(web_view, "create-web-view", G_CALLBACK(web_view_on_create_web_view), data);
 
 	/* Place the WebKitWebView in the GtkScrolledWindow */
 	gtk_container_add(GTK_CONTAINER(scrolled_window), web_view);
@@ -396,15 +396,12 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window, struct help
  * \internal
  * Treat the exit response of the dialog.
  */
-static gboolean dialog_on_response(GtkDialog * dialog, gint response_id, struct help_edit_data * data)
+static void dialog_on_response(struct help_edit_data * data)
 {
 	help_edit_save(data);
-
 	g_unlink(data->html_path->str);
 	g_string_free(data->html_path, TRUE);
 	g_free(data);
-
-	return TRUE;
 }
 
 /**
@@ -473,6 +470,14 @@ static gboolean web_view_on_button_press(GtkWidget * widget, GdkEventButton * ev
 static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, struct help_edit_data * data)
 {
 	if (event->keyval == GDK_Escape) {
+		GtkWindow * dialog;
+		dialog = gtk_widget_get_toplevel(widget);
+		dialog_on_response(data);
+		gtk_widget_destroy(dialog);
+		return TRUE;
+	}
+	if (event->keyval == GDK_s && event->state | GDK_CONTROL_MASK) {
+		help_edit_save(data);
 		return TRUE;
 	}
 	return FALSE;
@@ -516,7 +521,7 @@ static void _gebr_gui_help_edit(const gchar *help, GebrGeoXmlObject * object,
 	data->web_view = WEBKIT_WEB_VIEW(web_view);
 	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
 
-	g_signal_connect(dialog, "response", G_CALLBACK(dialog_on_response), data);
+	g_signal_connect_swapped(dialog, "response", G_CALLBACK(dialog_on_response), data);
 	g_signal_connect(web_view, "load-finished", G_CALLBACK(web_view_on_load_finished), data);
 	g_signal_connect(web_view, "button-press-event", G_CALLBACK(web_view_on_button_press), data);
 	g_signal_connect(web_view, "key-press-event", G_CALLBACK(web_view_on_key_press), data);
