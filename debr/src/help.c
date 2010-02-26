@@ -34,6 +34,8 @@
  * Prototypes
  */
 
+static void help_edit_on_refresh(GString * help, GebrGeoXmlObject * object);
+
 static void add_program_parameter_item(GString * str, GebrGeoXmlParameter * par);
 
 static void help_insert_parameters_list(GString * help, GebrGeoXmlProgram * program, gboolean refresh);
@@ -93,7 +95,7 @@ void help_show(const gchar * help, const gchar * title)
 	g_string_free(prepared_html, TRUE);
 }
 
-void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh)
+void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 {
 	GString *prepared_html;
 
@@ -125,9 +127,8 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean re
 		fclose(fp);
 
 		/* Substitute title, description and categories */
-		help_subst_fields(prepared_html, program, refresh);
-	} else if (refresh)
-		help_subst_fields(prepared_html, program, refresh);
+		help_subst_fields(prepared_html, program, FALSE);
+	}
 
 	/* Always fix DTD version */
 	gsize pos = strip_block(prepared_html, "dtd");
@@ -140,16 +141,24 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean re
 	/* EDIT IT */
 	if (program != NULL) {
 		gebr_geoxml_program_set_help(program, prepared_html->str);
-		gebr_gui_program_help_edit(program, help_edit_on_finished);
+		gebr_gui_program_help_edit(program, help_edit_on_finished, help_edit_on_refresh);
 	} else {
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html->str);
-		gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), help_edit_on_finished, TRUE);
+		gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), help_edit_on_finished,
+				   help_edit_on_refresh, TRUE);
 	}
 }
 
 /*
  * Private functions.
  */
+
+static void help_edit_on_refresh(GString * help, GebrGeoXmlObject * object)
+{
+	if (gebr_geoxml_object_get_type(object) != GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
+		object = NULL;
+	help_subst_fields(help, GEBR_GEOXML_PROGRAM(object), TRUE);
+}
 
 /**
  * \internal

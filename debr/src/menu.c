@@ -1374,7 +1374,7 @@ static void menu_help_view(void)
  */
 static void menu_help_edit(void)
 {
-	debr_help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL, FALSE);
+	debr_help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL);
 }
 
 /**

@@ -32,7 +32,9 @@ void help_fix_css(GString * help);
 void help_show(const gchar * help, const gchar * title);
 
 /**
+ * Starts the edition of \p program's help.
+ * If there is no help in \p program loads the default template.
  */
-void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program, gboolean refresh);
+void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program);
 
 #endif				//__HELP_H

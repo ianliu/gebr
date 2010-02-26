@@ -148,7 +148,6 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 
 	GtkWidget *table;
 	GtkWidget *label;
-	GtkWidget *help_show_button;
 	GtkWidget *help_hbox;
 	GtkWidget *title;
 	GtkWidget *description;
@@ -170,6 +169,7 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_window_set_default_size(GTK_WINDOW(dialog), 400, 260);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 
 	table = gtk_table_new(5, 2, FALSE);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 0);
@@ -178,7 +178,7 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 	label = gtk_label_new(_("Title"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	title = gtk_entry_new();
-	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_OK, title);
+	gtk_entry_set_activates_default(GTK_ENTRY(title), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), title, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3);
 	/* read */
@@ -188,7 +188,7 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 	label = gtk_label_new(_("Description"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	description = gtk_entry_new();
-	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_OK, description);
+	gtk_entry_set_activates_default(GTK_ENTRY(description), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), description, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 	/* read */
@@ -201,10 +201,6 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 	help_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_table_attach(GTK_TABLE(table), help_hbox, 1, 2, 2, 3,
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	help_show_button = gtk_button_new_from_stock(GTK_STOCK_OPEN);
-	gtk_box_pack_start(GTK_BOX(help_hbox), help_show_button, FALSE, FALSE, 0);
-	g_signal_connect(GTK_OBJECT(help_show_button), "clicked", G_CALLBACK(help_show_callback), document);
-	g_object_set(G_OBJECT(help_show_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	help = gtk_button_new_from_stock(GTK_STOCK_EDIT);
 	gtk_box_pack_start(GTK_BOX(help_hbox), help, FALSE, FALSE, 0);
@@ -215,7 +211,7 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 	label = gtk_label_new(_("Author"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	author = gtk_entry_new();
-	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_OK, author);
+	gtk_entry_set_activates_default(GTK_ENTRY(author), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), author, 1, 2, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
 	/* read */
@@ -225,7 +221,7 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 	label = gtk_label_new(_("Email"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	email = gtk_entry_new();
-	gebr_gui_gtk_dialog_set_response_on_widget_return(GTK_DIALOG(dialog), GTK_RESPONSE_OK, email);
+	gtk_entry_set_activates_default(GTK_ENTRY(email), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), email, 1, 2, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 	/* read */

@@ -56,7 +56,6 @@ static gboolean program_binary_changed(GtkEntry * entry);
 static gboolean program_description_changed(GtkEntry * entry);
 static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program);
 static void program_help_edit(GtkButton * button);
-static void program_help_refresh(GtkButton * button);
 static gboolean program_url_changed(GtkEntry * entry);
 
 static void program_preview_on_response(GtkWidget * dialog, gint arg1, struct program_preview_data *data);
@@ -354,9 +353,7 @@ gboolean program_dialog_setup_ui(void)
 	GtkWidget *description_entry;
 	GtkWidget *help_hbox;
 	GtkWidget *help_label;
-	GtkWidget *help_view_button;
 	GtkWidget *help_edit_button;
-	GtkWidget *help_refresh_button;
 	GtkWidget *url_label;
 	GtkWidget *url_entry;
 
@@ -473,24 +470,11 @@ gboolean program_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), help_hbox, 1, 2, 4, 5,
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 
-	help_view_button = gtk_button_new_from_stock(GTK_STOCK_OPEN);
-	gtk_widget_show(help_view_button);
-	gtk_box_pack_start(GTK_BOX(help_hbox), help_view_button, FALSE, FALSE, 0);
-	g_signal_connect(help_view_button, "clicked", G_CALLBACK(program_help_view), debr.program);
-	g_object_set(G_OBJECT(help_view_button), "relief", GTK_RELIEF_NONE, NULL);
-
 	help_edit_button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
 	gtk_widget_show(help_edit_button);
 	gtk_box_pack_start(GTK_BOX(help_hbox), help_edit_button, FALSE, FALSE, 0);
 	g_signal_connect(help_edit_button, "clicked", G_CALLBACK(program_help_edit), debr.program);
 	g_object_set(G_OBJECT(help_edit_button), "relief", GTK_RELIEF_NONE, NULL);
-
-	help_refresh_button = gtk_button_new_from_stock(GTK_STOCK_REFRESH);
-	gebr_gui_gtk_widget_set_tooltip(help_refresh_button, _("Help edition with all possible information refreshed"));
-	gtk_widget_show(help_refresh_button);
-	gtk_box_pack_start(GTK_BOX(help_hbox), help_refresh_button, FALSE, FALSE, 0);
-	g_signal_connect(help_refresh_button, "clicked", G_CALLBACK(program_help_refresh), debr.program);
-	g_object_set(G_OBJECT(help_refresh_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	/*
 	 * URL
@@ -855,16 +839,7 @@ static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program)
  */
 static void program_help_edit(GtkButton * button)
 {
-	debr_help_edit(gebr_geoxml_program_get_help(debr.program), debr.program, FALSE);
-}
-
-/**
- * \internal
- * Refresh the programs help.
- */
-static void program_help_refresh(GtkButton * button)
-{
-	debr_help_edit(gebr_geoxml_program_get_help(debr.program), debr.program, TRUE);
+	debr_help_edit(gebr_geoxml_program_get_help(debr.program), debr.program);
 }
 
 /**

@@ -51,11 +51,13 @@ static GString *server_ssh_login(const gchar * title, const gchar * message)
 					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 
 	label = gtk_label_new(message);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, TRUE, 0);
 
 	entry = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), entry, FALSE, TRUE, 0);
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 
