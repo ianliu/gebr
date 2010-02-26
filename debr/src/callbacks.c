@@ -1,8 +1,3 @@
-/**
- * \file callbacks.c General interface callbacks.
- * \see interface.c
- */
-
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -588,19 +583,10 @@ gboolean on_parameter_tool_item_new_press(GtkWidget * tool_button)
 	GtkWidget * menu;
 
 	menu = parameter_create_menu_with_types(FALSE);
-	gdk_window_get_origin(gtk_widget_get_window(tool_button), &x, &y);
-
-#if GTK_CHECK_VERSION(2,18,0)
-	GtkAllocation allocation;
-	gtk_widget_get_allocation(tool_button, &allocation);
-	xb = allocation.x;
-	yb = allocation.y;
-	hb = allocation.height;
-#else
+	gdk_window_get_origin(tool_button->window, &x, &y);
 	xb = tool_button->allocation.x;
 	yb = tool_button->allocation.y;
 	hb = tool_button->allocation.height;
-#endif
 
 	void popup_position(GtkMenu * menu, gint * xp, gint * yp, gboolean * push_in, gpointer user_data) {
 		*xp = x + xb;

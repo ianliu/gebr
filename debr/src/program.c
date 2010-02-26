@@ -1,7 +1,3 @@
-/**
- * \file program.c Construct interfaces for programs.
- */
-
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *

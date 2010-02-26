@@ -15,6 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * \file callbacks.c General interface callbacks.
+ * \see interface.c
+ */
+
 #ifndef __CALLBACKS_H
 #define __CALLBACKS_H
 

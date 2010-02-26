@@ -15,6 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * \file program.c Construct interfaces for programs.
+ */
+
 #ifndef __PROGRAM_H
 #define __PROGRAM_H
 
