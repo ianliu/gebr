@@ -226,9 +226,10 @@ static void job_set_status(struct job *job, enum JobStatus status)
 	const gchar * enum_to_string [] = {
 		"unknown", "queued", "failed", "running", "finished", "canceled", "requeued", NULL };
 
-	g_string_assign(job->status_string, enum_to_string[status]);
-	if (status != JOB_STATUS_REQUEUED)
-		job->status = status;	
+	if (status != JOB_STATUS_REQUEUED) {
+		g_string_assign(job->status_string, enum_to_string[status]);
+		job->status = status;
+	}
 }
 
 void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter)

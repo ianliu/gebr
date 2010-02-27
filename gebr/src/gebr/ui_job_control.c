@@ -382,10 +382,6 @@ static void job_control_on_cursor_changed(void)
  	if (job->server->type == GEBR_COMM_SERVER_TYPE_MOAB && job->moab_jid->len)
  		g_string_append_printf(info, "\n%s\n%s\n", _("Moab Job ID:"), job->moab_jid->str);
  
- 	/* queue */
- 	if (job->queue->len && job->queue->str[0] != 'j')
- 		g_string_append_printf(info, "\n%s\n%s\n", _("Queue:"), job->queue->str+1 /* jump 'q' identifier */);
- 
  	/* output */
  	if (job->output->len)
  		g_string_append(info, job->output->str);
