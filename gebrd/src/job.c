@@ -226,16 +226,19 @@ static void job_set_status(struct job *job, enum JobStatus status)
 	const gchar * enum_to_string [] = {
 		"unknown", "queued", "failed", "running", "finished", "canceled", "requeued", NULL };
 
-	if (status != JOB_STATUS_REQUEUED) {
-		g_string_assign(job->status_string, enum_to_string[status]);
-		job->status = status;
-	}
+	g_string_assign(job->status_string, enum_to_string[status]);
+	job->status = status;
 }
 
 void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter)
 {
 	GList *link;
+	enum JobStatus old_status;
+	gboolean restore_status = FALSE;
 
+	if (status == JOB_STATUS_REQUEUED)
+		restore_status = TRUE;
+	old_status = job->status;
 	job_set_status(job, status);
 
 	/* warn all client of the new status */
@@ -249,6 +252,9 @@ void job_notify_status(struct job *job, enum JobStatus status, const gchar *para
 
 		link = g_list_next(link);
 	}
+
+	if (restore_status)
+		job_set_status(job, old_status);
 }
 
 static gboolean job_set_status_finished(struct job *job)

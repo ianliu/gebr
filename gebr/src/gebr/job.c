@@ -343,9 +343,9 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 		gboolean was_selected = job_is_active(job);
 		gtk_tree_store_remove(gebr.ui_job_control->store, &job->iter);
 		job->iter = iter;
+		job_status_show(job);
 		if (was_selected)
 			job_set_active(job);
-		job_status_show(job);
 
 		return;
 	} else
