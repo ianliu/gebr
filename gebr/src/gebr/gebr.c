@@ -134,6 +134,18 @@ gboolean gebr_quit(void)
 	GtkTreeIter iter;
 
 	gebr_config_save(FALSE);
+
+	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store),
+			       (GtkTreeModelForeachFunc)gebr_quit_foreach_job, NULL); 
+	/* Free servers structs */
+	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
+		struct server *server;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+				   SERVER_POINTER, &server, -1);
+		server_free(server);
+	}
+
 	if (gebr.flow_clipboard != NULL) {
 		g_list_foreach(gebr.flow_clipboard, (GFunc) g_free, NULL);
 		g_list_free(gebr.flow_clipboard);
@@ -161,17 +173,6 @@ gboolean gebr_quit(void)
 
 	gebr_message(GEBR_LOG_END, TRUE, TRUE, _("GêBR finalizing..."));
 	gebr_log_close(gebr.log);
-
-	/* Free servers structs */
-	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
-		struct server *server;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
-				   SERVER_POINTER, &server, -1);
-		server_free(server);
-	}
-	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store),
-			       (GtkTreeModelForeachFunc)gebr_quit_foreach_job, NULL); 
 	gebr_comm_protocol_destroy();
 
 	/*

@@ -67,7 +67,8 @@ static GtkTreeIter job_add_jc_queue_iter(struct job * job)
 	if (!server_queue_find_at_job_control(job->server, job->queue->str, &queue_jc_iter))
 		gtk_tree_store_append(gebr.ui_job_control->store, &queue_jc_iter, NULL);
 	gtk_tree_store_set(gebr.ui_job_control->store, &queue_jc_iter, JC_SERVER_ADDRESS,
-			   job->server->comm->address->str, JC_QUEUE_NAME, job->queue->str, JC_TITLE, job->queue->str+1
+			   job->server->comm->address->str, JC_QUEUE_NAME, job->queue->str, JC_TITLE, job->server->type
+			   == GEBR_COMM_SERVER_TYPE_REGULAR ? job->queue->str+1 : job->queue->str
 			   /*jump 'q' identifier*/, JC_STRUCT, job, JC_IS_JOB, FALSE, -1);
 
 	return queue_jc_iter;
@@ -104,9 +105,9 @@ struct job *job_add(struct server *server, GString * jid,
 		.moab_jid = g_string_new(moab_jid->str)
 	};
 
+	GtkTreeIter queue_iter;
+	gboolean queue_exists = server_queue_find(job->server, queue->str, &queue_iter);
 	if (server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
-		GtkTreeIter queue_iter;
-		gboolean queue_exists = server_queue_find(job->server, queue->str, &queue_iter);
 
 		if (queue->str[0] == 'j') {
 			/* If the queue name prefix is 'j', it is an internal queue, with only one job
@@ -136,19 +137,26 @@ struct job *job_add(struct server *server, GString * jid,
 		} else 	/* The queue name prefix is 'q' (it has already been named by the user). */
 			if (queue_exists) {
 				GString *string = g_string_new(NULL);
+				gchar *queue_title = job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR 
+					? queue->str+1 /* jump q identifier */ : queue->str;
 
 				if (job->status != JOB_STATUS_RUNNING && job->status != JOB_STATUS_QUEUED)
-					g_string_printf(string, _("At '%s'"), queue->str+1 /* jump q identifier */);
+					g_string_printf(string, _("At '%s'"), queue_title);
 				else
-					g_string_printf(string, _("After '%s' at '%s'"), title->str, queue->str+1 /* jump q identifier */);
+					g_string_printf(string, _("After '%s' at '%s'"), title->str, queue_title);
 				
-				gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, 2, job, -1);
+				gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, 2,
+						   job, -1);
 
 				has_queue = TRUE;
 				queue_jc_iter = job_add_jc_queue_iter(job);
 
 				g_string_free(string, TRUE);
 			}
+	} else if (queue_exists) {
+		has_queue = TRUE;
+		puts("net");
+		queue_jc_iter = job_add_jc_queue_iter(job);
 	}
 
 	/* append to the store and select it */
@@ -383,8 +391,10 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 			} else if (job->queue->str[0] == 'q' && job == last_job)  {
 				GString *string = g_string_new(NULL);
 
-				g_string_printf(string, _("At '%s'"), job->queue->str+1 /* jump q identifier */);
-				gtk_list_store_set(job->server->queues_model, &queue_iter, 0, string->str, 1, job->queue->str, -1);
+				g_string_printf(string, _("At '%s'"), job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR
+						? job->queue->str+1 /* jump q identifier */ : job->queue->str);
+				gtk_list_store_set(job->server->queues_model, &queue_iter, 0, string->str, 1,
+						   job->queue->str, -1);
 
 				g_string_free(string, TRUE);
 			}

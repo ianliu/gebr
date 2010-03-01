@@ -27,10 +27,15 @@ struct server {
 
 };
 
+/**
+ * Create a new server with \p address
+ */
 struct server *server_new(const gchar * address);
 
+/**
+ * Just free \p server structure and its gebr_comm_server
+ * If \p server is connected the disconnect signal will cause \p server's jobs to be freed.
+ */
 void server_free(struct server *server);
-
-gboolean server_run_flow(struct server *server, const gchar * flow_path);
 
 #endif				//__SERVER_H

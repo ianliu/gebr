@@ -178,7 +178,7 @@ static gboolean server_free_foreach_job(GtkTreeModel *model, GtkTreePath *path, 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &job, JC_IS_JOB,
 			   &is_job, -1);
 	if (!is_job)
-		gtk_tree_store_remove(GTK_TREE_MODEL(gebr.ui_job_control->store), iter);
+		gtk_tree_store_remove(gebr.ui_job_control->store, iter);
 	else if (job != NULL && job->server == server)
 		job_delete(job);
 

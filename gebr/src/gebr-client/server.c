@@ -98,19 +98,12 @@ struct server *server_new(const gchar * address)
 	return server;
 }
 
-/*
- * Function: server_free
- * Just free _server_ structure and its gebr_comm_server
- */
 void server_free(struct server *server)
 {
 	gebr_comm_server_free(server->comm);
 	g_free(server);
 }
 
-/*
- * Function: server_run_flow
- */
 gboolean server_run_flow(struct server *server, const gchar * flow_path)
 {
 	GebrGeoXmlDocument *document;
