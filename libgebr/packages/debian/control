@@ -1,7 +1,7 @@
 Source: libgebr
 Priority: extra
 Maintainer: Ricardo Biloti <biloti@gmail.com>
-Build-Depends: debhelper (>= 5), libtool, intltool, zlib1g-dev, libwebkit-dev | libgtk2.0-dev, libgdome2-dev
+Build-Depends: debhelper (>= 5), automake, libtool, intltool, zlib1g-dev, libwebkit-dev | libgtk2.0-dev, libgdome2-dev
 Standards-Version: 3.7.2
 
 Package: libgebr-dev

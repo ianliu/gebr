@@ -3,7 +3,7 @@ Section: science
 Priority: extra
 Maintainer: Ricardo Biloti <biloti@gmail.com>
 Standards-Version: 3.7.2
-Build-Depends: debhelper (>= 5), intltool, libgebr-dev
+Build-Depends: debhelper (>= 5), automake, intltool, libgebr-dev
 
 Package: gebrd
 Architecture: any

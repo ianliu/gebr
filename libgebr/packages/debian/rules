@@ -33,12 +33,7 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-	[ -d m4 ] || mkdir m4
-	aclocal
-	libtoolize
-	intltoolize
-	automake --add-missing --copy
-	autoconf
+	AUTOPOINT='intltoolize --automake --copy' autoreconf --install
 	./configure --prefix=/usr --disable-debug
 	touch configure-stamp
 
