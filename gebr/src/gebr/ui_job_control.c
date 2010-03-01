@@ -88,14 +88,13 @@ struct ui_job_control *job_control_setup_ui(void)
 	g_signal_connect(GTK_OBJECT(ui_job_control->view), "cursor-changed", G_CALLBACK(job_control_on_cursor_changed),
 			 NULL);
 
+	col = gtk_tree_view_column_new();
+	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_job_control->view), col);
 	renderer = gtk_cell_renderer_pixbuf_new();
-	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_job_control->view), col);
+	gtk_tree_view_column_pack_start(col, renderer, FALSE);
 	gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", JC_ICON);
-
 	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_job_control->view), col);
+	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", JC_TITLE);
 
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_job_control->view);
