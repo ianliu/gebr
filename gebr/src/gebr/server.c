@@ -133,7 +133,7 @@ struct server *server_new(const gchar * address, gboolean autoconnect)
 		.last_error = g_string_new(""),
 		.type = GEBR_COMM_SERVER_TYPE_UNKNOWN,
 		.accounts_model = gtk_list_store_new(1, G_TYPE_STRING),
-		.queues_model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING),
+		.queues_model = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER),
 		.ran_jid = g_string_new(""),
 	};
 

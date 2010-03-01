@@ -536,7 +536,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 				GtkWidget *widget;
 				gchar *queue_name;
 
-				dialog = GTK_DIALOG(gtk_dialog_new_with_buttons(_("Choose queue"),
+				dialog = GTK_DIALOG(gtk_dialog_new_with_buttons(_("Name queue"),
 								     GTK_WINDOW(gebr.window),
 								     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 								     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -560,11 +560,17 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 					if (!strlen(queue_name))
 						gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 									_("Empty name"), _("Please type a queue name."));
-					else if (server_queue_find(server, queue_name, NULL))
-						gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-									_("Duplicate name"), _("The name given was already choosen."));
-					else
-						is_valid = TRUE;	
+					else {
+						gchar *prefixed_queue_name = g_strdup_printf("q%s", queue_name);
+
+						if (server_queue_find(server, prefixed_queue_name, NULL))
+							gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+										_("Duplicate name"), _("This queue name is already in use. Please give another one."));
+						else
+							is_valid = TRUE;
+
+						g_free(prefixed_queue_name);
+					}
 				} while (!is_valid);
 				config->class = g_strdup_printf("q%s", queue_name);
 

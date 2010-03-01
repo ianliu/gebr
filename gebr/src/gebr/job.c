@@ -107,34 +107,48 @@ struct job *job_add(struct server *server, GString * jid,
 	if (server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
 		GtkTreeIter queue_iter;
 		gboolean queue_exists = server_queue_find(job->server, queue->str, &queue_iter);
+
 		if (queue->str[0] == 'j') {
-			if (queue_exists && job->status != JOB_STATUS_RUNNING) 
+			/* If the queue name prefix is 'j', it is an internal queue, with only one job
+			 * running on it. The user did not give a name to it and does not know it exists. */
+
+			if (queue_exists && job->status != JOB_STATUS_RUNNING) { 
+				/* If the job is not running anymore, then it is not an option to start a queue.
+				 * Thus, it should not be in the combobox model. */
+
 				gtk_list_store_remove(server->queues_model, &queue_iter);
+				gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
+			}
 			else {
-				GString * string;
+				GString *string = g_string_new(NULL);
 
-				string = g_string_new(NULL);
+				g_string_printf(string, _("After '%s'"), title->str);
 
-				g_string_printf(string, _("After %s"), title->str);
 				if (!queue_exists)
+					/* If the queue does not exist yet, then the job is a new option for enqueuing,
+					 * and should be appended to the combobox model. */
 					gtk_list_store_append(server->queues_model, &queue_iter);
-				gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, -1);
+				
+				gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, 2, job, -1);
 
 				g_string_free(string, TRUE);
 			}
-		} else if (queue_exists) {
-			GString * string;
+		} else 	/* The queue name prefix is 'q' (it has already been named by the user). */
+			if (queue_exists) {
+				GString *string = g_string_new(NULL);
 
-			string = g_string_new(NULL);
+				if (job->status != JOB_STATUS_RUNNING && job->status != JOB_STATUS_QUEUED)
+					g_string_printf(string, _("At '%s'"), queue->str+1 /* jump q identifier */);
+				else
+					g_string_printf(string, _("After '%s' at '%s'"), title->str, queue->str+1 /* jump q identifier */);
+				
+				gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, 2, job, -1);
 
-			g_string_printf(string, _("After %s at %s"), title->str, queue->str+1 /* jump q identifier */);
-			gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, -1);
+				has_queue = TRUE;
+				queue_jc_iter = job_add_jc_queue_iter(job);
 
-			has_queue = TRUE;
-			queue_jc_iter = job_add_jc_queue_iter(job);
-
-			g_string_free(string, TRUE);
-		}
+				g_string_free(string, TRUE);
+			}
 	}
 
 	/* append to the store and select it */
@@ -331,6 +345,7 @@ void job_status_show(struct job *job)
 void job_status_update(struct job *job, enum JobStatus status, const gchar *parameter)
 {
 	if (status == JOB_STATUS_REQUEUED) {
+		/* 'parameter' is the new name for the job's queue. */
 		g_string_assign(job->queue, parameter);
 
 		GtkTreeIter iter;
@@ -354,7 +369,29 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 	job_status_show(job);
 
 	if (job->status == JOB_STATUS_FINISHED) {
-			g_string_assign(job->finish_date, parameter);
+		/* Update combobox model. */
+		GtkTreeIter queue_iter;
+		gboolean queue_exists = server_queue_find(job->server, job->queue->str, &queue_iter);
+		struct job *last_job;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(job->server->queues_model), &queue_iter, 2, &last_job, -1);
+		
+		if (queue_exists) {
+		       	if (job->queue->str[0] == 'j') {
+				gtk_list_store_remove(job->server->queues_model, &queue_iter);
+				gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
+			} else if (job->queue->str[0] == 'q' && job == last_job)  {
+				GString *string = g_string_new(NULL);
+
+				g_string_printf(string, _("At '%s'"), job->queue->str+1 /* jump q identifier */);
+				gtk_list_store_set(job->server->queues_model, &queue_iter, 0, string->str, 1, job->queue->str, -1);
+
+				g_string_free(string, TRUE);
+			}
+		}
+		
+		/* Fill 'finish date' if job is active (selected for viewing). */
+		g_string_assign(job->finish_date, parameter);
 
 		if (job_is_active(job) == FALSE) 
 			return;
