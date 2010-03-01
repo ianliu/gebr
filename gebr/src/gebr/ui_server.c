@@ -56,7 +56,6 @@ server_select_row_changed(GtkTreeModel * tree_model, GtkTreePath * path, GtkTree
 /* Function: server_common_tooltip_callback
  * Callback for tree view tooltip
  */
-#if GTK_CHECK_VERSION(2,12,0)
 static gboolean
 server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 			       GtkTreeIter * iter, GtkTreeViewColumn * column, struct ui_server_common *ui)
@@ -84,7 +83,6 @@ server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 
 	return FALSE;
 }
-#endif
 
 /* Function: server_common_connect
  * Callback for popup menu action

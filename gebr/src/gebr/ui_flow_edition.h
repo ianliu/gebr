@@ -62,6 +62,7 @@ struct ui_flow_edition {
 	/* available system and user's menus */
 	GtkWidget *menu_view;
 	GtkTreeStore *menu_store;
+
 };
 
 struct ui_flow_edition *flow_edition_setup_ui(void);

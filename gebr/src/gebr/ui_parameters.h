@@ -28,8 +28,28 @@ struct ui_parameters {
 	struct gebr_gui_program_edit *program_edit;
 };
 
+/**
+ * Assembly a dialog to configure the current selected program's parameters.
+ *
+ * \return The structure containing relevant data. It will be automatically freed when the dialog closes.
+ */
 struct ui_parameters *parameters_configure_setup_ui(void);
 
+/**
+ * Change all parameters' values from \p parameters to their default value.
+ */
 void parameters_reset_to_default(GebrGeoXmlParameters * parameters);
+
+/**
+ * This function checks if the selected program has a required parameter unfiled 
+ * \ref parameter_required_is_unfiled
+ */
+gboolean parameters_check_has_required_unfiled(void);
+
+/**
+ * This function checks if the selected program has a required parameter unfiled 
+ * \ref parameter_required_is_unfiled
+ */
+gboolean parameters_check_has_required_unfiled_for_iter(GtkTreeIter * iter);
 
 #endif				//__PARAMETERS_H

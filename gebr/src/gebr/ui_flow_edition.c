@@ -52,6 +52,9 @@ static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, struct ui_
 static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_edition *ui_flow_edition);
 static void flow_edition_on_combobox_changed(GtkComboBox * combobox);
 
+static gboolean
+on_has_required_parameter_unfiled_tooltip(GtkTreeView * treeview,
+		     gint x, gint y, gboolean keyboard_tip, GtkTooltip * tooltip, struct ui_flow_edition *ui_flow_edition);
 /*
  * Public functions
  */
@@ -151,6 +154,9 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->fseq_view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "stock-id", FSEQ_ICON_COLUMN);
+
+	g_object_set(G_OBJECT(ui_flow_edition->fseq_view), "has-tooltip", TRUE, NULL);
+	g_signal_connect(G_OBJECT(ui_flow_edition->fseq_view), "query-tooltip", G_CALLBACK(on_has_required_parameter_unfiled_tooltip), ui_flow_edition);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -466,6 +472,12 @@ static void flow_edition_component_selected(void)
 		return;
 	}
 
+	if (parameters_check_has_required_unfiled())
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured"), FALSE);
+	else
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured"), TRUE);
+
+
 	gtk_toggle_action_set_active(toggle_action, TRUE);
 
 	if (strlen(gebr_geoxml_program_get_help(gebr.program)) == 0)	
@@ -714,4 +726,38 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 
 	flow_edition_set_io();
 	flow_browse_info_update();
+}
+
+/**
+ * \internal
+ * Shows tooltips for each line in component flow tree view.
+ */
+static gboolean
+on_has_required_parameter_unfiled_tooltip(GtkTreeView * treeview,
+		     gint x, gint y, gboolean keyboard_tip, GtkTooltip * tooltip, struct ui_flow_edition *ui_flow_edition)
+{
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	GtkTreePath *path;
+	GebrGeoXmlProgram *program;
+
+	if (!gtk_tree_view_get_tooltip_context(treeview, &x, &y, keyboard_tip, &model, NULL, &iter))
+		return FALSE;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+			   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+	if (gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED)
+		return FALSE;
+	else
+		if (parameters_check_has_required_unfiled_for_iter(&iter))
+			gtk_tooltip_set_text(tooltip, _("Required parameter unfiled"));
+		else
+			gtk_tooltip_set_text(tooltip, _("Verify parameter configuration"));
+
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter);
+	gtk_tree_view_set_tooltip_row(treeview, tooltip, path);
+
+	gtk_tree_path_free(path);
+
+	return TRUE;
 }

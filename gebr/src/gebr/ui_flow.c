@@ -106,10 +106,8 @@ void flow_io_setup_ui(gboolean executable)
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)), GTK_SELECTION_BROWSE);
 	gtk_window_set_default_size(GTK_WINDOW(dialog), -1, 300);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 2);
-#if GTK_CHECK_VERSION(2,12,0)
 	g_object_set(G_OBJECT(treeview), "has-tooltip", TRUE, NULL);
 	g_signal_connect(G_OBJECT(treeview), "query-tooltip", G_CALLBACK(on_tree_view_tooltip), ui_flow_io);
-#endif
 	g_signal_connect(G_OBJECT(treeview), "cursor-changed", G_CALLBACK(on_tree_view_cursor_changed), ui_flow_io);
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(treeview),
 						  (GebrGuiGtkPopupCallback) on_menu_popup, ui_flow_io);
@@ -833,7 +831,6 @@ static void on_tree_view_cursor_changed(GtkTreeView * treeview, struct ui_flow_i
 		gtk_widget_set_sensitive(ui_flow_io->execute_button, server_listed);
 }
 
-#if GTK_CHECK_VERSION(2,12,0)
 /**
  * \internal
  * Shows tooltips for each cell in Server/IO tree view.
@@ -901,4 +898,3 @@ on_tree_view_tooltip(GtkTreeView * treeview,
 
 	return TRUE;
 }
-#endif
