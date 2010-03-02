@@ -177,6 +177,11 @@ void gebr_geoxml_program_set_description(GebrGeoXmlProgram * program, const gcha
 void gebr_geoxml_program_set_help(GebrGeoXmlProgram * program, const gchar * help);
 
 /**
+ * Sets the \p program's version attribute.
+ */
+void gebr_geoxml_program_set_version(GebrGeoXmlProgram * program, const gchar * version);
+
+/**
  *
  */
 void gebr_geoxml_program_set_url(GebrGeoXmlProgram * program, const gchar * url);
@@ -220,6 +225,11 @@ const gchar *gebr_geoxml_program_get_description(GebrGeoXmlProgram * program);
  *
  */
 const gchar *gebr_geoxml_program_get_help(GebrGeoXmlProgram * program);
+
+/**
+ * Gets the \p program's version.
+ */
+const gchar *gebr_geoxml_program_get_version(GebrGeoXmlProgram * program);
 
 /**
  *

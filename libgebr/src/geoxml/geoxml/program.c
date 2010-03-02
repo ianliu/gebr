@@ -155,6 +155,13 @@ void gebr_geoxml_program_set_help(GebrGeoXmlProgram * program, const gchar * hel
 	__gebr_geoxml_set_tag_value((GdomeElement *) program, "help", help, __gebr_geoxml_create_CDATASection);
 }
 
+void gebr_geoxml_program_set_version(GebrGeoXmlProgram * program, const gchar * version)
+{
+	if (program == NULL || version == NULL)
+		return;
+	__gebr_geoxml_set_attr_value((GdomeElement*)program, "version", version);
+}
+
 void gebr_geoxml_program_set_url(GebrGeoXmlProgram * program, const gchar * url)
 {
 	if (program == NULL || url == NULL)
@@ -233,6 +240,13 @@ const gchar *gebr_geoxml_program_get_help(GebrGeoXmlProgram * program)
 	if (program == NULL)
 		return NULL;
 	return __gebr_geoxml_get_tag_value((GdomeElement *) program, "help");
+}
+
+const gchar *gebr_geoxml_program_get_version(GebrGeoXmlProgram * program)
+{
+	if (program == NULL)
+		return NULL;
+	return __gebr_geoxml_get_attr_value((GdomeElement*)program, "version");
 }
 
 const gchar *gebr_geoxml_program_get_url(GebrGeoXmlProgram * program)

@@ -388,7 +388,7 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 		}
 	}
 	/* flow 0.3.1 to 0.3.2 */ 
-	if (strcmp(version, "0.3.2") < 0){
+	if (strcmp(version, "0.3.2") < 0) {
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			GdomeElement *element;
 
@@ -403,6 +403,12 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 			}
 		}
 	}
+	/* flow 0.3.1 to 0.3.2 */ 
+	if (strcmp(version, "0.3.3") < 0) {
+		// Backward compatible change, nothing to be done.
+		// Added #IMPLIED 'version' attribute to 'program' tag.
+	}
+
 	/* CHECKS (may impact performance) */
 	if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 		GdomeElement *element;

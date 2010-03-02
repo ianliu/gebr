@@ -56,6 +56,7 @@ static gboolean program_binary_changed(GtkEntry * entry);
 static gboolean program_description_changed(GtkEntry * entry);
 static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program);
 static void program_help_edit(GtkButton * button);
+static gboolean program_version_changed(GtkEntry * entry);
 static gboolean program_url_changed(GtkEntry * entry);
 
 static void program_preview_on_response(GtkWidget * dialog, gint arg1, struct program_preview_data *data);
@@ -354,6 +355,8 @@ gboolean program_dialog_setup_ui(void)
 	GtkWidget *help_hbox;
 	GtkWidget *help_label;
 	GtkWidget *help_edit_button;
+	GtkWidget *version_label;
+	GtkWidget *version_entry;
 	GtkWidget *url_label;
 	GtkWidget *url_entry;
 
@@ -477,17 +480,33 @@ gboolean program_dialog_setup_ui(void)
 	g_object_set(G_OBJECT(help_edit_button), "relief", GTK_RELIEF_NONE, NULL);
 
 	/*
+	 * Version
+	 */
+	version_label = gtk_label_new(_("Version:"));
+	gtk_widget_show(version_label);
+	gtk_table_attach(GTK_TABLE(table), version_label, 0, 1, 5, 6,
+			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(version_label), 0, 0.5);
+
+	version_entry = gtk_entry_new();
+	gtk_widget_show(version_entry);
+	gtk_table_attach(GTK_TABLE(table), version_entry, 1, 2, 5, 6,
+			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+	g_signal_connect(version_entry, "changed", G_CALLBACK(program_version_changed), debr.program);
+	gtk_widget_set_sensitive(version_entry, FALSE);
+
+	/*
 	 * URL
 	 */
 	url_label = gtk_label_new(_("URL:"));
 	gtk_widget_show(url_label);
-	gtk_table_attach(GTK_TABLE(table), url_label, 0, 1, 5, 6,
+	gtk_table_attach(GTK_TABLE(table), url_label, 0, 1, 6, 7,
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 	gtk_misc_set_alignment(GTK_MISC(url_label), 0, 0.5);
 
 	url_entry = gtk_entry_new();
 	gtk_widget_show(url_entry);
-	gtk_table_attach(GTK_TABLE(table), url_entry, 1, 2, 5, 6,
+	gtk_table_attach(GTK_TABLE(table), url_entry, 1, 2, 6, 7,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 	g_signal_connect(url_entry, "changed", G_CALLBACK(program_url_changed), debr.program);
 
@@ -503,10 +522,11 @@ gboolean program_dialog_setup_ui(void)
 	gtk_entry_set_text(GTK_ENTRY(title_entry), gebr_geoxml_program_get_title(debr.program));
 	gtk_entry_set_text(GTK_ENTRY(binary_entry), gebr_geoxml_program_get_binary(debr.program));
 	gtk_entry_set_text(GTK_ENTRY(description_entry), gebr_geoxml_program_get_description(debr.program));
+	gtk_entry_set_text(GTK_ENTRY(version_entry), gebr_geoxml_program_get_version(debr.program));
 	gtk_entry_set_text(GTK_ENTRY(url_entry), gebr_geoxml_program_get_url(debr.program));
 
 	gtk_widget_show(dialog);
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK){
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
 		menu_replace();
 		ret = FALSE;
 		goto out;
@@ -800,6 +820,18 @@ static gboolean program_binary_changed(GtkEntry * entry)
 static gboolean program_description_changed(GtkEntry * entry)
 {
 	gebr_geoxml_program_set_description(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
+
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+	return FALSE;
+}
+
+/**
+ * \internal
+ * Syncronize programs version from UI and XML.
+ */
+static gboolean program_version_changed(GtkEntry * entry)
+{
+	gebr_geoxml_program_set_version(debr.program, gtk_entry_get_text(GTK_ENTRY(entry)));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 	return FALSE;
