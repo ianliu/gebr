@@ -662,15 +662,15 @@ void parameter_select_iter(GtkTreeIter iter)
 GtkWidget * parameter_create_menu_with_types(gboolean use_action)
 {
 	gint n;
-	gboolean is_group;
+	gboolean cut;
 	GtkWidget *menu;
 
 	menu = gtk_menu_new();
 
-	is_group = parameter_get_selected(NULL, FALSE) && !use_action &&
-		(gebr_geoxml_parameter_get_type(debr.parameter) == GEBR_GEOXML_PARAMETER_TYPE_GROUP);
+	cut = gebr_geoxml_parameter_get_is_in_group(debr.parameter) || (parameter_get_selected(NULL, FALSE)
+		&& !use_action && (gebr_geoxml_parameter_get_type(debr.parameter) == GEBR_GEOXML_PARAMETER_TYPE_GROUP));
 
-	n = combo_type_map_size - (is_group? 1:0);
+	n = combo_type_map_size - (cut? 1:0);
 	for (guint i = 0; i < n; i++) {
 		GtkWidget *item;
 		if (use_action) {
@@ -1365,9 +1365,6 @@ static void parameter_selected(void)
 	do_navigation_bar_update();
 
 	/* parameter type stuff */
-	gtk_action_set_visible(gtk_action_group_get_action(debr.action_group,
-							   "parameter_type_group"),
-			       !gebr_geoxml_parameter_get_is_in_group(debr.parameter));
 	g_signal_handlers_block_matched(G_OBJECT(gtk_action_group_get_action(debr.action_group, "parameter_type_real")),
 					G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(on_parameter_type_activate), NULL);
 	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION
