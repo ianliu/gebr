@@ -49,7 +49,7 @@
 static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters *ui_parameters);
 static gboolean
 parameters_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_parameters *ui_parameters);
-static void parameter_required_is_unfiled(GebrGeoXmlParameter * parameter, gboolean * required_unfiled);
+static void parameter_required_is_unfilled(GebrGeoXmlParameter * parameter, gboolean * required_unfilled);
 
 /*
  * Public functions.
@@ -156,25 +156,25 @@ void parameters_reset_to_default(GebrGeoXmlParameters * parameters)
 	}
 }
 
-gboolean parameters_check_has_required_unfiled(void)
+gboolean parameters_check_has_required_unfilled(void)
 {
 	GtkTreeIter iter;
 
 	flow_edition_get_selected_component(&iter, FALSE);
-	return parameters_check_has_required_unfiled_for_iter(&iter);
+	return parameters_check_has_required_unfilled_for_iter(&iter);
 }
 
-gboolean parameters_check_has_required_unfiled_for_iter(GtkTreeIter * iter)
+gboolean parameters_check_has_required_unfilled_for_iter(GtkTreeIter * iter)
 {
-	gboolean required_unfiled = FALSE;
+	gboolean required_unfilled = FALSE;
 	GebrGeoXmlProgram *program;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), iter,
 			   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 
-	gebr_geoxml_program_foreach_parameter(GEBR_GEOXML_PROGRAM(program), (GebrGeoXmlCallback)parameter_required_is_unfiled, &required_unfiled);
+	gebr_geoxml_program_foreach_parameter(GEBR_GEOXML_PROGRAM(program), (GebrGeoXmlCallback)parameter_required_is_unfilled, &required_unfilled);
 
-	return required_unfiled;
+	return required_unfilled;
 }
 
 /*
@@ -184,13 +184,13 @@ gboolean parameters_check_has_required_unfiled_for_iter(GtkTreeIter * iter)
 /**
  * Callback to check if a given \p parameter content has some value
  */
-static void parameter_required_is_unfiled(GebrGeoXmlParameter * parameter, gboolean * required_unfiled)
+static void parameter_required_is_unfilled(GebrGeoXmlParameter * parameter, gboolean * required_unfilled)
 {
 	GString *value;
 
 	if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(parameter))) {
 		value = gebr_geoxml_program_parameter_get_string_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE);
-		*required_unfiled = (value->len == 0);
+		*required_unfilled = (value->len == 0);
 		g_string_free(value, TRUE);
 	}
 }
@@ -220,7 +220,7 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 				   FSEQ_ICON_COLUMN, icon,
 				   -1);
 		flow_edition_select_component_iter(&iter);
-		if (parameters_check_has_required_unfiled()){
+		if (parameters_check_has_required_unfilled()){
 			gtk_toggle_action_set_active(GTK_TOGGLE_ACTION
 						     (gtk_action_group_get_action
 						      (gebr.action_group, "flow_edition_status_unconfigured")), TRUE);

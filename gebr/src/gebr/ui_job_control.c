@@ -386,7 +386,10 @@ static void job_control_on_cursor_changed(void)
  		g_string_append(info, job->output->str);
  	/* finish date */
  	if (job->finish_date->len)
- 		g_string_append_printf(info, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
+		if (job->status == JOB_STATUS_FINISHED)
+			g_string_append_printf(info, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
+		if (job->status == JOB_STATUS_CANCELED)
+			g_string_append_printf(info, "\n%s %s", _("Cancel date:"), gebr_localized_date(job->finish_date->str));
  	/* to view */
  	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, info->str, info->len);
 

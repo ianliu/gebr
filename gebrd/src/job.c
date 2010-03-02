@@ -216,11 +216,6 @@ static void job_process_read_stderr(GebrCommProcess * process, struct job *job)
 	g_string_free(stderr, TRUE);
 }
 
-/**
- * \internal
- * Change status in \p job structure
- * \see job_notify_status
- */
 static void job_set_status(struct job *job, enum JobStatus status)
 {
 	const gchar * enum_to_string [] = {
@@ -230,6 +225,11 @@ static void job_set_status(struct job *job, enum JobStatus status)
 	job->status = status;
 }
 
+/**
+ * \internal
+ * Change status in \p job structure
+ * \see job_notify_status
+ */
 void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter)
 {
 	GList *link;
@@ -851,6 +851,7 @@ void job_end(struct job *job)
 
 		if (job->status == JOB_STATUS_QUEUED){
 			gebrd_queues_remove_job_from(job->queue->str, job);
+			g_string_assign(job->finish_date, gebr_iso_date());
 			job_notify_status(job, JOB_STATUS_CANCELED, job->finish_date->str);
 		} else {
 			job->user_finished = TRUE;

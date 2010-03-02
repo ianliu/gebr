@@ -41,15 +41,15 @@ struct ui_parameters *parameters_configure_setup_ui(void);
 void parameters_reset_to_default(GebrGeoXmlParameters * parameters);
 
 /**
- * This function checks if the selected program has a required parameter unfiled 
- * \ref parameter_required_is_unfiled
+ * This function checks if the selected program has a required parameter unfilled 
+ * \ref parameter_required_is_unfilled
  */
-gboolean parameters_check_has_required_unfiled(void);
+gboolean parameters_check_has_required_unfilled(void);
 
 /**
- * This function checks if the selected program has a required parameter unfiled 
- * \ref parameter_required_is_unfiled
+ * This function checks if the selected program has a required parameter unfilled 
+ * \ref parameter_required_is_unfilled
  */
-gboolean parameters_check_has_required_unfiled_for_iter(GtkTreeIter * iter);
+gboolean parameters_check_has_required_unfilled_for_iter(GtkTreeIter * iter);
 
 #endif				//__PARAMETERS_H

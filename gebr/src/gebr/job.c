@@ -376,7 +376,8 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 	
 	job_status_show(job);
 
-	if (job->status == JOB_STATUS_FINISHED) {
+	if ((job->status == JOB_STATUS_FINISHED) || job->status == JOB_STATUS_CANCELED) {
+
 		/* Update combobox model. */
 		GtkTreeIter queue_iter;
 		gboolean queue_exists = server_queue_find(job->server, job->queue->str, &queue_iter);
@@ -411,7 +412,10 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 
 		finish_date = g_string_new(NULL);
 
-		g_string_printf(finish_date, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
+		if (job->status == JOB_STATUS_FINISHED)
+			g_string_printf(finish_date, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
+		if (job->status == JOB_STATUS_CANCELED)
+			g_string_printf(finish_date, "\n%s %s", _("Cancel date:"), gebr_localized_date(job->finish_date->str));
 		gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
 		gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, finish_date->str, finish_date->len);
 

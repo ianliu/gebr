@@ -53,7 +53,7 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_
 static void flow_edition_on_combobox_changed(GtkComboBox * combobox);
 
 static gboolean
-on_has_required_parameter_unfiled_tooltip(GtkTreeView * treeview,
+on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 		     gint x, gint y, gboolean keyboard_tip, GtkTooltip * tooltip, struct ui_flow_edition *ui_flow_edition);
 /*
  * Public functions
@@ -156,7 +156,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gtk_tree_view_column_add_attribute(col, renderer, "stock-id", FSEQ_ICON_COLUMN);
 
 	g_object_set(G_OBJECT(ui_flow_edition->fseq_view), "has-tooltip", TRUE, NULL);
-	g_signal_connect(G_OBJECT(ui_flow_edition->fseq_view), "query-tooltip", G_CALLBACK(on_has_required_parameter_unfiled_tooltip), ui_flow_edition);
+	g_signal_connect(G_OBJECT(ui_flow_edition->fseq_view), "query-tooltip", G_CALLBACK(on_has_required_parameter_unfilled_tooltip), ui_flow_edition);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -472,7 +472,7 @@ static void flow_edition_component_selected(void)
 		return;
 	}
 
-	if (parameters_check_has_required_unfiled())
+	if (parameters_check_has_required_unfilled())
 		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured"), FALSE);
 	else
 		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured"), TRUE);
@@ -733,7 +733,7 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
  * Shows tooltips for each line in component flow tree view.
  */
 static gboolean
-on_has_required_parameter_unfiled_tooltip(GtkTreeView * treeview,
+on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 		     gint x, gint y, gboolean keyboard_tip, GtkTooltip * tooltip, struct ui_flow_edition *ui_flow_edition)
 {
 	GtkTreeModel *model;
@@ -749,8 +749,8 @@ on_has_required_parameter_unfiled_tooltip(GtkTreeView * treeview,
 	if (gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED)
 		return FALSE;
 	else
-		if (parameters_check_has_required_unfiled_for_iter(&iter))
-			gtk_tooltip_set_text(tooltip, _("Required parameter unfiled"));
+		if (parameters_check_has_required_unfilled_for_iter(&iter))
+			gtk_tooltip_set_text(tooltip, _("Required parameter unfilled"));
 		else
 			gtk_tooltip_set_text(tooltip, _("Verify parameter configuration"));
 
