@@ -31,6 +31,6 @@ struct ui_parameter_group_dialog {
 /**
  * Open a dialog to configure a group.
  */
-void parameter_group_dialog_setup_ui(void);
+gboolean parameter_group_dialog_setup_ui(void);
 
 #endif				//__PARAMETER_GROUP_H

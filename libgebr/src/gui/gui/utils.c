@@ -655,6 +655,57 @@ gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPopupCallba
 	return TRUE;
 }
 
+struct GebrGuiDropDownData {
+	GtkWidget *menu;
+	GebrGuiDropDown callback;
+};
+
+static gboolean on_widget_press_drop_down(GtkWidget * widget, GdkEventButton * event, struct GebrGuiDropDownData * data)
+{
+	gint x, y;
+	gint xb, yb, hb;
+
+	if (data->callback)
+		(data->callback)(GTK_MENU(data->menu));
+
+	gdk_window_get_origin(widget->window, &x, &y);
+	xb = widget->allocation.x;
+	yb = widget->allocation.y;
+	hb = widget->allocation.height;
+
+	void popup_position(GtkMenu * menu_, gint * xp, gint * yp, gboolean * push_in, gpointer user_data) {
+		*xp = x + xb;
+		*yp = y + yb + hb;
+		*push_in = TRUE;
+	}
+
+	gtk_widget_show_all(data->menu);
+	gtk_menu_popup(GTK_MENU(data->menu), NULL, NULL, popup_position, NULL, 0, gtk_get_current_event_time());
+
+	return FALSE;
+}
+
+void gebr_gui_gtk_widget_set_drop_down_menu_on_click(GtkWidget * widget, GtkMenu * menu, GebrGuiDropDown callback)
+{
+	g_return_if_fail(menu != NULL);
+	g_return_if_fail(GTK_IS_BUTTON(widget));
+
+	struct GebrGuiDropDownData *data;
+	data = g_new(struct GebrGuiDropDownData, 1);
+	data->menu = GTK_WIDGET(menu);
+	data->callback = callback;
+	g_signal_connect(widget, "button-press-event", G_CALLBACK(on_widget_press_drop_down), data);
+	g_object_weak_ref(G_OBJECT(widget), (GWeakNotify)g_free, data);
+}
+
+void gebr_gui_gtk_widget_drop_down_menu(GtkWidget * widget, GtkMenu * menu)
+{
+	struct GebrGuiDropDownData data;
+	data.menu = GTK_WIDGET(menu);
+	data.callback = NULL;
+	on_widget_press_drop_down(widget, NULL, &data);
+}
+
 void
 gebr_gui_gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GebrGuiGtkPopupCallback callback, gpointer user_data)
 {
@@ -666,7 +717,6 @@ gebr_gui_gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GebrGuiGtkPop
 	g_signal_connect(tree_view, "popup-menu", G_CALLBACK(__gtk_widget_on_popup_menu), popup_callback);
 }
 
-#if GTK_CHECK_VERSION(2,12,0)
 struct tooltip_data {
 	GebrGuiGtkTreeViewTooltipCallback callback;
 	gpointer user_data;
@@ -686,11 +736,7 @@ on_tooltip_query(GtkTreeView * tree_view, gint x, gint y, gboolean keyboard_mode
 	gchar *path_string;
 	GtkTreeIter iter;
 
-#if GTK_CHECK_VERSION(2,12,0)
 	gtk_tree_view_convert_widget_to_bin_window_coords(tree_view, x, y, &x, &y);
-#else
-	gtk_tree_view_widget_to_tree_coords(tree_view, x, y, &x, &y);
-#endif
 	if (!gtk_tree_view_get_path_at_pos(tree_view, x, y, &path, &column, NULL, NULL)) {
 		gtk_tree_path_free(path);
 		return FALSE;
@@ -729,7 +775,6 @@ gebr_gui_gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GebrGuiGtkT
 	g_signal_connect(tree_view, "query-tooltip", G_CALLBACK(on_tooltip_query), tooltip_data);
 	g_object_weak_ref(G_OBJECT(tree_view), (GWeakNotify) tooltip_weak_ref, tooltip_data);
 }
-#endif
 
 gboolean
 gtk_tree_view_reorder_callback(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
@@ -856,14 +901,7 @@ void gebr_gui_gtk_action_group_set_accel_group(GtkActionGroup * action_group, Gt
 
 void gebr_gui_gtk_widget_set_tooltip(GtkWidget * widget, const gchar * tip)
 {
-#if GTK_CHECK_VERSION(2,12,0)
 	g_object_set(G_OBJECT(widget), "tooltip-text", tip, NULL);
-#else
-	static GtkTooltips *tips = NULL;
-	if (tips == NULL)
-		tips = gtk_tooltips_new();
-	gtk_tooltips_set_tip(tips, widget, tip, NULL);
-#endif
 }
 
 GtkWidget *gebr_gui_gtk_container_add_depth_hbox(GtkWidget * container)

@@ -162,7 +162,7 @@ gboolean parameter_get_selected(GtkTreeIter * iter, gboolean show_warning);
 void parameter_select_iter(GtkTreeIter iter);
 
 /**
- * Populates \p menu with the available types.
+ * Populates a \ref GtkMenu with the available types.
  * \param use_action Whether to use the action group or not.
  */
 GtkWidget * parameter_create_menu_with_types(gboolean use_action);

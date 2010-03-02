@@ -292,6 +292,24 @@ gboolean gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPo
 						gpointer user_data);
 
 /**
+ * The purpose of this callback is to modify \p menu whenever it is droped down.
+ */
+typedef void (*GebrGuiDropDown)(GtkMenu * menu);
+
+/**
+ * Sets a drop-down \p menu to open below \p widget on click event.
+ * \param callback Called when the drop down is requested. May be NULL.
+ * \see GebrGuiDropDown
+ */
+void gebr_gui_gtk_widget_set_drop_down_menu_on_click(GtkWidget * widget, GtkMenu * menu, GebrGuiDropDown callback);
+
+/**
+ * Shows \p menu below \p widget.
+ * \see gebr_gui_gtk_widget_set_drop_down_menu_on_click
+ */
+void gebr_gui_gtk_widget_drop_down_menu(GtkWidget * widget, GtkMenu * menu);
+
+/**
  * Sets \p callback to fire when user right click or request for a context menu on \p tree_view.
  * \see gebr_gui_gtk_widget_set_popup_callback
  */
@@ -299,7 +317,6 @@ void
 gebr_gui_gtk_tree_view_set_popup_callback(GtkTreeView * tree_view, GebrGuiGtkPopupCallback callback,
 					  gpointer user_data);
 
-#if GTK_CHECK_VERSION(2,12,0)
 /**
  * Callback for \ref gebr_gui_gtk_tree_view_set_tooltip_callback.
  * \see gebr_gui_gtk_tree_view_set_tooltip_callback
@@ -313,7 +330,6 @@ typedef gboolean(*GebrGuiGtkTreeViewTooltipCallback) (GtkTreeView * tree_view, G
  */
 void gebr_gui_gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view,
 						 GebrGuiGtkTreeViewTooltipCallback callback, gpointer user_data);
-#endif
 
 /**
  * Callback for when \p sequence have been moved before \p item node.

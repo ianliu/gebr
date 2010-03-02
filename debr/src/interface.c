@@ -129,7 +129,6 @@ void debr_setup_ui(void)
 	GtkWidget *menu_item;
 	GtkWidget *child_menu_item;
 	GtkWidget *toolbar;
-	GtkToolItem *tool_item;
 
 	GtkActionGroup *common_action_group;
 
@@ -181,7 +180,6 @@ void debr_setup_ui(void)
 
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "menu_new"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "program_new"));
-	//gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "parameter_new"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "program_copy"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "parameter_cut"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group, "parameter_copy"));
@@ -331,10 +329,11 @@ void debr_setup_ui(void)
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox, gtk_label_new(_("Parameter")));
 
 	/* Treating the 'new' button */
+	debr.new_submenu = GTK_MENU(parameter_create_menu_with_types(FALSE));
 	debr.tool_item_new = gtk_tool_button_new_from_stock(GTK_STOCK_NEW);
 	gtk_tool_item_set_tooltip_text(debr.tool_item_new, _("Create new parameter"));
-	g_signal_connect(gtk_bin_get_child(GTK_BIN(debr.tool_item_new)), "button-press-event",
-			 G_CALLBACK(on_parameter_tool_item_new_press), NULL);
+	gebr_gui_gtk_widget_set_drop_down_menu_on_click(gtk_bin_get_child(GTK_BIN(debr.tool_item_new)),
+							debr.new_submenu, NULL);
 
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
@@ -374,11 +373,10 @@ void debr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(debr.action_group, "program_preview"))), -1);
 
-
-	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_CONVERT);
-	g_signal_connect(tool_item, "clicked", G_CALLBACK(on_parameter_change_type_activate), NULL);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
-	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), parameter_create_menu_with_types(TRUE));
+	debr.tool_item_change_type = gtk_tool_button_new_from_stock(GTK_STOCK_CONVERT);
+	gebr_gui_gtk_widget_set_drop_down_menu_on_click(gtk_bin_get_child(GTK_BIN(debr.tool_item_change_type)),
+							GTK_MENU(parameter_create_menu_with_types(TRUE)), NULL);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), debr.tool_item_change_type, -1);
 
 	gtk_widget_show_all(toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -436,3 +434,4 @@ void debr_set_actions_sensitive(gchar ** names, gboolean sensitive)
 	while (names[i])
 		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, names[i++]), sensitive);
 }
+

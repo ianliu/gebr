@@ -64,7 +64,8 @@ void on_new_activate(void)
 		on_program_new_activate();
 		break;
 	case NOTEBOOK_PAGE_PARAMETER:
-		on_parameter_tool_item_new_press(GTK_WIDGET(debr.tool_item_new));
+		gebr_gui_gtk_widget_drop_down_menu(GTK_WIDGET(debr.tool_item_new),
+						   GTK_MENU(parameter_create_menu_with_types(FALSE)));
 		break;
 	default:
 		break;

@@ -44,7 +44,7 @@ static void on_parameter_group_exclusive_toggled(GtkToggleButton * toggle_button
  * Public functions
  */
 
-void parameter_group_dialog_setup_ui(void)
+gboolean parameter_group_dialog_setup_ui(void)
 {
 	GtkWidget *dialog;
 	GtkWidget *scrolled_window;
@@ -67,6 +67,7 @@ void parameter_group_dialog_setup_ui(void)
 	GebrGeoXmlSequence *instance;
 	GebrGeoXmlSequence *parameter;
 	guint i;
+	gboolean ret = TRUE;
 
 	struct ui_parameter_group_dialog *ui;
 
@@ -203,7 +204,8 @@ void parameter_group_dialog_setup_ui(void)
 	/* for DeBR it doesn't matter if it's not instanciable */
 	gebr_geoxml_parameter_group_set_is_instanciable(parameter_group, TRUE);
 	/* let the user interact... */
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK){
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
+		ret = FALSE;
 		menu_replace();
 		goto out;
 	}
@@ -222,6 +224,8 @@ out:
 	/* frees */
 	gtk_widget_destroy(dialog);
 	g_free(ui);
+
+	return ret;
 }
 
 /*
