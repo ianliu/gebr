@@ -225,4 +225,9 @@ void on_help_about_activate(void);
  */
 gboolean on_parameter_tool_item_new_press(GtkWidget * tool_button);
 
+/**
+ * Calls \ref parameter_create_menu_with_types.
+ */
+void on_drop_down_menu_requested(GtkWidget * button, gpointer data);
+
 #endif				//__CALLBACKS_H

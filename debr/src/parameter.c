@@ -661,11 +661,17 @@ void parameter_select_iter(GtkTreeIter iter)
 
 GtkWidget * parameter_create_menu_with_types(gboolean use_action)
 {
+	gint n;
+	gboolean is_group;
 	GtkWidget *menu;
 
 	menu = gtk_menu_new();
 
-	for (guint i = 0; i < combo_type_map_size; i++) {
+	is_group = parameter_get_selected(NULL, FALSE) && !use_action &&
+		(gebr_geoxml_parameter_get_type(debr.parameter) == GEBR_GEOXML_PARAMETER_TYPE_GROUP);
+
+	n = combo_type_map_size - (is_group? 1:0);
+	for (guint i = 0; i < n; i++) {
 		GtkWidget *item;
 		if (use_action) {
 			GtkAction *action;
@@ -675,8 +681,6 @@ GtkWidget * parameter_create_menu_with_types(gboolean use_action)
 			item = gtk_menu_item_new_with_label(parameter_type_radio_actions_entries[i].label);
 			g_signal_connect(item, "activate", G_CALLBACK(on_parameter_menu_item_new_activate),
 					 GINT_TO_POINTER(parameter_type_radio_actions_entries[i].value));
-			if (i == combo_type_map_size - 1)
-				debr.group_item = item;
 		}
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	}
@@ -1361,13 +1365,6 @@ static void parameter_selected(void)
 	do_navigation_bar_update();
 
 	/* parameter type stuff */
-	if (parameter_get_selected(NULL, FALSE)) {
-		if (gebr_geoxml_parameter_get_type(debr.parameter) == GEBR_GEOXML_PARAMETER_TYPE_GROUP)
-			gtk_widget_hide(debr.group_item);
-		else
-			gtk_widget_show(debr.group_item);
-	} else
-		gtk_widget_show(debr.group_item);
 	gtk_action_set_visible(gtk_action_group_get_action(debr.action_group,
 							   "parameter_type_group"),
 			       !gebr_geoxml_parameter_get_is_in_group(debr.parameter));
@@ -1430,7 +1427,7 @@ static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 	param_preview    = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "program_preview"));
 	param_new        = gtk_image_menu_item_new_from_stock(GTK_STOCK_NEW, NULL);
 
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(param_new), GTK_WIDGET(debr.new_submenu));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(param_new), parameter_create_menu_with_types(FALSE));
 
 	if (parameter_get_selected(&iter, FALSE) == FALSE) {
 		//gtk_widget_set_sensitive(param_cut, FALSE);

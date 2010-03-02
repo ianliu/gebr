@@ -292,22 +292,24 @@ gboolean gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPo
 						gpointer user_data);
 
 /**
- * The purpose of this callback is to modify \p menu whenever it is droped down.
- */
-typedef void (*GebrGuiDropDown)(GtkMenu * menu);
-
-/**
- * Sets a drop-down \p menu to open below \p widget on click event.
- * \param callback Called when the drop down is requested. May be NULL.
- * \see GebrGuiDropDown
- */
-void gebr_gui_gtk_widget_set_drop_down_menu_on_click(GtkWidget * widget, GtkMenu * menu, GebrGuiDropDown callback);
-
-/**
  * Shows \p menu below \p widget.
  * \see gebr_gui_gtk_widget_set_drop_down_menu_on_click
  */
 void gebr_gui_gtk_widget_drop_down_menu(GtkWidget * widget, GtkMenu * menu);
+
+/**
+ * The purpose of this callback is to create a menu for displaying below the widget given in the \ref
+ * gebr_gui_gtk_widget_set_drop_down_menu_on_click.
+ */
+typedef GtkMenu * (*GebrGuiDropDownFunc)(GtkWidget * widget, gpointer user_data);
+
+/**
+ * Sets a drop-down menu to open below \p widget on click event.
+ * \param callback Called when the drop down is requested. It must return a \ref GtkMenu.
+ * \see GebrGuiDropDown
+ */
+void gebr_gui_gtk_widget_set_drop_down_menu_on_click(GtkWidget * widget, GebrGuiDropDownFunc dropdown,
+						     gpointer user_data);
 
 /**
  * Sets \p callback to fire when user right click or request for a context menu on \p tree_view.

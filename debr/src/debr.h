@@ -63,8 +63,6 @@ struct debr {
 	/* 'special' tool items */
 	GtkToolItem *tool_item_new;
 	GtkToolItem *tool_item_change_type;
-	GtkMenu *new_submenu;
-	GtkWidget *group_item;
 
 	/* notebook's widgets */
 	struct ui_menu ui_menu;

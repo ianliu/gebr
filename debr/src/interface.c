@@ -329,11 +329,10 @@ void debr_setup_ui(void)
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox, gtk_label_new(_("Parameter")));
 
 	/* Treating the 'new' button */
-	debr.new_submenu = GTK_MENU(parameter_create_menu_with_types(FALSE));
 	debr.tool_item_new = gtk_tool_button_new_from_stock(GTK_STOCK_NEW);
 	gtk_tool_item_set_tooltip_text(debr.tool_item_new, _("Create new parameter"));
 	gebr_gui_gtk_widget_set_drop_down_menu_on_click(gtk_bin_get_child(GTK_BIN(debr.tool_item_new)),
-							debr.new_submenu, NULL);
+							(GebrGuiDropDownFunc)on_drop_down_menu_requested, GINT_TO_POINTER(0));
 
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
@@ -374,8 +373,9 @@ void debr_setup_ui(void)
 					 (gtk_action_group_get_action(debr.action_group, "program_preview"))), -1);
 
 	debr.tool_item_change_type = gtk_tool_button_new_from_stock(GTK_STOCK_CONVERT);
+	gtk_tool_item_set_tooltip_text(debr.tool_item_change_type, _("Change parameter type"));
 	gebr_gui_gtk_widget_set_drop_down_menu_on_click(gtk_bin_get_child(GTK_BIN(debr.tool_item_change_type)),
-							GTK_MENU(parameter_create_menu_with_types(TRUE)), NULL);
+							(GebrGuiDropDownFunc)on_drop_down_menu_requested, GINT_TO_POINTER(1));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), debr.tool_item_change_type, -1);
 
 	gtk_widget_show_all(toolbar);

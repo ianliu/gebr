@@ -655,55 +655,48 @@ gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPopupCallba
 	return TRUE;
 }
 
-struct GebrGuiDropDownData {
-	GtkWidget *menu;
-	GebrGuiDropDown callback;
-};
-
-static gboolean on_widget_press_drop_down(GtkWidget * widget, GdkEventButton * event, struct GebrGuiDropDownData * data)
+void gebr_gui_gtk_widget_drop_down_menu(GtkWidget * widget, GtkMenu * menu)
 {
 	gint x, y;
 	gint xb, yb, hb;
-
-	if (data->callback)
-		(data->callback)(GTK_MENU(data->menu));
 
 	gdk_window_get_origin(widget->window, &x, &y);
 	xb = widget->allocation.x;
 	yb = widget->allocation.y;
 	hb = widget->allocation.height;
 
-	void popup_position(GtkMenu * menu_, gint * xp, gint * yp, gboolean * push_in, gpointer user_data) {
+	void popup_position(GtkMenu *m, gint *xp, gint *yp, gboolean *push_in, gpointer d) {
 		*xp = x + xb;
 		*yp = y + yb + hb;
 		*push_in = TRUE;
 	}
 
-	gtk_widget_show_all(data->menu);
-	gtk_menu_popup(GTK_MENU(data->menu), NULL, NULL, popup_position, NULL, 0, gtk_get_current_event_time());
+	gtk_widget_show_all(GTK_WIDGET(menu));
+	gtk_menu_popup(menu, NULL, NULL, popup_position, NULL, 0, gtk_get_current_event_time());
+}
 
+struct GebrGuiDropDownData {
+	GebrGuiDropDownFunc dropdown;
+	gpointer user_data;
+};
+
+static gboolean on_widget_press_drop_down(GtkWidget * widget, GdkEventButton * event, struct GebrGuiDropDownData * data)
+{
+	GtkMenu *menu;
+	menu = data->dropdown(widget, data->user_data);
+	gebr_gui_gtk_widget_drop_down_menu(widget, menu);
 	return FALSE;
 }
 
-void gebr_gui_gtk_widget_set_drop_down_menu_on_click(GtkWidget * widget, GtkMenu * menu, GebrGuiDropDown callback)
+void gebr_gui_gtk_widget_set_drop_down_menu_on_click(GtkWidget * widget, GebrGuiDropDownFunc dropdown,
+						     gpointer user_data)
 {
-	g_return_if_fail(menu != NULL);
-	g_return_if_fail(GTK_IS_BUTTON(widget));
-
 	struct GebrGuiDropDownData *data;
 	data = g_new(struct GebrGuiDropDownData, 1);
-	data->menu = GTK_WIDGET(menu);
-	data->callback = callback;
+	data->dropdown = dropdown;
+	data->user_data = user_data;
 	g_signal_connect(widget, "button-press-event", G_CALLBACK(on_widget_press_drop_down), data);
 	g_object_weak_ref(G_OBJECT(widget), (GWeakNotify)g_free, data);
-}
-
-void gebr_gui_gtk_widget_drop_down_menu(GtkWidget * widget, GtkMenu * menu)
-{
-	struct GebrGuiDropDownData data;
-	data.menu = GTK_WIDGET(menu);
-	data.callback = NULL;
-	on_widget_press_drop_down(widget, NULL, &data);
 }
 
 void

@@ -601,3 +601,7 @@ gboolean on_parameter_tool_item_new_press(GtkWidget * tool_button)
 	return FALSE;
 }
 
+void on_drop_down_menu_requested(GtkWidget * button, gpointer data)
+{
+	parameter_create_menu_with_types(GPOINTER_TO_INT(data));
+}
