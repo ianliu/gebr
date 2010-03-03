@@ -512,7 +512,7 @@ static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, s
 		gtk_widget_destroy(dialog);
 		return TRUE;
 	}
-	if (event->keyval == GDK_s && event->state | GDK_CONTROL_MASK) {
+	if (event->keyval == GDK_s && event->state & GDK_CONTROL_MASK) {
 		help_edit_save(data);
 		return TRUE;
 	}
