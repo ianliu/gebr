@@ -373,6 +373,7 @@ gboolean program_dialog_setup_ui(void)
 					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK,NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 	gtk_widget_set_size_request(dialog, 400, 350);
 
 	table = gtk_table_new(6, 2, FALSE);
@@ -424,6 +425,7 @@ gboolean program_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(title_label), 0, 0.5);
 
 	title_entry = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(title_entry), TRUE);
 	gtk_widget_show(title_entry);
 	gtk_table_attach(GTK_TABLE(table), title_entry, 1, 2, 1, 2,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -439,6 +441,7 @@ gboolean program_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(binary_label), 0, 0.5);
 
 	binary_entry = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(binary_entry), TRUE);
 	gtk_widget_show(binary_entry);
 	gtk_table_attach(GTK_TABLE(table), binary_entry, 1, 2, 2, 3,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -454,6 +457,7 @@ gboolean program_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(description_label), 0, 0.5);
 
 	description_entry = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(description_entry), TRUE);
 	gtk_widget_show(description_entry);
 	gtk_table_attach(GTK_TABLE(table), description_entry, 1, 2, 3, 4,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -489,6 +493,7 @@ gboolean program_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(version_label), 0, 0.5);
 
 	version_entry = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(version_entry), TRUE);
 	gtk_widget_show(version_entry);
 	gtk_table_attach(GTK_TABLE(table), version_entry, 1, 2, 5, 6,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -504,6 +509,7 @@ gboolean program_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(url_label), 0, 0.5);
 
 	url_entry = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(url_entry), TRUE);
 	gtk_widget_show(url_entry);
 	gtk_table_attach(GTK_TABLE(table), url_entry, 1, 2, 6, 7,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);

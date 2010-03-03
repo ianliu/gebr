@@ -152,8 +152,8 @@
       </div>
 
       <div class="footer">
-        <span class="left">G&ecirc;BR @VERSION@ (<!-- begin dtd --><!--end dtd -->) |
-        Version of the program</span>
+        <span class="left">G&ecirc;BR @VERSION@ (<!-- begin dtd --><!-- end dtd -->) |
+		<!-- begin ver --><!-- end ver --></span>
 
         <div class="clearer"></div>
       </div>

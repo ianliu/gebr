@@ -130,11 +130,6 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 		help_subst_fields(prepared_html, program, FALSE);
 	}
 
-	/* Always fix DTD version */
-	gsize pos = strip_block(prepared_html, "dtd");
-	if (pos)
-		g_string_insert(prepared_html, pos,
-				gebr_geoxml_document_get_version(GEBR_GEOXML_DOCUMENT(debr.menu)));
 	/* CSS fix */
 	help_fix_css(prepared_html);
 
@@ -347,8 +342,13 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 		}
 	}
 
+	pos = strip_block(help, "dtd");
+	g_string_insert(help, pos, gebr_geoxml_document_get_version(GEBR_GEOXML_DOCUMENT(debr.menu)));
+
 	/* Parameter's description replacement */
 	if (program != NULL) {
+		pos = strip_block(help, "ver");
+		g_string_insert(help, pos, gebr_geoxml_program_get_version(program));
 		help_insert_parameters_list(help, program, refresh);
 	} else {		/* strip parameter section for flow help */
 		strip_block(help, "par");
