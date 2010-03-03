@@ -167,8 +167,9 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 	}
 
 	gdome_di_saveDocToMemoryEnc(dom_implementation, tmp_doc, &xml, ENCODING, GDOME_SAVE_STANDARD, &exception);
-	doc = xmlCtxtReadMemory(ctxt, xml, strlen(xml), NULL, NULL, XML_PARSE_NOBLANKS | XML_PARSE_DTDATTR |	/* default DTD attributes */
-				XML_PARSE_NOENT |	/* substitute entities */
+	doc = xmlCtxtReadMemory(ctxt, xml, strlen(xml), NULL, NULL,
+				XML_PARSE_NOBLANKS | XML_PARSE_DTDATTR |	/* default DTD attributes */
+				XML_PARSE_NOENT |				/* substitute entities */
 				XML_PARSE_DTDVALID);
 
 	/* frees memory before we quit. */
@@ -403,10 +404,13 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 			}
 		}
 	}
-	/* flow 0.3.1 to 0.3.2 */ 
+	/* flow 0.3.2 to 0.3.3 */ 
 	if (strcmp(version, "0.3.3") < 0) {
 		// Backward compatible change, nothing to be done.
 		// Added #IMPLIED 'version' attribute to 'program' tag.
+		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.3");
+		}
 	}
 
 	/* CHECKS (may impact performance) */

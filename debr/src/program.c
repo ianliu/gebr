@@ -493,7 +493,6 @@ gboolean program_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), version_entry, 1, 2, 5, 6,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 	g_signal_connect(version_entry, "changed", G_CALLBACK(program_version_changed), debr.program);
-	gtk_widget_set_sensitive(version_entry, FALSE);
 
 	/*
 	 * URL
