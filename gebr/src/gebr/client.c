@@ -88,20 +88,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 								   queues[i], 2, NULL, -1);
 
 						/* at job control */
-						gtk_tree_store_append(gebr.ui_job_control->store, &iter, NULL);
-						if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) 
-							gtk_tree_store_set(gebr.ui_job_control->store, &iter,
-									   JC_SERVER_ADDRESS,
-									   server->comm->address->str, JC_QUEUE_NAME,
-									   queues[i], JC_TITLE, queues[i], JC_STRUCT,
-									   NULL, JC_IS_JOB, FALSE, -1);
-						else if (queues[i][0] != 'j')
-							gtk_tree_store_set(gebr.ui_job_control->store, &iter,
-									   JC_SERVER_ADDRESS,
-									   server->comm->address->str, JC_QUEUE_NAME,
-									   queues[i], JC_TITLE, queues[i]+1
-									   /*jump 'q' identifier*/, JC_STRUCT, NULL,
-									   JC_IS_JOB, FALSE, -1);
+						server_queue_find_at_job_control(server, queues[i], NULL);
 
 						g_string_free(string, TRUE);
 					}

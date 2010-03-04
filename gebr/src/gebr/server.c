@@ -114,6 +114,11 @@ gboolean server_find_address(const gchar * address, GtkTreeIter * iter)
 	return FALSE;
 }
 
+const gchar *server_get_name_from_address(const gchar * address)
+{
+	return !strcmp(address, "127.0.0.1") ? _("Local server") : address;
+}
+
 struct server *server_new(const gchar * address, gboolean autoconnect)
 {
 	static const struct gebr_comm_server_ops ops = {
@@ -217,12 +222,14 @@ gboolean server_queue_find(struct server * server, const gchar * name, GtkTreeIt
 
 		g_free(i_name);
 	}
+
 	return FALSE;
 }
 
-gboolean server_queue_find_at_job_control(struct server * server, const gchar * name, GtkTreeIter * _iter)
+void server_queue_find_at_job_control(struct server * server, const gchar * name, GtkTreeIter * _iter)
 {
 	GtkTreeIter iter;
+
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_job_control->store)) {
 		gchar *i_name;
 		gchar *i_address;
@@ -232,21 +239,33 @@ gboolean server_queue_find_at_job_control(struct server * server, const gchar * 
 				   JC_QUEUE_NAME, &i_name, JC_IS_JOB, &is_job, -1);
 		if (is_job)
 			continue;
-		if (!strcmp(server->comm->address->str, i_address) && !strcmp(name, i_name)) {
-			if (_iter != NULL)
-				*_iter = iter;
-			g_free(i_name);
-			g_free(i_address);
-			return TRUE;
-		}
+		if (strcmp(server->comm->address->str, i_address))
+			continue;
+		if (server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
+		    if (!((name[0] == 'j' && i_name[0] == 'j') || !strcmp(name, i_name)))
+		    	continue;
+		} else if (strcmp(name, i_name))
+			continue;
+		
+		if (_iter != NULL)
+			*_iter = iter;
 		g_free(i_name);
 		g_free(i_address);
+		return;
 	}
-	return FALSE;
-}
 
-const gchar *server_get_name_from_address(const gchar * address)
-{
-	return !strcmp(address, "127.0.0.1") ? _("Local server") : address;
+	GString *title = g_string_new(NULL);
+
+	g_string_printf(title, "%s at %s", (server->type == GEBR_COMM_SERVER_TYPE_MOAB) ? name : (name[0] == 'j') ?
+			_("Immediatly") : /* jump q identifier */ name+1,
+			server_get_name_from_address(server->comm->address->str));
+	gtk_tree_store_append(gebr.ui_job_control->store, &iter, NULL);
+	if (_iter != NULL)
+		*_iter = iter;
+	gtk_tree_store_set(gebr.ui_job_control->store, &iter, JC_SERVER_ADDRESS,
+			   server->comm->address->str, JC_QUEUE_NAME, name, JC_TITLE, title->str,
+			   JC_STRUCT, NULL, JC_IS_JOB, FALSE, -1);
+
+	g_string_free(title, TRUE);
 }
 

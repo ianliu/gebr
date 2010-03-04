@@ -35,6 +35,12 @@
  */
 gboolean server_find_address(const gchar * address, GtkTreeIter * iter);
 
+/**
+ * Return the server name from \p address. Except for \p address 127.0.0.1,
+ * returns \p address.
+ */
+const gchar *server_get_name_from_address(const gchar * address);
+
 struct server {
 	struct gebr_comm_server *comm;
 	GtkTreeIter iter;
@@ -76,14 +82,9 @@ gboolean server_find(struct server *server, GtkTreeIter * iter);
 gboolean server_queue_find(struct server * server, const gchar * queue_name, GtkTreeIter * iter);
 
 /**
- * Find the queue named \p queue_name.
- * If found, returns TRUE and set \p iter corresponding (from the job control UI). 
+ * Find the queue named \p queue_name and set \p iter corresponding (from the job control UI).
+ * If not found, the queue is added.
  */
-gboolean server_queue_find_at_job_control(struct server * server, const gchar * queue_name, GtkTreeIter * _iter);
-
-/**
- *
- */
-const gchar *server_get_name_from_address(const gchar * address);
+void server_queue_find_at_job_control(struct server * server, const gchar * queue_name, GtkTreeIter * _iter);
 
 #endif				//__SERVER_H

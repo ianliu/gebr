@@ -64,12 +64,8 @@ static GtkTreeIter job_add_jc_queue_iter(struct job * job)
 {
 	GtkTreeIter queue_jc_iter;
 
-	if (!server_queue_find_at_job_control(job->server, job->queue->str, &queue_jc_iter))
-		gtk_tree_store_append(gebr.ui_job_control->store, &queue_jc_iter, NULL);
-	gtk_tree_store_set(gebr.ui_job_control->store, &queue_jc_iter, JC_SERVER_ADDRESS,
-			   job->server->comm->address->str, JC_QUEUE_NAME, job->queue->str, JC_TITLE, job->server->type
-			   == GEBR_COMM_SERVER_TYPE_REGULAR ? job->queue->str+1 : job->queue->str
-			   /*jump 'q' identifier*/, JC_STRUCT, job, JC_IS_JOB, FALSE, -1);
+	server_queue_find_at_job_control(job->server, job->queue->str, &queue_jc_iter);
+	gtk_tree_store_set(gebr.ui_job_control->store, &queue_jc_iter, JC_STRUCT, job, -1);
 
 	return queue_jc_iter;
 }
@@ -80,7 +76,6 @@ struct job *job_add(struct server *server, GString * jid,
 		    cmd_line, GString * output, GString * queue, GString * moab_jid)
 {
 	GtkTreeIter iter;
-	gboolean has_queue = FALSE;
 	GtkTreeIter queue_jc_iter;
 
 	struct job *job;
@@ -148,18 +143,13 @@ struct job *job_add(struct server *server, GString * jid,
 				gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, 2,
 						   job, -1);
 
-				has_queue = TRUE;
-				queue_jc_iter = job_add_jc_queue_iter(job);
-
 				g_string_free(string, TRUE);
 			}
-	} else if (queue_exists) {
-		has_queue = TRUE;
-		queue_jc_iter = job_add_jc_queue_iter(job);
 	}
 
+	queue_jc_iter = job_add_jc_queue_iter(job);
 	/* append to the store and select it */
-	gtk_tree_store_append(gebr.ui_job_control->store, &iter, has_queue ? &queue_jc_iter : NULL); 
+	gtk_tree_store_append(gebr.ui_job_control->store, &iter, &queue_jc_iter); 
 	gtk_tree_store_set(gebr.ui_job_control->store, &iter, JC_SERVER_ADDRESS, job->server->comm->address->str,
 			   JC_QUEUE_NAME, job->queue->str, JC_TITLE, job->title->str, JC_STRUCT, job, JC_IS_JOB, TRUE,
 			   -1);
