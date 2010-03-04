@@ -68,6 +68,8 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	guint row;
 	GtkWidget *label;
 	GtkWidget *eventbox;
+	GtkWidget *fake_radio_button;
+	GtkWidget *list_widget_hbox;
 
 	ui_preferences = g_malloc(sizeof(struct ui_preferences));
 	ui_preferences->first_run = first_run;
@@ -144,12 +146,29 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 3, 3);
 
+	list_widget_hbox = gtk_hbox_new(FALSE, 0);
+	gtk_table_attach(GTK_TABLE(table), list_widget_hbox, 1, 2, row, row + 1,
+				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+				 (GtkAttachOptions) (0), 0, 0), ++row;
+
+	fake_radio_button = gtk_radio_button_new(NULL);
+	ui_preferences->built_in_radio_button =  gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio_button), _("Built-in"));
+	gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui_preferences->built_in_radio_button, FALSE, FALSE, 2);
+	ui_preferences->user_radio_button =  gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio_button), _("Custom"));
+	gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui_preferences->user_radio_button, FALSE, FALSE, 2);
+
 	ui_preferences->editor = gtk_entry_new();
 	gebr_gui_gtk_widget_set_tooltip(ui_preferences->editor, _("An HTML capable editor to edit helps and reports"));
-	gtk_table_attach(GTK_TABLE(table), ui_preferences->editor, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3), ++row;
+	gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui_preferences->editor, FALSE, FALSE, 0);
 
 	/* read config */
-	gtk_entry_set_text(GTK_ENTRY(ui_preferences->editor), gebr.config.editor->str);
+	if (gebr.config.editor->len != 0){
+		gtk_entry_set_text(GTK_ENTRY(ui_preferences->editor), gebr.config.editor->str);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_preferences->user_radio_button), TRUE);
+	} else {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_preferences->built_in_radio_button), TRUE);
+		gtk_entry_set_text(GTK_ENTRY(ui_preferences->editor), "");
+	}
 
 	/* Browser */
 	label = gtk_label_new(_("Browser"));
@@ -219,7 +238,11 @@ static void preferences_actions(GtkDialog * dialog, gint arg1, struct ui_prefere
 			g_string_assign(gebr.config.username, gtk_entry_get_text(GTK_ENTRY(ui_preferences->username)));
 			g_string_assign(gebr.config.email, gtk_entry_get_text(GTK_ENTRY(ui_preferences->email)));
 			g_string_assign(gebr.config.usermenus, tmp);
-			g_string_assign(gebr.config.editor, gtk_entry_get_text(GTK_ENTRY(ui_preferences->editor)));
+			if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui_preferences->user_radio_button)))
+				g_string_assign(gebr.config.editor, gtk_entry_get_text(GTK_ENTRY(ui_preferences->editor)));
+			else
+				g_string_assign(gebr.config.editor, "");
+
 			g_string_assign(gebr.config.browser, tmp3);
 			gebr.config.log_load =
 			    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui_preferences->log_load));

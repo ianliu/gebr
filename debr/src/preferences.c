@@ -48,6 +48,10 @@ void preferences_dialog_setup_ui(void)
 	GtkWidget *eventbox;
 	int i;
 	gboolean newbrowser = TRUE;
+	GtkWidget *fake_radio_button;
+	GtkWidget *built_in_radio_button;
+	GtkWidget *user_radio_button;
+	GtkWidget *list_widget_hbox;
 
 	/* dialog */
 	window = gtk_dialog_new_with_buttons(_("Preferences"),
@@ -120,13 +124,33 @@ void preferences_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
 
 	/* Editor */
+
 	label = gtk_label_new(_("HTML editor"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
+
+	list_widget_hbox = gtk_hbox_new(FALSE, 0);
+	gtk_table_attach(GTK_TABLE(table), list_widget_hbox, 1, 2, 4, 5,
+				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+				 (GtkAttachOptions) (0), 0, 0);
+
+	fake_radio_button = gtk_radio_button_new(NULL);
+	built_in_radio_button =  gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio_button), _("Built-in"));
+	gtk_box_pack_start(GTK_BOX(list_widget_hbox), built_in_radio_button, FALSE, FALSE, 2);
+	user_radio_button =  gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio_button), _("Custom"));
+	gtk_box_pack_start(GTK_BOX(list_widget_hbox), user_radio_button, FALSE, FALSE, 2);
+
 	htmleditor_entry = gtk_entry_new();
 	gtk_tooltips_set_tip(tips, htmleditor_entry, _("An HTML capable editor to edit helps and reports"), "");
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), htmleditor_entry, 1, 2, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_entry_set_text(GTK_ENTRY(htmleditor_entry), debr.config.htmleditor->str);
+	gtk_box_pack_start(GTK_BOX(list_widget_hbox), htmleditor_entry, FALSE, FALSE, 0);
+
+	if (debr.config.htmleditor->len != 0){
+		gtk_entry_set_text(GTK_ENTRY(htmleditor_entry), debr.config.htmleditor->str);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(user_radio_button), TRUE);
+	} else {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(built_in_radio_button), TRUE);
+		gtk_entry_set_text(GTK_ENTRY(htmleditor_entry), "");
+	}
 
 	gtk_widget_show_all(window);
 	switch (gtk_dialog_run(GTK_DIALOG(window))) {
@@ -141,7 +165,11 @@ void preferences_dialog_setup_ui(void)
 			g_string_assign(debr.config.email, gtk_entry_get_text(GTK_ENTRY(email_entry)));
 			g_string_assign(debr.config.browser,
 					gtk_combo_box_get_active_text(GTK_COMBO_BOX(browser_combo)));
-			g_string_assign(debr.config.htmleditor, gtk_entry_get_text(GTK_ENTRY(htmleditor_entry)));
+			if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(user_radio_button)))
+				g_string_assign(debr.config.htmleditor, gtk_entry_get_text(GTK_ENTRY(htmleditor_entry)));
+			else
+				g_string_assign(debr.config.htmleditor, "");
+
 
 			/* save */
 			debr_config_save();

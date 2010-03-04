@@ -98,12 +98,9 @@ void help_show(const gchar * help, const gchar * title)
 void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 {
 	GString *prepared_html;
-
-	/* check if there is an html editor in preferences */
-	if (!strlen(debr.config.htmleditor->str)) {
-		debr_message(GEBR_LOG_ERROR, _("No HTML editor specified in preferences."));
-		return;
-	}
+	GString *cmd_line;
+	FILE *html_fp;
+	GString *html_path;
 
 	/* initialization */
 	prepared_html = g_string_new(NULL);
@@ -136,11 +133,101 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 	/* EDIT IT */
 	if (program != NULL) {
 		gebr_geoxml_program_set_help(program, prepared_html->str);
-		gebr_gui_program_help_edit(program, help_edit_on_finished, help_edit_on_refresh);
+
+		if (debr.config.htmleditor->len == 0){
+			gebr_gui_program_help_edit(program, help_edit_on_finished, help_edit_on_refresh);
+		} else {
+
+			/* create temporary filename */
+			html_path = gebr_make_temp_filename("debr_XXXXXX.html");
+
+			/* open temporary file with help from XML */
+			html_fp = fopen(html_path->str, "w");
+			if (html_fp == NULL) {
+				debr_message(GEBR_LOG_ERROR, _("Unable to create temporary file."));
+				goto out_program;
+			}
+			fputs(prepared_html->str, html_fp);
+			fclose(html_fp);
+
+			cmd_line = g_string_new(NULL);
+			g_string_printf(cmd_line, "%s  %s", debr.config.htmleditor->str, html_path->str);
+			system(cmd_line->str);
+
+			/* Add file to list of files to be removed */
+			debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
+
+			/* open temporary file with help from XML */
+			html_fp = fopen(html_path->str, "r");
+			if (html_fp == NULL) {
+				debr_message(GEBR_LOG_ERROR, _("Unable to create temporary file."));
+				goto out_program;
+			}
+			g_string_assign(prepared_html, "");
+
+			gchar buffer[1000];
+			while (fgets(buffer, sizeof(buffer), html_fp))
+				g_string_append(prepared_html, buffer);
+
+			fclose(html_fp);
+			help_edit_on_finished(GEBR_GEOXML_OBJECT(program), prepared_html->str);
+
+			g_string_prepend(html_path, "file://");
+			gebr_gui_help_show(html_path->str, _("Program Help"));
+
+out_program:		g_string_free(html_path, FALSE);
+			g_string_free(prepared_html, TRUE);
+			g_string_free(cmd_line, TRUE);
+		}
 	} else {
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html->str);
-		gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), help_edit_on_finished,
-				   help_edit_on_refresh, TRUE);
+
+		if (debr.config.htmleditor->len == 0){
+			gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), help_edit_on_finished,
+					   help_edit_on_refresh, TRUE);
+		} else {
+
+			/* create temporary filename */
+			html_path = gebr_make_temp_filename("debr_XXXXXX.html");
+
+			/* open temporary file with help from XML */
+			html_fp = fopen(html_path->str, "w");
+			if (html_fp == NULL) {
+				debr_message(GEBR_LOG_ERROR, _("Unable to create temporary file."));
+				goto out_menu;
+			}
+			fputs(prepared_html->str, html_fp);
+			fclose(html_fp);
+
+			cmd_line = g_string_new(NULL);
+			g_string_printf(cmd_line, "%s  %s", debr.config.htmleditor->str, html_path->str);
+			system(cmd_line->str);
+
+			/* Add file to list of files to be removed */
+			debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
+
+			/* open temporary file with help from XML */
+			html_fp = fopen(html_path->str, "r");
+			if (html_fp == NULL) {
+				debr_message(GEBR_LOG_ERROR, _("Unable to create temporary file."));
+				goto out_menu;
+			}
+			g_string_assign(prepared_html, "");
+
+			gchar buffer[1000];
+			while (fgets(buffer, sizeof(buffer), html_fp))
+				g_string_append(prepared_html, buffer);
+
+			fclose(html_fp);
+			help_edit_on_finished(GEBR_GEOXML_OBJECT(GEBR_GEOXML_DOCUMENT(debr.menu)), prepared_html->str);
+
+			g_string_prepend(html_path, "file://");
+			gebr_gui_help_show(html_path->str, _("Menu Help"));
+
+out_menu:		g_string_free(html_path, FALSE);
+			g_string_free(prepared_html, TRUE);
+			g_string_free(cmd_line, TRUE);
+		}
 	}
 }
 
