@@ -1,3 +1,7 @@
+/**
+ * \file gebr.c General purpose functions
+ */
+
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -36,6 +40,11 @@
 #include "ui_preferences.h"
 #include "ui_server.h"
 
+G_BEGIN_DECLS
+
+/**
+ * The various tabs in GeBR interface.
+ */
 enum NOTEBOOK_PAGE {
 	NOTEBOOK_PAGE_PROJECT_LINE = 0,
 	NOTEBOOK_PAGE_FLOW_BROWSE,
@@ -43,9 +52,14 @@ enum NOTEBOOK_PAGE {
 	NOTEBOOK_PAGE_JOB_CONTROL,
 };
 
-/* global variable of common needed stuff */
+/**
+ * Global variable of common needed stuff.
+ */
 extern struct gebr gebr;
 
+/**
+ * Main program structure, containing configurations and interface widgets.
+ */
 struct gebr {
 	GtkWidget *window;
 	GtkWidget *menu[MENUBAR_N];
@@ -54,8 +68,7 @@ struct gebr {
 	GtkAccelGroup *accel_group;
 	GtkActionGroup *action_group;
 
-	/* for strange things ;) */
-	GtkWidget *invisible;
+	GtkWidget *invisible;			/**< \deprecated This should be avoided. Use Stock icons instead. */
 
 	GebrGeoXmlDocument *project_line;
 	GebrGeoXmlProject *project;
@@ -107,9 +120,12 @@ struct gebr {
 		GdkPixbuf *stock_go_forward;
 		GdkPixbuf *stock_info;
 		GdkPixbuf *chronometer;
-	} pixmaps;
+	} pixmaps;				/**< \deprecated Should use stock icons instead. */
 };
 
+/**
+ * Take initial measures. This function is called when \ref gebr.window is shown.
+ */
 void gebr_init(void);
 
 /**
@@ -117,15 +133,33 @@ void gebr_init(void);
  */
 gboolean gebr_quit(void);
 
-int gebr_config_load(gboolean nox);
+/**
+ * Initialize configuration for GeBR.
+ */
+int gebr_config_load(void);
 
+/**
+ * Populates the various data models, such as menus index and projects & lines.
+ */
 void gebr_config_apply(void);
 
+/**
+ * Save GeBR config to ~/.gebr/.gebr.conf file.
+ * \param verbose If TRUE, report 'Configuration saved' in status bar.
+ */
 void gebr_config_save(gboolean verbose);
 
+/**
+ * Logs \p message in various ways depending on \p type, \p in_statusbar and \p in_log_file.
+ * \param type The type of the log message.
+ * \param in_statusbar If TRUE, shows message in status bar. Depending on \p type, use a different icon in front of the
+ * message.
+ * \param in_log_file If TRUE, appends \p message in log file (see ~/.gebr/log/ directory).
+ * \param message A printf-like formated message.
+ */
 void gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in_log_file,
 		  const gchar * message, ...);
 
-int gebr_install_private_menus(gchar ** menu, gboolean overwrite);
+G_END_DECLS
 
 #endif				//__GEBR_H

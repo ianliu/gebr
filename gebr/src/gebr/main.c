@@ -33,14 +33,8 @@
 int main(int argc, char **argv, char **env)
 {
 	gboolean show_version = FALSE;
-	gboolean overwrite = FALSE;
 	gboolean show_sys_dir = FALSE;
-	gchar **menus = NULL;
 	GOptionEntry entries[] = {
-		{"install-menu", 'I', 0, G_OPTION_ARG_FILENAME_ARRAY, &menus,
-		 _("Install menus into private menu directory"), NULL},
-		{"force-overwrite", 'f', 0, G_OPTION_ARG_NONE, &overwrite,
-		 _("Force overwriting when installing menus"), NULL},
 		{"query-system-menu", 's', 0, G_OPTION_ARG_NONE, &show_sys_dir,
 		 _("Return where GeBR looks for globally installed menus"), NULL},
 		{"version", 'V', 0, G_OPTION_ARG_NONE, &show_version,
@@ -60,8 +54,7 @@ int main(int argc, char **argv, char **env)
 	g_option_context_set_summary(context,
 				     _("GeBR is a free-software which provides an environment to seismic\n"
 				       "data processing, designed to easily assemble and run processing\n"
-				       "flows, as well as to manage jobs.")
-	    );
+				       "flows, as well as to manage jobs."));
 	g_option_context_set_description(context, _("GeBR Project - http://www.gebrproject.com/"));
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
@@ -79,8 +72,6 @@ int main(int argc, char **argv, char **env)
 		fprintf(stdout, "%s\n", GEBR_SYS_MENUS_DIR);
 		return 0;
 	}
-	if (menus != NULL)
-		return gebr_install_private_menus(menus, overwrite);
 
 	gtk_init(&argc, &argv);
 	setlocale(LC_ALL, "");

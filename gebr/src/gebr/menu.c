@@ -15,11 +15,6 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * File: menu.c
- *
- */
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -37,12 +32,12 @@
 #include "gebr.h"
 #include "document.h"
 
-/*
- * Lists all directories to be scanned for menu files.
- * This list is NULL terminated.
- * GEBR_SYS_MENUS_DIR *must* be the first element.
+/**
+ * \internal
+ * A NULL terminated vector of all directories to be scanned for menu files.
+ * NOTE: GEBR_SYS_MENUS_DIR <em>must</em> be the first element.
  */
-gchar * directory_list[] = {
+static const gchar * directory_list[] = {
 	GEBR_SYS_MENUS_DIR,
 	"/usr/share/gebr/menus",
 	"/usr/local/share/gebr/menus",
@@ -52,26 +47,14 @@ gchar * directory_list[] = {
 /*
  * Prototypes
  */
+
 static void menu_scan_directory(const gchar * directory, GKeyFile * menu_key_file, GKeyFile * category_key_file);
+static gboolean menu_compare_times(const gchar * directory, time_t index_time, gboolean recursive);
 
 /*
- * Section: Public
- * Public functions.
+ * Public functions
  */
 
-/**
- * menu_load
- * Look for a given menu _filename_ and load it if found
- */
-GebrGeoXmlFlow *menu_load(const gchar * path)
-{
-	return menu_load_path(path);
-}
-
-/*
- * Look for a given menu _filename_ and load it if found
- * \deprecated
- */
 GebrGeoXmlFlow *menu_load_ancient(const gchar * filename)
 {
 	GebrGeoXmlFlow *menu;
@@ -100,59 +83,16 @@ GebrGeoXmlFlow *menu_load_ancient(const gchar * filename)
 
 found:	menu = menu_load_path(path->str);
 
-	/* frees */
 out:	g_string_free(path, TRUE);
 
 	return menu;
 }
 
-/*
- * Function: menu_load_path
- * Load menu at the given _path_
- */
 GebrGeoXmlFlow *menu_load_path(const gchar * path)
 {
 	return GEBR_GEOXML_FLOW(document_load_path(path));
 }
 
-/**
- * 
- */
-static gboolean menu_compare_times(const gchar * directory, time_t index_time, gboolean recursive)
-{
-	gchar *filename;
-	GString *path;
-	gboolean refresh_needed;
-
-	refresh_needed = FALSE;
-	path = g_string_new(NULL);
-	gebr_directory_foreach_file(filename, directory) {
-		struct stat file_stat;
-
-		g_string_printf(path, "%s/%s", directory, filename);
-		if (recursive && g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
-			if (menu_compare_times(path->str, index_time, TRUE)) {
-				refresh_needed = TRUE;
-				goto out;
-			}
-		}
-		if (fnmatch("*.mnu", filename, 1))
-			continue;
-
-		stat(path->str, &file_stat);
-		if (index_time < file_stat.st_mtime) {
-			refresh_needed = TRUE;
-			goto out;
-		}
-	}
-
- out:	g_string_free(path, TRUE);
-	return refresh_needed;
-}
-
-/**
- * Return TRUE if there is change in menus' directories
- */
 gboolean menu_refresh_needed(void)
 {
 	gboolean needed;
@@ -210,9 +150,6 @@ gboolean menu_refresh_needed(void)
 	return needed;
 }
 
-/**
- * Read index and add menus from it to the view
- */
 void menu_list_populate(void)
 {
 	GKeyFile *menu_key_file;
@@ -286,12 +223,6 @@ out:	g_key_file_free(menu_key_file);
 	g_string_free(menus_path, TRUE);
 }
 
-/*
- * Function: menu_list_create_index
- * Create menus from found using menu_scan_directory
- *
- * Returns TRUE if successful
- */
 gboolean menu_list_create_index(void)
 {
 	GString *path;
@@ -350,14 +281,55 @@ gboolean menu_list_create_index(void)
 	return ret;
 }
 
+const gchar ** menu_get_global_directories(void)
+{
+	return directory_list + 1;
+}
+
 /*
- * Section: Private
- * Private functions.
+ * Private functions
  */
 
+/**
+ * \internal
+ * Compares the modification time of all menu files in \p directory with \p index_time and determines if the directory
+ * was changed.
+ */
+static gboolean menu_compare_times(const gchar * directory, time_t index_time, gboolean recursive)
+{
+	gchar *filename;
+	GString *path;
+	gboolean refresh_needed;
+
+	refresh_needed = FALSE;
+	path = g_string_new(NULL);
+	gebr_directory_foreach_file(filename, directory) {
+		struct stat file_stat;
+
+		g_string_printf(path, "%s/%s", directory, filename);
+		if (recursive && g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
+			if (menu_compare_times(path->str, index_time, TRUE)) {
+				refresh_needed = TRUE;
+				goto out;
+			}
+		}
+		if (fnmatch("*.mnu", filename, 1))
+			continue;
+
+		stat(path->str, &file_stat);
+		if (index_time < file_stat.st_mtime) {
+			refresh_needed = TRUE;
+			goto out;
+		}
+	}
+
+ out:	g_string_free(path, TRUE);
+	return refresh_needed;
+}
 
 /**
- * Scans _directory_ for menus
+ * \internal
+ * Scans \p directory for menus files.
  */
 static void menu_scan_directory(const gchar * directory, GKeyFile * menu_key_file, GKeyFile * category_key_file)
 {

@@ -16,11 +16,6 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-/*
- * File: gebr.c
- * General purpose functions
- */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -47,12 +42,6 @@
 
 struct gebr gebr;
 
-/*
- * Function: gebr_init
- * Take initial measures.
- *
- * This function is the callback of when the gebr.window is shown.
- */
 void gebr_init(void)
 {
 	/* initialization */
@@ -105,7 +94,7 @@ void gebr_init(void)
 	    gtk_widget_render_icon(gebr.invisible, "chronometer", GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
 	/* finally the config. file */
-	gebr_config_load(FALSE);
+	gebr_config_load();
 
 	/* check for a menu list change */
 	if (menu_refresh_needed() == TRUE) {
@@ -320,11 +309,7 @@ static void gebr_migrate_data_dir(void)
 	gtk_widget_destroy(dialog);
 }
 
-/*
- * Function: gebr_config_load
- * Initialize configuration for GeBR
- */
-gint gebr_config_load(gboolean nox)
+gint gebr_config_load()
 {
 	gboolean new_config;
 	gboolean done_by_gengetopt;
@@ -388,21 +373,15 @@ gint gebr_config_load(gboolean nox)
 
 		g_string_free(data_dir, TRUE);
 	}
-	if (nox)
-		return 0;
 
 	/* log */
 	gebr_log_load();
 	gebr_message(GEBR_LOG_START, TRUE, TRUE, _("GêBR initiating..."));
 
 	if (new_config) {
-		if (nox) {
-			return 1;
-		} else {
-			server_new("127.0.0.1", TRUE);
-			preferences_setup_ui(TRUE);
-			return 0;
-		}
+		server_new("127.0.0.1", TRUE);
+		preferences_setup_ui(TRUE);
+		return 0;
 	}
 
 	gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
@@ -438,10 +417,6 @@ gint gebr_config_load(gboolean nox)
 	return 0;
 }
 
-/*
- * Function: gebr_config_apply
- * Apply configurations to GeBR
- */
 void gebr_config_apply(void)
 {
 	menu_list_create_index();
@@ -449,12 +424,6 @@ void gebr_config_apply(void)
 	project_list_populate();
 }
 
-/*
- * Function: gebr_config_save
- * Save GeBR config to file.
- *
- * Write ~/.gebr/.gebr.conf file.
- */
 void gebr_config_save(gboolean verbose)
 {
 	GtkTreeIter iter;
@@ -528,13 +497,8 @@ void gebr_config_save(gboolean verbose)
 	return;
 }
 
-/*
- * Function: gebr_message
- * Log a message. If in_statusbar is TRUE it is writen to status bar.
- *
- */
-void
-gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in_log_file, const gchar * message, ...)
+void gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in_log_file,
+		  const gchar * message, ...)
 {
 	gchar *string;
 	va_list argp;
@@ -562,49 +526,4 @@ gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in
 	}
 
 	g_free(string);
-}
-
-int gebr_install_private_menus(gchar ** menu, gboolean overwrite)
-{
-	GString *cmdline;
-	GString *target;
-	gboolean ret;
-
-	gebr.config.path = g_string_new(NULL);
-	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", getenv("HOME"));
-	gebr_create_config_dirs();
-	if (gebr_config_load(TRUE)) {
-		fprintf(stderr, _("Unable to load GêBR configuration. Try to run GêBR once.\n"));
-		return -2;
-	}
-
-	target = g_string_new(NULL);
-	cmdline = g_string_new(NULL);
-	ret = 0;
-	while (*menu != NULL) {
-		printf(_("Installing %s "), *menu);
-		printf("\t");
-
-		/* Verifies if there is already a menu with the prescribed name */
-		g_string_printf(target, "%s/%s", gebr.config.usermenus->str, g_path_get_basename(*menu));
-
-		if (!overwrite && (g_access(target->str, F_OK) == 0)) {
-			printf(_(" SKIPPING (or use --force-overwrite)\n"));
-			ret = -3;
-		} else {
-			g_string_printf(cmdline, "cp %s %s 2>/dev/null", *menu, gebr.config.usermenus->str);
-			if (system(cmdline->str)) {
-				printf(_(" FAILED\n"));
-				ret = -2;
-			} else
-				printf(_(" OK\n"));
-		}
-
-		menu++;
-	}
-
-	g_string_free(target, TRUE);
-	g_string_free(cmdline, TRUE);
-
-	return ret;
 }

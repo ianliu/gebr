@@ -1,3 +1,7 @@
+/**
+ * \file menu.c Provides methods for loading menus
+ */
+
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -22,12 +26,46 @@
 
 #include <libgebr/geoxml.h>
 
-GebrGeoXmlFlow *menu_load(const gchar * path);
+G_BEGIN_DECLS
+ 
+/**
+ * \deprecated
+ * Look for a given menu \p filename and load it if found.
+ *
+ * \see menu_load_path
+ */
 GebrGeoXmlFlow *menu_load_ancient(const gchar * filename);
+
+/**
+ * Loads a menu at the given \p path.
+ */
 GebrGeoXmlFlow *menu_load_path(const gchar * path);
 
+/**
+ * Verify if directories to search menus have changed.
+ *
+ * \return TRUE if there is change in menus' directories.
+ */
 gboolean menu_refresh_needed(void);
+
+/**
+ * Read index and add menus from it to the view.
+ */
 void menu_list_populate(void);
+
+/**
+ * Creates the indexes files for folders listed in \ref directory_list.
+ *
+ * \return TRUE if successfully scanned all directories.
+ */
 gboolean menu_list_create_index(void);
+
+/**
+ * Lists all system directories that GeBR looks for menus.
+ * \return a vector of strings, terminated by NULL. You don't need to free this.
+ */
+const gchar ** menu_get_system_directories(void);
+
+G_END_DECLS
 
 #endif				//__MENU_H_

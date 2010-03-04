@@ -509,7 +509,7 @@ static void flow_edition_menu_add(void)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &iter,
 			   MENU_TITLE_COLUMN, &name, MENU_FILEPATH_COLUMN, &filename, -1);
-	menu = menu_load(filename);
+	menu = menu_load_path(filename);
 	if (menu == NULL)
 		goto out;
 
@@ -549,7 +549,7 @@ static void flow_edition_menu_show_help(void)
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &iter,
 			   MENU_FILEPATH_COLUMN, &menu_filename, -1);
 
-	menu = menu_load(menu_filename);
+	menu = menu_load_path(menu_filename);
 	if (menu == NULL)
 		goto out;
 	help_show(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(menu)), _("Menu help"));
