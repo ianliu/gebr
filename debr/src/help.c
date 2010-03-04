@@ -135,7 +135,7 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 	if (program != NULL) {
 		gebr_geoxml_program_set_help(program, prepared_html->str);
 
-		if (debr.config.htmleditor->len == 0){
+		if (debr.config.htmleditor->len == 0) {
 			gebr_gui_program_help_edit(program, help_edit_on_finished, help_edit_on_refresh);
 		} else {
 
@@ -158,6 +158,8 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 				debr_message(GEBR_LOG_ERROR, _("Error during editor execution."));
 			}
 
+			g_string_free(cmd_line, TRUE);
+
 			/* Add file to list of files to be removed */
 			debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
 
@@ -178,7 +180,6 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 
 out_program:		g_string_free(html_path, FALSE);
 			g_string_free(prepared_html, TRUE);
-			g_string_free(cmd_line, TRUE);
 		}
 	} else {
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html->str);
@@ -203,9 +204,10 @@ out_program:		g_string_free(html_path, FALSE);
 			cmd_line = g_string_new(NULL);
 			g_string_printf(cmd_line, "%s  %s", debr.config.htmleditor->str, html_path->str);
 
-			if (WEXITSTATUS(system(cmd_line->str))){
+			if (WEXITSTATUS(system(cmd_line->str))) {
 				debr_message(GEBR_LOG_ERROR, _("Error during editor execution."));
 			}
+			g_string_free(cmd_line, TRUE);
 
 			/* Add file to list of files to be removed */
 			debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
@@ -227,7 +229,6 @@ out_program:		g_string_free(html_path, FALSE);
 
 out_menu:		g_string_free(html_path, FALSE);
 			g_string_free(prepared_html, TRUE);
-			g_string_free(cmd_line, TRUE);
 		}
 	}
 }
@@ -431,12 +432,14 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 	}
 
 	pos = strip_block(help, "dtd");
-	g_string_insert(help, pos, gebr_geoxml_document_get_version(GEBR_GEOXML_DOCUMENT(debr.menu)));
+	if (pos)
+		g_string_insert(help, pos, gebr_geoxml_document_get_version(GEBR_GEOXML_DOCUMENT(debr.menu)));
 
 	/* Parameter's description replacement */
 	if (program != NULL) {
 		pos = strip_block(help, "ver");
-		g_string_insert(help, pos, gebr_geoxml_program_get_version(program));
+		if (pos)
+			g_string_insert(help, pos, gebr_geoxml_program_get_version(program));
 		help_insert_parameters_list(help, program, refresh);
 	} else {		/* strip parameter section for flow help */
 		strip_block(help, "par");
