@@ -40,11 +40,26 @@
 #include "document.h"
 #include "flow.h"
 
+/*
+ * Prototypes
+ */
+
 struct gebr gebr;
+
+static gboolean gebr_quit_foreach_job(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter);
+
+static void gebr_log_load(void);
+
+static void gebr_migrate_data_dir(void);
+
+static gboolean gebr_config_load_from_gengetopt(void);
+
+/*
+ * Public functions
+ */
 
 void gebr_init(void)
 {
-	/* initialization */
 	gebr.project_line = NULL;
 	gebr.project = NULL;
 	gebr.line = NULL;
@@ -102,21 +117,6 @@ void gebr_init(void)
 		menu_list_populate();
 	}
 }
-
-static gboolean gebr_quit_foreach_job(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
-{
-	struct job *job;
-	gboolean is_job;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &job, JC_IS_JOB,
-			   &is_job, -1);
-	if (!is_job)
-		return FALSE;
-	job_free(job);
-
-	return FALSE;
-}
-
 
 gboolean gebr_quit(void)
 {
@@ -188,125 +188,6 @@ gboolean gebr_quit(void)
 	gtk_main_quit();
 
 	return FALSE;
-}
-
-/*
- * Function: gebr_log_load
- * Initialize log on GUI
- */
-void gebr_log_load(void)
-{
-	GString *log_filename;
-	GList *i;
-
-	log_filename = g_string_new(NULL);
-	g_string_printf(log_filename, "%s/.gebr/log/gebr.log", getenv("HOME"));
-	gebr.log = gebr_log_open(log_filename->str);
-
-	if (gebr.config.log_load) {
-		GList *messages;
-
-		messages = gebr_log_messages_read(gebr.log);
-		for (i = messages; i != NULL; i = g_list_next(i))
-			gebr_log_add_message_to_list(gebr.ui_log, (struct gebr_log_message *)i->data);
-
-		gebr_log_messages_free(messages);
-	}
-
-	/* frees */
-	g_string_free(log_filename, TRUE);
-}
-
-/* Function: gebr_config_load_from_gengetopt
- * Backwards compatibility function for old configuration file format.
- * Returns FALSE if could not parse config with gengetopt.
- */
-static gboolean gebr_config_load_from_gengetopt(void)
-{
-	struct ggopt ggopt;
-	gint i;
-
-	if (cmdline_parser_configfile(gebr.config.path->str, &ggopt, 1, 1, 0) != 0)
-		return FALSE;
-
-	gebr.config.username = g_string_new(ggopt.name_arg);
-	gebr.config.email = g_string_new(ggopt.email_arg);
-	gebr.config.editor = g_string_new(ggopt.editor_arg);
-	gebr.config.usermenus = g_string_new(ggopt.usermenus_arg);
-	gebr.config.data = g_string_new(ggopt.data_arg);
-	gebr.config.browser = g_string_new(ggopt.browser_arg);
-	gebr.config.width = ggopt.width_arg;
-	gebr.config.height = ggopt.height_arg;
-	gebr.config.log_expander_state = (gboolean) ggopt.logexpand_given;
-	gebr.config.log_load = FALSE;
-
-	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
-	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
-	g_key_file_set_string(gebr.config.key_file, "general", "usermenus", gebr.config.usermenus->str);
-	g_key_file_set_string(gebr.config.key_file, "general", "data", gebr.config.data->str);
-	g_key_file_set_string(gebr.config.key_file, "general", "browser", gebr.config.browser->str);
-	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
-	g_key_file_set_integer(gebr.config.key_file, "general", "width", gebr.config.width);
-	g_key_file_set_integer(gebr.config.key_file, "general", "height", gebr.config.height);
-	g_key_file_set_boolean(gebr.config.key_file, "general", "log_expander_state", gebr.config.log_expander_state);
-
-	for (i = 0; i < ggopt.server_given; ++i) {
-		GString *group;
-
-		group = g_string_new(NULL);
-		g_string_printf(group, "server-%s", ggopt.server_arg[i]);
-		g_key_file_set_string(gebr.config.key_file, group->str, "address", ggopt.server_arg[i]);
-
-		g_string_free(group, TRUE);
-	}
-
-	return TRUE;
-}
-
-/*
- * Function: gebr_migrate_data_dir
- * Initialize configuration for GeBR
- */
-static void gebr_migrate_data_dir(void)
-{
-	GtkWidget *dialog;
-	GString *new_data_dir;
-	GString *command_line;
-	gchar *filename;
-	gboolean empty;
-
-	new_data_dir = g_string_new(NULL);
-	g_string_printf(new_data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
-
-	command_line = g_string_new("");
-	gebr_directory_foreach_file(filename, gebr.config.data->str)
-	    if (!fnmatch("*.prj", filename, 1) || !fnmatch("*.lne", filename, 1) || !fnmatch("*.flw", filename, 1))
-		g_string_append_printf(command_line, "%s/%s ", gebr.config.data->str, filename);
-	empty = command_line->len == 0 ? TRUE : FALSE;
-	g_string_prepend(command_line, "cp -f ");
-	g_string_append(command_line, new_data_dir->str);
-
-	if (empty || !system(command_line->str)) {
-		dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
-						GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-						GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
-						_
-						("GêBR now stores data files on its own directory. You may now delete GêBR's files at %s."),
-						gebr.config.data->str);
-		g_string_assign(gebr.config.data, new_data_dir->str);
-	} else {
-		dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
-						GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-						GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_
-						("Cannot copy data files to GêBR's directory. Please check your write permissions to your home directory."));
-	}
-	gtk_widget_show_all(dialog);
-	gtk_dialog_run(GTK_DIALOG(dialog));
-
-	g_string_free(command_line, TRUE);
-	g_string_free(new_data_dir, TRUE);
-	gtk_widget_destroy(dialog);
 }
 
 gint gebr_config_load()
@@ -526,4 +407,145 @@ void gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboole
 	}
 
 	g_free(string);
+}
+
+/*
+ * Private functions
+ */
+
+/**
+ * \internal
+ */
+static gboolean gebr_quit_foreach_job(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
+{
+	struct job *job;
+	gboolean is_job;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &job, JC_IS_JOB,
+			   &is_job, -1);
+	if (!is_job)
+		return FALSE;
+	job_free(job);
+
+	return FALSE;
+}
+
+/**
+ * \internal
+ * Initialize log on GUI.
+ */
+static void gebr_log_load(void)
+{
+	GString *log_filename;
+	GList *i;
+
+	log_filename = g_string_new(NULL);
+	g_string_printf(log_filename, "%s/.gebr/log/gebr.log", getenv("HOME"));
+	gebr.log = gebr_log_open(log_filename->str);
+
+	if (gebr.config.log_load) {
+		GList *messages;
+
+		messages = gebr_log_messages_read(gebr.log);
+		for (i = messages; i != NULL; i = g_list_next(i))
+			gebr_log_add_message_to_list(gebr.ui_log, (struct gebr_log_message *)i->data);
+
+		gebr_log_messages_free(messages);
+	}
+
+	/* frees */
+	g_string_free(log_filename, TRUE);
+}
+
+/**
+ * \internal
+ * Backwards compatibility function for old configuration file format.
+ * \return FALSE if could not parse config with gengetopt.
+ */
+static gboolean gebr_config_load_from_gengetopt(void)
+{
+	struct ggopt ggopt;
+	gint i;
+
+	if (cmdline_parser_configfile(gebr.config.path->str, &ggopt, 1, 1, 0) != 0)
+		return FALSE;
+
+	gebr.config.username = g_string_new(ggopt.name_arg);
+	gebr.config.email = g_string_new(ggopt.email_arg);
+	gebr.config.editor = g_string_new(ggopt.editor_arg);
+	gebr.config.usermenus = g_string_new(ggopt.usermenus_arg);
+	gebr.config.data = g_string_new(ggopt.data_arg);
+	gebr.config.browser = g_string_new(ggopt.browser_arg);
+	gebr.config.width = ggopt.width_arg;
+	gebr.config.height = ggopt.height_arg;
+	gebr.config.log_expander_state = (gboolean) ggopt.logexpand_given;
+	gebr.config.log_load = FALSE;
+
+	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "usermenus", gebr.config.usermenus->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "data", gebr.config.data->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "browser", gebr.config.browser->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
+	g_key_file_set_integer(gebr.config.key_file, "general", "width", gebr.config.width);
+	g_key_file_set_integer(gebr.config.key_file, "general", "height", gebr.config.height);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "log_expander_state", gebr.config.log_expander_state);
+
+	for (i = 0; i < ggopt.server_given; ++i) {
+		GString *group;
+
+		group = g_string_new(NULL);
+		g_string_printf(group, "server-%s", ggopt.server_arg[i]);
+		g_key_file_set_string(gebr.config.key_file, group->str, "address", ggopt.server_arg[i]);
+
+		g_string_free(group, TRUE);
+	}
+
+	return TRUE;
+}
+
+/**
+ * \internal
+ * Initialize configuration for GeBR.
+ */
+static void gebr_migrate_data_dir(void)
+{
+	GtkWidget *dialog;
+	GString *new_data_dir;
+	GString *command_line;
+	gchar *filename;
+	gboolean empty;
+
+	new_data_dir = g_string_new(NULL);
+	g_string_printf(new_data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
+
+	command_line = g_string_new("");
+	gebr_directory_foreach_file(filename, gebr.config.data->str)
+	    if (!fnmatch("*.prj", filename, 1) || !fnmatch("*.lne", filename, 1) || !fnmatch("*.flw", filename, 1))
+		g_string_append_printf(command_line, "%s/%s ", gebr.config.data->str, filename);
+	empty = command_line->len == 0 ? TRUE : FALSE;
+	g_string_prepend(command_line, "cp -f ");
+	g_string_append(command_line, new_data_dir->str);
+
+	if (empty || !system(command_line->str)) {
+		dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
+						GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+						GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
+						_
+						("GêBR now stores data files on its own directory. You may now delete GêBR's files at %s."),
+						gebr.config.data->str);
+		g_string_assign(gebr.config.data, new_data_dir->str);
+	} else {
+		dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
+						GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+						GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						_
+						("Cannot copy data files to GêBR's directory. Please check your write permissions to your home directory."));
+	}
+	gtk_widget_show_all(dialog);
+	gtk_dialog_run(GTK_DIALOG(dialog));
+
+	g_string_free(command_line, TRUE);
+	g_string_free(new_data_dir, TRUE);
+	gtk_widget_destroy(dialog);
 }

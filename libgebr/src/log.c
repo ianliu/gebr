@@ -61,7 +61,9 @@ struct gebr_log_message *gebr_log_message_new(enum gebr_log_message_type type, c
 
 	log_message = g_malloc(sizeof(struct gebr_log_message));
 	*log_message = (struct gebr_log_message) {
-		.type = type,.date = g_string_new(date),.message = g_string_new(message)
+		.type = type,
+		.date = g_string_new(date),
+		.message = g_string_new(message)
 	};
 
 	return log_message;

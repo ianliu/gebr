@@ -15,6 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * \file log.h Logging API
+ */
+
 #ifndef __GEBR_GEBR_LOG_H
 #define __GEBR_GEBR_LOG_H
 
@@ -22,8 +26,16 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 enum gebr_log_message_type {
-	GEBR_LOG_START, GEBR_LOG_END, GEBR_LOG_INFO, GEBR_LOG_ERROR, GEBR_LOG_WARNING, GEBR_LOG_DEBUG, GEBR_LOG_MSG
+	GEBR_LOG_START,
+	GEBR_LOG_END,
+	GEBR_LOG_INFO,
+	GEBR_LOG_ERROR,
+	GEBR_LOG_WARNING,
+	GEBR_LOG_DEBUG,
+	GEBR_LOG_MSG
 };
 
 struct gebr_log_message {
@@ -50,5 +62,7 @@ GList *gebr_log_messages_read(struct gebr_log *log);
 void gebr_log_messages_free(GList * messages);
 
 void gebr_log_add_message(struct gebr_log *log, enum gebr_log_message_type type, const gchar * message);
+
+G_END_DECLS
 
 #endif				//__GEBR_GEBR_LOG_H

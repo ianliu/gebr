@@ -69,7 +69,34 @@ int main(int argc, char **argv, char **env)
 	}
 
 	if (show_sys_dir == TRUE) {
-		fprintf(stdout, "%s\n", GEBR_SYS_MENUS_DIR);
+		GKeyFile *file;
+		GString *path;
+		GError *error;
+		gchar *usermenus;
+
+		file = g_key_file_new();
+		path = g_string_new(NULL);
+		error = NULL;
+
+		g_string_printf(path, "%s/.gebr/gebr/gebr.conf", getenv("HOME"));
+		g_key_file_load_from_file(file, path->str, G_KEY_FILE_NONE, &error);
+
+		if (error) {
+			fprintf(stderr, _("ERROR: Could not find GeBR configuration file at %s.\n"), path->str);
+			return 1;
+		}
+
+		usermenus = g_key_file_get_string(file, "general", "usermenus", &error);
+		if (!usermenus) {
+			fprintf(stderr, _("ERROR: Local menu directory not defined in GeBR configuration.\n"));
+			return 1;
+		}
+
+		fprintf(stdout, "%s\n", usermenus);
+
+		g_free(usermenus);
+		g_key_file_free(file);
+		g_string_free(path, TRUE);
 		return 0;
 	}
 
