@@ -155,7 +155,6 @@ struct job *job_add(struct server *server, GString * jid,
 			}
 	} else if (queue_exists) {
 		has_queue = TRUE;
-		puts("net");
 		queue_jc_iter = job_add_jc_queue_iter(job);
 	}
 
