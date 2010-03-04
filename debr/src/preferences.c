@@ -61,7 +61,7 @@ void preferences_dialog_setup_ui(void)
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	/* tooltips */
 	tips = gtk_tooltips_new();
-	gtk_widget_set_size_request(window, 380, 300);
+	gtk_widget_set_size_request(window, 480, 300);
 	/* table */
 	table = gtk_table_new(6, 2, FALSE);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(window)->vbox), table, TRUE, TRUE, 0);

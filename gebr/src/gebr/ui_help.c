@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/wait.h>
 
 #include <glib.h>
 
@@ -105,5 +106,58 @@ static void help_edit_on_edited(GebrGeoXmlDocument * document, const gchar * hel
 
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 {
-	gebr_gui_help_edit(document, (GebrGuiHelpEdited)help_edit_on_edited, NULL, FALSE);
+	if (gebr.config.editor->len == 0){
+		gebr_gui_help_edit(document, (GebrGuiHelpEdited)help_edit_on_edited, NULL, FALSE);
+	} else {
+		GString *prepared_html;
+		GString *cmd_line;
+		FILE *html_fp;
+		GString *html_path;
+
+		/* initialization */
+		prepared_html = g_string_new(NULL);
+
+		g_string_assign(prepared_html, gebr_geoxml_document_get_help(document));
+
+		/* create temporary filename */
+		html_path = gebr_make_temp_filename("gebr_XXXXXX.html");
+
+		/* open temporary file with help from XML */
+		html_fp = fopen(html_path->str, "w");
+		if (html_fp == NULL) {
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to create temporary file."));
+			goto out_menu;
+		}
+		fputs(prepared_html->str, html_fp);
+		fclose(html_fp);
+
+		cmd_line = g_string_new(NULL);
+		g_string_printf(cmd_line, "%s  %s", gebr.config.editor->str, html_path->str);
+		if (WEXITSTATUS(system(cmd_line->str))){
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Error during editor execution."));
+		}
+
+		/* Add file to list of files to be removed */
+		gebr.tmpfiles = g_slist_append(gebr.tmpfiles, html_path->str);
+
+		html_fp = fopen(html_path->str, "r");
+		if (html_fp == NULL) {
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to create temporary file."));
+			goto out_menu;
+		}
+		g_string_assign(prepared_html, "");
+
+		gchar buffer[1000];
+		while (fgets(buffer, sizeof(buffer), html_fp))
+			g_string_append(prepared_html, buffer);
+
+		fclose(html_fp);
+
+		gebr_geoxml_document_set_help(document, prepared_html->str);
+
+out_menu:	g_string_free(html_path, FALSE);
+		g_string_free(prepared_html, TRUE);
+		g_string_free(cmd_line, TRUE);
+
+	}
 }

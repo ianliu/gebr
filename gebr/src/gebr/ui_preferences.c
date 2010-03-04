@@ -78,7 +78,7 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 							     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 							     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 							     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-	gtk_widget_set_size_request(ui_preferences->dialog, 460, 280);
+	gtk_widget_set_size_request(ui_preferences->dialog, 560, 280);
 	g_signal_connect(ui_preferences->dialog, "delete-event",
 			 G_CALLBACK(preferences_on_delete_event), ui_preferences);
 

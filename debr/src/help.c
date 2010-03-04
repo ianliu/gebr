@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <regex.h>
 
+#include <sys/wait.h>
 #include <glib/gstdio.h>
 
 #include <libgebr/intl.h>
@@ -152,7 +153,10 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 
 			cmd_line = g_string_new(NULL);
 			g_string_printf(cmd_line, "%s  %s", debr.config.htmleditor->str, html_path->str);
-			system(cmd_line->str);
+
+			if (WEXITSTATUS(system(cmd_line->str))){
+				debr_message(GEBR_LOG_ERROR, _("Error during editor execution."));
+			}
 
 			/* Add file to list of files to be removed */
 			debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
@@ -171,9 +175,6 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 
 			fclose(html_fp);
 			help_edit_on_finished(GEBR_GEOXML_OBJECT(program), prepared_html->str);
-
-			g_string_prepend(html_path, "file://");
-			gebr_gui_help_show(html_path->str, _("Program Help"));
 
 out_program:		g_string_free(html_path, FALSE);
 			g_string_free(prepared_html, TRUE);
@@ -201,7 +202,10 @@ out_program:		g_string_free(html_path, FALSE);
 
 			cmd_line = g_string_new(NULL);
 			g_string_printf(cmd_line, "%s  %s", debr.config.htmleditor->str, html_path->str);
-			system(cmd_line->str);
+
+			if (WEXITSTATUS(system(cmd_line->str))){
+				debr_message(GEBR_LOG_ERROR, _("Error during editor execution."));
+			}
 
 			/* Add file to list of files to be removed */
 			debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
@@ -220,9 +224,6 @@ out_program:		g_string_free(html_path, FALSE);
 
 			fclose(html_fp);
 			help_edit_on_finished(GEBR_GEOXML_OBJECT(GEBR_GEOXML_DOCUMENT(debr.menu)), prepared_html->str);
-
-			g_string_prepend(html_path, "file://");
-			gebr_gui_help_show(html_path->str, _("Menu Help"));
 
 out_menu:		g_string_free(html_path, FALSE);
 			g_string_free(prepared_html, TRUE);
