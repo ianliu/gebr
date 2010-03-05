@@ -257,7 +257,7 @@ void server_queue_find_at_job_control(struct server * server, const gchar * name
 	GString *title = g_string_new(NULL);
 
 	g_string_printf(title, "%s at %s", (server->type == GEBR_COMM_SERVER_TYPE_MOAB) ? name : (name[0] == 'j') ?
-			_("Immediatly") : /* jump q identifier */ name+1,
+			_("Immediately") : /* jump q identifier */ name+1,
 			server_get_name_from_address(server->comm->address->str));
 	gtk_tree_store_append(gebr.ui_job_control->store, &iter, NULL);
 	if (_iter != NULL)
