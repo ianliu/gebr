@@ -586,9 +586,17 @@ void flow_run(struct server *server, struct gebr_comm_server_run * config)
 	/* Strip flow: remove helps and revisions */
 	gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(flow), "");
 	gebr_geoxml_flow_get_program(flow, &i, 0);
+
+	if (i == NULL) {
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flow '%s' is empty."),
+			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
+		return;
+	}
+
 	for (; i != NULL; gebr_geoxml_sequence_next(&i))
 		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(i), "");
 	gebr_geoxml_flow_get_revision(flow, &i, 0);
+
 	while (i != NULL) {
 		GebrGeoXmlSequence *tmp;
 
