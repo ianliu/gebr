@@ -232,7 +232,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(struct gebr_gui_program_e
 		if (required) {
 			gchar *markup;
 			markup = g_markup_printf_escaped("<b>%s*</b>",
-							 gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(param)));
+							 gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)));
 			label = gtk_label_new("");
 			gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), markup);
 			g_free(markup);
