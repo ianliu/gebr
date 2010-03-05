@@ -176,7 +176,6 @@ void on_menu_save_as_activate(void)
 	GtkWidget *chooser_dialog;
 	GtkFileFilter *filefilter;
 
-	gchar *tmp;
 	gchar *dirname;
 	gchar *filename;
 	gchar *current_path;
@@ -219,12 +218,26 @@ void on_menu_save_as_activate(void)
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir[0]);
 
 	gtk_widget_show(chooser_dialog);
-	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
-		goto out;
+	gboolean rerun = FALSE;
+	path = g_string_new(NULL);
+	do {
+		if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
+			goto out;
 
-	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
-	path = g_string_new(tmp);
-	gebr_append_filename_extension(path, ".mnu");
+		gchar *tmp;
+		tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
+		g_string_assign(path, tmp);
+		gebr_append_filename_extension(path, ".mnu");
+		if (strcmp(tmp, path->str))
+			rerun = TRUE;	
+		else
+			rerun = FALSE;
+		g_free(tmp);
+
+		if (rerun && g_file_test(path->str, G_FILE_TEST_IS_REGULAR))
+			if (gebr_gui_confirm_action_dialog(_(""), _("A file named \"%s\" already exists.\nDo you want to replace it?"), g_path_get_basename(path->str)))
+				break;
+	} while(rerun);
 	filename = g_path_get_basename(path->str);
 
 	/*Verify if another file with same name already exist*/
@@ -297,7 +310,6 @@ void on_menu_save_as_activate(void)
 
 	/* frees */
 	g_string_free(path, TRUE);
-	g_free(tmp);
 	g_free(filename);
 	g_free(current_path);
 
