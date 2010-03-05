@@ -36,7 +36,7 @@ int main(int argc, char **argv, char **env)
 	gboolean show_sys_dir = FALSE;
 	GOptionEntry entries[] = {
 		{"query-system-menu", 's', 0, G_OPTION_ARG_NONE, &show_sys_dir,
-		 _("Return where GeBR looks for globally installed menus"), NULL},
+		 _("Return the users menu directory"), NULL},
 		{"version", 'V', 0, G_OPTION_ARG_NONE, &show_version,
 		 _("Show GeBR version"), NULL},
 		{NULL}
