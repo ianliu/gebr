@@ -239,7 +239,7 @@ gint gebr_config_load()
 		gebr.config.browser =
 		    gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "browser", "firefox");
 		gebr.config.editor =
-		    gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "gedit");
+		    gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "");
 		gebr.config.width = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "width", 700);
 		gebr.config.height = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "height", 400);
 		gebr.config.log_expander_state = gebr_g_key_file_load_boolean_key(gebr.config.key_file,

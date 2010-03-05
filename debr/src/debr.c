@@ -118,7 +118,7 @@ gboolean debr_config_load(void)
 	}
 	debr.config.browser = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "browser", "firefox");
 	debr.config.htmleditor =
-	    gebr_g_key_file_load_string_key(debr.config.key_file, "general", "htmleditor", "gedit");
+	    gebr_g_key_file_load_string_key(debr.config.key_file, "general", "htmleditor", "");
 	debr.config.menu_sort_ascending =
 	    gebr_g_key_file_load_boolean_key(debr.config.key_file, "general", "menu_sort_ascending", TRUE);
 	debr.config.menu_sort_column =
