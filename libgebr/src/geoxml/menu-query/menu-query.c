@@ -214,6 +214,7 @@ int main(int argc, char **argv)
 			       (gebr_geoxml_program_get_stdout(prog) ? "Write" : "Ignore"),
 			       (gebr_geoxml_program_get_stdin(prog) ? "Append" : "Ignore"));
 			printf("  Binary:      %s\n", report(gebr_geoxml_program_get_binary(prog), EMPTY));
+			printf("  Version:     %s\n", report(gebr_geoxml_program_get_version(prog), EMPTY));
 			printf("  URL:         %s\n", report(gebr_geoxml_program_get_url(prog), EMPTY));
 			printf("  Help:        %s\n",
 			       strlen(gebr_geoxml_program_get_help(prog)) ? "Defined" : report("", EMPTY));

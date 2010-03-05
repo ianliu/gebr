@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-19 23:08-0200\n"
+"POT-Creation-Date: 2010-03-05 09:27-0300\n"
 "PO-Revision-Date: 2010-02-19 23:08-0200\n"
 "Last-Translator: Ricardo Biloti <biloti@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -335,19 +335,19 @@ msgstr "GêBR Core Team:"
 msgid "Coordinator"
 msgstr "Coordenador"
 
-#: ../src/gui/gui/about.c:39
+#: ../src/gui/gui/about.c:40
 msgid "Developers"
 msgstr "Desenvolvedores"
 
-#: ../src/gui/gui/about.c:45
+#: ../src/gui/gui/about.c:47
 msgid "Consultants"
 msgstr "Consultores"
 
-#: ../src/gui/gui/about.c:61
+#: ../src/gui/gui/about.c:63
 msgid "GêBR Core Team"
 msgstr "GêBR Core Team"
 
-#: ../src/gui/gui/about.c:64
+#: ../src/gui/gui/about.c:66
 msgid ""
 "Copyright (C) 2007-2010 GêBR core team (http://www.gebrproject.com/)\n"
 "\n"
@@ -388,7 +388,7 @@ msgstr ""
 "abrl de 1998, e #9610, 19 de fevereiro de 1998, e é registrado no Instituto "
 "Nacional de Propriedade Industrial (INPI) sob número 70156."
 
-#: ../src/gui/gui/about.c:82
+#: ../src/gui/gui/about.c:84
 msgid "GêBR Home page"
 msgstr "Página da GêBR"
 

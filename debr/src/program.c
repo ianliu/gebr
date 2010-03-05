@@ -448,18 +448,34 @@ gboolean program_dialog_setup_ui(void)
 	g_signal_connect(binary_entry, "changed", G_CALLBACK(program_binary_changed), debr.program);
 
 	/*
+	 * Version
+	 */
+	version_label = gtk_label_new(_("Version:"));
+	gtk_widget_show(version_label);
+	gtk_table_attach(GTK_TABLE(table), version_label, 0, 1, 3, 4,
+			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(version_label), 0, 0.5);
+
+	version_entry = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(version_entry), TRUE);
+	gtk_widget_show(version_entry);
+	gtk_table_attach(GTK_TABLE(table), version_entry, 1, 2, 3, 4,
+			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+	g_signal_connect(version_entry, "changed", G_CALLBACK(program_version_changed), debr.program);
+
+	/*
 	 * Description
 	 */
 	description_label = gtk_label_new(_("Description:"));
 	gtk_widget_show(description_label);
-	gtk_table_attach(GTK_TABLE(table), description_label, 0, 1, 3, 4,
+	gtk_table_attach(GTK_TABLE(table), description_label, 0, 1, 4, 5,
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 	gtk_misc_set_alignment(GTK_MISC(description_label), 0, 0.5);
 
 	description_entry = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(description_entry), TRUE);
 	gtk_widget_show(description_entry);
-	gtk_table_attach(GTK_TABLE(table), description_entry, 1, 2, 3, 4,
+	gtk_table_attach(GTK_TABLE(table), description_entry, 1, 2, 4, 5,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 	g_signal_connect(description_entry, "changed", G_CALLBACK(program_description_changed), debr.program);
 
@@ -468,13 +484,13 @@ gboolean program_dialog_setup_ui(void)
 	 */
 	help_label = gtk_label_new(_("Help"));
 	gtk_widget_show(help_label);
-	gtk_table_attach(GTK_TABLE(table), help_label, 0, 1, 4, 5,
+	gtk_table_attach(GTK_TABLE(table), help_label, 0, 1, 5, 6,
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 	gtk_misc_set_alignment(GTK_MISC(help_label), 0, 0.5);
 
 	help_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_widget_show(help_hbox);
-	gtk_table_attach(GTK_TABLE(table), help_hbox, 1, 2, 4, 5,
+	gtk_table_attach(GTK_TABLE(table), help_hbox, 1, 2, 5, 6,
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 
 	help_edit_button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
@@ -482,22 +498,6 @@ gboolean program_dialog_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(help_hbox), help_edit_button, FALSE, FALSE, 0);
 	g_signal_connect(help_edit_button, "clicked", G_CALLBACK(program_help_edit), debr.program);
 	g_object_set(G_OBJECT(help_edit_button), "relief", GTK_RELIEF_NONE, NULL);
-
-	/*
-	 * Version
-	 */
-	version_label = gtk_label_new(_("Version:"));
-	gtk_widget_show(version_label);
-	gtk_table_attach(GTK_TABLE(table), version_label, 0, 1, 5, 6,
-			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	gtk_misc_set_alignment(GTK_MISC(version_label), 0, 0.5);
-
-	version_entry = gtk_entry_new();
-	gtk_entry_set_activates_default(GTK_ENTRY(version_entry), TRUE);
-	gtk_widget_show(version_entry);
-	gtk_table_attach(GTK_TABLE(table), version_entry, 1, 2, 5, 6,
-			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	g_signal_connect(version_entry, "changed", G_CALLBACK(program_version_changed), debr.program);
 
 	/*
 	 * URL

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebrd 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-19 23:36-0200\n"
-"PO-Revision-Date: 2010-02-19 17:40-0200\n"
+"POT-Creation-Date: 2010-03-05 10:10-0300\n"
+"PO-Revision-Date: 2010-03-05 10:10-0300\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -25,22 +25,22 @@ msgstr "Erro '%s' na conexão com o servidor '%s'"
 msgid "Server quited"
 msgstr "Servidor finalizado"
 
-#: ../src/job.c:98
+#: ../src/job.c:99
 #, c-format
 msgid "Required parameter '%s' of program '%s' not provided.\n"
 msgstr "O parâmetro '%s' do programa '%s' não foi fornecido.\n"
 
-#: ../src/job.c:117
+#: ../src/job.c:118
 #, c-format
 msgid "Unknown parameter type.\n"
 msgstr "Tipo de parâmetro desconhecido.\n"
 
-#: ../src/job.c:175
+#: ../src/job.c:176
 #, c-format
 msgid "Job '%s' sent output not in UTF-8."
 msgstr "Tarefa '%s' não enviou a saida no formato UTF-8"
 
-#: ../src/job.c:476
+#: ../src/job.c:485
 #, c-format
 msgid ""
 "DTD specified. The <DOCTYPE ...> must not appear in XML.\n"
@@ -49,7 +49,7 @@ msgstr ""
 "DTD especificado. <DOCTYPE ...> não deve aparecer no XML.\n"
 "libgeoxml encontrará o DTD apropriado a partir da versão.\n"
 
-#: ../src/job.c:481
+#: ../src/job.c:490
 #, c-format
 msgid ""
 "Invalid document. It has a sintax error or doesn't match the DTD.\n"
@@ -58,7 +58,7 @@ msgstr ""
 "Documento inválido. Ele contém um erro de sintaxe ou não respeita o DTD.\n"
 "Neste caso, veja os erros acima.\n"
 
-#: ../src/job.c:486
+#: ../src/job.c:495
 #, c-format
 msgid ""
 "Can't access file. The file doesn't exist or there is not enough permission "
@@ -67,7 +67,7 @@ msgstr ""
 "Impossível acessar o arquivo. Ele não existe ou não há permissão de "
 "leitura.\n"
 
-#: ../src/job.c:491
+#: ../src/job.c:500
 #, c-format
 msgid ""
 "Can't access dtd. The file's DTD couldn't not be found.\n"
@@ -78,7 +78,7 @@ msgstr ""
 "Pode ser uma versão mais nova, não suportada por esta versão da libgeoxml\n"
 "ou então um problema de instalação.\n"
 
-#: ../src/job.c:497
+#: ../src/job.c:506
 #, c-format
 msgid ""
 "Not enough memory. The library stoped after an unsucessful memory "
@@ -87,7 +87,7 @@ msgstr ""
 "Sem memória suficiente. A biblioteca abortou depois de uma alocação de "
 "memória mal-sucedida.\n"
 
-#: ../src/job.c:501
+#: ../src/job.c:510
 #, c-format
 msgid ""
 "Unspecified error %d.\n"
@@ -97,79 +97,84 @@ msgstr ""
 "Veja a documentação da biblioteca em http://sites.google.com/site/"
 "gebrproject.\n"
 
-#: ../src/job.c:514
+#: ../src/job.c:523
 #, c-format
 msgid "Empty flow.\n"
 msgstr "Fluxo vazio.\n"
 
-#: ../src/job.c:522
+#: ../src/job.c:531
 #, c-format
 msgid "%u) Skiping disabled/unconfigured program '%s.'\n"
 msgstr "%u) Desconsiderando programa '%s' desabilidato/não configurado.\n"
 
-#: ../src/job.c:528
+#: ../src/job.c:537
 #, c-format
 msgid "No configured programs.\n"
 msgstr "Sem programas configurados.\n"
 
-#: ../src/job.c:538
+#: ../src/job.c:547
 #, c-format
 msgid "No input file selected.\n"
 msgstr "Sem arquivo de entrada selecionado.\n"
 
-#: ../src/job.c:545
+#: ../src/job.c:554
 #, c-format
 msgid "Input file %s not present or not accessable.\n"
 msgstr "Arquivo de entrada %s não encontrado ou não acessível.\n"
 
-#: ../src/job.c:563 ../src/job.c:632
+#: ../src/job.c:572 ../src/job.c:641
 #, c-format
 msgid "Write permission to %s not granted.\n"
 msgstr "Permissão de escrita para %s não concedida.\n"
 
-#: ../src/job.c:579
+#: ../src/job.c:588
 #, c-format
 msgid "%u) Skiping disabled/unconfigured program '%s'.\n"
 msgstr "%u) Desconsiderando programa '%s' desabilidato/não configurado.\n"
 
 #. Previous does not write to stdin but current expect something
-#: ../src/job.c:595
+#: ../src/job.c:604
 #, c-format
 msgid "Broken flow before %s (no input).\n"
 msgstr "Fluxo interrompido depois de %s (sem entrada).\n"
 
 #. Previous does write to stdin but current does not carry about
-#: ../src/job.c:599
+#: ../src/job.c:608
 #, c-format
 msgid "Broken flow before %s (unexpected output).\n"
 msgstr "Fluxo interrompido antes de %s (saída inesperada).\n"
 
-#: ../src/job.c:625
+#: ../src/job.c:634
 #, c-format
 msgid "No error file selected; error output merged with standard output.\n"
 msgstr ""
 "Sem arquivo de erro selecionado; saída de erro será mesclada com a saída "
 "padrão.\n"
 
-#: ../src/job.c:628
+#: ../src/job.c:637
 #, c-format
 msgid "Proceeding without output file.\n"
 msgstr "Prosseguindo sem arquivo de saída.\n"
 
-#: ../src/job.c:750
+#: ../src/job.c:759
 #, c-format
 msgid "Cannot submit job to MOAB server.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB.\n"
 
-#: ../src/job.c:756
+#: ../src/job.c:765
 #, c-format
 msgid "Cannot submit job to MOAB server: %s.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB: %s.\n"
 
-#: ../src/job.c:766
+#: ../src/job.c:775
 #, c-format
 msgid "Cannot get MOAB job id.\n"
 msgstr "Não foi possível obter a identificação da tarefa no MOAB.\n"
+
+#: ../src/job.c:948 ../src/job.c:952
+#, c-format
+msgid "Cannot cancel job at MOAB server.\n"
+msgstr "Não foi possível cancelar a tarefa no servidor MOAB.\n"
 
 #: ../src/main.c:35
 msgid "Run server in interactive mode, not as a daemon"

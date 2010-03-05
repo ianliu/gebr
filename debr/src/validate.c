@@ -484,7 +484,9 @@ static void validate_do(struct validate *validate)
 
 		validate_append_item_with_check(validate, _("  Binary:      "),
 						gebr_geoxml_program_get_binary(prog), EMPTY);
-		validate_append_item_with_check(validate, _("  URL:         "),
+                validate_append_item_with_check(validate, _("  Version:     "),
+						gebr_geoxml_program_get_version(prog), EMPTY);
+                validate_append_item_with_check(validate, _("  URL:         "),
 						gebr_geoxml_program_get_url(prog), EMPTY);
 		validate_append_item(validate, _("  Help:        "));
 		if (strlen(gebr_geoxml_program_get_help(prog)) >= 1)

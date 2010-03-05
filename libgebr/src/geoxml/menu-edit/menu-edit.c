@@ -38,6 +38,7 @@ gboolean helpdel = FALSE;
 gchar *fnhelp = NULL;
 gint iprog = 0;
 gchar *binary = NULL;
+gchar *version = NULL;
 gchar *url = NULL;
 gchar **menu = NULL;
 gboolean capt = FALSE;
@@ -55,6 +56,7 @@ static GOptionEntry entries[] = {
 	{"helpdel", 0, 0, G_OPTION_ARG_NONE, &helpdel, "delete help text", NULL},
 	{"sethelp", 'H', 0, G_OPTION_ARG_FILENAME, &fnhelp, "replace help by an HTML file", NULL},
 	{"binary", 'b', 0, G_OPTION_ARG_STRING, &binary, "Binary command (without path)", "program/script"},
+        {"version", 'V', 0, G_OPTION_ARG_STRING, &version, "Binary's version", NULL},
 	{"url", 'u', 0, G_OPTION_ARG_STRING, &url, "URL for a program", "http://www.../"},
 	//{ "capitalize", 'c', 0, G_OPTION_ARG_NONE, &capt, "capitalize descriptions and labels", NULL},
 	{G_OPTION_REMAINING, 0, G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME_ARRAY, &menu, "",
@@ -148,8 +150,8 @@ int main(int argc, char **argv)
 				gebr_geoxml_document_set_title(doc, title);
 			if (desc != NULL)
 				gebr_geoxml_document_set_description(doc, desc);
-			if (url || binary)
-				printf("To set URL ou binary, you must specify iprog\n");
+			if (url || binary || version)
+				printf("To set URL, binary, or binary's version you must specify iprog\n");
 			if (helpdel)
 				gebr_geoxml_document_set_help(doc, "");
 			if (fnhelp) {
@@ -179,6 +181,8 @@ int main(int argc, char **argv)
 				gebr_geoxml_program_set_description(prog, desc);
 			if (binary != NULL)
 				gebr_geoxml_program_set_binary(prog, binary);
+                        if (version != NULL)
+				gebr_geoxml_program_set_version(prog, version);
 			if (url != NULL)
 				gebr_geoxml_program_set_url(prog, url);
 			if (helpdel)

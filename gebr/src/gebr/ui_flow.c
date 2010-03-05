@@ -536,7 +536,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 				GtkWidget *widget;
 				gchar *queue_name;
 
-				dialog = GTK_DIALOG(gtk_dialog_new_with_buttons(_("Name queue"),
+				dialog = GTK_DIALOG(gtk_dialog_new_with_buttons(_("New queue"),
 								     GTK_WINDOW(gebr.window),
 								     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 								     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
