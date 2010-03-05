@@ -265,7 +265,7 @@ void parameter_new(void)
 			parameter_group = GEBR_GEOXML_PARAMETER_GROUP(debr.parameter);
 			parent = pre_selected_iter;
 		} else
-			/* iter is part (or son) of a group. Let's get its group from its parent. */ 
+			/* iter is part (or son) of a group. Let's get its group from its parent. */
 			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent,
 					   PARAMETER_XMLPOINTER, &parameter_group, -1);
 

@@ -128,6 +128,13 @@ GebrGeoXmlFlow *gebr_geoxml_program_flow(GebrGeoXmlProgram * program);
 GebrGeoXmlParameters *gebr_geoxml_program_get_parameters(GebrGeoXmlProgram * program);
 
 /**
+ * Counts the number of parameters in this \p program.
+ * Note that groups are not considered as a parameter.
+ * \return The number of parameters in this program or -1 if \p program is NULL.
+ */
+gsize gebr_geoxml_program_count_parameters(GebrGeoXmlProgram * program);
+
+/**
  * Specify wheter \p program accepts standard input or not,
  * depending on \p enable
  *

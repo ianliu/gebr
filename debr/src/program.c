@@ -576,8 +576,8 @@ void program_select_iter(GtkTreeIter iter)
 static void program_details_update(void)
 {
 	gchar *markup;
+	gsize parameters_count;
 	GString *text;
-	GebrGeoXmlParameters *parameters;
 
 	g_object_set(debr.ui_program.details.url_button, "visible", debr.program != NULL, NULL);
 	gtk_widget_set_sensitive(debr.ui_program.details.help_button, debr.program != NULL);
@@ -601,9 +601,9 @@ static void program_details_update(void)
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.description_label), markup);
 	g_free(markup);
 
-	parameters = gebr_geoxml_program_get_parameters(debr.program);
+	parameters_count = gebr_geoxml_program_count_parameters(debr.program);
 	text = g_string_new(NULL);
-	switch (gebr_geoxml_parameters_get_number(parameters)) {
+	switch (parameters_count) {
 	case 0:
 		g_string_printf(text, _("This program has no parameters"));
 		break;
@@ -611,8 +611,8 @@ static void program_details_update(void)
 		g_string_printf(text, _("This program has 1 parameter"));
 		break;
 	default:
-		g_string_printf(text, _("This program has %li parameters"),
-				gebr_geoxml_parameters_get_number(parameters));
+		g_string_printf(text, _("This program has %d parameters"),
+				parameters_count);
 	}
 	gtk_label_set_text(GTK_LABEL(debr.ui_program.details.nparams_label), text->str);
 	g_string_free(text, TRUE);

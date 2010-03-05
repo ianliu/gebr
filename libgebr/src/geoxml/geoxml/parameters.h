@@ -143,12 +143,9 @@ GebrGeoXmlSequence *gebr_geoxml_parameters_get_first_parameter(GebrGeoXmlParamet
 
 /**
  * Get the parameter at \p index
- *
- *
  */
-int
-
- gebr_geoxml_parameters_get_parameter(GebrGeoXmlParameters * parameters, GebrGeoXmlSequence ** parameter, gulong index);
+int gebr_geoxml_parameters_get_parameter(GebrGeoXmlParameters * parameters, GebrGeoXmlSequence ** parameter,
+					 gulong index);
 
 /**
  * Get the number of parameters that \p parameters has.

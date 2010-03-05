@@ -81,6 +81,38 @@ GebrGeoXmlParameters *gebr_geoxml_program_get_parameters(GebrGeoXmlProgram * pro
 	return (GebrGeoXmlParameters *) __gebr_geoxml_get_first_element((GdomeElement *) program, "parameters");
 }
 
+gsize gebr_geoxml_program_count_parameters(GebrGeoXmlProgram * program)
+{
+	if (program == NULL)
+		return -1;
+
+	gsize n = 0;
+	GebrGeoXmlSequence *param;
+	GebrGeoXmlParameters *parameters;
+	enum GEBR_GEOXML_PARAMETER_TYPE type;
+
+	parameters = gebr_geoxml_program_get_parameters(program);
+	gebr_geoxml_parameters_get_parameter(parameters, &param, 0);
+	while (param) {
+		type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(param));
+		if (type == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
+			GebrGeoXmlSequence *params_ingroup;
+			GebrGeoXmlSequence *inner_param;
+
+			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(param), &params_ingroup, 0);
+			gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETER(params_ingroup), &inner_param, 0);
+
+			while (inner_param) {
+				n++;
+				gebr_geoxml_sequence_next(&inner_param);
+			}
+		} else
+			n++;
+		gebr_geoxml_sequence_next(&param);
+	}
+	return n;
+}
+
 void gebr_geoxml_program_set_stdin(GebrGeoXmlProgram * program, const gboolean enable)
 {
 	if (program == NULL)
