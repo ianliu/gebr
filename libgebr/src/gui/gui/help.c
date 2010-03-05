@@ -376,21 +376,10 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window, struct help
 	content_area = GTK_DIALOG(window)->vbox;
 #endif
 	if (data) {
-		GtkAction *action;
-
 		data->actions = actions = gtk_action_group_new("HelpEdit");
 		gtk_action_group_add_actions(actions, help_edit_actions, G_N_ELEMENTS(help_edit_actions), data);
 		gtk_action_group_add_toggle_actions(actions, help_edit_toggle_actions,
 						    G_N_ELEMENTS(help_edit_toggle_actions), data);
-		action = gtk_action_group_get_action(actions, "save");
-		g_object_set(action, "is-important", TRUE, NULL);
-		g_object_set(action, "short-label", _("Save"), NULL);
-		action = gtk_action_group_get_action(actions, "edit");
-		g_object_set(action, "is-important", TRUE, NULL);
-		g_object_set(action, "short-label", _("Editing"), NULL);
-		action = gtk_action_group_get_action(actions, "refresh");
-		g_object_set(action, "is-important", TRUE, NULL);
-		g_object_set(action, "short-label", _("Refresh"), NULL);
 
 		ui = gtk_ui_manager_new();
 		gtk_ui_manager_insert_action_group(ui, actions, 0);
@@ -400,6 +389,7 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window, struct help
 			g_error_free(error);
 		}
 		GtkWidget * toolbar = gtk_ui_manager_get_widget(ui, "/HelpToolBar");
+		gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH);
 		if (!data->refresh_callback) {
 			GtkWidget * refresh = gtk_ui_manager_get_widget(ui, "/HelpToolBar/Refresh/");
 			gtk_container_remove(GTK_CONTAINER(toolbar), refresh);
@@ -573,13 +563,9 @@ static void on_help_edit_save_activate(GtkAction * action, struct help_edit_data
 
 static void on_help_edit_edit_toggled(GtkToggleAction * action, struct help_edit_data * data)
 {
-	const gchar * label;
 	gboolean active;
 
 	active = gtk_toggle_action_get_active(action);
-	label = active? _("Editing"):_("Read only");
-
-	g_object_set(action, "short-label", label, NULL);
 	gtk_action_set_sensitive(gtk_action_group_get_action(data->actions, "save"), active);
 	gtk_action_set_sensitive(gtk_action_group_get_action(data->actions, "refresh"), active);
 
