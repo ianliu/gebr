@@ -356,6 +356,7 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 		gtk_tree_store_remove(gebr.ui_job_control->store, &job->iter);
 		job->iter = iter;
 		job_status_show(job);
+
 		if (was_selected)
 			job_set_active(job);
 
@@ -366,15 +367,14 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 	job_status_show(job);
 
 	if ((job->status == JOB_STATUS_FINISHED) || job->status == JOB_STATUS_CANCELED) {
-
 		/* Update combobox model. */
 		GtkTreeIter queue_iter;
 		gboolean queue_exists = server_queue_find(job->server, job->queue->str, &queue_iter);
 		struct job *last_job;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(job->server->queues_model), &queue_iter, 2, &last_job, -1);
 		
 		if (queue_exists) {
+			gtk_tree_model_get(GTK_TREE_MODEL(job->server->queues_model), &queue_iter, 2, &last_job, -1);
+
 		       	if (job->queue->str[0] == 'j') {
 				gtk_list_store_remove(job->server->queues_model, &queue_iter);
 				gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
@@ -388,6 +388,16 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 
 				g_string_free(string, TRUE);
 			}
+		}
+		else {
+			GString *string = g_string_new(NULL);
+
+			g_string_printf(string, _("At '%s'"), job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR
+					? job->queue->str+1 /* jump q identifier */ : job->queue->str);
+			gtk_list_store_append(job->server->queues_model, &queue_iter);
+			gtk_list_store_set(job->server->queues_model, &queue_iter, 0, string->str, -1);
+
+			g_string_free(string, TRUE);
 		}
 		
 		/* Fill 'finish date' if job is active (selected for viewing). */
@@ -405,6 +415,7 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 			g_string_printf(finish_date, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
 		if (job->status == JOB_STATUS_CANCELED)
 			g_string_printf(finish_date, "\n%s %s", _("Cancel date:"), gebr_localized_date(job->finish_date->str));
+		
 		gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
 		gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, finish_date->str, finish_date->len);
 

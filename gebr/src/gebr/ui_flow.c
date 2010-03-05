@@ -33,6 +33,8 @@
 #include "ui_server.h"
 #include "ui_moab.h"
 
+#include "job.h"
+
 #define GEBR_FLOW_UI_RESPONSE_EXECUTE 1
 
 static void flow_io_populate(struct ui_flow_io *ui_flow_io);
@@ -485,7 +487,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	GtkTreeIter iter;
 	const gchar *address;
 	struct server *server;
-	struct gebr_comm_server_run * config;
+	struct gebr_comm_server_run *config;
 
 	if (!flow_browse_get_selected(NULL, FALSE)) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected."));
@@ -526,15 +528,28 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 				     _("No available queue for server '%s'."), server->comm->address->str);
 	} else {
 		if (gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)) == 0)
+			/* If the active combobox entry is the first one (index 0), then
+			 * "Immediately" is selected as queue option. */
 			config->class = g_strdup("");
-		else { 
-			gchar *tmp;
+		else {
+			/* Other queue option is selected: after a running job (flow) or
+			 * on a pre-existent queue. */
+			gchar *internal_queue_name = NULL;
+
+			/* Get queue name from the queues combobox. */
 			gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter);
-			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &tmp, -1);
-			if (tmp[0] == 'j') {
+			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &internal_queue_name, -1);
+
+			if (internal_queue_name && internal_queue_name[0] == 'j') {
+				/* Prefix 'j' indicates a single running job. So, the user is placing a new
+				 * job behind this single one, which denotes proper enqueuing. In this case,
+				 * it is necessary to give a name to the new queue. */
 				GtkDialog *dialog;
 				GtkWidget *widget;
 				gchar *queue_name;
+
+				GString *server_address, *job_id;
+				struct job *job;
 
 				dialog = GTK_DIALOG(gtk_dialog_new_with_buttons(_("New queue"),
 								     GTK_WINDOW(gebr.window),
@@ -546,17 +561,17 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 				gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), widget, TRUE, TRUE, 0);
 				widget = gtk_entry_new();
 				gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), widget, TRUE, TRUE, 0);
-				
 				gtk_widget_show_all(GTK_WIDGET(dialog));
+
 				gboolean is_valid = FALSE;
 				do {
 					if (gtk_dialog_run(dialog) != GTK_RESPONSE_OK) {
 						gtk_widget_destroy(GTK_WIDGET(dialog));
-						g_free(tmp);
+						g_free(internal_queue_name);
 						goto err;
 					}
 
-					queue_name = (gchar*)gtk_entry_get_text(GTK_ENTRY(widget));	
+					queue_name = (gchar*)gtk_entry_get_text(GTK_ENTRY(widget));
 					if (!strlen(queue_name))
 						gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 									_("Empty name"), _("Please type a queue name."));
@@ -572,17 +587,36 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 						g_free(prefixed_queue_name);
 					}
 				} while (!is_valid);
+
 				config->class = g_strdup_printf("q%s", queue_name);
 
-				gtk_list_store_set(server->queues_model, &iter, 1, config->class, -1);
-				/* send server request to rename this queue */
+				/* A race condition can happen if the single running job finishes before
+				 * assigning a name to the queue. We try to prevent this race condition here. */
+				server_address = g_string_new(address);
+				job_id = g_string_new((const gchar *)(internal_queue_name+1)); /* Skip 'j' prefix and get jid. */ 
+				job = job_find(server_address, job_id);
+
+				/* Set the entry in the queues model accordingly. */
+				if (job->status == JOB_STATUS_RUNNING) {
+					/* The single job is still running; so, its entry in the combobox is still valid. */
+					gtk_list_store_set(server->queues_model, &iter, 1, config->class, -1);
+				}
+				else {
+					GtkTreeIter queue_iter;
+					gtk_list_store_append(server->queues_model, &queue_iter);
+					gtk_list_store_set(server->queues_model, &queue_iter, 1, config->class, -1);
+				}
+
+				g_string_free(server_address, TRUE);
+				g_string_free(job_id, TRUE);
+					
 				gebr_comm_protocol_send_data(server->comm->protocol, server->comm->stream_socket,
-							     gebr_comm_protocol_defs.rnq_def, 2, tmp, config->class);
+							     gebr_comm_protocol_defs.rnq_def, 2, internal_queue_name, config->class);
 
 				gtk_widget_destroy(GTK_WIDGET(dialog));
-				g_free(tmp);
+				g_free(internal_queue_name);
 			} else
-				config->class = tmp;
+				config->class = internal_queue_name;
 		}
 	}
 
