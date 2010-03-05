@@ -350,7 +350,7 @@ static void job_control_on_cursor_changed(void)
 	GtkTreeIter iter;
 	struct job *job;
 	gboolean is_job;
- 	GString *info;
+ 	GString *info, *queue_info;
   
  	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter) == FALSE)
 		return;
@@ -367,8 +367,17 @@ static void job_control_on_cursor_changed(void)
  	 * Fill job information
  	 */
  	/* who and where */
- 	g_string_append_printf(info, _("Job executed at %s by %s.\n"),
- 			       job->server->comm->protocol->hostname->str, job->hostname->str);
+	queue_info = g_string_new(NULL); 
+	if (job->queue->str[0] == 'j') {
+		g_string_assign(queue_info, "unqueued");
+	}
+	else if (job->queue->str[0] == 'q') {
+		g_string_printf(queue_info, "on %s", job->queue->str+1);
+	}
+ 	g_string_append_printf(info, _("Job executed at %s (%s) by %s.\n"),
+ 			       job->server->comm->protocol->hostname->str, queue_info->str, job->hostname->str);
+	g_string_free(queue_info, TRUE);
+
  	/* start date */
  	g_string_append_printf(info, "%s %s\n", _("Start date:"), gebr_localized_date(job->start_date->str));
  	/* issues */
