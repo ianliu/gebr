@@ -141,7 +141,11 @@ void program_setup_ui(void)
 
 	debr.ui_program.details.binary_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.binary_label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.binary_label, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.binary_label, FALSE, TRUE, 10);
+
+	debr.ui_program.details.version_label = gtk_label_new(NULL);
+	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.version_label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.version_label, FALSE, TRUE, 0);
 
 	debr.ui_program.details.url_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.url_label), 0, 0);
@@ -583,6 +587,7 @@ static void program_details_update(void)
 		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.description_label), "");
 		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.nparams_label), "");
 		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.binary_label), "");
+		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.version_label), "");
 		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.url_label), "");
 		return;
 	}
@@ -614,6 +619,10 @@ static void program_details_update(void)
 
 	markup = g_markup_printf_escaped("<b>%s</b>: %s", _("Binary"), gebr_geoxml_program_get_binary(debr.program));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.binary_label), markup);
+	g_free(markup);
+
+	markup = g_markup_printf_escaped("<b>%s</b>: %s", _("Version"), gebr_geoxml_program_get_version(debr.program));
+	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.version_label), markup);
 	g_free(markup);
 
 	markup = g_markup_printf_escaped("<b>%s</b>:", _("URL"));

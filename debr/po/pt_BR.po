@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-05 09:45-0300\n"
-"PO-Revision-Date: 2010-03-05 09:46-0300\n"
+"POT-Creation-Date: 2010-03-05 11:08-0300\n"
+"PO-Revision-Date: 2010-03-05 11:08-0300\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -310,7 +310,7 @@ msgstr "Criar um novo parâmetro"
 msgid "<i>Others</i>"
 msgstr "<i>Outros</i>"
 
-#: ../src/menu.c:140 ../src/program.c:590
+#: ../src/menu.c:140 ../src/program.c:595
 msgid "Details"
 msgstr "Detalhes"
 
@@ -388,21 +388,21 @@ msgstr "Editar menu"
 #.
 #. * Title
 #.
-#: ../src/menu.c:770 ../src/program.c:421
+#: ../src/menu.c:770 ../src/program.c:425
 msgid "Title:"
 msgstr "Título:"
 
 #.
 #. * Description
 #.
-#: ../src/menu.c:785 ../src/program.c:469
+#: ../src/menu.c:785 ../src/program.c:473
 msgid "Description:"
 msgstr "Descrição:"
 
 #.
 #. * Help
 #.
-#: ../src/menu.c:800 ../src/program.c:485
+#: ../src/menu.c:800 ../src/program.c:489
 msgid "Help"
 msgstr "Ajuda"
 
@@ -861,95 +861,100 @@ msgid "An HTML capable editor to edit helps and reports"
 msgstr "Um editor HTML para editar arquivos de ajuda e notificações"
 
 #. default settings
-#: ../src/program.c:200
+#: ../src/program.c:204
 msgid "New program"
 msgstr "Novo programa"
 
-#: ../src/program.c:231
+#: ../src/program.c:235
 msgid "Parameter's dialog preview"
 msgstr "Previsualização da janela de parâmetros"
 
-#: ../src/program.c:263
+#: ../src/program.c:267
 msgid "Delete program"
 msgstr "Apagar programa"
 
-#: ../src/program.c:263
+#: ../src/program.c:267
 msgid "Are you sure you want to delete selected(s) program(s)?"
 msgstr "Tem certeza que quer apagar o(s) programa(s) selecionado(s)?"
 
-#: ../src/program.c:323
+#: ../src/program.c:327
 msgid "Could not paste program"
 msgstr "Não foi possível colar o programa"
 
-#: ../src/program.c:371
+#: ../src/program.c:375
 msgid "Edit program"
 msgstr "Editar programa"
 
-#: ../src/program.c:393
+#: ../src/program.c:397
 msgid "This program:"
 msgstr "Este programa"
 
-#: ../src/program.c:403
+#: ../src/program.c:407
 msgid "reads from standard input"
 msgstr "lê da entrada padrão"
 
-#: ../src/program.c:408
+#: ../src/program.c:412
 msgid "writes to standard output"
 msgstr "escreve na saída padrão"
 
-#: ../src/program.c:413
+#: ../src/program.c:417
 msgid "appends to standard error"
 msgstr "acrescenta à saída de erro padrão"
 
 #.
 #. * Binary
 #.
-#: ../src/program.c:437
+#: ../src/program.c:441
 msgid "Executable:"
 msgstr "Executável:"
 
 #.
 #. * Version
 #.
-#: ../src/program.c:453
+#: ../src/program.c:457
 msgid "Version:"
 msgstr "Versão:"
 
 #.
 #. * URL
 #.
-#: ../src/program.c:505
+#: ../src/program.c:509
 msgid "URL:"
 msgstr "URL:"
 
-#: ../src/program.c:551
+#: ../src/program.c:555
 msgid "No program is selected"
 msgstr "Nenhum programa está selecionado"
 
-#: ../src/program.c:603
+#: ../src/program.c:608
 #, c-format
 msgid "This program has no parameters"
 msgstr "Este programa não tem parâmetros"
 
-#: ../src/program.c:606
+#: ../src/program.c:611
 #, c-format
 msgid "This program has 1 parameter"
 msgstr "Este programa tem 1 parâmetro"
 
-#: ../src/program.c:609
+#: ../src/program.c:614
 #, c-format
 msgid "This program has %li parameters"
 msgstr "Este programa tem %li parâmetros"
 
-#: ../src/program.c:615
+#: ../src/program.c:620
 msgid "Binary"
 msgstr "Binário"
 
-#: ../src/program.c:619
+#: ../src/program.c:624
+#, fuzzy
+msgid "Version"
+msgstr "Versão"
+
+#: ../src/program.c:628
 msgid "URL"
 msgstr "URL"
 
-#: ../src/program.c:638
+#: ../src/program.c:647
 msgid "URL not set"
 msgstr "URL não definida"
 
