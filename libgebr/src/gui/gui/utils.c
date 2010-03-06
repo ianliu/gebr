@@ -227,14 +227,11 @@ static gboolean gebr_gui_message_dialog_vararg(GtkMessageType type, GtkButtonsTy
 
 	gint ret;
 	gchar *string;
-	gchar * escaped;
 	gboolean confirmed;
 
 	string = g_strdup_vprintf(message, args);
-	escaped = title? g_markup_printf_escaped("<b>%s</b>", title) : g_markup_printf_escaped("%s", string);
-	dialog = gtk_message_dialog_new_with_markup(NULL,
-						    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-						    type, buttons, "%s", escaped);
+	dialog = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+						    type, buttons, title? "<b>%s</b>":"%s", title? title:string);
 	if (title) {
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
 		gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", string);
@@ -244,7 +241,6 @@ static gboolean gebr_gui_message_dialog_vararg(GtkMessageType type, GtkButtonsTy
 	confirmed = (ret == GTK_RESPONSE_YES || ret == GTK_RESPONSE_OK) ? TRUE : FALSE;
 
 	gtk_widget_destroy(dialog);
-	g_free(escaped);
 	g_free(string);
 
 	return confirmed;
