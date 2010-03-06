@@ -28,7 +28,11 @@ void gebr_g_string_replace_first_ref(GString * string, const gchar * oldtext, co
 gboolean gebr_g_string_starts_with(GString * string, const gchar * val);
 gboolean gebr_g_string_ends_with(GString * string, const gchar * val);
 
-void gebr_append_filename_extension(GString * filename, const gchar * extension);
+/**
+ * Appends \p extension in \p filename if it is not present.
+ * \return TRUE if append was made, FALSE otherwise.
+ */
+gboolean gebr_append_filename_extension(GString * filename, const gchar * extension);
 
 gboolean gebr_path_use_home_variable(GString * path);
 gboolean gebr_path_resolve_home_variable(GString * path);

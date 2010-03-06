@@ -227,20 +227,24 @@ void on_menu_save_as_activate(void)
 		gchar *tmp;
 		tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 		g_string_assign(path, tmp);
-		gebr_append_filename_extension(path, ".mnu");
-		if (strcmp(tmp, path->str))
-			rerun = TRUE;	
-		else
-			rerun = FALSE;
+		rerun = gebr_append_filename_extension(path, ".mnu");
 		g_free(tmp);
 
-		if (rerun && g_file_test(path->str, G_FILE_TEST_IS_REGULAR))
-			if (gebr_gui_confirm_action_dialog(_(""), _("A file named \"%s\" already exists.\nDo you want to replace it?"), g_path_get_basename(path->str)))
-				break;
+		puts(rerun? "YES":"NO");
+
+		if (rerun) {
+		       if (g_file_test(path->str, G_FILE_TEST_EXISTS)) {
+			       if (gebr_gui_confirm_action_dialog(NULL, _("A file named \"%s\" already exists.\n"
+									  "Do you want to replace it?"),
+								  g_path_get_basename(path->str)))
+				       break;
+		       } else
+			       break;
+		}
 	} while(rerun);
 	filename = g_path_get_basename(path->str);
 
-	/*Verify if another file with same name already exist*/
+	/* Verify if another file with same name already exist */
 
 	menu_path_get_parent(path->str, &parent);
 	valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, &parent);

@@ -81,14 +81,13 @@ gboolean gebr_g_string_ends_with(GString * string, const gchar * val)
 	return g_str_has_suffix(string->str, val);
 }
 
-/**
- * Append, if not already present, \p extension into \p filename
- * \p extension must include the dot (e.g. ".mnu")
- */
-void gebr_append_filename_extension(GString * filename, const gchar * extension)
+gboolean gebr_append_filename_extension(GString * filename, const gchar * extension)
 {
-	if (!g_str_has_suffix(filename->str, extension))
+	if (!g_str_has_suffix(filename->str, extension)) {
 		g_string_append(filename, extension);
+		return TRUE;
+	}
+	return FALSE;
 }
 
 gboolean gebr_path_use_home_variable(GString * path)
@@ -169,8 +168,12 @@ GString *gebr_temp_directory_create(void)
  */
 void gebr_temp_directory_destroy(GString * path)
 {
+	// FIXME: Should this free 'path' argument?
+	//
 	g_string_prepend(path, "rm -fr ");
-	system(path->str);
+	if (system(path->str) != 0) {
+		// do nothing
+	}
 	g_string_free(path, TRUE);
 }
 
