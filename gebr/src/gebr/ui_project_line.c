@@ -445,6 +445,7 @@ void project_line_import(void)
 
 			new_title = g_string_new(NULL);
 			g_string_printf(new_title, _("%s (Imported)"), gebr_geoxml_document_get_title(document));
+			gtk_tree_store_set(gebr.ui_project_line->store, &iter, PL_TITLE, new_title->str, -1);
 			gebr_geoxml_document_set_title(document, new_title->str);
 			document_save(document);
 			gebr_geoxml_document_free(document);
