@@ -39,14 +39,6 @@ static void on_text_view_populate_popup(GtkTextView * textview, GtkMenu * menu);
  * Public functions.
  */
 
-/*
- * Function: job_control_setup_ui
- * Assembly the job control page.
- *
- * Return:
- * The structure containing relevant data.
- *
- */
 struct ui_job_control *job_control_setup_ui(void)
 {
 	struct ui_job_control *ui_job_control;
@@ -135,34 +127,9 @@ struct ui_job_control *job_control_setup_ui(void)
 	return ui_job_control;
 }
 
-/*
- * Function; job_control_clear_or_select_first
- * *Fill me in!*
- */
-void job_control_clear_or_select_first(void)
-{
-	GtkTreeIter iter;
-
-	/* select the first job */
-	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter) == TRUE) {
-		gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter);
-		job_control_on_cursor_changed();
-	} else {
-		gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
-		gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
-	}
-}
-
-/*
- * Function: job_control_save
- * *Fill me in!*
- */
 void job_control_save(void)
 {
-	GtkTreeSelection *selection;
-	GtkTreeModel *model;
 	GtkTreeIter iter;
-
 	GtkWidget *chooser_dialog;
 	GtkFileFilter *filefilter;
 
@@ -175,8 +142,7 @@ void job_control_save(void)
 
 	struct job *job;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+	if (!job_control_get_selected(&iter, JobControlJobQueueSelection))
 		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
@@ -217,20 +183,13 @@ void job_control_save(void)
  out2:	gtk_widget_destroy(chooser_dialog);
 }
 
-/*
- * Function: job_control_cancel
- * *Fill me in!*
- */
 void job_control_cancel(void)
 {
-	GtkTreeSelection *selection;
-	GtkTreeModel *model;
 	GtkTreeIter iter;
 
 	struct job *job;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+	if (!job_control_get_selected(&iter, JobControlJobSelection))
 		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
@@ -258,20 +217,13 @@ void job_control_cancel(void)
 				     gebr_comm_protocol_defs.end_def, 1, job->jid->str);
 }
 
-/*
- * Function: job_control_close
- * *Fill me in!*
- */
 void job_control_close(void)
 {
-	GtkTreeSelection *selection;
-	GtkTreeModel *model;
 	GtkTreeIter iter;
 
 	struct job *job;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+	if (!job_control_get_selected(&iter, JobControlJobSelection))
 		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
@@ -279,45 +231,39 @@ void job_control_close(void)
 	    (_("Clear job "), _("Are you sure you want to clear job '%s'?"), job->title->str) == FALSE)
 		return;
 
-	job_close(job);
-	job_control_clear_or_select_first();
+	job_close(job, FALSE);
 }
 
-/*
- * Function: job_control_clear
- * *Fill me in!*
- */
-void job_control_clear(void)
+void job_control_clear(gboolean confirm)
 {
-	GtkTreeIter iter;
-
-	if (gebr_gui_confirm_action_dialog(_("Clear all jobs"),
-					   _("Are you sure you want to clear all jobs from all servers?")) == FALSE)
+	if (confirm && !gebr_gui_confirm_action_dialog(_("Clear all jobs"),
+						      _("Are you sure you want to clear all jobs from all servers?")))
 		return;
 
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_job_control->store)) {
+	gboolean job_control_clear_foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
+	{
 		struct job *job;
+		gboolean is_job;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
-		job_close(job);
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &job, JC_IS_JOB,
+				   &is_job, -1);
+		if (!is_job)
+			return FALSE;
+		job_delete(job);
+
+		return FALSE;
 	}
-	job_control_clear_or_select_first();
+	gebr_gui_gtk_tree_model_foreach_recursive(GTK_TREE_MODEL(gebr.ui_job_control->store),
+						  (GtkTreeModelForeachFunc)job_control_clear_foreach, NULL); 
 }
 
-/*
- * Function: job_control_stop
- * *Fill me in!*
- */
 void job_control_stop(void)
 {
-	GtkTreeSelection *selection;
-	GtkTreeModel *model;
 	GtkTreeIter iter;
 
 	struct job *job;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+	if (!job_control_get_selected(&iter, JobControlJobSelection))
 		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
@@ -334,17 +280,57 @@ void job_control_stop(void)
 		return;
 
 	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to kill job."));
-	if (gebr_comm_server_is_local(job->server->comm) == FALSE) {
+	if (gebr_comm_server_is_local(job->server->comm) == FALSE) 
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to kill job '%s'."),
 			     job->server->comm->address->str, job->title->str);
-	} else {
+	else 
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to kill job '%s'."), job->title->str);
-	}
 
 	gebr_comm_protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
 				     gebr_comm_protocol_defs.kil_def, 1, job->jid->str);
 }
 
+gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionType check_type)
+{
+	if (!gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_job_control->view), iter)) {
+		switch (check_type) {
+		case JobControlDontWarnUnselection:
+			break;
+		case JobControlJobQueueSelection:
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Nothing selected."));
+			break;
+		case JobControlJobSelection:
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No job selected."));
+			break;
+		case JobControlQueueSelection:
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No queue selected."));
+			break;
+		default:
+			break;
+		}
+		return FALSE;
+	}
+
+	gboolean is_job;
+	GtkTreePath *path;
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), iter);
+	is_job = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
+	gtk_tree_path_free(path);
+	if (check_type == JobControlJobSelection && !is_job) {
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a job."));
+		return FALSE;
+	}
+	if (check_type == JobControlQueueSelection && is_job) {
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a queue."));
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+/**
+ * \internal
+ */
 static void job_control_on_cursor_changed(void)
 {
 	GtkTreeIter iter;
@@ -352,8 +338,11 @@ static void job_control_on_cursor_changed(void)
 	gboolean is_job;
  	GString *info, *queue_info;
   
- 	if (gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter) == FALSE)
+	if (!job_control_get_selected(&iter, JobControlDontWarnUnselection)) {
+		gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
+		gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
 		return;
+	}
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, JC_IS_JOB,
 			   &is_job, -1);
 	if (!is_job) {
@@ -408,6 +397,9 @@ static void job_control_on_cursor_changed(void)
  	g_string_free(info, TRUE);
 }
 
+/**
+ * \internal
+ */
 static void wordwrap_toggled(GtkCheckMenuItem * check_menu_item, GtkTextView * text_view)
 {
 	gebr.config.job_log_word_wrap = gtk_check_menu_item_get_active(check_menu_item);
@@ -415,11 +407,17 @@ static void wordwrap_toggled(GtkCheckMenuItem * check_menu_item, GtkTextView * t
 		     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
 }
 
+/**
+ * \internal
+ */
 static void autoscroll_toggled(GtkCheckMenuItem * check_menu_item)
 {
 	gebr.config.job_log_auto_scroll = gtk_check_menu_item_get_active(check_menu_item);
 }
 
+/**
+ * \internal
+ */
 static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
 {
 	GtkWidget *menu_item;

@@ -629,6 +629,45 @@ GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkT
 	return renderer;
 }
 
+void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTreeModelForeachFunc func, gpointer
+					       user_data)
+{
+	GtkTreeIter iter;
+	GtkTreeIter parent;
+	gboolean coming_back = FALSE;
+	gboolean valid;
+
+	valid = gtk_tree_model_get_iter_first(tree_model, &iter);
+	while (valid == TRUE) {
+		GtkTreeIter user_iter;
+
+		if (coming_back == FALSE)
+			while (valid == TRUE && (parent = iter, 1) &&
+			       (valid = gtk_tree_model_iter_children(tree_model, &iter, &parent), 1));
+		user_iter = iter = parent;
+		if (!(valid = gtk_tree_model_iter_next(tree_model, &iter))) {
+			if ((coming_back = gtk_tree_model_iter_parent(tree_model, &iter, &parent))) {
+				valid = TRUE;
+			       	parent = iter;
+			} else {
+				valid = gtk_tree_model_iter_next(tree_model, &parent);
+				iter = parent;
+			}
+		} else {
+			parent = iter;
+			coming_back = FALSE;
+		} 
+
+		GtkTreePath *tree_path;
+		tree_path = gtk_tree_model_get_path(tree_model, &user_iter);
+		if ((*func)(tree_model, tree_path, &user_iter, user_data)) {
+			gtk_tree_path_free(tree_path);
+			return;
+		}
+		gtk_tree_path_free(tree_path);
+	}
+}
+
 /*
 void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIter * ini, GtkTextIter * end,
 					      const gchar * tooltip)

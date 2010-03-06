@@ -56,8 +56,17 @@ void on_flow_component_copy_activate(void);
 void on_flow_component_paste_activate(void);
 
 void on_job_control_save(void);
+/**
+ * Call <job_control_cancel>
+ */
 void on_job_control_cancel(void);
+/**
+ * Call <job_control_close>
+ */
 void on_job_control_close(void);
+/**
+ * Call <job_control_clear>
+ */
 void on_job_control_clear(void);
 void on_job_control_stop(void);
 

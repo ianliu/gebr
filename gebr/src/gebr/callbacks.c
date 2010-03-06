@@ -301,34 +301,19 @@ void on_job_control_save(void)
 	job_control_save();
 }
 
-/*
- * Function: on_job_control_cancel
- * Call <job_control_cancel>
- *
- */
 void on_job_control_cancel(void)
 {
 	job_control_cancel();
 }
 
-/*
- * Function: on_job_control_close
- * Call <job_control_close>
- *
- */
 void on_job_control_close(void)
 {
 	job_control_close();
 }
 
-/*
- * Function: on_job_control_clear
- * Call <job_control_clear>
- *
- */
 void on_job_control_clear(void)
 {
-	job_control_clear();
+	job_control_clear(TRUE);
 }
 
 /*

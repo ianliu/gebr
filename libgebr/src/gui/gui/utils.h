@@ -273,6 +273,13 @@ GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkT
 	iter = iter##hygid)
 
 /**
+ * Alternative to gtk_tree_model_foreach that works with removal of iter
+ */
+void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTreeModelForeachFunc func, gpointer
+					       user_data);
+	     
+
+/**
  * Sets a \p tooltip for text between \p ini and \p end.
  */
 void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIter * ini, GtkTextIter * end,

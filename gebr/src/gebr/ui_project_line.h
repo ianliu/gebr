@@ -32,13 +32,17 @@ enum ProjectLineSelectionType {
 	ProjectLineSelection
 };
 
-/* Store fields */
+/**
+ * Store fields
+ */
 enum {
 	PL_TITLE = 0,
 	PL_FILENAME,
 	PL_N_COLUMN
 };
 
+/**
+ */
 struct ui_project_line {
 	GtkWidget *widget;
 

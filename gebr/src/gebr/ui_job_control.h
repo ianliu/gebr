@@ -24,7 +24,16 @@
 
 #include <gtk/gtk.h>
 
-/* Store fields */
+enum JobControlSelectionType {
+	JobControlDontWarnUnselection,
+	JobControlJobQueueSelection,
+	JobControlJobSelection,
+	JobControlQueueSelection,
+};
+
+/**
+ * Store fields 
+ */
 enum {
 	JC_ICON = 0,
 	JC_IS_JOB,
@@ -46,18 +55,38 @@ struct ui_job_control {
 	GtkTextBuffer *text_buffer;
 };
 
+/**
+ * Assembly the job control page.
+ * Return:
+ * The structure containing relevant data.
+ */
 struct ui_job_control *job_control_setup_ui(void);
 
-void job_control_clear_or_select_first(void);
-
+/**
+ */
 void job_control_save(void);
 
+/**
+ */
 void job_control_cancel(void);
 
+/**
+ */
 void job_control_close(void);
 
-void job_control_clear(void);
+/**
+ */
+void job_control_clear(gboolean confirm);
 
+/**
+ */
 void job_control_stop(void);
+
+/**
+ * Get selected job/queue and put it at \p iter.
+ * Return TRUE if there was something selected. Otherwise, return FALSE.
+ * \p check_type determine the error message if selection don't match it.
+ */
+gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionType check_type);
 
 #endif				//__UI_JOB_CONTROL_H

@@ -46,8 +46,6 @@
 
 struct gebr gebr;
 
-static gboolean gebr_quit_foreach_job(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter);
-
 static void gebr_log_load(void);
 
 static void gebr_migrate_data_dir(void);
@@ -124,8 +122,6 @@ gboolean gebr_quit(void)
 
 	gebr_config_save(FALSE);
 
-	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store),
-			       (GtkTreeModelForeachFunc)gebr_quit_foreach_job, NULL); 
 	/* Free servers structs */
 	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
 		struct server *server;
@@ -134,6 +130,7 @@ gboolean gebr_quit(void)
 				   SERVER_POINTER, &server, -1);
 		server_free(server);
 	}
+	job_control_clear(FALSE);
 
 	if (gebr.flow_clipboard != NULL) {
 		g_list_foreach(gebr.flow_clipboard, (GFunc) g_free, NULL);
@@ -412,23 +409,6 @@ void gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboole
 /*
  * Private functions
  */
-
-/**
- * \internal
- */
-static gboolean gebr_quit_foreach_job(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
-{
-	struct job *job;
-	gboolean is_job;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &job, JC_IS_JOB,
-			   &is_job, -1);
-	if (!is_job)
-		return FALSE;
-	job_free(job);
-
-	return FALSE;
-}
 
 /**
  * \internal

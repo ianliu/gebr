@@ -116,9 +116,7 @@ void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 
 		/* initialization */
 		prepared_html = g_string_new(NULL);
-
 		g_string_assign(prepared_html, gebr_geoxml_document_get_help(document));
-
 		/* create temporary filename */
 		html_path = gebr_make_temp_filename("gebr_XXXXXX.html");
 
@@ -126,7 +124,7 @@ void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 		html_fp = fopen(html_path->str, "w");
 		if (html_fp == NULL) {
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to create temporary file."));
-			goto out_menu;
+			goto out2;
 		}
 		fputs(prepared_html->str, html_fp);
 		fclose(html_fp);
@@ -143,21 +141,19 @@ void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 		html_fp = fopen(html_path->str, "r");
 		if (html_fp == NULL) {
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to create temporary file."));
-			goto out_menu;
+			goto out1;
 		}
-		g_string_assign(prepared_html, "");
-
 		gchar buffer[1000];
+		g_string_assign(prepared_html, "");
 		while (fgets(buffer, sizeof(buffer), html_fp))
 			g_string_append(prepared_html, buffer);
-
 		fclose(html_fp);
 
 		gebr_geoxml_document_set_help(document, prepared_html->str);
 
-out_menu:	g_string_free(html_path, FALSE);
+out1:		g_string_free(cmd_line, TRUE);
+out2:		g_string_free(html_path, FALSE);
 		g_string_free(prepared_html, TRUE);
-		g_string_free(cmd_line, TRUE);
 
 	}
 }

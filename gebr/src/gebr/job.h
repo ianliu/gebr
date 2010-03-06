@@ -86,19 +86,27 @@ void job_delete(struct job *job);
 /**
  * Remove job from the list. 
  */
-void job_close(struct job *job);
+void job_close(struct job *job, gboolean force);
 
 /**
  * Select \p job and load it. 
  */
 void job_set_active(struct job *job);
 
+/**
+ */
 gboolean job_is_active(struct job *job);
 
+/**
+ */
 void job_append_output(struct job *job, GString * output);
 
+/**
+ */
 void job_update(struct job *job);
 
+/**
+ */
 void job_update_label(struct job *job);
 
 /**

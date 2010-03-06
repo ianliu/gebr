@@ -27,35 +27,28 @@
 #include "gebr.h"
 #include "ui_job_control.h"
 
-struct __job_foreach {
-	GString *address;
-	GString *jid;
-	struct job **job;
-}; 
-static gboolean job_find_foreach_func(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, struct __job_foreach
-				      * foreach)
-{
-	struct job *i;
-	gboolean is_job;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &i, JC_IS_JOB, &is_job, -1);
-	if (!is_job)
-		return FALSE;
-	if (!strcmp(i->server->comm->address->str, foreach->address->str) && !strcmp(i->jid->str, foreach->jid->str)) {
-		*foreach->job = i;
-		return TRUE;	
-	}
-	return FALSE;
-}
-
 struct job *job_find(GString * address, GString * jid)
 {
-	struct job *job;
+	struct job *job = NULL;
 
-	job = NULL;
-	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store),
-			       (GtkTreeModelForeachFunc)job_find_foreach_func, 
-			       &(struct __job_foreach){address, jid, &job}); 
+	gboolean job_find_foreach_func(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
+	{
+		struct job *i;
+		gboolean is_job;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &i, JC_IS_JOB, &is_job,
+				   -1);
+		if (!is_job)
+			return FALSE;
+		if (!strcmp(i->server->comm->address->str, address->str) && !strcmp(i->jid->str, jid->str)) {
+			job = i;
+			return TRUE;	
+		}
+		return FALSE;
+	}
+
+	gebr_gui_gtk_tree_model_foreach_recursive(GTK_TREE_MODEL(gebr.ui_job_control->store),
+						  (GtkTreeModelForeachFunc)job_find_foreach_func, NULL); 
 
 	return job;
 }
@@ -161,6 +154,8 @@ struct job *job_add(struct server *server, GString * jid,
 
 void job_free(struct job *job)
 {
+	if (gtk_tree_store_remove(gebr.ui_job_control->store, &job->iter))
+		gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_job_control->view), &job->iter);
 	g_string_free(job->title, TRUE);
 	g_string_free(job->jid, TRUE);
 	g_string_free(job->hostname, TRUE);
@@ -176,13 +171,10 @@ void job_free(struct job *job)
 
 void job_delete(struct job *job)
 {
-	gtk_tree_store_remove(gebr.ui_job_control->store, &job->iter);
 	job_free(job);
-
-	job_control_clear_or_select_first();
 }
 
-void job_close(struct job *job)
+void job_close(struct job *job, gboolean force)
 {
 	if (job->status == JOB_STATUS_RUNNING) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Can't close running job"));
@@ -202,10 +194,6 @@ void job_set_active(struct job *job)
  	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_job_control->view), &job->iter);
 }
 
-/*
- * Function: job_is_active
- * *Fill me in!*
- */
 gboolean job_is_active(struct job *job)
 {
 	GtkTreeSelection *selection;
@@ -215,10 +203,6 @@ gboolean job_is_active(struct job *job)
 	return gtk_tree_selection_iter_is_selected(selection, &job->iter);
 }
 
-/*
- * Function: job_append_output
- * *Fill me in!*
- */
 void job_append_output(struct job *job, GString * output)
 {
 	GtkTextIter iter;
@@ -244,10 +228,6 @@ void job_append_output(struct job *job, GString * output)
 	}
 }
 
-/*
- * Function: job_update
- * *Fill me in!*
- */
 void job_update(struct job *job)
 {
 	if (job_is_active(job) == FALSE)
@@ -255,10 +235,6 @@ void job_update(struct job *job)
 	job_set_active(job);
 }
 
-/*
- * Function: job_update_label
- * *Fill me in!*
- */
 void job_update_label(struct job *job)
 {
 	GString *label;

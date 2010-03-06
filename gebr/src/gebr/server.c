@@ -174,31 +174,29 @@ gboolean server_find(struct server * server, GtkTreeIter * iter)
 	return FALSE;
 }
 
-static gboolean server_free_foreach_job(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, struct server
-					*server)
-{
-	struct job *job;
-	gboolean is_job;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &job, JC_IS_JOB,
-			   &is_job, -1);
-	if (!is_job)
-		gtk_tree_store_remove(gebr.ui_job_control->store, iter);
-	else if (job != NULL && job->server == server)
-		job_delete(job);
-
-	return FALSE;
-}
-
 void server_free(struct server *server)
 {
 	gtk_list_store_remove(gebr.ui_server_list->common.store, &server->iter);
 	gtk_list_store_clear(server->accounts_model);
 	gtk_list_store_clear(server->queues_model);
 
+	gboolean server_free_foreach_job(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
+	{
+		struct job *job;
+		gboolean is_job;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &job, JC_IS_JOB,
+				   &is_job, -1);
+		if (!is_job)
+			gtk_tree_store_remove(gebr.ui_job_control->store, iter);
+		else if (job != NULL && job->server == server)
+			job_delete(job);
+
+		return FALSE;
+	}
 	/* delete all jobs at server */
-	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store),
-			       (GtkTreeModelForeachFunc)server_free_foreach_job, server); 
+	gebr_gui_gtk_tree_model_foreach_recursive(GTK_TREE_MODEL(gebr.ui_job_control->store),
+						  (GtkTreeModelForeachFunc)server_free_foreach_job, NULL); 
 
 	gebr_comm_server_free(server->comm);
 	g_string_free(server->last_error, TRUE);
