@@ -313,7 +313,7 @@ void on_job_control_close(void)
 
 void on_job_control_clear(void)
 {
-	job_control_clear(TRUE);
+	job_control_clear(FALSE);
 }
 
 /*

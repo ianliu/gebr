@@ -1,7 +1,3 @@
-/**
- * \file parameter.c Construct interfaces for parameter.
- */
-
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -742,11 +738,11 @@ static gboolean parameter_dialog_setup_ui(void)
 	GtkWidget *keyword_label;
 	GtkWidget *keyword_entry;
 	GtkWidget *required_label;
-	GtkWidget *required_check_button;
+	GtkWidget *required_check_button = NULL;
 	GtkWidget *is_list_label;
-	GtkWidget *is_list_check_button;
+	GtkWidget *is_list_check_button = NULL;
 	GtkWidget *separator_label;
-	GtkWidget *separator_entry;
+	GtkWidget *separator_entry = NULL;
 	GtkWidget *default_label;
 	GtkWidget *default_widget;
 	GtkWidget *default_widget_hbox;

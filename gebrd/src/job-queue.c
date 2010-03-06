@@ -16,6 +16,7 @@
  */
 
 #include "job-queue.h"
+#include "queues.h"
 
 GebrdJobQueue * gebrd_job_queue_new(const gchar * name)
 {
@@ -35,6 +36,8 @@ void gebrd_job_queue_append_job(GebrdJobQueue * job_queue, struct job * job)
 void gebrd_job_queue_remove_job(GebrdJobQueue * job_queue, struct job * job)
 {
 	job_queue->jobs = g_list_remove(job_queue->jobs, job);
+	if (job_queue->name[0] == 'j' && !g_list_length(job_queue->jobs))
+		gebrd_queues_remove(job_queue->name);	    
 }
 
 void gebrd_job_queue_free(GebrdJobQueue * job_queue)

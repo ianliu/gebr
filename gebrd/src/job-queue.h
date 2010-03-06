@@ -1,8 +1,3 @@
-/**
- * @file job-queue.h Job queue API
- * @ingroup gebrd
- */
-
 /*   GeBR Daemon - Process and control execution of flows
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -18,6 +13,11 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @file job-queue.h Job queue API
+ * @ingroup gebrd
  */
 
 #ifndef __JOB_QUEUE_H

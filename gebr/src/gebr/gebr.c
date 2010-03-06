@@ -130,7 +130,7 @@ gboolean gebr_quit(void)
 				   SERVER_POINTER, &server, -1);
 		server_free(server);
 	}
-	job_control_clear(FALSE);
+	job_control_clear(TRUE);
 
 	if (gebr.flow_clipboard != NULL) {
 		g_list_foreach(gebr.flow_clipboard, (GFunc) g_free, NULL);

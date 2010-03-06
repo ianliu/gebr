@@ -28,7 +28,6 @@ void gebrd_queues_add_job_to(const gchar * queue, struct job * job)
 		job_queue = gebrd_job_queue_new(queue);
 		g_hash_table_insert(gebrd.queues, g_strdup(queue), job_queue);
 	}
-	gebrd.jobs = g_list_append(gebrd.jobs, job);
 	gebrd_job_queue_append_job(job_queue, job);
 }
 

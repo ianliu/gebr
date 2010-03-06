@@ -76,7 +76,7 @@ void job_control_close(void);
 
 /**
  */
-void job_control_clear(gboolean confirm);
+void job_control_clear(gboolean force);
 
 /**
  */

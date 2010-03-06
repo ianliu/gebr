@@ -174,15 +174,24 @@ void job_delete(struct job *job)
 	job_free(job);
 }
 
-void job_close(struct job *job, gboolean force)
+void job_close(struct job *job, gboolean force, gboolean verbose)
 {
-	if (job->status == JOB_STATUS_RUNNING) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Can't close running job"));
+	if (force) {
+		job_delete(job);
 		return;
 	}
-	if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
-		/* TODO */
-	} else if (strcmp(job->jid->str, "0"))
+	/* NOTE: changes here must reflect changes in job_clear at gebrd */
+	if (job->status == JOB_STATUS_RUNNING || job->status == JOB_STATUS_QUEUED) {
+		if (verbose) {
+			if (job->status == JOB_STATUS_RUNNING)
+				gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Can't close running job '%s'"), job->title->str);
+			else if (job->status == JOB_STATUS_QUEUED)
+				gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Can't close queued job '%s'"), job->title->str);
+		}
+		return;
+	}
+
+	if (gebr_comm_server_is_logged(job->server->comm))
 		gebr_comm_protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
 					     gebr_comm_protocol_defs.clr_def, 1, job->jid->str);
 

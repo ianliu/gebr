@@ -86,7 +86,7 @@ void job_delete(struct job *job);
 /**
  * Remove job from the list. 
  */
-void job_close(struct job *job, gboolean force);
+void job_close(struct job *job, gboolean force, gboolean verbose);
 
 /**
  * Select \p job and load it. 

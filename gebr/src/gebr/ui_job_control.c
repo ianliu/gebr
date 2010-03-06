@@ -231,12 +231,12 @@ void job_control_close(void)
 	    (_("Clear job "), _("Are you sure you want to clear job '%s'?"), job->title->str) == FALSE)
 		return;
 
-	job_close(job, FALSE);
+	job_close(job, FALSE, TRUE);
 }
 
-void job_control_clear(gboolean confirm)
+void job_control_clear(gboolean force)
 {
-	if (confirm && !gebr_gui_confirm_action_dialog(_("Clear all jobs"),
+	if (!force && !gebr_gui_confirm_action_dialog(_("Clear all jobs"),
 						      _("Are you sure you want to clear all jobs from all servers?")))
 		return;
 
@@ -249,7 +249,7 @@ void job_control_clear(gboolean confirm)
 				   &is_job, -1);
 		if (!is_job)
 			return FALSE;
-		job_delete(job);
+		job_close(job, force, FALSE);
 
 		return FALSE;
 	}

@@ -23,6 +23,12 @@
 
 #include "client.h"
 
+/**
+ */
+struct job *job_find(GString * jid);
+
+/**
+ */
 struct job {
 	GebrCommProcess *process;
 	GebrGeoXmlFlow *flow;
@@ -60,26 +66,43 @@ struct job {
 	GString * status_string;
 };
 
+/**
+ */
 gboolean job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml);
+/**
+ */
 void job_free(struct job *job);
 
+/**
+ */
 void job_run_flow(struct job *job);
 
-struct job *job_find(GString * jid);
-
+/**
+ */
 void job_clear(struct job *job);
+/**
+ */
 void job_end(struct job *job);
+/**
+ */
 void job_kill(struct job *job);
 
+/**
+ */
 void job_notify(struct job *job, struct client *client);
+/**
+ */
 void job_list(struct client *client);
+/**
+ */
 void job_send_clients_job_notify(struct job *job);
 
+/**
+ */
 gchar * job_queue_get_list();
 
 /**
  * Change status and notify clients about it
- * \see job_set_status
  */
 void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter);
 

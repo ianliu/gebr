@@ -359,11 +359,9 @@ gboolean server_parse_client_messages(struct client *client)
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 
-			/* try to run and send return */
 			job = job_find(jid);
-			if (job != NULL) {
+			if (job != NULL)
 				job_clear(job);
-			}
 
 			/* frees */
 			gebr_comm_protocol_split_free(arguments);
