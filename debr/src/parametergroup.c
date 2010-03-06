@@ -178,10 +178,6 @@ gboolean parameter_group_dialog_setup_ui(void)
 
 	/* group data -> UI */
 	gtk_entry_set_text(GTK_ENTRY(label_entry), gebr_geoxml_parameter_get_label(debr.parameter));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(expanded_check_button),
-				     gebr_geoxml_parameter_group_get_expand(parameter_group));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(instanciable_check_button),
-				     gebr_geoxml_parameter_group_get_is_instanciable(parameter_group));
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(instances_spin_button),
 				  gebr_geoxml_parameter_group_get_instances_number(parameter_group));
 	/* scan for an exclusive instance */
