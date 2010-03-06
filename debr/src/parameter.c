@@ -324,9 +324,13 @@ void parameter_new_from_type(enum GEBR_GEOXML_PARAMETER_TYPE type)
 	if (gebr_geoxml_parameter_get_is_program_parameter(debr.parameter) == TRUE) {
 		if (!parameter_dialog_setup_ui())
 			parameter_remove(FALSE);
+		else
+			parameter_selected();
 	} else {
 		if (!parameter_group_dialog_setup_ui())
 			parameter_remove(FALSE);
+		else
+			parameter_selected();
 	}
 }
 
@@ -661,17 +665,17 @@ void parameter_select_iter(GtkTreeIter iter)
 
 GtkWidget * parameter_create_menu_with_types(gboolean use_action)
 {
-	gint n;
 	gboolean cut;
 	GtkWidget *menu;
 
 	menu = gtk_menu_new();
+	if (use_action)
+		cut = TRUE;
+	else
+		cut = gebr_geoxml_parameter_get_is_in_group(debr.parameter) ||
+			(parameter_get_selected(NULL, FALSE) && (gebr_geoxml_parameter_get_type(debr.parameter) == GEBR_GEOXML_PARAMETER_TYPE_GROUP));
 
-	cut = gebr_geoxml_parameter_get_is_in_group(debr.parameter) || (parameter_get_selected(NULL, FALSE)
-		&& !use_action && (gebr_geoxml_parameter_get_type(debr.parameter) == GEBR_GEOXML_PARAMETER_TYPE_GROUP));
-
-	n = combo_type_map_size - (cut? 1:0);
-	for (guint i = 0; i < n; i++) {
+	void append_menuitem(guint i) {
 		GtkWidget *item;
 		if (use_action) {
 			GtkAction *action;
@@ -684,6 +688,15 @@ GtkWidget * parameter_create_menu_with_types(gboolean use_action)
 		}
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	}
+
+	for (guint i = 0; i < combo_type_map_size - 1; i++)
+		append_menuitem(i);
+
+	if (!cut) {
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+		append_menuitem(combo_type_map_size - 1);
+	}
+
 	return menu;
 }
 
@@ -1365,6 +1378,8 @@ static void parameter_selected(void)
 	do_navigation_bar_update();
 
 	/* parameter type stuff */
+	gtk_widget_set_sensitive(GTK_WIDGET(debr.tool_item_change_type),
+				 gebr_geoxml_parameter_get_type(debr.parameter) != GEBR_GEOXML_PARAMETER_TYPE_GROUP);
 	g_signal_handlers_block_matched(G_OBJECT(gtk_action_group_get_action(debr.action_group, "parameter_type_real")),
 					G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(on_parameter_type_activate), NULL);
 	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION
@@ -1427,12 +1442,6 @@ static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(param_new), parameter_create_menu_with_types(FALSE));
 
 	if (parameter_get_selected(&iter, FALSE) == FALSE) {
-		//gtk_widget_set_sensitive(param_cut, FALSE);
-		//gtk_widget_set_sensitive(param_copy, FALSE);
-		//gtk_widget_set_sensitive(param_delete, FALSE);
-		//gtk_widget_set_sensitive(param_properties, FALSE);
-		//gtk_widget_set_sensitive(param_preview, FALSE);
-
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_new);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_cut);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_copy);
@@ -1457,7 +1466,6 @@ static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 	    || gebr_gui_gtk_tree_store_can_move_down(debr.ui_parameter.tree_store, &iter) == TRUE)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
-
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_new);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_cut);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_copy);
@@ -1466,11 +1474,12 @@ static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_properties);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_preview);
 
-	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_change_type"));
-	gtk_action_block_activate_from(gtk_action_group_get_action(debr.action_group, "parameter_change_type"), menu_item);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), parameter_create_menu_with_types(TRUE));
-
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	if (gebr_geoxml_parameter_get_type(debr.parameter) != GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
+		menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_change_type"));
+		gtk_action_block_activate_from(gtk_action_group_get_action(debr.action_group, "parameter_change_type"), menu_item);
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), parameter_create_menu_with_types(TRUE));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	}
 
 out:	
 	gtk_menu_set_accel_group(GTK_MENU(menu), debr.accel_group);
