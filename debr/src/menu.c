@@ -479,88 +479,73 @@ void menu_validate(GtkTreeIter * iter)
 
 void menu_install(void)
 {
+	gboolean overwriteall;
 	GtkTreeIter iter;
-	GString *cmd_line;
-	gboolean overwrite_all;
 
-	cmd_line = g_string_new(NULL);
-	overwrite_all = FALSE;
+	overwriteall = FALSE;
+
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
+		GtkWidget *dialog;
+
 		gchar *menu_filename;
 		gchar *menu_path;
-		GtkWidget *dialog;
+		GString *destination;
+		GString *command;
 		MenuStatus status;
-
-		if (!menu_get_selected(&iter, FALSE))
-			continue;
+		gboolean do_save = FALSE;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
-				   MENU_FILENAME, &menu_filename, MENU_STATUS, &status, MENU_PATH, &menu_path, -1);
+				   MENU_FILENAME, &menu_filename,
+				   MENU_STATUS, &status,
+				   MENU_PATH, &menu_path,
+				   -1);
+
+		destination = g_string_new(NULL);
+		command = g_string_new(NULL);
+		g_string_printf(destination, "%s/.gebr/menus/%s", getenv("HOME"), menu_filename);
+		g_string_printf(command, "cp %s %s", menu_path, destination->str);
 
 		if (status == MENU_STATUS_UNSAVED) {
-			gint response;
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 							GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 							GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 							_("Menu %s is unsaved. This means that "
 							  "you are installing an older state of it. "
 							  "Would you like to save if first?"), menu_filename);
-			response = gtk_dialog_run(GTK_DIALOG(dialog));
-			if (response == GTK_RESPONSE_YES)
+			if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES)
 				menu_save(&iter);
 			gtk_widget_destroy(dialog);
 		}
 
-		g_string_printf(cmd_line, "gebr %s -I %s", overwrite_all ? "-f" : "", menu_path);
-		switch ((char)WEXITSTATUS(system(cmd_line->str))) {
-		case 0:
-			break;
-		case -1:
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-						_("Failed to run GêBR. Please check if GêBR is installed."));
-			break;
-		case -2:
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-						_("Failed to install menu '%s'."), menu_filename);
-			break;
-		case -3:{
-				gint response;
+		if (!overwriteall && g_file_test(destination->str, G_FILE_TEST_EXISTS)) {
+			gint response;
+			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
+							GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+							GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
+							_("Menu '%s' already exists. Do you want to overwrite it?"),
+							menu_filename);
+			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't overwrite"), GTK_RESPONSE_NO);
+			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Overwrite"), GTK_RESPONSE_YES);
+			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Overwrite all"), GTK_RESPONSE_OK);
 
-				dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-								GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-								GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
-								_("Menu '%s' already exists. Do you want to overwrite it?"),
-								menu_filename);
-				gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't overwrite"), GTK_RESPONSE_NO);
-				gtk_dialog_add_button(GTK_DIALOG(dialog), _("Overwrite"), GTK_RESPONSE_YES);
-				gtk_dialog_add_button(GTK_DIALOG(dialog), _("Overwrite all"), GTK_RESPONSE_OK);
-				switch ((response = gtk_dialog_run(GTK_DIALOG(dialog)))) {
-				case GTK_RESPONSE_YES:
-				case GTK_RESPONSE_OK:
-					g_string_printf(cmd_line, "gebr -f -I %s", menu_path);
-					if ((char)WEXITSTATUS(system(cmd_line->str)))
-						gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-									_("Failed to install menu '%s'"),
-									menu_filename);
-					if (response == GTK_RESPONSE_OK)
-						overwrite_all = TRUE;
-					break;
-				default:
-					break;
-				}
-
-				gtk_widget_destroy(dialog);
-				break;
+			response = gtk_dialog_run(GTK_DIALOG(dialog));
+			if (response == GTK_RESPONSE_YES || response == GTK_RESPONSE_OK) {
+				do_save = TRUE;
+				overwriteall = (response == GTK_RESPONSE_OK);
 			}
-		default:
-			break;
-		}
+			gtk_widget_destroy(dialog);
+		} else
+			do_save = TRUE;
 
+		if (do_save && system(command->str) != 0)
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
+						_("Failed to install menu %s"),
+						menu_filename);
 		g_free(menu_filename);
 		g_free(menu_path);
+		g_string_free(destination, TRUE);
+		g_string_free(command, TRUE);
 	}
-
-	g_string_free(cmd_line, TRUE);
 }
 
 void menu_close(GtkTreeIter * iter)

@@ -204,11 +204,7 @@ on_gtk_tree_view_drag_motion(GtkTreeView * tree_view, GdkDragContext * drag_cont
 	if (!widget_class->drag_motion(GTK_WIDGET(tree_view), drag_context, x, y, time))
 		return TRUE;
 
-#if GTK_CHECK_VERSION(2,12,0)
 	gtk_tree_view_convert_widget_to_bin_window_coords(tree_view, x, y, &x, &y);
-#else
-	gtk_tree_view_widget_to_tree_coords(tree_view, x, y, &x, &y);
-#endif
 	gtk_tree_view_get_drag_dest_row(tree_view, &tree_path, &data->drop_position);
 	gtk_tree_model_get_iter(gtk_tree_view_get_model(tree_view), &data->position, tree_path);
 
@@ -229,18 +225,26 @@ static gboolean gebr_gui_message_dialog_vararg(GtkMessageType type, GtkButtonsTy
 {
 	GtkWidget *dialog;
 
-	gchar *string;
 	gint ret;
+	gchar *string;
+	gchar * escaped;
 	gboolean confirmed;
 
 	string = g_strdup_vprintf(message, args);
-	dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, "%s", string);
-	if (title != NULL)
+	escaped = title? g_markup_printf_escaped("<b>%s</b>", title) : g_markup_printf_escaped("%s", string);
+	dialog = gtk_message_dialog_new_with_markup(NULL,
+						    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+						    type, buttons, "%s", escaped);
+	if (title) {
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
+		gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", string);
+	}
+
 	ret = gtk_dialog_run(GTK_DIALOG(dialog));
 	confirmed = (ret == GTK_RESPONSE_YES || ret == GTK_RESPONSE_OK) ? TRUE : FALSE;
 
 	gtk_widget_destroy(dialog);
+	g_free(escaped);
 	g_free(string);
 
 	return confirmed;
