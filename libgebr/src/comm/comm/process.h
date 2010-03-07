@@ -71,7 +71,10 @@ struct _GebrCommProcessClass {
 
 GebrCommProcess *gebr_comm_process_new(void);
 
-void gebr_comm_process_free(GebrCommProcess *);
+/**
+ * Free \p process structure. If process is running, send kill signal first.
+ */
+void gebr_comm_process_free(GebrCommProcess *process);
 
 gboolean gebr_comm_process_is_running(GebrCommProcess *);
 

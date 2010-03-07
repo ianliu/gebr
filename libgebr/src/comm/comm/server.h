@@ -102,6 +102,7 @@ struct gebr_comm_server {
 			GebrCommProcess *regular;
 		} data;
 	} process;
+	guint tunnel_pooling_source;
 };
 
 /**
