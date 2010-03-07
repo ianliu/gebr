@@ -218,7 +218,7 @@ void on_menu_save_as_activate(void)
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir[0]);
 
 	gtk_widget_show(chooser_dialog);
-	gboolean rerun = FALSE;
+	gboolean rerun;
 	path = g_string_new(NULL);
 	do {
 		if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
@@ -227,10 +227,9 @@ void on_menu_save_as_activate(void)
 		gchar *tmp;
 		tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 		g_string_assign(path, tmp);
-		rerun = gebr_append_filename_extension(path, ".mnu");
+		gebr_append_filename_extension(path, ".mnu");
+		rerun = (strcmp(tmp, path->str)) ? TRUE : FALSE;
 		g_free(tmp);
-
-		puts(rerun? "YES":"NO");
 
 		if (rerun) {
 		       if (g_file_test(path->str, G_FILE_TEST_EXISTS)) {
@@ -241,7 +240,7 @@ void on_menu_save_as_activate(void)
 		       } else
 			       break;
 		}
-	} while(rerun);
+	} while (rerun);
 	filename = g_path_get_basename(path->str);
 
 	/* Verify if another file with same name already exist */

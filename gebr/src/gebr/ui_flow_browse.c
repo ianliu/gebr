@@ -557,7 +557,7 @@ static void flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXml
 		return;
 	}
 
-
+	
 
 	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Reverted to state '%s' ('%s')."), comment, date);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));

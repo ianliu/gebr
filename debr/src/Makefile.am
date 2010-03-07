@@ -17,8 +17,8 @@ include $(top_srcdir)/Makefile.decl
 
 bin_PROGRAMS = debr
 
-debr_SOURCES = \
-	main.c \
+noinst_LIBRARIES = libdebr.a
+libdebr_a_SOURCES = \
 	interface.c \
 	callbacks.c \
 	debr.c \
@@ -30,6 +30,8 @@ debr_SOURCES = \
 	validate.c \
 	help.c \
 	preferences.c
+
+debr_SOURCES = main.c
 noinst_HEADERS = \
 	interface.h \
 	callbacks.h \
@@ -47,5 +49,5 @@ EXTRA_DIST = $(noinst_HEADERS)
 INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
 	$(GEBR_CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_GUI_CFLAGS)
-debr_LDADD = $(INTLLIBS) \
+debr_LDADD = libdebr.a $(INTLLIBS) \
 	$(GEBR_LIBS) $(GEBR_GEOXML_LIBS) $(GEBR_GUI_LIBS)

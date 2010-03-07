@@ -18,8 +18,8 @@ include $(top_srcdir)/Makefile.decl
 bin_PROGRAMS = gebr
 
 #TODO: remove cmdline.{c,h} in future versions (remove old config format support)
-
-gebr_SOURCES = main.c \
+noinst_LIBRARIES = libgebr.a
+libgebr_a_SOURCES = \
 	cmdline.c \
 	gebr.c \
 	callbacks.c \
@@ -44,6 +44,8 @@ gebr_SOURCES = main.c \
 	ui_preferences.c \
 	ui_server.c \
 	ui_moab.c
+
+gebr_SOURCES = main.c
 noinst_HEADERS = \
 	cmdline.h \
 	gebr.h \
@@ -74,5 +76,5 @@ EXTRA_DIST = ${noinst_HEADERS}
 INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" 
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
 	$(CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_COMM_CFLAGS) $(GEBR_GUI_CFLAGS)
-gebr_LDADD = $(LIBS) \
+gebr_LDADD = libgebr.a $(LIBS) \
 	$(GEBR_GEOXML_LIBS) $(GEBR_COMM_LIBS) $(GEBR_GUI_LIBS)
