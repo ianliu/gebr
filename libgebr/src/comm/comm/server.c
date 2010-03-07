@@ -52,7 +52,8 @@ gebr_comm_ssh_open_tunnel_finished(GebrCommTerminalProcess * process, struct geb
 static void gebr_comm_server_connected(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server);
 static void gebr_comm_server_disconnected_state(struct gebr_comm_server *gebr_comm_server);
 static void gebr_comm_server_socket_disconnected(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server);
-static void gebr_comm_server_socket_read(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server);
+static void gebr_comm_server_socket_read(GebrCommStreamSocket * stream_socket, struct gebr_comm_server
+					 *gebr_comm_server);
 static void
 gebr_comm_server_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocketError error,
 		       struct gebr_comm_server *gebr_comm_server);
@@ -60,9 +61,24 @@ gebr_comm_server_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocket
 static void gebr_comm_server_free_x11_forward(struct gebr_comm_server *gebr_comm_server);
 static void gebr_comm_server_free_for_reuse(struct gebr_comm_server *gebr_comm_server);
 
-/*
- * Section: Public
- */
+gchar * gebr_comm_server_get_user(const gchar * address)
+{
+	gchar *addr_temp;
+
+	addr_temp = g_strdup(address);
+
+	return (gchar *) strsep(&addr_temp, "@");
+}
+
+GebrCommServerType gebr_comm_server_get_id(const gchar * name)
+{
+	if (strcmp(name, "regular") == 0)
+		return GEBR_COMM_SERVER_TYPE_REGULAR;
+	else if (strcmp(name, "moab") == 0)
+		return GEBR_COMM_SERVER_TYPE_MOAB;
+	else
+		return GEBR_COMM_SERVER_TYPE_UNKNOWN;
+}
 
 struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const struct gebr_comm_server_ops *ops)
 {
@@ -187,12 +203,6 @@ void gebr_comm_server_kill(struct gebr_comm_server *gebr_comm_server)
 	g_string_free(cmd_line, TRUE);
 }
 
-/*
- * Function: gebr_comm_server_forward_x11
- * For the logged _gebr_comm_server_ forward x11 server _port_ to user display
- * Fail if user's display is not set, returning FALSE.
- * If any other x11 redirect was previously made it is unmade
- */
 gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server, guint16 port)
 {
 	gchar *display;
@@ -251,11 +261,6 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server,
 	return ret;
 }
 
-/*
- * Function: gebr_comm_server_run_flow
- * Ask _gebr_comm_server_ to run the current _flow_
- *
- */
 void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, struct gebr_comm_server_run * config)
 {
 	GebrGeoXmlFlow *flow_wnh;	/* wnh: with no help */
@@ -284,27 +289,9 @@ void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, struct
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(flow_wnh));
 }
 
-
-gchar * gebr_comm_server_get_user(const gchar * address)
-{
-	gchar *addr_temp;
-
-	addr_temp = g_strdup(address);
-
-	return (gchar *) strsep(&addr_temp, "@");
-}
-
-
-GebrCommServerType gebr_comm_server_get_id(const gchar * name)
-{
-	if (strcmp(name, "regular") == 0)
-		return GEBR_COMM_SERVER_TYPE_REGULAR;
-	else if (strcmp(name, "moab") == 0)
-		return GEBR_COMM_SERVER_TYPE_MOAB;
-	else
-		return GEBR_COMM_SERVER_TYPE_UNKNOWN;
-}
-
+/**
+ * \internal
+ */
 static void
 gebr_comm_server_log_message(struct gebr_comm_server *gebr_comm_server, enum gebr_log_message_type type,
 			     const gchar * message, ...)
@@ -321,6 +308,9 @@ gebr_comm_server_log_message(struct gebr_comm_server *gebr_comm_server, enum geb
 	g_free(string);
 }
 
+/**
+ * \internal
+ */
 static void local_run_server_read(GebrCommProcess * process, struct gebr_comm_server *gebr_comm_server)
 {
 	GString *output;
@@ -342,6 +332,9 @@ static void local_run_server_read(GebrCommProcess * process, struct gebr_comm_se
 	g_string_free(output, TRUE);
 }
 
+/**
+ * \internal
+ */
 static void local_run_server_finished(GebrCommProcess * process, struct gebr_comm_server *gebr_comm_server)
 {
 	GebrCommSocketAddress socket_address;
@@ -358,6 +351,9 @@ static void local_run_server_finished(GebrCommProcess * process, struct gebr_com
 	gebr_comm_stream_socket_connect(gebr_comm_server->stream_socket, &socket_address, FALSE);
 }
 
+/**
+ * \internal
+ */
 static gboolean
 gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_server *gebr_comm_server,
 			   GString * output)
@@ -431,11 +427,11 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_s
 		return FALSE;
 	}
 
- out:	return TRUE;
+out:	return TRUE;
 }
 
-/*
- * Function: gebr_comm_ssh_read
+/**
+ * \internal
  * Simple ssh messages parser, like login questions and warnings
  */
 static void gebr_comm_ssh_read(GebrCommTerminalProcess * process, struct gebr_comm_server *gebr_comm_server)
@@ -450,11 +446,17 @@ static void gebr_comm_ssh_read(GebrCommTerminalProcess * process, struct gebr_co
 	g_string_free(output, TRUE);
 }
 
+/**
+ * \internal
+ */
 static void gebr_comm_ssh_finished(GebrCommTerminalProcess * process, struct gebr_comm_server *gebr_comm_server)
 {
 	gebr_comm_terminal_process_free(process);
 }
 
+/**
+ * \internal
+ */
 static void gebr_comm_ssh_run_server_read(GebrCommTerminalProcess * process, struct gebr_comm_server *gebr_comm_server)
 {
 	gchar *strtol_endptr;
@@ -480,9 +482,12 @@ static void gebr_comm_ssh_run_server_read(GebrCommTerminalProcess * process, str
 					     gebr_comm_server->address->str, output->str);
 	}
 
- out:	g_string_free(output, TRUE);
+out:	g_string_free(output, TRUE);
 }
 
+/**
+ * \internal
+ */
 static void
 gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, struct gebr_comm_server *gebr_comm_server)
 {
@@ -518,6 +523,9 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, struct gebr
 	g_string_free(cmd_line, TRUE);
 }
 
+/**
+ * \internal
+ */
 static void
 gebr_comm_ssh_open_tunnel_finished(GebrCommTerminalProcess * process, struct gebr_comm_server *gebr_comm_server)
 {
@@ -536,6 +544,9 @@ gebr_comm_ssh_open_tunnel_finished(GebrCommTerminalProcess * process, struct geb
 	gebr_comm_terminal_process_free(process);
 }
 
+/**
+ * \internal
+ */
 static void gebr_comm_server_connected(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server)
 {
 	gchar hostname[256];
@@ -581,6 +592,9 @@ static void gebr_comm_server_connected(GebrCommStreamSocket * stream_socket, str
 	}
 }
 
+/**
+ * \internal
+ */
 static void gebr_comm_server_disconnected_state(struct gebr_comm_server *gebr_comm_server)
 {
 	gebr_comm_server->port = 0;
@@ -589,6 +603,9 @@ static void gebr_comm_server_disconnected_state(struct gebr_comm_server *gebr_co
 	gebr_comm_server_free_for_reuse(gebr_comm_server);
 }
 
+/**
+ * \internal
+ */
 static void gebr_comm_server_socket_disconnected(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server)
 {
 	gebr_comm_server_disconnected_state(gebr_comm_server);
@@ -597,6 +614,9 @@ static void gebr_comm_server_socket_disconnected(GebrCommStreamSocket * stream_s
 				     gebr_comm_server->address->str);
 }
 
+/**
+ * \internal
+ */
 static void gebr_comm_server_socket_read(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *gebr_comm_server)
 {
 	GString *data;
@@ -615,6 +635,9 @@ static void gebr_comm_server_socket_read(GebrCommStreamSocket * stream_socket, s
 	g_free(data_stripped);
 }
 
+/**
+ * \internal
+ */
 static void
 gebr_comm_server_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocketError error,
 		       struct gebr_comm_server *gebr_comm_server)
@@ -627,8 +650,8 @@ gebr_comm_server_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocket
 				     gebr_comm_server->address->str);
 }
 
-/*
- * Function: gebr_comm_server_free_x11_forward
+/**
+ * \internal
  * Free (if necessary) gebr_comm_server->x11_forward_process for reuse
  */
 static void gebr_comm_server_free_x11_forward(struct gebr_comm_server *gebr_comm_server)
@@ -644,6 +667,9 @@ static void gebr_comm_server_free_x11_forward(struct gebr_comm_server *gebr_comm
 	}
 }
 
+/**
+ * \internal
+ */
 static void gebr_comm_server_free_for_reuse(struct gebr_comm_server *gebr_comm_server)
 {
 	gebr_comm_protocol_reset(gebr_comm_server->protocol);

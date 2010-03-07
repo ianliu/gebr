@@ -60,6 +60,7 @@ gboolean server_init(void)
 {
 	GebrCommSocketAddress socket_address;
 	struct sigaction act;
+	gchar buffer[100];
 	gboolean ret;
 
 	GString *log_filename;
@@ -95,7 +96,10 @@ gboolean server_init(void)
 				goto out;
 			}
 			ret = FALSE;
-			dprintf(gebrd.finished_starting_pipe[1], "%d\n", port);
+
+			snprintf(buffer, sizeof(buffer), "%d\n", port);
+			write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1);
+
 			goto out;
 		}
 	}
@@ -142,7 +146,8 @@ gboolean server_init(void)
 	ret = TRUE;
 	gebrd_message(GEBR_LOG_START, _("Server started at %u port"),
 		      gebr_comm_socket_address_get_ip_port(&socket_address));
-	dprintf(gebrd.finished_starting_pipe[1], "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
+	snprintf(buffer, sizeof(buffer), "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
+	write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1);
 
 	/* frees */
 	g_string_free(log_filename, TRUE);

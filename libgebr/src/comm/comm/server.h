@@ -29,17 +29,31 @@
 #include "process.h"
 #include "channelsocket.h"
 
+/**
+ */
 typedef enum {
 	GEBR_COMM_SERVER_TYPE_MOAB,
 	GEBR_COMM_SERVER_TYPE_REGULAR,
 	GEBR_COMM_SERVER_TYPE_UNKNOWN
 } GebrCommServerType;
 
+/**
+ */
 typedef enum {
 	GEBR_COMM_SERVER_LOCATION_LOCAL,
 	GEBR_COMM_SERVER_LOCATION_REMOTE
 } GebrCommServerLocation;
 
+/**
+ */
+gchar * gebr_comm_server_get_user(const char * address);
+
+/**
+ */
+GebrCommServerType gebr_comm_server_get_id(const gchar * name);
+
+/**
+ */
 struct gebr_comm_server {
 	/* the communication channel. */
 	GebrCommStreamSocket *stream_socket;
@@ -90,32 +104,52 @@ struct gebr_comm_server {
 	} process;
 };
 
+/**
+ */
 struct gebr_comm_server_run {
 	GebrGeoXmlFlow * flow;
 	gchar * account;
 	gchar * class;
 };
 
+/**
+ */
 struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const struct gebr_comm_server_ops *ops);
 
+/**
+ */
 void gebr_comm_server_free(struct gebr_comm_server *gebr_comm_server);
 
+/**
+ */
 void gebr_comm_server_connect(struct gebr_comm_server *gebr_comm_server);
 
+/**
+ */
 void gebr_comm_server_disconnect(struct gebr_comm_server *gebr_comm_server);
 
+/**
+ */
 gboolean gebr_comm_server_is_logged(struct gebr_comm_server *gebr_comm_server);
 
+/**
+ */
 gboolean gebr_comm_server_is_local(struct gebr_comm_server *gebr_comm_server);
 
+/**
+ */
 void gebr_comm_server_kill(struct gebr_comm_server *gebr_comm_server);
 
+/**
+ * For the logged _gebr_comm_server_ forward x11 server _port_ to user display
+ * Fail if user's display is not set, returning FALSE.
+ * If any other x11 redirect was previously made it is unmade
+ */
 gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server, guint16 port);
 
+/**
+ * Ask _gebr_comm_server_ to run the current _flow_
+ */
 void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, struct gebr_comm_server_run * config);
-
-gchar * gebr_comm_server_get_user(const char * address);
-
-GebrCommServerType gebr_comm_server_get_id(const gchar * name);
 
 #endif				//__GEBR_COMM_SERVER_H
