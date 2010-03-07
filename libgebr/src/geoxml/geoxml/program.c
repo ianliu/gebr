@@ -100,7 +100,7 @@ gsize gebr_geoxml_program_count_parameters(GebrGeoXmlProgram * program)
 			GebrGeoXmlSequence *inner_param;
 
 			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(param), &params_ingroup, 0);
-			gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETER(params_ingroup), &inner_param, 0);
+			gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(params_ingroup), &inner_param, 0);
 
 			while (inner_param) {
 				n++;

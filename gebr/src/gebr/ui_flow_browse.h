@@ -16,6 +16,10 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * \file ui_flow_browse.c Responsible for UI for browsing a line's flows.
+ */
+
 #ifndef __UI_FLOW_BROWSE_H
 #define __UI_FLOW_BROWSE_H
 

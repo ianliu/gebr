@@ -185,6 +185,7 @@ GebrGeoXmlFlowServer *gebr_geoxml_flow_servers_get_last_run(GebrGeoXmlFlow * flo
 
 /**
  * Returns the GebrGeoXmlFlowServer that has \p address
+ * \p input, \p output and/or \p error may be NULL which causes them to be ignored
  * If not found returns NULL.
  *
  * If \p flow or \p address is NULL returns NULL.

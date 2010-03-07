@@ -1,7 +1,3 @@
-/**
- * \file ui_flow_browse.c Responsible for UI for browsing a line's flows.
- */
-
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -440,7 +436,7 @@ static void flow_browse_load(void)
 
 	flow_browse_info_update();
 
- out:	g_free(filename);
+out:	g_free(filename);
 	g_free(title);
 }
 
@@ -556,11 +552,9 @@ static void flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXml
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not revert to state '%s' ('%s')."), comment, date);
 		return;
 	}
-
-	
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
 	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Reverted to state '%s' ('%s')."), comment, date);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 	flow_browse_load();
 }
 
