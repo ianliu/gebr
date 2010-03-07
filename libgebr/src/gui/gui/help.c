@@ -78,7 +78,6 @@ static gchar * js_start_inline_editing = \
 	"var editor = null;"
 	"var editing_element = null;"
 	"var CKEDITOR_BASEPATH='file://" CKEDITOR_DIR "/';"
-	"var last_saved_content = null;"
 	"function getHead(doc) {"
 		"var head = doc.getElementsByTagName('head')[0];"
 		"if (!head) {"
@@ -171,7 +170,7 @@ static gchar * js_start_inline_editing = \
 		"OpenCkEditor(GetEditableElements(document)[0]);"
 	"}"
 	"function isContentSaved() {"
-		"return editor.getData() == last_saved_content;"
+		"return !editor.checkDirty();"
 	"}"
 	"(function() {"
 		"var head = getHead(document);"
@@ -196,7 +195,6 @@ static gchar * js_start_inline_editing = \
 		//clone document for saving
 		"document_clone = document.implementation.createDocument('', '', null);"
 		"document_clone.appendChild(document.documentElement.cloneNode(true));"
-		"last_saved_content = GetEditableElements(document)[0].innerHTML;"
 		//append javascript to load
 		"var tag = document.createElement('script');"
 		"tag.setAttribute('type', 'text/javascript');"
@@ -250,7 +248,6 @@ static void help_edit_save(struct help_edit_data * data)
 
 	var_help = g_string_new(
 			"(function(){"
-				"last_saved_content = editor.getData();"
 				"UpdateDocumentClone();"
 				"if (menu_edition) {"
 					"GenerateNavigationIndex(document);"
