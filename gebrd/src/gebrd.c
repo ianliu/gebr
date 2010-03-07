@@ -32,7 +32,7 @@ struct gebrd gebrd;
 
 void gebrd_init(void)
 {
-	gchar buf[10];
+	gchar buffer[100];
 
 	pipe(gebrd.finished_starting_pipe);
 	if (gebrd.options.foreground == FALSE) {
@@ -66,9 +66,9 @@ void gebrd_init(void)
 		}
 
 		/* wait for server_init sign that it finished */
-		read(gebrd.finished_starting_pipe[0], buf, 10);
+		read(gebrd.finished_starting_pipe[0], buffer, 10);
 
-		fprintf(stdout, "%s", buf);
+		fprintf(stdout, "%s", buffer);
 	} else {
 		gebrd.main_loop = g_main_loop_new(NULL, FALSE);
 		g_type_init();
