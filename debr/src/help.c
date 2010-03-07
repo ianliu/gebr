@@ -184,7 +184,7 @@ out_program:		g_string_free(html_path, FALSE);
 	} else {
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html->str);
 
-		if (debr.config.htmleditor->len == 0){
+		if (debr.config.htmleditor->len == 0) {
 			gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), help_edit_on_finished,
 					   help_edit_on_refresh, TRUE);
 		} else {
@@ -400,35 +400,30 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 	g_free(escaped_content);
 
 	/* Categories replacement */
-	if (gebr_geoxml_flow_get_categories_number(debr.menu)) {
-		GebrGeoXmlSequence *category;
-		GString *catstr;
+	GebrGeoXmlSequence *category;
+	GString *catstr;
 
-		pos = strip_block(help, "cat");
-		if (pos) {
-			gebr_geoxml_flow_get_category(debr.menu, &category, 0);
-			catstr = g_string_new("\n       ");
-			
+	catstr = g_string_new("");
+	pos = strip_block(help, "cat");
+	if (pos) {
+		gebr_geoxml_flow_get_category(debr.menu, &category, 0);
+		if (category) {
 			content = (gchar *) gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category));
 			escaped_content = g_markup_escape_text(content, -1);
 			g_string_append(catstr, escaped_content);
 			g_free(escaped_content);
-		
 			gebr_geoxml_sequence_next(&category);
-			while (category != NULL) {
-				g_string_append(catstr, " | ");
-
-				content = (gchar *) gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category));
-				escaped_content = g_markup_escape_text(content, -1);
-				g_string_append(catstr, escaped_content);
-				g_free(escaped_content);
-			
-				gebr_geoxml_sequence_next(&category);
-			}
-			g_string_append(catstr, "\n       ");
-			g_string_insert(help, pos, catstr->str);
-			g_string_free(catstr, TRUE);
 		}
+		while (category != NULL) {
+			g_string_append(catstr, " | ");
+			content = (gchar *) gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category));
+			escaped_content = g_markup_escape_text(content, -1);
+			g_string_append(catstr, escaped_content);
+			g_free(escaped_content);
+			gebr_geoxml_sequence_next(&category);
+		}
+		g_string_insert(help, pos, catstr->str);
+		g_string_free(catstr, TRUE);
 	}
 
 	pos = strip_block(help, "dtd");
