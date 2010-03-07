@@ -149,34 +149,31 @@ void preferences_dialog_setup_ui(void)
 	}
 
 	gtk_widget_show_all(window);
-	switch (gtk_dialog_run(GTK_DIALOG(window))) {
-	case GTK_RESPONSE_OK: {
-			g_strfreev(debr.config.menu_dir);
 
-			/* update settings */
-			debr.config.menu_dir =
-			    gebr_gui_gtk_directory_chooser_get_paths(GEBR_GUI_GTK_DIRECTORY_CHOOSER
-								     (menudir_dirchooser));
-			g_string_assign(debr.config.name, gtk_entry_get_text(GTK_ENTRY(name_entry)));
-			g_string_assign(debr.config.email, gtk_entry_get_text(GTK_ENTRY(email_entry)));
-			g_string_assign(debr.config.browser,
-					gtk_combo_box_get_active_text(GTK_COMBO_BOX(browser_combo)));
-			if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(user_radio_button)))
-				g_string_assign(debr.config.htmleditor, gtk_entry_get_text(GTK_ENTRY(htmleditor_entry)));
-			else
-				g_string_assign(debr.config.htmleditor, "");
-
-
-			/* save */
-			debr_config_save();
-
-			/* apply settings */
-			if (menu_cleanup())
-				menu_reset();
-
+	while (TRUE) {
+		if (gtk_dialog_run(GTK_DIALOG(window)) != GTK_RESPONSE_OK)
 			break;
-		}
-	case GTK_RESPONSE_CANCEL:
+
+		g_strfreev(debr.config.menu_dir);
+
+		debr.config.menu_dir =
+			gebr_gui_gtk_directory_chooser_get_paths(GEBR_GUI_GTK_DIRECTORY_CHOOSER
+								 (menudir_dirchooser));
+		g_string_assign(debr.config.name, gtk_entry_get_text(GTK_ENTRY(name_entry)));
+		g_string_assign(debr.config.email, gtk_entry_get_text(GTK_ENTRY(email_entry)));
+		g_string_assign(debr.config.browser,
+				gtk_combo_box_get_active_text(GTK_COMBO_BOX(browser_combo)));
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(user_radio_button)))
+			g_string_assign(debr.config.htmleditor, gtk_entry_get_text(GTK_ENTRY(htmleditor_entry)));
+		else
+			g_string_assign(debr.config.htmleditor, "");
+
+		if (!menu_cleanup())
+			continue;
+
+		debr_config_save();
+		menu_reset();
+
 		break;
 	}
 
