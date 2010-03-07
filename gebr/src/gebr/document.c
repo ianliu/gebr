@@ -32,13 +32,6 @@
 #include "flow.h"
 #include "menu.h"
 
-
-/**
- * Create a new document with _type_
- *
- * Create a new document in the user's data diretory
- * with _type_ and set its filename.
- */
 GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
 {
 	gchar *extension;
@@ -78,9 +71,6 @@ GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
 	return document;
 }
 
-/**
- * Load a document (flow, line or project) from its filename, handling errors
- */
 GebrGeoXmlDocument *document_load(const gchar * filename)
 {
 	GebrGeoXmlDocument *document;
@@ -94,9 +84,6 @@ GebrGeoXmlDocument *document_load(const gchar * filename)
 	return document;
 }
 
-/**
- * Load a document (flow, line or project) from its filename, handling errors
- */
 GebrGeoXmlDocument *document_load_at(const gchar * filename, const gchar * directory)
 {
 	GebrGeoXmlDocument *document;
@@ -109,7 +96,9 @@ GebrGeoXmlDocument *document_load_at(const gchar * filename, const gchar * direc
 
 	return document;
 }
+
 /**
+ * \internal
  * Callback to remove menu reference from program to maintain backward compatibility
  */
 static void  __document_discard_menu_ref_callback(GebrGeoXmlProgram * program, const gchar * filename, gint index)
@@ -131,9 +120,7 @@ static void  __document_discard_menu_ref_callback(GebrGeoXmlProgram * program, c
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
 		
 }	
-/**
- * Load a document from its path, handling errors
- */
+
 GebrGeoXmlDocument *document_load_path(const gchar * path)
 {
 	GebrGeoXmlDocument *document;
@@ -147,9 +134,6 @@ GebrGeoXmlDocument *document_load_path(const gchar * path)
 	return document;
 }
 
-/**
- * Save _document_ using its filename field at data directory.
- */
 void document_save(GebrGeoXmlDocument * document)
 {
 	GString *path;
@@ -164,9 +148,6 @@ void document_save(GebrGeoXmlDocument * document)
 	g_string_free(path, TRUE);
 }
 
-/**
- * Import _document_ into data directory, saving it with a new filename.
- */
 void document_import(GebrGeoXmlDocument * document)
 {
 	GString *path;
@@ -199,12 +180,6 @@ void document_import(GebrGeoXmlDocument * document)
 	g_string_free(new_filename, TRUE);
 }
 
-/**
- * Creates a filename for a document
- *
- * Creates a filename for a document using the current date and a random
- * generated string and _extension_, ensuring that it is unique in user's data directory.
- */
 GString *document_assembly_filename(const gchar * extension)
 {
 	time_t t;
@@ -241,9 +216,6 @@ GString *document_assembly_filename(const gchar * extension)
 	return filename;
 }
 
-/**
- * Prefix filename with data diretory path
- */
 GString *document_get_path(const gchar * filename)
 {
 	GString *path;
@@ -254,9 +226,6 @@ GString *document_get_path(const gchar * filename)
 	return path;
 }
 
-/**
- * Delete document with _filename_ from data directory.
- */
 void document_delete(const gchar * filename)
 {
 	GString *path;

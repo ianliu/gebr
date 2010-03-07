@@ -71,7 +71,7 @@ struct server *server_new(const gchar * address, gboolean autoconnect);
 void server_free(struct server *server);
 
 /** 
- * Find \p server and put on \p iter
+ * Find \p server iterator and put on \p iter
  */
 gboolean server_find(struct server *server, GtkTreeIter * iter);
 

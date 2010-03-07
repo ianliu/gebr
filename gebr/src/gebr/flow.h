@@ -15,6 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file flow.c Flow manipulation
+ */
+
 #ifndef __FLOW_H
 #define __FLOW_H
 

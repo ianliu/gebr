@@ -21,7 +21,9 @@
 
 #include <gtk/gtk.h>
 
-/* Store fields */
+/**
+ * Store fields
+ */
 enum {
 	FB_TITLE = 0,
 	FB_FILENAME,
@@ -29,6 +31,8 @@ enum {
 	FB_N_COLUMN
 };
 
+/**
+ */
 struct ui_flow_browse {
 	GtkWidget *widget;
 	GtkListStore *store;
@@ -63,16 +67,37 @@ struct ui_flow_browse {
 	} info;
 };
 
+/**
+ * Assembly the flow browse page.
+ * Return:
+ * The structure containing relevant data.
+ */
 struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu);
 
+/**
+ * Update information shown about the selected flow
+ */
 void flow_browse_info_update(void);
 
+/**
+ * Set to _iter_ the current selected flow
+ */
 gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected);
 
+/**
+ * Select flow at _iter_
+ */
 void flow_browse_select_iter(GtkTreeIter * iter);
 
+/**
+ * Turn multiple selection into single.
+ */
 void flow_browse_single_selection(void);
 
+/**
+ * Load \p revision into the list of revision.
+ * If \p new is TRUE, then it is prepended; otherwise, appended.
+ */
 void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new);
 
 #endif				//__UI_FLOW_BROWSE_H

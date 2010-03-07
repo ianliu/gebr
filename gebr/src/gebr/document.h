@@ -22,19 +22,52 @@
 #include <glib.h>
 #include <libgebr/geoxml.h>
 
+/**
+ * Create a new document with _type_
+ *
+ * Create a new document in the user's data diretory
+ * with _type_ and set its filename.
+ */
 GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type);
 
+/**
+ * Load a document (flow, line or project) from its filename, handling errors
+ */
 GebrGeoXmlDocument *document_load(const gchar * filename);
+/**
+ * Load a document (flow, line or project) from its filename, handling errors
+ */
 GebrGeoXmlDocument *document_load_at(const gchar * filename, const gchar * directory);
+/**
+ * Load a document from its path, handling errors
+ */
 GebrGeoXmlDocument *document_load_path(const gchar * path);
 
+/**
+ * Save _document_ using its filename field at data directory.
+ */
 void document_save(GebrGeoXmlDocument * document);
+/**
+ * Import _document_ into data directory, saving it with a new filename.
+ */
 void document_import(GebrGeoXmlDocument * document);
 
+/**
+ * Creates a filename for a document
+ *
+ * Creates a filename for a document using the current date and a random
+ * generated string and _extension_, ensuring that it is unique in user's data directory.
+ */
 GString *document_assembly_filename(const gchar * extension);
 
+/**
+ * Prefix filename with data diretory path
+ */
 GString *document_get_path(const gchar * filename);
 
+/**
+ * Delete document with _filename_ from data directory.
+ */
 void document_delete(const gchar * filename);
 
 #endif				//__DOCUMENT_H

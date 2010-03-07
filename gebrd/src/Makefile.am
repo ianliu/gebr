@@ -15,17 +15,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-noinst_LIBRARIES = libjobqueue.a
-libjobqueue_a_SOURCES = job-queue.c job-queue.h
-
-bin_PROGRAMS = gebrd
-gebrd_SOURCES = \
-	main.c \
+noinst_LIBRARIES = libgebrd.a
+libgebrd_a_SOURCES = \
 	gebrd.c \
 	server.c \
 	client.c \
 	job.c \
+	job-queue.c \
 	queues.c
+
+bin_PROGRAMS = gebrd
+gebrd_SOURCES = \
+	main.c 
 
 noinst_HEADERS = \
 	gebrd.h \
@@ -33,6 +34,7 @@ noinst_HEADERS = \
 	client.h \
 	job.h \
 	macros.h \
+	job-queue.h \
 	queues.h
 
 EXTRA_DIST = $(noinst_HEADERS)
@@ -41,5 +43,5 @@ INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
 	$(GEBR_CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_COMM_CFLAGS)
-gebrd_LDADD = libjobqueue.a $(INTLLIBS) \
+gebrd_LDADD = libgebrd.a $(INTLLIBS) \
 	$(GEBR_LIBS) $(GEBR_GEOXML_LIBS) $(GEBR_COMM_LIBS)

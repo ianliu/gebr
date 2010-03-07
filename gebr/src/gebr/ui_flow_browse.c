@@ -50,18 +50,6 @@ static void flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXml
 static void flow_browse_on_revision_select(GtkWidget * menu_item, GebrGeoXmlRevision * revision);
 static void flow_browse_on_flow_move(void);
 
-/*
- * Section: Public
- * Public functions.
- */
-
-/*
- * Function: add_flow_browse
- * Assembly the flow browse page.
- *
- * Return:
- * The structure containing relevant data.
- */
 struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 {
 	struct ui_flow_browse *ui_flow_browse;
@@ -228,10 +216,6 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	return ui_flow_browse;
 }
 
-/*
- * Function: flow_browse_info_update
- * Update information shown about the selected flow
- */
 void flow_browse_info_update(void)
 {
 	if (gebr.flow == NULL) {
@@ -341,9 +325,6 @@ void flow_browse_info_update(void)
 	navigation_bar_update();
 }
 
-/* Function: flow_browse_get_selected
- * Set to _iter_ the current selected flow
- */
 gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 {
 	if (!gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_flow_browse->view), iter)) {
@@ -355,27 +336,17 @@ gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 	return TRUE;
 }
 
-/**
- * Select flow at _iter_
- */
 void flow_browse_select_iter(GtkTreeIter * iter)
 {
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_flow_browse->view), iter);
 	flow_browse_load();
 }
 
-/**
- * Turn multiple selection into single.
- */
 void flow_browse_single_selection(void)
 {
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 }
 
-/**
- * Load \p revision into the list of revision.
- * If \p new is TRUE, then it is prepended; otherwise, appended.
- */
 void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
 {
 	GString *label;
@@ -399,11 +370,8 @@ void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
 	g_signal_connect(menu_item, "select", G_CALLBACK(flow_browse_on_revision_select), revision);
 }
 
-/*
- * Private functions.
- */
-
 /**
+ * \internal
  * Load a selected flow from file when selected in "Flow Browse".
  */
 static void flow_browse_load(void)
@@ -476,7 +444,8 @@ static void flow_browse_load(void)
 	g_free(title);
 }
 
-/* Function: flow_browse_show_help
+/**
+ * \internal 
  * Obvious
  */
 static void flow_browse_show_help(void)
@@ -484,7 +453,8 @@ static void flow_browse_show_help(void)
 	help_show(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(gebr.flow)), _("Flow help"));
 }
 
-/* Function: flow_browse_on_row_activated
+/**
+ * \internal
  * Go to flow components tab
  */
 static void
@@ -494,7 +464,8 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 2);
 }
 
-/* Function: flow_browse_popup_menu
+/**
+ * \internal
  * Build popup menu
  */
 static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse *ui_flow_browse)
@@ -564,7 +535,8 @@ static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse
 	return GTK_MENU(menu);
 }
 
-/* Function: flow_browse_on_revision_activate
+/** 
+ * \internal
  * Change flow to selected revision
  */
 static void flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * revision)
@@ -579,12 +551,16 @@ static void flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXml
 	gchar *comment;
 
 	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
-	if (gebr_geoxml_flow_change_to_revision(gebr.flow, revision))
-		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Reverted to state '%s' ('%s')."), comment, date);
-	else
+	if (!gebr_geoxml_flow_change_to_revision(gebr.flow, revision)) {
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not revert to state '%s' ('%s')."), comment, date);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+		return;
+	}
 
+
+
+	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Reverted to state '%s' ('%s')."), comment, date);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 	flow_browse_load();
 }
 
