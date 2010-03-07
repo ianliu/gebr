@@ -455,7 +455,7 @@ void menu_save_all(void)
 		while (valid) {
 			MenuStatus status;
 			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_STATUS, &status, -1);
-			if (status == MENU_STATUS_UNSAVED && !menu_save(&child)) {
+			if (status == MENU_STATUS_UNSAVED) {
 				GtkTreePath *path;
 				path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_menu.model), &child);
 				unsaved = g_list_prepend(unsaved,
@@ -473,7 +473,8 @@ void menu_save_all(void)
 		row = (GtkTreeRowReference*)(entry->data);
 		path = gtk_tree_row_reference_get_path(row);
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(debr.ui_menu.model), &iter, path);
-		menu_save_as(&iter);
+		if (!menu_save(&iter))
+			menu_save_as(&iter);
 		gtk_tree_path_free(path);
 		gtk_tree_row_reference_free(row);
 		entry = entry->next;
