@@ -154,6 +154,11 @@ void menu_open(const gchar * path, gboolean select);
 gboolean menu_save(GtkTreeIter * iter);
 
 /**
+ * Save a copy of the menu pointed by \p iter.
+ */
+void menu_save_as(GtkTreeIter * iter);
+
+/**
  * Save all menus opened in DeBR that are unsaved.
  */
 void menu_save_all(void);

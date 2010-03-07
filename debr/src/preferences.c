@@ -44,7 +44,6 @@ void preferences_dialog_setup_ui(void)
 	GtkWidget *browser_combo;
 	GtkWidget *htmleditor_entry;
 	GtkWidget *label;
-	GtkTooltips *tips;
 	GtkWidget *eventbox;
 	int i;
 	gboolean newbrowser = TRUE;
@@ -60,7 +59,6 @@ void preferences_dialog_setup_ui(void)
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	/* tooltips */
-	tips = gtk_tooltips_new();
 	gtk_widget_set_size_request(window, 480, 300);
 	/* table */
 	table = gtk_table_new(6, 2, FALSE);
@@ -70,7 +68,7 @@ void preferences_dialog_setup_ui(void)
 	label = gtk_label_new(_("Name"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	name_entry = gtk_entry_new();
-	gtk_tooltips_set_tip(tips, name_entry, _("You should know your name"), "");
+	g_object_set(name_entry, "tooltip-text", _("You should know your name"), NULL);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), name_entry, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3);
 	gtk_entry_set_text(GTK_ENTRY(name_entry), debr.config.name->str);
@@ -79,7 +77,7 @@ void preferences_dialog_setup_ui(void)
 	label = gtk_label_new(_("Email"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	email_entry = gtk_entry_new();
-	gtk_tooltips_set_tip(tips, email_entry, _("Your email address"), "");
+	g_object_set(email_entry, "tooltip-text", _("Your email address"), NULL);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), email_entry, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_entry_set_text(GTK_ENTRY(email_entry), debr.config.email->str);
@@ -89,11 +87,9 @@ void preferences_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	/* Browse button for user's menus dir */
 	menudir_dirchooser = gebr_gui_gtk_directory_chooser_new();
-	// menudir_dirchooser = gtk_file_chooser_button_new("GêBR dir",
-	//                                      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
 	eventbox = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(eventbox), menudir_dirchooser);
-	gtk_tooltips_set_tip(tips, eventbox, _("Path to look for private user's menus"), "");
+	g_object_set(eventbox, "tooltip-text", _("Path to look for private user's menus"), NULL);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
 	/* read config */
@@ -119,7 +115,7 @@ void preferences_dialog_setup_ui(void)
 	}
 	eventbox = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(eventbox), browser_combo);
-	gtk_tooltips_set_tip(tips, eventbox, _("An HTML browser to display helps and reports"), "");
+	g_object_set(eventbox, "tooltip-text", _("An HTML browser to display helps and reports"), NULL);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
 
@@ -141,7 +137,7 @@ void preferences_dialog_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(list_widget_hbox), user_radio_button, FALSE, FALSE, 2);
 
 	htmleditor_entry = gtk_entry_new();
-	gtk_tooltips_set_tip(tips, htmleditor_entry, _("An HTML capable editor to edit helps and reports"), "");
+	g_object_set(htmleditor_entry, "tooltip-text", _("An HTML capable editor to edit helps and reports"), NULL);
 	gtk_box_pack_start(GTK_BOX(list_widget_hbox), htmleditor_entry, FALSE, FALSE, 0);
 
 	if (debr.config.htmleditor->len != 0){
@@ -154,7 +150,7 @@ void preferences_dialog_setup_ui(void)
 
 	gtk_widget_show_all(window);
 	switch (gtk_dialog_run(GTK_DIALOG(window))) {
-	case GTK_RESPONSE_OK:{
+	case GTK_RESPONSE_OK: {
 			g_strfreev(debr.config.menu_dir);
 
 			/* update settings */
