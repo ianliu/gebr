@@ -79,18 +79,21 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				}
 				for (gint i = 0; queues[i]; i++) {
 					if (strlen(queues[i])) {
-						GString *string;
+						if (queues[i][0] != 'j') {
+							GString *string;
 
-						string = g_string_new("");
-						g_string_printf(string, _("At '%s'"), queues[i]);
-						gtk_list_store_append(server->queues_model, &iter);
-						gtk_list_store_set(server->queues_model, &iter, 0, string->str, 1,
-								   queues[i], 2, NULL, -1);
+							string = g_string_new("");
+							g_string_printf(string, _("At '%s'"), queues[i]+1);
+							gtk_list_store_append(server->queues_model, &iter);
+							gtk_list_store_set(server->queues_model, &iter, 0, string->str,
+									   1, queues[i], 2, NULL, -1);
+
+							g_string_free(string, TRUE);
+						}
 
 						/* at job control */
 						server_queue_find_at_job_control(server, queues[i], NULL);
 
-						g_string_free(string, TRUE);
 					}
 				}
 
