@@ -83,7 +83,9 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 							GString *string;
 
 							string = g_string_new("");
-							g_string_printf(string, _("At '%s'"), queues[i]+1);
+							g_string_printf(string, _("At '%s'"),
+									server->type == GEBR_COMM_SERVER_TYPE_REGULAR
+								       	? queues[i]+1 : queues[i]);
 							gtk_list_store_append(server->queues_model, &iter);
 							gtk_list_store_set(server->queues_model, &iter, 0, string->str,
 									   1, queues[i], 2, NULL, -1);
