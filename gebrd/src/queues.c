@@ -35,7 +35,8 @@ void gebrd_queues_remove_job_from(const gchar * queue, struct job * job)
 {
 	GebrdJobQueue * job_queue;
 	job_queue = g_hash_table_lookup(gebrd.queues, queue);
-	gebrd_job_queue_remove_job(job_queue, job);
+	if (job_queue != NULL)
+		gebrd_job_queue_remove_job(job_queue, job);
 }
 
 void gebrd_queues_remove(const gchar * queue)
