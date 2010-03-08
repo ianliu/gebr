@@ -129,7 +129,8 @@ static void server_clear_jobs(struct server * server)
 static void server_disconnected(GebrCommStreamSocket * stream_socket, struct server *server)
 {
 	server_list_updated_status(server);
-	flow_edition_on_server_changed();
+	gtk_list_store_clear(server->accounts_model);
+	gtk_list_store_clear(server->queues_model);
 	server_clear_jobs(server);
 }
 

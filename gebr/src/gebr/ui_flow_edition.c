@@ -59,11 +59,6 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
  * Public functions
  */
 
-/**
- * Assembly the flow edit ui_flow_edition->widget.
- *
- * @return The structure containing relevant data.
- */
 struct ui_flow_edition *flow_edition_setup_ui(void)
 {
 	struct ui_flow_edition *ui_flow_edition;
@@ -212,9 +207,6 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	return ui_flow_edition;
 }
 
-/**
- * Load current flow's (gebr.flow) programs.
- */
 void flow_edition_load_components(void)
 {
 	GebrGeoXmlSequence *first_program;
@@ -232,11 +224,6 @@ void flow_edition_load_components(void)
 	flow_add_program_sequence_to_view(first_program, FALSE);
 }
 
-/*
- * Fuction: flow_edition_get_selected_component
- * Return TRUE if there is a selected component (program) and put it into _iter_
- * If _warn_unselected_ is TRUE then a error message is displayed if the FALSE is returned
- */
 gboolean flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected)
 {
 	if (!gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter)) {
@@ -248,20 +235,12 @@ gboolean flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_u
 	return TRUE;
 }
 
-/*
- * Fuction: flow_edition_select_component_iter
- * Select _iter_ and scroll to it.
- */
 void flow_edition_select_component_iter(GtkTreeIter * iter)
 {
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter);
 	flow_edition_component_selected();
 }
 
-/*
- * Function: flow_edition_set_io
- * Set the XML IO into iterators
- */
 void flow_edition_set_io(void)
 {
 	gchar *input;
@@ -278,10 +257,6 @@ void flow_edition_set_io(void)
 			   FSEQ_ICON_COLUMN, GTK_STOCK_GO_FORWARD, FSEQ_TITLE_COLUMN, output, -1);
 }
 
-/*
- * Function: flow_edition_component_activated
- * Show the current selected flow components parameters
- */
 void flow_edition_component_activated(void)
 {
 	GtkTreeIter iter;
@@ -306,10 +281,6 @@ void flow_edition_component_activated(void)
 	g_free(title);
 }
 
-/*
- * Function: flow_edition_component_changed
- * Change the flow status when select the status from the "Flow Component" menu.
- */
 void flow_edition_status_changed(void)
 {
 	GtkTreeIter iter;
@@ -349,20 +320,13 @@ void flow_edition_status_changed(void)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
 }
 
-/**
- * Update flow edition interface with information of the current selected server.
- */
 void flow_edition_on_server_changed(void)
 {
 	flow_edition_on_combobox_changed(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox));
 }
 
-/*
- * Private functions
- */
-
-/*
- * Fuction: flow_edition_get_selected_menu
+/**
+ * \internal
  * Return TRUE if there is a selected menu and put it into _iter_
  * If _warn_unselected_ is TRUE then a error message is displayed if the FALSE is returned
  */
@@ -386,10 +350,8 @@ static gboolean flow_edition_get_selected_menu(GtkTreeIter * iter, gboolean warn
 	return TRUE;
 }
 
-/*
- * Fuction: flow_edition_may_reorder
- *
- *
+/**
+ * \internal
  */
 static gboolean
 flow_edition_may_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
@@ -408,10 +370,8 @@ flow_edition_may_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIte
 	return TRUE;
 }
 
-/*
- * Fuction: flow_edition_reorder
- *
- * 
+/**
+ * \internal
  */
 static gboolean
 flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
@@ -437,6 +397,7 @@ flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * 
 }
 
 /**
+ * \internal
  * When a flow component (a program in the flow) is selected this funtions get the state of the program and set it on
  * Flow Component Menu.
  */
@@ -489,7 +450,6 @@ static void flow_edition_component_selected(void)
 
 /**
  * \internal
- *
  * Add selected menu to flow sequence.
  */
 static void flow_edition_menu_add(void)
@@ -534,7 +494,8 @@ static void flow_edition_menu_add(void)
 	g_free(filename);
 }
 
-/* Function: menus_show_help
+/**
+ * \internal
  * Show's menus help
  */
 static void flow_edition_menu_show_help(void)
@@ -558,6 +519,7 @@ static void flow_edition_menu_show_help(void)
 }
 
 /**
+ * \internal
  * Show popup menu for flow component.
  */
 static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, struct ui_flow_edition *ui_flow_edition)
@@ -635,6 +597,7 @@ static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, struct ui_
 }
 
 /**
+ * \internal
  * Show popup menu for menu list.
  */
 static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_edition *ui_flow_edition)
@@ -683,8 +646,8 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_
 	return GTK_MENU(menu);
 }
 
-/*
- *
+/**
+ * \internal
  */
 static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 {
