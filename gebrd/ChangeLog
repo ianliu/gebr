@@ -1,6 +1,262 @@
+2010-03-08  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Portuguese translation updated
+
+2010-03-07  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* adjust buffer size
+	* fix daemon port printing
+	* include all gebrd sources in libgebrd.a
+
+2010-03-06  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - fixes job clearing at daemon and gebr
+	  - don't clear queued jobs
+	  - some documentation fixes
+
+2010-03-05  Ricardo Biloti <biloti@gebrproject.com>
+
+	* - Portuguese translation update
+	  - Programs' version validated at DeBR
+	  - Programs' version query and/or edited through command-line
+	  tools
+
+2010-03-02  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Created getter/setter for version attribute in 'program' tag;
+	  Interface done.
+
+2010-03-02  abaaklini
+
+	* Resolved some comments at issues 201 and 197
+
+2010-03-01  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Depends in automake to build in lenny and intrepid. (Reverted
+	  from 0.9.16)
+
+2010-02-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fixed job_notify_status
+	* - fixed server_free_foreach_job
+	  - don't show "Queue:" in queue anymore
+
+2010-02-26  fabiosazevedo
+
+	* - added rnq message (rename queue) to client/server protocol
+	  - new status message (requeued) to notify queue renaming
+	  - no more empty queue names strings on gebrd, it gives an empty
+	  queue name a new name formatted as 'j<jobid>'
+	  - dialog for typing name of queue in the case the user executes
+	  after <job>
+	  - gebr prefixes user queues with 'q' to differentiate them from
+	  'j' prefixed queues
+	  - support for empty queues
+	  - added some documentation
+
+2010-02-25  abaaklini
+
+	* Removes job from daemon queue. (Fixes issue 210)
+
+2010-02-24  abaaklini
+
+	* Jobs that was waiting for execution on MOAB cluster, has status
+	  updated to queued. (Fixes issue 209)
+	* Update issue 209
+	  Implements the hide of 'kill' button when queued jobs was
+	  selected
+	  Update issue 210
+	  Implements the remove of a queued job
+
+2010-02-23  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 182
+	  requires glib of version at least 2.12 and only enable tests
+	  (with
+	  gtester) for glib 2.16+
+
+2010-02-20  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Portuguese translation even more updated
+
+2010-02-19  abaaklini
+
+	* Email changed to project name and some internationalization
+	* Bug fix due internationalization
+	* Internationalization for gebrd and debr
+
+2010-02-18  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* requires at least glib 2.16 (Fixes issue 182)
+	* - fix potencial count in debr's validation
+	  - fix validation of hotkeys in groups
+	  - fix hotkeys for flags
+	  - focus first parameter for group hotkey activation
+
+2010-02-18  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed autogen.sh script to copy instead of making links
+
+2010-02-18  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Commiting copys in subproject to easy the process, updates must
+	  be made into root and propagated with autogen.sh.
+	* Workaround to fix broken links in make dist, please use
+	  autogen.sh to copy *.decl into subprojects.
+
+2010-02-18  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Changed icon for unconfigured programs in GeBR; Program status is
+	  now an enumeration.
+
+2010-02-18  abaaklini
+
+	* - check libgebr version
+	  - fix ordering of libgebr and other libs linkage
+
+2010-02-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - require at least gtk 2.12
+	  - do not use svn/git version for libgebr
+
+2010-02-06  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - added configure.ac.decl for commom configure.ac's code
+	  - only use intall -C if available
+
+2010-02-05  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* added install -C script option automatically
+
+2010-02-05  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Added suport to git version in about.
+
+2010-02-02  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Integrated Ckeditor inside GeBR.
+	  Implemented test framework in libgebr.
+
+2010-01-31  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added unit test support. Primary tests on gebrd/tests.
+
+2010-01-28  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a segfault when deleting multiple parameters in DeBR (Fixes
+	  issue 145)
+
+2010-01-27  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a segfault when client disconnect; Added queue 'Immediatly'
+
+2010-01-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* added default queue behaviour (run immediatly)
+	* less agressive tail
+	* fix msub error checking
+	* fix error check for moab
+	* better checks for moab job id
+	* check for msub failures
+	* Don't use gebrd queueing system for moab servers
+
+2010-01-27  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Don't use g_hash_table_get_keys for backward compatibility
+	* Queues implemented
+
+2010-01-26  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* run msub syncronously to avoid run condition
+	* delete message from list upon fail
+	* fixed run on a local server
+	* fixed typo compiling errors
+	* for moab servers pool status using checkjob command
+
+2010-01-26  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Queues from Moab and/or Gebr are now stored in ListStore's, in
+	  GeBR
+
+2010-01-26  abaaklini
+
+	* Arguments moab_jid and queue passed from daemon to client
+
+2010-01-25  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fetching Moab output is now possible
+
+2010-01-25  abaaklini
+
+	* At the end of flow execution, daemon are signalized
+
+2010-01-25  fabiosazevedo
+
+	* It's now possible to get the job's id and output on Moab servers.
+
+2010-01-22  abaaklini
+
+	* Program parameters are now correctly escaped
+	* Fixed escapings when building command line on GeBRd
+
+2010-01-22  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Reverting build system fixes from 0.9.15.
+
+2010-01-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* gebr report server errors to the user
+	* more robust protocol checks
+
+2010-01-22  abaaklini
+
+	* Memory leak problem and export display on MOAB cluster, resolved
+
+2010-01-22  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Minor changes to get compliant with autoreconf,
+	  after a checkout use "AUTOPOINT=intltoolize autoreconf -i" to
+	  setup.
+
+2010-01-21  abaaklini
+
+	* Fixed escaping in Moab command construction
+	* GeBRd now supports MOAB cluster
+
+2010-01-21  fabiosazevedo
+
+	* Added code to get MOAB cluster user credentials.
+
+2010-01-21  abaaklini
+
+	* Added function to obtain server type
+
+2010-01-20  abaaklini
+
+	* All necessary informations to run a flow on Netuno are now passed
+	  to GeBRd
+
+2010-01-20  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* changed fake glib filenames in libgebr_comm
+
+2010-01-08  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* apply coding style police
+	  (http://code.google.com/p/gebr/wiki/CodingStyle)
+
+2009-12-12  Ricardo Biloti <biloti@gebrproject.com>
+
+	* changelog for deb packages updated
+	* changelog's update and version set to 0.9.15 for tag
+
+2009-12-12  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Added autotools chain to build process, there is alternative
+	  versions depending on distribuition.
+
 2009-12-11  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
 
-	* Marking the release 0.9.15.
 	* Fixed build dependencies to build from scratch in chroots.
 
 2009-12-01  Braulio Barros de Oliveira <brauliobo@gebrproject.com>

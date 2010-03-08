@@ -1,6 +1,517 @@
+2010-03-08  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Portuguese translation updated
+
+2010-03-07  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix race condition between ssh tunnel open and server connection
+
+2010-03-07  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* The erroneous saving confirmation in DeBR help edit is fixed.
+
+2010-03-07  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix daemon port printing
+	* ignore revision filename when changing revisions
+	* include all gebrd sources in libgebrd.a
+
+2010-03-06  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a bug where DeBR didn't do anything when trying to save an
+	  extensionless menu
+	* GeBR messages show the title as a bold text now
+	* Fixed menu install in DeBR
+
+2010-03-06  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - alternative to gtk_tree_model_foreach
+	  - some documentation fixed
+
+2010-03-05  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a bug where a the parameter label was being shown in its
+	  group label (Fixes issue 246)
+	* Added program-parameters count in Libgebr/DeBR
+
+2010-03-05  Ricardo Biloti <biloti@gebrproject.com>
+
+	* - Portuguese translation update
+	  - Programs' version validated at DeBR
+	  - Programs' version query and/or edited through command-line
+	  tools
+
+2010-03-05  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Changed 'Editing' label in CKEditor toolbar.
+
+2010-03-04  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* '-s' option for GeBR now returns the users menu directory.
+
+2010-03-03  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a bug where typing 's' in CKEditor saved the document.
+	* Added 'version' attribute in flow DTD; Fixed transition from
+	  0.3.2 to 0.3.3.
+	* Added flow 0.3.3 DTD
+
+2010-03-02  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Created getter/setter for version attribute in 'program' tag;
+	  Interface done.
+	* Added 'Remove Format' button in CKEditor
+	* Removed 'Group' item from 'New' menu when a group is selected
+	* Refactored the drop-down feature to libgebr
+
+2010-03-01  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Depends in automake to build in lenny and intrepid. (Reverted
+	  from 0.9.16)
+
+2010-02-26  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* GeBR and DeBR properties dialogs now have default responses
+
+2010-02-26  fabiosazevedo
+
+	* - added rnq message (rename queue) to client/server protocol
+	  - new status message (requeued) to notify queue renaming
+	  - no more empty queue names strings on gebrd, it gives an empty
+	  queue name a new name formatted as 'j<jobid>'
+	  - dialog for typing name of queue in the case the user executes
+	  after <job>
+	  - gebr prefixes user queues with 'q' to differentiate them from
+	  'j' prefixed queues
+	  - support for empty queues
+	  - added some documentation
+
+2010-02-26  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* On Help edit:
+	  - Closing the editor now asks for confirmation to save the help
+	  if applicable.
+	* On DeBR properties dialog:
+	  - Removed 'Open' and 'Refresh' buttons;
+	  - Standard way of activating the Ok button from GtkEntrie's.
+
+2010-02-25  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added a toolbar in Help Edition dialog; Removed old code from
+	  past fetching of help's html.
+
+2010-02-24  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - backported tag changes
+	  Update issue 209
+	  Removed unused code
+
+2010-02-24  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed the saving feature in DeBR (Fixes issue 221)
+
+2010-02-23  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* prevent crash on jaunty's webkit related to stylescombo
+	* backported tag 0.9.16 changes to trunk
+	* Update issue 182
+	  requires glib of version at least 2.12 and only enable tests
+	  (with
+	  gtester) for glib 2.16+
+
+2010-02-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - added experimental qtcreator project files
+	  - fix regressions on save (help enconding and others)
+	  - added title to styles combo (H1)
+	  - added parameter style
+	  - fix parameter type
+
+2010-02-20  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Portuguese translation even more updated
+	* - Portuguese translation update
+	  - Authors update in about dialog
+
+2010-02-19  fabiosazevedo
+
+	* Portuguese translation update.
+
+2010-02-19  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed HTML generation for helps
+
+2010-02-18  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* explicitly break ckeditor's toolbar
+	* requires at least glib 2.16 (Fixes issue 182)
+	* - fix potencial count in debr's validation
+	  - fix validation of hotkeys in groups
+	  - fix hotkeys for flags
+	  - focus first parameter for group hotkey activation
+
+2010-02-18  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed autogen.sh script to copy instead of making links
+	* Fixed the 'Link' button in program edition. Previously, it was
+	  opening the programs help, not URL.
+
+2010-02-18  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Commiting copys in subproject to easy the process, updates must
+	  be made into root and propagated with autogen.sh.
+	* Workaround to fix broken links in make dist, please use
+	  autogen.sh to copy *.decl into subprojects.
+
+2010-02-18  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Changed icon for unconfigured programs in GeBR; Program status is
+	  now an enumeration.
+
+2010-02-18  abaaklini
+
+	* - check libgebr version
+	  - fix ordering of libgebr and other libs linkage
+
+2010-02-18  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Commit to test 'Search' feature in Jaunty.
+
+2010-02-12  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix against strange behaviour of gdome's insert before.
+	* fix sexy-icon-entry release
+	* selection behaviour changes
+	* removed gebr_gui_gtk_tree_view_select_sibling
+
+2010-02-12  fabiosazevedo
+
+	* commit for data interchange
+
+2010-02-12  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Hotkeys in DeBR are now validated
+
+2010-02-12  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* do not install .svn directories when installing using find
+
+2010-02-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix move after
+	* - require at least gtk 2.12
+	  - do not use svn/git version for libgebr
+
+2010-02-10  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* added an unit test to geoxml_sequence
+
+2010-02-10  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added pipe icons in flow edition
+
+2010-02-09  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Inserted icon for queued jobs
+
+2010-02-09  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* support for hotkeys in parameter edition dialog
+	* set group's attribute properly (Fixes issue 193)
+
+2010-02-09  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed Â characters in GeBR help
+	* Added ; at end of line
+	* More usuability modifications for Vim
+
+2010-02-09  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* added gebr_gui_gtk_tree_view_select_iter
+	* fix last commit for debr and gebr
+	* always require webkit
+
+2010-02-08  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added 'collapse all' and 'expand all' in GeBR and DeBR.
+
+2010-02-06  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix compile without webkit
+	* - added configure.ac.decl for commom configure.ac's code
+	  - only use intall -C if available
+
+2010-02-05  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* added install -C script option automatically
+
+2010-02-05  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Fixes the html tags in the help index problem.
+	* Added suport to git version in about.
+
+2010-02-05  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* remove debug info
+
+2010-02-05  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed help links edition.
+	* Removing missing alerts.
+	* Removed style tags from help.
+
+2010-02-05  abaaklini
+
+	* check for empty help on edition
+
+2010-02-05  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Open editor on page load
+	* Removed a missing 'alert'
+	* Fixed help edition in GeBR.
+
+2010-02-05  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Avoids to use install -D to be able to configure with
+	  INSTALL='./install-sh -C' taking advantage of minimal make
+	  install effort.
+
+2010-02-05  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix gebr_gui_help_show to use title
+
+2010-02-05  fabiosazevedo
+
+	* Added code to escape invalid HTML tags and characters in menu
+	  helps. (Fixes issue 125.)
+
+2010-02-05  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed compilation problem
+
+2010-02-05  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - changed callback to reported HTML edition each time it happens,
+	  saving XML in gebr
+	  - esc on ckeditor cancel changes
+	  - added documentation
+	  - fix compatibility for version without webkit
+
+2010-02-05  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Documentation for libgebr/gui/utils.h
+
+2010-02-04  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added default styles for editor.
+	* Changed 'Formats' option to 'Styles'; using custom styles.
+	* More configurations in ckeditor.
+
+2010-02-04  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* put html back on the xml upon save ckeditor toolbar button
+
+2010-02-04  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Better search for gebr and debr. See
+	  gebr_gui_gtk_tree_view_fancy_search. (Fixes issue 41)
+
+2010-02-03  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed gebr_js_make_function to define the function globally.
+
+2010-02-03  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - added blockquote item
+	  - remove unecessary ckeditor stuff
+
+2010-02-03  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Header's menu is now dynamically generated for helps.
+
+2010-02-03  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - fix queue check
+	  - fixed editor toolbar clicking
+
+2010-02-03  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Correctly fetching of help's html done
+
+2010-02-02  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added CKEDITOR_DIR to makefile; changed class for ckeditor
+	  edition.
+	* Integrated Ckeditor inside GeBR.
+	  Implemented test framework in libgebr.
+
+2010-02-01  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fixed js.[ch]
+	* open webkit to edit help
+
+2010-02-01  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added convenience functions to work with JS;
+	  First script to fire Ckeditor.
+
+2010-01-31  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added unit test support. Primary tests on gebrd/tests.
+
+2010-01-29  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - fixed configure.ac VERSION
+	  - removed unused mkdir -p
+	* added ckeditor
+
+2010-01-28  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a segfault when deleting multiple parameters in DeBR (Fixes
+	  issue 145)
+
+2010-01-27  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Queues implemented
+
+2010-01-26  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* small fix to gebr_comm_server
+	* fixed run on a local server
+	* fixed typo compiling errors
+	* for moab servers pool status using checkjob command
+
+2010-01-25  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fetching Moab output is now possible
+
+2010-01-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* better connected/disconnected server states handling
+
+2010-01-22  abaaklini
+
+	* fixed blocking option in gebrcommlistensocket
+
+2010-01-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* added gebr_comm_socket_set_blocking
+
+2010-01-22  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Reverting build system fixes from 0.9.15.
+
+2010-01-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* gebr report server errors to the user
+	* more robust protocol checks
+
+2010-01-22  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Minor changes to get compliant with autoreconf,
+	  after a checkout use "AUTOPOINT=intltoolize autoreconf -i" to
+	  setup.
+
+2010-01-21  abaaklini
+
+	* Fixed escaping in Moab command construction
+
+2010-01-21  fabiosazevedo
+
+	* Added code to get MOAB cluster user credentials.
+
+2010-01-21  abaaklini
+
+	* Added enuns to describe the type and location of server
+
+2010-01-21  fabiosazevedo
+
+	* Added enum GebrCommServerType.
+
+2010-01-20  abaaklini
+
+	* All necessary informations to run a flow on Netuno are now passed
+	  to GeBRd
+
+2010-01-20  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* changed fake glib filenames in libgebr_comm
+
+2010-01-20  abaaklini
+
+	* Preparation for the new "RUN" message to support Netuno
+	* Netuno execution interface to obtain account and class
+	  implemented
+
+2010-01-20  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Removed 'delete' option for 'New' row in Server/IO dialog
+
+2010-01-17  Ricardo Biloti <biloti@gebrproject.com>
+
+	* - protection against problems at load/save
+	  - modified date updated whenever a menu is saved
+
+2010-01-14  abaaklini
+
+	* fixed compilation
+	* added flow 0.3.2 with no reference to menus in programs
+
+2010-01-13  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Creation date option added to gebr-geoxml-menu-edit (fixes issue
+	  70)
+
+2010-01-13  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - added gebr_geoxml_program_foreach_parameter
+	  - some documentation ported to doxygen format
+	  - use document_import in flow_import
+	  - added line_set_paths_to and flow_set_paths_to
+
+2010-01-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* go into groups for flow_copy_from_dicts (Fixes issue 107)
+
+2010-01-08  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* apply coding style police
+	  (http://code.google.com/p/gebr/wiki/CodingStyle)
+
+2009-12-31  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fast editing with tab/enter within dictionary dialog
+	* - added gebr_gui_gtk_dialog_set_response_on_widget_return
+	  - document properties dialog in gebr and debr now close on user
+	  return key press
+
+2009-12-17  Ricardo Biloti <biloti@gebrproject.com>
+
+	* min and max values shown for numerical parameters
+
+2009-12-15  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* include intl.h in libgebr_gui help.c (fixes compilation in debian
+	  etch)
+
+2009-12-14  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* let user select non listed servers but don't let (s)he execute it
+	* added gebr_g_string_replace, gebr_path_use_home_variable and
+	  gebr_path_resolve_home_variable and others
+
+2009-12-12  Ricardo Biloti <biloti@gebrproject.com>
+
+	* changelog for deb packages updated
+	* changelog's update and version set to 0.9.15 for tag
+
+2009-12-12  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Added autotools chain to build process, there is alternative
+	  versions depending on distribuition.
+
 2009-12-11  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
 
-	* Marking the release 0.9.15.
 	* Fixed build dependencies to build from scratch in chroots.
 
 2009-12-11  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
@@ -855,7 +1366,7 @@
 2008-08-22  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* renamed GHostAddress to GSocketAddress, GTcpServer to
-	  GListenSocket and GTcpSocket to GebrCommStreamSocket to support unix
+	  GListenSocket and GTcpSocket to GStreamSocket to support unix
 	  sockets
 
 2008-06-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
