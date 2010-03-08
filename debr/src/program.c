@@ -669,6 +669,7 @@ static void program_load_iter(GtkTreeIter * iter)
 
 	gtk_list_store_set(debr.ui_program.list_store, iter, PROGRAM_TITLE, gebr_geoxml_program_get_title(program), -1);
 	program_details_update();
+	do_navigation_bar_update();
 }
 
 /**
