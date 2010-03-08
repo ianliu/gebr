@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-05 09:27-0300\n"
+"POT-Creation-Date: 2010-03-07 22:13-0300\n"
 "PO-Revision-Date: 2010-02-19 23:08-0200\n"
 "Last-Translator: Ricardo Biloti <biloti@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -21,27 +21,27 @@ msgstr ""
 "Generator: Lokalize 0.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../src/comm/comm/server.c:118
+#: ../src/comm/comm/server.c:134
 #, c-format
 msgid "Launching server at %s."
 msgstr "Iniciando servidor em %s."
 
-#: ../src/comm/comm/server.c:133
+#: ../src/comm/comm/server.c:149
 msgid "Launching local server."
 msgstr "Iniciando servidor local."
 
-#: ../src/comm/comm/server.c:173
+#: ../src/comm/comm/server.c:189
 #, c-format
 msgid "Stoping server at %s."
 msgstr "Parando servidor em %s."
 
 #. log
-#: ../src/comm/comm/server.c:245
+#: ../src/comm/comm/server.c:255
 #, c-format
 msgid "Redirecting '%s' graphical output."
 msgstr "Redirecionando saída gráfica de '%s'."
 
-#: ../src/comm/comm/server.c:338
+#: ../src/comm/comm/server.c:328
 #, c-format
 msgid ""
 "Could not launch local server: \n"
@@ -50,7 +50,7 @@ msgstr ""
 "Não foi possível executar o servidor local: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:379
+#: ../src/comm/comm/server.c:375
 #, c-format
 msgid ""
 "Server %s needs SSH login.\n"
@@ -61,7 +61,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/comm/comm/server.c:382
+#: ../src/comm/comm/server.c:378
 #, c-format
 msgid ""
 "Wrong password for server %s, please try again.\n"
@@ -72,15 +72,15 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/comm/comm/server.c:385
+#: ../src/comm/comm/server.c:381
 msgid "SSH login:"
 msgstr "Login SSH:"
 
-#: ../src/comm/comm/server.c:403
+#: ../src/comm/comm/server.c:399
 msgid "SSH inquiry:"
 msgstr "Pergunta SSH:"
 
-#: ../src/comm/comm/server.c:413
+#: ../src/comm/comm/server.c:409
 #, c-format
 msgid ""
 "Received SSH message: \n"
@@ -89,7 +89,7 @@ msgstr ""
 "Mensagem SSH recebida: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:426
+#: ../src/comm/comm/server.c:422
 #, c-format
 msgid ""
 "Error contacting server at address %s via ssh: \n"
@@ -98,7 +98,7 @@ msgstr ""
 "Erro ao contatar o servidor no endereço %s via ssh: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:479
+#: ../src/comm/comm/server.c:481
 #, c-format
 msgid ""
 "Could not comunicate with server %s: \n"
@@ -107,7 +107,7 @@ msgstr ""
 "Não foi possível se comunicar com o servidor %s: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:626
+#: ../src/comm/comm/server.c:653
 #, c-format
 msgid "Connection error '%d' on server '%s'."
 msgstr "Erro de conexão '%d' no servidor '%s'."

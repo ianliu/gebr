@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebrd 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-05 10:10-0300\n"
+"POT-Creation-Date: 2010-03-07 22:14-0300\n"
 "PO-Revision-Date: 2010-03-05 10:10-0300\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -25,22 +25,22 @@ msgstr "Erro '%s' na conexão com o servidor '%s'"
 msgid "Server quited"
 msgstr "Servidor finalizado"
 
-#: ../src/job.c:99
+#: ../src/job.c:102
 #, c-format
 msgid "Required parameter '%s' of program '%s' not provided.\n"
 msgstr "O parâmetro '%s' do programa '%s' não foi fornecido.\n"
 
-#: ../src/job.c:118
+#: ../src/job.c:121
 #, c-format
 msgid "Unknown parameter type.\n"
 msgstr "Tipo de parâmetro desconhecido.\n"
 
-#: ../src/job.c:176
+#: ../src/job.c:191
 #, c-format
 msgid "Job '%s' sent output not in UTF-8."
 msgstr "Tarefa '%s' não enviou a saida no formato UTF-8"
 
-#: ../src/job.c:485
+#: ../src/job.c:516
 #, c-format
 msgid ""
 "DTD specified. The <DOCTYPE ...> must not appear in XML.\n"
@@ -49,7 +49,7 @@ msgstr ""
 "DTD especificado. <DOCTYPE ...> não deve aparecer no XML.\n"
 "libgeoxml encontrará o DTD apropriado a partir da versão.\n"
 
-#: ../src/job.c:490
+#: ../src/job.c:521
 #, c-format
 msgid ""
 "Invalid document. It has a sintax error or doesn't match the DTD.\n"
@@ -58,7 +58,7 @@ msgstr ""
 "Documento inválido. Ele contém um erro de sintaxe ou não respeita o DTD.\n"
 "Neste caso, veja os erros acima.\n"
 
-#: ../src/job.c:495
+#: ../src/job.c:526
 #, c-format
 msgid ""
 "Can't access file. The file doesn't exist or there is not enough permission "
@@ -67,7 +67,7 @@ msgstr ""
 "Impossível acessar o arquivo. Ele não existe ou não há permissão de "
 "leitura.\n"
 
-#: ../src/job.c:500
+#: ../src/job.c:531
 #, c-format
 msgid ""
 "Can't access dtd. The file's DTD couldn't not be found.\n"
@@ -78,7 +78,7 @@ msgstr ""
 "Pode ser uma versão mais nova, não suportada por esta versão da libgeoxml\n"
 "ou então um problema de instalação.\n"
 
-#: ../src/job.c:506
+#: ../src/job.c:537
 #, c-format
 msgid ""
 "Not enough memory. The library stoped after an unsucessful memory "
@@ -87,7 +87,7 @@ msgstr ""
 "Sem memória suficiente. A biblioteca abortou depois de uma alocação de "
 "memória mal-sucedida.\n"
 
-#: ../src/job.c:510
+#: ../src/job.c:541
 #, c-format
 msgid ""
 "Unspecified error %d.\n"
@@ -97,81 +97,81 @@ msgstr ""
 "Veja a documentação da biblioteca em http://sites.google.com/site/"
 "gebrproject.\n"
 
-#: ../src/job.c:523
+#: ../src/job.c:554
 #, c-format
 msgid "Empty flow.\n"
 msgstr "Fluxo vazio.\n"
 
-#: ../src/job.c:531
+#: ../src/job.c:562
 #, c-format
 msgid "%u) Skiping disabled/unconfigured program '%s.'\n"
 msgstr "%u) Desconsiderando programa '%s' desabilidato/não configurado.\n"
 
-#: ../src/job.c:537
+#: ../src/job.c:568
 #, c-format
 msgid "No configured programs.\n"
 msgstr "Sem programas configurados.\n"
 
-#: ../src/job.c:547
+#: ../src/job.c:578
 #, c-format
 msgid "No input file selected.\n"
 msgstr "Sem arquivo de entrada selecionado.\n"
 
-#: ../src/job.c:554
+#: ../src/job.c:585
 #, c-format
 msgid "Input file %s not present or not accessable.\n"
 msgstr "Arquivo de entrada %s não encontrado ou não acessível.\n"
 
-#: ../src/job.c:572 ../src/job.c:641
+#: ../src/job.c:603 ../src/job.c:672
 #, c-format
 msgid "Write permission to %s not granted.\n"
 msgstr "Permissão de escrita para %s não concedida.\n"
 
-#: ../src/job.c:588
+#: ../src/job.c:619
 #, c-format
 msgid "%u) Skiping disabled/unconfigured program '%s'.\n"
 msgstr "%u) Desconsiderando programa '%s' desabilidato/não configurado.\n"
 
 #. Previous does not write to stdin but current expect something
-#: ../src/job.c:604
+#: ../src/job.c:635
 #, c-format
 msgid "Broken flow before %s (no input).\n"
 msgstr "Fluxo interrompido depois de %s (sem entrada).\n"
 
 #. Previous does write to stdin but current does not carry about
-#: ../src/job.c:608
+#: ../src/job.c:639
 #, c-format
 msgid "Broken flow before %s (unexpected output).\n"
 msgstr "Fluxo interrompido antes de %s (saída inesperada).\n"
 
-#: ../src/job.c:634
+#: ../src/job.c:665
 #, c-format
 msgid "No error file selected; error output merged with standard output.\n"
 msgstr ""
 "Sem arquivo de erro selecionado; saída de erro será mesclada com a saída "
 "padrão.\n"
 
-#: ../src/job.c:637
+#: ../src/job.c:668
 #, c-format
 msgid "Proceeding without output file.\n"
 msgstr "Prosseguindo sem arquivo de saída.\n"
 
-#: ../src/job.c:759
+#: ../src/job.c:790
 #, c-format
 msgid "Cannot submit job to MOAB server.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB.\n"
 
-#: ../src/job.c:765
+#: ../src/job.c:796
 #, c-format
 msgid "Cannot submit job to MOAB server: %s.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB: %s.\n"
 
-#: ../src/job.c:775
+#: ../src/job.c:806
 #, c-format
 msgid "Cannot get MOAB job id.\n"
 msgstr "Não foi possível obter a identificação da tarefa no MOAB.\n"
 
-#: ../src/job.c:948 ../src/job.c:952
+#: ../src/job.c:964 ../src/job.c:968
 #, c-format
 msgid "Cannot cancel job at MOAB server.\n"
 msgstr "Não foi possível cancelar a tarefa no servidor MOAB.\n"
@@ -198,30 +198,30 @@ msgstr "%s: erro de sintaxe\n"
 msgid "Try %s --help\n"
 msgstr "Tente %s --help\n"
 
-#: ../src/server.c:72
+#: ../src/server.c:73
 msgid "Could not access GêBR configuration directories.\n"
 msgstr "Não foi possível acessar os diretórios de configuração da GêBR.\n"
 
-#: ../src/server.c:94
+#: ../src/server.c:95
 msgid "Cannot run interactive server, GêBR daemon is already running"
 msgstr ""
 "Não é possível executar o servidor iterativavmente. Daemon GêBR já está em "
 "execução"
 
-#: ../src/server.c:111
+#: ../src/server.c:115
 msgid "Could not listen for connections.\n"
 msgstr "Não foi possível escutar por conexões.\n"
 
-#: ../src/server.c:119
+#: ../src/server.c:123
 msgid "Could not write run file."
 msgstr "Não foi possível escrever arquivo de trava de execução."
 
-#: ../src/server.c:143
+#: ../src/server.c:147
 #, c-format
 msgid "Server started at %u port"
 msgstr "Servidor inicializado na porta %u"
 
-#: ../src/server.c:153
+#: ../src/server.c:158
 msgid "Could not init server. Quiting..."
 msgstr "Não foi possível inicializar o servidor. Abortando..."
 
