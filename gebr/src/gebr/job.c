@@ -107,8 +107,7 @@ struct job *job_add(struct server *server, GString * jid,
 
 				gtk_list_store_remove(server->queues_model, &queue_iter);
 				gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
-			}
-			else {
+			} else if (job->status == JOB_STATUS_RUNNING) {
 				GString *string = g_string_new(NULL);
 
 				g_string_printf(string, _("After '%s'"), title->str);
@@ -122,22 +121,21 @@ struct job *job_add(struct server *server, GString * jid,
 
 				g_string_free(string, TRUE);
 			}
-		} else 	/* The queue name prefix is 'q' (it has already been named by the user). */
-			if (queue_exists) {
-				GString *string = g_string_new(NULL);
-				gchar *queue_title = job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR 
-					? queue->str+1 /* jump q identifier */ : queue->str;
+		} else if (queue_exists) { /* The queue name prefix is 'q' (it has already been named by the user). */
+			GString *string = g_string_new(NULL);
+			gchar *queue_title = job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR 
+				? queue->str+1 /* jump q identifier */ : queue->str;
 
-				if (job->status != JOB_STATUS_RUNNING && job->status != JOB_STATUS_QUEUED)
-					g_string_printf(string, _("At '%s'"), queue_title);
-				else
-					g_string_printf(string, _("After '%s' at '%s'"), title->str, queue_title);
-				
-				gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, 2,
-						   job, -1);
+			if (job->status != JOB_STATUS_RUNNING && job->status != JOB_STATUS_QUEUED)
+				g_string_printf(string, _("At '%s'"), queue_title);
+			else
+				g_string_printf(string, _("After '%s' at '%s'"), title->str, queue_title);
 
-				g_string_free(string, TRUE);
-			}
+			gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, 2,
+					   job, -1);
+
+			g_string_free(string, TRUE);
+		}
 	}
 
 	queue_jc_iter = job_add_jc_queue_iter(job);
