@@ -479,7 +479,6 @@ static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io)
 
 /**
  * \internal
- *
  * Check for current server and if its connected, for the queue selected.
  */
 static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
@@ -535,10 +534,12 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 			/* Other queue option is selected: after a running job (flow) or
 			 * on a pre-existent queue. */
 			gchar *internal_queue_name = NULL;
+			struct job *job;
 
 			/* Get queue name from the queues combobox. */
 			gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter);
-			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &internal_queue_name, -1);
+			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &internal_queue_name, 2,
+					   &job, -1);
 
 			if (internal_queue_name && internal_queue_name[0] == 'j') {
 				/* Prefix 'j' indicates a single running job. So, the user is placing a new
@@ -547,9 +548,6 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 				GtkDialog *dialog;
 				GtkWidget *widget;
 				gchar *queue_name;
-
-				GString *server_address, *job_id;
-				struct job *job;
 
 				dialog = GTK_DIALOG(gtk_dialog_new_with_buttons(_("New queue"),
 								     GTK_WINDOW(gebr.window),
@@ -592,24 +590,16 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 
 				/* A race condition can happen if the single running job finishes before
 				 * assigning a name to the queue. We try to prevent this race condition here. */
-				server_address = g_string_new(address);
-				job_id = g_string_new((const gchar *)(internal_queue_name+1)); /* Skip 'j' prefix and get jid. */ 
-				job = job_find(server_address, job_id);
-
 				/* Set the entry in the queues model accordingly. */
 				if (job->status == JOB_STATUS_RUNNING) {
 					/* The single job is still running; so, its entry in the combobox is still valid. */
 					gtk_list_store_set(server->queues_model, &iter, 1, config->class, -1);
-				}
-				else {
+				} else {
 					GtkTreeIter queue_iter;
 					gtk_list_store_append(server->queues_model, &queue_iter);
 					gtk_list_store_set(server->queues_model, &queue_iter, 1, config->class, -1);
 				}
 
-				g_string_free(server_address, TRUE);
-				g_string_free(job_id, TRUE);
-					
 				gebr_comm_protocol_send_data(server->comm->protocol, server->comm->stream_socket,
 							     gebr_comm_protocol_defs.rnq_def, 2, internal_queue_name, config->class);
 

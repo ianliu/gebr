@@ -371,8 +371,7 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 
 				g_string_free(string, TRUE);
 			}
-		}
-		else {
+		} else {
 			GString *string = g_string_new(NULL);
 
 			g_string_printf(string, _("At '%s'"), job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR
