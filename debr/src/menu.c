@@ -739,8 +739,10 @@ void menu_selected(void)
 
 	program_load_menu();
 	do_navigation_bar_update();
+
 	if (type == ITER_FILE) {
 		menu_details_update();
+			
 		gchar *names[] = {
 			"menu_properties",
 			"menu_validate",
@@ -751,8 +753,12 @@ void menu_selected(void)
 			NULL
 		};
 		debr_set_actions_sensitive(names, TRUE);
+			
 		menu_status_set_from_iter(&iter, current_status);
-	} else{
+
+	} else if (type == ITER_FOLDER) {
+		menu_folder_details_update(&iter);
+
 		gchar *names[] = {
 			"menu_properties",
 			"menu_validate",
@@ -765,7 +771,22 @@ void menu_selected(void)
 			NULL
 		};
 		debr_set_actions_sensitive(names, FALSE);
-		menu_folder_details_update(&iter);
+
+	} else if (type == ITER_NONE) {
+		menu_details_update();
+		
+		gchar *names[] = {
+			"menu_properties",
+			"menu_validate",
+			"menu_install",
+			"menu_close",
+			"menu_save",
+			"menu_save_as",
+			"menu_revert",
+			"menu_delete",
+			NULL
+		};
+		debr_set_actions_sensitive(names, FALSE);
 	}
 }
 
@@ -1195,6 +1216,8 @@ void menu_folder_details_update(GtkTreeIter * iter)
 
 	if (menu_get_selected_type(iter, FALSE) != ITER_FOLDER)
 		return;
+	else
+		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_show, NULL);
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_PATH, &folder_path, -1);
 
