@@ -186,13 +186,8 @@ gboolean parameters_check_has_required_unfilled_for_iter(GtkTreeIter * iter)
  */
 static void parameter_required_is_unfilled(GebrGeoXmlParameter * parameter, gboolean * required_unfilled)
 {
-	GString *value;
-
-	if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(parameter))) {
-		value = gebr_geoxml_program_parameter_get_string_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE);
-		*required_unfilled = (value->len == 0);
-		g_string_free(value, TRUE);
-	}
+	if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(parameter)))
+		*required_unfilled = !gebr_geoxml_program_parameter_is_set(GEBR_GEOXML_PROGRAM_PARAMETER(parameter));
 }
 
 /**

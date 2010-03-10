@@ -343,6 +343,28 @@ GString *gebr_geoxml_program_parameter_get_string_value(GebrGeoXmlProgramParamet
 	return value;
 }
 
+gboolean gebr_geoxml_program_parameter_is_set(GebrGeoXmlProgramParameter * self)
+{
+	if (!self)
+		return FALSE;
+
+	gboolean ret = FALSE;
+	GString *value;
+	GdomeDOMString *string;
+	GdomeElement *property;
+
+	value = gebr_geoxml_program_parameter_get_string_value(self, FALSE);
+	string = gdome_str_mkref("dictkeyword");
+	property = __gebr_geoxml_get_first_element((GdomeElement*)self, "property");
+
+	if (value->len > 0 || strlen(__gebr_geoxml_get_attr_value(property, "dictkeyword")) > 0)
+		ret = TRUE;
+
+	g_string_free(value, TRUE);
+	gdome_str_unref(string);
+	return ret;
+}
+
 GebrGeoXmlProgramParameter *gebr_geoxml_program_parameter_find_dict_parameter(GebrGeoXmlProgramParameter *
 									      program_parameter,
 									      GebrGeoXmlDocument * dict_document)

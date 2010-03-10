@@ -303,6 +303,11 @@ GString *gebr_geoxml_program_parameter_get_string_value(GebrGeoXmlProgramParamet
 							gboolean default_value);
 
 /**
+ * Returns TRUE if this parameter is set, FALSE otherwise.
+ */
+gboolean gebr_geoxml_program_parameter_is_set(GebrGeoXmlProgramParameter * self);
+
+/**
  * Find the dictionary parameter from \p dict_document
  * that \p program_parameter uses for its value.
  * If \p program_parameter don't use a dictionary parameter value, then NULL is returned.
