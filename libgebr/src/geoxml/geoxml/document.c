@@ -18,6 +18,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <zlib.h>
+#include <stdio.h>
+#include <errno.h>
 
 #include <glib/gstdio.h>
 #include <gdome.h>
@@ -602,7 +604,8 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 		return FALSE;
 
 	zfp = gzopen(path, "w");
-	if (zfp == NULL)
+
+	if (zfp == NULL || errno != 0)
 		return GEBR_GEOXML_RETV_CANT_ACCESS_FILE;
 
 	gebr_geoxml_document_to_string(document, &xml);

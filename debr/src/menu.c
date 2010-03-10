@@ -398,7 +398,7 @@ void menu_open(const gchar * path, gboolean select)
 	menu_open_with_parent(path, &parent, select);
 }
 
-gboolean menu_save(GtkTreeIter * iter)
+MenuMessage menu_save(GtkTreeIter * iter)
 {
 	GtkTreeIter selected_iter;
 	GebrGeoXmlFlow *menu;
@@ -410,13 +410,18 @@ gboolean menu_save(GtkTreeIter * iter)
 	/* is this a new menu? */
 	if (!strlen(path)) {
 		g_free(path);
-		return FALSE;
+		return MENU_MESSAGE_FIRST_TIME_SAVE;
 	}
 
 	filename = g_path_get_basename(path);
-	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(menu), filename);
-	gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(menu), gebr_iso_date());
-	gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path);
+	if (gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path) != GEBR_GEOXML_RETV_SUCCESS){
+		debr_message(GEBR_LOG_ERROR, _("Permission denied."));
+		return MENU_MESSAGE_PERMISSION_DENIED;	
+	} else {
+		gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(menu), filename);
+		gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(menu), gebr_iso_date());
+		gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path);
+	}
 
 	tmp =
 	    g_strdup_printf("%ld",
@@ -435,7 +440,7 @@ gboolean menu_save(GtkTreeIter * iter)
 	g_free(filename);
 	g_free(tmp);
 
-	return TRUE;
+	return MENU_MESSAGE_SUCCESS;
 }
 
 void menu_save_all(void)
@@ -473,16 +478,26 @@ void menu_save_all(void)
 		row = (GtkTreeRowReference*)(entry->data);
 		path = gtk_tree_row_reference_get_path(row);
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(debr.ui_menu.model), &iter, path);
-		if (!menu_save(&iter))
+		MenuMessage result = MENU_MESSAGE_SUCCESS;
+
+		result = menu_save(&iter);
+		if (result == MENU_MESSAGE_FIRST_TIME_SAVE)
 			menu_save_as(&iter);
+		else if (result == MENU_MESSAGE_PERMISSION_DENIED){
+			gtk_tree_path_free(path);
+			gtk_tree_row_reference_free(row);
+			goto out;
+		}
+
 		gtk_tree_path_free(path);
 		gtk_tree_row_reference_free(row);
 		entry = entry->next;
 	}
 
-	g_list_free(unsaved);
 	menu_details_update();
 	debr_message(GEBR_LOG_INFO, _("All menus were saved."));
+out:
+	g_list_free(unsaved);
 }
 
 void menu_save_as(GtkTreeIter * iter)
@@ -599,15 +614,14 @@ void menu_save_as(GtkTreeIter * iter)
 
 	GtkTreeIter target;
 	GebrGeoXmlFlow *clone;
+	GebrGeoXmlDocument *remove;
 	clone = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(menu)));
 
 	/*
-	 * If we found a menu, we must free its Xml pointer and load the new Xml in the same iterator.
+	 * If we found a menu, we must load the new Xml in the same iterator.
 	 */
 	if (found) {
-		GebrGeoXmlDocument *remove;
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_XMLPOINTER, &remove, -1);
-		gebr_geoxml_document_free(remove);
 		target = child;
 	}
 	/*
@@ -617,8 +631,13 @@ void menu_save_as(GtkTreeIter * iter)
 		gtk_tree_store_append(debr.ui_menu.model, &target, &parent);
 	}
 
-	menu_load_iter(filepath->str, &target, clone, FALSE);
-	menu_save(&target);
+	if (menu_save(&target) == MENU_MESSAGE_PERMISSION_DENIED){
+		gtk_tree_store_set(debr.ui_menu.model, &target, MENU_XMLPOINTER, remove, -1);
+	} else {
+		menu_load_iter(filepath->str, &target, clone, FALSE);
+		gebr_geoxml_document_free(remove);
+	}
+
 	if (!strlen(currentpath))
 		gtk_tree_store_remove(debr.ui_menu.model, iter);
 

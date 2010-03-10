@@ -369,7 +369,7 @@ typedef gboolean(*GebrGuiGtkTreeViewReorderCallback) (GtkTreeView * tree_view, G
 						      GtkTreeViewDropPosition drop_position, gpointer user_data);
 /**
  * Make \p tree_view reorderable.
- * \param reorder_callback Responsible for reordering. It's return value is ignored.
+ * \param reorder_callback Responsible for reordering. Its return value is ignored.
  * \param may_reorder_callback Called at each cursor movement. If it returns TRUE, drop is allowed; otherwise is denied.
  * If NULL, every movement will be accepted.
  */

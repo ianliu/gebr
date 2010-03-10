@@ -162,7 +162,7 @@ void on_menu_save_activate(void)
 		debr_message(GEBR_LOG_INFO, _("No menu selected."));
 		return;
 	}
-	if (!menu_save(&iter))
+	if (menu_save(&iter) == MENU_MESSAGE_FIRST_TIME_SAVE)
 		on_menu_save_as_activate();
 }
 

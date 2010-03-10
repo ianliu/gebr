@@ -58,6 +58,15 @@ enum {
 };
 
 /**
+ * Error messages to handle menu save
+ */
+typedef enum {
+	MENU_MESSAGE_PERMISSION_DENIED = 0,	/**< The program don't has access to the file			*/ 
+	MENU_MESSAGE_FIRST_TIME_SAVE, 		/**< The file don't exist and will be saved by the first time	*/
+	MENU_MESSAGE_SUCCESS			/**< Normal execution						*/
+} MenuMessage;
+
+/**
  * Structure to hold widgets & data for the menus visualization.
  */
 struct ui_menu {
@@ -149,9 +158,10 @@ void menu_open(const gchar * path, gboolean select);
  * this function return FALSE and nothing is done.
  *
  * \param iter The iterator pointing to the menu.
- * \return TRUE if the menu was successfully saved, FALSE if it has never been saved.
+ * \return SUCCESS if the menu was successfully saved, FIRST_TIME_SAVE if it has never been saved and PERMISSION_DENIED
+ * if program has no write permission granted.
  */
-gboolean menu_save(GtkTreeIter * iter);
+MenuMessage menu_save(GtkTreeIter * iter);
 
 /**
  * Save a copy of the menu pointed by \p iter.
