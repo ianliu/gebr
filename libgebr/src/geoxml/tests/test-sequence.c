@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 
 	/* initialization */
 	g_test_init(&argc, &argv, NULL);
-	gebr_geoxml_document_load(&document, "test.mnu", NULL);
+	gebr_geoxml_document_load(&document, "test.mnu", TRUE, NULL);
 	test_menu = GEBR_GEOXML_FLOW(document);
 	g_assert(test_menu != NULL);
 	first = g_string_new("");

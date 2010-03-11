@@ -78,7 +78,8 @@ GebrGeoXmlDocument *document_load(const gchar * filename)
 
 	path = document_get_path(filename);
 	document = document_load_path(path->str);
-	document_save(document);
+	/* save will make a xml format upgrade if necessary */
+	document_save(document, FALSE);
 	g_string_free(path, TRUE);
 
 	return document;
@@ -126,24 +127,119 @@ GebrGeoXmlDocument *document_load_path(const gchar * path)
 	GebrGeoXmlDocument *document;
 	int ret;
 
-	if ((ret = gebr_geoxml_document_load(&document, path, 
-	g_str_has_suffix(path, ".flw") ? __document_discard_menu_ref_callback : NULL)) < 0)
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load document at %s: %s."), path,
-			     gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
+	if ((ret = gebr_geoxml_document_load(&document, path, TRUE, g_str_has_suffix(path, ".flw") ?
+					     __document_discard_menu_ref_callback : NULL)) < 0) {
+		GtkDialog *dialog;
+		GString *string;
 
-	return document;
+		string = g_string_new("");
+
+		if (!gebr_geoxml_document_load(&document, path, FALSE, NULL)) {
+			const gchar *title;
+			title = gebr_geoxml_document_get_title(document);
+			g_string_printf(string, "%s", title != NULL ? title : "");
+			if (title != NULL)
+				g_string_append(string, " ");
+		}
+		
+		/* don't do document recovery for menus */
+		if (g_str_has_suffix(path, ".mnu")) {
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load menu %sat %s: %s."),
+				     string, path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
+			g_string_free(string, TRUE);
+			goto out;
+		}
+
+		const gchar *document_name;
+		if (document == NULL)
+			document_name = _("document");
+		else switch (gebr_geoxml_document_get_type(document)) {
+		case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
+			document_name = _("project");
+			break;
+		case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+			document_name = _("line");
+			break;
+		case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
+			document_name = _("flow");
+			break;
+		default:
+			document_name = _("document");
+		}
+
+		dialog = GTK_DIALOG(gtk_message_dialog_new(GTK_WINDOW(gebr.window),
+						GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
+						GTK_MESSAGE_QUESTION,
+						GTK_BUTTONS_NONE,
+						"Could not load %s %sat %s.\nError: %s\n", document_name,
+						string->str, path,
+					       	gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret)));
+		g_string_printf(string, "Couldn't load %s", document_name);
+		gtk_window_set_title(GTK_WINDOW(dialog), string->str); 
+		gtk_dialog_add_button(dialog, _("Ignore"), 0);
+		if (ret != GEBR_GEOXML_RETV_CANT_ACCESS_FILE)
+			gtk_dialog_add_button(dialog, _("Export"), 1);
+
+		gtk_widget_show_all(GTK_WIDGET(dialog));
+		gint response;
+		gboolean keep_dialog;
+		do switch ((response = gtk_dialog_run(dialog))) {
+		case 1: {
+			GtkWidget *chooser_dialog;
+
+			chooser_dialog = gtk_file_chooser_dialog_new(_("Choose filename to export"),
+								     GTK_WINDOW(gebr.window),
+								     GTK_FILE_CHOOSER_ACTION_SAVE,
+								     GTK_STOCK_SAVE, GTK_RESPONSE_YES,
+								     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+
+			gtk_widget_show_all(chooser_dialog);
+			if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES) {
+				keep_dialog = TRUE;
+				goto out;
+			}
+			gchar *export_path;
+			export_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
+			document_save_at(document, export_path, FALSE);
+			g_free(export_path);
+
+			keep_dialog = FALSE;
+			gtk_widget_destroy(chooser_dialog);
+			break;
+		} case 0:
+		default:
+			unlink(path);
+			keep_dialog = FALSE;
+			break;
+		} while (keep_dialog);
+		
+		/* frees */
+		if (document) {
+			gebr_geoxml_document_free(document);
+			document = NULL;
+		}
+		g_string_free(string, TRUE);
+		gtk_widget_destroy(GTK_WIDGET(dialog));
+	}
+
+out:	return document;
 }
 
-void document_save(GebrGeoXmlDocument * document)
+void document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date)
+{
+	if (set_modified_date)
+		gebr_geoxml_document_set_date_modified(document, gebr_iso_date());
+
+	/* TODO: check save */
+	gebr_geoxml_document_save(document, path);
+}
+
+void document_save(GebrGeoXmlDocument * document, gboolean set_modified_date)
 {
 	GString *path;
 
-	/* get today's date */
-	gebr_geoxml_document_set_date_modified(document, gebr_iso_date());
-
-	/* TODO: check save */
 	path = document_get_path(gebr_geoxml_document_get_filename(document));
-	gebr_geoxml_document_save(document, path->str);
+	document_save_at(document, path->str, set_modified_date);
 
 	g_string_free(path, TRUE);
 }
@@ -174,7 +270,7 @@ void document_import(GebrGeoXmlDocument * document)
 	/* TODO: check save */
 	path = document_get_path(new_filename->str);
 	gebr_geoxml_document_set_filename(document, new_filename->str);
-	gebr_geoxml_document_save(document, path->str);
+	document_save_at(document, path->str, FALSE);
 
 	g_string_free(path, TRUE);
 	g_string_free(new_filename, TRUE);

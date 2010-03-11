@@ -71,7 +71,7 @@ int main(int argc, char **argv)
 	for (i = 0; files[i] != NULL; ++i) {
 		GebrGeoXmlDocument *document;
 
-		ret = gebr_geoxml_document_load(&document, files[i], NULL);
+		ret = gebr_geoxml_document_load(&document, files[i], TRUE, NULL);
 		if (ret < 0) {
 			fprintf(stderr, _("Could not load file %s.\n"), files[i]);
 			continue;

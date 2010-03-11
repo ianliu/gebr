@@ -244,7 +244,7 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 			gebr_geoxml_document_set_description(document, gtk_entry_get_text(GTK_ENTRY(description)));
 			gebr_geoxml_document_set_author(document, gtk_entry_get_text(GTK_ENTRY(author)));
 			gebr_geoxml_document_set_email(document, gtk_entry_get_text(GTK_ENTRY(email)));
-			document_save(document);
+			document_save(document, TRUE);
 
 			/* Update title in apropriated store */
 			switch ((type = gebr_geoxml_document_get_type(document))) {
@@ -476,7 +476,7 @@ void document_dict_edit_setup_ui(void)
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
 	for (int i = 0; data->documents[i] != NULL; ++i)
-		document_save(data->documents[i]);
+		document_save(data->documents[i], TRUE);
 
 	for (int i = 0; data->documents[i] != NULL; ++i) {
 		GebrGeoXmlSequence *i_parameter;
