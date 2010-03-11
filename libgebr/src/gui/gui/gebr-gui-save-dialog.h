@@ -57,10 +57,13 @@ GType gebr_gui_save_dialog_get_type(void) G_GNUC_CONST;
 GtkWidget *gebr_gui_save_dialog_new(GtkWindow *parent);
 
 /**
+ * Sets the default file extension to use with this save dialog.
+ * If the file choosen by the user doesn't have the extension, it is appended.
  */
 void gebr_gui_save_dialog_set_default_extension(GebrGuiSaveDialog *self, const gchar *extension);
 
 /**
+ * Gets the default file extension that is added to the file when saving.
  */
 const gchar *gebr_gui_save_dialog_get_default_extension(GebrGuiSaveDialog *self);
 

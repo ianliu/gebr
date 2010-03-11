@@ -40,6 +40,7 @@ enum {
 
 static void gebr_gui_save_dialog_set_property(GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void gebr_gui_save_dialog_get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
+static void gebr_gui_save_dialog_destroy(GtkObject *object);
 
 static guint save_dialog_signals[LAST_SIGNAL] = {0};
 
@@ -52,22 +53,27 @@ G_DEFINE_TYPE(GebrGuiSaveDialog, gebr_gui_save_dialog, GTK_TYPE_FILE_CHOOSER_DIA
 static void gebr_gui_save_dialog_class_init(GebrGuiSaveDialogClass * klass)
 {
 	GObjectClass *gobject_class;
+	GtkObjectClass *object_class;
 
 	gobject_class = G_OBJECT_CLASS(klass);
+	object_class = GTK_OBJECT_CLASS(klass);
 	gobject_class->set_property = gebr_gui_save_dialog_set_property;
 	gobject_class->get_property = gebr_gui_save_dialog_get_property;
+	object_class->destroy = gebr_gui_save_dialog_destroy;
 
 	g_object_class_install_property(gobject_class,
 					PROP_EXTENSION,
 					g_param_spec_string("extension",
-							    P_("Extension"),
-							    P_("Default extension to prepend to the file name."),
+							    "Extension",
+							    "Default extension to prepend to the file name.",
 							    NULL,
 							    G_PARAM_READWRITE));
 }
 
 static void gebr_gui_save_dialog_init(GebrGuiSaveDialog * self)
 {
+	self->extension = NULL;
+
 	gtk_dialog_add_buttons(GTK_DIALOG(self),
 			       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			       GTK_STOCK_SAVE, GTK_RESPONSE_OK,
@@ -102,6 +108,15 @@ static void gebr_gui_save_dialog_get_property(GObject *object, guint prop_id, GV
 	}
 }
 
+static void gebr_gui_save_dialog_destroy(GtkObject *object)
+{
+	GebrGuiSaveDialog *dialog = GEBR_GUI_SAVE_DIALOG(object);
+	if (dialog->extension) {
+		g_free(dialog->extension);
+		dialog->extension = NULL;
+	}
+}
+
 /*
  * Public functions
  */
@@ -121,6 +136,8 @@ GtkWidget *gebr_gui_save_dialog_new(GtkWindow *parent)
 
 void gebr_gui_save_dialog_set_default_extension(GebrGuiSaveDialog *self, const gchar *extension)
 {
+	g_return_if_fail(GEBR_GUI_IS_SAVE_DIALOG(self));
+
 	if (self->extension)
 		g_free(self->extension);
 	self->extension = g_strdup(extension);
@@ -128,6 +145,8 @@ void gebr_gui_save_dialog_set_default_extension(GebrGuiSaveDialog *self, const g
 
 const gchar *gebr_gui_save_dialog_get_default_extension(GebrGuiSaveDialog *self)
 {
+	g_return_val_if_fail(GEBR_GUI_IS_SAVE_DIALOG(self), NULL);
+
 	return self->extension;
 }
 
@@ -136,6 +155,8 @@ gchar *gebr_gui_save_dialog_run(GebrGuiSaveDialog *self)
 	GtkWidget *dialog;
 	GString *filename;
 	gboolean free_str = TRUE;
+
+	g_return_val_if_fail(GEBR_GUI_IS_SAVE_DIALOG(self), NULL);
 
 	filename = g_string_new(NULL);
 
