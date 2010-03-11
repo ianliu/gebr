@@ -33,9 +33,6 @@
 #include "callbacks.h"
 #include "ui_project_line.h"
 
-/**
- * Create a new project
- */
 void project_new(void)
 {
 	GtkTreeIter iter;
@@ -51,7 +48,7 @@ void project_new(void)
 	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
 			   PL_TITLE, gebr_geoxml_document_get_title(project),
 			   PL_FILENAME, gebr_geoxml_document_get_filename(project), -1);
-	document_save(project);
+	document_save(project, TRUE);
 	gebr_geoxml_document_free(project);
 
 	project_line_select_iter(&iter);
@@ -61,15 +58,6 @@ void project_new(void)
 	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New project created."));
 }
 
-/**
- * Delete the selected project
- *
- * TODO:
- * * If a project is not empty, the user user should be
- *   warned. Besides, it should be asked about erasing
- *   all project's lines.
- * * Project's line files should be deleted as well.
- */
 gboolean project_delete(gboolean confirm)
 {
 	GtkTreeIter iter;
@@ -110,9 +98,6 @@ out:	g_free(title);
 	return TRUE;
 }
 
-/**
- * Add _project_ to the list of projects.
- */
 GtkTreeIter project_append_iter(GebrGeoXmlProject * project)
 {
 	GtkTreeIter iter;
@@ -125,9 +110,6 @@ GtkTreeIter project_append_iter(GebrGeoXmlProject * project)
 	return iter;
 }
 
-/**
- * Add _line_ to _project_iter_.
- */
 GtkTreeIter project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine * line)
 {
 	GtkTreeIter iter;
@@ -140,9 +122,6 @@ GtkTreeIter project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine 
 	return iter;
 }
 
-/**
- * Reload the projets from the data directory
- */
 void project_list_populate(void)
 {
 	gchar *filename;
@@ -169,19 +148,26 @@ void project_list_populate(void)
 		project_iter = project_append_iter(project);
 
 		gebr_geoxml_project_get_line(project, &project_line, 0);
-		for (; project_line != NULL; gebr_geoxml_sequence_next(&project_line)) {
+		while (project_line != NULL) {
 			GebrGeoXmlLine *line;
 			const gchar *line_source;
 
 			line_source = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line));
 			line = GEBR_GEOXML_LINE(document_load(line_source));
 			if (line == NULL) {
-				gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Line file %s corrupted. Ignoring."),
-					     line_source);
+				GebrGeoXmlSequence * sequence;
+				
+				sequence = project_line;
+				gebr_geoxml_sequence_next(&project_line);
+				gebr_geoxml_sequence_remove(sequence);
+				document_save(GEBR_GEOXML_DOCUMENT(project), FALSE);
+
 				continue;
 			}
 			project_append_line_iter(&project_iter, line);
 			gebr_geoxml_document_free(GEBR_GEOXML_DOC(line));
+
+			gebr_geoxml_sequence_next(&project_line);
 		}
 
 		gebr_geoxml_document_free(GEBR_GEOXML_DOC(project));

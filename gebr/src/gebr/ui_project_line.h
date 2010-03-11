@@ -25,6 +25,8 @@
 
 #include <gtk/gtk.h>
 
+/**
+ */
 enum ProjectLineSelectionType {
 	DontWarnUnselection,
 	ProjectSelection,
@@ -70,21 +72,42 @@ struct ui_project_line {
 
 };
 
+/**
+ * Assembly the project/lines widget.
+ *
+ * Return:
+ * The structure containing relevant data.
+ */
 struct ui_project_line *project_line_setup_ui(void);
 
+/**
+ * Update information shown about the selected project or line.
+ */
 void project_line_info_update(void);
 
+/**
+ * Put selected iter in \p iter and return true if there is a selection.
+ */
 gboolean project_line_get_selected(GtkTreeIter * iter, enum ProjectLineSelectionType check_type);
 
 /**
- * Select _iter_ and load it into UI_
+ * Select \p iter and load it into UI.
  */
 void project_line_select_iter(GtkTreeIter * iter);
 
+/**
+ * Import line or project
+ */
 void project_line_import(void);
 
+/**
+ * Export selected line or project.
+ */
 void project_line_export(void);
 
+/**
+ * Frees memory related to project and line.
+ */
 void project_line_free(void);
 
 #endif				//__UI_PROJECT_LINE_H

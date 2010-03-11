@@ -419,7 +419,7 @@ static void flow_browse_load(void)
 		gebr_geoxml_flow_io_set_input(gebr.flow, "");
 		gebr_geoxml_flow_io_set_output(gebr.flow, "");
 		gebr_geoxml_flow_io_set_error(gebr.flow, "");
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE);
 	} else {
 		GebrGeoXmlSequence *first_server;
 
@@ -548,11 +548,11 @@ static void flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXml
 
 	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
 	if (!gebr_geoxml_flow_change_to_revision(gebr.flow, revision)) {
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not revert to state '%s' ('%s')."), comment, date);
 		return;
 	}
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 
 	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Reverted to state '%s' ('%s')."), comment, date);
 	flow_browse_load();
@@ -573,6 +573,6 @@ static void flow_browse_on_revision_select(GtkWidget * menu_item, GebrGeoXmlRevi
  */
 static void flow_browse_on_flow_move(void)
 {
-	document_save(GEBR_GEOXML_DOC(gebr.line));
+	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE);
 }
 

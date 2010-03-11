@@ -342,6 +342,8 @@ const gchar *__gebr_geoxml_get_element_value(GdomeElement * element)
 	GdomeDOMString *string;
 	GdomeNode *child;
 
+	if (element == NULL)
+		return NULL;
 	child = gdome_el_firstChild(element, &exception);
 	string = gdome_n_nodeValue(child, &exception);
 	if (string == NULL)
@@ -403,6 +405,8 @@ const gchar *__gebr_geoxml_get_attr_value(GdomeElement * element, const gchar * 
 	GdomeDOMString *string;
 	GdomeDOMString *attr_value;
 
+	if (element == NULL)
+		return NULL;
 	string = gdome_str_mkref(name);
 	attr_value = gdome_el_getAttribute(element, string, &exception);
 	gdome_str_unref(string);

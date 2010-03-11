@@ -406,7 +406,7 @@ gboolean on_revisions_key_press(GtkWidget * menu, GdkEventKey * event)
 			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(revision));
 			gtk_widget_destroy(gebr.ui_flow_browse->revision_to_be_removed);
 			gebr.ui_flow_browse->revision_to_be_removed = NULL;
-			document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+			document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 		}
 		return TRUE;
 	}

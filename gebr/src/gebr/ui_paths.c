@@ -58,7 +58,7 @@ void path_add(GebrGuiValueSequenceEdit * sequence_edit)
 
 gboolean path_save(void)
 {
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.line));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE);
 	project_line_info_update();
 	return TRUE;
 }
@@ -107,7 +107,6 @@ void path_list_setup_ui(void)
 
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.line));
 	project_line_info_update();
 
 	/* frees */
