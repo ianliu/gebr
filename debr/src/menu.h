@@ -171,7 +171,7 @@ void menu_save_as(GtkTreeIter * iter);
 /**
  * Save all menus opened in DeBR that are unsaved.
  */
-void menu_save_all(void);
+gboolean menu_save_all(void);
 
 /**
  * Validates the menu pointed by \p iter.

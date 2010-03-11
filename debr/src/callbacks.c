@@ -280,6 +280,8 @@ void on_menu_install_activate(void)
 void on_menu_close_activate(void)
 {
 	GtkTreeIter iter;
+	gboolean still_running = TRUE;
+	GtkWidget *dialog_permission;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
 		GebrGeoXmlFlow *menu;
@@ -308,26 +310,39 @@ void on_menu_close_activate(void)
 							 : _("Untitled")));
 			button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
 			g_object_set(G_OBJECT(button),
-					 "image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);
+				     "image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);
 			gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 			gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
-			switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-			case GTK_RESPONSE_YES:{
+			while(still_running){
+				switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
+				case GTK_RESPONSE_YES:{
 					gchar *path;
 
 					gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 							   MENU_PATH, &path, -1);
-					gebr_geoxml_document_save(GEBR_GEOXML_DOC(debr.menu), path);
+
+					if (gebr_geoxml_document_save(GEBR_GEOXML_DOC(debr.menu), path) == GEBR_GEOXML_RETV_CANT_ACCESS_FILE){
+						dialog_permission = gtk_message_dialog_new(GTK_WINDOW(debr.window),
+											   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION,
+											   GTK_BUTTONS_NONE, _("Saving menus failed: Permission denied"));
+						gtk_dialog_add_button(GTK_DIALOG(dialog_permission), GTK_STOCK_OK, GTK_RESPONSE_OK);
+						gtk_dialog_run(GTK_DIALOG(dialog_permission));
+						gtk_widget_destroy(dialog_permission);
+					} else {
+						still_running = FALSE;
+					}
 					g_free(path);
 					break;
 				}
-			case GTK_RESPONSE_NO:
-				break;
-			default:	/* cancel or dialog destroy */
-				cancel = TRUE;
-				break;
+				case GTK_RESPONSE_NO:
+					still_running = FALSE;
+					break;
+				default:	/* cancel or dialog destroy */
+					still_running = FALSE;
+					cancel = TRUE;
+					break;
+				}
 			}
-
 			gtk_widget_destroy(dialog);
 			if (cancel == TRUE)
 				return;

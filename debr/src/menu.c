@@ -443,10 +443,12 @@ MenuMessage menu_save(GtkTreeIter * iter)
 	return MENU_MESSAGE_SUCCESS;
 }
 
-void menu_save_all(void)
+gboolean menu_save_all(void)
 {
+	gboolean ret = TRUE;
+
 	if (!menu_count_unsaved())
-		return;
+		return FALSE;
 
 	GList *unsaved = NULL;
 
@@ -486,6 +488,7 @@ void menu_save_all(void)
 		else if (result == MENU_MESSAGE_PERMISSION_DENIED){
 			gtk_tree_path_free(path);
 			gtk_tree_row_reference_free(row);
+			ret = FALSE;
 			goto out;
 		}
 
@@ -498,6 +501,7 @@ void menu_save_all(void)
 	debr_message(GEBR_LOG_INFO, _("All menus were saved."));
 out:
 	g_list_free(unsaved);
+	return ret;
 }
 
 void menu_save_as(GtkTreeIter * iter)
@@ -811,9 +815,10 @@ void menu_selected(void)
 
 gboolean menu_cleanup(void)
 {
-	GtkWidget *dialog;
+	GtkWidget *dialog, *dialog_permission;
 	GtkWidget *button;
 	gboolean ret;
+	gboolean still_running = TRUE;
 
 	if (!menu_count_unsaved())
 		return TRUE;
@@ -825,19 +830,32 @@ gboolean menu_cleanup(void)
 	g_object_set(G_OBJECT(button), "image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
-	switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-	case GTK_RESPONSE_YES:
-		menu_save_all();
-		ret = TRUE;
-		break;
-	case GTK_RESPONSE_NO:
-		ret = TRUE;
-		break;
-	case GTK_RESPONSE_CANCEL:
-	default:
-		ret = FALSE;
+	while(still_running){
+		switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
+		case GTK_RESPONSE_YES:
+			if (!menu_save_all()){
+				dialog_permission = gtk_message_dialog_new(GTK_WINDOW(debr.window),
+									  GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION,
+									  GTK_BUTTONS_NONE, _("Saving menus failed: Permission denied"));
+				gtk_dialog_add_button(GTK_DIALOG(dialog_permission), GTK_STOCK_OK, GTK_RESPONSE_OK);
+				gtk_dialog_run(GTK_DIALOG(dialog_permission));
+				gtk_widget_destroy(dialog_permission);
+				ret = FALSE;
+			} else {
+				ret = TRUE;
+				still_running = FALSE;
+			}
+			break;
+		case GTK_RESPONSE_NO:
+			ret = TRUE;
+			still_running = FALSE;
+			break;
+		case GTK_RESPONSE_CANCEL:
+		default:
+			still_running = FALSE;
+			ret = FALSE;
+		}
 	}
-
 	gtk_widget_destroy(dialog);
 	return ret;
 }
