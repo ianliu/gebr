@@ -101,7 +101,7 @@ void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document)
  */
 static void help_edit_on_edited(GebrGeoXmlDocument * document, const gchar * help)
 {
-	document_save(document);
+	document_save(document, TRUE);
 }
 
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document)

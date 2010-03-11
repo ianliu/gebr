@@ -28,23 +28,73 @@
  * Creates a new flow.
  */
 gboolean flow_new(void);
+/** 
+ * Frees the memory allocated to a flow.
+ * Besides, update the detailed view of a flow in the interface.
+ */
 void flow_free(void);
+/** 
+ * Delete the selected flow in flow browser.
+ */
 void flow_delete(gboolean confirm);
+/** 
+ * Import flow from file to the current line.
+ */
 void flow_import(void);
+/** 
+ * Export selected(s) flow(s).
+ */
 void flow_export(void);
+/**
+ * Export current flow converting it to a menu.
+ */
 void flow_export_as_menu(void);
+/**
+ * Copy all values of parameters linked to dictionaries' parameters.
+ */
 void flow_copy_from_dicts(GebrGeoXmlFlow * flow);
+/**
+ * Change all paths to relative or absolute according to \p relative.
+ */
 void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative);
+/** 
+ * Runs a flow.
+ */
 void flow_run(struct server *server, struct gebr_comm_server_run * config);
+/**
+ * Make a revision from current flow.
+ * Opens a dialog asking the user for a comment of it.
+ */
 gboolean flow_revision_save(void);
 
+/**
+ * Remove selected program from flow process.
+ */
 void flow_program_remove(void);
+/**
+ * Move selected program to top in the processing flow.
+ */
 void flow_program_move_top(void);
+/** 
+ * Move selected program to bottom in the processing flow.
+ */
 void flow_program_move_bottom(void);
 
+/**
+ * Copy selected(s) flows(s) to clipboard.
+ */
 void flow_copy(void);
+/** 
+ * Paste flow(s) from clipboard.
+ */
 void flow_paste(void);
+/** 
+ * Copy selected(s) program(s) to clipboard.
+ */
 void flow_program_copy(void);
+/** 
+ * Paste program(s) from clipboard.
+ */
 void flow_program_paste(void);
 
 #endif				//__FLOW_H

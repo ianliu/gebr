@@ -444,7 +444,8 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 	return ret;
 }
 
-static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * src, createDoc_func func, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
+static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * src, createDoc_func func, gboolean
+				       validate, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
 {
 	GdomeDocument *doc;
 	int ret;
@@ -459,11 +460,12 @@ static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gch
 		goto err;
 	}
 
-	/* validate */
-	ret = __gebr_geoxml_document_validate_doc(doc, discard_menu_ref);
-	if (ret != GEBR_GEOXML_RETV_SUCCESS) {
-		gdome_doc_unref((GdomeDocument *) doc, &exception);
-		goto err;
+	if (validate) {
+		ret = __gebr_geoxml_document_validate_doc(doc, discard_menu_ref);
+		if (ret != GEBR_GEOXML_RETV_SUCCESS) {
+			gdome_doc_unref((GdomeDocument *) doc, &exception);
+			goto err;
+		}
 	}
 
 	*document = (GebrGeoXmlDocument *) doc;
@@ -515,19 +517,20 @@ GebrGeoXmlDocument *gebr_geoxml_document_new(const gchar * name, const gchar * v
  * library functions.
  */
 
-int gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
+int gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path, gboolean validate, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
 {
 	if (g_file_test(path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == FALSE || g_access(path, R_OK) < 0) {
 		*document = NULL;
 		return GEBR_GEOXML_RETV_CANT_ACCESS_FILE;
 	}
 
-	return __gebr_geoxml_document_load(document, path, (createDoc_func) gdome_di_createDocFromURI, discard_menu_ref);
+	return __gebr_geoxml_document_load(document, path, (createDoc_func)gdome_di_createDocFromURI, validate,
+					   discard_menu_ref);
 }
 
 int gebr_geoxml_document_load_buffer(GebrGeoXmlDocument ** document, const gchar * xml)
 {
-	return __gebr_geoxml_document_load(document, xml, (createDoc_func) gdome_di_createDocFromMemory, NULL);
+	return __gebr_geoxml_document_load(document, xml, (createDoc_func)gdome_di_createDocFromMemory, TRUE, NULL);
 }
 
 void gebr_geoxml_document_free(GebrGeoXmlDocument * document)
@@ -588,7 +591,7 @@ int gebr_geoxml_document_validate(const gchar * filename)
 	GebrGeoXmlDocument *document;
 	int ret;
 
-	ret = gebr_geoxml_document_load(&document, filename, NULL);
+	ret = gebr_geoxml_document_load(&document, filename, TRUE, NULL);
 	gebr_geoxml_document_free(document);
 
 	return ret;

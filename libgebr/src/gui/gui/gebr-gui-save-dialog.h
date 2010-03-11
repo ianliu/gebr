@@ -42,7 +42,7 @@ struct _GebrGuiSaveDialog {
 	GtkFileChooserDialog parent;
 
 	/* private */
-	const gchar *extension;
+	gchar *extension;
 };
 
 struct _GebrGuiSaveDialogClass {
@@ -54,7 +54,7 @@ GType gebr_gui_save_dialog_get_type(void) G_GNUC_CONST;
 /**
  * Creates a new save dialog.
  */
-GtkWidget *gebr_gui_save_dialog_new();
+GtkWidget *gebr_gui_save_dialog_new(GtkWindow *parent);
 
 /**
  */
@@ -62,7 +62,7 @@ void gebr_gui_save_dialog_set_default_extension(GebrGuiSaveDialog *self, const g
 
 /**
  */
-const gchar *gebr_gui_save_dialog_set_default_extension(GebrGuiSaveDialog *self);
+const gchar *gebr_gui_save_dialog_get_default_extension(GebrGuiSaveDialog *self);
 
 /**
  * Shows the dialog so the user can choose a file.

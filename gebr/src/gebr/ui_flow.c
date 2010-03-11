@@ -183,7 +183,7 @@ void flow_io_setup_ui(gboolean executable)
 				   FLOW_IO_FLOW_SERVER_POINTER, &flow_server, FLOW_IO_SERVER_POINTER, &server, -1);
 		/* move selected server/IO to the first server/IO of the server */
 		gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(flow_server), NULL);
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE);
 		/* select current server on flow edition */
 		server_find(server, &server_iter);
 		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &server_iter);
@@ -242,7 +242,7 @@ void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gc
 	gebr_geoxml_flow_server_io_set_output(gebr.flow_server, output);
 	gebr_geoxml_flow_server_io_set_error(gebr.flow_server, error);
 
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 }
 
 void flow_io_simple_setup_ui(gboolean focus_output)
@@ -611,7 +611,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	}
 
 	gebr_geoxml_flow_io_set_from_server(gebr.flow, flow_server);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 
 	flow_run(server, config);
 
@@ -667,7 +667,7 @@ on_renderer_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_tex
 	gtk_list_store_move_after(ui_flow_io->store, &iter, NULL);
 	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(flow_server), NULL);
 
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 }
 
 /**
@@ -817,7 +817,7 @@ static void on_delete_server_io_activate(GtkWidget * menu_item, struct ui_flow_i
 	if (gtk_list_store_remove(ui_flow_io->store, &iter))
 		gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(ui_flow_io->treeview), &iter);
 
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 }
 
 /**

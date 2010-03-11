@@ -111,7 +111,7 @@ typedef void (*GebrGeoXmlDiscardMenuRefCallback)(GebrGeoXmlProgram * program, co
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NO_MEMORY, GEBR_GEOXML_RETV_CANT_ACCESS_FILE,
  * GEBR_GEOXML_RETV_INVALID_DOCUMENT, GEBR_GEOXML_RETV_DTD_SPECIFIED, GEBR_GEOXML_RETV_CANT_ACCESS_DTD
  */
-int gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref);
+int gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path, gboolean validate, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref);
 
 /**
  * Load a document XML buffer at \p xml into \p document.

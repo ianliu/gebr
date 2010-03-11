@@ -22,12 +22,33 @@
 #include <gtk/gtk.h>
 #include <libgebr/geoxml.h>
 
+/**
+ * Create a new project.
+ */
 void project_new(void);
+/**
+ * Delete the selected project.
+ *
+ * TODO:
+ * * If a project is not empty, the user user should be
+ *   warned. Besides, it should be asked about erasing
+ *   all project's lines.
+ * * Project's line files should be deleted as well.
+ */
 gboolean project_delete(gboolean confirm);
 
+/**
+ * Add \p project to the list of projects.
+ */
 GtkTreeIter project_append_iter(GebrGeoXmlProject * project);
+/**
+ * Add \p line to \p project_iter.
+ */
 GtkTreeIter project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine * line);
 
+/**
+ * Reload the projets from the data directory.
+ */
 void project_list_populate(void);
 
 #endif				//__PROJECT_H

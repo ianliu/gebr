@@ -15,6 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * \file line.c
+ * Lines manipulation functions
+ */
+
 #ifndef __LINE_H
 #define __LINE_H
 
@@ -22,15 +27,41 @@
 
 #include <libgebr/geoxml.h>
 
+/**
+ * Create a new line
+ */
 gboolean line_new(void);
+/**
+ * Delete the selected line
+ */
 gboolean line_delete(gboolean confirm);
+/**
+ * Import line with basename \p line_filename inside \p at_dir.
+ * Also import its flows.
+ */
 GebrGeoXmlLine *line_import(const gchar * line_filename, const gchar * at_dir);
+/**
+ * Change all paths in \p line to relative or absolute according \p relative.
+ */
 void line_set_paths_to(GebrGeoXmlLine * line, gboolean relative);
 
-GtkTreeIter line_append_flow(GebrGeoXmlLineFlow * line_flow);
+/** 
+ * Append \p flow to flow browse and return the appended iter.
+ */
+GtkTreeIter line_append_flow_iter(GebrGeoXmlFlow * flow, GebrGeoXmlLineFlow * line_flow);
+/** 
+ * Load flows associated to the selected line.
+ * Called only by project_line_load.
+ */
 void line_load_flows(void);
 
+/** 
+ * Move flow top
+ */
 void line_move_flow_top(void);
+/** 
+ * Move flow bottom
+ */
 void line_move_flow_bottom(void);
 
 #endif				//__LINE_H

@@ -317,7 +317,7 @@ void flow_edition_status_changed(void)
 		icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(program));
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_ICON_COLUMN, icon, -1);
 	}
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 }
 
 void flow_edition_on_server_changed(void)
@@ -391,7 +391,7 @@ flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * 
 		gebr_geoxml_sequence_move_after(program, position_program);
 		gtk_list_store_move_after(gebr.ui_flow_edition->fseq_store, iter, position);
 	}
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 
 	return FALSE;
 }
@@ -483,7 +483,7 @@ static void flow_edition_menu_add(void)
 	menu_programs_index = gebr_geoxml_flow_get_programs_number(gebr.flow);
 	/* add it to the file */
 	gebr_geoxml_flow_add_flow(gebr.flow, menu);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 
 	/* and to the GUI */
 	gebr_geoxml_flow_get_program(gebr.flow, &menu_programs, menu_programs_index);
@@ -685,7 +685,7 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 		flow_io_set_server(&iter, "", "", "");
 	}
 	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(gebr.flow_server), NULL);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 
 	flow_edition_set_io();
 	flow_browse_info_update();

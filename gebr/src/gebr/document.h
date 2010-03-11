@@ -44,11 +44,19 @@ GebrGeoXmlDocument *document_load_at(const gchar * filename, const gchar * direc
 GebrGeoXmlDocument *document_load_path(const gchar * path);
 
 /**
- * Save _document_ using its filename field at data directory.
+ * Save \p document at \p path.
+ * Only set \p set_modified_date to TRUE if this save is a reflect of a explicit user action.
+ * TODO: treat errors
  */
-void document_save(GebrGeoXmlDocument * document);
+void document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date);
 /**
- * Import _document_ into data directory, saving it with a new filename.
+ * Save \p document using its filename field at data directory.
+ * @see document_save_at
+ */
+void document_save(GebrGeoXmlDocument * document, gboolean set_modified_date);
+
+/**
+ * Import \p document into data directory, saving it with a new filename.
  */
 void document_import(GebrGeoXmlDocument * document);
 
