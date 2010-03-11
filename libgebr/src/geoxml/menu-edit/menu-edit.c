@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 		GebrGeoXmlProgram *prog;
 		gint nprog;
 
-		if (gebr_geoxml_document_load((GebrGeoXmlDocument **) (&flow), menu[imenu], NULL) !=
+		if (gebr_geoxml_document_load((GebrGeoXmlDocument **) (&flow), menu[imenu], TRUE, NULL) !=
 		    GEBR_GEOXML_RETV_SUCCESS) {
 			fprintf(stderr, "Unable to load %s\n", menu[imenu]);
 			break;

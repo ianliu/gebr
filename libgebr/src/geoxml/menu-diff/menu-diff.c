@@ -82,8 +82,8 @@ int main(int argc, char **argv)
 	prefix = g_string_new(NULL);
 	offset = g_string_new(NULL);
 
-	gebr_geoxml_document_load((GebrGeoXmlDocument **) (&menu[0]), fnmenu[nmenu - 2], NULL);
-	gebr_geoxml_document_load((GebrGeoXmlDocument **) (&menu[1]), fnmenu[nmenu - 1], NULL);
+	gebr_geoxml_document_load((GebrGeoXmlDocument **) (&menu[0]), fnmenu[nmenu - 2], TRUE, NULL);
+	gebr_geoxml_document_load((GebrGeoXmlDocument **) (&menu[1]), fnmenu[nmenu - 1], TRUE, NULL);
 
 	doc[0] = GEBR_GEOXML_DOC(menu[0]);
 	doc[1] = GEBR_GEOXML_DOC(menu[1]);

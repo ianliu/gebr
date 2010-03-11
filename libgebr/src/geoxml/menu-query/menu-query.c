@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 	for (imenu = 0; imenu < nmenu; imenu++) {
 		error_count = 0;
 
-		if (gebr_geoxml_document_load((GebrGeoXmlDocument **) (&flow), menu[imenu], NULL) != GEBR_GEOXML_RETV_SUCCESS){
+		if (gebr_geoxml_document_load((GebrGeoXmlDocument **) (&flow), menu[imenu], TRUE, NULL) != GEBR_GEOXML_RETV_SUCCESS){
                         fprintf(stderr,"Unable to load %s\n", menu[imenu]);
                         break;
                 }
