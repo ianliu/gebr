@@ -32,17 +32,18 @@ GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type);
 
 /**
  * Load a document (flow, line or project) located at GêBR's data directory from its filename, handling errors.
- * Calls #document_load_path
+ * Calls #document_load_path.
  */
 int document_load(GebrGeoXmlDocument ** document, const gchar * filename);
 /**
  * Load a document (flow, line or project) located at \p diretory from its with \p filename, handling errors.
- * Calls #document_load_path
+ * Calls #document_load_path.
  */
 int document_load_at(GebrGeoXmlDocument ** document, const gchar * filename, const gchar * directory);
 /**
  * Load a document from its path, handling errors.
  * Return the errors codes of #gebr_geoxml_document_load.
+ * If load error is GEBR_GEOXML_RETV_CANT_ACCESS_FILE no action is requested for user and a log message is shown.
  */
 int document_load_path(GebrGeoXmlDocument **document, const gchar * path);
 

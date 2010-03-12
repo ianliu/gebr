@@ -152,7 +152,8 @@ void project_list_populate(void)
 			const gchar *line_source;
 
 			line_source = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line));
-			if (document_load((GebrGeoXmlDocument**)(&line), line_source)) {
+			int ret = document_load((GebrGeoXmlDocument**)(&line), line_source);
+			if (ret == GEBR_GEOXML_RETV_CANT_ACCESS_FILE) {
 				GebrGeoXmlSequence * sequence;
 				
 				sequence = project_line;
@@ -161,7 +162,8 @@ void project_list_populate(void)
 				document_save(GEBR_GEOXML_DOCUMENT(project), FALSE);
 
 				continue;
-			}
+			} else if (ret)
+				continue;
 			project_append_line_iter(&project_iter, line);
 			gebr_geoxml_document_free(GEBR_GEOXML_DOC(line));
 

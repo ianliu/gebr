@@ -432,10 +432,10 @@ void project_line_import(void)
 			while (project_line != NULL) {
 				GebrGeoXmlLine *line;
 
-				line =
-				    line_import(gebr_geoxml_project_get_line_source
+				int ret =
+				    line_import(&line, gebr_geoxml_project_get_line_source
 						(GEBR_GEOXML_PROJECT_LINE(project_line)), tmp_dir->str);
-				if (line == NULL) {
+				if (ret == GEBR_GEOXML_RETV_CANT_ACCESS_FILE) {
 					GebrGeoXmlSequence * sequence;
 
 					sequence = project_line;
@@ -444,7 +444,8 @@ void project_line_import(void)
 					document_save(GEBR_GEOXML_DOCUMENT(project), FALSE);
 
 					continue;
-				}
+				} else if (ret)
+					continue;
 				gebr_geoxml_project_set_line_source(GEBR_GEOXML_PROJECT_LINE(project_line),
 								    gebr_geoxml_document_get_filename
 								    (GEBR_GEOXML_DOCUMENT(line)));
@@ -461,7 +462,7 @@ void project_line_import(void)
 			GebrGeoXmlLine *line;
 			GtkTreeIter parent;
 
-			line = line_import(files[i], tmp_dir->str);
+			line_import(&line, files[i], tmp_dir->str);
 			if (line == NULL)
 				continue;
 			gebr_geoxml_project_append_line(gebr.project,

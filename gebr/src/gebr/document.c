@@ -127,6 +127,12 @@ int document_load_path(GebrGeoXmlDocument **document, const gchar * path)
 					     __document_discard_menu_ref_callback : NULL)) < 0) {
 		GtkDialog *dialog;
 		GString *string;
+		
+		if (ret == GEBR_GEOXML_RETV_CANT_ACCESS_FILE) {
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load file at %s: %s."),
+				     path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
+			return ret;
+		}
 
 		string = g_string_new("");
 

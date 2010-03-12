@@ -38,8 +38,9 @@ gboolean line_delete(gboolean confirm);
 /**
  * Import line with basename \p line_filename inside \p at_dir.
  * Also import its flows.
+ * Return error from #document_load_path.
  */
-GebrGeoXmlLine *line_import(const gchar * line_filename, const gchar * at_dir);
+int line_import(GebrGeoXmlLine ** line, const gchar * line_filename, const gchar * at_dir);
 /**
  * Change all paths in \p line to relative or absolute according \p relative.
  */

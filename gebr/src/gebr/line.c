@@ -148,21 +148,22 @@ gboolean line_delete(gboolean confirm)
 	return TRUE;
 }
 
-GebrGeoXmlLine *line_import(const gchar * line_filename, const gchar * at_dir)
+int line_import(GebrGeoXmlLine ** line, const gchar * line_filename, const gchar * at_dir)
 {
-	GebrGeoXmlLine *line;
 	GebrGeoXmlSequence *i;
+	int ret;
 
-	if (document_load_at((GebrGeoXmlDocument**)(&line), line_filename, at_dir))
-		return NULL;
-	document_import(GEBR_GEOXML_DOCUMENT(line));
+	if ((ret = document_load_at((GebrGeoXmlDocument**)line, line_filename, at_dir)))
+		return ret;
+	document_import(GEBR_GEOXML_DOCUMENT(*line));
 
-	gebr_geoxml_line_get_flow(line, &i, 0);
+	gebr_geoxml_line_get_flow(*line, &i, 0);
 	while (i != NULL) {
 		GebrGeoXmlFlow *flow;
 
-		if (document_load_at((GebrGeoXmlDocument**)(&flow),
-				     gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(i)), at_dir)) {
+		int ret = document_load_at((GebrGeoXmlDocument**)(&flow),
+					   gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(i)), at_dir);
+		if (ret == GEBR_GEOXML_RETV_CANT_ACCESS_FILE) {
 			GebrGeoXmlSequence * sequence;
 
 			sequence = i;
@@ -171,7 +172,8 @@ GebrGeoXmlLine *line_import(const gchar * line_filename, const gchar * at_dir)
 			document_save(GEBR_GEOXML_DOCUMENT(line), FALSE);
 
 			continue;
-		}
+		} else if (ret)
+			continue;
 		document_import(GEBR_GEOXML_DOCUMENT(flow));
 		gebr_geoxml_line_set_flow_source(GEBR_GEOXML_LINE_FLOW(i),
 						 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
@@ -180,9 +182,9 @@ GebrGeoXmlLine *line_import(const gchar * line_filename, const gchar * at_dir)
 
 		gebr_geoxml_sequence_next(&i);
 	}
-	document_save(GEBR_GEOXML_DOCUMENT(line), FALSE);
+	document_save(GEBR_GEOXML_DOCUMENT(*line), FALSE);
 
-	return line;
+	return ret;
 }
 
 void line_set_paths_to(GebrGeoXmlLine * line, gboolean relative)
@@ -230,8 +232,9 @@ void line_load_flows(void)
 	while (line_flow != NULL) {
 		GebrGeoXmlFlow *flow;
 
-		if (document_load((GebrGeoXmlDocument**)(&flow),
-				  gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow)))) {
+		int ret = document_load((GebrGeoXmlDocument**)(&flow),
+					gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow)));
+		if (ret == GEBR_GEOXML_RETV_CANT_ACCESS_FILE) {
 			GebrGeoXmlSequence * sequence;
 
 			sequence = line_flow;
@@ -240,7 +243,8 @@ void line_load_flows(void)
 			document_save(GEBR_GEOXML_DOCUMENT(gebr.line), FALSE);
 
 			continue;
-		}
+		} else if (ret)
+			continue;
 
 		line_append_flow_iter(flow, GEBR_GEOXML_LINE_FLOW(line_flow));
 
