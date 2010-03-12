@@ -175,7 +175,7 @@ gchar *gebr_gui_save_dialog_run(GebrGuiSaveDialog *self)
 		g_string_assign(filename, tmp);
 		g_free(tmp);
 
-		if (self->extension && !g_str_has_suffix(tmp, self->extension))
+		if (self->extension && !g_str_has_suffix(filename->str, self->extension))
 			g_string_append(filename, self->extension);
 
 		if (g_file_test(filename->str, G_FILE_TEST_EXISTS)) {
