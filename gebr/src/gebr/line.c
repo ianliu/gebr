@@ -153,8 +153,7 @@ GebrGeoXmlLine *line_import(const gchar * line_filename, const gchar * at_dir)
 	GebrGeoXmlLine *line;
 	GebrGeoXmlSequence *i;
 
-	line = GEBR_GEOXML_LINE(document_load_at(line_filename, at_dir));
-	if (line == NULL)
+	if (document_load_at((GebrGeoXmlDocument**)(&line), line_filename, at_dir))
 		return NULL;
 	document_import(GEBR_GEOXML_DOCUMENT(line));
 
@@ -162,9 +161,8 @@ GebrGeoXmlLine *line_import(const gchar * line_filename, const gchar * at_dir)
 	while (i != NULL) {
 		GebrGeoXmlFlow *flow;
 
-		flow = GEBR_GEOXML_FLOW(document_load_at(gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(i)),
-							 at_dir));
-		if (flow == NULL) {
+		if (document_load_at((GebrGeoXmlDocument**)(&flow),
+				     gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(i)), at_dir)) {
 			GebrGeoXmlSequence * sequence;
 
 			sequence = i;
@@ -232,8 +230,8 @@ void line_load_flows(void)
 	while (line_flow != NULL) {
 		GebrGeoXmlFlow *flow;
 
-		flow = GEBR_GEOXML_FLOW(document_load(gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow))));
-		if (flow == NULL) {
+		if (document_load((GebrGeoXmlDocument**)(&flow),
+				  gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow)))) {
 			GebrGeoXmlSequence * sequence;
 
 			sequence = line_flow;

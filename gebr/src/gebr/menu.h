@@ -1,7 +1,3 @@
-/**
- * \file menu.c Provides methods for loading menus
- */
-
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -17,6 +13,10 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * \file menu.c Provides methods for loading menus
  */
 
 #ifndef __MENU_H_
@@ -38,6 +38,7 @@ GebrGeoXmlFlow *menu_load_ancient(const gchar * filename);
 
 /**
  * Loads a menu at the given \p path.
+ * TODO: treat errors as document_load
  */
 GebrGeoXmlFlow *menu_load_path(const gchar * path);
 

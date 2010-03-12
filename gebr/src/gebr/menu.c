@@ -90,7 +90,9 @@ out:	g_string_free(path, TRUE);
 
 GebrGeoXmlFlow *menu_load_path(const gchar * path)
 {
-	return GEBR_GEOXML_FLOW(document_load_path(path));
+	GebrGeoXmlFlow *flow;
+	document_load_path((GebrGeoXmlDocument**)(&flow), path);
+	return flow;
 }
 
 gboolean menu_refresh_needed(void)
@@ -352,8 +354,7 @@ static void menu_scan_directory(const gchar * directory, GKeyFile * menu_key_fil
 		if (fnmatch("*.mnu", filename, 1))
 			continue;
 
-		menu = document_load_path(path->str);
-		if (menu == NULL)
+		if (document_load_path((GebrGeoXmlDocument**)(&menu), path->str))
 			continue;
 
 		gebr_geoxml_flow_get_category(GEBR_GEOXML_FLOW(menu), &category, 0);

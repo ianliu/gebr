@@ -71,31 +71,31 @@ GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
 	return document;
 }
 
-GebrGeoXmlDocument *document_load(const gchar * filename)
+int document_load(GebrGeoXmlDocument ** document, const gchar * filename)
 {
-	GebrGeoXmlDocument *document;
+	int ret;
 	GString *path;
 
 	path = document_get_path(filename);
-	document = document_load_path(path->str);
+	ret = document_load_path(document, path->str);
 	/* save will make a xml format upgrade if necessary */
-	document_save(document, FALSE);
+	document_save(*document, FALSE);
 	g_string_free(path, TRUE);
 
-	return document;
+	return ret;
 }
 
-GebrGeoXmlDocument *document_load_at(const gchar * filename, const gchar * directory)
+int document_load_at(GebrGeoXmlDocument ** document, const gchar * filename, const gchar * directory)
 {
-	GebrGeoXmlDocument *document;
+	int ret;
 	GString *path;
 
 	path = g_string_new("");
 	g_string_printf(path, "%s/%s", directory, filename);
-	document = document_load_path(path->str);
+	ret = document_load_path(document, path->str);
 	g_string_free(path, TRUE);
 
-	return document;
+	return ret;
 }
 
 /**
@@ -105,13 +105,11 @@ GebrGeoXmlDocument *document_load_at(const gchar * filename, const gchar * direc
 static void  __document_discard_menu_ref_callback(GebrGeoXmlProgram * program, const gchar * filename, gint index)
 {
 	GebrGeoXmlFlow *menu;
-
 	GebrGeoXmlSequence *menu_program;
 
 	menu = menu_load_ancient(filename);
-	if (menu == NULL){
+	if (menu == NULL)
 		return;
-	}	
 
 	/* go to menu's program index specified in flow */
 	gebr_geoxml_flow_get_program(menu, &menu_program, index);
@@ -119,24 +117,22 @@ static void  __document_discard_menu_ref_callback(GebrGeoXmlProgram * program, c
 
 
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
-		
 }	
 
-GebrGeoXmlDocument *document_load_path(const gchar * path)
+int document_load_path(GebrGeoXmlDocument **document, const gchar * path)
 {
-	GebrGeoXmlDocument *document;
 	int ret;
 
-	if ((ret = gebr_geoxml_document_load(&document, path, TRUE, g_str_has_suffix(path, ".flw") ?
+	if ((ret = gebr_geoxml_document_load(document, path, TRUE, g_str_has_suffix(path, ".flw") ?
 					     __document_discard_menu_ref_callback : NULL)) < 0) {
 		GtkDialog *dialog;
 		GString *string;
 
 		string = g_string_new("");
 
-		if (!gebr_geoxml_document_load(&document, path, FALSE, NULL)) {
+		if (!gebr_geoxml_document_load(document, path, FALSE, NULL)) {
 			const gchar *title;
-			title = gebr_geoxml_document_get_title(document);
+			title = gebr_geoxml_document_get_title(*document);
 			g_string_printf(string, "%s", title != NULL ? title : "");
 			if (title != NULL)
 				g_string_append(string, " ");
@@ -151,9 +147,9 @@ GebrGeoXmlDocument *document_load_path(const gchar * path)
 		}
 
 		const gchar *document_name;
-		if (document == NULL)
+		if (*document == NULL)
 			document_name = _("document");
-		else switch (gebr_geoxml_document_get_type(document)) {
+		else switch (gebr_geoxml_document_get_type(*document)) {
 		case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
 			document_name = _("project");
 			break;
@@ -168,12 +164,12 @@ GebrGeoXmlDocument *document_load_path(const gchar * path)
 		}
 
 		dialog = GTK_DIALOG(gtk_message_dialog_new(GTK_WINDOW(gebr.window),
-						GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
-						GTK_MESSAGE_QUESTION,
-						GTK_BUTTONS_NONE,
-						"Could not load %s %sat %s.\nError: %s\n", document_name,
-						string->str, path,
-					       	gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret)));
+							   GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
+							   GTK_MESSAGE_QUESTION,
+							   GTK_BUTTONS_NONE,
+							   "Could not load %s %sat %s.\nError: %s\n", document_name,
+							   string->str, path,
+							   gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret)));
 		g_string_printf(string, "Couldn't load %s", document_name);
 		gtk_window_set_title(GTK_WINDOW(dialog), string->str); 
 		gtk_dialog_add_button(dialog, _("Ignore"), 0);
@@ -200,7 +196,7 @@ GebrGeoXmlDocument *document_load_path(const gchar * path)
 			}
 			gchar *export_path;
 			export_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
-			document_save_at(document, export_path, FALSE);
+			document_save_at(*document, export_path, FALSE);
 			g_free(export_path);
 
 			keep_dialog = FALSE;
@@ -214,15 +210,15 @@ GebrGeoXmlDocument *document_load_path(const gchar * path)
 		} while (keep_dialog);
 		
 		/* frees */
-		if (document) {
-			gebr_geoxml_document_free(document);
+		if (*document) {
+			gebr_geoxml_document_free(*document);
 			document = NULL;
 		}
 		g_string_free(string, TRUE);
 		gtk_widget_destroy(GTK_WIDGET(dialog));
 	}
 
-out:	return document;
+out:	return ret;
 }
 
 gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date)
@@ -234,7 +230,8 @@ gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gbo
 
 	ret = (gebr_geoxml_document_save(document, path) == GEBR_GEOXML_RETV_SUCCESS);
 	if (!ret)
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to save file."));
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to save document '%s' file at '%s'."),
+			     gebr_geoxml_document_get_title(document), path);
 	return ret;
 }
 

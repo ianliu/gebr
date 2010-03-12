@@ -180,12 +180,11 @@ void flow_import(void)
 
 	/* load flow */
 	dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
-	imported_flow = GEBR_GEOXML_FLOW(document_load_path(dir));
-	if (imported_flow == NULL)
+	if (document_load_path((GebrGeoXmlDocument**)(&imported_flow), dir))
 		goto out2;
 
 	/* initialization */
-	flow_title = (gchar *) gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(imported_flow));
+	flow_title = (gchar*)gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(imported_flow));
 
 	/* feedback */
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' imported to line '%s' from file '%s'."),
@@ -231,8 +230,7 @@ void flow_export(void)
 	title = g_string_new(NULL);
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, FB_FILENAME, &flow_filename, -1);
-	flow = document_load(flow_filename);
-	if (flow == NULL)
+	if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename))
 		goto cont2;
 
 	/* run file chooser */
@@ -725,8 +723,7 @@ void flow_paste(void)
 	for (i = g_list_first(gebr.flow_clipboard); i != NULL; i = g_list_next(i)) {
 		GebrGeoXmlDocument *flow;
 
-		flow = document_load((gchar *)i->data);
-		if (flow == NULL)
+		if (document_load((GebrGeoXmlDocument**)(&flow), (gchar *)i->data))
 			continue;
 
 		document_import(flow);

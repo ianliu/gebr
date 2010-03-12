@@ -394,8 +394,7 @@ static void flow_browse_load(void)
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 			   FB_FILENAME, &filename, FB_TITLE, &title, -1);
 	/* free previous flow and load it */
-	gebr.flow = GEBR_GEOXML_FLOW(document_load(filename));
-	if (gebr.flow == NULL)
+	if (document_load((GebrGeoXmlDocument**)(&gebr.flow), filename))
 		goto out;
 	gtk_widget_set_sensitive(gebr.ui_flow_edition->queue_combobox, TRUE);
 	gtk_widget_set_sensitive(gebr.ui_flow_edition->server_combobox, TRUE);
