@@ -225,23 +225,29 @@ GebrGeoXmlDocument *document_load_path(const gchar * path)
 out:	return document;
 }
 
-void document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date)
+gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date)
 {
+	gboolean ret = FALSE;
+
 	if (set_modified_date)
 		gebr_geoxml_document_set_date_modified(document, gebr_iso_date());
 
-	/* TODO: check save */
-	gebr_geoxml_document_save(document, path);
+	ret = (gebr_geoxml_document_save(document, path) == GEBR_GEOXML_RETV_SUCCESS);
+	if (!ret)
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to save file."));
+	return ret;
 }
 
-void document_save(GebrGeoXmlDocument * document, gboolean set_modified_date)
+gboolean document_save(GebrGeoXmlDocument * document, gboolean set_modified_date)
 {
 	GString *path;
+	gboolean ret = FALSE;
 
 	path = document_get_path(gebr_geoxml_document_get_filename(document));
-	document_save_at(document, path->str, set_modified_date);
+	ret = document_save_at(document, path->str, set_modified_date);
 
 	g_string_free(path, TRUE);
+	return ret;
 }
 
 void document_import(GebrGeoXmlDocument * document)

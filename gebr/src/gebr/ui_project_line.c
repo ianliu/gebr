@@ -499,7 +499,7 @@ void project_line_import(void)
 	g_strfreev(files);
 	goto out;
 
- err:	gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Failed to import."));
+ err:	gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to import."));
 
 out:	g_free(output);
 out2:	g_free(filename);
@@ -618,9 +618,9 @@ void project_line_export(void)
 	g_chdir(tmpdir->str);
 	g_string_printf(command, "tar czf %s *", output_filename->str);
 	if (system(command->str))
-		gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Could not export."));
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not export."));
 	else
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Export succesful."));
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Export succesful."));
 	g_chdir(current_dir);
 	g_free(current_dir);
 
