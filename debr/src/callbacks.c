@@ -158,7 +158,7 @@ void on_menu_save_activate(void)
 {
 	GtkTreeIter iter;
 
-	if (!menu_get_selected(&iter, TRUE)){
+	if (!menu_get_selected(&iter, TRUE)) {
 		debr_message(GEBR_LOG_INFO, _("No menu selected."));
 		return;
 	}
@@ -173,8 +173,8 @@ void on_menu_save_as_activate(void)
 		debr_message(GEBR_LOG_INFO, _("Menu not selected."));
 		return;
 	}
-	menu_save_as(&iter);
-	menu_select_iter(&iter);
+	if (menu_save_as(&iter))
+		menu_select_iter(&iter);
 }
 
 void on_menu_save_all_activate(void)
