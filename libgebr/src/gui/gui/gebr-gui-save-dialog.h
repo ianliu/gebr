@@ -54,7 +54,7 @@ GType gebr_gui_save_dialog_get_type(void) G_GNUC_CONST;
 /**
  * Creates a new save dialog.
  */
-GtkWidget *gebr_gui_save_dialog_new(GtkWindow *parent);
+GtkWidget *gebr_gui_save_dialog_new(const gchar *title, GtkWindow *parent);
 
 /**
  * Sets the default file extension to use with this save dialog.
