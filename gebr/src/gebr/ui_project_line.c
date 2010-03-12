@@ -52,6 +52,11 @@ static void project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath *
 
 static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_line *ui_project_line);
 
+static gboolean line_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+			     GtkTreeViewDropPosition drop_position);
+static gboolean line_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+				 GtkTreeViewDropPosition drop_position);
+
 struct ui_project_line *project_line_setup_ui(void)
 {
 	struct ui_project_line *ui_project_line;
@@ -84,6 +89,11 @@ struct ui_project_line *project_line_setup_ui(void)
 	ui_project_line->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_project_line->store));
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_project_line->view),
 						  (GebrGuiGtkPopupCallback) project_line_popup_menu, ui_project_line);
+	// TODO!
+	gebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(ui_project_line->view),
+						    (GebrGuiGtkTreeViewReorderCallback) line_reorder,
+						    (GebrGuiGtkTreeViewReorderCallback) line_can_reorder, NULL);
+
 	g_signal_connect(ui_project_line->view, "row-activated",
 			 G_CALLBACK(project_line_on_row_activated), ui_project_line);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_project_line->view);
@@ -824,3 +834,99 @@ static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_li
 	return GTK_MENU(menu);
 }
 
+
+/**
+ * \internal
+ * TODO!
+ * Line reordering callback, responsible for putting lines in or out of a project.
+ */
+static gboolean
+line_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+	     GtkTreeViewDropPosition drop_position)
+{
+	GebrGeoXmlParameter *parameter;
+	GebrGeoXmlParameter *position_parameter;
+	GtkTreeIter parent;
+	GtkTreeIter position_parent;
+	GtkTreeIter new;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter, PARAMETER_XMLPOINTER, &parameter, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), position,
+			   PARAMETER_XMLPOINTER, &position_parameter, -1);
+	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent, iter);
+	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &position_parent, position);
+
+	if ((drop_position == GTK_TREE_VIEW_DROP_INTO_OR_BEFORE || drop_position == GTK_TREE_VIEW_DROP_INTO_OR_AFTER) &&
+	    gebr_geoxml_parameter_get_type(position_parameter) == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
+		gebr_geoxml_sequence_move_into_group(GEBR_GEOXML_SEQUENCE(parameter),
+						     GEBR_GEOXML_PARAMETER_GROUP(position_parameter));
+
+		gtk_tree_store_append(debr.ui_parameter.tree_store, &new, position);
+		gebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &new, iter);
+		gtk_tree_store_remove(debr.ui_parameter.tree_store, iter);
+
+		parameter_load_iter(position, FALSE);
+	} else {
+		if (drop_position == GTK_TREE_VIEW_DROP_AFTER)
+			gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(parameter),
+							GEBR_GEOXML_SEQUENCE(position_parameter));
+		else
+			gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(parameter),
+							 GEBR_GEOXML_SEQUENCE(position_parameter));
+
+		if (gebr_gui_gtk_tree_iter_equal_to(&parent, &position_parent)) {
+			new = *iter;
+			if (drop_position == GTK_TREE_VIEW_DROP_AFTER)
+				gtk_tree_store_move_after(debr.ui_parameter.tree_store, iter, position);
+			else
+				gtk_tree_store_move_before(debr.ui_parameter.tree_store, iter, position);
+		} else {
+			if (drop_position == GTK_TREE_VIEW_DROP_AFTER)
+				gtk_tree_store_insert_after(debr.ui_parameter.tree_store, &new, NULL, position);
+			else
+				gtk_tree_store_insert_before(debr.ui_parameter.tree_store, &new, NULL, position);
+			gebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &new,
+								 iter);
+			gtk_tree_store_remove(debr.ui_parameter.tree_store, iter);
+		}
+
+		if (gebr_gui_gtk_tree_model_iter_is_valid(&position_parent))
+			parameter_load_iter(&position_parent, FALSE);
+	}
+	if (gebr_gui_gtk_tree_model_iter_is_valid(&parent))
+		parameter_load_iter(&parent, FALSE);
+
+	parameter_select_iter(new);
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+
+	return TRUE;
+}
+
+/**
+ * \internal
+ * TODO!
+ * Parameter reordering acceptance callback.
+ */
+static gboolean
+line_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+		 GtkTreeViewDropPosition drop_position)
+{
+	GebrGeoXmlParameter *parameter;
+	GebrGeoXmlParameter *position_parameter;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), iter, PARAMETER_XMLPOINTER, &parameter, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), position,
+			   PARAMETER_XMLPOINTER, &position_parameter, -1);
+
+	if (gebr_geoxml_parameter_get_type(parameter) != GEBR_GEOXML_PARAMETER_TYPE_GROUP)
+		return TRUE;
+	/* group inside another expanded group */
+	if (gebr_geoxml_parameter_get_group(position_parameter) != NULL)
+		return FALSE;
+	/* group inside another group */
+	if ((drop_position == GTK_TREE_VIEW_DROP_INTO_OR_BEFORE || drop_position == GTK_TREE_VIEW_DROP_INTO_OR_AFTER) &&
+	    gebr_geoxml_parameter_get_type(position_parameter) == GEBR_GEOXML_PARAMETER_TYPE_GROUP)
+		return FALSE;
+
+	return TRUE;
+}
