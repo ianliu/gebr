@@ -26,6 +26,7 @@
 #include <libgebr/geoxml.h>
 #include <libgebr/comm.h>
 #include <libgebr/gui/utils.h>
+#include <libgebr/gui/gebr-gui-save-dialog.h>
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
 
@@ -210,7 +211,6 @@ out:	gtk_widget_destroy(chooser_dialog);
 
 void flow_export(void)
 {
-	GString *path;
 	GtkTreeIter iter;
 
 	GtkWidget *chooser_dialog;
@@ -225,24 +225,22 @@ void flow_export(void)
 
 	if (!flow_browse_get_selected(&iter, TRUE))
 		return;
+
 	flow_browse_single_selection();
 
-	path = g_string_new(NULL);
 	title = g_string_new(NULL);
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, FB_FILENAME, &flow_filename, -1);
 	flow = document_load(flow_filename);
 	if (flow == NULL)
-		goto cont2;
+		goto out;
 
 	/* run file chooser */
 	g_string_printf(title, _("Choose filename to save flow '%s'"), gebr_geoxml_document_get_title(flow));
 	check_box = gtk_check_button_new_with_label(_("Make this flow user-independent."));
-	chooser_dialog = gtk_file_chooser_dialog_new(title->str,
-						     GTK_WINDOW(gebr.window), GTK_FILE_CHOOSER_ACTION_SAVE,
-						     GTK_STOCK_SAVE, GTK_RESPONSE_YES, GTK_STOCK_CANCEL,
-						     GTK_RESPONSE_CANCEL, NULL);
-	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
+	chooser_dialog = gebr_gui_save_dialog_new(title->str, GTK_WINDOW(gebr.window));
+	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".flw");
+
 	file_filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(file_filter, _("Flow files (*.flw)"));
 	gtk_file_filter_add_pattern(file_filter, "*.flw");
@@ -251,31 +249,28 @@ void flow_export(void)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box), TRUE);
 
 	/* show file chooser */
-	gtk_widget_show(chooser_dialog);
-	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
-		goto cont1;
+	tmp = gebr_gui_save_dialog_run(GEBR_GUI_SAVE_DIALOG(chooser_dialog));
+	if (!tmp)
+		goto out;
 
 	flow_set_paths_to(GEBR_GEOXML_FLOW(flow), gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box)));
-	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
-	g_string_assign(path, tmp);
-	gebr_append_filename_extension(path, ".flw");
-	filename = g_path_get_basename(path->str);
+	filename = g_path_get_basename(tmp);
 
 	/* export current flow to disk */
 	gebr_geoxml_document_set_filename(flow, filename);
-	document_save_at(flow, path->str, FALSE);
+	document_save_at(flow, tmp, FALSE);
 
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' exported to %s."),
-		     (gchar *) gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)), path->str);
+		     (gchar *) gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)), tmp);
 
 	/* frees */
 	g_free(tmp);
 	g_free(filename);
-cont1:	gtk_widget_destroy(chooser_dialog);
-cont2:	gebr_geoxml_document_free(flow);
+
+	gebr_geoxml_document_free(flow);
+out:
 	g_free(flow_filename);
 	g_string_free(title, TRUE);
-	g_string_free(path, TRUE);
 }
 
 /**
