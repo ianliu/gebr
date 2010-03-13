@@ -115,7 +115,6 @@ static void  __document_discard_menu_ref_callback(GebrGeoXmlProgram * program, c
 	gebr_geoxml_flow_get_program(menu, &menu_program, index);
 	gebr_geoxml_program_set_help(program, gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(menu_program)));
 
-
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
 }	
 
@@ -179,14 +178,14 @@ int document_load_path(GebrGeoXmlDocument **document, const gchar * path)
 		g_string_printf(string, "Couldn't load %s", document_name);
 		gtk_window_set_title(GTK_WINDOW(dialog), string->str); 
 		gtk_dialog_add_button(dialog, _("Ignore"), 0);
-		if (ret != GEBR_GEOXML_RETV_CANT_ACCESS_FILE)
-			gtk_dialog_add_button(dialog, _("Export"), 1);
+		gtk_dialog_add_button(dialog, _("Export"), 1);
+		gtk_dialog_add_button(dialog, _("Delete"), 2);
 
 		gtk_widget_show_all(GTK_WIDGET(dialog));
 		gint response;
-		gboolean keep_dialog;
+		gboolean keep_dialog = FALSE;
 		do switch ((response = gtk_dialog_run(dialog))) {
-		case 1: {
+		case 1: { /* Export */
 			GtkWidget *chooser_dialog;
 
 			chooser_dialog = gtk_file_chooser_dialog_new(_("Choose filename to export"),
@@ -194,24 +193,28 @@ int document_load_path(GebrGeoXmlDocument **document, const gchar * path)
 								     GTK_FILE_CHOOSER_ACTION_SAVE,
 								     GTK_STOCK_SAVE, GTK_RESPONSE_YES,
 								     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
-
 			gtk_widget_show_all(chooser_dialog);
-			if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES) {
-				keep_dialog = TRUE;
-				goto out;
-			}
-			gchar *export_path;
-			export_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
-			document_save_at(*document, export_path, FALSE);
-			g_free(export_path);
+			if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) == GTK_RESPONSE_YES) {
+				gchar *export_path;
+				export_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
+				document_save_at(*document, export_path, FALSE);
+				g_free(export_path);
 
-			keep_dialog = FALSE;
+				keep_dialog = FALSE;
+			} else
+				keep_dialog = TRUE;
 			gtk_widget_destroy(chooser_dialog);
-			break;
-		} case 0:
-		default:
+
+			ret = GEBR_GEOXML_RETV_CANT_ACCESS_FILE;
 			unlink(path);
-			keep_dialog = FALSE;
+			break;
+		} case 2: { /* Delete */
+
+			ret = GEBR_GEOXML_RETV_CANT_ACCESS_FILE;
+			unlink(path);
+			break;
+		} case 0: /* Ignore */
+		default:
 			break;
 		} while (keep_dialog);
 		
