@@ -121,9 +121,14 @@ static void gebr_gui_save_dialog_destroy(GtkObject *object)
  * Public functions
  */
 
-GtkWidget *gebr_gui_save_dialog_new(GtkWindow *parent)
+GtkWidget *gebr_gui_save_dialog_new(const gchar *title, GtkWindow *parent)
 {
-	GtkWidget *self = g_object_new(GEBR_GUI_TYPE_SAVE_DIALOG, NULL);
+	GtkWidget *self;
+       
+	self = g_object_new(GEBR_GUI_TYPE_SAVE_DIALOG,
+			    "title", title,
+			    "action", GTK_FILE_CHOOSER_ACTION_SAVE,
+			    NULL);
 
 	gtk_window_set_modal(GTK_WINDOW(self), TRUE);
 	if (parent) {
@@ -170,7 +175,7 @@ gchar *gebr_gui_save_dialog_run(GebrGuiSaveDialog *self)
 		g_string_assign(filename, tmp);
 		g_free(tmp);
 
-		if (self->extension && !g_str_has_suffix(tmp, self->extension))
+		if (self->extension && !g_str_has_suffix(filename->str, self->extension))
 			g_string_append(filename, self->extension);
 
 		if (g_file_test(filename->str, G_FILE_TEST_EXISTS)) {

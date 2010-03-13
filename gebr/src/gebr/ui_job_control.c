@@ -22,6 +22,7 @@
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
 #include <libgebr/gui/utils.h>
+#include <libgebr/gui/gebr-gui-save-dialog.h>
 
 #include "ui_job_control.h"
 #include "gebr.h"
@@ -147,22 +148,18 @@ void job_control_save(void)
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
 	/* run file chooser */
-	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose filename to save"),
-						     GTK_WINDOW(gebr.window),
-						     GTK_FILE_CHOOSER_ACTION_SAVE,
-						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-						     GTK_STOCK_SAVE, GTK_RESPONSE_YES, NULL);
-	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
+	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
+	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".txt");
+
 	filefilter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filefilter, _("Text (*.txt)"));
 	gtk_file_filter_add_pattern(filefilter, "*.txt");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), filefilter);
 
 	/* show file chooser */
-	gtk_widget_show(chooser_dialog);
-	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
-		goto out2;
-	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
+	path = gebr_gui_save_dialog_run(GEBR_GUI_SAVE_DIALOG(chooser_dialog));
+	if (!path)
+		return;
 
 	/* save to file */
 	fp = fopen(path, "w");
@@ -180,7 +177,6 @@ void job_control_save(void)
 
 	g_free(text);
  out:	g_free(path);
- out2:	gtk_widget_destroy(chooser_dialog);
 }
 
 void job_control_cancel(void)
