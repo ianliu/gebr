@@ -176,9 +176,17 @@ void project_list_populate(void)
 	project_line_info_update();
 }
 
-void project_move_line_to(GebrGeoXmlProject * project, const gchar * line_path, GebrGeoXmlProject * dest)
+void project_line_move(GebrGeoXmlProjectLine * src_line, GebrGeoXmlProject * dest_project,
+		       GebrGeoXmlProjectLine * position, gboolean before)
 {
-	gebr_geoxml_project_remove_line(project, line_path);
-	if (!gebr_geoxml_project_has_line(dest, line_path))
-		gebr_geoxml_project_append_line(dest, line_path);
+	GebrGeoXmlProjectLine * clone;
+
+	clone = gebr_geoxml_project_append_line(dest_project, gebr_geoxml_project_get_line_source(src_line));
+	gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(src_line));
+
+	if (before)
+		gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(clone), GEBR_GEOXML_SEQUENCE(position));
+	else
+		gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(clone), GEBR_GEOXML_SEQUENCE(position));
 }
+

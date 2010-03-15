@@ -41,6 +41,7 @@ gboolean project_delete(gboolean confirm);
  * Add \p project to the list of projects.
  */
 GtkTreeIter project_append_iter(GebrGeoXmlProject * project);
+
 /**
  * Add \p line to \p project_iter.
  */
@@ -52,10 +53,10 @@ GtkTreeIter project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine 
 void project_list_populate(void);
 
 /**
- * Moves \p line_path from \p project to \p dest.
- * What this function does is remove \p line_path from \p project and add it to \p dest, so \p project does not need to
- * have \p line_path.
+ * Moves \p src_line to \p dest_project before or after \p position, depending on \p before flag.
  */
-void project_move_line_to(GebrGeoXmlProject * project, const gchar * line_path, GebrGeoXmlProject * dest);
+void project_line_move(GebrGeoXmlProjectLine * src_line, GebrGeoXmlProject * dest_project,
+		       GebrGeoXmlProjectLine * position, gboolean before);
+
 
 #endif				//__PROJECT_H
