@@ -25,6 +25,7 @@
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
 #include <libgebr/gui/utils.h>
+#include <libgebr/gui/gebr-gui-save-dialog.h>
 
 #include "ui_project_line.h"
 #include "gebr.h"
@@ -521,7 +522,6 @@ out3:	gtk_widget_destroy(chooser_dialog);
 void project_line_export(void)
 {
 	GString *command;
-	GString *output_filename;
 	GString *filename;
 	GString *tmpdir;
 	const gchar *extension;
@@ -552,22 +552,17 @@ void project_line_export(void)
 	/* run file chooser */
 	check_box = gtk_check_button_new_with_label(_(check_box_label));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box), TRUE);
-	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose filename to save"),
-						     GTK_WINDOW(gebr.window),
-						     GTK_FILE_CHOOSER_ACTION_SAVE,
-						     GTK_STOCK_SAVE, GTK_RESPONSE_YES,
-						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
-	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
+	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
+	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), extension);
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(chooser_dialog), check_box);
 
 	/* show file chooser */
-	gtk_widget_show(chooser_dialog);
-	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
-		goto out;
+	tmp = gebr_gui_save_dialog_run(GEBR_GUI_SAVE_DIALOG(chooser_dialog));
+	if (!tmp)
+		return;
 	
 	command = g_string_new("");
-	output_filename = g_string_new("");
 	filename = g_string_new("");
 	tmpdir = gebr_temp_directory_create();
 
@@ -621,13 +616,9 @@ void project_line_export(void)
 	} else
 		parse_line(gebr.line);
 
-	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
-	g_string_assign(output_filename, tmp);
-	gebr_append_filename_extension(output_filename, extension);
-
 	current_dir = g_get_current_dir();
 	g_chdir(tmpdir->str);
-	g_string_printf(command, "tar czf %s *", output_filename->str);
+	g_string_printf(command, "tar czf %s *", tmp);
 	if (system(command->str))
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not export."));
 	else
@@ -637,10 +628,8 @@ void project_line_export(void)
 
 	g_free(tmp);
 	g_string_free(command, TRUE);
-	g_string_free(output_filename, TRUE);
 	g_string_free(filename, TRUE);
 	gebr_temp_directory_destroy(tmpdir);
-out:	gtk_widget_destroy(chooser_dialog);
 }
 
 void project_line_free(void)

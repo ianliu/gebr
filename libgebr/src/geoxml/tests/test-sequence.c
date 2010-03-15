@@ -1,4 +1,4 @@
-/*   libgebr - G�BR Library
+/*   libgebr - GêBR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
