@@ -51,4 +51,11 @@ GtkTreeIter project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine 
  */
 void project_list_populate(void);
 
+/**
+ * Moves \p line_path from \p project to \p dest.
+ * What this function does is remove \p line_path from \p project and add it to \p dest, so \p project does not need to
+ * have \p line_path.
+ */
+void project_move_line_to(GebrGeoXmlProject * project, const gchar * line_path, GebrGeoXmlProject * dest);
+
 #endif				//__PROJECT_H

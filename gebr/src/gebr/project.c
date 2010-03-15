@@ -175,3 +175,10 @@ void project_list_populate(void)
 
 	project_line_info_update();
 }
+
+void project_move_line_to(GebrGeoXmlProject * project, const gchar * line_path, GebrGeoXmlProject * dest)
+{
+	gebr_geoxml_project_remove_line(project, line_path);
+	if (!gebr_geoxml_project_has_line(dest, line_path))
+		gebr_geoxml_project_append_line(dest, line_path);
+}
