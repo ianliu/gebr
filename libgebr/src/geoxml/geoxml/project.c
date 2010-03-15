@@ -38,6 +38,9 @@ struct gebr_geoxml_project_line {
 	GdomeElement *element;
 };
 
+static GebrGeoXmlProjectLine *gebr_geoxml_project_get_line_from_source(GebrGeoXmlProject * project,
+								       const gchar * source);
+
 /*
  * library functions.
  */
@@ -48,6 +51,9 @@ GebrGeoXmlProject *gebr_geoxml_project_new()
 	return GEBR_GEOXML_PROJECT(document);
 }
 
+/*
+ * FIXME: Should this check for duplicate sources? See tests
+ */
 GebrGeoXmlProjectLine *gebr_geoxml_project_append_line(GebrGeoXmlProject * project, const gchar * source)
 {
 	if (project == NULL)
@@ -65,18 +71,17 @@ GebrGeoXmlProjectLine *gebr_geoxml_project_append_line(GebrGeoXmlProject * proje
 gboolean gebr_geoxml_project_remove_line(GebrGeoXmlProject * project, const gchar * source)
 {
 	GebrGeoXmlSequence * line;
-
-	gebr_geoxml_project_get_line(project, &line, 0);
-	while (line) {
-		const gchar * path;
-		path = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(line));
-		if (strcmp(source, path) == 0) {
-			gebr_geoxml_sequence_remove(line);
-			return TRUE;
-		}
-		gebr_geoxml_sequence_next(&line);
+	line = GEBR_GEOXML_SEQUENCE(gebr_geoxml_project_get_line_from_source(project, source));
+	if (line) {
+		gebr_geoxml_sequence_remove(line);
+		return TRUE;
 	}
 	return FALSE;
+}
+
+gboolean gebr_geoxml_project_has_line(GebrGeoXmlProject * project, const gchar * source)
+{
+	return gebr_geoxml_project_get_line_from_source(project, source) != NULL;
 }
 
 int gebr_geoxml_project_get_line(GebrGeoXmlProject * project, GebrGeoXmlSequence ** project_line, gulong index)
@@ -114,3 +119,24 @@ const gchar *gebr_geoxml_project_get_line_source(GebrGeoXmlProjectLine * project
 		return NULL;
 	return __gebr_geoxml_get_attr_value((GdomeElement *) project_line, "source");
 }
+
+/*
+ * Private functions
+ */
+
+static GebrGeoXmlProjectLine *gebr_geoxml_project_get_line_from_source(GebrGeoXmlProject * project,
+								       const gchar * source)
+{
+	GebrGeoXmlSequence * line;
+
+	gebr_geoxml_project_get_line(project, &line, 0);
+	while (line) {
+		const gchar * path;
+		path = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(line));
+		if (strcmp(source, path) == 0)
+			return GEBR_GEOXML_PROJECT_LINE(line);
+		gebr_geoxml_sequence_next(&line);
+	}
+	return NULL;
+}
+
