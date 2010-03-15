@@ -165,8 +165,9 @@ MenuMessage menu_save(GtkTreeIter * iter);
 
 /**
  * Save a copy of the menu pointed by \p iter.
+ * \return TRUE if saving was done, FALSE otherwise.
  */
-void menu_save_as(GtkTreeIter * iter);
+gboolean menu_save_as(GtkTreeIter * iter);
 
 /**
  * Save all menus opened in DeBR that are unsaved.
