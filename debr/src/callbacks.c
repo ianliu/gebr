@@ -281,7 +281,6 @@ void on_menu_close_activate(void)
 {
 	GtkTreeIter iter;
 	gboolean still_running = TRUE;
-	GtkWidget *dialog_permission;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
 		GebrGeoXmlFlow *menu;
@@ -321,11 +320,15 @@ void on_menu_close_activate(void)
 					gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 							   MENU_PATH, &path, -1);
 
-					if (gebr_geoxml_document_save(GEBR_GEOXML_DOC(debr.menu), path) == GEBR_GEOXML_RETV_CANT_ACCESS_FILE){
-						dialog_permission = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-											   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION,
-											   GTK_BUTTONS_NONE, _("Saving menus failed: Permission denied"));
-						gtk_dialog_add_button(GTK_DIALOG(dialog_permission), GTK_STOCK_OK, GTK_RESPONSE_OK);
+					if (gebr_geoxml_document_save(GEBR_GEOXML_DOC(debr.menu), path)) {
+						GtkWidget *dialog_permission;
+
+						dialog_permission = gtk_message_dialog_new
+							(GTK_WINDOW(debr.window), GTK_DIALOG_MODAL |
+							 GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION,
+							 GTK_BUTTONS_NONE, _("Saving menus failed: Permission denied"));
+						gtk_dialog_add_button(GTK_DIALOG(dialog_permission), GTK_STOCK_OK,
+								      GTK_RESPONSE_OK);
 						gtk_dialog_run(GTK_DIALOG(dialog_permission));
 						gtk_widget_destroy(dialog_permission);
 					} else {
