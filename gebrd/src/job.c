@@ -510,39 +510,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 
 	ret = gebr_geoxml_document_load_buffer(&document, xml->str);
 	if (ret < 0) {
-		switch (ret) {
-		case GEBR_GEOXML_RETV_DTD_SPECIFIED:
-			g_string_append_printf(job->issues,
-					       _("DTD specified. The <DOCTYPE ...> must not appear in XML.\n"
-						 "libgeoxml will find the appopriated DTD installed from version.\n"));
-			break;
-		case GEBR_GEOXML_RETV_INVALID_DOCUMENT:
-			g_string_append_printf(job->issues,
-					       _("Invalid document. It has a sintax error or doesn't match the DTD.\n"
-						 "In this case see the errors above.\n"));
-			break;
-		case GEBR_GEOXML_RETV_CANT_ACCESS_FILE:
-			g_string_append_printf(job->issues,
-					       _("Can't access file. The file doesn't exist or there is not enough "
-						 "permission to read it.\n"));
-			break;
-		case GEBR_GEOXML_RETV_CANT_ACCESS_DTD:
-			g_string_append_printf(job->issues,
-					       _("Can't access dtd. The file's DTD couldn't not be found.\n"
-						 "It may be a newer version not support by this version of libgeoxml "
-						 "or there is an installation problem.\n"));
-			break;
-		case GEBR_GEOXML_RETV_NO_MEMORY:
-			g_string_append_printf(job->issues,
-					       _("Not enough memory. The library stoped after an unsucessful memory allocation.\n"));
-			break;
-		default:
-			g_string_append_printf(job->issues,
-					       _("Unspecified error %d.\n"
-						 "See library documentation at http://sites.google.com/site/gebrproject.\n"),
-					       ret);
-			break;
-		}
+		g_string_append(job->issues, gebr_geoxml_error_explained_string(ret));
 		goto err;
 	}
 
