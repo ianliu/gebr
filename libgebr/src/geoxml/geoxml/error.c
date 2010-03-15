@@ -25,7 +25,8 @@ const gchar *gebr_geoxml_error_string(enum GEBR_GEOXML_RETV error)
 		N_("Success."),
 		N_("Null pointer."),
 		N_("Not enough memory."),
-		N_("Couldn't find file or permission denied."),
+		N_("The file not found."),
+		N_("Permission denied."),
 		N_("Invalid element index."),
 		N_("Invalid document syntax or structure."),
 		N_("DTD specified in XML."),
@@ -38,7 +39,7 @@ const gchar *gebr_geoxml_error_string(enum GEBR_GEOXML_RETV error)
 	};
 	guint index = -(guint) error;
 
-	if (index > 11)
+	if (index > 13)
 		return NULL;
 	return error_string_array[index];
 }
@@ -49,7 +50,8 @@ const gchar *gebr_geoxml_error_explained_string(enum GEBR_GEOXML_RETV error)
 		N_("The operation was done successfuly."),
 		N_("One or more mandatory function arguments were null."),
 		N_("Not enough memory. " "The library stoped after an unsucessful memory allocation."),
-		N_("Can't access file. The file doesn't exist or there is not enough " "permission to read it."),
+		N_("Can't access file: file not found."),
+		N_("Can't access file: permission denied."),
 		N_("This element index does not exist in the sequence."),
 		N_("XML syntax is invalid or disagrees with DTD."),
 		N_("DTD was specified for the document. LibGeBR-GebrGeoXml requires the document does"
@@ -67,7 +69,7 @@ const gchar *gebr_geoxml_error_explained_string(enum GEBR_GEOXML_RETV error)
 	};
 	guint index = -(guint) error;
 
-	if (index > 11)
+	if (index > 13)
 		return NULL;
 	return error_string_array[index];
 }

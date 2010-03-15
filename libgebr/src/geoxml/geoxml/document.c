@@ -38,22 +38,38 @@
 #include "parameters_p.h"
 
 /* global variables */
-GdomeException exception;
-
-/*
- * internal stuff
+/**
+ * \internal
+ * Global variable.
  */
+GdomeException exception;
 
 struct gebr_geoxml_document {
 	GdomeDocument *document;
 };
 
+/**
+ * \internal
+ */
 typedef GdomeDocument *(*createDoc_func) (GdomeDOMImplementation *, char *, unsigned int, GdomeException *);
 
+/**
+ * \internal
+ */
 static GdomeDOMImplementation *dom_implementation;
+/**
+ * \internal
+ */
 static gint dom_implementation_ref_count = 0;
+/**
+ * \internal
+ * Used at GebrGeoXmlObject's methods.
+ */
 GdomeDocument *clipboard_document = NULL;
 
+/**
+ * \internal
+ */
 static void __gebr_geoxml_ref(void)
 {
 	if (!dom_implementation_ref_count) {
@@ -66,6 +82,9 @@ static void __gebr_geoxml_ref(void)
 	++dom_implementation_ref_count;
 }
 
+/**
+ * \internal
+ */
 static void __gebr_geoxml_unref(void)
 {
 	gdome_di_unref(dom_implementation, &exception);
@@ -74,6 +93,9 @@ static void __gebr_geoxml_unref(void)
 		clipboard_document = NULL;
 }
 
+/**
+ * \internal
+ */
 static GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, GdomeDocumentType * document_type)
 {
 	if (source == NULL)
@@ -114,6 +136,9 @@ static GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, G
 	return document;
 }
 
+/**
+ * \internal
+ */
 static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
 {
 	/* Based on code by Daniel Veillard
@@ -444,6 +469,9 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 	return ret;
 }
 
+/**
+ * \internal
+ */
 static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * src, createDoc_func func, gboolean
 				       validate, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
 {
@@ -474,6 +502,21 @@ static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gch
  err:	__gebr_geoxml_unref();
 	*document = NULL;
 	return ret;
+}
+
+/**
+ * \internal
+ */
+static int filename_check_access(const gchar * filename)
+{
+	if (filename == NULL)
+		return GEBR_GEOXML_RETV_FILE_NOT_FOUND;
+	if (!g_file_test(filename, G_FILE_TEST_EXISTS)) 
+		return GEBR_GEOXML_RETV_FILE_NOT_FOUND;
+	if (!g_file_test(filename, G_FILE_TEST_IS_REGULAR) || g_access(filename, R_OK) < 0) 
+		return GEBR_GEOXML_RETV_PERMISSION_DENIED;
+
+	return GEBR_GEOXML_RETV_SUCCESS;
 }
 
 /*
@@ -519,9 +562,10 @@ GebrGeoXmlDocument *gebr_geoxml_document_new(const gchar * name, const gchar * v
 
 int gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path, gboolean validate, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
 {
-	if (g_file_test(path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == FALSE || g_access(path, R_OK) < 0) {
+	int ret;
+	if ((ret = filename_check_access(path))) {
 		*document = NULL;
-		return GEBR_GEOXML_RETV_CANT_ACCESS_FILE;
+		return ret;
 	}
 
 	return __gebr_geoxml_document_load(document, path, (createDoc_func)gdome_di_createDocFromURI, validate,
@@ -585,11 +629,11 @@ const gchar *gebr_geoxml_document_get_version(GebrGeoXmlDocument * document)
 
 int gebr_geoxml_document_validate(const gchar * filename)
 {
-	if (g_file_test(filename, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == FALSE || g_access(filename, R_OK) < 0)
-		return GEBR_GEOXML_RETV_CANT_ACCESS_FILE;
+	int ret;
+	if ((ret = filename_check_access(filename)))
+		return ret;
 
 	GebrGeoXmlDocument *document;
-	int ret;
 
 	ret = gebr_geoxml_document_load(&document, filename, TRUE, NULL);
 	gebr_geoxml_document_free(document);
@@ -609,13 +653,13 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 	zfp = gzopen(path, "w");
 
 	if (zfp == NULL || errno != 0)
-		return GEBR_GEOXML_RETV_CANT_ACCESS_FILE;
+		return GEBR_GEOXML_RETV_PERMISSION_DENIED;
 
 	gebr_geoxml_document_to_string(document, &xml);
 	ret = gzwrite(zfp, xml, strlen(xml) + 1);
 	gzclose(zfp);
 
-	return ret ? GEBR_GEOXML_RETV_SUCCESS : GEBR_GEOXML_RETV_CANT_ACCESS_FILE;
+	return ret ? GEBR_GEOXML_RETV_SUCCESS : GEBR_GEOXML_RETV_PERMISSION_DENIED;
 }
 
 int gebr_geoxml_document_to_string(GebrGeoXmlDocument * document, gchar ** xml_string)

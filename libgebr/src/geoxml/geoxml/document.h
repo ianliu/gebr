@@ -108,7 +108,8 @@ typedef void (*GebrGeoXmlDiscardMenuRefCallback)(GebrGeoXmlProgram * program, co
  * Load a document XML file at \p path into \p document.
  * The document is validated using the proper DTD. Invalid documents are not loaded.
  *
- * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NO_MEMORY, GEBR_GEOXML_RETV_CANT_ACCESS_FILE,
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NO_MEMORY,
+ * GEBR_GEOXML_RETV_FILE_NOT_FOUND, GEBR_GEOXML_RETV_PERMISSION_DENIED, 
  * GEBR_GEOXML_RETV_INVALID_DOCUMENT, GEBR_GEOXML_RETV_DTD_SPECIFIED, GEBR_GEOXML_RETV_CANT_ACCESS_DTD
  */
 int gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path, gboolean validate, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref);
@@ -117,7 +118,8 @@ int gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path
  * Load a document XML buffer at \p xml into \p document.
  * The document is validated using the proper DTD. Invalid documents are not loaded.
  *
- * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NO_MEMORY, GEBR_GEOXML_RETV_CANT_ACCESS_FILE,
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NO_MEMORY,
+ * GEBR_GEOXML_RETV_FILE_NOT_FOUND, GEBR_GEOXML_RETV_PERMISSION_DENIED, 
  * GEBR_GEOXML_RETV_INVALID_DOCUMENT, GEBR_GEOXML_RETV_DTD_SPECIFIED, GEBR_GEOXML_RETV_CANT_ACCESS_DTD
  */
 int gebr_geoxml_document_load_buffer(GebrGeoXmlDocument ** document, const gchar * xml);
@@ -158,17 +160,18 @@ const gchar *gebr_geoxml_document_get_version(GebrGeoXmlDocument * document);
 /**
  * Validate the document specified in \p filename.
  *
- * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NO_MEMORY, GEBR_GEOXML_RETV_CANT_ACCESS_FILE,
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NO_MEMORY,
+ * GEBR_GEOXML_RETV_FILE_NOT_FOUND, GEBR_GEOXML_RETV_PERMISSION_DENIED, 
  * GEBR_GEOXML_RETV_INVALID_DOCUMENT, GEBR_GEOXML_RETV_DTD_SPECIFIED, GEBR_GEOXML_RETV_CANT_ACCESS_DTD
  *
- * If \p filename is NULL, GEBR_GEOXML_RETV_CANT_ACCESS_FILE is returned.
+ * If \p filename is NULL, GEBR_GEOXML_RETV_FILE_NOT_FOUND is returned.
  */
 int gebr_geoxml_document_validate(const gchar * filename);
 
 /**
  * Save \p document to \p path.
  *
- * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_CANT_ACCESS_FILE,
+ * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_PERMISSION_DENIED,
  *
  * If \p document is NULL nothing is done.
  */
