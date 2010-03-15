@@ -42,7 +42,7 @@ static void gebr_gui_save_dialog_set_property(GObject *object, guint prop_id, co
 static void gebr_gui_save_dialog_get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void gebr_gui_save_dialog_destroy(GtkObject *object);
 
-static guint save_dialog_signals[LAST_SIGNAL] = {0};
+//static guint save_dialog_signals[LAST_SIGNAL] = {0};
 
 G_DEFINE_TYPE(GebrGuiSaveDialog, gebr_gui_save_dialog, GTK_TYPE_FILE_CHOOSER_DIALOG);
 
@@ -129,6 +129,7 @@ GtkWidget *gebr_gui_save_dialog_new(const gchar *title, GtkWindow *parent)
 			    "title", title,
 			    "action", GTK_FILE_CHOOSER_ACTION_SAVE,
 			    NULL);
+	((GebrGuiSaveDialog*)self)->extension = NULL;
 
 	gtk_window_set_modal(GTK_WINDOW(self), TRUE);
 	if (parent) {
