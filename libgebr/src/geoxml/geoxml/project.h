@@ -118,6 +118,13 @@ GebrGeoXmlProject *gebr_geoxml_project_new();
 GebrGeoXmlProjectLine *gebr_geoxml_project_append_line(GebrGeoXmlProject * project, const gchar * source);
 
 /**
+ * Removes \p source from \p project if applicable.
+ *
+ * \return TRUE if \p source was removed, FALSE otherwise.
+ */
+gboolean gebr_geoxml_project_remove_line(GebrGeoXmlProject * project, const gchar * source);
+
+/**
  * Writes to \p project_line the \p index ieth line reference that \p project belong.
  * If an error ocurred, the content of \p project_line is assigned to NULL.
  *

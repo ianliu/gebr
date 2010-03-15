@@ -15,6 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
 #include <gdome.h>
 
 #include "project.h"
@@ -26,7 +27,7 @@
 #include "types.h"
 
 /*
- * internal structures and funcionts
+ * Internal structures and functions
  */
 
 struct gebr_geoxml_project {
@@ -59,6 +60,23 @@ GebrGeoXmlProjectLine *gebr_geoxml_project_append_line(GebrGeoXmlProject * proje
 	__gebr_geoxml_set_attr_value((GdomeElement *) project_line, "source", source);
 
 	return project_line;
+}
+
+gboolean gebr_geoxml_project_remove_line(GebrGeoXmlProject * project, const gchar * source)
+{
+	GebrGeoXmlSequence * line;
+
+	gebr_geoxml_project_get_line(project, &line, 0);
+	while (line) {
+		const gchar * path;
+		path = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(line));
+		if (strcmp(source, path) == 0) {
+			gebr_geoxml_sequence_remove(line);
+			return TRUE;
+		}
+		gebr_geoxml_sequence_next(&line);
+	}
+	return FALSE;
 }
 
 int gebr_geoxml_project_get_line(GebrGeoXmlProject * project, GebrGeoXmlSequence ** project_line, gulong index)
