@@ -172,7 +172,8 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 
 				if (server->ran_jid->len) {
 					job_set_active(job);
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 3);
+					gebr.config.current_notebook = 3;
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
 					g_string_assign(server->ran_jid, "");
 				}
 			}

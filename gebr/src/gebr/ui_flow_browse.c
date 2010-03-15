@@ -457,7 +457,8 @@ static void
 flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 			     GtkTreeViewColumn * column, struct ui_flow_browse *ui_flow_browse)
 {
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 2);
+	gebr.config.current_notebook = 2;
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
 }
 
 /**
