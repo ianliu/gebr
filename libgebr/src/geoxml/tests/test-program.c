@@ -43,26 +43,31 @@ void test_project_append_line()
 
 void test_project_get_lines_number()
 {
-	glong length;
 	GebrGeoXmlProject * project = gebr_geoxml_project_new();
 
-	length = gebr_geoxml_project_get_lines_number(NULL);
-	g_assert_cmpint(length, ==, -1);
+	glong null_project_length;
+	null_project_length = gebr_geoxml_project_get_lines_number(NULL);
+	g_assert_cmpint(null_project_length, ==, -1);
 
-	length = gebr_geoxml_project_get_lines_number(project);
-	g_assert_cmpint(length, ==, 0);
+	glong empty_project_length;
+	empty_project_length = gebr_geoxml_project_get_lines_number(project);
+	g_assert_cmpint(empty_project_length, ==, 0);
 
 	gebr_geoxml_project_append_line(project, "test1");
 	gebr_geoxml_project_append_line(project, "test2");
 	gebr_geoxml_project_append_line(project, "test3");
 
-	length = gebr_geoxml_project_get_lines_number(project);
-	g_assert_cmpint(length, ==, 3);
+	glong three_lines_project_length;
+	three_lines_project_length = gebr_geoxml_project_get_lines_number(project);
+	g_assert_cmpint(three_lines_project_length, ==, 3);
 
 	gebr_geoxml_project_append_line(project, "test4");
 	gebr_geoxml_project_append_line(project, "test4");
 	gebr_geoxml_project_append_line(project, "test4");
-	g_assert_cmpint(length, ==, 4);
+
+	glong duplicate_lines_project_length;
+	duplicate_lines_project_length = gebr_geoxml_project_get_lines_number(project);
+	g_assert_cmpint(duplicate_lines_project_length, ==, 4);
 
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(project));
 }
