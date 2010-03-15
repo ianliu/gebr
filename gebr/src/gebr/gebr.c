@@ -249,6 +249,8 @@ gint gebr_config_load()
 		gebr.config.job_log_auto_scroll =
 		    gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "job_log_auto_scroll", FALSE);
 
+		gebr.config.current_notebook = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "notebook", 0);
+
 		g_string_free(data_dir, TRUE);
 	}
 
@@ -287,6 +289,7 @@ gint gebr_config_load()
 		g_string_free(address, TRUE);
 	}
 
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
 	gebr_config_save(FALSE);
 
 	/* frees */
@@ -338,6 +341,7 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_boolean(gebr.config.key_file, "general", "log_load", gebr.config.log_load);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_word_wrap", gebr.config.job_log_word_wrap);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_auto_scroll", gebr.config.job_log_auto_scroll);
+	g_key_file_set_integer(gebr.config.key_file, "general", "notebook", gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)));
 
 	/* Save list of servers */
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
@@ -355,7 +359,7 @@ void gebr_config_save(gboolean verbose)
 
 		g_string_free(group, TRUE);
 	}
-
+	
 	error = NULL;
 	string = g_key_file_to_data(gebr.config.key_file, &length, &error);
 	configfp = fopen(gebr.config.path->str, "w");
@@ -460,6 +464,7 @@ static gboolean gebr_config_load_from_gengetopt(void)
 	gebr.config.height = ggopt.height_arg;
 	gebr.config.log_expander_state = (gboolean) ggopt.logexpand_given;
 	gebr.config.log_load = FALSE;
+	gebr.config.current_notebook = 0;
 
 	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
@@ -470,6 +475,7 @@ static gboolean gebr_config_load_from_gengetopt(void)
 	g_key_file_set_integer(gebr.config.key_file, "general", "width", gebr.config.width);
 	g_key_file_set_integer(gebr.config.key_file, "general", "height", gebr.config.height);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "log_expander_state", gebr.config.log_expander_state);
+	g_key_file_set_integer(gebr.config.key_file, "general", "notebook", gebr.config.current_notebook);
 
 	for (i = 0; i < ggopt.server_given; ++i) {
 		GString *group;

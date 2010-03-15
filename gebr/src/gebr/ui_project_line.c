@@ -760,7 +760,8 @@ static void project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath *
 		gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(ui->view), &iter);
 		return;
 	}
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 1);
+	gebr.config.current_notebook = 1;
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
 }
 
 /**
