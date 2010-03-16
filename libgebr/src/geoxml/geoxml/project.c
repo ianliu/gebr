@@ -38,8 +38,6 @@ struct gebr_geoxml_project_line {
 	GdomeElement *element;
 };
 
-static GebrGeoXmlProjectLine *gebr_geoxml_project_get_line_from_source(GebrGeoXmlProject * project,
-								       const gchar * source);
 
 /*
  * library functions.
@@ -120,11 +118,8 @@ const gchar *gebr_geoxml_project_get_line_source(GebrGeoXmlProjectLine * project
 	return __gebr_geoxml_get_attr_value((GdomeElement *) project_line, "source");
 }
 
-/*
- * Private functions
- */
 
-static GebrGeoXmlProjectLine *gebr_geoxml_project_get_line_from_source(GebrGeoXmlProject * project,
+GebrGeoXmlProjectLine *gebr_geoxml_project_get_line_from_source(GebrGeoXmlProject * project,
 								       const gchar * source)
 {
 	GebrGeoXmlSequence * line;

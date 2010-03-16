@@ -160,4 +160,11 @@ void gebr_geoxml_project_set_line_source(GebrGeoXmlProjectLine * project_line, c
  */
 const gchar *gebr_geoxml_project_get_line_source(GebrGeoXmlProjectLine * project_line);
 
+
+/**
+ * TODO!
+ */
+GebrGeoXmlProjectLine *gebr_geoxml_project_get_line_from_source(GebrGeoXmlProject * project,
+								const gchar * source);
+
 #endif				//__GEBR_GEOXML_PROJECT_H
