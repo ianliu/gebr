@@ -74,14 +74,23 @@ gebr_gui_gtk_enhanced_entry_get_property(GebrGuiGtkEnhancedEntry * enhanced_entr
 	}
 }
 
+static void gebr_gui_gtk_enhanced_entry_destroy(GtkObject *object)
+{
+	GebrGuiGtkEnhancedEntry *enhanced_entry = GEBR_GUI_GTK_ENHANCED_ENTRY(object);
+	g_free(enhanced_entry->empty_text);
+}
+
 static void gebr_gui_gtk_enhanced_entry_class_init(GebrGuiGtkEnhancedEntryClass * class)
 {
-	GObjectClass *gobject_class;
 	GParamSpec *param_spec;
 
+	GObjectClass *gobject_class;
 	gobject_class = G_OBJECT_CLASS(class);
 	gobject_class->set_property = (typeof(gobject_class->set_property)) gebr_gui_gtk_enhanced_entry_set_property;
 	gobject_class->get_property = (typeof(gobject_class->get_property)) gebr_gui_gtk_enhanced_entry_get_property;
+	GtkObjectClass *gtkobject_class;
+	gtkobject_class = GTK_OBJECT_CLASS(class);
+	gtkobject_class->destroy = gebr_gui_gtk_enhanced_entry_destroy;
 
 	param_spec = g_param_spec_pointer("empty-text",
 					  "Empty text", "Text to show when there is no user text in it",
@@ -101,12 +110,6 @@ static void gebr_gui_gtk_enhanced_entry_init(GebrGuiGtkEnhancedEntry * enhanced_
 			 G_CALLBACK(__gebr_gui_gtk_enhanced_entry_focus_in), enhanced_entry);
 	g_signal_connect(GTK_ENTRY(enhanced_entry), "focus-out-event",
 			 G_CALLBACK(__gebr_gui_gtk_enhanced_entry_focus_out), enhanced_entry);
-}
-
-/* FIXME: use this */
-static void gebr_gui_gtk_enhanced_entry_finalize(GebrGuiGtkEnhancedEntry * enhanced_entry)
-{
-	g_free(enhanced_entry->empty_text);
 }
 
 G_DEFINE_TYPE(GebrGuiGtkEnhancedEntry, gebr_gui_gtk_enhanced_entry, GTK_TYPE_ENTRY);
