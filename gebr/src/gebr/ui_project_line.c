@@ -59,6 +59,9 @@ static gboolean line_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, G
 static gboolean line_can_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *target_iter,
 				 GtkTreeViewDropPosition drop_position);
 
+static void line_move_to(GtkTreeIter *source_iter, GtkTreeIter *target_iter, GebrGeoXmlProjectLine *source_line);
+
+
 struct ui_project_line *project_line_setup_ui(void)
 {
 	struct ui_project_line *ui_project_line;
@@ -831,15 +834,15 @@ static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_li
  * Line reordering callback, responsible for putting lines in or out of a project.
  */
 static gboolean
-line_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter/*iter*/, GtkTreeIter *target_iter/*position*/,
+line_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *target_iter,
 	     GtkTreeViewDropPosition drop_position)
 {
-	GebrGeoXmlLine *source_line; // parameter
-	GebrGeoXmlLine *target_line; // position_parameter
+	GebrGeoXmlProjectLine *source_line;
+	GebrGeoXmlProjectLine *target_line;
 	
-	GtkTreeIter source_iter_parent; // parent
-	GtkTreeIter target_iter_parent; // position_parent
-	GtkTreeIter new_iter; //new
+	GtkTreeIter source_iter_parent;
+	GtkTreeIter target_iter_parent;
+	GtkTreeIter new_iter;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), source_iter, PL_TITLE, &source_line, -1);
 	gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &source_iter_parent, source_iter);
@@ -847,9 +850,11 @@ line_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter/*iter*/, GtkTreeIt
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), target_iter, PL_TITLE, &target_line, -1);
 	gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &target_iter_parent, target_iter);
 
-	if ((drop_position == GTK_TREE_VIEW_DROP_INTO_OR_BEFORE || drop_position == GTK_TREE_VIEW_DROP_INTO_OR_AFTER) /*&&
-	    gebr_geoxml_parameter_get_type(target_line) == GEBR_GEOXML_PARAMETER_TYPE_GROUP*/) {
-		// TODO: 
+	if ((drop_position == GTK_TREE_VIEW_DROP_INTO_OR_BEFORE || drop_position == GTK_TREE_VIEW_DROP_INTO_OR_AFTER) &&
+	    gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(target_line)) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
+
+		// TODO! line_move_to(source_iter, target_iter, source_line);
+
 		/*gebr_geoxml_sequence_move_into_group(GEBR_GEOXML_SEQUENCE(parameter),
 						     GEBR_GEOXML_PARAMETER_GROUP(position_parameter));*/
 
@@ -911,8 +916,9 @@ line_can_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter/*iter*/, GtkTr
 		 GtkTreeViewDropPosition drop_position)
 {
 	//TODO!
-	GebrGeoXmlLine *source_line;
-	GebrGeoXmlLine *target_line;
+	//GebrGeoXmlLine *source_line;
+	//GebrGeoXmlLine *target_line;
+	
 	//GebrGeoXmlParameter *parameter;
 	//GebrGeoXmlParameter *position_parameter;
 
@@ -933,3 +939,27 @@ line_can_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter/*iter*/, GtkTr
 
 	return TRUE;
 }
+
+
+/**
+ * \internal
+ * TODO!
+ */
+static void line_move_to(GtkTreeIter *source_iter, GtkTreeIter *target_iter, GebrGeoXmlProjectLine *source_line)
+{
+	GebrGeoXmlProject *source_project, *target_project;
+	gchar *project_filename;
+	const gchar *line_path;
+
+	// Get the source project.
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), source_iter, PL_FILENAME, &project_filename, -1);
+	source_project = GEBR_GEOXML_PROJECT(document_load(project_filename));
+	// Get the target project.
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), target_iter, PL_FILENAME, &project_filename, -1);
+	target_project = GEBR_GEOXML_PROJECT(document_load(project_filename));
+	// Get the path of the source line.
+	line_path = gebr_geoxml_project_get_line_source(source_line);
+
+	project_move_line_to(source_project, line_path, target_project);
+}
+
