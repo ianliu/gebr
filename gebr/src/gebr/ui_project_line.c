@@ -844,6 +844,7 @@ line_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *targ
 		gtk_tree_store_remove(store, source_iter);
 		
 		project_line_move(source_project_filename, source_line_filename, target_project_filename, target_line_filename, drop_before);
+		project_line_select_iter(&new_iter);
 
 		return TRUE;
 	}
@@ -854,6 +855,7 @@ line_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *targ
 		gtk_tree_store_remove(store, source_iter);
 
 		project_line_move(source_project_filename, source_line_filename, target_project_filename, NULL, FALSE);
+		project_line_select_iter(&new_iter);
 
 		return TRUE;
 	}
