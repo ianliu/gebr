@@ -26,6 +26,7 @@
  * Create a new project.
  */
 void project_new(void);
+
 /**
  * Delete the selected project.
  *
@@ -55,8 +56,8 @@ void project_list_populate(void);
 /**
  * Moves \p src_line to \p dest_project before or after \p position, depending on \p before flag.
  */
-void project_line_move(GebrGeoXmlProjectLine * src_line, GebrGeoXmlProject * dest_project,
-		       GebrGeoXmlProjectLine * position, gboolean before);
+void project_line_move(const gchar * src_project, const gchar * src_line,
+		       const gchar * dst_project, const gchar * dst_line, gboolean before);
 
 
 #endif				//__PROJECT_H
