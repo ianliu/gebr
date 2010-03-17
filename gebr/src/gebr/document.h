@@ -32,14 +32,30 @@ GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type);
 
 /**
  * Load a document (flow, line or project) located at GêBR's data directory from its filename, handling errors.
- * Calls #document_load_path.
+ * Calls #document_load_with_parent.
  */
 int document_load(GebrGeoXmlDocument ** document, const gchar * filename);
 /**
+ * Load a document (flow, line or project) located at GêBR's data directory from its filename, handling errors.
+ * Calls #document_load_path_with_parent.
+ */
+int document_load_with_parent(GebrGeoXmlDocument ** document, const gchar * filename, GtkTreeIter *parent);
+/**
  * Load a document (flow, line or project) located at \p diretory from its with \p filename, handling errors.
- * Calls #document_load_path.
+ * Calls #document_load_at_with_parent.
  */
 int document_load_at(GebrGeoXmlDocument ** document, const gchar * filename, const gchar * directory);
+/**
+ * Load a document (flow, line or project) located at \p diretory from its with \p filename, handling errors.
+ * Calls #document_load_path_with_parent.
+ */
+int document_load_at_with_parent(GebrGeoXmlDocument ** document, const gchar * filename, const gchar * directory,
+				 GtkTreeIter *parent);
+/**
+ * Load a document from its path, handling errors.
+ * Calls #document_load_path_with_parent.
+ */
+int document_load_path(GebrGeoXmlDocument **document, const gchar * path);
 /**
  * Load a document from its path, handling errors.
  * Return the errors codes of #gebr_geoxml_document_load.
@@ -47,8 +63,11 @@ int document_load_at(GebrGeoXmlDocument ** document, const gchar * filename, con
  * Otherwise, a dialog is presented to the user. If the user choose to delete or export file,
  * GEBR_GEOXML_RETV_CANT_ACCESS_FILE is returned, and the callee of this function is responsible for
  * removing references to \p path.
+ *
+ * If \p parent is non-NULL, it must point to the parent of \p document (eg. a line if \p document is a flow).
+ * It is used to remove child's reference if \p document fails to load. 
  */
-int document_load_path(GebrGeoXmlDocument **document, const gchar * path);
+int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * path, GtkTreeIter *parent);
 
 /**
  * Save \p document at \p path.

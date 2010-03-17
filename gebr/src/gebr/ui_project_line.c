@@ -412,6 +412,50 @@ void project_line_import(void)
 		goto out2;
 	}
 
+	/**
+	 * Import line with basename \p line_filename inside \p at_dir.
+	 * Also import its flows.
+	 * Return error from #document_load_path.
+	 */
+	int line_import(GtkTreeIter project_iter, GebrGeoXmlLine ** line, const gchar * line_filename, const gchar * at_dir)
+	{
+		GebrGeoXmlSequence *i;
+		int ret;
+
+		if ((ret = document_load_at((GebrGeoXmlDocument**)line, line_filename, at_dir)))
+			return ret;
+		document_import(GEBR_GEOXML_DOCUMENT(*line));
+
+		gebr_geoxml_line_get_flow(*line, &i, 0);
+		while (i != NULL) {
+			GebrGeoXmlFlow *flow;
+
+			int ret = document_load_at((GebrGeoXmlDocument**)(&flow),
+						   gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(i)), at_dir);
+			if (ret == GEBR_GEOXML_RETV_FILE_NOT_FOUND) {
+				GebrGeoXmlSequence * sequence;
+
+				sequence = i;
+				gebr_geoxml_sequence_next(&i);
+				gebr_geoxml_sequence_remove(sequence);
+				document_save(GEBR_GEOXML_DOCUMENT(line), FALSE);
+
+				continue;
+			} else if (ret)
+				continue;
+			document_import(GEBR_GEOXML_DOCUMENT(flow));
+			gebr_geoxml_line_set_flow_source(GEBR_GEOXML_LINE_FLOW(i),
+							 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
+			document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE);
+			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+
+			gebr_geoxml_sequence_next(&i);
+		}
+		document_save(GEBR_GEOXML_DOCUMENT(*line), FALSE);
+
+		return ret;
+	}
+
 	tmp_dir = gebr_temp_directory_create();
 	g_string_printf(command, "bash -c 'cd %s; tar xzfv %s'", tmp_dir->str, filename);
 	if (!g_spawn_command_line_sync(command->str, &output, NULL, &exit_status, &error))
@@ -436,7 +480,7 @@ void project_line_import(void)
 				int ret =
 				    line_import(&line, gebr_geoxml_project_get_line_source
 						(GEBR_GEOXML_PROJECT_LINE(project_line)), tmp_dir->str);
-				if (ret == GEBR_GEOXML_RETV_CANT_ACCESS_FILE) {
+				if (ret == GEBR_GEOXML_RETV_FILE_NOT_FOUND) {
 					GebrGeoXmlSequence * sequence;
 
 					sequence = project_line;

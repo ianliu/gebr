@@ -43,11 +43,7 @@ void project_new(void)
 	gebr_geoxml_document_set_title(project, _("New project"));
 	gebr_geoxml_document_set_author(project, gebr.config.username->str);
 	gebr_geoxml_document_set_email(project, gebr.config.email->str);
-
-	gtk_tree_store_append(gebr.ui_project_line->store, &iter, NULL);
-	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
-			   PL_TITLE, gebr_geoxml_document_get_title(project),
-			   PL_FILENAME, gebr_geoxml_document_get_filename(project), -1);
+	project_append_iter(GEBR_GEOXML_PROJECT(project));
 	document_save(project, TRUE);
 	gebr_geoxml_document_free(project);
 
@@ -153,7 +149,7 @@ void project_list_populate(void)
 
 			line_source = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line));
 			int ret = document_load((GebrGeoXmlDocument**)(&line), line_source);
-			if (ret == GEBR_GEOXML_RETV_CANT_ACCESS_FILE) {
+			if (ret == GEBR_GEOXML_RETV_FILE_NOT_FOUND) {
 				GebrGeoXmlSequence * sequence;
 				
 				sequence = project_line;
