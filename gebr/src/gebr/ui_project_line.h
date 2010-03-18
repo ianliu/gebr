@@ -40,6 +40,8 @@ enum ProjectLineSelectionType {
 enum {
 	PL_TITLE = 0,
 	PL_FILENAME,
+	/* Reference to project/line document pointer. Non-NULL if selected. */
+	PL_XMLPOINTER,
 	PL_N_COLUMN
 };
 

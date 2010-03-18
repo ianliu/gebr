@@ -28,19 +28,14 @@
 #include <libgebr/geoxml.h>
 
 /**
- * Create a new line
+ * Create a new line.
+ * If \p silent is TRUE then no message and dialogs are displayed to user.
  */
 gboolean line_new(void);
 /**
- * Delete the selected line
+ * Delete the selected line.
  */
 gboolean line_delete(gboolean confirm);
-/**
- * Import line with basename \p line_filename inside \p at_dir.
- * Also import its flows.
- * Return error from #document_load_path.
- */
-int line_import(GebrGeoXmlLine ** line, const gchar * line_filename, const gchar * at_dir);
 /**
  * Change all paths in \p line to relative or absolute according \p relative.
  */

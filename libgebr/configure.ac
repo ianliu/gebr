@@ -105,7 +105,6 @@ if test "$enable_gui" = "yes"; then
 	AC_SUBST(GTK_LIBS)
 	AC_SUBST(GTK_CFLAGS)
 
-	dnl webkit option
 	PKG_CHECK_MODULES(WEBKIT, webkit-1.0,, AC_MSG_ERROR([Could not find webkitgtk]))
 	AC_SUBST(WEBKIT_CFLAGS)
 	AC_SUBST(WEBKIT_LIBS)

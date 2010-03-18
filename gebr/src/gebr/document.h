@@ -32,27 +32,50 @@ GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type);
 
 /**
  * Load a document (flow, line or project) located at GêBR's data directory from its filename, handling errors.
- * Calls #document_load_path.
+ * Calls #document_load_with_parent.
  */
 int document_load(GebrGeoXmlDocument ** document, const gchar * filename);
 /**
+ * Load a document (flow, line or project) located at GêBR's data directory from its filename, handling errors.
+ * Calls #document_load_path_with_parent.
+ */
+int document_load_with_parent(GebrGeoXmlDocument ** document, const gchar * filename, GtkTreeIter *parent);
+/**
  * Load a document (flow, line or project) located at \p diretory from its with \p filename, handling errors.
- * Calls #document_load_path.
+ * Calls #document_load_at_with_parent.
  */
 int document_load_at(GebrGeoXmlDocument ** document, const gchar * filename, const gchar * directory);
 /**
+ * Load a document (flow, line or project) located at \p diretory from its with \p filename, handling errors.
+ * Calls #document_load_path_with_parent.
+ */
+int document_load_at_with_parent(GebrGeoXmlDocument ** document, const gchar * filename, const gchar * directory,
+				 GtkTreeIter *parent);
+/**
  * Load a document from its path, handling errors.
- * Return the errors codes of #gebr_geoxml_document_load.
- * If load error is GEBR_GEOXML_RETV_CANT_ACCESS_FILE no action is requested from user and a log message is shown.
- * Otherwise, a dialog is presented to the user. If the user choose to delete or export file,
- * GEBR_GEOXML_RETV_CANT_ACCESS_FILE is returned, and the callee of this function is responsible for
- * removing references to \p path.
+ * Calls #document_load_path_with_parent.
  */
 int document_load_path(GebrGeoXmlDocument **document, const gchar * path);
+/**
+ * Load a document from its path, handling errors.
+ * Return the errors codes of #gebr_geoxml_document_load.
+ *
+ * If load error is GEBR_GEOXML_RETV_FILE_NOT_FOUND or GEBR_GEOXML_RETV_PERMISSION_DENIED,
+ * no action is requested from user and a log message is shown.
+ * Otherwise, a dialog is presented to the user. If the user choose to delete or export file,
+ * GEBR_GEOXML_RETV_FILE_NOT_FOUND is returned. This function will remove the reference of \p path
+ * if \p parent is not NULL. The callee must take care to the removal of reference
+ * pointer (eg. GebrGeoXmlProjectLine) so that the next iterator pointer is obtained before
+ * calling this function.
+ *
+ * If \p parent is non-NULL, it must point to the parent of \p document
+ * (eg. a line if \p document is a flow).
+ * It is used to remove child's reference if \p document fails to load. 
+ */
+int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * path, GtkTreeIter *parent);
 
 /**
- * Save \p document at \p path.
- * Only set \p set_modified_date to TRUE if this save is a reflect of a explicit user action.
+ * Save \p document at \p path.  * Only set \p set_modified_date to TRUE if this save is a reflect of a explicit user action.
  * Returns TRUE on document save success or FALSE otherwise
  */
 gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date);
