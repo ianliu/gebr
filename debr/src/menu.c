@@ -344,8 +344,6 @@ void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * men
 		label = g_markup_printf_escaped("%s", filename);
 
 	gtk_tree_store_set(debr.ui_menu.model, iter,
-			   MENU_STATUS, MENU_STATUS_SAVED,
-			   MENU_IMAGE, GTK_STOCK_FILE,
 			   MENU_FILENAME, label,
 			   MENU_MODIFIED_DATE, tmp,
 			   MENU_XMLPOINTER, menu,
@@ -390,6 +388,7 @@ void menu_open_with_parent(const gchar * path, GtkTreeIter * parent, gboolean se
 		return;
 
 	gtk_tree_store_append(debr.ui_menu.model, &child, parent);
+	menu_status_set_from_iter(&child, MENU_STATUS_SAVED);
 	menu_load_iter(path, &child, menu, select);
 }
 
@@ -417,7 +416,7 @@ MenuMessage menu_save(GtkTreeIter * iter)
 	}
 
 	filename = g_path_get_basename(path);
-	if (gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path) != GEBR_GEOXML_RETV_SUCCESS){
+	if (gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path) != GEBR_GEOXML_RETV_SUCCESS) {
 		debr_message(GEBR_LOG_ERROR, _("Permission denied."));
 		return MENU_MESSAGE_PERMISSION_DENIED;	
 	} else {
@@ -426,10 +425,9 @@ MenuMessage menu_save(GtkTreeIter * iter)
 		gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path);
 	}
 
-	tmp =
-	    g_strdup_printf("%ld",
-			    gebr_iso_date_to_g_time_val(gebr_geoxml_document_get_date_modified
-							(GEBR_GEOXML_DOCUMENT(menu))).tv_sec);
+	tmp = g_strdup_printf("%ld",
+			      gebr_iso_date_to_g_time_val(gebr_geoxml_document_get_date_modified
+							  (GEBR_GEOXML_DOCUMENT(menu))).tv_sec);
 	gtk_tree_store_set(debr.ui_menu.model, iter, MENU_MODIFIED_DATE, tmp, -1);
 	menu_get_selected(&selected_iter, FALSE);
 	if (gebr_gui_gtk_tree_iter_equal_to(iter, &selected_iter))
@@ -486,8 +484,15 @@ gboolean menu_save_all(void)
 		MenuMessage result = MENU_MESSAGE_SUCCESS;
 
 		result = menu_save(&iter);
-		if (result == MENU_MESSAGE_FIRST_TIME_SAVE)
-			menu_save_as(&iter);
+		if (result == MENU_MESSAGE_FIRST_TIME_SAVE) {
+			while (!menu_save_as(&iter)) {
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+							_("Could not save the menu"),
+							_("You do not have the permissions necessary to save "
+							  "the menu. Please check that you typed the location "
+							  "correctly and try again."));
+			}
+		}
 		else if (result == MENU_MESSAGE_PERMISSION_DENIED) {
 			gtk_tree_path_free(path);
 			gtk_tree_row_reference_free(row);
@@ -784,7 +789,7 @@ void menu_selected(void)
 
 gboolean menu_cleanup(void)
 {
-	GtkWidget *dialog, *dialog_permission;
+	GtkWidget *dialog;
 	GtkWidget *button;
 	gboolean ret;
 	gboolean still_running = TRUE;
@@ -799,17 +804,17 @@ gboolean menu_cleanup(void)
 	g_object_set(G_OBJECT(button), "image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
-	while(still_running){
+	while(still_running) {
 		switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
 		case GTK_RESPONSE_YES:
-			if (!menu_save_all()){
-				dialog_permission = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-									  GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION,
-									  GTK_BUTTONS_NONE, _("Saving menus failed: Permission denied"));
-				gtk_dialog_add_button(GTK_DIALOG(dialog_permission), GTK_STOCK_OK, GTK_RESPONSE_OK);
-				gtk_dialog_run(GTK_DIALOG(dialog_permission));
-				gtk_widget_destroy(dialog_permission);
+			if (!menu_save_all()) {
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+							_("Could not save the menu"),
+							_("You do not have the permissions necessary to save "
+							  "the menu. Please check that you typed the location "
+							  "correctly and try again."));
 				ret = FALSE;
+				still_running = TRUE;
 			} else {
 				ret = TRUE;
 				still_running = FALSE;
@@ -839,42 +844,21 @@ void menu_saved_status_set(MenuStatus status)
 
 void menu_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 {
-	MenuStatus current_status;
-	gboolean enable;
-	gchar *path;
-	GtkTreeIter new_parent;
+	gboolean unsaved;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter,
-			   MENU_STATUS, &current_status, MENU_PATH, &path, -1);
+	unsaved = status == MENU_STATUS_UNSAVED;
+	gtk_tree_store_set(debr.ui_menu.model, iter,
+			   MENU_STATUS, status,
+			   MENU_IMAGE, unsaved? GTK_STOCK_NO : GTK_STOCK_FILE,
+			   -1);
 
-	switch (status) {
-	case MENU_STATUS_SAVED:
-		menu_path_get_parent(path, &new_parent);
-		if (gebr_gui_gtk_tree_store_reparent(debr.ui_menu.model, iter, &new_parent)) {
-			menu_select_iter(iter);
-		}
-		gtk_tree_store_set(debr.ui_menu.model, iter,
-				   MENU_STATUS, MENU_STATUS_SAVED, MENU_IMAGE, GTK_STOCK_FILE, -1);
-		enable = FALSE;
-		break;
-	case MENU_STATUS_UNSAVED:
-		gtk_tree_store_set(debr.ui_menu.model, iter,
-				   MENU_STATUS, MENU_STATUS_UNSAVED, MENU_IMAGE, GTK_STOCK_NO, -1);
-		enable = TRUE;
-		break;
-	default:
-		enable = FALSE;
-	}
-
-	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save"), enable);
-	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert"), enable);
+	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save"), unsaved);
+	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert"), unsaved);
 
 	if (menu_count_unsaved() > 0)
 		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save_all"), TRUE);
 	else
 		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save_all"), FALSE);
-
-	g_free(path);
 }
 
 void menu_status_set_unsaved(void)
@@ -1377,7 +1361,7 @@ void menu_replace(void){
 
 }
 
-void menu_archive(void){
+void menu_archive(void) {
 
 	GtkTreeIter iter;
 
