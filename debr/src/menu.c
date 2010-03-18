@@ -583,6 +583,7 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	GtkTreeIter child;
 	GtkTreeIter target;
 	gboolean is_overwrite;
+	gchar * target_fname;
 
 	clone = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(menu)));
 	is_overwrite = menu_is_path_loaded(filepath, &child);
@@ -596,6 +597,7 @@ gboolean menu_save_as(GtkTreeIter * iter)
 		gtk_tree_store_append(debr.ui_menu.model, &target, &parent);
 	}
 
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &target, MENU_PATH, &target_fname, -1);
 	menu_load_iter(filepath, &target, clone, FALSE);
 	ret = (menu_save(&target) != MENU_MESSAGE_PERMISSION_DENIED);
 	if (ret) {
@@ -609,6 +611,8 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	} else {
 		if (!is_overwrite)
 			gtk_tree_store_remove(debr.ui_menu.model, &target);
+		else
+			menu_load_iter(target_fname, &target, GEBR_GEOXML_FLOW(remove), FALSE);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(clone));
 	}
 
