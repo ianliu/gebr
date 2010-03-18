@@ -210,9 +210,10 @@ gboolean gebr_comm_terminal_process_start(GebrCommTerminalProcess * terminal_pro
 	ret = TRUE;
 	terminal_process->pid = pid;
 	/* monitor exit */
+	terminal_process->ptm_io_channel = NULL;
 	terminal_process->finish_watch_id =
-	    g_child_watch_add(terminal_process->pid, (GChildWatchFunc) __gebr_comm_terminal_process_finished_watch,
-			      terminal_process);
+		g_child_watch_add(terminal_process->pid, (GChildWatchFunc) __gebr_comm_terminal_process_finished_watch,
+				  terminal_process);
 	/* ptm */
 	terminal_process->ptm_io_channel = g_io_channel_unix_new(ptm_fd);
 	g_io_channel_set_close_on_unref(terminal_process->ptm_io_channel, TRUE);
