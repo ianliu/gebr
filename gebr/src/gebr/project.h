@@ -47,6 +47,11 @@ GtkTreeIter project_append_iter(GebrGeoXmlProject * project);
 GtkTreeIter project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine * line);
 
 /**
+ * Append iterators for \p project and its lines.
+ */
+GtkTreeIter project_load_with_lines(GebrGeoXmlProject *project);
+
+/**
  * Reload the projets from the data directory.
  */
 void project_list_populate(void);
