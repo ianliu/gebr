@@ -24,6 +24,7 @@
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
 #include <libgebr/gui/utils.h>
+#include <libgebr/geoxml/project.h>
 
 #include "project.h"
 #include "gebr.h"
@@ -174,4 +175,40 @@ void project_list_populate(void)
 	}
 
 	project_line_info_update();
+}
+
+void project_line_move(const gchar * src_project, const gchar * src_line,
+		       const gchar * dst_project, const gchar * dst_line, gboolean before)
+{
+	GebrGeoXmlProject * src_prj;
+	GebrGeoXmlProject * dst_prj;
+	GebrGeoXmlProjectLine * src_lne;
+	GebrGeoXmlProjectLine * dst_lne;
+	GebrGeoXmlProjectLine * clone;
+	
+	src_prj = GEBR_GEOXML_PROJECT(document_load(src_project));
+
+	if (strcmp(src_project, dst_project) == 0)
+		/* The line movement is inside the same project. */
+		dst_prj = src_prj;
+	else
+		dst_prj = GEBR_GEOXML_PROJECT(document_load(dst_project));
+	
+	src_lne = gebr_geoxml_project_get_line_from_source(src_prj, src_line);
+	clone = gebr_geoxml_project_append_line(dst_prj, src_line);
+
+	gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(src_lne));
+
+	if (dst_line) {
+		dst_lne = gebr_geoxml_project_get_line_from_source(dst_prj, dst_line);
+		if (before)
+			gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(clone), GEBR_GEOXML_SEQUENCE(dst_lne));
+		else
+			gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(clone), GEBR_GEOXML_SEQUENCE(dst_lne));
+	}
+
+	document_save(GEBR_GEOXML_DOCUMENT(src_prj), TRUE);
+
+	if (strcmp(src_project, dst_project) != 0)
+		document_save(GEBR_GEOXML_DOCUMENT(dst_prj), TRUE);
 }

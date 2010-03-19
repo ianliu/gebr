@@ -106,6 +106,9 @@ struct gebr {
 		gboolean log_load;
 		gboolean job_log_word_wrap;
 		gboolean job_log_auto_scroll;
+		gint current_notebook;
+		GString *project_line_string;
+		GString *flow_string;
 	} config;
 
 	/* Pixmaps */

@@ -91,7 +91,6 @@ gboolean line_delete(gboolean confirm)
 {
 	GtkTreeIter iter;
 
-	GebrGeoXmlSequence *project_line;
 	GebrGeoXmlSequence *line_flow;
 	const gchar *line_filename;
 
@@ -121,16 +120,10 @@ gboolean line_delete(gboolean confirm)
 
 	/* Remove the line from its project */
 	line_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(gebr.line));
-	gebr_geoxml_project_get_line(gebr.project, &project_line, 0);
-	for (; project_line != NULL; gebr_geoxml_sequence_next(&project_line)) {
-		if (strcmp(line_filename, gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line)))
-		    == 0) {
-			gebr_geoxml_sequence_remove(project_line);
-			document_save(GEBR_GEOXML_DOC(gebr.project), TRUE);
-			break;
-		}
+	if (gebr_geoxml_project_remove_line(gebr.project, line_filename)) {
+		document_save(GEBR_GEOXML_DOC(gebr.project), TRUE);
+		document_delete(line_filename);
 	}
-	document_delete(line_filename);
 
 	/* inform the user */
 	if (confirm) {
