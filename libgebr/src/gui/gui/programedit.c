@@ -121,7 +121,6 @@ void gebr_gui_gebr_gui_program_edit_reload(struct gebr_gui_program_edit *program
 		gtk_box_pack_start(GTK_BOX(program_edit->hbox), alignment, TRUE, TRUE, 5);
 
 		full_uri = g_string_new(NULL);
-		puts(uri);
 		if (g_str_has_prefix(uri, "http://"))
 			g_string_assign(full_uri, uri);
 		else
