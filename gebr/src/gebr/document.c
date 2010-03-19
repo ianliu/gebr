@@ -376,7 +376,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 			if (parent == NULL)
 				project_load_with_lines(GEBR_GEOXML_PROJECT(parent_document));
 			else
-				project_append_line_iter(parent, orphans_line);
+				project_append_line_iter(parent, GEBR_GEOXML_LINE(orphans_line));
 
 			break;
 		} default:

@@ -26,6 +26,7 @@
  * Create a new project.
  */
 void project_new(void);
+
 /**
  * Delete the selected project.
  *
@@ -41,6 +42,7 @@ gboolean project_delete(gboolean confirm);
  * Add \p project to the list of projects.
  */
 GtkTreeIter project_append_iter(GebrGeoXmlProject * project);
+
 /**
  * Add \p line to \p project_iter.
  */
@@ -55,5 +57,12 @@ GtkTreeIter project_load_with_lines(GebrGeoXmlProject *project);
  * Reload the projets from the data directory.
  */
 void project_list_populate(void);
+
+/**
+ * Moves \p src_line to \p dest_project before or after \p position, depending on \p before flag.
+ */
+void project_line_move(const gchar * src_project, const gchar * src_line,
+		       const gchar * dst_project, const gchar * dst_line, gboolean before);
+
 
 #endif				//__PROJECT_H

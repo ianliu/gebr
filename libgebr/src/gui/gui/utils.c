@@ -175,18 +175,6 @@ static gboolean on_gtk_tree_view_key_press(GtkTreeView * tree_view, GdkEventKey 
 }
 
 static void
-gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable_weak_ref(struct reorderable_data *data,
-								     GtkTreeView * tree_view)
-{
-	g_free(data);
-}
-
-static void gtk_tree_view_reorder_weak_ref(struct reorder_data *data, GtkTreeView * tree_view)
-{
-	g_free(data);
-}
-
-static void
 on_gtk_tree_view_drag_begin(GtkTreeView * tree_view, GdkDragContext * drag_context, struct reorder_data *data)
 {
 	gebr_gui_gtk_tree_view_get_selected(tree_view, &data->iter);
@@ -846,15 +834,16 @@ gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GtkTreeView * tree_view
 
 	data = g_malloc(sizeof(struct reorderable_data));
 	*data = (struct reorderable_data) {
-	.gebr_geoxml_sequence_pointer_column = gebr_geoxml_sequence_pointer_column,.callback =
-		    callback,.user_data = user_data,};
+		.gebr_geoxml_sequence_pointer_column = gebr_geoxml_sequence_pointer_column,
+		.callback = callback,
+		.user_data = user_data,
+	};
 
 	gebr_gui_gtk_tree_view_set_reorder_callback(tree_view,
 						    (GebrGuiGtkTreeViewReorderCallback) gtk_tree_view_reorder_callback,
 						    NULL, data);
 
-	g_object_weak_ref(G_OBJECT(tree_view),
-			  (GWeakNotify) gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable_weak_ref, data);
+	g_object_weak_ref(G_OBJECT(tree_view), (GWeakNotify)g_free, data);
 }
 
 gboolean
@@ -890,7 +879,7 @@ gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkT
 	g_signal_connect(tree_view, "drag-drop", G_CALLBACK(on_gtk_tree_view_drag_drop), data);
 	g_signal_connect(tree_view, "drag-motion", G_CALLBACK(on_gtk_tree_view_drag_motion), data);
 
-	g_object_weak_ref(G_OBJECT(tree_view), (GWeakNotify) gtk_tree_view_reorder_weak_ref, data);
+	g_object_weak_ref(G_OBJECT(tree_view), (GWeakNotify)g_free, data);
 }
 
 gboolean gebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons,

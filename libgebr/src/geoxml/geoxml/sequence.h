@@ -146,8 +146,7 @@ gint gebr_geoxml_sequence_get_index(GebrGeoXmlSequence * sequence);
 GebrGeoXmlSequence *gebr_geoxml_sequence_get_at(GebrGeoXmlSequence * sequence, gulong index);
 
 /**
- * Removes \p sequence from its sequence. It is not deleted and can be reinserted
- * into sequence using gebr_geoxml_sequence_prepend or gebr_geoxml_sequence_append.
+ * Removes \p sequence from its sequence.
  *
  * A special case are the parameter. It cannot be removed if it belongs to an
  * instanciated group. Also, if it is removed, all referenced parameters are
