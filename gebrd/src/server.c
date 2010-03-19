@@ -21,6 +21,7 @@
 #include <string.h>
 #include <signal.h>
 #include <unistd.h>
+#include <errno.h>
 #include <netdb.h>
 #include <time.h>
 #include <sys/socket.h>
@@ -83,9 +84,12 @@ gboolean server_init(void)
 		 * if the connection is refused, the it *probably* did
 		 */
 		guint16 port;
+		gint code;
 
 		run_fp = fopen(gebrd.run_filename->str, "r");
-		fscanf(run_fp, "%hu", &port);
+		code = fscanf(run_fp, "%hu", &port);
+		if (code == EOF)
+			g_warning("%s:%d: Failed to retrieve contents of '%s' file", __FILE__, __LINE__, gebrd.run_filename->str);
 		fclose(run_fp);
 
 		if (gebr_comm_listen_socket_is_local_port_available(port) == FALSE) {
@@ -98,7 +102,8 @@ gboolean server_init(void)
 			ret = FALSE;
 
 			snprintf(buffer, sizeof(buffer), "%d\n", port);
-			write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1);
+			if (write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1) < 0)
+				g_warning("Failed to write in file with error code %d", errno);
 
 			goto out;
 		}
@@ -147,7 +152,8 @@ gboolean server_init(void)
 	gebrd_message(GEBR_LOG_START, _("Server started at %u port"),
 		      gebr_comm_socket_address_get_ip_port(&socket_address));
 	snprintf(buffer, sizeof(buffer), "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
-	write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1);
+	if (write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1))
+		g_warning("%s:%d: Failed to write in file with error code %d", __FILE__, __LINE__, errno);
 
 	/* frees */
 	g_string_free(log_filename, TRUE);
@@ -254,7 +260,8 @@ gboolean server_parse_client_messages(struct client *client)
 					/* add client magic cookie */
 					cmd_line = g_string_new(NULL);
 					g_string_printf(cmd_line, "xauth add :%d . %s", display, x11->str);
-					system(cmd_line->str);
+					if (system(cmd_line->str) -1)
+						g_warning("%s:%d: Failed to run '%s'", __FILE__, __LINE__, cmd_line->str);
 
 					gebrd_message(GEBR_LOG_DEBUG, "xauth ran: %s", cmd_line->str);
 
@@ -329,9 +336,12 @@ gboolean server_parse_client_messages(struct client *client)
 						job_notify_status(job, JOB_STATUS_QUEUED, gebr_iso_date());
 				} else 
 					job_run_flow(job);
+			} else if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
+				if (!queue->len)
+					g_string_assign(job->queue, "j0");
 			}
 
-			if (success == TRUE) 
+			if (success == TRUE)
 				job_send_clients_job_notify(job);
 			else
 				job_notify(job, client); 

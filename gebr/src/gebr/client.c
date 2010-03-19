@@ -95,7 +95,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 
 						/* at job control */
 						server_queue_find_at_job_control(server, queues[i], NULL);
-
 					}
 				}
 
@@ -138,6 +137,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)
 					goto err;
 				jid = g_list_nth_data(arguments, 0);
+
 				g_string_assign(server->ran_jid, jid->str);	
 
 				gebr_comm_protocol_split_free(arguments);
