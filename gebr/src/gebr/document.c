@@ -73,6 +73,11 @@ GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
 	return document;
 }
 
+gboolean document_path_is_at_gebr_data_dir(const gchar *path)
+{
+	return g_str_has_prefix(path, gebr.config.data->str);
+}
+
 gboolean document_file_is_at_gebr_data_dir(const gchar *filename)
 {
 	GString *path;
@@ -211,10 +216,10 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		if (parent_document == NULL) {
 			gchar *filename;
 
-			free_document = TRUE;
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), parent,
 					   PL_FILENAME, &filename, -1);
 			document_load(&parent_document, filename);
+			free_document = parent_document != NULL;
 
 			g_free(filename);
 		}
@@ -223,7 +228,8 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	string = g_string_new("");
 
 	if (ret == GEBR_GEOXML_RETV_FILE_NOT_FOUND || ret == GEBR_GEOXML_RETV_PERMISSION_DENIED) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load file at %s: %s."),
+		/* the final point already comes with gebr_geoxml_error_string */
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load file at %s: %s"),
 			     path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		if (parent != NULL && ret == GEBR_GEOXML_RETV_FILE_NOT_FOUND)
 			remove_parent_ref(parent_document, path);
@@ -242,7 +248,8 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 
 	/* don't do document recovery for menus */
 	if (g_str_has_suffix(path, ".mnu")) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load menu %sat %s:\n%s."),
+		/* the final point already comes with gebr_geoxml_error_string */
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load menu %sat %s:\n%s"),
 			     string->str, path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		goto out;
 	}
@@ -266,15 +273,25 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 
 	dialog = GTK_DIALOG(gtk_message_dialog_new(GTK_WINDOW(gebr.window),
 						   GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
-						   GTK_MESSAGE_QUESTION,
+						   GTK_MESSAGE_ERROR,
 						   GTK_BUTTONS_NONE,
 						   "Could not load %s %sat %s.\nError: %s\n", document_name,
 						   string->str, path,
 						   gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret)));
 	g_string_printf(string, "Couldn't load %s", document_name);
 	gtk_window_set_title(GTK_WINDOW(dialog), string->str); 
+
+	/* for imported documents */
+	if (!document_path_is_at_gebr_data_dir(path)) {
+		gtk_dialog_add_button(dialog, _("Dismiss"), 0);
+		gtk_widget_show_all(GTK_WIDGET(dialog));
+		gtk_dialog_run(dialog);
+		goto out;
+	}
+
 	gtk_dialog_add_button(dialog, _("Ignore"), 0);
-	gtk_dialog_add_button(dialog, _("Export"), 1);
+	GtkWidget * export = gtk_dialog_add_button(dialog, _("Export"), 1);
+	gtk_button_box_set_child_secondary(GTK_BUTTON_BOX(dialog->action_area), export, TRUE);
 	gtk_dialog_add_button(dialog, _("Delete"), 2);
 
 	gtk_widget_show_all(GTK_WIDGET(dialog));
@@ -304,16 +321,10 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 				g_free(standard_error);
 			}
 			g_string_free(cmd_line, TRUE);
-
-			keep_dialog = FALSE;
-		} else
-			keep_dialog = TRUE;
+		}
+		keep_dialog = TRUE;
 		gtk_widget_destroy(chooser_dialog);
 
-		ret = GEBR_GEOXML_RETV_FILE_NOT_FOUND;
-		if (parent != NULL)
-			remove_parent_ref(parent_document, path);
-		unlink(path);
 		break;
 	} case 2: { /* Delete */
 		ret = GEBR_GEOXML_RETV_FILE_NOT_FOUND;
@@ -337,8 +348,6 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 				const gchar *src;
 
 				src = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line));
-				if (!document_file_is_at_gebr_data_dir(src))
-					continue;
 				gebr_geoxml_project_append_line(GEBR_GEOXML_PROJECT(orphans_project), src);
 			}
 			document_save(orphans_project, TRUE);
@@ -357,8 +366,6 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 				const gchar *src;
 				
 				src = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow)); 
-				if (!document_file_is_at_gebr_data_dir(src))
-					continue;
 				gebr_geoxml_line_append_flow(GEBR_GEOXML_LINE(orphans_line), src);
 			}
 			document_save(orphans_line, TRUE);

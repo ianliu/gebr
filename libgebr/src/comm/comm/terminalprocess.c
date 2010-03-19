@@ -59,7 +59,6 @@ static void gebr_comm_terminal_process_class_init(GebrCommTerminalProcessClass *
 static void gebr_comm_terminal_process_init(GebrCommTerminalProcess * terminal_process)
 {
 	__gebr_comm_terminal_process_stop_state(terminal_process);
-	terminal_process->ptm_io_channel = NULL;
 }
 
 G_DEFINE_TYPE(GebrCommTerminalProcess, gebr_comm_terminal_process, G_TYPE_OBJECT)
@@ -78,7 +77,8 @@ static void __gebr_comm_terminal_process_free(GebrCommTerminalProcess * terminal
 		terminal_process->finish_watch_id = 0;
 	}
 	if (terminal_process->ptm_io_channel != NULL) {
-		g_io_channel_unref(terminal_process->ptm_io_channel);
+		//FIXME: crashing
+		//g_io_channel_unref(terminal_process->ptm_io_channel);
 		terminal_process->ptm_io_channel = NULL;
 	}
 }
@@ -153,14 +153,6 @@ static GString *__gebr_comm_terminal_process_read_string(GIOChannel * io_channel
 	return string;
 }
 
-/*
- * private functions
- */
-
-/*
- * user functions
- */
-
 GebrCommTerminalProcess *gebr_comm_terminal_process_new(void)
 {
 	return (GebrCommTerminalProcess *) g_object_new(GEBR_COMM_TERMINAL_PROCESS_TYPE, NULL);
@@ -216,7 +208,7 @@ gboolean gebr_comm_terminal_process_start(GebrCommTerminalProcess * terminal_pro
 				  terminal_process);
 	/* ptm */
 	terminal_process->ptm_io_channel = g_io_channel_unix_new(ptm_fd);
-	g_io_channel_set_close_on_unref(terminal_process->ptm_io_channel, TRUE);
+	g_io_channel_set_close_on_unref(terminal_process->ptm_io_channel, FALSE);
 	terminal_process->ptm_watch_id = g_io_add_watch(terminal_process->ptm_io_channel,
 							G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
 							(GIOFunc) __gebr_comm_terminal_process_read_watch,

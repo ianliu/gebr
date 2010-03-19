@@ -31,12 +31,17 @@
 GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type);
 
 /**
- * Return TRUE if document \p filename exists in the GeBR data dir.
+ * Return TRUE if \p path is inside GeBR's data dir.
+ */
+gboolean document_path_is_at_gebr_data_dir(const gchar *path);
+
+/**
+ * Return TRUE if document \p filename exists in GeBR's data dir.
  */
 gboolean document_file_is_at_gebr_data_dir(const gchar *filename);
 
 /**
- * Return TRUE if \p document's filename exists in the GeBR data dir.
+ * Return TRUE if \p document's filename exists in GeBR's data dir.
  */
 gboolean document_is_at_gebr_data_dir(GebrGeoXmlDocument * document);
 

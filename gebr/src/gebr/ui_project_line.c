@@ -365,7 +365,6 @@ gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectio
 void project_line_select_iter(GtkTreeIter * iter)
 {
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
-	project_line_load();
 }
 
 void project_line_import(void)
@@ -419,6 +418,7 @@ void project_line_import(void)
 	}
 
 	/**
+	 * \internal
 	 * Import line with basename \p line_filename inside \p at_dir.
 	 * Also import its flows.
 	 * Return error from #document_load_path.

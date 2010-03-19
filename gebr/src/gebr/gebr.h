@@ -1,7 +1,3 @@
-/**
- * \file gebr.c General purpose functions
- */
-
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -18,6 +14,10 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see
  *   <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * \file gebr.c General purpose functions
  */
 
 #ifndef __GEBR_H
@@ -68,7 +68,8 @@ struct gebr {
 	GtkAccelGroup *accel_group;
 	GtkActionGroup *action_group;
 
-	GtkWidget *invisible;			/**< \deprecated This should be avoided. Use Stock icons instead. */
+	/** \deprecated This should be avoided. Use Stock icons instead. */
+	GtkWidget *invisible;			
 
 	GebrGeoXmlDocument *project_line;
 	GebrGeoXmlProject *project;
@@ -112,6 +113,7 @@ struct gebr {
 	} config;
 
 	/* Pixmaps */
+	/** \deprecated Should use stock icons instead. */
 	struct gebr_pixmaps {
 		GdkPixbuf *stock_apply;
 		GdkPixbuf *stock_warning;
@@ -123,7 +125,7 @@ struct gebr {
 		GdkPixbuf *stock_go_forward;
 		GdkPixbuf *stock_info;
 		GdkPixbuf *chronometer;
-	} pixmaps;				/**< \deprecated Should use stock icons instead. */
+	} pixmaps;				
 };
 
 /**
