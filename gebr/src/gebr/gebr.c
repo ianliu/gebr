@@ -297,10 +297,10 @@ gint gebr_config_load()
 
 	GtkTreeIter iter;
 	/* Restore last selected document */
-	if ((gebr.config.project_line_string->str) && gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter, gebr.config.project_line_string->str)){
+	if ((gebr.config.project_line_string->len) && gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter, gebr.config.project_line_string->str)){
 		project_line_select_iter(&iter);
 
-		if ((gebr.config.flow_string->str) && gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, gebr.config.flow_string->str)){
+		if ((gebr.config.flow_string->len) && gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, gebr.config.flow_string->str)){
 			flow_browse_select_iter(&iter);
 			/* Restore last selected tab */
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
