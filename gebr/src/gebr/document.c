@@ -73,17 +73,22 @@ GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
 	return document;
 }
 
-gboolean document_is_at_gebr_data_dir(GebrGeoXmlDocument * document)
+gboolean document_file_is_at_gebr_data_dir(const gchar *filename)
 {
 	GString *path;
 	gboolean ret;
 
-	path = document_get_path(gebr_geoxml_document_get_filename(document));
+	path = document_get_path(filename);
 	ret = g_file_test(path->str, G_FILE_TEST_IS_REGULAR);
 
 	g_string_free(path, TRUE);
 
 	return ret;
+}
+
+gboolean document_is_at_gebr_data_dir(GebrGeoXmlDocument * document)
+{
+	return document_file_is_at_gebr_data_dir(gebr_geoxml_document_get_filename(document));
 }
 
 int document_load(GebrGeoXmlDocument ** document, const gchar * filename)
@@ -237,7 +242,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 
 	/* don't do document recovery for menus */
 	if (g_str_has_suffix(path, ".mnu")) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load menu %sat %s: %s."),
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load menu %sat %s:\n%s."),
 			     string->str, path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		goto out;
 	}
@@ -328,9 +333,14 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 			gebr_geoxml_document_set_title(orphans_project, _("Orphans lines"));
 
 			gebr_geoxml_project_get_line(GEBR_GEOXML_PROJECT(*document), &project_line, 0);
-			for (; project_line != NULL; gebr_geoxml_sequence_next(&project_line))
-				gebr_geoxml_project_append_line(GEBR_GEOXML_PROJECT(orphans_project),
-								gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line)));
+			for (; project_line != NULL; gebr_geoxml_sequence_next(&project_line)) {
+				const gchar *src;
+
+				src = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line));
+				if (!document_file_is_at_gebr_data_dir(src))
+					continue;
+				gebr_geoxml_project_append_line(GEBR_GEOXML_PROJECT(orphans_project), src);
+			}
 			document_save(orphans_project, TRUE);
 			project_load_with_lines(GEBR_GEOXML_PROJECT(orphans_project));
 
@@ -343,9 +353,14 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 			gebr_geoxml_document_set_title(orphans_line, _("Orphans flows"));
 
 			gebr_geoxml_line_get_flow(GEBR_GEOXML_LINE(*document), &line_flow, 0);
-			for (; line_flow != NULL; gebr_geoxml_sequence_next(&line_flow))
-				gebr_geoxml_line_append_flow(GEBR_GEOXML_LINE(orphans_line),
-							     gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow)));
+			for (; line_flow != NULL; gebr_geoxml_sequence_next(&line_flow)) {
+				const gchar *src;
+				
+				src = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow)); 
+				if (!document_file_is_at_gebr_data_dir(src))
+					continue;
+				gebr_geoxml_line_append_flow(GEBR_GEOXML_LINE(orphans_line), src);
+			}
 			document_save(orphans_line, TRUE);
 
 			if (parent == NULL) {
@@ -361,7 +376,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 			if (parent == NULL)
 				project_load_with_lines(GEBR_GEOXML_PROJECT(parent_document));
 			else
-				project_append_line_iter(parent, GEBR_GEOXML_LINE(*document));
+				project_append_line_iter(parent, orphans_line);
 
 			break;
 		} default:
