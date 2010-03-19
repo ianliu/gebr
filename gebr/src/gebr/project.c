@@ -111,8 +111,6 @@ GtkTreeIter project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine 
 {
 	GtkTreeIter iter;
 
-	if (project_iter == NULL)
-		return;
 	gtk_tree_store_append(gebr.ui_project_line->store, &iter, project_iter);
 	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
 			   PL_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line)),
@@ -139,8 +137,10 @@ GtkTreeIter project_load_with_lines(GebrGeoXmlProject *project)
 
 		line_source = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line));
 		int ret = document_load_with_parent((GebrGeoXmlDocument**)(&line), line_source, &project_iter);
-		if (ret)
+		if (ret) {
+			project_line = next;
 			continue;
+		}
 		project_append_line_iter(&project_iter, line);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOC(line));
 

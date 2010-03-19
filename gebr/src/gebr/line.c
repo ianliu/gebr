@@ -185,6 +185,7 @@ void line_load_flows(void)
 {
 	GebrGeoXmlSequence *line_flow;
 	GtkTreeIter iter;
+	gboolean error = FALSE;
 
 	flow_free();
 	project_line_get_selected(&iter, DontWarnUnselection);
@@ -198,16 +199,21 @@ void line_load_flows(void)
 		gebr_geoxml_sequence_next(&next);
 
 		int ret = document_load_with_parent((GebrGeoXmlDocument**)(&flow),
-					gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow)), &iter);
-		if (ret)
+						    gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow)),
+						    &iter);
+		if (ret) {
+			line_flow = next;
+			error = TRUE;
 			continue;
+		}
 
 		line_append_flow_iter(flow, GEBR_GEOXML_LINE_FLOW(line_flow));
 
 		line_flow = next;
 	}
 
-	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flows loaded."));
+	if (!error)
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flows loaded."));
 
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter) == TRUE)
 		flow_browse_select_iter(&iter);

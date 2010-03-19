@@ -438,8 +438,10 @@ void project_line_import(void)
 			int ret = document_load_at_with_parent((GebrGeoXmlDocument**)(&flow),
 							       gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(i)),
 							       at_dir, project_iter);
-			if (ret)
+			if (ret) {
+				i = next;
 				continue;
+			}
 
 			document_import(GEBR_GEOXML_DOCUMENT(flow));
 			gebr_geoxml_line_set_flow_source(GEBR_GEOXML_LINE_FLOW(i),
@@ -481,8 +483,10 @@ void project_line_import(void)
 				int ret =
 				    line_import(&iter, &line, gebr_geoxml_project_get_line_source
 						(GEBR_GEOXML_PROJECT_LINE(project_line)), tmp_dir->str);
-				if (ret)
+				if (ret) {
+					project_line = next;
 					continue;
+				}
 				gebr_geoxml_project_set_line_source(GEBR_GEOXML_PROJECT_LINE(project_line),
 								    gebr_geoxml_document_get_filename
 								    (GEBR_GEOXML_DOCUMENT(line)));

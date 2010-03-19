@@ -31,6 +31,11 @@
 GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type);
 
 /**
+ * Return TRUE if document filename exists in the GeBR data dir.
+ */
+gboolean document_is_at_gebr_data_dir(GebrGeoXmlDocument * document);
+
+/**
  * Load a document (flow, line or project) located at GêBR's data directory from its filename, handling errors.
  * Calls #document_load_with_parent.
  */
