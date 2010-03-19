@@ -430,7 +430,12 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 	if (pos)
 		g_string_insert(help, pos, gebr_geoxml_document_get_version(GEBR_GEOXML_DOCUMENT(debr.menu)));
 
-	/* Parameter's description replacement */
+        GDate *date;
+        gchar datestr[13];
+        date = g_date_new();
+        g_date_set_time_t(date, time(NULL));
+        g_date_strftime(datestr, 13, "%b %d, %Y", date);
+
 	if (program != NULL) {
 		pos = strip_block(help, "ver");
 		if (pos)
@@ -439,21 +444,18 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 	} else {		/* strip parameter section for flow help */
 		strip_block(help, "par");
 		strip_block(help, "mpr");
+		pos = strip_block(help, "ver");
+		if (pos)
+			g_string_insert(help, pos, datestr);
 	}
 
 	/* Credits for menu */
 	if (program == NULL) {
-		GDate *date;
-		gchar buffer[13];
 		gchar *ptr1;
 		gchar *ptr2;
 		gsize pos;
 		const gchar *author, *email;
 		gchar *escaped_author, *escaped_email;
-
-		date = g_date_new();
-		g_date_set_time_t(date, time(NULL));
-		g_date_strftime(buffer, 13, "%b %d, %Y", date);
 
 		author = gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(debr.menu));
 		escaped_author = g_markup_escape_text(author, -1);
@@ -461,7 +463,7 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 		escaped_email = g_markup_escape_text(email, -1);
 
 		g_string_printf(text, "\n          <p>%s: written by %s &lt;%s&gt;</p>\n          ",
-				buffer, escaped_author, escaped_email);
+				datestr, escaped_author, escaped_email);
 
 		g_free(escaped_author);
 		g_free(escaped_email);
