@@ -587,6 +587,8 @@ void project_line_export(void)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box), TRUE);
 	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), extension);
+	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(chooser_dialog),
+					  gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.project_line)));
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(chooser_dialog), check_box);
 

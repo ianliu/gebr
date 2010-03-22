@@ -299,14 +299,13 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	gboolean keep_dialog = FALSE;
 	do switch ((response = gtk_dialog_run(dialog))) {
 	case 1: { /* Export */
+		gchar * export_path;
 		GtkWidget *chooser_dialog;
 
 		chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to export"),
 							  GTK_WINDOW(gebr.window));
-		gtk_widget_show_all(chooser_dialog);
-		if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) == GTK_RESPONSE_OK) {
-			gchar *export_path;
-			export_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
+		export_path = gebr_gui_save_dialog_run(GEBR_GUI_SAVE_DIALOG(chooser_dialog));
+		if (export_path) {
 			GString *cmd_line = g_string_new(NULL);
 			g_string_printf(cmd_line, "cp -f %s %s", path, export_path);
 			g_free(export_path);
@@ -323,7 +322,6 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 			g_string_free(cmd_line, TRUE);
 		}
 		keep_dialog = TRUE;
-		gtk_widget_destroy(chooser_dialog);
 
 		break;
 	} case 2: { /* Delete */
