@@ -646,19 +646,30 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 	gzFile zfp;
 	char *xml;
 	int ret;
+	FILE *fp;
 
 	if (document == NULL)
 		return FALSE;
 
-	zfp = gzopen(path, "w");
-
-	if (zfp == NULL || errno != 0)
-		return GEBR_GEOXML_RETV_PERMISSION_DENIED;
-
 	gebr_geoxml_document_to_string(document, &xml);
-	ret = gzwrite(zfp, xml, strlen(xml) + 1);
-	gzclose(zfp);
 
+	if ((gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) && g_str_has_suffix(path, ".mnu")){
+		fp = fopen(path, "w");
+
+		if (fp == NULL){
+			return GEBR_GEOXML_RETV_PERMISSION_DENIED;
+		}
+		ret = fwrite(xml, sizeof(gchar), strlen(xml) + 1, fp);
+		fclose(fp);
+	} else {
+		zfp = gzopen(path, "w");
+
+		if (zfp == NULL || errno != 0)
+			return GEBR_GEOXML_RETV_PERMISSION_DENIED;
+
+		ret = gzwrite(zfp, xml, strlen(xml) + 1);
+		gzclose(zfp);
+	}
 	return ret ? GEBR_GEOXML_RETV_SUCCESS : GEBR_GEOXML_RETV_PERMISSION_DENIED;
 }
 
