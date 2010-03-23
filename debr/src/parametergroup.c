@@ -54,7 +54,7 @@ gboolean parameter_group_dialog_setup_ui(void)
 
 	GtkWidget *label_label;
 	GtkWidget *label_entry;
-	GtkWidget *instanciable_label;
+	GtkWidget *instantiable_label;
 	GtkWidget *instanciable_check_button;
 	GtkWidget *instances_label;
 	GtkWidget *instances_spin_button;
@@ -126,13 +126,13 @@ gboolean parameter_group_dialog_setup_ui(void)
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
 
 	/*
-	 * Instanciable
+	 * Instantiable
 	 */
-	instanciable_label = gtk_label_new(_("Instanciable:"));
-	gtk_widget_show(instanciable_label);
-	gtk_table_attach(GTK_TABLE(table), instanciable_label, 0, 1, row, row + 1,
+	instantiable_label = gtk_label_new(_("Instantiable:"));
+	gtk_widget_show(instantiable_label);
+	gtk_table_attach(GTK_TABLE(table), instantiable_label, 0, 1, row, row + 1,
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	gtk_misc_set_alignment(GTK_MISC(instanciable_label), 0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(instantiable_label), 0, 0.5);
 
 	instanciable_check_button = gtk_check_button_new();
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(instanciable_check_button), gebr_geoxml_parameter_group_get_is_instanciable(parameter_group));
