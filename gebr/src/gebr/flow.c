@@ -49,6 +49,7 @@ gboolean flow_new(void)
 	const gchar *line_filename;
 
 	GebrGeoXmlFlow *flow;
+	GebrGeoXmlSequence *line_flow;
 
 	if (!project_line_get_selected(NULL, LineSelection))
 		return FALSE;
@@ -74,6 +75,10 @@ gboolean flow_new(void)
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(flow));
 
 	flow_browse_select_iter(&iter);
+
+	gebr_geoxml_line_get_flow(gebr.line, &line_flow, gebr_gui_gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
+	gtk_list_store_set(gebr.ui_flow_browse->store, &iter, FB_LINE_FLOW_POINTER, line_flow, -1);
+
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'."), line_title);
 	if (!on_document_properties_activate())
 		flow_delete(FALSE);
