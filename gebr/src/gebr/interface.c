@@ -102,7 +102,7 @@ static const GtkActionEntry actions_entries[] = {
 	 G_CALLBACK(on_job_control_save)},
 	{"job_control_cancel", GTK_STOCK_MEDIA_STOP, NULL, NULL, N_("Ask server to terminate the job"),
 	 G_CALLBACK(on_job_control_cancel)},
-	{"job_control_close", "edit-clear", NULL, NULL, N_("Clear current job log"),
+	{"job_control_close", "edit-clear", N_("Edit clear"), NULL, N_("Clear current job log"),
 	 G_CALLBACK(on_job_control_close)},
 	{"job_control_clear", GTK_STOCK_CLEAR, NULL, NULL, N_("Clear all unactive job logs"),
 	 G_CALLBACK(on_job_control_clear)},
@@ -215,7 +215,9 @@ void gebr_setup_ui(void)
 	 */
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
+#if !GTK_CHECK_VERSION(2,14,0)
 	gtk_toolbar_set_tooltips(GTK_TOOLBAR(toolbar), TRUE);
+#endif
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
