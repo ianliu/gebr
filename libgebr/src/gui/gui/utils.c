@@ -656,15 +656,54 @@ void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTree
 	}
 }
 
-/*
-void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIter * ini, GtkTextIter * end,
-					      const gchar * tooltip)
+void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIter * ini, GtkTextIter * end, const gchar
+					      * tooltip)
 {
-	GtkTextTag * tag;
+	/**
+	 * \internal
+	 */
+	gboolean
+	on_text_view_query_tooltip(GtkTextView * text_view, gint x, gint y, gboolean keyboard_mode, GtkTooltip * tooltip)
+	{
+		GtkTextIter iter;
+		GSList *tags;
+		gboolean ret = FALSE;
+
+		gtk_text_view_window_to_buffer_coords(text_view, GTK_TEXT_WINDOW_TEXT, x, y, &x, &y);
+		gtk_text_view_get_iter_at_location(text_view, &iter, x, y);
+		tags = gtk_text_iter_get_tags(&iter);
+		for (GSList *i = tags; i != NULL; i = g_slist_next(i)) {
+			gchar *name;
+
+			g_object_get(i->data, "name", &name, NULL);
+			if (g_str_has_prefix(name, "__tooltip")) {
+				gchar *tooltip_markup;
+				tooltip_markup = g_object_get_data(i->data, "tooltip");
+				gtk_tooltip_set_markup(tooltip, tooltip_markup);
+				ret = TRUE;
+				break;
+			}
+		}
+		g_slist_free(tags);
+		return ret;
+	}
+
+	static int tag_count = 0;
+	static gint signal_handler = 0;
 	GtkTextBuffer * buffer;
 	buffer = gtk_text_view_get_buffer(text_view);
+
+	GtkTextTag *text_tag;
+	GString *tag_name = g_string_new(NULL);
+	g_string_printf(tag_name, "__tooltip%d", tag_count);
+	text_tag = gtk_text_buffer_create_tag(buffer, tag_name->str, NULL);
+	g_string_free(tag_name, TRUE);
+	g_object_set_data(G_OBJECT(text_tag), "tooltip", (gpointer)tooltip);
+	gtk_text_buffer_apply_tag(buffer, text_tag, ini, end);
+
+	if (!signal_handler)
+		signal_handler = g_signal_connect(G_OBJECT(text_view), "query-tooltip", G_CALLBACK(on_text_view_query_tooltip), NULL);
 }
-*/
 
 gboolean
 gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPopupCallback callback, gpointer user_data)
