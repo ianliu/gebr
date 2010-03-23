@@ -417,7 +417,11 @@ MenuMessage menu_save(GtkTreeIter * iter)
 
 	filename = g_path_get_basename(path);
 	if (gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path) != GEBR_GEOXML_RETV_SUCCESS) {
-		debr_message(GEBR_LOG_ERROR, _("Permission denied."));
+		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+					_("Could not save the menu"),
+					_("You do not have the permissions necessary to save "
+					  "the menu. Please check that you typed the location "
+					  "correctly and try again."));
 		return MENU_MESSAGE_PERMISSION_DENIED;	
 	} else {
 		gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(menu), filename);
@@ -491,11 +495,6 @@ gboolean menu_save_all(void)
 		} else if (result == MENU_MESSAGE_PERMISSION_DENIED) {
 			gtk_tree_path_free(path);
 			gtk_tree_row_reference_free(row);
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("Could not save the menu"),
-						_("You do not have the permissions necessary to save "
-						  "the menu. Please check that you typed the location "
-						  "correctly and try again."));
 			ret = FALSE;
 			goto out;
 		}
@@ -623,12 +622,6 @@ gboolean menu_save_as(GtkTreeIter * iter)
 		else
 			menu_load_iter(target_fname, &target, GEBR_GEOXML_FLOW(remove), FALSE);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(clone));
-
-		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-					_("Could not save the menu"),
-					_("You do not have the permissions necessary to save "
-					  "the menu. Please check that you typed the location "
-					  "correctly and try again."));
 	}
 
 out:
