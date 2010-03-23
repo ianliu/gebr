@@ -264,10 +264,10 @@ static void parameter_group_instances_setup_ui(struct ui_parameter_group_dialog 
 		for (j = 0; parameter != NULL; ++j, gebr_geoxml_sequence_next(&parameter)) {
 			struct gebr_gui_parameter_widget *widget;
 
-			if (exclusive == NULL)
-				label_widget =
-				    gtk_label_new(gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)));
-			else {
+			if (exclusive == NULL){
+				label_widget = gtk_label_new(gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)));
+				gtk_misc_set_alignment(GTK_MISC(label_widget), 0, 0.5);
+			} else {
 				label_widget =
 				    gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(label_widget),
 										gebr_geoxml_parameter_get_label
@@ -278,7 +278,6 @@ static void parameter_group_instances_setup_ui(struct ui_parameter_group_dialog 
 						 G_CALLBACK(on_parameter_group_exclusive_toggled), ui);
 				g_object_set(label_widget, "user-data", parameter, NULL);
 			}
-			gtk_misc_set_alignment(GTK_MISC(label_widget), 0, 0.5);
 			gtk_widget_show(label_widget);
 			gtk_table_attach(GTK_TABLE(table), label_widget, 0, 1, j, j + 1,
 					 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
