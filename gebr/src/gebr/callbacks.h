@@ -20,6 +20,7 @@
 
 #include <gtk/gtk.h>
 
+void on_new_activate(void);
 void on_copy_activate(void);
 void on_paste_activate(void);
 void on_quit_activate(void);
@@ -27,14 +28,11 @@ void on_quit_activate(void);
 gboolean on_document_properties_activate(void);
 void on_document_dict_edit_activate(void);
 
-void on_project_line_new_project_activate(void);
-void on_project_line_new_line_activate(void);
 void on_project_line_delete_activate(void);
 void on_project_line_paths_activate(void);
 void on_project_line_import_activate(void);
 void on_project_line_export_activate(void);
 
-void on_flow_new_activate(void);
 void on_flow_import_activate(void);
 void on_flow_export_activate(void);
 void on_flow_export_as_menu_activate(void);
@@ -43,8 +41,6 @@ void on_flow_io_activate(void);
 void on_flow_execute_activate(void);
 void on_flow_revision_save_activate(void);
 void on_flow_revision_show_menu(void);
-void on_flow_copy_activate(void);
-void on_flow_paste_activate(void);
 
 void on_flow_component_help_activate(void);
 void on_flow_component_delete_activate(void);
@@ -52,21 +48,10 @@ void on_flow_component_properties_activate(void);
 void on_flow_component_refresh_activate(void);
 void on_flow_component_status_activate(GtkRadioAction * action, GtkRadioAction * current);
 void on_flow_component_refresh_activate(void);
-void on_flow_component_copy_activate(void);
-void on_flow_component_paste_activate(void);
 
 void on_job_control_save(void);
-/**
- * Call <job_control_cancel>
- */
 void on_job_control_cancel(void);
-/**
- * Call <job_control_close>
- */
 void on_job_control_close(void);
-/**
- * Call <job_control_clear>
- */
 void on_job_control_clear(void);
 void on_job_control_stop(void);
 

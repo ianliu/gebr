@@ -37,16 +37,33 @@
 #include "ui_help.h"
 
 /**
+ * \internal
+ */
+void on_new_activate(void)
+{
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+	case NOTEBOOK_PAGE_PROJECT_LINE:
+		project_line_new();
+		break;
+	case NOTEBOOK_PAGE_FLOW_BROWSE:
+		flow_new();
+		break;
+	default:
+		break;
+	}
+}
+
+/**
  * Select copy target depending on the context
  */
 void on_copy_activate(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE:
-		on_flow_copy_activate();
+		flow_copy();
 		break;
 	case NOTEBOOK_PAGE_FLOW_EDITION:
-		on_flow_component_copy_activate();
+		flow_program_copy();
 		break;
 	default:
 		break;
@@ -60,10 +77,10 @@ void on_paste_activate(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE:
-		on_flow_paste_activate();
+		flow_paste();
 		break;
 	case NOTEBOOK_PAGE_FLOW_EDITION:
-		on_flow_component_paste_activate();
+		flow_program_paste();
 		break;
 	default:
 		break;
@@ -92,22 +109,6 @@ gboolean on_document_properties_activate(void)
 void on_document_dict_edit_activate(void)
 {
 	document_dict_edit_setup_ui();
-}
-
-/** 
- * Call <project_new> from <project.c>
- */
-void on_project_line_new_project_activate(void)
-{
-	project_new();
-}
-
-/**
- * Call <project_new> from <project.c>
- */
-void on_project_line_new_line_activate(void)
-{
-	line_new();
 }
 
 /**
@@ -143,14 +144,6 @@ void on_project_line_import_activate(void)
 void on_project_line_export_activate(void)
 {
 	project_line_export();
-}
-
-/**
- * Call <flow_new> from <flow.c>
- */
-void on_flow_new_activate(void)
-{
-	flow_new();
 }
 
 /**
@@ -219,25 +212,7 @@ void on_flow_revision_show_menu(void)
 	flow_browse_single_selection();
 }
 
-/** 
- * Call <flow_copy>
- */
-void on_flow_copy_activate(void)
-{
-	flow_copy();
-}
-
-/** 
- * Call <flow_paste>
- */
-void on_flow_paste_activate(void)
-{
-	flow_paste();
-}
-
 /**
- * *Fill me in!*
- *
  */
 void on_flow_component_help_activate(void)
 {
@@ -275,22 +250,6 @@ void on_flow_component_refresh_activate(void)
 void on_flow_component_status_activate(GtkRadioAction * action, GtkRadioAction * current)
 {
 	flow_edition_status_changed();
-}
-
-/* Function: on_flow_copy_activate
- * Call <flow_edition_component_copy>
- */
-void on_flow_component_copy_activate(void)
-{
-	flow_program_copy();
-}
-
-/* Function: on_flow_paste_activate
- * Call <flow_edition_component_paste>
- */
-void on_flow_component_paste_activate(void)
-{
-	flow_program_paste();
 }
 
 /* Function: on_job_control_save

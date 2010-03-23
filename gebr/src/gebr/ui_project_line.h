@@ -26,12 +26,13 @@
 #include <gtk/gtk.h>
 
 /**
+ * Types for retrieving the selection in Projects/Line tab.
  */
 enum ProjectLineSelectionType {
-	DontWarnUnselection,
-	ProjectSelection,
-	LineSelection,
-	ProjectLineSelection
+	DontWarnUnselection,	/**< Don't warn into GeBR status bar if nothing is selected. */
+	ProjectSelection,	/**< Succeed only if a project is selected. */
+	LineSelection,		/**< Succeed only if a line is selected. */
+	ProjectLineSelection	/**< Succeed if line or project is selected. */
 };
 
 /**
@@ -83,12 +84,19 @@ struct ui_project_line {
 struct ui_project_line *project_line_setup_ui(void);
 
 /**
+ * Creates a project or line based on the current selection.
+ */
+void project_line_new(void);
+
+/**
  * Update information shown about the selected project or line.
  */
 void project_line_info_update(void);
 
 /**
  * Put selected iter in \p iter and return true if there is a selection.
+ *
+ * \param check_type one of #DontWarnUnselection, #ProjectSelection, #LineSelection, #ProjectLineSelection.
  */
 gboolean project_line_get_selected(GtkTreeIter * iter, enum ProjectLineSelectionType check_type);
 
