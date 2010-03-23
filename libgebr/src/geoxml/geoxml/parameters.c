@@ -136,7 +136,7 @@ void gebr_geoxml_parameters_set_exclusive(GebrGeoXmlParameters * parameters, Geb
 GebrGeoXmlParameter *gebr_geoxml_parameters_get_exclusive(GebrGeoXmlParameters * parameters)
 {
 	if (parameters == NULL)
-		return FALSE;
+		return NULL;
 
 	gulong index;
 	GebrGeoXmlSequence *parameter;

@@ -120,6 +120,7 @@ gboolean parameter_group_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(expanded_label), 0, 0.5);
 
 	expanded_check_button = gtk_check_button_new();
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(expanded_check_button), gebr_geoxml_parameter_group_get_expand(parameter_group));
 	gtk_widget_show(expanded_check_button);
 	gtk_table_attach(GTK_TABLE(table), expanded_check_button, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
@@ -134,6 +135,7 @@ gboolean parameter_group_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(instanciable_label), 0, 0.5);
 
 	instanciable_check_button = gtk_check_button_new();
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(instanciable_check_button), gebr_geoxml_parameter_group_get_is_instanciable(parameter_group));
 	gtk_widget_show(instanciable_check_button);
 	gtk_table_attach(GTK_TABLE(table), instanciable_check_button, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
