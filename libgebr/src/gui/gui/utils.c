@@ -740,8 +740,8 @@ GtkTextTag *gebr_gui_gtk_text_view_insert_link(GtkTextView * text_view, GtkTextI
 	g_object_free_list_add(G_OBJECT(text_view), (gpointer)url);
 	g_object_set_data(G_OBJECT(text_tag), "url", (gpointer)url);
 
-	/* TODO: set appereance */ 
-
+	/* set appereance */ 
+	g_object_set(G_OBJECT(text_tag), "underline", PANGO_UNDERLINE_SINGLE, "foreground", "blue", NULL);
 
 	g_signal_connect(text_tag, "event", G_CALLBACK(on_tag_event), callback);
 
