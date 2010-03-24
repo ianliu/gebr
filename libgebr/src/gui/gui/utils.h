@@ -285,7 +285,23 @@ void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTree
 	     
 
 /**
+ */
+typedef void (*GebrGuiGtkTextViewLinkClickCallback)(GtkTextView * text_view, GtkTextTag * tag, const gchar * url);
+
+/**
+ * Inserts link with \p text and reference \p url.
+ * When it is clicked \p callback is called
+ * You should take care to free \p url.
+ * Returns the tag used.
+ *
+ * \see GebrGuiGtkTextViewLinkClickCallback
+ */
+GtkTextTag *gebr_gui_gtk_text_view_insert_link(GtkTextView * text_view, GtkTextIter * iter, const gchar
+					      * text, const gchar * url, GebrGuiGtkTextViewLinkClickCallback callback);
+*
+/**
  * Sets a \p tooltip for text between \p ini and \p end.
+ * You should take care to free \p toolip.
  */
 void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIter * ini, GtkTextIter * end,
 					      const gchar * tooltip);
@@ -438,4 +454,5 @@ gboolean gebr_gui_gtk_expander_hacked_idle(GtkWidget * hbox, GdkEventExpose * ev
 	GTK_IMAGE(gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU)))
 #endif
 
+N_PRESS:
 #endif				//__GEBR_GUI_UTILS_H
