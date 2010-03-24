@@ -275,32 +275,6 @@ static gboolean gebr_gui_message_dialog_vararg(GtkMessageType type, GtkButtonsTy
 	return confirmed;
 }
 
-void g_object_free_list_add(GObject * object, gpointer data)
-{
-	GSList *free_list;
-	GWeakNotify weak_notify;
-
-	/**
-	 * \internal
-	 */
-	void g_object_free_list_weak_ref(gpointer data, GObject *object)
-	{
-		GSList *free_list;
-
-		free_list = g_object_get_data(object, "__g_object_free_list");
-		g_slist_foreach(free_list, (GFunc)g_free, NULL);
-		g_slist_free(free_list);
-	}
-
-	free_list = g_object_get_data(object, "__g_object_free_list");
-	free_list = g_slist_prepend(free_list, data);
-	g_object_set_data(object, "__g_object_free_list", free_list);
-
-	weak_notify = g_object_get_data(object, "__g_object_free_list_weak_notify");
-	if (weak_notify == NULL)
-		g_object_weak_ref(object, g_object_free_list_weak_ref, NULL);
-}
-
 void gebr_gui_gtk_dialog_set_response_on_widget_return(GtkDialog * dialog, gint response, GtkWidget * widget)
 {
 	g_object_set_data(G_OBJECT(widget), "__widget_return_dialog_response", GINT_TO_POINTER(response));
@@ -737,7 +711,7 @@ GtkTextTag *gebr_gui_gtk_text_view_insert_link(GtkTextView * text_view, GtkTextI
 	GtkTextTag *text_tag = gtk_text_buffer_create_tag(buffer, NULL, NULL);
 
 	url = (const gchar*)g_strdup(url);
-	g_object_free_list_add(G_OBJECT(text_view), (gpointer)url);
+	gebr_gui_g_object_set_free_parent(text_view, (gpointer)url);
 	g_object_set_data(G_OBJECT(text_tag), "url", (gpointer)url);
 
 	/* set appereance */ 
@@ -790,7 +764,7 @@ void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIt
 	g_string_free(tag_name, TRUE);
 
 	tooltip = (const gchar*)g_strdup(tooltip);
-	g_object_free_list_add(G_OBJECT(text_view), (gpointer)tooltip);
+	gebr_gui_g_object_set_free_parent(text_view, (gpointer)tooltip);
 	g_object_set_data(G_OBJECT(text_tag), "tooltip", (gpointer)tooltip);
 	gtk_text_buffer_apply_tag(buffer, text_tag, ini, end);
 

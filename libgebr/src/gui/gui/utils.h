@@ -23,9 +23,10 @@
 #include <geoxml.h>
 
 /**
- * Add \p data to the list of pointer to call #g_free before \p object is freed.
+ * Frees \p data before \p object is freed.
  */
-void g_object_free_list_add(GObject * object, gpointer data);
+#define gebr_gui_g_object_set_free_parent(object, data) \
+	g_object_weak_ref(G_OBJECT(object), (GWeakNotify)g_free, (gpointer)(data))
 
 /**
  * \deprecated
