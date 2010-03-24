@@ -23,10 +23,9 @@
 
 #include "utils.h"
 
-/*
- * Internal functions
+/**
+ * \internal
  */
-
 struct popup_callback {
 	GebrGuiGtkPopupCallback callback;
 	gpointer user_data;
@@ -35,12 +34,18 @@ struct popup_callback {
 	GtkWidget *widget;
 };
 
+/**
+ * \internal
+ */
 struct reorderable_data {
 	gint gebr_geoxml_sequence_pointer_column;
 	GebrGuiGtkTreeViewMoveSequenceCallback callback;
 	gpointer user_data;
 };
 
+/**
+ * \internal
+ */
 struct reorder_data {
 	GtkTreeIter iter;
 	GtkTreeIter position;
@@ -50,6 +55,9 @@ struct reorder_data {
 	gpointer user_data;
 };
 
+/**
+ * \internal
+ */
 static void __popup_callback_weak_notify(struct popup_callback *popup_callback, GtkObject * object)
 {
 	if (popup_callback->event_box != NULL)
@@ -57,6 +65,9 @@ static void __popup_callback_weak_notify(struct popup_callback *popup_callback, 
 	g_free(popup_callback);
 }
 
+/**
+ * \internal
+ */
 static struct popup_callback *__popup_callback_init(GObject * object, GebrGuiGtkPopupCallback callback,
 						    gpointer user_data, GtkWidget * event_box)
 {
@@ -71,6 +82,9 @@ static struct popup_callback *__popup_callback_init(GObject * object, GebrGuiGtk
 	return popup_callback;
 }
 
+/**
+ * \internal
+ */
 static gboolean
 __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * event,
 				  struct popup_callback *popup_callback)
@@ -104,6 +118,9 @@ __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * even
 	return TRUE;
 }
 
+/**
+ * \internal
+ */
 static gboolean
 __gtk_widget_on_button_pressed(GtkWidget * widget, GdkEventButton * event, struct popup_callback *popup_callback)
 {
@@ -120,6 +137,9 @@ __gtk_widget_on_button_pressed(GtkWidget * widget, GdkEventButton * event, struc
 	return TRUE;
 }
 
+/**
+ * \internal
+ */
 static void __gtk_widget_on_popup_menu(GtkWidget * widget, struct popup_callback *popup_callback)
 {
 	GtkMenu *menu;
@@ -130,6 +150,9 @@ static void __gtk_widget_on_popup_menu(GtkWidget * widget, struct popup_callback
 	gtk_menu_popup(menu, NULL, NULL, NULL, NULL, 0, gdk_event_get_time(NULL));
 }
 
+/**
+ * \internal
+ */
 static gboolean widget_return_on_key_press_event(GtkWidget * widget, GdkEventKey * event, GtkDialog * dialog)
 {
 	gint response;
@@ -146,6 +169,9 @@ static gboolean widget_return_on_key_press_event(GtkWidget * widget, GdkEventKey
 	return FALSE;
 }
 
+/**
+ * \internal
+ */
 static GList *gebr_gui_gtk_tree_model_path_to_iter_list(GtkTreeModel * model, GList * path_list)
 {
 	GList *iter_list, *i;
@@ -162,11 +188,17 @@ static GList *gebr_gui_gtk_tree_model_path_to_iter_list(GtkTreeModel * model, GL
 	return iter_list;
 }
 
+/**
+ * \internal
+ */
 static void on_gtk_tree_view_row_collapsed(GtkTreeView * tree_view)
 {
 	g_signal_emit_by_name(tree_view, "cursor-changed");
 }
 
+/**
+ * \internal
+ */
 static gboolean on_gtk_tree_view_key_press(GtkTreeView * tree_view, GdkEventKey * event)
 {
 	if (g_unichar_isalpha(gdk_keyval_to_unicode(event->keyval)))
@@ -174,12 +206,18 @@ static gboolean on_gtk_tree_view_key_press(GtkTreeView * tree_view, GdkEventKey 
 	return FALSE;
 }
 
+/**
+ * \internal
+ */
 static void
 on_gtk_tree_view_drag_begin(GtkTreeView * tree_view, GdkDragContext * drag_context, struct reorder_data *data)
 {
 	gebr_gui_gtk_tree_view_get_selected(tree_view, &data->iter);
 }
 
+/**
+ * \internal
+ */
 static gboolean
 on_gtk_tree_view_drag_motion(GtkTreeView * tree_view, GdkDragContext * drag_context, gint x, gint y,
 			     guint time, struct reorder_data *data)
@@ -208,6 +246,9 @@ on_gtk_tree_view_drag_motion(GtkTreeView * tree_view, GdkDragContext * drag_cont
 	return TRUE;
 }
 
+/**
+ * \internal
+ */
 static gboolean gebr_gui_message_dialog_vararg(GtkMessageType type, GtkButtonsType buttons,
 					       const gchar * title, const gchar * message, va_list args)
 {
