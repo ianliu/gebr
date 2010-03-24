@@ -23,6 +23,11 @@
 #include <geoxml.h>
 
 /**
+ * Add \p data to the list of pointer to call #g_free before \p object is freed.
+ */
+void g_object_free_list_add(GObject * object, gpointer data);
+
+/**
  * \deprecated
  *
  * Makes the \p dialog response when pressing Return key.

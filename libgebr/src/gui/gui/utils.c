@@ -234,9 +234,31 @@ static gboolean gebr_gui_message_dialog_vararg(GtkMessageType type, GtkButtonsTy
 	return confirmed;
 }
 
-/*
- * Public functions
- */
+void g_object_free_list_add(GObject * object, gpointer data)
+{
+	GSList *free_list;
+	GWeakNotify weak_notify;
+
+	/**
+	 * \internal
+	 */
+	void g_object_free_list_weak_ref(gpointer data, GObject *object)
+	{
+		GSList *free_list;
+
+		free_list = g_object_get_data(object, "__g_object_free_list");
+		g_slist_foreach(free_list, (GFunc)g_free, NULL);
+		g_slist_free(free_list);
+	}
+
+	free_list = g_object_get_data(object, "__g_object_free_list");
+	free_list = g_slist_prepend(free_list, data);
+	g_object_set_data(object, "__g_object_free_list", free_list);
+
+	weak_notify = g_object_get_data(object, "__g_object_free_list_weak_notify");
+	if (weak_notify == NULL)
+		g_object_weak_ref(object, g_object_free_list_weak_ref, NULL);
+}
 
 void gebr_gui_gtk_dialog_set_response_on_widget_return(GtkDialog * dialog, gint response, GtkWidget * widget)
 {
@@ -656,6 +678,13 @@ void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTree
 	}
 }
 
+typedef void (*GebrGuiGtkTextViewLinkClickCallback)(GtkTextView * text_view, GtkTextTag * tag, const gchar * url);
+
+GtkTextTag *gebr_gui_gtk_text_view_insert_link(GtkTextView * text_view, GtkTextIter * iter, const gchar
+					      * text, const gchar * url)
+{
+}
+
 void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIter * ini, GtkTextIter * end, const gchar
 					      * tooltip)
 {
@@ -689,7 +718,6 @@ void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIt
 	}
 
 	static int tag_count = 0;
-	static gint signal_handler = 0;
 	GtkTextBuffer * buffer;
 	buffer = gtk_text_view_get_buffer(text_view);
 
@@ -701,8 +729,10 @@ void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIt
 	g_object_set_data(G_OBJECT(text_tag), "tooltip", (gpointer)tooltip);
 	gtk_text_buffer_apply_tag(buffer, text_tag, ini, end);
 
+	gint signal_handler = 0;
+	signal_handler = g_signal_handler_find(text_view, G_SIGNAL_MATCH_FUNC, 0, (GQuark)0, NULL, on_text_view_query_tooltip, NULL);
 	if (!signal_handler)
-		signal_handler = g_signal_connect(G_OBJECT(text_view), "query-tooltip", G_CALLBACK(on_text_view_query_tooltip), NULL);
+		g_signal_connect(G_OBJECT(text_view), "query-tooltip", G_CALLBACK(on_text_view_query_tooltip), NULL);
 }
 
 gboolean
