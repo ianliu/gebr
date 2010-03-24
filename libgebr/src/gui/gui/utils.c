@@ -693,31 +693,38 @@ void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTree
 	}
 }
 
-GtkTextTag *gebr_gui_gtk_text_view_insert_link(GtkTextView * text_view, GtkTextIter * iter, const gchar
-					      * text, const gchar * url, GebrGuiGtkTextViewLinkClickCallback callback)
+GtkTextTag *gebr_gui_gtk_text_buffer_create_link_tag(GtkTextBuffer * text_buffer, const gchar * url,
+						     GebrGuiGtkTextViewLinkClickCallback callback, gpointer user_data)
 {
 	/**
 	 * \internal
 	 */
-	gboolean on_tag_event(GtkTextTag *tag, GObject *object, GdkEvent *event, GtkTextIter *iter, GebrGuiGtkTextViewLinkClickCallback callback)
+	gboolean on_tag_event(GtkTextTag *text_tag, GObject *object, GdkEvent *event, GtkTextIter *iter)
 	{
-		if (event->type == GDK_BUTTON_PRESS && event->button.button == 0)
-			callback(GTK_TEXT_VIEW(object), tag, g_object_get_data(G_OBJECT(tag), "url"));
+		if (!(event->type == GDK_BUTTON_PRESS && event->button.button == 1))
+			return FALSE;
+
+		GebrGuiGtkTextViewLinkClickCallback callback;
+		gpointer user_data;
+		callback = (GebrGuiGtkTextViewLinkClickCallback)g_object_get_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_callback");
+		user_data = g_object_get_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_user_data");
+		callback(GTK_TEXT_VIEW(object), text_tag, g_object_get_data(G_OBJECT(text_tag), "url"), user_data);
 
 		return FALSE;
 	}
 
-	GtkTextBuffer * buffer = gtk_text_view_get_buffer(text_view);
-	GtkTextTag *text_tag = gtk_text_buffer_create_tag(buffer, NULL, NULL);
+	GtkTextTag *text_tag = gtk_text_buffer_create_tag(text_buffer, NULL, NULL);
 
 	url = (const gchar*)g_strdup(url);
-	gebr_gui_g_object_set_free_parent(text_view, (gpointer)url);
+	gebr_gui_g_object_set_free_parent(text_tag, (gpointer)url);
 	g_object_set_data(G_OBJECT(text_tag), "url", (gpointer)url);
 
 	/* set appereance */ 
 	g_object_set(G_OBJECT(text_tag), "underline", PANGO_UNDERLINE_SINGLE, "foreground", "blue", NULL);
 
-	g_signal_connect(text_tag, "event", G_CALLBACK(on_tag_event), callback);
+	g_object_set_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_callback", callback);
+	g_object_set_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_user_data", user_data);
+	g_signal_connect(text_tag, "event", G_CALLBACK(on_tag_event), NULL);
 
 	return text_tag;
 }
@@ -764,7 +771,7 @@ void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIt
 	g_string_free(tag_name, TRUE);
 
 	tooltip = (const gchar*)g_strdup(tooltip);
-	gebr_gui_g_object_set_free_parent(text_view, (gpointer)tooltip);
+	gebr_gui_g_object_set_free_parent(text_tag, (gpointer)tooltip);
 	g_object_set_data(G_OBJECT(text_tag), "tooltip", (gpointer)tooltip);
 	gtk_text_buffer_apply_tag(buffer, text_tag, ini, end);
 

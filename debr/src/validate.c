@@ -50,10 +50,6 @@ static void validate_set_selected(GtkTreeIter * iter);
 static void validate_clicked(void);
 static void validate_do(struct validate *validate);
 
-/*
- * Public functions.
- */
-
 void validate_setup_ui(void)
 {
 	GtkWidget *hpanel;
@@ -174,10 +170,6 @@ void validate_clear(void)
 	}
 }
 
-/*
- * Private functions.
- */
-
 /**
  * \internal
  * Frees \p validate its iter and interface.
@@ -293,6 +285,29 @@ static void validate_append_text_with_tag(struct validate *validate, GtkTextTag 
 
 /**
  * \internal
+ */
+static void validate_parse_link_click_callback(GtkTextView * text_view, GtkTextTag * tag, const gchar * url, struct validate *validate)
+{
+	puts(url);
+}
+
+/**
+ * \internal
+ * Appends text to \p validate's text buffer referencing \p url.
+ */
+static GtkTextTag *
+validate_append_link(struct validate *validate, const gchar *text, const gchar *url) 
+{
+	GtkTextTag *tag;
+
+	tag = gebr_gui_gtk_text_buffer_create_link_tag(validate->text_buffer, url, (GebrGuiGtkTextViewLinkClickCallback)validate_parse_link_click_callback, validate);
+	validate_append_text_with_tag(validate, tag, text);
+
+	return tag;
+}
+
+/**
+ * \internal
  * Appends \p text into validate log with pair of style/values, as seen in #GtkTextTag properties.
  *
  * \see GtkTextTag
@@ -361,6 +376,9 @@ static void validate_append_text_error(struct validate *validate, const gchar * 
 	validate_append_text_with_property_list(validate, string, "foreground", "#ff0000", NULL);
 	va_end(argp);
 	g_free(string);
+
+	validate_append_text(validate, " ");
+	validate_append_link(validate, _("Fix"), "teste");
 }
 
 /**
