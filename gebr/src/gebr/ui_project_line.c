@@ -184,6 +184,14 @@ struct ui_project_line *project_line_setup_ui(void)
 	return ui_project_line;
 }
 
+void project_line_new()
+{
+	if (!project_line_get_selected(NULL, ProjectLineSelection))
+		project_new();
+	else
+		line_new();
+}
+
 void project_line_info_update(void)
 {
 	gchar *markup;
@@ -587,6 +595,8 @@ void project_line_export(void)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box), TRUE);
 	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), extension);
+	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(chooser_dialog),
+					  gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.project_line)));
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(chooser_dialog), check_box);
 
@@ -770,11 +780,22 @@ static void project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath *
 					  GtkTreeViewColumn * column, struct ui_project_line *ui)
 {
 	GtkTreeIter iter;
+
 	project_line_get_selected(&iter, DontWarnUnselection);
+
 	if (gtk_tree_store_iter_depth(ui->store, &iter) == 0) {
-		gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(ui->view), &iter);
+		GtkTreePath *path;
+		path = gtk_tree_model_get_path(GTK_TREE_MODEL(ui->store), &iter);
+
+		if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(ui->view), path)) {
+			gtk_tree_view_collapse_row(GTK_TREE_VIEW(ui->view), path);
+		} else {
+			gtk_tree_view_expand_row(GTK_TREE_VIEW(ui->view), path, FALSE);
+		}
+		gtk_tree_path_free(path);
 		return;
 	}
+
 	gebr.config.current_notebook = 1;
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
 }

@@ -54,7 +54,7 @@ gboolean parameter_group_dialog_setup_ui(void)
 
 	GtkWidget *label_label;
 	GtkWidget *label_entry;
-	GtkWidget *instanciable_label;
+	GtkWidget *instantiable_label;
 	GtkWidget *instanciable_check_button;
 	GtkWidget *instances_label;
 	GtkWidget *instances_spin_button;
@@ -120,20 +120,22 @@ gboolean parameter_group_dialog_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(expanded_label), 0, 0.5);
 
 	expanded_check_button = gtk_check_button_new();
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(expanded_check_button), gebr_geoxml_parameter_group_get_expand(parameter_group));
 	gtk_widget_show(expanded_check_button);
 	gtk_table_attach(GTK_TABLE(table), expanded_check_button, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
 
 	/*
-	 * Instanciable
+	 * Instantiable
 	 */
-	instanciable_label = gtk_label_new(_("Instanciable:"));
-	gtk_widget_show(instanciable_label);
-	gtk_table_attach(GTK_TABLE(table), instanciable_label, 0, 1, row, row + 1,
+	instantiable_label = gtk_label_new(_("Instantiable:"));
+	gtk_widget_show(instantiable_label);
+	gtk_table_attach(GTK_TABLE(table), instantiable_label, 0, 1, row, row + 1,
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	gtk_misc_set_alignment(GTK_MISC(instanciable_label), 0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(instantiable_label), 0, 0.5);
 
 	instanciable_check_button = gtk_check_button_new();
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(instanciable_check_button), gebr_geoxml_parameter_group_get_is_instanciable(parameter_group));
 	gtk_widget_show(instanciable_check_button);
 	gtk_table_attach(GTK_TABLE(table), instanciable_check_button, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
@@ -262,10 +264,10 @@ static void parameter_group_instances_setup_ui(struct ui_parameter_group_dialog 
 		for (j = 0; parameter != NULL; ++j, gebr_geoxml_sequence_next(&parameter)) {
 			struct gebr_gui_parameter_widget *widget;
 
-			if (exclusive == NULL)
-				label_widget =
-				    gtk_label_new(gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)));
-			else {
+			if (exclusive == NULL){
+				label_widget = gtk_label_new(gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)));
+				gtk_misc_set_alignment(GTK_MISC(label_widget), 0, 0.5);
+			} else {
 				label_widget =
 				    gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(label_widget),
 										gebr_geoxml_parameter_get_label
@@ -276,7 +278,6 @@ static void parameter_group_instances_setup_ui(struct ui_parameter_group_dialog 
 						 G_CALLBACK(on_parameter_group_exclusive_toggled), ui);
 				g_object_set(label_widget, "user-data", parameter, NULL);
 			}
-			gtk_misc_set_alignment(GTK_MISC(label_widget), 0, 0.5);
 			gtk_widget_show(label_widget);
 			gtk_table_attach(GTK_TABLE(table), label_widget, 0, 1, j, j + 1,
 					 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);

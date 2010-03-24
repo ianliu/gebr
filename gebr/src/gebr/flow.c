@@ -49,6 +49,7 @@ gboolean flow_new(void)
 	const gchar *line_filename;
 
 	GebrGeoXmlFlow *flow;
+	GebrGeoXmlSequence *line_flow;
 
 	if (!project_line_get_selected(NULL, LineSelection))
 		return FALSE;
@@ -74,6 +75,10 @@ gboolean flow_new(void)
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(flow));
 
 	flow_browse_select_iter(&iter);
+
+	gebr_geoxml_line_get_flow(gebr.line, &line_flow, gebr_gui_gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
+	gtk_list_store_set(gebr.ui_flow_browse->store, &iter, FB_LINE_FLOW_POINTER, line_flow, -1);
+
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'."), line_title);
 	if (!on_document_properties_activate())
 		flow_delete(FALSE);
@@ -238,6 +243,7 @@ void flow_export(void)
 	check_box = gtk_check_button_new_with_label(_("Make this flow user-independent."));
 	chooser_dialog = gebr_gui_save_dialog_new(title->str, GTK_WINDOW(gebr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".flw");
+	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(chooser_dialog), flow_filename);
 
 	file_filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(file_filter, _("Flow files (*.flw)"));

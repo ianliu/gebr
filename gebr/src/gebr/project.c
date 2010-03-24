@@ -44,7 +44,7 @@ void project_new(void)
 	gebr_geoxml_document_set_title(project, _("New project"));
 	gebr_geoxml_document_set_author(project, gebr.config.username->str);
 	gebr_geoxml_document_set_email(project, gebr.config.email->str);
-	project_append_iter(GEBR_GEOXML_PROJECT(project));
+	iter = project_append_iter(GEBR_GEOXML_PROJECT(project));
 	document_save(project, TRUE);
 	gebr_geoxml_document_free(project);
 
