@@ -15,7 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-SUBDIRS = data src packages po doc
+if ENABLE_TESTS
+TESTSDIR=tests
+endif
+SUBDIRS = data src packages po doc ${TESTDIR}
 
 desktopdir = $(datadir)/applications
 desktop_DATA = debr.desktop
