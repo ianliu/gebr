@@ -108,6 +108,8 @@ gboolean debr_config_load(void)
 	debr.config.key_file = g_key_file_new();
 	g_key_file_load_from_file(debr.config.key_file, debr.config.path->str, G_KEY_FILE_NONE, &error);
 
+	debr.config.opened_folders = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal,
+							   (GDestroyNotify)g_free, NULL);
 	debr.config.name = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "name", g_get_real_name());
 	debr.config.email =
 	    gebr_g_key_file_load_string_key(debr.config.key_file, "general", "email", g_get_user_name());

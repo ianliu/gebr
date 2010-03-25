@@ -68,6 +68,8 @@ static gboolean menu_on_query_tooltip(GtkTreeView * tree_view, GtkTooltip * tool
 
 static gboolean menu_is_path_loaded(const gchar * path, GtkTreeIter * iter);
 
+static gboolean menu_get_folder_iter_from_path(const gchar * path, GtkTreeIter * iter_);
+
 /*
  * Public functions
  */
@@ -1283,25 +1285,11 @@ gint menu_get_n_menus()
 void menu_path_get_parent(const gchar * path, GtkTreeIter * parent)
 {
 	gchar *dirname;
-	GtkTreeIter iter;
 
 	dirname = g_path_get_dirname(path);
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
-		gchar *dirpath;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_PATH, &dirpath, -1);
-		if (!dirpath)
-			continue;
-
-		if (strcmp(dirpath, dirname) == 0) {
-			*parent = iter;
-			g_free(dirpath);
-			goto out;
-		}
-		g_free(dirpath);
-	}
-	*parent = debr.ui_menu.iter_other;
- out:	g_free(dirname);
+	if (!menu_get_folder_iter_from_path(dirname, parent))
+		*parent = debr.ui_menu.iter_other;
+	g_free(dirname);
 }
 
 glong menu_count_unsaved()
@@ -1368,6 +1356,89 @@ void menu_archive(void) {
 
 	if (menu_get_selected(&iter, FALSE))
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_STATUS, &debr.menu_recovery.status, -1);
+}
+
+gboolean menu_open_folder(const gchar * path)
+{
+	GtkTreeIter iter;
+	GString *menu_path;
+	gchar *dirname;
+	gchar *dname;
+	gchar *filename;
+
+	if (g_hash_table_lookup_extended(debr.config.opened_folders, path, NULL, NULL))
+		return TRUE;
+
+	dname = g_path_get_basename(path);
+	dirname = g_markup_printf_escaped("%s", dname);
+
+	gtk_tree_store_append(debr.ui_menu.model, &iter, NULL);
+	gtk_tree_store_set(debr.ui_menu.model, &iter,
+			   MENU_IMAGE, GTK_STOCK_DIRECTORY,
+			   MENU_FILENAME, dirname,
+			   MENU_PATH, path,
+			   -1);
+
+	menu_path = g_string_new(NULL);
+	gebr_directory_foreach_file(filename, path) {
+		if (fnmatch("*.mnu", filename, 1))
+			continue;
+
+		g_string_printf(menu_path, "%s/%s", path, filename);
+		menu_open_with_parent(menu_path->str, &iter, FALSE);
+	}
+
+	g_string_free(menu_path, TRUE);
+	g_free(dirname);
+	g_free(dname);
+
+	return TRUE;
+}
+
+void menu_close_folder(GtkTreeIter * iter)
+{
+	gboolean valid;
+	GtkTreeIter parent;
+	GtkTreeIter child;
+	GList *rows = NULL;
+	gchar *path;
+
+	if (menu_get_type(iter) != ITER_FOLDER)
+		return;
+
+	valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, &parent);
+	while (valid) {
+		GtkTreePath *tree_path;
+		tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_menu.model), &child);
+		rows = g_list_prepend(rows, gtk_tree_row_reference_new(GTK_TREE_MODEL(debr.ui_menu.model), tree_path));
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);
+		gtk_tree_path_free(tree_path);
+	}
+
+	GList *rows_iter = rows;
+	while (rows_iter) {
+		GtkTreePath *tree_path;
+		tree_path = gtk_tree_row_reference_get_path((GtkTreeRowReference*)(rows_iter->data));
+		gtk_tree_model_get_iter(GTK_TREE_MODEL(debr.ui_menu.model), &child, tree_path);
+		menu_close(&child);
+		rows_iter = rows_iter->next;
+		gtk_tree_path_free(tree_path);
+		gtk_tree_row_reference_free((GtkTreeRowReference*)(rows_iter->data));
+	}
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_PATH, &path, -1);
+	g_hash_table_remove(debr.config.opened_folders, path);
+	gtk_tree_store_remove(debr.ui_menu.model, &parent);
+
+	g_list_free(rows);
+	g_free(path);
+}
+
+void menu_close_folder_from_path(const gchar * path)
+{
+	GtkTreeIter iter;
+	if (menu_get_folder_iter_from_path(path, &iter))
+		menu_close_folder(&iter);
 }
 
 /*
@@ -1688,3 +1759,24 @@ static gboolean menu_is_path_loaded(const gchar * path, GtkTreeIter * iter)
 	return valid;
 }
 
+
+static gboolean menu_get_folder_iter_from_path(const gchar * path, GtkTreeIter * iter_)
+{
+	GtkTreeIter iter;
+
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
+		gchar *dirpath;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_PATH, &dirpath, -1);
+		if (!dirpath)
+			continue;
+
+		if (strcmp(dirpath, path) == 0) {
+			*iter_ = iter;
+			g_free(dirpath);
+			return TRUE;
+		}
+		g_free(dirpath);
+	}
+	return FALSE;
+}
