@@ -86,10 +86,6 @@ static gchar * js_start_inline_editing = \
 		"}"
 		"return head;"
 	"}"
-	"function IsElementEditable(elt) {"
-		"return (elt.nodeName.toLowerCase() == 'div'"
-			"&& elt.className.indexOf('content') != -1);"
-	"}"
 	"function UpdateDocumentClone() {"
 		"editor.updateElement();"
 		"var content = GetEditableElements(document_clone)[0];"
@@ -141,7 +137,7 @@ static gchar * js_start_inline_editing = \
 			"var anchor = 'header_' + i;"
 			"var link = doc.createElement('a');"
 			"link.setAttribute('href', '#' + anchor);"
-			"link.appendChild(headers[i].cloneNode(true));"
+			"link.innerHTML = headers[i].innerHTML;"
 			"var li = doc.createElement('li');"
 			"li.appendChild(link);"
 			"navlist.appendChild(li);"
@@ -248,6 +244,7 @@ static void help_edit_save(struct help_edit_data * data)
 
 	var_help = g_string_new(
 			"(function(){"
+				"editor.resetDirty();"
 				"UpdateDocumentClone();"
 				"if (menu_edition) {"
 					"GenerateNavigationIndex(document);"
