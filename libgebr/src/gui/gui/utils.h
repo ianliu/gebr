@@ -300,6 +300,12 @@ typedef void (*GebrGuiGtkTextViewLinkClickCallback)(GtkTextView * text_view, Gtk
 GtkTextTag *gebr_gui_gtk_text_buffer_create_link_tag(GtkTextBuffer * text_buffer, const gchar * url,
 						     GebrGuiGtkTextViewLinkClickCallback callback, gpointer user_data);
 
+
+/**
+ * Create a mark before the after the last caracter
+ */
+GtkTextMark *gebr_gui_gtk_text_buffer_create_mark_before_last_char(GtkTextBuffer * text_buffer);
+
 /**
  * Sets a \p tooltip for text between \p ini and \p end.
  * You should take care to free \p toolip.

@@ -231,16 +231,31 @@ static void show_program_parameter(struct validate *validate, GebrGeoXmlProgramP
 
 #define VALID		TRUE
 #define INVALID		FALSE
-enum VALIDATE_FLAGS {
-	EMPTY = 1 << 0,
-	CAPIT = 1 << 1,
-	NOBLK = 1 << 2,
-	MTBLK = 1 << 3,
-	NOPNT = 1 << 4,
-	EMAIL = 1 << 5,
-	FILEN = 1 << 6,
-	LABEL_HOTKEY = 1 << 7,
+enum ValidateFlags {
+	VALIDATE_EMPTY = 1 << 0,
+	VALIDATE_CAPIT = 1 << 1,
+	VALIDATE_NOBLK = 1 << 2,
+	VALIDATE_MTBLK = 1 << 3,
+	VALIDATE_NOPNT = 1 << 4,
+	VALIDATE_EMAIL = 1 << 5,
+	VALIDATE_FILEN = 1 << 6,
+	VALIDATE_LABEL_HOTKEY = 1 << 7,
 };
+
+/**
+ * \internal
+ */
+static void
+validate_insert_text_valist(struct validate *validate, GtkTextTag * text_tag, GtkTextIter * iter, const gchar * format, va_list argp)
+{
+	if (format == NULL)
+		return;
+
+	gchar *string;
+	string = g_strdup_vprintf(format, argp);
+	gtk_text_buffer_insert_with_tags(validate->text_buffer, iter, string, -1, text_tag, NULL);
+	g_free(string);
+}
 
 /**
  * \internal
@@ -256,16 +271,8 @@ static void
 validate_append_text_valist(struct validate *validate, GtkTextTag * text_tag, const gchar * format, va_list argp)
 {
 	GtkTextIter iter;
-	gchar *string;
-
-	if (format == NULL)
-		return;
-	string = g_strdup_vprintf(format, argp);
-
 	gtk_text_buffer_get_end_iter(validate->text_buffer, &iter);
-	gtk_text_buffer_insert_with_tags(validate->text_buffer, &iter, string, -1, text_tag, NULL);
-
-	g_free(string);
+	validate_insert_text_valist(validate, text_tag, &iter, format, argp);
 }
 
 /**
@@ -286,9 +293,35 @@ static void validate_append_text_with_tag(struct validate *validate, GtkTextTag 
 /**
  * \internal
  */
-static void validate_parse_link_click_callback(GtkTextView * text_view, GtkTextTag * tag, const gchar * url, struct validate *validate)
+static void validate_parse_link_click_callback(GtkTextView * text_view, GtkTextTag * link_tag, const gchar * url, struct validate *validate)
 {
-	puts(url);
+	if (g_str_has_prefix(url, "fix/")) {
+		GtkTextIter start_iter;
+		GtkTextIter end_iter;
+		GtkTextMark *start_mark;
+		GtkTextMark *end_mark;
+		GtkTextMark *link_start_mark;
+		GtkTextMark *link_end_mark;
+		gint fix_flags;
+
+		link_start_mark = g_object_get_data(G_OBJECT(link_tag), "link_start_mark");
+		link_end_mark = g_object_get_data(G_OBJECT(link_tag), "link_end_mark");
+		start_mark = g_object_get_data(G_OBJECT(link_tag), "error_start_mark");
+		end_mark = g_object_get_data(G_OBJECT(link_tag), "error_end_mark");
+
+		sscanf(url, "fix/%d", &fix_flags);
+
+		gtk_text_buffer_get_iter_at_mark(validate->text_buffer, &start_iter, link_start_mark);
+		gtk_text_buffer_get_iter_at_mark(validate->text_buffer, &end_iter, link_end_mark);
+		gtk_text_buffer_delete(validate->text_buffer, &start_iter, &end_iter);
+
+		gtk_text_buffer_get_iter_at_mark(validate->text_buffer, &start_iter, start_mark);
+		gtk_text_buffer_get_iter_at_mark(validate->text_buffer, &end_iter, end_mark);
+		gtk_text_buffer_delete(validate->text_buffer, &start_iter, &end_iter);
+		gtk_text_buffer_get_iter_at_mark(validate->text_buffer, &start_iter, start_mark);
+		gtk_text_buffer_insert(validate->text_buffer, &start_iter, "abc", 3);
+	} else if (g_str_has_prefix(url, "edit/")) {
+	}
 }
 
 /**
@@ -365,20 +398,55 @@ static void validate_append_text(struct validate *validate, const gchar * format
 /**
  * \internal
  * Appends \p format into \p validate buffer, indicating error (by setting the text color to red).
+ * If \p fix_flags in non-zero then add a fix link after text.
+ * If \p edit_id is non-zero the add an edit link after text.
  */
-static void validate_append_text_error(struct validate *validate, const gchar * format, ...)
+static void validate_append_text_error(struct validate *validate, gint fix_flags, const gchar * edit_id, const gchar * format, ...)
 {
+	GtkTextMark *start_mark;
+	GtkTextMark *end_mark;
+	GtkTextMark *link_start_mark;
+	GtkTextMark *link_end_mark;
+
+	if (fix_flags)
+		start_mark = gebr_gui_gtk_text_buffer_create_mark_before_last_char(validate->text_buffer);
+
 	gchar *string;
 	va_list argp;
-
 	va_start(argp, format);
 	string = g_strdup_vprintf(format, argp);
 	validate_append_text_with_property_list(validate, string, "foreground", "#ff0000", NULL);
 	va_end(argp);
 	g_free(string);
 
-	validate_append_text(validate, " ");
-	validate_append_link(validate, _("Fix"), "teste");
+	if (fix_flags)
+		end_mark = gebr_gui_gtk_text_buffer_create_mark_before_last_char(validate->text_buffer);
+
+	if (fix_flags) {
+		GtkTextTag *link_tag;
+		GString *string = g_string_new(NULL);
+		g_string_printf(string, "fix/%d", fix_flags);
+
+		link_start_mark = gebr_gui_gtk_text_buffer_create_mark_before_last_char(validate->text_buffer);
+		validate_append_text(validate, " ");
+		link_tag = validate_append_link(validate, _("Fix"), string->str);
+		link_end_mark = gebr_gui_gtk_text_buffer_create_mark_before_last_char(validate->text_buffer);
+
+		g_object_set_data(G_OBJECT(link_tag), "link_start_mark", link_start_mark);
+		g_object_set_data(G_OBJECT(link_tag), "link_end_mark", link_end_mark);
+		g_object_set_data(G_OBJECT(link_tag), "error_start_mark", start_mark);
+		g_object_set_data(G_OBJECT(link_tag), "error_end_mark", end_mark);
+		g_string_free(string, TRUE);
+	}
+	if (edit_id) {
+		GString *string = g_string_new(NULL);
+		g_string_printf(string, "edit/%s", edit_id);
+
+		validate_append_text(validate, " ");
+		validate_append_link(validate, _("Edit"), string->str);
+		
+		g_string_free(string, TRUE);
+	}
 }
 
 /**
@@ -427,50 +495,50 @@ static void validate_do(struct validate *validate)
 	if (filename || all)
 		validate_append_item_with_check(validate, _("Filename:      "),
 						gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(validate->menu)),
-						NOBLK | MTBLK | FILEN);
+						VALIDATE_NOBLK | VALIDATE_MTBLK | VALIDATE_FILEN);
 	if (title || all)
 		validate_append_item_with_check(validate, _("Title:         "),
 						gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(validate->menu)),
-						EMPTY | NOBLK | NOPNT | MTBLK);
+						VALIDATE_EMPTY | VALIDATE_NOBLK | VALIDATE_NOPNT | VALIDATE_MTBLK);
 	if (desc || all)
 		validate_append_item_with_check(validate, _("Description:   "),
 						gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT
 										     (validate->menu)),
-						EMPTY | CAPIT | NOBLK | MTBLK | NOPNT);
+						VALIDATE_EMPTY | VALIDATE_CAPIT | VALIDATE_NOBLK | VALIDATE_MTBLK | VALIDATE_NOPNT);
 	if (author || all) {
 		validate_append_item(validate, _("Author:        "));
 		validate_append_check(validate, gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(validate->menu)),
-				      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT, " <");
+				      VALIDATE_EMPTY | VALIDATE_CAPIT | VALIDATE_NOBLK | VALIDATE_MTBLK | VALIDATE_NOPNT, " <");
 		validate_append_check(validate, gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(validate->menu)),
-				      EMAIL, ">");
+				      VALIDATE_EMAIL, ">");
 		validate_append_text(validate, "\n");
 	}
 	if (dates || all) {
 		validate_append_item_with_check(validate, _("Created:       "),
 						gebr_localized_date(gebr_geoxml_document_get_date_created
-								    (GEBR_GEOXML_DOCUMENT(validate->menu))), EMPTY);
+								    (GEBR_GEOXML_DOCUMENT(validate->menu))), VALIDATE_EMPTY);
 		validate_append_item_with_check(validate, _("Modified:      "),
 						gebr_localized_date(gebr_geoxml_document_get_date_modified
-								    (GEBR_GEOXML_DOCUMENT(validate->menu))), EMPTY);
+								    (GEBR_GEOXML_DOCUMENT(validate->menu))), VALIDATE_EMPTY);
 	}
 	if (mhelp || all) {
 		validate_append_item(validate, _("Help:          "));
 		if (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(validate->menu))) >= 1)
 			validate_append_text(validate, _("Defined"));
 		else
-			validate_append_check(validate, "", EMPTY, "");
+			validate_append_check(validate, "", VALIDATE_EMPTY, "");
 		validate_append_text(validate, "\n");
 	}
 	if (category || all) {
 		gebr_geoxml_flow_get_category(validate->menu, &seq, 0);
 		if (seq == NULL)
-			validate_append_item_with_check(validate, _("Category:      "), "", EMPTY);
+			validate_append_item_with_check(validate, _("Category:      "), "", VALIDATE_EMPTY);
 		else
 			for (; seq != NULL; gebr_geoxml_sequence_next(&seq))
 				validate_append_item_with_check(validate, _("Category:      "),
 								gebr_geoxml_value_sequence_get
 								(GEBR_GEOXML_VALUE_SEQUENCE(seq)),
-								EMPTY | CAPIT | NOBLK | MTBLK | NOPNT);
+								VALIDATE_EMPTY | VALIDATE_CAPIT | VALIDATE_NOBLK | VALIDATE_MTBLK | VALIDATE_NOPNT);
 	}
 
 	if (!progs && !all && !params)
@@ -489,10 +557,10 @@ static void validate_do(struct validate *validate)
 		validate_append_text_emph(validate, _("\n>>Program:     "));
 		validate_append_text(validate, "%d\n", i + 1);
 		validate_append_item_with_check(validate, _("  Title:       "),
-						gebr_geoxml_program_get_title(prog), EMPTY | NOBLK | MTBLK);
+						gebr_geoxml_program_get_title(prog), VALIDATE_EMPTY | VALIDATE_NOBLK | VALIDATE_MTBLK);
 		validate_append_item_with_check(validate, _("  Description: "),
 						gebr_geoxml_program_get_description(prog),
-						EMPTY | CAPIT | NOBLK | MTBLK | NOPNT);
+						VALIDATE_EMPTY | VALIDATE_CAPIT | VALIDATE_NOBLK | VALIDATE_MTBLK | VALIDATE_NOPNT);
 
 		validate_append_text_emph(validate, _("  In/out/err:  "));
 		validate_append_text(validate, "%s/%s/%s\n",
@@ -501,16 +569,16 @@ static void validate_do(struct validate *validate)
 				     gebr_geoxml_program_get_stdin(prog) ? _("Append") : _("Ignore"));
 
 		validate_append_item_with_check(validate, _("  Binary:      "),
-						gebr_geoxml_program_get_binary(prog), EMPTY);
+						gebr_geoxml_program_get_binary(prog), VALIDATE_EMPTY);
                 validate_append_item_with_check(validate, _("  Version:     "),
-						gebr_geoxml_program_get_version(prog), EMPTY);
+						gebr_geoxml_program_get_version(prog), VALIDATE_EMPTY);
                 validate_append_item_with_check(validate, _("  URL:         "),
-						gebr_geoxml_program_get_url(prog), EMPTY);
+						gebr_geoxml_program_get_url(prog), VALIDATE_EMPTY);
 		validate_append_item(validate, _("  Help:        "));
 		if (strlen(gebr_geoxml_program_get_help(prog)) >= 1)
 			validate_append_text(validate, _("Defined"));
 		else
-			validate_append_check(validate, "", EMPTY, "");
+			validate_append_check(validate, "", VALIDATE_EMPTY, "");
 		validate_append_text(validate, "\n");
 
 		if (params || all) {
@@ -644,32 +712,32 @@ static void validate_append_check(struct validate *validate, const gchar * value
 	gboolean result = VALID;
 	va_list argp;
 
-	if (flags & EMPTY)
+	if (flags & VALIDATE_EMPTY)
 		result = result && check_is_not_empty(value);
-	if (flags & CAPIT)
+	if (flags & VALIDATE_CAPIT)
 		result = result && check_no_lower_case(value);
-	if (flags & NOBLK)
+	if (flags & VALIDATE_NOBLK)
 		result = result && check_no_blanks_at_boundaries(value);
-	if (flags & MTBLK)
+	if (flags & VALIDATE_MTBLK)
 		result = result && check_no_multiple_blanks(value);
-	if (flags & NOPNT)
+	if (flags & VALIDATE_NOPNT)
 		result = result && check_no_punctuation_at_end(value);
-	if (flags & EMAIL)
+	if (flags & VALIDATE_EMAIL)
 		result = result && check_is_email(value);
-	if (flags & FILEN)
+	if (flags & VALIDATE_FILEN)
 		result = result && check_menu_filename(value);
 
 	if (result)
 		validate_append_text(validate, value);
 	else {
 		if (check_is_not_empty(value))
-			validate_append_text_error(validate, "%s", value);
+			validate_append_text_error(validate, VALIDATE_EMPTY, NULL, "%s", value);
 		else
-			validate_append_text_error(validate, _("UNSET"));
+			validate_append_text_error(validate, VALIDATE_EMPTY, NULL, _("UNSET"));
 		validate->error_count++;
 	}
 
-	if (flags & LABEL_HOTKEY) {
+	if (flags & VALIDATE_LABEL_HOTKEY) {
 		gchar * underscore;
 
 		underscore = (gchar*)value;
@@ -701,7 +769,7 @@ static void validate_append_check(struct validate *validate, const gchar * value
 			uppercase = g_utf8_strup(hotkey, length);
 			if (g_hash_table_lookup(validate->hotkey_table, uppercase)) {
 				g_string_printf(label_ext, " (Alt+%s%s)", uppercase, _(", already used above"));
-				validate_append_text_error(validate, label_ext->str);
+				validate_append_text_error(validate, VALIDATE_EMPTY, NULL, label_ext->str);
 				++validate->error_count;
 				result = INVALID;
 			} else
@@ -732,7 +800,7 @@ static void show_program_parameter(struct validate *validate, GebrGeoXmlProgramP
 		validate_append_text(validate, "    %2d: ", ipar);
 
 	label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp));
-	validate_append_check(validate, label, EMPTY | CAPIT | NOBLK | MTBLK | NOPNT | LABEL_HOTKEY, "\n");
+	validate_append_check(validate, label, VALIDATE_EMPTY | VALIDATE_CAPIT | VALIDATE_NOBLK | VALIDATE_MTBLK | VALIDATE_NOPNT | VALIDATE_LABEL_HOTKEY, "\n");
 
 	validate_append_text(validate, "        ");
 	if (isubpar)
@@ -745,7 +813,7 @@ static void show_program_parameter(struct validate *validate, GebrGeoXmlProgramP
 	validate_append_text(validate, "] ");
 
 	validate_append_text(validate, "'");
-	validate_append_check(validate, gebr_geoxml_program_parameter_get_keyword(pp), EMPTY, "'");
+	validate_append_check(validate, gebr_geoxml_program_parameter_get_keyword(pp), VALIDATE_EMPTY, "'");
 
 	default_value = gebr_geoxml_program_parameter_get_string_value(pp, TRUE);
 	if (default_value->len)
@@ -770,7 +838,7 @@ static void show_program_parameter(struct validate *validate, GebrGeoXmlProgramP
 					     gebr_geoxml_program_parameter_get_list_separator
 					     (GEBR_GEOXML_PROGRAM_PARAMETER(pp)));
 		else {
-			validate_append_text_error(validate, _(" (missing entries' separator)"));
+			validate_append_text_error(validate, VALIDATE_EMPTY, NULL, _(" (missing entries' separator)"));
 			validate->error_count++;
 		}
 	}
@@ -785,7 +853,7 @@ static void show_program_parameter(struct validate *validate, GebrGeoXmlProgramP
 		gebr_geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
 
 		if (enum_option == NULL) {
-			validate_append_text_error(validate, _("\n        missing options"));
+			validate_append_text_error(validate, VALIDATE_EMPTY, NULL, _("\n        missing options"));
 			validate->error_count++;
 		}
 
@@ -818,7 +886,7 @@ static void show_parameter(struct validate *validate, GebrGeoXmlParameter * para
 
 		validate_append_text(validate, "    %2d: ", ipar);
 		validate_append_check(validate, gebr_geoxml_parameter_get_label(parameter),
-				      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT | LABEL_HOTKEY, NULL);
+				      VALIDATE_EMPTY | VALIDATE_CAPIT | VALIDATE_NOBLK | VALIDATE_MTBLK | VALIDATE_NOPNT | VALIDATE_LABEL_HOTKEY, NULL);
 
 		if (gebr_geoxml_parameter_group_get_is_instanciable(GEBR_GEOXML_PARAMETER_GROUP(parameter)))
 			validate_append_text(validate, _("   [Instanciable]\n"));

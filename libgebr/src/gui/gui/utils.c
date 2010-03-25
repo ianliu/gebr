@@ -729,6 +729,18 @@ GtkTextTag *gebr_gui_gtk_text_buffer_create_link_tag(GtkTextBuffer * text_buffer
 	return text_tag;
 }
 
+GtkTextMark *gebr_gui_gtk_text_buffer_create_mark_before_last_char(GtkTextBuffer * text_buffer)
+{
+	GtkTextMark *end_mark;
+	GtkTextIter iter;
+
+	gtk_text_buffer_get_end_iter(text_buffer, &iter);
+	gtk_text_buffer_get_iter_at_offset(text_buffer, &iter, gtk_text_iter_get_offset(&iter));
+	end_mark = gtk_text_buffer_create_mark(text_buffer, NULL, &iter, TRUE);
+	
+	return end_mark;
+}
+
 void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIter * ini, GtkTextIter * end, const gchar
 					      * tooltip)
 {
