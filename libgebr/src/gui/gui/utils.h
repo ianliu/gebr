@@ -23,6 +23,11 @@
 #include <geoxml.h>
 
 /**
+ * Add \p data to the list of pointer to call #g_free before \p object is freed.
+ */
+void g_object_free_list_add(GObject * object, gpointer data);
+
+/**
  * \deprecated
  *
  * Makes the \p dialog response when pressing Return key.
@@ -280,7 +285,23 @@ void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTree
 	     
 
 /**
+ */
+typedef void (*GebrGuiGtkTextViewLinkClickCallback)(GtkTextView * text_view, GtkTextTag * tag, const gchar * url);
+
+/**
+ * Inserts \p text with reference \p url.
+ * When it is clicked \p callback is called
+ * You should take care to free \p url.
+ * Returns the tag used.
+ *
+ * \see GebrGuiGtkTextViewLinkClickCallback
+ */
+GtkTextTag *gebr_gui_gtk_text_view_insert_link(GtkTextView * text_view, GtkTextIter * iter, const gchar
+					      * text, const gchar * url, GebrGuiGtkTextViewLinkClickCallback callback);
+
+/**
  * Sets a \p tooltip for text between \p ini and \p end.
+ * You should take care to free \p toolip.
  */
 void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIter * ini, GtkTextIter * end,
 					      const gchar * tooltip);
