@@ -42,11 +42,36 @@
 void on_new_activate(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
-	case NOTEBOOK_PAGE_PROJECT_LINE:
-		project_line_new();
-		break;
 	case NOTEBOOK_PAGE_FLOW_BROWSE:
 		flow_new();
+		break;
+	default:
+		break;
+	}
+}
+
+/**
+ * \internal
+ */
+void on_new_project_activate(void)
+{
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+	case NOTEBOOK_PAGE_PROJECT_LINE:
+		project_new();
+		break;
+	default:
+		break;
+	}
+}
+
+/**
+ * \internal
+ */
+void on_new_line_activate(void)
+{
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+	case NOTEBOOK_PAGE_PROJECT_LINE:
+		line_new();
 		break;
 	default:
 		break;
