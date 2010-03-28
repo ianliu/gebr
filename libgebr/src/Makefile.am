@@ -22,11 +22,11 @@ pkgconfig_DATA = gebr.pc
 
 lib_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES = libgebr.c \
-	date.c log.c utils.c
+	date.c log.c utils.c validate.c
 
 libgebrincludedir = $(includedir)/libgebr
 libgebrinclude_HEADERS = libgebr.h \
-	intl.h date.h log.h utils.h
+	intl.h date.h log.h utils.h validate.h
 noinst_HEADERS = defines.h
 
 EXTRA_DIST = ${pkgconfig_DATA} $(noinst_HEADERS)

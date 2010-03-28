@@ -1,8 +1,3 @@
-/**
- * @file menu.h DeBR Menu API
- * @ingroup debr
- */
-
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -18,6 +13,11 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @file menu.h DeBR Menu API
+ * @ingroup debr
  */
 
 #ifndef __MENU_H
@@ -90,7 +90,6 @@ struct ui_menu {
 		GtkWidget *category_label;
 		GtkWidget *categories_label[3];
 		GtkWidget *help_button;
-
 	} details;
 };
 
@@ -320,4 +319,12 @@ void menu_replace(void);
  * Could be restored by \ref menu_replace 
  */
 void menu_archive(void);
+
+/**
+ * Select program at \p program_path_string and parameter \p parameter_path_string
+ * of current menu.
+ * If \p parameter_path_string is NULL only select program.
+ */
+void menu_select_program_and_paramater(const gchar *program_path_string, const gchar *parameter_path_string);
+
 #endif				//__MENU_H

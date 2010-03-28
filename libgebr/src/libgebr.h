@@ -15,14 +15,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __H
-#define __H
+#ifndef __LIBGEBR_H
+#define __LIBGEBR_H
 
 #include "date.h"
 #include "intl.h"
 #include "log.h"
 #include "utils.h"
+#include "validate.h"
 
 void gebr_libinit(void);
 
-#endif				// __H
+#endif				// __LIBGEBR_H

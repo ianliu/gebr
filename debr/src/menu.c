@@ -637,6 +637,8 @@ void menu_validate(GtkTreeIter * iter)
 	GebrGeoXmlFlow *menu;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &menu, -1);
+	if (menu == NULL)
+		return;
 	validate_menu(iter, menu);
 }
 
@@ -1370,9 +1372,20 @@ void menu_archive(void) {
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_STATUS, &debr.menu_recovery.status, -1);
 }
 
-/*
- * Private functions
- */
+void menu_select_program_and_paramater(const gchar *program_path_string, const gchar *parameter_path_string)
+{
+	GtkTreeIter iter;
+
+	if (!gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(debr.ui_program.list_store), &iter, program_path_string))
+		return;
+	program_select_iter(iter);
+
+	if (parameter_path_string == NULL)
+		return;
+	if (!gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter, parameter_path_string))
+		return;
+	parameter_select_iter(iter);
+}
 
 /**
  * \internal

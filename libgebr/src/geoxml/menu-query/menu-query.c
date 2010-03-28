@@ -21,37 +21,15 @@
 #include <regex.h>
 
 #include <glib.h>
+#include <glib/gprintf.h>
 
 #include <geoxml.h>
 #include <libgebr.h>
 
-enum FLAGS {
-	EMPTY = 1 << 0,
-	CAPIT = 1 << 1,
-	NOBLK = 1 << 2,
-	MTBLK = 1 << 3,
-	NOPNT = 1 << 4,
-	EMAIL = 1 << 5,
-	FILEN = 1 << 6
-};
-
-#define  VALID     TRUE
-#define  INVALID   FALSE
-
-int error_count;
 int global_error_count;
 
-gboolean all = FALSE;
-gboolean filename = FALSE;
-gboolean title = FALSE;
-gboolean desc = FALSE;
-gboolean author = FALSE;
-gboolean dates = FALSE;
-gboolean category = FALSE;
-gboolean mhelp = FALSE;
+GebrGeoXmlValidateOptions options;
 gint ehelp = -1;
-gboolean progs = FALSE;
-gboolean params = FALSE;
 gboolean nocolors = FALSE;
 gchar **menu = NULL;
 
@@ -64,320 +42,80 @@ void show_program_parameter(GebrGeoXmlProgramParameter * pp, gint ipar, guint is
 
 /* Command-line parameters definition */
 static GOptionEntry entries[] = {
-	{"all", 'a', 0, G_OPTION_ARG_NONE, &all, "show all tags (but -P)", NULL},
-	{"filename", 'f', 0, G_OPTION_ARG_NONE, &filename, "show filename", NULL},
-	{"title", 't', 0, G_OPTION_ARG_NONE, &title, "show title", NULL},
-	{"desc", 'd', 0, G_OPTION_ARG_NONE, &desc, "show description", NULL},
-	{"author", 'A', 0, G_OPTION_ARG_NONE, &author, "show authors", NULL},
-	{"dates", 'D', 0, G_OPTION_ARG_NONE, &dates, "show created/modified dates", NULL},
-	{"mhelp", 'H', 0, G_OPTION_ARG_NONE, &mhelp, "check help status", NULL},
+	{"all", 'a', 0, G_OPTION_ARG_NONE, &options.all, "show all tags (but -P)", NULL},
+	{"filename", 'f', 0, G_OPTION_ARG_NONE, &options.filename, "show filename", NULL},
+	{"title", 't', 0, G_OPTION_ARG_NONE, &options.title, "show title", NULL},
+	{"desc", 'd', 0, G_OPTION_ARG_NONE, &options.desc, "show description", NULL},
+	{"author", 'A', 0, G_OPTION_ARG_NONE, &options.author, "show authors", NULL},
+	{"dates", 'D', 0, G_OPTION_ARG_NONE, &options.dates, "show created/modified dates", NULL},
+	{"mhelp", 'H', 0, G_OPTION_ARG_NONE, &options.mhelp, "check help status", NULL},
 	{"ehelp", 'e', 0, G_OPTION_ARG_INT, &ehelp, "extract help (0 for menu, >0 for program)", "index"},
-	{"category", 'c', 0, G_OPTION_ARG_NONE, &category, "show categories", NULL},
-	{"progs", 'p', 0, G_OPTION_ARG_NONE, &progs, "show programs", NULL},
-	{"params", 'P', 0, G_OPTION_ARG_NONE, &params, "show parameters", NULL},
+	{"category", 'c', 0, G_OPTION_ARG_NONE, &options.category, "show categories", NULL},
+	{"progs", 'p', 0, G_OPTION_ARG_NONE, &options.progs, "show programs", NULL},
+	{"params", 'P', 0, G_OPTION_ARG_NONE, &options.params, "show parameters", NULL},
 	{"nocolors", 'C', 0, G_OPTION_ARG_NONE, &nocolors, "disable colored output", NULL},
 	{G_OPTION_REMAINING, 0, G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME_ARRAY, &menu, "",
 	 "menu1.mnu menu2.mnu ..."},
 	{NULL}
 };
 
+void append_text(gpointer data, const gchar * format, ...)
+{
+	va_list argp;
+	va_start(argp, format);
+	g_vprintf(format, argp);
+	va_end(argp);
+}
+
+void append_text_error(gpointer data, const gchar * format, ...)
+{
+	gchar *string; 
+
+	va_list argp;
+	va_start(argp, format);
+	string = g_strdup_vprintf(format, argp);
+	va_end(argp);
+
+	if (nocolors) 
+		g_printf("**%s**", string);
+	else
+		g_printf("%c[0;37;40m%s%c[0m", 0x1B, string, 0x1B);
+
+	g_free(string);
+}
+
 int main(int argc, char **argv)
 {
-
-	GebrGeoXmlDocument *doc;
-	GebrGeoXmlFlow *flow;
-	GebrGeoXmlSequence *seq;
-	int nprog;
-	int iprog;
-	int nmenu;
-	int imenu;
+	GebrGeoXmlValidate *validate;
 
 	parse_command_line(argc, argv);
 
 	if (menu == NULL)
 		return 0;
 
-	nmenu = 0;
-	while (menu[++nmenu] != NULL) ;
-
+	GebrGeoXmlValidateOperations operations = (GebrGeoXmlValidateOperations) {
+		.append_text = append_text, 
+		.append_text_error = append_text_error, 
+		.append_text_emph = append_text, 
+	};
+	validate = gebr_geoxml_validate_new(NULL, operations, options);
 	global_error_count = 0;
+	int nmenu = 0;
+	while (menu[++nmenu] != NULL);
+	int imenu;
 	for (imenu = 0; imenu < nmenu; imenu++) {
-		error_count = 0;
+		GebrGeoXmlFlow *flow;
 
 		if (gebr_geoxml_document_load((GebrGeoXmlDocument **) (&flow), menu[imenu], TRUE, NULL) != GEBR_GEOXML_RETV_SUCCESS){
                         fprintf(stderr,"Unable to load %s\n", menu[imenu]);
                         break;
                 }
-		doc = GEBR_GEOXML_DOC(flow);
-
-		if (filename || all) {
-			gchar *filename;
-			filename = g_path_get_basename(menu[imenu]);
-			if (strcmp(gebr_geoxml_document_get_filename(doc), filename)) {
-				if (nocolors) {
-					printf("Filename:      %s **DIFFERS FROM SET** %s\n",
-					       filename, report(gebr_geoxml_document_get_filename(doc), EMPTY));
-				} else {
-					printf("Filename:      %s %c[0;31;40mDIFFERS FROM SET%c[1;37;40m %s\n",
-					       filename, 0x1B, 0x1B,
-					       report(gebr_geoxml_document_get_filename(doc), EMPTY));
-				}
-				error_count++;
-			} else {
-				printf("Filename:      %s\n",
-				       report(gebr_geoxml_document_get_filename(doc), NOBLK | MTBLK | FILEN));
-			}
-			g_free(filename);
-		}
-
-		if (title || all)
-			printf("Title:         %s\n",
-			       report(gebr_geoxml_document_get_title(doc), EMPTY | NOBLK | NOPNT | MTBLK));
-
-		if (desc || all)
-			printf("Description:   %s\n",
-			       report(gebr_geoxml_document_get_description(doc),
-				      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT));
-
-		if (author || all)
-			printf("Author:        %s <%s>\n",
-			       report(gebr_geoxml_document_get_author(doc),
-				      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT),
-			       report(gebr_geoxml_document_get_email(doc), EMAIL));
-
-		if (dates || all) {
-			printf("Created:       %s\n",
-			       strlen(gebr_geoxml_document_get_date_created(doc)) ?
-			       gebr_localized_date(gebr_geoxml_document_get_date_created(doc)) : report("", EMPTY));
-
-			printf("Modified:      %s\n",
-			       strlen(gebr_geoxml_document_get_date_modified(doc)) ?
-			       gebr_localized_date(gebr_geoxml_document_get_date_modified(doc)) : report("", EMPTY));
-		}
-
-		if (mhelp || all)
-			printf("Help:          %s\n",
-			       strlen(gebr_geoxml_document_get_help(doc)) ? "Defined" : report("", EMPTY));
-
-		if (ehelp == 0) {
-			printf("%s", gebr_geoxml_document_get_help(doc));
-			goto out2;
-		}
-
-		if (category || all) {
-			int icat;
-			int ncat;
-			ncat = gebr_geoxml_flow_get_categories_number(flow);
-
-			if (ncat == 0)
-				printf("Category:      %s\n", report("", EMPTY));
-
-			for (icat = 0; icat < ncat; icat++) {
-				GebrGeoXmlSequence *cat;
-
-				gebr_geoxml_flow_get_category(flow, &cat, icat);
-				printf("Category:      %s\n",
-				       report(gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(cat)),
-					      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT));
-
-			}
-		}
-
-		nprog = gebr_geoxml_flow_get_programs_number(flow);
-		if (ehelp > 0 && ehelp <= nprog) {
-			gebr_geoxml_flow_get_program(flow, &seq, ehelp - 1);
-			printf("%s", gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(seq)));
-			goto out2;
-		}
-
-		if (nprog == 0 || (!progs && !all && !params))
-			goto out;
-
-		printf("Menu with:     %d program(s)\n", nprog);
-
-		gebr_geoxml_flow_get_program(flow, &seq, 0);
-		for (iprog = 0; iprog < nprog; iprog++) {
-			GebrGeoXmlProgram *prog;
-			GebrGeoXmlParameter *parameter;
-			gint ipar = 0;
-
-			prog = GEBR_GEOXML_PROGRAM(seq);
-
-			printf(">>Program:     %d\n", iprog + 1);
-			printf("  Title:       %s\n",
-			       report(gebr_geoxml_program_get_title(prog), EMPTY | NOBLK | MTBLK));
-			printf("  Description: %s\n",
-			       report(gebr_geoxml_program_get_description(prog),
-				      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT));
-			printf("  In/out/err:  %s/%s/%s\n",
-			       (gebr_geoxml_program_get_stdin(prog) ? "Read" : "Ignore"),
-			       (gebr_geoxml_program_get_stdout(prog) ? "Write" : "Ignore"),
-			       (gebr_geoxml_program_get_stdin(prog) ? "Append" : "Ignore"));
-			printf("  Binary:      %s\n", report(gebr_geoxml_program_get_binary(prog), EMPTY));
-			printf("  Version:     %s\n", report(gebr_geoxml_program_get_version(prog), EMPTY));
-			printf("  URL:         %s\n", report(gebr_geoxml_program_get_url(prog), EMPTY));
-			printf("  Help:        %s\n",
-			       strlen(gebr_geoxml_program_get_help(prog)) ? "Defined" : report("", EMPTY));
-
-			if (params || all) {
-				printf("  >>Parameters:\n");
-
-				parameter =
-				    GEBR_GEOXML_PARAMETER(gebr_geoxml_parameters_get_first_parameter
-							  (gebr_geoxml_program_get_parameters(prog)));
-
-				while (parameter != NULL) {
-
-					show_parameter(parameter, ++ipar);
-
-					gebr_geoxml_sequence_next((GebrGeoXmlSequence **) & parameter);
-				}
-			}
-
-			gebr_geoxml_sequence_next(&seq);
-		}
-
- out:		printf("%d potencial error(s)\n\n", error_count);
- out2:		gebr_geoxml_document_free(doc);
-		global_error_count += error_count;
+		global_error_count += gebr_geoxml_validate_report_menu(validate, flow);
+		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 	}
+	gebr_geoxml_validate_free(validate);
 
 	return global_error_count;
-}
-
-/* ------------------------------------------------------------*/
-/* Checks */
-
-/* VALID if str is not empty */
-gboolean check_is_not_empty(const gchar * str)
-{
-	return (strlen(str) ? VALID : INVALID);
-}
-
-/* VALID if str does not start with lower case letter */
-gboolean check_no_lower_case(const gchar * sentence)
-{
-
-	if (!check_is_not_empty(sentence))
-		return VALID;
-
-	if (g_ascii_islower(sentence[0]))
-		return INVALID;
-
-	return VALID;
-}
-
-/* VALID if str has not consecutive blanks */
-gboolean check_no_multiple_blanks(const gchar * str)
-{
-	regex_t pattern;
-	regcomp(&pattern, "   *", REG_NOSUB);
-	return (regexec(&pattern, str, 0, 0, 0) ? VALID : INVALID);
-}
-
-/* VALID if str does not start or end with blanks/tabs */
-gboolean check_no_blanks_at_boundaries(const gchar * str)
-{
-	int n = strlen(str);
-
-	if (n == 0)
-		return VALID;
-
-	if (str[0] == ' ' || str[0] == '\t' || str[n - 1] == ' ' || str[n - 1] == '\t')
-		return INVALID;
-
-	return VALID;
-}
-
-/* VALID if str does not end if a punctuation mark */
-gboolean check_no_punctuation_at_end(const gchar * str)
-{
-	int n = strlen(str);
-
-	if (n == 0)
-		return VALID;
-
-	if (g_ascii_ispunct(str[n - 1]))
-		return INVALID;
-
-	return VALID;
-}
-
-/* VALID if str has not path and ends with .mnu */
-gboolean check_menu_filename(const gchar * str)
-{
-	gchar *base;
-
-	base = g_path_get_basename(str);
-	if (strcmp(base, str)) {
-		g_free(base);
-		return INVALID;
-	}
-	g_free(base);
-
-	if (!g_str_has_suffix(str, ".mnu"))
-		return INVALID;
-
-	return VALID;
-}
-
-/* VALID if str xxx@yyy, with xxx  composed    */
-/* by letter, digits, underscores, dots and    */
-/* dashes, and yyy composed by at least one    */
-/* dot, letter digits and dashes.              */
-/*                                             */
-/* To do something right, take a look at       */
-/* http://en.wikipedia.org/wiki/E-mail_address */
-gboolean check_is_email(const gchar * str)
-{
-	regex_t pattern;
-	regcomp(&pattern, "^[a-z0-9_.-][a-z0-9_.-]*@[a-z0-9.-]*\\.[a-z0-9-][a-z0-9-]*$", REG_NOSUB | REG_ICASE);
-	return (!regexec(&pattern, str, 0, 0, 0) ? VALID : INVALID);
-}
-
-/* VALID if str passed through all selected tests */
-gboolean check(const gchar * str, int flags)
-{
-
-	gboolean result = VALID;
-
-	if (flags & EMPTY)
-		result = result && check_is_not_empty(str);
-	if (flags & CAPIT)
-		result = result && check_no_lower_case(str);
-	if (flags & NOBLK)
-		result = result && check_no_blanks_at_boundaries(str);
-	if (flags & MTBLK)
-		result = result && check_no_multiple_blanks(str);
-	if (flags & NOPNT)
-		result = result && check_no_punctuation_at_end(str);
-	if (flags & EMAIL)
-		result = result && check_is_email(str);
-	if (flags & FILEN)
-		result = result && check_menu_filename(str);
-
-	return result;
-}
-
-const gchar *report(const gchar * str, int flags)
-{
-
-	if (check(str, flags))
-		return str;
-	else {
-		GString *msg;
-		msg = g_string_new(NULL);
-		if (check_is_not_empty(str))
-			(nocolors) ?
-			    g_string_printf(msg, "**%s**", str) :
-			    g_string_printf(msg, "%c[0;37;40m%s%c[0m", 0x1B, str, 0x1B);
-		else
-			(nocolors) ?
-			    g_string_printf(msg, "**UNSET**") : g_string_printf(msg, "%c[0;31mUNSET%c[0m", 0x1B, 0x1B);
-		error_count++;
-
-		return msg->str;
-	}
 }
 
 void parse_command_line(int argc, char **argv)
@@ -416,115 +154,8 @@ void parse_command_line(int argc, char **argv)
 
 	g_option_context_free(context);
 
-	if (!(all || filename || title || desc || author || dates || mhelp || (ehelp != -1) || category || progs))
-		all = TRUE;
+	if (!(options.all || options.filename || options.title || options.desc || options.author || options.dates || options.mhelp || (ehelp != -1) || options.category || options.progs))
+		options.all = TRUE;
 
 }
 
-void show_program_parameter(GebrGeoXmlProgramParameter * pp, gint ipar, guint isubpar)
-{
-
-	GString *default_value;
-
-	if (isubpar) {
-		printf("       %2d.%02d: %s\n", ipar, isubpar,
-		       report(gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp)),
-			      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT));
-	} else {
-		printf("    %2d: %s\n", ipar,
-		       report(gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp)),
-			      EMPTY | CAPIT | NOBLK | MTBLK | NOPNT));
-	}
-
-	printf("        ");
-	if (isubpar)
-		printf("      ");
-
-	printf("[%s", gebr_geoxml_parameter_get_type_name(GEBR_GEOXML_PARAMETER(pp)));
-	if (gebr_geoxml_program_parameter_get_is_list(pp))
-		printf("(s)");
-	printf("] ");
-
-	printf("'%s'", report(gebr_geoxml_program_parameter_get_keyword(pp), EMPTY));
-
-	default_value = gebr_geoxml_program_parameter_get_string_value(pp, TRUE);
-	if (strlen(default_value->str))
-		printf(" [%s]", report(default_value->str, EMPTY));
-	g_string_free(default_value, TRUE);
-
-	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_INT ||
-	    gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
-	    gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
-
-		gchar *min_str;
-		gchar *max_str;
-
-		gebr_geoxml_program_parameter_get_number_min_max(pp, &min_str, &max_str);
-		printf(" in [%s,%s]", (strlen(min_str) <= 0 ? "*" : min_str), (strlen(max_str) <= 0 ? "*" : max_str));
-	}
-
-	if (gebr_geoxml_program_parameter_get_is_list(pp)) {
-		printf(" ");
-		if (strlen(gebr_geoxml_program_parameter_get_list_separator(pp)))
-			printf("(entries separeted by '%s')", gebr_geoxml_program_parameter_get_list_separator(pp));
-		else {
-			printf("%s", report("(missing entries' separator)", FILEN));
-		}
-	}
-
-	if (gebr_geoxml_program_parameter_get_required(pp))
-		printf("  REQUIRED ");
-
-	/* enum details */
-	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_ENUM) {
-		GebrGeoXmlSequence *enum_option;
-
-		gebr_geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
-
-		if (enum_option == NULL) {
-			printf("\n        %s", report("missing options", FILEN));
-		}
-
-		for (; enum_option != NULL; gebr_geoxml_sequence_next(&enum_option)) {
-			printf("\n");
-			if (isubpar)
-				printf("      ");
-
-			printf("        %s (%s)",
-			       gebr_geoxml_enum_option_get_label(GEBR_GEOXML_ENUM_OPTION(enum_option)),
-			       gebr_geoxml_enum_option_get_value(GEBR_GEOXML_ENUM_OPTION(enum_option)));
-		}
-	}
-
-	printf("\n\n");
-}
-
-void show_parameter(GebrGeoXmlParameter * parameter, gint ipar)
-{
-
-	if (gebr_geoxml_parameter_get_is_program_parameter(parameter))
-		show_program_parameter(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), ipar, 0);
-
-	else {
-		GebrGeoXmlSequence *subpar;
-		GebrGeoXmlSequence *instance;
-
-		gint subipar = 0;
-
-		printf("    %2d: %s\n", ipar,
-		       report(gebr_geoxml_parameter_get_label(parameter), EMPTY | CAPIT | NOBLK | MTBLK | NOPNT));
-
-		gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-		subpar = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance));
-
-		while (subpar != NULL) {
-
-			show_program_parameter(GEBR_GEOXML_PROGRAM_PARAMETER(subpar), ipar, ++subipar);
-
-			gebr_geoxml_sequence_next(&subpar);
-		}
-
-	}
-
-	return;
-}
