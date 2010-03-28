@@ -43,6 +43,13 @@ struct _GebrGeoXmlValidate {
 		 * This function is optional. If NULL #append_text is used instead.
 		 */
 		void (*append_text_error)(gpointer data, const gchar * format, ...);
+		/**
+		 * Append error text with the paths strings (as for GtkTreeModels)
+		 * for programs and parameters.
+		 * If set then it is preferred over #append_text_error.
+		 */
+		void (*append_text_error_with_paths)(gpointer data, const gchar *program_path, const
+						     gchar *parameter_path, const gchar * format, ...);
 	} operations;
 	gpointer data;
 
@@ -63,8 +70,12 @@ struct _GebrGeoXmlValidate {
 		gboolean params;
 	} options;
 
-	GHashTable *hotkey_table;
 	gint potential_errors;
+	
+	GHashTable *hotkey_table;
+	gint iprog;
+	gint ipar;
+	gint isubpar;
 };
 
 /**

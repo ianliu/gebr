@@ -26,6 +26,7 @@
 
 #include "validate.h"
 #include "debr.h"
+#include "callbacks.h"
 
 /**
  * \internal
@@ -101,7 +102,8 @@ void validate_setup_ui(void)
 
 static void validate_append_text(struct validate *validate, const gchar * format, ...);
 static void validate_append_text_emph(struct validate *validate, const gchar * format, ...);
-static void validate_append_text_error(struct validate *validate, const gchar * format, ...);
+static void validate_append_text_error(struct validate *validate, const gchar *program_path,
+				       const gchar *parameter_path, const gchar * format, ...);
 void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 {
 	struct validate *validate;
@@ -126,8 +128,9 @@ void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 
 	GebrGeoXmlValidateOperations operations = (GebrGeoXmlValidateOperations) {
 		.append_text = validate_append_text, 
-		.append_text_error = validate_append_text_error, 
 		.append_text_emph = validate_append_text_emph, 
+		.append_text_error = NULL, 
+		.append_text_error_with_paths = validate_append_text_error, 
 	};
 	GebrGeoXmlValidateOptions options;
 	options.all = TRUE;
@@ -286,10 +289,16 @@ static void validate_parse_link_click_callback(GtkTextView * text_view, GtkTextT
 						   &validate->menu_iter))
 		menu_select_iter(&validate->menu_iter);
 
-	gchar *path_string = g_object_get_data(G_OBJECT(link_tag), "program_path_string");
-	if (path_string != NULL)
-		menu_select_program_and_paramater(path_string, g_object_get_data(G_OBJECT(link_tag), "parameter_path_string"));
-
+	gchar *program_path = g_object_get_data(G_OBJECT(link_tag), "program_path_string");
+	gchar *parameter_path = g_object_get_data(G_OBJECT(link_tag), "parameter_path_string");
+	if (program_path != NULL) {
+		menu_select_program_and_paramater(program_path, parameter_path);
+		if (parameter_path != NULL)
+			on_parameter_properties_activate();
+		else
+			on_program_properties_activate();	
+	} else 
+		on_menu_properties_activate();
 }
 
 /**
@@ -369,7 +378,8 @@ static void validate_append_text(struct validate *validate, const gchar * format
  * If \p fix_flags in non-zero then add a fix link after text.
  * If \p edit_id is non-zero the add an edit link after text.
  */
-static void validate_append_text_error(struct validate *validate, const gchar * format, ...)
+static void validate_append_text_error(struct validate *validate, const gchar *program_path,
+				       const gchar *parameter_path, const gchar * format, ...)
 {
 	gchar *string;
 	va_list argp;
@@ -379,17 +389,17 @@ static void validate_append_text_error(struct validate *validate, const gchar * 
 	va_end(argp);
 	g_free(string);
 
-//	GtkTextTag *link_tag;
-//
-//	validate_append_text(validate, " ");
-//	link_tag = validate_append_link(validate, _("Edit"), "");
-//
-//	gchar *tmp = g_strdup(program_path_string);
-//	g_object_set_data(G_OBJECT(link_tag), "program_path_string", tmp);
-//	gebr_gui_g_object_set_free_parent(link_tag, tmp);
-//
-//	tmp = g_strdup(parameter_path_string);
-//	g_object_set_data(G_OBJECT(link_tag), "parameter_path_string", tmp);
-//	gebr_gui_g_object_set_free_parent(link_tag, tmp);
+	GtkTextTag *link_tag;
+
+	validate_append_text(validate, " ");
+	link_tag = validate_append_link(validate, _("Edit"), "");
+
+	gchar *tmp = g_strdup(program_path);
+	g_object_set_data(G_OBJECT(link_tag), "program_path_string", tmp);
+	gebr_gui_g_object_set_free_parent(link_tag, tmp);
+
+	tmp = g_strdup(parameter_path);
+	g_object_set_data(G_OBJECT(link_tag), "parameter_path_string", tmp);
+	gebr_gui_g_object_set_free_parent(link_tag, tmp);
 }
 
