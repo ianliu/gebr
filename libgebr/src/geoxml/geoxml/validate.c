@@ -26,14 +26,14 @@
  * \internal
  */
 enum GebrGeoXmlValidateCheckFlags {
-	GEBR_GEOXML_TRUEATE_CHECK_EMPTY = 1 << 0,
-	GEBR_GEOXML_TRUEATE_CHECK_CAPIT = 1 << 1,
-	GEBR_GEOXML_TRUEATE_CHECK_NOBLK = 1 << 2,
-	GEBR_GEOXML_TRUEATE_CHECK_MTBLK = 1 << 3,
-	GEBR_GEOXML_TRUEATE_CHECK_NOPNT = 1 << 4,
-	GEBR_GEOXML_TRUEATE_CHECK_EMAIL = 1 << 5,
-	GEBR_GEOXML_TRUEATE_CHECK_FILEN = 1 << 6,
-	GEBR_GEOXML_TRUEATE_CHECK_LABEL_HOTKEY = 1 << 7,
+	GEBR_GEOXML_VALIDATE_CHECK_EMPTY = 1 << 0,
+	GEBR_GEOXML_VALIDATE_CHECK_CAPIT = 1 << 1,
+	GEBR_GEOXML_VALIDATE_CHECK_NOBLK = 1 << 2,
+	GEBR_GEOXML_VALIDATE_CHECK_MTBLK = 1 << 3,
+	GEBR_GEOXML_VALIDATE_CHECK_NOPNT = 1 << 4,
+	GEBR_GEOXML_VALIDATE_CHECK_EMAIL = 1 << 5,
+	GEBR_GEOXML_VALIDATE_CHECK_FILEN = 1 << 6,
+	GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY = 1 << 7,
 };
 
 GebrGeoXmlValidate *gebr_geoxml_validate_new(gpointer data, GebrGeoXmlValidateOperations operations,
@@ -93,50 +93,50 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 	if (validate->options.filename)
 		validate_append_item_with_check(validate, _("Filename:      "),
 						gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)),
-						GEBR_GEOXML_TRUEATE_CHECK_NOBLK | GEBR_GEOXML_TRUEATE_CHECK_MTBLK | GEBR_GEOXML_TRUEATE_CHECK_FILEN);
+						GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_FILEN);
 	if (validate->options.title)
 		validate_append_item_with_check(validate, _("Title:         "),
 						gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(menu)),
-						GEBR_GEOXML_TRUEATE_CHECK_EMPTY | GEBR_GEOXML_TRUEATE_CHECK_NOBLK | GEBR_GEOXML_TRUEATE_CHECK_NOPNT | GEBR_GEOXML_TRUEATE_CHECK_MTBLK);
+						GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT | GEBR_GEOXML_VALIDATE_CHECK_MTBLK);
 	if (validate->options.desc)
 		validate_append_item_with_check(validate, _("Description:   "),
 						gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT
 										     (menu)),
-						GEBR_GEOXML_TRUEATE_CHECK_EMPTY | GEBR_GEOXML_TRUEATE_CHECK_CAPIT | GEBR_GEOXML_TRUEATE_CHECK_NOBLK | GEBR_GEOXML_TRUEATE_CHECK_MTBLK | GEBR_GEOXML_TRUEATE_CHECK_NOPNT);
+						GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT);
 	if (validate->options.author) {
 		validate_append_item(validate, _("Author:        "));
 		validate_append_check(validate, gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(menu)),
-				      GEBR_GEOXML_TRUEATE_CHECK_EMPTY | GEBR_GEOXML_TRUEATE_CHECK_CAPIT | GEBR_GEOXML_TRUEATE_CHECK_NOBLK | GEBR_GEOXML_TRUEATE_CHECK_MTBLK | GEBR_GEOXML_TRUEATE_CHECK_NOPNT, " <");
+				      GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT, " <");
 		validate_append_check(validate, gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(menu)),
-				      GEBR_GEOXML_TRUEATE_CHECK_EMAIL, ">");
+				      GEBR_GEOXML_VALIDATE_CHECK_EMAIL, ">");
 		validate->operations.append_text(validate->data, "\n");
 	}
 	if (validate->options.dates) {
 		validate_append_item_with_check(validate, _("Created:       "),
 						gebr_localized_date(gebr_geoxml_document_get_date_created
-								    (GEBR_GEOXML_DOCUMENT(menu))), GEBR_GEOXML_TRUEATE_CHECK_EMPTY);
+								    (GEBR_GEOXML_DOCUMENT(menu))), GEBR_GEOXML_VALIDATE_CHECK_EMPTY);
 		validate_append_item_with_check(validate, _("Modified:      "),
 						gebr_localized_date(gebr_geoxml_document_get_date_modified
-								    (GEBR_GEOXML_DOCUMENT(menu))), GEBR_GEOXML_TRUEATE_CHECK_EMPTY);
+								    (GEBR_GEOXML_DOCUMENT(menu))), GEBR_GEOXML_VALIDATE_CHECK_EMPTY);
 	}
 	if (validate->options.mhelp) {
 		validate_append_item(validate, _("Help:          "));
 		if (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu))) >= 1)
 			validate->operations.append_text(validate->data, _("Defined"));
 		else
-			validate_append_check(validate, "", GEBR_GEOXML_TRUEATE_CHECK_EMPTY, "");
+			validate_append_check(validate, "", GEBR_GEOXML_VALIDATE_CHECK_EMPTY, "");
 		validate->operations.append_text(validate->data, "\n");
 	}
 	if (validate->options.category) {
 		gebr_geoxml_flow_get_category(menu, &seq, 0);
 		if (seq == NULL)
-			validate_append_item_with_check(validate, _("Category:      "), "", GEBR_GEOXML_TRUEATE_CHECK_EMPTY);
+			validate_append_item_with_check(validate, _("Category:      "), "", GEBR_GEOXML_VALIDATE_CHECK_EMPTY);
 		else
 			for (; seq != NULL; gebr_geoxml_sequence_next(&seq))
 				validate_append_item_with_check(validate, _("Category:      "),
 								gebr_geoxml_value_sequence_get
 								(GEBR_GEOXML_VALUE_SEQUENCE(seq)),
-								GEBR_GEOXML_TRUEATE_CHECK_EMPTY | GEBR_GEOXML_TRUEATE_CHECK_CAPIT | GEBR_GEOXML_TRUEATE_CHECK_NOBLK | GEBR_GEOXML_TRUEATE_CHECK_MTBLK | GEBR_GEOXML_TRUEATE_CHECK_NOPNT);
+								GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT);
 	}
 
 	if (!validate->options.progs && !validate->options.params)
@@ -155,10 +155,10 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 		validate->operations.append_text_emph(validate->data, _("\n>>Program:     "));
 		validate->operations.append_text(validate->data, "%d\n", i + 1);
 		validate_append_item_with_check(validate, _("  Title:       "),
-						gebr_geoxml_program_get_title(prog), GEBR_GEOXML_TRUEATE_CHECK_EMPTY | GEBR_GEOXML_TRUEATE_CHECK_NOBLK | GEBR_GEOXML_TRUEATE_CHECK_MTBLK);
+						gebr_geoxml_program_get_title(prog), GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK);
 		validate_append_item_with_check(validate, _("  Description: "),
 						gebr_geoxml_program_get_description(prog),
-						GEBR_GEOXML_TRUEATE_CHECK_EMPTY | GEBR_GEOXML_TRUEATE_CHECK_CAPIT | GEBR_GEOXML_TRUEATE_CHECK_NOBLK | GEBR_GEOXML_TRUEATE_CHECK_MTBLK | GEBR_GEOXML_TRUEATE_CHECK_NOPNT);
+						GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT);
 
 		validate->operations.append_text_emph(validate->data, _("  In/out/err:  "));
 		validate->operations.append_text(validate->data, "%s/%s/%s\n",
@@ -167,16 +167,16 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 				     gebr_geoxml_program_get_stdin(prog) ? _("Append") : _("Ignore"));
 
 		validate_append_item_with_check(validate, _("  Binary:      "),
-						gebr_geoxml_program_get_binary(prog), GEBR_GEOXML_TRUEATE_CHECK_EMPTY);
+						gebr_geoxml_program_get_binary(prog), GEBR_GEOXML_VALIDATE_CHECK_EMPTY);
                 validate_append_item_with_check(validate, _("  Version:     "),
-						gebr_geoxml_program_get_version(prog), GEBR_GEOXML_TRUEATE_CHECK_EMPTY);
+						gebr_geoxml_program_get_version(prog), GEBR_GEOXML_VALIDATE_CHECK_EMPTY);
                 validate_append_item_with_check(validate, _("  URL:         "),
-						gebr_geoxml_program_get_url(prog), GEBR_GEOXML_TRUEATE_CHECK_EMPTY);
+						gebr_geoxml_program_get_url(prog), GEBR_GEOXML_VALIDATE_CHECK_EMPTY);
 		validate_append_item(validate, _("  Help:        "));
 		if (strlen(gebr_geoxml_program_get_help(prog)) >= 1)
 			validate->operations.append_text(validate->data, _("Defined"));
 		else
-			validate_append_check(validate, "", GEBR_GEOXML_TRUEATE_CHECK_EMPTY, "");
+			validate_append_check(validate, "", GEBR_GEOXML_VALIDATE_CHECK_EMPTY, "");
 		validate->operations.append_text(validate->data, "\n");
 
 		if (validate->options.params) {
@@ -210,19 +210,19 @@ static void validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 {
 	gboolean result = TRUE;
 
-	if (flags & GEBR_GEOXML_TRUEATE_CHECK_EMPTY)
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_EMPTY)
 		result = result && gebr_validate_check_is_not_empty(value);
-	if (flags & GEBR_GEOXML_TRUEATE_CHECK_CAPIT)
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_CAPIT)
 		result = result && gebr_validate_check_no_lower_case(value);
-	if (flags & GEBR_GEOXML_TRUEATE_CHECK_NOBLK)
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_NOBLK)
 		result = result && gebr_validate_check_no_blanks_at_boundaries(value);
-	if (flags & GEBR_GEOXML_TRUEATE_CHECK_MTBLK)
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_MTBLK)
 		result = result && gebr_validate_check_no_multiple_blanks(value);
-	if (flags & GEBR_GEOXML_TRUEATE_CHECK_NOPNT)
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_NOPNT)
 		result = result && gebr_validate_check_no_punctuation_at_end(value);
-	if (flags & GEBR_GEOXML_TRUEATE_CHECK_EMAIL)
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_EMAIL)
 		result = result && gebr_validate_check_is_email(value);
-	if (flags & GEBR_GEOXML_TRUEATE_CHECK_FILEN)
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_FILEN)
 		result = result && gebr_validate_check_menu_filename(value);
 
 	if (result)
@@ -235,7 +235,7 @@ static void validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 		validate->potential_errors++;
 	}
 
-	if (flags & GEBR_GEOXML_TRUEATE_CHECK_LABEL_HOTKEY) {
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY) {
 		gchar * underscore;
 
 		underscore = (gchar*)value;
@@ -303,7 +303,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 			validate->operations.append_text(validate->data, "    %2d: ", ipar);
 
 		label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp));
-		validate_append_check(validate, label, GEBR_GEOXML_TRUEATE_CHECK_EMPTY | GEBR_GEOXML_TRUEATE_CHECK_CAPIT | GEBR_GEOXML_TRUEATE_CHECK_NOBLK | GEBR_GEOXML_TRUEATE_CHECK_MTBLK | GEBR_GEOXML_TRUEATE_CHECK_NOPNT | GEBR_GEOXML_TRUEATE_CHECK_LABEL_HOTKEY, "\n");
+		validate_append_check(validate, label, GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT | GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY, "\n");
 
 		validate->operations.append_text(validate->data, "        ");
 		if (isubpar)
@@ -316,7 +316,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 		validate->operations.append_text(validate->data, "] ");
 
 		validate->operations.append_text(validate->data, "'");
-		validate_append_check(validate, gebr_geoxml_program_parameter_get_keyword(pp), GEBR_GEOXML_TRUEATE_CHECK_EMPTY, "'");
+		validate_append_check(validate, gebr_geoxml_program_parameter_get_keyword(pp), GEBR_GEOXML_VALIDATE_CHECK_EMPTY, "'");
 
 		default_value = gebr_geoxml_program_parameter_get_string_value(pp, TRUE);
 		if (default_value->len)
@@ -380,7 +380,9 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 
 		validate->operations.append_text(validate->data, "    %2d: ", ipar);
 		validate_append_check(validate, gebr_geoxml_parameter_get_label(parameter),
-				      GEBR_GEOXML_TRUEATE_CHECK_EMPTY | GEBR_GEOXML_TRUEATE_CHECK_CAPIT | GEBR_GEOXML_TRUEATE_CHECK_NOBLK | GEBR_GEOXML_TRUEATE_CHECK_MTBLK | GEBR_GEOXML_TRUEATE_CHECK_NOPNT | GEBR_GEOXML_TRUEATE_CHECK_LABEL_HOTKEY, NULL);
+				      GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT |
+				      GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK |
+				      GEBR_GEOXML_VALIDATE_CHECK_NOPNT | GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY, NULL);
 
 		if (gebr_geoxml_parameter_group_get_is_instanciable(GEBR_GEOXML_PARAMETER_GROUP(parameter)))
 			validate->operations.append_text(validate->data, _("   [Instanciable]\n"));
