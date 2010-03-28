@@ -73,4 +73,5 @@ Makefile data/Makefile src/Makefile src/defines.h
 debr.desktop
 po/Makefile.in
 doc/Makefile doc/userdoc/Makefile
+tests/Makefile
 ])

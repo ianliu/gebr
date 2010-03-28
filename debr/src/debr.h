@@ -81,6 +81,7 @@ struct debr {
 	struct debr_config {
 		GKeyFile *key_file;
 		GString *path;
+		GHashTable *opened_folders;
 
 		GString *name;
 		GString *email;

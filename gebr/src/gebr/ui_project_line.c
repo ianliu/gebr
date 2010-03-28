@@ -184,14 +184,6 @@ struct ui_project_line *project_line_setup_ui(void)
 	return ui_project_line;
 }
 
-void project_line_new()
-{
-	if (!project_line_get_selected(NULL, ProjectLineSelection))
-		project_new();
-	else
-		line_new();
-}
-
 void project_line_info_update(void)
 {
 	gchar *markup;

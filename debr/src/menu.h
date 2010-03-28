@@ -327,4 +327,24 @@ void menu_archive(void);
  */
 void menu_select_program_and_paramater(const gchar *program_path_string, const gchar *parameter_path_string);
 
+/*
+ * Folder manipulation functions
+ */
+
+/**
+ * Opens folder \p path and load all its menus in interface.
+ * \return TRUE if could open \p path or \p path is already open, FALSE otherwise.
+ */
+gboolean menu_open_folder(const gchar * path);
+
+/**
+ * Closes folder pointed by \p iter, unloading all its child menus.
+ */
+void menu_close_folder(GtkTreeIter * iter);
+
+/**
+ * Closes folder \p path, unloading all its menus and removing them from interface.
+ */
+void menu_close_folder_from_path(const gchar * path);
+
 #endif				//__MENU_H

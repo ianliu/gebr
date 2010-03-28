@@ -63,10 +63,10 @@ static const GtkActionEntry actions_entries[] = {
 	 */
 
 	{"project_line_new_project", "folder-new", N_("New Project"),
-		"<Control>N", N_("Create a new project"), G_CALLBACK(on_new_activate)},
+		"<Control>J", N_("Create a new project"), G_CALLBACK(on_new_project_activate)},
 
 	{"project_line_new_line", "tab-new-background", N_("New Line"),
-		"<Control>N", N_("Create a new line"), G_CALLBACK(on_new_activate)},
+		"<Control>L", N_("Create a new line"), G_CALLBACK(on_new_line_activate)},
 
 	{"project_line_delete", GTK_STOCK_DELETE, NULL,
 		NULL, N_("Delete selected project or line"), G_CALLBACK(on_project_line_delete_activate)},
@@ -91,7 +91,7 @@ static const GtkActionEntry actions_entries[] = {
 	 */
 
 	{"flow_new", GTK_STOCK_NEW, NULL,
-		NULL, N_("Create a new flow"), G_CALLBACK(on_new_activate)},
+		"<Control>F", N_("Create a new flow"), G_CALLBACK(on_new_activate)},
 
 	{"flow_delete", GTK_STOCK_DELETE, NULL, NULL,
 		N_("Delete selected flow"), G_CALLBACK(on_flow_delete_activate)},
@@ -346,13 +346,13 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "flow_export_as_menu"))), -1);
 
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	/* gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_io"))), -1); */
+	/* gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group, "flow_io"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1); */
 
 	gebr.ui_flow_browse = flow_browse_setup_ui(revisions_menu);
 	vbox = gtk_vbox_new(FALSE, 0);
