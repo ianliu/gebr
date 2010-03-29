@@ -30,7 +30,6 @@
 #include "interface.h"
 #include "gebr.h"
 #include "callbacks.h"
-#include "line.h"
 
 /*
  * Private data
@@ -270,14 +269,10 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "project_line_new_project"))),
 			   -1);
-
-	GtkAction *action;
-	action = gtk_action_group_get_action(gebr.action_group, "project_line_new_line");
-	tool_item = GTK_TOOL_ITEM(gtk_action_create_tool_item(action));
-	gtk_action_block_activate_from(action, GTK_WIDGET(tool_item));
-	g_signal_connect(tool_item, "clicked", G_CALLBACK(line_new), NULL);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(gebr.action_group, "project_line_new_line"))),
+			   -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "project_line_delete"))), -1);

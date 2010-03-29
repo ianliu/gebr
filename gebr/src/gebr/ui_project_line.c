@@ -799,17 +799,13 @@ static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_li
 {
 	GtkWidget *menu;
 	GtkWidget *menu_item;
-	GtkAction *action;
 
 	menu = gtk_menu_new();
 
-	action = gtk_action_group_get_action(gebr.action_group, "project_line_new_project");
-	menu_item = gtk_action_create_menu_item(action);
-	gtk_action_block_activate_from(action, menu_item);
-	g_signal_connect(menu_item, "activate", G_CALLBACK(project_new), NULL);
-
 	/* new project */
-	gtk_container_add(GTK_CONTAINER(menu), menu_item);
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (gebr.action_group, "project_line_new_project")));
 
 	if (!project_line_get_selected(NULL, DontWarnUnselection)) {
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
@@ -825,12 +821,9 @@ static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_li
 	}
 
 	/* new line */
-	action = gtk_action_group_get_action(gebr.action_group, "project_line_new_line");
-	menu_item = gtk_action_create_menu_item(action);
-	gtk_action_block_activate_from(action, menu_item);
-	g_signal_connect(menu_item, "activate", G_CALLBACK(line_new), NULL);
-	gtk_container_add(GTK_CONTAINER(menu), menu_item);
-
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (gebr.action_group, "project_line_new_line")));
 	/* properties */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
