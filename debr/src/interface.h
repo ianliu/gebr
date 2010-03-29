@@ -15,6 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * \file interface.c Interface creation: mainwindow, actions and callbacks assignmment.
+ * \see callbacks.c
+ */
+
 #ifndef __INTERFACE_H
 #define __INTERFACE_H
 

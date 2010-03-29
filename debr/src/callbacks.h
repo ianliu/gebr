@@ -26,6 +26,11 @@
 #include <gtk/gtk.h>
 
 /**
+ *
+ */
+void on_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num);
+
+/**
  * Callback to update navigation bar content according to menu, program and parameter selected.
  */
 void do_navigation_bar_update(void);
