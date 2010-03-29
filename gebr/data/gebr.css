@@ -141,8 +141,42 @@ h1,h2,h3 {padding-top: 6px; color: #553; margin-bottom: 4px;}
 	padding-bottom: 6px;
 }
 
+/* optional parameters */
 .parameters .label {
 	font-weight: bold;
+}
+.parameters .label:after {
+        content: " ]";
+}
+.parameters .label:before {
+        content: "[ ";
+}
+
+/* required parameters */
+.parameters li.req:after {
+        content: " (required)";
+	color: #8c0c0c;
+}
+
+.parameters .reqlabel {
+	font-weight: bold;
+}
+.parameters .reqlabel:after {
+        content: " ]";
+}
+.parameters .reqlabel:before {
+        content: "[ ";
+}
+
+/* group parameters */
+.parameters .grouplabel {
+	font-weight: bold;
+}
+.parameters .grouplabel:after {
+        content: " ]";
+}
+.parameters .grouplabel:before {
+        content: "[ ";
 }
 
 /* navigation */
