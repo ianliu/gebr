@@ -35,11 +35,31 @@ gboolean gebr_validate_check_no_lower_case(const gchar * sentence)
 	return TRUE;
 }
 
+gchar * gebr_validate_change_first_to_upper(const gchar * sentence)
+{
+	gchar char_utf8[6];
+	gchar * uppercase;
+	gint length = g_unichar_to_utf8(g_utf8_get_char(sentence), char_utf8);
+
+	uppercase = g_utf8_strup(char_utf8, length);
+	return g_strjoin(NULL, uppercase, sentence+length, NULL);
+}
+
 gboolean gebr_validate_check_no_multiple_blanks(const gchar * str)
 {
 	regex_t pattern;
 	regcomp(&pattern, "   *", REG_NOSUB);
 	return (regexec(&pattern, str, 0, 0, 0) ? TRUE : FALSE);
+}
+
+gchar * gebr_validate_change_multiple_blanks(const gchar * sentence)
+{	
+	GRegex *regex;
+	gchar *str = g_strdup(sentence);
+
+	regex = g_regex_new ("[[:space:]]{2,}", 0, 0, NULL);
+	str = g_regex_replace(regex, str, -1, 0, " ", 0, NULL);
+	return str;
 }
 
 gboolean gebr_validate_check_no_blanks_at_boundaries(const gchar * str)
@@ -54,6 +74,16 @@ gboolean gebr_validate_check_no_blanks_at_boundaries(const gchar * str)
 	return TRUE;
 }
 
+gchar * gebr_validate_change_no_blanks_at_boundaries(const gchar * sentence)
+{	
+	GRegex *regex;
+	gchar *str = g_strdup(sentence);
+
+	regex = g_regex_new ("^[[:space:]]|[[:space:]]$", 0, 0, NULL);
+	str = g_regex_replace(regex, str, -1, 0, "", 0, NULL);
+	return str;
+}
+
 gboolean gebr_validate_check_no_punctuation_at_end(const gchar * str)
 {
 	int n = strlen(str);
@@ -64,6 +94,18 @@ gboolean gebr_validate_check_no_punctuation_at_end(const gchar * str)
 		return FALSE;
 
 	return TRUE;
+}
+
+gchar * gebr_validate_change_no_punctuation_at_end(const gchar * sentence)
+{	
+	gchar *str = g_strdup(sentence);
+
+	if (str){
+		int n = strlen(str);
+		while(str[--n] != ')' && g_ascii_ispunct(str[n]))
+			str[n] = '\0';
+	}
+	return str;
 }
 
 gboolean gebr_validate_check_menu_filename(const gchar * str)

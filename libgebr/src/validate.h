@@ -31,9 +31,23 @@ gboolean gebr_validate_check_is_not_empty(const gchar * str);
 gboolean gebr_validate_check_no_lower_case(const gchar * sentence);
 
 /**
+ *  CHANGE \p sentence first letter to upper case.
+ *  \return  a newly allocated string that must be freed
+ *  It implements the correction for \ref gebr_validate_check_no_lower_case check
+ */
+gchar * gebr_validate_change_first_to_upper(const gchar * sentence);
+
+/**
  * TRUE if str has not consecutive blanks.
  */
 gboolean gebr_validate_check_no_multiple_blanks(const gchar * str);
+
+/**
+ *  CHANGE \p sentence to remove mutiple blanks.
+ *  \return  a newly allocated string that must be freed
+ *  It implements the correction for \ref gebr_validate_check_no_multiple_blanks check
+ */
+gchar * gebr_validate_change_multiple_blanks(const gchar * sentence);
 
 /**
  * TRUE if str does not start or end with blanks/tabs.
@@ -41,9 +55,24 @@ gboolean gebr_validate_check_no_multiple_blanks(const gchar * str);
 gboolean gebr_validate_check_no_blanks_at_boundaries(const gchar * str);
 
 /**
+ *  CHANGE \p sentence to remove blanks at boundaries.
+ *  \return  a newly allocated string that must be freed
+ *  It implements the correction for \ref gebr_validate_check_no_multiple_blanks check
+ */
+gchar * gebr_validate_change_no_blanks_at_boundaries(const gchar * sentence);
+
+/**
  * TRUE if str does not end if a punctuation mark.
  */
 gboolean gebr_validate_check_no_punctuation_at_end(const gchar * str);
+
+/**
+ *  CHANGE \p sentence to remove punctuation at string's end.
+ *  \return  string with last punctuation changed by a NULL character 
+ *  \return  a newly allocated string that must be freed
+ *  It implements the correction for \ref gebr_validate_check_no_punctuation_at_end check
+ */
+gchar * gebr_validate_change_no_punctuation_at_end(const gchar * sentence);
 
 /**
  * TRUE if str has not path and ends with .mnu
