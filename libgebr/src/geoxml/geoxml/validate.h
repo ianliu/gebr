@@ -27,6 +27,20 @@
  * Semantic validator for GeoXml
  */
 
+/**
+ * \internal
+ */
+enum GebrGeoXmlValidateCheckFlags {
+	GEBR_GEOXML_VALIDATE_CHECK_EMPTY	= 1 << 0,
+	GEBR_GEOXML_VALIDATE_CHECK_CAPIT	= 1 << 1,
+	GEBR_GEOXML_VALIDATE_CHECK_NOBLK	= 1 << 2,
+	GEBR_GEOXML_VALIDATE_CHECK_MTBLK	= 1 << 3,
+	GEBR_GEOXML_VALIDATE_CHECK_NOPNT	= 1 << 4,
+	GEBR_GEOXML_VALIDATE_CHECK_EMAIL	= 1 << 5,
+	GEBR_GEOXML_VALIDATE_CHECK_FILEN	= 1 << 6,
+	GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY	= 1 << 7,
+};
+
 typedef struct _GebrGeoXmlValidate GebrGeoXmlValidate;
 typedef struct _GebrGeoXmlValidateOperations GebrGeoXmlValidateOperations;
 typedef struct _GebrGeoXmlValidateOptions GebrGeoXmlValidateOptions;
@@ -85,6 +99,7 @@ GebrGeoXmlValidate *gebr_geoxml_validate_new(gpointer data, GebrGeoXmlValidateOp
 					     GebrGeoXmlValidateOptions options);
 
 /**
+ * Frees \ref GebrGeoXmlValidate structure and members.
  */
 void gebr_geoxml_validate_free(GebrGeoXmlValidate * validate);
 
@@ -95,4 +110,3 @@ void gebr_geoxml_validate_free(GebrGeoXmlValidate * validate);
 gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlFlow * menu);
 
 #endif //__GEBR_GEOXML_VALIDATE_H
-

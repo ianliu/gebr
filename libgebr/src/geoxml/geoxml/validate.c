@@ -22,20 +22,6 @@
 #include "../../intl.h"
 #include "../../date.h"
 
-/**
- * \internal
- */
-enum GebrGeoXmlValidateCheckFlags {
-	GEBR_GEOXML_VALIDATE_CHECK_EMPTY = 1 << 0,
-	GEBR_GEOXML_VALIDATE_CHECK_CAPIT = 1 << 1,
-	GEBR_GEOXML_VALIDATE_CHECK_NOBLK = 1 << 2,
-	GEBR_GEOXML_VALIDATE_CHECK_MTBLK = 1 << 3,
-	GEBR_GEOXML_VALIDATE_CHECK_NOPNT = 1 << 4,
-	GEBR_GEOXML_VALIDATE_CHECK_EMAIL = 1 << 5,
-	GEBR_GEOXML_VALIDATE_CHECK_FILEN = 1 << 6,
-	GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY = 1 << 7,
-};
-
 GebrGeoXmlValidate *gebr_geoxml_validate_new(gpointer data, GebrGeoXmlValidateOperations operations,
 					     GebrGeoXmlValidateOptions options)
 {
