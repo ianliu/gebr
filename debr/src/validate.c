@@ -28,22 +28,6 @@
 #include "debr.h"
 #include "callbacks.h"
 
-/**
- * \internal
- */
-struct validate {
-	GtkWidget *widget;
-	GtkWidget *text_view;
-
-	GtkTextBuffer *text_buffer;
-	GtkTreeIter iter;
-
-	GebrGeoXmlFlow *menu;
-	GtkTreeIter menu_iter;
-
-	GebrGeoXmlValidate *geoxml_validate;
-};
-
 static void validate_free(struct validate *validate);
 static gboolean validate_get_selected(GtkTreeIter * iter, gboolean warn_unselected);
 static void validate_set_selected(GtkTreeIter * iter);
@@ -111,6 +95,14 @@ void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 	GtkWidget *text_view;
 	GtkTextBuffer *text_buffer;
 
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_VALIDATE_POINTER, &validate, -1);
+	if (validate != NULL) {
+		validate->menu_iter = *iter;
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &validate->menu, -1);
+		gtk_text_buffer_set_text(validate->text_buffer, "", 0);
+		goto out;
+	}
+
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
 				       GTK_POLICY_AUTOMATIC);
@@ -143,9 +135,13 @@ void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 		.menu_iter = *iter,
 		.geoxml_validate = gebr_geoxml_validate_new(validate, operations, options)
 	};
-	gint error_count = gebr_geoxml_validate_report_menu(validate->geoxml_validate, menu);
-
 	gtk_list_store_append(debr.ui_validate.list_store, &validate->iter);
+
+out:
+	gtk_tree_store_set(debr.ui_menu.model, iter, MENU_VALIDATE_NEED_UPDATE, FALSE,
+			   MENU_VALIDATE_POINTER, validate, -1);
+
+	gint error_count = gebr_geoxml_validate_report_menu(validate->geoxml_validate, menu);
 	gtk_list_store_set(debr.ui_validate.list_store, &validate->iter,
 			   VALIDATE_ICON, !error_count ? debr.pixmaps.stock_apply : debr.pixmaps.stock_cancel,
 			   VALIDATE_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)),
@@ -156,24 +152,27 @@ void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 void validate_close(void)
 {
 	GtkTreeIter iter;
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_validate.tree_view)
+		validate_close_iter(&iter);
+}
+
+void validate_close_iter(GtkTreeIter *iter)
+{
 	struct validate *validate;
 
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_validate.tree_view) {
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_validate.list_store), &iter, VALIDATE_POINTER, &validate, -1);
-		validate_free(validate);
-	}
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_validate.list_store), iter, VALIDATE_POINTER, &validate, -1);
+	gtk_tree_store_set(debr.ui_menu.model, &validate->menu_iter,
+			   MENU_VALIDATE_POINTER, NULL,
+			   MENU_VALIDATE_NEED_UPDATE, TRUE,
+			   -1);
+	validate_free(validate);
 }
 
 void validate_clear(void)
 {
 	GtkTreeIter iter;
-
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_validate.list_store)) {
-		struct validate *validate;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_validate.list_store), &iter, VALIDATE_POINTER, &validate, -1);
-		validate_free(validate);
-	}
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_validate.list_store))
+		validate_close_iter(&iter);
 }
 
 /**
