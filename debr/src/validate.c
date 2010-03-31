@@ -95,10 +95,17 @@ void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 	GtkWidget *text_view;
 	GtkTextBuffer *text_buffer;
 
+	gboolean updated = FALSE; 
+	gdouble scroll_hvalue;
+	gdouble scroll_vvalue;
+
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_VALIDATE_POINTER, &validate, -1);
 	if (validate != NULL) {
+		updated = TRUE;
 		validate->menu_iter = *iter;
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &validate->menu, -1);
+		scroll_hvalue = gtk_adjustment_get_value(gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(validate->widget)));
+		scroll_vvalue = gtk_adjustment_get_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(validate->widget)));
 		gtk_text_buffer_set_text(validate->text_buffer, "", 0);
 		goto out;
 	}
@@ -147,6 +154,11 @@ out:
 			   VALIDATE_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)),
 			   VALIDATE_POINTER, validate, -1);
 	validate_set_selected(&validate->iter);
+
+	if (updated) {
+		gtk_adjustment_set_value(gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(validate->widget)), scroll_hvalue);
+		gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(validate->widget)), scroll_vvalue);
+	}
 }
 
 void validate_close(void)
@@ -290,14 +302,18 @@ static void validate_parse_link_click_callback(GtkTextView * text_view, GtkTextT
 
 	gchar *program_path = g_object_get_data(G_OBJECT(link_tag), "program_path_string");
 	gchar *parameter_path = g_object_get_data(G_OBJECT(link_tag), "parameter_path_string");
+	gboolean ret;
 	if (program_path != NULL) {
 		menu_select_program_and_paramater(program_path, parameter_path);
 		if (parameter_path != NULL)
-			on_parameter_properties_activate();
+			ret = on_parameter_properties_activate();
 		else
-			on_program_properties_activate();	
+			ret = on_program_properties_activate();	
 	} else 
-		on_menu_properties_activate();
+		ret = on_menu_properties_activate();
+
+	if (ret)
+		validate_menu(&validate->menu_iter, validate->menu);
 }
 
 /**

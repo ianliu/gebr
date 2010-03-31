@@ -274,9 +274,9 @@ void on_menu_delete_activate(void)
 
 }
 
-void on_menu_properties_activate(void)
+gboolean on_menu_properties_activate(void)
 {
-	menu_dialog_setup_ui();
+	return menu_dialog_setup_ui();
 }
 
 void on_menu_validate_activate(void)
@@ -416,9 +416,9 @@ void on_parameter_delete_activate(void)
 	parameter_remove(TRUE);
 }
 
-void on_parameter_properties_activate(void)
+gboolean on_parameter_properties_activate(void)
 {
-	parameter_properties();
+	return parameter_properties();
 }
 
 void on_parameter_top_activate(void)

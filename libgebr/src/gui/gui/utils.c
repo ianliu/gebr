@@ -654,8 +654,8 @@ GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkT
 	return renderer;
 }
 
-void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTreeModelForeachFunc func, gpointer
-					       user_data)
+void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTreeModelForeachFunc func,
+					       gpointer user_data)
 {
 	GtkTreeIter iter;
 	GtkTreeIter parent;

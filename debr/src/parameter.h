@@ -145,7 +145,7 @@ void parameter_change_type(enum GEBR_GEOXML_PARAMETER_TYPE type);
 /**
  * Show parameter's properties according to its type.
  */
-void parameter_properties(void);
+gboolean parameter_properties(void);
 
 /**
  * Get the selected parameter in the tree view, if any.

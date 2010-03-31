@@ -98,7 +98,7 @@ void on_menu_delete_activate(void);
 /**
  * Calls \ref menu_dialog_setup_ui.
  */
-void on_menu_properties_activate(void);
+gboolean on_menu_properties_activate(void);
 
 /**
  * Calls \ref menu_validate.
@@ -163,7 +163,7 @@ void on_parameter_delete_activate(void);
 /**
  * Calls \ref parameter_remove.
  */
-void on_parameter_properties_activate(void);
+gboolean on_parameter_properties_activate(void);
 
 /**
  * Calls \ref parameter_top.

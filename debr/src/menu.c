@@ -1427,11 +1427,11 @@ void menu_close_folder(GtkTreeIter * iter)
 	GtkTreeIter parent;
 	GtkTreeIter child;
 	GList *rows = NULL;
-	gchar *path;
 
 	if (menu_get_type(iter) != ITER_FOLDER)
 		return;
 
+	parent = *iter;
 	valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, &parent);
 	while (valid) {
 		GtkTreePath *tree_path;
@@ -1452,12 +1452,13 @@ void menu_close_folder(GtkTreeIter * iter)
 		gtk_tree_row_reference_free((GtkTreeRowReference*)(rows_iter->data));
 	}
 
+	gchar *path;
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_PATH, &path, -1);
 	g_hash_table_remove(debr.config.opened_folders, path);
 	gtk_tree_store_remove(debr.ui_menu.model, &parent);
+	g_free(path);
 
 	g_list_free(rows);
-	g_free(path);
 }
 
 void menu_close_folder_from_path(const gchar * path)
