@@ -327,6 +327,8 @@ static void validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 		}
 	}
 
+	if (format == NULL)
+		return;
 	va_list argp;
 	va_start(argp, format);
 	gchar *string; 
