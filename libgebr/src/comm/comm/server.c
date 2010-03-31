@@ -261,7 +261,7 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	return ret;
 }
 
-void gebr_comm_server_run_flow(struct gebr_comm_server *server, struct gebr_comm_server_run * config)
+void gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerRun * config)
 {
 	GebrGeoXmlFlow *flow_wnh;	/* wnh: with no help */
 	GebrGeoXmlSequence *program;
@@ -282,8 +282,10 @@ void gebr_comm_server_run_flow(struct gebr_comm_server *server, struct gebr_comm
 	gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(flow_wnh), &xml);
 
 	gebr_comm_protocol_send_data(server->protocol, server->stream_socket,
-				     gebr_comm_protocol_defs.run_def, 3, xml,
-				     config->account ? config->account : "", config->class ? config->class : "");
+				     gebr_comm_protocol_defs.run_def, 4, xml,
+				     config->account ? config->account : "",
+				     config->class ? config->class : "",
+				     config->n_proccess);
 	/* frees */
 	g_free(xml);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(flow_wnh));

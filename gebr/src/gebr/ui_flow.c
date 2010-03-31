@@ -486,7 +486,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	GtkTreeIter iter;
 	const gchar *address;
 	struct server *server;
-	struct gebr_comm_server_run *config;
+	GebrCommServerRun *config;
 
 	if (!flow_browse_get_selected(NULL, FALSE)) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected."));
@@ -494,7 +494,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	}
 
 	/* initialization */
-	config = g_new(struct gebr_comm_server_run, 1);
+	config = g_new(GebrCommServerRun, 1);
 	config->account = config->class = NULL;
 
 	/* find iter */

@@ -60,7 +60,7 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative);
 /** 
  * Runs a flow.
  */
-void flow_run(struct server *server, struct gebr_comm_server_run * config);
+void flow_run(struct server *server, GebrCommServerRun * config);
 /**
  * Make a revision from current flow.
  * Opens a dialog asking the user for a comment of it.

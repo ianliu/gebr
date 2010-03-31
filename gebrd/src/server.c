@@ -307,16 +307,17 @@ gboolean server_parse_client_messages(struct client *client)
 			job_list(client);
 		} else if (message->hash == gebr_comm_protocol_defs.run_def.hash) {
 			GList *arguments;
-			GString *xml, *account, *queue;
+			GString *xml, *account, *queue, *n_process;
 			struct job *job;
 			gboolean success;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_split_new(message->argument, 3)) == NULL)
+			if ((arguments = gebr_comm_protocol_split_new(message->argument, 4)) == NULL)
 				goto err;
 			xml = g_list_nth_data(arguments, 0);
 			account = g_list_nth_data(arguments, 1);
 			queue = g_list_nth_data(arguments, 2);
+			n_process = g_list_nth_data(arguments, 3);
 
 			/* try to run and send return */
 			success = job_new(&job, client, queue, account, xml);
