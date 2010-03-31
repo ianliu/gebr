@@ -22,7 +22,9 @@ libgebrd_a_SOURCES = \
 	client.c \
 	job.c \
 	job-queue.c \
-	queues.c
+	queues.c \
+	mpi-implementations.c \
+	mpi-interface.c
 
 bin_PROGRAMS = gebrd
 gebrd_SOURCES = \
@@ -35,7 +37,9 @@ noinst_HEADERS = \
 	job.h \
 	macros.h \
 	job-queue.h \
-	queues.h
+	queues.h \
+	mpi-implementations.h \
+	mpi-interface.h
 
 EXTRA_DIST = $(noinst_HEADERS)
 
