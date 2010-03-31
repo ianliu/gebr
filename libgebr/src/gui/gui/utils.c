@@ -702,13 +702,12 @@ GtkTextTag *gebr_gui_gtk_text_buffer_create_link_tag(GtkTextBuffer * text_buffer
 	gboolean on_tag_event(GtkTextTag *text_tag, GtkTextView *text_view, GdkEvent *event, GtkTextIter *iter)
 	{
 		if (event->type == GDK_MOTION_NOTIFY) {
-			gdk_window_set_cursor(GTK_WIDGET(text_view)->window, 
-					      gdk_cursor_new_for_display(gdk_display_get_default(),
-									 GDK_HAND1));
+			gdk_window_set_cursor(gtk_text_view_get_window(text_view, GTK_TEXT_WINDOW_TEXT), 
+					      gdk_cursor_new(GDK_HAND2));
 			return FALSE;
 		}
 		if (!(event->type == GDK_BUTTON_RELEASE && event->button.button == 1)) {
-			gdk_window_set_cursor(GTK_WIDGET(text_view)->window, NULL);
+			gdk_window_set_cursor(gtk_text_view_get_window(text_view, GTK_TEXT_WINDOW_TEXT), NULL);
 			return FALSE;
 		}
 
