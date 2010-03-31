@@ -693,33 +693,63 @@ void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTree
 	}
 }
 
-GtkTextTag *gebr_gui_gtk_text_buffer_create_link_tag(GtkTextBuffer * text_buffer, const gchar * url,
-						     GebrGuiGtkTextViewLinkClickCallback callback, gpointer user_data)
+GtkTextTag *gebr_gui_gtk_text_view_create_link_tag(GtkTextView * text_view, const gchar * url,
+						   GebrGuiGtkTextViewLinkClickCallback callback, gpointer user_data)
 {
 	/**
 	 * \internal
 	 */
 	gboolean on_tag_event(GtkTextTag *text_tag, GtkTextView *text_view, GdkEvent *event, GtkTextIter *iter)
 	{
-		if (event->type == GDK_MOTION_NOTIFY) {
-			gdk_window_set_cursor(gtk_text_view_get_window(text_view, GTK_TEXT_WINDOW_TEXT), 
-					      gdk_cursor_new(GDK_HAND2));
+		if (!(event->type == GDK_BUTTON_RELEASE && event->button.button == 1))
 			return FALSE;
-		}
-		if (!(event->type == GDK_BUTTON_RELEASE && event->button.button == 1)) {
-			gdk_window_set_cursor(gtk_text_view_get_window(text_view, GTK_TEXT_WINDOW_TEXT), NULL);
-			return FALSE;
-		}
 
 		GebrGuiGtkTextViewLinkClickCallback callback;
 		gpointer user_data;
-		callback = (GebrGuiGtkTextViewLinkClickCallback)g_object_get_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_callback");
 		user_data = g_object_get_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_user_data");
+		callback = (GebrGuiGtkTextViewLinkClickCallback)g_object_get_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_callback");
 		callback(text_view, text_tag, g_object_get_data(G_OBJECT(text_tag), "url"), user_data);
 
 		return FALSE;
 	}
 
+	/**
+	 * \internal
+	 */
+	gboolean on_text_view_motion_notify(GtkTextView *text_view, GdkEventMotion *event)
+       	{
+		GtkTextIter iter;
+		GSList *tags;
+		gboolean ret = FALSE;
+		gint x = event->x;
+		gint y = event->y;
+
+		gtk_text_view_window_to_buffer_coords(text_view, GTK_TEXT_WINDOW_TEXT, x, y, &x, &y);
+		gtk_text_view_get_iter_at_location(text_view, &iter, x, y);
+		tags = gtk_text_iter_get_tags(&iter);
+		for (GSList *i = tags; i != NULL; i = g_slist_next(i)) {
+			GtkTextTag *text_tag = (GtkTextTag*)i->data;
+			gpointer callback;
+
+			callback = g_object_get_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_callback");
+			if (callback) {
+				ret = TRUE;
+				break;
+			}
+		}
+		g_slist_free(tags);
+
+		if (ret)
+			gdk_window_set_cursor(gtk_text_view_get_window(text_view, GTK_TEXT_WINDOW_TEXT), 
+					      gdk_cursor_new(GDK_HAND2));
+		else
+			gdk_window_set_cursor(gtk_text_view_get_window(text_view, GTK_TEXT_WINDOW_TEXT), gdk_cursor_new(GDK_XTERM));
+		//gdk_window_get_pointer(GTK_WIDGET(text_view)->window, NULL, NULL, NULL);
+
+		return FALSE;
+	}
+
+	GtkTextBuffer *text_buffer = gtk_text_view_get_buffer(text_view);
 	GtkTextTag *text_tag = gtk_text_buffer_create_tag(text_buffer, NULL, NULL);
 
 	url = (const gchar*)g_strdup(url);
@@ -732,6 +762,9 @@ GtkTextTag *gebr_gui_gtk_text_buffer_create_link_tag(GtkTextBuffer * text_buffer
 	g_object_set_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_callback", callback);
 	g_object_set_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_user_data", user_data);
 	g_signal_connect(text_tag, "event", G_CALLBACK(on_tag_event), NULL);
+	gint signal_handler = g_signal_handler_find(text_view, G_SIGNAL_MATCH_FUNC, 0, (GQuark)0, NULL, on_text_view_motion_notify, NULL);
+	if (!signal_handler)
+		g_signal_connect(G_OBJECT(text_view), "motion-notify-event", G_CALLBACK(on_text_view_motion_notify), text_tag);
 
 	return text_tag;
 }

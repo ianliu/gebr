@@ -325,7 +325,7 @@ validate_append_link(struct validate *validate, const gchar *text, const gchar *
 {
 	GtkTextTag *tag;
 
-	tag = gebr_gui_gtk_text_buffer_create_link_tag(validate->text_buffer, url, (GebrGuiGtkTextViewLinkClickCallback)validate_parse_link_click_callback, validate);
+	tag = gebr_gui_gtk_text_view_create_link_tag(GTK_TEXT_VIEW(validate->text_view), url, (GebrGuiGtkTextViewLinkClickCallback)validate_parse_link_click_callback, validate);
 	validate_append_text_with_tag(validate, tag, text);
 
 	return tag;

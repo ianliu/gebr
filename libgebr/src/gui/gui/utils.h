@@ -297,8 +297,8 @@ typedef void (*GebrGuiGtkTextViewLinkClickCallback)(GtkTextView * text_view, Gtk
  *
  * \see GebrGuiGtkTextViewLinkClickCallback
  */
-GtkTextTag *gebr_gui_gtk_text_buffer_create_link_tag(GtkTextBuffer * text_buffer, const gchar * url,
-						     GebrGuiGtkTextViewLinkClickCallback callback, gpointer user_data);
+GtkTextTag *gebr_gui_gtk_text_view_create_link_tag(GtkTextView * text_view, const gchar * url,
+						   GebrGuiGtkTextViewLinkClickCallback callback, gpointer user_data);
 
 
 /**
