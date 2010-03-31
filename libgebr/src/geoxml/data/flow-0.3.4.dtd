@@ -1,0 +1,124 @@
+<!ELEMENT flow (filename, title, description, help, author, email, dict, date, category*, io, servers, program*, revision*)>
+<!ATTLIST flow
+	version CDATA #FIXED "0.3.3"
+	nextid  ID #REQUIRED>
+
+<!-- Name of the XML flow file -->
+<!ELEMENT filename (#PCDATA)>
+<!-- Short title for a program or flow -->
+<!ELEMENT title	(#PCDATA)>
+<!-- One line description for a program or flow -->
+<!ELEMENT description (#PCDATA)>
+<!-- Detailed text used as help message for a program or flow -->
+<!ELEMENT help (#PCDATA)>
+<!-- Author of the flow and his/her email -->
+<!ELEMENT author (#PCDATA)>
+<!ELEMENT email (#PCDATA)>
+<!-- Dictionary of parameters for use in programs' parameters -->
+<!ELEMENT dict (parameters)>
+<!-- Dates associated to the line -->
+<!ELEMENT date (created, modified, lastrun)>
+<!ELEMENT created (#PCDATA)>
+<!ELEMENT modified (#PCDATA)>
+<!ELEMENT lastrun (#PCDATA)>
+
+<!-- Categories to which the flow belongs to -->
+<!ELEMENT category (#PCDATA)>
+<!-- Input/Output/Erro log files -->
+<!ELEMENT input (#PCDATA)>
+<!ELEMENT output (#PCDATA)>
+<!ELEMENT error (#PCDATA)>
+
+<!-- Servers list and configuration -->
+<!ELEMENT servers (server*)>
+<!ELEMENT server (io, lastrun)>
+<!ATTLIST server
+	address CDATA #REQUIRED>
+
+<!-- Input/Output to run the flow -->
+<!ELEMENT io (input, output, error)>
+
+<!ELEMENT program (title, binary, description, help, url, parameters)>
+<!ATTLIST program
+	stdin	(yes | no)				#REQUIRED
+	stdout	(yes | no)				#REQUIRED
+	stderr	(yes | no)				#REQUIRED
+	status	(disabled | configured | unconfigured)	#REQUIRED
+	version CDATA					#IMPLIED
+	parallelization CDATA				#IMPLIED>
+
+<!ELEMENT revision (#PCDATA)>
+<!ATTLIST revision
+	date	CDATA	#REQUIRED
+	comment	CDATA	#REQUIRED>
+
+<!-- Binary to program (without path) -->
+<!ELEMENT binary (#PCDATA)>
+<!-- URL to get the program -->
+<!ELEMENT url (#PCDATA)>
+
+<!ELEMENT group (parameters+)>
+<!ATTLIST group
+	expand		(yes | no)	#REQUIRED
+	instanciable	(yes | no)	#REQUIRED>
+
+<!ELEMENT parameters (parameter*)>
+<!ATTLIST parameters
+	exclusive	CDATA	#REQUIRED
+	selected	CDATA	#IMPLIED>
+
+<!ELEMENT parameter (label, (reference | int | float | string | flag | file | range | enum | group))>
+<!ATTLIST parameter
+	id ID #REQUIRED>
+
+<!-- Short text to be displayed as label for a parameter -->
+<!ELEMENT label (#PCDATA)>
+
+<!ELEMENT property (keyword, value+, default+)>
+<!ATTLIST property
+	dictkeyword	CDATA		#IMPLIED
+	required	(yes | no)	#IMPLIED
+	separator	CDATA		#IMPLIED>
+
+<!-- Keyword to build the command line -->
+<!ELEMENT keyword (#PCDATA)>
+<!-- Actual value of a parameter -->
+<!ELEMENT value (#PCDATA)>
+<!-- Actual default value of a parameter -->
+<!ELEMENT default (#PCDATA)>
+
+<!-- Types of parameters -->
+<!-- Reference (except for groups) -->
+<!ELEMENT reference (property)>
+<!ATTLIST reference
+	idref IDREF #REQUIRED>
+<!-- Integer -->
+<!ELEMENT int (property)>
+<!ATTLIST int
+	min	CDATA	#IMPLIED
+	max	CDATA	#IMPLIED>
+<!-- Real number -->
+<!ELEMENT float (property)>
+<!ATTLIST float
+	min	CDATA	#IMPLIED
+	max	CDATA	#IMPLIED>
+<!-- String -->
+<!ELEMENT string (property)>
+<!-- Flag -->
+<!ELEMENT flag (property)>
+<!-- File -->
+<!ELEMENT file (property)>
+<!ATTLIST file
+	directory	(yes | no)	#REQUIRED
+	filter-name	CDATA		#IMPLIED
+	filter-pattern	CDATA		#IMPLIED>
+<!-- Range -->
+<!ELEMENT range (property)>
+<!ATTLIST range
+	min	CDATA	#REQUIRED
+	max	CDATA	#REQUIRED
+	inc	CDATA	#REQUIRED
+	digits	CDATA	#REQUIRED>
+<!-- Enum -->
+<!ELEMENT enum (property, option*)>
+<!ELEMENT option (label, value)>
