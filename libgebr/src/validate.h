@@ -20,6 +20,38 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
+typedef enum {
+	GEBR_VALIDATE_CASE_AUTHOR,
+	GEBR_VALIDATE_CASE_CATEGORY,
+	GEBR_VALIDATE_CASE_DATE,
+	GEBR_VALIDATE_CASE_DESCRIPTION,
+	GEBR_VALIDATE_CASE_FILENAME,
+	GEBR_VALIDATE_CASE_HELP,
+	GEBR_VALIDATE_CASE_TITLE,
+	GEBR_VALIDATE_CASE_EMAIL,
+
+	GEBR_VALIDATE_CASE_PROGRAM_BINARY,
+	GEBR_VALIDATE_CASE_PROGRAM_DESCRIPTION,
+	GEBR_VALIDATE_CASE_PROGRAM_TITLE,
+	GEBR_VALIDATE_CASE_PROGRAM_URL,
+	GEBR_VALIDATE_CASE_PROGRAM_VERSION,
+
+	GEBR_VALIDATE_CASE_PARAMETER_KEYWORD,
+	GEBR_VALIDATE_CASE_PARAMETER_LABEL,
+} GebrValidateCaseName;
+
+typedef struct _GebrValidateCase GebrValidateCase;
+
+struct _GebrValidateCase {
+	GebrValidateCaseName name;
+	gint flags;
+	const gchar * errmsg;
+};
+
+GebrValidateCase * gebr_validate_get_validate_case(GebrValidateCaseName name);
+
 /**
  * TRUE if str is not empty.
  */
@@ -49,7 +81,7 @@ gboolean gebr_validate_check_no_punctuation_at_end(const gchar * str);
  * TRUE if str has not path and ends with .mnu
  */
 gboolean gebr_validate_check_menu_filename(const gchar * str);
-	
+ 
 /**
  * TRUE if \p str is of kind <code>xxx@yyy</code>, with xxx composed by letter, digits, underscores, dots and dashes,
  * and yyy composed by at least one dot, letter digits and dashes.
@@ -57,5 +89,7 @@ gboolean gebr_validate_check_menu_filename(const gchar * str);
  * \see http://en.wikipedia.org/wiki/E-mail_address
  */
 gboolean gebr_validate_check_is_email(const gchar * str);
+
+G_END_DECLS
 
 #endif				//__GEBR_VALIDATE_H

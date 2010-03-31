@@ -129,31 +129,30 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 	if (validate->options.filename)
 		validate_append_item_with_check(validate, _("Filename:      "),
 						gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)),
-						GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_FILEN);
+						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_FILENAME)->flags);
 	if (validate->options.title)
 		validate_append_item_with_check(validate, _("Title:         "),
 						gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(menu)),
-						GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT | GEBR_GEOXML_VALIDATE_CHECK_MTBLK);
+						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_TITLE)->flags);
 	if (validate->options.desc)
 		validate_append_item_with_check(validate, _("Description:   "),
-						gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT
-										     (menu)),
-						GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT);
+						gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT(menu)),
+						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_DESCRIPTION)->flags);
 	if (validate->options.author) {
 		validate_append_item(validate, _("Author:        "));
 		validate_append_check(validate, gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(menu)),
-				      GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT, " <");
+				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_AUTHOR)->flags, " <");
 		validate_append_check(validate, gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(menu)),
-				      GEBR_GEOXML_VALIDATE_CHECK_EMAIL, ">");
+				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_EMAIL)->flags, ">");
 		validate->operations.append_text(validate->data, "\n");
 	}
 	if (validate->options.dates) {
 		validate_append_item_with_check(validate, _("Created:       "),
-						gebr_localized_date(gebr_geoxml_document_get_date_created
-								    (GEBR_GEOXML_DOCUMENT(menu))), GEBR_GEOXML_VALIDATE_CHECK_EMPTY);
+						gebr_localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOCUMENT(menu))),
+						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_DATE)->flags);
 		validate_append_item_with_check(validate, _("Modified:      "),
-						gebr_localized_date(gebr_geoxml_document_get_date_modified
-								    (GEBR_GEOXML_DOCUMENT(menu))), GEBR_GEOXML_VALIDATE_CHECK_EMPTY);
+						gebr_localized_date(gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(menu))),
+						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_DATE)->flags);
 	}
 	if (validate->options.mhelp) {
 		validate_append_item(validate, _("Help:          "));
@@ -170,9 +169,8 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 		else
 			for (; seq != NULL; gebr_geoxml_sequence_next(&seq))
 				validate_append_item_with_check(validate, _("Category:      "),
-								gebr_geoxml_value_sequence_get
-								(GEBR_GEOXML_VALUE_SEQUENCE(seq)),
-								GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT);
+								gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq)),
+								gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_CATEGORY)->flags);
 	}
 
 	if (!validate->options.progs && !validate->options.params)
@@ -191,10 +189,11 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 		validate->operations.append_text_emph(validate->data, _("\n>>Program:     "));
 		validate->operations.append_text(validate->data, "%d\n", i + 1);
 		validate_append_item_with_check(validate, _("  Title:       "),
-						gebr_geoxml_program_get_title(prog), GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK);
+						gebr_geoxml_program_get_title(prog),
+						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_TITLE)->flags);
 		validate_append_item_with_check(validate, _("  Description: "),
 						gebr_geoxml_program_get_description(prog),
-						GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT);
+						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_DESCRIPTION)->flags);
 
 		validate->operations.append_text_emph(validate->data, _("  In/out/err:  "));
 		validate->operations.append_text(validate->data, "%s/%s/%s\n",
@@ -203,11 +202,14 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 				     gebr_geoxml_program_get_stdin(prog) ? _("Append") : _("Ignore"));
 
 		validate_append_item_with_check(validate, _("  Binary:      "),
-						gebr_geoxml_program_get_binary(prog), GEBR_GEOXML_VALIDATE_CHECK_EMPTY);
+						gebr_geoxml_program_get_binary(prog),
+						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_BINARY)->flags);
                 validate_append_item_with_check(validate, _("  Version:     "),
-						gebr_geoxml_program_get_version(prog), GEBR_GEOXML_VALIDATE_CHECK_EMPTY);
+						gebr_geoxml_program_get_version(prog),
+						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_VERSION)->flags);
                 validate_append_item_with_check(validate, _("  URL:         "),
-						gebr_geoxml_program_get_url(prog), GEBR_GEOXML_VALIDATE_CHECK_EMPTY);
+						gebr_geoxml_program_get_url(prog),
+						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_URL)->flags);
 		validate_append_item(validate, _("  Help:        "));
 		if (strlen(gebr_geoxml_program_get_help(prog)) >= 1)
 			validate->operations.append_text(validate->data, _("Defined"));
@@ -338,7 +340,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 			validate->operations.append_text(validate->data, "    %2d: ", validate->ipar);
 
 		label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp));
-		validate_append_check(validate, label, GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT | GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY, "\n");
+		validate_append_check(validate, label, gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL)->flags, "\n");
 
 		validate->operations.append_text(validate->data, "        ");
 		if (validate->isubpar)
@@ -351,7 +353,8 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 		validate->operations.append_text(validate->data, "] ");
 
 		validate->operations.append_text(validate->data, "'");
-		validate_append_check(validate, gebr_geoxml_program_parameter_get_keyword(pp), GEBR_GEOXML_VALIDATE_CHECK_EMPTY, "'");
+		validate_append_check(validate, gebr_geoxml_program_parameter_get_keyword(pp),
+				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_KEYWORD)->flags, "'");
 
 		default_value = gebr_geoxml_program_parameter_get_string_value(pp, TRUE);
 		if (default_value->len)
@@ -414,9 +417,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 		validate->isubpar = 0;
 		validate->operations.append_text(validate->data, "    %2d: ", validate->ipar);
 		validate_append_check(validate, gebr_geoxml_parameter_get_label(parameter),
-				      GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT |
-				      GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK |
-				      GEBR_GEOXML_VALIDATE_CHECK_NOPNT | GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY, NULL);
+				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL)->flags, NULL);
 
 		if (gebr_geoxml_parameter_group_get_is_instanciable(GEBR_GEOXML_PARAMETER_GROUP(parameter)))
 			validate->operations.append_text(validate->data, _("   [Instanciable]\n"));

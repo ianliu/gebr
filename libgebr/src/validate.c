@@ -18,7 +18,98 @@
 #include <string.h>
 #include <regex.h>
 
+#include "intl.h"
 #include "validate.h"
+#include "geoxml/geoxml/validate.h"
+
+/*
+ * Prototypes
+ */
+
+static GebrValidateCase validate_cases[] = {
+	/* menu */
+	{GEBR_VALIDATE_CASE_FILENAME,
+		GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_FILEN,
+		N_("File names must be a valid path.")},
+
+	{GEBR_VALIDATE_CASE_TITLE,
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT
+			| GEBR_GEOXML_VALIDATE_CHECK_MTBLK,
+		N_("Titles should not start with spaces or end with punctuations characters.")},
+
+	{GEBR_VALIDATE_CASE_DESCRIPTION,
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK
+			| GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT,
+		N_("Description should be capitalized and have no punctuations at the end.")},
+
+	{GEBR_VALIDATE_CASE_AUTHOR,
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK
+			| GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT,
+		N_("Author should be capitalized and have no punctuations at the end.")},
+
+	{GEBR_VALIDATE_CASE_DATE,
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY,
+		N_("Date should not be empty.")},
+
+	{GEBR_VALIDATE_CASE_HELP,
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY,
+		N_("Help should not be empty.")},
+
+	{GEBR_VALIDATE_CASE_CATEGORY,
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK
+			| GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT,
+		N_("Categories should be capitalized and have no punctuations at the end.")},
+	
+	{GEBR_VALIDATE_CASE_EMAIL,
+		GEBR_GEOXML_VALIDATE_CHECK_EMAIL,
+		N_("Help should not be empty.")},
+
+	/* program */
+	{GEBR_VALIDATE_CASE_PROGRAM_TITLE,
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK,
+		N_("Program titles should not have extra spaces.")},
+
+	{GEBR_VALIDATE_CASE_PROGRAM_DESCRIPTION,
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK
+			| GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT,
+		N_("Program description should be capitalized and have no punctuation characters at the end.")},
+
+	{GEBR_VALIDATE_CASE_PROGRAM_BINARY,
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY,
+		N_("Binaries should not be empty.")},
+
+	{GEBR_VALIDATE_CASE_PROGRAM_VERSION,
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY,
+		N_("Program version should be filled.")},
+
+	{GEBR_VALIDATE_CASE_PROGRAM_URL,
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY,
+		N_("Program url should not be empty.")},
+
+	/* parameter */
+	{GEBR_VALIDATE_CASE_PARAMETER_LABEL,
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK
+			| GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT | GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY,
+		N_("Parameter label should be capitalized and have no punctuations characters at the end. Also, careful with colliding shortcuts.")},
+
+	{GEBR_VALIDATE_CASE_PARAMETER_KEYWORD,
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY,
+		N_("Parameter keyword should not be empty.")},
+};
+
+/*
+ * Public functions
+ */
+
+GebrValidateCase * gebr_validate_get_validate_case(GebrValidateCaseName name)
+{
+	static gint n_elements = G_N_ELEMENTS(validate_cases);
+
+	for (int i = 0; i < n_elements; i++)
+		if (validate_cases[i].name == name)
+			return &validate_cases[i];
+	return NULL;
+}
 
 gboolean gebr_validate_check_is_not_empty(const gchar * str)
 {
