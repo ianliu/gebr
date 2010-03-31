@@ -56,18 +56,38 @@ struct ui_validate {
 void validate_setup_ui(void);
 
 /**
+ */
+struct validate {
+	GtkWidget *widget;
+	GtkWidget *text_view;
+
+	GtkTreeIter iter;
+	GtkTextBuffer *text_buffer;
+
+	GebrGeoXmlFlow *menu;
+	GtkTreeIter menu_iter;
+
+	GebrGeoXmlValidate *geoxml_validate;
+};
+
+/**
  * Validate \p menu adding it to the validated list.
  * \param iter The item on the menu list.
  */
 void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu);
 
 /**
- * Clear selecteds validated menus.
+ * Clear selected menu validations.
  */
 void validate_close(void);
 
 /**
- * Clear all the list of validated menus.
+ * Clear menu validation at \p iter.
+ */
+void validate_close_iter(GtkTreeIter *iter);
+
+/**
+ * Clear all the list of menus validations.
  */
 void validate_clear(void);
 

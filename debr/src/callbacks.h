@@ -26,6 +26,11 @@
 #include <gtk/gtk.h>
 
 /**
+ *
+ */
+void on_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num);
+
+/**
  * Callback to update navigation bar content according to menu, program and parameter selected.
  */
 void do_navigation_bar_update(void);
@@ -93,7 +98,7 @@ void on_menu_delete_activate(void);
 /**
  * Calls \ref menu_dialog_setup_ui.
  */
-void on_menu_properties_activate(void);
+gboolean on_menu_properties_activate(void);
 
 /**
  * Calls \ref menu_validate.
@@ -158,7 +163,7 @@ void on_parameter_delete_activate(void);
 /**
  * Calls \ref parameter_remove.
  */
-void on_parameter_properties_activate(void);
+gboolean on_parameter_properties_activate(void);
 
 /**
  * Calls \ref parameter_top.

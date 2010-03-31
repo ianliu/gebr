@@ -48,18 +48,20 @@ typedef enum {
  * Colums for debr.ui_menu.model, that keeps all opened menus.
  */
 enum {
-	MENU_STATUS = 0,	/**< The #MenuStatus of this menu.				*/
-	MENU_IMAGE,		/**< The stock image that represents this row type.		*/
-	MENU_FILENAME,		/**< Title of this row.						*/
-	MENU_MODIFIED_DATE,	/**< When this menu was last modified.				*/
-	MENU_XMLPOINTER,	/**< Pointer to the Xml structure of this menu.			*/
-	MENU_PATH,		/**< Absolute path for this menu in system.			*/
+	MENU_STATUS = 0,		/**< The #MenuStatus of this menu. */
+	MENU_IMAGE,			/**< The stock image that represents this row type. */
+	MENU_FILENAME,			/**< Title of this row.	*/
+	MENU_MODIFIED_DATE,		/**< When this menu was last modified. */
+	MENU_XMLPOINTER,		/**< Pointer to the Xml structure of this menu.	*/
+	MENU_PATH,			/**< Absolute path for this menu in system. */
+	MENU_VALIDATE_NEED_UPDATE,	/**< If menu has changed than validation needs to be updated. */
+	/** If this menu was validated, then keeps the validation structure. */
+	MENU_VALIDATE_POINTER,		
 	MENU_N_COLUMN
 };
 
 /**
- * Error messages to handle menu save
- */
+ * Error messages to handle menu save */
 typedef enum {
 	MENU_MESSAGE_PERMISSION_DENIED = 0,	/**< The program don't has access to the file			*/ 
 	MENU_MESSAGE_FIRST_TIME_SAVE, 		/**< The file don't exist and will be saved by the first time	*/

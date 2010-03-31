@@ -30,6 +30,22 @@
 #include "preferences.h"
 #include "parameter.h"
 
+void on_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num)
+{
+	if (page_num == NOTEBOOK_PAGE_VALIDATE) {
+		GtkTreeIter iter;
+		gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_validate.list_store)) {
+			struct validate *validate;;
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_validate.list_store), &iter, VALIDATE_POINTER, &validate, -1);
+
+			gboolean need_update;
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &validate->menu_iter, MENU_VALIDATE_NEED_UPDATE, &need_update, -1);
+			if (need_update) 
+				validate_menu(&validate->menu_iter, validate->menu);
+		}
+	}
+}
+
 void do_navigation_bar_update(void)
 {
 	GString *markup;
@@ -258,9 +274,9 @@ void on_menu_delete_activate(void)
 
 }
 
-void on_menu_properties_activate(void)
+gboolean on_menu_properties_activate(void)
 {
-	menu_dialog_setup_ui();
+	return menu_dialog_setup_ui();
 }
 
 void on_menu_validate_activate(void)
@@ -400,9 +416,9 @@ void on_parameter_delete_activate(void)
 	parameter_remove(TRUE);
 }
 
-void on_parameter_properties_activate(void)
+gboolean on_parameter_properties_activate(void)
 {
-	parameter_properties();
+	return parameter_properties();
 }
 
 void on_parameter_top_activate(void)

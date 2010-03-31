@@ -15,6 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * \file parametergroup.c Create dialog for editing a parameter of type group
+ */
+
 #ifndef __PARAMETER_GROUP_H
 #define __PARAMETER_GROUP_H
 

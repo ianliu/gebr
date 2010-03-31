@@ -315,6 +315,8 @@ static void validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 		}
 	}
 
+	if (format == NULL)
+		return;
 	va_list argp;
 	va_start(argp, format);
 	gchar *string; 
@@ -334,7 +336,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 		const gchar * label;
 		GebrGeoXmlProgramParameter *pp = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 
-		if (validate->isubpar)
+		if (validate->isubpar != -1)
 			validate->operations.append_text(validate->data, "       %2d.%02d: ", validate->ipar, validate->isubpar);
 		else
 			validate->operations.append_text(validate->data, "    %2d: ", validate->ipar);
@@ -343,7 +345,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 		validate_append_check(validate, label, gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL)->flags, "\n");
 
 		validate->operations.append_text(validate->data, "        ");
-		if (validate->isubpar)
+		if (validate->isubpar != -1)
 			validate->operations.append_text(validate->data, "      ");
 
 		validate->operations.append_text(validate->data, "[");
@@ -400,7 +402,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 
 			for (; enum_option != NULL; gebr_geoxml_sequence_next(&enum_option)) {
 				validate->operations.append_text(validate->data, "\n");
-				if (validate->isubpar)
+				if (validate->isubpar != -1)
 					validate->operations.append_text(validate->data, "      ");
 
 				validate->operations.append_text(validate->data, "        %s (%s)",
@@ -414,7 +416,6 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 		GebrGeoXmlSequence *subpar;
 		GebrGeoXmlSequence *instance;
 
-		validate->isubpar = 0;
 		validate->operations.append_text(validate->data, "    %2d: ", validate->ipar);
 		validate_append_check(validate, gebr_geoxml_parameter_get_label(parameter),
 				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL)->flags, NULL);
@@ -426,8 +427,10 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 
 		gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
 		subpar = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance));
+		validate->isubpar = 0;
 		for (; subpar != NULL; gebr_geoxml_sequence_next(&subpar), ++validate->isubpar)
 			show_parameter(validate, GEBR_GEOXML_PARAMETER(subpar));
+		validate->isubpar = -1;
 	}
 }
 

@@ -112,7 +112,7 @@ static void parameter_append_to_ui(GebrGeoXmlParameter * parameter, GtkTreeIter 
 static void parameter_insert_to_ui(GebrGeoXmlParameter *parameter, GtkTreeIter *sibling, GtkTreeIter *iter);
 static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group);
 static void parameter_selected(void);
-static void parameter_activated(void);
+static gboolean parameter_activated(void);
 static GtkMenu *parameter_popup_menu(GtkWidget * tree_view);
 static gboolean
 parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
@@ -637,9 +637,9 @@ void parameter_change_type(enum GEBR_GEOXML_PARAMETER_TYPE type)
 	parameter_load_selected();
 }
 
-void parameter_properties(void)
+gboolean parameter_properties(void)
 {
-	parameter_activated();
+	return parameter_activated();
 }
 
 gboolean parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
@@ -1392,16 +1392,16 @@ static void parameter_selected(void)
  * \internal
  * Open a dialog to configure the parameter, according to its type.
  */
-static void parameter_activated(void)
+static gboolean parameter_activated(void)
 {
 	GtkTreeIter iter;
 
 	if (parameter_get_selected(&iter, FALSE) == FALSE)
-		return;
+		return FALSE;
 	if (gebr_geoxml_parameter_get_is_program_parameter(debr.parameter) == TRUE)
-		parameter_dialog_setup_ui();
+		return parameter_dialog_setup_ui();
 	else
-		parameter_group_dialog_setup_ui();
+		return parameter_group_dialog_setup_ui();
 }
 
 /**

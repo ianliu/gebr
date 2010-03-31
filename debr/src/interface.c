@@ -1,8 +1,3 @@
-/**
- * \file interface.c Interface creation: mainwindow, actions and callbacks assignmment.
- * \see callbacks.c
- */
-
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -161,6 +156,7 @@ void debr_setup_ui(void)
 	debr.notebook = notebook = gtk_notebook_new();
 	gtk_widget_show(notebook);
 	gtk_box_pack_start(GTK_BOX(vbox), notebook, TRUE, TRUE, 0);
+	g_signal_connect(notebook, "switch-page", G_CALLBACK(on_notebook_switch_page), NULL);
 
 	debr.statusbar = statusbar = gtk_statusbar_new();
 	gtk_widget_show(statusbar);

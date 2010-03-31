@@ -1,7 +1,3 @@
-/**
- * \file parametergroup.c Create dialog for editing a parameter of type group
- */
-
 /*   DeBR - GeBR Designer
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
