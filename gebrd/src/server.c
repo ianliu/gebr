@@ -320,7 +320,7 @@ gboolean server_parse_client_messages(struct client *client)
 			n_process = g_list_nth_data(arguments, 3);
 
 			/* try to run and send return */
-			success = job_new(&job, client, queue, account, xml);
+			success = job_new(&job, client, queue, account, xml, n_process);
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
 						     gebr_comm_protocol_defs.ret_def, 1, job->jid->str);
 			if (success) {

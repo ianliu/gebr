@@ -35,6 +35,7 @@
 #include "job.h"
 #include "gebrd.h"
 #include "queues.h"
+#include "mpi-implementations.h"
 
 static gboolean job_parse_parameters(struct job *job, GebrGeoXmlParameters * parameters, GebrGeoXmlProgram * program);
 
@@ -47,6 +48,8 @@ static gboolean check_for_write_permission(const gchar * file);
 //static gboolean check_for_binary(const gchar * binary);
 
 static void job_send_signal_on_moab(const char * signal, struct job * job);
+
+static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, GString * n_process);
 
 /**
  * \internal
@@ -466,13 +469,15 @@ struct job *job_find(GString * jid)
 	return job;
 }
 
-gboolean job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml)
+gboolean job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml,
+		 GString * n_process)
 {
 	struct job *job;
 
 	GebrGeoXmlFlow *flow;
 	GebrGeoXmlDocument *document;
 	GebrGeoXmlSequence *program;
+	GebrdMpiInterface * mpi;
 	gulong nprog;
 
 	gboolean has_error_output_file;
@@ -500,7 +505,8 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 		.output = g_string_new(""),
 		.queue  = g_string_new(queue->str),
 		.moab_account = g_string_new(account->str),
-		.moab_jid = g_string_new("")
+		.moab_jid = g_string_new(""),
+		.n_process = g_string_new(n_process->str)
 	};
 	*_job = job;
 	gebrd.jobs = g_list_append(gebrd.jobs, job);
@@ -560,8 +566,13 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 		g_free(quoted);
 
 	}
+
+	/* Configure MPI */
+	mpi = job_get_mpi_impl(gebr_geoxml_program_get_parallelization(GEBR_GEOXML_PROGRAM(program)),
+			       n_process);
 	/* Binary followed by an space */
-	g_string_append_printf(job->cmd_line, "%s ", gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program)));
+	g_string_append_printf(job->cmd_line, "%s ",
+			       gebrd_mpi_interface_build_comand(mpi, gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program))));
 	if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program)) == FALSE)
 		goto err;
 	/* check for error file output */
@@ -592,12 +603,15 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 			continue;
 		}
 
+		mpi = job_get_mpi_impl(gebr_geoxml_program_get_parallelization(GEBR_GEOXML_PROGRAM(program)),
+				       n_process);
+
 		/* How to connect chainned programs */
 		int chain_option = gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program)) + (previous_stdout << 1);
 		switch (chain_option) {
 		case 0:	/* Previous does not write to stdin and current does not carry about */
 			g_string_append_printf(job->cmd_line, "; %s ",
-					       gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program)));
+					       gebrd_mpi_interface_build_comand(mpi, gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program))));
 			break;
 		case 1:	/* Previous does not write to stdin but current expect something */
 			g_string_append_printf(job->issues, _("Broken flow before %s (no input).\n"),
@@ -609,7 +623,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 			goto err;
 		case 3:	/* Both talk to each other */
 			g_string_append_printf(job->cmd_line, "| %s ",
-					       gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program)));
+					       gebrd_mpi_interface_build_comand(mpi, gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program))));
 			break;
 		default:
 			break;
@@ -692,6 +706,7 @@ void job_free(struct job *job)
 	g_string_free(job->output, TRUE);
 	g_string_free(job->moab_jid, TRUE);
 	g_string_free(job->queue, TRUE);
+	g_string_free(job->n_process, TRUE);
 
 	
 	g_free(job);
@@ -702,7 +717,7 @@ void job_run_flow(struct job *job)
 	GString *cmd_line;
 	GebrGeoXmlSequence *program;
 	gchar *locale_str;
-	gsize __attribute__ ((unused)) bytes_written;
+	gsize bytes_written;
 	gchar * quoted;
 	gboolean may_run;
 
@@ -943,4 +958,19 @@ err1:	g_free(std_out);
 	g_free(std_err);
 err:	g_string_free(cmd_line, TRUE);
 
+}
+
+static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, GString * n_process)
+{
+	const GebrdMpiConfig * config;
+
+	config = gebrd_get_mpi_config_by_name(mpi_name);
+
+	if (!config)
+		return NULL;
+
+	if (strcmp(mpi_name, "openmpi") == 0)
+		return gebrd_open_mpi_new(n_process->str, config->libpath->str, config->binpath->str);
+
+	return NULL;
 }
