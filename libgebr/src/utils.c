@@ -254,6 +254,8 @@ gboolean gebr_create_config_dirs(void)
 		goto err;
 	if (!gebr_make_config_dir("gebr"))
 		goto err;
+	if (!gebr_make_config_dir("gebrd"))
+		goto err;
 	if (!gebr_make_config_dir("menus"))
 		goto err;
 	if (!gebr_make_config_dir("gebr/data"))
