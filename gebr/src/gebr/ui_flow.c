@@ -498,9 +498,8 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 
 	GtkWidget *cb_account = NULL;
 	GtkWidget *entry_queue = NULL;
-	// TODO GtkWidget *spin_button_np = NULL;
 	GtkWidget *entry_np = NULL;
-	
+
 	dialog = gtk_dialog_new_with_buttons(_("Flow execution parameters"), GTK_WINDOW(gebr.window), 
 					     GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT, 
 					     GTK_STOCK_EXECUTE, GTK_RESPONSE_ACCEPT,
@@ -531,8 +530,9 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 	else {
 		/* Common servers. */
 		if (config->queue == NULL) {
-			/* We should ask for a queue name only if it is not NULL. Even an empty string ("")
-			 * has a meaning: it means the flow is supposed to run immediately. */
+			/* We should ask for a queue name only if it is originally NULL.
+			 * Even an empty string ("") has a meaning: it means the flow is supposed
+			 * to run immediately. */
 			GtkWidget *hbox_queue = gtk_hbox_new(FALSE, 5);
 
 			GtkWidget *label_queue = gtk_label_new(_("Give a name to the queue:"));
@@ -548,10 +548,8 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 	if (parallel_program) {
 		/* We should be able to ask for the number of processes (np) to run the parallel program(s). */
 		GtkWidget *hbox_np = gtk_hbox_new(FALSE, 5);
-		// TODO GtkAdjustment *adjustment = (GtkAdjustment *)gtk_adjustment_new(...); 
-		// TODO spin_button_np = gtk_spin_button_new(adjustment, 1, 0);
 
-		GtkWidget *label_np = gtk_label_new(_("Number of processes"));
+		GtkWidget *label_np = gtk_label_new(_("Number of parallel processes"));
 		entry_np = gtk_entry_new();
 		gtk_box_pack_start(GTK_BOX(hbox_np), label_np, TRUE, TRUE, 0);
 		gtk_box_pack_start(GTK_BOX(hbox_np), entry_np, TRUE, TRUE, 0);
@@ -562,26 +560,69 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 	
 	gtk_widget_show_all(dialog);
 
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_ACCEPT) {
-		ret = FALSE;
-		goto out;
-	}
+	gboolean moab_server_validated = !(server->type == GEBR_COMM_SERVER_TYPE_MOAB);
+	gboolean queue_name_validated = !(config->queue == NULL);
+	gboolean num_processes_validated = !(parallel_program); 
 
-	/* Gathering data from the dialog. */
+	do {
+		if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_ACCEPT) {
+			ret = FALSE;
+			goto out;
+		}
 
-	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) {
-		gtk_combo_box_get_active_iter(GTK_COMBO_BOX(cb_account), &iter);
-		gtk_tree_model_get(GTK_TREE_MODEL(server->accounts_model), &iter, 0, &(config->account)/*char_account*/, -1);
-	}
-	else {
-		/* Common servers. */
-		config->queue = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry_queue)));
-	}
+		/* Gathering and validating data from the dialog. */
+		if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) {
+			gtk_combo_box_get_active_iter(GTK_COMBO_BOX(cb_account), &iter);
+			gtk_tree_model_get(GTK_TREE_MODEL(server->accounts_model), &iter, 0, &(config->account), -1);
+			moab_server_validated = TRUE;
+		}
+		else {
+			/* Common servers. */
+			if (config->queue == NULL) {
+				config->queue = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry_queue)));
 
-	if (parallel_program) {
-		/* Get the number of processes for parallel execution. */
-		config->num_processes = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry_np)));
-	}
+				if (strlen(config->queue) == 0) {
+					gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Empty name"), _("Please type a queue name."));
+					/* Return to previous invalid condition. */
+					g_free(config->queue);
+					config->queue = NULL;
+				}
+				else {
+					gchar *prefixed_queue_name = g_strdup_printf("q%s", config->queue);
+					if (server_queue_find(server, prefixed_queue_name, NULL)) {
+						gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+									_("Duplicated name"), _("This queue name is already in use. Please give another one."));
+						/* Return to previous invalid condition. */
+						g_free(config->queue);
+						config->queue = NULL;
+					}
+					else {
+						/* Update config->queue with the prefix. */
+						g_free(config->queue);
+						config->queue = g_strdup(prefixed_queue_name);
+						queue_name_validated = TRUE;
+					}
+					g_free(prefixed_queue_name);
+				}
+			}
+		}
+
+		if (parallel_program) {
+			/* Get the number of processes for parallel execution. */
+			config->num_processes = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry_np)));
+
+			// TODO: Better validation for the number of processes...
+			if (strlen(config->num_processes) == 0) {
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+							_("Empty number"), _("Please enter the number of parallel processes to run the flow."));
+				g_free(config->num_processes);
+				config->num_processes = NULL;
+			}
+			else {
+				num_processes_validated = TRUE;
+			}
+		}
+	} while (!(moab_server_validated && queue_name_validated && num_processes_validated));
 out:
 	gtk_widget_destroy(dialog);
 	return ret;
@@ -606,7 +647,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 
 	/* initialization */
 	config = g_new(GebrCommServerRun, 1);
-	config->account = config->queue = NULL;
+	config->account = config->queue = config->num_processes = NULL;
 
 	/* find iter */
 	address = gebr_geoxml_flow_server_get_address(flow_server);
@@ -627,38 +668,28 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 		goto err;
 	}
 	
-	// ***** TODO
-	parallel_program = TRUE;
+	parallel_program = (gebr_geoxml_flow_get_first_parallel_program(gebr.flow) != NULL);
 
-	//if (TRUE) {
 	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) {
-		if (!flow_io_run_dialog(config, server, parallel_program))
-			goto err;
-		if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter))
+		if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter)) {
 			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &config->queue, -1);
+			if (!flow_io_run_dialog(config, server, parallel_program))
+				goto err;
+		}
 		else
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("No available queue for server '%s'."), server->comm->address->str);
 
 	} else {
-		// TODO: if (parallel_program)
-
+		/* Common servers. */
 		if (gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)) == 0) {
 			/* If the active combobox entry is the first one (index 0), then
 			 * "Immediately" is selected as queue option. */
 			config->queue = g_strdup("");
 
 			if (parallel_program) {
-				gboolean is_valid = FALSE;
-				do {
-					if (!flow_io_run_dialog(config, server, parallel_program)) {
-						goto err;
-					}
-					/* TODO: Better validation for config->num_processes brought by the dialog. */
-					if (!strlen(config->num_processes))
-						gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Empty number"), _("Please type the number of processes."));
-					else
-						is_valid = TRUE;
-				} while (!is_valid);
+				if (!flow_io_run_dialog(config, server, parallel_program)) {
+					goto err;
+				}
 			}
 		}
 		else {
@@ -675,32 +706,11 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 				/* Prefix 'j' indicates a single running job. So, the user is placing a new
 				 * job behind this single one, which denotes proper enqueuing. In this case,
 				 * it is necessary to give a name to the new queue. */
-				gchar *prefixed_queue_name = NULL;
-				gboolean is_valid = FALSE;
-				do {
-					if (!flow_io_run_dialog(config, server, parallel_program)) {
-						g_free(internal_queue_name);
-						goto err;
-					}
-					/* Validate config->queue brought by the dialog. */
-					if (!strlen(config->queue))
-						gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Empty name"), _("Please type a queue name."));
-					else {
-						prefixed_queue_name = g_strdup_printf("q%s", config->queue);
-						if (server_queue_find(server, prefixed_queue_name, NULL)) {
-							gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-										_("Duplicate name"), _("This queue name is already in use. Please give another one."));
-							g_free(prefixed_queue_name);
-						}
-						else
-							is_valid = TRUE;
-					}
-				} while (!is_valid);
-				
-				/* Update config->queue with the prefix. */
-				g_free(config->queue);
-				config->queue = g_strdup(prefixed_queue_name);
-				g_free(prefixed_queue_name);
+
+				if (!flow_io_run_dialog(config, server, parallel_program)) {
+					g_free(internal_queue_name);
+					goto err;
+				}
 
 				/* A race condition can happen if the single running job finishes before
 				 * assigning a name to the queue. We try to prevent this race condition here. */
@@ -717,12 +727,18 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 				gebr_comm_protocol_send_data(server->comm->protocol, server->comm->stream_socket,
 							     gebr_comm_protocol_defs.rnq_def, 2, internal_queue_name, config->queue);
 
-				// TODO gtk_widget_destroy(GTK_WIDGET(dialog));
-
 				g_free(internal_queue_name);
 			} 
-			else
-				config->queue = g_strdup(internal_queue_name ? internal_queue_name : "EMPTY_NAME");
+			else {
+				if (internal_queue_name) {
+					config->queue = g_strdup(internal_queue_name);
+					if (parallel_program) {
+						if (!flow_io_run_dialog(config, server, parallel_program)) {
+							goto err;
+						}
+					}
+				}
+			}
 		}
 	}
 
