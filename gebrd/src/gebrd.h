@@ -24,6 +24,8 @@
 #include <netdb.h>
 #include <libgebr/comm/server.h>
 
+#include "mpi-interface.h"
+
 /**
  * \file gebrd.h
  * \brief Global access variable for date interchange 
@@ -93,5 +95,10 @@ GebrCommServerType gebrd_get_server_type(void);
  * \see gebrd.config
  */
 void gebrd_config_load(void);
+
+/**
+ * TODO
+ */
+const GebrdMpiConfig * gebrd_get_mpi_config_by_name(const gchar * name);
 
 #endif				//__GEBRD_H

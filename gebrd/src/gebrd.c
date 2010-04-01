@@ -16,6 +16,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <unistd.h>
@@ -23,6 +24,7 @@
 #include <sys/stat.h>
 
 #include <libgebr/intl.h>
+#include <libgebr/utils.h>
 
 #include "gebrd.h"
 #include "server.h"
@@ -155,12 +157,20 @@ void gebrd_config_load(void)
 	gchar ** groups;
 	gchar * config_path;
 	GKeyFile * key_file;
+	GError * error;
 
+	error = NULL;
 	gebrd.mpi_flavors = NULL;
 	config_path = g_strdup_printf("%s/.gebr/gebrd/gebrd.conf", getenv("HOME"));
 	key_file = g_key_file_new();
 
-	g_key_file_load_from_file(key_file, config_path);
+	g_key_file_load_from_file(key_file, config_path, G_KEY_FILE_NONE, &error);
+
+	if (error) {
+		g_warning("Error reading ~/gebr/gebrd/gebrd.conf: %s\n", error->message);
+		return;
+	}
+
 	groups = g_key_file_get_groups(key_file, NULL);
 
 	for (int i = 0; groups[i]; i++) {
@@ -182,3 +192,11 @@ void gebrd_config_load(void)
 	g_key_file_free(key_file);
 }
 
+const GebrdMpiConfig * gebrd_get_mpi_config_by_name(const gchar * name)
+{
+	GList * iter;
+	for (iter = gebrd.mpi_flavors; iter; iter = iter->next)
+		if (g_strcmp0(((GebrdMpiConfig*)iter->data)->name->str, name) == 0)
+			return (GebrdMpiConfig*)iter->data;
+	return NULL;
+}
