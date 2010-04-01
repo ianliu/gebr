@@ -38,33 +38,22 @@
 #define GEBR_FLOW_UI_RESPONSE_EXECUTE 1
 
 static void flow_io_populate(struct ui_flow_io *ui_flow_io);
-
 static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io);
-
 static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *server, gboolean parallel_program);
-
 static void flow_io_run(GebrGeoXmlFlowServer * server);
-
 static void flow_io_insert(struct ui_flow_io *ui_flow_io, GebrGeoXmlFlowServer * flow_server, GtkTreeIter * iter);
-
 static void
 on_renderer_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_text, struct ui_flow_io *ui_flow_io);
-
 static void
 on_renderer_combo_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_text, struct ui_flow_io *ui_flow_io);
-
 static void
 on_renderer_editing_started(GtkCellRenderer * renderer,
 			    GtkCellEditable * editable, gchar * path, struct ui_flow_io *ui_flow_io);
-
 static void
 on_renderer_entry_icon_release(GtkEntry * widget,
 			       GtkEntryIconPosition position, GdkEvent * event, struct ui_flow_io *ui_flow_io);
-
 static GtkMenu *on_menu_popup(GtkTreeView * treeview, struct ui_flow_io *data);
-
 static void on_delete_server_io_activate(GtkWidget * menu_item, struct ui_flow_io *ui_flow_io);
-
 static void on_tree_view_cursor_changed(GtkTreeView * treeview, struct ui_flow_io *ui_flow_io);
 
 #if GTK_CHECK_VERSION(2,12,0)
@@ -548,7 +537,7 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 		GtkWidget *hbox_np = gtk_hbox_new(FALSE, 5);
 
 		GtkWidget *label_np = gtk_label_new(_("Number of parallel processes"));
-		entry_np = gtk_entry_new();
+		entry_np = gtk_spin_button_new_with_range(1, 99999999999, 1);
 		gtk_box_pack_start(GTK_BOX(hbox_np), label_np, TRUE, TRUE, 0);
 		gtk_box_pack_start(GTK_BOX(hbox_np), entry_np, TRUE, TRUE, 0);
 
