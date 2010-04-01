@@ -27,14 +27,7 @@ GebrMpiInterface * gebr_open_mpi_new(const gchar * bin_path, const gchar * lib_p
 
 static gchar * gebr_open_mpi_initialize(GebrMpiInterface * mpi)
 {
-	GebrOpenMpi * self;
-	GString * cmd;
-
-	self = (GebrOpenMpi*)mpi;
-	cmd = g_string_new(NULL);
-	g_string_printf(cmd, "export LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH; export PATH=%s:$PATH;",
-			self->lib_path, self->bin_path);
-	return g_string_free(cmd, FALSE);
+	return NULL;
 }
 
 static gchar * gebr_open_mpi_build_command(GebrMpiInterface * mpi, const gchar * command)
@@ -44,7 +37,8 @@ static gchar * gebr_open_mpi_build_command(GebrMpiInterface * mpi, const gchar *
 
 	self = (GebrOpenMpi*)mpi;
 	cmd = g_string_new(NULL);
-	g_string_printf(cmd, "mpirun %s", command);
+	g_string_printf(cmd, "LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH PATH=%s:$PATH mpirun.openmpi -np %d %s",
+			self->lib_path, self->bin_path, mpi->n_processes, command);
 	return g_string_free(cmd, FALSE);
 }
 
