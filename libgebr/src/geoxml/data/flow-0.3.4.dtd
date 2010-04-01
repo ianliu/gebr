@@ -1,6 +1,6 @@
 <!ELEMENT flow (filename, title, description, help, author, email, dict, date, category*, io, servers, program*, revision*)>
 <!ATTLIST flow
-	version CDATA #FIXED "0.3.3"
+	version CDATA #FIXED "0.3.4"
 	nextid  ID #REQUIRED>
 
 <!-- Name of the XML flow file -->
