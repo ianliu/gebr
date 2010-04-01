@@ -106,14 +106,13 @@ struct gebr_comm_server {
 };
 
 /**
- * Configurations for running a flow.
  */
-typedef struct {
+struct gebr_comm_server_run {
 	GebrGeoXmlFlow * flow;
 	gchar * account;
-	gchar * class;
-	gchar * n_proccess;
-} GebrCommServerRun;
+	gchar *queue;
+	gchar *num_processes;
+};
 
 /**
  */
@@ -153,6 +152,6 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server,
 /**
  * Ask _gebr_comm_server_ to run the current _flow_
  */
-void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, GebrCommServerRun * config);
+void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, struct gebr_comm_server_run * config);
 
 #endif				//__GEBR_COMM_SERVER_H

@@ -73,7 +73,7 @@ struct ui_flow_simple {
 void flow_io_setup_ui(gboolean executable);
 
 /**
- * Fills in \p inter a reference for the selected row if there is a selection.
+ * Fills in \p iter a reference for the selected row if there is a selection.
  * @param iter A reference to a #GtkTreeIter or #NULL.
  * @return #TRUE if there is a selection, #FALSE otherwise.
  */

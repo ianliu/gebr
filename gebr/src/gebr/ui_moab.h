@@ -21,6 +21,6 @@
 #include <gtk/gtk.h>
 #include "server.h"
 
-gboolean moab_setup_ui(gchar ** char_account, struct server * server);
+gboolean moab_setup_ui(gchar ** char_account, struct server * server, gboolean parallel_program);
 
 #endif				/* __UI_MOAB_H */

@@ -19,7 +19,7 @@
 #include <libgebr/intl.h>
 #include "ui_moab.h"
 
-gboolean moab_setup_ui(gchar ** char_account, struct server * server)
+gboolean moab_setup_ui(gchar ** char_account, struct server * server, gboolean parallel_program)
 {
 	gboolean ret;
 	GtkWidget * box;
@@ -42,12 +42,22 @@ gboolean moab_setup_ui(gchar ** char_account, struct server * server)
 	cell = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cb_account), cell, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cb_account), cell, "text", 0);
-	hbox= gtk_hbox_new(FALSE, 5);
+	hbox = gtk_hbox_new(FALSE, 5);
 
 	label = gtk_label_new(_("Account"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), cb_account, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, TRUE, 0);
+
+	if (parallel_program) {
+		/* We should be able to ask for the number of processes (np) to run the parallel program(s). */
+		GtkWidget *hbox_np = gtk_hbox_new(FALSE, 5);
+		GtkWidget *label_np = gtk_label_new(_("Number of processes"));
+		GtkWidget *entry_np = gtk_entry_new();
+		gtk_box_pack_start(GTK_BOX(hbox_np), label_np, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(hbox_np), entry_np, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(box), hbox_np, TRUE, TRUE, 0);
+	}
 
 	gtk_combo_box_set_model(GTK_COMBO_BOX(cb_account), GTK_TREE_MODEL(server->accounts_model));
 	gtk_combo_box_set_active(GTK_COMBO_BOX(cb_account), 0);
