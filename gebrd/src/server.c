@@ -152,7 +152,7 @@ gboolean server_init(void)
 	gebrd_message(GEBR_LOG_START, _("Server started at %u port"),
 		      gebr_comm_socket_address_get_ip_port(&socket_address));
 	snprintf(buffer, sizeof(buffer), "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
-	if (write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1))
+	if (write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1) <= 0)
 		g_warning("%s:%d: Failed to write in file with error code %d", __FILE__, __LINE__, errno);
 
 	/* frees */

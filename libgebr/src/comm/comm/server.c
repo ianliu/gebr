@@ -285,7 +285,7 @@ void gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerRu
 				     gebr_comm_protocol_defs.run_def, 4, xml,
 				     config->account ? config->account : "",
 				     config->class ? config->class : "",
-				     config->n_proccess);
+				     "4");
 	/* frees */
 	g_free(xml);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(flow_wnh));
