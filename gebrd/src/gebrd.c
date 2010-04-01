@@ -84,6 +84,9 @@ void gebrd_quit(void)
 {
 	gebrd_message(GEBR_LOG_END, _("Server quited"));
 
+	g_list_foreach(gebrd.mpi_flavors, (GFunc)gebrd_mpi_config_free, NULL);
+	g_list_free(gebrd.mpi_flavors);
+
 	server_quit();
 	g_main_loop_quit(gebrd.main_loop);
 }
@@ -145,5 +148,37 @@ GebrCommServerType gebrd_get_server_type(void)
 
 	got_type = TRUE;
 	return server_type;
+}
+
+void gebrd_config_load(void)
+{
+	gchar ** groups;
+	gchar * config_path;
+	GKeyFile * key_file;
+
+	gebrd.mpi_flavors = NULL;
+	config_path = g_strdup_printf("%s/.gebr/gebrd/gebrd.conf", getenv("HOME"));
+	key_file = g_key_file_new();
+
+	g_key_file_load_from_file(key_file, config_path);
+	groups = g_key_file_get_groups(key_file, NULL);
+
+	for (int i = 0; groups[i]; i++) {
+		if (!g_str_has_prefix(groups[i], "mpi-"))
+			continue;
+		GebrdMpiConfig * mpi_config;
+		mpi_config = g_new(GebrdMpiConfig, 1);
+
+		mpi_config->name = g_string_new(groups[i] + 4);
+		mpi_config->libpath = gebr_g_key_file_load_string_key(key_file, groups[i], "libpath", NULL);
+		mpi_config->binpath = gebr_g_key_file_load_string_key(key_file, groups[i], "binpath", NULL);
+		mpi_config->init_script = gebr_g_key_file_load_string_key(key_file, groups[i], "init_script", NULL);
+		mpi_config->end_script = gebr_g_key_file_load_string_key(key_file, groups[i], "end_script", NULL);
+
+		gebrd.mpi_flavors = g_list_prepend(gebrd.mpi_flavors, mpi_config);
+	}
+
+	g_free(config_path);
+	g_key_file_free(key_file);
 }
 

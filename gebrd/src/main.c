@@ -48,10 +48,8 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 
 	context = g_option_context_new(_("GeBR daemon"));
-	g_option_context_set_summary(context, _("")
-	    );
-	g_option_context_set_description(context, _("")
-	    );
+	g_option_context_set_summary(context, _(""));
+	g_option_context_set_description(context, _(""));
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
 	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE) {
@@ -65,6 +63,7 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
+	gebrd_config_load();
 	gebrd_init();
 
 	return 0;
