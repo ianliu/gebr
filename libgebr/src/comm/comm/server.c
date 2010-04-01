@@ -261,7 +261,7 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	return ret;
 }
 
-void gebr_comm_server_run_flow(struct gebr_comm_server *server, struct gebr_comm_server_run * config)
+void gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerRun * config)
 {
 	GebrGeoXmlFlow *flow_wnh;	/* wnh: with no help */
 	GebrGeoXmlSequence *program;

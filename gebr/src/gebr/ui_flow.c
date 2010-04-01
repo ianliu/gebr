@@ -44,7 +44,7 @@ static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io);
 
 
 
-static gboolean flow_io_run_dialog(struct gebr_comm_server_run *config, struct server *server, gboolean parallel_program);
+static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *server, gboolean parallel_program);
 static void flow_io_run(GebrGeoXmlFlowServer * server);
 
 static void flow_io_insert(struct ui_flow_io *ui_flow_io, GebrGeoXmlFlowServer * flow_server, GtkTreeIter * iter);
@@ -489,7 +489,7 @@ static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io)
  * @param server
  * @param parallel_program
  */
-static gboolean flow_io_run_dialog(struct gebr_comm_server_run *config, struct server *server, gboolean parallel_program)
+static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *server, gboolean parallel_program)
 {
 	gboolean ret = TRUE;
 	GtkWidget *dialog;
@@ -596,7 +596,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	GtkTreeIter iter;
 	const gchar *address;
 	struct server *server;
-	struct gebr_comm_server_run *config;
+	GebrCommServerRun *config;
 	gboolean parallel_program;
 
 	if (!flow_browse_get_selected(NULL, FALSE)) {
@@ -605,7 +605,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	}
 
 	/* initialization */
-	config = g_new(struct gebr_comm_server_run, 1);
+	config = g_new(GebrCommServerRun, 1);
 	config->account = config->queue = NULL;
 
 	/* find iter */
