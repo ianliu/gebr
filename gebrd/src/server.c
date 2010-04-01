@@ -338,8 +338,10 @@ gboolean server_parse_client_messages(struct client *client)
 				} else
 					job_run_flow(job);
 			} else if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
-				if (!queue->len)
+				if (!queue->len) {
 					g_string_printf(queue, "j%s", job->jid->str);
+					g_string_assign(job->queue, queue->str);
+				}
 			}
 
 			if (success == TRUE)
