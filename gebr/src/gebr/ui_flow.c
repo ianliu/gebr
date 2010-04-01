@@ -41,10 +41,8 @@ static void flow_io_populate(struct ui_flow_io *ui_flow_io);
 
 static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io);
 
-
-
-
 static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *server, gboolean parallel_program);
+
 static void flow_io_run(GebrGeoXmlFlowServer * server);
 
 static void flow_io_insert(struct ui_flow_io *ui_flow_io, GebrGeoXmlFlowServer * flow_server, GtkTreeIter * iter);
