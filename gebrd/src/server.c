@@ -335,11 +335,11 @@ gboolean server_parse_client_messages(struct client *client)
 						gebrd_queues_step_queue(queue->str);
 					} else
 						job_notify_status(job, JOB_STATUS_QUEUED, gebr_iso_date());
-				} else 
+				} else
 					job_run_flow(job);
 			} else if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 				if (!queue->len)
-					g_string_assign(job->queue, "j0");
+					g_string_printf(queue, "j%s", job->jid->str);
 			}
 
 			if (success == TRUE)

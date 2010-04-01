@@ -380,7 +380,7 @@ static GString *job_generate_id(void)
 /**
  * \internal
  */
-gboolean job_moab_checkjob_pooling(struct job * job)
+static gboolean job_moab_checkjob_pooling(struct job * job)
 {
 	GString *cmd_line = NULL;
 	gchar *std_out = NULL;
@@ -666,7 +666,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 	success = TRUE;
 	goto out;
 
- err:	g_string_assign(job->jid, "0");
+ err:	
 	job_set_status(job, JOB_STATUS_FAILED);
 	g_string_assign(job->cmd_line, "");
 	success = FALSE;
