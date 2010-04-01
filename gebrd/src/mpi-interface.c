@@ -23,3 +23,15 @@ gchar * gebrd_mpi_interface_finalize(GebrdMpiInterface * self)
 {
 	return self->finalize(self);
 }
+
+void gebrd_mpi_interface_set_n_processes(GebrdMpiInterface * self, const gchar * n)
+{
+	self->n_processes = g_strdup(n);
+}
+
+void gebrd_mpi_interface_free(GebrdMpiInterface * self)
+{
+	self->free(self);
+	g_free(self->n_processes);
+	g_free(self);
+}

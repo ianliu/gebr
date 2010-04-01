@@ -35,12 +35,13 @@ void gebrd_mpi_config_free(GebrdMpiConfig * self);
 typedef struct _GebrdMpiInterface GebrdMpiInterface;
 
 struct _GebrdMpiInterface {
-	gint n_processes;
+	gchar * n_processes;
 
 	/* Virtual methods */
 	gchar * (*initialize) (GebrdMpiInterface * self);
 	gchar * (*build_command) (GebrdMpiInterface * self, const gchar * command);
 	gchar * (*finalize) (GebrdMpiInterface * self);
+	void (*free) (GebrdMpiInterface * self);
 };
 
 /**
@@ -64,6 +65,14 @@ gchar * gebrd_mpi_interface_build_comand(GebrdMpiInterface * self, const gchar *
  * \return A newly allocated string with the shell commands to finalize (or restore) the machine state.
  */
 gchar * gebrd_mpi_interface_finalize(GebrdMpiInterface * self);
+
+/**
+ */
+void gebrd_mpi_interface_set_n_processes(GebrdMpiInterface * self, const gchar * n);
+
+/**
+ */
+void gebrd_mpi_interface_free(GebrdMpiInterface * self);
 
 G_END_DECLS
 
