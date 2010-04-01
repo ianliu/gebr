@@ -265,7 +265,7 @@ void on_menu_delete_activate(void)
 			gtk_dialog_run(GTK_DIALOG(dialog));
 			gtk_widget_destroy(dialog);
 		} else{
-			menu_close(&iter);
+			menu_close(&iter, TRUE);
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(debr.notebook), NOTEBOOK_PAGE_MENU);
 		}
 
@@ -367,7 +367,7 @@ void on_menu_close_activate(void)
 				return;
 		}
 
-		menu_close(&iter);
+		menu_close(&iter, TRUE);
 	}
 }
 

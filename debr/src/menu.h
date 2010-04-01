@@ -195,7 +195,7 @@ void menu_install(void);
  *
  * \param iter The iterator pointing to the menu.
  */
-void menu_close(GtkTreeIter * iter);
+void menu_close(GtkTreeIter * iter, gboolean warn_user);
 
 /**
  * Update details of the selected menu on the GUI.
