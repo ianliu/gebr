@@ -9,17 +9,17 @@ void gebrd_mpi_config_free(GebrdMpiConfig * self)
 	g_free(self);
 }
 
-gchar * gebr_mpi_interface_initialize(GebrdMpiInterface * self)
+gchar * gebrd_mpi_interface_initialize(GebrdMpiInterface * self)
 {
 	return self->initialize(self);
 }
 
-gchar * gebr_mpi_interface_build_comand(GebrdMpiInterface * self, const gchar * command)
+gchar * gebrd_mpi_interface_build_comand(GebrdMpiInterface * self, const gchar * command)
 {
 	return self->build_command(self, command);
 }
 
-gchar * gebr_mpi_interface_finalize(GebrdMpiInterface * self)
+gchar * gebrd_mpi_interface_finalize(GebrdMpiInterface * self)
 {
 	return self->finalize(self);
 }

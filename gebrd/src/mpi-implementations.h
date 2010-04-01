@@ -22,16 +22,16 @@
 
 G_BEGIN_DECLS
 
-typedef struct _GebrOpenMpi GebrOpenMpi;
+typedef struct _GebrdOpenMpi GebrdOpenMpi;
 
-struct _GebrOpenMpi {
+struct _GebrdOpenMpi {
 	GebrMpiInterface parent;
 
 	const gchar * bin_path;
 	const gchar * lib_path;
 };
 
-GebrMpiInterface * gebr_open_mpi_new();
+GebrMpiInterface * gebrd_open_mpi_new();
 
 G_END_DECLS
 
