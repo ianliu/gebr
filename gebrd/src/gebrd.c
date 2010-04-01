@@ -16,6 +16,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <unistd.h>
@@ -23,6 +24,7 @@
 #include <sys/stat.h>
 
 #include <libgebr/intl.h>
+#include <libgebr/utils.h>
 
 #include "gebrd.h"
 #include "server.h"
@@ -83,6 +85,9 @@ void gebrd_init(void)
 void gebrd_quit(void)
 {
 	gebrd_message(GEBR_LOG_END, _("Server quited"));
+
+	g_list_foreach(gebrd.mpi_flavors, (GFunc)gebrd_mpi_config_free, NULL);
+	g_list_free(gebrd.mpi_flavors);
 
 	server_quit();
 	g_main_loop_quit(gebrd.main_loop);
@@ -147,3 +152,51 @@ GebrCommServerType gebrd_get_server_type(void)
 	return server_type;
 }
 
+void gebrd_config_load(void)
+{
+	gchar ** groups;
+	gchar * config_path;
+	GKeyFile * key_file;
+	GError * error;
+
+	error = NULL;
+	gebrd.mpi_flavors = NULL;
+	config_path = g_strdup_printf("%s/.gebr/gebrd/gebrd.conf", getenv("HOME"));
+	key_file = g_key_file_new();
+
+	g_key_file_load_from_file(key_file, config_path, G_KEY_FILE_NONE, &error);
+
+	if (error) {
+		g_warning("Error reading ~/gebr/gebrd/gebrd.conf: %s\n", error->message);
+		return;
+	}
+
+	groups = g_key_file_get_groups(key_file, NULL);
+
+	for (int i = 0; groups[i]; i++) {
+		if (!g_str_has_prefix(groups[i], "mpi-"))
+			continue;
+		GebrdMpiConfig * mpi_config;
+		mpi_config = g_new(GebrdMpiConfig, 1);
+
+		mpi_config->name = g_string_new(groups[i] + 4);
+		mpi_config->libpath = gebr_g_key_file_load_string_key(key_file, groups[i], "libpath", "");
+		mpi_config->binpath = gebr_g_key_file_load_string_key(key_file, groups[i], "binpath", "");
+		mpi_config->init_script = gebr_g_key_file_load_string_key(key_file, groups[i], "init_script", "");
+		mpi_config->end_script = gebr_g_key_file_load_string_key(key_file, groups[i], "end_script", "");
+
+		gebrd.mpi_flavors = g_list_prepend(gebrd.mpi_flavors, mpi_config);
+	}
+
+	g_free(config_path);
+	g_key_file_free(key_file);
+}
+
+const GebrdMpiConfig * gebrd_get_mpi_config_by_name(const gchar * name)
+{
+	GList * iter;
+	for (iter = gebrd.mpi_flavors; iter; iter = iter->next)
+		if (g_strcmp0(((GebrdMpiConfig*)iter->data)->name->str, name) == 0)
+			return (GebrdMpiConfig*)iter->data;
+	return NULL;
+}

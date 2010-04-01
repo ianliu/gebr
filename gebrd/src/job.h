@@ -53,6 +53,9 @@ struct job {
 	GString *moab_account;
 	GString *moab_jid;
 	GebrCommProcess *tail_process;
+
+	/* MPI stuff */
+	GString *n_process;
 	
 	enum JobStatus {
 		JOB_STATUS_UNKNOWN = 0,
@@ -68,7 +71,8 @@ struct job {
 
 /**
  */
-gboolean job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml);
+gboolean job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml,
+		 GString * n_process);
 /**
  */
 void job_free(struct job *job);

@@ -24,6 +24,8 @@
 #include <netdb.h>
 #include <libgebr/comm/server.h>
 
+#include "mpi-interface.h"
+
 /**
  * \file gebrd.h
  * \brief Global access variable for date interchange 
@@ -52,6 +54,8 @@ struct gebrd {
 	struct gebrd_options {
 		gboolean foreground;
 	} options;
+
+	GList * mpi_flavors;
 
 	GMainLoop *main_loop;
 	int finished_starting_pipe[2];
@@ -85,5 +89,16 @@ guint8 gebrd_get_x11_redirect_display(void);
  * Check wheter running on a Moab cluster.
  */
 GebrCommServerType gebrd_get_server_type(void);
+
+/**
+ * Loads gebrd configuration file into gebrd configuration structure.
+ * \see gebrd.config
+ */
+void gebrd_config_load(void);
+
+/**
+ * TODO
+ */
+const GebrdMpiConfig * gebrd_get_mpi_config_by_name(const gchar * name);
 
 #endif				//__GEBRD_H

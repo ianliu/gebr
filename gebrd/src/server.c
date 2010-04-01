@@ -152,7 +152,7 @@ gboolean server_init(void)
 	gebrd_message(GEBR_LOG_START, _("Server started at %u port"),
 		      gebr_comm_socket_address_get_ip_port(&socket_address));
 	snprintf(buffer, sizeof(buffer), "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
-	if (write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1))
+	if (write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1) <= 0)
 		g_warning("%s:%d: Failed to write in file with error code %d", __FILE__, __LINE__, errno);
 
 	/* frees */
@@ -320,7 +320,7 @@ gboolean server_parse_client_messages(struct client *client)
 			n_process = g_list_nth_data(arguments, 3);
 
 			/* try to run and send return */
-			success = job_new(&job, client, queue, account, xml);
+			success = job_new(&job, client, queue, account, xml, n_process);
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
 						     gebr_comm_protocol_defs.ret_def, 1, job->jid->str);
 			if (success) {
@@ -335,11 +335,11 @@ gboolean server_parse_client_messages(struct client *client)
 						gebrd_queues_step_queue(queue->str);
 					} else
 						job_notify_status(job, JOB_STATUS_QUEUED, gebr_iso_date());
-				} else 
+				} else
 					job_run_flow(job);
 			} else if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 				if (!queue->len)
-					g_string_assign(job->queue, "j0");
+					g_string_printf(queue, "j%s", job->jid->str);
 			}
 
 			if (success == TRUE)
