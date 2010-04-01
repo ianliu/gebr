@@ -251,7 +251,7 @@ void menu_new(gboolean edit)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 	if (edit) {
 		if (!menu_dialog_setup_ui())
-			menu_close(&iter);
+			menu_close(&iter, FALSE);
 	}
 
 	g_string_free(new_menu_str, TRUE);
@@ -712,7 +712,7 @@ void menu_install(void)
 	}
 }
 
-void menu_close(GtkTreeIter * iter)
+void menu_close(GtkTreeIter * iter, gboolean warn_user)
 {
 	GebrGeoXmlFlow *menu;
 	gchar *path;
@@ -731,7 +731,9 @@ void menu_close(GtkTreeIter * iter)
 	else
 		menu_selected();
 
-	debr_message(GEBR_LOG_INFO, _("Menu \"%s\" closed."), path);
+	if (warn_user)
+		debr_message(GEBR_LOG_INFO, _("Menu \"%s\" closed."), path);
+
 	g_free(path);
 }
 
@@ -1434,22 +1436,16 @@ void menu_close_folder(GtkTreeIter * iter)
 	parent = *iter;
 	valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, &parent);
 	while (valid) {
-		GtkTreePath *tree_path;
-		tree_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_menu.model), &child);
-		rows = g_list_prepend(rows, gtk_tree_row_reference_new(GTK_TREE_MODEL(debr.ui_menu.model), tree_path));
+		rows = g_list_prepend(rows, gtk_tree_iter_copy(&child));
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);
-		gtk_tree_path_free(tree_path);
 	}
 
 	GList *rows_iter = rows;
 	while (rows_iter) {
-		GtkTreePath *tree_path;
-		tree_path = gtk_tree_row_reference_get_path((GtkTreeRowReference*)(rows_iter->data));
-		gtk_tree_model_get_iter(GTK_TREE_MODEL(debr.ui_menu.model), &child, tree_path);
-		menu_close(&child);
+		GtkTreeIter *child = (GtkTreeIter*)rows_iter->data;
+		menu_close(child, FALSE);
 		rows_iter = rows_iter->next;
-		gtk_tree_path_free(tree_path);
-		gtk_tree_row_reference_free((GtkTreeRowReference*)(rows_iter->data));
+		gtk_tree_iter_free(child);
 	}
 
 	gchar *path;
