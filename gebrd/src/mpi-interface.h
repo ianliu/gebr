@@ -22,15 +22,25 @@
 
 G_BEGIN_DECLS
 
-typedef struct _GebrMpiInterface GebrMpiInterface;
+typedef struct {
+	GString * name;		/**< The name of the Mpi implementation */
+	GString * libpath;
+	GString * binpath;
+	GString * init_script;
+	GString * end_script;
+} GebrdMpiConfig;
 
-struct _GebrMpiInterface {
+void gebrd_mpi_config_free(GebrdMpiConfig * self);
+
+typedef struct _GebrdMpiInterface GebrdMpiInterface;
+
+struct _GebrdMpiInterface {
 	gint n_processes;
 
 	/* Virtual methods */
-	gchar * (*initialize) (GebrMpiInterface * self);
-	gchar * (*build_command) (GebrMpiInterface * self, const gchar * command);
-	gchar * (*finalize) (GebrMpiInterface * self);
+	gchar * (*initialize) (GebrdMpiInterface * self);
+	gchar * (*build_command) (GebrdMpiInterface * self, const gchar * command);
+	gchar * (*finalize) (GebrdMpiInterface * self);
 };
 
 /**
@@ -39,21 +49,21 @@ struct _GebrMpiInterface {
  *
  * \return A newly allocated string with the initial commands to setup this Mpi interface.
  */
-gchar * gebr_mpi_interface_initialize(GebrMpiInterface * self);
+gchar * gebr_mpi_interface_initialize(GebrdMpiInterface * self);
 
 /**
  * Wraps \p cmd to execute it with Mpi.
  *
  * \return A newly allocated string with the shell command that will execute \p cmd with Mpi.
  */
-gchar * gebr_mpi_interface_build_comand(GebrMpiInterface * self, const gchar * cmd);
+gchar * gebr_mpi_interface_build_comand(GebrdMpiInterface * self, const gchar * cmd);
 
 /**
  * Returns commands that will finalize possible states, modified by the hole process.
  *
  * \return A newly allocated string with the shell commands to finalize (or restore) the machine state.
  */
-gchar * gebr_mpi_interface_finalize(GebrMpiInterface * self);
+gchar * gebr_mpi_interface_finalize(GebrdMpiInterface * self);
 
 G_END_DECLS
 

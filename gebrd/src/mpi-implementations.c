@@ -4,17 +4,17 @@
  * OpenMPI definition
  */
 
-static gchar * gebr_open_mpi_initialize(GebrMpiInterface * mpi);
-static gchar * gebr_open_mpi_build_command(GebrMpiInterface * mpi, const gchar * command);
-static gchar * gebr_open_mpi_finalize(GebrMpiInterface * mpi);
+static gchar * gebr_open_mpi_initialize(GebrdMpiInterface * mpi);
+static gchar * gebr_open_mpi_build_command(GebrdMpiInterface * mpi, const gchar * command);
+static gchar * gebr_open_mpi_finalize(GebrdMpiInterface * mpi);
 
-GebrMpiInterface * gebr_open_mpi_new(const gchar * bin_path, const gchar * lib_path)
+GebrdMpiInterface * gebr_open_mpi_new(const gchar * bin_path, const gchar * lib_path)
 {
 	GebrOpenMpi * self;
-	GebrMpiInterface * mpi;
+	GebrdMpiInterface * mpi;
 
 	self = g_new(GebrOpenMpi, 1);
-	mpi = (GebrMpiInterface*)self;
+	mpi = (GebrdMpiInterface*)self;
 
 	self->bin_path = bin_path;
 	self->lib_path = lib_path;
@@ -25,12 +25,12 @@ GebrMpiInterface * gebr_open_mpi_new(const gchar * bin_path, const gchar * lib_p
 	return mpi;
 }
 
-static gchar * gebr_open_mpi_initialize(GebrMpiInterface * mpi)
+static gchar * gebr_open_mpi_initialize(GebrdMpiInterface * mpi)
 {
 	return NULL;
 }
 
-static gchar * gebr_open_mpi_build_command(GebrMpiInterface * mpi, const gchar * command)
+static gchar * gebr_open_mpi_build_command(GebrdMpiInterface * mpi, const gchar * command)
 {
 	GebrOpenMpi * self;
 	GString * cmd;
@@ -42,7 +42,7 @@ static gchar * gebr_open_mpi_build_command(GebrMpiInterface * mpi, const gchar *
 	return g_string_free(cmd, FALSE);
 }
 
-static gchar * gebr_open_mpi_finalize(GebrMpiInterface * mpi)
+static gchar * gebr_open_mpi_finalize(GebrdMpiInterface * mpi)
 {
 	return NULL;
 }
