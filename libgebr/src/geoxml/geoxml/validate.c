@@ -44,6 +44,7 @@ GebrGeoXmlValidate *gebr_geoxml_validate_new(gpointer data, GebrGeoXmlValidateOp
 		options.category = TRUE;
 		options.mhelp = TRUE;
 		options.progs = TRUE;
+                options.url = TRUE;
 		options.params = TRUE;
 	}
 	validate->options = options;
@@ -261,6 +262,8 @@ static void validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 		result = result && gebr_validate_check_is_email(value);
 	if (flags & GEBR_GEOXML_VALIDATE_CHECK_FILEN)
 		result = result && gebr_validate_check_menu_filename(value);
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_URL)
+		result = result && gebr_validate_check_is_url(value);
 
 	if (result)
 		validate->operations.append_text(validate->data, value);
