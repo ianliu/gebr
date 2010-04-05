@@ -111,6 +111,87 @@ GebrValidateCase * gebr_validate_get_validate_case(GebrValidateCaseName name)
 	return NULL;
 }
 
+gboolean gebr_validate_case_is_value_fixable(GebrValidateCase * self, const gchar * value, gint * failed)
+{
+	gint flags = self->flags;
+
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_EMPTY ||
+	    flags & GEBR_GEOXML_VALIDATE_CHECK_EMAIL ||
+	    flags & GEBR_GEOXML_VALIDATE_CHECK_FILEN ||
+	    flags & GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY)
+		return FALSE;
+
+	if (flags != NULL) {
+		*failed = 0;
+		if (flags & GEBR_GEOXML_VALIDATE_CHECK_CAPIT && !gebr_validate_check_no_lower_case(value))
+			*failed |= GEBR_GEOXML_VALIDATE_CHECK_CAPIT;
+		if (flags & GEBR_GEOXML_VALIDATE_CHECK_NOBLK && !gebr_validate_check_no_blanks_at_boundaries(value))
+			*failed |= GEBR_GEOXML_VALIDATE_CHECK_NOBLK;
+		if (flags & GEBR_GEOXML_VALIDATE_CHECK_MTBLK && !gebr_validate_check_no_multiple_blanks(value))
+			*result |= GEBR_GEOXML_VALIDATE_CHECK_MTBLK;
+		if (flags & GEBR_GEOXML_VALIDATE_CHECK_NOPNT && !gebr_validate_check_no_punctuation_at_end(value))
+			*failed |= GEBR_GEOXML_VALIDATE_CHECK_NOPNT;
+	}
+
+	return TRUE;
+}
+
+gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
+{
+	gchar * tmp;
+	gchar * fix;
+	gint failed;
+
+	if (!gebr_validate_case_is_value_fixable(self, value, &failed))
+		return NULL;
+
+	tmp = NULL;
+	fix = g_strdup(value);
+
+	if (self->flags & GEBR_GEOXML_VALIDATE_CHECK_CAPIT
+	    && !gebr_validate_check_no_lower_case(fix)) {
+		if (fix != NULL)
+			tmp = fix;
+		fix = gebr_validate_change_first_to_upper(fix);
+		if (tmp) {
+			g_free(tmp);
+			tmp = NULL;
+		}
+	}
+	if (self->flags & GEBR_GEOXML_VALIDATE_CHECK_NOBLK
+	    && !gebr_validate_check_no_blanks_at_boundaries(fix)) {
+		if (fix != NULL)
+			tmp = fix;
+		fix = gebr_validate_change_no_blanks_at_boundaries(fix);
+		if (tmp) {
+			g_free(tmp);
+			tmp = NULL;
+		}
+	}
+	if (self->flags & GEBR_GEOXML_VALIDATE_CHECK_MTBLK
+	    && !gebr_validate_check_no_multiple_blanks(fix)) {
+		if (fix != NULL)
+			tmp = fix;
+		fix = gebr_validate_change_multiple_blanks(fix);
+		if (tmp) {
+			g_free(tmp);
+			tmp = NULL;
+		}
+	}
+	if (self->flags & GEBR_GEOXML_VALIDATE_CHECK_NOPNT
+	    && !gebr_validate_check_no_punctuation_at_end(fix)) {
+		if (fix != NULL)
+			tmp = fix;
+		fix = gebr_validate_change_no_punctuation_at_end(fix);
+		if (tmp) {
+			g_free(tmp);
+			tmp = NULL;
+		}
+	}
+
+	return fix;
+}
+
 gboolean gebr_validate_check_is_not_empty(const gchar * str)
 {
 	return (strlen(str) ? TRUE : FALSE);
@@ -144,13 +225,16 @@ gboolean gebr_validate_check_no_multiple_blanks(const gchar * str)
 }
 
 gchar * gebr_validate_change_multiple_blanks(const gchar * sentence)
-{	
+{
 	GRegex *regex;
-	gchar *str = g_strdup(sentence);
-
-	regex = g_regex_new ("[[:space:]]{2,}", 0, 0, NULL);
-	str = g_regex_replace(regex, str, -1, 0, " ", 0, NULL);
-	return str;
+	GError *error = NULL;
+	regex = g_regex_new("[[:space:]]{2,}", 0, 0, &error);
+	if (error != NULL) {
+		g_warning("%s:%d %s", __FILE__, __LINE__, error->message);
+		g_error_free(error);
+		return NULL;
+	}
+	return g_regex_replace(regex, sentence, -1, 0, " ", 0, NULL);
 }
 
 gboolean gebr_validate_check_no_blanks_at_boundaries(const gchar * str)
@@ -166,13 +250,16 @@ gboolean gebr_validate_check_no_blanks_at_boundaries(const gchar * str)
 }
 
 gchar * gebr_validate_change_no_blanks_at_boundaries(const gchar * sentence)
-{	
+{
 	GRegex *regex;
-	gchar *str = g_strdup(sentence);
-
-	regex = g_regex_new ("^[[:space:]]|[[:space:]]$", 0, 0, NULL);
-	str = g_regex_replace(regex, str, -1, 0, "", 0, NULL);
-	return str;
+	GError *error = NULL;
+	regex = g_regex_new("^[[:space:]]|[[:space:]]$", 0, 0, NULL);
+	if (error != NULL) {
+		g_warning("%s:%d %s", __FILE__, __LINE__, error->message);
+		g_error_free(error);
+		return NULL;
+	}
+	return g_regex_replace(regex, sentence, -1, 0, "", 0, NULL);
 }
 
 gboolean gebr_validate_check_no_punctuation_at_end(const gchar * str)
@@ -188,13 +275,14 @@ gboolean gebr_validate_check_no_punctuation_at_end(const gchar * str)
 }
 
 gchar * gebr_validate_change_no_punctuation_at_end(const gchar * sentence)
-{	
+{
 	gchar *str = g_strdup(sentence);
 
-	if (str){
-		int n = strlen(str);
-		while(str[--n] != ')' && g_ascii_ispunct(str[n]))
-			str[n] = '\0';
+	if (str) {
+		int n = strlen(str) - 1;
+		while(str[n] != ')' && g_ascii_ispunct(str[n]))
+			n--;
+		str[n + 1] = '\0';
 	}
 	return str;
 }
