@@ -25,6 +25,7 @@
 #include <libgebr/intl.h>
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
+#include <libgebr/validate.h>
 #include <libgebr/gui/utils.h>
 #include <libgebr/gui/valuesequenceedit.h>
 #include <libgebr/gui/gebr-gui-save-dialog.h>
@@ -950,6 +951,8 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_widget_show(title_entry);
 	gtk_table_attach(GTK_TABLE(table), title_entry, 1, 2, 0, 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+	g_signal_connect(title_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
+			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_TITLE));
 
 	/*
 	 * Description
@@ -965,6 +968,8 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_widget_show(description_entry);
 	gtk_table_attach(GTK_TABLE(table), description_entry, 1, 2, 1, 2,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+	g_signal_connect(description_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
+			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_DESCRIPTION));
 
 	/*
 	 * Help
@@ -1014,6 +1019,8 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_widget_show(email_entry);
 	gtk_table_attach(GTK_TABLE(table), email_entry, 1, 2, 4, 5,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+	g_signal_connect(email_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
+			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_EMAIL));
 
 	/*
 	 * Categories
@@ -1799,3 +1806,4 @@ static gboolean menu_get_folder_iter_from_path(const gchar * path, GtkTreeIter *
 	}
 	return FALSE;
 }
+

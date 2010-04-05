@@ -62,7 +62,7 @@ static GebrValidateCase validate_cases[] = {
 	
 	{GEBR_VALIDATE_CASE_EMAIL,
 		GEBR_GEOXML_VALIDATE_CHECK_EMAIL,
-		N_("Help should not be empty.")},
+		N_("Invalid email address.")},
 
 	/* program */
 	{GEBR_VALIDATE_CASE_PROGRAM_TITLE,
@@ -111,38 +111,47 @@ GebrValidateCase * gebr_validate_get_validate_case(GebrValidateCaseName name)
 	return NULL;
 }
 
-gboolean gebr_validate_case_is_value_fixable(GebrValidateCase * self, const gchar * value, gint * failed)
+gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value, gboolean * can_fix)
 {
 	gint flags = self->flags;
+	gint failed = 0;
 
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_EMPTY ||
-	    flags & GEBR_GEOXML_VALIDATE_CHECK_EMAIL ||
-	    flags & GEBR_GEOXML_VALIDATE_CHECK_FILEN ||
-	    flags & GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY)
-		return FALSE;
-
-	if (flags != NULL) {
-		*failed = 0;
-		if (flags & GEBR_GEOXML_VALIDATE_CHECK_CAPIT && !gebr_validate_check_no_lower_case(value))
-			*failed |= GEBR_GEOXML_VALIDATE_CHECK_CAPIT;
-		if (flags & GEBR_GEOXML_VALIDATE_CHECK_NOBLK && !gebr_validate_check_no_blanks_at_boundaries(value))
-			*failed |= GEBR_GEOXML_VALIDATE_CHECK_NOBLK;
-		if (flags & GEBR_GEOXML_VALIDATE_CHECK_MTBLK && !gebr_validate_check_no_multiple_blanks(value))
-			*result |= GEBR_GEOXML_VALIDATE_CHECK_MTBLK;
-		if (flags & GEBR_GEOXML_VALIDATE_CHECK_NOPNT && !gebr_validate_check_no_punctuation_at_end(value))
-			*failed |= GEBR_GEOXML_VALIDATE_CHECK_NOPNT;
+	if (can_fix != NULL) {
+		if (strlen(value) == 0 ||
+		    flags & GEBR_GEOXML_VALIDATE_CHECK_EMAIL ||
+		    flags & GEBR_GEOXML_VALIDATE_CHECK_FILEN ||
+		    flags & GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY)
+			*can_fix = FALSE;
+		else
+			*can_fix = TRUE;
 	}
 
-	return TRUE;
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_EMPTY && !gebr_validate_check_is_not_empty(value))
+		failed |= GEBR_GEOXML_VALIDATE_CHECK_EMPTY;
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_CAPIT && !gebr_validate_check_no_lower_case(value))
+		failed |= GEBR_GEOXML_VALIDATE_CHECK_CAPIT;
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_NOBLK && !gebr_validate_check_no_blanks_at_boundaries(value))
+		failed |= GEBR_GEOXML_VALIDATE_CHECK_NOBLK;
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_MTBLK && !gebr_validate_check_no_multiple_blanks(value))
+		failed |= GEBR_GEOXML_VALIDATE_CHECK_MTBLK;
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_NOPNT && !gebr_validate_check_no_punctuation_at_end(value))
+		failed |= GEBR_GEOXML_VALIDATE_CHECK_NOPNT;
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_EMAIL && !gebr_validate_check_is_email(value))
+		failed |= GEBR_GEOXML_VALIDATE_CHECK_EMAIL;
+	if (flags & GEBR_GEOXML_VALIDATE_CHECK_FILEN && !gebr_validate_check_menu_filename(value))
+		failed |= GEBR_GEOXML_VALIDATE_CHECK_FILEN;
+
+	return failed;
 }
 
 gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 {
 	gchar * tmp;
 	gchar * fix;
-	gint failed;
+	gboolean can_fix;
 
-	if (!gebr_validate_case_is_value_fixable(self, value, &failed))
+	gebr_validate_case_check_value(self, value, &can_fix);
+	if (!can_fix)
 		return NULL;
 
 	tmp = NULL;
@@ -253,7 +262,7 @@ gchar * gebr_validate_change_no_blanks_at_boundaries(const gchar * sentence)
 {
 	GRegex *regex;
 	GError *error = NULL;
-	regex = g_regex_new("^[[:space:]]|[[:space:]]$", 0, 0, NULL);
+	regex = g_regex_new("^[[:space:]]+|[[:space:]]+$", 0, 0, NULL);
 	if (error != NULL) {
 		g_warning("%s:%d %s", __FILE__, __LINE__, error->message);
 		g_error_free(error);

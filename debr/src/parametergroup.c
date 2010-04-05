@@ -22,9 +22,10 @@
 #include <libgebr/intl.h>
 #include <libgebr/gui/utils.h>
 
-#include "parametergroup.h"
 #include "debr.h"
+#include "callbacks.h"
 #include "parameter.h"
+#include "parametergroup.h"
 
 /*
  * Declarations
@@ -105,6 +106,8 @@ gboolean parameter_group_dialog_setup_ui(void)
 	gtk_widget_show(label_entry);
 	gtk_table_attach(GTK_TABLE(table), label_entry, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
+	g_signal_connect(label_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
+			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL));
 
 	/*
 	 * Expanded by default

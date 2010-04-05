@@ -456,6 +456,8 @@ gboolean program_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), title_entry, 1, 2, row, row+1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), row++;
 	g_signal_connect(title_entry, "changed", G_CALLBACK(program_title_changed), debr.program);
+	g_signal_connect(title_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
+			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_TITLE));
 
 	/*
 	 * Binary
@@ -472,6 +474,8 @@ gboolean program_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), binary_entry, 1, 2, row, row+1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), row++;
 	g_signal_connect(binary_entry, "changed", G_CALLBACK(program_binary_changed), debr.program);
+	g_signal_connect(binary_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
+			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_BINARY));
 
 	/*
 	 * Version
@@ -488,6 +492,8 @@ gboolean program_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), version_entry, 1, 2, row, row+1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), row++;
 	g_signal_connect(version_entry, "changed", G_CALLBACK(program_version_changed), debr.program);
+	g_signal_connect(version_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
+			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_VERSION));
 
 	/*
 	 * Parallelization
@@ -521,6 +527,8 @@ gboolean program_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), description_entry, 1, 2, row, row+1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), row++;
 	g_signal_connect(description_entry, "changed", G_CALLBACK(program_description_changed), debr.program);
+	g_signal_connect(description_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
+			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_DESCRIPTION));
 
 	/*
 	 * Help
@@ -557,6 +565,8 @@ gboolean program_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), url_entry, 1, 2, row, row+1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), row++;
 	g_signal_connect(url_entry, "changed", G_CALLBACK(program_url_changed), debr.program);
+	g_signal_connect(url_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
+			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_URL));
 
 	/*
 	 * Load program into UI
@@ -653,7 +663,7 @@ static void program_details_update(void)
 		g_string_printf(text, _("This program has 1 parameter"));
 		break;
 	default:
-		g_string_printf(text, _("This program has %lu parameters"),
+		g_string_printf(text, _("This program has %" G_GSIZE_FORMAT " parameters"),
 				parameters_count);
 	}
 	gtk_label_set_text(GTK_LABEL(debr.ui_program.details.nparams_label), text->str);

@@ -809,6 +809,8 @@ static gboolean parameter_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), label_entry, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
 	g_signal_connect(label_entry, "changed", G_CALLBACK(menu_status_set_unsaved), NULL);
+	g_signal_connect(label_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
+			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL));
 
 	/*
 	 * Keyword
@@ -824,6 +826,8 @@ static gboolean parameter_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), keyword_entry, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
 	g_signal_connect(keyword_entry, "changed", G_CALLBACK(menu_status_set_unsaved), NULL);
+	g_signal_connect(keyword_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
+			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_KEYWORD));
 
 	/* skip default */
 	++row;

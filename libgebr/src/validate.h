@@ -50,9 +50,9 @@ struct _GebrValidateCase {
 	const gchar * errmsg;
 };
 
-gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value);
-
 GebrValidateCase * gebr_validate_get_validate_case(GebrValidateCaseName name);
+
+gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value, gboolean * can_fix);
 
 gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value);
 
