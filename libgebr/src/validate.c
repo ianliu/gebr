@@ -83,8 +83,8 @@ static GebrValidateCase validate_cases[] = {
 		N_("Program version should be filled.")},
 
 	{GEBR_VALIDATE_CASE_PROGRAM_URL,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY,
-		N_("Program url should not be empty.")},
+		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_URL,
+		N_("Program url should starts with a protocol.")},
 
 	/* parameter */
 	{GEBR_VALIDATE_CASE_PARAMETER_LABEL,
@@ -320,3 +320,36 @@ gboolean gebr_validate_check_is_email(const gchar * str)
 	return (!regexec(&pattern, str, 0, 0, 0) ? TRUE : FALSE);
 }
 
+gboolean gebr_validate_check_is_url(const gchar * str)
+{
+        return (g_str_has_prefix(str, "http://") ||
+                g_str_has_prefix(str, "mailto:") ||
+                g_str_has_prefix(str, "file://") ||
+                g_str_has_prefix(str, "ftp://") );
+}
+
+gchar * gebr_validate_change_url(const gchar * sentence)
+{	
+        
+        gchar *str;
+
+        if (gebr_validate_check_is_email(sentence)){
+                return g_strconcat("mailto:", sentence);
+        }
+
+        if (g_str_has_prefix(sentence, "www.")){
+                return g_strconcat("http://", sentence);
+        }
+        
+        if (g_str_has_prefix(sentence, "ftp.")){
+                return g_strconcat("ftp://", sentence);
+        }
+
+        if (g_str_has_prefix(sentence, "/")){
+                return g_strconcat("file://", sentence);
+        }
+
+        str = g_strdup(sentence);
+
+	return str;
+}

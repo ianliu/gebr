@@ -1,3 +1,4 @@
+
 /*   libgebr - GeBR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -39,6 +40,7 @@ enum GebrGeoXmlValidateCheckFlags {
 	GEBR_GEOXML_VALIDATE_CHECK_EMAIL	= 1 << 5,
 	GEBR_GEOXML_VALIDATE_CHECK_FILEN	= 1 << 6,
 	GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY	= 1 << 7,
+        GEBR_GEOXML_VALIDATE_CHECK_URL          = 1 << 8
 };
 
 typedef struct _GebrGeoXmlValidate GebrGeoXmlValidate;
@@ -81,6 +83,7 @@ struct _GebrGeoXmlValidate {
 		gboolean category;
 		gboolean mhelp;
 		gboolean progs;
+                gboolean url;
 		gboolean params;
 	} options;
 

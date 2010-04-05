@@ -123,6 +123,24 @@ gboolean gebr_validate_check_menu_filename(const gchar * str);
  */
 gboolean gebr_validate_check_is_email(const gchar * str);
 
+/**
+ * TRUE if \p str starts with one of the following protocols: http, mailto, file or ftp.
+ */
+gboolean gebr_validate_check_is_url(const gchar * str);
+
+/**
+ *  GUESS which protocol should prefixes \p sentence, and add it. If
+ *  sentence validates as an email, "mailto:" is added. If sentence
+ *  starts with "www.", "http://" is added. If sentence starts with
+ *  "ftp.", "ftp://" is added. If sentence starts with "/", "file://"
+ *  is added. Otherwise, a copy of sentence is returned.
+ *  \return  string prefixed by a protocol, or the input string whenever there is no reasonable guess.
+ *  \return  a newly allocated string that must be freed
+ *  It implements the correction for \ref gebr_validate_check_is_url check
+ */
+gchar * gebr_validate_change_url(const gchar * sentence);
+
+
 G_END_DECLS
 
 #endif				//__GEBR_VALIDATE_H
