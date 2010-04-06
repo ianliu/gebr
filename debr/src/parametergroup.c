@@ -198,8 +198,10 @@ gboolean parameter_group_dialog_setup_ui(void)
 	g_signal_connect(instances_spin_button, "output", G_CALLBACK(on_parameter_group_instances_changed), ui);
 	g_signal_connect(exclusive_check_button, "toggled", G_CALLBACK(on_parameter_group_is_exclusive_toggled), ui);
 
-	/* for DeBR it doesn't matter if it's not instanciable */
-	gebr_geoxml_parameter_group_set_is_instanciable(parameter_group, FALSE/*TRUE*/);
+	/* For DeBR it doesn't matter if it's not instantiable, because we need to instantiate it
+	 * (gebr_geoxml_parameter_group_instanciate doesn't work for non-instatiable groups).
+	 * 'Instantiable' makes sense only for menus added in GeBR. */
+	gebr_geoxml_parameter_group_set_is_instanciable(parameter_group, TRUE);
 	/* let the user interact... */
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
 		ret = FALSE;

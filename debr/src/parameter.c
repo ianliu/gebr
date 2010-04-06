@@ -323,6 +323,8 @@ void parameter_new_from_type(enum GEBR_GEOXML_PARAMETER_TYPE type)
 		else
 			parameter_selected();
 	} else {
+		GebrGeoXmlParameterGroup *parameter_group = GEBR_GEOXML_PARAMETER_GROUP(debr.parameter);
+		gebr_geoxml_parameter_group_set_is_instanciable(parameter_group, FALSE);
 		if (!parameter_group_dialog_setup_ui())
 			parameter_remove(FALSE);
 		else
@@ -341,7 +343,7 @@ void parameter_remove(gboolean confirm)
 	if (parameter_get_selected(&iter, TRUE) == FALSE)
 		return;
 	if (confirm
-	    && gebr_gui_confirm_action_dialog(_("Delete parameter"), _("Are you sure you want to delete selected" \
+	    && gebr_gui_confirm_action_dialog(_("Delete parameter"), _("Are you sure you want to delete the selected" \
 								       " parameter(s)?")) == FALSE)
 		return;
 	
