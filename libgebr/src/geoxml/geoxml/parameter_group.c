@@ -162,7 +162,7 @@ void gebr_geoxml_parameter_group_set_is_instanciable(GebrGeoXmlParameterGroup * 
 	if (parameter_group == NULL)
 		return;
 	__gebr_geoxml_set_attr_value(__gebr_geoxml_parameter_get_type_element
-				     (GEBR_GEOXML_PARAMETER(parameter_group), FALSE), "instantiable",
+				     (GEBR_GEOXML_PARAMETER(parameter_group), FALSE), "instanciable",
 				     (enable == TRUE ? "yes" : "no"));
 }
 
@@ -182,7 +182,7 @@ gboolean gebr_geoxml_parameter_group_get_is_instanciable(GebrGeoXmlParameterGrou
 	return (!strcmp
 		(__gebr_geoxml_get_attr_value
 		 (__gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group), FALSE),
-		  "instantiable"), "yes"))
+		  "instanciable"), "yes"))
 	    ? TRUE : FALSE;
 }
 

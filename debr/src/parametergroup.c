@@ -199,7 +199,7 @@ gboolean parameter_group_dialog_setup_ui(void)
 	g_signal_connect(exclusive_check_button, "toggled", G_CALLBACK(on_parameter_group_is_exclusive_toggled), ui);
 
 	/* for DeBR it doesn't matter if it's not instanciable */
-	gebr_geoxml_parameter_group_set_is_instanciable(parameter_group, TRUE);
+	gebr_geoxml_parameter_group_set_is_instanciable(parameter_group, FALSE/*TRUE*/);
 	/* let the user interact... */
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
 		ret = FALSE;
