@@ -424,7 +424,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL)->flags, NULL);
 
 		if (gebr_geoxml_parameter_group_get_is_instanciable(GEBR_GEOXML_PARAMETER_GROUP(parameter)))
-			validate->operations.append_text(validate->data, _("   [Instanciable]\n"));
+			validate->operations.append_text(validate->data, _("   [Instantiable]\n"));
 		else
 			validate->operations.append_text(validate->data, "\n");
 
