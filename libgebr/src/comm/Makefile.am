@@ -15,7 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-SUBDIRS = comm
+if ENABLE_TESTS
+TESTSDIR=tests
+endif
+SUBDIRS = comm ${TESTDIR}
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr-comm.pc

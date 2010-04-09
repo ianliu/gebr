@@ -78,3 +78,4 @@ marshalers.h
 missing
 stamp-it
 tags
+libgebr/src/comm/tests/test-protocol

@@ -24,6 +24,8 @@
 
 #define PROTOCOL_VERSION "1.0.3"
 
+#define gebr_comm_message_def_create(str, resp) ((struct gebr_comm_message_def){g_str_hash(str), str, resp})
+
 extern struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
 
 struct gebr_comm_message_def {
@@ -92,9 +94,10 @@ void gebr_comm_protocol_free(struct gebr_comm_protocol *protocol);
 
 gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GString * data);
 
-void
-gebr_comm_protocol_send_data(struct gebr_comm_protocol *protocol, GebrCommStreamSocket * stream_socket,
-			     struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...);
+GString * gebr_comm_protocol_build_message(struct gebr_comm_message_def msg_def, guint n_params, ...);
+
+void gebr_comm_protocol_send_data(struct gebr_comm_protocol *protocol, GebrCommStreamSocket * stream_socket,
+				  struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...);
 
 GList *gebr_comm_protocol_split_new(GString * arguments, guint parts);
 

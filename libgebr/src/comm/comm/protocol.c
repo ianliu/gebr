@@ -27,6 +27,8 @@
  * Internal variables and variables
  */
 
+static GString * gebr_comm_protocol_build_messagev(struct gebr_comm_message_def msg_def, guint n_params, va_list ap);
+
 struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
 
 void gebr_comm_protocol_split_free_each(GString * string)
@@ -38,26 +40,24 @@ void gebr_comm_protocol_split_free_each(GString * string)
  * Public functions
  */
 
-#define create_gebr_comm_message_def(str, resp) ((struct gebr_comm_message_def){g_str_hash(str), str, resp})
-
 void gebr_comm_protocol_init(void)
 {
 	/* create messages hashes */
 	gebr_comm_protocol_defs = (struct gebr_comm_protocol_defs) {
-		.ret_def = create_gebr_comm_message_def("RET", FALSE),
-		.err_def = create_gebr_comm_message_def("ERR", FALSE),
-		.ini_def = create_gebr_comm_message_def("INI", TRUE),
-		.qut_def = create_gebr_comm_message_def("QUT", FALSE),
-		.lst_def = create_gebr_comm_message_def("LST", FALSE),	/* return, but it is not a ret */
-		.job_def = create_gebr_comm_message_def("JOB", FALSE),
-		.run_def = create_gebr_comm_message_def("RUN", TRUE),
-		.rnq_def = create_gebr_comm_message_def("RNQ", FALSE),
-		.flw_def = create_gebr_comm_message_def("FLW", TRUE),
-		.clr_def = create_gebr_comm_message_def("CLR", FALSE),
-		.end_def = create_gebr_comm_message_def("END", FALSE),
-		.kil_def = create_gebr_comm_message_def("KIL", FALSE),
-		.out_def = create_gebr_comm_message_def("OUT", FALSE),
-		.sta_def = create_gebr_comm_message_def("STA", FALSE)
+		.ret_def = gebr_comm_message_def_create("RET", FALSE),
+		.err_def = gebr_comm_message_def_create("ERR", FALSE),
+		.ini_def = gebr_comm_message_def_create("INI", TRUE),
+		.qut_def = gebr_comm_message_def_create("QUT", FALSE),
+		.lst_def = gebr_comm_message_def_create("LST", FALSE),	/* return, but it is not a ret */
+		.job_def = gebr_comm_message_def_create("JOB", FALSE),
+		.run_def = gebr_comm_message_def_create("RUN", TRUE),
+		.rnq_def = gebr_comm_message_def_create("RNQ", FALSE),
+		.flw_def = gebr_comm_message_def_create("FLW", TRUE),
+		.clr_def = gebr_comm_message_def_create("CLR", FALSE),
+		.end_def = gebr_comm_message_def_create("END", FALSE),
+		.kil_def = gebr_comm_message_def_create("KIL", FALSE),
+		.out_def = gebr_comm_message_def_create("OUT", FALSE),
+		.sta_def = gebr_comm_message_def_create("STA", FALSE)
 	};
 
 	gebr_comm_protocol_defs.hash_table = g_hash_table_new(g_str_hash, g_str_equal);
@@ -214,35 +214,51 @@ gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GS
 	return FALSE;
 }
 
-void
-gebr_comm_protocol_send_data(struct gebr_comm_protocol *protocol, GebrCommStreamSocket * stream_socket,
-			     struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...)
+GString * gebr_comm_protocol_build_message(struct gebr_comm_message_def msg_def, guint n_params, ...)
 {
-	GString *message;
 	va_list ap;
-	GString *data;
-	guint i;
+	va_start(ap, n_params);
+	return gebr_comm_protocol_build_messagev(msg_def, n_params, ap);
+}
+
+static GString * gebr_comm_protocol_build_messagev(struct gebr_comm_message_def msg_def, guint n_params, va_list ap)
+{
+	GString * data;
+	GString * message;
 
 	/* very little code, but very interesting functionality ;) */
 	data = g_string_new(NULL);
-	va_start(ap, n_params);
-	for (i = 1; i <= n_params; ++i) {
+	for (guint i = 1; i <= n_params; ++i) {
 		gchar *param;
-
 		param = va_arg(ap, char *);
+		if (!param)
+			param = "";
 		g_string_append_printf(data, (i != n_params) ? "%zu|%s " : "%zu|%s", strlen(param), param);
 	}
 	va_end(ap);
 
-	/* does this message need return? */
-	protocol->waiting_ret_hash = (gebr_comm_message_def.returns == TRUE) ? gebr_comm_message_def.hash : 0;
 	/* assembly message */
 	message = g_string_new(NULL);
-	g_string_printf(message, "%s %zu %s\n", gebr_comm_message_def.string, data->len, data->str);
+	g_string_printf(message, "%s %zu %s\n", msg_def.string, data->len, data->str);
+	g_string_free(data, TRUE);
+
+	return message;
+}
+
+void gebr_comm_protocol_send_data(struct gebr_comm_protocol *protocol, GebrCommStreamSocket * stream_socket,
+				  struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...)
+{
+	va_list ap;
+	GString * message;
+
+	va_start(ap, n_params);
+	message = gebr_comm_protocol_build_messagev(gebr_comm_message_def, n_params, ap);
+
+	/* does this message need return? */
+	protocol->waiting_ret_hash = (gebr_comm_message_def.returns == TRUE) ? gebr_comm_message_def.hash : 0;
 	/* send it */
 	gebr_comm_socket_write_string(GEBR_COMM_SOCKET(stream_socket), message);
 
-	g_string_free(data, TRUE);
 	g_string_free(message, TRUE);
 }
 
