@@ -482,6 +482,7 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 	GtkWidget *dialog;
 	GtkWidget *box;
 	GtkTreeIter iter;
+	GtkSizeGroup *group;
 
 	GtkWidget *cb_account = NULL;
 	GtkWidget *entry_queue = NULL;
@@ -494,24 +495,43 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 					     NULL);
 
 	box = GTK_DIALOG(dialog)->vbox; /* This is the 'main box' of the dialog. */
+	group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
+	gtk_box_set_spacing(GTK_BOX(box), 5);
+
+	void plug_widget(const gchar * title, GtkWidget * widget) {
+		gchar * markup;
+		GtkWidget * frame;
+		GtkWidget * align;
+		GtkWidget * label;
+
+		align = gtk_alignment_new(0, 0, 1, 1);
+		gtk_alignment_set_padding(GTK_ALIGNMENT(align), 0, 0, 10, 0);
+		gtk_container_add(GTK_CONTAINER(align), widget);
+
+		markup = g_markup_printf_escaped("<b>%s</b>", title);
+		frame = gtk_frame_new(markup);
+		label = gtk_frame_get_label_widget(GTK_FRAME(frame));
+		gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
+		gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
+		gtk_container_add(GTK_CONTAINER(frame), align);
+
+		gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE, 0);
+
+		g_free(markup);
+	}
 	
 	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) {
-		GtkWidget *hbox_account = gtk_hbox_new(FALSE, 5);
-
-		GtkWidget *label_account = gtk_label_new(_("Account"));
+		GtkCellRenderer *cell;
+		cell = gtk_cell_renderer_text_new();
 		cb_account = gtk_combo_box_new();
-		GtkCellRenderer *cell = gtk_cell_renderer_text_new();
 		gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cb_account), cell, TRUE);
 		gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cb_account), cell, "text", 0);
-	
-		gtk_box_pack_start(GTK_BOX(hbox_account), label_account, FALSE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(hbox_account), cb_account, TRUE, TRUE, 0);
-
-		/* Add the 'account box' to the main box. */
-		gtk_box_pack_start(GTK_BOX(box), hbox_account, FALSE, TRUE, 0);
-
 		gtk_combo_box_set_model(GTK_COMBO_BOX(cb_account), GTK_TREE_MODEL(server->accounts_model));
 		gtk_combo_box_set_active(GTK_COMBO_BOX(cb_account), 0);
+		plug_widget(_("Account"), cb_account);
 	}
 	else {
 		/* Common servers. */
@@ -519,29 +539,15 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 			/* We should ask for a queue name only if it is originally NULL.
 			 * Even an empty string ("") has a meaning: it means the flow is supposed
 			 * to run immediately. */
-			GtkWidget *hbox_queue = gtk_hbox_new(FALSE, 5);
-
-			GtkWidget *label_queue = gtk_label_new(_("Give a name to the queue:"));
 			entry_queue = gtk_entry_new();
-			gtk_box_pack_start(GTK_BOX(hbox_queue), label_queue, TRUE, TRUE, 0);
-			gtk_box_pack_start(GTK_BOX(hbox_queue), entry_queue, TRUE, TRUE, 0);
-
-			/* Add the 'queue naming box' to the main box. */
-			gtk_box_pack_start(GTK_BOX(box), hbox_queue, TRUE, TRUE, 0);
+			plug_widget(_("Choose the queue's name"), entry_queue);
 		}
 	}
 
 	if (mpi_program) {
 		/* We should be able to ask for the number of processes (np) to run the mpi program(s). */
-		GtkWidget *hbox_np = gtk_hbox_new(FALSE, 5);
-
-		GtkWidget *label_np = gtk_label_new(_("Number of parallel processes"));
 		entry_np = gtk_spin_button_new_with_range(1, 99999999999, 1);
-		gtk_box_pack_start(GTK_BOX(hbox_np), label_np, TRUE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(hbox_np), entry_np, TRUE, TRUE, 0);
-
-		/* Add the 'number of processes box' to the main box. */
-		gtk_box_pack_start(GTK_BOX(box), hbox_np, TRUE, TRUE, 0);
+		plug_widget(_("Number of processes"), entry_np);
 	}
 	
 	gtk_widget_show_all(dialog);
