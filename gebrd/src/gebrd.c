@@ -84,7 +84,7 @@ void gebrd_init(void)
 
 void gebrd_quit(void)
 {
-	gebrd_message(GEBR_LOG_END, _("Server quited"));
+	gebrd_message(GEBR_LOG_END, _("Server quit."));
 
 	g_list_foreach(gebrd.mpi_flavors, (GFunc)gebrd_mpi_config_free, NULL);
 	g_list_free(gebrd.mpi_flavors);
