@@ -89,15 +89,7 @@ const gchar *gebr_validate_int(const gchar * text_value, const gchar * min, cons
 const gchar *gebr_validate_float(const gchar * text_value, const gchar * min, const gchar * max);
 
 #if !GLIB_CHECK_VERSION(2,16,0)
-int
-g_strcmp0(const char * str1, const char * str2)
-{
-	if (!str1)
-		return -(str1 != str2);
-	if (!str2)
-		return str1 != str2;
-	return strcmp(str1, str2);
-}
+int g_strcmp0(const char * str1, const char * str2);
 #endif
 
 #endif				//__GEBR_UTILS_H
