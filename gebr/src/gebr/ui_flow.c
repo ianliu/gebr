@@ -490,8 +490,8 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 
 	dialog = gtk_dialog_new_with_buttons(_("Flow execution parameters"), GTK_WINDOW(gebr.window), 
 					     GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT, 
-					     GTK_STOCK_EXECUTE, GTK_RESPONSE_ACCEPT,
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
+					     GTK_STOCK_EXECUTE, GTK_RESPONSE_ACCEPT,
 					     NULL);
 
 	box = GTK_DIALOG(dialog)->vbox; /* This is the 'main box' of the dialog. */
@@ -540,6 +540,7 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 			 * Even an empty string ("") has a meaning: it means the flow is supposed
 			 * to run immediately. */
 			entry_queue = gtk_entry_new();
+			gtk_entry_set_activates_default(GTK_ENTRY(entry_queue), TRUE);
 			plug_widget(_("Choose the queue's name"), entry_queue);
 		}
 	}
@@ -547,6 +548,7 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 	if (mpi_program) {
 		/* We should be able to ask for the number of processes (np) to run the mpi program(s). */
 		entry_np = gtk_spin_button_new_with_range(1, 99999999999, 1);
+		gtk_entry_set_activates_default(GTK_ENTRY(entry_np), TRUE);
 		plug_widget(_("Number of processes"), entry_np);
 	}
 	
