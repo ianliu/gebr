@@ -194,11 +194,11 @@ void gebr_geoxml_program_set_version(GebrGeoXmlProgram * program, const gchar * 
 	__gebr_geoxml_set_attr_value((GdomeElement*)program, "version", version);
 }
 
-void gebr_geoxml_program_set_parallelization(GebrGeoXmlProgram * program, const gchar * parallelization_type)
+void gebr_geoxml_program_set_mpi(GebrGeoXmlProgram * program, const gchar * mpi_type)
 {
-	if (program == NULL || parallelization_type == NULL)
+	if (program == NULL || mpi_type == NULL)
 		return;
-	__gebr_geoxml_set_attr_value((GdomeElement*)program, "parallelization", parallelization_type);
+	__gebr_geoxml_set_attr_value((GdomeElement*)program, "mpi", mpi_type);
 }
 
 void gebr_geoxml_program_set_url(GebrGeoXmlProgram * program, const gchar * url)
@@ -288,11 +288,11 @@ const gchar *gebr_geoxml_program_get_version(GebrGeoXmlProgram * program)
 	return __gebr_geoxml_get_attr_value((GdomeElement*)program, "version");
 }
 
-const gchar *gebr_geoxml_program_get_parallelization(GebrGeoXmlProgram * program)
+const gchar *gebr_geoxml_program_get_mpi(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;
-	return __gebr_geoxml_get_attr_value((GdomeElement*)program, "parallelization");
+	return __gebr_geoxml_get_attr_value((GdomeElement*)program, "mpi");
 }
 
 const gchar *gebr_geoxml_program_get_url(GebrGeoXmlProgram * program)

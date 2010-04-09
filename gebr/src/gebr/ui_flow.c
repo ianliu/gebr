@@ -39,7 +39,7 @@
 
 static void flow_io_populate(struct ui_flow_io *ui_flow_io);
 static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io);
-static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *server, gboolean parallel_program);
+static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *server, gboolean mpi_program);
 static void flow_io_run(GebrGeoXmlFlowServer * server);
 static void flow_io_insert(struct ui_flow_io *ui_flow_io, GebrGeoXmlFlowServer * flow_server, GtkTreeIter * iter);
 static void
@@ -474,9 +474,9 @@ static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io)
  *
  * @param config A pointer to a gebr_comm_server_run structure, which will hold the parameters entered within the dialog.
  * @param server
- * @param parallel_program
+ * @param mpi_program
  */
-static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *server, gboolean parallel_program)
+static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *server, gboolean mpi_program)
 {
 	gboolean ret = TRUE;
 	GtkWidget *dialog;
@@ -496,7 +496,6 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 	box = GTK_DIALOG(dialog)->vbox; /* This is the 'main box' of the dialog. */
 	
 	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) {
-	//if (TRUE) {
 		GtkWidget *hbox_account = gtk_hbox_new(FALSE, 5);
 
 		GtkWidget *label_account = gtk_label_new(_("Account"));
@@ -532,8 +531,8 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 		}
 	}
 
-	if (parallel_program) {
-		/* We should be able to ask for the number of processes (np) to run the parallel program(s). */
+	if (mpi_program) {
+		/* We should be able to ask for the number of processes (np) to run the mpi program(s). */
 		GtkWidget *hbox_np = gtk_hbox_new(FALSE, 5);
 
 		GtkWidget *label_np = gtk_label_new(_("Number of parallel processes"));
@@ -549,7 +548,7 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 
 	gboolean moab_server_validated = !(server->type == GEBR_COMM_SERVER_TYPE_MOAB);
 	gboolean queue_name_validated = !(config->queue == NULL);
-	gboolean num_processes_validated = !(parallel_program); 
+	gboolean num_processes_validated = !(mpi_program); 
 
 	do {
 		if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_ACCEPT) {
@@ -594,14 +593,14 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 			}
 		}
 
-		if (parallel_program) {
-			/* Get the number of processes for parallel execution. */
+		if (mpi_program) {
+			/* Get the number of processes for mpi execution. */
 			config->num_processes = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry_np)));
 
 			// TODO: Better validation for the number of processes...
 			if (strlen(config->num_processes) == 0) {
 				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-							_("Empty number"), _("Please enter the number of parallel processes to run the flow."));
+							_("Empty number"), _("Please enter the number of processes to run the flow."));
 				g_free(config->num_processes);
 				config->num_processes = NULL;
 			}
@@ -625,7 +624,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	const gchar *address;
 	struct server *server;
 	GebrCommServerRun *config;
-	gboolean parallel_program;
+	gboolean mpi_program;
 
 	if (!flow_browse_get_selected(NULL, FALSE)) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected."));
@@ -655,12 +654,12 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 		goto err;
 	}
 	
-	parallel_program = (gebr_geoxml_flow_get_first_parallel_program(gebr.flow) != NULL);
+	mpi_program = (gebr_geoxml_flow_get_first_mpi_program(gebr.flow) != NULL);
 
 	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) {
 		if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter)) {
 			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &config->queue, -1);
-			if (!flow_io_run_dialog(config, server, parallel_program))
+			if (!flow_io_run_dialog(config, server, mpi_program))
 				goto err;
 		}
 		else
@@ -673,8 +672,8 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 			 * "Immediately" is selected as queue option. */
 			config->queue = g_strdup("");
 
-			if (parallel_program) {
-				if (!flow_io_run_dialog(config, server, parallel_program)) {
+			if (mpi_program) {
+				if (!flow_io_run_dialog(config, server, mpi_program)) {
 					goto err;
 				}
 			}
@@ -694,7 +693,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 				 * job behind this single one, which denotes proper enqueuing. In this case,
 				 * it is necessary to give a name to the new queue. */
 
-				if (!flow_io_run_dialog(config, server, parallel_program)) {
+				if (!flow_io_run_dialog(config, server, mpi_program)) {
 					g_free(internal_queue_name);
 					goto err;
 				}
@@ -719,8 +718,8 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 			else {
 				if (internal_queue_name) {
 					config->queue = g_strdup(internal_queue_name);
-					if (parallel_program) {
-						if (!flow_io_run_dialog(config, server, parallel_program)) {
+					if (mpi_program) {
+						if (!flow_io_run_dialog(config, server, mpi_program)) {
 							goto err;
 						}
 					}

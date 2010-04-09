@@ -430,7 +430,7 @@ glong gebr_geoxml_flow_get_programs_number(GebrGeoXmlFlow * flow)
 	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), "program");
 }
 
-GebrGeoXmlProgram *gebr_geoxml_flow_get_first_parallel_program(GebrGeoXmlFlow * flow)
+GebrGeoXmlProgram *gebr_geoxml_flow_get_first_mpi_program(GebrGeoXmlFlow * flow)
 {
 	if (flow == NULL)
 		return NULL;
@@ -438,7 +438,7 @@ GebrGeoXmlProgram *gebr_geoxml_flow_get_first_parallel_program(GebrGeoXmlFlow * 
 	GebrGeoXmlSequence *program;
 	gebr_geoxml_flow_get_program(flow, &program, 0);
 	for (; program != NULL; gebr_geoxml_sequence_next(&program))
-		if (strlen(gebr_geoxml_program_get_parallelization(GEBR_GEOXML_PROGRAM(program))))
+		if (strlen(gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program))))
 			return GEBR_GEOXML_PROGRAM(program);
 
 	return NULL;

@@ -34,16 +34,16 @@
 
 #define RESPONSE_REFRESH	101
 
-static const gchar * parallelization_combo_to_xml [] = {
+static const gchar * mpi_combo_to_xml [] = {
 	"", "openmpi", NULL
 };
-static const gchar * parallelization_xml_to_combo [] = {
+static const gchar * mpi_xml_to_combo [] = {
 	N_("None"), N_("OpenMPI"), NULL
 };
-static const gint parallelization_xml_to_index(GebrGeoXmlProgram * program)
+static const gint mpi_xml_to_index(GebrGeoXmlProgram * program)
 {
-	for (int i = 0; parallelization_combo_to_xml[i] != NULL; i++)
-		if (!strcmp(parallelization_combo_to_xml[i], gebr_geoxml_program_get_parallelization(program)))
+	for (int i = 0; mpi_combo_to_xml[i] != NULL; i++)
+		if (!strcmp(mpi_combo_to_xml[i], gebr_geoxml_program_get_mpi(program)))
 			return i;
 	return 0;
 }
@@ -71,7 +71,7 @@ static gboolean program_description_changed(GtkEntry * entry);
 static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program);
 static void program_help_edit(GtkButton * button);
 static gboolean program_version_changed(GtkEntry * entry);
-static void program_parallelization_changed(GtkComboBox * combo);
+static void program_mpi_changed(GtkComboBox * combo);
 static gboolean program_url_changed(GtkEntry * entry);
 
 static void program_preview_on_response(GtkWidget * dialog, gint arg1, struct program_preview_data *data);
@@ -162,9 +162,9 @@ void program_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.version_label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.version_label, FALSE, TRUE, 0);
 
-	debr.ui_program.details.parallelization_label = gtk_label_new(NULL);
-	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.parallelization_label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.parallelization_label, FALSE, TRUE, 0);
+	debr.ui_program.details.mpi_label = gtk_label_new(NULL);
+	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.mpi_label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(details), debr.ui_program.details.mpi_label, FALSE, TRUE, 0);
 
 	debr.ui_program.details.url_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_program.details.url_label), 0, 0);
@@ -380,8 +380,8 @@ gboolean program_dialog_setup_ui(void)
 	GtkWidget *help_edit_button;
 	GtkWidget *version_label;
 	GtkWidget *version_entry;
-	GtkWidget *parallelization_label;
-	GtkWidget *parallelization_combo;
+	GtkWidget *mpi_label;
+	GtkWidget *mpi_combo;
 	GtkWidget *url_label;
 	GtkWidget *url_entry;
 
@@ -496,21 +496,21 @@ gboolean program_dialog_setup_ui(void)
 			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_VERSION));
 
 	/*
-	 * Parallelization
+	 * mpi
 	 */
-	parallelization_label = gtk_label_new(_("Parallelization:"));
-	gtk_widget_show(parallelization_label);
-	gtk_table_attach(GTK_TABLE(table), parallelization_label, 0, 1, row, row+1,
+	mpi_label = gtk_label_new(_("MPI:"));
+	gtk_widget_show(mpi_label);
+	gtk_table_attach(GTK_TABLE(table), mpi_label, 0, 1, row, row+1,
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	gtk_misc_set_alignment(GTK_MISC(parallelization_label), 0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(mpi_label), 0, 0.5);
 
-	parallelization_combo = gtk_combo_box_new_text();
-	for (int i = 0; parallelization_xml_to_combo[i] != NULL; i++)
-		gtk_combo_box_append_text(GTK_COMBO_BOX(parallelization_combo), parallelization_xml_to_combo[i]);
-	gtk_widget_show(parallelization_combo);
-	gtk_table_attach(GTK_TABLE(table), parallelization_combo, 1, 2, row, row+1,
+	mpi_combo = gtk_combo_box_new_text();
+	for (int i = 0; mpi_xml_to_combo[i] != NULL; i++)
+		gtk_combo_box_append_text(GTK_COMBO_BOX(mpi_combo), mpi_xml_to_combo[i]);
+	gtk_widget_show(mpi_combo);
+	gtk_table_attach(GTK_TABLE(table), mpi_combo, 1, 2, row, row+1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), row++;
-	g_signal_connect(parallelization_combo, "changed", G_CALLBACK(program_parallelization_changed), debr.program);
+	g_signal_connect(mpi_combo, "changed", G_CALLBACK(program_mpi_changed), debr.program);
 
 	/*
 	 * Description
@@ -581,7 +581,7 @@ gboolean program_dialog_setup_ui(void)
 	gtk_entry_set_text(GTK_ENTRY(binary_entry), gebr_geoxml_program_get_binary(debr.program));
 	gtk_entry_set_text(GTK_ENTRY(description_entry), gebr_geoxml_program_get_description(debr.program));
 	gtk_entry_set_text(GTK_ENTRY(version_entry), gebr_geoxml_program_get_version(debr.program));
-	gtk_combo_box_set_active(GTK_COMBO_BOX(parallelization_combo), parallelization_xml_to_index(debr.program));
+	gtk_combo_box_set_active(GTK_COMBO_BOX(mpi_combo), mpi_xml_to_index(debr.program));
 	gtk_entry_set_text(GTK_ENTRY(version_entry), gebr_geoxml_program_get_version(debr.program));
 	gtk_entry_set_text(GTK_ENTRY(url_entry), gebr_geoxml_program_get_url(debr.program));
 
@@ -639,7 +639,7 @@ static void program_details_update(void)
 		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.nparams_label), "");
 		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.binary_label), "");
 		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.version_label), "");
-		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.parallelization_label), "");
+		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.mpi_label), "");
 		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.url_label), "");
 		return;
 	}
@@ -677,8 +677,8 @@ static void program_details_update(void)
 	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.version_label), markup);
 	g_free(markup);
 
-	markup = g_markup_printf_escaped("<b>%s</b>: %s", _("Parallelization"), parallelization_xml_to_combo[parallelization_xml_to_index(debr.program)]);
-	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.parallelization_label), markup);
+	markup = g_markup_printf_escaped("<b>%s</b>: %s", _("MPI"), mpi_xml_to_combo[mpi_xml_to_index(debr.program)]);
+	gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.mpi_label), markup);
 	g_free(markup);
 
 	markup = g_markup_printf_escaped("<b>%s</b>:", _("URL"));
@@ -912,9 +912,9 @@ static gboolean program_version_changed(GtkEntry * entry)
  * \internal
  * Syncronize program's parallelization from UI and XML.
  */
-static void program_parallelization_changed(GtkComboBox * combo)
+static void program_mpi_changed(GtkComboBox * combo)
 {
-	gebr_geoxml_program_set_parallelization(debr.program, parallelization_combo_to_xml[gtk_combo_box_get_active(combo)]);
+	gebr_geoxml_program_set_mpi(debr.program, mpi_combo_to_xml[gtk_combo_box_get_active(combo)]);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }

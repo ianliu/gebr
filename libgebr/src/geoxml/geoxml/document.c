@@ -442,7 +442,7 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 	/* flow 0.3.3 to 0.3.4 */ 
 	if (strcmp(version, "0.3.4") < 0) {
 		// Backward compatible change, nothing to be done.
-		// Added #IMPLIED 'parallelization' attribute to 'program' tag.
+		// Added #IMPLIED 'mpi' attribute to 'program' tag.
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.4");
 		}

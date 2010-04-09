@@ -45,7 +45,7 @@
 	stderr	(yes | no)				#REQUIRED
 	status	(disabled | configured | unconfigured)	#REQUIRED
 	version CDATA					#IMPLIED
-	parallelization CDATA				#IMPLIED>
+	mpi 	CDATA					#IMPLIED>
 
 <!ELEMENT revision (#PCDATA)>
 <!ATTLIST revision

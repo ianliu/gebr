@@ -191,11 +191,11 @@ void gebr_geoxml_program_set_help(GebrGeoXmlProgram * program, const gchar * hel
 void gebr_geoxml_program_set_version(GebrGeoXmlProgram * program, const gchar * version);
 
 /**
- * Sets the \p program parallelization implementation to \p parallelization_type.
+ * Sets the \p program mpi implementation to \p mpi_type.
  *
- * If \p program or \p parallelization_type is NULL nothing is done.
+ * If \p program or \p mpi_type is NULL nothing is done.
  */
-void gebr_geoxml_program_set_parallelization(GebrGeoXmlProgram * program, const gchar * parallelization_type);
+void gebr_geoxml_program_set_mpi(GebrGeoXmlProgram * program, const gchar * mpi_type);
 
 /**
  *
@@ -250,11 +250,11 @@ const gchar *gebr_geoxml_program_get_help(GebrGeoXmlProgram * program);
 const gchar *gebr_geoxml_program_get_version(GebrGeoXmlProgram * program);
 
 /**
- * Get \p program's parallelization implementation.
+ * Get \p program's mpi implementation.
  *
  * If \p program is NULL returns NULL.
  */
-const gchar *gebr_geoxml_program_get_parallelization(GebrGeoXmlProgram * program);
+const gchar *gebr_geoxml_program_get_mpi(GebrGeoXmlProgram * program);
 
 /**
  *

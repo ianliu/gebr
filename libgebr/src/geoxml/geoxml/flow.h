@@ -365,10 +365,10 @@ int gebr_geoxml_flow_get_program(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** pr
 glong gebr_geoxml_flow_get_programs_number(GebrGeoXmlFlow * flow);
 
 /**
- * Return the first program using a parallel implementation at \p flow.
- * If there is no parallel program, return NULL.
+ * Return the first program using a mpi implementation at \p flow.
+ * If there is no mpi program, return NULL.
  */
-GebrGeoXmlProgram *gebr_geoxml_flow_get_first_parallel_program(GebrGeoXmlFlow * flow);
+GebrGeoXmlProgram *gebr_geoxml_flow_get_first_mpi_program(GebrGeoXmlFlow * flow);
 
 /**
  * Creates a new category and append it to the list of categories.
