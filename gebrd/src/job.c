@@ -969,7 +969,7 @@ static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, GString * n_
 		return NULL;
 
 	if (strcmp(mpi_name, "openmpi") == 0)
-		return gebrd_open_mpi_new(n_process->str, config->libpath->str, config->binpath->str);
+		return gebrd_open_mpi_new(n_process->str, config->binpath->str, config->libpath->str);
 
 	return NULL;
 }
