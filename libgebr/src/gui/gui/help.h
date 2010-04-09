@@ -28,7 +28,7 @@
 G_BEGIN_DECLS
 
 /** 
- * Show HTML at \p uri with WebKit (if enabled) or with \p browser executable specified
+ * Show help HTML identified by \p uri with WebKit (if enabled) within a dialog with \p title in its title bar.
  */
 void gebr_gui_help_show(const gchar * uri, const gchar * title);
 
