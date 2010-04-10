@@ -109,7 +109,6 @@ void menu_setup_ui(void)
 	gebr_gui_gtk_tree_view_change_cursor_on_row_collapsed(GTK_TREE_VIEW(debr.ui_menu.tree_view));
 	gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(debr.ui_menu.tree_view), menu_on_query_tooltip, NULL);
 	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(debr.ui_menu.tree_view), MENU_FILENAME);
-	//g_signal_connect(debr.ui_menu.tree_view, "cursor-changed", G_CALLBACK(menu_selected), NULL);
 	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view)), "changed",
 			 G_CALLBACK(menu_selected), NULL);
 	g_signal_connect(debr.ui_menu.tree_view, "row-activated", G_CALLBACK(menu_dialog_setup_ui), NULL);
@@ -769,6 +768,10 @@ void menu_selected(void)
 			
 		menu_status_set_from_iter(&iter, current_status);
 
+		struct validate *validate;
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_VALIDATE_POINTER, &validate, -1);
+		if (validate != NULL)
+			validate_set_selected(&validate->iter);
 	} else if (type == ITER_FOLDER) {
 		menu_folder_details_update(&iter);
 
@@ -784,7 +787,6 @@ void menu_selected(void)
 			NULL
 		};
 		debr_set_actions_sensitive(names, FALSE);
-
 	} else if (type == ITER_NONE) {
 		menu_details_update();
 		
