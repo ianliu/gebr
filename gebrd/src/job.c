@@ -568,7 +568,16 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 	}
 
 	/* Configure MPI */
-	mpi = job_get_mpi_impl(gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program)), n_process);
+	const gchar * mpiname;
+	mpiname = gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program));
+	mpi = job_get_mpi_impl(mpiname, n_process);
+	if (strlen(mpiname) && !mpi) {
+		g_string_append_printf(job->issues,
+				       _("Trying to run program with '%s' MPI implementation,"
+					 " but server does not support it.\n"), mpiname);
+		goto err;
+	}
+
 	/* Binary followed by an space */
 	g_string_append_printf(job->cmd_line, "%s ", mpi == NULL? gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program)):
 			       gebrd_mpi_interface_build_comand(mpi, gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program))));
