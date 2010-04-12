@@ -116,15 +116,11 @@ gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value
 	gint flags = self->flags;
 	gint failed = 0;
 
-	if (can_fix != NULL) {
-		if (strlen(value) == 0 ||
-		    flags & GEBR_VALIDATE_CHECK_EMAIL ||
-		    flags & GEBR_VALIDATE_CHECK_FILEN ||
-		    flags & GEBR_VALIDATE_CHECK_LABEL_HOTKEY)
-			*can_fix = FALSE;
-		else
-			*can_fix = TRUE;
-	}
+	if (can_fix != NULL)
+		*can_fix = (strlen(value) == 0 ||
+			    flags & GEBR_VALIDATE_CHECK_EMAIL ||
+			    flags & GEBR_VALIDATE_CHECK_FILEN ||
+			    flags & GEBR_VALIDATE_CHECK_LABEL_HOTKEY) ? FALSE : TRUE;
 
 	if (flags & GEBR_VALIDATE_CHECK_EMPTY && !gebr_validate_check_is_not_empty(value))
 		failed |= GEBR_VALIDATE_CHECK_EMPTY;
@@ -199,6 +195,30 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 	}
 
 	return fix;
+}
+
+gchar *gebr_validate_case_automatic_fixes_msg(GebrValidateCase *self, const gchar * value, gboolean * can_fix)
+{
+	gint failed = gebr_validate_case_check_value(self, value, can_fix);
+	if (!(*can_fix))
+		return g_strdup(_("Any automatic fix available"));
+
+	GString *msg = g_string_new(_("Automatic fix(es) available:"));
+	if (failed & GEBR_VALIDATE_CHECK_CAPIT)
+		g_string_append(msg, _("\n - Capitalize first letter"));
+	if (failed & GEBR_VALIDATE_CHECK_NOBLK)
+		g_string_append(msg, _("\n - Remove spaces at the beggining/end"));
+	if (failed & GEBR_VALIDATE_CHECK_MTBLK)
+		g_string_append(msg, _("\n - Remove multiple spaces"));
+	if (failed & GEBR_VALIDATE_CHECK_NOPNT)
+		g_string_append(msg, _("\n - Remove final pontuaction"));
+	if (failed & GEBR_VALIDATE_CHECK_URL)
+		g_string_append(msg, _("\n - Add url scheme"));
+
+	gchar *ret = msg->str;
+	g_string_free(msg, FALSE);
+
+	return ret;
 }
 
 gboolean gebr_validate_check_is_not_empty(const gchar * str)

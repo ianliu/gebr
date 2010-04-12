@@ -458,11 +458,9 @@ gboolean gebr_gui_gtk_expander_hacked_idle(GtkWidget * hbox, GdkEventExpose * ev
 #define gtk_entry_new sexy_icon_entry_new
 #define gtk_entry_set_icon_from_stock(entry, icon_pos, stock_id) \
 	sexy_icon_entry_set_icon(SEXY_ICON_ENTRY(entry), icon_pos, \
-	GTK_IMAGE(gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU)))
-#define gtk_entry_set_icon_tooltip_text(entry, icon_pos, tooltip) \
-	gtk_widget_set_tooltip_text(GTK_WIDGET(entry), tooltip)
-#define gtk_entry_set_icon_tooltip_markup(entry, icon_pos, tooltip) \
-	gtk_widget_set_tooltip_markup(GTK_WIDGET(entry), tooltip)
+	stock_id != NULL ? GTK_IMAGE(gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU)) : NULL)
+#define gtk_entry_set_icon_tooltip_text(entry, icon_pos, tooltip)
+#define gtk_entry_set_icon_tooltip_markup(entry, icon_pos, tooltip) 
 #endif
 
 #endif				//__GEBR_GUI_UTILS_H

@@ -512,7 +512,7 @@ void on_drop_down_menu_requested(GtkWidget * button, gpointer data)
 	parameter_create_menu_with_types(GPOINTER_TO_INT(data));
 }
 
-static void on_icon_release(GtkEntry * entry, GtkEntryIconPosition pos, GdkEvent * event, gchar * fix)
+static void on_icon_release(GtkEntry * entry, GtkEntryIconPosition pos, GdkEvent * event, GebrValidateCase * validate_case)
 {
 	gulong *id;
 	id = g_object_get_data(G_OBJECT(entry), "icon-release-id");
@@ -520,57 +520,38 @@ static void on_icon_release(GtkEntry * entry, GtkEntryIconPosition pos, GdkEvent
 	g_object_set_data(G_OBJECT(entry), "icon-release-id", NULL);
 	g_free(id);
 
-	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
-
+	gchar *fix = gebr_validate_case_fix(validate_case, gtk_entry_get_text(entry));
 	gtk_entry_set_text(entry, fix);
 	g_free(fix);
+
+	/* maybe we can fix it again... */
+	on_entry_focus_out(entry, NULL, validate_case);
 }
 
 gboolean on_entry_focus_out(GtkEntry * entry, GdkEventFocus * event, GebrValidateCase * data)
 {
 	gchar * tooltip;
-	gint failed;
 	gboolean can_fix;
 
-	failed = gebr_validate_case_check_value(data, gtk_entry_get_text(entry), &can_fix);
-
-	if (failed == 0) {
+	if (!gebr_validate_case_check_value(data, gtk_entry_get_text(entry), NULL)) {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
 		return FALSE;
 	}
-
-	gchar * fix;
-	gchar * escaped;
-
-	fix = NULL;
-	escaped = g_markup_escape_text(data->errmsg, -1);
-
+	tooltip = gebr_validate_case_automatic_fixes_msg(data, gtk_entry_get_text(entry), &can_fix);
 	if (can_fix) {
-		fix = gebr_validate_case_fix(data, gtk_entry_get_text(entry));
-		tooltip = g_strjoin(NULL, escaped, _("\n<b>Fix:</b> "), fix, NULL);
-	} else
-		tooltip = g_strjoin(NULL, escaped, _("\n<b>No fix available</b>"), NULL);
-
-
-	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-	gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, tooltip);
-
-	if (fix) {
 		gulong *id;
-
 		if ((id = g_object_get_data(G_OBJECT(entry), "icon-release-id")) == NULL)
 			id = g_new(gulong, 1);
 		else
 			g_signal_handler_disconnect(entry, *id);
-
-		*id = g_signal_connect(entry, "icon-release", G_CALLBACK(on_icon_release), g_strdup(fix));
+		*id = g_signal_connect(entry, "icon-release", G_CALLBACK(on_icon_release), data);
 		g_object_set_data(G_OBJECT(entry), "icon-release-id", id);
-		gtk_entry_set_icon_activatable(entry, GTK_ENTRY_ICON_SECONDARY, TRUE);
-	} else
-		gtk_entry_set_icon_activatable(entry, GTK_ENTRY_ICON_SECONDARY, FALSE);
 
-	g_free(fix);
-	g_free(escaped);
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, tooltip);
+	} else
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+
 	g_free(tooltip);
 
 	return FALSE;

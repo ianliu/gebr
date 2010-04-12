@@ -25,17 +25,47 @@ G_BEGIN_DECLS
 /**
  */
 enum GebrValidateCheckFlags {
+	/**
+	 * Field is empty.
+	 * Can't be automatically fixed.
+	 */
 	GEBR_VALIDATE_CHECK_EMPTY		= 1 << 0,
+	/**
+	 * First letter should be capitalized.
+	 */
 	GEBR_VALIDATE_CHECK_CAPIT		= 1 << 1,
+	/**
+	 * Blank spaces at the begging and/or end of the field found.
+	 */
 	GEBR_VALIDATE_CHECK_NOBLK		= 1 << 2,
+	/**
+	 * Muliple blank spaces found.
+	 */
 	GEBR_VALIDATE_CHECK_MTBLK		= 1 << 3,
 	GEBR_VALIDATE_CHECK_NOPNT		= 1 << 4,
+	/**
+	 * Invalid email address.
+	 * Can't be automatically fixed.
+	 */
 	GEBR_VALIDATE_CHECK_EMAIL		= 1 << 5,
+	/**
+	 * Filename tag don't match menu's filename.
+	 * Can't be automatically fixed.
+	 */
 	GEBR_VALIDATE_CHECK_FILEN		= 1 << 6,
+	/**
+	 * Hotkey duplicated for other parameter's label.
+	 * Can't be automatically fixed.
+	 */
 	GEBR_VALIDATE_CHECK_LABEL_HOTKEY	= 1 << 7,
+	/**
+	 * URL isn't prefixed with the scheme (http://, mailto:, etc).
+	 */
         GEBR_VALIDATE_CHECK_URL			= 1 << 8
 };
 
+/**
+ */
 typedef enum {
 	GEBR_VALIDATE_CASE_AUTHOR,
 	GEBR_VALIDATE_CASE_CATEGORY,
@@ -56,19 +86,32 @@ typedef enum {
 	GEBR_VALIDATE_CASE_PARAMETER_LABEL,
 } GebrValidateCaseName;
 
-typedef struct _GebrValidateCase GebrValidateCase;
 
+/**
+ */
 struct _GebrValidateCase {
 	GebrValidateCaseName name;
 	gint flags;
-	const gchar * errmsg;
+	const gchar * validcase_msg;
 };
+typedef struct _GebrValidateCase GebrValidateCase;
 
+/**
+ */
 GebrValidateCase * gebr_validate_get_validate_case(GebrValidateCaseName name);
 
+/**
+ */
 gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value, gboolean * can_fix);
 
+/**
+ */
 gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value);
+
+/**
+ * Return a newly allocated Pango markup string explaining the automatic fixes available for \p value in validation case \p self.
+ */
+gchar *gebr_validate_case_automatic_fixes_msg(GebrValidateCase *self, const gchar * value, gboolean * can_fix);
 
 /**
  * TRUE if str is not empty.
