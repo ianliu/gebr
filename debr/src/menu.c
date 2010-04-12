@@ -111,7 +111,7 @@ void menu_setup_ui(void)
 	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(debr.ui_menu.tree_view), MENU_FILENAME);
 	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_menu.tree_view)), "changed",
 			 G_CALLBACK(menu_selected), NULL);
-	g_signal_connect(debr.ui_menu.tree_view, "row-activated", G_CALLBACK(menu_dialog_setup_ui), NULL);
+	g_signal_connect(debr.ui_menu.tree_view, "row-activated", G_CALLBACK(on_menu_properties_activate), NULL);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(debr.ui_menu.tree_view), FALSE);
 	col = gtk_tree_view_column_new();
@@ -250,7 +250,7 @@ void menu_new(gboolean edit)
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 	if (edit) {
-		if (!menu_dialog_setup_ui())
+		if (!menu_dialog_setup_ui(TRUE))
 			menu_close(&iter, FALSE);
 	}
 
@@ -883,7 +883,7 @@ void menu_status_set_unsaved(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-gboolean menu_dialog_setup_ui(void)
+gboolean menu_dialog_setup_ui(gboolean new)
 {
 	GtkWidget *dialog;
 	GtkWidget *table;
@@ -953,8 +953,6 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_widget_show(title_entry);
 	gtk_table_attach(GTK_TABLE(table), title_entry, 1, 2, 0, 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	g_signal_connect(title_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
-			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_TITLE));
 
 	/*
 	 * Description
@@ -970,8 +968,6 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_widget_show(description_entry);
 	gtk_table_attach(GTK_TABLE(table), description_entry, 1, 2, 1, 2,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	g_signal_connect(description_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
-			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_DESCRIPTION));
 
 	/*
 	 * Help
@@ -1021,8 +1017,6 @@ gboolean menu_dialog_setup_ui(void)
 	gtk_widget_show(email_entry);
 	gtk_table_attach(GTK_TABLE(table), email_entry, 1, 2, 4, 5,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	g_signal_connect(email_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
-			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_EMAIL));
 
 	/*
 	 * Categories
@@ -1053,6 +1047,18 @@ gboolean menu_dialog_setup_ui(void)
 			   gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_entry_set_text(GTK_ENTRY(author_entry), gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_entry_set_text(GTK_ENTRY(email_entry), gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu)));
+	GebrValidateCase *validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_TITLE);
+	g_signal_connect(title_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
+	if (!new)
+		on_entry_focus_out(GTK_ENTRY(title_entry), NULL, validate_case);
+	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_DESCRIPTION);
+	g_signal_connect(description_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
+	if (!new)
+		on_entry_focus_out(GTK_ENTRY(description_entry), NULL, validate_case);
+	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_EMAIL);
+	g_signal_connect(email_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
+	if (!new)
+		on_entry_focus_out(GTK_ENTRY(description_entry), NULL, validate_case);
 
 	g_signal_connect(title_entry, "changed", G_CALLBACK(menu_title_changed), NULL);
 	g_signal_connect(description_entry, "changed", G_CALLBACK(menu_description_changed), NULL);

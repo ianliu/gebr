@@ -276,7 +276,7 @@ void on_menu_delete_activate(void)
 
 gboolean on_menu_properties_activate(void)
 {
-	return menu_dialog_setup_ui();
+	return menu_dialog_setup_ui(FALSE);
 }
 
 void on_menu_validate_activate(void)
@@ -530,14 +530,19 @@ static void on_icon_release(GtkEntry * entry, GtkEntryIconPosition pos, GdkEvent
 
 gboolean on_entry_focus_out(GtkEntry * entry, GdkEventFocus * event, GebrValidateCase * data)
 {
-	gchar * tooltip;
+	gchar * fixes;
 	gboolean can_fix;
 
 	if (!gebr_validate_case_check_value(data, gtk_entry_get_text(entry), NULL)) {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
 		return FALSE;
 	}
-	tooltip = gebr_validate_case_automatic_fixes_msg(data, gtk_entry_get_text(entry), &can_fix);
+
+	GString *tooltip = g_string_new("");
+	fixes = gebr_validate_case_automatic_fixes_msg(data, gtk_entry_get_text(entry), &can_fix);
+
+	g_string_printf(tooltip, "%s\n%s", data->validcase_msg, fixes);
+	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 	if (can_fix) {
 		gulong *id;
 		if ((id = g_object_get_data(G_OBJECT(entry), "icon-release-id")) == NULL)
@@ -547,12 +552,12 @@ gboolean on_entry_focus_out(GtkEntry * entry, GdkEventFocus * event, GebrValidat
 		*id = g_signal_connect(entry, "icon-release", G_CALLBACK(on_icon_release), data);
 		g_object_set_data(G_OBJECT(entry), "icon-release-id", id);
 
-		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, tooltip);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, tooltip->str);
 	} else
-		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, tooltip->str);
 
-	g_free(tooltip);
+	g_free(fixes);
+	g_string_free(tooltip, TRUE);
 
 	return FALSE;
 }
