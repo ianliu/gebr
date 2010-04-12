@@ -340,9 +340,9 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 		GebrGeoXmlProgramParameter *pp = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 
 		if (validate->isubpar != -1)
-			validate->operations.append_text(validate->data, "       %2d.%02d: ", validate->ipar, validate->isubpar);
+			validate->operations.append_text(validate->data, "       %2d.%02d: ", validate->ipar+1, validate->isubpar+1);
 		else
-			validate->operations.append_text(validate->data, "    %2d: ", validate->ipar);
+			validate->operations.append_text(validate->data, "    %2d: ", validate->ipar+1);
 
 		label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp));
 		validate_append_check(validate, label, gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL)->flags, "\n");
@@ -419,7 +419,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 		GebrGeoXmlSequence *subpar;
 		GebrGeoXmlSequence *instance;
 
-		validate->operations.append_text(validate->data, "    %2d: ", validate->ipar);
+		validate->operations.append_text(validate->data, "    %2d: ", validate->ipar+1);
 		validate_append_check(validate, gebr_geoxml_parameter_get_label(parameter),
 				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL)->flags, NULL);
 
