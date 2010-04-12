@@ -100,7 +100,7 @@ void program_paste(void);
 /**
  * Open dialog to configure current program.
  */
-gboolean program_dialog_setup_ui(void);
+gboolean program_dialog_setup_ui(gboolean new);
 
 /**
  * Sets \p iter to point to the selected program.

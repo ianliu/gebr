@@ -114,7 +114,7 @@ void program_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_program.tree_view);
 	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view)), "changed",
 			 G_CALLBACK(program_selected), NULL);
-	g_signal_connect(debr.ui_program.tree_view, "row-activated", G_CALLBACK(program_dialog_setup_ui), NULL);
+	g_signal_connect(debr.ui_program.tree_view, "row-activated", G_CALLBACK(on_program_properties_activate), NULL);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(debr.ui_program.tree_view), FALSE);
 	renderer = gtk_cell_renderer_pixbuf_new();
@@ -229,12 +229,11 @@ void program_new(gboolean edit)
 	gtk_list_store_set(debr.ui_program.list_store, &iter, PROGRAM_STATUS, debr.pixmaps.stock_no, -1);
 
 	program_select_iter(iter);
-	if (edit){
-		if (on_program_properties_activate()){
+	if (edit) {
+		if (program_dialog_setup_ui(TRUE)) {
 			menu_details_update();
 			menu_saved_status_set(MENU_STATUS_UNSAVED);
-		}
-		else{
+		} else {
 			program_remove(FALSE);
 			menu_replace();
 		}
@@ -357,7 +356,7 @@ void program_paste(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-gboolean program_dialog_setup_ui(void)
+gboolean program_dialog_setup_ui(gboolean new)
 {
 	GtkWidget *dialog;
 	GtkWidget *table;
@@ -456,8 +455,6 @@ gboolean program_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), title_entry, 1, 2, row, row+1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), row++;
 	g_signal_connect(title_entry, "changed", G_CALLBACK(program_title_changed), debr.program);
-	g_signal_connect(title_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
-			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_TITLE));
 
 	/*
 	 * Binary
@@ -474,8 +471,6 @@ gboolean program_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), binary_entry, 1, 2, row, row+1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), row++;
 	g_signal_connect(binary_entry, "changed", G_CALLBACK(program_binary_changed), debr.program);
-	g_signal_connect(binary_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
-			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_BINARY));
 
 	/*
 	 * Version
@@ -492,8 +487,6 @@ gboolean program_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), version_entry, 1, 2, row, row+1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), row++;
 	g_signal_connect(version_entry, "changed", G_CALLBACK(program_version_changed), debr.program);
-	g_signal_connect(version_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
-			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_VERSION));
 
 	/*
 	 * mpi
@@ -527,8 +520,6 @@ gboolean program_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), description_entry, 1, 2, row, row+1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), row++;
 	g_signal_connect(description_entry, "changed", G_CALLBACK(program_description_changed), debr.program);
-	g_signal_connect(description_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
-			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_DESCRIPTION));
 
 	/*
 	 * Help
@@ -565,8 +556,6 @@ gboolean program_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), url_entry, 1, 2, row, row+1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), row++;
 	g_signal_connect(url_entry, "changed", G_CALLBACK(program_url_changed), debr.program);
-	g_signal_connect(url_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
-			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_URL));
 
 	/*
 	 * Load program into UI
@@ -584,6 +573,27 @@ gboolean program_dialog_setup_ui(void)
 	gtk_combo_box_set_active(GTK_COMBO_BOX(mpi_combo), mpi_xml_to_index(debr.program));
 	gtk_entry_set_text(GTK_ENTRY(version_entry), gebr_geoxml_program_get_version(debr.program));
 	gtk_entry_set_text(GTK_ENTRY(url_entry), gebr_geoxml_program_get_url(debr.program));
+
+	GebrValidateCase *validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_TITLE);
+	g_signal_connect(title_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
+	if (!new)
+		on_entry_focus_out(GTK_ENTRY(title_entry), NULL, validate_case);
+	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_BINARY);
+	g_signal_connect(binary_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
+	if (!new)
+		on_entry_focus_out(GTK_ENTRY(binary_entry), NULL, validate_case);
+	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_VERSION);
+	g_signal_connect(version_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
+	if (!new)
+		on_entry_focus_out(GTK_ENTRY(version_entry), NULL, validate_case);
+	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_DESCRIPTION);
+	g_signal_connect(description_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
+	if (!new)
+		on_entry_focus_out(GTK_ENTRY(description_entry), NULL, validate_case);
+	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_URL);
+	g_signal_connect(url_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
+	if (!new)
+		on_entry_focus_out(GTK_ENTRY(url_entry), NULL, validate_case);
 
 	gtk_widget_show(dialog);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {

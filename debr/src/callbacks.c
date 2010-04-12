@@ -383,7 +383,7 @@ void on_program_delete_activate(void)
 
 gboolean on_program_properties_activate(void)
 {
-	return program_dialog_setup_ui();
+	return program_dialog_setup_ui(FALSE);
 }
 
 void on_program_preview_activate(void)
