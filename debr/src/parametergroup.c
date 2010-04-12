@@ -41,7 +41,7 @@ static void on_parameter_group_exclusive_toggled(GtkToggleButton * toggle_button
  * Public functions
  */
 
-gboolean parameter_group_dialog_setup_ui(void)
+gboolean parameter_group_dialog_setup_ui(gboolean new)
 {
 	GtkWidget *dialog;
 	GtkWidget *scrolled_window;
@@ -106,8 +106,6 @@ gboolean parameter_group_dialog_setup_ui(void)
 	gtk_widget_show(label_entry);
 	gtk_table_attach(GTK_TABLE(table), label_entry, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
-	g_signal_connect(label_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
-			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL));
 
 	/*
 	 * Expanded by default
@@ -177,7 +175,9 @@ gboolean parameter_group_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), instances_edit_vbox, 0, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_FILL | GTK_EXPAND), (GtkAttachOptions) (0), 0, 0), ++row;
 
-	/* group data -> UI */
+	/* 
+	 * XML group data -> UI
+	 * */
 	gtk_entry_set_text(GTK_ENTRY(label_entry), gebr_geoxml_parameter_get_label(debr.parameter));
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(instances_spin_button),
 				  gebr_geoxml_parameter_group_get_instances_number(parameter_group));
@@ -193,6 +193,12 @@ gboolean parameter_group_dialog_setup_ui(void)
 		}
 	}
 	parameter_group_instances_setup_ui(ui);
+
+	GebrValidateCase *validate_case;
+	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL);
+	g_signal_connect(label_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
+	if (!new)
+		on_entry_focus_out(GTK_ENTRY(label_entry), NULL, validate_case);
 
 	/* signals */
 	g_signal_connect(instances_spin_button, "output", G_CALLBACK(on_parameter_group_instances_changed), ui);

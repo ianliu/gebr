@@ -418,7 +418,7 @@ void on_parameter_delete_activate(void)
 
 gboolean on_parameter_properties_activate(void)
 {
-	return parameter_properties();
+	return parameter_properties(FALSE);
 }
 
 void on_parameter_top_activate(void)

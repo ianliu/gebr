@@ -107,12 +107,12 @@ const GtkRadioActionEntry parameter_type_radio_actions_entries[] = {
 	{"parameter_type_group", NULL, N_("group"), NULL, NULL, GEBR_GEOXML_PARAMETER_TYPE_GROUP},
 };
 
-static gboolean parameter_dialog_setup_ui(void);
+static gboolean parameter_dialog_setup_ui(gboolean new);
 static void parameter_append_to_ui(GebrGeoXmlParameter * parameter, GtkTreeIter * parent, GtkTreeIter *iter);
 static void parameter_insert_to_ui(GebrGeoXmlParameter *parameter, GtkTreeIter *sibling, GtkTreeIter *iter);
 static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group);
 static void parameter_selected(void);
-static gboolean parameter_activated(void);
+static void on_parameter_row_activated(void);
 static GtkMenu *parameter_popup_menu(GtkWidget * tree_view);
 static gboolean
 parameter_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
@@ -180,7 +180,7 @@ void parameter_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_parameter.tree_view);
 	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_parameter.tree_view)),
 			 "changed", G_CALLBACK(parameter_selected), NULL);
-	g_signal_connect(debr.ui_parameter.tree_view, "row-activated", G_CALLBACK(parameter_activated), NULL);
+	g_signal_connect(debr.ui_parameter.tree_view, "row-activated", G_CALLBACK(on_parameter_row_activated), NULL);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Type"), renderer, NULL);
@@ -318,14 +318,14 @@ void parameter_new_from_type(enum GEBR_GEOXML_PARAMETER_TYPE type)
 		return;
 
 	if (gebr_geoxml_parameter_get_is_program_parameter(debr.parameter) == TRUE) {
-		if (!parameter_dialog_setup_ui())
+		if (!parameter_dialog_setup_ui(FALSE))
 			parameter_remove(FALSE);
 		else
 			parameter_selected();
 	} else {
 		GebrGeoXmlParameterGroup *parameter_group = GEBR_GEOXML_PARAMETER_GROUP(debr.parameter);
 		gebr_geoxml_parameter_group_set_is_instanciable(parameter_group, FALSE);
-		if (!parameter_group_dialog_setup_ui())
+		if (!parameter_group_dialog_setup_ui(FALSE))
 			parameter_remove(FALSE);
 		else
 			parameter_selected();
@@ -639,9 +639,16 @@ void parameter_change_type(enum GEBR_GEOXML_PARAMETER_TYPE type)
 	parameter_load_selected();
 }
 
-gboolean parameter_properties(void)
+gboolean parameter_properties(gboolean new)
 {
-	return parameter_activated();
+	GtkTreeIter iter;
+
+	if (parameter_get_selected(&iter, FALSE) == FALSE)
+		return FALSE;
+	if (gebr_geoxml_parameter_get_is_program_parameter(debr.parameter) == TRUE)
+		return parameter_dialog_setup_ui(new);
+	else
+		return parameter_group_dialog_setup_ui(new);
 }
 
 gboolean parameter_get_selected(GtkTreeIter * iter, gboolean show_warning)
@@ -725,7 +732,7 @@ static void parameter_update_actions_sensitive()
  * \internal
  * Create an dialog to configure the current selected parameter (not a group)
  */
-static gboolean parameter_dialog_setup_ui(void)
+static gboolean parameter_dialog_setup_ui(gboolean new)
 {
 	struct ui_parameter_dialog *ui;
 	enum GEBR_GEOXML_PARAMETER_TYPE type;
@@ -752,6 +759,7 @@ static gboolean parameter_dialog_setup_ui(void)
 
 	GebrGeoXmlProgramParameter *program_parameter;
 	struct gebr_gui_parameter_widget *gebr_gui_parameter_widget;
+	GebrValidateCase *validate_case;
 
 	gboolean ret = TRUE;
 
@@ -811,8 +819,6 @@ static gboolean parameter_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), label_entry, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
 	g_signal_connect(label_entry, "changed", G_CALLBACK(menu_status_set_unsaved), NULL);
-	g_signal_connect(label_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
-			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL));
 
 	/*
 	 * Keyword
@@ -828,8 +834,6 @@ static gboolean parameter_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), keyword_entry, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
 	g_signal_connect(keyword_entry, "changed", G_CALLBACK(menu_status_set_unsaved), NULL);
-	g_signal_connect(keyword_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out),
-			 gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_KEYWORD));
 
 	/* skip default */
 	++row;
@@ -1156,7 +1160,8 @@ static gboolean parameter_dialog_setup_ui(void)
 	gebr_gui_parameter_widget_set_auto_submit_callback(gebr_gui_parameter_widget,
 							   (changed_callback) parameter_default_widget_changed, NULL);
 
-	/* parameter -> UI */
+	/*
+	 * XML -> UI */
 	gtk_entry_set_text(GTK_ENTRY(label_entry), gebr_geoxml_parameter_get_label(ui->parameter));
 	gtk_entry_set_text(GTK_ENTRY(keyword_entry), gebr_geoxml_program_parameter_get_keyword(program_parameter));
 	if (type != GEBR_GEOXML_PARAMETER_TYPE_FLAG) {
@@ -1168,6 +1173,15 @@ static gboolean parameter_dialog_setup_ui(void)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(is_list_check_button),
 					     gebr_geoxml_program_parameter_get_is_list(program_parameter));
 	}
+
+	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL);
+	g_signal_connect(label_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
+	if (!new)
+		on_entry_focus_out(GTK_ENTRY(label_entry), NULL, validate_case);
+	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_KEYWORD);
+	g_signal_connect(keyword_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
+	if (!new)
+		on_entry_focus_out(GTK_ENTRY(keyword_entry), NULL, validate_case);
 
 	/* dialog actions loop and checks */
 	do {
@@ -1396,18 +1410,11 @@ static void parameter_selected(void)
 
 /**
  * \internal
- * Open a dialog to configure the parameter, according to its type.
+ * Callback for row-activated GtkTreeView's signal
  */
-static gboolean parameter_activated(void)
+static void on_parameter_row_activated(void)
 {
-	GtkTreeIter iter;
-
-	if (parameter_get_selected(&iter, FALSE) == FALSE)
-		return FALSE;
-	if (gebr_geoxml_parameter_get_is_program_parameter(debr.parameter) == TRUE)
-		return parameter_dialog_setup_ui();
-	else
-		return parameter_group_dialog_setup_ui();
+	parameter_properties(FALSE);
 }
 
 /**
