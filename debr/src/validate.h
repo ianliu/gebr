@@ -87,6 +87,11 @@ void validate_close(void);
 void validate_close_iter(GtkTreeIter *iter);
 
 /**
+ * Select \p iter.
+ */
+void validate_set_selected(GtkTreeIter * iter);
+
+/**
  * Clear all the list of menus validations.
  */
 void validate_clear(void);

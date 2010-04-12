@@ -1,4 +1,3 @@
-
 /*   libgebr - GeBR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -27,21 +26,6 @@
  * \brief
  * Semantic validator for GeoXml
  */
-
-/**
- * \internal
- */
-enum GebrGeoXmlValidateCheckFlags {
-	GEBR_GEOXML_VALIDATE_CHECK_EMPTY	= 1 << 0,
-	GEBR_GEOXML_VALIDATE_CHECK_CAPIT	= 1 << 1,
-	GEBR_GEOXML_VALIDATE_CHECK_NOBLK	= 1 << 2,
-	GEBR_GEOXML_VALIDATE_CHECK_MTBLK	= 1 << 3,
-	GEBR_GEOXML_VALIDATE_CHECK_NOPNT	= 1 << 4,
-	GEBR_GEOXML_VALIDATE_CHECK_EMAIL	= 1 << 5,
-	GEBR_GEOXML_VALIDATE_CHECK_FILEN	= 1 << 6,
-	GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY	= 1 << 7,
-        GEBR_GEOXML_VALIDATE_CHECK_URL          = 1 << 8
-};
 
 typedef struct _GebrGeoXmlValidate GebrGeoXmlValidate;
 typedef struct _GebrGeoXmlValidateOperations GebrGeoXmlValidateOperations;

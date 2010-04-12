@@ -30,7 +30,6 @@
 
 static void validate_free(struct validate *validate);
 static gboolean validate_get_selected(GtkTreeIter * iter, gboolean warn_unselected);
-static void validate_set_selected(GtkTreeIter * iter);
 static void validate_clicked(void);
 
 void validate_setup_ui(void)
@@ -81,7 +80,6 @@ void validate_setup_ui(void)
 	gtk_paned_pack2(GTK_PANED(hpanel), debr.ui_validate.text_view_vbox, TRUE, TRUE);
 
 	gtk_widget_show_all(debr.ui_validate.widget);
-
 }
 
 static void validate_append_text(struct validate *validate, const gchar * format, ...);
@@ -180,6 +178,11 @@ void validate_close_iter(GtkTreeIter *iter)
 	validate_free(validate);
 }
 
+void validate_set_selected(GtkTreeIter * iter)
+{
+	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(debr.ui_validate.tree_view), iter);
+}
+
 void validate_clear(void)
 {
 	GtkTreeIter iter;
@@ -212,15 +215,6 @@ static gboolean validate_get_selected(GtkTreeIter * iter, gboolean warn_unselect
 	}
 
 	return TRUE;
-}
-
-/**
- * \internal
- * Select \p iter.
- */
-static void validate_set_selected(GtkTreeIter * iter)
-{
-	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(debr.ui_validate.tree_view), iter);
 }
 
 /**

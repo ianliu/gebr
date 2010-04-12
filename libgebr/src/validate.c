@@ -29,71 +29,71 @@
 static GebrValidateCase validate_cases[] = {
 	/* menu */
 	{GEBR_VALIDATE_CASE_FILENAME,
-		GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_FILEN,
+		GEBR_VALIDATE_CHECK_NOBLK | GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_FILEN,
 		N_("File names must be a valid path.")},
 
 	{GEBR_VALIDATE_CASE_TITLE,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT
-			| GEBR_GEOXML_VALIDATE_CHECK_MTBLK,
+		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_NOBLK | GEBR_VALIDATE_CHECK_NOPNT
+			| GEBR_VALIDATE_CHECK_MTBLK,
 		N_("Titles should not start with spaces or end with punctuations characters.")},
 
 	{GEBR_VALIDATE_CASE_DESCRIPTION,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK
-			| GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT,
+		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
 		N_("Description should be capitalized and have no punctuations at the end.")},
 
 	{GEBR_VALIDATE_CASE_AUTHOR,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK
-			| GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT,
+		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
 		N_("Author should be capitalized and have no punctuations at the end.")},
 
 	{GEBR_VALIDATE_CASE_DATE,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY,
+		GEBR_VALIDATE_CHECK_EMPTY,
 		N_("Date should not be empty.")},
 
 	{GEBR_VALIDATE_CASE_HELP,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY,
+		GEBR_VALIDATE_CHECK_EMPTY,
 		N_("Help should not be empty.")},
 
 	{GEBR_VALIDATE_CASE_CATEGORY,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK
-			| GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT,
+		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
 		N_("Categories should be capitalized and have no punctuations at the end.")},
 	
 	{GEBR_VALIDATE_CASE_EMAIL,
-		GEBR_GEOXML_VALIDATE_CHECK_EMAIL,
+		GEBR_VALIDATE_CHECK_EMAIL,
 		N_("Invalid email address.")},
 
 	/* program */
 	{GEBR_VALIDATE_CASE_PROGRAM_TITLE,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_NOBLK | GEBR_GEOXML_VALIDATE_CHECK_MTBLK,
+		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_NOBLK | GEBR_VALIDATE_CHECK_MTBLK,
 		N_("Program titles should not have extra spaces.")},
 
 	{GEBR_VALIDATE_CASE_PROGRAM_DESCRIPTION,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK
-			| GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT,
+		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
 		N_("Program description should be capitalized and have no punctuation characters at the end.")},
 
 	{GEBR_VALIDATE_CASE_PROGRAM_BINARY,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY,
+		GEBR_VALIDATE_CHECK_EMPTY,
 		N_("Binaries should not be empty.")},
 
 	{GEBR_VALIDATE_CASE_PROGRAM_VERSION,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY,
+		GEBR_VALIDATE_CHECK_EMPTY,
 		N_("Program version should be filled.")},
 
 	{GEBR_VALIDATE_CASE_PROGRAM_URL,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_URL,
+		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_URL,
 		N_("Program url should starts with a protocol.")},
 
 	/* parameter */
 	{GEBR_VALIDATE_CASE_PARAMETER_LABEL,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY | GEBR_GEOXML_VALIDATE_CHECK_CAPIT | GEBR_GEOXML_VALIDATE_CHECK_NOBLK
-			| GEBR_GEOXML_VALIDATE_CHECK_MTBLK | GEBR_GEOXML_VALIDATE_CHECK_NOPNT | GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY,
+		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT | GEBR_VALIDATE_CHECK_LABEL_HOTKEY,
 		N_("Parameter label should be capitalized and have no punctuations characters at the end. Also, careful with colliding shortcuts.")},
 
 	{GEBR_VALIDATE_CASE_PARAMETER_KEYWORD,
-		GEBR_GEOXML_VALIDATE_CHECK_EMPTY,
+		GEBR_VALIDATE_CHECK_EMPTY,
 		N_("Parameter keyword should not be empty.")},
 };
 
@@ -118,28 +118,28 @@ gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value
 
 	if (can_fix != NULL) {
 		if (strlen(value) == 0 ||
-		    flags & GEBR_GEOXML_VALIDATE_CHECK_EMAIL ||
-		    flags & GEBR_GEOXML_VALIDATE_CHECK_FILEN ||
-		    flags & GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY)
+		    flags & GEBR_VALIDATE_CHECK_EMAIL ||
+		    flags & GEBR_VALIDATE_CHECK_FILEN ||
+		    flags & GEBR_VALIDATE_CHECK_LABEL_HOTKEY)
 			*can_fix = FALSE;
 		else
 			*can_fix = TRUE;
 	}
 
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_EMPTY && !gebr_validate_check_is_not_empty(value))
-		failed |= GEBR_GEOXML_VALIDATE_CHECK_EMPTY;
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_CAPIT && !gebr_validate_check_no_lower_case(value))
-		failed |= GEBR_GEOXML_VALIDATE_CHECK_CAPIT;
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_NOBLK && !gebr_validate_check_no_blanks_at_boundaries(value))
-		failed |= GEBR_GEOXML_VALIDATE_CHECK_NOBLK;
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_MTBLK && !gebr_validate_check_no_multiple_blanks(value))
-		failed |= GEBR_GEOXML_VALIDATE_CHECK_MTBLK;
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_NOPNT && !gebr_validate_check_no_punctuation_at_end(value))
-		failed |= GEBR_GEOXML_VALIDATE_CHECK_NOPNT;
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_EMAIL && !gebr_validate_check_is_email(value))
-		failed |= GEBR_GEOXML_VALIDATE_CHECK_EMAIL;
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_FILEN && !gebr_validate_check_menu_filename(value))
-		failed |= GEBR_GEOXML_VALIDATE_CHECK_FILEN;
+	if (flags & GEBR_VALIDATE_CHECK_EMPTY && !gebr_validate_check_is_not_empty(value))
+		failed |= GEBR_VALIDATE_CHECK_EMPTY;
+	if (flags & GEBR_VALIDATE_CHECK_CAPIT && !gebr_validate_check_no_lower_case(value))
+		failed |= GEBR_VALIDATE_CHECK_CAPIT;
+	if (flags & GEBR_VALIDATE_CHECK_NOBLK && !gebr_validate_check_no_blanks_at_boundaries(value))
+		failed |= GEBR_VALIDATE_CHECK_NOBLK;
+	if (flags & GEBR_VALIDATE_CHECK_MTBLK && !gebr_validate_check_no_multiple_blanks(value))
+		failed |= GEBR_VALIDATE_CHECK_MTBLK;
+	if (flags & GEBR_VALIDATE_CHECK_NOPNT && !gebr_validate_check_no_punctuation_at_end(value))
+		failed |= GEBR_VALIDATE_CHECK_NOPNT;
+	if (flags & GEBR_VALIDATE_CHECK_EMAIL && !gebr_validate_check_is_email(value))
+		failed |= GEBR_VALIDATE_CHECK_EMAIL;
+	if (flags & GEBR_VALIDATE_CHECK_FILEN && !gebr_validate_check_menu_filename(value))
+		failed |= GEBR_VALIDATE_CHECK_FILEN;
 
 	return failed;
 }
@@ -157,7 +157,7 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 	tmp = NULL;
 	fix = g_strdup(value);
 
-	if (self->flags & GEBR_GEOXML_VALIDATE_CHECK_CAPIT
+	if (self->flags & GEBR_VALIDATE_CHECK_CAPIT
 	    && !gebr_validate_check_no_lower_case(fix)) {
 		if (fix != NULL)
 			tmp = fix;
@@ -167,7 +167,7 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 			tmp = NULL;
 		}
 	}
-	if (self->flags & GEBR_GEOXML_VALIDATE_CHECK_NOBLK
+	if (self->flags & GEBR_VALIDATE_CHECK_NOBLK
 	    && !gebr_validate_check_no_blanks_at_boundaries(fix)) {
 		if (fix != NULL)
 			tmp = fix;
@@ -177,7 +177,7 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 			tmp = NULL;
 		}
 	}
-	if (self->flags & GEBR_GEOXML_VALIDATE_CHECK_MTBLK
+	if (self->flags & GEBR_VALIDATE_CHECK_MTBLK
 	    && !gebr_validate_check_no_multiple_blanks(fix)) {
 		if (fix != NULL)
 			tmp = fix;
@@ -187,7 +187,7 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 			tmp = NULL;
 		}
 	}
-	if (self->flags & GEBR_GEOXML_VALIDATE_CHECK_NOPNT
+	if (self->flags & GEBR_VALIDATE_CHECK_NOPNT
 	    && !gebr_validate_check_no_punctuation_at_end(fix)) {
 		if (fix != NULL)
 			tmp = fix;
@@ -330,24 +330,16 @@ gboolean gebr_validate_check_is_url(const gchar * str)
 
 gchar * gebr_validate_change_url(const gchar * sentence)
 {	
-        
         gchar *str;
 
-        if (gebr_validate_check_is_email(sentence)){
-                return g_strconcat("mailto:", sentence);
-        }
-
-        if (g_str_has_prefix(sentence, "www.")){
-                return g_strconcat("http://", sentence);
-        }
-        
-        if (g_str_has_prefix(sentence, "ftp.")){
-                return g_strconcat("ftp://", sentence);
-        }
-
-        if (g_str_has_prefix(sentence, "/")){
-                return g_strconcat("file://", sentence);
-        }
+        if (gebr_validate_check_is_email(sentence))
+                return g_strconcat("mailto:", sentence, NULL);
+        if (g_str_has_prefix(sentence, "www."))
+                return g_strconcat("http://", sentence, NULL);
+        if (g_str_has_prefix(sentence, "ftp."))
+                return g_strconcat("ftp://", sentence, NULL);
+        if (g_str_has_prefix(sentence, "/"))
+                return g_strconcat("file://", sentence, NULL);
 
         str = g_strdup(sentence);
 

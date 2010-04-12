@@ -160,13 +160,13 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 		if (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu))) >= 1)
 			validate->operations.append_text(validate->data, _("Defined"));
 		else
-			validate_append_check(validate, "", GEBR_GEOXML_VALIDATE_CHECK_EMPTY, "");
+			validate_append_check(validate, "", GEBR_VALIDATE_CHECK_EMPTY, "");
 		validate->operations.append_text(validate->data, "\n");
 	}
 	if (validate->options.category) {
 		gebr_geoxml_flow_get_category(menu, &seq, 0);
 		if (seq == NULL)
-			validate_append_item_with_check(validate, _("Category:      "), "", GEBR_GEOXML_VALIDATE_CHECK_EMPTY);
+			validate_append_item_with_check(validate, _("Category:      "), "", GEBR_VALIDATE_CHECK_EMPTY);
 		else
 			for (; seq != NULL; gebr_geoxml_sequence_next(&seq))
 				validate_append_item_with_check(validate, _("Category:      "),
@@ -215,7 +215,7 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 		if (strlen(gebr_geoxml_program_get_help(prog)) >= 1)
 			validate->operations.append_text(validate->data, _("Defined"));
 		else
-			validate_append_check(validate, "", GEBR_GEOXML_VALIDATE_CHECK_EMPTY, "");
+			validate_append_check(validate, "", GEBR_VALIDATE_CHECK_EMPTY, "");
 		validate->operations.append_text(validate->data, "\n");
 
 		if (validate->options.params) {
@@ -248,21 +248,21 @@ static void validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 {
 	gboolean result = TRUE;
 
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_EMPTY)
+	if (flags & GEBR_VALIDATE_CHECK_EMPTY)
 		result = result && gebr_validate_check_is_not_empty(value);
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_CAPIT)
+	if (flags & GEBR_VALIDATE_CHECK_CAPIT)
 		result = result && gebr_validate_check_no_lower_case(value);
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_NOBLK)
+	if (flags & GEBR_VALIDATE_CHECK_NOBLK)
 		result = result && gebr_validate_check_no_blanks_at_boundaries(value);
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_MTBLK)
+	if (flags & GEBR_VALIDATE_CHECK_MTBLK)
 		result = result && gebr_validate_check_no_multiple_blanks(value);
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_NOPNT)
+	if (flags & GEBR_VALIDATE_CHECK_NOPNT)
 		result = result && gebr_validate_check_no_punctuation_at_end(value);
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_EMAIL)
+	if (flags & GEBR_VALIDATE_CHECK_EMAIL)
 		result = result && gebr_validate_check_is_email(value);
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_FILEN)
+	if (flags & GEBR_VALIDATE_CHECK_FILEN)
 		result = result && gebr_validate_check_menu_filename(value);
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_URL)
+	if (flags & GEBR_VALIDATE_CHECK_URL)
 		result = result && gebr_validate_check_is_url(value);
 
 	if (result)
@@ -275,7 +275,7 @@ static void validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 		validate->potential_errors++;
 	}
 
-	if (flags & GEBR_GEOXML_VALIDATE_CHECK_LABEL_HOTKEY) {
+	if (flags & GEBR_VALIDATE_CHECK_LABEL_HOTKEY) {
 		gchar * underscore;
 
 		underscore = (gchar*)value;
@@ -340,9 +340,9 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 		GebrGeoXmlProgramParameter *pp = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 
 		if (validate->isubpar != -1)
-			validate->operations.append_text(validate->data, "       %2d.%02d: ", validate->ipar, validate->isubpar);
+			validate->operations.append_text(validate->data, "       %2d.%02d: ", validate->ipar+1, validate->isubpar+1);
 		else
-			validate->operations.append_text(validate->data, "    %2d: ", validate->ipar);
+			validate->operations.append_text(validate->data, "    %2d: ", validate->ipar+1);
 
 		label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp));
 		validate_append_check(validate, label, gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL)->flags, "\n");
@@ -419,7 +419,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 		GebrGeoXmlSequence *subpar;
 		GebrGeoXmlSequence *instance;
 
-		validate->operations.append_text(validate->data, "    %2d: ", validate->ipar);
+		validate->operations.append_text(validate->data, "    %2d: ", validate->ipar+1);
 		validate_append_check(validate, gebr_geoxml_parameter_get_label(parameter),
 				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL)->flags, NULL);
 
