@@ -69,7 +69,7 @@ static gboolean program_title_changed(GtkEntry * entry);
 static gboolean program_binary_changed(GtkEntry * entry);
 static gboolean program_description_changed(GtkEntry * entry);
 static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program);
-static void program_help_edit(GtkButton * button);
+static void program_help_edit(GtkButton * button, GtkWidget * validate_image);
 static gboolean program_version_changed(GtkEntry * entry);
 static void program_mpi_changed(GtkComboBox * combo);
 static gboolean program_url_changed(GtkEntry * entry);
@@ -377,6 +377,7 @@ gboolean program_dialog_setup_ui(gboolean new)
 	GtkWidget *help_hbox;
 	GtkWidget *help_label;
 	GtkWidget *help_edit_button;
+	GtkWidget *empty_help_image;
 	GtkWidget *version_label;
 	GtkWidget *version_entry;
 	GtkWidget *mpi_label;
@@ -538,8 +539,10 @@ gboolean program_dialog_setup_ui(gboolean new)
 	help_edit_button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
 	gtk_widget_show(help_edit_button);
 	gtk_box_pack_start(GTK_BOX(help_hbox), help_edit_button, FALSE, FALSE, 0);
-	g_signal_connect(help_edit_button, "clicked", G_CALLBACK(program_help_edit), debr.program);
 	g_object_set(G_OBJECT(help_edit_button), "relief", GTK_RELIEF_NONE, NULL);
+	empty_help_image = validate_image_warning_new();
+	gtk_box_pack_start(GTK_BOX(help_hbox), empty_help_image, FALSE, FALSE, 0);
+	g_signal_connect(help_edit_button, "clicked", G_CALLBACK(program_help_edit), empty_help_image);
 
 	/*
 	 * URL
@@ -574,6 +577,7 @@ gboolean program_dialog_setup_ui(gboolean new)
 	gtk_entry_set_text(GTK_ENTRY(version_entry), gebr_geoxml_program_get_version(debr.program));
 	gtk_entry_set_text(GTK_ENTRY(url_entry), gebr_geoxml_program_get_url(debr.program));
 
+	/* validate */
 	GebrValidateCase *validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_TITLE);
 	g_signal_connect(title_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
 	if (!new)
@@ -594,6 +598,8 @@ gboolean program_dialog_setup_ui(gboolean new)
 	g_signal_connect(url_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
 	if (!new)
 		on_entry_focus_out(GTK_ENTRY(url_entry), NULL, validate_case);
+	if (!new)
+		validate_image_set_check_help(empty_help_image, gebr_geoxml_program_get_help(debr.program));
 
 	gtk_widget_show(dialog);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
@@ -961,9 +967,10 @@ static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program)
  * \internal
  * Edits the programs help.
  */
-static void program_help_edit(GtkButton * button)
+static void program_help_edit(GtkButton * button, GtkWidget * validate_image)
 {
 	debr_help_edit(gebr_geoxml_program_get_help(debr.program), debr.program);
+	validate_image_set_check_help(validate_image, gebr_geoxml_program_get_help(debr.program));
 }
 
 /**

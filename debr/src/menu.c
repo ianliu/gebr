@@ -1063,8 +1063,9 @@ gboolean menu_dialog_setup_ui(gboolean new)
 	g_signal_connect(email_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
 	if (!new)
 		on_entry_focus_out(GTK_ENTRY(description_entry), NULL, validate_case);
-
-	validate_image_set_check_help(empty_help_image, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
+	if (!new)
+		validate_image_set_check_help(empty_help_image,
+					      gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
 
 	g_signal_connect(title_entry, "changed", G_CALLBACK(menu_title_changed), NULL);
 	g_signal_connect(description_entry, "changed", G_CALLBACK(menu_description_changed), NULL);
