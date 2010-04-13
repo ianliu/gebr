@@ -96,4 +96,25 @@ void validate_set_selected(GtkTreeIter * iter);
  */
 void validate_clear(void);
 
+/**
+ * Create a warning GtkImage for validation warning.
+ */
+GtkWidget *validate_image_warning_new(void);
+
+/**
+ * Set \p markup to be the tooltip of \p image.
+ * If \p markup is NULL then the widget is hidden (no warning is displayed).
+ */
+void validate_image_set_warning(GtkWidget * image, const gchar *markup);
+
+/**
+ * Set \p image warning if \p help.
+ */
+void validate_image_set_check_help(GtkWidget * image, const gchar *help);
+
+/**
+ * Set \p image warning if \p menu don't have any category.
+ */
+void validate_image_set_check_category_list(GtkWidget * image, GebrGeoXmlFlow * menu);
+
 #endif				//__VALIDATE_H

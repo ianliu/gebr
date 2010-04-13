@@ -190,6 +190,36 @@ void validate_clear(void)
 		validate_close_iter(&iter);
 }
 
+GtkWidget *validate_image_warning_new(void)
+{
+	return gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_SMALL_TOOLBAR);
+}
+
+void validate_image_set_warning(GtkWidget * image, const gchar *markup)
+{
+	g_object_set(G_OBJECT(image), "visible", markup != NULL ? TRUE : FALSE, NULL);
+	gtk_widget_set_tooltip_markup(image, markup);
+}
+
+void validate_image_set_check_help(GtkWidget * image, const gchar *help)
+{
+	if (strlen(help) <= 2)
+		validate_image_set_warning(image, _("Menu help is empty"));
+	else
+		validate_image_set_warning(image, NULL);
+}
+
+void validate_image_set_check_category_list(GtkWidget * image, GebrGeoXmlFlow * menu)
+{
+	GebrGeoXmlSequence *sequence;
+
+	gebr_geoxml_flow_get_category(menu, &sequence, 0);
+	if (sequence == NULL)
+		validate_image_set_warning(image, _("Any category is set"));
+	else
+		validate_image_set_warning(image, NULL);
+}
+
 /**
  * \internal
  * Frees \p validate its iter and interface.

@@ -49,7 +49,7 @@ static void menu_description_changed(GtkEntry * entry);
 
 static void menu_help_view(void);
 
-static void menu_help_edit(void);
+static void on_menu_help_edit_clicked(GtkWidget * edit_button, GtkWidget *validate_image);
 
 static void menu_author_changed(GtkEntry * entry);
 
@@ -895,6 +895,7 @@ gboolean menu_dialog_setup_ui(gboolean new)
 	GtkWidget *menuhelp_label;
 	GtkWidget *menuhelp_hbox;
 	GtkWidget *menuhelp_edit_button;
+	GtkWidget *empty_help_image;
 	GtkWidget *author_label;
 	GtkWidget *author_entry;
 	GtkWidget *email_label;
@@ -987,6 +988,8 @@ gboolean menu_dialog_setup_ui(gboolean new)
 	gtk_widget_show(menuhelp_edit_button);
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_edit_button, FALSE, FALSE, 0);
 	g_object_set(G_OBJECT(menuhelp_edit_button), "relief", GTK_RELIEF_NONE, NULL);
+	empty_help_image = validate_image_warning_new();
+	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), empty_help_image, FALSE, FALSE, 0);
 
 	/*
 	 * Author
@@ -1046,7 +1049,8 @@ gboolean menu_dialog_setup_ui(gboolean new)
 	gtk_entry_set_text(GTK_ENTRY(description_entry),
 			   gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_entry_set_text(GTK_ENTRY(author_entry), gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(debr.menu)));
-	gtk_entry_set_text(GTK_ENTRY(email_entry), gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu)));
+	gtk_entry_set_text(GTK_ENTRY(email_entry), gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu))); 
+	/* validate */
 	GebrValidateCase *validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_TITLE);
 	g_signal_connect(title_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
 	if (!new)
@@ -1060,6 +1064,8 @@ gboolean menu_dialog_setup_ui(gboolean new)
 	if (!new)
 		on_entry_focus_out(GTK_ENTRY(description_entry), NULL, validate_case);
 
+	validate_image_set_check_help(empty_help_image, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
+
 	g_signal_connect(title_entry, "changed", G_CALLBACK(menu_title_changed), NULL);
 	g_signal_connect(description_entry, "changed", G_CALLBACK(menu_description_changed), NULL);
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "add-request",
@@ -1068,7 +1074,7 @@ gboolean menu_dialog_setup_ui(gboolean new)
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "renamed", G_CALLBACK(menu_category_renamed), NULL);
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "removed", G_CALLBACK(menu_category_removed), NULL);
 	g_signal_connect(email_entry, "changed", G_CALLBACK(menu_email_changed), NULL);
-	g_signal_connect(menuhelp_edit_button, "clicked", G_CALLBACK(menu_help_edit), NULL);
+	g_signal_connect(menuhelp_edit_button, "clicked", G_CALLBACK(on_menu_help_edit_clicked), empty_help_image);
 	g_signal_connect(author_entry, "changed", G_CALLBACK(menu_author_changed), NULL);
 
 	/* categories */
@@ -1635,11 +1641,13 @@ static void menu_help_view(void)
 
 /**
  * \internal
- * Calls \ref debr_help_edit with menu's help. After help was edited in a external browser, save it back to XML.
+ * Calls \ref debr_help_edit with menu's help.
+ * After help was edited in a external browser, save it back to XML.
  */
-static void menu_help_edit(void)
+static void on_menu_help_edit_clicked(GtkWidget * edit_button, GtkWidget *validate_image)
 {
 	debr_help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL);
+	validate_image_set_check_help(validate_image, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
 }
 
 /**
