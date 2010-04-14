@@ -43,8 +43,6 @@ struct ui_flow_browse {
 	GtkWidget *view;
 
 	GtkWidget *revisions_menu;
-	/* Variable holding the revision to be removed */
-	GtkWidget *revision_to_be_removed;
 
 	struct ui_flow_browse_info {
 		GtkWidget *title;

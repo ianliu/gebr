@@ -202,7 +202,6 @@ void gebr_setup_ui(void)
 	GtkWidget *toolbar;
 	GtkToolItem *tool_item;
 	GtkWidget *menu;
-	GtkWidget *revisions_menu;
 
 	gebr.about = gebr_gui_about_setup_ui("GêBR", _("A plug-and-play environment for\nseismic processing tools"));
 	gebr.ui_server_list = server_list_setup_ui();
@@ -326,8 +325,7 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "flow_properties"))), -1);
 
-	revisions_menu = menu = gtk_menu_new();
-	g_signal_connect(menu, "key-press-event", G_CALLBACK(on_revisions_key_press), NULL);
+	menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock("document-open-recent");
 	g_signal_connect(GTK_OBJECT(tool_item), "clicked", G_CALLBACK(on_flow_revision_save_activate), NULL);
 	g_signal_connect(GTK_OBJECT(tool_item), "show-menu", G_CALLBACK(on_flow_revision_show_menu), NULL);
@@ -354,7 +352,7 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1); */
 
-	gebr.ui_flow_browse = flow_browse_setup_ui(revisions_menu);
+	gebr.ui_flow_browse = flow_browse_setup_ui(menu);
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gebr.ui_flow_browse->widget, TRUE, TRUE, 0);

@@ -42,8 +42,8 @@ static void
 flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 			     GtkTreeViewColumn * column, struct ui_flow_browse *ui_flow_browse);
 static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse *ui_flow_browse);
-static void flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * revision);
-static void flow_browse_on_revision_select(GtkWidget * menu_item, GebrGeoXmlRevision * revision);
+static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * revision);
+static void flow_browse_on_revision_delete_activate(GtkWidget * menu_item, GebrGeoXmlRevision * revision);
 static void flow_browse_on_flow_move(void);
 
 struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
@@ -64,7 +64,6 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	/* alloc */
 	ui_flow_browse = g_malloc(sizeof(struct ui_flow_browse));
 	ui_flow_browse->revisions_menu = revisions_menu;
-	ui_flow_browse->revision_to_be_removed = NULL;
 
 	/* Create flow browse page */
 	page = gtk_vbox_new(FALSE, 0);
@@ -349,21 +348,33 @@ void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
 	gchar *date;
 	gchar *comment;
 
+	GtkWidget *submenu;
 	GtkWidget *menu_item;
+	GtkWidget *menu_item_rev;
 
 	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
 	label = g_string_new(NULL);
 	g_string_printf(label, "%s: %s", date, comment);
 
-	menu_item = gtk_menu_item_new_with_label(label->str);
-	gtk_widget_set_events(menu_item, GDK_KEY_PRESS_MASK);
-	gtk_widget_show(menu_item);
+	submenu = gtk_menu_new();
+	menu_item_rev = gtk_menu_item_new_with_label(label->str);
+
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_REVERT_TO_SAVED, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
+	g_signal_connect(menu_item, "activate", G_CALLBACK(flow_browse_on_revision_revert_activate), revision);
+
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
+	g_object_set_data(G_OBJECT(menu_item), "menu-item-to-be-removed", menu_item_rev);
+	g_signal_connect(menu_item, "activate", G_CALLBACK(flow_browse_on_revision_delete_activate), revision);
+
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item_rev), submenu);
+	gtk_widget_show_all(submenu);
+	gtk_widget_show(menu_item_rev);
 	if (new)
-		gtk_menu_shell_prepend(GTK_MENU_SHELL(gebr.ui_flow_browse->revisions_menu), menu_item);
+		gtk_menu_shell_prepend(GTK_MENU_SHELL(gebr.ui_flow_browse->revisions_menu), menu_item_rev);
 	else
-		gtk_menu_shell_append(GTK_MENU_SHELL(gebr.ui_flow_browse->revisions_menu), menu_item);
-	g_signal_connect(menu_item, "activate", G_CALLBACK(flow_browse_on_revision_activate), revision);
-	g_signal_connect(menu_item, "select", G_CALLBACK(flow_browse_on_revision_select), revision);
+		gtk_menu_shell_append(GTK_MENU_SHELL(gebr.ui_flow_browse->revisions_menu), menu_item_rev);
 }
 
 /**
@@ -535,7 +546,7 @@ static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse
  * \internal
  * Change flow to selected revision
  */
-static void flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * revision)
+static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * revision)
 {
 	if (gebr_gui_confirm_action_dialog(_("Backup current state?"),
 					   _("You are about to revert to a previous state. "
@@ -559,12 +570,20 @@ static void flow_browse_on_revision_activate(GtkMenuItem * menu_item, GebrGeoXml
 }
 
 /**
- * \internal
  */
-static void flow_browse_on_revision_select(GtkWidget * menu_item, GebrGeoXmlRevision * revision)
+static void flow_browse_on_revision_delete_activate(GtkWidget * widget, GebrGeoXmlRevision * revision)
 {
-	g_object_set_data(G_OBJECT(menu_item), "revision", revision);
-	gebr.ui_flow_browse->revision_to_be_removed = menu_item;
+	gboolean response;
+	gpointer menu_item;
+	response = gebr_gui_confirm_action_dialog(_("Remove this revision permanently?"),
+						  _("If you choose to remove this revision, "
+						    "you will not be able to recover it later."));
+	if (response) {
+		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(revision));
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+		menu_item = g_object_get_data(G_OBJECT(widget), "menu-item-to-be-removed");
+		gtk_widget_destroy(GTK_WIDGET(menu_item));
+	}
 }
 
 /**

@@ -606,10 +606,11 @@ out:	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(config->flow));
 gboolean flow_revision_save(void)
 {
 	GtkWidget *dialog;
-	GtkBox *vbox;
+	GtkWidget *vbox;
 	GtkWidget *label;
 	GtkWidget *entry;
-	gboolean ret;
+	GtkWidget *align;
+	gboolean ret = FALSE;
 
 	if (gebr.flow == NULL)
 		return FALSE;
@@ -619,27 +620,31 @@ gboolean flow_revision_save(void)
 					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-	vbox = GTK_BOX(GTK_DIALOG(dialog)->vbox);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
+	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+
+	align = gtk_alignment_new(0, 0, 1, 1);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(align), 10, 10, 10, 10);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), align, TRUE, TRUE, 0);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(align), vbox);
 
 	label = gtk_label_new(_("Make a comment for this state:"));
-	gtk_box_pack_start(vbox, label, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 	entry = gtk_entry_new();
-	gtk_box_pack_start(vbox, entry, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), entry, TRUE, TRUE, 0);
+	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
 
 	gtk_widget_show_all(dialog);
-	switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-	case GTK_RESPONSE_OK: {
+
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
 		GebrGeoXmlRevision *revision;
 
 		revision = gebr_geoxml_flow_append_revision(gebr.flow, gtk_entry_get_text(GTK_ENTRY(entry)));
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 		flow_browse_load_revision(revision, TRUE);
 		ret = TRUE;
-
-		break;
-	} default:
-		ret = FALSE;
-		break;
 	}
 
 	gtk_widget_destroy(dialog);
