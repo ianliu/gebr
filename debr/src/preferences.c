@@ -82,20 +82,6 @@ void preferences_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), email_entry, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_entry_set_text(GTK_ENTRY(email_entry), debr.config.email->str);
 
-	/* Menus dir */
-	label = gtk_label_new(_("Menus directory"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	/* Browse button for user's menus dir */
-	menudir_dirchooser = gebr_gui_gtk_directory_chooser_new();
-	eventbox = gtk_event_box_new();
-	gtk_container_add(GTK_CONTAINER(eventbox), menudir_dirchooser);
-	g_object_set(eventbox, "tooltip-text", _("Path to look for private user's menus"), NULL);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
-	/* read config */
-	gebr_gui_gtk_directory_chooser_set_paths(GEBR_GUI_GTK_DIRECTORY_CHOOSER(menudir_dirchooser),
-						 debr.config.menu_dir);
-
 	/* Browser */
 	label = gtk_label_new(_("Browser"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
@@ -154,11 +140,6 @@ void preferences_dialog_setup_ui(void)
 		if (gtk_dialog_run(GTK_DIALOG(window)) != GTK_RESPONSE_OK)
 			break;
 
-		g_strfreev(debr.config.menu_dir);
-
-		debr.config.menu_dir =
-			gebr_gui_gtk_directory_chooser_get_paths(GEBR_GUI_GTK_DIRECTORY_CHOOSER
-								 (menudir_dirchooser));
 		g_string_assign(debr.config.name, gtk_entry_get_text(GTK_ENTRY(name_entry)));
 		g_string_assign(debr.config.email, gtk_entry_get_text(GTK_ENTRY(email_entry)));
 		g_string_assign(debr.config.browser,

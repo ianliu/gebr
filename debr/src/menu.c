@@ -283,28 +283,27 @@ void menu_load_user_directory(void)
 
 	gint i = 0;
 
-	if (!debr.config.menu_dir)
-		return;
-
-	while (debr.config.menu_dir[i]) {
+	void foreach(gchar * key) {
 		GString *path;
 		gchar *dirname;
 		gchar *dname;
 
-		dname = g_path_get_basename(debr.config.menu_dir[i]);
+		dname = g_path_get_basename(key);
 		dirname = g_markup_printf_escaped("%s", dname);
 
 		gtk_tree_store_append(debr.ui_menu.model, &iter, NULL);
 		gtk_tree_store_set(debr.ui_menu.model, &iter,
-				   MENU_IMAGE, GTK_STOCK_DIRECTORY, MENU_FILENAME, dirname,
-				   MENU_PATH, debr.config.menu_dir[i], -1);
+				   MENU_IMAGE, GTK_STOCK_DIRECTORY,
+				   MENU_FILENAME, dirname,
+				   MENU_PATH, key,
+				   -1);
 
 		path = g_string_new(NULL);
-		gebr_directory_foreach_file(filename, debr.config.menu_dir[i]) {
+		gebr_directory_foreach_file(filename, key) {
 			if (fnmatch("*.mnu", filename, 1))
 				continue;
 
-			g_string_printf(path, "%s/%s", debr.config.menu_dir[i], filename);
+			g_string_printf(path, "%s/%s", key, filename);
 			menu_open_with_parent(path->str, &iter, FALSE);
 		}
 
@@ -313,6 +312,8 @@ void menu_load_user_directory(void)
 		g_free(dname);
 		i++;
 	}
+
+	g_hash_table_foreach(debr.config.opened_folders, (GHFunc)foreach, NULL);
 
 	/* select first menu */
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_menu.model), &iter) == TRUE)
@@ -539,19 +540,23 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	g_free(title);
 	g_free(fname);
 
+	gchar * cwd = NULL;
+	void foreach(gchar * key) {
+		if (!cwd)
+			cwd = key;
+		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(dialog), key, NULL);
+	}
+	g_hash_table_foreach(debr.config.opened_folders, (GHFunc)foreach, NULL);
+
 	if (gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(debr.ui_menu.model),
 						  &parent, &debr.ui_menu.iter_other)) {
-		if (debr.config.menu_dir[0])
-			gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), debr.config.menu_dir[0]);
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), cwd);
 	} else {
 		gchar *menu_path;
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &parent, MENU_PATH, &menu_path, -1);
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), menu_path);
 		g_free(menu_path);
 	}
-
-	for (gsize i = 0; debr.config.menu_dir[i]; i++)
-		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(dialog), debr.config.menu_dir[i], NULL);
 
 	GtkFileFilter *filefilter;
 	filefilter = gtk_file_filter_new();
@@ -762,9 +767,16 @@ void menu_selected(void)
 			"menu_close",
 			"menu_save_as",
 			"menu_delete",
+			"menu_add_folder",
 			NULL
 		};
 		debr_set_actions_sensitive(names, TRUE);
+
+		gchar *names_off[] = {
+			"menu_remove_folder",
+			NULL
+		};
+		debr_set_actions_sensitive(names_off, FALSE);
 			
 		menu_status_set_from_iter(&iter, current_status);
 
@@ -787,6 +799,14 @@ void menu_selected(void)
 			NULL
 		};
 		debr_set_actions_sensitive(names, FALSE);
+
+		gchar *names_on[] = {
+			"menu_add_folder",
+			"menu_remove_folder",
+			NULL
+		};
+		debr_set_actions_sensitive(names_on, TRUE);
+
 	} else if (type == ITER_NONE) {
 		menu_details_update();
 		
@@ -799,9 +819,16 @@ void menu_selected(void)
 			"menu_save_as",
 			"menu_revert",
 			"menu_delete",
+			"menu_remove_folder",
 			NULL
 		};
 		debr_set_actions_sensitive(names, FALSE);
+
+		gchar *names_on[] = {
+			"menu_add_folder",
+			NULL
+		};
+		debr_set_actions_sensitive(names_on, TRUE);
 	}
 }
 
@@ -1419,6 +1446,8 @@ gboolean menu_open_folder(const gchar * path)
 	if (g_hash_table_lookup_extended(debr.config.opened_folders, path, NULL, NULL))
 		return TRUE;
 
+	g_hash_table_insert(debr.config.opened_folders, g_strdup(path), NULL);
+
 	dname = g_path_get_basename(path);
 	dirname = g_markup_printf_escaped("%s", dname);
 
@@ -1560,6 +1589,12 @@ static GtkMenu *menu_popup_menu(GtkTreeView * tree_view)
 							      (debr.action_group, "menu_revert")));
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_delete")));
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_add_folder")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_remove_folder")));
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 	menu_item = gtk_menu_item_new_with_label(_("Collapse all"));

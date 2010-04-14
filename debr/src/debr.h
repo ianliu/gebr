@@ -89,7 +89,6 @@ struct debr {
 		GString *browser;
 		gboolean menu_sort_ascending;
 		gint menu_sort_column;
-		gchar **menu_dir;
 	} config;
 
 	GtkListStore *categories_model;

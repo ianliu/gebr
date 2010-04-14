@@ -97,6 +97,16 @@ void on_menu_revert_activate(void);
 void on_menu_delete_activate(void);
 
 /**
+ * Add a folder to the menu's list.
+ */
+void on_menu_add_folder_activate(void);
+
+/**
+ * Remove a folder from the menu's list.
+ */
+void on_menu_remove_folder_activate(void);
+
+/**
  * Calls \ref menu_dialog_setup_ui.
  */
 gboolean on_menu_properties_activate(void);

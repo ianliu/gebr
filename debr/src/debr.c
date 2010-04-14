@@ -53,6 +53,9 @@ void debr_init(void)
 							   GTK_STOCK_CANCEL, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 	debr.pixmaps.stock_no = gtk_widget_render_icon(debr.invisible, GTK_STOCK_NO, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
+	debr.config.opened_folders = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal,
+							   (GDestroyNotify)g_free, NULL);
+
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model), debr.config.menu_sort_column,
 					     debr.config.
 					     menu_sort_ascending ? GTK_SORT_ASCENDING : GTK_SORT_DESCENDING);
@@ -73,7 +76,7 @@ gboolean debr_quit(void)
 	g_object_unref(debr.accel_group);
 
 	/* free config stuff */
-	g_strfreev(debr.config.menu_dir);
+	g_hash_table_destroy(debr.config.opened_folders);
 	g_key_file_free(debr.config.key_file);
 	g_string_free(debr.config.path, TRUE);
 	g_string_free(debr.config.name, TRUE);
@@ -99,6 +102,7 @@ gboolean debr_quit(void)
 gboolean debr_config_load(void)
 {
 	GError *error;
+	gchar ** list;
 
 	gebr_create_config_dirs();
 	debr.config.path = g_string_new(getenv("HOME"));
@@ -108,16 +112,13 @@ gboolean debr_config_load(void)
 	debr.config.key_file = g_key_file_new();
 	g_key_file_load_from_file(debr.config.key_file, debr.config.path->str, G_KEY_FILE_NONE, &error);
 
-	debr.config.opened_folders = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal,
-							   (GDestroyNotify)g_free, NULL);
 	debr.config.name = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "name", g_get_real_name());
-	debr.config.email =
-	    gebr_g_key_file_load_string_key(debr.config.key_file, "general", "email", g_get_user_name());
-	if (!(debr.config.menu_dir = g_key_file_get_string_list(debr.config.key_file, "general", "menu_dir", NULL,
-								NULL))) {
-		debr.config.menu_dir = g_new(gchar *, 1);
-		debr.config.menu_dir[0] = NULL;
-	}
+	debr.config.email = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "email", g_get_user_name());
+
+	list = g_key_file_get_string_list(debr.config.key_file, "general", "menu_dir", NULL, NULL);
+	for (guint i = 0; list && list[i]; i++)
+		g_hash_table_insert(debr.config.opened_folders, g_strdup(list[i]), NULL);
+
 	debr.config.browser = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "browser", "firefox");
 	debr.config.htmleditor =
 	    gebr_g_key_file_load_string_key(debr.config.key_file, "general", "htmleditor", "");
@@ -126,7 +127,9 @@ gboolean debr_config_load(void)
 	debr.config.menu_sort_column =
 	    gebr_g_key_file_load_int_key(debr.config.key_file, "general", "menu_sort_column", MENU_MODIFIED_DATE);
 
-	if (debr.config.menu_dir == NULL || debr.config.menu_dir[0] == NULL)
+	g_strfreev(list);
+
+	if (g_hash_table_size(debr.config.opened_folders) == 0)
 		return FALSE;
 
 	return TRUE;
@@ -138,11 +141,22 @@ void debr_config_save(void)
 	gchar *string;
 	GError *error;
 	FILE *configfp;
+	gchar ** list;
+	guint i = 0;
+
+	list = g_new(gchar *, g_hash_table_size(debr.config.opened_folders) + 1);
+
+	void foreach(gchar * key) {
+		list[i++] = g_strdup(key);
+	}
+
+	g_hash_table_foreach(debr.config.opened_folders, (GHFunc)foreach, NULL);
+
+	list[i] = NULL;
 
 	g_key_file_set_string(debr.config.key_file, "general", "name", debr.config.name->str);
 	g_key_file_set_string(debr.config.key_file, "general", "email", debr.config.email->str);
-	g_key_file_set_string_list(debr.config.key_file, "general", "menu_dir",
-				   (const gchar * const *)debr.config.menu_dir, g_strv_length(debr.config.menu_dir));
+	g_key_file_set_string_list(debr.config.key_file, "general", "menu_dir", (const gchar * const *)list, i);
 	g_key_file_set_string(debr.config.key_file, "general", "browser", debr.config.browser->str);
 	g_key_file_set_string(debr.config.key_file, "general", "htmleditor", debr.config.htmleditor->str);
 	g_key_file_set_boolean(debr.config.key_file, "general", "menu_sort_ascending", debr.config.menu_sort_ascending);
@@ -157,6 +171,7 @@ void debr_config_save(void)
 	}
 	fwrite(string, sizeof(gchar), length, configfp);
 	fclose(configfp);
+	g_strfreev(list);
 }
 
 void debr_message(enum gebr_log_message_type type, const gchar * message, ...)

@@ -145,11 +145,14 @@ void on_menu_open_activate(void)
 
 	/* create file chooser */
 	chooser_dialog = gtk_file_chooser_dialog_new(_("Open menu"), NULL,
-							 GTK_FILE_CHOOSER_ACTION_OPEN,
-							 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-							 GTK_STOCK_OPEN, GTK_RESPONSE_YES, NULL);
-	for (int i = 0; debr.config.menu_dir[i]; i++)
-		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(chooser_dialog), debr.config.menu_dir[i], NULL);
+						     GTK_FILE_CHOOSER_ACTION_OPEN,
+						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+						     GTK_STOCK_OPEN, GTK_RESPONSE_YES, NULL);
+	void foreach(gchar * key) {
+		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(chooser_dialog), key, NULL);
+	}
+	g_hash_table_foreach(debr.config.opened_folders, (GHFunc) foreach, NULL);
+
 	filefilter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filefilter, _("Menu files (*.mnu)"));
 	gtk_file_filter_add_pattern(filefilter, "*.mnu");
@@ -272,6 +275,32 @@ void on_menu_delete_activate(void)
 		g_free(path);
 	}
 
+}
+
+void on_menu_add_folder_activate(void)
+{
+	GtkWidget *file_chooser;
+	gchar *fname;
+
+	file_chooser = gtk_file_chooser_dialog_new(_("Choose a folder"), GTK_WINDOW(debr.window),
+						   GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+						   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+						   GTK_STOCK_ADD, GTK_RESPONSE_OK,
+						   NULL);
+	if (gtk_dialog_run(GTK_DIALOG(file_chooser)) != GTK_RESPONSE_OK)
+		goto err;
+	
+	fname = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+
+	menu_open_folder(fname);
+
+	g_free(fname);
+err:
+	gtk_widget_destroy(file_chooser);
+}
+
+void on_menu_remove_folder_activate(void)
+{
 }
 
 gboolean on_menu_properties_activate(void)

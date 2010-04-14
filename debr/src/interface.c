@@ -58,6 +58,10 @@ static const GtkActionEntry actions_entries[] = {
 	 G_CALLBACK(on_menu_revert_activate)},
 	{"menu_delete", GTK_STOCK_DELETE, NULL, NULL, N_("Delete selected menus files"),
 	 G_CALLBACK(on_menu_delete_activate)},
+	{"menu_add_folder", GTK_STOCK_ADD, N_("Add folder"), NULL, N_("Add a new folder"),
+	 G_CALLBACK(on_menu_add_folder_activate)},
+	{"menu_remove_folder", GTK_STOCK_REMOVE, N_("Remove folder"), NULL, N_("Remove a folder"),
+	 G_CALLBACK(on_menu_remove_folder_activate)},
 	/* program */
 	{"program_new", GTK_STOCK_NEW, NULL, NULL, N_("Create new program"),
 	 G_CALLBACK(on_program_new_activate)},
