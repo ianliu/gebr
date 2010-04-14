@@ -86,6 +86,7 @@ struct debr {
 		GString *name;
 		GString *email;
 		GString *htmleditor;
+		gboolean native_editor;
 		GString *browser;
 		gboolean menu_sort_ascending;
 		gint menu_sort_column;

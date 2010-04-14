@@ -18,7 +18,6 @@
 #include <string.h>
 
 #include <libgebr/intl.h>
-#include <libgebr/gui/gtkdirectorychooser.h>
 
 #include "preferences.h"
 #include "debr.h"
@@ -40,27 +39,24 @@ void preferences_dialog_setup_ui(void)
 	GtkWidget *table;
 	GtkWidget *name_entry;
 	GtkWidget *email_entry;
-	GtkWidget *menudir_dirchooser;
 	GtkWidget *browser_combo;
 	GtkWidget *htmleditor_entry;
 	GtkWidget *label;
 	GtkWidget *eventbox;
-	int i;
 	gboolean newbrowser = TRUE;
 	GtkWidget *fake_radio_button;
-	GtkWidget *built_in_radio_button;
-	GtkWidget *user_radio_button;
+	GtkWidget *builtin_editor;
+	GtkWidget *custom_editor;
 	GtkWidget *list_widget_hbox;
 
-	/* dialog */
 	window = gtk_dialog_new_with_buttons(_("Preferences"),
 					     GTK_WINDOW(debr.window),
 					     GTK_DIALOG_MODAL,
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-	/* tooltips */
-	gtk_widget_set_size_request(window, 480, 300);
-	/* table */
+	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+	gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_OK);
+
 	table = gtk_table_new(6, 2, FALSE);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(window)->vbox), table, TRUE, TRUE, 0);
 
@@ -86,7 +82,7 @@ void preferences_dialog_setup_ui(void)
 	label = gtk_label_new(_("Browser"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	browser_combo = gtk_combo_box_entry_new_text();
-	for (i = 0; i < NBROWSER; i++) {
+	for (guint i = 0; i < NBROWSER; i++) {
 		gtk_combo_box_append_text(GTK_COMBO_BOX(browser_combo), browser[i]);
 		if (debr.config.browser && newbrowser) {
 			if (strcmp(browser[i], debr.config.browser->str) == 0) {
@@ -113,49 +109,35 @@ void preferences_dialog_setup_ui(void)
 
 	list_widget_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_table_attach(GTK_TABLE(table), list_widget_hbox, 1, 2, 4, 5,
-				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-				 (GtkAttachOptions) (0), 0, 0);
+			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+			 (GtkAttachOptions) (0), 0, 0);
 
 	fake_radio_button = gtk_radio_button_new(NULL);
-	built_in_radio_button =  gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio_button), _("Built-in"));
-	gtk_box_pack_start(GTK_BOX(list_widget_hbox), built_in_radio_button, FALSE, FALSE, 2);
-	user_radio_button =  gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio_button), _("Custom"));
-	gtk_box_pack_start(GTK_BOX(list_widget_hbox), user_radio_button, FALSE, FALSE, 2);
+	builtin_editor = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio_button), _("Built-in"));
+	gtk_box_pack_start(GTK_BOX(list_widget_hbox), builtin_editor, FALSE, FALSE, 2);
+	custom_editor = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio_button), _("Custom"));
+	gtk_box_pack_start(GTK_BOX(list_widget_hbox), custom_editor, FALSE, FALSE, 2);
 
 	htmleditor_entry = gtk_entry_new();
 	g_object_set(htmleditor_entry, "tooltip-text", _("An HTML capable editor to edit helps and reports"), NULL);
 	gtk_box_pack_start(GTK_BOX(list_widget_hbox), htmleditor_entry, FALSE, FALSE, 0);
+	gtk_entry_set_text(GTK_ENTRY(htmleditor_entry), debr.config.htmleditor->str);
 
-	if (debr.config.htmleditor->len != 0){
-		gtk_entry_set_text(GTK_ENTRY(htmleditor_entry), debr.config.htmleditor->str);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(user_radio_button), TRUE);
-	} else {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(built_in_radio_button), TRUE);
-		gtk_entry_set_text(GTK_ENTRY(htmleditor_entry), "");
-	}
+	if (debr.config.native_editor)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(builtin_editor), TRUE);
+	else
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(custom_editor), TRUE);
 
 	gtk_widget_show_all(window);
 
-	while (TRUE) {
-		if (gtk_dialog_run(GTK_DIALOG(window)) != GTK_RESPONSE_OK)
-			break;
-
+	if (gtk_dialog_run(GTK_DIALOG(window)) == GTK_RESPONSE_OK) {
 		g_string_assign(debr.config.name, gtk_entry_get_text(GTK_ENTRY(name_entry)));
 		g_string_assign(debr.config.email, gtk_entry_get_text(GTK_ENTRY(email_entry)));
-		g_string_assign(debr.config.browser,
-				gtk_combo_box_get_active_text(GTK_COMBO_BOX(browser_combo)));
-		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(user_radio_button)))
-			g_string_assign(debr.config.htmleditor, gtk_entry_get_text(GTK_ENTRY(htmleditor_entry)));
-		else
-			g_string_assign(debr.config.htmleditor, "");
-
-		if (!menu_cleanup())
-			continue;
+		g_string_assign(debr.config.browser, gtk_combo_box_get_active_text(GTK_COMBO_BOX(browser_combo)));
+		g_string_assign(debr.config.htmleditor, gtk_entry_get_text(GTK_ENTRY(htmleditor_entry)));
+		debr.config.native_editor = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(builtin_editor));
 
 		debr_config_save();
-		menu_reset();
-
-		break;
 	}
 
 	gtk_widget_destroy(window);

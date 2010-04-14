@@ -53,9 +53,6 @@ void debr_init(void)
 							   GTK_STOCK_CANCEL, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 	debr.pixmaps.stock_no = gtk_widget_render_icon(debr.invisible, GTK_STOCK_NO, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
-	debr.config.opened_folders = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal,
-							   (GDestroyNotify)g_free, NULL);
-
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model), debr.config.menu_sort_column,
 					     debr.config.
 					     menu_sort_ascending ? GTK_SORT_ASCENDING : GTK_SORT_DESCENDING);
@@ -115,17 +112,27 @@ gboolean debr_config_load(void)
 	debr.config.name = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "name", g_get_real_name());
 	debr.config.email = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "email", g_get_user_name());
 
+	debr.config.opened_folders = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal,
+							   (GDestroyNotify)g_free, NULL);
+
 	list = g_key_file_get_string_list(debr.config.key_file, "general", "menu_dir", NULL, NULL);
 	for (guint i = 0; list && list[i]; i++)
 		g_hash_table_insert(debr.config.opened_folders, g_strdup(list[i]), NULL);
 
-	debr.config.browser = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "browser", "firefox");
-	debr.config.htmleditor =
-	    gebr_g_key_file_load_string_key(debr.config.key_file, "general", "htmleditor", "");
-	debr.config.menu_sort_ascending =
-	    gebr_g_key_file_load_boolean_key(debr.config.key_file, "general", "menu_sort_ascending", TRUE);
-	debr.config.menu_sort_column =
-	    gebr_g_key_file_load_int_key(debr.config.key_file, "general", "menu_sort_column", MENU_MODIFIED_DATE);
+	debr.config.browser = gebr_g_key_file_load_string_key(debr.config.key_file,
+							      "general", "browser", "firefox");
+
+	debr.config.htmleditor = gebr_g_key_file_load_string_key(debr.config.key_file,
+								 "general", "htmleditor", "");
+
+	debr.config.native_editor = gebr_g_key_file_load_boolean_key(debr.config.key_file,
+								     "general", "native_editor", TRUE);
+
+	debr.config.menu_sort_ascending = gebr_g_key_file_load_boolean_key(debr.config.key_file,
+									   "general", "menu_sort_ascending", TRUE);
+
+	debr.config.menu_sort_column = gebr_g_key_file_load_int_key(debr.config.key_file,
+								    "general", "menu_sort_column", MENU_MODIFIED_DATE);
 
 	g_strfreev(list);
 
@@ -159,6 +166,7 @@ void debr_config_save(void)
 	g_key_file_set_string_list(debr.config.key_file, "general", "menu_dir", (const gchar * const *)list, i);
 	g_key_file_set_string(debr.config.key_file, "general", "browser", debr.config.browser->str);
 	g_key_file_set_string(debr.config.key_file, "general", "htmleditor", debr.config.htmleditor->str);
+	g_key_file_set_boolean(debr.config.key_file, "general", "native_editor", debr.config.native_editor);
 	g_key_file_set_boolean(debr.config.key_file, "general", "menu_sort_ascending", debr.config.menu_sort_ascending);
 	g_key_file_set_integer(debr.config.key_file, "general", "menu_sort_column", debr.config.menu_sort_column);
 
