@@ -830,7 +830,7 @@ gboolean menu_cleanup(void)
 					GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION,
 					GTK_BUTTONS_NONE, _("There are menus unsaved. Do you want to save them?"));
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
-	g_object_set(G_OBJECT(button), "image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);
+	gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON));
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
 	while(still_running) {
@@ -1865,7 +1865,7 @@ static GList * menu_get_unsaved(GtkTreeIter * folder)
 		}
 	}
 
-	if (!folder)
+	if (folder)
 		process(folder);
 	else {
 		GtkTreeIter iter;
