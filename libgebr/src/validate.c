@@ -84,7 +84,7 @@ static GebrValidateCase validate_cases[] = {
 
 	{GEBR_VALIDATE_CASE_PROGRAM_URL,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_URL,
-		N_("Program url should starts with a protocol.")},
+		N_("Program url should start with a protocol.")},
 
 	/* parameter */
 	{GEBR_VALIDATE_CASE_PARAMETER_LABEL,
