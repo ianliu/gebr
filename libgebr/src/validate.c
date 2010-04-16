@@ -201,17 +201,17 @@ gchar *gebr_validate_case_automatic_fixes_msg(GebrValidateCase *self, const gcha
 {
 	gint failed = gebr_validate_case_check_value(self, value, can_fix);
 	if (!(*can_fix))
-		return g_strdup(_("Any automatic fix available"));
+		return g_strdup(_("No automatic fix available"));
 
 	GString *msg = g_string_new(_("Automatic fix(es) available:"));
 	if (failed & GEBR_VALIDATE_CHECK_CAPIT)
 		g_string_append(msg, _("\n - Capitalize first letter"));
 	if (failed & GEBR_VALIDATE_CHECK_NOBLK)
-		g_string_append(msg, _("\n - Remove spaces at the beggining/end"));
+		g_string_append(msg, _("\n - Remove spaces at the beginning/end"));
 	if (failed & GEBR_VALIDATE_CHECK_MTBLK)
 		g_string_append(msg, _("\n - Remove multiple spaces"));
 	if (failed & GEBR_VALIDATE_CHECK_NOPNT)
-		g_string_append(msg, _("\n - Remove final pontuaction"));
+		g_string_append(msg, _("\n - Remove final punctuation"));
 	if (failed & GEBR_VALIDATE_CHECK_URL)
 		g_string_append(msg, _("\n - Add url scheme"));
 
