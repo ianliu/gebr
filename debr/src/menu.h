@@ -171,6 +171,10 @@ MenuMessage menu_save(GtkTreeIter * iter);
 gboolean menu_save_as(GtkTreeIter * iter);
 
 /**
+ */
+gboolean menu_save_folder(GtkTreeIter * folder);
+
+/**
  * Save all menus opened in DeBR that are unsaved.
  */
 gboolean menu_save_all(void);
