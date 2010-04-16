@@ -764,8 +764,10 @@ void menu_selected(void)
 
 		struct validate *validate;
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_VALIDATE_POINTER, &validate, -1);
-		if (validate != NULL)
+		if (validate != NULL) {
 			validate_set_selected(&validate->iter);
+			menu_validate(&iter);
+		}
 	} else if (type == ITER_FOLDER) {
 		menu_folder_details_update(&iter);
 
@@ -1081,13 +1083,6 @@ gboolean menu_dialog_setup_ui(gboolean new)
 	g_signal_connect(email_entry, "changed", G_CALLBACK(menu_email_changed), NULL);
 	g_signal_connect(menuhelp_edit_button, "clicked", G_CALLBACK(on_menu_help_edit_clicked), empty_help_image);
 	g_signal_connect(author_entry, "changed", G_CALLBACK(menu_author_changed), NULL);
-
-	/* categories */
-	GebrGeoXmlSequence *category;
-	gebr_geoxml_flow_get_category(debr.menu, &category, 0);
-	gebr_gui_value_sequence_edit_load(GEBR_GUI_VALUE_SEQUENCE_EDIT(categories_sequence_edit), category,
-					  (ValueSequenceSetFunction) gebr_geoxml_value_sequence_set,
-					  (ValueSequenceGetFunction) gebr_geoxml_value_sequence_get, NULL);
 
 	gtk_widget_show(dialog);
 
