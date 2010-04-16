@@ -2,6 +2,7 @@
 src/callbacks.c
 src/debr.c
 src/enumoptionedit.c
+src/categoryedit.c
 src/help.c
 src/interface.c
 src/main.c

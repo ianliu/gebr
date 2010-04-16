@@ -27,6 +27,7 @@ libdebr_a_SOURCES = \
 	parameter.c \
 	parametergroup.c \
 	enumoptionedit.c \
+	categoryedit.c \
 	validate.c \
 	help.c \
 	preferences.c
@@ -41,6 +42,7 @@ noinst_HEADERS = \
 	parameter.h \
 	parametergroup.h \
 	enumoptionedit.h \
+	categoryedit.h \
 	validate.h \
 	help.h \
 	preferences.h

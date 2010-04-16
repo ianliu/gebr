@@ -272,10 +272,6 @@ static GtkWidget *__enum_option_edit_create_tree_view(EnumOptionEdit * enum_opti
 	return tree_view;
 }
 
-/*
- * Library functions
- */
-
 GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter)
 {
 	EnumOptionEdit *enum_option_edit;

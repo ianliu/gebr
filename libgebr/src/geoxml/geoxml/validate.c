@@ -116,8 +116,6 @@ validate_append_item_with_check(GebrGeoXmlValidate * validate, const gchar * ite
 }
 
 static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * parameter);
-
-
 gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlFlow * menu)
 {
 	GebrGeoXmlSequence *seq;
