@@ -313,7 +313,7 @@ void menu_path_get_parent(const gchar * path, GtkTreeIter * parent);
  * 
  * \return The number of unsaved menus.
  */
-glong menu_count_unsaved(void);
+glong menu_count_unsaved(GtkTreeIter * folder);
 
 /**
  * Replace the current menu by the clone made on the dialog start, by \ref menu_archive.

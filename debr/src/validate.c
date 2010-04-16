@@ -94,8 +94,8 @@ void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 	GtkTextBuffer *text_buffer;
 
 	gboolean updated = FALSE; 
-	gdouble scroll_hvalue;
-	gdouble scroll_vvalue;
+	gdouble scroll_hvalue = 0;
+	gdouble scroll_vvalue = 0;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_VALIDATE_POINTER, &validate, -1);
 	if (validate != NULL) {
@@ -124,10 +124,13 @@ void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 	pango_font_description_free(font);
 
 	GebrGeoXmlValidateOperations operations = (GebrGeoXmlValidateOperations) {
-		.append_text = validate_append_text, 
-		.append_text_emph = validate_append_text_emph, 
+		.append_text = (void(*)(gpointer,const gchar*,...))validate_append_text, 
+		.append_text_emph = (void(*)(gpointer,const gchar*,...))validate_append_text_emph, 
 		.append_text_error = NULL, 
-		.append_text_error_with_paths = validate_append_text_error, 
+		.append_text_error_with_paths = (void(*)(gpointer,
+							 const gchar *,
+							 const gchar *,
+							 const gchar *, ...))validate_append_text_error, 
 	};
 	GebrGeoXmlValidateOptions options;
 	options.all = TRUE;
