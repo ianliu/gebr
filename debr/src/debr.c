@@ -69,6 +69,8 @@ gboolean debr_quit(void)
 	if (!menu_cleanup())
 		return TRUE;
 
+	debr_config_save();
+
 	gtk_widget_destroy(debr.about.dialog);
 	g_object_unref(debr.accel_group);
 

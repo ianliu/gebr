@@ -35,17 +35,17 @@ static GebrValidateCase validate_cases[] = {
 	{GEBR_VALIDATE_CASE_TITLE,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_NOBLK | GEBR_VALIDATE_CHECK_NOPNT
 			| GEBR_VALIDATE_CHECK_MTBLK,
-		N_("Titles should not start with spaces or end with punctuations characters.")},
+		N_("Titles should not start with spaces or end with punctuation characters.")},
 
 	{GEBR_VALIDATE_CASE_DESCRIPTION,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
 			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
-		N_("Description should be capitalized and have no punctuations at the end.")},
+		N_("Description should be capitalized and have no punctuation characters at the end.")},
 
 	{GEBR_VALIDATE_CASE_AUTHOR,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
 			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
-		N_("Author should be capitalized and have no punctuations at the end.")},
+		N_("Author should be capitalized and have no punctuation characters at the end.")},
 
 	{GEBR_VALIDATE_CASE_DATE,
 		GEBR_VALIDATE_CHECK_EMPTY,
@@ -58,7 +58,7 @@ static GebrValidateCase validate_cases[] = {
 	{GEBR_VALIDATE_CASE_CATEGORY,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
 			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
-		N_("Categories should be capitalized and have no punctuations at the end.")},
+		N_("Categories should be capitalized and have no punctuation characters at the end.")},
 	
 	{GEBR_VALIDATE_CASE_EMAIL,
 		GEBR_VALIDATE_CHECK_EMAIL,
@@ -90,7 +90,7 @@ static GebrValidateCase validate_cases[] = {
 	{GEBR_VALIDATE_CASE_PARAMETER_LABEL,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
 			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT | GEBR_VALIDATE_CHECK_LABEL_HOTKEY,
-		N_("Parameter label should be capitalized and have no punctuations characters at the end. Also, careful with colliding shortcuts.")},
+		N_("Parameter label should be capitalized and have no punctuation characters at the end. Also, be careful with colliding shortcuts.")},
 
 	{GEBR_VALIDATE_CASE_PARAMETER_KEYWORD,
 		GEBR_VALIDATE_CHECK_EMPTY,
@@ -119,8 +119,7 @@ gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value
 	if (can_fix != NULL)
 		*can_fix = (strlen(value) == 0 ||
 			    flags & GEBR_VALIDATE_CHECK_EMAIL ||
-			    flags & GEBR_VALIDATE_CHECK_FILEN ||
-			    flags & GEBR_VALIDATE_CHECK_LABEL_HOTKEY) ? FALSE : TRUE;
+			    flags & GEBR_VALIDATE_CHECK_FILEN) ? FALSE : TRUE;
 
 	if (flags & GEBR_VALIDATE_CHECK_EMPTY && !gebr_validate_check_is_not_empty(value))
 		failed |= GEBR_VALIDATE_CHECK_EMPTY;
@@ -201,17 +200,17 @@ gchar *gebr_validate_case_automatic_fixes_msg(GebrValidateCase *self, const gcha
 {
 	gint failed = gebr_validate_case_check_value(self, value, can_fix);
 	if (!(*can_fix))
-		return g_strdup(_("Any automatic fix available"));
+		return g_strdup(_("<b>No automatic fix available</b>"));
 
-	GString *msg = g_string_new(_("Automatic fix(es) available:"));
+	GString *msg = g_string_new(_("<b>Automatic fix(es) available:</b>"));
 	if (failed & GEBR_VALIDATE_CHECK_CAPIT)
 		g_string_append(msg, _("\n - Capitalize first letter"));
 	if (failed & GEBR_VALIDATE_CHECK_NOBLK)
-		g_string_append(msg, _("\n - Remove spaces at the beggining/end"));
+		g_string_append(msg, _("\n - Remove spaces at the beginning/end"));
 	if (failed & GEBR_VALIDATE_CHECK_MTBLK)
 		g_string_append(msg, _("\n - Remove multiple spaces"));
 	if (failed & GEBR_VALIDATE_CHECK_NOPNT)
-		g_string_append(msg, _("\n - Remove final pontuaction"));
+		g_string_append(msg, _("\n - Remove final punctuation character"));
 	if (failed & GEBR_VALIDATE_CHECK_URL)
 		g_string_append(msg, _("\n - Add url scheme"));
 

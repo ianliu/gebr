@@ -55,6 +55,7 @@ void preferences_dialog_setup_ui(void)
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+	gtk_container_set_border_width(GTK_CONTAINER(window), 5);
 	gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_OK);
 
 	table = gtk_table_new(6, 2, FALSE);
@@ -64,6 +65,7 @@ void preferences_dialog_setup_ui(void)
 	label = gtk_label_new(_("Name"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	name_entry = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(name_entry), TRUE);
 	g_object_set(name_entry, "tooltip-text", _("You should know your name"), NULL);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), name_entry, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3);
@@ -73,6 +75,7 @@ void preferences_dialog_setup_ui(void)
 	label = gtk_label_new(_("Email"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	email_entry = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(email_entry), TRUE);
 	g_object_set(email_entry, "tooltip-text", _("Your email address"), NULL);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_table_attach(GTK_TABLE(table), email_entry, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
@@ -119,6 +122,7 @@ void preferences_dialog_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(list_widget_hbox), custom_editor, FALSE, FALSE, 2);
 
 	htmleditor_entry = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(htmleditor_entry), TRUE);
 	g_object_set(htmleditor_entry, "tooltip-text", _("An HTML capable editor to edit helps and reports"), NULL);
 	gtk_box_pack_start(GTK_BOX(list_widget_hbox), htmleditor_entry, FALSE, FALSE, 0);
 	gtk_entry_set_text(GTK_ENTRY(htmleditor_entry), debr.config.htmleditor->str);
@@ -136,7 +140,6 @@ void preferences_dialog_setup_ui(void)
 		g_string_assign(debr.config.browser, gtk_combo_box_get_active_text(GTK_COMBO_BOX(browser_combo)));
 		g_string_assign(debr.config.htmleditor, gtk_entry_get_text(GTK_ENTRY(htmleditor_entry)));
 		debr.config.native_editor = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(builtin_editor));
-
 		debr_config_save();
 	}
 

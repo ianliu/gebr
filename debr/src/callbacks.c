@@ -301,6 +301,54 @@ err:
 
 void on_menu_remove_folder_activate(void)
 {
+	GtkTreeIter iter;
+	GtkWidget *dialog;
+	GtkWidget *button;
+	gboolean ret;
+	gboolean still_running = TRUE;
+
+	if (menu_get_selected_type(&iter, FALSE) != ITER_FOLDER)
+		return;
+
+	if (menu_count_unsaved(&iter) != 0) {
+		/* There are unsaved menus. We need to let the user choose what to do. */
+		dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
+						GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION,
+						GTK_BUTTONS_NONE, _("There are unsaved menus. Do you want to save them?"));
+		button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
+		gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON));
+		gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+		gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
+
+		while (still_running) {
+			switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
+			case GTK_RESPONSE_YES:
+				if (!menu_save_folder(&iter)) {
+					ret = FALSE;
+					still_running = TRUE;
+				} else {
+					ret = TRUE;
+					still_running = FALSE;
+				}
+				break;
+			case GTK_RESPONSE_NO:
+				ret = TRUE;
+				still_running = FALSE;
+				break;
+			case GTK_RESPONSE_CANCEL:
+			default:
+				still_running = FALSE;
+				ret = FALSE;
+			}
+		}
+		gtk_widget_destroy(dialog);
+
+		if (ret)
+			menu_close_folder(&iter);
+	}
+	else {
+		menu_close_folder(&iter);
+	}
 }
 
 gboolean on_menu_properties_activate(void)
@@ -570,7 +618,7 @@ gboolean on_entry_focus_out(GtkEntry * entry, GdkEventFocus * event, GebrValidat
 	GString *tooltip = g_string_new("");
 	fixes = gebr_validate_case_automatic_fixes_msg(data, gtk_entry_get_text(entry), &can_fix);
 
-	g_string_printf(tooltip, "%s\n%s", data->validcase_msg, fixes);
+	g_string_printf(tooltip, "%s\n\n%s", data->validcase_msg, fixes);
 	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 	if (can_fix) {
 		gulong *id;

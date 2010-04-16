@@ -69,6 +69,8 @@ static gboolean menu_is_path_loaded(const gchar * path, GtkTreeIter * iter);
 
 static gboolean menu_get_folder_iter_from_path(const gchar * path, GtkTreeIter * iter_);
 
+static GList * menu_get_unsaved(GtkTreeIter * folder);
+
 /*
  * Public functions
  */
@@ -449,67 +451,49 @@ MenuMessage menu_save(GtkTreeIter * iter)
 	return MENU_MESSAGE_SUCCESS;
 }
 
-gboolean menu_save_all(void)
+gboolean menu_save_folder(GtkTreeIter * folder)
 {
-	gboolean ret = TRUE;
-
-	if (!menu_count_unsaved())
+	if (folder && menu_get_type(folder) != ITER_FOLDER)
 		return FALSE;
 
-	GList *unsaved = NULL;
+	GList * entry;
+	GList * unsaved;
+	gboolean ret;
+	unsaved = menu_get_unsaved(folder);
+	entry = unsaved;
+	ret = TRUE;
 
-	GtkTreeIter iter;
-	GtkTreeIter child;
-	gboolean valid;
+	if (!entry)
+		return FALSE;
 
-	/* We save a reference to all unsaved rows, so we can save them later */
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
-		valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, &iter);
-		while (valid) {
-			MenuStatus status;
-			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_STATUS, &status, -1);
-			if (status == MENU_STATUS_UNSAVED) {
-				GtkTreePath *path;
-				path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_menu.model), &child);
-				unsaved = g_list_prepend(unsaved,
-							 gtk_tree_row_reference_new(GTK_TREE_MODEL(debr.ui_menu.model), path));
-				gtk_tree_path_free(path);
-			}
-			valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);
-		}
-	}
-
-	GList *entry = unsaved;
 	while (entry) {
-		GtkTreePath *path;
-		GtkTreeRowReference *row;
-		row = (GtkTreeRowReference*)(entry->data);
-		path = gtk_tree_row_reference_get_path(row);
-		gtk_tree_model_get_iter(GTK_TREE_MODEL(debr.ui_menu.model), &iter, path);
-		MenuMessage result = MENU_MESSAGE_SUCCESS;
+		GtkTreeIter * iter;
+		MenuMessage result;
 
-		result = menu_save(&iter);
-		if (result == MENU_MESSAGE_FIRST_TIME_SAVE) {
-			if (!menu_save_as(&iter))
-				ret = FALSE;
-			goto out;
-		} else if (result == MENU_MESSAGE_PERMISSION_DENIED) {
-			gtk_tree_path_free(path);
-			gtk_tree_row_reference_free(row);
+		iter = (GtkTreeIter*)entry->data;
+		result = menu_save(iter);
+		if (result == MENU_MESSAGE_PERMISSION_DENIED
+		    || (result == MENU_MESSAGE_FIRST_TIME_SAVE && !menu_save_as(iter))) {
 			ret = FALSE;
-			goto out;
+			break;
 		}
-
-		gtk_tree_path_free(path);
-		gtk_tree_row_reference_free(row);
 		entry = entry->next;
 	}
 
-	menu_details_update();
-	debr_message(GEBR_LOG_INFO, _("All menus were saved."));
-out:
+	if (ret) {
+		menu_details_update();
+		debr_message(GEBR_LOG_INFO, _("All menus were saved."));
+	}
+
+	g_list_foreach(unsaved, (GFunc)gtk_tree_iter_free, NULL);
 	g_list_free(unsaved);
+
 	return ret;
+}
+
+gboolean menu_save_all(void)
+{
+	return menu_save_folder(NULL);
 }
 
 gboolean menu_save_as(GtkTreeIter * iter)
@@ -837,14 +821,14 @@ gboolean menu_cleanup(void)
 	gboolean ret;
 	gboolean still_running = TRUE;
 
-	if (!menu_count_unsaved())
+	if (!menu_count_unsaved(NULL))
 		return TRUE;
 
 	dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 					GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION,
 					GTK_BUTTONS_NONE, _("There are menus unsaved. Do you want to save them?"));
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
-	g_object_set(G_OBJECT(button), "image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);
+	gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON));
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
 	while(still_running) {
@@ -897,7 +881,7 @@ void menu_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save"), unsaved);
 	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert"), unsaved);
 
-	if (menu_count_unsaved() > 0)
+	if (menu_count_unsaved(NULL) > 0)
 		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save_all"), TRUE);
 	else
 		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save_all"), FALSE);
@@ -1347,19 +1331,18 @@ void menu_path_get_parent(const gchar * path, GtkTreeIter * parent)
 	g_free(dirname);
 }
 
-glong menu_count_unsaved()
+glong menu_count_unsaved(GtkTreeIter * folder)
 {
-	GtkTreeIter iter;
-	gboolean valid;
 	glong count;
 
 	count = 0;
 
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model)) {
+	void process(GtkTreeIter * iter) {
+		gboolean valid;
 		GtkTreeIter child;
 		MenuStatus status;
 
-		valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, &iter);
+		valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, iter);
 		while (valid) {
 			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_STATUS, &status, -1);
 			if (status == MENU_STATUS_UNSAVED)
@@ -1367,10 +1350,19 @@ glong menu_count_unsaved()
 			valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);
 		}
 	}
+
+	if (folder)
+		process(folder);
+	else {
+		GtkTreeIter iter;
+		gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model))
+			process(&iter);
+	}
+
 	return count;
 }
 
-void menu_replace(void){
+void menu_replace(void) {
 
 	GtkTreeIter iter;
 	GtkTreePath * program_path, * parameter_path;
@@ -1831,3 +1823,35 @@ static gboolean menu_get_folder_iter_from_path(const gchar * path, GtkTreeIter *
 	return FALSE;
 }
 
+/**
+ * \internal
+ */
+static GList * menu_get_unsaved(GtkTreeIter * folder)
+{
+	g_return_val_if_fail(folder == NULL || menu_get_type(folder) == ITER_FOLDER, NULL);
+
+	GList * list = NULL;
+
+	void process(GtkTreeIter * iter) {
+		gboolean valid;
+		GtkTreeIter child;
+		valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, iter);
+		while (valid) {
+			MenuStatus status;
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_STATUS, &status, -1);
+			if (status == MENU_STATUS_UNSAVED)
+				list = g_list_prepend(list, gtk_tree_iter_copy(&child));
+			valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);
+		}
+	}
+
+	if (folder)
+		process(folder);
+	else {
+		GtkTreeIter iter;
+		gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model))
+			process(&iter);
+	}
+
+	return list;
+}
