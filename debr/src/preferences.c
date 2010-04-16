@@ -136,7 +136,6 @@ void preferences_dialog_setup_ui(void)
 		g_string_assign(debr.config.browser, gtk_combo_box_get_active_text(GTK_COMBO_BOX(browser_combo)));
 		g_string_assign(debr.config.htmleditor, gtk_entry_get_text(GTK_ENTRY(htmleditor_entry)));
 		debr.config.native_editor = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(builtin_editor));
-
 		debr_config_save();
 	}
 
