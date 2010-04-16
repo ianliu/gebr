@@ -119,8 +119,7 @@ gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value
 	if (can_fix != NULL)
 		*can_fix = (strlen(value) == 0 ||
 			    flags & GEBR_VALIDATE_CHECK_EMAIL ||
-			    flags & GEBR_VALIDATE_CHECK_FILEN ||
-			    flags & GEBR_VALIDATE_CHECK_LABEL_HOTKEY) ? FALSE : TRUE;
+			    flags & GEBR_VALIDATE_CHECK_FILEN) ? FALSE : TRUE;
 
 	if (flags & GEBR_VALIDATE_CHECK_EMPTY && !gebr_validate_check_is_not_empty(value))
 		failed |= GEBR_VALIDATE_CHECK_EMPTY;
@@ -201,9 +200,9 @@ gchar *gebr_validate_case_automatic_fixes_msg(GebrValidateCase *self, const gcha
 {
 	gint failed = gebr_validate_case_check_value(self, value, can_fix);
 	if (!(*can_fix))
-		return g_strdup(_("No automatic fix available"));
+		return g_strdup(_("<b>No automatic fix available</b>"));
 
-	GString *msg = g_string_new(_("Automatic fix(es) available:"));
+	GString *msg = g_string_new(_("<b>Automatic fix(es) available:</b>"));
 	if (failed & GEBR_VALIDATE_CHECK_CAPIT)
 		g_string_append(msg, _("\n - Capitalize first letter"));
 	if (failed & GEBR_VALIDATE_CHECK_NOBLK)
