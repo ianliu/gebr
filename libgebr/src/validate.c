@@ -208,11 +208,42 @@ gchar *gebr_validate_case_automatic_fixes_msg(GebrValidateCase *self, const gcha
 	if (failed & GEBR_VALIDATE_CHECK_NOBLK)
 		g_string_append(msg, _("\n - Remove spaces at the beginning/end"));
 	if (failed & GEBR_VALIDATE_CHECK_MTBLK)
-		g_string_append(msg, _("\n - Remove multiple spaces"));
+		g_string_append(msg, _("\n - Remove multiples spaces"));
 	if (failed & GEBR_VALIDATE_CHECK_NOPNT)
 		g_string_append(msg, _("\n - Remove final punctuation character"));
 	if (failed & GEBR_VALIDATE_CHECK_URL)
-		g_string_append(msg, _("\n - Add url scheme"));
+		g_string_append(msg, _("\n - Add URL scheme"));
+
+	gchar *ret = msg->str;
+	g_string_free(msg, FALSE);
+
+	return ret;
+}
+
+gchar *gebr_validate_flags_failed_msg(gint failed_flags)
+{
+	if (!failed_flags)
+		return NULL;
+
+	GString *msg = g_string_new(_("<b>Error(s) found:</b>"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_EMPTY)
+		g_string_append(msg, _("\n - The field isn't filled"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_CAPIT)
+		g_string_append(msg, _("\n - First letter should be capitalized"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_NOBLK)
+		g_string_append(msg, _("\n - There are spaces at the beginning/end"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_MTBLK)
+		g_string_append(msg, _("\n - There are multiples spaces"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_NOPNT)
+		g_string_append(msg, _("\n - This field shouldn't have a final punctuation"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_EMAIL)
+		g_string_append(msg, _("\n - Invalid email address"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_FILEN)
+		g_string_append(msg, _("\n - Invalid menu filename"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_LABEL_HOTKEY)
+		g_string_append(msg, _("\n - Duplicated hotkey"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_URL)
+		g_string_append(msg, _("\n - URL scheme is missing"));
 
 	gchar *ret = msg->str;
 	g_string_free(msg, FALSE);

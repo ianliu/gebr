@@ -84,7 +84,7 @@ void validate_setup_ui(void)
 
 static void validate_append_text(struct validate *validate, const gchar * format, ...);
 static void validate_append_text_emph(struct validate *validate, const gchar * format, ...);
-static void validate_append_text_error(struct validate *validate, const gchar *program_path,
+static void validate_append_text_error(struct validate *validate, gint failed_flags, const gchar *program_path,
 				       const gchar *parameter_path, const gchar * format, ...);
 void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 {
@@ -127,7 +127,7 @@ void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 		.append_text = (void(*)(gpointer,const gchar*,...))validate_append_text, 
 		.append_text_emph = (void(*)(gpointer,const gchar*,...))validate_append_text_emph, 
 		.append_text_error = NULL, 
-		.append_text_error_with_paths = (void(*)(gpointer,
+		.append_text_error_with_paths = (void(*)(gpointer, gint,
 							 const gchar *,
 							 const gchar *,
 							 const gchar *, ...))validate_append_text_error, 
@@ -364,7 +364,7 @@ validate_append_link(struct validate *validate, const gchar *text, const gchar *
  *
  * \see GtkTextTag
  */
-static void
+static GtkTextTag *
 validate_append_text_with_property_list(struct validate *validate, const gchar * text,
 					const gchar * first_property_name, ...)
 {
@@ -378,6 +378,8 @@ validate_append_text_with_property_list(struct validate *validate, const gchar *
 	va_end(argp);
 
 	validate_append_text_with_tag(validate, text_tag, text);
+
+	return text_tag;
 }
 
 /**
@@ -420,16 +422,22 @@ static void validate_append_text(struct validate *validate, const gchar * format
  * If \p fix_flags in non-zero then add a fix link after text.
  * If \p edit_id is non-zero the add an edit link after text.
  */
-static void validate_append_text_error(struct validate *validate, const gchar *program_path,
+static void validate_append_text_error(struct validate *validate, gint failed_flags, const gchar *program_path,
 				       const gchar *parameter_path, const gchar * format, ...)
 {
+	GtkTextTag *text_tag;
 	gchar *string;
 	va_list argp;
 	va_start(argp, format);
 	string = g_strdup_vprintf(format, argp);
-	validate_append_text_with_property_list(validate, string, "foreground", "#ff0000", NULL);
+	text_tag = validate_append_text_with_property_list(validate, string, "foreground", "#ff0000", NULL);
 	va_end(argp);
 	g_free(string);
+
+	/* error tooltip */
+	gchar *error_msg = gebr_validate_flags_failed_msg(failed_flags);
+	gebr_gui_gtk_text_view_set_tooltip_on_tag(GTK_TEXT_VIEW(validate->text_view), text_tag, error_msg);
+	g_free(error_msg);
 
 	GtkTextTag *link_tag;
 

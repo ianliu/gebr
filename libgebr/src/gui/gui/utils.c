@@ -781,8 +781,7 @@ GtkTextMark *gebr_gui_gtk_text_buffer_create_mark_before_last_char(GtkTextBuffer
 	return end_mark;
 }
 
-void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIter * ini, GtkTextIter * end, const gchar
-					      * tooltip)
+void gebr_gui_gtk_text_view_set_tooltip_on_tag(GtkTextView * text_view, GtkTextTag * text_tag, const gchar* tooltip)
 {
 	/**
 	 * \internal
@@ -798,12 +797,9 @@ void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIt
 		gtk_text_view_get_iter_at_location(text_view, &iter, x, y);
 		tags = gtk_text_iter_get_tags(&iter);
 		for (GSList *i = tags; i != NULL; i = g_slist_next(i)) {
-			gchar *name;
-
-			g_object_get(i->data, "name", &name, NULL);
-			if (g_str_has_prefix(name, "__tooltip")) {
-				gchar *tooltip_markup;
-				tooltip_markup = g_object_get_data(i->data, "tooltip");
+			gchar *tooltip_markup;
+			tooltip_markup = g_object_get_data(i->data, "tooltip");
+			if (tooltip_markup != NULL) {
 				gtk_tooltip_set_markup(tooltip, tooltip_markup);
 				ret = TRUE;
 				break;
@@ -813,22 +809,13 @@ void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIt
 		return ret;
 	}
 
-	static int tag_count = 0;
-	GtkTextBuffer * buffer = gtk_text_view_get_buffer(text_view);
-
-	GtkTextTag *text_tag;
-	GString *tag_name = g_string_new(NULL);
-	g_string_printf(tag_name, "__tooltip%d", tag_count);
-	text_tag = gtk_text_buffer_create_tag(buffer, tag_name->str, NULL);
-	g_string_free(tag_name, TRUE);
-
 	tooltip = (const gchar*)g_strdup(tooltip);
 	gebr_gui_g_object_set_free_parent(text_tag, (gpointer)tooltip);
 	g_object_set_data(G_OBJECT(text_tag), "tooltip", (gpointer)tooltip);
-	gtk_text_buffer_apply_tag(buffer, text_tag, ini, end);
 
-	gint signal_handler = 0;
-	signal_handler = g_signal_handler_find(text_view, G_SIGNAL_MATCH_FUNC, 0, (GQuark)0, NULL, on_text_view_query_tooltip, NULL);
+	g_object_set(G_OBJECT(text_view), "has-tooltip", TRUE, NULL);
+	gint signal_handler = g_signal_handler_find(text_view, G_SIGNAL_MATCH_FUNC, 0, (GQuark)0, NULL,
+						    on_text_view_query_tooltip, NULL);
 	if (!signal_handler)
 		g_signal_connect(G_OBJECT(text_view), "query-tooltip", G_CALLBACK(on_text_view_query_tooltip), NULL);
 }

@@ -32,8 +32,6 @@ GebrGeoXmlValidate *gebr_geoxml_validate_new(gpointer data, GebrGeoXmlValidateOp
 	validate->data = data;
 	if (operations.append_text_emph == NULL)
 		operations.append_text_emph = operations.append_text;
-	if (operations.append_text_error == NULL)
-		operations.append_text_error = operations.append_text;
 	validate->operations = operations;
 	if (options.all) {
 		options.filename = TRUE;
@@ -60,7 +58,7 @@ void gebr_geoxml_validate_free(GebrGeoXmlValidate * validate)
 /**
  * \internal
  */
-static void validate_append_text_error(GebrGeoXmlValidate * validate, const gchar * format, ...)
+static void validate_append_text_error(GebrGeoXmlValidate * validate, gint flags_failed, const gchar * format, ...)
 {
 	va_list argp;
 	va_start(argp, format);
@@ -69,18 +67,18 @@ static void validate_append_text_error(GebrGeoXmlValidate * validate, const gcha
 	va_end(argp);
 	
 	if (validate->operations.append_text_error_with_paths == NULL) {
-		validate->operations.append_text_error(validate->data, string);
+		validate->operations.append_text_error(validate->data, flags_failed, string);
 		goto out;
 	}
 	if (validate->iprog == -1) {
-		validate->operations.append_text_error_with_paths(validate->data, NULL, NULL, string);
+		validate->operations.append_text_error_with_paths(validate->data, flags_failed,  NULL, NULL, string);
 		goto out;
 	}
 
 	GString *path = g_string_new(NULL);
 	g_string_printf(path, "%d", validate->iprog);
 	if (validate->ipar == -1) {
-		validate->operations.append_text_error_with_paths(validate->data, path->str, NULL, string);
+		validate->operations.append_text_error_with_paths(validate->data, flags_failed, path->str, NULL, string);
 		goto out2;
 	}
 	GString *path2 = g_string_new(NULL);
@@ -88,7 +86,7 @@ static void validate_append_text_error(GebrGeoXmlValidate * validate, const gcha
 		g_string_printf(path2, "%d", validate->ipar);
 	else
 		g_string_printf(path2, "%d:%d", validate->ipar, validate->isubpar);
-	validate->operations.append_text_error_with_paths(validate->data, path->str, path2->str, string);
+	validate->operations.append_text_error_with_paths(validate->data, flags_failed, path->str, path2->str, string);
 
 	g_string_free(path2, TRUE);
 out2:	g_string_free(path, TRUE);
@@ -103,16 +101,16 @@ static void validate_append_item(GebrGeoXmlValidate * validate, const gchar * it
 	validate->operations.append_text_emph(validate->data, item);
 }
 
-static void validate_append_check(GebrGeoXmlValidate * validate, const gchar * value, int flags, const gchar * format, ...);
+static gint validate_append_check(GebrGeoXmlValidate * validate, const gchar * value, int flags, const gchar * format, ...);
 
 /**
  * \internal
  */
-static void
+static gint
 validate_append_item_with_check(GebrGeoXmlValidate * validate, const gchar * item, const gchar * value, int flags)
 {
 	validate_append_item(validate, item);
-	validate_append_check(validate, value, flags, "\n");
+	return validate_append_check(validate, value, flags, "\n");
 }
 
 static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * parameter);
@@ -242,34 +240,36 @@ out:	validate->operations.append_text_emph(validate->data, _("%d potential error
  * \internal
  * TRUE if \p value passed through all selected tests
  */
-static void validate_append_check(GebrGeoXmlValidate * validate, const gchar * value, int flags, const gchar * format, ...)
+static gint validate_append_check(GebrGeoXmlValidate * validate, const gchar * value, int flags, const gchar * format, ...)
 {
 	gboolean result = TRUE;
+	gint failed = 0;
 
-	if (flags & GEBR_VALIDATE_CHECK_EMPTY)
-		result = result && gebr_validate_check_is_not_empty(value);
-	if (flags & GEBR_VALIDATE_CHECK_CAPIT)
-		result = result && gebr_validate_check_no_lower_case(value);
-	if (flags & GEBR_VALIDATE_CHECK_NOBLK)
-		result = result && gebr_validate_check_no_blanks_at_boundaries(value);
-	if (flags & GEBR_VALIDATE_CHECK_MTBLK)
-		result = result && gebr_validate_check_no_multiple_blanks(value);
-	if (flags & GEBR_VALIDATE_CHECK_NOPNT)
-		result = result && gebr_validate_check_no_punctuation_at_end(value);
-	if (flags & GEBR_VALIDATE_CHECK_EMAIL)
-		result = result && gebr_validate_check_is_email(value);
-	if (flags & GEBR_VALIDATE_CHECK_FILEN)
-		result = result && gebr_validate_check_menu_filename(value);
-	if (flags & GEBR_VALIDATE_CHECK_URL)
-		result = result && gebr_validate_check_is_url(value);
+	if ((flags & GEBR_VALIDATE_CHECK_EMPTY) && !gebr_validate_check_is_not_empty(value))
+		failed |= GEBR_VALIDATE_CHECK_EMPTY;
+	if ((flags & GEBR_VALIDATE_CHECK_CAPIT) && !gebr_validate_check_no_lower_case(value))
+		failed |= GEBR_VALIDATE_CHECK_CAPIT;
+	if ((flags & GEBR_VALIDATE_CHECK_NOBLK) && !gebr_validate_check_no_blanks_at_boundaries(value))
+		failed |= GEBR_VALIDATE_CHECK_NOBLK;
+	if ((flags & GEBR_VALIDATE_CHECK_MTBLK) && !gebr_validate_check_no_multiple_blanks(value))
+		failed |= GEBR_VALIDATE_CHECK_MTBLK;
+	if ((flags & GEBR_VALIDATE_CHECK_NOPNT) && !gebr_validate_check_no_punctuation_at_end(value))
+		failed |= GEBR_VALIDATE_CHECK_NOPNT;
+	if ((flags & GEBR_VALIDATE_CHECK_EMAIL) && !gebr_validate_check_is_email(value))
+		failed |= GEBR_VALIDATE_CHECK_EMAIL;
+	if ((flags & GEBR_VALIDATE_CHECK_FILEN) && !gebr_validate_check_menu_filename(value))
+		failed |= GEBR_VALIDATE_CHECK_FILEN;
+	if ((flags & GEBR_VALIDATE_CHECK_URL) && !gebr_validate_check_is_url(value))
+		failed |= GEBR_VALIDATE_CHECK_URL;
 
+	result = failed ? FALSE : TRUE;
 	if (result)
 		validate->operations.append_text(validate->data, value);
 	else {
 		if (gebr_validate_check_is_not_empty(value))
-			validate_append_text_error(validate, "%s", value);
+			validate_append_text_error(validate, failed, "%s", value);
 		else
-			validate_append_text_error(validate, _("UNSET"));
+			validate_append_text_error(validate, GEBR_VALIDATE_CHECK_EMPTY, _("UNSET"));
 		validate->potential_errors++;
 	}
 
@@ -305,8 +305,10 @@ static void validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 			uppercase = g_utf8_strup(hotkey, length);
 			if (g_hash_table_lookup(validate->hotkey_table, uppercase)) {
 				g_string_printf(label_ext, " (Alt+%s%s)", uppercase, _(", already used above"));
-				validate_append_text_error(validate, label_ext->str);
+				validate_append_text_error(validate, GEBR_VALIDATE_CHECK_LABEL_HOTKEY, label_ext->str);
 				++validate->potential_errors;
+
+				failed |= GEBR_VALIDATE_CHECK_LABEL_HOTKEY;
 				result = FALSE;
 			} else
 				validate->operations.append_text(validate->data, _(" (Alt+%s)"), uppercase);
@@ -317,7 +319,7 @@ static void validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 	}
 
 	if (format == NULL)
-		return;
+		return failed;
 	va_list argp;
 	va_start(argp, format);
 	gchar *string; 
@@ -325,6 +327,8 @@ static void validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 	validate->operations.append_text(validate->data, string);
 	g_free(string);
 	va_end(argp);
+
+	return failed;
 }
 
 /**
@@ -382,7 +386,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 						     gebr_geoxml_program_parameter_get_list_separator
 						     (GEBR_GEOXML_PROGRAM_PARAMETER(pp)));
 			else {
-				validate_append_text_error(validate, _(" (missing entries' separator)"));
+				validate_append_text_error(validate, 0, _(" (missing entries' separator)"));
 				validate->potential_errors++;
 			}
 		}
@@ -397,7 +401,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 			gebr_geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
 
 			if (enum_option == NULL) {
-				validate_append_text_error(validate, _("\n        missing options"));
+				validate_append_text_error(validate, 0, _("\n        missing options"));
 				validate->potential_errors++;
 			}
 
