@@ -31,7 +31,7 @@ static void __category_edit_validate_iter(CategoryEdit * category_edit, GtkTreeI
 static void __category_edit_add(CategoryEdit * category_edit, GebrGeoXmlSequence * category);
 static void __category_edit_remove(CategoryEdit * category_edit, GtkTreeIter * iter);
 static void __category_edit_move(CategoryEdit * category_edit, GtkTreeIter * iter, GtkTreeIter * position,
-				    GtkTreeViewDropPosition drop_position);
+				 GtkTreeViewDropPosition drop_position);
 static void __category_edit_move_top(CategoryEdit * category_edit, GtkTreeIter * iter);
 static void __category_edit_move_bottom(CategoryEdit * category_edit, GtkTreeIter * iter);
 static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit);
@@ -155,6 +155,7 @@ static void category_edit_add_request(CategoryEdit * category_edit, GtkWidget *c
 
 /**
  * \internal
+ * \p cell and \p path_string may be NULL
  */
 static void
 __category_edit_on_value_edited(GtkCellRendererText * cell, gchar * path_string, gchar * new_text,
@@ -323,6 +324,44 @@ static void __category_edit_move_bottom(CategoryEdit * category_edit, GtkTreeIte
  */
 static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit)
 {
+
+	/**
+	 * \internal
+	 * Handle validation warning clicks, triggering automatic fixes.
+	 */
+	gboolean tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * event,
+						   CategoryEdit * category_edit)
+	{
+		if (event->button != 1)
+			return FALSE;
+
+		GtkTreePath *path;
+		/* Get tree path for row that was clicked */
+		if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tree_view),
+						  (gint) event->x, (gint) event->y, &path, NULL, NULL, NULL)) {
+			GtkTreeIter iter;
+			gchar *stock;
+			GebrGeoXmlValueSequence *category;
+
+			gtk_tree_model_get_iter(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store), &iter, path);
+			gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store), &iter,
+					   2, &category, 1, &stock, -1);
+			if (stock) {
+				gtk_list_store_set(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store, &iter,
+						   1, stock, -1);
+
+				GebrValidateCase *validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_CATEGORY);
+				gchar *fix = gebr_validate_case_fix(validate_case, gebr_geoxml_value_sequence_get(category));
+				__category_edit_on_value_edited(NULL, NULL, fix, GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit));
+				g_free(fix);
+				g_free(stock);
+			}
+			gtk_tree_path_free(path);
+		}
+
+		return FALSE;
+	}
+
 	GtkWidget *tree_view;
 	GtkTreeViewColumn *col;
 	GtkCellRenderer *renderer;
@@ -333,6 +372,7 @@ static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit)
 						    (GebrGuiGtkTreeViewTooltipCallback)__category_edit_on_query_tooltip,
 						    category_edit);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree_view), FALSE);
+	g_signal_connect(tree_view, "button-press-event", G_CALLBACK(tree_view_on_button_pressed), category_edit);
 
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(renderer, "editable", TRUE, NULL);
