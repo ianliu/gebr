@@ -330,31 +330,38 @@ static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit)
 	 * Handle validation warning clicks, triggering automatic fixes.
 	 */
 	gboolean tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * event,
-						   CategoryEdit * category_edit)
+					     CategoryEdit * category_edit)
 	{
 		if (event->button != 1)
 			return FALSE;
 
 		GtkTreePath *path;
+		GtkTreeViewColumn *column;
 		/* Get tree path for row that was clicked */
 		if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tree_view),
-						  (gint) event->x, (gint) event->y, &path, NULL, NULL, NULL)) {
-			GtkTreeIter iter;
-			gchar *stock;
-			GebrGeoXmlValueSequence *category;
+						  (gint) event->x, (gint) event->y, &path, &column, NULL, NULL)) {
+			if (gtk_tree_view_column_get_sort_column_id(column) == 1) {
+				GtkTreeIter iter;
+				gchar *stock;
+				GebrGeoXmlValueSequence *category;
 
-			gtk_tree_model_get_iter(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store), &iter, path);
-			gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store), &iter,
-					   2, &category, 1, &stock, -1);
-			if (stock) {
-				gtk_list_store_set(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store, &iter,
-						   1, stock, -1);
+				gtk_tree_model_get_iter(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store),
+							&iter, path);
+				gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store),
+						   &iter, 2, &category, 1, &stock, -1);
+				if (stock) {
+					gtk_list_store_set(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store, &iter,
+							   1, stock, -1);
 
-				GebrValidateCase *validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_CATEGORY);
-				gchar *fix = gebr_validate_case_fix(validate_case, gebr_geoxml_value_sequence_get(category));
-				__category_edit_on_value_edited(NULL, NULL, fix, GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit));
-				g_free(fix);
-				g_free(stock);
+					GebrValidateCase *validate_case =
+						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_CATEGORY);
+					gchar *fix = gebr_validate_case_fix(validate_case,
+									    gebr_geoxml_value_sequence_get(category));
+					__category_edit_on_value_edited(NULL, NULL, fix,
+									GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit));
+					g_free(fix);
+					g_free(stock);
+				}
 			}
 			gtk_tree_path_free(path);
 		}
