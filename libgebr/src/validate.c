@@ -135,6 +135,8 @@ gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value
 		failed |= GEBR_VALIDATE_CHECK_EMAIL;
 	if (flags & GEBR_VALIDATE_CHECK_FILEN && !gebr_validate_check_menu_filename(value))
 		failed |= GEBR_VALIDATE_CHECK_FILEN;
+	if (flags & GEBR_VALIDATE_CHECK_URL && !gebr_validate_check_is_url(value))
+		failed |= GEBR_VALIDATE_CHECK_URL;
 
 	return failed;
 }
@@ -187,6 +189,16 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 		if (fix != NULL)
 			tmp = fix;
 		fix = gebr_validate_change_no_punctuation_at_end(fix);
+		if (tmp) {
+			g_free(tmp);
+			tmp = NULL;
+		}
+	}
+	if (self->flags & GEBR_VALIDATE_CHECK_URL
+	    && !gebr_validate_check_is_url(fix)) {
+		if (fix != NULL)
+			tmp = fix;
+		fix = gebr_validate_change_url(fix);
 		if (tmp) {
 			g_free(tmp);
 			tmp = NULL;
