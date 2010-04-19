@@ -347,18 +347,26 @@ static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit)
 
 				gtk_tree_model_get_iter(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store),
 							&iter, path);
-				gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store),
-						   &iter, 2, &category, 1, &stock, -1);
+				gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store), &iter,
+						   1, &stock,
+						   2, &category,
+						   -1);
 				if (stock) {
-					gtk_list_store_set(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store, &iter,
-							   1, stock, -1);
-
 					GebrValidateCase *validate_case =
 						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_CATEGORY);
 					gchar *fix = gebr_validate_case_fix(validate_case,
 									    gebr_geoxml_value_sequence_get(category));
-					__category_edit_on_value_edited(NULL, NULL, fix,
-									GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit));
+
+					gtk_list_store_set(GEBR_GUI_GTK_SEQUENCE_EDIT(category_edit)->list_store, &iter,
+							   0, fix,
+							   1, stock,
+							   -1);
+
+					gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(category), fix);
+					__category_edit_validate_iter(category_edit, &iter);
+
+					g_signal_emit_by_name(category_edit, "changed");
+
 					g_free(fix);
 					g_free(stock);
 				}
@@ -385,12 +393,14 @@ static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit)
 	g_object_set(renderer, "editable", TRUE, NULL);
 	g_signal_connect(renderer, "edited", G_CALLBACK(__category_edit_on_value_edited), category_edit);
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_column_set_expand(col, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
 	gtk_tree_view_column_set_sort_column_id(col, 0);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_column_set_expand(col, FALSE);
 	gtk_tree_view_column_add_attribute(col, renderer, "stock-id", 1);
 	gtk_tree_view_column_set_sort_column_id(col, 1);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
