@@ -80,7 +80,7 @@ static GebrValidateCase validate_cases[] = {
 
 	{GEBR_VALIDATE_CASE_PROGRAM_VERSION,
 		GEBR_VALIDATE_CHECK_EMPTY,
-		N_("Program version should be filled.")},
+		N_("Program version should be filled in.")},
 
 	{GEBR_VALIDATE_CASE_PROGRAM_URL,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_URL,
@@ -214,7 +214,7 @@ gchar *gebr_validate_case_automatic_fixes_msg(GebrValidateCase *self, const gcha
 	if (!(*can_fix))
 		return g_strdup(_("<b>No automatic fix available</b>"));
 
-	GString *msg = g_string_new(_("<b>Automatic fix(es) available:</b>"));
+	GString *msg = g_string_new(_("<b>Click on the icon to fix:</b>"));
 	if (failed & GEBR_VALIDATE_CHECK_CAPIT)
 		g_string_append(msg, _("\n - Capitalize first letter"));
 	if (failed & GEBR_VALIDATE_CHECK_NOBLK)
@@ -239,7 +239,7 @@ gchar *gebr_validate_flags_failed_msg(gint failed_flags)
 
 	GString *msg = g_string_new(_("<b>Error(s) found:</b>"));
 	if (failed_flags & GEBR_VALIDATE_CHECK_EMPTY)
-		g_string_append(msg, _("\n - The field isn't filled"));
+		g_string_append(msg, _("\n - The field is not filled in"));
 	if (failed_flags & GEBR_VALIDATE_CHECK_CAPIT)
 		g_string_append(msg, _("\n - First letter should be capitalized"));
 	if (failed_flags & GEBR_VALIDATE_CHECK_NOBLK)
@@ -247,7 +247,7 @@ gchar *gebr_validate_flags_failed_msg(gint failed_flags)
 	if (failed_flags & GEBR_VALIDATE_CHECK_MTBLK)
 		g_string_append(msg, _("\n - There are multiples spaces"));
 	if (failed_flags & GEBR_VALIDATE_CHECK_NOPNT)
-		g_string_append(msg, _("\n - This field shouldn't have a final punctuation"));
+		g_string_append(msg, _("\n - This field should not have a final punctuation"));
 	if (failed_flags & GEBR_VALIDATE_CHECK_EMAIL)
 		g_string_append(msg, _("\n - Invalid email address"));
 	if (failed_flags & GEBR_VALIDATE_CHECK_FILEN)

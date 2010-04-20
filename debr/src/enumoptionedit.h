@@ -42,6 +42,7 @@ struct _EnumOptionEdit {
 	GebrGeoXmlProgramParameter *program_parameter;
 	GtkWidget *label_entry;
 	GtkWidget *value_entry;
+	GtkWidget *validate_image;
 };
 struct _EnumOptionEditClass {
 	GtkSequenceEditClass parent;
@@ -50,6 +51,6 @@ struct _EnumOptionEditClass {
 /**
  * Creates a new EnumOptionEdit widget and returns it.
  */
-GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter);
+GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter, gboolean new);
 
 #endif				//__ENUM_OPTION_EDIT_H

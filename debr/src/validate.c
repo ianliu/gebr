@@ -149,11 +149,14 @@ out:
 	gtk_tree_store_set(debr.ui_menu.model, iter, MENU_VALIDATE_NEED_UPDATE, FALSE,
 			   MENU_VALIDATE_POINTER, validate, -1);
 
+	gchar *filename;
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_FILENAME, &filename, -1);
 	gint error_count = gebr_geoxml_validate_report_menu(validate->geoxml_validate, menu);
 	gtk_list_store_set(debr.ui_validate.list_store, &validate->iter,
 			   VALIDATE_ICON, !error_count ? debr.pixmaps.stock_apply : debr.pixmaps.stock_cancel,
-			   VALIDATE_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)),
+			   VALIDATE_FILENAME, filename,
 			   VALIDATE_POINTER, validate, -1);
+	g_free(filename);
 	validate_set_selected(&validate->iter);
 
 	if (updated) {
@@ -207,7 +210,7 @@ void validate_image_set_warning(GtkWidget * image, const gchar *markup)
 void validate_image_set_check_help(GtkWidget * image, const gchar *help)
 {
 	if (strlen(help) <= 2)
-		validate_image_set_warning(image, _("Menu help is empty"));
+		validate_image_set_warning(image, _("Help is empty"));
 	else
 		validate_image_set_warning(image, NULL);
 }
@@ -218,7 +221,18 @@ void validate_image_set_check_category_list(GtkWidget * image, GebrGeoXmlFlow * 
 
 	gebr_geoxml_flow_get_category(menu, &sequence, 0);
 	if (sequence == NULL)
-		validate_image_set_warning(image, _("Any category is set"));
+		validate_image_set_warning(image, _("No category is set"));
+	else
+		validate_image_set_warning(image, NULL);
+}
+
+void validate_image_set_check_enum_option_list(GtkWidget * image, GebrGeoXmlProgramParameter * enum_parameter)
+{
+	GebrGeoXmlSequence *sequence;
+
+	gebr_geoxml_program_parameter_get_enum_option(enum_parameter, &sequence, 0);
+	if (sequence == NULL)
+		validate_image_set_warning(image, _("No enum option is set"));
 	else
 		validate_image_set_warning(image, NULL);
 }

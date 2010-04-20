@@ -408,7 +408,7 @@ static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit)
 	return tree_view;
 }
 
-GtkWidget *category_edit_new(GebrGeoXmlFlow * menu)
+GtkWidget *category_edit_new(GebrGeoXmlFlow * menu, gboolean new)
 {
 	CategoryEdit *category_edit;
 	GtkListStore *list_store;
@@ -433,7 +433,8 @@ GtkWidget *category_edit_new(GebrGeoXmlFlow * menu)
 
 	category_edit->validate_image = validate_image;
 	category_edit->menu = menu;
-	validate_image_set_check_category_list(category_edit->validate_image, category_edit->menu);
+	if (!new)
+		validate_image_set_check_category_list(category_edit->validate_image, category_edit->menu);
 	g_signal_connect(GTK_OBJECT(category_edit), "add-request", G_CALLBACK(category_edit_add_request), categories_combo);
 
 	return (GtkWidget *) category_edit;

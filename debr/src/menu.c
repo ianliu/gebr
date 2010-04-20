@@ -1047,7 +1047,7 @@ gboolean menu_dialog_setup_ui(gboolean new)
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, 0);
 	gtk_misc_set_alignment(GTK_MISC(categories_label), 0, 0.5);
 
-	categories_sequence_edit = category_edit_new(debr.menu);
+	categories_sequence_edit = category_edit_new(debr.menu, new);
 	gtk_widget_show(categories_sequence_edit);
 	gtk_table_attach(GTK_TABLE(table), categories_sequence_edit, 1, 2, 5, 6,
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, 0);

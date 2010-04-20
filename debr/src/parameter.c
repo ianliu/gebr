@@ -318,14 +318,14 @@ void parameter_new_from_type(enum GEBR_GEOXML_PARAMETER_TYPE type)
 		return;
 
 	if (gebr_geoxml_parameter_get_is_program_parameter(debr.parameter) == TRUE) {
-		if (!parameter_dialog_setup_ui(FALSE))
+		if (!parameter_dialog_setup_ui(TRUE))
 			parameter_remove(FALSE);
 		else
 			parameter_selected();
 	} else {
 		GebrGeoXmlParameterGroup *parameter_group = GEBR_GEOXML_PARAMETER_GROUP(debr.parameter);
 		gebr_geoxml_parameter_group_set_is_instanciable(parameter_group, FALSE);
-		if (!parameter_group_dialog_setup_ui(FALSE))
+		if (!parameter_group_dialog_setup_ui(TRUE))
 			parameter_remove(FALSE);
 		else
 			parameter_selected();
@@ -922,208 +922,205 @@ static gboolean parameter_dialog_setup_ui(gboolean new)
 
 	gebr_gui_parameter_widget = gebr_gui_parameter_widget_new(ui->parameter, TRUE, NULL);
 	switch (type) {
-	case GEBR_GEOXML_PARAMETER_TYPE_FILE:{
-			GtkWidget *type_label;
-			GtkWidget *type_combo;
-			GtkWidget *filter_label;
-			GtkWidget *hbox;
-			GtkWidget *filter_name_entry;
-			GtkWidget *filter_pattern_entry;
-			gchar *filter_name;
-			gchar *filter_pattern;
+	case GEBR_GEOXML_PARAMETER_TYPE_FILE: {
+		GtkWidget *type_label;
+		GtkWidget *type_combo;
+		GtkWidget *filter_label;
+		GtkWidget *hbox;
+		GtkWidget *filter_name_entry;
+		GtkWidget *filter_pattern_entry;
+		gchar *filter_name;
+		gchar *filter_pattern;
 
-			/*
-			 * Type
-			 */
-			type_label = gtk_label_new(_("Type:"));
-			gtk_widget_show(type_label);
-			gtk_table_attach(GTK_TABLE(table), type_label, 0, 1, row, row + 1,
-					 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-			gtk_misc_set_alignment(GTK_MISC(type_label), 0, 0.5);
+		/*
+		 * Type
+		 */
+		type_label = gtk_label_new(_("Type:"));
+		gtk_widget_show(type_label);
+		gtk_table_attach(GTK_TABLE(table), type_label, 0, 1, row, row + 1,
+				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(type_label), 0, 0.5);
 
-			type_combo = gtk_combo_box_new_text();
-			gtk_widget_show(type_combo);
-			gtk_table_attach(GTK_TABLE(table), type_combo, 1, 2, row, row + 1,
-					 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-					 (GtkAttachOptions) (0), 0, 0), ++row;
-			gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), _("File"));
-			gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), _("Directory"));
-			g_signal_connect(type_combo, "changed",
-					 G_CALLBACK(parameter_file_type_changed), gebr_gui_parameter_widget);
+		type_combo = gtk_combo_box_new_text();
+		gtk_widget_show(type_combo);
+		gtk_table_attach(GTK_TABLE(table), type_combo, 1, 2, row, row + 1,
+				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+				 (GtkAttachOptions) (0), 0, 0), ++row;
+		gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), _("File"));
+		gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), _("Directory"));
+		g_signal_connect(type_combo, "changed",
+				 G_CALLBACK(parameter_file_type_changed), gebr_gui_parameter_widget);
 
-			/* file or directory? */
-			gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo),
-						 gebr_geoxml_program_parameter_get_file_be_directory(program_parameter)
-						 == TRUE ? 1 : 0);
+		/* file or directory? */
+		gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo),
+					 gebr_geoxml_program_parameter_get_file_be_directory(program_parameter)
+					 == TRUE ? 1 : 0);
 
-			/*
-			 * Filter
-			 */
-			filter_label = gtk_label_new(_("Filter file types:"));
-			gtk_widget_show(filter_label);
-			gtk_table_attach(GTK_TABLE(table), filter_label, 0, 1, row, row + 1,
-					 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-			gtk_misc_set_alignment(GTK_MISC(filter_label), 0, 0.5);
-			hbox = gtk_hbox_new(FALSE, 0);
-			gtk_widget_show(hbox);
-			gtk_table_attach(GTK_TABLE(table), hbox, 1, 2, row, row + 1,
-					 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-					 (GtkAttachOptions) (0), 0, 0), ++row;
-			filter_name_entry = gebr_gui_gtk_enhanced_entry_new_with_empty_text(_("name"));
-			gtk_widget_show(filter_name_entry);
-			gtk_box_pack_start(GTK_BOX(hbox), filter_name_entry, FALSE, FALSE, 0);
-			g_signal_connect(filter_name_entry, "changed",
-					 G_CALLBACK(parameter_file_filter_name_changed), gebr_gui_parameter_widget);
-			filter_pattern_entry =
-			    gebr_gui_gtk_enhanced_entry_new_with_empty_text(_("pattern (eg. *.jpg *.png)"));
-			gtk_widget_show(filter_pattern_entry);
-			gtk_box_pack_start(GTK_BOX(hbox), filter_pattern_entry, FALSE, FALSE, 0);
-			g_signal_connect(filter_pattern_entry, "changed",
-					 G_CALLBACK(parameter_file_filter_pattern_changed), gebr_gui_parameter_widget);
+		/*
+		 * Filter
+		 */
+		filter_label = gtk_label_new(_("Filter file types:"));
+		gtk_widget_show(filter_label);
+		gtk_table_attach(GTK_TABLE(table), filter_label, 0, 1, row, row + 1,
+				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(filter_label), 0, 0.5);
+		hbox = gtk_hbox_new(FALSE, 0);
+		gtk_widget_show(hbox);
+		gtk_table_attach(GTK_TABLE(table), hbox, 1, 2, row, row + 1,
+				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+				 (GtkAttachOptions) (0), 0, 0), ++row;
+		filter_name_entry = gebr_gui_gtk_enhanced_entry_new_with_empty_text(_("name"));
+		gtk_widget_show(filter_name_entry);
+		gtk_box_pack_start(GTK_BOX(hbox), filter_name_entry, FALSE, FALSE, 0);
+		g_signal_connect(filter_name_entry, "changed",
+				 G_CALLBACK(parameter_file_filter_name_changed), gebr_gui_parameter_widget);
+		filter_pattern_entry =
+			gebr_gui_gtk_enhanced_entry_new_with_empty_text(_("pattern (eg. *.jpg *.png)"));
+		gtk_widget_show(filter_pattern_entry);
+		gtk_box_pack_start(GTK_BOX(hbox), filter_pattern_entry, FALSE, FALSE, 0);
+		g_signal_connect(filter_pattern_entry, "changed",
+				 G_CALLBACK(parameter_file_filter_pattern_changed), gebr_gui_parameter_widget);
 
-			gebr_geoxml_program_parameter_get_file_filter(program_parameter, &filter_name, &filter_pattern);
-			gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_GTK_ENHANCED_ENTRY(filter_name_entry),
-							     filter_name);
-			gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_GTK_ENHANCED_ENTRY(filter_pattern_entry),
-							     filter_pattern);
+		gebr_geoxml_program_parameter_get_file_filter(program_parameter, &filter_name, &filter_pattern);
+		gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_GTK_ENHANCED_ENTRY(filter_name_entry),
+						     filter_name);
+		gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_GTK_ENHANCED_ENTRY(filter_pattern_entry),
+						     filter_pattern);
 
-			break;
-		}
-	case GEBR_GEOXML_PARAMETER_TYPE_INT:
+		break;
+	} case GEBR_GEOXML_PARAMETER_TYPE_INT:
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
-	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:{
-			GtkWidget *min_label;
-			GtkWidget *min_entry;
-			GtkWidget *max_label;
-			GtkWidget *max_entry;
-			GtkWidget *inc_label;
-			GtkWidget *inc_entry;
-			GtkWidget *digits_label;
-			GtkWidget *digits_entry;
-			gchar *min_str;
-			gchar *max_str;
-			gchar *inc_str;
-			gchar *digits_str;
+	case GEBR_GEOXML_PARAMETER_TYPE_RANGE: {
+		GtkWidget *min_label;
+		GtkWidget *min_entry;
+		GtkWidget *max_label;
+		GtkWidget *max_entry;
+		GtkWidget *inc_label;
+		GtkWidget *inc_entry;
+		GtkWidget *digits_label;
+		GtkWidget *digits_entry;
+		gchar *min_str;
+		gchar *max_str;
+		gchar *inc_str;
+		gchar *digits_str;
 
-			gebr_geoxml_program_parameter_get_number_min_max(program_parameter, &min_str, &max_str);
+		gebr_geoxml_program_parameter_get_number_min_max(program_parameter, &min_str, &max_str);
 
-			/*
-			 * Minimum
-			 */
-			min_label = gtk_label_new(_("Minimum:"));
-			gtk_widget_show(min_label);
-			gtk_table_attach(GTK_TABLE(table), min_label, 0, 1, row, row + 1,
-					 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-			gtk_misc_set_alignment(GTK_MISC(min_label), 0, 0.5);
-			min_entry = gtk_entry_new();
-			gtk_widget_show(min_entry);
-			gtk_table_attach(GTK_TABLE(table), min_entry, 1, 2, row, row + 1,
-					 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-					 (GtkAttachOptions) (0), 0, 0), ++row;
-			g_signal_connect(min_entry, "activate",
-					 G_CALLBACK(parameter_number_min_on_activate), gebr_gui_parameter_widget);
-			g_signal_connect(min_entry, "focus-out-event",
-					 G_CALLBACK(parameter_number_min_on_focus_out), gebr_gui_parameter_widget);
+		/*
+		 * Minimum
+		 */
+		min_label = gtk_label_new(_("Minimum:"));
+		gtk_widget_show(min_label);
+		gtk_table_attach(GTK_TABLE(table), min_label, 0, 1, row, row + 1,
+				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(min_label), 0, 0.5);
+		min_entry = gtk_entry_new();
+		gtk_widget_show(min_entry);
+		gtk_table_attach(GTK_TABLE(table), min_entry, 1, 2, row, row + 1,
+				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+				 (GtkAttachOptions) (0), 0, 0), ++row;
+		g_signal_connect(min_entry, "activate",
+				 G_CALLBACK(parameter_number_min_on_activate), gebr_gui_parameter_widget);
+		g_signal_connect(min_entry, "focus-out-event",
+				 G_CALLBACK(parameter_number_min_on_focus_out), gebr_gui_parameter_widget);
 
-			/*
-			 * Maximum
-			 */
-			max_label = gtk_label_new(_("Maximum:"));
-			gtk_widget_show(max_label);
-			gtk_table_attach(GTK_TABLE(table), max_label, 0, 1, row, row + 1,
-					 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-			gtk_misc_set_alignment(GTK_MISC(max_label), 0, 0.5);
-			max_entry = gtk_entry_new();
-			gtk_widget_show(max_entry);
-			gtk_table_attach(GTK_TABLE(table), max_entry, 1, 2, row, row + 1,
-					 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-					 (GtkAttachOptions) (0), 0, 0), ++row;
-			g_signal_connect(max_entry, "activate",
-					 G_CALLBACK(parameter_number_max_on_activate), gebr_gui_parameter_widget);
-			g_signal_connect(max_entry, "focus-out-event",
-					 G_CALLBACK(parameter_number_max_on_focus_out), gebr_gui_parameter_widget);
+		/*
+		 * Maximum
+		 */
+		max_label = gtk_label_new(_("Maximum:"));
+		gtk_widget_show(max_label);
+		gtk_table_attach(GTK_TABLE(table), max_label, 0, 1, row, row + 1,
+				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(max_label), 0, 0.5);
+		max_entry = gtk_entry_new();
+		gtk_widget_show(max_entry);
+		gtk_table_attach(GTK_TABLE(table), max_entry, 1, 2, row, row + 1,
+				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+				 (GtkAttachOptions) (0), 0, 0), ++row;
+		g_signal_connect(max_entry, "activate",
+				 G_CALLBACK(parameter_number_max_on_activate), gebr_gui_parameter_widget);
+		g_signal_connect(max_entry, "focus-out-event",
+				 G_CALLBACK(parameter_number_max_on_focus_out), gebr_gui_parameter_widget);
 
-			gtk_entry_set_text(GTK_ENTRY(min_entry), min_str);
-			gtk_entry_set_text(GTK_ENTRY(max_entry), max_str);
+		gtk_entry_set_text(GTK_ENTRY(min_entry), min_str);
+		gtk_entry_set_text(GTK_ENTRY(max_entry), max_str);
 
-			if (type != GEBR_GEOXML_PARAMETER_TYPE_RANGE)
-				break;
-
-			gebr_geoxml_program_parameter_get_range_properties(program_parameter,
-									   &min_str, &max_str, &inc_str, &digits_str);
-
-			/*
-			 * Increment
-			 */
-			inc_label = gtk_label_new(_("Increment:"));
-			gtk_widget_show(inc_label);
-			gtk_table_attach(GTK_TABLE(table), inc_label, 0, 1, row, row + 1,
-					 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-			gtk_misc_set_alignment(GTK_MISC(inc_label), 0, 0.5);
-			inc_entry = gtk_entry_new();
-			gtk_widget_show(inc_entry);
-			gtk_table_attach(GTK_TABLE(table), inc_entry, 1, 2, row, row + 1,
-					 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-					 (GtkAttachOptions) (0), 0, 0), ++row;
-			g_signal_connect(inc_entry, "activate",
-					 G_CALLBACK(parameter_range_inc_on_activate), gebr_gui_parameter_widget);
-			g_signal_connect(inc_entry, "focus-out-event",
-					 G_CALLBACK(parameter_range_inc_on_focus_out), gebr_gui_parameter_widget);
-
-			/*
-			 * Digits
-			 */
-			digits_label = gtk_label_new(_("Digits:"));
-			gtk_widget_show(digits_label);
-			gtk_table_attach(GTK_TABLE(table), digits_label, 0, 1, row, row + 1,
-					 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-			gtk_misc_set_alignment(GTK_MISC(digits_label), 0, 0.5);
-			digits_entry = gtk_entry_new();
-			gtk_widget_show(digits_entry);
-			gtk_table_attach(GTK_TABLE(table), digits_entry, 1, 2, row, row + 1,
-					 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-					 (GtkAttachOptions) (0), 0, 0), ++row;
-			g_signal_connect(digits_entry, "activate",
-					 G_CALLBACK(parameter_range_digits_on_activate), gebr_gui_parameter_widget);
-			g_signal_connect(digits_entry, "focus-out-event",
-					 G_CALLBACK(parameter_range_digits_on_focus_out), gebr_gui_parameter_widget);
-
-			gtk_entry_set_text(GTK_ENTRY(inc_entry), inc_str);
-			gtk_entry_set_text(GTK_ENTRY(digits_entry), digits_str);
-
+		if (type != GEBR_GEOXML_PARAMETER_TYPE_RANGE)
 			break;
-		}
-	case GEBR_GEOXML_PARAMETER_TYPE_ENUM:{
-			GtkWidget *enum_option_edit;
-			GtkWidget *options_label;
-			GtkWidget *vbox;
 
-			GebrGeoXmlSequence *option;
+		gebr_geoxml_program_parameter_get_range_properties(program_parameter,
+								   &min_str, &max_str, &inc_str, &digits_str);
 
-			/*
-			 * Options
-			 */
-			options_label = gtk_label_new(_("Options:"));
-			gtk_widget_show(options_label);
-			vbox = gtk_vbox_new(FALSE, 0);
-			gtk_widget_show(vbox);
-			gtk_box_pack_start(GTK_BOX(vbox), options_label, FALSE, FALSE, 0);
-			gtk_table_attach(GTK_TABLE(table), vbox, 0, 1, row, row + 1,
-					 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, 0);
-			gtk_misc_set_alignment(GTK_MISC(options_label), 0, 0.5);
+		/*
+		 * Increment
+		 */
+		inc_label = gtk_label_new(_("Increment:"));
+		gtk_widget_show(inc_label);
+		gtk_table_attach(GTK_TABLE(table), inc_label, 0, 1, row, row + 1,
+				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(inc_label), 0, 0.5);
+		inc_entry = gtk_entry_new();
+		gtk_widget_show(inc_entry);
+		gtk_table_attach(GTK_TABLE(table), inc_entry, 1, 2, row, row + 1,
+				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+				 (GtkAttachOptions) (0), 0, 0), ++row;
+		g_signal_connect(inc_entry, "activate",
+				 G_CALLBACK(parameter_range_inc_on_activate), gebr_gui_parameter_widget);
+		g_signal_connect(inc_entry, "focus-out-event",
+				 G_CALLBACK(parameter_range_inc_on_focus_out), gebr_gui_parameter_widget);
 
-			gebr_geoxml_program_parameter_get_enum_option(program_parameter, &option, 0);
-			enum_option_edit = enum_option_edit_new(GEBR_GEOXML_ENUM_OPTION(option), program_parameter);
-			gtk_widget_show(enum_option_edit);
-			gtk_table_attach(GTK_TABLE(table), enum_option_edit, 1, 2, row, row + 1,
-					 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-					 (GtkAttachOptions) (0), 0, 0), ++row;
-			g_signal_connect(GTK_OBJECT(enum_option_edit), "changed",
-					 G_CALLBACK(parameter_enum_options_changed), ui);
+		/*
+		 * Digits
+		 */
+		digits_label = gtk_label_new(_("Digits:"));
+		gtk_widget_show(digits_label);
+		gtk_table_attach(GTK_TABLE(table), digits_label, 0, 1, row, row + 1,
+				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(digits_label), 0, 0.5);
+		digits_entry = gtk_entry_new();
+		gtk_widget_show(digits_entry);
+		gtk_table_attach(GTK_TABLE(table), digits_entry, 1, 2, row, row + 1,
+				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+				 (GtkAttachOptions) (0), 0, 0), ++row;
+		g_signal_connect(digits_entry, "activate",
+				 G_CALLBACK(parameter_range_digits_on_activate), gebr_gui_parameter_widget);
+		g_signal_connect(digits_entry, "focus-out-event",
+				 G_CALLBACK(parameter_range_digits_on_focus_out), gebr_gui_parameter_widget);
 
-			break;
-		}
-	default:
+		gtk_entry_set_text(GTK_ENTRY(inc_entry), inc_str);
+		gtk_entry_set_text(GTK_ENTRY(digits_entry), digits_str);
+
+		break;
+	} case GEBR_GEOXML_PARAMETER_TYPE_ENUM: {
+		GtkWidget *enum_option_edit;
+		GtkWidget *options_label;
+		GtkWidget *vbox;
+
+		GebrGeoXmlSequence *option;
+
+		/*
+		 * Options
+		 */
+		options_label = gtk_label_new(_("Options:"));
+		gtk_widget_show(options_label);
+		vbox = gtk_vbox_new(FALSE, 0);
+		gtk_widget_show(vbox);
+		gtk_box_pack_start(GTK_BOX(vbox), options_label, FALSE, FALSE, 0);
+		gtk_table_attach(GTK_TABLE(table), vbox, 0, 1, row, row + 1,
+				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(options_label), 0, 0.5);
+
+		gebr_geoxml_program_parameter_get_enum_option(program_parameter, &option, 0);
+		enum_option_edit = enum_option_edit_new(GEBR_GEOXML_ENUM_OPTION(option), program_parameter, new);
+		gtk_widget_show(enum_option_edit);
+		gtk_table_attach(GTK_TABLE(table), enum_option_edit, 1, 2, row, row + 1,
+				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+				 (GtkAttachOptions) (0), 0, 0), ++row;
+		g_signal_connect(GTK_OBJECT(enum_option_edit), "changed",
+				 G_CALLBACK(parameter_enum_options_changed), ui);
+
+		break;
+	} default:
 		break;
 	}
 

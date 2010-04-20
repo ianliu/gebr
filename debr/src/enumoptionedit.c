@@ -21,6 +21,7 @@
 #include <libgebr/intl.h>
 
 #include "enumoptionedit.h"
+#include "validate.h"
 
 /*
  * Prototypes
@@ -131,6 +132,7 @@ static void enum_option_edit_add_request(EnumOptionEdit * enum_option_edit)
 	gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_GTK_ENHANCED_ENTRY(enum_option_edit->label_entry), "");
 	gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_GTK_ENHANCED_ENTRY(enum_option_edit->value_entry), "");
 
+	validate_image_set_check_enum_option_list(enum_option_edit->validate_image, enum_option_edit->program_parameter); 
 	g_signal_emit_by_name(enum_option_edit, "changed");
 }
 
@@ -194,6 +196,7 @@ static void __enum_option_edit_remove(EnumOptionEdit * enum_option_edit, GtkTree
 	gebr_geoxml_sequence_remove(sequence);
 	gtk_list_store_remove(GEBR_GUI_GTK_SEQUENCE_EDIT(enum_option_edit)->list_store, iter);
 
+	validate_image_set_check_enum_option_list(enum_option_edit->validate_image, enum_option_edit->program_parameter); 
 	g_signal_emit_by_name(enum_option_edit, "changed");
 }
 
@@ -272,30 +275,38 @@ static GtkWidget *__enum_option_edit_create_tree_view(EnumOptionEdit * enum_opti
 	return tree_view;
 }
 
-GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter)
+GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter, gboolean new)
 {
 	EnumOptionEdit *enum_option_edit;
 	GtkListStore *list_store;
 	GtkWidget *hbox;
 	GtkWidget *label_entry;
 	GtkWidget *value_entry;
+	GtkWidget *validate_image;
 
 	list_store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER, -1);
-	hbox = gtk_hbox_new(TRUE, 0);
+	hbox = gtk_hbox_new(FALSE, 0);
 	label_entry = gebr_gui_gtk_enhanced_entry_new_with_empty_text(_("label"));
+	gtk_widget_show(label_entry);
 	value_entry = gebr_gui_gtk_enhanced_entry_new_with_empty_text(_("value"));
+	gtk_widget_show(value_entry);
 	gtk_widget_set_size_request(value_entry, 20, -1);
 	gtk_box_pack_start(GTK_BOX(hbox), value_entry, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label_entry, TRUE, TRUE, 2);
-	gtk_widget_show_all(hbox);
+	validate_image = validate_image_warning_new();
+	gtk_box_pack_start(GTK_BOX(hbox), validate_image, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
 
 	enum_option_edit = g_object_new(TYPE_ENUM_OPTION_EDIT,
 					"value-widget", hbox,
 					"list-store", list_store, "enum-option", enum_option, NULL);
 
+	enum_option_edit->validate_image = validate_image;
 	enum_option_edit->program_parameter = program_parameter;
 	enum_option_edit->label_entry = label_entry;
 	enum_option_edit->value_entry = value_entry;
+	if (!new)
+		validate_image_set_check_enum_option_list(validate_image, program_parameter); 
 	g_signal_connect(GTK_OBJECT(enum_option_edit), "add-request", G_CALLBACK(enum_option_edit_add_request), NULL);
 
 	gtk_widget_set_size_request(GTK_WIDGET(enum_option_edit), -1, 150);

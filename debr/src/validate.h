@@ -117,4 +117,9 @@ void validate_image_set_check_help(GtkWidget * image, const gchar *help);
  */
 void validate_image_set_check_category_list(GtkWidget * image, GebrGeoXmlFlow * menu);
 
+/**
+ * Set \p image warning if \p enum_option don't have any enum_option.
+ */
+void validate_image_set_check_enum_option_list(GtkWidget * image, GebrGeoXmlProgramParameter * enum_parameter);
+
 #endif				//__VALIDATE_H
