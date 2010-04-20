@@ -35,17 +35,17 @@ static GebrValidateCase validate_cases[] = {
 	{GEBR_VALIDATE_CASE_TITLE,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_NOBLK | GEBR_VALIDATE_CHECK_NOPNT
 			| GEBR_VALIDATE_CHECK_MTBLK,
-		N_("Titles should not start with spaces or end with punctuations characters.")},
+		N_("Titles should not start with spaces or end with punctuation characters.")},
 
 	{GEBR_VALIDATE_CASE_DESCRIPTION,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
 			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
-		N_("Description should be capitalized and have no punctuations at the end.")},
+		N_("Description should be capitalized and have no punctuation characters at the end.")},
 
 	{GEBR_VALIDATE_CASE_AUTHOR,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
 			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
-		N_("Author should be capitalized and have no punctuations at the end.")},
+		N_("Author should be capitalized and have no punctuation characters at the end.")},
 
 	{GEBR_VALIDATE_CASE_DATE,
 		GEBR_VALIDATE_CHECK_EMPTY,
@@ -58,7 +58,7 @@ static GebrValidateCase validate_cases[] = {
 	{GEBR_VALIDATE_CASE_CATEGORY,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
 			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
-		N_("Categories should be capitalized and have no punctuations at the end.")},
+		N_("Categories should be capitalized and have no punctuation characters at the end.")},
 	
 	{GEBR_VALIDATE_CASE_EMAIL,
 		GEBR_VALIDATE_CHECK_EMAIL,
@@ -84,13 +84,13 @@ static GebrValidateCase validate_cases[] = {
 
 	{GEBR_VALIDATE_CASE_PROGRAM_URL,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_URL,
-		N_("Program url should starts with a protocol.")},
+		N_("Program url should start with a protocol.")},
 
 	/* parameter */
 	{GEBR_VALIDATE_CASE_PARAMETER_LABEL,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
 			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT | GEBR_VALIDATE_CHECK_LABEL_HOTKEY,
-		N_("Parameter label should be capitalized and have no punctuations characters at the end. Also, careful with colliding shortcuts.")},
+		N_("Parameter label should be capitalized and have no punctuation characters at the end. Also, be careful with colliding shortcuts.")},
 
 	{GEBR_VALIDATE_CASE_PARAMETER_KEYWORD,
 		GEBR_VALIDATE_CHECK_EMPTY,
@@ -135,6 +135,8 @@ gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value
 		failed |= GEBR_VALIDATE_CHECK_EMAIL;
 	if (flags & GEBR_VALIDATE_CHECK_FILEN && !gebr_validate_check_menu_filename(value))
 		failed |= GEBR_VALIDATE_CHECK_FILEN;
+	if (flags & GEBR_VALIDATE_CHECK_URL && !gebr_validate_check_is_url(value))
+		failed |= GEBR_VALIDATE_CHECK_URL;
 
 	return failed;
 }
@@ -192,6 +194,16 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 			tmp = NULL;
 		}
 	}
+	if (self->flags & GEBR_VALIDATE_CHECK_URL
+	    && !gebr_validate_check_is_url(fix)) {
+		if (fix != NULL)
+			tmp = fix;
+		fix = gebr_validate_change_url(fix);
+		if (tmp) {
+			g_free(tmp);
+			tmp = NULL;
+		}
+	}
 
 	return fix;
 }
@@ -208,11 +220,42 @@ gchar *gebr_validate_case_automatic_fixes_msg(GebrValidateCase *self, const gcha
 	if (failed & GEBR_VALIDATE_CHECK_NOBLK)
 		g_string_append(msg, _("\n - Remove spaces at the beginning/end"));
 	if (failed & GEBR_VALIDATE_CHECK_MTBLK)
-		g_string_append(msg, _("\n - Remove multiple spaces"));
+		g_string_append(msg, _("\n - Remove multiples spaces"));
 	if (failed & GEBR_VALIDATE_CHECK_NOPNT)
-		g_string_append(msg, _("\n - Remove final punctuation"));
+		g_string_append(msg, _("\n - Remove final punctuation character"));
 	if (failed & GEBR_VALIDATE_CHECK_URL)
-		g_string_append(msg, _("\n - Add url scheme"));
+		g_string_append(msg, _("\n - Add URL scheme"));
+
+	gchar *ret = msg->str;
+	g_string_free(msg, FALSE);
+
+	return ret;
+}
+
+gchar *gebr_validate_flags_failed_msg(gint failed_flags)
+{
+	if (!failed_flags)
+		return NULL;
+
+	GString *msg = g_string_new(_("<b>Error(s) found:</b>"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_EMPTY)
+		g_string_append(msg, _("\n - The field isn't filled"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_CAPIT)
+		g_string_append(msg, _("\n - First letter should be capitalized"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_NOBLK)
+		g_string_append(msg, _("\n - There are spaces at the beginning/end"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_MTBLK)
+		g_string_append(msg, _("\n - There are multiples spaces"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_NOPNT)
+		g_string_append(msg, _("\n - This field shouldn't have a final punctuation"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_EMAIL)
+		g_string_append(msg, _("\n - Invalid email address"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_FILEN)
+		g_string_append(msg, _("\n - Invalid menu filename"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_LABEL_HOTKEY)
+		g_string_append(msg, _("\n - Duplicated hotkey"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_URL)
+		g_string_append(msg, _("\n - URL scheme is missing"));
 
 	gchar *ret = msg->str;
 	g_string_free(msg, FALSE);

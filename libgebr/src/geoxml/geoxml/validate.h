@@ -40,15 +40,14 @@ struct _GebrGeoXmlValidate {
 		void (*append_text_emph)(gpointer data, const gchar * format, ...);
 		/**
 		 * Append error text.
-		 * This function is optional. If NULL #append_text is used instead.
 		 */
-		void (*append_text_error)(gpointer data, const gchar * format, ...);
+		void (*append_text_error)(gpointer data, gint flags_failed, const gchar * format, ...);
 		/**
 		 * Append error text with the paths strings (as for GtkTreeModels)
 		 * for programs and parameters.
 		 * If set then it is preferred over #append_text_error.
 		 */
-		void (*append_text_error_with_paths)(gpointer data, const gchar *program_path, const
+		void (*append_text_error_with_paths)(gpointer data, gint flags_failed, const gchar *program_path, const
 						     gchar *parameter_path, const gchar * format, ...);
 	} operations;
 	gpointer data;

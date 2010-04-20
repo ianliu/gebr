@@ -42,6 +42,8 @@ enum GebrValidateCheckFlags {
 	 * Muliple blank spaces found.
 	 */
 	GEBR_VALIDATE_CHECK_MTBLK		= 1 << 3,
+	/**
+	 */
 	GEBR_VALIDATE_CHECK_NOPNT		= 1 << 4,
 	/**
 	 * Invalid email address.
@@ -112,6 +114,11 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value);
  * Return a newly allocated Pango markup string explaining the automatic fixes available for \p value in validation case \p self.
  */
 gchar *gebr_validate_case_automatic_fixes_msg(GebrValidateCase *self, const gchar * value, gboolean * can_fix);
+
+/**
+ * Return a newly allocated Pango markup string explaining the failed \p flags. 
+ */
+gchar *gebr_validate_flags_failed_msg(gint failed_flags);
 
 /**
  * TRUE if str is not empty.

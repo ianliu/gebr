@@ -67,7 +67,7 @@ void append_text(gpointer data, const gchar * format, ...)
 	va_end(argp);
 }
 
-void append_text_error(gpointer data, const gchar * format, ...)
+void append_text_error(gpointer data, gint failed_flags, const gchar * format, ...)
 {
 	gchar *string; 
 

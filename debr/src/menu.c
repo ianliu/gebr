@@ -27,7 +27,6 @@
 #include <libgebr/utils.h>
 #include <libgebr/validate.h>
 #include <libgebr/gui/utils.h>
-#include <libgebr/gui/valuesequenceedit.h>
 #include <libgebr/gui/gebr-gui-save-dialog.h>
 
 #include "menu.h"
@@ -36,6 +35,7 @@
 #include "help.h"
 #include "program.h"
 #include "interface.h"
+#include "categoryedit.h"
 
 /*
  * Prototypes
@@ -54,8 +54,6 @@ static void on_menu_help_edit_clicked(GtkWidget * edit_button, GtkWidget *valida
 static void menu_author_changed(GtkEntry * entry);
 
 static void menu_email_changed(GtkEntry * entry);
-
-static void menu_category_add(GebrGuiValueSequenceEdit * sequence_edit, GtkComboBox * combo_box);
 
 static void menu_category_changed(void);
 
@@ -770,8 +768,10 @@ void menu_selected(void)
 
 		struct validate *validate;
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_VALIDATE_POINTER, &validate, -1);
-		if (validate != NULL)
+		if (validate != NULL) {
 			validate_set_selected(&validate->iter);
+			menu_validate(&iter);
+		}
 	} else if (type == ITER_FOLDER) {
 		menu_folder_details_update(&iter);
 
@@ -916,7 +916,6 @@ gboolean menu_dialog_setup_ui(gboolean new)
 	GtkWidget *email_label;
 	GtkWidget *email_entry;
 	GtkWidget *categories_label;
-	GtkWidget *categories_combo;
 	GtkWidget *categories_sequence_edit;
 	GtkWidget *widget;
 
@@ -1048,10 +1047,7 @@ gboolean menu_dialog_setup_ui(gboolean new)
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, 0);
 	gtk_misc_set_alignment(GTK_MISC(categories_label), 0, 0.5);
 
-	categories_combo = gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(debr.categories_model), CATEGORY_NAME);
-	gtk_widget_show(categories_combo);
-
-	categories_sequence_edit = gebr_gui_value_sequence_edit_new(categories_combo);
+	categories_sequence_edit = category_edit_new(debr.menu);
 	gtk_widget_show(categories_sequence_edit);
 	gtk_table_attach(GTK_TABLE(table), categories_sequence_edit, 1, 2, 5, 6,
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, 0);
@@ -1077,28 +1073,20 @@ gboolean menu_dialog_setup_ui(gboolean new)
 	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_EMAIL);
 	g_signal_connect(email_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
 	if (!new)
-		on_entry_focus_out(GTK_ENTRY(description_entry), NULL, validate_case);
+		on_entry_focus_out(GTK_ENTRY(email_entry), NULL, validate_case);
 	if (!new)
 		validate_image_set_check_help(empty_help_image,
 					      gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
 
+	/* signals */
 	g_signal_connect(title_entry, "changed", G_CALLBACK(menu_title_changed), NULL);
 	g_signal_connect(description_entry, "changed", G_CALLBACK(menu_description_changed), NULL);
-	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "add-request",
-			 G_CALLBACK(menu_category_add), categories_combo);
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "changed", G_CALLBACK(menu_category_changed), NULL);
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "renamed", G_CALLBACK(menu_category_renamed), NULL);
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "removed", G_CALLBACK(menu_category_removed), NULL);
 	g_signal_connect(email_entry, "changed", G_CALLBACK(menu_email_changed), NULL);
 	g_signal_connect(menuhelp_edit_button, "clicked", G_CALLBACK(on_menu_help_edit_clicked), empty_help_image);
 	g_signal_connect(author_entry, "changed", G_CALLBACK(menu_author_changed), NULL);
-
-	/* categories */
-	GebrGeoXmlSequence *category;
-	gebr_geoxml_flow_get_category(debr.menu, &category, 0);
-	gebr_gui_value_sequence_edit_load(GEBR_GUI_VALUE_SEQUENCE_EDIT(categories_sequence_edit), category,
-					  (ValueSequenceSetFunction) gebr_geoxml_value_sequence_set,
-					  (ValueSequenceGetFunction) gebr_geoxml_value_sequence_get, NULL);
 
 	gtk_widget_show(dialog);
 
@@ -1700,27 +1688,6 @@ static void menu_email_changed(GtkEntry * entry)
 {
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(debr.menu), gtk_entry_get_text(entry));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
-}
-
-/**
- * \internal
- * Add a category.
- */
-static void menu_category_add(GebrGuiValueSequenceEdit * sequence_edit, GtkComboBox * combo_box)
-{
-	gchar *name;
-
-	name = gtk_combo_box_get_active_text(combo_box);
-	if (!strlen(name))
-		name = g_strdup(_("New category"));
-	else
-		debr_has_category(name, TRUE);
-	gebr_gui_value_sequence_edit_add(GEBR_GUI_VALUE_SEQUENCE_EDIT(sequence_edit),
-					 GEBR_GEOXML_SEQUENCE(gebr_geoxml_flow_append_category(debr.menu, name)));
-
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
-
-	g_free(name);
 }
 
 /**

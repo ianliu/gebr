@@ -307,11 +307,11 @@ GtkTextTag *gebr_gui_gtk_text_view_create_link_tag(GtkTextView * text_view, cons
 GtkTextMark *gebr_gui_gtk_text_buffer_create_mark_before_last_char(GtkTextBuffer * text_buffer);
 
 /**
- * Sets a \p tooltip for text between \p ini and \p end.
+ * Sets a \p tooltip markup for \p tag.
+ * This functions set a tooltip key with #g_object_set_data
  * You should take care to free \p toolip.
  */
-void gebr_gui_gtk_text_view_set_range_tooltip(GtkTextView * text_view, GtkTextIter * ini, GtkTextIter * end,
-					      const gchar * tooltip);
+void gebr_gui_gtk_text_view_set_tooltip_on_tag(GtkTextView * text_view, GtkTextTag * tag, const gchar* tooltip);
 
 /**
  * Callback called when a popup is requested.
