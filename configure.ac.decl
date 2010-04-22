@@ -15,12 +15,18 @@ AC_SUBST(PACKAGE_PREFIX_DIR)
 
 INSTALL_BIN=/usr/bin/install
 $INSTALL_BIN -C configure.ac __install_test 2>/dev/null
-if [[ $? -ne 0 \]]; then
-        true
-else
+if [[ $? -eq 0 \]]; then
         rm __install_test
         INSTALL="$INSTALL_BIN -C"
         AC_ARG_VAR(INSTALL)
+else
+	INSTALL_BIN=./install-sh
+	$INSTALL_BIN -C configure.ac __install_test 2>/dev/null
+	if [[ $? -eq 0 \]]; then
+        	rm __install_test
+	        INSTALL="$INSTALL_BIN -C"
+        	AC_ARG_VAR(INSTALL)
+	fi
 fi
 
 GLIB_MINOR_VERSION=`pkg-config glib-2.0 --modversion | awk -F. '{ printf "%d", $2 }'`
