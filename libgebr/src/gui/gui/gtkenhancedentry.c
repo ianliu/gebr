@@ -77,7 +77,10 @@ gebr_gui_gtk_enhanced_entry_get_property(GebrGuiGtkEnhancedEntry * enhanced_entr
 static void gebr_gui_gtk_enhanced_entry_destroy(GtkObject *object)
 {
 	GebrGuiGtkEnhancedEntry *enhanced_entry = GEBR_GUI_GTK_ENHANCED_ENTRY(object);
-	g_free(enhanced_entry->empty_text);
+	if (enhanced_entry->empty_text != NULL) {
+		g_free(enhanced_entry->empty_text);
+		enhanced_entry->empty_text = NULL;
+	}
 }
 
 static void gebr_gui_gtk_enhanced_entry_class_init(GebrGuiGtkEnhancedEntryClass * class)
