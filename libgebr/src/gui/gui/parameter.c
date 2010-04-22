@@ -168,7 +168,7 @@ gebr_gui_parameter_widget_set_non_list_widget_value(struct gebr_gui_parameter_wi
 		gebr_gui_gtk_file_entry_set_path(GEBR_GUI_GTK_FILE_ENTRY(gebr_gui_parameter_widget->value_widget),
 						 value);
 		break;
-	case GEBR_GEOXML_PARAMETER_TYPE_ENUM:{
+	case GEBR_GEOXML_PARAMETER_TYPE_ENUM: {
 			GebrGeoXmlSequence *option;
 			int i;
 
@@ -261,7 +261,7 @@ static GString *gebr_gui_parameter_widget_get_widget_value_full(struct gebr_gui_
 				    (gebr_gui_parameter_widget->program_parameter, &enum_option,
 				     gebr_geoxml_program_parameter_get_required
 				     (gebr_gui_parameter_widget->program_parameter) ? index : index - 1);
-				g_string_assign(value,
+				g_string_assign(value, (enum_option == NULL) ? "" :
 						gebr_geoxml_enum_option_get_value(GEBR_GEOXML_ENUM_OPTION
 										  (enum_option)));
 			}
