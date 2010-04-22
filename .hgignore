@@ -14,6 +14,8 @@ syntax: glob
 INSTALL
 Makefile
 Makefile.in
+Makefile.in.in
+intltool-*.in
 POTFILES
 aclocal.m4
 autom4te.cache
@@ -30,7 +32,6 @@ debr/doc/userdoc/debr.html
 debr/packages/rpm/debr.fedora.spec
 debr/packages/rpm/debr.mandriva.spec
 debr/packages/rpm/debr.opensuse.spec
-debr/po/Makefile.in.in
 debr/src/debr
 debr/src/defines.h
 depcomp
@@ -39,14 +40,12 @@ gebr/doc/userdoc/gebr.html
 gebr/packages/rpm/gebr.fedora.spec
 gebr/packages/rpm/gebr.mandriva.spec
 gebr/packages/rpm/gebr.opensuse.spec
-gebr/po/Makefile.in.in
 gebr/src/defines.h
 gebr/src/gebr-client/gebr-client
 gebr/src/gebr/gebr
 gebrd/packages/rpm/gebrd.fedora.spec
 gebrd/packages/rpm/gebrd.mandriva.spec
 gebrd/packages/rpm/gebrd.opensuse.spec
-gebrd/po/Makefile.in.in
 gebrd/src/defines.h
 gebrd/src/gebrd
 gebrd/tests/test-job-queue
@@ -54,7 +53,6 @@ install-sh
 libgebr/packages/rpm/libgebr.fedora.spec
 libgebr/packages/rpm/libgebr.mandriva.spec
 libgebr/packages/rpm/libgebr.opensuse.spec
-libgebr/po/Makefile.in.in
 libgebr/src/comm/comm/json-glib/stamp-json-enum-types.h
 libgebr/src/comm/comm/json-glib/stamp-json-marshal.h
 libgebr/src/comm/gebr-comm.pc
