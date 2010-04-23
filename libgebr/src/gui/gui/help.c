@@ -300,12 +300,9 @@ static WebKitNavigationResponse web_view_on_navigation_requested(WebKitWebView *
 	if (g_str_has_prefix(uri, "file://") || g_str_has_prefix(uri, "about:"))
 		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 
-#if GTK_CHECK_VERSION(2,14,0)
-	if (!data) {
-		GError *error = NULL;
-		gtk_show_uri(NULL, uri, GDK_CURRENT_TIME, &error);
-	}
-#endif
+	if (!data)
+		gebr_gui_show_uri(uri);
+
 	return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 }
 

@@ -465,4 +465,10 @@ gboolean gebr_gui_gtk_expander_hacked_idle(GtkWidget * hbox, GdkEventExpose * ev
 	gtk_widget_set_tooltip_markup(GTK_WIDGET(entry), tooltip)
 #endif
 
+#if !GTK_CHECK_VERSION(2,14,0)
+gboolean gtk_show_uri(GdkScreen *screen, const gchar *uri, guint32 timestamp, GError **error);
+#endif
+
+gboolean gebr_gui_show_uri(const gchar * uri);
+
 #endif				//__GEBR_GUI_UTILS_H

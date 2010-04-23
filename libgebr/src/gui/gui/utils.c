@@ -1115,3 +1115,34 @@ gboolean gebr_gui_gtk_expander_hacked_idle(GtkWidget * label_widget, GdkEventExp
 
 	return TRUE;
 }
+
+#if !GTK_CHECK_VERSION(2,14,0)
+gboolean gtk_show_uri(GdkScreen *screen, const gchar *uri, guint32 timestamp, GError **error)
+{
+	GdkAppLaunchContext *context;
+	gboolean ret;
+
+	g_return_val_if_fail(uri != NULL, FALSE);
+
+	context = gdk_app_launch_context_new();
+	gdk_app_launch_context_set_screen(context, screen);
+	gdk_app_launch_context_set_timestamp(context, timestamp);
+
+	ret = g_app_info_launch_default_for_uri(uri, (GAppLaunchContext*)context, error);
+	g_object_unref(context);
+
+	return ret;
+}
+#endif
+
+gboolean gebr_gui_show_uri(const gchar * uri)
+{
+	GError *error = NULL;
+	gboolean ret;
+	ret = gtk_show_uri(NULL, uri, GDK_CURRENT_TIME, &error);
+	if (error) {
+		g_warning("%s", error->message);
+		g_error_free(error);
+	}
+	return ret;
+}
