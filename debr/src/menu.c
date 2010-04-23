@@ -820,27 +820,31 @@ void menu_selected(void)
 	}
 }
 
-gboolean menu_cleanup(void)
+gboolean menu_cleanup_folder(GtkTreeIter * folder)
 {
 	GtkWidget *dialog;
 	GtkWidget *button;
 	gboolean ret;
 	gboolean still_running = TRUE;
 
-	if (!menu_count_unsaved(NULL))
+	if (folder && menu_get_type(folder) != ITER_FOLDER)
+		return FALSE;
+
+	if (!menu_count_unsaved(folder))
 		return TRUE;
 
 	dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 					GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION,
-					GTK_BUTTONS_NONE, _("There are menus unsaved. Do you want to save them?"));
+					GTK_BUTTONS_NONE, _("There are unsaved menus. Do you want to save them?"));
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
 	gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON));
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
+
 	while(still_running) {
 		switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
 		case GTK_RESPONSE_YES:
-			if (!menu_save_all()) {
+			if (!menu_save_folder(folder)) {
 				ret = FALSE;
 				still_running = TRUE;
 			} else {

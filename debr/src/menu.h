@@ -209,7 +209,7 @@ void menu_selected(void);
 /**
  * Asks for save all unsaved menus; if yes, free memory allocated for them.
  */
-gboolean menu_cleanup(void);
+gboolean menu_cleanup_folder(GtkTreeIter * folder);
 
 /**
  * Change the status of the currently selected menu.
