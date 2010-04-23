@@ -15,37 +15,42 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
+NULL=
+
 bin_PROGRAMS = debr
 
 noinst_LIBRARIES = libdebr.a
 libdebr_a_SOURCES = \
-	interface.c \
 	callbacks.c \
+	categoryedit.c \
 	debr.c \
+	enumoptionedit.c \
+	help.c \
+	interface.c \
 	menu.c \
-	program.c \
 	parameter.c \
 	parametergroup.c \
-	enumoptionedit.c \
-	categoryedit.c \
+	preferences.c \
+	program.c \
 	validate.c \
-	help.c \
-	preferences.c
+	$(NULL)
 
 debr_SOURCES = main.c
 noinst_HEADERS = \
-	interface.h \
 	callbacks.h \
+	categoryedit.h \
 	debr.h \
+	enumoptionedit.h \
+	help.h \
+	interface.h \
 	menu.h \
-	program.h \
 	parameter.h \
 	parametergroup.h \
-	enumoptionedit.h \
-	categoryedit.h \
+	preferences.h \
+	program.h \
 	validate.h \
-	help.h \
-	preferences.h
+	$(NULL)
+
 EXTRA_DIST = $(noinst_HEADERS)
 
 INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"

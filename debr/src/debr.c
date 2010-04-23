@@ -66,7 +66,7 @@ void debr_init(void)
 
 gboolean debr_quit(void)
 {
-	if (!menu_cleanup())
+	if (!menu_cleanup_folder(NULL))
 		return TRUE;
 
 	debr_config_save();
