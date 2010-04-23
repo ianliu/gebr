@@ -74,106 +74,16 @@ void on_help_edit_refresh_activate(GtkAction * action, struct help_edit_data * d
  * edition, CKEDITOR load with configuration.
  */
 static gchar * js_start_inline_editing = \
-	"var document_clone = null;"
-	"var editor = null;"
-	"var editing_element = null;"
-	"var CKEDITOR_BASEPATH='file://" CKEDITOR_DIR "/';"
-	"function getHead(doc) {"
-		"var head = doc.getElementsByTagName('head')[0];"
+	"function getHead() {"
+		"var head = document.getElementsByTagName('head')[0];"
 		"if (!head) {"
-			"head = doc.createElement('head');"
-			"doc.documentElement.insertBefore(head, doc.body);"
+			"head = document.createElement('head');"
+			"document.documentElement.insertBefore(head, doc.body);"
 		"}"
 		"return head;"
 	"}"
-	"function UpdateDocumentClone() {"
-		"editor.updateElement();"
-		"var content = GetEditableElements(document_clone)[0];"
-		"while (content.firstChild)"
-			"content.removeChild(content.firstChild);"
-		"for (var i = GetEditableElements(document)[0].firstChild; i; i = i.nextSibling)"
-			"content.appendChild(i.cloneNode(true));"
-	"}"
-	"function ToggleVisible(element) {"
-		"var hidden = element.style.visibility == 'hidden';"
-		"if (hidden) {"
-			"element.style.visibility = 'visible';"
-			"element.style.display = 'block';"
-		"} else {"
-			"element.style.visibility = 'hidden';"
-			"element.style.display = 'none';"
-		"}"
-	"}"
-	"function GetEditableElements(doc) {"
-		"var content = doc.getElementsByClassName('content')[0];"
-		"if (!menu_edition && !content) {"
-			"content = doc.createElement('div');"
-			"content.setAttribute('class', 'content');"
-			"content.innerHTML = doc.body.innerHTML;"
-			"doc.body.innerHTML = '';"
-			"doc.body.appendChild(content);"
-		"}"
-		"return [content];"
-	"}"
-	"function UpgradeHelpFormat(doc) {"
-		"var content = GetEditableElements(doc)[0];"
-		"var links = content.getElementsByTagName('a');"
-		"var blacklist = [];"
-		"for (var i = 0; i < links.length; i++)"
-			"if (links[i].innerHTML.search(/^\\s*$/) == 0)"
-				"blacklist.push(links[i]);"
-		"for (var i = 0; i < blacklist.length; i++)"
-			"blacklist[i].parentNode.removeChild(blacklist[i]);"
-
-		"GenerateNavigationIndex(doc);"
-	"}"
-	"function GenerateNavigationIndex(doc) {"
-		"var navbar = doc.getElementsByClassName('navigation')[0];"
-		"if (!navbar) return;"
-		"var headers = GetEditableElements(doc)[0].getElementsByTagName('h2');"
-		"navbar.innerHTML = '<h2>Index</h2><ul></ul>';"
-		"var navlist = navbar.getElementsByTagName('ul')[0];"
-		"for (var i = 0; i < headers.length; i++) {"
-			"var anchor = 'header_' + i;"
-			"var link = doc.createElement('a');"
-			"link.setAttribute('href', '#' + anchor);"
-			"for (var j = 0; j < headers[i].childNodes.length; j++) {"
-				"var clone = headers[i].childNodes[j].cloneNode(true);"
-				"link.appendChild(clone);"
-			"}"
-			"var li = doc.createElement('li');"
-			"li.appendChild(link);"
-			"navlist.appendChild(li);"
-			"headers[i].setAttribute('id', anchor);"
-		"}"
-	"}"
-	"function OpenCkEditor(element) {"
-		"if (editor) return;"
-		"editing_element = element;"
-		"editor = CKEDITOR.replace(element, {"
-			"fullpage: true,"
-			"height:300,"
-			"width: menu_edition?390:'100%',"
-			"resize_enabled:false,"
-			"toolbarCanCollapse:false,"
-			"toolbar:[['Source','-','Bold','Italic','Underline','-',"
-				"'Subscript','Superscript','-','Undo','Redo','-','/',"
-				"'NumberedList','BulletedList','Blockquote','Styles','-',"
-				"'Link','Unlink','-','RemoveFormat','-','Find','Replace', '-' ]]});"
-	"}"
-	"function onCkEditorLoadFinished() {"
-		"if (menu_edition) {"
-			"UpgradeHelpFormat(document);"
-			"UpgradeHelpFormat(document_clone);"
-		"}"
-		"OpenCkEditor(GetEditableElements(document)[0]);"
-	"}"
-	"function isContentSaved() {"
-		"return !editor.checkDirty();"
-	"}"
-	"(function() {"
-		"var head = getHead(document);"
-		//force encode to UTF-8
+	"function forceUtf8() {"
+		"var head = getHead();"
 		"var meta = head.getElementsByTagName('meta');"
 		"var black_list = [];"
 		"for (var i = 0; i < meta.length; i++) {"
@@ -191,15 +101,21 @@ static gchar * js_start_inline_editing = \
 		"} else {"
 			"head.appendChild(meta);"
 		"}"
-		//clone document for saving
-		"document_clone = document.implementation.createDocument('', '', null);"
-		"document_clone.appendChild(document.documentElement.cloneNode(true));"
-		//append javascript to load
-		"var tag = document.createElement('script');"
-		"tag.setAttribute('type', 'text/javascript');"
-		"tag.setAttribute('src', 'file://" CKEDITOR_DIR "/ckeditor.js');"
-		"head.appendChild(tag);"
-	"})();";
+	"}"
+	"function addScript(source) {"
+		"var script = document.createElement('script');"
+		"script.type = 'text/javascript';"
+		"script.id = source;"
+		"script.src = 'file://" CKEDITOR_DIR "/' + source + '.js';"
+		"script.defer = false;"
+		"getHead().appendChild(script);"
+	"}"
+	"forceUtf8();"
+	"addScript('help');"
+	"addScript('ckeditor');"
+	"alert(help.src);"
+	"alert(ckeditor.src);"
+	"";
 
 /*
  * Public functions
@@ -436,15 +352,11 @@ static void web_view_on_title_changed(WebKitWebView * web_view, WebKitWebFrame *
  * CKEDITOR save toolbar button callback
  * Set at #web_view_on_load_finished
  */
-JSValueRef js_callback_gebr_help_save(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject,
+JSValueRef js_callback_gebr_menu_edition(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject,
 				      size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
 	struct help_edit_data * data;
-
-	data = g_hash_table_lookup(jscontext_to_data_hash, function);
-	help_edit_save(data);
-
-	return JSValueMakeUndefined(ctx);
+	return JSValueMakeUndefined(1);
 }
 
 /**
@@ -459,15 +371,18 @@ static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame *
 	data->web_view = web_view;
 	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
 
-	var = g_string_new(NULL);
-	g_string_printf(var, "var menu_edition = %s;", data->menu_edition ? "true" : "false");
-	gebr_js_evaluate(data->context, var->str);
-	g_string_free(var, TRUE);
+	function = gebr_js_make_function(data->context, "menu_edition", js_callback_gebr_menu_edition);
+	g_hash_table_insert(jscontext_to_data_hash, (gpointer)function, data);
+
+	//var = g_string_new(NULL);
+	//g_string_printf(var, "var menu_edition = %s;", data->menu_edition ? "true" : "false");
+	//gebr_js_evaluate(data->context, var->str);
+	//g_string_free(var, TRUE);
 
 	gebr_js_evaluate(data->context, js_start_inline_editing);
-	function = gebr_js_make_function(data->context, "gebr_help_save", js_callback_gebr_help_save);
+	//function = gebr_js_make_function(data->context, "gebr_help_save", js_callback_gebr_help_save);
 
-	g_hash_table_insert(jscontext_to_data_hash, (gpointer)function, data);
+	//g_hash_table_insert(jscontext_to_data_hash, (gpointer)function, data);
 	g_signal_handlers_disconnect_matched(G_OBJECT(web_view),
 						 G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(web_view_on_load_finished), data);
 }
