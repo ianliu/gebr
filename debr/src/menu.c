@@ -44,6 +44,8 @@
 
 static GtkMenu *menu_popup_menu(GtkTreeView * tree_view);
 
+static GtkMenu *menu_dialog_save_popup_menu(GtkTreeView * tree_view);
+
 static void menu_title_changed(GtkEntry * entry);
 
 static void menu_description_changed(GtkEntry * entry);
@@ -73,6 +75,10 @@ static gboolean menu_get_folder_iter_from_path(const gchar * path, GtkTreeIter *
 static GList * menu_get_unsaved(GtkTreeIter * folder);
 
 static void on_renderer_toggled(GtkCellRendererToggle * cell, gchar * path, GtkListStore * store);
+
+static void on_menu_select_all_activate(GtkMenuItem *menuitem, GtkTreeView *tree_view);
+
+static void on_menu_unselect_all_activate(GtkMenuItem *menuitem, GtkTreeView *tree_view);
 
 static gboolean menu_save_iter_list(GList * unsaved);
 
@@ -805,7 +811,7 @@ void menu_selected(void)
 gboolean menu_cleanup_folder(GtkTreeIter * folder)
 {
 	GError *error = NULL;
-	GList *unsaved;
+	GList *unsaved_list;
 	GtkBuilder *builder;
 	GtkCellRenderer *renderer;
 	GtkListStore *store;
@@ -842,13 +848,16 @@ gboolean menu_cleanup_folder(GtkTreeIter * folder)
 	renderer = gtk_cell_renderer_text_new();
 	column = gtk_tree_view_column_new_with_attributes("", renderer, "text", 1, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+	
+	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(treeview),
+						  (GebrGuiGtkPopupCallback) menu_dialog_save_popup_menu, NULL);
 
 	gtk_widget_show_all(dialog);
 
-	while(still_running) {
-		unsaved = menu_get_unsaved(folder);
+	while (still_running) {
+		unsaved_list = menu_get_unsaved(folder);
 		gtk_list_store_clear(store);
-		for (GList * i = unsaved; i != NULL; i = i->next) {
+		for (GList * i = unsaved_list; i != NULL; i = i->next) {
 			gchar * fname;
 			GtkTreeIter iter;
 			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), (GtkTreeIter*)i->data,
@@ -909,10 +918,11 @@ gboolean menu_cleanup_folder(GtkTreeIter * folder)
 			still_running = FALSE;
 			ret = FALSE;
 		} 
-		g_list_foreach(unsaved, (GFunc)gtk_tree_iter_free, NULL);
-		g_list_free(unsaved);
+		g_list_foreach(unsaved_list, (GFunc)gtk_tree_iter_free, NULL);
+		g_list_free(unsaved_list);
 	}
 
+	gtk_list_store_clear(store);
 	gtk_widget_destroy(dialog);
 	return ret;
 }
@@ -1635,6 +1645,14 @@ static GtkMenu *menu_popup_menu(GtkTreeView * tree_view)
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_remove_folder")));
 
+	/*
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_select_all")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_unselect_all")));
+	*/
+
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 	menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
@@ -1676,6 +1694,31 @@ static GtkMenu *menu_popup_menu(GtkTreeView * tree_view)
 	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
+}
+
+/**
+ * \internal
+ * Agregate action to the popup menu of the menus' save dialog and show it.
+ */
+static GtkMenu *menu_dialog_save_popup_menu(GtkTreeView * tree_view)
+{
+	GtkWidget *popup_menu;
+	GtkWidget *select_all_menu_item;
+	GtkWidget *unselect_all_menu_item;
+
+	popup_menu = gtk_menu_new();
+
+	select_all_menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_select_all"));
+	g_signal_connect(select_all_menu_item, "activate", G_CALLBACK(on_menu_select_all_activate), tree_view);
+	gtk_container_add(GTK_CONTAINER(popup_menu), select_all_menu_item);
+	
+	unselect_all_menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_unselect_all"));
+	g_signal_connect(unselect_all_menu_item, "activate", G_CALLBACK(on_menu_unselect_all_activate), tree_view);
+	gtk_container_add(GTK_CONTAINER(popup_menu), unselect_all_menu_item);
+
+	gtk_widget_show_all(popup_menu);
+
+	return GTK_MENU(popup_menu);
 }
 
 /**
@@ -1918,6 +1961,34 @@ static void on_renderer_toggled(GtkCellRendererToggle * cell, gchar * path, GtkL
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(store), &iter, path);
 	gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, &chosen, -1);
 	gtk_list_store_set(store, &iter, 0, !chosen, -1);
+}
+
+static void on_menu_select_all_activate(GtkMenuItem *menu_item, GtkTreeView *tree_view)
+{
+	GtkListStore *store;
+	gboolean valid;
+	GtkTreeIter iter;
+
+	store = GTK_LIST_STORE(gtk_tree_view_get_model(tree_view));
+	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter);
+	while (valid) {
+		gtk_list_store_set(store, &iter, 0, TRUE, -1);
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &iter);
+	}
+}
+
+static void on_menu_unselect_all_activate(GtkMenuItem *menu_item, GtkTreeView *tree_view)
+{
+	GtkListStore *store;
+	gboolean valid;
+	GtkTreeIter iter;
+
+	store = GTK_LIST_STORE(gtk_tree_view_get_model(tree_view));
+	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter);
+	while (valid) {
+		gtk_list_store_set(store, &iter, 0, FALSE, -1);
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &iter);
+	}
 }
 
 static gboolean menu_save_iter_list(GList * unsaved)
