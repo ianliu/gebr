@@ -302,7 +302,8 @@ err:
 void on_menu_remove_folder_activate(void)
 {
 	GtkTreeIter iter;
-	if (menu_get_selected(&iter, FALSE) && menu_cleanup_folder(&iter))
+	if (menu_get_selected_type(&iter, FALSE) == ITER_FOLDER
+	    && menu_cleanup_folder(&iter))
 		menu_close_folder(&iter);
 }
 
