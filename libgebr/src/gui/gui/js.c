@@ -15,8 +15,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
+#include <glib/gprintf.h>
+#include <JavaScriptCore/JSValueRef.h>
+
 #include "js.h"
+
+/*
+ * Private functions
+ */
+static gchar * gebr_js_string_to_cstring(JSStringRef string);
+
+/*
+ * Public functions
+ */
 
 JSValueRef gebr_js_eval_with_url(JSContextRef ctx, const gchar * script, const gchar * url)
 {
@@ -31,8 +42,30 @@ JSValueRef gebr_js_eval_with_url(JSContextRef ctx, const gchar * script, const g
 	source = url? JSStringCreateWithUTF8CString(url) : NULL;
 	obj = JSContextGetGlobalObject(ctx);
 	val = JSEvaluateScript(ctx, script_str, obj, source, 0, &except);
-	if (except)
-		puts(gebr_js_value_to_string(ctx, except));
+	if (except) {
+		JSPropertyNameArrayRef array;
+		g_warning("[JavaScript exception]");
+		array = JSObjectCopyPropertyNames(ctx, (JSObjectRef)except);
+		for (size_t i = 0; i < JSPropertyNameArrayGetCount(array); i++) {
+			gchar * prop_name;
+			gchar * prop_value;
+			JSValueRef value;
+			JSStringRef name_str;
+
+			name_str = JSPropertyNameArrayGetNameAtIndex(array, i);
+			value = JSObjectGetProperty(ctx, (JSObjectRef)except, name_str, NULL);
+
+			prop_name = gebr_js_string_to_cstring(name_str);
+			prop_value = gebr_js_value_to_string(ctx, value);
+
+			g_fprintf(stderr, "  %s => %s\n", prop_name, prop_value);
+
+			g_free(prop_name);
+			g_free(prop_value);
+			JSStringRelease(name_str);
+		}
+		JSPropertyNameArrayRelease(array);
+	}
 	JSStringRelease(script_str);
 	if (url)
 		JSStringRelease(source);
@@ -136,3 +169,14 @@ gboolean gebr_js_include(JSContextRef ctx, const gchar * file)
 	return TRUE;
 }
 
+static gchar * gebr_js_string_to_cstring(JSStringRef string)
+{
+	size_t len;
+	gchar * buffer;
+
+	len = JSStringGetMaximumUTF8CStringSize(string);
+	buffer = g_new(gchar, len);
+	JSStringGetUTF8CString(string, buffer, len);
+
+	return buffer;
+}
