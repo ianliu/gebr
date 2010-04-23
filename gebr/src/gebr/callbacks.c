@@ -241,7 +241,8 @@ void on_help_contents_activate(void)
 {
 	GString *html_path = g_string_new("");
 	g_string_printf(html_path, "file://"GEBR_USERDOC_DIR"/pt/index.html");
-	gebr_gui_show_uri(html_path->str);
+	if (!gebr_gui_show_uri(html_path->str))
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not load help. Certify it was installed correctly."));
 	g_string_free(html_path, TRUE);
 }
 
