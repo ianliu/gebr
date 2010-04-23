@@ -36,6 +36,7 @@
 #include "program.h"
 #include "interface.h"
 #include "categoryedit.h"
+#include "menu_dialog_save.h"
 
 /*
  * Prototypes
@@ -70,6 +71,10 @@ static gboolean menu_is_path_loaded(const gchar * path, GtkTreeIter * iter);
 static gboolean menu_get_folder_iter_from_path(const gchar * path, GtkTreeIter * iter_);
 
 static GList * menu_get_unsaved(GtkTreeIter * folder);
+
+static void on_renderer_toggled(GtkCellRendererToggle * cell, gchar * path, GtkListStore * store);
+
+static gboolean menu_save_iter_list(GList * unsaved);
 
 /*
  * Public functions
@@ -453,37 +458,14 @@ MenuMessage menu_save(GtkTreeIter * iter)
 
 gboolean menu_save_folder(GtkTreeIter * folder)
 {
+	gboolean ret;
+	GList * unsaved;
+
 	if (folder && menu_get_type(folder) != ITER_FOLDER)
 		return FALSE;
 
-	GList * entry;
-	GList * unsaved;
-	gboolean ret;
 	unsaved = menu_get_unsaved(folder);
-	entry = unsaved;
-	ret = TRUE;
-
-	if (!entry)
-		return FALSE;
-
-	while (entry) {
-		GtkTreeIter * iter;
-		MenuMessage result;
-
-		iter = (GtkTreeIter*)entry->data;
-		result = menu_save(iter);
-		if (result == MENU_MESSAGE_PERMISSION_DENIED
-		    || (result == MENU_MESSAGE_FIRST_TIME_SAVE && !menu_save_as(iter))) {
-			ret = FALSE;
-			break;
-		}
-		entry = entry->next;
-	}
-
-	if (ret) {
-		menu_details_update();
-		debr_message(GEBR_LOG_INFO, _("All menus were saved."));
-	}
+	ret = menu_save_iter_list(unsaved);
 
 	g_list_foreach(unsaved, (GFunc)gtk_tree_iter_free, NULL);
 	g_list_free(unsaved);
@@ -822,8 +804,14 @@ void menu_selected(void)
 
 gboolean menu_cleanup_folder(GtkTreeIter * folder)
 {
+	GError *error = NULL;
+	GList *unsaved;
+	GtkBuilder *builder;
+	GtkCellRenderer *renderer;
+	GtkListStore *store;
+	GtkTreeViewColumn *column;
 	GtkWidget *dialog;
-	GtkWidget *button;
+	GtkWidget *treeview;
 	gboolean ret;
 	gboolean still_running = TRUE;
 
@@ -833,35 +821,98 @@ gboolean menu_cleanup_folder(GtkTreeIter * folder)
 	if (!menu_count_unsaved(folder))
 		return TRUE;
 
-	dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-					GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION,
-					GTK_BUTTONS_NONE, _("There are unsaved menus. Do you want to save them?"));
-	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
-	gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON));
-	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
-	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
+	builder = gtk_builder_new();
+	gtk_builder_add_from_string(builder, menu_dialog_save_def, -1, &error);
+	if (error) {
+		g_warning("%s", error->message);
+		g_error_free(error);
+		error = NULL;
+	}
+
+	dialog = GTK_WIDGET(gtk_builder_get_object(builder, "dialog1"));
+	treeview = GTK_WIDGET(gtk_builder_get_object(builder, "treeview1"));
+	store = GTK_LIST_STORE(gtk_builder_get_object(builder, "liststore1"));
+
+	renderer = gtk_cell_renderer_toggle_new();
+	g_signal_connect(renderer, "toggled", G_CALLBACK(on_renderer_toggled), store);
+	column = gtk_tree_view_column_new_with_attributes("", renderer, "active", 0, NULL);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+
+	renderer = gtk_cell_renderer_text_new();
+	column = gtk_tree_view_column_new_with_attributes("", renderer, "text", 1, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+
+	gtk_widget_show_all(dialog);
 
 	while(still_running) {
+		unsaved = menu_get_unsaved(folder);
+		gtk_list_store_clear(store);
+		for (GList * i = unsaved; i != NULL; i = i->next) {
+			gchar * fname;
+			GtkTreeIter iter;
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), (GtkTreeIter*)i->data,
+					   MENU_FILENAME, &fname,
+					   -1);
+			gtk_list_store_append(store, &iter);
+			gtk_list_store_set(store, &iter,
+					   0, TRUE,
+					   1, fname,
+					   2, i->data,
+					   -1);
+		}
+
 		switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-		case GTK_RESPONSE_YES:
-			if (!menu_save_folder(folder)) {
-				ret = FALSE;
-				still_running = TRUE;
-			} else {
+		case 1: { // Save response
+			gboolean valid;
+			GList * chosen_list = NULL;
+			GtkTreeIter iter;
+
+			valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter);
+			while (valid) {
+				gboolean chosen;
+				GtkTreeIter *menu_iter;
+				gtk_tree_model_get(GTK_TREE_MODEL(store), &iter,
+						   0, &chosen,
+						   2, &menu_iter,
+						   -1);
+				if (chosen)
+					chosen_list = g_list_prepend(chosen_list, menu_iter);
+				valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &iter);
+			}
+
+			/* If chosen_list = NULL, the user unchecked all menus.
+			 * This means that there is nothing to save and the previous operation
+			 * should go on. That's why ret = TRUE.
+			 */
+			if (chosen_list == NULL) {
 				ret = TRUE;
 				still_running = FALSE;
+			} else {
+				if (!menu_save_iter_list(chosen_list)) {
+					ret = FALSE;
+					still_running = TRUE;
+				} else {
+					ret = TRUE;
+					still_running = FALSE;
+				}
+				g_list_free(chosen_list);
 			}
 			break;
-		case GTK_RESPONSE_NO:
+		}
+		case 3: // Close without saving response
 			ret = TRUE;
 			still_running = FALSE;
 			break;
-		case GTK_RESPONSE_CANCEL:
+		case 2: // Cancel response
 		default:
 			still_running = FALSE;
 			ret = FALSE;
-		}
+		} 
+		g_list_foreach(unsaved, (GFunc)gtk_tree_iter_free, NULL);
+		g_list_free(unsaved);
 	}
+
 	gtk_widget_destroy(dialog);
 	return ret;
 }
@@ -1857,4 +1908,47 @@ static GList * menu_get_unsaved(GtkTreeIter * folder)
 	}
 
 	return list;
+}
+
+static void on_renderer_toggled(GtkCellRendererToggle * cell, gchar * path, GtkListStore * store)
+{
+	gboolean chosen;
+	GtkTreeIter iter;
+
+	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(store), &iter, path);
+	gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, &chosen, -1);
+	gtk_list_store_set(store, &iter, 0, !chosen, -1);
+}
+
+static gboolean menu_save_iter_list(GList * unsaved)
+{
+	GList * entry;
+	gboolean ret;
+	entry = unsaved;
+	ret = TRUE;
+
+	if (!entry)
+		return FALSE;
+
+	while (entry) {
+		GtkTreeIter * iter;
+		MenuMessage result;
+
+		iter = (GtkTreeIter*)entry->data;
+		result = menu_save(iter);
+		if (result == MENU_MESSAGE_PERMISSION_DENIED
+		    || (result == MENU_MESSAGE_FIRST_TIME_SAVE && !menu_save_as(iter))) {
+			ret = FALSE;
+			break;
+		}
+		entry = entry->next;
+	}
+
+	if (ret) {
+		menu_details_update();
+		debr_message(GEBR_LOG_INFO, _("All menus were saved."));
+	}
+
+	return ret;
+
 }
