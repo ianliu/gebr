@@ -333,7 +333,10 @@ void on_configure_servers_activate(void)
  */
 void on_help_contents_activate(void)
 {
-	gebr_gui_help_show(GEBR_USERDOC_HTML, _("User's Manual"));
+	GString *html_path = g_string_new("");
+	g_string_printf(html_path, "file://"GEBR_USERDOC_DIR"/pt/index.html");
+	gebr_gui_show_uri(html_path->str);
+	g_string_free(html_path, TRUE);
 }
 
 /* Function: on_help_about_activate

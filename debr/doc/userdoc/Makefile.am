@@ -16,8 +16,8 @@
 include $(top_srcdir)/Makefile.decl
 
 userdoc:
-#	gnome-doc-tool html ../debr.docbook
-	touch debr.html
+#	gnome-doc-tool html debr.docbook
+	echo "  " > debr.html
 *.html: userdoc
 
 debrdocdir = $(datadir)/debr/userdoc
