@@ -18,8 +18,8 @@
 #ifndef __GEBR_GUI_JS_H__
 #define __GEBR_GUI_JS_H__
 
-#include <JavaScriptCore/JavaScript.h>
 #include <glib.h>
+#include <JavaScriptCore/JavaScript.h>
 
 G_BEGIN_DECLS
 
