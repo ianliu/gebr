@@ -14,18 +14,9 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 var document_clone = null;
 var editor = null;
 var editing_element = null;
-function getHead(doc) {
-	var head = doc.getElementsByTagName('head')[0];
-	if (!head) {
-		head = doc.createElement('head');
-		doc.documentElement.insertBefore(head, doc.body);
-	}
-	return head;
-}
 function UpdateDocumentClone() {
 	editor.updateElement();
 	var content = GetEditableElements(document_clone)[0];
@@ -58,7 +49,6 @@ function GetEditableElements(doc) {
 function UpgradeHelpFormat(doc) {
 	var content = GetEditableElements(doc)[0];
 	var links = content.getElementsByTagName('a');
-	alert(links);
 	var blacklist = [];
 	for (var i = 0; i < links.length; i++)
 		if (links[i].innerHTML.search(/^\s*$/) == 0)
@@ -98,17 +88,19 @@ function OpenCkEditor(element) {
 		resize_enabled:false,
 		toolbarCanCollapse:false,
 		toolbar:[['Source','-','Bold','Italic','Underline','-',
-			'Subscript','Superscript','-','Undo','Redo','-','/',
+			'Subscript','Superscript','-','Undo','Redo'],'/',[
 			'NumberedList','BulletedList','Blockquote','Styles','-',
 			'Link','Unlink','-','RemoveFormat','-','Find','Replace', '-' ]]});
 }
 function onCkEditorLoadFinished() {
+	if (typeof(menu_edition) == 'undefined') {
+		return;
+	}
 	cloneDocument();
-	alert(menu_edition ? true : false);
-	//if (menu_edition) {
+	if (menu_edition) {
 		UpgradeHelpFormat(document);
 		UpgradeHelpFormat(document_clone);
-	//}
+	}
 	OpenCkEditor(GetEditableElements(document)[0]);
 }
 function isContentSaved() {
@@ -137,11 +129,6 @@ function forceUtf8() {
 function cloneDocument() {
 	document_clone = document.implementation.createDocument('', '', null);
 	document_clone.appendChild(document.documentElement.cloneNode(true));
-}
-
-function startEditor() {
-	//forceUtf8();
-	//cloneDocument();
 }
 
 function closeEditor() {
