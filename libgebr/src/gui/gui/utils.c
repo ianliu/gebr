@@ -542,6 +542,7 @@ void gebr_gui_gtk_tree_view_select_iter(GtkTreeView * tree_view, GtkTreeIter * i
 	gtk_tree_selection_unselect_all(tree_selection);
 	if (iter == NULL)
 		return;
+
 	gebr_gui_gtk_tree_view_expand_to_iter(tree_view, iter);
 
 	GtkTreePath * tree_path;
@@ -556,7 +557,10 @@ void gebr_gui_gtk_tree_view_expand_to_iter(GtkTreeView * view, GtkTreeIter * ite
 {
 	GtkTreePath *path;
 	path = gtk_tree_model_get_path(gtk_tree_view_get_model(view), iter);
+	gboolean expanded = gtk_tree_view_row_expanded(view, path);
 	gtk_tree_view_expand_to_path(view, path);
+	if (!expanded)
+		gtk_tree_view_collapse_row(view, path);
 	gtk_tree_path_free(path);
 }
 

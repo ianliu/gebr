@@ -1452,7 +1452,6 @@ void menu_replace(void) {
 	}
 
 	if ((parameter_path != NULL) && gtk_tree_model_get_iter(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter, parameter_path)){
-		gtk_tree_view_expand_to_path(GTK_TREE_VIEW(debr.ui_parameter.tree_view), parameter_path);
 		parameter_select_iter(iter);
 		gtk_tree_path_free(parameter_path);
 	}

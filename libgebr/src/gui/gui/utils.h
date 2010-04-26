@@ -174,6 +174,7 @@ void gebr_gui_gtk_tree_view_select_iter(GtkTreeView * tree_view, GtkTreeIter * i
 
 /**
  * Expands the rows of \p view so that the row pointed by \p iter is visible.
+ * Fixes extrange behaviour of gtk_tree_view_expand_to_path that expand the \p iter it self.
  */
 void gebr_gui_gtk_tree_view_expand_to_iter(GtkTreeView * view, GtkTreeIter * iter);
 
