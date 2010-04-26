@@ -78,7 +78,7 @@ static gchar * js_start_inline_editing = \
 		"var head = document.getElementsByTagName('head')[0];"
 		"if (!head) {"
 			"head = document.createElement('head');"
-			"document.documentElement.insertBefore(head, doc.body);"
+			"document.documentElement.insertBefore(head, document.body);"
 		"}"
 		"return head;"
 	"}"
@@ -347,18 +347,6 @@ static void web_view_on_title_changed(WebKitWebView * web_view, WebKitWebFrame *
 
 /**
  * \internal
- * CKEDITOR save toolbar button callback
- * Set at #web_view_on_load_finished
- */
-JSValueRef js_callback_gebr_menu_edition(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject,
-				      size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-	struct help_edit_data * data;
-	return JSValueMakeUndefined(data->menu_edition);
-}
-
-/**
- * \internal
  * Load all page personalization for editing.
  */
 static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, struct help_edit_data * data)
@@ -369,8 +357,10 @@ static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame *
 	data->web_view = web_view;
 	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
 
-	function = gebr_js_make_function(data->context, "menu_edition", js_callback_gebr_menu_edition);
-	g_hash_table_insert(jscontext_to_data_hash, (gpointer)function, data);
+	if (data->menu_edition)
+		gebr_js_evaluate(data->context, "var menu_edition = true;");
+	else
+		gebr_js_evaluate(data->context, "var menu_edition = false;");
 
 	gebr_js_evaluate(data->context, js_start_inline_editing);
 
