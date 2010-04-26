@@ -464,8 +464,17 @@ static void flow_edition_menu_add(void)
 
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
-	if (!flow_edition_get_selected_menu(&iter, TRUE))
+
+	if (!flow_edition_get_selected_menu(&iter, FALSE)) {
+		GtkTreePath *path;
+		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &iter);
+		if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(gebr.ui_flow_edition->menu_view), path))
+			gtk_tree_view_collapse_row(GTK_TREE_VIEW(gebr.ui_flow_edition->menu_view), path);
+		else
+			gtk_tree_view_expand_row(GTK_TREE_VIEW(gebr.ui_flow_edition->menu_view), path, FALSE);
+		gtk_tree_path_free(path);
 		return;
+	}
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &iter,
 			   MENU_TITLE_COLUMN, &name, MENU_FILEPATH_COLUMN, &filename, -1);
