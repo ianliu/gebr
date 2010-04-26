@@ -112,6 +112,8 @@ static gchar * js_start_inline_editing = \
 		"getHead().appendChild(script);"
 	"}"
 	"forceUtf8();"
+	"var document_clone = document.implementation.createDocument('', '', null);"
+	"document_clone.appendChild(document.documentElement.cloneNode(true));"
 	"addScript('help');"
 	"addScript('ckeditor');"
 	"";

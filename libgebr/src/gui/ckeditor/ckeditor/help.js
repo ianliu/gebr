@@ -14,7 +14,6 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var document_clone = null;
 var editor = null;
 var editing_element = null;
 function UpdateDocumentClone() {
@@ -93,10 +92,6 @@ function OpenCkEditor(element) {
 			'Link','Unlink','-','RemoveFormat','-','Find','Replace', '-' ]]});
 }
 function onCkEditorLoadFinished() {
-	if (typeof(menu_edition) == 'undefined') {
-		return;
-	}
-	cloneDocument();
 	if (menu_edition) {
 		UpgradeHelpFormat(document);
 		UpgradeHelpFormat(document_clone);
@@ -127,10 +122,6 @@ function forceUtf8() {
 	} else {
 		head.appendChild(meta);
 	}
-}
-function cloneDocument() {
-	document_clone = document.implementation.createDocument('', '', null);
-	document_clone.appendChild(document.documentElement.cloneNode(true));
 }
 
 function closeEditor() {
