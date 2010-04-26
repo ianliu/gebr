@@ -117,12 +117,6 @@ void parameter_top(void);
 void parameter_bottom(void);
 
 /**
- * Open dialog to change type of current selected parameter.
- * \return TRUE if user accepted changes, FALSE otherwise.
- */
-gboolean parameter_change_type_setup_ui(void);
-
-/**
  * Cuts the selected parameter(s) to clipboard.
  */
 void parameter_cut(void);

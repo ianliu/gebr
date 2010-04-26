@@ -92,7 +92,7 @@ static const GtkActionEntry actions_entries[] = {
 	{"parameter_bottom", GTK_STOCK_GOTO_BOTTOM, NULL, NULL,
 	 N_("Move parameter to bottom"), G_CALLBACK(on_parameter_bottom_activate)},
 	{"parameter_change_type", GTK_STOCK_CONVERT, N_("Change type"), NULL, N_("Change parameter type"),
-	 G_CALLBACK(on_parameter_change_type_activate)},
+	 NULL},
 	{"parameter_cut", GTK_STOCK_CUT, N_("Cut"), NULL, N_("Cut selected parameter(s) to clipboard"),
 	 G_CALLBACK(on_parameter_cut_activate)},
 	{"parameter_copy", GTK_STOCK_COPY, N_("Copy"), NULL, N_("Copy selected parameter(s) to clipboard"),

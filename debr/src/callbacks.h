@@ -187,11 +187,6 @@ void on_parameter_top_activate(void);
 void on_parameter_bottom_activate(void);
 
 /**
- * Calls \ref parameter_remove.
- */
-void on_parameter_change_type_activate(void);
-
-/**
  * Calls \ref parameter_change_type.
  */
 void on_parameter_type_activate(GtkRadioAction * first_action);

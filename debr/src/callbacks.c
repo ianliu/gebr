@@ -464,11 +464,6 @@ void on_parameter_bottom_activate(void)
 	parameter_bottom();
 }
 
-void on_parameter_change_type_activate(void)
-{
-	parameter_change_type_setup_ui();
-}
-
 void on_parameter_type_activate(GtkRadioAction * first_action)
 {
 	gint type;

@@ -399,72 +399,6 @@ void parameter_bottom(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-gboolean parameter_change_type_setup_ui(void)
-{
-	GtkWidget *dialog;
-	GtkWidget *table;
-	GtkWidget *type_label;
-	GtkWidget *type_combo;
-
-	GtkTreeIter iter;
-	gboolean ret = TRUE;
-
-	if (parameter_get_selected(&iter, TRUE) == FALSE)
-		return FALSE;
-
-	dialog = gtk_dialog_new_with_buttons(_("Parameter's type"),
-					     GTK_WINDOW(debr.window),
-					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-	gtk_widget_set_size_request(dialog, 300, 100);
-
-	table = gtk_table_new(1, 2, FALSE);
-	gtk_widget_show(table);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 5);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
-
-	type_label = gtk_label_new(_("Type:"));
-	gtk_widget_show(type_label);
-	gtk_table_attach(GTK_TABLE(table), type_label, 0, 1, 0, 1,
-			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	gtk_misc_set_alignment(GTK_MISC(type_label), 0, 0.5);
-
-	type_combo = gtk_combo_box_new_text();
-	gtk_widget_show(type_combo);
-	gtk_table_attach(GTK_TABLE(table), type_combo, 1, 2, 0, 1,
-			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[0].title);
-	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[1].title);
-	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[2].title);
-	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[3].title);
-	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[4].title);
-	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[5].title);
-	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[6].title);
-	/* does not allow group-in-group */
-	if (gebr_geoxml_parameter_get_is_program_parameter(debr.parameter) == TRUE &&
-	    gebr_geoxml_parameter_get_is_in_group(debr.parameter) == FALSE) {
-		gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), combo_type_map[7].title);
-		gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo),
-					 combo_type_map_get_index(gebr_geoxml_parameter_get_type(debr.parameter)));
-	} else
-		gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), 0);
-
-	gtk_widget_show(dialog);
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
-		ret = FALSE;
-		goto out;
-	}
-
-	parameter_change_type(combo_type_map_get_type(gtk_combo_box_get_active(GTK_COMBO_BOX(type_combo))));
-	menu_saved_status_set(MENU_STATUS_UNSAVED);
-
- out:	gtk_widget_destroy(dialog);
-
-	return ret;
-}
-
 void parameter_cut(void)
 {
 	parameter_copy();
@@ -637,6 +571,8 @@ void parameter_change_type(enum GEBR_GEOXML_PARAMETER_TYPE type)
 		gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(debr.parameter), keyword);
 
 	parameter_load_selected();
+
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
 gboolean parameter_properties(gboolean new)
@@ -1482,7 +1418,6 @@ static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 
 	if (gebr_geoxml_parameter_get_type(debr.parameter) != GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
 		menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "parameter_change_type"));
-		gtk_action_block_activate_from(gtk_action_group_get_action(debr.action_group, "parameter_change_type"), menu_item);
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), parameter_create_menu_with_types(TRUE));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	}
