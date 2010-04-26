@@ -514,17 +514,14 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	g_free(title);
 	g_free(fname);
 
-	gchar * cwd = NULL;
 	void foreach(gchar * key) {
-		if (!cwd)
-			cwd = key;
 		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(dialog), key, NULL);
 	}
 	g_hash_table_foreach(debr.config.opened_folders, (GHFunc)foreach, NULL);
 
 	if (gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(debr.ui_menu.model),
 						  &parent, &debr.ui_menu.iter_other)) {
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), cwd);
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), getenv("HOME"));
 	} else {
 		gchar *menu_path;
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &parent, MENU_PATH, &menu_path, -1);
