@@ -9,4 +9,4 @@ styles.push({name:'Section',element:'h2'},{name:'Subsection',element:'h3'});
 if (menu_edition)
 	styles.push({name:'Parameter',element:'span',attributes:{'class':'label'}});
 styles.push({name:'Code',element:'pre'});
-CKEDITOR.addStylesSet('default',styles);
+CKEDITOR.stylesSet.add('default', styles);
