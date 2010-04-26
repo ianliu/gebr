@@ -104,6 +104,8 @@ function onCkEditorLoadFinished() {
 	OpenCkEditor(GetEditableElements(document)[0]);
 }
 function isContentSaved() {
+	if (menu_refresh)
+		return false;
 	return !editor.checkDirty();
 }
 function forceUtf8() {

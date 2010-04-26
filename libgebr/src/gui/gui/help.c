@@ -46,6 +46,7 @@ struct help_edit_data {
 	GtkActionGroup *actions;
 
 	gboolean menu_edition;
+	gboolean menu_refresh;
 };
 
 static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window, struct help_edit_data * data);
@@ -162,6 +163,7 @@ static void help_edit_save(struct help_edit_data * data)
 	var_help = g_string_new(
 			"(function(){"
 				"editor.resetDirty();"
+				"menu_refresh = false;"
 				"UpdateDocumentClone();"
 				"if (menu_edition) {"
 					"GenerateNavigationIndex(document);"
@@ -351,12 +353,13 @@ static void web_view_on_title_changed(WebKitWebView * web_view, WebKitWebFrame *
  */
 static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, struct help_edit_data * data)
 {
-	JSObjectRef function;
-	GString *var;
-
 	data->web_view = web_view;
 	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
 
+	gchar * script = g_strdup_printf("var menu_refresh = %s;", data->menu_refresh? "true":"false");
+	gebr_js_evaluate(data->context, script);
+	data->menu_refresh = FALSE;
+	g_free(script);
 	if (data->menu_edition)
 		gebr_js_evaluate(data->context, "var menu_edition = true;");
 	else
@@ -428,6 +431,7 @@ static void _gebr_gui_help_edit(const gchar *help, GebrGeoXmlObject * object, Ge
 	data->edited_callback = edited_callback;
 	data->refresh_callback = refresh_callback;
 	data->menu_edition = menu_edition;
+	data->menu_refresh = FALSE;
 
 	web_view = web_view_on_create_web_view(&dialog, data);
 	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
@@ -476,6 +480,7 @@ void on_help_edit_refresh_activate(GtkAction * action, struct help_edit_data * d
 		FILE * html_fp;
 		GString * help;
 		JSValueRef value;
+		data->menu_refresh = TRUE;
 		value = gebr_js_evaluate(data->context,
 					 "(function(){"
 					 	"UpdateDocumentClone();"
