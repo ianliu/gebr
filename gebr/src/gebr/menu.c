@@ -100,15 +100,17 @@ gboolean menu_refresh_needed(void)
 	gboolean needed;
 	GString *index_path;
 
-	gchar *subdir;
+	gchar *home_menu_dir;
 	GString *menudir_path;
 	struct stat _stat;
 	time_t index_time;
-	time_t menudirs_time;
 
 	needed = FALSE;
 	index_path = g_string_new(NULL);
 	menudir_path = g_string_new(NULL);
+	home_menu_dir = g_strconcat(getenv("HOME"), "/.gebr/gebr/menus", NULL);
+
+	puts(home_menu_dir);
 
 	/* index path string */
 	g_string_printf(index_path, "%s/.gebr/gebr/menus.idx2", getenv("HOME"));
@@ -118,36 +120,25 @@ gboolean menu_refresh_needed(void)
 	/* Time for index */
 	stat(index_path->str, &_stat);
 	index_time = _stat.st_mtime;
-	/* Times for system menus directories */
-	stat(GEBR_SYS_MENUS_DIR, &_stat);
-	menudirs_time = _stat.st_mtime;
-	gebr_directory_foreach_file(subdir, GEBR_SYS_MENUS_DIR) {
-		g_string_printf(menudir_path, "%s/%s", GEBR_SYS_MENUS_DIR, subdir);
-		if (!g_file_test(menudir_path->str, G_FILE_TEST_IS_DIR))
-			continue;
-		stat(menudir_path->str, &_stat);
-		if (menudirs_time < _stat.st_mtime)
-			menudirs_time = _stat.st_mtime;
-	}
-	if (menudirs_time > index_time) {
-		needed = TRUE;
-		goto out;
-	}
-
-
 
 	/* Times for all menus */
-	if (menu_compare_times(GEBR_SYS_MENUS_DIR, index_time, TRUE)) {
-		needed = TRUE;
-		goto out;
-	}
-	if (menu_compare_times(gebr.config.usermenus->str, index_time, FALSE)) {
+	if (menu_compare_times(gebr.config.usermenus->str, index_time, FALSE)
+	    || menu_compare_times(home_menu_dir, index_time, FALSE)) {
 		needed = TRUE;
 		goto out;
 	}
 
- out:	g_string_free(index_path, TRUE);
+	for (gint i = 0; directory_list[i]; i++) {
+		if (menu_compare_times(directory_list[i], index_time, FALSE)) {
+			needed = TRUE;
+			goto out;
+		}
+	}
+
+out:
+	g_string_free(index_path, TRUE);
 	g_string_free(menudir_path, TRUE);
+	g_free(home_menu_dir);
 
 	return needed;
 }
