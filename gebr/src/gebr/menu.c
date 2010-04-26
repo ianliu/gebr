@@ -110,8 +110,6 @@ gboolean menu_refresh_needed(void)
 	menudir_path = g_string_new(NULL);
 	home_menu_dir = g_strconcat(getenv("HOME"), "/.gebr/gebr/menus", NULL);
 
-	puts(home_menu_dir);
-
 	/* index path string */
 	g_string_printf(index_path, "%s/.gebr/gebr/menus.idx2", getenv("HOME"));
 	if (g_access(index_path->str, F_OK | R_OK) && menu_list_create_index() == FALSE)
@@ -287,18 +285,22 @@ const gchar ** menu_get_global_directories(void)
  * \internal
  * Compares the modification time of all menu files in \p directory with \p index_time and determines if the directory
  * was changed.
+ * \return TRUE if refresh is needed, ie, \p directory time is greater than \p index_time.
  */
 static gboolean menu_compare_times(const gchar * directory, time_t index_time, gboolean recursive)
 {
 	gchar *filename;
 	GString *path;
 	gboolean refresh_needed;
+	struct stat info;
+
+	stat(directory, &info);
+	if (index_time < info.st_mtime)
+		return TRUE;
 
 	refresh_needed = FALSE;
 	path = g_string_new(NULL);
 	gebr_directory_foreach_file(filename, directory) {
-		struct stat file_stat;
-
 		g_string_printf(path, "%s/%s", directory, filename);
 		if (recursive && g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
 			if (menu_compare_times(path->str, index_time, TRUE)) {
@@ -309,8 +311,8 @@ static gboolean menu_compare_times(const gchar * directory, time_t index_time, g
 		if (fnmatch("*.mnu", filename, 1))
 			continue;
 
-		stat(path->str, &file_stat);
-		if (index_time < file_stat.st_mtime) {
+		stat(path->str, &info);
+		if (index_time < info.st_mtime) {
 			refresh_needed = TRUE;
 			goto out;
 		}
