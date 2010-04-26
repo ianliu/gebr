@@ -113,8 +113,6 @@ static gchar * js_start_inline_editing = \
 	"forceUtf8();"
 	"addScript('help');"
 	"addScript('ckeditor');"
-	"alert(help.src);"
-	"alert(ckeditor.src);"
 	"";
 
 /*
@@ -356,7 +354,7 @@ JSValueRef js_callback_gebr_menu_edition(JSContextRef ctx, JSObjectRef function,
 				      size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
 	struct help_edit_data * data;
-	return JSValueMakeUndefined(1);
+	return JSValueMakeUndefined(data->menu_edition);
 }
 
 /**
@@ -374,15 +372,8 @@ static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame *
 	function = gebr_js_make_function(data->context, "menu_edition", js_callback_gebr_menu_edition);
 	g_hash_table_insert(jscontext_to_data_hash, (gpointer)function, data);
 
-	//var = g_string_new(NULL);
-	//g_string_printf(var, "var menu_edition = %s;", data->menu_edition ? "true" : "false");
-	//gebr_js_evaluate(data->context, var->str);
-	//g_string_free(var, TRUE);
-
 	gebr_js_evaluate(data->context, js_start_inline_editing);
-	//function = gebr_js_make_function(data->context, "gebr_help_save", js_callback_gebr_help_save);
 
-	//g_hash_table_insert(jscontext_to_data_hash, (gpointer)function, data);
 	g_signal_handlers_disconnect_matched(G_OBJECT(web_view),
 						 G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(web_view_on_load_finished), data);
 }
