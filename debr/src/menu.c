@@ -853,6 +853,7 @@ gboolean menu_cleanup_folder(GtkTreeIter * folder)
 
 	while (still_running) {
 		unsaved_list = menu_get_unsaved(folder);
+		unsaved_list = g_list_reverse(unsaved_list);
 		gtk_list_store_clear(store);
 		for (GList * i = unsaved_list; i != NULL; i = i->next) {
 			gchar * fname;
