@@ -232,7 +232,7 @@ void validate_image_set_check_enum_option_list(GtkWidget * image, GebrGeoXmlProg
 
 	gebr_geoxml_program_parameter_get_enum_option(enum_parameter, &sequence, 0);
 	if (sequence == NULL)
-		validate_image_set_warning(image, _("No enum option is set"));
+		validate_image_set_warning(image, _("No option is set"));
 	else
 		validate_image_set_warning(image, NULL);
 }
