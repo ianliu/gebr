@@ -23,27 +23,14 @@
 #include "debr.h"
 #include "menu.h"
 
-const gchar *browser[] = {
-	"epiphany",
-	"firefox",
-	"galeon",
-	"konqueror",
-	"mozilla"
-};
-
-#define NBROWSER 5
-
 void preferences_dialog_setup_ui(void)
 {
 	GtkWidget *window;
 	GtkWidget *table;
 	GtkWidget *name_entry;
 	GtkWidget *email_entry;
-	GtkWidget *browser_combo;
 	GtkWidget *htmleditor_entry;
 	GtkWidget *label;
-	GtkWidget *eventbox;
-	gboolean newbrowser = TRUE;
 	GtkWidget *fake_radio_button;
 	GtkWidget *builtin_editor;
 	GtkWidget *custom_editor;
@@ -81,31 +68,7 @@ void preferences_dialog_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), email_entry, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_entry_set_text(GTK_ENTRY(email_entry), debr.config.email->str);
 
-	/* Browser */
-	label = gtk_label_new(_("Browser"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	browser_combo = gtk_combo_box_entry_new_text();
-	for (guint i = 0; i < NBROWSER; i++) {
-		gtk_combo_box_append_text(GTK_COMBO_BOX(browser_combo), browser[i]);
-		if (debr.config.browser && newbrowser) {
-			if (strcmp(browser[i], debr.config.browser->str) == 0) {
-				newbrowser = FALSE;
-				gtk_combo_box_set_active(GTK_COMBO_BOX(browser_combo), i);
-			}
-		}
-	}
-	if (strlen(debr.config.browser->str) && newbrowser) {
-		gtk_combo_box_append_text(GTK_COMBO_BOX(browser_combo), debr.config.browser->str);
-		gtk_combo_box_set_active(GTK_COMBO_BOX(browser_combo), NBROWSER);
-	}
-	eventbox = gtk_event_box_new();
-	gtk_container_add(GTK_CONTAINER(eventbox), browser_combo);
-	g_object_set(eventbox, "tooltip-text", _("An HTML browser to display helps and reports"), NULL);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, 5, 6, GTK_FILL, GTK_FILL, 3, 3);
-
 	/* Editor */
-
 	label = gtk_label_new(_("HTML editor"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
@@ -137,7 +100,6 @@ void preferences_dialog_setup_ui(void)
 	if (gtk_dialog_run(GTK_DIALOG(window)) == GTK_RESPONSE_OK) {
 		g_string_assign(debr.config.name, gtk_entry_get_text(GTK_ENTRY(name_entry)));
 		g_string_assign(debr.config.email, gtk_entry_get_text(GTK_ENTRY(email_entry)));
-		g_string_assign(debr.config.browser, gtk_combo_box_get_active_text(GTK_COMBO_BOX(browser_combo)));
 		g_string_assign(debr.config.htmleditor, gtk_entry_get_text(GTK_ENTRY(htmleditor_entry)));
 		debr.config.native_editor = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(builtin_editor));
 		debr_config_save();
