@@ -100,7 +100,6 @@ struct gebr {
 		GString *usermenus;
 		GString *data;
 		GString *editor;
-		GString *browser;
 		int width;
 		int height;
 		gboolean log_expander_state;
