@@ -251,7 +251,7 @@ void parameter_new(void)
 	     gebr_geoxml_parameter_get_is_in_group(debr.parameter) == TRUE)) {
 		/* The selected parameter is a group or is part of a group. */
 		GebrGeoXmlParameterGroup *parameter_group;
-		GebrGeoXmlSequence *first_instance;
+		GebrGeoXmlParameters *template;
 		GtkTreeIter parent;
 
 		/* Let's determine the parameter group to which iter belongs. */
@@ -265,11 +265,12 @@ void parameter_new(void)
 			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent,
 					   PARAMETER_XMLPOINTER, &parameter_group, -1);
 
-		gebr_geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
+		//gebr_geoxml_parameter_group_get_instance(parameter_group, &template, 0);
+		template = gebr_geoxml_parameter_group_get_template(parameter_group);
 		if (gebr_geoxml_parameter_get_is_in_group(debr.parameter)) {
 			GebrGeoXmlParameter *xml_parameter;
 
-			xml_parameter = gebr_geoxml_parameters_append_parameter(GEBR_GEOXML_PARAMETERS(first_instance),
+			xml_parameter = gebr_geoxml_parameters_append_parameter(template,
 										GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
 
 			/* Insert new parameter after pre-selected one. */
@@ -277,9 +278,8 @@ void parameter_new(void)
 			parameter_insert_to_ui(xml_parameter, &pre_selected_iter, &iter);
 		} else {
 			/* Selection is a group. Append new parameter at the end of the group's list. */
-			parameter_append_to_ui(gebr_geoxml_parameters_append_parameter
-					       (GEBR_GEOXML_PARAMETERS(first_instance),
-						GEBR_GEOXML_PARAMETER_TYPE_FLOAT), &parent, &iter);
+			parameter_append_to_ui(gebr_geoxml_parameters_append_parameter(template, GEBR_GEOXML_PARAMETER_TYPE_FLOAT),
+					       &parent, &iter);
 		}
 	} else {
 		/* There is no selected parameter for the current menu or the selected parameter
@@ -354,8 +354,6 @@ void parameter_remove(gboolean confirm)
 			gtk_tree_selection_unselect_iter(tree_selection, &iter);
 			continue;
 		}
-		// if (in_group)
-		//	parameter_load_iter(&parent, FALSE);
 	}
 	gebr_gui_gtk_tree_view_foreach_selected_hyg(&iter, debr.ui_parameter.tree_view, 2) {
 		GebrGeoXmlParameter * parameter;
