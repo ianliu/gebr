@@ -165,10 +165,10 @@ gboolean parameter_group_dialog_setup_ui(gboolean new)
 	gtk_table_attach(GTK_TABLE(table), instances_spin_button, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
 	/* if we don't any parameter we cannot instanciate */
-	gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
+	GebrGeoXmlParameters *template;
+	template = gebr_geoxml_parameter_group_get_template(parameter_group);
 	gtk_widget_set_sensitive(instances_spin_button,
-				 gebr_geoxml_parameters_get_number(GEBR_GEOXML_PARAMETERS(instance)) >
-				 0 ? TRUE : FALSE);
+				 gebr_geoxml_parameters_get_number(template) > 0 ? TRUE : FALSE);
 
 	ui->instances_edit_vbox = instances_edit_vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(ui->instances_edit_vbox);
@@ -181,6 +181,7 @@ gboolean parameter_group_dialog_setup_ui(gboolean new)
 	gtk_entry_set_text(GTK_ENTRY(label_entry), gebr_geoxml_parameter_get_label(debr.parameter));
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(instances_spin_button),
 				  gebr_geoxml_parameter_group_get_instances_number(parameter_group));
+
 	/* scan for an exclusive instance */
 	gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(exclusive_check_button), TRUE);
@@ -271,7 +272,7 @@ static void parameter_group_instances_setup_ui(struct ui_parameter_group_dialog 
 		for (j = 0; parameter != NULL; ++j, gebr_geoxml_sequence_next(&parameter)) {
 			struct gebr_gui_parameter_widget *widget;
 
-			if (exclusive == NULL){
+			if (exclusive == NULL) {
 				label_widget = gtk_label_new(gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)));
 				gtk_misc_set_alignment(GTK_MISC(label_widget), 0, 0.5);
 			} else {
