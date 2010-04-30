@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-07 22:13-0300\n"
-"PO-Revision-Date: 2010-02-19 23:08-0200\n"
+"POT-Creation-Date: 2010-04-30 13:54-0300\n"
+"PO-Revision-Date: 2010-04-30 13:55-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -41,7 +41,7 @@ msgstr "Parando servidor em %s."
 msgid "Redirecting '%s' graphical output."
 msgstr "Redirecionando saída gráfica de '%s'."
 
-#: ../src/comm/comm/server.c:328
+#: ../src/comm/comm/server.c:330
 #, c-format
 msgid ""
 "Could not launch local server: \n"
@@ -50,7 +50,7 @@ msgstr ""
 "Não foi possível executar o servidor local: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:375
+#: ../src/comm/comm/server.c:377
 #, c-format
 msgid ""
 "Server %s needs SSH login.\n"
@@ -61,7 +61,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/comm/comm/server.c:378
+#: ../src/comm/comm/server.c:380
 #, c-format
 msgid ""
 "Wrong password for server %s, please try again.\n"
@@ -72,15 +72,15 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/comm/comm/server.c:381
+#: ../src/comm/comm/server.c:383
 msgid "SSH login:"
 msgstr "Login SSH:"
 
-#: ../src/comm/comm/server.c:399
+#: ../src/comm/comm/server.c:401
 msgid "SSH inquiry:"
 msgstr "Pergunta SSH:"
 
-#: ../src/comm/comm/server.c:409
+#: ../src/comm/comm/server.c:411
 #, c-format
 msgid ""
 "Received SSH message: \n"
@@ -89,7 +89,7 @@ msgstr ""
 "Mensagem SSH recebida: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:422
+#: ../src/comm/comm/server.c:424
 #, c-format
 msgid ""
 "Error contacting server at address %s via ssh: \n"
@@ -98,7 +98,7 @@ msgstr ""
 "Erro ao contatar o servidor no endereço %s via ssh: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:481
+#: ../src/comm/comm/server.c:483
 #, c-format
 msgid ""
 "Could not comunicate with server %s: \n"
@@ -107,7 +107,7 @@ msgstr ""
 "Não foi possível se comunicar com o servidor %s: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:653
+#: ../src/comm/comm/server.c:655
 #, c-format
 msgid "Connection error '%d' on server '%s'."
 msgstr "Erro de conexão '%d' no servidor '%s'."
@@ -125,78 +125,82 @@ msgid "Not enough memory."
 msgstr "Memória insuficiente."
 
 #: ../src/geoxml/geoxml/error.c:28
-msgid "Can not find file or permission denied."
-msgstr "Não foi possível encontrar o arquivo ou permissão negada."
+msgid "File not found."
+msgstr "Arquivo não encontrado."
 
 #: ../src/geoxml/geoxml/error.c:29
+msgid "Permission denied."
+msgstr "Permissão negada."
+
+#: ../src/geoxml/geoxml/error.c:30
 msgid "Invalid element index."
 msgstr "Índice de elementos inválido."
 
-#: ../src/geoxml/geoxml/error.c:30
+#: ../src/geoxml/geoxml/error.c:31
 msgid "Invalid document syntax or structure."
 msgstr "Sintaxe ou estrutura do documento inválida."
 
-#: ../src/geoxml/geoxml/error.c:31
+#: ../src/geoxml/geoxml/error.c:32
 msgid "DTD specified in XML."
 msgstr "DTD especificado no XML."
 
-#: ../src/geoxml/geoxml/error.c:32
+#: ../src/geoxml/geoxml/error.c:33
 msgid "Could not find or read DTD."
 msgstr "Não foi possível encontrar ou ler DTD."
 
-#: ../src/geoxml/geoxml/error.c:33
+#: ../src/geoxml/geoxml/error.c:34
 msgid "Not a sequence."
 msgstr "Não é uma seqüência."
 
-#: ../src/geoxml/geoxml/error.c:34
+#: ../src/geoxml/geoxml/error.c:35
 msgid "Unable to perform binary sequence operation with conflicting types."
 msgstr ""
 "Impossível realizar operação binária em seqüências de tipos conflitantes."
 
-#: ../src/geoxml/geoxml/error.c:35
+#: ../src/geoxml/geoxml/error.c:36
 msgid "Not an enum."
 msgstr "Não é um enum."
 
-#: ../src/geoxml/geoxml/error.c:36
+#: ../src/geoxml/geoxml/error.c:37
 msgid "Reference to itself."
 msgstr "Referência a ele mesmo."
 
-#: ../src/geoxml/geoxml/error.c:37
+#: ../src/geoxml/geoxml/error.c:38
 msgid "Not first instance of the group."
 msgstr "Não é a primeira instância do grupo."
 
-#: ../src/geoxml/geoxml/error.c:49
+#: ../src/geoxml/geoxml/error.c:50
 msgid "The operation was done successfuly."
 msgstr "A operação foi feita com sucesso."
 
-#: ../src/geoxml/geoxml/error.c:50
+#: ../src/geoxml/geoxml/error.c:51
 msgid "One or more mandatory function arguments were null."
 msgstr "Um ou mais argumentos obrigatórios da função eram nulos."
 
-#: ../src/geoxml/geoxml/error.c:51
+#: ../src/geoxml/geoxml/error.c:52
 msgid ""
 "Not enough memory. The library stoped after an unsucessful memory allocation."
 msgstr ""
 "Memória insuficiente. A biblioteca parou depois de uma alocação de memória "
 "mal sucedida."
 
-#: ../src/geoxml/geoxml/error.c:52
-msgid ""
-"Can't access file. The file doesn't exist or there is not enough permission "
-"to read it."
-msgstr ""
-"Não é possível acessar o arquivo. O arquivo não existe ou não há permissão "
-"suficiente para lê-lo."
-
 #: ../src/geoxml/geoxml/error.c:53
+msgid "Can't access file: file not found."
+msgstr "Não foi possível acessar o arquivo: arquivo não encontrado."
+
+#: ../src/geoxml/geoxml/error.c:54
+msgid "Can't access file: permission denied."
+msgstr "Não foi possível acessar o arquivo: permissão negada."
+
+#: ../src/geoxml/geoxml/error.c:55
 msgid "This element index does not exist in the sequence."
 msgstr "Este índice de elementos não existe na seqüência."
 
-#: ../src/geoxml/geoxml/error.c:54
+#: ../src/geoxml/geoxml/error.c:56
 msgid "XML syntax is invalid or disagrees with DTD."
 msgstr "Sintaxe do XML inválida ou em desacordo o DTD."
 
-#: ../src/geoxml/geoxml/error.c:55
+#: ../src/geoxml/geoxml/error.c:57
 msgid ""
 "DTD was specified for the document. LibGeBR-GebrGeoXml requires the document "
 "doesnot to specify the DTD as it automatically finds it and validates "
@@ -205,7 +209,7 @@ msgstr ""
 "O DTD foi especificado para este documento. LibGeBR-GebrGeoXml requer que o "
 "documento não especifique o DTD dado que este é encontrado automaticamente."
 
-#: ../src/geoxml/geoxml/error.c:57
+#: ../src/geoxml/geoxml/error.c:59
 msgid ""
 "DTD for the corresponding document type (flow, line or project) and version "
 "could not be found or accessed on the system.\n"
@@ -217,7 +221,7 @@ msgstr ""
 "Verifique se sua instalação está correta e se ela suporta esta versão de "
 "documento (atualização pode ser necessária)."
 
-#: ../src/geoxml/geoxml/error.c:61
+#: ../src/geoxml/geoxml/error.c:63
 msgid ""
 "The argument(s) passed are not inside a sequence and therefore sequence "
 "operations doesn't apply. This is a type checking result error."
@@ -225,7 +229,7 @@ msgstr ""
 "Os argumentos fornecidos não estão contidos em uma sequência e portanto as "
 "operações não se aplicam. Isto é um erro resutante de checagem de tipo."
 
-#: ../src/geoxml/geoxml/error.c:63
+#: ../src/geoxml/geoxml/error.c:65
 msgid ""
 "An operation on two sequences requires that both sequences are of the same "
 "type."
@@ -233,17 +237,17 @@ msgstr ""
 "Uma operação com duas seqüências requer que ambas as seqüências sejam do "
 "mesmo tipo."
 
-#: ../src/geoxml/geoxml/error.c:64
+#: ../src/geoxml/geoxml/error.c:66
 msgid "The function is only for enums. This is a type checking result error."
 msgstr ""
 "A função é somente para enums. Isso é um erro de resultante de checagem de "
 "tipo."
 
-#: ../src/geoxml/geoxml/error.c:65
+#: ../src/geoxml/geoxml/error.c:67
 msgid "The reference parameter references itself."
 msgstr "O parâmetro de referência faz referência a si próprio."
 
-#: ../src/geoxml/geoxml/error.c:66
+#: ../src/geoxml/geoxml/error.c:68
 msgid "The operation only applies to the first instance of the group."
 msgstr "A operação aplica-se somente à primeira instância do grupo."
 
@@ -423,6 +427,13 @@ msgstr "Dicionário"
 #: ../src/date.c:69
 msgid "Unknown"
 msgstr "Desconhecida"
+
+#~ msgid ""
+#~ "Can't access file. The file doesn't exist or there is not enough "
+#~ "permission to read it."
+#~ msgstr ""
+#~ "Não é possível acessar o arquivo. O arquivo não existe ou não há "
+#~ "permissão suficiente para lê-lo."
 
 #, fuzzy
 #~ msgid ""

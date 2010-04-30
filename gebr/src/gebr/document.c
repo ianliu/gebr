@@ -249,7 +249,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	/* don't do document recovery for menus */
 	if (g_str_has_suffix(path, ".mnu")) {
 		/* the final point already comes with gebr_geoxml_error_string */
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load menu %sat %s:\n%s"),
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load menu %s at %s:\n%s"),
 			     string->str, path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		goto out;
 	}
@@ -275,7 +275,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 						   (GtkDialogFlags)(GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL),
 						   GTK_MESSAGE_ERROR,
 						   GTK_BUTTONS_NONE,
-						   "Could not load %s %sat %s.\nError: %s\n", document_name,
+						   "Could not load %s %s at %s.\nError: %s\n", document_name,
 						   string->str, path,
 						   gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret)));
 	g_string_printf(string, "Couldn't load %s", document_name);

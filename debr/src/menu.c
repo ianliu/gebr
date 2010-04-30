@@ -435,9 +435,9 @@ MenuMessage menu_save(GtkTreeIter * iter)
 	if (gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path) != GEBR_GEOXML_RETV_SUCCESS) {
 		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 					_("Could not save the menu"),
-					_("You do not have the permissions necessary to save "
-					  "the menu. Please check that you typed the location "
-					  "correctly and try again."));
+					_("You do not have necessary permissions to save "
+					  "the menu. Please check the provided location is "
+					  "correct and try again."));
 		debr_message(GEBR_LOG_ERROR, _("Permission denied."));
 		return MENU_MESSAGE_PERMISSION_DENIED;	
 	} else {

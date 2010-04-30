@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: gebrd 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-03-07 22:14-0300\n"
-"PO-Revision-Date: 2010-03-05 10:10-0300\n"
+"PO-Revision-Date: 2010-04-30 13:34-0300\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -105,7 +105,7 @@ msgstr "Fluxo vazio.\n"
 #: ../src/job.c:562
 #, c-format
 msgid "%u) Skiping disabled/unconfigured program '%s.'\n"
-msgstr "%u) Desconsiderando programa '%s' desabilidato/não configurado.\n"
+msgstr "%u) Desconsiderando programa '%s' desabilitado/não configurado.\n"
 
 #: ../src/job.c:568
 #, c-format
