@@ -89,8 +89,14 @@ typedef struct gebr_geoxml_parameter_group GebrGeoXmlParameterGroup;
 #include "sequence.h"
 
 /**
- * Instanciate \p parameter_group, appending a new instances
- * (which is a clone of the first instance) to the list of instances.
+ * \internal
+ * Get the group template instance.
+ */
+GebrGeoXmlParameters *gebr_geoxml_parameter_group_get_template(GebrGeoXmlParameterGroup * parameter_group);
+
+/**
+ * Instanciate \p parameter_group, appending a new instance (which is a clone of the first instance) to the list of
+ * instances.
  */
 GebrGeoXmlParameters *gebr_geoxml_parameter_group_instanciate(GebrGeoXmlParameterGroup * parameter_group);
 
@@ -104,11 +110,8 @@ gboolean gebr_geoxml_parameter_group_deinstanciate(GebrGeoXmlParameterGroup * pa
  *
  * \see \ref parameters.h "GebrGeoXmlParameters"
  */
-int
-
-
-gebr_geoxml_parameter_group_get_instance(GebrGeoXmlParameterGroup * parameter_group,
-					 GebrGeoXmlSequence ** parameters, gulong index);
+int gebr_geoxml_parameter_group_get_instance(GebrGeoXmlParameterGroup * parameter_group,
+					     GebrGeoXmlSequence ** parameters, gulong index);
 
 /**
  * Get the number of instances of \p parameter_group

@@ -514,17 +514,14 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	g_free(title);
 	g_free(fname);
 
-	gchar * cwd = NULL;
 	void foreach(gchar * key) {
-		if (!cwd)
-			cwd = key;
 		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(dialog), key, NULL);
 	}
 	g_hash_table_foreach(debr.config.opened_folders, (GHFunc)foreach, NULL);
 
 	if (gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(debr.ui_menu.model),
 						  &parent, &debr.ui_menu.iter_other)) {
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), cwd);
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), getenv("HOME"));
 	} else {
 		gchar *menu_path;
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &parent, MENU_PATH, &menu_path, -1);
@@ -839,6 +836,8 @@ gboolean menu_cleanup_folder(GtkTreeIter * folder)
 	treeview = GTK_WIDGET(gtk_builder_get_object(builder, "treeview1"));
 	store = GTK_LIST_STORE(gtk_builder_get_object(builder, "liststore1"));
 
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(debr.window));
+
 	renderer = gtk_cell_renderer_toggle_new();
 	g_signal_connect(renderer, "toggled", G_CALLBACK(on_renderer_toggled), store);
 	column = gtk_tree_view_column_new_with_attributes("", renderer, "active", 0, NULL);
@@ -856,6 +855,7 @@ gboolean menu_cleanup_folder(GtkTreeIter * folder)
 
 	while (still_running) {
 		unsaved_list = menu_get_unsaved(folder);
+		unsaved_list = g_list_reverse(unsaved_list);
 		gtk_list_store_clear(store);
 		for (GList * i = unsaved_list; i != NULL; i = i->next) {
 			gchar * fname;

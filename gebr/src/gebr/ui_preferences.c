@@ -15,12 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * File: ui_preferences.c
- * Preferences dialog and config related stuff
+/**
+ * \file ui_preferences.c Preferences dialog and config related stuff. Assembly preferences dialog and changes
+ * configuration file according to user's change.
  *
- * Assembly preferences dialog and changes configuration file
- * according to user's change
+ * \ingroup gebr
  */
 
 #include <stdlib.h>
@@ -32,33 +31,16 @@
 #include "ui_preferences.h"
 #include "gebr.h"
 
-/* Pre-defined browser options */
-#define NBROWSER 5
-static const gchar *browser[] = {
-	"epiphany", "firefox", "galeon", "konqueror", "mozilla"
-};
-
 /*
  * Prototypes
  */
 
 static void preferences_actions(GtkDialog * dialog, gint arg1, struct ui_preferences *ui_preferences);
 
-static gboolean
-preferences_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_preferences *ui_preferences);
-
-/*
- * Section: Public
- * Public functions.
- */
-
-/*
- * Function: assembly_preference_win
+/**
  * Assembly preference window.
  *
- * Return:
- * The structure containing relevant data. It will be automatically freed when the
- * dialog closes.
+ * \return The structure containing relevant data. It will be automatically freed when the dialog closes.
  */
 struct ui_preferences *preferences_setup_ui(gboolean first_run)
 {
@@ -71,16 +53,16 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	GtkWidget *fake_radio_button;
 	GtkWidget *list_widget_hbox;
 
-	ui_preferences = g_malloc(sizeof(struct ui_preferences));
+	ui_preferences = g_new(struct ui_preferences, 1);
 	ui_preferences->first_run = first_run;
 	ui_preferences->dialog = gtk_dialog_new_with_buttons(_("Preferences"),
 							     GTK_WINDOW(gebr.window),
 							     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 							     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 							     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-	gtk_widget_set_size_request(ui_preferences->dialog, 560, 280);
-	g_signal_connect(ui_preferences->dialog, "delete-event",
-			 G_CALLBACK(preferences_on_delete_event), ui_preferences);
+	gtk_dialog_set_default_response(GTK_DIALOG(ui_preferences->dialog), GTK_RESPONSE_OK);
+	gtk_window_set_resizable(GTK_WINDOW(ui_preferences->dialog), FALSE);
+	gtk_container_set_border_width(GTK_CONTAINER(ui_preferences->dialog), 5);
 
 	/* Take the apropriate action when a button is pressed */
 	g_signal_connect(ui_preferences->dialog, "response", G_CALLBACK(preferences_actions), ui_preferences);
@@ -96,6 +78,7 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 3, 3);
 	ui_preferences->username = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(ui_preferences->username), TRUE);
 	gebr_gui_gtk_widget_set_tooltip(ui_preferences->username, _("You should know your name"));
 	gtk_table_attach(GTK_TABLE(table), ui_preferences->username,
 			 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3), ++row;
@@ -113,6 +96,7 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 3, 3);
 	ui_preferences->email = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(ui_preferences->email), TRUE);
 	gebr_gui_gtk_widget_set_tooltip(ui_preferences->email, _("Your email address"));
 	gtk_table_attach(GTK_TABLE(table), ui_preferences->email, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3), ++row;
 
@@ -158,6 +142,7 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui_preferences->user_radio_button, FALSE, FALSE, 2);
 
 	ui_preferences->editor = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(ui_preferences->editor), TRUE);
 	gebr_gui_gtk_widget_set_tooltip(ui_preferences->editor, _("An HTML capable editor to edit helps and reports"));
 	gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui_preferences->editor, FALSE, FALSE, 0);
 
@@ -168,37 +153,6 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	} else {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_preferences->built_in_radio_button), TRUE);
 		gtk_entry_set_text(GTK_ENTRY(ui_preferences->editor), "");
-	}
-
-	/* Browser */
-	label = gtk_label_new(_("Browser"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 3, 3);
-
-	eventbox = gtk_event_box_new();
-	ui_preferences->browser = gtk_combo_box_entry_new_text();
-	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->browser);
-	gebr_gui_gtk_widget_set_tooltip(eventbox, _("An HTML browser to display helps and reports"));
-	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3), ++row;
-	/* read config */
-	{
-		int i;
-		gboolean new_browser;
-
-		new_browser = TRUE;
-		for (i = 0; i < NBROWSER; i++) {
-			gtk_combo_box_append_text(GTK_COMBO_BOX(ui_preferences->browser), browser[i]);
-			if (gebr.config.browser->len > 0 && new_browser) {
-				if (strcmp(browser[i], gebr.config.browser->str) == 0) {
-					new_browser = FALSE;
-					gtk_combo_box_set_active(GTK_COMBO_BOX(ui_preferences->browser), i);
-				}
-			}
-		}
-		if (gebr.config.browser->len > 0 && new_browser) {
-			gtk_combo_box_append_text(GTK_COMBO_BOX(ui_preferences->browser), gebr.config.browser->str);
-			gtk_combo_box_set_active(GTK_COMBO_BOX(ui_preferences->browser), NBROWSER);
-		}
 	}
 
 	/* Load log */
@@ -213,27 +167,17 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	return ui_preferences;
 }
 
-/*
- * Section: Private
- * Private functions.
- */
-
-/*
- * Function: preferences_actions
- * Take the appropriate action when the parameter dialog emmits
- * a response signal.
+/**
+ * \internal
+ * Take the appropriate action when the parameter dialog emmits a response signal.
  */
 static void preferences_actions(GtkDialog * dialog, gint arg1, struct ui_preferences *ui_preferences)
 {
 	switch (arg1) {
 	case GTK_RESPONSE_OK:{
 			gchar *tmp;
-			gchar *tmp3;
 
 			tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(ui_preferences->usermenus));
-			tmp3 = gtk_combo_box_get_active_text(GTK_COMBO_BOX(ui_preferences->browser));
-			if (tmp3 == NULL)
-				tmp3 = "";
 
 			g_string_assign(gebr.config.username, gtk_entry_get_text(GTK_ENTRY(ui_preferences->username)));
 			g_string_assign(gebr.config.email, gtk_entry_get_text(GTK_ENTRY(ui_preferences->email)));
@@ -243,7 +187,6 @@ static void preferences_actions(GtkDialog * dialog, gint arg1, struct ui_prefere
 			else
 				g_string_assign(gebr.config.editor, "");
 
-			g_string_assign(gebr.config.browser, tmp3);
 			gebr.config.log_load =
 			    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui_preferences->log_load));
 
@@ -251,25 +194,16 @@ static void preferences_actions(GtkDialog * dialog, gint arg1, struct ui_prefere
 			gebr_config_apply();
 
 			g_free(tmp);
-			g_free(tmp3);
 
 			break;
 		}
-	case GTK_RESPONSE_CANCEL:	/* does nothing */
+	case GTK_RESPONSE_CANCEL:
+	default:
 		if (ui_preferences->first_run == TRUE)
 			gebr_quit();
-		break;
-	default:
 		break;
 	}
 
 	gtk_widget_destroy(ui_preferences->dialog);
 	g_free(ui_preferences);
-}
-
-static gboolean
-preferences_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_preferences *ui_preferences)
-{
-	preferences_actions(dialog, GTK_RESPONSE_CANCEL, ui_preferences);
-	return FALSE;
 }

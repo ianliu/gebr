@@ -73,7 +73,7 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 
 	index = __gebr_geoxml_get_element_index((GdomeElement *) parameter);
 	parameter_group = GEBR_GEOXML_PARAMETER_GROUP(gdome_el_parentNode(parent, &exception));
-	gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 1);
+	gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
 	for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
 		GdomeElement *reference;
 		GebrGeoXmlSequence *position;

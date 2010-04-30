@@ -80,7 +80,6 @@ gboolean debr_quit(void)
 	g_string_free(debr.config.path, TRUE);
 	g_string_free(debr.config.name, TRUE);
 	g_string_free(debr.config.email, TRUE);
-	g_string_free(debr.config.browser, TRUE);
 	g_string_free(debr.config.htmleditor, TRUE);
 
 	/* remove temporaries files */
@@ -120,9 +119,6 @@ gboolean debr_config_load(void)
 	list = g_key_file_get_string_list(debr.config.key_file, "general", "menu_dir", NULL, NULL);
 	for (guint i = 0; list && list[i]; i++)
 		g_hash_table_insert(debr.config.opened_folders, g_strdup(list[i]), NULL);
-
-	debr.config.browser = gebr_g_key_file_load_string_key(debr.config.key_file,
-							      "general", "browser", "firefox");
 
 	debr.config.htmleditor = gebr_g_key_file_load_string_key(debr.config.key_file,
 								 "general", "htmleditor", "");
@@ -166,7 +162,6 @@ void debr_config_save(void)
 	g_key_file_set_string(debr.config.key_file, "general", "name", debr.config.name->str);
 	g_key_file_set_string(debr.config.key_file, "general", "email", debr.config.email->str);
 	g_key_file_set_string_list(debr.config.key_file, "general", "menu_dir", (const gchar * const *)list, i);
-	g_key_file_set_string(debr.config.key_file, "general", "browser", debr.config.browser->str);
 	g_key_file_set_string(debr.config.key_file, "general", "htmleditor", debr.config.htmleditor->str);
 	g_key_file_set_boolean(debr.config.key_file, "general", "native_editor", debr.config.native_editor);
 	g_key_file_set_boolean(debr.config.key_file, "general", "menu_sort_ascending", debr.config.menu_sort_ascending);

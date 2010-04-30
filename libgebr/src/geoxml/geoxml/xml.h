@@ -77,8 +77,9 @@ GdomeElement *__gebr_geoxml_get_first_element(GdomeElement * parent_element, con
 
 /**
  * \internal
- * Get the child element of \p parent_element at \p index position. If recursive is TRUE,
- * all the childs (direct or not) are considered
+ * Get the child element of \p parent_element at \p index position.
+ *
+ * If recursive is TRUE, all the children (direct or not) are considered
  */
 GdomeElement *__gebr_geoxml_get_element_at(GdomeElement * parent_element, const gchar * tag_name, gulong index,
 					   gboolean recursive);

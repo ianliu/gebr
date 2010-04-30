@@ -150,7 +150,6 @@ gboolean gebr_quit(void)
 	g_string_free(gebr.config.editor, TRUE);
 	g_string_free(gebr.config.usermenus, TRUE);
 	g_string_free(gebr.config.data, TRUE);
-	g_string_free(gebr.config.browser, TRUE);
 	g_string_free(gebr.config.project_line_string, TRUE);
 	g_string_free(gebr.config.flow_string, TRUE);
 
@@ -235,8 +234,6 @@ gint gebr_config_load()
 			gebr_migrate_data_dir();
 		else
 			gebr_path_resolve_home_variable(gebr.config.data);
-		gebr.config.browser =
-		    gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "browser", "firefox");
 		gebr.config.editor =
 		    gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "");
 		gebr.config.width = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "width", 700);
@@ -336,7 +333,6 @@ void gebr_config_save(gboolean verbose)
 
 	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
-	g_key_file_set_string(gebr.config.key_file, "general", "browser", gebr.config.browser->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
 
 	GString *home_variable;
@@ -486,7 +482,6 @@ static gboolean gebr_config_load_from_gengetopt(void)
 	gebr.config.editor = g_string_new(ggopt.editor_arg);
 	gebr.config.usermenus = g_string_new(ggopt.usermenus_arg);
 	gebr.config.data = g_string_new(ggopt.data_arg);
-	gebr.config.browser = g_string_new(ggopt.browser_arg);
 	gebr.config.width = ggopt.width_arg;
 	gebr.config.height = ggopt.height_arg;
 	gebr.config.log_expander_state = (gboolean) ggopt.logexpand_given;
@@ -499,7 +494,6 @@ static gboolean gebr_config_load_from_gengetopt(void)
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "usermenus", gebr.config.usermenus->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "data", gebr.config.data->str);
-	g_key_file_set_string(gebr.config.key_file, "general", "browser", gebr.config.browser->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
 	g_key_file_set_integer(gebr.config.key_file, "general", "width", gebr.config.width);
 	g_key_file_set_integer(gebr.config.key_file, "general", "height", gebr.config.height);

@@ -42,6 +42,10 @@ gebr_gui_program_edit_deinstanciate(GtkButton * button, struct gebr_gui_program_
 
 static gboolean on_group_expander_mnemonic_activate(GtkExpander * expander, gboolean cycle, struct gebr_gui_program_edit *program_edit);
 
+static void on_arrow_up_clicked(GtkWidget *button, gpointer data);
+
+static void on_arrow_down_clicked(GtkWidget *button, gpointer data);
+
 /*
  * Public functions.
  */
@@ -155,13 +159,34 @@ gebr_gui_program_edit_load(struct gebr_gui_program_edit *program_edit, GebrGeoXm
 	GSList *radio_group;
 
 	frame = gtk_frame_new(NULL);
-	gtk_widget_show(frame);
-	parameter_group = gebr_geoxml_parameters_get_group(parameters);
-	if (parameter_group != NULL && !gebr_geoxml_parameter_group_get_is_instanciable(parameter_group))
-		gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
-
 	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_widget_show(vbox);
+
+	gtk_widget_show(frame);
+
+	parameter_group = gebr_geoxml_parameters_get_group(parameters);
+	if (parameter_group != NULL) {
+		GtkWidget *hbox;
+		GtkWidget *button;
+
+		if (!gebr_geoxml_parameter_group_get_is_instanciable(parameter_group))
+			gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
+
+		hbox = gtk_hbox_new(FALSE, 0);
+
+		button = gtk_button_new();
+		gtk_container_add(GTK_CONTAINER(button), gtk_arrow_new(GTK_ARROW_DOWN, GTK_SHADOW_NONE));
+		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
+		g_signal_connect(button, "clicked", on_arrow_down_clicked, NULL);
+
+		button = gtk_button_new();
+		gtk_container_add(GTK_CONTAINER(button), gtk_arrow_new(GTK_ARROW_UP, GTK_SHADOW_NONE));
+		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
+		g_signal_connect(button, "clicked", on_arrow_up_clicked, NULL);
+
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
+	}
+
+	gtk_widget_show_all(vbox);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	radio_group = NULL;
@@ -443,3 +468,16 @@ static gboolean on_group_expander_mnemonic_activate(GtkExpander * expander, gboo
 	return TRUE;
 }
 
+/**
+ * \internal
+ */
+static void on_arrow_up_clicked(GtkWidget *button, gpointer data)
+{
+}
+
+/**
+ * \internal
+ */
+static void on_arrow_down_clicked(GtkWidget *button, gpointer data)
+{
+}
