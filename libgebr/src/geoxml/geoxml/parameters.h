@@ -107,16 +107,16 @@ GebrGeoXmlParameter *gebr_geoxml_parameters_append_parameter(GebrGeoXmlParameter
  *
  * If \p parameters is NULL nothing is done.
  *
- * \see gebr_geoxml_parameters_get_exclusive
- * gebr_geoxml_parameters_set_selected
+ * \see gebr_geoxml_parameters_get_default_selection
+ * gebr_geoxml_parameters_set_selection
  */
-void gebr_geoxml_parameters_set_exclusive(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter);
+void gebr_geoxml_parameters_set_default_selection(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter);
 
 /**
  *
  * If \p parameters is NULL returns FALSE.
  */
-GebrGeoXmlParameter *gebr_geoxml_parameters_get_exclusive(GebrGeoXmlParameters * parameters);
+GebrGeoXmlParameter *gebr_geoxml_parameters_get_default_selection(GebrGeoXmlParameters * parameters);
 
 /**
  * If \p parameters is a exclusive group (aka has a non-NULL exclusive parameter set)
@@ -124,7 +124,7 @@ GebrGeoXmlParameter *gebr_geoxml_parameters_get_exclusive(GebrGeoXmlParameters *
  *
  * If \p parameters is NULL nothing is done.
  */
-void gebr_geoxml_parameters_set_selected(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter);
+void gebr_geoxml_parameters_set_selection(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter);
 
 /**
  * If \p parameters is a exclusive group (aka has a non-NULL exclusive parameter set)
@@ -132,7 +132,7 @@ void gebr_geoxml_parameters_set_selected(GebrGeoXmlParameters * parameters, Gebr
  *
  * If \p parameters is NULL returns NULL.
  */
-GebrGeoXmlParameter *gebr_geoxml_parameters_get_selected(GebrGeoXmlParameters * parameters);
+GebrGeoXmlParameter *gebr_geoxml_parameters_get_selection(GebrGeoXmlParameters * parameters);
 
 /**
  * Get the first paramater of \p program.

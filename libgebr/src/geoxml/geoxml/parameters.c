@@ -42,7 +42,7 @@ GebrGeoXmlParameters *__gebr_geoxml_parameters_append_new(GdomeElement * parent)
 	GebrGeoXmlParameters *parameters;
 
 	parameters = (GebrGeoXmlParameters *) __gebr_geoxml_insert_new_element(parent, "parameters", NULL);
-	gebr_geoxml_parameters_set_exclusive(parameters, NULL);
+	gebr_geoxml_parameters_set_default_selection(parameters, NULL);
 
 	return parameters;
 }
@@ -114,26 +114,26 @@ GebrGeoXmlParameter *gebr_geoxml_parameters_append_parameter(GebrGeoXmlParameter
 	return (GebrGeoXmlParameter *) element;
 }
 
-void gebr_geoxml_parameters_set_exclusive(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter)
+void gebr_geoxml_parameters_set_default_selection(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter)
 {
 	if (parameters == NULL)
 		return;
 	if (parameter == NULL) {
-		__gebr_geoxml_set_attr_value((GdomeElement *) parameters, "exclusive", "0");
+		__gebr_geoxml_set_attr_value((GdomeElement *) parameters, "default-selection", "0");
 		return;
 	}
 
 	gchar *value;
 
 	value = g_strdup_printf("%ld", __gebr_geoxml_get_element_index((GdomeElement *) parameter) + 1);
-	__gebr_geoxml_set_attr_value((GdomeElement *) parameters, "exclusive", value);
+	__gebr_geoxml_set_attr_value((GdomeElement *) parameters, "default-selection", value);
 	g_free(value);
 
-	if (gebr_geoxml_parameters_get_selected(parameters) == NULL)
-		gebr_geoxml_parameters_set_selected(parameters, parameter);
+	if (gebr_geoxml_parameters_get_selection(parameters) == NULL)
+		gebr_geoxml_parameters_set_selection(parameters, parameter);
 }
 
-GebrGeoXmlParameter *gebr_geoxml_parameters_get_exclusive(GebrGeoXmlParameters * parameters)
+GebrGeoXmlParameter *gebr_geoxml_parameters_get_default_selection(GebrGeoXmlParameters * parameters)
 {
 	if (parameters == NULL)
 		return NULL;
@@ -141,7 +141,7 @@ GebrGeoXmlParameter *gebr_geoxml_parameters_get_exclusive(GebrGeoXmlParameters *
 	gulong index;
 	GebrGeoXmlSequence *parameter;
 
-	index = atol(__gebr_geoxml_get_attr_value((GdomeElement *) parameters, "exclusive"));
+	index = atol(__gebr_geoxml_get_attr_value((GdomeElement *) parameters, "default-selection"));
 	if (index == 0)
 		return NULL;
 	index--;
@@ -154,35 +154,35 @@ GebrGeoXmlParameter *gebr_geoxml_parameters_get_exclusive(GebrGeoXmlParameters *
 	return (GebrGeoXmlParameter *) parameter;
 }
 
-void gebr_geoxml_parameters_set_selected(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter)
+void gebr_geoxml_parameters_set_selection(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter)
 {
 	if (parameters == NULL)
 		return;
-	if (gebr_geoxml_parameters_get_exclusive(parameters) == NULL)
+	if (gebr_geoxml_parameters_get_default_selection(parameters) == NULL)
 		return;
 	if (parameter == NULL) {
-		__gebr_geoxml_set_attr_value((GdomeElement *) parameters, "selected", "0");
+		__gebr_geoxml_set_attr_value((GdomeElement *) parameters, "selection", "0");
 		return;
 	}
 
 	gchar *value;
 
 	value = g_strdup_printf("%ld", __gebr_geoxml_get_element_index((GdomeElement *) parameter) + 1);
-	__gebr_geoxml_set_attr_value((GdomeElement *) parameters, "selected", value);
+	__gebr_geoxml_set_attr_value((GdomeElement *) parameters, "selection", value);
 	g_free(value);
 }
 
-GebrGeoXmlParameter *gebr_geoxml_parameters_get_selected(GebrGeoXmlParameters * parameters)
+GebrGeoXmlParameter *gebr_geoxml_parameters_get_selection(GebrGeoXmlParameters * parameters)
 {
 	if (parameters == NULL)
 		return FALSE;
-	if (gebr_geoxml_parameters_get_exclusive(parameters) == NULL)
+	if (gebr_geoxml_parameters_get_default_selection(parameters) == NULL)
 		return NULL;
 
 	gulong index;
 	GebrGeoXmlSequence *parameter;
 
-	index = atol(__gebr_geoxml_get_attr_value((GdomeElement *) parameters, "selected"));
+	index = atol(__gebr_geoxml_get_attr_value((GdomeElement *) parameters, "selection"));
 	if (index == 0)
 		return NULL;
 	index--;
@@ -190,9 +190,9 @@ GebrGeoXmlParameter *gebr_geoxml_parameters_get_selected(GebrGeoXmlParameters * 
 
 	/* there isn't a parameter at index, so use the first parameter of the group */
 	if (parameter == NULL)
-		return (GebrGeoXmlParameter *) gebr_geoxml_parameters_get_first_parameter(parameters);
+		return (GebrGeoXmlParameter *)gebr_geoxml_parameters_get_first_parameter(parameters);
 
-	return (GebrGeoXmlParameter *) parameter;
+	return (GebrGeoXmlParameter *)parameter;
 }
 
 GebrGeoXmlSequence *gebr_geoxml_parameters_get_first_parameter(GebrGeoXmlParameters * parameters)

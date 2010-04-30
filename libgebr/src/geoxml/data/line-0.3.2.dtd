@@ -1,0 +1,81 @@
+<!ELEMENT line (filename, title, description, help, author, email, dict, date, path*, flow*)>
+<!ATTLIST line
+	version CDATA #FIXED "0.3.2"
+	nextid  ID #REQUIRED>
+
+<!-- Short title -->
+<!ELEMENT title	           (#PCDATA)>
+<!-- One line description -->
+<!ELEMENT description      (#PCDATA)>
+<!-- Detailed text used as help message -->
+<!ELEMENT help             (#PCDATA)>
+<!-- Author of the flow and his/her email -->
+<!ELEMENT author           (#PCDATA)>
+<!ELEMENT email            (#PCDATA)>
+<!-- Dictionary of parameters for use in programs' parameters -->
+<!ELEMENT dict (parameters)>
+<!-- Dates associated to the line -->
+<!ELEMENT date (created, modified)>
+<!ELEMENT created          (#PCDATA)>
+<!ELEMENT modified         (#PCDATA)>
+
+<!-- Path for input/output/error of flows -->
+<!ELEMENT path             (#PCDATA)>
+
+<!-- Flow reference -->
+<!ELEMENT flow EMPTY>
+<!ATTLIST flow source CDATA #REQUIRED>
+
+<!-- PARAMETERS -->
+<!ELEMENT parameters (parameter*)>
+<!ATTLIST parameters
+	exclusive	CDATA	#REQUIRED
+	selected	CDATA	#IMPLIED>
+
+<!ELEMENT parameter (label, (reference | int | float | string | flag | file | range | enum))>
+<!ATTLIST parameter
+	id ID #REQUIRED>
+
+<!-- Short text to be displayed as label for a parameter -->
+<!ELEMENT label (#PCDATA)>
+
+<!ELEMENT property (keyword, value+, default+)>
+<!ATTLIST property
+	dictkeyword	CDATA		#IMPLIED
+	required	(yes | no)	#IMPLIED
+	separator	CDATA		#IMPLIED>
+
+<!-- Keyword to build the command line -->
+<!ELEMENT keyword (#PCDATA)>
+<!-- Actual value of a parameter -->
+<!ELEMENT value (#PCDATA)>
+<!-- Actual default value of a parameter -->
+<!ELEMENT default (#PCDATA)>
+
+<!-- Types of parameters -->
+<!-- Reference (except for groups) -->
+<!ELEMENT reference (property)>
+<!ATTLIST reference
+	idref IDREF #REQUIRED>
+<!-- Integer -->
+<!ELEMENT int (property)>
+<!-- Real number -->
+<!ELEMENT float (property)>
+<!-- String -->
+<!ELEMENT string (property)>
+<!-- Flag -->
+<!ELEMENT flag (property)>
+<!-- File -->
+<!ELEMENT file (property)>
+<!ATTLIST file
+	directory (yes | no) #REQUIRED>
+<!-- Range -->
+<!ELEMENT range (property)>
+<!ATTLIST range
+	min	CDATA	#REQUIRED
+	max	CDATA	#REQUIRED
+	inc	CDATA	#REQUIRED
+	digits	CDATA	#REQUIRED>
+<!-- Enum -->
+<!ELEMENT enum (property, option*)>
+<!ELEMENT option (label, value)>

@@ -1245,7 +1245,7 @@ static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group)
 		} else
 			g_string_printf(keyword_label, _("not instantiable"));
 
-		if (gebr_geoxml_parameters_get_exclusive(GEBR_GEOXML_PARAMETERS(instance)) != NULL)
+		if (gebr_geoxml_parameters_get_default_selection(GEBR_GEOXML_PARAMETERS(instance)) != NULL)
 			g_string_append_printf(keyword_label, _(" and exclusive"));
 		else
 			g_string_append_printf(keyword_label, _(" and not exclusive"));

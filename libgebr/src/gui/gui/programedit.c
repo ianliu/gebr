@@ -311,7 +311,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(struct gebr_gui_program_e
 		gtk_widget_show(gebr_gui_parameter_widget->widget);
 
 		/* exclusive? */
-		selected = gebr_geoxml_parameters_get_selected(gebr_geoxml_parameter_get_parameters(parameter));
+		selected = gebr_geoxml_parameters_get_selection(gebr_geoxml_parameter_get_parameters(parameter));
 		if (selected != NULL) {
 			GtkWidget *radio_button;
 
@@ -373,8 +373,8 @@ gebr_gui_program_edit_change_selected(GtkToggleButton * toggle_button, struct ge
 {
 	gtk_widget_set_sensitive(widget->widget, gtk_toggle_button_get_active(toggle_button));
 	if (gtk_toggle_button_get_active(toggle_button))
-		gebr_geoxml_parameters_set_selected(gebr_geoxml_parameter_get_parameters(widget->parameter),
-						    widget->parameter);
+		gebr_geoxml_parameters_set_selection(gebr_geoxml_parameter_get_parameters(widget->parameter),
+						     widget->parameter);
 }
 
 /**

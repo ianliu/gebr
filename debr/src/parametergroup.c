@@ -186,7 +186,7 @@ gboolean parameter_group_dialog_setup_ui(gboolean new)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(exclusive_check_button), TRUE);
 	for (i = 0, parameter = NULL; instance != NULL; ++i, gebr_geoxml_sequence_next(&instance)) {
 		parameter =
-		    GEBR_GEOXML_SEQUENCE(gebr_geoxml_parameters_get_exclusive(GEBR_GEOXML_PARAMETERS(instance)));
+		    GEBR_GEOXML_SEQUENCE(gebr_geoxml_parameters_get_default_selection(GEBR_GEOXML_PARAMETERS(instance)));
 		if (parameter == NULL) {
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(exclusive_check_button), FALSE);
 			break;
@@ -266,7 +266,7 @@ static void parameter_group_instances_setup_ui(struct ui_parameter_group_dialog 
 
 		label_widget = NULL;
 		exclusive =
-		    GEBR_GEOXML_SEQUENCE(gebr_geoxml_parameters_get_exclusive(GEBR_GEOXML_PARAMETERS(instance)));
+		    GEBR_GEOXML_SEQUENCE(gebr_geoxml_parameters_get_default_selection(GEBR_GEOXML_PARAMETERS(instance)));
 		gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &parameter, 0);
 		for (j = 0; parameter != NULL; ++j, gebr_geoxml_sequence_next(&parameter)) {
 			struct gebr_gui_parameter_widget *widget;
@@ -342,13 +342,13 @@ on_parameter_group_is_exclusive_toggled(GtkToggleButton * toggle_button, struct 
 	gebr_geoxml_parameter_group_get_instance(ui->parameter_group, &instance, 0);
 	for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
 		if (gtk_toggle_button_get_active(toggle_button) == FALSE)
-			gebr_geoxml_parameters_set_exclusive(GEBR_GEOXML_PARAMETERS(instance), NULL);
+			gebr_geoxml_parameters_set_default_selection(GEBR_GEOXML_PARAMETERS(instance), NULL);
 		else {
 			GebrGeoXmlSequence *first_parameter;
 
 			gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &first_parameter, 0);
-			gebr_geoxml_parameters_set_exclusive(GEBR_GEOXML_PARAMETERS(instance),
-							     GEBR_GEOXML_PARAMETER(first_parameter));
+			gebr_geoxml_parameters_set_default_selection(GEBR_GEOXML_PARAMETERS(instance),
+								     GEBR_GEOXML_PARAMETER(first_parameter));
 		}
 	}
 
@@ -366,5 +366,5 @@ static void on_parameter_group_exclusive_toggled(GtkToggleButton * toggle_button
 	GebrGeoXmlParameter *parameter;
 
 	g_object_get(toggle_button, "user-data", &parameter, NULL);
-	gebr_geoxml_parameters_set_exclusive(gebr_geoxml_parameter_get_parameters(parameter), parameter);
+	gebr_geoxml_parameters_set_default_selection(gebr_geoxml_parameter_get_parameters(parameter), parameter);
 }

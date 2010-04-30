@@ -48,7 +48,12 @@ struct gebr_geoxml_document {
 	GdomeDocument *document;
 };
 
+struct gebr_geoxml_document_data {
+	gchar *filename;
+};
+
 /**
+ *
  * \internal
  */
 typedef GdomeDocument *(*createDoc_func) (GdomeDOMImplementation *, char *, unsigned int, GdomeException *);
@@ -415,7 +420,7 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 										    (root_element, "io")));
 		}
 	}
-	/* flow 0.3.1 to 0.3.2 */ 
+	/* 0.3.1 to 0.3.2 */ 
 	if (strcmp(version, "0.3.2") < 0) {
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			GdomeElement *element;
@@ -429,6 +434,9 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 
 				gdome_n_removeChild(gdome_el_parentNode(element, &exception), (GdomeNode *)element, &exception);
 			}
+		} else {
+			/* removal of filename for project and lines */
+			gdome_el_removeChild(root_element, (GdomeNode*)__gebr_geoxml_get_first_element(root_element, "filename"), &exception);
 		}
 	}
 	/* flow 0.3.2 to 0.3.3 */ 
@@ -445,6 +453,23 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 		// Added #IMPLIED 'mpi' attribute to 'program' tag.
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.4");
+		}
+	}
+	/* flow 0.3.4 to 0.3.5 */ 
+	if (strcmp(version, "0.3.5") < 0) {
+		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+			/* remove flow filename */
+			gdome_el_removeChild(root_element, (GdomeNode*)__gebr_geoxml_get_first_element(root_element, "filename"), &exception);
+			
+			GdomeElement *element;
+			gebr_foreach_gslist(element, __gebr_geoxml_get_elements_by_tag(root_element, "parameters")) {
+				__gebr_geoxml_set_attr_value(element, "default-selection",
+							     __gebr_geoxml_get_attr_value(root_element, "exclusive"));
+				__gebr_geoxml_remove_attr(element, "exclusive");
+				__gebr_geoxml_set_attr_value(element, "selection",
+							     __gebr_geoxml_get_attr_value(root_element, "selected"));
+				__gebr_geoxml_remove_attr(element, "selected");
+			}
 		}
 	}
 

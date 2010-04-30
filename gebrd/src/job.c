@@ -69,7 +69,7 @@ static gboolean job_parse_parameter(struct job *job, GebrGeoXmlParameter * param
 			GebrGeoXmlParameter *selected;
 
 			/* for an exclusive instance */
-			selected = gebr_geoxml_parameters_get_selected(GEBR_GEOXML_PARAMETERS(instance));
+			selected = gebr_geoxml_parameters_get_selection(GEBR_GEOXML_PARAMETERS(instance));
 			if (selected != NULL)
 				ret = job_parse_parameter(job, selected, program);
 			else

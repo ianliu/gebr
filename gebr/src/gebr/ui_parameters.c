@@ -119,9 +119,9 @@ void parameters_reset_to_default(GebrGeoXmlParameters * parameters)
 			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
 			for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
 				parameters_reset_to_default(GEBR_GEOXML_PARAMETERS(instance));
-				gebr_geoxml_parameters_set_selected(GEBR_GEOXML_PARAMETERS(instance),
-								    gebr_geoxml_parameters_get_exclusive
-								    (GEBR_GEOXML_PARAMETERS(instance)));
+				gebr_geoxml_parameters_set_selection(GEBR_GEOXML_PARAMETERS(instance),
+								     gebr_geoxml_parameters_get_default_selection
+								     (GEBR_GEOXML_PARAMETERS(instance)));
 			}
 
 			continue;
@@ -187,7 +187,7 @@ gboolean parameters_check_has_required_unfilled_for_iter(GtkTreeIter * iter)
 static void parameter_required_is_unfilled(GebrGeoXmlParameter * parameter, gboolean * required_unfilled)
 {
 	GebrGeoXmlParameters * instance = gebr_geoxml_parameter_get_parameters(parameter);
-	GebrGeoXmlParameter *selected = gebr_geoxml_parameters_get_selected(instance);
+	GebrGeoXmlParameter *selected = gebr_geoxml_parameters_get_selection(instance);
 	/* for exclusive groups, check if this is the selected parameter of its instance */
 	if (instance != NULL && selected != parameter)
 		return;
