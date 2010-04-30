@@ -836,6 +836,8 @@ gboolean menu_cleanup_folder(GtkTreeIter * folder)
 	treeview = GTK_WIDGET(gtk_builder_get_object(builder, "treeview1"));
 	store = GTK_LIST_STORE(gtk_builder_get_object(builder, "liststore1"));
 
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(debr.window));
+
 	renderer = gtk_cell_renderer_toggle_new();
 	g_signal_connect(renderer, "toggled", G_CALLBACK(on_renderer_toggled), store);
 	column = gtk_tree_view_column_new_with_attributes("", renderer, "active", 0, NULL);
