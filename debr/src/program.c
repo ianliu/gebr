@@ -248,7 +248,7 @@ void program_preview(void)
 	if (!program_get_selected(NULL, TRUE))
 		return;
 
-	data = g_malloc(sizeof(struct program_preview_data));
+	data = g_new(struct program_preview_data, 1);
 	data->program = debr.program;
 	dialog = gtk_dialog_new_with_buttons(_("Parameter's dialog preview"),
 					     GTK_WINDOW(NULL),

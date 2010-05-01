@@ -75,7 +75,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	GtkCellRenderer *renderer;
 
 	/* alloc */
-	ui_flow_edition = g_malloc(sizeof(struct ui_flow_edition));
+	ui_flow_edition = g_new(struct ui_flow_edition, 1);
 
 	/* Create flow edit ui_flow_edition->widget */
 	ui_flow_edition->widget = gtk_vbox_new(FALSE, 0);

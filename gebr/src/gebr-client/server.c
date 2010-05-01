@@ -87,7 +87,7 @@ struct server *server_new(const gchar * address)
 	};
 	struct server *server;
 
-	server = g_malloc(sizeof(struct server));
+	server = g_new(struct server, 1);
 	server->comm = gebr_comm_server_new(address, &ops);
 	server->comm->user_data = server;
 

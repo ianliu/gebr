@@ -87,7 +87,7 @@ struct gebr_comm_message *gebr_comm_message_new(void)
 {
 	struct gebr_comm_message *message;
 
-	message = g_malloc(sizeof(struct gebr_comm_message));
+	message = g_new(struct gebr_comm_message, 1);
 	*message = (struct gebr_comm_message) {
 		.hash = 0,.argument_size = 0,.argument = g_string_new(NULL)
 	};

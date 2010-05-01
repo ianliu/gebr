@@ -314,7 +314,7 @@ void document_dict_edit_setup_ui(void)
 	if (document == NULL)
 		return;
 
-	data = g_malloc(sizeof(struct dict_edit_data));
+	data = g_new(struct dict_edit_data, 1);
 	tree_store = gtk_tree_store_new(DICT_EDIT_N_COLUMN, G_TYPE_STRING,	/* document */
 					G_TYPE_STRING,	/* type */
 					G_TYPE_STRING,	/* keyword stock */

@@ -70,7 +70,7 @@ struct ui_project_line *project_line_setup_ui(void)
 	GtkWidget *infopage;
 
 	/* alloc */
-	ui_project_line = g_malloc(sizeof(struct ui_project_line));
+	ui_project_line = g_new(struct ui_project_line, 1);
 
 	/* Create projects/lines ui_project_line->widget */
 	ui_project_line->widget = gtk_vbox_new(FALSE, 0);

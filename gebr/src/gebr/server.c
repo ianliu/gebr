@@ -168,7 +168,7 @@ struct server *server_new(const gchar * address, gboolean autoconnect)
 	struct server *server;
 
 	gtk_list_store_append(gebr.ui_server_list->common.store, &iter);
-	server = g_malloc(sizeof(struct server));
+	server = g_new(struct server, 1);
 	*server = (struct server) {
 		.comm = gebr_comm_server_new(address, &ops),
 		.iter = iter,

@@ -487,7 +487,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 
 	/* initialization */
 	issue_number = 0;
-	job = g_malloc(sizeof(struct job));
+	job = g_new(struct job, 1);
 	*job = (struct job) {
 		.process = gebr_comm_process_new(),
 		.flow = NULL,

@@ -78,7 +78,7 @@ void flow_io_setup_ui(gboolean executable)
 
 	gint response;
 
-	ui_flow_io = g_malloc(sizeof(struct ui_flow_io));
+	ui_flow_io = g_new(struct ui_flow_io, 1);
 	store = gtk_list_store_new(FLOW_IO_N,
 				   GDK_TYPE_PIXBUF,	// Icon
 				   G_TYPE_STRING,	// Address
@@ -252,7 +252,7 @@ void flow_io_simple_setup_ui(gboolean focus_output)
 
 	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &server_iter);
 
-	simple = (struct ui_flow_simple *)g_malloc(sizeof(struct ui_flow_simple));
+	simple = g_new(struct ui_flow_simple, 1);
 	simple->focus_output = focus_output;
 
 	dialog = gtk_dialog_new_with_buttons(_("Flow input/output"),

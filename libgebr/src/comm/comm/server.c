@@ -85,7 +85,7 @@ struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const stru
 	struct gebr_comm_server *server;
 
 	/* initialize */
-	server = g_malloc(sizeof(struct gebr_comm_server));
+	server = g_new(struct gebr_comm_server, 1);
 	*server = (struct gebr_comm_server) {
 	.stream_socket = gebr_comm_stream_socket_new(),.protocol = gebr_comm_protocol_new(),.address =
 		    g_string_new(_address),.port = 0,.password = g_string_new(""),.x11_forward_process =

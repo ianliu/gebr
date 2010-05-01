@@ -73,7 +73,7 @@ static struct popup_callback *__popup_callback_init(GObject * object, GebrGuiGtk
 {
 	struct popup_callback *popup_callback;
 
-	popup_callback = g_malloc(sizeof(struct popup_callback));
+	popup_callback = g_new(struct popup_callback, 1);
 	*popup_callback = (struct popup_callback) {
 		.callback = callback,.user_data = user_data,.event_box = event_box,.widget = GTK_WIDGET(object)
 	};
@@ -945,7 +945,7 @@ gebr_gui_gtk_tree_view_set_tooltip_callback(GtkTreeView * tree_view, GebrGuiGtkT
 	if (callback == NULL)
 		return;
 
-	tooltip_data = g_malloc(sizeof(struct tooltip_data));
+	tooltip_data = g_new(struct tooltip_data, 1);
 	*tooltip_data = (struct tooltip_data) {
 	.callback = callback,.user_data = user_data,};
 
@@ -990,7 +990,7 @@ gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GtkTreeView * tree_view
 {
 	struct reorderable_data *data;
 
-	data = g_malloc(sizeof(struct reorderable_data));
+	data = g_new(struct reorderable_data, 1);
 	*data = (struct reorderable_data) {
 		.gebr_geoxml_sequence_pointer_column = gebr_geoxml_sequence_pointer_column,
 		.callback = callback,
@@ -1026,7 +1026,7 @@ gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkT
 	if (tree_view == NULL || callback == NULL)
 		return;
 
-	data = g_malloc(sizeof(struct reorder_data));
+	data = g_new(struct reorder_data, 1);
 	*data = (struct reorder_data) {
 	.callback = callback,.can_callback = can_callback,.user_data = user_data,};
 

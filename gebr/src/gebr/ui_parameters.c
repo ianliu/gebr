@@ -60,7 +60,7 @@ struct ui_parameters *parameters_configure_setup_ui(void)
 	if (flow_edition_get_selected_component(NULL, FALSE) == FALSE)
 		return NULL;
 
-	ui_parameters = g_malloc(sizeof(struct ui_parameters));
+	ui_parameters = g_new(struct ui_parameters, 1);
 	dialog = gtk_dialog_new_with_buttons(_("Parameters"), GTK_WINDOW(gebr.window),
 					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, NULL);
 	g_object_set(dialog, "type-hint", GDK_WINDOW_TYPE_HINT_NORMAL, NULL);

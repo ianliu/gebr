@@ -56,7 +56,7 @@ struct ui_job_control *job_control_setup_ui(void)
 	GtkTextIter iter_end;
 
 	/* alloc */
-	ui_job_control = g_malloc(sizeof(struct ui_job_control));
+	ui_job_control = g_new(struct ui_job_control, 1);
 
 	hpanel = gtk_hpaned_new();
 	ui_job_control->widget = hpanel;

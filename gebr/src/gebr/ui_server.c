@@ -375,7 +375,7 @@ struct ui_server_list *server_list_setup_ui(void)
 	GtkWidget *hbox;
 	GtkWidget *entry;
 
-	ui_server_list = g_malloc(sizeof(struct ui_server_list));
+	ui_server_list = g_new(struct ui_server_list, 1);
 	ui_server_list->common.store = gtk_list_store_new(SERVER_N_COLUMN,
 							  GDK_TYPE_PIXBUF,
 							  G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER);
@@ -482,7 +482,7 @@ struct server *server_select_setup_ui(void)
 		goto out;
 	}
 
-	ui_server_select = g_malloc(sizeof(struct ui_server_select));
+	ui_server_select = g_new(struct ui_server_select, 1);
 	ui_server_select->common.dialog = gtk_dialog_new_with_buttons(_("Select server"),
 								      GTK_WINDOW(gebr.window),
 								      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,

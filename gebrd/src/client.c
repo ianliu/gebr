@@ -47,7 +47,7 @@ void client_add(GebrCommStreamSocket * stream_socket)
 {
 	struct client *client;
 
-	client = g_malloc(sizeof(struct client));
+	client = g_new(struct client, 1);
 	*client = (struct client) {
 	.stream_socket = stream_socket,.protocol = gebr_comm_protocol_new(),.display = g_string_new(NULL),};
 

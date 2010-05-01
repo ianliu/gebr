@@ -703,7 +703,7 @@ static gboolean parameter_dialog_setup_ui(gboolean new)
 	if (parameter_get_selected(NULL, TRUE) == FALSE)
 		return FALSE;
 			
-	ui = g_malloc(sizeof(struct ui_parameter_dialog));
+	ui = g_new(struct ui_parameter_dialog, 1);
 	ui->parameter = debr.parameter;
 	program_parameter = GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter);
 	type = gebr_geoxml_parameter_get_type(ui->parameter);

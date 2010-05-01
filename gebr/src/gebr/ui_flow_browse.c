@@ -62,7 +62,7 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gint row;
 
 	/* alloc */
-	ui_flow_browse = g_malloc(sizeof(struct ui_flow_browse));
+	ui_flow_browse = g_new(struct ui_flow_browse, 1);
 	ui_flow_browse->revisions_menu = revisions_menu;
 
 	/* Create flow browse page */

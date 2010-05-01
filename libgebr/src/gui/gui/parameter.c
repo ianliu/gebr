@@ -949,7 +949,7 @@ struct gebr_gui_parameter_widget *gebr_gui_parameter_widget_new(GebrGeoXmlParame
 {
 	struct gebr_gui_parameter_widget *gebr_gui_parameter_widget;
 
-	gebr_gui_parameter_widget = g_malloc(sizeof(struct gebr_gui_parameter_widget));
+	gebr_gui_parameter_widget = g_new(struct gebr_gui_parameter_widget, 1);
 	*gebr_gui_parameter_widget = (struct gebr_gui_parameter_widget) {
 		.parameter = parameter,
 		.program_parameter = GEBR_GEOXML_PROGRAM_PARAMETER(parameter),

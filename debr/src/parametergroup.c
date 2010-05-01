@@ -70,7 +70,7 @@ gboolean parameter_group_dialog_setup_ui(gboolean new)
 
 	menu_archive();
 
-	ui = g_malloc(sizeof(struct ui_parameter_group_dialog));
+	ui = g_new(struct ui_parameter_group_dialog, 1);
 	ui->parameter_group = parameter_group = GEBR_GEOXML_PARAMETER_GROUP(debr.parameter);
 	ui->dialog = dialog = gtk_dialog_new_with_buttons(_("Edit group"),
 							  GTK_WINDOW(debr.window),

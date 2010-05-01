@@ -55,7 +55,7 @@ struct ui_log *log_setup_ui(void)
 	GtkTreeViewColumn *col;
 	GtkCellRenderer *renderer;
 
-	ui_log = g_malloc(sizeof(struct ui_log));
+	ui_log = g_new(struct ui_log, 1);
 	ui_log->widget = gtk_expander_new("");
 
 	/*
