@@ -1,4 +1,4 @@
-<!ELEMENT project (filename, title, description, help, author, email, dict, date, line*)>
+<!ELEMENT project (title, description, help, author, email, dict, date, line*)>
 <!ATTLIST project
 	version CDATA #FIXED "0.3.2"
 	nextid  ID #REQUIRED>

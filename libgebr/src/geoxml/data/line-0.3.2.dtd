@@ -1,4 +1,4 @@
-<!ELEMENT line (filename, title, description, help, author, email, dict, date, path*, flow*)>
+<!ELEMENT line (title, description, help, author, email, dict, date, path*, flow*)>
 <!ATTLIST line
 	version CDATA #FIXED "0.3.2"
 	nextid  ID #REQUIRED>

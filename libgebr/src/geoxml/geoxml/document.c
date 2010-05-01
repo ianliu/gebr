@@ -422,10 +422,10 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 	}
 	/* 0.3.1 to 0.3.2 */ 
 	if (strcmp(version, "0.3.2") < 0) {
+		__gebr_geoxml_set_attr_value(root_element, "version", "0.3.2");
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			GdomeElement *element;
 
-			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.2");
 			gebr_foreach_gslist(element, __gebr_geoxml_get_elements_by_tag(root_element, "menu")) {
 				if (discard_menu_ref != NULL)
 					discard_menu_ref((GebrGeoXmlProgram *)gdome_el_parentNode(element, &exception), 
@@ -458,6 +458,8 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 	/* flow 0.3.4 to 0.3.5 */ 
 	if (strcmp(version, "0.3.5") < 0) {
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.5");
+
 			/* remove flow filename */
 			gdome_el_removeChild(root_element, (GdomeNode*)__gebr_geoxml_get_first_element(root_element, "filename"), &exception);
 			

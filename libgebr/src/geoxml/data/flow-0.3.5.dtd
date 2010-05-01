@@ -1,4 +1,4 @@
-<!ELEMENT flow (filename, title, description, help, author, email, dict, date, category*, io, servers, program*, revision*)>
+<!ELEMENT flow (title, description, help, author, email, dict, date, category*, io, servers, program*, revision*)>
 <!ATTLIST flow
 	version CDATA #FIXED "0.3.5"
 	nextid  ID #REQUIRED>
