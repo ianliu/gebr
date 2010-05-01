@@ -22,6 +22,8 @@
 
 #include "macros.h"
 
+G_BEGIN_DECLS
+
 /**
  * \struct GebrGeoXmlProgramParameter program_parameter.h geoxml/program_parameter.h
  * \brief
@@ -491,4 +493,5 @@ gebr_geoxml_program_parameter_get_enum_option(GebrGeoXmlProgramParameter * progr
  */
 glong gebr_geoxml_program_parameter_get_enum_options_number(GebrGeoXmlProgramParameter * program_parameter);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_PROGRAM_PARAMETER_H

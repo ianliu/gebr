@@ -24,6 +24,8 @@
 
 #include "server.h"
 
+G_BEGIN_DECLS
+
 /** 
  * Creates a new flow.
  */
@@ -97,4 +99,5 @@ void flow_program_copy(void);
  */
 void flow_program_paste(void);
 
+G_END_DECLS
 #endif				//__FLOW_H

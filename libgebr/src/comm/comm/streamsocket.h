@@ -23,7 +23,9 @@
 #include "socket.h"
 #include "socketaddress.h"
 
-G_BEGIN_DECLS GType gebr_comm_stream_socket_get_type(void);
+G_BEGIN_DECLS
+
+GType gebr_comm_stream_socket_get_type(void);
 
 #define GEBR_COMM_STREAM_SOCKET_TYPE		(gebr_comm_stream_socket_get_type())
 #define GEBR_COMM_STREAM_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_STREAM_SOCKET_TYPE, GebrCommStreamSocket))

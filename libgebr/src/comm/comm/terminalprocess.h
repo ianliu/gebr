@@ -24,10 +24,12 @@
 #include <glib-object.h>
 #include <netinet/in.h>
 
+G_BEGIN_DECLS
+
 typedef struct _GebrCommTerminalProcess GebrCommTerminalProcess;
 typedef struct _GebrCommTerminalProcessClass GebrCommTerminalProcessClass;
 
-G_BEGIN_DECLS GType gebr_comm_terminal_process_get_type(void);
+GType gebr_comm_terminal_process_get_type(void);
 
 #define GEBR_COMM_TERMINAL_PROCESS_TYPE			(gebr_comm_terminal_process_get_type())
 #define GEBR_COMM_TERMINAL_PROCESS(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_TERMINAL_PROCESS_TYPE, GebrCommTerminalProcess))

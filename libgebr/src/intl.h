@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 #ifdef ENABLE_NLS
 #	include <libintl.h>
 #	undef _
@@ -45,4 +47,5 @@
 #	define N_(String) (String)
 #endif
 
+G_END_DECLS
 #endif				// __INTL_H

@@ -1,7 +1,3 @@
-/**
- * \file programedit.h
- */
-
 /*   libgebr - GeBR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -22,9 +18,15 @@
 #ifndef __GEBR_GUI_PROGRAM_EDIT_H
 #define __GEBR_GUI_PROGRAM_EDIT_H
 
+/**
+ * \file programedit.h
+ */
+
 #include <gtk/gtk.h>
 
 #include <geoxml.h>
+
+G_BEGIN_DECLS
 
 struct gebr_gui_program_edit {
 	GebrGeoXmlProgram *program;
@@ -64,4 +66,5 @@ void gebr_gui_gebr_gui_program_edit_destroy(struct gebr_gui_program_edit *progra
  */
 void gebr_gui_gebr_gui_program_edit_reload(struct gebr_gui_program_edit *program_edit, GebrGeoXmlProgram * program);
 
+G_END_DECLS
 #endif				//__GEBR_GUI_PROGRAM_EDIT_H

@@ -20,6 +20,8 @@
 
 #include <gtk/gtk.h>
 
+G_BEGIN_DECLS
+
 /* Menubar entries */
 enum {
 	MENUBAR_PROJECT = 0,
@@ -31,4 +33,5 @@ enum {
 
 void gebr_setup_ui(void);
 
+G_END_DECLS
 #endif				//__INTERFACE_H

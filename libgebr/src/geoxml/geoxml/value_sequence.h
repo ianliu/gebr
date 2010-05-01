@@ -18,6 +18,10 @@
 #ifndef __GEBR_GEOXML_VALUE_SEQUENCE_H
 #define __GEBR_GEOXML_VALUE_SEQUENCE_H
 
+#include <glib.h>
+
+G_BEGIN_DECLS
+
 /**
  * \struct GebrGeoXmlValueSequence value_sequence.h geoxml/value_sequence.h
  * \brief
@@ -71,8 +75,6 @@
  */
 typedef struct gebr_geoxml_value_sequence GebrGeoXmlValueSequence;
 
-#include <glib.h>
-
 /**
  * Set the \p value_sequence element's value to \p value.
  *
@@ -103,4 +105,5 @@ const gchar *gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequ
 // gboolean
 // gebr_geoxml_value_sequence_get_boolean(GebrGeoXmlValueSequence * value_sequence);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_VALUE_SEQUENCE_H

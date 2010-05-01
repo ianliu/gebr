@@ -26,6 +26,8 @@
 #include <gtk/gtk.h>
 #include <libgebr/validate.h>
 
+G_BEGIN_DECLS
+
 /**
  *
  */
@@ -245,4 +247,5 @@ void on_drop_down_menu_requested(GtkWidget * button, gpointer data);
  */
 gboolean on_entry_focus_out(GtkEntry * entry, GdkEventFocus * event, GebrValidateCase * data);
 
+G_END_DECLS
 #endif				//__CALLBACKS_H

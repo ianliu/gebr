@@ -27,6 +27,8 @@
 
 #include <libgebr/gui/programedit.h>
 
+G_BEGIN_DECLS
+
 struct ui_parameters {
 	GtkWidget *dialog;
 	struct gebr_gui_program_edit *program_edit;
@@ -56,4 +58,5 @@ gboolean parameters_check_has_required_unfilled(void);
  */
 gboolean parameters_check_has_required_unfilled_for_iter(GtkTreeIter * iter);
 
+G_END_DECLS
 #endif				//__PARAMETERS_H

@@ -22,6 +22,8 @@
 
 #include <libgebr/comm/server.h>
 
+G_BEGIN_DECLS
+
 struct server {
 	struct gebr_comm_server *comm;
 
@@ -38,4 +40,5 @@ struct server *server_new(const gchar * address);
  */
 void server_free(struct server *server);
 
+G_END_DECLS
 #endif				//__SERVER_H

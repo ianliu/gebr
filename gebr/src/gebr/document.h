@@ -22,6 +22,8 @@
 #include <glib.h>
 #include <libgebr/geoxml.h>
 
+G_BEGIN_DECLS
+
 /**
  * Create a new document with _type_
  *
@@ -124,4 +126,5 @@ GString *document_get_path(const gchar * filename);
  */
 void document_delete(const gchar * filename);
 
+G_END_DECLS
 #endif				//__DOCUMENT_H

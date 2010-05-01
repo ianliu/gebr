@@ -25,6 +25,8 @@
 
 #include "job.h"
 
+G_BEGIN_DECLS
+
 /**
  * Structure representing a queue of jobs.
  */
@@ -63,4 +65,5 @@ void gebrd_job_queue_free(GebrdJobQueue * job_queue);
  */
 struct job * gebrd_job_queue_pop(GebrdJobQueue * job_queue);
 
+G_END_DECLS
 #endif /* __JOB_QUEUE_H */

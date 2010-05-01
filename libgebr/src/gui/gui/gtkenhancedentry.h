@@ -20,7 +20,9 @@
 
 #include <gtk/gtk.h>
 
-G_BEGIN_DECLS GType gebr_gui_gtk_enhanced_entry_get_type(void);
+G_BEGIN_DECLS
+
+GType gebr_gui_gtk_enhanced_entry_get_type(void);
 
 #define GEBR_GUI_GTK_TYPE_ENHANCED_ENTRY		(gebr_gui_gtk_enhanced_entry_get_type())
 #define GEBR_GUI_GTK_ENHANCED_ENTRY(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_GTK_TYPE_ENHANCED_ENTRY, GebrGuiGtkEnhancedEntry))

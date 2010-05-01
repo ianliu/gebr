@@ -25,6 +25,8 @@
 
 #include <gtk/gtk.h>
 
+G_BEGIN_DECLS
+
 /**
  * Types for retrieving the selection in Projects/Line tab.
  */
@@ -120,4 +122,5 @@ void project_line_export(void);
  */
 void project_line_free(void);
 
+G_END_DECLS
 #endif				//__UI_PROJECT_LINE_H

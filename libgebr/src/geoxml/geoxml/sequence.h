@@ -18,6 +18,10 @@
 #ifndef __GEBR_GEOXML_SEQUENCE_H
 #define __GEBR_GEOXML_SEQUENCE_H
 
+#include <glib.h>
+
+G_BEGIN_DECLS
+
 /**
  * \struct GebrGeoXmlSequence sequence.h geoxml/sequence.h
  * \brief
@@ -86,8 +90,6 @@
  * The GebrGeoXmlSequence struct contains private data only, and should be accessed using the functions below.
  */
 typedef struct gebr_geoxml_sequence GebrGeoXmlSequence;
-
-#include <glib.h>
 
 #include "parameter_group.h"
 
@@ -208,4 +210,5 @@ int gebr_geoxml_sequence_move_up(GebrGeoXmlSequence * sequence);
  */
 int gebr_geoxml_sequence_move_down(GebrGeoXmlSequence * sequence);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_SEQUENCE_H

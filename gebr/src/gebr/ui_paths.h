@@ -15,13 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * File: ui_path.h
- */
-
 #ifndef __UI_PATH_H
 #define __UI_PATH_H
 
+G_BEGIN_DECLS
+
 void path_list_setup_ui(void);
 
+G_END_DECLS
 #endif				//__UI_PATH_H

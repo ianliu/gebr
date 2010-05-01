@@ -18,6 +18,8 @@
 #ifndef __GEBR_GEOXML_PARAMETERS_P_H
 #define __GEBR_GEOXML_PARAMETERS_P_H
 
+G_BEGIN_DECLS
+
 /**
  * \internal
  * Create new parameters element into the end of \p parent
@@ -41,4 +43,5 @@ void
 
  __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter);
 
+ G_END_DECLS
 #endif				//__GEBR_GEOXML_PARAMETERS_P_H

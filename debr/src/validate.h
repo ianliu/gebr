@@ -26,6 +26,8 @@
 
 #include <libgebr/geoxml.h>
 
+G_BEGIN_DECLS
+
 /**
  * Columns for validate #GtkListStore model.
  */
@@ -122,4 +124,5 @@ void validate_image_set_check_category_list(GtkWidget * image, GebrGeoXmlFlow * 
  */
 void validate_image_set_check_enum_option_list(GtkWidget * image, GebrGeoXmlProgramParameter * enum_parameter);
 
+G_END_DECLS
 #endif				//__VALIDATE_H

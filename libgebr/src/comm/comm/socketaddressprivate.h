@@ -24,7 +24,9 @@
 
 #include "socketaddress.h"
 
-G_BEGIN_DECLS GebrCommSocketAddress _gebr_comm_socket_address_unknown(void);
+G_BEGIN_DECLS
+
+GebrCommSocketAddress _gebr_comm_socket_address_unknown(void);
 
 gboolean
 _gebr_comm_socket_address_get_sockaddr(GebrCommSocketAddress * socket_address, struct sockaddr **sockaddr,
@@ -33,20 +35,14 @@ _gebr_comm_socket_address_get_sockaddr(GebrCommSocketAddress * socket_address, s
 int _gebr_comm_socket_address_get_family(GebrCommSocketAddress * socket_address);
 
 int
-
-
 _gebr_comm_socket_address_getsockname(GebrCommSocketAddress * socket_address, enum GebrCommSocketAddressType type,
 				      int sockfd);
 
 int
-
-
 _gebr_comm_socket_address_getpeername(GebrCommSocketAddress * socket_address, enum GebrCommSocketAddressType type,
 				      int sockfd);
 
 int
-
-
 _gebr_comm_socket_address_accept(GebrCommSocketAddress * socket_address, enum GebrCommSocketAddressType type,
 				 int sockfd);
 

@@ -24,7 +24,9 @@
 
 #include "gtksequenceedit.h"
 
-G_BEGIN_DECLS GType gebr_gui_value_sequence_edit_get_type(void);
+G_BEGIN_DECLS
+
+GType gebr_gui_value_sequence_edit_get_type(void);
 
 #define TYPE_GEBR_GUI_VALUE_SEQUENCE_EDIT		(gebr_gui_value_sequence_edit_get_type())
 #define GEBR_GUI_VALUE_SEQUENCE_EDIT(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_GEBR_GUI_VALUE_SEQUENCE_EDIT, GebrGuiValueSequenceEdit))

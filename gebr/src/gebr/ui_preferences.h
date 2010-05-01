@@ -21,6 +21,8 @@
 
 #include <gtk/gtk.h>
 
+G_BEGIN_DECLS
+
 struct ui_preferences {
 	GtkWidget *dialog;
 
@@ -38,4 +40,5 @@ struct ui_preferences {
 
 struct ui_preferences *preferences_setup_ui(gboolean first_run);
 
+G_END_DECLS
 #endif				//__UI_PREFERENCES_H

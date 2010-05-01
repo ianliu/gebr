@@ -18,6 +18,10 @@
 #ifndef __GEBR_GEOXML_PROJECT_H
 #define __GEBR_GEOXML_PROJECT_H
 
+#include <glib.h>
+
+G_BEGIN_DECLS
+
 /**
  * \struct GebrGeoXmlProject project.h geoxml/project.h
  * \brief
@@ -167,4 +171,5 @@ const gchar *gebr_geoxml_project_get_line_source(GebrGeoXmlProjectLine * project
 GebrGeoXmlProjectLine *gebr_geoxml_project_get_line_from_source(GebrGeoXmlProject * project,
 								const gchar * source);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_PROJECT_H

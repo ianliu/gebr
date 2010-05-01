@@ -22,6 +22,8 @@
 #include <gtk/gtk.h>
 #include <geoxml.h>
 
+G_BEGIN_DECLS
+
 /**
  * Frees \p data before \p object is freed.
  */
@@ -472,4 +474,5 @@ gboolean gtk_show_uri(GdkScreen *screen, const gchar *uri, guint32 timestamp, GE
 
 gboolean gebr_gui_show_uri(const gchar * uri);
 
+G_END_DECLS
 #endif				//__GEBR_GUI_UTILS_H

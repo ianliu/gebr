@@ -24,6 +24,8 @@
 
 #include <gtk/gtk.h>
 
+G_BEGIN_DECLS
+
 /**
  * Flow sequence store fields
  */ 
@@ -118,4 +120,5 @@ void flow_edition_on_server_changed(void);
 
 
 
+G_END_DECLS
 #endif				//__UI_FLOW_COMPONENT_H

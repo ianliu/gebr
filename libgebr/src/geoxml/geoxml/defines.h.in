@@ -18,6 +18,10 @@
 #ifndef __GEBR_GEOXML_DEFINES_H
 #define __GEBR_GEOXML_DEFINES_H
 
+#include <glib.h>
+
+G_BEGIN_DECLS
+
 #define GEBR_GEOXML_FLOW_VERSION		"@FLOW_VERSION@"
 #define GEBR_GEOXML_LINE_VERSION		"@LINE_VERSION@"
 #define GEBR_GEOXML_PROJECT_VERSION		"@PROJECT_VERSION@"
@@ -25,4 +29,5 @@
 
 #define GEBR_GEOXML_DTD_DIR			"@prefix@/share/libgebr/geoxml"
 
+G_END_DECLS
 #endif //__GEBR_GEOXML_DEFINES_H

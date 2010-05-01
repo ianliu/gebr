@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 /**
  * \struct GebrGeoXmlLine line.h geoxml/line.h
  * \brief
@@ -183,4 +185,5 @@ int gebr_geoxml_line_get_path(GebrGeoXmlLine * line, GebrGeoXmlSequence ** path,
  */
 glong gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_LINE_H

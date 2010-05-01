@@ -20,10 +20,13 @@
 
 #include <gtk/gtk.h>
 
+G_BEGIN_DECLS
+
 struct about {
 	GtkWidget *dialog;
 };
 
 struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * description);
 
+G_END_DECLS
 #endif				//__GEBR_GUI_ABOUT_H

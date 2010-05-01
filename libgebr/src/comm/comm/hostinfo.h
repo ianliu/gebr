@@ -24,7 +24,9 @@
 
 #include "socketaddress.h"
 
-G_BEGIN_DECLS typedef struct _GebrCommHostInfo GebrCommHostInfo;
+G_BEGIN_DECLS
+
+typedef struct _GebrCommHostInfo GebrCommHostInfo;
 
 enum GebrCommHostInfoError {
 	GEBR_COMM_HOST_INFO_ERROR_NONE = 0,

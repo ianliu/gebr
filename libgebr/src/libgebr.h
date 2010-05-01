@@ -24,6 +24,9 @@
 #include "utils.h"
 #include "validate.h"
 
+G_BEGIN_DECLS
+
 void gebr_libinit(void);
 
+G_END_DECLS
 #endif				// __LIBGEBR_H

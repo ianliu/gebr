@@ -23,7 +23,9 @@
 #include <libgebr/geoxml.h>
 #include <libgebr/gui/gtksequenceedit.h>
 
-G_BEGIN_DECLS GType enum_option_edit_get_type(void);
+G_BEGIN_DECLS
+
+GType enum_option_edit_get_type(void);
 
 #define TYPE_ENUM_OPTION_EDIT			(enum_option_edit_get_type())
 #define ENUM_OPTION_EDIT(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_ENUM_OPTION_EDIT, EnumOptionEdit))
@@ -53,4 +55,5 @@ struct _EnumOptionEditClass {
  */
 GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter, gboolean new);
 
+G_END_DECLS
 #endif				//__ENUM_OPTION_EDIT_H

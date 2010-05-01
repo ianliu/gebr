@@ -23,6 +23,8 @@
 #include "socket.h"
 #include "socketaddress.h"
 
+G_BEGIN_DECLS
+
 void _gebr_comm_socket_init(GebrCommSocket * socket, int fd, enum GebrCommSocketAddressType address_type);
 
 void _gebr_comm_socket_close(GebrCommSocket * socket);
@@ -35,4 +37,5 @@ void _gebr_comm_socket_enable_write_watch(GebrCommSocket * socket);
 
 void _gebr_comm_socket_emit_error(GebrCommSocket * socket, enum GebrCommSocketError error);
 
+G_END_DECLS
 #endif				//__GEBR_COMM_SOCKETPRIVATE_H

@@ -29,6 +29,8 @@
 #include "parameter.h"
 #include "validate.h"
 
+G_BEGIN_DECLS
+
 extern struct debr debr;
 
 enum NOTEBOOK_PAGE {
@@ -146,4 +148,5 @@ void debr_message(enum gebr_log_message_type type, const gchar * message, ...);
  */
 gboolean debr_has_category(const gchar * category, gboolean add);
 
+G_END_DECLS
 #endif				//__DEBR_H

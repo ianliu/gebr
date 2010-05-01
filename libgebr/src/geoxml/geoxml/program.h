@@ -18,6 +18,10 @@
 #ifndef __GEBR_GEOXML_PROGRAM_H
 #define __GEBR_GEOXML_PROGRAM_H
 
+#include <glib.h>
+
+G_BEGIN_DECLS
+
 /**
  * \struct GebrGeoXmlProgram program.h geoxml/program.h
  * \brief
@@ -96,8 +100,6 @@ typedef enum {
  * The GebrGeoXmlProgram struct contains private data only, and should be accessed using the functions below.
  */
 typedef struct gebr_geoxml_program GebrGeoXmlProgram;
-
-#include <glib.h>
 
 #include "parameter.h"
 #include "parameters.h"
@@ -261,4 +263,5 @@ const gchar *gebr_geoxml_program_get_mpi(GebrGeoXmlProgram * program);
  */
 const gchar *gebr_geoxml_program_get_url(GebrGeoXmlProgram * program);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_PROGRAM_H

@@ -25,6 +25,8 @@
 #include <gtk/gtk.h>
 #include <libgebr/geoxml.h>
 
+G_BEGIN_DECLS
+
 enum {
 	PROGRAM_STATUS = 0,
 	PROGRAM_TITLE,
@@ -115,4 +117,5 @@ gboolean program_get_selected(GtkTreeIter * iter, gboolean warn_user);
  */
 void program_select_iter(GtkTreeIter iter);
 
+G_END_DECLS
 #endif				//__PROGRAM_H

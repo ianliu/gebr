@@ -20,6 +20,8 @@
 
 #include <gtk/gtk.h>
 
+G_BEGIN_DECLS
+
 GdkPixbuf *gebr_gui_pixmaps_gebr_icon_16x16(void);
 
 GdkPixbuf *gebr_gui_pixmaps_gebr_icon_32x32(void);
@@ -28,4 +30,5 @@ GdkPixbuf *gebr_gui_pixmaps_gebr_icon_64x64(void);
 
 GdkPixbuf *gebr_gui_pixmaps_gebr_logo(void);
 
+G_END_DECLS
 #endif				//__GEBR_GUI_PIXMAPS_H

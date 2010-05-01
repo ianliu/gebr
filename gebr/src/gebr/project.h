@@ -22,6 +22,8 @@
 #include <gtk/gtk.h>
 #include <libgebr/geoxml.h>
 
+G_BEGIN_DECLS
+
 /**
  * Create a new project.
  */
@@ -65,4 +67,5 @@ void project_line_move(const gchar * src_project, const gchar * src_line,
 		       const gchar * dst_project, const gchar * dst_line, gboolean before);
 
 
+G_END_DECLS
 #endif				//__PROJECT_H

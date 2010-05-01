@@ -22,6 +22,8 @@
 
 #include "object.h"
 
+G_BEGIN_DECLS
+
 /**
  * Clear clipboard
  */
@@ -38,4 +40,5 @@ void gebr_geoxml_clipboard_copy(GebrGeoXmlObject * object);
  */
 GebrGeoXmlObject *gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_CLIPBOARD_H

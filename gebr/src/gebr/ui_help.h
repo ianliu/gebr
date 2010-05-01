@@ -21,6 +21,8 @@
 #include <gtk/gtk.h>
 #include <libgebr/geoxml.h>
 
+G_BEGIN_DECLS
+
 /**
  * Show current selected program's help.
  */
@@ -41,4 +43,5 @@ void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document);
  */
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document);
 
+G_END_DECLS
 #endif				//__UI_HELP_H

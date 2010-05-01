@@ -18,6 +18,8 @@
 #ifndef __GEBR_GEOXML_TYPES_H
 #define __GEBR_GEOXML_TYPES_H
 
+G_BEGIN_DECLS
+
 /**
  * \internal
  * defined in parameter.c
@@ -39,4 +41,5 @@ extern const int parameter_type_to_str_len;
  */
 extern GdomeException exception;
 
+G_END_DECLS
 #endif				// __GEBR_GEOXML_TYPES_H

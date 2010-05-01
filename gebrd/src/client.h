@@ -22,6 +22,8 @@
 #include <libgebr/comm/streamsocket.h>
 #include <libgebr/comm/server.h>
 
+G_BEGIN_DECLS
+
 struct gebr_comm_protocol;
 
 struct client {
@@ -36,4 +38,5 @@ void client_add(GebrCommStreamSocket * stream_socket);
 
 void client_free(struct client *client);
 
+G_END_DECLS
 #endif				//__CLIENT_H

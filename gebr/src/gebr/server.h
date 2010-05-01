@@ -24,6 +24,8 @@
 #include <libgebr/comm/server.h>
 #include <libgebr/geoxml.h>
 
+G_BEGIN_DECLS
+
 /**
  * @p address: The server to be found.
  * @p iter: A #GtkTreeIter that will hold the corresponding iterator.
@@ -87,4 +89,5 @@ gboolean server_queue_find(struct server * server, const gchar * queue_name, Gtk
  */
 void server_queue_find_at_job_control(struct server * server, const gchar * queue_name, GtkTreeIter * _iter);
 
+G_END_DECLS
 #endif				//__SERVER_H

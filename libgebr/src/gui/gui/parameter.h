@@ -26,6 +26,8 @@
 #include "valuesequenceedit.h"
 #include "programedit.h"
 
+G_BEGIN_DECLS
+
 struct gebr_gui_parameter_widget;
 typedef void (*changed_callback) (struct gebr_gui_parameter_widget * gebr_gui_parameter_widget, gpointer user_data);
 
@@ -79,4 +81,5 @@ void gebr_gui_parameter_widget_update_list_separator(struct gebr_gui_parameter_w
  */
 void gebr_gui_parameter_widget_reconfigure(struct gebr_gui_parameter_widget *gebr_gui_parameter_widget);
 
+G_END_DECLS
 #endif				//__GEBR_GUI_PARAMETER_H

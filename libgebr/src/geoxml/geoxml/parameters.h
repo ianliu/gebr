@@ -18,6 +18,8 @@
 #ifndef __GEBR_GEOXML_PARAMETERS_H
 #define __GEBR_GEOXML_PARAMETERS_H
 
+G_BEGIN_DECLS
+
 /**
  * \struct GebrGeoXmlParameters parameters.h geoxml/parameters.h
  * \brief
@@ -177,4 +179,5 @@ GebrGeoXmlParameterGroup *gebr_geoxml_parameters_get_group(GebrGeoXmlParameters 
  */
 void gebr_geoxml_parameters_reset(GebrGeoXmlParameters * parameters, gboolean recursive);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_PARAMETERS_H

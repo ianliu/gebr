@@ -22,6 +22,8 @@
 
 #include <libgebr/log.h>
 
+G_BEGIN_DECLS
+
 /* Store fields */
 enum {
 	GEBR_LOG_TYPE_ICON = 0,
@@ -43,4 +45,5 @@ void log_set_message(struct ui_log *ui_log, const gchar * message);
 
 void gebr_log_add_message_to_list(struct ui_log *ui_log, struct gebr_log_message *message);
 
+G_END_DECLS
 #endif				//__UI_GEBR_LOG_H

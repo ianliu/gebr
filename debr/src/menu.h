@@ -27,6 +27,8 @@
 
 #include <libgebr/geoxml.h>
 
+G_BEGIN_DECLS
+
 /**
  * Indicates the status of a menu.
  */
@@ -353,4 +355,5 @@ void menu_close_folder(GtkTreeIter * iter);
  */
 void menu_close_folder_from_path(const gchar * path);
 
+G_END_DECLS
 #endif				//__MENU_H

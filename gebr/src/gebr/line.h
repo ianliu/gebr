@@ -27,6 +27,8 @@
 
 #include <libgebr/geoxml.h>
 
+G_BEGIN_DECLS
+
 /**
  * Create a new line.
  * If \p silent is TRUE then no message and dialogs are displayed to user.
@@ -60,4 +62,5 @@ void line_move_flow_top(void);
  */
 void line_move_flow_bottom(void);
 
+G_END_DECLS
 #endif				//__LINE_H

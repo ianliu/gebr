@@ -18,6 +18,8 @@
 #ifndef __GEBR_GEOXML_DOCUMENT_P_H
 #define __GEBR_GEOXML_DOCUMENT_P_H
 
+G_BEGIN_DECLS
+
 /**
  * \internal
  * Private constructor. Used by super classes to create a new document
@@ -48,4 +50,5 @@ struct gebr_geoxml_document_data {
 #define _gebr_geoxml_document_get_data(document) \
 	((struct gebr_geoxml_document_data*)((GdomeDocument*)document)->user_data)
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_DOCUMENT_P_H

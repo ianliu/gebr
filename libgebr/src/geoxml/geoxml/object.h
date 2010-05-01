@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 /**
  * \struct GebrGeoXmlObject object.h geoxml/object.h
  * \brief
@@ -109,6 +111,7 @@ void gebr_geoxml_object_set_user_data(GebrGeoXmlObject * object, gpointer user_d
 gpointer gebr_geoxml_object_get_user_data(GebrGeoXmlObject * object);
 
 #include "document.h"
+
 /**
  * Get the owner document of \p object
  *
@@ -123,4 +126,5 @@ GebrGeoXmlDocument *gebr_geoxml_object_get_owner_document(GebrGeoXmlObject * obj
  */
 GebrGeoXmlObject *gebr_geoxml_object_copy(GebrGeoXmlObject * object);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_OBJECT_H

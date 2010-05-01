@@ -18,6 +18,8 @@
 #ifndef __GEBR_GEOXML_SEQUENCE_P_H
 #define __GEBR_GEOXML_SEQUENCE_P_H
 
+G_BEGIN_DECLS
+
 /**
  * \internal
  * Do operation without checks, for library use
@@ -66,4 +68,5 @@ int __gebr_geoxml_sequence_move_up(GebrGeoXmlSequence * sequence);
  */
 int __gebr_geoxml_sequence_move_down(GebrGeoXmlSequence * sequence);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_SEQUENCE_P_H

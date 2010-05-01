@@ -18,6 +18,8 @@
 #ifndef __GEBR_GEOXML_PARAMETER_GROUP_H
 #define __GEBR_GEOXML_PARAMETER_GROUP_H
 
+G_BEGIN_DECLS
+
 /**
  * \struct GebrGeoXmlParameterGroup parameter_group.h geoxml/parameter_group.h
  * \brief
@@ -158,4 +160,5 @@ gboolean gebr_geoxml_parameter_group_get_is_instanciable(GebrGeoXmlParameterGrou
  */
 gboolean gebr_geoxml_parameter_group_get_expand(GebrGeoXmlParameterGroup * parameter_group);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_PARAMETER_GROUP_H

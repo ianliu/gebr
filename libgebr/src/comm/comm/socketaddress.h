@@ -26,7 +26,9 @@
 #include <sys/un.h>
 #include <netinet/ip.h>
 
-G_BEGIN_DECLS typedef struct _GebrCommSocketAddress GebrCommSocketAddress;
+G_BEGIN_DECLS
+
+typedef struct _GebrCommSocketAddress GebrCommSocketAddress;
 
 enum GebrCommSocketAddressType {
 	GEBR_COMM_SOCKET_ADDRESS_TYPE_UNKNOWN = 0,

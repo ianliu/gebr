@@ -24,6 +24,8 @@
 
 #include "../../utils.h"
 
+G_BEGIN_DECLS
+
 /**
  * \internal
  *
@@ -199,6 +201,7 @@ void __gebr_geoxml_element_assign_new_id(GdomeElement * element, GdomeElement * 
 /**
  * \internal
  * Recursively reassign all elements in \p element (including it)
+ *
  * using __gebr_geoxml_element_assign_new_id.
  */
 void __gebr_geoxml_element_reassign_ids(GdomeElement * element);
@@ -258,4 +261,5 @@ GdomeXPathResult *__gebr_geoxml_xpath_evaluate(GdomeElement * context, const gch
 		__i##hygid < __l##hygid || (gdome_nl_unref(__node_list##hygid, &exception), 0); \
 		element = (GdomeElement*)gdome_nl_item(__node_list##hygid, ++__i##hygid, &exception))
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_XML_H

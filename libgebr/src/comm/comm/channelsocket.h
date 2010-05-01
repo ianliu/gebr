@@ -24,6 +24,8 @@
 #include "streamsocket.h"
 #include "socketaddress.h"
 
+G_BEGIN_DECLS
+
 /**
  * \file channelsocket.h
  * \brief A socket that channel all data to another address
@@ -33,7 +35,7 @@
  * is established between these two sockets.
  */
 
-G_BEGIN_DECLS GType gebr_comm_channel_socket_get_type(void);
+GType gebr_comm_channel_socket_get_type(void);
 
 #define GEBR_COMM_CHANNEL_SOCKET_TYPE		(gebr_comm_channel_socket_get_type())
 #define GEBR_COMM_CHANNEL_SOCKET(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_CHANNEL_SOCKET_TYPE, GebrCommChannelSocket))

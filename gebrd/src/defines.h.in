@@ -18,6 +18,11 @@
 #ifndef __DEFINES_H
 #define __DEFINES_H
 
+#include <glib.h>
+
+G_BEGIN_DECLS
+
 #define GEBRD_VERSION	"@VERSION@"
 
+G_END_DECLS
 #endif //__DEFINES_H

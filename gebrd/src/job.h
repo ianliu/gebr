@@ -23,6 +23,8 @@
 
 #include "client.h"
 
+G_BEGIN_DECLS
+
 /**
  */
 struct job *job_find(GString * jid);
@@ -110,4 +112,5 @@ gchar * job_queue_get_list();
  */
 void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter);
 
+G_END_DECLS
 #endif				//__JOB_H

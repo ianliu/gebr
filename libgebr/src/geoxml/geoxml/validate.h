@@ -21,6 +21,8 @@
 #include <glib.h>
 #include "flow.h"
 
+G_BEGIN_DECLS
+
 /**
  * \struct GebrGeoXmlValidate validate.h geoxml/validate.h
  * \brief
@@ -95,4 +97,5 @@ void gebr_geoxml_validate_free(GebrGeoXmlValidate * validate);
  */
 gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlFlow * menu);
 
+G_END_DECLS
 #endif //__GEBR_GEOXML_VALIDATE_H

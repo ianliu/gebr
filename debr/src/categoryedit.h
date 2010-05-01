@@ -23,7 +23,9 @@
 #include <libgebr/geoxml.h>
 #include <libgebr/gui/gtksequenceedit.h>
 
-G_BEGIN_DECLS GType category_edit_get_type(void);
+G_BEGIN_DECLS
+
+GType category_edit_get_type(void);
 
 #define TYPE_CATEGORY_EDIT		(category_edit_get_type())
 #define CATEGORY_EDIT(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_CATEGORY_EDIT, CategoryEdit))
@@ -51,4 +53,5 @@ struct _CategoryEditClass {
  */
 GtkWidget *category_edit_new(GebrGeoXmlFlow * menu, gboolean new);
 
+G_END_DECLS
 #endif //__CATEGORY_EDIT_H

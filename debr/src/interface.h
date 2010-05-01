@@ -25,6 +25,8 @@
 
 #include <gtk/gtk.h>
 
+G_BEGIN_DECLS
+
 /**
  * Creates the main window for DeBR and initialize all structures.
  */
@@ -38,4 +40,5 @@ void debr_setup_ui(void);
  */
 void debr_set_actions_sensitive(gchar ** names, gboolean sensitive);
 
+G_END_DECLS
 #endif				//__INTERFACE_H

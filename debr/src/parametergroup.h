@@ -24,6 +24,8 @@
 
 #include <libgebr/geoxml.h>
 
+G_BEGIN_DECLS
+
 struct ui_parameter_group_dialog {
 	GtkWidget *dialog;
 
@@ -37,4 +39,5 @@ struct ui_parameter_group_dialog {
  */
 gboolean parameter_group_dialog_setup_ui(gboolean new);
 
+G_END_DECLS
 #endif				//__PARAMETER_GROUP_H

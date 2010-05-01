@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 /**
  * \struct GebrGeoXmlFlow flow.h geoxml/flow.h
  * \brief
@@ -445,4 +447,5 @@ void gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** 
  */
 glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_FLOW_H

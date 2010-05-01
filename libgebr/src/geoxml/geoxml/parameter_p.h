@@ -18,6 +18,8 @@
 #ifndef __GEBR_GEOXML_PARAMETER_P_H
 #define __GEBR_GEOXML_PARAMETER_P_H
 
+G_BEGIN_DECLS
+
 /**
  * \internal
  * Create element type and add it to \p parameter, according to \p type
@@ -55,4 +57,5 @@ void __gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, G
  */
 GSList *__gebr_geoxml_parameter_get_referencee_list(GdomeElement * context, const gchar * id);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_PARAMETER_P_H

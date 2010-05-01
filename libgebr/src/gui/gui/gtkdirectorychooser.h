@@ -1,7 +1,3 @@
-/**
- * @file gtkdirectorychooser.h Widget to choose and list directories
- * @ingroup libgebr-gui
- */
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://sites.google.com/site/gebrproject/)
  *
@@ -23,9 +19,16 @@
 #ifndef __GEBR_GUI_GTK_DIRECTORY_CHOOSER_H
 #define __GEBR_GUI_GTK_DIRECTORY_CHOOSER_H
 
+/**
+ * @file gtkdirectorychooser.h Widget to choose and list directories
+ * @ingroup libgebr-gui
+ */
+
 #include <gtk/gtk.h>
 
-G_BEGIN_DECLS GType gebr_gui_gtk_directory_chooser_get_type(void) G_GNUC_CONST;
+G_BEGIN_DECLS
+
+GType gebr_gui_gtk_directory_chooser_get_type(void) G_GNUC_CONST;
 
 #define GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER		(gebr_gui_gtk_directory_chooser_get_type())
 #define GEBR_GUI_GTK_DIRECTORY_CHOOSER(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER, GebrGuiGtkDirectoryChooser))

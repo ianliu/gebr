@@ -24,6 +24,8 @@
 
 #include "server.h"
 
+G_BEGIN_DECLS
+
 extern struct gebr_client gebr_client;
 
 struct gebr_client {
@@ -42,4 +44,5 @@ void gebr_client_quit(void);
 
 void gebr_client_message(enum gebr_log_message_type type, const gchar * message, ...);
 
+G_END_DECLS
 #endif				//__GEBR_CLIENT_H

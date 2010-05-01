@@ -22,10 +22,13 @@
 
 #include "streamsocket.h"
 
+G_BEGIN_DECLS
+
 /**
  * Create an already connected socket
  * Used by GTcpServer when a new connection is accepted.
  */
 GebrCommStreamSocket *_gebr_comm_stream_socket_new_connected(int fd, enum GebrCommSocketAddressType address_type);
 
+G_END_DECLS
 #endif				//__GEBR_COMM_TCP_SOCKET_PRIVATE_H

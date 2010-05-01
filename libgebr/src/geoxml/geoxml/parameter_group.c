@@ -95,7 +95,7 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_group_instanciate(GebrGeoXmlParamete
 	GebrGeoXmlSequence *first_instance;
 	GebrGeoXmlParameters *new_instance;
 
-	first_instance = gebr_geoxml_parameter_group_get_template(parameter_group);
+	first_instance = (GebrGeoXmlSequence*)gebr_geoxml_parameter_group_get_template(parameter_group);
 	new_instance = GEBR_GEOXML_PARAMETERS(__gebr_geoxml_sequence_append_clone(first_instance));
 	__gebr_geoxml_parameter_group_turn_instance_to_reference(parameter_group, new_instance);
 	gebr_geoxml_parameters_reset(new_instance, TRUE);

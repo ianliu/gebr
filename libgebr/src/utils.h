@@ -23,6 +23,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 void gebr_g_string_replace(GString * string, const gchar * oldtext, const gchar * newtext);
 void gebr_g_string_replace_first_ref(GString * string, const gchar * oldtext, const gchar * newtext);
 gboolean gebr_g_string_starts_with(GString * string, const gchar * val);
@@ -92,4 +94,5 @@ const gchar *gebr_validate_float(const gchar * text_value, const gchar * min, co
 int g_strcmp0(const char * str1, const char * str2);
 #endif
 
+G_END_DECLS
 #endif				//__GEBR_UTILS_H

@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 /**
  * \file error.h
  * Error values used by libgeoxml
@@ -122,4 +124,5 @@ const gchar *gebr_geoxml_error_string(enum GEBR_GEOXML_RETV error);
  */
 const gchar *gebr_geoxml_error_explained_string(enum GEBR_GEOXML_RETV error);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_ERROR_H

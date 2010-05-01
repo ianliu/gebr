@@ -1,7 +1,3 @@
-/**
- * \file help.h API for displaying help's
- */
-
 /*   libgebr - GeBR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -21,6 +17,10 @@
 
 #ifndef __GEBR_GUI_HELP_H
 #define __GEBR_GUI_HELP_H
+
+/**
+ * \file help.h API for displaying help's
+ */
 
 #include <glib.h>
 #include <geoxml.h>

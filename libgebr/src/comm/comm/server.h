@@ -29,6 +29,8 @@
 #include "process.h"
 #include "channelsocket.h"
 
+G_BEGIN_DECLS
+
 /**
  */
 typedef enum {
@@ -155,4 +157,5 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server,
  */
 void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, GebrCommServerRun * config);
 
+G_END_DECLS
 #endif				//__GEBR_COMM_SERVER_H

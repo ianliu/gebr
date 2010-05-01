@@ -20,6 +20,8 @@
 
 #include "program_parameter.h"
 
+G_BEGIN_DECLS
+
 /**
  * \internal
  * Assign to all values (or default one according to \p default_value) the value \p value.
@@ -31,4 +33,5 @@ void
 __gebr_geoxml_program_parameter_set_all_value(GebrGeoXmlProgramParameter * program_parameter,
 					      gboolean default_value, const gchar * value);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_PROGRAM_PARAMETER_P_H

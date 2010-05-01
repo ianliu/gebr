@@ -27,6 +27,8 @@
 #include <gtk/gtkentry.h>
 #include <gtk/gtkimage.h>
 
+G_BEGIN_DECLS
+
 typedef struct _SexyIconEntry SexyIconEntry;
 typedef struct _SexyIconEntryClass SexyIconEntryClass;
 typedef struct _SexyIconEntryPriv SexyIconEntryPriv;
@@ -71,7 +73,7 @@ struct _SexyIconEntryClass {
 	void (*gtk_reserved4) (void);
 };
 
-G_BEGIN_DECLS GType sexy_icon_entry_get_type(void);
+GType sexy_icon_entry_get_type(void);
 
 GtkWidget *sexy_icon_entry_new(void);
 

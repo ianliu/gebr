@@ -18,6 +18,8 @@
 #ifndef __GEBR_GEOXML_MACROS_H
 #define __GEBR_GEOXML_MACROS_H
 
+G_BEGIN_DECLS
+
 /**
  * \internal
  */
@@ -25,4 +27,5 @@
 #  define GEBR_GEOXML_DEPRECATED __attribute__((__deprecated__))
 #endif
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_MACROS_H

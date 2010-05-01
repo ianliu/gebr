@@ -20,6 +20,8 @@
 
 #include <gtk/gtk.h>
 
+G_BEGIN_DECLS
+
 /**
  *
  */
@@ -166,4 +168,5 @@ void on_help_about_activate(void);
  */
 void navigation_bar_update(void);
 
+G_END_DECLS
 #endif				//__CALLBACKS_H

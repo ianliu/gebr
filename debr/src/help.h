@@ -21,6 +21,8 @@
 #include <glib.h>
 #include <libgebr/geoxml.h>
 
+G_BEGIN_DECLS
+
 /**
  * Ensures \p help is an absolute path.
  */
@@ -37,4 +39,5 @@ void help_show(const gchar * help, const gchar * title);
  */
 void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program);
 
+G_END_DECLS
 #endif				//__HELP_H

@@ -22,6 +22,8 @@
 
 #include "streamsocket.h"
 
+G_BEGIN_DECLS
+
 #define PROTOCOL_VERSION "1.0.3"
 
 #define gebr_comm_message_def_create(str, resp) ((struct gebr_comm_message_def){g_str_hash(str), str, resp})
@@ -103,4 +105,5 @@ GList *gebr_comm_protocol_split_new(GString * arguments, guint parts);
 
 void gebr_comm_protocol_split_free(GList * split);
 
+G_END_DECLS
 #endif				//__GEBR_COMM_PROTOCOL_H

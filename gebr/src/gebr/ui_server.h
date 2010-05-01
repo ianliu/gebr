@@ -26,6 +26,8 @@
 
 #include "server.h"
 
+G_BEGIN_DECLS
+
 /* Store field */
 enum {
 	SERVER_STATUS_ICON = 0,
@@ -65,4 +67,5 @@ struct ui_server_select {
 
 struct server *server_select_setup_ui(void);
 
+G_END_DECLS
 #endif				//__UI_SERVER_H

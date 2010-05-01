@@ -1,8 +1,3 @@
-/**
- * @file ui_flow.h Server IO Gui
- * @ingroup gebr
- */
-
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -20,12 +15,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file ui_flow.h Server IO Gui
+ * @ingroup gebr
+ */
+
 #ifndef __UI_FLOW_H
 #define __UI_FLOW_H
 
 #include <gtk/gtk.h>
 
 #include <libgebr/geoxml.h>
+
+G_BEGIN_DECLS
 
 enum {
 	FLOW_IO_ICON,
@@ -120,4 +122,5 @@ void flow_fast_run(void);
  */
 void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean select_last);
 
+G_END_DECLS
 #endif				//__UI_FLOW_H

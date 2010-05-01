@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 /**
  * \struct GebrGeoXmlEnumOption enum_option.h geoxml/enum_option.h
  * \brief
@@ -90,4 +92,5 @@ void gebr_geoxml_enum_option_set_value(GebrGeoXmlEnumOption * enum_option, const
  */
 const gchar *gebr_geoxml_enum_option_get_value(GebrGeoXmlEnumOption * enum_option);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_ENUM_OPTION_H

@@ -28,6 +28,8 @@
 
 #include "server.h"
 
+G_BEGIN_DECLS
+
 /**
  * Find the job structure for the corresponding \p jid and server \p address.
  */
@@ -126,4 +128,5 @@ void job_status_show(struct job *job);
  */
 void job_status_update(struct job *job, enum JobStatus status, const gchar *parameter);
 
+G_END_DECLS
 #endif				//__JOB_H

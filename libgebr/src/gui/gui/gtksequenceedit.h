@@ -20,7 +20,9 @@
 
 #include <gtk/gtk.h>
 
-G_BEGIN_DECLS GType gtk_sequence_edit_get_type(void);
+G_BEGIN_DECLS
+
+GType gtk_sequence_edit_get_type(void);
 
 #define GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT			(gtk_sequence_edit_get_type())
 #define GEBR_GUI_GTK_SEQUENCE_EDIT(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GtkSequenceEdit))

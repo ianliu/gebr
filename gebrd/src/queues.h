@@ -20,6 +20,8 @@
 
 #include "job.h"
 
+G_BEGIN_DECLS
+
 /**
  * Adds a job at the end of \p queue.
  * @param queue Name of queue to add \p job.
@@ -72,4 +74,5 @@ void gebrd_queues_step_queue(const gchar * queue);
  */
 gboolean gebrd_queues_has_next(const gchar * queue);
 
+G_END_DECLS
 #endif /* __GEBRD_QUEUES_H */

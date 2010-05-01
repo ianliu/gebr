@@ -24,6 +24,8 @@
 
 #include <gtk/gtk.h>
 
+G_BEGIN_DECLS
+
 enum JobControlSelectionType {
 	JobControlDontWarnUnselection,
 	JobControlJobQueueSelection,
@@ -89,4 +91,5 @@ void job_control_stop(void);
  */
 gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionType check_type);
 
+G_END_DECLS
 #endif				//__UI_JOB_CONTROL_H

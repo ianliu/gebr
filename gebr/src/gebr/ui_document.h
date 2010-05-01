@@ -22,10 +22,13 @@
 
 #include <libgebr/geoxml.h>
 
+G_BEGIN_DECLS
+
 GebrGeoXmlDocument *document_get_current(void);
 
 gboolean document_properties_setup_ui(GebrGeoXmlDocument * document);
 
 void document_dict_edit_setup_ui(void);
 
+G_END_DECLS
 #endif				//__UI_DOCUMENT_H

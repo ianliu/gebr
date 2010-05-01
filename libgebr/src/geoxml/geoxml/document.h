@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 /**
  * \struct GebrGeoXmlDocument document.h geoxml/document.h
  * \brief
@@ -99,6 +101,7 @@ enum GEBR_GEOXML_DOCUMENT_TYPE {
 };
 
 #include "program.h"
+
 /**
  * Used by \ref gebr_geoxml_document_load 
  */
@@ -357,4 +360,5 @@ const gchar *gebr_geoxml_document_get_description(GebrGeoXmlDocument * document)
  */
 const gchar *gebr_geoxml_document_get_help(GebrGeoXmlDocument * document);
 
+G_END_DECLS
 #endif				//__GEBR_GEOXML_DOCUMENT_H

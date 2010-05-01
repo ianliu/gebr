@@ -26,6 +26,8 @@
 
 #include "mpi-interface.h"
 
+G_BEGIN_DECLS
+
 /**
  * \file gebrd.h
  * \brief Global access variable for date interchange 
@@ -101,4 +103,5 @@ void gebrd_config_load(void);
  */
 const GebrdMpiConfig * gebrd_get_mpi_config_by_name(const gchar * name);
 
+G_END_DECLS
 #endif				//__GEBRD_H

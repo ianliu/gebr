@@ -20,6 +20,8 @@
 
 #include "client.h"
 
+G_BEGIN_DECLS
+
 /**
  * Init daemon log file and run lock file.
  */
@@ -46,4 +48,5 @@ void server_new_connection(void);
  */
 gboolean server_parse_client_messages(struct client *client);
 
+G_END_DECLS
 #endif				//__SERVER_H

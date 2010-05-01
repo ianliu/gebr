@@ -18,6 +18,10 @@
 #ifndef __DEFINES_H
 #define __DEFINES_H
 
+#include <glib.h>
+
+G_BEGIN_DECLS
+
 #define GEBR_DATA_DIR		"@prefix@/share/gebr"
 #define GEBR_SYS_MENUS_DIR	GEBR_DATA_DIR"/menus"
 
@@ -25,4 +29,5 @@
 
 #define GEBR_VERSION		"@VERSION@"
 
+G_END_DECLS
 #endif //__DEFINES_H
