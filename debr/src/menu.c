@@ -239,6 +239,7 @@ void menu_new(gboolean edit)
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(debr.menu), debr.config.name->str);
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(debr.menu), debr.config.email->str);
 	gebr_geoxml_document_set_date_created(GEBR_GEOXML_DOC(debr.menu), gebr_iso_date());
+	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(debr.menu), new_menu_str->str);
 
 	switch (menu_get_selected_type(&iter, FALSE)) {
 	case ITER_FILE:
@@ -494,25 +495,18 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	 * Setup file chooser
 	 */
 	gchar *title;
-	gchar *fname;
-	gchar *indexof;
 	GebrGeoXmlFlow *menu;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter,
 			   MENU_XMLPOINTER, &menu,
-			   MENU_FILENAME, &fname,
 			   -1);
-	indexof = strchr(fname, '<');
-	if (indexof)
-		fname[strlen(fname)-strlen(indexof)-1] = '\0';
-	title = g_strdup_printf(_("Choose file for \"%s\""),
-				gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(menu)));
+	const gchar *menu_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu));
+	title = g_strdup_printf(_("Choose file for \"%s\""), menu_filename);
 	dialog = gebr_gui_save_dialog_new(title, GTK_WINDOW(debr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(dialog), ".mnu");
-	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), fname);
+	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), menu_filename);
 	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_menu.model), &parent, iter);
 	g_free(title);
-	g_free(fname);
 
 	void foreach(gchar * key) {
 		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(dialog), key, NULL);
@@ -627,19 +621,17 @@ void menu_install(void)
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
 		GtkWidget *dialog;
 
-		gchar *menu_filename;
 		gchar *menu_path;
 		GString *destination;
 		GString *command;
+		GebrGeoXmlFlow *menu;
 		MenuStatus status;
 		gboolean do_save = FALSE;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
-				   MENU_FILENAME, &menu_filename,
-				   MENU_STATUS, &status,
-				   MENU_PATH, &menu_path,
-				   -1);
+				   MENU_STATUS, &status, MENU_PATH, &menu_path, MENU_XMLPOINTER, &menu, -1);
 
+		const gchar *menu_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu));
 		destination = g_string_new(NULL);
 		command = g_string_new(NULL);
 		g_string_printf(destination, "%s/.gebr/menus/%s", getenv("HOME"), menu_filename);
@@ -681,7 +673,6 @@ void menu_install(void)
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 						_("Failed to install menu %s"),
 						menu_filename);
-		g_free(menu_filename);
 		g_free(menu_path);
 		g_string_free(destination, TRUE);
 		g_string_free(command, TRUE);
@@ -858,15 +849,15 @@ gboolean menu_cleanup_folder(GtkTreeIter * folder)
 		unsaved_list = g_list_reverse(unsaved_list);
 		gtk_list_store_clear(store);
 		for (GList * i = unsaved_list; i != NULL; i = i->next) {
-			gchar * fname;
+			GebrGeoXmlFlow *menu;
 			GtkTreeIter iter;
+
 			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), (GtkTreeIter*)i->data,
-					   MENU_FILENAME, &fname,
-					   -1);
+					   MENU_XMLPOINTER, &menu, -1);
 			gtk_list_store_append(store, &iter);
 			gtk_list_store_set(store, &iter,
 					   0, TRUE,
-					   1, fname,
+					   1, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)),
 					   2, i->data,
 					   -1);
 		}

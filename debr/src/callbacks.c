@@ -255,10 +255,8 @@ void on_menu_delete_activate(void)
 		if (!menu_get_selected(&iter, TRUE))
 			continue;
 
-		gchar *filename;
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
-				   MENU_XMLPOINTER, &menu, MENU_PATH, &path,
-				   MENU_FILENAME, &filename, -1);
+				   MENU_XMLPOINTER, &menu, MENU_PATH, &path, -1);
 
 		if ((strlen(path)) && (g_unlink(path))) {
 			GtkWidget *dialog;
@@ -273,7 +271,6 @@ void on_menu_delete_activate(void)
 			menu_close(&iter, TRUE);
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(debr.notebook), NOTEBOOK_PAGE_MENU);
 		}
-		g_free(filename);
 		g_free(path);
 	}
 

@@ -149,14 +149,11 @@ out:
 	gtk_tree_store_set(debr.ui_menu.model, iter, MENU_VALIDATE_NEED_UPDATE, FALSE,
 			   MENU_VALIDATE_POINTER, validate, -1);
 
-	gchar *filename;
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_FILENAME, &filename, -1);
 	gint error_count = gebr_geoxml_validate_report_menu(validate->geoxml_validate, menu);
 	gtk_list_store_set(debr.ui_validate.list_store, &validate->iter,
 			   VALIDATE_ICON, !error_count ? debr.pixmaps.stock_apply : debr.pixmaps.stock_cancel,
-			   VALIDATE_FILENAME, filename,
+			   VALIDATE_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(validate->menu)),
 			   VALIDATE_POINTER, validate, -1);
-	g_free(filename);
 	validate_set_selected(&validate->iter);
 
 	if (updated) {
