@@ -30,7 +30,21 @@ GebrGeoXmlDocument *gebr_geoxml_document_new(const gchar * name, const gchar * v
  * \internal
  *
  */
-#define gebr_geoxml_document_root_element(document)	\
+#define gebr_geoxml_document_root_element(document) \
 	gdome_doc_documentElement((GdomeDocument*)document, &exception)
+
+/**
+ * \internal
+ */
+struct gebr_geoxml_document_data {
+	GString *filename;
+	gpointer user_data;
+};
+
+/**
+ * \internal
+ */
+#define _gebr_geoxml_document_get_data(document) \
+	((struct gebr_geoxml_document_data*)((GdomeDocument*)document)->user_data)
 
 #endif				//__GEBR_GEOXML_DOCUMENT_P_H

@@ -107,6 +107,7 @@ typedef void (*GebrGeoXmlDiscardMenuRefCallback)(GebrGeoXmlProgram * program, co
 /**
  * Load a document XML file at \p path into \p document.
  * The document is validated using the proper DTD. Invalid documents are not loaded.
+ * The filename is set according to \p path (see #gebr_geoxml_document_set_filename).
  *
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_NO_MEMORY,
  * GEBR_GEOXML_RETV_FILE_NOT_FOUND, GEBR_GEOXML_RETV_PERMISSION_DENIED, 
@@ -170,6 +171,7 @@ int gebr_geoxml_document_validate(const gchar * filename);
 
 /**
  * Save \p document to \p path.
+ * The filename is set according to \p path (see #gebr_geoxml_document_set_filename).
  *
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_PERMISSION_DENIED,
  *
@@ -186,8 +188,9 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 int gebr_geoxml_document_to_string(GebrGeoXmlDocument * document, gchar ** xml_string);
 
 /**
- * Set the filename of \p document to \p filename
- * which is its correct name in the filesystem
+ * Set the filename of \p document to \p filename which is its correct name in the filesystem.
+ * This information is not stored on the file. It is set according to the path from
+ * #gebr_geoxml_document_load and #gebr_geoxml_document_save.
  *
  * If \p document is NULL nothing is done.
  *
@@ -277,6 +280,8 @@ void gebr_geoxml_document_set_help(GebrGeoXmlDocument * document, const gchar * 
 /**
  * Get the filename of \p document as it should correctly
  * be named in the filesystem.
+ * This information is not stored on the file. It is set according to the path from
+ * #gebr_geoxml_document_load and #gebr_geoxml_document_save.
  *
  * If \p document is NULL returns NULL.
  *

@@ -22,6 +22,7 @@
 #include "object.h"
 #include "types.h"
 #include "xml.h"
+#include "document_p.h"
 
 /*
  * internal structures and funcionts
@@ -65,14 +66,24 @@ void gebr_geoxml_object_set_user_data(GebrGeoXmlObject * object, gpointer user_d
 {
 	if (object == NULL)
 		return;
-	((GdomeNode *) object)->user_data = user_data;
+
+	enum GEBR_GEOXML_OBJECT_TYPE type = gebr_geoxml_object_get_type(object);
+	if (!(type == GEBR_GEOXML_OBJECT_TYPE_FLOW || type == GEBR_GEOXML_OBJECT_TYPE_LINE || type == GEBR_GEOXML_OBJECT_TYPE_PROJECT))
+		_gebr_geoxml_document_get_data(object)->user_data = user_data;
+	else
+		((GdomeNode *) object)->user_data = user_data;
 }
 
 gpointer gebr_geoxml_object_get_user_data(GebrGeoXmlObject * object)
 {
 	if (object == NULL)
 		return NULL;
-	return ((GdomeNode *) object)->user_data;
+
+	enum GEBR_GEOXML_OBJECT_TYPE type = gebr_geoxml_object_get_type(object);
+	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW || type == GEBR_GEOXML_OBJECT_TYPE_LINE || type == GEBR_GEOXML_OBJECT_TYPE_PROJECT)
+		return _gebr_geoxml_document_get_data(object)->user_data;
+	else
+		return ((GdomeNode *) object)->user_data;
 }
 
 GebrGeoXmlDocument *gebr_geoxml_object_get_owner_document(GebrGeoXmlObject * object)
