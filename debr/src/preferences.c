@@ -38,7 +38,7 @@ void preferences_dialog_setup_ui(void)
 
 	window = gtk_dialog_new_with_buttons(_("Preferences"),
 					     GTK_WINDOW(debr.window),
-					     GTK_DIALOG_MODAL,
+					     (GtkDialogFlags)(GTK_DIALOG_MODAL),
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);

@@ -272,7 +272,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	}
 
 	dialog = GTK_DIALOG(gtk_message_dialog_new(GTK_WINDOW(gebr.window),
-						   GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
+						   (GtkDialogFlags)(GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL),
 						   GTK_MESSAGE_ERROR,
 						   GTK_BUTTONS_NONE,
 						   "Could not load %s %sat %s.\nError: %s\n", document_name,

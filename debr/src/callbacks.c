@@ -261,8 +261,8 @@ void on_menu_delete_activate(void)
 		if ((strlen(path)) && (g_unlink(path))) {
 			GtkWidget *dialog;
 
-			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-							GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window), (GtkDialogFlags)(GTK_DIALOG_MODAL),
+							GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 							_("Could not delete menu '%s'."),
 							gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)));
 			gtk_dialog_run(GTK_DIALOG(dialog));
@@ -347,7 +347,7 @@ void on_menu_close_activate(void)
 			/* FIXME: gebr_geoxml_document_get_title returns empty string for never saved menus.
 			   However, dialog should display temporary filename set.                        */
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-							GTK_DIALOG_MODAL,
+							(GtkDialogFlags)(GTK_DIALOG_MODAL),
 							GTK_MESSAGE_QUESTION,
 							GTK_BUTTONS_NONE,
 							_("'%s' menu has unsaved changes. Do you want to save it?"),
@@ -372,8 +372,9 @@ void on_menu_close_activate(void)
 						GtkWidget *dialog_permission;
 
 						dialog_permission = gtk_message_dialog_new
-							(GTK_WINDOW(debr.window), GTK_DIALOG_MODAL |
-							 GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION,
+							(GTK_WINDOW(debr.window),
+							(GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+							 GTK_MESSAGE_QUESTION,
 							 GTK_BUTTONS_NONE, _("Saving menus failed: Permission denied"));
 						gtk_dialog_add_button(GTK_DIALOG(dialog_permission), GTK_STOCK_OK,
 								      GTK_RESPONSE_OK);

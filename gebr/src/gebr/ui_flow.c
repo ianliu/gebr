@@ -93,7 +93,7 @@ void flow_io_setup_ui(gboolean executable)
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
 	dialog = gtk_dialog_new_with_buttons(_("Server and I/O setup"),
 					     GTK_WINDOW(gebr.window),
-					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
 	ui_flow_io->execute_button = !executable ? NULL :
 		gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_EXECUTE, GEBR_FLOW_UI_RESPONSE_EXECUTE);
@@ -257,7 +257,7 @@ void flow_io_simple_setup_ui(gboolean focus_output)
 
 	dialog = gtk_dialog_new_with_buttons(_("Flow input/output"),
 					     GTK_WINDOW(gebr.window),
-					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	simple->dialog = dialog;
@@ -453,7 +453,7 @@ static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io)
 		if (icon != gebr.pixmaps.stock_connect) {
 			GtkWidget *dialog;
 			dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
-							GTK_DIALOG_DESTROY_WITH_PARENT,
+							(GtkDialogFlags)(GTK_DIALOG_DESTROY_WITH_PARENT),
 							GTK_MESSAGE_ERROR,
 							GTK_BUTTONS_CLOSE,
 							_("This server is disconnected. "
@@ -489,7 +489,7 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 	GtkWidget *entry_np = NULL;
 
 	dialog = gtk_dialog_new_with_buttons(_("Flow execution parameters"), GTK_WINDOW(gebr.window), 
-					     GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT, 
+					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), 
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
 					     GTK_STOCK_EXECUTE, GTK_RESPONSE_ACCEPT,
 					     NULL);

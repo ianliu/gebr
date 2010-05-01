@@ -87,7 +87,7 @@ void path_list_setup_ui(void)
 
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 					     GTK_WINDOW(gebr.window),
-					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CLOSE, GTK_RESPONSE_OK, NULL);
 	gtk_widget_set_size_request(dialog, 380, 260);
 

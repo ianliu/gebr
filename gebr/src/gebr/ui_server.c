@@ -382,7 +382,7 @@ struct ui_server_list *server_list_setup_ui(void)
 
 	dialog = gtk_dialog_new_with_buttons(_("Servers configuration"),
 					     GTK_WINDOW(gebr.window),
-					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, NULL);
+					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), NULL);
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Connect all"), RESPONSE_CONNECT_ALL);
 	gtk_button_set_image(GTK_BUTTON(button),
 			     gtk_image_new_from_stock(GTK_STOCK_CONNECT, GTK_ICON_SIZE_SMALL_TOOLBAR));
@@ -485,7 +485,7 @@ struct server *server_select_setup_ui(void)
 	ui_server_select = g_new(struct ui_server_select, 1);
 	ui_server_select->common.dialog = gtk_dialog_new_with_buttons(_("Select server"),
 								      GTK_WINDOW(gebr.window),
-								      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+								      (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 								      NULL);
 	ui_server_select->ok_button =
 	    gtk_dialog_add_button(GTK_DIALOG(ui_server_select->common.dialog), GTK_STOCK_OK, GTK_RESPONSE_OK);

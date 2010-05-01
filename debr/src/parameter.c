@@ -713,7 +713,7 @@ static gboolean parameter_dialog_setup_ui(gboolean new)
 	 */
 	ui->dialog = dialog = gtk_dialog_new_with_buttons(_("Edit parameter"),
 							  GTK_WINDOW(debr.window),
-							  GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+							  (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 							  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 							  GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_widget_set_size_request(dialog, 530, 400);

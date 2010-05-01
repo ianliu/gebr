@@ -259,7 +259,8 @@ static gboolean gebr_gui_message_dialog_vararg(GtkMessageType type, GtkButtonsTy
 	gboolean confirmed;
 
 	string = g_strdup_vprintf(message, args);
-	dialog = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+	dialog = gtk_message_dialog_new_with_markup(NULL,
+						    (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 						    type, buttons, title? "<b>%s</b>":"%s", title? title:string);
 	if (title) {
 		gtk_window_set_title(GTK_WINDOW(dialog), title);

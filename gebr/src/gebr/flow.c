@@ -380,7 +380,7 @@ void flow_export_as_menu(void)
 
 	gtk_widget_destroy(dialog);
 	dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
-					GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
+					(GtkDialogFlags)(GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL),
 					GTK_MESSAGE_QUESTION,
 					GTK_BUTTONS_YES_NO,
 					"Do you want to use your parameters' values as default values?");
@@ -617,7 +617,7 @@ gboolean flow_revision_save(void)
 
 	dialog = gtk_dialog_new_with_buttons(_("Save flow state"),
 					     GTK_WINDOW(gebr.window),
-					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);

@@ -183,7 +183,7 @@ gchar *gebr_gui_save_dialog_run(GebrGuiSaveDialog *self)
 			gchar *basename;
 			basename = g_path_get_basename(filename->str);
 			dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW(self),
-								    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+								    (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 								    GTK_MESSAGE_QUESTION,
 								    GTK_BUTTONS_NONE,
 								    _("<b>A file named \"%s\" already exists. "

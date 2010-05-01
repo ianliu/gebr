@@ -277,7 +277,7 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window, struct help
 	gtk_window_group_add_window(window_group, GTK_WINDOW(window));
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-					   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	web_view = webkit_web_view_new();
 
 	/* Place the WebKitWebView in the GtkScrolledWindow */

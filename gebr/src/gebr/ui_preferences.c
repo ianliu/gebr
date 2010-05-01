@@ -57,7 +57,7 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	ui_preferences->first_run = first_run;
 	ui_preferences->dialog = gtk_dialog_new_with_buttons(_("Preferences"),
 							     GTK_WINDOW(gebr.window),
-							     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+							     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 							     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 							     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(ui_preferences->dialog), GTK_RESPONSE_OK);

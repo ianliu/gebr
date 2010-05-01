@@ -15,8 +15,6 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//for WEXITSTATUS
-#define _XOPEN_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -639,7 +637,7 @@ void menu_install(void)
 
 		if (status == MENU_STATUS_UNSAVED) {
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-							GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+							(GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 							GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 							_("Menu %s is unsaved. This means that "
 							  "you are installing an older state of it. "
@@ -652,7 +650,7 @@ void menu_install(void)
 		if (!overwriteall && g_file_test(destination->str, G_FILE_TEST_EXISTS)) {
 			gint response;
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-							GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+							(GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 							GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
 							_("Menu '%s' already exists. Do you want to overwrite it?"),
 							menu_filename);
@@ -998,7 +996,7 @@ gboolean menu_dialog_setup_ui(gboolean new)
 
 	dialog = gtk_dialog_new_with_buttons(_("Edit menu"),
 					     GTK_WINDOW(debr.window),
-					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_widget_set_size_request(dialog, 400, 350);

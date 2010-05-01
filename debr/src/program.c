@@ -252,7 +252,7 @@ void program_preview(void)
 	data->program = debr.program;
 	dialog = gtk_dialog_new_with_buttons(_("Parameter's dialog preview"),
 					     GTK_WINDOW(NULL),
-					     GTK_DIALOG_DESTROY_WITH_PARENT,
+					     (GtkDialogFlags)(GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_REFRESH, RESPONSE_REFRESH,
 					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
 	g_object_set(dialog, "type-hint", GDK_WINDOW_TYPE_HINT_NORMAL, NULL);
@@ -396,7 +396,7 @@ gboolean program_dialog_setup_ui(gboolean new)
 
 	dialog = gtk_dialog_new_with_buttons(_("Edit program"),
 					     GTK_WINDOW(debr.window),
-					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK,NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);

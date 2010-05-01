@@ -50,7 +50,7 @@ static GString *server_ssh_login(const gchar * title, const gchar * message)
 
 	dialog = gtk_dialog_new_with_buttons(title,
 					     GTK_WINDOW(gebr.window),
-					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
@@ -83,7 +83,7 @@ static gboolean server_ssh_question(const gchar * title, const gchar * message)
 	gboolean yes;
 
 	dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
-					GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
+					(GtkDialogFlags)(GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL),
 					GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "%s", message);
 	gtk_window_set_title(GTK_WINDOW(dialog), _("SSH inquiry"));
 
