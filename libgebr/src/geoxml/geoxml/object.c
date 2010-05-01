@@ -68,7 +68,7 @@ void gebr_geoxml_object_set_user_data(GebrGeoXmlObject * object, gpointer user_d
 		return;
 
 	enum GEBR_GEOXML_OBJECT_TYPE type = gebr_geoxml_object_get_type(object);
-	if (!(type == GEBR_GEOXML_OBJECT_TYPE_FLOW || type == GEBR_GEOXML_OBJECT_TYPE_LINE || type == GEBR_GEOXML_OBJECT_TYPE_PROJECT))
+	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW || type == GEBR_GEOXML_OBJECT_TYPE_LINE || type == GEBR_GEOXML_OBJECT_TYPE_PROJECT)
 		_gebr_geoxml_document_get_data(object)->user_data = user_data;
 	else
 		((GdomeNode *) object)->user_data = user_data;
