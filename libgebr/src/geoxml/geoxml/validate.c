@@ -123,10 +123,6 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 	validate->ipar = -1;
 	validate->isubpar = -1;
 	validate->potential_errors = 0;
-	if (validate->options.filename)
-		validate_append_item_with_check(validate, _("Filename:      "),
-						gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)),
-						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_FILENAME)->flags);
 	if (validate->options.title)
 		validate_append_item_with_check(validate, _("Title:         "),
 						gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(menu)),
