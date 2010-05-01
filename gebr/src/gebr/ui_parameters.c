@@ -181,10 +181,12 @@ gboolean parameters_check_has_required_unfilled_for_iter(GtkTreeIter * iter)
  */
 static void parameter_required_is_unfilled(GebrGeoXmlParameter * parameter, gboolean * required_unfilled)
 {
+	if (*required_unfilled)
+		return;
 	GebrGeoXmlParameters * instance = gebr_geoxml_parameter_get_parameters(parameter);
-	GebrGeoXmlParameter *selected = gebr_geoxml_parameters_get_selection(instance);
+	GebrGeoXmlParameter * selected = gebr_geoxml_parameters_get_selection(instance);
 	/* for exclusive groups, check if this is the selected parameter of its instance */
-	if (instance != NULL && selected != parameter)
+	if (selected != parameter)
 		return;
 	if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(parameter))) 
 		*required_unfilled = !gebr_geoxml_program_parameter_is_set(GEBR_GEOXML_PROGRAM_PARAMETER(parameter));

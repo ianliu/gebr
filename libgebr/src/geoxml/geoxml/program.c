@@ -46,7 +46,8 @@ static void gebr_geoxml_parameters_foreach(GebrGeoXmlParameters * parameters, Ge
 
 	gebr_geoxml_parameters_get_parameter(parameters, &parameter, 0);
 	for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter)) {
-		if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter)) == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
+		if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter)) ==
+		    GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
 			GebrGeoXmlSequence *instance;
 
 			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
