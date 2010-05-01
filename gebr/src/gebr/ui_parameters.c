@@ -1,7 +1,3 @@
-/**
- * \file ui_parameters.c Program's parameter window stuff.
- */
-
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -65,8 +61,7 @@ struct ui_parameters *parameters_configure_setup_ui(void)
 		return NULL;
 
 	ui_parameters = g_malloc(sizeof(struct ui_parameters));
-	dialog = gtk_dialog_new_with_buttons(_("Parameters"),
-					     GTK_WINDOW(gebr.window),
+	dialog = gtk_dialog_new_with_buttons(_("Parameters"), GTK_WINDOW(gebr.window),
 					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT, NULL);
 	g_object_set(dialog, "type-hint", GDK_WINDOW_TYPE_HINT_NORMAL, NULL);
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
@@ -74,8 +69,8 @@ struct ui_parameters *parameters_configure_setup_ui(void)
 		gtk_widget_set_sensitive(button, FALSE);
 
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Default"), GTK_RESPONSE_DEFAULT);
-	g_object_set(G_OBJECT(button),
-		     "image", gtk_image_new_from_stock(GTK_STOCK_REVERT_TO_SAVED, GTK_ICON_SIZE_BUTTON), NULL);
+	g_object_set(G_OBJECT(button), "image",
+		     gtk_image_new_from_stock(GTK_STOCK_REVERT_TO_SAVED, GTK_ICON_SIZE_BUTTON), NULL);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_OK, GTK_RESPONSE_OK);
 

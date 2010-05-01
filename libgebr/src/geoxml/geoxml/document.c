@@ -478,10 +478,10 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 			GdomeElement *element;
 			gebr_foreach_gslist(element, __gebr_geoxml_get_elements_by_tag(root_element, "parameters")) {
 				__gebr_geoxml_set_attr_value(element, "default-selection",
-							     __gebr_geoxml_get_attr_value(root_element, "exclusive"));
+							     __gebr_geoxml_get_attr_value(element, "exclusive"));
 				__gebr_geoxml_remove_attr(element, "exclusive");
 				__gebr_geoxml_set_attr_value(element, "selection",
-							     __gebr_geoxml_get_attr_value(root_element, "selected"));
+							     __gebr_geoxml_get_attr_value(element, "selected"));
 				__gebr_geoxml_remove_attr(element, "selected");
 			}
 		}

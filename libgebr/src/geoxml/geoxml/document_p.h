@@ -38,6 +38,7 @@ GebrGeoXmlDocument *gebr_geoxml_document_new(const gchar * name, const gchar * v
  */
 struct gebr_geoxml_document_data {
 	GString *filename;
+	/** For #gebr_geoxml_object_set_user_data */
 	gpointer user_data;
 };
 

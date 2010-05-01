@@ -18,6 +18,10 @@
 #ifndef __PARAMETERS_H
 #define __PARAMETERS_H
 
+/**
+ * \file ui_parameters.c Program's parameter window stuff.
+ */
+
 #include <glib.h>
 #include <gtk/gtk.h>
 
