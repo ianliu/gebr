@@ -47,8 +47,7 @@ struct gebr_log *gebr_log_open(const gchar * path)
 
 	error = NULL;
 	log = g_new(struct gebr_log, 1);
-	*log = (struct gebr_log) {
-	.io_channel = g_io_channel_new_file(path, "r+", &error),};
+	log->io_channel = g_io_channel_new_file(path, "r+", &error);
 	g_io_channel_seek_position(log->io_channel, 0, G_SEEK_END, &error);
 
 	return log;
@@ -60,11 +59,9 @@ struct gebr_log_message *gebr_log_message_new(enum gebr_log_message_type type, c
 	struct gebr_log_message *log_message;
 
 	log_message = g_new(struct gebr_log_message, 1);
-	*log_message = (struct gebr_log_message) {
-		.type = type,
-		.date = g_string_new(date),
-		.message = g_string_new(message)
-	};
+	log_message->type = type;
+	log_message->date = g_string_new(date);
+	log_message->message = g_string_new(message);
 
 	return log_message;
 }

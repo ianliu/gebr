@@ -78,20 +78,18 @@ struct job *job_add(struct server *server, GString * jid,
 	gethostname(local_hostname, 100);
 	status = job_translate_status(_status);
 	job = g_new(struct job, 1);
-	*job = (struct job) {
-		.status = status, 
-		.server = server, 
-		.title = g_string_new(title->str), 
-		.jid = g_string_new(jid->str),
-		.start_date = g_string_new(start_date->str),
-		.finish_date = g_string_new(finish_date == NULL ? "" : finish_date->str),
-		.hostname = g_string_new(hostname == NULL ? local_hostname : hostname->str),
-		.issues = g_string_new(issues->str),
-		.cmd_line = g_string_new(cmd_line->str),
-		.output = g_string_new(NULL),
-		.queue = g_string_new(queue->str), 
-		.moab_jid = g_string_new(moab_jid->str)
-	};
+	job->status = status; 
+	job->server = server;
+	job->title = g_string_new(title->str);
+	job->jid = g_string_new(jid->str);
+	job->start_date = g_string_new(start_date->str);
+	job->finish_date = g_string_new(finish_date == NULL ? "" : finish_date->str);
+	job->hostname = g_string_new(hostname == NULL ? local_hostname : hostname->str);
+	job->issues = g_string_new(issues->str);
+	job->cmd_line = g_string_new(cmd_line->str);
+	job->output = g_string_new(NULL);
+	job->queue = g_string_new(queue->str); 
+	job->moab_jid = g_string_new(moab_jid->str);
 
 	GtkTreeIter queue_iter;
 	gboolean queue_exists = server_queue_find(job->server, queue->str, &queue_iter);

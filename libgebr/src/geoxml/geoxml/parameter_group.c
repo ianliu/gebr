@@ -142,7 +142,7 @@ int gebr_geoxml_parameter_group_get_instance(GebrGeoXmlParameterGroup * paramete
 	 * index. */
 	*parameters = (GebrGeoXmlSequence *)
 	    __gebr_geoxml_get_element_at(__gebr_geoxml_parameter_get_type_element
-					 (GEBR_GEOXML_PARAMETER(parameter_group), FALSE), "parameters", index + 1, FALSE);
+					 (GEBR_GEOXML_PARAMETER(parameter_group), FALSE), "parameters", index, FALSE);
 
 	return (*parameters == NULL)
 	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;

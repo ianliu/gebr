@@ -64,11 +64,9 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer parameter_w
 	program_edit->parameter_widget_data = parameter_widget_data;
 	program_edit->use_default = use_default;
 	program_edit->widget = vbox = gtk_vbox_new(FALSE, 0);
-	program_edit->dicts = (struct gebr_gui_gebr_gui_program_edit_dicts) {
-		.project = NULL,
-		.line = NULL,
-		.flow = NULL,
-	};
+	program_edit->dicts.project = NULL;
+	program_edit->dicts.line = NULL;
+	program_edit->dicts.flow = NULL;
 	gtk_widget_show(vbox);
 	program_edit->title_label = title_label = gtk_label_new(NULL);
 	gtk_widget_show(title_label);
@@ -176,12 +174,12 @@ gebr_gui_program_edit_load(struct gebr_gui_program_edit *program_edit, GebrGeoXm
 		button = gtk_button_new();
 		gtk_container_add(GTK_CONTAINER(button), gtk_arrow_new(GTK_ARROW_DOWN, GTK_SHADOW_NONE));
 		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-		g_signal_connect(button, "clicked", on_arrow_down_clicked, NULL);
+		g_signal_connect(button, "clicked", G_CALLBACK(on_arrow_down_clicked), NULL);
 
 		button = gtk_button_new();
 		gtk_container_add(GTK_CONTAINER(button), gtk_arrow_new(GTK_ARROW_UP, GTK_SHADOW_NONE));
 		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-		g_signal_connect(button, "clicked", on_arrow_up_clicked, NULL);
+		g_signal_connect(button, "clicked", G_CALLBACK(on_arrow_up_clicked), NULL);
 
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 	}

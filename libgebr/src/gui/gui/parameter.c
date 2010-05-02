@@ -950,17 +950,15 @@ struct gebr_gui_parameter_widget *gebr_gui_parameter_widget_new(GebrGeoXmlParame
 	struct gebr_gui_parameter_widget *gebr_gui_parameter_widget;
 
 	gebr_gui_parameter_widget = g_new(struct gebr_gui_parameter_widget, 1);
-	*gebr_gui_parameter_widget = (struct gebr_gui_parameter_widget) {
-		.parameter = parameter,
-		.program_parameter = GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
-		.parameter_type = gebr_geoxml_parameter_get_type(parameter),
-		.use_default_value = use_default_value,
-		.data = data,
-		.dict_parameter = NULL,
-		.dicts = NULL,
-		.callback = NULL,
-		.user_data = NULL
-	};
+	gebr_gui_parameter_widget->parameter = parameter;
+	gebr_gui_parameter_widget->program_parameter = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
+	gebr_gui_parameter_widget->parameter_type = gebr_geoxml_parameter_get_type(parameter);
+	gebr_gui_parameter_widget->use_default_value = use_default_value;
+	gebr_gui_parameter_widget->data = data;
+	gebr_gui_parameter_widget->dict_parameter = NULL;
+	gebr_gui_parameter_widget->dicts = NULL;
+	gebr_gui_parameter_widget->callback = NULL;
+	gebr_gui_parameter_widget->user_data = NULL;
 
 	gebr_gui_parameter_widget_configure(gebr_gui_parameter_widget);
 

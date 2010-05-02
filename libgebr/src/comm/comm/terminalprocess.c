@@ -299,8 +299,8 @@ gsize gebr_comm_terminal_process_write_string(GebrCommTerminalProcess * terminal
 	GByteArray byte_array;
 	size_t written_bytes;
 
-	byte_array = (GByteArray) {
-	.data = (guint8 *) string->str,.len = string->len};
+	byte_array.data = (guint8 *) string->str;
+	byte_array.len = string->len;
 	written_bytes = gebr_comm_terminal_process_write(terminal_process, &byte_array);
 
 	return written_bytes;

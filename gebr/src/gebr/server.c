@@ -169,16 +169,13 @@ struct server *server_new(const gchar * address, gboolean autoconnect)
 
 	gtk_list_store_append(gebr.ui_server_list->common.store, &iter);
 	server = g_new(struct server, 1);
-	*server = (struct server) {
-		.comm = gebr_comm_server_new(address, &ops),
-		.iter = iter,
-		.last_error = g_string_new(""),
-		.type = GEBR_COMM_SERVER_TYPE_UNKNOWN,
-		.accounts_model = gtk_list_store_new(1, G_TYPE_STRING),
-		.queues_model = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER),
-		.ran_jid = g_string_new(""),
-	};
-
+	server->comm = gebr_comm_server_new(address, &ops);
+	server->iter = iter;
+	server->last_error = g_string_new("");
+	server->type = GEBR_COMM_SERVER_TYPE_UNKNOWN;
+	server->accounts_model = gtk_list_store_new(1, G_TYPE_STRING);
+	server->queues_model = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+	server->ran_jid = g_string_new("");
 	server->comm->user_data = server;
 	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
 			   SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,

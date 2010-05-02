@@ -409,8 +409,8 @@ gsize gebr_comm_process_write_stdin_string(GebrCommProcess * process, GString * 
 	GByteArray byte_array;
 	ssize_t written_bytes;
 
-	byte_array = (GByteArray) {
-	.data = (guint8 *) string->str,.len = string->len};
+	byte_array.data = (guint8 *) string->str;
+	byte_array.len = string->len;
 	written_bytes = gebr_comm_process_write_stdin(process, &byte_array);
 
 	return written_bytes;

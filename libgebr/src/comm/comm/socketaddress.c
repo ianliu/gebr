@@ -125,8 +125,8 @@ GebrCommSocketAddress gebr_comm_socket_address_unix(const gchar * path)
 {
 	GebrCommSocketAddress socket_address;
 
-	socket_address = (GebrCommSocketAddress) {
-	.type = GEBR_COMM_SOCKET_ADDRESS_TYPE_UNIX,.address.unix_sockaddr.sun_family = AF_UNIX,};
+	socket_address.type = GEBR_COMM_SOCKET_ADDRESS_TYPE_UNIX;
+	socket_address.address.unix_sockaddr.sun_family = AF_UNIX;
 	strncpy(socket_address.address.unix_sockaddr.sun_path, path, UNIX_PATH_MAX);
 
 	return socket_address;
@@ -142,10 +142,10 @@ GebrCommSocketAddress gebr_comm_socket_address_ipv4(const gchar * string, guint1
 		goto out;
 	}
 
-	socket_address = (GebrCommSocketAddress) {
-		.type = GEBR_COMM_SOCKET_ADDRESS_TYPE_IPV4,.address.inet_sockaddr = (struct sockaddr_in) {
-		.sin_family = AF_INET,.sin_port = htons(port),.sin_addr = in_addr}
-	};
+	socket_address.type = GEBR_COMM_SOCKET_ADDRESS_TYPE_IPV4;
+	socket_address.address.inet_sockaddr.sin_family = AF_INET;
+	socket_address.address.inet_sockaddr.sin_port = htons(port);
+	socket_address.address.inet_sockaddr.sin_addr = in_addr;
 
  out:	return socket_address;
 }

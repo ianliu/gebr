@@ -147,10 +147,10 @@ gboolean gebr_comm_listen_socket_is_local_port_available(guint16 port)
 	gboolean available;
 
 	sockfd = socket(PF_INET, SOCK_STREAM, 0);
-	sockaddr_in = (struct sockaddr_in) {
-		.sin_family = AF_INET,.sin_port = htons(port),.sin_addr = {
-		INADDR_ANY}
-	};
+	sockaddr_in.sin_family = AF_INET;
+	sockaddr_in.sin_port = htons(port);
+	sockaddr_in.sin_addr.s_addr = INADDR_ANY;
+
 	available = !bind(sockfd, (struct sockaddr *)&sockaddr_in, sizeof(sockaddr_in)) ? TRUE : FALSE;
 
 	close(sockfd);

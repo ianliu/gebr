@@ -123,26 +123,21 @@ void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 	gtk_widget_modify_font(text_view, font);
 	pango_font_description_free(font);
 
-	GebrGeoXmlValidateOperations operations = (GebrGeoXmlValidateOperations) {
-		.append_text = (void(*)(gpointer,const gchar*,...))validate_append_text, 
-		.append_text_emph = (void(*)(gpointer,const gchar*,...))validate_append_text_emph, 
-		.append_text_error = NULL, 
-		.append_text_error_with_paths = (void(*)(gpointer, gint,
-							 const gchar *,
-							 const gchar *,
-							 const gchar *, ...))validate_append_text_error, 
-	};
+	GebrGeoXmlValidateOperations operations;
+	operations.append_text = (void(*)(gpointer,const gchar*,...))validate_append_text;
+	operations.append_text_emph = (void(*)(gpointer,const gchar*,...))validate_append_text_emph;
+	operations.append_text_error = NULL;
+	operations.append_text_error_with_paths = (void(*)(gpointer, gint, const gchar *, const gchar *, const gchar *,
+							   ...))validate_append_text_error;
 	GebrGeoXmlValidateOptions options;
 	options.all = TRUE;
 	validate = g_new(struct validate, 1);
-	*validate = (struct validate) {
-		.widget = scrolled_window,
-		.text_view = text_view,
-		.text_buffer = text_buffer,
-		.menu = menu,
-		.menu_iter = *iter,
-		.geoxml_validate = gebr_geoxml_validate_new(validate, operations, options)
-	};
+	validate->widget = scrolled_window;
+	validate->text_view = text_view;
+	validate->text_buffer = text_buffer;
+	validate->menu = menu;
+	validate->menu_iter = *iter;
+	validate->geoxml_validate = gebr_geoxml_validate_new(validate, operations, options);
 	gtk_list_store_append(debr.ui_validate.list_store, &validate->iter);
 
 out:

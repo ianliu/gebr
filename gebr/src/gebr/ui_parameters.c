@@ -77,11 +77,10 @@ struct ui_parameters *parameters_configure_setup_ui(void)
 	g_signal_connect(dialog, "response", G_CALLBACK(parameters_actions), ui_parameters);
 	g_signal_connect(dialog, "delete-event", G_CALLBACK(parameters_on_delete_event), ui_parameters);
 
-	*ui_parameters = (struct ui_parameters) {
-		.dialog = dialog,.program_edit =
-			gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM(gebr_geoxml_sequence_append_clone(GEBR_GEOXML_SEQUENCE(gebr.program))),
-						       flow_io_customized_paths_from_line, FALSE)
-	};
+	ui_parameters->dialog = dialog;
+	ui_parameters->program_edit =
+		gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM(gebr_geoxml_sequence_append_clone(GEBR_GEOXML_SEQUENCE(gebr.program))),
+					       flow_io_customized_paths_from_line, FALSE);
 	ui_parameters->program_edit->dicts.project = GEBR_GEOXML_DOCUMENT(gebr.project);
 	ui_parameters->program_edit->dicts.line = GEBR_GEOXML_DOCUMENT(gebr.line);
 	ui_parameters->program_edit->dicts.flow = GEBR_GEOXML_DOCUMENT(gebr.flow);

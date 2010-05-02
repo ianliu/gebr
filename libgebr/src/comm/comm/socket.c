@@ -404,8 +404,8 @@ void gebr_comm_socket_write_string(GebrCommSocket * socket, GString * string)
 {
 	GByteArray byte_array;
 
-	byte_array = (GByteArray) {
-	.data = (guint8 *) string->str,.len = string->len};
+	byte_array.data = (guint8 *)string->str;
+	byte_array.len = string->len;
 
 	gebr_comm_socket_write(socket, &byte_array);
 }

@@ -43,22 +43,20 @@ void gebr_comm_protocol_split_free_each(GString * string)
 void gebr_comm_protocol_init(void)
 {
 	/* create messages hashes */
-	gebr_comm_protocol_defs = (struct gebr_comm_protocol_defs) {
-		.ret_def = gebr_comm_message_def_create("RET", FALSE),
-		.err_def = gebr_comm_message_def_create("ERR", FALSE),
-		.ini_def = gebr_comm_message_def_create("INI", TRUE),
-		.qut_def = gebr_comm_message_def_create("QUT", FALSE),
-		.lst_def = gebr_comm_message_def_create("LST", FALSE),	/* return, but it is not a ret */
-		.job_def = gebr_comm_message_def_create("JOB", FALSE),
-		.run_def = gebr_comm_message_def_create("RUN", TRUE),
-		.rnq_def = gebr_comm_message_def_create("RNQ", FALSE),
-		.flw_def = gebr_comm_message_def_create("FLW", TRUE),
-		.clr_def = gebr_comm_message_def_create("CLR", FALSE),
-		.end_def = gebr_comm_message_def_create("END", FALSE),
-		.kil_def = gebr_comm_message_def_create("KIL", FALSE),
-		.out_def = gebr_comm_message_def_create("OUT", FALSE),
-		.sta_def = gebr_comm_message_def_create("STA", FALSE)
-	};
+	gebr_comm_protocol_defs.ret_def = gebr_comm_message_def_create("RET", FALSE);
+	gebr_comm_protocol_defs.err_def = gebr_comm_message_def_create("ERR", FALSE);
+	gebr_comm_protocol_defs.ini_def = gebr_comm_message_def_create("INI", TRUE);
+	gebr_comm_protocol_defs.qut_def = gebr_comm_message_def_create("QUT", FALSE);
+	gebr_comm_protocol_defs.lst_def = gebr_comm_message_def_create("LST", FALSE); /* return JOBs */
+	gebr_comm_protocol_defs.job_def = gebr_comm_message_def_create("JOB", FALSE);
+	gebr_comm_protocol_defs.run_def = gebr_comm_message_def_create("RUN", TRUE);
+	gebr_comm_protocol_defs.rnq_def = gebr_comm_message_def_create("RNQ", FALSE);
+	gebr_comm_protocol_defs.flw_def = gebr_comm_message_def_create("FLW", TRUE);
+	gebr_comm_protocol_defs.clr_def = gebr_comm_message_def_create("CLR", FALSE);
+	gebr_comm_protocol_defs.end_def = gebr_comm_message_def_create("END", FALSE);
+	gebr_comm_protocol_defs.kil_def = gebr_comm_message_def_create("KIL", FALSE);
+	gebr_comm_protocol_defs.out_def = gebr_comm_message_def_create("OUT", FALSE);
+	gebr_comm_protocol_defs.sta_def = gebr_comm_message_def_create("STA", FALSE);
 
 	gebr_comm_protocol_defs.hash_table = g_hash_table_new(g_str_hash, g_str_equal);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, "RET", &gebr_comm_protocol_defs.ret_def);
@@ -88,9 +86,9 @@ struct gebr_comm_message *gebr_comm_message_new(void)
 	struct gebr_comm_message *message;
 
 	message = g_new(struct gebr_comm_message, 1);
-	*message = (struct gebr_comm_message) {
-		.hash = 0,.argument_size = 0,.argument = g_string_new(NULL)
-	};
+	message->hash = 0;
+	message->argument_size = 0;
+	message->argument = g_string_new(NULL);
 
 	return message;
 }
@@ -105,16 +103,17 @@ void gebr_comm_message_free(struct gebr_comm_message *message)
 
 struct gebr_comm_protocol *gebr_comm_protocol_new(void)
 {
-	struct gebr_comm_protocol *new;
+	struct gebr_comm_protocol *protocol;
 
-	new = g_new(struct gebr_comm_protocol, 1);
-	*new = (struct gebr_comm_protocol) {
-		.data = g_string_new(NULL),.message = NULL,.messages = NULL,.hostname = g_string_new(NULL)
-	};
+	protocol = g_new(struct gebr_comm_protocol, 1);
+	protocol->data = g_string_new(NULL);
+	protocol->message = NULL;
+	protocol->messages = NULL;
+	protocol->hostname = g_string_new(NULL);
 
-	gebr_comm_protocol_reset(new);
+	gebr_comm_protocol_reset(protocol);
 
-	return new;
+	return protocol;
 }
 
 void gebr_comm_protocol_reset(struct gebr_comm_protocol *protocol)

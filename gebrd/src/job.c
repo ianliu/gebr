@@ -488,26 +488,25 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 	/* initialization */
 	issue_number = 0;
 	job = g_new(struct job, 1);
-	*job = (struct job) {
-		.process = gebr_comm_process_new(),
-		.flow = NULL,
-		.user_finished = FALSE,
-		.hostname = g_string_new(client->protocol->hostname->str),
-		.display = g_string_new(client->display->str),
-		.server_location = client->server_location,
-		.status_string = g_string_new(""),
-		.jid = job_generate_id(),
-		.title = g_string_new(""),
-		.start_date = g_string_new(""),
-		.finish_date = g_string_new(""),
-		.issues = g_string_new(""),
-		.cmd_line = g_string_new(""),
-		.output = g_string_new(""),
-		.queue  = g_string_new(queue->str),
-		.moab_account = g_string_new(account->str),
-		.moab_jid = g_string_new(""),
-		.n_process = g_string_new(n_process->str)
-	};
+	job->process = gebr_comm_process_new();
+	job->flow = NULL;
+	job->user_finished = FALSE;
+	job->hostname = g_string_new(client->protocol->hostname->str);
+	job->display = g_string_new(client->display->str);
+	job->server_location = client->server_location;
+	job->status_string = g_string_new("");
+	job->jid = job_generate_id();
+	job->title = g_string_new("");
+	job->start_date = g_string_new("");
+	job->finish_date = g_string_new("");
+	job->issues = g_string_new("");
+	job->cmd_line = g_string_new("");
+	job->output = g_string_new("");
+	job->queue  = g_string_new(queue->str);
+	job->moab_account = g_string_new(account->str);
+	job->moab_jid = g_string_new("");
+	job->n_process = g_string_new(n_process->str);
+
 	*_job = job;
 	gebrd.jobs = g_list_append(gebrd.jobs, job);
 

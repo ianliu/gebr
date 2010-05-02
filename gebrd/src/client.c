@@ -48,8 +48,9 @@ void client_add(GebrCommStreamSocket * stream_socket)
 	struct client *client;
 
 	client = g_new(struct client, 1);
-	*client = (struct client) {
-	.stream_socket = stream_socket,.protocol = gebr_comm_protocol_new(),.display = g_string_new(NULL),};
+	client->stream_socket = stream_socket;
+	client->protocol = gebr_comm_protocol_new();
+	client->display = g_string_new(NULL);
 
 	gebrd.clients = g_list_prepend(gebrd.clients, client);
 	g_signal_connect(stream_socket, "disconnected", G_CALLBACK(client_disconnected), client);

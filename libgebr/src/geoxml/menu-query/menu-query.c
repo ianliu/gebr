@@ -93,12 +93,11 @@ int main(int argc, char **argv)
 	if (menu == NULL)
 		return 0;
 
-	GebrGeoXmlValidateOperations operations = (GebrGeoXmlValidateOperations) {
-		.append_text = append_text, 
-		.append_text_emph = append_text, 
-		.append_text_error = append_text_error, 
-		.append_text_error_with_paths = NULL, 
-	};
+	GebrGeoXmlValidateOperations operations;
+	operations.append_text = append_text;
+	operations.append_text_emph = append_text;
+	operations.append_text_error = append_text_error;
+	operations.append_text_error_with_paths = NULL;
 	validate = gebr_geoxml_validate_new(NULL, operations, options);
 	global_error_count = 0;
 	int nmenu = 0;

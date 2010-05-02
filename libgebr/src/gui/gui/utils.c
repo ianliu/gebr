@@ -74,9 +74,11 @@ static struct popup_callback *__popup_callback_init(GObject * object, GebrGuiGtk
 	struct popup_callback *popup_callback;
 
 	popup_callback = g_new(struct popup_callback, 1);
-	*popup_callback = (struct popup_callback) {
-		.callback = callback,.user_data = user_data,.event_box = event_box,.widget = GTK_WIDGET(object)
-	};
+	popup_callback->callback = callback;
+	popup_callback->user_data = user_data;
+	popup_callback->event_box = event_box;
+	popup_callback->widget = GTK_WIDGET(object);
+
 	g_object_weak_ref(object, (GWeakNotify) __popup_callback_weak_notify, popup_callback);
 
 	return popup_callback;
@@ -435,8 +437,8 @@ void gebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter 
 	GValue value;
 	guint i, n;
 
-	value = (GValue) {
-	0,};
+	g_value_init(&value, G_TYPE_INT);
+	g_value_unset(&value);
 	n = gtk_tree_model_get_n_columns(model);
 	for (i = 0; i < n; ++i) {
 		gtk_tree_model_get_value(model, source, i, &value);
@@ -992,11 +994,9 @@ gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GtkTreeView * tree_view
 	struct reorderable_data *data;
 
 	data = g_new(struct reorderable_data, 1);
-	*data = (struct reorderable_data) {
-		.gebr_geoxml_sequence_pointer_column = gebr_geoxml_sequence_pointer_column,
-		.callback = callback,
-		.user_data = user_data,
-	};
+	data->gebr_geoxml_sequence_pointer_column = gebr_geoxml_sequence_pointer_column;
+	data->callback = callback;
+	data->user_data = user_data;
 
 	gebr_gui_gtk_tree_view_set_reorder_callback(tree_view,
 						    (GebrGuiGtkTreeViewReorderCallback) gtk_tree_view_reorder_callback,
@@ -1028,8 +1028,9 @@ gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkT
 		return;
 
 	data = g_new(struct reorder_data, 1);
-	*data = (struct reorder_data) {
-	.callback = callback,.can_callback = can_callback,.user_data = user_data,};
+	data->callback = callback;
+	data->can_callback = can_callback;
+	data->user_data = user_data;
 
 	gtk_tree_view_enable_model_drag_source(tree_view, GDK_MODIFIER_MASK, target_entries, 1, GDK_ACTION_MOVE);
 	gtk_tree_view_enable_model_drag_dest(tree_view, target_entries, 1, GDK_ACTION_MOVE);
