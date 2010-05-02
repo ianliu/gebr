@@ -952,7 +952,7 @@ void menu_status_set_unsaved(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-gboolean menu_dialog_setup_ui(gboolean new)
+gboolean menu_dialog_setup_ui(gboolean new_menu)
 {
 	GtkWidget *dialog;
 	GtkWidget *table;
@@ -1101,7 +1101,7 @@ gboolean menu_dialog_setup_ui(gboolean new)
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, 0);
 	gtk_misc_set_alignment(GTK_MISC(categories_label), 0, 0.5);
 
-	categories_sequence_edit = category_edit_new(debr.menu, new);
+	categories_sequence_edit = category_edit_new(debr.menu, new_menu);
 	gtk_widget_show(categories_sequence_edit);
 	gtk_table_attach(GTK_TABLE(table), categories_sequence_edit, 1, 2, 5, 6,
 			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, 0);
@@ -1118,17 +1118,17 @@ gboolean menu_dialog_setup_ui(gboolean new)
 	/* validate */
 	GebrValidateCase *validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_TITLE);
 	g_signal_connect(title_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
-	if (!new)
+	if (!new_menu)
 		on_entry_focus_out(GTK_ENTRY(title_entry), NULL, validate_case);
 	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_DESCRIPTION);
 	g_signal_connect(description_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
-	if (!new)
+	if (!new_menu)
 		on_entry_focus_out(GTK_ENTRY(description_entry), NULL, validate_case);
 	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_EMAIL);
 	g_signal_connect(email_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
-	if (!new)
+	if (!new_menu)
 		on_entry_focus_out(GTK_ENTRY(email_entry), NULL, validate_case);
-	if (!new)
+	if (!new_menu)
 		validate_image_set_check_help(empty_help_image,
 					      gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
 

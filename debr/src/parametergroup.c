@@ -41,7 +41,7 @@ static void on_parameter_group_exclusive_toggled(GtkToggleButton * toggle_button
  * Public functions
  */
 
-gboolean parameter_group_dialog_setup_ui(gboolean new)
+gboolean parameter_group_dialog_setup_ui(gboolean new_parameter)
 {
 	GtkWidget *dialog;
 	GtkWidget *scrolled_window;
@@ -198,7 +198,7 @@ gboolean parameter_group_dialog_setup_ui(gboolean new)
 	GebrValidateCase *validate_case;
 	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL);
 	g_signal_connect(label_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
-	if (!new)
+	if (!new_parameter)
 		on_entry_focus_out(GTK_ENTRY(label_entry), NULL, validate_case);
 
 	/* signals */

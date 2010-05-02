@@ -276,7 +276,7 @@ static GtkWidget *__enum_option_edit_create_tree_view(EnumOptionEdit * enum_opti
 	return tree_view;
 }
 
-GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter, gboolean new)
+GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter, gboolean new_parameter)
 {
 	EnumOptionEdit *enum_option_edit;
 	GtkListStore *list_store;
@@ -306,7 +306,7 @@ GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlPr
 	enum_option_edit->program_parameter = program_parameter;
 	enum_option_edit->label_entry = label_entry;
 	enum_option_edit->value_entry = value_entry;
-	if (!new)
+	if (!new_parameter)
 		validate_image_set_check_enum_option_list(validate_image, program_parameter); 
 	g_signal_connect(GTK_OBJECT(enum_option_edit), "add-request", G_CALLBACK(enum_option_edit_add_request), NULL);
 

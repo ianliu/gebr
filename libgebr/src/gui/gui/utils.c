@@ -403,16 +403,16 @@ gboolean gebr_gui_gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * i
 
 gboolean gebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * iter, GtkTreeIter * parent)
 {
-	GtkTreeIter new;
+	GtkTreeIter new_iter;
 
-	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(store), &new, iter))
-		if (gebr_gui_gtk_tree_iter_equal_to(&new, parent))
+	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(store), &new_iter, iter))
+		if (gebr_gui_gtk_tree_iter_equal_to(&new_iter, parent))
 			return FALSE;
 
-	gtk_tree_store_append(store, &new, parent);
-	gebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(store), &new, iter);
+	gtk_tree_store_append(store, &new_iter, parent);
+	gebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(store), &new_iter, iter);
 	gtk_tree_store_remove(store, iter);
-	*iter = new;
+	*iter = new_iter;
 
 	return TRUE;
 }

@@ -242,7 +242,7 @@ void menu_status_set_unsaved(void);
 /**
  * Create a dialog to edit information about menu, like title, description, categories, etc.
  */
-gboolean menu_dialog_setup_ui(gboolean new);
+gboolean menu_dialog_setup_ui(gboolean new_menu);
 
 /**
  * Sets \p iter to the selected item in \ref debr.ui_menu.tree_view.

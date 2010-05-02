@@ -53,7 +53,7 @@ struct _EnumOptionEditClass {
 /**
  * Creates a new EnumOptionEdit widget and returns it.
  */
-GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter, gboolean new);
+GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter, gboolean new_parameter);
 
 G_END_DECLS
 #endif				//__ENUM_OPTION_EDIT_H

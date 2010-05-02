@@ -139,7 +139,7 @@ void parameter_change_type(enum GEBR_GEOXML_PARAMETER_TYPE type);
 /**
  * Open a dialog to configure the parameter, according to its type.
  */
-gboolean parameter_properties(gboolean new);
+gboolean parameter_properties(gboolean new_parameter);
 
 /**
  * Get the selected parameter in the tree view, if any.

@@ -51,7 +51,7 @@ struct _CategoryEditClass {
 /**
  * Creates a new CategoryEdit widget and returns it.
  */
-GtkWidget *category_edit_new(GebrGeoXmlFlow * menu, gboolean new);
+GtkWidget *category_edit_new(GebrGeoXmlFlow * menu, gboolean new_menu);
 
 G_END_DECLS
 #endif //__CATEGORY_EDIT_H
