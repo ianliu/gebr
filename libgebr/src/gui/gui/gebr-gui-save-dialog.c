@@ -67,7 +67,7 @@ static void gebr_gui_save_dialog_class_init(GebrGuiSaveDialogClass * klass)
 							    "Extension",
 							    "Default extension to prepend to the file name.",
 							    NULL,
-							    G_PARAM_READWRITE));
+							    (GParamFlags)(G_PARAM_READWRITE)));
 }
 
 static void gebr_gui_save_dialog_init(GebrGuiSaveDialog * self)

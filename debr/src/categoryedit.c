@@ -115,7 +115,7 @@ static void category_edit_class_init(CategoryEditClass * klass)
 	gobject_class->get_property = (typeof(gobject_class->get_property)) category_edit_get_property;
 
 	param_spec = g_param_spec_pointer("category",
-					  "", "", G_PARAM_READWRITE);
+					  "", "", (GParamFlags)(G_PARAM_READWRITE));
 	g_object_class_install_property(gobject_class, CATEGORY, param_spec);
 }
 

@@ -99,7 +99,7 @@ static void gebr_comm_listen_socket_class_init(GebrCommListenSocketClass * klass
 				  "Set/Get the max pending connections", 1 /* minimum value */ ,
 				  UINT_MAX /* maximum value */ ,
 				  30 /* default value */ ,
-				  G_PARAM_READWRITE);
+				  (GParamFlags)(G_PARAM_READWRITE));
 	g_object_class_install_property(gobject_class, MAX_PENDING_CONNECTIONS, pspec);
 }
 

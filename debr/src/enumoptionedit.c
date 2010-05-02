@@ -102,7 +102,8 @@ static void enum_option_edit_class_init(EnumOptionEditClass * klass)
 	gobject_class->get_property = (typeof(gobject_class->get_property)) enum_option_edit_get_property;
 
 	param_spec = g_param_spec_pointer("enum-option",
-					  "Enum Option", "GebrGeoXml's enum option source of data", G_PARAM_READWRITE);
+					  "Enum Option", "GebrGeoXml's enum option source of data",
+					  (GParamFlags)(G_PARAM_READWRITE));
 	g_object_class_install_property(gobject_class, ENUM_OPTION, param_spec);
 }
 

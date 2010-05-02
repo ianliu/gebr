@@ -175,16 +175,17 @@ static void gtk_sequence_edit_class_init(GtkSequenceEditClass * klass)
 
 	param_spec = g_param_spec_pointer("value-widget",
 					  "Value widget", "Value widget used for adding",
-					  G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
+					  (GParamFlags)(G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 	g_object_class_install_property(gobject_class, VALUE_WIDGET, param_spec);
 
 	param_spec = g_param_spec_pointer("list-store",
 					  "List store", "List store, model for view",
-					  G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
+					  (GParamFlags)(G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 	g_object_class_install_property(gobject_class, LIST_STORE, param_spec);
 
 	param_spec = g_param_spec_boolean("may-rename",
-					  "Rename enabled", "True if the list is renameable", TRUE, G_PARAM_READWRITE);
+					  "Rename enabled", "True if the list is renameable", TRUE,
+					  (GParamFlags)(G_PARAM_READWRITE));
 	g_object_class_install_property(gobject_class, MAY_RENAME, param_spec);
 }
 

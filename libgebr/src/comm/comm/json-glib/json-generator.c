@@ -140,7 +140,8 @@ static void json_generator_class_init(JsonGeneratorClass * klass)
 					PROP_PRETTY,
 					g_param_spec_boolean("pretty",
 							     "Pretty",
-							     "Pretty-print the output", FALSE, G_PARAM_READWRITE));
+							     "Pretty-print the output", FALSE,
+							     (GParamFlags)(G_PARAM_READWRITE)));
   /**
    * JsonGenerator:indent:
    *
@@ -151,7 +152,7 @@ static void json_generator_class_init(JsonGeneratorClass * klass)
 					g_param_spec_uint("indent",
 							  "Indent",
 							  "Number of indentation spaces",
-							  0, G_MAXUINT, 2, G_PARAM_READWRITE));
+							  0, G_MAXUINT, 2, (GParamFlags)(G_PARAM_READWRITE)));
   /**
    * JsonGenerator:root:
    *
@@ -165,7 +166,7 @@ static void json_generator_class_init(JsonGeneratorClass * klass)
 					g_param_spec_boxed("root",
 							   "Root",
 							   "Root of the JSON data tree",
-							   JSON_TYPE_NODE, G_PARAM_READWRITE));
+							   JSON_TYPE_NODE, (GParamFlags)(G_PARAM_READWRITE)));
   /**
    * JsonGenerator:indent-char:
    *
@@ -178,7 +179,7 @@ static void json_generator_class_init(JsonGeneratorClass * klass)
 					g_param_spec_unichar("indent-char",
 							     "Indent Char",
 							     "Character that should be used when indenting",
-							     ' ', G_PARAM_READWRITE));
+							     ' ', (GParamFlags)(G_PARAM_READWRITE)));
 }
 
 static void json_generator_init(JsonGenerator * generator)

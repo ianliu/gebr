@@ -88,7 +88,7 @@ static void gebr_gui_gtk_file_entry_class_init(GebrGuiGtkFileEntryClass * klass)
 
 	param_spec = g_param_spec_pointer("customize-function",
 					  "Customize function", "Customize GtkFileChooser of dialog",
-					  G_PARAM_READWRITE);
+					  (GParamFlags)(G_PARAM_READWRITE));
 	g_object_class_install_property(gobject_class, CUSTOMIZE_FUNCTION, param_spec);
 
 	/* signals */

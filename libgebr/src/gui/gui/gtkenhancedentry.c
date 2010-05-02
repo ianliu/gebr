@@ -97,7 +97,7 @@ static void gebr_gui_gtk_enhanced_entry_class_init(GebrGuiGtkEnhancedEntryClass 
 
 	param_spec = g_param_spec_pointer("empty-text",
 					  "Empty text", "Text to show when there is no user text in it",
-					  G_PARAM_READWRITE);
+					  (GParamFlags)(G_PARAM_READWRITE));
 	g_object_class_install_property(gobject_class, EMPTY_TEXT, param_spec);
 }
 

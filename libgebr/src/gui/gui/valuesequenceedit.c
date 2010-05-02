@@ -95,7 +95,7 @@ static void gebr_gui_value_sequence_edit_class_init(GebrGuiValueSequenceEditClas
 
 	param_spec = g_param_spec_boolean("minimum-one",
 					  "Minimum one", "True if the list keep at least one item",
-					  FALSE, G_PARAM_READWRITE);
+					  FALSE, (GParamFlags)(G_PARAM_READWRITE));
 	g_object_class_install_property(gobject_class, MINIMUM_ONE, param_spec);
 }
 
