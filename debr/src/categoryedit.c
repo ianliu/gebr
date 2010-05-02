@@ -94,14 +94,14 @@ category_edit_get_property(CategoryEdit * category_edit, guint property_id, GVal
 /**
  * \internal
  */
-static void category_edit_class_init(CategoryEditClass * class)
+static void category_edit_class_init(CategoryEditClass * klass)
 {
 	GtkSequenceEditClass *category_edit_class;
 	GObjectClass *gobject_class;
 	GParamSpec *param_spec;
 
 	/* virtual */
-	category_edit_class = GEBR_GUI_GTK_SEQUENCE_EDIT_CLASS(class);
+	category_edit_class = GEBR_GUI_GTK_SEQUENCE_EDIT_CLASS(klass);
 	category_edit_class->remove = (typeof(category_edit_class->remove)) __category_edit_remove;
 	category_edit_class->move = (typeof(category_edit_class->move)) __category_edit_move;
 	category_edit_class->move_top = (typeof(category_edit_class->move_top)) __category_edit_move_top;
@@ -110,7 +110,7 @@ static void category_edit_class_init(CategoryEditClass * class)
 	category_edit_class->create_tree_view =
 	    (typeof(category_edit_class->create_tree_view)) __category_edit_create_tree_view;
 
-	gobject_class = G_OBJECT_CLASS(class);
+	gobject_class = G_OBJECT_CLASS(klass);
 	gobject_class->set_property = (typeof(gobject_class->set_property)) category_edit_set_property;
 	gobject_class->get_property = (typeof(gobject_class->get_property)) category_edit_get_property;
 

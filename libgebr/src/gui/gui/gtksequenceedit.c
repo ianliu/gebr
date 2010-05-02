@@ -135,7 +135,7 @@ gtk_sequence_edit_get_property(GtkSequenceEdit * sequence_edit, guint property_i
 	}
 }
 
-static void gtk_sequence_edit_class_init(GtkSequenceEditClass * class)
+static void gtk_sequence_edit_class_init(GtkSequenceEditClass * klass)
 {
 	GObjectClass *gobject_class;
 	GParamSpec *param_spec;
@@ -161,15 +161,15 @@ static void gtk_sequence_edit_class_init(GtkSequenceEditClass * class)
 					       G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 
 	/* virtual definition */
-	class->add = NULL;
-	class->remove = __gtk_sequence_edit_remove;
-	class->move = __gtk_sequence_edit_move;
-	class->move_top = __gtk_sequence_edit_move_top;
-	class->move_bottom = __gtk_sequence_edit_move_bottom;
-	class->rename = __gtk_sequence_edit_rename;
-	class->create_tree_view = __gtk_sequence_edit_create_tree_view;
+	klass->add = NULL;
+	klass->remove = __gtk_sequence_edit_remove;
+	klass->move = __gtk_sequence_edit_move;
+	klass->move_top = __gtk_sequence_edit_move_top;
+	klass->move_bottom = __gtk_sequence_edit_move_bottom;
+	klass->rename = __gtk_sequence_edit_rename;
+	klass->create_tree_view = __gtk_sequence_edit_create_tree_view;
 
-	gobject_class = G_OBJECT_CLASS(class);
+	gobject_class = G_OBJECT_CLASS(klass);
 	gobject_class->set_property = (typeof(gobject_class->set_property)) gtk_sequence_edit_set_property;
 	gobject_class->get_property = (typeof(gobject_class->get_property)) gtk_sequence_edit_get_property;
 

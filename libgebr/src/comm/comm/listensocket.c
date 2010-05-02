@@ -78,13 +78,13 @@ gebr_comm_listen_socket_get_property(GObject * object, guint property_id, GValue
 	}
 }
 
-static void gebr_comm_listen_socket_class_init(GebrCommListenSocketClass * class)
+static void gebr_comm_listen_socket_class_init(GebrCommListenSocketClass * klass)
 {
-	GObjectClass *gobject_class = G_OBJECT_CLASS(class);
+	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
 	GParamSpec *pspec;
 
 	/* virtual */
-	class->parent.new_connection = (typeof(class->parent.new_connection)) __gebr_comm_listen_socket_new_connection;
+	klass->parent.new_connection = (typeof(klass->parent.new_connection)) __gebr_comm_listen_socket_new_connection;
 
 	/* signals */
 	object_signals[NEW_CONNECTION] = g_signal_new("new-connection", GEBR_COMM_LISTEN_SOCKET_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommListenSocketClass, new_connection), NULL, NULL,	/* acumulators */

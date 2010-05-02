@@ -81,14 +81,14 @@ enum_option_edit_get_property(EnumOptionEdit * enum_option_edit, guint property_
 	}
 }
 
-static void enum_option_edit_class_init(EnumOptionEditClass * class)
+static void enum_option_edit_class_init(EnumOptionEditClass * klass)
 {
 	GtkSequenceEditClass *enum_option_edit_class;
 	GObjectClass *gobject_class;
 	GParamSpec *param_spec;
 
 	/* virtual */
-	enum_option_edit_class = GEBR_GUI_GTK_SEQUENCE_EDIT_CLASS(class);
+	enum_option_edit_class = GEBR_GUI_GTK_SEQUENCE_EDIT_CLASS(klass);
 	enum_option_edit_class->remove = (typeof(enum_option_edit_class->remove)) __enum_option_edit_remove;
 	enum_option_edit_class->move = (typeof(enum_option_edit_class->move)) __enum_option_edit_move;
 	enum_option_edit_class->move_top = (typeof(enum_option_edit_class->move_top)) __enum_option_edit_move_top;
@@ -97,7 +97,7 @@ static void enum_option_edit_class_init(EnumOptionEditClass * class)
 	enum_option_edit_class->create_tree_view =
 	    (typeof(enum_option_edit_class->create_tree_view)) __enum_option_edit_create_tree_view;
 
-	gobject_class = G_OBJECT_CLASS(class);
+	gobject_class = G_OBJECT_CLASS(klass);
 	gobject_class->set_property = (typeof(gobject_class->set_property)) enum_option_edit_set_property;
 	gobject_class->get_property = (typeof(gobject_class->get_property)) enum_option_edit_get_property;
 

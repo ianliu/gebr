@@ -81,14 +81,14 @@ static gboolean __gebr_comm_socket_read(GIOChannel * source, GIOCondition condit
 		return FALSE;
 	}
 	if (condition & G_IO_HUP) {
-		GebrCommSocketClass *class;
+		GebrCommSocketClass *klass;
 
-		class = GEBR_COMM_SOCKET_GET_CLASS(socket);
+		klass = GEBR_COMM_SOCKET_GET_CLASS(socket);
 		switch (socket->state) {
 		case G_SOCKET_STATE_CONNECTED:
 			socket->state = G_SOCKET_STATE_UNCONNECTED;
-			if (class->disconnected != NULL)
-				class->disconnected(socket);
+			if (klass->disconnected != NULL)
+				klass->disconnected(socket);
 			break;
 		default:
 			break;
@@ -97,21 +97,21 @@ static gboolean __gebr_comm_socket_read(GIOChannel * source, GIOCondition condit
 		return FALSE;
 	}
 	if (!gebr_comm_socket_bytes_available(socket)) {
-		GebrCommSocketClass *class;
+		GebrCommSocketClass *klass;
 		gboolean ret;
 
-		class = GEBR_COMM_SOCKET_GET_CLASS(socket);
+		klass = GEBR_COMM_SOCKET_GET_CLASS(socket);
 		switch (socket->state) {
 		case G_SOCKET_STATE_LISTENING:
-			if (class->new_connection != NULL)
-				class->new_connection(socket);
+			if (klass->new_connection != NULL)
+				klass->new_connection(socket);
 
 			ret = TRUE;
 			break;
 		case G_SOCKET_STATE_CONNECTED:
 			socket->state = G_SOCKET_STATE_UNCONNECTED;
-			if (class->disconnected != NULL)
-				class->disconnected(socket);
+			if (klass->disconnected != NULL)
+				klass->disconnected(socket);
 
 			ret = FALSE;
 			break;
@@ -167,12 +167,12 @@ static gboolean __gebr_comm_socket_write(GIOChannel * source, GIOCondition condi
 			break;
 		}
 		if (socket->state == G_SOCKET_STATE_CONNECTED) {
-			GebrCommSocketClass *class;
+			GebrCommSocketClass *klass;
 
-			class = GEBR_COMM_SOCKET_GET_CLASS(socket);
+			klass = GEBR_COMM_SOCKET_GET_CLASS(socket);
 			socket->state = G_SOCKET_STATE_UNCONNECTED;
-			if (class->disconnected != NULL)
-				class->disconnected(socket);
+			if (klass->disconnected != NULL)
+				klass->disconnected(socket);
 		}
 		goto out;
 	}
@@ -181,14 +181,14 @@ static gboolean __gebr_comm_socket_write(GIOChannel * source, GIOCondition condi
 		goto out;
 	}
 	if (socket->state != G_SOCKET_STATE_CONNECTED && !gebr_comm_socket_bytes_available(socket)) {
-		GebrCommSocketClass *class;
+		GebrCommSocketClass *klass;
 
-		class = GEBR_COMM_SOCKET_GET_CLASS(socket);
+		klass = GEBR_COMM_SOCKET_GET_CLASS(socket);
 		switch (socket->state) {
 		case G_SOCKET_STATE_CONNECTING:
 			socket->state = G_SOCKET_STATE_CONNECTED;
-			if (class->connected != NULL)
-				class->connected(socket);
+			if (klass->connected != NULL)
+				klass->connected(socket);
 			break;
 		default:
 			break;

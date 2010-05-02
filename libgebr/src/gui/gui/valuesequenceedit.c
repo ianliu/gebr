@@ -74,14 +74,14 @@ gebr_gui_value_sequence_edit_get_property(GebrGuiValueSequenceEdit * gebr_gui_va
 	}
 }
 
-static void gebr_gui_value_sequence_edit_class_init(GebrGuiValueSequenceEditClass * class)
+static void gebr_gui_value_sequence_edit_class_init(GebrGuiValueSequenceEditClass * klass)
 {
 	GtkSequenceEditClass *sequence_edit_class;
 	GObjectClass *gobject_class;
 	GParamSpec *param_spec;
 
 	/* virtual */
-	sequence_edit_class = GEBR_GUI_GTK_SEQUENCE_EDIT_CLASS(class);
+	sequence_edit_class = GEBR_GUI_GTK_SEQUENCE_EDIT_CLASS(klass);
 	sequence_edit_class->remove = (typeof(sequence_edit_class->remove)) __gebr_gui_value_sequence_edit_remove;
 	sequence_edit_class->move = (typeof(sequence_edit_class->move)) __gebr_gui_value_sequence_edit_move;
 	sequence_edit_class->move_top = (typeof(sequence_edit_class->move_top)) __gebr_gui_value_sequence_edit_move_top;
@@ -89,7 +89,7 @@ static void gebr_gui_value_sequence_edit_class_init(GebrGuiValueSequenceEditClas
 	    (typeof(sequence_edit_class->move_bottom)) __gebr_gui_value_sequence_edit_move_bottom;
 	sequence_edit_class->rename = (typeof(sequence_edit_class->rename)) __gebr_gui_value_sequence_edit_rename;
 
-	gobject_class = G_OBJECT_CLASS(class);
+	gobject_class = G_OBJECT_CLASS(klass);
 	gobject_class->set_property = (typeof(gobject_class->set_property)) gebr_gui_value_sequence_edit_set_property;
 	gobject_class->get_property = (typeof(gobject_class->get_property)) gebr_gui_value_sequence_edit_get_property;
 

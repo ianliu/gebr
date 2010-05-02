@@ -77,12 +77,12 @@ gebr_gui_gtk_file_entry_get_property(GebrGuiGtkFileEntry * file_entry, guint pro
 	}
 }
 
-static void gebr_gui_gtk_file_entry_class_init(GebrGuiGtkFileEntryClass * class)
+static void gebr_gui_gtk_file_entry_class_init(GebrGuiGtkFileEntryClass * klass)
 {
 	GObjectClass *gobject_class;
 	GParamSpec *param_spec;
 
-	gobject_class = G_OBJECT_CLASS(class);
+	gobject_class = G_OBJECT_CLASS(klass);
 	gobject_class->set_property = (typeof(gobject_class->set_property)) gebr_gui_gtk_file_entry_set_property;
 	gobject_class->get_property = (typeof(gobject_class->get_property)) gebr_gui_gtk_file_entry_get_property;
 

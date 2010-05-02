@@ -83,16 +83,16 @@ static void gebr_gui_gtk_enhanced_entry_destroy(GtkObject *object)
 	}
 }
 
-static void gebr_gui_gtk_enhanced_entry_class_init(GebrGuiGtkEnhancedEntryClass * class)
+static void gebr_gui_gtk_enhanced_entry_class_init(GebrGuiGtkEnhancedEntryClass * klass)
 {
 	GParamSpec *param_spec;
 
 	GObjectClass *gobject_class;
-	gobject_class = G_OBJECT_CLASS(class);
+	gobject_class = G_OBJECT_CLASS(klass);
 	gobject_class->set_property = (typeof(gobject_class->set_property)) gebr_gui_gtk_enhanced_entry_set_property;
 	gobject_class->get_property = (typeof(gobject_class->get_property)) gebr_gui_gtk_enhanced_entry_get_property;
 	GtkObjectClass *gtkobject_class;
-	gtkobject_class = GTK_OBJECT_CLASS(class);
+	gtkobject_class = GTK_OBJECT_CLASS(klass);
 	gtkobject_class->destroy = gebr_gui_gtk_enhanced_entry_destroy;
 
 	param_spec = g_param_spec_pointer("empty-text",
