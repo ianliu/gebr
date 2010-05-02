@@ -76,12 +76,13 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	 */
 	label = gtk_label_new(_("User name"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 	ui_preferences->username = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(ui_preferences->username), TRUE);
 	gebr_gui_gtk_widget_set_tooltip(ui_preferences->username, _("You should know your name"));
-	gtk_table_attach(GTK_TABLE(table), ui_preferences->username,
-			 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3), ++row;
+	gtk_table_attach(GTK_TABLE(table), ui_preferences->username, 1, 2, row, row + 1, GTK_EXPAND |
+			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3), ++row;
 
 	/* read config */
 	if (strlen(gebr.config.username->str))
@@ -94,11 +95,13 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	 */
 	label = gtk_label_new(_("Email"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 	ui_preferences->email = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(ui_preferences->email), TRUE);
 	gebr_gui_gtk_widget_set_tooltip(ui_preferences->email, _("Your email address"));
-	gtk_table_attach(GTK_TABLE(table), ui_preferences->email, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3), ++row;
+	gtk_table_attach(GTK_TABLE(table), ui_preferences->email, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3), ++row;
 
 	/* read config */
 	if (strlen(gebr.config.email->str))
@@ -111,12 +114,14 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	 */
 	label = gtk_label_new(_("User's menus directory"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 	eventbox = gtk_event_box_new();
 	ui_preferences->usermenus = gtk_file_chooser_button_new(_("User's menus directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
 	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->usermenus);
 	gebr_gui_gtk_widget_set_tooltip(eventbox, _("Path to look for private user's menus"));
-	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3), ++row;
+	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3), ++row;
 
 	/* read config */
 	if (gebr.config.usermenus->len > 0)
@@ -128,11 +133,12 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	 */
 	label = gtk_label_new(_("HTML editor"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	list_widget_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_table_attach(GTK_TABLE(table), list_widget_hbox, 1, 2, row, row + 1,
-				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 				 (GtkAttachOptions) (0), 0, 0), ++row;
 
 	fake_radio_button = gtk_radio_button_new(NULL);
@@ -157,7 +163,8 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 
 	/* Load log */
 	ui_preferences->log_load = label = gtk_check_button_new_with_label(_("Load past-execution log"));
-	gtk_table_attach(GTK_TABLE(table), label, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3), ++row;
+	gtk_table_attach(GTK_TABLE(table), label, 0, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3), ++row;
 
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(label), gebr.config.log_load);
 

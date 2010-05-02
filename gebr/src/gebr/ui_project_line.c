@@ -143,32 +143,39 @@ struct ui_project_line *project_line_setup_ui(void)
 	/* Dates */
 	ui_project_line->info.created_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.created_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.created_label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.created_label, 0, 1, 0, 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	ui_project_line->info.created = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.created), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.created, 1, 2, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.created, 1, 2, 0, 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	ui_project_line->info.modified_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.modified_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.modified_label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.modified_label, 0, 1, 1, 2, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	ui_project_line->info.modified = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.modified), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.modified, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.modified, 1, 2, 1, 2, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	/* Paths for lines */
 	ui_project_line->info.path_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path_label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path_label, 0, 1, 2, 3, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	ui_project_line->info.path1 = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path1), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path1, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path1, 1, 2, 2, 3, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	ui_project_line->info.path2 = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path2), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path2, 1, 2, 3, 4, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path2, 1, 2, 3, 4, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	/* Help */
 	ui_project_line->info.help = gtk_button_new_from_stock(GTK_STOCK_INFO);

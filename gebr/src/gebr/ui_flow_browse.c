@@ -133,29 +133,30 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 
 	ui_flow_browse->info.created_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.created_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.created_label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL,
-			 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.created_label, 0, 1, row, row + 1,
+			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
 	ui_flow_browse->info.created = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.created), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.created, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3),
-	    row++;
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.created, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
 
 	ui_flow_browse->info.modified_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.modified_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.modified_label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL,
-			 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.modified_label, 0, 1, row, row + 1,
+			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
 	ui_flow_browse->info.modified = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.modified), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.modified, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3),
-	    row++;
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.modified, 1, 2, row, row + 1,
+			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3), row++;
 
 	ui_flow_browse->info.lastrun_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.lastrun_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.lastrun_label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL,
-			 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.lastrun_label, 0, 1, row, row + 1,
+			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
 	ui_flow_browse->info.lastrun = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.lastrun), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.lastrun, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.lastrun, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	/* I/O */
 	table = gtk_table_new(4, 2, FALSE), row = 0;
@@ -163,38 +164,42 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 
 	ui_flow_browse->info.server_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.server_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.server_label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 3,
-			 3);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.server_label, 0, 1, row, row + 1,
+			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
 	ui_flow_browse->info.server = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.server), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.server, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3),
-	    row++;
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.server, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
 
 	ui_flow_browse->info.input_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.input_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.input_label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 3,
-			 3);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.input_label, 0, 1, row, row + 1,
+			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
 	ui_flow_browse->info.input = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.input), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.input, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3),
-	    row++;
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.input, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
 
 	ui_flow_browse->info.output_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.output_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.output_label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 3,
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.output_label, 0, 1, row, row + 1,
+			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
 			 3);
 	ui_flow_browse->info.output = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.output), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.output, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3),
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.output, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3),
 	    row++;
 
 	ui_flow_browse->info.error_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.error_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.error_label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 3,
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.error_label, 0, 1, row, row + 1,
+			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
 			 3);
 	ui_flow_browse->info.error = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.error), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.error, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.error, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	/* Help */
 	ui_flow_browse->info.help = gtk_button_new_from_stock(GTK_STOCK_INFO);

@@ -54,8 +54,10 @@ void preferences_dialog_setup_ui(void)
 	name_entry = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(name_entry), TRUE);
 	g_object_set(name_entry, "tooltip-text", _("You should know your name"), NULL);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), name_entry, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
+			 3);
+	gtk_table_attach(GTK_TABLE(table), name_entry, 1, 2, 0, 1, GTK_EXPAND | (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 	gtk_entry_set_text(GTK_ENTRY(name_entry), debr.config.name->str);
 
 	/* Email */
@@ -64,14 +66,17 @@ void preferences_dialog_setup_ui(void)
 	email_entry = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(email_entry), TRUE);
 	g_object_set(email_entry, "tooltip-text", _("Your email address"), NULL);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), email_entry, 1, 2, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
+			 3);
+	gtk_table_attach(GTK_TABLE(table), email_entry, 1, 2, 1, 2, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 	gtk_entry_set_text(GTK_ENTRY(email_entry), debr.config.email->str);
 
 	/* Editor */
 	label = gtk_label_new(_("HTML editor"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 4, 5, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
+			 3);
 
 	list_widget_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_table_attach(GTK_TABLE(table), list_widget_hbox, 1, 2, 4, 5,

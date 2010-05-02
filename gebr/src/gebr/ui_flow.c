@@ -271,8 +271,10 @@ void flow_io_simple_setup_ui(gboolean focus_output)
 	simple->input = gebr_gui_gtk_file_entry_new((GebrGuiGtkFileEntryCustomize) flow_io_customized_paths_from_line,
 						    NULL);
 	gtk_widget_set_size_request(simple->input, 140, 30);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), simple->input, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
+			 3);
+	gtk_table_attach(GTK_TABLE(table), simple->input, 1, 2, 0, 1, GTK_EXPAND | (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 	if ((tmp = (gchar *) gebr_geoxml_flow_server_io_get_input(gebr.flow_server)) != NULL)
 		gebr_gui_gtk_file_entry_set_path(GEBR_GUI_GTK_FILE_ENTRY(simple->input), tmp);
 	gebr_gui_gtk_file_entry_set_do_overwrite_confirmation(GEBR_GUI_GTK_FILE_ENTRY(simple->input), FALSE);
@@ -283,8 +285,9 @@ void flow_io_simple_setup_ui(gboolean focus_output)
 	simple->output = gebr_gui_gtk_file_entry_new((GebrGuiGtkFileEntryCustomize) flow_io_customized_paths_from_line,
 						     NULL);
 	gtk_widget_set_size_request(simple->input, 140, 30);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), simple->output, 1, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), simple->output, 1, 2, 1, 2, GTK_EXPAND | (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 	if ((tmp = (gchar *) gebr_geoxml_flow_server_io_get_output(gebr.flow_server)) != NULL)
 		gebr_gui_gtk_file_entry_set_path(GEBR_GUI_GTK_FILE_ENTRY(simple->output), tmp);
 	gebr_gui_gtk_file_entry_set_do_overwrite_confirmation(GEBR_GUI_GTK_FILE_ENTRY(simple->output), FALSE);
@@ -295,8 +298,10 @@ void flow_io_simple_setup_ui(gboolean focus_output)
 	simple->error = gebr_gui_gtk_file_entry_new((GebrGuiGtkFileEntryCustomize) flow_io_customized_paths_from_line,
 						    NULL);
 	gtk_widget_set_size_request(simple->input, 140, 30);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), simple->error, 1, 2, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
+			 3);
+	gtk_table_attach(GTK_TABLE(table), simple->error, 1, 2, 2, 3, GTK_EXPAND | (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
 	if ((tmp = (gchar *) gebr_geoxml_flow_server_io_get_error(gebr.flow_server)) != NULL)
 		gebr_gui_gtk_file_entry_set_path(GEBR_GUI_GTK_FILE_ENTRY(simple->error), tmp);
 	gebr_gui_gtk_file_entry_set_do_overwrite_confirmation(GEBR_GUI_GTK_FILE_ENTRY(simple->error), FALSE);
