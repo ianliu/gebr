@@ -42,12 +42,12 @@ static void
 __gebr_geoxml_parameter_group_turn_instance_to_reference(GebrGeoXmlParameterGroup * parameter_group,
 							 GebrGeoXmlParameters * instance)
 {
-	GebrGeoXmlSequence *first_instance;
+	GebrGeoXmlParameters *first_instance;
 	GebrGeoXmlSequence *fi_parameter;
 	GebrGeoXmlSequence *parameter;
 
-	gebr_geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
-	gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(first_instance), &fi_parameter, 0);
+	first_instance = gebr_geoxml_parameter_group_get_template(parameter_group);
+	gebr_geoxml_parameters_get_parameter(first_instance, &fi_parameter, 0);
 	gebr_geoxml_parameters_get_parameter(instance, &parameter, 0);
 	for (; fi_parameter != NULL;
 	     __gebr_geoxml_sequence_next(&fi_parameter), __gebr_geoxml_sequence_next(&parameter)) {
@@ -76,7 +76,7 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_group_get_template(GebrGeoXmlParamet
 	GdomeElement *group;
 
 	group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group), FALSE);
-	tpl = __gebr_geoxml_get_element_at(group, "parameters", 0, FALSE);
+	tpl = __gebr_geoxml_get_first_element(group, "parameters");
 
 	return GEBR_GEOXML_PARAMETERS(tpl);
 }
@@ -142,7 +142,7 @@ int gebr_geoxml_parameter_group_get_instance(GebrGeoXmlParameterGroup * paramete
 	 * index. */
 	*parameters = (GebrGeoXmlSequence *)
 	    __gebr_geoxml_get_element_at(__gebr_geoxml_parameter_get_type_element
-					 (GEBR_GEOXML_PARAMETER(parameter_group), FALSE), "parameters", index, FALSE);
+					 (GEBR_GEOXML_PARAMETER(parameter_group), FALSE), "parameters", index+1, FALSE);
 
 	return (*parameters == NULL)
 	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;

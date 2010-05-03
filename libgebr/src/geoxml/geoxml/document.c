@@ -476,13 +476,43 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 			gdome_el_removeChild(root_element, (GdomeNode*)__gebr_geoxml_get_first_element(root_element, "filename"), &exception);
 			
 			GdomeElement *element;
-			gebr_foreach_gslist(element, __gebr_geoxml_get_elements_by_tag(root_element, "parameters")) {
+			gebr_foreach_gslist_hyg(element, __gebr_geoxml_get_elements_by_tag(root_element, "parameters"), parameters) {
 				__gebr_geoxml_set_attr_value(element, "default-selection",
 							     __gebr_geoxml_get_attr_value(element, "exclusive"));
 				__gebr_geoxml_remove_attr(element, "exclusive");
 				__gebr_geoxml_set_attr_value(element, "selection",
 							     __gebr_geoxml_get_attr_value(element, "selected"));
 				__gebr_geoxml_remove_attr(element, "selected");
+			}
+
+			gebr_foreach_gslist_hyg(element, __gebr_geoxml_get_elements_by_tag(root_element, "group"), group) {
+				GdomeElement *parameter;
+				GebrGeoXmlParameterGroup *group;
+				GebrGeoXmlParameters *new_instance;
+				GebrGeoXmlParameters *template_instance;
+
+				parameter = (GdomeElement*)gdome_el_parentNode(element, &exception);
+				group = (GebrGeoXmlParameterGroup*)parameter;
+				new_instance = gebr_geoxml_parameter_group_instanciate(group);
+				template_instance = gebr_geoxml_parameter_group_get_template(group);
+
+				/* move new instance after template instance */
+				GdomeNode *next = (GdomeNode*)__gebr_geoxml_next_same_element((GdomeElement*)template_instance);
+				gdome_n_insertBefore_protected(gdome_el_parentNode((GdomeElement*)new_instance, &exception),
+							       (GdomeNode*)new_instance, next, &exception);
+
+				/* copy data from template to new instance */
+				GebrGeoXmlSequence *i, *j;
+				i = gebr_geoxml_parameters_get_first_parameter(template_instance);
+				j = gebr_geoxml_parameters_get_first_parameter(new_instance);
+				for (; i != NULL; gebr_geoxml_sequence_next(&i), gebr_geoxml_sequence_next(&j)) {
+					gebr_geoxml_program_parameter_copy_value(GEBR_GEOXML_PROGRAM_PARAMETER(j),
+										 GEBR_GEOXML_PROGRAM_PARAMETER(i),
+										 TRUE);
+					gebr_geoxml_program_parameter_copy_value(GEBR_GEOXML_PROGRAM_PARAMETER(j),
+										 GEBR_GEOXML_PROGRAM_PARAMETER(i),
+										 FALSE);
+				}
 			}
 		}
 	}
