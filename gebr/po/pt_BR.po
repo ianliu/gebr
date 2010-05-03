@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-30 13:42-0300\n"
-"PO-Revision-Date: 2010-04-30 13:43-0300\n"
+"POT-Creation-Date: 2010-05-03 12:08-0300\n"
+"PO-Revision-Date: 2010-05-03 12:09-0300\n"
 "Last-Translator: Fabio Azevedo <fabioaz@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -70,7 +70,7 @@ msgstr "Não foi possível carregar documento em %s: %s."
 
 #. the final point already comes with gebr_geoxml_error_string
 #: ../src/gebr/document.c:252
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Can't load menu %s at %s:\n"
 "%s"
@@ -93,10 +93,6 @@ msgstr "linha"
 #: ../src/gebr/document.c:268 ../src/gebr/ui_document.c:957
 msgid "flow"
 msgstr "fluxo"
-
-#: ../src/gebr/document.c:286
-msgid "Dismiss"
-msgstr ""
 
 #: ../src/gebr/document.c:292
 msgid "Ignore"
@@ -438,8 +434,9 @@ msgid "Ask server to terminate the job"
 msgstr "Pedir para o servidor terminar a tarefa"
 
 #: ../src/gebr/interface.c:161
-msgid "Edit clear"
-msgstr ""
+#, fuzzy
+msgid "Clear current"
+msgstr "Limpar selecionado"
 
 #: ../src/gebr/interface.c:162
 msgid "Clear current job log"

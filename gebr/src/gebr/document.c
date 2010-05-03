@@ -283,7 +283,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 
 	/* for imported documents */
 	if (!document_path_is_at_gebr_data_dir(path)) {
-		gtk_dialog_add_button(dialog, _("Dismiss"), 0);
+		gtk_dialog_add_button(dialog, GTK_STOCK_OK, 0);
 		gtk_widget_show_all(GTK_WIDGET(dialog));
 		gtk_dialog_run(dialog);
 		goto out;

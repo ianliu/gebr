@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-30 13:52-0300\n"
-"PO-Revision-Date: 2010-04-30 13:53-0300\n"
+"POT-Creation-Date: 2010-05-03 12:14-0300\n"
+"PO-Revision-Date: 2010-05-03 12:14-0300\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -303,17 +303,12 @@ msgstr "Colar parâmetro(s) da área de transferência"
 
 #. validate
 #: ../src/interface.c:103
-#, fuzzy
-msgid "Edit clear"
-msgstr "Editar menu"
-
-#: ../src/interface.c:103
-msgid "Clear selected reports"
-msgstr "Limpar relatórios selecionadas"
+msgid "Close selected reports"
+msgstr "Fecha relatórios selecionados"
 
 #: ../src/interface.c:105
-msgid "Clear all reports"
-msgstr "Limpar todos os relatórios"
+msgid "Close all reports"
+msgstr "Fecha todos os relatórios"
 
 #: ../src/interface.c:143
 msgid "Menu designer for GêBR"
@@ -371,11 +366,12 @@ msgid "Could not save the menu"
 msgstr "Não foi possível salvar o menu"
 
 #: ../src/menu.c:435
-#, fuzzy
 msgid ""
 "You do not have necessary permissions to save the menu. Please check the "
 "provided location is correct and try again."
-msgstr "Você não tem permissões necessárias para salvar o menu. Por favor, certifique-se que a pasta fornecida está correta e tente novamente."
+msgstr ""
+"Você não tem permissões necessárias para salvar o menu. Por favor, "
+"certifique-se que a pasta fornecida está correta e tente novamente."
 
 #: ../src/menu.c:438
 msgid "Permission denied."
@@ -1013,6 +1009,10 @@ msgstr "Nenhum menu selecionado"
 #: ../src/validate.c:459
 msgid "Edit"
 msgstr "Editar"
+
+#, fuzzy
+#~ msgid "Edit clear"
+#~ msgstr "Editar menu"
 
 #~ msgid ""
 #~ "A file named \"%s\" already exists.\n"
