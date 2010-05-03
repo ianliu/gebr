@@ -76,7 +76,8 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_group_get_template(GebrGeoXmlParamet
 	GdomeElement *group;
 
 	group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group), FALSE);
-	tpl = __gebr_geoxml_get_first_element(group, "parameters");
+	tpl = __gebr_geoxml_get_first_element(group, "template-instance");
+	tpl = __gebr_geoxml_get_first_element(tpl, "parameters");
 
 	return GEBR_GEOXML_PARAMETERS(tpl);
 }
@@ -92,11 +93,17 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_group_instanciate(GebrGeoXmlParamete
 	if (gebr_geoxml_parameter_group_get_is_instanciable(parameter_group) == FALSE)
 		return FALSE;
 
-	GebrGeoXmlSequence *first_instance;
+	GebrGeoXmlSequence *template_instance;
 	GebrGeoXmlParameters *new_instance;
 
-	first_instance = (GebrGeoXmlSequence*)gebr_geoxml_parameter_group_get_template(parameter_group);
-	new_instance = GEBR_GEOXML_PARAMETERS(__gebr_geoxml_sequence_append_clone(first_instance));
+	template_instance = (GebrGeoXmlSequence*)gebr_geoxml_parameter_group_get_template(parameter_group);
+
+	//new_instance = GEBR_GEOXML_PARAMETERS(__gebr_geoxml_sequence_append_clone(template_instance));
+	new_instance = (GebrGeoXmlParameters *) gdome_n_cloneNode((GdomeNode *)template_instance, TRUE, &exception);
+	__gebr_geoxml_element_reassign_ids((GdomeElement *)new_instance);
+	GdomeElement *group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group), FALSE);
+	gdome_el_insertBefore_protected(group, (GdomeNode*)new_instance, NULL, &exception);
+
 	__gebr_geoxml_parameter_group_turn_instance_to_reference(parameter_group, new_instance);
 	gebr_geoxml_parameters_reset(new_instance, TRUE);
 
@@ -119,7 +126,7 @@ gboolean gebr_geoxml_parameter_group_deinstanciate(GebrGeoXmlParameterGroup * pa
 	if (length <= 1)
 		return FALSE;
 
-	gebr_geoxml_parameter_group_get_instance(parameter_group, &last_instance, length - 1);
+	gebr_geoxml_parameter_group_get_instance(parameter_group, &last_instance, length);
 
 	if (!last_instance)
 		return FALSE;
@@ -138,11 +145,9 @@ int gebr_geoxml_parameter_group_get_instance(GebrGeoXmlParameterGroup * paramete
 		return GEBR_GEOXML_RETV_NULL_PTR;
 	}
 
-	/* The first 'instance' is the template for all other instances and isn't used. That's why we add 1 into
-	 * index. */
 	*parameters = (GebrGeoXmlSequence *)
 	    __gebr_geoxml_get_element_at(__gebr_geoxml_parameter_get_type_element
-					 (GEBR_GEOXML_PARAMETER(parameter_group), FALSE), "parameters", index+1, FALSE);
+					 (GEBR_GEOXML_PARAMETER(parameter_group), FALSE), "parameters", index, TRUE);
 
 	return (*parameters == NULL)
 	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
@@ -153,12 +158,10 @@ glong gebr_geoxml_parameter_group_get_instances_number(GebrGeoXmlParameterGroup 
 	if (parameter_group == NULL)
 		return -1;
 
-	/* The first 'instance' is the template for all other instances, so it must be ignored. That's why we subtract 1
-	 * from the result. */
 	return __gebr_geoxml_get_elements_number((GdomeElement *)
 						 __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER
 											  (parameter_group), FALSE),
-						 "parameters") - 1;
+						 "parameters");
 }
 
 GSList *gebr_geoxml_parameter_group_get_parameter_in_all_instances(GebrGeoXmlParameterGroup * parameter_group,

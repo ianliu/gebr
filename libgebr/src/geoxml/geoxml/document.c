@@ -493,11 +493,16 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 
 				parameter = (GdomeElement*)gdome_el_parentNode(element, &exception);
 				group = (GebrGeoXmlParameterGroup*)parameter;
-				new_instance = gebr_geoxml_parameter_group_instanciate(group);
-				template_instance = gebr_geoxml_parameter_group_get_template(group);
+				template_instance = (GebrGeoXmlParameters*)__gebr_geoxml_get_first_element(element, "parameters");
+				/* encapsulate template instance into template-instance element */
+				GdomeElement *template_container;
+				template_container = __gebr_geoxml_insert_new_element(element, "template-instance",
+										      (GdomeElement*)template_instance);
+				gdome_el_insertBefore_protected(template_container, (GdomeNode*)template_instance, NULL, &exception);
 
 				/* move new instance after template instance */
-				GdomeNode *next = (GdomeNode*)__gebr_geoxml_next_same_element((GdomeElement*)template_instance);
+				new_instance = gebr_geoxml_parameter_group_instanciate(group);
+				GdomeNode *next = (GdomeNode*)__gebr_geoxml_next_element((GdomeElement*)template_container);
 				gdome_n_insertBefore_protected(gdome_el_parentNode((GdomeElement*)new_instance, &exception),
 							       (GdomeNode*)new_instance, next, &exception);
 

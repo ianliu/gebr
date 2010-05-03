@@ -55,7 +55,7 @@
 <!-- URL to get the program -->
 <!ELEMENT url (#PCDATA)>
 
-<!ELEMENT group (parameters+)>
+<!ELEMENT group (template-instance, parameters+)>
 <!ATTLIST group
 	expand		(yes | no)	#REQUIRED
 	instanciable	(yes | no)	#REQUIRED
@@ -63,6 +63,7 @@
 	instances-min	CDATA		#IMPLIED
 	instances-max	CDATA		#IMPLIED>
 
+<!ELEMENT template-instance (parameters)>
 <!ELEMENT parameters (parameter*)>
 <!ATTLIST parameters
 	default-selection	CDATA	#REQUIRED
