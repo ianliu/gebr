@@ -82,6 +82,24 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_group_get_template(GebrGeoXmlParamet
 	return GEBR_GEOXML_PARAMETERS(tpl);
 }
 
+GebrGeoXmlParameters *gebr_geoxml_parameter_group_add_instance(GebrGeoXmlParameterGroup * parameter_group)
+{
+	GebrGeoXmlSequence *template_instance;
+	GebrGeoXmlParameters *new_instance;
+
+	template_instance = (GebrGeoXmlSequence*)gebr_geoxml_parameter_group_get_template(parameter_group);
+
+	new_instance = GEBR_GEOXML_PARAMETERS(__gebr_geoxml_sequence_append_clone(template_instance));
+	//new_instance = (GebrGeoXmlParameters *) gdome_n_cloneNode((GdomeNode *)template_instance, TRUE, &exception);
+	//__gebr_geoxml_element_reassign_ids((GdomeElement *)new_instance);
+	GdomeElement *group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group), FALSE);
+	gdome_el_insertBefore_protected(group, (GdomeNode*)new_instance, NULL, &exception);
+
+	__gebr_geoxml_parameter_group_turn_instance_to_reference(parameter_group, new_instance);
+
+	return new_instance;
+}
+
 /*
  * library functions.
  */
@@ -89,25 +107,12 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_group_get_template(GebrGeoXmlParamet
 GebrGeoXmlParameters *gebr_geoxml_parameter_group_instanciate(GebrGeoXmlParameterGroup * parameter_group)
 {
 	if (parameter_group == NULL)
-		return FALSE;
+		return NULL;
+
 	if (gebr_geoxml_parameter_group_get_is_instanciable(parameter_group) == FALSE)
-		return FALSE;
+		return NULL;
 
-	GebrGeoXmlSequence *template_instance;
-	GebrGeoXmlParameters *new_instance;
-
-	template_instance = (GebrGeoXmlSequence*)gebr_geoxml_parameter_group_get_template(parameter_group);
-
-	//new_instance = GEBR_GEOXML_PARAMETERS(__gebr_geoxml_sequence_append_clone(template_instance));
-	new_instance = (GebrGeoXmlParameters *) gdome_n_cloneNode((GdomeNode *)template_instance, TRUE, &exception);
-	__gebr_geoxml_element_reassign_ids((GdomeElement *)new_instance);
-	GdomeElement *group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group), FALSE);
-	gdome_el_insertBefore_protected(group, (GdomeNode*)new_instance, NULL, &exception);
-
-	__gebr_geoxml_parameter_group_turn_instance_to_reference(parameter_group, new_instance);
-	gebr_geoxml_parameters_reset(new_instance, TRUE);
-
-	return new_instance;
+	return gebr_geoxml_parameter_group_add_instance(parameter_group);
 }
 
 gboolean gebr_geoxml_parameter_group_deinstanciate(GebrGeoXmlParameterGroup * parameter_group)
@@ -206,10 +211,14 @@ gboolean gebr_geoxml_parameter_group_get_is_instanciable(GebrGeoXmlParameterGrou
 {
 	if (parameter_group == NULL)
 		return FALSE;
-	return (!strcmp
-		(__gebr_geoxml_get_attr_value
-		 (__gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group), FALSE),
-		  "instanciable"), "yes"))
+
+	GdomeElement * group;
+	gchar * instanciable;
+
+	group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group), FALSE);
+	instanciable = __gebr_geoxml_get_attr_value((GdomeElement*)group, "instanciable");
+
+	return (!strcmp(instanciable, "yes"))
 	    ? TRUE : FALSE;
 }
 

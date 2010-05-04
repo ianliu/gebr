@@ -254,9 +254,6 @@ static void parameter_group_instances_setup_ui(struct ui_parameter_group_dialog 
 	gebr_geoxml_parameter_group_get_instance(ui->parameter_group, &instance, 0);
 	for (i = 1; instance != NULL; i++, gebr_geoxml_sequence_next(&instance)) {
 		GtkWidget *frame;
-		GtkWidget *vbox;
-		GtkWidget *hbox;
-		GtkWidget *button;
 		GtkWidget *table;
 		GtkWidget *label_widget;
 
@@ -302,24 +299,8 @@ static void parameter_group_instances_setup_ui(struct ui_parameter_group_dialog 
 		g_string_printf(string, _("Instance #%d"), i);
 
 		frame = gtk_frame_new(string->str);
-		hbox = gtk_hbox_new(FALSE, 0);
-		vbox = gtk_vbox_new(FALSE, 0);
 
-		button = gtk_button_new();
-		gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(GTK_STOCK_DELETE, GTK_ICON_SIZE_BUTTON));
-		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-
-		button = gtk_button_new();
-		gtk_container_add(GTK_CONTAINER(button), gtk_arrow_new(GTK_ARROW_DOWN, GTK_SHADOW_NONE));
-		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-
-		button = gtk_button_new();
-		gtk_container_add(GTK_CONTAINER(button), gtk_arrow_new(GTK_ARROW_UP, GTK_SHADOW_NONE));
-		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-
-		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(vbox), table, TRUE, TRUE, 0);
-		gtk_container_add(GTK_CONTAINER(frame), vbox);
+		gtk_container_add(GTK_CONTAINER(frame), table);
 		gtk_box_pack_start(GTK_BOX(ui->instances_edit_vbox), frame, TRUE, TRUE, 5);
 
 		gtk_widget_show_all(frame);

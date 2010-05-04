@@ -501,23 +501,9 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 				gdome_el_insertBefore_protected(template_container, (GdomeNode*)template_instance, NULL, &exception);
 
 				/* move new instance after template instance */
-				new_instance = gebr_geoxml_parameter_group_instanciate(group);
+				new_instance = gebr_geoxml_parameter_group_add_instance(group);
 				GdomeNode *next = (GdomeNode*)__gebr_geoxml_next_element((GdomeElement*)template_container);
-				gdome_n_insertBefore_protected(gdome_el_parentNode((GdomeElement*)new_instance, &exception),
-							       (GdomeNode*)new_instance, next, &exception);
-
-				/* copy data from template to new instance */
-				GebrGeoXmlSequence *i, *j;
-				i = gebr_geoxml_parameters_get_first_parameter(template_instance);
-				j = gebr_geoxml_parameters_get_first_parameter(new_instance);
-				for (; i != NULL; gebr_geoxml_sequence_next(&i), gebr_geoxml_sequence_next(&j)) {
-					gebr_geoxml_program_parameter_copy_value(GEBR_GEOXML_PROGRAM_PARAMETER(j),
-										 GEBR_GEOXML_PROGRAM_PARAMETER(i),
-										 TRUE);
-					gebr_geoxml_program_parameter_copy_value(GEBR_GEOXML_PROGRAM_PARAMETER(j),
-										 GEBR_GEOXML_PROGRAM_PARAMETER(i),
-										 FALSE);
-				}
+				gdome_n_insertBefore_protected((GdomeNode*)element, (GdomeNode*)new_instance, next, &exception);
 			}
 		}
 	}
