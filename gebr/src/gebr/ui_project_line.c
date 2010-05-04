@@ -514,18 +514,18 @@ void project_line_import(void)
 			GebrGeoXmlLine *line;
 			GtkTreeIter parent;
 
-			project_line_get_selected(&iter, DontWarnUnselection);
-			parent = iter;
-			if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &parent, &iter))
-				parent = iter;
-			iter = project_append_line_iter(&parent, line);
-
 			line_import(&parent, &line, files[i], tmp_dir->str);
 			if (line == NULL)
 				continue;
 			gebr_geoxml_project_append_line(gebr.project,
 							gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)));
 			document_save(GEBR_GEOXML_DOCUMENT(gebr.project), TRUE);
+
+			project_line_get_selected(&iter, DontWarnUnselection);
+			parent = iter;
+			if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &parent, &iter))
+				parent = iter;
+			iter = project_append_line_iter(&parent, line);
 
 			document = GEBR_GEOXML_DOCUMENT(line);
 		} else
