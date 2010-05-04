@@ -213,7 +213,7 @@ gboolean gebr_geoxml_parameter_group_get_is_instanciable(GebrGeoXmlParameterGrou
 		return FALSE;
 
 	GdomeElement * group;
-	gchar * instanciable;
+	const gchar * instanciable;
 
 	group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group), FALSE);
 	instanciable = __gebr_geoxml_get_attr_value((GdomeElement*)group, "instanciable");

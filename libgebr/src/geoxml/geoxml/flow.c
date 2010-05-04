@@ -491,6 +491,7 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 	GebrGeoXmlSequence *first_revision;
 	GdomeElement *child;
 
+	/* load document validating it */
 	if (gebr_geoxml_document_load_buffer(&revision_flow,
 					     __gebr_geoxml_get_element_value((GdomeElement *) revision)))
 		return FALSE;
@@ -500,9 +501,7 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 	 * WARNING: for this implementation to work revision must be
 	 * the last child of flow. Be careful when changing the DTD!
 	 */
-	child = __gebr_geoxml_get_first_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(flow)),
-						"filename");
-	child = __gebr_geoxml_next_element(child);
+	child = __gebr_geoxml_get_first_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(flow)), "*");
 	while (child != NULL) {
 		GdomeElement *aux;
 
@@ -516,8 +515,7 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 
 	/* add all revision elements */
 	child = __gebr_geoxml_get_first_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(revision_flow)),
-						"filename");
-	child = __gebr_geoxml_next_element(child);
+						"*");
 	for (; child != NULL; child = __gebr_geoxml_next_element(child)) {
 		GdomeNode *new_node;
 
