@@ -435,6 +435,7 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 	/* 0.3.1 to 0.3.2 */ 
 	if (strcmp(version, "0.3.2") < 0) {
 		__gebr_geoxml_set_attr_value(root_element, "version", "0.3.2");
+
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			GdomeElement *element;
 
@@ -455,56 +456,53 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 	if (strcmp(version, "0.3.3") < 0) {
 		// Backward compatible change, nothing to be done.
 		// Added #IMPLIED 'version' attribute to 'program' tag.
-		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.3");
-		}
 	}
 	/* flow 0.3.3 to 0.3.4 */ 
 	if (strcmp(version, "0.3.4") < 0) {
 		// Backward compatible change, nothing to be done.
 		// Added #IMPLIED 'mpi' attribute to 'program' tag.
-		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.4");
-		}
 	}
 	/* flow 0.3.4 to 0.3.5 */ 
 	if (strcmp(version, "0.3.5") < 0) {
-		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) 
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.5");
+	
+		/* remove flow filename */
+		gdome_el_removeChild(root_element, (GdomeNode*)__gebr_geoxml_get_first_element(root_element, "filename"), &exception);
 
-			/* remove flow filename */
-			gdome_el_removeChild(root_element, (GdomeNode*)__gebr_geoxml_get_first_element(root_element, "filename"), &exception);
-			
-			GdomeElement *element;
-			gebr_foreach_gslist_hyg(element, __gebr_geoxml_get_elements_by_tag(root_element, "parameters"), parameters) {
-				__gebr_geoxml_set_attr_value(element, "default-selection",
-							     __gebr_geoxml_get_attr_value(element, "exclusive"));
-				__gebr_geoxml_remove_attr(element, "exclusive");
-				__gebr_geoxml_set_attr_value(element, "selection",
-							     __gebr_geoxml_get_attr_value(element, "selected"));
-				__gebr_geoxml_remove_attr(element, "selected");
-			}
+		GdomeElement *element;
+		gebr_foreach_gslist_hyg(element, __gebr_geoxml_get_elements_by_tag(root_element, "parameters"), parameters) {
+			__gebr_geoxml_set_attr_value(element, "default-selection",
+						     __gebr_geoxml_get_attr_value(element, "exclusive"));
+			__gebr_geoxml_remove_attr(element, "exclusive");
+			__gebr_geoxml_set_attr_value(element, "selection",
+						     __gebr_geoxml_get_attr_value(element, "selected"));
+			__gebr_geoxml_remove_attr(element, "selected");
+		}
 
-			gebr_foreach_gslist_hyg(element, __gebr_geoxml_get_elements_by_tag(root_element, "group"), group) {
-				GdomeElement *parameter;
-				GebrGeoXmlParameterGroup *group;
-				GebrGeoXmlParameters *new_instance;
-				GebrGeoXmlParameters *template_instance;
+		gebr_foreach_gslist_hyg(element, __gebr_geoxml_get_elements_by_tag(root_element, "group"), group) {
+			GdomeElement *parameter;
+			GebrGeoXmlParameterGroup *group;
+			GebrGeoXmlParameters *new_instance;
+			GebrGeoXmlParameters *template_instance;
 
-				parameter = (GdomeElement*)gdome_el_parentNode(element, &exception);
-				group = (GebrGeoXmlParameterGroup*)parameter;
-				template_instance = (GebrGeoXmlParameters*)__gebr_geoxml_get_first_element(element, "parameters");
-				/* encapsulate template instance into template-instance element */
-				GdomeElement *template_container;
-				template_container = __gebr_geoxml_insert_new_element(element, "template-instance",
-										      (GdomeElement*)template_instance);
-				gdome_el_insertBefore_protected(template_container, (GdomeNode*)template_instance, NULL, &exception);
+			parameter = (GdomeElement*)gdome_el_parentNode(element, &exception);
+			group = (GebrGeoXmlParameterGroup*)parameter;
+			template_instance = (GebrGeoXmlParameters*)__gebr_geoxml_get_first_element(element, "parameters");
+			/* encapsulate template instance into template-instance element */
+			GdomeElement *template_container;
+			template_container = __gebr_geoxml_insert_new_element(element, "template-instance",
+									      (GdomeElement*)template_instance);
+			gdome_el_insertBefore_protected(template_container, (GdomeNode*)template_instance, NULL, &exception);
 
-				/* move new instance after template instance */
-				new_instance = gebr_geoxml_parameter_group_add_instance(group);
-				GdomeNode *next = (GdomeNode*)__gebr_geoxml_next_element((GdomeElement*)template_container);
-				gdome_n_insertBefore_protected((GdomeNode*)element, (GdomeNode*)new_instance, next, &exception);
-			}
+			/* move new instance after template instance */
+			new_instance = gebr_geoxml_parameter_group_add_instance(group);
+			GdomeNode *next = (GdomeNode*)__gebr_geoxml_next_element((GdomeElement*)template_container);
+			gdome_n_insertBefore_protected((GdomeNode*)element, (GdomeNode*)new_instance, next, &exception);
 		}
 	}
 

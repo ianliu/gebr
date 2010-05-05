@@ -3,21 +3,7 @@
 	version CDATA #FIXED "0.3.5"
 	nextid  ID #REQUIRED>
 
-<!-- Short title for a program or flow -->
-<!ELEMENT title	(#PCDATA)>
-<!-- One line description for a program or flow -->
-<!ELEMENT description (#PCDATA)>
-<!-- Detailed text used as help message for a program or flow -->
-<!ELEMENT help (#PCDATA)>
-<!-- Author of the flow and his/her email -->
-<!ELEMENT author (#PCDATA)>
-<!ELEMENT email (#PCDATA)>
-<!-- Dictionary of parameters for use in programs' parameters -->
-<!ELEMENT dict (parameters)>
-<!-- Dates associated to the line -->
 <!ELEMENT date (created, modified, lastrun)>
-<!ELEMENT created (#PCDATA)>
-<!ELEMENT modified (#PCDATA)>
 <!ELEMENT lastrun (#PCDATA)>
 
 <!-- Categories to which the flow belongs to -->
@@ -44,16 +30,36 @@
 	status	(disabled | configured | unconfigured)	#REQUIRED
 	version CDATA					#IMPLIED
 	mpi 	CDATA					#IMPLIED>
+<!-- Binary to program (without path) -->
+<!ELEMENT binary (#PCDATA)>
+<!-- URL to get the program -->
+<!ELEMENT url (#PCDATA)>
 
 <!ELEMENT revision (#PCDATA)>
 <!ATTLIST revision
 	date	CDATA	#REQUIRED
 	comment	CDATA	#REQUIRED>
 
-<!-- Binary to program (without path) -->
-<!ELEMENT binary (#PCDATA)>
-<!-- URL to get the program -->
-<!ELEMENT url (#PCDATA)>
+<!-- ******* BEGIN COMMON PART FOR DOCUMENTS ******* -->
+
+<!-- Short title for a program, flow, line or project -->
+<!ELEMENT title	(#PCDATA)>
+<!-- One line description for a program or flow -->
+<!ELEMENT description (#PCDATA)>
+<!-- Detailed text used as help message for a program or flow -->
+<!ELEMENT help (#PCDATA)>
+<!-- Author of the flow and his/her email -->
+<!ELEMENT author (#PCDATA)>
+<!ELEMENT email (#PCDATA)>
+<!-- Dictionary of parameters for use in programs' parameters -->
+<!ELEMENT dict (parameters)>
+<!-- Dates associated to the line -->
+<!ELEMENT created (#PCDATA)>
+<!ELEMENT modified (#PCDATA)>
+
+<!ELEMENT parameter (label, (reference | int | float | string | flag | file | range | enum | group))>
+<!ATTLIST parameter
+	id ID #REQUIRED>
 
 <!ELEMENT group (template-instance, parameters+)>
 <!ATTLIST group
@@ -68,10 +74,6 @@
 <!ATTLIST parameters
 	default-selection	CDATA	#REQUIRED
 	selection		CDATA	#IMPLIED>
-
-<!ELEMENT parameter (label, (reference | int | float | string | flag | file | range | enum | group))>
-<!ATTLIST parameter
-	id ID #REQUIRED>
 
 <!-- Short text to be displayed as label for a parameter -->
 <!ELEMENT label (#PCDATA)>
@@ -124,3 +126,6 @@
 <!-- Enum -->
 <!ELEMENT enum (property, option*)>
 <!ELEMENT option (label, value)>
+
+<!-- ******* END COMMON PART FOR DOCUMENTS ******* -->
+
