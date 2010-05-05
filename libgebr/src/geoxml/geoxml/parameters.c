@@ -238,10 +238,9 @@ GebrGeoXmlParameterGroup *gebr_geoxml_parameters_get_group(GebrGeoXmlParameters 
 	if (parameters == NULL)
 		return NULL;
 	GdomeElement *parent_element;
-	return !strcmp(gdome_el_tagName((parent_element = (GdomeElement *) gdome_el_parentNode((GdomeElement *)
-											       parameters, &exception)),
-					&exception)->str, "group")
-	    ? (GebrGeoXmlParameterGroup *) gdome_el_parentNode(parent_element, &exception)
+	parent_element = (GdomeElement*)gdome_el_parentNode((GdomeElement*)parameters, &exception);
+	return !strcmp(gdome_el_tagName(parent_element, &exception)->str, "group")
+	    ? (GebrGeoXmlParameterGroup*)gdome_el_parentNode(parent_element, &exception)
 	    : NULL;
 }
 
