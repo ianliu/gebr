@@ -28,7 +28,7 @@
 
 G_BEGIN_DECLS
 
-struct gebr_gui_program_edit {
+typedef struct {
 	GebrGeoXmlProgram *program;
 
 	GtkWidget *widget;
@@ -44,19 +44,19 @@ struct gebr_gui_program_edit {
 		GebrGeoXmlDocument *line;
 		GebrGeoXmlDocument *flow;
 	} dicts;
-};
+} GebrGuiProgramEdit;
 
 /**
  * Setup UI for \p program.
  */
-struct gebr_gui_program_edit *
+GebrGuiProgramEdit *
 gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer parameter_widget_data, gboolean use_default);
 
 /**
  * \internal
  * Just free.
  */
-void gebr_gui_gebr_gui_program_edit_destroy(struct gebr_gui_program_edit *program_edit);
+void gebr_gui_gebr_gui_program_edit_destroy(GebrGuiProgramEdit *program_edit);
 
 /**
  * \internal
@@ -64,7 +64,7 @@ void gebr_gui_gebr_gui_program_edit_destroy(struct gebr_gui_program_edit *progra
  * Reload UI of \p gebr_gui_program_edit.
  * \param program If not NULL, then use it as new program.
  */
-void gebr_gui_gebr_gui_program_edit_reload(struct gebr_gui_program_edit *program_edit, GebrGeoXmlProgram * program);
+void gebr_gui_gebr_gui_program_edit_reload(GebrGuiProgramEdit *program_edit, GebrGeoXmlProgram * program);
 
 G_END_DECLS
 #endif				//__GEBR_GUI_PROGRAM_EDIT_H

@@ -31,7 +31,7 @@ G_BEGIN_DECLS
 
 struct ui_parameters {
 	GtkWidget *dialog;
-	struct gebr_gui_program_edit *program_edit;
+	GebrGuiProgramEdit *program_edit;
 };
 
 /**

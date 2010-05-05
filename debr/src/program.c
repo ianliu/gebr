@@ -49,7 +49,7 @@ static const gint mpi_xml_to_index(GebrGeoXmlProgram * program)
 }
 
 struct program_preview_data {
-	struct gebr_gui_program_edit *program_edit;
+	GebrGuiProgramEdit *program_edit;
 	GebrGeoXmlProgram *program;
 	GtkWidget *title_label;
 	GtkWidget *hbox;
