@@ -82,7 +82,7 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer parameter_w
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-	gebr_gui_gebr_gui_program_edit_reload(program_edit, NULL);
+	gebr_gui_program_edit_reload(program_edit, NULL);
 
 	return program_edit;
 }
@@ -93,7 +93,7 @@ void gebr_gui_gebr_gui_program_edit_destroy(GebrGuiProgramEdit *program_edit)
 	g_free(program_edit);
 }
 
-void gebr_gui_gebr_gui_program_edit_reload(GebrGuiProgramEdit *program_edit, GebrGeoXmlProgram * program)
+void gebr_gui_program_edit_reload(GebrGuiProgramEdit *program_edit, GebrGeoXmlProgram * program)
 {
 	GtkWidget *label;
 	GtkWidget *widget;

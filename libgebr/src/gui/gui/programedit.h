@@ -64,7 +64,7 @@ void gebr_gui_gebr_gui_program_edit_destroy(GebrGuiProgramEdit *program_edit);
  * Reload UI of \p gebr_gui_program_edit.
  * \param program If not NULL, then use it as new program.
  */
-void gebr_gui_gebr_gui_program_edit_reload(GebrGuiProgramEdit *program_edit, GebrGeoXmlProgram * program);
+void gebr_gui_program_edit_reload(GebrGuiProgramEdit *program_edit, GebrGeoXmlProgram * program);
 
 G_END_DECLS
 #endif				//__GEBR_GUI_PROGRAM_EDIT_H

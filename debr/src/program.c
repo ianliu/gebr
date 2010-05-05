@@ -980,9 +980,9 @@ static void program_preview_on_response(GtkWidget * dialog, gint response, struc
 {
 	switch (response) {
 	case RESPONSE_REFRESH:
-		gebr_gui_gebr_gui_program_edit_reload(data->program_edit,
-						      GEBR_GEOXML_PROGRAM(gebr_geoxml_object_copy
-									  (GEBR_GEOXML_OBJECT(data->program))));
+		gebr_gui_program_edit_reload(data->program_edit,
+					     GEBR_GEOXML_PROGRAM(gebr_geoxml_object_copy
+								 (GEBR_GEOXML_OBJECT(data->program))));
 		break;
 	case GTK_RESPONSE_CLOSE:
 	default:

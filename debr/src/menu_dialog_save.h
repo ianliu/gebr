@@ -133,6 +133,7 @@ const gchar * menu_dialog_save_def =
                 "<property name=\"visible\">True</property>"
                 "<property name=\"can_focus\">True</property>"
                 "<property name=\"receives_default\">True</property>"
+                "<property name=\"use_underline\">True</property>"
                 "<property name=\"image\">image2</property>"
               "</object>"
               "<packing>"

@@ -84,7 +84,7 @@ struct ui_parameters *parameters_configure_setup_ui(void)
 	ui_parameters->program_edit->dicts.project = GEBR_GEOXML_DOCUMENT(gebr.project);
 	ui_parameters->program_edit->dicts.line = GEBR_GEOXML_DOCUMENT(gebr.line);
 	ui_parameters->program_edit->dicts.flow = GEBR_GEOXML_DOCUMENT(gebr.flow);
-	gebr_gui_gebr_gui_program_edit_reload(ui_parameters->program_edit, NULL);
+	gebr_gui_program_edit_reload(ui_parameters->program_edit, NULL);
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_parameters->program_edit->widget, TRUE, TRUE, 0);
 	gtk_widget_show(dialog);
@@ -229,7 +229,7 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 	}
 	case GTK_RESPONSE_DEFAULT:
 		parameters_reset_to_default(gebr_geoxml_program_get_parameters(ui_parameters->program_edit->program));
-		gebr_gui_gebr_gui_program_edit_reload(ui_parameters->program_edit, NULL);
+		gebr_gui_program_edit_reload(ui_parameters->program_edit, NULL);
 		return;
 	case GTK_RESPONSE_HELP:
 		program_help_show();
