@@ -93,7 +93,7 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
  */
 
 GebrGeoXmlParameter *gebr_geoxml_parameters_append_parameter(GebrGeoXmlParameters * parameters,
-							     enum GEBR_GEOXML_PARAMETER_TYPE type)
+							     GebrGeoXmlParameterType type)
 {
 	if (parameters == NULL)
 		return NULL;

@@ -42,7 +42,7 @@
  * Bidirecional relation of combo box index and type enumerations.
  */
 struct {
-	enum GEBR_GEOXML_PARAMETER_TYPE type;
+	GebrGeoXmlParameterType type;
 	guint index;
 	gchar *title;
 } combo_type_map[] = {
@@ -65,7 +65,7 @@ const gsize combo_type_map_size = 8;
  * \p type A #GEBR_GEOXML_PARAMETER_TYPE.
  * \return The associated index.
  */
-static int combo_type_map_get_index(enum GEBR_GEOXML_PARAMETER_TYPE type)
+static int combo_type_map_get_index(GebrGeoXmlParameterType type)
 {
 	int i;
 	for (i = 0; i < combo_type_map_size; ++i)
@@ -307,7 +307,7 @@ void parameter_new(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-void parameter_new_from_type(enum GEBR_GEOXML_PARAMETER_TYPE type)
+void parameter_new_from_type(GebrGeoXmlParameterType type)
 {
 	GtkTreeIter iter;
 
@@ -551,7 +551,7 @@ void parameter_paste(void)
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
-void parameter_change_type(enum GEBR_GEOXML_PARAMETER_TYPE type)
+void parameter_change_type(GebrGeoXmlParameterType type)
 {
 	const gchar *keyword;
 
@@ -669,7 +669,7 @@ static void parameter_update_actions_sensitive()
 static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 {
 	struct ui_parameter_dialog *ui;
-	enum GEBR_GEOXML_PARAMETER_TYPE type;
+	GebrGeoXmlParameterType type;
 
 	GtkWidget *dialog;
 	GtkWidget *scrolled_window;
@@ -1858,6 +1858,6 @@ static void parameter_is_radio_button_other_toggled(GtkToggleButton * toggle_but
  */
 static void on_parameter_menu_item_new_activate(GtkWidget * menu_item, gpointer type)
 {
-	parameter_new_from_type((enum GEBR_GEOXML_PARAMETER_TYPE)GPOINTER_TO_INT(type));
+	parameter_new_from_type((GebrGeoXmlParameterType)GPOINTER_TO_INT(type));
 }
 

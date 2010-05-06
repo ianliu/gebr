@@ -46,6 +46,8 @@ static void on_arrow_up_clicked(GtkWidget *button, GebrGeoXmlParameters * sequen
 
 static void on_arrow_down_clicked(GtkWidget *button, GebrGeoXmlParameters * sequence);
 
+static void on_delete_clicked(GtkWidget *button, GebrGeoXmlParameters * sequence);
+
 /*
  * Public functions.
  */
@@ -228,7 +230,7 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit *program_edit,
 						       GebrGeoXmlParameter * parameter, GSList ** radio_group)
 {
-	enum GEBR_GEOXML_PARAMETER_TYPE type;
+	GebrGeoXmlParameterType type;
 
 	type = gebr_geoxml_parameter_get_type(parameter);
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
@@ -492,6 +494,7 @@ static void on_arrow_up_clicked(GtkWidget *button, GebrGeoXmlParameters * sequen
 	GtkBox *box;
 	GtkWidget *frame;
 
+	frame = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "frame"));
 	index = gebr_geoxml_sequence_get_index(GEBR_GEOXML_SEQUENCE(sequence));
 
 	if (index == 1)
@@ -499,7 +502,6 @@ static void on_arrow_up_clicked(GtkWidget *button, GebrGeoXmlParameters * sequen
 
 	gebr_geoxml_sequence_move_up(GEBR_GEOXML_SEQUENCE(sequence));
 
-	frame = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "frame"));
 	box = GTK_BOX(gtk_widget_get_parent(frame));
 	gtk_box_reorder_child(box, frame, index-1);
 
@@ -530,4 +532,8 @@ static void on_arrow_down_clicked(GtkWidget *button, GebrGeoXmlParameters * sequ
 	frame = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "frame"));
 	box = GTK_BOX(gtk_widget_get_parent(frame));
 	gtk_box_reorder_child(box, frame, index+1);
+}
+
+static void on_delete_clicked(GtkWidget *button, GebrGeoXmlParameters * sequence)
+{
 }

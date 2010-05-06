@@ -99,7 +99,7 @@ void parameter_new(void);
 /**
  * Creates a new parameter with the specified \p type.
  */
-void parameter_new_from_type(enum GEBR_GEOXML_PARAMETER_TYPE type);
+void parameter_new_from_type(GebrGeoXmlParameterType type);
 
 /**
  * Removes the selected parameter; if \p confirm is TRUE, asks for confirmation.
@@ -134,7 +134,7 @@ void parameter_paste(void);
 /**
  * Changes the type of the selected parameter to \p type.
  */
-void parameter_change_type(enum GEBR_GEOXML_PARAMETER_TYPE type);
+void parameter_change_type(GebrGeoXmlParameterType type);
 
 /**
  * Open a dialog to configure the parameter, according to its type.

@@ -56,7 +56,7 @@ static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, GString * n_
  */
 static gboolean job_parse_parameter(struct job *job, GebrGeoXmlParameter * parameter, GebrGeoXmlProgram * program)
 {
-	enum GEBR_GEOXML_PARAMETER_TYPE type;
+	GebrGeoXmlParameterType type;
 	GebrGeoXmlProgramParameter *program_parameter;
 
 	type = gebr_geoxml_parameter_get_type(parameter);

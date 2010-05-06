@@ -100,7 +100,7 @@ typedef struct gebr_geoxml_parameter GebrGeoXmlParameter;
  *
  * \see gebr_geoxml_parameter_get_is_program_parameter
  */
-enum GEBR_GEOXML_PARAMETER_TYPE {
+typedef enum {
 	/**
 	 * In case of error.
 	 */
@@ -142,7 +142,7 @@ enum GEBR_GEOXML_PARAMETER_TYPE {
 	 * then this parameter will only have its value as a difference.
 	 */
 	GEBR_GEOXML_PARAMETER_TYPE_REFERENCE,
-};
+} GebrGeoXmlParameterType;
 
 #include <glib.h>
 
@@ -162,7 +162,7 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_get_parameters(GebrGeoXmlParameter *
  *
  * If \p parameter is NULL nothing is done.
  */
-gboolean gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, enum GEBR_GEOXML_PARAMETER_TYPE type);
+gboolean gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, GebrGeoXmlParameterType type);
 
 /**
  * Change \p parameter to reference \p reference.
@@ -180,7 +180,7 @@ int gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, Gebr
  *
  * \see GEBR_GEOXML_PARAMETER_TYPE
  */
-enum GEBR_GEOXML_PARAMETER_TYPE gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter);
+GebrGeoXmlParameterType gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter);
 
 /**
  * Return the type name of \p parameter

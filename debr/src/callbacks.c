@@ -468,7 +468,7 @@ void on_parameter_type_activate(GtkRadioAction * first_action)
 {
 	gint type;
 	type = gtk_radio_action_get_current_value(first_action);
-	parameter_change_type((enum GEBR_GEOXML_PARAMETER_TYPE)type);
+	parameter_change_type((GebrGeoXmlParameterType)type);
 }
 
 void on_parameter_copy_activate(void)

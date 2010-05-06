@@ -90,7 +90,7 @@ gsize gebr_geoxml_program_count_parameters(GebrGeoXmlProgram * program)
 	gsize n = 0;
 	GebrGeoXmlSequence *param;
 	GebrGeoXmlParameters *parameters;
-	enum GEBR_GEOXML_PARAMETER_TYPE type;
+	GebrGeoXmlParameterType type;
 
 	parameters = gebr_geoxml_program_get_parameters(program);
 	gebr_geoxml_parameters_get_parameter(parameters, &param, 0);

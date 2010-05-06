@@ -319,7 +319,7 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 					GdomeElement *parameter;
 					GdomeElement *property;
 
-					enum GEBR_GEOXML_PARAMETER_TYPE type;
+					GebrGeoXmlParameterType type;
 					GdomeDOMString *tag_name;
 					int i;
 
@@ -327,7 +327,7 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 					tag_name = gdome_el_tagName(old_parameter, &exception);
 					for (i = 1; i <= parameter_type_to_str_len; ++i)
 						if (!strcmp(parameter_type_to_str[i], tag_name->str)) {
-							type = (enum GEBR_GEOXML_PARAMETER_TYPE)i;
+							type = (GebrGeoXmlParameterType)i;
 							break;
 						}
 

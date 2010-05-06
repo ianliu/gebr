@@ -34,7 +34,7 @@ typedef void (*changed_callback) (struct gebr_gui_parameter_widget * gebr_gui_pa
 struct gebr_gui_parameter_widget {
 	GebrGeoXmlParameter *parameter;
 	GebrGeoXmlProgramParameter *program_parameter;
-	enum GEBR_GEOXML_PARAMETER_TYPE parameter_type;
+	GebrGeoXmlParameterType parameter_type;
 	gboolean use_default_value;
 	gpointer data;
 

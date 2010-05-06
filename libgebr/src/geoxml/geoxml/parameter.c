@@ -65,7 +65,7 @@ GdomeElement *__gebr_geoxml_parameter_get_type_element(GebrGeoXmlParameter * par
 	return type_element;
 }
 
-enum GEBR_GEOXML_PARAMETER_TYPE
+GebrGeoXmlParameterType
 __gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter, gboolean resolve_references)
 {
 	GdomeDOMString *tag_name;
@@ -75,7 +75,7 @@ __gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter, gboolean resol
 	    gdome_el_tagName(__gebr_geoxml_parameter_get_type_element(parameter, resolve_references), &exception);
 	for (i = 1; i <= parameter_type_to_str_len; ++i)
 		if (!strcmp(parameter_type_to_str[i], tag_name->str))
-			return (enum GEBR_GEOXML_PARAMETER_TYPE)i;
+			return (GebrGeoXmlParameterType)i;
 
 	return GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN;
 }
@@ -83,7 +83,7 @@ __gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter, gboolean resol
 void __gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, GebrGeoXmlParameter * referencee)
 {
 	GdomeElement *type_element;
-	enum GEBR_GEOXML_PARAMETER_TYPE type;
+	GebrGeoXmlParameterType type;
 
 	type = __gebr_geoxml_parameter_get_type(parameter, FALSE);
 	type_element = __gebr_geoxml_parameter_get_type_element(parameter, FALSE);
@@ -99,7 +99,7 @@ void __gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, G
 	__gebr_geoxml_element_assign_reference_id(type_element, (GdomeElement *) referencee);
 }
 
-GdomeElement *__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * parameter, enum GEBR_GEOXML_PARAMETER_TYPE type)
+GdomeElement *__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * parameter, GebrGeoXmlParameterType type)
 {
 	GdomeElement *type_element;
 
@@ -182,7 +182,7 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_get_parameters(GebrGeoXmlParameter *
 	return (GebrGeoXmlParameters *) gdome_n_parentNode((GdomeNode *) parameter, &exception);
 }
 
-gboolean gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, enum GEBR_GEOXML_PARAMETER_TYPE type)
+gboolean gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, GebrGeoXmlParameterType type)
 {
 	if (parameter == NULL)
 		return FALSE;
@@ -208,7 +208,7 @@ int gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, Gebr
 	return GEBR_GEOXML_RETV_SUCCESS;
 }
 
-enum GEBR_GEOXML_PARAMETER_TYPE gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter)
+GebrGeoXmlParameterType gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter)
 {
 	if (parameter == NULL)
 		return GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN;

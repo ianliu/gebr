@@ -100,7 +100,7 @@ typedef struct gebr_geoxml_parameters GebrGeoXmlParameters;
  * If \p parameters is NULL returns NULL.
  */
 GebrGeoXmlParameter *gebr_geoxml_parameters_append_parameter(GebrGeoXmlParameters * parameters,
-							     enum GEBR_GEOXML_PARAMETER_TYPE type);
+							     GebrGeoXmlParameterType type);
 
 /**
  * Set this \p parameters to be an exclusive group and \p parameter

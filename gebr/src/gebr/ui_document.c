@@ -95,7 +95,7 @@ static void dict_edit_start_keyword_editing(struct dict_edit_data *data, GtkTree
 static void dict_edit_new_parameter_iter(struct dict_edit_data *data, GebrGeoXmlObject * object, GtkTreeIter * iter);
 static void dict_edit_append_add_parameter(struct dict_edit_data *data, GtkTreeIter * document_iter);
 static GtkMenu *on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_data *data);
-static enum GEBR_GEOXML_PARAMETER_TYPE dict_edit_type_text_to_gebr_geoxml_type(const gchar * text);
+static GebrGeoXmlParameterType dict_edit_type_text_to_gebr_geoxml_type(const gchar * text);
 static gboolean dict_edit_check_empty_keyword(const gchar * keyword);
 static GtkTreeIter
 dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXmlObject * object, GtkTreeIter * document_iter);
@@ -906,7 +906,7 @@ static GtkMenu *on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_dat
 /* Function: dict_edit_type_text_to_gebr_geoxml_type
  * Convert type combo box text to a GEBR_GEOXML_PARAMETER_TYPE
  */
-static enum GEBR_GEOXML_PARAMETER_TYPE dict_edit_type_text_to_gebr_geoxml_type(const gchar * text)
+static GebrGeoXmlParameterType dict_edit_type_text_to_gebr_geoxml_type(const gchar * text)
 {
 	if (!strcmp(text, "string"))
 		return GEBR_GEOXML_PARAMETER_TYPE_STRING;

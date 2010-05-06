@@ -553,7 +553,7 @@ void
 gebr_geoxml_program_parameter_set_number_min_max(GebrGeoXmlProgramParameter * program_parameter,
 						 const gchar * min, const gchar * max)
 {
-	enum GEBR_GEOXML_PARAMETER_TYPE type;
+	GebrGeoXmlParameterType type;
 
 	if (program_parameter == NULL)
 		return;
@@ -577,7 +577,7 @@ void
 gebr_geoxml_program_parameter_get_number_min_max(GebrGeoXmlProgramParameter * program_parameter,
 						 gchar ** min, gchar ** max)
 {
-	enum GEBR_GEOXML_PARAMETER_TYPE type;
+	GebrGeoXmlParameterType type;
 
 	if (program_parameter == NULL)
 		return;

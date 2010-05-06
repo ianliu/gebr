@@ -754,7 +754,7 @@ compare_parameters_by_keyword(GebrGeoXmlProgramParameter * parameter1, GebrGeoXm
  */
 static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_parameter_widget *widget)
 {
-	enum GEBR_GEOXML_PARAMETER_TYPE compatibles_types[5] = {
+	GebrGeoXmlParameterType compatibles_types[5] = {
 		GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN, GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN,
 		GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN, GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN,
 		GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN
@@ -790,7 +790,7 @@ static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_para
 	compatible_parameters = NULL;
 	for (int i = 0; documents[i] != NULL; i++) {
 		GebrGeoXmlSequence *dict_parameter;
-		enum GEBR_GEOXML_PARAMETER_TYPE dict_parameter_type;
+		GebrGeoXmlParameterType dict_parameter_type;
 
 		dict_parameter =
 		    gebr_geoxml_parameters_get_first_parameter(gebr_geoxml_document_get_dict_parameters(documents[i]));

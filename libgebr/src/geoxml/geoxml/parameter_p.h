@@ -26,7 +26,7 @@ G_BEGIN_DECLS
  *
  */
 GdomeElement *__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * parameter,
-						  enum GEBR_GEOXML_PARAMETER_TYPE type);
+						  GebrGeoXmlParameterType type);
 
 /**
  * \internal
@@ -40,7 +40,7 @@ GdomeElement *__gebr_geoxml_parameter_get_type_element(GebrGeoXmlParameter * par
  * Return type of \p parameter, according to \p resolve_references
  *
  */
-enum GEBR_GEOXML_PARAMETER_TYPE
+GebrGeoXmlParameterType
 __gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter, gboolean resolve_references);
 
 /**
