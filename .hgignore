@@ -11,11 +11,11 @@ syntax: glob
 *.swp
 .deps
 .libs
+.nfs*
 INSTALL
 Makefile
 Makefile.in
 Makefile.in.in
-intltool-*.in
 POTFILES
 aclocal.m4
 autom4te.cache
@@ -37,6 +37,7 @@ debr/src/defines.h
 depcomp
 gebr.desktop
 gebr/doc/userdoc/gebr.html
+gebr/doc/userdoc/userdoc
 gebr/packages/rpm/gebr.fedora.spec
 gebr/packages/rpm/gebr.mandriva.spec
 gebr/packages/rpm/gebr.opensuse.spec
@@ -50,12 +51,14 @@ gebrd/src/defines.h
 gebrd/src/gebrd
 gebrd/tests/test-job-queue
 install-sh
+intltool-*.in
 libgebr/packages/rpm/libgebr.fedora.spec
 libgebr/packages/rpm/libgebr.mandriva.spec
 libgebr/packages/rpm/libgebr.opensuse.spec
 libgebr/src/comm/comm/json-glib/stamp-json-enum-types.h
 libgebr/src/comm/comm/json-glib/stamp-json-marshal.h
 libgebr/src/comm/gebr-comm.pc
+libgebr/src/comm/tests/test-protocol
 libgebr/src/defines.h
 libgebr/src/gebr.pc
 libgebr/src/geoxml/gebr-geoxml.pc
@@ -76,5 +79,3 @@ marshalers.h
 missing
 stamp-it
 tags
-libgebr/src/comm/tests/test-protocol
-gebr/doc/userdoc/userdoc
