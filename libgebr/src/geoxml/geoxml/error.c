@@ -25,7 +25,7 @@ const gchar *gebr_geoxml_error_string(enum GEBR_GEOXML_RETV error)
 		N_("Success."),
 		N_("Null pointer."),
 		N_("Not enough memory."),
-		N_("The file not found."),
+		N_("File not found."),
 		N_("Permission denied."),
 		N_("Invalid element index."),
 		N_("Invalid document syntax or structure."),

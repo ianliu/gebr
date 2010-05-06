@@ -158,7 +158,7 @@ static const GtkActionEntry actions_entries[] = {
 	{"job_control_cancel", GTK_STOCK_MEDIA_STOP, NULL,
 		NULL, N_("Ask server to terminate the job"), G_CALLBACK(on_job_control_cancel)},
 
-	{"job_control_close", "edit-clear", N_("Edit clear"),
+	{"job_control_close", "edit-clear", N_("Clear current"),
 		NULL, N_("Clear current job log"), G_CALLBACK(on_job_control_close)},
 
 	{"job_control_clear", GTK_STOCK_CLEAR, NULL,
