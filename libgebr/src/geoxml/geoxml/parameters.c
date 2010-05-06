@@ -49,14 +49,12 @@ GebrGeoXmlParameters *__gebr_geoxml_parameters_append_new(GdomeElement * parent)
 
 gboolean __gebr_geoxml_parameters_group_check(GebrGeoXmlParameters * parameters)
 {
-	GdomeElement *parent_element;
+	GebrGeoXmlParameterGroup *group = gebr_geoxml_parameters_get_group(parameters);
+	if (group == NULL)
+		return TRUE; 
 
-	/* if this is not in a group then there is no problem */
-	parent_element = (GdomeElement *) gdome_el_parentNode((GdomeElement *) parameters, &exception);
-	if (strcmp(gdome_el_nodeName(parent_element, &exception)->str, "group") != 0)
-		return TRUE;
-
-	return (gboolean) (__gebr_geoxml_get_element_index((GdomeElement *) parameters) == 0);
+	return (gebr_geoxml_parameter_group_get_template(group) == parameters)
+	       	? TRUE : FALSE;
 }
 
 void

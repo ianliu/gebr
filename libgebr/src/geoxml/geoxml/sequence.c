@@ -54,9 +54,9 @@ static int __gebr_geoxml_sequence_check(GebrGeoXmlSequence * sequence, gboolean 
 	if (sequence == NULL)
 		return GEBR_GEOXML_RETV_NULL_PTR;
 
-	GdomeDOMString *tag;
+	GdomeDOMString *tag = gdome_el_tagName((GdomeElement *) sequence, &exception);
 
-	tag = gdome_el_tagName((GdomeElement *) sequence, &exception);
+	/* parameter in group check */
 	if (check_master_instance && !strcmp(tag->str, "parameter")) {
 		GebrGeoXmlParameters *parameters;
 
@@ -66,14 +66,14 @@ static int __gebr_geoxml_sequence_check(GebrGeoXmlSequence * sequence, gboolean 
 
 		return GEBR_GEOXML_RETV_SUCCESS;
 	}
+
 	/* on success, return 0 = GEBR_GEOXML_RETV_SUCCESS */
 	return strcmp(tag->str, "server") &&
 	    strcmp(tag->str, "value") &&
 	    strcmp(tag->str, "default") &&
 	    strcmp(tag->str, "option") &&
-	    (!strcmp(tag->str, "parameters") &&
-	     !gebr_geoxml_parameters_get_is_in_group((GebrGeoXmlParameters *) sequence)) &&
 	    strcmp(tag->str, "program") &&
+	    strcmp(tag->str, "parameters") &&
 	    strcmp(tag->str, "category") &&
 	    strcmp(tag->str, "revision") &&
 	    strcmp(tag->str, "flow") && strcmp(tag->str, "path") && strcmp(tag->str, "line");
@@ -336,7 +336,18 @@ int gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence)
 
 	if ((ret = __gebr_geoxml_sequence_check(sequence, TRUE)))
 		return ret;
-	if (__gebr_geoxml_sequence_is_parameter(sequence)
+
+	GdomeDOMString *tag = gdome_el_tagName((GdomeElement *) sequence, &exception);
+
+	/* last instance check */
+	if (!strcmp(tag->str, "parameters")) {
+		GebrGeoXmlParameters *parameters = (GebrGeoXmlParameters*)sequence;
+		GebrGeoXmlParameterGroup *group = gebr_geoxml_parameters_get_group(parameters);
+		if (group != NULL && gebr_geoxml_parameter_group_get_instances_number(group) == 1) 
+			return GEBR_GEOXML_RETV_INVALID_INDEX;
+		else
+			return GEBR_GEOXML_RETV_SUCCESS;
+	} else if (__gebr_geoxml_sequence_is_parameter(sequence)
 	    && gebr_geoxml_parameter_get_is_in_group((GebrGeoXmlParameter *) sequence)) {
 		GdomeElement *parameter_element;
 

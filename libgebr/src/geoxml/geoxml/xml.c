@@ -331,7 +331,7 @@ gulong __gebr_geoxml_get_elements_number(GdomeElement * parent_element, const gc
 	gulong elements_number;
 
 	elements_number = 0;
-	for (child = __gebr_geoxml_get_first_element(parent_element, tag_name); child != NULL; elements_number++)
+	for (child = __gebr_geoxml_get_element_at(parent_element, tag_name, 0, FALSE); child != NULL; elements_number++)
 		child = __gebr_geoxml_next_same_element(child);
 
 	return elements_number;
