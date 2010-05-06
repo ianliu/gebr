@@ -48,6 +48,8 @@ static void on_arrow_down_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * 
 
 static void on_delete_clicked(GtkWidget *button, GebrGeoXmlParameters * sequence);
 
+static void update_arrow_buttons(GtkWidget * frame1, GtkWidget * frame2);
+
 typedef struct {
 	GtkBox * group_vbox;
 	GList * instances_list;
@@ -325,8 +327,9 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit *progr
 		for (gboolean first_instance = TRUE, i = 0; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
 			GtkWidget *widget;
 			widget = gebr_gui_program_edit_load(program_edit, GEBR_GEOXML_PARAMETERS(instance));
-			data->instances_list = g_list_prepend(data->instances_list, GUINT_TO_POINTER(i++));
+			data->instances_list = g_list_prepend(data->instances_list, widget);
 			g_object_set_data(G_OBJECT(widget), "list-node", data->instances_list);
+			g_object_set_data(G_OBJECT(widget), "index", GUINT_TO_POINTER(i++));
 			if (first_instance) {
 				g_signal_connect(expander, "mnemonic-activate",
 						 G_CALLBACK(on_group_expander_mnemonic_activate), program_edit);
@@ -497,18 +500,22 @@ static gboolean on_group_expander_mnemonic_activate(GtkExpander * expander, gboo
  */
 static void on_arrow_up_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * parameter_group)
 {
+	GtkWidget * frame1;
+	GtkWidget * frame2;
 	GList * node;
-	GtkWidget * frame;
-
-	frame = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "frame"));
-	node = (GList*)(g_object_get_data(G_OBJECT(frame), "list-node"));
-
-	if (!g_list_previous(node))
-		return;
-
 	GList * prev;
 	GList * next;
+	guint index1;
+	guint index2;
 	GebrGroupReorderData *data;
+
+	frame1 = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "frame"));
+	node = (GList*)(g_object_get_data(G_OBJECT(frame1), "list-node"));
+
+	if (!node->prev)
+		return;
+
+	frame2 = GTK_WIDGET(node->prev->data);
 
 	data = gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(parameter_group));
 	prev = node->prev;
@@ -522,13 +529,17 @@ static void on_arrow_up_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * pa
 	prev->prev = node;
 	node->next = prev;
 	prev->next = next;
-	next->prev = prev;
+	if (next)
+		next->prev = prev;
 
-	prev->data = GUINT_TO_POINTER(GPOINTER_TO_UINT(prev->data) + 1);
-	node->data = GUINT_TO_POINTER(GPOINTER_TO_UINT(node->data) - 1);
+	index1 = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(frame1), "index")) - 1;
+	index2 = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(frame2), "index")) + 1;
+	g_object_set_data(G_OBJECT(frame1), "index", GUINT_TO_POINTER(index1));
+	g_object_set_data(G_OBJECT(frame2), "index", GUINT_TO_POINTER(index2));
 
-	gtk_box_reorder_child(data->group_vbox, frame, GPOINTER_TO_UINT(node->data));
-	gtk_widget_set_sensitive(button, node->prev != NULL);
+	gtk_box_reorder_child(data->group_vbox, frame1, index1);
+
+	update_arrow_buttons(frame1, frame2);
 }
 
 /**
@@ -536,18 +547,22 @@ static void on_arrow_up_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * pa
  */
 static void on_arrow_down_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * parameter_group)
 {
+	GtkWidget * frame1;
+	GtkWidget * frame2;
 	GList * node;
-	GtkWidget * frame;
-
-	frame = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "frame"));
-	node = (GList*)(g_object_get_data(G_OBJECT(frame), "list-node"));
-
-	if (!g_list_next(node))
-		return;
-
 	GList * prev;
 	GList * next;
+	guint index1;
+	guint index2;
 	GebrGroupReorderData *data;
+
+	frame1 = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "frame"));
+	node = (GList*)(g_object_get_data(G_OBJECT(frame1), "list-node"));
+
+	if (!node->next)
+		return;
+
+	frame2 = GTK_WIDGET(node->next->data);
 
 	data = gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(parameter_group));
 	prev = node->prev;
@@ -561,13 +576,17 @@ static void on_arrow_down_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * 
 	next->next = node;
 	node->prev = next;
 	next->prev = prev;
-	prev->next = next;
+	if (prev)
+		prev->next = next;
 
-	prev->data = GUINT_TO_POINTER(GPOINTER_TO_UINT(prev->data) - 1);
-	node->data = GUINT_TO_POINTER(GPOINTER_TO_UINT(node->data) + 1);
+	index1 = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(frame1), "index")) + 1;
+	index2 = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(frame2), "index")) - 1;
+	g_object_set_data(G_OBJECT(frame1), "index", GUINT_TO_POINTER(index1));
+	g_object_set_data(G_OBJECT(frame2), "index", GUINT_TO_POINTER(index2));
 
-	gtk_box_reorder_child(data->group_vbox, frame, GPOINTER_TO_UINT(node->data));
-	gtk_widget_set_sensitive(button, node->next != NULL);
+	gtk_box_reorder_child(data->group_vbox, frame1, index1);
+
+	update_arrow_buttons(frame1, frame2);
 }
 
 /**
@@ -576,3 +595,29 @@ static void on_arrow_down_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * 
 static void on_delete_clicked(GtkWidget *button, GebrGeoXmlParameters * sequence)
 {
 }
+
+/**
+ * \internal
+ */
+static void update_arrow_buttons(GtkWidget * frame1, GtkWidget * frame2)
+{
+	GList *node1;
+	GList *node2;
+	GtkWidget *up1;
+	GtkWidget *up2;
+	GtkWidget *down1;
+	GtkWidget *down2;
+
+	node1 = (GList *)(g_object_get_data(G_OBJECT(frame1), "list-node"));
+	node2 = (GList *)(g_object_get_data(G_OBJECT(frame2), "list-node"));
+	up1 = GTK_WIDGET(g_object_get_data(G_OBJECT(frame1), "arrow-up"));
+	up2 = GTK_WIDGET(g_object_get_data(G_OBJECT(frame2), "arrow-up"));
+	down1 = GTK_WIDGET(g_object_get_data(G_OBJECT(frame1), "arrow-down"));
+	down2 = GTK_WIDGET(g_object_get_data(G_OBJECT(frame2), "arrow-down"));
+
+	gtk_widget_set_sensitive(up1, node1->prev != NULL);
+	gtk_widget_set_sensitive(up2, node2->prev != NULL);
+	gtk_widget_set_sensitive(down1, node1->next != NULL);
+	gtk_widget_set_sensitive(down2, node2->next != NULL);
+}
+
