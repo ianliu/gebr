@@ -241,7 +241,7 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 	}
 
 	/* gui free */
-	gebr_gui_gebr_gui_program_edit_destroy(ui_parameters->program_edit);
+	gebr_gui_program_edit_destroy(ui_parameters->program_edit);
 	gtk_widget_destroy(GTK_WIDGET(dialog));
 	g_free(ui_parameters);
 }

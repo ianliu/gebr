@@ -986,7 +986,7 @@ static void program_preview_on_response(GtkWidget * dialog, gint response, struc
 		break;
 	case GTK_RESPONSE_CLOSE:
 	default:
-		gebr_gui_gebr_gui_program_edit_destroy(data->program_edit);
+		gebr_gui_program_edit_destroy(data->program_edit);
 		gtk_widget_destroy(dialog);
 		g_free(data);
 		break;

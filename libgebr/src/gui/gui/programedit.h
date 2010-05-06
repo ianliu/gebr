@@ -56,7 +56,7 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer parameter_w
  * \internal
  * Just free.
  */
-void gebr_gui_gebr_gui_program_edit_destroy(GebrGuiProgramEdit *program_edit);
+void gebr_gui_program_edit_destroy(GebrGuiProgramEdit *program_edit);
 
 /**
  * \internal
