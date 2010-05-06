@@ -225,9 +225,9 @@ gboolean parameter_group_dialog_setup_ui(gboolean new_parameter)
 										     (instanciable_check_button)));
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
-out:
 	parameter_load_selected();
-	/* frees */
+
+out:
 	gtk_widget_destroy(dialog);
 	g_free(ui);
 

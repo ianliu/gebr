@@ -1146,11 +1146,9 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 										       (is_list_check_button)));
 	}
 
-out:
-
 	parameter_load_selected();
 
-	/* frees */
+out:
 	gtk_widget_destroy(ui->dialog);
 	g_free(ui);
 	return ret;

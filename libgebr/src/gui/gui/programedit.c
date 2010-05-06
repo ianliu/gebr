@@ -175,24 +175,6 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 
 		hbox = gtk_hbox_new(FALSE, 0);
 
-		button = gtk_button_new();
-		g_object_set_data(G_OBJECT(button), "frame", frame);
-		gtk_container_add(GTK_CONTAINER(button), gtk_arrow_new(GTK_ARROW_DOWN, GTK_SHADOW_NONE));
-		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-		gtk_widget_set_sensitive(button, gebr_geoxml_sequence_get_index(GEBR_GEOXML_SEQUENCE(parameters)) != 1);
-		g_signal_connect(button, "clicked", G_CALLBACK(on_arrow_down_clicked), parameter_group);
-		g_object_set_data(G_OBJECT(frame), "arrow-down", button);
-
-		button = gtk_button_new();
-		g_object_set_data(G_OBJECT(button), "frame", frame);
-		gtk_container_add(GTK_CONTAINER(button), gtk_arrow_new(GTK_ARROW_UP, GTK_SHADOW_NONE));
-		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-		parameter = GEBR_GEOXML_SEQUENCE(parameters);
-		gebr_geoxml_sequence_next(&parameter);
-		gtk_widget_set_sensitive(button, parameter != NULL);
-		g_signal_connect(button, "clicked", G_CALLBACK(on_arrow_up_clicked), parameter_group);
-		g_object_set_data(G_OBJECT(frame), "arrow-up", button);
-
 		if (!gebr_geoxml_parameter_group_get_is_instanciable(parameter_group))
 			gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
 		else {
@@ -204,6 +186,22 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 			g_signal_connect(button, "clicked", G_CALLBACK(on_delete_clicked), parameter_group);
 			g_object_set_data(G_OBJECT(frame), "delete", button);
 		}
+
+		button = gtk_button_new();
+		g_object_set_data(G_OBJECT(button), "frame", frame);
+		g_object_set_data(G_OBJECT(frame), "arrow-down", button);
+		g_signal_connect(button, "clicked", G_CALLBACK(on_arrow_down_clicked), parameter_group);
+
+		gtk_container_add(GTK_CONTAINER(button), gtk_arrow_new(GTK_ARROW_DOWN, GTK_SHADOW_NONE));
+		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
+
+		button = gtk_button_new();
+		g_object_set_data(G_OBJECT(button), "frame", frame);
+		g_object_set_data(G_OBJECT(frame), "arrow-up", button);
+		g_signal_connect(button, "clicked", G_CALLBACK(on_arrow_up_clicked), parameter_group);
+
+		gtk_container_add(GTK_CONTAINER(button), gtk_arrow_new(GTK_ARROW_UP, GTK_SHADOW_NONE));
+		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
 
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 	}
