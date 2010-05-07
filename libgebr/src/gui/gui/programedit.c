@@ -25,6 +25,11 @@
  * Prototypes
  */
 
+typedef struct {
+	GtkBox * group_vbox;
+	GList * instances_list;
+} GebrGroupReorderData;
+
 static GtkWidget *
 gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameters * parameters);
 
@@ -50,10 +55,7 @@ static void on_delete_clicked(GtkWidget *button, GebrGeoXmlParameters * sequence
 
 static void update_arrow_buttons(GtkWidget * frame1, GtkWidget * frame2);
 
-typedef struct {
-	GtkBox * group_vbox;
-	GList * instances_list;
-} GebrGroupReorderData;
+static void on_instance_destroy(GebrGroupReorderData * data);
 
 /*
  * Public functions.
@@ -322,6 +324,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit *progr
 		data->group_vbox = GTK_BOX(group_vbox);
 		gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(parameter_group), data);
 		g_object_set(G_OBJECT(group_vbox), "user-data", deinstanciate_button, NULL);
+		g_object_weak_ref(G_OBJECT(group_vbox), (GWeakNotify)on_instance_destroy, data);
 
 		gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
 		for (gboolean first_instance = TRUE, i = 0; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
@@ -329,6 +332,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit *progr
 			widget = gebr_gui_program_edit_load(program_edit, GEBR_GEOXML_PARAMETERS(instance));
 			data->instances_list = g_list_prepend(data->instances_list, widget);
 			g_object_set_data(G_OBJECT(widget), "list-node", data->instances_list);
+			g_object_set_data(G_OBJECT(widget), "instance", instance);
 			g_object_set_data(G_OBJECT(widget), "index", GUINT_TO_POINTER(i++));
 			if (first_instance) {
 				g_signal_connect(expander, "mnemonic-activate",
@@ -439,6 +443,7 @@ static void gebr_gui_program_edit_instanciate(GtkButton * button, GebrGuiProgram
 	GebrGroupReorderData *data;
 	GtkWidget *deinstanciate_button;
 	GtkWidget *widget;
+	GList *node;
 
 	g_object_get(button, "user-data", &parameter_group, NULL);
 	data = gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(parameter_group));
@@ -446,8 +451,14 @@ static void gebr_gui_program_edit_instanciate(GtkButton * button, GebrGuiProgram
 
 	instance = gebr_geoxml_parameter_group_instanciate(parameter_group);
 	widget = gebr_gui_program_edit_load(program_edit, GEBR_GEOXML_PARAMETERS(instance));
+	data->instances_list = g_list_append(data->instances_list, widget);
+	node = g_list_last(data->instances_list);
+	g_object_set_data(G_OBJECT(widget), "list-node", node);
+	g_object_set_data(G_OBJECT(widget), "instance", instance);
+	g_object_set_data(G_OBJECT(widget), "index", GUINT_TO_POINTER(g_list_length(data->instances_list) - 1));
 	gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(instance), widget);
 	gtk_box_pack_start(data->group_vbox, widget, FALSE, TRUE, 0);
+	update_arrow_buttons(node->data, node->prev->data);
 
 	gtk_widget_set_sensitive(deinstanciate_button, TRUE);
 }
@@ -460,16 +471,21 @@ static void gebr_gui_program_edit_deinstanciate(GtkButton * button, GebrGuiProgr
 {
 	GebrGeoXmlParameterGroup *parameter_group;
 	GebrGeoXmlSequence *last_instance;
+	GebrGroupReorderData *data;
 	GtkWidget *widget;
+	GList *penultimate;
 
 	g_object_get(button, "user-data", &parameter_group, NULL);
+	data = gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(parameter_group));
+	penultimate = g_list_last(data->instances_list)->prev;
+	data->instances_list = g_list_delete_link(data->instances_list, penultimate->next);
 	gebr_geoxml_parameter_group_get_instance(parameter_group, &last_instance,
 						 gebr_geoxml_parameter_group_get_instances_number(parameter_group) - 1);
 
 	widget = gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(last_instance));
 	gtk_widget_destroy(widget);
 	gebr_geoxml_parameter_group_deinstanciate(parameter_group);
-
+	update_arrow_buttons(penultimate->data, penultimate->prev->data);
 	gtk_widget_set_sensitive(GTK_WIDGET(button),
 				 gebr_geoxml_parameter_group_get_instances_number(parameter_group) > 1);
 }
@@ -621,3 +637,8 @@ static void update_arrow_buttons(GtkWidget * frame1, GtkWidget * frame2)
 	gtk_widget_set_sensitive(down2, node2->next != NULL);
 }
 
+static void on_instance_destroy(GebrGroupReorderData * data)
+{
+	g_list_free(data->instances_list);
+	g_free(data);
+}
