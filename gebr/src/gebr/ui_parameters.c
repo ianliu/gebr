@@ -36,8 +36,6 @@
 #include "ui_help.h"
 #include "ui_flow.h"
 
-#define GTK_RESPONSE_DEFAULT	GTK_RESPONSE_APPLY
-
 /*
  * Prototypes
  */
@@ -68,7 +66,7 @@ struct ui_parameters *parameters_configure_setup_ui(void)
 	if (strlen(gebr_geoxml_program_get_help(gebr.program)) == 0)	
 		gtk_widget_set_sensitive(button, FALSE);
 
-	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Default"), GTK_RESPONSE_DEFAULT);
+	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Default"), GTK_RESPONSE_APPLY);
 	g_object_set(G_OBJECT(button), "image",
 		     gtk_image_new_from_stock(GTK_STOCK_REVERT_TO_SAVED, GTK_ICON_SIZE_BUTTON), NULL);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
@@ -227,7 +225,7 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 		}
 		break;
 	}
-	case GTK_RESPONSE_DEFAULT:
+	case GTK_RESPONSE_APPLY:
 		parameters_reset_to_default(gebr_geoxml_program_get_parameters(ui_parameters->program_edit->program));
 		gebr_gui_program_edit_reload(ui_parameters->program_edit, NULL);
 		return;
