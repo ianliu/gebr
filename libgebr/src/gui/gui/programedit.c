@@ -176,6 +176,7 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 	if (parameter_group != NULL) {
 		GtkWidget *hbox;
 		GtkWidget *button;
+		GtkRcStyle *style;
 
 		hbox = gtk_hbox_new(FALSE, 0);
 
@@ -183,16 +184,24 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 			gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
 		else {
 			button = gtk_button_new();
+			style = gtk_rc_style_new();
+			style->xthickness = style->ythickness = 0;
+			gtk_widget_modify_style(button, style);
+			g_object_unref(style);
 			g_object_set(button, "relief", GTK_RELIEF_NONE, NULL);
 			g_object_set_data(G_OBJECT(button), "frame", frame);
 			gtk_container_add(GTK_CONTAINER(button),
-					  gtk_image_new_from_stock(GTK_STOCK_DELETE, GTK_ICON_SIZE_BUTTON));
+					  gtk_image_new_from_stock(GTK_STOCK_DELETE, GTK_ICON_SIZE_MENU));
 			gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
 			g_signal_connect(button, "clicked", G_CALLBACK(on_delete_clicked), parameter_group);
 			g_object_set_data(G_OBJECT(frame), "delete", button);
 		}
 
 		button = gtk_button_new();
+		style = gtk_rc_style_new();
+		style->xthickness = style->ythickness = 0;
+		gtk_widget_modify_style(button, style);
+		g_object_unref(style);
 		g_object_set(button, "relief", GTK_RELIEF_NONE, NULL);
 		g_object_set_data(G_OBJECT(button), "frame", frame);
 		g_object_set_data(G_OBJECT(frame), "arrow-down", button);
@@ -202,6 +211,10 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
 
 		button = gtk_button_new();
+		style = gtk_rc_style_new();
+		style->xthickness = style->ythickness = 0;
+		gtk_widget_modify_style(button, style);
+		g_object_unref(style);
 		g_object_set(button, "relief", GTK_RELIEF_NONE, NULL);
 		g_object_set_data(G_OBJECT(button), "frame", frame);
 		g_object_set_data(G_OBJECT(frame), "arrow-up", button);
