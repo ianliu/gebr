@@ -278,9 +278,6 @@ void gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gcha
 	grandpa = gdome_el_parentNode((GdomeElement*)parameter, &exception);
 	grandpa = gdome_el_parentNode((GdomeElement*)grandpa, &exception);
 
-	puts("[set_label]");
-	puts(gdome_el_tagName((GdomeElement*)grandpa, &exception)->str);
-
 	if (strcmp(gdome_el_tagName((GdomeElement*)grandpa, &exception)->str, "template-instance") == 0) {
 		GSList * elements;
 		const gchar * id;

@@ -57,7 +57,7 @@ static int __gebr_geoxml_sequence_check(GebrGeoXmlSequence * sequence, gboolean 
 	GdomeDOMString *tag = gdome_el_tagName((GdomeElement *) sequence, &exception);
 
 	/* parameter in group check */
-	if (check_master_instance && !strcmp(tag->str, "parameter")) {
+	if (check_master_instance && strcmp(tag->str, "parameter") == 0) {
 		GebrGeoXmlParameters *parameters;
 
 		parameters = (GebrGeoXmlParameters *) gdome_el_parentNode((GdomeElement *) sequence, &exception);
@@ -68,15 +68,18 @@ static int __gebr_geoxml_sequence_check(GebrGeoXmlSequence * sequence, gboolean 
 	}
 
 	/* on success, return 0 = GEBR_GEOXML_RETV_SUCCESS */
-	return strcmp(tag->str, "server") &&
-	    strcmp(tag->str, "value") &&
-	    strcmp(tag->str, "default") &&
-	    strcmp(tag->str, "option") &&
-	    strcmp(tag->str, "program") &&
-	    strcmp(tag->str, "parameters") &&
-	    strcmp(tag->str, "category") &&
-	    strcmp(tag->str, "revision") &&
-	    strcmp(tag->str, "flow") && strcmp(tag->str, "path") && strcmp(tag->str, "line");
+	return strcmp(tag->str, "server")
+		&& strcmp(tag->str, "value")
+		&& strcmp(tag->str, "default")
+		&& strcmp(tag->str, "option")
+		&& strcmp(tag->str, "program")
+		&& strcmp(tag->str, "parameter")
+		&& strcmp(tag->str, "parameters")
+		&& strcmp(tag->str, "category")
+		&& strcmp(tag->str, "revision")
+		&& strcmp(tag->str, "flow")
+		&& strcmp(tag->str, "path")
+		&& strcmp(tag->str, "line");
 }
 
 int
@@ -386,7 +389,7 @@ int gebr_geoxml_sequence_move_into_group(GebrGeoXmlSequence * sequence, GebrGeoX
 		return GEBR_GEOXML_RETV_DIFFERENT_SEQUENCES;
 
 	if (gebr_geoxml_parameter_get_is_in_group((GebrGeoXmlParameter *) sequence)) {
-		GList *referencee;
+		GSList *referencee;
 		const gchar *id;
 		GebrGeoXmlParameterGroup *group;
 		GdomeElement *parameter_element;
