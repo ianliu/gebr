@@ -97,11 +97,11 @@ gsize gebr_geoxml_program_count_parameters(GebrGeoXmlProgram * program)
 	while (param) {
 		type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(param));
 		if (type == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
-			GebrGeoXmlSequence *params_ingroup;
+			GebrGeoXmlParameters *template;
 			GebrGeoXmlSequence *inner_param;
 
-			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(param), &params_ingroup, 0);
-			gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(params_ingroup), &inner_param, 0);
+			template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(param));
+			gebr_geoxml_parameters_get_parameter(template, &inner_param, 0);
 
 			while (inner_param) {
 				n++;

@@ -247,29 +247,28 @@ static void help_insert_parameters_list(GString * help, GebrGeoXmlProgram * prog
 		if (gebr_geoxml_parameter_get_is_program_parameter(GEBR_GEOXML_PARAMETER(parameter)) == TRUE) {
 			add_program_parameter_item(label, GEBR_GEOXML_PARAMETER(parameter));
 		} else {
-			GebrGeoXmlSequence *instance;
+			GebrGeoXmlSequence *template;
 			GebrGeoXmlSequence *subpar;
 
-			g_string_append_printf(label, "              "
-					       "<li class=\"group\"><span class=\"grouplabel\">%s</span><br/>"
+			g_string_append_printf(label, "<li class=\"group\"><span class=\"grouplabel\">%s</span><br/>"
 					       " detailed description comes here.\n\n",
 					       gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)));
 
-			g_string_append_printf(label, "              <ul>\n");
+			g_string_append_printf(label, "<ul>\n");
 
-			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-			subpar = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance));
+			template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(parameter));
+			subpar = gebr_geoxml_parameters_get_first_parameter(template);
 			while (subpar != NULL) {
 				add_program_parameter_item(label, GEBR_GEOXML_PARAMETER(subpar));
 				gebr_geoxml_sequence_next(&subpar);
 			}
-			g_string_append_printf(label, "              </ul></li>\n\n");
+			g_string_append_printf(label, "</ul></li>\n\n");
 
 		}
 
 		gebr_geoxml_sequence_next(&parameter);
 	}
-	g_string_append(label, "            </ul>\n            ");
+	g_string_append(label, "</ul>\n");
 
 	if (refresh) {
 		ptr = strstr(help->str, "<!-- end lst -->");

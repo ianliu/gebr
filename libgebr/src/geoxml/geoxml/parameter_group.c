@@ -170,12 +170,12 @@ GSList *gebr_geoxml_parameter_group_get_parameter_in_all_instances(GebrGeoXmlPar
 	if (parameter_group == NULL)
 		return NULL;
 
-	GebrGeoXmlSequence *first_instance;
+	GebrGeoXmlParameters *template;
 	GebrGeoXmlSequence *parameter;
 	GSList *idref_list;
 
-	gebr_geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
-	gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(first_instance), &parameter, 0);
+	template = gebr_geoxml_parameter_group_get_template(parameter_group);
+	gebr_geoxml_parameters_get_parameter(template, &parameter, 0);
 	idref_list = __gebr_geoxml_parameter_get_referencee_list((GdomeElement *) parameter_group,
 								 __gebr_geoxml_get_attr_value((GdomeElement *)
 											      parameter, "id"));

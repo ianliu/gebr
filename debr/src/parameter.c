@@ -265,7 +265,6 @@ void parameter_new(void)
 			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent,
 					   PARAMETER_XMLPOINTER, &parameter_group, -1);
 
-		//gebr_geoxml_parameter_group_get_instance(parameter_group, &template, 0);
 		template = gebr_geoxml_parameter_group_get_template(parameter_group);
 		if (gebr_geoxml_parameter_get_is_in_group(debr.parameter)) {
 			GebrGeoXmlParameter *xml_parameter;
@@ -463,7 +462,6 @@ void parameter_paste(void)
 		}
 
 		GebrGeoXmlParameterGroup *parameter_group;
-		GebrGeoXmlSequence *first_instance;
 		GtkTreeIter parent;
 
 		/* Let's determine the parameter group to which pre_selected_iter belongs. */
@@ -475,8 +473,6 @@ void parameter_paste(void)
 			/* pre_selected_iter is part (or son) of a group. Let's get its group from its parent. */ 
 			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent,
 					   PARAMETER_XMLPOINTER, &parameter_group, -1);
-
-		gebr_geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
 
 		if (gebr_geoxml_parameter_get_is_in_group(debr.parameter)) {
 			GebrGeoXmlSequence *xml_sequence;
@@ -1223,15 +1219,14 @@ static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group)
 		g_string_free(default_value, TRUE);
 		g_string_free(keyword, TRUE);
 	} else {
-		GebrGeoXmlSequence *instance;
+		GebrGeoXmlParameters *template;
 
 		keyword_label = g_string_new(NULL);
-		gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+		template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(parameter));
 
 		if (gebr_geoxml_parameter_group_get_is_instanciable(GEBR_GEOXML_PARAMETER_GROUP(parameter))) {
-			if (gebr_geoxml_parameter_group_get_instances_number(GEBR_GEOXML_PARAMETER_GROUP(parameter)) ==
-			    1)
-				g_string_printf(keyword_label, _("with 1 instance"));
+			if (gebr_geoxml_parameter_group_get_instances_number(GEBR_GEOXML_PARAMETER_GROUP(parameter)) == 1)
+				g_string_printf(keyword_label, _("with 1 template"));
 			else {
 				g_string_printf(keyword_label,
 						_("with %lu instances"),
@@ -1241,35 +1236,17 @@ static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group)
 		} else
 			g_string_printf(keyword_label, _("not instantiable"));
 
-		if (gebr_geoxml_parameters_get_default_selection(GEBR_GEOXML_PARAMETERS(instance)) != NULL)
+		if (gebr_geoxml_parameters_get_default_selection(template) != NULL)
 			g_string_append_printf(keyword_label, _(" and exclusive"));
 		else
 			g_string_append_printf(keyword_label, _(" and not exclusive"));
 
 		if (load_group) {
-			GebrGeoXmlSequence *first_instance;
+			GebrGeoXmlParameters *template;
 			GebrGeoXmlSequence *group_parameter;
 
-			/* remove all childs for reload */
-//                      if (gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(debr.ui_parameter.tree_store),
-//                      iter, NULL, 0)) {
-//                              GtkTreeIter     child = *iter;
-//                              gboolean        has_next;
-//                              do {
-//                                      GtkTreeIter     tmp;
-// 
-//                                      tmp = child;
-//                                      has_next = gtk_tree_model_iter_next(
-//                                              GTK_TREE_MODEL(debr.ui_parameter.tree_store), &tmp);
-//                                      gtk_tree_store_remove(debr.ui_parameter.tree_store, &child);
-//                                      child = tmp;
-//                              } while (has_next);
-//                      }
-
-			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter),
-								 &first_instance, 0);
-			gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(first_instance), &group_parameter,
-							     0);
+			template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(parameter));
+			gebr_geoxml_parameters_get_parameter(template, &group_parameter, 0);
 			for (; group_parameter != NULL; gebr_geoxml_sequence_next(&group_parameter))
 				parameter_append_to_ui(GEBR_GEOXML_PARAMETER(group_parameter), iter, NULL);
 		}

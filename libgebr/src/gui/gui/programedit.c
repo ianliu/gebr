@@ -267,9 +267,10 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit *progr
 		gtk_expander_set_label_widget(GTK_EXPANDER(expander), label_widget);
 		gebr_gui_gtk_expander_hacked_define(expander, label_widget);
 
+		GebrGeoXmlParameters *template;
 		required = FALSE;
-		gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
-		gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &param, 0);
+		template = gebr_geoxml_parameter_group_get_template(parameter_group);
+		gebr_geoxml_parameters_get_parameter(template, &param, 0);
 		for (; param != NULL; gebr_geoxml_sequence_next(&param)) {
 			if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(param))) {
 				required = TRUE;

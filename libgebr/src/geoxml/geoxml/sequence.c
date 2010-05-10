@@ -376,7 +376,7 @@ gboolean gebr_geoxml_sequence_is_same_sequence(GebrGeoXmlSequence * sequence, Ge
 int gebr_geoxml_sequence_move_into_group(GebrGeoXmlSequence * sequence, GebrGeoXmlParameterGroup * parameter_group)
 {
 	int ret;
-	GebrGeoXmlSequence *first_instance;
+	GebrGeoXmlParameters *template;
 
 	if (parameter_group == NULL)
 		return GEBR_GEOXML_RETV_NULL_PTR;
@@ -386,21 +386,22 @@ int gebr_geoxml_sequence_move_into_group(GebrGeoXmlSequence * sequence, GebrGeoX
 		return GEBR_GEOXML_RETV_DIFFERENT_SEQUENCES;
 
 	if (gebr_geoxml_parameter_get_is_in_group((GebrGeoXmlParameter *) sequence)) {
+		GList *referencee;
+		const gchar *id;
+		GebrGeoXmlParameterGroup *group;
 		GdomeElement *parameter_element;
 
-		__gebr_geoxml_foreach_element(parameter_element,
-					      __gebr_geoxml_parameter_get_referencee_list((GdomeElement *)
-											  gebr_geoxml_parameter_get_group
-											  ((GebrGeoXmlParameter *)
-											   sequence),
-											  __gebr_geoxml_get_attr_value((GdomeElement *) sequence, "id")))
+		id = __gebr_geoxml_get_attr_value((GdomeElement *) sequence, "id");
+		group = gebr_geoxml_parameter_get_group((GebrGeoXmlParameter*)sequence);
+		referencee = __gebr_geoxml_parameter_get_referencee_list((GdomeElement*)group, id);
+
+		__gebr_geoxml_foreach_element(parameter_element, referencee)
 		    __gebr_geoxml_sequence_remove((GebrGeoXmlSequence *) parameter_element);
 	}
 
-	gebr_geoxml_parameter_group_get_instance(parameter_group, &first_instance, 0);
-	gdome_el_insertBefore_protected((GdomeElement *) first_instance, (GdomeNode *) sequence, NULL, &exception);
-	__gebr_geoxml_parameters_do_insert_in_group_stuff(GEBR_GEOXML_PARAMETERS(first_instance),
-							  GEBR_GEOXML_PARAMETER(sequence));
+	template = gebr_geoxml_parameter_group_get_template(parameter_group);
+	gdome_el_insertBefore_protected((GdomeElement *) template, (GdomeNode *) sequence, NULL, &exception);
+	__gebr_geoxml_parameters_do_insert_in_group_stuff(template, GEBR_GEOXML_PARAMETER(sequence));
 
 	return ret;
 }

@@ -108,7 +108,7 @@ GdomeElement *__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * paramete
 		GdomeElement * template;
 		template = __gebr_geoxml_insert_new_element(type_element, "template-instance", NULL);
 		__gebr_geoxml_parameters_append_new(template);
-		gebr_geoxml_parameter_group_add_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter));
+		//gebr_geoxml_parameter_group_add_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter));
 		gebr_geoxml_parameter_group_set_is_instanciable((GebrGeoXmlParameterGroup *)parameter, FALSE);
 		gebr_geoxml_parameter_group_set_expand((GebrGeoXmlParameterGroup *)parameter, FALSE);
 	} else {
@@ -273,18 +273,31 @@ void gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gcha
 {
 	if (parameter == NULL || label == NULL)
 		return;
-	__gebr_geoxml_set_tag_value((GdomeElement *) parameter, "label", label, __gebr_geoxml_create_TextNode);
-	if (gebr_geoxml_parameter_get_is_in_group(parameter)) {
-		GebrGeoXmlParameterGroup *parameter_group;
-		GdomeElement *reference_element;
 
+	GdomeNode *grandpa;
+	grandpa = gdome_el_parentNode((GdomeElement*)parameter, &exception);
+	grandpa = gdome_el_parentNode((GdomeElement*)grandpa, &exception);
+
+	puts("[set_label]");
+	puts(gdome_el_tagName((GdomeElement*)grandpa, &exception)->str);
+
+	if (strcmp(gdome_el_tagName((GdomeElement*)grandpa, &exception)->str, "template-instance") == 0) {
+		GSList * elements;
+		const gchar * id;
+		GdomeElement *reference_element;
+		GebrGeoXmlParameterGroup *parameter_group;
+		
+		id = __gebr_geoxml_get_attr_value((GdomeElement*)parameter, "id");
 		parameter_group = gebr_geoxml_parameter_get_group(parameter);
-		__gebr_geoxml_foreach_element(reference_element,
-					      __gebr_geoxml_get_elements_by_idref((GdomeElement *) parameter_group,
-										  __gebr_geoxml_get_attr_value((GdomeElement *) parameter, "id"), TRUE))
-		    gebr_geoxml_parameter_set_label((GebrGeoXmlParameter *)
-						    gdome_el_parentNode(reference_element, &exception), label);
+		elements = __gebr_geoxml_get_elements_by_idref((GdomeElement*)parameter_group, id, TRUE);
+		__gebr_geoxml_foreach_element(reference_element, elements) {
+			GdomeNode *param;
+			param = gdome_el_parentNode(reference_element, &exception);
+			gebr_geoxml_parameter_set_label((GebrGeoXmlParameter*)param, label);
+		}
 	}
+
+	__gebr_geoxml_set_tag_value((GdomeElement *) parameter, "label", label, __gebr_geoxml_create_TextNode);
 }
 
 const gchar *gebr_geoxml_parameter_get_label(GebrGeoXmlParameter * parameter)

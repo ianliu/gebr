@@ -290,16 +290,16 @@ void compare_parameter(GebrGeoXmlParameter * par1, GebrGeoXmlParameter * par2)
 						  GEBR_GEOXML_PROGRAM_PARAMETER(par2));
 		} else {	/* They are groups */
 
-			GebrGeoXmlSequence *instance1;
-			GebrGeoXmlSequence *instance2;
+			GebrGeoXmlParameters *template1;
+			GebrGeoXmlParameters *template2;
 			GebrGeoXmlSequence *subpar1;
 			GebrGeoXmlSequence *subpar2;
 
-			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(par1), &instance1, 0);
-			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(par2), &instance2, 0);
+			template1 = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(par1));
+			template2 = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(par2));
 
-			subpar1 = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance1));
-			subpar2 = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance2));
+			subpar1 = gebr_geoxml_parameters_get_first_parameter(template1);
+			subpar2 = gebr_geoxml_parameters_get_first_parameter(template2);
 
 			while (subpar1 != NULL || subpar2 != NULL) {
 				isubpar++;

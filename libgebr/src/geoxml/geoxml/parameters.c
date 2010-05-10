@@ -65,7 +65,9 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 	glong index;
 	GebrGeoXmlSequence *instance;
 
+	/* The structure is group/template-instance/parameters, that is why we need the grandparent. */
 	parent = (GdomeElement *) gdome_el_parentNode((GdomeElement *) parameters, &exception);
+	parent = (GdomeElement *) gdome_el_parentNode((GdomeElement *) parent, &exception);
 	if (strcmp(gdome_el_tagName(parent, &exception)->str, "group"))
 		return;
 
@@ -226,19 +228,28 @@ gboolean gebr_geoxml_parameters_get_is_in_group(GebrGeoXmlParameters * parameter
 {
 	if (parameters == NULL)
 		return FALSE;
-	return !strcmp(gdome_el_tagName((GdomeElement *) gdome_el_parentNode((GdomeElement *) parameters, &exception),
-					&exception)->str, "group")
-	    ? TRUE : FALSE;
+
+	GdomeElement *parent;
+
+	parent = (GdomeElement*)gdome_el_parentNode((GdomeElement*)parameters, &exception);
+	if (strcmp(gdome_el_tagName(parent, &exception)->str, "template-instance") == 0)
+		parent = (GdomeElement*)gdome_el_parentNode(parent, &exception);
+
+	return !strcmp(gdome_el_tagName(parent, &exception)->str, "group") ? TRUE : FALSE;
 }
 
 GebrGeoXmlParameterGroup *gebr_geoxml_parameters_get_group(GebrGeoXmlParameters * parameters)
 {
 	if (parameters == NULL)
 		return NULL;
-	GdomeElement *parent_element;
-	parent_element = (GdomeElement*)gdome_el_parentNode((GdomeElement*)parameters, &exception);
-	return !strcmp(gdome_el_tagName(parent_element, &exception)->str, "group")
-	    ? (GebrGeoXmlParameterGroup*)gdome_el_parentNode(parent_element, &exception)
+	GdomeElement *parent;
+	parent = (GdomeElement*)gdome_el_parentNode((GdomeElement*)parameters, &exception);
+
+	if (strcmp(gdome_el_tagName(parent, &exception)->str, "template-instance") == 0)
+		parent = (GdomeElement*)gdome_el_parentNode(parent, &exception);
+
+	return !strcmp(gdome_el_tagName(parent, &exception)->str, "group")
+	    ? (GebrGeoXmlParameterGroup*)gdome_el_parentNode(parent, &exception)
 	    : NULL;
 }
 
