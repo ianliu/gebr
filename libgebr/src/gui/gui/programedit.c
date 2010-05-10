@@ -362,6 +362,21 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit *progr
 		}
 		data->instances_list = g_list_reverse(data->instances_list);
 
+		/* Updates the arrow and delete buttons */
+		GList * tmp;
+		GtkWidget * first_frame;
+		GtkWidget * last_frame;
+		GtkWidget * delete_btn;
+
+		tmp = g_list_last(data->instances_list);
+
+		first_frame = data->instances_list? data->instances_list->data : NULL;
+		last_frame = tmp? tmp->data : NULL;
+		update_arrow_buttons(first_frame, last_frame);
+		delete_btn = g_object_get_data(G_OBJECT(first_frame), "");
+		if (delete_btn)
+			gtk_widget_set_sensitive(delete_btn, last_frame != NULL);
+
 		return expander;
 	} else {
 		GtkWidget *hbox;
