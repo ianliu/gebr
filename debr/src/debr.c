@@ -108,7 +108,7 @@ gboolean debr_config_load(void)
 
 	error = NULL;
 	debr.config.key_file = g_key_file_new();
-	g_key_file_load_from_file(debr.config.key_file, debr.config.path->str, G_KEY_FILE_NONE, &error);
+	gboolean ret = g_key_file_load_from_file(debr.config.key_file, debr.config.path->str, G_KEY_FILE_NONE, &error);
 
 	debr.config.name = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "name", g_get_real_name());
 	debr.config.email = gebr_g_key_file_load_string_key(debr.config.key_file, "general", "email", g_get_user_name());
@@ -122,22 +122,16 @@ gboolean debr_config_load(void)
 
 	debr.config.htmleditor = gebr_g_key_file_load_string_key(debr.config.key_file,
 								 "general", "htmleditor", "");
-
 	debr.config.native_editor = gebr_g_key_file_load_boolean_key(debr.config.key_file,
 								     "general", "native_editor", TRUE);
-
 	debr.config.menu_sort_ascending = gebr_g_key_file_load_boolean_key(debr.config.key_file,
 									   "general", "menu_sort_ascending", TRUE);
-
 	debr.config.menu_sort_column = gebr_g_key_file_load_int_key(debr.config.key_file,
 								    "general", "menu_sort_column", MENU_MODIFIED_DATE);
 
 	g_strfreev(list);
 
-	if (g_hash_table_size(debr.config.opened_folders) == 0)
-		return FALSE;
-
-	return TRUE;
+	return ret;
 }
 
 void debr_config_save(void)
