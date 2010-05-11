@@ -214,7 +214,7 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 				   FSEQ_ICON_COLUMN, icon,
 				   -1);
 		flow_edition_select_component_iter(&iter);
-		if (parameters_check_has_required_unfilled()){
+		if (parameters_check_has_required_unfilled()) {
 			gtk_toggle_action_set_active(GTK_TOGGLE_ACTION
 						     (gtk_action_group_get_action
 						      (gebr.action_group, "flow_edition_status_unconfigured")), TRUE);
