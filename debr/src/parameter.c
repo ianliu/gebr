@@ -1226,7 +1226,7 @@ static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group)
 
 		if (gebr_geoxml_parameter_group_get_is_instanciable(GEBR_GEOXML_PARAMETER_GROUP(parameter))) {
 			if (gebr_geoxml_parameter_group_get_instances_number(GEBR_GEOXML_PARAMETER_GROUP(parameter)) == 1)
-				g_string_printf(keyword_label, _("with 1 template"));
+				g_string_printf(keyword_label, _("with 1 instance"));
 			else {
 				g_string_printf(keyword_label,
 						_("with %lu instances"),

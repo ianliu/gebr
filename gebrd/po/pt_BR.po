@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebrd 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-03 11:32-0300\n"
+"POT-Creation-Date: 2010-05-11 15:56-0300\n"
 "PO-Revision-Date: 2010-05-03 11:35-0300\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../src/client.c:99
+#: ../src/client.c:100
 #, c-format
 msgid "Connection error '%s' on client '%s'"
 msgstr "Erro '%s' na conexão com o servidor '%s'"
@@ -40,81 +40,81 @@ msgstr "Tipo de parâmetro desconhecido.\n"
 msgid "Job '%s' sent output not in UTF-8."
 msgstr "Tarefa '%s' não enviou a saida no formato UTF-8"
 
-#: ../src/job.c:528
+#: ../src/job.c:527
 #, c-format
 msgid "Empty flow.\n"
 msgstr "Fluxo vazio.\n"
 
-#: ../src/job.c:536 ../src/job.c:605
+#: ../src/job.c:535 ../src/job.c:604
 #, c-format
 msgid "%u) Skiping disabled/unconfigured program '%s'.\n"
 msgstr "%u) Desconsiderando programa '%s' desabilitado/não configurado.\n"
 
-#: ../src/job.c:542
+#: ../src/job.c:541
 #, c-format
 msgid "No configured programs.\n"
 msgstr "Sem programas configurados.\n"
 
-#: ../src/job.c:552
+#: ../src/job.c:551
 #, c-format
 msgid "No input file selected.\n"
 msgstr "Sem arquivo de entrada selecionado.\n"
 
-#: ../src/job.c:559
+#: ../src/job.c:558
 #, c-format
 msgid "Input file %s not present or not accessable.\n"
 msgstr "Arquivo de entrada %s não encontrado ou não acessível.\n"
 
-#: ../src/job.c:576
+#: ../src/job.c:575
 #, c-format
 msgid "Requested MPI (%s) is not supported by this server.\n"
 msgstr "MPI (%s) solicitado não é suportado pelo servidor.\n"
 
-#: ../src/job.c:589 ../src/job.c:661
+#: ../src/job.c:588 ../src/job.c:660
 #, c-format
 msgid "Write permission to %s not granted.\n"
 msgstr "Permissão de escrita para %s não concedida.\n"
 
 #. Previous does not write to stdin but current expect something
-#: ../src/job.c:624
+#: ../src/job.c:623
 #, c-format
 msgid "Broken flow before %s (no input).\n"
 msgstr "Fluxo interrompido depois de %s (sem entrada).\n"
 
 #. Previous does write to stdin but current does not carry about
-#: ../src/job.c:628
+#: ../src/job.c:627
 #, c-format
 msgid "Broken flow before %s (unexpected output).\n"
 msgstr "Fluxo interrompido antes de %s (saída inesperada).\n"
 
-#: ../src/job.c:654
+#: ../src/job.c:653
 #, c-format
 msgid "No error file selected; error output merged with standard output.\n"
 msgstr ""
 "Sem arquivo de erro selecionado; saída de erro será mesclada com a saída "
 "padrão.\n"
 
-#: ../src/job.c:657
+#: ../src/job.c:656
 #, c-format
 msgid "Proceeding without output file.\n"
 msgstr "Prosseguindo sem arquivo de saída.\n"
 
-#: ../src/job.c:780
+#: ../src/job.c:779
 #, c-format
 msgid "Cannot submit job to MOAB server.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB.\n"
 
-#: ../src/job.c:786
+#: ../src/job.c:785
 #, c-format
 msgid "Cannot submit job to MOAB server: %s.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB: %s.\n"
 
-#: ../src/job.c:796
+#: ../src/job.c:795
 #, c-format
 msgid "Cannot get MOAB job id.\n"
 msgstr "Não foi possível obter a identificação da tarefa no MOAB.\n"
 
-#: ../src/job.c:954 ../src/job.c:958
+#: ../src/job.c:953 ../src/job.c:957
 #, c-format
 msgid "Cannot cancel job at MOAB server.\n"
 msgstr "Não foi possível cancelar a tarefa no servidor MOAB.\n"
