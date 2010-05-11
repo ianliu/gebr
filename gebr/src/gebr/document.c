@@ -204,7 +204,6 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 					      __document_discard_menu_ref_callback : NULL)))
 		return ret;
 
-	GtkDialog *dialog;
 	GString *string;
 	GebrGeoXmlDocument *parent_document;
 	gboolean free_document = FALSE;
@@ -271,33 +270,35 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		goto out;
 	}
 
-	dialog = GTK_DIALOG(gtk_message_dialog_new(GTK_WINDOW(gebr.window),
-						   (GtkDialogFlags)(GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL),
-						   GTK_MESSAGE_ERROR,
-						   GTK_BUTTONS_NONE,
-						   "Could not load %s %s at %s.\nError: %s\n", document_name,
-						   string->str, path,
-						   gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret)));
+	GtkWidget *dialog;
+	dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW(gebr.window),
+						    (GtkDialogFlags)(GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL),
+						    GTK_MESSAGE_ERROR, GTK_BUTTONS_NONE,
+						    "<span weight='bold' size='large'>Could not load %s</span>", document_name);
+
 	g_string_printf(string, "Couldn't load %s", document_name);
 	gtk_window_set_title(GTK_WINDOW(dialog), string->str); 
+	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog),
+						 _("The file %s could not be loaded.\n%s"),
+						 path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 
 	/* for imported documents */
 	if (!document_path_is_at_gebr_data_dir(path)) {
-		gtk_dialog_add_button(dialog, GTK_STOCK_OK, 0);
-		gtk_widget_show_all(GTK_WIDGET(dialog));
-		gtk_dialog_run(dialog);
+		gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_OK, 0);
+		gtk_widget_show_all(dialog);
+		gtk_dialog_run(GTK_DIALOG(dialog));
 		goto out;
 	}
 
-	gtk_dialog_add_button(dialog, _("Ignore"), 0);
-	GtkWidget * export = gtk_dialog_add_button(dialog, _("Export"), 1);
-	gtk_button_box_set_child_secondary(GTK_BUTTON_BOX(dialog->action_area), export, TRUE);
-	gtk_dialog_add_button(dialog, _("Delete"), 2);
+	gtk_dialog_add_button(GTK_DIALOG(dialog), _("Ignore"), 0);
+	GtkWidget * export = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Export"), 1);
+	gtk_button_box_set_child_secondary(GTK_BUTTON_BOX(GTK_DIALOG(dialog)->action_area), export, TRUE);
+	gtk_dialog_add_button(GTK_DIALOG(dialog), _("Delete"), 2);
 
-	gtk_widget_show_all(GTK_WIDGET(dialog));
+	gtk_widget_show_all(dialog);
 	gint response;
 	gboolean keep_dialog = FALSE;
-	do switch ((response = gtk_dialog_run(dialog))) {
+	do switch ((response = gtk_dialog_run(GTK_DIALOG(dialog)))) {
 	case 1: { /* Export */
 		gchar * export_path;
 		GtkWidget *chooser_dialog;
@@ -400,7 +401,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		gebr_geoxml_document_free(*document);
 		*document = NULL;
 	}
-	gtk_widget_destroy(GTK_WIDGET(dialog));
+	gtk_widget_destroy(dialog);
 
 out:	g_string_free(string, TRUE);
 	if (free_document)

@@ -36,10 +36,11 @@ const gchar *gebr_geoxml_error_string(enum GEBR_GEOXML_RETV error)
 		N_("Not an enum."),
 		N_("Reference to itself."),
 		N_("Not first instance of the group."),
+		N_("Document seems to be from newer version of GêBR."),
 	};
 	guint index = -(guint) error;
 
-	if (index > 13)
+	if (index >= GEBR_GEOXML_RETV_LENGTH)
 		return NULL;
 	return error_string_array[index];
 }

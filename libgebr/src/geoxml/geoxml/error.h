@@ -43,6 +43,7 @@ G_BEGIN_DECLS
  * Enumeration for possible return values of complex functions.
  */
 enum GEBR_GEOXML_RETV {
+
 	GEBR_GEOXML_RETV_SUCCESS = 0,
 
 	/**
@@ -51,64 +52,85 @@ enum GEBR_GEOXML_RETV {
 	 * Returned by all complex functions.
 	 */
 	GEBR_GEOXML_RETV_NULL_PTR = -1,
+
 	/**
 	 * An memory allocation operation could not be made.
 	 *
 	 * Returned by complex functions that requires modification.
 	 */
 	GEBR_GEOXML_RETV_NO_MEMORY = -2,
+
 	/**
-	 * A file could not be read on document load because 
-	 * it does not exist. 
-	 *
+	 * A file could not be read on document load because it does not exist. 
 	 * Returned by 'gebr_geoxml_flow_load' and 'gebr_geoxml_flow_validate'
 	 */
 	GEBR_GEOXML_RETV_FILE_NOT_FOUND = -3,
+
 	/**
-	 * A file could not be read or written because it
-	 * there is no enough permission
-	 * to access (read or write depending on the function).
-	 *
+	 * A file could not be read or written because it there is no enough permission to access (read or write
+	 * depending on the function).
 	 * Returned by 'gebr_geoxml_flow_load', 'gebr_geoxml_flow_validate' and 'gebr_geoxml_flow_save'.
 	 */
 	GEBR_GEOXML_RETV_PERMISSION_DENIED = -4,
+
 	/**
 	 * The index is equal or greater than the list.
 	 */
 	GEBR_GEOXML_RETV_INVALID_INDEX = -5,
+
 	/**
 	 * The parsed flow is invalid acording to its DTD.
 	 */
 	GEBR_GEOXML_RETV_INVALID_DOCUMENT = -6,
+
 	/**
-	 * libgeoxml documents must not specify DTDs, as it uses the attribute version of root element to find the appropriate the DTD. DTDs are kept in /usr/share/libgeoxml (specifically at ${datarootdir}/libgeoxml, run '--configure --help' for more information).
+	 * libgeoxml documents must not specify DTDs, as it uses the attribute version of root element to find the
+	 * appropriate the DTD. DTDs are kept in /usr/share/libgeoxml (specifically at ${datarootdir}/libgeoxml, run
+	 * '--configure --help' for more information).
 	 */
 	GEBR_GEOXML_RETV_DTD_SPECIFIED = -7,
+
 	/**
-	 * Can't read DTD equivalent to document's version in libgeoxml data folder (${datarootdir}/libgeoxml, run '--configure --help' for more information). Verify if it exists or if you read permissions for it.
+	 * Can't read DTD equivalent to document's version in libgeoxml data folder (${datarootdir}/libgeoxml, run
+	 * '--configure --help' for more information). Verify if it exists or if you read permissions for it.
 	 */
 	GEBR_GEOXML_RETV_CANT_ACCESS_DTD = -8,
+
 	/**
 	 * The function parameter is not a sequence.
 	 */
 	GEBR_GEOXML_RETV_NOT_A_SEQUENCE = -9,
+
 	/**
 	 * The user tried to mix two elements of different sequences.
 	 */
 	GEBR_GEOXML_RETV_DIFFERENT_SEQUENCES = -10,
+
 	/**
 	 * The parameter passed is not a enum parameter.
 	 */
 	GEBR_GEOXML_RETV_PARAMETER_NOT_ENUM = -11,
+
 	/**
-	 * The user tried to create a parameter that reference to itself
+	 * The user tried to create a parameter that reference to itself.
 	 */
 	GEBR_GEOXML_RETV_REFERENCE_TO_ITSELF = -12,
+
 	/**
 	 * The operation could not be made because it is not the
 	 * first instance of a group, aka the master instance.
 	 */
 	GEBR_GEOXML_RETV_NOT_MASTER_INSTANCE = -13,
+
+	/**
+	 * The version of the loaded document is newer than GêBR.
+	 */
+	GEBR_GEOXML_RETV_NEWER_VERSION = -14,
+
+	/**
+	 * Number of return flags.
+	 */
+	GEBR_GEOXML_RETV_LENGTH = 15,
 };
 
 /**
