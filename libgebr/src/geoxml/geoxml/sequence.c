@@ -346,10 +346,11 @@ int gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence)
 	if (!strcmp(tag->str, "parameters")) {
 		GebrGeoXmlParameters *parameters = (GebrGeoXmlParameters*)sequence;
 		GebrGeoXmlParameterGroup *group = gebr_geoxml_parameters_get_group(parameters);
-		if (group != NULL && gebr_geoxml_parameter_group_get_instances_number(group) == 1) 
-			return GEBR_GEOXML_RETV_INVALID_INDEX;
+		if (group != NULL && (gebr_geoxml_parameter_group_get_instances_number(group) == 1 ||
+		    gebr_geoxml_parameter_group_get_template(group) == parameters)) 
+			ret = GEBR_GEOXML_RETV_INVALID_INDEX;
 		else
-			return GEBR_GEOXML_RETV_SUCCESS;
+			ret = GEBR_GEOXML_RETV_SUCCESS;
 	} else if (__gebr_geoxml_sequence_is_parameter(sequence)
 	    && gebr_geoxml_parameter_get_is_in_group((GebrGeoXmlParameter *) sequence)) {
 		GdomeElement *parameter_element;
@@ -362,10 +363,10 @@ int gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence)
 											  __gebr_geoxml_get_attr_value((GdomeElement *) sequence, "id")))
 		    __gebr_geoxml_sequence_remove((GebrGeoXmlSequence *) parameter_element);
 	}
-	/* must be done after cause we need the id */
-	__gebr_geoxml_sequence_remove(sequence);
+	if (ret == GEBR_GEOXML_RETV_SUCCESS)
+		__gebr_geoxml_sequence_remove(sequence);
 
-	return GEBR_GEOXML_RETV_SUCCESS;
+	return ret;
 }
 
 gboolean gebr_geoxml_sequence_is_same_sequence(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * other)
