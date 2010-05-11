@@ -12,3 +12,4 @@ src/parametergroup.c
 src/preferences.c
 src/program.c
 src/validate.c
+src/menu-dialog-save-ui.glade

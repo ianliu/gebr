@@ -34,7 +34,6 @@
 #include "program.h"
 #include "interface.h"
 #include "categoryedit.h"
-#include "menu_dialog_save.h"
 
 /*
  * Prototypes
@@ -818,7 +817,7 @@ gboolean menu_cleanup_folder(GtkTreeIter * folder)
 		return TRUE;
 
 	builder = gtk_builder_new();
-	gtk_builder_add_from_string(builder, menu_dialog_save_def, -1, &error);
+	gtk_builder_add_from_file(builder, GLADE_DIR "/menu-dialog-save-ui.glade", &error);
 	if (error) {
 		g_warning("%s", error->message);
 		g_error_free(error);

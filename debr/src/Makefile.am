@@ -19,6 +19,9 @@ NULL=
 
 bin_PROGRAMS = debr
 
+debrgladedir = $(datadir)/debr/glade/
+debrglade_DATA = menu-dialog-save-ui.glade
+
 noinst_LIBRARIES = libdebr.a
 libdebr_a_SOURCES = \
 	callbacks.c \
@@ -53,7 +56,7 @@ noinst_HEADERS = \
 
 EXTRA_DIST = $(noinst_HEADERS)
 
-INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
+INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" -DGLADE_DIR=\""$(debrgladedir)"\"
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
 	$(GEBR_CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_GUI_CFLAGS)
 debr_LDADD = libdebr.a $(INTLLIBS) \
