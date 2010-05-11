@@ -243,7 +243,6 @@ void flow_export(void)
 	check_box = gtk_check_button_new_with_label(_("Make this flow user-independent."));
 	chooser_dialog = gebr_gui_save_dialog_new(title->str, GTK_WINDOW(gebr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".flw");
-	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(chooser_dialog), flow_filename);
 
 	file_filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(file_filter, _("Flow files (*.flw)"));
