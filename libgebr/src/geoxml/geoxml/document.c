@@ -53,7 +53,6 @@ struct gebr_geoxml_document {
 };
 
 /**
- *
  * \internal
  */
 typedef GdomeDocument *(*createDoc_func) (GdomeDOMImplementation *, char *, unsigned int, GdomeException *);
@@ -71,6 +70,12 @@ static gint dom_implementation_ref_count = 0;
  * Used at GebrGeoXmlObject's methods.
  */
 GdomeDocument *clipboard_document = NULL;
+
+/**
+ * \internal
+ * Checks if \p version has the form '%d.%d.%d', ie three numbers separated by a dot.
+ */
+gboolean gebr_geoxml_document_is_version_valid(const gchar * version);
 
 /**
  * \internal
@@ -175,7 +180,7 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 	GdomeDocumentType *tmp_document_type;
 
 	GdomeElement *root_element;
-	gchar *version;
+	const gchar *version;
 
 	int ret;
 
@@ -191,10 +196,17 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 	dtd_filename = g_string_new(NULL);
 	root_element = gebr_geoxml_document_root_element(document);
 
-	/* find DTD */
+	/* If there is no version attribute, the document is invalid */
+	version = gebr_geoxml_document_get_version((GebrGeoXmlDocument *) document);
+	if (!gebr_geoxml_document_is_version_valid(version)) {
+		ret = GEBR_GEOXML_RETV_INVALID_DOCUMENT;
+		goto out;
+	}
+
+	/* Find the DTD spec file. If the file doesn't exists, it may mean that this document is from newer version. */
 	g_string_printf(dtd_filename, "%s/%s-%s.dtd", GEBR_GEOXML_DTD_DIR,
 			gdome_el_nodeName(root_element, &exception)->str,
-			gebr_geoxml_document_get_version((GebrGeoXmlDocument *) document));
+			version);
 	if (g_file_test(dtd_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == FALSE
 	    || g_access(dtd_filename->str, R_OK) < 0) {
 		ret = GEBR_GEOXML_RETV_CANT_ACCESS_DTD;
@@ -273,7 +285,7 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument * document, GebrGeo
 		}
 	}
 
-	version = (gchar *) gebr_geoxml_document_get_version((GebrGeoXmlDocument *) document);
+	// version = (gchar *) gebr_geoxml_document_get_version((GebrGeoXmlDocument *) document);
 	/* document 0.1.x to 0.2.0 */
 	if (strcmp(version, "0.2.0") < 0) {
 		GdomeElement *element;
@@ -907,4 +919,13 @@ const gchar *gebr_geoxml_document_get_help(GebrGeoXmlDocument * document)
 	if (document == NULL)
 		return NULL;
 	return __gebr_geoxml_get_tag_value(gebr_geoxml_document_root_element(document), "help");
+}
+
+gboolean gebr_geoxml_document_is_version_valid(const gchar * version)
+{
+	if (!version)
+		return FALSE;
+
+	//guint major, minor, micro;
+	return TRUE;
 }
