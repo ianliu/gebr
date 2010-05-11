@@ -180,9 +180,7 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 
 		hbox = gtk_hbox_new(FALSE, 0);
 
-		if (!gebr_geoxml_parameter_group_get_is_instanciable(parameter_group))
-			gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
-		else {
+		if (gebr_geoxml_parameter_group_get_is_instanciable(parameter_group)) {
 			button = gtk_button_new();
 			style = gtk_rc_style_new();
 			style->xthickness = style->ythickness = 0;
@@ -616,7 +614,7 @@ static void on_arrow_down_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * 
 	frame1 = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "frame"));
 	node = (GList*)(g_object_get_data(G_OBJECT(frame1), "list-node"));
 	instance = GEBR_GEOXML_SEQUENCE(g_object_get_data(G_OBJECT(frame1), "instance"));
-	gebr_geoxml_sequence_move_up(instance);
+	gebr_geoxml_sequence_move_down(instance);
 
 	if (!node->next)
 		return;
