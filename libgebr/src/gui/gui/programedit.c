@@ -53,7 +53,7 @@ static void on_arrow_down_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * 
 
 static void on_delete_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * parameter_group);
 
-static void update_arrow_buttons(GtkWidget * frame1, GtkWidget * frame2);
+static void update_frame(GtkWidget * frame);
 
 static void on_instance_destroy(GebrGroupReorderData * data);
 
@@ -339,6 +339,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit *progr
 		data->group_vbox = GTK_BOX(group_vbox);
 		gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(parameter_group), data);
 		g_object_set(G_OBJECT(group_vbox), "user-data", deinstanciate_button, NULL);
+		g_printf("deinstanciate_button = %p\n", deinstanciate_button);
 		g_object_weak_ref(G_OBJECT(group_vbox), (GWeakNotify)on_instance_destroy, data);
 
 		gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
@@ -364,16 +365,13 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit *progr
 		GList * tmp;
 		GtkWidget * first_frame;
 		GtkWidget * last_frame;
-		GtkWidget * delete_btn;
 
 		tmp = g_list_last(data->instances_list);
 
 		first_frame = data->instances_list? data->instances_list->data : NULL;
 		last_frame = tmp? tmp->data : NULL;
-		update_arrow_buttons(first_frame, last_frame);
-		delete_btn = g_object_get_data(G_OBJECT(first_frame), "");
-		if (delete_btn)
-			gtk_widget_set_sensitive(delete_btn, last_frame != NULL);
+		update_frame(first_frame);
+		update_frame(last_frame);
 
 		return expander;
 	} else {
@@ -488,12 +486,8 @@ static void gebr_gui_program_edit_instanciate(GtkButton * button, GebrGuiProgram
 	g_object_set_data(G_OBJECT(widget), "index", GUINT_TO_POINTER(g_list_length(data->instances_list) - 1));
 	gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(instance), widget);
 	gtk_box_pack_start(data->group_vbox, widget, FALSE, TRUE, 0);
-	update_arrow_buttons(node->data, node->prev->data);
-
-	/* Enables first 'delete' button */
-	GtkWidget *delete;
-	delete = GTK_WIDGET(g_object_get_data(G_OBJECT(data->instances_list->data), "delete"));
-	gtk_widget_set_sensitive(delete, TRUE);
+	update_frame(node->data);
+	update_frame(node->prev->data);
 
 	gtk_widget_set_sensitive(deinstanciate_button, TRUE);
 }
@@ -520,7 +514,8 @@ static void gebr_gui_program_edit_deinstanciate(GtkButton * button, GebrGuiProgr
 	widget = gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(last_instance));
 	gtk_widget_destroy(widget);
 	gebr_geoxml_parameter_group_deinstanciate(parameter_group);
-	update_arrow_buttons(penultimate->data, penultimate->prev? penultimate->prev->data:NULL);
+	update_frame(penultimate->data);
+	update_frame(penultimate->prev? penultimate->prev->data:NULL);
 	gtk_widget_set_sensitive(GTK_WIDGET(button),
 				 gebr_geoxml_parameter_group_get_instances_number(parameter_group) > 1);
 }
@@ -593,7 +588,8 @@ static void on_arrow_up_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * pa
 
 	gtk_box_reorder_child(data->group_vbox, frame1, index1);
 
-	update_arrow_buttons(frame1, frame2);
+	update_frame(frame1);
+	update_frame(frame2);
 }
 
 /**
@@ -643,7 +639,8 @@ static void on_arrow_down_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * 
 
 	gtk_box_reorder_child(data->group_vbox, frame1, index1);
 
-	update_arrow_buttons(frame1, frame2);
+	update_frame(frame1);
+	update_frame(frame2);
 }
 
 /**
@@ -668,12 +665,15 @@ static void on_delete_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * para
 	instance = GEBR_GEOXML_SEQUENCE(g_object_get_data(G_OBJECT(frame), "instance"));
 	data->instances_list = g_list_delete_link(data->instances_list, node);
 	gebr_geoxml_sequence_remove(instance);
-	update_arrow_buttons(frame_prev, frame_next);
+	update_frame(frame_prev);
+	update_frame(frame_next);
 
-	if (g_list_length(data->instances_list) == 1) {
-		GtkWidget *delete;
-		delete = GTK_WIDGET(g_object_get_data(G_OBJECT(data->instances_list->data), "delete"));
-		gtk_widget_set_sensitive(delete, FALSE);
+	/* If there is only one item in the list, we must disable the 'Deinstanciate' button. */
+	if (!data->instances_list->next) {
+		GtkWidget * deinstanciate;
+		g_object_get(data->group_vbox, "user-data", &deinstanciate, NULL);
+		g_printf("deinstanciate = %p\n", deinstanciate);
+		gtk_widget_set_sensitive(deinstanciate, TRUE);
 	}
 
 	gtk_widget_destroy(frame);
@@ -682,29 +682,21 @@ static void on_delete_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * para
 /**
  * \internal
  */
-static void update_arrow_buttons(GtkWidget * frame1, GtkWidget * frame2)
+static void update_frame(GtkWidget * frame)
 {
-	GList *node1;
-	GList *node2;
-	GtkWidget *up1;
-	GtkWidget *up2;
-	GtkWidget *down1;
-	GtkWidget *down2;
+	GList *node;
+	GtkWidget *up;
+	GtkWidget *down;
+	GtkWidget *delbtn;
 
-	if (frame1) {
-		node1 = (GList *)(g_object_get_data(G_OBJECT(frame1), "list-node"));
-		up1 = GTK_WIDGET(g_object_get_data(G_OBJECT(frame1), "arrow-up"));
-		down1 = GTK_WIDGET(g_object_get_data(G_OBJECT(frame1), "arrow-down"));
-		gtk_widget_set_sensitive(up1, node1->prev != NULL);
-		gtk_widget_set_sensitive(down1, node1->next != NULL);
-	}
-
-	if (frame2) {
-		node2 = (GList *)(g_object_get_data(G_OBJECT(frame2), "list-node"));
-		up2 = GTK_WIDGET(g_object_get_data(G_OBJECT(frame2), "arrow-up"));
-		down2 = GTK_WIDGET(g_object_get_data(G_OBJECT(frame2), "arrow-down"));
-		gtk_widget_set_sensitive(up2, node2->prev != NULL);
-		gtk_widget_set_sensitive(down2, node2->next != NULL);
+	if (frame) {
+		node = (GList *)(g_object_get_data(G_OBJECT(frame), "list-node"));
+		up = GTK_WIDGET(g_object_get_data(G_OBJECT(frame), "arrow-up"));
+		down = GTK_WIDGET(g_object_get_data(G_OBJECT(frame), "arrow-down"));
+		delbtn = GTK_WIDGET(g_object_get_data(G_OBJECT(frame), "delete"));
+		gtk_widget_set_sensitive(up, node->prev != NULL);
+		gtk_widget_set_sensitive(down, node->next != NULL);
+		gtk_widget_set_sensitive(delbtn, node->next || node->prev);
 	}
 }
 
