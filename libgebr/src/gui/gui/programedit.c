@@ -339,7 +339,6 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit *progr
 		data->group_vbox = GTK_BOX(group_vbox);
 		gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(parameter_group), data);
 		g_object_set(G_OBJECT(group_vbox), "user-data", deinstanciate_button, NULL);
-		g_printf("deinstanciate_button = %p\n", deinstanciate_button);
 		g_object_weak_ref(G_OBJECT(group_vbox), (GWeakNotify)on_instance_destroy, data);
 
 		gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
@@ -672,8 +671,7 @@ static void on_delete_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * para
 	if (!data->instances_list->next) {
 		GtkWidget * deinstanciate;
 		g_object_get(data->group_vbox, "user-data", &deinstanciate, NULL);
-		g_printf("deinstanciate = %p\n", deinstanciate);
-		gtk_widget_set_sensitive(deinstanciate, TRUE);
+		gtk_widget_set_sensitive(deinstanciate, FALSE);
 	}
 
 	gtk_widget_destroy(frame);
