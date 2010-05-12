@@ -580,6 +580,9 @@ static void on_arrow_up_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * pa
 	if (next)
 		next->prev = prev;
 
+	if (!node->prev)
+		data->instances_list = node;
+
 	index1 = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(frame1), "index")) - 1;
 	index2 = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(frame2), "index")) + 1;
 	g_object_set_data(G_OBJECT(frame1), "index", GUINT_TO_POINTER(index1));
@@ -630,6 +633,8 @@ static void on_arrow_down_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * 
 	next->prev = prev;
 	if (prev)
 		prev->next = next;
+	else
+		data->instances_list = next;
 
 	index1 = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(frame1), "index")) + 1;
 	index2 = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(frame2), "index")) - 1;
