@@ -270,6 +270,12 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		goto out;
 	}
 
+	gchar *fname;
+	fname = g_path_get_basename(path);
+	g_string_printf(string, "Error loading '%s': %s",
+			fname, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
+	gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, string->str);
+
 	GtkWidget *dialog;
 	dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW(gebr.window),
 						    (GtkDialogFlags)(GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL),
@@ -280,7 +286,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	gtk_window_set_title(GTK_WINDOW(dialog), string->str); 
 	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog),
 						 _("The file %s could not be loaded.\n%s"),
-						 path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
+						 fname, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 
 	/* for imported documents */
 	if (!document_path_is_at_gebr_data_dir(path)) {
