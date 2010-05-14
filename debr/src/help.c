@@ -19,6 +19,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <regex.h>
+#include <locale.h>
 
 #include <sys/wait.h>
 #include <glib/gstdio.h>
@@ -247,7 +248,7 @@ static void help_insert_parameters_list(GString * help, GebrGeoXmlProgram * prog
 		if (gebr_geoxml_parameter_get_is_program_parameter(GEBR_GEOXML_PARAMETER(parameter)) == TRUE) {
 			add_program_parameter_item(label, GEBR_GEOXML_PARAMETER(parameter));
 		} else {
-			GebrGeoXmlSequence *template;
+			GebrGeoXmlParameters *template;
 			GebrGeoXmlSequence *subpar;
 
 			g_string_append_printf(label, "<li class=\"group\"><span class=\"grouplabel\">%s</span><br/>"
