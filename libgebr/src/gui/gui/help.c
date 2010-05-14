@@ -279,6 +279,9 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window, struct help
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	web_view = webkit_web_view_new();
+#if WEBKIT_CHECK_VERSION(1,1,13)
+	g_object_set(G_OBJECT(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(web_view))), "enable-universal-access-from-file-uris", TRUE, NULL);
+#endif
 
 	/* Place the WebKitWebView in the GtkScrolledWindow */
 	gtk_container_add(GTK_CONTAINER(scrolled_window), web_view);

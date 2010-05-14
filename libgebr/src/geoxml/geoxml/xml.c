@@ -164,30 +164,27 @@ GdomeElement *__gebr_geoxml_get_element_at(GdomeElement * parent_element, const 
 
 GdomeElement *__gebr_geoxml_get_element_by_id(GdomeElement * base, const gchar * id)
 {
+	/* gdome_doc_getElementById only work with xml:id element */
 	GdomeElement *document_element;
 	gint i;
 
 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(base, &exception), &exception);
 	for (i = 0; id_tags[i] != NULL; ++i) {
-		GdomeDOMString *string;
+
+		GdomeDOMString *string = gdome_str_mkref(id_tags[i]);
 		GdomeNodeList *node_list;
-		gint j, l;
-
-		string = gdome_str_mkref(id_tags[i]);
 		node_list = gdome_el_getElementsByTagName(document_element, string, &exception);
+		gdome_nl_unref(node_list, &exception);
+		gdome_str_unref(string);
 
-		l = gdome_nl_length(node_list, &exception);
-		/* get the list of elements with this tag_name. */
-		for (j = 0; j < l; ++j) {
+		GSList * list = __gebr_geoxml_nodelist_to_gslist(node_list);
+		for (GSList *i = list; i != NULL; i = g_slist_next(i)) {
 			GdomeElement *element;
 
-			element = (GdomeElement *) gdome_nl_item(node_list, j, &exception);
+			element = (GdomeElement *)i->data;
 			if (!strcmp(__gebr_geoxml_get_attr_value(element, "id"), id))
 				return element;
 		}
-
-		gdome_str_unref(string);
-		gdome_nl_unref(node_list, &exception);
 	}
 
 	return NULL;
@@ -556,3 +553,17 @@ GdomeXPathResult *__gebr_geoxml_xpath_evaluate(GdomeElement * context, const gch
 
 	return xpath_result;
 }
+
+GSList *__gebr_geoxml_nodelist_to_gslist(GdomeNodeList *node_list)
+{
+	GSList *list = NULL;
+
+	gint l = gdome_nl_length(node_list, &exception);
+	/* get the list of elements with this tag_name. */
+	for (gint j = 0; j < l; ++j)
+		list = g_slist_prepend(list, gdome_nl_item(node_list, j, &exception));
+	list = g_slist_reverse(list);
+
+	return list;
+}
+
