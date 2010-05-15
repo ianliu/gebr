@@ -28,9 +28,10 @@
 G_BEGIN_DECLS
 
 /** 
- * Show help HTML identified by \p uri with WebKit (if enabled) within a dialog with \p title in its title bar.
+ * Show HTML \p help within a dialog with \p title in its title bar.
+ * \p object is used for help navition within the xml if \p menu is TRUE.
  */
-void gebr_gui_help_show(const gchar * uri, const gchar * title);
+void gebr_gui_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar *help, const gchar * title);
 
 /**
  * Callback for when 'Refresh' button is pressed.

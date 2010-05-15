@@ -29,9 +29,9 @@ G_BEGIN_DECLS
 void program_help_show(void);
 
 /**
- * Show \p help HTML. 
+ * Show help of \p object (program or flow) HTML. 
  */
-void help_show(const gchar * help, const gchar * title);
+void help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title);
 
 /**
  * Button callback, calls #help_show.

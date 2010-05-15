@@ -1734,18 +1734,11 @@ static void menu_description_changed(GtkEntry * entry)
 
 /**
  * \internal
- * Calls \ref help_show with menu's help.
+ * Calls \ref help_show for current menu.
  */
 static void menu_help_view(void)
 {
-	gchar *help;
-
-	help = (gchar *) gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu));
-
-	if (strlen(help) > 1)
-		help_show(help, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
-	else
-		help_show(" ", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
+	help_show(GEBR_GEOXML_OBJECT(debr.menu), gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
 }
 
 /**

@@ -31,7 +31,7 @@ void help_fix_css(GString * help);
 /**
  * Shows \p help using user's browser.
  */
-void help_show(const gchar * help, const gchar * title);
+void help_show(GebrGeoXmlObject *object, const gchar * title);
 
 /**
  * Starts the edition of \p program's help.

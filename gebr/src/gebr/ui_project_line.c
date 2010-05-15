@@ -765,7 +765,7 @@ out:	g_free(project_filename);
  */
 static void project_line_show_help(void)
 {
-	help_show(gebr_geoxml_document_get_help(gebr.project_line), 
+	help_show(GEBR_GEOXML_OBJECT(gebr.project_line), FALSE,
 		  gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT
 		  ? _("Project report") : _("Line report"));
 }

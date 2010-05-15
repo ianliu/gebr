@@ -77,19 +77,48 @@ function GenerateNavigationIndex(doc) {
 		headers[i].setAttribute('id', anchor);
 	}
 }
+/**
+ * Get a list of title-link pairs and generate an index on \p doc.
+ */
+function GenerateLinksIndex(doc, links) {
+	var linkbar = doc.getElementsByClassName('links')[0];
+	if (!linkbar) {
+		linkbar = doc.createElement('div');
+		linkbar.setAttribute('class', 'links');
+		var navbar = doc.getElementsByClassName('navigation')[0];
+		navbar.parentNode.insertBefore(linkbar, navbar.nextSibling);
+	}
+	linkbar.innerHTML = '<h2>Links</h2><ul></ul>';
+	var linklist = navbar.getElementsByTagName('ul')[0];
+	for (var i = 0; i < links.length; ++i) {
+		var link = doc.createElement('a');
+		link.setAttribute('href', links[i][1]);
+		link.innerHTML = links[i][0];
+		var li = doc.createElement('li');
+		li.appendChild(link);
+		linklist.appendChild(li);
+	}
+}
+/**
+ * Use GenerateLinksIndex above to generate indexes for \p document and \p document_clone.
+ */
+function GenerateLinksIndex(links) {
+	GenerateLinksIndex(document);
+	GenerateLinksIndex(document_clone);
+}
 function OpenCkEditor(element) {
 	if (editor) return;
 	editing_element = element;
 	editor = CKEDITOR.replace(element, {
 		fullpage: true,
-		height:300,
-		width: menu_edition?390:'100%',
-		resize_enabled:false,
-		toolbarCanCollapse:false,
+		height: 300,
+		width: menu_edition ? 390 : '100%',
+		resize_enabled: false,
+		toolbarCanCollapse: false,
 		toolbar:[['Source','-','Bold','Italic','Underline','-',
-			'Subscript','Superscript','-','Undo','Redo'],'/',[
-			'NumberedList','BulletedList','Blockquote','Styles','-',
-			'Link','Unlink','-','RemoveFormat','-','Find','Replace', '-' ]]});
+			'Subscript','Superscript','-','Undo','Redo'],'/',
+			['NumberedList','BulletedList','Blockquote','Styles','-',
+			'Link','Unlink','-','RemoveFormat','-','Find','Replace', '-']]});
 }
 function onCkEditorLoadFinished() {
 	if (menu_edition) {

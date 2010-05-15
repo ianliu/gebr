@@ -58,43 +58,24 @@ void help_fix_css(GString * help)
 
 	/* Change CSS's path to an absolute one. */
 	if ((gebrcsspos = strstr(help->str, "\"gebr.css")) != NULL) {
-		int pos;
-
-		pos = (gebrcsspos - help->str) / sizeof(char);
+		int pos = (gebrcsspos - help->str) / sizeof(char);
 		g_string_erase(help, pos, 9);
 		g_string_insert(help, pos, "\"file://" DEBR_DATA_DIR "gebr.css");
 	}
 }
 
-void help_show(const gchar * help, const gchar * title)
+void help_show(GebrGeoXmlObject *object, const gchar * title)
 {
-	GString *prepared_html;
-	FILE *html_fp;
-	GString *html_path;
+	GString *html = g_string_new("");
+	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
+		g_string_assign(html, gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object)));
+	else
+		g_string_assign(html, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object)));
 
-	prepared_html = g_string_new(help);
-	help_fix_css(prepared_html);
+	help_fix_css(html);
+	gebr_gui_help_show(object, TRUE, html->str, title);
 
-	/* create temporary filename */
-	html_path = gebr_make_temp_filename("debr_XXXXXX.html");
-
-	/* open temporary file with help from XML */
-	html_fp = fopen(html_path->str, "w");
-	if (html_fp == NULL) {
-		debr_message(GEBR_LOG_ERROR, _("Unable to create temporary file."));
-		goto out;
-	}
-	fputs(prepared_html->str, html_fp);
-	fclose(html_fp);
-
-	/* Add file to list of files to be removed */
-	debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
-
-	g_string_prepend(html_path, "file://");
-	gebr_gui_help_show(html_path->str, title);
-
- out:	g_string_free(html_path, FALSE);
-	g_string_free(prepared_html, TRUE);
+	g_string_free(html, TRUE);
 }
 
 void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
@@ -145,7 +126,6 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 			gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), help_edit_on_finished,
 					   help_edit_on_refresh, TRUE);
 	} else {
-
 		/* create temporary filename */
 		html_path = gebr_make_temp_filename("debr_XXXXXX.html");
 
