@@ -165,7 +165,7 @@ GdomeElement *__gebr_geoxml_get_element_at(GdomeElement * parent_element, const 
 GdomeElement *__gebr_geoxml_get_element_by_id(GdomeElement * base, const gchar * id)
 {
 	/* gdome_doc_getElementById only work with xml:id element */
-	GdomeElement *document_element;
+	/* GdomeElement *document_element;
 	gint i;
 
 	document_element = gdome_doc_documentElement(gdome_el_ownerDocument(base, &exception), &exception);
@@ -187,7 +187,7 @@ GdomeElement *__gebr_geoxml_get_element_by_id(GdomeElement * base, const gchar *
 		}
 	}
 
-	return NULL;
+	return NULL; */
 
 /* only work with xml:id att. name */
 //      GString *               expression;
@@ -207,15 +207,15 @@ GdomeElement *__gebr_geoxml_get_element_by_id(GdomeElement * base, const gchar *
 //      gdome_xpresult_unref(xpath_result, &exception);
 // 
 //      return element;
-/* simple, but doesn't work :( */
-//      GdomeDOMString *        string;
-//      GdomeElement *          element;
-// 
-//      string = gdome_str_mkref(id);
-//      element = gdome_doc_getElementById(gdome_el_ownerDocument(base, &exception), string, &exception);
-//      gdome_str_unref(string);
-// 
-//      return element;
+	/* simple, but doesn't work :( */
+	GdomeDOMString *        string;
+	GdomeElement *          element;
+
+	string = gdome_str_mkref(id);
+	element = gdome_doc_getElementById(gdome_el_ownerDocument(base, &exception), string, &exception);
+	gdome_str_unref(string);
+
+	return element;
 }
 
 GSList *__gebr_geoxml_get_elements_by_tag(GdomeElement * base, const gchar * tag)
