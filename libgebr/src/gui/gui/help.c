@@ -166,6 +166,14 @@ void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited e
 
 /**
  * \internal
+ * Generate Links index.
+ */
+static void help_edit_save(struct help_data * data)
+{
+}
+
+/**
+ * \internal
  * Save the updated HTML and call edited_callback if set.
  * If the editor is opened remove its HTML code.
  */
