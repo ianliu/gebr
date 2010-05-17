@@ -84,6 +84,7 @@ function GenerateLinksIndex2(doc, links) {
 	var linkbar = doc.getElementsByClassName('links')[0];
 	if (!linkbar) {
 		linkbar = doc.createElement('div');
+		linkbar.appendChild(doc.createTextNode(' '));
 		linkbar.setAttribute('class', 'links');
 		var navbar = doc.getElementsByClassName('navigation')[0];
 		navbar.parentNode.insertBefore(linkbar, navbar.nextSibling);

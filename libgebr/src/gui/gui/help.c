@@ -16,6 +16,7 @@
  */
 
 #include <stdlib.h>
+#include <regex.h>
 
 #include <webkit/webkit.h>
 #include <gdk/gdk.h>
@@ -25,6 +26,7 @@
 
 #include "../../intl.h"
 #include "../../utils.h"
+#include "../../defines.h"
 
 #include "help.h"
 #include "utils.h"
@@ -217,6 +219,24 @@ static void help_edit_save(struct help_data * data)
 
 	html = gebr_js_evaluate(data->context, var_help->str);
 	help = gebr_js_value_get_string(data->context, html);
+
+	/* transform css into a relative path back */
+	if (data->menu) {
+		regex_t regexp;
+		regmatch_t matchptr;
+		regcomp(&regexp, "<link[^<]*>", REG_NEWLINE | REG_ICASE);
+		if (!regexec(&regexp, help->str, 1, &matchptr, 0)) {
+			g_string_erase(help, (gssize) matchptr.rm_so,
+				       (gssize) matchptr.rm_eo - matchptr.rm_so);
+			g_string_insert(help, (gssize) matchptr.rm_so,
+					"<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
+		} else {
+			regcomp(&regexp, "<head>", REG_NEWLINE | REG_ICASE);
+			if (!regexec(&regexp, help->str, 1, &matchptr, 0))
+				g_string_insert(help, (gssize) matchptr.rm_eo,
+						"\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
+		}
+	}
 
 	if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(data->object), help->str);
@@ -520,11 +540,9 @@ static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, s
 /**
  * \internal
  */
-static void __gebr_gui_help_save_custom_help_to_file(struct help_data * data, const gchar *help)
+static void __gebr_gui_help_save_custom_help_to_file(struct help_data * data, const gchar *_help)
 {
-	/* some webkit versions crash to open an empty file... */
-	if (!strlen(help))
-		help = " ";
+	GString *help = g_string_new(_help);
 
 	if (!data->html_path->len) {
 		GString *tmp;
@@ -533,11 +551,34 @@ static void __gebr_gui_help_save_custom_help_to_file(struct help_data * data, co
 		g_string_free(tmp, TRUE);
 	}
 
+	/* CSS to absolute path */
+	if (help->len && data->menu) {
+		regex_t regexp;
+		regmatch_t matchptr;
+		regcomp(&regexp, "<link[^<]*>", REG_NEWLINE | REG_ICASE);
+		if (!regexec(&regexp, help->str, 1, &matchptr, 0)) {
+			g_string_erase(help, (gssize) matchptr.rm_so,
+				       (gssize) matchptr.rm_eo - matchptr.rm_so);
+			g_string_insert(help, (gssize) matchptr.rm_so,
+					"<link rel=\"stylesheet\" type=\"text/css\" href=\"file://"LIBGEBR_DATA_DIR"/gebr.css\" />");
+		} else {
+			regcomp(&regexp, "<head>", REG_NEWLINE | REG_ICASE);
+			if (!regexec(&regexp, help->str, 1, &matchptr, 0))
+				g_string_insert(help, (gssize) matchptr.rm_eo,
+						"\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"file://"LIBGEBR_DATA_DIR"/gebr.css\" />");
+		}
+	}
+
+	/* some webkit versions crash to open an empty file... */
+	if (!help->len)
+		g_string_assign(help, " ");
 	/* write current help to temporary file */
 	FILE *fp;
 	fp = fopen(data->html_path->str, "w");
-	fputs(help, fp);
+	fputs(help->str, fp);
 	fclose(fp);
+
+	g_string_free(help, TRUE);
 }
 
 /**

@@ -18,7 +18,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <regex.h>
 #include <locale.h>
 
 #include <sys/wait.h>
@@ -52,18 +51,6 @@ static gsize strip_block(GString * buffer, const gchar * tag);
  * Public functions.
  */
 
-void help_fix_css(GString * help)
-{
-	gchar *gebrcsspos;
-
-	/* Change CSS's path to an absolute one. */
-	if ((gebrcsspos = strstr(help->str, "\"gebr.css")) != NULL) {
-		int pos = (gebrcsspos - help->str) / sizeof(char);
-		g_string_erase(help, pos, 9);
-		g_string_insert(help, pos, "\"file://" DEBR_DATA_DIR "gebr.css");
-	}
-}
-
 void help_show(GebrGeoXmlObject *object, const gchar * title)
 {
 	GString *html = g_string_new("");
@@ -72,7 +59,6 @@ void help_show(GebrGeoXmlObject *object, const gchar * title)
 	else
 		g_string_assign(html, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object)));
 
-	help_fix_css(html);
 	gebr_gui_help_show(object, TRUE, html->str, title);
 
 	g_string_free(html, TRUE);
@@ -109,9 +95,6 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 		/* Substitute title, description and categories */
 		help_subst_fields(prepared_html, program, FALSE);
 	}
-
-	/* CSS fix */
-	help_fix_css(prepared_html);
 
 	/* EDIT IT */
 	if (program != NULL)
@@ -451,24 +434,6 @@ static void help_edit_on_finished(GebrGeoXmlObject * object, const gchar * _help
 	GString * help;
 
 	help = g_string_new(_help);
-	/* transform css into a relative path back */
-	{
-		regex_t regexp;
-		regmatch_t matchptr;
-
-		regcomp(&regexp, "<link[^<]*>", REG_NEWLINE | REG_ICASE);
-		if (!regexec(&regexp, help->str, 1, &matchptr, 0)) {
-			g_string_erase(help, (gssize) matchptr.rm_so,
-				       (gssize) matchptr.rm_eo - matchptr.rm_so);
-			g_string_insert(help, (gssize) matchptr.rm_so,
-					"<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
-		} else {
-			regcomp(&regexp, "<head>", REG_NEWLINE | REG_ICASE);
-			if (!regexec(&regexp, help->str, 1, &matchptr, 0))
-				g_string_insert(help, (gssize) matchptr.rm_eo,
-						"\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
-		}
-	}
 
 	switch (gebr_geoxml_object_get_type(object)) {
 	case GEBR_GEOXML_OBJECT_TYPE_FLOW:
