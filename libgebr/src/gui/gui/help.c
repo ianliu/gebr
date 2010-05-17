@@ -60,6 +60,7 @@ web_view_on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame * fram
 
 static gboolean web_view_on_key_press(GtkWidget * widget, GdkEventKey * event, struct help_data * data);
 
+static void generate_menu_links_index(struct help_data * data);
 static void __gebr_gui_help_save_custom_help_to_file(struct help_data * data, const gchar *help);
 static void __gebr_gui_help_save_help_to_file(struct help_data * data);
 
@@ -72,7 +73,9 @@ static void on_help_edit_edit_toggled(GtkToggleAction * action, struct help_data
 
 static void on_dialog_response(struct help_data * data);
 
-void on_help_edit_refresh_activate(GtkAction * action, struct help_data * data);
+static void on_help_edit_refresh_activate(GtkAction * action, struct help_data * data);
+
+static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, struct help_data * data);
 
 /**
  * \internal
@@ -80,7 +83,7 @@ void on_help_edit_refresh_activate(GtkAction * action, struct help_data * data);
  * Load CKEDITOR JS, CSS hover highlight, on click start/leave edition depending on area clicked, index generation after
  * edition, CKEDITOR load with configuration.
  */
-static gchar * js_start_inline_editing = \
+static gchar * start_js = \
 	"function getHead() {"
 		"var head = document.getElementsByTagName('head')[0];"
 		"if (!head) {"
@@ -121,7 +124,6 @@ static gchar * js_start_inline_editing = \
 	"var document_clone = document.implementation.createDocument('', '', null);"
 	"document_clone.appendChild(document.documentElement.cloneNode(true));"
 	"addScript('help');"
-	"addScript('ckeditor');"
 	"";
 
 /*
@@ -145,6 +147,7 @@ void gebr_gui_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar *h
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), data->html_path->str);
 	g_signal_connect_swapped(dialog, "response", G_CALLBACK(on_dialog_response), data);
 	g_signal_connect(web_view, "navigation-requested", G_CALLBACK(web_view_on_navigation_requested), data);
+	g_signal_connect(web_view, "load-finished", G_CALLBACK(web_view_on_load_finished), data);
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 }
 
@@ -168,8 +171,25 @@ void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited e
  * \internal
  * Generate Links index.
  */
-static void help_edit_save(struct help_data * data)
+static void generate_menu_links_index(struct help_data * data)
 {
+	GString *js = g_string_new(NULL);
+	
+	if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
+		g_string_assign(js, "GenerateLinksIndex([['Menu', 'gebr://menu']]);");
+		gebr_js_evaluate(data->context, js->str);
+	} else if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
+		g_string_assign(js, "GenerateLinksIndex([");
+		GebrGeoXmlSequence *program;
+		gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(data->object), &program, 0);
+		for (gint i = 0; program != NULL; gebr_geoxml_sequence_next(&program), ++i)
+			g_string_append_printf(js, "['Program \\'%s\\'', 'gebr://prog%d']",
+					       gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)), i);
+		g_string_append(js, "]);");
+		gebr_js_evaluate(data->context, js->str);
+	}
+
+	g_string_free(js, TRUE);
 }
 
 /**
@@ -234,13 +254,56 @@ static void web_view_on_destroy(WebKitWebView * web_view, struct help_data * dat
 static WebKitNavigationResponse web_view_on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame * frame,
 								 WebKitNetworkRequest * request, struct help_data * data)
 {
-	const gchar * uri;
-	uri = webkit_network_request_get_uri(request);
+	const gchar * uri = webkit_network_request_get_uri(request);
+
+	if (g_str_has_prefix(uri, "gebr://") && data->menu) {
+		const gchar *help;
+		GebrGeoXmlObject *object;
+		if (!strcmp(uri, "gebr://menu")) {
+			if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						       	_("Invalid link"), _("Sorry, couldn't reach link."));
+				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
+			}
+			GebrGeoXmlDocument *menu = gebr_geoxml_object_get_owner_document(data->object);
+			help = gebr_geoxml_document_get_help(menu);
+			object = GEBR_GEOXML_OBJECT(menu);
+		} else {
+			if (gebr_geoxml_object_get_type(data->object) != GEBR_GEOXML_OBJECT_TYPE_FLOW) {
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						       	_("Invalid link"), _("Sorry, couldn't reach link."));
+				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
+			}
+			int program_index = -1;
+			sscanf(strstr(uri, "prog"), "prog%d", &program_index);
+			GebrGeoXmlSequence *program;
+			gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(data->object), &program, program_index);
+			if (program == NULL) {
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						       	_("Invalid link"), _("Sorry, couldn't find program."));
+				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
+			}
+
+			help = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(program));
+			object = GEBR_GEOXML_OBJECT(program);
+		}
+
+		if (!strlen(help)) {
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						_("No help available"), _("Sorry, the help is empty."));
+			return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
+		}
+		data->object = object;
+		__gebr_gui_help_save_custom_help_to_file(data, help);
+		g_signal_connect(data->web_view, "load-finished", G_CALLBACK(web_view_on_load_finished), data);
+		webkit_web_view_open(WEBKIT_WEB_VIEW(data->web_view), data->html_path->str);
+
+		return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
+	}
 	if (g_str_has_prefix(uri, "file://") || g_str_has_prefix(uri, "about:"))
 		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 
-	if (!data)
-		gebr_gui_show_uri(uri);
+	gebr_gui_show_uri(uri);
 
 	return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 }
@@ -379,6 +442,20 @@ static void web_view_on_title_changed(WebKitWebView * web_view, WebKitWebFrame *
 
 /**
  * \internal
+ * helpJSFinished, called at the end of help.js.
+ */
+static JSValueRef helpJSFinished_callback(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject,
+					  size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+	struct help_data * data = g_hash_table_lookup(jscontext_to_data_hash, (gpointer)function);
+	if (data->menu)
+		generate_menu_links_index(data);
+
+	return JSValueMakeUndefined(ctx);
+}
+
+/**
+ * \internal
  * Load all page personalization for editing.
  */
 static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, struct help_data * data)
@@ -386,19 +463,27 @@ static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame *
 	data->web_view = web_view;
 	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
 
-	gchar * script = g_strdup_printf("var menu_refresh = %s;", data->edit->menu_refresh ? "true" : "false");
-	gebr_js_evaluate(data->context, script);
-	data->edit->menu_refresh = FALSE;
-	g_free(script);
-	if (data->menu)
-		gebr_js_evaluate(data->context, "var menu_edition = true;");
-	else
-		gebr_js_evaluate(data->context, "var menu_edition = false;");
+	/* called by help.js */
+	JSObjectRef obj = gebr_js_make_function(data->context, "helpJSFinished", helpJSFinished_callback);
+	g_hash_table_insert(jscontext_to_data_hash, (gpointer)obj, data);
 
-	gebr_js_evaluate(data->context, js_start_inline_editing);
+	if (data->edit) {
+		gchar * script = g_strdup_printf("var menu_refresh = %s;", data->edit->menu_refresh ? "true" : "false");
+		gebr_js_evaluate(data->context, script);
+		data->edit->menu_refresh = FALSE;
+		g_free(script);
+		if (data->menu)
+			gebr_js_evaluate(data->context, "var menu_edition = true;");
+		else
+			gebr_js_evaluate(data->context, "var menu_edition = false;");
 
-	g_signal_handlers_disconnect_matched(G_OBJECT(web_view),
-						 G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(web_view_on_load_finished), data);
+		gebr_js_evaluate(data->context, start_js);
+		gebr_js_evaluate(data->context, "addScript('ckeditor');");
+	} else if (data->menu)
+		gebr_js_evaluate(data->context, start_js);
+
+	g_signal_handlers_disconnect_matched(G_OBJECT(web_view), G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+					     G_CALLBACK(web_view_on_load_finished), data);
 }
 
 /**
@@ -508,11 +593,17 @@ static void _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdited edi
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), data->html_path->str);
 }
 
+/**
+ * \internal
+ */
 static void on_help_edit_save_activate(GtkAction * action, struct help_data * data)
 {
 	help_edit_save(data);
 }
 
+/**
+ * \internal
+ */
 static void on_help_edit_edit_toggled(GtkToggleAction * action, struct help_data * data)
 {
 	gboolean active;
@@ -532,7 +623,10 @@ static void on_help_edit_edit_toggled(GtkToggleAction * action, struct help_data
 			 "})();");
 }
 
-void on_help_edit_refresh_activate(GtkAction * action, struct help_data * data)
+/**
+ * \internal
+ */
+static void on_help_edit_refresh_activate(GtkAction * action, struct help_data * data)
 {
 	if (data->edit->refresh_callback) {
 		data->edit->menu_refresh = TRUE;

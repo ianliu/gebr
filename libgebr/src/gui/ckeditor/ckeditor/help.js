@@ -80,7 +80,7 @@ function GenerateNavigationIndex(doc) {
 /**
  * Get a list of title-link pairs and generate an index on \p doc.
  */
-function GenerateLinksIndex(doc, links) {
+function GenerateLinksIndex2(doc, links) {
 	var linkbar = doc.getElementsByClassName('links')[0];
 	if (!linkbar) {
 		linkbar = doc.createElement('div');
@@ -89,7 +89,9 @@ function GenerateLinksIndex(doc, links) {
 		navbar.parentNode.insertBefore(linkbar, navbar.nextSibling);
 	}
 	linkbar.innerHTML = '<h2>Links</h2><ul></ul>';
-	var linklist = navbar.getElementsByTagName('ul')[0];
+	var linklist = linkbar.getElementsByTagName('ul')[0];
+	if (!linklist)
+		return;
 	for (var i = 0; i < links.length; ++i) {
 		var link = doc.createElement('a');
 		link.setAttribute('href', links[i][1]);
@@ -103,8 +105,8 @@ function GenerateLinksIndex(doc, links) {
  * Use GenerateLinksIndex above to generate indexes for \p document and \p document_clone.
  */
 function GenerateLinksIndex(links) {
-	GenerateLinksIndex(document);
-	GenerateLinksIndex(document_clone);
+	GenerateLinksIndex2(document, links);
+	GenerateLinksIndex2(document_clone, links);
 }
 function OpenCkEditor(element) {
 	if (editor) return;
@@ -176,3 +178,5 @@ function refreshEditor() {
 	UpdateDocumentClone();
 	return document_clone.documentElement.outerHTML;
 }
+
+helpJSFinished();
