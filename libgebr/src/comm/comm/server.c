@@ -98,6 +98,8 @@ struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const stru
 	server->ops = ops;
 	server->tunnel_pooling_source = 0;
 
+	server->process.use = COMM_SERVER_PROCESS_NONE;
+
 	g_signal_connect(server->stream_socket, "connected",
 			 G_CALLBACK(gebr_comm_server_connected), server);
 	g_signal_connect(server->stream_socket, "disconnected",
