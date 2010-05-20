@@ -78,7 +78,7 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 		GdomeElement *reference;
 		GebrGeoXmlSequence *position;
 
-		reference = (GdomeElement *) gdome_el_cloneNode((GdomeElement *) parameter, TRUE, &exception);
+		reference = (GdomeElement *) gdome_el_cloneNode_protected((GdomeElement *) parameter);
 		__gebr_geoxml_element_assign_new_id(reference, NULL, FALSE);
 		__gebr_geoxml_parameter_set_be_reference((GebrGeoXmlParameter *) reference, parameter);
 
