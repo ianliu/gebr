@@ -138,7 +138,7 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 	else
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html->str);
 
-	if (debr.config.native_editor) {
+	if (debr.config.htmleditor->len == 0) {
 		if (program != NULL)
 			gebr_gui_program_help_edit(program, help_edit_on_finished, help_edit_on_refresh);
 		else

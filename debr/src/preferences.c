@@ -95,7 +95,7 @@ void preferences_dialog_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(list_widget_hbox), htmleditor_entry, FALSE, FALSE, 0);
 	gtk_entry_set_text(GTK_ENTRY(htmleditor_entry), debr.config.htmleditor->str);
 
-	if (debr.config.native_editor)
+	if (debr.config.htmleditor->len == 0)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(builtin_editor), TRUE);
 	else
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(custom_editor), TRUE);
