@@ -97,5 +97,5 @@ GebrGeoXmlObject *gebr_geoxml_object_copy(GebrGeoXmlObject * object)
 {
 	if (object == NULL)
 		return NULL;
-	return (GebrGeoXmlObject *) gdome_el_cloneNode((GdomeElement *) object, TRUE, &exception);
+	return (GebrGeoXmlObject *) gdome_el_cloneNode_protected((GdomeElement *) object);
 }

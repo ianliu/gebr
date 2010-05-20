@@ -554,6 +554,114 @@ GdomeXPathResult *__gebr_geoxml_xpath_evaluate(GdomeElement * context, const gch
 	return xpath_result;
 }
 
+GdomeElement* gdome_el_cloneNode_protected(GdomeElement * el)
+{
+	GdomeDOMString * tagName = gdome_el_tagName(el, &exception);
+	GdomeNamedNodeMap * attributes = gdome_el_attributes(el, &exception);
+	GdomeNodeList * children = gdome_el_childNodes(el, &exception);
+
+	GdomeDocument *document = gdome_el_ownerDocument(el, &exception);
+	GdomeElement *clone = gdome_doc_createElement(document, tagName, &exception);
+
+	/* Writes the element name and its attributes.
+	 */
+	for (guint i = 0; i < gdome_nnm_length(attributes, &exception); i++) {
+		GdomeNode * attr;
+		GdomeDOMString * attrName;
+		GdomeDOMString * attrValue;
+
+		attr = gdome_nnm_item(attributes, i, &exception);
+		attrName = gdome_n_nodeName(attr, &exception);
+		attrValue = gdome_n_nodeValue(attr, &exception);
+
+		if (!strcmp(attrName->str, "id"))
+			__gebr_geoxml_element_assign_new_id(clone, clone, TRUE);
+		else
+			gdome_el_setAttribute(clone, attrName, attrValue, &exception);
+	}
+
+	/* Recurse into all children.
+	 */
+	for (guint i = 0; i < gdome_nl_length(children, &exception); i++) {
+		GdomeNode *child = gdome_nl_item(children, i, &exception);
+		GdomeNode *cloneChild;
+		switch (gdome_n_nodeType(child, &exception)) {
+		case GDOME_ELEMENT_NODE:
+			cloneChild = (GdomeNode*)gdome_el_cloneNode_protected((GdomeElement*)child);
+			break;
+		case GDOME_TEXT_NODE:
+			cloneChild = (GdomeNode*)gdome_doc_createTextNode(document, gdome_n_nodeValue(child, &exception), &exception);
+			break;
+		case GDOME_CDATA_SECTION_NODE:
+			cloneChild = (GdomeNode*)gdome_doc_createCDATASection(document, gdome_n_nodeValue(child, &exception), &exception);
+			break;
+		default:
+			continue;
+		}
+		gdome_el_insertBefore_protected(clone, cloneChild, NULL, &exception);
+	}
+
+	return clone;
+}
+
+static gchar * __gebr_geoxml_to_string_recursive(GdomeElement * el, guint indent)
+{
+	GString * str;
+	gchar * indentation;
+	GdomeException exc = 0;
+	GdomeDOMString * tagName;
+	GdomeNamedNodeMap * attributes;
+	GdomeNodeList * children;
+
+	str = g_string_new(NULL);
+	indentation = g_new(gchar, indent+1);
+	memset(indentation, ' ', indent);
+	indentation[indent] = '\0';
+	tagName = gdome_el_tagName(el, &exc);
+	attributes = gdome_el_attributes(el, &exc);
+	children = gdome_el_childNodes(el, &exc);
+
+	/* Writes the element name and its attributes.
+	 */
+	g_string_printf(str, "%s<%s", indentation, tagName->str);
+	for (guint i = 0; i < gdome_nnm_length(attributes, &exc); i++) {
+		GdomeNode * attr;
+		GdomeDOMString * attrName;
+		GdomeDOMString * attrValue;
+
+		attr = gdome_nnm_item(attributes, i, &exc);
+		attrName = gdome_n_nodeName(attr, &exc);
+		attrValue = gdome_n_nodeValue(attr, &exc);
+
+		g_string_append_printf(str, " %s=\"%s\"",
+				       attrName->str, attrValue->str);
+	}
+	g_string_append(str, ">\n");
+
+	/* Recurse into all children.
+	 */
+	for (guint i = 0; i < gdome_nl_length(children, &exc); i++) {
+		gchar * childStr;
+		GdomeElement * child;
+		child = (GdomeElement*)gdome_nl_item(children, i, &exc);
+		childStr = __gebr_geoxml_to_string_recursive(child, indent+1);
+		g_string_append(str, childStr);
+		g_free(childStr);
+	}
+	g_string_append_printf(str, "%s</%s>\n", indentation, tagName->str);
+
+	g_free(indentation);
+	return g_string_free(str, FALSE);
+}
+
+void __gebr_geoxml_to_string(GdomeElement * el)
+{
+	gchar * str;
+	str = __gebr_geoxml_to_string_recursive(el, 1);
+	puts(str);
+	g_free(str);
+}
+
 GSList *__gebr_geoxml_nodelist_to_gslist(GdomeNodeList *node_list)
 {
 	GSList *list = NULL;

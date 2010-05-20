@@ -71,6 +71,12 @@ GdomeNode *gdome_el_insertBefore_protected(GdomeElement * self, GdomeNode *newCh
 
 /**
  * \internal
+ * Same as gdome_el_cloneNode but generating new ids when needed
+ */
+GdomeElement* gdome_el_cloneNode_protected(GdomeElement * el);
+
+/**
+ * \internal
  * Get the first child element of \p parent_element with tag name
  * \p tag_name. The child might not be a direct child of \p parent_element
  * (the search done is recursive)
@@ -218,6 +224,12 @@ void __gebr_geoxml_element_assign_reference_id(GdomeElement * element, GdomeElem
  * \ref __gebr_geoxml_foreach_xpath_result or use .
  */
 GdomeXPathResult *__gebr_geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression);
+
+/**
+ * \internal
+ * Prints an xml node to stdout.
+ */
+void __gebr_geoxml_to_string(GdomeElement * el);
 
 /**
  * \internal
