@@ -221,6 +221,12 @@ GdomeXPathResult *__gebr_geoxml_xpath_evaluate(GdomeElement * context, const gch
 
 /**
  * \internal
+ * Prints an xml node to stdout.
+ */
+void __gebr_geoxml_to_string(GdomeElement * el);
+
+/**
+ * \internal
  * Iterates elements of a GdomeXPathResult at \p result
  * This macro will auto free \p result and you can use it
  * as __gebr_geoxml_foreach_xpath_result(element, __gebr_geoxml_xpath_evaluate(context, expression)).
