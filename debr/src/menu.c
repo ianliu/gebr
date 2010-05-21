@@ -427,7 +427,7 @@ MenuMessage menu_save(GtkTreeIter * iter)
 	/* is this a new menu? */
 	if (!strlen(path)) {
 		g_free(path);
-		return MENU_MESSAGE_FIRST_TIME_SAVE;
+		return menu_save_as(iter) ? MENU_MESSAGE_SUCCESS : MENU_MESSAGE_PERMISSION_DENIED;
 	}
 
 	filename = g_path_get_basename(path);
@@ -1991,8 +1991,7 @@ static gboolean menu_save_iter_list(GList * unsaved)
 
 		iter = (GtkTreeIter*)entry->data;
 		result = menu_save(iter);
-		if (result == MENU_MESSAGE_PERMISSION_DENIED
-		    || (result == MENU_MESSAGE_FIRST_TIME_SAVE && !menu_save_as(iter))) {
+		if (result == MENU_MESSAGE_PERMISSION_DENIED) {
 			ret = FALSE;
 			break;
 		}

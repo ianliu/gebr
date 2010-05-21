@@ -181,8 +181,7 @@ void on_menu_save_activate(void)
 		debr_message(GEBR_LOG_INFO, _("No menu selected."));
 		return;
 	}
-	if (menu_save(&iter) == MENU_MESSAGE_FIRST_TIME_SAVE)
-		on_menu_save_as_activate();
+	menu_save(&iter);
 }
 
 void on_menu_save_as_activate(void)
@@ -362,30 +361,14 @@ void on_menu_close_activate(void)
 			gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
 			while(still_running){
 				switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-				case GTK_RESPONSE_YES:{
-					gchar *path;
-
-					gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
-							   MENU_PATH, &path, -1);
-
-					if (gebr_geoxml_document_save(GEBR_GEOXML_DOC(debr.menu), path)) {
-						GtkWidget *dialog_permission;
-
-						dialog_permission = gtk_message_dialog_new
-							(GTK_WINDOW(debr.window),
-							(GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-							 GTK_MESSAGE_QUESTION,
-							 GTK_BUTTONS_NONE, _("Saving menus failed: Permission denied"));
-						gtk_dialog_add_button(GTK_DIALOG(dialog_permission), GTK_STOCK_OK,
-								      GTK_RESPONSE_OK);
-						gtk_dialog_run(GTK_DIALOG(dialog_permission));
-						gtk_widget_destroy(dialog_permission);
-					} else {
+				case GTK_RESPONSE_YES:
+					if (menu_save(&iter) == MENU_MESSAGE_PERMISSION_DENIED)
+						gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+									_("Permission denied"),
+									_("Menu saving failed: permission denied"));
+					else
 						still_running = FALSE;
-					}
-					g_free(path);
 					break;
-				}
 				case GTK_RESPONSE_NO:
 					still_running = FALSE;
 					break;
