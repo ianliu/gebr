@@ -97,7 +97,6 @@ struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const stru
 	server->error = SERVER_ERROR_NONE;
 	server->ops = ops;
 	server->tunnel_pooling_source = 0;
-
 	server->process.use = COMM_SERVER_PROCESS_NONE;
 
 	g_signal_connect(server->stream_socket, "connected",
@@ -515,7 +514,7 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, struct gebr
 	cmd_line = g_string_new(NULL);
 
 	server->tried_existant_pass = FALSE;
-	server->process.use = COMM_SERVER_PROCESS_NONE;
+	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
 	server->process.data.terminal = process = gebr_comm_terminal_process_new();
 	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
 
