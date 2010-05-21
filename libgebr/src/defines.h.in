@@ -21,4 +21,8 @@
 #define STATIC_MODE	@STATIC_MODE@
 #define VERSION         "@VERSION@"
 
+#define LIBGEBR_STATIC_MODE	@STATIC_MODE@
+#define LIBGEBR_VERSION         "@VERSION@"
+#define LIBGEBR_DATA_DIR	"@prefix@/share/libgebr"
+
 #endif //__DEFINES_H

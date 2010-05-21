@@ -69,7 +69,7 @@ AC_SUBST(GEBR_COMM_LIBS)
 
 AC_OUTPUT([
 packages/rpm/gebr.fedora.spec packages/rpm/gebr.opensuse.spec packages/rpm/gebr.mandriva.spec
-Makefile data/Makefile menus/Makefile packages/Makefile
+Makefile menus/Makefile packages/Makefile
 src/Makefile src/defines.h src/gebr/Makefile src/gebr-client/Makefile
 gebr.desktop
 po/Makefile.in

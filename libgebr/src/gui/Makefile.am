@@ -16,9 +16,9 @@
 include $(top_srcdir)/Makefile.decl
 
 if ENABLE_TESTS
-TESTSDIR=tests
+TESTSDIR = tests
 endif
-SUBDIRS = gui pixmaps icons ckeditor ${TESTSDIR}
+SUBDIRS = gui pixmaps data icons ckeditor ${TESTSDIR}
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr-gui.pc

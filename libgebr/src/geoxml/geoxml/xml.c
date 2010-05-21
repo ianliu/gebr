@@ -177,7 +177,7 @@ GdomeElement *__gebr_geoxml_get_element_by_id(GdomeElement * base, const gchar *
 		gdome_nl_unref(node_list, &exception);
 		gdome_str_unref(string);
 
-		GSList * list = __gebr_geoxml_nodelist_to_gslist(node_list);
+		GSList * list;
 		for (GSList *i = list; i != NULL; i = g_slist_next(i)) {
 			GdomeElement *element;
 

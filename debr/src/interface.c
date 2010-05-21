@@ -217,8 +217,8 @@ void debr_setup_ui(void)
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
 
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),
-			      gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "help_contents")));
+	//gtk_menu_shell_append(GTK_MENU_SHELL(menu),
+			      //gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "help_contents")));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu),
 			      gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "help_about")));
 
