@@ -77,6 +77,12 @@ GdomeElement* gdome_el_cloneNode_protected(GdomeElement * el);
 
 /**
  * \internal
+ * Same as gdome_doc_importNode but generating new ids when needed
+ */
+GdomeNode* gdome_doc_importNode_protected(GdomeDocument * self, GdomeElement * source);
+
+/**
+ * \internal
  * Get the first child element of \p parent_element with tag name
  * \p tag_name. The child might not be a direct child of \p parent_element
  * (the search done is recursive)

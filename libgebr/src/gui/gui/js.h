@@ -23,6 +23,8 @@
 
 G_BEGIN_DECLS
 
+JSValueRef gebr_js_eval_with_url(JSContextRef ctx, const gchar * script, const gchar * url);
+
 JSValueRef gebr_js_evaluate(JSContextRef ctx, const gchar * script);
 
 JSValueRef gebr_js_evaluate_file(JSContextRef ctx, const gchar * file);

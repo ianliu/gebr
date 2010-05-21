@@ -699,7 +699,8 @@ static void update_frame(GtkWidget * frame)
 		delbtn = GTK_WIDGET(g_object_get_data(G_OBJECT(frame), "delete"));
 		gtk_widget_set_sensitive(up, node->prev != NULL);
 		gtk_widget_set_sensitive(down, node->next != NULL);
-		gtk_widget_set_sensitive(delbtn, node->next || node->prev);
+		if (delbtn)
+			gtk_widget_set_sensitive(delbtn, node->next || node->prev);
 	}
 }
 

@@ -139,7 +139,6 @@ static GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, G
 	GdomeElement *root_element;
 	GdomeElement *source_root_element;
 	GdomeDOMString *string;
-	GdomeNode *node;
 
 	source_root_element = gdome_doc_documentElement(source, &exception);
 	document = gdome_di_createDocument(dom_implementation,
@@ -153,19 +152,14 @@ static GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, G
 	__gebr_geoxml_set_attr_value(root_element, "version",
 				     __gebr_geoxml_get_attr_value(source_root_element, "version"));
 	/* nextid */
-	string = gdome_str_mkref("nextid");
-	if (gdome_el_hasAttribute(source_root_element, string, &exception) == TRUE)
-		__gebr_geoxml_set_attr_value(root_element, "nextid",
-					     __gebr_geoxml_get_attr_value(source_root_element, "nextid"));
-	gdome_str_unref(string);
+	__gebr_geoxml_set_attr_value(root_element, "nextid", "n0");
 
-	node = gdome_el_firstChild(source_root_element, &exception);
-	do {
-		GdomeNode *new_node = gdome_doc_importNode(document, node, TRUE, &exception);
+	/* import all elements */
+	GdomeElement *element = __gebr_geoxml_get_first_element(source_root_element, "*");
+	for (; element != NULL; element = __gebr_geoxml_next_element(element)) {
+		GdomeNode *new_node = gdome_doc_importNode_protected(document, element);
 		gdome_el_appendChild(root_element, new_node, &exception);
-
-		node = gdome_n_nextSibling(node, &exception);
-	} while (node != NULL);
+	}
 
 	return document;
 }

@@ -112,6 +112,7 @@ static gchar * js_start_inline_editing = \
 		"getHead().appendChild(script);"
 	"}"
 	"forceUtf8();"
+	"alert(document.location.href);"
 	"var document_clone = document.implementation.createDocument('', '', null);"
 	"document_clone.appendChild(document.documentElement.cloneNode(true));"
 	"addScript('help');"
@@ -174,7 +175,7 @@ static void help_edit_save(struct help_edit_data * data)
 				"return document_clone.documentElement.outerHTML;"
 			"})();");
 
-	html = gebr_js_evaluate(data->context, var_help->str);
+	html = gebr_js_eval_with_url(data->context, var_help->str, data->html_path->str);
 	help = gebr_js_value_get_string(data->context, html);
 
 	if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
@@ -215,7 +216,12 @@ static WebKitNavigationResponse web_view_on_navigation_requested(WebKitWebView *
 {
 	const gchar * uri;
 	uri = webkit_network_request_get_uri(request);
-	if (g_str_has_prefix(uri, "file://") || g_str_has_prefix(uri, "about:"))
+	puts("Network request:");
+	puts(uri);
+	puts("Frame uri:");
+	puts(webkit_web_frame_get_uri(frame)?webkit_web_frame_get_uri(frame):"(null)");
+	puts("");
+	if (g_str_has_prefix(uri, "file://"))
 		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 
 	if (!data)
@@ -328,7 +334,7 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window, struct help
 static void on_dialog_response(struct help_edit_data * data)
 {
 	gboolean is_content_saved;
-	is_content_saved = JSValueToBoolean(data->context, gebr_js_evaluate(data->context, "isContentSaved();"));
+	is_content_saved = JSValueToBoolean(data->context, gebr_js_eval_with_url(data->context, "isContentSaved();", data->html_path->str));
 	if (!is_content_saved) {
 		gboolean response;
 		response = gebr_gui_confirm_action_dialog(_("Save changes in help?"),
@@ -362,15 +368,15 @@ static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame *
 	data->context = webkit_web_frame_get_global_context(webkit_web_view_get_main_frame(data->web_view));
 
 	gchar * script = g_strdup_printf("var menu_refresh = %s;", data->menu_refresh? "true":"false");
-	gebr_js_evaluate(data->context, script);
+	gebr_js_eval_with_url(data->context, script, data->html_path->str);
 	data->menu_refresh = FALSE;
 	g_free(script);
 	if (data->menu_edition)
-		gebr_js_evaluate(data->context, "var menu_edition = true;");
+		gebr_js_eval_with_url(data->context, "var menu_edition = true;", data->html_path->str);
 	else
-		gebr_js_evaluate(data->context, "var menu_edition = false;");
+		gebr_js_eval_with_url(data->context, "var menu_edition = false;", data->html_path->str);
 
-	gebr_js_evaluate(data->context, js_start_inline_editing);
+	gebr_js_eval_with_url(data->context, js_start_inline_editing, data->html_path->str);
 
 	g_signal_handlers_disconnect_matched(G_OBJECT(web_view),
 						 G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(web_view_on_load_finished), data);
@@ -468,7 +474,7 @@ static void on_help_edit_edit_toggled(GtkToggleAction * action, struct help_edit
 	gtk_action_set_sensitive(gtk_action_group_get_action(data->actions, "save"), active);
 	gtk_action_set_sensitive(gtk_action_group_get_action(data->actions, "refresh"), active);
 
-	gebr_js_evaluate(data->context,
+	gebr_js_eval_with_url(data->context,
 			 "(function(){"
 			 	"var content = GetEditableElements(document)[0];"
 			 	"var cke_editor = document.getElementById('cke_' + editor.name);"
@@ -476,7 +482,7 @@ static void on_help_edit_edit_toggled(GtkToggleAction * action, struct help_edit
 				"GenerateNavigationIndex(document);"
 				"ToggleVisible(content);"
 				"ToggleVisible(cke_editor);"
-			 "})();");
+			 "})();", data->html_path->str);
 }
 
 void on_help_edit_refresh_activate(GtkAction * action, struct help_edit_data * data)
@@ -486,11 +492,11 @@ void on_help_edit_refresh_activate(GtkAction * action, struct help_edit_data * d
 		GString * help;
 		JSValueRef value;
 		data->menu_refresh = TRUE;
-		value = gebr_js_evaluate(data->context,
+		value = gebr_js_eval_with_url(data->context,
 					 "(function(){"
 					 	"UpdateDocumentClone();"
 						"return document_clone.documentElement.outerHTML;"
-					 "})();");
+					 "})();", data->html_path->str);
 		help = gebr_js_value_get_string(data->context, value);
 		(data->refresh_callback)(help, data->object);
 		// 'help' is now refreshed, I hope ;)

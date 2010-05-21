@@ -420,7 +420,7 @@ gebr_geoxml_program_parameter_copy_value(GebrGeoXmlProgramParameter * program_pa
 						  default_value == FALSE ? "value" : "default");
 	for (; element != NULL; element = __gebr_geoxml_next_same_element(element))
 		gdome_n_insertBefore_protected(gdome_el_parentNode(insert_position, &exception),
-				     gdome_doc_importNode(document, (GdomeNode *) element, TRUE, &exception),
+				     gdome_doc_importNode_protected(document, element),
 				     (GdomeNode *) insert_position, &exception);
 
 	return TRUE;

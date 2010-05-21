@@ -41,7 +41,7 @@ void gebr_geoxml_clipboard_copy(GebrGeoXmlObject * object)
 		return;
 
 	gdome_el_appendChild(gdome_doc_documentElement(clipboard_document, &exception),
-			     gdome_doc_importNode(clipboard_document, (GdomeNode *) object, TRUE, &exception),
+			     gdome_doc_importNode_protected(clipboard_document, (GdomeElement *) object),
 			     &exception);
 }
 
@@ -68,15 +68,15 @@ GebrGeoXmlObject *gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object)
 			    !strcmp(gdome_el_tagName(container_element, &exception)->str, child_parent[i][1])) {
 				GdomeNode *imported;
 
-				imported = gdome_doc_importNode(gdome_el_ownerDocument(container_element, &exception),
-								(GdomeNode *) paste_element, TRUE, &exception);
+				imported = gdome_doc_importNode_protected(gdome_el_ownerDocument(container_element, &exception),
+									  paste_element);
 				if (!strlen(child_parent[i][2]))
 					gdome_el_appendChild(container_element, imported, &exception);
 				else
 					gdome_el_appendChild(__gebr_geoxml_get_first_element
 							     (container_element, child_parent[i][2]), imported,
 							     &exception);
-				__gebr_geoxml_element_reassign_ids((GdomeElement *) imported);
+				//__gebr_geoxml_element_reassign_ids((GdomeElement *) imported);
 				if (first_paste == NULL)
 					first_paste = GEBR_GEOXML_OBJECT(imported);
 				break;
