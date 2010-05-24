@@ -908,12 +908,17 @@ static GtkMenu *on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_dat
  */
 static GebrGeoXmlParameterType dict_edit_type_text_to_gebr_geoxml_type(const gchar * text)
 {
-	if (!strcmp(text, "string"))
-		return GEBR_GEOXML_PARAMETER_TYPE_STRING;
-	else if (!strcmp(text, "integer"))
-		return GEBR_GEOXML_PARAMETER_TYPE_INT;
-	else if (!strcmp(text, "real"))
-		return GEBR_GEOXML_PARAMETER_TYPE_FLOAT;
+	if (text != NULL)
+	{
+		if (!strcmp(text, "string"))
+			return GEBR_GEOXML_PARAMETER_TYPE_STRING;
+		else if (!strcmp(text, "integer"))
+			return GEBR_GEOXML_PARAMETER_TYPE_INT;
+		else if (!strcmp(text, "real"))
+			return GEBR_GEOXML_PARAMETER_TYPE_FLOAT;
+		else
+			return GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN;
+	}
 	else
 		return GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN;
 }
