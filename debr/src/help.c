@@ -18,7 +18,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <regex.h>
 #include <locale.h>
 
 #include <sys/wait.h>
@@ -52,49 +51,17 @@ static gsize strip_block(GString * buffer, const gchar * tag);
  * Public functions.
  */
 
-void help_fix_css(GString * help)
+void help_show(GebrGeoXmlObject *object, const gchar * title)
 {
-	gchar *gebrcsspos;
+	GString *html = g_string_new("");
+	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
+		g_string_assign(html, gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object)));
+	else
+		g_string_assign(html, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object)));
 
-	/* Change CSS's path to an absolute one. */
-	if ((gebrcsspos = strstr(help->str, "\"gebr.css")) != NULL) {
-		int pos;
+	gebr_gui_help_show(object, TRUE, html->str, title);
 
-		pos = (gebrcsspos - help->str) / sizeof(char);
-		g_string_erase(help, pos, 9);
-		g_string_insert(help, pos, "\"file://" DEBR_DATA_DIR "gebr.css");
-	}
-}
-
-void help_show(const gchar * help, const gchar * title)
-{
-	GString *prepared_html;
-	FILE *html_fp;
-	GString *html_path;
-
-	prepared_html = g_string_new(help);
-	help_fix_css(prepared_html);
-
-	/* create temporary filename */
-	html_path = gebr_make_temp_filename("debr_XXXXXX.html");
-
-	/* open temporary file with help from XML */
-	html_fp = fopen(html_path->str, "w");
-	if (html_fp == NULL) {
-		debr_message(GEBR_LOG_ERROR, _("Unable to create temporary file."));
-		goto out;
-	}
-	fputs(prepared_html->str, html_fp);
-	fclose(html_fp);
-
-	/* Add file to list of files to be removed */
-	debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
-
-	g_string_prepend(html_path, "file://");
-	gebr_gui_help_show(html_path->str, title);
-
- out:	g_string_free(html_path, FALSE);
-	g_string_free(prepared_html, TRUE);
+	g_string_free(html, TRUE);
 }
 
 void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
@@ -129,9 +96,6 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 		help_subst_fields(prepared_html, program, FALSE);
 	}
 
-	/* CSS fix */
-	help_fix_css(prepared_html);
-
 	/* EDIT IT */
 	if (program != NULL)
 		gebr_geoxml_program_set_help(program, prepared_html->str);
@@ -145,7 +109,6 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 			gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), help_edit_on_finished,
 					   help_edit_on_refresh, TRUE);
 	} else {
-
 		/* create temporary filename */
 		html_path = gebr_make_temp_filename("debr_XXXXXX.html");
 
@@ -471,24 +434,6 @@ static void help_edit_on_finished(GebrGeoXmlObject * object, const gchar * _help
 	GString * help;
 
 	help = g_string_new(_help);
-	/* transform css into a relative path back */
-	{
-		regex_t regexp;
-		regmatch_t matchptr;
-
-		regcomp(&regexp, "<link[^<]*>", REG_NEWLINE | REG_ICASE);
-		if (!regexec(&regexp, help->str, 1, &matchptr, 0)) {
-			g_string_erase(help, (gssize) matchptr.rm_so,
-				       (gssize) matchptr.rm_eo - matchptr.rm_so);
-			g_string_insert(help, (gssize) matchptr.rm_so,
-					"<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
-		} else {
-			regcomp(&regexp, "<head>", REG_NEWLINE | REG_ICASE);
-			if (!regexec(&regexp, help->str, 1, &matchptr, 0))
-				g_string_insert(help, (gssize) matchptr.rm_eo,
-						"\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
-		}
-	}
 
 	switch (gebr_geoxml_object_get_type(object)) {
 	case GEBR_GEOXML_OBJECT_TYPE_FLOW:

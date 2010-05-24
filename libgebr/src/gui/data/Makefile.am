@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-gebrdatadir = $(datadir)/gebr/
-gebrdata_DATA = gebr.css
+libgebrdatadir = $(datadir)/libgebr/
+libgebrdata_DATA = gebr.css
 
-EXTRA_DIST = $(gebrdata_DATA)
+EXTRA_DIST = $(libgebrdata_DATA)

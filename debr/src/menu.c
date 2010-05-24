@@ -427,7 +427,7 @@ MenuMessage menu_save(GtkTreeIter * iter)
 	/* is this a new menu? */
 	if (!strlen(path)) {
 		g_free(path);
-		return MENU_MESSAGE_FIRST_TIME_SAVE;
+		return menu_save_as(iter) ? MENU_MESSAGE_SUCCESS : MENU_MESSAGE_PERMISSION_DENIED;
 	}
 
 	filename = g_path_get_basename(path);
@@ -1734,18 +1734,11 @@ static void menu_description_changed(GtkEntry * entry)
 
 /**
  * \internal
- * Calls \ref help_show with menu's help.
+ * Calls \ref help_show for current menu.
  */
 static void menu_help_view(void)
 {
-	gchar *help;
-
-	help = (gchar *) gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu));
-
-	if (strlen(help) > 1)
-		help_show(help, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
-	else
-		help_show(" ", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
+	help_show(GEBR_GEOXML_OBJECT(debr.menu), gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
 }
 
 /**
@@ -1998,8 +1991,7 @@ static gboolean menu_save_iter_list(GList * unsaved)
 
 		iter = (GtkTreeIter*)entry->data;
 		result = menu_save(iter);
-		if (result == MENU_MESSAGE_PERMISSION_DENIED
-		    || (result == MENU_MESSAGE_FIRST_TIME_SAVE && !menu_save_as(iter))) {
+		if (result == MENU_MESSAGE_PERMISSION_DENIED) {
 			ret = FALSE;
 			break;
 		}

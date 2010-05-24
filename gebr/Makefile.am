@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-SUBDIRS = data menus src packages po doc
+SUBDIRS = menus src packages po doc
 
 desktopdir = $(datadir)/applications
 desktop_DATA = gebr.desktop

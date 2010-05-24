@@ -16,8 +16,6 @@
 include $(top_srcdir)/Makefile.decl
 
 debrdatadir = $(datadir)/debr/
-debrdata_DATA = \
-		gebr.css \
-		help-template.html
+debrdata_DATA = help-template.html
 
 EXTRA_DIST = $(debrdata_DATA)

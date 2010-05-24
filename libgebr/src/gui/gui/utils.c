@@ -434,11 +434,9 @@ gboolean gebr_gui_gtk_tree_model_iter_equal_to(GtkTreeModel * model, GtkTreeIter
 
 void gebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source)
 {
-	GValue value;
+	GValue value = {0,};
 	guint i, n;
 
-	g_value_init(&value, G_TYPE_INT);
-	g_value_unset(&value);
 	n = gtk_tree_model_get_n_columns(model);
 	for (i = 0; i < n; ++i) {
 		gtk_tree_model_get_value(model, source, i, &value);

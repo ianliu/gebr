@@ -141,6 +141,7 @@ src/gui/gebr-gui.pc
 src/gui/gui/Makefile
 src/gui/icons/Makefile
 src/gui/icons/gebr-theme/Makefile
+src/gui/data/Makefile
 src/gui/pixmaps/Makefile
 src/gui/ckeditor/Makefile
 src/gui/tests/Makefile

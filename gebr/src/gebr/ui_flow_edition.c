@@ -522,9 +522,9 @@ static void flow_edition_menu_show_help(void)
 	menu = menu_load_path(menu_filename);
 	if (menu == NULL)
 		goto out;
-	help_show(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(menu)), _("Menu help"));
+	help_show(GEBR_GEOXML_OBJECT(menu), TRUE, _("Menu help"));
 
- out:	g_free(menu_filename);
+out:	g_free(menu_filename);
 }
 
 /**

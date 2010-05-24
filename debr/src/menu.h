@@ -66,7 +66,6 @@ enum {
  * Error messages to handle menu save */
 typedef enum {
 	MENU_MESSAGE_PERMISSION_DENIED = 0,	/**< The program don't has access to the file			*/ 
-	MENU_MESSAGE_FIRST_TIME_SAVE, 		/**< The file don't exist and will be saved by the first time	*/
 	MENU_MESSAGE_SUCCESS			/**< Normal execution						*/
 } MenuMessage;
 
