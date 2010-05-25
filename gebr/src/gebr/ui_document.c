@@ -672,31 +672,34 @@ on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar
 	GebrGeoXmlParameter *parameter;
 	const gchar *keyword, *value;
 
-	gtk_tree_model_get_iter_from_string(data->tree_model, &iter, path_string);
-	gtk_tree_model_get(data->tree_model, &iter, DICT_EDIT_IS_ADD_PARAMETER, &is_add_parameter, -1);
+	if (dict_edit_type_text_to_gebr_geoxml_type(new_text) != GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN)
+	{
+		gtk_tree_model_get_iter_from_string(data->tree_model, &iter, path_string);
+		gtk_tree_model_get(data->tree_model, &iter, DICT_EDIT_IS_ADD_PARAMETER, &is_add_parameter, -1);
 
-	if (is_add_parameter) {
-		parameter =
-		    gebr_geoxml_parameters_append_parameter(gebr_geoxml_document_get_dict_parameters
-							    (data->current_document),
-							    dict_edit_type_text_to_gebr_geoxml_type(new_text));
-		dict_edit_new_parameter_iter(data, GEBR_GEOXML_OBJECT(parameter), &iter);
+		if (is_add_parameter) {
+			parameter =
+				gebr_geoxml_parameters_append_parameter(gebr_geoxml_document_get_dict_parameters
+									(data->current_document),
+									dict_edit_type_text_to_gebr_geoxml_type(new_text));
+			dict_edit_new_parameter_iter(data, GEBR_GEOXML_OBJECT(parameter), &iter);
+			dict_edit_load_iter(data, &iter, parameter);
+			dict_edit_append_add_parameter(data, &data->current_document_iter);
+			dict_edit_start_keyword_editing(data, &iter);
+			return;
+		}
+
+		gtk_tree_model_get(data->tree_model, &iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
+
+		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter));
+		value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE);
+		gebr_geoxml_parameter_set_type(parameter, dict_edit_type_text_to_gebr_geoxml_type(new_text));
+		/* restore */
+		gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), keyword);
+		gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE, value);
+
 		dict_edit_load_iter(data, &iter, parameter);
-		dict_edit_append_add_parameter(data, &data->current_document_iter);
-		dict_edit_start_keyword_editing(data, &iter);
-		return;
 	}
-
-	gtk_tree_model_get(data->tree_model, &iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
-
-	keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter));
-	value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE);
-	gebr_geoxml_parameter_set_type(parameter, dict_edit_type_text_to_gebr_geoxml_type(new_text));
-	/* restore */
-	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), keyword);
-	gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE, value);
-
-	dict_edit_load_iter(data, &iter, parameter);
 }
 
 /* Function: on_dict_edit_cell_edited
