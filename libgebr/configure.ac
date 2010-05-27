@@ -18,12 +18,27 @@ AC_INIT(configure.ac)
 
 m4_include(configure.ac.decl)
 
+AC_CONFIG_MACRO_DIR([m4])
+
 PACKAGE=libgebr
 GEBR_VERSION_INFO=`echo $VERSION | awk -F. '{ printf "%d:%d:%d", $1+$2, $3, $2 }'`
 
 AC_SUBST(PACKAGE)
 AC_SUBST(TODAY)
 AC_SUBST(GEBR_VERSION_INFO)
+
+AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
+
+IT_PROG_INTLTOOL
+
+AC_PROG_CC
+AM_PROG_CC_STDC
+AC_PROG_INSTALL
+AC_PROG_LIBTOOL
+AC_HEADER_STDC
+
+# check for gtk-doc
+GTK_DOC_CHECK([1.14],[--flavour no-tmpl])
 
 dnl Debug option
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [turn on debugging])],, enable_debug=yes)
@@ -53,16 +68,6 @@ AC_ARG_ENABLE([static-mode],
 	STATIC_MODE=1, STATIC_MODE=0)
 AC_SUBST(STATIC_MODE)
 
-AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
-
-IT_PROG_INTLTOOL
-
-AC_PROG_CC
-AM_PROG_CC_STDC
-AC_PROG_INSTALL
-AC_PROG_LIBTOOL
-AC_HEADER_STDC
-
 dnl check for zlib
 AC_CHECK_LIB(z,main,, [AC_MSG_ERROR(zlib required)])
 
@@ -71,8 +76,8 @@ GETTEXT_PACKAGE=$PACKAGE
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package])
 
-AM_GLIB_GNU_GETTEXT
 AM_GNU_GETTEXT_VERSION([0.11])
+AM_GLIB_GNU_GETTEXT
 
 dnl check for GLIB >= 2.8.0 (needed for g_access)
 PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.12.0],,AC_MSG_ERROR([Could not find glib >= 2.12.0]))
@@ -112,6 +117,11 @@ fi
 
 AC_OUTPUT([
 Makefile
+docs/Makefile
+docs/reference/Makefile
+docs/reference/comm/Makefile
+docs/reference/geoxml/Makefile
+docs/reference/gui/Makefile
 packages/Makefile
 packages/rpm/libgebr.fedora.spec
 packages/rpm/libgebr.mandriva.spec
