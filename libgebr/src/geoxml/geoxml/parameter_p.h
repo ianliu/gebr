@@ -33,7 +33,7 @@ GdomeElement *__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * paramete
  *
  * Return the type element of \p parameter, according to \p resolve_references
  */
-GdomeElement *__gebr_geoxml_parameter_get_type_element(GebrGeoXmlParameter * parameter, gboolean resolve_references);
+GdomeElement *__gebr_geoxml_parameter_get_type_element(GebrGeoXmlParameter * parameter);
 
 /**
  * \internal

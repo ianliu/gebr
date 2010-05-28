@@ -401,7 +401,7 @@ void
 
 
 gebr_geoxml_program_parameter_get_file_filter(GebrGeoXmlProgramParameter * program_parameter,
-					      gchar ** name, gchar ** pattern);
+					      const gchar ** name, const gchar ** pattern);
 
 /**
  * For integer, float and range parameters type, set mininimum

@@ -75,7 +75,7 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_group_get_template(GebrGeoXmlParamet
 	GdomeElement *tpl;
 	GdomeElement *group;
 
-	group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group), FALSE);
+	group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
 	tpl = __gebr_geoxml_get_first_element(group, "template-instance");
 	tpl = __gebr_geoxml_get_first_element(tpl, "parameters");
 
@@ -90,7 +90,7 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_group_add_instance(GebrGeoXmlParamet
 	template_instance = (GebrGeoXmlSequence*)gebr_geoxml_parameter_group_get_template(parameter_group);
 
 	new_instance = GEBR_GEOXML_PARAMETERS(__gebr_geoxml_sequence_append_clone(template_instance));
-	GdomeElement *group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group), FALSE);
+	GdomeElement *group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
 	gdome_el_insertBefore_protected(group, (GdomeNode*)new_instance, NULL, &exception);
 
 	__gebr_geoxml_parameter_group_turn_instance_to_reference(parameter_group, new_instance);
@@ -145,9 +145,10 @@ int gebr_geoxml_parameter_group_get_instance(GebrGeoXmlParameterGroup * paramete
 		return GEBR_GEOXML_RETV_NULL_PTR;
 	}
 
-	*parameters = (GebrGeoXmlSequence *)
-	    __gebr_geoxml_get_element_at(__gebr_geoxml_parameter_get_type_element
-					 (GEBR_GEOXML_PARAMETER(parameter_group), FALSE), "parameters", index, FALSE);
+	GdomeElement * type_element;
+
+	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
+	*parameters = (GebrGeoXmlSequence *) __gebr_geoxml_get_element_at(type_element, "parameters", index, FALSE);
 
 	return (*parameters == NULL)
 	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
@@ -155,13 +156,13 @@ int gebr_geoxml_parameter_group_get_instance(GebrGeoXmlParameterGroup * paramete
 
 glong gebr_geoxml_parameter_group_get_instances_number(GebrGeoXmlParameterGroup * parameter_group)
 {
-	if (parameter_group == NULL)
-		return -1;
+	g_return_val_if_fail(parameter_group != NULL, -1);
 
-	return __gebr_geoxml_get_elements_number((GdomeElement *)
-						 __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER
-											  (parameter_group), FALSE),
-						 "parameters");
+	GdomeElement * type_element;
+
+	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
+
+	return __gebr_geoxml_get_elements_number(type_element, "parameters");
 }
 
 GSList *gebr_geoxml_parameter_group_get_parameter_in_all_instances(GebrGeoXmlParameterGroup * parameter_group,
@@ -186,44 +187,46 @@ GSList *gebr_geoxml_parameter_group_get_parameter_in_all_instances(GebrGeoXmlPar
 
 void gebr_geoxml_parameter_group_set_is_instanciable(GebrGeoXmlParameterGroup * parameter_group, gboolean enable)
 {
-	if (parameter_group == NULL)
-		return;
-	__gebr_geoxml_set_attr_value(__gebr_geoxml_parameter_get_type_element
-				     (GEBR_GEOXML_PARAMETER(parameter_group), FALSE), "instanciable",
-				     (enable == TRUE ? "yes" : "no"));
+	GdomeElement * type_element;
+
+	g_return_if_fail(parameter_group != NULL);
+
+	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
+	__gebr_geoxml_set_attr_value(type_element, "instanciable", (enable == TRUE ? "yes" : "no"));
 }
 
 void gebr_geoxml_parameter_group_set_expand(GebrGeoXmlParameterGroup * parameter_group, const gboolean enable)
 {
-	if (parameter_group == NULL)
-		return;
-	__gebr_geoxml_set_attr_value(__gebr_geoxml_parameter_get_type_element
-				     (GEBR_GEOXML_PARAMETER(parameter_group), FALSE), "expand",
-				     (enable == TRUE ? "yes" : "no"));
+	GdomeElement * type_element;
+
+	g_return_if_fail(parameter_group != NULL);
+
+	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
+	__gebr_geoxml_set_attr_value(type_element, "expand", (enable == TRUE ? "yes" : "no"));
 }
 
 gboolean gebr_geoxml_parameter_group_get_is_instanciable(GebrGeoXmlParameterGroup * parameter_group)
 {
-	if (parameter_group == NULL)
-		return FALSE;
-
 	GdomeElement * group;
 	const gchar * instanciable;
 
-	group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group), FALSE);
+	g_return_val_if_fail(parameter_group != NULL, FALSE);
+
+	group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
 	instanciable = __gebr_geoxml_get_attr_value((GdomeElement*)group, "instanciable");
 
-	return (!strcmp(instanciable, "yes"))
-	    ? TRUE : FALSE;
+	return (!strcmp(instanciable, "yes")) ? TRUE : FALSE;
 }
 
 gboolean gebr_geoxml_parameter_group_get_expand(GebrGeoXmlParameterGroup * parameter_group)
 {
-	if (parameter_group == NULL)
-		return FALSE;
-	return (!strcmp
-		(__gebr_geoxml_get_attr_value
-		 (__gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group), FALSE), "expand"),
-		 "yes"))
-	    ? TRUE : FALSE;
+	const gchar * expand;
+	GdomeElement * type_element;
+
+	g_return_val_if_fail(parameter_group != NULL, FALSE);
+
+	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
+	expand = __gebr_geoxml_get_attr_value(type_element, "expand");
+
+	return (!strcmp(expand, "yes")) ? TRUE : FALSE;
 }
