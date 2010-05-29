@@ -255,10 +255,10 @@ GebrGeoXmlParameter *gebr_geoxml_parameter_get_referencee(GebrGeoXmlParameter * 
 {
 	if (!gebr_geoxml_parameter_get_is_reference(parameter_reference))
 		return NULL;
-	return (GebrGeoXmlParameter *) __gebr_geoxml_get_element_by_id((GdomeElement *) parameter_reference,
-								       __gebr_geoxml_get_attr_value
-								       (__gebr_geoxml_parameter_get_type_element
-									(parameter_reference, FALSE), "idref"));
+
+	GdomeElement *type_element = __gebr_geoxml_parameter_get_type_element(parameter_reference, FALSE);
+	const gchar *id = __gebr_geoxml_get_attr_value(type_element, "idref");
+	return (GebrGeoXmlParameter *) __gebr_geoxml_get_element_by_id((GdomeElement *) parameter_reference, id);
 }
 
 gboolean gebr_geoxml_parameter_get_is_program_parameter(GebrGeoXmlParameter * parameter)

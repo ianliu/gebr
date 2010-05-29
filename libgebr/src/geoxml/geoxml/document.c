@@ -138,7 +138,6 @@ static GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, G
 	GdomeDocument *document;
 	GdomeElement *root_element;
 	GdomeElement *source_root_element;
-	GdomeDOMString *string;
 
 	source_root_element = gdome_doc_documentElement(source, &exception);
 	document = gdome_di_createDocument(dom_implementation,
@@ -152,12 +151,13 @@ static GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, G
 	__gebr_geoxml_set_attr_value(root_element, "version",
 				     __gebr_geoxml_get_attr_value(source_root_element, "version"));
 	/* nextid */
-	__gebr_geoxml_set_attr_value(root_element, "nextid", "n0");
+	//__gebr_geoxml_set_attr_value(root_element, "nextid", "n0");
+	__gebr_geoxml_set_attr_value(root_element, "nextid", __gebr_geoxml_get_attr_value(source_root_element, "nextid"));
 
 	/* import all elements */
 	GdomeElement *element = __gebr_geoxml_get_first_element(source_root_element, "*");
 	for (; element != NULL; element = __gebr_geoxml_next_element(element)) {
-		GdomeNode *new_node = gdome_doc_importNode_protected(document, element);
+		GdomeNode *new_node = gdome_doc_importNode(document, element, TRUE, &exception);
 		gdome_el_appendChild(root_element, new_node, &exception);
 	}
 
@@ -687,14 +687,14 @@ GebrGeoXmlDocument *gebr_geoxml_document_clone(GebrGeoXmlDocument * source)
 	if (source == NULL)
 		return NULL;
 
-	GdomeDocument *document;
+	GebrGeoXmlDocument *document;
 
-	document = __gebr_geoxml_document_clone_doc((GdomeDocument *) source, NULL);
-	__gebr_geoxml_document_new_data((GebrGeoXmlDocument *)document, gebr_geoxml_document_get_filename(source));
+	gchar *xml;
+	gebr_geoxml_document_to_string(source, &xml);
+	gebr_geoxml_document_load_buffer(&document, xml);
+	g_free(xml);
 
-	__gebr_geoxml_ref();
-
-	return (GebrGeoXmlDocument *)document;
+	return document;
 }
 
 enum GEBR_GEOXML_DOCUMENT_TYPE gebr_geoxml_document_get_type(GebrGeoXmlDocument * document)
@@ -785,6 +785,7 @@ int gebr_geoxml_document_to_string(GebrGeoXmlDocument * document, gchar ** xml_s
 	GdomeBoolean ret;
 	GdomeDocument * clone;
 
+	/* clone to remove DOCTYPE */
 	clone = __gebr_geoxml_document_clone_doc((GdomeDocument*)document, NULL);
 	ret = gdome_di_saveDocToMemoryEnc(dom_implementation, clone, xml_string, ENCODING,
 					  GDOME_SAVE_LIBXML_INDENT, &exception);

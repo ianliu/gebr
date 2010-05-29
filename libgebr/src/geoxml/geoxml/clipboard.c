@@ -76,7 +76,6 @@ GebrGeoXmlObject *gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object)
 					gdome_el_appendChild(__gebr_geoxml_get_first_element
 							     (container_element, child_parent[i][2]), imported,
 							     &exception);
-				//__gebr_geoxml_element_reassign_ids((GdomeElement *) imported);
 				if (first_paste == NULL)
 					first_paste = GEBR_GEOXML_OBJECT(imported);
 				break;
