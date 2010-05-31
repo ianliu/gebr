@@ -208,15 +208,12 @@ GdomeElement *__gebr_geoxml_next_same_element(GdomeElement * element);
  * Use nextid and use it as ID
  * Automatically change references ids.
  */
-void __gebr_geoxml_element_assign_new_id(GdomeElement * element, GdomeElement * context, gboolean reassign_refereceds);
+void __gebr_geoxml_element_assign_new_id(GdomeElement * element, const gchar *oldid, GdomeElement * reassign_context);
 
 /**
  * \internal
- * Recursively reassign all elements in \p element (including it)
- *
- * using __gebr_geoxml_element_assign_new_id.
  */
-void __gebr_geoxml_element_reassign_ids(GdomeElement * element);
+void __gebr_geoxml_element_reassign_id(GdomeElement * element, GdomeElement * reassign_context);
 
 /**
  * \internal

@@ -79,7 +79,6 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 		GebrGeoXmlSequence *position;
 
 		reference = (GdomeElement *) gdome_el_cloneNode_protected((GdomeElement *) parameter);
-		__gebr_geoxml_element_assign_new_id(reference, NULL, FALSE);
 		__gebr_geoxml_parameter_set_be_reference((GebrGeoXmlParameter *) reference, parameter);
 
 		gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &position, index);
@@ -105,7 +104,7 @@ GebrGeoXmlParameter *gebr_geoxml_parameters_append_parameter(GebrGeoXmlParameter
 	GdomeElement *element;
 
 	element = __gebr_geoxml_insert_new_element((GdomeElement *) parameters, "parameter", NULL);
-	__gebr_geoxml_element_assign_new_id(element, NULL, FALSE);
+	__gebr_geoxml_element_assign_new_id(element, NULL, NULL);
 	__gebr_geoxml_insert_new_element(element, "label", NULL);
 	__gebr_geoxml_parameter_insert_type((GebrGeoXmlParameter *) element, type);
 

@@ -81,32 +81,16 @@ void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 	if (flow == NULL || flow2 == NULL)
 		return;
 
-	GdomeNodeList *flow2_node_list;
-	GdomeDOMString *string;
-	gulong i, n;
+	GdomeNode *insert_position = (GdomeNode*)__gebr_geoxml_get_first_element(gebr_geoxml_document_root_element
+										 (GEBR_GEOXML_DOC(flow)), "revision");
 
-	/* import each program from flow2 */
-	string = gdome_str_mkref("program");
-	flow2_node_list =
-	    gdome_el_getElementsByTagName(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow2)), string,
-					  &exception);
-	n = gdome_nl_length(flow2_node_list, &exception);
-
-	/* clear each copied program help */
-	for (i = 0; i < n; ++i) {
-		GdomeNode *new_node = gdome_doc_importNode_protected((GdomeDocument *) flow,
-								     (GdomeElement*)gdome_nl_item(flow2_node_list, i, &exception));
-
-		//__gebr_geoxml_element_reassign_ids((GdomeElement *) new_node);
+	GebrGeoXmlSequence *program;
+	gebr_geoxml_flow_get_program(flow2, &program, 0);
+	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
+		GdomeNode *new_node = gdome_doc_importNode_protected((GdomeDocument *)flow, (GdomeElement*)program);
 		gdome_el_insertBefore_protected(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), new_node,
-						(GdomeNode *)
-						__gebr_geoxml_get_first_element(gebr_geoxml_document_root_element
-										(GEBR_GEOXML_DOC(flow)), "revision"),
-						&exception);
+						insert_position, &exception);
 	}
-
-	gdome_str_unref(string);
-	gdome_nl_unref(flow2_node_list, &exception);
 }
 
 void gebr_geoxml_flow_foreach_parameter(GebrGeoXmlFlow * flow, GebrGeoXmlCallback callback, gpointer user_data)
