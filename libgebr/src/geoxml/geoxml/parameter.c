@@ -62,20 +62,19 @@ GdomeElement *__gebr_geoxml_parameter_get_type_element(GebrGeoXmlParameter * par
 GebrGeoXmlParameterType
 __gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter, gboolean resolve_references)
 {
-	gint i;
-	GdomeElement *type_element;
 	GdomeDOMString *tag_name;
+	GdomeElement *type_element;
 
-	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 	if (resolve_references) {
 		GebrGeoXmlParameter * referencee;
 		referencee = gebr_geoxml_parameter_get_referencee(parameter);
 		if (referencee)
-			type_element = (GdomeElement*)referencee;
+			return __gebr_geoxml_parameter_get_type(referencee, FALSE);
 	}
 
+	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 	tag_name = gdome_el_tagName(type_element, &exception);
-	for (i = 1; i <= parameter_type_to_str_len; ++i)
+	for (gint i = 1; i <= parameter_type_to_str_len; ++i)
 		if (!strcmp(parameter_type_to_str[i], tag_name->str))
 			return (GebrGeoXmlParameterType)i;
 
@@ -212,8 +211,7 @@ int gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, Gebr
 
 GebrGeoXmlParameterType gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter)
 {
-	if (parameter == NULL)
-		return GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN;
+	g_return_val_if_fail(parameter != NULL, GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN);
 
 	return __gebr_geoxml_parameter_get_type(parameter, TRUE);
 }
@@ -253,27 +251,27 @@ GSList *gebr_geoxml_parameter_get_references_list(GebrGeoXmlParameter * paramete
 
 GebrGeoXmlParameter *gebr_geoxml_parameter_get_referencee(GebrGeoXmlParameter * parameter_reference)
 {
-	if (!gebr_geoxml_parameter_get_is_reference(parameter_reference))
-		return NULL;
-
 	gint index;
 	GdomeElement * group;
 	GdomeDOMString * node_name;
 	GebrGeoXmlSequence * referencee;
 	GebrGeoXmlParameters * template;
 
+	if (!gebr_geoxml_parameter_get_is_reference(parameter_reference))
+		return NULL;
+
 	group = (GdomeElement*)gdome_el_parentNode((GdomeElement*)parameter_reference, &exception);
 	group = (GdomeElement*)gdome_el_parentNode(group, &exception);
 	
 	node_name = gdome_el_nodeName(group, &exception);
 	if (strcmp(node_name->str, "group") != 0)
-		return NULL;
+		g_error("DTD is wrong!");
 
 	group = (GdomeElement*)gdome_el_parentNode(group, &exception);
 	template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(group));
 
 	if (!template)
-		return NULL;
+		g_error("DTD is wrong!");
 
 	index = gebr_geoxml_sequence_get_index(GEBR_GEOXML_SEQUENCE(parameter_reference));
 	gebr_geoxml_parameters_get_parameter(template, &referencee, index);
