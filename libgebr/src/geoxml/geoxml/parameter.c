@@ -59,6 +59,16 @@ GdomeElement *__gebr_geoxml_parameter_get_type_element(GebrGeoXmlParameter * par
 	return __gebr_geoxml_next_element(type_element);
 }
 
+/**
+ * __gebr_geoxml_parameter_resolve:
+ */
+GebrGeoXmlParameter * __gebr_geoxml_parameter_resolve(GebrGeoXmlParameter * parameter)
+{
+	if (gebr_geoxml_parameter_get_is_reference(parameter))
+		return gebr_geoxml_parameter_get_referencee(parameter);
+	return parameter;
+}
+
 GebrGeoXmlParameterType
 __gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter, gboolean resolve_references)
 {

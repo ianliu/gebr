@@ -138,7 +138,6 @@ static GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, G
 	GdomeDocument *document;
 	GdomeElement *root_element;
 	GdomeElement *source_root_element;
-	GdomeDOMString *string;
 
 	source_root_element = gdome_doc_documentElement(source, &exception);
 	document = gdome_di_createDocument(dom_implementation,

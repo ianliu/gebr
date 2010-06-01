@@ -459,10 +459,9 @@ void
 gebr_geoxml_program_parameter_set_value_from_dict(GebrGeoXmlProgramParameter * program_parameter,
 						  GebrGeoXmlProgramParameter * dict_parameter)
 {
-	if (program_parameter == NULL)
-		return;
-
 	GdomeElement *property_element;
+
+	g_return_if_fail(program_parameter != NULL);
 
 	property_element = __gebr_geoxml_get_first_element((GdomeElement *) program_parameter, "property");
 
@@ -473,9 +472,11 @@ gebr_geoxml_program_parameter_set_value_from_dict(GebrGeoXmlProgramParameter * p
 		gdome_el_removeAttribute(property_element, string, &exception);
 
 		gdome_str_unref(string);
-	} else
-		__gebr_geoxml_set_attr_value(property_element, "dictkeyword",
-					     gebr_geoxml_program_parameter_get_keyword(dict_parameter));
+	} else {
+		const gchar * keyword;
+		keyword = gebr_geoxml_program_parameter_get_keyword(dict_parameter);
+		__gebr_geoxml_set_attr_value(property_element, "dictkeyword", keyword);
+	}
 }
 
 void
@@ -483,12 +484,15 @@ gebr_geoxml_program_parameter_set_file_be_directory(GebrGeoXmlProgramParameter *
 						    gboolean is_directory)
 {
 	GdomeElement * type_element;
+	GebrGeoXmlParameter * parameter;
+
+	parameter = GEBR_GEOXML_PARAMETER(program_parameter);
 
 	g_return_if_fail(program_parameter != NULL);
-	g_return_if_fail(!gebr_geoxml_parameter_get_is_reference(GEBR_GEOXML_PARAMETER(program_parameter)));
-	g_return_if_fail(gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(program_parameter)) == GEBR_GEOXML_PARAMETER_TYPE_FILE);
+	g_return_if_fail(!gebr_geoxml_parameter_get_is_reference(parameter));
+	g_return_if_fail(gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FILE);
 
-	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(program_parameter));
+	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 	__gebr_geoxml_set_attr_value(type_element, "directory", (is_directory == TRUE ? "yes" : "no"));
 }
 
@@ -498,22 +502,12 @@ gboolean gebr_geoxml_program_parameter_get_file_be_directory(GebrGeoXmlProgramPa
 	GdomeElement * type_element;
 	GebrGeoXmlParameter * parameter;
 
-	parameter = GEBR_GEOXML_PARAMETER(program_parameter);
+	parameter = __gebr_geoxml_parameter_resolve(GEBR_GEOXML_PARAMETER(program_parameter));
 
 	g_return_val_if_fail(program_parameter != NULL, FALSE);
 	g_return_val_if_fail(gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FILE, FALSE);
 
-	if (gebr_geoxml_parameter_get_is_reference(parameter)) {
-		GebrGeoXmlParameter * referencee;
-		GebrGeoXmlProgramParameter * program;
-
-		referencee = gebr_geoxml_parameter_get_referencee(parameter);
-		program = GEBR_GEOXML_PROGRAM_PARAMETER(referencee);
-
-		return gebr_geoxml_program_parameter_get_file_be_directory(program);
-	}
-
-	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(program_parameter));
+	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 	is_directory = __gebr_geoxml_get_attr_value(type_element, "directory");
 
 	return (!strcmp(is_directory, "yes")) ? TRUE : FALSE;
@@ -536,7 +530,6 @@ gebr_geoxml_program_parameter_set_file_filter(GebrGeoXmlProgramParameter * progr
 
 	if (name)
 		__gebr_geoxml_set_attr_value(type_element, "filter-name", name);
-
 	if (pattern)
 		__gebr_geoxml_set_attr_value(type_element, "filter-pattern", pattern);
 }
@@ -548,27 +541,16 @@ gebr_geoxml_program_parameter_get_file_filter(GebrGeoXmlProgramParameter * progr
 	GdomeElement * type_element;
 	GebrGeoXmlParameter * parameter;
 
-	parameter = GEBR_GEOXML_PARAMETER(program_parameter);
+	parameter = __gebr_geoxml_parameter_resolve(GEBR_GEOXML_PARAMETER(program_parameter));
 
 	g_return_if_fail(program_parameter != NULL);
 	g_return_if_fail(gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FILE);
 
-	if (gebr_geoxml_parameter_get_is_reference(parameter)) {
-		GebrGeoXmlParameter * referencee;
-		GebrGeoXmlProgramParameter * program;
-
-		referencee = gebr_geoxml_parameter_get_referencee(parameter);
-		program = GEBR_GEOXML_PROGRAM_PARAMETER(referencee);
-
-		return gebr_geoxml_program_parameter_get_file_filter(program, name, pattern);
-	}
-
 	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 
-	if (name != NULL)
+	if (name)
 		*name = __gebr_geoxml_get_attr_value(type_element, "filter-name");
-
-	if (pattern != NULL)
+	if (pattern)
 		*pattern = __gebr_geoxml_get_attr_value(type_element, "filter-pattern");
 }
 
@@ -589,7 +571,7 @@ gebr_geoxml_program_parameter_set_number_min_max(GebrGeoXmlProgramParameter * pr
 			 || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT
 			 || type == GEBR_GEOXML_PARAMETER_TYPE_RANGE);
 
-	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(program_parameter));
+	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 
 	if (min != NULL)
 		__gebr_geoxml_set_attr_value(type_element, "min", min);
@@ -600,141 +582,161 @@ gebr_geoxml_program_parameter_set_number_min_max(GebrGeoXmlProgramParameter * pr
 
 void
 gebr_geoxml_program_parameter_get_number_min_max(GebrGeoXmlProgramParameter * program_parameter,
-						 gchar ** min, gchar ** max)
+						 const gchar ** min, const gchar ** max)
 {
+	GdomeElement *type_element;
+	GebrGeoXmlParameter * parameter;
 	GebrGeoXmlParameterType type;
 
-	if (program_parameter == NULL)
-		return;
-	if (gebr_geoxml_parameter_get_is_reference(GEBR_GEOXML_PARAMETER(program_parameter)))
-		return gebr_geoxml_program_parameter_get_number_min_max((GebrGeoXmlProgramParameter *)
-									gebr_geoxml_parameter_get_referencee((GebrGeoXmlParameter *) program_parameter), min, max);
-	type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(program_parameter));
-	if (type != GEBR_GEOXML_PARAMETER_TYPE_INT &&
-	    type != GEBR_GEOXML_PARAMETER_TYPE_FLOAT && type != GEBR_GEOXML_PARAMETER_TYPE_RANGE)
-		return;
+	g_return_if_fail(program_parameter != NULL);
 
-	GdomeElement *type_element;
+	parameter = __gebr_geoxml_parameter_resolve(GEBR_GEOXML_PARAMETER(program_parameter));
+	type = gebr_geoxml_parameter_get_type(parameter);
 
-	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(program_parameter));
-	if (min != NULL)
-		*min = (gchar *) __gebr_geoxml_get_attr_value(type_element, "min");
-	if (max != NULL)
-		*max = (gchar *) __gebr_geoxml_get_attr_value(type_element, "max");
+	g_return_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_INT
+			 || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT
+			 || type == GEBR_GEOXML_PARAMETER_TYPE_RANGE);
+
+	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
+
+	if (min)
+		*min = __gebr_geoxml_get_attr_value(type_element, "min");
+	if (max)
+		*max = __gebr_geoxml_get_attr_value(type_element, "max");
 }
 
 void
 gebr_geoxml_program_parameter_set_range_properties(GebrGeoXmlProgramParameter * program_parameter,
-						   const gchar * min, const gchar * max, const gchar * inc,
-						   const gchar * digits)
+						   const gchar * min, const gchar * max,
+						   const gchar * inc, const gchar * digits)
 {
-	if (program_parameter == NULL)
-		return;
-	if (gebr_geoxml_parameter_get_is_reference(GEBR_GEOXML_PARAMETER(program_parameter)))
-		return;
-	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(program_parameter)) !=
-	    GEBR_GEOXML_PARAMETER_TYPE_RANGE)
-		return;
-
 	GdomeElement *type_element;
+	GebrGeoXmlParameter * parameter;
+	GebrGeoXmlParameterType type;
 
-	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(program_parameter));
-	if (min != NULL)
+	parameter = GEBR_GEOXML_PARAMETER(program_parameter);
+	type = gebr_geoxml_parameter_get_type(parameter);
+
+	g_return_if_fail(program_parameter != NULL);
+	g_return_if_fail(!gebr_geoxml_parameter_get_is_reference(parameter));
+	g_return_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_RANGE);
+
+	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
+
+	if (min)
 		__gebr_geoxml_set_attr_value(type_element, "min", min);
-	if (max != NULL)
+	if (max)
 		__gebr_geoxml_set_attr_value(type_element, "max", max);
-	if (inc != NULL)
+	if (inc)
 		__gebr_geoxml_set_attr_value(type_element, "inc", inc);
-	if (digits != NULL)
+	if (digits)
 		__gebr_geoxml_set_attr_value(type_element, "digits", digits);
 }
 
 void
 gebr_geoxml_program_parameter_get_range_properties(GebrGeoXmlProgramParameter * program_parameter,
-						   gchar ** min, gchar ** max, gchar ** inc, gchar ** digits)
+						   const gchar ** min, const gchar ** max,
+						   const gchar ** inc, const gchar ** digits)
 {
-	if (program_parameter == NULL)
-		return;
-	if (gebr_geoxml_parameter_get_is_reference(GEBR_GEOXML_PARAMETER(program_parameter)))
-		return gebr_geoxml_program_parameter_get_range_properties((GebrGeoXmlProgramParameter *)
-									  gebr_geoxml_parameter_get_referencee((GebrGeoXmlParameter *) program_parameter), min, max, inc, digits);
-	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(program_parameter)) !=
-	    GEBR_GEOXML_PARAMETER_TYPE_RANGE)
-		return;
-
 	GdomeElement *type_element;
+	GebrGeoXmlParameter * parameter;
+	GebrGeoXmlParameterType type;
 
-	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(program_parameter));
-	if (min != NULL)
-		*min = (gchar *) __gebr_geoxml_get_attr_value(type_element, "min");
-	if (max != NULL)
-		*max = (gchar *) __gebr_geoxml_get_attr_value(type_element, "max");
-	if (inc != NULL)
-		*inc = (gchar *) __gebr_geoxml_get_attr_value(type_element, "inc");
-	if (digits != NULL)
-		*digits = (gchar *) __gebr_geoxml_get_attr_value(type_element, "digits");
+	g_return_if_fail(program_parameter != NULL);
+
+	parameter = __gebr_geoxml_parameter_resolve(GEBR_GEOXML_PARAMETER(program_parameter));
+	type = gebr_geoxml_parameter_get_type(parameter);
+
+	g_return_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_RANGE);
+
+	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
+
+	if (min)
+		*min = __gebr_geoxml_get_attr_value(type_element, "min");
+	if (max)
+		*max = __gebr_geoxml_get_attr_value(type_element, "max");
+	if (inc)
+		*inc = __gebr_geoxml_get_attr_value(type_element, "inc");
+	if (digits)
+		*digits = __gebr_geoxml_get_attr_value(type_element, "digits");
 }
 
 GebrGeoXmlEnumOption *gebr_geoxml_program_parameter_append_enum_option(GebrGeoXmlProgramParameter * program_parameter,
 								       const gchar * label, const gchar * value)
 {
-	if (program_parameter == NULL || label == NULL || value == NULL)
-		return NULL;
-	if (gebr_geoxml_parameter_get_is_reference(GEBR_GEOXML_PARAMETER(program_parameter)))
-		return gebr_geoxml_program_parameter_append_enum_option((GebrGeoXmlProgramParameter *)
-									gebr_geoxml_parameter_get_referencee((GebrGeoXmlParameter *) program_parameter), label, value);
-	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(program_parameter)) != GEBR_GEOXML_PARAMETER_TYPE_ENUM)
-		return NULL;
-
-	GebrGeoXmlEnumOption *enum_option;
+	GdomeElement *enum_option;
+	GdomeElement *type_element;
 	GdomeElement *label_element;
 	GdomeElement *value_element;
+	GebrGeoXmlParameter * parameter;
+	GebrGeoXmlParameterType type;
 
-	enum_option = (GebrGeoXmlEnumOption *) __gebr_geoxml_new_element((GdomeElement *) program_parameter, "option");
-	label_element = __gebr_geoxml_insert_new_element((GdomeElement *) enum_option, "label", NULL);
-	value_element = __gebr_geoxml_insert_new_element((GdomeElement *) enum_option, "value", NULL);
+	g_return_val_if_fail(program_parameter != NULL, NULL);
+	g_return_val_if_fail(label != NULL, NULL);
+	g_return_val_if_fail(value != NULL, NULL);
+
+	parameter = __gebr_geoxml_parameter_resolve(GEBR_GEOXML_PARAMETER(program_parameter));
+	type = gebr_geoxml_parameter_get_type(parameter);
+
+	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_ENUM, NULL);
+
+	enum_option = __gebr_geoxml_new_element((GdomeElement *) program_parameter, "option");
+	label_element = __gebr_geoxml_insert_new_element(enum_option, "label", NULL);
+	value_element = __gebr_geoxml_insert_new_element(enum_option, "value", NULL);
 	__gebr_geoxml_set_element_value(label_element, label, __gebr_geoxml_create_TextNode);
 	__gebr_geoxml_set_element_value(value_element, value, __gebr_geoxml_create_TextNode);
 
-	gdome_el_insertBefore_protected(__gebr_geoxml_parameter_get_type_element
-			      ((GebrGeoXmlParameter *) program_parameter), (GdomeNode *) enum_option, NULL,
-			      &exception);
+	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
+	gdome_el_insertBefore_protected(type_element, (GdomeNode*)enum_option, NULL, &exception);
 
-	return enum_option;
+	return GEBR_GEOXML_ENUM_OPTION(enum_option);
 }
 
 int
 gebr_geoxml_program_parameter_get_enum_option(GebrGeoXmlProgramParameter * program_parameter,
 					      GebrGeoXmlSequence ** enum_option, gulong index)
 {
+	GdomeElement * type_element;
+	GebrGeoXmlParameter * parameter;
+
+	parameter = GEBR_GEOXML_PARAMETER(program_parameter);
+
 	if (program_parameter == NULL) {
 		*enum_option = NULL;
 		return GEBR_GEOXML_RETV_NULL_PTR;
 	}
-	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(program_parameter)) != GEBR_GEOXML_PARAMETER_TYPE_ENUM)
+
+	if (gebr_geoxml_parameter_get_type(parameter) != GEBR_GEOXML_PARAMETER_TYPE_ENUM)
 		return GEBR_GEOXML_RETV_PARAMETER_NOT_ENUM;
-	if (gebr_geoxml_parameter_get_is_reference((GebrGeoXmlParameter *) program_parameter))
-		return gebr_geoxml_program_parameter_get_enum_option((GebrGeoXmlProgramParameter *)
-								     gebr_geoxml_parameter_get_referencee((GebrGeoXmlParameter *) program_parameter), enum_option, index);
 
-	*enum_option = (GebrGeoXmlSequence *)
-	    __gebr_geoxml_get_element_at(__gebr_geoxml_parameter_get_type_element
-					 ((GebrGeoXmlParameter *) program_parameter), "option", index, TRUE);
+	if (gebr_geoxml_parameter_get_is_reference(parameter)) {
+		GebrGeoXmlParameter * referencee;
+		GebrGeoXmlProgramParameter * program;
 
-	return (*enum_option == NULL)
-	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
+		referencee = gebr_geoxml_parameter_get_referencee(parameter);
+		program = GEBR_GEOXML_PROGRAM_PARAMETER(referencee);
+
+		return gebr_geoxml_program_parameter_get_enum_option(program, enum_option, index);
+	}
+
+	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
+	*enum_option = GEBR_GEOXML_SEQUENCE(__gebr_geoxml_get_element_at(type_element, "option", index, TRUE));
+
+	return (*enum_option == NULL) ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
 }
 
 glong gebr_geoxml_program_parameter_get_enum_options_number(GebrGeoXmlProgramParameter * program_parameter)
 {
-	if (program_parameter == NULL)
-		return -1;
-	if (gebr_geoxml_parameter_get_is_reference((GebrGeoXmlParameter *) program_parameter))
-		return gebr_geoxml_program_parameter_get_enum_options_number((GebrGeoXmlProgramParameter *)
-									     gebr_geoxml_parameter_get_referencee((GebrGeoXmlParameter *) program_parameter));
-	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(program_parameter)) != GEBR_GEOXML_PARAMETER_TYPE_ENUM)
-		return -1;
-	return
-	    __gebr_geoxml_get_elements_number(__gebr_geoxml_parameter_get_type_element
-					      ((GebrGeoXmlParameter *) program_parameter), "options");
+	GdomeElement * type_element;
+	GebrGeoXmlParameter * parameter;
+	GebrGeoXmlParameterType type;
+
+	parameter = __gebr_geoxml_parameter_resolve(GEBR_GEOXML_PARAMETER(program_parameter));
+	type = gebr_geoxml_parameter_get_type(parameter);
+
+	g_return_val_if_fail(program_parameter != NULL, -1);
+	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_ENUM, -1);
+
+	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
+	return __gebr_geoxml_get_elements_number(type_element, "options");
 }
