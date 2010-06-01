@@ -170,7 +170,7 @@ int main(int argc, char **argv)
 		iprog++;
 
 		printf("+------------------------------------------------------------------------------\n");
-		printf("|  Program %02i\n|\n", iprog);
+		printf("|  Program %02" G_GSIZE_FORMAT "\n|\n", iprog);
 
 		report("Title", gebr_geoxml_program_get_title(prog[0]), gebr_geoxml_program_get_title(prog[1]));
 
@@ -441,11 +441,11 @@ void make_prefix(void)
 	}
 
 	if (isubpar == 0) {
-		g_string_printf(prefix, "|  |  %3i. ", ipar);
+		g_string_printf(prefix, "|  |  %3" G_GSIZE_FORMAT ". ", ipar);
 		g_string_assign(offset, "|  |       ");
 		return;
 	}
 
-	g_string_printf(prefix, "|  |       %3i.%03i. ", ipar, isubpar);
+	g_string_printf(prefix, "|  |       %3" G_GSIZE_FORMAT ".%03" G_GSIZE_FORMAT ". ", ipar, isubpar);
 	g_string_assign(offset, "|  |            ");
 }

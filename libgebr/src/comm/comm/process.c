@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <signal.h>
@@ -230,15 +231,23 @@ gboolean gebr_comm_process_start(GebrCommProcess * process, GString * cmd_line)
 	int stdin_pipe[2], stdout_pipe[2], stderr_pipe[2];
 	GError *error;
 
-	/* initialization */
 	__gebr_comm_process_free(process);
 	ret = FALSE;
 	error = NULL;
 	g_shell_parse_argv(cmd_line->str, &argc, &argv, &error);
 
-	pipe(stdin_pipe);
-	pipe(stdout_pipe);
-	pipe(stderr_pipe);
+	if (pipe(stdin_pipe) == -1)
+		g_warning("%s:%d: Error when creating stdin pipe with error code %d",
+			  __FILE__, __LINE__, errno);
+
+	if (pipe(stdout_pipe) == -1)
+		g_warning("%s:%d: Error when creating stdout pipe with error code %d",
+			  __FILE__, __LINE__, errno);
+
+	if (pipe(stderr_pipe) == -1)
+		g_warning("%s:%d: Error when creating stderr pipe with error code %d",
+			  __FILE__, __LINE__, errno);
+
 	process->pid = fork();
 	if (process->pid == -1)
 		goto out;

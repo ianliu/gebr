@@ -20,6 +20,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -36,7 +37,10 @@ void gebrd_init(void)
 {
 	gchar buffer[100];
 
-	pipe(gebrd.finished_starting_pipe);
+	if (pipe(gebrd.finished_starting_pipe) == -1)
+		g_warning("%s:%d: Error when creating pipe with error code %d",
+			  __FILE__, __LINE__, errno);
+
 	if (gebrd.options.foreground == FALSE) {
 		if (fork() == 0) {
 			int i;
