@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
+SUBDIRS = . tests
+
 bin_PROGRAMS = gebr
 
 #TODO: remove cmdline.{c,h} in future versions (remove old config format support)
