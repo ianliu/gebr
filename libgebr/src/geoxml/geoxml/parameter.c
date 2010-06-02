@@ -248,17 +248,6 @@ gboolean gebr_geoxml_parameter_get_is_reference(GebrGeoXmlParameter * parameter)
 	    ? TRUE : FALSE;
 }
 
-GSList *gebr_geoxml_parameter_get_references_list(GebrGeoXmlParameter * parameter)
-{
-	if (parameter == NULL)
-		return NULL;
-	return
-	    __gebr_geoxml_parameter_get_referencee_list(gdome_doc_documentElement
-							(gdome_el_ownerDocument((GdomeElement *) parameter, &exception),
-							 &exception),
-							__gebr_geoxml_get_attr_value((GdomeElement *) parameter, "id"));
-}
-
 GebrGeoXmlParameter *gebr_geoxml_parameter_get_referencee(GebrGeoXmlParameter * parameter_reference)
 {
 	gint index;

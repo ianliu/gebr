@@ -197,13 +197,6 @@ const gchar *gebr_geoxml_parameter_get_type_name(GebrGeoXmlParameter * parameter
 gboolean gebr_geoxml_parameter_get_is_reference(GebrGeoXmlParameter * parameter);
 
 /**
- * Get the list of GebrGeoXmlParameter references to \p parameter
- *
- * If \p parameter is NULL returns NULL.
- */
-GSList *gebr_geoxml_parameter_get_references_list(GebrGeoXmlParameter * parameter);
-
-/**
  * If \p parameter_reference is of the type GEBR_GEOXML_PARAMETER_TYPE_REFERENCE
  * returns the parameter that it references. Otherwise, returns NULL.
  *
