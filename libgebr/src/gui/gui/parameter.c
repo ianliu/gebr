@@ -88,8 +88,8 @@ static void
 gebr_gui_parameter_widget_file_entry_customize_function(GtkFileChooser * file_chooser,
 							struct gebr_gui_parameter_widget *gebr_gui_parameter_widget)
 {
-	gchar *filter_name;
-	gchar *filter_pattern;
+	const gchar *filter_name;
+	const gchar *filter_pattern;
 
 	gebr_geoxml_program_parameter_get_file_filter(gebr_gui_parameter_widget->program_parameter,
 						      &filter_name, &filter_pattern);
@@ -472,7 +472,7 @@ static void __validate_int(GtkEntry * entry, struct gebr_gui_parameter_widget *g
 	if (gebr_gui_parameter_widget->dict_parameter != NULL)
 		return;
 
-	gchar *min, *max;
+	const gchar *min, *max;
 
 	gebr_geoxml_program_parameter_get_number_min_max(gebr_gui_parameter_widget->program_parameter, &min, &max);
 	gtk_entry_set_text(entry, gebr_validate_int(gtk_entry_get_text(entry), min, max));
@@ -486,7 +486,7 @@ static void __validate_float(GtkEntry * entry, struct gebr_gui_parameter_widget 
 	if (gebr_gui_parameter_widget->dict_parameter != NULL)
 		return;
 
-	gchar *min, *max;
+	const gchar *min, *max;
 
 	gebr_geoxml_program_parameter_get_number_min_max(gebr_gui_parameter_widget->program_parameter, &min, &max);
 	gtk_entry_set_text(entry, gebr_validate_float(gtk_entry_get_text(entry), min, max));
@@ -543,10 +543,10 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:{
 			GtkWidget *spin;
 
-			gchar *min_str;
-			gchar *max_str;
-			gchar *inc_str;
-			gchar *digits_str;
+			const gchar *min_str;
+			const gchar *max_str;
+			const gchar *inc_str;
+			const gchar *digits_str;
 			double min, max, inc;
 
 			gebr_geoxml_program_parameter_get_range_properties(gebr_gui_parameter_widget->program_parameter,

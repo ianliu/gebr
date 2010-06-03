@@ -79,12 +79,12 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 		GebrGeoXmlSequence *position;
 
 		reference = (GdomeElement *) gdome_el_cloneNode_protected((GdomeElement *) parameter);
-		__gebr_geoxml_element_assign_new_id(reference, NULL, FALSE);
+		//__gebr_geoxml_element_assign_new_id(reference, NULL, FALSE);
 		__gebr_geoxml_parameter_set_be_reference((GebrGeoXmlParameter *) reference, parameter);
 
 		gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &position, index);
 		gdome_el_insertBefore_protected((GdomeElement *) instance,
-				      (GdomeNode *) reference, (GdomeNode *) position, &exception);
+						(GdomeNode *) reference, (GdomeNode *) position, &exception);
 	}
 }
 
