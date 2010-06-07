@@ -1,7 +1,6 @@
 <!ELEMENT flow (title, description, help, author, email, dict, date, category*, io, servers, program*, revision*)>
 <!ATTLIST flow
 	version CDATA #FIXED "0.3.5"
-	nextid  ID #REQUIRED>
 
 <!ELEMENT date (created, modified, lastrun)>
 <!ELEMENT lastrun (#PCDATA)>
@@ -58,8 +57,6 @@
 <!ELEMENT modified (#PCDATA)>
 
 <!ELEMENT parameter (label, (reference | int | float | string | flag | file | range | enum | group))>
-<!ATTLIST parameter
-	id ID #REQUIRED>
 
 <!ELEMENT group (template-instance, parameters+)>
 <!ATTLIST group
@@ -94,8 +91,6 @@
 <!-- Types of parameters -->
 <!-- Reference (except for groups) -->
 <!ELEMENT reference (property)>
-<!ATTLIST reference
-	idref IDREF #REQUIRED>
 <!-- Integer -->
 <!ELEMENT int (property)>
 <!ATTLIST int
