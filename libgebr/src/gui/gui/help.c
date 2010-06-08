@@ -66,8 +66,8 @@ static void generate_menu_links_index(struct help_data * data);
 static void __gebr_gui_help_save_custom_help_to_file(struct help_data * data, const gchar *help);
 static void __gebr_gui_help_save_help_to_file(struct help_data * data);
 
-static void _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdited edited_callback,
-				GebrGuiHelpRefresh refresh_callback, gboolean menu_edition);
+static GtkWidget* _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdited edited_callback,
+				      GebrGuiHelpRefresh refresh_callback, gboolean menu_edition);
 
 static void on_help_edit_save_activate(GtkAction * action, struct help_data * data);
 
@@ -153,16 +153,16 @@ void gebr_gui_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar *h
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 }
 
-void gebr_gui_help_edit(GebrGeoXmlDocument * document, GebrGuiHelpEdited edited_callback,
-			GebrGuiHelpRefresh refresh_callback, gboolean menu_edition)
+GtkWidget* gebr_gui_help_edit(GebrGeoXmlDocument * document, GebrGuiHelpEdited edited_callback,
+			      GebrGuiHelpRefresh refresh_callback, gboolean menu_edition)
 {
-	_gebr_gui_help_edit(GEBR_GEOXML_OBJECT(document), edited_callback, refresh_callback, menu_edition);
+	return _gebr_gui_help_edit(GEBR_GEOXML_OBJECT(document), edited_callback, refresh_callback, menu_edition);
 }
 
-void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited edited_callback,
-				GebrGuiHelpRefresh refresh_callback)
+GtkWidget* gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited edited_callback,
+				      GebrGuiHelpRefresh refresh_callback)
 {
-	_gebr_gui_help_edit(GEBR_GEOXML_OBJECT(program), edited_callback, refresh_callback, TRUE);
+	return _gebr_gui_help_edit(GEBR_GEOXML_OBJECT(program), edited_callback, refresh_callback, TRUE);
 }
 
 /*
@@ -603,8 +603,8 @@ static void __gebr_gui_help_save_help_to_file(struct help_data * data)
  * \internal
  * Load help into a temporary file and load with Webkit (if enabled).
  */
-static void _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdited edited_callback,
-				GebrGuiHelpRefresh refresh_callback, gboolean menu_edition)
+static GtkWidget* _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdited edited_callback,
+				      GebrGuiHelpRefresh refresh_callback, gboolean menu_edition)
 {
 	struct help_data *data;
 	GtkWidget * web_view;
@@ -636,6 +636,8 @@ static void _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdited edi
 	g_signal_connect(web_view, "navigation-requested", G_CALLBACK(web_view_on_navigation_requested), data);
 	g_hash_table_insert(jscontext_to_data_hash, (gpointer)data->context, data);
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), data->html_path->str);
+
+	return GTK_WIDGET(dialog);
 }
 
 /**

@@ -26,11 +26,17 @@
 #include <interface.h>
 
 int gtk_loop() {
-	while (gtk_events_pending()) {
-		gtk_main_iteration();
-	}
+	_gtk_loop();
 	sleep(0);
 }
+int _gtk_loop() {
+//	int n = 0;
+	while (gtk_events_pending()) {
+//		fprintf(stderr, "EVT %i\n", ++n);
+		gtk_main_iteration();
+	}
+}
+
 
 static void test_gebr_help_about(void) {
 	GtkWidget *about = gebr_gui_about_setup_ui("gebr", NULL).dialog;
@@ -48,6 +54,28 @@ static void test_gebr_help_about(void) {
 }
 
 static void test_gebr_help_ckeditor_confirm_save(void) {
+	GebrGeoXmlDocument *menu;
+
+	gebr_geoxml_document_load(&menu, "test.mnu", FALSE, NULL);
+	
+	GtkWidget *help = gebr_gui_help_edit(menu, NULL, NULL, TRUE);
+	g_assert(help);
+
+	GtkWidget *edit = gtk_test_find_widget(help, "*Edit*", GTK_TYPE_BUTTON);
+	g_assert(edit);
+
+	// Flooding gtk pipe with events to give time for webkit javascript processing
+	for (int n = 0; n++ < 1000; ) {
+		gtk_test_widget_click(edit, 3, 0);
+		if (n % 10 == 0) {
+			_gtk_loop();
+		}
+	}
+
+	gboolean click = gtk_test_widget_click(edit, 1, 0);
+	g_assert (click);
+	gtk_loop();
+
 }
 
 int main(int argc, char *argv[]) {
@@ -55,7 +83,7 @@ int main(int argc, char *argv[]) {
 	/* initialization */
 	gtk_test_init(&argc, &argv, NULL);
 
-	g_test_add_func("/gebr/help/about", test_gebr_help_ckeditor_confirm_save);
+	g_test_add_func("/gebr/help/about", test_gebr_help_about);
 	g_test_add_func("/gebr/help/ckeditor/confirm-save", test_gebr_help_ckeditor_confirm_save);
 	return g_test_run();
 
