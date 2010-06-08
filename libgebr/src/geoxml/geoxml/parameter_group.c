@@ -165,26 +165,6 @@ glong gebr_geoxml_parameter_group_get_instances_number(GebrGeoXmlParameterGroup 
 	return __gebr_geoxml_get_elements_number(type_element, "parameters");
 }
 
-GSList *gebr_geoxml_parameter_group_get_parameter_in_all_instances(GebrGeoXmlParameterGroup * parameter_group,
-								   guint index)
-{
-	if (parameter_group == NULL)
-		return NULL;
-
-	GebrGeoXmlParameters *template;
-	GebrGeoXmlSequence *parameter;
-	GSList *idref_list;
-
-	template = gebr_geoxml_parameter_group_get_template(parameter_group);
-	gebr_geoxml_parameters_get_parameter(template, &parameter, 0);
-	idref_list = __gebr_geoxml_parameter_get_referencee_list((GdomeElement *) parameter_group,
-								 __gebr_geoxml_get_attr_value((GdomeElement *)
-											      parameter, "id"));
-	idref_list = g_slist_prepend(idref_list, parameter);
-
-	return idref_list;
-}
-
 void gebr_geoxml_parameter_group_set_is_instanciable(GebrGeoXmlParameterGroup * parameter_group, gboolean enable)
 {
 	GdomeElement * type_element;

@@ -150,34 +150,48 @@ GdomeElement *__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * paramete
 	return type_element;
 }
 
-GSList *__gebr_geoxml_parameter_get_referencee_list(GdomeElement * context, const gchar * id)
+GSList *__gebr_geoxml_parameter_get_referencee_list(GebrGeoXmlParameter * parameter)
 {
-	GSList *idref_list;
-	GdomeDOMString *string, *idref_string;
-	GdomeNodeList *node_list;
-	gint i, l;
+	gint index;
+	GSList * list = NULL;
+	GdomeNode * parent;
+	GdomeDOMString * tagname;
+	GebrGeoXmlSequence * instance;
 
-	idref_list = NULL;
-	idref_string = gdome_str_mkref("idref");
-	string = gdome_str_mkref("reference");
-	node_list = gdome_el_getElementsByTagName(context, string, &exception);
+	/* This parameter should be inside a template tag, according to flow DTD 0.3.5.
+	 * So, the hierarchy should be this:
+	 * 	parameter   <-- We want this guy
+	 * 	  |-label
+	 * 	  `-group
+	 * 	      |-template-instance
+	 * 	      |   `-parameters
+	 * 	      |       `-parameter*   <-- You are here (4 parents below)
+	 * 	      `-parameters*
+	 */
+	parent = gdome_el_parentNode((GdomeElement*)parameter, &exception);
+	parent = gdome_el_parentNode((GdomeElement*)parent, &exception);
+	parent = gdome_el_parentNode((GdomeElement*)parent, &exception);
+	tagname = gdome_el_tagName((GdomeElement*)parent, &exception);
 
-	l = gdome_nl_length(node_list, &exception);
-	for (i = 0; i < l; ++i) {
-		GdomeElement *element;
+	g_return_val_if_fail("parameter should be inside a template"
+			     && strcmp(tagname->str, "group"), NULL);
+	parent = gdome_el_parentNode((GdomeElement*)parent, &exception);
 
-		element = (GdomeElement *) gdome_nl_item(node_list, i, &exception);
-		if (strcmp(gdome_el_getAttribute(element, idref_string, &exception)->str, id) == 0)
-			idref_list = g_slist_prepend(idref_list, gdome_el_parentNode(element, &exception));
+	index = gebr_geoxml_sequence_get_index(GEBR_GEOXML_SEQUENCE(parameter));
+
+	/* Iterate in all instances, inserting the index-eth parameter into the list
+	 */
+	gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parent),
+						 &instance, 0);
+	while (instance) {
+		GebrGeoXmlSequence * param;
+
+		gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance),
+						     &param, index);
+		list = g_slist_prepend(list, param);
+		gebr_geoxml_sequence_next(&instance);
 	}
-
-	gdome_str_unref(string);
-	gdome_nl_unref(node_list, &exception);
-	gdome_str_unref(idref_string);
-
-	idref_list = g_slist_reverse(idref_list);
-
-	return idref_list;
+	return g_slist_reverse(list);
 }
 
 /*
@@ -248,17 +262,6 @@ gboolean gebr_geoxml_parameter_get_is_reference(GebrGeoXmlParameter * parameter)
 	    ? TRUE : FALSE;
 }
 
-GSList *gebr_geoxml_parameter_get_references_list(GebrGeoXmlParameter * parameter)
-{
-	if (parameter == NULL)
-		return NULL;
-	return
-	    __gebr_geoxml_parameter_get_referencee_list(gdome_doc_documentElement
-							(gdome_el_ownerDocument((GdomeElement *) parameter, &exception),
-							 &exception),
-							__gebr_geoxml_get_attr_value((GdomeElement *) parameter, "id"));
-}
-
 GebrGeoXmlParameter *gebr_geoxml_parameter_get_referencee(GebrGeoXmlParameter * parameter_reference)
 {
 	gint index;
@@ -308,13 +311,11 @@ void gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gcha
 
 	if (strcmp(gdome_el_tagName((GdomeElement*)grandpa, &exception)->str, "template-instance") == 0) {
 		GSList * elements;
-		const gchar * id;
 		GdomeElement *reference_element;
 		GebrGeoXmlParameterGroup *parameter_group;
 		
-		id = __gebr_geoxml_get_attr_value((GdomeElement*)parameter, "id");
 		parameter_group = gebr_geoxml_parameter_get_group(parameter);
-		elements = __gebr_geoxml_get_elements_by_idref((GdomeElement*)parameter_group, id, TRUE);
+		elements = __gebr_geoxml_parameter_get_referencee_list(parameter);
 		__gebr_geoxml_foreach_element(reference_element, elements) {
 			GdomeNode *param;
 			param = gdome_el_parentNode(reference_element, &exception);

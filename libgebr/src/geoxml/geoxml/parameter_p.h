@@ -55,7 +55,7 @@ void __gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, G
  * Get the list of GebrGeoXmlParameter referencees of \p id, inside the element
  * _context_
  */
-GSList *__gebr_geoxml_parameter_get_referencee_list(GdomeElement * context, const gchar * id);
+GSList *__gebr_geoxml_parameter_get_referencee_list(GebrGeoXmlParameter * parameter);
 
 GebrGeoXmlParameter * __gebr_geoxml_parameter_resolve(GebrGeoXmlParameter * parameter);
 
