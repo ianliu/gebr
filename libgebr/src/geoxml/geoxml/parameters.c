@@ -83,7 +83,7 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 
 		gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &position, index);
 		gdome_el_insertBefore_protected((GdomeElement *) instance,
-				      (GdomeNode *) reference, (GdomeNode *) position, &exception);
+						(GdomeNode *) reference, (GdomeNode *) position, &exception);
 	}
 }
 
@@ -104,7 +104,6 @@ GebrGeoXmlParameter *gebr_geoxml_parameters_append_parameter(GebrGeoXmlParameter
 	GdomeElement *element;
 
 	element = __gebr_geoxml_insert_new_element((GdomeElement *) parameters, "parameter", NULL);
-	__gebr_geoxml_element_assign_new_id(element, NULL, NULL);
 	__gebr_geoxml_insert_new_element(element, "label", NULL);
 	__gebr_geoxml_parameter_insert_type((GebrGeoXmlParameter *) element, type);
 

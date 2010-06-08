@@ -859,8 +859,8 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 		GtkWidget *hbox;
 		GtkWidget *filter_name_entry;
 		GtkWidget *filter_pattern_entry;
-		gchar *filter_name;
-		gchar *filter_pattern;
+		const gchar *filter_name;
+		const gchar *filter_pattern;
 
 		/*
 		 * Type
@@ -929,10 +929,10 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 		GtkWidget *inc_entry;
 		GtkWidget *digits_label;
 		GtkWidget *digits_entry;
-		gchar *min_str;
-		gchar *max_str;
-		gchar *inc_str;
-		gchar *digits_str;
+		const gchar *min_str;
+		const gchar *max_str;
+		const gchar *inc_str;
+		const gchar *digits_str;
 
 		gebr_geoxml_program_parameter_get_number_min_max(program_parameter, &min_str, &max_str);
 
@@ -1701,11 +1701,11 @@ parameter_number_max_on_focus_out(GtkEntry * entry, GdkEvent * event, struct geb
  */
 static void parameter_range_inc_on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *widget)
 {
-	gchar *min_str;
-	gchar *max_str;
-	gchar *inc_str;
-	gchar *digits_str;
 	gdouble inc;
+	const gchar *min_str;
+	const gchar *max_str;
+	const gchar *inc_str;
+	const gchar *digits_str;
 	GtkSpinButton *spin_button;
 
 	spin_button = GTK_SPIN_BUTTON(widget->value_widget);
@@ -1738,11 +1738,11 @@ parameter_range_inc_on_focus_out(GtkEntry * entry, GdkEvent * event, struct gebr
  */
 static void parameter_range_digits_on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *widget)
 {
-	gchar *min_str;
-	gchar *max_str;
-	gchar *inc_str;
-	gchar *digits_str;
 	gdouble digits;
+	const gchar *min_str;
+	const gchar *max_str;
+	const gchar *inc_str;
+	const gchar *digits_str;
 	GtkSpinButton *spin_button;
 
 	spin_button = GTK_SPIN_BUTTON(widget->value_widget);

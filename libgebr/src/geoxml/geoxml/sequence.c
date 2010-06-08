@@ -289,14 +289,16 @@ GebrGeoXmlSequence *gebr_geoxml_sequence_append_clone(GebrGeoXmlSequence * seque
 	/* append reference to clone for others group instances */
 	if (__gebr_geoxml_sequence_is_parameter(sequence)
 	    && gebr_geoxml_parameter_get_is_in_group((GebrGeoXmlParameter *) sequence)) {
+		const gchar * id;
+		GSList * referencee;
+		GdomeElement *group_element;
 		GdomeElement *parameter_element;
 
-		__gebr_geoxml_foreach_element(parameter_element,
-					      __gebr_geoxml_parameter_get_referencee_list((GdomeElement *)
-											  gebr_geoxml_parameter_get_group
-											  ((GebrGeoXmlParameter *)
-											   sequence),
-											  __gebr_geoxml_get_attr_value((GdomeElement *) sequence, "id")))
+		id = __gebr_geoxml_get_attr_value((GdomeElement *) sequence, "id");
+		group_element = (GdomeElement *)gebr_geoxml_parameter_get_group((GebrGeoXmlParameter *) sequence);
+		referencee = __gebr_geoxml_parameter_get_referencee_list(group_element, id);
+
+		__gebr_geoxml_foreach_element(parameter_element, referencee)
 		    __gebr_geoxml_sequence_append_clone((GebrGeoXmlSequence *) parameter_element);
 	}
 

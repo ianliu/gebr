@@ -401,7 +401,7 @@ void
 
 
 gebr_geoxml_program_parameter_get_file_filter(GebrGeoXmlProgramParameter * program_parameter,
-					      gchar ** name, gchar ** pattern);
+					      const gchar ** name, const gchar ** pattern);
 
 /**
  * For integer, float and range parameters type, set mininimum
@@ -427,7 +427,7 @@ void
 
 
 gebr_geoxml_program_parameter_get_number_min_max(GebrGeoXmlProgramParameter * program_parameter,
-						 gchar ** min, gchar ** max);
+						 const gchar ** min, const gchar ** max);
 
 /**
  *
@@ -449,10 +449,9 @@ gebr_geoxml_program_parameter_set_range_properties(GebrGeoXmlProgramParameter * 
  * @see GEBR_GEOXML_PARAMETER_TYPE_RANGE
  */
 void
-
-
 gebr_geoxml_program_parameter_get_range_properties(GebrGeoXmlProgramParameter * program_parameter,
-						   gchar ** min, gchar ** max, gchar ** inc, gchar ** digits);
+						   const gchar ** min, const gchar ** max,
+						   const gchar ** inc, const gchar ** digits);
 
 /**
  * Return TRUE if \p program_parameter that this program_parameter's value is in fact a list of values
