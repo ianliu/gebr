@@ -151,7 +151,8 @@ static GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, G
 	__gebr_geoxml_set_attr_value(root_element, "version",
 				     __gebr_geoxml_get_attr_value(source_root_element, "version"));
 	/* nextid */
-	__gebr_geoxml_set_attr_value(root_element, "nextid", "n0");
+	//__gebr_geoxml_set_attr_value(root_element, "nextid", "n0");
+	__gebr_geoxml_set_attr_value(root_element, "nextid", __gebr_geoxml_get_attr_value(source_root_element, "nextid"));
 
 	/* import all elements */
 	GdomeElement *element = __gebr_geoxml_get_first_element(source_root_element, "*");
@@ -231,17 +232,18 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 		ret = GEBR_GEOXML_RETV_NO_MEMORY;
 		goto out;
 	}
-
 	gdome_doc_unref(*document, &exception);
-
 	*document = tmp_doc;
 	root_element = gebr_geoxml_document_root_element(tmp_doc);
-
 
 	/*
 	 * Success, now change to last version
 	 */
 
+	/**
+	 * \internal
+	 * Change group XML as declared in flow-0.3.5, project-0.3.2 and line-0.3.2
+	 */
 	void __port_to_new_group_semantics(void)
 	{
 		/* remove flow filename */
@@ -279,7 +281,6 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 		}
 	}
 
-	// version = (gchar *) gebr_geoxml_document_get_version((GebrGeoXmlDocument *) *document);
 	/* document 0.1.x to 0.2.0 */
 	if (strcmp(version, "0.2.0") < 0) {
 		GdomeElement *element;
@@ -732,14 +733,16 @@ GebrGeoXmlDocument *gebr_geoxml_document_clone(GebrGeoXmlDocument * source)
 	if (source == NULL)
 		return NULL;
 
-	GdomeDocument *document;
+	GebrGeoXmlDocument *document;
 
-	document = __gebr_geoxml_document_clone_doc((GdomeDocument *) source, NULL);
-	__gebr_geoxml_document_new_data((GebrGeoXmlDocument *)document, gebr_geoxml_document_get_filename(source));
+	puts("abc");
+	gchar *xml;
+	gebr_geoxml_document_to_string(source, &xml);
+	gebr_geoxml_document_load_buffer(&document, xml);
+	g_free(xml);
+	puts("abc");
 
-	__gebr_geoxml_ref();
-
-	return (GebrGeoXmlDocument *)document;
+	return document;
 }
 
 enum GEBR_GEOXML_DOCUMENT_TYPE gebr_geoxml_document_get_type(GebrGeoXmlDocument * document)
@@ -830,6 +833,7 @@ int gebr_geoxml_document_to_string(GebrGeoXmlDocument * document, gchar ** xml_s
 	GdomeBoolean ret;
 	GdomeDocument * clone;
 
+	/* clone to remove DOCTYPE */
 	clone = __gebr_geoxml_document_clone_doc((GdomeDocument*)document, NULL);
 	ret = gdome_di_saveDocToMemoryEnc(dom_implementation, clone, xml_string, ENCODING,
 					  GDOME_SAVE_LIBXML_INDENT, &exception);

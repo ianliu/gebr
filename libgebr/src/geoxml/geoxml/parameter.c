@@ -200,8 +200,7 @@ GSList *__gebr_geoxml_parameter_get_referencee_list(GebrGeoXmlParameter * parame
 
 GebrGeoXmlParameters *gebr_geoxml_parameter_get_parameters(GebrGeoXmlParameter * parameter)
 {
-	if (parameter == NULL)
-		return NULL;
+	g_return_val_if_fail(parameter != NULL, NULL);
 	return (GebrGeoXmlParameters *) gdome_n_parentNode((GdomeNode *) parameter, &exception);
 }
 
@@ -211,11 +210,8 @@ gboolean gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, GebrGeo
 	g_return_val_if_fail(type != GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN, FALSE);
 	g_return_val_if_fail(type != GEBR_GEOXML_PARAMETER_TYPE_REFERENCE, FALSE);
 
-	GdomeElement * type_element;
-
-	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
-
-	gdome_n_removeChild((GdomeNode *) parameter, (GdomeNode *) type_element, &exception);
+	gdome_n_removeChild((GdomeNode *) parameter,
+			    (GdomeNode *) __gebr_geoxml_parameter_get_type_element(parameter), &exception);
 	__gebr_geoxml_parameter_insert_type(parameter, type);
 
 	return TRUE;

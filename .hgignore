@@ -8,6 +8,7 @@ syntax: glob
 *.lo
 *.o
 *.so
+*.stamp
 *.swp
 .deps
 .libs
@@ -52,14 +53,9 @@ gebrd/src/gebrd
 gebrd/tests/test-job-queue
 install-sh
 intltool-*.in
-libgebr/docs/reference/gui/gebr-gui-decl-list.txt
-libgebr/docs/reference/gui/gebr-gui-decl-list.txt.bak
-libgebr/docs/reference/gui/gebr-gui-decl.txt
-libgebr/docs/reference/gui/gebr-gui-decl.txt.bak
-libgebr/docs/reference/gui/gebr-gui-overrides.txt
-libgebr/docs/reference/gui/gebr-gui-scan.c
-libgebr/docs/reference/gui/gebr-gui-sections.txt
-libgebr/docs/reference/gui/gebr-gui.types
+libgebr/docs/reference/*/html
+libgebr/docs/reference/*/xml
+libgebr/docs/reference/*/gebr-*
 libgebr/gtk-doc.make
 libgebr/m4
 libgebr/packages/rpm/libgebr.fedora.spec
