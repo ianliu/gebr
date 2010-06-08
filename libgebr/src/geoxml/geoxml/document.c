@@ -156,7 +156,7 @@ static GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, G
 	/* import all elements */
 	GdomeElement *element = __gebr_geoxml_get_first_element(source_root_element, "*");
 	for (; element != NULL; element = __gebr_geoxml_next_element(element)) {
-		GdomeNode *new_node = gdome_doc_importNode_protected(document, element);
+		GdomeNode *new_node = gdome_doc_importNode(document, (GdomeNode*)element, TRUE, &exception);
 		gdome_el_appendChild(root_element, new_node, &exception);
 	}
 
@@ -377,7 +377,6 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 
 					parameter = __gebr_geoxml_insert_new_element((GdomeElement *) parameters,
 										     "parameter", old_parameter);
-					__gebr_geoxml_element_assign_new_id(parameter, NULL, FALSE);
 					gdome_el_insertBefore_protected(parameter, (GdomeNode *)
 							      __gebr_geoxml_get_first_element(old_parameter, "label"),
 							      NULL, &exception);

@@ -74,7 +74,7 @@ typedef struct gebr_geoxml_object GebrGeoXmlObject;
 /**
  * GebrGeoXml basic object types
  */
-enum GEBR_GEOXML_OBJECT_TYPE {
+typedef enum {
 	GEBR_GEOXML_OBJECT_TYPE_UNKNOWN = 0,
 	GEBR_GEOXML_OBJECT_TYPE_PROJECT,
 	GEBR_GEOXML_OBJECT_TYPE_LINE,
@@ -83,12 +83,12 @@ enum GEBR_GEOXML_OBJECT_TYPE {
 	GEBR_GEOXML_OBJECT_TYPE_PARAMETERS,
 	GEBR_GEOXML_OBJECT_TYPE_PARAMETER,
 	GEBR_GEOXML_OBJECT_TYPE_ENUM_OPTION,
-};
+} GebrGeoXmlObjectType;
 
 /**
  * Return the type of \p object
  */
-enum GEBR_GEOXML_OBJECT_TYPE gebr_geoxml_object_get_type(GebrGeoXmlObject * object);
+GebrGeoXmlObjectType gebr_geoxml_object_get_type(GebrGeoXmlObject * object);
 
 /**
  * \see gebr_geoxml_program_foreach_parameter

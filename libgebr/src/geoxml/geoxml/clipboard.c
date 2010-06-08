@@ -37,12 +37,15 @@ void gebr_geoxml_clipboard_clear(void)
 
 void gebr_geoxml_clipboard_copy(GebrGeoXmlObject * object)
 {
-	if (object == NULL)
-		return;
+	GdomeNode * imported_node;
+	GdomeElement * document_element;
 
-	gdome_el_appendChild(gdome_doc_documentElement(clipboard_document, &exception),
-			     gdome_doc_importNode_protected(clipboard_document, (GdomeElement *) object),
-			     &exception);
+	g_return_if_fail(object != NULL);
+
+	document_element = gdome_doc_documentElement(clipboard_document, &exception);
+	imported_node = gdome_doc_importNode(clipboard_document, (GdomeNode*)object, TRUE, &exception);
+
+	gdome_el_appendChild(document_element, imported_node, &exception);
 }
 
 GebrGeoXmlObject *gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object)
@@ -67,9 +70,10 @@ GebrGeoXmlObject *gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object)
 			if (!strcmp(gdome_el_tagName(paste_element, &exception)->str, child_parent[i][0]) &&
 			    !strcmp(gdome_el_tagName(container_element, &exception)->str, child_parent[i][1])) {
 				GdomeNode *imported;
+				GdomeDocument *document;
 
-				imported = gdome_doc_importNode_protected(gdome_el_ownerDocument(container_element, &exception),
-									  paste_element);
+				document = gdome_el_ownerDocument(container_element, &exception);
+				imported = gdome_doc_importNode(document, (GdomeNode*)paste_element, TRUE, &exception);
 				if (!strlen(child_parent[i][2]))
 					gdome_el_appendChild(container_element, imported, &exception);
 				else

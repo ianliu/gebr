@@ -71,18 +71,6 @@ GdomeNode *gdome_el_insertBefore_protected(GdomeElement * self, GdomeNode *newCh
 
 /**
  * \internal
- * Same as gdome_el_cloneNode but generating new ids when needed
- */
-GdomeElement* gdome_el_cloneNode_protected(GdomeElement * el);
-
-/**
- * \internal
- * Same as gdome_doc_importNode but generating new ids when needed
- */
-GdomeNode* gdome_doc_importNode_protected(GdomeDocument * self, GdomeElement * source);
-
-/**
- * \internal
  * Get the first child element of \p parent_element with tag name
  * \p tag_name. The child might not be a direct child of \p parent_element
  * (the search done is recursive)
@@ -110,12 +98,6 @@ GdomeElement *__gebr_geoxml_get_element_by_id(GdomeElement * base, const gchar *
  * gebr_foreach_gslist(element, __gebr_geoxml_get_elements_by_tag) { }
  */
 GSList *__gebr_geoxml_get_elements_by_tag(GdomeElement * base, const gchar * tag);
-
-/**
- * \internal
- *
- */
-GSList *__gebr_geoxml_get_elements_by_idref(GdomeElement * base, const gchar * idref, gboolean global);
 
 /**
  * \internal
@@ -204,28 +186,6 @@ GdomeElement *__gebr_geoxml_next_same_element(GdomeElement * element);
 
 /**
  * \internal
- * Assign to \p element a new unique ID based on document nextid attibute.
- * Use nextid and use it as ID
- * Automatically change references ids.
- */
-void __gebr_geoxml_element_assign_new_id(GdomeElement * element, GdomeElement * context, gboolean reassign_refereceds);
-
-/**
- * \internal
- * Recursively reassign all elements in \p element (including it)
- *
- * using __gebr_geoxml_element_assign_new_id.
- */
-void __gebr_geoxml_element_reassign_ids(GdomeElement * element);
-
-/**
- * \internal
- * Assign \p reference's ID to \p element
- */
-void __gebr_geoxml_element_assign_reference_id(GdomeElement * element, GdomeElement * referencee);
-
-/**
- * \internal
  * Easy function to evaluate a XPath expression. Use in combination with
  * \ref __gebr_geoxml_foreach_xpath_result or use .
  */
@@ -252,11 +212,9 @@ void __gebr_geoxml_to_string(GdomeElement * el);
 		element = (GdomeElement*)gdome_xpresult_iterateNext(__xpath_result, &exception))
 
 /**
- * \internal
- * Iterates elements of a GSList at \p list
- * This macro will auto free \p list and you can use it
- * as __gebr_geoxml_foreach_element(element, __gebr_geoxml_get_elements_by_idref(base, id)).
- * If you use 'break' then you have to free it yourself.
+ * __gebr_geoxml_foreach_element:
+ * Iterates over the elements of @list, updating the value of @element for each iteration. The list will be freed
+ * automatically when iteration finish, unless you break the loop in the middle.
  */
 #define __gebr_geoxml_foreach_element(element, list) \
 	gebr_foreach_gslist(element, list)

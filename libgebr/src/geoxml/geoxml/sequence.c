@@ -165,8 +165,7 @@ GebrGeoXmlSequence *__gebr_geoxml_sequence_append_clone(GebrGeoXmlSequence * seq
 	GebrGeoXmlSequence *clone;
 	GebrGeoXmlSequence *after_last;
 
-	clone = (GebrGeoXmlSequence *) gdome_el_cloneNode_protected((GdomeElement *) sequence);
-	//__gebr_geoxml_element_reassign_ids((GdomeElement *) clone);
+	clone = (GebrGeoXmlSequence *) gdome_el_cloneNode((GdomeElement *) sequence, TRUE, &exception);
 
 	after_last = sequence;
 	while (__gebr_geoxml_sequence_next(&after_last) == GEBR_GEOXML_RETV_SUCCESS);

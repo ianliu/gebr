@@ -51,7 +51,6 @@ __gebr_geoxml_parameter_group_turn_instance_to_reference(GebrGeoXmlParameterGrou
 	gebr_geoxml_parameters_get_parameter(instance, &parameter, 0);
 	for (; fi_parameter != NULL;
 	     __gebr_geoxml_sequence_next(&fi_parameter), __gebr_geoxml_sequence_next(&parameter)) {
-		__gebr_geoxml_element_assign_new_id((GdomeElement *) parameter, NULL, FALSE);
 		__gebr_geoxml_parameter_set_be_reference(GEBR_GEOXML_PARAMETER(parameter),
 							 GEBR_GEOXML_PARAMETER(fi_parameter));
 	}
