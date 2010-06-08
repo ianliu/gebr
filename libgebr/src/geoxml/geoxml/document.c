@@ -493,6 +493,30 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 		} else {
 			/* removal of filename for project and lines */
 			gdome_el_removeChild(root_element, (GdomeNode*)__gebr_geoxml_get_first_element(root_element, "filename"), &exception);
+
+			__gebr_geoxml_remove_attr(root_element, "nextid");
+
+			GSList * params;
+			GSList * iter;
+
+			params = __gebr_geoxml_get_elements_by_tag(root_element, "parameter");
+			iter = params;
+			while (iter) {
+				__gebr_geoxml_remove_attr(iter->data, "id");
+				iter = iter->next;
+			}
+			g_slist_free(params);
+
+			GSList * refer;
+
+			refer = __gebr_geoxml_get_elements_by_tag(root_element, "reference");
+			iter = refer;
+			while (iter) {
+				__gebr_geoxml_remove_attr(iter->data, "idref");
+				iter = iter->next;
+			}
+			g_slist_free(refer);
+
 			__port_to_new_group_semantics();
 		}
 	}
@@ -515,6 +539,29 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.5");
 			__port_to_new_group_semantics();
+
+			__gebr_geoxml_remove_attr(root_element, "nextid");
+
+			GSList * params;
+			GSList * iter;
+
+			params = __gebr_geoxml_get_elements_by_tag(root_element, "parameter");
+			iter = params;
+			while (iter) {
+				__gebr_geoxml_remove_attr(iter->data, "id");
+				iter = iter->next;
+			}
+			g_slist_free(params);
+
+			GSList * refer;
+
+			refer = __gebr_geoxml_get_elements_by_tag(root_element, "reference");
+			iter = refer;
+			while (iter) {
+				__gebr_geoxml_remove_attr(iter->data, "idref");
+				iter = iter->next;
+			}
+			g_slist_free(refer);
 		}
 	}
 
