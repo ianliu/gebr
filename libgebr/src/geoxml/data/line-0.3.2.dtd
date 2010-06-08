@@ -1,6 +1,6 @@
 <!ELEMENT line (title, description, help, author, email, dict, date, path*, flow*)>
 <!ATTLIST line
-	version CDATA #FIXED "0.3.2"
+	version CDATA #FIXED "0.3.2">
 
 <!ELEMENT date (created, modified)>
 

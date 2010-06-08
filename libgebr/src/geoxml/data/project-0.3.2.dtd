@@ -1,6 +1,6 @@
 <!ELEMENT project (title, description, help, author, email, dict, date, line*)>
 <!ATTLIST project
-	version CDATA #FIXED "0.3.2"
+	version CDATA #FIXED "0.3.2">
 
 <!ELEMENT date (created, modified)>
 
