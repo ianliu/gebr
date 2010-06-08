@@ -495,7 +495,6 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 			/* removal of filename for project and lines */
 			gdome_el_removeChild(root_element, (GdomeNode*)__gebr_geoxml_get_first_element(root_element, "filename"), &exception);
 
-			/*Novo*/
 			__gebr_geoxml_remove_attr(root_element, "nextid");
 
 			GSList * params;
@@ -518,7 +517,6 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 				iter = iter->next;
 			}
 			g_slist_free(refer);
-			/*Novo*/
 
 			__port_to_new_group_semantics();
 		}
@@ -543,7 +541,6 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.5");
 			__port_to_new_group_semantics();
 
-			/*Novo*/
 			__gebr_geoxml_remove_attr(root_element, "nextid");
 
 			GSList * params;
@@ -566,7 +563,6 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 				iter = iter->next;
 			}
 			g_slist_free(refer);
-			/*Novo*/
 		}
 	}
 
