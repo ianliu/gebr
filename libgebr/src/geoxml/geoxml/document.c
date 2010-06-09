@@ -150,9 +150,6 @@ static GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, G
 	root_element = gdome_doc_documentElement(document, &exception);
 	__gebr_geoxml_set_attr_value(root_element, "version",
 				     __gebr_geoxml_get_attr_value(source_root_element, "version"));
-	/* nextid */
-	//__gebr_geoxml_set_attr_value(root_element, "nextid", "n0");
-	__gebr_geoxml_set_attr_value(root_element, "nextid", __gebr_geoxml_get_attr_value(source_root_element, "nextid"));
 
 	/* import all elements */
 	GdomeElement *element = __gebr_geoxml_get_first_element(source_root_element, "*");
@@ -602,8 +599,8 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 /**
  * \internal
  */
-static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * src, createDoc_func func, gboolean
-				       validate, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
+static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * src, createDoc_func func,
+				       gboolean validate, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
 {
 	GdomeDocument *doc;
 	int ret;
@@ -668,7 +665,6 @@ GebrGeoXmlDocument *gebr_geoxml_document_new(const gchar * name, const gchar * v
 	/* document (root) element */
 	root_element = gdome_doc_documentElement(document, &exception);
 	__gebr_geoxml_set_attr_value(root_element, "version", version);
-	__gebr_geoxml_set_attr_value(root_element, "nextid", "n0");
 
 	/* elements (as specified in DTD) */
 	__gebr_geoxml_insert_new_element(root_element, "title", NULL);
