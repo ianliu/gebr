@@ -116,6 +116,7 @@ GdomeElement *__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * paramete
 		GdomeElement * template;
 		template = __gebr_geoxml_insert_new_element(type_element, "template-instance", NULL);
 		__gebr_geoxml_parameters_append_new(template);
+		__gebr_geoxml_parameters_append_new(type_element);
 		gebr_geoxml_parameter_group_set_is_instanciable((GebrGeoXmlParameterGroup *)parameter, FALSE);
 		gebr_geoxml_parameter_group_set_expand((GebrGeoXmlParameterGroup *)parameter, FALSE);
 	} else {
@@ -206,12 +207,14 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_get_parameters(GebrGeoXmlParameter *
 
 gboolean gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, GebrGeoXmlParameterType type)
 {
+	GdomeElement * type_element;
+
 	g_return_val_if_fail(parameter != NULL, FALSE);
 	g_return_val_if_fail(type != GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN, FALSE);
 	g_return_val_if_fail(type != GEBR_GEOXML_PARAMETER_TYPE_REFERENCE, FALSE);
 
-	gdome_n_removeChild((GdomeNode *) parameter,
-			    (GdomeNode *) __gebr_geoxml_parameter_get_type_element(parameter), &exception);
+	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
+	gdome_n_removeChild((GdomeNode*)parameter, (GdomeNode*)type_element, &exception);
 	__gebr_geoxml_parameter_insert_type(parameter, type);
 
 	return TRUE;
