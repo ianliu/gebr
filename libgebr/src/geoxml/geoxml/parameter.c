@@ -175,7 +175,7 @@ GSList *__gebr_geoxml_parameter_get_referencee_list(GebrGeoXmlParameter * parame
 	tagname = gdome_el_tagName((GdomeElement*)parent, &exception);
 
 	g_return_val_if_fail("parameter should be inside a template"
-			     && strcmp(tagname->str, "group"), NULL);
+			     && strcmp(tagname->str, "group") == 0, NULL);
 	parent = gdome_el_parentNode((GdomeElement*)parent, &exception);
 
 	index = gebr_geoxml_sequence_get_index(GEBR_GEOXML_SEQUENCE(parameter));
