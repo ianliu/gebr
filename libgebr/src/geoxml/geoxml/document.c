@@ -731,12 +731,10 @@ GebrGeoXmlDocument *gebr_geoxml_document_clone(GebrGeoXmlDocument * source)
 
 	GebrGeoXmlDocument *document;
 
-	puts("abc");
 	gchar *xml;
 	gebr_geoxml_document_to_string(source, &xml);
 	gebr_geoxml_document_load_buffer(&document, xml);
 	g_free(xml);
-	puts("abc");
 
 	return document;
 }

@@ -38,7 +38,7 @@ AC_PROG_LIBTOOL
 AC_HEADER_STDC
 
 # check for gtk-doc
-GTK_DOC_CHECK([1.14],[--flavour no-tmpl])
+GTK_DOC_CHECK([1.11],[--flavour no-tmpl])
 
 dnl Debug option
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [turn on debugging])],, enable_debug=yes)
