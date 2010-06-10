@@ -101,10 +101,12 @@ __gebr_geoxml_sequence_move_after_before(GebrGeoXmlSequence * sequence, GebrGeoX
 		GSList *i;
 		GSList *sequence_refs;
 
-		if ((ret = move_function(sequence, position)))
+		sequence_refs = __gebr_geoxml_parameter_get_referencee_list(parameter);
+		ret = move_function(sequence, position);
+
+		if (ret != GEBR_GEOXML_RETV_SUCCESS)
 			return ret;
 
-		sequence_refs = __gebr_geoxml_parameter_get_referencee_list(parameter);
 		if (group == gebr_geoxml_parameter_get_group(GEBR_GEOXML_PARAMETER(position))) {
 			GSList *j;
 			GSList *position_refs;
