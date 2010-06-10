@@ -288,8 +288,6 @@ gebr_geoxml_program_parameter_get_values_number(GebrGeoXmlProgramParameter * pro
  * If \p program_parameter or \p value is NULL nothing is done.
  */
 void
-
-
 gebr_geoxml_program_parameter_set_string_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value,
 					       const gchar * value);
 

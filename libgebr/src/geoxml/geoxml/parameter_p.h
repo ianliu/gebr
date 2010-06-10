@@ -48,7 +48,7 @@ __gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter, gboolean resol
  * Set \p parameter to be a reference to \p reference.
  * If \p new is TRUE indicate that it was previously cloned.
  */
-void __gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, GebrGeoXmlParameter * reference);
+void __gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter);
 
 /**
  * \internal

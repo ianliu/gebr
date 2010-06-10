@@ -257,14 +257,14 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 		}
 
 		gebr_foreach_gslist_hyg(element, __gebr_geoxml_get_elements_by_tag(root_element, "group"), group) {
+			GdomeNode *new_instance;
 			GdomeElement *parameter;
 			GebrGeoXmlParameterGroup *group;
-			GebrGeoXmlParameters *new_instance;
 			GebrGeoXmlParameters *template_instance;
 
 			parameter = (GdomeElement*)gdome_el_parentNode(element, &exception);
-			group = (GebrGeoXmlParameterGroup*)parameter;
-			template_instance = (GebrGeoXmlParameters*)__gebr_geoxml_get_first_element(element, "parameters");
+			group = GEBR_GEOXML_PARAMETER_GROUP(parameter);
+			template_instance = GEBR_GEOXML_PARAMETERS(__gebr_geoxml_get_first_element(element, "parameters"));
 			/* encapsulate template instance into template-instance element */
 			GdomeElement *template_container;
 			template_container = __gebr_geoxml_insert_new_element(element, "template-instance",
@@ -272,9 +272,9 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 			gdome_el_insertBefore_protected(template_container, (GdomeNode*)template_instance, NULL, &exception);
 
 			/* move new instance after template instance */
-			new_instance = gebr_geoxml_parameter_group_add_instance(group);
+			new_instance = gdome_el_cloneNode((GdomeElement*)template_instance, TRUE, &exception);
 			GdomeNode *next = (GdomeNode*)__gebr_geoxml_next_element((GdomeElement*)template_container);
-			gdome_n_insertBefore_protected((GdomeNode*)element, (GdomeNode*)new_instance, next, &exception);
+			gdome_n_insertBefore_protected((GdomeNode*)element, new_instance, next, &exception);
 		}
 	}
 

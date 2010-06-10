@@ -38,21 +38,23 @@ struct gebr_geoxml_parameter_group {
 	GdomeElement *element;
 };
 
+/*
+ * __gebr_geoxml_parameter_group_turn_instance_to_reference:
+ * @parameter_group:
+ * @instance:
+ */
 static void
 __gebr_geoxml_parameter_group_turn_instance_to_reference(GebrGeoXmlParameterGroup * parameter_group,
 							 GebrGeoXmlParameters * instance)
 {
-	GebrGeoXmlParameters *first_instance;
-	GebrGeoXmlSequence *fi_parameter;
+	GebrGeoXmlParameters *template;
 	GebrGeoXmlSequence *parameter;
 
-	first_instance = gebr_geoxml_parameter_group_get_template(parameter_group);
-	gebr_geoxml_parameters_get_parameter(first_instance, &fi_parameter, 0);
+	template = gebr_geoxml_parameter_group_get_template(parameter_group);
 	gebr_geoxml_parameters_get_parameter(instance, &parameter, 0);
-	for (; fi_parameter != NULL;
-	     __gebr_geoxml_sequence_next(&fi_parameter), __gebr_geoxml_sequence_next(&parameter)) {
-		__gebr_geoxml_parameter_set_be_reference(GEBR_GEOXML_PARAMETER(parameter),
-							 GEBR_GEOXML_PARAMETER(fi_parameter));
+	while (parameter) {
+		__gebr_geoxml_parameter_set_be_reference(GEBR_GEOXML_PARAMETER(parameter));
+		gebr_geoxml_sequence_next(&parameter);
 	}
 }
 
