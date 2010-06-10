@@ -26,9 +26,7 @@
 #include <interface.h>
 
 int _gtk_loop() {
-//	int n = 0;
 	while (gtk_events_pending()) {
-//		fprintf(stderr, "EVT %i\n", ++n);
 		gtk_main_iteration();
 	}
 }
@@ -78,7 +76,7 @@ static void test_gebr_help_ckeditor_confirm_save(void) {
 
 	gtk_dialog_response(help, GTK_RESPONSE_CLOSE);
 
-	gtk_main();
+	gtk_loop();
 
 }
 
@@ -87,7 +85,7 @@ int main(int argc, char *argv[]) {
 	/* initialization */
 	gtk_test_init(&argc, &argv, NULL);
 
-	//g_test_add_func("/gebr/help/about", test_gebr_help_about);
+	g_test_add_func("/gebr/help/about", test_gebr_help_about);
 	g_test_add_func("/gebr/help/ckeditor/confirm-save", test_gebr_help_ckeditor_confirm_save);
 	return g_test_run();
 

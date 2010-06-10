@@ -436,7 +436,7 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window, struct help
 static void on_dialog_response(struct help_data * data)
 {
 	if (data->edit) {
-		if (JSValueToBoolean(data->context, gebr_js_evaluate(data->context, "isContentSaved();"))) {
+		if (JSValueToBoolean(data->context, gebr_js_evaluate(data->context, "!isContentSaved();"))) {
 			gboolean response;
 			response = gebr_gui_confirm_action_dialog(_("Save changes in help?"),
 								  _("This help has unsaved changes. Do you want to save it?"));
