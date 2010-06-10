@@ -25,10 +25,6 @@
 #include <../defines.h>
 #include <interface.h>
 
-int gtk_loop() {
-	_gtk_loop();
-	sleep(0);
-}
 int _gtk_loop() {
 //	int n = 0;
 	while (gtk_events_pending()) {
@@ -36,13 +32,17 @@ int _gtk_loop() {
 		gtk_main_iteration();
 	}
 }
+int gtk_loop() {
+	_gtk_loop();
+	sleep(0);
+}
 
 
 static void test_gebr_help_about(void) {
 	GtkWidget *about = gebr_gui_about_setup_ui("gebr", NULL).dialog;
 	gtk_widget_show(about);
 	gtk_loop();
-	GtkWidget *ok = gtk_test_find_widget (about, "*Close*", GTK_TYPE_BUTTON);
+	GtkWidget *ok = gtk_test_find_widget (about, "Close", GTK_TYPE_BUTTON);
 	gboolean hit = gtk_test_widget_send_key (ok, GDK_Return, 0);
 	g_assert (hit == TRUE);
 	gtk_loop();
@@ -57,11 +57,11 @@ static void test_gebr_help_ckeditor_confirm_save(void) {
 	GebrGeoXmlDocument *menu;
 
 	gebr_geoxml_document_load(&menu, "test.mnu", FALSE, NULL);
-	
+
 	GtkWidget *help = gebr_gui_help_edit(menu, NULL, NULL, TRUE);
 	g_assert(help);
 
-	GtkWidget *edit = gtk_test_find_widget(help, "*Edit*", GTK_TYPE_BUTTON);
+	GtkWidget *edit = gtk_test_find_widget(help, "Edit", GTK_TYPE_BUTTON);
 	g_assert(edit);
 
 	// Flooding gtk pipe with events to give time for webkit javascript processing
@@ -76,6 +76,10 @@ static void test_gebr_help_ckeditor_confirm_save(void) {
 	g_assert (click);
 	gtk_loop();
 
+	gtk_dialog_response(help, GTK_RESPONSE_CLOSE);
+
+	gtk_main();
+
 }
 
 int main(int argc, char *argv[]) {
@@ -83,7 +87,7 @@ int main(int argc, char *argv[]) {
 	/* initialization */
 	gtk_test_init(&argc, &argv, NULL);
 
-	g_test_add_func("/gebr/help/about", test_gebr_help_about);
+	//g_test_add_func("/gebr/help/about", test_gebr_help_about);
 	g_test_add_func("/gebr/help/ckeditor/confirm-save", test_gebr_help_ckeditor_confirm_save);
 	return g_test_run();
 
