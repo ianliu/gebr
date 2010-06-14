@@ -96,7 +96,8 @@ gboolean server_init(void)
 		run_fp = fopen(gebrd.run_filename->str, "r");
 		code = fscanf(run_fp, "%hu", &port);
 		if (code == EOF)
-			g_warning("%s:%d: Failed to retrieve contents of '%s' file", __FILE__, __LINE__, gebrd.run_filename->str);
+			g_warning("%s:%d: Failed to retrieve contents of '%s' file",
+				  __FILE__, __LINE__, gebrd.run_filename->str);
 		fclose(run_fp);
 
 		if (gebr_comm_listen_socket_is_local_port_available(port) == FALSE) {
