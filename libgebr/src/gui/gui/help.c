@@ -202,22 +202,9 @@ static void generate_menu_links_index(struct help_data * data)
 static void help_edit_save(struct help_data * data)
 {
 	GString *help;
-	GString *var_help;
 	JSValueRef html;
 
-	var_help = g_string_new(
-			"(function(){"
-				"editor.resetDirty();"
-				"menu_refresh = false;"
-				"UpdateDocumentClone();"
-				"if (menu_edition) {"
-					"GenerateNavigationIndex(document);"
-					"GenerateNavigationIndex(document_clone);"
-				"}"
-				"return document_clone.documentElement.outerHTML;"
-			"})();");
-
-	html = gebr_js_evaluate(data->context, var_help->str);
+	html = gebr_js_evaluate(data->context, "closeEditor();");
 	help = gebr_js_value_get_string(data->context, html);
 
 	/* transform css into a relative path back */
@@ -659,15 +646,7 @@ static void on_help_edit_edit_toggled(GtkToggleAction * action, struct help_data
 	gtk_action_set_sensitive(gtk_action_group_get_action(data->edit->actions, "save"), active);
 	gtk_action_set_sensitive(gtk_action_group_get_action(data->edit->actions, "refresh"), active);
 
-	gebr_js_evaluate(data->context,
-			 "(function(){"
-			 	"var content = GetEditableElements(document)[0];"
-			 	"var cke_editor = document.getElementById('cke_' + editor.name);"
-				"editor.updateElement();"
-				"GenerateNavigationIndex(document);"
-				"ToggleVisible(content);"
-				"ToggleVisible(cke_editor);"
-			 "})();");
+	gebr_js_evaluate(data->context, "toggleEditor();");
 }
 
 /**
@@ -677,11 +656,7 @@ static void on_help_edit_refresh_activate(GtkAction * action, struct help_data *
 {
 	if (data->edit->refresh_callback) {
 		data->edit->menu_refresh = TRUE;
-		JSValueRef value = gebr_js_evaluate(data->context,
-			 "(function(){"
-				"UpdateDocumentClone();"
-				"return document_clone.documentElement.outerHTML;"
-			 "})();");
+		JSValueRef value = gebr_js_evaluate(data->context, "refreshEditor();");
 		GString * help;
 		help = gebr_js_value_get_string(data->context, value);
 		data->edit->refresh_callback(help, data->object);

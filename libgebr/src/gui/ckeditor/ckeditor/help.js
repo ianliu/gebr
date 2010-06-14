@@ -135,29 +135,10 @@ function isContentSaved() {
 		return false;
 	return !editor.checkDirty();
 }
-function forceUtf8() {
-	var head = getHead(document);
-	var meta = head.getElementsByTagName('meta');
-	var black_list = [];
-	for (var i = 0; i < meta.length; i++) {
-		var attr = meta[i].getAttribute('http-equiv');
-		if (attr && attr.toLowerCase() == 'content-type')
-			black_list.push(meta[i]);
-	}
-	for (var i = 0; i < black_list.length; i++)
-		black_list[i].parentNode.removeChild(black_list[i]);
-	meta = document.createElement('meta');
-	meta.setAttribute('http-equiv', 'Content-Type');
-	meta.setAttribute('content', 'text/html; charset=UTF-8');
-	if (head.firstChild) {
-		head.insertBefore(meta, head.firstChild);
-	} else {
-		head.appendChild(meta);
-	}
-}
 
 function closeEditor() {
 	editor.resetDirty();
+	menu_refresh = false;
 	UpdateDocumentClone();
 	if (menu_edition) {
 		GenerateNavigationIndex(document);
