@@ -71,12 +71,19 @@ gboolean server_init(void)
 
 	/* from libgebr-misc */
 	if (gebr_create_config_dirs() == FALSE) {
-		gebrd_message(GEBR_LOG_ERROR, _("Could not access GêBR configuration directories.\n"));
-		goto err;
+		g_warning(_("%s:%d: Could not access GêBR configuration directories.\n"), __FILE__, __LINE__);
+		ret = FALSE;
+		goto out;
 	}
 
-	/* check if there is another daemon running for this user and hostname */
 	gethostname(gebrd.hostname, 255);
+
+	/* log */
+	log_filename = g_string_new(NULL);
+	g_string_printf(log_filename, "%s/.gebr/log/gebrd-%s.log", getenv("HOME"), gebrd.hostname);
+	gebrd.log = gebr_log_open(log_filename->str);
+
+	/* check if there is another daemon running for this user and hostname */
 	gebrd.run_filename = g_string_new(NULL);
 	g_string_printf(gebrd.run_filename, "%s/.gebr/run/gebrd-%s.run", getenv("HOME"), gebrd.hostname);
 	if (g_file_test(gebrd.run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
@@ -130,11 +137,6 @@ gboolean server_init(void)
 	}
 	fprintf(run_fp, "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
 	fclose(run_fp);
-
-	/* log */
-	log_filename = g_string_new(NULL);
-	g_string_printf(log_filename, "%s/.gebr/log/gebrd-%s.log", getenv("HOME"), gebrd.hostname);
-	gebrd.log = gebr_log_open(log_filename->str);
 
 	/* connecting signal TERM */
 	act.sa_sigaction = (typeof(act.sa_sigaction)) & gebrd_quit;
