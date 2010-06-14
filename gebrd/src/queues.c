@@ -84,7 +84,8 @@ gchar * gebrd_queues_get_names()
 	}
 
 	g_hash_table_foreach(gebrd.queues, (GHFunc)gebrd_queues_iter, string);
-	string->str[string->len-1] = '\0';
+	if (string->len > 0)
+		string->str[string->len-1] = '\0';
 	return g_string_free(string, FALSE);
 }
 
