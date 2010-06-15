@@ -549,7 +549,6 @@ static void on_arrow_up_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * pa
 	GtkWidget * frame2;
 	GList * node;
 	GList * prev;
-	GList * next;
 	guint index1;
 	guint index2;
 	GebrGroupReorderData *data;
@@ -558,30 +557,18 @@ static void on_arrow_up_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * pa
 	frame1 = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "frame"));
 	node = (GList*)(g_object_get_data(G_OBJECT(frame1), "list-node"));
 	instance = GEBR_GEOXML_SEQUENCE(g_object_get_data(G_OBJECT(frame1), "instance"));
+
+	g_return_if_fail(node->prev != NULL);
+
 	gebr_geoxml_sequence_move_up(instance);
 
-	if (!node->prev)
-		return;
-
 	frame2 = GTK_WIDGET(node->prev->data);
-
 	data = gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(parameter_group));
 	prev = node->prev;
-	next = node->next;
 
-	/*
-	 * Swap nodes.
-	 * TODO Make utility functions?
-	 */
-	node->prev = prev->prev;
-	prev->prev = node;
-	node->next = prev;
-	prev->next = next;
-	if (next)
-		next->prev = prev;
-
-	if (!node->prev)
-		data->instances_list = node;
+	data->instances_list = g_list_delete_link(data->instances_list, node);
+	data->instances_list = g_list_insert_before(data->instances_list, prev, frame1);
+	g_object_set_data(G_OBJECT(frame1), "list-node", prev->prev);
 
 	index1 = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(frame1), "index")) - 1;
 	index2 = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(frame2), "index")) + 1;
@@ -602,7 +589,6 @@ static void on_arrow_down_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * 
 	GtkWidget * frame1;
 	GtkWidget * frame2;
 	GList * node;
-	GList * prev;
 	GList * next;
 	guint index1;
 	guint index2;
@@ -612,29 +598,18 @@ static void on_arrow_down_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * 
 	frame1 = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "frame"));
 	node = (GList*)(g_object_get_data(G_OBJECT(frame1), "list-node"));
 	instance = GEBR_GEOXML_SEQUENCE(g_object_get_data(G_OBJECT(frame1), "instance"));
+
+	g_return_if_fail(node->next != NULL);
+
 	gebr_geoxml_sequence_move_down(instance);
 
-	if (!node->next)
-		return;
-
 	frame2 = GTK_WIDGET(node->next->data);
-
 	data = gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(parameter_group));
-	prev = node->prev;
 	next = node->next;
 
-	/*
-	 * Swap nodes.
-	 * TODO Make utility functions?
-	 */
-	node->next = next->next;
-	next->next = node;
-	node->prev = next;
-	next->prev = prev;
-	if (prev)
-		prev->next = next;
-	else
-		data->instances_list = next;
+	data->instances_list = g_list_delete_link(data->instances_list, node);
+	data->instances_list = g_list_insert_before(data->instances_list, next->next, frame1);
+	g_object_set_data(G_OBJECT(frame1), "list-node", next->next);
 
 	index1 = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(frame1), "index")) + 1;
 	index2 = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(frame2), "index")) - 1;
@@ -652,7 +627,9 @@ static void on_arrow_down_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * 
  */
 static void on_delete_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * parameter_group)
 {
+	GList * iter;
 	GList * node;
+	gulong index;
 	GtkWidget * frame;
 	GtkWidget * frame_prev;
 	GtkWidget * frame_next;
@@ -661,8 +638,8 @@ static void on_delete_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * para
 
 	data = gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(parameter_group));
 	frame = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "frame"));
-
 	node = (GList*)(g_object_get_data(G_OBJECT(frame), "list-node"));
+	iter = node->next;
 	frame_prev = GTK_WIDGET(node->prev ? node->prev->data : NULL);
 	frame_next = GTK_WIDGET(node->next ? node->next->data : NULL);
 
@@ -677,6 +654,12 @@ static void on_delete_clicked(GtkWidget *button, GebrGeoXmlParameterGroup * para
 		GtkWidget * deinstanciate;
 		g_object_get(data->group_vbox, "user-data", &deinstanciate, NULL);
 		gtk_widget_set_sensitive(deinstanciate, FALSE);
+	}
+
+	index = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(frame), "index"));
+	while (iter) {
+		g_object_set_data(G_OBJECT(iter->data), "index", GUINT_TO_POINTER(index++));
+		iter = iter->next;
 	}
 
 	gtk_widget_destroy(frame);

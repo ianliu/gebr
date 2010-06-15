@@ -60,9 +60,9 @@ gboolean __gebr_geoxml_parameters_group_check(GebrGeoXmlParameters * parameters)
 void
 __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter)
 {
+	glong index;
 	GdomeElement *parent;
 	GebrGeoXmlParameterGroup *parameter_group;
-	glong index;
 	GebrGeoXmlSequence *instance;
 
 	/* The structure is group/template-instance/parameters, that is why we need the grandparent. */
@@ -78,12 +78,11 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 		GdomeElement *reference;
 		GebrGeoXmlSequence *position;
 
-		reference = (GdomeElement *) gdome_el_cloneNode_protected((GdomeElement *) parameter);
-		__gebr_geoxml_parameter_set_be_reference((GebrGeoXmlParameter *) reference, parameter);
-
+		reference = (GdomeElement *) gdome_el_cloneNode((GdomeElement *) parameter, TRUE, &exception);
 		gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &position, index);
-		gdome_el_insertBefore_protected((GdomeElement *) instance,
-				      (GdomeNode *) reference, (GdomeNode *) position, &exception);
+		gdome_el_insertBefore_protected((GdomeElement *) instance, (GdomeNode *) reference,
+						(GdomeNode *) position, &exception);
+		__gebr_geoxml_parameter_set_be_reference((GebrGeoXmlParameter *) reference);
 	}
 }
 
@@ -104,7 +103,6 @@ GebrGeoXmlParameter *gebr_geoxml_parameters_append_parameter(GebrGeoXmlParameter
 	GdomeElement *element;
 
 	element = __gebr_geoxml_insert_new_element((GdomeElement *) parameters, "parameter", NULL);
-	__gebr_geoxml_element_assign_new_id(element, NULL, NULL);
 	__gebr_geoxml_insert_new_element(element, "label", NULL);
 	__gebr_geoxml_parameter_insert_type((GebrGeoXmlParameter *) element, type);
 

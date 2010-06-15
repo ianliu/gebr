@@ -368,8 +368,8 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 		    gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
 		    gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(pp)) == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
 
-			gchar *min_str;
-			gchar *max_str;
+			const gchar *min_str;
+			const gchar *max_str;
 
 			gebr_geoxml_program_parameter_get_number_min_max(pp, &min_str, &max_str);
 			validate->operations.append_text(validate->data, _(" in [%s,%s]"), (strlen(min_str) <= 0 ? "*" : min_str),

@@ -229,7 +229,7 @@ gboolean server_queue_find(struct server * server, const gchar * name, GtkTreeIt
 		gchar * i_name;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &i_name, -1);
-		if (strcmp(name, i_name) == 0) {
+		if (g_strcmp0(name, i_name) == 0) {
 			if (_iter != NULL)
 				*_iter = iter;
 			g_free(i_name);

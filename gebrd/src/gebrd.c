@@ -20,6 +20,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -36,7 +37,10 @@ void gebrd_init(void)
 {
 	gchar buffer[100];
 
-	pipe(gebrd.finished_starting_pipe);
+	if (pipe(gebrd.finished_starting_pipe) == -1)
+		g_warning("%s:%d: Error when creating pipe with error code %d",
+			  __FILE__, __LINE__, errno);
+
 	if (gebrd.options.foreground == FALSE) {
 		if (fork() == 0) {
 			int i;
@@ -85,10 +89,8 @@ void gebrd_init(void)
 void gebrd_quit(void)
 {
 	gebrd_message(GEBR_LOG_END, _("Server quit."));
-
 	g_list_foreach(gebrd.mpi_flavors, (GFunc)gebrd_mpi_config_free, NULL);
 	g_list_free(gebrd.mpi_flavors);
-
 	server_quit();
 	g_main_loop_quit(gebrd.main_loop);
 }
@@ -166,9 +168,13 @@ void gebrd_config_load(void)
 
 	g_key_file_load_from_file(key_file, config_path, G_KEY_FILE_NONE, &error);
 
-	if (error) {
-		g_warning("Error reading ~/gebr/gebrd/gebrd.conf: %s\n", error->message);
-		return;
+	if (error != NULL) {
+		/* Don't show warning message when the config file does not exists */
+		if (error->domain != G_FILE_ERROR || error->code != G_FILE_ERROR_NOENT)
+			g_warning("Error reading %s: %s\n", config_path, error->message);
+
+		g_error_free(error);
+		goto out;
 	}
 
 	groups = g_key_file_get_groups(key_file, NULL);
@@ -188,6 +194,7 @@ void gebrd_config_load(void)
 		gebrd.mpi_flavors = g_list_prepend(gebrd.mpi_flavors, mpi_config);
 	}
 
+out:
 	g_free(config_path);
 	g_key_file_free(key_file);
 }

@@ -36,7 +36,7 @@ struct gebr_geoxml_object {
  * library functions.
  */
 
-enum GEBR_GEOXML_OBJECT_TYPE gebr_geoxml_object_get_type(GebrGeoXmlObject * object)
+GebrGeoXmlObjectType gebr_geoxml_object_get_type(GebrGeoXmlObject * object)
 {
 	GdomeElement * element;
 
@@ -47,8 +47,7 @@ enum GEBR_GEOXML_OBJECT_TYPE gebr_geoxml_object_get_type(GebrGeoXmlObject * obje
 	};
 	guint i;
 
-	if (object == NULL)
-		return GEBR_GEOXML_OBJECT_TYPE_UNKNOWN;
+	g_return_val_if_fail(object != NULL, GEBR_GEOXML_OBJECT_TYPE_UNKNOWN);
 
 	if (gdome_n_nodeType((GdomeNode*)object, &exception) == GDOME_DOCUMENT_NODE)
 		element = gdome_doc_documentElement((GdomeDocument*)object, &exception);
@@ -57,17 +56,16 @@ enum GEBR_GEOXML_OBJECT_TYPE gebr_geoxml_object_get_type(GebrGeoXmlObject * obje
 
 	for (i = 1; i <= 7; ++i)
 		if (!strcmp(gdome_el_tagName(element, &exception)->str, tag_map[i]))
-			return (enum GEBR_GEOXML_OBJECT_TYPE)i;
+			return (GebrGeoXmlObjectType)i;
 
 	return GEBR_GEOXML_OBJECT_TYPE_UNKNOWN;
 }
 
 void gebr_geoxml_object_set_user_data(GebrGeoXmlObject * object, gpointer user_data)
 {
-	if (object == NULL)
-		return;
+	g_return_if_fail(object != NULL);
 
-	enum GEBR_GEOXML_OBJECT_TYPE type = gebr_geoxml_object_get_type(object);
+	GebrGeoXmlObjectType type = gebr_geoxml_object_get_type(object);
 	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW || type == GEBR_GEOXML_OBJECT_TYPE_LINE || type == GEBR_GEOXML_OBJECT_TYPE_PROJECT)
 		_gebr_geoxml_document_get_data(object)->user_data = user_data;
 	else
@@ -76,10 +74,12 @@ void gebr_geoxml_object_set_user_data(GebrGeoXmlObject * object, gpointer user_d
 
 gpointer gebr_geoxml_object_get_user_data(GebrGeoXmlObject * object)
 {
-	if (object == NULL)
-		return NULL;
+	GebrGeoXmlObjectType type;
+	
+	type = gebr_geoxml_object_get_type(object);
 
-	enum GEBR_GEOXML_OBJECT_TYPE type = gebr_geoxml_object_get_type(object);
+	g_return_val_if_fail(object != NULL, NULL);
+
 	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW || type == GEBR_GEOXML_OBJECT_TYPE_LINE || type == GEBR_GEOXML_OBJECT_TYPE_PROJECT)
 		return _gebr_geoxml_document_get_data(object)->user_data;
 	else
@@ -88,14 +88,14 @@ gpointer gebr_geoxml_object_get_user_data(GebrGeoXmlObject * object)
 
 GebrGeoXmlDocument *gebr_geoxml_object_get_owner_document(GebrGeoXmlObject * object)
 {
-	if (object == NULL)
-		return NULL;
+	g_return_val_if_fail(object != NULL, NULL);
+
 	return (GebrGeoXmlDocument *) gdome_el_ownerDocument((GdomeElement *) object, &exception);
 }
 
 GebrGeoXmlObject *gebr_geoxml_object_copy(GebrGeoXmlObject * object)
 {
-	if (object == NULL)
-		return NULL;
-	return (GebrGeoXmlObject *) gdome_el_cloneNode_protected((GdomeElement *) object);
+	g_return_val_if_fail(object != NULL, NULL);
+
+	return (GebrGeoXmlObject *) gdome_el_cloneNode((GdomeElement *) object, TRUE, &exception);
 }

@@ -8,6 +8,7 @@ syntax: glob
 *.lo
 *.o
 *.so
+*.stamp
 *.swp
 .deps
 .libs
@@ -44,6 +45,7 @@ gebr/packages/rpm/gebr.opensuse.spec
 gebr/src/defines.h
 gebr/src/gebr-client/gebr-client
 gebr/src/gebr/gebr
+gebr/src/gebr/tests/test-help
 gebrd/packages/rpm/gebrd.fedora.spec
 gebrd/packages/rpm/gebrd.mandriva.spec
 gebrd/packages/rpm/gebrd.opensuse.spec
@@ -52,6 +54,11 @@ gebrd/src/gebrd
 gebrd/tests/test-job-queue
 install-sh
 intltool-*.in
+libgebr/docs/reference/*/gebr-*
+libgebr/docs/reference/*/html
+libgebr/docs/reference/*/xml
+libgebr/gtk-doc.make
+libgebr/m4
 libgebr/packages/rpm/libgebr.fedora.spec
 libgebr/packages/rpm/libgebr.mandriva.spec
 libgebr/packages/rpm/libgebr.opensuse.spec

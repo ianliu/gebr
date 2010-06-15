@@ -197,7 +197,6 @@ void flow_import(void)
 		     flow_title, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.line)), dir);
 
 	document_import(GEBR_GEOXML_DOCUMENT(imported_flow));
-	gebr_geoxml_document_free(GEBR_GEOXML_DOC(imported_flow));
 	/* and add it to the line */
 	gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(imported_flow)));
 	document_save(GEBR_GEOXML_DOC(gebr.line), FALSE);
@@ -208,7 +207,7 @@ void flow_import(void)
 			   FB_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(imported_flow)), -1);
 	flow_browse_select_iter(&iter);
 
-	/* frees */
+	gebr_geoxml_document_free(GEBR_GEOXML_DOC(imported_flow));
 out2:	g_free(dir);
 out:	gtk_widget_destroy(chooser_dialog);
 }

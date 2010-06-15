@@ -575,7 +575,6 @@ static void gebr_comm_server_connected(GebrCommStreamSocket * stream_socket, str
 		GString *cmd_line;
 		gchar mcookie_str[33];
 
-		/* initialization */
 		cmd_line = g_string_new(NULL);
 
 		if (strlen(display)) {
@@ -584,7 +583,9 @@ static void gebr_comm_server_connected(GebrCommStreamSocket * stream_socket, str
 			/* get this X session magic cookie */
 			g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display);
 			output_fp = popen(cmd_line->str, "r");
-			fscanf(output_fp, "%32s", mcookie_str);
+			if (fscanf(output_fp, "%32s", mcookie_str) != 1)
+				g_warning("%s:%d: Error fetching authorization code for display %s",
+					  __FILE__, __LINE__, display);
 
 			pclose(output_fp);
 		} else

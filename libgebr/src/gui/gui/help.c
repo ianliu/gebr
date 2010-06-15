@@ -66,8 +66,8 @@ static void generate_menu_links_index(struct help_data * data);
 static void __gebr_gui_help_save_custom_help_to_file(struct help_data * data, const gchar *help);
 static void __gebr_gui_help_save_help_to_file(struct help_data * data);
 
-static void _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdited edited_callback,
-				GebrGuiHelpRefresh refresh_callback, gboolean menu_edition);
+static GtkWidget* _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdited edited_callback,
+				      GebrGuiHelpRefresh refresh_callback, gboolean menu_edition);
 
 static void on_help_edit_save_activate(GtkAction * action, struct help_data * data);
 
@@ -153,16 +153,16 @@ void gebr_gui_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar *h
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 }
 
-void gebr_gui_help_edit(GebrGeoXmlDocument * document, GebrGuiHelpEdited edited_callback,
-			GebrGuiHelpRefresh refresh_callback, gboolean menu_edition)
+GtkWidget* gebr_gui_help_edit(GebrGeoXmlDocument * document, GebrGuiHelpEdited edited_callback,
+			      GebrGuiHelpRefresh refresh_callback, gboolean menu_edition)
 {
-	_gebr_gui_help_edit(GEBR_GEOXML_OBJECT(document), edited_callback, refresh_callback, menu_edition);
+	return _gebr_gui_help_edit(GEBR_GEOXML_OBJECT(document), edited_callback, refresh_callback, menu_edition);
 }
 
-void gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited edited_callback,
-				GebrGuiHelpRefresh refresh_callback)
+GtkWidget* gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited edited_callback,
+				      GebrGuiHelpRefresh refresh_callback)
 {
-	_gebr_gui_help_edit(GEBR_GEOXML_OBJECT(program), edited_callback, refresh_callback, TRUE);
+	return _gebr_gui_help_edit(GEBR_GEOXML_OBJECT(program), edited_callback, refresh_callback, TRUE);
 }
 
 /*
@@ -202,22 +202,9 @@ static void generate_menu_links_index(struct help_data * data)
 static void help_edit_save(struct help_data * data)
 {
 	GString *help;
-	GString *var_help;
 	JSValueRef html;
 
-	var_help = g_string_new(
-			"(function(){"
-				"editor.resetDirty();"
-				"menu_refresh = false;"
-				"UpdateDocumentClone();"
-				"if (menu_edition) {"
-					"GenerateNavigationIndex(document);"
-					"GenerateNavigationIndex(document_clone);"
-				"}"
-				"return document_clone.documentElement.outerHTML;"
-			"})();");
-
-	html = gebr_js_evaluate(data->context, var_help->str);
+	html = gebr_js_evaluate(data->context, "closeEditor();");
 	help = gebr_js_value_get_string(data->context, html);
 
 	/* transform css into a relative path back */
@@ -436,7 +423,7 @@ static GtkWidget *web_view_on_create_web_view(GtkDialog ** r_window, struct help
 static void on_dialog_response(struct help_data * data)
 {
 	if (data->edit) {
-		if (JSValueToBoolean(data->context, gebr_js_evaluate(data->context, "isContentSaved();"))) {
+		if (JSValueToBoolean(data->context, gebr_js_evaluate(data->context, "!isContentSaved();"))) {
 			gboolean response;
 			response = gebr_gui_confirm_action_dialog(_("Save changes in help?"),
 								  _("This help has unsaved changes. Do you want to save it?"));
@@ -603,8 +590,8 @@ static void __gebr_gui_help_save_help_to_file(struct help_data * data)
  * \internal
  * Load help into a temporary file and load with Webkit (if enabled).
  */
-static void _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdited edited_callback,
-				GebrGuiHelpRefresh refresh_callback, gboolean menu_edition)
+static GtkWidget* _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdited edited_callback,
+				      GebrGuiHelpRefresh refresh_callback, gboolean menu_edition)
 {
 	struct help_data *data;
 	GtkWidget * web_view;
@@ -636,6 +623,8 @@ static void _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdited edi
 	g_signal_connect(web_view, "navigation-requested", G_CALLBACK(web_view_on_navigation_requested), data);
 	g_hash_table_insert(jscontext_to_data_hash, (gpointer)data->context, data);
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), data->html_path->str);
+
+	return GTK_WIDGET(dialog);
 }
 
 /**
@@ -657,15 +646,7 @@ static void on_help_edit_edit_toggled(GtkToggleAction * action, struct help_data
 	gtk_action_set_sensitive(gtk_action_group_get_action(data->edit->actions, "save"), active);
 	gtk_action_set_sensitive(gtk_action_group_get_action(data->edit->actions, "refresh"), active);
 
-	gebr_js_evaluate(data->context,
-			 "(function(){"
-			 	"var content = GetEditableElements(document)[0];"
-			 	"var cke_editor = document.getElementById('cke_' + editor.name);"
-				"editor.updateElement();"
-				"GenerateNavigationIndex(document);"
-				"ToggleVisible(content);"
-				"ToggleVisible(cke_editor);"
-			 "})();");
+	gebr_js_evaluate(data->context, "toggleEditor();");
 }
 
 /**
@@ -675,11 +656,7 @@ static void on_help_edit_refresh_activate(GtkAction * action, struct help_data *
 {
 	if (data->edit->refresh_callback) {
 		data->edit->menu_refresh = TRUE;
-		JSValueRef value = gebr_js_evaluate(data->context,
-			 "(function(){"
-				"UpdateDocumentClone();"
-				"return document_clone.documentElement.outerHTML;"
-			 "})();");
+		JSValueRef value = gebr_js_evaluate(data->context, "refreshEditor();");
 		GString * help;
 		help = gebr_js_value_get_string(data->context, value);
 		data->edit->refresh_callback(help, data->object);

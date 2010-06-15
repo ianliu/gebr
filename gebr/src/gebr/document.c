@@ -142,8 +142,7 @@ int document_load_path(GebrGeoXmlDocument **document, const gchar * path)
 
 int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * path, GtkTreeIter *parent)
 {
-	/**
-	 * \internal
+	/*
 	 * Callback to remove menu reference from program to maintain backward compatibility
 	 */
 	void  __document_discard_menu_ref_callback(GebrGeoXmlProgram * program, const gchar * filename, gint index)

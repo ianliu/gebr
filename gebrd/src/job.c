@@ -577,8 +577,17 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 	}
 
 	/* Binary followed by an space */
-	g_string_append_printf(job->cmd_line, "%s ", mpi == NULL? gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program)):
-			       gebrd_mpi_interface_build_comand(mpi, gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program))));
+	const gchar * binary;
+	binary = gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program));
+	if (mpi == NULL)
+		g_string_append_printf(job->cmd_line, "%s ", binary);
+	else {
+		gchar * mpicmd;
+		mpicmd = gebrd_mpi_interface_build_comand(mpi, binary);
+		g_string_append_printf(job->cmd_line, "%s ", mpicmd);
+		g_free(mpicmd);
+	}
+
 	if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program)) == FALSE)
 		goto err;
 	/* check for error file output */
@@ -615,10 +624,22 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 		/* How to connect chainned programs */
 		int chain_option = gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program)) + (previous_stdout << 1);
 		switch (chain_option) {
-		case 0:	/* Previous does not write to stdin and current does not carry about */
-			g_string_append_printf(job->cmd_line, "; %s ", mpi == NULL? gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program)):
-					       gebrd_mpi_interface_build_comand(mpi, gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program))));
+		case 0:	{
+			/* Previous does not write to stdin and current does not carry about */
+
+			const gchar * binary;
+
+			binary = gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program));
+			if (mpi == NULL)
+				g_string_append_printf(job->cmd_line, "; %s ", binary);
+			else {
+				gchar * mpicmd;
+				mpicmd = gebrd_mpi_interface_build_comand(mpi, binary);
+				g_string_append_printf(job->cmd_line, "; %s ", mpicmd);
+				g_free(mpicmd);
+			}
 			break;
+		}
 		case 1:	/* Previous does not write to stdin but current expect something */
 			g_string_append_printf(job->issues, _("Broken flow before %s (no input).\n"),
 					       gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
@@ -627,10 +648,24 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 			g_string_append_printf(job->issues, _("Broken flow before %s (unexpected output).\n"),
 					       gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
 			goto err;
-		case 3:	/* Both talk to each other */
-			g_string_append_printf(job->cmd_line, "| %s ", mpi == NULL? gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program)):
-					       gebrd_mpi_interface_build_comand(mpi, gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program))));
+		case 3:	{
+			/* Both talk to each other */
+
+			const gchar * binary;
+
+			binary = gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program));
+
+			if (mpi == NULL)
+				g_string_append_printf(job->cmd_line, "| %s ", binary);
+			else {
+				gchar * mpicmd;
+				mpicmd = gebrd_mpi_interface_build_comand(mpi, binary);
+				g_string_append_printf(job->cmd_line, "| %s ", mpicmd);
+				g_free(mpicmd);
+			}
+
 			break;
+		}
 		default:
 			break;
 		}
@@ -972,7 +1007,7 @@ static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, GString * n_
 
 	config = gebrd_get_mpi_config_by_name(mpi_name);
 
-	if (!config)
+	if (config == NULL)
 		return NULL;
 
 	if (strcmp(mpi_name, "openmpi") == 0)
