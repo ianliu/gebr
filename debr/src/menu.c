@@ -767,10 +767,17 @@ void menu_selected(void)
 
 		gchar *names_on[] = {
 			"menu_add_folder",
-			"menu_remove_folder",
 			NULL
 		};
 		debr_set_actions_sensitive(names_on, TRUE);
+
+		GtkAction * action;
+		action = gtk_action_group_get_action(debr.action_group, "menu_remove_folder");
+		if (gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(debr.ui_menu.model), &iter, &debr.ui_menu.iter_other))
+			gtk_action_set_sensitive(action, FALSE);
+		else
+			gtk_action_set_sensitive(action, TRUE);
+
 
 	} else if (type == ITER_NONE) {
 		menu_details_update();
