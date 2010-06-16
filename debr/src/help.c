@@ -102,13 +102,13 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 	else
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html->str);
 
-	if (debr.config.htmleditor->len == 0) {
+	if (debr.config.native_editor) {
 		if (program != NULL)
 			gebr_gui_program_help_edit(program, help_edit_on_finished, help_edit_on_refresh);
 		else
 			gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), help_edit_on_finished,
 					   help_edit_on_refresh, TRUE);
-	} else {
+	} else if (debr.config.htmleditor->len) {
 		/* create temporary filename */
 		html_path = gebr_make_temp_filename("debr_XXXXXX.html");
 
@@ -124,9 +124,8 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 		cmd_line = g_string_new(NULL);
 		g_string_printf(cmd_line, "%s  %s", debr.config.htmleditor->str, html_path->str);
 
-		if (WEXITSTATUS(system(cmd_line->str))){
+		if (WEXITSTATUS(system(cmd_line->str)))
 			debr_message(GEBR_LOG_ERROR, _("Error during editor execution."));
-		}
 
 		g_string_free(cmd_line, TRUE);
 
@@ -155,7 +154,8 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 out:
 		g_string_free(html_path, FALSE);
 		g_string_free(prepared_html, TRUE);
-	}
+	} else
+		debr_message(GEBR_LOG_ERROR, _("Please choose your HTML editor at Preferences."));
 }
 
 /*

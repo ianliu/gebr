@@ -23,6 +23,15 @@
 #include "debr.h"
 #include "menu.h"
 
+/**
+ * \internal
+ * Disable HTML editor entry on radio false state
+ */
+static void on_custom_radio_toggled(GtkToggleButton *togglebutton, GtkWidget *htmleditor_entry)
+{
+	gtk_widget_set_sensitive(htmleditor_entry, gtk_toggle_button_get_active(togglebutton));
+}
+
 void preferences_dialog_setup_ui(void)
 {
 	GtkWidget *window;
@@ -85,17 +94,20 @@ void preferences_dialog_setup_ui(void)
 
 	fake_radio_button = gtk_radio_button_new(NULL);
 	builtin_editor = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio_button), _("Built-in"));
-	gtk_box_pack_start(GTK_BOX(list_widget_hbox), builtin_editor, FALSE, FALSE, 2);
 	custom_editor = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio_button), _("Custom"));
-	gtk_box_pack_start(GTK_BOX(list_widget_hbox), custom_editor, FALSE, FALSE, 2);
-
 	htmleditor_entry = gtk_entry_new();
+	gtk_widget_set_sensitive(htmleditor_entry, FALSE);
 	gtk_entry_set_activates_default(GTK_ENTRY(htmleditor_entry), TRUE);
 	g_object_set(htmleditor_entry, "tooltip-text", _("An HTML capable editor to edit helps and reports"), NULL);
-	gtk_box_pack_start(GTK_BOX(list_widget_hbox), htmleditor_entry, FALSE, FALSE, 0);
 	gtk_entry_set_text(GTK_ENTRY(htmleditor_entry), debr.config.htmleditor->str);
 
-	if (debr.config.htmleditor->len == 0)
+	g_signal_connect(custom_editor, "toggled", G_CALLBACK(on_custom_radio_toggled), htmleditor_entry);
+
+	gtk_box_pack_start(GTK_BOX(list_widget_hbox), builtin_editor, FALSE, FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(list_widget_hbox), custom_editor, FALSE, FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(list_widget_hbox), htmleditor_entry, FALSE, FALSE, 0);
+
+	if (debr.config.native_editor)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(builtin_editor), TRUE);
 	else
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(custom_editor), TRUE);
