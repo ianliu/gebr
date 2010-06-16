@@ -38,6 +38,15 @@
 static void preferences_actions(GtkDialog * dialog, gint arg1, struct ui_preferences *ui_preferences);
 
 /**
+ * \internal
+ * Disable HTML editor entry on radio false state
+ */
+static void on_custom_radio_toggled(GtkToggleButton *togglebutton, GtkWidget *htmleditor_entry)
+{
+	gtk_widget_set_sensitive(htmleditor_entry, gtk_toggle_button_get_active(togglebutton));
+}
+
+/**
  * Assembly preference window.
  *
  * \return The structure containing relevant data. It will be automatically freed when the dialog closes.
@@ -143,17 +152,20 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 
 	fake_radio_button = gtk_radio_button_new(NULL);
 	ui_preferences->built_in_radio_button =  gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio_button), _("Built-in"));
-	gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui_preferences->built_in_radio_button, FALSE, FALSE, 2);
 	ui_preferences->user_radio_button =  gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio_button), _("Custom"));
-	gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui_preferences->user_radio_button, FALSE, FALSE, 2);
-
 	ui_preferences->editor = gtk_entry_new();
+	gtk_widget_set_sensitive(ui_preferences->editor, FALSE);
 	gtk_entry_set_activates_default(GTK_ENTRY(ui_preferences->editor), TRUE);
 	gebr_gui_gtk_widget_set_tooltip(ui_preferences->editor, _("An HTML capable editor to edit helps and reports"));
+
+	g_signal_connect(ui_preferences->user_radio_button, "toggled", G_CALLBACK(on_custom_radio_toggled), ui_preferences->editor);
+
+	gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui_preferences->built_in_radio_button, FALSE, FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui_preferences->user_radio_button, FALSE, FALSE, 2);
 	gtk_box_pack_start(GTK_BOX(list_widget_hbox), ui_preferences->editor, FALSE, FALSE, 0);
 
 	/* read config */
-	if (gebr.config.editor->len != 0){
+	if (gebr.config.editor->len != 0) {
 		gtk_entry_set_text(GTK_ENTRY(ui_preferences->editor), gebr.config.editor->str);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_preferences->user_radio_button), TRUE);
 	} else {
