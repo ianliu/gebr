@@ -1125,19 +1125,29 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 			   gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_entry_set_text(GTK_ENTRY(author_entry), gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_entry_set_text(GTK_ENTRY(email_entry), gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu))); 
-	/* validate */
+
+	/* Apply validation cases to the fields */
+
 	GebrValidateCase *validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_TITLE);
-	g_signal_connect(title_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
 	if (!new_menu)
 		on_entry_focus_out(GTK_ENTRY(title_entry), NULL, validate_case);
+	g_signal_connect(title_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
+
 	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_DESCRIPTION);
 	g_signal_connect(description_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
 	if (!new_menu)
 		on_entry_focus_out(GTK_ENTRY(description_entry), NULL, validate_case);
+
+	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_AUTHOR);
+	g_signal_connect(author_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
+	if (!new_menu)
+		on_entry_focus_out(GTK_ENTRY(author_entry), NULL, validate_case);
+
 	validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_EMAIL);
 	g_signal_connect(email_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
 	if (!new_menu)
 		on_entry_focus_out(GTK_ENTRY(email_entry), NULL, validate_case);
+
 	if (!new_menu)
 		validate_image_set_check_help(empty_help_image,
 					      gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
