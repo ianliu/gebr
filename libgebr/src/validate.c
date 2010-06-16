@@ -33,8 +33,8 @@ static GebrValidateCase validate_cases[] = {
 		N_("File names must be a valid path.")},
 
 	{GEBR_VALIDATE_CASE_TITLE,
-		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_NOBLK | GEBR_VALIDATE_CHECK_NOPNT
-			| GEBR_VALIDATE_CHECK_MTBLK,
+		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
 		N_("Titles should not start with spaces or end with punctuation characters.")},
 
 	{GEBR_VALIDATE_CASE_DESCRIPTION,
