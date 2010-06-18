@@ -116,14 +116,14 @@ static void __gebr_geoxml_unref(void)
 	}
 }
 
-/**
- * \internal
+/*
+ * __gebr_geoxml_document_new_data:
+ * Creates the #GebrGeoXmlDocumentData for this document.
  */
 static void __gebr_geoxml_document_new_data(GebrGeoXmlDocument * document, const gchar * filename)
 {
-	struct gebr_geoxml_document_data *data = g_new(struct gebr_geoxml_document_data, 1);
+	GebrGeoXmlDocumentData *data = g_new(GebrGeoXmlDocumentData, 1);
 	((GdomeDocument*)document)->user_data = data;
-
 	data->filename = g_string_new(filename);
 }
 
@@ -716,8 +716,8 @@ void gebr_geoxml_document_free(GebrGeoXmlDocument * document)
 	if (document == NULL)
 		return;
 
-	struct gebr_geoxml_document_data *data = (struct gebr_geoxml_document_data*)
-		((GdomeDocument*)document)->user_data;
+	GebrGeoXmlDocumentData *data;
+	data = _gebr_geoxml_document_get_data(document);
 	g_string_free(data->filename, TRUE);
 	g_free(data);
 	gdome_doc_unref((GdomeDocument *) document, &exception);

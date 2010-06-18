@@ -38,17 +38,17 @@ GebrGeoXmlDocument *gebr_geoxml_document_new(const gchar * name, const gchar * v
 /**
  * \internal
  */
-struct gebr_geoxml_document_data {
+typedef struct {
 	GString *filename;
 	/** For #gebr_geoxml_object_set_user_data */
 	gpointer user_data;
-};
+} GebrGeoXmlDocumentData;
 
 /**
  * \internal
  */
 #define _gebr_geoxml_document_get_data(document) \
-	((struct gebr_geoxml_document_data*)((GdomeDocument*)document)->user_data)
+	((GebrGeoXmlDocumentData*)((GdomeDocument*)document)->user_data)
 
 G_END_DECLS
 #endif				//__GEBR_GEOXML_DOCUMENT_P_H
