@@ -742,13 +742,12 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 							  (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 							  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 							  GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-	gtk_widget_set_size_request(dialog, 530, 400);
 
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_widget_show(scrolled_window);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), scrolled_window, TRUE, TRUE, 5);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+				       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_IN);
 
 	table = gtk_table_new(15, 2, FALSE);
@@ -831,19 +830,20 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 		g_signal_connect(is_list_check_button, "toggled", G_CALLBACK(parameter_is_list_changed), ui);
 
 
-		ui->list_widget_hbox = list_widget_hbox = gtk_hbox_new(FALSE, 0);
-		gtk_widget_show(list_widget_hbox);
-		gtk_table_attach(GTK_TABLE(table), list_widget_hbox, 0, 2, row, row + 1,
-				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-				 (GtkAttachOptions) (0), 0, 0), ++row;
-
 		/*
 		 * List separator
 		 */
-		separator_label = gtk_label_new(_("List-item separator:"));
+		separator_label = gtk_label_new(_("List-item\nseparator:"));
 		gtk_widget_show(separator_label);
-		gtk_box_pack_start(GTK_BOX(list_widget_hbox), separator_label, FALSE, FALSE, 0);
+		gtk_table_attach(GTK_TABLE(table), separator_label, 0, 1, row, row+1,
+				 GTK_FILL, GTK_FILL, 0, 0);
 		gtk_misc_set_alignment(GTK_MISC(separator_label), 0, 0.5);
+
+		ui->list_widget_hbox = list_widget_hbox = gtk_hbox_new(FALSE, 0);
+		gtk_widget_show(list_widget_hbox);
+		gtk_table_attach(GTK_TABLE(table), list_widget_hbox, 1, 2, row, row + 1,
+				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+				 (GtkAttachOptions) (0), 0, 0), ++row;
 
 		ui->fake_separator = gtk_radio_button_new(NULL);
 
@@ -876,7 +876,8 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 		g_signal_connect(ui->space_separator, "toggled", G_CALLBACK(parameter_is_radio_button_space_toggled), ui);
 		g_signal_connect(ui->comma_separator, "toggled", G_CALLBACK(parameter_is_radio_button_comma_toggled), ui);
 
-		gtk_widget_set_sensitive(ui->list_widget_hbox, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button)));
+		gtk_widget_set_sensitive(ui->list_widget_hbox,
+					 gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button)));
 
 	}
 
@@ -1139,6 +1140,10 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 	g_signal_connect(keyword_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
 	if (!new_parameter)
 		on_entry_focus_out(GTK_ENTRY(keyword_entry), NULL, validate_case);
+
+	GtkRequisition requisition;
+	gtk_widget_size_request(table, &requisition);
+	gtk_widget_set_size_request(scrolled_window, -1, requisition.height + 10);
 
 	/* dialog actions loop and checks */
 	do {
