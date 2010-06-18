@@ -163,7 +163,6 @@ gboolean parameters_check_has_required_unfilled_for_iter(GtkTreeIter * iter)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), iter,
 			   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
-
 	gebr_geoxml_program_foreach_parameter(GEBR_GEOXML_PROGRAM(program), (GebrGeoXmlCallback)parameter_required_is_unfilled, &required_unfilled);
 
 	return required_unfilled;
@@ -183,9 +182,9 @@ static void parameter_required_is_unfilled(GebrGeoXmlParameter * parameter, gboo
 	GebrGeoXmlParameters * instance = gebr_geoxml_parameter_get_parameters(parameter);
 	GebrGeoXmlParameter * selected = gebr_geoxml_parameters_get_selection(instance);
 	/* for exclusive groups, check if this is the selected parameter of its instance */
-	if (selected != parameter)
+	if (selected != NULL && selected != parameter)
 		return;
-	if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(parameter))) 
+	if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(parameter)))
 		*required_unfilled = !gebr_geoxml_program_parameter_is_set(GEBR_GEOXML_PROGRAM_PARAMETER(parameter));
 }
 
