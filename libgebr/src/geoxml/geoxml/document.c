@@ -729,11 +729,14 @@ GebrGeoXmlDocument *gebr_geoxml_document_clone(GebrGeoXmlDocument * source)
 	if (source == NULL)
 		return NULL;
 
+	gchar *xml;
+	GebrGeoXmlDocumentData *data;
 	GebrGeoXmlDocument *document;
 
-	gchar *xml;
+	data = _gebr_geoxml_document_get_data(source);
 	gebr_geoxml_document_to_string(source, &xml);
 	gebr_geoxml_document_load_buffer(&document, xml);
+	__gebr_geoxml_document_new_data(document, data->filename->str);
 	g_free(xml);
 
 	return document;
