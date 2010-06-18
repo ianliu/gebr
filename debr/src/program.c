@@ -386,8 +386,6 @@ gboolean program_dialog_setup_ui(gboolean new_program)
 	gint row = 0;
 	gboolean ret = TRUE;
 
-	menu_archive();
-
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(debr.ui_program.tree_view));
 	if (program_get_selected(NULL, TRUE) == FALSE)
 		return FALSE;
@@ -601,7 +599,6 @@ gboolean program_dialog_setup_ui(gboolean new_program)
 
 	gtk_widget_show(dialog);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
-		menu_replace();
 		ret = FALSE;
 		goto out;
 	}

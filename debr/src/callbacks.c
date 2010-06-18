@@ -399,7 +399,12 @@ void on_program_delete_activate(void)
 
 gboolean on_program_properties_activate(void)
 {
-	return program_dialog_setup_ui(FALSE);
+	menu_archive();
+	if (!program_dialog_setup_ui(FALSE)) {
+		menu_replace();
+		return FALSE;
+	}
+	return TRUE;
 }
 
 void on_program_preview_activate(void)
