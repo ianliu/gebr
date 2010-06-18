@@ -303,7 +303,7 @@ static void parameter_group_instances_setup_ui(struct ui_parameter_group_dialog 
 		gtk_container_add(GTK_CONTAINER(frame), table);
 		gtk_box_pack_start(GTK_BOX(ui->instances_edit_vbox), frame, TRUE, TRUE, 5);
 
-		gtk_widget_show_all(frame);
+		gtk_widget_show(frame);
 	}
 	g_string_free(string, TRUE);
 }
