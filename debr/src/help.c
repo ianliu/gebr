@@ -102,13 +102,13 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 	else
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html->str);
 
-	if (debr.config.native_editor) {
+	if (debr.config.native_editor || !debr.config.htmleditor->len) {
 		if (program != NULL)
 			gebr_gui_program_help_edit(program, help_edit_on_finished, help_edit_on_refresh);
 		else
 			gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), help_edit_on_finished,
 					   help_edit_on_refresh, TRUE);
-	} else if (debr.config.htmleditor->len) {
+	} else {
 		/* create temporary filename */
 		html_path = gebr_make_temp_filename("debr_XXXXXX.html");
 
@@ -151,11 +151,10 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 			help_edit_on_finished(GEBR_GEOXML_OBJECT(GEBR_GEOXML_DOCUMENT(debr.menu)),
 					      prepared_html->str);
 
-out:
+	out:
 		g_string_free(html_path, FALSE);
 		g_string_free(prepared_html, TRUE);
-	} else
-		debr_message(GEBR_LOG_ERROR, _("Please choose your HTML editor at Preferences."));
+	}
 }
 
 /*
@@ -175,16 +174,23 @@ static void help_edit_on_refresh(GString * help, GebrGeoXmlObject * object)
 static void add_program_parameter_item(GString * str, GebrGeoXmlParameter * par)
 {
 	if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(par))) {
-		g_string_append_printf(str, "              "
-				       "<li class=\"req\"><span class=\"reqlabel\">%s</span><br/>"
-				       " detailed description comes here.</li>\n\n",
+		g_string_append_printf(str, "<li class=\"req\"><span class=\"reqlabel\">%s</span><br/>",
 				       gebr_geoxml_parameter_get_label(par));
 	} else {
-		g_string_append_printf(str, "              "
-				       "<li><span class=\"label\">%s</span><br/>"
-				       " detailed description comes here.</li>\n\n",
+		g_string_append_printf(str, "<li><span class=\"label\">%s</span><br/>"
+				       " detailed description comes here.",
 				       gebr_geoxml_parameter_get_label(par));
 	}
+	if (gebr_geoxml_parameter_get_type(par) == GEBR_GEOXML_PARAMETER_TYPE_ENUM) {
+		GebrGeoXmlSequence *enum_option;
+
+		g_string_append_printf(str, "\n<ul>");
+		gebr_geoxml_program_parameter_get_enum_option(GEBR_GEOXML_PROGRAM_PARAMETER(par), &enum_option, 0);
+		for (; enum_option != NULL; gebr_geoxml_sequence_next(&enum_option))
+			g_string_append_printf(str, "<li>%s</li>", gebr_geoxml_enum_option_get_label(GEBR_GEOXML_ENUM_OPTION(enum_option)));
+		g_string_append_printf(str, "\n</ul>");
+	}
+	g_string_append_printf(str, "</li>\n");
 }
 
 /**
