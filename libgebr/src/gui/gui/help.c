@@ -543,16 +543,16 @@ static void __gebr_gui_help_save_custom_help_to_file(struct help_data * data, co
 	}
 
 	/* CSS to absolute path */
-	if (help->len && data->menu) {
+	if (help->len) {
 		regex_t regexp;
 		regmatch_t matchptr;
-		regcomp(&regexp, "<link[^<]*>", REG_NEWLINE | REG_ICASE);
+		regcomp(&regexp, "<link[^<]*gebr.css[^<]*>", REG_NEWLINE | REG_ICASE);
 		if (!regexec(&regexp, help->str, 1, &matchptr, 0)) {
 			g_string_erase(help, (gssize) matchptr.rm_so,
 				       (gssize) matchptr.rm_eo - matchptr.rm_so);
 			g_string_insert(help, (gssize) matchptr.rm_so,
 					"<link rel=\"stylesheet\" type=\"text/css\" href=\"file://"LIBGEBR_DATA_DIR"/gebr.css\" />");
-		} else {
+		} else if (data->menu) {
 			regcomp(&regexp, "<head>", REG_NEWLINE | REG_ICASE);
 			if (!regexec(&regexp, help->str, 1, &matchptr, 0))
 				g_string_insert(help, (gssize) matchptr.rm_eo,
@@ -563,6 +563,7 @@ static void __gebr_gui_help_save_custom_help_to_file(struct help_data * data, co
 	/* some webkit versions crash to open an empty file... */
 	if (!help->len)
 		g_string_assign(help, " ");
+
 	/* write current help to temporary file */
 	FILE *fp;
 	fp = fopen(data->html_path->str, "w");
