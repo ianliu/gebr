@@ -91,7 +91,7 @@ struct ui_menu {
 		GtkWidget *modified_label;
 		GtkWidget *modified_date_label;
 		GtkWidget *category_label;
-		GtkWidget *categories_label[3];
+		GtkWidget *categories_label;
 		GtkWidget *help_button;
 	} details;
 };
