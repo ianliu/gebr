@@ -94,7 +94,7 @@ void parameter_load_selected(void);
 /**
  * Creates a new parameter.
  */
-void parameter_new(void);
+void parameter_new(GebrGeoXmlParameterType type);
 
 /**
  * Creates a new parameter with the specified \p type.
@@ -155,11 +155,7 @@ gboolean parameter_get_selected(GtkTreeIter * iter, gboolean show_warning);
  */
 void parameter_select_iter(GtkTreeIter iter);
 
-/**
- * Populates a \ref GtkMenu with the available types.
- * \param use_action Whether to use the action group or not.
- */
-GtkWidget * parameter_create_menu_with_types(gboolean use_action);
+GtkWidget * parameter_create_menu_with_types(gboolean is_change_type);
 
 G_END_DECLS
 

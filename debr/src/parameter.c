@@ -225,12 +225,14 @@ void parameter_load_selected(void)
 	parameter_load_iter(&iter, FALSE);
 }
 
-void parameter_new(void)
+void parameter_new(GebrGeoXmlParameterType type)
 {
 	GtkTreeIter iter;
 	GtkTreeIter pre_selected_iter;
 	GebrGeoXmlSequence *xml_sequence;
 	gboolean pre_selected_param;
+	gboolean is_prog_parameter;
+	gboolean is_in_group;
 
 	if (!menu_get_selected(NULL, TRUE) || (!program_get_selected(NULL, TRUE)))
 		/* No menu is selected. So, we can't create any parameter. */
@@ -239,16 +241,18 @@ void parameter_new(void)
 	menu_archive();
 
 	/* use the last iter selected */
-	if ((pre_selected_param = parameter_get_selected(&pre_selected_iter, FALSE)) == TRUE) {
+	pre_selected_param = parameter_get_selected(&pre_selected_iter, FALSE);
+	if (pre_selected_param == TRUE) {
 		gebr_gui_gtk_tree_view_get_last_selected(GTK_TREE_VIEW(debr.ui_parameter.tree_view),
 							 &pre_selected_iter);
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &pre_selected_iter,
 				   PARAMETER_XMLPOINTER, &xml_sequence, -1);
 	}
 
-	if (pre_selected_param &&
-	    (gebr_geoxml_parameter_get_is_program_parameter(debr.parameter) == FALSE ||
-	     gebr_geoxml_parameter_get_is_in_group(debr.parameter) == TRUE)) {
+	is_prog_parameter = gebr_geoxml_parameter_get_is_program_parameter(debr.parameter);
+	is_in_group = gebr_geoxml_parameter_get_is_in_group(debr.parameter);
+
+	if (pre_selected_param && (!is_prog_parameter || is_in_group)) {
 		/* The selected parameter is a group or is part of a group. */
 		GebrGeoXmlParameterGroup *parameter_group;
 		GebrGeoXmlParameters *template;
@@ -265,39 +269,56 @@ void parameter_new(void)
 			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent,
 					   PARAMETER_XMLPOINTER, &parameter_group, -1);
 
-		template = gebr_geoxml_parameter_group_get_template(parameter_group);
-		if (gebr_geoxml_parameter_get_is_in_group(debr.parameter)) {
-			GebrGeoXmlParameter *xml_parameter;
+		/* If the new parameter is a Group, than we must treat it specially.
+		 * It must not enter inside another group.
+		 */
+		if (type == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
+			GebrGeoXmlParameter *new_param;
+			GebrGeoXmlParameters *parameters;
+			GebrGeoXmlSequence *pivot;
 
-			xml_parameter = gebr_geoxml_parameters_append_parameter(template,
-										GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
-
-			/* Insert new parameter after pre-selected one. */
-			gebr_geoxml_sequence_move_after((GebrGeoXmlSequence *)xml_parameter, xml_sequence);
-			parameter_insert_to_ui(xml_parameter, &pre_selected_iter, &iter);
+			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &parent,
+					   PARAMETER_XMLPOINTER, &pivot, -1);
+			parameters = gebr_geoxml_program_get_parameters(debr.program);
+			new_param = gebr_geoxml_parameters_append_parameter(parameters, type);
+			gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(new_param), pivot);
+			parameter_insert_to_ui(new_param, &parent, &iter);
 		} else {
-			/* Selection is a group. Append new parameter at the end of the group's list. */
-			parameter_append_to_ui(gebr_geoxml_parameters_append_parameter(template, GEBR_GEOXML_PARAMETER_TYPE_FLOAT),
-					       &parent, &iter);
+			template = gebr_geoxml_parameter_group_get_template(parameter_group);
+			if (gebr_geoxml_parameter_get_is_in_group(debr.parameter)) {
+				/* Insert new parameter after pre-selected one. */
+				GebrGeoXmlParameter *new_param;
+				new_param = gebr_geoxml_parameters_append_parameter(template, type);
+				gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(new_param), xml_sequence);
+				parameter_insert_to_ui(new_param, &pre_selected_iter, &iter);
+			} else {
+				/* Selection is a group. Append new parameter at the end of the group's list. */
+				GebrGeoXmlParameter *new_param;
+				new_param = gebr_geoxml_parameters_append_parameter(template, type);
+				parameter_append_to_ui(new_param, &parent, &iter);
+			}
 		}
 	} else {
 		/* There is no selected parameter for the current menu or the selected parameter
 		   is out of a group. If it is the first case, we create the new parameter at the end of the list. */
 		if (pre_selected_param) {
-			GebrGeoXmlParameter *xml_parameter;
+			GebrGeoXmlParameter *new_param;
+			GebrGeoXmlParameters *parameters;
 
-			xml_parameter =
-				gebr_geoxml_parameters_append_parameter(gebr_geoxml_program_get_parameters(debr.program),
-									GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
+			parameters = gebr_geoxml_program_get_parameters(debr.program);
+			new_param = gebr_geoxml_parameters_append_parameter(parameters, type);
 
 			/* Selection is out of groups. Insert new parameter after pre-selected one. */
-			gebr_geoxml_sequence_move_after((GebrGeoXmlSequence *)xml_parameter, xml_sequence);
-			parameter_insert_to_ui(xml_parameter, &pre_selected_iter, &iter);
+			gebr_geoxml_sequence_move_after((GebrGeoXmlSequence *)new_param, xml_sequence);
+			parameter_insert_to_ui(new_param, &pre_selected_iter, &iter);
 		} else {
 			/* Nothing is selected. Append new parameter at the end of the list. */
-			parameter_append_to_ui(gebr_geoxml_parameters_append_parameter
-					       (gebr_geoxml_program_get_parameters(debr.program),
-						GEBR_GEOXML_PARAMETER_TYPE_FLOAT), NULL, &iter);
+			GebrGeoXmlParameter *new_param;
+			GebrGeoXmlParameters *parameters;
+
+			parameters = gebr_geoxml_program_get_parameters(debr.program);
+			new_param = gebr_geoxml_parameters_append_parameter(parameters, type);
+			parameter_append_to_ui(new_param, NULL, &iter);
 		}
 	}
 
@@ -310,8 +331,7 @@ void parameter_new_from_type(GebrGeoXmlParameterType type)
 {
 	GtkTreeIter iter;
 
-	parameter_new();
-	parameter_change_type(type);
+	parameter_new(type);
 
 	if (parameter_get_selected(&iter, FALSE) == FALSE)
 		return;
@@ -598,38 +618,48 @@ void parameter_select_iter(GtkTreeIter iter)
 	parameter_selected();
 }
 
-GtkWidget * parameter_create_menu_with_types(gboolean use_action)
+/**
+ * parameter_create_menu_with_types:
+ *
+ * @is_change_type: Whether to create the menu for 'change type' operation or not. If the operation is 'change type', we
+ * do not include the 'Group' item.
+ *
+ * Returns: A #GtkMenu containing all types of parameters.
+ */
+GtkWidget * parameter_create_menu_with_types(gboolean is_change_type)
 {
-	gboolean cut;
 	GtkWidget *menu;
+	GtkWidget *item;
+	GtkRadioActionEntry entry;
 
 	menu = gtk_menu_new();
-	if (use_action)
-		cut = TRUE;
-	else
-		cut = gebr_geoxml_parameter_get_is_in_group(debr.parameter) ||
-			(parameter_get_selected(NULL, FALSE) && (gebr_geoxml_parameter_get_type(debr.parameter) == GEBR_GEOXML_PARAMETER_TYPE_GROUP));
 
-	void append_menuitem(guint i) {
-		GtkWidget *item;
-		if (use_action) {
+	for (guint i = 0; i < combo_type_map_size - 1; i++) {
+		if (is_change_type) {
 			GtkAction *action;
 			action = gtk_action_group_get_action(debr.action_group, parameter_type_radio_actions_entries[i].name);
 			item = gtk_action_create_menu_item(action);
 		} else {
-			item = gtk_menu_item_new_with_label(parameter_type_radio_actions_entries[i].label);
-			g_signal_connect(item, "activate", G_CALLBACK(on_parameter_menu_item_new_activate),
-					 GINT_TO_POINTER(parameter_type_radio_actions_entries[i].value));
+			entry = parameter_type_radio_actions_entries[i];
+			item = gtk_menu_item_new_with_label(entry.label);
+			g_signal_connect(item, "activate",
+					 G_CALLBACK(on_parameter_menu_item_new_activate),
+					 GINT_TO_POINTER(entry.value));
 		}
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	}
 
-	for (guint i = 0; i < combo_type_map_size - 1; i++)
-		append_menuitem(i);
-
-	if (!cut) {
+	/*
+	 * When changing type, we do not include the 'group' item, otherwise we do.
+	 */
+	if (!is_change_type) {
+		entry = parameter_type_radio_actions_entries[combo_type_map_size-1];
+		item = gtk_menu_item_new_with_label(entry.label);
+		g_signal_connect(item, "activate",
+				 G_CALLBACK(on_parameter_menu_item_new_activate),
+				 GINT_TO_POINTER(entry.value));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-		append_menuitem(combo_type_map_size - 1);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	}
 
 	return menu;
@@ -1835,4 +1865,3 @@ static void on_parameter_menu_item_new_activate(GtkWidget * menu_item, gpointer 
 {
 	parameter_new_from_type((GebrGeoXmlParameterType)GPOINTER_TO_INT(type));
 }
-
