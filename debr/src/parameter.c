@@ -698,7 +698,6 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 	GebrGeoXmlParameterType type;
 
 	GtkWidget *dialog;
-	GtkWidget *scrolled_window;
 	GtkWidget *table;
 	int row = 0;
 
@@ -743,16 +742,11 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 							  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 							  GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 
-	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-	gtk_widget_show(scrolled_window);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), scrolled_window, TRUE, TRUE, 5);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-				       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_IN);
-
 	table = gtk_table_new(15, 2, FALSE);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 5);
+
+	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_widget_show(table);
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), table);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
 
@@ -1140,10 +1134,6 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 	g_signal_connect(keyword_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
 	if (!new_parameter)
 		on_entry_focus_out(GTK_ENTRY(keyword_entry), NULL, validate_case);
-
-	GtkRequisition requisition;
-	gtk_widget_size_request(table, &requisition);
-	gtk_widget_set_size_request(scrolled_window, -1, requisition.height + 10);
 
 	/* dialog actions loop and checks */
 	do {
