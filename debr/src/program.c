@@ -208,7 +208,7 @@ void program_load_menu(void)
 		program_select_iter(iter);
 }
 
-void program_new(gboolean edit)
+void program_new()
 {
 	GebrGeoXmlProgram *program;
 	GtkTreeIter iter;
@@ -229,14 +229,12 @@ void program_new(gboolean edit)
 	gtk_list_store_set(debr.ui_program.list_store, &iter, PROGRAM_STATUS, debr.pixmaps.stock_no, -1);
 
 	program_select_iter(iter);
-	if (edit) {
-		if (program_dialog_setup_ui(TRUE)) {
-			menu_details_update();
-			menu_saved_status_set(MENU_STATUS_UNSAVED);
-		} else {
-			program_remove(FALSE);
-			menu_replace();
-		}
+	if (program_dialog_setup_ui(TRUE)) {
+		menu_details_update();
+		menu_saved_status_set(MENU_STATUS_UNSAVED);
+	} else {
+		program_remove(FALSE);
+		menu_replace();
 	}
 }
 

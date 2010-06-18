@@ -389,7 +389,7 @@ void on_menu_close_activate(void)
 
 void on_program_new_activate(void)
 {
-	program_new(TRUE);
+	program_new();
 }
 
 void on_program_delete_activate(void)

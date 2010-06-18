@@ -67,7 +67,7 @@ void program_load_menu(void);
 /**
  * Append a new program and selects it
  */
-void program_new(gboolean edit);
+void program_new();
 
 /**
  * Show GeBR's program edit view.
