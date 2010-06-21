@@ -66,7 +66,8 @@ static GebrValidateCase validate_cases[] = {
 
 	/* program */
 	{GEBR_VALIDATE_CASE_PROGRAM_TITLE,
-		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_NOBLK | GEBR_VALIDATE_CHECK_MTBLK,
+		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK 
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
 		N_("Program titles should not have extra spaces.")},
 
 	{GEBR_VALIDATE_CASE_PROGRAM_DESCRIPTION,
@@ -394,14 +395,14 @@ gchar * gebr_validate_change_url(const gchar * sentence)
 {	
         gchar *str;
 
-        if (gebr_validate_check_is_email(sentence))
-                return g_strconcat("mailto:", sentence, NULL);
-        if (g_str_has_prefix(sentence, "www."))
-                return g_strconcat("http://", sentence, NULL);
-        if (g_str_has_prefix(sentence, "ftp."))
-                return g_strconcat("ftp://", sentence, NULL);
-        if (g_str_has_prefix(sentence, "/"))
-                return g_strconcat("file://", sentence, NULL);
+	if (gebr_validate_check_is_email(sentence))
+		return g_strconcat("mailto:", sentence, NULL);
+	else if (g_str_has_prefix(sentence, "ftp."))
+		return g_strconcat("ftp://", sentence, NULL);
+	else if (g_str_has_prefix(sentence, "/"))
+		return g_strconcat("file://", sentence, NULL);
+	else 
+		return g_strconcat("http://", sentence, NULL);
 
         str = g_strdup(sentence);
 
