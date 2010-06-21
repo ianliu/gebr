@@ -23,6 +23,7 @@ src/geoxml/geoxml/program_parameter.c
 src/geoxml/geoxml/project.c
 src/geoxml/geoxml/sequence.c
 src/geoxml/geoxml/value_sequence.c
+src/geoxml/geoxml/validate.c
 src/geoxml/geoxml/xml.c
 src/geoxml/upgrade/upgrade.c
 src/geoxml/validate/validate.c

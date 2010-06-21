@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-11 15:52-0300\n"
-"PO-Revision-Date: 2010-04-30 13:55-0300\n"
+"POT-Creation-Date: 2010-06-21 14:05-0300\n"
+"PO-Revision-Date: 2010-06-21 14:54-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -21,27 +21,27 @@ msgstr ""
 "Generator: Lokalize 0.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../src/comm/comm/server.c:140
+#: ../src/comm/comm/server.c:141
 #, c-format
 msgid "Launching server at %s."
 msgstr "Iniciando servidor em %s."
 
-#: ../src/comm/comm/server.c:155
+#: ../src/comm/comm/server.c:156
 msgid "Launching local server."
 msgstr "Iniciando servidor local."
 
-#: ../src/comm/comm/server.c:195
+#: ../src/comm/comm/server.c:196
 #, c-format
 msgid "Stoping server at %s."
 msgstr "Parando servidor em %s."
 
 #. log
-#: ../src/comm/comm/server.c:261
+#: ../src/comm/comm/server.c:262
 #, c-format
 msgid "Redirecting '%s' graphical output."
 msgstr "Redirecionando saída gráfica de '%s'."
 
-#: ../src/comm/comm/server.c:336
+#: ../src/comm/comm/server.c:337
 #, c-format
 msgid ""
 "Could not launch local server: \n"
@@ -50,7 +50,7 @@ msgstr ""
 "Não foi possível executar o servidor local: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:383
+#: ../src/comm/comm/server.c:384
 #, c-format
 msgid ""
 "Server %s needs SSH login.\n"
@@ -61,7 +61,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/comm/comm/server.c:386
+#: ../src/comm/comm/server.c:387
 #, c-format
 msgid ""
 "Wrong password for server %s, please try again.\n"
@@ -72,15 +72,15 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/comm/comm/server.c:389
+#: ../src/comm/comm/server.c:390
 msgid "SSH login:"
 msgstr "Login SSH:"
 
-#: ../src/comm/comm/server.c:407
+#: ../src/comm/comm/server.c:408
 msgid "SSH inquiry:"
 msgstr "Pergunta SSH:"
 
-#: ../src/comm/comm/server.c:417
+#: ../src/comm/comm/server.c:418
 #, c-format
 msgid ""
 "Received SSH message: \n"
@@ -89,7 +89,7 @@ msgstr ""
 "Mensagem SSH recebida: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:430
+#: ../src/comm/comm/server.c:431
 #, c-format
 msgid ""
 "Error contacting server at address %s via ssh: \n"
@@ -98,7 +98,7 @@ msgstr ""
 "Erro ao contatar o servidor no endereço %s via ssh: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:489
+#: ../src/comm/comm/server.c:490
 #, c-format
 msgid ""
 "Could not comunicate with server %s: \n"
@@ -107,7 +107,7 @@ msgstr ""
 "Não foi possível se comunicar com o servidor %s: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:661
+#: ../src/comm/comm/server.c:663
 #, c-format
 msgid "Connection error '%d' on server '%s'."
 msgstr "Erro de conexão '%d' no servidor '%s'."
@@ -255,41 +255,183 @@ msgstr "O parâmetro de referência faz referência a si próprio."
 msgid "The operation only applies to the first instance of the group."
 msgstr "A operação aplica-se somente à primeira instância do grupo."
 
-#: ../src/geoxml/geoxml/parameter.c:227
+#: ../src/geoxml/geoxml/parameter.c:254
 msgid "string"
 msgstr "texto"
 
-#: ../src/geoxml/geoxml/parameter.c:227
+#: ../src/geoxml/geoxml/parameter.c:254
 msgid "integer"
 msgstr "inteiro"
 
-#: ../src/geoxml/geoxml/parameter.c:227
+#: ../src/geoxml/geoxml/parameter.c:254
 msgid "file"
 msgstr "arquivo"
 
-#: ../src/geoxml/geoxml/parameter.c:227
+#: ../src/geoxml/geoxml/parameter.c:254
 msgid "flag"
 msgstr "boleano"
 
-#: ../src/geoxml/geoxml/parameter.c:228
+#: ../src/geoxml/geoxml/parameter.c:255
 msgid "real number"
 msgstr "número real"
 
-#: ../src/geoxml/geoxml/parameter.c:228
+#: ../src/geoxml/geoxml/parameter.c:255
 msgid "range"
 msgstr "intervalo"
 
-#: ../src/geoxml/geoxml/parameter.c:228
+#: ../src/geoxml/geoxml/parameter.c:255
 msgid "enum"
 msgstr "enumeração"
 
-#: ../src/geoxml/geoxml/parameter.c:229
+#: ../src/geoxml/geoxml/parameter.c:256
 msgid "group"
 msgstr "grupo"
 
-#: ../src/geoxml/geoxml/parameter.c:229
+#: ../src/geoxml/geoxml/parameter.c:256
 msgid "reference"
 msgstr "referência"
+
+#: ../src/geoxml/geoxml/validate.c:127
+msgid "Title:         "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:131
+msgid "Description:   "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:135
+msgid "Author:        "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:143
+msgid "Created:       "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:146
+msgid "Modified:      "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:151
+msgid "Help:          "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:153 ../src/geoxml/geoxml/validate.c:208
+msgid "Defined"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:161 ../src/geoxml/geoxml/validate.c:164
+msgid "Category:      "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:172
+msgid "Menu with:     "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:173
+#, c-format
+msgid "%ld program(s)\n"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:182
+msgid ""
+"\n"
+">>Program:     "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:184
+msgid "  Title:       "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:187
+msgid "  Description: "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:191
+msgid "  In/out/err:  "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:193
+msgid "Read"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:193 ../src/geoxml/geoxml/validate.c:194
+#: ../src/geoxml/geoxml/validate.c:195
+msgid "Ignore"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:194
+msgid "Write"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:195
+msgid "Append"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:197
+msgid "  Binary:      "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:200
+msgid "  Version:     "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:203
+msgid "  URL:         "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:206
+msgid "  Help:        "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:218
+msgid "  >>Parameters:\n"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:230
+#, c-format
+msgid "%d potential error(s)"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:268
+msgid "UNSET"
+msgstr "VAZIO"
+
+#: ../src/geoxml/geoxml/validate.c:303
+msgid ", already used above"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:310
+#, c-format
+msgid " (Alt+%s)"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:375
+#, c-format
+msgid " in [%s,%s]"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:381
+#, c-format
+msgid " (entries separated by '%s')"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:385
+msgid " (missing entries' separator)"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:391
+msgid "  REQUIRED "
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:400
+msgid ""
+"\n"
+"        missing options"
+msgstr ""
+
+#: ../src/geoxml/geoxml/validate.c:425
+msgid "   [Instantiable]\n"
+msgstr ""
 
 #: ../src/geoxml/upgrade/upgrade.c:32 ../src/geoxml/validate/validate.c:32
 msgid "file1.flw file2.mnu file3.prj file4.lne ..."
