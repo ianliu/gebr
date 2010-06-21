@@ -181,21 +181,21 @@ h1,h2,h3 {padding-top: 6px; color: #553; margin-bottom: 4px;}
 }
 
 /* navigation */
-.navigation {
+.links, .navigation {
 	float: left;
 	width: 18%;
 	margin-left: 2%;
 }
-.navigation h2 {
+.links h2, .navigation h2 {
 	color: #5A5A43;
 	font: bold 1.1em Tahoma,sans-serif;
 }
-.navigation ul {
+.links ul, .navigation ul {
 	padding: 0;
 	border-top: 1px solid #EAEADA;
 }
-.navigation li {border-bottom: 1px solid #EAEADA;}
-.navigation li a {
+.links li, .navigation li {border-bottom: 1px solid #EAEADA;}
+.links li a, .navigation li a {
 	font-size: 1.1em;
 	color: #554;
 	display: block;
@@ -207,41 +207,10 @@ h1,h2,h3 {padding-top: 6px; color: #553; margin-bottom: 4px;}
 	padding-left: 12px;
 	overflow: hidden;
 }
-.navigation li a:hover {
+.links li a:hover, .navigation li a:hover {
 	background: #F0F0EB;
 	color: #654;
 	overflow: visible;
-}
-
-/* links */
-.links {
-	float: left;
-	width: 18%;
-	margin-left: 2%;
-}
-.links h2 {
-	color: #5A5A43;
-	font: bold 1.1em Tahoma,sans-serif;
-	line-height: 30px;
-	margin: 0;
-	padding-left: 12px;
-}
-.links ul {
-	padding: 0;
-	border-top: 1px solid #EAEADA;
-}
-.links li {border-bottom: 1px solid #EAEADA;}
-.links li a {
-	font-size: 1.1em;
-	color: #554;
-	display: block;
-	padding: 8px 0 8px 5%;
-	text-decoration: none;
-	width: 95%;
-}
-.links li a:hover {
-	background: #F0F0EB;
-	color: #654;	
 }
 
 /* footer */
