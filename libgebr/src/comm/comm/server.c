@@ -229,12 +229,15 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	display = getenv("DISPLAY");
 	if (!(ret = !(display == NULL || !strlen(display))))
 		goto out;
-	sscanf(display, ":%hu.", &display_number);
+	if (sscanf(display, "%*[^:]:%hu.", &display_number) != 1)
+		display_number = 0;
+	g_printf("display = %s\ndisplay number = %d\n", display, display_number);
 
 	/* set redirection port */
 	redirect_display_port = (display_number + 6000 > 6010) ? display_number + 6000 : 6010;
-	while (!gebr_comm_listen_socket_is_local_port_available(redirect_display_port))
+	while (!gebr_comm_listen_socket_is_local_port_available(redirect_display_port)) {
 		++redirect_display_port;
+	}
 
 	/* free previous forward */
 	gebr_comm_server_free_x11_forward(server);
@@ -244,9 +247,7 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	g_string_printf(string, "/tmp/.X11-unix/X%hu", display_number);
 	forward_address = gebr_comm_socket_address_unix(string->str);
 	server->x11_forward_channel = gebr_comm_channel_socket_new();
-	if (!
-	    (ret =
-	     gebr_comm_channel_socket_start(server->x11_forward_channel, &listen_address, &forward_address)))
+	if (!(ret = gebr_comm_channel_socket_start(server->x11_forward_channel, &listen_address, &forward_address)))
 		goto out;
 
 	/* now ssh from server to redirect_display_port */
