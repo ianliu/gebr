@@ -52,6 +52,7 @@ void debr_init(void)
 	debr.pixmaps.stock_cancel = gtk_widget_render_icon(debr.invisible,
 							   GTK_STOCK_CANCEL, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 	debr.pixmaps.stock_no = gtk_widget_render_icon(debr.invisible, GTK_STOCK_NO, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
+	debr.pixmaps.stock_warning = gtk_widget_render_icon(debr.invisible, GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.ui_menu.model), debr.config.menu_sort_column,
 					     debr.config.
@@ -90,6 +91,7 @@ gboolean debr_quit(void)
 	g_object_unref(debr.pixmaps.stock_apply);
 	g_object_unref(debr.pixmaps.stock_cancel);
 	g_object_unref(debr.pixmaps.stock_no);
+	g_object_unref(debr.pixmaps.stock_warning);
 	gtk_widget_destroy(debr.invisible);
 
 	gtk_main_quit();

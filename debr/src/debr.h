@@ -77,6 +77,7 @@ struct debr {
 		GdkPixbuf *stock_apply;
 		GdkPixbuf *stock_cancel;
 		GdkPixbuf *stock_no;
+		GdkPixbuf *stock_warning;
 	} pixmaps;
 
 	/* config file */
