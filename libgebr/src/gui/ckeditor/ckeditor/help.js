@@ -115,13 +115,13 @@ function OpenCkEditor(element) {
 	editor = CKEDITOR.replace(element, {
 		fullpage: true,
 		height: 300,
-		width: menu_edition ? 390 : '100%',
+		width: menu_edition ? '76%' : '100%',
 		resize_enabled: false,
 		toolbarCanCollapse: false,
 		toolbar:[['Source','-','Bold','Italic','Underline','-',
-			'Subscript','Superscript','-','Undo','Redo'],'/',
-			['NumberedList','BulletedList','Blockquote','Styles','-',
-			'Link','Unlink','-','RemoveFormat','-','Find','Replace', '-']]});
+			'Subscript','Superscript','-','Undo','Redo','-',
+			'NumberedList','BulletedList','-','Outdent','Indent','Blockquote','Styles','-',
+			'Link','Unlink','-','RemoveFormat','-','Find','Replace','Table','-']]});
 }
 function onCkEditorLoadFinished() {
 	if (menu_edition) {
