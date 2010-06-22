@@ -130,8 +130,7 @@ static gboolean __gebr_comm_socket_read(GIOChannel * source, GIOCondition condit
 
 void __gebr_comm_socket_write_queue(GebrCommSocket * socket)
 {
-	if (socket->state != G_SOCKET_STATE_CONNECTED)
-		return;
+	g_return_if_fail(socket->state == G_SOCKET_STATE_CONNECTED);
 	/* write queud bytes */
 	if (socket->queue_write_bytes->len) {
 		ssize_t written_bytes;
@@ -139,9 +138,8 @@ void __gebr_comm_socket_write_queue(GebrCommSocket * socket)
 		_gebr_comm_socket_enable_write_watch(socket);
 
 		written_bytes = send(_gebr_comm_socket_get_fd(socket), socket->queue_write_bytes->data,
-				     socket->queue_write_bytes->len > 1024 ? 1024 : socket->queue_write_bytes->len, 0);
-		if (written_bytes == -1)
-			return;
+				     socket->queue_write_bytes->len > 64024 ? 64024 : socket->queue_write_bytes->len, 0);
+		g_return_if_fail(written_bytes != -1);
 
 		g_byte_array_remove_range(socket->queue_write_bytes, 0, written_bytes);
 	}
