@@ -154,6 +154,7 @@ function toggleEditor() {
 	GenerateNavigationIndex(document);
 	ToggleVisible(content);
 	ToggleVisible(cke_editor);
+	content.focus(); // workaround webkit rendering bug in jaunty
 }
 
 function refreshEditor() {
