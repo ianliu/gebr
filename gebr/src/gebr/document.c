@@ -108,9 +108,6 @@ int document_load_with_parent(GebrGeoXmlDocument ** document, const gchar * file
 
 	path = document_get_path(filename);
 	ret = document_load_path_with_parent(document, path->str, parent);
-	/* save will make a xml format upgrade if necessary */
-	if (!ret)
-		document_save(*document, FALSE);
 	g_string_free(path, TRUE);
 
 	return ret;

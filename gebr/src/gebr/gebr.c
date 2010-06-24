@@ -542,16 +542,14 @@ static void gebr_migrate_data_dir(void)
 		dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
 						(GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 						GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
-						_
-						("GêBR now stores data files on its own directory. You may now delete GêBR's files at %s."),
+						_("GêBR now stores data files on its own directory. You may now delete GêBR's files at %s."),
 						gebr.config.data->str);
 		g_string_assign(gebr.config.data, new_data_dir->str);
 	} else {
 		dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
 						(GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 						GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_
-						("Cannot copy data files to GêBR's directory. Please check your write permissions to your home directory."));
+						_("Cannot copy data files to GêBR's directory. Please check your write permissions to your home directory."));
 	}
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
