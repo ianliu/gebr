@@ -229,34 +229,35 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	display = getenv("DISPLAY");
 	if (!(ret = !(display == NULL || !strlen(display))))
 		goto out;
-	if (sscanf(display, "%*[^:]:%hu.", &display_number) != 1)
-		display_number = 0;
-	g_printf("display = %s\ndisplay number = %d\n", display, display_number);
-
-	/* set redirection port */
-	redirect_display_port = (display_number + 6000 > 6010) ? display_number + 6000 : 6010;
-	while (!gebr_comm_listen_socket_is_local_port_available(redirect_display_port)) {
 		++redirect_display_port;
-	}
+		display_number = 0;
 
 	/* free previous forward */
 	gebr_comm_server_free_x11_forward(server);
 
-	/* redirect_display_port tcp port to X11 unix socket */
-	listen_address = gebr_comm_socket_address_ipv4_local(redirect_display_port);
 	g_string_printf(string, "/tmp/.X11-unix/X%hu", display_number);
-	forward_address = gebr_comm_socket_address_unix(string->str);
-	server->x11_forward_channel = gebr_comm_channel_socket_new();
-	if (!(ret = gebr_comm_channel_socket_start(server->x11_forward_channel, &listen_address, &forward_address)))
-		goto out;
+	if (g_file_test(string->str, G_FILE_TEST_EXISTS)) {
+		/* set redirection port */
+		redirect_display_port = (display_number + 6000 > 6010) ? display_number + 6000 : 6010;
+		while (!gebr_comm_listen_socket_is_local_port_available(redirect_display_port)) {
+			++redirect_display_port;
+		}
+
+		/* redirect_display_port tcp port to X11 unix socket */
+		listen_address = gebr_comm_socket_address_ipv4_local(redirect_display_port);
+		forward_address = gebr_comm_socket_address_unix(string->str);
+		server->x11_forward_channel = gebr_comm_channel_socket_new();
+		if (!(ret = gebr_comm_channel_socket_start(server->x11_forward_channel, &listen_address, &forward_address)))
+			goto out;
+	} else
+		redirect_display_port = display_number+6000;
 
 	/* now ssh from server to redirect_display_port */
 	server->tried_existant_pass = FALSE;
 	server->x11_forward_process = gebr_comm_terminal_process_new();
 	g_signal_connect(server->x11_forward_process, "ready-read",
 			 G_CALLBACK(gebr_comm_ssh_read), server);
-	g_string_printf(string, "ssh -x -R %d:127.0.0.1:%d %s 'sleep 999d'",
-			port, redirect_display_port, server->address->str);
+	g_string_printf(string, "ssh -x -R %d:127.0.0.1:%d %s 'sleep 999d'", port, redirect_display_port, server->address->str);
 	gebr_comm_terminal_process_start(server->x11_forward_process, string);
 
 	/* log */
@@ -565,12 +566,15 @@ static void gebr_comm_server_connected(GebrCommStreamSocket * stream_socket, str
 {
 	gchar hostname[256];
 	gchar *display;
+	gchar *display_number = NULL;
 
 	/* initialization */
 	gethostname(hostname, 255);
 	display = getenv("DISPLAY");
 	if (display == NULL)
 		display = "";
+	else
+		display_number = strchr(display, ':');
 
 	if (gebr_comm_server_is_local(server) == FALSE) {
 		GString *cmd_line;
@@ -578,11 +582,11 @@ static void gebr_comm_server_connected(GebrCommStreamSocket * stream_socket, str
 
 		cmd_line = g_string_new(NULL);
 
-		if (strlen(display)) {
+		if (display_number != NULL) {
 			FILE *output_fp;
 
 			/* get this X session magic cookie */
-			g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display);
+			g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display_number);
 			output_fp = popen(cmd_line->str, "r");
 			if (fscanf(output_fp, "%32s", mcookie_str) != 1)
 				g_warning("%s:%d: Error fetching authorization code for display %s",
@@ -597,7 +601,6 @@ static void gebr_comm_server_connected(GebrCommStreamSocket * stream_socket, str
 					     gebr_comm_protocol_defs.ini_def, 4, PROTOCOL_VERSION, hostname, "remote",
 					     mcookie_str);
 
-		/* frees */
 		g_string_free(cmd_line, TRUE);
 	} else {
 		/* send INI */

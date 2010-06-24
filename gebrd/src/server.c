@@ -263,7 +263,7 @@ gboolean server_parse_client_messages(struct client *client)
 					/* add client magic cookie */
 					cmd_line = g_string_new(NULL);
 					g_string_printf(cmd_line, "xauth add :%d . %s", display, x11->str);
-					if (system(cmd_line->str) -1)
+					if (WEXITSTATUS(system(cmd_line->str)))
 						g_warning("%s:%d: Failed to run '%s'", __FILE__, __LINE__, cmd_line->str);
 
 					gebrd_message(GEBR_LOG_DEBUG, "xauth ran: %s", cmd_line->str);

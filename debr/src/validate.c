@@ -146,7 +146,7 @@ out:
 
 	gint error_count = gebr_geoxml_validate_report_menu(validate->geoxml_validate, menu);
 	gtk_list_store_set(debr.ui_validate.list_store, &validate->iter,
-			   VALIDATE_ICON, !error_count ? debr.pixmaps.stock_apply : debr.pixmaps.stock_cancel,
+			   VALIDATE_ICON, !error_count ? debr.pixmaps.stock_apply : debr.pixmaps.stock_warning,
 			   VALIDATE_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(validate->menu)),
 			   VALIDATE_POINTER, validate, -1);
 	validate_set_selected(&validate->iter);
