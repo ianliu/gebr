@@ -693,8 +693,12 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 		gebr.flow_server = gebr_geoxml_flow_append_server(gebr.flow);
 		flow_io_set_server(&iter, "", "", "");
 	}
-	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(gebr.flow_server), NULL);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+
+	/*if server isn't the first one, move after and save*/
+	if (gebr_geoxml_sequence_get_index(GEBR_GEOXML_SEQUENCE(gebr.flow_server)) != 0) {
+		gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(gebr.flow_server), NULL);
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+	}
 
 	flow_edition_set_io();
 	flow_browse_info_update();
