@@ -43,7 +43,6 @@ void show_program_parameter(GebrGeoXmlProgramParameter * pp, gint ipar, guint is
 /* Command-line parameters definition */
 static GOptionEntry entries[] = {
 	{"all", 'a', 0, G_OPTION_ARG_NONE, &options.all, "show all tags (but -P)", NULL},
-	{"filename", 'f', 0, G_OPTION_ARG_NONE, &options.filename, "show filename", NULL},
 	{"title", 't', 0, G_OPTION_ARG_NONE, &options.title, "show title", NULL},
 	{"desc", 'd', 0, G_OPTION_ARG_NONE, &options.desc, "show description", NULL},
 	{"author", 'A', 0, G_OPTION_ARG_NONE, &options.author, "show authors", NULL},
@@ -128,7 +127,7 @@ void parse_command_line(int argc, char **argv)
 	g_option_context_set_summary(context,
 				     "Show information about menu files for GeBR. Many menu files can\n"
 				     "be inspected at once. To obtain the most verbose information try\n"
-				     "options -a -P togheter.");
+				     "options -a -P together.");
 
 	/* Description */
 	g_option_context_set_description(context,
@@ -137,8 +136,7 @@ void parse_command_line(int argc, char **argv)
 					 " 2. First letter of sentences capitalized\n"
 					 " 3. Well-formed email (just a guess)\n"
 					 " 4. Sentences not ended by period mark\n"
-					 " 5. Filename correted set\n"
-					 " 6. Empty tags\n\n" "Copyright (C) 2008 Ricardo Biloti <biloti@gmail.com>");
+					 " 5. Empty tags\n\n" "Copyright (C) 2008 Ricardo Biloti <biloti@gmail.com>");
 
 	g_option_context_add_main_entries(context, entries, NULL);
 
@@ -154,7 +152,7 @@ void parse_command_line(int argc, char **argv)
 
 	g_option_context_free(context);
 
-	if (!(options.all || options.filename || options.title || options.desc || options.author || options.dates || options.mhelp || (ehelp != -1) || options.category || options.progs))
+	if (!(options.all || options.title || options.desc || options.author || options.dates || options.mhelp || (ehelp != -1) || options.category || options.progs))
 		options.all = TRUE;
 
 }
