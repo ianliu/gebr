@@ -338,13 +338,15 @@ gboolean
 gebr_g_key_file_load_boolean_key(GKeyFile * key_file, const gchar * group, const gchar * key, gboolean default_value)
 {
 	gboolean value;
-	gboolean tmp;
 	GError *error;
 
 	error = NULL;
-	tmp = g_key_file_get_boolean(key_file, group, key, &error);
-	value = (error != NULL && error->code == G_KEY_FILE_ERROR_KEY_NOT_FOUND)
-	    ? default_value : tmp;
+	value = g_key_file_get_boolean(key_file, group, key, &error);
+
+	if (error != NULL) {
+		g_error_free(error);
+		return default_value;
+	}
 
 	return value;
 }
@@ -352,13 +354,14 @@ gebr_g_key_file_load_boolean_key(GKeyFile * key_file, const gchar * group, const
 int gebr_g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * key, int default_value)
 {
 	int value;
-	int tmp;
 	GError *error;
 
 	error = NULL;
-	tmp = g_key_file_get_integer(key_file, group, key, &error);
-	value = (error != NULL && error->code == G_KEY_FILE_ERROR_KEY_NOT_FOUND)
-	    ? default_value : tmp;
+	value = g_key_file_get_integer(key_file, group, key, &error);
+	if (error != NULL) {
+		g_error_free(error);
+		return default_value;
+	}
 
 	return value;
 }
