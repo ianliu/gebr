@@ -16,6 +16,9 @@
  */
 var editor = null;
 var editing_element = null;
+document.oncontextmenu = function() {
+	return false;
+}
 function UpdateDocumentClone() {
 	editor.updateElement();
 	var content = GetEditableElements(document_clone)[0];

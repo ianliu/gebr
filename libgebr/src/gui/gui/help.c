@@ -497,16 +497,6 @@ static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame *
 					     G_CALLBACK(web_view_on_load_finished), data);
 }
 
-/**
- * \internal
- * Disable context menu for HTML editing.
- */
-static gboolean web_view_on_button_press(GtkWidget * widget, GdkEventButton * event)
-{
-	if (event->button == 3)
-		return TRUE;
-	return FALSE;
-}
 
 /**
  * \internal
@@ -617,7 +607,6 @@ static GtkWidget* _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdit
 
 	g_signal_connect_swapped(dialog, "response", G_CALLBACK(on_dialog_response), data);
 	g_signal_connect(web_view, "load-finished", G_CALLBACK(web_view_on_load_finished), data);
-	g_signal_connect(web_view, "button-press-event", G_CALLBACK(web_view_on_button_press), data);
 	g_signal_connect(web_view, "key-press-event", G_CALLBACK(web_view_on_key_press), data);
 	g_signal_connect(web_view, "destroy", G_CALLBACK(web_view_on_destroy), data);
 	g_signal_connect(web_view, "title-changed", G_CALLBACK(web_view_on_title_changed), dialog);
