@@ -229,7 +229,7 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	display = getenv("DISPLAY");
 	if (!(ret = !(display == NULL || !strlen(display))))
 		goto out;
-		++redirect_display_port;
+	if (sscanf(display, "%*[^:]:%hu.", &display_number) != 1)
 		display_number = 0;
 
 	/* free previous forward */
