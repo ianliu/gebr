@@ -235,9 +235,14 @@ GebrGeoXmlFlowServer *gebr_geoxml_flow_servers_query(GebrGeoXmlFlow * flow, cons
 
 glong gebr_geoxml_flow_get_servers_number(GebrGeoXmlFlow * flow)
 {
-	if (flow == NULL)
-		return -1;
-	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), "server");
+	GdomeElement * root_element ;
+	GdomeElement * servers_element ;
+
+	g_return_val_if_fail(flow != NULL, -1);
+	root_element = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow));
+	servers_element = __gebr_geoxml_get_first_element(root_element, "servers");
+
+	return __gebr_geoxml_get_elements_number(servers_element, "server");
 }
 
 void gebr_geoxml_flow_server_io_set_input(GebrGeoXmlFlowServer * server, const gchar * input)
