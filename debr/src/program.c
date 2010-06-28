@@ -640,10 +640,17 @@ static void program_details_update(void)
 	gchar *markup;
 	gsize parameters_count;
 	GString *text;
+	gboolean is_program_selected;
 
-	g_object_set(debr.ui_program.details.url_button, "visible", debr.program != NULL, NULL);
-	gtk_widget_set_sensitive(debr.ui_program.details.help_button, debr.program != NULL);
-	if (debr.program == NULL) {
+	is_program_selected = debr.program != NULL;
+
+	g_object_set(debr.ui_program.details.url_button, "visible", is_program_selected, NULL);
+	gtk_widget_set_sensitive(debr.ui_program.details.help_button, is_program_selected);
+	gtk_widget_set_sensitive(GTK_WIDGET(debr.tool_item_new), is_program_selected);
+	if (!is_program_selected) {
+		/* Comentary for translators: Tooltip shown in 'New' button in Parameters page, when no programs are
+		 * selected */
+		gtk_tool_item_set_tooltip_text((debr.tool_item_new), _("There are no programs selected"));
 		gtk_frame_set_label(GTK_FRAME(debr.ui_program.details.frame), NULL);
 		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.title_label), "");
 		gtk_label_set_markup(GTK_LABEL(debr.ui_program.details.description_label), "");
@@ -655,6 +662,7 @@ static void program_details_update(void)
 		return;
 	}
 
+	gtk_tool_item_set_tooltip_text(debr.tool_item_new, _("Create a new parameter"));
 	gtk_frame_set_label(GTK_FRAME(debr.ui_program.details.frame), _("Details"));
 
 	markup = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_program_get_title(debr.program));

@@ -120,6 +120,10 @@ static const GtkActionEntry common_actions_entries[] = {
 void debr_setup_ui(void)
 {
 	GtkWidget *vbox;
+	GtkWidget *menu_vbox;
+	GtkWidget *program_vbox;
+	GtkWidget *parameter_vbox;
+	GtkWidget *validate_vbox;
 
 	GtkWidget *menu_bar;
 	GtkWidget *navigation_hbox;
@@ -227,9 +231,9 @@ void debr_setup_ui(void)
 	/*
 	 * Notebook page: Menu
 	 */
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_widget_show(vbox);
-	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox, gtk_label_new(_("Menu")));
+	menu_vbox = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(menu_vbox);
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), menu_vbox, gtk_label_new(_("Menu")));
 
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
@@ -274,16 +278,14 @@ void debr_setup_ui(void)
 					 (gtk_action_group_get_action(debr.action_group, "menu_install"))), -1);
 
 	gtk_widget_show_all(toolbar);
-	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-	menu_setup_ui();
-	gtk_box_pack_start(GTK_BOX(vbox), debr.ui_menu.widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(menu_vbox), toolbar, FALSE, FALSE, 0);
 
 	/*
 	 * Notebook page: Program
 	 */
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_widget_show(vbox);
-	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox, gtk_label_new(_("Program")));
+	program_vbox = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(program_vbox);
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), program_vbox, gtk_label_new(_("Program")));
 
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
@@ -319,20 +321,18 @@ void debr_setup_ui(void)
 					 (gtk_action_group_get_action(debr.action_group, "program_properties"))), -1);
 
 	gtk_widget_show_all(toolbar);
-	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-	program_setup_ui();
-	gtk_box_pack_start(GTK_BOX(vbox), debr.ui_program.widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(program_vbox), toolbar, FALSE, FALSE, 0);
 
 	/*
 	 * Notebook page: Parameter
 	 */
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_widget_show(vbox);
-	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox, gtk_label_new(_("Parameter")));
+	parameter_vbox = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(parameter_vbox);
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), parameter_vbox, gtk_label_new(_("Parameter")));
 
 	/* Treating the 'new' button */
 	debr.tool_item_new = gtk_tool_button_new_from_stock(GTK_STOCK_NEW);
-	gtk_tool_item_set_tooltip_text(debr.tool_item_new, _("Create new parameter"));
+	gtk_tool_item_set_tooltip_text(debr.tool_item_new, _("Create a new parameter"));
 	gebr_gui_gtk_widget_set_drop_down_menu_on_click(gtk_bin_get_child(GTK_BIN(debr.tool_item_new)),
 							(GebrGuiDropDownFunc)on_drop_down_menu_requested, GINT_TO_POINTER(0));
 
@@ -381,16 +381,14 @@ void debr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), debr.tool_item_change_type, -1);
 
 	gtk_widget_show_all(toolbar);
-	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-	parameter_setup_ui();
-	gtk_box_pack_start(GTK_BOX(vbox), debr.ui_parameter.widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(parameter_vbox), toolbar, FALSE, FALSE, 0);
 
 	/*
 	 * Notebook page: Validate
 	 */
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_widget_show(vbox);
-	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox, gtk_label_new(_("Validate")));
+	validate_vbox = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(validate_vbox);
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), validate_vbox, gtk_label_new(_("Validate")));
 
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
@@ -418,9 +416,17 @@ void debr_setup_ui(void)
 
 
 	gtk_widget_show_all(toolbar);
-	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(validate_vbox), toolbar, FALSE, FALSE, 0);
+
+	menu_setup_ui();
+	program_setup_ui();
+	parameter_setup_ui();
 	validate_setup_ui();
-	gtk_box_pack_start(GTK_BOX(vbox), debr.ui_validate.widget, TRUE, TRUE, 0);
+
+	gtk_box_pack_start(GTK_BOX(menu_vbox), debr.ui_menu.widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(program_vbox), debr.ui_program.widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(parameter_vbox), debr.ui_parameter.widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(validate_vbox), debr.ui_validate.widget, TRUE, TRUE, 0);
 
 	gtk_widget_show(debr.window);
 }
