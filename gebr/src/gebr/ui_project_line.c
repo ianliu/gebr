@@ -384,6 +384,7 @@ void project_line_import(void)
 
 	GString *tmp_dir;
 	GString *command;
+	GString *command_line;
 	gint exit_status;
 	GError *error;
 	gchar *output;
@@ -394,6 +395,7 @@ void project_line_import(void)
 	int i;
 
 	command = g_string_new(NULL);
+	command_line = g_string_new(NULL);
 	error = NULL;
 
 	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose project/line to open"),
@@ -467,8 +469,20 @@ void project_line_import(void)
 		return ret;
 	}
 
+	char *quoted_dir;
+	char *quoted_fil;
+	char *quoted_com;
+
 	tmp_dir = gebr_temp_directory_create();
-	g_string_printf(command, "bash -c 'cd %s; tar xzfv %s'", tmp_dir->str, filename);
+
+	quoted_dir = g_shell_quote(tmp_dir->str);
+	quoted_fil = g_shell_quote(filename);
+
+	g_string_printf(command_line, "cd %s; tar xzfv %s", quoted_dir, quoted_fil);
+	quoted_com = g_shell_quote(command_line->str);
+
+	g_string_printf(command, "bash -c %s", quoted_com);
+
 	if (!g_spawn_command_line_sync(command->str, &output, NULL, &exit_status, &error))
 		goto err;
 	if (exit_status)
@@ -657,7 +671,10 @@ void project_line_export(void)
 
 	current_dir = g_get_current_dir();
 	g_chdir(tmpdir->str);
-	g_string_printf(command, "tar czf %s *", tmp);
+	char *quoted;
+	quoted = g_shell_quote(tmp);
+	g_string_printf(command, "tar czf %s *", quoted);
+
 	if (system(command->str))
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not export."));
 	else
