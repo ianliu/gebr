@@ -92,7 +92,10 @@ function GenerateLinksIndex2(doc, links) {
 		var navbar = doc.getElementsByClassName('navigation')[0];
 		navbar.parentNode.insertBefore(linkbar, navbar.nextSibling);
 	}
-	linkbar.innerHTML = '<h2>Links</h2><ul></ul>';
+	if (!is_programs_help)
+		linkbar.innerHTML = '<h2>Programs</h2><ul></ul>';
+	else
+		linkbar.innerHTML = '<ul></ul>';
 	var linklist = linkbar.getElementsByTagName('ul')[0];
 	if (!linklist)
 		return;

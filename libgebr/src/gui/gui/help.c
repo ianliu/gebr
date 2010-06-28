@@ -178,14 +178,14 @@ static void generate_menu_links_index(struct help_data * data)
 	GString *js = g_string_new(NULL);
 	
 	if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
-		g_string_assign(js, "GenerateLinksIndex([['Menu', 'gebr://menu']]);");
+		g_string_assign(js, "GenerateLinksIndex([['<b>Menu</b>', 'gebr://menu']]);");
 		gebr_js_evaluate(data->context, js->str);
 	} else if (gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 		g_string_assign(js, "GenerateLinksIndex([");
 		GebrGeoXmlSequence *program;
 		gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(data->object), &program, 0);
 		for (gint i = 0; program != NULL; gebr_geoxml_sequence_next(&program), ++i)
-			g_string_append_printf(js, "['Program \\'%s\\'', 'gebr://prog%d']",
+			g_string_append_printf(js, "['%s', 'gebr://prog%d']",
 					       gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)), i);
 		g_string_append(js, "]);");
 		gebr_js_evaluate(data->context, js->str);
@@ -478,11 +478,14 @@ static void web_view_on_load_finished(WebKitWebView * web_view, WebKitWebFrame *
 	JSObjectRef obj = gebr_js_make_function(data->context, "helpJSFinished", helpJSFinished_callback);
 	g_hash_table_insert(jscontext_to_data_hash, (gpointer)obj, data);
 
+	gchar * script = g_strdup_printf("var is_programs_help = %s;", gebr_geoxml_object_get_type(data->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM ? "true" : "false");
+	gebr_js_evaluate(data->context, script);
+	g_free(script);
 	if (data->edit) {
 		gchar * script = g_strdup_printf("var menu_refresh = %s;", data->edit->menu_refresh ? "true" : "false");
 		gebr_js_evaluate(data->context, script);
-		data->edit->menu_refresh = FALSE;
 		g_free(script);
+		data->edit->menu_refresh = FALSE;
 		if (data->menu)
 			gebr_js_evaluate(data->context, "var menu_edition = true;");
 		else
