@@ -10,5 +10,5 @@ Exec=gebr
 TryExec=gebr
 Icon=@PACKAGE_PREFIX_DIR@/share/libgebr/pixmaps/gebr-icon-64x64.png
 Terminal=false
-Categories=Science;Geoscience;GTK;
+Categories=Education;Science;Geoscience;GTK;
 StartupNotify=true
