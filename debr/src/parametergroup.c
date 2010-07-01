@@ -296,7 +296,7 @@ static void parameter_group_instances_setup_ui(struct ui_parameter_group_dialog 
 					 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 		}
 
-		g_string_printf(string, _("Instance #%d"), i);
+		g_string_printf(string, _("Defaults for instance #%d"), i);
 
 		frame = gtk_frame_new(string->str);
 
