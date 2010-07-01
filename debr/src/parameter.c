@@ -736,7 +736,7 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 	/*
 	 * Dialog and table
 	 */
-	ui->dialog = dialog = gtk_dialog_new_with_buttons(_("Edit parameter"),
+	ui->dialog = dialog = gtk_dialog_new_with_buttons(NULL,
 							  GTK_WINDOW(debr.window),
 							  (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 							  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -791,7 +791,45 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 	/* skip default */
 	++row;
 
+	/*
+	 * Set window title
+	 */
+	GString * title_msg;
+	title_msg = g_string_new(_("Edit parameter "));
+
+	switch (type) {
+	case GEBR_GEOXML_PARAMETER_TYPE_STRING: {
+		title_msg = g_string_append(title_msg, _("(text)"));
+		break;
+	}case GEBR_GEOXML_PARAMETER_TYPE_INT: {
+		title_msg = g_string_append(title_msg, _("(integer)"));
+		break;
+	}case GEBR_GEOXML_PARAMETER_TYPE_FILE: {
+		title_msg = g_string_append(title_msg, _("(file)"));
+		break;
+	}case GEBR_GEOXML_PARAMETER_TYPE_FLAG: {
+		title_msg = g_string_append(title_msg, _("(flag)"));
+		break;
+	}case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: {
+		title_msg = g_string_append(title_msg, _("(real)"));
+		break;
+	}case GEBR_GEOXML_PARAMETER_TYPE_RANGE: {
+		title_msg = g_string_append(title_msg, _("(range)"));
+		break;
+	}case GEBR_GEOXML_PARAMETER_TYPE_ENUM: {
+		title_msg = g_string_append(title_msg, _("(enum)"));
+		break;
+	}case GEBR_GEOXML_PARAMETER_TYPE_REFERENCE: {
+		title_msg = g_string_append(title_msg, _("(reference)"));
+		break;
+	} default:
+		break;
+	}
+	gtk_window_set_title(GTK_WINDOW(dialog), title_msg->str);
+
+
 	if (type != GEBR_GEOXML_PARAMETER_TYPE_FLAG) {
+
 		/*
 		 * Required
 		 */
