@@ -124,10 +124,11 @@ function OpenCkEditor(element) {
 		width: menu_edition ? '76%' : '100%',
 		resize_enabled: false,
 		toolbarCanCollapse: false,
-		toolbar:[['Source','-','Bold','Italic','Underline','-',
-			'Subscript','Superscript','-','Undo','Redo','-',
-			'NumberedList','BulletedList','-','Outdent','Indent','Blockquote','Styles','-',
-			'Link','Unlink','-','RemoveFormat','-','Find','Replace','Table','-']]});
+		toolbar:[['Source'],['Bold','Italic','Underline'],
+			['Subscript','Superscript'],['Undo','Redo'],
+			['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+			['NumberedList','BulletedList'],['Outdent','Indent','Blockquote','Styles'],
+			['Link','Unlink'],['RemoveFormat'],['Find','Replace','Table']]});
 }
 function onCkEditorLoadFinished() {
 	if (menu_edition) {
