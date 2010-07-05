@@ -229,8 +229,16 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	display = getenv("DISPLAY");
 	if (!(ret = !(display == NULL || !strlen(display))))
 		goto out;
-	if (sscanf(display, "%*[^:]:%hu.", &display_number) != 1)
+	GString *display_host = g_string_new_len(display, (strchr(display, ':')-display)/sizeof(gchar));
+	if (!display_host->len)
+		g_string_assign(display_host, "127.0.0.1");
+	GString *tmp = g_string_new(strchr(display, ':'));
+	if (sscanf(tmp->str, ":%hu.", &display_number) != 1) {
 		display_number = 0;
+		puts("error");
+	}
+	g_string_free(tmp, TRUE);
+	g_printf("display_host = %s display number = %d\n", display_host->str, display_number);
 
 	/* free previous forward */
 	gebr_comm_server_free_x11_forward(server);
@@ -257,7 +265,7 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	server->x11_forward_process = gebr_comm_terminal_process_new();
 	g_signal_connect(server->x11_forward_process, "ready-read",
 			 G_CALLBACK(gebr_comm_ssh_read), server);
-	g_string_printf(string, "ssh -x -R %d:127.0.0.1:%d %s 'sleep 999d'", port, redirect_display_port, server->address->str);
+	g_string_printf(string, "ssh -x -R %d:%s:%d %s 'sleep 999d'", port, display_host->str, redirect_display_port, server->address->str);
 	gebr_comm_terminal_process_start(server->x11_forward_process, string);
 
 	/* log */
