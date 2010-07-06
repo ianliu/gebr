@@ -298,15 +298,23 @@ gboolean gebr_validate_check_no_multiple_blanks(const gchar * str)
 
 gchar * gebr_validate_change_multiple_blanks(const gchar * sentence)
 {
+#if GLIB_CHECK_VERSION(2,14,0)
 	GRegex *regex;
 	GError *error = NULL;
 	regex = g_regex_new("[[:space:]]{2,}", 0, 0, &error);
 	if (error != NULL) {
 		g_warning("%s:%d %s", __FILE__, __LINE__, error->message);
 		g_error_free(error);
+		if (regex)
+			g_regex_unref(regex);
 		return NULL;
 	}
-	return g_regex_replace(regex, sentence, -1, 0, " ", 0, NULL);
+	gchar *ret = g_regex_replace(regex, sentence, -1, 0, " ", 0, NULL);
+	g_regex_unref(regex);
+	return ret;
+#else
+	return NULL;
+#endif
 }
 
 gboolean gebr_validate_check_no_blanks_at_boundaries(const gchar * str)
@@ -323,15 +331,23 @@ gboolean gebr_validate_check_no_blanks_at_boundaries(const gchar * str)
 
 gchar * gebr_validate_change_no_blanks_at_boundaries(const gchar * sentence)
 {
+#if GLIB_CHECK_VERSION(2,14,0)
 	GRegex *regex;
 	GError *error = NULL;
 	regex = g_regex_new("^[[:space:]]+|[[:space:]]+$", 0, 0, NULL);
 	if (error != NULL) {
 		g_warning("%s:%d %s", __FILE__, __LINE__, error->message);
 		g_error_free(error);
+		if (regex)
+			g_regex_unref(regex);
 		return NULL;
 	}
-	return g_regex_replace(regex, sentence, -1, 0, "", 0, NULL);
+	gchar *ret = g_regex_replace(regex, sentence, -1, 0, "", 0, NULL);
+	g_regex_unref(regex);
+	return ret;
+#else
+	return NULL;
+#endif
 }
 
 gboolean gebr_validate_check_no_punctuation_at_end(const gchar * str)
