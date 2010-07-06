@@ -17,6 +17,7 @@
 
 #include <glib.h>
 #include <glib-object.h>
+#include <glib/gstdio.h>
 
 #include <listensocket.h>
 #include <channelsocket.h>
@@ -24,14 +25,15 @@
 #include <socketaddress.h>
 #include <socket.h>
 
+GMainLoop *loop;
+
 void test_comm_socket_tcpunix_channel()
 {
-	GMainLoop *loop = g_main_loop_new(NULL, FALSE);
 	GChecksum *checksum = g_checksum_new(G_CHECKSUM_SHA256);
 	GByteArray *data_read = g_byte_array_new();
 
 	/*fill with random data*/
-	guchar data[64000000]; 
+	guchar data[10001001]; 
 	for (int i = 0; i < sizeof(data); ++i)
 		data[i] = g_random_int();
 
@@ -40,17 +42,18 @@ void test_comm_socket_tcpunix_channel()
 
 	GebrCommListenSocket *unixsocket = gebr_comm_listen_socket_new();
 	gebr_comm_listen_socket_listen(unixsocket, &unixaddress);
-	void new_connection()
+	void ready_read(GebrCommStreamSocket * newconn)
+	{
+		GByteArray *array = gebr_comm_socket_read_all(GEBR_COMM_SOCKET(newconn));
+		g_byte_array_append(data_read, array->data, array->len);
+		if (data_read->len == sizeof(data)) {
+			g_assert(memcmp(data_read->data, data, sizeof(data)) == 0);
+			g_main_loop_quit(loop);
+		}
+	}
+	void new_connection(GebrCommListenSocket * unixsocket)
 	{
 		GebrCommStreamSocket *newconn = gebr_comm_listen_socket_get_next_pending_connection(unixsocket);
-		void ready_read()
-		{
-			GByteArray *array = gebr_comm_socket_read_all(GEBR_COMM_SOCKET(newconn));
-			g_byte_array_append(data_read, array->data, array->len);
-			g_warning("read %d bytes (total %d)\n", array->len, data_read->len);
-			if (data_read->len == sizeof(data))
-				g_main_loop_quit(loop);
-		}
 		g_signal_connect(newconn, "ready-read",
 				 G_CALLBACK(ready_read), NULL);
 	}
@@ -69,7 +72,7 @@ void test_comm_socket_tcpunix_channel()
 
 	g_main_loop_run(loop);
 
-	gebr_comm_channel_socket_free(channel);
+	g_unlink("myunixsocket");
 	g_checksum_free(checksum);
 	g_byte_array_free(data_read, TRUE);
 }
@@ -77,6 +80,7 @@ void test_comm_socket_tcpunix_channel()
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	loop = g_main_loop_new(NULL, FALSE);
 	g_type_init();
 	g_test_add_func("/comm/socket/tcpunix-channel", test_comm_socket_tcpunix_channel);
 	return g_test_run();
