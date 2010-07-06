@@ -695,7 +695,13 @@ void menu_close(GtkTreeIter * iter, gboolean warn_user)
 		menu_selected();
 
 	if (warn_user)
-		debr_message(GEBR_LOG_INFO, _("Menu \"%s\" closed."), path);
+	{  
+		if (strlen(path)){
+			debr_message(GEBR_LOG_INFO, _("Menu \"%s\" closed."), path);
+		} else {
+			debr_message(GEBR_LOG_INFO, _("Menu closed."));
+		}
+	}
 
 	g_free(path);
 }
