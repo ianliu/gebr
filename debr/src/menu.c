@@ -574,7 +574,7 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	}
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &target, MENU_PATH, &target_fname, -1);
-	menu_load_iter(filepath, &target, clone, FALSE);
+	menu_load_iter(filepath, &target, clone, TRUE);
 	ret = (menu_save(&target) != MENU_MESSAGE_PERMISSION_DENIED);
 	if (ret) {
 		if (is_overwrite)
