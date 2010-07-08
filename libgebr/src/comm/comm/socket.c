@@ -139,9 +139,10 @@ void __gebr_comm_socket_write_queue(GebrCommSocket * socket)
 
 		written_bytes = send(_gebr_comm_socket_get_fd(socket), socket->queue_write_bytes->data,
 				     socket->queue_write_bytes->len > 64024 ? 64024 : socket->queue_write_bytes->len, 0);
-		g_return_if_fail(written_bytes != -1);
+		//g_return_if_fail(written_bytes != -1);
 
-		g_byte_array_remove_range(socket->queue_write_bytes, 0, written_bytes);
+		if (written_bytes != -1)
+			g_byte_array_remove_range(socket->queue_write_bytes, 0, written_bytes);
 	}
 }
 
