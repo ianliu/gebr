@@ -69,7 +69,7 @@ struct gebr_comm_server {
 	gint16 tunnel_port;
 	gboolean tried_existant_pass;
 	GebrCommTerminalProcess *x11_forward_process;
-	GebrCommChannelSocket *x11_forward_channel;
+	GebrCommProcess *x11_forward_unix;
 
 	enum gebr_comm_server_state {
 		SERVER_STATE_DISCONNECTED,

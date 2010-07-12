@@ -131,6 +131,7 @@ src/Makefile
 src/comm/Makefile src/comm/gebr-comm.pc
 src/comm/comm/Makefile
 src/comm/comm/json-glib/Makefile
+src/comm/socketchannel/Makefile
 src/comm/tests/Makefile
 src/defines.h
 src/gebr.pc

@@ -1,5 +1,5 @@
-# libgebr - GeBR Library
-#  Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+# libgebr - G�BR Library
+# Copyright (C) 2007  Br�ulio Barros de Oliveira (brauliobo@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,15 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-if ENABLE_TESTS
-TESTSDIR=tests
-endif
-SUBDIRS = comm socketchannel ${TESTDIR}
+bin_PROGRAMS = gebr-comm-socketchannel
+gebr_comm_socketchannel_SOURCES = socketchannel.c
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = gebr-comm.pc
-
-EXTRA_DIST = gebr-comm.pc
-
-libcommincludedir=$(includedir)/libgebr
-libcomminclude_HEADERS=comm.h
+INCLUDES = -I.. \
+	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
+AM_CFLAGS = -Wall $(GDOME2_CFLAGS)
+gebr_comm_socketchannel_LDADD = ../comm/libgebr_comm.la

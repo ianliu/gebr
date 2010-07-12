@@ -152,8 +152,8 @@ gboolean
 gebr_comm_channel_socket_start(GebrCommChannelSocket * channel_socket, GebrCommSocketAddress * listen_address,
 			       GebrCommSocketAddress * forward_address)
 {
-	if (!gebr_comm_socket_address_get_is_valid(listen_address)
-	    || !gebr_comm_socket_address_get_is_valid(forward_address))
+	if (!gebr_comm_socket_address_get_is_valid(listen_address) ||
+	    !gebr_comm_socket_address_get_is_valid(forward_address))
 		return FALSE;
 
 	int sockfd;

@@ -39,8 +39,8 @@ void test_comm_socket_tcpunix_channel()
 	for (int i = 0; i < sizeof(data); ++i)
 		data[i] = g_random_int();
 
-	GebrCommSocketAddress tcpaddress = gebr_comm_socket_address_ipv4_local(61234);
-	GebrCommSocketAddress unixaddress = gebr_comm_socket_address_unix("myunixsocket");
+	GebrCommSocketAddress tcpaddress = gebr_comm_socket_address_ipv4_local(6011);
+	GebrCommSocketAddress unixaddress = gebr_comm_socket_address_unix("/tmp/.X11-unix/X1");
 
 	GebrCommListenSocket *unixsocket = gebr_comm_listen_socket_new();
 	g_unlink("myunixsocket");

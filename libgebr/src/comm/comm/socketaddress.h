@@ -50,6 +50,10 @@ GebrCommSocketAddress gebr_comm_socket_address_ipv4(const gchar * ip, guint16 po
 
 GebrCommSocketAddress gebr_comm_socket_address_ipv4_local(guint16 port);
 
+GebrCommSocketAddress gebr_comm_socket_address_parse_from_string(const gchar *address);
+
+enum GebrCommSocketAddressType gebr_comm_socket_address_get_type(GebrCommSocketAddress * socket_address);
+
 gboolean gebr_comm_socket_address_get_is_valid(GebrCommSocketAddress * socket_address);
 
 const gchar *gebr_comm_socket_address_get_string(GebrCommSocketAddress * socket_address);

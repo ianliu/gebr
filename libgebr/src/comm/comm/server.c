@@ -92,7 +92,7 @@ struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const stru
 	server->port = 0;
 	server->password = g_string_new("");
 	server->x11_forward_process = NULL;
-	server->x11_forward_channel = NULL;
+	server->x11_forward_unix = NULL;
 	server->state = SERVER_STATE_DISCONNECTED;
 	server->error = SERVER_ERROR_NONE;
 	server->ops = ops;
@@ -216,10 +216,7 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	guint16 display_number;
 	guint16 redirect_display_port;
 
-	GebrCommSocketAddress listen_address;
-	GebrCommSocketAddress forward_address;
-
-	gboolean ret;
+	gboolean ret = TRUE;
 	GString *string;
 
 	/* initialization */
@@ -238,7 +235,6 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 		puts("error");
 	}
 	g_string_free(tmp, TRUE);
-	g_printf("display_host = %s display number = %d\n", display_host->str, display_number);
 
 	/* free previous forward */
 	gebr_comm_server_free_x11_forward(server);
@@ -251,12 +247,11 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 			++redirect_display_port;
 		}
 
-		/* redirect_display_port tcp port to X11 unix socket */
-		listen_address = gebr_comm_socket_address_ipv4_local(redirect_display_port);
-		forward_address = gebr_comm_socket_address_unix(string->str);
-		server->x11_forward_channel = gebr_comm_channel_socket_new();
-		if (!(ret = gebr_comm_channel_socket_start(server->x11_forward_channel, &listen_address, &forward_address)))
-			goto out;
+		server->x11_forward_unix = gebr_comm_process_new();
+		GString *cmdline = g_string_new(NULL);
+		g_string_printf(cmdline, "gebr-comm-socketchannel %d %s", redirect_display_port, string->str);
+		gebr_comm_process_start(server->x11_forward_unix, cmdline);
+		g_string_free(cmdline, TRUE);
 	} else
 		redirect_display_port = display_number+6000;
 
@@ -692,9 +687,9 @@ static void gebr_comm_server_free_x11_forward(struct gebr_comm_server *server)
 		gebr_comm_terminal_process_free(server->x11_forward_process);
 		server->x11_forward_process = NULL;
 	}
-	if (server->x11_forward_channel != NULL) {
-		gebr_comm_socket_close(GEBR_COMM_SOCKET(server->x11_forward_channel));
-		server->x11_forward_channel = NULL;
+	if (server->x11_forward_unix != NULL) {
+		gebr_comm_process_free(server->x11_forward_unix);
+		server->x11_forward_unix = NULL;
 	}
 }
 

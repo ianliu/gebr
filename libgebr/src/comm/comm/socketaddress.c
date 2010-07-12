@@ -24,6 +24,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "socketaddress.h"
 
@@ -73,7 +74,7 @@ int _gebr_comm_socket_address_get_family(GebrCommSocketAddress * socket_address)
 }
 
 typedef int (*sockname_function) (int sockfd, struct sockaddr * addr, socklen_t * addrlen);
-static int
+	static int
 __gebr_comm_socket_address_sockname_function(GebrCommSocketAddress * socket_address,
 					     enum GebrCommSocketAddressType type, int sockfd,
 					     sockname_function function)
@@ -96,21 +97,21 @@ __gebr_comm_socket_address_sockname_function(GebrCommSocketAddress * socket_addr
 	return function(sockfd, sockaddr, &addrlen);
 }
 
-int
+	int
 _gebr_comm_socket_address_getsockname(GebrCommSocketAddress * socket_address, enum GebrCommSocketAddressType type,
 				      int sockfd)
 {
 	return __gebr_comm_socket_address_sockname_function(socket_address, type, sockfd, getsockname);
 }
 
-int
+	int
 _gebr_comm_socket_address_getpeername(GebrCommSocketAddress * socket_address, enum GebrCommSocketAddressType type,
 				      int sockfd)
 {
 	return __gebr_comm_socket_address_sockname_function(socket_address, type, sockfd, getpeername);
 }
 
-int
+	int
 _gebr_comm_socket_address_accept(GebrCommSocketAddress * socket_address, enum GebrCommSocketAddressType type,
 				 int sockfd)
 {
@@ -147,12 +148,36 @@ GebrCommSocketAddress gebr_comm_socket_address_ipv4(const gchar * string, guint1
 	socket_address.address.inet_sockaddr.sin_port = htons(port);
 	socket_address.address.inet_sockaddr.sin_addr = in_addr;
 
- out:	return socket_address;
+out:	return socket_address;
 }
 
 GebrCommSocketAddress gebr_comm_socket_address_ipv4_local(guint16 port)
 {
 	return gebr_comm_socket_address_ipv4("127.0.0.1", port);
+}
+
+GebrCommSocketAddress gebr_comm_socket_address_parse_from_string(const gchar *address)
+{
+	if (g_str_has_prefix(address, "/") || g_file_test(address, G_FILE_TEST_IS_REGULAR)) 
+		return gebr_comm_socket_address_unix(address);
+	else {
+		GebrCommSocketAddress socket_address;
+		if (strstr(address, ":") == NULL)
+			return gebr_comm_socket_address_ipv4_local(atoi(address));
+		gchar **host_port = g_strsplit(address, ":", 2);
+		if (host_port == NULL)
+			return socket_address;
+		if (g_strv_length(host_port) == 2)
+			socket_address = gebr_comm_socket_address_ipv4(host_port[0], atoi(host_port[1]));
+		g_strfreev(host_port);
+		return socket_address;
+	}
+}
+
+enum GebrCommSocketAddressType gebr_comm_socket_address_get_type(GebrCommSocketAddress * socket_address)
+{
+	g_return_val_if_fail(socket_address != NULL, GEBR_COMM_SOCKET_ADDRESS_TYPE_UNKNOWN);
+	return socket_address->type;
 }
 
 gboolean gebr_comm_socket_address_get_is_valid(GebrCommSocketAddress * socket_address)

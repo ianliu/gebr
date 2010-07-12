@@ -17,9 +17,6 @@
 
 #include <stdio.h>
 #include <locale.h>
-#ifdef ENABLE_NLS
-#	include <libintl.h>
-#endif
 
 #include "../../intl.h"
 #include "../geoxml.h"
