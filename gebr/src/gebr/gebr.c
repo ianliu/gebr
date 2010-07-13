@@ -69,7 +69,6 @@ void gebr_init(void)
 	gebr_libinit();
 	gebr_comm_protocol_init();
 
-
 	/* check/create config dir */
 	if (gebr_create_config_dirs() == FALSE) {
 		fprintf(stderr, _("Unable to create GêBR configuration files.\n"

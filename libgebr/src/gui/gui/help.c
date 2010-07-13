@@ -184,7 +184,8 @@ static void generate_menu_links_index(struct help_data * data)
 		GebrGeoXmlSequence *program;
 		gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(data->object), &program, 0);
 		for (gint i = 0; program != NULL; gebr_geoxml_sequence_next(&program), ++i)
-			g_string_append_printf(js, "['%s', 'gebr://prog%d']",
+			g_string_append_printf(js, "%s['%s', 'gebr://prog%d']",
+					       i == 0 ? "" : ", ",
 					       gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)), i);
 		g_string_append(js, "]);");
 		gebr_js_evaluate(data->context, js->str);
