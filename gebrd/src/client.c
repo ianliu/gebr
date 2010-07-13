@@ -97,6 +97,5 @@ static void client_read(GebrCommStreamSocket * stream_socket, struct client *cli
 
 static void client_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocketError error, struct client *client)
 {
-	gebrd_message(GEBR_LOG_ERROR, _("Connection error '%s' on client '%s'"), error, strerror(error),
-		      client->protocol->hostname->str);
+	gebrd_message(GEBR_LOG_ERROR, _("Connection error '%d' on client '%s'"), error, client->protocol->hostname->str);
 }
