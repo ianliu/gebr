@@ -192,7 +192,7 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 		validate->operations.append_text(validate->data, "%s/%s/%s\n",
 				     gebr_geoxml_program_get_stdin(prog) ? _("Read") : _("Ignore"),
 				     gebr_geoxml_program_get_stdout(prog) ? _("Write") : _("Ignore"),
-				     gebr_geoxml_program_get_stdin(prog) ? _("Append") : _("Ignore"));
+				     gebr_geoxml_program_get_stderr(prog) ? _("Append") : _("Ignore"));
 
 		validate_append_item_with_check(validate, _("  Binary:      "),
 						gebr_geoxml_program_get_binary(prog),
@@ -382,7 +382,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 						     gebr_geoxml_program_parameter_get_list_separator
 						     (GEBR_GEOXML_PROGRAM_PARAMETER(pp)));
 			else {
-				validate_append_text_error(validate, 0, _(" (missing entries' separator)"));
+				validate_append_text_error(validate, 0, _(" (missing entries separator)"));
 				validate->potential_errors++;
 			}
 		}
