@@ -256,7 +256,7 @@ gboolean server_parse_client_messages(struct client *client)
 
 				/* figure out a free display */
 				display = gebrd_get_x11_redirect_display();
-				if (display && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
+				if (x11->len && display && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
 					g_string_printf(display_port, "%d", 6000 + display);
 					g_string_printf(client->display, ":%d", display);
 
