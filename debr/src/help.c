@@ -97,16 +97,11 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 	}
 
 	/* EDIT IT */
-	if (program != NULL)
-		gebr_geoxml_program_set_help(program, prepared_html->str);
-	else
-		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html->str);
-
 	if (debr.config.native_editor || !debr.config.htmleditor->len) {
 		if (program != NULL)
-			gebr_gui_program_help_edit(program, help_edit_on_finished, help_edit_on_refresh);
+			gebr_gui_program_help_edit(program, prepared_html, help_edit_on_finished, help_edit_on_refresh);
 		else
-			gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), help_edit_on_finished,
+			gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html, help_edit_on_finished,
 					   help_edit_on_refresh, TRUE);
 	} else {
 		/* create temporary filename */
@@ -148,8 +143,7 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 		if (program)
 			help_edit_on_finished(GEBR_GEOXML_OBJECT(program), prepared_html->str);
 		else
-			help_edit_on_finished(GEBR_GEOXML_OBJECT(GEBR_GEOXML_DOCUMENT(debr.menu)),
-					      prepared_html->str);
+			help_edit_on_finished(GEBR_GEOXML_OBJECT(debr.menu), prepared_html->str);
 
 	out:
 		g_string_free(html_path, FALSE);
@@ -436,7 +430,7 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
  * \internal
  */
 static void help_edit_on_finished(GebrGeoXmlObject * object, const gchar * _help)
-{	
+{
 	GString * help;
 
 	help = g_string_new(_help);
@@ -452,6 +446,7 @@ static void help_edit_on_finished(GebrGeoXmlObject * object, const gchar * _help
 		break;
 	}
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
+	validate_image_set_check_help(debr.ui_menu.help_validate_image, _help);
 
 	g_string_free(help, TRUE);
 }

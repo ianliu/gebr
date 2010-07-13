@@ -80,13 +80,16 @@ void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document)
  */
 static void help_edit_on_edited(GebrGeoXmlDocument * document, const gchar * help)
 {
+	gebr_geoxml_document_set_help(document, help);
 	document_save(document, TRUE);
 }
 
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 {
 	if (gebr.config.editor->len == 0) {
-		gebr_gui_help_edit(document, (GebrGuiHelpEdited)help_edit_on_edited, NULL, FALSE);
+		GString * html;
+		html = g_string_new(gebr_geoxml_document_get_help(document));
+		gebr_gui_help_edit(document, html, (GebrGuiHelpEdited)help_edit_on_edited, NULL, FALSE);
 	} else {
 		GString *prepared_html;
 		GString *cmd_line;
