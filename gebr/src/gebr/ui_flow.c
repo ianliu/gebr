@@ -644,6 +644,11 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected."));
 		return;
 	}
+	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &iter)) {
+		//just happen if the current server was removed
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No server selected."));
+		return;
+	}
 
 	/* initialization */
 	config = g_new(GebrCommServerRun, 1);
