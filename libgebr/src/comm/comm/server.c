@@ -524,10 +524,13 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, struct gebr
 	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
 
 	server->state = SERVER_STATE_OPEN_TUNNEL;
-	server->tunnel_port = 2125;
-	while (!gebr_comm_listen_socket_is_local_port_available(server->tunnel_port))
-		++server->tunnel_port;
+	static gint tunnel_port = 2125;
+	while (!gebr_comm_listen_socket_is_local_port_available(tunnel_port))
+		++tunnel_port;
+	server->tunnel_port = tunnel_port;
+	++tunnel_port;
 
+	printf("%d\n", server->tunnel_port);
 	g_string_printf(cmd_line, "ssh -x -L %d:127.0.0.1:%d %s 'sleep 300'",
 			server->tunnel_port, server->port, server->address->str);
 	gebr_comm_terminal_process_start(process, cmd_line);

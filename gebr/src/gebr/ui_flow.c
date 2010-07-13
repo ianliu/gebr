@@ -622,6 +622,7 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 			}
 		}
 	} while (!(moab_server_validated && queue_name_validated && num_processes_validated));
+
 out:
 	gtk_widget_destroy(dialog);
 	return ret;
