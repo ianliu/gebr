@@ -60,7 +60,6 @@ static void server_moab_read_credentials(GString *accounts, GString *queue_list)
 gboolean server_init(void)
 {
 	GebrCommSocketAddress socket_address;
-	struct sigaction act;
 	gchar buffer[100];
 	gboolean ret;
 
@@ -140,6 +139,7 @@ gboolean server_init(void)
 	fclose(run_fp);
 
 	/* connecting signal TERM */
+	struct sigaction act;
 	act.sa_sigaction = (typeof(act.sa_sigaction)) & gebrd_quit;
 	sigemptyset(&act.sa_mask);
 	sigaction(SIGTERM, &act, NULL);

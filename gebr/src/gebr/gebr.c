@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <signal.h>
 #include <errno.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -67,6 +68,7 @@ void gebr_init(void)
 	gebr.flow_clipboard = NULL;
 	gebr_libinit();
 	gebr_comm_protocol_init();
+
 
 	/* check/create config dir */
 	if (gebr_create_config_dirs() == FALSE) {

@@ -192,12 +192,12 @@ gboolean gebr_comm_terminal_process_start(GebrCommTerminalProcess * terminal_pro
 		goto out;
 	}
 	if (pid == 0) {
-		setpgrp();
 		if (execvp(argv[0], argv) == -1) {
 			ret = FALSE;
 			goto out;
 		}
-	}
+	} else
+		setpgid(pid, getpid());
 
 	ret = TRUE;
 	terminal_process->pid = pid;
