@@ -1068,6 +1068,7 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_edit_button, FALSE, FALSE, 0);
 	g_object_set(G_OBJECT(menuhelp_edit_button), "relief", GTK_RELIEF_NONE, NULL);
 	empty_help_image = validate_image_warning_new();
+	debr.ui_menu.help_validate_image = empty_help_image;
 	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), empty_help_image, FALSE, FALSE, 0);
 
 	/*
