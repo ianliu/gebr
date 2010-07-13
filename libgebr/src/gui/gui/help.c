@@ -580,8 +580,18 @@ static void __gebr_gui_help_save_help_to_file(struct help_data * data)
 	__gebr_gui_help_save_custom_help_to_file(data, help);
 }
 
-/**
- * \internal
+/*
+ * web_view_on_popup:
+ * This callback removes the default WebKit context menu.
+ */
+static void
+web_view_on_popup(WebKitWebView * web_view, GtkWidget * menu)
+{
+	gtk_widget_destroy(menu);
+}
+
+/*
+ * _gebr_gui_help_edit:
  * Load help into a temporary file and load with Webkit (if enabled).
  */
 static GtkWidget* _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdited edited_callback,
@@ -610,6 +620,7 @@ static GtkWidget* _gebr_gui_help_edit(GebrGeoXmlObject * object, GebrGuiHelpEdit
 
 	g_signal_connect_swapped(dialog, "response", G_CALLBACK(on_dialog_response), data);
 	g_signal_connect(web_view, "load-finished", G_CALLBACK(web_view_on_load_finished), data);
+	g_signal_connect(web_view, "populate-popup", G_CALLBACK(web_view_on_popup), data);
 	g_signal_connect(web_view, "key-press-event", G_CALLBACK(web_view_on_key_press), data);
 	g_signal_connect(web_view, "destroy", G_CALLBACK(web_view_on_destroy), data);
 	g_signal_connect(web_view, "title-changed", G_CALLBACK(web_view_on_title_changed), dialog);

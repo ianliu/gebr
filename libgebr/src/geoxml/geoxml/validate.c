@@ -415,6 +415,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 		validate->operations.append_text(validate->data, "\n\n");
 	} else {
 		GebrGeoXmlSequence *subpar;
+		GebrGeoXmlSequence *instance;
 		GebrGeoXmlParameters *template;
 
 		validate->operations.append_text(validate->data, "    %2d: ", validate->ipar+1);
@@ -425,12 +426,26 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 			validate->operations.append_text(validate->data, _("   [Instantiable]\n"));
 		else
 			validate->operations.append_text(validate->data, "\n");
+		validate->operations.append_text(validate->data, "        [Template]\n");
 
 		template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(parameter));
 		subpar = gebr_geoxml_parameters_get_first_parameter(template);
 		validate->isubpar = 0;
 		for (; subpar != NULL; gebr_geoxml_sequence_next(&subpar), ++validate->isubpar)
 			show_parameter(validate, GEBR_GEOXML_PARAMETER(subpar));
+
+		gint count = 1;
+		gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+		while (instance != NULL) {
+			subpar = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance));
+			validate->operations.append_text(validate->data, "        [Instance #%d]\n", count);
+			while (subpar) {
+				show_parameter(validate, GEBR_GEOXML_PARAMETER(subpar));
+				gebr_geoxml_sequence_next(&subpar);
+			}
+			gebr_geoxml_sequence_next(&instance);
+			count++;
+		}
 		validate->isubpar = -1;
 	}
 }
