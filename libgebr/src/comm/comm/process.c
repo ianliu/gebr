@@ -312,14 +312,14 @@ void gebr_comm_process_kill(GebrCommProcess * process)
 {
 	if (!process->pid)
 		return;
-	killpg(process->pid, SIGKILL);
+	kill(process->pid, SIGKILL);
 }
 
 void gebr_comm_process_terminate(GebrCommProcess * process)
 {
 	if (!process->pid)
 		return;
-	killpg(process->pid, SIGTERM);
+	kill(process->pid, SIGTERM);
 }
 
 void gebr_comm_process_close_stdin(GebrCommProcess * process)

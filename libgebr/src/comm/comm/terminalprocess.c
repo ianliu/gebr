@@ -234,14 +234,14 @@ void gebr_comm_terminal_process_kill(GebrCommTerminalProcess * terminal_process)
 {
 	if (!terminal_process->pid)
 		return;
-	killpg(terminal_process->pid, SIGKILL);
+	kill(terminal_process->pid, SIGKILL);
 }
 
 void gebr_comm_terminal_process_terminate(GebrCommTerminalProcess * terminal_process)
 {
 	if (!terminal_process->pid)
 		return;
-	killpg(terminal_process->pid, SIGTERM);
+	kill(terminal_process->pid, SIGTERM);
 }
 
 gulong gebr_comm_terminal_process_bytes_available(GebrCommTerminalProcess * terminal_process)
