@@ -263,9 +263,14 @@ gboolean server_parse_client_messages(struct client *client)
 					/* add client magic cookie */
 					cmd_line = g_string_new(NULL);
 					g_string_printf(cmd_line, "xauth add :%d . %s", display, x11->str);
-					if (WEXITSTATUS(system(cmd_line->str)))
-						g_warning("%s:%d: Failed to run '%s'", __FILE__, __LINE__, cmd_line->str);
-
+					gint i = 0;
+					while (i++ < 5 && WEXITSTATUS(system(cmd_line->str))) {
+						gebrd_message(GEBR_LOG_ERROR, "Failed to add X11 authorization.");
+						usleep(200*1000);
+					}
+					/* failed to add X11 authorization */
+					if (i == 5)
+						g_string_assign(display_port, "0");
 					gebrd_message(GEBR_LOG_DEBUG, "xauth ran: %s", cmd_line->str);
 
 					g_string_free(cmd_line, TRUE);

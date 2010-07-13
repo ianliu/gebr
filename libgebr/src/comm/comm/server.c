@@ -591,12 +591,19 @@ static void gebr_comm_server_connected(GebrCommStreamSocket * stream_socket, str
 
 			/* get this X session magic cookie */
 			g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display_number);
-			output_fp = popen(cmd_line->str, "r");
-			if (fscanf(output_fp, "%32s", mcookie_str) != 1)
-				g_warning("%s:%d: Error fetching authorization code for display %s",
-					  __FILE__, __LINE__, display);
+			gint try = 0;
+			while (try++ < 5) {
+				output_fp = popen(cmd_line->str, "r");
+				if (fscanf(output_fp, "%32s", mcookie_str) != 1) {
+					g_warning("%s:%d: Error fetching authorization code for display %s",
+						  __FILE__, __LINE__, display);
+					usleep(100*1000);
+				}
 
-			pclose(output_fp);
+				pclose(output_fp);
+			}
+			if (try == 5)
+				strcpy(mcookie_str, "");
 		} else
 			strcpy(mcookie_str, "");
 

@@ -115,9 +115,14 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				else {
 					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to server '%s'."),
 						     comm_server->address->str);
-					if (display_port->len)
-						gebr_comm_server_forward_x11(comm_server, atoi(display_port->str));
-					else
+					if (display_port->len) {
+						if (!strcmp(display_port->str, "0"))
+							gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
+								     _("Server '%s' could not add X11 authorization to redirect graphical output."),
+								     comm_server->address->str);
+						else
+							gebr_comm_server_forward_x11(comm_server, atoi(display_port->str));
+					} else 
 						gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
 							     _("Server '%s' could not redirect graphical output."),
 							     comm_server->address->str);
