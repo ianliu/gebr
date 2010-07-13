@@ -230,10 +230,8 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	if (!display_host->len)
 		g_string_assign(display_host, "127.0.0.1");
 	GString *tmp = g_string_new(strchr(display, ':'));
-	if (sscanf(tmp->str, ":%hu.", &display_number) != 1) {
+	if (sscanf(tmp->str, ":%hu.", &display_number) != 1)
 		display_number = 0;
-		puts("error");
-	}
 	g_string_free(tmp, TRUE);
 
 	/* free previous forward */
@@ -530,7 +528,6 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, struct gebr
 	server->tunnel_port = tunnel_port;
 	++tunnel_port;
 
-	printf("%d\n", server->tunnel_port);
 	g_string_printf(cmd_line, "ssh -x -L %d:127.0.0.1:%d %s 'sleep 300'",
 			server->tunnel_port, server->port, server->address->str);
 	gebr_comm_terminal_process_start(process, cmd_line);
