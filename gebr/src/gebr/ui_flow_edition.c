@@ -55,6 +55,12 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox);
 static gboolean
 on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 		     gint x, gint y, gboolean keyboard_tip, GtkTooltip * tooltip, struct ui_flow_edition *ui_flow_edition);
+static void
+on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
+					   GtkCellRenderer *cell,
+					   GtkTreeModel    *tree_model,
+					   GtkTreeIter     *iter,
+					   gpointer         data);
 /*
  * Public functions
  */
@@ -89,13 +95,18 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, FALSE, FALSE);
 
 	combobox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(gebr.ui_server_list->common.store));
+	
 	renderer = gtk_cell_renderer_pixbuf_new();
 	g_object_set(renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, FALSE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "pixbuf", SERVER_STATUS_ICON);
+	gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (combobox), renderer, on_server_disconnected_set_row_insensitive, NULL, NULL);
+
 	renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "text", SERVER_NAME);
+	gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (combobox), renderer, on_server_disconnected_set_row_insensitive, NULL, NULL);
+
 	frame = gtk_frame_new(NULL);
 	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
 	label = gtk_label_new_with_mnemonic(_("Server"));
@@ -736,4 +747,25 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 	gtk_tree_path_free(path);
 
 	return TRUE;
+}
+
+/**
+ * \internal
+ * If the server was not connected, the combo box item stay insensitive
+ */
+static void
+on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
+					   GtkCellRenderer *cell,
+					   GtkTreeModel    *tree_model,
+					   GtkTreeIter     *iter,
+					   gpointer         data)
+{
+
+	struct server *server;
+	server = NULL;
+
+	gtk_tree_model_get(tree_model, iter, SERVER_POINTER, &server, -1);
+
+	if (server != NULL)
+		g_object_set (cell, "sensitive", gebr_comm_server_is_logged(server->comm), NULL);
 }
