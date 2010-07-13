@@ -240,10 +240,11 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	g_string_printf(string, "/tmp/.X11-unix/X%hu", display_number);
 	if (g_file_test(string->str, G_FILE_TEST_EXISTS)) {
 		/* set redirection port */
-		redirect_display_port = (display_number + 6000 > 6010) ? display_number + 6000 : 6010;
-		while (!gebr_comm_listen_socket_is_local_port_available(redirect_display_port)) {
-			++redirect_display_port;
-		}
+		static gint start_port = 6010;
+		while (!gebr_comm_listen_socket_is_local_port_available(start_port))
+			++start_port;
+		redirect_display_port = start_port;
+		++start_port;
 
 		server->x11_forward_unix = gebr_comm_process_new();
 		GString *cmdline = g_string_new(NULL);
