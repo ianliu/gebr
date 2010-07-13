@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-21 14:05-0300\n"
-"PO-Revision-Date: 2010-06-21 14:54-0300\n"
+"POT-Creation-Date: 2010-07-13 14:49-0300\n"
+"PO-Revision-Date: 2010-07-13 14:49-0300\n"
 "Last-Translator: Ricardo Biloti <biloti@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -36,12 +36,12 @@ msgid "Stoping server at %s."
 msgstr "Parando servidor em %s."
 
 #. log
-#: ../src/comm/comm/server.c:262
+#: ../src/comm/comm/server.c:267
 #, c-format
 msgid "Redirecting '%s' graphical output."
 msgstr "Redirecionando saída gráfica de '%s'."
 
-#: ../src/comm/comm/server.c:337
+#: ../src/comm/comm/server.c:342
 #, c-format
 msgid ""
 "Could not launch local server: \n"
@@ -50,7 +50,7 @@ msgstr ""
 "Não foi possível executar o servidor local: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:384
+#: ../src/comm/comm/server.c:389
 #, c-format
 msgid ""
 "Server %s needs SSH login.\n"
@@ -61,7 +61,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/comm/comm/server.c:387
+#: ../src/comm/comm/server.c:392
 #, c-format
 msgid ""
 "Wrong password for server %s, please try again.\n"
@@ -72,15 +72,15 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/comm/comm/server.c:390
+#: ../src/comm/comm/server.c:395
 msgid "SSH login:"
 msgstr "Login SSH:"
 
-#: ../src/comm/comm/server.c:408
+#: ../src/comm/comm/server.c:413
 msgid "SSH inquiry:"
 msgstr "Pergunta SSH:"
 
-#: ../src/comm/comm/server.c:418
+#: ../src/comm/comm/server.c:423
 #, c-format
 msgid ""
 "Received SSH message: \n"
@@ -89,7 +89,7 @@ msgstr ""
 "Mensagem SSH recebida: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:431
+#: ../src/comm/comm/server.c:436
 #, c-format
 msgid ""
 "Error contacting server at address %s via ssh: \n"
@@ -98,7 +98,7 @@ msgstr ""
 "Erro ao contatar o servidor no endereço %s via ssh: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:490
+#: ../src/comm/comm/server.c:495
 #, c-format
 msgid ""
 "Could not comunicate with server %s: \n"
@@ -107,7 +107,7 @@ msgstr ""
 "Não foi possível se comunicar com o servidor %s: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:663
+#: ../src/comm/comm/server.c:670
 #, c-format
 msgid "Connection error '%d' on server '%s'."
 msgstr "Erro de conexão '%d' no servidor '%s'."
@@ -293,104 +293,106 @@ msgstr "referência"
 
 #: ../src/geoxml/geoxml/validate.c:127
 msgid "Title:         "
-msgstr ""
+msgstr "Título:        "
 
 #: ../src/geoxml/geoxml/validate.c:131
 msgid "Description:   "
-msgstr ""
+msgstr "Descrição:     "
 
 #: ../src/geoxml/geoxml/validate.c:135
 msgid "Author:        "
-msgstr ""
+msgstr "Autor:         "
 
 #: ../src/geoxml/geoxml/validate.c:143
 msgid "Created:       "
-msgstr ""
+msgstr "Criado:        "
 
 #: ../src/geoxml/geoxml/validate.c:146
 msgid "Modified:      "
-msgstr ""
+msgstr "Modificado:    "
 
 #: ../src/geoxml/geoxml/validate.c:151
 msgid "Help:          "
-msgstr ""
+msgstr "Ajuda:         "
 
 #: ../src/geoxml/geoxml/validate.c:153 ../src/geoxml/geoxml/validate.c:208
 msgid "Defined"
-msgstr ""
+msgstr "Definido"
 
 #: ../src/geoxml/geoxml/validate.c:161 ../src/geoxml/geoxml/validate.c:164
 msgid "Category:      "
-msgstr ""
+msgstr "Categoria:     "
 
 #: ../src/geoxml/geoxml/validate.c:172
 msgid "Menu with:     "
-msgstr ""
+msgstr "Menu com:      "
 
 #: ../src/geoxml/geoxml/validate.c:173
 #, c-format
 msgid "%ld program(s)\n"
-msgstr ""
+msgstr "%ld programa(s)\n"
 
 #: ../src/geoxml/geoxml/validate.c:182
 msgid ""
 "\n"
 ">>Program:     "
 msgstr ""
+"\n"
+">>Programa:     "
 
 #: ../src/geoxml/geoxml/validate.c:184
 msgid "  Title:       "
-msgstr ""
+msgstr "  Título:      "
 
 #: ../src/geoxml/geoxml/validate.c:187
 msgid "  Description: "
-msgstr ""
+msgstr "  Descrição:   "
 
 #: ../src/geoxml/geoxml/validate.c:191
 msgid "  In/out/err:  "
-msgstr ""
+msgstr "  Entrada/saída/erro: "
 
 #: ../src/geoxml/geoxml/validate.c:193
 msgid "Read"
-msgstr ""
+msgstr "Lê"
 
 #: ../src/geoxml/geoxml/validate.c:193 ../src/geoxml/geoxml/validate.c:194
 #: ../src/geoxml/geoxml/validate.c:195
 msgid "Ignore"
-msgstr ""
+msgstr "Ignora"
 
 #: ../src/geoxml/geoxml/validate.c:194
 msgid "Write"
-msgstr ""
+msgstr "Escreve"
 
 #: ../src/geoxml/geoxml/validate.c:195
 msgid "Append"
-msgstr ""
+msgstr "Anexa"
 
 #: ../src/geoxml/geoxml/validate.c:197
 msgid "  Binary:      "
-msgstr ""
+msgstr "Binário"
 
 #: ../src/geoxml/geoxml/validate.c:200
 msgid "  Version:     "
-msgstr ""
+msgstr "  Versão:      "
 
 #: ../src/geoxml/geoxml/validate.c:203
 msgid "  URL:         "
-msgstr ""
+msgstr "  URL:         "
 
 #: ../src/geoxml/geoxml/validate.c:206
 msgid "  Help:        "
-msgstr ""
+msgstr "  Ajuda:       "
 
 #: ../src/geoxml/geoxml/validate.c:218
 msgid "  >>Parameters:\n"
-msgstr ""
+msgstr "  >>Parâmetros:\n"
 
 #: ../src/geoxml/geoxml/validate.c:230
 #, c-format
 msgid "%d potential error(s)"
-msgstr ""
+msgstr "%d provável(is) erro(s)"
 
 #: ../src/geoxml/geoxml/validate.c:268
 msgid "UNSET"
@@ -398,56 +400,58 @@ msgstr "VAZIO"
 
 #: ../src/geoxml/geoxml/validate.c:303
 msgid ", already used above"
-msgstr ""
+msgstr ", já usado acima"
 
 #: ../src/geoxml/geoxml/validate.c:310
 #, c-format
 msgid " (Alt+%s)"
-msgstr ""
+msgstr " (Alt+%s)"
 
 #: ../src/geoxml/geoxml/validate.c:375
 #, c-format
 msgid " in [%s,%s]"
-msgstr ""
+msgstr " em [%s,%s]"
 
 #: ../src/geoxml/geoxml/validate.c:381
 #, c-format
 msgid " (entries separated by '%s')"
-msgstr ""
+msgstr " (entradas separadas por '%s')"
 
 #: ../src/geoxml/geoxml/validate.c:385
-msgid " (missing entries' separator)"
-msgstr ""
+msgid " (missing entries separator)"
+msgstr " (separador de entradas perdidas)"
 
 #: ../src/geoxml/geoxml/validate.c:391
 msgid "  REQUIRED "
-msgstr ""
+msgstr "  REQUERIDO "
 
 #: ../src/geoxml/geoxml/validate.c:400
 msgid ""
 "\n"
 "        missing options"
 msgstr ""
+"\n"
+"        opções perdidas"
 
-#: ../src/geoxml/geoxml/validate.c:425
+#: ../src/geoxml/geoxml/validate.c:426
 msgid "   [Instantiable]\n"
-msgstr ""
+msgstr "   [Instanciável]\n"
 
-#: ../src/geoxml/upgrade/upgrade.c:32 ../src/geoxml/validate/validate.c:32
+#: ../src/geoxml/upgrade/upgrade.c:32 ../src/geoxml/validate/validate.c:29
 msgid "file1.flw file2.mnu file3.prj file4.lne ..."
 msgstr "arquivo1.flw arquivo2.flw arquivo3.prj arquivo4.lne ..."
 
-#: ../src/geoxml/upgrade/upgrade.c:48 ../src/geoxml/validate/validate.c:48
+#: ../src/geoxml/upgrade/upgrade.c:48 ../src/geoxml/validate/validate.c:45
 msgid "LibGebrGeoXml XML validator"
 msgstr "Validador XML da LibGebrGeoXml"
 
-#: ../src/geoxml/upgrade/upgrade.c:56 ../src/geoxml/validate/validate.c:55
+#: ../src/geoxml/upgrade/upgrade.c:56 ../src/geoxml/validate/validate.c:52
 #, c-format
 msgid "%s: syntax error\n"
 msgstr "%s: erro de sintaxe\n"
 
 #: ../src/geoxml/upgrade/upgrade.c:57 ../src/geoxml/upgrade/upgrade.c:66
-#: ../src/geoxml/validate/validate.c:56
+#: ../src/geoxml/validate/validate.c:53
 #, c-format
 msgid "Try %s --help\n"
 msgstr "Tente %s --help\n"
@@ -467,12 +471,12 @@ msgstr "Não foi possível salvar o arquivo %s.\n"
 msgid "Upgraded file %s to version %s!\n"
 msgstr "Atualizando arquivo %s para a versão %s!\n"
 
-#: ../src/geoxml/validate/validate.c:64
+#: ../src/geoxml/validate/validate.c:61
 #, c-format
 msgid "%s INVALID: %s"
 msgstr "%s INVÁLIDO: %s"
 
-#: ../src/geoxml/validate/validate.c:69
+#: ../src/geoxml/validate/validate.c:66
 #, c-format
 msgid "%s valid!\n"
 msgstr "%s válido!\n"

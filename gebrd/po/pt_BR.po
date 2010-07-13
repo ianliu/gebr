@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebrd 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-11 15:56-0300\n"
-"PO-Revision-Date: 2010-05-03 11:35-0300\n"
+"POT-Creation-Date: 2010-07-13 14:50-0300\n"
+"PO-Revision-Date: 2010-07-13 14:51-0300\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Connection error '%s' on client '%s'"
 msgstr "Erro '%s' na conexão com o servidor '%s'"
 
-#: ../src/gebrd.c:87
+#: ../src/gebrd.c:91
 msgid "Server quit."
 msgstr "Servidor finalizado."
 
@@ -45,7 +45,7 @@ msgstr "Tarefa '%s' não enviou a saida no formato UTF-8"
 msgid "Empty flow.\n"
 msgstr "Fluxo vazio.\n"
 
-#: ../src/job.c:535 ../src/job.c:604
+#: ../src/job.c:535 ../src/job.c:613
 #, c-format
 msgid "%u) Skiping disabled/unconfigured program '%s'.\n"
 msgstr "%u) Desconsiderando programa '%s' desabilitado/não configurado.\n"
@@ -70,51 +70,51 @@ msgstr "Arquivo de entrada %s não encontrado ou não acessível.\n"
 msgid "Requested MPI (%s) is not supported by this server.\n"
 msgstr "MPI (%s) solicitado não é suportado pelo servidor.\n"
 
-#: ../src/job.c:588 ../src/job.c:660
+#: ../src/job.c:597 ../src/job.c:695
 #, c-format
 msgid "Write permission to %s not granted.\n"
 msgstr "Permissão de escrita para %s não concedida.\n"
 
 #. Previous does not write to stdin but current expect something
-#: ../src/job.c:623
+#: ../src/job.c:644
 #, c-format
 msgid "Broken flow before %s (no input).\n"
 msgstr "Fluxo interrompido depois de %s (sem entrada).\n"
 
 #. Previous does write to stdin but current does not carry about
-#: ../src/job.c:627
+#: ../src/job.c:648
 #, c-format
 msgid "Broken flow before %s (unexpected output).\n"
 msgstr "Fluxo interrompido antes de %s (saída inesperada).\n"
 
-#: ../src/job.c:653
+#: ../src/job.c:688
 #, c-format
 msgid "No error file selected; error output merged with standard output.\n"
 msgstr ""
 "Sem arquivo de erro selecionado; saída de erro será mesclada com a saída "
 "padrão.\n"
 
-#: ../src/job.c:656
+#: ../src/job.c:691
 #, c-format
 msgid "Proceeding without output file.\n"
 msgstr "Prosseguindo sem arquivo de saída.\n"
 
-#: ../src/job.c:779
+#: ../src/job.c:814
 #, c-format
 msgid "Cannot submit job to MOAB server.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB.\n"
 
-#: ../src/job.c:785
+#: ../src/job.c:820
 #, c-format
 msgid "Cannot submit job to MOAB server: %s.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB: %s.\n"
 
-#: ../src/job.c:795
+#: ../src/job.c:830
 #, c-format
 msgid "Cannot get MOAB job id.\n"
 msgstr "Não foi possível obter a identificação da tarefa no MOAB.\n"
 
-#: ../src/job.c:953 ../src/job.c:957
+#: ../src/job.c:988 ../src/job.c:992
 #, c-format
 msgid "Cannot cancel job at MOAB server.\n"
 msgstr "Não foi possível cancelar a tarefa no servidor MOAB.\n"
@@ -142,28 +142,29 @@ msgid "Try %s --help\n"
 msgstr "Tente %s --help\n"
 
 #: ../src/server.c:74
-msgid "Could not access GêBR configuration directories.\n"
-msgstr "Não foi possível acessar os diretórios de configuração da GêBR.\n"
+#, c-format
+msgid "%s:%d: Could not access GêBR configuration directories.\n"
+msgstr "%s:%d: Não foi possível acessar os diretórios de configuração da GêBR.\n"
 
-#: ../src/server.c:99
+#: ../src/server.c:107
 msgid "Cannot run interactive server, GêBR daemon is already running"
 msgstr ""
 "Não é possível executar o servidor iterativavmente. Daemon GêBR já está em "
 "execução"
 
-#: ../src/server.c:120
+#: ../src/server.c:128
 msgid "Could not listen for connections.\n"
 msgstr "Não foi possível escutar por conexões.\n"
 
-#: ../src/server.c:128
+#: ../src/server.c:136
 msgid "Could not write run file."
 msgstr "Não foi possível escrever arquivo de trava de execução."
 
-#: ../src/server.c:152
+#: ../src/server.c:155
 #, c-format
 msgid "Server started at %u port"
 msgstr "Servidor inicializado na porta %u"
 
-#: ../src/server.c:164
+#: ../src/server.c:167
 msgid "Could not init server. Quiting..."
 msgstr "Não foi possível inicializar o servidor. Abortando..."
