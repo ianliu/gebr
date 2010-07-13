@@ -50,14 +50,14 @@ typedef void (*GebrGuiHelpEdited)(GebrGeoXmlObject * object, const gchar * help)
  * If \p menu_edition is TRUE then enabled menu specific features edition (for DéBR) \p edited_callback is called each
  * time the content is edited. 
  */
-GtkWidget* gebr_gui_help_edit(GebrGeoXmlDocument * document, GebrGuiHelpEdited edited_callback,
+GtkWidget* gebr_gui_help_edit(GebrGeoXmlDocument * document, GString * tmpl, GebrGuiHelpEdited edited_callback,
 			      GebrGuiHelpRefresh refresh_callback, gboolean menu_edition);
 
 /**
  * Edit help HTML from \p program with WebKit and CKEDITOR (if enabled) or with \p editor executable specified.
  * \p edited_callback is called each time the content is edited. 
  */
-GtkWidget* gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GebrGuiHelpEdited edited_callback,
+GtkWidget* gebr_gui_program_help_edit(GebrGeoXmlProgram * program, GString * tmpl, GebrGuiHelpEdited edited_callback,
 				      GebrGuiHelpRefresh refresh_callback);
 
 G_END_DECLS

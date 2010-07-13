@@ -94,6 +94,11 @@ struct ui_menu {
 		GtkWidget *categories_label;
 		GtkWidget *help_button;
 	} details;
+
+	// FIXME: This is ugly :(
+	// This is the Warning icon for help validation in Menu Properties Dialog.
+	// It must be updated when the user saves a Help edition.
+	GtkWidget * help_validate_image;
 };
 
 
