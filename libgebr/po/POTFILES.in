@@ -1,4 +1,5 @@
 # List of source files containing translatable strings.
+src/comm/socketchannel/socketchannel.c
 src/comm/comm/channelsocket.c
 src/comm/comm/hostinfo.c
 src/comm/comm/listensocket.c
