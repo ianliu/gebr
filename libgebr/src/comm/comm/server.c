@@ -260,7 +260,7 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	server->x11_forward_process = gebr_comm_terminal_process_new();
 	g_signal_connect(server->x11_forward_process, "ready-read",
 			 G_CALLBACK(gebr_comm_ssh_read), server);
-	g_string_printf(string, "ssh -x -R %d:%s:%d %s 'sleep 999d'", port, display_host->str, redirect_display_port, server->address->str);
+	g_string_printf(string, "ssh -x -R %d:%s:%d %s -N", port, display_host->str, redirect_display_port, server->address->str);
 	gebr_comm_terminal_process_start(server->x11_forward_process, string);
 
 	/* log */
