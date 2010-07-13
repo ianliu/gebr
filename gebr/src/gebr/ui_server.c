@@ -383,10 +383,10 @@ struct ui_server_list *server_list_setup_ui(void)
 	dialog = gtk_dialog_new_with_buttons(_("Servers configuration"),
 					     GTK_WINDOW(gebr.window),
 					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), NULL);
-	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Connect all"), RESPONSE_CONNECT_ALL);
+	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Co_nnect all"), RESPONSE_CONNECT_ALL);
 	gtk_button_set_image(GTK_BUTTON(button),
 			     gtk_image_new_from_stock(GTK_STOCK_CONNECT, GTK_ICON_SIZE_SMALL_TOOLBAR));
-	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Disconnect all"), RESPONSE_DISCONNECT_ALL);
+	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("_Disconnect all"), RESPONSE_DISCONNECT_ALL);
 	gtk_button_set_image(GTK_BUTTON(button),
 			     gtk_image_new_from_stock(GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_SMALL_TOOLBAR));
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CLOSE, RESPONSE_CLOSE);

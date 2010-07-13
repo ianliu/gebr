@@ -458,7 +458,7 @@ static void assembly_menus(GtkMenuBar * menu_bar)
 	GtkWidget *menu_item;
 	GtkWidget *menu;
 
-	menu_item = gtk_menu_item_new_with_label(_("Actions"));
+	menu_item = gtk_menu_item_new_with_mnemonic(_("_Actions"));
 	gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), menu_item);
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
@@ -473,7 +473,7 @@ static void assembly_menus(GtkMenuBar * menu_bar)
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "actions_quit")));
 
-	menu_item = gtk_menu_item_new_with_label(_("Help"));
+	menu_item = gtk_menu_item_new_with_mnemonic(_("_Help"));
 	gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), menu_item);
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
