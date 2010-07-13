@@ -65,6 +65,7 @@ libgebr/packages/rpm/libgebr.opensuse.spec
 libgebr/src/comm/comm/json-glib/stamp-json-enum-types.h
 libgebr/src/comm/comm/json-glib/stamp-json-marshal.h
 libgebr/src/comm/gebr-comm.pc
+libgebr/src/comm/socketchannel/gebr-comm-socketchannel
 libgebr/src/comm/tests/test-protocol
 libgebr/src/defines.h
 libgebr/src/gebr.pc
