@@ -53,7 +53,7 @@ static void gebr_comm_channel_socket_class_init(GebrCommChannelSocketClass * cla
 
 static void gebr_comm_channel_socket_init(GebrCommChannelSocket * channel_socket)
 {
-	channel_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
+	channel_socket->parent.state = GEBR_COMM_SOCKET_STATE_NOTLISTENING;
 }
 
 G_DEFINE_TYPE(GebrCommChannelSocket, gebr_comm_channel_socket, GEBR_COMM_SOCKET_TYPE)
@@ -144,6 +144,8 @@ GebrCommChannelSocket *gebr_comm_channel_socket_new(void)
 
 void gebr_comm_channel_socket_free(GebrCommChannelSocket * channel_socket)
 {
+	g_return_if_fail(GEBR_COMM_IS_CHANNEL_SOCKET(channel_socket));
+
 	gebr_comm_socket_close(&channel_socket->parent);
 	g_object_unref(channel_socket);
 }
@@ -152,6 +154,8 @@ gboolean
 gebr_comm_channel_socket_start(GebrCommChannelSocket * channel_socket, GebrCommSocketAddress * listen_address,
 			       GebrCommSocketAddress * forward_address)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_CHANNEL_SOCKET(channel_socket), FALSE);
+
 	if (!gebr_comm_socket_address_get_is_valid(listen_address) ||
 	    !gebr_comm_socket_address_get_is_valid(forward_address))
 		return FALSE;
@@ -165,7 +169,7 @@ gebr_comm_channel_socket_start(GebrCommChannelSocket * channel_socket, GebrCommS
 	error = NULL;
 	sockfd = socket(_gebr_comm_socket_address_get_family(listen_address), SOCK_STREAM, 0);
 	_gebr_comm_socket_init(&channel_socket->parent, sockfd, listen_address->type);
-	channel_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
+	channel_socket->parent.state = GEBR_COMM_SOCKET_STATE_NOTLISTENING;
 	g_io_channel_set_flags(channel_socket->parent.io_channel, G_IO_FLAG_NONBLOCK, &error);
 	_gebr_comm_socket_enable_read_watch(&channel_socket->parent);
 
@@ -174,10 +178,10 @@ gebr_comm_channel_socket_start(GebrCommChannelSocket * channel_socket, GebrCommS
 	if (bind(sockfd, sockaddr, sockaddr_size))
 		return FALSE;
 	if (listen(sockfd, 1024)) {
-		channel_socket->parent.state = G_SOCKET_STATE_NOTLISTENING;
+		channel_socket->parent.state = GEBR_COMM_SOCKET_STATE_NOTLISTENING;
 		return FALSE;
 	}
-	channel_socket->parent.state = G_SOCKET_STATE_LISTENING;
+	channel_socket->parent.state = GEBR_COMM_SOCKET_STATE_LISTENING;
 	channel_socket->forward_address = *forward_address;
 
 	return TRUE;
@@ -185,5 +189,7 @@ gebr_comm_channel_socket_start(GebrCommChannelSocket * channel_socket, GebrCommS
 
 GebrCommSocketAddress gebr_comm_channel_socket_get_forward_address(GebrCommChannelSocket * channel_socket)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_CHANNEL_SOCKET(channel_socket), _gebr_comm_socket_address_unknown());
+
 	return channel_socket->forward_address;
 }
