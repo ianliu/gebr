@@ -153,6 +153,10 @@ static GString *__gebr_comm_terminal_process_read_string(GIOChannel * io_channel
 	return string;
 }
 
+/*
+ * user functions
+ */
+
 GebrCommTerminalProcess *gebr_comm_terminal_process_new(void)
 {
 	return (GebrCommTerminalProcess *) g_object_new(GEBR_COMM_TERMINAL_PROCESS_TYPE, NULL);
@@ -160,6 +164,8 @@ GebrCommTerminalProcess *gebr_comm_terminal_process_new(void)
 
 void gebr_comm_terminal_process_free(GebrCommTerminalProcess * terminal_process)
 {
+	g_return_if_fail(GEBR_COMM_IS_TERMINAL_PROCESS(terminal_process));
+
 	if (terminal_process->is_running)
 		gebr_comm_terminal_process_kill(terminal_process);
 	__gebr_comm_terminal_process_free(terminal_process);
@@ -168,11 +174,16 @@ void gebr_comm_terminal_process_free(GebrCommTerminalProcess * terminal_process)
 
 gboolean gebr_comm_terminal_process_is_running(GebrCommTerminalProcess * terminal_process)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_TERMINAL_PROCESS(terminal_process), FALSE);
+
 	return terminal_process->is_running;
 }
 
 gboolean gebr_comm_terminal_process_start(GebrCommTerminalProcess * terminal_process, GString * cmd_line)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_TERMINAL_PROCESS(terminal_process), FALSE);
+	g_return_val_if_fail(cmd_line != NULL, FALSE);
+
 	gboolean ret;
 	gchar **argv;
 	gint argc;
@@ -227,11 +238,15 @@ gboolean gebr_comm_terminal_process_start(GebrCommTerminalProcess * terminal_pro
 
 GPid gebr_comm_terminal_process_get_pid(GebrCommTerminalProcess * terminal_process)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_TERMINAL_PROCESS(terminal_process), 0);
+
 	return terminal_process->pid;
 }
 
 void gebr_comm_terminal_process_kill(GebrCommTerminalProcess * terminal_process)
 {
+	g_return_if_fail(GEBR_COMM_IS_TERMINAL_PROCESS(terminal_process));
+
 	if (!terminal_process->pid)
 		return;
 	kill(terminal_process->pid, SIGKILL);
@@ -239,6 +254,8 @@ void gebr_comm_terminal_process_kill(GebrCommTerminalProcess * terminal_process)
 
 void gebr_comm_terminal_process_terminate(GebrCommTerminalProcess * terminal_process)
 {
+	g_return_if_fail(GEBR_COMM_IS_TERMINAL_PROCESS(terminal_process));
+
 	if (!terminal_process->pid)
 		return;
 	kill(terminal_process->pid, SIGTERM);
@@ -246,6 +263,8 @@ void gebr_comm_terminal_process_terminate(GebrCommTerminalProcess * terminal_pro
 
 gulong gebr_comm_terminal_process_bytes_available(GebrCommTerminalProcess * terminal_process)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_TERMINAL_PROCESS(terminal_process), 0);
+
 	/* Adapted from QNativeProcessEnginePrivate::nativeBytesAvailable()
 	 * (qnativeterminal_processengine_unix.cpp:528 of Qt 4.3.0)
 	 */
@@ -260,16 +279,22 @@ gulong gebr_comm_terminal_process_bytes_available(GebrCommTerminalProcess * term
 
 GByteArray *gebr_comm_terminal_process_read(GebrCommTerminalProcess * terminal_process, gsize max_size)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_TERMINAL_PROCESS(terminal_process), NULL);
+
 	return __gebr_comm_terminal_process_read(terminal_process->ptm_io_channel, max_size);
 }
 
 GString *gebr_comm_terminal_process_read_string(GebrCommTerminalProcess * terminal_process, gsize max_size)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_TERMINAL_PROCESS(terminal_process), NULL);
+
 	return __gebr_comm_terminal_process_read_string(terminal_process->ptm_io_channel, max_size);
 }
 
 GByteArray *gebr_comm_terminal_process_read_all(GebrCommTerminalProcess * terminal_process)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_TERMINAL_PROCESS(terminal_process), NULL);
+
 	/* trick for lazyness */
 	return gebr_comm_terminal_process_read(terminal_process,
 					       gebr_comm_terminal_process_bytes_available(terminal_process));
@@ -277,6 +302,8 @@ GByteArray *gebr_comm_terminal_process_read_all(GebrCommTerminalProcess * termin
 
 GString *gebr_comm_terminal_process_read_string_all(GebrCommTerminalProcess * terminal_process)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_TERMINAL_PROCESS(terminal_process), NULL);
+
 	/* trick for lazyness */
 	return gebr_comm_terminal_process_read_string(terminal_process,
 						      gebr_comm_terminal_process_bytes_available(terminal_process));
@@ -284,6 +311,9 @@ GString *gebr_comm_terminal_process_read_string_all(GebrCommTerminalProcess * te
 
 gsize gebr_comm_terminal_process_write(GebrCommTerminalProcess * terminal_process, GByteArray * byte_array)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_TERMINAL_PROCESS(terminal_process), 0);
+	g_return_val_if_fail(byte_array != NULL, 0);
+
 	ssize_t written_bytes;
 
 	written_bytes = write(g_io_channel_unix_get_fd(terminal_process->ptm_io_channel),
@@ -296,6 +326,9 @@ gsize gebr_comm_terminal_process_write(GebrCommTerminalProcess * terminal_proces
 
 gsize gebr_comm_terminal_process_write_string(GebrCommTerminalProcess * terminal_process, GString * string)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_TERMINAL_PROCESS(terminal_process), 0);
+	g_return_val_if_fail(string != NULL, 0);
+
 	GByteArray byte_array;
 	size_t written_bytes;
 

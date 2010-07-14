@@ -158,10 +158,12 @@ GebrCommSocketAddress gebr_comm_socket_address_ipv4_local(guint16 port)
 
 GebrCommSocketAddress gebr_comm_socket_address_parse_from_string(const gchar *address)
 {
+	g_return_val_if_fail(address != NULL, _gebr_comm_socket_address_unknown());
+
 	if (g_str_has_prefix(address, "/") || g_file_test(address, G_FILE_TEST_IS_REGULAR)) 
 		return gebr_comm_socket_address_unix(address);
 	else {
-		GebrCommSocketAddress socket_address;
+		GebrCommSocketAddress socket_address = _gebr_comm_socket_address_unknown();
 		if (strstr(address, ":") == NULL)
 			return gebr_comm_socket_address_ipv4_local(atoi(address));
 		gchar **host_port = g_strsplit(address, ":", 2);
@@ -177,16 +179,21 @@ GebrCommSocketAddress gebr_comm_socket_address_parse_from_string(const gchar *ad
 enum GebrCommSocketAddressType gebr_comm_socket_address_get_type(GebrCommSocketAddress * socket_address)
 {
 	g_return_val_if_fail(socket_address != NULL, GEBR_COMM_SOCKET_ADDRESS_TYPE_UNKNOWN);
+
 	return socket_address->type;
 }
 
 gboolean gebr_comm_socket_address_get_is_valid(GebrCommSocketAddress * socket_address)
 {
+	g_return_val_if_fail(socket_address != NULL, FALSE);
+
 	return (gboolean) (socket_address->type != GEBR_COMM_SOCKET_ADDRESS_TYPE_UNKNOWN);
 }
 
 const gchar *gebr_comm_socket_address_get_string(GebrCommSocketAddress * socket_address)
 {
+	g_return_val_if_fail(socket_address != NULL, NULL);
+
 	switch (socket_address->type) {
 	case GEBR_COMM_SOCKET_ADDRESS_TYPE_UNIX:
 		return inet_ntoa(socket_address->address.inet_sockaddr.sin_addr);
@@ -199,6 +206,8 @@ const gchar *gebr_comm_socket_address_get_string(GebrCommSocketAddress * socket_
 
 guint16 gebr_comm_socket_address_get_ip_port(GebrCommSocketAddress * socket_address)
 {
+	g_return_val_if_fail(socket_address != NULL, 0);
+
 	switch (socket_address->type) {
 	case GEBR_COMM_SOCKET_ADDRESS_TYPE_IPV4:
 		return ntohs(socket_address->address.inet_sockaddr.sin_port);

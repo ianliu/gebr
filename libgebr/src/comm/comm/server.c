@@ -673,7 +673,7 @@ gebr_comm_server_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocket
 {
 	server->error = SERVER_ERROR_CONNECT;
 	gebr_comm_server_disconnected_state(server);
-	if (error == G_SOCKET_ERROR_UNKNOWN)
+	if (error == GEBR_COMM_SOCKET_ERROR_UNKNOWN)
 		puts("FIXME: handle G_SOCKET_ERROR_UNKNOWN");
 	gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("Connection error '%d' on server '%s'."), error,
 				     server->address->str);

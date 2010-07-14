@@ -197,10 +197,6 @@ static GString *__gebr_comm_process_read_string(GIOChannel * io_channel, gsize m
 }
 
 /*
- * private functions
- */
-
-/*
  * user functions
  */
 
@@ -211,6 +207,8 @@ GebrCommProcess *gebr_comm_process_new(void)
 
 void gebr_comm_process_free(GebrCommProcess * process)
 {
+	g_return_if_fail(GEBR_COMM_IS_PROCESS(process));
+
 	if (process->is_running)
 		gebr_comm_process_kill(process);
 	__gebr_comm_process_free(process);
@@ -219,11 +217,16 @@ void gebr_comm_process_free(GebrCommProcess * process)
 
 gboolean gebr_comm_process_is_running(GebrCommProcess * process)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), FALSE);
+
 	return process->is_running;
 }
 
 gboolean gebr_comm_process_start(GebrCommProcess * process, GString * cmd_line)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), FALSE);
+	g_return_val_if_fail(cmd_line != NULL, FALSE);
+
 	gboolean ret;
 	gchar **argv;
 	gint argc;
@@ -305,11 +308,15 @@ gboolean gebr_comm_process_start(GebrCommProcess * process, GString * cmd_line)
 
 GPid gebr_comm_process_get_pid(GebrCommProcess * process)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), 0);
+
 	return process->pid;
 }
 
 void gebr_comm_process_kill(GebrCommProcess * process)
 {
+	g_return_if_fail(GEBR_COMM_IS_PROCESS(process));
+
 	if (!process->pid)
 		return;
 	kill(process->pid, SIGKILL);
@@ -317,6 +324,8 @@ void gebr_comm_process_kill(GebrCommProcess * process)
 
 void gebr_comm_process_terminate(GebrCommProcess * process)
 {
+	g_return_if_fail(GEBR_COMM_IS_PROCESS(process));
+
 	if (!process->pid)
 		return;
 	kill(process->pid, SIGTERM);
@@ -324,6 +333,8 @@ void gebr_comm_process_terminate(GebrCommProcess * process)
 
 void gebr_comm_process_close_stdin(GebrCommProcess * process)
 {
+	g_return_if_fail(GEBR_COMM_IS_PROCESS(process));
+
 	if (process->is_running == FALSE)
 		return;
 	__gebr_comm_process_io_channel_free(&process->stdin_io_channel);
@@ -331,6 +342,8 @@ void gebr_comm_process_close_stdin(GebrCommProcess * process)
 
 gulong gebr_comm_process_stdout_bytes_available(GebrCommProcess * process)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), 0);
+
 	/* Adapted from QNativeProcessEnginePrivate::nativeBytesAvailable()
 	 * (qnativeprocessengine_unix.cpp:528 of Qt 4.3.0)
 	 */
@@ -345,6 +358,8 @@ gulong gebr_comm_process_stdout_bytes_available(GebrCommProcess * process)
 
 gulong gebr_comm_process_stderr_bytes_available(GebrCommProcess * process)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), 0);
+
 	/* Adapted from QNativeProcessEnginePrivate::nativeBytesAvailable()
 	 * (qnativeprocessengine_unix.cpp:528 of Qt 4.3.0)
 	 */
@@ -359,50 +374,69 @@ gulong gebr_comm_process_stderr_bytes_available(GebrCommProcess * process)
 
 GByteArray *gebr_comm_process_read_stdout(GebrCommProcess * process, gsize max_size)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), NULL);
+
 	return __gebr_comm_process_read(process->stdout_io_channel, max_size);
 }
 
 GString *gebr_comm_process_read_stdout_string(GebrCommProcess * process, gsize max_size)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), NULL);
+
 	return __gebr_comm_process_read_string(process->stdout_io_channel, max_size);
 }
 
 GByteArray *gebr_comm_process_read_stdout_all(GebrCommProcess * process)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), NULL);
+
 	/* trick for lazyness */
 	return gebr_comm_process_read_stdout(process, gebr_comm_process_stdout_bytes_available(process));
 }
 
 GString *gebr_comm_process_read_stdout_string_all(GebrCommProcess * process)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), NULL);
+
 	/* trick for lazyness */
 	return gebr_comm_process_read_stdout_string(process, gebr_comm_process_stdout_bytes_available(process));
 }
 
 GByteArray *gebr_comm_process_read_stderr(GebrCommProcess * process, gsize max_size)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), NULL);
+
 	return __gebr_comm_process_read(process->stderr_io_channel, max_size);
 }
 
 GString *gebr_comm_process_read_stderr_string(GebrCommProcess * process, gsize max_size)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), NULL);
+
 	return __gebr_comm_process_read_string(process->stderr_io_channel, max_size);
 }
 
 GByteArray *gebr_comm_process_read_stderr_all(GebrCommProcess * process)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), NULL);
+
 	/* trick for lazyness */
 	return gebr_comm_process_read_stderr(process, gebr_comm_process_stderr_bytes_available(process));
 }
 
 GString *gebr_comm_process_read_stderr_string_all(GebrCommProcess * process)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), NULL);
+
 	/* trick for lazyness */
 	return gebr_comm_process_read_stderr_string(process, gebr_comm_process_stderr_bytes_available(process));
 }
 
 gsize gebr_comm_process_write_stdin(GebrCommProcess * process, GByteArray * byte_array)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), 0);
+	g_return_val_if_fail(byte_array != NULL, 0);
+
 	ssize_t written_bytes;
 
 	written_bytes = write(g_io_channel_unix_get_fd(process->stdin_io_channel), byte_array->data, byte_array->len);
@@ -414,6 +448,8 @@ gsize gebr_comm_process_write_stdin(GebrCommProcess * process, GByteArray * byte
 
 gsize gebr_comm_process_write_stdin_string(GebrCommProcess * process, GString * string)
 {
+	g_return_val_if_fail(GEBR_COMM_IS_PROCESS(process), 0);
+
 	GByteArray byte_array;
 	ssize_t written_bytes;
 
