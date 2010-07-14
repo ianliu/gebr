@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-13 14:05-0300\n"
-"PO-Revision-Date: 2010-05-03 12:09-0300\n"
+"POT-Creation-Date: 2010-07-14 15:38-0300\n"
+"PO-Revision-Date: 2010-07-14 15:45-0300\n"
 "Last-Translator: Fabio Azevedo <fabioaz@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -48,16 +48,22 @@ msgstr "Conectado ao servidor local."
 msgid "Connected to server '%s'."
 msgstr "Conectado ao servidor '%s'."
 
-#: ../src/gebr/client.c:122
+#: ../src/gebr/client.c:121
+#, c-format
+msgid ""
+"Server '%s' could not add X11 authorization to redirect graphical output."
+msgstr "O servidor '%s' não conseguiu adicionar a autorização para redirecionar a saída gráfica."
+
+#: ../src/gebr/client.c:127
 #, c-format
 msgid "Server '%s' could not redirect graphical output."
 msgstr "O servidor '%s' não conseguiu redirecionar a saída gráfica."
 
-#: ../src/gebr/client.c:231
+#: ../src/gebr/client.c:236
 msgid "Error communicating with local server. Please reconnect."
 msgstr "Erro na comunicação com o servidor local. Por favor, reconecte."
 
-#: ../src/gebr/client.c:233
+#: ../src/gebr/client.c:238
 #, c-format
 msgid "Error communicating with server '%s'. Please reconnect."
 msgstr "Erro na comunicação com o servidor '%s'. Por favor, reconecte."
@@ -250,7 +256,7 @@ msgstr "Criar um comentário para este estado:"
 msgid "Could not paste component."
 msgstr "Não foi possível colar componente."
 
-#: ../src/gebr/gebr.c:73
+#: ../src/gebr/gebr.c:74
 #, c-format
 msgid ""
 "Unable to create GêBR configuration files.\n"
@@ -261,23 +267,23 @@ msgstr ""
 "Talvez você não tenha permissão de escrita no seu\n"
 "próprio diretório ou não haja espaço no dispositivo.\n"
 
-#: ../src/gebr/gebr.c:161
+#: ../src/gebr/gebr.c:162
 msgid "GêBR finalizing..."
 msgstr "GêBR finalizando..."
 
-#: ../src/gebr/gebr.c:262
+#: ../src/gebr/gebr.c:263
 msgid "GêBR initiating..."
 msgstr "GêBR iniciando..."
 
-#: ../src/gebr/gebr.c:390
+#: ../src/gebr/gebr.c:391
 msgid "Could not save configuration."
 msgstr "Não foi possível salvar a configuração."
 
-#: ../src/gebr/gebr.c:397
+#: ../src/gebr/gebr.c:398
 msgid "Configuration saved"
 msgstr "A configuração foi salva."
 
-#: ../src/gebr/gebr.c:545
+#: ../src/gebr/gebr.c:546
 #, c-format
 msgid ""
 "GêBR now stores data files on its own directory. You may now delete GêBR's "
@@ -286,7 +292,7 @@ msgstr ""
 "A GêBR agora armazena arquivos de dados em um diretório próprio. Você pode\n"
 "apagar os arquivos da GêBR em %s."
 
-#: ../src/gebr/gebr.c:552
+#: ../src/gebr/gebr.c:553
 msgid ""
 "Cannot copy data files to GêBR's directory. Please check your write "
 "permissions to your home directory."
@@ -495,12 +501,12 @@ msgid "Job control"
 msgstr "Controle de tarefas"
 
 #: ../src/gebr/interface.c:461
-msgid "Actions"
-msgstr "Ações"
+msgid "_Actions"
+msgstr "_Ações"
 
 #: ../src/gebr/interface.c:476
-msgid "Help"
-msgstr "Ajuda"
+msgid "_Help"
+msgstr "A_juda"
 
 #: ../src/gebr/job.c:111
 #, c-format
@@ -923,37 +929,42 @@ msgstr "Número vazio"
 msgid "Please enter the number of processes to run the flow."
 msgstr "Por favor, forneça o número de processos para rodar o fluxos."
 
-#: ../src/gebr/ui_flow.c:643
+#: ../src/gebr/ui_flow.c:644
 msgid "No flow selected."
 msgstr "Nenhum fluxo selecionado"
 
-#: ../src/gebr/ui_flow.c:663
+#. just happen if the current server was removed
+#: ../src/gebr/ui_flow.c:649
+msgid "No server selected."
+msgstr "Nenhuma servidor selecionado."
+
+#: ../src/gebr/ui_flow.c:669
 msgid "You are not connected to the local server."
 msgstr "Você não está conectado ao servidor local."
 
-#: ../src/gebr/ui_flow.c:666
+#: ../src/gebr/ui_flow.c:672
 #, c-format
 msgid "You are not connected to server '%s'."
 msgstr "Você não está conectado ao servidor '%s'."
 
-#: ../src/gebr/ui_flow.c:679
+#: ../src/gebr/ui_flow.c:685
 #, c-format
 msgid "No available queue for server '%s'."
 msgstr "Nenhuma fila disponível para o servidor '%s'."
 
-#: ../src/gebr/ui_flow.c:901
+#: ../src/gebr/ui_flow.c:907
 msgid "Choose a file"
 msgstr "Escolha um arquivo"
 
-#: ../src/gebr/ui_flow.c:1019
+#: ../src/gebr/ui_flow.c:1025
 msgid "Creates a new Input/Output configuration."
 msgstr "Cria uma nova configuração de Entrada/Saída"
 
-#: ../src/gebr/ui_flow.c:1027
+#: ../src/gebr/ui_flow.c:1033
 msgid "This server no longer exists in the servers list dialog."
 msgstr "Este servidor não existe mais na lista de servidores."
 
-#: ../src/gebr/ui_flow.c:1029
+#: ../src/gebr/ui_flow.c:1035
 msgid "This server is disconnected."
 msgstr "Este servidor está desconectado."
 
@@ -1011,11 +1022,11 @@ msgstr "Verifique a configuração dos parâmetros"
 msgid "Program help"
 msgstr "Ajuda do programa"
 
-#: ../src/gebr/ui_help.c:105 ../src/gebr/ui_help.c:122
+#: ../src/gebr/ui_help.c:108 ../src/gebr/ui_help.c:125
 msgid "Unable to create temporary file."
 msgstr "Impossível escrever arquivo temporário."
 
-#: ../src/gebr/ui_help.c:114
+#: ../src/gebr/ui_help.c:117
 msgid "Error during editor execution."
 msgstr "Erro durate a execução do editor."
 
@@ -1370,12 +1381,12 @@ msgid "Servers configuration"
 msgstr "Configuração de servidores"
 
 #: ../src/gebr/ui_server.c:386
-msgid "Connect all"
-msgstr "Conectar todos"
+msgid "Co_nnect all"
+msgstr "Co_nectar todos"
 
 #: ../src/gebr/ui_server.c:389
-msgid "Disconnect all"
-msgstr "Desconectar todos"
+msgid "_Disconnect all"
+msgstr "_Desconectar todos"
 
 #: ../src/gebr/ui_server.c:404
 msgid "Type here [user@]serverhostname"
