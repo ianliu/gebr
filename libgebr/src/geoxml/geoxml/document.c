@@ -166,13 +166,6 @@ static GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, G
  */
 static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
 {
-	/* Based on code by Daniel Veillard
-	 * References:
-	 *   http://xmlsoft.org/examples/index.html#parse2.c
-	 *   http://xmlsoft.org/examples/parse2.c
-	 */
-
-	gchar *src;
 	GString *source;
 	GString *dtd_filename;
 
@@ -217,13 +210,38 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 
 	/* Inserts the document type into the xml so we can validate and specify the ID attributes and use
 	 * gdome_doc_getElementById. */
+	gchar *src;
 	gdome_di_saveDocToMemoryEnc(dom_implementation, *document, &src, ENCODING, GDOME_SAVE_STANDARD, &exception);
 	source = g_string_new(src);
+	g_free(src);
 	gebr_geoxml_document_fix_header(source, tagname, dtd_filename->str);
-	tmp_doc = gdome_di_createDocFromMemory(dom_implementation, source->str, GDOME_LOAD_VALIDATING, &exception);
+
+	/* Based on code by Daniel Veillard
+	 * References:
+	 *   http://xmlsoft.org/examples/index.html#parse2.c
+	 *   http://xmlsoft.org/examples/parse2.c
+	 */
+	xmlParserCtxtPtr ctxt = xmlNewParserCtxt();
+	xmlDocPtr doc = xmlCtxtReadMemory(ctxt, source->str, source->len, NULL, NULL,
+					  XML_PARSE_NOBLANKS | XML_PARSE_DTDATTR |        /* default DTD attributes */
+					  XML_PARSE_NOENT |                               /* substitute entities */
+					  XML_PARSE_DTDVALID);
+	if (doc == NULL) {
+		xmlFreeParserCtxt(ctxt);
+		ret = GEBR_GEOXML_RETV_INVALID_DOCUMENT;
+		goto out;
+	} else {
+		xmlFreeDoc(doc);
+		if (ctxt->valid == 0) {
+			xmlFreeParserCtxt(ctxt);
+			ret = GEBR_GEOXML_RETV_INVALID_DOCUMENT;
+			goto out;
+		}
+	}
+
+	tmp_doc = gdome_di_createDocFromMemory(dom_implementation, source->str, GDOME_LOAD_PARSING, &exception);
 
 	g_free(tagname);
-	g_free(src);
 
 	if (tmp_doc == NULL) {
 		ret = GEBR_GEOXML_RETV_NO_MEMORY;
@@ -587,12 +605,10 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 
 	ret = GEBR_GEOXML_RETV_SUCCESS;
 
- out:
+out:
 	g_string_free(dtd_filename, TRUE);
 	g_string_free(source, TRUE);
-
- out2:
-
+out2:
 	return ret;
 }
 
