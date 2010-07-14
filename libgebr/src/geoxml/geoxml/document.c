@@ -261,9 +261,6 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 	 */
 	void __port_to_new_group_semantics(void)
 	{
-		/* remove flow filename */
-		gdome_el_removeChild(root_element, (GdomeNode*)__gebr_geoxml_get_first_element(root_element, "filename"), &exception);
-
 		GdomeElement *element;
 		gebr_foreach_gslist_hyg(element, __gebr_geoxml_get_elements_by_tag(root_element, "parameters"), parameters) {
 			__gebr_geoxml_set_attr_value(element, "default-selection",
@@ -554,6 +551,10 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 	if (strcmp(version, "0.3.5") < 0) {
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.5");
+
+			/* remove flow filename */
+			gdome_el_removeChild(root_element, (GdomeNode*)__gebr_geoxml_get_first_element(root_element, "filename"), &exception);
+
 			__port_to_new_group_semantics();
 
 			__gebr_geoxml_remove_attr(root_element, "nextid");
