@@ -24,6 +24,7 @@ G_BEGIN_DECLS
 
 typedef struct {
 	GString * name;		/**< The name of the Mpi implementation */
+	GString * mpirun;
 	GString * libpath;
 	GString * binpath;
 	GString * host;
