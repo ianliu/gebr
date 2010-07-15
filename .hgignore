@@ -57,6 +57,7 @@ intltool-*.in
 libgebr/docs/reference/*/gebr-*
 libgebr/docs/reference/*/html
 libgebr/docs/reference/*/xml
+libgebr/docs/reference/*/tmpl
 libgebr/gtk-doc.make
 libgebr/m4
 libgebr/packages/rpm/libgebr.fedora.spec

@@ -49,7 +49,7 @@ static gchar * gebrd_open_mpi_build_command(GebrdMpiInterface * mpi, const gchar
 
 	self = (GebrdOpenMpi*)mpi;
 
-	host = strlen(self->host) == 0? "":g_strconcat(" --host", self->host, NULL);
+	host = strlen(self->host) == 0? "":g_strconcat(" --host ", self->host, NULL);
 	cmd = g_string_new(NULL);
 	g_string_printf(cmd, "LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH PATH=%s:$PATH mpirun.openmpi%s -np %s %s",
 			self->lib_path,
