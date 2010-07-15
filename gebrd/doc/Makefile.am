@@ -1,5 +1,5 @@
-# GeBR Daemon - Process and control execution of flows
-# Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+# libgebr - GÍBR Library
+# Copyright (C) 2007  Br·ulio Barros de Oliveira (brauliobo@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
- 
-if ENABLE_TESTS
-TESTSDIR=tests
-endif
-SUBDIRS = src packages po ${TESTSDIR} doc
+
+gebrd_datadir=$(datadir)/doc/gebrd/examples
+gebrd_data_DATA= gebrd.conf
+EXTRA_DIST = $(gebrd_data_DATA)
