@@ -188,6 +188,7 @@ void gebrd_config_load(void)
 		mpi_config->name = g_string_new(groups[i] + 4);
 		mpi_config->libpath = gebr_g_key_file_load_string_key(key_file, groups[i], "libpath", "");
 		mpi_config->binpath = gebr_g_key_file_load_string_key(key_file, groups[i], "binpath", "");
+		mpi_config->host = gebr_g_key_file_load_string_key(key_file, groups[i], "host", "");
 		mpi_config->init_script = gebr_g_key_file_load_string_key(key_file, groups[i], "init_script", "");
 		mpi_config->end_script = gebr_g_key_file_load_string_key(key_file, groups[i], "end_script", "");
 

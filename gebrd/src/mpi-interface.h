@@ -26,6 +26,7 @@ typedef struct {
 	GString * name;		/**< The name of the Mpi implementation */
 	GString * libpath;
 	GString * binpath;
+	GString * host;
 	GString * init_script;
 	GString * end_script;
 } GebrdMpiConfig;

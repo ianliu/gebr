@@ -28,9 +28,13 @@ struct _GebrdOpenMpi {
 	GebrdMpiInterface parent;
 	gchar * bin_path;
 	gchar * lib_path;
+	gchar * host;
 };
 
-GebrdMpiInterface * gebrd_open_mpi_new(const gchar * n_process, const gchar * bin_path, const gchar * lib_path);
+GebrdMpiInterface * gebrd_open_mpi_new(const gchar * n_process,
+				       const gchar * bin_path,
+				       const gchar * lib_path,
+				       const gchar * host);
 
 G_END_DECLS
 

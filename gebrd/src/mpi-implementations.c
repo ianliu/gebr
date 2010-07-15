@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "mpi-implementations.h"
 
 /*
@@ -9,7 +11,10 @@ static gchar * gebrd_open_mpi_build_command(GebrdMpiInterface * mpi, const gchar
 static gchar * gebrd_open_mpi_finalize(GebrdMpiInterface * mpi);
 static void gebrd_open_mpi_free(GebrdMpiInterface * mpi);
 
-GebrdMpiInterface * gebrd_open_mpi_new(const gchar * n_process, const gchar * bin_path, const gchar * lib_path)
+GebrdMpiInterface * gebrd_open_mpi_new(const gchar * n_process,
+				       const gchar * bin_path,
+				       const gchar * lib_path,
+				       const gchar * host)
 {
 	GebrdOpenMpi * self;
 	GebrdMpiInterface * mpi;
@@ -19,6 +24,7 @@ GebrdMpiInterface * gebrd_open_mpi_new(const gchar * n_process, const gchar * bi
 
 	self->bin_path = g_strdup(bin_path);
 	self->lib_path = g_strdup(lib_path);
+	self->host = g_strdup(host);
 
 	mpi->initialize = gebrd_open_mpi_initialize;
 	mpi->build_command = gebrd_open_mpi_build_command;
@@ -39,11 +45,18 @@ static gchar * gebrd_open_mpi_build_command(GebrdMpiInterface * mpi, const gchar
 {
 	GebrdOpenMpi * self;
 	GString * cmd;
+	gchar * host;
 
 	self = (GebrdOpenMpi*)mpi;
+
+	host = strlen(self->host) == 0? "":g_strconcat(" --host", self->host, NULL);
 	cmd = g_string_new(NULL);
-	g_string_printf(cmd, "LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH PATH=%s:$PATH mpirun.openmpi -np %s %s",
-			self->lib_path, self->bin_path, mpi->n_processes, command);
+	g_string_printf(cmd, "LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH PATH=%s:$PATH mpirun.openmpi%s -np %s %s",
+			self->lib_path,
+			self->bin_path,
+			host,
+			mpi->n_processes,
+			command);
 	return g_string_free(cmd, FALSE);
 }
 
