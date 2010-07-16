@@ -1,4 +1,407 @@
-2010-03-08  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+2010-07-16  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Disabled gtk_test on lenny.
+
+2010-07-15  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Fixed maintainers email and docbook-utils build dependency.
+	* Expands author's email address.
+
+2010-07-14  Ricardo Biloti <biloti@gebrproject.com>
+
+	* GeBR portuguese translation updated
+
+2010-07-13  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Added mnemonics to easy server (dis)connection.
+
+2010-07-13 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Fix crash when tried to run after the selected server removed (no
+	server selected).
+	* Delay and retry if 'xauth list' (GeBR) or 'xauth add' (GeBRD) fails
+	(probably failed to lock).
+	* Fix concurrent server connect.
+	* Update issue 452
+	* fixes gterminalprocess and gprocess to group child correctly
+
+2010-07-13  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* I18n files updated
+
+2010-07-13  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Help validation icon is updated when the help is saved (Fixes issue
+	423)
+
+2010-07-13  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* If a server was disconnected make the related entry insensitive at
+	combobox
+
+2010-06-30  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Move GeBR/DeBR icons to Science menu
+
+2010-06-28  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* Command line related with project and line export/import action, was
+	escaped
+
+2010-06-24  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* Flow save at GêBR startup was removed.
+	* Project and Line save at GêBR initialization
+
+2010-06-18 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Fixed unfilled parameter check
+
+2010-06-16 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 416
+
+2010-06-15  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixes a bug when the same machine is added two times to the server
+	list (Fixes issue 419)
+
+2010-06-14  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a segfault when importing a Flow in GeBR
+
+2010-06-10  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Fixes save help confirmation bug introduced in revision 65c186bdc2.
+	(Fixes issue 286)
+	* Added response close to verifiy save confirm on exit.
+
+2010-06-08  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Test case iteracting with help edition. (Update issue 286).
+
+2010-06-07  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Sample gtk+test using about dialog.
+
+2010-06-09  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Removed 'nextid' when creating a new flow
+
+2010-06-02 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* add unit tests infrastructure to gebr
+
+2010-05-25  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Freeze preparing to release 0.9.17.
+
+2010-05-25  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* Solved problem that lead to "Invalid Document" on dictionary
+	parameter edition
+
+2010-05-24  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* On double click at New Dictionary Parameter, Segmentation Fault was
+	resolved with a 'is null' string check
+
+2010-05-17 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 380
+	* copied navigation stuff in css to links
+
+2010-05-15 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 285
+
+2010-05-13  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Errors when opening projects, lines or flows are now logged
+
+2010-05-11  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* updated translations and fixed a mistaken string replace.
+
+2010-05-11  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Newer versions of Xml documents present a better error message in
+	gebr
+	* Removed name suggestion from flow export dialog
+	* No name is suggested when exporting a line/project or flow (Fixes
+	issue 358)
+
+2010-05-10  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Removed the GTK_RESPONSE_DEFAULT macro
+
+2010-05-06  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Renamed 'gebr_gui_gebr_gui_program_edit_destroy' to
+	'gebr_gui_program_edit_destroy'
+	* Renamed 'enum GEBR_GEOXML_PARAMETER_TYPE' to
+	'GebrGeoXmlParameterType'
+
+2010-05-03  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Portuguese translation updated
+
+2010-05-05  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added hotkeys for DeBR's save dialog
+
+2010-04-30  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Portuguese translation updated
+
+2010-05-05  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Changed 'struct gebr_gui_program_edit to 'GebrGuiProgramEdit'
+
+2010-05-04 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Fixed crash on line import
+
+2010-05-01 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* avoid struct assigments
+	* use GtkAttachOptions cast
+	* Cast GtkDialogFlags parameter
+	* Fixed and added G_BEGIN_DECLS/G_END_DECLS
+	* replaced g_malloc with g_new
+	* Update issue 319
+	* Update issue 254
+
+2010-04-29  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Removed browser from GeBR
+
+2010-04-30 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 354
+
+2010-04-27 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* changed validation text
+
+2010-04-26  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Double-clicking a category in GeBR open/close it
+	* Fixed another bug with menus index generation
+	* Fixes issue 316
+
+2010-04-23 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* use and absolute path for install-sh script
+	* fixed gebr's userdoc define
+	* fixed documentation for callbacks.{c,h}
+	* Fix empty help for DeBR (Fixes issue 342)
+	* Update issue 342
+
+2010-04-22  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Fallback to autotools install-sh if system don't have -C option.
+
+2010-04-14  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixes issue 298
+
+2010-04-09  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Changed 'Execute' and 'Cancel' positions in GeBR's run dialog
+	* Standardized the run dialog in GêBR
+
+2010-04-09  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Changed "parallelization" to "mpi".
+
+2010-04-01 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* use spinbutton for process number
+
+2010-04-01  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Fixing bad edition at the beginning of the file.
+
+2010-04-01  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed default value for gebrd configuration
+
+2010-04-01  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Commiting more stable code for redesigned dialogs for flow execution
+	(including parallel flows).
+	* Fixing some conflicts due to new type GebrCommServerRun.
+	* Redesign of flow_io_run() and creation of flow_io_run_dialog().
+
+2010-03-31  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added number of process information into GeBR protocol
+
+2010-03-29  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Backed out changeset 10f82da054f7
+
+2010-03-26  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed popup menu items for creating Project/Line
+
+2010-03-29  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Changes in DeBR CSS for help ported to GeBR
+
+2010-03-26  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Changes on operation 'New' on 'Projects and Lines' and 'Flows' in
+	GeBR.
+
+2010-03-24  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Suppress run button from flow browse toolbar
+
+2010-03-23  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixes strange behavior with CTRL-N accelerator in GêBR
+
+2010-03-23  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Now flow_new() stores in the model a FB_LINE_FLOW_POINTER for the
+	newly created flow. (Fixes issue 281.)
+
+2010-03-23  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed atk warnings in GeBR and DeBR
+
+2010-03-22  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Inserted current file name in dialog when Exporting/Saving
+
+2010-03-19  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed bug when running unconfigured flows
+
+2010-03-19 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Fixes for invalid document treatment
+
+2010-03-19  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* Some bug fix on "restore last document" at GêBR
+
+2010-03-18 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - more fixes to invalid document import
+	* various fixes to invalid document treatment
+	* implemented delete invalid flows
+	* - added PL_XMLPOINTER to project/line store: keep loaded documents
+	references
+
+2010-03-17 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* temporary commit
+
+2010-03-13 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* prepared to add delete option upon document load error and to use
+	GebrGuiSaveDialog
+
+2010-03-12 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - changed line_import to conform with document_load_path error
+	handling.
+	* changed document_load* function family to treat errors
+
+2010-03-17  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Drag-and-dropped lines are now selected.
+	* Changes in Projects and Lines drag-and-drop.
+	* Fixed project_line_move() for when source and destination projects
+	are the same.
+
+2010-03-17  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Changed project_line_move to ease drag'n'drop
+
+2010-03-17  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Functions line_reorder() and line_can_reorder() redesigned.
+
+2010-03-15  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Changed 'project_move_line_to' to 'project_line_move'
+
+2010-03-16  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Commiting function line_move_to().
+
+2010-03-15  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added convenience function to move a line between projects in GeBR.
+	* Refactored 'Line Delete' in GeBR to use
+	gebr_geoxml_program_remove_line
+
+2010-03-12  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Refactored Job Control save feature to use GebrGuiSaveDialog
+	* Refactored Flow export feature to use GebrGuiSaveDialog
+	* Refactored Project/Line export feature to use GebrGuiSaveDialog
+
+2010-03-15  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* Implemented restore of last document used
+
+2010-03-15  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Adding line_reorder() and line_can_reorder() for implementing drag-
+	and-drop for lines inside projects.
+
+2010-03-15  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* Implemented last notebook/tab restored
+
+2010-03-12  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Adding functions to handle drag-and-drop in the UI.
+
+2010-03-12  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* document_save and document_save_at reports execution success or
+	failure, and on import and export process, the messages was shown on
+	status bar
+
+2010-03-11 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix compilation errors for new gebr_geoxml_document_load
+	* - documentation fixes
+
+2010-03-10  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed bug with required parameters set from dictionary
+
+2010-03-09 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* job structure already available at iter, do not use queue name to
+	find it (potentially fixes issue 252)
+	* don't add job's queues when they aren't running
+
+2010-03-09  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed absolute path in gebr and debr desktop launchers
+
+2010-03-08  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Changed some slashes positions in gebr macros
+
+2010-03-08 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - clear queues selection list uppon server disconnection
+	* delete jobs uppon server disconnection
+
+2010-03-08  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Changelogs updated for 0.9.16 release.
+
+2010-03-08 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix regression for moab queues name
 

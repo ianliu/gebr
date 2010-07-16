@@ -1,4 +1,141 @@
-2010-03-08  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+2010-07-15  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Fixed maintainers email and docbook-utils build dependency.
+	* Expands author's email address.
+	* Minimal gebrd.conf example.
+
+2010-07-15  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added 'mpirun' key into GeBRd's configuration file
+	* Fixed a bug where the hosts from GeBRd where glued to '--host' flag
+	* Added a 'host' key to GeBRd's configuration file
+
+2010-07-13 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix use of strerror() not on errno
+	* Check if the client sent the cookie for X11 authorization
+	* Delay and retry if 'xauth list' (GeBR) or 'xauth add' (GeBRD) fails
+	(probably failed to lock).
+	* fixes gterminalprocess and gprocess to group child correctly
+
+2010-07-13  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* I18n files updated
+
+2010-06-22 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Fixed chained X redirection when running gebr remotelly with ssh -X
+
+2010-06-14  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a bug where it was not possible to connect into a remote
+	server (Fixes issue 415)
+	* Added protection for empty queue's in GeBRd
+
+2010-06-14  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* SegFault resolved at Daemon.
+
+2010-06-01  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed autogen script to call `gtkdocize' in libgebr folder
+
+2010-06-02 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* add unit tests infrastructure to gebr
+
+2010-05-25  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Freeze preparing to release 0.9.17.
+
+2010-05-11  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* updated translations and fixed a mistaken string replace.
+
+2010-05-06  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Renamed 'enum GEBR_GEOXML_PARAMETER_TYPE' to
+	'GebrGeoXmlParameterType'
+
+2010-05-03  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Portuguese translation updated
+
+2010-04-30  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Portuguese translation updated
+
+2010-05-01 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* avoid struct assigments
+	* Fixed and added G_BEGIN_DECLS/G_END_DECLS
+	* replaced g_malloc with g_new
+
+2010-04-30 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 354
+
+2010-04-23 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* use and absolute path for install-sh script
+
+2010-04-22  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Fallback to autotools install-sh if system don't have -C option.
+
+2010-04-12  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixes issue 326
+
+2010-04-09  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed 'libpath' and 'binpath' in GeBRd
+
+2010-04-09  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Fixed a little typo: changed "quited" to "quit".
+	* Changed "parallelization" to "mpi".
+
+2010-04-01  braulio
+
+	* fixed typo and string assignment
+	* fix jid for failed jobs
+
+2010-04-01  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed default value for gebrd configuration
+	* Fixed a bug where Mpi was always considered when building the
+	command line
+	* The command line is actually built
+	* Added a function to get a GebrdMpiConfig from name
+	* Added virtual method for freeing Mpi structures
+	* Added gebrd_config_load method in GeBRd
+	* Added Mpi configuration structure
+	* Added Mpi configuration structure
+	* Fixed OpenMPI command line wrapper
+
+2010-03-31  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* First attempt to abstract Mpi under GêBRd
+	* Added number of process information into GeBR protocol
+
+2010-03-19  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed bug when running unconfigured flows
+
+2010-03-15 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* use geoxml's errors string in gebrd
+
+2010-03-09  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed absolute path in gebr and debr desktop launchers
+
+2010-03-08  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Changelogs updated for 0.9.16 release.
+
+2010-03-08 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* gebrd: check if the queue exists before removing a job
 

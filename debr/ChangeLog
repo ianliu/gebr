@@ -1,5 +1,464 @@
+2010-07-16  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Saving a menu on top of another validated menu, removes that
+	validation
+	* Fixed a bug when validating & saving a newly created menu
+
+2010-07-15  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Fixed maintainers email and docbook-utils build dependency.
+	* Expands author's email address.
+
+2010-07-13  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* I18n files updated
+
+2010-07-13  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Help validation icon is updated when the help is saved (Fixes issue
+	423)
+
+2010-07-08  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Deleting a program clears the 'Parameters' tab (Fixes issue 439)
+
+2010-07-06  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* Saving an untitled menu, the menu loses the selection
+
+2010-07-05  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* On deleting an untitled menu, the message don't show the path to the
+	filename
+
+2010-07-01  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* "Parameter edition" window title, was changed to include the
+	parameter type that was being edited
+	* Changed title for group instance from "Instance #" to "Defaults for
+	instance #" at DéBR
+
+2010-06-30  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Move GeBR/DeBR icons to Science menu
+
+2010-06-28  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* 'New' is disabled when no Program is selected in DeBR (Fixes issue
+	439)
+
+2010-06-22  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Fixed warning icon at debr's menu validation.
+
+2010-06-21  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* File libgebr/src/geoxml/geoxml/validate.c added to pot files for
+	internationalization
+
+2010-06-18  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a bug where the list widget was being shown from the start
+	(Fixes issue 440)
+	* Removed the scrolled window from parameters dialog
+	* Parameter edition dialog does not scroll horizontally (Fixes issue
+	438)
+	* All categories are reported on DeBR's detail view (Fixes issue 435)
+
+2010-06-18 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 434
+
+2010-06-18  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Groups can be created even if a group is selected (Fixes issue 433)
+	* Fixed segfault when canceling the menu properties dialog (Fixes
+	issue 425)
+	* Changed signature of 'program_new(gboolean)' to 'program_new(void)'
+
+2010-06-16  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added validation to the author field in menu properties dialog
+	(Fixes issue 421)
+	* 'Remove folder' is now disabled on 'Other' folder, in DeBR (Fixes
+	issue 424)
+
+2010-06-16 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 416
+
+2010-06-01  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed autogen script to call `gtkdocize' in libgebr folder
+
+2010-06-02 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* add unit tests infrastructure to gebr
+
+2010-05-25  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Freeze preparing to release 0.9.17.
+
+2010-05-21 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 377
+
+2010-05-17 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 380
+
+2010-05-20  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* Custom Editor selected with its entry box empty, causes Permission
+	Denied on help edit at DéBR. Update issue 375
+
+2010-05-17 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 285
+	* copied navigation stuff in css to links
+
+2010-05-15 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 285
+
+2010-05-14  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* Included Locale header file
+
+2010-05-11  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added internationalization to the glade interface file
+
+2010-05-11  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* updated translations and fixed a mistaken string replace.
+
+2010-05-11 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* BUG: check first run for DeBR depending wheter the config file could
+	be loaded
+
+2010-05-10  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed several places where the first instance was being treated as
+	template
+
+2010-05-06  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a segfault when canceling a parameter edition
+	* Renamed 'gebr_gui_gebr_gui_program_edit_destroy' to
+	'gebr_gui_program_edit_destroy'
+	* Renamed 'enum GEBR_GEOXML_PARAMETER_TYPE' to
+	'GebrGeoXmlParameterType'
+
+2010-05-03  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Portuguese translation updated
+
+2010-05-05  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Added hotkeys for DeBR's save dialog
+
+2010-04-30  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Portuguese translation updated
+
+2010-05-05  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Changed 'struct gebr_gui_program_edit to 'GebrGuiProgramEdit'
+
+2010-05-04  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a bug in conversion of 0.3.4 flows to 0.3.5
+
+2010-05-01 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* avoid struct assigments
+	* use GtkAttachOptions cast
+	* do not use c++ reserved name 'new'
+	* use GParamFlags cast
+	* do not use reserved c++ name 'class'
+	* Cast GtkDialogFlags parameter
+	* Fixed and added G_BEGIN_DECLS/G_END_DECLS
+	* replaced g_malloc with g_new
+	* Update issue 355
+
+2010-04-30  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Adding the 'Up' and 'Down' buttons to group intances
+	* Fixed a bug when propagating changes in template
+	* First changes for adopting the new strategy for group instances
+
+2010-04-30  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed some minor interfaces bugs in DeBR's save dialog
+
+2010-04-28  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Month strings in DeBR menu's help is now locale independent.
+
+2010-04-29  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Removed browser configuration from DeBR
+
+2010-04-27  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Fixed reversed order of filenames list to save in DéBR.
+
+2010-04-30 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 354
+
+2010-04-26  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Default saving folder in DeBR is $HOME
+
+2010-04-27 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* changed validation text
+
+2010-04-26 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 318
+
+2010-04-26  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixes issue 304
+
+2010-04-23  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Implemented a context menu for the menus' save dialog in DeBR.
+
+2010-04-23 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* use and absolute path for install-sh script
+	* Fix empty help for DeBR (Fixes issue 342)
+
+2010-04-23  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Fixed a bug when closing a folder
+	* Fixes issue 341
+
+2010-04-23  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Update issue 341
+
+2010-04-22  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+
+	* Fallback to autotools install-sh if system don't have -C option.
+
+2010-04-20 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 338
+
+2010-04-19  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a bug where clicking in a category fix, changed the wrong
+	category
+
+2010-04-18 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 333
+	* Update issue 333
+
+2010-04-17 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 336
+
+2010-04-16 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* validate empty list of categories (Fixes issue 332)
+
+2010-04-20  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixes issue 324
+
+2010-04-16  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* DeBR's preferences dialog has a default response
+	* Parameters label are now fixable
+
+2010-04-16  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* GUI to insert/remove folders directly in DéBR menus treeview.
+
+2010-04-16  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Changed menu_count_unsaved to work with single folders
+	* Fixed a bug where 'Save All' feature was not working
+
+2010-04-15  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Update issue 335
+
+2010-04-16 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 333
+
+2010-04-15  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed HTML editor choice in DeBR
+
+2010-04-14  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixes issue 272
+
+2010-04-14  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Opening and closing folders directly into DeBR's treeview.
+
+2010-04-13 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 331
+	* Update issue 331
+
+2010-04-12 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 284
+	* Update issue 284
+	* Update issue 284
+	* Update issue 284
+
+2010-04-10 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* Update issue 284
+
+2010-04-09  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Changed "parallelization" to "mpi".
+
+2010-04-06  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Attribute 'instanciable' is now set to FALSE in XML when creating a
+	parameter group.
+	* Reverted "instantiable" to "instanciable" in GeoXml
+	parameter_group.c.
+	* Changed "instanciable" to "instantiable" in some UI texts.
+
+2010-04-05  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* First 'on demand' validation implementation in DeBR
+
+2010-04-01 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix menu_close_folder
+
+2010-04-01  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed default value for gebrd configuration
+
+2010-04-01 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* added debr interface for configuring parallelization implementation
+	in a program
+
+2010-03-31 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix hand cursor for links
+
+2010-03-30 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* - recover scroll position after validation update
+
+2010-03-29 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* keep syncronized menu and validate tab
+
+2010-03-28 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix validate's edit to show dialog correctly
+	* added validatation interface in libgebr_geoxml and use it for menu-
+	query and DeBR
+
+2010-03-25 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* implemented testing Fix feature
+
+2010-03-24 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* added Fix link after validation errors
+
+2010-03-25  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Included functions for single directory manipulation in DéBR
+	* Added infrastructure for DéBR unit-testing
+
+2010-03-23  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* Modification associated with issue 225. On "permission denied" error
+	accessing files, the error dialog and the message on status bar will
+	be shown.
+	* "Warning: invalid cast from `GtkRadioButton' to `GtkMisc'" fixed
+	when exclusive radio button is set
+	* Some misspelled words fixed
+	* "expanded by default" and "instantiable" radio buttons, preserves it
+	state during execution
+
+2010-03-23  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed atk warnings in GeBR and DeBR
+
+2010-03-22  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* On 'save' button activate with no permission at chosen folder,
+	change the error message to be like as the others 'save' places.
+
+2010-03-22  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Inserted current file name in dialog when Exporting/Saving
+
+2010-03-18  Ricardo Biloti <biloti@gebrproject.com>
+
+	* Fixes issue 277
+
+2010-03-18  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Changed "Save on Exit" behavior
+	* Fixing some save as bugs
+
+2010-03-15 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* replaced GEBR_GEOXML_RETV_CANT_ACCESS_FILE
+
+2010-03-18  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed a bug in 'Save as' feature when permition was denied.
+
+2010-03-12  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Replaced the save dialog for DeBR menus tab
+
+2010-03-11 Braulio Barros de Oliveira <brauliobo@gebrproject.com>
+
+	* fix compilation errors for new gebr_geoxml_document_load
+
+2010-03-11  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* More from "Implemented at DéBR, save on protected folder report
+	error message."
+
+2010-03-10  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
+
+	* Implemented at DéBR, save on protected folder report error message.
+
+2010-03-10  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* menu_selected() now handles ITER_FOLDER and ITER_NONE explicitly.
+	menu_folder_details_update() now always shows the details widgets
+	when a folder is selected.
+
+2010-03-09  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+
+	* Fixed absolute path in gebr and debr desktop launchers
+
+2010-03-08  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
+
+	* Added call to do_navigation_bar_update() in program_load_iter()
+	(Fixes issue 237).
+
 2010-03-08  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
 
+	* Changelogs updated for 0.9.16 release.
 	* Changelogs updated for 0.9.16 release.
 
 2010-03-08  Ricardo Biloti <biloti@gebrproject.com>
