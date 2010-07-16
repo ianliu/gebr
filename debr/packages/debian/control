@@ -1,6 +1,6 @@
 Source: debr
 Priority: extra
-Maintainer: Ricardo Biloti <biloti@gmail.com>
+Maintainer: Ricardo Biloti <biloti@gebrproject.com>
 Build-Depends: debhelper (>= 5), automake, intltool, libgebr-dev, gnome-doc-utils
 Standards-Version: 3.7.2
 
