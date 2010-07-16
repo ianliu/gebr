@@ -35,7 +35,7 @@ void on_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint
 	if (page_num == NOTEBOOK_PAGE_VALIDATE) {
 		GtkTreeIter iter;
 		gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_validate.list_store)) {
-			struct validate *validate;;
+			struct validate *validate;
 			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_validate.list_store), &iter, VALIDATE_POINTER, &validate, -1);
 
 			gboolean need_update;

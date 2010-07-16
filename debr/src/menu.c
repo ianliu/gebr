@@ -561,6 +561,7 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	GtkTreeIter target;
 	gboolean is_overwrite;
 	gchar * target_fname;
+	struct validate * validate;
 
 	clone = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(menu)));
 	is_overwrite = menu_is_path_loaded(filepath, &child);
@@ -574,12 +575,21 @@ gboolean menu_save_as(GtkTreeIter * iter)
 		gtk_tree_store_append(debr.ui_menu.model, &target, &parent);
 	}
 
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &target, MENU_PATH, &target_fname, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &target,
+			   MENU_PATH, &target_fname,
+			   MENU_VALIDATE_POINTER, &validate,
+			   -1);
+
+	gtk_tree_store_set(debr.ui_menu.model, &target, MENU_VALIDATE_POINTER, validate, -1);
+
 	menu_load_iter(filepath, &target, clone, TRUE);
 	ret = (menu_save(&target) != MENU_MESSAGE_PERMISSION_DENIED);
 	if (ret) {
-		if (is_overwrite)
+		if (is_overwrite) {
 			gebr_geoxml_document_free(remove);
+			if (validate)
+				validate_close_iter(&validate->iter);
+		}
 
 		/* If the menu was never saved, that means is 'currentpath' is empty,
 		 * and we need to remove it from the interface. In case this menu was
