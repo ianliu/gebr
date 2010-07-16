@@ -16,5 +16,3 @@
 include $(top_srcdir)/Makefile.decl
 
 SUBDIRS = userdoc develdoc
-
-EXTRA_DIST = gebr.docbook
