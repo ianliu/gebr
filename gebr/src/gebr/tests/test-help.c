@@ -25,6 +25,7 @@
 #include <../defines.h>
 #include <interface.h>
 
+#if GTK_CHECK_VERSION(2,14,0)
 int _gtk_loop() {
 	while (gtk_events_pending()) {
 		gtk_main_iteration();
@@ -90,3 +91,8 @@ int main(int argc, char *argv[]) {
 	return g_test_run();
 
 }
+#else
+int main(int argc, char *argv[]) {
+	return 0;
+}
+#endif
