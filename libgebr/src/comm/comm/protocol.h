@@ -24,7 +24,7 @@
 
 G_BEGIN_DECLS
 
-#define PROTOCOL_VERSION "1.0.3"
+#define PROTOCOL_VERSION "1.0.4"
 
 #define gebr_comm_message_def_create(str, resp) ((struct gebr_comm_message_def){g_str_hash(str), str, resp})
 
