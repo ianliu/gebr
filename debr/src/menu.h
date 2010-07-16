@@ -359,5 +359,19 @@ void menu_close_folder(GtkTreeIter * iter);
  */
 void menu_close_folder_from_path(const gchar * path);
 
+//======================================================================================================================
+// Getters & Setters												       =
+//======================================================================================================================
+
+/**
+ * menu_get_xml_pointer:
+ * Gets the #GebrGeoXmlMenu associated to @iter.
+ *
+ * @iter: A #GtkTreeIter pointing to a row in DeBR's menus list.
+ *
+ * Returns: A #GebrGeoXmlMenu.
+ */
+GebrGeoXmlFlow * menu_get_xml_pointer(GtkTreeIter * iter);
+
 G_END_DECLS
 #endif				//__MENU_H

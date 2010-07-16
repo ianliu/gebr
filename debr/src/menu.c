@@ -79,6 +79,8 @@ static void on_menu_unselect_all_activate(GtkMenuItem *menuitem, GtkTreeView *tr
 
 static gboolean menu_save_iter_list(GList * unsaved);
 
+static void menu_remove_with_validation(GtkTreeIter * iter);
+
 /*
  * Public functions
  */
@@ -491,17 +493,15 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	 * Setup file chooser
 	 */
 	gchar *title;
+	const gchar * menu_filename;
 	GebrGeoXmlFlow *menu;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter,
-			   MENU_XMLPOINTER, &menu,
-			   -1);
-	const gchar *menu_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu));
+	menu = menu_get_xml_pointer(iter);
+	menu_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu));
 	title = g_strdup_printf(_("Choose file for \"%s\""), menu_filename);
 	dialog = gebr_gui_save_dialog_new(title, GTK_WINDOW(debr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(dialog), ".mnu");
 	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), menu_filename);
-	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_menu.model), &parent, iter);
 	g_free(title);
 
 	void foreach(gchar * key) {
@@ -509,6 +509,7 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	}
 	g_hash_table_foreach(debr.config.opened_folders, (GHFunc)foreach, NULL);
 
+	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_menu.model), &parent, iter);
 	if (gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(debr.ui_menu.model),
 						  &parent, &debr.ui_menu.iter_other)) {
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), getenv("HOME"));
@@ -580,11 +581,18 @@ gboolean menu_save_as(GtkTreeIter * iter)
 		if (is_overwrite)
 			gebr_geoxml_document_free(remove);
 
+		/* If the menu was never saved, that means is 'currentpath' is empty,
+		 * and we need to remove it from the interface. In case this menu was
+		 * validated, we need to delete that too. */
 		if (!strlen(currentpath))
-			gtk_tree_store_remove(debr.ui_menu.model, iter);
+			menu_remove_with_validation(iter);
 
 		*iter = target;
 	} else {
+
+		/* We do not have permissions to save this menu, so we revert all operations.
+		 * If we are not overwriting, just delete the new menu created. Otherwise, we
+		 * need to load the old menu into target. */
 		if (!is_overwrite)
 			gtk_tree_store_remove(debr.ui_menu.model, &target);
 		else
@@ -601,10 +609,7 @@ out:
 
 void menu_validate(GtkTreeIter * iter)
 {
-	GebrGeoXmlFlow *menu;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &menu, -1);
-	validate_menu(iter, menu);
+	validate_menu(iter);
 }
 
 void menu_install(void)
@@ -1568,6 +1573,14 @@ void menu_close_folder_from_path(const gchar * path)
 		menu_close_folder(&iter);
 }
 
+GebrGeoXmlFlow * menu_get_xml_pointer(GtkTreeIter * iter)
+{
+	GtkTreeModel * model;
+	GebrGeoXmlFlow * menu;
+	model = GTK_TREE_MODEL(debr.ui_menu.model);
+	gtk_tree_model_get(model, iter, MENU_XMLPOINTER, &menu, -1);
+	return menu;
+}
 
 /**
  * \internal
@@ -2018,4 +2031,24 @@ static gboolean menu_save_iter_list(GList * unsaved)
 
 	return ret;
 
+}
+
+/*
+ * menu_remove_with_validation:
+ * Removes the validation entry corresponding to this menu @iter.
+ * This function is needed to update the validate tab when a menu
+ * is deleted.
+ */
+static void menu_remove_with_validation(GtkTreeIter * iter)
+{
+	GtkTreeModel * model;
+	struct validate * validate;
+
+	model = GTK_TREE_MODEL(debr.ui_menu.model);
+	gtk_tree_model_get(model, iter, MENU_VALIDATE_POINTER, &validate, -1);
+
+	if (validate != NULL)
+		validate_close_iter(&validate->iter);
+
+	gtk_tree_store_remove(debr.ui_menu.model, iter);
 }

@@ -66,7 +66,6 @@ struct validate {
 	GtkTreeIter iter;
 	GtkTextBuffer *text_buffer;
 
-	GebrGeoXmlFlow *menu;
 	GtkTreeIter menu_iter;
 
 	GebrGeoXmlValidate *geoxml_validate;
@@ -76,7 +75,7 @@ struct validate {
  * Validate \p menu adding it to the validated list.
  * \param iter The item on the menu list.
  */
-void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu);
+void validate_menu(GtkTreeIter * iter);
 
 /**
  * Clear selected menu validations.

@@ -41,7 +41,7 @@ void on_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint
 			gboolean need_update;
 			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &validate->menu_iter, MENU_VALIDATE_NEED_UPDATE, &need_update, -1);
 			if (need_update) 
-				validate_menu(&validate->menu_iter, validate->menu);
+				validate_menu(&validate->menu_iter);
 		}
 	}
 }

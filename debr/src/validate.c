@@ -86,7 +86,7 @@ static void validate_append_text(struct validate *validate, const gchar * format
 static void validate_append_text_emph(struct validate *validate, const gchar * format, ...);
 static void validate_append_text_error(struct validate *validate, gint failed_flags, const gchar *program_path,
 				       const gchar *parameter_path, const gchar * format, ...);
-void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
+void validate_menu(GtkTreeIter * iter)
 {
 	struct validate *validate;
 	GtkWidget *scrolled_window;
@@ -101,7 +101,6 @@ void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 	if (validate != NULL) {
 		updated = TRUE;
 		validate->menu_iter = *iter;
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &validate->menu, -1);
 		scroll_hvalue = gtk_adjustment_get_value(gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(validate->widget)));
 		scroll_vvalue = gtk_adjustment_get_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(validate->widget)));
 		gtk_text_buffer_set_text(validate->text_buffer, "", 0);
@@ -135,7 +134,6 @@ void validate_menu(GtkTreeIter * iter, GebrGeoXmlFlow * menu)
 	validate->widget = scrolled_window;
 	validate->text_view = text_view;
 	validate->text_buffer = text_buffer;
-	validate->menu = menu;
 	validate->menu_iter = *iter;
 	validate->geoxml_validate = gebr_geoxml_validate_new(validate, operations, options);
 	gtk_list_store_append(debr.ui_validate.list_store, &validate->iter);
@@ -144,10 +142,11 @@ out:
 	gtk_tree_store_set(debr.ui_menu.model, iter, MENU_VALIDATE_NEED_UPDATE, FALSE,
 			   MENU_VALIDATE_POINTER, validate, -1);
 
+	GebrGeoXmlFlow * menu = menu_get_xml_pointer(iter);
 	gint error_count = gebr_geoxml_validate_report_menu(validate->geoxml_validate, menu);
 	gtk_list_store_set(debr.ui_validate.list_store, &validate->iter,
 			   VALIDATE_ICON, !error_count ? debr.pixmaps.stock_apply : debr.pixmaps.stock_warning,
-			   VALIDATE_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(validate->menu)),
+			   VALIDATE_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)),
 			   VALIDATE_POINTER, validate, -1);
 	validate_set_selected(&validate->iter);
 
@@ -346,7 +345,7 @@ static void validate_parse_link_click_callback(GtkTextView * text_view, GtkTextT
 		ret = on_menu_properties_activate();
 
 	if (ret)
-		validate_menu(&validate->menu_iter, validate->menu);
+		validate_menu(&validate->menu_iter);
 }
 
 /**
