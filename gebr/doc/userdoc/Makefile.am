@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-gebrdocdir = $(datadir)/gebr/userdoc
+gebrdocdir = $(DESTDIR)/$(datadir)/gebr/userdoc
 EXTRA_DIST = userdoc images
 
 all: userdoc-dir
