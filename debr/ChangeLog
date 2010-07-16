@@ -51,7 +51,7 @@
 	  See this commit diff for quick workaround.
 	  See gimp for possible better solution.
 
-2010-03-05  abaaklini
+2010-03-05  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Menu changes lost on preferences save. (Updates issue 245)
 
@@ -67,7 +67,7 @@
 	  - Programs' version query and/or edited through command-line
 	  tools
 
-2010-03-05  abaaklini
+2010-03-05  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* When the built-in option was selected, a default editor (gedit)
 	  overwrite it on program load
@@ -77,7 +77,7 @@
 	* Added protection for when 'dtd' or 'ver' marks wheren't present
 	  in help-template.
 
-2010-03-04  abaaklini
+2010-03-04  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Option for custom editor implemented at GeBR and some updates at
 	  Debr
@@ -158,7 +158,7 @@
 
 	* Portuguese translation even more updated
 
-2010-02-19  abaaklini
+2010-02-19  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Email changed to project name and some internationalization
 	* Bug fix due internationalization
@@ -169,7 +169,7 @@
 	* Fixed another bug in 'Save as' in DeBR, where the same xml
 	  pointer was being used by two menus
 
-2010-02-19  abaaklini
+2010-02-19  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Some memory leak solved.
 
@@ -197,7 +197,7 @@
 	* Fixed the 'Link' button in program edition. Previously, it was
 	  opening the programs help, not URL.
 
-2010-02-18  fabiosazevedo
+2010-02-18  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Added code to prevent pasting a group inside another group.
 
@@ -208,7 +208,7 @@
 	* Workaround to fix broken links in make dist, please use
 	  autogen.sh to copy *.decl into subprojects.
 
-2010-02-18  abaaklini
+2010-02-18  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Field name changed on parameter dialog
 	* - check libgebr version
@@ -224,11 +224,11 @@
 	* fixed parameter new selection handling
 	* selection behaviour changes
 
-2010-02-12  fabiosazevedo
+2010-02-12  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* commit for data interchange
 
-2010-02-12  abaaklini
+2010-02-12  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* The "menu save all" button remains sensitive even when no menu
 	  was unsaved
@@ -237,14 +237,14 @@
 
 	* Hotkeys in DeBR are now validated
 
-2010-02-12  abaaklini
+2010-02-12  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Some bugs fixed at the menu save behavior.
 	  The buttons "save all", "delete" and "open" are
 	  removed due some usability problems and the "validate"
 	  button was added to all tabs.
 
-2010-02-11  abaaklini
+2010-02-11  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Save from any tab, implemented. (Fixes issue 189)
 
@@ -253,11 +253,11 @@
 	* - require at least gtk 2.12
 	  - do not use svn/git version for libgebr
 
-2010-02-10  abaaklini
+2010-02-10  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Some fixes on "List-item Separator", (Fixes issue 39)
 
-2010-02-09  abaaklini
+2010-02-09  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Menu status icon, corrected to represent the real menu status
 	  (Fixes issue 188)
@@ -292,16 +292,16 @@
 
 	* Added suport to git version in about.
 
-2010-02-05  abaaklini
+2010-02-05  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Some minors bug fixes
 
-2010-02-05  fabiosazevedo
+2010-02-05  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Added code to escape invalid HTML tags and characters in menu
 	  helps. (Fixes issue 125.)
 
-2010-02-05  abaaklini
+2010-02-05  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Separator between list items. (Fixes issue 39)
 
@@ -322,7 +322,7 @@
 	* Better search for gebr and debr. See
 	  gebr_gui_gtk_tree_view_fancy_search. (Fixes issue 41)
 
-2010-02-04  fabiosazevedo
+2010-02-04  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Now, new parameters are created in more appropriate places in
 	  DéBR. (Fixes issue 162)
@@ -331,11 +331,11 @@
 
 	* Added shortcut paths in DeBR's save dialog.
 
-2010-02-03  abaaklini
+2010-02-03  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Save from any DéBR tabs (Fixes issue 161)
 
-2010-02-02  abaaklini
+2010-02-02  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* On "parameter_new" function, only the selection of "menu" was
 	  checked. (Fixes issue 173)
@@ -345,7 +345,7 @@
 
 	* open webkit to edit help
 
-2010-02-01  fabiosazevedo
+2010-02-01  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Added 'cut' option for menu parameters in DeBR.
 
@@ -381,7 +381,7 @@
 	  after a checkout use "AUTOPOINT=intltoolize autoreconf -i" to
 	  setup.
 
-2010-01-14  abaaklini
+2010-01-14  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* added flow 0.3.2 with no reference to menus in programs
 
@@ -395,7 +395,7 @@
 	* apply coding style police
 	  (http://code.google.com/p/gebr/wiki/CodingStyle)
 
-2010-01-07  fabiosazevedo
+2010-01-07  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Added tooltips on DeBR folders.
 

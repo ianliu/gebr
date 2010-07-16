@@ -34,7 +34,7 @@
 	* Created getter/setter for version attribute in 'program' tag;
 	  Interface done.
 
-2010-03-02  abaaklini
+2010-03-02  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Resolved some comments at issues 201 and 197
 
@@ -49,7 +49,7 @@
 	* - fixed server_free_foreach_job
 	  - don't show "Queue:" in queue anymore
 
-2010-02-26  fabiosazevedo
+2010-02-26  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* - added rnq message (rename queue) to client/server protocol
 	  - new status message (requeued) to notify queue renaming
@@ -62,11 +62,11 @@
 	  - support for empty queues
 	  - added some documentation
 
-2010-02-25  abaaklini
+2010-02-25  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Removes job from daemon queue. (Fixes issue 210)
 
-2010-02-24  abaaklini
+2010-02-24  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Jobs that was waiting for execution on MOAB cluster, has status
 	  updated to queued. (Fixes issue 209)
@@ -87,7 +87,7 @@
 
 	* Portuguese translation even more updated
 
-2010-02-19  abaaklini
+2010-02-19  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Email changed to project name and some internationalization
 	* Bug fix due internationalization
@@ -117,7 +117,7 @@
 	* Changed icon for unconfigured programs in GeBR; Program status is
 	  now an enumeration.
 
-2010-02-18  abaaklini
+2010-02-18  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* - check libgebr version
 	  - fix ordering of libgebr and other libs linkage
@@ -186,7 +186,7 @@
 	* Queues from Moab and/or Gebr are now stored in ListStore's, in
 	  GeBR
 
-2010-01-26  abaaklini
+2010-01-26  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Arguments moab_jid and queue passed from daemon to client
 
@@ -194,15 +194,15 @@
 
 	* Fetching Moab output is now possible
 
-2010-01-25  abaaklini
+2010-01-25  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* At the end of flow execution, daemon are signalized
 
-2010-01-25  fabiosazevedo
+2010-01-25  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* It's now possible to get the job's id and output on Moab servers.
 
-2010-01-22  abaaklini
+2010-01-22  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Program parameters are now correctly escaped
 	* Fixed escapings when building command line on GeBRd
@@ -216,7 +216,7 @@
 	* gebr report server errors to the user
 	* more robust protocol checks
 
-2010-01-22  abaaklini
+2010-01-22  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Memory leak problem and export display on MOAB cluster, resolved
 
@@ -226,20 +226,20 @@
 	  after a checkout use "AUTOPOINT=intltoolize autoreconf -i" to
 	  setup.
 
-2010-01-21  abaaklini
+2010-01-21  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Fixed escaping in Moab command construction
 	* GeBRd now supports MOAB cluster
 
-2010-01-21  fabiosazevedo
+2010-01-21  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Added code to get MOAB cluster user credentials.
 
-2010-01-21  abaaklini
+2010-01-21  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Added function to obtain server type
 
-2010-01-20  abaaklini
+2010-01-20  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* All necessary informations to run a flow on Netuno are now passed
 	  to GeBRd

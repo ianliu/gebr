@@ -39,7 +39,7 @@
 	* Fixed bug when trying to run an empty flow (fabiosazevedo) (Fixes
 	  issue 234).
 
-2010-03-05  fabiosazevedo
+2010-03-05  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Added code to display queue information on job control.
 	* Fixed bug (race condition due to job termination) when naming
@@ -53,12 +53,12 @@
 	  - Programs' version query and/or edited through command-line
 	  tools
 
-2010-03-05  abaaklini
+2010-03-05  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* When the built-in option was selected, a default editor (gedit)
 	  overwrite it on program load
 
-2010-03-05  fabiosazevedo
+2010-03-05  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Minor English language correction: 'Immediately'.
 
@@ -71,7 +71,7 @@
 	* better titles for queues at job control
 	* removed debug message
 
-2010-03-04  abaaklini
+2010-03-04  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Option for custom editor implemented at GeBR and some updates at
 	  Debr
@@ -80,7 +80,7 @@
 
 	* '-s' option for GeBR now returns the users menu directory.
 
-2010-03-04  abaaklini
+2010-03-04  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Options for legacy editor implemented on DeBR
 
@@ -93,7 +93,7 @@
 	* Created getter/setter for version attribute in 'program' tag;
 	  Interface done.
 
-2010-03-02  abaaklini
+2010-03-02  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Resolved some comments at issues 201 and 197
 
@@ -102,12 +102,12 @@
 	* - fix queue support to moab
 	  - temporary fix to seg. fault on exit
 
-2010-03-01  fabiosazevedo
+2010-03-01  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Code for choosing job execution order in GeBR. (Fixes issue 199.)
 	  (Fixes issue 212.)
 
-2010-03-01  abaaklini
+2010-03-01  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Signaling required parameter unfiled (Fixes issue 201)
 
@@ -137,7 +137,7 @@
 
 	* GeBR and DeBR properties dialogs now have default responses
 
-2010-02-26  fabiosazevedo
+2010-02-26  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* - added rnq message (rename queue) to client/server protocol
 	  - new status message (requeued) to notify queue renaming
@@ -162,7 +162,7 @@
 	  Update issue 209
 	  Removed unused code
 
-2010-02-24  abaaklini
+2010-02-24  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Update issue 209
 	  Implements the hide of 'kill' button when queued jobs was
@@ -189,7 +189,7 @@
 
 	* Portuguese translation even more updated
 
-2010-02-19  fabiosazevedo
+2010-02-19  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Portuguese translation update.
 
@@ -201,7 +201,7 @@
 	  - fix hotkeys for flags
 	  - focus first parameter for group hotkey activation
 
-2010-02-18  fabiosazevedo
+2010-02-18  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Menu titles are now escaped inside the Flow Edition tab in GeBr.
 
@@ -211,12 +211,12 @@
 	* Fixed the 'Link' button in program edition. Previously, it was
 	  opening the programs help, not URL.
 
-2010-02-18  abaaklini
+2010-02-18  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* When the browser field was empty the webkit are not launched.
 	* When the editor field was empty the ckeditor are not launched
 
-2010-02-18  fabiosazevedo
+2010-02-18  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Corrected text: from 'Any flow selected' to 'No flow selected'.
 
@@ -232,7 +232,7 @@
 	* Changed icon for unconfigured programs in GeBR; Program status is
 	  now an enumeration.
 
-2010-02-18  abaaklini
+2010-02-18  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* - check libgebr version
 	  - fix ordering of libgebr and other libs linkage
@@ -301,7 +301,7 @@
 
 	* Added suport to git version in about.
 
-2010-02-05  abaaklini
+2010-02-05  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* do not allow selection of server/queue when no flow is selected
 	* initialize ui_flow_edition->queue_combobox
@@ -349,7 +349,7 @@
 	* Fixed combobox renderers bug
 	* Fixed a segfault when client disconnect; Added queue 'Immediatly'
 
-2010-01-27  fabiosazevedo
+2010-01-27  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Changed listbox label 'Queues' to 'Queue'.
 
@@ -358,7 +358,7 @@
 	* Reverting the buggy changes
 	* Interface for queues initiated
 
-2010-01-27  fabiosazevedo
+2010-01-27  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Changed label 'Classes' to 'Queue' in Moab Execute dialog.
 
@@ -385,7 +385,7 @@
 	* Queues from Moab and/or Gebr are now stored in ListStore's, in
 	  GeBR
 
-2010-01-26  abaaklini
+2010-01-26  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Receiving and displaying moab_jid and queue from daemon
 
@@ -394,7 +394,7 @@
 	* Fixing last commit
 	* Fetching Moab output is now possible
 
-2010-01-25  fabiosazevedo
+2010-01-25  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Added pointer tests when executing flows on non-connected
 	  servers.
@@ -417,7 +417,7 @@
 	* gebr report server errors to the user
 	* more robust protocol checks
 
-2010-01-22  abaaklini
+2010-01-22  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Memory leak problem and export display on MOAB cluster, resolved
 
@@ -427,7 +427,7 @@
 	  after a checkout use "AUTOPOINT=intltoolize autoreconf -i" to
 	  setup.
 
-2010-01-21  abaaklini
+2010-01-21  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Fixed escaping in Moab command construction
 
@@ -435,7 +435,7 @@
 
 	* changed fake glib filenames in libgebr_comm
 
-2010-01-20  abaaklini
+2010-01-20  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Files ui_netuno .c and .h added
 	* Preparation for the new "RUN" message to support Netuno
@@ -446,7 +446,7 @@
 
 	* Removed 'delete' option for 'New' row in Server/IO dialog
 
-2010-01-18  fabiosazevedo
+2010-01-18  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Fix relative paths when exporting flows. (Fixes issue 111)
 
@@ -454,7 +454,7 @@
 
 	* Changed default folder for Gebr menus (Fixes issue 121)
 
-2010-01-15  abaaklini
+2010-01-15  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Segmentation Fault on Server/IO dialog, resolved (Fixes issue
 	  122)
@@ -463,7 +463,7 @@
 
 	* Changed .gebr/ to .gebr/menus
 
-2010-01-15  fabiosazevedo
+2010-01-15  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Added .gebr folder to search path
 
@@ -472,11 +472,11 @@
 	* make colums resizable in server/io dialog
 	* removed menu_get_path
 
-2010-01-14  abaaklini
+2010-01-14  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* added flow 0.3.2 with no reference to menus in programs
 
-2010-01-14  fabiosazevedo
+2010-01-14  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* New menus index format to enable absolute paths
 
@@ -500,11 +500,11 @@
 	* apply coding style police
 	  (http://code.google.com/p/gebr/wiki/CodingStyle)
 
-2010-01-08  fabiosazevedo
+2010-01-08  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* (Fixes issue 94)
 
-2010-01-08  abaaklini
+2010-01-08  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Line paths added to FileChooser on Server IO Dialog (Fixes issue
 	  94)

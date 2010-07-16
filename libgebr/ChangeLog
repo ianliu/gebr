@@ -77,7 +77,7 @@
 
 	* GeBR and DeBR properties dialogs now have default responses
 
-2010-02-26  fabiosazevedo
+2010-02-26  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* - added rnq message (rename queue) to client/server protocol
 	  - new status message (requeued) to notify queue renaming
@@ -137,7 +137,7 @@
 	* - Portuguese translation update
 	  - Authors update in about dialog
 
-2010-02-19  fabiosazevedo
+2010-02-19  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Portuguese translation update.
 
@@ -172,7 +172,7 @@
 	* Changed icon for unconfigured programs in GeBR; Program status is
 	  now an enumeration.
 
-2010-02-18  abaaklini
+2010-02-18  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* - check libgebr version
 	  - fix ordering of libgebr and other libs linkage
@@ -188,7 +188,7 @@
 	* selection behaviour changes
 	* removed gebr_gui_gtk_tree_view_select_sibling
 
-2010-02-12  fabiosazevedo
+2010-02-12  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* commit for data interchange
 
@@ -264,7 +264,7 @@
 	* Removing missing alerts.
 	* Removed style tags from help.
 
-2010-02-05  abaaklini
+2010-02-05  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* check for empty help on edition
 
@@ -284,7 +284,7 @@
 
 	* fix gebr_gui_help_show to use title
 
-2010-02-05  fabiosazevedo
+2010-02-05  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Added code to escape invalid HTML tags and characters in menu
 	  helps. (Fixes issue 125.)
@@ -393,7 +393,7 @@
 
 	* better connected/disconnected server states handling
 
-2010-01-22  abaaklini
+2010-01-22  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* fixed blocking option in gebrcommlistensocket
 
@@ -416,23 +416,23 @@
 	  after a checkout use "AUTOPOINT=intltoolize autoreconf -i" to
 	  setup.
 
-2010-01-21  abaaklini
+2010-01-21  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Fixed escaping in Moab command construction
 
-2010-01-21  fabiosazevedo
+2010-01-21  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Added code to get MOAB cluster user credentials.
 
-2010-01-21  abaaklini
+2010-01-21  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Added enuns to describe the type and location of server
 
-2010-01-21  fabiosazevedo
+2010-01-21  Fabio de Souza Azevedo <fabioaz@gebrproject.com>
 
 	* Added enum GebrCommServerType.
 
-2010-01-20  abaaklini
+2010-01-20  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* All necessary informations to run a flow on Netuno are now passed
 	  to GeBRd
@@ -441,7 +441,7 @@
 
 	* changed fake glib filenames in libgebr_comm
 
-2010-01-20  abaaklini
+2010-01-20  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* Preparation for the new "RUN" message to support Netuno
 	* Netuno execution interface to obtain account and class
@@ -456,7 +456,7 @@
 	* - protection against problems at load/save
 	  - modified date updated whenever a menu is saved
 
-2010-01-14  abaaklini
+2010-01-14  Alexandre Baaklini Gomes Coelho <abaaklini@gebrproject.com>
 
 	* fixed compilation
 	* added flow 0.3.2 with no reference to menus in programs
