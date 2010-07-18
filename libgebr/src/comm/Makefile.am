@@ -16,7 +16,7 @@
 include $(top_srcdir)/Makefile.decl
 
 if ENABLE_TESTS
-TESTSDIR=tests
+TESTDIR=tests
 endif
 SUBDIRS = comm socketchannel ${TESTDIR}
 
