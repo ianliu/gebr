@@ -54,7 +54,7 @@ noinst_HEADERS = \
 	validate.h \
 	$(NULL)
 
-EXTRA_DIST = $(noinst_HEADERS)
+EXTRA_DIST = $(noinst_HEADERS) $(debrglade_DATA)
 
 INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" -DGLADE_DIR=\""$(debrgladedir)"\"
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
