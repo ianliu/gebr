@@ -4,8 +4,8 @@ void gebrd_mpi_config_free(GebrdMpiConfig * self)
 {
 	g_string_free(self->binpath, TRUE);
 	g_string_free(self->libpath, TRUE);
-	g_string_free(self->init_script, TRUE);
-	g_string_free(self->end_script, TRUE);
+	g_string_free(self->init_cmd, TRUE);
+	g_string_free(self->end_cmd, TRUE);
 	g_free(self);
 }
 

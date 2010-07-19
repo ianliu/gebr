@@ -190,8 +190,8 @@ void gebrd_config_load(void)
 		mpi_config->libpath = gebr_g_key_file_load_string_key(key_file, groups[i], "libpath", "");
 		mpi_config->binpath = gebr_g_key_file_load_string_key(key_file, groups[i], "binpath", "");
 		mpi_config->host = gebr_g_key_file_load_string_key(key_file, groups[i], "host", "");
-		mpi_config->init_script = gebr_g_key_file_load_string_key(key_file, groups[i], "init_script", "");
-		mpi_config->end_script = gebr_g_key_file_load_string_key(key_file, groups[i], "end_script", "");
+		mpi_config->init_cmd = gebr_g_key_file_load_string_key(key_file, groups[i], "init_command", "");
+		mpi_config->end_cmd = gebr_g_key_file_load_string_key(key_file, groups[i], "end_command", "");
 
 		gebrd.mpi_flavors = g_list_prepend(gebrd.mpi_flavors, mpi_config);
 	}
