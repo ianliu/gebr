@@ -28,8 +28,8 @@ typedef struct {
 	GString * libpath;
 	GString * binpath;
 	GString * host;
-	GString * init_script;
-	GString * end_script;
+	GString * init_cmd;
+	GString * end_cmd;
 } GebrdMpiConfig;
 
 void gebrd_mpi_config_free(GebrdMpiConfig * self);
