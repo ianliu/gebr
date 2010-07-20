@@ -114,5 +114,9 @@ void gebr_comm_socket_write(GebrCommSocket *, GByteArray *);
 
 void gebr_comm_socket_write_string(GebrCommSocket *, GString *);
 
+void gebr_comm_socket_write_immediately(GebrCommSocket *, GByteArray *);
+
+void gebr_comm_socket_write_string_immediately(GebrCommSocket *, GString *);
+
 G_END_DECLS
 #endif				//__GEBR_COMM_SOCKET_H

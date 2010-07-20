@@ -261,6 +261,23 @@ void gebr_comm_protocol_send_data(struct gebr_comm_protocol *protocol, GebrCommS
 	g_string_free(message, TRUE);
 }
 
+void gebr_comm_protocol_send_data_immediately(struct gebr_comm_protocol *protocol, GebrCommStreamSocket * stream_socket,
+				  struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...)
+{
+	va_list ap;
+	GString * message;
+
+	va_start(ap, n_params);
+	message = gebr_comm_protocol_build_messagev(gebr_comm_message_def, n_params, ap);
+
+	/* does this message need return? */
+	protocol->waiting_ret_hash = (gebr_comm_message_def.returns == TRUE) ? gebr_comm_message_def.hash : 0;
+	/* send it */
+	gebr_comm_socket_write_string_immediately(GEBR_COMM_SOCKET(stream_socket), message);
+
+	g_string_free(message, TRUE);
+}
+
 GList *gebr_comm_protocol_split_new(GString * arguments, guint parts)
 {
 	gchar *iarg;

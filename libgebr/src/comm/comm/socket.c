@@ -138,8 +138,7 @@ void __gebr_comm_socket_write_queue(GebrCommSocket * socket)
 		_gebr_comm_socket_enable_write_watch(socket);
 
 		written_bytes = send(_gebr_comm_socket_get_fd(socket), socket->queue_write_bytes->data,
-				     socket->queue_write_bytes->len > 64024 ? 64024 : socket->queue_write_bytes->len, 0);
-		//g_return_if_fail(written_bytes != -1);
+				     socket->queue_write_bytes->len > 4096 ? 4096 : socket->queue_write_bytes->len, 0);
 
 		if (written_bytes != -1)
 			g_byte_array_remove_range(socket->queue_write_bytes, 0, written_bytes);
@@ -421,8 +420,15 @@ void gebr_comm_socket_write(GebrCommSocket * socket, GByteArray * byte_array)
 	g_return_if_fail(GEBR_COMM_IS_SOCKET(socket));
 
 	g_byte_array_append(socket->queue_write_bytes, byte_array->data, byte_array->len);
-//      __gebr_comm_socket_write_queue(socket);
 	_gebr_comm_socket_enable_write_watch(socket);
+}
+
+void gebr_comm_socket_write_immediately(GebrCommSocket * socket, GByteArray * byte_array)
+{
+	g_return_if_fail(GEBR_COMM_IS_SOCKET(socket));
+
+	g_byte_array_append(socket->queue_write_bytes, byte_array->data, byte_array->len);
+	__gebr_comm_socket_write_queue(socket);
 }
 
 void gebr_comm_socket_write_string(GebrCommSocket * socket, GString * string)
@@ -435,4 +441,16 @@ void gebr_comm_socket_write_string(GebrCommSocket * socket, GString * string)
 	byte_array.len = string->len;
 
 	gebr_comm_socket_write(socket, &byte_array);
+}
+
+void gebr_comm_socket_write_string_immediately(GebrCommSocket * socket, GString * string)
+{
+	g_return_if_fail(GEBR_COMM_IS_SOCKET(socket));
+
+	GByteArray byte_array;
+
+	byte_array.data = (guint8 *)string->str;
+	byte_array.len = string->len;
+
+	gebr_comm_socket_write_immediately(socket, &byte_array);
 }

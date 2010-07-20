@@ -101,6 +101,9 @@ GString * gebr_comm_protocol_build_message(struct gebr_comm_message_def msg_def,
 void gebr_comm_protocol_send_data(struct gebr_comm_protocol *protocol, GebrCommStreamSocket * stream_socket,
 				  struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...);
 
+void gebr_comm_protocol_send_data_immediately(struct gebr_comm_protocol *protocol, GebrCommStreamSocket * stream_socket,
+				  struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...);
+
 GList *gebr_comm_protocol_split_new(GString * arguments, guint parts);
 
 void gebr_comm_protocol_split_free(GList * split);
