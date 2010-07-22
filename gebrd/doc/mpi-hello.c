@@ -21,11 +21,21 @@
  *
  *   $ mpicc mpi-hello.c -o mpi-hello
  *
+ * You can test the program by running
+ *
+ *   $ mpirun -np 5 mpi-hello
  */
 
+/* Included for `printf' */
 #include <stdio.h>
-#include <stdlib.h>
+
+/* Included for `sleep' and `gethostname' */
 #include <unistd.h>
+
+/* Includes the OpenMPI header. Make sure the folder
+ * structure is like written bellow. In some cases,
+ * it might be #include <mpi.h>. */
+//#include <mpi.h>
 #include <mpi/mpi.h>
 
 int main(int argc, char *argv[])
@@ -39,6 +49,7 @@ int main(int argc, char *argv[])
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
+	/* Waits `rank' seconds until printing the greetings message. */
 	sleep(rank);
 	gethostname(hostname, sizeof(hostname));
 	printf("Hello world from process %d of %d at %s\n",
