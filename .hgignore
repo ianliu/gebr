@@ -68,6 +68,7 @@ libgebr/src/comm/comm/json-glib/stamp-json-marshal.h
 libgebr/src/comm/gebr-comm.pc
 libgebr/src/comm/socketchannel/gebr-comm-socketchannel
 libgebr/src/comm/tests/test-protocol
+libgebr/src/comm/tests/test-socket
 libgebr/src/defines.h
 libgebr/src/gebr.pc
 libgebr/src/geoxml/gebr-geoxml.pc

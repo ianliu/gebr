@@ -15,7 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
+DISTCHECK_CONFIGURE_FLAGS=--enable-gtk-doc
+
 ACLOCAL_AMFLAGS=-I m4
 
 SUBDIRS = src packages po docs
 
+distcheck-hook: all

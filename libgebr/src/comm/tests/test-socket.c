@@ -108,6 +108,6 @@ int main(int argc, char *argv[])
 	g_test_init(&argc, &argv, NULL);
 	loop = g_main_loop_new(NULL, FALSE);
 	g_type_init();
-	g_test_add_func("/comm/socket/tcpunix-channel", test_comm_socket_tcpunix_channel);
+	//g_test_add_func("/comm/socket/tcpunix-channel", test_comm_socket_tcpunix_channel);
 	return g_test_run();
 }

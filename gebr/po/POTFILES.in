@@ -1,4 +1,6 @@
 # List of source files containing translatable strings.
+src/gebr-client/main.c
+src/gebr-client/server.c
 src/gebr/callbacks.c
 src/gebr/client.c
 src/gebr/cmdline.c
@@ -13,8 +15,8 @@ src/gebr/menu.c
 src/gebr/project.c
 src/gebr/server.c
 src/gebr/ui_document.c
-src/gebr/ui_flow_browse.c
 src/gebr/ui_flow.c
+src/gebr/ui_flow_browse.c
 src/gebr/ui_flow_edition.c
 src/gebr/ui_help.c
 src/gebr/ui_job_control.c

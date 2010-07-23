@@ -15,4 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
+DISTCHECK_CONFIGURE_FLAGS=--enable-gtk-doc
+
 SUBDIRS = libgebr gebrd gebr debr
+
+distcheck-hook: all

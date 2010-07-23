@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-EXTRA_DIST =
+EXTRA_DIST = \
 	rpm/gebrd.fedora.spec \
 	rpm/gebrd.opensuse.spec \
 	rpm/gebrd.mandriva.spec

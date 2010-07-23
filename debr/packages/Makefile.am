@@ -17,7 +17,7 @@ include $(top_srcdir)/Makefile.decl
 
 SUBDIRS =
 
-EXTRA_DIST =
+EXTRA_DIST = \
 	rpm/debr.fedora.spec \
 	rpm/debr.opensuse.spec \
 	rpm/debr.mandriva.spec

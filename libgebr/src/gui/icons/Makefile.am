@@ -20,11 +20,11 @@ SUBDIRS = gebr-theme
 libgebr_gui_icons = $(DESTDIR)/$(datadir)/libgebr/icons
 
 install-data-local:
-	find 16x16 \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${libgebr_gui_icons}/{} \;
-	find 16x16 \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${libgebr_gui_icons}/{} \;
-	find 22x22 \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${libgebr_gui_icons}/{} \;
-	find 22x22 \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${libgebr_gui_icons}/{} \;
-	find 48x48 \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${libgebr_gui_icons}/{} \;
-	find 48x48 \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${libgebr_gui_icons}/{} \;
+	find $(srcdir)/16x16 \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${libgebr_gui_icons}/{} \;
+	find $(srcdir)/16x16 \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${libgebr_gui_icons}/{} \;
+	find $(srcdir)/22x22 \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${libgebr_gui_icons}/{} \;
+	find $(srcdir)/22x22 \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${libgebr_gui_icons}/{} \;
+	find $(srcdir)/48x48 \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${libgebr_gui_icons}/{} \;
+	find $(srcdir)/48x48 \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${libgebr_gui_icons}/{} \;
 
 EXTRA_DIST = 16x16 22x22 48x48

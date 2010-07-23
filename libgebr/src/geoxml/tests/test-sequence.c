@@ -15,6 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdio.h>
 #include <gdome.h>
 
 #include "../geoxml.h"
@@ -102,7 +103,8 @@ int main(int argc, char *argv[])
 
 	/* initialization */
 	g_test_init(&argc, &argv, NULL);
-	gebr_geoxml_document_load(&document, "test.mnu", TRUE, NULL);
+	fprintf(stderr, "LOADING: %s\n", TEST_DIR"/test.mnu");
+	gebr_geoxml_document_load(&document, TEST_DIR"/test.mnu", TRUE, NULL);
 	test_menu = GEBR_GEOXML_FLOW(document);
 	g_assert(test_menu != NULL);
 	first = g_string_new("");

@@ -26,8 +26,8 @@ userdoc: userdoc-dir
 	db2html gebr-pt.docbook -o userdoc/pt || true
 
 install-data-local: userdoc
-	find images \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${gebrdocdir}/{} \;
-	find images \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${gebrdocdir}/{} \;
+	find $(srcdir)/images \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${gebrdocdir}/{} \;
+	find $(srcdir)/images \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${gebrdocdir}/{} \;
 	cd userdoc && find . \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${gebrdocdir}/{} \;
 	cd userdoc && find . \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${gebrdocdir}/{} \;
 

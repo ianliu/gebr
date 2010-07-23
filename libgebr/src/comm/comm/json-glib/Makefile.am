@@ -25,7 +25,7 @@ EXTRA_DIST = \
 	json-enum-types.h.in \
 	json-enum-types.c.in
 
-INCLUDES = -I ..
+INCLUDES = -I$(srcdir)/..
 AM_CFLAGS = $(GOBJECT_CFLAGS)
 noinst_LTLIBRARIES = libjson-glib-1.0.la
 libjson_glib_1_0_la_LDFLAGS = $(GOBJECT_LIBS)
@@ -59,7 +59,7 @@ json-enum-types.h: stamp-json-enum-types.h
 	@true
 stamp-json-enum-types.h: $(source_h) Makefile
 	glib-mkenums \
-	  	--template json-enum-types.h.in \
+	  	--template $(srcdir)/json-enum-types.h.in \
 	  $(source_h) > xgen-ceth \
 	&& (cmp xgen-ceth json-enum-types.h || cp xgen-ceth json-enum-types.h) \
 	&& rm -f xgen-ceth \
@@ -67,7 +67,7 @@ stamp-json-enum-types.h: $(source_h) Makefile
 
 json-enum-types.c: json-enum-types.h
 	glib-mkenums \
-	  	--template json-enum-types.c.in \
+	  	--template $(srcdir)/json-enum-types.c.in \
 	  $(source_h) > xgen-cetc \
 	&& cp xgen-cetc json-enum-types.c \
 	&& rm -f xgen-cetc
