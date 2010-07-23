@@ -86,7 +86,7 @@ static void help_edit_on_edited(GebrGeoXmlDocument * document, const gchar * hel
 
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 {
-	if (gebr.config.editor->len == 0) {
+	if (gebr.config.native_editor || gebr.config.editor->len == 0) {
 		GString * html;
 		html = g_string_new(gebr_geoxml_document_get_help(document));
 		gebr_gui_help_edit(document, html, (GebrGuiHelpEdited)help_edit_on_edited, NULL, FALSE);

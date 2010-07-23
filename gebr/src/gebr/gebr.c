@@ -237,6 +237,8 @@ gint gebr_config_load()
 			gebr_path_resolve_home_variable(gebr.config.data);
 		gebr.config.editor =
 		    gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "");
+		gebr.config.native_editor =
+		    gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "native_editor", TRUE);
 		gebr.config.width = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "width", 700);
 		gebr.config.height = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "height", 400);
 		gebr.config.log_expander_state = gebr_g_key_file_load_boolean_key(gebr.config.key_file,
@@ -244,6 +246,7 @@ gint gebr_config_load()
 										  FALSE);
 		gebr.config.log_load =
 		    gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "log_load", FALSE);
+
 		gebr.config.job_log_word_wrap =
 		    gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "job_log_word_wrap", FALSE);
 		gebr.config.job_log_auto_scroll =
@@ -335,6 +338,7 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "native_editor", gebr.config.native_editor);
 
 	GString *home_variable;
 	home_variable = g_string_new(NULL);
@@ -487,6 +491,7 @@ static gboolean gebr_config_load_from_gengetopt(void)
 	gebr.config.height = ggopt.height_arg;
 	gebr.config.log_expander_state = (gboolean) ggopt.logexpand_given;
 	gebr.config.log_load = FALSE;
+	gebr.config.native_editor = FALSE;
 	gebr.config.current_notebook = 0;
 	gebr.config.project_line_string = g_string_new(NULL);
 	gebr.config.editor = g_string_new(NULL);
@@ -496,6 +501,7 @@ static gboolean gebr_config_load_from_gengetopt(void)
 	g_key_file_set_string(gebr.config.key_file, "general", "usermenus", gebr.config.usermenus->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "data", gebr.config.data->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "native_editor", gebr.config.native_editor);
 	g_key_file_set_integer(gebr.config.key_file, "general", "width", gebr.config.width);
 	g_key_file_set_integer(gebr.config.key_file, "general", "height", gebr.config.height);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "log_expander_state", gebr.config.log_expander_state);
