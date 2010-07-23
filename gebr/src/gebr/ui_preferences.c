@@ -194,24 +194,26 @@ static void preferences_actions(GtkDialog * dialog, gint arg1, struct ui_prefere
 {
 	switch (arg1) {
 	case GTK_RESPONSE_OK:{
-			gchar *tmp;
+		gchar *tmp;
 
-			tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(ui_preferences->usermenus));
+		tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(ui_preferences->usermenus));
 
-			g_string_assign(gebr.config.username, gtk_entry_get_text(GTK_ENTRY(ui_preferences->username)));
-			g_string_assign(gebr.config.email, gtk_entry_get_text(GTK_ENTRY(ui_preferences->email)));
+		g_string_assign(gebr.config.username, gtk_entry_get_text(GTK_ENTRY(ui_preferences->username)));
+		g_string_assign(gebr.config.email, gtk_entry_get_text(GTK_ENTRY(ui_preferences->email)));
+		g_string_assign(gebr.config.editor, gtk_entry_get_text(GTK_ENTRY(ui_preferences->editor)));
+		gebr.config.native_editor = !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui_preferences->user_radio_button));
+
+		gebr.config.log_load = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui_preferences->log_load));
+
+		if (g_strcmp0(gebr.config.usermenus->str, tmp) != 0){
 			g_string_assign(gebr.config.usermenus, tmp);
-			g_string_assign(gebr.config.editor, gtk_entry_get_text(GTK_ENTRY(ui_preferences->editor)));
-			gebr.config.native_editor = !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui_preferences->user_radio_button));
-
-			gebr.config.log_load = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui_preferences->log_load));
-
-			gebr_config_save(TRUE);
 			gebr_config_apply();
+		}
+		gebr_config_save(TRUE);
 
-			g_free(tmp);
+		g_free(tmp);
 
-			break;
+		break;
 		}
 	case GTK_RESPONSE_CANCEL:
 	default:

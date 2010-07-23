@@ -319,7 +319,6 @@ void gebr_config_apply(void)
 {
 	menu_list_create_index();
 	menu_list_populate();
-	project_list_populate();
 }
 
 void gebr_config_save(gboolean verbose)
