@@ -31,6 +31,8 @@
 #include "server.h"
 #include "client.h"
 
+#define GEBRD_CONF_FILE "/etc/gebr/gebrd.conf"
+
 struct gebrd gebrd;
 
 void gebrd_init(void)
@@ -159,24 +161,46 @@ void gebrd_config_load(void)
 	gchar ** groups;
 	gchar * config_path;
 	GKeyFile * key_file;
-	GError * error;
+	GError * err1, * err2;
 
-	error = NULL;
+	err1 = err2 = NULL;
 	gebrd.mpi_flavors = NULL;
 	config_path = g_strdup_printf("%s/.gebr/gebrd/gebrd.conf", getenv("HOME"));
 	key_file = g_key_file_new();
 
-	g_key_file_load_from_file(key_file, config_path, G_KEY_FILE_NONE, &error);
+	/*
+	 * Prints the error message of @error.
+	 */
+	gboolean key_file_exception(GError ** error, const gchar * path) {
+		if (*error == NULL)
+			return FALSE;
 
-	if (error != NULL) {
-		/* Don't show warning message when the config file does not exists */
-		if (error->domain != G_FILE_ERROR || error->code != G_FILE_ERROR_NOENT)
-			g_warning("Error reading %s: %s\n", config_path, error->message);
+		if ((*error)->domain == G_FILE_ERROR && (*error)->code == G_FILE_ERROR_NOENT)
+			return FALSE;
 
-		g_error_free(error);
-		goto out;
+		g_warning("Error reading %s: %s\n", path, (*error)->message);
+		g_error_free(*error);
+		*error = NULL;
+
+		return TRUE;
 	}
 
+	/*
+	 * Loads both configuration files in the same GKeyFile structure.
+	 * If both fail to load, prints an error message and exit.
+	 */
+	g_key_file_load_from_file(key_file, config_path, G_KEY_FILE_NONE, &err1);
+	g_key_file_load_from_file(key_file, GEBRD_CONF_FILE, G_KEY_FILE_NONE, &err2);
+
+	if (key_file_exception(&err1, config_path)
+	    && key_file_exception(&err2, GEBRD_CONF_FILE))
+		goto out;
+
+
+	/*
+	 * Iterate over all groups starting with `mpi-', populating the
+	 * GList gebrd.mpi_flavors.
+	 */
 	groups = g_key_file_get_groups(key_file, NULL);
 
 	for (int i = 0; groups[i]; i++) {
