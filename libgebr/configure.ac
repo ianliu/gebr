@@ -84,14 +84,18 @@ PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.12.0],,AC_MSG_ERROR([Could not find glib 
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GLIB_CFLAGS)
 dnl check for JSON-GLIB
-PKG_CHECK_MODULES(JSONGLIB, json-glib-1.0,,
-	[JSONGLIB_SUBDIR=json-glib
-	JSONGLIB_LDADD=json-glib/libjson-glib-1.0.la
-	AC_MSG_WARN([Could not find json-glib, building builtin])])
+
+has_jsonglib = yes
+PKG_CHECK_MODULES(JSONGLIB, json-glib-1.0, , [has_jsonglib=no])
+if test "x${has_jsonglib}" = "xno"; then
+	JSONGLIB_LIBS='${top_builddir}/src/comm/comm/json-glib/libjson-glib-1.0.la'
+	JSONGLIB_CFLAGS='-I${top_srcdir}/src/comm/comm/json-glib/'
+	JSONGLIB_SUBDIR=json-glib
+	AC_SUBST(JSONGLIB_SUBDIR)
+fi
 AC_SUBST(JSONGLIB_LIBS)
 AC_SUBST(JSONGLIB_CFLAGS)
-AC_SUBST(JSONGLIB_SUBDIR)
-AC_SUBST(JSONGLIB_LDADD)
+
 dnl check for GOBJECT >= 2.8 (which is thread safe)
 PKG_CHECK_MODULES(GOBJECT, [gobject-2.0 >= 2.8],,AC_MSG_ERROR([Could not find gobject >= 2.8]))
 AC_SUBST(GOBJECT_LIBS)
@@ -131,6 +135,8 @@ src/Makefile
 src/comm/Makefile src/comm/gebr-comm.pc
 src/comm/comm/Makefile
 src/comm/comm/json-glib/Makefile
+src/comm/comm/json-glib/json-enum-types.c
+src/comm/comm/json-glib/json-enum-types.h
 src/comm/socketchannel/Makefile
 src/comm/tests/Makefile
 src/defines.h
@@ -144,16 +150,16 @@ src/geoxml/geoxml/defines.h
 src/geoxml/menu-diff/Makefile
 src/geoxml/menu-edit/Makefile
 src/geoxml/menu-query/Makefile
+src/geoxml/tests/Makefile
 src/geoxml/upgrade/Makefile
 src/geoxml/validate/Makefile
-src/geoxml/tests/Makefile
 src/gui/Makefile
+src/gui/ckeditor/Makefile
+src/gui/data/Makefile
 src/gui/gebr-gui.pc
 src/gui/gui/Makefile
 src/gui/icons/Makefile
 src/gui/icons/gebr-theme/Makefile
-src/gui/data/Makefile
 src/gui/pixmaps/Makefile
-src/gui/ckeditor/Makefile
 src/gui/tests/Makefile
 ])

@@ -4,10 +4,10 @@ BUILT_SOURCES = json-marshal.h json-marshal.c json-enum-types.h json-enum-types.
 STAMP_FILES = stamp-json-marshal.h stamp-json-enum-types.h
 
 source_h = \
-	json-generator.h \
-	json-gobject.h \
-	json-parser.h \
-	json-types.h
+	$(srcdir)/json-generator.h \
+	$(srcdir)/json-gobject.h \
+	$(srcdir)/json-parser.h \
+	$(srcdir)/json-types.h
 source_h_private = \
 	json-scanner.h
 source_c = \
@@ -71,3 +71,5 @@ json-enum-types.c: json-enum-types.h
 	  $(source_h) > xgen-cetc \
 	&& cp xgen-cetc json-enum-types.c \
 	&& rm -f xgen-cetc
+
+CLEANFILES = json-marshal.c json-marshal.h stamp-json-marshal.h stamp-json-enum-types.h

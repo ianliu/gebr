@@ -97,9 +97,11 @@ expand_content_files=
 # e.g. GTKDOC_LIBS=$(top_builddir)/gtk/$(gtktargetlib)
 GTKDOC_CFLAGS= -I$(top_srcdir)/src/comm/comm			\
 	       $(GLIB_CFLAGS)					\
+	       $(JSONGLIB_CFLAGS)				\
 	       $(GOBJECT_CFLAGS)
 GTKDOC_LIBS= $(top_builddir)/src/comm/comm/libgebr_comm.la	\
 	     $(GLIB_LIBS)					\
+	     $(JSONGLIB_LIBS)					\
 	     $(GOBJECT_LIBS)
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.

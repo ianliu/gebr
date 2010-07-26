@@ -2,8 +2,8 @@
 /* Generated data (by glib-mkenums) */
 
 #include "json-enum-types.h"
-/* enumerations from "json-parser.h" */
-#include "json-parser.h"
+/* enumerations from "./json-parser.h" */
+#include "./json-parser.h"
 GType
 json_parser_error_get_type(void) {
   static GType etype = 0;
@@ -19,8 +19,8 @@ json_parser_error_get_type(void) {
   return etype;
 }
 
-/* enumerations from "json-types.h" */
-#include "json-types.h"
+/* enumerations from "./json-types.h" */
+#include "./json-types.h"
 GType
 json_node_type_get_type(void) {
   static GType etype = 0;

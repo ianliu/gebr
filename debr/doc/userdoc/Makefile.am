@@ -22,3 +22,5 @@ userdoc:
 
 debrdocdir = $(datadir)/debr/userdoc
 debrdoc_DATA = *.html
+
+CLEANFILES = debr.html

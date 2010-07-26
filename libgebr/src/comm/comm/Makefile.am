@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-SUBDIRS = @JSONGLIB_SUBDIR@
+SUBDIRS = $(JSONGLIB_SUBDIR)
 
 lib_LTLIBRARIES = libgebr_comm.la
 libgebr_comm_la_SOURCES = \
@@ -34,8 +34,8 @@ noinst_HEADERS = \
 	socketaddressprivate.h socketprivate.h streamsocketprivate.h
 EXTRA_DIST = ${noinst_HEADERS}
 
-INCLUDES = -I$(srcdir)/../.. -I$(srcdir)/../../geoxml -I .
+INCLUDES = -I$(srcdir)/../.. -I$(srcdir)/../../geoxml
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(GTHREAD_CFLAGS) $(JSONGLIB_CFLAGS)
 libgebr_comm_la_LIBADD = -lutil ../../libgebr.la ../../geoxml/geoxml/libgebr_geoxml.la \
-	$(INTLLIBS) $(GLIB_LIBS) $(GOBJECT_LIBS) $(GTHREAD_LIBS) $(JSONGLIB_LIBS) @JSONGLIB_LDADD@
+	$(INTLLIBS) $(GLIB_LIBS) $(GOBJECT_LIBS) $(GTHREAD_LIBS) $(JSONGLIB_LIBS)
 libgebr_comm_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@

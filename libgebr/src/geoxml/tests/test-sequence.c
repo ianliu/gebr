@@ -20,9 +20,31 @@
 
 #include "../geoxml.h"
 
-static GebrGeoXmlFlow * test_menu;
-static GString * first;
-static GString * after;
+typedef struct {
+	GebrGeoXmlFlow * flow;
+	GString * before;
+	GString * after;
+} Fixture;
+
+static void
+fixture_setup(Fixture * fix, gconstpointer data)
+{
+	gebr_geoxml_document_load((GebrGeoXmlDocument**)(&fix->flow), TEST_DIR"/test.mnu", TRUE, NULL);
+
+	g_assert(fix->flow != NULL);
+
+	fix->before = g_string_new("");
+	fix->after = g_string_new("");
+}
+
+static void
+fixture_teardown(Fixture * fix, gconstpointer data)
+{
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(fix->flow));
+
+	g_string_free(fix->before, TRUE);
+	g_string_free(fix->after, TRUE);
+}
 
 static void generate_parameter_list(GString * string, GebrGeoXmlProgram * program, gboolean reversed)
 {
@@ -43,26 +65,16 @@ static void generate_parameter_list(GString * string, GebrGeoXmlProgram * progra
 	}
 }
 
-static void generate_parameter_list_first(GebrGeoXmlProgram * program, gboolean reversed)
-{
-	generate_parameter_list(first, program, reversed);
-}
-
-static void generate_parameter_list_after(GebrGeoXmlProgram * program, gboolean reversed)
-{
-	generate_parameter_list(after, program, reversed);
-}
-
 static void
-test_gebr_geoxml_sequence_move_before_with_null(void)
+test_gebr_geoxml_sequence_move_before_with_null(Fixture * fix, gconstpointer data)
 {
 	GebrGeoXmlSequence *program;
 	GebrGeoXmlParameters *parameters;
 	GebrGeoXmlSequence *parameter;
 	gint length;
 
-	gebr_geoxml_flow_get_program(test_menu, &program, 0);
-	generate_parameter_list_first(GEBR_GEOXML_PROGRAM(program), TRUE);
+	gebr_geoxml_flow_get_program(fix->flow, &program, 0);
+	generate_parameter_list(fix->before, GEBR_GEOXML_PROGRAM(program), TRUE);
 
 	parameters = gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program));
 	parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
@@ -70,20 +82,20 @@ test_gebr_geoxml_sequence_move_before_with_null(void)
 	for (gint i = 0; i < length; i++, parameter = gebr_geoxml_parameters_get_first_parameter(parameters))
 		gebr_geoxml_sequence_move_before(parameter, NULL);
 
-	generate_parameter_list_after(GEBR_GEOXML_PROGRAM(program), TRUE);
-	g_assert_cmpstr(first->str, ==, after->str);
+	generate_parameter_list(fix->after, GEBR_GEOXML_PROGRAM(program), TRUE);
+	g_assert_cmpstr(fix->before->str, ==, fix->after->str);
 }
 
 static void
-test_gebr_geoxml_sequence_move_after(void)
+test_gebr_geoxml_sequence_move_after(Fixture * fix, gconstpointer data)
 {
 	GebrGeoXmlSequence *program;
 	GebrGeoXmlParameters *parameters;
 	GebrGeoXmlSequence *parameter;
 	GebrGeoXmlSequence *last_parameter;
 
-	gebr_geoxml_flow_get_program(test_menu, &program, 0);
-	generate_parameter_list_first(GEBR_GEOXML_PROGRAM(program), FALSE);
+	gebr_geoxml_flow_get_program(fix->flow, &program, 0);
+	generate_parameter_list(fix->before, GEBR_GEOXML_PROGRAM(program), FALSE);
 
 	parameters = gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program));
 	parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
@@ -92,31 +104,18 @@ test_gebr_geoxml_sequence_move_after(void)
 	for (; parameter != last_parameter; parameter = gebr_geoxml_parameters_get_first_parameter(parameters))
 		gebr_geoxml_sequence_move_after(parameter, last_parameter);
 
-	generate_parameter_list_after(GEBR_GEOXML_PROGRAM(program), TRUE);
-	g_assert_cmpstr(first->str, ==, after->str);
+	generate_parameter_list(fix->after, GEBR_GEOXML_PROGRAM(program), TRUE);
+	g_assert_cmpstr(fix->before->str, ==, fix->after->str);
 }
 
 int main(int argc, char *argv[])
 {
-	GebrGeoXmlDocument * document;
-	int ret;
-
-	/* initialization */
 	g_test_init(&argc, &argv, NULL);
-	fprintf(stderr, "LOADING: %s\n", TEST_DIR"/test.mnu");
-	gebr_geoxml_document_load(&document, TEST_DIR"/test.mnu", TRUE, NULL);
-	test_menu = GEBR_GEOXML_FLOW(document);
-	g_assert(test_menu != NULL);
-	first = g_string_new("");
-	after = g_string_new("");
 
-	g_test_add_func("/geoxml/sequence/move-before-with-null", test_gebr_geoxml_sequence_move_before_with_null);
-	g_test_add_func("/geoxml/sequence/move-after", test_gebr_geoxml_sequence_move_after);
-	ret = g_test_run();
+	g_test_add("/geoxml/sequence/move-before-with-null", Fixture, NULL, fixture_setup,
+		   test_gebr_geoxml_sequence_move_before_with_null, fixture_teardown);
+	g_test_add("/geoxml/sequence/move-after", Fixture, NULL, fixture_setup,
+		   test_gebr_geoxml_sequence_move_after, fixture_teardown);
 
-	/* frees */
-	g_string_free(first, TRUE);
-	g_string_free(after, TRUE);
-
-	return ret;
+	return g_test_run();
 }
