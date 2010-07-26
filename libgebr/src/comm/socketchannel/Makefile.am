@@ -20,5 +20,5 @@ gebr_comm_socketchannel_SOURCES = socketchannel.c
 
 INCLUDES = -I$(srcdir)/.. \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
-AM_CFLAGS = -Wall $(GDOME2_CFLAGS)
-gebr_comm_socketchannel_LDADD = ../comm/libgebr_comm.la
+AM_CFLAGS = -Wall $(GOBJECT_CFLAGS) $(GLIB_CFLAGS)
+gebr_comm_socketchannel_LDADD = ../comm/libgebr_comm.la $(GOBJECT_LIBS) $(GLIB_LIBS)

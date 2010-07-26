@@ -21,4 +21,4 @@ gebr_geoxml_menu_diff_SOURCES = menu-diff.c
 INCLUDES = -I$(srcdir)/.. -I$(srcdir)/../.. \
 	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
 AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
-gebr_geoxml_menu_diff_LDADD = ../geoxml/libgebr_geoxml.la ../../libgebr.la $(GLIB_CFLAGS)
+gebr_geoxml_menu_diff_LDADD = ../geoxml/libgebr_geoxml.la ../../libgebr.la $(GLIB_LIBS)
