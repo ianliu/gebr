@@ -21,6 +21,7 @@
 #include "about.h"
 #include "pixmaps.h"
 
+#if !GTK_CHECK_VERSION(2,20,0)
 void __dummy__(GtkAboutDialog * about, const gchar * link, gpointer data)
 {
 	// Esta funcao eh vazia pois o GtkLinkButton interno
@@ -28,6 +29,7 @@ void __dummy__(GtkAboutDialog * about, const gchar * link, gpointer data)
 	// eh configurado quando esta funcao eh "instalada"
 	// atravez do gtk_about_dialog_set_url_hook. Veja abaixo.
 }
+#endif
 
 struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * description)
 {
@@ -51,9 +53,11 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
 		NULL
 	};
 
+#if !GTK_CHECK_VERSION(2,20,0)
 	// Instala a funcao que nada faz. Este bug ja foi
 	// corrigido no trunk do Gtk+, eu acredito.
 	gtk_about_dialog_set_url_hook(__dummy__, NULL, NULL);
+#endif
 
 	about.dialog = gtk_about_dialog_new();
 
