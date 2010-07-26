@@ -67,11 +67,18 @@ AC_SUBST(GEBR_GUI_CFLAGS)
 AC_SUBST(GEBR_GUI_LIBS)
 
 AC_OUTPUT([
-packages/rpm/debr.fedora.spec packages/rpm/debr.opensuse.spec packages/rpm/debr.mandriva.spec
-data/help-template.html packages/Makefile 
-Makefile data/Makefile src/Makefile src/defines.h
+Makefile
+data/Makefile
+data/help-template.html
 debr.desktop
+doc/Makefile
+doc/userdoc/Makefile
+packages/Makefile 
+packages/rpm/debr.fedora.spec
+packages/rpm/debr.mandriva.spec
+packages/rpm/debr.opensuse.spec
 po/Makefile.in
-doc/Makefile doc/userdoc/Makefile
+src/Makefile
+src/defines.h
 tests/Makefile
 ])
