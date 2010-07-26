@@ -83,9 +83,9 @@ dnl check for GLIB >= 2.8.0 (needed for g_access)
 PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.12.0],,AC_MSG_ERROR([Could not find glib >= 2.12.0]))
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GLIB_CFLAGS)
-dnl check for JSON-GLIB
 
-has_jsonglib = yes
+dnl check for JSON-GLIB
+has_jsonglib=yes
 PKG_CHECK_MODULES(JSONGLIB, json-glib-1.0, , [has_jsonglib=no])
 if test "x${has_jsonglib}" = "xno"; then
 	JSONGLIB_LIBS='${top_builddir}/src/comm/comm/json-glib/libjson-glib-1.0.la'
