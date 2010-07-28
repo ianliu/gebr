@@ -60,16 +60,16 @@
 	    <!-- begin lst -->
 	    <!-- List of parameters -->
             <ul>
-              <li class="req"><span class="label">text used as label a
-              required parameter</span> detailed description for this
+              <li><span class="reqlabel">text used as label a
+              required parameter</span><br/>Detailed description for this
               parameter.</li>
 
               <li><span class="label">text used as label for an
-              optional parameter</span> detailed description for this
+              optional parameter</span><br/>Detailed description for this
               parameter.</li>
 
               <li><span class="label">text used as label for second
-              optional parameter</span> detailed description for this
+              optional parameter</span><br/>Detailed description for this
               parameter.</li>
             </ul>
 	    <!-- end lst -->

@@ -85,7 +85,6 @@ h1,h2,h3 {padding-top: 6px; color: #553; margin-bottom: 4px;}
 	font: normal 2em sans-serif;
 	padding-bottom: 2px;
 }
-.header .title a:hover {border-color: #F60;}
 .header .title .description {
 	font: normal 1.1em Verdana,sans-serif;
 	padding-top: 6px;
@@ -154,16 +153,11 @@ h1,h2,h3 {padding-top: 6px; color: #553; margin-bottom: 4px;}
 }
 
 /* required parameters */
-.parameters li.req:after {
-        content: " (required)";
-	color: #8c0c0c;
-}
-
 .parameters .reqlabel {
 	font-weight: bold;
 }
 .parameters .reqlabel:after {
-        content: " ]";
+        content: " ] (required)";
 }
 .parameters .reqlabel:before {
         content: "[ ";

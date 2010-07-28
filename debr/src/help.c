@@ -168,7 +168,7 @@ static void help_edit_on_refresh(GString * help, GebrGeoXmlObject * object)
 static void add_program_parameter_item(GString * str, GebrGeoXmlParameter * par)
 {
 	if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(par))) {
-		g_string_append_printf(str, "<li class=\"req\"><span class=\"reqlabel\">%s</span><br/>",
+		g_string_append_printf(str, "<li><span class=\"reqlabel\">%s</span><br/>",
 				       gebr_geoxml_parameter_get_label(par));
 	} else {
 		g_string_append_printf(str, "<li><span class=\"label\">%s</span><br/>"
