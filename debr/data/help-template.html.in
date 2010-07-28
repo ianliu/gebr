@@ -42,8 +42,8 @@
           <h2>Introduction</h2>
 
           <p>A short one or two paragraphs describing the purpose
-          of the program or flow. In case of flow, try to comment
-          the flow purpose but not the internals of each program.
+          of the program or menu. In case of menu, try to comment
+          the its purpose but not the internals of each program.
           This should be detailed inside each program's help.</p>
 
 	  <!-- begin par -->
@@ -52,33 +52,25 @@
             <a name="par" id="par"></a>
             <h2>Parameters</h2>
 
-            <p>This section should be present only for program
+            <p>This section should be present only for program's
             helps. You should describe each parameter the user must
             specify to properly configure the program. It can be
             suppressed in case the program has not parameters.</p>
 
-	    <p>The HTML code for inclusion of an optional parameter is<br/>
-	      &nbsp;&nbsp;&lt;li&gt;&lt;span class="label"&gt;label&lt;/span&gt;&lt;br/&gt;<br/>
-	      &nbsp;&nbsp;description&lt;/li&gt;</p>
-	      
-	    <p>The HTML code for inclusion of a required parameter is<br/>
-	      &nbsp;&nbsp;&lt;li class="req"&gt;&lt;span class="reqlabel"&gt;label&lt;/span&gt;&lt;br/&gt;<br/>
-	      &nbsp;&nbsp;description&lt;/li&gt;</p>
-
-	    <p>The HTML code for inclusion of a group parameter is<br/>
-	      &nbsp;&nbsp;&lt;li class="group"&gt;&lt;span class="grouplabel"&gt;label&lt;/span&gt;&lt;br/&gt;<br/>
-	      &nbsp;&nbsp;description&lt;/li&gt;</p>
-	      
 	    <!-- begin lst -->
 	    <!-- List of parameters -->
             <ul>
-              <li><span class="label">text used as label for first
-              parameter</span> detailed description for this
+              <li class="req"><span class="label">text used as label a
+              required parameter</span> detailed description for this
               parameter.</li>
 
-              <li><span class="label">text used as label for
-              second parameter</span> detailed description for
-              this parameter.</li>
+              <li><span class="label">text used as label for an
+              optional parameter</span> detailed description for this
+              parameter.</li>
+
+              <li><span class="label">text used as label for second
+              optional parameter</span> detailed description for this
+              parameter.</li>
             </ul>
 	    <!-- end lst -->
             
@@ -89,13 +81,14 @@
           <h2>Description</h2>
 
           <p>Feel free to describe each detail of the program or
-          flow.</p>
+          menu. However, note that the help of the menu must provide
+	  general information about its purpose only.</p>
 
 	  <a name="notes" id="notes"></a>
           <h2>Notes</h2>
 
-          <p>Any first comment or detailed information might be
-          given here.</p>
+          <p>Any other comment or detailed information might be given
+          here.</p>
 
 	  <a name="ref" id="ref"></a>
           <h2>References</h2>
@@ -153,7 +146,7 @@
 
       <div class="footer">
         <span class="left">G&ecirc;BR @VERSION@ (<!-- begin dtd --><!-- end dtd -->) |
-		<!-- begin ver --><!-- end ver --></span>
+		<!-- begin ver -->Program's version comes here<!-- end ver --></span>
 
         <div class="clearer"></div>
       </div>
