@@ -1,5 +1,4 @@
-# libgebr - GeBR Library
-# Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+# libgebr - GeBR Library # Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -61,11 +60,7 @@ libgebr_guisubinclude_HEADERS = \
 noinst_HEADERS = marshalers.h js.h
 EXTRA_DIST = ${noinst_HEADERS} marshalers.list 
 
-INCLUDES = -I$(srcdir)/../.. -I$(srcdir)/../../geoxml \
-	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" \
-	-DPIXMAPS_DIR=\"$(datadir)/libgebr/pixmaps/\" \
-	-DICONS_DIR=\"$(datadir)/libgebr/icons/\" \
-	-DCKEDITOR_DIR=\"$(datadir)/libgebr/ckeditor/\"
+INCLUDES = -I$(srcdir)/../.. -I$(srcdir)/../../geoxml
 AM_CFLAGS = -Wall -std=gnu99 -fPIC @DEBUG_CFLAGS@ $(GTK_CFLAGS) $(GTHREAD_CFLAGS) $(WEBKIT_CFLAGS)
 libgebr_gui_la_LIBADD = ../../libgebr.la ../../geoxml/geoxml/libgebr_geoxml.la \
 	$(INTLLIBS) $(GTK_LIBS) $(GTHREAD_LIBS) $(WEBKIT_LIBS) 

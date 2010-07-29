@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "../../intl.h"
+#include "../../defines.h"
 
 #include "server.h"
 #include "listensocket.h"
@@ -160,11 +161,7 @@ void gebr_comm_server_connect(struct gebr_comm_server *server)
 		g_signal_connect(process, "ready-read-stdout", G_CALLBACK(local_run_server_read), server);
 		g_signal_connect(process, "finished", G_CALLBACK(local_run_server_finished), server);
 
-#if (!STATIC_MODE)
 		g_string_printf(cmd_line, "bash -c \"bash -l -c 'gebrd >&3' 3>&1 >/dev/null\"");
-#else
-		g_string_printf(cmd_line, "bash -c \"bash -l -c './gebrd >&3' 3>&1 >/dev/null\"");
-#endif
 		gebr_comm_process_start(process, cmd_line);
 	}
 

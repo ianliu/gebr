@@ -18,6 +18,7 @@
 #ifndef __LIBGEBR_H
 #define __LIBGEBR_H
 
+#include "defines.h"
 #include "date.h"
 #include "intl.h"
 #include "log.h"

@@ -146,7 +146,6 @@ src/geoxml/data/Makefile
 src/geoxml/doc/Makefile
 src/geoxml/gebr-geoxml.pc
 src/geoxml/geoxml/Makefile
-src/geoxml/geoxml/defines.h
 src/geoxml/menu-diff/Makefile
 src/geoxml/menu-edit/Makefile
 src/geoxml/menu-query/Makefile

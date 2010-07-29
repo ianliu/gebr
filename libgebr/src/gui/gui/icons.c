@@ -24,6 +24,7 @@
 #include "gtk/gtk.h"
 
 #include "icons.h"
+#include "defines.h"
 
 /*
  * Private functions
@@ -60,7 +61,7 @@ void gebr_gui_setup_icons(void)
 		DIR *dir;
 		struct dirent *size_file;
 
-		g_string_printf(size_path, "%s%s", ICONS_DIR "/", sizes[i]);
+		g_string_printf(size_path, "%s%s", LIBGEBR_ICONS_DIR "/", sizes[i]);
 		if ((dir = opendir(size_path->str)) == NULL)
 			continue;
 
@@ -86,7 +87,13 @@ void gebr_gui_setup_icons(void)
 
 				/* remove ".png" from string */
 				filename = g_string_new(NULL);
-				g_string_printf(filename, "%s/%s", path->str, file->d_name);
+				if (g_path_is_absolute(path->str))
+					g_string_printf(filename, "%s/%s", path->str, file->d_name);
+				else {
+					gchar *cwd = g_get_current_dir();
+					g_string_printf(filename, "%s/%s/%s", cwd, path->str, file->d_name);
+					g_free(cwd);
+				}
 				stock_id = g_strndup(file->d_name, strlen(file->d_name) - 4);
 
 				icon_source = gtk_icon_source_new();
@@ -120,7 +127,7 @@ void gebr_gui_setup_icons(void)
 
 void gebr_gui_setup_theme(void)
 {
-	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), ICONS_DIR);
+	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), LIBGEBR_ICONS_DIR);
 	g_object_set(gtk_settings_get_default(), "gtk-icon-theme-name", "gebr-theme", NULL);
 }
 

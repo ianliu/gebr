@@ -117,7 +117,7 @@ static gchar * start_js = \
 		"var script = document.createElement('script');"
 		"script.type = 'text/javascript';"
 		"script.id = source;"
-		"script.src = 'file://" CKEDITOR_DIR "/' + source + '.js';"
+		"script.src = 'file://" LIBGEBR_CKEDITOR_DIR "/' + source + '.js';"
 		"script.defer = false;"
 		"getHead().appendChild(script);"
 	"}"

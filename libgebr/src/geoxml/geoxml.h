@@ -143,7 +143,6 @@
  */
 
 /* include all geoxml library's headers. */
-#include <geoxml/defines.h>
 #include <geoxml/error.h>
 #include <geoxml/macros.h>
 #include <geoxml/object.h>

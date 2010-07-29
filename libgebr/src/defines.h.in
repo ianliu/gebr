@@ -15,14 +15,29 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __DEFINES_H
-#define __DEFINES_H
+#ifndef __LIBGEBR_DEFINES_H
+#define __LIBGEBR_DEFINES_H
 
-#define STATIC_MODE	@STATIC_MODE@
-#define VERSION         "@VERSION@"
+#include <glib.h>
 
-#define LIBGEBR_STATIC_MODE	@STATIC_MODE@
+G_BEGIN_DECLS
+
+#define DATA_DIR		"@prefix@/share"
+#define	PACKAGE_LOCALE_DIR	DATA_DIR"/locale"
+
+#define LIBGEBR_STATIC_MODE	"@STATIC_MODE@"
 #define LIBGEBR_VERSION         "@VERSION@"
-#define LIBGEBR_DATA_DIR	"@prefix@/share/libgebr"
+#define LIBGEBR_DATA_DIR	DATA_DIR"/libgebr"
+#define LIBGEBR_PIXMAPS_DIR	LIBGEBR_DATA_DIR"/pixmaps"
+#define LIBGEBR_ICONS_DIR	LIBGEBR_DATA_DIR"/icons"
+#define LIBGEBR_CKEDITOR_DIR	LIBGEBR_DATA_DIR"/ckeditor"
 
-#endif //__DEFINES_H
+#define GEBR_GEOXML_FLOW_VERSION		"@FLOW_VERSION@"
+#define GEBR_GEOXML_LINE_VERSION		"@LINE_VERSION@"
+#define GEBR_GEOXML_PROJECT_VERSION		"@PROJECT_VERSION@"
+#define GEBR_GEOXML_DOCUMENT_VERSION		"@DOCUMENT_VERSION@"
+#define GEBR_GEOXML_DTD_DIR			LIBGEBR_DATA_DIR"/geoxml" 
+
+G_END_DECLS
+
+#endif //__LIBGEBR_DEFINES_H

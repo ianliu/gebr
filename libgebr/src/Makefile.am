@@ -26,13 +26,12 @@ libgebr_la_SOURCES = libgebr.c \
 
 libgebrincludedir = $(includedir)/libgebr
 libgebrinclude_HEADERS = libgebr.h \
-	intl.h date.h log.h utils.h validate.h
+	defines.h intl.h date.h log.h utils.h validate.h
 noinst_HEADERS = defines.h
 
 EXTRA_DIST = ${pkgconfig_DATA} $(noinst_HEADERS)
 
-INCLUDES = \
-	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
+INCLUDES = 
 AM_CFLAGS = -Wall -std=gnu99 -fPIC @DEBUG_CFLAGS@ $(GLIB_CFLAGS)
 libgebr_la_LIBADD = -lutil $(INTLLIBS) $(GLIB_LIBS)
 libgebr_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@

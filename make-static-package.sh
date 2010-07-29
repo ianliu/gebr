@@ -18,30 +18,31 @@
 #dir
 GEBR_DIR=`pwd`/gebr-static
 rm -fr $GEBR_DIR
-mkdir $GEBR_DIR
+mkdir -p $GEBR_DIR
 
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$GEBR_DIR/lib/pkgconfig
+export LD_LIBRARY_PATH=$GEBR_DIR/lib
 #compilation flags
 export CFLAGS="-g"
-# export LDFLAGS="-Wl,-rpath ."
+export LDFLAGS="-Wl,-rpath=../lib"
+
+#./autogen.sh
 
 #GeBR libray
 cd libgebr
-aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR --enable-static-mode
-cat src/libgebr/libgebr/geoxml/libgebr/libgebr/geoxml/defines.h.in | sed 's/@prefix@/../' > src/libgebr/libgebr/geoxml/libgebr/libgebr/geoxml/defines.h
+./configure --prefix=$GEBR_DIR --enable-static-mode
+perl -i -pe "s|$GEBR_DIR|..|" src/defines.h
+perl -i -pe "s|$GEBR_DIR|..|" src/geoxml/geoxml/defines.h
+#find -name Makefile | xargs perl -i -pe "s|$GEBR_DIR|..|" 
 # make -j5 clean install
 make -j5 install
 cd ..
 
-#preparation for compiling GÃªBR's programs
-export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$GEBR_DIR/lib/pkgconfig
-export LD_LIBRARY_PATH=$GEBR_DIR/lib
-export LDFLAGS="-Wl,-rpath ../lib"
-
 #GeBR
 mkdir lib gebr/lib
 cd gebr
-aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR --enable-static-mode
-cat src/defines.h.in | sed 's/@prefix@/../' | sed 's/@STATIC_MODE@/1/' > src/defines.h
+./configure --prefix=$GEBR_DIR --enable-static-mode
+perl -i -pe "s|$GEBR_DIR|..|" src/defines.h
 #make -j5 clean install
 make -j5 install
 cd ..
@@ -50,7 +51,7 @@ rmdir lib gebr/lib
 #GeBRD
 mkdir lib gebrd/lib
 cd gebrd
-aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR
+./configure --prefix=$GEBR_DIR
 #make -j5 clean install
 make -j5 install
 cd ..
@@ -59,8 +60,8 @@ rmdir lib gebrd/lib
 #DeBR
 mkdir lib debr/lib
 cd debr
-aclocal;automake;autoconf;./configure --prefix=$GEBR_DIR
-cat src/defines.h.in | sed 's/@prefix@/../' > src/defines.h
+./configure --prefix=$GEBR_DIR
+perl -i -pe "s|$GEBR_DIR|..|" src/defines.h
 #make -j5 clean install
 make -j5 install
 cd ..
