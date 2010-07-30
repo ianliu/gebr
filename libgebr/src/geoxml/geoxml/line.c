@@ -110,9 +110,10 @@ GebrGeoXmlLinePath *gebr_geoxml_line_append_path(GebrGeoXmlLine * line, const gc
 	GebrGeoXmlLinePath *line_path;
 
 	line_path = (GebrGeoXmlLinePath *)
-	    __gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "path",
-					     __gebr_geoxml_get_first_element(gebr_geoxml_document_root_element
-									     (GEBR_GEOXML_DOC(line)), "flow"));
+	    __gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), 
+					     "path",
+					     __gebr_geoxml_get_first_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), 
+									     "flow"));
 	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(line_path), path);
 
 	return line_path;

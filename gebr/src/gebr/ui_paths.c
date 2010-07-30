@@ -42,6 +42,13 @@
  * Private functions.
  */
 
+gboolean path_save(void)
+{
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE);
+	project_line_info_update();
+	return TRUE;
+}
+
 void path_add(GebrGuiValueSequenceEdit * sequence_edit)
 {
 	GebrGuiGtkFileEntry *file_entry;
@@ -54,13 +61,7 @@ void path_add(GebrGuiValueSequenceEdit * sequence_edit)
 
 	gebr_gui_value_sequence_edit_add(sequence_edit,
 					 GEBR_GEOXML_SEQUENCE(gebr_geoxml_line_append_path(gebr.line, path)));
-}
-
-gboolean path_save(void)
-{
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE);
-	project_line_info_update();
-	return TRUE;
+	path_save();
 }
 
 /*
@@ -103,7 +104,7 @@ void path_list_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), path_sequence_edit, TRUE, TRUE, 0);
 
 	g_signal_connect(GTK_OBJECT(path_sequence_edit), "add-request", G_CALLBACK(path_add), NULL);
-	g_signal_connect(GTK_OBJECT(dialog), "delete-event", G_CALLBACK(path_save), NULL);
+	g_signal_connect(GTK_OBJECT(path_sequence_edit), "changed", G_CALLBACK(path_save), NULL);
 
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
