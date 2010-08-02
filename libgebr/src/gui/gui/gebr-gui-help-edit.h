@@ -19,7 +19,7 @@
 #ifndef __GEBR_GUI_HELP_EDIT__
 #define __GEBR_GUI_HELP_EDIT__
 
-#include <gtk/gtkvbox.h>
+#include <gtk/gtk.h>
 
 
 G_BEGIN_DECLS
@@ -45,7 +45,7 @@ struct _GebrGuiHelpEditClass {
 
 	/* Abstract methods */
 	gchar * (*get_content) (GebrGuiHelpEdit * self);
-	void (*set_content) (GebrGuiHelpEdit * self, gchar * content);
+	void (*set_content) (GebrGuiHelpEdit * self, const gchar * content);
 	void (*commit_changes) (GebrGuiHelpEdit * self);
 };
 
@@ -91,6 +91,13 @@ gchar * gebr_gui_help_edit_get_content(GebrGuiHelpEdit * self);
  * @content: The new content for this help edition.
  */
 void gebr_gui_help_edit_set_content(GebrGuiHelpEdit * self, const gchar * content);
+
+/**
+ * gebr_gui_help_edit_get_edit_widget:
+ *
+ * Returns: The #GtkWebKitWebView used to show the help edition.
+ */
+GtkWidget * gebr_gui_help_edit_get_edit_widget(GebrGuiHelpEdit * self);
 
 G_END_DECLS
 

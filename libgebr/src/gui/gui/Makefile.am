@@ -38,6 +38,7 @@ libgebr_gui_la_SOURCES = 	\
 	parameter.c		\
 	gtkdirectorychooser.c	\
 	gebr-gui-save-dialog.c	\
+	gebr-gui-help-edit.c	\
 	js.c
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
@@ -56,7 +57,8 @@ libgebr_guisubinclude_HEADERS = \
 	programedit.h		\
 	parameter.h		\
 	gtkdirectorychooser.h	\
-	gebr-gui-save-dialog.h
+	gebr-gui-save-dialog.h	\
+	gebr-gui-help-edit.h
 
 noinst_HEADERS = marshalers.h js.h
 EXTRA_DIST = ${noinst_HEADERS} marshalers.list 

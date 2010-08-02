@@ -15,9 +15,12 @@
  *   along with this program. If not, see
  *   <http://www.gnu.org/licenses/>.
  */
+
 #include "../../intl.h"
 
-#include "gebr_gui-help-edit-dialog.h"
+#include "gebr-gui-help-edit.h"
+
+#include <glib.h>
 
 enum {
 	PROP_0,
@@ -34,7 +37,7 @@ struct _GebrGuiHelpEditPrivate {
 	GtkWidget * html_viewer;
 };
 
-#define GEBR_GUI_HELP_EDIT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE((o), GebrGuiHelpEdit, GebrGuiHelpEditPrivate))
+#define GEBR_GUI_HELP_EDIT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_GUI_TYPE_HELP_EDIT, GebrGuiHelpEditPrivate))
 
 //==============================================================================
 // PROTOTYPES								       =
@@ -70,7 +73,7 @@ static void gebr_gui_help_edit_class_init(GebrGuiHelpEditClass * klass)
 	/**
 	 * GebrGuiHelpEdit:editing:
 	 */
-	g_object_class_install_property(object_class,
+	g_object_class_install_property(gobject_class,
 					PROP_EDITING,
 					g_param_spec_boolean("editing",
 							     "Editing",
@@ -81,7 +84,7 @@ static void gebr_gui_help_edit_class_init(GebrGuiHelpEditClass * klass)
 	/**
 	 * GebrGuiHelpEdit:saved:
 	 */
-	g_object_class_install_property(object_class,
+	g_object_class_install_property(gobject_class,
 					PROP_SAVED,
 					g_param_spec_boolean("saved",
 							     "Saved",
@@ -89,7 +92,7 @@ static void gebr_gui_help_edit_class_init(GebrGuiHelpEditClass * klass)
 							     FALSE,
 							     G_PARAM_READABLE));
 
-	g_type_class_add_private(klass, sizeof(HelpEditPrivate));
+	g_type_class_add_private(klass, sizeof(GebrGuiHelpEditPrivate));
 }
 
 static void gebr_gui_help_edit_init(GebrGuiHelpEdit * self)
@@ -98,8 +101,8 @@ static void gebr_gui_help_edit_init(GebrGuiHelpEdit * self)
 	GebrGuiHelpEditPrivate * priv;
 
 	priv = GEBR_GUI_HELP_EDIT_GET_PRIVATE(self);
-	priv->edit_widget = gtk_webkit_webview_new();
-	priv->html_viewer = gebr_gui_html_viewer_new();
+	priv->edit_widget = gtk_label_new("EDIT WIDGET"); // gtk_webkit_webview_new();
+	priv->html_viewer = gtk_label_new("HTML VIEWER"); // gebr_gui_html_viewer_new();
 	priv->is_editing = TRUE;
 	priv->is_saved = FALSE;
 
@@ -113,8 +116,6 @@ static void gebr_gui_help_edit_set_property(GObject		*object,
 					    const GValue	*value,
 					    GParamSpec		*pspec)
 {
-	GebrGuiHelpEdit *self = GEBR_GUI_HELP_EDIT(object);
-
 	switch (prop_id) {
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -127,7 +128,6 @@ static void gebr_gui_help_edit_get_property(GObject	*object,
 					    GValue	*value,
 					    GParamSpec	*pspec)
 {
-	GebrGuiHelpEdit *self = GEBR_GUI_HELP_EDIT(object);
 	GebrGuiHelpEditPrivate * priv = GEBR_GUI_HELP_EDIT_GET_PRIVATE(object);
 
 	switch (prop_id) {
@@ -167,7 +167,7 @@ void gebr_gui_help_edit_set_editing(GebrGuiHelpEdit * self, gboolean editing)
 
 	priv->is_editing = editing;
 	content = gebr_gui_help_edit_get_content(self);
-	gebr_gui_html_viewer_show(priv->html_viewer, content);
+	//gebr_gui_html_viewer_show(GEBR_GUI_HTML_VIEWER(priv->html_viewer), content);
 	g_free(content);
 
 	if (editing) {
@@ -192,4 +192,11 @@ gchar * gebr_gui_help_edit_get_content(GebrGuiHelpEdit * self)
 void gebr_gui_help_edit_set_content(GebrGuiHelpEdit * self, const gchar * content)
 {
 	GEBR_GUI_HELP_EDIT_GET_CLASS(self)->set_content(self, content);
+}
+
+GtkWidget * gebr_gui_help_edit_get_edit_widget(GebrGuiHelpEdit * self)
+{
+	GebrGuiHelpEditPrivate * priv;
+	priv = GEBR_GUI_HELP_EDIT_GET_PRIVATE(self);
+	return priv->edit_widget;
 }
