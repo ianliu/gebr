@@ -93,11 +93,11 @@ gchar * gebr_gui_help_edit_get_content(GebrGuiHelpEdit * self);
 void gebr_gui_help_edit_set_content(GebrGuiHelpEdit * self, const gchar * content);
 
 /**
- * gebr_gui_help_edit_get_edit_widget:
+ * gebr_gui_help_edit_get_web_view:
  *
  * Returns: The #GtkWebKitWebView used to show the help edition.
  */
-GtkWidget * gebr_gui_help_edit_get_edit_widget(GebrGuiHelpEdit * self);
+GtkWidget * gebr_gui_help_edit_get_web_view(GebrGuiHelpEdit * self);
 
 G_END_DECLS
 

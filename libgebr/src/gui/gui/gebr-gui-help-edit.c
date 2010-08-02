@@ -4,7 +4,7 @@
  *   This program is free software: you can redistribute it and/or
  *   modify it under the terms of the GNU General Public License as
  *   published by the Free Software Foundation, either version 3 of
- *   the License, or * (at your option) any later version.
+ *   the License, or (at your option) any later version.
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -37,7 +37,8 @@ struct _GebrGuiHelpEditPrivate {
 	GtkWidget * html_viewer;
 };
 
-#define GEBR_GUI_HELP_EDIT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_GUI_TYPE_HELP_EDIT, GebrGuiHelpEditPrivate))
+#define GEBR_GUI_HELP_EDIT_GET_PRIVATE(o) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_GUI_TYPE_HELP_EDIT, GebrGuiHelpEditPrivate))
 
 //==============================================================================
 // PROTOTYPES								       =
@@ -194,7 +195,7 @@ void gebr_gui_help_edit_set_content(GebrGuiHelpEdit * self, const gchar * conten
 	GEBR_GUI_HELP_EDIT_GET_CLASS(self)->set_content(self, content);
 }
 
-GtkWidget * gebr_gui_help_edit_get_edit_widget(GebrGuiHelpEdit * self)
+GtkWidget * gebr_gui_help_edit_get_web_view(GebrGuiHelpEdit * self)
 {
 	GebrGuiHelpEditPrivate * priv;
 	priv = GEBR_GUI_HELP_EDIT_GET_PRIVATE(self);
