@@ -41,7 +41,7 @@ struct _GebrGuiHelpEdit {
 };
 
 struct _GebrGuiHelpEditClass {
-	GtkVBox parent_class;
+	GtkVBoxClass parent_class;
 
 	/* Abstract methods */
 	gchar * (*get_content) (GebrGuiHelpEdit * self);
