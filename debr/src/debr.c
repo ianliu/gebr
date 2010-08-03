@@ -36,7 +36,6 @@ void debr_init(void)
 {
 	gboolean configured;
 
-	gebr_libinit();
 	configured = debr_config_load();
 	debr.categories_model = gtk_list_store_new(CATEGORY_N_COLUMN, G_TYPE_STRING, G_TYPE_INT);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(debr.categories_model),

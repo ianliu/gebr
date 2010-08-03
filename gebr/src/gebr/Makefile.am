@@ -75,7 +75,7 @@ noinst_HEADERS = \
 	ui_moab.h
 EXTRA_DIST = ${noinst_HEADERS}
 
-INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" 
+INCLUDES = 
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
 	$(CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_COMM_CFLAGS) $(GEBR_GUI_CFLAGS)
 gebr_LDADD = libgebr.a $(LIBS) \

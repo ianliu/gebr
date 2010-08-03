@@ -15,15 +15,37 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <unistd.h>
+#include <stdlib.h>
 #include <locale.h>
 #ifdef ENABLE_NLS
 #	include <libintl.h>
 #endif
 
 #include "libgebr.h"
+#include "defines.h"
 
-void gebr_libinit(void)
+void gebr_libinit(const gchar * gettext_package, const gchar * argv0)
 {
 	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	if (gettext_package != NULL)
+		textdomain(gettext_package);
+
+#if (LIBGEBR_STATIC_MODE == 1)
+	GString *cwd = g_string_new(NULL);
+	gchar *tmp = g_get_current_dir();
+	g_string_printf(cwd, "%s/%s", tmp, argv0);
+	g_free(tmp);
+	if (g_file_test(cwd->str, G_FILE_TEST_IS_DIR))
+		chdir(cwd->str);
+	puts(cwd->str);
+
+	GString *path = g_string_new(NULL);
+	g_string_printf(path, "%s:%s", cwd->str, getenv("PATH"));
+	setenv("PATH", path->str, 1);
+	g_string_free(path, TRUE);
+
+	g_string_free(cwd, TRUE);
+#endif
 }

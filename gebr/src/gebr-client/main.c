@@ -16,16 +16,12 @@
  */
 
 #include <stdlib.h>
-#include <locale.h>
-/* TODO: Check for libintl on configure */
-#ifdef ENABLE_NLS
-#  include <libintl.h>
-#endif
 
 #include <glib.h>
 
 #include <libgebr/intl.h>
 #include <libgebr/comm.h>
+#include <libgebr/libgebr.h>
 
 #include "gebrclient.h"
 #include "../defines.h"
@@ -41,6 +37,8 @@ int main(int argc, char **argv, char **env)
 	GError *error = NULL;
 	GOptionContext *context;
 
+	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
+
 	context = g_option_context_new(_("serveraddress command [args]}"));
 	g_option_context_set_summary(context, _("GeBR commandline client")
 	    );
@@ -53,17 +51,10 @@ int main(int argc, char **argv, char **env)
 		gebr_client_message(GEBR_LOG_ERROR, _("Try %s --­­help"), argv[0]);
 		return -1;
 	}
-
 	if (show_version == TRUE) {
 		gebr_client_message(GEBR_LOG_INFO, _("%s"), GEBR_VERSION);
 		return 0;
 	}
-#ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
-#endif
-
 	if (argc < 2) {
 		gebr_client_message(GEBR_LOG_ERROR, _("No server address specified"));
 		return -1;

@@ -25,8 +25,7 @@ noinst_HEADERS = \
 	server.h client.h
 EXTRA_DIST = ${noinst_HEADERS}
 
-INCLUDES = \
-	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
+INCLUDES =
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
 	$(CFLAGS) $(GEBR_MISC_CFLAGS) $(GEBR_COMM_CFLAGS)
 gebr_client_LDADD = $(LIBS) $(GEBR_MISC_LIBS) $(GEBR_COMM_LIBS)

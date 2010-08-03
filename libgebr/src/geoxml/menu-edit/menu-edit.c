@@ -68,19 +68,19 @@ GString *help_load(const gchar * fname);
 
 int main(int argc, char **argv)
 {
-
 	int nmenu;
 	int imenu;
 
 	GError *error = NULL;
 	GOptionContext *context;
 
+	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
+
 	/* Summary */
 	context = g_option_context_new(NULL);
 	g_option_context_set_summary(context,
 				     "Edit tags of menu files for GeBR. Many menu files can\n"
 				     "be edited at once, but using the same tag values to all menus.");
-
 	/* Description */
 	g_option_context_set_description(context,
 					 "Parameter --created set menu's creation date. It accepts \"now\" or\n"
@@ -88,9 +88,7 @@ int main(int argc, char **argv)
 					 "If iprog is 0, then title and description options refers to menu's\n"
 					 "title and description. If iprog > 0, then ith program is edited.\n"
 					 "Copyright (C) 2008-2010 Ricardo Biloti <biloti@gebrproject.com>");
-
 	g_option_context_add_main_entries(context, entries, NULL);
-
 	/* Complain about unknown options */
 	g_option_context_set_ignore_unknown_options(context, FALSE);
 

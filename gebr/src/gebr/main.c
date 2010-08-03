@@ -17,14 +17,12 @@
 
 #include <stdlib.h>
 #include <locale.h>
-#ifdef ENABLE_NLS
-#	include <libintl.h>
-#endif
 
 #include <gtk/gtk.h>
 
 #include <libgebr/intl.h>
 #include <libgebr/gui/icons.h>
+#include <libgebr/libgebr.h>
 
 #include "gebr.h"
 #include "../defines.h"
@@ -44,11 +42,7 @@ int main(int argc, char **argv, char **env)
 	GError *error = NULL;
 	GOptionContext *context;
 
-#ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
-#endif
+	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
 
 	context = g_option_context_new(_(" - GeBR, a seismic processing environment"));
 	g_option_context_set_summary(context,

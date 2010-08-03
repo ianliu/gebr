@@ -23,6 +23,7 @@
 #include <glib.h>
 
 #include <libgebr/intl.h>
+#include <libgebr/libgebr.h>
 
 #include "gebrd.h"
 #include "defines.h"
@@ -30,21 +31,17 @@
 int main(int argc, char **argv)
 {
 	gboolean show_version;
-	GOptionEntry entries[] = {
+	const GOptionEntry entries[] = {
 		{"interactive", 'i', 0, G_OPTION_ARG_NONE, &gebrd.options.foreground,
-		 _("Run server in interactive mode, not as a daemon"), NULL},
+		 N_("Run server in interactive mode, not as a daemon"), NULL},
 		{"version", 0, 0, G_OPTION_ARG_NONE, &show_version,
-		 _("Show GeBR daemon version"), NULL},
+		 N_("Show GeBR daemon version"), NULL},
 		{NULL}
 	};
 	GError *error = NULL;
 	GOptionContext *context;
 
-#ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
-#endif
+	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
 	setlocale(LC_ALL, "");
 
 	context = g_option_context_new(_("GeBR daemon"));

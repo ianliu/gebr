@@ -87,6 +87,8 @@ int main(int argc, char **argv)
 {
 	GebrGeoXmlValidate *validate;
 
+	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
+
 	parse_command_line(argc, argv);
 
 	if (menu == NULL)

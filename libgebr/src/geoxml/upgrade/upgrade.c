@@ -17,9 +17,6 @@
 
 #include <stdio.h>
 #include <locale.h>
-#ifdef ENABLE_NLS
-#	include <libintl.h>
-#endif
 
 #include "../../intl.h"
 #include "../geoxml.h"
@@ -37,11 +34,7 @@ int main(int argc, char **argv)
 	GError *error = NULL;
 	GOptionContext *context;
 
-#ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
-#endif
+	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
 	setlocale(LC_ALL, "");
 
 	context = g_option_context_new(NULL);

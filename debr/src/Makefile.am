@@ -56,7 +56,7 @@ noinst_HEADERS = \
 
 EXTRA_DIST = $(noinst_HEADERS) $(debrglade_DATA)
 
-INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" -DGLADE_DIR=\""$(debrgladedir)"\"
+INCLUDES = -DGLADE_DIR=\""$(debrgladedir)"\"
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
 	$(GEBR_CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_GUI_CFLAGS)
 debr_LDADD = libdebr.a $(INTLLIBS) \

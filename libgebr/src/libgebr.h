@@ -27,7 +27,12 @@
 
 G_BEGIN_DECLS
 
-void gebr_libinit(void);
+/**
+ * Call this before gtk/glib initialization and before any internationalized string.
+ * If static mode is enabled, then change the current working directory to the binary directory,
+ * and prepend it to PATH.
+ */
+void gebr_libinit(const gchar * gettext_package, const gchar * argv0);
 
 G_END_DECLS
 #endif				// __LIBGEBR_H

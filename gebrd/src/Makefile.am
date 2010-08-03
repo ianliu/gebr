@@ -43,8 +43,7 @@ noinst_HEADERS = \
 
 EXTRA_DIST = $(noinst_HEADERS)
 
-INCLUDES = \
-	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
+INCLUDES =
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
 	$(GEBR_CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_COMM_CFLAGS)
 gebrd_LDADD = libgebrd.a $(INTLLIBS) \

@@ -27,8 +27,6 @@ struct gebr_client gebr_client;
 
 gboolean gebr_client_init(const gchar * server_address)
 {
-	gebr_libinit();
-
 	gebr_client.server = server_new(server_address);
 
 	return TRUE;

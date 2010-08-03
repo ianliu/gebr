@@ -1,19 +1,19 @@
-/*   libgebr - GeBR Library
- *   Copyright (C) 2007-2008  Br ulio Barros de Oliveira (brauliobo@gmail.com)
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+	/*   libgebr - GeBR Library
+	 *   Copyright (C) 2007-2008  Br ulio Barros de Oliveira (brauliobo@gmail.com)
+	 *
+	 *   This program is free software: you can redistribute it and/or modify
+	 *   it under the terms of the GNU General Public License as published by
+	 *   the Free Software Foundation, either version 3 of the License, or
+	 *   (at your option) any later version.
+	 *
+	 *   This program is distributed in the hope that it will be useful,
+	 *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 *   GNU General Public License for more details.
+	 *
+	 *   You should have received a copy of the GNU General Public License
+	 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	 */
 
 #include <stdio.h>
 #include <locale.h>
@@ -21,10 +21,10 @@
 #include "../../intl.h"
 #include "../comm/channelsocket.h"
 
-gint channel_do(const gchar * source, const gchar * destination);
+	gint channel_do(const gchar * source, const gchar * destination);
 
-void cmdline_print_error(char **argv)
-{
+	void cmdline_print_error(char **argv)
+	{
 	fprintf(stderr, _("%s: syntax error\n"), argv[0]);
 	fprintf(stderr, _("Try %s --help\n"), argv[0]);
 }
@@ -34,19 +34,14 @@ int main(int argc, char **argv)
 	static gchar **host_pair;
 	static GOptionEntry entries[] = {
 		{G_OPTION_REMAINING, 0, G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_STRING_ARRAY, &host_pair, "",
-		 N_("192.168.0.1:6010 /tmp/.X11-unix/X0")},
+		 "192.168.0.1:6010 /tmp/.X11-unix/X0"},
 		{NULL}
 	};
 	gint ret;
 	GError *error = NULL;
 	GOptionContext *context;
 
-#ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
-#endif
-	setlocale(LC_ALL, "");
+	gebr_libinit(GETTEXT_PACKAGE);
 
 	context = g_option_context_new(NULL);
 	g_option_context_set_summary(context, _("LibGebrComm socket channelling"));

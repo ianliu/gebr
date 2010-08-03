@@ -66,7 +66,6 @@ void gebr_init(void)
 	gebr.program = NULL;
 	gebr.flow_server = NULL;
 	gebr.flow_clipboard = NULL;
-	gebr_libinit();
 	gebr_comm_protocol_init();
 
 	/* check/create config dir */

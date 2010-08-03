@@ -34,16 +34,11 @@ int main(int argc, char **argv)
 	GError *error = NULL;
 	GOptionContext *context;
 
-#ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
-#endif
+	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
 	setlocale(LC_ALL, "");
 
 	context = g_option_context_new(NULL);
-	g_option_context_set_summary(context, _("LibGebrGeoXml XML validator")
-	    );
+	g_option_context_set_summary(context, _("LibGebrGeoXml XML validator"));
 	g_option_context_set_description(context, "");
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);

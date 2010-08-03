@@ -66,8 +66,6 @@ gboolean server_init(void)
 	GString *log_filename;
 	FILE *run_fp;
 
-	gebr_libinit();
-
 	/* from libgebr-misc */
 	if (gebr_create_config_dirs() == FALSE) {
 		g_warning(_("%s:%d: Could not access GêBR configuration directories.\n"), __FILE__, __LINE__);

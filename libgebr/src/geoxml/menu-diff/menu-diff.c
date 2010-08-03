@@ -62,16 +62,16 @@ int main(int argc, char **argv)
 	GebrGeoXmlSequence *seq[2];
 	int nmenu;
 
+	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
+
 	parse_command_line(argc, argv);
 
 	if (fnmenu == NULL) {
 		fprintf(stderr, "You should provide two menus to compare.\n");
 		exit(EXIT_FAILURE);
 	}
-
 	nmenu = 0;
-	while (fnmenu[++nmenu] != NULL) ;
-
+	while (fnmenu[++nmenu] != NULL);
 	if (nmenu < 2) {
 		fprintf(stderr, "You should provide two menus to compare.\n");
 		exit(EXIT_FAILURE);
@@ -90,24 +90,16 @@ int main(int argc, char **argv)
 
 	report("Comparing files", fnmenu[nmenu - 2], fnmenu[nmenu - 1]);
 	diff_count--;
-
 	report("Filename", gebr_geoxml_document_get_filename(doc[0]), gebr_geoxml_document_get_filename(doc[1]));
-
 	report("Title", gebr_geoxml_document_get_title(doc[0]), gebr_geoxml_document_get_title(doc[1]));
-
 	report("Description",
 	       gebr_geoxml_document_get_description(doc[0]), gebr_geoxml_document_get_description(doc[1]));
-
 	report("Author", gebr_geoxml_document_get_author(doc[0]), gebr_geoxml_document_get_author(doc[1]));
-
 	report("Email", gebr_geoxml_document_get_email(doc[0]), gebr_geoxml_document_get_email(doc[1]));
-
 	report("Created date",
 	       gebr_geoxml_document_get_date_created(doc[0]), gebr_geoxml_document_get_date_created(doc[1]));
-
 	report("Modified date",
 	       gebr_geoxml_document_get_date_modified(doc[0]), gebr_geoxml_document_get_date_modified(doc[1]));
-
 	report_help("Help", gebr_geoxml_document_get_help(doc[0]), gebr_geoxml_document_get_help(doc[1]));
 
 	{

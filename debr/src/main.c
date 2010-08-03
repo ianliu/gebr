@@ -16,24 +16,18 @@
  */
 
 #include <locale.h>
-#ifdef ENABLE_NLS
-#  include <libintl.h>
-#endif
 
 #include <gtk/gtk.h>
 
 #include <libgebr/gui/icons.h>
+#include <libgebr/libgebr.h>
 
 #include "interface.h"
 #include "debr.h"
 
 int main(int argc, char *argv[])
 {
-#ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
-#endif
+	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
 
 	gtk_init(&argc, &argv);
 	setlocale(LC_ALL, "");

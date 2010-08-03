@@ -18,7 +18,6 @@ include $(top_srcdir)/Makefile.decl
 bin_PROGRAMS = gebr-geoxml-menu-query
 gebr_geoxml_menu_query_SOURCES = menu-query.c
 
-INCLUDES = -I$(srcdir)/.. -I$(srcdir)/../.. \
-	-DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"
+INCLUDES = -I$(srcdir)/.. -I$(srcdir)/../..
 AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
 gebr_geoxml_menu_query_LDADD = ../geoxml/libgebr_geoxml.la ../../libgebr.la $(GLIB_LIBS)
