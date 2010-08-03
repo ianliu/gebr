@@ -22,15 +22,13 @@ mkdir -p $GEBR_DIR
 
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$GEBR_DIR/lib/pkgconfig
 export LD_LIBRARY_PATH=$GEBR_DIR/lib
-#compilation flags
-export CFLAGS="-g"
 export LDFLAGS="-Wl,-rpath=../lib"
 
 #./autogen.sh
 
 #GeBR libray
 cd libgebr
-./configure --prefix=$GEBR_DIR --enable-static-mode
+./configure --prefix=$GEBR_DIR --enable-static-mode --disable-debug
 perl -i -pe "s|$GEBR_DIR|..|" src/defines.h
 perl -i -pe "s|$GEBR_DIR|..|" src/geoxml/geoxml/defines.h
 #find -name Makefile | xargs perl -i -pe "s|$GEBR_DIR|..|" 
@@ -41,7 +39,7 @@ cd ..
 #GeBR
 mkdir lib gebr/lib
 cd gebr
-./configure --prefix=$GEBR_DIR --enable-static-mode
+./configure --prefix=$GEBR_DIR --disable-debug
 perl -i -pe "s|$GEBR_DIR|..|" src/defines.h
 #make -j5 clean install
 make -j5 install
@@ -51,7 +49,7 @@ rmdir lib gebr/lib
 #GeBRD
 mkdir lib gebrd/lib
 cd gebrd
-./configure --prefix=$GEBR_DIR
+./configure --prefix=$GEBR_DIR --disable-debug
 #make -j5 clean install
 make -j5 install
 cd ..
@@ -60,7 +58,7 @@ rmdir lib gebrd/lib
 #DeBR
 mkdir lib debr/lib
 cd debr
-./configure --prefix=$GEBR_DIR
+./configure --prefix=$GEBR_DIR --disable-debug
 perl -i -pe "s|$GEBR_DIR|..|" src/defines.h
 #make -j5 clean install
 make -j5 install

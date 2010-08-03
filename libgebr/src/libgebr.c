@@ -35,11 +35,12 @@ void gebr_libinit(const gchar * gettext_package, const gchar * argv0)
 #if (LIBGEBR_STATIC_MODE == 1)
 	GString *cwd = g_string_new(NULL);
 	gchar *tmp = g_get_current_dir();
-	g_string_printf(cwd, "%s/%s", tmp, argv0);
+	gchar *tmp2 = g_path_get_dirname(argv0);
+	g_string_printf(cwd, "%s/%s/", tmp, tmp2);
 	g_free(tmp);
+	g_free(tmp2);
 	if (g_file_test(cwd->str, G_FILE_TEST_IS_DIR))
 		chdir(cwd->str);
-	puts(cwd->str);
 
 	GString *path = g_string_new(NULL);
 	g_string_printf(path, "%s:%s", cwd->str, getenv("PATH"));
