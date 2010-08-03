@@ -60,14 +60,12 @@ void on_document_dict_edit_activate(void);
  * Call #project_delete> from #project.c
  */
 void on_project_line_delete_activate(void);
-/**
- *
- */
-void on_project_line_paths_activate(void);
+
 /**
  * Call #project_line_import> from #ui_project_line.c
  */
 void on_project_line_import_activate(void);
+
 /**
  * Call #project_line_export> from #ui_project_line.c
  */

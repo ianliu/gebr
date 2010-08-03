@@ -167,14 +167,9 @@ struct ui_project_line *project_line_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path_label, 0, 1, 2, 3, (GtkAttachOptions)GTK_FILL,
 			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
-	ui_project_line->info.path1 = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path1), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path1, 1, 2, 2, 3, (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3);
-
-	ui_project_line->info.path2 = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path2), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path2, 1, 2, 3, 4, (GtkAttachOptions)GTK_FILL,
+	ui_project_line->info.path = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path, 1, 2, 2, 3, (GtkAttachOptions)GTK_FILL,
 			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	/* Help */
@@ -206,8 +201,7 @@ void project_line_info_update(void)
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path_label), "");
-		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1), "");
-		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.numberoflines), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.author), "");
 
@@ -270,42 +264,30 @@ void project_line_info_update(void)
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.path_label), markup);
 		g_free(markup);
 
-		switch (gebr_geoxml_line_get_paths_number(gebr.line)) {
-		case 0:
-			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1), _("None"));
-			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");
+		text = g_string_new("");
 
-			break;
-		case 1:
-			gebr_geoxml_line_get_path(gebr.line, &path, 0);
-			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
-					   gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path)));
-			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");
-
-			break;
-		case 2:
-			gebr_geoxml_line_get_path(gebr.line, &path, 0);
-			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
-					   gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path)));
-
-			gebr_geoxml_line_get_path(gebr.line, &path, 1);
-			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2),
-					   gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path)));
-
-			break;
-		default:
-			gebr_geoxml_line_get_path(gebr.line, &path, 0);
-			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1),
-					   gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path)));
-			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "...");
-
-			break;
+		if (gebr_geoxml_line_get_path(gebr.line, &path, 0) == GEBR_GEOXML_RETV_SUCCESS){
+			while (path) {
+				const gchar * value;
+				value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path));
+				g_string_append_printf(text, "%s\n", value);
+				gebr_geoxml_sequence_next(&path);
+			}
 		}
+		if (text->len == 0) {
+			/* There is no path, put "None" */
+			markup = g_markup_printf_escaped("<i>%s</i>", _("None"));
+			gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.path), markup);
+			g_free(markup);
+		} else {
+			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path), text->str);
+		}
+		g_string_free(text, TRUE);
 	} else {
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path_label), "");
-		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path1), "");
-		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path2), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path), "");
 	}
+
 
 	/* Author and email */
 	text = g_string_new(NULL);
@@ -850,11 +832,6 @@ static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_li
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group, "project_line_properties")));
-	/* paths */
-	if (gebr.line != NULL)
-		gtk_container_add(GTK_CONTAINER(menu),
-				  gtk_action_create_menu_item(gtk_action_group_get_action
-							      (gebr.action_group, "project_line_line_paths")));
 	/* delete */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action

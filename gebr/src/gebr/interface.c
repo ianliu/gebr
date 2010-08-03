@@ -77,9 +77,6 @@ static const GtkActionEntry actions_entries[] = {
 	{"project_line_dict_edit", "accessories-dictionary", N_("Parameter dictionary"),
 		NULL, N_("Edit parameter dictionary of current project or line"), G_CALLBACK(on_document_dict_edit_activate)},
 
-	{"project_line_line_paths", GTK_STOCK_DIRECTORY, N_("Line paths"),
-		NULL, N_("Edit custom line paths"), G_CALLBACK(on_project_line_paths_activate)},
-
 	{"project_line_import", "document-import", N_("Import"),
 		NULL, N_("Import project or line"), G_CALLBACK(on_project_line_import_activate)},
 
@@ -283,11 +280,6 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "project_line_dict_edit"))),
 			   -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "project_line_line_paths"))),
-			   -1);
-
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item

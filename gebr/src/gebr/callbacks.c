@@ -120,11 +120,6 @@ void on_project_line_delete_activate(void)
 		line_delete(TRUE);
 }
 
-void on_project_line_paths_activate(void)
-{
-	path_list_setup_ui();
-}
-
 void on_project_line_import_activate(void)
 {
 	project_line_import();

@@ -27,6 +27,8 @@
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
 #include <libgebr/gui/utils.h>
+#include <libgebr/gui/valuesequenceedit.h>
+#include <libgebr/gui/gtkfileentry.h>
 
 #include "ui_document.h"
 #include "gebr.h"
@@ -34,6 +36,7 @@
 #include "ui_help.h"
 #include "document.h"
 #include "ui_project_line.h"
+#include "ui_paths.h"
 
 /*
  * Prototypes
@@ -154,6 +157,11 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 	GtkWidget *help;
 	GtkWidget *author;
 	GtkWidget *email;
+	GtkWidget *line_path_label;
+	GtkWidget *widget;
+	GtkWidget *file_entry;
+	GtkWidget *path_sequence_edit;
+	GebrGeoXmlSequence *path_sequence;
 
 	if (document == NULL)
 		return FALSE;
@@ -236,6 +244,34 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 			 3);
 	/* read */
 	gtk_entry_set_text(GTK_ENTRY(email), gebr_geoxml_document_get_email(document));
+
+	if (gebr.line != NULL){
+		/* Line Path's*/
+		line_path_label = gtk_label_new(_("Line Path:"));
+		gtk_widget_show(line_path_label);
+		widget = gtk_vbox_new(FALSE, 0);
+		gtk_widget_show(widget);
+		gtk_box_pack_start(GTK_BOX(widget), line_path_label, FALSE, FALSE, 0);
+		gtk_table_attach(GTK_TABLE(table), widget, 0, 1, 5, 6,
+				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(line_path_label), 0, 0.5);
+
+		file_entry = gebr_gui_gtk_file_entry_new(NULL, NULL);
+		gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_GTK_FILE_ENTRY(file_entry), TRUE);
+		gtk_widget_set_size_request(file_entry, 220, 30);
+
+		gebr_geoxml_line_get_path(gebr.line, &path_sequence, 0);
+		path_sequence_edit = gebr_gui_value_sequence_edit_new(file_entry);
+		gebr_gui_value_sequence_edit_load(GEBR_GUI_VALUE_SEQUENCE_EDIT(path_sequence_edit), path_sequence,
+						  (ValueSequenceSetFunction) gebr_geoxml_value_sequence_set,
+						  (ValueSequenceGetFunction) gebr_geoxml_value_sequence_get, NULL);
+
+		g_signal_connect(GTK_OBJECT(path_sequence_edit), "add-request", G_CALLBACK(path_add), NULL);
+		g_signal_connect(GTK_OBJECT(path_sequence_edit), "changed", G_CALLBACK(path_save), NULL);
+
+		gtk_table_attach(GTK_TABLE(table), path_sequence_edit, 1, 2, 5, 6, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
+				 3);
+	}
 
 	gtk_widget_show_all(dialog);
 	switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
@@ -514,7 +550,6 @@ static void on_dict_edit_cursor_changed(GtkTreeView * tree_view, struct dict_edi
 {
 	GtkTreeIter iter;
 	GtkTreeIter parent;
-//      gboolean        is_add_parameter;
 
 	if (!dict_edit_get_selected(data, &iter))
 		return;
@@ -523,20 +558,6 @@ static void on_dict_edit_cursor_changed(GtkTreeView * tree_view, struct dict_edi
 		parent = iter;
 	gtk_tree_model_get(data->tree_model, &parent, DICT_EDIT_GEBR_GEOXML_POINTER, &data->current_document, -1);
 	data->current_document_iter = parent;
-
-//      gtk_tree_model_get(data->tree_model, &iter,
-//              DICT_EDIT_IS_ADD_PARAMETER, &is_add_parameter,
-//              -1);
-//      if (is_add_parameter) {
-//              g_signal_handlers_block_matched(G_OBJECT(data->tree_view),
-//                      G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-//                      G_CALLBACK(on_dict_edit_cursor_changed), NULL);
-//              gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view), &iter,
-//                      gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 1), TRUE);
-//              g_signal_handlers_unblock_matched(G_OBJECT(data->tree_view),
-//                      G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-//                      G_CALLBACK(on_dict_edit_cursor_changed), NULL);
-//      }
 }
 
 /* Function: on_dict_edit_add_clicked

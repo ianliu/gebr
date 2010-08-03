@@ -18,9 +18,12 @@
 #ifndef __UI_PATH_H
 #define __UI_PATH_H
 
+#include <libgebr/gui/valuesequenceedit.h>
+
 G_BEGIN_DECLS
 
-void path_list_setup_ui(void);
+gboolean path_save(void);
+void path_add(GebrGuiValueSequenceEdit * sequence_edit);
 
 G_END_DECLS
 #endif				//__UI_PATH_H
