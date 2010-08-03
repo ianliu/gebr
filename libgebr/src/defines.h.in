@@ -25,7 +25,6 @@ G_BEGIN_DECLS
 #define DATA_DIR		"@prefix@/share"
 #define	PACKAGE_LOCALE_DIR	DATA_DIR"/locale"
 
-#define LIBGEBR_STATIC_MODE	@STATIC_MODE@
 #define LIBGEBR_VERSION         "@VERSION@"
 #define LIBGEBR_DATA_DIR	DATA_DIR"/libgebr"
 #define LIBGEBR_PIXMAPS_DIR	LIBGEBR_DATA_DIR"/pixmaps"

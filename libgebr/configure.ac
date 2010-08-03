@@ -62,10 +62,6 @@ fi
 AC_SUBST(CONFIG_SUBDIRS)
 AC_SUBST(CONFIG_GUI)
 
-dnl For static build
-AC_ARG_ENABLE(static-mode, [AC_HELP_STRING([--enable-static-mode], [enables flags for generating a static package])], STATIC_MODE=1, STATIC_MODE=0)
-AC_SUBST(STATIC_MODE)
-
 dnl check for zlib
 AC_CHECK_LIB(z,main,, [AC_MSG_ERROR(zlib required)])
 
