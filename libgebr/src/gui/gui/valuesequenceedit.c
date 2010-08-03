@@ -186,6 +186,9 @@ __gebr_gui_value_sequence_edit_rename(GebrGuiValueSequenceEdit * gebr_gui_value_
 				      const gchar * new_text)
 {
 	GebrGeoXmlSequence *sequence;
+	if(!strlen(new_text)){
+		return; 
+	}
 
 	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store), iter,
 			   1, &sequence, -1);
