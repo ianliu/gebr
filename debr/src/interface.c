@@ -216,7 +216,6 @@ void debr_setup_ui(void)
 	 * Menu: Help
 	 */
 	menu_item = gtk_menu_item_new_with_mnemonic(_("_Help"));
-	gtk_menu_item_set_right_justified(GTK_MENU_ITEM(menu_item), TRUE);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu_bar), menu_item);
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);

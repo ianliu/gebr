@@ -469,7 +469,6 @@ static void assembly_menus(GtkMenuBar * menu_bar)
 	gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), menu_item);
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
-	gtk_menu_item_right_justify(GTK_MENU_ITEM(menu_item));
 
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "help_contents")));
