@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: debr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-07-13 14:14-0300\n"
-"PO-Revision-Date: 2010-07-13 14:21-0300\n"
+"PO-Revision-Date: 2010-08-04 22:15-0300\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -312,7 +312,7 @@ msgstr "Fecha todos os relatórios"
 
 #: ../src/interface.c:147
 msgid "Menu designer for GêBR"
-msgstr "Designer de menu para GêBR"
+msgstr "Designer de menus para GêBR"
 
 #.
 #. * Menu: Actions
@@ -538,7 +538,7 @@ msgstr "Esta pasta tem %d menus"
 
 #: ../src/menu.c:1660
 msgid "Collapse all"
-msgstr "Recolher todos"
+msgstr "Colapsar todos"
 
 #: ../src/menu.c:1663
 msgid "Expand all"
