@@ -27,3 +27,4 @@
 #include <gui/valuesequenceedit.h>
 #include <gui/utils.h>
 #include <gui/gebr-gui-help-edit.h>
+#include <gui/gebr-js.h>
