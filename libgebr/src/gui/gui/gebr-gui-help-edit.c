@@ -80,7 +80,7 @@ static void gebr_gui_help_edit_class_init(GebrGuiHelpEditClass * klass)
 							     "Editing",
 							     "Whether editing the help or previewing it",
 							     TRUE,
-							     G_PARAM_READABLE));
+							     G_PARAM_READWRITE));
 
 	/**
 	 * GebrGuiHelpEdit:saved:
@@ -102,7 +102,7 @@ static void gebr_gui_help_edit_init(GebrGuiHelpEdit * self)
 	GebrGuiHelpEditPrivate * priv;
 
 	priv = GEBR_GUI_HELP_EDIT_GET_PRIVATE(self);
-	priv->edit_widget = gtk_label_new("EDIT WIDGET"); // gtk_webkit_webview_new();
+	priv->edit_widget = webkit_web_view_new();
 	priv->html_viewer = gtk_label_new("HTML VIEWER"); // gebr_gui_html_viewer_new();
 	priv->is_editing = TRUE;
 	priv->is_saved = FALSE;
@@ -110,6 +110,8 @@ static void gebr_gui_help_edit_init(GebrGuiHelpEdit * self)
 	box = GTK_BOX(self);
 	gtk_box_pack_start(box, priv->edit_widget, TRUE, TRUE, 0);
 	gtk_box_pack_start(box, priv->html_viewer, TRUE, TRUE, 0);
+	gtk_widget_hide(priv->html_viewer);
+	gtk_widget_show(priv->edit_widget);
 }
 
 static void gebr_gui_help_edit_set_property(GObject		*object,
@@ -117,7 +119,14 @@ static void gebr_gui_help_edit_set_property(GObject		*object,
 					    const GValue	*value,
 					    GParamSpec		*pspec)
 {
+	GebrGuiHelpEdit * self;
+
+	self = GEBR_GUI_HELP_EDIT(object);
+
 	switch (prop_id) {
+	case PROP_EDITING:
+		gebr_gui_help_edit_set_editing(self, g_value_get_boolean(value));
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
 		break;
@@ -163,20 +172,23 @@ GtkWidget *gebr_gui_help_edit_new(const gchar *title, GtkWindow *parent)
 
 void gebr_gui_help_edit_set_editing(GebrGuiHelpEdit * self, gboolean editing)
 {
-	gchar * content;
 	GebrGuiHelpEditPrivate * priv = GEBR_GUI_HELP_EDIT_GET_PRIVATE(self);
 
 	priv->is_editing = editing;
-	content = gebr_gui_help_edit_get_content(self);
-	//gebr_gui_html_viewer_show(GEBR_GUI_HTML_VIEWER(priv->html_viewer), content);
-	g_free(content);
+	puts(editing? "EDITING":"NOT EDITING");
 
 	if (editing) {
 		gtk_widget_show(priv->edit_widget);
 		gtk_widget_hide(priv->html_viewer);
 	} else {
+		gchar * content;
+		content = gebr_gui_help_edit_get_content(self);
+		//gebr_gui_html_viewer_show(GEBR_GUI_HTML_VIEWER(priv->html_viewer), content);
+		puts(content);
+		gtk_label_set_text(GTK_LABEL(priv->html_viewer), content);
 		gtk_widget_show(priv->html_viewer);
 		gtk_widget_hide(priv->edit_widget);
+		g_free(content);
 	}
 }
 
@@ -200,4 +212,17 @@ GtkWidget * gebr_gui_help_edit_get_web_view(GebrGuiHelpEdit * self)
 	GebrGuiHelpEditPrivate * priv;
 	priv = GEBR_GUI_HELP_EDIT_GET_PRIVATE(self);
 	return priv->edit_widget;
+}
+
+JSContextRef gebr_gui_help_edit_get_js_context(GebrGuiHelpEdit * self)
+{
+	WebKitWebView * view;
+	WebKitWebFrame * frame;
+	GebrGuiHelpEditPrivate * private;
+
+	private = GEBR_GUI_HELP_EDIT_GET_PRIVATE(self);
+	view = WEBKIT_WEB_VIEW(private->edit_widget);
+	frame = webkit_web_view_get_main_frame(view);
+
+	return webkit_web_frame_get_global_context(frame);
 }

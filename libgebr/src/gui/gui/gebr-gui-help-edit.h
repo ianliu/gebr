@@ -20,6 +20,7 @@
 #define __GEBR_GUI_HELP_EDIT__
 
 #include <gtk/gtk.h>
+#include <webkit/webkit.h>
 
 
 G_BEGIN_DECLS
@@ -94,10 +95,21 @@ void gebr_gui_help_edit_set_content(GebrGuiHelpEdit * self, const gchar * conten
 
 /**
  * gebr_gui_help_edit_get_web_view:
+ * This is a convenience function for classes extending this abstract class.
+ * That means you should not use this method if you are not extending it!
  *
- * Returns: The #GtkWebKitWebView used to show the help edition.
+ * Returns: The #WebKitWebView used to show the help edition.
  */
 GtkWidget * gebr_gui_help_edit_get_web_view(GebrGuiHelpEdit * self);
+
+/**
+ * gebr_gui_help_edit_get_js_context:
+ * This is a convenience function for classes extending this abstract class.
+ * That means you should not use this method if you are not extending it!
+ *
+ * Returns: The #JSContextRef from the #WebKitWebView of this help edit widget.
+ */
+JSContextRef gebr_gui_help_edit_get_js_context(GebrGuiHelpEdit * self);
 
 G_END_DECLS
 
