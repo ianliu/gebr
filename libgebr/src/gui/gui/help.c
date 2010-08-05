@@ -30,7 +30,7 @@
 
 #include "help.h"
 #include "utils.h"
-#include "js.h"
+#include "gebr-js.h"
 
 /*
  * Declarations

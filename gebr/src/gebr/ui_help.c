@@ -32,6 +32,7 @@
 #include <libgebr/utils.h>
 #include <libgebr/gui/help.h>
 
+#include "gebr-help-edit.c"
 #include "ui_help.h"
 #include "gebr.h"
 #include "document.h"
@@ -74,22 +75,44 @@ void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document)
 	help_show(GEBR_GEOXML_OBJECT(document), FALSE, gebr_geoxml_document_get_title(document));
 }
 
-/**
- * \internal
- * Save document upon help change.
- */
-static void help_edit_on_edited(GebrGeoXmlDocument * document, const gchar * help)
+void on_edit_preview_toggle(GtkToggleToolButton * button, GebrGuiHelpEdit * help_edit)
 {
-	gebr_geoxml_document_set_help(document, help);
-	document_save(document, TRUE);
+	gboolean active = gtk_toggle_tool_button_get_active(button);
+	gebr_gui_help_edit_set_editing(help_edit, active);
 }
 
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 {
 	if (gebr.config.native_editor || gebr.config.editor->len == 0) {
-		GString * html;
-		html = g_string_new(gebr_geoxml_document_get_help(document));
-		gebr_gui_help_edit(document, html, (GebrGuiHelpEdited)help_edit_on_edited, NULL, FALSE);
+		const gchar * html;
+		GtkWidget * vbox;
+		GtkWidget * dialog;
+		GtkWidget * toolbar;
+		GtkToolItem * tool_item;
+		GtkWidget * help_edit;
+
+		vbox = gtk_vbox_new(FALSE, 0);
+		html = gebr_geoxml_document_get_help(document);
+		dialog = gtk_dialog_new();
+		toolbar = gtk_toolbar_new();
+		tool_item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_EDIT);
+		help_edit = gebr_help_edit_new(GEBR_GEOXML_FLOW(document), html);
+
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(tool_item), TRUE);
+		gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+		g_signal_connect(tool_item, "toggled",
+				 G_CALLBACK(on_edit_preview_toggle), help_edit);
+
+		gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
+		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), help_edit, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox, TRUE, TRUE, 0);
+
+		gtk_widget_show(vbox);
+		gtk_widget_show_all(toolbar);
+		gtk_widget_show(help_edit);
+		gtk_dialog_run(GTK_DIALOG(dialog));
+		gtk_widget_destroy(dialog);
 	} else {
 		GString *prepared_html;
 		GString *cmd_line;

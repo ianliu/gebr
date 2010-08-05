@@ -18,7 +18,7 @@
 #include <glib/gprintf.h>
 #include <JavaScriptCore/JSValueRef.h>
 
-#include "js.h"
+#include "gebr-js.h"
 
 /*
  * Private functions
