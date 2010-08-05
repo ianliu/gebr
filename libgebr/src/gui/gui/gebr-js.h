@@ -28,17 +28,21 @@
  * from the GtkWebKit package.
  *
  * <example>
- * 	<title>JavaScript evaluation example</title>
- * 	<programlisting>
- * 	JSContextRef context;
- * 	JSValueRef jsvalue;
- * 	gchar * value;
- * 	...
- * 	jsvalue = gebr_js_evaluate(context, "'Hi'");
- * 	value = gebr_js_value_get_string(context, jsvalue);
- * 	puts(value); // Hi
- * 	g_free(value);
- * 	</programlisting>
+ * <title></title>
+ * <programlisting>
+ * {
+ *   JSContextRef context;
+ *   JSValueRef jsvalue;
+ *   gchar * value;
+ *
+ *   // ...
+ *
+ *   jsvalue = gebr_js_evaluate(context, "'Hi'");
+ *   value = gebr_js_value_get_string(context, jsvalue);
+ *   puts(value); // Hi
+ *   g_free(value);
+ * }
+ * </programlisting>
  * </example>
  */
 
