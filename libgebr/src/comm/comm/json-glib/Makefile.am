@@ -55,21 +55,4 @@ json-marshal.c: Makefile json-marshal.list
 	cp -f xgen-jmc json-marshal.c && \
 	rm -f xgen-jmc
 
-json-enum-types.h: stamp-json-enum-types.h
-	@true
-stamp-json-enum-types.h: $(source_h) Makefile
-	glib-mkenums \
-	  	--template $(srcdir)/json-enum-types.h.in \
-	  $(source_h) > xgen-ceth \
-	&& (cmp xgen-ceth json-enum-types.h || cp xgen-ceth json-enum-types.h) \
-	&& rm -f xgen-ceth \
-	&& echo timestamp > $(@F)
-
-json-enum-types.c: json-enum-types.h
-	glib-mkenums \
-	  	--template $(srcdir)/json-enum-types.c.in \
-	  $(source_h) > xgen-cetc \
-	&& cp xgen-cetc json-enum-types.c \
-	&& rm -f xgen-cetc
-
 CLEANFILES = json-marshal.c json-marshal.h stamp-json-marshal.h stamp-json-enum-types.h

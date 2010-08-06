@@ -18,7 +18,7 @@
 
 #include "../../intl.h"
 
-#include "gebr-gui-help-edit.h"
+#include "gebr-gui-help-edit-widget.h"
 
 #include <glib.h>
 
@@ -28,51 +28,51 @@ enum {
 	PROP_SAVED
 };
 
-typedef struct _GebrGuiHelpEditPrivate GebrGuiHelpEditPrivate;
+typedef struct _GebrGuiHelpEditWidgetPrivate GebrGuiHelpEditWidgetPrivate;
 
-struct _GebrGuiHelpEditPrivate {
+struct _GebrGuiHelpEditWidgetPrivate {
 	gboolean is_editing;
 	gboolean is_saved;
 	GtkWidget * edit_widget;
 	GtkWidget * html_viewer;
 };
 
-#define GEBR_GUI_HELP_EDIT_GET_PRIVATE(o) \
-	(G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_GUI_TYPE_HELP_EDIT, GebrGuiHelpEditPrivate))
+#define GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(o) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_GUI_TYPE_HELP_EDIT_WIDGET, GebrGuiHelpEditWidgetPrivate))
 
 //==============================================================================
 // PROTOTYPES								       =
 //==============================================================================
 
-static void gebr_gui_help_edit_set_property	(GObject	*object,
-						 guint		 prop_id,
-						 const GValue	*value,
-						 GParamSpec	*pspec);
-static void gebr_gui_help_edit_get_property	(GObject	*object,
-						 guint		 prop_id,
-						 GValue		*value,
-						 GParamSpec	*pspec);
-static void gebr_gui_help_edit_destroy(GtkObject *object);
+static void gebr_gui_help_edit_widget_set_property	(GObject	*object,
+							 guint		 prop_id,
+							 const GValue	*value,
+							 GParamSpec	*pspec);
+static void gebr_gui_help_edit_widget_get_property	(GObject	*object,
+							 guint		 prop_id,
+							 GValue		*value,
+							 GParamSpec	*pspec);
+static void gebr_gui_help_edit_widget_destroy(GtkObject *object);
 
-G_DEFINE_ABSTRACT_TYPE(GebrGuiHelpEdit, gebr_gui_help_edit, GTK_TYPE_VBOX);
+G_DEFINE_ABSTRACT_TYPE(GebrGuiHelpEditWidget, gebr_gui_help_edit_widget, GTK_TYPE_VBOX);
 
 //==============================================================================
 // GOBJECT RELATED FUNCTIONS						       =
 //==============================================================================
 
-static void gebr_gui_help_edit_class_init(GebrGuiHelpEditClass * klass)
+static void gebr_gui_help_edit_widget_class_init(GebrGuiHelpEditWidgetClass * klass)
 {
 	GObjectClass *gobject_class;
 	GtkObjectClass *object_class;
 
 	gobject_class = G_OBJECT_CLASS(klass);
 	object_class = GTK_OBJECT_CLASS(klass);
-	gobject_class->set_property = gebr_gui_help_edit_set_property;
-	gobject_class->get_property = gebr_gui_help_edit_get_property;
-	object_class->destroy = gebr_gui_help_edit_destroy;
+	gobject_class->set_property = gebr_gui_help_edit_widget_set_property;
+	gobject_class->get_property = gebr_gui_help_edit_widget_get_property;
+	object_class->destroy = gebr_gui_help_edit_widget_destroy;
 
 	/**
-	 * GebrGuiHelpEdit:editing:
+	 * GebrGuiHelpEditWidget:editing:
 	 */
 	g_object_class_install_property(gobject_class,
 					PROP_EDITING,
@@ -83,7 +83,7 @@ static void gebr_gui_help_edit_class_init(GebrGuiHelpEditClass * klass)
 							     G_PARAM_READWRITE));
 
 	/**
-	 * GebrGuiHelpEdit:saved:
+	 * GebrGuiHelpEditWidget:saved:
 	 */
 	g_object_class_install_property(gobject_class,
 					PROP_SAVED,
@@ -93,39 +93,46 @@ static void gebr_gui_help_edit_class_init(GebrGuiHelpEditClass * klass)
 							     FALSE,
 							     G_PARAM_READABLE));
 
-	g_type_class_add_private(klass, sizeof(GebrGuiHelpEditPrivate));
+	g_type_class_add_private(klass, sizeof(GebrGuiHelpEditWidgetPrivate));
 }
 
-static void gebr_gui_help_edit_init(GebrGuiHelpEdit * self)
+static void gebr_gui_help_edit_widget_init(GebrGuiHelpEditWidget * self)
 {
 	GtkBox * box;
-	GebrGuiHelpEditPrivate * priv;
+	GtkWidget * scrolled_window;
+	GebrGuiHelpEditWidgetPrivate * priv;
 
-	priv = GEBR_GUI_HELP_EDIT_GET_PRIVATE(self);
+	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	priv->edit_widget = webkit_web_view_new();
 	priv->html_viewer = gtk_label_new("HTML VIEWER"); // gebr_gui_html_viewer_new();
 	priv->is_editing = TRUE;
 	priv->is_saved = FALSE;
 
 	box = GTK_BOX(self);
-	gtk_box_pack_start(box, priv->edit_widget, TRUE, TRUE, 0);
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+				       GTK_POLICY_AUTOMATIC,
+				       GTK_POLICY_AUTOMATIC);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), priv->edit_widget);
+
+	gtk_box_pack_start(box, scrolled_window, TRUE, TRUE, 0);
 	gtk_box_pack_start(box, priv->html_viewer, TRUE, TRUE, 0);
 	gtk_widget_hide(priv->html_viewer);
-	gtk_widget_show(priv->edit_widget);
+	gtk_widget_show_all(scrolled_window);
 }
 
-static void gebr_gui_help_edit_set_property(GObject		*object,
-					    guint		 prop_id,
-					    const GValue	*value,
-					    GParamSpec		*pspec)
+static void gebr_gui_help_edit_widget_set_property(GObject		*object,
+						   guint		 prop_id,
+						   const GValue	*value,
+						   GParamSpec		*pspec)
 {
-	GebrGuiHelpEdit * self;
+	GebrGuiHelpEditWidget * self;
 
-	self = GEBR_GUI_HELP_EDIT(object);
+	self = GEBR_GUI_HELP_EDIT_WIDGET(object);
 
 	switch (prop_id) {
 	case PROP_EDITING:
-		gebr_gui_help_edit_set_editing(self, g_value_get_boolean(value));
+		gebr_gui_help_edit_widget_set_editing(self, g_value_get_boolean(value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -133,12 +140,12 @@ static void gebr_gui_help_edit_set_property(GObject		*object,
 	}
 }
 
-static void gebr_gui_help_edit_get_property(GObject	*object,
-					    guint	 prop_id,
-					    GValue	*value,
-					    GParamSpec	*pspec)
+static void gebr_gui_help_edit_widget_get_property(GObject	*object,
+						   guint	 prop_id,
+						   GValue	*value,
+						   GParamSpec	*pspec)
 {
-	GebrGuiHelpEditPrivate * priv = GEBR_GUI_HELP_EDIT_GET_PRIVATE(object);
+	GebrGuiHelpEditWidgetPrivate * priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(object);
 
 	switch (prop_id) {
 	case PROP_EDITING:
@@ -153,7 +160,7 @@ static void gebr_gui_help_edit_get_property(GObject	*object,
 	}
 }
 
-static void gebr_gui_help_edit_destroy(GtkObject *object)
+static void gebr_gui_help_edit_widget_destroy(GtkObject *object)
 {
 }
 
@@ -165,14 +172,9 @@ static void gebr_gui_help_edit_destroy(GtkObject *object)
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
 
-GtkWidget *gebr_gui_help_edit_new(const gchar *title, GtkWindow *parent)
+void gebr_gui_help_edit_widget_set_editing(GebrGuiHelpEditWidget * self, gboolean editing)
 {
-	return g_object_new(GEBR_GUI_TYPE_HELP_EDIT, NULL);
-}
-
-void gebr_gui_help_edit_set_editing(GebrGuiHelpEdit * self, gboolean editing)
-{
-	GebrGuiHelpEditPrivate * priv = GEBR_GUI_HELP_EDIT_GET_PRIVATE(self);
+	GebrGuiHelpEditWidgetPrivate * priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 
 	priv->is_editing = editing;
 	puts(editing? "EDITING":"NOT EDITING");
@@ -182,7 +184,7 @@ void gebr_gui_help_edit_set_editing(GebrGuiHelpEdit * self, gboolean editing)
 		gtk_widget_hide(priv->html_viewer);
 	} else {
 		gchar * content;
-		content = gebr_gui_help_edit_get_content(self);
+		content = gebr_gui_help_edit_widget_get_content(self);
 		//gebr_gui_html_viewer_show(GEBR_GUI_HTML_VIEWER(priv->html_viewer), content);
 		puts(content);
 		gtk_label_set_text(GTK_LABEL(priv->html_viewer), content);
@@ -192,35 +194,35 @@ void gebr_gui_help_edit_set_editing(GebrGuiHelpEdit * self, gboolean editing)
 	}
 }
 
-void gebr_gui_help_edit_commit_changes(GebrGuiHelpEdit * self)
+void gebr_gui_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self)
 {
-	GEBR_GUI_HELP_EDIT_GET_CLASS(self)->commit_changes(self);
+	GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS(self)->commit_changes(self);
 }
 
-gchar * gebr_gui_help_edit_get_content(GebrGuiHelpEdit * self)
+gchar * gebr_gui_help_edit_widget_get_content(GebrGuiHelpEditWidget * self)
 {
-	return GEBR_GUI_HELP_EDIT_GET_CLASS(self)->get_content(self);
+	return GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS(self)->get_content(self);
 }
 
-void gebr_gui_help_edit_set_content(GebrGuiHelpEdit * self, const gchar * content)
+void gebr_gui_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, const gchar * content)
 {
-	GEBR_GUI_HELP_EDIT_GET_CLASS(self)->set_content(self, content);
+	GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS(self)->set_content(self, content);
 }
 
-GtkWidget * gebr_gui_help_edit_get_web_view(GebrGuiHelpEdit * self)
+GtkWidget * gebr_gui_help_edit_widget_get_web_view(GebrGuiHelpEditWidget * self)
 {
-	GebrGuiHelpEditPrivate * priv;
-	priv = GEBR_GUI_HELP_EDIT_GET_PRIVATE(self);
+	GebrGuiHelpEditWidgetPrivate * priv;
+	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	return priv->edit_widget;
 }
 
-JSContextRef gebr_gui_help_edit_get_js_context(GebrGuiHelpEdit * self)
+JSContextRef gebr_gui_help_edit_widget_get_js_context(GebrGuiHelpEditWidget * self)
 {
 	WebKitWebView * view;
 	WebKitWebFrame * frame;
-	GebrGuiHelpEditPrivate * private;
+	GebrGuiHelpEditWidgetPrivate * private;
 
-	private = GEBR_GUI_HELP_EDIT_GET_PRIVATE(self);
+	private = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	view = WEBKIT_WEB_VIEW(private->edit_widget);
 	frame = webkit_web_view_get_main_frame(view);
 
