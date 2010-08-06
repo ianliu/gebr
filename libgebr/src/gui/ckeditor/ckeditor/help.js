@@ -84,21 +84,15 @@ function GenerateNavigationIndex(doc) {
  * Get a list of title-link pairs and generate an index on \p doc.
  */
 function GenerateLinksIndex2(doc, links) {
-	var linkbar = doc.getElementsByClassName('links')[0];
-	if (!linkbar) {
-		linkbar = doc.createElement('div');
-		linkbar.appendChild(doc.createTextNode(' '));
-		linkbar.setAttribute('class', 'links');
-		var navbar = doc.getElementsByClassName('navigation')[0];
-		navbar.parentNode.insertBefore(linkbar, navbar.nextSibling);
+	var navbar = doc.getElementsByClassName('navigation')[0];
+	if (!navbar) return;
+	var linklist = navbar.getElementsByTagName('ul')[0];
+	if (!linklist) return;
+	if (!is_programs_help) {
+		var session = doc.createElement('li');
+		session.innerHTML = '<h2>Programs</h2>';
+		linklist.appendChild(session);
 	}
-	if (!is_programs_help)
-		linkbar.innerHTML = '<h2>Programs</h2><ul></ul>';
-	else
-		linkbar.innerHTML = '<ul></ul>';
-	var linklist = linkbar.getElementsByTagName('ul')[0];
-	if (!linklist)
-		return;
 	for (var i = 0; i < links.length; ++i) {
 		var link = doc.createElement('a');
 		link.setAttribute('href', links[i][1]);
@@ -113,7 +107,6 @@ function GenerateLinksIndex2(doc, links) {
  */
 function GenerateLinksIndex(links) {
 	GenerateLinksIndex2(document, links);
-	GenerateLinksIndex2(document_clone, links);
 }
 function OpenCkEditor(element) {
 	if (editor) return;
