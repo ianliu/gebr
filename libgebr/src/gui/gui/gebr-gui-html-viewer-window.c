@@ -40,14 +40,16 @@ struct _GebrGuiHtmlViewerWindowPrivate {
 //==============================================================================
 
 static void gebr_gui_html_viewer_window_set_property	(GObject	*object,
-						 guint		 prop_id,
-						 const GValue	*value,
-						 GParamSpec	*pspec);
+							 guint		 prop_id,
+							 const GValue	*value,
+							 GParamSpec	*pspec);
 static void gebr_gui_html_viewer_window_get_property	(GObject	*object,
-						 guint		 prop_id,
-						 GValue		*value,
-						 GParamSpec	*pspec);
+							 guint		 prop_id,
+							 GValue		*value,
+							 GParamSpec	*pspec);
 static void gebr_gui_html_viewer_window_destroy(GtkObject *object);
+
+void on_print_clicked(GtkToolButton * button, GebrGuiHtmlViewerWindow * self);
 
 G_DEFINE_TYPE(GebrGuiHtmlViewerWindow, gebr_gui_html_viewer_window, GTK_TYPE_WINDOW);
 
@@ -71,22 +73,37 @@ static void gebr_gui_html_viewer_window_class_init(GebrGuiHtmlViewerWindowClass 
 
 static void gebr_gui_html_viewer_window_init(GebrGuiHtmlViewerWindow * self)
 {
-	GtkWindow *window;
 	GebrGuiHtmlViewerWindowPrivate * priv;
+	GtkWidget * vbox;
+	GtkWindow * window;
+	GtkWidget * toolbar;
+	GtkToolItem * item;
 
 	priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
-
 	priv->viewer_widget = gebr_gui_html_viewer_widget_new();
 
+	vbox = gtk_vbox_new(FALSE, 0);
+	toolbar = gtk_toolbar_new();
+	item = gtk_tool_button_new_from_stock(GTK_STOCK_PRINT);
+
+	g_signal_connect(item, "clicked", G_CALLBACK(on_print_clicked), self);
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+
 	window = GTK_WINDOW(self);
-	gtk_container_add(GTK_CONTAINER(window), priv->viewer_widget);
+	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), priv->viewer_widget, TRUE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(window), vbox);
+
 	gtk_widget_show(priv->viewer_widget);
+	gtk_widget_show_all(toolbar);
+	gtk_widget_show(vbox);
 }
 
 static void gebr_gui_html_viewer_window_set_property(GObject		*object,
-					      guint		 prop_id,
-					      const GValue	*value,
-					      GParamSpec		*pspec)
+						     guint		 prop_id,
+						     const GValue	*value,
+						     GParamSpec		*pspec)
 {
 	switch (prop_id) {
 	default:
@@ -96,9 +113,9 @@ static void gebr_gui_html_viewer_window_set_property(GObject		*object,
 }
 
 static void gebr_gui_html_viewer_window_get_property(GObject	*object,
-					      guint	 prop_id,
-					      GValue	*value,
-					      GParamSpec	*pspec)
+						     guint	 prop_id,
+						     GValue	*value,
+						     GParamSpec	*pspec)
 {
 	switch (prop_id) {
 	default:
@@ -114,6 +131,12 @@ static void gebr_gui_html_viewer_window_destroy(GtkObject *object)
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
+void on_print_clicked(GtkToolButton * button, GebrGuiHtmlViewerWindow * self)
+{
+	GebrGuiHtmlViewerWindowPrivate * private;
+	private = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
+	gebr_gui_html_viewer_widget_print(GEBR_GUI_HTML_VIEWER_WIDGET(private->viewer_widget));
+}
 
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
@@ -130,4 +153,10 @@ void gebr_gui_html_viewer_window_show_html(GebrGuiHtmlViewerWindow * self, const
 {
 	GebrGuiHtmlViewerWindowPrivate * priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
 	gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(priv->viewer_widget), content);
+}
+
+void gebr_gui_html_viewer_window_set_geoxml_object(GebrGuiHtmlViewerWindow * self, GebrGeoXmlObject * object)
+{
+	GebrGuiHtmlViewerWindowPrivate * priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
+	gebr_gui_html_viewer_widget_set_geoxml_object(GEBR_GUI_HTML_VIEWER_WIDGET(priv->viewer_widget), object);
 }

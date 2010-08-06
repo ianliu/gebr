@@ -20,7 +20,7 @@
 #define __GEBR_GUI_HTML_VIEWER_WINDOW__
 
 #include <gtk/gtk.h>
-
+#include <geoxml.h>
 
 G_BEGIN_DECLS
 
@@ -59,6 +59,13 @@ GtkWidget * gebr_gui_html_viewer_window_new();
  * Show the html content
  */
 void gebr_gui_html_viewer_window_show_html(GebrGuiHtmlViewerWindow * self, const gchar * content);
+
+/**
+ * gebr_gui_html_viewer_window_set_geoxml_object:
+ *
+ * Set a geoxml object attribute
+ */
+void gebr_gui_html_viewer_window_set_geoxml_object(GebrGuiHtmlViewerWindow * self, GebrGeoXmlObject * object);
 
 G_END_DECLS
 

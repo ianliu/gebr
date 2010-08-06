@@ -67,6 +67,12 @@ void gebr_gui_html_viewer_widget_print(GebrGuiHtmlViewerWidget * self);
  */
 void gebr_gui_html_viewer_widget_show_html(GebrGuiHtmlViewerWidget * self, const gchar * content);
 
+/**
+ * gebr_gui_html_viewer_widget_set_geoxml_object:
+ *
+ * Set a geoxml object attribute
+ */
+void gebr_gui_html_viewer_widget_set_geoxml_object(GebrGuiHtmlViewerWidget *self, GebrGeoXmlObject * object);
 G_END_DECLS
 
 #endif /* __GEBR_GUI_HTML_VIEWER_WIDGET__ */

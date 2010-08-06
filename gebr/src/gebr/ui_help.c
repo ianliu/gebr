@@ -30,7 +30,7 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
-#include <libgebr/gui/help.h>
+#include <libgebr/gui.h>
 
 #include "gebr-help-edit.c"
 #include "ui_help.h"
@@ -50,6 +50,8 @@ void program_help_show(void)
 void help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
 {
 	GString *html = g_string_new("");
+	GtkWidget *window;
+
 
 	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		g_string_assign(html, gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object)));
@@ -64,7 +66,11 @@ void help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
 		g_string_insert(html, pos, "file://" GEBR_DATA_DIR "/gebr.css");
 	}
 
-	gebr_gui_help_show(object, menu, html->str, title);
+	window = gebr_gui_html_viewer_window_new(title); 
+	gebr_gui_html_viewer_window_set_geoxml_object(GEBR_GUI_HTML_VIEWER_WINDOW(window), object);
+	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html->str);
+
+	gtk_widget_show(window);
 
 	/* frees */
 	g_string_free(html, TRUE);
