@@ -32,7 +32,7 @@
 #include <libgebr/utils.h>
 #include <libgebr/gui.h>
 
-#include "gebr-help-edit.c"
+#include "gebr-help-edit-widget.c"
 #include "ui_help.h"
 #include "gebr.h"
 #include "document.h"
@@ -81,10 +81,10 @@ void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document)
 	help_show(GEBR_GEOXML_OBJECT(document), FALSE, gebr_geoxml_document_get_title(document));
 }
 
-void on_edit_preview_toggle(GtkToggleToolButton * button, GebrGuiHelpEdit * help_edit)
+void on_edit_preview_toggle(GtkToggleToolButton * button, GebrGuiHelpEditWidget * help_edit)
 {
 	gboolean active = gtk_toggle_tool_button_get_active(button);
-	gebr_gui_help_edit_set_editing(help_edit, active);
+	gebr_gui_help_edit_widget_set_editing(help_edit, active);
 }
 
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
@@ -102,7 +102,7 @@ void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 		dialog = gtk_dialog_new();
 		toolbar = gtk_toolbar_new();
 		tool_item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_EDIT);
-		help_edit = gebr_help_edit_new(GEBR_GEOXML_FLOW(document), html);
+		help_edit = gebr_help_edit_widget_new(GEBR_GEOXML_FLOW(document), html);
 
 		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(tool_item), TRUE);
 		gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);

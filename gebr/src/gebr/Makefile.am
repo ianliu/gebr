@@ -46,7 +46,7 @@ libgebr_a_SOURCES = \
 	ui_preferences.c \
 	ui_server.c \
 	ui_moab.c \
-	gebr-help-edit.c
+	gebr-help-edit-widget.c
 
 gebr_SOURCES = main.c
 noinst_HEADERS = \
@@ -75,7 +75,7 @@ noinst_HEADERS = \
 	ui_preferences.h \
 	ui_server.h \
 	ui_moab.h \
-	gebr-help-edit.h
+	gebr-help-edit-widget.h
 
 EXTRA_DIST = ${noinst_HEADERS}
 
