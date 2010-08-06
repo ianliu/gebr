@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow version="0.2.1">
-  <filename>grace.mnu</filename>
+<flow version="0.3.5">
   <title>Grace</title>
   <description>WYSIWYG 2D plotting tool for numerical data</description>
   <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -57,7 +56,7 @@
 	  <a name="credits" id="credits"></a>
           <h2>Credits</h2>
 
-          <p>Feb 10, 2008: created by Ricardo Biloti, G&ecirc;BR Core Team.</p>
+          <p>Feb 10, 2008: created by Ricardo Biloti, G&ecirc;BR Core Team, &lt;biloti@gebrproject.com&gt;.</p>
         </div>
 
         <div class="navigation">
@@ -74,7 +73,7 @@
       </div>
 
       <div class="footer">
-        <span class="left">G&ecirc;BR 0.9.4 (0.2.1) | Feb 10, 2008</span>
+        <span class="left">G&ecirc;BR 0.9.17 (0.3.5) | Feb 10, 2008</span>
 
         <div class="clearer"></div>
       </div>
@@ -84,10 +83,13 @@
 </html>
 ]]></help>
   <author>Ricardo Biloti</author>
-  <email>gebr@users.sf.net</email>
+  <email>biloti@gebrproject.com</email>
+  <dict>
+    <parameters default-selection="" selection=""/>
+  </dict>
   <date>
     <created/>
-    <modified/>
+    <modified>2010-08-06T14:40:40.285445Z</modified>
     <lastrun/>
   </date>
   <category>Graphics</category>
@@ -96,28 +98,22 @@
     <output/>
     <error/>
   </io>
-  <program stdin="yes" stdout="no" stderr="yes" status="unconfigured">
-    <menu index="0">grace.mnu</menu>
+  <servers/>
+  <program stdin="yes" stdout="no" stderr="yes" status="unconfigured" mpi="" version="Grace 5.1.2">
+    
     <title>Grace</title>
-    <binary>xmgrace -pipe</binary>
+    <binary>xmgrace -pipe -free</binary>
     <description>WYSIWYG 2D plotting tool for numerical data</description>
-    <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta http-equiv="content-type" content=
-  "text/html; charset=utf-8" />
+    <help><![CDATA[<html xmlns="http://www.w3.org/1999/xhtml"><head xmlns="http://www.w3.org/1999/xhtml"><meta xmlns="http://www.w3.org/1999/xhtml" http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  
   <link rel="stylesheet" type="text/css" href="gebr.css" />
 
-  <title>G&ecirc;BR - Grace</title>
-</head>
-
-<body>
-  <div class="outer-container">
-    <div class="inner-container">
-      <div class="header">
-        <div class="title">
+  <title xmlns="http://www.w3.org/1999/xhtml">GêBR - Grace</title>
+</head><body xmlns="http://www.w3.org/1999/xhtml">
+  <div xmlns="http://www.w3.org/1999/xhtml" class="outer-container">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="inner-container">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="header">
+        <div xmlns="http://www.w3.org/1999/xhtml" class="title">
           <span class="flowtitle">Grace</span>
 
           <div class="description">
@@ -126,119 +122,88 @@
         </div>
       </div>
 
-      <div class="category">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="category">
         Graphics
       </div>
 
-      <div class="main">
-        <div class="content">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="main">
+        <div xmlns="http://www.w3.org/1999/xhtml" class="content"><h2 id="header_0">
+	Introduction</h2>
+<p>
+	<a href="http://plasma-gate.weizmann.ac.il/Grace/">Grace</a> is a WYSIWYG 2D plotting tool for the X Window System and M*tif. Grace runs on practically any version of Unix-like OS. As well, it has been successfully ported to VMS, OS/2, and Win9*/NT/2000/XP (some minor functionality may be missing, though).</p>
+<div class="parameters">
+	<p>
+		Grace plots data written in ascii format, by columns, like</p>
+	<p>
+		x<sub>1</sub>   y<sub>1</sub><br />
+		x<sub>2</sub>   y<sub>2</sub><br />
+		x<sub>3</sub>   y<sub>3</sub><br />
+		...<br />
+		x<sub>n</sub>   y<sub>n</sub></p>
+	<h2 id="header_1">
+		Parameters</h2>
+<!-- List of optional parameters -->	<ul>
+		<li>
+			<span class="label">Free page layout</span></li>
+		<li>
+			<span class="label">Hide all tool bars</span> opens the Grace window just with graph itself.</li>
+		<li>
+			<span class="label">Add timestamp to graph</span> prints the current time at bottom left of the graph.</li>
+		<li>
+			<span class="label">Input data in format (X Y1 Y2 Y3...)</span> means that the first numeric column will provide the abscissas and all remaining columns will provide the ordinates of several sets.</li>
+		<li>
+			<span class="label">Parameter file</span> is a way to import a set of predefined style options to the current graph. Refer to Grace User's Guide for more information.</li>
+		<li>
+			<span class="label">Save graph to file</span> instead of showing it.</li>
+		<li>
+			<span class="label">Export device</span> is used to select the type of file generated (PNG, EPS or JPEG).</li>
+	</ul>
+	<p>
+		<span class="Apple-style-span" style="font-size: 18px; font-weight: bold; ">References</span></p>
+</div>
+<!-- List of references --><ul>
+	<li>
+		<a href="http://plasma-gate.weizmann.ac.il/Grace/doc/Tutorial.html">Grace Tutorial</a></li>
+	<li>
+		<a href="http://plasma-gate.weizmann.ac.il/Grace/doc/UsersGuide.html">Grace Users's Guide</a></li>
+	<li>
+		<a href="http://plasma-gate.weizmann.ac.il/Grace/doc/FAQ.html">FAQ</a></li>
+</ul>
+<h2 id="header_2">
+	Credits</h2>
+<p>
+	Grace is maintained by Evgeny Stambulchik. Please refer to <a href="http://plasma-gate.weizmann.ac.il/Grace/">Grace home page</a> for full credits information.</p>
+</div>
 
-          <a name="intro" id="intro"></a>
-          <h2>Introduction</h2>
+        <div xmlns="http://www.w3.org/1999/xhtml" class="navigation"><h2>Index</h2><ul><li><a href="#header_0">
+	Introduction</a></li><li><a href="#header_1">
+		Parameters</a></li><li><a href="#header_2">
+	Credits</a></li></ul></div>
 
-          <p><a href="http://plasma-gate.weizmann.ac.il/Grace/">Grace</a> is a WYSIWYG 2D plotting tool for the X Window System and M*tif.
-	  Grace runs on practically any version of Unix-like OS. As well, it has been
-	  successfully ported to VMS, OS/2, and Win9*/NT/2000/XP (some minor functionality
-	  may be missing, though).</p>
+        <div class="clearer"></div>
 
-          <div class="parameters">
-
-            <a name="par" id="par"></a>
-            <h2>Required parameters</h2>
-
-            <p>Grace plots data written in ascii format, by columns, like<br />
- 	    x<sub>1</sub> &nbsp; y<sub>1</sub><br />
- 	    x<sub>2</sub> &nbsp; y<sub>2</sub><br />
- 	    x<sub>3</sub> &nbsp; y<sub>3</sub><br />
- 	    ...<br />
- 	    x<sub>n</sub> &nbsp; y<sub>n</sub><br />
-	   </p>
-
-           <h2>Optional parameters</h2>
-
-	    <!-- List of optional parameters -->
-            <ul>
-              <li><span class="label">[Hide all tool bars]</span> opens the Grace
-              window just with graph itself.</li>
-
-              <li><span class="label">[Add timestamp to graph]</span> prints the
-              current time at bottom left of the graph.</li>
-
-	      <li><span class="label">[Input data in format (X Y1 Y2 Y3...)]</span> means that the first numeric column will provide the abscissas and all remaining columns will provide the ordinates of several sets.</li>
-
-	      <li><span class="label">[Parameter file]</span> is a way to import a set
-              of predefined style options to the current graph. Refer to Grace User's Guide for
-              more information.</li>
-
-	      <li><span class="label">[Save graph to file]</span> instead of showing it.</li>
-
-	      <li><span class="label">[Export device]</span> is used to select the type
-              of file generated (PNG, EPS or JPEG).</li>
-
-            </ul>
-          </div>
-	    
-	  <a name="ref" id="ref"></a>
-          <h2>References</h2>
-
-	  <!-- List of references -->
-          <ul>
-            <li><a href="http://plasma-gate.weizmann.ac.il/Grace/doc/Tutorial.html">Grace
-	    Tutorial</a></li>
-
-            <li><a href="http://plasma-gate.weizmann.ac.il/Grace/doc/UsersGuide.html">Grace
-	    Users's Guide</a></li>
-
-            <li><a href="http://plasma-gate.weizmann.ac.il/Grace/doc/FAQ.html">FAQ</a></li>
-          </ul>
-
-	  <a name="credits" id="credits"></a>
-          <h2>Credits</h2>
-
-          <p>Grace is maintained by Evgeny Stambulchik. Please refer to
-          <a href="http://plasma-gate.weizmann.ac.il/Grace/">Grace home page</a> for
-          full credits information.</p>
-        </div>
-
-        <div class="navigation">
-          <h2>Index</h2>
-
-          <ul>
-            <li><a href="#intro">Introduction</a></li>
-
-            <li><a href="#par">Parameters</a></li>
-
-            <li><a href="#ref">References</a></li>
-
-            <li><a href="#credits">Credits</a></li>
-          </ul>
-        </div>
+      <div xmlns="http://www.w3.org/1999/xhtml" class="footer">
+        <span class="left">GêBR 0.9.4 (0.2.1) | Grace 5.1.21</span>
 
         <div class="clearer"></div>
       </div>
 
-      <div class="footer">
-        <span class="left">G&ecirc;BR 0.9.4 (0.2.1) | Grace 5.1.21</span>
 
-        <div class="clearer"></div>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+</a></body></html>
 ]]></help>
-    <url>http://plasma-gate.weizmann.ac.il/Grace/</url><parameters>
-      <flag>
-        <keyword>-barebones</keyword>
-        <label>Hide all tool bars</label>
-        <state default="off"/>
-      </flag>
+    <url>http://plasma-gate.weizmann.ac.il/Grace/</url><parameters default-selection="0" selection="">
+      <parameter><label>Free page layout</label><flag><property required="no"><keyword>-free</keyword><value>off</value><default>on</default></property></flag></parameter><parameter><label>Hide all tool bars</label><flag><property required="no"><keyword>-barebones</keyword><value>off</value><default>off</default></property>
+        
+        
+        
+      </flag></parameter>
       
-      <flag><keyword>-timestamp</keyword><label>Add timestamp to graph</label><state default="off"/></flag><flag><keyword>-nxy</keyword><label>Input data in format (X Y1 Y2 Y3 ...)</label><state default="off"/></flag><file required="no" directory="no"><keyword>-param </keyword><label>Parameter file</label><value/></file><file required="no" directory="no">
-        <keyword>-hardcopy -printfile </keyword>
-        <label>Save graph to file</label>
-        <value/>
-      </file><enum required="no"><keyword>-hdevice </keyword><label>Export device</label><value default="PNG"/><option>PNG</option><option>EPS</option><option>JPEG</option></enum>
+      <parameter><label>Add timestamp to graph</label><flag><property required="no"><keyword>-timestamp</keyword><value>off</value><default>off</default></property></flag></parameter><parameter><label>Input data in format (X Y1 Y2 Y3 ...)</label><flag><property required="no"><keyword>-nxy</keyword><value>off</value><default>off</default></property></flag></parameter><parameter><label>Parameter file</label><file directory="no"><property required="no"><keyword>-param </keyword><value/><default/></property></file></parameter><parameter><label>Save graph to file</label><file directory="no"><property required="no"><keyword>-hardcopy -printfile </keyword><value/><default/></property>
+        
+        
+        
+      </file></parameter><parameter><label>Export device</label><enum><property required="no"><keyword>-hdevice </keyword><value/><default>PNG</default></property><option><label/><value>PNG</value></option><option><label/><value>EPS</value></option><option><label/><value>JPEG</value></option></enum></parameter>
     </parameters>
   </program>
 </flow>
+ 
