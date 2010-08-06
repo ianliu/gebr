@@ -62,7 +62,6 @@ libgebr_guisubinclude_HEADERS = 	\
 	gebr-gui-save-dialog.h		\
 	gebr-gui-help-edit-widget.h	\
 	gebr-gui-html-viewer-widget.h	\
-	gebr-gui-help-edit.h		\
 	gebr-gui-html-viewer-window.h	\
 	gebr-js.h
 
