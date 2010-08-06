@@ -40,6 +40,7 @@ libgebr_gui_la_SOURCES = 		\
 	gebr-gui-save-dialog.c		\
 	gebr-gui-help-edit.c		\
 	gebr-gui-html-viewer-widget.c	\
+	gebr-gui-html-viewer-window.c	\
 	gebr-js.c
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
@@ -60,6 +61,7 @@ libgebr_guisubinclude_HEADERS = 	\
 	gtkdirectorychooser.h		\
 	gebr-gui-save-dialog.h		\
 	gebr-gui-html-viewer-widget.h	\
+	gebr-gui-html-viewer-window.h	\
 	gebr-gui-help-edit.h		\
 	gebr-js.h
 

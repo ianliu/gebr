@@ -120,14 +120,16 @@ static void gebr_gui_html_viewer_widget_destroy(GtkObject *object)
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
 
-GtkWidget *gebr_gui_html_viewer_widget_new(const gchar *title, GtkWindow *parent)
+GtkWidget *gebr_gui_html_viewer_widget_new(void)
 {
 	return  g_object_new(GEBR_GUI_TYPE_HTML_VIEWER_WIDGET, NULL);
 }
 
 void gebr_gui_html_viewer_widget_print(GebrGuiHtmlViewerWidget * self)
 {
-
+	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+	WebKitWebFrame * frame = webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(priv->web_view));
+	webkit_web_frame_print(frame);
 }
 void gebr_gui_html_viewer_widget_show_html(GebrGuiHtmlViewerWidget * self, const gchar * content)
 {
