@@ -958,6 +958,12 @@ static gboolean check_for_write_permission(const gchar * file)
 	gboolean ret;
 	gchar *dir;
 
+        /* Test if the file exists */
+        if ( g_access(file, F_OK) == 0 )
+                /* The file exists, but is it writeable ? */
+                return (g_access(file, W_OK) == 0 ? FALSE : TRUE);
+
+        /* Otherwise test for directory permissions */
 	dir = g_path_get_dirname(file);
 	ret = (g_access(dir, W_OK) == -1 ? TRUE : FALSE);
 	g_free(dir);
