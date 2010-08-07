@@ -82,17 +82,20 @@ static void gebr_gui_html_viewer_widget_class_init(GebrGuiHtmlViewerWidgetClass 
 static void gebr_gui_html_viewer_widget_init(GebrGuiHtmlViewerWidget * self)
 {
 	GtkWidget * vbox;
+	GtkWidget * scrolled_window;
 	GebrGuiHtmlViewerWidgetPrivate * priv;
 
 	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	priv->object = NULL;
-
 	priv->web_view = webkit_web_view_new();
+
 	g_signal_connect(priv->web_view, "navigation-requested", G_CALLBACK(on_navigation_requested), self);
 
 	vbox = GTK_WIDGET(self);
-	gtk_box_pack_start(GTK_BOX(vbox), priv->web_view, TRUE, TRUE, 0);
-	gtk_widget_show(priv->web_view);
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), priv->web_view);
+	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
+	gtk_widget_show_all(scrolled_window);
 }
 
 static void gebr_gui_html_viewer_widget_set_property(GObject		*object,

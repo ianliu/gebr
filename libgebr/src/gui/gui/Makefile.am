@@ -38,7 +38,7 @@ libgebr_gui_la_SOURCES = 		\
 	parameter.c			\
 	gtkdirectorychooser.c		\
 	gebr-gui-save-dialog.c		\
-	gebr-gui-help-edit-widget.c		\
+	gebr-gui-help-edit-widget.c	\
 	gebr-gui-html-viewer-widget.c	\
 	gebr-gui-html-viewer-window.c	\
 	gebr-js.c
