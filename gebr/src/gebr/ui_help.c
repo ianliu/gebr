@@ -81,44 +81,18 @@ void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document)
 	help_show(GEBR_GEOXML_OBJECT(document), FALSE, gebr_geoxml_document_get_title(document));
 }
 
-void on_edit_preview_toggle(GtkToggleToolButton * button, GebrGuiHelpEditWidget * help_edit)
-{
-	gboolean active = gtk_toggle_tool_button_get_active(button);
-	gebr_gui_help_edit_widget_set_editing(help_edit, active);
-}
-
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 {
 	if (gebr.config.native_editor || gebr.config.editor->len == 0) {
-		const gchar * html;
-		GtkWidget * vbox;
-		GtkWidget * dialog;
-		GtkWidget * toolbar;
-		GtkToolItem * tool_item;
-		GtkWidget * help_edit;
+		const gchar * help;
+		GtkWidget * window;
+		GtkWidget * help_edit_widget;
 
-		vbox = gtk_vbox_new(FALSE, 0);
-		html = gebr_geoxml_document_get_help(document);
-		dialog = gtk_dialog_new();
-		toolbar = gtk_toolbar_new();
-		tool_item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_EDIT);
-		help_edit = gebr_help_edit_widget_new(GEBR_GEOXML_FLOW(document), html);
-
-		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(tool_item), TRUE);
-		gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-		g_signal_connect(tool_item, "toggled",
-				 G_CALLBACK(on_edit_preview_toggle), help_edit);
-
-		gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
-		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(vbox), help_edit, TRUE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox, TRUE, TRUE, 0);
-
-		gtk_widget_show(vbox);
-		gtk_widget_show_all(toolbar);
-		gtk_widget_show(help_edit);
-		gtk_dialog_run(GTK_DIALOG(dialog));
-		gtk_widget_destroy(dialog);
+		help = gebr_geoxml_document_get_help(document);
+		help_edit_widget = gebr_help_edit_widget_new(document, help);
+		window = gebr_gui_help_edit_window_new(GEBR_GUI_HELP_EDIT_WIDGET(help_edit_widget));
+		gtk_dialog_run(GTK_DIALOG(window));
+		gtk_widget_destroy(window);
 	} else {
 		GString *prepared_html;
 		GString *cmd_line;
