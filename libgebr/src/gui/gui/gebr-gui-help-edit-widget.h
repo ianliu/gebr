@@ -16,6 +16,16 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * SECTION:gebr-gui-help-edit-widget
+ * @short_description: A widget for editing rich text
+ * @title: GebrGuiHelpEditWidget class
+ * @see_also: #GebrGuiHelpEditWindow
+ * @include: libgebr/gui/gebr-gui-help-edit-widget.h
+ *
+ * A What You See Is What You Get rich text editor, made with WebKit and the JavaScript editor, CKEditor.
+ */
+
 #ifndef __GEBR_GUI_HELP_EDIT_WIDGET__
 #define __GEBR_GUI_HELP_EDIT_WIDGET__
 

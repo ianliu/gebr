@@ -16,11 +16,11 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-#include "../../intl.h"
-
-#include "gebr-gui-help-edit-widget.h"
-
 #include <glib.h>
+
+#include "../../intl.h"
+#include "gebr-gui-help-edit-widget.h"
+#include "gebr-gui-html-viewer-widget.h"
 
 enum {
 	PROP_0,
@@ -35,6 +35,7 @@ struct _GebrGuiHelpEditWidgetPrivate {
 	gboolean is_saved;
 	GtkWidget * edit_widget;
 	GtkWidget * html_viewer;
+	GtkWidget * scrolled_window;
 };
 
 #define GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(o) \
@@ -73,6 +74,8 @@ static void gebr_gui_help_edit_widget_class_init(GebrGuiHelpEditWidgetClass * kl
 
 	/**
 	 * GebrGuiHelpEditWidget:editing:
+	 * You can set this property to change the state of the widget. If %TRUE, the widget enters editing mode, if
+	 * %FALSE, the widget enters preview mode.
 	 */
 	g_object_class_install_property(gobject_class,
 					PROP_EDITING,
@@ -84,6 +87,7 @@ static void gebr_gui_help_edit_widget_class_init(GebrGuiHelpEditWidgetClass * kl
 
 	/**
 	 * GebrGuiHelpEditWidget:saved:
+	 * This is a read only property which states if the content is saved or not.
 	 */
 	g_object_class_install_property(gobject_class,
 					PROP_SAVED,
@@ -99,32 +103,31 @@ static void gebr_gui_help_edit_widget_class_init(GebrGuiHelpEditWidgetClass * kl
 static void gebr_gui_help_edit_widget_init(GebrGuiHelpEditWidget * self)
 {
 	GtkBox * box;
-	GtkWidget * scrolled_window;
 	GebrGuiHelpEditWidgetPrivate * priv;
 
 	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	priv->edit_widget = webkit_web_view_new();
-	priv->html_viewer = gtk_label_new("HTML VIEWER"); // gebr_gui_html_viewer_new();
+	priv->html_viewer = gebr_gui_html_viewer_widget_new();
 	priv->is_editing = TRUE;
 	priv->is_saved = FALSE;
 
 	box = GTK_BOX(self);
-	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+	priv->scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(priv->scrolled_window),
 				       GTK_POLICY_AUTOMATIC,
 				       GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(scrolled_window), priv->edit_widget);
+	gtk_container_add(GTK_CONTAINER(priv->scrolled_window), priv->edit_widget);
 
-	gtk_box_pack_start(box, scrolled_window, TRUE, TRUE, 0);
+	gtk_box_pack_start(box, priv->scrolled_window, TRUE, TRUE, 0);
 	gtk_box_pack_start(box, priv->html_viewer, TRUE, TRUE, 0);
 	gtk_widget_hide(priv->html_viewer);
-	gtk_widget_show_all(scrolled_window);
+	gtk_widget_show_all(priv->scrolled_window);
 }
 
-static void gebr_gui_help_edit_widget_set_property(GObject		*object,
-						   guint		 prop_id,
+static void gebr_gui_help_edit_widget_set_property(GObject	*object,
+						   guint	 prop_id,
 						   const GValue	*value,
-						   GParamSpec		*pspec)
+						   GParamSpec	*pspec)
 {
 	GebrGuiHelpEditWidget * self;
 
@@ -177,19 +180,16 @@ void gebr_gui_help_edit_widget_set_editing(GebrGuiHelpEditWidget * self, gboolea
 	GebrGuiHelpEditWidgetPrivate * priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 
 	priv->is_editing = editing;
-	puts(editing? "EDITING":"NOT EDITING");
 
 	if (editing) {
-		gtk_widget_show(priv->edit_widget);
+		gtk_widget_show(priv->scrolled_window);
 		gtk_widget_hide(priv->html_viewer);
 	} else {
 		gchar * content;
 		content = gebr_gui_help_edit_widget_get_content(self);
-		//gebr_gui_html_viewer_show(GEBR_GUI_HTML_VIEWER(priv->html_viewer), content);
-		puts(content);
-		gtk_label_set_text(GTK_LABEL(priv->html_viewer), content);
+		gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(priv->html_viewer), content);
 		gtk_widget_show(priv->html_viewer);
-		gtk_widget_hide(priv->edit_widget);
+		gtk_widget_hide(priv->scrolled_window);
 		g_free(content);
 	}
 }

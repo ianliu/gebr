@@ -39,19 +39,19 @@
 	"ed = CKEDITOR.replace('editor', {"						\
 	"	fullPage:true,"								\
 	"	height:300,"								\
-	"	width:'100%%',"								\
+	"	width:'99%%',"								\
 	"	resize_enabled:false,"							\
 	"	toolbarCanCollapse:false,"						\
-	"	toolbar:[['Source'],['Bold','Italic','Underline'],"			\
-	"		['Subscript','Superscript'],['Undo','Redo'],"			\
-	"		['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],"	\
-	"		['NumberedList','BulletedList'],['Outdent','Indent','Blockquote','Styles'],"	\
-	"		['Link','Unlink'],['RemoveFormat'],['Find','Replace','Table']]"	\
-	"});"										\
-	"</script>"									\
-	"</body>"									\
-	"</html>"									\
-	""
+"	toolbar:[['Source'],['Bold','Italic','Underline'],"			\
+"		['Subscript','Superscript'],['Undo','Redo'],"			\
+"		['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],"	\
+"		['NumberedList','BulletedList'],['Outdent','Indent','Blockquote','Styles'],"	\
+"		['Link','Unlink'],['RemoveFormat'],['Find','Replace','Table']]"	\
+"});"										\
+"</script>"									\
+"</body>"									\
+"</html>"									\
+""
 
 enum {
 	PROP_0,
@@ -73,13 +73,13 @@ struct _GebrHelpEditWidgetPrivate {
 //==============================================================================
 
 static void gebr_help_edit_widget_set_property	(GObject	*object,
-					 guint		 prop_id,
-					 const GValue	*value,
-					 GParamSpec	*pspec);
+						 guint		 prop_id,
+						 const GValue	*value,
+						 GParamSpec	*pspec);
 static void gebr_help_edit_widget_get_property	(GObject	*object,
-					 guint		 prop_id,
-					 GValue		*value,
-					 GParamSpec	*pspec);
+						 guint		 prop_id,
+						 GValue		*value,
+						 GParamSpec	*pspec);
 static void gebr_help_edit_widget_destroy(GtkObject *object);
 
 static void gebr_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self);
@@ -130,9 +130,9 @@ static void gebr_help_edit_widget_init(GebrHelpEditWidget * self)
 }
 
 static void gebr_help_edit_widget_set_property(GObject		*object,
-					guint		 prop_id,
-					const GValue	*value,
-					GParamSpec	*pspec)
+					       guint		 prop_id,
+					       const GValue	*value,
+					       GParamSpec	*pspec)
 {
 	GebrHelpEditWidgetPrivate * priv;
 	priv = GEBR_HELP_EDIT_WIDGET_GET_PRIVATE(object);
@@ -148,9 +148,9 @@ static void gebr_help_edit_widget_set_property(GObject		*object,
 }
 
 static void gebr_help_edit_widget_get_property(GObject		*object,
-					guint		 prop_id,
-					GValue		*value,
-					GParamSpec	*pspec)
+					       guint		 prop_id,
+					       GValue		*value,
+					       GParamSpec	*pspec)
 {
 	GebrHelpEditWidgetPrivate * priv;
 	priv = GEBR_HELP_EDIT_WIDGET_GET_PRIVATE(object);
