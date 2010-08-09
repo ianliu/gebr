@@ -49,6 +49,8 @@ struct _GebrGuiHelpEditWindowPrivate {
 // PROTOTYPES								       =
 //==============================================================================
 
+static void gebr_gui_help_edit_window_constructed(GObject * self);
+
 static void gebr_gui_help_edit_window_set_property	(GObject	*object,
 							 guint		 prop_id,
 							 const GValue	*value,
@@ -57,9 +59,16 @@ static void gebr_gui_help_edit_window_get_property	(GObject	*object,
 							 guint		 prop_id,
 							 GValue		*value,
 							 GParamSpec	*pspec);
+
 static void gebr_gui_help_edit_window_destroy(GtkObject *object);
 
-G_DEFINE_TYPE(GebrGuiHelpEditWindow, gebr_gui_help_edit_window, GTK_TYPE_WINDOW);
+void on_save_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self);
+
+void on_edit_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow * self);
+
+void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self);
+
+G_DEFINE_TYPE(GebrGuiHelpEditWindow, gebr_gui_help_edit_window, GTK_TYPE_DIALOG);
 
 //==============================================================================
 // GOBJECT RELATED FUNCTIONS						       =
@@ -72,6 +81,7 @@ static void gebr_gui_help_edit_window_class_init(GebrGuiHelpEditWindowClass * kl
 
 	gobject_class = G_OBJECT_CLASS(klass);
 	object_class = GTK_OBJECT_CLASS(klass);
+	gobject_class->constructed = gebr_gui_help_edit_window_constructed;
 	gobject_class->set_property = gebr_gui_help_edit_window_set_property;
 	gobject_class->get_property = gebr_gui_help_edit_window_get_property;
 	object_class->destroy = gebr_gui_help_edit_window_destroy;
@@ -96,7 +106,7 @@ static void gebr_gui_help_edit_window_class_init(GebrGuiHelpEditWindowClass * kl
 					g_param_spec_pointer("help-edit-widget",
 							     "Help Edit Widget",
 							     "The GebrGuiHelpEdit widget",
-							     G_PARAM_READABLE | G_PARAM_CONSTRUCT_ONLY));
+							     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	/**
 	 * GebrGuiHelpEditWindow::refresh-requested:
@@ -120,7 +130,7 @@ static void gebr_gui_help_edit_window_class_init(GebrGuiHelpEditWindowClass * kl
 	g_type_class_add_private(klass, sizeof(GebrGuiHelpEditWindowPrivate));
 }
 
-static void gebr_gui_help_edit_window_init(GebrGuiHelpEditWindow * self)
+static void gebr_gui_help_edit_window_constructed(GObject * self)
 {
 	GebrGuiHelpEditWindowPrivate * private;
 	GtkWidget * vbox;
@@ -129,22 +139,35 @@ static void gebr_gui_help_edit_window_init(GebrGuiHelpEditWindow * self)
 
 	private = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
 
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = GTK_DIALOG(self)->vbox;
 	toolbar = gtk_toolbar_new();
 
 	// Commit button
-	item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_SAVE);
+	item = gtk_tool_button_new_from_stock(GTK_STOCK_SAVE);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+	g_signal_connect(item, "clicked", G_CALLBACK(on_save_clicked), self);
 
 	// Edit button
 	item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_EDIT);
 	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(item), TRUE);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+	g_signal_connect(item, "toggled", G_CALLBACK(on_edit_toggled), self);
+
+	if (private->has_refresh) {
+		// Refresh button
+		item = gtk_tool_button_new_from_stock(GTK_STOCK_REFRESH);
+		gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+		g_signal_connect(item, "clicked", G_CALLBACK(on_refresh_clicked), self);
+	}
 
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), private->help_edit_widget, TRUE, TRUE, 0);
 	gtk_widget_show_all(toolbar);
 	gtk_widget_show(private->help_edit_widget);
+}
+
+static void gebr_gui_help_edit_window_init(GebrGuiHelpEditWindow * self)
+{
 }
 
 static void gebr_gui_help_edit_window_set_property(GObject	*object,
@@ -191,6 +214,47 @@ static void gebr_gui_help_edit_window_destroy(GtkObject *object)
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
+void on_save_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
+{
+	GebrGuiHelpEditWindowPrivate * priv;
+	GebrGuiHelpEditWidget * help_edit_widget;
+
+	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
+	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
+	gebr_gui_help_edit_widget_commit_changes(help_edit_widget);
+}
+
+void on_edit_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow * self)
+{
+	GebrGuiHelpEditWindowPrivate * priv;
+	GebrGuiHelpEditWidget * help_edit_widget;
+	gboolean toggled;
+
+	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
+	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
+	toggled = gtk_toggle_tool_button_get_active(button);
+	gebr_gui_help_edit_widget_set_editing(help_edit_widget, toggled);
+}
+
+void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
+{
+	GebrGuiHelpEditWindowPrivate * priv;
+	GebrGuiHelpEditWidget * help_edit_widget;
+	GString * content_string;
+	gchar * content;
+
+	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
+	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
+	content = gebr_gui_help_edit_widget_get_content(help_edit_widget);
+	content_string = g_string_new(content);
+	g_free(content);
+
+	g_signal_emit(self, signals[REFRESH_REQUESTED], 0, content_string);
+
+	// After the signal callback returns, content_string should be updated.
+	gebr_gui_help_edit_widget_set_content(help_edit_widget, content_string->str);
+	g_string_free(content_string, TRUE);
+}
 
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
@@ -200,6 +264,7 @@ GtkWidget *gebr_gui_help_edit_window_new(GebrGuiHelpEditWidget * help_edit_widge
 {
 	return g_object_new(GEBR_GUI_TYPE_HELP_EDIT_WINDOW,
 			    "help-edit-widget", help_edit_widget,
+			    "has-separator", FALSE,
 			    NULL);
 }
 
@@ -208,5 +273,6 @@ GtkWidget *gebr_gui_help_edit_window_new_with_refresh(GebrGuiHelpEditWidget * he
 	return g_object_new(GEBR_GUI_TYPE_HELP_EDIT_WINDOW,
 			    "help-edit-widget", help_edit_widget,
 			    "has-refresh", TRUE,
+			    "has-separator", FALSE,
 			    NULL);
 }

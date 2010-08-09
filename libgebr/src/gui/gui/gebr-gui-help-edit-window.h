@@ -42,11 +42,11 @@ typedef struct _GebrGuiHelpEditWindow GebrGuiHelpEditWindow;
 typedef struct _GebrGuiHelpEditWindowClass GebrGuiHelpEditWindowClass;
 
 struct _GebrGuiHelpEditWindow {
-	GtkWindow parent;
+	GtkDialog parent;
 };
 
 struct _GebrGuiHelpEditWindowClass {
-	GtkWindowClass parent_class;
+	GtkDialogClass parent_class;
 
 	/* Signals */
 	void (*refresh_requested) (GebrGuiHelpEditWindow *self, GString *help);
