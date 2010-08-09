@@ -55,13 +55,13 @@
 
 enum {
 	PROP_0,
-	PROP_FLOW
+	PROP_DOCUMENT
 };
 
 typedef struct _GebrHelpEditWidgetPrivate GebrHelpEditWidgetPrivate;
 
 struct _GebrHelpEditWidgetPrivate {
-	GebrGeoXmlFlow * flow;
+	GebrGeoXmlDocument * document;
 	gchar * temp_file;
 };
 
@@ -112,14 +112,14 @@ static void gebr_help_edit_widget_class_init(GebrHelpEditWidgetClass * klass)
 	super_class->set_content = gebr_help_edit_widget_set_content;
 
 	/**
-	 * GebrHelpEditWidget:geoxml-flow:
-	 * The #GebrGeoXmlFlow associated with this help edition.
+	 * GebrHelpEditWidget:geoxml-document:
+	 * The #GebrGeoXmlDocument associated with this help edition.
 	 */
 	g_object_class_install_property(gobject_class,
-					PROP_FLOW,
-					g_param_spec_pointer("geoxml-flow",
-							     "GeoXml Flow",
-							     "The GebrGeoXmlFlow associated with this help edition.",
+					PROP_DOCUMENT,
+					g_param_spec_pointer("geoxml-document",
+							     "GeoXml Document",
+							     "The GebrGeoXmlDocument associated with this help edition.",
 							     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_type_class_add_private(klass, sizeof(GebrHelpEditWidgetPrivate));
@@ -138,8 +138,8 @@ static void gebr_help_edit_widget_set_property(GObject		*object,
 	priv = GEBR_HELP_EDIT_WIDGET_GET_PRIVATE(object);
 
 	switch (prop_id) {
-	case PROP_FLOW:
-		priv->flow = GEBR_GEOXML_FLOW(g_value_get_pointer(value));
+	case PROP_DOCUMENT:
+		priv->document = GEBR_GEOXML_DOCUMENT(g_value_get_pointer(value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -156,8 +156,8 @@ static void gebr_help_edit_widget_get_property(GObject		*object,
 	priv = GEBR_HELP_EDIT_WIDGET_GET_PRIVATE(object);
 
 	switch (prop_id) {
-	case PROP_FLOW:
-		g_value_set_pointer(value, priv->flow);
+	case PROP_DOCUMENT:
+		g_value_set_pointer(value, priv->document);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -206,7 +206,7 @@ static void gebr_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self)
 
 	priv = GEBR_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	content = gebr_help_edit_widget_get_content(self);
-	gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(priv->flow), content);
+	gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(priv->document), content);
 	g_free(content);
 }
 
@@ -243,7 +243,7 @@ static void gebr_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, cons
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
-GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlFlow * flow, const gchar * content)
+GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlDocument * document, const gchar * content)
 {
 	FILE * fp;
 	gchar * escaped;
@@ -254,7 +254,7 @@ GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlFlow * flow, const gchar * conte
 	GebrHelpEditWidgetPrivate * priv;
 
 	self = g_object_new(GEBR_TYPE_HELP_EDIT_WIDGET,
-			    "geoxml-flow", flow,
+			    "geoxml-document", document,
 			    NULL);
 
 	escaped = g_markup_escape_text(content, -1);
