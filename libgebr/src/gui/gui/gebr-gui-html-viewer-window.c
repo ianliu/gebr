@@ -49,7 +49,9 @@ static void gebr_gui_html_viewer_window_get_property	(GObject	*object,
 							 GParamSpec	*pspec);
 static void gebr_gui_html_viewer_window_destroy(GtkObject *object);
 
-void on_print_clicked(GtkToolButton * button, GebrGuiHtmlViewerWindow * self);
+static void gebr_gui_html_viewer_window_response(GtkDialog *object, gint response_id);
+void on_print_clicked(GtkWidget * printer_item, GebrGuiHtmlViewerWindow * self);
+void on_quit_clicked(GtkWidget * quit_item, GebrGuiHtmlViewerWindow * self);
 
 G_DEFINE_TYPE(GebrGuiHtmlViewerWindow, gebr_gui_html_viewer_window, GTK_TYPE_DIALOG);
 
@@ -61,12 +63,15 @@ static void gebr_gui_html_viewer_window_class_init(GebrGuiHtmlViewerWindowClass 
 {
 	GObjectClass *gobject_class;
 	GtkObjectClass *object_class;
+	GtkDialogClass *dialog_class;
 
 	gobject_class = G_OBJECT_CLASS(klass);
 	object_class = GTK_OBJECT_CLASS(klass);
+	dialog_class = GTK_DIALOG_CLASS(klass);
 	gobject_class->set_property = gebr_gui_html_viewer_window_set_property;
 	gobject_class->get_property = gebr_gui_html_viewer_window_get_property;
-	object_class->destroy = gebr_gui_html_viewer_window_destroy;
+	object_class->destroy =  gebr_gui_html_viewer_window_destroy;
+	dialog_class->response =  gebr_gui_html_viewer_window_response;
 
 	g_type_class_add_private(klass, sizeof(GebrGuiHtmlViewerWindowPrivate));
 }
@@ -92,23 +97,23 @@ static void gebr_gui_html_viewer_window_init(GebrGuiHtmlViewerWindow * self)
 	file_menu = gtk_menu_new ();    /* Don't need to show menus */
 
 	/* Create the menu items */
-	print_item = gtk_menu_item_new_with_label _("Print");
-	quit_item = gtk_menu_item_new_with_label _("Quit");
+	print_item = gtk_menu_item_new_with_label (_("Print"));
+	quit_item = gtk_menu_item_new_with_label (_("Quit"));
 
 	/* Add them to the menu */
 	gtk_menu_shell_append (GTK_MENU_SHELL (file_menu), print_item);
 	gtk_menu_shell_append (GTK_MENU_SHELL (file_menu), quit_item);
-#if 0
+
 	/* Attach the callback functions to the activate signal */
-	g_signal_connect_swapped (G_OBJECT (save_item), "activate",
-				  G_CALLBACK (menuitem_response),
-				  (gpointer) "file.save");
+	g_signal_connect (G_OBJECT (print_item), "activate",
+			  G_CALLBACK (on_print_clicked),
+			  self);
 
 	/* We can attach the Quit menu item to our exit function */
-	g_signal_connect_swapped (G_OBJECT (quit_item), "activate",
-				  G_CALLBACK (destroy),
-				  (gpointer) "file.quit");
-#endif
+	g_signal_connect (G_OBJECT (quit_item), "activate",
+			  G_CALLBACK (on_quit_clicked),
+			  self);
+
 	/* We do need to show menu items */
 	gtk_widget_show (print_item);
 	gtk_widget_show (quit_item);
@@ -117,7 +122,7 @@ static void gebr_gui_html_viewer_window_init(GebrGuiHtmlViewerWindow * self)
 	gtk_box_pack_start (GTK_BOX (dialog->vbox), menu_bar, FALSE, TRUE, 0);
 	gtk_widget_show (menu_bar);
 
-	file_item = gtk_menu_item_new_with_label _("File");
+	file_item = gtk_menu_item_new_with_label (_("File"));
 	gtk_widget_show (file_item);
 
 	gtk_menu_item_set_submenu (GTK_MENU_ITEM (file_item), file_menu);
@@ -159,13 +164,25 @@ static void gebr_gui_html_viewer_window_destroy(GtkObject *object)
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
-void on_print_clicked(GtkToolButton * button, GebrGuiHtmlViewerWindow * self)
+static void gebr_gui_html_viewer_window_response(GtkDialog *object, gint response_id)
+{
+	gtk_widget_destroy(GTK_WIDGET(object));
+}
+
+void on_print_clicked(GtkWidget * print_item, GebrGuiHtmlViewerWindow * self)
 {
 	GebrGuiHtmlViewerWindowPrivate * private;
 	private = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
 	gebr_gui_html_viewer_widget_print(GEBR_GUI_HTML_VIEWER_WIDGET(private->viewer_widget));
 }
 
+void on_quit_clicked(GtkWidget * quit_item, GebrGuiHtmlViewerWindow * self)
+{
+	GebrGuiHtmlViewerWindowPrivate * private;
+	private = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
+
+	gtk_widget_destroy(GTK_WIDGET(self));
+}
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
