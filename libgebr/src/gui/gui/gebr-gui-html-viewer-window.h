@@ -37,11 +37,11 @@ typedef struct _GebrGuiHtmlViewerWindow GebrGuiHtmlViewerWindow;
 typedef struct _GebrGuiHtmlViewerWindowClass GebrGuiHtmlViewerWindowClass;
 
 struct _GebrGuiHtmlViewerWindow {
-	GtkWindow parent;
+	GtkDialog parent;
 };
 
 struct _GebrGuiHtmlViewerWindowClass {
-	GtkWindowClass parent_class;
+	GtkDialogClass parent_class;
 };
 
 GType gebr_gui_html_viewer_window_get_type(void) G_GNUC_CONST;

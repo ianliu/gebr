@@ -51,7 +51,7 @@ static void gebr_gui_html_viewer_window_destroy(GtkObject *object);
 
 void on_print_clicked(GtkToolButton * button, GebrGuiHtmlViewerWindow * self);
 
-G_DEFINE_TYPE(GebrGuiHtmlViewerWindow, gebr_gui_html_viewer_window, GTK_TYPE_WINDOW);
+G_DEFINE_TYPE(GebrGuiHtmlViewerWindow, gebr_gui_html_viewer_window, GTK_TYPE_DIALOG);
 
 //==============================================================================
 // GOBJECT RELATED FUNCTIONS						       =
@@ -74,30 +74,58 @@ static void gebr_gui_html_viewer_window_class_init(GebrGuiHtmlViewerWindowClass 
 static void gebr_gui_html_viewer_window_init(GebrGuiHtmlViewerWindow * self)
 {
 	GebrGuiHtmlViewerWindowPrivate * priv;
-	GtkWidget * vbox;
-	GtkWindow * window;
-	GtkWidget * toolbar;
-	GtkToolItem * item;
+	GtkDialog * dialog;
+	GtkWidget *menu_bar;
+	GtkWidget *file_item;
+	GtkWidget *print_item;
+	GtkWidget *quit_item;
+	GtkWidget *file_menu;
 
 	priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
 	priv->viewer_widget = gebr_gui_html_viewer_widget_new();
 
-	vbox = gtk_vbox_new(FALSE, 0);
-	toolbar = gtk_toolbar_new();
-	item = gtk_tool_button_new_from_stock(GTK_STOCK_PRINT);
-
-	g_signal_connect(item, "clicked", G_CALLBACK(on_print_clicked), self);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-
-	window = GTK_WINDOW(self);
-	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), priv->viewer_widget, TRUE, TRUE, 0);
-	gtk_container_add(GTK_CONTAINER(window), vbox);
+	dialog = GTK_DIALOG(self);
+	gtk_window_set_default_size(GTK_WINDOW(dialog), 800, 600);
 
 	gtk_widget_show(priv->viewer_widget);
-	gtk_widget_show_all(toolbar);
-	gtk_widget_show(vbox);
+
+	file_menu = gtk_menu_new ();    /* Don't need to show menus */
+
+	/* Create the menu items */
+	print_item = gtk_menu_item_new_with_label _("Print");
+	quit_item = gtk_menu_item_new_with_label _("Quit");
+
+	/* Add them to the menu */
+	gtk_menu_shell_append (GTK_MENU_SHELL (file_menu), print_item);
+	gtk_menu_shell_append (GTK_MENU_SHELL (file_menu), quit_item);
+#if 0
+	/* Attach the callback functions to the activate signal */
+	g_signal_connect_swapped (G_OBJECT (save_item), "activate",
+				  G_CALLBACK (menuitem_response),
+				  (gpointer) "file.save");
+
+	/* We can attach the Quit menu item to our exit function */
+	g_signal_connect_swapped (G_OBJECT (quit_item), "activate",
+				  G_CALLBACK (destroy),
+				  (gpointer) "file.quit");
+#endif
+	/* We do need to show menu items */
+	gtk_widget_show (print_item);
+	gtk_widget_show (quit_item);
+
+	menu_bar = gtk_menu_bar_new ();
+	gtk_box_pack_start (GTK_BOX (dialog->vbox), menu_bar, FALSE, TRUE, 0);
+	gtk_widget_show (menu_bar);
+
+	file_item = gtk_menu_item_new_with_label _("File");
+	gtk_widget_show (file_item);
+
+	gtk_menu_item_set_submenu (GTK_MENU_ITEM (file_item), file_menu);
+
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu_bar), file_item);
+
+	gtk_box_pack_start(GTK_BOX(dialog->vbox), priv->viewer_widget, TRUE, TRUE, 0);
+
 }
 
 static void gebr_gui_html_viewer_window_set_property(GObject		*object,

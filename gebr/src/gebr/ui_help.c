@@ -70,7 +70,7 @@ void help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
 	gebr_gui_html_viewer_window_set_geoxml_object(GEBR_GUI_HTML_VIEWER_WINDOW(window), object);
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html->str);
 
-	gtk_widget_show(window);
+	gtk_dialog_run(GTK_DIALOG(window));
 
 	/* frees */
 	g_string_free(html, TRUE);
