@@ -33,7 +33,7 @@ G_BEGIN_DECLS
  * Create a new line.
  * If \p silent is TRUE then no message and dialogs are displayed to user.
  */
-gboolean line_new(void);
+void line_new(void);
 /**
  * Delete the selected line.
  */

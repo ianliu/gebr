@@ -102,9 +102,9 @@ void on_quit_activate(void)
 	gebr_quit();
 }
 
-gboolean on_document_properties_activate(void)
+void on_document_properties_activate(void)
 {
-	return document_properties_setup_ui(document_get_current());
+	document_properties_setup_ui(document_get_current(), NULL);
 }
 
 void on_document_dict_edit_activate(void)

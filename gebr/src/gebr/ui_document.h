@@ -24,9 +24,11 @@
 
 G_BEGIN_DECLS
 
+typedef void (*GebrPropertiesResponseFunc) (gboolean accept);
+
 GebrGeoXmlDocument *document_get_current(void);
 
-gboolean document_properties_setup_ui(GebrGeoXmlDocument * document);
+void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesResponseFunc func);
 
 void document_dict_edit_setup_ui(void);
 

@@ -35,19 +35,25 @@
 #include "flow.h"
 #include "callbacks.h"
 #include "ui_project_line.h"
+#include "ui_document.h"
 
-gboolean line_new(void)
+static void on_properties_response(gboolean accept)
+{
+	if (!accept)
+		line_delete(FALSE);
+}
+
+void line_new(void)
 {
 	GtkTreeSelection *selection;
 	GtkTreeIter project_iter, line_iter;
 
-	gchar *project_filename;
 	gchar *project_title;
 
 	GebrGeoXmlLine *line;
 
 	if (!project_line_get_selected(NULL, ProjectLineSelection))
-		return FALSE;
+		return;
 
 	/* get project iter */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
@@ -64,7 +70,7 @@ gboolean line_new(void)
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(line), gebr.config.username->str);
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(line), gebr.config.email->str);
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &project_iter,
-			   PL_TITLE, &project_title, PL_FILENAME, &project_filename, -1);
+			   PL_TITLE, &project_title, -1);
 	gtk_tree_store_append(gebr.ui_project_line->store, &line_iter, &project_iter);
 	gtk_tree_store_set(gebr.ui_project_line->store, &line_iter,
 			   PL_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(line)),
@@ -76,15 +82,11 @@ gboolean line_new(void)
 
 	/* feedback */
 	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New line created in project '%s'."), project_title);
+	g_free(project_title);
 
 	project_line_select_iter(&line_iter);
-	if (!on_document_properties_activate())
-		line_delete(FALSE);
 
-	g_free(project_title);
-	g_free(project_filename);
-
-	return TRUE;
+	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.line), on_properties_response);
 }
 
 gboolean line_delete(gboolean confirm)

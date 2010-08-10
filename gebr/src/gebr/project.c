@@ -33,6 +33,15 @@
 #include "line.h"
 #include "callbacks.h"
 #include "ui_project_line.h"
+#include "ui_document.h"
+
+static void on_properties_response(gboolean accept)
+{
+	if (accept)
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New project created."));
+	else
+		project_delete(FALSE);
+}
 
 void project_new(void)
 {
@@ -49,10 +58,8 @@ void project_new(void)
 	gebr_geoxml_document_free(project);
 
 	project_line_select_iter(&iter);
-	if (!on_document_properties_activate())
-		project_delete(FALSE);
 
-	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New project created."));
+	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.project), on_properties_response);
 }
 
 gboolean project_delete(gboolean confirm)
