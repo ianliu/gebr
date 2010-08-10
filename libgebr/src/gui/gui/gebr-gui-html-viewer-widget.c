@@ -27,6 +27,8 @@
 #include <glib.h>
 #include <regex.h>
 
+#define CSS_LINK "<link rel=\"stylesheet\" type=\"text/css\" href=\"file://"LIBGEBR_DATA_DIR"/gebr.css\" />"
+
 enum {
 	PROP_0
 };
@@ -138,7 +140,6 @@ WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view,
 	const gchar * uri = webkit_network_request_get_uri(request);
 
 	if (g_str_has_prefix(uri, "gebr://")) {
-		/* only enable in non edition mode and for menus */
 		if (priv->object == NULL)
 			return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 
@@ -191,6 +192,37 @@ WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view,
 
 }
 
+void pre_process_html(GebrGuiHtmlViewerWidgetPrivate * priv, GString *html)
+{
+	regex_t regexp;
+	regmatch_t matchptr;
+
+	if (!html->len)
+		return;
+
+	regcomp(&regexp, "<link[^<]*gebr.css[^<]*>", REG_NEWLINE | REG_ICASE);
+	if (!regexec(&regexp, html->str, 1, &matchptr, 0)) {
+		/*
+		 * If we found a link for GeBR's style sheet, we must update its path.
+		 */
+		gssize start = matchptr.rm_so;
+		gssize length = matchptr.rm_eo - matchptr.rm_so;
+		g_string_erase(html, start, length);
+		g_string_insert(html, start, CSS_LINK);
+	} else if (priv->object != NULL) {
+		/*
+		 * Otherwise, we only include the CSS link if we have a
+		 * GeoXml object associated with this html view, because
+		 * this mean we are viewing a Flow or Program.
+		 */
+		regcomp(&regexp, "<head>", REG_NEWLINE | REG_ICASE);
+		if (!regexec(&regexp, html->str, 1, &matchptr, 0)) {
+			gssize start = matchptr.rm_eo;
+			g_string_insert(html, start, CSS_LINK);
+		}
+	}
+}
+
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
@@ -216,23 +248,7 @@ void gebr_gui_html_viewer_widget_show_html(GebrGuiHtmlViewerWidget * self, const
 	tmp_file = gebr_make_temp_filename("XXXXXX.html");
 	g_string_assign(_content, content);
 
-	/* CSS to absolute path */
-	if (_content->len) {
-		regex_t regexp;
-		regmatch_t matchptr;
-		regcomp(&regexp, "<link[^<]*gebr.css[^<]*>", REG_NEWLINE | REG_ICASE);
-		if (!regexec(&regexp, _content->str, 1, &matchptr, 0)) {
-			g_string_erase(_content, (gssize) matchptr.rm_so,
-				       (gssize) matchptr.rm_eo - matchptr.rm_so);
-			g_string_insert(_content, (gssize) matchptr.rm_so,
-					"<link rel=\"stylesheet\" type=\"text/css\" href=\"file://"LIBGEBR_DATA_DIR"/gebr.css\" />");
-		} else {
-			regcomp(&regexp, "<head>", REG_NEWLINE | REG_ICASE);
-			if (!regexec(&regexp, _content->str, 1, &matchptr, 0))
-				g_string_insert(_content, (gssize) matchptr.rm_eo,
-						"\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"file://"LIBGEBR_DATA_DIR"/gebr.css\" />");
-		}
-	}
+	pre_process_html(priv, _content);
 
 	/* some webkit versions crash to open an empty file... */
 	if (!_content->len)

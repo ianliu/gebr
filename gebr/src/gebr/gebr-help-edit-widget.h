@@ -51,12 +51,12 @@ GType gebr_help_edit_widget_get_type(void) G_GNUC_CONST;
  * gebr_help_edit_widget_new:
  * Creates a new help edit widget for GêBR
  *
- * @flow: The #GebrGeoXmlFlow associated with this help edition.
+ * @document: The #GebrGeoXmlDocument associated with this help edition.
  * @help: The initial help string to start editing.
  *
  * Returns: A new help edit widget for GêBR.
  */
-GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlFlow * flow, const gchar * help);
+GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlDocument * document, const gchar * help);
 
 G_END_DECLS
 
