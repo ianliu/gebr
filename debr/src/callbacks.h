@@ -99,6 +99,11 @@ void on_menu_revert_activate(void);
 void on_menu_delete_activate(void);
 
 /**
+ * Create a menu from a flow (.flw) file.
+ */
+void on_menu_create_from_flow_activate(void);
+
+/**
  * Add a folder to the menu's list.
  */
 void on_menu_add_folder_activate(void);

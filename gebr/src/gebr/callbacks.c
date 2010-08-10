@@ -140,11 +140,6 @@ void on_flow_export_activate(void)
 	flow_export();
 }
 
-void on_flow_export_as_menu_activate(void)
-{
-	flow_export_as_menu();
-}
-
 void on_flow_delete_activate(void)
 {
 	flow_delete(TRUE);

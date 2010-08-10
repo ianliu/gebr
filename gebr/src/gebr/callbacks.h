@@ -80,10 +80,6 @@ void on_flow_import_activate(void);
  */
 void on_flow_export_activate(void);
 /**
- * Call #flow_export_as_menu> from #flow.c
- */
-void on_flow_export_as_menu_activate(void);
-/**
  * Call #flow_delete> from #flow.c
  */
 void on_flow_delete_activate(void);

@@ -48,10 +48,6 @@ void flow_import(void);
  */
 void flow_export(void);
 /**
- * Export current flow converting it to a menu.
- */
-void flow_export_as_menu(void);
-/**
  * Copy all values of parameters linked to dictionaries' parameters.
  */
 void flow_copy_from_dicts(GebrGeoXmlFlow * flow);

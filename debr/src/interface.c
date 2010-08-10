@@ -39,6 +39,8 @@ static const GtkActionEntry actions_entries[] = {
 	{"help_about", GTK_STOCK_ABOUT, NULL, NULL, NULL, G_CALLBACK(on_help_about_activate)},
 	/* menu */
 	{"menu_new", GTK_STOCK_NEW, NULL, NULL, N_("Create new menu"), G_CALLBACK(on_menu_new_activate)},
+	{"menu_create_from_menu", "document-import", N_("Import"),
+		NULL, N_("Create menu from flow"), G_CALLBACK(on_menu_create_from_flow_activate)},
 	{"menu_properties", GTK_STOCK_PROPERTIES, NULL, NULL, N_("Edit menu properties"),
 	 G_CALLBACK(on_menu_properties_activate)},
 	{"menu_validate", GTK_STOCK_APPLY, N_("Validate"), NULL, N_("Validate menu"),
@@ -264,6 +266,9 @@ void debr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(debr.action_group, "menu_new"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(debr.action_group, "menu_create_from_menu"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(debr.action_group, "menu_properties"))), -1);
