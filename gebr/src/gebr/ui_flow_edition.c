@@ -352,7 +352,7 @@ static gboolean flow_edition_get_selected_menu(GtkTreeIter * iter, gboolean warn
 			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No menu selected."));
 		return FALSE;
 	}
-	if (!gtk_tree_store_iter_depth(gebr.ui_flow_edition->menu_store, iter)) {
+	if (gtk_tree_model_iter_has_child(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), iter)) {
 		if (warn_unselected)
 			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Select a menu instead of a category."));
 		return FALSE;

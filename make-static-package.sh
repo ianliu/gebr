@@ -69,3 +69,51 @@ for bin in *; do
 	ln -sf script $GEBR_DIR/bin/$bin
 done
 
+#libs
+cd $GEBR_DIR/lib
+cp -a /usr/lib/libgdome.* .
+cp -a /usr/lib/libwebkit-1.0.so* .
+cp -a /usr/lib/libsoup-2.4.* .
+cp -a /usr/lib/libgio-2.0.* .
+cp -a /usr/lib/libenchant.* .
+cp -a /usr/lib/libgstapp-0.10* .
+cp -a /usr/lib/libgstpbutils-0.10* .
+cp -a /usr/lib/libicui18n.so* .
+cp -a /usr/lib/libgnutls.so* .
+cp -a /lib/libpcre.so.3* .
+cp -a /usr/lib/libtasn1.* .
+cp -a /usr/lib/libxml2.* .
+cp -a /usr/lib/libxslt.* .
+cp -a /usr/lib/libicuuc.so.* .
+cp -a /usr/lib/libicudata.so.* .
+cp -a /lib/libc.so.6 .
+cp -a /lib/libc-2* .
+cp -a /usr/lib/libgstreamer-0.10.so.0* .
+#jaunty
+cp -a /usr/lib/libcurl-gnutls.so.* .
+cp -a /usr/lib/liblber-2.4.so* .
+cp -a /usr/lib/libldap_r-2.4.so* .
+cp -a /usr/lib/libsasl2.so.2* .
+cp -a /usr/lib/libgthread-2.0.* .
+cp -a /usr/lib/libglib-2.0.* .
+#lucid
+
+cp -a /usr/lib/libgmodule-2.0.* .
+cp -a /usr/lib/libgdk-x11-2.0.* .
+cp -a /usr/lib/libgtk-x11-2.0.* .
+cp -a /usr/lib/libatk-1.0.* .
+cp -a /usr/lib/libpangoft2-1.0.* .
+cp -a /usr/lib/libpangocairo-1.0.* .
+cp -a /usr/lib/libpango-1.0.* .
+cp -a /usr/lib/libgdk_pixbuf-2.0.* .
+cp -a /lib/libgcrypt.* .
+cp -a /usr/lib/libgobject-2.0.* .
+cp -a /usr/lib/libcairo.so* .
+cp -a /usr/lib/libpixman-1.* .
+cp -a /usr/lib/libdirectfb-1.0* .
+cp -a /usr/lib/libfusion-1.0* .
+cp -a /usr/lib/libdirect-1.0* .
+cp -a /usr/lib/libxcb.so* .
+cp -a /usr/lib/libxcb-render* .
+
+rm *.la *.a
