@@ -29,7 +29,7 @@
 	"<html>"									\
 	"<head>"									\
 	"<script>"									\
-	"function onCkEditorLoadFinished() {}"						\
+	"var menu_edition = false;"							\
 	"</script>"									\
 	"<script src='" HELP_EDIT_SCRIPT_PATH "ckeditor.js'>"				\
 	"</script></head>"								\
@@ -42,16 +42,16 @@
 	"	width:'99%%',"								\
 	"	resize_enabled:false,"							\
 	"	toolbarCanCollapse:false,"						\
-"	toolbar:[['Source'],['Bold','Italic','Underline'],"			\
-"		['Subscript','Superscript'],['Undo','Redo'],"			\
-"		['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],"	\
-"		['NumberedList','BulletedList'],['Outdent','Indent','Blockquote','Styles'],"	\
-"		['Link','Unlink'],['RemoveFormat'],['Find','Replace','Table']]"	\
-"});"										\
-"</script>"									\
-"</body>"									\
-"</html>"									\
-""
+	"	toolbar:[['Source'],['Bold','Italic','Underline'],"			\
+	"		['Subscript','Superscript'],['Undo','Redo'],"			\
+	"		['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],"	\
+	"		['NumberedList','BulletedList'],['Outdent','Indent','Blockquote','Styles'],"	\
+	"		['Link','Unlink'],['RemoveFormat'],['Find','Replace','Table']]"	\
+	"});"										\
+	"</script>"									\
+	"</body>"									\
+	"</html>"									\
+	""
 
 enum {
 	PROP_0,

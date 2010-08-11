@@ -53,6 +53,7 @@ static void test_gebr_help_about(void) {
 	gtk_loop();
 }
 
+#if 0
 static void test_gebr_help_ckeditor_confirm_save(void) {
 	GString * tmpl;
 	GebrGeoXmlDocument *menu;
@@ -83,6 +84,7 @@ static void test_gebr_help_ckeditor_confirm_save(void) {
 	gtk_loop();
 
 }
+#endif
 
 int main(int argc, char *argv[]) {
 

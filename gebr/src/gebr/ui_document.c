@@ -166,7 +166,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesR
 	GtkWidget *email;
 
 	if (document == NULL)
-		return FALSE;
+		return;
 
 	data.document = document;
 
