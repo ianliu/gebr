@@ -727,7 +727,10 @@ void menu_selected(void)
 
 	type = menu_get_selected_type(&iter, FALSE);
 	if (type == ITER_FILE) {
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_XMLPOINTER, &debr.menu, MENU_STATUS, &current_status, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
+				   MENU_XMLPOINTER, &debr.menu,
+				   MENU_STATUS, &current_status,
+				   -1);
 	} else
 		debr.menu = NULL;
 
@@ -1293,9 +1296,9 @@ void menu_folder_details_update(GtkTreeIter * iter)
 
 	if (menu_get_selected_type(iter, FALSE) != ITER_FOLDER)
 		return;
-	else
-		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_show, NULL);
 
+	gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_show, NULL);
+	gtk_widget_hide(debr.ui_menu.details.help_button);
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_PATH, &folder_path, -1);
 
 	if (gebr_gui_gtk_tree_iter_equal_to(iter, &debr.ui_menu.iter_other)) {
@@ -1731,7 +1734,7 @@ static void menu_description_changed(GtkEntry * entry)
  * Calls \ref debr_help_edit with menu's help.
  * After help was edited in a external browser, save it back to XML.
  */
-static void on_menu_help_edit_clicked(GtkWidget * edit_button)
+static void on_menu_help_edit_clicked(GtkWidget * button)
 {
 	debr_help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL);
 	//validate_image_set_check_help(validate_image, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
