@@ -137,14 +137,13 @@ GebrGeoXmlDocument *document_get_current(void)
 	}
 }
 
-/* Function: document_properties_setup_ui
- * Show the _document_ properties in a dialog
- * Create the user interface for editing _document_(flow, line or project) properties,
- * like author, email, report, etc.
+/**
+ * document_properties_setup_ui:
+ * @document: The document which will have its properties modified.
+ * @func: A callback function which is called when the dialog exits.
  *
- * Return:
- * The structure containing relevant data. It will be automatically freed when the
- * dialog closes.
+ * Create the user interface for editing @document, which maybe a #GebrGeoXmlFlow, #GebrGeoXmlLine or
+ * #GebrGeoXmlProject.
  */
 void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesResponseFunc func)
 {
@@ -195,30 +194,33 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesR
 	cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 
 	/* Connect response signals for the Ok and Cancel buttons */
-	g_signal_connect_swapped(ok_button, "clicked",
-				 G_CALLBACK(func), GUINT_TO_POINTER(1));
-	g_signal_connect_swapped(cancel_button, "clicked",
-				 G_CALLBACK(func), GUINT_TO_POINTER(0));
+	if (func != NULL) {
+		g_signal_connect_swapped(ok_button, "clicked",
+					 G_CALLBACK(func), GUINT_TO_POINTER(1));
+		g_signal_connect_swapped(cancel_button, "clicked",
+					 G_CALLBACK(func), GUINT_TO_POINTER(0));
+		g_signal_connect_swapped(window, "destroy",
+					 G_CALLBACK(func), GUINT_TO_POINTER(0));
+	}
+
 	g_signal_connect_swapped(ok_button, "clicked",
 				 G_CALLBACK(gtk_widget_destroy), window);
 	g_signal_connect_swapped(cancel_button, "clicked",
 				 G_CALLBACK(gtk_widget_destroy), window);
-	g_signal_connect_swapped(window, "destroy",
-				 G_CALLBACK(func), GUINT_TO_POINTER(0));
 	g_signal_connect(ok_button, "clicked",
 			 G_CALLBACK(on_response_ok), &data);
 	g_signal_connect(window, "destroy",
 			 G_CALLBACK(gtk_widget_destroy), NULL);
-
-	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
-	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
-	gtk_widget_grab_default(ok_button);
 
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
 	gtk_box_pack_start(GTK_BOX(button_box), cancel_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), ok_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), table, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), button_box, FALSE, TRUE, 0);
+
+	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
+	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
+	gtk_widget_grab_default(ok_button);
 
 	/* Title */
 	label = gtk_label_new(_("Title"));
