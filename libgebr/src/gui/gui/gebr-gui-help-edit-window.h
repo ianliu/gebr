@@ -18,6 +18,15 @@
 
 /**
  * SECTION:gebr-gui-help-edit-window
+ * @short_description: A window presenting a toolbar with actions for the help edit widget
+ * @title: GebrGuiHelpEditWindow class
+ * @see_also: #GebrGuiHelpEditWidget
+ * @include: libgebr/gui/gebr-gui-help-edit-window.h
+ * @image: gebr-gui-help-edit-window.png
+ *
+ * This widget packs a #GebrGuiHelpEditWidget for editing a help
+ * string. It may or may not have a Refresh button, depending on which
+ * constructor you use to instanciate this class.
  */
 
 #ifndef __GEBR_GUI_HELP_EDIT_WINDOW__
@@ -56,11 +65,30 @@ GType gebr_gui_help_edit_window_get_type(void) G_GNUC_CONST;
 
 /**
  * gebr_gui_help_edit_window_new:
+ * @help_edit_widget: A #GebrGuiHelpEditWidget to perform the help edition.
+ *
+ * Creates a new window containing a tool bar with buttons for commiting
+ * changes and toggling between preview and edit mode. You do not need
+ * to destroy the widget on #GtkObject::destroy signal, since this is
+ * already done.
+ *
+ * Returns: A new #GebrGuiHelpEditWindow containing a tool bar with
+ * buttons for commiting changes and toggling between preview and edit
+ * mode.
  */
 GtkWidget *gebr_gui_help_edit_window_new(GebrGuiHelpEditWidget * help_edit_widget);
 
 /**
  * gebr_gui_help_edit_window_new_with_refresh:
+ * @help_edit_widget: A #GebrGuiHelpEditWidget to perform the help edition.
+ *
+ * Creates a new window containing a tool bar with buttons for commiting
+ * changes, toggling between preview and edit mode and refreshing
+ * content.
+ *
+ * Returns: A new #GebrGuiHelpEditWindow containing a tool bar with
+ * buttons for commiting changes, toggling between preview and edit mode
+ * and refreshing the editor content.
  */
 GtkWidget *gebr_gui_help_edit_window_new_with_refresh(GebrGuiHelpEditWidget * help_edit_widget);
 
