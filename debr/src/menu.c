@@ -47,9 +47,7 @@ static void menu_title_changed(GtkEntry * entry);
 
 static void menu_description_changed(GtkEntry * entry);
 
-static void menu_help_view(void);
-
-static void on_menu_help_edit_clicked(GtkWidget * edit_button, GtkWidget *validate_image);
+static void on_menu_help_edit_clicked(GtkWidget * edit_button);
 
 static void menu_author_changed(GtkEntry * entry);
 
@@ -209,10 +207,10 @@ void menu_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.categories_label, 1, 2, 3, 4,
 			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
 
-	debr.ui_menu.details.help_button = gtk_button_new_from_stock(GTK_STOCK_INFO);
+	debr.ui_menu.details.help_button = gtk_button_new_with_label(_("Edit & View menu's help"));
 	gtk_box_pack_end(GTK_BOX(details), debr.ui_menu.details.help_button, FALSE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(debr.ui_menu.details.help_button), "clicked",
-			 G_CALLBACK(menu_help_view), debr.menu);
+			 G_CALLBACK(on_menu_help_edit_clicked), NULL);
 
 	debr.ui_menu.details.author_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.author_label), 0, 0);
@@ -987,10 +985,6 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	GtkWidget *title_entry;
 	GtkWidget *description_label;
 	GtkWidget *description_entry;
-	GtkWidget *menuhelp_label;
-	GtkWidget *menuhelp_hbox;
-	GtkWidget *menuhelp_edit_button;
-	GtkWidget *empty_help_image;
 	GtkWidget *author_label;
 	GtkWidget *author_entry;
 	GtkWidget *email_label;
@@ -1063,28 +1057,6 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	gtk_widget_show(description_entry);
 	gtk_table_attach(GTK_TABLE(table), description_entry, 1, 2, 1, 2,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-
-	/*
-	 * Help
-	 */
-	menuhelp_label = gtk_label_new(_("Help"));
-	gtk_widget_show(menuhelp_label);
-	gtk_table_attach(GTK_TABLE(table), menuhelp_label, 0, 1, 2, 3,
-			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	gtk_misc_set_alignment(GTK_MISC(menuhelp_label), 0, 0.5);
-
-	menuhelp_hbox = gtk_hbox_new(FALSE, 0);
-	gtk_widget_show(menuhelp_hbox);
-	gtk_table_attach(GTK_TABLE(table), menuhelp_hbox, 1, 2, 2, 3,
-			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-
-	menuhelp_edit_button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
-	gtk_widget_show(menuhelp_edit_button);
-	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_edit_button, FALSE, FALSE, 0);
-	g_object_set(G_OBJECT(menuhelp_edit_button), "relief", GTK_RELIEF_NONE, NULL);
-	empty_help_image = validate_image_warning_new();
-	debr.ui_menu.help_validate_image = empty_help_image;
-	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), empty_help_image, FALSE, FALSE, 0);
 
 	/*
 	 * Author
@@ -1165,10 +1137,6 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	if (!new_menu)
 		on_entry_focus_out(GTK_ENTRY(email_entry), NULL, validate_case);
 
-	if (!new_menu)
-		validate_image_set_check_help(empty_help_image,
-					      gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
-
 	/* signals */
 	g_signal_connect(title_entry, "changed", G_CALLBACK(menu_title_changed), NULL);
 	g_signal_connect(description_entry, "changed", G_CALLBACK(menu_description_changed), NULL);
@@ -1176,7 +1144,6 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "renamed", G_CALLBACK(menu_category_renamed), NULL);
 	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "removed", G_CALLBACK(menu_category_removed), NULL);
 	g_signal_connect(email_entry, "changed", G_CALLBACK(menu_email_changed), NULL);
-	g_signal_connect(menuhelp_edit_button, "clicked", G_CALLBACK(on_menu_help_edit_clicked), empty_help_image);
 	g_signal_connect(author_entry, "changed", G_CALLBACK(menu_author_changed), NULL);
 
 	gtk_widget_show(dialog);
@@ -1246,8 +1213,6 @@ void menu_details_update(void)
 	} else
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_show, NULL);
 
-	gtk_widget_set_sensitive(debr.ui_menu.details.help_button, TRUE);
-
 	markup = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), markup);
 	g_free(markup);
@@ -1316,10 +1281,6 @@ void menu_details_update(void)
 			gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.author_label), text->str);
 	g_string_free(text, TRUE);
-
-	g_object_set(G_OBJECT(debr.ui_menu.details.help_button),
-		     "sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu))) > 1 ? TRUE : FALSE,
-		     NULL);
 }
 
 void menu_folder_details_update(GtkTreeIter * iter)
@@ -1337,7 +1298,6 @@ void menu_folder_details_update(GtkTreeIter * iter)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_PATH, &folder_path, -1);
 
-	gtk_widget_set_sensitive(debr.ui_menu.details.help_button, FALSE);
 	if (gebr_gui_gtk_tree_iter_equal_to(iter, &debr.ui_menu.iter_other)) {
 		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), _("<b>Others</b>"));
 		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.description_label),
@@ -1377,8 +1337,6 @@ void menu_folder_details_update(GtkTreeIter * iter)
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.modified_date_label), "");
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.category_label), "");
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label), "");
-
-	g_object_set(G_OBJECT(debr.ui_menu.details.help_button), "sensitive", FALSE, NULL);
 
 	g_free(folder_path);
 }
@@ -1770,22 +1728,13 @@ static void menu_description_changed(GtkEntry * entry)
 
 /**
  * \internal
- * Calls \ref help_show for current menu.
- */
-static void menu_help_view(void)
-{
-	help_show(GEBR_GEOXML_OBJECT(debr.menu), gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
-}
-
-/**
- * \internal
  * Calls \ref debr_help_edit with menu's help.
  * After help was edited in a external browser, save it back to XML.
  */
-static void on_menu_help_edit_clicked(GtkWidget * edit_button, GtkWidget *validate_image)
+static void on_menu_help_edit_clicked(GtkWidget * edit_button)
 {
 	debr_help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL);
-	validate_image_set_check_help(validate_image, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
+	//validate_image_set_check_help(validate_image, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
 }
 
 /**
