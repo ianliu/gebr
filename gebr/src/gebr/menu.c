@@ -173,7 +173,7 @@ void menu_list_populate(void)
 	if (!g_key_file_load_from_file(menu_key_file, menus_path->str, G_KEY_FILE_NONE, NULL))
 		goto out;
 
-	GHashTable *categories_hash = g_hash_table_new(g_str_hash, g_str_equal);
+	GHashTable *categories_hash = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)gtk_tree_iter_free);
 	/**
 	 * \internal
 	 */
@@ -184,36 +184,30 @@ void menu_list_populate(void)
 		GtkTreeIter iter;
 
 		gchar **category_tree = g_strsplit(title, "|", 0);
+		GString *category_name = g_string_new("");
 		for (int i = 0; category_tree[i] != NULL; ++i) {
 			GString *bold = g_string_new(NULL);
 			gchar *escaped_title = g_markup_escape_text(category_tree[i], -1);
 			g_string_printf(bold, "<b>%s</b>", escaped_title);
 			g_free(escaped_title);
 
-			GtkTreeIter find;
-			gboolean found = FALSE;
-			gebr_gui_gtk_tree_model_foreach_child(find, pparent, GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store)) {
-				gchar *title;
-				gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &find,
-						   MENU_TITLE_COLUMN, &title, -1);
-				if (!strcmp(bold->str, title)) {
-					g_free(title);
-					found = TRUE;
-					iter = find;
-					break;
-				}
-				g_free(title);
-			}
-			if (!found) {
+			if (i)
+				g_string_append(category_name, "|");
+			g_string_append(category_name, category_tree[i]);
+			GtkTreeIter * category_iter = g_hash_table_lookup(categories_hash, category_name->str);
+			if (category_iter== NULL) {
 				gtk_tree_store_append(gebr.ui_flow_edition->menu_store, &iter, i > 0 ? &parent : NULL);
 				gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &iter,
 						   MENU_TITLE_COLUMN, bold->str, -1);
-			}
+				g_hash_table_insert(categories_hash, category_name->str, gtk_tree_iter_copy(&iter));
+			} else
+				iter = *category_iter;
 
 			parent = iter;
 			pparent = &parent;
 			g_string_free(bold, TRUE);
 		}
+		g_string_free(category_name, TRUE);
 		g_strfreev(category_tree);
 
 		return iter;
