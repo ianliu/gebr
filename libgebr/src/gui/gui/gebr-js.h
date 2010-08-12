@@ -117,6 +117,17 @@ gchar * gebr_js_value_to_string(JSContextRef ctx, JSValueRef value);
 GString * gebr_js_value_get_string(JSContextRef ctx, JSValueRef val);
 
 /**
+ * gebr_js_value_get_boolean:
+ * @ctx: A #JSContextRef, from a #WebKitWebView for example.
+ * @val: The JavaScript value to get the boolean value.
+ *
+ * Gets the boolean value from the #JSValueRef, @val.
+ *
+ * Returns: A #gboolean containing the value of @val.
+ */
+gboolean gebr_js_value_get_boolean(JSContextRef ctx, JSValueRef val);
+
+/**
  * gebr_js_make_function:
  * @name: The JavaScript function name to be created.
  * @callback: A c-function which will be called upon JavaScript's function call.

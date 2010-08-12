@@ -136,6 +136,11 @@ GString * gebr_js_value_get_string(JSContextRef ctx, JSValueRef val)
 	return ret;
 }
 
+gboolean gebr_js_value_get_boolean(JSContextRef ctx, JSValueRef val)
+{
+	return JSValueToBoolean(ctx, val) == 1? TRUE:FALSE;
+}
+
 JSObjectRef gebr_js_make_function(JSContextRef ctx, const gchar * name, JSObjectCallAsFunctionCallback callback)
 {
 	JSObjectRef ret;
