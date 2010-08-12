@@ -32,6 +32,8 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
+#include "gebr-gui-html-viewer-widget.h"
+
 
 G_BEGIN_DECLS
 
@@ -58,6 +60,7 @@ struct _GebrGuiHelpEditWidgetClass {
 	gchar * (*get_content) (GebrGuiHelpEditWidget * self);
 	void (*set_content) (GebrGuiHelpEditWidget * self, const gchar * content);
 	void (*commit_changes) (GebrGuiHelpEditWidget * self);
+	gboolean (*is_content_saved) (GebrGuiHelpEditWidget * self);
 };
 
 GType gebr_gui_help_edit_widget_get_type(void) G_GNUC_CONST;
@@ -89,12 +92,20 @@ gchar * gebr_gui_help_edit_widget_get_content(GebrGuiHelpEditWidget * self);
 
 /**
  * gebr_gui_help_edit_widget_set_content:
+ * @self: The #GebrGuiHelpEditWidget instance to have its content changed.
+ * @content: The new content for this help edition.
  *
  * Sets the content for this help edition session.
- *
- * @content: The new content for this help edition.
  */
 void gebr_gui_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, const gchar * content);
+
+/**
+ * gebr_gui_help_edit_widget_is_content_saved:
+ * @self: A #GebrGuiHelpEditWidget instance.
+ *
+ * Returns: %TRUE if the content is already saved, %FALSE otherwise.
+ */
+gboolean gebr_gui_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self);
 
 /**
  * gebr_gui_help_edit_widget_get_web_view:
@@ -113,6 +124,13 @@ GtkWidget * gebr_gui_help_edit_widget_get_web_view(GebrGuiHelpEditWidget * self)
  * Returns: The #JSContextRef from the #WebKitWebView of this help edit widget.
  */
 JSContextRef gebr_gui_help_edit_widget_get_js_context(GebrGuiHelpEditWidget * self);
+
+/**
+ * gebr_gui_help_edit_widget_get_html_viewer:
+ *
+ * Returns: The #GebrGuiHtmlViewerWidget packed into this help edit widget.
+ */
+GebrGuiHtmlViewerWidget * gebr_gui_help_edit_widget_get_html_viewer(GebrGuiHelpEditWidget * self);
 
 G_END_DECLS
 

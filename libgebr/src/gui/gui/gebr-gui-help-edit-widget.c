@@ -32,7 +32,6 @@ typedef struct _GebrGuiHelpEditWidgetPrivate GebrGuiHelpEditWidgetPrivate;
 
 struct _GebrGuiHelpEditWidgetPrivate {
 	gboolean is_editing;
-	gboolean is_saved;
 	GtkWidget * edit_widget;
 	GtkWidget * html_viewer;
 	GtkWidget * scrolled_window;
@@ -54,6 +53,8 @@ static void gebr_gui_help_edit_widget_get_property	(GObject	*object,
 							 GValue		*value,
 							 GParamSpec	*pspec);
 static void gebr_gui_help_edit_widget_destroy(GtkObject *object);
+
+gboolean gebr_gui_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self);
 
 G_DEFINE_ABSTRACT_TYPE(GebrGuiHelpEditWidget, gebr_gui_help_edit_widget, GTK_TYPE_VBOX);
 
@@ -109,7 +110,6 @@ static void gebr_gui_help_edit_widget_init(GebrGuiHelpEditWidget * self)
 	priv->edit_widget = webkit_web_view_new();
 	priv->html_viewer = gebr_gui_html_viewer_widget_new();
 	priv->is_editing = TRUE;
-	priv->is_saved = FALSE;
 
 	box = GTK_BOX(self);
 	priv->scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -149,13 +149,14 @@ static void gebr_gui_help_edit_widget_get_property(GObject	*object,
 						   GParamSpec	*pspec)
 {
 	GebrGuiHelpEditWidgetPrivate * priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(object);
+	GebrGuiHelpEditWidget * self = GEBR_GUI_HELP_EDIT_WIDGET(object);
 
 	switch (prop_id) {
 	case PROP_EDITING:
 		g_value_set_boolean(value, priv->is_editing);
 		break;
 	case PROP_SAVED:
-		g_value_set_boolean(value, priv->is_saved);
+		g_value_set_boolean(value, gebr_gui_help_edit_widget_is_content_saved(self));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -209,6 +210,11 @@ void gebr_gui_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, const g
 	GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS(self)->set_content(self, content);
 }
 
+gboolean gebr_gui_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self)
+{
+	return GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS(self)->is_content_saved(self);
+}
+
 GtkWidget * gebr_gui_help_edit_widget_get_web_view(GebrGuiHelpEditWidget * self)
 {
 	GebrGuiHelpEditWidgetPrivate * priv;
@@ -227,4 +233,11 @@ JSContextRef gebr_gui_help_edit_widget_get_js_context(GebrGuiHelpEditWidget * se
 	frame = webkit_web_view_get_main_frame(view);
 
 	return webkit_web_frame_get_global_context(frame);
+}
+
+GebrGuiHtmlViewerWidget * gebr_gui_help_edit_widget_get_html_viewer(GebrGuiHelpEditWidget * self)
+{
+	GebrGuiHelpEditWidgetPrivate * private;
+	private = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
+	return GEBR_GUI_HTML_VIEWER_WIDGET(private->html_viewer);
 }
