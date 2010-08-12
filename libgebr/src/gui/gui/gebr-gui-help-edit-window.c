@@ -16,11 +16,11 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#include <glib.h>
+
 #include "../../intl.h"
 
 #include "gebr-gui-help-edit-window.h"
-
-#include <glib.h>
 
 enum {
 	PROP_0,
@@ -62,13 +62,17 @@ static void gebr_gui_help_edit_window_get_property	(GObject	*object,
 
 static void gebr_gui_help_edit_window_destroy(GtkObject *object);
 
-void on_save_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self);
+static void on_save_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self);
 
-void on_edit_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow * self);
+static void on_edit_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow * self);
 
-void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self);
+static void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self);
 
-G_DEFINE_TYPE(GebrGuiHelpEditWindow, gebr_gui_help_edit_window, GTK_TYPE_DIALOG);
+static void on_print_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self);
+
+static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * self, GdkEventAny * event);
+
+G_DEFINE_TYPE(GebrGuiHelpEditWindow, gebr_gui_help_edit_window, GTK_TYPE_WINDOW);
 
 //==============================================================================
 // GOBJECT RELATED FUNCTIONS						       =
@@ -78,13 +82,16 @@ static void gebr_gui_help_edit_window_class_init(GebrGuiHelpEditWindowClass * kl
 {
 	GObjectClass *gobject_class;
 	GtkObjectClass *object_class;
+	GtkWidgetClass *widget_class;
 
 	gobject_class = G_OBJECT_CLASS(klass);
 	object_class = GTK_OBJECT_CLASS(klass);
+	widget_class = GTK_WIDGET_CLASS(klass);
 	gobject_class->constructed = gebr_gui_help_edit_window_constructed;
 	gobject_class->set_property = gebr_gui_help_edit_window_set_property;
 	gobject_class->get_property = gebr_gui_help_edit_window_get_property;
 	object_class->destroy = gebr_gui_help_edit_window_destroy;
+	widget_class->delete_event = gebr_gui_help_edit_window_delete_event;
 
 	/**
 	 * GebrGuiHelpEditWindow:has-refresh:
@@ -139,8 +146,9 @@ static void gebr_gui_help_edit_window_constructed(GObject * self)
 
 	private = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
 
-	vbox = GTK_DIALOG(self)->vbox;
+	vbox = gtk_vbox_new(FALSE, 0);
 	toolbar = gtk_toolbar_new();
+	gtk_container_add(GTK_CONTAINER(self), vbox);
 
 	// Commit button
 	item = gtk_tool_button_new_from_stock(GTK_STOCK_SAVE);
@@ -160,10 +168,18 @@ static void gebr_gui_help_edit_window_constructed(GObject * self)
 		g_signal_connect(item, "clicked", G_CALLBACK(on_refresh_clicked), self);
 	}
 
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+
+	// Print button
+	item = gtk_tool_button_new_from_stock(GTK_STOCK_PRINT);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+	g_signal_connect(item, "clicked", G_CALLBACK(on_print_clicked), self);
+
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), private->help_edit_widget, TRUE, TRUE, 0);
-	gtk_widget_show_all(toolbar);
+	gtk_widget_show(vbox);
 	gtk_widget_show(private->help_edit_widget);
+	gtk_widget_show_all(toolbar);
 }
 
 static void gebr_gui_help_edit_window_init(GebrGuiHelpEditWindow * self)
@@ -207,14 +223,10 @@ static void gebr_gui_help_edit_window_get_property(GObject	*object,
 	}
 }
 
-static void gebr_gui_help_edit_window_destroy(GtkObject *object)
-{
-}
-
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
-void on_save_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
+static void on_save_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
 {
 	GebrGuiHelpEditWindowPrivate * priv;
 	GebrGuiHelpEditWidget * help_edit_widget;
@@ -224,7 +236,7 @@ void on_save_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
 	gebr_gui_help_edit_widget_commit_changes(help_edit_widget);
 }
 
-void on_edit_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow * self)
+static void on_edit_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow * self)
 {
 	GebrGuiHelpEditWindowPrivate * priv;
 	GebrGuiHelpEditWidget * help_edit_widget;
@@ -236,7 +248,7 @@ void on_edit_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow * self)
 	gebr_gui_help_edit_widget_set_editing(help_edit_widget, toggled);
 }
 
-void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
+static void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
 {
 	GebrGuiHelpEditWindowPrivate * priv;
 	GebrGuiHelpEditWidget * help_edit_widget;
@@ -256,6 +268,76 @@ void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
 	g_string_free(content_string, TRUE);
 }
 
+static void on_print_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
+{
+	GebrGuiHelpEditWindowPrivate * private;
+	GebrGuiHelpEditWidget * help_edit;
+	GebrGuiHtmlViewerWidget * html_viewer;
+
+	private = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
+	help_edit = GEBR_GUI_HELP_EDIT_WIDGET(private->help_edit_widget);
+	html_viewer = gebr_gui_help_edit_widget_get_html_viewer(help_edit);
+
+	gebr_gui_html_viewer_widget_print(html_viewer);
+}
+
+static gint confirmation_dialog(GebrGuiHelpEditWindow * self)
+{
+	gint response;
+	GtkWidget * dialog;
+
+	dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW(self),
+						    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+						    GTK_MESSAGE_WARNING,
+						    GTK_BUTTONS_NONE,
+						    _("<span size='larger' weight='bold'>There are unsaved changes."
+						      " Do you want to save them now?</span>"));
+
+	gtk_dialog_add_buttons(GTK_DIALOG(dialog),
+			       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			       GTK_STOCK_DISCARD, GTK_RESPONSE_REJECT,
+			       GTK_STOCK_SAVE, GTK_RESPONSE_OK,
+			       NULL);
+
+	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog),
+						 _("If you do not save the changes, they will be permanently lost."));
+
+	response = gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+
+	return response;
+}
+
+static void gebr_gui_help_edit_window_destroy(GtkObject *object)
+{
+}
+
+static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * widget, GdkEventAny * event)
+{
+	gint response;
+	GebrGuiHelpEditWindow * self;
+	GebrGuiHelpEditWidget * help_edit_widget;
+	GebrGuiHelpEditWindowPrivate * private;
+
+	self = GEBR_GUI_HELP_EDIT_WINDOW(widget);
+	private = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
+	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(private->help_edit_widget);
+
+	// Return TRUE to maintain the window alive, FALSE to destroy it.
+	response = confirmation_dialog(self);
+	switch(response) {
+	case GTK_RESPONSE_OK:
+		gebr_gui_help_edit_widget_commit_changes(help_edit_widget);
+		return FALSE;
+
+	case GTK_RESPONSE_REJECT:
+		return FALSE;
+
+	default:
+		return TRUE;
+	}
+}
+
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
@@ -264,7 +346,6 @@ GtkWidget *gebr_gui_help_edit_window_new(GebrGuiHelpEditWidget * help_edit_widge
 {
 	return g_object_new(GEBR_GUI_TYPE_HELP_EDIT_WINDOW,
 			    "help-edit-widget", help_edit_widget,
-			    "has-separator", FALSE,
 			    NULL);
 }
 
@@ -273,6 +354,5 @@ GtkWidget *gebr_gui_help_edit_window_new_with_refresh(GebrGuiHelpEditWidget * he
 	return g_object_new(GEBR_GUI_TYPE_HELP_EDIT_WINDOW,
 			    "help-edit-widget", help_edit_widget,
 			    "has-refresh", TRUE,
-			    "has-separator", FALSE,
 			    NULL);
 }
