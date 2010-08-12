@@ -27,6 +27,7 @@
  * Prototypes
  */
 
+static gboolean __category_edit_check_text(const gchar *text);
 static void __category_edit_validate_iter(CategoryEdit * category_edit, GtkTreeIter *iter);
 static void __category_edit_add(CategoryEdit * category_edit, GebrGeoXmlSequence * category);
 static void __category_edit_remove(CategoryEdit * category_edit, GtkTreeIter * iter);
@@ -140,11 +141,12 @@ static void category_edit_add_request(CategoryEdit * category_edit, GtkWidget *c
 	gchar *name;
 
 	name = gtk_combo_box_get_active_text(GTK_COMBO_BOX(combo));
-	if (!strlen(name)) {
+	if (__category_edit_check_text(name)) {
 		g_free(name);
-		name = g_strdup(_("New category"));
-	} else
-		debr_has_category(name, TRUE);
+		return;
+	}
+
+	debr_has_category(name, TRUE);
 	__category_edit_add(category_edit, GEBR_GEOXML_SEQUENCE(gebr_geoxml_flow_append_category(category_edit->menu, name)));
 
 	validate_image_set_check_category_list(category_edit->validate_image, category_edit->menu);
@@ -167,6 +169,9 @@ __category_edit_on_value_edited(GtkCellRendererText * cell, gchar * path_string,
 
 	GebrGeoXmlCategory *category;
 
+	if (__category_edit_check_text(new_text))
+		return;
+
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(sequence_edit->tree_view));
 	gtk_tree_selection_get_selected(selection, &model, &iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(sequence_edit->list_store), &iter, 2, &category, -1);
@@ -176,6 +181,35 @@ __category_edit_on_value_edited(GtkCellRendererText * cell, gchar * path_string,
 	__category_edit_validate_iter(CATEGORY_EDIT(sequence_edit), &iter);
 
 	g_signal_emit_by_name(sequence_edit, "changed");
+}
+
+/**
+ * \internal
+ * Check for emptyness.
+ */
+static gboolean __category_edit_check_text(const gchar *text)
+{
+	gboolean empty = FALSE;
+
+	if (!strlen(text))
+		empty = TRUE;
+	else {
+		gchar **categories = g_strsplit(text, "|", 0);
+		for (int i = 0; categories[i] != NULL; ++i) {
+			if (!strlen(categories[i])) {
+				empty = TRUE;
+				break;
+			}
+		}
+		g_strfreev(categories);
+	}
+
+	if (empty)
+		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+					_("Empty category"),
+					_("You can't add an empty category name (remember to take care with the '|' hierarchy separator)."));
+
+	return empty;
 }
 
 /**
