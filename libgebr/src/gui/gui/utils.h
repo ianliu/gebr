@@ -282,6 +282,19 @@ GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkT
 	iter = iter##hygid)
 
 /**
+ * Similar to #gebr_gui_gtk_tree_model_foreach_hyg, but iterates on each child of a given \p parent.
+ * If \p parent is NULL then it works the same.
+ */
+#define gebr_gui_gtk_tree_model_foreach_child_hyg(iter, parent, tree_model, hygid) \
+	gboolean valid##hygid; \
+	GtkTreeIter iter##hygid; \
+	for (valid##hygid = gtk_tree_model_iter_nth_child(tree_model, &iter, parent, 0), iter##hygid = iter; \
+	valid##hygid == TRUE && ((valid##hygid = gtk_tree_model_iter_next(tree_model, &iter##hygid)), 1); \
+	iter = iter##hygid)
+#define gebr_gui_gtk_tree_model_foreach_child(iter, parent, tree_model) \
+	gebr_gui_gtk_tree_model_foreach_child_hyg(iter, parent, tree_model, __nohyg)
+
+/**
  * Alternative to gtk_tree_model_foreach that works with removal of iter
  */
 void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTreeModelForeachFunc func, gpointer

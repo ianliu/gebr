@@ -173,12 +173,14 @@ void menu_list_populate(void)
 	if (!g_key_file_load_from_file(menu_key_file, menus_path->str, G_KEY_FILE_NONE, NULL))
 		goto out;
 
+	GHashTable *categories_hash = g_hash_table_new(g_str_hash, g_str_equal);
 	/**
 	 * \internal
 	 */
 	GtkTreeIter find_or_add_category(const gchar *title)
 	{
 		GtkTreeIter parent;
+		GtkTreeIter *pparent = NULL;
 		GtkTreeIter iter;
 
 		gchar **category_tree = g_strsplit(title, "|", 0);
@@ -190,7 +192,7 @@ void menu_list_populate(void)
 
 			GtkTreeIter find;
 			gboolean found = FALSE;
-			gebr_gui_gtk_tree_model_foreach(find, GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store)) {
+			gebr_gui_gtk_tree_model_foreach_child(find, pparent, GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store)) {
 				gchar *title;
 				gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &find,
 						   MENU_TITLE_COLUMN, &title, -1);
@@ -209,6 +211,7 @@ void menu_list_populate(void)
 			}
 
 			parent = iter;
+			pparent = &parent;
 			g_string_free(bold, TRUE);
 		}
 		g_strfreev(category_tree);
@@ -241,6 +244,7 @@ void menu_list_populate(void)
 		g_strfreev(menus_list);
 	}
 	g_strfreev(category_list);
+	g_hash_table_unref(categories_hash);
 
 out:	g_key_file_free(menu_key_file);
 	g_key_file_free(category_key_file);
