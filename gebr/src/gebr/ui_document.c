@@ -158,7 +158,6 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 	GtkWidget *author;
 	GtkWidget *email;
 	GtkWidget *line_path_label;
-	GtkWidget *widget;
 	GtkWidget *file_entry;
 	GtkWidget *path_sequence_edit;
 	GebrGeoXmlSequence *path_sequence;
@@ -247,14 +246,11 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 
 	if (gebr.line != NULL){
 		/* Line Path's*/
-		line_path_label = gtk_label_new(_("Line Path:"));
+		line_path_label = gtk_label_new(_("Path"));
 		gtk_widget_show(line_path_label);
-		widget = gtk_vbox_new(FALSE, 0);
-		gtk_widget_show(widget);
-		gtk_box_pack_start(GTK_BOX(widget), line_path_label, FALSE, FALSE, 0);
-		gtk_table_attach(GTK_TABLE(table), widget, 0, 1, 5, 6,
-				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, 0);
-		gtk_misc_set_alignment(GTK_MISC(line_path_label), 0, 0.5);
+		gtk_table_attach(GTK_TABLE(table), line_path_label, 0, 1, 5, 6,
+				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 3, 3);
+		gtk_misc_set_alignment(GTK_MISC(line_path_label), 0, 0);
 
 		file_entry = gebr_gui_gtk_file_entry_new(NULL, NULL);
 		gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_GTK_FILE_ENTRY(file_entry), TRUE);
