@@ -318,7 +318,7 @@ gchar * gebr_validate_change_tabs(const gchar * sentence)
 #if GLIB_CHECK_VERSION(2,14,0)
 	GRegex *regex;
 	GError *error = NULL;
-	regex = g_regex_new("[\t\t]*", 0, 0, &error);
+	regex = g_regex_new("\t\t*", 0, 0, &error);
 	if (error != NULL) {
 		g_warning("%s:%d %s", __FILE__, __LINE__, error->message);
 		g_error_free(error);
