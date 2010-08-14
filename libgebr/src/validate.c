@@ -34,12 +34,12 @@ static GebrValidateCase validate_cases[] = {
 
 	{GEBR_VALIDATE_CASE_TITLE,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
-			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT | GEBR_VALIDATE_CHECK_TABS,
 		N_("Titles should not start with spaces or end with punctuation characters.")},
 
 	{GEBR_VALIDATE_CASE_DESCRIPTION,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
-			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT | GEBR_VALIDATE_CHECK_TABS,
 		N_("Description should be capitalized and have no punctuation characters at the end.")},
 
 	{GEBR_VALIDATE_CASE_AUTHOR,
@@ -67,12 +67,12 @@ static GebrValidateCase validate_cases[] = {
 	/* program */
 	{GEBR_VALIDATE_CASE_PROGRAM_TITLE,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK 
-			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT | GEBR_VALIDATE_CHECK_TABS,
 		N_("Program titles should not have extra spaces.")},
 
 	{GEBR_VALIDATE_CASE_PROGRAM_DESCRIPTION,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
-			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT | GEBR_VALIDATE_CHECK_TABS,
 		N_("Program description should be capitalized and have no punctuation characters at the end.")},
 
 	{GEBR_VALIDATE_CASE_PROGRAM_BINARY,
@@ -90,7 +90,8 @@ static GebrValidateCase validate_cases[] = {
 	/* parameter */
 	{GEBR_VALIDATE_CASE_PARAMETER_LABEL,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
-			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT | GEBR_VALIDATE_CHECK_LABEL_HOTKEY,
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT | GEBR_VALIDATE_CHECK_LABEL_HOTKEY
+                        | GEBR_VALIDATE_CHECK_TABS, 
 		N_("Parameter label should be capitalized and have no punctuation characters at the end. Also, be careful with colliding shortcuts.")},
 
 	{GEBR_VALIDATE_CASE_PARAMETER_KEYWORD,
@@ -138,6 +139,8 @@ gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value
 		failed |= GEBR_VALIDATE_CHECK_FILEN;
 	if (flags & GEBR_VALIDATE_CHECK_URL && !gebr_validate_check_is_url(value))
 		failed |= GEBR_VALIDATE_CHECK_URL;
+	if (flags & GEBR_VALIDATE_CHECK_TABS && !gebr_validate_check_tabs(value))
+		failed |= GEBR_VALIDATE_CHECK_TABS;
 
 	return failed;
 }
@@ -205,6 +208,16 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 			tmp = NULL;
 		}
 	}
+	if (self->flags & GEBR_VALIDATE_CHECK_TABS
+	    && !gebr_validate_check_tabs(fix)) {
+		if (fix != NULL)
+			tmp = fix;
+		fix = gebr_validate_change_tabs(fix);
+		if (tmp) {
+			g_free(tmp);
+			tmp = NULL;
+		}
+	}
 
 	return fix;
 }
@@ -226,6 +239,8 @@ gchar *gebr_validate_case_automatic_fixes_msg(GebrValidateCase *self, const gcha
 		g_string_append(msg, _("\n - Remove final punctuation character"));
 	if (failed & GEBR_VALIDATE_CHECK_URL)
 		g_string_append(msg, _("\n - Add URL scheme"));
+	if (failed & GEBR_VALIDATE_CHECK_TABS)
+		g_string_append(msg, _("\n - Replace tabs by space"));
 
 	gchar *ret = msg->str;
 	g_string_free(msg, FALSE);
@@ -257,6 +272,8 @@ gchar *gebr_validate_flags_failed_msg(gint failed_flags)
 		g_string_append(msg, _("\n - Duplicated hotkey"));
 	if (failed_flags & GEBR_VALIDATE_CHECK_URL)
 		g_string_append(msg, _("\n - URL scheme is missing"));
+	if (failed_flags & GEBR_VALIDATE_CHECK_TABS)
+		g_string_append(msg, _("\n - There are tabs"));
 
 	gchar *ret = msg->str;
 	g_string_free(msg, FALSE);
@@ -287,6 +304,34 @@ gchar * gebr_validate_change_first_to_upper(const gchar * sentence)
 
 	uppercase = g_utf8_strup(char_utf8, length);
 	return g_strjoin(NULL, uppercase, sentence+length, NULL);
+} 
+
+gboolean gebr_validate_check_tabs(const gchar * str)
+{
+	regex_t pattern;
+	regcomp(&pattern, "\t\t*", REG_NOSUB);
+	return (regexec(&pattern, str, 0, 0, 0) ? TRUE : FALSE);
+}
+
+gchar * gebr_validate_change_tabs(const gchar * sentence)
+{
+#if GLIB_CHECK_VERSION(2,14,0)
+	GRegex *regex;
+	GError *error = NULL;
+	regex = g_regex_new("[\t\t]*", 0, 0, &error);
+	if (error != NULL) {
+		g_warning("%s:%d %s", __FILE__, __LINE__, error->message);
+		g_error_free(error);
+		if (regex)
+			g_regex_unref(regex);
+		return NULL;
+	}
+	gchar *ret = g_regex_replace(regex, sentence, -1, 0, " ", 0, NULL);
+	g_regex_unref(regex);
+	return ret;
+#else
+	return NULL;
+#endif
 }
 
 gboolean gebr_validate_check_no_multiple_blanks(const gchar * str)

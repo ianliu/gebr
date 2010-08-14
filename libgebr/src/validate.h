@@ -43,6 +43,7 @@ enum GebrValidateCheckFlags {
 	 */
 	GEBR_VALIDATE_CHECK_MTBLK		= 1 << 3,
 	/**
+         * Sentence ends with punctuation mark.
 	 */
 	GEBR_VALIDATE_CHECK_NOPNT		= 1 << 4,
 	/**
@@ -63,7 +64,11 @@ enum GebrValidateCheckFlags {
 	/**
 	 * URL isn't prefixed with the scheme (http://, mailto:, etc).
 	 */
-        GEBR_VALIDATE_CHECK_URL			= 1 << 8
+        GEBR_VALIDATE_CHECK_URL			= 1 << 8,
+        /**
+         * Tabs found.
+         */
+        GEBR_VALIDATE_CHECK_TABS                = 1 << 9
 };
 
 /**
@@ -136,6 +141,18 @@ gboolean gebr_validate_check_no_lower_case(const gchar * sentence);
  *  It implements the correction for \ref gebr_validate_check_no_lower_case check
  */
 gchar * gebr_validate_change_first_to_upper(const gchar * sentence);
+
+/**
+ * TRUE if str has tabs.
+ */
+gboolean gebr_validate_check_tabs(const gchar * str);
+
+/**
+ *  CHANGE \p sentence to remove tabs.
+ *  \return  a newly allocated string that must be freed
+ *  It implements the correction for \ref gebr_validate_check_tabs check
+ */
+gchar * gebr_validate_change_tabs(const gchar * sentence);
 
 /**
  * TRUE if str has not consecutive blanks.

@@ -257,6 +257,8 @@ static gint validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 		failed |= GEBR_VALIDATE_CHECK_FILEN;
 	if ((flags & GEBR_VALIDATE_CHECK_URL) && !gebr_validate_check_is_url(value))
 		failed |= GEBR_VALIDATE_CHECK_URL;
+	if ((flags & GEBR_VALIDATE_CHECK_TABS) && !gebr_validate_check_tabs(value))
+		failed |= GEBR_VALIDATE_CHECK_TABS;
 
 	result = failed ? FALSE : TRUE;
 	if (result)
