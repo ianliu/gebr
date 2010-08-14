@@ -44,7 +44,7 @@ static GebrValidateCase validate_cases[] = {
 
 	{GEBR_VALIDATE_CASE_AUTHOR,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
-			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT | GEBR_VALIDATE_CHECK_TABS,
 		N_("Author should be capitalized and have no punctuation characters at the end.")},
 
 	{GEBR_VALIDATE_CASE_DATE,
@@ -57,7 +57,7 @@ static GebrValidateCase validate_cases[] = {
 
 	{GEBR_VALIDATE_CASE_CATEGORY,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
-			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT,
+			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT | GEBR_VALIDATE_CHECK_TABS,
 		N_("Categories should be capitalized and have no punctuation characters at the end.")},
 	
 	{GEBR_VALIDATE_CASE_EMAIL,
@@ -80,7 +80,8 @@ static GebrValidateCase validate_cases[] = {
 		N_("Binaries should not be empty.")},
 
 	{GEBR_VALIDATE_CASE_PROGRAM_VERSION,
-		GEBR_VALIDATE_CHECK_EMPTY,
+		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_NOBLK | GEBR_VALIDATE_CHECK_NOPNT
+                        | GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_TABS,
 		N_("Program version should be filled in.")},
 
 	{GEBR_VALIDATE_CASE_PROGRAM_URL,
