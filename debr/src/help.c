@@ -97,19 +97,24 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 
 	/* EDIT IT */
 	if (debr.config.native_editor || !debr.config.htmleditor->len) {
+		const gchar * title;
 		GtkWidget * help_edit_window;
 		GebrGuiHelpEditWidget * help_edit_widget;
 		GebrGeoXmlObject * object;
 
-		if (program != NULL)
+		if (program != NULL) {
 			object = GEBR_GEOXML_OBJECT(program);
-		else
+			title = gebr_geoxml_program_get_title(program);
+		} else {
 			object = GEBR_GEOXML_OBJECT(debr.menu);
+			title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(debr.flow));
+		}
 
 		help_edit_widget = debr_help_edit_widget_new(object, prepared_html->str);
 		help_edit_window = gebr_gui_help_edit_window_new_with_refresh(help_edit_widget);
 		g_signal_connect(help_edit_window, "refresh-requested",
 				 G_CALLBACK(help_edit_on_refresh), object);
+		gtk_window_set_title(GTK_WINDOW(help_edit_window), title);
 		gtk_widget_show(help_edit_window);
 	} else {
 		/* create temporary filename */
