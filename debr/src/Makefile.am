@@ -22,6 +22,9 @@ bin_PROGRAMS = debr
 debrgladedir = $(datadir)/debr/glade/
 debrglade_DATA = menu-dialog-save-ui.glade
 
+debrscriptsdir = $(datadir)/libgebr/ckeditor/
+debrscripts_DATA = debr-help-edit-script.js
+
 noinst_LIBRARIES = libdebr.a
 libdebr_a_SOURCES = \
 	callbacks.c \
@@ -36,6 +39,7 @@ libdebr_a_SOURCES = \
 	preferences.c \
 	program.c \
 	validate.c \
+	debr-help-edit-widget.c \
 	$(NULL)
 
 debr_SOURCES = main.c
@@ -52,11 +56,16 @@ noinst_HEADERS = \
 	preferences.h \
 	program.h \
 	validate.h \
+	debr-help-edit-widget.h \
 	$(NULL)
 
-EXTRA_DIST = $(noinst_HEADERS) $(debrglade_DATA)
+EXTRA_DIST = $(noinst_HEADERS) $(debrglade_DATA) $(debrscripts_DATA)
 
-INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\" -DGLADE_DIR=\""$(debrgladedir)"\"
+INCLUDES = -DPACKAGE_LOCALE_DIR=\""$(datadir)/locale"\"			\
+	   -DGLADE_DIR=\""$(debrgladedir)"\"				\
+	   -DLIBGEBR_DATA_DIR=\""$(datadir)/libgebr/"\"			\
+	   -DHELP_EDIT_SCRIPT_PATH=\"$(debrscriptsdir)\"
+
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
 	$(GEBR_CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_GUI_CFLAGS)
 debr_LDADD = libdebr.a $(INTLLIBS) \
