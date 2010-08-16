@@ -102,7 +102,7 @@ static void gebr_gui_help_edit_window_class_init(GebrGuiHelpEditWindowClass * kl
 							     "Has refresh",
 							     "Whether to show the refresh button or not",
 							     FALSE,
-							     G_PARAM_READWRITE));
+							     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	/**
 	 * GebrGuiHelpEditWindow:help-edit-widget:
@@ -322,6 +322,9 @@ static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * widget, GdkEv
 	self = GEBR_GUI_HELP_EDIT_WINDOW(widget);
 	private = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
 	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(private->help_edit_widget);
+
+	if (gebr_gui_help_edit_widget_is_content_saved(help_edit_widget))
+		return FALSE;
 
 	// Return TRUE to maintain the window alive, FALSE to destroy it.
 	response = confirmation_dialog(self);
