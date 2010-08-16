@@ -211,8 +211,11 @@ void program_load_menu(void)
 
 void program_new()
 {
-	GebrGeoXmlProgram *program;
+	static guint programs_count = 1;
+
 	GtkTreeIter iter;
+	gchar * program_title;
+	GebrGeoXmlProgram *program;
 
 	if (!menu_get_selected(NULL, TRUE))
 		return;
@@ -221,7 +224,8 @@ void program_new()
 
 	program = gebr_geoxml_flow_append_program(debr.menu);
 	/* default settings */
-	gebr_geoxml_program_set_title(program, _("New program"));
+	program_title = g_strdup_printf(_("New program %d"), programs_count++);
+	gebr_geoxml_program_set_title(program, program_title);
 	gebr_geoxml_program_set_stdin(program, TRUE);
 	gebr_geoxml_program_set_stdout(program, TRUE);
 	gebr_geoxml_program_set_stderr(program, TRUE);
@@ -237,6 +241,8 @@ void program_new()
 		program_remove(FALSE);
 		menu_replace();
 	}
+
+	g_free(program_title);
 }
 
 void program_preview(void)
@@ -575,6 +581,8 @@ gboolean program_dialog_setup_ui(gboolean new_program)
 	g_signal_connect(url_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
 	if (!new_program)
 		on_entry_focus_out(GTK_ENTRY(url_entry), NULL, validate_case);
+
+	gtk_container_set_focus_child(GTK_CONTAINER(table), title_entry);
 
 	gtk_widget_show(dialog);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
