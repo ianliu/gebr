@@ -107,7 +107,7 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 			title = gebr_geoxml_program_get_title(program);
 		} else {
 			object = GEBR_GEOXML_OBJECT(debr.menu);
-			title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(debr.flow));
+			title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(debr.menu));
 		}
 
 		help_edit_widget = debr_help_edit_widget_new(object, prepared_html->str);
