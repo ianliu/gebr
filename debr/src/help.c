@@ -30,12 +30,13 @@
 #include "help.h"
 #include "debr.h"
 #include "defines.h"
+#include "debr-help-edit-widget.h"
 
 /*
  * Prototypes
  */
 
-static void help_edit_on_refresh(GString * help, GebrGeoXmlObject * object);
+static void help_edit_on_refresh(GebrGuiHelpEditWindow * window, GString * help, GebrGeoXmlObject * object);
 
 static void add_program_parameter_item(GString * str, GebrGeoXmlParameter * par);
 
@@ -71,11 +72,9 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 	FILE *html_fp;
 	GString *html_path;
 
-	/* initialization */
-	prepared_html = g_string_new(NULL);
+	prepared_html = g_string_new(help);
 
-	/* help empty; create from template. */
-	g_string_assign(prepared_html, help);
+	// If help is empty, create from template.
 	if (prepared_html->len <= 1) {
 		FILE *fp;
 		gchar buffer[1000];
@@ -98,11 +97,20 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 
 	/* EDIT IT */
 	if (debr.config.native_editor || !debr.config.htmleditor->len) {
+		GtkWidget * help_edit_window;
+		GebrGuiHelpEditWidget * help_edit_widget;
+		GebrGeoXmlObject * object;
+
 		if (program != NULL)
-			gebr_gui_program_help_edit(program, prepared_html, help_edit_on_finished, help_edit_on_refresh);
+			object = GEBR_GEOXML_OBJECT(program);
 		else
-			gebr_gui_help_edit(GEBR_GEOXML_DOCUMENT(debr.menu), prepared_html, help_edit_on_finished,
-					   help_edit_on_refresh, TRUE);
+			object = GEBR_GEOXML_OBJECT(debr.menu);
+
+		help_edit_widget = debr_help_edit_widget_new(object, prepared_html->str);
+		help_edit_window = gebr_gui_help_edit_window_new_with_refresh(help_edit_widget);
+		g_signal_connect(help_edit_window, "refresh-requested",
+				 G_CALLBACK(help_edit_on_refresh), object);
+		gtk_widget_show(help_edit_window);
 	} else {
 		/* create temporary filename */
 		html_path = gebr_make_temp_filename("debr_XXXXXX.html");
@@ -155,7 +163,7 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
  * Private functions.
  */
 
-static void help_edit_on_refresh(GString * help, GebrGeoXmlObject * object)
+static void help_edit_on_refresh(GebrGuiHelpEditWindow * window, GString * help, GebrGeoXmlObject * object)
 {
 	if (gebr_geoxml_object_get_type(object) != GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		object = NULL;
