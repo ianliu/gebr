@@ -322,9 +322,7 @@ void gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gcha
 		parameter_group = gebr_geoxml_parameter_get_group(parameter);
 		elements = __gebr_geoxml_parameter_get_referencee_list(parameter);
 		__gebr_geoxml_foreach_element(reference_element, elements) {
-			GdomeNode *param;
-			param = gdome_el_parentNode(reference_element, &exception);
-			gebr_geoxml_parameter_set_label((GebrGeoXmlParameter*)param, label);
+			gebr_geoxml_parameter_set_label((GebrGeoXmlParameter*)reference_element, label);
 		}
 	}
 
