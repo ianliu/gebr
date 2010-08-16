@@ -223,19 +223,22 @@ void menu_setup_ui(void)
 
 void menu_new(gboolean edit)
 {
-	static int new_count = 0;
-	GString *new_menu_str;
+	static int new_count = 1;
 	GtkTreeIter iter;
 	GtkTreeIter target;
+	gchar * new_menu_str;
+	gchar * title_str;
 
-	new_menu_str = g_string_new(NULL);
-	g_string_printf(new_menu_str, "%s%d.mnu", _("untitled"), ++new_count);
+	title_str = g_strdup_printf(_("Untitled menu %d"), new_count);
+	new_menu_str = g_strdup_printf(_("untitled%d.mnu"), new_count);
+	new_count++;
 
 	debr.menu = gebr_geoxml_flow_new();
+	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(debr.menu), title_str);
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(debr.menu), debr.config.name->str);
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(debr.menu), debr.config.email->str);
 	gebr_geoxml_document_set_date_created(GEBR_GEOXML_DOC(debr.menu), gebr_iso_date());
-	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(debr.menu), new_menu_str->str);
+	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(debr.menu), new_menu_str);
 
 	switch (menu_get_selected_type(&iter, FALSE)) {
 	case ITER_FILE:
@@ -252,7 +255,7 @@ void menu_new(gboolean edit)
 	gtk_tree_store_append(debr.ui_menu.model, &iter, &target);
 	gtk_tree_store_set(debr.ui_menu.model, &iter,
 			   MENU_STATUS, MENU_STATUS_UNSAVED, MENU_IMAGE, GTK_STOCK_NO,
-			   MENU_FILENAME, new_menu_str->str, MENU_XMLPOINTER, (gpointer) debr.menu,
+			   MENU_FILENAME, new_menu_str, MENU_XMLPOINTER, (gpointer) debr.menu,
 			   MENU_PATH, "", MENU_VALIDATE_POINTER, NULL, -1),
 	menu_select_iter(&iter);
 
@@ -262,7 +265,8 @@ void menu_new(gboolean edit)
 			menu_close(&iter, FALSE);
 	}
 
-	g_string_free(new_menu_str, TRUE);
+	g_free(new_menu_str);
+	g_free(title_str);
 }
 
 GebrGeoXmlFlow *menu_load(const gchar * path)
@@ -1113,8 +1117,7 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	 * Load menu into widgets
 	 */
 	gtk_entry_set_text(GTK_ENTRY(title_entry), gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
-	gtk_entry_set_text(GTK_ENTRY(description_entry),
-			   gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu)));
+	gtk_entry_set_text(GTK_ENTRY(description_entry), gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_entry_set_text(GTK_ENTRY(author_entry), gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_entry_set_text(GTK_ENTRY(email_entry), gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu))); 
 
@@ -1143,15 +1146,15 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	/* signals */
 	g_signal_connect(title_entry, "changed", G_CALLBACK(menu_title_changed), NULL);
 	g_signal_connect(description_entry, "changed", G_CALLBACK(menu_description_changed), NULL);
-	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "changed", G_CALLBACK(menu_category_changed), NULL);
-	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "renamed", G_CALLBACK(menu_category_renamed), NULL);
-	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "removed", G_CALLBACK(menu_category_removed), NULL);
+	g_signal_connect(categories_sequence_edit, "changed", G_CALLBACK(menu_category_changed), NULL);
+	g_signal_connect(categories_sequence_edit, "renamed", G_CALLBACK(menu_category_renamed), NULL);
+	g_signal_connect(categories_sequence_edit, "removed", G_CALLBACK(menu_category_removed), NULL);
 	g_signal_connect(email_entry, "changed", G_CALLBACK(menu_email_changed), NULL);
 	g_signal_connect(author_entry, "changed", G_CALLBACK(menu_author_changed), NULL);
 
 	gtk_widget_show(dialog);
 
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK){
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
 		menu_replace();
 		ret = FALSE;
 		goto out;
