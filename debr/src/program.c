@@ -175,7 +175,7 @@ void program_setup_ui(void)
 	debr.ui_program.details.url_button = gtk_link_button_new("");
 	gtk_box_pack_start(GTK_BOX(hbox), debr.ui_program.details.url_button, FALSE, TRUE, 0);
 
-	debr.ui_program.details.help_button = gtk_button_new_with_label(_("Edit & View menu's help"));
+	debr.ui_program.details.help_button = gtk_button_new_with_label(_("Edit & View program's help"));
 	g_signal_connect(debr.ui_program.details.help_button, "clicked",
 			 G_CALLBACK(program_help_edit), NULL);
 	gtk_box_pack_end(GTK_BOX(details), debr.ui_program.details.help_button, FALSE, TRUE, 0);
