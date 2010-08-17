@@ -336,7 +336,6 @@ void on_menu_create_from_flow_activate(void)
 
 	GtkWidget *dialog;
 	GtkFileFilter *file_filter;
-	GString *path;
 	GebrGeoXmlFlow *flow;
 	gboolean use_value;
 
@@ -352,12 +351,13 @@ void on_menu_create_from_flow_activate(void)
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), file_filter);
 	gtk_widget_show(dialog);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_YES)
-		goto out;
+		return;
 
 	gchar *tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 	if (gebr_geoxml_document_load((GebrGeoXmlDocument**)&flow, tmp, TRUE, NULL)) {
 		debr_message(GEBR_LOG_ERROR, _("Could not load flow at '%s'"), tmp);
-		goto out;
+		g_free(tmp);
+		return;
 	}
 	g_free(tmp);
 
@@ -365,23 +365,6 @@ void on_menu_create_from_flow_activate(void)
 	 * Ask if default values should be used.
 	 */
 	use_value = gebr_gui_confirm_action_dialog(_("Default values"), _("Do you want to use your parameters' values as default values?"));
-	gtk_widget_destroy(dialog);
-
-	/* 
-	 * Ask menu file to save.
-	 */
-	dialog = gebr_gui_save_dialog_new(_("Choose menu file to save"), GTK_WINDOW(debr.window));
-	file_filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(file_filter, _("Menu files (*.mnu)"));
-	gtk_file_filter_add_pattern(file_filter, "*.mnu");
-	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), file_filter);
-	gtk_widget_show(dialog);
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK)
-		goto out;
-	tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-	path = g_string_new(tmp);
-	g_free(tmp);
-	gebr_append_filename_extension(path, ".mnu");
 	gtk_widget_destroy(dialog);
 
 	/*
@@ -402,20 +385,10 @@ void on_menu_create_from_flow_activate(void)
 	gebr_geoxml_document_set_date_created(GEBR_GEOXML_DOC(flow), gebr_iso_date());
 	gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(flow), gebr_iso_date());
 	gebr_geoxml_document_set_help(GEBR_GEOXML_DOC(flow), "");
-	gchar *filename = g_path_get_basename(path->str);
-	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(flow), filename);
-	g_free(filename);
-	gebr_geoxml_document_save(GEBR_GEOXML_DOC(flow), path->str);
 
-	menu_open(path->str, TRUE);
-	debr_message(GEBR_LOG_INFO, _("Flow '%s' imported as menu to %s."),
-		     (gchar *)gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)), path->str);
-
-	/* frees */
-	g_string_free(path, TRUE);
-	gebr_geoxml_document_free(GEBR_GEOXML_DOC(flow));
-
-out:	gtk_widget_destroy(dialog);
+	menu_new_from_menu(flow, FALSE);
+	debr_message(GEBR_LOG_INFO, _("Flow '%s' imported as menu."),
+		     (gchar *)gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
 }
 
 void on_menu_add_folder_activate(void)
