@@ -226,6 +226,9 @@ void on_menu_revert_activate(void)
 		menu = menu_load(path);
 		if (menu == NULL)
 			return;
+
+		debr_remove_help_edit_window(old_menu);
+
 		/* revert to the one in disk */
 		gebr_geoxml_document_free(GEBR_GEOXML_DOC(old_menu));
 		gtk_tree_store_set(debr.ui_menu.model, &iter, MENU_XMLPOINTER, menu, -1);

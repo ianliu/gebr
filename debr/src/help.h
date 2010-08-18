@@ -34,10 +34,12 @@ void help_fix_css(GString * help);
 void help_show(GebrGeoXmlObject *object, const gchar * title);
 
 /**
- * Starts the edition of \p program's help.
- * If there is no help in \p program loads the default template.
+ * debr_help_edit:
+ * @object: a #GebrGeoXmlProgram or #GebrGeoXmlFlow
+ *
+ * Starts the editing @object's help.
  */
-void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program);
+void debr_help_edit(GebrGeoXmlObject * object);
 
 G_END_DECLS
 #endif				//__HELP_H

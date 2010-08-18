@@ -48,6 +48,8 @@ static void help_edit_on_finished(GebrGeoXmlObject * object, const gchar * _help
 
 static gsize strip_block(GString * buffer, const gchar * tag);
 
+static GtkMenuBar * create_menu_bar(GebrGeoXmlObject * object, GebrGuiHelpEditWindow * window);
+
 /*
  * Public functions.
  */
@@ -65,12 +67,20 @@ void help_show(GebrGeoXmlObject *object, const gchar * title)
 	g_string_free(html, TRUE);
 }
 
-void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
+void debr_help_edit(GebrGeoXmlObject * object)
 {
 	GString *prepared_html;
 	GString *cmd_line;
 	FILE *html_fp;
 	GString *html_path;
+	const gchar * help;
+	GebrGeoXmlProgram * program = NULL;
+
+	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
+		program = GEBR_GEOXML_PROGRAM(object);
+		help = gebr_geoxml_program_get_help(program);
+	} else
+		help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
 
 	prepared_html = g_string_new(help);
 
@@ -97,25 +107,40 @@ void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 
 	/* EDIT IT */
 	if (debr.config.native_editor || !debr.config.htmleditor->len) {
-		const gchar * title;
 		GtkWidget * help_edit_window;
-		GebrGuiHelpEditWidget * help_edit_widget;
-		GebrGeoXmlObject * object;
 
-		if (program != NULL) {
-			object = GEBR_GEOXML_OBJECT(program);
-			title = gebr_geoxml_program_get_title(program);
+		help_edit_window = g_hash_table_lookup(debr.help_edit_windows, object);
+
+		if (help_edit_window != NULL) {
+			gtk_window_present(GTK_WINDOW(help_edit_window));
 		} else {
-			object = GEBR_GEOXML_OBJECT(debr.menu);
-			title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(debr.menu));
-		}
+			gchar * title;
+			const gchar * object_title;
+			GtkMenuBar * menu_bar;
+			GebrGuiHelpEditWidget * help_edit_widget;
+			GebrGeoXmlObject * object;
 
-		help_edit_widget = debr_help_edit_widget_new(object, prepared_html->str);
-		help_edit_window = gebr_gui_help_edit_window_new_with_refresh(help_edit_widget);
-		g_signal_connect(help_edit_window, "refresh-requested",
-				 G_CALLBACK(help_edit_on_refresh), object);
-		gtk_window_set_title(GTK_WINDOW(help_edit_window), title);
-		gtk_widget_show(help_edit_window);
+			if (program != NULL) {
+				object = GEBR_GEOXML_OBJECT(program);
+				object_title = gebr_geoxml_program_get_title(program);
+				title = g_strdup_printf(_("Program: %s"), object_title);
+			} else {
+				object = GEBR_GEOXML_OBJECT(debr.menu);
+				object_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(debr.menu));
+				title = g_strdup_printf(_("Menu: %s"), object_title);
+			}
+
+			help_edit_widget = debr_help_edit_widget_new(object, prepared_html->str);
+			help_edit_window = gebr_gui_help_edit_window_new_with_refresh(help_edit_widget);
+			menu_bar = create_menu_bar(object, GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window));
+			gebr_gui_help_edit_window_set_menu_bar(GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window), menu_bar);
+			g_signal_connect(help_edit_window, "refresh-requested",
+					 G_CALLBACK(help_edit_on_refresh), object);
+			g_hash_table_insert(debr.help_edit_windows, object, help_edit_window);
+			gtk_window_set_title(GTK_WINDOW(help_edit_window), title);
+			g_free(title);
+			gtk_widget_show(help_edit_window);
+		}
 	} else {
 		/* create temporary filename */
 		html_path = gebr_make_temp_filename("debr_XXXXXX.html");
@@ -175,9 +200,96 @@ static void help_edit_on_refresh(GebrGuiHelpEditWindow * window, GString * help,
 	help_subst_fields(help, GEBR_GEOXML_PROGRAM(object), TRUE);
 }
 
-/**
- * \internal
- */
+static GtkMenuBar * create_menu_bar(GebrGeoXmlObject * object, GebrGuiHelpEditWindow * window)
+{
+	GtkWidget * menu;
+	GtkWidget * menu_bar;
+	GtkWidget * menu_item;
+	GtkWidget * menu_bar_item;
+	GtkAccelGroup * accel_group;
+	GebrGuiHelpEditWidget * help_edit_widget;
+	GebrGuiHtmlViewerWidget * html_viewer_widget;
+
+	g_object_get(window, "help-edit-widget", &help_edit_widget, NULL);
+	html_viewer_widget = gebr_gui_help_edit_widget_get_html_viewer(help_edit_widget);
+
+	accel_group = gtk_accel_group_new();
+	menu_bar = gtk_menu_bar_new();
+
+	gtk_window_add_accel_group(GTK_WINDOW(window), accel_group);
+
+	// 'File' menu
+	//
+	menu = gtk_menu_new();
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PRINT, accel_group);
+	g_signal_connect_swapped(menu_item, "activate",
+				 G_CALLBACK(gebr_gui_html_viewer_widget_print), html_viewer_widget);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_QUIT, accel_group);
+	g_signal_connect_swapped(menu_item, "activate",
+				 G_CALLBACK(gebr_gui_help_edit_window_quit), window);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+
+	// Insert 'File' menu into menubar
+	menu_bar_item = gtk_menu_item_new_with_mnemonic(_("_File"));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_bar_item), menu);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu_bar), GTK_WIDGET(menu_bar_item));
+
+	// 'Jump to' menu
+	//
+	menu = gtk_menu_new();
+
+	// Insert 'Jump to' menu into menubar
+	menu_bar_item = gtk_menu_item_new_with_mnemonic(_("_Jump to"));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_bar_item), menu);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu_bar), GTK_WIDGET(menu_bar_item));
+
+	GebrGeoXmlFlow * flow;
+	GebrGeoXmlSequence * program;
+
+	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
+		flow = GEBR_GEOXML_FLOW(gebr_geoxml_object_get_owner_document(object));
+	else
+		flow = GEBR_GEOXML_FLOW(object);
+
+	// Insert link for Flow
+	gchar * label;
+	const gchar * title;
+	title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow));
+	label = g_strdup_printf(_("Menu: %s"), title);
+	menu_item = gtk_menu_item_new_with_label(label);
+	g_free(label);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	if (GEBR_GEOXML_OBJECT(flow) != object)
+		g_signal_connect_swapped(menu_item, "activate",
+					 G_CALLBACK(debr_help_edit), flow);
+	else
+		gtk_widget_set_sensitive(menu_item, FALSE);
+
+	gebr_geoxml_flow_get_program(flow, &program, 0);
+	while (program) {
+		title = gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program));
+		label = g_strdup_printf(_("Program: %s"), title);
+		menu_item = gtk_menu_item_new_with_label(label);
+		g_free(label);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+
+		if (GEBR_GEOXML_OBJECT(program) != object)
+			g_signal_connect_swapped(menu_item, "activate",
+						 G_CALLBACK(debr_help_edit), program);
+		else
+			gtk_widget_set_sensitive(menu_item, FALSE);
+		gebr_geoxml_sequence_next(&program);
+	}
+
+	gtk_widget_show_all(menu_bar);
+	return GTK_MENU_BAR(menu_bar);
+}
+
 static void add_program_parameter_item(GString * str, GebrGeoXmlParameter * par)
 {
 	if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(par))) {
@@ -200,9 +312,6 @@ static void add_program_parameter_item(GString * str, GebrGeoXmlParameter * par)
 	g_string_append_printf(str, "</li>\n");
 }
 
-/**
- * \internal
- */
 static void help_insert_parameters_list(GString * help, GebrGeoXmlProgram * program, gboolean refresh)
 {
 	GString *label;
