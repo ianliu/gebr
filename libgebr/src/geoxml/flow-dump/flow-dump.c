@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 
 	parse_command_line(argc, argv);
 
-	if (flow == NULL)
+	if (flowfn == NULL)
 		return 0;
 
 	nflow = 0;
