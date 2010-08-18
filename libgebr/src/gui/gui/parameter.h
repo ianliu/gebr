@@ -37,6 +37,7 @@ struct gebr_gui_parameter_widget {
 	GebrGeoXmlParameterType parameter_type;
 	gboolean use_default_value;
 	gpointer data;
+	gboolean readonly;
 
 	GtkWidget *widget;
 	GtkWidget *value_widget;
@@ -54,32 +55,54 @@ struct gebr_gui_parameter_widget {
 	gpointer user_data;
 };
 
+/**
+ * Create a new parameter widget.
+ */
 struct gebr_gui_parameter_widget *
 gebr_gui_parameter_widget_new(GebrGeoXmlParameter * parameter, gboolean use_default_value, gpointer data);
 
+/**
+ * Set dictionaries documents to find dictionaries parameters
+ */
 void
-gebr_gui_parameter_widget_set_dicts(struct gebr_gui_parameter_widget *gebr_gui_parameter_widget,
+gebr_gui_parameter_widget_set_dicts(struct gebr_gui_parameter_widget *parameter_widget,
 				    struct gebr_gui_gebr_gui_program_edit_dicts *dicts);
 
-GString *gebr_gui_parameter_widget_get_widget_value(struct gebr_gui_parameter_widget *gebr_gui_parameter_widget);
+/**
+ * Return the parameter's widget value
+ */
+GString *parameter_widget_get_widget_value(struct gebr_gui_parameter_widget *parameter_widget);
 
-void
+/**
+ *
+ */
+void gebr_gui_parameter_widget_set_auto_submit_callback(struct gebr_gui_parameter_widget *parameter_widget,
+							changed_callback callback, gpointer user_data);
 
+/**
+ *
+ */
+void gebr_gui_parameter_widget_set_readonly(struct gebr_gui_parameter_widget *parameter_widget, gboolean readonly);
 
-gebr_gui_parameter_widget_set_auto_submit_callback(struct gebr_gui_parameter_widget *gebr_gui_parameter_widget,
-						   changed_callback callback, gpointer user_data);
+/**
+ * Update input widget value from the parameter's value
+ */
+void gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget *parameter_widget);
 
-void gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget *gebr_gui_parameter_widget);
+/**
+ * Apply validations rules (if existent) to _gebr_gui_parameter_widget_
+ */
+void gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parameter_widget);
 
-void gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *gebr_gui_parameter_widget);
-
-void gebr_gui_parameter_widget_update_list_separator(struct gebr_gui_parameter_widget
-						     *gebr_gui_parameter_widget);
+/**
+ * Update UI of list with the new separator
+ */
+void gebr_gui_parameter_widget_update_list_separator(struct gebr_gui_parameter_widget *parameter_widget);
 
 /**
  * Rebuild the UI.
  */
-void gebr_gui_parameter_widget_reconfigure(struct gebr_gui_parameter_widget *gebr_gui_parameter_widget);
+void gebr_gui_parameter_widget_reconfigure(struct gebr_gui_parameter_widget *parameter_widget);
 
 G_END_DECLS
 #endif				//__GEBR_GUI_PARAMETER_H

@@ -115,6 +115,10 @@ void menu_setup_ui(void);
 void menu_new(gboolean edit);
 
 /**
+ */
+void menu_new_from_menu(GebrGeoXmlFlow *menu, gboolean edit);
+
+/**
  * Loads an Xml representing a menu given by \p path and returns its structure.
  *
  * \param path The file path of the Xml file on the system.

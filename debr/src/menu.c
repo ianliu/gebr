@@ -225,19 +225,21 @@ void menu_setup_ui(void)
 
 void menu_new(gboolean edit)
 {
+	GebrGeoXmlFlow *menu = gebr_geoxml_flow_new();
+	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(menu), debr.config.name->str);
+	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(menu), debr.config.email->str);
+	gebr_geoxml_document_set_date_created(GEBR_GEOXML_DOC(menu), gebr_iso_date());
+
+	menu_new_from_menu(menu, edit);
+}
+
+void menu_new_from_menu(GebrGeoXmlFlow *menu, gboolean edit)
+{
 	static int new_count = 0;
-	GString *new_menu_str;
 	GtkTreeIter iter;
 	GtkTreeIter target;
 
-	new_menu_str = g_string_new(NULL);
-	g_string_printf(new_menu_str, "%s%d.mnu", _("untitled"), ++new_count);
-
-	debr.menu = gebr_geoxml_flow_new();
-	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(debr.menu), debr.config.name->str);
-	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(debr.menu), debr.config.email->str);
-	gebr_geoxml_document_set_date_created(GEBR_GEOXML_DOC(debr.menu), gebr_iso_date());
-	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(debr.menu), new_menu_str->str);
+	debr.menu = menu;
 
 	switch (menu_get_selected_type(&iter, FALSE)) {
 	case ITER_FILE:
@@ -252,10 +254,14 @@ void menu_new(gboolean edit)
 	}
 
 	gtk_tree_store_append(debr.ui_menu.model, &iter, &target);
+	GString *new_menu_str = g_string_new(NULL);
+	g_string_printf(new_menu_str, "%s%d.mnu", _("untitled"), ++new_count);
+	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(menu), new_menu_str->str);
 	gtk_tree_store_set(debr.ui_menu.model, &iter,
 			   MENU_STATUS, MENU_STATUS_UNSAVED, MENU_IMAGE, GTK_STOCK_NO,
 			   MENU_FILENAME, new_menu_str->str, MENU_XMLPOINTER, (gpointer) debr.menu,
 			   MENU_PATH, "", MENU_VALIDATE_POINTER, NULL, -1),
+	g_string_free(new_menu_str, TRUE);
 	menu_select_iter(&iter);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -264,7 +270,6 @@ void menu_new(gboolean edit)
 			menu_close(&iter, FALSE);
 	}
 
-	g_string_free(new_menu_str, TRUE);
 }
 
 GebrGeoXmlFlow *menu_load(const gchar * path)
