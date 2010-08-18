@@ -66,6 +66,9 @@ struct debr {
 	GtkToolItem *tool_item_new;
 	GtkToolItem *tool_item_change_type;
 
+	/* HashTable for holding HelpEditWindow's */
+	GHashTable *help_edit_windows;
+
 	/* notebook's widgets */
 	struct ui_menu ui_menu;
 	struct ui_program ui_program;
@@ -148,6 +151,14 @@ void debr_message(enum gebr_log_message_type type, const gchar * message, ...);
  * \return #TRUE if \p category is not present, #FALSE otherwise.
  */
 gboolean debr_has_category(const gchar * category, gboolean add);
+
+/**
+ * debr_remove_help_edit_window:
+ * @object:
+ *
+ * Removes the @object key in debr.help_edit_windows, destroying the associated GebrGuiHelpEditWindow.
+ */
+void debr_remove_help_edit_window(gpointer object);
 
 G_END_DECLS
 #endif				//__DEBR_H
