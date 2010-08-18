@@ -201,6 +201,12 @@ GSList *__gebr_geoxml_parameter_get_referencee_list(GebrGeoXmlParameter * parame
 	return g_slist_reverse(list);
 }
 
+
+void __gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gchar * label)
+{
+	__gebr_geoxml_set_tag_value((GdomeElement *) parameter, "label", label, __gebr_geoxml_create_TextNode);
+}
+
 /*
  * library functions.
  */

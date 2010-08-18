@@ -603,18 +603,16 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 				for (; instance != NULL; gebr_geoxml_sequence_next(&instance)){
 					gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &iter, 0);
 
-					if (first_instance){
-						for (; iter != NULL; gebr_geoxml_sequence_next(&iter)){
-							gebr_geoxml_parameter_set_label((GebrGeoXmlParameter *) iter, "");
-							__gebr_geoxml_parameter_set_be_reference((GebrGeoXmlParameter *) iter);
-						}
-						first_instance = FALSE;
-					} 
-					else {
-						for (; iter != NULL; gebr_geoxml_sequence_next(&iter)){
-							gebr_geoxml_parameter_set_label((GebrGeoXmlParameter *) iter, "");
+					for (; iter != NULL; gebr_geoxml_sequence_next(&iter)){
+						__gebr_geoxml_parameter_set_label((GebrGeoXmlParameter *) iter, "");
+
+						if (first_instance){
+							if( __gebr_geoxml_parameter_get_type((GebrGeoXmlParameter *) iter, FALSE) != GEBR_GEOXML_PARAMETER_TYPE_REFERENCE){
+								__gebr_geoxml_parameter_set_be_reference((GebrGeoXmlParameter *) iter);
+							}
 						}
 					}
+					first_instance = FALSE;
 				}
 			}
 		}
