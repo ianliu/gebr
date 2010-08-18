@@ -1,5 +1,5 @@
-# libgebr - GeBR Library
-# Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+# libgebr - G�BR Library
+# Copyright (C) 2007  Br�ulio Barros de Oliveira (brauliobo@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,20 +15,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-if ENABLE_TESTS
-TESTSDIR=tests
-endif
-SUBDIRS = geoxml data validate upgrade menu-diff menu-edit menu-query flow-dump doc ${TESTSDIR}
+bin_PROGRAMS = gebr-geoxml-flow-dump
+gebr_geoxml_flow_dump_SOURCES = flow-dump.c
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = gebr-geoxml.pc
-
-man_MANS = gebr-geoxml.1
-EXTRA_DIST =					\
-	gebr-geoxml.pc				\
-	gebr-geoxml.1
-
-libgebr_geoxmlincludedir=$(includedir)/libgebr
-libgebr_geoxmlinclude_HEADERS=geoxml.h
-
-
+INCLUDES = -I$(srcdir)/.. -I$(srcdir)/../..
+AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
+gebr_geoxml_flow_dump_LDADD = ../geoxml/libgebr_geoxml.la ../../libgebr.la $(GLIB_LIBS)

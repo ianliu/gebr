@@ -143,6 +143,7 @@ src/geoxml/geoxml/Makefile
 src/geoxml/menu-diff/Makefile
 src/geoxml/menu-edit/Makefile
 src/geoxml/menu-query/Makefile
+src/geoxml/flow-dump/Makefile
 src/geoxml/tests/Makefile
 src/geoxml/upgrade/Makefile
 src/geoxml/validate/Makefile

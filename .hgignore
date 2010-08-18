@@ -76,9 +76,7 @@ libgebr/src/defines.h
 libgebr/src/gebr.pc
 libgebr/src/geoxml/gebr-geoxml.pc
 libgebr/src/geoxml/geoxml/defines.h
-libgebr/src/geoxml/menu-diff/gebr-geoxml-menu-diff
-libgebr/src/geoxml/menu-edit/gebr-geoxml-menu-edit
-libgebr/src/geoxml/menu-query/gebr-geoxml-menu-query
+libgebr/src/geoxml/*/gebr-geoxml-*
 libgebr/src/geoxml/tests/test-program
 libgebr/src/geoxml/tests/test-sequence
 libgebr/src/geoxml/upgrade/gebr-geoxml-upgrade
