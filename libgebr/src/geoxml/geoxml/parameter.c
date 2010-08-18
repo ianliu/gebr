@@ -307,33 +307,30 @@ gboolean gebr_geoxml_parameter_get_is_program_parameter(GebrGeoXmlParameter * pa
 
 void gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gchar * label)
 {
+	GebrGeoXmlParameterType type;
+
 	if (parameter == NULL || label == NULL)
 		return;
 
-	GdomeNode *grandpa;
-	grandpa = gdome_el_parentNode((GdomeElement*)parameter, &exception);
-	grandpa = gdome_el_parentNode((GdomeElement*)grandpa, &exception);
+	type = __gebr_geoxml_parameter_get_type(parameter, FALSE);
 
-	if (strcmp(gdome_el_tagName((GdomeElement*)grandpa, &exception)->str, "template-instance") == 0) {
-		GSList * elements;
-		GdomeElement *reference_element;
-		GebrGeoXmlParameterGroup *parameter_group;
-		
-		parameter_group = gebr_geoxml_parameter_get_group(parameter);
-		elements = __gebr_geoxml_parameter_get_referencee_list(parameter);
-		__gebr_geoxml_foreach_element(reference_element, elements) {
-			gebr_geoxml_parameter_set_label((GebrGeoXmlParameter*)reference_element, label);
-		}
-	}
+	g_return_if_fail(type != GEBR_GEOXML_PARAMETER_TYPE_REFERENCE);
 
 	__gebr_geoxml_set_tag_value((GdomeElement *) parameter, "label", label, __gebr_geoxml_create_TextNode);
 }
 
 const gchar *gebr_geoxml_parameter_get_label(GebrGeoXmlParameter * parameter)
 {
+	GebrGeoXmlParameter * template ;
+
 	if (parameter == NULL)
 		return NULL;
-	return __gebr_geoxml_get_tag_value((GdomeElement *) parameter, "label");
+	if (gebr_geoxml_parameter_get_is_reference(parameter))
+		template = gebr_geoxml_parameter_get_referencee(parameter);
+	else
+		template = parameter;
+
+	return __gebr_geoxml_get_tag_value((GdomeElement *) template, "label");
 }
 
 gboolean gebr_geoxml_parameter_get_is_in_group(GebrGeoXmlParameter * parameter)

@@ -36,6 +36,7 @@
 #include "parameter.h"
 #include "program_parameter.h"
 #include "parameters_p.h"
+#include "parameter_p.h"
 #include "parameter_group_p.h"
 
 /* global variables */
@@ -579,6 +580,43 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 				iter = iter->next;
 			}
 			g_slist_free(refer);
+		}
+	}
+	/* flow 0.3.5 to 0.3.6 */ 
+	if (strcmp(version, "0.3.6") < 0) {
+		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.6");
+
+			GdomeElement *element;
+
+			gebr_foreach_gslist_hyg(element, __gebr_geoxml_get_elements_by_tag(root_element, "group"), group) {
+				GdomeElement *parameter;
+				GebrGeoXmlParameterGroup *group;
+				GebrGeoXmlSequence *instance;
+				GebrGeoXmlSequence *iter;
+				gboolean first_instance = TRUE;
+
+				parameter = (GdomeElement*)gdome_el_parentNode(element, &exception);
+				group = GEBR_GEOXML_PARAMETER_GROUP(parameter);
+				gebr_geoxml_parameter_group_get_instance(group, &instance, 0);
+
+				for (; instance != NULL; gebr_geoxml_sequence_next(&instance)){
+					gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &iter, 0);
+
+					if (first_instance){
+						for (; iter != NULL; gebr_geoxml_sequence_next(&iter)){
+							gebr_geoxml_parameter_set_label((GebrGeoXmlParameter *) iter, "");
+							__gebr_geoxml_parameter_set_be_reference((GebrGeoXmlParameter *) iter);
+						}
+						first_instance = FALSE;
+					} 
+					else {
+						for (; iter != NULL; gebr_geoxml_sequence_next(&iter)){
+							gebr_geoxml_parameter_set_label((GebrGeoXmlParameter *) iter, "");
+						}
+					}
+				}
+			}
 		}
 	}
 
