@@ -92,6 +92,25 @@ GtkWidget *gebr_gui_help_edit_window_new(GebrGuiHelpEditWidget * help_edit_widge
  */
 GtkWidget *gebr_gui_help_edit_window_new_with_refresh(GebrGuiHelpEditWidget * help_edit_widget);
 
+/**
+ * gebr_gui_help_edit_window_set_menu_bar:
+ * @window: a #GebrGuiHelpEditWindow
+ * @menubar: a #GtkMenuBar to be placed on top of the window.
+ *
+ * Sets the menu bar for this window. If there is already a menu bar, it is removed from the interface and replaced with
+ * @menu_bar. Notice that by removing the old menu will destroy it unless you g_object_ref() it before this operation.
+ * See gtk_container_remove() for more information on widget removal.
+ */
+void gebr_gui_help_edit_window_set_menu_bar(GebrGuiHelpEditWindow * self, GtkMenuBar * menu_bar);
+
+/**
+ * gebr_gui_help_edit_window_quit:
+ * @window: a #GebrGuiHelpEditWindow
+ *
+ * Closes @window, showing a message dialog if the content has uncommitted changes.
+ */
+void gebr_gui_help_edit_window_quit(GebrGuiHelpEditWindow * self);
+
 G_END_DECLS
 
 #endif /* __GEBR_GUI_HELP_EDIT_WINDOW__ */
