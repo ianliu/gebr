@@ -131,10 +131,8 @@ static void gebr_gui_help_edit_window_class_init(GebrGuiHelpEditWindowClass * kl
 	/**
 	 * GebrGuiHelpEditWindow::refresh-requested:
 	 * @widget: The help edit window.
-	 * @help: A #GString containing the help content.
 	 *
-	 * Emitted when the user presses the Refresh button in this window. You may modify @help string as you wish.
-	 * When the callback returns, the modified string is set into the help edition widget.
+	 * Emitted when the user presses the Refresh button in this window.
 	 */
 	signals[REFRESH_REQUESTED] =
 		g_signal_new("refresh-requested",
@@ -142,10 +140,9 @@ static void gebr_gui_help_edit_window_class_init(GebrGuiHelpEditWindowClass * kl
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrGuiHelpEditWindowClass, refresh_requested),
 			     NULL, NULL,
-			     g_cclosure_marshal_VOID__POINTER,
+			     g_cclosure_marshal_VOID__VOID,
 			     G_TYPE_NONE,
-			     1,
-			     G_TYPE_GSTRING);
+			     0);
 
 	g_type_class_add_private(klass, sizeof(GebrGuiHelpEditWindowPrivate));
 }
@@ -276,22 +273,7 @@ static void on_edit_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow 
 
 static void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
 {
-	GebrGuiHelpEditWindowPrivate * priv;
-	GebrGuiHelpEditWidget * help_edit_widget;
-	GString * content_string;
-	gchar * content;
-
-	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
-	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
-	content = gebr_gui_help_edit_widget_get_content(help_edit_widget);
-	content_string = g_string_new(content);
-	g_free(content);
-
-	g_signal_emit(self, signals[REFRESH_REQUESTED], 0, content_string);
-
-	// After the signal callback returns, content_string should be updated.
-	gebr_gui_help_edit_widget_set_content(help_edit_widget, content_string->str);
-	g_string_free(content_string, TRUE);
+	g_signal_emit(self, signals[REFRESH_REQUESTED], 0);
 }
 
 static void on_print_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
