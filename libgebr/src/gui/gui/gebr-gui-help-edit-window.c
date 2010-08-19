@@ -26,6 +26,7 @@ enum {
 	PROP_0,
 	PROP_HAS_REFRESH,
 	PROP_HELP_EDIT_WIDGET,
+	PROP_MENU_BAR,
 };
 
 enum {
@@ -39,6 +40,7 @@ typedef struct _GebrGuiHelpEditWindowPrivate GebrGuiHelpEditWindowPrivate;
 
 struct _GebrGuiHelpEditWindowPrivate {
 	gboolean has_refresh;
+	GtkWidget * menu_bar;
 	GtkWidget * help_edit_widget;
 };
 
@@ -116,12 +118,21 @@ static void gebr_gui_help_edit_window_class_init(GebrGuiHelpEditWindowClass * kl
 							     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	/**
+	 * GebrGuiHelpEditWindow:menu-bar:
+	 * A #GebrGuiHelpEditWidget that will be packed into this window.
+	 */
+	g_object_class_install_property(gobject_class,
+					PROP_MENU_BAR,
+					g_param_spec_pointer("menu-bar",
+							     "GtkMenuBar",
+							     "A GtkMenuBar for this window",
+							     G_PARAM_READWRITE));
+
+	/**
 	 * GebrGuiHelpEditWindow::refresh-requested:
 	 * @widget: The help edit window.
-	 * @help: A #GString containing the help content.
 	 *
-	 * Emitted when the user presses the Refresh button in this window. You may modify @help string as you wish.
-	 * When the callback returns, the modified string is set into the help edition widget.
+	 * Emitted when the user presses the Refresh button in this window.
 	 */
 	signals[REFRESH_REQUESTED] =
 		g_signal_new("refresh-requested",
@@ -129,10 +140,9 @@ static void gebr_gui_help_edit_window_class_init(GebrGuiHelpEditWindowClass * kl
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrGuiHelpEditWindowClass, refresh_requested),
 			     NULL, NULL,
-			     g_cclosure_marshal_VOID__POINTER,
+			     g_cclosure_marshal_VOID__VOID,
 			     G_TYPE_NONE,
-			     1,
-			     G_TYPE_GSTRING);
+			     0);
 
 	g_type_class_add_private(klass, sizeof(GebrGuiHelpEditWindowPrivate));
 }
@@ -145,7 +155,6 @@ static void gebr_gui_help_edit_window_constructed(GObject * self)
 	GtkToolItem * item;
 
 	private = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
-
 	vbox = gtk_vbox_new(FALSE, 0);
 	toolbar = gtk_toolbar_new();
 	gtk_container_add(GTK_CONTAINER(self), vbox);
@@ -184,6 +193,10 @@ static void gebr_gui_help_edit_window_constructed(GObject * self)
 
 static void gebr_gui_help_edit_window_init(GebrGuiHelpEditWindow * self)
 {
+	GebrGuiHelpEditWindowPrivate * priv;
+       
+	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
+	priv->menu_bar = NULL;
 }
 
 static void gebr_gui_help_edit_window_set_property(GObject	*object,
@@ -191,6 +204,7 @@ static void gebr_gui_help_edit_window_set_property(GObject	*object,
 						   const GValue	*value,
 						   GParamSpec	*pspec)
 {
+	GebrGuiHelpEditWindow * self = GEBR_GUI_HELP_EDIT_WINDOW(object);
 	GebrGuiHelpEditWindowPrivate * priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(object);
 
 	switch (prop_id) {
@@ -199,6 +213,9 @@ static void gebr_gui_help_edit_window_set_property(GObject	*object,
 		break;
 	case PROP_HELP_EDIT_WIDGET:
 		priv->help_edit_widget = g_value_get_pointer(value);
+		break;
+	case PROP_MENU_BAR:
+		gebr_gui_help_edit_window_set_menu_bar(self, g_value_get_pointer(value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -216,6 +233,12 @@ static void gebr_gui_help_edit_window_get_property(GObject	*object,
 	switch (prop_id) {
 	case PROP_HAS_REFRESH:
 		g_value_set_boolean(value, priv->has_refresh);
+		break;
+	case PROP_HELP_EDIT_WIDGET:
+		g_value_set_pointer(value, priv->help_edit_widget);
+		break;
+	case PROP_MENU_BAR:
+		g_value_set_pointer(value, priv->menu_bar);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -250,22 +273,7 @@ static void on_edit_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow 
 
 static void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
 {
-	GebrGuiHelpEditWindowPrivate * priv;
-	GebrGuiHelpEditWidget * help_edit_widget;
-	GString * content_string;
-	gchar * content;
-
-	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
-	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
-	content = gebr_gui_help_edit_widget_get_content(help_edit_widget);
-	content_string = g_string_new(content);
-	g_free(content);
-
-	g_signal_emit(self, signals[REFRESH_REQUESTED], 0, content_string);
-
-	// After the signal callback returns, content_string should be updated.
-	gebr_gui_help_edit_widget_set_content(help_edit_widget, content_string->str);
-	g_string_free(content_string, TRUE);
+	g_signal_emit(self, signals[REFRESH_REQUESTED], 0);
 }
 
 static void on_print_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
@@ -312,14 +320,12 @@ static void gebr_gui_help_edit_window_destroy(GtkObject *object)
 {
 }
 
-static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * widget, GdkEventAny * event)
+static gboolean gebr_gui_help_edit_window_quit_real(GebrGuiHelpEditWindow * self)
 {
 	gint response;
-	GebrGuiHelpEditWindow * self;
 	GebrGuiHelpEditWidget * help_edit_widget;
 	GebrGuiHelpEditWindowPrivate * private;
 
-	self = GEBR_GUI_HELP_EDIT_WINDOW(widget);
 	private = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
 	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(private->help_edit_widget);
 
@@ -341,12 +347,21 @@ static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * widget, GdkEv
 	}
 }
 
+static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * widget, GdkEventAny * event)
+{
+	GebrGuiHelpEditWindow * self;
+	self = GEBR_GUI_HELP_EDIT_WINDOW(widget);
+	return gebr_gui_help_edit_window_quit_real(self);
+}
+
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
 
 GtkWidget *gebr_gui_help_edit_window_new(GebrGuiHelpEditWidget * help_edit_widget)
 {
+	g_return_val_if_fail(GEBR_GUI_IS_HELP_EDIT_WIDGET(help_edit_widget), NULL);
+
 	return g_object_new(GEBR_GUI_TYPE_HELP_EDIT_WINDOW,
 			    "help-edit-widget", help_edit_widget,
 			    NULL);
@@ -354,8 +369,35 @@ GtkWidget *gebr_gui_help_edit_window_new(GebrGuiHelpEditWidget * help_edit_widge
 
 GtkWidget *gebr_gui_help_edit_window_new_with_refresh(GebrGuiHelpEditWidget * help_edit_widget)
 {
+	g_return_val_if_fail(GEBR_GUI_IS_HELP_EDIT_WIDGET(help_edit_widget), NULL);
+
 	return g_object_new(GEBR_GUI_TYPE_HELP_EDIT_WINDOW,
 			    "help-edit-widget", help_edit_widget,
 			    "has-refresh", TRUE,
 			    NULL);
+}
+
+void gebr_gui_help_edit_window_set_menu_bar(GebrGuiHelpEditWindow * self, GtkMenuBar * menu_bar)
+{
+	GtkWidget * vbox;
+	GebrGuiHelpEditWindowPrivate * priv;
+
+	g_return_if_fail(GEBR_GUI_IS_HELP_EDIT_WINDOW(self));
+
+	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
+	vbox = gtk_bin_get_child(GTK_BIN(self));
+
+	if (priv->menu_bar != NULL)
+		gtk_container_remove(GTK_CONTAINER(vbox), priv->menu_bar);
+
+	if (menu_bar != NULL) {
+		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(menu_bar), FALSE, TRUE, 0);
+		gtk_box_reorder_child(GTK_BOX(vbox), GTK_WIDGET(menu_bar), 0);
+	}
+}
+
+void gebr_gui_help_edit_window_quit(GebrGuiHelpEditWindow * self)
+{
+	if (!gebr_gui_help_edit_window_quit_real(self))
+		gtk_widget_destroy(GTK_WIDGET(self));
 }

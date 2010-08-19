@@ -935,7 +935,7 @@ static gboolean program_url_changed(GtkEntry * entry)
  */
 static void program_help_edit(GtkButton * button, GtkWidget * validate_image)
 {
-	debr_help_edit(gebr_geoxml_program_get_help(debr.program), debr.program);
+	debr_help_edit(GEBR_GEOXML_OBJECT(debr.program));
 }
 
 /**

@@ -705,6 +705,7 @@ void menu_close(GtkTreeIter * iter, gboolean warn_user)
 	if (validate)
 		validate_close_iter(&validate->iter);
 
+	debr_remove_help_edit_window(menu);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
 	if (gtk_tree_store_remove(debr.ui_menu.model, iter))
 		menu_select_iter(iter);
@@ -1423,7 +1424,7 @@ void menu_replace(void) {
 	if (parameter_get_selected(&iter, FALSE))
 		parameter_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter);
 
-	if (menu_get_selected(&iter, FALSE)){
+	if (menu_get_selected(&iter, FALSE)) {
 		gtk_tree_store_set(debr.ui_menu.model, &iter, MENU_XMLPOINTER, debr.menu_recovery.clone, -1);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(debr.menu));
 		menu_selected();
@@ -1739,8 +1740,7 @@ static void menu_description_changed(GtkEntry * entry)
  */
 static void on_menu_help_edit_clicked(GtkWidget * button)
 {
-	debr_help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL);
-	//validate_image_set_check_help(validate_image, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
+	debr_help_edit(GEBR_GEOXML_OBJECT(debr.menu));
 }
 
 /**
