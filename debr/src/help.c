@@ -36,7 +36,7 @@
  * Prototypes
  */
 
-static void help_edit_on_refresh(GebrGuiHelpEditWindow * window, GString * help, GebrGeoXmlObject * object);
+static void help_edit_on_refresh(GebrGuiHelpEditWindow * window, GebrGeoXmlObject * object);
 
 static void add_program_parameter_item(GString * str, GebrGeoXmlParameter * par);
 
@@ -194,11 +194,22 @@ void debr_help_edit(GebrGeoXmlObject * object)
  * Private functions.
  */
 
-static void help_edit_on_refresh(GebrGuiHelpEditWindow * window, GString * help, GebrGeoXmlObject * object)
+static void help_edit_on_refresh(GebrGuiHelpEditWindow * window, GebrGeoXmlObject * object)
 {
+	gchar * help_content;
+	GString * help_string;
+	GebrGuiHelpEditWidget * help_edit_widget;
+
 	if (gebr_geoxml_object_get_type(object) != GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		object = NULL;
-	help_subst_fields(help, GEBR_GEOXML_PROGRAM(object), TRUE);
+
+	g_object_get(window, "help-edit-widget", &help_edit_widget, NULL);
+	help_content = gebr_gui_help_edit_widget_get_content(help_edit_widget);
+	help_string = g_string_new(help_content);
+	help_subst_fields(help_string, GEBR_GEOXML_PROGRAM(object), TRUE);
+	gebr_gui_help_edit_widget_set_content(help_edit_widget, help_string->str);
+	g_free(help_content);
+	g_string_free(help_string, TRUE);
 }
 
 static GtkMenuBar * create_menu_bar(GebrGeoXmlObject * object, GebrGuiHelpEditWindow * window)
