@@ -138,6 +138,7 @@ void debr_help_edit(GebrGeoXmlObject * object)
 					 G_CALLBACK(help_edit_on_refresh), object);
 			g_hash_table_insert(debr.help_edit_windows, object, help_edit_window);
 			gtk_window_set_title(GTK_WINDOW(help_edit_window), title);
+			gtk_window_set_default_size(GTK_WINDOW(help_edit_window), 600, 500);
 			g_free(title);
 			gtk_widget_show(help_edit_window);
 		}
