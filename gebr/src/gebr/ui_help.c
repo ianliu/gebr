@@ -53,21 +53,17 @@ void help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
 	GtkWidget * window;
 
 	window = gebr_gui_html_viewer_window_new(title); 
+	gebr_gui_html_viewer_window_set_geoxml_object(GEBR_GUI_HTML_VIEWER_WINDOW(window), object);
+	gebr_gui_html_viewer_widget_set_generate_links(gebr_gui_html_viewer_window_get_widget(GEBR_GUI_HTML_VIEWER_WINDOW(window)), menu);
 
 	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
 		html = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
-		gebr_gui_html_viewer_window_set_geoxml_object(GEBR_GUI_HTML_VIEWER_WINDOW(window), object);
 	} else
 		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
 
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
 
 	gtk_dialog_run(GTK_DIALOG(window));
-}
-
-void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document)
-{
-	help_show(GEBR_GEOXML_OBJECT(document), FALSE, gebr_geoxml_document_get_title(document));
 }
 
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document)

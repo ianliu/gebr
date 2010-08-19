@@ -74,6 +74,13 @@ void gebr_gui_html_viewer_widget_show_html(GebrGuiHtmlViewerWidget * self, const
  */
 void gebr_gui_html_viewer_widget_set_geoxml_object(GebrGuiHtmlViewerWidget *self, GebrGeoXmlObject * object);
 
+/**
+ * gebr_gui_html_viewer_widget_set_generate_links:
+ *
+ * Set wheter to generate links or not
+ */
+void gebr_gui_html_viewer_widget_set_generate_links(GebrGuiHtmlViewerWidget *self, gboolean generate_links);
+
 G_END_DECLS
 
 #endif /* __GEBR_GUI_HTML_VIEWER_WIDGET__ */

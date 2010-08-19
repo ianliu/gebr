@@ -29,7 +29,6 @@ libgebr_gui_la_SOURCES = 		\
 	utils.c 			\
 	pixmaps.c 			\
 	icons.c 			\
-	help.c 				\
 	gtkfileentry.c			\
 	gtkenhancedentry.c		\
 	gtksequenceedit.c		\
@@ -52,7 +51,6 @@ libgebr_guisubinclude_HEADERS = 	\
 	utils.h				\
 	pixmaps.h			\
 	icons.h				\
-	help.h				\
 	gtkfileentry.h			\
 	gtkenhancedentry.h		\
 	gtksequenceedit.h		\

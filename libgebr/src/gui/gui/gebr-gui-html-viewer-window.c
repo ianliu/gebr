@@ -205,3 +205,9 @@ void gebr_gui_html_viewer_window_set_geoxml_object(GebrGuiHtmlViewerWindow * sel
 	GebrGuiHtmlViewerWindowPrivate * priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
 	gebr_gui_html_viewer_widget_set_geoxml_object(GEBR_GUI_HTML_VIEWER_WIDGET(priv->viewer_widget), object);
 }
+
+GebrGuiHtmlViewerWidget* gebr_gui_html_viewer_window_get_widget(GebrGuiHtmlViewerWindow * self)
+{
+	GebrGuiHtmlViewerWindowPrivate * priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
+	return GEBR_GUI_HTML_VIEWER_WIDGET(priv->viewer_widget);
+}

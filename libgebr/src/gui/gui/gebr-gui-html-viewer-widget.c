@@ -16,16 +16,17 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+#include <regex.h>
+#include <webkit/webkit.h>
+#include <glib.h>
+#include <geoxml.h>
+#include "gebr-gui-html-viewer-widget.h"
 #include "../../intl.h"
 #include "../../utils.h"
 #include "../../defines.h"
 #include "utils.h"
-#include <webkit/webkit.h>
-#include <geoxml.h>
-#include "gebr-gui-html-viewer-widget.h"
-#include <string.h>
-#include <glib.h>
-#include <regex.h>
+#include "gebr-js.h"
 
 #define CSS_LINK "<link rel=\"stylesheet\" type=\"text/css\" href=\"file://"LIBGEBR_DATA_DIR"/gebr.css\" />"
 
@@ -38,6 +39,7 @@ typedef struct _GebrGuiHtmlViewerWidgetPrivate GebrGuiHtmlViewerWidgetPrivate;
 struct _GebrGuiHtmlViewerWidgetPrivate {
 	GtkWidget * web_view;
 	GebrGeoXmlObject *object;
+	gboolean generate_links;
 };
 
 #define GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_GUI_TYPE_HTML_VIEWER_WIDGET, GebrGuiHtmlViewerWidgetPrivate))
@@ -56,10 +58,11 @@ static void gebr_gui_html_viewer_widget_get_property	(GObject	*object,
 							 GParamSpec	*pspec);
 static void gebr_gui_html_viewer_widget_destroy(GtkObject *object);
 
-WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, 
-						 WebKitWebFrame *frame,
-						 WebKitNetworkRequest *request,
-						 GebrGuiHtmlViewerWidget *self);
+static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, GebrGuiHtmlViewerWidget *self);
+static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, 
+							WebKitWebFrame *frame,
+							WebKitNetworkRequest *request,
+							GebrGuiHtmlViewerWidget *self);
 
 G_DEFINE_TYPE(GebrGuiHtmlViewerWidget, gebr_gui_html_viewer_widget, GTK_TYPE_VBOX);
 
@@ -92,6 +95,7 @@ static void gebr_gui_html_viewer_widget_init(GebrGuiHtmlViewerWidget * self)
 	priv->web_view = webkit_web_view_new();
 
 	g_signal_connect(priv->web_view, "navigation-requested", G_CALLBACK(on_navigation_requested), self);
+	g_signal_connect(priv->web_view, "load-finished", G_CALLBACK(on_load_finished), self);
 
 	vbox = GTK_WIDGET(self);
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -131,15 +135,60 @@ static void gebr_gui_html_viewer_widget_destroy(GtkObject *object)
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
-WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, 
-						 WebKitWebFrame *frame,
-						 WebKitNetworkRequest *request,
-						 GebrGuiHtmlViewerWidget *self)
+static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, GebrGuiHtmlViewerWidget *self)
+{
+	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+	GebrGeoXmlObject * object = priv->object;
+	JSContextRef context = webkit_web_frame_get_global_context(frame);
+	
+	if (priv->generate_links) {
+		GString *js = g_string_new(
+			"function GenerateLinksIndex(links, is_programs_help) {"
+				"var navbar = document.getElementsByClassName('navigation')[0];"
+				"if (!navbar) return;"
+				"var linklist = navbar.getElementsByTagName('ul')[0];"
+				"if (!linklist) return;"
+				"if (!is_programs_help) {"
+					"var session = document.createElement('li');"
+					"session.innerHTML = '<h2>Programs</h2>';"
+					"linklist.appendChild(session);"
+				"}"
+				"for (var i = 0; i < links.length; ++i) {"
+					"var link = document.createElement('a');"
+					"link.setAttribute('href', links[i][1]);"
+					"link.innerHTML = links[i][0];"
+					"var li = document.createElement('li');"
+					"li.appendChild(link);"
+					"linklist.appendChild(li);"
+				"}"
+			"}");
+		if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
+			g_string_append(js, "GenerateLinksIndex([['<b>Menu</b>', 'gebr://menu']], true);");
+			gebr_js_evaluate(context, js->str);
+		} else if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
+			g_string_append(js, "GenerateLinksIndex([");
+			GebrGeoXmlSequence *program;
+			gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(object), &program, 0);
+			for (gint i = 0; program != NULL; gebr_geoxml_sequence_next(&program), ++i)
+				g_string_append_printf(js, "%s['%s', 'gebr://prog%d']",
+						       i == 0 ? "" : ", ",
+						       gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)), i);
+			g_string_append(js, "], false);");
+			gebr_js_evaluate(context, js->str);
+		}
+		g_string_free(js, TRUE);
+	}
+}
+
+static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, 
+							WebKitWebFrame *frame,
+							WebKitNetworkRequest *request,
+							GebrGuiHtmlViewerWidget *self)
 {
 	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	const gchar * uri = webkit_network_request_get_uri(request);
 
-	if (g_str_has_prefix(uri, "gebr://")) {
+	if (priv->generate_links && g_str_has_prefix(uri, "gebr://")) {
 		if (priv->object == NULL)
 			return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 
@@ -180,6 +229,7 @@ WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view,
 			return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 		}
 
+		gebr_gui_html_viewer_widget_set_geoxml_object(self, object);
 		gebr_gui_html_viewer_widget_show_html(self, help);
 		return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 	}
@@ -271,4 +321,10 @@ void gebr_gui_html_viewer_widget_set_geoxml_object(GebrGuiHtmlViewerWidget *self
 	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 
 	priv->object = object;
+}
+void gebr_gui_html_viewer_widget_set_generate_links(GebrGuiHtmlViewerWidget *self, gboolean generate_links)
+{
+	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+
+	priv->generate_links = generate_links;
 }

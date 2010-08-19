@@ -34,11 +34,6 @@ void program_help_show(void);
 void help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title);
 
 /**
- * Button callback, calls #help_show.
- */
-void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document);
-
-/**
  * Edit help in editor as reponse to button clicks.
  */
 void help_edit(GtkButton * button, GebrGeoXmlDocument * document);

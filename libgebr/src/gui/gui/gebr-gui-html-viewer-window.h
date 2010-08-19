@@ -21,6 +21,7 @@
 
 #include <gtk/gtk.h>
 #include <geoxml.h>
+#include "gebr-gui-html-viewer-widget.h"
 
 G_BEGIN_DECLS
 
@@ -66,6 +67,13 @@ void gebr_gui_html_viewer_window_show_html(GebrGuiHtmlViewerWindow * self, const
  * Set a geoxml object attribute
  */
 void gebr_gui_html_viewer_window_set_geoxml_object(GebrGuiHtmlViewerWindow * self, GebrGeoXmlObject * object);
+
+/**
+ * gebr_gui_html_viewer_window_get_widget:
+ *
+ * Get widget
+ */
+GebrGuiHtmlViewerWidget* gebr_gui_html_viewer_window_get_widget(GebrGuiHtmlViewerWindow * self);
 
 G_END_DECLS
 
