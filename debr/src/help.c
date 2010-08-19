@@ -52,19 +52,6 @@ static gsize strip_block(GString * buffer, const gchar * tag);
  * Public functions.
  */
 
-void help_show(GebrGeoXmlObject *object, const gchar * title)
-{
-	GString *html = g_string_new("");
-	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
-		g_string_assign(html, gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object)));
-	else
-		g_string_assign(html, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object)));
-
-	gebr_gui_help_show(object, TRUE, html->str, title);
-
-	g_string_free(html, TRUE);
-}
-
 void debr_help_edit(const gchar * help, GebrGeoXmlProgram * program)
 {
 	GString *prepared_html;

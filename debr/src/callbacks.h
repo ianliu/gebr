@@ -224,7 +224,7 @@ void on_validate_clear_activate(void);
 void on_configure_preferences_activate(void);
 
 /**
- * Calls \ref gebr_gui_help_show.
+ * Not yet available cause no user manual was writen.
  */
 void on_help_contents_activate(void);
 

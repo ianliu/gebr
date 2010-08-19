@@ -29,11 +29,6 @@ G_BEGIN_DECLS
 void help_fix_css(GString * help);
 
 /**
- * Shows \p help using user's browser.
- */
-void help_show(GebrGeoXmlObject *object, const gchar * title);
-
-/**
  * Starts the edition of \p program's help.
  * If there is no help in \p program loads the default template.
  */
