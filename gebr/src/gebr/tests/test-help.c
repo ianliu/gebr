@@ -27,18 +27,21 @@
 #include <interface.h>
 
 #if GTK_CHECK_VERSION(2,14,0)
-void _gtk_loop() {
+void _gtk_loop()
+{
 	while (gtk_events_pending()) {
 		gtk_main_iteration();
 	}
 }
-void gtk_loop() {
+void gtk_loop()
+{
 	_gtk_loop();
 	sleep(0);
 }
 
 
-static void test_gebr_help_about(void) {
+static void test_gebr_help_about(void)
+{
 	GtkWidget *about = gebr_gui_about_setup_ui("gebr", NULL).dialog;
 	gtk_widget_show(about);
 	gtk_loop();
@@ -53,41 +56,8 @@ static void test_gebr_help_about(void) {
 	gtk_loop();
 }
 
-#if 0
-static void test_gebr_help_ckeditor_confirm_save(void) {
-	GString * tmpl;
-	GebrGeoXmlDocument *menu;
-
-	gebr_geoxml_document_load(&menu, TEST_DIR"/test.mnu", FALSE, NULL);
-
-	tmpl = g_string_new(" ");
-	GtkWidget *help = gebr_gui_help_edit(menu, tmpl, NULL, NULL, TRUE);
-	g_assert(help);
-
-	GtkWidget *edit = gtk_test_find_widget(help, "Edit", GTK_TYPE_BUTTON);
-	g_assert(edit);
-
-	// Flooding gtk pipe with events to give time for webkit javascript processing
-	for (int n = 0; n++ < 1000; ) {
-		gtk_test_widget_click(edit, 3, 0);
-		if (n % 10 == 0) {
-			_gtk_loop();
-		}
-	}
-
-	gboolean click = gtk_test_widget_click(edit, 1, 0);
-	g_assert (click);
-	gtk_loop();
-
-	gtk_dialog_response(GTK_DIALOG(help), GTK_RESPONSE_CLOSE);
-
-	gtk_loop();
-
-}
-#endif
-
-int main(int argc, char *argv[]) {
-
+int main(int argc, char *argv[])
+{
 	/* initialization */
 	gtk_test_init(&argc, &argv, NULL);
 
@@ -99,7 +69,8 @@ int main(int argc, char *argv[]) {
 
 }
 #else
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 	return 0;
 }
 #endif
