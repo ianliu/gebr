@@ -483,6 +483,7 @@ static void flow_browse_show_help(void)
 static void flow_browse_edit_help(void)
 {
 	debr_help_edit_document(GEBR_GEOXML_DOC(gebr.flow));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 }
 
 /**
