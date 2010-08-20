@@ -256,12 +256,19 @@ gboolean gebr_create_config_dirs(void)
 		goto err;
 	if (!gebr_make_config_dir("gebrd"))
 		goto err;
-	if (!gebr_make_config_dir("menus"))
+	if (!gebr_make_config_dir("gebr/menus"))
 		goto err;
 	if (!gebr_make_config_dir("gebr/data"))
 		goto err;
 
 	/* DEPRECATED: migration from old structure */
+	g_string_printf(string, "%s/.gebr/menus", getenv("HOME"));
+	if (g_file_test(string->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == TRUE) {
+		g_string_printf(string, "mv %s/.gebr/menus/* %s/.gebr/gebr/menus; rmdir %s/.gebr/menus/",
+				getenv("HOME"), getenv("HOME"), getenv("HOME"));
+		if (system(string->str))
+			goto err;
+	}
 	g_string_printf(string, "%s/.gebr/gebrdata", getenv("HOME"));
 	if (g_file_test(string->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == TRUE) {
 		g_string_printf(string, "mv %s/.gebr/gebrdata/* %s/.gebr/gebr/data; rmdir %s/.gebr/gebrdata/",

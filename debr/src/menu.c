@@ -650,7 +650,7 @@ void menu_install(void)
 		const gchar *menu_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu));
 		destination = g_string_new(NULL);
 		command = g_string_new(NULL);
-		g_string_printf(destination, "%s/.gebr/menus/%s", getenv("HOME"), menu_filename);
+		g_string_printf(destination, "%s/.gebr/gebr/menus/%s", getenv("HOME"), menu_filename);
 		g_string_printf(command, "cp %s %s", menu_path, destination->str);
 
 		if (status == MENU_STATUS_UNSAVED) {
