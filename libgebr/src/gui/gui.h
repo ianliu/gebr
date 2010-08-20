@@ -31,3 +31,4 @@
 #include <gui/gebr-gui-help-edit-window.h>
 #include <gui/gebr-gui-html-viewer-widget.h>
 #include <gui/gebr-gui-html-viewer-window.h>
+#include <gui/gebr-gui-save-dialog.h>
