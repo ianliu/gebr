@@ -20,6 +20,7 @@
 #include <libgebr/utils.h>
 
 #include "gebr-help-edit-widget.h"
+#include "document.h"
 
 /*
  * HTML_HOLDER:
@@ -30,6 +31,7 @@
 	"<head>"									\
 	"<script>"									\
 	"var menu_edition = false;"							\
+	"function onCkEditorLoadFinished() {}"						\
 	"</script>"									\
 	"<script src='" HELP_EDIT_SCRIPT_PATH "ckeditor.js'>"				\
 	"</script></head>"								\
@@ -88,6 +90,8 @@ static gchar * gebr_help_edit_widget_get_content(GebrGuiHelpEditWidget * self);
 
 static void gebr_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, const gchar * content);
 
+static gboolean gebr_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self);
+
 G_DEFINE_TYPE(GebrHelpEditWidget, gebr_help_edit_widget, GEBR_GUI_TYPE_HELP_EDIT_WIDGET);
 
 //==============================================================================
@@ -110,6 +114,7 @@ static void gebr_help_edit_widget_class_init(GebrHelpEditWidgetClass * klass)
 	super_class->commit_changes = gebr_help_edit_widget_commit_changes;
 	super_class->get_content = gebr_help_edit_widget_get_content;
 	super_class->set_content = gebr_help_edit_widget_set_content;
+	super_class->is_content_saved = gebr_help_edit_widget_is_content_saved;
 
 	/**
 	 * GebrHelpEditWidget:geoxml-document:
@@ -202,11 +207,16 @@ static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame)
 static void gebr_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self)
 {
 	gchar * content;
+	JSContextRef context;
 	GebrHelpEditWidgetPrivate * priv;
+
+	context = gebr_gui_help_edit_widget_get_js_context(self);
+	gebr_js_evaluate(context, "ed.resetDirty();");
 
 	priv = GEBR_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	content = gebr_help_edit_widget_get_content(self);
-	gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(priv->document), content);
+	gebr_geoxml_document_set_help(priv->document, content);
+	document_save(priv->document, TRUE);
 	g_free(content);
 }
 
@@ -238,6 +248,15 @@ static void gebr_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, cons
 	gebr_js_evaluate(context, script);
 
 	g_free(script);
+}
+
+static gboolean gebr_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self)
+{
+	JSContextRef context;
+	JSValueRef value;
+	context = gebr_gui_help_edit_widget_get_js_context(self);
+	value = gebr_js_evaluate(context, "ed.checkDirty();");
+	return !gebr_js_value_get_boolean(context, value);
 }
 
 //==============================================================================
