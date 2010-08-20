@@ -51,14 +51,19 @@ void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 {
 	const gchar * html;
 	GtkWidget * window;
+	GebrGuiHtmlViewerWidget * html_viewer_widget;
 
 	window = gebr_gui_html_viewer_window_new(title); 
-	gebr_gui_html_viewer_window_set_geoxml_object(GEBR_GUI_HTML_VIEWER_WINDOW(window), object);
-	gebr_gui_html_viewer_widget_set_generate_links(gebr_gui_html_viewer_window_get_widget(GEBR_GUI_HTML_VIEWER_WINDOW(window)), menu);
+	html_viewer_widget = gebr_gui_html_viewer_window_get_widget(GEBR_GUI_HTML_VIEWER_WINDOW(window));
 
-	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
+	if (menu) {
+		gebr_gui_html_viewer_window_set_geoxml_object(GEBR_GUI_HTML_VIEWER_WINDOW(window), object);
+		gebr_gui_html_viewer_widget_set_generate_links(html_viewer_widget, TRUE);
+	}
+
+	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		html = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
-	} else
+	else
 		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
 
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
@@ -77,7 +82,7 @@ void debr_help_edit_document(GebrGeoXmlDocument * document)
 		help_edit_widget = gebr_help_edit_widget_new(document, help);
 		window = gebr_gui_help_edit_window_new(GEBR_GUI_HELP_EDIT_WIDGET(help_edit_widget));
 		gtk_window_set_default_size(GTK_WINDOW(window), 400, 500);
-		gtk_widget_destroy(window);
+		gtk_widget_show(window);
 	} else {
 		GString *prepared_html;
 		GString *cmd_line;
