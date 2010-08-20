@@ -24,8 +24,7 @@
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
 #include <libgebr/validate.h>
-#include <libgebr/gui/utils.h>
-#include <libgebr/gui/gebr-gui-save-dialog.h>
+#include <libgebr/gui.h>
 
 #include "menu.h"
 #include "debr.h"
@@ -34,6 +33,7 @@
 #include "program.h"
 #include "interface.h"
 #include "categoryedit.h"
+#include "debr-help-edit-widget.h"
 
 /*
  * Prototypes
@@ -339,6 +339,19 @@ void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * men
 	gchar *label;
 	gchar *filename;
 	GtkTreeIter parent;
+	GtkTreeIter temp_iter;
+	GebrGeoXmlFlow * old_menu;
+	GebrGuiHelpEditWindow * help_edit_window;
+
+	/* Synchronizing changes in DebrHelpEditWidget */
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &temp_iter,
+			   MENU_XMLPOINTER, &old_menu, -1);
+	help_edit_window = g_hash_table_lookup(debr.help_edit_windows, old_menu);
+	if (help_edit_window != NULL) {
+		DebrHelpEditWidget * help_edit_widget;
+		g_object_get(help_edit_window, "help-edit-widget", &help_edit_widget, NULL);
+		g_object_set(help_edit_widget, "geoxml-object", menu, NULL);
+	}
 
 	filename = g_path_get_basename(path);
 	date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(menu));
@@ -1425,6 +1438,17 @@ void menu_replace(void) {
 		parameter_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter);
 
 	if (menu_get_selected(&iter, FALSE)) {
+		GtkTreeIter temp_iter;
+		GebrGeoXmlFlow * old_xml;
+		GebrGuiHelpEditWindow * help_edit_window;
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &temp_iter,
+				   MENU_XMLPOINTER, &old_xml, -1);
+		help_edit_window = g_hash_table_lookup(debr.help_edit_windows, old_xml);
+		if (help_edit_window) {
+			DebrHelpEditWidget * help_edit_widget;
+			g_object_get(help_edit_window, "help-edit-widget", &help_edit_widget, NULL);
+			g_object_set(help_edit_widget, "geoxml-object", debr.menu_recovery.clone, NULL);
+		}
 		gtk_tree_store_set(debr.ui_menu.model, &iter, MENU_XMLPOINTER, debr.menu_recovery.clone, -1);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(debr.menu));
 		menu_selected();
