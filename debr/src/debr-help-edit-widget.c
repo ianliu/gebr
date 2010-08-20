@@ -104,7 +104,7 @@ static void debr_help_edit_widget_class_init(DebrHelpEditWidgetClass * klass)
 					g_param_spec_pointer("geoxml-object",
 							     "GeoXml Object",
 							     "The GebrGeoXmlObject associated with this help edition.",
-							     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+							     G_PARAM_READWRITE));
 
 	g_type_class_add_private(klass, sizeof(DebrHelpEditWidgetPrivate));
 }
