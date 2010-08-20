@@ -24,19 +24,25 @@
 G_BEGIN_DECLS
 
 /**
- * Show current selected program's help.
+ * debr_help_show_selected_program_help:
+ * Show help for the currently selected program.
  */
-void program_help_show(void);
+void debr_help_show_selected_program_help(void);
 
 /**
+ * debr_help_show:
+ * @object: an Xml object to get the help from.
+ * @menu: %TRUE if we are showing a menu's help, %FALSE otherwise.
+ * @title: the window title.
+ *
  * Show help of \p object (program or flow) HTML. 
  */
-void help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title);
+void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title);
 
 /**
- * Edit help in editor as reponse to button clicks.
+ * debr_help_edit_document:
  */
-void help_edit(GtkButton * button, GebrGeoXmlDocument * document);
+void debr_help_edit_document(GebrGeoXmlDocument * document);
 
 G_END_DECLS
 #endif				//__UI_HELP_H

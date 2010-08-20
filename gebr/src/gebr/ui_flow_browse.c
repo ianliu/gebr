@@ -461,7 +461,7 @@ out:	g_free(filename);
  */
 static void flow_browse_show_help(void)
 {
-	help_show(GEBR_GEOXML_OBJECT(gebr.flow), FALSE, _("Flow help"));
+	debr_help_show(GEBR_GEOXML_OBJECT(gebr.flow), FALSE, _("Flow help"));
 }
 
 /**

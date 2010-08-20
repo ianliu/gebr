@@ -178,7 +178,7 @@ void on_flow_revision_show_menu(void)
 
 void on_flow_component_help_activate(void)
 {
-	program_help_show();
+	debr_help_show_selected_program_help();
 }
 
 void on_flow_component_delete_activate(void)

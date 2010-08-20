@@ -533,7 +533,7 @@ static void flow_edition_menu_show_help(void)
 	menu = menu_load_path(menu_filename);
 	if (menu == NULL)
 		goto out;
-	help_show(GEBR_GEOXML_OBJECT(menu), TRUE, _("Menu help"));
+	debr_help_show(GEBR_GEOXML_OBJECT(menu), TRUE, _("Menu help"));
 
 out:	g_free(menu_filename);
 }

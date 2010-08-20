@@ -72,9 +72,9 @@ typedef struct {
 	gboolean accept_response;
 } GebrPropertiesData;
 
-/*
- * Prototypes
- */
+//==============================================================================
+// PROTOTYPES								       =
+//==============================================================================
 
 static void on_dict_edit_cursor_changed(GtkTreeView * tree_view, struct dict_edit_data *data);
 
@@ -138,10 +138,6 @@ static const GtkActionEntry dict_actions_entries[] = {
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
 
-/**
- * document_get_current:
- * Returns: current selected and active project, line or flow.
- */
 GebrGeoXmlDocument *document_get_current(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
@@ -156,14 +152,6 @@ GebrGeoXmlDocument *document_get_current(void)
 	}
 }
 
-/**
- * document_properties_setup_ui:
- * @document: The document which will have its properties modified.
- * @func: A callback function which is called when the dialog exits.
- *
- * Create the user interface for editing @document, which maybe a #GebrGeoXmlFlow, #GebrGeoXmlLine or
- * #GebrGeoXmlProject.
- */
 void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesResponseFunc func)
 {
 	GebrPropertiesData * data;
@@ -278,9 +266,6 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesR
 	gtk_widget_show_all(window);
 }
 
-/* Function: document_dict_edit_setup_ui
- * Open dialog for parameters's edition
- */
 void document_dict_edit_setup_ui(void)
 {
 	GtkWidget *dialog;
@@ -486,19 +471,14 @@ void document_dict_edit_setup_ui(void)
 	gtk_widget_destroy(dialog);
 }
 
-/*
- * Section: Private
- * Private functions.
- */
+//==============================================================================
+// PRIVATE FUNCTIONS							       =
+//==============================================================================
 
-/* Function: on_dict_edit_cursor_changed
- * 
- */
 static void on_dict_edit_cursor_changed(GtkTreeView * tree_view, struct dict_edit_data *data)
 {
 	GtkTreeIter iter;
 	GtkTreeIter parent;
-//      gboolean        is_add_parameter;
 
 	if (!dict_edit_get_selected(data, &iter))
 		return;
@@ -507,23 +487,10 @@ static void on_dict_edit_cursor_changed(GtkTreeView * tree_view, struct dict_edi
 		parent = iter;
 	gtk_tree_model_get(data->tree_model, &parent, DICT_EDIT_GEBR_GEOXML_POINTER, &data->current_document, -1);
 	data->current_document_iter = parent;
-
-//      gtk_tree_model_get(data->tree_model, &iter,
-//              DICT_EDIT_IS_ADD_PARAMETER, &is_add_parameter,
-//              -1);
-//      if (is_add_parameter) {
-//              g_signal_handlers_block_matched(G_OBJECT(data->tree_view),
-//                      G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-//                      G_CALLBACK(on_dict_edit_cursor_changed), NULL);
-//              gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view), &iter,
-//                      gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 1), TRUE);
-//              g_signal_handlers_unblock_matched(G_OBJECT(data->tree_view),
-//                      G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-//                      G_CALLBACK(on_dict_edit_cursor_changed), NULL);
-//      }
 }
 
-/* Function: on_dict_edit_add_clicked
+/*
+ * on_dict_edit_add_clicked:
  * Add new parameter
  */
 static void on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data *data)
@@ -547,7 +514,8 @@ static void on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data *
 	dict_edit_start_keyword_editing(data, &iter);
 }
 
-/* Function: on_dict_edit_remove_clicked
+/*
+ * on_dict_edit_remove_clicked:
  * Remove parameter
  */
 static void on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_data *data)
@@ -609,12 +577,8 @@ static gboolean on_renderer_entry_key_press_event(GtkWidget * widget, GdkEventKe
 	}
 }
 
-/* Function: on_dict_edit_renderer_editing_started
- * 
- */
-static void
-on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
-				      GtkCellEditable * editable, gchar * path, struct dict_edit_data *data)
+static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer, GtkCellEditable * editable,
+						  gchar * path, struct dict_edit_data *data)
 {
 	GtkWidget *widget;
 
@@ -624,13 +588,13 @@ on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
 	g_object_set(widget, "user-data", renderer, NULL);
 }
 
-/* Function: dict_edit_tooltip_callback
+/*
+ * dict_edit_tooltip_callback:
  * Set tooltip for New iters
  */
 #if GTK_CHECK_VERSION(2,12,0)
-static gboolean
-dict_edit_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
-			   GtkTreeIter * iter, GtkTreeViewColumn * column, struct dict_edit_data *data)
+static gboolean dict_edit_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip, GtkTreeIter * iter,
+					   GtkTreeViewColumn * column, struct dict_edit_data *data)
 {
 	gboolean is_add_parameter;
 
@@ -644,12 +608,12 @@ dict_edit_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 }
 #endif
 
-/* Function: on_dict_edit_type_cell_edited
+/*
+ * on_dict_edit_type_cell_edited:
  * Edit type of parameter
  */
-static void
-on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
-			      struct dict_edit_data *data)
+static void on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+					  struct dict_edit_data *data)
 {
 	GtkTreeIter iter;
 	gboolean is_add_parameter;
@@ -686,11 +650,12 @@ on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar
 	}
 }
 
-/* Function: on_dict_edit_cell_edited
+/*
+ * on_dict_edit_cell_edited:
  * Edit keyword, value and comment of parameter
  */
-static void
-on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text, struct dict_edit_data *data)
+static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+				     struct dict_edit_data *data)
 {
 	GtkTreeIter iter;
 	gint index;
@@ -734,8 +699,9 @@ on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * ne
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter, index, new_text, -1);
 }
 
-/* Function: dict_edit_load_iter
- * Load _parameter_ into _iter_
+/*
+ * dict_edit_load_iter:
+ * Load @parameter into @iter
  */
 static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter, GebrGeoXmlParameter * parameter)
 {
@@ -768,11 +734,11 @@ static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter,
 			   DICT_EDIT_KEYWORD_EDITABLE, TRUE, DICT_EDIT_EDITABLE, TRUE, -1);
 }
 
-/* Function: dict_edit_check_duplicates
+/*
+ * dict_edit_check_duplicates:
  * Check for duplicates keywords for parameters of higher hierarchical documents levels
  */
-static void
-dict_edit_check_duplicates(struct dict_edit_data *data, GebrGeoXmlDocument * document, const gchar * keyword)
+static void dict_edit_check_duplicates(struct dict_edit_data *data, GebrGeoXmlDocument * document, const gchar * keyword)
 {
 	GebrGeoXmlSequence *i_parameter;
 
@@ -795,12 +761,12 @@ dict_edit_check_duplicates(struct dict_edit_data *data, GebrGeoXmlDocument * doc
 	}
 }
 
-/* Function: dict_edit_check_duplicate_keyword
- * Check if _keyword_ intended to be used by _parameter_ is already being used
+/*
+ * dict_edit_check_duplicate_keyword:
+ * Check if @keyword intended to be used by @parameter is already being used
  */
-static gboolean
-dict_edit_check_duplicate_keyword(struct dict_edit_data *data, GebrGeoXmlProgramParameter * parameter,
-				  const gchar * keyword, gboolean show_error)
+static gboolean dict_edit_check_duplicate_keyword(struct dict_edit_data *data, GebrGeoXmlProgramParameter * parameter,
+						  const gchar * keyword, gboolean show_error)
 {
 	GebrGeoXmlDocument *document;
 	GebrGeoXmlSequence *i_parameter;
@@ -825,8 +791,9 @@ dict_edit_check_duplicate_keyword(struct dict_edit_data *data, GebrGeoXmlProgram
 	return FALSE;
 }
 
-/* Function: dict_edit_get_selected
- * Get selected iterator into _iter_
+/*
+ * dict_edit_get_selected:
+ * Get selected iterator into @iter
  */
 static gboolean dict_edit_get_selected(struct dict_edit_data *data, GtkTreeIter * iter)
 {
@@ -837,8 +804,9 @@ static gboolean dict_edit_get_selected(struct dict_edit_data *data, GtkTreeIter 
 	return gtk_tree_selection_get_selected(selection, &model, iter);
 }
 
-/* Function: dict_edit_start_keyword_editing
- * Set keyword column in _iter_
+/*
+ * dict_edit_start_keyword_editing:
+ * Set keyword column in @iter
  */
 static void dict_edit_start_keyword_editing(struct dict_edit_data *data, GtkTreeIter * iter)
 {
@@ -846,7 +814,8 @@ static void dict_edit_start_keyword_editing(struct dict_edit_data *data, GtkTree
 					  gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 2), TRUE);
 }
 
-/* Function: dict_edit_append_add_parameter
+/*
+ * dict_edit_append_add_parameter:
  * Add special parameter for easy new parameter creation
  */
 static void dict_edit_append_add_parameter(struct dict_edit_data *data, GtkTreeIter * document_iter)
@@ -860,7 +829,8 @@ static void dict_edit_append_add_parameter(struct dict_edit_data *data, GtkTreeI
 			   DICT_EDIT_KEYWORD_EDITABLE, TRUE, DICT_EDIT_EDITABLE, FALSE, -1);
 }
 
-/* Function: on_dict_edit_popup_menu
+/*
+ * on_dict_edit_popup_menu:
  * Popup menu for parameter removal, etc
  */
 static GtkMenu *on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_data *data)
@@ -890,7 +860,8 @@ static GtkMenu *on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_dat
 	return GTK_MENU(menu);
 }
 
-/* Function: dict_edit_type_text_to_gebr_geoxml_type
+/*
+ * dict_edit_type_text_to_gebr_geoxml_type
  * Convert type combo box text to a GEBR_GEOXML_PARAMETER_TYPE
  */
 static GebrGeoXmlParameterType dict_edit_type_text_to_gebr_geoxml_type(const gchar * text)
@@ -920,7 +891,8 @@ static gboolean dict_edit_check_empty_keyword(const gchar * keyword)
 	return TRUE;
 }
 
-/* Function: dict_edit_new_parameter_iter
+/*
+ * dict_edit_new_parameter_iter:
  * New parameter
  */
 static void dict_edit_new_parameter_iter(struct dict_edit_data *data, GebrGeoXmlObject * object, GtkTreeIter * iter)
@@ -931,11 +903,12 @@ static void dict_edit_new_parameter_iter(struct dict_edit_data *data, GebrGeoXml
 	gebr_geoxml_object_set_user_data(object, gtk_tree_iter_copy(iter));
 }
 
-/* Function: dict_edit_append_iter
- * Append iter
+/*
+ * dict_edit_append_iter:
+ * Append @iter
  */
-static GtkTreeIter
-dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXmlObject * object, GtkTreeIter * document_iter)
+static GtkTreeIter dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXmlObject * object,
+					 GtkTreeIter * document_iter)
 {
 	GtkTreeIter iter;
 
@@ -945,7 +918,8 @@ dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXmlObject * object, Gt
 	return iter;
 }
 
-/* Function: document_get_name_from_type
+/*
+ * document_get_name_from_type:
  * Return the document name given its type
  */
 static const gchar *document_get_name_from_type(GebrGeoXmlDocument * document, gboolean upper)

@@ -39,15 +39,15 @@
 #include "../defines.h"
 #include "menu.h"
 
-void program_help_show(void)
+void debr_help_show_selected_program_help(void)
 {
 	if (!flow_edition_get_selected_component(NULL, TRUE))
 		return;
 
-	help_show(GEBR_GEOXML_OBJECT(gebr.program), FALSE, _("Program help"));
+	debr_help_show(GEBR_GEOXML_OBJECT(gebr.program), FALSE, _("Program help"));
 }
 
-void help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
+void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
 {
 	const gchar * html;
 	GtkWidget * window;
@@ -66,7 +66,7 @@ void help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
 	gtk_dialog_run(GTK_DIALOG(window));
 }
 
-void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
+void debr_help_edit_document(GebrGeoXmlDocument * document)
 {
 	if (gebr.config.native_editor || gebr.config.editor->len == 0) {
 		const gchar * help;
@@ -77,7 +77,6 @@ void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
 		help_edit_widget = gebr_help_edit_widget_new(document, help);
 		window = gebr_gui_help_edit_window_new(GEBR_GUI_HELP_EDIT_WIDGET(help_edit_widget));
 		gtk_window_set_default_size(GTK_WINDOW(window), 400, 500);
-		gtk_dialog_run(GTK_DIALOG(window));
 		gtk_widget_destroy(window);
 	} else {
 		GString *prepared_html;

@@ -782,9 +782,15 @@ out:	g_free(project_filename);
  */
 static void project_line_show_help(void)
 {
-	help_show(GEBR_GEOXML_OBJECT(gebr.project_line), FALSE,
-		  gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT
-		  ? _("Project report") : _("Line report"));
+	const gchar * title;
+	GebrGeoXmlObject * object;
+
+	object = GEBR_GEOXML_OBJECT(gebr.project_line);
+	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
+		title = _("Project report");
+	else
+		title = _("Line report");
+	debr_help_show(object, FALSE, title);
 }
 
 /**
