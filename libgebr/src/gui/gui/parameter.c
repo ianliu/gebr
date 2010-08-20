@@ -935,12 +935,12 @@ gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * entry, GtkMen
  */
 static gboolean gebr_gui_parameter_widget_can_use_dict(struct gebr_gui_parameter_widget *widget)
 {
-	switch (gebr_geoxml_parameter_get_type(widget->parameter)) {
+	switch (widget->parameter_type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
-		return TRUE;
+		return !gebr_geoxml_program_parameter_get_is_list(GEBR_GEOXML_PROGRAM_PARAMETER(widget->parameter));
 	default:
 		return FALSE;
 	}
