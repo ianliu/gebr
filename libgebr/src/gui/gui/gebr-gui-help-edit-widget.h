@@ -61,6 +61,9 @@ struct _GebrGuiHelpEditWidgetClass {
 	void (*set_content) (GebrGuiHelpEditWidget * self, const gchar * content);
 	void (*commit_changes) (GebrGuiHelpEditWidget * self);
 	gboolean (*is_content_saved) (GebrGuiHelpEditWidget * self);
+
+	/* Signals */
+	void (*commit_request) (GebrGuiHelpEditWidget * self);
 };
 
 GType gebr_gui_help_edit_widget_get_type(void) G_GNUC_CONST;
