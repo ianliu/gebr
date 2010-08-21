@@ -161,11 +161,15 @@ static void gebr_gui_help_edit_window_constructed(GObject * self)
 
 	// Commit button
 	item = gtk_tool_button_new_from_stock(GTK_STOCK_SAVE);
+	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(item),
+				       _("Overwrites the menu's help with edited content"));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
 	g_signal_connect(item, "clicked", G_CALLBACK(on_save_clicked), self);
 
 	// Edit button
 	item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_EDIT);
+	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(item),
+				       _("Toggles between edit mode and preview mode"));
 	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(item), TRUE);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
 	g_signal_connect(item, "toggled", G_CALLBACK(on_edit_toggled), self);
@@ -173,6 +177,8 @@ static void gebr_gui_help_edit_window_constructed(GObject * self)
 	if (private->has_refresh) {
 		// Refresh button
 		item = gtk_tool_button_new_from_stock(GTK_STOCK_REFRESH);
+		gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(item),
+					       _("Updates editor content"));
 		gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
 		g_signal_connect(item, "clicked", G_CALLBACK(on_refresh_clicked), self);
 	}
