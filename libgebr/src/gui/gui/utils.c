@@ -502,8 +502,7 @@ gboolean gebr_gui_gtk_tree_view_get_selected(GtkTreeView * tree_view, GtkTreeIte
 		GList *list, *first;
 		gboolean ret = TRUE;
 
-		list =
-		    gtk_tree_selection_get_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view)), &model);
+		list = gtk_tree_selection_get_selected_rows(tree_selection, &model);
 		first = g_list_first(list);
 		if (first == NULL || first->data == NULL)
 			ret = FALSE;
