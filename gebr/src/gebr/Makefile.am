@@ -45,7 +45,8 @@ libgebr_a_SOURCES = \
 	ui_paths.c \
 	ui_preferences.c \
 	ui_server.c \
-	ui_moab.c
+	ui_moab.c \
+	gebr-help-edit-widget.c
 
 gebr_SOURCES = main.c
 noinst_HEADERS = \
@@ -57,7 +58,8 @@ noinst_HEADERS = \
 	line.h \
 	flow.h \
 	job.h \
-	server.h client.h \
+	server.h \
+	client.h \
 	menu.h \
 	interface.h \
 	ui_document.h \
@@ -72,11 +74,13 @@ noinst_HEADERS = \
 	ui_paths.h \
 	ui_preferences.h \
 	ui_server.h \
-	ui_moab.h
+	ui_moab.h \
+	gebr-help-edit-widget.h
+
 EXTRA_DIST = ${noinst_HEADERS}
 
-INCLUDES = 
+INCLUDES = -DHELP_EDIT_SCRIPT_PATH=\""$(datadir)/libgebr/ckeditor/"\"
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
-	$(CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_COMM_CFLAGS) $(GEBR_GUI_CFLAGS)
+	    $(CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_COMM_CFLAGS) $(GEBR_GUI_CFLAGS)
 gebr_LDADD = libgebr.a $(LIBS) \
-	$(GEBR_GEOXML_LIBS) $(GEBR_COMM_LIBS) $(GEBR_GUI_LIBS)
+	     $(GEBR_GEOXML_LIBS) $(GEBR_COMM_LIBS) $(GEBR_GUI_LIBS)

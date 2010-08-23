@@ -38,10 +38,17 @@
 #include "server.h"
 #include "callbacks.h"
 #include "ui_flow.h"
+#include "ui_document.h"
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
 
-gboolean flow_new(void)
+static void on_properties_response(gboolean accept)
+{
+	if (!accept)
+		flow_delete(FALSE);
+}
+
+void flow_new(void)
 {
 	GtkTreeIter iter;
 
@@ -52,7 +59,7 @@ gboolean flow_new(void)
 	GebrGeoXmlSequence *line_flow;
 
 	if (!project_line_get_selected(NULL, LineSelection))
-		return FALSE;
+		return;
 
 	line_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line));
 	line_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.line));
@@ -80,10 +87,8 @@ gboolean flow_new(void)
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter, FB_LINE_FLOW_POINTER, line_flow, -1);
 
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'."), line_title);
-	if (!on_document_properties_activate())
-		flow_delete(FALSE);
 
-	return TRUE;
+	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.flow), on_properties_response);
 }
 
 void flow_free(void)

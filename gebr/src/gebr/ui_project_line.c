@@ -45,6 +45,8 @@ static void project_line_load(void);
 
 static void project_line_show_help(void);
 
+static void project_line_edit_help(void);
+
 static void project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 					  GtkTreeViewColumn * column, struct ui_project_line *ui_project_line);
 
@@ -173,10 +175,17 @@ struct ui_project_line *project_line_setup_ui(void)
 			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	/* Help */
-	ui_project_line->info.help = gtk_button_new_from_stock(GTK_STOCK_INFO);
-	gtk_box_pack_end(GTK_BOX(infopage), ui_project_line->info.help, FALSE, TRUE, 0);
-	g_signal_connect(GTK_OBJECT(ui_project_line->info.help), "clicked",
-			 G_CALLBACK(project_line_show_help), ui_project_line);
+	GtkWidget * hbox;
+	hbox = gtk_hbox_new(FALSE, 0);
+	ui_project_line->info.help_view = gtk_button_new_with_label(_("View report"));
+	ui_project_line->info.help_edit = gtk_button_new_with_label(_("Edit report"));
+	gtk_box_pack_start(GTK_BOX(hbox), ui_project_line->info.help_view, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), ui_project_line->info.help_edit, TRUE, TRUE, 0);
+	g_signal_connect(GTK_OBJECT(ui_project_line->info.help_view), "clicked",
+			 G_CALLBACK(project_line_show_help), NULL);
+	g_signal_connect(GTK_OBJECT(ui_project_line->info.help_edit), "clicked",
+			 G_CALLBACK(project_line_edit_help), NULL);
+	gtk_box_pack_end(GTK_BOX(infopage), hbox, FALSE, TRUE, 0);
 
 	/* Author */
 	ui_project_line->info.author = gtk_label_new("");
@@ -205,8 +214,8 @@ void project_line_info_update(void)
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.numberoflines), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.author), "");
 
-		g_object_set(gebr.ui_project_line->info.help, "sensitive", FALSE, NULL);
-
+		g_object_set(gebr.ui_project_line->info.help_view, "sensitive", FALSE, NULL);
+		g_object_set(gebr.ui_project_line->info.help_edit, "sensitive", FALSE, NULL);
 		navigation_bar_update();
 		return;
 	}
@@ -298,9 +307,11 @@ void project_line_info_update(void)
 	g_string_free(text, TRUE);
 
 	/* Info button */
-	g_object_set(gebr.ui_project_line->info.help,
-		     "sensitive", gebr.project_line != NULL && strlen(gebr_geoxml_document_get_help(gebr.project_line))
+	g_object_set(gebr.ui_project_line->info.help_view,
+		     "sensitive", gebr.project_line != NULL && strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.project_line)))
 		     ? TRUE : FALSE, NULL);
+
+	g_object_set(gebr.ui_project_line->info.help_edit, "sensitive", TRUE, NULL);
 
 	navigation_bar_update();
 }
@@ -764,9 +775,21 @@ out:	g_free(project_filename);
  */
 static void project_line_show_help(void)
 {
-	help_show(GEBR_GEOXML_OBJECT(gebr.project_line), FALSE,
-		  gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT
-		  ? _("Project report") : _("Line report"));
+	const gchar * title;
+	GebrGeoXmlObject * object;
+
+	object = GEBR_GEOXML_OBJECT(gebr.project_line);
+	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
+		title = _("Project report");
+	else
+		title = _("Line report");
+	debr_help_show(object, FALSE, title);
+}
+
+static void project_line_edit_help(void)
+{
+	debr_help_edit_document(GEBR_GEOXML_DOC(gebr.project_line));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.project_line), TRUE);
 }
 
 /**

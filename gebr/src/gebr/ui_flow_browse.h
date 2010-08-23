@@ -66,7 +66,8 @@ struct ui_flow_browse {
 		GtkWidget *error_label;
 		GtkWidget *error;
 
-		GtkWidget *help;
+		GtkWidget *help_view;
+		GtkWidget *help_edit;
 		GtkWidget *author;
 	} info;
 };

@@ -30,66 +30,59 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
-#include <libgebr/gui/help.h>
+#include <libgebr/gui.h>
 
+#include "gebr-help-edit-widget.c"
 #include "ui_help.h"
 #include "gebr.h"
 #include "document.h"
 #include "../defines.h"
 #include "menu.h"
 
-void program_help_show(void)
+void debr_help_show_selected_program_help(void)
 {
 	if (!flow_edition_get_selected_component(NULL, TRUE))
 		return;
 
-	help_show(GEBR_GEOXML_OBJECT(gebr.program), FALSE, _("Program help"));
+	debr_help_show(GEBR_GEOXML_OBJECT(gebr.program), FALSE, _("Program help"));
 }
 
-void help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
+void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
 {
-	GString *html = g_string_new("");
+	const gchar * html;
+	GtkWidget * window;
+	GebrGuiHtmlViewerWidget * html_viewer_widget;
 
-	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
-		g_string_assign(html, gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object)));
-	else
-		g_string_assign(html, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object)));
+	window = gebr_gui_html_viewer_window_new(title); 
+	html_viewer_widget = gebr_gui_html_viewer_window_get_widget(GEBR_GUI_HTML_VIEWER_WINDOW(window));
 
-	/* CSS to absolute path */
-	gchar *gebrcsspos;
-	if ((gebrcsspos = strstr(html->str, "gebr.css")) != NULL) {
-		int pos = (gebrcsspos - html->str) / sizeof(gchar);
-		g_string_erase(html, pos, 8);
-		g_string_insert(html, pos, "file://" GEBR_DATA_DIR "/gebr.css");
+	if (menu) {
+		gebr_gui_html_viewer_window_set_geoxml_object(GEBR_GUI_HTML_VIEWER_WINDOW(window), object);
+		gebr_gui_html_viewer_widget_set_generate_links(html_viewer_widget, TRUE);
 	}
 
-	gebr_gui_help_show(object, menu, html->str, title);
+	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
+		html = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
+	else
+		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
 
-	/* frees */
-	g_string_free(html, TRUE);
+	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
+
+	gtk_dialog_run(GTK_DIALOG(window));
 }
 
-void help_show_callback(GtkButton * button, GebrGeoXmlDocument * document)
-{
-	help_show(GEBR_GEOXML_OBJECT(document), FALSE, gebr_geoxml_document_get_title(document));
-}
-
-/**
- * \internal
- * Save document upon help change.
- */
-static void help_edit_on_edited(GebrGeoXmlDocument * document, const gchar * help)
-{
-	gebr_geoxml_document_set_help(document, help);
-	document_save(document, TRUE);
-}
-
-void help_edit(GtkButton * button, GebrGeoXmlDocument * document)
+void debr_help_edit_document(GebrGeoXmlDocument * document)
 {
 	if (gebr.config.native_editor || gebr.config.editor->len == 0) {
-		GString * html;
-		html = g_string_new(gebr_geoxml_document_get_help(document));
-		gebr_gui_help_edit(document, html, (GebrGuiHelpEdited)help_edit_on_edited, NULL, FALSE);
+		const gchar * help;
+		GtkWidget * window;
+		GtkWidget * help_edit_widget;
+
+		help = gebr_geoxml_document_get_help(document);
+		help_edit_widget = gebr_help_edit_widget_new(document, help);
+		window = gebr_gui_help_edit_window_new(GEBR_GUI_HELP_EDIT_WIDGET(help_edit_widget));
+		gtk_window_set_default_size(GTK_WINDOW(window), 400, 500);
+		gtk_widget_show(window);
 	} else {
 		GString *prepared_html;
 		GString *cmd_line;

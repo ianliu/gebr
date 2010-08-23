@@ -24,8 +24,7 @@
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
 #include <libgebr/validate.h>
-#include <libgebr/gui/utils.h>
-#include <libgebr/gui/gebr-gui-save-dialog.h>
+#include <libgebr/gui.h>
 
 #include "menu.h"
 #include "debr.h"
@@ -34,6 +33,7 @@
 #include "program.h"
 #include "interface.h"
 #include "categoryedit.h"
+#include "debr-help-edit-widget.h"
 
 /*
  * Prototypes
@@ -47,9 +47,7 @@ static void menu_title_changed(GtkEntry * entry);
 
 static void menu_description_changed(GtkEntry * entry);
 
-static void menu_help_view(void);
-
-static void on_menu_help_edit_clicked(GtkWidget * edit_button, GtkWidget *validate_image);
+static void on_menu_help_edit_clicked(GtkWidget * edit_button);
 
 static void menu_author_changed(GtkEntry * entry);
 
@@ -80,6 +78,8 @@ static void on_menu_unselect_all_activate(GtkMenuItem *menuitem, GtkTreeView *tr
 static gboolean menu_save_iter_list(GList * unsaved);
 
 static void menu_remove_with_validation(GtkTreeIter * iter);
+
+static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object);
 
 /*
  * Public functions
@@ -209,10 +209,10 @@ void menu_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.categories_label, 1, 2, 3, 4,
 			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
 
-	debr.ui_menu.details.help_button = gtk_button_new_from_stock(GTK_STOCK_INFO);
+	debr.ui_menu.details.help_button = gtk_button_new_with_label(_("Edit & View menu's help"));
 	gtk_box_pack_end(GTK_BOX(details), debr.ui_menu.details.help_button, FALSE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(debr.ui_menu.details.help_button), "clicked",
-			 G_CALLBACK(menu_help_view), debr.menu);
+			 G_CALLBACK(on_menu_help_edit_clicked), NULL);
 
 	debr.ui_menu.details.author_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.author_label), 0, 0);
@@ -235,11 +235,23 @@ void menu_new(gboolean edit)
 
 void menu_new_from_menu(GebrGeoXmlFlow *menu, gboolean edit)
 {
-	static int new_count = 0;
+	static int new_count = 1;
 	GtkTreeIter iter;
 	GtkTreeIter target;
+	gchar * new_menu_str;
+	gchar * title_str;
+
+	title_str = g_strdup_printf(_("Untitled menu %d"), new_count);
+	new_menu_str = g_strdup_printf(_("untitled%d.mnu"), new_count);
+	new_count++;
+
 
 	debr.menu = menu;
+	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(debr.menu), title_str);
+	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(debr.menu), debr.config.name->str);
+	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(debr.menu), debr.config.email->str);
+	gebr_geoxml_document_set_date_created(GEBR_GEOXML_DOC(debr.menu), gebr_iso_date());
+	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(debr.menu), new_menu_str);
 
 	switch (menu_get_selected_type(&iter, FALSE)) {
 	case ITER_FILE:
@@ -254,14 +266,11 @@ void menu_new_from_menu(GebrGeoXmlFlow *menu, gboolean edit)
 	}
 
 	gtk_tree_store_append(debr.ui_menu.model, &iter, &target);
-	GString *new_menu_str = g_string_new(NULL);
-	g_string_printf(new_menu_str, "%s%d.mnu", _("untitled"), ++new_count);
-	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(menu), new_menu_str->str);
+	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(menu), new_menu_str);
 	gtk_tree_store_set(debr.ui_menu.model, &iter,
 			   MENU_STATUS, MENU_STATUS_UNSAVED, MENU_IMAGE, GTK_STOCK_NO,
-			   MENU_FILENAME, new_menu_str->str, MENU_XMLPOINTER, (gpointer) debr.menu,
+			   MENU_FILENAME, new_menu_str, MENU_XMLPOINTER, (gpointer) debr.menu,
 			   MENU_PATH, "", MENU_VALIDATE_POINTER, NULL, -1),
-	g_string_free(new_menu_str, TRUE);
 	menu_select_iter(&iter);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -270,6 +279,8 @@ void menu_new_from_menu(GebrGeoXmlFlow *menu, gboolean edit)
 			menu_close(&iter, FALSE);
 	}
 
+	g_free(new_menu_str);
+	g_free(title_str);
 }
 
 GebrGeoXmlFlow *menu_load(const gchar * path)
@@ -361,6 +372,7 @@ void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * men
 	} else
 		label = g_markup_printf_escaped("%s", filename);
 
+	debr_menu_sync_help_edit_window(iter, menu);
 	gtk_tree_store_set(debr.ui_menu.model, iter,
 			   MENU_FILENAME, label, MENU_MODIFIED_DATE, tmp,
 			   MENU_XMLPOINTER, menu, MENU_PATH, path,
@@ -708,6 +720,7 @@ void menu_close(GtkTreeIter * iter, gboolean warn_user)
 	if (validate)
 		validate_close_iter(&validate->iter);
 
+	debr_remove_help_edit_window(menu);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
 	if (gtk_tree_store_remove(debr.ui_menu.model, iter))
 		menu_select_iter(iter);
@@ -734,7 +747,10 @@ void menu_selected(void)
 
 	type = menu_get_selected_type(&iter, FALSE);
 	if (type == ITER_FILE) {
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_XMLPOINTER, &debr.menu, MENU_STATUS, &current_status, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
+				   MENU_XMLPOINTER, &debr.menu,
+				   MENU_STATUS, &current_status,
+				   -1);
 	} else
 		debr.menu = NULL;
 
@@ -992,10 +1008,6 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	GtkWidget *title_entry;
 	GtkWidget *description_label;
 	GtkWidget *description_entry;
-	GtkWidget *menuhelp_label;
-	GtkWidget *menuhelp_hbox;
-	GtkWidget *menuhelp_edit_button;
-	GtkWidget *empty_help_image;
 	GtkWidget *author_label;
 	GtkWidget *author_entry;
 	GtkWidget *email_label;
@@ -1070,28 +1082,6 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 
 	/*
-	 * Help
-	 */
-	menuhelp_label = gtk_label_new(_("Help"));
-	gtk_widget_show(menuhelp_label);
-	gtk_table_attach(GTK_TABLE(table), menuhelp_label, 0, 1, 2, 3,
-			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	gtk_misc_set_alignment(GTK_MISC(menuhelp_label), 0, 0.5);
-
-	menuhelp_hbox = gtk_hbox_new(FALSE, 0);
-	gtk_widget_show(menuhelp_hbox);
-	gtk_table_attach(GTK_TABLE(table), menuhelp_hbox, 1, 2, 2, 3,
-			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-
-	menuhelp_edit_button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
-	gtk_widget_show(menuhelp_edit_button);
-	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), menuhelp_edit_button, FALSE, FALSE, 0);
-	g_object_set(G_OBJECT(menuhelp_edit_button), "relief", GTK_RELIEF_NONE, NULL);
-	empty_help_image = validate_image_warning_new();
-	debr.ui_menu.help_validate_image = empty_help_image;
-	gtk_box_pack_start(GTK_BOX(menuhelp_hbox), empty_help_image, FALSE, FALSE, 0);
-
-	/*
 	 * Author
 	 */
 	author_label = gtk_label_new(_("Author:"));
@@ -1143,8 +1133,7 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	 * Load menu into widgets
 	 */
 	gtk_entry_set_text(GTK_ENTRY(title_entry), gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
-	gtk_entry_set_text(GTK_ENTRY(description_entry),
-			   gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu)));
+	gtk_entry_set_text(GTK_ENTRY(description_entry), gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_entry_set_text(GTK_ENTRY(author_entry), gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_entry_set_text(GTK_ENTRY(email_entry), gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu))); 
 
@@ -1170,23 +1159,18 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	if (!new_menu)
 		on_entry_focus_out(GTK_ENTRY(email_entry), NULL, validate_case);
 
-	if (!new_menu)
-		validate_image_set_check_help(empty_help_image,
-					      gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
-
 	/* signals */
 	g_signal_connect(title_entry, "changed", G_CALLBACK(menu_title_changed), NULL);
 	g_signal_connect(description_entry, "changed", G_CALLBACK(menu_description_changed), NULL);
-	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "changed", G_CALLBACK(menu_category_changed), NULL);
-	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "renamed", G_CALLBACK(menu_category_renamed), NULL);
-	g_signal_connect(GTK_OBJECT(categories_sequence_edit), "removed", G_CALLBACK(menu_category_removed), NULL);
+	g_signal_connect(categories_sequence_edit, "changed", G_CALLBACK(menu_category_changed), NULL);
+	g_signal_connect(categories_sequence_edit, "renamed", G_CALLBACK(menu_category_renamed), NULL);
+	g_signal_connect(categories_sequence_edit, "removed", G_CALLBACK(menu_category_removed), NULL);
 	g_signal_connect(email_entry, "changed", G_CALLBACK(menu_email_changed), NULL);
-	g_signal_connect(menuhelp_edit_button, "clicked", G_CALLBACK(on_menu_help_edit_clicked), empty_help_image);
 	g_signal_connect(author_entry, "changed", G_CALLBACK(menu_author_changed), NULL);
 
 	gtk_widget_show(dialog);
 
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK){
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
 		menu_replace();
 		ret = FALSE;
 		goto out;
@@ -1250,8 +1234,6 @@ void menu_details_update(void)
 		return;
 	} else
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_show, NULL);
-
-	gtk_widget_set_sensitive(debr.ui_menu.details.help_button, TRUE);
 
 	markup = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), markup);
@@ -1321,10 +1303,6 @@ void menu_details_update(void)
 			gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.author_label), text->str);
 	g_string_free(text, TRUE);
-
-	g_object_set(G_OBJECT(debr.ui_menu.details.help_button),
-		     "sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu))) > 1 ? TRUE : FALSE,
-		     NULL);
 }
 
 void menu_folder_details_update(GtkTreeIter * iter)
@@ -1337,12 +1315,11 @@ void menu_folder_details_update(GtkTreeIter * iter)
 
 	if (menu_get_selected_type(iter, FALSE) != ITER_FOLDER)
 		return;
-	else
-		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_show, NULL);
 
+	gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_show, NULL);
+	gtk_widget_hide(debr.ui_menu.details.help_button);
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_PATH, &folder_path, -1);
 
-	gtk_widget_set_sensitive(debr.ui_menu.details.help_button, FALSE);
 	if (gebr_gui_gtk_tree_iter_equal_to(iter, &debr.ui_menu.iter_other)) {
 		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), _("<b>Others</b>"));
 		gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.description_label),
@@ -1382,8 +1359,6 @@ void menu_folder_details_update(GtkTreeIter * iter)
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.modified_date_label), "");
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.category_label), "");
 	gtk_label_set_text(GTK_LABEL(debr.ui_menu.details.categories_label), "");
-
-	g_object_set(G_OBJECT(debr.ui_menu.details.help_button), "sensitive", FALSE, NULL);
 
 	g_free(folder_path);
 }
@@ -1464,7 +1439,8 @@ void menu_replace(void) {
 	if (parameter_get_selected(&iter, FALSE))
 		parameter_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter);
 
-	if (menu_get_selected(&iter, FALSE)){
+	if (menu_get_selected(&iter, FALSE)) {
+		debr_menu_sync_help_edit_window(&iter, debr.menu_recovery.clone);
 		gtk_tree_store_set(debr.ui_menu.model, &iter, MENU_XMLPOINTER, debr.menu_recovery.clone, -1);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(debr.menu));
 		menu_selected();
@@ -1775,22 +1751,12 @@ static void menu_description_changed(GtkEntry * entry)
 
 /**
  * \internal
- * Calls \ref help_show for current menu.
- */
-static void menu_help_view(void)
-{
-	help_show(GEBR_GEOXML_OBJECT(debr.menu), gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
-}
-
-/**
- * \internal
  * Calls \ref debr_help_edit with menu's help.
  * After help was edited in a external browser, save it back to XML.
  */
-static void on_menu_help_edit_clicked(GtkWidget * edit_button, GtkWidget *validate_image)
+static void on_menu_help_edit_clicked(GtkWidget * button)
 {
-	debr_help_edit(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)), NULL);
-	validate_image_set_check_help(validate_image, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)));
+	debr_help_edit(GEBR_GEOXML_OBJECT(debr.menu));
 }
 
 /**
@@ -2067,3 +2033,43 @@ static void menu_remove_with_validation(GtkTreeIter * iter)
 
 	gtk_tree_store_remove(debr.ui_menu.model, iter);
 }
+
+/*
+ * debr_menu_sync_help_edit_window:
+ * @iter: the iterator that will be modified.
+ * @object: the new XML pointer for @iter.
+ *
+ * If @iter is having its XML changed to @object, this function must be called to synchronize the pointers of the help
+ * edit windows.
+ */
+static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object)
+{
+	GebrGeoXmlFlow * old_menu;
+	GebrGuiHelpEditWindow * help_edit_window;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &old_menu, -1);
+
+	/* Searches for 'old_menu' in the help_edit_windows hash table. If there is a window for this menu, we must
+	 * update its geoxml-object. Further more, we must close all its programs window.
+	 */
+	help_edit_window = g_hash_table_lookup(debr.help_edit_windows, old_menu);
+
+	if (help_edit_window != NULL) {
+		GebrGeoXmlSequence * program;
+		DebrHelpEditWidget * help_edit_widget;
+
+		g_object_get(help_edit_window, "help-edit-widget", &help_edit_widget, NULL);
+		g_object_set(help_edit_widget, "geoxml-object", object, NULL);
+
+		/* Time to destroy the programs.
+		 */
+		gebr_geoxml_flow_get_program(old_menu, &program, 0);
+		while (program) {
+			help_edit_window = g_hash_table_lookup(debr.help_edit_windows, program);
+			if (help_edit_window)
+				gtk_widget_destroy(GTK_WIDGET(help_edit_window));
+			gebr_geoxml_sequence_next(&program);
+		}
+	}
+}
+

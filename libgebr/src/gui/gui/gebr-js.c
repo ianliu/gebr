@@ -18,7 +18,7 @@
 #include <glib/gprintf.h>
 #include <JavaScriptCore/JSValueRef.h>
 
-#include "js.h"
+#include "gebr-js.h"
 
 /*
  * Private functions
@@ -134,6 +134,11 @@ GString * gebr_js_value_get_string(JSContextRef ctx, JSValueRef val)
 	g_free(buf);
 
 	return ret;
+}
+
+gboolean gebr_js_value_get_boolean(JSContextRef ctx, JSValueRef val)
+{
+	return JSValueToBoolean(ctx, val) == 1? TRUE:FALSE;
 }
 
 JSObjectRef gebr_js_make_function(JSContextRef ctx, const gchar * name, JSObjectCallAsFunctionCallback callback)

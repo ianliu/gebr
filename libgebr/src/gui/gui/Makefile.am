@@ -21,43 +21,50 @@ marshalers.c: marshalers.h
 	glib-genmarshal --prefix=_gebr_gui_marshal marshalers.list --body >marshalers.c
 
 lib_LTLIBRARIES = libgebr_gui.la
-libgebr_gui_la_SOURCES = 	\
-	marshalers.c 		\
-	sexy-icon-entry.c 	\
-	about.c 		\
-	utils.c 		\
-	pixmaps.c 		\
-	icons.c 		\
-	help.c 			\
-	gtkfileentry.c		\
-	gtkenhancedentry.c	\
-	gtksequenceedit.c	\
-	valuesequenceedit.c	\
-	programedit.c		\
-	parameter.c		\
-	gtkdirectorychooser.c	\
-	gebr-gui-save-dialog.c	\
-	js.c
+libgebr_gui_la_SOURCES = 		\
+	marshalers.c 			\
+	sexy-icon-entry.c 		\
+	about.c 			\
+	utils.c 			\
+	pixmaps.c 			\
+	icons.c 			\
+	gtkfileentry.c			\
+	gtkenhancedentry.c		\
+	gtksequenceedit.c		\
+	valuesequenceedit.c		\
+	programedit.c			\
+	parameter.c			\
+	gtkdirectorychooser.c		\
+	gebr-gui-save-dialog.c		\
+	gebr-gui-help-edit-widget.c	\
+	gebr-gui-help-edit-window.c	\
+	gebr-gui-html-viewer-widget.c	\
+	gebr-gui-html-viewer-window.c	\
+	gebr-js.c
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
-libgebr_guisubinclude_HEADERS = \
-	marshalers.h		\
-	sexy-icon-entry.h	\
-	about.h			\
-	utils.h			\
-	pixmaps.h		\
-	icons.h			\
-	help.h			\
-	gtkfileentry.h		\
-	gtkenhancedentry.h	\
-	gtksequenceedit.h	\
-	valuesequenceedit.h	\
-	programedit.h		\
-	parameter.h		\
-	gtkdirectorychooser.h	\
-	gebr-gui-save-dialog.h
+libgebr_guisubinclude_HEADERS = 	\
+	marshalers.h			\
+	sexy-icon-entry.h		\
+	about.h				\
+	utils.h				\
+	pixmaps.h			\
+	icons.h				\
+	gtkfileentry.h			\
+	gtkenhancedentry.h		\
+	gtksequenceedit.h		\
+	valuesequenceedit.h		\
+	programedit.h			\
+	parameter.h			\
+	gtkdirectorychooser.h		\
+	gebr-gui-save-dialog.h		\
+	gebr-gui-help-edit-widget.h	\
+	gebr-gui-help-edit-window.h	\
+	gebr-gui-html-viewer-widget.h	\
+	gebr-gui-html-viewer-window.h	\
+	gebr-js.h
 
-noinst_HEADERS = marshalers.h js.h
+noinst_HEADERS = marshalers.h
 EXTRA_DIST = ${noinst_HEADERS} marshalers.list 
 
 INCLUDES = -I$(srcdir)/../.. -I$(srcdir)/../../geoxml

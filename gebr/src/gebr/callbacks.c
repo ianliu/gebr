@@ -102,9 +102,9 @@ void on_quit_activate(void)
 	gebr_quit();
 }
 
-gboolean on_document_properties_activate(void)
+void on_document_properties_activate(void)
 {
-	return document_properties_setup_ui(document_get_current());
+	document_properties_setup_ui(document_get_current(), NULL);
 }
 
 void on_document_dict_edit_activate(void)
@@ -168,7 +168,7 @@ void on_flow_revision_show_menu(void)
 
 void on_flow_component_help_activate(void)
 {
-	program_help_show();
+	debr_help_show_selected_program_help();
 }
 
 void on_flow_component_delete_activate(void)

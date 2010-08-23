@@ -68,7 +68,6 @@ static void program_stderr_changed(GtkToggleButton * togglebutton);
 static gboolean program_title_changed(GtkEntry * entry);
 static gboolean program_binary_changed(GtkEntry * entry);
 static gboolean program_description_changed(GtkEntry * entry);
-static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program);
 static void program_help_edit(GtkButton * button, GtkWidget * validate_image);
 static gboolean program_version_changed(GtkEntry * entry);
 static void program_mpi_changed(GtkComboBox * combo);
@@ -176,7 +175,9 @@ void program_setup_ui(void)
 	debr.ui_program.details.url_button = gtk_link_button_new("");
 	gtk_box_pack_start(GTK_BOX(hbox), debr.ui_program.details.url_button, FALSE, TRUE, 0);
 
-	debr.ui_program.details.help_button = gtk_button_new_from_stock(GTK_STOCK_INFO);
+	debr.ui_program.details.help_button = gtk_button_new_with_label(_("Edit & View program's help"));
+	g_signal_connect(debr.ui_program.details.help_button, "clicked",
+			 G_CALLBACK(program_help_edit), NULL);
 	gtk_box_pack_end(GTK_BOX(details), debr.ui_program.details.help_button, FALSE, TRUE, 0);
 
 	debr.ui_program.widget = hpanel;
@@ -210,8 +211,11 @@ void program_load_menu(void)
 
 void program_new()
 {
-	GebrGeoXmlProgram *program;
+	static guint programs_count = 1;
+
 	GtkTreeIter iter;
+	gchar * program_title;
+	GebrGeoXmlProgram *program;
 
 	if (!menu_get_selected(NULL, TRUE))
 		return;
@@ -220,7 +224,8 @@ void program_new()
 
 	program = gebr_geoxml_flow_append_program(debr.menu);
 	/* default settings */
-	gebr_geoxml_program_set_title(program, _("New program"));
+	program_title = g_strdup_printf(_("New program %d"), programs_count++);
+	gebr_geoxml_program_set_title(program, program_title);
 	gebr_geoxml_program_set_stdin(program, TRUE);
 	gebr_geoxml_program_set_stdout(program, TRUE);
 	gebr_geoxml_program_set_stderr(program, TRUE);
@@ -236,6 +241,8 @@ void program_new()
 		program_remove(FALSE);
 		menu_replace();
 	}
+
+	g_free(program_title);
 }
 
 void program_preview(void)
@@ -378,10 +385,6 @@ gboolean program_dialog_setup_ui(gboolean new_program)
 	GtkWidget *binary_entry;
 	GtkWidget *description_label;
 	GtkWidget *description_entry;
-	GtkWidget *help_hbox;
-	GtkWidget *help_label;
-	GtkWidget *help_edit_button;
-	GtkWidget *empty_help_image;
 	GtkWidget *version_label;
 	GtkWidget *version_entry;
 	GtkWidget *mpi_label;
@@ -525,28 +528,6 @@ gboolean program_dialog_setup_ui(gboolean new_program)
 	g_signal_connect(description_entry, "changed", G_CALLBACK(program_description_changed), debr.program);
 
 	/*
-	 * Help
-	 */
-	help_label = gtk_label_new(_("Help"));
-	gtk_widget_show(help_label);
-	gtk_table_attach(GTK_TABLE(table), help_label, 0, 1, row, row+1,
-			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	gtk_misc_set_alignment(GTK_MISC(help_label), 0, 0.5);
-
-	help_hbox = gtk_hbox_new(FALSE, 0);
-	gtk_widget_show(help_hbox);
-	gtk_table_attach(GTK_TABLE(table), help_hbox, 1, 2, row, row+1,
-			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0), row++;
-
-	help_edit_button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
-	gtk_widget_show(help_edit_button);
-	gtk_box_pack_start(GTK_BOX(help_hbox), help_edit_button, FALSE, FALSE, 0);
-	g_object_set(G_OBJECT(help_edit_button), "relief", GTK_RELIEF_NONE, NULL);
-	empty_help_image = validate_image_warning_new();
-	gtk_box_pack_start(GTK_BOX(help_hbox), empty_help_image, FALSE, FALSE, 0);
-	g_signal_connect(help_edit_button, "clicked", G_CALLBACK(program_help_edit), empty_help_image);
-
-	/*
 	 * URL
 	 */
 	url_label = gtk_label_new(_("URL:"));
@@ -600,8 +581,8 @@ gboolean program_dialog_setup_ui(gboolean new_program)
 	g_signal_connect(url_entry, "focus-out-event", G_CALLBACK(on_entry_focus_out), validate_case);
 	if (!new_program)
 		on_entry_focus_out(GTK_ENTRY(url_entry), NULL, validate_case);
-	if (!new_program)
-		validate_image_set_check_help(empty_help_image, gebr_geoxml_program_get_help(debr.program));
+
+	gtk_container_set_focus_child(GTK_CONTAINER(table), title_entry);
 
 	gtk_widget_show(dialog);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
@@ -651,7 +632,7 @@ static void program_details_update(void)
 	is_program_selected = debr.program != NULL;
 
 	g_object_set(debr.ui_program.details.url_button, "visible", is_program_selected, NULL);
-	gtk_widget_set_sensitive(debr.ui_program.details.help_button, is_program_selected);
+	g_object_set(debr.ui_program.details.help_button, "visible", is_program_selected, NULL);
 	gtk_widget_set_sensitive(GTK_WIDGET(debr.tool_item_new), is_program_selected);
 	if (!is_program_selected) {
 		/* Comentary for translators: Tooltip shown in 'New' button in Parameters page, when no programs are
@@ -729,13 +710,6 @@ static void program_details_update(void)
 	}
 
 	g_object_set(G_OBJECT(debr.ui_program.details.url_button), "sensitive", strlen(uri) > 0, NULL);
-
-	g_signal_handlers_disconnect_matched(G_OBJECT(debr.ui_program.details.help_button),
-					     G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(program_help_view), NULL);
-	g_signal_connect(GTK_OBJECT(debr.ui_program.details.help_button), "clicked",
-			 G_CALLBACK(program_help_view), debr.program);
-	g_object_set(G_OBJECT(debr.ui_program.details.help_button),
-		     "sensitive", (strlen(gebr_geoxml_program_get_help(debr.program)) > 1) ? TRUE : FALSE, NULL);
 }
 
 /**
@@ -957,22 +931,11 @@ static gboolean program_url_changed(GtkEntry * entry)
 }
 
 /**
- * \internal
- * Visualizate the programs help.
- */
-static void program_help_view(GtkButton * button, GebrGeoXmlProgram * program)
-{
-	help_show(GEBR_GEOXML_OBJECT(program), gebr_geoxml_program_get_title(program));
-}
-
-/**
- * \internal
  * Edits the programs help.
  */
 static void program_help_edit(GtkButton * button, GtkWidget * validate_image)
 {
-	debr_help_edit(gebr_geoxml_program_get_help(debr.program), debr.program);
-	validate_image_set_check_help(validate_image, gebr_geoxml_program_get_help(debr.program));
+	debr_help_edit(GEBR_GEOXML_OBJECT(debr.program));
 }
 
 /**

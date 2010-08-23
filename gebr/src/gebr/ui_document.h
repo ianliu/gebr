@@ -24,11 +24,36 @@
 
 G_BEGIN_DECLS
 
+/**
+ * GebrPropertiesResponseFunc:
+ * @accept: %TRUE if the user clicked Ok on properties window.
+ *
+ * See document_properties_setup_ui().
+ */
+typedef void (*GebrPropertiesResponseFunc) (gboolean accept);
+
+/**
+ * document_get_current:
+ * Returns: current selected and active project, line or flow.
+ */
 GebrGeoXmlDocument *document_get_current(void);
 
-gboolean document_properties_setup_ui(GebrGeoXmlDocument * document);
+/**
+ * document_properties_setup_ui:
+ * @document: The document which will have its properties modified.
+ * @func: A callback function which is called when the dialog exits.
+ *
+ * Create the user interface for editing @document, which maybe a #GebrGeoXmlFlow, #GebrGeoXmlLine or
+ * #GebrGeoXmlProject.
+ */
+void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesResponseFunc func);
 
+/**
+ * document_dict_edit_setup_ui:
+ * Opens a dialog for editing dictionary keywords.
+ */
 void document_dict_edit_setup_ui(void);
 
 G_END_DECLS
+
 #endif				//__UI_DOCUMENT_H

@@ -38,6 +38,7 @@
 
 static void flow_browse_load(void);
 static void flow_browse_show_help(void);
+static void flow_browse_edit_help(void);
 static void
 flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 			     GtkTreeViewColumn * column, struct ui_flow_browse *ui_flow_browse);
@@ -202,11 +203,20 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	/* Help */
-	ui_flow_browse->info.help = gtk_button_new_from_stock(GTK_STOCK_INFO);
-	g_object_set(ui_flow_browse->info.help, "sensitive", FALSE, NULL);
-	gtk_box_pack_end(GTK_BOX(infopage), ui_flow_browse->info.help, FALSE, TRUE, 0);
-	g_signal_connect(GTK_OBJECT(ui_flow_browse->info.help), "clicked",
-			 G_CALLBACK(flow_browse_show_help), ui_flow_browse);
+	
+	GtkWidget * hbox;
+	hbox = gtk_hbox_new(FALSE, 0);
+
+	ui_flow_browse->info.help_view = gtk_button_new_with_label(_("View report"));
+	ui_flow_browse->info.help_edit = gtk_button_new_with_label(_("Edit report"));
+
+	gtk_box_pack_start(GTK_BOX(hbox), ui_flow_browse->info.help_view, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), ui_flow_browse->info.help_edit, TRUE, TRUE, 0);
+	g_signal_connect(GTK_OBJECT(ui_flow_browse->info.help_view), "clicked",
+			 G_CALLBACK(flow_browse_show_help), NULL);
+	g_signal_connect(GTK_OBJECT(ui_flow_browse->info.help_edit), "clicked",
+			 G_CALLBACK(flow_browse_edit_help), NULL);
+	gtk_box_pack_end(GTK_BOX(infopage), hbox, FALSE, TRUE, 0);
 
 	/* Author */
 	ui_flow_browse->info.author = gtk_label_new("");
@@ -237,8 +247,8 @@ void flow_browse_info_update(void)
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun_label), "");
 
-		g_object_set(gebr.ui_flow_browse->info.help, "sensitive", FALSE, NULL);
-
+		g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
+		g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
 		navigation_bar_update();
 		return;
 	}
@@ -318,9 +328,11 @@ void flow_browse_info_update(void)
 	g_string_free(text, TRUE);
 
 	/* Info button */
-	g_object_set(gebr.ui_flow_browse->info.help,
-		     "sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(gebr.flow))) ? TRUE : FALSE,
-		     NULL);
+	g_object_set(gebr.ui_flow_browse->info.help_view,
+		     "sensitive", gebr.flow != NULL && strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.flow)))
+		     ? TRUE : FALSE, NULL);
+
+	g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", TRUE, NULL);
 
 	navigation_bar_update();
 }
@@ -461,7 +473,17 @@ out:	g_free(filename);
  */
 static void flow_browse_show_help(void)
 {
-	help_show(GEBR_GEOXML_OBJECT(gebr.flow), FALSE, _("Flow help"));
+	debr_help_show(GEBR_GEOXML_OBJECT(gebr.flow), FALSE, _("Flow report"));
+}
+
+/**
+ * \internal 
+ * Obvious
+ */
+static void flow_browse_edit_help(void)
+{
+	debr_help_edit_document(GEBR_GEOXML_DOC(gebr.flow));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 }
 
 /**

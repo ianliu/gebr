@@ -44,6 +44,8 @@ void debr_init(void)
 	debr.program = NULL;
 	debr.parameter = NULL;
 
+	debr.help_edit_windows = g_hash_table_new(NULL, NULL);
+
 	debr.tmpfiles = g_slist_alloc();
 	debr.invisible = gtk_invisible_new();
 	debr.pixmaps.stock_apply = gtk_widget_render_icon(debr.invisible,
@@ -73,6 +75,8 @@ gboolean debr_quit(void)
 
 	gtk_widget_destroy(debr.about.dialog);
 	g_object_unref(debr.accel_group);
+
+	g_hash_table_destroy(debr.help_edit_windows);
 
 	/* free config stuff */
 	g_hash_table_destroy(debr.config.opened_folders);
@@ -221,4 +225,33 @@ gboolean debr_has_category(const gchar * category, gboolean add)
 	}
 
 	return FALSE;
+}
+
+void debr_remove_help_edit_window(gpointer object)
+{
+	GtkWidget * window;
+
+	window = g_hash_table_lookup(debr.help_edit_windows, object);
+
+	/* If this is a GeoXmlFlow, we scan through all programs
+	 * and destroy their windows too.
+	 */
+	if (gebr_geoxml_object_get_type(GEBR_GEOXML_OBJECT(object)) == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+	{
+		GebrGeoXmlFlow * flow = GEBR_GEOXML_FLOW(object);
+		GebrGeoXmlSequence * program;
+
+		gebr_geoxml_flow_get_program(flow, &program, 0);
+		while (program) {
+			GtkWidget * prog_window;
+			prog_window = g_hash_table_lookup(debr.help_edit_windows, program);
+			if (prog_window)
+				gtk_widget_destroy(prog_window);
+			gebr_geoxml_sequence_next(&program);
+		}
+	}
+
+	if (window != NULL)
+		gtk_widget_destroy(window);
+	g_hash_table_remove(debr.help_edit_windows, object);
 }

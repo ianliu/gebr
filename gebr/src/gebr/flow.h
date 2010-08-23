@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 /** 
  * Creates a new flow.
  */
-gboolean flow_new(void);
+void flow_new(void);
 /** 
  * Frees the memory allocated to a flow.
  * Besides, update the detailed view of a flow in the interface.

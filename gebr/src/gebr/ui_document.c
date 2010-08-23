@@ -16,10 +16,6 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-/*
- * File: ui_document.c
- */
-
 #include <string.h>
 
 #include <gdk/gdkkeysyms.h>
@@ -37,10 +33,6 @@
 #include "document.h"
 #include "ui_project_line.h"
 #include "ui_paths.h"
-
-/*
- * Prototypes
- */
 
 enum {
 	DICT_EDIT_DOCUMENT,
@@ -71,39 +63,72 @@ struct dict_edit_data {
 	GtkCellRenderer *cell_renderer_array[10];
 };
 
+typedef struct {
+	GebrGeoXmlDocument * document;
+	GtkWidget * window;
+	GtkWidget * author;
+	GtkWidget * description;
+	GtkWidget * email;
+	GtkWidget * title;
+
+	GebrPropertiesResponseFunc func;
+	gboolean accept_response;
+} GebrPropertiesData;
+
+//==============================================================================
+// PROTOTYPES								       =
+//==============================================================================
+
 static void on_dict_edit_cursor_changed(GtkTreeView * tree_view, struct dict_edit_data *data);
+
 static void on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data *data);
+
 static void on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_data *data);
-static void
-on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
-				      GtkCellEditable * editable, gchar * path, struct dict_edit_data *data);
+
+static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer, GtkCellEditable * editable, gchar * path,
+						  struct dict_edit_data *data);
+
 #if GTK_CHECK_VERSION(2,12,0)
-static gboolean
-dict_edit_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
-			   GtkTreeIter * iter, GtkTreeViewColumn * column, struct dict_edit_data *data);
+static gboolean dict_edit_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
+					   GtkTreeIter * iter, GtkTreeViewColumn * column, struct dict_edit_data *data);
 #endif
-static void
-on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
-			      struct dict_edit_data *data);
-static void
-on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text, struct dict_edit_data *data);
+
+static void on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+					  struct dict_edit_data *data);
+
+static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+				     struct dict_edit_data *data);
+
 static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter, GebrGeoXmlParameter * parameter);
-static void
-dict_edit_check_duplicates(struct dict_edit_data *data, GebrGeoXmlDocument * document, const gchar * keyword);
-static gboolean
-dict_edit_check_duplicate_keyword(struct dict_edit_data *data, GebrGeoXmlProgramParameter * parameter,
-				  const gchar * keyword, gboolean show_error);
+
+static void dict_edit_check_duplicates(struct dict_edit_data *data, GebrGeoXmlDocument * document,
+				       const gchar * keyword);
+
+static gboolean dict_edit_check_duplicate_keyword(struct dict_edit_data *data, GebrGeoXmlProgramParameter * parameter,
+						  const gchar * keyword, gboolean show_error);
+
 static gboolean dict_edit_get_selected(struct dict_edit_data *data, GtkTreeIter * iter);
+
 static void dict_edit_start_keyword_editing(struct dict_edit_data *data, GtkTreeIter * iter);
+
 static void dict_edit_new_parameter_iter(struct dict_edit_data *data, GebrGeoXmlObject * object, GtkTreeIter * iter);
+
 static void dict_edit_append_add_parameter(struct dict_edit_data *data, GtkTreeIter * document_iter);
+
 static GtkMenu *on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_data *data);
+
 static GebrGeoXmlParameterType dict_edit_type_text_to_gebr_geoxml_type(const gchar * text);
+
 static gboolean dict_edit_check_empty_keyword(const gchar * keyword);
-static GtkTreeIter
-dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXmlObject * object, GtkTreeIter * document_iter);
+
+static GtkTreeIter dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXmlObject * object,
+					 GtkTreeIter * document_iter);
 
 static const gchar *document_get_name_from_type(GebrGeoXmlDocument * document, gboolean upper);
+
+void on_response_ok(GtkButton * button, GebrPropertiesData * data);
+
+void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data);
 
 static const GtkActionEntry dict_actions_entries[] = {
 	{"add", GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter."),
@@ -112,14 +137,10 @@ static const GtkActionEntry dict_actions_entries[] = {
 	 G_CALLBACK(on_dict_edit_remove_clicked)},
 };
 
-/*
- * Section: Public
- * Public functions.
- */
+//==============================================================================
+// PUBLIC FUNCTIONS							       =
+//==============================================================================
 
-/* Function: document_get_current
- * Return current selected and active project, line or flow
- */
 GebrGeoXmlDocument *document_get_current(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
@@ -134,27 +155,20 @@ GebrGeoXmlDocument *document_get_current(void)
 	}
 }
 
-/* Function: document_properties_setup_ui
- * Show the _document_ properties in a dialog
- * Create the user interface for editing _document_(flow, line or project) properties,
- * like author, email, report, etc.
- *
- * Return:
- * The structure containing relevant data. It will be automatically freed when the
- * dialog closes.
- */
-gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
+void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesResponseFunc func)
 {
-	GtkWidget *dialog;
-	gint ret;
-	GString *dialog_title;
+	GebrPropertiesData * data;
+	GtkWidget *window;
+	GtkWidget *vbox;
+	GtkWidget *button_box;
+	GtkWidget *ok_button;
+	GtkWidget *cancel_button;
+	gchar *window_title;
 
 	GtkWidget *table;
 	GtkWidget *label;
-	GtkWidget *help_hbox;
 	GtkWidget *title;
 	GtkWidget *description;
-	GtkWidget *help;
 	GtkWidget *author;
 	GtkWidget *email;
 	GtkWidget *line_path_label;
@@ -163,29 +177,55 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 	GebrGeoXmlSequence *path_sequence;
 
 	if (document == NULL)
-		return FALSE;
+		return;
+
+	data = g_new(GebrPropertiesData, 1);
+	data->func = func;
+	data->accept_response = FALSE;
+	data->document = document;
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
 		flow_browse_single_selection();
 
-	dialog_title = g_string_new(NULL);
-	g_string_printf(dialog_title, _("Properties for %s '%s'"),
-			document_get_name_from_type(document, FALSE), gebr_geoxml_document_get_title(document));
-	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
-					     GTK_WINDOW(gebr.window),
-					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-	gtk_window_set_default_size(GTK_WINDOW(dialog), 400, 260);
-	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
+	data->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_modal(GTK_WINDOW(window), TRUE);
+	gtk_window_set_transient_for(GTK_WINDOW(window), GTK_WINDOW(gebr.window));
+	gtk_window_set_destroy_with_parent(GTK_WINDOW(window), TRUE);
+
+	window_title = g_strdup_printf(_("Properties for %s '%s'"),
+				       document_get_name_from_type(document, FALSE),
+				       gebr_geoxml_document_get_title(document));
+	gtk_window_set_title(GTK_WINDOW(window), window_title);
+	g_free(window_title);
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(window), vbox);
+	gtk_window_set_default_size(GTK_WINDOW(window), 400, 260);
 
 	table = gtk_table_new(5, 2, FALSE);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 0);
+	button_box = gtk_hbutton_box_new();
+
+	ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
+	cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+
+	g_signal_connect(window, "destroy", G_CALLBACK(on_properties_destroy), data);
+	g_signal_connect(ok_button, "clicked", G_CALLBACK(on_response_ok), data);
+	g_signal_connect_swapped(cancel_button, "clicked", G_CALLBACK(gtk_widget_destroy), window);
+
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
+	gtk_box_pack_start(GTK_BOX(button_box), cancel_button, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(button_box), ok_button, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), table, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), button_box, FALSE, TRUE, 0);
+
+	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
+	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
+	gtk_widget_grab_default(ok_button);
 
 	/* Title */
 	label = gtk_label_new(_("Title"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	title = gtk_entry_new();
+	data->title = title = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(title), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
 			 3);
@@ -197,7 +237,7 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 	/* Description */
 	label = gtk_label_new(_("Description"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	description = gtk_entry_new();
+	data->description = description = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(description), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
 			 3);
@@ -206,24 +246,10 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 	/* read */
 	gtk_entry_set_text(GTK_ENTRY(description), gebr_geoxml_document_get_description(document));
 
-	/* Report */
-	label = gtk_label_new(_("Report"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
-			 3);
-	help_hbox = gtk_hbox_new(FALSE, 0);
-	gtk_table_attach(GTK_TABLE(table), help_hbox, 1, 2, 2, 3,
-			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-
-	help = gtk_button_new_from_stock(GTK_STOCK_EDIT);
-	gtk_box_pack_start(GTK_BOX(help_hbox), help, FALSE, FALSE, 0);
-	g_signal_connect(GTK_OBJECT(help), "clicked", G_CALLBACK(help_edit), document);
-	g_object_set(G_OBJECT(help), "relief", GTK_RELIEF_NONE, NULL);
-
 	/* Author */
 	label = gtk_label_new(_("Author"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	author = gtk_entry_new();
+	data->author = author = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(author), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
 			 3);
@@ -235,7 +261,7 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 	/* User email */
 	label = gtk_label_new(_("Email"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	email = gtk_entry_new();
+	data->email = email = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(email), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 4, 5, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
 			 3);
@@ -269,66 +295,9 @@ gboolean document_properties_setup_ui(GebrGeoXmlDocument * document)
 				 3);
 	}
 
-	gtk_widget_show_all(dialog);
-	switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-	case GTK_RESPONSE_OK:{
-			GtkTreeIter iter;
-
-			const gchar *old_title;
-			const gchar *new_title;
-
-			enum GEBR_GEOXML_DOCUMENT_TYPE type;
-
-			old_title = gebr_geoxml_document_get_title(document);
-			new_title = gtk_entry_get_text(GTK_ENTRY(title));
-
-			gebr_geoxml_document_set_title(document, new_title);
-			gebr_geoxml_document_set_description(document, gtk_entry_get_text(GTK_ENTRY(description)));
-			gebr_geoxml_document_set_author(document, gtk_entry_get_text(GTK_ENTRY(author)));
-			gebr_geoxml_document_set_email(document, gtk_entry_get_text(GTK_ENTRY(email)));
-			document_save(document, TRUE);
-
-			/* Update title in apropriated store */
-			switch ((type = gebr_geoxml_document_get_type(document))) {
-			case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
-			case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
-				project_line_get_selected(&iter, DontWarnUnselection);
-				gtk_tree_store_set(gebr.ui_project_line->store, &iter,
-						   PL_TITLE, gebr_geoxml_document_get_title(document), -1);
-				project_line_info_update();
-				break;
-			case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
-				flow_browse_get_selected(&iter, FALSE);
-				gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
-						   FB_TITLE, gebr_geoxml_document_get_title(document), -1);
-				flow_browse_info_update();
-				break;
-			default:
-				break;
-			}
-
-			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Properties of %s '%s' updated."),
-				     document_get_name_from_type(document, FALSE), old_title);
-			if (strcmp(old_title, new_title) != 0)
-				gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Renaming %s '%s' to '%s'."),
-					     document_get_name_from_type(document, FALSE), old_title, new_title);
-
-			ret = TRUE;
-			break;
-		}
-	default:
-		ret = FALSE;
-	}
-
-	gtk_widget_destroy(GTK_WIDGET(dialog));
-	g_string_free(dialog_title, TRUE);
-
-	return ret;
+	gtk_widget_show_all(window);
 }
 
-/* Function: document_dict_edit_setup_ui
- * Open dialog for parameters's edition
- */
 void document_dict_edit_setup_ui(void)
 {
 	GtkWidget *dialog;
@@ -534,14 +503,10 @@ void document_dict_edit_setup_ui(void)
 	gtk_widget_destroy(dialog);
 }
 
-/*
- * Section: Private
- * Private functions.
- */
+//==============================================================================
+// PRIVATE FUNCTIONS							       =
+//==============================================================================
 
-/* Function: on_dict_edit_cursor_changed
- * 
- */
 static void on_dict_edit_cursor_changed(GtkTreeView * tree_view, struct dict_edit_data *data)
 {
 	GtkTreeIter iter;
@@ -556,7 +521,8 @@ static void on_dict_edit_cursor_changed(GtkTreeView * tree_view, struct dict_edi
 	data->current_document_iter = parent;
 }
 
-/* Function: on_dict_edit_add_clicked
+/*
+ * on_dict_edit_add_clicked:
  * Add new parameter
  */
 static void on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data *data)
@@ -580,7 +546,8 @@ static void on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data *
 	dict_edit_start_keyword_editing(data, &iter);
 }
 
-/* Function: on_dict_edit_remove_clicked
+/*
+ * on_dict_edit_remove_clicked:
  * Remove parameter
  */
 static void on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_data *data)
@@ -642,12 +609,8 @@ static gboolean on_renderer_entry_key_press_event(GtkWidget * widget, GdkEventKe
 	}
 }
 
-/* Function: on_dict_edit_renderer_editing_started
- * 
- */
-static void
-on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
-				      GtkCellEditable * editable, gchar * path, struct dict_edit_data *data)
+static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer, GtkCellEditable * editable,
+						  gchar * path, struct dict_edit_data *data)
 {
 	GtkWidget *widget;
 
@@ -657,13 +620,13 @@ on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
 	g_object_set(widget, "user-data", renderer, NULL);
 }
 
-/* Function: dict_edit_tooltip_callback
+/*
+ * dict_edit_tooltip_callback:
  * Set tooltip for New iters
  */
 #if GTK_CHECK_VERSION(2,12,0)
-static gboolean
-dict_edit_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
-			   GtkTreeIter * iter, GtkTreeViewColumn * column, struct dict_edit_data *data)
+static gboolean dict_edit_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip, GtkTreeIter * iter,
+					   GtkTreeViewColumn * column, struct dict_edit_data *data)
 {
 	gboolean is_add_parameter;
 
@@ -677,12 +640,12 @@ dict_edit_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 }
 #endif
 
-/* Function: on_dict_edit_type_cell_edited
+/*
+ * on_dict_edit_type_cell_edited:
  * Edit type of parameter
  */
-static void
-on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
-			      struct dict_edit_data *data)
+static void on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+					  struct dict_edit_data *data)
 {
 	GtkTreeIter iter;
 	gboolean is_add_parameter;
@@ -719,11 +682,12 @@ on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar
 	}
 }
 
-/* Function: on_dict_edit_cell_edited
+/*
+ * on_dict_edit_cell_edited:
  * Edit keyword, value and comment of parameter
  */
-static void
-on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text, struct dict_edit_data *data)
+static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+				     struct dict_edit_data *data)
 {
 	GtkTreeIter iter;
 	gint index;
@@ -767,8 +731,9 @@ on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * ne
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter, index, new_text, -1);
 }
 
-/* Function: dict_edit_load_iter
- * Load _parameter_ into _iter_
+/*
+ * dict_edit_load_iter:
+ * Load @parameter into @iter
  */
 static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter, GebrGeoXmlParameter * parameter)
 {
@@ -801,11 +766,11 @@ static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter,
 			   DICT_EDIT_KEYWORD_EDITABLE, TRUE, DICT_EDIT_EDITABLE, TRUE, -1);
 }
 
-/* Function: dict_edit_check_duplicates
+/*
+ * dict_edit_check_duplicates:
  * Check for duplicates keywords for parameters of higher hierarchical documents levels
  */
-static void
-dict_edit_check_duplicates(struct dict_edit_data *data, GebrGeoXmlDocument * document, const gchar * keyword)
+static void dict_edit_check_duplicates(struct dict_edit_data *data, GebrGeoXmlDocument * document, const gchar * keyword)
 {
 	GebrGeoXmlSequence *i_parameter;
 
@@ -828,12 +793,12 @@ dict_edit_check_duplicates(struct dict_edit_data *data, GebrGeoXmlDocument * doc
 	}
 }
 
-/* Function: dict_edit_check_duplicate_keyword
- * Check if _keyword_ intended to be used by _parameter_ is already being used
+/*
+ * dict_edit_check_duplicate_keyword:
+ * Check if @keyword intended to be used by @parameter is already being used
  */
-static gboolean
-dict_edit_check_duplicate_keyword(struct dict_edit_data *data, GebrGeoXmlProgramParameter * parameter,
-				  const gchar * keyword, gboolean show_error)
+static gboolean dict_edit_check_duplicate_keyword(struct dict_edit_data *data, GebrGeoXmlProgramParameter * parameter,
+						  const gchar * keyword, gboolean show_error)
 {
 	GebrGeoXmlDocument *document;
 	GebrGeoXmlSequence *i_parameter;
@@ -858,8 +823,9 @@ dict_edit_check_duplicate_keyword(struct dict_edit_data *data, GebrGeoXmlProgram
 	return FALSE;
 }
 
-/* Function: dict_edit_get_selected
- * Get selected iterator into _iter_
+/*
+ * dict_edit_get_selected:
+ * Get selected iterator into @iter
  */
 static gboolean dict_edit_get_selected(struct dict_edit_data *data, GtkTreeIter * iter)
 {
@@ -870,8 +836,9 @@ static gboolean dict_edit_get_selected(struct dict_edit_data *data, GtkTreeIter 
 	return gtk_tree_selection_get_selected(selection, &model, iter);
 }
 
-/* Function: dict_edit_start_keyword_editing
- * Set keyword column in _iter_
+/*
+ * dict_edit_start_keyword_editing:
+ * Set keyword column in @iter
  */
 static void dict_edit_start_keyword_editing(struct dict_edit_data *data, GtkTreeIter * iter)
 {
@@ -879,7 +846,8 @@ static void dict_edit_start_keyword_editing(struct dict_edit_data *data, GtkTree
 					  gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 2), TRUE);
 }
 
-/* Function: dict_edit_append_add_parameter
+/*
+ * dict_edit_append_add_parameter:
  * Add special parameter for easy new parameter creation
  */
 static void dict_edit_append_add_parameter(struct dict_edit_data *data, GtkTreeIter * document_iter)
@@ -893,7 +861,8 @@ static void dict_edit_append_add_parameter(struct dict_edit_data *data, GtkTreeI
 			   DICT_EDIT_KEYWORD_EDITABLE, TRUE, DICT_EDIT_EDITABLE, FALSE, -1);
 }
 
-/* Function: on_dict_edit_popup_menu
+/*
+ * on_dict_edit_popup_menu:
  * Popup menu for parameter removal, etc
  */
 static GtkMenu *on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_data *data)
@@ -923,7 +892,8 @@ static GtkMenu *on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_dat
 	return GTK_MENU(menu);
 }
 
-/* Function: dict_edit_type_text_to_gebr_geoxml_type
+/*
+ * dict_edit_type_text_to_gebr_geoxml_type
  * Convert type combo box text to a GEBR_GEOXML_PARAMETER_TYPE
  */
 static GebrGeoXmlParameterType dict_edit_type_text_to_gebr_geoxml_type(const gchar * text)
@@ -953,7 +923,8 @@ static gboolean dict_edit_check_empty_keyword(const gchar * keyword)
 	return TRUE;
 }
 
-/* Function: dict_edit_new_parameter_iter
+/*
+ * dict_edit_new_parameter_iter:
  * New parameter
  */
 static void dict_edit_new_parameter_iter(struct dict_edit_data *data, GebrGeoXmlObject * object, GtkTreeIter * iter)
@@ -964,11 +935,12 @@ static void dict_edit_new_parameter_iter(struct dict_edit_data *data, GebrGeoXml
 	gebr_geoxml_object_set_user_data(object, gtk_tree_iter_copy(iter));
 }
 
-/* Function: dict_edit_append_iter
- * Append iter
+/*
+ * dict_edit_append_iter:
+ * Append @iter
  */
-static GtkTreeIter
-dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXmlObject * object, GtkTreeIter * document_iter)
+static GtkTreeIter dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXmlObject * object,
+					 GtkTreeIter * document_iter)
 {
 	GtkTreeIter iter;
 
@@ -978,7 +950,8 @@ dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXmlObject * object, Gt
 	return iter;
 }
 
-/* Function: document_get_name_from_type
+/*
+ * document_get_name_from_type:
  * Return the document name given its type
  */
 static const gchar *document_get_name_from_type(GebrGeoXmlDocument * document, gboolean upper)
@@ -992,4 +965,56 @@ static const gchar *document_get_name_from_type(GebrGeoXmlDocument * document, g
 		return upper ? _("Flow") : _("flow");
 	}
 	return "";
+}
+
+void on_response_ok(GtkButton * button, GebrPropertiesData * data)
+{
+	GtkTreeIter iter;
+	const gchar *old_title;
+	const gchar *new_title;
+	enum GEBR_GEOXML_DOCUMENT_TYPE type;
+
+	data->accept_response = TRUE;
+	old_title = gebr_geoxml_document_get_title(data->document);
+	new_title = gtk_entry_get_text(GTK_ENTRY(data->title));
+
+	gebr_geoxml_document_set_title(data->document, new_title);
+	gebr_geoxml_document_set_description(data->document, gtk_entry_get_text(GTK_ENTRY(data->description)));
+	gebr_geoxml_document_set_author(data->document, gtk_entry_get_text(GTK_ENTRY(data->author)));
+	gebr_geoxml_document_set_email(data->document, gtk_entry_get_text(GTK_ENTRY(data->email)));
+	document_save(data->document, TRUE);
+
+	/* Update title in apropriated store */
+	switch ((type = gebr_geoxml_document_get_type(data->document))) {
+	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
+	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+		project_line_get_selected(&iter, DontWarnUnselection);
+		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
+				   PL_TITLE, gebr_geoxml_document_get_title(data->document), -1);
+		project_line_info_update();
+		break;
+	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
+		flow_browse_get_selected(&iter, FALSE);
+		gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
+				   FB_TITLE, gebr_geoxml_document_get_title(data->document), -1);
+		flow_browse_info_update();
+		break;
+	default:
+		break;
+	}
+
+	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Properties of %s '%s' updated."),
+		     document_get_name_from_type(data->document, FALSE), old_title);
+	if (strcmp(old_title, new_title) != 0)
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Renaming %s '%s' to '%s'."),
+			     document_get_name_from_type(data->document, FALSE), old_title, new_title);
+
+	gtk_widget_destroy(data->window);
+}
+
+void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data)
+{
+	if (data->func)
+		data->func(data->accept_response);
+	g_free(data);
 }

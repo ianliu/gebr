@@ -50,7 +50,7 @@ void on_quit_activate(void);
 /** 
  * Call #document_properties_setup_ui
  */
-gboolean on_document_properties_activate(void);
+void on_document_properties_activate(void);
 /** 
  * Call #document_dict_edit_setup_ui
  */
