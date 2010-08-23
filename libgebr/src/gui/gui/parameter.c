@@ -27,21 +27,19 @@
 #define DOUBLE_MAX +999999999
 #define DOUBLE_MIN -999999999
 
-/*
- * Prototypes
- */
+//==============================================================================
+// PROTOTYPES								       =
+//==============================================================================
 
 static void gebr_gui_parameter_widget_find_dict_parameter(struct gebr_gui_parameter_widget *widget);
 
 static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_parameter_widget *widget);
 
-static void
-on_dict_clicked(GtkEntry * entry, GtkEntryIconPosition icon_pos, GdkEventButton * event,
-		struct gebr_gui_parameter_widget *widget);
+static void on_dict_clicked(GtkEntry * entry, GtkEntryIconPosition icon_pos, GdkEventButton * event,
+			    struct gebr_gui_parameter_widget *widget);
 
-static void
-gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * entry, GtkMenu * menu,
-							struct gebr_gui_parameter_widget *widget);
+static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * entry, GtkMenu * menu,
+								    struct gebr_gui_parameter_widget *widget);
 
 static gboolean gebr_gui_parameter_widget_can_use_dict(struct gebr_gui_parameter_widget *widget);
 
@@ -50,16 +48,22 @@ static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_p
 static gboolean on_list_widget_mnemonic_activate(GtkBox * box, gboolean cycle,
 						 struct gebr_gui_parameter_widget *widget);
 
-/*
- * Internal stuff
- */
+static void gebr_gui_parameter_on_list_value_widget_changed(GtkEntry * entry,
+							    struct gebr_gui_parameter_widget *parameter_widget);
 
-/**
- * \internal
- */
-static void
-enum_value_to_label_set(GebrGeoXmlSequence * sequence, const gchar * label,
-			struct gebr_gui_parameter_widget *parameter_widget)
+static void __on_sequence_edit_changed(GtkSequenceEdit * sequence_edit,
+				       struct gebr_gui_parameter_widget *parameter_widget);
+
+static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget, struct gebr_gui_parameter_widget
+							      *parameter_widget);
+
+
+//==============================================================================
+// PRIVATE FUNCTIONS							       =
+//==============================================================================
+
+static void enum_value_to_label_set(GebrGeoXmlSequence * sequence, const gchar * label,
+				    struct gebr_gui_parameter_widget *parameter_widget)
 {
 	GebrGeoXmlSequence *enum_option;
 
@@ -74,9 +78,6 @@ enum_value_to_label_set(GebrGeoXmlSequence * sequence, const gchar * label,
 	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(sequence), "");
 }
 
-/**
- * \internal
- */
 static const gchar *enum_value_to_label_get(GebrGeoXmlSequence * sequence,
 					    struct gebr_gui_parameter_widget *parameter_widget)
 {
@@ -90,12 +91,8 @@ static const gchar *enum_value_to_label_get(GebrGeoXmlSequence * sequence,
 	return gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(sequence));
 }
 
-/**
- * \internal
- */
-static void
-gebr_gui_parameter_widget_file_entry_customize_function(GtkFileChooser * file_chooser,
-							struct gebr_gui_parameter_widget *parameter_widget)
+static void gebr_gui_parameter_widget_file_entry_customize_function(GtkFileChooser * file_chooser,
+								    struct gebr_gui_parameter_widget *parameter_widget)
 {
 	const gchar *filter_name;
 	const gchar *filter_pattern;
@@ -131,12 +128,8 @@ gebr_gui_parameter_widget_file_entry_customize_function(GtkFileChooser * file_ch
 		((GebrGuiGtkFileEntryCustomize) parameter_widget->data) (file_chooser, NULL);
 }
 
-/**
- * \internal
- */
-static void
-gebr_gui_parameter_widget_set_non_list_widget_value(struct gebr_gui_parameter_widget *parameter_widget,
-						    const gchar * value)
+static void gebr_gui_parameter_widget_set_non_list_widget_value(struct gebr_gui_parameter_widget *parameter_widget,
+								const gchar * value)
 {
 	if (parameter_widget->dict_parameter != NULL) {
 		GString *value;
@@ -208,9 +201,6 @@ gebr_gui_parameter_widget_set_non_list_widget_value(struct gebr_gui_parameter_wi
 	}
 }
 
-/**
- * \internal
- */
 static GString *gebr_gui_parameter_widget_get_widget_value_full(struct gebr_gui_parameter_widget *parameter_widget,
 								gboolean check_list)
 {
@@ -295,21 +285,18 @@ static GString *gebr_gui_parameter_widget_get_widget_value_full(struct gebr_gui_
 	return value;
 }
 
-/**
- * \internal
- */
 static void gebr_gui_parameter_widget_report_change(struct gebr_gui_parameter_widget *parameter_widget)
 {
 	if (parameter_widget->callback != NULL)
 		parameter_widget->callback(parameter_widget, parameter_widget->user_data);
 }
 
-/**
- * \internal
+/*
+ * gebr_gui_parameter_on_list_value_widget_changed:
  * Update XML when user is manually editing the list
  */
-static void
-gebr_gui_parameter_on_list_value_widget_changed(GtkEntry * entry, struct gebr_gui_parameter_widget *parameter_widget)
+static void gebr_gui_parameter_on_list_value_widget_changed(GtkEntry * entry,
+							    struct gebr_gui_parameter_widget *parameter_widget)
 {
 	gebr_geoxml_program_parameter_set_parse_list_value(parameter_widget->program_parameter,
 							   parameter_widget->use_default_value,
@@ -318,8 +305,8 @@ gebr_gui_parameter_on_list_value_widget_changed(GtkEntry * entry, struct gebr_gu
 	gebr_gui_parameter_widget_report_change(parameter_widget);
 }
 
-/**
- * \internal
+/*
+ * gebr_gui_parameter_widget_sync_non_list:
  * Syncronize input widget value with the parameter
  */
 static void gebr_gui_parameter_widget_sync_non_list(struct gebr_gui_parameter_widget *parameter_widget)
@@ -333,12 +320,8 @@ static void gebr_gui_parameter_widget_sync_non_list(struct gebr_gui_parameter_wi
 	g_string_free(value, TRUE);
 }
 
-/**
- * \internal
- */
-static void
-gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget,
-						  struct gebr_gui_parameter_widget *parameter_widget)
+static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget,
+							      struct gebr_gui_parameter_widget *parameter_widget)
 {
 	if (parameter_widget->dict_parameter != NULL)
 		return;
@@ -347,32 +330,15 @@ gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget,
 	gebr_gui_parameter_widget_report_change(parameter_widget);
 }
 
-/**
- * \internal
- */
-static gboolean
-gebr_gui_parameter_widget_on_range_changed(GtkSpinButton * spinbutton,
-					   struct gebr_gui_parameter_widget *parameter_widget)
+static gboolean gebr_gui_parameter_widget_on_range_changed(GtkSpinButton * spinbutton,
+							   struct gebr_gui_parameter_widget *parameter_widget)
 {
 	gebr_gui_parameter_widget_on_value_widget_changed(GTK_WIDGET(spinbutton), parameter_widget);
 	return FALSE;
 }
 
-/**
- * \internal
- * Free struct before widget deletion
- */
-static void
-gebr_gui_parameter_widget_weak_ref(struct gebr_gui_parameter_widget *parameter_widget, GtkWidget * widget)
-{
-	g_free(parameter_widget);
-}
-
-static void
-gebr_gui_parameter_on_list_value_widget_changed(GtkEntry * entry, struct gebr_gui_parameter_widget *parameter_widget);
-
-/**
- * \internal
+/*
+ * __parameter_list_value_widget_update:
  * Update from the XML
  */
 static void __parameter_list_value_widget_update(struct gebr_gui_parameter_widget *parameter_widget)
@@ -393,18 +359,11 @@ static void __parameter_list_value_widget_update(struct gebr_gui_parameter_widge
 	g_string_free(value, TRUE);
 }
 
-static void
-__on_sequence_edit_changed(GtkSequenceEdit * sequence_edit,
-			   struct gebr_gui_parameter_widget *parameter_widget);
-static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget, struct gebr_gui_parameter_widget
-							      *parameter_widget);
-
-/**
- * \internal
+/*
+ * __on_edit_list_toggled:
  * Take action to start/finish editing list of parameter's values.
  */
-static void
-__on_edit_list_toggled(GtkToggleButton * toggle_button, struct gebr_gui_parameter_widget *parameter_widget)
+static void __on_edit_list_toggled(GtkToggleButton * toggle_button, struct gebr_gui_parameter_widget *parameter_widget)
 {
 	gboolean toggled;
 
@@ -450,12 +409,8 @@ __on_edit_list_toggled(GtkToggleButton * toggle_button, struct gebr_gui_paramete
 	gtk_widget_set_sensitive(parameter_widget->list_value_widget, !toggled);
 }
 
-/**
- * \internal
- */
-static void
-__on_sequence_edit_add_request(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit,
-			       struct gebr_gui_parameter_widget *parameter_widget)
+static void __on_sequence_edit_add_request(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit,
+					   struct gebr_gui_parameter_widget *parameter_widget)
 {
 	GString *value;
 	GebrGeoXmlSequence *sequence;
@@ -485,17 +440,14 @@ __on_sequence_edit_add_request(GebrGuiValueSequenceEdit * gebr_gui_value_sequenc
 	g_string_free(value, TRUE);
 }
 
-/**
- * \internal
- */
-static void
-__on_sequence_edit_changed(GtkSequenceEdit * sequence_edit, struct gebr_gui_parameter_widget *parameter_widget)
+static void __on_sequence_edit_changed(GtkSequenceEdit * sequence_edit,
+				       struct gebr_gui_parameter_widget *parameter_widget)
 {
 	__parameter_list_value_widget_update(parameter_widget);
 }
 
-/**
- * \internal
+/*
+ * __validate_int:
  * Validate an int parameter
  */
 static void __validate_int(GtkEntry * entry, struct gebr_gui_parameter_widget *parameter_widget)
@@ -509,8 +461,8 @@ static void __validate_int(GtkEntry * entry, struct gebr_gui_parameter_widget *p
 	gtk_entry_set_text(entry, gebr_validate_int(gtk_entry_get_text(entry), min, max));
 }
 
-/**
- * \internal
+/*
+ * __validate_float:
  * Validate a float parameter
  */
 static void __validate_float(GtkEntry * entry, struct gebr_gui_parameter_widget *parameter_widget)
@@ -524,20 +476,19 @@ static void __validate_float(GtkEntry * entry, struct gebr_gui_parameter_widget 
 	gtk_entry_set_text(entry, gebr_validate_float(gtk_entry_get_text(entry), min, max));
 }
 
-/**
- * \internal
+/*
+ * __validate_on_leaving:
  * Call a validation function
  */
-static gboolean
-__validate_on_leaving(GtkWidget * widget, GdkEventFocus * event,
-		      struct gebr_gui_parameter_widget *parameter_widget)
+static gboolean __validate_on_leaving(GtkWidget * widget, GdkEventFocus * event,
+				      struct gebr_gui_parameter_widget *parameter_widget)
 {
 	gebr_gui_parameter_widget_validate(parameter_widget);
 	return FALSE;
 }
 
-/**
- * \internal
+/*
+ * gebr_gui_parameter_widget_configure:
  * Create UI.
  */
 static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget *parameter_widget)
@@ -759,11 +710,11 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 							   parameter_widget->user_data);
 
 	/* delete struct */
-	g_object_weak_ref(G_OBJECT(parameter_widget->widget), (GWeakNotify) gebr_gui_parameter_widget_weak_ref,
-			  parameter_widget);
+	g_object_weak_ref(G_OBJECT(parameter_widget->widget), (GWeakNotify) g_free, parameter_widget);
 }
 
-/**
+/*
+ * gebr_gui_parameter_widget_find_dict_parameter:
  * Find in documents' dictionaries for the associated dictionary parameter
  */
 static void gebr_gui_parameter_widget_find_dict_parameter(struct gebr_gui_parameter_widget *widget)
@@ -779,17 +730,19 @@ static void gebr_gui_parameter_widget_find_dict_parameter(struct gebr_gui_parame
 	}
 }
 
-/**
+/*
+ * compare_parameters_by_keyword:
  * For sorting parameters by keyword
  */
-static gint
-compare_parameters_by_keyword(GebrGeoXmlProgramParameter * parameter1, GebrGeoXmlProgramParameter * parameter2)
+static gint compare_parameters_by_keyword(GebrGeoXmlProgramParameter * parameter1,
+					  GebrGeoXmlProgramParameter * parameter2)
 {
 	return strcmp(gebr_geoxml_program_parameter_get_keyword(parameter1),
 		      gebr_geoxml_program_parameter_get_keyword(parameter2));
 }
 
-/**
+/*
+ * gebr_gui_parameter_widget_dict_popup_menu:
  * Read dictionaries and build a popup menu
  */
 static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_parameter_widget *widget)
@@ -905,23 +858,23 @@ static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_para
 	return menu;
 }
 
-/**
+/*
+ * on_dict_clicked:
  * Popup menu upon dictionary icon click
  */
-static void
-on_dict_clicked(GtkEntry * entry, GtkEntryIconPosition icon_pos, GdkEventButton * event,
-		struct gebr_gui_parameter_widget *widget)
+static void on_dict_clicked(GtkEntry * entry, GtkEntryIconPosition icon_pos, GdkEventButton * event,
+			    struct gebr_gui_parameter_widget *widget)
 {
 	gtk_menu_popup(GTK_MENU(gebr_gui_parameter_widget_dict_popup_menu(widget)), NULL, NULL, NULL, NULL,
 		       event->button, event->time);
 }
 
-/**
+/*
+ * gebr_gui_parameter_widget_value_entry_on_populate_popup:
  * Add dictionary submenu into entry popup menu
  */
-static void
-gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * entry, GtkMenu * menu,
-							struct gebr_gui_parameter_widget *widget)
+static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * entry, GtkMenu * menu,
+								    struct gebr_gui_parameter_widget *widget)
 {
 	GtkWidget *menu_item;
 
@@ -935,7 +888,8 @@ gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * entry, GtkMen
 	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
 }
 
-/**
+/*
+ * gebr_gui_parameter_widget_can_use_dict:
  * Return TRUE if parameter is of an compatible type to use an dictionary value
  */
 static gboolean gebr_gui_parameter_widget_can_use_dict(struct gebr_gui_parameter_widget *widget)
@@ -951,7 +905,8 @@ static gboolean gebr_gui_parameter_widget_can_use_dict(struct gebr_gui_parameter
 	}
 }
 
-/**
+/*
+ * on_dict_parameter_toggled:
  * Use value of dictionary parameter corresponding to menu_item in parameter at _widget_
  */
 static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_parameter_widget *widget)
@@ -970,9 +925,6 @@ static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_p
 	gebr_gui_parameter_widget_update(widget);
 }
 
-/**
- * \internal
- */
 static gboolean on_list_widget_mnemonic_activate(GtkBox * box, gboolean cycle, struct gebr_gui_parameter_widget *widget)
 {
 	gboolean sensitive;
@@ -982,9 +934,9 @@ static gboolean on_list_widget_mnemonic_activate(GtkBox * box, gboolean cycle, s
 	return TRUE;
 }
 
-/*
- * Public functions
- */
+//==============================================================================
+// PUBLIC FUNCTIONS							       =
+//==============================================================================
 
 struct gebr_gui_parameter_widget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter * parameter,
 								gboolean use_default_value, gpointer data)
@@ -1008,9 +960,8 @@ struct gebr_gui_parameter_widget *gebr_gui_parameter_widget_new(GebrGeoXmlParame
 	return parameter_widget;
 }
 
-void
-gebr_gui_parameter_widget_set_dicts(struct gebr_gui_parameter_widget *parameter_widget,
-				    struct gebr_gui_gebr_gui_program_edit_dicts *dicts)
+void gebr_gui_parameter_widget_set_dicts(struct gebr_gui_parameter_widget *parameter_widget,
+					 struct gebr_gui_gebr_gui_program_edit_dicts *dicts)
 {
 	parameter_widget->dicts = dicts;
 	gebr_gui_parameter_widget_reconfigure(parameter_widget);
@@ -1021,9 +972,8 @@ GString *parameter_widget_get_widget_value(struct gebr_gui_parameter_widget *par
 	return gebr_gui_parameter_widget_get_widget_value_full(parameter_widget, TRUE);
 }
 
-void
-gebr_gui_parameter_widget_set_auto_submit_callback(struct gebr_gui_parameter_widget *parameter_widget,
-						   changed_callback callback, gpointer user_data)
+void gebr_gui_parameter_widget_set_auto_submit_callback(struct gebr_gui_parameter_widget *parameter_widget,
+							changed_callback callback, gpointer user_data)
 {
 	parameter_widget->callback = callback;
 	parameter_widget->user_data = user_data;
@@ -1070,10 +1020,8 @@ void gebr_gui_parameter_widget_reconfigure(struct gebr_gui_parameter_widget *par
 	parameter_widget->parameter_type =
 	    gebr_geoxml_parameter_get_type(parameter_widget->parameter);
 
-	g_object_weak_unref(G_OBJECT(parameter_widget->widget),
-			    (GWeakNotify) gebr_gui_parameter_widget_weak_ref, parameter_widget);
+	g_object_weak_unref(G_OBJECT(parameter_widget->widget), (GWeakNotify) g_free, parameter_widget);
 	gtk_widget_destroy(parameter_widget->widget);
 
 	gebr_gui_parameter_widget_configure(parameter_widget);
 }
-
