@@ -79,6 +79,8 @@ static gboolean menu_save_iter_list(GList * unsaved);
 
 static void menu_remove_with_validation(GtkTreeIter * iter);
 
+static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object);
+
 /*
  * Public functions
  */
@@ -339,19 +341,6 @@ void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * men
 	gchar *label;
 	gchar *filename;
 	GtkTreeIter parent;
-	GtkTreeIter temp_iter;
-	GebrGeoXmlFlow * old_menu;
-	GebrGuiHelpEditWindow * help_edit_window;
-
-	/* Synchronizing changes in DebrHelpEditWidget */
-	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &temp_iter,
-			   MENU_XMLPOINTER, &old_menu, -1);
-	help_edit_window = g_hash_table_lookup(debr.help_edit_windows, old_menu);
-	if (help_edit_window != NULL) {
-		DebrHelpEditWidget * help_edit_widget;
-		g_object_get(help_edit_window, "help-edit-widget", &help_edit_widget, NULL);
-		g_object_set(help_edit_widget, "geoxml-object", menu, NULL);
-	}
 
 	filename = g_path_get_basename(path);
 	date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(menu));
@@ -371,6 +360,7 @@ void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * men
 	} else
 		label = g_markup_printf_escaped("%s", filename);
 
+	debr_menu_sync_help_edit_window(iter, menu);
 	gtk_tree_store_set(debr.ui_menu.model, iter,
 			   MENU_FILENAME, label, MENU_MODIFIED_DATE, tmp,
 			   MENU_XMLPOINTER, menu, MENU_PATH, path,
@@ -1438,17 +1428,7 @@ void menu_replace(void) {
 		parameter_path = gtk_tree_model_get_path(GTK_TREE_MODEL(debr.ui_parameter.tree_store), &iter);
 
 	if (menu_get_selected(&iter, FALSE)) {
-		GtkTreeIter temp_iter;
-		GebrGeoXmlFlow * old_xml;
-		GebrGuiHelpEditWindow * help_edit_window;
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &temp_iter,
-				   MENU_XMLPOINTER, &old_xml, -1);
-		help_edit_window = g_hash_table_lookup(debr.help_edit_windows, old_xml);
-		if (help_edit_window) {
-			DebrHelpEditWidget * help_edit_widget;
-			g_object_get(help_edit_window, "help-edit-widget", &help_edit_widget, NULL);
-			g_object_set(help_edit_widget, "geoxml-object", debr.menu_recovery.clone, NULL);
-		}
+		debr_menu_sync_help_edit_window(&iter, debr.menu_recovery.clone);
 		gtk_tree_store_set(debr.ui_menu.model, &iter, MENU_XMLPOINTER, debr.menu_recovery.clone, -1);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(debr.menu));
 		menu_selected();
@@ -2041,3 +2021,43 @@ static void menu_remove_with_validation(GtkTreeIter * iter)
 
 	gtk_tree_store_remove(debr.ui_menu.model, iter);
 }
+
+/*
+ * debr_menu_sync_help_edit_window:
+ * @iter: the iterator that will be modified.
+ * @object: the new XML pointer for @iter.
+ *
+ * If @iter is having its XML changed to @object, this function must be called to synchronize the pointers of the help
+ * edit windows.
+ */
+static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object)
+{
+	GebrGeoXmlFlow * old_menu;
+	GebrGuiHelpEditWindow * help_edit_window;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_XMLPOINTER, &old_menu, -1);
+
+	/* Searches for 'old_menu' in the help_edit_windows hash table. If there is a window for this menu, we must
+	 * update its geoxml-object. Further more, we must close all its programs window.
+	 */
+	help_edit_window = g_hash_table_lookup(debr.help_edit_windows, old_menu);
+
+	if (help_edit_window != NULL) {
+		GebrGeoXmlSequence * program;
+		DebrHelpEditWidget * help_edit_widget;
+
+		g_object_get(help_edit_window, "help-edit-widget", &help_edit_widget, NULL);
+		g_object_set(help_edit_widget, "geoxml-object", object, NULL);
+
+		/* Time to destroy the programs.
+		 */
+		gebr_geoxml_flow_get_program(old_menu, &program, 0);
+		while (program) {
+			help_edit_window = g_hash_table_lookup(debr.help_edit_windows, program);
+			if (help_edit_window)
+				gtk_widget_destroy(GTK_WIDGET(help_edit_window));
+			gebr_geoxml_sequence_next(&program);
+		}
+	}
+}
+
