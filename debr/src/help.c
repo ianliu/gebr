@@ -577,7 +577,6 @@ static void help_edit_on_finished(GebrGeoXmlObject * object, const gchar * _help
 		break;
 	}
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
-	validate_image_set_check_help(debr.ui_menu.help_validate_image, _help);
 
 	g_string_free(help, TRUE);
 }
