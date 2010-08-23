@@ -874,14 +874,19 @@ static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_para
 	compatible_parameters = g_list_sort(compatible_parameters, (GCompareFunc) compare_parameters_by_keyword);
 	for (cp = compatible_parameters; cp != NULL; cp = g_list_next(cp)) {
 		GString *label;
+		const gchar * keyword;
+		const gchar * first_value;
+		const gchar * param_label;
+
+		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data));
+		first_value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data), FALSE);
+		param_label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(cp->data));
 
 		label = g_string_new(NULL);
+		g_string_printf(label, "%s=%s", keyword, first_value);
+		if (param_label != NULL && strlen(param_label) > 0)
+			g_string_append_printf(label, " (%s)", param_label);
 
-		g_string_printf(label, "%s=%s (%s)",
-				gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data)),
-				gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data),
-									      FALSE),
-				gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(cp->data)));
 		menu_item = gtk_radio_menu_item_new_with_label(group, label->str);
 		group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
 		g_object_set(menu_item, "user-data", cp->data, NULL);
