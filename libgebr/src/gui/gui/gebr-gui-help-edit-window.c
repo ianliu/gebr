@@ -187,6 +187,8 @@ static void gebr_gui_help_edit_window_constructed(GObject * self)
 
 	// Print button
 	item = gtk_tool_button_new_from_stock(GTK_STOCK_PRINT);
+	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(item),
+				       _("Prints the edited content"));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
 	g_signal_connect(item, "clicked", G_CALLBACK(on_print_clicked), self);
 
