@@ -248,7 +248,8 @@ out:
  * \internal
  *
  */
-static GtkWidget* parameter_group_instances_setup_ui_foreach(struct ui_parameter_group_dialog *ui, GebrGeoXmlSequence *instance, gint index, gboolean template)
+static GtkWidget* parameter_group_instances_setup_ui_foreach(struct ui_parameter_group_dialog *ui,
+							     GebrGeoXmlSequence *instance, gint index, gboolean template)
 {
 	GtkWidget *frame;
 	GtkWidget *table;
@@ -263,8 +264,7 @@ static GtkWidget* parameter_group_instances_setup_ui_foreach(struct ui_parameter
 	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
 
 	label_widget = NULL;
-	exclusive =
-		GEBR_GEOXML_SEQUENCE(gebr_geoxml_parameters_get_default_selection(GEBR_GEOXML_PARAMETERS(instance)));
+	exclusive = GEBR_GEOXML_SEQUENCE(gebr_geoxml_parameters_get_default_selection(GEBR_GEOXML_PARAMETERS(instance)));
 	gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &parameter, 0);
 	for (gint j = 0; parameter != NULL; ++j, gebr_geoxml_sequence_next(&parameter)) {
 		struct gebr_gui_parameter_widget *widget;
@@ -357,15 +357,25 @@ static gboolean on_parameter_group_instances_changed(GtkSpinButton * spin_button
 static void
 on_parameter_group_is_exclusive_toggled(GtkToggleButton * toggle_button, struct ui_parameter_group_dialog *ui)
 {
+	gboolean toggled;
 	GebrGeoXmlSequence *instance;
+	GebrGeoXmlParameters *template;
+	GebrGeoXmlSequence *first_parameter;
+
+	toggled = gtk_toggle_button_get_active(toggle_button);
+	template = gebr_geoxml_parameter_group_get_template(ui->parameter_group);
+	if (!toggled)
+		gebr_geoxml_parameters_set_default_selection(template, NULL);
+	else {
+		gebr_geoxml_parameters_get_parameter(template, &first_parameter, 0);
+		gebr_geoxml_parameters_set_default_selection(template, GEBR_GEOXML_PARAMETER(first_parameter));
+	}
 
 	gebr_geoxml_parameter_group_get_instance(ui->parameter_group, &instance, 0);
 	for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
-		if (gtk_toggle_button_get_active(toggle_button) == FALSE)
+		if (!toggled)
 			gebr_geoxml_parameters_set_default_selection(GEBR_GEOXML_PARAMETERS(instance), NULL);
 		else {
-			GebrGeoXmlSequence *first_parameter;
-
 			gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &first_parameter, 0);
 			gebr_geoxml_parameters_set_default_selection(GEBR_GEOXML_PARAMETERS(instance),
 								     GEBR_GEOXML_PARAMETER(first_parameter));
