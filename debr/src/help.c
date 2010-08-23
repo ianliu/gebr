@@ -50,6 +50,8 @@ static gsize strip_block(GString * buffer, const gchar * tag);
 
 static GtkMenuBar * create_menu_bar(GebrGeoXmlObject * object, GebrGuiHelpEditWindow * window);
 
+static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self, GtkTreeIter * iter);
+
 /*
  * Public functions.
  */
@@ -102,8 +104,10 @@ void debr_help_edit(GebrGeoXmlObject * object)
 			gtk_window_present(GTK_WINDOW(help_edit_window));
 		} else {
 			gchar * title;
+			gboolean is_menu_selected;
 			const gchar * object_title;
 			GtkMenuBar * menu_bar;
+			GtkTreeIter iter;
 			GebrGuiHelpEditWidget * help_edit_widget;
 			GebrGeoXmlObject * object;
 
@@ -117,12 +121,18 @@ void debr_help_edit(GebrGeoXmlObject * object)
 				title = g_strdup_printf(_("Menu: %s"), object_title);
 			}
 
+			is_menu_selected = menu_get_selected(&iter, TRUE);
 			help_edit_widget = debr_help_edit_widget_new(object, prepared_html->str);
 			help_edit_window = gebr_gui_help_edit_window_new_with_refresh(help_edit_widget);
 			menu_bar = create_menu_bar(object, GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window));
 			gebr_gui_help_edit_window_set_menu_bar(GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window), menu_bar);
+
 			g_signal_connect(help_edit_window, "refresh-requested",
 					 G_CALLBACK(help_edit_on_refresh), object);
+			g_signal_connect(help_edit_widget, "commit-request",
+					 G_CALLBACK(help_edit_on_commit_request),
+					 is_menu_selected ? gtk_tree_iter_copy(&iter):NULL);
+
 			g_hash_table_insert(debr.help_edit_windows, object, help_edit_window);
 			gtk_window_set_title(GTK_WINDOW(help_edit_window), title);
 			gtk_window_set_default_size(GTK_WINDOW(help_edit_window), 600, 500);
@@ -613,4 +623,10 @@ static gsize strip_block(GString * buffer, const gchar * tag)
 
 	return pos;
 
+}
+
+static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self, GtkTreeIter * iter)
+{
+	if (iter != NULL)
+		menu_status_set_from_iter(iter, MENU_STATUS_UNSAVED);
 }
