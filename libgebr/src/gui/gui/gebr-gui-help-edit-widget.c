@@ -106,7 +106,7 @@ static void gebr_gui_help_edit_widget_class_init(GebrGuiHelpEditWidgetClass * kl
 							     G_PARAM_READABLE));
 
 	/**
-	 * GebrGuiHelpEditWidget::commig-request:
+	 * GebrGuiHelpEditWidget::commit-request:
 	 * Emitted when 'commit_changes' is called.
 	 */
 	signals[COMMIT_REQUEST] =
