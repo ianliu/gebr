@@ -36,5 +36,12 @@ void help_fix_css(GString * help);
  */
 void debr_help_edit(GebrGeoXmlObject * object);
 
+/**
+ * debr_help_show:
+ * @object: a #GebrGeoXmlProgram or #GebrGeoXmlFlow
+ *
+ * Shows  @object's help.
+ */
+void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title);
 G_END_DECLS
 #endif				//__HELP_H
