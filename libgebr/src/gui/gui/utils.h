@@ -472,6 +472,9 @@ gboolean gebr_gui_gtk_expander_hacked_idle(GtkWidget * hbox, GdkEventExpose * ev
 #include "sexy-icon-entry.h"
 /* Symbols name compatibility with GTK 2.16 using SexyIconEntry */
 #define gtk_entry_new sexy_icon_entry_new
+#define gtk_entry_get_icon_from_stock(entry, icon_pos, stock_id) \
+	sexy_icon_entry_get_icon(SEXY_ICON_ENTRY(entry), icon_pos, \
+	stock_id != NULL ? GTK_IMAGE(gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU)) : NULL)
 #define gtk_entry_set_icon_from_stock(entry, icon_pos, stock_id) \
 	sexy_icon_entry_set_icon(SEXY_ICON_ENTRY(entry), icon_pos, \
 	stock_id != NULL ? GTK_IMAGE(gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU)) : NULL)

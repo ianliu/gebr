@@ -45,7 +45,7 @@ static gboolean gebr_gui_parameter_widget_can_use_dict(struct gebr_gui_parameter
 
 static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_parameter_widget *widget);
 
-static gboolean on_list_widget_mnemonic_activate(GtkBox * box, gboolean cycle,
+static gboolean on_mnemonic_activate(GtkBox * box, gboolean cycle,
 						 struct gebr_gui_parameter_widget *widget);
 
 static void gebr_gui_parameter_on_list_value_widget_changed(GtkEntry * entry,
@@ -493,6 +493,27 @@ static gboolean __validate_on_leaving(GtkWidget * widget, GdkEventFocus * event,
  */
 static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget *parameter_widget)
 {
+	gtk_container_foreach(GTK_CONTAINER(parameter_widget->widget), (GtkCallback)gtk_widget_destroy, NULL);
+
+	gboolean may_use_dict = parameter_widget->dicts != NULL && gebr_gui_parameter_widget_can_use_dict(parameter_widget);
+	if (may_use_dict) {
+		GebrGeoXmlDocument *documents[] = {
+			parameter_widget->dicts->project, parameter_widget->dicts->line,
+			parameter_widget->dicts->flow, NULL
+		};
+
+		parameter_widget->dict_parameter = NULL;
+		for (int i = 0; documents[i] != NULL; i++) {
+			GebrGeoXmlProgramParameter *dict_parameter;
+
+			dict_parameter =
+			    gebr_geoxml_program_parameter_find_dict_parameter
+			    (parameter_widget->program_parameter, documents[i]);
+			if (dict_parameter != NULL)
+				parameter_widget->dict_parameter = dict_parameter;
+		}
+	}
+
 	switch (parameter_widget->parameter_type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:{
 			GtkWidget *entry;
@@ -525,25 +546,29 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			break;
 		}
 	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:{
-			GtkWidget *spin;
+			if (parameter_widget->dict_parameter == NULL) {
+				GtkWidget *spin;
 
-			const gchar *min_str;
-			const gchar *max_str;
-			const gchar *inc_str;
-			const gchar *digits_str;
-			double min, max, inc;
+				const gchar *min_str;
+				const gchar *max_str;
+				const gchar *inc_str;
+				const gchar *digits_str;
+				double min, max, inc;
 
-			gebr_geoxml_program_parameter_get_range_properties(parameter_widget->program_parameter,
-									   &min_str, &max_str, &inc_str, &digits_str);
-			min = !strlen(min_str) ? DOUBLE_MIN : atof(min_str);
-			max = !strlen(max_str) ? DOUBLE_MAX : atof(max_str);
-			inc = !strlen(inc_str) ? 1.0 : atof(inc_str);
-			if (inc == 0)
-				inc = 1.0;
+				gebr_geoxml_program_parameter_get_range_properties(parameter_widget->program_parameter,
+										   &min_str, &max_str, &inc_str, &digits_str);
+				min = !strlen(min_str) ? DOUBLE_MIN : atof(min_str);
+				max = !strlen(max_str) ? DOUBLE_MAX : atof(max_str);
+				inc = !strlen(inc_str) ? 1.0 : atof(inc_str);
+				if (inc == 0)
+					inc = 1.0;
 
-			parameter_widget->value_widget = spin = gtk_spin_button_new_with_range(min, max, inc);
-			gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), atoi(digits_str));
-			gtk_widget_set_size_request(spin, 90, 30);
+				parameter_widget->value_widget = spin = gtk_spin_button_new_with_range(min, max, inc);
+				gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), atoi(digits_str));
+			} else {
+				parameter_widget->value_widget = gtk_entry_new();
+			}
+			gtk_widget_set_size_request(parameter_widget->value_widget, 90, 30);
 
 			break;
 		}
@@ -597,16 +622,14 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		gtk_widget_set_sensitive(parameter_widget->value_widget, FALSE);
 
 	if (gebr_geoxml_program_parameter_get_is_list(parameter_widget->program_parameter) == TRUE) {
-		GtkWidget *vbox;
 		GtkWidget *hbox;
 		GtkWidget *button;
 		GtkWidget *sequence_edit;
 
-		vbox = gtk_vbox_new(FALSE, 10);
 		hbox = gtk_hbox_new(FALSE, 10);
 		if (parameter_widget->parameter_type != GEBR_GEOXML_PARAMETER_TYPE_ENUM)
 			gtk_widget_show(hbox);
-		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(parameter_widget->widget), hbox, TRUE, TRUE, 0);
 
 		parameter_widget->list_value_widget = gtk_entry_new();
 		if (parameter_widget->readonly)
@@ -630,7 +653,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		gtk_widget_show(parameter_widget->value_widget);
 
 		sequence_edit = gebr_gui_value_sequence_edit_new(parameter_widget->value_widget);
-		gtk_box_pack_start(GTK_BOX(vbox), sequence_edit, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(parameter_widget->widget), sequence_edit, TRUE, TRUE, 0);
 		parameter_widget->gebr_gui_value_sequence_edit = GEBR_GUI_VALUE_SEQUENCE_EDIT(sequence_edit);
 		g_object_set(G_OBJECT(sequence_edit), "minimum-one", TRUE, NULL);
 		g_signal_connect(sequence_edit, "add-request",
@@ -644,12 +667,9 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			gtk_button_clicked(GTK_BUTTON(button));
 			gtk_widget_hide(hbox);
 		}
-
-		parameter_widget->widget = vbox;
-		g_signal_connect(vbox, "mnemonic-activate",
-				 G_CALLBACK(on_list_widget_mnemonic_activate), parameter_widget);
 	} else {
-		parameter_widget->widget = parameter_widget->value_widget;
+		gtk_box_pack_start(GTK_BOX(parameter_widget->widget), parameter_widget->value_widget, TRUE, TRUE, 0);
+		gtk_widget_show(parameter_widget->value_widget);
 		parameter_widget->gebr_gui_value_sequence_edit = NULL;
 
 		switch (parameter_widget->parameter_type) {
@@ -662,9 +682,10 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 					 parameter_widget);
 			break;
 		case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
-			g_signal_connect(parameter_widget->value_widget, "output",
-					 G_CALLBACK(gebr_gui_parameter_widget_on_range_changed),
-					 parameter_widget);
+			if (parameter_widget->dict_parameter == NULL)
+				g_signal_connect(parameter_widget->value_widget, "output",
+						 G_CALLBACK(gebr_gui_parameter_widget_on_range_changed),
+						 parameter_widget);
 			break;
 		case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 			g_signal_connect(parameter_widget->value_widget, "path-changed",
@@ -680,37 +701,18 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			break;
 		}
 	}
-	if (parameter_widget->dicts != NULL
-	    && gebr_gui_parameter_widget_can_use_dict(parameter_widget)) {
-		GebrGeoXmlDocument *documents[] = {
-			parameter_widget->dicts->project, parameter_widget->dicts->line,
-			parameter_widget->dicts->flow, NULL
-		};
-
-		parameter_widget->dict_parameter = NULL;
-		for (int i = 0; documents[i] != NULL; i++) {
-			GebrGeoXmlProgramParameter *dict_parameter;
-
-			dict_parameter =
-			    gebr_geoxml_program_parameter_find_dict_parameter
-			    (parameter_widget->program_parameter, documents[i]);
-			if (dict_parameter != NULL)
-				parameter_widget->dict_parameter = dict_parameter;
-		}
-
-		gebr_gui_parameter_widget_find_dict_parameter(parameter_widget);
-		g_signal_connect(parameter_widget->value_widget, "populate-popup",
-				 G_CALLBACK(gebr_gui_parameter_widget_value_entry_on_populate_popup),
-				 parameter_widget);
-	}
 
 	gebr_gui_parameter_widget_update(parameter_widget);
 	gebr_gui_parameter_widget_set_auto_submit_callback(parameter_widget,
 							   parameter_widget->callback,
 							   parameter_widget->user_data);
 
-	/* delete struct */
-	g_object_weak_ref(G_OBJECT(parameter_widget->widget), (GWeakNotify) g_free, parameter_widget);
+	if (may_use_dict) {
+		gebr_gui_parameter_widget_find_dict_parameter(parameter_widget);
+		g_signal_connect(parameter_widget->value_widget, "populate-popup",
+				 G_CALLBACK(gebr_gui_parameter_widget_value_entry_on_populate_popup),
+				 parameter_widget);
+	}
 }
 
 /*
@@ -721,6 +723,12 @@ static void gebr_gui_parameter_widget_find_dict_parameter(struct gebr_gui_parame
 {
 	g_signal_handlers_disconnect_matched(G_OBJECT(widget->value_widget),
 					     G_SIGNAL_MATCH_FUNC, 0, 0, NULL, G_CALLBACK(on_dict_clicked), NULL);
+	gboolean changed_state = (widget->dict_enabled && widget->dict_parameter == NULL) || (!widget->dict_enabled && widget->dict_parameter != NULL);
+	if (changed_state && widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
+		widget->dict_enabled = !widget->dict_enabled;
+		gebr_gui_parameter_widget_reconfigure(widget);
+		return;
+	}
 	if (widget->dict_parameter != NULL) {
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(widget->value_widget),
 					      GTK_ENTRY_ICON_SECONDARY, "accessories-dictionary");
@@ -925,12 +933,16 @@ static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_p
 	gebr_gui_parameter_widget_update(widget);
 }
 
-static gboolean on_list_widget_mnemonic_activate(GtkBox * box, gboolean cycle, struct gebr_gui_parameter_widget *widget)
+static gboolean on_mnemonic_activate(GtkBox * box, gboolean cycle, struct gebr_gui_parameter_widget *widget)
 {
-	gboolean sensitive;
-	g_object_get(G_OBJECT(widget->list_value_widget), "sensitive", &sensitive, NULL);
-	gtk_widget_mnemonic_activate(sensitive? widget->list_value_widget:
-				     GTK_WIDGET(widget->gebr_gui_value_sequence_edit), cycle);
+	if (!gebr_geoxml_program_parameter_get_is_list(widget->program_parameter)) {
+		gtk_widget_mnemonic_activate(widget->value_widget, cycle);
+	} else {
+		gboolean sensitive;
+		g_object_get(G_OBJECT(widget->list_value_widget), "sensitive", &sensitive, NULL);
+		gtk_widget_mnemonic_activate(sensitive? widget->list_value_widget:
+					     GTK_WIDGET(widget->gebr_gui_value_sequence_edit), cycle);
+	}
 	return TRUE;
 }
 
@@ -950,10 +962,15 @@ struct gebr_gui_parameter_widget *gebr_gui_parameter_widget_new(GebrGeoXmlParame
 	parameter_widget->use_default_value = use_default_value;
 	parameter_widget->readonly = FALSE;
 	parameter_widget->data = data;
+	parameter_widget->dict_enabled = FALSE;
 	parameter_widget->dict_parameter = NULL;
 	parameter_widget->dicts = NULL;
 	parameter_widget->callback = NULL;
 	parameter_widget->user_data = NULL;
+	parameter_widget->widget = gtk_vbox_new(FALSE, 10);
+	g_object_weak_ref(G_OBJECT(parameter_widget->widget), (GWeakNotify) g_free, parameter_widget);
+	g_signal_connect(parameter_widget->widget, "mnemonic-activate",
+			 G_CALLBACK(on_mnemonic_activate), parameter_widget);
 
 	gebr_gui_parameter_widget_configure(parameter_widget);
 
@@ -1019,9 +1036,6 @@ void gebr_gui_parameter_widget_reconfigure(struct gebr_gui_parameter_widget *par
 {
 	parameter_widget->parameter_type =
 	    gebr_geoxml_parameter_get_type(parameter_widget->parameter);
-
-	g_object_weak_unref(G_OBJECT(parameter_widget->widget), (GWeakNotify) g_free, parameter_widget);
-	gtk_widget_destroy(parameter_widget->widget);
 
 	gebr_gui_parameter_widget_configure(parameter_widget);
 }
