@@ -68,6 +68,7 @@ static void program_stderr_changed(GtkToggleButton * togglebutton);
 static gboolean program_title_changed(GtkEntry * entry);
 static gboolean program_binary_changed(GtkEntry * entry);
 static gboolean program_description_changed(GtkEntry * entry);
+static void program_help_show(GtkButton * button);
 static void program_help_edit(GtkButton * button, GtkWidget * validate_image);
 static gboolean program_version_changed(GtkEntry * entry);
 static void program_mpi_changed(GtkComboBox * combo);
@@ -171,14 +172,21 @@ void program_setup_ui(void)
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(details), hbox, FALSE, TRUE, 0);
-
 	debr.ui_program.details.url_button = gtk_link_button_new("");
 	gtk_box_pack_start(GTK_BOX(hbox), debr.ui_program.details.url_button, FALSE, TRUE, 0);
 
-	debr.ui_program.details.help_button = gtk_button_new_with_label(_("Edit & View program's help"));
-	g_signal_connect(debr.ui_program.details.help_button, "clicked",
+	/* Help */
+	GtkWidget *hbox_aux;
+	hbox_aux = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(details), hbox_aux, FALSE, TRUE, 0);
+	debr.ui_program.details.help_view = gtk_button_new_with_label(_("View Help"));
+	debr.ui_program.details.help_edit = gtk_button_new_with_label(_("Edit Help"));
+	gtk_box_pack_start(GTK_BOX(hbox_aux), debr.ui_program.details.help_view, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbox_aux), debr.ui_program.details.help_edit, TRUE, TRUE, 0);
+	g_signal_connect(GTK_OBJECT(debr.ui_program.details.help_view), "clicked",
+			 G_CALLBACK(program_help_show), NULL);
+	g_signal_connect(GTK_OBJECT(debr.ui_program.details.help_edit), "clicked",
 			 G_CALLBACK(program_help_edit), NULL);
-	gtk_box_pack_end(GTK_BOX(details), debr.ui_program.details.help_button, FALSE, TRUE, 0);
 
 	debr.ui_program.widget = hpanel;
 	gtk_widget_show_all(debr.ui_program.widget);
@@ -632,7 +640,8 @@ static void program_details_update(void)
 	is_program_selected = debr.program != NULL;
 
 	g_object_set(debr.ui_program.details.url_button, "visible", is_program_selected, NULL);
-	g_object_set(debr.ui_program.details.help_button, "visible", is_program_selected, NULL);
+	g_object_set(debr.ui_program.details.help_edit, "visible", is_program_selected, NULL);
+	g_object_set(debr.ui_program.details.help_view, "visible", is_program_selected, NULL);
 	gtk_widget_set_sensitive(GTK_WIDGET(debr.tool_item_new), is_program_selected);
 	if (!is_program_selected) {
 		/* Comentary for translators: Tooltip shown in 'New' button in Parameters page, when no programs are
@@ -928,6 +937,15 @@ static gboolean program_url_changed(GtkEntry * entry)
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 	return FALSE;
+}
+
+/**
+ * \internal
+ * Calls \ref debr_help_show with menu's help.
+ */
+static void program_help_show(GtkButton * button)
+{
+	debr_help_show(GEBR_GEOXML_OBJECT(debr.program), TRUE, _("Program Help"));
 }
 
 /**

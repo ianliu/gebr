@@ -81,6 +81,7 @@ static void menu_remove_with_validation(GtkTreeIter * iter);
 
 static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object);
 
+static void on_menu_help_show_clicked(GtkWidget * button);
 /*
  * Public functions
  */
@@ -209,10 +210,20 @@ void menu_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), debr.ui_menu.details.categories_label, 1, 2, 3, 4,
 			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
 
-	debr.ui_menu.details.help_button = gtk_button_new_with_label(_("Edit & View menu's help"));
-	gtk_box_pack_end(GTK_BOX(details), debr.ui_menu.details.help_button, FALSE, TRUE, 0);
-	g_signal_connect(GTK_OBJECT(debr.ui_menu.details.help_button), "clicked",
+
+	/* Help */
+	GtkWidget * hbox;
+	debr.ui_menu.details.hbox = hbox = gtk_hbox_new(TRUE, 0);
+
+	debr.ui_menu.details.help_view = gtk_button_new_with_label(_("View Help"));
+	debr.ui_menu.details.help_edit = gtk_button_new_with_label(_("Edit Help"));
+	gtk_box_pack_start(GTK_BOX(hbox), debr.ui_menu.details.help_view, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), debr.ui_menu.details.help_edit, TRUE, TRUE, 0);
+	g_signal_connect(GTK_OBJECT(debr.ui_menu.details.help_view), "clicked",
+			 G_CALLBACK(on_menu_help_show_clicked), NULL);
+	g_signal_connect(GTK_OBJECT(debr.ui_menu.details.help_edit), "clicked",
 			 G_CALLBACK(on_menu_help_edit_clicked), NULL);
+	gtk_box_pack_end(GTK_BOX(details), hbox, FALSE, TRUE, 0);
 
 	debr.ui_menu.details.author_label = gtk_label_new(NULL);
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.author_label), 0, 0);
@@ -1232,9 +1243,10 @@ void menu_details_update(void)
 	if (debr.menu == NULL) {
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_hide, NULL);
 		return;
-	} else
+	} else{
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_show, NULL);
-
+		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.hbox), (GtkCallback) gtk_widget_show, NULL);
+	}
 	markup = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), markup);
 	g_free(markup);
@@ -1313,11 +1325,18 @@ void menu_folder_details_update(GtkTreeIter * iter)
 	gint n_menus;
 	GString *text;
 
+
 	if (menu_get_selected_type(iter, FALSE) != ITER_FOLDER)
 		return;
 
 	gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_show, NULL);
-	gtk_widget_hide(debr.ui_menu.details.help_button);
+	if (debr.menu == NULL){
+		gtk_widget_hide(debr.ui_menu.details.help_view);
+		gtk_widget_hide(debr.ui_menu.details.help_edit);
+	}else{
+		gtk_widget_show(debr.ui_menu.details.help_edit);
+		gtk_widget_show(debr.ui_menu.details.help_view);
+	}
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_PATH, &folder_path, -1);
 
 	if (gebr_gui_gtk_tree_iter_equal_to(iter, &debr.ui_menu.iter_other)) {
@@ -1747,6 +1766,15 @@ static void menu_description_changed(GtkEntry * entry)
 {
 	gebr_geoxml_document_set_description(GEBR_GEOXML_DOC(debr.menu), gtk_entry_get_text(entry));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
+}
+
+/**
+ * \internal
+ * Calls \ref debr_help_show with menu's help.
+ */
+static void on_menu_help_show_clicked(GtkWidget * button)
+{
+	debr_help_show(GEBR_GEOXML_OBJECT(debr.menu), TRUE, _("Menu Help"));
 }
 
 /**

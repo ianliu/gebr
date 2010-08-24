@@ -50,7 +50,8 @@ struct ui_program {
 		GtkWidget *mpi_label;
 		GtkWidget *url_label;
 		GtkWidget *url_button;
-		GtkWidget *help_button;
+		GtkWidget *help_edit;
+		GtkWidget *help_view;
 	} details;
 };
 

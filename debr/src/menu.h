@@ -81,6 +81,7 @@ struct ui_menu {
 
 	struct ui_menu_details {
 		GtkWidget *vbox;
+		GtkWidget *hbox;
 
 		GtkWidget *title_label;
 		GtkWidget *description_label;
@@ -92,7 +93,8 @@ struct ui_menu {
 		GtkWidget *modified_date_label;
 		GtkWidget *category_label;
 		GtkWidget *categories_label;
-		GtkWidget *help_button;
+		GtkWidget *help_edit;
+		GtkWidget *help_view;
 	} details;
 
 };
