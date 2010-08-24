@@ -155,6 +155,10 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 			validate_append_check(validate, "", GEBR_VALIDATE_CHECK_EMPTY, "");
 		validate->operations.append_text(validate->data, "\n");
 	}
+	if (validate->options.ehelp == 0) {
+		validate->operations.append_text(validate->data, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu)));
+		goto out;
+	}
 	if (validate->options.category) {
 		gebr_geoxml_flow_get_category(menu, &seq, 0);
 		if (seq == NULL)
@@ -164,6 +168,12 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 				validate_append_item_with_check(validate, _("Category:      "),
 								gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq)),
 								gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_CATEGORY)->flags);
+	}
+	gint nprog = gebr_geoxml_flow_get_programs_number(menu);
+	if (validate->options.ehelp > 0 && validate->options.ehelp <= nprog) {
+		gebr_geoxml_flow_get_program(menu, &seq, validate->options.ehelp - 1);
+		validate->operations.append_text(validate->data, gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(seq)));
+		goto out;
 	}
 
 	if (!validate->options.progs && !validate->options.params)
@@ -227,7 +237,7 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 		}
 	}
 
-out:	validate->operations.append_text_emph(validate->data, _("%d potential error(s)"), validate->potential_errors);
+out:	validate->operations.append_text_emph(validate->data, _("%d potential error(s)\n"), validate->potential_errors);
 
 	return validate->potential_errors;
 }

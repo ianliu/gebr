@@ -57,7 +57,7 @@ struct _GebrGeoXmlValidate {
 	struct _GebrGeoXmlValidateOptions {
 		/**
 		 * TRUE to enable all subsequent tests.
-		 * If so, don't to set others
+		 * If so, others are overwriten
 		 */
 		gboolean all;
 		gboolean filename;
@@ -70,6 +70,10 @@ struct _GebrGeoXmlValidate {
 		gboolean progs;
                 gboolean url;
 		gboolean params;
+		/**
+		 * Not influenced by all
+		 */
+		gint ehelp;
 	} options;
 
 	gint potential_errors;

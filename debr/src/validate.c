@@ -130,6 +130,7 @@ void validate_menu(GtkTreeIter * iter)
 							   ...))validate_append_text_error;
 	GebrGeoXmlValidateOptions options;
 	options.all = TRUE;
+	options.ehelp = -1;
 	validate = g_new(struct validate, 1);
 	validate->widget = scrolled_window;
 	validate->text_view = text_view;

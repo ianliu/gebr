@@ -29,7 +29,6 @@
 int global_error_count;
 
 GebrGeoXmlValidateOptions options;
-gint ehelp = -1;
 gboolean nocolors = FALSE;
 gchar **menu = NULL;
 
@@ -48,7 +47,7 @@ static GOptionEntry entries[] = {
 	{"author", 'A', 0, G_OPTION_ARG_NONE, &options.author, "show authors", NULL},
 	{"dates", 'D', 0, G_OPTION_ARG_NONE, &options.dates, "show created/modified dates", NULL},
 	{"mhelp", 'H', 0, G_OPTION_ARG_NONE, &options.mhelp, "check help status", NULL},
-	{"ehelp", 'e', 0, G_OPTION_ARG_INT, &ehelp, "extract help (0 for menu, >0 for program)", "index"},
+	{"ehelp", 'e', 0, G_OPTION_ARG_INT, &options.ehelp, "extract help (0 for menu, >0 for program)", "index"},
 	{"category", 'c', 0, G_OPTION_ARG_NONE, &options.category, "show categories", NULL},
 	{"progs", 'p', 0, G_OPTION_ARG_NONE, &options.progs, "show programs", NULL},
 	{"params", 'P', 0, G_OPTION_ARG_NONE, &options.params, "show parameters", NULL},
@@ -88,6 +87,10 @@ int main(int argc, char **argv)
 	GebrGeoXmlValidate *validate;
 
 	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
+
+	/* default values */
+	options.all = TRUE;
+	options.ehelp = -1;
 
 	parse_command_line(argc, argv);
 
@@ -153,9 +156,5 @@ void parse_command_line(int argc, char **argv)
 	}
 
 	g_option_context_free(context);
-
-	if (!(options.all || options.title || options.desc || options.author || options.dates || options.mhelp || (ehelp != -1) || options.category || options.progs))
-		options.all = TRUE;
-
 }
 
