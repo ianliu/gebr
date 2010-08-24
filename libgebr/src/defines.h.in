@@ -22,7 +22,7 @@
 
 G_BEGIN_DECLS
 
-#define DATA_DIR		"@prefix@/share"
+#define DATA_DIR		"@prefix@/share/"
 #define	PACKAGE_LOCALE_DIR	DATA_DIR"/locale"
 
 #define LIBGEBR_VERSION         "@VERSION@"

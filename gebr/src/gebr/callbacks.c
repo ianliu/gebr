@@ -18,7 +18,6 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#include <libgebr/gui/help.h>
 #include <libgebr/gui/utils.h>
 #include <libgebr/intl.h>
 
