@@ -42,6 +42,8 @@ struct _GebrGuiHelpEditWindowPrivate {
 	gboolean has_refresh;
 	GtkWidget * menu_bar;
 	GtkWidget * help_edit_widget;
+	GtkWidget * commit_button;
+	GtkWidget * refresh_button;
 };
 
 #define GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(o) \
@@ -165,6 +167,7 @@ static void gebr_gui_help_edit_window_constructed(GObject * self)
 				       _("Overwrites the menu's help with edited content"));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
 	g_signal_connect(item, "clicked", G_CALLBACK(on_save_clicked), self);
+	private->commit_button = GTK_WIDGET(item);
 
 	// Edit button
 	item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_EDIT);
@@ -181,6 +184,7 @@ static void gebr_gui_help_edit_window_constructed(GObject * self)
 					       _("Updates editor content"));
 		gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
 		g_signal_connect(item, "clicked", G_CALLBACK(on_refresh_clicked), self);
+		private->refresh_button = GTK_WIDGET(item);
 	}
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
@@ -277,6 +281,10 @@ static void on_edit_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow 
 	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
 	toggled = gtk_toggle_tool_button_get_active(button);
 	gebr_gui_help_edit_widget_set_editing(help_edit_widget, toggled);
+	gtk_widget_set_sensitive(priv->commit_button, toggled);
+	if (priv->has_refresh) {
+		gtk_widget_set_sensitive(priv->refresh_button, toggled);
+	}
 }
 
 static void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
