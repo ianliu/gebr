@@ -44,6 +44,7 @@ struct _GebrGuiHelpEditWindowPrivate {
 	GtkWidget * help_edit_widget;
 	GtkWidget * commit_button;
 	GtkWidget * refresh_button;
+	GtkWidget * preview_button;
 };
 
 #define GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(o) \
@@ -75,6 +76,8 @@ static void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * s
 static void on_print_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self);
 
 static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * self, GdkEventAny * event);
+
+static gboolean is_editing(GebrGuiHelpEditWindow * self);
 
 G_DEFINE_TYPE(GebrGuiHelpEditWindow, gebr_gui_help_edit_window, GTK_TYPE_WINDOW);
 
@@ -188,6 +191,7 @@ static void gebr_gui_help_edit_window_constructed(GObject * self)
 	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(item), FALSE);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
 	g_signal_connect(item, "toggled", G_CALLBACK(on_preview_toggled), self);
+	private->preview_button = GTK_WIDGET(item);
 
 	// Print button
 	item = gtk_tool_button_new_from_stock(GTK_STOCK_PRINT);
@@ -279,7 +283,7 @@ static void on_preview_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWind
 
 	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
 	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
-	preview = gtk_toggle_tool_button_get_active(button);
+	preview = !is_editing(self);
 	gebr_gui_help_edit_widget_set_editing(help_edit_widget, !preview);
 	gtk_widget_set_sensitive(priv->commit_button, !preview);
 	if (priv->has_refresh) {
@@ -301,6 +305,10 @@ static void on_print_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * sel
 	private = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
 	help_edit = GEBR_GUI_HELP_EDIT_WIDGET(private->help_edit_widget);
 	html_viewer = gebr_gui_help_edit_widget_get_html_viewer(help_edit);
+
+	if (is_editing(self)) {
+		gebr_gui_html_viewer_widget_show_html(html_viewer, gebr_gui_help_edit_widget_get_content(help_edit));
+	}
 
 	gebr_gui_html_viewer_widget_print(html_viewer);
 }
@@ -416,4 +424,8 @@ void gebr_gui_help_edit_window_quit(GebrGuiHelpEditWindow * self)
 {
 	if (!gebr_gui_help_edit_window_quit_real(self))
 		gtk_widget_destroy(GTK_WIDGET(self));
+}
+
+gboolean is_editing(GebrGuiHelpEditWindow * self) {
+	return !gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self)->preview_button));
 }
