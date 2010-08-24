@@ -165,6 +165,11 @@ void gebr_config_save(gboolean verbose);
 void gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in_log_file,
 		  const gchar * message, ...);
 
+/**
+ * 
+ */
+void gebr_path_set_to(GString * path, gboolean relative);
+
 G_END_DECLS
 
 #endif				//__GEBR_H

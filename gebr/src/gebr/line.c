@@ -152,10 +152,7 @@ void line_set_paths_to(GebrGeoXmlLine * line, gboolean relative)
 	gebr_geoxml_line_get_path(line, &line_path, 0);
 	for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
 		g_string_assign(path, gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path)));
-		if (relative)
-			gebr_path_use_home_variable(path);
-		else
-			gebr_path_resolve_home_variable(path);
+		gebr_path_set_to(path, relative);
 		gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(line_path), path->str);
 	}
 

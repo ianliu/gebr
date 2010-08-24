@@ -344,17 +344,6 @@ void flow_copy_from_dicts(GebrGeoXmlFlow * flow)
 /**
  * \internal
  */
-static void path_set_to(GString * path, gboolean relative)
-{
-	if (relative)
-		gebr_path_use_home_variable(path);
-	else
-		gebr_path_resolve_home_variable(path);
-}
-
-/**
- * \internal
- */
 static void flow_paths_foreach_parameter(GebrGeoXmlParameter * parameter, gboolean relative)
 {
 	if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
@@ -365,7 +354,7 @@ static void flow_paths_foreach_parameter(GebrGeoXmlParameter * parameter, gboole
 			GString *path;
 
 			path = g_string_new(gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(value)));
-			path_set_to(path, relative);
+			gebr_path_set_to(path, relative);
 			gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value), path->str);
 
 			g_string_free(path, TRUE);
@@ -382,26 +371,26 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 
 	/* flow's IO */
 	g_string_assign(path, gebr_geoxml_flow_io_get_input(flow));
-	path_set_to(path, relative);
+	gebr_path_set_to(path, relative);
 	gebr_geoxml_flow_io_set_input(flow, path->str);
 	g_string_assign(path, gebr_geoxml_flow_io_get_output(flow));
-	path_set_to(path, relative);
+	gebr_path_set_to(path, relative);
 	gebr_geoxml_flow_io_set_output(flow, path->str);
 	g_string_assign(path, gebr_geoxml_flow_io_get_error(flow));
-	path_set_to(path, relative);
+	gebr_path_set_to(path, relative);
 	gebr_geoxml_flow_io_set_error(flow, path->str);
 
 	/* servers IO */
 	gebr_geoxml_flow_get_server(flow, &server, 0);
 	for (; server != NULL; gebr_geoxml_sequence_next(&server)) {
 		g_string_assign(path, gebr_geoxml_flow_server_io_get_input(GEBR_GEOXML_FLOW_SERVER(server)));
-		path_set_to(path, relative);
+		gebr_path_set_to(path, relative);
 		gebr_geoxml_flow_server_io_set_input(GEBR_GEOXML_FLOW_SERVER(server), path->str);
 		g_string_assign(path, gebr_geoxml_flow_server_io_get_output(GEBR_GEOXML_FLOW_SERVER(server)));
-		path_set_to(path, relative);
+		gebr_path_set_to(path, relative);
 		gebr_geoxml_flow_server_io_set_output(GEBR_GEOXML_FLOW_SERVER(server), path->str);
 		g_string_assign(path, gebr_geoxml_flow_server_io_get_error(GEBR_GEOXML_FLOW_SERVER(server)));
-		path_set_to(path, relative);
+		gebr_path_set_to(path, relative);
 		gebr_geoxml_flow_server_io_set_error(GEBR_GEOXML_FLOW_SERVER(server), path->str);
 	}
 

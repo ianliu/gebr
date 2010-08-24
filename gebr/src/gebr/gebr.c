@@ -436,6 +436,14 @@ void gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboole
 	g_free(string);
 }
 
+void gebr_path_set_to(GString * path, gboolean relative)
+{
+	if (relative)
+		gebr_path_use_home_variable(path);
+	else
+		gebr_path_resolve_home_variable(path);
+}
+
 /*
  * Private functions
  */
