@@ -68,7 +68,7 @@ static void gebr_gui_help_edit_window_destroy(GtkObject *object);
 
 static void on_save_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self);
 
-static void on_edit_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow * self);
+static void on_preview_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow * self);
 
 static void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self);
 
@@ -169,14 +169,6 @@ static void gebr_gui_help_edit_window_constructed(GObject * self)
 	g_signal_connect(item, "clicked", G_CALLBACK(on_save_clicked), self);
 	private->commit_button = GTK_WIDGET(item);
 
-	// Edit button
-	item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_EDIT);
-	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(item),
-				       _("Toggles between edit mode and preview mode"));
-	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(item), TRUE);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-	g_signal_connect(item, "toggled", G_CALLBACK(on_edit_toggled), self);
-
 	if (private->has_refresh) {
 		// Refresh button
 		item = gtk_tool_button_new_from_stock(GTK_STOCK_REFRESH);
@@ -188,6 +180,14 @@ static void gebr_gui_help_edit_window_constructed(GObject * self)
 	}
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
+
+	// Preview button
+	item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_PRINT_PREVIEW);
+	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(item),
+				       _("Toggles between edit and preview modes"));
+	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(item), FALSE);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+	g_signal_connect(item, "toggled", G_CALLBACK(on_preview_toggled), self);
 
 	// Print button
 	item = gtk_tool_button_new_from_stock(GTK_STOCK_PRINT);
@@ -271,19 +271,19 @@ static void on_save_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self
 	gebr_gui_help_edit_widget_commit_changes(help_edit_widget);
 }
 
-static void on_edit_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow * self)
+static void on_preview_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow * self)
 {
 	GebrGuiHelpEditWindowPrivate * priv;
 	GebrGuiHelpEditWidget * help_edit_widget;
-	gboolean toggled;
+	gboolean preview;
 
 	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
 	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
-	toggled = gtk_toggle_tool_button_get_active(button);
-	gebr_gui_help_edit_widget_set_editing(help_edit_widget, toggled);
-	gtk_widget_set_sensitive(priv->commit_button, toggled);
+	preview = gtk_toggle_tool_button_get_active(button);
+	gebr_gui_help_edit_widget_set_editing(help_edit_widget, !preview);
+	gtk_widget_set_sensitive(priv->commit_button, !preview);
 	if (priv->has_refresh) {
-		gtk_widget_set_sensitive(priv->refresh_button, toggled);
+		gtk_widget_set_sensitive(priv->refresh_button, !preview);
 	}
 }
 
