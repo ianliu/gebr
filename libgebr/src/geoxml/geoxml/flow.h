@@ -419,6 +419,12 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, const gchar * comment);
 
 /**
+ *
+ * If \p flow is NULL nothing is done.
+ */
+void gebr_geoxml_flow_set_revision_data(GebrGeoXmlRevision * revision, const gchar * flow, const gchar * date, const gchar * comment);
+
+/**
  * Writes to \p revision the \p index ieth revision that \p flow has.
  * If an error ocurred, the content of \p revision is assigned to NULL.
  *

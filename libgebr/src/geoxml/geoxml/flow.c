@@ -548,8 +548,6 @@ GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, cons
 	revision = (GebrGeoXmlRevision *)
 	    __gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(flow)), "revision",
 					     (GdomeElement *) first_revision);
-	__gebr_geoxml_set_attr_value((GdomeElement *) revision, "date", gebr_iso_date());
-	__gebr_geoxml_set_attr_value((GdomeElement *) revision, "comment", comment);
 
 	revision_flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
 	gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(revision_flow), &revision_xml);
@@ -567,13 +565,24 @@ GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, cons
 
 	/* save the xml */
 	gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(revision_flow), &revision_xml);
-	__gebr_geoxml_set_element_value((GdomeElement *) revision, revision_xml, __gebr_geoxml_create_CDATASection);
+	gebr_geoxml_flow_set_revision_data(revision, revision_xml, gebr_iso_date(), comment);
 
 	/* frees */
 	g_free(revision_xml);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(revision_flow));
 
 	return revision;
+}
+
+void gebr_geoxml_flow_set_revision_data(GebrGeoXmlRevision * revision, const gchar * flow, const gchar * date, const gchar * comment)
+{
+	g_return_if_fail(revision != NULL);
+	if (flow != NULL)
+		__gebr_geoxml_set_element_value((GdomeElement *) revision, flow, __gebr_geoxml_create_CDATASection);
+	if (date != NULL)
+		__gebr_geoxml_set_attr_value((GdomeElement *) revision, "date", date);
+	if (comment != NULL)
+		__gebr_geoxml_set_attr_value((GdomeElement *) revision, "comment", comment);
 }
 
 int gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** revision, gulong index)
