@@ -26,10 +26,10 @@ typedef struct _GebrdOpenMpi GebrdOpenMpi;
 
 struct _GebrdOpenMpi {
 	GebrdMpiInterface parent;
-	GebrdMpiConfig * config;
+	const GebrdMpiConfig * config;
 };
 
-GebrdMpiInterface * gebrd_open_mpi_new(const gchar * n_process, GebrdMpiConfig * config);
+GebrdMpiInterface * gebrd_open_mpi_new(const gchar * n_process, const GebrdMpiConfig * config);
 
 G_END_DECLS
 

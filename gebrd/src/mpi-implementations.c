@@ -11,8 +11,7 @@ static gchar * gebrd_open_mpi_build_command(GebrdMpiInterface * mpi, const gchar
 static gchar * gebrd_open_mpi_finalize(GebrdMpiInterface * mpi);
 static void gebrd_open_mpi_free(GebrdMpiInterface * mpi);
 
-GebrdMpiInterface * gebrd_open_mpi_new(const gchar * n_process,
-				       GebrdMpiConfig * config)
+GebrdMpiInterface * gebrd_open_mpi_new(const gchar * n_process, const GebrdMpiConfig * config)
 {
 	GebrdOpenMpi * self;
 	GebrdMpiInterface * mpi;

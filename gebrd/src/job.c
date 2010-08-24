@@ -1009,10 +1009,7 @@ err:	g_string_free(cmd_line, TRUE);
 
 static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, GString * n_process)
 {
-	const GebrdMpiConfig * config;
-
-	config = gebrd_get_mpi_config_by_name(mpi_name);
-
+	const GebrdMpiConfig * config = gebrd_get_mpi_config_by_name(mpi_name);
 	if (config == NULL)
 		return NULL;
 

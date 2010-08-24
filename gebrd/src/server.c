@@ -39,6 +39,7 @@
 #include <gdome.h>
 
 #include "server.h"
+#include "defines.h"
 #include "gebrd.h"
 #include "job.h"
 #include "client.h"
@@ -233,7 +234,7 @@ gboolean server_parse_client_messages(struct client *client)
 			if (strcmp(version->str, PROTOCOL_VERSION)) {
 				gebr_comm_protocol_send_data_immediately(client->protocol, client->stream_socket,
 								      gebr_comm_protocol_defs.err_def, 1,
-								      "Client/server version mismatch");
+								      "Client/server version mismatch (GeBRd version is "GEBRD_VERSION")");
 				gebr_comm_socket_flush(GEBR_COMM_SOCKET(client->stream_socket));
 				goto err;
 			}
