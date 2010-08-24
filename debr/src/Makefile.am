@@ -61,10 +61,7 @@ noinst_HEADERS = \
 
 EXTRA_DIST = $(noinst_HEADERS) $(debrglade_DATA) $(debrscripts_DATA)
 
-INCLUDES = -DGLADE_DIR=\""$(debrgladedir)"\"				\
-	   -DLIBGEBR_DATA_DIR=\""$(datadir)/libgebr/"\"			\
-	   -DHELP_EDIT_SCRIPT_PATH=\"$(debrscriptsdir)\"
-
+INCLUDES = 
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
 	$(GEBR_CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_GUI_CFLAGS)
 debr_LDADD = libdebr.a $(INTLLIBS) \

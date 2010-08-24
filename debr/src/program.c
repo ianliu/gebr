@@ -20,7 +20,6 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/gui/utils.h>
-#include <libgebr/gui/help.h>
 #include <libgebr/gui/programedit.h>
 
 #include "program.h"

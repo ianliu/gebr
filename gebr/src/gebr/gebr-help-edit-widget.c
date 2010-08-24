@@ -21,6 +21,7 @@
 
 #include "gebr-help-edit-widget.h"
 #include "document.h"
+#include "defines.h"
 
 /*
  * HTML_HOLDER:
@@ -33,7 +34,7 @@
 	"var menu_edition = false;"							\
 	"function onCkEditorLoadFinished() {}"						\
 	"</script>"									\
-	"<script src='" HELP_EDIT_SCRIPT_PATH "ckeditor.js'>"				\
+	"<script src='" GEBR_HELP_EDIT_SCRIPT_PATH "ckeditor.js'>"			\
 	"</script></head>"								\
 	"<body>"									\
 	"<textarea id=\"editor\" name=\"editor\">%s</textarea>"				\

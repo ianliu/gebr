@@ -16,12 +16,15 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-#include <glib/gstdio.h>
-#include <webkit/webkit.h>
-#include <libgebr/utils.h>
 #include <regex.h>
 
+#include <glib/gstdio.h>
+#include <webkit/webkit.h>
+
+#include <libgebr/utils.h>
+
 #include "debr-help-edit-widget.h"
+#include "defines.h"
 
 enum {
 	PROP_0,
@@ -206,8 +209,8 @@ static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame)
 
 	context = webkit_web_frame_get_global_context(frame);
 	gebr_js_evaluate(context, init_script);
-	gebr_js_include(context, HELP_EDIT_SCRIPT_PATH "debr-help-edit-script.js");
-	gebr_js_include(context, HELP_EDIT_SCRIPT_PATH "ckeditor.js");
+	gebr_js_include(context, DEBR_HELP_EDIT_SCRIPT_PATH "debr-help-edit-script.js");
+	gebr_js_include(context, DEBR_HELP_EDIT_SCRIPT_PATH "ckeditor.js");
 }
 
 static gboolean check_editor_dirty(GebrGuiHelpEditWidget * self)
