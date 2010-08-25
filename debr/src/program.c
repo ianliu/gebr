@@ -641,6 +641,12 @@ static void program_details_update(void)
 	g_object_set(debr.ui_program.details.url_button, "visible", is_program_selected, NULL);
 	g_object_set(debr.ui_program.details.help_edit, "visible", is_program_selected, NULL);
 	g_object_set(debr.ui_program.details.help_view, "visible", is_program_selected, NULL);
+
+	if (is_program_selected)
+		g_object_set(debr.ui_program.details.help_view,
+			     "sensitive", strlen(gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(debr.program)))
+			     ? TRUE : FALSE, NULL);
+
 	gtk_widget_set_sensitive(GTK_WIDGET(debr.tool_item_new), is_program_selected);
 	if (!is_program_selected) {
 		/* Comentary for translators: Tooltip shown in 'New' button in Parameters page, when no programs are

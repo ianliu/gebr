@@ -1247,6 +1247,10 @@ void menu_details_update(void)
 	} else{
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_show, NULL);
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.hbox), (GtkCallback) gtk_widget_show, NULL);
+
+		g_object_set(debr.ui_menu.details.help_view,
+			     "sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)))
+			     ? TRUE : FALSE, NULL);
 	}
 	markup = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), markup);
@@ -1334,9 +1338,6 @@ void menu_folder_details_update(GtkTreeIter * iter)
 	if (debr.menu == NULL){
 		gtk_widget_hide(debr.ui_menu.details.help_view);
 		gtk_widget_hide(debr.ui_menu.details.help_edit);
-	}else{
-		gtk_widget_show(debr.ui_menu.details.help_edit);
-		gtk_widget_show(debr.ui_menu.details.help_view);
 	}
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), iter, MENU_PATH, &folder_path, -1);
 

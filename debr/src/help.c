@@ -651,6 +651,19 @@ static gsize strip_block(GString * buffer, const gchar * tag)
 
 static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self, GtkTreeIter * iter)
 {
+	GebrGeoXmlObject *object = NULL;
+
 	if (iter != NULL)
 		menu_status_set_from_iter(iter, MENU_STATUS_UNSAVED);
+	
+	g_object_get(self, "geoxml-object", &object, NULL);	
+
+	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
+		g_object_set(debr.ui_program.details.help_view,
+			     "sensitive", strlen(gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(debr.program)))
+			     ? TRUE : FALSE, NULL);
+	else
+		g_object_set(debr.ui_menu.details.help_view,
+			     "sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)))
+			     ? TRUE : FALSE, NULL);
 }
