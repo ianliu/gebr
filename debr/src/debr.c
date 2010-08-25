@@ -24,9 +24,10 @@
 #include <libgebr.h>
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
-#include <libgebr/gui/utils.h>
+#include <libgebr/gui.h>
 
 #include "debr.h"
+#include "help.h"
 #include "menu.h"
 #include "preferences.h"
 
@@ -245,13 +246,17 @@ void debr_remove_help_edit_window(gpointer object)
 		while (program) {
 			GtkWidget * prog_window;
 			prog_window = g_hash_table_lookup(debr.help_edit_windows, program);
-			if (prog_window)
+			if (prog_window) {
 				gtk_widget_destroy(prog_window);
+				g_hash_table_remove(debr.help_edit_windows, program);
+			}
 			gebr_geoxml_sequence_next(&program);
 		}
 	}
 
-	if (window != NULL)
+	if (window != NULL) {
 		gtk_widget_destroy(window);
+		g_hash_table_remove(debr.help_edit_windows, object);
+	}
 	g_hash_table_remove(debr.help_edit_windows, object);
 }

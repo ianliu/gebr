@@ -150,6 +150,8 @@ void debr_help_edit(GebrGeoXmlObject * object)
 			menu_bar = create_menu_bar(object, GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window));
 			gebr_gui_help_edit_window_set_menu_bar(GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window), menu_bar);
 
+			g_signal_connect_swapped(help_edit_window, "destroy",
+						 G_CALLBACK(debr_remove_help_edit_window), object);
 			g_signal_connect(help_edit_window, "refresh-requested",
 					 G_CALLBACK(help_edit_on_refresh), object);
 			g_signal_connect(help_edit_widget, "commit-request",
