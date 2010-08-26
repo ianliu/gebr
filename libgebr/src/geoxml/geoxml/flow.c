@@ -545,9 +545,7 @@ GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, cons
 	GebrGeoXmlSequence *i;
 	gebr_geoxml_flow_get_revision(revision_flow, &i, 0);
 	while (i != NULL) {
-		GebrGeoXmlSequence *aux;
-
-		aux = (GebrGeoXmlSequence *) __gebr_geoxml_next_element((GdomeElement *) i);
+		GebrGeoXmlSequence *aux = (GebrGeoXmlSequence *) __gebr_geoxml_next_element((GdomeElement *) i);
 		gdome_el_removeChild(gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(revision_flow)),
 				     (GdomeNode *) i, &exception);
 
