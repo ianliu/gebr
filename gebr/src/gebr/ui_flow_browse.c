@@ -473,7 +473,7 @@ out:	g_free(filename);
  */
 static void flow_browse_show_help(void)
 {
-	debr_help_show(GEBR_GEOXML_OBJECT(gebr.flow), FALSE, _("Flow report"));
+	gebr_help_show(GEBR_GEOXML_OBJECT(gebr.flow), FALSE, _("Flow report"));
 }
 
 /**
@@ -482,7 +482,7 @@ static void flow_browse_show_help(void)
  */
 static void flow_browse_edit_help(void)
 {
-	debr_help_edit_document(GEBR_GEOXML_DOC(gebr.flow));
+	gebr_help_edit_document(GEBR_GEOXML_DOC(gebr.flow));
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
 }
 

@@ -783,12 +783,12 @@ static void project_line_show_help(void)
 		title = _("Project report");
 	else
 		title = _("Line report");
-	debr_help_show(object, FALSE, title);
+	gebr_help_show(object, FALSE, title);
 }
 
 static void project_line_edit_help(void)
 {
-	debr_help_edit_document(GEBR_GEOXML_DOC(gebr.project_line));
+	gebr_help_edit_document(GEBR_GEOXML_DOC(gebr.project_line));
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.project_line), TRUE);
 }
 

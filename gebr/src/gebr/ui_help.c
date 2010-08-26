@@ -39,15 +39,17 @@
 #include "../defines.h"
 #include "menu.h"
 
-void debr_help_show_selected_program_help(void)
+static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self);
+
+void gebr_help_show_selected_program_help(void)
 {
 	if (!flow_edition_get_selected_component(NULL, TRUE))
 		return;
 
-	debr_help_show(GEBR_GEOXML_OBJECT(gebr.program), FALSE, _("Program help"));
+	gebr_help_show(GEBR_GEOXML_OBJECT(gebr.program), FALSE, _("Program help"));
 }
 
-void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
+void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
 {
 	const gchar * html;
 	GtkWidget * window;
@@ -71,7 +73,7 @@ void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 	gtk_dialog_run(GTK_DIALOG(window));
 }
 
-void debr_help_edit_document(GebrGeoXmlDocument * document)
+void gebr_help_edit_document(GebrGeoXmlDocument * document)
 {
 	if (gebr.config.native_editor || gebr.config.editor->len == 0) {
 		const gchar * help;
@@ -81,6 +83,9 @@ void debr_help_edit_document(GebrGeoXmlDocument * document)
 		help = gebr_geoxml_document_get_help(document);
 		help_edit_widget = gebr_help_edit_widget_new(document, help);
 		window = gebr_gui_help_edit_window_new(GEBR_GUI_HELP_EDIT_WIDGET(help_edit_widget));
+		g_signal_connect(help_edit_widget, "commit-request",
+				 G_CALLBACK(help_edit_on_commit_request),
+				 NULL);
 		gtk_window_set_default_size(GTK_WINDOW(window), 400, 500);
 		gtk_widget_show(window);
 	} else {
@@ -131,4 +136,20 @@ out2:		g_string_free(html_path, FALSE);
 		g_string_free(prepared_html, TRUE);
 
 	}
+}
+
+static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self)
+{
+	GebrGeoXmlObject *object = NULL;
+
+	g_object_get(self, "geoxml-document", &object, NULL);	
+
+	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+		g_object_set(gebr.ui_flow_browse->info.help_view,
+			     "sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.flow)))
+			     ? TRUE : FALSE, NULL);
+	else
+		g_object_set(gebr.ui_project_line->info.help_view,
+			     "sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.project_line)))
+			     ? TRUE : FALSE, NULL);
 }

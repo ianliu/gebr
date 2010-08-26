@@ -228,7 +228,7 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 		gebr_gui_program_edit_reload(ui_parameters->program_edit, NULL);
 		return;
 	case GTK_RESPONSE_HELP:
-		debr_help_show_selected_program_help();
+		gebr_help_show_selected_program_help();
 		return;
 	case GTK_RESPONSE_CANCEL:
 	default:
