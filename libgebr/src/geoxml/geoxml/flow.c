@@ -535,23 +535,14 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 
 GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, const gchar * comment)
 {
-	if (flow == NULL)
-		return NULL;
+	g_return_val_if_fail(flow != NULL, NULL);
+	g_return_val_if_fail(comment != NULL, NULL);
 
-	GebrGeoXmlSequence *first_revision;
 	GebrGeoXmlRevision *revision;
-	GebrGeoXmlFlow *revision_flow;
-	gchar *revision_xml;
-	GebrGeoXmlSequence *i;
 
-	gebr_geoxml_flow_get_revision(flow, &first_revision, 0);
-	revision = (GebrGeoXmlRevision *)
-	    __gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(flow)), "revision",
-					     (GdomeElement *) first_revision);
-
-	revision_flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
-	gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(revision_flow), &revision_xml);
+	GebrGeoXmlFlow *revision_flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
 	/* remove revisions from the revision flow. */
+	GebrGeoXmlSequence *i;
 	gebr_geoxml_flow_get_revision(revision_flow, &i, 0);
 	while (i != NULL) {
 		GebrGeoXmlSequence *aux;
@@ -563,13 +554,19 @@ GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, cons
 		i = aux;
 	}
 
-	/* save the xml */
+	/* save to xml and free */
+	gchar *revision_xml;
 	gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(revision_flow), &revision_xml);
-	gebr_geoxml_flow_set_revision_data(revision, revision_xml, gebr_iso_date(), comment);
-
-	/* frees */
-	g_free(revision_xml);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(revision_flow));
+
+	GebrGeoXmlSequence *first_revision;
+	gebr_geoxml_flow_get_revision(flow, &first_revision, 0);
+	revision = (GebrGeoXmlRevision *)
+	    __gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(flow)), "revision",
+					     (GdomeElement *) first_revision);
+
+	gebr_geoxml_flow_set_revision_data(revision, revision_xml, gebr_iso_date(), comment);
+	g_free(revision_xml);
 
 	return revision;
 }
