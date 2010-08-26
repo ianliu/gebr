@@ -43,10 +43,6 @@
 
 static void project_line_load(void);
 
-static void project_line_show_help(void);
-
-static void project_line_edit_help(void);
-
 static void project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 					  GtkTreeViewColumn * column, struct ui_project_line *ui_project_line);
 
@@ -216,6 +212,7 @@ void project_line_info_update(void)
 
 		g_object_set(gebr.ui_project_line->info.help_view, "sensitive", FALSE, NULL);
 		g_object_set(gebr.ui_project_line->info.help_edit, "sensitive", FALSE, NULL);
+
 		navigation_bar_update();
 		return;
 	}
@@ -307,9 +304,11 @@ void project_line_info_update(void)
 	g_string_free(text, TRUE);
 
 	/* Info button */
-	g_object_set(gebr.ui_project_line->info.help_view,
-		     "sensitive", gebr.project_line != NULL && strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.project_line)))
-		     ? TRUE : FALSE, NULL);
+    gboolean help_exists = gebr.project_line != NULL && (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.project_line)))? TRUE : FALSE);
+
+	g_object_set(gebr.ui_project_line->info.help_view, "sensitive", help_exists, NULL);
+
+    gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "project_line_view"), help_exists);
 
 	g_object_set(gebr.ui_project_line->info.help_edit, "sensitive", TRUE, NULL);
 
@@ -770,27 +769,6 @@ out:	g_free(project_filename);
 		g_free(line_filename);
 }
 
-/**
- * \internal
- */
-static void project_line_show_help(void)
-{
-	const gchar * title;
-	GebrGeoXmlObject * object;
-
-	object = GEBR_GEOXML_OBJECT(gebr.project_line);
-	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
-		title = _("Project report");
-	else
-		title = _("Line report");
-	gebr_help_show(object, FALSE, title);
-}
-
-static void project_line_edit_help(void)
-{
-	gebr_help_edit_document(GEBR_GEOXML_DOC(gebr.project_line));
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.project_line), TRUE);
-}
 
 /**
  * \internal
@@ -859,6 +837,16 @@ static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_li
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group, "project_line_delete")));
+
+	/* view report */
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (gebr.action_group, "project_line_view")));
+
+	/* edit report */
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (gebr.action_group, "project_line_edit")));
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
@@ -983,3 +971,23 @@ line_can_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *
 }
 
 
+/**
+ */
+void project_line_show_help(void)
+{
+	const gchar * title;
+	GebrGeoXmlObject * object;
+
+	object = GEBR_GEOXML_OBJECT(gebr.project_line);
+	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
+		title = _("Project report");
+	else
+		title = _("Line report");
+	gebr_help_show(object, FALSE, title);
+}
+
+void project_line_edit_help(void)
+{
+	gebr_help_edit_document(GEBR_GEOXML_DOC(gebr.project_line));
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.project_line), TRUE);
+}

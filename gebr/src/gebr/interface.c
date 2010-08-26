@@ -70,6 +70,10 @@ static const GtkActionEntry actions_entries[] = {
 		NULL, N_("Import project or line"), G_CALLBACK(on_project_line_import_activate)},
 	{"project_line_export", "document-export", N_("Export"),
 		NULL, N_("Export selected project or line"), G_CALLBACK(on_project_line_export_activate)},
+	{"project_line_view", GTK_STOCK_INFO, N_("View Report"),
+		NULL, N_("View the report related to project/line"), G_CALLBACK(on_project_line_show_help)},
+	{"project_line_edit", GTK_STOCK_EDIT, N_("Edit Report"),
+		NULL, N_("Edit the report related to project/line"), G_CALLBACK(on_project_line_edit_help)},
 
 	/*
 	 * Flow
@@ -94,6 +98,10 @@ static const GtkActionEntry actions_entries[] = {
 		NULL, N_("Copy selected flow(s) to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_paste", GTK_STOCK_PASTE, N_("Paste"),
 		NULL, N_("Paste flow(s) from clipboard"), G_CALLBACK(on_paste_activate)},
+	{"flow_view", GTK_STOCK_INFO, N_("View Report"),
+		NULL, N_("View the report related to flow"), G_CALLBACK(on_flow_browse_show_help)},
+	{"flow_edit", GTK_STOCK_EDIT, N_("Edit Report"),
+		NULL, N_("Edit the report related to flow"), G_CALLBACK(on_flow_browse_edit_help)},
 
 	/*
 	 * Flow Edition
