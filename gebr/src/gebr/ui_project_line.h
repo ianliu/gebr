@@ -122,5 +122,11 @@ void project_line_export(void);
  */
 void project_line_free(void);
 
+/**
+ */
+void project_line_show_help(void);
+
+void project_line_edit_help(void);
+
 G_END_DECLS
 #endif				//__UI_PROJECT_LINE_H

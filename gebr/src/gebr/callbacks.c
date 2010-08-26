@@ -30,8 +30,10 @@
 #include "flow.h"
 #include "menu.h"
 #include "ui_flow.h"
+#include "ui_flow_browse.h"
 #include "ui_document.h"
 #include "ui_paths.h"
+#include "ui_project_line.h"
 #include "ui_job_control.h"
 #include "ui_help.h"
 
@@ -264,5 +266,23 @@ void navigation_bar_update(void)
 	gtk_label_set_markup(GTK_LABEL(gebr.navigation_box_label), markup->str);
 
 	g_string_free(markup, TRUE);
+}
+
+void on_flow_browse_show_help(void){
+    flow_browse_show_help();
+}
+
+void on_flow_browse_edit_help(void){
+    flow_browse_edit_help();
+}
+
+/**
+ */
+void on_project_line_show_help(void){
+    project_line_show_help();
+}
+
+void on_project_line_edit_help(void){
+    project_line_edit_help();
 }
 

@@ -105,5 +105,9 @@ void flow_browse_single_selection(void);
  */
 void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new);
 
+void flow_browse_show_help(void);
+
+void flow_browse_edit_help(void);
+
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

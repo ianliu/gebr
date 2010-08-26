@@ -37,8 +37,6 @@
  */
 
 static void flow_browse_load(void);
-static void flow_browse_show_help(void);
-static void flow_browse_edit_help(void);
 static void
 flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 			     GtkTreeViewColumn * column, struct ui_flow_browse *ui_flow_browse);
@@ -328,9 +326,11 @@ void flow_browse_info_update(void)
 	g_string_free(text, TRUE);
 
 	/* Info button */
-	g_object_set(gebr.ui_flow_browse->info.help_view,
-		     "sensitive", gebr.flow != NULL && strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.flow)))
-		     ? TRUE : FALSE, NULL);
+    gboolean help_exists = gebr.flow != NULL && (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.flow))) ? TRUE : FALSE);
+
+	g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", help_exists, NULL);
+
+    gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_view"), help_exists);
 
 	g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", TRUE, NULL);
 
@@ -468,19 +468,15 @@ out:	g_free(filename);
 }
 
 /**
- * \internal 
- * Obvious
  */
-static void flow_browse_show_help(void)
+void flow_browse_show_help(void)
 {
 	gebr_help_show(GEBR_GEOXML_OBJECT(gebr.flow), FALSE, _("Flow report"));
 }
 
 /**
- * \internal 
- * Obvious
  */
-static void flow_browse_edit_help(void)
+void flow_browse_edit_help(void)
 {
 	gebr_help_edit_document(GEBR_GEOXML_DOC(gebr.flow));
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
@@ -551,8 +547,11 @@ static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_delete")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group, "flow_properties")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_properties")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_view")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_edit")));
 
 	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_change_revision"));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), ui_flow_browse->revisions_menu);

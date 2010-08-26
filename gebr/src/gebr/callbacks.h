@@ -162,5 +162,21 @@ void on_help_about_activate(void);
  */
 void navigation_bar_update(void);
 
+/**
+ *
+ */
+void on_flow_browse_show_help(void);
+
+/**
+ *
+ */
+void on_flow_browse_edit_help(void);
+
+/**
+ */
+void on_project_line_show_help(void);
+
+void on_project_line_edit_help(void);
+
 G_END_DECLS
 #endif				//__CALLBACKS_H
