@@ -739,9 +739,8 @@ void menu_close(GtkTreeIter * iter, gboolean warn_user)
 	else
 		menu_selected();
 
-	if (warn_user)
-	{  
-		if (strlen(path)){
+	if (warn_user) {  
+		if (strlen(path)) {
 			debr_message(GEBR_LOG_INFO, _("Menu \"%s\" closed."), path);
 		} else {
 			debr_message(GEBR_LOG_INFO, _("Menu closed."));
@@ -855,8 +854,25 @@ void menu_selected(void)
 
 gboolean menu_cleanup_folder(GtkTreeIter * folder)
 {
+	if (folder && menu_get_type(folder) != ITER_FOLDER)
+		return FALSE;
+	if (!menu_count_unsaved(folder))
+		return TRUE;
+
+	gboolean ret;
+
+	GList * unsaved_list = menu_get_unsaved(folder);
+	unsaved_list = g_list_reverse(unsaved_list);
+	ret = menu_cleanup_iter_list(unsaved_list);
+	g_list_foreach(unsaved_list, (GFunc)gtk_tree_iter_free, NULL);
+	g_list_free(unsaved_list);
+
+	return ret;
+}
+
+gboolean menu_cleanup_iter_list(GList * list)
+{
 	GError *error = NULL;
-	GList *unsaved_list;
 	GtkBuilder *builder;
 	GtkCellRenderer *renderer;
 	GtkListStore *store;
@@ -865,12 +881,6 @@ gboolean menu_cleanup_folder(GtkTreeIter * folder)
 	GtkWidget *treeview;
 	gboolean ret;
 	gboolean still_running = TRUE;
-
-	if (folder && menu_get_type(folder) != ITER_FOLDER)
-		return FALSE;
-
-	if (!menu_count_unsaved(folder))
-		return TRUE;
 
 	builder = gtk_builder_new();
 	gtk_builder_add_from_file(builder, DEBR_GLADE_DIR "/menu-dialog-save-ui.glade", &error);
@@ -902,10 +912,8 @@ gboolean menu_cleanup_folder(GtkTreeIter * folder)
 	gtk_widget_show_all(dialog);
 
 	while (still_running) {
-		unsaved_list = menu_get_unsaved(folder);
-		unsaved_list = g_list_reverse(unsaved_list);
 		gtk_list_store_clear(store);
-		for (GList * i = unsaved_list; i != NULL; i = i->next) {
+		for (GList * i = list; i != NULL; i = i->next) {
 			GebrGeoXmlFlow *menu;
 			GtkTreeIter iter;
 
@@ -966,8 +974,6 @@ gboolean menu_cleanup_folder(GtkTreeIter * folder)
 			still_running = FALSE;
 			ret = FALSE;
 		} 
-		g_list_foreach(unsaved_list, (GFunc)gtk_tree_iter_free, NULL);
-		g_list_free(unsaved_list);
 	}
 
 	gtk_list_store_clear(store);

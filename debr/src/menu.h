@@ -220,6 +220,10 @@ void menu_selected(void);
 gboolean menu_cleanup_folder(GtkTreeIter * folder);
 
 /**
+ */
+gboolean menu_cleanup_iter_list(GList * list);
+
+/**
  * Change the status of the currently selected menu.
  *
  * This affects the status of the currently selected menu by changing #MENU_STATUS
