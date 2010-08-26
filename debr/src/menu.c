@@ -76,7 +76,7 @@ static void on_menu_select_all_activate(GtkMenuItem *menuitem, GtkTreeView *tree
 
 static void on_menu_unselect_all_activate(GtkMenuItem *menuitem, GtkTreeView *tree_view);
 
-static gboolean menu_save_iter_list(GList * unsaved);
+static gboolean menu_save_iter_list(GList * unsaved, gboolean close);
 
 static void menu_remove_with_validation(GtkTreeIter * iter);
 
@@ -499,7 +499,7 @@ gboolean menu_save_folder(GtkTreeIter * folder)
 		return FALSE;
 
 	unsaved = menu_get_unsaved(folder);
-	ret = menu_save_iter_list(unsaved);
+	ret = menu_save_iter_list(unsaved, FALSE);
 
 	g_list_foreach(unsaved, (GFunc)gtk_tree_iter_free, NULL);
 	g_list_free(unsaved);
@@ -929,21 +929,16 @@ gboolean menu_cleanup_iter_list(GList * list)
 
 		switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
 		case 1: { // Save response
-			gboolean valid;
 			GList * chosen_list = NULL;
 			GtkTreeIter iter;
-
-			valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter);
-			while (valid) {
+			gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(store)) {
 				gboolean chosen;
 				GtkTreeIter *menu_iter;
-				gtk_tree_model_get(GTK_TREE_MODEL(store), &iter,
-						   0, &chosen,
-						   2, &menu_iter,
-						   -1);
+				gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, &chosen, 2, &menu_iter, -1);
 				if (chosen)
 					chosen_list = g_list_prepend(chosen_list, menu_iter);
-				valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &iter);
+				else
+					menu_close(menu_iter, FALSE);
 			}
 
 			/* If chosen_list = NULL, the user unchecked all menus.
@@ -954,7 +949,7 @@ gboolean menu_cleanup_iter_list(GList * list)
 				ret = TRUE;
 				still_running = FALSE;
 			} else {
-				if (!menu_save_iter_list(chosen_list)) {
+				if (!menu_save_iter_list(chosen_list, TRUE)) {
 					ret = FALSE;
 					still_running = TRUE;
 				} else {
@@ -965,11 +960,17 @@ gboolean menu_cleanup_iter_list(GList * list)
 			}
 			break;
 		}
-		case 3: // Close without saving response
+		case 3: { // Close without saving response
+			GtkTreeIter iter;
+			gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(store)) {
+				GtkTreeIter *menu_iter;
+				gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 2, &menu_iter, -1);
+				menu_close(menu_iter, FALSE);
+			}
 			ret = TRUE;
 			still_running = FALSE;
 			break;
-		case 2: // Cancel response
+		} case 2: // Cancel response
 		default:
 			still_running = FALSE;
 			ret = FALSE;
@@ -2018,27 +2019,20 @@ static void on_menu_unselect_all_activate(GtkMenuItem *menu_item, GtkTreeView *t
 	}
 }
 
-static gboolean menu_save_iter_list(GList * unsaved)
+static gboolean menu_save_iter_list(GList * unsaved, gboolean close)
 {
-	GList * entry;
-	gboolean ret;
-	entry = unsaved;
-	ret = TRUE;
+	gboolean ret = TRUE;
 
-	if (!entry)
+	if (!unsaved)
 		return FALSE;
-
-	while (entry) {
-		GtkTreeIter * iter;
-		MenuMessage result;
-
-		iter = (GtkTreeIter*)entry->data;
-		result = menu_save(iter);
+	for (GList * entry = unsaved; entry != NULL; entry = entry->next) {
+		GtkTreeIter * iter = (GtkTreeIter*)entry->data;
+		MenuMessage result = menu_save(iter);
 		if (result == MENU_MESSAGE_PERMISSION_DENIED) {
 			ret = FALSE;
 			break;
-		}
-		entry = entry->next;
+		} else if (close)
+			menu_close(iter, FALSE);
 	}
 
 	if (ret) {

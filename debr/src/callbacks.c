@@ -418,8 +418,7 @@ err:
 void on_menu_remove_folder_activate(void)
 {
 	GtkTreeIter iter;
-	if (menu_get_selected_type(&iter, FALSE) == ITER_FOLDER
-	    && menu_cleanup_folder(&iter))
+	if (menu_get_selected_type(&iter, FALSE) == ITER_FOLDER && menu_cleanup_folder(&iter))
 		menu_close_folder(&iter);
 }
 
@@ -444,65 +443,29 @@ void on_menu_install_activate(void)
 
 void on_menu_close_activate(void)
 {
+	GList *list = NULL;
+	GList *saved_list = NULL;
+
 	GtkTreeIter iter;
-	gboolean still_running = TRUE;
-
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
-		GebrGeoXmlFlow *menu;
-		GtkWidget *button;
 		MenuStatus status;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
-				   MENU_XMLPOINTER, &menu, MENU_STATUS, &status, -1);
-
-		if (status == MENU_STATUS_UNSAVED) {
-			GtkWidget *dialog;
-			gboolean cancel;
-
-			cancel = FALSE;
-
-			/* FIXME: gebr_geoxml_document_get_title returns empty string for never saved menus.
-			   However, dialog should display temporary filename set.                        */
-			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-							(GtkDialogFlags)(GTK_DIALOG_MODAL),
-							GTK_MESSAGE_QUESTION,
-							GTK_BUTTONS_NONE,
-							_("'%s' menu has unsaved changes. Do you want to save it?"),
-							(strlen
-							 (gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu)))
-							 ? gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu))
-							 : _("Untitled")));
-			button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't save"), GTK_RESPONSE_NO);
-			g_object_set(G_OBJECT(button),
-				     "image", gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON), NULL);
-			gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
-			gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
-			while(still_running){
-				switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-				case GTK_RESPONSE_YES:
-					if (menu_save(&iter) == MENU_MESSAGE_PERMISSION_DENIED)
-						gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-									_("Permission denied"),
-									_("Menu saving failed: permission denied"));
-					else
-						still_running = FALSE;
-					break;
-				case GTK_RESPONSE_NO:
-					still_running = FALSE;
-					break;
-				default:	/* cancel or dialog destroy */
-					still_running = FALSE;
-					cancel = TRUE;
-					break;
-				}
-			}
-			gtk_widget_destroy(dialog);
-			if (cancel == TRUE)
-				return;
-		}
-
-		menu_close(&iter, TRUE);
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_STATUS, &status, -1);
+		if (status == MENU_STATUS_UNSAVED)
+			list = g_list_prepend(list, gtk_tree_iter_copy(&iter));
+		else
+			saved_list = g_list_prepend(saved_list, gtk_tree_iter_copy(&iter));
 	}
+	list = g_list_reverse(list);
+
+	if (menu_cleanup_iter_list(list)) {
+		for (GList * i = saved_list; i != NULL; i = i->next)
+			menu_close((GtkTreeIter*)i->data, FALSE);
+	}
+
+	g_list_foreach(list, (GFunc)gtk_tree_iter_free, NULL);
+	g_list_free(list);
+	g_list_foreach(saved_list, (GFunc)gtk_tree_iter_free, NULL);
+	g_list_free(saved_list);
 }
 
 void on_program_new_activate(void)
