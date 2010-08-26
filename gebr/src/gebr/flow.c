@@ -399,7 +399,7 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 
 	/* call recursively for each revision */
 	GebrGeoXmlSequence *revision;
-	gebr_geoxml_flow_get_revision(gebr.flow, &revision, 0);
+	gebr_geoxml_flow_get_revision(flow, &revision, 0);
 	for (; revision != NULL; gebr_geoxml_sequence_next(&revision)) {
 		gchar *xml;
 		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), &xml, NULL, NULL);
@@ -407,8 +407,8 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 		if (gebr_geoxml_document_load_buffer((GebrGeoXmlDocument **)&rev, xml) == GEBR_GEOXML_RETV_SUCCESS) {
 			flow_set_paths_to(rev, relative);
 			g_free(xml);
-			gebr_geoxml_document_to_string(rev, &xml);
-			gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(revision), &xml, NULL, NULL);
+			gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(rev), &xml);
+			gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(revision), xml, NULL, NULL);
 			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(rev));
 		}
 		g_free(xml);

@@ -515,8 +515,8 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 	gchar *original_locale = NULL, *new_locale = NULL;
 
 	/* Temporarily set the current date/time locale to English. */
-       	original_locale = g_strdup(setlocale(LC_TIME, ""));
-       	new_locale = g_strdup(setlocale(LC_TIME, "en_US.UTF-8"));
+       	original_locale = g_strdup(setlocale(LC_TIME, NULL));
+       	new_locale = g_strdup(setlocale(LC_TIME, "C"));
 
         date = g_date_new();
         g_date_set_time_t(date, time(NULL));
