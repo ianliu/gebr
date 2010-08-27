@@ -66,6 +66,11 @@ static const GtkActionEntry actions_entries[] = {
 	 G_CALLBACK(on_menu_remove_folder_activate)},
 	{"menu_select_all", GTK_STOCK_SELECT_ALL, N_("Select all"), NULL, N_("Select all menus"), NULL},
 	{"menu_unselect_all", NULL, N_("Unselect all"), NULL, N_("Unselect all menus"), NULL},
+	{"menu_help_view", GTK_STOCK_INFO, N_("View Help"),
+		NULL, N_("View the help related to menu"), G_CALLBACK(on_menu_help_show_clicked)},
+	{"menu_help_edit", GTK_STOCK_EDIT, N_("Edit Help"),
+		NULL, N_("Edit the help related to menu"), G_CALLBACK(on_menu_help_edit_clicked)},
+
 	/* program */
 	{"program_new", GTK_STOCK_NEW, NULL, NULL, N_("Create new program"),
 	 G_CALLBACK(on_program_new_activate)},
@@ -83,6 +88,11 @@ static const GtkActionEntry actions_entries[] = {
 	 G_CALLBACK(on_program_copy_activate)},
 	{"program_paste", GTK_STOCK_PASTE, N_("Paste"), NULL, N_("Paste program(s) from clipboard"),
 	 G_CALLBACK(on_program_paste_activate)},
+	{"program_help_view", GTK_STOCK_INFO, N_("View Help"),
+		NULL, N_("View the help related to program"), G_CALLBACK(on_program_help_show)},
+	{"program_help_edit", GTK_STOCK_EDIT, N_("Edit Help"),
+		NULL, N_("Edit the help related to program"), G_CALLBACK(on_program_help_edit)},
+
 	/* parameter */
 	// "paramter_new" is a special button, where a popup menu is created on its bottom.
 	{"parameter_delete", GTK_STOCK_DELETE, NULL, NULL, N_("Delete current parameter"),

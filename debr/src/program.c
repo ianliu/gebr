@@ -67,8 +67,6 @@ static void program_stderr_changed(GtkToggleButton * togglebutton);
 static gboolean program_title_changed(GtkEntry * entry);
 static gboolean program_binary_changed(GtkEntry * entry);
 static gboolean program_description_changed(GtkEntry * entry);
-static void program_help_show(GtkButton * button);
-static void program_help_edit(GtkButton * button, GtkWidget * validate_image);
 static gboolean program_version_changed(GtkEntry * entry);
 static void program_mpi_changed(GtkComboBox * combo);
 static gboolean program_url_changed(GtkEntry * entry);
@@ -642,10 +640,13 @@ static void program_details_update(void)
 	g_object_set(debr.ui_program.details.help_edit, "visible", is_program_selected, NULL);
 	g_object_set(debr.ui_program.details.help_view, "visible", is_program_selected, NULL);
 
-	if (is_program_selected)
+	if (is_program_selected){
+		gboolean help_exists = (strlen(gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(debr.program))) ? TRUE : FALSE);
 		g_object_set(debr.ui_program.details.help_view,
-			     "sensitive", strlen(gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(debr.program)))
-			     ? TRUE : FALSE, NULL);
+			     "sensitive", help_exists, NULL);
+
+		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "program_help_view"), help_exists);
+	}
 
 	gtk_widget_set_sensitive(GTK_WIDGET(debr.tool_item_new), is_program_selected);
 	if (!is_program_selected) {
@@ -835,6 +836,15 @@ static GtkMenu *program_popup_menu(GtkWidget * tree_view)
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "program_paste")));
 
+	/* view help */
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (debr.action_group, "program_help_view")));
+
+	/* edit help */
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (debr.action_group, "program_help_edit")));
  out:	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
@@ -945,10 +955,9 @@ static gboolean program_url_changed(GtkEntry * entry)
 }
 
 /**
- * \internal
  * Calls \ref debr_help_show with menu's help.
  */
-static void program_help_show(GtkButton * button)
+void program_help_show(void)
 {
 	debr_help_show(GEBR_GEOXML_OBJECT(debr.program), TRUE, _("Program Help"));
 }
@@ -956,7 +965,7 @@ static void program_help_show(GtkButton * button)
 /**
  * Edits the programs help.
  */
-static void program_help_edit(GtkButton * button, GtkWidget * validate_image)
+void program_help_edit(void)
 {
 	debr_help_edit(GEBR_GEOXML_OBJECT(debr.program));
 }

@@ -252,5 +252,13 @@ void on_drop_down_menu_requested(GtkWidget * button, gpointer data);
  */
 gboolean on_entry_focus_out(GtkEntry * entry, GdkEventFocus * event, GebrValidateCase * data);
 
+void on_menu_help_edit_clicked(void);
+
+void on_menu_help_show_clicked(void);
+
+void on_program_help_show(void);
+
+void on_program_help_edit(void);
+
 G_END_DECLS
 #endif				//__CALLBACKS_H

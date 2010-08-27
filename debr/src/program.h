@@ -118,5 +118,15 @@ gboolean program_get_selected(GtkTreeIter * iter, gboolean warn_user);
  */
 void program_select_iter(GtkTreeIter iter);
 
+/*
+ *
+ */
+void program_help_show(void);
+
+/*
+ *
+ */
+void program_help_edit(void);
+
 G_END_DECLS
 #endif				//__PROGRAM_H

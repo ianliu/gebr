@@ -30,6 +30,8 @@
 #include "debr.h"
 #include "preferences.h"
 #include "parameter.h"
+#include "menu.h"
+#include "program.h"
 
 void on_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num)
 {
@@ -656,4 +658,20 @@ gboolean on_entry_focus_out(GtkEntry * entry, GdkEventFocus * event, GebrValidat
 	g_string_free(tooltip, TRUE);
 
 	return FALSE;
+}
+
+void on_menu_help_edit_clicked(void){
+	menu_help_edit_clicked();
+}
+
+void on_menu_help_show_clicked(void){
+	menu_help_show_clicked();
+}
+
+void on_program_help_show(void){
+	program_help_show();
+}
+
+void on_program_help_edit(void){
+	program_help_edit();
 }

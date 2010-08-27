@@ -48,8 +48,6 @@ static void menu_title_changed(GtkEntry * entry);
 
 static void menu_description_changed(GtkEntry * entry);
 
-static void on_menu_help_edit_clicked(GtkWidget * edit_button);
-
 static void menu_author_changed(GtkEntry * entry);
 
 static void menu_email_changed(GtkEntry * entry);
@@ -82,7 +80,6 @@ static void menu_remove_with_validation(GtkTreeIter * iter);
 
 static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object);
 
-static void on_menu_help_show_clicked(GtkWidget * button);
 /*
  * Public functions
  */
@@ -221,9 +218,9 @@ void menu_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(hbox), debr.ui_menu.details.help_view, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), debr.ui_menu.details.help_edit, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(debr.ui_menu.details.help_view), "clicked",
-			 G_CALLBACK(on_menu_help_show_clicked), NULL);
+			 G_CALLBACK(menu_help_show_clicked), NULL);
 	g_signal_connect(GTK_OBJECT(debr.ui_menu.details.help_edit), "clicked",
-			 G_CALLBACK(on_menu_help_edit_clicked), NULL);
+			 G_CALLBACK(menu_help_edit_clicked), NULL);
 	gtk_box_pack_end(GTK_BOX(details), hbox, FALSE, TRUE, 0);
 
 	debr.ui_menu.details.author_label = gtk_label_new(NULL);
@@ -779,6 +776,8 @@ void menu_selected(void)
 			"menu_save_as",
 			"menu_delete",
 			"menu_add_folder",
+			"menu_help_edit",
+			"menu_help_view",
 			NULL
 		};
 		debr_set_actions_sensitive(names, TRUE);
@@ -797,6 +796,10 @@ void menu_selected(void)
 			validate_set_selected(&validate->iter);
 			menu_validate(&iter);
 		}
+
+		gboolean help_exists = (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu))) ? TRUE : FALSE);
+		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_help_view"), help_exists);
+
 	} else if (type == ITER_FOLDER) {
 		menu_folder_details_update(&iter);
 
@@ -809,6 +812,8 @@ void menu_selected(void)
 			"menu_save_as",
 			"menu_revert",
 			"menu_delete",
+			"menu_help_edit",
+			"menu_help_view",
 			NULL
 		};
 		debr_set_actions_sensitive(names, FALSE);
@@ -840,6 +845,8 @@ void menu_selected(void)
 			"menu_revert",
 			"menu_delete",
 			"menu_remove_folder",
+			"menu_help_edit",
+			"menu_help_view",
 			NULL
 		};
 		debr_set_actions_sensitive(names, FALSE);
@@ -1252,12 +1259,14 @@ void menu_details_update(void)
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_hide, NULL);
 		return;
 	} else{
+		gboolean help_exists = (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu))) ? TRUE : FALSE);
+
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_show, NULL);
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.hbox), (GtkCallback) gtk_widget_show, NULL);
 
 		g_object_set(debr.ui_menu.details.help_view,
-			     "sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)))
-			     ? TRUE : FALSE, NULL);
+			     "sensitive", help_exists, NULL);
+		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_help_view"), help_exists);
 	}
 	markup = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), markup);
@@ -1681,6 +1690,15 @@ static GtkMenu *menu_popup_menu(GtkTreeView * tree_view)
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_remove_folder")));
 
+	/* view help */
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (debr.action_group, "menu_help_view")));
+
+	/* edit help */
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (debr.action_group, "menu_help_edit")));
 	/*
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 	gtk_container_add(GTK_CONTAINER(menu),
@@ -1778,20 +1796,18 @@ static void menu_description_changed(GtkEntry * entry)
 }
 
 /**
- * \internal
  * Calls \ref debr_help_show with menu's help.
  */
-static void on_menu_help_show_clicked(GtkWidget * button)
+void menu_help_show_clicked(void)
 {
 	debr_help_show(GEBR_GEOXML_OBJECT(debr.menu), TRUE, _("Menu Help"));
 }
 
 /**
- * \internal
  * Calls \ref debr_help_edit with menu's help.
  * After help was edited in a external browser, save it back to XML.
  */
-static void on_menu_help_edit_clicked(GtkWidget * button)
+void menu_help_edit_clicked(void)
 {
 	debr_help_edit(GEBR_GEOXML_OBJECT(debr.menu));
 }

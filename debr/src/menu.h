@@ -365,6 +365,16 @@ void menu_close_folder(GtkTreeIter * iter);
  */
 void menu_close_folder_from_path(const gchar * path);
 
+/*
+ *
+ */
+void menu_help_edit_clicked(void);
+
+/*
+ *
+ */
+void menu_help_show_clicked(void);
+
 //======================================================================================================================
 // Getters & Setters												       =
 //======================================================================================================================
