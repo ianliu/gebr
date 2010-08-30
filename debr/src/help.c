@@ -653,6 +653,8 @@ static gsize strip_block(GString * buffer, const gchar * tag)
 
 static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self, GtkTreeIter * iter)
 {
+	gboolean sensitive;
+	const gchar * help;
 	GebrGeoXmlObject *object = NULL;
 
 	if (iter != NULL)
@@ -660,14 +662,16 @@ static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self, GtkTreeIte
 	
 	g_object_get(self, "geoxml-object", &object, NULL);	
 
-	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
-		g_object_set(debr.ui_program.details.help_view,
-			     "sensitive", strlen(gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(debr.program)))
-			     ? TRUE : FALSE, NULL);
-	else
-		g_object_set(debr.ui_menu.details.help_view,
-			     "sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu)))
-			     ? TRUE : FALSE, NULL);
+	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
+		help = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(debr.program));
+		sensitive = strlen(help) > 0 ? TRUE : FALSE;
+		g_object_set(debr.ui_program.details.help_view, "sensitive", sensitive, NULL);
+	} else {
+		help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu));
+		sensitive = strlen(help) > 0 ? TRUE : FALSE;
+		g_object_set(debr.ui_menu.details.help_view, "sensitive", sensitive, NULL);
+		validate_image_set_check_help(debr.ui_menu.help_validate_image, help);
+	}
 }
 
 static void help_edit_window_on_destroy(GtkWidget * window, GebrGeoXmlObject * object)
