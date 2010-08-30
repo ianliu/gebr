@@ -1,0 +1,147 @@
+<!ELEMENT gebr (project | line | flow)>
+<!ATTLIST gebr
+	  version CDATA #FIXED "0.4.0">
+
+<!ELEMENT project (document, path*, child*, revision*)>
+<!ELEMENT line    (document, path*, child*, revision*)>
+<!ELEMENT flow    (document, category*, io, servers, program*, revision*)>
+
+<!ELEMENT document (title, description, author, email, date, help, dict)>
+
+<!-- Short title for a program, flow, line or project -->
+<!ELEMENT title	(#PCDATA)>
+<!-- One line description for a program or flow -->
+<!ELEMENT description (#PCDATA)>
+<!-- Author of the flow and his/her email -->
+<!ELEMENT author (#PCDATA)>
+<!ELEMENT email (#PCDATA)>
+<!-- Dates associated to documents -->
+<!ELEMENT date (created, modified, lastrun?)>
+<!ELEMENT created (#PCDATA)>
+<!ELEMENT modified (#PCDATA)>
+<!ELEMENT lastrun (#PCDATA)>
+<!-- Detailed text used as help for a program or menu as well as for report -->
+<!ELEMENT help (#PCDATA)>
+<!-- Dictionary of parameters for use in programs' parameters -->
+<!ELEMENT dict (parameterlist)>
+
+<!-- Child's reference -->
+<!ELEMENT child EMPTY>
+<!ATTLIST child source CDATA #REQUIRED>
+
+<!-- Path for quick access for lines or projects -->
+<!ELEMENT path             (#PCDATA)>
+<!ATTLIST path alias CDATA #IMPLIED>
+
+<!-- Categories to which the menu belongs to -->
+<!ELEMENT category (#PCDATA)>
+
+<!-- Input/Output to run the flow -->
+<!ELEMENT io (input, output, error)>
+<!-- Input/Output/Erro log files -->
+<!ELEMENT input (#PCDATA)>
+<!ELEMENT output (#PCDATA)>
+<!ELEMENT error (#PCDATA)>
+
+<!-- Servers list and configuration -->
+<!ELEMENT servers (server*)>
+<!ELEMENT server (io, lastrun)>
+<!ATTLIST server
+	  address CDATA #REQUIRED>
+
+<!ELEMENT program (title, binary, description, help, url, parameterlist)>
+<!ATTLIST program
+	  stdin	        (yes | no)				#REQUIRED
+	  stdout	(yes | no)				#REQUIRED
+	  stderr	(yes | no)				#REQUIRED
+	  status	(disabled | configured | unconfigured)	#REQUIRED
+	  version       CDATA					#IMPLIED
+	  mpi 	        CDATA					#IMPLIED>
+
+<!-- Binary to program (without path) -->
+<!ELEMENT binary (#PCDATA)>
+<!-- URL related to the program -->
+<!ELEMENT url (#PCDATA)>
+
+<!ELEMENT revision (project | line | flow)>
+<!ATTLIST revision
+	  date	        CDATA	#REQUIRED
+	  comment	CDATA	#REQUIRED>
+
+<!-- Parameters -->
+<!ELEMENT parameterlist (parameter* | group*)>
+
+<!ELEMENT parameter (label, type)>
+<!ATTLIST parameter
+	  keyword       CDATA           #REQUIRED
+	  dictkeyword	CDATA		#IMPLIED
+	  required	(yes | no)	#IMPLIED
+	  separator	CDATA		#IMPLIED>
+ 
+<!ELEMENT type (int | float | string | flag | file | range | enum)>
+
+<!ELEMENT template (default+)>
+<!ELEMENT instance (value+, default+)>
+
+<!-- Integer -->
+<!ELEMENT int (template?, instance+)>
+<!ATTLIST int
+	  min	CDATA	#IMPLIED
+	  max	CDATA	#IMPLIED>
+
+<!-- Real number -->
+<!ELEMENT float (template?, instance+)>
+<!ATTLIST float
+   	  min	CDATA	#IMPLIED
+	  max	CDATA	#IMPLIED>
+
+<!-- String -->
+<!ELEMENT string (template?, instance+)>
+
+<!-- Flag -->
+<!ELEMENT flag (template?, instance+)>
+
+<!-- File -->
+<!ELEMENT file (template?, instance+)>
+<!ATTLIST file
+	  directory	        (yes | no)	#REQUIRED
+	  filter-name	        CDATA		#IMPLIED
+	  filter-pattern	CDATA		#IMPLIED>
+
+<!-- Range -->
+<!ELEMENT range (template?, instance+)>
+<!ATTLIST range
+	  min	   CDATA	#REQUIRED
+	  max      CDATA	#REQUIRED
+	  inc      CDATA	#REQUIRED
+	  digits   CDATA	#REQUIRED>
+
+<!-- Enum -->
+<!ELEMENT enum (template?, instance+, option*)>
+<!ELEMENT option (label, value)>
+
+<!-- Short text to be displayed as label for a parameter -->
+<!ELEMENT label (#PCDATA)>
+
+<!-- Actual value of a parameter -->
+<!ELEMENT value (#PCDATA)>
+
+<!-- Actual default value of a parameter -->
+<!ELEMENT default (#PCDATA)>
+
+
+<!ELEMENT group (instanceness, exclusiveness?, parameter*)>
+<!ATTLIST group
+	  expand	  (yes | no)	#REQUIRED>
+
+<!ELEMENT instanceness EMPTY>
+<!ATTLIST instanceness
+	  min	      CDATA   #REQUIRED
+	  max	      CDATA   #REQUIRED
+	  count       CDATA   #REQUIRED>
+
+<!ELEMENT exclusiveness  EMPTY>
+<!ATTLIST exclusiveness
+	  default  	CDATA	#REQUIRED
+	  selection	CDATA	#REQUIRED>
+
