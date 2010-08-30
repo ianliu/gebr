@@ -223,8 +223,6 @@ void menu_setup_ui(void)
 	debr.ui_menu.details.help_view = gtk_button_new_with_label(_("View Help"));
 	debr.ui_menu.details.help_edit = gtk_button_new();
 
-	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.help_validate_image), 1, 0.5);
-	gtk_misc_set_alignment(GTK_MISC(edit_help_label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(button_hbox), debr.ui_menu.help_validate_image, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_hbox), edit_help_label, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(alignment), button_hbox);

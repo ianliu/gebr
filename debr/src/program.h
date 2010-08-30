@@ -36,6 +36,7 @@ enum {
 
 struct ui_program {
 	GtkWidget *widget;
+	GtkWidget * help_validate_image;
 
 	GtkListStore *list_store;
 	GtkWidget *tree_view;

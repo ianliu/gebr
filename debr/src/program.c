@@ -174,10 +174,24 @@ void program_setup_ui(void)
 
 	/* Help */
 	GtkWidget *hbox_aux;
+	GtkWidget * alignment;
+	GtkWidget * button_hbox;
+	GtkWidget * edit_help_label;
+
 	hbox_aux = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(details), hbox_aux, FALSE, TRUE, 0);
+	alignment = gtk_alignment_new(0.5, 0.5, 0, 0);
+	button_hbox = gtk_hbox_new(FALSE, 0);
+	edit_help_label = gtk_label_new(_("Edit Help"));
+	debr.ui_program.help_validate_image = validate_image_warning_new();
 	debr.ui_program.details.help_view = gtk_button_new_with_label(_("View Help"));
-	debr.ui_program.details.help_edit = gtk_button_new_with_label(_("Edit Help"));
+	debr.ui_program.details.help_edit = gtk_button_new();
+
+	gtk_box_pack_start(GTK_BOX(button_hbox), debr.ui_program.help_validate_image, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(button_hbox), edit_help_label, TRUE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(alignment), button_hbox);
+	gtk_container_add(GTK_CONTAINER(debr.ui_program.details.help_edit), alignment);
+
+	gtk_box_pack_start(GTK_BOX(details), hbox_aux, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox_aux), debr.ui_program.details.help_view, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(hbox_aux), debr.ui_program.details.help_edit, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(debr.ui_program.details.help_view), "clicked",
@@ -640,12 +654,14 @@ static void program_details_update(void)
 	g_object_set(debr.ui_program.details.help_edit, "visible", is_program_selected, NULL);
 	g_object_set(debr.ui_program.details.help_view, "visible", is_program_selected, NULL);
 
-	if (is_program_selected){
-		gboolean help_exists = (strlen(gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(debr.program))) ? TRUE : FALSE);
-		g_object_set(debr.ui_program.details.help_view,
-			     "sensitive", help_exists, NULL);
-
+	if (is_program_selected) {
+		const gchar * help;
+		gboolean help_exists;
+		help = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(debr.program));
+		help_exists = strlen(help) > 0 ? TRUE : FALSE;
+		g_object_set(debr.ui_program.details.help_view, "sensitive", help_exists, NULL);
 		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "program_help_view"), help_exists);
+		validate_image_set_check_help(debr.ui_program.help_validate_image, help);
 	}
 
 	gtk_widget_set_sensitive(GTK_WIDGET(debr.tool_item_new), is_program_selected);

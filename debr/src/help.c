@@ -666,6 +666,7 @@ static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self, GtkTreeIte
 		help = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(debr.program));
 		sensitive = strlen(help) > 0 ? TRUE : FALSE;
 		g_object_set(debr.ui_program.details.help_view, "sensitive", sensitive, NULL);
+		validate_image_set_check_help(debr.ui_program.help_validate_image, help);
 	} else {
 		help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu));
 		sensitive = strlen(help) > 0 ? TRUE : FALSE;
