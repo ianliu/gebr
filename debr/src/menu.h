@@ -74,6 +74,7 @@ typedef enum {
  */
 struct ui_menu {
 	GtkWidget *widget;
+	GtkWidget *help_validate_image;
 
 	GtkTreeStore *model;
 	GtkWidget *tree_view;

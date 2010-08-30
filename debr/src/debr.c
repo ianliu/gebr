@@ -228,16 +228,18 @@ gboolean debr_has_category(const gchar * category, gboolean add)
 	return FALSE;
 }
 
-void debr_remove_help_edit_window(gpointer object)
+void debr_remove_help_edit_window(gpointer object, gboolean destroy_children)
 {
 	GtkWidget * window;
+	GebrGeoXmlObjectType type;
 
 	window = g_hash_table_lookup(debr.help_edit_windows, object);
 
 	/* If this is a GeoXmlFlow, we scan through all programs
 	 * and destroy their windows too.
 	 */
-	if (gebr_geoxml_object_get_type(GEBR_GEOXML_OBJECT(object)) == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+	type = gebr_geoxml_object_get_type(GEBR_GEOXML_OBJECT(object));
+	if (destroy_children && type == GEBR_GEOXML_OBJECT_TYPE_FLOW)
 	{
 		GebrGeoXmlFlow * flow = GEBR_GEOXML_FLOW(object);
 		GebrGeoXmlSequence * program;

@@ -211,10 +211,18 @@ void menu_setup_ui(void)
 
 	/* Help */
 	GtkWidget * hbox;
-	debr.ui_menu.details.hbox = hbox = gtk_hbox_new(TRUE, 0);
+	GtkWidget * button_hbox;
 
+	debr.ui_menu.details.hbox = hbox = gtk_hbox_new(TRUE, 0);
+	button_hbox = gtk_hbox_new(FALSE, 0);
 	debr.ui_menu.details.help_view = gtk_button_new_with_label(_("View Help"));
-	debr.ui_menu.details.help_edit = gtk_button_new_with_label(_("Edit Help"));
+	debr.ui_menu.details.help_edit = gtk_button_new();
+	debr.ui_menu.help_validate_image = validate_image_warning_new();
+
+	gtk_box_pack_start(GTK_BOX(button_hbox), debr.ui_menu.help_validate_image, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(button_hbox), gtk_label_new(_("Edit Help")), FALSE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(debr.ui_menu.details.help_edit), button_hbox);
+
 	gtk_box_pack_start(GTK_BOX(hbox), debr.ui_menu.details.help_view, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), debr.ui_menu.details.help_edit, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(debr.ui_menu.details.help_view), "clicked",
@@ -729,7 +737,7 @@ void menu_close(GtkTreeIter * iter, gboolean warn_user)
 	if (validate)
 		validate_close_iter(&validate->iter);
 
-	debr_remove_help_edit_window(menu);
+	debr_remove_help_edit_window(menu, TRUE);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
 	if (gtk_tree_store_remove(debr.ui_menu.model, iter))
 		menu_select_iter(iter);
@@ -1264,9 +1272,10 @@ void menu_details_update(void)
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_show, NULL);
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.hbox), (GtkCallback) gtk_widget_show, NULL);
 
-		g_object_set(debr.ui_menu.details.help_view,
-			     "sensitive", help_exists, NULL);
+		g_object_set(debr.ui_menu.details.help_view, "sensitive", help_exists, NULL);
 		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_help_view"), help_exists);
+		validate_image_set_check_help(debr.ui_menu.help_validate_image,
+					      gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)));
 	}
 	markup = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), markup);

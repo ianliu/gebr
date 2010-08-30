@@ -155,10 +155,11 @@ gboolean debr_has_category(const gchar * category, gboolean add);
 /**
  * debr_remove_help_edit_window:
  * @object:
+ * @destroy_children:
  *
  * Removes the @object key in debr.help_edit_windows, destroying the associated GebrGuiHelpEditWindow.
  */
-void debr_remove_help_edit_window(gpointer object);
+void debr_remove_help_edit_window(gpointer object, gboolean destroy_children);
 
 G_END_DECLS
 #endif				//__DEBR_H

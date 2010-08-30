@@ -226,7 +226,7 @@ void on_menu_revert_activate(void)
 		if (menu == NULL)
 			return;
 
-		debr_remove_help_edit_window(old_menu);
+		debr_remove_help_edit_window(old_menu, TRUE);
 
 		/* revert to the one in disk */
 		gebr_geoxml_document_free(GEBR_GEOXML_DOC(old_menu));
