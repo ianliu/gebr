@@ -94,6 +94,7 @@ int main(int argc, char **argv, char **env)
 		return 0;
 	}
 
+	g_thread_init(NULL);
 	gtk_init(&argc, &argv);
 	setlocale(LC_ALL, "");
 	setlocale(LC_NUMERIC, "C");
