@@ -663,10 +663,7 @@ void menu_validate(GtkTreeIter * iter)
 
 void menu_install(void)
 {
-	gboolean overwriteall;
 	GtkTreeIter iter;
-
-	overwriteall = FALSE;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
 		GtkWidget *dialog;
@@ -676,16 +673,11 @@ void menu_install(void)
 		GString *command;
 		GebrGeoXmlFlow *menu;
 		MenuStatus status;
-		gboolean do_save = FALSE;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
-				   MENU_STATUS, &status, MENU_PATH, &menu_path, MENU_XMLPOINTER, &menu, -1);
+				   MENU_STATUS, &status, MENU_XMLPOINTER, &menu, -1);
 
 		const gchar *menu_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu));
-		destination = g_string_new(NULL);
-		command = g_string_new(NULL);
-		g_string_printf(destination, "%s/.gebr/gebr/menus/%s", getenv("HOME"), menu_filename);
-		g_string_printf(command, "cp %s %s", menu_path, destination->str);
 
 		if (status == MENU_STATUS_UNSAVED) {
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
@@ -694,32 +686,21 @@ void menu_install(void)
 							_("Menu %s is unsaved. This means that "
 							  "you are installing an older state of it. "
 							  "Would you like to save if first?"), menu_filename);
-			if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES)
+			if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES){
 				menu_save(&iter);
+			}
 			gtk_widget_destroy(dialog);
 		}
 
-		if (!overwriteall && g_file_test(destination->str, G_FILE_TEST_EXISTS)) {
-			gint response;
-			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-							(GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-							GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
-							_("Menu '%s' already exists. Do you want to overwrite it?"),
-							menu_filename);
-			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't overwrite"), GTK_RESPONSE_NO);
-			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Overwrite"), GTK_RESPONSE_YES);
-			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Overwrite all"), GTK_RESPONSE_OK);
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
+				   MENU_PATH, &menu_path, MENU_XMLPOINTER, &menu, -1);
 
-			response = gtk_dialog_run(GTK_DIALOG(dialog));
-			if (response == GTK_RESPONSE_YES || response == GTK_RESPONSE_OK) {
-				do_save = TRUE;
-				overwriteall = (response == GTK_RESPONSE_OK);
-			}
-			gtk_widget_destroy(dialog);
-		} else
-			do_save = TRUE;
+		destination = g_string_new(NULL);
+		command = g_string_new(NULL);
+		g_string_printf(destination, "%s/.gebr/gebr/menus/%s", getenv("HOME"), menu_filename);
+		g_string_printf(command, "cp %s %s", menu_path, destination->str);
 
-		if (do_save && system(command->str) != 0)
+		if (destination->len && strlen(menu_path) && system(command->str) != 0)
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 						_("Failed to install menu %s"),
 						menu_filename);
