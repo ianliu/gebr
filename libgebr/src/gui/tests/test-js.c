@@ -18,7 +18,7 @@
 #include <JavaScriptCore/JavaScript.h>
 #include <glib.h>
 
-#include "../gui/gebr-js.h"
+#include "../gui/gebr-gui-js.h"
 
 static void
 test_gebr_js_value_get_string(void)
