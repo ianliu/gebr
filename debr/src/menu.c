@@ -668,6 +668,24 @@ void menu_install(void)
 
 	overwriteall = FALSE;
 
+	gebr_gui_gtk_tree_view_foreach_selected_hyg(&iter, debr.ui_menu.tree_view, 2) {
+		GtkWidget *dialog;
+
+		MenuStatus status;
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
+				   MENU_STATUS, &status, -1);
+
+		if (status == MENU_STATUS_UNSAVED) {
+			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
+							(GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+							GTK_MESSAGE_WARNING, GTK_BUTTONS_OK,
+							_("There are menus unsaved. You need to "
+							  "save then before install."));
+			gtk_dialog_run(GTK_DIALOG(dialog));
+			gtk_widget_destroy(dialog);
+			return;
+		}
+	}
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view) {
 		GtkWidget *dialog;
 
@@ -687,17 +705,6 @@ void menu_install(void)
 		g_string_printf(destination, "%s/.gebr/gebr/menus/%s", getenv("HOME"), menu_filename);
 		g_string_printf(command, "cp %s %s", menu_path, destination->str);
 
-		if (status == MENU_STATUS_UNSAVED) {
-			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
-							(GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-							GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
-							_("Menu %s is unsaved. This means that "
-							  "you are installing an older state of it. "
-							  "Would you like to save if first?"), menu_filename);
-			if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES)
-				menu_save(&iter);
-			gtk_widget_destroy(dialog);
-		}
 
 		if (!overwriteall && g_file_test(destination->str, G_FILE_TEST_EXISTS)) {
 			gint response;
@@ -719,27 +726,11 @@ void menu_install(void)
 		} else
 			do_save = TRUE;
 
-		if (do_save){
-			if (strlen(menu_path) == 0){
-				g_free(menu_path);
-				g_string_free(destination, TRUE);
-				g_string_free(command, TRUE);
-
-				gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
-						   MENU_PATH, &menu_path, MENU_XMLPOINTER, &menu, -1);
-
-				destination = g_string_new(NULL);
-				command = g_string_new(NULL);
-
-				g_string_printf(destination, "%s/.gebr/gebr/menus/%s", getenv("HOME"), menu_filename);
-				g_string_printf(command, "cp %s %s", menu_path, destination->str);
-			}
-			if (system(command->str) != 0){
+		if (do_save && system(command->str) != 0){
 				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 							_("Failed to install menu %s"),
 							menu_filename);
 			}
-		}
 
 		g_free(menu_path);
 		g_string_free(destination, TRUE);
