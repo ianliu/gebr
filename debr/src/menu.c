@@ -704,7 +704,7 @@ void menu_install(void)
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),
 							(GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 							GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
-							_("Menu '%s' already exists. Do you want to overwrite it?"),
+							_("Menu '%s' already exists on destination folder. Do you want to overwrite it?"),
 							menu_filename);
 			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Don't overwrite"), GTK_RESPONSE_NO);
 			gtk_dialog_add_button(GTK_DIALOG(dialog), _("Overwrite"), GTK_RESPONSE_YES);
@@ -719,10 +719,28 @@ void menu_install(void)
 		} else
 			do_save = TRUE;
 
-		if (do_save && system(command->str) != 0)
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-						_("Failed to install menu %s"),
-						menu_filename);
+		if (do_save){
+			if (strlen(menu_path) == 0){
+				g_free(menu_path);
+				g_string_free(destination, TRUE);
+				g_string_free(command, TRUE);
+
+				gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
+						   MENU_PATH, &menu_path, MENU_XMLPOINTER, &menu, -1);
+
+				destination = g_string_new(NULL);
+				command = g_string_new(NULL);
+
+				g_string_printf(destination, "%s/.gebr/gebr/menus/%s", getenv("HOME"), menu_filename);
+				g_string_printf(command, "cp %s %s", menu_path, destination->str);
+			}
+			if (system(command->str) != 0){
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
+							_("Failed to install menu %s"),
+							menu_filename);
+			}
+		}
+
 		g_free(menu_path);
 		g_string_free(destination, TRUE);
 		g_string_free(command, TRUE);
