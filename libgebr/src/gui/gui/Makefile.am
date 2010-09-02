@@ -40,7 +40,7 @@ libgebr_gui_la_SOURCES = 		\
 	gebr-gui-help-edit-window.c	\
 	gebr-gui-html-viewer-widget.c	\
 	gebr-gui-html-viewer-window.c	\
-	gebr-js.c
+	gebr-gui-js.c
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = 	\
@@ -62,7 +62,7 @@ libgebr_guisubinclude_HEADERS = 	\
 	gebr-gui-help-edit-window.h	\
 	gebr-gui-html-viewer-widget.h	\
 	gebr-gui-html-viewer-window.h	\
-	gebr-js.h
+	gebr-gui-js.h
 
 noinst_HEADERS = marshalers.h
 EXTRA_DIST = ${noinst_HEADERS} marshalers.list 

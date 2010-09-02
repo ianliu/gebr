@@ -21,7 +21,7 @@
  * @title: GêBR JavaScript Module
  * @stability: Stable
  * @see_also: #WebKitWebView, #WebKitWebFrame
- * @include: libgebr/gui/gebr-js.h
+ * @include: libgebr/gui/gebr-gui-js.h
  *
  * This module provides convenience functions for evaluating JavaScript scripts and converting JavaScript values into
  * GLib values. The example below assumes you already have a #JSContextRef, which can be retrieved from a #WebKitWebView
