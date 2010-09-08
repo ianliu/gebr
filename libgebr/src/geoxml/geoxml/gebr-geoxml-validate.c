@@ -58,7 +58,7 @@ void gebr_geoxml_validate_free(GebrGeoXmlValidate * validate)
 /**
  * \internal
  */
-static void validate_append_text_error(GebrGeoXmlValidate * validate, gint flags_failed, const gchar * format, ...)
+static void validate_append_text_error(GebrGeoXmlValidate * validate, gint flags_failed, GebrValidateCaseName validate_case, const gchar * format, ...)
 {
 	va_list argp;
 	va_start(argp, format);
@@ -71,14 +71,14 @@ static void validate_append_text_error(GebrGeoXmlValidate * validate, gint flags
 		goto out;
 	}
 	if (validate->iprog == -1) {
-		validate->operations.append_text_error_with_paths(validate->data, flags_failed,  NULL, NULL, string);
+		validate->operations.append_text_error_with_paths(validate->data, flags_failed,  NULL, NULL, validate_case, string);
 		goto out;
 	}
 
 	GString *path = g_string_new(NULL);
 	g_string_printf(path, "%d", validate->iprog);
 	if (validate->ipar == -1) {
-		validate->operations.append_text_error_with_paths(validate->data, flags_failed, path->str, NULL, string);
+		validate->operations.append_text_error_with_paths(validate->data, flags_failed, path->str, NULL, validate_case, string);
 		goto out2;
 	}
 	GString *path2 = g_string_new(NULL);
@@ -86,7 +86,7 @@ static void validate_append_text_error(GebrGeoXmlValidate * validate, gint flags
 		g_string_printf(path2, "%d", validate->ipar);
 	else
 		g_string_printf(path2, "%d:%d", validate->ipar, validate->isubpar);
-	validate->operations.append_text_error_with_paths(validate->data, flags_failed, path->str, path2->str, string);
+	validate->operations.append_text_error_with_paths(validate->data, flags_failed, path->str, path2->str, validate_case, string);
 
 	g_string_free(path2, TRUE);
 out2:	g_string_free(path, TRUE);
@@ -101,16 +101,16 @@ static void validate_append_item(GebrGeoXmlValidate * validate, const gchar * it
 	validate->operations.append_text_emph(validate->data, item);
 }
 
-static gint validate_append_check(GebrGeoXmlValidate * validate, const gchar * value, int flags, const gchar * format, ...);
+static gint validate_append_check(GebrGeoXmlValidate * validate, const gchar * value, int flags, GebrValidateCaseName, const gchar * format, ...);
 
 /**
  * \internal
  */
 static gint
-validate_append_item_with_check(GebrGeoXmlValidate * validate, const gchar * item, const gchar * value, int flags)
+validate_append_item_with_check(GebrGeoXmlValidate * validate, const gchar * item, const gchar * value, GebrValidateCaseName validate_case)
 {
 	validate_append_item(validate, item);
-	return validate_append_check(validate, value, flags, "\n");
+	return validate_append_check(validate, value, gebr_validate_get_validate_case(validate_case)->flags, validate_case, "\n");
 }
 
 static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * parameter);
@@ -126,33 +126,33 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 	if (validate->options.title)
 		validate_append_item_with_check(validate, _("Title:         "),
 						gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(menu)),
-						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_TITLE)->flags);
+						GEBR_VALIDATE_CASE_TITLE);
 	if (validate->options.desc)
 		validate_append_item_with_check(validate, _("Description:   "),
 						gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT(menu)),
-						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_DESCRIPTION)->flags);
+						GEBR_VALIDATE_CASE_DESCRIPTION);
 	if (validate->options.author) {
 		validate_append_item(validate, _("Author:        "));
 		validate_append_check(validate, gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(menu)),
-				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_AUTHOR)->flags, " <");
+				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_AUTHOR)->flags, GEBR_VALIDATE_CASE_AUTHOR, " <");
 		validate_append_check(validate, gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(menu)),
-				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_EMAIL)->flags, ">");
+				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_EMAIL)->flags, GEBR_VALIDATE_CASE_EMAIL, ">");
 		validate->operations.append_text(validate->data, "\n");
 	}
 	if (validate->options.dates) {
 		validate_append_item_with_check(validate, _("Created:       "),
 						gebr_localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOCUMENT(menu))),
-						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_DATE)->flags);
+						GEBR_VALIDATE_CASE_DATE);
 		validate_append_item_with_check(validate, _("Modified:      "),
 						gebr_localized_date(gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(menu))),
-						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_DATE)->flags);
+						GEBR_VALIDATE_CASE_DATE);
 	}
 	if (validate->options.mhelp) {
 		validate_append_item(validate, _("Help:          "));
 		if (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu))) >= 1)
 			validate->operations.append_text(validate->data, _("Defined"));
 		else
-			validate_append_check(validate, "", GEBR_VALIDATE_CHECK_EMPTY, "");
+			validate_append_check(validate, "", GEBR_VALIDATE_CHECK_EMPTY, GEBR_VALIDATE_CASE_HELP, "");
 		validate->operations.append_text(validate->data, "\n");
 	}
 	if (validate->options.ehelp == 0) {
@@ -167,7 +167,7 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 			for (; seq != NULL; gebr_geoxml_sequence_next(&seq))
 				validate_append_item_with_check(validate, _("Category:      "),
 								gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq)),
-								gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_CATEGORY)->flags);
+								GEBR_VALIDATE_CASE_CATEGORY);
 	}
 	gint nprog = gebr_geoxml_flow_get_programs_number(menu);
 	if (validate->options.ehelp > 0 && validate->options.ehelp <= nprog) {
@@ -193,10 +193,10 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 		validate->operations.append_text(validate->data, "%d\n", i + 1);
 		validate_append_item_with_check(validate, _("  Title:       "),
 						gebr_geoxml_program_get_title(prog),
-						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_TITLE)->flags);
+						GEBR_VALIDATE_CASE_PROGRAM_TITLE);
 		validate_append_item_with_check(validate, _("  Description: "),
 						gebr_geoxml_program_get_description(prog),
-						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_DESCRIPTION)->flags);
+						GEBR_VALIDATE_CASE_PROGRAM_DESCRIPTION);
 
 		validate->operations.append_text_emph(validate->data, _("  In/out/err:  "));
 		validate->operations.append_text(validate->data, "%s/%s/%s\n",
@@ -206,18 +206,18 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 
 		validate_append_item_with_check(validate, _("  Binary:      "),
 						gebr_geoxml_program_get_binary(prog),
-						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_BINARY)->flags);
+						GEBR_VALIDATE_CASE_PROGRAM_BINARY);
                 validate_append_item_with_check(validate, _("  Version:     "),
 						gebr_geoxml_program_get_version(prog),
-						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_VERSION)->flags);
+						GEBR_VALIDATE_CASE_PROGRAM_VERSION);
                 validate_append_item_with_check(validate, _("  URL:         "),
 						gebr_geoxml_program_get_url(prog),
-						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PROGRAM_URL)->flags);
+						GEBR_VALIDATE_CASE_PROGRAM_URL);
 		validate_append_item(validate, _("  Help:        "));
 		if (strlen(gebr_geoxml_program_get_help(prog)) >= 1)
 			validate->operations.append_text(validate->data, _("Defined"));
 		else
-			validate_append_check(validate, "", GEBR_VALIDATE_CHECK_EMPTY, "");
+			validate_append_check(validate, "", GEBR_VALIDATE_CHECK_EMPTY, GEBR_VALIDATE_CASE_HELP, "");
 		validate->operations.append_text(validate->data, "\n");
 
 		if (validate->options.params) {
@@ -246,7 +246,7 @@ out:	validate->operations.append_text_emph(validate->data, _("%d potential error
  * \internal
  * TRUE if \p value passed through all selected tests
  */
-static gint validate_append_check(GebrGeoXmlValidate * validate, const gchar * value, int flags, const gchar * format, ...)
+static gint validate_append_check(GebrGeoXmlValidate * validate, const gchar * value, int flags, GebrValidateCaseName validate_case, const gchar * format, ...)
 {
 	gboolean result = TRUE;
 	gint failed = 0;
@@ -275,9 +275,9 @@ static gint validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 		validate->operations.append_text(validate->data, value);
 	else {
 		if (gebr_validate_check_is_not_empty(value))
-			validate_append_text_error(validate, failed, "%s", value);
+			validate_append_text_error(validate, failed, validate_case, "%s", value);
 		else
-			validate_append_text_error(validate, GEBR_VALIDATE_CHECK_EMPTY, _("UNSET"));
+			validate_append_text_error(validate, GEBR_VALIDATE_CHECK_EMPTY, validate_case, _("UNSET"));
 		validate->potential_errors++;
 	}
 
@@ -313,7 +313,7 @@ static gint validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 			uppercase = g_utf8_strup(hotkey, length);
 			if (g_hash_table_lookup(validate->hotkey_table, uppercase)) {
 				g_string_printf(label_ext, " (Alt+%s%s)", uppercase, _(", already used above"));
-				validate_append_text_error(validate, GEBR_VALIDATE_CHECK_LABEL_HOTKEY, label_ext->str);
+				validate_append_text_error(validate, GEBR_VALIDATE_CHECK_LABEL_HOTKEY, validate_case, label_ext->str);
 				++validate->potential_errors;
 
 				failed |= GEBR_VALIDATE_CHECK_LABEL_HOTKEY;
@@ -355,7 +355,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 			validate->operations.append_text(validate->data, "    %2d: ", validate->ipar+1);
 
 		label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(pp));
-		validate_append_check(validate, label, gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL)->flags, "\n");
+		validate_append_check(validate, label, gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL)->flags, GEBR_VALIDATE_CASE_PARAMETER_LABEL, "\n");
 
 		validate->operations.append_text(validate->data, "        ");
 		if (validate->isubpar != -1)
@@ -369,7 +369,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 
 		validate->operations.append_text(validate->data, "'");
 		validate_append_check(validate, gebr_geoxml_program_parameter_get_keyword(pp),
-				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_KEYWORD)->flags, "'");
+				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_KEYWORD)->flags, GEBR_VALIDATE_CASE_PARAMETER_KEYWORD, "'");
 
 		default_value = gebr_geoxml_program_parameter_get_string_value(pp, TRUE);
 		if (default_value->len)
@@ -394,7 +394,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 						     gebr_geoxml_program_parameter_get_list_separator
 						     (GEBR_GEOXML_PROGRAM_PARAMETER(pp)));
 			else {
-				validate_append_text_error(validate, 0, _(" (missing entries separator)"));
+				validate_append_text_error(validate, 0, GEBR_VALIDATE_CASE_PARAMETER_KEYWORD, _(" (missing entries separator)"));
 				validate->potential_errors++;
 			}
 		}
@@ -409,7 +409,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 			gebr_geoxml_program_parameter_get_enum_option(pp, &enum_option, 0);
 
 			if (enum_option == NULL) {
-				validate_append_text_error(validate, 0, _("\n        missing options"));
+				validate_append_text_error(validate, 0, GEBR_VALIDATE_CASE_PARAMETER_KEYWORD, _("\n        missing options"));
 				validate->potential_errors++;
 			}
 
@@ -432,7 +432,7 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 
 		validate->operations.append_text(validate->data, "    %2d: ", validate->ipar+1);
 		validate_append_check(validate, gebr_geoxml_parameter_get_label(parameter),
-				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL)->flags, NULL);
+				      gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_PARAMETER_LABEL)->flags, GEBR_VALIDATE_CASE_PARAMETER_LABEL, NULL);
 
 		if (gebr_geoxml_parameter_group_get_is_instanciable(GEBR_GEOXML_PARAMETER_GROUP(parameter)))
 			validate->operations.append_text(validate->data, _("   [Instantiable]\n"));

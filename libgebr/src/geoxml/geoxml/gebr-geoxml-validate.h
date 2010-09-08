@@ -19,6 +19,8 @@
 #define __GEBR_GEOXML_VALIDATE_H
 
 #include <glib.h>
+#include <validate.h>
+
 #include "flow.h"
 
 G_BEGIN_DECLS
@@ -50,7 +52,7 @@ struct _GebrGeoXmlValidate {
 		 * If set then it is preferred over #append_text_error.
 		 */
 		void (*append_text_error_with_paths)(gpointer data, gint flags_failed, const gchar *program_path, const
-						     gchar *parameter_path, const gchar * format, ...);
+						     gchar *parameter_path, GebrValidateCaseName validate_case, const gchar * format, ...);
 	} operations;
 	gpointer data;
 
