@@ -60,7 +60,7 @@ static void debr_help_edit_widget_get_property	(GObject	*object,
 						 GValue		*value,
 						 GParamSpec	*pspec);
 
-static void debr_help_edit_widget_destroy(GtkObject *object);
+static void debr_help_edit_widget_finalize(GObject *object);
 
 static void debr_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self);
 
@@ -83,16 +83,14 @@ G_DEFINE_TYPE(DebrHelpEditWidget, debr_help_edit_widget, GEBR_GUI_TYPE_HELP_EDIT
 static void debr_help_edit_widget_class_init(DebrHelpEditWidgetClass * klass)
 {
 	GObjectClass *gobject_class;
-	GtkObjectClass *object_class;
 	GebrGuiHelpEditWidgetClass *super_class;
 
 	gobject_class = G_OBJECT_CLASS(klass);
-	object_class = GTK_OBJECT_CLASS(klass);
 	super_class = GEBR_GUI_HELP_EDIT_WIDGET_CLASS(klass);
 
 	gobject_class->set_property = debr_help_edit_widget_set_property;
 	gobject_class->get_property = debr_help_edit_widget_get_property;
-	object_class->destroy = debr_help_edit_widget_destroy;
+	gobject_class->finalize = debr_help_edit_widget_finalize;
 	super_class->commit_changes = debr_help_edit_widget_commit_changes;
 	super_class->get_content = debr_help_edit_widget_get_content;
 	super_class->set_content = debr_help_edit_widget_set_content;
@@ -114,6 +112,12 @@ static void debr_help_edit_widget_class_init(DebrHelpEditWidgetClass * klass)
 
 static void debr_help_edit_widget_init(DebrHelpEditWidget * self)
 {
+	DebrHelpEditWidgetPrivate * priv;
+
+	priv = DEBR_HELP_EDIT_WIDGET_GET_PRIVATE(self);
+	priv->is_commited = FALSE;
+	priv->object = NULL;
+	priv->temp_file = NULL;
 }
 
 static void debr_help_edit_widget_set_property(GObject		*object,
@@ -152,12 +156,17 @@ static void debr_help_edit_widget_get_property(GObject		*object,
 	}
 }
 
-static void debr_help_edit_widget_destroy(GtkObject *object)
+static void debr_help_edit_widget_finalize(GObject *object)
 {
 	DebrHelpEditWidgetPrivate * priv;
+
 	priv = DEBR_HELP_EDIT_WIDGET_GET_PRIVATE(object);
-	g_unlink(priv->temp_file);
-	g_free(priv->temp_file);
+	if (priv->temp_file) {
+		g_unlink(priv->temp_file);
+		g_free(priv->temp_file);
+	}
+
+	G_OBJECT_CLASS(debr_help_edit_widget_parent_class)->finalize(object);
 }
 
 //==============================================================================
