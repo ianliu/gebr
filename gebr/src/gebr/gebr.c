@@ -83,6 +83,8 @@ void gebr_init(void)
 	/* allocating list of temporary files */
 	gebr.tmpfiles = g_slist_alloc();
 
+	gebr.help_edit_windows = g_hash_table_new(NULL, NULL);
+
 	/* icons */
 	gebr.invisible = gtk_invisible_new();
 	gebr.pixmaps.stock_cancel =
@@ -136,6 +138,9 @@ gboolean gebr_quit(void)
 		g_list_foreach(gebr.flow_clipboard, (GFunc) g_free, NULL);
 		g_list_free(gebr.flow_clipboard);
 	}
+
+	g_hash_table_destroy(gebr.help_edit_windows);
+
 	/*
 	 * Data frees and cleanups
 	 */
