@@ -30,10 +30,6 @@
 
 #define CSS_LINK "<link rel=\"stylesheet\" type=\"text/css\" href=\"file://"LIBGEBR_DATA_DIR"/gebr.css\" />"
 
-enum {
-	PROP_0
-};
-
 typedef struct _GebrGuiHtmlViewerWidgetPrivate GebrGuiHtmlViewerWidgetPrivate;
 
 struct _GebrGuiHtmlViewerWidgetPrivate {
@@ -48,21 +44,10 @@ struct _GebrGuiHtmlViewerWidgetPrivate {
 // PROTOTYPES								       =
 //==============================================================================
 
-static void gebr_gui_html_viewer_widget_set_property	(GObject	*object,
-							 guint		 prop_id,
-							 const GValue	*value,
-							 GParamSpec	*pspec);
-static void gebr_gui_html_viewer_widget_get_property	(GObject	*object,
-							 guint		 prop_id,
-							 GValue		*value,
-							 GParamSpec	*pspec);
-static void gebr_gui_html_viewer_widget_destroy(GtkObject *object);
-
 static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, GebrGuiHtmlViewerWidget *self);
-static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, 
-							WebKitWebFrame *frame,
-							WebKitNetworkRequest *request,
-							GebrGuiHtmlViewerWidget *self);
+
+static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame *frame,
+							WebKitNetworkRequest *request, GebrGuiHtmlViewerWidget *self);
 
 G_DEFINE_TYPE(GebrGuiHtmlViewerWidget, gebr_gui_html_viewer_widget, GTK_TYPE_VBOX);
 
@@ -73,20 +58,14 @@ G_DEFINE_TYPE(GebrGuiHtmlViewerWidget, gebr_gui_html_viewer_widget, GTK_TYPE_VBO
 static void gebr_gui_html_viewer_widget_class_init(GebrGuiHtmlViewerWidgetClass * klass)
 {
 	GObjectClass *gobject_class;
-	GtkObjectClass *object_class;
 
 	gobject_class = G_OBJECT_CLASS(klass);
-	object_class = GTK_OBJECT_CLASS(klass);
-	gobject_class->set_property = gebr_gui_html_viewer_widget_set_property;
-	gobject_class->get_property = gebr_gui_html_viewer_widget_get_property;
-	object_class->destroy = gebr_gui_html_viewer_widget_destroy;
 
 	g_type_class_add_private(klass, sizeof(GebrGuiHtmlViewerWidgetPrivate));
 }
 
 static void gebr_gui_html_viewer_widget_init(GebrGuiHtmlViewerWidget * self)
 {
-	GtkWidget * vbox;
 	GtkWidget * scrolled_window;
 	GebrGuiHtmlViewerWidgetPrivate * priv;
 
@@ -97,39 +76,10 @@ static void gebr_gui_html_viewer_widget_init(GebrGuiHtmlViewerWidget * self)
 	g_signal_connect(priv->web_view, "navigation-requested", G_CALLBACK(on_navigation_requested), self);
 	g_signal_connect(priv->web_view, "load-finished", G_CALLBACK(on_load_finished), self);
 
-	vbox = GTK_WIDGET(self);
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), priv->web_view);
-	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(self), scrolled_window, TRUE, TRUE, 0);
 	gtk_widget_show_all(scrolled_window);
-}
-
-static void gebr_gui_html_viewer_widget_set_property(GObject		*object,
-						     guint		 prop_id,
-						     const GValue	*value,
-						     GParamSpec		*pspec)
-{
-	switch (prop_id) {
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-		break;
-	}
-}
-
-static void gebr_gui_html_viewer_widget_get_property(GObject	*object,
-						     guint	 prop_id,
-						     GValue	*value,
-						     GParamSpec	*pspec)
-{
-	switch (prop_id) {
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-		break;
-	}
-}
-
-static void gebr_gui_html_viewer_widget_destroy(GtkObject *object)
-{
 }
 
 //==============================================================================
@@ -180,10 +130,8 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 	}
 }
 
-static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, 
-							WebKitWebFrame *frame,
-							WebKitNetworkRequest *request,
-							GebrGuiHtmlViewerWidget *self)
+static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame *frame,
+							WebKitNetworkRequest *request, GebrGuiHtmlViewerWidget *self)
 {
 	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	const gchar * uri = webkit_network_request_get_uri(request);
@@ -284,12 +232,15 @@ GtkWidget *gebr_gui_html_viewer_widget_new(void)
 
 void gebr_gui_html_viewer_widget_print(GebrGuiHtmlViewerWidget * self)
 {
+	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
+
 	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	WebKitWebFrame * frame = webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(priv->web_view));
 	webkit_web_frame_print(frame);
 }
 void gebr_gui_html_viewer_widget_show_html(GebrGuiHtmlViewerWidget * self, const gchar * content)
 {
+	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
 
 	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	GString *_content = g_string_new(content);
@@ -318,13 +269,15 @@ void gebr_gui_html_viewer_widget_show_html(GebrGuiHtmlViewerWidget * self, const
 }
 void gebr_gui_html_viewer_widget_set_geoxml_object(GebrGuiHtmlViewerWidget *self, GebrGeoXmlObject * object)
 {
-	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
 
+	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	priv->object = object;
 }
 void gebr_gui_html_viewer_widget_set_generate_links(GebrGuiHtmlViewerWidget *self, gboolean generate_links)
 {
-	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
 
+	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	priv->generate_links = generate_links;
 }
