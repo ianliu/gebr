@@ -39,8 +39,92 @@
 #include "../defines.h"
 #include "menu.h"
 
-static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self);
+//==============================================================================
+// PROTOTYPES AND STATIC VARIABLES					       =
+//==============================================================================
+static void on_save_activate(GtkAction * action, GebrGuiHelpEditWidget * self);
 
+static GtkWidget * create_help_edit_window(GebrGeoXmlDocument * document);
+
+static void on_help_edit_window_destroy(GtkWidget * widget, gpointer user_data);
+
+static const GtkActionEntry action_entries[] = {
+	{"SaveAction", GTK_STOCK_SAVE, NULL, NULL,
+		N_("Save the current document"), G_CALLBACK(on_save_activate)},
+};
+
+static guint n_action_entries = G_N_ELEMENTS(action_entries);
+
+//==============================================================================
+// PRIVATE METHODS 							       =
+//==============================================================================
+static GtkWidget *
+create_help_edit_window(GebrGeoXmlDocument * document)
+{
+	guint merge_id;
+	const gchar * help;
+	const gchar * filemenu;
+	const gchar * mark;
+	const gchar * document_type;
+	GtkWidget * window;
+	GtkWidget * widget;
+	GtkUIManager * ui_manager;
+	GtkActionGroup * action_group;
+	GebrGuiHelpEditWidget * help_edit_widget;
+	GebrGuiHelpEditWindow * help_edit_window;
+
+	// Create the HelpEdit widget and window
+	help = gebr_geoxml_document_get_help(document);
+	widget = gebr_help_edit_widget_new(document, help);
+	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(widget);
+	window = gebr_gui_help_edit_window_new(help_edit_widget);
+	help_edit_window = GEBR_GUI_HELP_EDIT_WINDOW(window);
+
+	g_signal_connect(window, "destroy",
+			 G_CALLBACK(on_help_edit_window_destroy), document);
+
+	// Create the Save button and merge with the window UI
+	switch(gebr_geoxml_document_get_type(document)) {
+	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
+		document_type = _("flow");
+		break;
+	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+		document_type = _("line");
+		break;
+	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
+		document_type = _("project");
+		break;
+	default:
+		document_type = "";
+		g_warn_if_reached();
+	}
+
+	action_group = gtk_action_group_new("GebrHelpEditButtons");
+	gtk_action_group_add_actions(action_group, action_entries, n_action_entries, widget);
+
+	ui_manager = gebr_gui_help_edit_window_get_ui_manager(help_edit_window);
+	merge_id = gtk_ui_manager_new_merge_id(ui_manager);
+	mark = gebr_gui_help_edit_window_get_tool_bar_mark(help_edit_window);
+	filemenu = gebr_gui_help_edit_window_get_file_menu_path(help_edit_window);
+	gtk_ui_manager_insert_action_group(ui_manager, action_group, 0);
+	gtk_ui_manager_add_ui(ui_manager, merge_id, mark,
+			      "SaveAction", "SaveAction", GTK_UI_MANAGER_TOOLITEM, TRUE);
+	gtk_ui_manager_add_ui(ui_manager, merge_id, filemenu,
+			      "SaveAction", "SaveAction", GTK_UI_MANAGER_MENUITEM, TRUE);
+	g_object_unref(action_group);
+	gtk_window_set_default_size(GTK_WINDOW(window), 400, 500);
+
+	return window;
+}
+
+static void on_help_edit_window_destroy(GtkWidget * widget, gpointer document)
+{
+	g_hash_table_remove(gebr.help_edit_windows, document);
+}
+
+//==============================================================================
+// PUBLIC METHODS 							       =
+//==============================================================================
 void gebr_help_show_selected_program_help(void)
 {
 	if (!flow_edition_get_selected_component(NULL, TRUE))
@@ -76,18 +160,16 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 void gebr_help_edit_document(GebrGeoXmlDocument * document)
 {
 	if (gebr.config.native_editor || gebr.config.editor->len == 0) {
-		const gchar * help;
 		GtkWidget * window;
-		GtkWidget * help_edit_widget;
 
-		help = gebr_geoxml_document_get_help(document);
-		help_edit_widget = gebr_help_edit_widget_new(document, help);
-		window = gebr_gui_help_edit_window_new(GEBR_GUI_HELP_EDIT_WIDGET(help_edit_widget));
-		g_signal_connect(help_edit_widget, "commit-request",
-				 G_CALLBACK(help_edit_on_commit_request),
-				 NULL);
-		gtk_window_set_default_size(GTK_WINDOW(window), 400, 500);
-		gtk_widget_show(window);
+		window = g_hash_table_lookup(gebr.help_edit_windows, document);
+		if (window != NULL)
+			gtk_window_present(GTK_WINDOW(window));
+		else {
+			window = create_help_edit_window(document);
+			g_hash_table_insert(gebr.help_edit_windows, document, window);
+			gtk_widget_show(window);
+		}
 	} else {
 		GString *prepared_html;
 		GString *cmd_line;
@@ -138,9 +220,11 @@ out2:		g_string_free(html_path, FALSE);
 	}
 }
 
-static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self)
+static void on_save_activate(GtkAction * action, GebrGuiHelpEditWidget * self)
 {
 	GebrGeoXmlObject *object = NULL;
+
+	gebr_gui_help_edit_widget_commit_changes(self);
 
 	g_object_get(self, "geoxml-document", &object, NULL);	
 
