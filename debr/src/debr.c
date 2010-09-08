@@ -228,7 +228,7 @@ gboolean debr_has_category(const gchar * category, gboolean add)
 	return FALSE;
 }
 
-void debr_remove_help_edit_window(gpointer object, gboolean destroy_children)
+void debr_remove_help_edit_window(gpointer object, gboolean remove_only, gboolean destroy_children)
 {
 	GtkWidget * window;
 	GebrGeoXmlObjectType type;
@@ -257,8 +257,8 @@ void debr_remove_help_edit_window(gpointer object, gboolean destroy_children)
 	}
 
 	if (window != NULL) {
-		gtk_widget_destroy(window);
+		if (!remove_only)
+			gtk_widget_destroy(window);
 		g_hash_table_remove(debr.help_edit_windows, object);
 	}
-	g_hash_table_remove(debr.help_edit_windows, object);
 }

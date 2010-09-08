@@ -154,12 +154,14 @@ gboolean debr_has_category(const gchar * category, gboolean add);
 
 /**
  * debr_remove_help_edit_window:
- * @object:
- * @destroy_children:
+ * @object: The #GebrGeoXmlObject to be removed from the hash table.
+ * @remove_only: If %TRUE don't destroy the window widget.
+ * @destroy_children: If %TRUE, remove and destroy children windows.
  *
- * Removes the @object key in debr.help_edit_windows, destroying the associated GebrGuiHelpEditWindow.
+ * Removes the @object key in #debr.help_edit_windows, destroying the
+ * associated #GebrGuiHelpEditWindow if @remove_only is %FALSE.
  */
-void debr_remove_help_edit_window(gpointer object, gboolean destroy_children);
+void debr_remove_help_edit_window(gpointer object, gboolean remove_only, gboolean destroy_children);
 
 G_END_DECLS
 #endif				//__DEBR_H
