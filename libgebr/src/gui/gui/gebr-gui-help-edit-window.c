@@ -24,34 +24,27 @@
 
 enum {
 	PROP_0,
-	PROP_HAS_REFRESH,
 	PROP_HELP_EDIT_WIDGET,
-	PROP_MENU_BAR,
+	PROP_AUTO_SAVE,
+	PROP_HAS_MENU_BAR,
 };
-
-enum {
-	REFRESH_REQUESTED,
-	LAST_SIGNAL
-};
-
-static guint signals[LAST_SIGNAL] = { 0 };
 
 typedef struct _GebrGuiHelpEditWindowPrivate GebrGuiHelpEditWindowPrivate;
 
 struct _GebrGuiHelpEditWindowPrivate {
-	gboolean has_refresh;
-	GtkWidget * menu_bar;
+	gboolean auto_save;
+	gboolean has_menu_bar;
+
+	GtkUIManager * ui_manager;
+	GtkWidget * action_area;
 	GtkWidget * help_edit_widget;
-	GtkWidget * commit_button;
-	GtkWidget * refresh_button;
-	GtkWidget * preview_button;
 };
 
 #define GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(o) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_GUI_TYPE_HELP_EDIT_WINDOW, GebrGuiHelpEditWindowPrivate))
 
 //==============================================================================
-// PROTOTYPES								       =
+// PROTOTYPES AND STATIC VARIABLES					       =
 //==============================================================================
 
 static void gebr_gui_help_edit_window_constructed(GObject * self);
@@ -65,21 +58,60 @@ static void gebr_gui_help_edit_window_get_property	(GObject	*object,
 							 GValue		*value,
 							 GParamSpec	*pspec);
 
-static void gebr_gui_help_edit_window_destroy(GtkObject *object);
+static void gebr_gui_help_edit_window_dispose(GObject * object);
 
-static void on_save_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self);
+static void on_preview_toggled(GtkToggleAction * button, GebrGuiHelpEditWindow * self);
 
-static void on_preview_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow * self);
-
-static void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self);
-
-static void on_print_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self);
+static void on_print_clicked(GtkAction * action, GebrGuiHelpEditWindow * self);
 
 static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * self, GdkEventAny * event);
 
-static gboolean is_editing(GebrGuiHelpEditWindow * self);
-
 G_DEFINE_TYPE(GebrGuiHelpEditWindow, gebr_gui_help_edit_window, GTK_TYPE_WINDOW);
+
+static const GtkActionEntry action_entries[] = {
+	{"FileMenu", NULL, N_("_File")},
+	{"EditMenu", NULL, N_("_Edit")},
+
+	{"PrintAction", GTK_STOCK_PRINT, NULL, NULL,
+		N_("Prints the content of this window"), G_CALLBACK(on_print_clicked)},
+	{"QuitAction", GTK_STOCK_QUIT, NULL, NULL,
+		N_("Quits the window"), NULL},
+};
+
+static const guint n_action_entries = G_N_ELEMENTS(action_entries);
+
+static const GtkToggleActionEntry toggle_entries[] = {
+	{"PreviewAction", GTK_STOCK_PRINT_PREVIEW, NULL, NULL,
+		N_("Toggles between edit and preview modes"), G_CALLBACK(on_preview_toggled), FALSE},
+};
+
+static const guint n_toggle_entries = G_N_ELEMENTS(toggle_entries);
+
+static const gchar * ui_def =
+"<ui>"
+" <menubar name='" GEBR_GUI_HELP_EDIT_WINDOW_MENU_BAR_NAME "'>"
+"  <menu action='FileMenu'>"
+"    <separator />"
+"    <menuitem action='PrintAction' />"
+"    <separator />"
+"    <menuitem action='QuitAction' />"
+"  </menu>"
+"  <menu action='EditMenu'>"
+"   <menuitem action='PreviewAction' />"
+"  </menu>"
+"  <placeholder name='" GEBR_GUI_HELP_EDIT_WINDOW_MENU_BAR_MARK "' />"
+" </menubar>"
+" <toolbar name='" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_NAME "'>"
+"  <placeholder name='" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_MARK "'>"
+"   <separator />"
+"   <toolitem action='PreviewAction' />"
+"   <separator />"
+"   <toolitem action='PrintAction' />"
+"   <separator />"
+"  </placeholder>"
+" </toolbar>"
+"</ui>";
+
 
 //==============================================================================
 // GOBJECT RELATED FUNCTIONS						       =
@@ -88,28 +120,15 @@ G_DEFINE_TYPE(GebrGuiHelpEditWindow, gebr_gui_help_edit_window, GTK_TYPE_WINDOW)
 static void gebr_gui_help_edit_window_class_init(GebrGuiHelpEditWindowClass * klass)
 {
 	GObjectClass *gobject_class;
-	GtkObjectClass *object_class;
 	GtkWidgetClass *widget_class;
 
 	gobject_class = G_OBJECT_CLASS(klass);
-	object_class = GTK_OBJECT_CLASS(klass);
 	widget_class = GTK_WIDGET_CLASS(klass);
 	gobject_class->constructed = gebr_gui_help_edit_window_constructed;
 	gobject_class->set_property = gebr_gui_help_edit_window_set_property;
 	gobject_class->get_property = gebr_gui_help_edit_window_get_property;
-	object_class->destroy = gebr_gui_help_edit_window_destroy;
+	gobject_class->dispose = gebr_gui_help_edit_window_dispose;
 	widget_class->delete_event = gebr_gui_help_edit_window_delete_event;
-
-	/**
-	 * GebrGuiHelpEditWindow:has-refresh:
-	 */
-	g_object_class_install_property(gobject_class,
-					PROP_HAS_REFRESH,
-					g_param_spec_boolean("has-refresh",
-							     "Has refresh",
-							     "Whether to show the refresh button or not",
-							     FALSE,
-							     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	/**
 	 * GebrGuiHelpEditWindow:help-edit-widget:
@@ -123,96 +142,82 @@ static void gebr_gui_help_edit_window_class_init(GebrGuiHelpEditWindowClass * kl
 							     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	/**
-	 * GebrGuiHelpEditWindow:menu-bar:
-	 * A #GebrGuiHelpEditWidget that will be packed into this window.
+	 * GebrGuiHelpEditWindow:auto-save:
 	 */
 	g_object_class_install_property(gobject_class,
-					PROP_MENU_BAR,
-					g_param_spec_pointer("menu-bar",
-							     "GtkMenuBar",
-							     "A GtkMenuBar for this window",
+					PROP_AUTO_SAVE,
+					g_param_spec_boolean("auto-save",
+							     "Auto save",
+							     "Whether to automatic save",
+							     FALSE,
 							     G_PARAM_READWRITE));
 
 	/**
-	 * GebrGuiHelpEditWindow::refresh-requested:
-	 * @widget: The help edit window.
-	 *
-	 * Emitted when the user presses the Refresh button in this window.
+	 * GebrGuiHelpEditWindow:has-menu-bar:
 	 */
-	signals[REFRESH_REQUESTED] =
-		g_signal_new("refresh-requested",
-			     GEBR_GUI_TYPE_HELP_EDIT_WINDOW,
-			     G_SIGNAL_RUN_LAST,
-			     G_STRUCT_OFFSET(GebrGuiHelpEditWindowClass, refresh_requested),
-			     NULL, NULL,
-			     g_cclosure_marshal_VOID__VOID,
-			     G_TYPE_NONE,
-			     0);
+	g_object_class_install_property(gobject_class,
+					PROP_HAS_MENU_BAR,
+					g_param_spec_boolean("has-menu-bar",
+							     "Has GtkMenuBar",
+							     "Whether to show the menu bar",
+							     TRUE,
+							     G_PARAM_READWRITE));
 
 	g_type_class_add_private(klass, sizeof(GebrGuiHelpEditWindowPrivate));
 }
 
 static void gebr_gui_help_edit_window_constructed(GObject * self)
 {
-	GebrGuiHelpEditWindowPrivate * private;
-	GtkWidget * vbox;
-	GtkWidget * toolbar;
-	GtkToolItem * item;
-
-	private = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
-	vbox = gtk_vbox_new(FALSE, 0);
-	toolbar = gtk_toolbar_new();
-	gtk_container_add(GTK_CONTAINER(self), vbox);
-
-	// Commit button
-	item = gtk_tool_button_new_from_stock(GTK_STOCK_SAVE);
-	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(item),
-				       _("Overwrites the menu's help with edited content"));
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-	g_signal_connect(item, "clicked", G_CALLBACK(on_save_clicked), self);
-	private->commit_button = GTK_WIDGET(item);
-
-	if (private->has_refresh) {
-		// Refresh button
-		item = gtk_tool_button_new_from_stock(GTK_STOCK_REFRESH);
-		gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(item),
-					       _("Updates editor content"));
-		gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-		g_signal_connect(item, "clicked", G_CALLBACK(on_refresh_clicked), self);
-		private->refresh_button = GTK_WIDGET(item);
-	}
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-
-	// Preview button
-	item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_PRINT_PREVIEW);
-	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(item),
-				       _("Toggles between edit and preview modes"));
-	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(item), FALSE);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-	g_signal_connect(item, "toggled", G_CALLBACK(on_preview_toggled), self);
-	private->preview_button = GTK_WIDGET(item);
-
-	// Print button
-	item = gtk_tool_button_new_from_stock(GTK_STOCK_PRINT);
-	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(item),
-				       _("Prints the edited content"));
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-	g_signal_connect(item, "clicked", G_CALLBACK(on_print_clicked), self);
-
-	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), private->help_edit_widget, TRUE, TRUE, 0);
-	gtk_widget_show(vbox);
-	gtk_widget_show(private->help_edit_widget);
-	gtk_widget_show_all(toolbar);
+	GebrGuiHelpEditWindowPrivate * priv;
+	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
+	gtk_box_pack_start(GTK_BOX(priv->action_area), priv->help_edit_widget, TRUE, TRUE, 0);
+	gtk_widget_show(priv->help_edit_widget);
 }
 
 static void gebr_gui_help_edit_window_init(GebrGuiHelpEditWindow * self)
 {
 	GebrGuiHelpEditWindowPrivate * priv;
+	GtkActionGroup * action_group;
+	GtkAccelGroup * accel_group;
+	GtkWidget * menu_bar;
+	GtkWidget * tool_bar;
+	GError * error = NULL;
+
+	const gchar * menu_bar_path;
+	const gchar * tool_bar_path;
        
 	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
-	priv->menu_bar = NULL;
+	priv->action_area      = gtk_vbox_new(FALSE, 0);
+	priv->auto_save        = FALSE;
+	priv->has_menu_bar     = FALSE;
+	priv->help_edit_widget = NULL;
+	priv->ui_manager       = gtk_ui_manager_new();
+
+	action_group = gtk_action_group_new("HelpEditWindowGroup");
+	gtk_action_group_add_actions(action_group, action_entries, n_action_entries, self);
+	gtk_action_group_add_toggle_actions(action_group, toggle_entries, n_toggle_entries, self);
+	gtk_ui_manager_insert_action_group(priv->ui_manager, action_group, 0);
+	gtk_ui_manager_add_ui_from_string(priv->ui_manager, ui_def, -1, &error);
+	g_object_unref(action_group);
+
+	if (error != NULL) {
+		g_warning("%s\n", error->message);
+		g_clear_error(&error);
+	}
+
+	accel_group = gtk_ui_manager_get_accel_group(priv->ui_manager);
+	gtk_window_add_accel_group(GTK_WINDOW(self), accel_group);
+
+	menu_bar_path = gebr_gui_help_edit_window_get_menu_bar_path(self);
+	tool_bar_path = gebr_gui_help_edit_window_get_tool_bar_path(self);
+	menu_bar = gtk_ui_manager_get_widget(priv->ui_manager, menu_bar_path);
+	tool_bar = gtk_ui_manager_get_widget(priv->ui_manager, tool_bar_path);
+
+	gtk_box_pack_start(GTK_BOX(priv->action_area), menu_bar, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(priv->action_area), tool_bar, FALSE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(self), priv->action_area);
+	gtk_widget_show(priv->action_area);
+	gtk_widget_show(tool_bar);
 }
 
 static void gebr_gui_help_edit_window_set_property(GObject	*object,
@@ -220,18 +225,21 @@ static void gebr_gui_help_edit_window_set_property(GObject	*object,
 						   const GValue	*value,
 						   GParamSpec	*pspec)
 {
-	GebrGuiHelpEditWindow * self = GEBR_GUI_HELP_EDIT_WINDOW(object);
-	GebrGuiHelpEditWindowPrivate * priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(object);
+	GebrGuiHelpEditWindow * self;
+	GebrGuiHelpEditWindowPrivate * priv;
+
+	self = GEBR_GUI_HELP_EDIT_WINDOW(object);
+	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(object);
 
 	switch (prop_id) {
-	case PROP_HAS_REFRESH:
-		priv->has_refresh = g_value_get_boolean(value);
-		break;
 	case PROP_HELP_EDIT_WIDGET:
 		priv->help_edit_widget = g_value_get_pointer(value);
 		break;
-	case PROP_MENU_BAR:
-		gebr_gui_help_edit_window_set_menu_bar(self, g_value_get_pointer(value));
+	case PROP_AUTO_SAVE:
+		gebr_gui_help_edit_window_set_auto_save(self, g_value_get_boolean(value));
+		break;
+	case PROP_HAS_MENU_BAR:
+		gebr_gui_help_edit_window_set_has_menu_bar(self, g_value_get_boolean(value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -247,14 +255,14 @@ static void gebr_gui_help_edit_window_get_property(GObject	*object,
 	GebrGuiHelpEditWindowPrivate * priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(object);
 
 	switch (prop_id) {
-	case PROP_HAS_REFRESH:
-		g_value_set_boolean(value, priv->has_refresh);
-		break;
 	case PROP_HELP_EDIT_WIDGET:
 		g_value_set_pointer(value, priv->help_edit_widget);
 		break;
-	case PROP_MENU_BAR:
-		g_value_set_pointer(value, priv->menu_bar);
+	case PROP_AUTO_SAVE:
+		g_value_set_boolean(value, priv->auto_save);
+		break;
+	case PROP_HAS_MENU_BAR:
+		g_value_set_boolean(value, priv->has_menu_bar);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -262,42 +270,37 @@ static void gebr_gui_help_edit_window_get_property(GObject	*object,
 	}
 }
 
+static void gebr_gui_help_edit_window_dispose(GObject * object)
+{
+	GebrGuiHelpEditWindowPrivate * priv;
+	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(object);
+
+	if (priv->ui_manager != NULL) {
+		g_object_unref(priv->ui_manager);
+		priv->ui_manager = NULL;
+	}
+
+	G_OBJECT_CLASS(gebr_gui_help_edit_window_parent_class)->dispose(object);
+}
+
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
-static void on_save_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
+static void on_preview_toggled(GtkToggleAction * action, GebrGuiHelpEditWindow * self)
 {
+	gboolean is_editing;
 	GebrGuiHelpEditWindowPrivate * priv;
 	GebrGuiHelpEditWidget * help_edit_widget;
 
 	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
 	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
-	gebr_gui_help_edit_widget_commit_changes(help_edit_widget);
+	is_editing = !gtk_toggle_action_get_active(action);
+	gebr_gui_help_edit_widget_set_editing(help_edit_widget, is_editing);
 }
 
-static void on_preview_toggled(GtkToggleToolButton * button, GebrGuiHelpEditWindow * self)
+static void on_print_clicked(GtkAction * action, GebrGuiHelpEditWindow * self)
 {
-	GebrGuiHelpEditWindowPrivate * priv;
-	GebrGuiHelpEditWidget * help_edit_widget;
-	gboolean preview;
-
-	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
-	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
-	preview = !is_editing(self);
-	gebr_gui_help_edit_widget_set_editing(help_edit_widget, !preview);
-	gtk_widget_set_sensitive(priv->commit_button, !preview);
-	if (priv->has_refresh) {
-		gtk_widget_set_sensitive(priv->refresh_button, !preview);
-	}
-}
-
-static void on_refresh_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
-{
-	g_signal_emit(self, signals[REFRESH_REQUESTED], 0);
-}
-
-static void on_print_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * self)
-{
+	gboolean editing;
 	GebrGuiHelpEditWindowPrivate * private;
 	GebrGuiHelpEditWidget * help_edit;
 	GebrGuiHtmlViewerWidget * html_viewer;
@@ -306,8 +309,14 @@ static void on_print_clicked(GtkToolButton * button, GebrGuiHelpEditWindow * sel
 	help_edit = GEBR_GUI_HELP_EDIT_WIDGET(private->help_edit_widget);
 	html_viewer = gebr_gui_help_edit_widget_get_html_viewer(help_edit);
 
-	if (is_editing(self)) {
-		gebr_gui_html_viewer_widget_show_html(html_viewer, gebr_gui_help_edit_widget_get_content(help_edit));
+	g_object_get(help_edit, "editing", &editing, NULL);
+
+	/* If we are in edit mode, refresh the Html Viewer content */
+	if (editing) {
+		gchar * content;
+		content = gebr_gui_help_edit_widget_get_content(help_edit);
+		gebr_gui_html_viewer_widget_show_html(html_viewer, content);
+		g_free(content);
 	}
 
 	gebr_gui_html_viewer_widget_print(html_viewer);
@@ -340,10 +349,6 @@ static gint confirmation_dialog(GebrGuiHelpEditWindow * self)
 	return response;
 }
 
-static void gebr_gui_help_edit_window_destroy(GtkObject *object)
-{
-}
-
 static gboolean gebr_gui_help_edit_window_quit_real(GebrGuiHelpEditWindow * self)
 {
 	gint response;
@@ -374,8 +379,18 @@ static gboolean gebr_gui_help_edit_window_quit_real(GebrGuiHelpEditWindow * self
 static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * widget, GdkEventAny * event)
 {
 	GebrGuiHelpEditWindow * self;
+	GebrGuiHelpEditWindowPrivate * priv;
+
 	self = GEBR_GUI_HELP_EDIT_WINDOW(widget);
-	return gebr_gui_help_edit_window_quit_real(self);
+	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
+
+	if (priv->auto_save) {
+		GebrGuiHelpEditWidget * help_edit_widget;
+		help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
+		gebr_gui_help_edit_widget_commit_changes(help_edit_widget);
+		return FALSE;
+	} else
+		return gebr_gui_help_edit_window_quit_real(self);
 }
 
 //==============================================================================
@@ -391,41 +406,74 @@ GtkWidget *gebr_gui_help_edit_window_new(GebrGuiHelpEditWidget * help_edit_widge
 			    NULL);
 }
 
-GtkWidget *gebr_gui_help_edit_window_new_with_refresh(GebrGuiHelpEditWidget * help_edit_widget)
-{
-	g_return_val_if_fail(GEBR_GUI_IS_HELP_EDIT_WIDGET(help_edit_widget), NULL);
-
-	return g_object_new(GEBR_GUI_TYPE_HELP_EDIT_WINDOW,
-			    "help-edit-widget", help_edit_widget,
-			    "has-refresh", TRUE,
-			    NULL);
-}
-
-void gebr_gui_help_edit_window_set_menu_bar(GebrGuiHelpEditWindow * self, GtkMenuBar * menu_bar)
-{
-	GtkWidget * vbox;
-	GebrGuiHelpEditWindowPrivate * priv;
-
-	g_return_if_fail(GEBR_GUI_IS_HELP_EDIT_WINDOW(self));
-
-	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
-	vbox = gtk_bin_get_child(GTK_BIN(self));
-
-	if (priv->menu_bar != NULL)
-		gtk_container_remove(GTK_CONTAINER(vbox), priv->menu_bar);
-
-	if (menu_bar != NULL) {
-		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(menu_bar), FALSE, TRUE, 0);
-		gtk_box_reorder_child(GTK_BOX(vbox), GTK_WIDGET(menu_bar), 0);
-	}
-}
-
 void gebr_gui_help_edit_window_quit(GebrGuiHelpEditWindow * self)
 {
 	if (!gebr_gui_help_edit_window_quit_real(self))
 		gtk_widget_destroy(GTK_WIDGET(self));
 }
 
-gboolean is_editing(GebrGuiHelpEditWindow * self) {
-	return !gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self)->preview_button));
+void gebr_gui_help_edit_window_set_has_menu_bar(GebrGuiHelpEditWindow * self, gboolean has_menu_bar)
+{
+	GtkWidget * menu_bar;
+	const gchar * menu_bar_path;
+	GebrGuiHelpEditWindowPrivate * priv;
+
+	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
+	priv->has_menu_bar = has_menu_bar;
+	menu_bar_path = gebr_gui_help_edit_window_get_menu_bar_path(self);
+	menu_bar = gtk_ui_manager_get_widget(priv->ui_manager, menu_bar_path);
+
+	if (has_menu_bar)
+		gtk_widget_show(menu_bar);
+	else
+		gtk_widget_hide(menu_bar);
 }
+
+void gebr_gui_help_edit_window_set_auto_save(GebrGuiHelpEditWindow * self, gboolean auto_save)
+{
+	GebrGuiHelpEditWindowPrivate * priv;
+	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
+	priv->auto_save = auto_save;
+}
+
+GtkUIManager * gebr_gui_help_edit_window_get_ui_manager(GebrGuiHelpEditWindow * self)
+{
+	GebrGuiHelpEditWindowPrivate * priv;
+	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
+	return priv->ui_manager;
+}
+
+/*
+ * UI Manager paths accessors
+ */
+
+const gchar * gebr_gui_help_edit_window_get_menu_bar_path(GebrGuiHelpEditWindow * self)
+{
+	return "/" GEBR_GUI_HELP_EDIT_WINDOW_MENU_BAR_NAME;
+}
+
+const gchar * gebr_gui_help_edit_window_get_file_menu_path(GebrGuiHelpEditWindow * self)
+{
+	return "/" GEBR_GUI_HELP_EDIT_WINDOW_MENU_BAR_NAME "/FileMenu";
+}
+
+const gchar * gebr_gui_help_edit_window_get_edit_menu_path(GebrGuiHelpEditWindow * self)
+{
+	return "/" GEBR_GUI_HELP_EDIT_WINDOW_MENU_BAR_NAME "/EditMenu";
+}
+
+const gchar * gebr_gui_help_edit_window_get_menu_mark(GebrGuiHelpEditWindow * self)
+{
+	return "/" GEBR_GUI_HELP_EDIT_WINDOW_MENU_BAR_NAME "/" GEBR_GUI_HELP_EDIT_WINDOW_MENU_BAR_MARK;
+}
+
+const gchar * gebr_gui_help_edit_window_get_tool_bar_path(GebrGuiHelpEditWindow * self)
+{
+	return "/" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_NAME;
+}
+
+const gchar * gebr_gui_help_edit_window_get_tool_bar_mark(GebrGuiHelpEditWindow * self)
+{
+	return "/" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_NAME "/" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_MARK;
+}
+

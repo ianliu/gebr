@@ -47,6 +47,15 @@ G_BEGIN_DECLS
 #define GEBR_GUI_HELP_EDIT_WINDOW_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_TYPE_HELP_EDIT_WINDOW, GebrGuiHelpEditWindowClass))
 
 
+/*
+ * These macros defines the names for the xml ui definition.
+ */
+#define GEBR_GUI_HELP_EDIT_WINDOW_MENU_BAR_NAME "help_edit_window_menu_bar"
+#define GEBR_GUI_HELP_EDIT_WINDOW_MENU_BAR_MARK "help_edit_window_menu_bar_place_holder"
+#define GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_NAME "help_edit_window_tool_bar"
+#define GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_MARK "help_edit_window_tool_bar_place_holder"
+
+
 typedef struct _GebrGuiHelpEditWindow GebrGuiHelpEditWindow;
 typedef struct _GebrGuiHelpEditWindowClass GebrGuiHelpEditWindowClass;
 
@@ -67,41 +76,10 @@ GType gebr_gui_help_edit_window_get_type(void) G_GNUC_CONST;
  * gebr_gui_help_edit_window_new:
  * @help_edit_widget: A #GebrGuiHelpEditWidget to perform the help edition.
  *
- * Creates a new window containing a tool bar with buttons for commiting
- * changes and toggling between preview and edit mode. You do not need
- * to destroy the widget on #GtkObject::destroy signal, since this is
- * already done.
- *
- * Returns: A new #GebrGuiHelpEditWindow containing a tool bar with
- * buttons for commiting changes and toggling between preview and edit
- * mode.
+ * Creates a new window containing a tool bar and a menu bar, which you can modify
+ * using the GtkUIManager.
  */
 GtkWidget *gebr_gui_help_edit_window_new(GebrGuiHelpEditWidget * help_edit_widget);
-
-/**
- * gebr_gui_help_edit_window_new_with_refresh:
- * @help_edit_widget: A #GebrGuiHelpEditWidget to perform the help edition.
- *
- * Creates a new window containing a tool bar with buttons for commiting
- * changes, toggling between preview and edit mode and refreshing
- * content.
- *
- * Returns: A new #GebrGuiHelpEditWindow containing a tool bar with
- * buttons for commiting changes, toggling between preview and edit mode
- * and refreshing the editor content.
- */
-GtkWidget *gebr_gui_help_edit_window_new_with_refresh(GebrGuiHelpEditWidget * help_edit_widget);
-
-/**
- * gebr_gui_help_edit_window_set_menu_bar:
- * @window: a #GebrGuiHelpEditWindow
- * @menubar: a #GtkMenuBar to be placed on top of the window.
- *
- * Sets the menu bar for this window. If there is already a menu bar, it is removed from the interface and replaced with
- * @menu_bar. Notice that by removing the old menu will destroy it unless you g_object_ref() it before this operation.
- * See gtk_container_remove() for more information on widget removal.
- */
-void gebr_gui_help_edit_window_set_menu_bar(GebrGuiHelpEditWindow * self, GtkMenuBar * menu_bar);
 
 /**
  * gebr_gui_help_edit_window_quit:
@@ -110,6 +88,42 @@ void gebr_gui_help_edit_window_set_menu_bar(GebrGuiHelpEditWindow * self, GtkMen
  * Closes @window, showing a message dialog if the content has uncommitted changes.
  */
 void gebr_gui_help_edit_window_quit(GebrGuiHelpEditWindow * self);
+
+/**
+ * gebr_gui_help_edit_window_set_has_menu_bar:
+ * @window:
+ * @has_menu_bar:
+ */
+void gebr_gui_help_edit_window_set_has_menu_bar(GebrGuiHelpEditWindow * self, gboolean has_menu_bar);
+
+/**
+ * gebr_gui_help_edit_window_set_auto_save:
+ * @window:
+ * @auto_save:
+ */
+void gebr_gui_help_edit_window_set_auto_save(GebrGuiHelpEditWindow * self, gboolean auto_save);
+
+/**
+ * gebr_gui_help_edit_window_get_ui_manager:
+ * @window: this window.
+ * Returns: A #GtkUIManager.
+ */
+GtkUIManager * gebr_gui_help_edit_window_get_ui_manager(GebrGuiHelpEditWindow * self);
+
+/*
+ * UI Manager path accessors
+ */
+const gchar * gebr_gui_help_edit_window_get_menu_bar_path(GebrGuiHelpEditWindow * self);
+
+const gchar * gebr_gui_help_edit_window_get_file_menu_path(GebrGuiHelpEditWindow * self);
+
+const gchar * gebr_gui_help_edit_window_get_edit_menu_path(GebrGuiHelpEditWindow * self);
+
+const gchar * gebr_gui_help_edit_window_get_menu_mark(GebrGuiHelpEditWindow * self);
+
+const gchar * gebr_gui_help_edit_window_get_tool_bar_path(GebrGuiHelpEditWindow * self);
+
+const gchar * gebr_gui_help_edit_window_get_tool_bar_mark(GebrGuiHelpEditWindow * self);
 
 G_END_DECLS
 
