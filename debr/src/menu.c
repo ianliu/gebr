@@ -378,16 +378,19 @@ void menu_load_user_directory(void)
 void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * menu, gboolean select)
 {
 	const gchar *date;
+	const gchar *help;
 	gchar *tmp;
 	gchar *label;
 	gchar *filename;
 	GtkTreeIter parent;
 
 	filename = g_path_get_basename(path);
+	help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu));
 	date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(menu));
-	tmp = (strlen(date))
-	    ? g_strdup_printf("%ld", gebr_iso_date_to_g_time_val(date).tv_sec)
-	    : g_strdup_printf("%ld", gebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
+	if (strlen(date) > 0)
+		tmp = g_strdup_printf("%ld", gebr_iso_date_to_g_time_val(date).tv_sec);
+	else
+		tmp = g_strdup_printf("%ld", gebr_iso_date_to_g_time_val("2007-01-01T00:00:00.000000Z").tv_sec);
 
 	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_menu.model), &parent, iter);
 	if (gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(debr.ui_menu.model),
@@ -403,10 +406,14 @@ void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * men
 
 	debr_menu_sync_help_edit_window(iter, menu);
 	gtk_tree_store_set(debr.ui_menu.model, iter,
-			   MENU_FILENAME, label, MENU_MODIFIED_DATE, tmp,
-			   MENU_XMLPOINTER, menu, MENU_PATH, path,
+			   MENU_FILENAME, label,
+			   MENU_MODIFIED_DATE, tmp,
+			   MENU_XMLPOINTER, menu,
+			   MENU_PATH, path,
 			   MENU_VALIDATE_POINTER, NULL,
+			   MENU_HELP_BACKUP, help,
 			   -1);
+
 	/* select it and load its contents into UI */
 	if (select == TRUE) {
 		menu_select_iter(iter);
