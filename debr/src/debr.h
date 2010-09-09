@@ -27,7 +27,7 @@
 #include "menu.h"
 #include "program.h"
 #include "parameter.h"
-#include "validate.h"
+#include "debr-validate.h"
 
 G_BEGIN_DECLS
 

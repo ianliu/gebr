@@ -16,15 +16,16 @@
  */
 
 /**
- * \file validate.h Validate API.
+ * \file debr-validate.h Validate API.
  */
 
-#ifndef __VALIDATE_H
-#define __VALIDATE_H
+#ifndef __DEBR_VALIDATE_H
+#define __DEBR_VALIDATE_H
 
 #include <gtk/gtk.h>
-
+#include <libgebr/validate.h>
 #include <libgebr/geoxml.h>
+#include <libgebr/geoxml/gebr-geoxml-validate.h>
 
 G_BEGIN_DECLS
 

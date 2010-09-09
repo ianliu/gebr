@@ -21,7 +21,7 @@
 #include <libgebr/intl.h>
 
 #include "enumoptionedit.h"
-#include "validate.h"
+#include "debr-validate.h"
 
 /*
  * Prototypes

@@ -38,7 +38,7 @@ libdebr_a_SOURCES = \
 	parametergroup.c \
 	preferences.c \
 	program.c \
-	validate.c \
+	debr-validate.c \
 	debr-help-edit-widget.c \
 	$(NULL)
 
@@ -55,14 +55,14 @@ noinst_HEADERS = \
 	parametergroup.h \
 	preferences.h \
 	program.h \
-	validate.h \
+	debr-validate.h \
 	debr-help-edit-widget.h \
 	$(NULL)
 
 EXTRA_DIST = $(noinst_HEADERS) $(debrglade_DATA) $(debrscripts_DATA)
 
-INCLUDES = 
 AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
-	$(GEBR_CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_GUI_CFLAGS)
+	    $(GEBR_CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_GUI_CFLAGS)
+
 debr_LDADD = libdebr.a $(INTLLIBS) \
 	$(GEBR_LIBS) $(GEBR_GEOXML_LIBS) $(GEBR_GUI_LIBS)
