@@ -64,7 +64,9 @@ static void on_preview_toggled(GtkToggleAction * button, GebrGuiHelpEditWindow *
 
 static void on_print_clicked(GtkAction * action, GebrGuiHelpEditWindow * self);
 
-static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * self, GdkEventAny * event);
+static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * widget, GdkEventAny * event);
+
+static gboolean gebr_gui_help_edit_window_focus_out_event(GtkWidget * widget, GdkEventFocus * event);
 
 static void on_quit_clicked(GtkAction * action, GebrGuiHelpEditWindow * self);
 
@@ -131,6 +133,7 @@ static void gebr_gui_help_edit_window_class_init(GebrGuiHelpEditWindowClass * kl
 	gobject_class->get_property = gebr_gui_help_edit_window_get_property;
 	gobject_class->dispose = gebr_gui_help_edit_window_dispose;
 	widget_class->delete_event = gebr_gui_help_edit_window_delete_event;
+	widget_class->focus_out_event = gebr_gui_help_edit_window_focus_out_event;
 
 	/**
 	 * GebrGuiHelpEditWindow:help-edit-widget:
@@ -355,20 +358,20 @@ static gboolean gebr_gui_help_edit_window_quit_real(GebrGuiHelpEditWindow * self
 {
 	gint response;
 	GebrGuiHelpEditWidget * help_edit_widget;
-	GebrGuiHelpEditWindowPrivate * private;
+	GebrGuiHelpEditWindowPrivate * priv;
 
-	private = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
-	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(private->help_edit_widget);
+	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
+	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
 
+	// Return TRUE to maintain the window alive, FALSE to destroy it.
 	if (gebr_gui_help_edit_widget_is_content_saved(help_edit_widget))
 		return FALSE;
 
-	if (private->auto_save) {
+	if (priv->auto_save) {
 		gebr_gui_help_edit_widget_commit_changes(help_edit_widget);
 		return FALSE;
 	} 
 
-	// Return TRUE to maintain the window alive, FALSE to destroy it.
 	response = confirmation_dialog(self);
 	switch(response) {
 	case GTK_RESPONSE_OK:
@@ -386,24 +389,33 @@ static gboolean gebr_gui_help_edit_window_quit_real(GebrGuiHelpEditWindow * self
 static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * widget, GdkEventAny * event)
 {
 	GebrGuiHelpEditWindow * self;
+	self = GEBR_GUI_HELP_EDIT_WINDOW(widget);
+	return gebr_gui_help_edit_window_quit_real(self);
+}
+
+static gboolean gebr_gui_help_edit_window_focus_out_event(GtkWidget * widget, GdkEventFocus * event)
+{
+	GebrGuiHelpEditWindow * self;
 	GebrGuiHelpEditWindowPrivate * priv;
+	GebrGuiHelpEditWidget * help_edit_widget;
 
 	self = GEBR_GUI_HELP_EDIT_WINDOW(widget);
 	priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
-
-	if (priv->auto_save) {
-		GebrGuiHelpEditWidget * help_edit_widget;
-		help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
+	help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
+	
+	// Don't call is_content_saved before checking auto_save, since
+	// is_content_saved might be expensive!
+	if (priv->auto_save && !gebr_gui_help_edit_widget_is_content_saved(help_edit_widget))
 		gebr_gui_help_edit_widget_commit_changes(help_edit_widget);
-		return FALSE;
-	} else
-		return gebr_gui_help_edit_window_quit_real(self);
+
+	return FALSE;
 }
 
 static void on_quit_clicked(GtkAction * action, GebrGuiHelpEditWindow * self)
 {
 	gebr_gui_help_edit_window_quit(self);
 }
+
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================

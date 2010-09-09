@@ -345,8 +345,8 @@ GebrGuiHelpEditWidget * debr_help_edit_widget_new(GebrGeoXmlObject * object, con
 
 	gebr_gui_help_edit_widget_set_content(self, content);
 
-	// Set is_commited to TRUE for the first time we open a help edition
-	priv->is_commited = TRUE;
+	// Set is_commited to FALSE for the first time we open a help edition
+	priv->is_commited = FALSE;
 
 	return self;
 }

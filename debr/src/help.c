@@ -125,6 +125,7 @@ static void create_help_edit_window(GebrGeoXmlObject * object, GString * help) {
 	is_menu_selected = menu_get_selected(&iter, TRUE);
 	help_edit_widget = debr_help_edit_widget_new(object, help->str);
 	help_edit_window = gebr_gui_help_edit_window_new(help_edit_widget);
+	gebr_gui_help_edit_window_set_auto_save(GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window), TRUE);
 	merge_ui_def(GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window));
 
 	g_signal_connect(help_edit_window, "destroy",
