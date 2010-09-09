@@ -24,11 +24,6 @@
 G_BEGIN_DECLS
 
 /**
- * Ensures \p help is an absolute path.
- */
-void help_fix_css(GString * help);
-
-/**
  * debr_help_edit:
  * @object: a #GebrGeoXmlProgram or #GebrGeoXmlFlow
  *
@@ -43,5 +38,7 @@ void debr_help_edit(GebrGeoXmlObject * object);
  * Shows  @object's help.
  */
 void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title);
+
 G_END_DECLS
+
 #endif				//__HELP_H
