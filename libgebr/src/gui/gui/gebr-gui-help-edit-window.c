@@ -66,6 +66,8 @@ static void on_print_clicked(GtkAction * action, GebrGuiHelpEditWindow * self);
 
 static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * self, GdkEventAny * event);
 
+static void on_quit_clicked(GtkAction * action, GebrGuiHelpEditWindow * self);
+
 G_DEFINE_TYPE(GebrGuiHelpEditWindow, gebr_gui_help_edit_window, GTK_TYPE_WINDOW);
 
 static const GtkActionEntry action_entries[] = {
@@ -75,7 +77,7 @@ static const GtkActionEntry action_entries[] = {
 	{"PrintAction", GTK_STOCK_PRINT, NULL, NULL,
 		N_("Prints the content of this window"), G_CALLBACK(on_print_clicked)},
 	{"QuitAction", GTK_STOCK_QUIT, NULL, NULL,
-		N_("Quits the window"), NULL},
+		N_("Quits the window"), G_CALLBACK(on_quit_clicked)},
 };
 
 static const guint n_action_entries = G_N_ELEMENTS(action_entries);
@@ -361,6 +363,11 @@ static gboolean gebr_gui_help_edit_window_quit_real(GebrGuiHelpEditWindow * self
 	if (gebr_gui_help_edit_widget_is_content_saved(help_edit_widget))
 		return FALSE;
 
+	if (private->auto_save) {
+		gebr_gui_help_edit_widget_commit_changes(help_edit_widget);
+		return FALSE;
+	} 
+
 	// Return TRUE to maintain the window alive, FALSE to destroy it.
 	response = confirmation_dialog(self);
 	switch(response) {
@@ -393,6 +400,10 @@ static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * widget, GdkEv
 		return gebr_gui_help_edit_window_quit_real(self);
 }
 
+static void on_quit_clicked(GtkAction * action, GebrGuiHelpEditWindow * self)
+{
+	gebr_gui_help_edit_window_quit(self);
+}
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
