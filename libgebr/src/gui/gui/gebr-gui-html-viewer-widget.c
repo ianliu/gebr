@@ -145,30 +145,39 @@ static void generate_links_index(JSContextRef context, const gchar * links, gboo
 	g_free(script);
 }
 
+static gchar * js_get_document_title(JSContextRef context)
+{
+	JSValueRef value;
+	GString * title;
+	value = gebr_js_evaluate(context, "document.title");
+	title = gebr_js_value_get_string(context, value);
+	return g_string_free(title, FALSE);
+}
+
 static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, GebrGuiHtmlViewerWidget *self)
 {
 	GebrGuiHtmlViewerWidgetPrivate * priv;
 	GebrGeoXmlObjectType type;
 	JSContextRef context;
-	const gchar * title = "";
+	gchar * title = "";
 
 	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+	context = webkit_web_frame_get_global_context(frame);
 
 	if (priv->object) {
-		context = webkit_web_frame_get_global_context(frame);
 		type = gebr_geoxml_object_get_type(priv->object);
 		create_generate_links_index_function(context);
 
 		if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
 			generate_links_index(context, "[['<b>Menu</b>', 'gebr://menu']]", TRUE);
-			title = gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(priv->object));
+			title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(priv->object)));
 		} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 			GString * list;
 			GebrGeoXmlSequence *program;
 
 			list = g_string_new("[");
 			gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(priv->object), &program, 0);
-			title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(priv->object));
+			title = g_strdup(gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(priv->object)));
 
 			for (gint i = 0; program != NULL; gebr_geoxml_sequence_next(&program), ++i)
 				g_string_append_printf(list, "%s['%s', 'gebr://prog%d']",
@@ -179,9 +188,10 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 			g_string_free(list, TRUE);
 		}
 	} else
-		title = webkit_web_view_get_title(web_view);
+		title = js_get_document_title(context);
 
 	g_signal_emit(self, signals[TITLE_READY], 0, title);
+	g_free(title);
 }
 
 static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame *frame,
