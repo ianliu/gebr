@@ -57,13 +57,14 @@ enum {
 	MENU_XMLPOINTER,		/**< Pointer to the Xml structure of this menu.	*/
 	MENU_PATH,			/**< Absolute path for this menu in system. */
 	MENU_VALIDATE_NEED_UPDATE,	/**< If menu has changed than validation needs to be updated. */
-	/** If this menu was validated, then keeps the validation structure. */
-	MENU_VALIDATE_POINTER,		
+	MENU_VALIDATE_POINTER,		/**< If this menu was validated, then keeps the validation structure. */
+	MENU_HELP_BACKUP,
 	MENU_N_COLUMN
 };
 
 /**
- * Error messages to handle menu save */
+ * Error messages to handle menu save
+ */
 typedef enum {
 	MENU_MESSAGE_PERMISSION_DENIED = 0,	/**< The program don't has access to the file			*/ 
 	MENU_MESSAGE_SUCCESS			/**< Normal execution						*/

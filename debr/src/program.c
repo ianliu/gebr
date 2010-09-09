@@ -97,7 +97,11 @@ void program_setup_ui(void)
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_IN);
 
 	debr.ui_program.list_store = gtk_list_store_new(PROGRAM_N_COLUMN,
-							GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
+							GDK_TYPE_PIXBUF,	// PROGRAM_STATUS
+							G_TYPE_STRING,		// PROGRAM_TITLE
+							G_TYPE_POINTER,		// PROGRAM_XMLPOINTER
+							G_TYPE_STRING);		// PROGRAM_HELP_BACKUP
+
 	debr.ui_program.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_program.list_store));
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(debr.ui_program.tree_view), TRUE);
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(debr.ui_program.tree_view)),

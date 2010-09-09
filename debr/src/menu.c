@@ -105,9 +105,16 @@ void menu_setup_ui(void)
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_IN);
 
 	debr.ui_menu.model = gtk_tree_store_new(MENU_N_COLUMN,
-						G_TYPE_INT, G_TYPE_STRING, G_TYPE_STRING,
-					       	G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING,
-						G_TYPE_BOOLEAN, G_TYPE_POINTER);
+						G_TYPE_INT,	// MENU_STATUS
+						G_TYPE_STRING,	// MENU_IMAGE
+						G_TYPE_STRING,	// MENU_FILENAME
+					       	G_TYPE_STRING,	// MENU_MODIFIED_DATE
+						G_TYPE_POINTER,	// MENU_XMLPOINTER
+						G_TYPE_STRING,	// MENU_PATH
+						G_TYPE_BOOLEAN,	// MENU_VALIDATE_NEED_UPDATE
+						G_TYPE_POINTER,	// MENU_VALIDATE_POINTER
+						G_TYPE_STRING);	// MENU_HELP_BACKUP
+
 	debr.ui_menu.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_menu.model));
 	gtk_widget_show(debr.ui_menu.tree_view);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), debr.ui_menu.tree_view);
