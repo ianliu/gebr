@@ -130,5 +130,10 @@ void program_help_show(void);
  */
 void program_help_edit(void);
 
+/**
+ * debr_program_get_backup_help_from_pointer:
+ */
+gchar * debr_program_get_backup_help_from_pointer(gpointer program);
+
 G_END_DECLS
 #endif				//__PROGRAM_H

@@ -391,5 +391,10 @@ void menu_help_show_clicked(void);
  */
 GebrGeoXmlFlow * menu_get_xml_pointer(GtkTreeIter * iter);
 
+/**
+ * debr_menu_get_backup_help_from_pointer:
+ */
+gchar * debr_menu_get_backup_help_from_pointer(gpointer menu);
+
 G_END_DECLS
 #endif				//__MENU_H

@@ -785,16 +785,25 @@ static void program_load_selected(void)
 static GtkTreeIter program_append_to_ui(GebrGeoXmlProgram * program)
 {
 	GtkTreeIter iter;
+	const gchar * help;
+
+	help = gebr_geoxml_program_get_help(program);
+
+	if (strlen(help) == 0)
+		help = NULL;
 
 	gtk_list_store_append(debr.ui_program.list_store, &iter);
-	gtk_list_store_set(debr.ui_program.list_store, &iter, PROGRAM_XMLPOINTER, program, -1);
+	gtk_list_store_set(debr.ui_program.list_store, &iter,
+			   PROGRAM_XMLPOINTER, program,
+			   PROGRAM_HELP_BACKUP, help,
+			   -1);
 	program_load_iter(&iter);
 
 	return iter;
 }
 
 /**
- * \internal
+ * program_selected:
  * Load user selected program.
  */
 static void program_selected(void)
@@ -988,6 +997,32 @@ void program_help_show(void)
 void program_help_edit(void)
 {
 	debr_help_edit(GEBR_GEOXML_OBJECT(debr.program));
+}
+
+gchar * debr_program_get_backup_help_from_pointer(gpointer program)
+{
+	gboolean valid;
+	GtkTreeIter iter;
+	GtkTreeModel * model;
+
+	// Searches the program's model for 'program', returning the corresponding help backup
+
+	model = GTK_TREE_MODEL (debr.ui_program.list_store);
+	valid = gtk_tree_model_get_iter_first(model, &iter);
+	while (valid) {
+		gchar * help;
+		gpointer ptr;
+		gtk_tree_model_get(model, &iter,
+				   PROGRAM_XMLPOINTER, &ptr,
+				   PROGRAM_HELP_BACKUP, &help,
+				   -1);
+		if (ptr == program)
+			return help;
+		g_free(help);
+
+		valid = gtk_tree_model_iter_next(model, &iter);
+	}
+	return NULL;
 }
 
 /**

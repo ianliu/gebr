@@ -605,6 +605,23 @@ static void help_edit_on_jump_to_activate(GtkAction * action, GebrGuiHelpEditWin
 
 static void help_edit_on_revert(GtkAction * action, GebrGuiHelpEditWindow * window)
 {
+	gchar * help_backup;
+	GebrGeoXmlObject * object;
+	GebrGeoXmlObjectType type;
+	GebrGuiHelpEditWidget * widget;
+
+	g_object_get(window, "help-edit-widget", &widget, NULL);
+	g_object_get(widget, "geoxml-object", &object, NULL);
+
+	type = gebr_geoxml_object_get_type(object);
+	if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
+		help_backup = debr_program_get_backup_help_from_pointer(object);
+	else
+		help_backup = debr_menu_get_backup_help_from_pointer(object);
+
+	if (help_backup != NULL)
+		gebr_gui_help_edit_widget_set_content(widget, help_backup);
+	g_free(help_backup);
 }
 
 //==============================================================================

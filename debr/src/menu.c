@@ -80,6 +80,8 @@ static void menu_remove_with_validation(GtkTreeIter * iter);
 
 static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object);
 
+void debr_menu_backup_help(GtkTreeIter * iter);
+
 /*
  * Public functions
  */
@@ -415,10 +417,8 @@ void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * men
 			   -1);
 
 	/* select it and load its contents into UI */
-	if (select == TRUE) {
+	if (select == TRUE)
 		menu_select_iter(iter);
-		menu_selected();
-	}
 
 	g_free(filename);
 	g_free(label);
@@ -493,6 +493,7 @@ MenuMessage menu_save(GtkTreeIter * iter)
 		gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(menu), filename);
 		gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(menu), gebr_iso_date());
 		gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path);
+		debr_menu_backup_help(iter);
 	}
 
 	tmp = g_strdup_printf("%ld",
@@ -1283,7 +1284,6 @@ IterType menu_get_selected_type(GtkTreeIter * _iter, gboolean warn_unselected_me
 void menu_select_iter(GtkTreeIter * iter)
 {
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(debr.ui_menu.tree_view), iter);
-	menu_selected();
 }
 
 void menu_details_update(void)
@@ -1645,6 +1645,37 @@ GebrGeoXmlFlow * menu_get_xml_pointer(GtkTreeIter * iter)
 	model = GTK_TREE_MODEL(debr.ui_menu.model);
 	gtk_tree_model_get(model, iter, MENU_XMLPOINTER, &menu, -1);
 	return menu;
+}
+
+gchar * debr_menu_get_backup_help_from_pointer(gpointer menu)
+{
+	gboolean valid;
+	GtkTreeIter iter;
+	GtkTreeIter child;
+	GtkTreeModel * model;
+
+	// Searches the menu's model for 'menu', returning the corresponding help backup
+
+	model = GTK_TREE_MODEL (debr.ui_menu.model);
+	valid = gtk_tree_model_get_iter_first(model, &iter);
+	while (valid) {
+		valid = gtk_tree_model_iter_children(model, &child, &iter);
+		while (valid) {
+			gchar * help;
+			gpointer ptr;
+			gtk_tree_model_get(model, &child,
+					   MENU_XMLPOINTER, &ptr,
+					   MENU_HELP_BACKUP, &help,
+					   -1);
+			if (ptr == menu)
+				return help;
+			g_free(help);
+
+			valid = gtk_tree_model_iter_next(model, &child);
+		}
+		valid = gtk_tree_model_iter_next(model, &iter);
+	}
+	return NULL;
 }
 
 /**
@@ -2156,3 +2187,21 @@ static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object)
 	}
 }
 
+/*
+ * debr_menu_backup_help:
+ * @iter:
+ */
+void debr_menu_backup_help(GtkTreeIter * iter)
+{
+	const gchar * help;
+	GebrGeoXmlDocument * document;
+
+	gtk_tree_model_get(GTK_TREE_MODEL (debr.ui_menu.model), iter,
+			   MENU_XMLPOINTER, &document,
+			   -1);
+
+	help = gebr_geoxml_document_get_help(document);
+	gtk_tree_store_set(debr.ui_menu.model, iter,
+			   MENU_HELP_BACKUP, help,
+			   -1);
+}
