@@ -18,6 +18,6 @@ include $(top_srcdir)/Makefile.decl
 bin_PROGRAMS = gebr-geoxml-validate
 gebr_geoxml_validate_SOURCES = validate.c
 
-INCLUDES = -I$(srcdir)/..
+INCLUDES = -I$(srcdir)/.. -I$(srcdir)/../..
 AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
 gebr_geoxml_validate_LDADD = ../geoxml/libgebr_geoxml.la $(GLIB_LIBS)

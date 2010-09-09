@@ -17,7 +17,7 @@
 
 #include <string.h>
 
-#include "validate.h"
+#include "gebr-geoxml-validate.h"
 #include "../../validate.h"
 #include "../../intl.h"
 #include "../../date.h"

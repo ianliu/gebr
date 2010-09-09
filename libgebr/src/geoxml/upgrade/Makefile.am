@@ -18,6 +18,6 @@ include $(top_srcdir)/Makefile.decl
 bin_PROGRAMS = gebr-geoxml-upgrade
 gebr_geoxml_upgrade_SOURCES = upgrade.c
 
-INCLUDES = -I$(srcdir)/..
+INCLUDES = -I$(srcdir)/.. -I$(srcdir)/../..
 AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
 gebr_geoxml_upgrade_LDADD = ../geoxml/libgebr_geoxml.la $(GLIB_LIBS)

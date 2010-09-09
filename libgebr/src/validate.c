@@ -20,7 +20,7 @@
 
 #include "intl.h"
 #include "validate.h"
-#include "geoxml/geoxml/validate.h"
+#include "geoxml/geoxml/gebr-geoxml-validate.h"
 
 /*
  * Prototypes
