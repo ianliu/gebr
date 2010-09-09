@@ -27,6 +27,7 @@
 #include "debr-validate.h"
 #include "debr.h"
 #include "callbacks.h"
+#include <help.h>
 
 static void validate_free(struct validate *validate);
 static gboolean validate_get_selected(GtkTreeIter * iter, gboolean warn_unselected);
@@ -332,8 +333,6 @@ static void validate_parse_link_click_callback(GtkTextView * text_view, GtkTextT
 
 	validate_case = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(link_tag), "validate_case"));
 
-	//printf("\nvalidate_case: %i", validate_case);
-	puts("validate");
 	if (!menu_get_selected(&menu_iter, FALSE) ||
 	    !gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(debr.ui_menu.model), &menu_iter,
 						   &validate->menu_iter))
@@ -341,15 +340,21 @@ static void validate_parse_link_click_callback(GtkTextView * text_view, GtkTextT
 
 	gchar *program_path = g_object_get_data(G_OBJECT(link_tag), "program_path_string");
 	gchar *parameter_path = g_object_get_data(G_OBJECT(link_tag), "parameter_path_string");
-	gboolean ret;
+	gboolean ret = FALSE;
 	if (program_path != NULL) {
 		menu_select_program_and_paramater(program_path, parameter_path);
 		if (parameter_path != NULL)
 			ret = on_parameter_properties_activate();
 		else
-			ret = on_program_properties_activate();	
+			if (validate_case == GEBR_VALIDATE_CASE_HELP)
+				debr_help_edit(GEBR_GEOXML_OBJECT(debr.program));
+			else
+				ret = on_program_properties_activate();	
 	} else 
-		ret = on_menu_properties_activate();
+			if (validate_case == GEBR_VALIDATE_CASE_HELP)
+				debr_help_edit(GEBR_GEOXML_OBJECT(debr.menu));
+			else
+				ret = on_menu_properties_activate();
 
 	if (ret)
 		validate_menu(&validate->menu_iter);
