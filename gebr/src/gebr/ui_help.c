@@ -142,10 +142,8 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 	window = gebr_gui_html_viewer_window_new(title); 
 	html_viewer_widget = gebr_gui_html_viewer_window_get_widget(GEBR_GUI_HTML_VIEWER_WINDOW(window));
 
-	if (menu) {
-		gebr_gui_html_viewer_window_set_geoxml_object(GEBR_GUI_HTML_VIEWER_WINDOW(window), object);
-		gebr_gui_html_viewer_widget_set_generate_links(html_viewer_widget, TRUE);
-	}
+	if (menu)
+		gebr_gui_html_viewer_widget_generate_links(html_viewer_widget, object);
 
 	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		html = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));

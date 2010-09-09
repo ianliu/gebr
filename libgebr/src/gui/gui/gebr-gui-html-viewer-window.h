@@ -62,13 +62,6 @@ GtkWidget * gebr_gui_html_viewer_window_new();
 void gebr_gui_html_viewer_window_show_html(GebrGuiHtmlViewerWindow * self, const gchar * content);
 
 /**
- * gebr_gui_html_viewer_window_set_geoxml_object:
- *
- * Set a geoxml object attribute
- */
-void gebr_gui_html_viewer_window_set_geoxml_object(GebrGuiHtmlViewerWindow * self, GebrGeoXmlObject * object);
-
-/**
  * gebr_gui_html_viewer_window_get_widget:
  *
  * Get widget

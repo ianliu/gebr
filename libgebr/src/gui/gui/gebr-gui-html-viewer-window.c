@@ -37,9 +37,11 @@ struct _GebrGuiHtmlViewerWindowPrivate {
 
 static void gebr_gui_html_viewer_window_response(GtkDialog *object, gint response_id);
 
-void on_print_clicked(GtkWidget * printer_item, GebrGuiHtmlViewerWindow * self);
+static void on_print_clicked(GtkWidget * printer_item, GebrGuiHtmlViewerWindow * self);
 
-void on_quit_clicked(GtkWidget * quit_item, GebrGuiHtmlViewerWindow * self);
+static void on_quit_clicked(GtkWidget * quit_item, GebrGuiHtmlViewerWindow * self);
+
+static void on_title_ready(GebrGuiHtmlViewerWidget * widget, const gchar * title, GebrGuiHtmlViewerWindow * self);
 
 G_DEFINE_TYPE(GebrGuiHtmlViewerWindow, gebr_gui_html_viewer_window, GTK_TYPE_DIALOG);
 
@@ -52,7 +54,7 @@ static void gebr_gui_html_viewer_window_class_init(GebrGuiHtmlViewerWindowClass 
 	GtkDialogClass *dialog_class;
 
 	dialog_class = GTK_DIALOG_CLASS(klass);
-	dialog_class->response =  gebr_gui_html_viewer_window_response;
+	dialog_class->response = gebr_gui_html_viewer_window_response;
 
 	g_type_class_add_private(klass, sizeof(GebrGuiHtmlViewerWindowPrivate));
 }
@@ -69,6 +71,10 @@ static void gebr_gui_html_viewer_window_init(GebrGuiHtmlViewerWindow * self)
 
 	priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
 	priv->viewer_widget = gebr_gui_html_viewer_widget_new();
+
+	g_signal_connect (priv->viewer_widget, "title-ready",
+			  G_CALLBACK (on_title_ready),
+			  self);
 
 	dialog = GTK_DIALOG(self);
 	gtk_window_set_default_size(GTK_WINDOW(dialog), 800, 600);
@@ -122,19 +128,24 @@ static void gebr_gui_html_viewer_window_response(GtkDialog *object, gint respons
 	gtk_widget_destroy(GTK_WIDGET(object));
 }
 
-void on_print_clicked(GtkWidget * print_item, GebrGuiHtmlViewerWindow * self)
+static void on_print_clicked(GtkWidget * print_item, GebrGuiHtmlViewerWindow * self)
 {
 	GebrGuiHtmlViewerWindowPrivate * private;
 	private = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
 	gebr_gui_html_viewer_widget_print(GEBR_GUI_HTML_VIEWER_WIDGET(private->viewer_widget));
 }
 
-void on_quit_clicked(GtkWidget * quit_item, GebrGuiHtmlViewerWindow * self)
+static void on_quit_clicked(GtkWidget * quit_item, GebrGuiHtmlViewerWindow * self)
 {
 	GebrGuiHtmlViewerWindowPrivate * private;
 	private = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
 
 	gtk_widget_destroy(GTK_WIDGET(self));
+}
+
+static void on_title_ready(GebrGuiHtmlViewerWidget * widget, const gchar * title, GebrGuiHtmlViewerWindow * self)
+{
+	gtk_window_set_title(GTK_WINDOW (self), title);
 }
 
 //==============================================================================
@@ -153,14 +164,6 @@ void gebr_gui_html_viewer_window_show_html(GebrGuiHtmlViewerWindow * self, const
 
 	GebrGuiHtmlViewerWindowPrivate * priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
 	gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(priv->viewer_widget), content);
-}
-
-void gebr_gui_html_viewer_window_set_geoxml_object(GebrGuiHtmlViewerWindow * self, GebrGeoXmlObject * object)
-{
-	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WINDOW(self));
-
-	GebrGuiHtmlViewerWindowPrivate * priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
-	gebr_gui_html_viewer_widget_set_geoxml_object(GEBR_GUI_HTML_VIEWER_WIDGET(priv->viewer_widget), object);
 }
 
 GebrGuiHtmlViewerWidget* gebr_gui_html_viewer_window_get_widget(GebrGuiHtmlViewerWindow * self)

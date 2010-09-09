@@ -42,6 +42,9 @@ struct _GebrGuiHtmlViewerWidget {
 
 struct _GebrGuiHtmlViewerWidgetClass {
 	GtkVBoxClass parent_class;
+
+	/* Signals */
+	void (*title_ready) (GebrGuiHtmlViewerWidget * self, const gchar * title);
 };
 
 GType gebr_gui_html_viewer_widget_get_type(void) G_GNUC_CONST;
@@ -68,18 +71,13 @@ void gebr_gui_html_viewer_widget_print(GebrGuiHtmlViewerWidget * self);
 void gebr_gui_html_viewer_widget_show_html(GebrGuiHtmlViewerWidget * self, const gchar * content);
 
 /**
- * gebr_gui_html_viewer_widget_set_geoxml_object:
+ * gebr_gui_html_viewer_widget_generate_links:
+ * @widget: The HTML viewer widget
+ * @object: A #GebrGeoXmlObject for generating the links
  *
- * Set a geoxml object attribute
+ * Generate links for @object.
  */
-void gebr_gui_html_viewer_widget_set_geoxml_object(GebrGuiHtmlViewerWidget *self, GebrGeoXmlObject * object);
-
-/**
- * gebr_gui_html_viewer_widget_set_generate_links:
- *
- * Set wheter to generate links or not
- */
-void gebr_gui_html_viewer_widget_set_generate_links(GebrGuiHtmlViewerWidget *self, gboolean generate_links);
+void gebr_gui_html_viewer_widget_generate_links(GebrGuiHtmlViewerWidget *self, GebrGeoXmlObject * object);
 
 G_END_DECLS
 
