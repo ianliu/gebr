@@ -751,7 +751,7 @@ void menu_close(GtkTreeIter * iter, gboolean warn_user)
 	if (validate)
 		validate_close_iter(&validate->iter);
 
-	debr_remove_help_edit_window(menu, TRUE);
+	debr_remove_help_edit_window(menu, FALSE, TRUE);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
 	if (gtk_tree_store_remove(debr.ui_menu.model, iter))
 		menu_select_iter(iter);

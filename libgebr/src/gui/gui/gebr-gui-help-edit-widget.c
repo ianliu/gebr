@@ -59,7 +59,6 @@ static void gebr_gui_help_edit_widget_get_property	(GObject	*object,
 							 guint		 prop_id,
 							 GValue		*value,
 							 GParamSpec	*pspec);
-static void gebr_gui_help_edit_widget_destroy(GtkObject *object);
 
 gboolean gebr_gui_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self);
 
@@ -72,13 +71,10 @@ G_DEFINE_ABSTRACT_TYPE(GebrGuiHelpEditWidget, gebr_gui_help_edit_widget, GTK_TYP
 static void gebr_gui_help_edit_widget_class_init(GebrGuiHelpEditWidgetClass * klass)
 {
 	GObjectClass *gobject_class;
-	GtkObjectClass *object_class;
 
 	gobject_class = G_OBJECT_CLASS(klass);
-	object_class = GTK_OBJECT_CLASS(klass);
 	gobject_class->set_property = gebr_gui_help_edit_widget_set_property;
 	gobject_class->get_property = gebr_gui_help_edit_widget_get_property;
-	object_class->destroy = gebr_gui_help_edit_widget_destroy;
 
 	/**
 	 * GebrGuiHelpEditWidget:editing:
@@ -183,10 +179,6 @@ static void gebr_gui_help_edit_widget_get_property(GObject	*object,
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
 		break;
 	}
-}
-
-static void gebr_gui_help_edit_widget_destroy(GtkObject *object)
-{
 }
 
 //==============================================================================

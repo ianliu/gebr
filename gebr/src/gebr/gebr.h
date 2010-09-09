@@ -71,6 +71,8 @@ struct gebr {
 	/** \deprecated This should be avoided. Use Stock icons instead. */
 	GtkWidget *invisible;			
 
+	GHashTable * help_edit_windows;
+
 	GebrGeoXmlDocument *project_line;
 	GebrGeoXmlProject *project;
 	GebrGeoXmlLine *line;
