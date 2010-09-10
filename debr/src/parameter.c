@@ -1282,11 +1282,7 @@ static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group)
 		g_string_free(default_value, TRUE);
 		g_string_free(keyword, TRUE);
 	} else {
-		GebrGeoXmlParameters *template;
-
 		keyword_label = g_string_new(NULL);
-		template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(parameter));
-
 		if (gebr_geoxml_parameter_group_get_is_instanciable(GEBR_GEOXML_PARAMETER_GROUP(parameter))) {
 			if (gebr_geoxml_parameter_group_get_instances_number(GEBR_GEOXML_PARAMETER_GROUP(parameter)) == 1)
 				g_string_printf(keyword_label, _("with 1 instance"));
@@ -1299,7 +1295,7 @@ static void parameter_load_iter(GtkTreeIter * iter, gboolean load_group)
 		} else
 			g_string_printf(keyword_label, _("not instantiable"));
 
-		if (gebr_geoxml_parameters_get_default_selection(template) != NULL)
+		if (gebr_geoxml_parameter_group_is_exclusive(GEBR_GEOXML_PARAMETER_GROUP(parameter)))
 			g_string_append_printf(keyword_label, _(" and exclusive"));
 		else
 			g_string_append_printf(keyword_label, _(" and not exclusive"));

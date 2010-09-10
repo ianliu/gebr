@@ -61,6 +61,7 @@ void
 __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * parameters, GebrGeoXmlParameter * parameter)
 {
 	glong index;
+	gboolean exclusive;
 	GdomeElement *parent;
 	GebrGeoXmlParameterGroup *parameter_group;
 	GebrGeoXmlSequence *instance;
@@ -73,6 +74,8 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 
 	index = __gebr_geoxml_get_element_index((GdomeElement *) parameter);
 	parameter_group = GEBR_GEOXML_PARAMETER_GROUP(gdome_el_parentNode(parent, &exception));
+	exclusive = gebr_geoxml_parameter_group_is_exclusive(parameter_group);
+
 	gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
 	for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
 		GdomeElement *reference;
@@ -83,6 +86,12 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 		gdome_el_insertBefore_protected((GdomeElement *) instance, (GdomeNode *) reference,
 						(GdomeNode *) position, &exception);
 		__gebr_geoxml_parameter_set_be_reference((GebrGeoXmlParameter *) reference);
+
+		// If template is exclusive and this is the first parameter being inserted
+		// into the instance, we must set this <parameters> tag to be exclusive too.
+		if (exclusive && index == 0)
+			gebr_geoxml_parameters_set_default_selection(GEBR_GEOXML_PARAMETERS(instance),
+								     GEBR_GEOXML_PARAMETER(reference));
 	}
 }
 

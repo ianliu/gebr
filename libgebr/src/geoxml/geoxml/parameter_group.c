@@ -211,3 +211,45 @@ gboolean gebr_geoxml_parameter_group_get_expand(GebrGeoXmlParameterGroup * param
 
 	return (!strcmp(expand, "yes")) ? TRUE : FALSE;
 }
+
+void gebr_geoxml_parameter_group_set_exclusive(GebrGeoXmlParameterGroup * parameter_group, gboolean exclusive)
+{
+	GebrGeoXmlParameters * template;
+	GebrGeoXmlSequence * instance;
+	GebrGeoXmlSequence * parameter;
+
+	g_return_if_fail(parameter_group != NULL);
+
+	template = gebr_geoxml_parameter_group_get_template(parameter_group);
+	if (exclusive) {
+		__gebr_geoxml_set_attr_value((GdomeElement*)template, "default-selection", "1");
+		__gebr_geoxml_set_attr_value((GdomeElement*)template, "selection", "1");
+	} else {
+		__gebr_geoxml_set_attr_value((GdomeElement*)template, "default-selection", "0");
+		__gebr_geoxml_remove_attr((GdomeElement*)template, "selection");
+	}
+
+	gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
+	while (instance) {
+		if (!exclusive)
+			gebr_geoxml_parameters_set_default_selection(GEBR_GEOXML_PARAMETERS(instance), NULL);
+		else {
+			gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &parameter, 0);
+			gebr_geoxml_parameters_set_default_selection(GEBR_GEOXML_PARAMETERS(instance),
+								     GEBR_GEOXML_PARAMETER(parameter));
+		}
+		gebr_geoxml_sequence_next(&instance);
+	}
+}
+
+gboolean gebr_geoxml_parameter_group_is_exclusive(GebrGeoXmlParameterGroup * parameter_group)
+{
+	const gchar * default_selection;
+	GebrGeoXmlParameters * template;
+
+	g_return_val_if_fail(parameter_group != NULL, FALSE);
+
+	template = gebr_geoxml_parameter_group_get_template(parameter_group);
+	default_selection = __gebr_geoxml_get_attr_value((GdomeElement*)template, "default-selection");
+	return default_selection[0] == '0' ? FALSE:TRUE;
+}

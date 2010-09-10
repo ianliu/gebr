@@ -63,8 +63,7 @@ gboolean parameter_group_dialog_setup_ui(gboolean new_parameter)
 
 	GebrGeoXmlParameterGroup *parameter_group;
 	GebrGeoXmlSequence *instance;
-	GebrGeoXmlSequence *parameter;
-	guint i;
+	GebrGeoXmlParameters *template;
 	gboolean ret = TRUE;
 
 	struct ui_parameter_group_dialog *ui;
@@ -78,6 +77,7 @@ gboolean parameter_group_dialog_setup_ui(gboolean new_parameter)
 							  (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 							  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 							  GTK_STOCK_OK, GTK_RESPONSE_OK,NULL);
+	template = gebr_geoxml_parameter_group_get_template(parameter_group);
 	gtk_widget_set_size_request(dialog, -1, 500);
 
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -171,8 +171,6 @@ gboolean parameter_group_dialog_setup_ui(gboolean new_parameter)
 	gtk_table_attach(GTK_TABLE(table), instances_spin_button, 1, 2, row, row + 1,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0), ++row;
 	/* if we don't any parameter we cannot instanciate */
-	GebrGeoXmlParameters *template;
-	template = gebr_geoxml_parameter_group_get_template(parameter_group);
 	gtk_widget_set_sensitive(instances_spin_button,
 				 gebr_geoxml_parameters_get_number(template) > 0 ? TRUE : FALSE);
 
@@ -188,17 +186,8 @@ gboolean parameter_group_dialog_setup_ui(gboolean new_parameter)
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(instances_spin_button),
 				  gebr_geoxml_parameter_group_get_instances_number(parameter_group));
 
-	/* scan for an exclusive instance */
-	gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(exclusive_check_button), TRUE);
-	for (i = 0, parameter = NULL; instance != NULL; ++i, gebr_geoxml_sequence_next(&instance)) {
-		parameter =
-		    GEBR_GEOXML_SEQUENCE(gebr_geoxml_parameters_get_default_selection(GEBR_GEOXML_PARAMETERS(instance)));
-		if (parameter == NULL) {
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(exclusive_check_button), FALSE);
-			break;
-		}
-	}
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(exclusive_check_button),
+				     gebr_geoxml_parameter_group_is_exclusive(parameter_group));
 	parameter_group_instances_setup_ui(ui);
 
 	GebrValidateCase *validate_case;
@@ -350,38 +339,15 @@ static gboolean on_parameter_group_instances_changed(GtkSpinButton * spin_button
 	return FALSE;
 }
 
-/**
- * \internal
+/*
  * Called when the 'Exclusive' toggle button is pressed.
  */
-static void
-on_parameter_group_is_exclusive_toggled(GtkToggleButton * toggle_button, struct ui_parameter_group_dialog *ui)
+static void on_parameter_group_is_exclusive_toggled(GtkToggleButton * toggle_button,
+						    struct ui_parameter_group_dialog *ui)
 {
 	gboolean toggled;
-	GebrGeoXmlSequence *instance;
-	GebrGeoXmlParameters *template;
-	GebrGeoXmlSequence *first_parameter;
-
 	toggled = gtk_toggle_button_get_active(toggle_button);
-	template = gebr_geoxml_parameter_group_get_template(ui->parameter_group);
-	if (!toggled)
-		gebr_geoxml_parameters_set_default_selection(template, NULL);
-	else {
-		gebr_geoxml_parameters_get_parameter(template, &first_parameter, 0);
-		gebr_geoxml_parameters_set_default_selection(template, GEBR_GEOXML_PARAMETER(first_parameter));
-	}
-
-	gebr_geoxml_parameter_group_get_instance(ui->parameter_group, &instance, 0);
-	for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
-		if (!toggled)
-			gebr_geoxml_parameters_set_default_selection(GEBR_GEOXML_PARAMETERS(instance), NULL);
-		else {
-			gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &first_parameter, 0);
-			gebr_geoxml_parameters_set_default_selection(GEBR_GEOXML_PARAMETERS(instance),
-								     GEBR_GEOXML_PARAMETER(first_parameter));
-		}
-	}
-
+	gebr_geoxml_parameter_group_set_exclusive(ui->parameter_group, toggled);
 	parameter_group_instances_setup_ui(ui);
 }
 

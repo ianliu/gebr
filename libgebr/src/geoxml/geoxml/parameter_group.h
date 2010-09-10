@@ -151,5 +151,22 @@ gboolean gebr_geoxml_parameter_group_get_is_instanciable(GebrGeoXmlParameterGrou
  */
 gboolean gebr_geoxml_parameter_group_get_expand(GebrGeoXmlParameterGroup * parameter_group);
 
+/**
+ * gebr_geoxml_parameter_group_set_exclusive:
+ * @parameter_group: a pointer to a parameter group xml
+ * @exclusive: %TRUE to transform @parameter_group into an exclusive group
+ */
+void gebr_geoxml_parameter_group_set_exclusive(GebrGeoXmlParameterGroup * parameter_group, gboolean exclusive);
+
+/**
+ * gebr_geoxml_parameter_group_is_exclusive:
+ * @parameter_group: a pointer to a parameter group xml
+ *
+ * When a group is exclusive, only one parameter inside it might be filled.
+ *
+ * Returns: %TRUE is the group parameter is exclusive, %FALSE otherwise.
+ */
+gboolean gebr_geoxml_parameter_group_is_exclusive(GebrGeoXmlParameterGroup * parameter_group);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PARAMETER_GROUP_H
