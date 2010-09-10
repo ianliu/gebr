@@ -310,7 +310,8 @@ void program_remove(gboolean confirm)
 	if (!program_get_selected(NULL, TRUE))
 		return;
 	if (confirm && 
-	    gebr_gui_confirm_action_dialog(_("Delete program"), _("Are you sure you want to delete selected(s) program(s)?")) == FALSE)
+	    gebr_gui_confirm_action_dialog(_("Delete program"),
+					   _("Are you sure you want to delete selected(s) program(s)?")) == FALSE)
 		return;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_program.tree_view) {
@@ -318,7 +319,8 @@ void program_remove(gboolean confirm)
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), &iter,
 				   PROGRAM_XMLPOINTER, &program,
 				   -1);
-		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(debr.program));
+		debr_remove_help_edit_window(program, FALSE, FALSE);
+		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(program));
 		valid = gtk_list_store_remove(debr.ui_program.list_store, &iter);
 	}
 	if (valid)
