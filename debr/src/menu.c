@@ -926,6 +926,9 @@ gboolean menu_cleanup_iter_list(GList * list)
 	gboolean ret;
 	gboolean still_running = TRUE;
 
+	if (!list)
+		return TRUE;
+
 	builder = gtk_builder_new();
 	gtk_builder_add_from_file(builder, DEBR_GLADE_DIR "/menu-dialog-save-ui.glade", &error);
 	if (error) {
