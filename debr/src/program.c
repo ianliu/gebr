@@ -791,9 +791,6 @@ static GtkTreeIter program_append_to_ui(GebrGeoXmlProgram * program)
 
 	help = gebr_geoxml_program_get_help(program);
 
-	if (strlen(help) == 0)
-		help = NULL;
-
 	gtk_list_store_append(debr.ui_program.list_store, &iter);
 	gtk_list_store_set(debr.ui_program.list_store, &iter,
 			   PROGRAM_XMLPOINTER, program,
@@ -1003,28 +1000,37 @@ void program_help_edit(void)
 
 gchar * debr_program_get_backup_help_from_pointer(gpointer program)
 {
+	gchar * help;
 	gboolean valid;
 	GtkTreeIter iter;
 	GtkTreeModel * model;
 
 	// Searches the program's model for 'program', returning the corresponding help backup
-
+	help = NULL;
 	model = GTK_TREE_MODEL (debr.ui_program.list_store);
 	valid = gtk_tree_model_get_iter_first(model, &iter);
+
 	while (valid) {
-		gchar * help;
 		gpointer ptr;
 		gtk_tree_model_get(model, &iter,
 				   PROGRAM_XMLPOINTER, &ptr,
 				   PROGRAM_HELP_BACKUP, &help,
 				   -1);
 		if (ptr == program)
-			return help;
+			break;
 		g_free(help);
 
 		valid = gtk_tree_model_iter_next(model, &iter);
 	}
-	return NULL;
+
+	if (help && strlen(help) == 0) {
+		g_free(help);
+		help = NULL;
+	}
+
+	g_printf("%d\n", help == NULL ? -1:strlen(help));
+
+	return help;
 }
 
 /**

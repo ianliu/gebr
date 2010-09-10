@@ -1652,33 +1652,40 @@ GebrGeoXmlFlow * menu_get_xml_pointer(GtkTreeIter * iter)
 
 gchar * debr_menu_get_backup_help_from_pointer(gpointer menu)
 {
+	gchar * help;
 	gboolean valid;
 	GtkTreeIter iter;
 	GtkTreeIter child;
 	GtkTreeModel * model;
 
 	// Searches the menu's model for 'menu', returning the corresponding help backup
-
+	help = NULL;
 	model = GTK_TREE_MODEL (debr.ui_menu.model);
 	valid = gtk_tree_model_get_iter_first(model, &iter);
+
 	while (valid) {
 		valid = gtk_tree_model_iter_children(model, &child, &iter);
 		while (valid) {
-			gchar * help;
 			gpointer ptr;
 			gtk_tree_model_get(model, &child,
 					   MENU_XMLPOINTER, &ptr,
 					   MENU_HELP_BACKUP, &help,
 					   -1);
 			if (ptr == menu)
-				return help;
+				break;
 			g_free(help);
 
 			valid = gtk_tree_model_iter_next(model, &child);
 		}
 		valid = gtk_tree_model_iter_next(model, &iter);
 	}
-	return NULL;
+
+	if (help && strlen(help) == 0) {
+		g_free(help);
+		help = NULL;
+	}
+
+	return help;
 }
 
 /**
