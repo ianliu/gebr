@@ -318,7 +318,9 @@ static gboolean debr_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * s
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
-GebrGuiHelpEditWidget * debr_help_edit_widget_new(GebrGeoXmlObject * object, const gchar * content)
+GebrGuiHelpEditWidget * debr_help_edit_widget_new(GebrGeoXmlObject * object,
+						  const gchar * content,
+						  gboolean committed)
 {
 	GebrGuiHelpEditWidget * self;
 	DebrHelpEditWidgetPrivate * priv;
@@ -344,9 +346,7 @@ GebrGuiHelpEditWidget * debr_help_edit_widget_new(GebrGeoXmlObject * object, con
 #endif
 
 	gebr_gui_help_edit_widget_set_content(self, content);
-
-	// Set is_commited to FALSE for the first time we open a help edition
-	priv->is_commited = FALSE;
+	priv->is_commited = committed;
 
 	return self;
 }

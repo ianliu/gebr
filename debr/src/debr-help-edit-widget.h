@@ -49,14 +49,17 @@ GType debr_help_edit_widget_get_type(void) G_GNUC_CONST;
 
 /**
  * debr_help_edit_widget_new:
- * Creates a new help edit widget for DéBR
- *
  * @object: The #GebrGeoXmlDocument associated with this help edition.
  * @help: The initial help string to start editing.
+ * @committed: If %TRUE the content is considered committed.
+ *
+ * Creates a new help edit widget for DéBR
  *
  * Returns: A new help edit widget for DéBR.
  */
-GebrGuiHelpEditWidget * debr_help_edit_widget_new(GebrGeoXmlObject * object, const gchar * help);
+GebrGuiHelpEditWidget * debr_help_edit_widget_new(GebrGeoXmlObject * object,
+						  const gchar * help,
+						  gboolean committed);
 
 G_END_DECLS
 

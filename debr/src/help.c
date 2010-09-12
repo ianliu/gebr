@@ -83,7 +83,8 @@ static const gchar * ui_def =
 // PRIVATE METHODS							       =
 //==============================================================================
 
-static void merge_ui_def(GebrGuiHelpEditWindow * window) {
+static void merge_ui_def(GebrGuiHelpEditWindow * window, gboolean revert_visible)
+{
 	GtkActionGroup * action_group;
 	GtkUIManager * ui_manager;
 	GtkAction * action;
@@ -95,6 +96,8 @@ static void merge_ui_def(GebrGuiHelpEditWindow * window) {
 	gtk_action_group_add_actions(action_group, action_entries, n_action_entries, window);
 	action = gtk_action_group_get_action(action_group, "JumpToMenu");
 	g_object_set(action, "hide-if-empty", FALSE, NULL);
+	action = gtk_action_group_get_action(action_group, "RevertAction");
+	gtk_action_set_sensitive(action, revert_visible);
 
 	gtk_ui_manager_insert_action_group(ui_manager, action_group, 0);
 	gtk_ui_manager_add_ui_from_string(ui_manager, ui_def, -1, &error);
@@ -106,8 +109,10 @@ static void merge_ui_def(GebrGuiHelpEditWindow * window) {
 	}
 }
 
-static void create_help_edit_window(GebrGeoXmlObject * object, GString * help) {
+static void create_help_edit_window(GebrGeoXmlObject * object, GString * help)
+{
 	gchar * title;
+	gchar * help_backup;
 	gboolean is_menu_selected;
 	const gchar * object_title;
 	GtkTreeIter iter;
@@ -115,18 +120,21 @@ static void create_help_edit_window(GebrGeoXmlObject * object, GString * help) {
 	GtkWidget * help_edit_window;
 
 	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
+		help_backup = debr_program_get_backup_help_from_pointer(object);
 		object_title = gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(object));
 		title = g_strdup_printf(_("Program: %s"), object_title);
 	} else {
+		help_backup = debr_menu_get_backup_help_from_pointer(object);
 		object_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(object));
 		title = g_strdup_printf(_("Menu: %s"), object_title);
 	}
 
 	is_menu_selected = menu_get_selected(&iter, TRUE);
-	help_edit_widget = debr_help_edit_widget_new(object, help->str);
+	help_edit_widget = debr_help_edit_widget_new(object, help->str, help_backup != NULL);
 	help_edit_window = gebr_gui_help_edit_window_new(help_edit_widget);
 	gebr_gui_help_edit_window_set_auto_save(GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window), TRUE);
-	merge_ui_def(GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window));
+	merge_ui_def(GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window), help_backup != NULL);
+	g_free(help_backup);
 
 	g_signal_connect(help_edit_window, "destroy",
 			 G_CALLBACK(help_edit_window_on_destroy), object);
@@ -605,10 +613,26 @@ static void help_edit_on_jump_to_activate(GtkAction * action, GebrGuiHelpEditWin
 
 static void help_edit_on_revert(GtkAction * action, GebrGuiHelpEditWindow * window)
 {
+	GtkWidget * dialog;
 	gchar * help_backup;
 	GebrGeoXmlObject * object;
 	GebrGeoXmlObjectType type;
 	GebrGuiHelpEditWidget * widget;
+
+	dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW (window),
+						    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+						    GTK_MESSAGE_WARNING,
+						    GTK_BUTTONS_YES_NO,
+						    _("<span font_weight='bold' size='large'>"
+						      "Do you really want to revert this help?"
+						      "</span>"));
+
+	gtk_message_dialog_format_secondary_markup(GTK_MESSAGE_DIALOG (dialog),
+						   _("By choosing <i>yes</i>, you will lose all modifications"
+						     " made after the associated menu was saved."));
+
+	if (gtk_dialog_run(GTK_DIALOG (dialog)) != GTK_RESPONSE_YES)
+		goto out;
 
 	g_object_get(window, "help-edit-widget", &widget, NULL);
 	g_object_get(widget, "geoxml-object", &object, NULL);
@@ -619,9 +643,13 @@ static void help_edit_on_revert(GtkAction * action, GebrGuiHelpEditWindow * wind
 	else
 		help_backup = debr_menu_get_backup_help_from_pointer(object);
 
-	if (help_backup != NULL)
+	if (help_backup != NULL) {
 		gebr_gui_help_edit_widget_set_content(widget, help_backup);
-	g_free(help_backup);
+		g_free(help_backup);
+	}
+
+out:
+	gtk_widget_destroy(dialog);
 }
 
 //==============================================================================
