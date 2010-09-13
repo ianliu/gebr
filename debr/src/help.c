@@ -79,6 +79,9 @@ static const gchar * ui_def =
 " </toolbar>"
 "</ui>";
 
+#define JUMP_TO_ACTION_GROUP "jump-to-action-group"
+#define JUMP_TO_MERGE_ID "jump-to-merge-id"
+
 //==============================================================================
 // PRIVATE METHODS							       =
 //==============================================================================
@@ -214,10 +217,25 @@ static void create_jump_to_menu(GebrGeoXmlObject * object, GebrGuiHelpEditWindow
 	GebrGeoXmlSequence * program;
 	gchar * jumpto_path;
 
-	jumpto_path = g_strconcat(gebr_gui_help_edit_window_get_menu_bar_path(window), "/JumpToMenu", NULL);
 	manager = gebr_gui_help_edit_window_get_ui_manager(window);
+
+	// Remove old action group and merge_id from the window and insert the new ones
+	//
+	group = g_object_get_data(G_OBJECT(window), JUMP_TO_ACTION_GROUP);
+	merge_id = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(window), JUMP_TO_MERGE_ID));
+	if (group != NULL) {
+		gtk_ui_manager_remove_action_group(manager, group);
+		gtk_ui_manager_remove_ui(manager, merge_id);
+	}
+	group = gtk_action_group_new(JUMP_TO_ACTION_GROUP);
 	merge_id = gtk_ui_manager_new_merge_id(manager);
-	group = gtk_action_group_new("JumpToMenuGroup");
+
+	g_object_set_data(G_OBJECT(window), JUMP_TO_ACTION_GROUP, group);
+	g_object_set_data(G_OBJECT(window), JUMP_TO_MERGE_ID, GUINT_TO_POINTER(merge_id));
+
+	// Calculates the path for JumpToMenu
+	//
+	jumpto_path = g_strconcat(gebr_gui_help_edit_window_get_menu_bar_path(window), "/JumpToMenu", NULL);
 
 	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		flow = GEBR_GEOXML_FLOW(gebr_geoxml_object_get_owner_document(object));
@@ -627,9 +645,9 @@ static void help_edit_on_revert(GtkAction * action, GebrGuiHelpEditWindow * wind
 						      "Do you really want to revert this help?"
 						      "</span>"));
 
-	gtk_message_dialog_format_secondary_markup(GTK_MESSAGE_DIALOG (dialog),
-						   _("By choosing <i>yes</i>, you will lose all modifications"
-						     " made after the associated menu was saved."));
+	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG (dialog),
+						 _("By choosing yes, you will lose all modifications"
+						   " made after the associated menu was saved."));
 
 	if (gtk_dialog_run(GTK_DIALOG (dialog)) != GTK_RESPONSE_YES)
 		goto out;
