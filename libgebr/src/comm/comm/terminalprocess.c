@@ -203,12 +203,13 @@ gboolean gebr_comm_terminal_process_start(GebrCommTerminalProcess * terminal_pro
 		goto out;
 	}
 	if (pid == 0) {
+		setpgrp();
 		if (execvp(argv[0], argv) == -1) {
 			ret = FALSE;
 			goto out;
 		}
 	} else
-		setpgid(pid, getpid());
+		setpgid(pid, getpgrp());
 
 	ret = TRUE;
 	terminal_process->pid = pid;
@@ -249,7 +250,7 @@ void gebr_comm_terminal_process_kill(GebrCommTerminalProcess * terminal_process)
 
 	if (!terminal_process->pid)
 		return;
-	kill(terminal_process->pid, SIGKILL);
+	killpg(terminal_process->pid, SIGKILL);
 }
 
 void gebr_comm_terminal_process_terminate(GebrCommTerminalProcess * terminal_process)
@@ -258,7 +259,7 @@ void gebr_comm_terminal_process_terminate(GebrCommTerminalProcess * terminal_pro
 
 	if (!terminal_process->pid)
 		return;
-	kill(terminal_process->pid, SIGTERM);
+	killpg(terminal_process->pid, SIGTERM);
 }
 
 gulong gebr_comm_terminal_process_bytes_available(GebrCommTerminalProcess * terminal_process)

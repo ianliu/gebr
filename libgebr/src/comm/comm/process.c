@@ -255,6 +255,8 @@ gboolean gebr_comm_process_start(GebrCommProcess * process, GString * cmd_line)
 	if (process->pid == -1)
 		goto out;
 	if (process->pid == 0) {
+		setpgrp();
+
 		close(stdin_pipe[1]);
 		close(stdout_pipe[0]);
 		close(stderr_pipe[0]);
@@ -264,8 +266,9 @@ gboolean gebr_comm_process_start(GebrCommProcess * process, GString * cmd_line)
 
 		if (execvp(argv[0], argv) == -1)
 			exit(0);
-	} else
-		setpgid(process->pid, getpid());
+	} else 
+	       setpgid(process->pid, getpgrp());	
+
 	close(stdin_pipe[0]);
 	close(stdout_pipe[1]);
 	close(stderr_pipe[1]);
@@ -319,7 +322,7 @@ void gebr_comm_process_kill(GebrCommProcess * process)
 
 	if (!process->pid)
 		return;
-	kill(process->pid, SIGKILL);
+	killpg(process->pid, SIGKILL);
 }
 
 void gebr_comm_process_terminate(GebrCommProcess * process)
@@ -328,7 +331,7 @@ void gebr_comm_process_terminate(GebrCommProcess * process)
 
 	if (!process->pid)
 		return;
-	kill(process->pid, SIGTERM);
+	killpg(process->pid, SIGTERM);
 }
 
 void gebr_comm_process_close_stdin(GebrCommProcess * process)

@@ -59,6 +59,7 @@ void gebrd_init(void)
 			dup(i);	/* stderr */
 			signal(SIGCHLD, SIG_IGN);
 
+			setpgrp();
 			gebrd.main_loop = g_main_loop_new(NULL, FALSE);
 			g_type_init();
 
