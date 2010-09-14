@@ -1028,9 +1028,29 @@ gchar * debr_program_get_backup_help_from_pointer(gpointer program)
 		help = NULL;
 	}
 
-	g_printf("%d\n", help == NULL ? -1:strlen(help));
-
 	return help;
+}
+
+void debr_program_sync_help_backups()
+{
+	gboolean valid;
+	GtkTreeIter iter;
+	GtkTreeModel * model;
+	const gchar * help;
+	GebrGeoXmlProgram * program;
+
+	model = GTK_TREE_MODEL (debr.ui_program.list_store);
+	valid = gtk_tree_model_get_iter_first(model, &iter);
+	while (valid) {
+		gtk_tree_model_get(model, &iter,
+				   PROGRAM_XMLPOINTER, &program,
+				   -1);
+		help = gebr_geoxml_program_get_help(program);
+		gtk_list_store_set(debr.ui_program.list_store, &iter,
+				   PROGRAM_HELP_BACKUP, &help,
+				   -1);
+		valid = gtk_tree_model_iter_next(model, &iter);
+	}
 }
 
 /**

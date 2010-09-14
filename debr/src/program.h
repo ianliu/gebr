@@ -135,5 +135,11 @@ void program_help_edit(void);
  */
 gchar * debr_program_get_backup_help_from_pointer(gpointer program);
 
+/**
+ * debr_program_sync_help_backups:
+ * Synchronize the backed up programs help.
+ */
+void debr_program_sync_help_backups();
+
 G_END_DECLS
 #endif				//__PROGRAM_H

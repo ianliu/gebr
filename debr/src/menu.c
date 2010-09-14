@@ -80,7 +80,9 @@ static void menu_remove_with_validation(GtkTreeIter * iter);
 
 static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object);
 
-void debr_menu_backup_help(GtkTreeIter * iter);
+static void debr_menu_backup_help(GtkTreeIter * iter);
+
+static void debr_menu_sync_revert_buttons(GtkTreeIter * iter);
 
 /*
  * Public functions
@@ -407,6 +409,7 @@ void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * men
 		label = g_markup_printf_escaped("%s", filename);
 
 	debr_menu_sync_help_edit_window(iter, menu);
+	debr_program_sync_help_backups();
 	gtk_tree_store_set(debr.ui_menu.model, iter,
 			   MENU_FILENAME, label,
 			   MENU_MODIFIED_DATE, tmp,
@@ -494,6 +497,8 @@ MenuMessage menu_save(GtkTreeIter * iter)
 		gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(menu), gebr_iso_date());
 		gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path);
 		debr_menu_backup_help(iter);
+		debr_program_sync_help_backups();
+		debr_menu_sync_revert_buttons(iter);
 	}
 
 	tmp = g_strdup_printf("%ld",
@@ -2201,7 +2206,7 @@ static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object)
  * debr_menu_backup_help:
  * @iter:
  */
-void debr_menu_backup_help(GtkTreeIter * iter)
+static void debr_menu_backup_help(GtkTreeIter * iter)
 {
 	const gchar * help;
 	GebrGeoXmlDocument * document;
@@ -2214,4 +2219,42 @@ void debr_menu_backup_help(GtkTreeIter * iter)
 	gtk_tree_store_set(debr.ui_menu.model, iter,
 			   MENU_HELP_BACKUP, help,
 			   -1);
+}
+
+static void update_revert_sensitiveness(gpointer xmlpointer)
+{
+	GebrGuiHelpEditWindow * window;
+
+	window = g_hash_table_lookup(debr.help_edit_windows, xmlpointer);
+
+	if (window != NULL) {
+		const gchar * path;
+		GtkUIManager * manager;
+		GtkAction * action;
+		path = "/ui/" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_NAME "/RevertAction";
+		manager = gebr_gui_help_edit_window_get_ui_manager(window);
+		action = gtk_ui_manager_get_action(manager, path);
+		gtk_action_set_sensitive(action, TRUE);
+	}
+}
+
+static void debr_menu_sync_revert_buttons(GtkTreeIter * iter)
+{
+	GtkTreeModel * model;
+	GebrGeoXmlFlow * menu;
+	GebrGeoXmlSequence * program;
+
+	model = GTK_TREE_MODEL (debr.ui_menu.model);
+
+	gtk_tree_model_get(model, iter,
+			   MENU_XMLPOINTER, &menu,
+			   -1);
+
+	update_revert_sensitiveness(menu);
+
+	gebr_geoxml_flow_get_program(menu, &program, 0);
+	while (program) {
+		update_revert_sensitiveness(program);
+		gebr_geoxml_sequence_next(&program);
+	}
 }
