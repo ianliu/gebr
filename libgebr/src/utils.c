@@ -90,14 +90,18 @@ gboolean gebr_append_filename_extension(GString * filename, const gchar * extens
 	return FALSE;
 }
 
-gboolean gebr_path_use_home_variable(GString * path)
+gboolean gebr_path_is_at_home(const gchar * path)
 {
-	gchar *home;
-
-	home = getenv("HOME");
+	gchar *home = getenv("HOME");
 	if (home == NULL)
 		return FALSE;
-	if (gebr_g_string_starts_with(path, home)) {
+	return g_str_has_prefix(path, home);
+}
+
+gboolean gebr_path_use_home_variable(GString * path)
+{
+	if (gebr_path_is_at_home(path->str)) {
+		gchar *home = getenv("HOME");
 		gebr_g_string_replace_first_ref(path, home, "$HOME");
 		return TRUE;
 	}
@@ -107,12 +111,8 @@ gboolean gebr_path_use_home_variable(GString * path)
 
 gboolean gebr_path_resolve_home_variable(GString * path)
 {
-	gchar *home;
-
-	home = getenv("HOME");
-	if (home == NULL)
-		return FALSE;
 	if (gebr_g_string_starts_with(path, "$HOME")) {
+		gchar *home = getenv("HOME");
 		gebr_g_string_replace_first_ref(path, "$HOME", home);
 		return TRUE;
 	}

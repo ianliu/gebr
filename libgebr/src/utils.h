@@ -36,6 +36,7 @@ gboolean gebr_g_string_ends_with(GString * string, const gchar * val);
  */
 gboolean gebr_append_filename_extension(GString * filename, const gchar * extension);
 
+gboolean gebr_path_is_at_home(const gchar * path);
 gboolean gebr_path_use_home_variable(GString * path);
 gboolean gebr_path_resolve_home_variable(GString * path);
 
