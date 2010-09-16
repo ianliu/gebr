@@ -108,6 +108,8 @@ void flow_edition_set_io(void);
  */
 void flow_edition_component_activated(void);
 
+gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key);
+
 /**
  * Change the flow status when select the status from the "Flow Component" menu.
  */

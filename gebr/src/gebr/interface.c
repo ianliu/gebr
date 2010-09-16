@@ -29,6 +29,7 @@
 #include "ui_flow_edition.h"
 #include "interface.h"
 #include "gebr.h"
+#include "flow.h"
 #include "callbacks.h"
 
 /*
@@ -109,7 +110,7 @@ static const GtkActionEntry actions_entries[] = {
 	{"flow_edition_help", GTK_STOCK_HELP, NULL,
 		NULL, N_("Show component's help"), G_CALLBACK(on_flow_component_help_activate)},
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL,
-		NULL, N_("Delete component"), G_CALLBACK(on_flow_component_delete_activate)},
+		"Delete", N_("Delete component"), G_CALLBACK(on_flow_component_delete_activate)},
 	{"flow_edition_properties", GTK_STOCK_PROPERTIES, NULL,
 		NULL, N_("Edit component parameters"), G_CALLBACK(on_flow_component_properties_activate)},
 	{"flow_edition_refresh", GTK_STOCK_REFRESH, NULL,
@@ -118,6 +119,10 @@ static const GtkActionEntry actions_entries[] = {
 		NULL, N_("Copy selected component(s) to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_edition_paste", GTK_STOCK_PASTE, N_("Paste"),
 		NULL, N_("Paste component(s) from clipboard"), G_CALLBACK(on_paste_activate)},
+	{"flow_edition_top", GTK_STOCK_GOTO_TOP, N_("Move Top"),
+		"Home", NULL, G_CALLBACK(on_flow_component_move_top)},
+	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move Down"),
+		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
 
 	/*
 	 * Job control
@@ -139,7 +144,7 @@ static const GtkRadioActionEntry status_radio_actions_entries[] = {
 		NULL, NULL, FSEQ_PROGRAM_CONFIGURED},
 	{"flow_edition_status_disabled", NULL, N_("Disabled"),
 		NULL, NULL, FSEQ_PROGRAM_DISABLED},
-	{"flow_edition_status_unconfigured", NULL, N_("Unconfigured"),
+	{"flow_edition_status_unconfigured", NULL, N_("Not configured"),
 		NULL, NULL, FSEQ_PROGRAM_UNCONFIGURED}
 };
 

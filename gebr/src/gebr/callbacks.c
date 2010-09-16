@@ -174,7 +174,13 @@ void on_flow_component_help_activate(void)
 
 void on_flow_component_delete_activate(void)
 {
-	flow_program_remove();
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+	case NOTEBOOK_PAGE_FLOW_EDITION :
+		flow_program_remove();
+		break;
+	default:
+		break;
+	}
 }
 
 void on_flow_component_properties_activate(void)
@@ -190,7 +196,51 @@ void on_flow_component_refresh_activate(void)
 
 void on_flow_component_status_activate(GtkRadioAction * action, GtkRadioAction * current)
 {
-	flow_edition_status_changed();
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+	case NOTEBOOK_PAGE_FLOW_EDITION :
+		flow_edition_status_changed();
+		break;
+	default:
+		break;
+	}
+}
+
+void on_flow_component_move_top(void)
+{
+	GtkTreeIter iter;
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+	case NOTEBOOK_PAGE_FLOW_EDITION :
+		gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+		if (!flow_edition_get_selected_component(&iter, TRUE))
+			return;
+		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
+			return;
+		}
+		flow_program_move_top();
+		break;
+	default:
+		break;
+	}
+}
+
+void on_flow_component_move_bottom(void)
+{
+	GtkTreeIter iter;
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+	case NOTEBOOK_PAGE_FLOW_EDITION :
+		gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+		if (!flow_edition_get_selected_component(&iter, TRUE))
+			return;
+		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
+			return;
+		}
+		flow_program_move_bottom();
+		break;
+	default:
+		break;
+	}
 }
 
 void on_job_control_save(void)

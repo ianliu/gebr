@@ -118,6 +118,10 @@ void on_flow_component_refresh_activate(void);
  */
 void on_flow_component_status_activate(GtkRadioAction * action, GtkRadioAction * current);
 
+void on_flow_component_move_top(void);
+
+void on_flow_component_move_bottom(void);
+
 /**
  * Call #job_control_save
  */

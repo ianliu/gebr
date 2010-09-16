@@ -20,6 +20,7 @@
 #include <libgebr/intl.h>
 #include <libgebr/gui/utils.h>
 #include <libgebr/gui/icons.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "ui_flow_edition.h"
 #include "gebr.h"
@@ -169,6 +170,10 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->fseq_view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", FSEQ_TITLE_COLUMN);
 
+	/* Space key pressed on flow component changes its configured status */
+	g_signal_connect(ui_flow_edition->fseq_view, "key-press-event",
+			 G_CALLBACK(flow_edition_component_key_pressed), ui_flow_edition);
+
 	/* Double click on flow component open its parameter window */
 	g_signal_connect(ui_flow_edition->fseq_view, "row-activated",
 			 G_CALLBACK(flow_edition_component_activated), ui_flow_edition);
@@ -292,6 +297,57 @@ void flow_edition_component_activated(void)
 	g_free(title);
 }
 
+gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
+{
+	GtkTreeIter iter;
+	GebrGeoXmlProgramStatus status;
+	const gchar *icon;
+
+	if (key->keyval == GDK_space) {
+
+		gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+
+		if (!flow_edition_get_selected_component(&iter, TRUE))
+			return TRUE;
+
+		GebrGeoXmlSequence *program;
+
+		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
+		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
+			return TRUE;
+	
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+				   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+
+		switch (gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program))) {
+
+		case GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED:
+			status = GEBR_GEOXML_PROGRAM_STATUS_DISABLED;
+			break;
+		case GEBR_GEOXML_PROGRAM_STATUS_DISABLED:
+			if (parameters_check_has_required_unfilled())
+				status = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
+			else
+				status = GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED;
+			break;
+		case GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED:
+			if (parameters_check_has_required_unfilled())
+				status = GEBR_GEOXML_PROGRAM_STATUS_DISABLED;
+			else
+				status = GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED;
+			break;
+		default:
+			return TRUE;
+		}
+
+		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), status);
+		icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(program));
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_ICON_COLUMN, icon, -1);
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+		return TRUE;
+	}
+	return FALSE;
+}
 void flow_edition_status_changed(void)
 {
 	GtkTreeIter iter;
