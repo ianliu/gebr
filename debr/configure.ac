@@ -32,19 +32,6 @@ AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_HEADER_STDC
 
-dnl Debug option
-AC_ARG_ENABLE(debug,
-	[AC_HELP_STRING([--enable-debug],
-	[turn on debugging])],,
-	enable_debug=yes)
-if test "$enable_debug" = "yes"; then
-	DEBUG_CFLAGS="-DDEBR_DEBUG"
-else
-	DEBUG_CFLAGS=""
-fi
-AC_SUBST(DEBUG_CFLAGS)
-
-
 dnl Gettext stuff.
 GETTEXT_PACKAGE=$PACKAGE
 AC_SUBST(GETTEXT_PACKAGE)

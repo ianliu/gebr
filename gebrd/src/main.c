@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 	}
 
 	if (show_version == TRUE) {
-		fprintf(stdout, "%s\n", GEBRD_VERSION);
+		fprintf(stdout, "%s (%s)\n", GEBRD_VERSION, gebr_version());
 		return 0;
 	}
 

@@ -95,5 +95,7 @@ const gchar *gebr_validate_float(const gchar * text_value, const gchar * min, co
 int g_strcmp0(const char * str1, const char * str2);
 #endif
 
+const gchar *gebr_version();
+
 G_END_DECLS
 #endif				//__GEBR_UTILS_H

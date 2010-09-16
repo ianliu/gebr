@@ -40,16 +40,6 @@ AC_HEADER_STDC
 # check for gtk-doc
 GTK_DOC_CHECK([1.11],[--flavour no-tmpl])
 
-dnl Debug option
-AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [turn on debugging])],, enable_debug=yes)
-AC_ARG_ENABLE(debug, [AC_HELP_STRING([--disable-debug], [turn off debugging])],, enable_debug=no)
-if test "$enable_debug" = "yes"; then
-	DEBUG_CFLAGS="-DDEBUG"
-else
-	DEBUG_CFLAGS=""
-fi
-AC_SUBST(DEBUG_CFLAGS)
-
 dnl Option to turn on GUI build or not (useful for servers).
 AC_ARG_ENABLE(gui, [AC_HELP_STRING([--enable-gui], [turn on GUI build])],, enable_gui=yes)
 AC_ARG_ENABLE(gui, [AC_HELP_STRING([--disable-gui], [turn off GUI elements])],, enable_gui=no)

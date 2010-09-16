@@ -1,5 +1,5 @@
-VERSION=0.9.17
-#VERSION=`if test -d .svn; then echo -n r; svnversion; else git log -1 --date=local --pretty=%cd; fi`
+VERSION=`hg parent --template '{latesttag}\n' 2> /dev/null || date +%y.%m.%d`
+NANOVERSION=`hg parent --template '+{latesttagdistance}-{node|short}\n' 2> /dev/null || date ++%H%M`
 AC_SUBST(VERSION)
 
 PACKAGE_PREFIX_DIR=`echo ${prefix}`
@@ -31,3 +31,14 @@ fi
 
 GLIB_MINOR_VERSION=`pkg-config glib-2.0 --modversion | awk -F. '{ printf "%d", $2 }'`
 AM_CONDITIONAL(ENABLE_TESTS, test ${GLIB_MINOR_VERSION} -ge 16)
+
+dnl Debug option
+AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [turn on debugging])],, enable_debug=yes)
+if test "$enable_debug" = "yes"; then
+	DEBUG_CFLAGS="-DDEBUG"
+else
+	DEBUG_CFLAGS=""
+	NANOVERSION=""
+fi
+AC_SUBST(DEBUG_CFLAGS)
+AC_SUBST(NANOVERSION)

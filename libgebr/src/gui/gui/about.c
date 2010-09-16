@@ -17,6 +17,7 @@
 
 #include "../../defines.h"
 #include "../../intl.h"
+#include "../../utils.h"
 
 #include "about.h"
 #include "pixmaps.h"
@@ -62,7 +63,7 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
 	about.dialog = gtk_about_dialog_new();
 
 	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(about.dialog), program);
-	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about.dialog), VERSION);
+	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about.dialog), gebr_version());
 	gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about.dialog), gebr_gui_pixmaps_gebr_logo());
 	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about.dialog), _("GêBR Core Team"));
 

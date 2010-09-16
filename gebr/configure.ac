@@ -22,18 +22,6 @@ PACKAGE=gebr
 AC_SUBST(PACKAGE)
 AC_SUBST(TODAY)
 
-dnl Debug option
-AC_ARG_ENABLE(debug,
-	[AC_HELP_STRING([--enable-debug],
-	[turn on debugging])],,
-	enable_debug=yes)
-if test "$enable_debug" = "yes"; then
-	DEBUG_CFLAGS="-DGEBR_DEBUG"
-else
-	DEBUG_CFLAGS=""
-fi
-AC_SUBST(DEBUG_CFLAGS)
-
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 PACKAGE_NAME=$PACKAGE
 PACKAGE_VERSION=$VERSION

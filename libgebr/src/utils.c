@@ -26,6 +26,7 @@
 
 #include <glib/gstdio.h>
 
+#include "defines.h"
 #include "utils.h"
 
 /**
@@ -437,3 +438,12 @@ int g_strcmp0(const char * str1, const char * str2)
 	return strcmp(str1, str2);
 }
 #endif
+
+/*
+ * Function: gebr_version
+ * Returns the libgebr version
+ */
+const gchar* gebr_version()
+{
+	return LIBGEBR_VERSION LIBGEBR_NANOVERSION;
+}
