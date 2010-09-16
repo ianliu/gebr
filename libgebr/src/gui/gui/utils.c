@@ -257,23 +257,24 @@ static gboolean gebr_gui_message_dialog_vararg(GtkMessageType type, GtkButtonsTy
 	GtkWidget *dialog;
 
 	gint ret;
-	gchar *string;
 	gboolean confirmed;
 
-	string = g_strdup_vprintf(message, args);
+	/* FIXME: does gtkmessagedialog puts a scrolledwindow for the message label? if not, that can be a problem with
+	 * large messages. */
 	dialog = gtk_message_dialog_new_with_markup(NULL,
 						    (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-						    type, buttons, title? "<b>%s</b>":"%s", title? title:string);
-	if (title) {
+						    type, buttons, "<b>%s</b>", title ? title : "");
+	if (title)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
-		gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", string);
-	}
+
+	gchar *string = g_strdup_vprintf(message, args);
+	gtk_message_dialog_format_secondary_markup(GTK_MESSAGE_DIALOG(dialog), "%s", string);
+	g_free(string);
 
 	ret = gtk_dialog_run(GTK_DIALOG(dialog));
 	confirmed = (ret == GTK_RESPONSE_YES || ret == GTK_RESPONSE_OK) ? TRUE : FALSE;
 
 	gtk_widget_destroy(dialog);
-	g_free(string);
 
 	return confirmed;
 }

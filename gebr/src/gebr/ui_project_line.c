@@ -380,6 +380,7 @@ void project_line_import(void)
 	gint exit_status;
 	GError *error;
 	gchar *output;
+	GList *line_paths_creation_sugest = NULL;
 
 	GebrGeoXmlDocument *document;
 	GtkTreeIter iter;
@@ -431,7 +432,16 @@ void project_line_import(void)
 
 		if ((ret = document_load_at((GebrGeoXmlDocument**)line, line_filename, at_dir)))
 			return ret;
+
 		document_import(GEBR_GEOXML_DOCUMENT(*line));
+		/* check for paths that could be created; */
+		GebrGeoXmlSequence *line_path;
+		gebr_geoxml_line_get_path(*line, &line_path, 0);
+		for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
+			const gchar *path = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
+			if (gebr_path_is_at_home(path))
+				line_paths_creation_sugest = g_list_prepend(line_paths_creation_sugest, g_strdup(path));
+		}
 
 		gebr_geoxml_line_get_flow(*line, &i, 0);
 		while (i != NULL) {
@@ -552,6 +562,16 @@ void project_line_import(void)
 		}
 	}
 
+	if (gebr_gui_confirm_action_dialog(_("Create directories"),
+					   _("There are some line paths localed on your home directory that do not exist. Do you want to create these folders?"))) {
+		GString *cmd_line = g_string_new(NULL);
+		for (GList *i = line_paths_creation_sugest; i != NULL; i = g_list_next(i)) {
+			g_string_printf(cmd_line, "mkdir -p %s", (gchar*)i->data);
+			system(cmd_line->str);
+		}
+		g_string_free(cmd_line, TRUE);
+	}
+
 	gebr_temp_directory_destroy(tmp_dir);
 	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Import successful."));
 	g_strfreev(files);
@@ -562,6 +582,8 @@ void project_line_import(void)
 out:	g_free(output);
 out2:	g_free(filename);
 out3:	gtk_widget_destroy(chooser_dialog);
+	g_list_foreach(line_paths_creation_sugest, (GFunc)g_free, NULL);
+	g_list_free(line_paths_creation_sugest);
 	g_string_free(command, TRUE);
 }
 
