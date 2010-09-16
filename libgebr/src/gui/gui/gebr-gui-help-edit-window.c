@@ -429,10 +429,14 @@ GtkWidget *gebr_gui_help_edit_window_new(GebrGuiHelpEditWidget * help_edit_widge
 			    NULL);
 }
 
-void gebr_gui_help_edit_window_quit(GebrGuiHelpEditWindow * self)
+gboolean gebr_gui_help_edit_window_quit(GebrGuiHelpEditWindow * self)
 {
-	if (!gebr_gui_help_edit_window_quit_real(self))
+	if (!gebr_gui_help_edit_window_quit_real(self)) {
 		gtk_widget_destroy(GTK_WIDGET(self));
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 void gebr_gui_help_edit_window_set_has_menu_bar(GebrGuiHelpEditWindow * self, gboolean has_menu_bar)
