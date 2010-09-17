@@ -116,7 +116,8 @@ void on_flow_component_refresh_activate(void);
 /**
  * Call #flow_edition_status_changed
  */
-void on_flow_component_status_activate(GtkRadioAction * action, GtkRadioAction * current);
+void on_flow_component_status_activate(GtkAction *action,
+				       gpointer user_data);
 
 void on_flow_component_move_top(void);
 

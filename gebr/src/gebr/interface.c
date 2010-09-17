@@ -171,6 +171,7 @@ void gebr_setup_ui(void)
 	GtkWidget *toolbar;
 	GtkToolItem *tool_item;
 	GtkWidget *menu;
+	GtkAction *action;
 
 	gebr.about = gebr_gui_about_setup_ui("GêBR", _("A plug-and-play environment for\nseismic processing tools"));
 	gebr.ui_server_list = server_list_setup_ui();
@@ -186,7 +187,7 @@ void gebr_setup_ui(void)
 	gtk_action_group_set_translation_domain(gebr.action_group, PACKAGE);
 	gtk_action_group_add_actions(gebr.action_group, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
 	gtk_action_group_add_radio_actions(gebr.action_group, status_radio_actions_entries, 3, -1,
-					   G_CALLBACK(on_flow_component_status_activate), NULL);
+					   NULL, NULL);
 	gebr.accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group);
 	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group, gebr.accel_group);
@@ -350,12 +351,20 @@ void gebr_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group, "flow_edition_status_configured")));
+	action = gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured");
+	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED));
+
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group, "flow_edition_status_disabled")));
+	action = gtk_action_group_get_action(gebr.action_group, "flow_edition_status_disabled");
+	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_DISABLED));
+
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group, "flow_edition_status_unconfigured")));
+	action = gtk_action_group_get_action(gebr.action_group, "flow_edition_status_unconfigured");
+	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED));
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	/* gtk_toolbar_insert(GTK_TOOLBAR(toolbar),

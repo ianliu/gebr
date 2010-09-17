@@ -194,17 +194,6 @@ void on_flow_component_refresh_activate(void)
 	menu_list_populate();
 }
 
-void on_flow_component_status_activate(GtkRadioAction * action, GtkRadioAction * current)
-{
-	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
-	case NOTEBOOK_PAGE_FLOW_EDITION :
-		flow_edition_status_changed();
-		break;
-	default:
-		break;
-	}
-}
-
 void on_flow_component_move_top(void)
 {
 	GtkTreeIter iter;
@@ -241,6 +230,14 @@ void on_flow_component_move_bottom(void)
 	default:
 		break;
 	}
+}
+
+void on_flow_component_status_activate(GtkAction *action,
+				       gpointer user_data)
+{
+	guint status = GPOINTER_TO_UINT(user_data);
+	if (gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)))
+		flow_edition_status_changed(status);
 }
 
 void on_job_control_save(void)
