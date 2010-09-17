@@ -56,7 +56,7 @@ void flow_new(void)
 	const gchar *line_filename;
 
 	GebrGeoXmlFlow *flow;
-	GebrGeoXmlSequence *line_flow;
+	GebrGeoXmlLineFlow *line_flow;
 
 	if (!project_line_get_selected(NULL, LineSelection))
 		return;
@@ -69,34 +69,22 @@ void flow_new(void)
 	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(flow), _("New Flow"));
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(flow), gebr.config.username->str);
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(flow), gebr.config.email->str);
-	/* and add to the GUI */
-	gtk_list_store_append(gebr.ui_flow_browse->store, &iter);
-	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
-			   FB_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)),
-			   FB_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)), -1);
 
-	/* and add to current line */
-	gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)));
+	line_flow = gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)));
+	iter = line_append_flow_iter(flow, line_flow);
+
 	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE);
 	document_save(GEBR_GEOXML_DOC(flow), TRUE);
-	gebr_geoxml_document_free(GEBR_GEOXML_DOC(flow));
 
 	flow_browse_select_iter(&iter);
 
-	gebr_geoxml_line_get_flow(gebr.line, &line_flow, gebr_gui_gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
-	gtk_list_store_set(gebr.ui_flow_browse->store, &iter, FB_LINE_FLOW_POINTER, line_flow, -1);
-
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'."), line_title);
-
 	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.flow), on_properties_response);
 }
 
 void flow_free(void)
 {
-	if (gebr.flow != NULL) {
-		gebr_geoxml_document_free(GEBR_GEOXML_DOC(gebr.flow));
-		gebr.flow = NULL;
-	}
+	gebr.flow = NULL;
 	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
 	gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), NULL);
 	gtk_widget_set_sensitive(gebr.ui_flow_edition->queue_combobox, FALSE);
@@ -108,6 +96,7 @@ void flow_free(void)
 
 void flow_delete(gboolean confirm)
 {
+	gpointer document;
 	GtkTreeIter iter;
 	gboolean valid = FALSE;
 
@@ -118,14 +107,17 @@ void flow_delete(gboolean confirm)
 
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
+
 	if (confirm && gebr_gui_confirm_action_dialog(_("Delete flow"),
-						      _("Are you sure you want to delete the selected flow(s)?")) ==
-	    FALSE)
+						      _("Are you sure you want to delete the selected flow(s)?")) == FALSE)
 		return;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
-				   FB_TITLE, &title, FB_FILENAME, &filename, -1);
+				   FB_TITLE, &title,
+				   FB_FILENAME, &filename,
+				   FB_XMLPOINTER, &document,
+				   -1);
 
 		/* Some feedback */
 		if (confirm) {
@@ -145,6 +137,7 @@ void flow_delete(gboolean confirm)
 		}
 
 		/* Free and delete flow from the disk */
+		gebr_remove_help_edit_window(document);
 		valid = gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter);
 		flow_free();
 		document_delete(filename);

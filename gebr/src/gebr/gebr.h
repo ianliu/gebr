@@ -172,6 +172,12 @@ void gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboole
  */
 void gebr_path_set_to(GString * path, gboolean relative);
 
+/**
+ * gebr_remove_help_edit_window:
+ * @document:
+ */
+void gebr_remove_help_edit_window(gpointer document);
+
 G_END_DECLS
 
 #endif				//__GEBR_H

@@ -55,7 +55,6 @@ void project_new(void)
 	gebr_geoxml_document_set_email(project, gebr.config.email->str);
 	iter = project_append_iter(GEBR_GEOXML_PROJECT(project));
 	document_save(project, TRUE);
-	gebr_geoxml_document_free(project);
 
 	project_line_select_iter(&iter);
 
@@ -86,6 +85,8 @@ gboolean project_delete(gboolean confirm)
 	/* message user */
 	if (confirm)
 		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Deleting project '%s'."), title);
+
+	gebr_remove_help_edit_window(gebr.project);
 
 	/* finally, remove it from the disk */
 	document_delete(filename);
@@ -150,7 +151,6 @@ GtkTreeIter project_load_with_lines(GebrGeoXmlProject *project)
 			continue;
 		}
 		project_append_line_iter(&project_iter, line);
-		gebr_geoxml_document_free(GEBR_GEOXML_DOC(line));
 
 		project_line = next;
 	}
@@ -166,8 +166,8 @@ void project_list_populate(void)
 	gtk_tree_store_clear(gebr.ui_project_line->store);
 	gtk_list_store_clear(gebr.ui_flow_browse->store);
 	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
+
 	project_line_free();
-	flow_free();
 
 	gebr_directory_foreach_file(filename, gebr.config.data->str) {
 		if (fnmatch("*.prj", filename, 1))
@@ -178,7 +178,6 @@ void project_list_populate(void)
 			continue;
 
 		project_load_with_lines(project);
-		gebr_geoxml_document_free(GEBR_GEOXML_DOC(project));
 	}
 
 	project_line_info_update();

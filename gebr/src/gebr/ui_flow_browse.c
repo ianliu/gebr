@@ -81,7 +81,8 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 
 	ui_flow_browse->store = gtk_list_store_new(FB_N_COLUMN, G_TYPE_STRING,	/* Name (title for libgeoxml) */
 						   G_TYPE_STRING,	/* Filename */
-						   G_TYPE_POINTER /* GebrGeoXmlLineFlow pointer */ );
+						   G_TYPE_POINTER, /* GebrGeoXmlFlow pointer */
+						   G_TYPE_POINTER  /* GebrGeoXmlLineFlow pointer */ );
 	ui_flow_browse->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->store));
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(ui_flow_browse->view), TRUE);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->view);
@@ -351,7 +352,6 @@ gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 void flow_browse_select_iter(GtkTreeIter * iter)
 {
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_flow_browse->view), iter);
-	flow_browse_load();
 }
 
 void flow_browse_single_selection(void)
@@ -420,10 +420,12 @@ static void flow_browse_load(void)
 
 	/* load its filename and title */
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
-			   FB_FILENAME, &filename, FB_TITLE, &title, -1);
+			   FB_FILENAME, &filename,
+			   FB_TITLE, &title,
+			   FB_XMLPOINTER, &gebr.flow,
+			   -1);
+
 	/* free previous flow and load it */
-	if (document_load((GebrGeoXmlDocument**)(&gebr.flow), filename))
-		goto out;
 	gtk_widget_set_sensitive(gebr.ui_flow_edition->queue_combobox, TRUE);
 	gtk_widget_set_sensitive(gebr.ui_flow_edition->server_combobox, TRUE);
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
@@ -437,7 +439,7 @@ static void flow_browse_load(void)
 		flow_browse_load_revision(GEBR_GEOXML_REVISION(revision), FALSE);
 
 	/* if there are no local servers, introduce local server */
-	if (!gebr_geoxml_flow_get_servers_number(gebr.flow)) {
+	if (gebr_geoxml_flow_get_servers_number(gebr.flow) == 0) {
 		flow_server = gebr_geoxml_flow_append_server(gebr.flow);
 		gebr_geoxml_flow_server_set_address(flow_server, "127.0.0.1");
 		gebr_geoxml_flow_server_io_set_input(flow_server, gebr_geoxml_flow_io_get_input(gebr.flow));
@@ -463,7 +465,7 @@ static void flow_browse_load(void)
 
 	flow_browse_info_update();
 
-out:	g_free(filename);
+	g_free(filename);
 	g_free(title);
 }
 
@@ -620,4 +622,3 @@ static void flow_browse_on_flow_move(void)
 {
 	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE);
 }
-

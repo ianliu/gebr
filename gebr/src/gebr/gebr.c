@@ -449,6 +449,15 @@ void gebr_path_set_to(GString * path, gboolean relative)
 		gebr_path_resolve_home_variable(path);
 }
 
+void gebr_remove_help_edit_window(gpointer document)
+{
+	GtkWidget * window;
+
+	window = g_hash_table_lookup(gebr.help_edit_windows, document);
+	if (window)
+		gtk_widget_destroy(window);
+}
+
 /*
  * Private functions
  */

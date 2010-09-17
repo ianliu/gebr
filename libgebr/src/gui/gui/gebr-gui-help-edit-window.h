@@ -86,8 +86,12 @@ GtkWidget *gebr_gui_help_edit_window_new(GebrGuiHelpEditWidget * help_edit_widge
  * @window: a #GebrGuiHelpEditWindow
  *
  * Closes @window, showing a message dialog if the content has uncommitted changes.
+ * This function will not destroy this help edit window if the user choses cancel in
+ * the confirmation dialog. In this case, %FALSE is returned.
+ *
+ * Returns: %TRUE if the window was destroyed, %FALSE otherwise.
  */
-void gebr_gui_help_edit_window_quit(GebrGuiHelpEditWindow * self);
+gboolean gebr_gui_help_edit_window_quit(GebrGuiHelpEditWindow * self);
 
 /**
  * gebr_gui_help_edit_window_set_has_menu_bar:
