@@ -71,14 +71,10 @@ void line_new(void)
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(line), gebr.config.email->str);
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &project_iter,
 			   PL_TITLE, &project_title, -1);
-	gtk_tree_store_append(gebr.ui_project_line->store, &line_iter, &project_iter);
-	gtk_tree_store_set(gebr.ui_project_line->store, &line_iter,
-			   PL_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(line)),
-			   PL_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(line)), -1);
+	line_iter = project_append_line_iter(&project_iter, line);
 	gebr_geoxml_project_append_line(gebr.project, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(line)));
 	document_save(GEBR_GEOXML_DOC(gebr.project), TRUE);
 	document_save(GEBR_GEOXML_DOC(line), TRUE);
-	gebr_geoxml_document_free(GEBR_GEOXML_DOC(line));
 
 	/* feedback */
 	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New line created in project '%s'."), project_title);
@@ -104,6 +100,15 @@ gboolean line_delete(gboolean confirm)
 					      _("Are you sure you want to delete line '%s' and all its flows?"),
 					      gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.line))) == FALSE)
 		return FALSE;
+
+	GtkTreeIter tmpiter;
+	gpointer document;
+	gebr_gui_gtk_tree_model_foreach(tmpiter, GTK_TREE_MODEL(gebr.ui_flow_browse->store)) {
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &tmpiter,
+				   FB_XMLPOINTER, &document, -1);
+		gebr_remove_help_edit_window(document);
+	}
+	gebr_remove_help_edit_window(gebr.line);
 
 	/* Removes its flows */
 	gebr_geoxml_line_get_flow(gebr.line, &line_flow, 0);
@@ -165,9 +170,11 @@ GtkTreeIter line_append_flow_iter(GebrGeoXmlFlow * flow, GebrGeoXmlLineFlow * li
 
 	/* add to the flow browser. */
 	gtk_list_store_append(gebr.ui_flow_browse->store, &iter);
-	gtk_list_store_set(gebr.ui_flow_browse->store, &iter, FB_TITLE,
-			   gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)), FB_FILENAME,
-			   gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)), FB_LINE_FLOW_POINTER, line_flow,
+	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
+			   FB_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)),
+			   FB_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)),
+			   FB_LINE_FLOW_POINTER, line_flow,
+			   FB_XMLPOINTER, flow,
 			   -1);
 
 	return iter;
