@@ -68,6 +68,15 @@ void gebr_gui_html_viewer_window_show_html(GebrGuiHtmlViewerWindow * self, const
  */
 GebrGuiHtmlViewerWidget* gebr_gui_html_viewer_window_get_widget(GebrGuiHtmlViewerWindow * self);
 
+/**
+ * gebr_gui_html_viewer_window_set_custom_tab:
+ * @label: Name the new custom tab
+ * @widget: The widget to attach to the print dialog, as the only custom tab
+ *
+ * a proxy to create the custom print tab
+ */
+void gebr_gui_html_viewer_window_set_custom_tab(GebrGuiHtmlViewerWindow * self, const gchar * label, GtkWidget * widget);
+
 G_END_DECLS
 
 #endif /* __GEBR_GUI_HTML_VIEWER_WINDOW__ */
