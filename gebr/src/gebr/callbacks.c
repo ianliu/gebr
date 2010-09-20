@@ -18,7 +18,7 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#include <libgebr/gui/utils.h>
+#include <libgebr/gui.h>
 #include <libgebr/intl.h>
 
 #include "callbacks.h"
@@ -315,12 +315,20 @@ void navigation_bar_update(void)
 	g_string_free(markup, TRUE);
 }
 
-void on_flow_browse_show_help(void){
+void on_flow_browse_show_help(void) {
     flow_browse_show_help();
 }
 
-void on_flow_browse_edit_help(void){
+void on_flow_browse_edit_help(void) {
     flow_browse_edit_help();
+}
+
+void on_detailed_report_activate() {
+	GtkWidget * window;
+	window = gebr_gui_html_viewer_window_new();
+	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window),
+					      "<html><body>Oh, Hi! :D</body></html>");
+	gtk_widget_show(window);
 }
 
 /**

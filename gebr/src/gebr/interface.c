@@ -103,6 +103,8 @@ static const GtkActionEntry actions_entries[] = {
 		NULL, N_("View the report related to flow"), G_CALLBACK(on_flow_browse_show_help)},
 	{"flow_edit", GTK_STOCK_EDIT, N_("Edit Report"),
 		NULL, N_("Edit the report related to flow"), G_CALLBACK(on_flow_browse_edit_help)},
+	{"flow_dump", GTK_STOCK_PRINT_REPORT, N_("Detailed flow report"),
+		NULL, N_("View "), G_CALLBACK(on_detailed_report_activate)},
 
 	/*
 	 * Flow Edition
@@ -298,6 +300,10 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
 	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
 
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(gebr.action_group, "flow_detailed_report"))), -1);
+
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
@@ -305,14 +311,6 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "flow_export"))), -1);
-
-	/* gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_io"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1); */
 
 	gebr.ui_flow_browse = flow_browse_setup_ui(menu);
 	vbox = gtk_vbox_new(FALSE, 0);
