@@ -43,7 +43,7 @@ typedef struct _GebrGuiHtmlViewerWidgetPrivate GebrGuiHtmlViewerWidgetPrivate;
 struct _GebrGuiHtmlViewerWidgetPrivate {
 	GtkWidget * web_view;
 	GebrGeoXmlObject *object;
-	GtkWidget * custom_tab;
+	GebrGuiHtmlViewerCustomTab callback;
 	gchar * label;
 };
 
@@ -57,6 +57,8 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 
 static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame *frame,
 							WebKitNetworkRequest *request, GebrGuiHtmlViewerWidget *self);
+
+static void gebr_gui_html_viewer_widget_finalize(GObject *object);
 
 G_DEFINE_TYPE(GebrGuiHtmlViewerWidget, gebr_gui_html_viewer_widget, GTK_TYPE_VBOX);
 
@@ -101,6 +103,7 @@ static void gebr_gui_html_viewer_widget_init(GebrGuiHtmlViewerWidget * self)
 	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	priv->object = NULL;
 	priv->web_view = webkit_web_view_new();
+	priv->callback = NULL;
 
 	g_signal_connect(priv->web_view, "navigation-requested", G_CALLBACK(on_navigation_requested), self);
 	g_signal_connect(priv->web_view, "load-finished", G_CALLBACK(on_load_finished), self);
@@ -114,7 +117,7 @@ static void gebr_gui_html_viewer_widget_init(GebrGuiHtmlViewerWidget * self)
 static void gebr_gui_html_viewer_widget_finalize(GObject *object)
 {
 	GebrGuiHtmlViewerWidgetPrivate * priv;
-	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(object);
 	
 	g_free(priv->label);
 }
@@ -300,7 +303,10 @@ GtkWidget * on_create_custom_widget(GtkPrintOperation * print_op, GebrGuiHtmlVie
 	GebrGuiHtmlViewerWidgetPrivate * priv;
 	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 
-	return priv->custom_tab; 
+	if (priv->callback)
+		return priv->callback(self); 
+
+	return NULL;
 }
 
 //==============================================================================
@@ -321,12 +327,14 @@ void gebr_gui_html_viewer_widget_print(GebrGuiHtmlViewerWidget * self)
 
 	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
 
+	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+
 	print_op = gtk_print_operation_new();
 	g_signal_connect(print_op, "create-custom-widget", G_CALLBACK(on_create_custom_widget), self);
+	gtk_print_operation_set_custom_tab_label(print_op, priv->label);
 
-	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	frame = webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(priv->web_view));
-	webkit_web_frame_print_full(frame, print_op, GTK_PRINT_OPERATION_ACTION_PRINT, &error);
+	webkit_web_frame_print_full(frame, print_op, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, &error);
 
 	if (error) {
 		g_warning("%s", error->message);
@@ -372,11 +380,11 @@ void gebr_gui_html_viewer_widget_generate_links(GebrGuiHtmlViewerWidget *self, G
 	priv->object = object;
 }
 
-void gebr_gui_html_viewer_widget_set_custom_tab(GebrGuiHtmlViewerWidget * self, const gchar * label, GtkWidget * widget)
+void gebr_gui_html_viewer_widget_set_custom_tab(GebrGuiHtmlViewerWidget * self, const gchar * label, GebrGuiHtmlViewerCustomTab callback)
 {
 	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
 
 	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+	priv->callback = callback;
 	priv->label = g_strdup(label);
-	priv->custom_tab = widget;
 }

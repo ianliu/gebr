@@ -75,7 +75,7 @@ GebrGuiHtmlViewerWidget* gebr_gui_html_viewer_window_get_widget(GebrGuiHtmlViewe
  *
  * a proxy to create the custom print tab
  */
-void gebr_gui_html_viewer_window_set_custom_tab(GebrGuiHtmlViewerWindow * self, const gchar * label, GtkWidget * widget);
+void gebr_gui_html_viewer_window_set_custom_tab(GebrGuiHtmlViewerWindow * self, const gchar * label, GebrGuiHtmlViewerCustomTab callback);
 
 G_END_DECLS
 

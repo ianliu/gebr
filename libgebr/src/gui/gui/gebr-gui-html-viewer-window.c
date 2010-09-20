@@ -174,10 +174,10 @@ GebrGuiHtmlViewerWidget* gebr_gui_html_viewer_window_get_widget(GebrGuiHtmlViewe
 	return GEBR_GUI_HTML_VIEWER_WIDGET(priv->viewer_widget);
 }
 
-void gebr_gui_html_viewer_window_set_custom_tab(GebrGuiHtmlViewerWindow * self, const gchar * label, GtkWidget * widget)
+void gebr_gui_html_viewer_window_set_custom_tab(GebrGuiHtmlViewerWindow * self, const gchar * label, GebrGuiHtmlViewerCustomTab callback)
 {
 	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WINDOW(self));
 
 	GebrGuiHtmlViewerWindowPrivate * priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
-	gebr_gui_html_viewer_widget_custom_tab(priv->viewer_widget, label, widget);
+	gebr_gui_html_viewer_widget_set_custom_tab(GEBR_GUI_HTML_VIEWER_WIDGET(priv->viewer_widget), label, callback);
 }

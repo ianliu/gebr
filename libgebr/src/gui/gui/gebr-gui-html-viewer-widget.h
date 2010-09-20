@@ -35,6 +35,7 @@ G_BEGIN_DECLS
 
 typedef struct _GebrGuiHtmlViewerWidget GebrGuiHtmlViewerWidget;
 typedef struct _GebrGuiHtmlViewerWidgetClass GebrGuiHtmlViewerWidgetClass;
+typedef GtkWidget * (* GebrGuiHtmlViewerCustomTab)(GebrGuiHtmlViewerWidget *self);
 
 struct _GebrGuiHtmlViewerWidget {
 	GtkVBox parent;
@@ -86,7 +87,8 @@ void gebr_gui_html_viewer_widget_generate_links(GebrGuiHtmlViewerWidget *self, G
  *
  * Create the custom print tab
  */
-void gebr_gui_html_viewer_widget_set_custom_tab(GebrGuiHtmlViewerWidget * self, const gchar * label, GtkWidget * widget);
+void gebr_gui_html_viewer_widget_set_custom_tab(GebrGuiHtmlViewerWidget * self, const gchar * label,
+					       	GebrGuiHtmlViewerCustomTab callback);
 
 G_END_DECLS
 
