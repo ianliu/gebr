@@ -90,10 +90,21 @@ void flow_paste(void);
  * Copy selected(s) program(s) to clipboard.
  */
 void flow_program_copy(void);
+
 /** 
  * Paste program(s) from clipboard.
  */
 void flow_program_paste(void);
+
+/**
+ * gebr_flow_generate_parameter_value_table:
+ * @flow: a #GebrGeoXmlFlow
+ *
+ * Creates a string containing a HTML table for the programs of @flow.
+ *
+ * Returns: a newly allocated string containing HTML markup.
+ */
+gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow);
 
 G_END_DECLS
 #endif				//__FLOW_H
