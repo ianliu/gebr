@@ -104,7 +104,7 @@ static const GtkActionEntry actions_entries[] = {
 	{"flow_edit", GTK_STOCK_EDIT, N_("Edit Report"),
 		NULL, N_("Edit the report related to flow"), G_CALLBACK(on_flow_browse_edit_help)},
 	{"flow_dump", GTK_STOCK_PRINT_REPORT, N_("Detailed flow report"),
-		NULL, N_("View "), G_CALLBACK(on_detailed_report_activate)},
+		NULL, N_("View detailed flow report"), G_CALLBACK(on_detailed_report_activate)},
 
 	/*
 	 * Flow Edition
@@ -302,7 +302,7 @@ void gebr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_detailed_report"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group, "flow_dump"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
