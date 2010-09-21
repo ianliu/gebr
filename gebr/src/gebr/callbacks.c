@@ -352,10 +352,14 @@ void on_flow_browse_edit_help(void) {
 }
 
 void on_detailed_report_activate() {
+	gchar * table_str;
 	GtkWidget * window;
+
+	table_str = gebr_flow_generate_parameter_value_table(gebr.flow);
 	window = gebr_gui_html_viewer_window_new();
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window),
-					      HTML_HOLDER);
+					      table_str);
+
 	gtk_widget_show(window);
 }
 
