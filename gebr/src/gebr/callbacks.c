@@ -37,6 +37,34 @@
 #include "ui_job_control.h"
 #include "ui_help.h"
 
+#define HEADER_HOLDER					\
+	""						\
+
+#define TABLE_HOLDER					\
+	""						\
+
+/*
+ * HTML_HOLDER:
+ * Defines the HTML containing the textarea that will load the CKEditor.
+ */
+#define HTML_HOLDER																\
+	" <!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"> "	\
+	" <html xmlns=\"http://www.w3.org/1999/xhtml\"> "											\
+	" <head> "																\
+	" <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /> "								\
+	" <title> %s  </title> "														\
+	" </head> "																\
+	" <body> "																\
+	" <div id=\"header\"> "															\
+	" %s "																	\
+	" </div> "																\
+	" <div id=\"table\"> "															\
+	" %s "																	\
+	" </div> "																\
+	" </body> "																\
+	" </html> "																\
+	""																	\
+
 void on_new_activate(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
@@ -327,7 +355,7 @@ void on_detailed_report_activate() {
 	GtkWidget * window;
 	window = gebr_gui_html_viewer_window_new();
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window),
-					      "<html><body>Oh, Hi! :D</body></html>");
+					      HTML_HOLDER);
 	gtk_widget_show(window);
 }
 
