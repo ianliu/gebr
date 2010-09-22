@@ -713,7 +713,7 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow)
 			gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(gebr.flow))
 		       );
 
-	g_string_append_printf(dump, _("<p>By %s %s, %s</p>"),
+	g_string_append_printf(dump, _("<p>By %s &lt;%s&gt;, %s</p>"),
 			gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(gebr.flow)),
 			gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(gebr.flow)),
 			gebr_localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOCUMENT(gebr.flow)))
