@@ -37,12 +37,6 @@
 #include "ui_job_control.h"
 #include "ui_help.h"
 
-#define HEADER_HOLDER					\
-	""						\
-
-#define TABLE_HOLDER					\
-	""						\
-
 /*
  * HTML_HOLDER:
  * Defines the HTML containing the textarea that will load the CKEditor.
@@ -52,6 +46,7 @@
 	" <html xmlns=\"http://www.w3.org/1999/xhtml\"> "											\
 	" <head> "																\
 	" <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /> "								\
+	" <link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />" 									\
 	" <title> %s  </title> "														\
 	" </head> "																\
 	" <body> "																\
