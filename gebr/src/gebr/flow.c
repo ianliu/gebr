@@ -700,3 +700,23 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 	g_string_append(dump, "</tbody></table>");
 	return g_string_free(dump, FALSE);
 }
+
+gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow)
+{
+	GString * dump;
+
+	dump = g_string_new(NULL);
+	g_string_printf(dump,
+			"<p><h1> %s </h1></p>"
+			"<p>%s</p>"
+			"<p>By %s %s, %s</p>"
+			"<p>Flow with %ld program(s)</p>",
+			gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)),
+			gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(gebr.flow)),
+			gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(gebr.flow)),
+			gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(gebr.flow)),
+			gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOC(gebr.flow)),
+			gebr_geoxml_flow_get_programs_number(gebr.flow)
+		       );
+	return g_string_free(dump, FALSE);
+}

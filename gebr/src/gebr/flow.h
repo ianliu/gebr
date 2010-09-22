@@ -106,5 +106,15 @@ void flow_program_paste(void);
  */
 gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow);
 
+/**
+ * gebr_flow_generate_header:
+ * @flow: a #GebrGeoXmlFlow
+ *
+ * Creates a string containing a HTML description of @flow.
+ *
+ * Returns: a newly allocated string containing HTML markup.
+ */
+gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow);
+
 G_END_DECLS
 #endif				//__FLOW_H

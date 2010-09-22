@@ -353,14 +353,23 @@ void on_flow_browse_edit_help(void) {
 
 void on_detailed_report_activate() {
 	gchar * table_str;
+	gchar * header_str;
+	GString * final_str;
 	GtkWidget * window;
 
+	final_str = g_string_new(NULL);
+
+	header_str = gebr_flow_generate_header(gebr.flow);
 	table_str = gebr_flow_generate_parameter_value_table(gebr.flow);
+	g_string_printf(final_str, HTML_HOLDER, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)), header_str, table_str);
+
 	window = gebr_gui_html_viewer_window_new();
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window),
-					      table_str);
+					      final_str->str);
 
 	gtk_widget_show(window);
+	g_string_free(final_str, FALSE);
+
 }
 
 /**
