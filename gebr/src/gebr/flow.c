@@ -678,12 +678,14 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 	GebrGeoXmlParameters * parameters;
 
 	dump = g_string_new(NULL);
-	g_string_printf(dump,
-			"<table id='parameter-value'>"
-			"<thead>"
-			"<tr><td>%s</td><td>%s</td></tr>"
-			"</thead>"
-			"<tbody>", _("Parameter label"), _("Value"));
+	g_string_append_printf(dump, _("<p>Input %s</p>"), gebr_geoxml_flow_io_get_input(gebr.flow)); 
+	g_string_append_printf(dump,
+			       "<table id='parameter-value'>"
+			       "<thead>"
+			       "<tr><td><strong>%s</strong></td><td><strong>%s</strong></td></tr>"
+			       "</thead>"
+			       "<tbody>", _("Parameter label"), _("Value"));
+
 
 	gebr_geoxml_flow_get_program(flow, &program, 0);
 	while (program) {
@@ -698,6 +700,7 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 	}
 
 	g_string_append(dump, "</tbody></table>");
+	g_string_append_printf(dump, _("<br><p>Output %s</p>"), gebr_geoxml_flow_io_get_output(gebr.flow)); 
 	return g_string_free(dump, FALSE);
 }
 
@@ -723,6 +726,18 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow)
 			_("<p>Flow with %ld program(s)</p>"),
 			gebr_geoxml_flow_get_programs_number(gebr.flow)
 		       );
+
+	return g_string_free(dump, FALSE);
+}
+
+gchar * gebr_flow_generate_style(const gchar * style){
+
+	GString * dump;
+
+	dump = g_string_new(NULL);
+	g_string_printf(dump,
+			" <link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" />",
+			style);
 
 	return g_string_free(dump, FALSE);
 }

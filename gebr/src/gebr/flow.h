@@ -116,5 +116,15 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow);
  */
 gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow);
 
+/**
+ * gebr_flow_generate_style:
+ * @style: a #gchar
+ *
+ * Creates a string containing a HTML for style.
+ *
+ * Returns: a newly allocated string containing HTML markup.
+ */
+gchar * gebr_flow_generate_style(const gchar * style);
+
 G_END_DECLS
 #endif				//__FLOW_H

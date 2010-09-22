@@ -46,7 +46,7 @@
 	" <html xmlns=\"http://www.w3.org/1999/xhtml\"> "											\
 	" <head> "																\
 	" <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /> "								\
-	" <link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />" 									\
+	" %s "																	\
 	" <title> %s  </title> "														\
 	" </head> "																\
 	" <body> "																\
@@ -349,6 +349,7 @@ void on_flow_browse_edit_help(void) {
 void on_detailed_report_activate() {
 	gchar * table_str;
 	gchar * header_str;
+	gchar * style_str;
 	GString * final_str;
 	GtkWidget * window;
 
@@ -356,7 +357,8 @@ void on_detailed_report_activate() {
 
 	header_str = gebr_flow_generate_header(gebr.flow);
 	table_str = gebr_flow_generate_parameter_value_table(gebr.flow);
-	g_string_printf(final_str, HTML_HOLDER, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)), header_str, table_str);
+	style_str = gebr_flow_generate_style("gebr.css");
+	g_string_printf(final_str, HTML_HOLDER, style_str, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)), header_str, table_str);
 
 	window = gebr_gui_html_viewer_window_new();
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window),
