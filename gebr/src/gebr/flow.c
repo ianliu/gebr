@@ -708,15 +708,21 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow)
 	dump = g_string_new(NULL);
 	g_string_printf(dump,
 			"<p><h1> %s </h1></p>"
-			"<p>%s</p>"
-			"<p>By %s %s, %s</p>"
-			"<p>Flow with %ld program(s)</p>",
+			"<p>%s</p>",
 			gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)),
-			gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(gebr.flow)),
+			gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(gebr.flow))
+		       );
+
+	g_string_append_printf(dump, _("<p>By %s %s, %s</p>"),
 			gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(gebr.flow)),
 			gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(gebr.flow)),
-			gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOC(gebr.flow)),
+			gebr_localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOCUMENT(gebr.flow)))
+			);
+			
+	g_string_append_printf(dump, 
+			_("<p>Flow with %ld program(s)</p>"),
 			gebr_geoxml_flow_get_programs_number(gebr.flow)
 		       );
+
 	return g_string_free(dump, FALSE);
 }
