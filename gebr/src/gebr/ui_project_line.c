@@ -441,7 +441,7 @@ void project_line_import(void)
 		gebr_geoxml_line_get_path(*line, &line_path, 0);
 		for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
 			const gchar *path = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
-			if (gebr_path_is_at_home(path))
+			if (gebr_path_is_at_home(path) && !g_file_test(path, G_FILE_TEST_IS_DIR))
 				line_paths_creation_sugest = g_list_prepend(line_paths_creation_sugest, g_strdup(path));
 		}
 
@@ -552,7 +552,8 @@ void project_line_import(void)
 			project_line_select_iter(&iter);
 	}
 
-	if (gebr_gui_confirm_action_dialog(_("Create directories"),
+	if (line_paths_creation_sugest != NULL &&
+	    gebr_gui_confirm_action_dialog(_("Create directories"),
 					   _("There are some line paths localed on your home directory that do not exist. Do you want to create these folders?"))) {
 		GString *cmd_line = g_string_new(NULL);
 		for (GList *i = line_paths_creation_sugest; i != NULL; i = g_list_next(i)) {
