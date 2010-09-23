@@ -136,5 +136,14 @@ void document_delete(const gchar * filename);
  */
 GList * gebr_document_report_get_styles(const gchar * report);
 
+/**
+ * gebr_document_report_get_inner_body:
+ * @report: an html markup
+ *
+ * Returns: a newly allocated string containing the inner
+ * html of the body tag from @report.
+ */
+gchar * gebr_document_report_get_inner_body(const gchar * report);
+
 G_END_DECLS
 #endif				//__DOCUMENT_H

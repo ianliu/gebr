@@ -557,5 +557,30 @@ GList * gebr_document_report_get_styles(const gchar * report)
 	list = g_list_concat(list, generate_list_from_match_info(match));
 	g_match_info_free(match);
 
+	g_regex_unref(links);
+	g_regex_unref(styles);
+
 	return list;
+}
+
+gchar * gebr_document_report_get_inner_body(const gchar * report)
+{
+	GRegex * body;
+	gchar * inner_body;
+	GMatchInfo * match;
+
+	body = g_regex_new("<body[^>]*>(.*?)<\\/body>",
+			   G_REGEX_DOTALL, 0, NULL);
+
+	if (!g_regex_match(body, report, 0, &match)) {
+		g_regex_unref(body);
+		return NULL;
+	}
+
+	inner_body = g_match_info_fetch(match, 1);
+
+	g_match_info_free(match);
+	g_regex_unref(body);
+
+	return inner_body;
 }
