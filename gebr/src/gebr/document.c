@@ -209,7 +209,6 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	}
 
 	if ((*document = document_cache_check(path)) != NULL) {
-		puts("cache hit");
 		return GEBR_GEOXML_RETV_SUCCESS;
 	}
 	int ret; 
