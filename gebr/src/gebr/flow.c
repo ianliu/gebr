@@ -682,7 +682,7 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 	g_string_append_printf(dump,
 			       "<table id='parameter-value'>"
 			       "<thead>"
-			       "<tr><td><strong>%s</strong></td><td><strong>%s</strong></td></tr>"
+			       "<tr><td>%s</td><td>%s</td></tr>"
 			       "</thead>"
 			       "<tbody>", _("Parameter label"), _("Value"));
 
@@ -741,3 +741,15 @@ gchar * gebr_flow_generate_style(const gchar * style){
 
 	return g_string_free(dump, FALSE);
 }
+
+gchar * gebr_flow_obtain_report(GebrGeoXmlFlow * flow)
+{
+	GString * dump;
+
+	dump = g_string_new(NULL);
+	g_string_printf(dump,
+			" ");
+
+	return g_string_free(dump, FALSE);
+}
+

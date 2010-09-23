@@ -191,5 +191,7 @@ void on_project_line_edit_help(void);
  */
 void on_detailed_report_activate(void);
 
+void on_detailed_flow_report_activate(const gchar * style, gboolean include_parameter_dump);
+
 G_END_DECLS
 #endif				//__CALLBACKS_H

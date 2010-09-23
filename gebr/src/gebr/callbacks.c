@@ -369,6 +369,37 @@ void on_detailed_report_activate() {
 
 }
 
+void on_detailed_flow_report_activate(const gchar * style, gboolean include_parameter_dump) {
+	gchar * header_str;
+	gchar * report_str;
+	gchar * style_str;
+	GString * table_str;
+	GString * final_str;
+	GtkWidget * window;
+
+	final_str = g_string_new(NULL);
+	table_str = g_string_new(NULL);
+
+	header_str = gebr_flow_generate_header(gebr.flow);
+	style_str = gebr_flow_generate_style(style);
+	report_str = gebr_flow_obtain_report(gebr.flow);
+
+	if (include_parameter_dump){
+		g_string_assign(table_str, gebr_flow_generate_parameter_value_table(gebr.flow));
+	}
+
+	g_string_printf(final_str, HTML_HOLDER, style_str, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)), header_str, table_str->str);
+
+	window = gebr_gui_html_viewer_window_new();
+	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window),
+					      final_str->str);
+
+	gtk_widget_show(window);
+	g_string_free(final_str, FALSE);
+	g_string_free(table_str, FALSE);
+
+}
+
 /**
  */
 void on_project_line_show_help(void){
