@@ -54,8 +54,6 @@ static gboolean line_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, G
 static gboolean line_can_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *target_iter,
 				 GtkTreeViewDropPosition drop_position);
 
-static void on_project_line_row_deleted(GtkTreeModel * model, GtkTreePath * path);
-
 struct ui_project_line *project_line_setup_ui(void)
 {
 	struct ui_project_line *ui_project_line;
@@ -87,7 +85,6 @@ struct ui_project_line *project_line_setup_ui(void)
 						    G_TYPE_STRING,
 						    G_TYPE_STRING,
 						    G_TYPE_POINTER);
-	g_signal_connect(ui_project_line->store, "row-deleted", G_CALLBACK(on_project_line_row_deleted), NULL);
 	ui_project_line->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_project_line->store));
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_project_line->view),
 						  (GebrGuiGtkPopupCallback) project_line_popup_menu, ui_project_line);
@@ -970,21 +967,6 @@ line_can_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *
 
 	/* Source and target are projects. */
 	return FALSE;
-}
-
-
-static void on_project_line_row_deleted(GtkTreeModel * model, GtkTreePath * path)
-{
-	GtkTreeIter iter;
-	GtkWidget * window;
-	gpointer document;
-
-	gtk_tree_model_get_iter(model, &iter, path);
-	gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &document, -1);
-	window = g_hash_table_lookup(gebr.help_edit_windows, document);
-
-	if (window)
-		gtk_widget_destroy(window);
 }
 
 /**
