@@ -84,6 +84,7 @@ void gebr_init(void)
 	gebr.tmpfiles = g_slist_alloc();
 
 	gebr.help_edit_windows = g_hash_table_new(NULL, NULL);
+	gebr.xmls_by_filename = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	/* icons */
 	gebr.invisible = gtk_invisible_new();
@@ -140,6 +141,7 @@ gboolean gebr_quit(void)
 	}
 
 	g_hash_table_destroy(gebr.help_edit_windows);
+	g_hash_table_destroy(gebr.xmls_by_filename);
 
 	/*
 	 * Data frees and cleanups

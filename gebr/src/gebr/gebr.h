@@ -72,6 +72,7 @@ struct gebr {
 	GtkWidget *invisible;			
 
 	GHashTable * help_edit_windows;
+	GHashTable * xmls_by_filename;
 
 	GebrGeoXmlDocument *project_line;
 	GebrGeoXmlProject *project;
