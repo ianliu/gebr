@@ -522,7 +522,6 @@ void project_line_import(void)
 
 				project_append_line_iter(&iter, line);
 				document_save(GEBR_GEOXML_DOCUMENT(line), FALSE);
-				gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(line));
 				
 				project_line = next;
 			}
@@ -548,20 +547,9 @@ void project_line_import(void)
 			document = GEBR_GEOXML_DOCUMENT(line);
 		} else
 			document = NULL;
-		if (document != NULL) {
-			GString *new_title;
 
-			new_title = g_string_new(NULL);
-			g_string_printf(new_title, _("%s (Imported)"), gebr_geoxml_document_get_title(document));
-			gtk_tree_store_set(gebr.ui_project_line->store, &iter, PL_TITLE, new_title->str, -1);
-			gebr_geoxml_document_set_title(document, new_title->str);
-			document_save(document, FALSE);
-			gebr_geoxml_document_free(document);
-
+		if (document != NULL)
 			project_line_select_iter(&iter);
-
-			g_string_free(new_title, TRUE);
-		}
 	}
 
 	if (gebr_gui_confirm_action_dialog(_("Create directories"),

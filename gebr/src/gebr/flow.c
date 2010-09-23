@@ -152,8 +152,6 @@ void flow_delete(gboolean confirm)
 
 void flow_import(void)
 {
-	GtkTreeIter iter;
-
 	GtkWidget *chooser_dialog;
 	GtkFileFilter *file_filter;
 	gchar *dir;
@@ -196,16 +194,12 @@ void flow_import(void)
 
 	document_import(GEBR_GEOXML_DOCUMENT(imported_flow));
 	/* and add it to the line */
-	gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(imported_flow)));
+	GebrGeoXmlLineFlow * line_flow = gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(imported_flow)));
 	document_save(GEBR_GEOXML_DOC(gebr.line), FALSE);
 	/* and to the GUI */
-	gtk_list_store_append(gebr.ui_flow_browse->store, &iter);
-	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
-			   FB_TITLE, flow_title, 
-			   FB_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(imported_flow)), -1);
+	GtkTreeIter iter = line_append_flow_iter(imported_flow, line_flow);
 	flow_browse_select_iter(&iter);
 
-	gebr_geoxml_document_free(GEBR_GEOXML_DOC(imported_flow));
 out2:	g_free(dir);
 out:	gtk_widget_destroy(chooser_dialog);
 }
