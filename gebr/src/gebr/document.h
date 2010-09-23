@@ -126,5 +126,15 @@ GString *document_get_path(const gchar * filename);
  */
 void document_delete(const gchar * filename);
 
+/**
+ * gebr_document_report_get_styles:
+ * @report: an html markup
+ *
+ * Returns: a list of strings containing all styles inside @report.
+ * It may return complete <style> tags and <link rel='stylesheet' ... > tags.
+ * You must free all strings and the list itself.
+ */
+GList * gebr_document_report_get_styles(const gchar * report);
+
 G_END_DECLS
 #endif				//__DOCUMENT_H

@@ -524,3 +524,38 @@ void document_delete(const gchar * filename)
 
 	g_string_free(path, TRUE);
 }
+
+static GList *
+generate_list_from_match_info(GMatchInfo * match)
+{
+	GList * list = NULL;
+	while (g_match_info_matches(match)) {
+		list = g_list_prepend(list, g_match_info_fetch(match, 0));
+		g_match_info_next(match, NULL);
+	}
+	return g_list_reverse(list);
+}
+
+GList * gebr_document_report_get_styles(const gchar * report)
+{
+	GList * list;
+	GRegex * links;
+	GRegex * styles;
+	GMatchInfo * match;
+
+	links = g_regex_new("<\\s*link\\s+rel\\s*=\\s*\"stylesheet\"[^>]*>",
+			    G_REGEX_DOTALL, 0, NULL);
+
+	styles = g_regex_new("<style[^>]*>.*?<\\/style>",
+			     G_REGEX_DOTALL, 0, NULL);
+
+	g_regex_match(links, report, 0, &match);
+	list = generate_list_from_match_info(match);
+	g_match_info_free(match);
+
+	g_regex_match(styles, report, 0, &match);
+	list = g_list_concat(list, generate_list_from_match_info(match));
+	g_match_info_free(match);
+
+	return list;
+}
