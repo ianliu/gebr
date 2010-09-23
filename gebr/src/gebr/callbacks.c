@@ -361,6 +361,7 @@ void on_detailed_report_activate() {
 	g_string_printf(final_str, HTML_HOLDER, style_str, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)), header_str, table_str);
 
 	window = gebr_gui_html_viewer_window_new();
+	gebr_gui_html_viewer_window_set_custom_tab(GEBR_GUI_HTML_VIEWER_WINDOW(window), _("Detailed Report"), on_detailed_flow_report_print);
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window),
 					      final_str->str);
 
@@ -410,3 +411,27 @@ void on_project_line_edit_help(void){
     project_line_edit_help();
 }
 
+GtkWidget * on_detailed_flow_report_print(GebrGuiHtmlViewerWidget *self){
+
+	GtkWidget *check_button_param;
+	GtkWidget *check_button_css;
+	GtkWidget *vbox;
+	GtkWidget *label;
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	label = gtk_label_new(_("Detailed report options"));
+	check_button_param = gtk_check_button_new_with_label(_("Include the program parameters and value to report"));
+	check_button_css = gtk_check_button_new_with_label(_(_("Choose the CSS style created by the user")));
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), check_button_param, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), check_button_css, FALSE, FALSE, 0);
+	g_signal_connect(check_button_param, "toggled", G_CALLBACK(on_check_button_param_toggled), NULL);
+	g_signal_connect(check_button_css, "toggled", G_CALLBACK(on_check_button_css_toggled), NULL);
+
+	gtk_widget_show_all(vbox);
+	return vbox;
+}
+void on_check_button_param_toggled(GtkToggleButton *togglebutton, gpointer user_data){
+}
+void on_check_button_css_toggled(GtkToggleButton *togglebutton, gpointer user_data){
+}

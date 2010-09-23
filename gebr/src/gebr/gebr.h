@@ -112,6 +112,8 @@ struct gebr {
 		gint current_notebook;
 		GString *project_line_string;
 		GString *flow_string;
+		gboolean print_option_check_button_param;
+		gboolean print_option_check_button_css;
 	} config;
 
 	/* Pixmaps */

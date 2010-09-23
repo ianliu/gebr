@@ -19,6 +19,7 @@
 #define __CALLBACKS_H
 
 #include <gtk/gtk.h>
+#include <libgebr/gui/gebr-gui-html-viewer-widget.h>
 
 G_BEGIN_DECLS
 
@@ -193,5 +194,10 @@ void on_detailed_report_activate(void);
 
 void on_detailed_flow_report_activate(const gchar * style, gboolean include_parameter_dump);
 
+GtkWidget * on_detailed_flow_report_print(GebrGuiHtmlViewerWidget * self);
+
+void on_check_button_param_toggled(GtkToggleButton *togglebutton, gpointer user_data);
+
+void on_check_button_css_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 G_END_DECLS
 #endif				//__CALLBACKS_H
