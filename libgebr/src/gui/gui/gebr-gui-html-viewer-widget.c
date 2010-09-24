@@ -33,6 +33,7 @@
 
 enum {
 	TITLE_READY,
+	PRINT_REQUESTED,
 	LAST_SIGNAL
 };
 
@@ -91,6 +92,19 @@ static void gebr_gui_html_viewer_widget_class_init(GebrGuiHtmlViewerWidgetClass 
 			     G_TYPE_NONE,
 			     1,
 			     G_TYPE_STRING);
+
+	/**
+	 * GebrGuiHtmlViewerWidget::print-requested:
+	 * Emitted when the user requests a print job.
+	 */
+	signals[ PRINT_REQUESTED ] =
+		g_signal_new("print-requested",
+			     GEBR_GUI_TYPE_HTML_VIEWER_WIDGET,
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrGuiHtmlViewerWidgetClass, print_requested),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
 
 	g_type_class_add_private(klass, sizeof(GebrGuiHtmlViewerWidgetPrivate));
 }
@@ -298,7 +312,7 @@ void pre_process_html(GebrGuiHtmlViewerWidgetPrivate * priv, GString *html)
 	}
 }
 
-GtkWidget * on_create_custom_widget(GtkPrintOperation * print_op, GebrGuiHtmlViewerWidget *self)
+static GtkWidget * on_create_custom_widget(GtkPrintOperation * print_op, GebrGuiHtmlViewerWidget *self)
 {
 	GebrGuiHtmlViewerWidgetPrivate * priv;
 	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
@@ -307,6 +321,11 @@ GtkWidget * on_create_custom_widget(GtkPrintOperation * print_op, GebrGuiHtmlVie
 		return priv->callback(self); 
 
 	return NULL;
+}
+
+static void on_apply_custom_widget(GtkPrintOperation * print_op, GtkWidget * widget, GebrGuiHtmlViewerWidget * self)
+{
+	g_signal_emit(self, signals[ PRINT_REQUESTED ], 0);
 }
 
 //==============================================================================
@@ -331,6 +350,7 @@ void gebr_gui_html_viewer_widget_print(GebrGuiHtmlViewerWidget * self)
 
 	print_op = gtk_print_operation_new();
 	g_signal_connect(print_op, "create-custom-widget", G_CALLBACK(on_create_custom_widget), self);
+	g_signal_connect(print_op, "custom-widget-apply", G_CALLBACK(on_apply_custom_widget), self);
 	gtk_print_operation_set_custom_tab_label(print_op, priv->label);
 
 	frame = webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(priv->web_view));

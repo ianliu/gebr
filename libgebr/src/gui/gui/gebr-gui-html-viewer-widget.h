@@ -46,6 +46,7 @@ struct _GebrGuiHtmlViewerWidgetClass {
 
 	/* Signals */
 	void (*title_ready) (GebrGuiHtmlViewerWidget * self, const gchar * title);
+	void (*print_requested) (GebrGuiHtmlViewerWidget * self);
 };
 
 GType gebr_gui_html_viewer_widget_get_type(void) G_GNUC_CONST;
