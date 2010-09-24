@@ -736,20 +736,36 @@ GtkWidget * gebr_flow_print_dialog_custom_tab(GebrGuiHtmlViewerWidget *widget){
 	GtkWidget *check_button_param;
 	GtkWidget *check_button_css;
 	GtkWidget *vbox;
-	GtkWidget *label;
+	GtkWidget *frame;
+	GtkWidget *label_markup;
+	GtkWidget * alignment;
+	gchar *label;
 
-	vbox = gtk_vbox_new(FALSE, 5);
-	label = gtk_label_new(_("Detailed report options"));
-	check_button_param = gtk_check_button_new_with_label(_("Include the program parameters and value to report"));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_button_param), gebr.config.print_option_check_button_param);
-	check_button_css = gtk_check_button_new_with_label(_(_("Use gebr style sheet")));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_button_css), gebr.config.print_option_check_button_css);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), check_button_param, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), check_button_css, FALSE, FALSE, 0);
+	check_button_css = gtk_check_button_new_with_label(_("Use gebr style sheet"));
+	check_button_param =  gtk_check_button_new_with_label(_("Generate detailed flow reports"));
+
 	g_signal_connect(check_button_param, "toggled", G_CALLBACK(on_check_button_param_toggled), NULL);
 	g_signal_connect(check_button_css, "toggled", G_CALLBACK(on_check_button_css_toggled), NULL);
 
-	gtk_widget_show_all(vbox);
-	return vbox;
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_button_param), gebr.config.print_option_check_button_param);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_button_css), gebr.config.print_option_check_button_css);
+
+	label = g_strdup_printf("<b>%s</b>", _("Detailed Report"));
+	frame = gtk_frame_new(label);
+	label_markup = gtk_frame_get_label_widget(GTK_FRAME(frame));
+	gtk_label_set_use_markup(GTK_LABEL(label_markup), TRUE);
+	g_free(label);
+
+	alignment = gtk_alignment_new(0, 0, 1, 1);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 10, 0);
+	gtk_container_add(GTK_CONTAINER(frame), alignment);
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(alignment), vbox);
+	gtk_box_pack_start(GTK_BOX(vbox), check_button_param, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), check_button_css, FALSE, TRUE, 0);
+
+
+	gtk_widget_show_all(frame);
+	return frame;
 }
