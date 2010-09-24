@@ -563,6 +563,31 @@ GList * gebr_document_report_get_styles(const gchar * report)
 	return list;
 }
 
+gchar * gebr_document_report_get_styles_string(const gchar * report)
+{
+	GList * list, * i;
+	GString * string;
+
+	list = gebr_document_report_get_styles(report);
+
+	if (list)
+		string = g_string_new(list->data);
+	else
+		return NULL;
+
+	i = list->next;
+	while (i) {
+		g_string_append_c(string, '\n');
+		g_string_append(string, i->data);
+		i = i->next;
+	}
+
+	g_list_foreach(list, g_free);
+	g_list_free(list);
+
+	return g_string_free(string, FALSE);
+}
+
 gchar * gebr_document_report_get_inner_body(const gchar * report)
 {
 	GRegex * body;
