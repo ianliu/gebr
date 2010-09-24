@@ -60,7 +60,7 @@ static guint n_action_entries = G_N_ELEMENTS(action_entries);
 //==============================================================================
 // PRIVATE METHODS 							       =
 //==============================================================================
-static GtkWidget *
+	static GtkWidget *
 create_help_edit_window(GebrGeoXmlDocument * document)
 {
 	guint merge_id;
@@ -124,6 +124,57 @@ static void on_help_edit_window_destroy(GtkWidget * widget, gpointer document)
 	g_hash_table_remove(gebr.help_edit_windows, document);
 }
 
+static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocument * document)
+{
+	GebrGeoXmlObjectType type;
+	gchar * detailed_html;
+	const gchar * title;
+	const gchar * report;
+	gchar * inner_body;
+	gchar * styles;
+	gchar * header;
+	gchar * content;
+
+	type = gebr_geoxml_object_get_type(GEBR_GEOXML_OBJECT(document));
+	title = gebr_geoxml_document_get_title(document);
+	report = gebr_geoxml_document_get_help(document);
+	inner_body = gebr_document_report_get_inner_body(report);
+
+	if (type == GEBR_GEOXML_OBJECT_TYPE_LINE) {
+		if (gebr.config.print_option_line_use_gebr_css)
+			styles = g_strdup("<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
+		else
+			styles = gebr_document_report_get_styles_string(report);
+		header = gebr_line_generate_header(document);
+		content = NULL;
+	} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
+		if (gebr.config.print_option_check_button_css)
+			styles = g_strdup("<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
+		else
+			styles = gebr_document_report_get_styles_string(report);
+		header = gebr_flow_generate_header(GEBR_GEOXML_FLOW(document));
+
+		if (gebr.config.print_option_check_button_param)
+			content = gebr_flow_generate_parameter_value_table(GEBR_GEOXML_FLOW(document));
+		else
+			content = NULL;
+	} else
+		g_return_if_reached();
+
+	gchar * real_content = g_strconcat(inner_body, content, NULL);
+
+	if (!styles)
+		styles = g_strdup("");
+	detailed_html = gebr_generate_report(title, styles, header, real_content);
+	gebr_gui_html_viewer_widget_show_html(self, detailed_html);
+
+	g_free(styles);
+	g_free(header);
+	g_free(content);
+	g_free(inner_body);
+	g_free(real_content);
+}
+
 //==============================================================================
 // PUBLIC METHODS 							       =
 //==============================================================================
@@ -143,12 +194,12 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 
 	window = gebr_gui_html_viewer_window_new(title); 
 	html_viewer_widget = gebr_gui_html_viewer_window_get_widget(GEBR_GUI_HTML_VIEWER_WINDOW(window));
-
+	g_signal_connect(html_viewer_widget, "print-requested", G_CALLBACK(on_print_requested), object);
 
 	if (menu)
 		gebr_gui_html_viewer_widget_generate_links(html_viewer_widget, object);
 
-	switch (gebr_geoxml_object_get_type(object)){
+	switch (gebr_geoxml_object_get_type(object)) {
 	case GEBR_GEOXML_OBJECT_TYPE_FLOW:
 		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
 		gebr_gui_html_viewer_window_set_custom_tab(GEBR_GUI_HTML_VIEWER_WINDOW(window), _("Detailed Report"), gebr_flow_print_dialog_custom_tab);
@@ -248,4 +299,27 @@ static void on_save_activate(GtkAction * action, GebrGuiHelpEditWidget * self)
 		g_object_set(gebr.ui_project_line->info.help_view,
 			     "sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.project_line)))
 			     ? TRUE : FALSE, NULL);
+}
+
+gchar * gebr_generate_report(const gchar * title,
+			     const gchar * styles,
+			     const gchar * header,
+			     const gchar * table)
+{
+	static gchar * html = ""
+		"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" "
+		"\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
+		"<html xmlns=\"http://www.w3.org/1999/xhtml\">"
+		"<head>"
+		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
+		"<title>%s</title>"
+		"%s"
+		"</head>"
+		"<body>"
+		"<div id=\"header\">%s</div>"
+		"<div id=\"content\">%s</div>"
+		"</body>"
+		"</html>";
+
+	return g_strdup_printf(html, title, styles, header, table);
 }

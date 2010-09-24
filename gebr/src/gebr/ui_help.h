@@ -44,5 +44,12 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
  */
 void gebr_help_edit_document(GebrGeoXmlDocument * document);
 
+/**
+ * gebr_generate_report:
+ * Returns: a newly allocated string containing the generated report.
+ */
+gchar * gebr_generate_report(const gchar * title, const gchar * styles, const gchar * header, const gchar * table);
+
 G_END_DECLS
+
 #endif				//__UI_HELP_H

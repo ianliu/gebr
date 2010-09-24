@@ -1047,6 +1047,7 @@ gebr_project_line_print_dialog_custom_tab(GebrGuiHtmlViewerWidget * widget)
 	gchar * tab_label;
 	GtkWidget * vbox;
 	GtkWidget * frame;
+	GtkWidget * label;
 	GtkWidget * alignment;
 	GtkWidget * use_gebr_css_cb;
 	GtkWidget * include_flows_cb;
@@ -1063,9 +1064,14 @@ gebr_project_line_print_dialog_custom_tab(GebrGuiHtmlViewerWidget * widget)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(use_gebr_css_cb), gebr.config.print_option_line_use_gebr_css);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(include_flows_cb), gebr.config.print_option_line_include_flows);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_flows_cb), gebr.config.print_option_line_detailed_flows);
+	gtk_widget_set_sensitive(detailed_flows_cb, gebr.config.print_option_line_include_flows);
 
 	tab_label = g_strdup_printf("<b>%s</b>", _("Detailed Report"));
 	frame = gtk_frame_new(tab_label);
+	label = gtk_frame_get_label_widget(GTK_FRAME(frame));
+	gtk_container_set_border_width(GTK_CONTAINER(frame), 10);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
+	gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
 	g_free(tab_label);
 
 	alignment = gtk_alignment_new(0, 0, 1, 1);
