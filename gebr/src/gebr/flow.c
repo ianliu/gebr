@@ -701,6 +701,7 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 
 	g_string_append(dump, "</tbody></table>");
 	g_string_append_printf(dump, _("<br><p>Output %s</p>"), gebr_geoxml_flow_io_get_output(gebr.flow)); 
+	g_string_append_printf(dump, _("<br><p>Error %s</p>"), gebr_geoxml_flow_io_get_error(gebr.flow)); 
 	return g_string_free(dump, FALSE);
 }
 
@@ -730,26 +731,25 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow)
 	return g_string_free(dump, FALSE);
 }
 
-gchar * gebr_flow_generate_style(const gchar * style){
+GtkWidget * gebr_flow_print_dialog_custom_tab(GebrGuiHtmlViewerWidget *widget){
 
-	GString * dump;
+	GtkWidget *check_button_param;
+	GtkWidget *check_button_css;
+	GtkWidget *vbox;
+	GtkWidget *label;
 
-	dump = g_string_new(NULL);
-	g_string_printf(dump,
-			" <link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" />",
-			style);
+	vbox = gtk_vbox_new(FALSE, 5);
+	label = gtk_label_new(_("Detailed report options"));
+	check_button_param = gtk_check_button_new_with_label(_("Include the program parameters and value to report"));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_button_param), gebr.config.print_option_check_button_param);
+	check_button_css = gtk_check_button_new_with_label(_(_("Use gebr style sheet")));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_button_css), gebr.config.print_option_check_button_css);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), check_button_param, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), check_button_css, FALSE, FALSE, 0);
+	g_signal_connect(check_button_param, "toggled", G_CALLBACK(on_check_button_param_toggled), NULL);
+	g_signal_connect(check_button_css, "toggled", G_CALLBACK(on_check_button_css_toggled), NULL);
 
-	return g_string_free(dump, FALSE);
+	gtk_widget_show_all(vbox);
+	return vbox;
 }
-
-gchar * gebr_flow_obtain_report(GebrGeoXmlFlow * flow)
-{
-	GString * dump;
-
-	dump = g_string_new(NULL);
-	g_string_printf(dump,
-			" ");
-
-	return g_string_free(dump, FALSE);
-}
-

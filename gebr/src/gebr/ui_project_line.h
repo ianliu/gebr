@@ -24,6 +24,7 @@
 #define __UI_PROJECT_LINE_H
 
 #include <gtk/gtk.h>
+#include <libgebr/gui/gebr-gui-html-viewer-widget.h>
 
 G_BEGIN_DECLS
 
@@ -127,6 +128,9 @@ void project_line_free(void);
 void project_line_show_help(void);
 
 void project_line_edit_help(void);
+
+GtkWidget *
+gebr_project_line_print_dialog_custom_tab(GebrGuiHtmlViewerWidget * widget);
 
 G_END_DECLS
 #endif				//__UI_PROJECT_LINE_H

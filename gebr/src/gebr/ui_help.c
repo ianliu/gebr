@@ -38,6 +38,8 @@
 #include "document.h"
 #include "../defines.h"
 #include "menu.h"
+#include "flow.h"
+#include "ui_project_line.h"
 
 //==============================================================================
 // PROTOTYPES AND STATIC VARIABLES					       =
@@ -142,14 +144,26 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 	window = gebr_gui_html_viewer_window_new(title); 
 	html_viewer_widget = gebr_gui_html_viewer_window_get_widget(GEBR_GUI_HTML_VIEWER_WINDOW(window));
 
+
 	if (menu)
 		gebr_gui_html_viewer_widget_generate_links(html_viewer_widget, object);
 
-	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
-		html = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
-	else
+	switch (gebr_geoxml_object_get_type(object)){
+	case GEBR_GEOXML_OBJECT_TYPE_FLOW:
 		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
+		gebr_gui_html_viewer_window_set_custom_tab(GEBR_GUI_HTML_VIEWER_WINDOW(window), _("Detailed Report"), gebr_flow_print_dialog_custom_tab);
+		break;
+	case GEBR_GEOXML_OBJECT_TYPE_LINE:
+		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
+		gebr_gui_html_viewer_window_set_custom_tab(GEBR_GUI_HTML_VIEWER_WINDOW(window), _("Detailed Report"), gebr_project_line_print_dialog_custom_tab);
+		break;
+	case GEBR_GEOXML_OBJECT_TYPE_PROGRAM:
+		html = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
+		break;
+	default:
+		break;
 
+	}
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
 
 	gtk_dialog_run(GTK_DIALOG(window));

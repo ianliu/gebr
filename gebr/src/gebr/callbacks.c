@@ -349,7 +349,6 @@ void on_flow_browse_edit_help(void) {
 void on_detailed_report_activate() {
 	gchar * table_str;
 	gchar * header_str;
-	gchar * style_str;
 	GString * final_str;
 	GtkWidget * window;
 
@@ -357,39 +356,7 @@ void on_detailed_report_activate() {
 
 	header_str = gebr_flow_generate_header(gebr.flow);
 	table_str = gebr_flow_generate_parameter_value_table(gebr.flow);
-	style_str = gebr_flow_generate_style("gebr.css");
-	g_string_printf(final_str, HTML_HOLDER, style_str, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)), header_str, table_str);
-
-	window = gebr_gui_html_viewer_window_new();
-	gebr_gui_html_viewer_window_set_custom_tab(GEBR_GUI_HTML_VIEWER_WINDOW(window), _("Detailed Report"), on_detailed_flow_report_print);
-	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window),
-					      final_str->str);
-
-	gtk_widget_show(window);
-	g_string_free(final_str, FALSE);
-
-}
-
-void on_detailed_flow_report_activate(const gchar * style, gboolean include_parameter_dump) {
-	gchar * header_str;
-	gchar * report_str;
-	gchar * style_str;
-	GString * table_str;
-	GString * final_str;
-	GtkWidget * window;
-
-	final_str = g_string_new(NULL);
-	table_str = g_string_new(NULL);
-
-	header_str = gebr_flow_generate_header(gebr.flow);
-	style_str = gebr_flow_generate_style(style);
-	report_str = gebr_flow_obtain_report(gebr.flow);
-
-	if (include_parameter_dump){
-		g_string_assign(table_str, gebr_flow_generate_parameter_value_table(gebr.flow));
-	}
-
-	g_string_printf(final_str, HTML_HOLDER, style_str, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)), header_str, table_str->str);
+	g_string_printf(final_str, HTML_HOLDER, "<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)), header_str, table_str);
 
 	window = gebr_gui_html_viewer_window_new();
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window),
@@ -397,7 +364,6 @@ void on_detailed_flow_report_activate(const gchar * style, gboolean include_para
 
 	gtk_widget_show(window);
 	g_string_free(final_str, FALSE);
-	g_string_free(table_str, FALSE);
 
 }
 
@@ -411,27 +377,9 @@ void on_project_line_edit_help(void){
     project_line_edit_help();
 }
 
-GtkWidget * on_detailed_flow_report_print(GebrGuiHtmlViewerWidget *self){
-
-	GtkWidget *check_button_param;
-	GtkWidget *check_button_css;
-	GtkWidget *vbox;
-	GtkWidget *label;
-
-	vbox = gtk_vbox_new(FALSE, 5);
-	label = gtk_label_new(_("Detailed report options"));
-	check_button_param = gtk_check_button_new_with_label(_("Include the program parameters and value to report"));
-	check_button_css = gtk_check_button_new_with_label(_(_("Choose the CSS style created by the user")));
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), check_button_param, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), check_button_css, FALSE, FALSE, 0);
-	g_signal_connect(check_button_param, "toggled", G_CALLBACK(on_check_button_param_toggled), NULL);
-	g_signal_connect(check_button_css, "toggled", G_CALLBACK(on_check_button_css_toggled), NULL);
-
-	gtk_widget_show_all(vbox);
-	return vbox;
-}
 void on_check_button_param_toggled(GtkToggleButton *togglebutton, gpointer user_data){
+	gebr.config.print_option_check_button_param = gtk_toggle_button_get_active(togglebutton);
 }
 void on_check_button_css_toggled(GtkToggleButton *togglebutton, gpointer user_data){
+	gebr.config.print_option_check_button_css = gtk_toggle_button_get_active(togglebutton);
 }
