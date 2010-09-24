@@ -136,6 +136,9 @@ static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocumen
 	gchar * content;
 
 	type = gebr_geoxml_object_get_type(GEBR_GEOXML_OBJECT(document));
+	if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) 
+		return ;
+
 	title = gebr_geoxml_document_get_title(document);
 	report = gebr_geoxml_document_get_help(document);
 	inner_body = gebr_document_report_get_inner_body(report);
