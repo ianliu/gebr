@@ -582,7 +582,7 @@ gchar * gebr_document_report_get_styles_string(const gchar * report)
 		i = i->next;
 	}
 
-	g_list_foreach(list, g_free);
+	g_list_foreach(list, (GFunc)g_free, NULL);
 	g_list_free(list);
 
 	return g_string_free(string, FALSE);

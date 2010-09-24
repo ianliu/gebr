@@ -112,8 +112,13 @@ struct gebr {
 		gint current_notebook;
 		GString *project_line_string;
 		GString *flow_string;
+
+		// Print options for Print dialog
 		gboolean print_option_check_button_param;
 		gboolean print_option_check_button_css;
+		gboolean print_option_line_use_gebr_css;
+		gboolean print_option_line_include_flows;
+		gboolean print_option_line_detailed_flows;
 	} config;
 
 	/* Pixmaps */

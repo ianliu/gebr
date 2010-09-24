@@ -1018,3 +1018,71 @@ void project_line_edit_help(void)
 	gebr_help_edit_document(GEBR_GEOXML_DOC(gebr.project_line));
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.project_line), TRUE);
 }
+
+static void on_use_gebr_css_toggled(GtkToggleButton * button)
+{
+	gboolean toggled;
+	toggled = gtk_toggle_button_get_active(button);
+	gebr.config.print_option_line_use_gebr_css = toggled;
+}
+
+static void on_include_flows_toggled(GtkToggleButton * button, GtkWidget * widget)
+{
+	gboolean toggled;
+	toggled = gtk_toggle_button_get_active(button);
+	gtk_widget_set_sensitive(widget, toggled);
+	gebr.config.print_option_line_include_flows = toggled;
+}
+
+static void on_detailed_flows_toggled(GtkToggleButton * button)
+{
+	gboolean toggled;
+	toggled = gtk_toggle_button_get_active(button);
+	gebr.config.print_option_line_detailed_flows = toggled;
+}
+
+GtkWidget *
+gebr_project_line_print_dialog_custom_tab(GebrGuiHtmlViewerWidget * widget)
+{
+	gchar * tab_label;
+	GtkWidget * vbox;
+	GtkWidget * frame;
+	GtkWidget * alignment;
+	GtkWidget * use_gebr_css_cb;
+	GtkWidget * include_flows_cb;
+	GtkWidget * detailed_flows_cb;
+
+	use_gebr_css_cb = gtk_check_button_new_with_label(_("Use gebr style sheet"));
+	include_flows_cb = gtk_check_button_new_with_label(_("Include flow reports"));
+	detailed_flows_cb = gtk_check_button_new_with_label(_("Generate detailed flow reports"));
+
+	g_signal_connect(use_gebr_css_cb, "toggled", G_CALLBACK(on_use_gebr_css_toggled), NULL);
+	g_signal_connect(include_flows_cb, "toggled", G_CALLBACK(on_include_flows_toggled), detailed_flows_cb);
+	g_signal_connect(detailed_flows_cb, "toggled", G_CALLBACK(on_detailed_flows_toggled), NULL);
+
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(use_gebr_css_cb), gebr.config.print_option_line_use_gebr_css);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(include_flows_cb), gebr.config.print_option_line_include_flows);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_flows_cb), gebr.config.print_option_line_detailed_flows);
+
+	tab_label = g_strdup_printf("<b>%s</b>", _("Detailed Report"));
+	frame = gtk_frame_new(tab_label);
+	g_free(tab_label);
+
+	alignment = gtk_alignment_new(0, 0, 1, 1);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 10, 0);
+	gtk_container_add(GTK_CONTAINER(frame), alignment);
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(alignment), vbox);
+	gtk_box_pack_start(GTK_BOX(vbox), use_gebr_css_cb, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), include_flows_cb, FALSE, TRUE, 0);
+
+	alignment = gtk_alignment_new(0, 0, 1, 1);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 10, 0);
+	gtk_container_add(GTK_CONTAINER(alignment), detailed_flows_cb);
+	gtk_box_pack_start(GTK_BOX(vbox), alignment, FALSE, TRUE, 0);
+
+	gtk_widget_show_all(frame);
+
+	return frame;
+}

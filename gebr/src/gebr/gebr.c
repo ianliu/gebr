@@ -264,6 +264,10 @@ gint gebr_config_load()
 		gebr.config.print_option_check_button_css = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_check_button_css", FALSE);
 		gebr.config.print_option_check_button_param = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_check_button_param", FALSE);
 
+		gebr.config.print_option_line_use_gebr_css = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_line_use_gebr_css", FALSE);
+		gebr.config.print_option_line_include_flows = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_line_include_flows", FALSE);
+		gebr.config.print_option_line_detailed_flows = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_line_detailed_flows", FALSE);
+
 		g_string_free(data_dir, TRUE);
 	}
 
@@ -366,6 +370,9 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_integer(gebr.config.key_file, "general", "notebook", gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)));
 	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_check_button_param", gebr.config.print_option_check_button_param);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_check_button_css", gebr.config.print_option_check_button_css);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_line_use_gebr_css", gebr.config.print_option_line_use_gebr_css);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_line_include_flows", gebr.config.print_option_line_include_flows);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_line_detailed_flows", gebr.config.print_option_line_detailed_flows);
 
 	/* Save list of servers */
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
