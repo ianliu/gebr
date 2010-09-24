@@ -34,6 +34,19 @@
 #include "flow.h"
 #include "menu.h"
 
+static GebrGeoXmlDocument *document_cache_check(const gchar *path)
+{
+	return g_hash_table_lookup(gebr.xmls_by_filename, path);
+}
+
+static void document_cache_add(const gchar *path, GebrGeoXmlDocument * document)
+{
+	if (document != NULL && !g_str_has_suffix(path, ".mnu") && gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW
+	    && document_path_is_at_gebr_data_dir(path)) {
+		g_hash_table_insert(gebr.xmls_by_filename, g_strdup(path), document);
+	}
+}
+
 GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
 {
 	gchar *extension;
@@ -195,10 +208,15 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		g_free(basename);
 	}
 
+	if ((*document = document_cache_check(path)) != NULL) {
+		return GEBR_GEOXML_RETV_SUCCESS;
+	}
 	int ret; 
 	if (!(ret = gebr_geoxml_document_load(document, path, TRUE, g_str_has_suffix(path, ".flw") ?
-					      __document_discard_menu_ref_callback : NULL)))
+					      __document_discard_menu_ref_callback : NULL))) {
+		document_cache_add(path, *document);
 		return ret;
+	}
 
 	GString *string;
 	GebrGeoXmlDocument *parent_document;
@@ -422,6 +440,8 @@ gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gbo
 	if (!ret)
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to save document '%s' file at '%s'."),
 			     gebr_geoxml_document_get_title(document), path);
+	document_cache_add(path, document);
+	
 	return ret;
 }
 
@@ -461,7 +481,13 @@ void document_import(GebrGeoXmlDocument * document)
 	new_filename = document_assembly_filename(extension);
 
 	path = document_get_path(new_filename->str);
+
 	gebr_geoxml_document_set_filename(document, new_filename->str);
+	GString *new_title = g_string_new(NULL);
+	g_string_printf(new_title, _("%s (Imported)"), gebr_geoxml_document_get_title(document));
+	gebr_geoxml_document_set_title(document, new_title->str);
+	g_string_free(new_title, TRUE);
+
 	/* TODO: check save */
 	document_save_at(document, path->str, FALSE);
 

@@ -1679,6 +1679,7 @@ gchar * debr_menu_get_backup_help_from_pointer(gpointer menu)
 			if (ptr == menu)
 				break;
 			g_free(help);
+			help = NULL;
 
 			valid = gtk_tree_model_iter_next(model, &child);
 		}

@@ -54,8 +54,6 @@ static gboolean line_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, G
 static gboolean line_can_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *target_iter,
 				 GtkTreeViewDropPosition drop_position);
 
-static void on_project_line_row_deleted(GtkTreeModel * model, GtkTreePath * path);
-
 struct ui_project_line *project_line_setup_ui(void)
 {
 	struct ui_project_line *ui_project_line;
@@ -87,7 +85,6 @@ struct ui_project_line *project_line_setup_ui(void)
 						    G_TYPE_STRING,
 						    G_TYPE_STRING,
 						    G_TYPE_POINTER);
-	g_signal_connect(ui_project_line->store, "row-deleted", G_CALLBACK(on_project_line_row_deleted), NULL);
 	ui_project_line->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_project_line->store));
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_project_line->view),
 						  (GebrGuiGtkPopupCallback) project_line_popup_menu, ui_project_line);
@@ -306,12 +303,9 @@ void project_line_info_update(void)
 	g_string_free(text, TRUE);
 
 	/* Info button */
-    gboolean help_exists = gebr.project_line != NULL && (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.project_line)))? TRUE : FALSE);
-
+	gboolean help_exists = gebr.project_line != NULL && (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.project_line)))? TRUE : FALSE);
 	g_object_set(gebr.ui_project_line->info.help_view, "sensitive", help_exists, NULL);
-
-    gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "project_line_view"), help_exists);
-
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "project_line_view"), help_exists);
 	g_object_set(gebr.ui_project_line->info.help_edit, "sensitive", TRUE, NULL);
 
 	navigation_bar_update();
@@ -320,16 +314,14 @@ void project_line_info_update(void)
 gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectionType check_type)
 {
 	GtkTreeIter iter;
-	GtkTreeSelection *selection;
 	GtkTreeModel *model;
-	GtkTreePath *path;
 	gboolean is_line;
 	static const gchar *no_line_selected;
 	static const gchar *no_project_selected;
 
 	no_line_selected = _("Please select a line.");
 	no_project_selected = _("Please select a project.");
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
 		switch (check_type) {
 		case DontWarnUnselection:
@@ -348,7 +340,7 @@ gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectio
 	}
 	if (_iter != NULL)
 		*_iter = iter;
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
+	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
 	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
 	gtk_tree_path_free(path);
 	if (check_type == LineSelection && !is_line) {
@@ -441,7 +433,7 @@ void project_line_import(void)
 		gebr_geoxml_line_get_path(*line, &line_path, 0);
 		for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
 			const gchar *path = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
-			if (gebr_path_is_at_home(path))
+			if (gebr_path_is_at_home(path) && !g_file_test(path, G_FILE_TEST_IS_DIR))
 				line_paths_creation_sugest = g_list_prepend(line_paths_creation_sugest, g_strdup(path));
 		}
 
@@ -522,7 +514,6 @@ void project_line_import(void)
 
 				project_append_line_iter(&iter, line);
 				document_save(GEBR_GEOXML_DOCUMENT(line), FALSE);
-				gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(line));
 				
 				project_line = next;
 			}
@@ -548,23 +539,13 @@ void project_line_import(void)
 			document = GEBR_GEOXML_DOCUMENT(line);
 		} else
 			document = NULL;
-		if (document != NULL) {
-			GString *new_title;
 
-			new_title = g_string_new(NULL);
-			g_string_printf(new_title, _("%s (Imported)"), gebr_geoxml_document_get_title(document));
-			gtk_tree_store_set(gebr.ui_project_line->store, &iter, PL_TITLE, new_title->str, -1);
-			gebr_geoxml_document_set_title(document, new_title->str);
-			document_save(document, FALSE);
-			gebr_geoxml_document_free(document);
-
+		if (document != NULL)
 			project_line_select_iter(&iter);
-
-			g_string_free(new_title, TRUE);
-		}
 	}
 
-	if (gebr_gui_confirm_action_dialog(_("Create directories"),
+	if (line_paths_creation_sugest != NULL &&
+	    gebr_gui_confirm_action_dialog(_("Create directories"),
 					   _("There are some line paths localed on your home directory that do not exist. Do you want to create these folders?"))) {
 		GString *cmd_line = g_string_new(NULL);
 		for (GList *i = line_paths_creation_sugest; i != NULL; i = g_list_next(i)) {
@@ -734,8 +715,7 @@ static void project_line_load(void)
 	if (!project_line_get_selected(&iter, DontWarnUnselection))
 		return;
 
-	GtkTreePath *path;
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
+	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
 	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
 	gtk_tree_path_free(path);
 	if (is_line == TRUE) {
@@ -753,15 +733,6 @@ static void project_line_load(void)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 			   PL_XMLPOINTER, &gebr.project, -1);
-
-	GtkTreeIter tmpiter;
-	GebrGeoXmlDocument * document;
-	gebr_gui_gtk_tree_model_foreach(tmpiter, GTK_TREE_MODEL(gebr.ui_flow_browse->store)) {
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &tmpiter,
-				   FB_XMLPOINTER, &document, -1);
-		gebr_geoxml_document_free(document);
-	}
-
 	if (is_line == TRUE) {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &child,
 				   PL_XMLPOINTER, &gebr.line, -1);
@@ -771,8 +742,6 @@ static void project_line_load(void)
 	} else {
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.project);
 		gebr.line = NULL;
-		gtk_list_store_clear(gebr.ui_flow_browse->store);
-		flow_free();
 	}
 
 	project_line_info_update();
@@ -981,21 +950,6 @@ line_can_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *
 
 	/* Source and target are projects. */
 	return FALSE;
-}
-
-
-static void on_project_line_row_deleted(GtkTreeModel * model, GtkTreePath * path)
-{
-	GtkTreeIter iter;
-	GtkWidget * window;
-	gpointer document;
-
-	gtk_tree_model_get_iter(model, &iter, path);
-	gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &document, -1);
-	window = g_hash_table_lookup(gebr.help_edit_windows, document);
-
-	if (window)
-		gtk_widget_destroy(window);
 }
 
 /**
