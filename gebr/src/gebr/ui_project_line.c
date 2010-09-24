@@ -1086,3 +1086,24 @@ gebr_project_line_print_dialog_custom_tab(GebrGuiHtmlViewerWidget * widget)
 
 	return frame;
 }
+
+gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
+{
+	GString * dump;
+
+	dump = g_string_new(NULL);
+	g_string_printf(dump,
+			"<p><h1> %s </h1></p>"
+			"<p>%s</p>",
+			gebr_geoxml_document_get_title(document),
+			gebr_geoxml_document_get_description(document)
+		       );
+
+	g_string_append_printf(dump, _("<p>By %s &lt;%s&gt;, %s</p>"),
+			gebr_geoxml_document_get_author(document),
+			gebr_geoxml_document_get_email(document),
+			gebr_localized_date(gebr_iso_date())
+			);
+			
+	return g_string_free(dump, FALSE);
+}

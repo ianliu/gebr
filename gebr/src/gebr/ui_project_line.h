@@ -132,5 +132,7 @@ void project_line_edit_help(void);
 GtkWidget *
 gebr_project_line_print_dialog_custom_tab(GebrGuiHtmlViewerWidget * widget);
 
+gchar * gebr_line_generate_header(GebrGeoXmlDocument * document);
+
 G_END_DECLS
 #endif				//__UI_PROJECT_LINE_H
