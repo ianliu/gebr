@@ -99,16 +99,16 @@ h1,h2,h3 {padding-top: 6px; color: #553; margin-bottom: 4px; }
     margin-bottom : 5px;
     text-align : center
   }
-  .header.title {
+  .header .title {
     color : #FFF;
     padding-top : 10px
   }
-  .header.title.flowtitle {
+  .header .title .flowtitle {
     color : #FFF;
     font : normal 2em sans-serif;
     padding-bottom : 2px
   }
-  .header.title.description {
+  .header .title .description {
     font : normal 1.100em Verdana, sans-serif;
     padding-top : 6px;
     padding-bottom : 10px
@@ -122,16 +122,16 @@ h1,h2,h3 {padding-top: 6px; color: #553; margin-bottom: 4px; }
     margin-bottom : 5px;
     text-align : left
   }
-  .header.title {
+  .header .title {
     color : #000;
     padding-top : 6px
   }
-  .header.title.flowtitle {
+  .header .title .flowtitle {
     color : #553;
     font : bold 2em sans-serif;
     padding-bottom : 2px
   }
-  .header.title.description {
+  .header .title .description {
     font : normal 1.100em Verdana, sans-serif;
     padding-top : 4px;
     padding-bottom : 6px
@@ -197,7 +197,7 @@ h1,h2,h3 {padding-top: 6px; color: #553; margin-bottom: 4px; }
   }
 }
 
-.content.descr {
+.content .descr {
   color : #664;
   font-size : 0.900em;
   margin-bottom : 6px
@@ -205,25 +205,26 @@ h1,h2,h3 {padding-top: 6px; color: #553; margin-bottom: 4px; }
 
 .content li { margin-left : 18px; }
 .content p { font-family : "Lucida Sans Unicode", sans-serif; }
+.content td { font: normal 0.750em "Lucida Sans Unicode", sans-serif; }
 
 /* parameters */
 
 .parameters li { padding-bottom : 6px; }
 
 /* optional parameters */
-.parameters.label        { font-weight : bold; }
-.parameters.label:after  { content : " ]"; }
-.parameters.label:before { content : "[ "; }
+.parameters .label        { font-weight : bold; }
+.parameters .label:after  { content : " ]"; }
+.parameters .label:before { content : "[ "; }
 
 /* required parameters */
-.parameters.reqlabel        { font-weight : bold; }
-.parameters.reqlabel:after  { content : " ] (required)"; }
-.parameters.reqlabel:before { content : "[ "; }
+.parameters .reqlabel        { font-weight : bold; }
+.parameters .reqlabel:after  { content : " ] (required)"; }
+.parameters .reqlabel:before { content : "[ "; }
 
 /* group parameters */
-.parameters.grouplabel        { font-weight : bold; }
-.parameters.grouplabel:after  { content : " ]"; }
-.parameters.grouplabel:before { content : "[ "; }
+.parameters .grouplabel        { font-weight : bold; }
+.parameters .grouplabel:after  { content : " ]"; }
+.parameters .grouplabel:before { content : "[ "; }
 
 /* navigation */
 @media screen {
