@@ -460,7 +460,6 @@ gboolean document_save(GebrGeoXmlDocument * document, gboolean set_modified_date
 void document_import(GebrGeoXmlDocument * document)
 {
 	GString *path;
-	GString *new_filename;
 	const gchar *extension;
 
 	switch (gebr_geoxml_document_get_type(document)) {
@@ -478,11 +477,11 @@ void document_import(GebrGeoXmlDocument * document)
 	default:
 		return;
 	}
-	new_filename = document_assembly_filename(extension);
-
+	GString *new_filename = document_assembly_filename(extension);
 	path = document_get_path(new_filename->str);
-
 	gebr_geoxml_document_set_filename(document, new_filename->str);
+	g_string_free(new_filename, TRUE);
+
 	GString *new_title = g_string_new(NULL);
 	g_string_printf(new_title, _("%s (Imported)"), gebr_geoxml_document_get_title(document));
 	gebr_geoxml_document_set_title(document, new_title->str);
@@ -492,7 +491,6 @@ void document_import(GebrGeoXmlDocument * document)
 	document_save_at(document, path->str, FALSE);
 
 	g_string_free(path, TRUE);
-	g_string_free(new_filename, TRUE);
 }
 
 GString *document_assembly_filename(const gchar * extension)
