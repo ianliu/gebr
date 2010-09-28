@@ -27,23 +27,23 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 
-G_DEFINE_TYPE(GebrGuiGtkDirectoryChooser, gebr_gui_gtk_directory_chooser, GTK_TYPE_VBOX);
+G_DEFINE_TYPE(GebrGuiDirectoryChooser, gebr_gui_directory_chooser, GTK_TYPE_VBOX);
 
 /*
  * Prototypes
  */
 
-static void __gebr_gui_sequence_edit_add_request(GebrGuiSequenceEdit * sequence_edit, GebrGuiGtkDirectoryChooser * dir_chooser);
+static void __gebr_gui_sequence_edit_add_request(GebrGuiSequenceEdit * sequence_edit, GebrGuiDirectoryChooser * dir_chooser);
 
 /*
  * gobject
  */
 
-static void gebr_gui_gtk_directory_chooser_class_init(GebrGuiGtkDirectoryChooserClass * class)
+static void gebr_gui_directory_chooser_class_init(GebrGuiDirectoryChooserClass * class)
 {
 }
 
-static void gebr_gui_gtk_directory_chooser_init(GebrGuiGtkDirectoryChooser * directory_chooser)
+static void gebr_gui_directory_chooser_init(GebrGuiDirectoryChooser * directory_chooser)
 {
 	GtkWidget *file_entry;
 	GtkWidget *sequence_edit;
@@ -64,19 +64,19 @@ static void gebr_gui_gtk_directory_chooser_init(GebrGuiGtkDirectoryChooser * dir
  * Public methods
  */
 
-GtkWidget *gebr_gui_gtk_directory_chooser_new()
+GtkWidget *gebr_gui_directory_chooser_new()
 {
 	return g_object_new(GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER, NULL);
 }
 
 /**
- * gebr_gui_gtk_directory_chooser_get_paths:
+ * gebr_gui_directory_chooser_get_paths:
  *
  * Returns a NULL-terminated array of C strings corresponding
  * to the values contained in this widget. If there is no path
  * for this widget, returns NULL.
  */
-gchar **gebr_gui_gtk_directory_chooser_get_paths(GebrGuiGtkDirectoryChooser * widget)
+gchar **gebr_gui_directory_chooser_get_paths(GebrGuiDirectoryChooser * widget)
 {
 	GtkTreeModel *store;
 	GtkTreeIter iter;
@@ -101,7 +101,7 @@ gchar **gebr_gui_gtk_directory_chooser_get_paths(GebrGuiGtkDirectoryChooser * wi
 	return paths;
 }
 
-void gebr_gui_gtk_directory_chooser_set_paths(GebrGuiGtkDirectoryChooser * widget, gchar ** paths)
+void gebr_gui_directory_chooser_set_paths(GebrGuiDirectoryChooser * widget, gchar ** paths)
 {
 	gint i;
 
@@ -119,7 +119,7 @@ void gebr_gui_gtk_directory_chooser_set_paths(GebrGuiGtkDirectoryChooser * widge
  * Internal functions
  */
 
-static void __gebr_gui_sequence_edit_add_request(GebrGuiSequenceEdit * sequence_edit, GebrGuiGtkDirectoryChooser * dir_chooser)
+static void __gebr_gui_sequence_edit_add_request(GebrGuiSequenceEdit * sequence_edit, GebrGuiDirectoryChooser * dir_chooser)
 {
 	GtkWidget *file_entry;
 	const gchar *path;

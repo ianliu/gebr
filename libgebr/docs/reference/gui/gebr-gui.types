@@ -1,4 +1,4 @@
-gebr_gui_gtk_directory_chooser_get_type
+gebr_gui_directory_chooser_get_type
 gebr_gui_gtk_enhanced_entry_get_type
 gebr_gui_gtk_file_entry_get_type
 gebr_gui_save_dialog_get_type
