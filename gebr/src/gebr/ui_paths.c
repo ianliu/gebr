@@ -28,6 +28,7 @@
 #include <libgebr/intl.h>
 #include <libgebr/gui/gebr-gui-value-sequence-edit.h>
 #include <libgebr/gui/gebr-gui-file-entry.h>
+#include <libgebr/gui/gebr-gui-utils.h>
 
 #include "ui_paths.h"
 #include "gebr.h"
@@ -42,13 +43,28 @@ gboolean path_save(void)
 
 void path_add(GebrGuiValueSequenceEdit * sequence_edit)
 {
-	GebrGuiGtkFileEntry *file_entry;
 	const gchar *path;
 
+	GebrGuiGtkFileEntry *file_entry;
 	g_object_get(G_OBJECT(sequence_edit), "value-widget", &file_entry, NULL);
 	path = gebr_gui_gtk_file_entry_get_path(file_entry);
 	if (!strlen(path))
 		return;
+
+	/* check for duplication */
+	GtkTreeModel *model;
+	g_object_get(G_OBJECT(sequence_edit), "list-store", &model, NULL);
+	GtkTreeIter iter;
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		gchar *i_path;
+		gtk_tree_model_get(model, &iter, 0, &i_path, -1);
+		if (!strcmp(i_path, path)) {
+			gebr_gui_gtk_tree_view_select_iter(GEBR_GUI_SEQUENCE_EDIT(sequence_edit)->tree_view, &iter);
+			g_free(i_path);
+			return;
+		}
+		g_free(i_path);
+	}
 
 	gebr_gui_value_sequence_edit_add(sequence_edit,
 					 GEBR_GEOXML_SEQUENCE(gebr_geoxml_line_append_path(gebr.line, path)));

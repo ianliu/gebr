@@ -60,7 +60,7 @@ category_edit_set_property(CategoryEdit * category_edit, guint property_id, cons
 	case CATEGORY: {
 		GebrGeoXmlSequence *category;
 
-		gtk_list_store_clear(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store);
+		gtk_list_store_clear(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store);
 		category_edit->category = g_value_get_pointer(value);
 		category = (GebrGeoXmlSequence *) category_edit->category;
 		for (; category != NULL; gebr_geoxml_sequence_next(&category))
@@ -102,7 +102,7 @@ static void category_edit_class_init(CategoryEditClass * klass)
 	GParamSpec *param_spec;
 
 	/* virtual */
-	category_edit_class = GEBR_GUI_gebr_gui_sequence_edit_CLASS(klass);
+	category_edit_class = GEBR_GUI_SEQUENCE_EDIT_CLASS(klass);
 	category_edit_class->remove = (typeof(category_edit_class->remove)) __category_edit_remove;
 	category_edit_class->move = (typeof(category_edit_class->move)) __category_edit_move;
 	category_edit_class->move_top = (typeof(category_edit_class->move_top)) __category_edit_move_top;
@@ -218,7 +218,7 @@ static gboolean __category_edit_check_text(const gchar *text)
 static void __category_edit_validate_iter(CategoryEdit * category_edit, GtkTreeIter *iter)
 {
 	GebrGeoXmlSequence *category;
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store), iter,
 			   2, &category, -1);
 
 	GebrValidateCase *validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_CATEGORY);
@@ -227,7 +227,7 @@ static void __category_edit_validate_iter(CategoryEdit * category_edit, GtkTreeI
 		stock = GTK_STOCK_DIALOG_WARNING;
 	else
 		stock = NULL;
-	gtk_list_store_set(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store, iter,
+	gtk_list_store_set(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store, iter,
 			   1, stock, -1);
 }
 
@@ -239,7 +239,7 @@ gboolean __category_edit_on_query_tooltip(GtkTreeView * tree_view, GtkTooltip * 
 					  CategoryEdit * category_edit)
 {
 	gchar *stock;
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store), iter,
 			   1, &stock, -1);
 	if (stock == NULL)
 		return FALSE;
@@ -247,7 +247,7 @@ gboolean __category_edit_on_query_tooltip(GtkTreeView * tree_view, GtkTooltip * 
 		return FALSE;
 
 	gchar *name;
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store), iter,
 			   0, &name, -1);
 	GebrValidateCase *validate_case = gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_CATEGORY);
 	GString *tooltip_string = g_string_new("");
@@ -271,8 +271,8 @@ static void __category_edit_add(CategoryEdit * category_edit, GebrGeoXmlSequence
 {
 	GtkTreeIter iter;
 
-	gtk_list_store_append(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store, &iter);
-	gtk_list_store_set(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store, &iter,
+	gtk_list_store_append(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store, &iter);
+	gtk_list_store_set(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store, &iter,
 			   0, gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)),
 			   1, NULL, 2, category, -1);
 	__category_edit_validate_iter(category_edit, &iter);
@@ -285,11 +285,11 @@ static void __category_edit_remove(CategoryEdit * category_edit, GtkTreeIter * i
 {
 	GebrGeoXmlSequence *sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store), iter,
 			   2, &sequence, -1);
 
 	gebr_geoxml_sequence_remove(sequence);
-	gtk_list_store_remove(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store, iter);
+	gtk_list_store_remove(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store, iter);
 
 	validate_image_set_check_category_list(category_edit->validate_image, category_edit->menu);
 	g_signal_emit_by_name(category_edit, "changed");
@@ -305,17 +305,17 @@ __category_edit_move(CategoryEdit * category_edit, GtkTreeIter * iter, GtkTreeIt
 	GebrGeoXmlSequence *sequence;
 	GebrGeoXmlSequence *position_sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store), iter,
 			   2, &sequence, -1);
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store), position,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store), position,
 			   2, &position_sequence, -1);
 
 	if (drop_position == GTK_TREE_VIEW_DROP_AFTER) {
 		gebr_geoxml_sequence_move_after(sequence, position_sequence);
-		gtk_list_store_move_after(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store, iter, position);
+		gtk_list_store_move_after(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store, iter, position);
 	} else {
 		gebr_geoxml_sequence_move_before(sequence, position_sequence);
-		gtk_list_store_move_before(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store, iter, position);
+		gtk_list_store_move_before(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store, iter, position);
 	}
 
 	g_signal_emit_by_name(category_edit, "changed");
@@ -328,11 +328,11 @@ static void __category_edit_move_top(CategoryEdit * category_edit, GtkTreeIter *
 {
 	GebrGeoXmlSequence *sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store), iter,
 			   2, &sequence, -1);
 
 	gebr_geoxml_sequence_move_after(sequence, NULL);
-	gtk_list_store_move_after(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store, iter, NULL);
+	gtk_list_store_move_after(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store, iter, NULL);
 
 	g_signal_emit_by_name(category_edit, "changed");
 }
@@ -344,11 +344,11 @@ static void __category_edit_move_bottom(CategoryEdit * category_edit, GtkTreeIte
 {
 	GebrGeoXmlSequence *sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store), iter,
 			   2, &sequence, -1);
 
 	gebr_geoxml_sequence_move_before(sequence, NULL);
-	gtk_list_store_move_before(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store, iter, NULL);
+	gtk_list_store_move_before(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store, iter, NULL);
 
 	g_signal_emit_by_name(category_edit, "changed");
 }
@@ -379,9 +379,9 @@ static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit)
 				gchar *stock;
 				GebrGeoXmlValueSequence *category;
 
-				gtk_tree_model_get_iter(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store),
+				gtk_tree_model_get_iter(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store),
 							&iter, path);
-				gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store), &iter,
+				gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store), &iter,
 						   1, &stock,
 						   2, &category,
 						   -1);
@@ -391,7 +391,7 @@ static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit)
 					gchar *fix = gebr_validate_case_fix(validate_case,
 									    gebr_geoxml_value_sequence_get(category));
 
-					gtk_list_store_set(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store, &iter,
+					gtk_list_store_set(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store, &iter,
 							   0, fix,
 							   1, stock,
 							   -1);
@@ -416,7 +416,7 @@ static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit)
 	GtkCellRenderer *renderer;
 
 	tree_view =
-	    gtk_tree_view_new_with_model(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(category_edit)->list_store));
+	    gtk_tree_view_new_with_model(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store));
 	gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(tree_view),
 						    (GebrGuiGtkTreeViewTooltipCallback)__category_edit_on_query_tooltip,
 						    category_edit);

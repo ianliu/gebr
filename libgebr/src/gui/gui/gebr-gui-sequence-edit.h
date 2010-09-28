@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEBR_GUI_gebr_gui_sequence_edit_H
-#define __GEBR_GUI_gebr_gui_sequence_edit_H
+#ifndef __GEBR_GUI_SEQUENCE_EDIT_H
+#define __GEBR_GUI_SEQUENCE_EDIT_H
 
 #include <gtk/gtk.h>
 
@@ -25,11 +25,11 @@ G_BEGIN_DECLS
 GType gebr_gui_sequence_edit_get_type(void);
 
 #define GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT			(gebr_gui_sequence_edit_get_type())
-#define GEBR_GUI_gebr_gui_sequence_edit(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEdit))
-#define GEBR_GUI_gebr_gui_sequence_edit_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEditClass))
+#define GEBR_GUI_SEQUENCE_EDIT(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEdit))
+#define GEBR_GUI_SEQUENCE_EDIT_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEditClass))
 #define GEBR_GUI_GTK_IS_SEQUENCE_EDIT(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT))
 #define GEBR_GUI_GTK_IS_SEQUENCE_EDIT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT))
-#define GEBR_GUI_gebr_gui_sequence_edit_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEditClass))
+#define GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEditClass))
 
 typedef struct _GebrGuiSequenceEdit GebrGuiSequenceEdit;
 typedef struct _GebrGuiSequenceEditClass GebrGuiSequenceEditClass;
@@ -74,4 +74,4 @@ GtkTreeIter gebr_gui_sequence_edit_add(GebrGuiSequenceEdit * sequence_edit, cons
 void gebr_gui_sequence_edit_clear(GebrGuiSequenceEdit * sequence_edit);
 
 G_END_DECLS
-#endif				//__GEBR_GUI_gebr_gui_sequence_edit_H
+#endif				//__GEBR_GUI_SEQUENCE_EDIT_H

@@ -110,7 +110,7 @@ void gebr_gui_directory_chooser_set_paths(GebrGuiDirectoryChooser * widget, gcha
 
 	i = 0;
 	while (paths[i] != NULL) {
-		gebr_gui_sequence_edit_add(GEBR_GUI_gebr_gui_sequence_edit(widget->sequence_edit), paths[i], FALSE);
+		gebr_gui_sequence_edit_add(GEBR_GUI_SEQUENCE_EDIT(widget->sequence_edit), paths[i], FALSE);
 		i++;
 	}
 }

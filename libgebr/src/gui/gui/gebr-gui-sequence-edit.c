@@ -90,7 +90,7 @@ gebr_gui_sequence_edit_set_property(GebrGuiSequenceEdit * sequence_edit, guint p
 						       GTK_POLICY_AUTOMATIC);
 
 			tree_view =
-			    GEBR_GUI_gebr_gui_sequence_edit_GET_CLASS(sequence_edit)->create_tree_view(sequence_edit);
+			    GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->create_tree_view(sequence_edit);
 			gebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(tree_view),
 								    (GebrGuiGtkTreeViewReorderCallback)
 								    __gebr_gui_sequence_edit_on_reorder, NULL,
@@ -279,8 +279,8 @@ __gebr_gui_sequence_edit_button_clicked(GebrGuiSequenceEdit * sequence_edit,
 
 static void __gebr_gui_sequence_edit_on_add_clicked(GtkWidget * button, GebrGuiSequenceEdit * sequence_edit)
 {
-	if (GEBR_GUI_gebr_gui_sequence_edit_GET_CLASS(sequence_edit)->add != NULL)
-		GEBR_GUI_gebr_gui_sequence_edit_GET_CLASS(sequence_edit)->add(sequence_edit);
+	if (GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->add != NULL)
+		GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->add(sequence_edit);
 	else
 		g_signal_emit(sequence_edit, object_signals[ADD_REQUEST], 0);
 }
@@ -297,7 +297,7 @@ static void __gebr_gui_sequence_edit_on_remove_activated(GtkWidget * button, Geb
 	gtk_tree_model_get(GTK_TREE_MODEL(sequence_edit->list_store), &iter, 0, &old_text, -1);
 
 	g_signal_emit(sequence_edit, object_signals[REMOVED], 0, old_text, "");
-	__gebr_gui_sequence_edit_button_clicked(sequence_edit, GEBR_GUI_gebr_gui_sequence_edit_GET_CLASS(sequence_edit)->remove);
+	__gebr_gui_sequence_edit_button_clicked(sequence_edit, GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->remove);
 
 	g_free(old_text);
 }
@@ -306,20 +306,20 @@ static gboolean
 __gebr_gui_sequence_edit_on_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
 			       GtkTreeViewDropPosition drop_position, GebrGuiSequenceEdit * sequence_edit)
 {
-	GEBR_GUI_gebr_gui_sequence_edit_GET_CLASS(sequence_edit)->move(sequence_edit, iter, position, drop_position);
+	GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->move(sequence_edit, iter, position, drop_position);
 	return TRUE;
 }
 
 static void __gebr_gui_sequence_edit_on_move_top_activated(GtkWidget * button, GebrGuiSequenceEdit * sequence_edit)
 {
 	__gebr_gui_sequence_edit_button_clicked(sequence_edit,
-					   GEBR_GUI_gebr_gui_sequence_edit_GET_CLASS(sequence_edit)->move_top);
+					   GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->move_top);
 }
 
 static void __gebr_gui_sequence_edit_on_move_bottom_activated(GtkWidget * button, GebrGuiSequenceEdit * sequence_edit)
 {
 	__gebr_gui_sequence_edit_button_clicked(sequence_edit,
-					   GEBR_GUI_gebr_gui_sequence_edit_GET_CLASS(sequence_edit)->move_bottom);
+					   GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->move_bottom);
 }
 
 static void
@@ -336,7 +336,7 @@ __gebr_gui_sequence_edit_on_edited(GtkCellRendererText * cell, gchar * path_stri
 	gtk_tree_model_get(GTK_TREE_MODEL(sequence_edit->list_store), &iter, 0, &old_text, -1);
 
 	g_signal_emit(sequence_edit, object_signals[RENAMED], 0, old_text, new_text);
-	GEBR_GUI_gebr_gui_sequence_edit_GET_CLASS(sequence_edit)->rename(sequence_edit, &iter, new_text);
+	GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->rename(sequence_edit, &iter, new_text);
 
 	g_free(old_text);
 }
