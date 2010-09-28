@@ -15,26 +15,26 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEBR_GUI_GTK_SEQUENCE_EDIT_H
-#define __GEBR_GUI_GTK_SEQUENCE_EDIT_H
+#ifndef __GEBR_GUI_gebr_gui_sequence_edit_H
+#define __GEBR_GUI_gebr_gui_sequence_edit_H
 
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
-GType gtk_sequence_edit_get_type(void);
+GType gebr_gui_sequence_edit_get_type(void);
 
-#define GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT			(gtk_sequence_edit_get_type())
-#define GEBR_GUI_GTK_SEQUENCE_EDIT(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GtkSequenceEdit))
-#define GEBR_GUI_GTK_SEQUENCE_EDIT_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GtkSequenceEditClass))
+#define GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT			(gebr_gui_sequence_edit_get_type())
+#define GEBR_GUI_gebr_gui_sequence_edit(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEdit))
+#define GEBR_GUI_gebr_gui_sequence_edit_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEditClass))
 #define GEBR_GUI_GTK_IS_SEQUENCE_EDIT(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT))
 #define GEBR_GUI_GTK_IS_SEQUENCE_EDIT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT))
-#define GEBR_GUI_GTK_SEQUENCE_EDIT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GtkSequenceEditClass))
+#define GEBR_GUI_gebr_gui_sequence_edit_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEditClass))
 
-typedef struct _GtkSequenceEdit GtkSequenceEdit;
-typedef struct _GtkSequenceEditClass GtkSequenceEditClass;
+typedef struct _GebrGuiSequenceEdit GebrGuiSequenceEdit;
+typedef struct _GebrGuiSequenceEditClass GebrGuiSequenceEditClass;
 
-struct _GtkSequenceEdit {
+struct _GebrGuiSequenceEdit {
 	GtkVBox parent;
 
 	GtkWidget *widget;
@@ -46,32 +46,32 @@ struct _GtkSequenceEdit {
 
 	gboolean may_rename;
 };
-struct _GtkSequenceEditClass {
+struct _GebrGuiSequenceEditClass {
 	GtkVBoxClass parent;
 
 	/* signals */
-	void (*add_request) (GtkSequenceEdit * self);
-	void (*changed) (GtkSequenceEdit * self);
-	void (*renamed) (GtkSequenceEdit * self, const gchar * old_text, const gchar * new_text);
-	void (*removed) (GtkSequenceEdit * self, const gchar * old_text);
+	void (*add_request) (GebrGuiSequenceEdit * self);
+	void (*changed) (GebrGuiSequenceEdit * self);
+	void (*renamed) (GebrGuiSequenceEdit * self, const gchar * old_text, const gchar * new_text);
+	void (*removed) (GebrGuiSequenceEdit * self, const gchar * old_text);
 	/* virtual */
-	void (*add) (GtkSequenceEdit * self);
-	void (*remove) (GtkSequenceEdit * self, GtkTreeIter * iter);
-	void (*move) (GtkSequenceEdit * self, GtkTreeIter * iter, GtkTreeIter * position,
+	void (*add) (GebrGuiSequenceEdit * self);
+	void (*remove) (GebrGuiSequenceEdit * self, GtkTreeIter * iter);
+	void (*move) (GebrGuiSequenceEdit * self, GtkTreeIter * iter, GtkTreeIter * position,
 		      GtkTreeViewDropPosition drop_position);
-	void (*move_top) (GtkSequenceEdit * self, GtkTreeIter * iter);
-	void (*move_bottom) (GtkSequenceEdit * self, GtkTreeIter * iter);
-	void (*rename) (GtkSequenceEdit * self, GtkTreeIter * iter, const gchar * new_text);
-	GtkWidget *(*create_tree_view) (GtkSequenceEdit * self);
+	void (*move_top) (GebrGuiSequenceEdit * self, GtkTreeIter * iter);
+	void (*move_bottom) (GebrGuiSequenceEdit * self, GtkTreeIter * iter);
+	void (*rename) (GebrGuiSequenceEdit * self, GtkTreeIter * iter, const gchar * new_text);
+	GtkWidget *(*create_tree_view) (GebrGuiSequenceEdit * self);
 };
 
-GtkWidget *gtk_sequence_edit_new(GtkWidget * widget);
+GtkWidget *gebr_gui_sequence_edit_new(GtkWidget * widget);
 
-GtkWidget *gtk_sequence_edit_new_from_store(GtkWidget * widget, GtkListStore * list_store);
+GtkWidget *gebr_gui_sequence_edit_new_from_store(GtkWidget * widget, GtkListStore * list_store);
 
-GtkTreeIter gtk_sequence_edit_add(GtkSequenceEdit * sequence_edit, const gchar * text, gboolean show_empty_value_text);
+GtkTreeIter gebr_gui_sequence_edit_add(GebrGuiSequenceEdit * sequence_edit, const gchar * text, gboolean show_empty_value_text);
 
-void gtk_sequence_edit_clear(GtkSequenceEdit * sequence_edit);
+void gebr_gui_sequence_edit_clear(GebrGuiSequenceEdit * sequence_edit);
 
 G_END_DECLS
-#endif				//__GEBR_GUI_GTK_SEQUENCE_EDIT_H
+#endif				//__GEBR_GUI_gebr_gui_sequence_edit_H

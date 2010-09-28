@@ -33,7 +33,7 @@ G_DEFINE_TYPE(GebrGuiGtkDirectoryChooser, gebr_gui_gtk_directory_chooser, GTK_TY
  * Prototypes
  */
 
-static void __gtk_sequence_edit_add_request(GtkSequenceEdit * sequence_edit, GebrGuiGtkDirectoryChooser * dir_chooser);
+static void __gebr_gui_sequence_edit_add_request(GebrGuiSequenceEdit * sequence_edit, GebrGuiGtkDirectoryChooser * dir_chooser);
 
 /*
  * gobject
@@ -50,11 +50,11 @@ static void gebr_gui_gtk_directory_chooser_init(GebrGuiGtkDirectoryChooser * dir
 
 	file_entry = gebr_gui_gtk_file_entry_new(NULL, NULL);
 	gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_GTK_FILE_ENTRY(file_entry), TRUE);
-	sequence_edit = gtk_sequence_edit_new(file_entry);
+	sequence_edit = gebr_gui_sequence_edit_new(file_entry);
 
 	directory_chooser->sequence_edit = sequence_edit;
 
-	g_signal_connect(sequence_edit, "add-request", G_CALLBACK(__gtk_sequence_edit_add_request), directory_chooser);
+	g_signal_connect(sequence_edit, "add-request", G_CALLBACK(__gebr_gui_sequence_edit_add_request), directory_chooser);
 
 	gtk_box_pack_start(GTK_BOX(directory_chooser), sequence_edit, TRUE, TRUE, 0);
 	gtk_widget_show_all(sequence_edit);
@@ -110,7 +110,7 @@ void gebr_gui_gtk_directory_chooser_set_paths(GebrGuiGtkDirectoryChooser * widge
 
 	i = 0;
 	while (paths[i] != NULL) {
-		gtk_sequence_edit_add(GEBR_GUI_GTK_SEQUENCE_EDIT(widget->sequence_edit), paths[i], FALSE);
+		gebr_gui_sequence_edit_add(GEBR_GUI_gebr_gui_sequence_edit(widget->sequence_edit), paths[i], FALSE);
 		i++;
 	}
 }
@@ -119,13 +119,13 @@ void gebr_gui_gtk_directory_chooser_set_paths(GebrGuiGtkDirectoryChooser * widge
  * Internal functions
  */
 
-static void __gtk_sequence_edit_add_request(GtkSequenceEdit * sequence_edit, GebrGuiGtkDirectoryChooser * dir_chooser)
+static void __gebr_gui_sequence_edit_add_request(GebrGuiSequenceEdit * sequence_edit, GebrGuiGtkDirectoryChooser * dir_chooser)
 {
 	GtkWidget *file_entry;
 	const gchar *path;
 
 	g_object_get(sequence_edit, "value-widget", &file_entry, NULL);
 	path = gebr_gui_gtk_file_entry_get_path(GEBR_GUI_GTK_FILE_ENTRY(file_entry));
-	gtk_sequence_edit_add(sequence_edit, path, TRUE);
+	gebr_gui_sequence_edit_add(sequence_edit, path, TRUE);
 }
 

@@ -42,7 +42,7 @@ typedef void (*ValueSequenceSetFunction) (GebrGeoXmlSequence *, const gchar *, g
 typedef const gchar *(*ValueSequenceGetFunction) (GebrGeoXmlSequence *, gpointer);
 
 struct _GebrGuiValueSequenceEdit {
-	GtkSequenceEdit parent;
+	GebrGuiSequenceEdit parent;
 
 	gboolean minimum_one;
 	ValueSequenceSetFunction set_function;
@@ -50,7 +50,7 @@ struct _GebrGuiValueSequenceEdit {
 	gpointer user_data;
 };
 struct _GebrGuiValueSequenceEditClass {
-	GtkSequenceEditClass parent;
+	GebrGuiSequenceEditClass parent;
 };
 
 GtkWidget *gebr_gui_value_sequence_edit_new(GtkWidget * widget);

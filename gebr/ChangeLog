@@ -1304,7 +1304,7 @@
 2009-07-30  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fix preferences dialog crash: don't try to read data dir
-	* - signals renamed and removed added to gtksequenceedit
+	* - signals renamed and removed added to GebrGuiSequenceEdit
 	  - added libgebr_gtk_tree_model_foreach
 	* gebr config directory structure organized
 
@@ -1988,7 +1988,7 @@
 
 2008-02-21  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* - fixed icon of gtkfileentry and gtksequenceedit
+	* - fixed icon of gtkfileentry and GebrGuiSequenceEdit
 	  - merged enum-impl and improved show on combo box
 	  - quote each value when parameter accepts a list of parameters
 	  - fixed revert to default value on parameters dialog

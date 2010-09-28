@@ -76,12 +76,12 @@ gebr_gui_value_sequence_edit_get_property(GebrGuiValueSequenceEdit * gebr_gui_va
 
 static void gebr_gui_value_sequence_edit_class_init(GebrGuiValueSequenceEditClass * klass)
 {
-	GtkSequenceEditClass *sequence_edit_class;
+	GebrGuiSequenceEditClass *sequence_edit_class;
 	GObjectClass *gobject_class;
 	GParamSpec *param_spec;
 
 	/* virtual */
-	sequence_edit_class = GEBR_GUI_GTK_SEQUENCE_EDIT_CLASS(klass);
+	sequence_edit_class = GEBR_GUI_gebr_gui_sequence_edit_CLASS(klass);
 	sequence_edit_class->remove = (typeof(sequence_edit_class->remove)) __gebr_gui_value_sequence_edit_remove;
 	sequence_edit_class->move = (typeof(sequence_edit_class->move)) __gebr_gui_value_sequence_edit_move;
 	sequence_edit_class->move_top = (typeof(sequence_edit_class->move_top)) __gebr_gui_value_sequence_edit_move_top;
@@ -114,7 +114,7 @@ __gebr_gui_value_sequence_edit_remove(GebrGuiValueSequenceEdit * gebr_gui_value_
 {
 	GebrGeoXmlSequence *sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store), iter,
 			   1, &sequence, -1);
 
 	if (gebr_gui_value_sequence_edit->minimum_one &&
@@ -123,7 +123,7 @@ __gebr_gui_value_sequence_edit_remove(GebrGuiValueSequenceEdit * gebr_gui_value_
 	else
 		gebr_geoxml_sequence_remove(sequence);
 
-	gtk_list_store_remove(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store, iter);
+	gtk_list_store_remove(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store, iter);
 
 	g_signal_emit_by_name(gebr_gui_value_sequence_edit, "changed");
 }
@@ -135,18 +135,18 @@ __gebr_gui_value_sequence_edit_move(GebrGuiValueSequenceEdit * gebr_gui_value_se
 	GebrGeoXmlSequence *sequence;
 	GebrGeoXmlSequence *position_sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store), iter,
 			   1, &sequence, -1);
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store),
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store),
 			   position, 1, &position_sequence, -1);
 
 	if (drop_position == GTK_TREE_VIEW_DROP_AFTER) {
 		gebr_geoxml_sequence_move_after(sequence, position_sequence);
-		gtk_list_store_move_after(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store, iter,
+		gtk_list_store_move_after(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store, iter,
 					  position);
 	} else {
 		gebr_geoxml_sequence_move_before(sequence, position_sequence);
-		gtk_list_store_move_before(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store, iter,
+		gtk_list_store_move_before(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store, iter,
 					   position);
 	}
 
@@ -158,11 +158,11 @@ __gebr_gui_value_sequence_edit_move_top(GebrGuiValueSequenceEdit * gebr_gui_valu
 {
 	GebrGeoXmlSequence *sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store), iter,
 			   1, &sequence, -1);
 
 	gebr_geoxml_sequence_move_after(sequence, NULL);
-	gtk_list_store_move_after(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store, iter, NULL);
+	gtk_list_store_move_after(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store, iter, NULL);
 
 	g_signal_emit_by_name(gebr_gui_value_sequence_edit, "changed");
 }
@@ -172,11 +172,11 @@ __gebr_gui_value_sequence_edit_move_bottom(GebrGuiValueSequenceEdit * gebr_gui_v
 {
 	GebrGeoXmlSequence *sequence;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store), iter,
 			   1, &sequence, -1);
 
 	gebr_geoxml_sequence_move_before(sequence, NULL);
-	gtk_list_store_move_before(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store, iter, NULL);
+	gtk_list_store_move_before(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store, iter, NULL);
 
 	g_signal_emit_by_name(gebr_gui_value_sequence_edit, "changed");
 }
@@ -190,10 +190,10 @@ __gebr_gui_value_sequence_edit_rename(GebrGuiValueSequenceEdit * gebr_gui_value_
 		return; 
 	}
 
-	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store), iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store), iter,
 			   1, &sequence, -1);
 
-	gtk_list_store_set(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store, iter, 0, new_text, -1);
+	gtk_list_store_set(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store, iter, 0, new_text, -1);
 	gebr_gui_value_sequence_edit->set_function(sequence, new_text, gebr_gui_value_sequence_edit->user_data);
 
 	g_signal_emit_by_name(gebr_gui_value_sequence_edit, "changed");
@@ -223,11 +223,11 @@ gebr_gui_value_sequence_edit_add(GebrGuiValueSequenceEdit * gebr_gui_value_seque
 {
 	GtkTreeIter iter;
 
-	iter = gtk_sequence_edit_add(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit),
+	iter = gebr_gui_sequence_edit_add(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit),
 				     gebr_gui_value_sequence_edit->get_function(sequence,
 										gebr_gui_value_sequence_edit->
 										user_data), FALSE);
-	gtk_list_store_set(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store, &iter, 1, sequence,
+	gtk_list_store_set(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store, &iter, 1, sequence,
 			   -1);
 }
 
@@ -242,7 +242,7 @@ gebr_gui_value_sequence_edit_load(GebrGuiValueSequenceEdit * gebr_gui_value_sequ
 	gebr_gui_value_sequence_edit->set_function = set_function;
 	gebr_gui_value_sequence_edit->get_function = get_function;
 	gebr_gui_value_sequence_edit->user_data = user_data;
-	gtk_list_store_clear(GEBR_GUI_GTK_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store);
+	gtk_list_store_clear(GEBR_GUI_gebr_gui_sequence_edit(gebr_gui_value_sequence_edit)->list_store);
 
 	if (gebr_gui_value_sequence_edit->minimum_one) {
 		GebrGeoXmlSequence *next;

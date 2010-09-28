@@ -38,14 +38,14 @@ typedef struct _CategoryEdit CategoryEdit;
 typedef struct _CategoryEditClass CategoryEditClass;
 
 struct _CategoryEdit {
-	GtkSequenceEdit parent;
+	GebrGuiSequenceEdit parent;
 
 	GtkWidget *validate_image;
 	GebrGeoXmlCategory *category;
 	GebrGeoXmlFlow *menu;
 };
 struct _CategoryEditClass {
-	GtkSequenceEditClass parent;
+	GebrGuiSequenceEditClass parent;
 };
 
 /**

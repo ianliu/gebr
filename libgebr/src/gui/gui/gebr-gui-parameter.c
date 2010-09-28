@@ -51,7 +51,7 @@ static gboolean on_mnemonic_activate(GtkBox * box, gboolean cycle,
 static void gebr_gui_parameter_on_list_value_widget_changed(GtkEntry * entry,
 							    struct gebr_gui_parameter_widget *parameter_widget);
 
-static void __on_sequence_edit_changed(GtkSequenceEdit * sequence_edit,
+static void __on_sequence_edit_changed(GebrGuiSequenceEdit * sequence_edit,
 				       struct gebr_gui_parameter_widget *parameter_widget);
 
 static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget, struct gebr_gui_parameter_widget
@@ -440,7 +440,7 @@ static void __on_sequence_edit_add_request(GebrGuiValueSequenceEdit * gebr_gui_v
 	g_string_free(value, TRUE);
 }
 
-static void __on_sequence_edit_changed(GtkSequenceEdit * sequence_edit,
+static void __on_sequence_edit_changed(GebrGuiSequenceEdit * sequence_edit,
 				       struct gebr_gui_parameter_widget *parameter_widget)
 {
 	__parameter_list_value_widget_update(parameter_widget);

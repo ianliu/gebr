@@ -1272,8 +1272,8 @@
 
 2009-12-03  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* fixed __gtk_sequence_edit_move_top and
-	  __gtk_sequence_edit_move_bottom
+	* fixed __gebr_gui_sequence_edit_move_top and
+	  __gebr_gui_sequence_edit_move_bottom
 	* - added server element to GeoXmlSequence type check
 	  - fixed __gebr_geoxml_sequence_move_after and
 	  __gebr_geoxml_sequence_move_before
@@ -1553,7 +1553,7 @@
 
 	* fixes element counting (Fixes issue 4)
 	* debr category list with reference count (Fixes issue 14)
-	* - signals renamed and removed added to gtksequenceedit
+	* - signals renamed and removed added to GebrGuiSequenceEdit
 	  - added libgebr_gtk_tree_model_foreach
 	* added menu-edit and menu-query to libgebr_geoxml
 	* gebr config directory structure organized
@@ -1796,7 +1796,7 @@
 
 2009-01-28  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* - fix drag n' drop on gtksequenceedit and devivates
+	* - fix drag n' drop on GebrGuiSequenceEdit and devivates
 	  - fix save on exit dialog on debr
 	* ¡commit 1000! several UI tweaks
 	* follow required condition for enums when reading its value
@@ -1832,7 +1832,7 @@
 2009-01-24  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* - fix __geoxml_sequence_move_before with position NULL
-	  - fixes to top/bottom at gtksequenceedit and derivatives
+	  - fixes to top/bottom at GebrGuiSequenceEdit and derivatives
 
 2009-01-23  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
@@ -2246,7 +2246,7 @@
 2008-02-21  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* added enum_option.{c,h}
-	* - fixed icon of gtkfileentry and gtksequenceedit
+	* - fixed icon of gtkfileentry and GebrGuiSequenceEdit
 	  - merged enum-impl and improved show on combo box
 	  - quote each value when parameter accepts a list of parameters
 	  - fixed revert to default value on parameters dialog
@@ -2269,7 +2269,7 @@
 
 	* add support for a customize function in gtkfileentry
 	* layout fixes
-	* fixed layout in gtksequenceedit
+	* fixed layout in GebrGuiSequenceEdit
 	* fixed line path and add message when a invalid flow is found
 	* fixed line's paths
 	* fixed typo
