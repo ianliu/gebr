@@ -21,7 +21,7 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#include "utils.h"
+#include "gebr-gui-utils.h"
 
 /**
  * \internal

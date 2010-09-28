@@ -16,7 +16,7 @@
  */
 
 /**
- * \file parameter.c Construct interfaces for parameter.
+ * \file gebr-gui-parameter.c Construct interfaces for parameter.
  */
 
 #ifndef __PARAMETER_H
@@ -25,7 +25,7 @@
 #include <gtk/gtk.h>
 #include <libgebr/geoxml.h>
 
-#include <libgebr/gui/parameter.h>
+#include <libgebr/gui/gebr-gui-parameter.h>
 
 G_BEGIN_DECLS
 

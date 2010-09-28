@@ -18,8 +18,8 @@
 #include <string.h>
 
 #include <libgebr/intl.h>
-#include <libgebr/gui/utils.h>
-#include <libgebr/gui/icons.h>
+#include <libgebr/gui/gebr-gui-utils.h>
+#include <libgebr/gui/gebr-gui-icons.h>
 #include <gdk/gdkkeysyms.h>
 
 #include "ui_flow_edition.h"

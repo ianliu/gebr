@@ -18,11 +18,11 @@
 
 #include "../../intl.h"
 
-#include "gtkdirectorychooser.h"
-#include "utils.h"
+#include "gebr-gui-directory-chooser.h"
+#include "gebr-gui-utils.h"
 
-#include "gtkfileentry.h"
-#include "gtksequenceedit.h"
+#include "gebr-gui-file-entry.h"
+#include "gebr-gui-sequence-edit.h"
 
 #include <glib.h>
 #include <glib/gprintf.h>

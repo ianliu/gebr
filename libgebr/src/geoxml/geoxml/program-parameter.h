@@ -25,7 +25,7 @@
 G_BEGIN_DECLS
 
 /**
- * \struct GebrGeoXmlProgramParameter program_parameter.h geoxml/program_parameter.h
+ * \struct GebrGeoXmlProgramParameter program-parameter.h geoxml/program-parameter.h
  * \brief
  * Represents one of the program_parameters that describes a program.
  * \dot
@@ -50,9 +50,9 @@ G_BEGIN_DECLS
  * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
  * 	"GebrGeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
  * 	"GebrGeoXmlEnumOption" [ URL = "\ref GebrGeoXmlEnumOption" ];
- * 	"GebrGeoXmlParameter" [ URL = "\ref parameter.h" ];
+ * 	"GebrGeoXmlParameter" [ URL = "\ref gebr-gui-parameter.h" ];
  * 	"GebrGeoXmlParameters" [ URL = "\ref parameters.h" ];
- * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
+ * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program-parameter.h" ];
  * 	"GebrGeoXmlPropertyValue" [ URL = "\ref GebrGeoXmlPropertyValue" ];
  * 	"GebrGeoXmlParameterGroup" [ URL = "\ref parameter_group.h" ];
  *
@@ -92,11 +92,11 @@ G_BEGIN_DECLS
  * 	"GebrGeoXmlProgramParameter" -> "GebrGeoXmlPropertyValue";
  * }
  * \enddot
- * \see program_parameter.h
+ * \see program-parameter.h
  */
 
 /**
- * \file program_parameter.h
+ * \file program-parameter.h
  * Represents one of the program_parameters that define the program usage.
  *
  *
@@ -122,7 +122,7 @@ typedef struct gebr_geoxml_program_parameter GebrGeoXmlProgramParameter;
  */
 typedef struct gebr_geoxml_property_value GebrGeoXmlPropertyValue;
 
-#include "program_parameter.h"
+#include "program-parameter.h"
 #include "program.h"
 #include "enum_option.h"
 #include "value_sequence.h"

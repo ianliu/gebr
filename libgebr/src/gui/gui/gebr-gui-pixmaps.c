@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pixmaps.h"
+#include "gebr-gui-pixmaps.h"
 #include "defines.h"
 
 GdkPixbuf *gebr_gui_pixmaps_gebr_icon_16x16(void)

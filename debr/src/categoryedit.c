@@ -17,8 +17,8 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/validate.h>
-#include <libgebr/gui/gtkenhancedentry.h>
-#include <libgebr/gui/utils.h>
+#include <libgebr/gui/gebr-gui-enhanced-entry.h>
+#include <libgebr/gui/gebr-gui-utils.h>
 
 #include "categoryedit.h"
 #include "debr.h"

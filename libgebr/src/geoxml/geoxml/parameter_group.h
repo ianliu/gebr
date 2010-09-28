@@ -44,9 +44,9 @@ G_BEGIN_DECLS
  * 	"GebrGeoXmlFlow" [ URL = "\ref flow.h" ];
  * 	"GebrGeoXmlProgram" [ URL = "\ref program.h" ];
  * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
- * 	"GebrGeoXmlParameter" [ URL = "\ref parameter.h" ];
+ * 	"GebrGeoXmlParameter" [ URL = "\ref gebr-gui-parameter.h" ];
  * 	"GebrGeoXmlParameters" [ URL = "\ref parameters.h" ];
- * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
+ * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program-parameter.h" ];
  * 	"GebrGeoXmlParameterGroup" [ URL = "\ref parameter_group.h" ];
  *
  * 	edge [

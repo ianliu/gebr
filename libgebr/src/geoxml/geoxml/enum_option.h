@@ -43,7 +43,7 @@ G_BEGIN_DECLS
  * 	]
  *
  * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
- * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
+ * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program-parameter.h" ];
  * 	"GebrGeoXmlEnumOption" [ URL = "\ref enum_option.h" ];
  *
  * 	edge [

@@ -19,8 +19,8 @@
 #include <string.h>
 
 #include <libgebr/intl.h>
-#include <libgebr/gui/utils.h>
-#include <libgebr/gui/programedit.h>
+#include <libgebr/gui/gebr-gui-utils.h>
+#include <libgebr/gui/gebr-gui-program-edit.h>
 
 #include "program.h"
 #include "debr.h"

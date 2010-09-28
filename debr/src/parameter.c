@@ -20,10 +20,10 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
-#include <libgebr/gui/gtkfileentry.h>
-#include <libgebr/gui/gtkenhancedentry.h>
-#include <libgebr/gui/utils.h>
-#include <libgebr/gui/valuesequenceedit.h>
+#include <libgebr/gui/gebr-gui-file-entry.h>
+#include <libgebr/gui/gebr-gui-enhanced-entry.h>
+#include <libgebr/gui/gebr-gui-utils.h>
+#include <libgebr/gui/gebr-gui-value-sequence-edit.h>
 
 #include "parameter.h"
 #include "debr.h"

@@ -561,74 +561,74 @@ msgstr "Data em que foi modificado"
 msgid "All menus were saved."
 msgstr "Todos os menus foram salvos."
 
-#: ../src/parameter.c:49 ../src/parameter.c:100
+#: ../src/gebr-gui-parameter.c:49 ../src/gebr-gui-parameter.c:100
 msgid "real"
 msgstr "real"
 
-#: ../src/parameter.c:50 ../src/parameter.c:101
+#: ../src/gebr-gui-parameter.c:50 ../src/gebr-gui-parameter.c:101
 msgid "integer"
 msgstr "inteiro"
 
-#: ../src/parameter.c:51 ../src/parameter.c:102
+#: ../src/gebr-gui-parameter.c:51 ../src/gebr-gui-parameter.c:102
 msgid "range"
 msgstr "intervalo"
 
-#: ../src/parameter.c:52 ../src/parameter.c:103
+#: ../src/gebr-gui-parameter.c:52 ../src/gebr-gui-parameter.c:103
 msgid "flag"
 msgstr "flag"
 
-#: ../src/parameter.c:53 ../src/parameter.c:104
+#: ../src/gebr-gui-parameter.c:53 ../src/gebr-gui-parameter.c:104
 msgid "text"
 msgstr "texto"
 
-#: ../src/parameter.c:54 ../src/parameter.c:105
+#: ../src/gebr-gui-parameter.c:54 ../src/gebr-gui-parameter.c:105
 msgid "enum"
 msgstr "enum"
 
-#: ../src/parameter.c:55 ../src/parameter.c:106
+#: ../src/gebr-gui-parameter.c:55 ../src/gebr-gui-parameter.c:106
 msgid "file"
 msgstr "arquivo"
 
-#: ../src/parameter.c:56 ../src/parameter.c:107
+#: ../src/gebr-gui-parameter.c:56 ../src/gebr-gui-parameter.c:107
 msgid "group"
 msgstr "grupo"
 
-#: ../src/parameter.c:186
+#: ../src/gebr-gui-parameter.c:186
 msgid "Type"
 msgstr "Tipo"
 
-#: ../src/parameter.c:190
+#: ../src/gebr-gui-parameter.c:190
 msgid "Keyword / default value"
 msgstr "Palavra-chave / valor padrão"
 
-#: ../src/parameter.c:194
+#: ../src/gebr-gui-parameter.c:194
 msgid "Label"
 msgstr "Rótulo"
 
-#: ../src/parameter.c:365
+#: ../src/gebr-gui-parameter.c:365
 msgid "Delete parameter"
 msgstr "Apagar parâmetro"
 
-#: ../src/parameter.c:365
+#: ../src/gebr-gui-parameter.c:365
 msgid "Are you sure you want to delete the selected parameter(s)?"
 msgstr "Tem certeza que quer apagar o(s) parâmetro(s) selecionado(s)?"
 
-#: ../src/parameter.c:457 ../src/parameter.c:480
+#: ../src/gebr-gui-parameter.c:457 ../src/gebr-gui-parameter.c:480
 msgid "Could not paste parameter."
 msgstr "Não foi possível colar o parâmetro."
 
-#: ../src/parameter.c:608
+#: ../src/gebr-gui-parameter.c:608
 msgid "No parameter is selected."
 msgstr "Nenhum parâmetro está selecionado."
 
 #.
 #. * Label
 #.
-#: ../src/parameter.c:756 ../src/parametergroup.c:99
+#: ../src/gebr-gui-parameter.c:756 ../src/parametergroup.c:99
 msgid "Label:"
 msgstr "Rótulo:"
 
-#: ../src/parameter.c:763
+#: ../src/gebr-gui-parameter.c:763
 msgid ""
 "Characters preceded by an underscore will be underlined and the first, will "
 "be used as a hot-key to focus this parameter. For example, if the label is "
@@ -646,64 +646,64 @@ msgstr ""
 #.
 #. * Keyword
 #.
-#: ../src/parameter.c:779
+#: ../src/gebr-gui-parameter.c:779
 msgid "Keyword:"
 msgstr "Palavra-chave:"
 
-#: ../src/parameter.c:798
+#: ../src/gebr-gui-parameter.c:798
 msgid "Edit parameter "
 msgstr "Editar parâmetro "
 
-#: ../src/parameter.c:802
+#: ../src/gebr-gui-parameter.c:802
 msgid "(text)"
 msgstr "(texto)"
 
-#: ../src/parameter.c:805
+#: ../src/gebr-gui-parameter.c:805
 msgid "(integer)"
 msgstr "(inteiro)"
 
-#: ../src/parameter.c:808
+#: ../src/gebr-gui-parameter.c:808
 msgid "(file)"
 msgstr "(arquivo)"
 
-#: ../src/parameter.c:811
+#: ../src/gebr-gui-parameter.c:811
 msgid "(flag)"
 msgstr "(flag)"
 
-#: ../src/parameter.c:814
+#: ../src/gebr-gui-parameter.c:814
 msgid "(real)"
 msgstr "(real)"
 
-#: ../src/parameter.c:817
+#: ../src/gebr-gui-parameter.c:817
 msgid "(range)"
 msgstr "(intervalo)"
 
-#: ../src/parameter.c:820
+#: ../src/gebr-gui-parameter.c:820
 msgid "(enum)"
 msgstr "(enum)"
 
-#: ../src/parameter.c:823
+#: ../src/gebr-gui-parameter.c:823
 msgid "(reference)"
 msgstr "(referência)"
 
 #.
 #. * Required
 #.
-#: ../src/parameter.c:836
+#: ../src/gebr-gui-parameter.c:836
 msgid "Required:"
 msgstr "Obrigatório:"
 
 #.
 #. * Is List
 #.
-#: ../src/parameter.c:852
+#: ../src/gebr-gui-parameter.c:852
 msgid "List:"
 msgstr "Lista:"
 
 #.
 #. * List separator
 #.
-#: ../src/parameter.c:868
+#: ../src/gebr-gui-parameter.c:868
 msgid ""
 "List-item\n"
 "separator:"
@@ -714,105 +714,105 @@ msgstr ""
 #.
 #. * Comma Separator
 #.
-#: ../src/parameter.c:885
+#: ../src/gebr-gui-parameter.c:885
 msgid "Comma"
 msgstr "Vírgula"
 
 #.
 #. * Space Separator
 #.
-#: ../src/parameter.c:892
+#: ../src/gebr-gui-parameter.c:892
 msgid "Space"
 msgstr "Espaço"
 
 #.
 #. * Other Separator
 #.
-#: ../src/parameter.c:899
+#: ../src/gebr-gui-parameter.c:899
 msgid "Other:"
 msgstr "Outro:"
 
 #.
 #. * Type
 #.
-#: ../src/parameter.c:931
+#: ../src/gebr-gui-parameter.c:931
 msgid "Type:"
 msgstr "Tipo:"
 
-#: ../src/parameter.c:942
+#: ../src/gebr-gui-parameter.c:942
 msgid "File"
 msgstr "Arquivo"
 
-#: ../src/parameter.c:943
+#: ../src/gebr-gui-parameter.c:943
 msgid "Directory"
 msgstr "Diretório"
 
 #.
 #. * Filter
 #.
-#: ../src/parameter.c:955
+#: ../src/gebr-gui-parameter.c:955
 msgid "Filter file types:"
 msgstr "Tipos de filtros de arquivos:"
 
-#: ../src/parameter.c:965
+#: ../src/gebr-gui-parameter.c:965
 msgid "name"
 msgstr "nome"
 
-#: ../src/parameter.c:971
+#: ../src/gebr-gui-parameter.c:971
 msgid "pattern (eg. *.jpg *.png)"
 msgstr "padrão (ex. *.jpg *.png)"
 
 #.
 #. * Minimum
 #.
-#: ../src/parameter.c:1005
+#: ../src/gebr-gui-parameter.c:1005
 msgid "Minimum:"
 msgstr "Mínimo:"
 
 #.
 #. * Maximum
 #.
-#: ../src/parameter.c:1023
+#: ../src/gebr-gui-parameter.c:1023
 msgid "Maximum:"
 msgstr "Máximo:"
 
 #.
 #. * Increment
 #.
-#: ../src/parameter.c:1050
+#: ../src/gebr-gui-parameter.c:1050
 msgid "Increment:"
 msgstr "Incremento:"
 
 #.
 #. * Digits
 #.
-#: ../src/parameter.c:1068
+#: ../src/gebr-gui-parameter.c:1068
 msgid "Digits:"
 msgstr "Dígitos:"
 
 #.
 #. * Options
 #.
-#: ../src/parameter.c:1097
+#: ../src/gebr-gui-parameter.c:1097
 msgid "Options:"
 msgstr "Opções:"
 
 #.
 #. * Default value
 #.
-#: ../src/parameter.c:1125
+#: ../src/gebr-gui-parameter.c:1125
 msgid "Default value:"
 msgstr "Valor padrão:"
 
-#: ../src/parameter.c:1141
+#: ../src/gebr-gui-parameter.c:1141
 msgid "enabled by default"
 msgstr "habilitado por padrão"
 
-#: ../src/parameter.c:1182
+#: ../src/gebr-gui-parameter.c:1182
 msgid "Separator"
 msgstr "Separador"
 
-#: ../src/parameter.c:1183
+#: ../src/gebr-gui-parameter.c:1183
 msgid ""
 "You've marked this parameter as a list but no separator was selected.\n"
 "Please select the list separator."
@@ -821,27 +821,27 @@ msgstr ""
 "definido.\n"
 "Por favor, selecione um separador para os elementos da lista."
 
-#: ../src/parameter.c:1292
+#: ../src/gebr-gui-parameter.c:1292
 #, c-format
 msgid "with 1 instance"
 msgstr "com 1 instância"
 
-#: ../src/parameter.c:1295
+#: ../src/gebr-gui-parameter.c:1295
 #, c-format
 msgid "with %lu instances"
 msgstr "com %lu instâncias"
 
-#: ../src/parameter.c:1300
+#: ../src/gebr-gui-parameter.c:1300
 #, c-format
 msgid "not instantiable"
 msgstr "não instanciável"
 
-#: ../src/parameter.c:1303
+#: ../src/gebr-gui-parameter.c:1303
 #, c-format
 msgid " and exclusive"
 msgstr " e exclusivo"
 
-#: ../src/parameter.c:1305
+#: ../src/gebr-gui-parameter.c:1305
 #, c-format
 msgid " and not exclusive"
 msgstr " e não exclusivo"

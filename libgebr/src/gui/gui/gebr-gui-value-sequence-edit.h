@@ -22,7 +22,7 @@
 
 #include <geoxml.h>
 
-#include "gtksequenceedit.h"
+#include "gebr-gui-sequence-edit.h"
 
 G_BEGIN_DECLS
 

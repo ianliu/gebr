@@ -21,8 +21,8 @@
 #include "../../intl.h"
 #include "../../utils.h"
 
-#include "parameter.h"
-#include "utils.h"
+#include "gebr-gui-parameter.h"
+#include "gebr-gui-utils.h"
 
 #define DOUBLE_MAX +999999999
 #define DOUBLE_MIN -999999999

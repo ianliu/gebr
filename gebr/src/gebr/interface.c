@@ -23,8 +23,8 @@
 #include <string.h>
 
 #include <libgebr/intl.h>
-#include <libgebr/gui/pixmaps.h>
-#include <libgebr/gui/utils.h>
+#include <libgebr/gui/gebr-gui-pixmaps.h>
+#include <libgebr/gui/gebr-gui-utils.h>
 
 #include "ui_flow_edition.h"
 #include "interface.h"

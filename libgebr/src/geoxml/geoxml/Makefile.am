@@ -20,7 +20,7 @@ libgebr_geoxml_la_SOURCES = \
 	xml.c error.c object.c clipboard.c gebr-geoxml-validate.c \
 	sequence.c value_sequence.c \
 	enum_option.c program.c \
-	parameters.c parameter.c program_parameter.c parameter_group.c \
+	parameters.c parameter.c program-parameter.c parameter_group.c \
 	document.c flow.c line.c project.c
 
 libgebr_geoxmlsubincludedir=$(includedir)/libgebr/geoxml
@@ -28,7 +28,7 @@ libgebr_geoxmlsubinclude_HEADERS = \
 	error.h macros.h object.h clipboard.h gebr-geoxml-validate.h \
 	sequence.h value_sequence.h \
 	enum_option.h program.h \
-	parameters.h parameter.h program_parameter.h parameter_group.h \
+	parameters.h parameter.h program-parameter.h parameter_group.h \
 	document.h flow.h line.h project.h
 noinst_HEADERS = \
 	xml.h sequence_p.h document_p.h program_p.h \

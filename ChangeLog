@@ -1918,7 +1918,7 @@
 
 2010-02-05  Ian Liu Rodrigues <ian.liu@gebrproject.com>
 
-	* Documentation for libgebr/gui/utils.h
+	* Documentation for libgebr/gui/gebr-gui-utils.h
 
 2010-02-04  Ian Liu Rodrigues <ian.liu@gebrproject.com>
 
@@ -3083,7 +3083,7 @@
 
 2009-05-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* added geoxml_parameter_get_type_name in parameter.h
+	* added geoxml_parameter_get_type_name in gebr-gui-parameter.h
 	* added geoxml_parameter_get_type_name
 
 2009-05-22  Ricardo Biloti <biloti@gebrproject.com>

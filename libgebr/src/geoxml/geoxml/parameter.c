@@ -29,7 +29,7 @@
 #include "parameters_p.h"
 #include "parameter_group.h"
 #include "parameter_group_p.h"
-#include "program_parameter.h"
+#include "program-parameter.h"
 #include "program_parameter_p.h"
 
 /*

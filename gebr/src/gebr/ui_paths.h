@@ -18,7 +18,7 @@
 #ifndef __UI_PATH_H
 #define __UI_PATH_H
 
-#include <libgebr/gui/valuesequenceedit.h>
+#include <libgebr/gui/gebr-gui-value-sequence-edit.h>
 
 G_BEGIN_DECLS
 

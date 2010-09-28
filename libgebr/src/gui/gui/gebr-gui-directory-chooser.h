@@ -20,7 +20,7 @@
 #define __GEBR_GUI_GTK_DIRECTORY_CHOOSER_H
 
 /**
- * @file gtkdirectorychooser.h Widget to choose and list directories
+ * @file gebr-gui-directory-chooser.h Widget to choose and list directories
  * @ingroup libgebr-gui
  */
 

@@ -21,7 +21,7 @@
 #include <gtk/gtk.h>
 
 #include <libgebr/geoxml.h>
-#include <libgebr/gui/gtksequenceedit.h>
+#include <libgebr/gui/gebr-gui-sequence-edit.h>
 
 G_BEGIN_DECLS
 

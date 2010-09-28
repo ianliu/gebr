@@ -19,8 +19,8 @@
 
 #include "../../intl.h"
 
-#include "gtksequenceedit.h"
-#include "utils.h"
+#include "gebr-gui-sequence-edit.h"
+#include "gebr-gui-utils.h"
 #include "marshalers.h"
 
 /*

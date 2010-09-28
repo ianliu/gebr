@@ -19,7 +19,7 @@
 #define __GEBR_GUI_PROGRAM_EDIT_H
 
 /**
- * \file programedit.h
+ * \file gebr-gui-program-edit.h
  */
 
 #include <gtk/gtk.h>

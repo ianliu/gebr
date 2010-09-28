@@ -15,9 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libgebr/gui/gtkenhancedentry.h>
-#include <libgebr/gui/utils.h>
-
+#include <libgebr/gui/gebr-gui-enhanced-entry.h>
+#include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/intl.h>
 
 #include "enumoptionedit.h"

@@ -34,7 +34,7 @@
 #include "sequence.h"
 #include "flow.h"
 #include "parameter.h"
-#include "program_parameter.h"
+#include "program-parameter.h"
 #include "parameters_p.h"
 #include "parameter_p.h"
 #include "parameter_group_p.h"

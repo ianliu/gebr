@@ -20,7 +20,7 @@
 #include <libgebr/intl.h>
 #include <libgebr/comm/protocol.h>
 #include <libgebr/comm/server.h>
-#include <libgebr/gui/utils.h>
+#include <libgebr/gui/gebr-gui-utils.h>
 
 #include "client.h"
 #include "gebr.h"

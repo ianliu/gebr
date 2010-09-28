@@ -18,7 +18,7 @@
 #ifndef __GEBR_GEOXML_PROGRAM_PARAMETER_P_H
 #define __GEBR_GEOXML_PROGRAM_PARAMETER_P_H
 
-#include "program_parameter.h"
+#include "program-parameter.h"
 
 G_BEGIN_DECLS
 

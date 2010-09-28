@@ -22,9 +22,9 @@
 
 #include <geoxml.h>
 
-#include "gtkfileentry.h"
-#include "valuesequenceedit.h"
-#include "programedit.h"
+#include "gebr-gui-file-entry.h"
+#include "gebr-gui-value-sequence-edit.h"
+#include "gebr-gui-program-edit.h"
 
 G_BEGIN_DECLS
 

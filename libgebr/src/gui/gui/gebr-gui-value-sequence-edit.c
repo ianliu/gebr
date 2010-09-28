@@ -17,8 +17,8 @@
 
 #include "../../intl.h"
 
-#include "valuesequenceedit.h"
-#include "utils.h"
+#include "gebr-gui-value-sequence-edit.h"
+#include "gebr-gui-utils.h"
 
 /*
  * Prototypes

@@ -24,7 +24,7 @@
 #include "xml.h"
 #include "types.h"
 #include "error.h"
-#include "program_parameter.h"
+#include "program-parameter.h"
 #include "program_parameter_p.h"
 #include "parameter_p.h"
 #include "parameter_group.h"

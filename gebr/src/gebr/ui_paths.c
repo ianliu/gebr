@@ -26,8 +26,8 @@
 #include <gtk/gtk.h>
 
 #include <libgebr/intl.h>
-#include <libgebr/gui/valuesequenceedit.h>
-#include <libgebr/gui/gtkfileentry.h>
+#include <libgebr/gui/gebr-gui-value-sequence-edit.h>
+#include <libgebr/gui/gebr-gui-file-entry.h>
 
 #include "ui_paths.h"
 #include "gebr.h"

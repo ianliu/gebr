@@ -17,8 +17,8 @@
 
 #include "../../intl.h"
 
-#include "gtkfileentry.h"
-#include "utils.h"
+#include "gebr-gui-file-entry.h"
+#include "gebr-gui-utils.h"
 
 /*
  * Prototypes

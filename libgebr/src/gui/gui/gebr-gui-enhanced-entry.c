@@ -19,7 +19,7 @@
 
 #include "../../intl.h"
 
-#include "gtkenhancedentry.h"
+#include "gebr-gui-enhanced-entry.h"
 
 /*
  * Prototypes

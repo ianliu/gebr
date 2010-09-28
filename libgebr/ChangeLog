@@ -1018,7 +1018,7 @@
 
 2010-02-05  Ian Liu Rodrigues <ian.liu@gebrproject.com>
 
-	* Documentation for libgebr/gui/utils.h
+	* Documentation for libgebr/gui/gebr-gui-utils.h
 
 2010-02-04  Ian Liu Rodrigues <ian.liu@gebrproject.com>
 
@@ -1655,7 +1655,7 @@
 2009-05-27  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* use $HOME/.gebr/gebrdata as data dir
-	* added geoxml_parameter_get_type_name in parameter.h
+	* added geoxml_parameter_get_type_name in gebr-gui-parameter.h
 	* added geoxml_parameter_get_type_name
 
 2009-05-13  Ricardo Biloti <biloti@gebrproject.com>
@@ -2694,7 +2694,7 @@
 	* fix line_add_flow and project_add_line
 	* fix document_save
 	* suximage.menu fix
-	* fix program_parameter.h typo
+	* fix program-parameter.h typo
 	* fix pkg-config file
 	* installation changes
 	* include glib.h again
