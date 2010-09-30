@@ -456,7 +456,6 @@ void project_line_import(void)
 			gebr_geoxml_line_set_flow_source(GEBR_GEOXML_LINE_FLOW(i),
 							 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
 			document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE);
-			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 
 			i = next;
 		}
