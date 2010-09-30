@@ -650,7 +650,7 @@ gboolean menu_save_as(GtkTreeIter * iter)
 				validate_close_iter(&validate->iter);
 		}
 
-		/* If the menu was never saved, that means is 'currentpath' is empty,
+		/* If the menu was never saved, that means 'currentpath' is empty,
 		 * and we need to remove it from the interface. In case this menu was
 		 * validated, we need to delete that too. */
 		if (!strlen(currentpath))
@@ -2191,13 +2191,18 @@ static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object)
 		g_object_get(help_edit_window, "help-edit-widget", &help_edit_widget, NULL);
 		g_object_set(help_edit_widget, "geoxml-object", object, NULL);
 
+		g_hash_table_remove(debr.help_edit_windows, old_menu);
+		g_hash_table_insert(debr.help_edit_windows, object, help_edit_window);
+
 		/* Time to destroy the programs.
 		 */
 		gebr_geoxml_flow_get_program(old_menu, &program, 0);
 		while (program) {
 			help_edit_window = g_hash_table_lookup(debr.help_edit_windows, program);
-			if (help_edit_window)
+			if (help_edit_window){
+				g_hash_table_remove(debr.help_edit_windows, program);
 				gtk_widget_destroy(GTK_WIDGET(help_edit_window));
+			}
 			gebr_geoxml_sequence_next(&program);
 		}
 	}
