@@ -132,7 +132,6 @@ static void gebr_gui_help_edit_widget_init(GebrGuiHelpEditWidget * self)
 
 	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE (self);
 	priv->state = STATE_INIT;
-	g_message ("HelpEditWidget state changed to: STATE_INIT");
 	priv->edit_widget = webkit_web_view_new();
 	priv->html_viewer = gebr_gui_html_viewer_widget_new();
 	priv->is_editing = TRUE;
@@ -204,7 +203,6 @@ static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrG
 					      on_load_finished,
 					      self);
 
-	g_message ("HelpEditWidget state changed to: STATE_LOADED");
 }
 
 //==============================================================================
@@ -262,8 +260,6 @@ void gebr_gui_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, const g
 
 	g_signal_connect (priv->edit_widget, "load-finished",
 			  G_CALLBACK (on_load_finished), self);
-
-	g_message ("HelpEditWidget state changed to: STATE_LOADING");
 
 	GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS(self)->set_content(self, content);
 }
