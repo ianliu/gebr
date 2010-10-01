@@ -47,7 +47,7 @@ static gsize strip_block(GString * buffer, const gchar * tag);
 
 static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self, GtkTreeIter * iter);
 
-static void help_edit_window_on_destroy(GtkWidget * window, GebrGeoXmlObject * object);
+static void help_edit_window_on_destroy(GtkWidget * window);
 
 static void help_edit_on_jump_to_activate(GtkAction * action, GebrGuiHelpEditWindow * window);
 
@@ -140,7 +140,7 @@ static void create_help_edit_window(GebrGeoXmlObject * object, GString * help)
 	g_free(help_backup);
 
 	g_signal_connect(help_edit_window, "destroy",
-			 G_CALLBACK(help_edit_window_on_destroy), object);
+			 G_CALLBACK(help_edit_window_on_destroy), NULL);
 	g_signal_connect(help_edit_widget, "commit-request",
 			 G_CALLBACK(help_edit_on_commit_request),
 			 is_menu_selected ? gtk_tree_iter_copy(&iter):NULL);
@@ -613,8 +613,14 @@ static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self, GtkTreeIte
 	}
 }
 
-static void help_edit_window_on_destroy(GtkWidget * window, GebrGeoXmlObject * object)
+static void help_edit_window_on_destroy(GtkWidget * window)
 {
+	GebrGuiHelpEditWidget *widget;
+	GebrGeoXmlObject * object;
+
+	g_object_get(window, "help-edit-widget", &widget, NULL);
+	g_object_get(widget, "geoxml-object", &object, NULL);
+
 	g_hash_table_remove(debr.help_edit_windows, object);
 }
 

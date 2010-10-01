@@ -645,6 +645,7 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	ret = (menu_save(&target) != MENU_MESSAGE_PERMISSION_DENIED);
 	if (ret) {
 		if (is_overwrite) {
+			debr_remove_help_edit_window(remove, TRUE, TRUE);
 			gebr_geoxml_document_free(remove);
 			if (validate)
 				validate_close_iter(&validate->iter);
@@ -653,8 +654,10 @@ gboolean menu_save_as(GtkTreeIter * iter)
 		/* If the menu was never saved, that means 'currentpath' is empty,
 		 * and we need to remove it from the interface. In case this menu was
 		 * validated, we need to delete that too. */
-		if (!strlen(currentpath))
+		if (!strlen(currentpath)){
+			debr_menu_sync_help_edit_window(iter, clone);
 			menu_remove_with_validation(iter);
+		}
 
 		*iter = target;
 	} else {
