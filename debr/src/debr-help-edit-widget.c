@@ -268,9 +268,6 @@ static void debr_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self)
 
 static gchar * debr_help_edit_widget_get_content(GebrGuiHelpEditWidget * self)
 {
-	// Executes the JavaScript code:
-	//   ed.getData();
-
 	JSContextRef context;
 	JSValueRef value;
 	GString * str;
@@ -349,4 +346,27 @@ GebrGuiHelpEditWidget * debr_help_edit_widget_new(GebrGeoXmlObject * object,
 	priv->is_commited = committed;
 
 	return self;
+}
+
+gboolean debr_help_edit_widget_is_content_empty(DebrHelpEditWidget * self)
+{
+	gboolean retval;
+	GString * string;
+	JSValueRef value;
+	JSContextRef context;
+	GebrGuiHelpEditWidget * super;
+
+	super = GEBR_GUI_HELP_EDIT_WIDGET (self);
+	context = gebr_gui_help_edit_widget_get_js_context (super);
+	value = gebr_js_evaluate (context, "editor.getData();");
+	string = gebr_js_value_get_string (context, value);
+
+	if (string->len > 0)
+		retval = FALSE;
+	else
+		retval = TRUE;
+
+	g_string_free (string, TRUE);
+
+	return retval;
 }
