@@ -1020,6 +1020,7 @@ gchar * debr_program_get_backup_help_from_pointer(gpointer program)
 			break;
 		g_free(help);
 
+		help = NULL;
 		valid = gtk_tree_model_iter_next(model, &iter);
 	}
 
@@ -1047,7 +1048,7 @@ void debr_program_sync_help_backups()
 				   -1);
 		help = gebr_geoxml_program_get_help(program);
 		gtk_list_store_set(debr.ui_program.list_store, &iter,
-				   PROGRAM_HELP_BACKUP, &help,
+				   PROGRAM_HELP_BACKUP, help,
 				   -1);
 		valid = gtk_tree_model_iter_next(model, &iter);
 	}

@@ -493,7 +493,6 @@ MenuMessage menu_save(GtkTreeIter * iter)
 		debr_message(GEBR_LOG_ERROR, _("Permission denied."));
 		return MENU_MESSAGE_PERMISSION_DENIED;	
 	} else {
-		gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(menu), filename);
 		gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(menu), gebr_iso_date());
 		gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path);
 		debr_menu_backup_help(iter);
