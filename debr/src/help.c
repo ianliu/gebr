@@ -44,7 +44,7 @@ static void help_edit_on_finished(GebrGeoXmlObject * object, const gchar * _help
 
 static gsize strip_block(GString * buffer, const gchar * tag);
 
-static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self, GtkTreeIter * iter);
+static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self);
 
 static void help_edit_window_on_destroy(GtkWidget * window);
 
@@ -143,7 +143,7 @@ static void create_help_edit_window(GebrGeoXmlObject * object, const gchar * hel
 			 G_CALLBACK(help_edit_window_on_destroy), NULL);
 	g_signal_connect(help_edit_widget, "commit-request",
 			 G_CALLBACK(help_edit_on_commit_request),
-			 is_menu_selected ? gtk_tree_iter_copy(&iter):NULL);
+			 NULL);
 
 	g_hash_table_insert(debr.help_edit_windows, object, help_edit_window);
 	gtk_window_set_title(GTK_WINDOW(help_edit_window), title);
@@ -591,24 +591,52 @@ static gsize strip_block(GString * buffer, const gchar * tag)
 
 }
 
-static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self, GtkTreeIter * iter)
+static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self)
 {
 	gboolean sensitive;
 	const gchar * help;
 	GebrGeoXmlObject *object = NULL;
+	gboolean valid;
+	gboolean interrupt = FALSE;
+	GtkTreeIter iter;
+	GtkTreeIter child;
+	GtkTreeModel * model;
 
-	if (iter != NULL)
-		menu_status_set_from_iter(iter, MENU_STATUS_UNSAVED);
-	
 	g_object_get(self, "geoxml-object", &object, NULL);	
 
+	// Searches the menu's model for 'menu', returning the corresponding help backup
+	model = GTK_TREE_MODEL (debr.ui_menu.model);
+	valid = gtk_tree_model_get_iter_first(model, &iter);
+
+	while (valid && !interrupt) {
+		valid = gtk_tree_model_iter_children(model, &child, &iter);
+		while (valid) {
+			gpointer ptr;
+			gtk_tree_model_get(model, &child,
+					   MENU_XMLPOINTER, &ptr,
+					   -1);
+			if (ptr == object){
+				interrupt = TRUE;
+				break;
+			}
+			valid = gtk_tree_model_iter_next(model, &child);
+		}
+		valid = gtk_tree_model_iter_next(model, &iter);
+	}
+
+	iter = child;
+
+	if (interrupt)
+		menu_status_set_from_iter(&iter, MENU_STATUS_UNSAVED);
+	
+
 	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
-		help = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(debr.program));
+		help = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
 		sensitive = strlen(help) > 0 ? TRUE : FALSE;
 		g_object_set(debr.ui_program.details.help_view, "sensitive", sensitive, NULL);
 		validate_image_set_check_help(debr.ui_program.help_validate_image, help);
 	} else {
-		help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu));
+		help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
 		sensitive = strlen(help) > 0 ? TRUE : FALSE;
 		g_object_set(debr.ui_menu.details.help_view, "sensitive", sensitive, NULL);
 		validate_image_set_check_help(debr.ui_menu.help_validate_image, help);
