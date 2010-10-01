@@ -34,7 +34,6 @@
 //==============================================================================
 // PROTOTYPES AND STATIC VARIABLES					       =
 //==============================================================================
-
 static void add_program_parameter_item(GString * str, GebrGeoXmlParameter * par);
 
 static void help_insert_parameters_list(GString * help, GebrGeoXmlProgram * program, gboolean refresh);
@@ -54,6 +53,8 @@ static void help_edit_on_jump_to_activate(GtkAction * action, GebrGuiHelpEditWin
 static void help_edit_on_refresh(GtkAction * action, GebrGuiHelpEditWindow * window);
 
 static void help_edit_on_revert(GtkAction * action, GebrGuiHelpEditWindow * window);
+
+static gchar * generate_help_from_template(GebrGeoXmlObject * object);
 
 static const GtkActionEntry action_entries[] = {
 	{"JumpToMenu", NULL, N_("_Jump To"), NULL, NULL,
@@ -85,7 +86,6 @@ static const gchar * ui_def =
 //==============================================================================
 // PRIVATE METHODS							       =
 //==============================================================================
-
 static void merge_ui_def(GebrGuiHelpEditWindow * window, gboolean revert_visible)
 {
 	GtkActionGroup * action_group;
@@ -112,7 +112,7 @@ static void merge_ui_def(GebrGuiHelpEditWindow * window, gboolean revert_visible
 	}
 }
 
-static void create_help_edit_window(GebrGeoXmlObject * object, GString * help)
+static void create_help_edit_window(GebrGeoXmlObject * object, const gchar * help)
 {
 	gchar * title;
 	gchar * help_backup;
@@ -133,7 +133,7 @@ static void create_help_edit_window(GebrGeoXmlObject * object, GString * help)
 	}
 
 	is_menu_selected = menu_get_selected(&iter, TRUE);
-	help_edit_widget = debr_help_edit_widget_new(object, help->str, help_backup != NULL);
+	help_edit_widget = debr_help_edit_widget_new(object, help, help_backup != NULL);
 	help_edit_window = gebr_gui_help_edit_window_new(help_edit_widget);
 	gebr_gui_help_edit_window_set_auto_save(GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window), TRUE);
 	merge_ui_def(GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window), help_backup != NULL);
@@ -156,18 +156,27 @@ static void help_edit_on_refresh(GtkAction * action, GebrGuiHelpEditWindow * win
 {
 	GebrGeoXmlObject * object;
 	GebrGuiHelpEditWidget * widget;
+	DebrHelpEditWidget * dwidget;
 	gchar * help_content;
 	GString * help_string;
 
 	g_object_get(window, "help-edit-widget", &widget, NULL);
 	g_object_get(widget, "geoxml-object", &object, NULL);
+	dwidget = DEBR_HELP_EDIT_WIDGET (widget);
 
 	if (gebr_geoxml_object_get_type(object) != GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
 		object = NULL;
 
-	help_content = gebr_gui_help_edit_widget_get_content(widget);
-	help_string = g_string_new(help_content);
-	help_subst_fields(help_string, GEBR_GEOXML_PROGRAM(object), TRUE);
+	/* If there is no content, we must regenerate the template file.
+	 */
+	if (debr_help_edit_widget_is_content_empty (dwidget)) {
+		help_content = generate_help_from_template(object);
+		help_string = g_string_new(help_content);
+	} else {
+		help_content = gebr_gui_help_edit_widget_get_content(widget);
+		help_string = g_string_new(help_content);
+		help_subst_fields(help_string, GEBR_GEOXML_PROGRAM(object), TRUE);
+	}
 	gebr_gui_help_edit_widget_set_content(widget, help_string->str);
 	g_free(help_content);
 	g_string_free(help_string, TRUE);
@@ -365,9 +374,6 @@ static void help_insert_parameters_list(GString * help, GebrGeoXmlProgram * prog
 	g_string_free(label, TRUE);
 }
 
-/**
- * \internal
- */
 static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gboolean refresh)
 {
 	gchar *content;
@@ -522,9 +528,6 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 	g_string_free(text, TRUE);
 }
 
-/**
- * \internal
- */
 static void help_edit_on_finished(GebrGeoXmlObject * object, const gchar * _help)
 {
 	GString * help;
@@ -546,14 +549,13 @@ static void help_edit_on_finished(GebrGeoXmlObject * object, const gchar * _help
 	g_string_free(help, TRUE);
 }
 
-/**
- * \internal
- * Strips a block delimited by
- *      <!-- begin tag -->
- *      <!-- end tag -->
- *  and returns the position of the
- *  begining of the block, suitable for
- *  text insertion. "tag" must have 3 letters.
+/*
+ * strip_block:
+ * @buffer: the string to be processed
+ * @tag: the tag to be stripped
+ *
+ * Strips a block delimited by <!-- begin tag --> and <!-- end tag -->, returning the position of the beginning of the
+ * block, suitable for text insertion. @tag must have 3 letters.
  */
 static gsize strip_block(GString * buffer, const gchar * tag)
 {
@@ -676,10 +678,48 @@ out:
 	gtk_widget_destroy(dialog);
 }
 
+/*
+ * generate_help_from_template:
+ * @object: an XML pointer for a flow or program
+ *
+ * Generates the template help string, inserting the title, description, etc. fetched from @object. See
+ * help_subst_fields().
+ *
+ * Returns: a newly allocated string containing the help.
+ */
+static gchar * generate_help_from_template(GebrGeoXmlObject * object)
+{
+	gchar buffer[1000];
+	FILE * template;
+	GString * prepared_html;
+	GebrGeoXmlProgram * program;
+
+	program = NULL;
+	prepared_html = g_string_new (NULL);
+	template = fopen (DEBR_DATA_DIR "help-template.html", "r");
+
+	if (!template) {
+		debr_message (GEBR_LOG_ERROR, _("Unable to open template. Please check your installation."));
+		return g_strdup("");
+	}
+
+	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
+		program = GEBR_GEOXML_PROGRAM(object);
+
+	while (fgets(buffer, sizeof(buffer), template))
+		g_string_append(prepared_html, buffer);
+
+	/* Substitute title, description and categories */
+	help_subst_fields(prepared_html, program, FALSE);
+
+	fclose(template);
+
+	return g_string_free (prepared_html, FALSE);
+}
+
 //==============================================================================
 // PUBLIC METHODS							       =
 //==============================================================================
-
 void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
 {
 	const gchar * html;
@@ -704,41 +744,19 @@ void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 
 void debr_help_edit(GebrGeoXmlObject * object)
 {
-	GString *prepared_html;
-	GString *cmd_line;
-	FILE *html_fp;
-	GString *html_path;
-	const gchar * help;
-	GebrGeoXmlProgram * program = NULL;
+	gchar * help;
+	GebrGeoXmlProgram * program;
+
+	program = NULL;
 
 	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
 		program = GEBR_GEOXML_PROGRAM(object);
-		help = gebr_geoxml_program_get_help(program);
+		help = g_strdup(gebr_geoxml_program_get_help(program));
 	} else
-		help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
+		help = g_strdup(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object)));
 
-	prepared_html = g_string_new(help);
-
-	// If help is empty, create from template.
-	if (prepared_html->len <= 1) {
-		FILE *fp;
-		gchar buffer[1000];
-
-		/* Read back the help from file */
-		fp = fopen(DEBR_DATA_DIR "help-template.html", "r");
-		if (fp == NULL) {
-			debr_message(GEBR_LOG_ERROR, _("Unable to open template. Please check your installation."));
-			return;
-		}
-
-		while (fgets(buffer, sizeof(buffer), fp))
-			g_string_append(prepared_html, buffer);
-
-		fclose(fp);
-
-		/* Substitute title, description and categories */
-		help_subst_fields(prepared_html, program, FALSE);
-	}
+	if (strlen(help) <= 1)
+		help = generate_help_from_template(object);
 
 	/* EDIT IT */
 	if (debr.config.native_editor || !debr.config.htmleditor->len) {
@@ -749,51 +767,59 @@ void debr_help_edit(GebrGeoXmlObject * object)
 		if (help_edit_window != NULL)
 			gtk_window_present(GTK_WINDOW(help_edit_window));
 		else
-			create_help_edit_window(object, prepared_html);
+			create_help_edit_window(object, help);
 	} else {
-		/* create temporary filename */
-		html_path = gebr_make_temp_filename("debr_XXXXXX.html");
+		FILE * htmlfp;
+		GString * html_path;
+		GString * html_content;
+		gchar * cmdline;
+		gchar buffer[1000];
 
-		/* open temporary file with help from XML */
-		html_fp = fopen(html_path->str, "w");
-		if (html_fp == NULL) {
+		/* Create a temporary file and write the help into it */
+		html_path = gebr_make_temp_filename("debr_XXXXXX.html");
+		htmlfp = fopen(html_path->str, "w");
+		cmdline = g_strconcat(debr.config.htmleditor->str, " ", html_path->str, NULL);
+
+		if (htmlfp == NULL) {
 			debr_message(GEBR_LOG_ERROR, _("Unable to create temporary file."));
 			goto out;
 		}
-		fputs(prepared_html->str, html_fp);
-		fclose(html_fp);
 
-		cmd_line = g_string_new(NULL);
-		g_string_printf(cmd_line, "%s  %s", debr.config.htmleditor->str, html_path->str);
+		fputs(help, htmlfp);
+		fclose(htmlfp);
 
-		if (WEXITSTATUS(system(cmd_line->str)))
+		if (WEXITSTATUS(system(cmdline))) {
 			debr_message(GEBR_LOG_ERROR, _("Error during editor execution."));
-
-		g_string_free(cmd_line, TRUE);
+			goto out;
+		}
 
 		/* Add file to list of files to be removed */
 		debr.tmpfiles = g_slist_append(debr.tmpfiles, html_path->str);
 
 		/* open temporary file with help from XML */
-		html_fp = fopen(html_path->str, "r");
-		if (html_fp == NULL) {
+		htmlfp = fopen(html_path->str, "r");
+		if (htmlfp == NULL) {
 			debr_message(GEBR_LOG_ERROR, _("Unable to create temporary file."));
 			goto out;
 		}
-		g_string_assign(prepared_html, "");
 
-		gchar buffer[1000];
-		while (fgets(buffer, sizeof(buffer), html_fp))
-			g_string_append(prepared_html, buffer);
+		html_content = g_string_new (NULL);
 
-		fclose(html_fp);
+		while (fgets(buffer, sizeof(buffer), htmlfp))
+			g_string_append(html_content, buffer);
+
+		fclose(htmlfp);
+
 		if (program)
-			help_edit_on_finished(GEBR_GEOXML_OBJECT(program), prepared_html->str);
+			help_edit_on_finished(GEBR_GEOXML_OBJECT(program), html_content->str);
 		else
-			help_edit_on_finished(GEBR_GEOXML_OBJECT(debr.menu), prepared_html->str);
+			help_edit_on_finished(GEBR_GEOXML_OBJECT(debr.menu), html_content->str);
+
+		g_string_free (html_content, TRUE);
 
 	out:
-		g_string_free(html_path, FALSE);
-		g_string_free(prepared_html, TRUE);
+		g_string_free(html_path, TRUE);
+		g_free(cmdline);
+		g_free(help);
 	}
 }
