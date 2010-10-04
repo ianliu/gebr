@@ -54,6 +54,8 @@ static void help_edit_on_refresh(GtkAction * action, GebrGuiHelpEditWindow * win
 
 static void help_edit_on_revert(GtkAction * action, GebrGuiHelpEditWindow * window);
 
+static void help_edit_on_content_loaded(GebrGuiHelpEditWidget * self, GebrGuiHelpEditWindow * window);
+
 static gchar * generate_help_from_template(GebrGeoXmlObject * object);
 
 static const GtkActionEntry action_entries[] = {
@@ -139,11 +141,15 @@ static void create_help_edit_window(GebrGeoXmlObject * object, const gchar * hel
 	merge_ui_def(GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window), help_backup != NULL);
 	g_free(help_backup);
 
-	g_signal_connect(help_edit_window, "destroy",
-			 G_CALLBACK(help_edit_window_on_destroy), NULL);
-	g_signal_connect(help_edit_widget, "commit-request",
-			 G_CALLBACK(help_edit_on_commit_request),
-			 NULL);
+	g_signal_connect (help_edit_window, "destroy",
+			  G_CALLBACK (help_edit_window_on_destroy),
+			  NULL);
+	g_signal_connect (help_edit_widget, "commit-request",
+			  G_CALLBACK (help_edit_on_commit_request),
+			  NULL);
+	g_signal_connect (help_edit_widget, "content-loaded",
+			  G_CALLBACK (help_edit_on_content_loaded),
+			  help_edit_window);
 
 	g_hash_table_insert(debr.help_edit_windows, object, help_edit_window);
 	gtk_window_set_title(GTK_WINDOW(help_edit_window), title);
@@ -160,6 +166,7 @@ static void help_edit_on_refresh(GtkAction * action, GebrGuiHelpEditWindow * win
 	gchar * help_content;
 	GString * help_string;
 
+	gtk_action_set_sensitive (action, FALSE);
 	g_object_get(window, "help-edit-widget", &widget, NULL);
 	g_object_get(widget, "geoxml-object", &object, NULL);
 	dwidget = DEBR_HELP_EDIT_WIDGET (widget);
@@ -704,6 +711,16 @@ static void help_edit_on_revert(GtkAction * action, GebrGuiHelpEditWindow * wind
 
 out:
 	gtk_widget_destroy(dialog);
+}
+
+static void help_edit_on_content_loaded(GebrGuiHelpEditWidget * self, GebrGuiHelpEditWindow * window)
+{
+	GtkAction * action;
+	GtkUIManager * manager;
+
+	manager = gebr_gui_help_edit_window_get_ui_manager (window);
+	action = gtk_ui_manager_get_action (manager, "/" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_NAME "/RefreshAction");
+	gtk_action_set_sensitive (action, TRUE);
 }
 
 /*
