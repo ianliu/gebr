@@ -450,11 +450,12 @@ flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * 
 static void flow_edition_component_selected(void)
 {
 	GtkTreeIter iter;
-	GtkToggleAction *toggle_action;
+	GtkAction * action;
 
 	gebr.program = NULL;
 	if (!flow_edition_get_selected_component(&iter, FALSE))
 		return;
+
 	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
 	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
 		return;
@@ -462,36 +463,11 @@ static void flow_edition_component_selected(void)
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
 			   FSEQ_GEBR_GEOXML_POINTER, &gebr.program, -1);
 
-	switch(gebr_geoxml_program_get_status(gebr.program)) {
-	case GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED:
-		toggle_action = GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,
-									      "flow_edition_status_configured"));
-		break;
-	case GEBR_GEOXML_PROGRAM_STATUS_DISABLED:
-		toggle_action = GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,
-									      "flow_edition_status_disabled"));
-		break;
-	case GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED:
-		toggle_action = GTK_TOGGLE_ACTION(gtk_action_group_get_action(gebr.action_group,
-									      "flow_edition_status_unconfigured"));
-		break;
-	default:
-		return;
-	}
+	action = gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured");
+	gtk_action_set_sensitive(action, !parameters_check_has_required_unfilled());
 
-	if (parameters_check_has_required_unfilled())
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured"), FALSE);
-	else
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured"), TRUE);
-
-
-	gtk_toggle_action_set_active(toggle_action, TRUE);
-
-	if (strlen(gebr_geoxml_program_get_help(gebr.program)) == 0)	
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_edition_help"), FALSE);
-	else
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_edition_help"), TRUE);
-
+	action = gtk_action_group_get_action(gebr.action_group, "flow_edition_help");
+	gtk_action_set_sensitive(action, strlen(gebr_geoxml_program_get_help(gebr.program)) != 0);
 }
 
 /*
@@ -580,9 +556,9 @@ out:	g_free(menu_filename);
 static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, struct ui_flow_edition *ui_flow_edition)
 {
 	GtkTreeIter iter;
-	GtkWidget *menu;
-	GtkWidget *menu_item;
-	GtkAction *action;
+	GtkWidget * menu;
+	GtkWidget * menu_item;
+	GtkAction * action;
 
 	if (!flow_edition_get_selected_component(&iter, FALSE))
 		return NULL;

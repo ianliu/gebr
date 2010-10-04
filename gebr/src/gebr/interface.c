@@ -141,13 +141,13 @@ static const GtkActionEntry actions_entries[] = {
 		NULL, N_("Ask server to kill the job"), G_CALLBACK(on_job_control_stop)}
 };
 
-static const GtkRadioActionEntry status_radio_actions_entries[] = {
+static const GtkActionEntry status_action_entries[] = {
 	{"flow_edition_status_configured", NULL, N_("Configured"),
-		NULL, NULL, FSEQ_PROGRAM_CONFIGURED},
+		NULL, N_("Change current program status to configured"), NULL},
 	{"flow_edition_status_disabled", NULL, N_("Disabled"),
-		NULL, NULL, FSEQ_PROGRAM_DISABLED},
+		NULL, N_("Change current program status to disabled"), NULL},
 	{"flow_edition_status_unconfigured", NULL, N_("Not configured"),
-		NULL, NULL, FSEQ_PROGRAM_UNCONFIGURED}
+		NULL, N_("Change current program status to not configured"), NULL}
 };
 
 /*
@@ -188,8 +188,7 @@ void gebr_setup_ui(void)
 	gebr.action_group = gtk_action_group_new("General");
 	gtk_action_group_set_translation_domain(gebr.action_group, PACKAGE);
 	gtk_action_group_add_actions(gebr.action_group, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
-	gtk_action_group_add_radio_actions(gebr.action_group, status_radio_actions_entries, 3, -1,
-					   NULL, NULL);
+	gtk_action_group_add_actions(gebr.action_group, status_action_entries, G_N_ELEMENTS(status_action_entries), NULL);
 	gebr.accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group);
 	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group, gebr.accel_group);
