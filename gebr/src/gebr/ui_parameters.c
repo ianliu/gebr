@@ -187,8 +187,12 @@ static void parameter_required_is_unfilled(GebrGeoXmlParameter * parameter, gboo
 		*required_unfilled = !gebr_geoxml_program_parameter_is_set(GEBR_GEOXML_PROGRAM_PARAMETER(parameter));
 }
 
-/**
- * \internal
+/*
+ * parameters_actions:
+ * @dialog: the dialog that emitted the response signal
+ * @arg1: the response id
+ * @ui_parameters: a #ui_parameter's structure
+ *
  * Take the appropriate action when the parameter dialog emmits a response signal.
  */
 static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters *ui_parameters)
@@ -212,15 +216,10 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 				   FSEQ_ICON_COLUMN, icon,
 				   -1);
 		flow_edition_select_component_iter(&iter);
-		if (parameters_check_has_required_unfilled()) {
-			gtk_toggle_action_set_active(GTK_TOGGLE_ACTION
-						     (gtk_action_group_get_action
-						      (gebr.action_group, "flow_edition_status_unconfigured")), TRUE);
-		} else {
-			gtk_toggle_action_set_active(GTK_TOGGLE_ACTION
-						     (gtk_action_group_get_action
-						      (gebr.action_group, "flow_edition_status_configured")), TRUE);
-		}
+		if (parameters_check_has_required_unfilled())
+			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+		else
+			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 		break;
 	}
 	case GTK_RESPONSE_APPLY:

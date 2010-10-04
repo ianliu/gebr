@@ -236,8 +236,7 @@ void on_flow_component_status_activate(GtkAction *action,
 				       gpointer user_data)
 {
 	guint status = GPOINTER_TO_UINT(user_data);
-	if (gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)))
-		flow_edition_status_changed(status);
+	flow_edition_status_changed(status);
 }
 
 void on_job_control_save(void)
