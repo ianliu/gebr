@@ -30,6 +30,7 @@ enum {
 
 enum {
 	COMMIT_REQUEST,
+	CONTENT_LOADED,
 	LAST_SIGNAL
 };
 
@@ -112,7 +113,7 @@ static void gebr_gui_help_edit_widget_class_init(GebrGuiHelpEditWidgetClass * kl
 	 * GebrGuiHelpEditWidget::commit-request:
 	 * Emitted when 'commit_changes' is called.
 	 */
-	signals[COMMIT_REQUEST] =
+	signals[ COMMIT_REQUEST ] =
 		g_signal_new("commit-request",
 			     GEBR_GUI_TYPE_HELP_EDIT_WIDGET,
 			     G_SIGNAL_RUN_LAST,
@@ -121,6 +122,21 @@ static void gebr_gui_help_edit_widget_class_init(GebrGuiHelpEditWidgetClass * kl
 			     g_cclosure_marshal_VOID__VOID,
 			     G_TYPE_NONE,
 			     0);
+
+	/**
+	 * GebrGuiHelpEditWidget::content-loaded:
+	 * Emitted after a gebr_gui_help_edit_widget_set_content(), when it is fully loaded, but before JavaScripts
+	 * calls.
+	 */
+	signals[ CONTENT_LOADED ] =
+		g_signal_new ("content-loaded",
+			      GEBR_GUI_TYPE_HELP_EDIT_WIDGET,
+			      G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (GebrGuiHelpEditWidgetClass, content_loaded),
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__VOID,
+			      G_TYPE_NONE,
+			      0);
 
 	g_type_class_add_private(klass, sizeof(GebrGuiHelpEditWidgetPrivate));
 }
@@ -203,6 +219,7 @@ static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrG
 					      on_load_finished,
 					      self);
 
+	g_signal_emit (self, signals[ CONTENT_LOADED ], 0);
 }
 
 //==============================================================================

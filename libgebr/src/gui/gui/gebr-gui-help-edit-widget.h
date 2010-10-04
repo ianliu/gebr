@@ -64,6 +64,7 @@ struct _GebrGuiHelpEditWidgetClass {
 
 	/* Signals */
 	void (*commit_request) (GebrGuiHelpEditWidget * self);
+	void (*content_loaded) (GebrGuiHelpEditWidget * self);
 };
 
 GType gebr_gui_help_edit_widget_get_type(void) G_GNUC_CONST;
