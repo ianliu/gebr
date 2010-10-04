@@ -151,13 +151,13 @@ static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocumen
 		header = gebr_line_generate_header(document);
 		content = NULL;
 	} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
-		if (gebr.config.print_option_check_button_css)
+		if (gebr.config.print_option_line_use_gebr_css)
 			styles = g_strdup("<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
 		else
 			styles = gebr_document_report_get_styles_string(report);
 		header = gebr_flow_generate_header(GEBR_GEOXML_FLOW(document));
 
-		if (gebr.config.print_option_check_button_param)
+		if (gebr.config.print_option_line_include_flows)
 			content = gebr_flow_generate_parameter_value_table(GEBR_GEOXML_FLOW(document));
 		else
 			content = NULL;

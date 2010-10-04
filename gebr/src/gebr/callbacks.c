@@ -350,9 +350,3 @@ void on_project_line_edit_help(void){
     project_line_edit_help();
 }
 
-void on_check_button_param_toggled(GtkToggleButton *togglebutton, gpointer user_data){
-	gebr.config.print_option_check_button_param = gtk_toggle_button_get_active(togglebutton);
-}
-void on_check_button_css_toggled(GtkToggleButton *togglebutton, gpointer user_data){
-	gebr.config.print_option_check_button_css = gtk_toggle_button_get_active(togglebutton);
-}

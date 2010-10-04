@@ -263,12 +263,14 @@ gint gebr_config_load()
 		    gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "project_line_string", "");
 		gebr.config.flow_string =
 		    gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "flow_string", "");
-		gebr.config.print_option_check_button_css = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_check_button_css", FALSE);
-		gebr.config.print_option_check_button_param = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_check_button_param", FALSE);
+
+		gebr.config.print_option_flow_use_gebr_css = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_flow_use_gebr_css", FALSE);
+		gebr.config.print_option_flow_include_flows = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_flow_include_flows", FALSE);
+		gebr.config.print_option_flow_detailed_report = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_flow_detailed_report", FALSE);
 
 		gebr.config.print_option_line_use_gebr_css = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_line_use_gebr_css", FALSE);
 		gebr.config.print_option_line_include_flows = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_line_include_flows", FALSE);
-		gebr.config.print_option_line_detailed_flows = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_line_detailed_flows", FALSE);
+		gebr.config.print_option_line_detailed_report = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_line_detailed_report", FALSE);
 
 		g_string_free(data_dir, TRUE);
 	}
@@ -370,11 +372,12 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_word_wrap", gebr.config.job_log_word_wrap);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_auto_scroll", gebr.config.job_log_auto_scroll);
 	g_key_file_set_integer(gebr.config.key_file, "general", "notebook", gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)));
-	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_check_button_param", gebr.config.print_option_check_button_param);
-	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_check_button_css", gebr.config.print_option_check_button_css);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_flow_use_gebr_css", gebr.config.print_option_flow_use_gebr_css);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_flow_include_flows", gebr.config.print_option_flow_include_flows);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_flow_detailed_report", gebr.config.print_option_flow_detailed_report);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_line_use_gebr_css", gebr.config.print_option_line_use_gebr_css);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_line_include_flows", gebr.config.print_option_line_include_flows);
-	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_line_detailed_flows", gebr.config.print_option_line_detailed_flows);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_line_detailed_report", gebr.config.print_option_line_detailed_report);
 
 	/* Save list of servers */
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
@@ -528,8 +531,6 @@ static gboolean gebr_config_load_from_gengetopt(void)
 	gebr.config.current_notebook = 0;
 	gebr.config.project_line_string = g_string_new(NULL);
 	gebr.config.editor = g_string_new(NULL);
-	gebr.config.print_option_check_button_param = FALSE;
-	gebr.config.print_option_check_button_css = FALSE;
 
 	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
@@ -543,8 +544,6 @@ static gboolean gebr_config_load_from_gengetopt(void)
 	g_key_file_set_integer(gebr.config.key_file, "general", "notebook", gebr.config.current_notebook);
 	g_key_file_set_string(gebr.config.key_file, "general", "project_line_string", gebr.config.project_line_string->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "flow_string", gebr.config.flow_string->str);
-	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_check_button_param", gebr.config.print_option_check_button_param);
-	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_check_button_css", gebr.config.print_option_check_button_css);
 
 	for (i = 0; i < ggopt.server_given; ++i) {
 		GString *group;

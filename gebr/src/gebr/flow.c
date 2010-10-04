@@ -725,41 +725,80 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow)
 	return g_string_free(dump, FALSE);
 }
 
+static void on_use_gebr_css_toggled(GtkToggleButton * button)
+{
+	gboolean toggled;
+	toggled = gtk_toggle_button_get_active(button);
+	gebr.config.print_option_flow_use_gebr_css = toggled;
+}
+
+static void on_include_flows_toggled(GtkToggleButton * button)
+{
+	gboolean toggled;
+	toggled = gtk_toggle_button_get_active(button);
+	gebr.config.print_option_flow_include_flows = toggled;
+}
+
+static void on_detailed_report_toggled(GtkToggleButton * button, GtkWidget * widget)
+{
+	gboolean toggled;
+	toggled = gtk_toggle_button_get_active(button);
+	gtk_widget_set_sensitive(widget, toggled);
+	gebr.config.print_option_flow_detailed_report = toggled;
+}
+
 GtkWidget * gebr_flow_print_dialog_custom_tab(GebrGuiHtmlViewerWidget *widget){
 
-	GtkWidget *check_button_param;
-	GtkWidget *check_button_css;
-	GtkWidget *vbox;
-	GtkWidget *frame;
-	GtkWidget *label_markup;
+	gchar * tab_label;
+	GtkWidget * hbox;
+	GtkWidget * vbox;
+	GtkWidget * hbox_below;
+	GtkWidget * frame;
+	GtkWidget * label;
 	GtkWidget * alignment;
-	gchar *label;
+	GtkWidget * use_gebr_css_cb;
+	GtkWidget * include_flows_cb;
+	GtkWidget * detailed_report_cb;
 
-	check_button_css = gtk_check_button_new_with_label(_("Use gebr style sheet"));
-	check_button_param =  gtk_check_button_new_with_label(_("Generate detailed flow reports"));
+	use_gebr_css_cb = gtk_check_button_new_with_label(_("Use gebr style sheet"));
+	include_flows_cb = gtk_check_button_new_with_label(_("Include flow reports"));
+	detailed_report_cb = gtk_check_button_new_with_label(_("Generate detailed report"));
 
-	g_signal_connect(check_button_param, "toggled", G_CALLBACK(on_check_button_param_toggled), NULL);
-	g_signal_connect(check_button_css, "toggled", G_CALLBACK(on_check_button_css_toggled), NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(use_gebr_css_cb), gebr.config.print_option_flow_use_gebr_css);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(include_flows_cb), gebr.config.print_option_flow_include_flows);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_report_cb), gebr.config.print_option_flow_detailed_report);
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_button_param), gebr.config.print_option_check_button_param);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_button_css), gebr.config.print_option_check_button_css);
-
-	label = g_strdup_printf("<b>%s</b>", _("Detailed Report"));
-	frame = gtk_frame_new(label);
-	label_markup = gtk_frame_get_label_widget(GTK_FRAME(frame));
-	gtk_label_set_use_markup(GTK_LABEL(label_markup), TRUE);
-	g_free(label);
-
-	alignment = gtk_alignment_new(0, 0, 1, 1);
-	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 10, 0);
-	gtk_container_add(GTK_CONTAINER(frame), alignment);
+	tab_label = g_strdup_printf("<b>%s</b>", _("Detailed Report"));
+	frame = gtk_frame_new(tab_label);
+	label = gtk_frame_get_label_widget(GTK_FRAME(frame));
+	gtk_container_set_border_width(GTK_CONTAINER(frame), 10);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
+	gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
+	g_free(tab_label);
 
 	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(alignment), vbox);
-	gtk_box_pack_start(GTK_BOX(vbox), check_button_param, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), check_button_css, FALSE, TRUE, 0);
 
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), detailed_report_cb, FALSE, TRUE, 0);
+
+	hbox_below = gtk_vbox_new(FALSE, 0);
+	alignment = gtk_alignment_new(0, 0, 1, 1);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 10, 0);
+	gtk_box_pack_start(GTK_BOX(hbox_below), use_gebr_css_cb, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox_below), include_flows_cb, FALSE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(alignment), hbox_below);
+	gtk_widget_set_sensitive(hbox_below, gebr.config.print_option_flow_detailed_report);
+
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), alignment, FALSE, TRUE, 0);
+
+	gtk_container_add(GTK_CONTAINER(frame),vbox);
+
+	g_signal_connect(use_gebr_css_cb, "toggled", G_CALLBACK(on_use_gebr_css_toggled), NULL);
+	g_signal_connect(include_flows_cb, "toggled", G_CALLBACK(on_include_flows_toggled), NULL);
+	g_signal_connect(detailed_report_cb, "toggled", G_CALLBACK(on_detailed_report_toggled), hbox_below);
 
 	gtk_widget_show_all(frame);
+
 	return frame;
 }

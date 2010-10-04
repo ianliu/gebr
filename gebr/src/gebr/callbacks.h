@@ -191,8 +191,5 @@ void on_project_line_edit_help(void);
  */
 void on_detailed_report_activate(void);
 
-void on_check_button_param_toggled(GtkToggleButton *togglebutton, gpointer user_data);
-
-void on_check_button_css_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 G_END_DECLS
 #endif				//__CALLBACKS_H
