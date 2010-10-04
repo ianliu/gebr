@@ -58,6 +58,8 @@ static void help_edit_on_content_loaded(GebrGuiHelpEditWidget * self, GebrGuiHel
 
 static gchar * generate_help_from_template(GebrGeoXmlObject * object);
 
+static void on_preview_toggled(GtkToggleAction * action, GtkUIManager * manager);
+
 static const GtkActionEntry action_entries[] = {
 	{"JumpToMenu", NULL, N_("_Jump To"), NULL, NULL,
 		G_CALLBACK(help_edit_on_jump_to_activate)},
@@ -94,6 +96,7 @@ static void merge_ui_def(GebrGuiHelpEditWindow * window, gboolean revert_visible
 	GtkUIManager * ui_manager;
 	GtkAction * action;
 	GError * error = NULL;
+	gchar * path;
 
 	ui_manager = gebr_gui_help_edit_window_get_ui_manager(window);
 
@@ -107,6 +110,13 @@ static void merge_ui_def(GebrGuiHelpEditWindow * window, gboolean revert_visible
 	gtk_ui_manager_insert_action_group(ui_manager, action_group, 0);
 	gtk_ui_manager_add_ui_from_string(ui_manager, ui_def, -1, &error);
 	g_object_unref(action_group);
+
+	path = g_strconcat (gebr_gui_help_edit_window_get_tool_bar_mark (window),
+			    "/PreviewAction",
+			    NULL);
+	action = gtk_ui_manager_get_action (ui_manager, path);
+	g_signal_connect (action, "toggled", G_CALLBACK (on_preview_toggled), ui_manager);
+	g_free (path);
 
 	if (error != NULL) {
 		g_warning("%s\n", error->message);
@@ -760,6 +770,19 @@ static gchar * generate_help_from_template(GebrGeoXmlObject * object)
 	fclose(template);
 
 	return g_string_free (prepared_html, FALSE);
+}
+
+static void on_preview_toggled(GtkToggleAction * action, GtkUIManager * manager)
+{
+	gboolean toggled;
+	GtkAction * refresh;
+	GtkAction * revert;
+
+	toggled = gtk_toggle_action_get_active (action);
+	refresh = gtk_ui_manager_get_action (manager, "/" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_NAME "/RefreshAction");
+	revert = gtk_ui_manager_get_action (manager, "/" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_NAME "/RevertAction");
+	gtk_action_set_sensitive (refresh, !toggled);
+	gtk_action_set_sensitive (revert, !toggled);
 }
 
 //==============================================================================
