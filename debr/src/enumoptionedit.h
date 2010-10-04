@@ -21,7 +21,7 @@
 #include <gtk/gtk.h>
 
 #include <libgebr/geoxml.h>
-#include <libgebr/gui/gtksequenceedit.h>
+#include <libgebr/gui/gebr-gui-sequence-edit.h>
 
 G_BEGIN_DECLS
 
@@ -38,7 +38,7 @@ typedef struct _EnumOptionEdit EnumOptionEdit;
 typedef struct _EnumOptionEditClass EnumOptionEditClass;
 
 struct _EnumOptionEdit {
-	GtkSequenceEdit parent;
+	GebrGuiSequenceEdit parent;
 
 	GebrGeoXmlEnumOption *enum_option;
 	GebrGeoXmlProgramParameter *program_parameter;
@@ -47,7 +47,7 @@ struct _EnumOptionEdit {
 	GtkWidget *validate_image;
 };
 struct _EnumOptionEditClass {
-	GtkSequenceEditClass parent;
+	GebrGuiSequenceEditClass parent;
 };
 
 /**

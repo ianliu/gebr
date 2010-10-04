@@ -16,15 +16,15 @@
  */
 
 /* include all library headers */
-#include <gui/about.h>
-#include <gui/gtkfileentry.h>
-#include <gui/gtksequenceedit.h>
-#include <gui/icons.h>
-#include <gui/pixmaps.h>
-#include <gui/parameter.h>
-#include <gui/programedit.h>
-#include <gui/valuesequenceedit.h>
-#include <gui/utils.h>
+#include <gui/gebr-gui-about.h>
+#include <gui/gebr-gui-file-entry.h>
+#include <gui/gebr-gui-sequence-edit.h>
+#include <gui/gebr-gui-icons.h>
+#include <gui/gebr-gui-pixmaps.h>
+#include <gui/gebr-gui-parameter.h>
+#include <gui/gebr-gui-program-edit.h>
+#include <gui/gebr-gui-value-sequence-edit.h>
+#include <gui/gebr-gui-utils.h>
 #include <gui/gebr-gui-js.h>
 #include <gui/gebr-gui-help-edit-widget.h>
 #include <gui/gebr-gui-help-edit-window.h>

@@ -23,7 +23,7 @@
 
 #include "gtk/gtk.h"
 
-#include "icons.h"
+#include "gebr-gui-icons.h"
 #include "defines.h"
 
 /*

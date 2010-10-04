@@ -74,12 +74,9 @@ void gebr_geoxml_object_set_user_data(GebrGeoXmlObject * object, gpointer user_d
 
 gpointer gebr_geoxml_object_get_user_data(GebrGeoXmlObject * object)
 {
-	GebrGeoXmlObjectType type;
-	
-	type = gebr_geoxml_object_get_type(object);
-
 	g_return_val_if_fail(object != NULL, NULL);
 
+	GebrGeoXmlObjectType type = gebr_geoxml_object_get_type(object);
 	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW || type == GEBR_GEOXML_OBJECT_TYPE_LINE || type == GEBR_GEOXML_OBJECT_TYPE_PROJECT)
 		return _gebr_geoxml_document_get_data(object)->user_data;
 	else

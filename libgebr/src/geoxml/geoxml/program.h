@@ -46,7 +46,7 @@ G_BEGIN_DECLS
  * 	"GebrGeoXmlFlow" [ URL = "\ref flow.h" ];
  * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
  * 	"GebrGeoXmlProgram" [ URL = "\ref program.h" ];
- * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
+ * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program-parameter.h" ];
  *
  * 	edge [
  * 		arrowhead = "normal"
@@ -103,7 +103,7 @@ typedef struct gebr_geoxml_program GebrGeoXmlProgram;
 
 #include "parameter.h"
 #include "parameters.h"
-#include "program_parameter.h"
+#include "program-parameter.h"
 #include "flow.h"
 #include "macros.h"
 #include "object.h"

@@ -21,7 +21,7 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/comm/streamsocket.h>
-#include <libgebr/gui/utils.h>
+#include <libgebr/gui/gebr-gui-utils.h>
 
 #include "server.h"
 #include "gebr.h"

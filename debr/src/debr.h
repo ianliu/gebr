@@ -21,7 +21,7 @@
 #include <gtk/gtk.h>
 #include <libgebr/geoxml.h>
 
-#include <libgebr/gui/about.h>
+#include <libgebr/gui/gebr-gui-about.h>
 #include <libgebr/log.h>
 
 #include "menu.h"

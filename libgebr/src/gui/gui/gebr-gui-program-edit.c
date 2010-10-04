@@ -17,9 +17,9 @@
 
 #include "../../intl.h"
 
-#include "programedit.h"
-#include "parameter.h"
-#include "utils.h"
+#include "gebr-gui-program-edit.h"
+#include "gebr-gui-parameter.h"
+#include "gebr-gui-utils.h"
 
 /*
  * Prototypes

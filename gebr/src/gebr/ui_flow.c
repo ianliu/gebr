@@ -20,9 +20,9 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/date.h>
-#include <libgebr/gui/gtkfileentry.h>
-#include <libgebr/gui/utils.h>
-#include <libgebr/gui/icons.h>
+#include <libgebr/gui/gebr-gui-file-entry.h>
+#include <libgebr/gui/gebr-gui-utils.h>
+#include <libgebr/gui/gebr-gui-icons.h>
 
 #include "ui_flow.h"
 #include "gebr.h"

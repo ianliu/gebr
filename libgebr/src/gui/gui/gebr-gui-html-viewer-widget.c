@@ -26,7 +26,7 @@
 #include "../../intl.h"
 #include "../../utils.h"
 #include "../../defines.h"
-#include "utils.h"
+#include "gebr-gui-utils.h"
 #include "gebr-gui-js.h"
 
 #define CSS_LINK "<link rel=\"stylesheet\" type=\"text/css\" href=\"file://"LIBGEBR_DATA_DIR"/gebr.css\" />"

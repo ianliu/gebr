@@ -19,8 +19,8 @@
 #include "../../intl.h"
 #include "../../utils.h"
 
-#include "about.h"
-#include "pixmaps.h"
+#include "gebr-gui-about.h"
+#include "gebr-gui-pixmaps.h"
 
 #if !GTK_CHECK_VERSION(2,20,0)
 void __dummy__(GtkAboutDialog * about, const gchar * link, gpointer data)

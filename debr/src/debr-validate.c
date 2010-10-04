@@ -22,7 +22,7 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/date.h>
-#include <libgebr/gui/utils.h>
+#include <libgebr/gui/gebr-gui-utils.h>
 
 #include "debr-validate.h"
 #include "debr.h"

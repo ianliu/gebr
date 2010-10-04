@@ -30,7 +30,7 @@
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
-#include <libgebr/gui/utils.h>
+#include <libgebr/gui/gebr-gui-utils.h>
 
 #include "gebr.h"
 #include "project.h"

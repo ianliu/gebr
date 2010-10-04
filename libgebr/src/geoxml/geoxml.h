@@ -53,8 +53,8 @@
  * 	"GebrGeoXmlFlow" [ URL = "\ref flow.h" ];
  * 	"GebrGeoXmlProgram" [ URL = "\ref program.h" ];
  * 	"GebrGeoXmlParameters" [ URL = "\ref parameters.h" ];
- * 	"GebrGeoXmlParameter" [ URL = "\ref parameter.h" ];
- * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program_parameter.h" ];
+ * 	"GebrGeoXmlParameter" [ URL = "\ref gebr-gui-parameter.h" ];
+ * 	"GebrGeoXmlProgramParameter" [ URL = "\ref program-parameter.h" ];
  * 	"GebrGeoXmlPropertyValue" [ URL = "\ref GebrGeoXmlPropertyValue" ];
  * 	"GebrGeoXmlParameterGroup" [ URL = "\ref parameter_group.h" ];
  *
@@ -111,7 +111,7 @@
  * 	"GebrGeoXmlLineFlow" [ URL = "\ref GebrGeoXmlLineFlow" ];
  * 	"GebrGeoXmlProgram" [ URL = "\ref program.h" ];
  * 	"GebrGeoXmlParameters" [ URL = "\ref parameters.h" ];
- * 	"GebrGeoXmlParameter" [ URL = "\ref parameter.h" ];
+ * 	"GebrGeoXmlParameter" [ URL = "\ref gebr-gui-parameter.h" ];
  * 	"GebrGeoXmlPropertyValue" [ URL = "\ref GebrGeoXmlPropertyValue" ];
  * 	"GebrGeoXmlEnumOption" [ URL = "\ref enum_option.h" ];
  * 	"GebrGeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];
@@ -156,7 +156,7 @@
 #include <geoxml/program.h>
 #include <geoxml/parameters.h>
 #include <geoxml/parameter.h>
-#include <geoxml/program_parameter.h>
+#include <geoxml/program-parameter.h>
 #include <geoxml/parameter_group.h>
 #include <geoxml/clipboard.h>
 #include <geoxml/gebr-geoxml-validate.h>

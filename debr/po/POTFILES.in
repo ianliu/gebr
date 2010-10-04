@@ -7,7 +7,7 @@ src/help.c
 src/interface.c
 src/main.c
 src/menu.c
-src/parameter.c
+src/gebr-gui-parameter.c
 src/parametergroup.c
 src/preferences.c
 src/program.c

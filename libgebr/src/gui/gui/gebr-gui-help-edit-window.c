@@ -85,7 +85,7 @@ static const GtkActionEntry action_entries[] = {
 static const guint n_action_entries = G_N_ELEMENTS(action_entries);
 
 static const GtkToggleActionEntry toggle_entries[] = {
-	{"PreviewAction", GTK_STOCK_PRINT_PREVIEW, NULL, NULL,
+	{"PreviewAction", GTK_STOCK_PRINT_PREVIEW, N_("Preview"), NULL,
 		N_("Toggles between edit and preview modes"), G_CALLBACK(on_preview_toggled), FALSE},
 };
 

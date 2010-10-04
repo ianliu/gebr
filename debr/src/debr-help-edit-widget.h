@@ -61,6 +61,18 @@ GebrGuiHelpEditWidget * debr_help_edit_widget_new(GebrGeoXmlObject * object,
 						  const gchar * help,
 						  gboolean committed);
 
+/**
+ * debr_help_edit_widget_is_content_empty:
+ * @self: a #DebrHelpEditWidget
+ *
+ * This widget limits the editable area to the content of the help, the index and header titles are auto generated. The
+ * intent of this function is for checking if the editable area is empty, since checking for emptiness with the return
+ * value of gebr_gui_help_edit_get_content will fail.
+ *
+ * Returns: %TRUE if the editable area is empty, %FALSE otherwise.
+ */
+gboolean debr_help_edit_widget_is_content_empty(DebrHelpEditWidget * self);
+
 G_END_DECLS
 
 #endif /* __DEBR_HELP_EDIT_WIDGET__ */

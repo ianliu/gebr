@@ -24,17 +24,17 @@ lib_LTLIBRARIES = libgebr_gui.la
 libgebr_gui_la_SOURCES = 		\
 	marshalers.c 			\
 	sexy-icon-entry.c 		\
-	about.c 			\
-	utils.c 			\
-	pixmaps.c 			\
-	icons.c 			\
-	gtkfileentry.c			\
-	gtkenhancedentry.c		\
-	gtksequenceedit.c		\
-	valuesequenceedit.c		\
-	programedit.c			\
-	parameter.c			\
-	gtkdirectorychooser.c		\
+	gebr-gui-about.c 			\
+	gebr-gui-utils.c 			\
+	gebr-gui-pixmaps.c 			\
+	gebr-gui-icons.c 			\
+	gebr-gui-file-entry.c			\
+	gebr-gui-enhanced-entry.c		\
+	gebr-gui-sequence-edit.c		\
+	gebr-gui-value-sequence-edit.c		\
+	gebr-gui-program-edit.c			\
+	gebr-gui-parameter.c			\
+	gebr-gui-directory-chooser.c		\
 	gebr-gui-save-dialog.c		\
 	gebr-gui-help-edit-widget.c	\
 	gebr-gui-help-edit-window.c	\
@@ -46,17 +46,17 @@ libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = 	\
 	marshalers.h			\
 	sexy-icon-entry.h		\
-	about.h				\
-	utils.h				\
-	pixmaps.h			\
-	icons.h				\
-	gtkfileentry.h			\
-	gtkenhancedentry.h		\
-	gtksequenceedit.h		\
-	valuesequenceedit.h		\
-	programedit.h			\
-	parameter.h			\
-	gtkdirectorychooser.h		\
+	gebr-gui-about.h				\
+	gebr-gui-utils.h				\
+	gebr-gui-pixmaps.h			\
+	gebr-gui-icons.h				\
+	gebr-gui-file-entry.h			\
+	gebr-gui-enhanced-entry.h		\
+	gebr-gui-sequence-edit.h		\
+	gebr-gui-value-sequence-edit.h		\
+	gebr-gui-program-edit.h			\
+	gebr-gui-parameter.h			\
+	gebr-gui-directory-chooser.h		\
 	gebr-gui-save-dialog.h		\
 	gebr-gui-help-edit-widget.h	\
 	gebr-gui-help-edit-window.h	\

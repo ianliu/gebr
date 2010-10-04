@@ -21,7 +21,7 @@
 #include <gtk/gtk.h>
 
 #include <libgebr/intl.h>
-#include <libgebr/gui/icons.h>
+#include <libgebr/gui/gebr-gui-icons.h>
 #include <libgebr/libgebr.h>
 
 #include "gebr.h"

@@ -19,7 +19,7 @@
 #include "../../intl.h"
 
 #include "gebr-gui-save-dialog.h"
-#include "utils.h"
+#include "gebr-gui-utils.h"
 
 #include <glib.h>
 #include <glib/gprintf.h>

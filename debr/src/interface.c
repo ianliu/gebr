@@ -15,10 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libgebr/gui/pixmaps.h>
+#include <libgebr/gui/gebr-gui-pixmaps.h>
 
-#include <libgebr/gui/utils.h>
-#include <libgebr/gui/valuesequenceedit.h>
+#include <libgebr/gui/gebr-gui-utils.h>
+#include <libgebr/gui/gebr-gui-value-sequence-edit.h>
 
 #include <libgebr/intl.h>
 

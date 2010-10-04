@@ -21,7 +21,7 @@
 #include <gtk/gtk.h>
 
 #include <libgebr/geoxml.h>
-#include <libgebr/gui/gtksequenceedit.h>
+#include <libgebr/gui/gebr-gui-sequence-edit.h>
 
 G_BEGIN_DECLS
 
@@ -38,14 +38,14 @@ typedef struct _CategoryEdit CategoryEdit;
 typedef struct _CategoryEditClass CategoryEditClass;
 
 struct _CategoryEdit {
-	GtkSequenceEdit parent;
+	GebrGuiSequenceEdit parent;
 
 	GtkWidget *validate_image;
 	GebrGeoXmlCategory *category;
 	GebrGeoXmlFlow *menu;
 };
 struct _CategoryEditClass {
-	GtkSequenceEditClass parent;
+	GebrGuiSequenceEditClass parent;
 };
 
 /**

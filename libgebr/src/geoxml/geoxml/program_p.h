@@ -21,7 +21,7 @@
 #include <gdome.h>
 
 #include "program.h"
-#include "program_parameter.h"
+#include "program-parameter.h"
 
 G_BEGIN_DECLS
 

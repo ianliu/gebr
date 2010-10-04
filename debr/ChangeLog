@@ -1176,7 +1176,7 @@
 
 	* category sorting
 	* debr category list with reference count (Fixes issue 14)
-	* - signals renamed and removed added to gtksequenceedit
+	* - signals renamed and removed added to GebrGuiSequenceEdit
 	  - added libgebr_gtk_tree_model_foreach
 	* gebr config directory structure organized
 
@@ -1512,7 +1512,7 @@
 
 2009-01-28  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
-	* - fix drag n' drop on gtksequenceedit and devivates
+	* - fix drag n' drop on GebrGuiSequenceEdit and devivates
 	  - fix save on exit dialog on debr
 	* ¡commit 1000! several UI tweaks
 
@@ -1547,7 +1547,7 @@
 
 	* fixed parameter group creation and deletion (debr)
 	* - fix __geoxml_sequence_move_before with position NULL
-	  - fixes to top/bottom at gtksequenceedit and derivatives
+	  - fixes to top/bottom at GebrGuiSequenceEdit and derivatives
 
 2009-01-23  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 

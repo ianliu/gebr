@@ -255,39 +255,39 @@ msgstr "O parâmetro de referência faz referência a si próprio."
 msgid "The operation only applies to the first instance of the group."
 msgstr "A operação aplica-se somente à primeira instância do grupo."
 
-#: ../src/geoxml/geoxml/parameter.c:254
+#: ../src/geoxml/geoxml/gebr-gui-parameter.c:254
 msgid "string"
 msgstr "texto"
 
-#: ../src/geoxml/geoxml/parameter.c:254
+#: ../src/geoxml/geoxml/gebr-gui-parameter.c:254
 msgid "integer"
 msgstr "inteiro"
 
-#: ../src/geoxml/geoxml/parameter.c:254
+#: ../src/geoxml/geoxml/gebr-gui-parameter.c:254
 msgid "file"
 msgstr "arquivo"
 
-#: ../src/geoxml/geoxml/parameter.c:254
+#: ../src/geoxml/geoxml/gebr-gui-parameter.c:254
 msgid "flag"
 msgstr "boleano"
 
-#: ../src/geoxml/geoxml/parameter.c:255
+#: ../src/geoxml/geoxml/gebr-gui-parameter.c:255
 msgid "real number"
 msgstr "número real"
 
-#: ../src/geoxml/geoxml/parameter.c:255
+#: ../src/geoxml/geoxml/gebr-gui-parameter.c:255
 msgid "range"
 msgstr "intervalo"
 
-#: ../src/geoxml/geoxml/parameter.c:255
+#: ../src/geoxml/geoxml/gebr-gui-parameter.c:255
 msgid "enum"
 msgstr "enumeração"
 
-#: ../src/geoxml/geoxml/parameter.c:256
+#: ../src/geoxml/geoxml/gebr-gui-parameter.c:256
 msgid "group"
 msgstr "grupo"
 
-#: ../src/geoxml/geoxml/parameter.c:256
+#: ../src/geoxml/geoxml/gebr-gui-parameter.c:256
 msgid "reference"
 msgstr "referência"
 
@@ -481,27 +481,27 @@ msgstr "%s INVÁLIDO: %s"
 msgid "%s valid!\n"
 msgstr "%s válido!\n"
 
-#: ../src/gui/gui/about.c:36
+#: ../src/gui/gui/gebr-gui-about.c:36
 msgid "GêBR Core Team:"
 msgstr "GêBR Core Team:"
 
-#: ../src/gui/gui/about.c:37
+#: ../src/gui/gui/gebr-gui-about.c:37
 msgid "Coordinator"
 msgstr "Coordenador"
 
-#: ../src/gui/gui/about.c:40
+#: ../src/gui/gui/gebr-gui-about.c:40
 msgid "Developers"
 msgstr "Desenvolvedores"
 
-#: ../src/gui/gui/about.c:47
+#: ../src/gui/gui/gebr-gui-about.c:47
 msgid "Consultants"
 msgstr "Consultores"
 
-#: ../src/gui/gui/about.c:63
+#: ../src/gui/gui/gebr-gui-about.c:63
 msgid "GêBR Core Team"
 msgstr "GêBR Core Team"
 
-#: ../src/gui/gui/about.c:66
+#: ../src/gui/gui/gebr-gui-about.c:66
 msgid ""
 "Copyright (C) 2007-2010 GêBR core team (http://www.gebrproject.com/)\n"
 "\n"
@@ -542,35 +542,35 @@ msgstr ""
 "abrl de 1998, e #9610, 19 de fevereiro de 1998, e é registrado no Instituto "
 "Nacional de Propriedade Industrial (INPI) sob número 70156."
 
-#: ../src/gui/gui/about.c:84
+#: ../src/gui/gui/gebr-gui-about.c:84
 msgid "GêBR Home page"
 msgstr "Página da GêBR"
 
-#: ../src/gui/gui/gtkfileentry.c:136
+#: ../src/gui/gui/gebr-gui-file-entry.c:136
 msgid "Choose file"
 msgstr "Escolha um arquivo"
 
-#: ../src/gui/gui/gtkfileentry.c:136
+#: ../src/gui/gui/gebr-gui-file-entry.c:136
 msgid "Choose directory"
 msgstr "Escolha um diretório"
 
-#: ../src/gui/gui/gtksequenceedit.c:424
+#: ../src/gui/gui/gebr-gui-sequence-edit.c:424
 msgid "<empty value>"
 msgstr "<valor vazio>"
 
-#: ../src/gui/gui/parameter.c:113
+#: ../src/gui/gui/gebr-gui-parameter.c:113
 msgid "All"
 msgstr "Todos"
 
-#: ../src/gui/gui/parameter.c:633
+#: ../src/gui/gui/gebr-gui-parameter.c:633
 msgid "Edit list"
 msgstr "Editar lista"
 
-#: ../src/gui/gui/parameter.c:827
+#: ../src/gui/gui/gebr-gui-parameter.c:827
 msgid "Do not use dictionary"
 msgstr "Não use o dicionário"
 
-#: ../src/gui/gui/parameter.c:887
+#: ../src/gui/gui/gebr-gui-parameter.c:887
 msgid "Dictionary"
 msgstr "Dicionário"
 

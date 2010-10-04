@@ -756,7 +756,7 @@
 2008-02-21  Braulio Barros de Oliveira <brauliobo@gebrproject.com>
 
 	* fixed generation of commandline for list parameters
-	* - fixed icon of gtkfileentry and gtksequenceedit
+	* - fixed icon of gtkfileentry and GebrGuiSequenceEdit
 	  - merged enum-impl and improved show on combo box
 	  - quote each value when parameter accepts a list of parameters
 	  - fixed revert to default value on parameters dialog

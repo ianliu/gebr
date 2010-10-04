@@ -48,7 +48,7 @@ G_BEGIN_DECLS
  * 	"GebrGeoXmlLineFlow" [ URL = "\ref GebrGeoXmlLineFlow" ];
  * 	"GebrGeoXmlProgram" [ URL = "\ref program.h" ];
  * 	"GebrGeoXmlParameters" [ URL = "\ref parameters.h" ];
- * 	"GebrGeoXmlParameter" [ URL = "\ref parameter.h" ];
+ * 	"GebrGeoXmlParameter" [ URL = "\ref gebr-gui-parameter.h" ];
  * 	"GebrGeoXmlPropertyValue" [ URL = "\ref GebrGeoXmlPropertyValue" ];
  * 	"GebrGeoXmlEnumOption" [ URL = "\ref enum_option.h" ];
  * 	"GebrGeoXmlValueSequence" [ URL = "\ref value_sequence.h" ];

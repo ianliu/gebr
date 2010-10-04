@@ -25,7 +25,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-#include <libgebr/gui/programedit.h>
+#include <libgebr/gui/gebr-gui-program-edit.h>
 
 G_BEGIN_DECLS
 

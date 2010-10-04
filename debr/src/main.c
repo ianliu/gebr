@@ -19,7 +19,7 @@
 
 #include <gtk/gtk.h>
 
-#include <libgebr/gui/icons.h>
+#include <libgebr/gui/gebr-gui-icons.h>
 #include <libgebr/libgebr.h>
 
 #include "interface.h"

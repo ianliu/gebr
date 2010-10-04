@@ -19,7 +19,7 @@
 
 #include <gdome.h>
 
-#include "program_parameter.h"
+#include "program-parameter.h"
 #include "types.h"
 #include "xml.h"
 #include "error.h"

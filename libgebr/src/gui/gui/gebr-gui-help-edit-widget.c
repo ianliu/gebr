@@ -30,7 +30,14 @@ enum {
 
 enum {
 	COMMIT_REQUEST,
+	CONTENT_LOADED,
 	LAST_SIGNAL
+};
+
+enum {
+	STATE_INIT,
+	STATE_LOADING,
+	STATE_LOADED
 };
 
 static guint signals[LAST_SIGNAL] = { 0 };
@@ -38,6 +45,7 @@ static guint signals[LAST_SIGNAL] = { 0 };
 typedef struct _GebrGuiHelpEditWidgetPrivate GebrGuiHelpEditWidgetPrivate;
 
 struct _GebrGuiHelpEditWidgetPrivate {
+	guint state;
 	gboolean is_editing;
 	GtkWidget * edit_widget;
 	GtkWidget * html_viewer;
@@ -60,7 +68,7 @@ static void gebr_gui_help_edit_widget_get_property	(GObject	*object,
 							 GValue		*value,
 							 GParamSpec	*pspec);
 
-gboolean gebr_gui_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self);
+static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrGuiHelpEditWidget * self);
 
 G_DEFINE_ABSTRACT_TYPE(GebrGuiHelpEditWidget, gebr_gui_help_edit_widget, GTK_TYPE_VBOX);
 
@@ -105,7 +113,7 @@ static void gebr_gui_help_edit_widget_class_init(GebrGuiHelpEditWidgetClass * kl
 	 * GebrGuiHelpEditWidget::commit-request:
 	 * Emitted when 'commit_changes' is called.
 	 */
-	signals[COMMIT_REQUEST] =
+	signals[ COMMIT_REQUEST ] =
 		g_signal_new("commit-request",
 			     GEBR_GUI_TYPE_HELP_EDIT_WIDGET,
 			     G_SIGNAL_RUN_LAST,
@@ -115,6 +123,21 @@ static void gebr_gui_help_edit_widget_class_init(GebrGuiHelpEditWidgetClass * kl
 			     G_TYPE_NONE,
 			     0);
 
+	/**
+	 * GebrGuiHelpEditWidget::content-loaded:
+	 * Emitted after a gebr_gui_help_edit_widget_set_content(), when it is fully loaded, but before JavaScripts
+	 * calls.
+	 */
+	signals[ CONTENT_LOADED ] =
+		g_signal_new ("content-loaded",
+			      GEBR_GUI_TYPE_HELP_EDIT_WIDGET,
+			      G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (GebrGuiHelpEditWidgetClass, content_loaded),
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__VOID,
+			      G_TYPE_NONE,
+			      0);
+
 	g_type_class_add_private(klass, sizeof(GebrGuiHelpEditWidgetPrivate));
 }
 
@@ -123,7 +146,8 @@ static void gebr_gui_help_edit_widget_init(GebrGuiHelpEditWidget * self)
 	GtkBox * box;
 	GebrGuiHelpEditWidgetPrivate * priv;
 
-	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
+	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE (self);
+	priv->state = STATE_INIT;
 	priv->edit_widget = webkit_web_view_new();
 	priv->html_viewer = gebr_gui_html_viewer_widget_new();
 	priv->is_editing = TRUE;
@@ -184,6 +208,19 @@ static void gebr_gui_help_edit_widget_get_property(GObject	*object,
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
+static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrGuiHelpEditWidget * self)
+{
+	GebrGuiHelpEditWidgetPrivate * priv;
+
+	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE (self);
+	priv->state = STATE_LOADED;
+
+	g_signal_handlers_disconnect_by_func (priv->edit_widget,
+					      on_load_finished,
+					      self);
+
+	g_signal_emit (self, signals[ CONTENT_LOADED ], 0);
+}
 
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
@@ -193,9 +230,9 @@ void gebr_gui_help_edit_widget_set_editing(GebrGuiHelpEditWidget * self, gboolea
 {
 	GebrGuiHelpEditWidgetPrivate * priv;
 	
-	g_return_if_fail(GEBR_GUI_IS_HELP_EDIT_WIDGET(self));
+	g_return_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self));
 
-	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
+	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE (self);
 	priv->is_editing = editing;
 
 	if (editing) {
@@ -213,29 +250,47 @@ void gebr_gui_help_edit_widget_set_editing(GebrGuiHelpEditWidget * self, gboolea
 
 void gebr_gui_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self)
 {
-	g_return_if_fail(GEBR_GUI_IS_HELP_EDIT_WIDGET(self));
+	GebrGuiHelpEditWidgetPrivate * priv;
 
-	GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS(self)->commit_changes(self);
-	g_signal_emit(self, signals[COMMIT_REQUEST], 0);
+	g_return_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self));
+
+	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE (self);
+
+	if (priv->state == STATE_LOADED) {
+		GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS(self)->commit_changes(self);
+		g_signal_emit(self, signals[COMMIT_REQUEST], 0);
+	}
 }
 
 gchar * gebr_gui_help_edit_widget_get_content(GebrGuiHelpEditWidget * self)
 {
-	g_return_val_if_fail(GEBR_GUI_IS_HELP_EDIT_WIDGET(self), NULL);
+	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), NULL);
 
 	return GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS(self)->get_content(self);
 }
 
 void gebr_gui_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, const gchar * content)
 {
-	g_return_if_fail(GEBR_GUI_IS_HELP_EDIT_WIDGET(self));
+	GebrGuiHelpEditWidgetPrivate * priv;
+
+	g_return_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self));
+
+	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE (self);
+
+	if (priv->state == STATE_LOADING)
+		return;
+
+	priv->state = STATE_LOADING;
+
+	g_signal_connect (priv->edit_widget, "load-finished",
+			  G_CALLBACK (on_load_finished), self);
 
 	GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS(self)->set_content(self, content);
 }
 
 gboolean gebr_gui_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self)
 {
-	g_return_val_if_fail(GEBR_GUI_IS_HELP_EDIT_WIDGET(self), FALSE);
+	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), FALSE);
 
 	return GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS(self)->is_content_saved(self);
 }
@@ -244,7 +299,7 @@ GtkWidget * gebr_gui_help_edit_widget_get_web_view(GebrGuiHelpEditWidget * self)
 {
 	GebrGuiHelpEditWidgetPrivate * priv;
 
-	g_return_val_if_fail(GEBR_GUI_IS_HELP_EDIT_WIDGET(self), NULL);
+	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), NULL);
 
 	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	return priv->edit_widget;
@@ -256,7 +311,7 @@ JSContextRef gebr_gui_help_edit_widget_get_js_context(GebrGuiHelpEditWidget * se
 	WebKitWebFrame * frame;
 	GebrGuiHelpEditWidgetPrivate * private;
 
-	g_return_val_if_fail(GEBR_GUI_IS_HELP_EDIT_WIDGET(self), NULL);
+	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), NULL);
 
 	private = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	view = WEBKIT_WEB_VIEW(private->edit_widget);
@@ -269,7 +324,7 @@ GebrGuiHtmlViewerWidget * gebr_gui_help_edit_widget_get_html_viewer(GebrGuiHelpE
 {
 	GebrGuiHelpEditWidgetPrivate * priv;
 
-	g_return_val_if_fail(GEBR_GUI_IS_HELP_EDIT_WIDGET(self), NULL);
+	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), NULL);
 
 	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	return GEBR_GUI_HTML_VIEWER_WIDGET(priv->html_viewer);

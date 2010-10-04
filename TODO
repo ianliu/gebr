@@ -3,7 +3,7 @@
 RC:
 +	Mudar nome da libgebr_misc para libcommon
 +	Reiniciar ou avisar o usuário de daemons antigos ao instalar o gebrd
-+	"Enter" adiciona em GtkSequenceEdit
++	"Enter" adiciona em GebrGuiSequenceEdit
 +	Copy/paste de projetos, linhas, fluxos, componentes de fluxos (*****)
 
 =====================
