@@ -341,32 +341,17 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "flow_dict_edit"))), -1);
 
-	menu = gtk_menu_new();
-	tool_item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_APPLY);
-	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group, "flow_edition_status_configured")));
 	action = gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured");
 	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED));
 
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group, "flow_edition_status_disabled")));
 	action = gtk_action_group_get_action(gebr.action_group, "flow_edition_status_disabled");
 	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_DISABLED));
 
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group, "flow_edition_status_unconfigured")));
 	action = gtk_action_group_get_action(gebr.action_group, "flow_edition_status_unconfigured");
 	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED));
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	/* gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_io"))), -1); */
+
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
