@@ -80,6 +80,8 @@ static void menu_remove_with_validation(GtkTreeIter * iter);
 
 static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object);
 
+static void debr_menu_commit_help_edit_windows(GtkTreeIter * iter);
+
 static void debr_menu_backup_help(GtkTreeIter * iter);
 
 static void debr_menu_sync_revert_buttons(GtkTreeIter * iter);
@@ -493,11 +495,13 @@ MenuMessage menu_save(GtkTreeIter * iter)
 		debr_message(GEBR_LOG_ERROR, _("Permission denied."));
 		return MENU_MESSAGE_PERMISSION_DENIED;	
 	} else {
-		gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(menu), gebr_iso_date());
-		gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path);
+		debr_menu_commit_help_edit_windows(iter);
 		debr_menu_backup_help(iter);
 		debr_program_sync_help_backups();
 		debr_menu_sync_revert_buttons(iter);
+
+		gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(menu), gebr_iso_date());
+		gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path);
 	}
 
 	tmp = g_strdup_printf("%ld",
@@ -621,6 +625,7 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	gchar * target_fname;
 	struct validate * validate;
 
+	debr_menu_commit_help_edit_windows (iter);
 	clone = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(menu)));
 	is_overwrite = menu_is_path_loaded(filepath, &child);
 
@@ -638,8 +643,6 @@ gboolean menu_save_as(GtkTreeIter * iter)
 			   MENU_VALIDATE_POINTER, &validate,
 			   -1);
 
-	gtk_tree_store_set(debr.ui_menu.model, &target, MENU_VALIDATE_POINTER, validate, -1);
-
 	menu_load_iter(filepath, &target, clone, TRUE);
 	ret = (menu_save(&target) != MENU_MESSAGE_PERMISSION_DENIED);
 	if (ret) {
@@ -652,9 +655,11 @@ gboolean menu_save_as(GtkTreeIter * iter)
 
 		/* If the menu was never saved, that means 'currentpath' is empty,
 		 * and we need to remove it from the interface. In case this menu was
-		 * validated, we need to delete that too. */
-		if (!strlen(currentpath)){
-			debr_menu_sync_help_edit_window(iter, clone);
+		 * validated, we need to delete that too. 
+		 */
+		if (!strlen(currentpath)) {
+			debr_menu_sync_help_edit_window (iter, clone);
+			debr_menu_sync_revert_buttons (&target);
 			menu_remove_with_validation(iter);
 		}
 
@@ -1988,11 +1993,15 @@ menu_on_query_tooltip(GtkTreeView * tree_view, GtkTooltip * tooltip, GtkTreeIter
 	return FALSE;
 }
 
-/**
- * \internal
- * Tells if \p path is loaded in DeBR interface.
- * If \p path is loaded and \p iter is not NULL, set \p iter to point to the respective menu whose file path is \p path.
- * \return TRUE if \p path is loaded, FALSE otherwise.
+/*
+ * menu_is_path_loaded:
+ * @path:
+ * @iter:
+ *
+ * Tells if @path is loaded in DeBR interface. If @path is loaded and @iter is not %NULL, set @iter to point to the
+ * respective menu whose file path is @path.
+ *
+ * Returns: %TRUE if @path is loaded, %FALSE otherwise.
  */
 static gboolean menu_is_path_loaded(const gchar * path, GtkTreeIter * iter)
 {
@@ -2201,12 +2210,45 @@ static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object)
 		gebr_geoxml_flow_get_program(old_menu, &program, 0);
 		while (program) {
 			help_edit_window = g_hash_table_lookup(debr.help_edit_windows, program);
-			if (help_edit_window){
+			if (help_edit_window) {
 				g_hash_table_remove(debr.help_edit_windows, program);
 				gtk_widget_destroy(GTK_WIDGET(help_edit_window));
 			}
 			gebr_geoxml_sequence_next(&program);
 		}
+	}
+}
+
+/*
+ * debr_menu_commit_help_edit_windows:
+ *
+ * Calls gebr_gui_help_edit_widget_commit_changes() on all help edit windows for @iter.
+ */
+static void debr_menu_commit_help_edit_windows(GtkTreeIter * iter)
+{
+	GtkTreeModel * model;
+	GebrGeoXmlFlow * menu;
+	GebrGeoXmlSequence * program;
+	GebrGuiHelpEditWidget * widget;
+	GebrGuiHelpEditWindow * window;
+
+	model = GTK_TREE_MODEL (debr.ui_menu.model);
+	gtk_tree_model_get (model, iter, MENU_XMLPOINTER, &menu, -1);
+
+	window = g_hash_table_lookup (debr.help_edit_windows, menu);
+	if (window) {
+		g_object_get (window, "help-edit-widget", &widget, NULL);
+		gebr_gui_help_edit_widget_commit_changes (widget);
+	}
+
+	gebr_geoxml_flow_get_program (menu, &program, 0);
+	while (program) {
+		window = g_hash_table_lookup (debr.help_edit_windows, program);
+		if (window) {
+			g_object_get (window, "help-edit-widget", &widget, NULL);
+			gebr_gui_help_edit_widget_commit_changes (widget);
+		}
+		gebr_geoxml_sequence_next (&program);
 	}
 }
 
