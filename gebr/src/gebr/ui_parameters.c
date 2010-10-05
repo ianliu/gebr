@@ -205,7 +205,7 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 		gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(ui_parameters->program_edit->program),
 						 GEBR_GEOXML_SEQUENCE(gebr.program));
 		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(gebr.program));
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 		icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(ui_parameters->program_edit->program));
 

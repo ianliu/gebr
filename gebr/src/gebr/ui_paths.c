@@ -36,7 +36,7 @@
 
 gboolean path_save(void)
 {
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, FALSE);
 	project_line_info_update();
 	return TRUE;
 }

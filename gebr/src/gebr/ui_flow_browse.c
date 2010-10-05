@@ -445,7 +445,7 @@ static void flow_browse_load(void)
 		gebr_geoxml_flow_io_set_input(gebr.flow, "");
 		gebr_geoxml_flow_io_set_output(gebr.flow, "");
 		gebr_geoxml_flow_io_set_error(gebr.flow, "");
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE);
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, TRUE);
 	} else {
 		GebrGeoXmlSequence *first_server;
 
@@ -478,7 +478,7 @@ void flow_browse_show_help(void)
 void flow_browse_edit_help(void)
 {
 	gebr_help_edit_document(GEBR_GEOXML_DOC(gebr.flow));
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 }
 
 /**
@@ -584,11 +584,11 @@ static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, Geb
 
 	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
 	if (!gebr_geoxml_flow_change_to_revision(gebr.flow, revision)) {
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not revert to state '%s' ('%s')."), comment, date);
 		return;
 	}
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Reverted to state '%s' ('%s')."), comment, date);
 	flow_browse_load();
@@ -605,7 +605,7 @@ static void flow_browse_on_revision_delete_activate(GtkWidget * widget, GebrGeoX
 						    "you will not be able to recover it later."));
 	if (response) {
 		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(revision));
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 		menu_item = g_object_get_data(G_OBJECT(widget), "menu-item-to-be-removed");
 		gtk_widget_destroy(GTK_WIDGET(menu_item));
 	}
@@ -617,5 +617,5 @@ static void flow_browse_on_revision_delete_activate(GtkWidget * widget, GebrGeoX
  */
 static void flow_browse_on_flow_move(void)
 {
-	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE);
+	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE, TRUE);
 }

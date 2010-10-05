@@ -54,7 +54,7 @@ void project_new(void)
 	gebr_geoxml_document_set_author(project, gebr.config.username->str);
 	gebr_geoxml_document_set_email(project, gebr.config.email->str);
 	iter = project_append_iter(GEBR_GEOXML_PROJECT(project));
-	document_save(project, TRUE);
+	document_save(project, TRUE, FALSE);
 
 	project_line_select_iter(&iter);
 
@@ -145,7 +145,7 @@ GtkTreeIter project_load_with_lines(GebrGeoXmlProject *project)
 		gebr_geoxml_sequence_next(&next);
 
 		line_source = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line));
-		int ret = document_load_with_parent((GebrGeoXmlDocument**)(&line), line_source, &project_iter);
+		int ret = document_load_with_parent((GebrGeoXmlDocument**)(&line), line_source, &project_iter, FALSE);
 		if (ret) {
 			project_line = next;
 			continue;
@@ -174,7 +174,7 @@ void project_list_populate(void)
 			continue;
 
 		GebrGeoXmlProject *project;
-		if (document_load((GebrGeoXmlDocument**)(&project), filename))
+		if (document_load((GebrGeoXmlDocument**)(&project), filename, FALSE))
 			continue;
 
 		project_load_with_lines(project);
@@ -192,13 +192,13 @@ void project_line_move(const gchar * src_project, const gchar * src_line,
 	GebrGeoXmlProjectLine * dst_lne;
 	GebrGeoXmlProjectLine * clone;
 	
-	document_load((GebrGeoXmlDocument**)&src_prj, src_project);
+	document_load((GebrGeoXmlDocument**)&src_prj, src_project, FALSE);
 
 	if (strcmp(src_project, dst_project) == 0)
 		/* The line movement is inside the same project. */
 		dst_prj = src_prj;
 	else
-		document_load((GebrGeoXmlDocument**)&dst_prj, dst_project);
+		document_load((GebrGeoXmlDocument**)&dst_prj, dst_project, FALSE);
 	
 	src_lne = gebr_geoxml_project_get_line_from_source(src_prj, src_line);
 	clone = gebr_geoxml_project_append_line(dst_prj, src_line);
@@ -213,8 +213,8 @@ void project_line_move(const gchar * src_project, const gchar * src_line,
 			gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(clone), GEBR_GEOXML_SEQUENCE(dst_lne));
 	}
 
-	document_save(GEBR_GEOXML_DOCUMENT(src_prj), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(src_prj), TRUE, FALSE);
 
 	if (strcmp(src_project, dst_project) != 0)
-		document_save(GEBR_GEOXML_DOCUMENT(dst_prj), TRUE);
+		document_save(GEBR_GEOXML_DOCUMENT(dst_prj), TRUE, FALSE);
 }

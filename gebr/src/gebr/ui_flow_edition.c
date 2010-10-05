@@ -424,7 +424,7 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 		listiter = listiter->next;
 	}
 
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	g_list_foreach (paths, (GFunc) gtk_tree_path_free, NULL);
 	g_list_free (paths);
@@ -456,7 +456,7 @@ void flow_edition_status_changed(guint status)
 		icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(program));
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_ICON_COLUMN, icon, -1);
 	}
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 }
 
 void flow_edition_on_server_changed(void)
@@ -530,7 +530,7 @@ flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * 
 		gebr_geoxml_sequence_move_after(program, position_program);
 		gtk_list_store_move_after(gebr.ui_flow_edition->fseq_store, iter, position);
 	}
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	return FALSE;
 }
@@ -607,13 +607,13 @@ static void flow_edition_menu_add(void)
 	menu_programs_index = gebr_geoxml_flow_get_programs_number(gebr.flow);
 	/* add it to the file */
 	gebr_geoxml_flow_add_flow(gebr.flow, menu);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	/* and to the GUI */
 	gebr_geoxml_flow_get_program(gebr.flow, &menu_programs, menu_programs_index);
 	flow_add_program_sequence_to_view(menu_programs, TRUE);
 
-	gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
+	document_free(GEBR_GEOXML_DOC(menu));
  out:	g_free(name);
 	g_free(filename);
 }
@@ -810,7 +810,7 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 	/*if server isn't the first one, move after and save*/
 	if (gebr_geoxml_sequence_get_index(GEBR_GEOXML_SEQUENCE(gebr.flow_server)) != 0) {
 		gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(gebr.flow_server), NULL);
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 	}
 
 	flow_edition_set_io();

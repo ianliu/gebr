@@ -455,11 +455,11 @@ void project_line_import(void)
 			document_import(GEBR_GEOXML_DOCUMENT(flow));
 			gebr_geoxml_line_set_flow_source(GEBR_GEOXML_LINE_FLOW(i),
 							 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
-			document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE);
+			document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, TRUE); /* this flow is cached */
 
 			i = next;
 		}
-		document_save(GEBR_GEOXML_DOCUMENT(*line), FALSE);
+		document_save(GEBR_GEOXML_DOCUMENT(*line), FALSE, FALSE);
 
 		return ret;
 	}
@@ -500,9 +500,8 @@ void project_line_import(void)
 				GebrGeoXmlSequence * next = project_line;
 				gebr_geoxml_sequence_next(&next);
 
-				int ret =
-				    line_import(&iter, &line, gebr_geoxml_project_get_line_source
-						(GEBR_GEOXML_PROJECT_LINE(project_line)), tmp_dir->str);
+				int ret = line_import(&iter, &line, gebr_geoxml_project_get_line_source
+						      (GEBR_GEOXML_PROJECT_LINE(project_line)), tmp_dir->str);
 				if (ret) {
 					project_line = next;
 					continue;
@@ -512,7 +511,7 @@ void project_line_import(void)
 								    (GEBR_GEOXML_DOCUMENT(line)));
 
 				project_append_line_iter(&iter, line);
-				document_save(GEBR_GEOXML_DOCUMENT(line), FALSE);
+				document_save(GEBR_GEOXML_DOCUMENT(line), FALSE, FALSE);
 				
 				project_line = next;
 			}
@@ -527,7 +526,7 @@ void project_line_import(void)
 				continue;
 			gebr_geoxml_project_append_line(gebr.project,
 							gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)));
-			document_save(GEBR_GEOXML_DOCUMENT(gebr.project), TRUE);
+			document_save(GEBR_GEOXML_DOCUMENT(gebr.project), TRUE, FALSE);
 
 			project_line_get_selected(&iter, DontWarnUnselection);
 			parent = iter;
@@ -631,7 +630,7 @@ void project_line_export(void)
 
 		line_set_paths_to(line,	gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box)));
 		g_string_printf(filename, "%s/%s", tmpdir->str, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)));
-		document_save_at(GEBR_GEOXML_DOCUMENT(line), filename->str, FALSE);
+		document_save_at(GEBR_GEOXML_DOCUMENT(line), filename->str, FALSE, FALSE);
 
 		gebr_geoxml_line_get_flow(line, &j, 0);
 		for (; j != NULL; gebr_geoxml_sequence_next(&j)) {
@@ -639,35 +638,35 @@ void project_line_export(void)
 			GebrGeoXmlFlow *flow;
 
 			flow_filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(j));
-			if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename))
+			if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename, FALSE))
 				continue;
 
 			flow_set_paths_to(flow,	gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box)));
 			g_string_printf(filename, "%s/%s", tmpdir->str, flow_filename);
-			document_save_at(GEBR_GEOXML_DOCUMENT(flow), filename->str, FALSE);
+			document_save_at(GEBR_GEOXML_DOCUMENT(flow), filename->str, FALSE, FALSE);
 
-			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+			document_free(GEBR_GEOXML_DOCUMENT(flow));
 		}
 
-		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(line));
+		document_free(GEBR_GEOXML_DOCUMENT(line));
 	}
 	
 	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
 		GebrGeoXmlSequence *i;
 
 		g_string_printf(filename, "%s/%s", tmpdir->str, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.project)));
-		document_save_at(GEBR_GEOXML_DOCUMENT(gebr.project), filename->str, FALSE);
+		document_save_at(GEBR_GEOXML_DOCUMENT(gebr.project), filename->str, FALSE, FALSE);
 
 		gebr_geoxml_project_get_line(gebr.project, &i, 0);
 		for (; i != NULL; gebr_geoxml_sequence_next(&i)) {
 			GebrGeoXmlLine *line;
 
 			if (document_load((GebrGeoXmlDocument**)(&line),
-					  gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(i))))
+					  gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(i)), FALSE))
 				continue;
 
 			parse_line(line);
-			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(line));
+			document_free(GEBR_GEOXML_DOCUMENT(line));
 		}
 	} else
 		parse_line(gebr.line);
@@ -976,5 +975,5 @@ void project_line_show_help(void)
 void project_line_edit_help(void)
 {
 	gebr_help_edit_document(GEBR_GEOXML_DOC(gebr.project_line));
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.project_line), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.project_line), TRUE, FALSE);
 }

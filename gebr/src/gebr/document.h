@@ -51,12 +51,12 @@ gboolean document_is_at_gebr_data_dir(GebrGeoXmlDocument * document);
  * Load a document (flow, line or project) located at GêBR's data directory from its filename, handling errors.
  * Calls #document_load_with_parent.
  */
-int document_load(GebrGeoXmlDocument ** document, const gchar * filename);
+int document_load(GebrGeoXmlDocument ** document, const gchar * filename, gboolean cache);
 /**
  * Load a document (flow, line or project) located at GêBR's data directory from its filename, handling errors.
  * Calls #document_load_path_with_parent.
  */
-int document_load_with_parent(GebrGeoXmlDocument ** document, const gchar * filename, GtkTreeIter *parent);
+int document_load_with_parent(GebrGeoXmlDocument ** document, const gchar * filename, GtkTreeIter *parent, gboolean cache);
 /**
  * Load a document (flow, line or project) located at \p diretory from its with \p filename, handling errors.
  * Calls #document_load_at_with_parent.
@@ -89,19 +89,24 @@ int document_load_path(GebrGeoXmlDocument **document, const gchar * path);
  * (eg. a line if \p document is a flow).
  * It is used to remove child's reference if \p document fails to load. 
  */
-int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * path, GtkTreeIter *parent);
+int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * path, GtkTreeIter *parent, gboolean cache);
 
 /**
  * Save \p document at \p path.  * Only set \p set_modified_date to TRUE if this save is a reflect of a explicit user action.
  * Returns TRUE on document save success or FALSE otherwise
  */
-gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date);
+gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date, gboolean cache);
 /**
  * Save \p document using its filename field at data directory.
  * @see document_save_at
  * Returns TRUE on document save success or FALSE otherwise
  */
-gboolean document_save(GebrGeoXmlDocument * document, gboolean set_modified_date);
+gboolean document_save(GebrGeoXmlDocument * document, gboolean set_modified_date, gboolean cache);
+
+/**
+ * Free document and remove it from cache.
+ */
+void document_free(GebrGeoXmlDocument * document);
 
 /**
  * Import \p document into data directory, saving it with a new filename.
