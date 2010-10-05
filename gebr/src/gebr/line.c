@@ -198,13 +198,12 @@ void line_load_flows(void)
 		gebr_geoxml_sequence_next(&next);
 
 		const gchar *filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
-		int ret = document_load_with_parent((GebrGeoXmlDocument**)(&flow), filename, &iter, FALSE);
+		int ret = document_load_with_parent((GebrGeoXmlDocument**)(&flow), filename, &iter, TRUE);
 		if (ret) {
 			line_flow = next;
 			error = TRUE;
 			continue;
 		}
-		puts(filename);
 
 		line_append_flow_iter(flow, GEBR_GEOXML_LINE_FLOW(line_flow));
 
