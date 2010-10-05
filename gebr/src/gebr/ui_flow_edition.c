@@ -312,7 +312,6 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 	const gchar		* icon;
 	gboolean		  has_configured;
 	gboolean		  is_homogeneous = TRUE;
-	gboolean		  required_unfilled;
 
 	if (key->keyval != GDK_space)
 		return FALSE;

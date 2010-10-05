@@ -23,6 +23,7 @@ char *strptime(const char *s, const char *formato, struct tm *tm);
 
 #include <glib.h>
 
+#include <libgebr.h>
 #include <geoxml.h>
 #include "../../utils.h"
 #include "../../date.h"

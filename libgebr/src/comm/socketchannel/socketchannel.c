@@ -18,13 +18,15 @@
 #include <stdio.h>
 #include <locale.h>
 
+#include <libgebr.h>
+
 #include "../../intl.h"
 #include "../comm/channelsocket.h"
 
-	gint channel_do(const gchar * source, const gchar * destination);
+gint channel_do(const gchar * source, const gchar * destination);
 
-	void cmdline_print_error(char **argv)
-	{
+void cmdline_print_error(char **argv)
+{
 	fprintf(stderr, _("%s: syntax error\n"), argv[0]);
 	fprintf(stderr, _("Try %s --help\n"), argv[0]);
 }
@@ -34,14 +36,14 @@ int main(int argc, char **argv)
 	static gchar **host_pair;
 	static GOptionEntry entries[] = {
 		{G_OPTION_REMAINING, 0, G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_STRING_ARRAY, &host_pair, "",
-		 "192.168.0.1:6010 /tmp/.X11-unix/X0"},
+			"192.168.0.1:6010 /tmp/.X11-unix/X0"},
 		{NULL}
 	};
 	gint ret;
 	GError *error = NULL;
 	GOptionContext *context;
 
-	gebr_libinit(GETTEXT_PACKAGE);
+	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
 
 	context = g_option_context_new(NULL);
 	g_option_context_set_summary(context, _("LibGebrComm socket channelling"));
@@ -94,5 +96,5 @@ gint channel_do(const gchar * source, const gchar * destination)
 	g_main_loop_run(loop);
 
 	return 0;
-}
+	}
 

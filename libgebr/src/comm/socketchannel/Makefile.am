@@ -18,6 +18,7 @@ include $(top_srcdir)/Makefile.decl
 bin_PROGRAMS = gebr-comm-socketchannel
 gebr_comm_socketchannel_SOURCES = socketchannel.c
 
-INCLUDES = -I$(srcdir)/..
+INCLUDES = -I$(srcdir)/.. -I$(top_srcdir)/src
 AM_CFLAGS = -Wall $(GOBJECT_CFLAGS) $(GLIB_CFLAGS)
-gebr_comm_socketchannel_LDADD = ../comm/libgebr_comm.la $(GOBJECT_LIBS) $(GLIB_LIBS)
+gebr_comm_socketchannel_LDADD = ../../libgebr.la ../comm/libgebr_comm.la \
+				$(GOBJECT_LIBS) $(GLIB_LIBS)
