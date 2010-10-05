@@ -127,13 +127,13 @@ static void on_help_edit_window_destroy(GtkWidget * widget, gpointer document)
 static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocument * document)
 {
 	GebrGeoXmlObjectType type;
-	gchar * detailed_html;
 	const gchar * title;
 	const gchar * report;
-	gchar * inner_body;
-	gchar * styles;
-	gchar * header;
-	gchar * content;
+	gchar * detailed_html = NULL;
+	gchar * inner_body = NULL;
+	gchar * styles = NULL;
+	gchar * header = NULL;
+	gchar * content = NULL;
 
 	type = gebr_geoxml_object_get_type(GEBR_GEOXML_OBJECT(document));
 	if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) 
@@ -144,38 +144,55 @@ static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocumen
 	inner_body = gebr_document_report_get_inner_body(report);
 
 	if (type == GEBR_GEOXML_OBJECT_TYPE_LINE) {
-		if (gebr.config.print_option_line_use_gebr_css)
-			styles = g_strdup("<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
-		else
-			styles = gebr_document_report_get_styles_string(report);
-		header = gebr_line_generate_header(document);
-		content = NULL;
-	} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
-		if (gebr.config.print_option_line_use_gebr_css)
-			styles = g_strdup("<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
-		else
-			styles = gebr_document_report_get_styles_string(report);
-		header = gebr_flow_generate_header(GEBR_GEOXML_FLOW(document));
+		if (gebr.config.print_option_line_detailed_report){
 
-		if (gebr.config.print_option_line_include_flows)
-			content = gebr_flow_generate_parameter_value_table(GEBR_GEOXML_FLOW(document));
-		else
-			content = NULL;
+			if (gebr.config.print_option_line_use_gebr_css)
+				styles = g_strdup("<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
+			else
+				styles = gebr_document_report_get_styles_string(report);
+
+			header = gebr_line_generate_header(document);
+			detailed_html = gebr_generate_report(title, styles, header, g_strconcat(inner_body, content, NULL));
+		} else {
+			detailed_html = g_strdup(report);
+		}
+	} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
+		if (gebr.config.print_option_flow_detailed_report){
+
+			if (gebr.config.print_option_flow_use_gebr_css)
+				styles = g_strdup("<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />");
+			else
+				styles = gebr_document_report_get_styles_string(report);
+
+			header = gebr_flow_generate_header(GEBR_GEOXML_FLOW(document));
+
+			if (gebr.config.print_option_flow_include_flows)
+				content = gebr_flow_generate_parameter_value_table(GEBR_GEOXML_FLOW(document));
+
+			detailed_html = gebr_generate_report(title, styles, header, g_strconcat(inner_body, content, NULL));
+
+		} else {
+			detailed_html = g_strdup(report);
+		}
 	} else
 		g_return_if_reached();
 
-	gchar * real_content = g_strconcat(inner_body, content, NULL);
-
-	if (!styles)
-		styles = g_strdup("");
-	detailed_html = gebr_generate_report(title, styles, header, real_content);
 	gebr_gui_html_viewer_widget_show_html(self, detailed_html);
 
-	g_free(styles);
-	g_free(header);
-	g_free(content);
-	g_free(inner_body);
-	g_free(real_content);
+	if (detailed_html != NULL)
+		g_free(detailed_html);
+	
+	if (header != NULL)
+		g_free(header);
+	
+	if (styles != NULL)
+		g_free(styles);
+
+	if (inner_body != NULL)
+		g_free(inner_body);
+
+	if (content != NULL)
+		g_free(content);
 }
 
 //==============================================================================
