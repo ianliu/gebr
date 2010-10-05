@@ -366,6 +366,11 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 			    -1);
 
 	last_status = gebr_geoxml_program_get_status (program);
+	if (parameters_check_has_required_unfilled_for_iter (&iter))
+		last_status = GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN;
+	else
+		last_status = gebr_geoxml_program_get_status (program);
+
 	has_configured = (last_status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 	listiter = paths->next;
 
@@ -375,11 +380,12 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 				    FSEQ_GEBR_GEOXML_POINTER, &program,
 				    -1);
 
-		// Ignore not-configured programs because a required parameter is unfilled.
-		if (!parameters_check_has_required_unfilled_for_iter (&iter)) {
-			status = gebr_geoxml_program_get_status (program);
-			has_configured |= (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+		status = gebr_geoxml_program_get_status (program);
+		has_configured |= (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 
+		// Ignore not-configured programs because a required parameter is unfilled.
+		if (!parameters_check_has_required_unfilled_for_iter (&iter) &&
+		    last_status != GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN) {
 			if (status != last_status) {
 				is_homogeneous = FALSE;
 				break;
