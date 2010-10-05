@@ -702,25 +702,41 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow)
 {
 	GString * dump;
+	GebrGeoXmlSequence * program;
 
 	dump = g_string_new(NULL);
 	g_string_printf(dump,
-			"<p><h1> %s </h1></p>"
-			"<p>%s</p>",
+			"<h1>%s</h1>"
+			"<h2>%s</h2>",
 			gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)),
-			gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(gebr.flow))
-		       );
+			gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(gebr.flow)));
 
-	g_string_append_printf(dump, _("<p>By %s &lt;%s&gt;, %s</p>"),
-			gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(gebr.flow)),
-			gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(gebr.flow)),
-			gebr_localized_date(gebr_iso_date())
-			);
+	g_string_append_printf(dump, _("<p>By <span class='gebr-author'>%s</span>"
+				       " <span class='gebr-email'>%s</span>, %s</p>"),
+			       gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(gebr.flow)),
+			       gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(gebr.flow)),
+			       gebr_localized_date(gebr_iso_date()));
 			
-	g_string_append_printf(dump, 
-			_("<p>Flow with %ld program(s)</p>"),
-			gebr_geoxml_flow_get_programs_number(gebr.flow)
-		       );
+	g_string_append_printf(dump,
+			       _("<p>Flow with %ld program(s)</p>"),
+			       gebr_geoxml_flow_get_programs_number(gebr.flow));
+
+	g_string_append_printf (dump, "<ui>");
+	gebr_geoxml_flow_get_program (flow, &program, 0);
+	while (program) {
+		GebrGeoXmlProgram * prog;
+		GebrGeoXmlProgramStatus status;
+
+		prog = GEBR_GEOXML_PROGRAM (program);
+		status = gebr_geoxml_program_get_status (prog);
+
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+			g_string_append_printf (dump, "<li>%s</li>",
+						gebr_geoxml_program_get_title (prog));
+
+		gebr_geoxml_sequence_next (&program);
+	}
+	g_string_append_printf (dump, "</ui>");
 
 	return g_string_free(dump, FALSE);
 }
