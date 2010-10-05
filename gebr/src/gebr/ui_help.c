@@ -126,6 +126,7 @@ static void on_help_edit_window_destroy(GtkWidget * widget, gpointer document)
 
 static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocument * document)
 {
+	GebrGeoXmlSequence *line_flow;
 	GebrGeoXmlObjectType type;
 	const gchar * title;
 	const gchar * report;
@@ -133,7 +134,9 @@ static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocumen
 	gchar * inner_body = NULL;
 	gchar * styles = NULL;
 	gchar * header = NULL;
-	gchar * content = NULL;
+	GString * content;
+
+	content = g_string_new(NULL);
 
 	type = gebr_geoxml_object_get_type(GEBR_GEOXML_OBJECT(document));
 	if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) 
@@ -151,8 +154,26 @@ static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocumen
 			else
 				styles = gebr_document_report_get_styles_string(report);
 
+			if (gebr.config.print_option_flow_include_flows){
+
+				/* iterate over its flows */
+				gebr_geoxml_line_get_flow(GEBR_GEOXML_LINE(document), &line_flow, 0);
+				for (; line_flow != NULL; gebr_geoxml_sequence_next(&line_flow)) {
+
+					GebrGeoXmlFlow *flow;
+					const gchar *filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
+
+					document_load((GebrGeoXmlDocument**)(&flow), filename);
+
+					gchar * flow_cont = gebr_flow_get_detailed_report(flow, TRUE);
+					g_string_append(content, flow_cont);
+					g_free(flow_cont);
+					gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+				}
+			}
+
 			header = gebr_line_generate_header(document);
-			detailed_html = gebr_generate_report(title, styles, header, g_strconcat(inner_body, content, NULL));
+			detailed_html = gebr_generate_report(title, styles, header, g_strconcat(inner_body, content->str, NULL));
 		} else {
 			detailed_html = g_strdup(report);
 		}
@@ -166,10 +187,13 @@ static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocumen
 
 			header = gebr_flow_generate_header(GEBR_GEOXML_FLOW(document));
 
-			if (gebr.config.print_option_flow_include_flows)
-				content = gebr_flow_generate_parameter_value_table(GEBR_GEOXML_FLOW(document));
+			if (gebr.config.print_option_flow_include_flows){
+				gchar * flow_cont = gebr_flow_generate_parameter_value_table(GEBR_GEOXML_FLOW(document));
+				g_string_assign(content, flow_cont);
+				g_free(flow_cont);
+			}
 
-			detailed_html = gebr_generate_report(title, styles, header, g_strconcat(inner_body, content, NULL));
+			detailed_html = gebr_generate_report(title, styles, header, g_strconcat(inner_body, content->str, NULL));
 
 		} else {
 			detailed_html = g_strdup(report);
@@ -191,8 +215,7 @@ static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocumen
 	if (inner_body != NULL)
 		g_free(inner_body);
 
-	if (content != NULL)
-		g_free(content);
+	g_string_free(content, TRUE);
 }
 
 //==============================================================================
