@@ -747,7 +747,30 @@ static void on_detailed_report_toggled(GtkToggleButton * button, GtkWidget * wid
 	gebr.config.print_option_flow_detailed_report = toggled;
 }
 
-GtkWidget * gebr_flow_print_dialog_custom_tab(GebrGuiHtmlViewerWidget *widget){
+gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_table)
+{
+	gchar * table;
+	gchar * inner;
+	gchar * report;
+	gchar * header;
+	const gchar * help;
+
+	help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (flow));
+	inner = gebr_document_report_get_inner_body (help);
+	table = include_table ? gebr_flow_generate_parameter_value_table (flow) : "";
+	header = gebr_flow_generate_header (flow);
+	report = g_strdup_printf ("<div class='gebr-geoxml-flow'>%s%s%s</div>", header, inner, table);
+
+	if (include_table)
+		g_free (table);
+	g_free (inner);
+	g_free (header);
+
+	return report;
+}
+
+GtkWidget * gebr_flow_print_dialog_custom_tab(GebrGuiHtmlViewerWidget *widget)
+{
 
 	gchar * tab_label;
 	GtkWidget * hbox;

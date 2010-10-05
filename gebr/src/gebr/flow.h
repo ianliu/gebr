@@ -117,6 +117,21 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow);
  */
 gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow);
 
+/**
+ * gebr_flow_get_detailed_report:
+ * @flow: a #GebrGeoXmlFlow
+ * @include_table: whether to include the parameter/value table 
+ *
+ * Generates the detailed report for @flow and returns it as a string.
+ * The detailed report includes a header containing informations such
+ * as author, modified date, list of enabled programs, etc.
+ * If @include_table is %TRUE, a table containing the parameter label
+ * and its value is included.
+ *
+ * Returns: a newly allocated string, which must be freed with g_free().
+ */
+gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_table);
+
 GtkWidget * gebr_flow_print_dialog_custom_tab(GebrGuiHtmlViewerWidget *widget);
 
 G_END_DECLS
