@@ -163,7 +163,7 @@ static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocumen
 					GebrGeoXmlFlow *flow;
 					const gchar *filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
 
-					document_load((GebrGeoXmlDocument**)(&flow), filename);
+					document_load((GebrGeoXmlDocument**)(&flow), filename, FALSE);
 
 					gchar * flow_cont = gebr_flow_get_detailed_report(flow, TRUE);
 					g_string_append(content, flow_cont);

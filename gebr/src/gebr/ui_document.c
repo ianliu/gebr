@@ -487,7 +487,7 @@ void document_dict_edit_setup_ui(void)
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
 	for (int i = 0; data->documents[i] != NULL; ++i)
-		document_save(data->documents[i], TRUE);
+		document_save(data->documents[i], TRUE, TRUE);
 
 	for (int i = 0; data->documents[i] != NULL; ++i) {
 		GebrGeoXmlSequence *i_parameter;
@@ -982,7 +982,7 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 	gebr_geoxml_document_set_description(data->document, gtk_entry_get_text(GTK_ENTRY(data->description)));
 	gebr_geoxml_document_set_author(data->document, gtk_entry_get_text(GTK_ENTRY(data->author)));
 	gebr_geoxml_document_set_email(data->document, gtk_entry_get_text(GTK_ENTRY(data->email)));
-	document_save(data->document, TRUE);
+	document_save(data->document, TRUE, TRUE);
 
 	/* Update title in apropriated store */
 	switch ((type = gebr_geoxml_document_get_type(data->document))) {

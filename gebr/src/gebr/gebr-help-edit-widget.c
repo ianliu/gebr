@@ -226,7 +226,7 @@ static void gebr_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self)
 	priv = GEBR_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	content = gebr_help_edit_widget_get_content(self);
 	gebr_geoxml_document_set_help(priv->document, content);
-	document_save(priv->document, TRUE);
+	document_save(priv->document, TRUE, TRUE);
 	g_free(content);
 }
 

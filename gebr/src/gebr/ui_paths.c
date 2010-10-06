@@ -36,7 +36,7 @@
 
 gboolean path_save(void)
 {
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, FALSE);
 	project_line_info_update();
 	return TRUE;
 }
@@ -59,7 +59,8 @@ void path_add(GebrGuiValueSequenceEdit * sequence_edit)
 		gchar *i_path;
 		gtk_tree_model_get(model, &iter, 0, &i_path, -1);
 		if (!strcmp(i_path, path)) {
-			gebr_gui_gtk_tree_view_select_iter(GEBR_GUI_SEQUENCE_EDIT(sequence_edit)->tree_view, &iter);
+			gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(GEBR_GUI_SEQUENCE_EDIT(sequence_edit)->tree_view),
+							   &iter);
 			g_free(i_path);
 			return;
 		}

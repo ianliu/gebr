@@ -73,8 +73,8 @@ void line_new(void)
 			   PL_TITLE, &project_title, -1);
 	line_iter = project_append_line_iter(&project_iter, line);
 	gebr_geoxml_project_append_line(gebr.project, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(line)));
-	document_save(GEBR_GEOXML_DOC(gebr.project), TRUE);
-	document_save(GEBR_GEOXML_DOC(line), TRUE);
+	document_save(GEBR_GEOXML_DOC(gebr.project), TRUE, FALSE);
+	document_save(GEBR_GEOXML_DOC(line), TRUE, FALSE);
 
 	/* feedback */
 	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New line created in project '%s'."), project_title);
@@ -128,7 +128,7 @@ gboolean line_delete(gboolean confirm)
 	/* Remove the line from its project */
 	line_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(gebr.line));
 	if (gebr_geoxml_project_remove_line(gebr.project, line_filename)) {
-		document_save(GEBR_GEOXML_DOC(gebr.project), TRUE);
+		document_save(GEBR_GEOXML_DOC(gebr.project), TRUE, FALSE);
 		document_delete(line_filename);
 	}
 
@@ -198,13 +198,12 @@ void line_load_flows(void)
 		gebr_geoxml_sequence_next(&next);
 
 		const gchar *filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
-		int ret = document_load_with_parent((GebrGeoXmlDocument**)(&flow), filename, &iter);
+		int ret = document_load_with_parent((GebrGeoXmlDocument**)(&flow), filename, &iter, TRUE);
 		if (ret) {
 			line_flow = next;
 			error = TRUE;
 			continue;
 		}
-		puts(filename);
 
 		line_append_flow_iter(flow, GEBR_GEOXML_LINE_FLOW(line_flow));
 
@@ -228,7 +227,7 @@ void line_move_flow_top(void)
 	gebr_geoxml_line_get_flow(gebr.line, &line_flow,
 				  gebr_gui_gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
 	gebr_geoxml_sequence_move_after(line_flow, NULL);
-	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE);
+	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE, FALSE);
 	/* GUI */
 	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
 }
@@ -243,7 +242,7 @@ void line_move_flow_bottom(void)
 	gebr_geoxml_line_get_flow(gebr.line, &line_flow,
 				  gebr_gui_gtk_list_store_get_iter_index(gebr.ui_flow_browse->store, &iter));
 	gebr_geoxml_sequence_move_before(line_flow, NULL);
-	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE);
+	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE, FALSE);
 	/* GUI */
 	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
 }

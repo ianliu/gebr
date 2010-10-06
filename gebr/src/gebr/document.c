@@ -41,10 +41,7 @@ static GebrGeoXmlDocument *document_cache_check(const gchar *path)
 
 static void document_cache_add(const gchar *path, GebrGeoXmlDocument * document)
 {
-	if (document != NULL && !g_str_has_suffix(path, ".mnu") && gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW
-	    && document_path_is_at_gebr_data_dir(path)) {
-		g_hash_table_insert(gebr.xmls_by_filename, g_strdup(path), document);
-	}
+	g_hash_table_insert(gebr.xmls_by_filename, g_strdup(path), document);
 }
 
 GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
@@ -109,18 +106,18 @@ gboolean document_is_at_gebr_data_dir(GebrGeoXmlDocument * document)
 	return document_file_is_at_gebr_data_dir(gebr_geoxml_document_get_filename(document));
 }
 
-int document_load(GebrGeoXmlDocument ** document, const gchar * filename)
+int document_load(GebrGeoXmlDocument ** document, const gchar * filename, gboolean cache)
 {
-	return document_load_with_parent(document, filename, NULL);
+	return document_load_with_parent(document, filename, NULL, cache);
 }
 
-int document_load_with_parent(GebrGeoXmlDocument ** document, const gchar * filename, GtkTreeIter *parent)
+int document_load_with_parent(GebrGeoXmlDocument ** document, const gchar * filename, GtkTreeIter *parent, gboolean cache)
 {
 	int ret;
 	GString *path;
 
 	path = document_get_path(filename);
-	ret = document_load_path_with_parent(document, path->str, parent);
+	ret = document_load_path_with_parent(document, path->str, parent, cache);
 	g_string_free(path, TRUE);
 
 	return ret;
@@ -139,7 +136,7 @@ int document_load_at_with_parent(GebrGeoXmlDocument ** document, const gchar * f
 
 	path = g_string_new("");
 	g_string_printf(path, "%s/%s", directory, filename);
-	ret = document_load_path_with_parent(document, path->str, parent);
+	ret = document_load_path_with_parent(document, path->str, parent, FALSE);
 	g_string_free(path, TRUE);
 
 	return ret;
@@ -147,10 +144,10 @@ int document_load_at_with_parent(GebrGeoXmlDocument ** document, const gchar * f
 
 int document_load_path(GebrGeoXmlDocument **document, const gchar * path)
 {
-	return document_load_path_with_parent(document, path, NULL);
+	return document_load_path_with_parent(document, path, NULL, FALSE);
 }
 
-int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * path, GtkTreeIter *parent)
+int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * path, GtkTreeIter *parent, gboolean cache)
 {
 	/*
 	 * Callback to remove menu reference from program to maintain backward compatibility
@@ -168,7 +165,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		gebr_geoxml_flow_get_program(menu, &menu_program, index);
 		gebr_geoxml_program_set_help(program, gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(menu_program)));
 
-		gebr_geoxml_document_free(GEBR_GEOXML_DOC(menu));
+		document_free(GEBR_GEOXML_DOC(menu));
 	}	
 
 	/**
@@ -200,7 +197,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 				i_src = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(sequence));
 			if (!strcmp(i_src, basename)) {
 				gebr_geoxml_sequence_remove(sequence);
-				document_save(parent_document, FALSE);
+				document_save(parent_document, FALSE, FALSE);
 				break;
 			}
 		}
@@ -208,13 +205,14 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		g_free(basename);
 	}
 
-	if ((*document = document_cache_check(path)) != NULL) {
+	if (cache && (*document = document_cache_check(path)) != NULL) {
 		return GEBR_GEOXML_RETV_SUCCESS;
 	}
 	int ret; 
 	if (!(ret = gebr_geoxml_document_load(document, path, TRUE, g_str_has_suffix(path, ".flw") ?
 					      __document_discard_menu_ref_callback : NULL))) {
-		document_cache_add(path, *document);
+		if (cache)
+			document_cache_add(path, *document);
 		return ret;
 	}
 
@@ -231,7 +229,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), parent,
 					   PL_FILENAME, &filename, -1);
-			document_load(&parent_document, filename);
+			document_load(&parent_document, filename, FALSE);
 			free_document = parent_document != NULL;
 
 			g_free(filename);
@@ -369,7 +367,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 				src = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line));
 				gebr_geoxml_project_append_line(GEBR_GEOXML_PROJECT(orphans_project), src);
 			}
-			document_save(orphans_project, TRUE);
+			document_save(orphans_project, TRUE, FALSE);
 			project_load_with_lines(GEBR_GEOXML_PROJECT(orphans_project));
 
 			break;
@@ -387,7 +385,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 				src = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow)); 
 				gebr_geoxml_line_append_flow(GEBR_GEOXML_LINE(orphans_line), src);
 			}
-			document_save(orphans_line, TRUE);
+			document_save(orphans_line, TRUE, FALSE);
 
 			if (parent == NULL) {
 				free_document = TRUE;
@@ -397,7 +395,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 
 			gebr_geoxml_project_append_line(GEBR_GEOXML_PROJECT(parent_document),
 							gebr_geoxml_document_get_filename(orphans_line));
-			document_save(parent_document, TRUE);
+			document_save(parent_document, TRUE, FALSE);
 
 			if (parent == NULL)
 				project_load_with_lines(GEBR_GEOXML_PROJECT(parent_document));
@@ -418,18 +416,18 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 
 	/* frees */
 	if (*document) {
-		gebr_geoxml_document_free(*document);
+		document_free(*document);
 		*document = NULL;
 	}
 	gtk_widget_destroy(dialog);
 
 out:	g_string_free(string, TRUE);
 	if (free_document)
-		gebr_geoxml_document_free(parent_document);
+		document_free(parent_document);
 	return ret;
 }
 
-gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date)
+gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date, gboolean cache)
 {
 	gboolean ret = FALSE;
 
@@ -440,21 +438,34 @@ gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gbo
 	if (!ret)
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to save document '%s' file at '%s'."),
 			     gebr_geoxml_document_get_title(document), path);
-	document_cache_add(path, document);
+	if (cache)
+		document_cache_add(path, document);
 	
 	return ret;
 }
 
-gboolean document_save(GebrGeoXmlDocument * document, gboolean set_modified_date)
+gboolean document_save(GebrGeoXmlDocument * document, gboolean set_modified_date, gboolean cache)
 {
 	GString *path;
 	gboolean ret = FALSE;
 
 	path = document_get_path(gebr_geoxml_document_get_filename(document));
-	ret = document_save_at(document, path->str, set_modified_date);
+	ret = document_save_at(document, path->str, set_modified_date, cache);
 
 	g_string_free(path, TRUE);
 	return ret;
+}
+
+void document_free(GebrGeoXmlDocument * document)
+{
+	void foreach(gpointer key, gpointer value)
+	{
+		if (value == (gpointer)document)
+			g_hash_table_remove(gebr.xmls_by_filename, key);
+	}
+	g_hash_table_foreach(gebr.xmls_by_filename, (GHFunc)foreach, NULL);
+
+	gebr_geoxml_document_free(document);
 }
 
 void document_import(GebrGeoXmlDocument * document)
@@ -488,7 +499,7 @@ void document_import(GebrGeoXmlDocument * document)
 	g_string_free(new_title, TRUE);
 
 	/* TODO: check save */
-	document_save_at(document, path->str, FALSE);
+	document_save_at(document, path->str, FALSE, TRUE);
 
 	g_string_free(path, TRUE);
 }

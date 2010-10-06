@@ -18,6 +18,8 @@
 #include <stdio.h>
 #include <locale.h>
 
+#include <libgebr.h>
+
 #include "../../intl.h"
 #include "../geoxml.h"
 

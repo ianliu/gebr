@@ -73,8 +73,8 @@ void flow_new(void)
 	line_flow = gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)));
 	iter = line_append_flow_iter(flow, line_flow);
 
-	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE);
-	document_save(GEBR_GEOXML_DOC(flow), TRUE);
+	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE, FALSE);
+	document_save(GEBR_GEOXML_DOC(flow), TRUE, TRUE);
 
 	flow_browse_select_iter(&iter);
 
@@ -131,7 +131,7 @@ void flow_delete(gboolean confirm)
 		for (; line_flow != NULL; gebr_geoxml_sequence_next(&line_flow)) {
 			if (strcmp(filename, gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow))) == 0) {
 				gebr_geoxml_sequence_remove(line_flow);
-				document_save(GEBR_GEOXML_DOC(gebr.line), TRUE);
+				document_save(GEBR_GEOXML_DOC(gebr.line), TRUE, FALSE);
 				break;
 			}
 		}
@@ -195,7 +195,7 @@ void flow_import(void)
 	document_import(GEBR_GEOXML_DOCUMENT(imported_flow));
 	/* and add it to the line */
 	GebrGeoXmlLineFlow * line_flow = gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(imported_flow)));
-	document_save(GEBR_GEOXML_DOC(gebr.line), FALSE);
+	document_save(GEBR_GEOXML_DOC(gebr.line), FALSE, FALSE);
 	/* and to the GUI */
 	GtkTreeIter iter = line_append_flow_iter(imported_flow, line_flow);
 	flow_browse_select_iter(&iter);
@@ -226,7 +226,7 @@ void flow_export(void)
 	title = g_string_new(NULL);
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, FB_FILENAME, &flow_filename, -1);
-	if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename))
+	if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename, FALSE))
 		goto out;
 
 	/* run file chooser */
@@ -252,7 +252,7 @@ void flow_export(void)
 
 	/* export current flow to disk */
 	gebr_geoxml_document_set_filename(flow, filename);
-	document_save_at(flow, tmp, FALSE);
+	document_save_at(flow, tmp, FALSE, FALSE);
 
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' exported to %s."),
 		     (gchar *) gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)), tmp);
@@ -261,7 +261,7 @@ void flow_export(void)
 	g_free(tmp);
 	g_free(filename);
 
-	gebr_geoxml_document_free(flow);
+	document_free(flow);
 out:
 	g_free(flow_filename);
 	g_string_free(title, TRUE);
@@ -396,7 +396,7 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 			g_free(xml);
 			gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(rev), &xml);
 			gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(revision), xml, NULL, NULL);
-			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(rev));
+			document_free(GEBR_GEOXML_DOCUMENT(rev));
 		}
 		g_free(xml);
 	}
@@ -439,7 +439,7 @@ void flow_run(struct server *server, GebrCommServerRun * config)
 	gebr_comm_server_run_flow(server->comm, config);
 
 	gebr_geoxml_flow_set_date_last_run(gebr.flow, gebr_iso_date());
-	document_save(GEBR_GEOXML_DOC(gebr.flow), FALSE);
+	document_save(GEBR_GEOXML_DOC(gebr.flow), FALSE, TRUE);
 	flow_browse_info_update();
 
 	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'."),
@@ -453,7 +453,7 @@ void flow_run(struct server *server, GebrCommServerRun * config)
 	}
 
 	/* frees */
-out:	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(config->flow));
+out:	document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 gboolean flow_revision_save(void)
@@ -495,7 +495,7 @@ gboolean flow_revision_save(void)
 		GebrGeoXmlRevision *revision;
 
 		revision = gebr_geoxml_flow_append_revision(gebr.flow, gtk_entry_get_text(GTK_ENTRY(entry)));
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 		flow_browse_load_revision(revision, TRUE);
 		ret = TRUE;
 	}
@@ -521,7 +521,7 @@ void flow_program_remove(void)
 		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(program));
 		valid = gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
 	}
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	if (valid)
 		flow_edition_select_component_iter(&iter);
@@ -534,7 +534,7 @@ void flow_program_move_top(void)
 	flow_edition_get_selected_component(&iter, FALSE);
 	/* Update flow */
 	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(gebr.program), NULL);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 	/* Update GUI */
 	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store),
 				  &iter, &gebr.ui_flow_edition->input_iter);
@@ -547,7 +547,7 @@ void flow_program_move_bottom(void)
 	flow_edition_get_selected_component(&iter, FALSE);
 	/* Update flow */
 	gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(gebr.program), NULL);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 	/* Update GUI */
 	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store),
 				   &iter, &gebr.ui_flow_edition->output_iter);
@@ -582,16 +582,16 @@ void flow_paste(void)
 	for (i = g_list_first(gebr.flow_clipboard); i != NULL; i = g_list_next(i)) {
 		GebrGeoXmlDocument *flow;
 
-		if (document_load((GebrGeoXmlDocument**)(&flow), (gchar *)i->data))
+		if (document_load((GebrGeoXmlDocument**)(&flow), (gchar *)i->data, FALSE))
 			continue;
 
 		document_import(flow);
 		line_append_flow_iter(GEBR_GEOXML_FLOW(flow),
 				      GEBR_GEOXML_LINE_FLOW(gebr_geoxml_line_append_flow(gebr.line,
 											 gebr_geoxml_document_get_filename(flow))));
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE);
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, FALSE);
 
-		gebr_geoxml_document_free(flow);
+		document_free(flow);
 	}
 }
 
@@ -620,7 +620,7 @@ void flow_program_paste(void)
 	}
 
 	flow_add_program_sequence_to_view(GEBR_GEOXML_SEQUENCE(pasted), TRUE);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 }
 
 static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump)

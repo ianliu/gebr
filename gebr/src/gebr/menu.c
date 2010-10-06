@@ -416,7 +416,7 @@ static void menu_scan_directory(const gchar * directory, GKeyFile * menu_key_fil
 		g_key_file_set_string(menu_key_file, path->str, "description", gebr_geoxml_document_get_description(menu));
 
 		g_strfreev(category_list);
-		gebr_geoxml_document_free(menu);
+		document_free(menu);
 	}
 
 	g_string_free(path, TRUE);

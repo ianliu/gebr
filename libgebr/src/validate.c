@@ -237,9 +237,9 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 	if (self->name == GEBR_VALIDATE_CASE_CATEGORY) {
 		GString *fix = g_string_new("");
 		gchar **cats = g_strsplit(value, "|", 0);
-		for (int i = 0; cats[i] != NULL;) {
+		for (int i = 0; cats[i] != NULL; i++) {
 			gchar *ifix = gebr_validate_case_fix_aux(cats[i]);
-			g_string_append_printf(fix, "%s%s", ifix != NULL ? ifix : cats[i], cats[++i] != NULL ? "|" : "");
+			g_string_append_printf(fix, "%s%s", ifix != NULL ? ifix : cats[i], cats[i+1] != NULL ? "|" : "");
 			if (ifix != NULL)
 				g_free(ifix);
 		}
