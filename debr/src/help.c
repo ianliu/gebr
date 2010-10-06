@@ -60,6 +60,8 @@ static gchar * generate_help_from_template(GebrGeoXmlObject * object);
 
 static void on_preview_toggled(GtkToggleAction * action, GtkUIManager * manager);
 
+static void on_title_ready (GebrGuiHtmlViewerWidget * widget, const gchar * title, GtkWindow * window);
+
 static const GtkActionEntry action_entries[] = {
 	{"JumpToMenu", NULL, N_("_Jump To"), NULL, NULL,
 		G_CALLBACK(help_edit_on_jump_to_activate)},
@@ -785,6 +787,11 @@ static void on_preview_toggled(GtkToggleAction * action, GtkUIManager * manager)
 	gtk_action_set_sensitive (revert, !toggled);
 }
 
+static void on_title_ready (GebrGuiHtmlViewerWidget * widget, const gchar * title, GtkWindow * window)
+{
+	gtk_window_set_title (window, title);
+}
+
 //==============================================================================
 // PUBLIC METHODS							       =
 //==============================================================================
@@ -796,6 +803,7 @@ void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 
 	window = gebr_gui_html_viewer_window_new(title); 
 	html_viewer_widget = gebr_gui_html_viewer_window_get_widget(GEBR_GUI_HTML_VIEWER_WINDOW(window));
+	g_signal_connect (html_viewer_widget, "title-ready", G_CALLBACK (on_title_ready), window);
 
 	if (menu)
 		gebr_gui_html_viewer_widget_generate_links(html_viewer_widget, object);

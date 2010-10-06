@@ -330,20 +330,21 @@ out2:		g_string_free(html_path, FALSE);
 
 static void on_save_activate(GtkAction * action, GebrGuiHelpEditWidget * self)
 {
-	GebrGeoXmlObject *object = NULL;
+	GtkWidget * widget;
+	const gchar * help;
+	GebrGeoXmlObject * object;
 
 	gebr_gui_help_edit_widget_commit_changes(self);
 
-	g_object_get(self, "geoxml-document", &object, NULL);	
+	g_object_get(self, "geoxml-document", &object, NULL);
 
 	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_FLOW)
-		g_object_set(gebr.ui_flow_browse->info.help_view,
-			     "sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.flow)))
-			     ? TRUE : FALSE, NULL);
+		widget = gebr.ui_flow_browse->info.help_view;
 	else
-		g_object_set(gebr.ui_project_line->info.help_view,
-			     "sensitive", strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.project_line)))
-			     ? TRUE : FALSE, NULL);
+		widget = gebr.ui_project_line->info.help_view;
+
+	help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT(object));
+	g_object_set(widget, "sensitive", strlen(help) ? TRUE : FALSE, NULL);
 }
 
 gchar * gebr_generate_report(const gchar * title,
