@@ -154,7 +154,7 @@ static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocumen
 			else
 				styles = gebr_document_report_get_styles_string(report);
 
-			if (gebr.config.print_option_flow_include_flows){
+			if (gebr.config.print_option_line_include_flows){
 
 				/* iterate over its flows */
 				gebr_geoxml_line_get_flow(GEBR_GEOXML_LINE(document), &line_flow, 0);
