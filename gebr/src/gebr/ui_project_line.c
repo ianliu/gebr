@@ -1076,5 +1076,20 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 			gebr_localized_date(gebr_iso_date())
 			);
 			
+	if (gebr_geoxml_object_get_type(GEBR_GEOXML_OBJECT(document)) == GEBR_GEOXML_OBJECT_TYPE_LINE){
+		GString *dump_line;
+		dump_line = g_string_new(_("<p>Line Path:</p>"));
+		GebrGeoXmlSequence *line_path;
+
+		gebr_geoxml_line_get_path(GEBR_GEOXML_LINE(document), &line_path, 0);
+		for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
+			g_string_append_printf(dump_line,
+					       "<p>%s</p>",
+					       gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path)));
+		}
+		g_string_append(dump, dump_line->str);
+		g_string_free(dump_line, TRUE);
+	}
+
 	return g_string_free(dump, FALSE);
 }

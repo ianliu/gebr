@@ -270,7 +270,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesR
 	/* read */
 	gtk_entry_set_text(GTK_ENTRY(email), gebr_geoxml_document_get_email(document));
 
-	if (gebr.line != NULL){
+	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE){
 		/* Line Path's*/
 		line_path_label = gtk_label_new(_("Path"));
 		gtk_widget_show(line_path_label);
