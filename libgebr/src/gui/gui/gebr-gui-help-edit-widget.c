@@ -230,6 +230,8 @@ void gebr_gui_help_edit_widget_set_editing(GebrGuiHelpEditWidget * self, gboolea
 {
 	GebrGuiHelpEditWidgetPrivate * priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 
+	g_return_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self));
+
 	priv->is_editing = editing;
 
 	if (editing) {
@@ -249,6 +251,8 @@ void gebr_gui_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self)
 {
 	GebrGuiHelpEditWidgetPrivate * priv;
 
+	g_return_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self));
+
 	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE (self);
 
 	if (priv->state == STATE_LOADED) {
@@ -259,6 +263,8 @@ void gebr_gui_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self)
 
 gchar * gebr_gui_help_edit_widget_get_content(GebrGuiHelpEditWidget * self)
 {
+	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), NULL);
+
 	return GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS(self)->get_content(self);
 }
 
@@ -283,12 +289,17 @@ void gebr_gui_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, const g
 
 gboolean gebr_gui_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self)
 {
+	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), FALSE);
+
 	return GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS(self)->is_content_saved(self);
 }
 
 GtkWidget * gebr_gui_help_edit_widget_get_web_view(GebrGuiHelpEditWidget * self)
 {
 	GebrGuiHelpEditWidgetPrivate * priv;
+
+	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), NULL);
+
 	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	return priv->edit_widget;
 }
@@ -297,10 +308,12 @@ JSContextRef gebr_gui_help_edit_widget_get_js_context(GebrGuiHelpEditWidget * se
 {
 	WebKitWebView * view;
 	WebKitWebFrame * frame;
-	GebrGuiHelpEditWidgetPrivate * private;
+	GebrGuiHelpEditWidgetPrivate * priv;
 
-	private = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
-	view = WEBKIT_WEB_VIEW(private->edit_widget);
+	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), NULL);
+
+	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
+	view = WEBKIT_WEB_VIEW(priv->edit_widget);
 	frame = webkit_web_view_get_main_frame(view);
 
 	return webkit_web_frame_get_global_context(frame);
@@ -308,7 +321,20 @@ JSContextRef gebr_gui_help_edit_widget_get_js_context(GebrGuiHelpEditWidget * se
 
 GebrGuiHtmlViewerWidget * gebr_gui_help_edit_widget_get_html_viewer(GebrGuiHelpEditWidget * self)
 {
-	GebrGuiHelpEditWidgetPrivate * private;
-	private = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
-	return GEBR_GUI_HTML_VIEWER_WIDGET(private->html_viewer);
+	GebrGuiHelpEditWidgetPrivate * priv;
+
+	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), NULL);
+
+	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
+	return GEBR_GUI_HTML_VIEWER_WIDGET(priv->html_viewer);
+}
+
+void gebr_gui_help_edit_widget_set_loaded(GebrGuiHelpEditWidget * self)
+{
+	GebrGuiHelpEditWidgetPrivate * priv;
+
+	g_return_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self));
+
+	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
+	priv->state = STATE_LOADED;
 }

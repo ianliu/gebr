@@ -136,6 +136,13 @@ JSContextRef gebr_gui_help_edit_widget_get_js_context(GebrGuiHelpEditWidget * se
  */
 GebrGuiHtmlViewerWidget * gebr_gui_help_edit_widget_get_html_viewer(GebrGuiHelpEditWidget * self);
 
+/**
+ * gebr_gui_help_edit_widget_set_loaded:
+ *
+ * Sets the widget's state to STATE_LOADED.
+ */
+void gebr_gui_help_edit_widget_set_loaded(GebrGuiHelpEditWidget * self);
+
 G_END_DECLS
 
 #endif /* __GEBR_GUI_HELP_EDIT_WIDGET__ */

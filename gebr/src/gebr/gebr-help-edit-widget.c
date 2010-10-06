@@ -200,15 +200,13 @@ static void pre_process_html(GString * html)
 	// Do nothing for now ;)
 }
 
-static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame)
+static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrGuiHelpEditWidget * self)
 {
-	JSContextRef context;
-
-	context = webkit_web_frame_get_global_context(frame);
-
 	g_signal_handlers_disconnect_by_func(view,
 					     on_load_finished,
-					     NULL);
+					     self);
+
+	gebr_gui_help_edit_widget_set_loaded (self);
 }
 
 //==============================================================================
@@ -309,7 +307,7 @@ GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlDocument * document, const gchar
 	 * temporary file */
 	g_return_val_if_fail(fprintf(fp, HTML_HOLDER, help->str) >= 0, GTK_WIDGET(self));
 
-	g_signal_connect(web_view, "load-finished", G_CALLBACK(on_load_finished), NULL);
+	g_signal_connect(web_view, "load-finished", G_CALLBACK(on_load_finished), self);
 
 	g_object_set(G_OBJECT(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(web_view))),
 		     "enable-universal-access-from-file-uris", TRUE, NULL);
