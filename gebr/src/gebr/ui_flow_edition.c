@@ -310,7 +310,8 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 	GtkTreePath		* out_path;
 	GtkTreeSelection	* selection;
 	const gchar		* icon;
-	gboolean		  has_configured;
+	gboolean		  has_configured = FALSE;
+	gboolean		  only_unfilled = TRUE;
 	gboolean		  is_homogeneous = TRUE;
 
 	if (key->keyval != GDK_space)
@@ -360,39 +361,45 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 	 * All programs which are not-configured because a required parameter is unfilled, are ignored.
 	 * This crazy logic tries to imitate a 'bold' action in a text editor, for example.
 	 */
-	gtk_tree_model_get_iter (model, &iter, paths->data);
-	gtk_tree_model_get (model, &iter,
-			    FSEQ_GEBR_GEOXML_POINTER, &program,
-			    -1);
 
-	last_status = gebr_geoxml_program_get_status (program);
-	if (parameters_check_has_required_unfilled_for_iter (&iter))
-		last_status = GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN;
-	else
-		last_status = gebr_geoxml_program_get_status (program);
+	// Skip unfilled programs
+	listiter = paths;
+	while (listiter) {
+		gtk_tree_model_get_iter (model, &iter, listiter->data);
+		if (!parameters_check_has_required_unfilled_for_iter (&iter)) {
+			gtk_tree_model_get (model, &iter,
+					    FSEQ_GEBR_GEOXML_POINTER, &program,
+					    -1);
 
-	has_configured = (last_status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
-	listiter = paths->next;
+			last_status = gebr_geoxml_program_get_status (program);
+			has_configured = (last_status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+			listiter = listiter->next;
+			only_unfilled = FALSE;
+
+			break;
+		}
+		listiter = listiter->next;
+	}
 
 	while (listiter) {
 		gtk_tree_model_get_iter (model, &iter, listiter->data);
-		gtk_tree_model_get (model, &iter,
-				    FSEQ_GEBR_GEOXML_POINTER, &program,
-				    -1);
+		if (!parameters_check_has_required_unfilled_for_iter (&iter)) {
+			gtk_tree_model_get (model, &iter,
+					    FSEQ_GEBR_GEOXML_POINTER, &program,
+					    -1);
 
-		status = gebr_geoxml_program_get_status (program);
-		has_configured |= (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+			only_unfilled = FALSE;
+			status = gebr_geoxml_program_get_status (program);
 
-		// Ignore not-configured programs because a required parameter is unfilled.
-		if (!parameters_check_has_required_unfilled_for_iter (&iter) &&
-		    last_status != GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN) {
+			if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+				has_configured = TRUE;
+
 			if (status != last_status) {
 				is_homogeneous = FALSE;
 				break;
 			}
 			last_status = status;
 		}
-
 		listiter = listiter->next;
 	}
 
@@ -400,33 +407,43 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 	 * is_homogeneous.
 	 */
 
-	g_message ("is_homogeneous = %s, has_configured = %s",
-		   is_homogeneous ? "Yes":"No",
-		   has_configured ? "Yes":"No");
+	if (is_homogeneous) {
+		if (has_configured)
+			status = GEBR_GEOXML_PROGRAM_STATUS_DISABLED;
+		else
+			status = GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED;
+	} else {
+		status = GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED;
+	}
 
 	listiter = paths;
 	while (listiter) {
+		GebrGeoXmlProgramStatus tmpstatus;
+
 		gtk_tree_model_get_iter (model, &iter, listiter->data);
 		gtk_tree_model_get (model, &iter,
 				    FSEQ_GEBR_GEOXML_POINTER, &program,
 				    -1);
 
-		if (!parameters_check_has_required_unfilled_for_iter (&iter)) {
-			if (is_homogeneous) {
-				if (has_configured)
-					status = GEBR_GEOXML_PROGRAM_STATUS_DISABLED;
+		tmpstatus = status;
+		if (parameters_check_has_required_unfilled_for_iter (&iter) &&
+		    status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
+			if (only_unfilled) {
+				tmpstatus = gebr_geoxml_program_get_status (program);
+				if (tmpstatus == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
+					tmpstatus = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
 				else
-					status = GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED;
-			} else {
-				status = GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED;
-			}
-
-			gebr_geoxml_program_set_status (program, status);
-			icon = gebr_gui_get_program_icon (program);
-			gtk_list_store_set (gebr.ui_flow_edition->fseq_store, &iter,
-					    FSEQ_ICON_COLUMN, icon,
-					    -1);
+					tmpstatus = GEBR_GEOXML_PROGRAM_STATUS_DISABLED;
+			} else
+				tmpstatus = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
 		}
+
+		gebr_geoxml_program_set_status (program, tmpstatus);
+		icon = gebr_gui_get_program_icon (program);
+		gtk_list_store_set (gebr.ui_flow_edition->fseq_store, &iter,
+				    FSEQ_ICON_COLUMN, icon,
+				    -1);
+
 		listiter = listiter->next;
 	}
 
