@@ -206,25 +206,23 @@ out:	gtk_widget_destroy(chooser_dialog);
 
 void flow_export(void)
 {
-	GtkTreeIter iter;
+	GString *title;
+	gchar *flow_filename;
 
 	GtkWidget *chooser_dialog;
 	GtkWidget *check_box;
 	GtkFileFilter *file_filter;
-	GString *title;
 	gchar *tmp;
 	gchar *filename;
 
+	GtkTreeIter iter;
 	GebrGeoXmlDocument *flow;
-	gchar *flow_filename;
 
 	if (!flow_browse_get_selected(&iter, TRUE))
 		return;
-
 	flow_browse_single_selection();
 
 	title = g_string_new(NULL);
-
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, FB_FILENAME, &flow_filename, -1);
 	if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename, FALSE))
 		goto out;
@@ -260,8 +258,8 @@ void flow_export(void)
 	/* frees */
 	g_free(tmp);
 	g_free(filename);
-
 	document_free(flow);
+
 out:
 	g_free(flow_filename);
 	g_string_free(title, TRUE);
@@ -582,16 +580,16 @@ void flow_paste(void)
 	for (i = g_list_first(gebr.flow_clipboard); i != NULL; i = g_list_next(i)) {
 		GebrGeoXmlDocument *flow;
 
-		if (document_load((GebrGeoXmlDocument**)(&flow), (gchar *)i->data, FALSE))
+		if (document_load((GebrGeoXmlDocument**)(&flow), (gchar *)i->data, FALSE)) {
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not paste flow. It was probably deleted."));
 			continue;
+		}
 
 		document_import(flow);
 		line_append_flow_iter(GEBR_GEOXML_FLOW(flow),
 				      GEBR_GEOXML_LINE_FLOW(gebr_geoxml_line_append_flow(gebr.line,
 											 gebr_geoxml_document_get_filename(flow))));
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, FALSE);
-
-		document_free(flow);
 	}
 }
 
@@ -620,7 +618,7 @@ void flow_program_paste(void)
 	}
 
 	flow_add_program_sequence_to_view(GEBR_GEOXML_SEQUENCE(pasted), TRUE);
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 }
 
 static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump)

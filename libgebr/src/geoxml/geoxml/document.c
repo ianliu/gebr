@@ -608,7 +608,7 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 
 						if (first_instance){
 							if( __gebr_geoxml_parameter_get_type((GebrGeoXmlParameter *) iter, FALSE) != GEBR_GEOXML_PARAMETER_TYPE_REFERENCE){
-								__gebr_geoxml_parameter_set_be_reference((GebrGeoXmlParameter *) iter);
+								__gebr_geoxml_parameter_set_be_reference_with_value((GebrGeoXmlParameter *) iter);
 							}
 						}
 					}
