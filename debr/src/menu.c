@@ -733,7 +733,6 @@ void menu_install(void)
 		g_string_printf(destination, "%s/.gebr/gebr/menus/%s", getenv("HOME"), menu_filename);
 		g_string_printf(command, "cp %s %s", menu_path, destination->str);
 
-
 		if (!overwriteall && g_file_test(destination->str, G_FILE_TEST_EXISTS)) {
 			gint response;
 			dialog = gtk_message_dialog_new(GTK_WINDOW(debr.window),

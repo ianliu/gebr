@@ -355,13 +355,13 @@ void on_menu_create_from_flow_activate(void)
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), file_filter);
 	gtk_widget_show(dialog);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_YES)
-		return;
+		goto out;
 
 	gchar *tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 	if (gebr_geoxml_document_load((GebrGeoXmlDocument**)&flow, tmp, TRUE, NULL)) {
 		debr_message(GEBR_LOG_ERROR, _("Could not load flow at '%s'"), tmp);
 		g_free(tmp);
-		return;
+		goto out;
 	}
 	g_free(tmp);
 
@@ -369,7 +369,6 @@ void on_menu_create_from_flow_activate(void)
 	 * Ask if default values should be used.
 	 */
 	use_value = gebr_gui_confirm_action_dialog(_("Default values"), _("Do you want to use your parameters' values as default values?"));
-	gtk_widget_destroy(dialog);
 
 	/*
 	 * Flow to menu transformations.
@@ -393,6 +392,9 @@ void on_menu_create_from_flow_activate(void)
 	menu_new_from_menu(flow, FALSE);
 	debr_message(GEBR_LOG_INFO, _("Flow '%s' imported as menu."),
 		     (gchar *)gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
+
+out:
+	gtk_widget_destroy(dialog);
 }
 
 void on_menu_add_folder_activate(void)
