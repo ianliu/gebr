@@ -498,7 +498,6 @@ void document_import(GebrGeoXmlDocument * document)
 	gebr_geoxml_document_set_title(document, new_title->str);
 	g_string_free(new_title, TRUE);
 
-	/* TODO: check save */
 	document_save_at(document, path->str, FALSE, TRUE);
 
 	g_string_free(path, TRUE);
