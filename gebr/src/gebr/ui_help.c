@@ -48,6 +48,8 @@ static GtkWidget * create_help_edit_window(GebrGeoXmlDocument * document);
 
 static void on_help_edit_window_destroy(GtkWidget * widget, gpointer user_data);
 
+static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, GtkWindow * window);
+
 static const GtkActionEntry action_entries[] = {
 	{"SaveAction", GTK_STOCK_SAVE, NULL, NULL,
 		N_("Save the current document"), G_CALLBACK(on_save_activate)},
@@ -122,6 +124,55 @@ static void on_help_edit_window_destroy(GtkWidget * widget, gpointer document)
 	g_hash_table_remove(gebr.help_edit_windows, document);
 }
 
+static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, GtkWindow * window)
+{
+	gboolean is_menu;
+	GString * final_title;
+	const gchar * obj_name;
+	const gchar * obj_title;
+	GebrGeoXmlObject * object;
+
+	if (title && strlen (title)) {
+		gtk_window_set_title (window, title);
+		return;
+	}
+
+	object = g_object_get_data (G_OBJECT (widget), "geoxml-object");
+
+	switch (gebr_geoxml_object_get_type (object)) {
+	case GEBR_GEOXML_OBJECT_TYPE_PROJECT:
+		obj_name = _("project");
+		obj_title = gebr_geoxml_document_get_title (GEBR_GEOXML_DOC (object));
+		break;
+	case GEBR_GEOXML_OBJECT_TYPE_LINE:
+		obj_name = _("line");
+		obj_title = gebr_geoxml_document_get_title (GEBR_GEOXML_DOC (object));
+		break;
+	case GEBR_GEOXML_OBJECT_TYPE_FLOW:
+		obj_name = _("flow");
+		obj_title = gebr_geoxml_document_get_title (GEBR_GEOXML_DOC (object));
+		break;
+	case GEBR_GEOXML_OBJECT_TYPE_PROGRAM:
+		obj_name = _("program");
+		obj_title = gebr_geoxml_program_get_title (GEBR_GEOXML_PROGRAM (object));
+		break;
+	default:
+		obj_name = "";
+		obj_title = "";
+		break;
+	}
+
+	final_title = g_string_new ("");
+
+	if (strlen(obj_title) > 0)
+		g_string_printf (final_title, "Report of the %s \"%s\"", obj_name, obj_title);
+	else
+		g_string_printf (final_title, "Report of the %s", obj_name);
+
+	gtk_window_set_title (window, final_title->str);
+	g_string_free (final_title, TRUE);
+}
+
 //==============================================================================
 // PUBLIC METHODS 							       =
 //==============================================================================
@@ -139,8 +190,11 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 	GtkWidget * window;
 	GebrGuiHtmlViewerWidget * html_viewer_widget;
 
-	window = gebr_gui_html_viewer_window_new(title); 
+	window = gebr_gui_html_viewer_window_new(); 
 	html_viewer_widget = gebr_gui_html_viewer_window_get_widget(GEBR_GUI_HTML_VIEWER_WINDOW(window));
+
+	g_object_set_data (G_OBJECT (html_viewer_widget), "geoxml-object", object);
+	g_signal_connect (html_viewer_widget, "title-ready", G_CALLBACK (on_title_ready), window);
 
 	if (menu)
 		gebr_gui_html_viewer_widget_generate_links(html_viewer_widget, object);
