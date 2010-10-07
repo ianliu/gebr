@@ -66,6 +66,8 @@ static GtkWidget *
 create_help_edit_window(GebrGeoXmlDocument * document)
 {
 	guint merge_id;
+	gchar * title;
+	const gchar * doc_title;
 	const gchar * help;
 	const gchar * filemenu;
 	const gchar * mark;
@@ -87,7 +89,6 @@ create_help_edit_window(GebrGeoXmlDocument * document)
 	g_signal_connect(window, "destroy",
 			 G_CALLBACK(on_help_edit_window_destroy), document);
 
-	// Create the Save button and merge with the window UI
 	switch(gebr_geoxml_document_get_type(document)) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
 		document_type = _("flow");
@@ -103,6 +104,15 @@ create_help_edit_window(GebrGeoXmlDocument * document)
 		g_warn_if_reached();
 	}
 
+	doc_title = gebr_geoxml_document_get_title (document);
+	if (strlen (doc_title))
+		title = g_strdup_printf (_("Report of the %s \"%s\""), document_type, doc_title);
+	else
+		title = g_strdup_printf (_("Report of the %s"), document_type);
+	gtk_window_set_title (GTK_WINDOW (window), title);
+	g_free (title);
+
+	// Create the Save button and merge with the window UI
 	action_group = gtk_action_group_new("GebrHelpEditButtons");
 	gtk_action_group_add_actions(action_group, action_entries, n_action_entries, widget);
 
