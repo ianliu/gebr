@@ -140,11 +140,9 @@ static void on_quit_clicked(GtkWidget * quit_item, GebrGuiHtmlViewerWindow * sel
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
-GtkWidget *gebr_gui_html_viewer_window_new(const gchar *title)
+GtkWidget *gebr_gui_html_viewer_window_new()
 {
-	return g_object_new(GEBR_GUI_TYPE_HTML_VIEWER_WINDOW, 
-			    "title", title, 
-			    NULL);
+	return g_object_new(GEBR_GUI_TYPE_HTML_VIEWER_WINDOW, NULL);
 }
 
 void gebr_gui_html_viewer_window_show_html(GebrGuiHtmlViewerWindow * self, const gchar * content)
