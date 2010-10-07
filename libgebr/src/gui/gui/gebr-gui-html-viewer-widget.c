@@ -194,7 +194,6 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 
 	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	context = webkit_web_frame_get_global_context(frame);
-	title = js_get_document_title(context);
 
 	if (priv->object) {
 		type = gebr_geoxml_object_get_type(priv->object);
@@ -202,17 +201,12 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 
 		if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
 			generate_links_index(context, "[['<b>Menu</b>', 'gebr://menu']]", TRUE);
-			if (!title || strlen(title) == 0)
-				title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(priv->object)));
 		} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 			GString * list;
 			GebrGeoXmlSequence *program;
 
 			list = g_string_new("[");
 			gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(priv->object), &program, 0);
-
-			if (!title || strlen(title) == 0)
-				title = g_strdup(gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(priv->object)));
 
 			for (gint i = 0; program != NULL; gebr_geoxml_sequence_next(&program), ++i)
 				g_string_append_printf(list, "%s['%s', 'gebr://prog%d']",
@@ -224,8 +218,10 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 		}
 	}
 
+	title = js_get_document_title(context);
+
 	g_signal_emit(self, signals[ TITLE_READY ], 0, title);
-	g_free(title);
+	g_free (title);
 }
 
 static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame *frame,
@@ -365,6 +361,7 @@ void gebr_gui_html_viewer_widget_print(GebrGuiHtmlViewerWidget * self)
 	}
 	g_object_unref(print_op);
 }
+
 void gebr_gui_html_viewer_widget_show_html(GebrGuiHtmlViewerWidget * self, const gchar * content)
 {
 	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
