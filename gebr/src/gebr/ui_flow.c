@@ -260,6 +260,7 @@ void flow_io_simple_setup_ui(gboolean focus_output)
 					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
 	simple->dialog = dialog;
 
 	table = gtk_table_new(5, 2, FALSE);
