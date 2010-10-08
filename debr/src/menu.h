@@ -396,5 +396,10 @@ GebrGeoXmlFlow * menu_get_xml_pointer(GtkTreeIter * iter);
  */
 gchar * debr_menu_get_backup_help_from_pointer(gpointer menu);
 
+/**
+ * debr_menu_get_iter_from_xmlpointer:
+ */
+gboolean debr_menu_get_iter_from_xmlpointer (gpointer menu, GtkTreeIter * iter);
+
 G_END_DECLS
 #endif				//__MENU_H

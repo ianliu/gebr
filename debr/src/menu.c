@@ -2308,3 +2308,32 @@ static void debr_menu_sync_revert_buttons(GtkTreeIter * iter)
 		gebr_geoxml_sequence_next(&program);
 	}
 }
+
+gboolean debr_menu_get_iter_from_xmlpointer (gpointer menu, GtkTreeIter * iter)
+{
+	gboolean valid;
+	GtkTreeIter _iter;
+	GtkTreeIter child;
+	GtkTreeModel * model;
+
+	g_return_val_if_fail (iter != NULL, FALSE);
+
+	model = GTK_TREE_MODEL (debr.ui_menu.model);
+	valid = gtk_tree_model_get_iter_first (model, &_iter);
+
+	while (valid) {
+		valid = gtk_tree_model_iter_children (model, &child, &_iter);
+		while (valid) {
+			gpointer ptr;
+			gtk_tree_model_get (model, &child, MENU_XMLPOINTER, &ptr, -1);
+			if (ptr == menu) {
+				*iter = child;
+				return TRUE;
+			}
+			valid = gtk_tree_model_iter_next (model, &child);
+		}
+		valid = gtk_tree_model_iter_next (model, &_iter);
+	}
+
+	return FALSE;
+}
