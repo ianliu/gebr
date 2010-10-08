@@ -209,3 +209,9 @@ const gchar *gebr_gui_gtk_file_entry_get_path(GebrGuiGtkFileEntry * file_entry)
 	return gtk_entry_get_text(GTK_ENTRY(file_entry->entry));
 }
 
+void gebr_gui_file_entry_set_activates_default (GebrGuiGtkFileEntry * self, gboolean setting)
+{
+	g_return_if_fail (GEBR_GUI_GTK_IS_FILE_ENTRY (self));
+
+	gtk_entry_set_activates_default (GTK_ENTRY (self->entry), setting);
+}

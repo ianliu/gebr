@@ -73,5 +73,15 @@ void gebr_gui_gtk_file_entry_set_path(GebrGuiGtkFileEntry * file_entry, const gc
 
 const gchar *gebr_gui_gtk_file_entry_get_path(GebrGuiGtkFileEntry * file_entry);
 
+/**
+ * gebr_gui_file_entry_set_activates_default:
+ * @self:
+ * @setting:
+ *
+ * Sets this entry to activate the default response for the toplevel window containing @self based on the value of
+ * @setting.
+ */
+void gebr_gui_file_entry_set_activates_default (GebrGuiGtkFileEntry * self, gboolean setting);
+
 G_END_DECLS
 #endif				//__GEBR_GUI_GTK_FILE_ENTRY_H
