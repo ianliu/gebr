@@ -136,7 +136,6 @@ static void on_help_edit_window_destroy(GtkWidget * widget, gpointer document)
 
 static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, GtkWindow * window)
 {
-	gboolean is_menu;
 	GString * final_title;
 	const gchar * obj_name;
 	const gchar * obj_title;
