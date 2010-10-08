@@ -321,6 +321,7 @@ void flow_io_simple_setup_ui(gboolean focus_output)
 			   gebr_gui_gtk_file_entry_get_path(GEBR_GUI_GTK_FILE_ENTRY(simple->output)),
 			   gebr_gui_gtk_file_entry_get_path(GEBR_GUI_GTK_FILE_ENTRY(simple->error)));
 	flow_edition_set_io();
+	flow_browse_info_update();
 
  out:	gtk_widget_destroy(dialog);
 }
