@@ -694,16 +694,23 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 {
 	GString * dump;
+	const gchar * input;
+	const gchar * output;
+	const gchar * error;
 	GebrGeoXmlSequence * sequence;
+
+	input = gebr_geoxml_flow_server_io_get_input (gebr.flow_server);
+	output = gebr_geoxml_flow_server_io_get_output (gebr.flow_server);
+	error = gebr_geoxml_flow_server_io_get_error (gebr.flow_server);
 
 	dump = g_string_new(NULL);
 	g_string_append_printf(dump,
-			       "<p>%s %s</p>"
-			       "<p>%s %s</p>"
-			       "<p>%s %s</p>",
-			       _("Input"), gebr_geoxml_flow_io_get_input (flow),
-			       _("Output"), gebr_geoxml_flow_io_get_output (flow),
-			       _("Error"), gebr_geoxml_flow_io_get_error (flow)); 
+			       "<p><strong>%s</strong> %s</p>"
+			       "<p><strong>%s</strong> %s</p>"
+			       "<p><strong>%s</strong> %s</p>",
+			       _("Input"), strlen (input) > 0? input : _("(none)"),
+			       _("Output"), strlen (output) > 0? output : _("(none)"),
+			       _("Error"), strlen (error) > 0? error : _("(none)")); 
 
 	gebr_geoxml_flow_get_program(flow, &sequence, 0);
 	while (sequence) {
@@ -722,8 +729,6 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 		gebr_geoxml_sequence_next(&sequence);
 	}
 
-	g_string_append_printf(dump, _("<p>Output %s</p>"), gebr_geoxml_flow_io_get_output(flow)); 
-	g_string_append_printf(dump, _("<p>Error %s</p>"), gebr_geoxml_flow_io_get_error(flow)); 
 	return g_string_free(dump, FALSE);
 }
 
