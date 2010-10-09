@@ -670,8 +670,12 @@ static void help_edit_window_on_destroy(GtkWidget * window)
 	g_object_get(window, "help-edit-widget", &widget, NULL);
 	g_object_get(widget, "geoxml-object", &object, NULL);
 
-	if (debr_help_edit_widget_is_content_empty (DEBR_HELP_EDIT_WIDGET (widget)))
-		gebr_geoxml_object_set_help (object, "");
+	if (debr_help_edit_widget_is_content_empty (DEBR_HELP_EDIT_WIDGET (widget))) {
+		if (gebr_geoxml_object_get_type (object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
+			gebr_geoxml_program_set_help (GEBR_GEOXML_PROGRAM (object), "");
+		else
+			gebr_geoxml_document_set_help (GEBR_GEOXML_DOCUMENT (object), "");
+	}
 
 	g_hash_table_remove(debr.help_edit_windows, object);
 }
