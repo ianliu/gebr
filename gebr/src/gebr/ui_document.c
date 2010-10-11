@@ -200,7 +200,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesR
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(window), vbox);
-	gtk_window_set_default_size(GTK_WINDOW(window), 400, 260);
+	gtk_window_set_default_size(GTK_WINDOW(window), 400, -1);
 
 	table = gtk_table_new(5, 2, FALSE);
 	button_box = gtk_hbutton_box_new();
@@ -270,7 +270,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesR
 	/* read */
 	gtk_entry_set_text(GTK_ENTRY(email), gebr_geoxml_document_get_email(document));
 
-	if (gebr.line != NULL){
+	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		/* Line Path's*/
 		line_path_label = gtk_label_new(_("Path"));
 		gtk_widget_show(line_path_label);
