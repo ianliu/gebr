@@ -557,11 +557,31 @@ void project_line_import(void)
 			g_string_append_printf(paths, "\n%s", (gchar*)i->data);
 
 		if (gebr_gui_confirm_action_dialog(_("Create directories"),
-						   _("There are some line paths localed on your home directory that do not exist. Do you want to create following folders:%s"), paths->str)) {
+						   _("There are some line paths localed on your home directory that"
+						     " do not exist. Do you want to create following folders:%s"), paths->str)) {
 			GString *cmd_line = g_string_new(NULL);
 			for (GList *i = line_paths_creation_sugest; i != NULL; i = g_list_next(i)) {
-				g_string_printf(cmd_line, "mkdir -p %s", (gchar*)i->data);
-				system(cmd_line->str);
+				if (g_file_test (i->data, G_FILE_TEST_EXISTS))
+					continue;
+
+				if (g_mkdir_with_parents (i->data, 0755) != 0) {
+					GtkWidget * warning;
+					warning = gtk_message_dialog_new_with_markup (GTK_WINDOW (gebr.window),
+										      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+										      GTK_MESSAGE_WARNING,
+										      GTK_BUTTONS_OK,
+										      "<span size='larger' weight='bold'>%s %s</span>",
+										      _("Could not create the directory"),
+										      (gchar*)i->data);
+
+					gtk_message_dialog_format_secondary_markup (GTK_MESSAGE_DIALOG (warning),
+										    _("The directory <i>%s</i> could not be created. "
+										      "Certify you have the rights to perform this operation."),
+										    (gchar*)i->data);
+
+					gtk_dialog_run (GTK_DIALOG (warning));
+					gtk_widget_destroy (warning);
+				}
 			}
 			g_string_free(cmd_line, TRUE);
 		}
