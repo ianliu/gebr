@@ -290,6 +290,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesR
 
 		g_signal_connect(GTK_OBJECT(path_sequence_edit), "add-request", G_CALLBACK(path_add), NULL);
 		g_signal_connect(GTK_OBJECT(path_sequence_edit), "changed", G_CALLBACK(path_save), NULL);
+		g_signal_connect(GTK_OBJECT(path_sequence_edit), "renamed", G_CALLBACK(path_renamed), NULL);
 
 		gtk_table_attach(GTK_TABLE(table), path_sequence_edit, 1, 2, 5, 6, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
 				 3);

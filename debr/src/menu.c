@@ -54,8 +54,8 @@ static void menu_email_changed(GtkEntry * entry);
 
 static void menu_category_changed(void);
 
-static void menu_category_renamed(GebrGuiValueSequenceEdit * sequence_edit,
-				  const gchar * old_text, const gchar * new_text);
+static gboolean menu_category_renamed(GebrGuiValueSequenceEdit * sequence_edit,
+				      const gchar * old_text, const gchar * new_text);
 
 static void menu_category_removed(GebrGuiValueSequenceEdit * sequence_edit, const gchar * old_text);
 
@@ -1936,11 +1936,12 @@ static void menu_category_changed(void)
  * \internal
  * Update category list upon rename.
  */
-static void
+static gboolean
 menu_category_renamed(GebrGuiValueSequenceEdit * sequence_edit, const gchar * old_text, const gchar * new_text)
 {
 	menu_category_removed(sequence_edit, old_text);
 	debr_has_category(new_text, TRUE);
+	return TRUE;
 }
 
 /**

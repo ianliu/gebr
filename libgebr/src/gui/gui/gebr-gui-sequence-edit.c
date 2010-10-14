@@ -150,8 +150,8 @@ static void gebr_gui_sequence_edit_class_init(GebrGuiSequenceEditClass * klass)
 					       G_SIGNAL_RUN_LAST,
 					       G_STRUCT_OFFSET(GebrGuiSequenceEditClass, renamed),
 					       NULL, NULL,
-					       _gebr_gui_marshal_VOID__STRING_STRING,
-					       G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
+					       _gebr_gui_marshal_BOOLEAN__STRING_STRING,
+					       G_TYPE_BOOLEAN, 2, G_TYPE_STRING, G_TYPE_STRING);
 	object_signals[REMOVED] = g_signal_new(("removed"),
 					       GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT,
 					       G_SIGNAL_RUN_LAST,
@@ -330,13 +330,16 @@ __gebr_gui_sequence_edit_on_edited(GtkCellRendererText * cell, gchar * path_stri
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	gchar *old_text;
+	gboolean retval;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(sequence_edit->tree_view));
 	gtk_tree_selection_get_selected(selection, &model, &iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(sequence_edit->list_store), &iter, 0, &old_text, -1);
 
-	g_signal_emit(sequence_edit, object_signals[RENAMED], 0, old_text, new_text);
-	GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->rename(sequence_edit, &iter, new_text);
+	g_signal_emit(sequence_edit, object_signals[RENAMED], 0, old_text, new_text, &retval);
+
+	if (retval)
+		GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->rename(sequence_edit, &iter, new_text);
 
 	g_free(old_text);
 }
