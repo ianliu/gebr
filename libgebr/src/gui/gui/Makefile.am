@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-marshalers.h:
+marshalers.h: marshalers.list
 	glib-genmarshal --prefix=_gebr_gui_marshal marshalers.list --header >marshalers.h
 
 marshalers.c: marshalers.h
@@ -72,3 +72,5 @@ AM_CFLAGS = -Wall -std=gnu99 -fPIC @DEBUG_CFLAGS@ $(GTK_CFLAGS) $(GTHREAD_CFLAGS
 libgebr_gui_la_LIBADD = ../../libgebr.la ../../geoxml/geoxml/libgebr_geoxml.la \
 	$(INTLLIBS) $(GTK_LIBS) $(GTHREAD_LIBS) $(WEBKIT_LIBS) 
 libgebr_gui_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@
+
+CLEANFILES = marshalers.c marshalers.h
