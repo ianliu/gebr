@@ -166,7 +166,7 @@ static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocumen
 			else
 				styles = gebr_document_report_get_styles_string(report);
 
-			if (gebr.config.print_option_line_include_flows){
+			if (gebr.config.print_option_line_include_flows) {
 
 				/* iterate over its flows */
 				gebr_geoxml_line_get_flow(GEBR_GEOXML_LINE(document), &line_flow, 0);
@@ -177,7 +177,7 @@ static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocumen
 
 					document_load((GebrGeoXmlDocument**)(&flow), filename, FALSE);
 
-					gchar * flow_cont = gebr_flow_get_detailed_report(flow, TRUE);
+					gchar * flow_cont = gebr_flow_get_detailed_report(flow, TRUE, FALSE);
 					g_string_append(content, flow_cont);
 					g_free(flow_cont);
 					gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
@@ -197,7 +197,7 @@ static void on_print_requested(GebrGuiHtmlViewerWidget * self, GebrGeoXmlDocumen
 			else
 				styles = gebr_document_report_get_styles_string(report);
 
-			header = gebr_flow_generate_header(GEBR_GEOXML_FLOW(document));
+			header = gebr_flow_generate_header(GEBR_GEOXML_FLOW(document), TRUE);
 
 			if (gebr.config.print_option_flow_include_flows){
 				gchar * flow_cont = gebr_flow_generate_parameter_value_table(GEBR_GEOXML_FLOW(document));

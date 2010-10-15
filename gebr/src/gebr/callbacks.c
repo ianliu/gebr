@@ -328,7 +328,7 @@ void on_detailed_report_activate() {
 	gchar * final_str;
 	GtkWidget * window;
 
-	header_str = gebr_flow_generate_header(gebr.flow);
+	header_str = gebr_flow_generate_header(gebr.flow, TRUE);
 	table_str = gebr_flow_generate_parameter_value_table(gebr.flow);
 	final_str = gebr_generate_report(gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)),
 					 "<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />",

@@ -110,17 +110,19 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow);
 /**
  * gebr_flow_generate_header:
  * @flow: a #GebrGeoXmlFlow
+ * @include_date: whether to include the date
  *
  * Creates a string containing a HTML description of @flow.
  *
  * Returns: a newly allocated string containing HTML markup.
  */
-gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow);
+gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date);
 
 /**
  * gebr_flow_get_detailed_report:
  * @flow: a #GebrGeoXmlFlow
  * @include_table: whether to include the parameter/value table 
+ * @include_table: whether to include the date in the header
  *
  * Generates the detailed report for @flow and returns it as a string.
  * The detailed report includes a header containing informations such
@@ -130,7 +132,7 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow);
  *
  * Returns: a newly allocated string, which must be freed with g_free().
  */
-gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_table);
+gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_table, gboolean include_date);
 
 GtkWidget * gebr_flow_print_dialog_custom_tab(GebrGuiHtmlViewerWidget *widget);
 
