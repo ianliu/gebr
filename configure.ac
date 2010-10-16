@@ -14,21 +14,23 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT(configure.ac)
+AC_PREREQ([2.59])
+
+m4_define(gebr_major_version,  0)
+m4_define(gebr_minor_version,  9)
+m4_define(gebr_micro_version, 18)
+m4_define(gebr_version, gebr_major_version.gebr_minor_version.gebr_micro_version)
+
+AC_INIT([gebr], [gebr_version], [http://code.google.com/p/gebr/issues/list])
+AM_INIT_AUTOMAKE
 
 m4_include(configure.ac.decl)
 
-PACKAGE=gebr
-AC_SUBST(PACKAGE)
-AC_SUBST(VERSION)
-AC_SUBST(TODAY)
+AC_CONFIG_SUBDIRS([libgebr
+		   gebrd
+		   gebr
+		   debr])
 
-AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
-PACKAGE_NAME=$PACKAGE
-PACKAGE_VERSION=$VERSION
+AC_CONFIG_FILES([Makefile])
 
-AC_CONFIG_SUBDIRS([libgebr gebrd gebr debr])
-
-AC_OUTPUT([
-Makefile
-])
+AC_OUTPUT
