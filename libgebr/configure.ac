@@ -68,18 +68,6 @@ PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.12.0],,AC_MSG_ERROR([Could not find glib 
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GLIB_CFLAGS)
 
-dnl check for JSON-GLIB
-has_jsonglib=yes
-PKG_CHECK_MODULES(JSONGLIB, json-glib-1.0, , [has_jsonglib=no])
-if test "x${has_jsonglib}" = "xno"; then
-	JSONGLIB_LIBS='${top_builddir}/src/comm/comm/json-glib/libjson-glib-1.0.la'
-	JSONGLIB_CFLAGS='-I${top_srcdir}/src/comm/comm/json-glib/'
-	JSONGLIB_SUBDIR=json-glib
-	AC_SUBST(JSONGLIB_SUBDIR)
-fi
-AC_SUBST(JSONGLIB_LIBS)
-AC_SUBST(JSONGLIB_CFLAGS)
-
 dnl check for GOBJECT >= 2.8 (which is thread safe)
 PKG_CHECK_MODULES(GOBJECT, [gobject-2.0 >= 2.8],,AC_MSG_ERROR([Could not find gobject >= 2.8]))
 AC_SUBST(GOBJECT_LIBS)
@@ -118,9 +106,6 @@ po/Makefile.in
 src/Makefile
 src/comm/Makefile src/comm/gebr-comm.pc
 src/comm/comm/Makefile
-src/comm/comm/json-glib/Makefile
-src/comm/comm/json-glib/json-enum-types.c
-src/comm/comm/json-glib/json-enum-types.h
 src/comm/socketchannel/Makefile
 src/comm/tests/Makefile
 src/defines.h
