@@ -52,7 +52,7 @@ struct _GebrGuiSequenceEditClass {
 	/* signals */
 	void (*add_request) (GebrGuiSequenceEdit * self);
 	void (*changed) (GebrGuiSequenceEdit * self);
-	void (*renamed) (GebrGuiSequenceEdit * self, const gchar * old_text, const gchar * new_text);
+	gboolean (*renamed) (GebrGuiSequenceEdit * self, const gchar * old_text, const gchar * new_text);
 	void (*removed) (GebrGuiSequenceEdit * self, const gchar * old_text);
 	/* virtual */
 	void (*add) (GebrGuiSequenceEdit * self);

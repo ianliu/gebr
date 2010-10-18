@@ -23,7 +23,18 @@
 G_BEGIN_DECLS
 
 gboolean path_save(void);
+
 void path_add(GebrGuiValueSequenceEdit * sequence_edit);
+
+/**
+ * path_renamed:
+ * @self:
+ * @old_text:
+ * @new_text:
+ *
+ * Callback for #GebrGuiSequenceEdit::renamed signal.
+ */
+gboolean path_renamed (GebrGuiValueSequenceEdit * self, const gchar * old_text, const gchar * new_text);
 
 G_END_DECLS
 #endif				//__UI_PATH_H
