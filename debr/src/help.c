@@ -809,6 +809,8 @@ void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 	GebrGuiHtmlViewerWidget * html_viewer_widget;
 
 	window = gebr_gui_html_viewer_window_new(title); 
+	gtk_window_set_modal (GTK_WINDOW (window), TRUE);
+
 	html_viewer_widget = gebr_gui_html_viewer_window_get_widget(GEBR_GUI_HTML_VIEWER_WINDOW(window));
 	g_signal_connect (html_viewer_widget, "title-ready", G_CALLBACK (on_title_ready), window);
 
@@ -821,8 +823,7 @@ void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
 
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
-
-	gtk_dialog_run(GTK_DIALOG(window));
+	gtk_widget_show (window);
 }
 
 void debr_help_edit(GebrGeoXmlObject * object)

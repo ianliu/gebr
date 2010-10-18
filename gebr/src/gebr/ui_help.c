@@ -296,6 +296,8 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 	GebrGuiHtmlViewerWidget * html_viewer_widget;
 
 	window = gebr_gui_html_viewer_window_new(); 
+	gtk_window_set_modal (GTK_WINDOW (window), TRUE);
+
 	html_viewer_widget = gebr_gui_html_viewer_window_get_widget(GEBR_GUI_HTML_VIEWER_WINDOW(window));
 
 	g_object_set_data (G_OBJECT (html_viewer_widget), "geoxml-object", object);
@@ -308,13 +310,13 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 	else switch (gebr_geoxml_object_get_type(object)) {
 	case GEBR_GEOXML_OBJECT_TYPE_FLOW:
 		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
-		gebr_gui_html_viewer_window_set_custom_tab(GEBR_GUI_HTML_VIEWER_WINDOW(window), _("Detailed Report"), gebr_flow_print_dialog_custom_tab);
-		g_signal_connect(html_viewer_widget, "print-requested", G_CALLBACK(on_print_requested), object);
+		//gebr_gui_html_viewer_window_set_custom_tab(GEBR_GUI_HTML_VIEWER_WINDOW(window), _("Detailed Report"), gebr_flow_print_dialog_custom_tab);
+		//g_signal_connect(html_viewer_widget, "print-requested", G_CALLBACK(on_print_requested), object);
 		break;
 	case GEBR_GEOXML_OBJECT_TYPE_LINE:
 		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
-		gebr_gui_html_viewer_window_set_custom_tab(GEBR_GUI_HTML_VIEWER_WINDOW(window), _("Detailed Report"), gebr_project_line_print_dialog_custom_tab);
-		g_signal_connect(html_viewer_widget, "print-requested", G_CALLBACK(on_print_requested), object);
+		//gebr_gui_html_viewer_window_set_custom_tab(GEBR_GUI_HTML_VIEWER_WINDOW(window), _("Detailed Report"), gebr_project_line_print_dialog_custom_tab);
+		//g_signal_connect(html_viewer_widget, "print-requested", G_CALLBACK(on_print_requested), object);
 		break;
 	case GEBR_GEOXML_OBJECT_TYPE_PROGRAM:
 		html = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
@@ -323,8 +325,7 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 		break;
 	}
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
-
-	gtk_dialog_run(GTK_DIALOG(window));
+	gtk_widget_show (window);
 }
 
 void gebr_help_edit_document(GebrGeoXmlDocument * document)

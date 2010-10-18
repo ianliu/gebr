@@ -46,7 +46,6 @@ struct _GebrGuiHelpEditWindowPrivate {
 //==============================================================================
 // PROTOTYPES AND STATIC VARIABLES					       =
 //==============================================================================
-
 static void gebr_gui_help_edit_window_constructed(GObject * self);
 
 static void gebr_gui_help_edit_window_set_property	(GObject	*object,
@@ -115,7 +114,6 @@ static const gchar * ui_def =
 "  </placeholder>"
 " </toolbar>"
 "</ui>";
-
 
 //==============================================================================
 // GOBJECT RELATED FUNCTIONS						       =

@@ -137,6 +137,8 @@ static void gebr_gui_html_viewer_widget_finalize(GObject *object)
 	
 	g_free(priv->label);
 	g_string_free (priv->content, TRUE);
+
+	G_OBJECT_CLASS (gebr_gui_html_viewer_widget_parent_class)->finalize (object);
 }
 
 //==============================================================================
