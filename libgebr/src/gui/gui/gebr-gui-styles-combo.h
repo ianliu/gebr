@@ -61,6 +61,13 @@ struct _GebrGuiStylesComboClass {
 GtkWidget *gebr_gui_styles_combo_new (const gchar *path);
 
 /**
+ * gebr_gui_styles_combo_set_path:
+ * @combo:
+ * @path:
+ */
+void gebr_gui_styles_combo_set_path (GebrGuiStylesCombo *self, const gchar *path);
+
+/**
  * gebr_gui_styles_combo_get_selected:
  * @combo: a #GebrGuiStylesCombo
  *

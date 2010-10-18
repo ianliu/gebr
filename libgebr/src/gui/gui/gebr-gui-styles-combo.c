@@ -36,16 +36,25 @@ static void gebr_gui_styles_combo_init (GebrGuiStylesCombo *self)
 GtkWidget *gebr_gui_styles_combo_new (const gchar *path)
 {
 	GtkWidget *widget;
-	GebrGuiStylesCombo *self;
 
 	widget = g_object_new (GEBR_GUI_TYPE_STYLES_COMBO, NULL);
-	self = GEBR_GUI_STYLES_COMBO (widget);
-	self->priv->path = g_strdup (path);
+	gebr_gui_styles_combo_set_path (GEBR_GUI_STYLES_COMBO (widget));
 
 	return widget;
 }
 
+void gebr_gui_styles_combo_set_path (GebrGuiStylesCombo *self,
+				     const gchar *path)
+{
+	g_return_if_fail (GEBR_GUI_IS_STYLES_COMBO (self));
+
+	g_free (self->priv->path);
+	self->priv->path = g_strdup (path);
+}
+
 gchar *gebr_gui_styles_combo_get_selected (GebrGuiStylesCombo *self)
 {
+	g_return_val_if_fail (GEBR_GUI_IS_STYLES_COMBO (self), NULL);
+
 	return NULL;
 }
