@@ -843,7 +843,7 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 	const gchar * filename = NULL;
 	gint active = 0, i = 0;
 
-	css_combo_label = gtk_label_new(_("CSS:"));
+	css_combo_label = gtk_label_new(_("Style"));
 	gtk_widget_show(css_combo_label);
 	detailed_flow_css = gtk_combo_box_new_text();
 
@@ -858,10 +858,11 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 	while (filename != NULL) {
 		if (fnmatch ("*.css", filename, 1) == 0) {
 			gtk_combo_box_prepend_text (GTK_COMBO_BOX (detailed_flow_css), filename);
+
 			if (strcmp (filename, gebr.config.detailed_flow_css->str) == 0)
 				active = i;
+			i++;
 		}
-		i++;
 		filename = g_dir_read_name(directory);
 	}
 	gtk_combo_box_prepend_text (GTK_COMBO_BOX (detailed_flow_css), USERS_CSS);

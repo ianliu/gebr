@@ -132,13 +132,6 @@ struct gebr {
 		gboolean detailed_line_include_report;
 		gboolean detailed_line_include_flow_report;
 		gboolean detailed_line_include_flow_params;
-
-		gint print_option_flow_use_gebr_css;
-		gboolean print_option_flow_include_flows;
-		gboolean print_option_flow_detailed_report;
-		gboolean print_option_line_use_gebr_css;
-		gboolean print_option_line_include_flows;
-		gboolean print_option_line_detailed_report;
 	} config;
 
 	/* Pixmaps */
