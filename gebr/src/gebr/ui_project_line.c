@@ -1032,6 +1032,72 @@ static void on_detailed_report_toggled(GtkToggleButton * button, GtkWidget * wid
 GtkWidget *
 gebr_project_line_print_dialog_custom_tab(GebrGuiHtmlViewerWidget * widget)
 {
+#if 0
+	GtkWidget * hbox_combo;
+	GtkWidget * vbox;
+	GtkWidget * frame;
+	GtkWidget * alignment;
+	GtkWidget * use_gebr_css_combo;
+	GtkWidget * include_flows_cb;
+	GtkWidget * detailed_report_cb;
+	GtkWidget * css_combo_label;
+	GDir * directory;
+	GError * error = NULL;
+	const gchar * filename = NULL;
+
+	css_combo_label = gtk_label_new(_("CSS:"));
+	gtk_widget_show(css_combo_label);
+	use_gebr_css_combo = gtk_combo_box_new_text();
+
+	directory = g_dir_open("/home/alex/pasta/lixo/", 0, &error);
+	if (error != NULL){
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to read file: %s"), error->message);
+		g_error_free(error);
+		return NULL;
+	}
+	filename = g_dir_read_name(directory);
+	while (filename != NULL){
+		if (fnmatch("*.css", filename, 1) == 0)
+			gtk_combo_box_prepend_text(GTK_COMBO_BOX(use_gebr_css_combo), filename);
+
+		filename = g_dir_read_name(directory);
+	}
+	gtk_widget_show(use_gebr_css_combo);
+
+	include_flows_cb = gtk_check_button_new_with_label(_("Include flow reports"));
+	detailed_report_cb = gtk_check_button_new_with_label(_("Parameter Dump"));
+
+	gtk_combo_box_set_active(GTK_COMBO_BOX(use_gebr_css_combo), gebr.config.print_option_flow_use_gebr_css);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(include_flows_cb), gebr.config.print_option_flow_include_flows);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_report_cb), gebr.config.print_option_flow_detailed_report); 
+
+	frame = gtk_frame_new(NULL);
+	gtk_container_set_border_width(GTK_CONTAINER(frame), 10);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	hbox_combo = gtk_hbox_new(FALSE, 0);
+
+
+	alignment = gtk_alignment_new(0, 0, 1, 1);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 10, 0);
+
+	gtk_box_pack_start(GTK_BOX(hbox_combo), css_combo_label, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox_combo), use_gebr_css_combo, TRUE, TRUE, 0);
+
+	gtk_box_pack_start(GTK_BOX(vbox), include_flows_cb, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), detailed_report_cb, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox_combo, FALSE, TRUE, 0);
+
+	gtk_container_add(GTK_CONTAINER(frame),vbox);
+
+	g_signal_connect(use_gebr_css_combo, "changed", G_CALLBACK(on_use_gebr_css_changed), NULL);
+	g_signal_connect(include_flows_cb, "toggled", G_CALLBACK(on_include_flows_toggled), NULL);
+	g_signal_connect(detailed_report_cb, "toggled", G_CALLBACK(on_detailed_report_toggled), NULL);
+
+	gtk_widget_show_all(frame);
+	return frame;
+#endif
 	gchar * tab_label;
 	GtkWidget * hbox;
 	GtkWidget * vbox;

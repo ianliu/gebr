@@ -38,7 +38,7 @@ GtkWidget *gebr_gui_styles_combo_new (const gchar *path)
 	GtkWidget *widget;
 
 	widget = g_object_new (GEBR_GUI_TYPE_STYLES_COMBO, NULL);
-	gebr_gui_styles_combo_set_path (GEBR_GUI_STYLES_COMBO (widget));
+	gebr_gui_styles_combo_set_path (GEBR_GUI_STYLES_COMBO (widget), path);
 
 	return widget;
 }

@@ -115,7 +115,7 @@ struct gebr {
 		GString *flow_string;
 
 		// Print options for Print dialog
-		gboolean print_option_flow_use_gebr_css;
+		gint print_option_flow_use_gebr_css;
 		gboolean print_option_flow_include_flows;
 		gboolean print_option_flow_detailed_report;
 		gboolean print_option_line_use_gebr_css;
