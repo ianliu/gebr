@@ -114,7 +114,25 @@ struct gebr {
 		GString *project_line_string;
 		GString *flow_string;
 
-		// Print options for Print dialog
+		// Detailed report options
+		// - For flows:
+		//  [ ] Include user's report
+		//  [ ] Include parameter/value table
+		//  (CSS Combo ^)
+		GString * detailed_flow_css;
+		gboolean detailed_flow_include_report;
+		gboolean detailed_flow_include_params;
+
+		// - For lines:
+		//  [ ] Include user's report
+		//  [ ] Include flow's report
+		//    [ ] Include parameter/value table
+		//  (CSS Combo ^)
+		GString * detailed_line_css;
+		gboolean detailed_line_include_report;
+		gboolean detailed_line_include_flow_report;
+		gboolean detailed_line_include_flow_params;
+
 		gint print_option_flow_use_gebr_css;
 		gboolean print_option_flow_include_flows;
 		gboolean print_option_flow_detailed_report;

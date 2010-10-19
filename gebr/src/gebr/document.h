@@ -156,5 +156,14 @@ gchar * gebr_document_report_get_styles_string(const gchar * report);
  */
 gchar * gebr_document_report_get_inner_body(const gchar * report);
 
+/**
+ * gebr_document_generate_report:
+ * @document:
+ *
+ * Returns: a newly allocated string containing the detailed report for document based on the GêBR configuration
+ * structure #gebr.config.
+ */
+gchar * gebr_document_generate_report (GebrGeoXmlDocument *document);
+
 G_END_DECLS
 #endif				//__DOCUMENT_H

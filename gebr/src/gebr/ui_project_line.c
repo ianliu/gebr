@@ -1030,7 +1030,7 @@ static void on_detailed_report_toggled(GtkToggleButton * button, GtkWidget * wid
 }
 
 GtkWidget *
-gebr_project_line_print_dialog_custom_tab(GebrGuiHtmlViewerWidget * widget)
+gebr_project_line_print_dialog_custom_tab()
 {
 #if 0
 	GtkWidget * hbox_combo;

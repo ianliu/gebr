@@ -42,6 +42,8 @@
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
 
+#define USERS_CSS _("Report style")
+
 static void on_properties_response(gboolean accept)
 {
 	if (!accept)
@@ -781,19 +783,27 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
 	return g_string_free(dump, FALSE);
 }
 
-static void on_use_gebr_css_changed(GtkComboBox * box)
+static void on_detailed_flow_css_changed (GtkComboBox * box)
 {
-	gebr.config.print_option_flow_use_gebr_css = gtk_combo_box_get_active(box);
+	gchar * css;
+
+	css = gtk_combo_box_get_active_text (box);
+	if (strcmp (css, USERS_CSS) == 0)
+		g_string_assign (gebr.config.detailed_flow_css, "");
+	else
+		g_string_assign (gebr.config.detailed_flow_css, css);
+
+	g_free (css);
 }
 
-static void on_include_flows_toggled(GtkToggleButton * button)
+static void on_detailed_flow_include_report_toggled (GtkToggleButton * button)
 {
-	gebr.config.print_option_flow_include_flows = gtk_toggle_button_get_active(button);
+	gebr.config.detailed_flow_include_report = gtk_toggle_button_get_active (button);
 }
 
-static void on_detailed_report_toggled(GtkToggleButton * button)
+static void on_detailed_flow_include_params_toggled (GtkToggleButton * button)
 {
-	gebr.config.print_option_flow_detailed_report = gtk_toggle_button_get_active(button);
+	gebr.config.detailed_flow_include_params = gtk_toggle_button_get_active (button);
 }
 
 gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_table, gboolean include_date)
@@ -818,46 +828,51 @@ gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_t
 	return report;
 }
 
-GtkWidget * gebr_flow_print_dialog_custom_tab(GebrGuiHtmlViewerWidget *widget)
+GtkWidget * gebr_flow_print_dialog_custom_tab()
 {
-
 	GtkWidget * hbox_combo;
 	GtkWidget * vbox;
 	GtkWidget * frame;
 	GtkWidget * alignment;
-	GtkWidget * use_gebr_css_combo;
-	GtkWidget * include_flows_cb;
-	GtkWidget * detailed_report_cb;
+	GtkWidget * detailed_flow_css;
+	GtkWidget * detailed_flow_include_report;
+	GtkWidget * detailed_flow_include_params;
 	GtkWidget * css_combo_label;
 	GDir * directory;
 	GError * error = NULL;
 	const gchar * filename = NULL;
+	gint active = 0, i = 0;
 
 	css_combo_label = gtk_label_new(_("CSS:"));
 	gtk_widget_show(css_combo_label);
-	use_gebr_css_combo = gtk_combo_box_new_text();
+	detailed_flow_css = gtk_combo_box_new_text();
 
-	directory = g_dir_open("/home/alex/pasta/lixo/", 0, &error);
-	if (error != NULL){
+	directory = g_dir_open(g_get_home_dir (), 0, &error);
+	if (error != NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to read file: %s"), error->message);
-		g_error_free(error);
+		g_clear_error (&error);
 		return NULL;
 	}
-	filename = g_dir_read_name(directory);
-	while (filename != NULL){
-		if (fnmatch("*.css", filename, 1) == 0)
-			gtk_combo_box_prepend_text(GTK_COMBO_BOX(use_gebr_css_combo), filename);
 
+	filename = g_dir_read_name(directory);
+	while (filename != NULL) {
+		if (fnmatch ("*.css", filename, 1) == 0) {
+			gtk_combo_box_prepend_text (GTK_COMBO_BOX (detailed_flow_css), filename);
+			if (strcmp (filename, gebr.config.detailed_flow_css->str) == 0)
+				active = i;
+		}
+		i++;
 		filename = g_dir_read_name(directory);
 	}
-	gtk_widget_show(use_gebr_css_combo);
+	gtk_combo_box_prepend_text (GTK_COMBO_BOX (detailed_flow_css), USERS_CSS);
+	gtk_widget_show(detailed_flow_css);
 
-	include_flows_cb = gtk_check_button_new_with_label(_("Include flow reports"));
-	detailed_report_cb = gtk_check_button_new_with_label(_("Parameter Dump"));
+	detailed_flow_include_report = gtk_check_button_new_with_label(_("Include user's report"));
+	detailed_flow_include_params = gtk_check_button_new_with_label(_("Include parameter/value table"));
 
-	gtk_combo_box_set_active(GTK_COMBO_BOX(use_gebr_css_combo), gebr.config.print_option_flow_use_gebr_css);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(include_flows_cb), gebr.config.print_option_flow_include_flows);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_report_cb), gebr.config.print_option_flow_detailed_report); 
+	gtk_combo_box_set_active(GTK_COMBO_BOX(detailed_flow_css), active);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_flow_include_report), gebr.config.detailed_flow_include_report);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_flow_include_params), gebr.config.detailed_flow_include_params); 
 
 	frame = gtk_frame_new(NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 10);
@@ -866,22 +881,21 @@ GtkWidget * gebr_flow_print_dialog_custom_tab(GebrGuiHtmlViewerWidget *widget)
 	vbox = gtk_vbox_new(FALSE, 0);
 	hbox_combo = gtk_hbox_new(FALSE, 0);
 
-
 	alignment = gtk_alignment_new(0, 0, 1, 1);
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 10, 0);
 
 	gtk_box_pack_start(GTK_BOX(hbox_combo), css_combo_label, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox_combo), use_gebr_css_combo, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox_combo), detailed_flow_css, TRUE, TRUE, 0);
 
-	gtk_box_pack_start(GTK_BOX(vbox), include_flows_cb, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), detailed_report_cb, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), detailed_flow_include_report, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), detailed_flow_include_params, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox_combo, FALSE, TRUE, 0);
 
 	gtk_container_add(GTK_CONTAINER(frame),vbox);
 
-	g_signal_connect(use_gebr_css_combo, "changed", G_CALLBACK(on_use_gebr_css_changed), NULL);
-	g_signal_connect(include_flows_cb, "toggled", G_CALLBACK(on_include_flows_toggled), NULL);
-	g_signal_connect(detailed_report_cb, "toggled", G_CALLBACK(on_detailed_report_toggled), NULL);
+	g_signal_connect(detailed_flow_css, "changed", G_CALLBACK(on_detailed_flow_css_changed), NULL);
+	g_signal_connect(detailed_flow_include_report, "toggled", G_CALLBACK(on_detailed_flow_include_report_toggled), NULL);
+	g_signal_connect(detailed_flow_include_params, "toggled", G_CALLBACK(on_detailed_flow_include_params_toggled), NULL);
 
 	gtk_widget_show_all(frame);
 	return frame;

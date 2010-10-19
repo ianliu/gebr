@@ -77,6 +77,8 @@ void gebr_init(void)
 		exit(-1);
 	}
 
+	gebr.config.detailed_flow_css = g_string_new (NULL);
+	gebr.config.detailed_line_css = g_string_new (NULL);
 	gebr.config.path = g_string_new(NULL);
 	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", getenv("HOME"));
 
@@ -159,6 +161,8 @@ gboolean gebr_quit(void)
 	g_string_free(gebr.config.data, TRUE);
 	g_string_free(gebr.config.project_line_string, TRUE);
 	g_string_free(gebr.config.flow_string, TRUE);
+	g_string_free(gebr.config.detailed_flow_css, TRUE);
+	g_string_free(gebr.config.detailed_line_css, TRUE);
 
 	/* remove temporaries files */
 	g_slist_foreach(gebr.tmpfiles, (GFunc) g_unlink, NULL);
@@ -264,13 +268,16 @@ gint gebr_config_load()
 		gebr.config.flow_string =
 		    gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "flow_string", "");
 
-		gebr.config.print_option_flow_use_gebr_css = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_flow_use_gebr_css", FALSE);
-		gebr.config.print_option_flow_include_flows = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_flow_include_flows", FALSE);
-		gebr.config.print_option_flow_detailed_report = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_flow_detailed_report", FALSE);
+		g_string_assign (gebr.config.detailed_flow_css,
+				 gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_flow_css", FALSE)->str);
+		gebr.config.detailed_flow_include_report = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "detailed_flow_include_report", FALSE);
+		gebr.config.detailed_flow_include_params = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "detailed_flow_include_params", FALSE);
 
-		gebr.config.print_option_line_use_gebr_css = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_line_use_gebr_css", FALSE);
-		gebr.config.print_option_line_include_flows = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_line_include_flows", FALSE);
-		gebr.config.print_option_line_detailed_report = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "print_option_line_detailed_report", FALSE);
+		g_string_assign (gebr.config.detailed_line_css,
+				 gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_line_css", FALSE)->str);
+		gebr.config.detailed_line_include_report = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "detailed_line_include_report", FALSE);
+		gebr.config.detailed_line_include_flow_report = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "detailed_line_include_flow_report", FALSE);
+		gebr.config.detailed_line_include_flow_params = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "detailed_line_include_flow_params", FALSE);
 
 		g_string_free(data_dir, TRUE);
 	}
@@ -372,12 +379,15 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_word_wrap", gebr.config.job_log_word_wrap);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "job_log_auto_scroll", gebr.config.job_log_auto_scroll);
 	g_key_file_set_integer(gebr.config.key_file, "general", "notebook", gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)));
-	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_flow_use_gebr_css", gebr.config.print_option_flow_use_gebr_css);
-	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_flow_include_flows", gebr.config.print_option_flow_include_flows);
-	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_flow_detailed_report", gebr.config.print_option_flow_detailed_report);
-	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_line_use_gebr_css", gebr.config.print_option_line_use_gebr_css);
-	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_line_include_flows", gebr.config.print_option_line_include_flows);
-	g_key_file_set_boolean(gebr.config.key_file, "general", "print_option_line_detailed_report", gebr.config.print_option_line_detailed_report);
+
+	g_key_file_set_string(gebr.config.key_file, "general", "detailed_flow_css", gebr.config.detailed_flow_css->str);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "detailed_flow_include_report", gebr.config.detailed_flow_include_report);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "detailed_flow_include_params", gebr.config.detailed_flow_include_params);
+
+	g_key_file_set_string(gebr.config.key_file, "general", "detailed_line_css", gebr.config.detailed_line_css->str);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "detailed_line_include_report", gebr.config.detailed_line_include_report);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "detailed_line_include_flow_report", gebr.config.detailed_line_include_flow_report);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "detailed_line_include_flow_params", gebr.config.detailed_line_include_flow_params);
 
 	/* Save list of servers */
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {

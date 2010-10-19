@@ -323,21 +323,50 @@ void on_flow_browse_edit_help(void) {
 }
 
 void on_detailed_report_activate() {
-	gchar * table_str;
-	gchar * header_str;
-	gchar * final_str;
-	GtkWidget * window;
+	GtkWidget *dialog;
+	GtkWidget *content;
+	GtkWidget *html_viewer;
+	gchar *detailed_report;
+	GebrGeoXmlDocument *document;
 
-	header_str = gebr_flow_generate_header(gebr.flow, TRUE);
-	table_str = gebr_flow_generate_parameter_value_table(gebr.flow);
-	final_str = gebr_generate_report(gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)),
-					 "<link rel=\"stylesheet\" type=\"text/css\" href=\"gebr.css\" />",
-					 header_str, table_str);
+	dialog = gtk_dialog_new_with_buttons (_("Generate detailed report"),
+					      GTK_WINDOW (gebr.window),
+					      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					      GTK_STOCK_OK, GTK_RESPONSE_OK,
+					      NULL);
 
-	window = gebr_gui_html_viewer_window_new();
-	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), final_str);
-	gtk_widget_show(window);
-	g_free(final_str);
+	switch (gtk_notebook_get_current_page (GTK_NOTEBOOK (gebr.notebook))) {
+	case NOTEBOOK_PAGE_FLOW_BROWSE:
+		content = gebr_flow_print_dialog_custom_tab ();
+		document = GEBR_GEOXML_DOCUMENT (gebr.flow);
+		break;
+	case NOTEBOOK_PAGE_PROJECT_LINE: {
+		GebrGeoXmlObject *object;
+		object = GEBR_GEOXML_OBJECT (gebr.project_line);
+		if (gebr_geoxml_object_get_type (object) != GEBR_GEOXML_OBJECT_TYPE_LINE)
+			goto out;
+		content = gebr_project_line_print_dialog_custom_tab ();
+		document = GEBR_GEOXML_DOCUMENT (gebr.project_line);
+		break;
+	}
+	default:
+		goto out;
+	}
+
+	gtk_widget_show_all (content);
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), content, TRUE, TRUE, 0);
+
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) != GTK_RESPONSE_OK)
+		goto out;
+
+	html_viewer = gebr_gui_html_viewer_window_new ();
+	detailed_report = gebr_document_generate_report (document);
+	gebr_gui_html_viewer_window_show_html (GEBR_GUI_HTML_VIEWER_WINDOW (html_viewer), detailed_report);
+	gtk_widget_show (html_viewer);
+	g_free (detailed_report);
+out:
+	gtk_widget_destroy (dialog);
 }
 
 /**

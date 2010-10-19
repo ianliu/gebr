@@ -130,7 +130,7 @@ void project_line_show_help(void);
 void project_line_edit_help(void);
 
 GtkWidget *
-gebr_project_line_print_dialog_custom_tab(GebrGuiHtmlViewerWidget * widget);
+gebr_project_line_print_dialog_custom_tab(void);
 
 gchar * gebr_line_generate_header(GebrGeoXmlDocument * document);
 
