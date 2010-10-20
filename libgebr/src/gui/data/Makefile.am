@@ -18,4 +18,7 @@ include $(top_srcdir)/Makefile.decl
 libgebrdatadir = $(datadir)/libgebr/
 libgebrdata_DATA = gebr.css
 
-EXTRA_DIST = $(libgebrdata_DATA)
+gebrstylesdir = $(datadir)/libgebr/styles
+gebrstyles_DATA = gebr-report.css gebr.css
+
+EXTRA_DIST = $(libgebrdata_DATA) $(gebrstyles_DATA)
