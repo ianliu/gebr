@@ -528,8 +528,19 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 			flow_i = matchptr[0].rm_so;
 		}
 
-		if (start != -1 && length != -1 && flow_i != -1)
-			g_string_insert_len (merged_help, flow_i, revision_help + start, length); 
+		if (start != -1 && length != -1 && flow_i != -1){
+			gchar * date = NULL;
+			gchar * comment = NULL;
+			GString * revision_data;
+
+			revision_data = g_string_new(NULL);
+
+			gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
+			g_string_append(revision_data, comment);
+			g_string_append(revision_data, date);
+			g_string_insert (merged_help, flow_i, revision_data->str); 
+			g_string_insert_len (merged_help, flow_i + revision_data->len, revision_help + start, length); 
+		}
 
 		gebr_geoxml_document_set_help (revision_flow, "");
 		gebr_geoxml_document_to_string (revision_flow, &revision_xml);
