@@ -1017,9 +1017,7 @@ static void on_detailed_line_css_changed (GtkComboBox * combobox)
 {
 	gchar *text;
 	text = gtk_combo_box_get_active_text (combobox);
-	g_message ("%s", text);
 	if (gtk_combo_box_get_active (combobox) == 0) {
-		g_message ("Fallback to users css");
 		g_string_assign (gebr.config.detailed_line_css, "");
 	} else {
 		g_string_assign (gebr.config.detailed_line_css, text);

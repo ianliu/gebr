@@ -707,9 +707,12 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 
 	dump = g_string_new(NULL);
 	g_string_append_printf(dump,
-			       "<p><strong>%s</strong> %s</p>"
-			       "<p><strong>%s</strong> %s</p>"
-			       "<p><strong>%s</strong> %s</p>",
+			       "<div class='gebr-flow-dump'>"
+			       "<table>"
+			       "<tr><td>%s</td><td>%s</td></tr>"
+			       "<tr><td>%s</td><td>%s</td></tr>"
+			       "<tr><td>%s</td><td>%s</td></tr>"
+			       "</table>",
 			       _("Input"), strlen (input) > 0? input : _("(none)"),
 			       _("Output"), strlen (output) > 0? output : _("(none)"),
 			       _("Error"), strlen (error) > 0? error : _("(none)")); 
@@ -731,13 +734,13 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 		gebr_geoxml_sequence_next(&sequence);
 	}
 
+	g_string_append (dump, "</div>");
 	return g_string_free(dump, FALSE);
 }
 
 gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
 {
 	gchar *date;
-	gchar *revisions;
 	GString *dump;
 	GebrGeoXmlSequence * program;
 
@@ -763,11 +766,7 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
 				date);
 	g_free (date);
 
-	revisions = g_strdup_printf (_("This flow has %ld revisions"),
-				     gebr_geoxml_flow_get_revisions_number (flow));
-	g_string_append_printf (dump, "<p>%s</p>", revisions);
-	g_free (revisions);
-
+	g_string_append_printf (dump, "<p>%s</p>", _("Flow with programs"));
 	g_string_append_printf (dump, "<ul>");
 	gebr_geoxml_flow_get_program (flow, &program, 0);
 	while (program) {

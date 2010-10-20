@@ -370,6 +370,8 @@ void on_detailed_report_activate() {
 	g_signal_connect (dialog, "response",
 			  G_CALLBACK (on_detailed_report_dialog_response), document);
 
+	gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+	gtk_container_set_border_width (GTK_CONTAINER (dialog), 5);
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), content, TRUE, TRUE, 0);
 	gtk_widget_show_all (content);
 	gtk_widget_show (dialog);
