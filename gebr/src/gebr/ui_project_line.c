@@ -754,9 +754,10 @@ static void project_line_load(void)
 	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
 	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
 	gtk_tree_path_free(path);
-	if (is_line == TRUE) {
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_dump"), TRUE);
 
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "project_line_dump"), is_line);
+
+	if (is_line == TRUE) {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 				   PL_FILENAME, &line_filename, -1);
 
@@ -765,8 +766,6 @@ static void project_line_load(void)
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 				   PL_FILENAME, &project_filename, -1);
 	} else {
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_dump"), FALSE);
-
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 				   PL_FILENAME, &project_filename, -1);
 	}
