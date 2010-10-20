@@ -1073,18 +1073,18 @@ gebr_project_line_print_dialog_custom_tab()
 		g_error_free(error);
 		return NULL;
 	}
+
+	gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_line_css_combo), USERS_CSS);
 	filename = g_dir_read_name(directory);
 	while (filename != NULL) {
 		if (fnmatch("*.css", filename, 1) == 0) {
-			gtk_combo_box_prepend_text(GTK_COMBO_BOX(detailed_line_css_combo), filename);
-
-			if (strcmp (filename, gebr.config.detailed_line_css->str))
+			gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_line_css_combo), filename);
+			if (strcmp (filename, gebr.config.detailed_line_css->str) == 0)
 				active = i + 1;
 			i++;
 		}
 		filename = g_dir_read_name(directory);
 	}
-	gtk_combo_box_prepend_text (GTK_COMBO_BOX (detailed_line_css_combo), USERS_CSS);
 	gtk_widget_show(detailed_line_css_combo);
 
 	detailed_line_include_report = gtk_check_button_new_with_label(_("Include user's report"));

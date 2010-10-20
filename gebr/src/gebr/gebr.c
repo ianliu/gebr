@@ -407,7 +407,7 @@ void gebr_config_save(gboolean verbose)
 	}
 	
 	/* Save selected document*/
-	if (project_line_get_selected(&iter, DontWarnUnselection)){
+	if (project_line_get_selected(&iter, DontWarnUnselection)) {
 		gebr.config.project_line_string->str = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
 		g_key_file_set_string(gebr.config.key_file, "general", "project_line_string", gebr.config.project_line_string->str);
 
@@ -418,7 +418,7 @@ void gebr_config_save(gboolean verbose)
 	}
 
 	error = NULL;
-	string = g_key_file_to_data(gebr.config.key_file, &length, &error);
+	string = g_key_file_to_data(gebr.config.key_file, &length, NULL);
 	configfp = fopen(gebr.config.path->str, "w");
 	if (configfp == NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not save configuration."));

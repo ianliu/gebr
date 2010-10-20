@@ -859,10 +859,11 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 		return NULL;
 	}
 
+	gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_flow_css), USERS_CSS);
 	filename = g_dir_read_name(directory);
 	while (filename != NULL) {
 		if (fnmatch ("*.css", filename, 1) == 0) {
-			gtk_combo_box_prepend_text (GTK_COMBO_BOX (detailed_flow_css), filename);
+			gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_flow_css), filename);
 			if (strcmp (filename, gebr.config.detailed_flow_css->str) == 0)
 				// We must sum 1 to active to skip the USERS_CSS entry
 				active = i + 1;
@@ -870,7 +871,6 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 		}
 		filename = g_dir_read_name(directory);
 	}
-	gtk_combo_box_prepend_text (GTK_COMBO_BOX (detailed_flow_css), USERS_CSS);
 	gtk_widget_show(detailed_flow_css);
 
 	detailed_flow_include_report = gtk_check_button_new_with_label(_("Include user's report"));
