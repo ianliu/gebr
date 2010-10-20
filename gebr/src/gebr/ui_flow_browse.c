@@ -248,6 +248,8 @@ void flow_browse_info_update(void)
 
 		g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
 		g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_dump"), FALSE);
+
 		navigation_bar_update();
 		return;
 	}
@@ -327,13 +329,15 @@ void flow_browse_info_update(void)
 	g_string_free(text, TRUE);
 
 	/* Info button */
-    gboolean help_exists = gebr.flow != NULL && (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.flow))) ? TRUE : FALSE);
+	gboolean help_exists = gebr.flow != NULL && (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.flow))) ? TRUE : FALSE);
 
 	g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", help_exists, NULL);
 
-    gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_view"), help_exists);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_view"), help_exists);
 
 	g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", TRUE, NULL);
+
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_dump"), TRUE);
 
 	navigation_bar_update();
 }
