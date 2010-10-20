@@ -535,14 +535,17 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 
 GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, const gchar * comment)
 {
+	GebrGeoXmlRevision *revision;
+	GebrGeoXmlSequence *i;
+	GebrGeoXmlFlow *revision_flow;
+
 	g_return_val_if_fail(flow != NULL, NULL);
 	g_return_val_if_fail(comment != NULL, NULL);
 
-	GebrGeoXmlRevision *revision;
+	revision_flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
+	gebr_geoxml_document_set_help (GEBR_GEOXML_DOCUMENT (revision_flow), "");
 
-	GebrGeoXmlFlow *revision_flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
 	/* remove revisions from the revision flow. */
-	GebrGeoXmlSequence *i;
 	gebr_geoxml_flow_get_revision(revision_flow, &i, 0);
 	while (i != NULL) {
 		GebrGeoXmlSequence *aux = (GebrGeoXmlSequence *) __gebr_geoxml_next_element((GdomeElement *) i);
