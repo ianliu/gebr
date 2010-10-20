@@ -15,6 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <regex.h>
 #include <gdome.h>
 #include <string.h>
 
@@ -493,6 +494,9 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 	if (flow == NULL || revision == NULL)
 		return FALSE;
 
+	GString *merged_help;
+	const gchar *revision_help;
+	const gchar *flow_help;
 	GebrGeoXmlDocument *revision_flow;
 	GebrGeoXmlSequence *first_revision;
 	GdomeElement *child;
@@ -501,6 +505,37 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 	if (gebr_geoxml_document_load_buffer(&revision_flow,
 					     __gebr_geoxml_get_element_value((GdomeElement *) revision)))
 		return FALSE;
+
+	flow_help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (flow));
+	revision_help = gebr_geoxml_document_get_help (revision_flow);
+	merged_help = g_string_new (flow_help);
+	if (strlen (revision_help) > 1) {
+		gchar *revision_xml;
+		regex_t regexp;
+		regmatch_t matchptr[2];
+		gssize start = -1;
+		gssize length = -1;
+		gssize flow_i = -1;
+
+		regcomp(&regexp, "<body[^>]*>\\(.*\\?\\)<\\/body>", REG_ICASE);
+		if (!regexec(&regexp, revision_help, 2, matchptr, 0)) {
+			start = matchptr[1].rm_so;
+			length = matchptr[1].rm_eo - matchptr[1].rm_so;
+		}
+
+		regcomp (&regexp, "</body>", REG_NEWLINE | REG_ICASE);
+		if (!regexec (&regexp, flow_help, 1, matchptr, 0)) {
+			flow_i = matchptr[0].rm_so;
+		}
+
+		if (start != -1 && length != -1 && flow_i != -1)
+			g_string_insert_len (merged_help, flow_i, revision_help + start, length); 
+
+		gebr_geoxml_document_set_help (revision_flow, "");
+		gebr_geoxml_document_to_string (revision_flow, &revision_xml);
+		__gebr_geoxml_set_element_value((GdomeElement *) revision, revision_xml, __gebr_geoxml_create_CDATASection);
+		g_free (revision_xml);
+	}
 
 	gebr_geoxml_flow_get_revision(flow, &first_revision, 0);
 	/* remove all elements till first_revision
@@ -529,6 +564,9 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 		gdome_el_insertBefore_protected(gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(flow)),
 				      (GdomeNode *) new_node, (GdomeNode *) first_revision, &exception);
 	}
+
+	gebr_geoxml_document_set_help (GEBR_GEOXML_DOCUMENT (flow), merged_help->str);
+	g_string_free (merged_help, TRUE);
 
 	return TRUE;
 }
