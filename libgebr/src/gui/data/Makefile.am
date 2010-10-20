@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
+# TODO: remove this install dir!
 libgebrdatadir = $(datadir)/libgebr/
 libgebrdata_DATA = gebr.css
 

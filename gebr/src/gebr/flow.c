@@ -41,8 +41,7 @@
 #include "ui_document.h"
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
-
-#define USERS_CSS _("Report style")
+#include "../defines.h"
 
 static void on_properties_response(gboolean accept)
 {
@@ -50,7 +49,7 @@ static void on_properties_response(gboolean accept)
 		flow_delete(FALSE);
 }
 
-void flow_new(void)
+void flow_new (void)
 {
 	GtkTreeIter iter;
 
@@ -852,20 +851,20 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 	gtk_widget_show(css_combo_label);
 	detailed_flow_css = gtk_combo_box_new_text();
 
-	directory = g_dir_open(g_get_home_dir (), 0, &error);
+	directory = g_dir_open(GEBR_STYLES_DIR, 0, &error);
 	if (error != NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to read file: %s"), error->message);
 		g_clear_error (&error);
 		return NULL;
 	}
 
-	gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_flow_css), USERS_CSS);
+	gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_flow_css), _("Report style"));
 	filename = g_dir_read_name(directory);
 	while (filename != NULL) {
 		if (fnmatch ("*.css", filename, 1) == 0) {
 			gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_flow_css), filename);
 			if (strcmp (filename, gebr.config.detailed_flow_css->str) == 0)
-				// We must sum 1 to active to skip the USERS_CSS entry
+				// We must sum 1 to active to skip the first entry
 				active = i + 1;
 			i++;
 		}

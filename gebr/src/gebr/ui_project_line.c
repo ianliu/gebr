@@ -36,8 +36,7 @@
 #include "flow.h"
 #include "ui_help.h"
 #include "callbacks.h"
-
-#define USERS_CSS _("Report style")
+#include "../defines.h"
 
 /*
  * Prototypes
@@ -1067,14 +1066,14 @@ gebr_project_line_print_dialog_custom_tab()
 	gtk_widget_show(css_combo_label);
 	detailed_line_css_combo = gtk_combo_box_new_text();
 
-	directory = g_dir_open(g_get_home_dir (), 0, &error);
+	directory = g_dir_open(GEBR_STYLES_DIR, 0, &error);
 	if (error != NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to read file: %s"), error->message);
 		g_error_free(error);
 		return NULL;
 	}
 
-	gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_line_css_combo), USERS_CSS);
+	gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_line_css_combo), _("Report style"));
 	filename = g_dir_read_name(directory);
 	while (filename != NULL) {
 		if (fnmatch("*.css", filename, 1) == 0) {

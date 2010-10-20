@@ -15,72 +15,90 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
+NULL =
+
 SUBDIRS = . tests
 
 bin_PROGRAMS = gebr
 
 #TODO: remove cmdline.{c,h} in future versions (remove old config format support)
 noinst_LIBRARIES = libgebr.a
-libgebr_a_SOURCES = \
-	cmdline.c \
-	gebr.c \
-	callbacks.c \
-	document.c \
-	project.c \
-	line.c \
-	flow.c \
-	job.c \
-	server.c client.c \
-	menu.c \
-	interface.c \
-	ui_document.c \
-	ui_flow.c \
-	ui_parameters.c \
-	ui_help.c \
-	ui_project_line.c \
-	ui_flow_browse.c \
-	ui_flow_edition.c \
-	ui_log.c \
-	ui_job_control.c \
-	ui_paths.c \
-	ui_preferences.c \
-	ui_server.c \
-	ui_moab.c \
-	gebr-help-edit-widget.c
+libgebr_a_SOURCES =		\
+	callbacks.c		\
+	client.c		\
+	cmdline.c		\
+	document.c		\
+	flow.c			\
+	gebr-help-edit-widget.c	\
+	gebr.c			\
+	interface.c		\
+	job.c			\
+	line.c			\
+	menu.c			\
+	project.c		\
+	server.c		\
+	ui_document.c		\
+	ui_flow.c		\
+	ui_flow_browse.c	\
+	ui_flow_edition.c	\
+	ui_help.c		\
+	ui_job_control.c	\
+	ui_log.c		\
+	ui_moab.c		\
+	ui_parameters.c		\
+	ui_paths.c		\
+	ui_preferences.c	\
+	ui_project_line.c	\
+	ui_server.c		\
+	$(NULL)
 
 gebr_SOURCES = main.c
-noinst_HEADERS = \
-	cmdline.h \
-	gebr.h \
-	callbacks.h \
-	document.h \
-	project.h \
-	line.h \
-	flow.h \
-	job.h \
-	server.h \
-	client.h \
-	menu.h \
-	interface.h \
-	ui_document.h \
-	ui_flow.h \
-	ui_parameters.h \
-	ui_help.h \
-	ui_project_line.h \
-	ui_flow_browse.h \
-	ui_flow_edition.h \
-	ui_job_control.h \
-	ui_log.h \
-	ui_paths.h \
-	ui_preferences.h \
-	ui_server.h \
-	ui_moab.h \
-	gebr-help-edit-widget.h
+noinst_HEADERS = 		\
+	callbacks.h		\
+	client.h		\
+	cmdline.h		\
+	document.h		\
+	flow.h			\
+	gebr-help-edit-widget.h	\
+	gebr.h			\
+	interface.h		\
+	job.h			\
+	line.h			\
+	menu.h			\
+	project.h		\
+	server.h		\
+	ui_document.h		\
+	ui_flow.h		\
+	ui_flow_browse.h	\
+	ui_flow_edition.h	\
+	ui_help.h		\
+	ui_job_control.h	\
+	ui_log.h		\
+	ui_moab.h		\
+	ui_parameters.h		\
+	ui_paths.h		\
+	ui_preferences.h	\
+	ui_project_line.h	\
+	ui_server.h		\
+	$(NULL)
 
 EXTRA_DIST = ${noinst_HEADERS}
 
-INCLUDES = -I..
-AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
-	    $(CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_COMM_CFLAGS) $(GEBR_GUI_CFLAGS)
-gebr_LDADD = libgebr.a $(LIBS) \
-	     $(GEBR_GEOXML_LIBS) $(GEBR_COMM_LIBS) $(GEBR_GUI_LIBS)
+AM_CPPFLAGS =			\
+	-I..			\
+	$(CFLAGS)		\
+	$(GEBR_GEOXML_CFLAGS)	\
+	$(GEBR_COMM_CFLAGS)	\
+	$(GEBR_GUI_CFLAGS)	\
+	@DEBUG_CFLAGS@		\
+	$(NULL)
+
+AM_CFLAGS = -Wall -std=gnu99
+
+gebr_LDADD =			\
+	libgebr.a		\
+	$(LIBS)			\
+	$(GEBR_GEOXML_LIBS)	\
+	$(GEBR_COMM_LIBS)	\
+	$(GEBR_GUI_LIBS)	\
+	$(NULL)
