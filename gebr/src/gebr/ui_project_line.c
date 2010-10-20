@@ -1139,6 +1139,7 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 	GString * dump;
 	GebrGeoXmlLine *line;
 	GebrGeoXmlDocumentType type;
+	GebrGeoXmlSequence *sequence;
 
 	type = gebr_geoxml_document_get_type (document);
 	g_return_val_if_fail (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE, NULL);
@@ -1175,6 +1176,9 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 		}
 		g_string_append(dump, "</ul>");
 	}
+
+	g_string_append (dump, "<ul>");
+	g_string_append (dump, "</ul>");
 
 	return g_string_free(dump, FALSE);
 }

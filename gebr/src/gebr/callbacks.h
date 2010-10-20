@@ -113,7 +113,10 @@ void on_flow_component_properties_activate(void);
  *
  */
 void on_flow_component_refresh_activate(void);
+
 /**
+ * on_flow_component_refresh_activate:
+ *
  * Call #flow_edition_status_changed
  */
 void on_flow_component_status_activate(GtkAction *action,
@@ -124,72 +127,63 @@ void on_flow_component_move_top(void);
 void on_flow_component_move_bottom(void);
 
 /**
- * Call #job_control_save
+ * on_job_control_save:
+ *
+ * Call job_control_save()
  */
 void on_job_control_save(void);
-/**
- *
- */
+
 void on_job_control_cancel(void);
-/**
- *
- */
+
 void on_job_control_close(void);
-/**
- *
- */
+
 void on_job_control_clear(void);
+
 /**
- * Call #job_control_stop
+ * on_job_control_stop:
+ *
+ * Call job_control_stop().
  */
 void on_job_control_stop(void);
 
-/**
- *
- */
 void on_configure_preferences_activate(void);
+
 /**
- * Show servers's configuration dialog
+ * on_configure_servers_activate:
+ *
+ * Show servers's configuration dialog.
  */
 void on_configure_servers_activate(void);
 
-/**
- *
- */
 void on_help_contents_activate(void);
-/**
- * Show about dialog
- */
-void on_help_about_activate(void);
 
 /**
+ * on_help_about_activate:
  *
+ * Show GêBR's about dialog.
  */
+void on_help_about_activate (void);
+
 void navigation_bar_update(void);
 
-/**
- *
- */
 void on_flow_browse_show_help(void);
 
-/**
- *
- */
 void on_flow_browse_edit_help(void);
 
-/**
- */
-void on_project_line_show_help(void);
+void on_project_line_show_help (void);
 
-void on_project_line_edit_help(void);
+void on_project_line_edit_help (void);
 
 /**
  * on_detailed_report_activate:
+ *
  * Called when the user presses the Detailed report button in Flow's tab.
  * This function creates a #GebrGuiHtmlViewerWindow to show the detailed
  * report.
  */
-void on_detailed_report_activate(void);
+void on_flow_detailed_report_activate (void);
+
+void on_line_detailed_report_activate (void);
 
 G_END_DECLS
 #endif				//__CALLBACKS_H
