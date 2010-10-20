@@ -66,6 +66,8 @@ struct ui_flow_browse {
 		GtkWidget *output;
 		GtkWidget *error_label;
 		GtkWidget *error;
+		GtkWidget *rev_num_label;
+		GtkWidget *rev_num;
 
 		GtkWidget *help_view;
 		GtkWidget *help_edit;

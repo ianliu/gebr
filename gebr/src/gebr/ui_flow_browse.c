@@ -199,6 +199,17 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	ui_flow_browse->info.error = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.error), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.error, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3),
+	    row++;
+
+	ui_flow_browse->info.rev_num_label = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.rev_num_label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.rev_num_label, 0, 1, row, row + 1,
+			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
+			 3);
+	ui_flow_browse->info.rev_num = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.rev_num), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.rev_num, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
 			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	/* Help */
@@ -245,6 +256,8 @@ void flow_browse_info_update(void)
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.modified_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun_label), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.rev_num), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.rev_num_label), "");
 
 		g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
 		g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
@@ -295,6 +308,9 @@ void flow_browse_info_update(void)
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Error log:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.error_label), markup);
 	g_free(markup);
+	markup = g_markup_printf_escaped("<b>%s</b>", _("Flow State Number:"));
+	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.rev_num_label), markup);
+	g_free(markup);
 	/* Server */
 //      if (gebr.flow_server != NULL)
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.server),
@@ -319,6 +335,17 @@ void flow_browse_info_update(void)
 				   gebr_geoxml_flow_server_io_get_error(gebr.flow_server));
 	else
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error), _("(none)"));
+
+	/* Revision number */
+
+	if (gebr_geoxml_flow_get_revisions_number(gebr.flow) > 0){
+		char * str_tmp = g_strdup_printf("%ld", gebr_geoxml_flow_get_revisions_number(gebr.flow));
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.rev_num), str_tmp);
+		g_free(str_tmp);
+	}
+       	else {
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.rev_num), _("(none)"));
+	}
 
 	/* Author and email */
 	text = g_string_new(NULL);
