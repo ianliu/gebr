@@ -322,42 +322,12 @@ void on_flow_browse_edit_help(void) {
     flow_browse_edit_help();
 }
 
-void on_detailed_report_activate() {
-	GtkWidget *dialog;
-	GtkWidget *content;
+static void on_detailed_report_dialog_response (GtkWidget *dialog, gint response, GebrGeoXmlDocument *document)
+{
 	GtkWidget *html_viewer;
 	gchar *detailed_report;
-	GebrGeoXmlDocument *document;
 
-	dialog = gtk_dialog_new_with_buttons (_("Generate detailed report"),
-					      GTK_WINDOW (gebr.window),
-					      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-					      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					      GTK_STOCK_OK, GTK_RESPONSE_OK,
-					      NULL);
-
-	switch (gtk_notebook_get_current_page (GTK_NOTEBOOK (gebr.notebook))) {
-	case NOTEBOOK_PAGE_FLOW_BROWSE:
-		content = gebr_flow_print_dialog_custom_tab ();
-		document = GEBR_GEOXML_DOCUMENT (gebr.flow);
-		break;
-	case NOTEBOOK_PAGE_PROJECT_LINE: {
-		GebrGeoXmlObject *object;
-		object = GEBR_GEOXML_OBJECT (gebr.project_line);
-		if (gebr_geoxml_object_get_type (object) != GEBR_GEOXML_OBJECT_TYPE_LINE)
-			goto out;
-		content = gebr_project_line_print_dialog_custom_tab ();
-		document = GEBR_GEOXML_DOCUMENT (gebr.project_line);
-		break;
-	}
-	default:
-		goto out;
-	}
-
-	gtk_widget_show_all (content);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), content, TRUE, TRUE, 0);
-
-	if (gtk_dialog_run (GTK_DIALOG (dialog)) != GTK_RESPONSE_OK)
+	if (response != GTK_RESPONSE_OK)
 		goto out;
 
 	html_viewer = gebr_gui_html_viewer_window_new ();
@@ -367,6 +337,42 @@ void on_detailed_report_activate() {
 	g_free (detailed_report);
 out:
 	gtk_widget_destroy (dialog);
+}
+
+void on_detailed_report_activate() {
+	GtkWidget *dialog;
+	GtkWidget *content;
+	GebrGeoXmlDocument *document;
+
+	switch (gtk_notebook_get_current_page (GTK_NOTEBOOK (gebr.notebook))) {
+	case NOTEBOOK_PAGE_FLOW_BROWSE:
+		content = gebr_flow_print_dialog_custom_tab ();
+		document = GEBR_GEOXML_DOCUMENT (gebr.flow);
+		break;
+	case NOTEBOOK_PAGE_PROJECT_LINE: {
+		if (gebr_geoxml_document_get_type (gebr.project_line) != GEBR_GEOXML_DOCUMENT_TYPE_LINE)
+			return;
+		content = gebr_project_line_print_dialog_custom_tab ();
+		document = GEBR_GEOXML_DOCUMENT (gebr.project_line);
+		break;
+	}
+	default:
+		return;
+	}
+
+	dialog = gtk_dialog_new_with_buttons (_("Generate detailed report"),
+					      GTK_WINDOW (gebr.window),
+					      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					      GTK_STOCK_OK, GTK_RESPONSE_OK,
+					      NULL);
+
+	g_signal_connect (dialog, "response",
+			  G_CALLBACK (on_detailed_report_dialog_response), document);
+
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), content, TRUE, TRUE, 0);
+	gtk_widget_show_all (content);
+	gtk_widget_show (dialog);
 }
 
 /**

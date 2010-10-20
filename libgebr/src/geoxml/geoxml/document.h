@@ -85,7 +85,7 @@ typedef struct gebr_geoxml_document GebrGeoXmlDocument;
  * Document type: flow, line or project
  *
  */
-enum GEBR_GEOXML_DOCUMENT_TYPE {
+typedef enum {
 	/**
 	 * The document is a GebrGeoXmlFlow
 	 */
@@ -98,7 +98,7 @@ enum GEBR_GEOXML_DOCUMENT_TYPE {
 	 * The document is a GebrGeoXmlProject
 	 */
 	GEBR_GEOXML_DOCUMENT_TYPE_PROJECT,
-};
+} GebrGeoXmlDocumentType;
 
 #include "program.h"
 
@@ -149,7 +149,7 @@ GebrGeoXmlDocument *gebr_geoxml_document_clone(GebrGeoXmlDocument * source);
  *
  * \see GEBR_GEOXML_DOCUMENT_TYPE
  */
-enum GEBR_GEOXML_DOCUMENT_TYPE gebr_geoxml_document_get_type(GebrGeoXmlDocument * document);
+GebrGeoXmlDocumentType gebr_geoxml_document_get_type(GebrGeoXmlDocument * document);
 
 /**
  * Returns the version string of \p document.

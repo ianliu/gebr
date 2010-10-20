@@ -973,7 +973,7 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 	GtkTreeIter iter;
 	const gchar *old_title;
 	const gchar *new_title;
-	enum GEBR_GEOXML_DOCUMENT_TYPE type;
+	GebrGeoXmlDocumentType type;
 
 	data->accept_response = TRUE;
 	old_title = gebr_geoxml_document_get_title(data->document);

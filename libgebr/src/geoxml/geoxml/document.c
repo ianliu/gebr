@@ -795,7 +795,7 @@ GebrGeoXmlDocument *gebr_geoxml_document_clone(GebrGeoXmlDocument * source)
 	return document;
 }
 
-enum GEBR_GEOXML_DOCUMENT_TYPE gebr_geoxml_document_get_type(GebrGeoXmlDocument * document)
+GebrGeoXmlDocumentType gebr_geoxml_document_get_type(GebrGeoXmlDocument * document)
 {
 	if (document == NULL)
 		return GEBR_GEOXML_DOCUMENT_TYPE_FLOW;

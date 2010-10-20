@@ -45,7 +45,7 @@ static void document_cache_add(const gchar *path, GebrGeoXmlDocument * document)
 	g_hash_table_insert(gebr.xmls_by_filename, g_strdup(path), document);
 }
 
-GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type)
+GebrGeoXmlDocument *document_new(GebrGeoXmlDocumentType type)
 {
 	gchar *extension;
 	GString *filename;
@@ -177,7 +177,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	void remove_parent_ref(GebrGeoXmlDocument *parent_document, const gchar *path)
 	{
 		GebrGeoXmlSequence * sequence;
-		enum GEBR_GEOXML_DOCUMENT_TYPE type;
+		GebrGeoXmlDocumentType type;
 
 		gchar *basename;
 		basename = g_path_get_basename(path);
@@ -707,7 +707,6 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 			g_string_append (content, params);
 			g_free (params);
 		}
-
 	} else
 		g_return_val_if_reached(NULL);
 

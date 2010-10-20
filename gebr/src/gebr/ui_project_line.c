@@ -1013,11 +1013,13 @@ static void on_detailed_line_css_changed (GtkComboBox * combobox)
 {
 	gchar *text;
 	text = gtk_combo_box_get_active_text (combobox);
-	g_string_assign (gebr.config.detailed_line_css, text);
-	if (strcmp (text, USERS_CSS) == 0)
+	g_message ("%s", text);
+	if (gtk_combo_box_get_active (combobox) == 0) {
+		g_message ("Fallback to users css");
 		g_string_assign (gebr.config.detailed_line_css, "");
-	else
+	} else {
 		g_string_assign (gebr.config.detailed_line_css, text);
+	}
 	g_free (text);
 }
 
@@ -1065,7 +1067,7 @@ gebr_project_line_print_dialog_custom_tab()
 	detailed_line_css_combo = gtk_combo_box_new_text();
 
 	directory = g_dir_open(g_get_home_dir (), 0, &error);
-	if (error != NULL){
+	if (error != NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to read file: %s"), error->message);
 		g_error_free(error);
 		return NULL;
@@ -1076,7 +1078,7 @@ gebr_project_line_print_dialog_custom_tab()
 			gtk_combo_box_prepend_text(GTK_COMBO_BOX(detailed_line_css_combo), filename);
 
 			if (strcmp (filename, gebr.config.detailed_line_css->str))
-				active = i;
+				active = i + 1;
 			i++;
 		}
 		filename = g_dir_read_name(directory);
@@ -1087,6 +1089,18 @@ gebr_project_line_print_dialog_custom_tab()
 	detailed_line_include_report = gtk_check_button_new_with_label(_("Include user's report"));
 	detailed_line_include_flow_report = gtk_check_button_new_with_label(_("Include flow reports"));
 	detailed_line_include_flow_params = gtk_check_button_new_with_label(_("Include parameter/value table"));
+
+	g_signal_connect(detailed_line_css_combo, "changed",
+			 G_CALLBACK(on_detailed_line_css_changed), NULL);
+
+	g_signal_connect(detailed_line_include_report, "toggled",
+			 G_CALLBACK(on_detailed_line_include_report_toggled), NULL);
+
+	g_signal_connect(detailed_line_include_flow_report, "toggled",
+			 G_CALLBACK(on_detailed_line_include_flow_report_toggled), detailed_line_include_flow_params);
+
+	g_signal_connect(detailed_line_include_flow_params, "toggled",
+			 G_CALLBACK(on_detailed_line_include_flow_params_toggled), NULL);
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(detailed_line_css_combo), active);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_line_include_report), gebr.config.detailed_line_include_report);
@@ -1101,7 +1115,6 @@ gebr_project_line_print_dialog_custom_tab()
 	vbox = gtk_vbox_new(FALSE, 0);
 	hbox_combo = gtk_hbox_new(FALSE, 0);
 
-
 	gtk_box_pack_start(GTK_BOX(hbox_combo), css_combo_label, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox_combo), detailed_line_css_combo, TRUE, TRUE, 0);
 
@@ -1115,16 +1128,6 @@ gebr_project_line_print_dialog_custom_tab()
 	gtk_box_pack_start(GTK_BOX(vbox), hbox_combo, FALSE, TRUE, 0);
 
 	gtk_container_add(GTK_CONTAINER(frame),vbox);
-
-	g_signal_connect(detailed_line_css_combo, "changed", G_CALLBACK(on_detailed_line_css_changed), NULL);
-	g_signal_connect(detailed_line_include_report, "toggled", G_CALLBACK(on_detailed_line_include_report_toggled), NULL);
-
-	g_signal_connect(detailed_line_include_flow_report, "toggled",
-			 G_CALLBACK(on_detailed_line_include_flow_report_toggled),
-			 detailed_line_include_flow_params);
-
-	g_signal_connect(detailed_line_include_flow_params, "toggled", G_CALLBACK(on_detailed_line_include_flow_params_toggled), NULL);
-
 	gtk_widget_show_all(frame);
 	return frame;
 }
@@ -1132,37 +1135,43 @@ gebr_project_line_print_dialog_custom_tab()
 gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 {
 	GString * dump;
+	GebrGeoXmlLine *line;
+	GebrGeoXmlDocumentType type;
+
+	type = gebr_geoxml_document_get_type (document);
+	g_return_val_if_fail (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE, NULL);
 
 	dump = g_string_new(NULL);
 	g_string_printf(dump,
-			"<p><h1> %s </h1></p>"
-			"<p>%s</p>",
+			"<h1>%s</h1><h2>%s</h2>",
 			gebr_geoxml_document_get_title(document),
-			gebr_geoxml_document_get_description(document)
-		       );
+			gebr_geoxml_document_get_description(document));
 
-	g_string_append_printf(dump, _("<p>By %s &lt;%s&gt;, %s</p>"),
-			gebr_geoxml_document_get_author(document),
-			gebr_geoxml_document_get_email(document),
-			gebr_localized_date(gebr_iso_date())
-			);
+	g_string_append_printf(dump,
+			       "<p>%s <span style='gebr-author'>%s</span> "
+			       "<span style='gebr-email'>%s</span>, "
+			       "<span style='gebr-date'>%s</span></p>",
+			       // Comment for translators:
+			       // "By" as in "By John McClane"
+			       _("By"),
+			       gebr_geoxml_document_get_author(document),
+			       gebr_geoxml_document_get_email(document),
+			       gebr_localized_date(gebr_iso_date()));
 			
-	if (gebr_geoxml_object_get_type(GEBR_GEOXML_OBJECT(document)) == GEBR_GEOXML_OBJECT_TYPE_LINE &&
-	    (gebr_geoxml_line_get_paths_number(GEBR_GEOXML_LINE(document)) > 0)){
 
+	line = GEBR_GEOXML_LINE (document);
+	if (gebr_geoxml_line_get_paths_number(line) > 0) {
 		GebrGeoXmlSequence *line_path;
-		GString *dump_line;
 
-		dump_line = g_string_new(_("<p>Line Path:</p>"));
+		// Comment for translators: HTML header for detailed report
+		g_string_append_printf (dump, "<h3>%s</h3><ul>", _("Line paths"));
 
 		gebr_geoxml_line_get_path(GEBR_GEOXML_LINE(document), &line_path, 0);
 		for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
-			g_string_append_printf(dump_line,
-					       "<p>%s</p>",
+			g_string_append_printf(dump, "<li>%s</li>",
 					       gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path)));
 		}
-		g_string_append(dump, dump_line->str);
-		g_string_free(dump_line, TRUE);
+		g_string_append(dump, "</ul>");
 	}
 
 	return g_string_free(dump, FALSE);

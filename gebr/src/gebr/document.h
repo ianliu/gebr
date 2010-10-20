@@ -30,7 +30,7 @@ G_BEGIN_DECLS
  * Create a new document in the user's data diretory
  * with _type_ and set its filename.
  */
-GebrGeoXmlDocument *document_new(enum GEBR_GEOXML_DOCUMENT_TYPE type);
+GebrGeoXmlDocument *document_new(GebrGeoXmlDocumentType type);
 
 /**
  * Return TRUE if \p path is inside GeBR's data dir.

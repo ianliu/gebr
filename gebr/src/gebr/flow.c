@@ -736,8 +736,9 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 
 gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
 {
-	gchar * date;
-	GString * dump;
+	gchar *date;
+	gchar *revisions;
+	GString *dump;
 	GebrGeoXmlSequence * program;
 
 	dump = g_string_new(NULL);
@@ -748,22 +749,26 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
 			gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(flow)));
 
 	if (include_date)
-		date = g_strdup_printf (", %s", gebr_localized_date(gebr_iso_date()));
+		date = g_strdup_printf (", <span style='gebr-date'>%s</span>",
+					gebr_localized_date(gebr_iso_date()));
 	else
 		date = NULL;
 
-	g_string_append_printf(dump, _("<p>By <span class='gebr-author'>%s</span>"
-				       " <span class='gebr-email'>%s</span>%s</p>"),
-			       gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(flow)),
-			       gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(flow)),
-			       date);
+	g_string_append_printf (dump,
+				"<p>%s <span class='gebr-author'>%s</span>"
+				" <span class='gebr-email'>%s</span>%s</p>",
+				_("By"),
+				gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(flow)),
+				gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(flow)),
+				date);
 	g_free (date);
-			
-	g_string_append_printf(dump,
-			       _("<p>Flow with %ld program(s)</p>"),
-			       gebr_geoxml_flow_get_programs_number(flow));
 
-	g_string_append_printf (dump, "<ui>");
+	revisions = g_strdup_printf (_("This flow has %ld revisions"),
+				     gebr_geoxml_flow_get_revisions_number (flow));
+	g_string_append_printf (dump, "<p>%s</p>", revisions);
+	g_free (revisions);
+
+	g_string_append_printf (dump, "<ul>");
 	gebr_geoxml_flow_get_program (flow, &program, 0);
 	while (program) {
 		GebrGeoXmlProgram * prog;
@@ -778,20 +783,21 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
 
 		gebr_geoxml_sequence_next (&program);
 	}
-	g_string_append_printf (dump, "</ui>");
+	g_string_append_printf (dump, "</ul>");
 
 	return g_string_free(dump, FALSE);
 }
 
-static void on_detailed_flow_css_changed (GtkComboBox * box)
+static void on_detailed_flow_css_changed (GtkComboBox * combobox)
 {
 	gchar * css;
 
-	css = gtk_combo_box_get_active_text (box);
-	if (strcmp (css, USERS_CSS) == 0)
+	css = gtk_combo_box_get_active_text (combobox);
+	if (gtk_combo_box_get_active (combobox) == 0) {
 		g_string_assign (gebr.config.detailed_flow_css, "");
-	else
+	} else {
 		g_string_assign (gebr.config.detailed_flow_css, css);
+	}
 
 	g_free (css);
 }
@@ -858,9 +864,9 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 	while (filename != NULL) {
 		if (fnmatch ("*.css", filename, 1) == 0) {
 			gtk_combo_box_prepend_text (GTK_COMBO_BOX (detailed_flow_css), filename);
-
 			if (strcmp (filename, gebr.config.detailed_flow_css->str) == 0)
-				active = i;
+				// We must sum 1 to active to skip the USERS_CSS entry
+				active = i + 1;
 			i++;
 		}
 		filename = g_dir_read_name(directory);
@@ -870,6 +876,10 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 
 	detailed_flow_include_report = gtk_check_button_new_with_label(_("Include user's report"));
 	detailed_flow_include_params = gtk_check_button_new_with_label(_("Include parameter/value table"));
+
+	g_signal_connect(detailed_flow_css, "changed", G_CALLBACK(on_detailed_flow_css_changed), NULL);
+	g_signal_connect(detailed_flow_include_report, "toggled", G_CALLBACK(on_detailed_flow_include_report_toggled), NULL);
+	g_signal_connect(detailed_flow_include_params, "toggled", G_CALLBACK(on_detailed_flow_include_params_toggled), NULL);
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(detailed_flow_css), active);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_flow_include_report), gebr.config.detailed_flow_include_report);
@@ -893,10 +903,6 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 	gtk_box_pack_start(GTK_BOX(vbox), hbox_combo, FALSE, TRUE, 0);
 
 	gtk_container_add(GTK_CONTAINER(frame),vbox);
-
-	g_signal_connect(detailed_flow_css, "changed", G_CALLBACK(on_detailed_flow_css_changed), NULL);
-	g_signal_connect(detailed_flow_include_report, "toggled", G_CALLBACK(on_detailed_flow_include_report_toggled), NULL);
-	g_signal_connect(detailed_flow_include_params, "toggled", G_CALLBACK(on_detailed_flow_include_params_toggled), NULL);
 
 	gtk_widget_show_all(frame);
 	return frame;
