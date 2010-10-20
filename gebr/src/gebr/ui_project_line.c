@@ -1176,7 +1176,18 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 		g_string_append(dump, "</ul>");
 	}
 
-	g_string_append (dump, "<ul>");
+	g_string_append_printf (dump, "<h3>%s</h3><ul>", _("Line flows"));
+	gebr_geoxml_line_get_flow (GEBR_GEOXML_LINE (document), &sequence, 0);
+	while (sequence) {
+		const gchar *fname;
+		GebrGeoXmlDocument *flow;
+
+		fname = gebr_geoxml_line_get_flow_source (GEBR_GEOXML_LINE_FLOW (sequence));
+		document_load(&flow, fname, FALSE);
+		g_string_append_printf (dump, "<li>%s</li>", gebr_geoxml_document_get_title (flow));
+		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+		gebr_geoxml_sequence_next (&sequence);
+	}
 	g_string_append (dump, "</ul>");
 
 	return g_string_free(dump, FALSE);
