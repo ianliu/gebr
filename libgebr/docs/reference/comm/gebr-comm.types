@@ -1,6 +1,0 @@
-gebr_comm_channel_socket_get_type
-gebr_comm_listen_socket_get_type
-gebr_comm_process_get_type
-gebr_comm_socket_get_type
-gebr_comm_stream_socket_get_type
-gebr_comm_terminal_process_get_type
