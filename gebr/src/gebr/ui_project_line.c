@@ -1144,14 +1144,14 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 
 	dump = g_string_new(NULL);
 	g_string_printf(dump,
-			"<h1>%s</h1><h2>%s</h2>",
+			"<h1>%s</h1>\n<h2>%s</h2>\n",
 			gebr_geoxml_document_get_title(document),
 			gebr_geoxml_document_get_description(document));
 
 	g_string_append_printf(dump,
 			       "<p>%s <span style='gebr-author'>%s</span> "
 			       "<span style='gebr-email'>%s</span>, "
-			       "<span style='gebr-date'>%s</span></p>",
+			       "<span style='gebr-date'>%s</span></p>\n",
 			       // Comment for translators:
 			       // "By" as in "By John McClane"
 			       _("By"),
@@ -1165,17 +1165,17 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 		GebrGeoXmlSequence *line_path;
 
 		// Comment for translators: HTML header for detailed report
-		g_string_append_printf (dump, "<h3>%s</h3><ul>", _("Line paths"));
+		g_string_append_printf (dump, "<h3>%s</h3>\n<ul>\n", _("Line paths"));
 
 		gebr_geoxml_line_get_path(GEBR_GEOXML_LINE(document), &line_path, 0);
 		for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
-			g_string_append_printf(dump, "<li>%s</li>",
+			g_string_append_printf(dump, "   <li>%s</li>\n",
 					       gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path)));
 		}
-		g_string_append(dump, "</ul>");
+		g_string_append(dump, "</ul>\n");
 	}
 
-	g_string_append_printf (dump, "<h3>%s</h3><ul>", _("Line flows"));
+	g_string_append_printf (dump, "<h3>%s</h3>\n<ul>\n", _("Line flows"));
 	gebr_geoxml_line_get_flow (GEBR_GEOXML_LINE (document), &sequence, 0);
 	while (sequence) {
 		const gchar *fname;
@@ -1183,11 +1183,11 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 
 		fname = gebr_geoxml_line_get_flow_source (GEBR_GEOXML_LINE_FLOW (sequence));
 		document_load(&flow, fname, FALSE);
-		g_string_append_printf (dump, "<li>%s</li>", gebr_geoxml_document_get_title (flow));
+		g_string_append_printf (dump, "<li>%s</li>\n", gebr_geoxml_document_get_title (flow));
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 		gebr_geoxml_sequence_next (&sequence);
 	}
-	g_string_append (dump, "</ul>");
+	g_string_append (dump, "</ul>\n");
 
 	return g_string_free(dump, FALSE);
 }

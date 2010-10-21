@@ -319,17 +319,17 @@ gchar * gebr_generate_report(const gchar * title,
 {
 	static gchar * html = ""
 		"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" "
-		"\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
-		"<html xmlns=\"http://www.w3.org/1999/xhtml\">"
-		"<head>"
-		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
-		"<title>%s</title>"
-		"%s"
-		"</head>"
-		"<body>"
-		"<div id=\"header\">%s</div>"
-		"<div id=\"content\">%s</div>"
-		"</body>"
+		"\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
+		"<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+		"<head>\n"
+		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
+		"<title>%s</title>\n"
+		"%s\n"
+		"</head>\n"
+		"<body>\n"
+		"<div id=\"header\">%s</div>\n"
+		"<div id=\"content\">%s</div>\n"
+		"</body>\n"
 		"</html>";
 
 	return g_strdup_printf(html, title, styles, header, table);
