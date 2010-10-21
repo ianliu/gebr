@@ -96,6 +96,7 @@ Makefile
 docs/Makefile
 docs/reference/Makefile
 docs/reference/libgebr/Makefile
+docs/reference/libgebr/version.xml
 packages/Makefile
 packages/rpm/libgebr.fedora.spec
 packages/rpm/libgebr.mandriva.spec

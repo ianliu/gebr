@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+[
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+  <!ENTITY version SYSTEM "version.xml">
+]>
+<book id="index">
+  <bookinfo>
+    <title>libgebr Reference Manual</title>
+    <releaseinfo>
+      for libgebr &version;.
+      The latest version of this documentation can be found on-line at
+      <ulink role="online-location" url="http://www.gebrproject.com/libgebr/index.html">http://www.gebrproject.com/libgebr/</ulink>.
+    </releaseinfo>
+  </bookinfo>
+
+  <chapter>
+    <title>[Insert title here]</title>
+        <xi:include href="xml/terminalprocess.xml"/>
+    <xi:include href="xml/listensocket.xml"/>
+    <xi:include href="xml/process.xml"/>
+    <xi:include href="xml/channelsocket.xml"/>
+    <xi:include href="xml/socket.xml"/>
+    <xi:include href="xml/streamsocket.xml"/>
+    <xi:include href="xml/gebr-gui-directory-chooser.xml"/>
+    <xi:include href="xml/gebr-gui-save-dialog.xml"/>
+    <xi:include href="xml/gebr-gui-html-viewer-widget.xml"/>
+    <xi:include href="xml/gebr-gui-enhanced-entry.xml"/>
+    <xi:include href="xml/gebr-gui-html-viewer-window.xml"/>
+    <xi:include href="xml/gebr-gui-sequence-edit.xml"/>
+    <xi:include href="xml/gebr-gui-file-entry.xml"/>
+    <xi:include href="xml/gebr-gui-help-edit-widget.xml"/>
+    <xi:include href="xml/gebr-gui-help-edit-window.xml"/>
+    <xi:include href="xml/gebr-gui-styles-combo.xml"/>
+    <xi:include href="xml/socketaddress.xml"/>
+    <xi:include href="xml/server.xml"/>
+    <xi:include href="xml/protocol.xml"/>
+    <xi:include href="xml/hostinfo.xml"/>
+    <xi:include href="xml/project.xml"/>
+    <xi:include href="xml/enum_option.xml"/>
+    <xi:include href="xml/macros.xml"/>
+    <xi:include href="xml/value_sequence.xml"/>
+    <xi:include href="xml/document.xml"/>
+    <xi:include href="xml/parameter.xml"/>
+    <xi:include href="xml/types.xml"/>
+    <xi:include href="xml/line.xml"/>
+    <xi:include href="xml/xml.xml"/>
+    <xi:include href="xml/document_p.xml"/>
+    <xi:include href="xml/parameters.xml"/>
+    <xi:include href="xml/object.xml"/>
+    <xi:include href="xml/sequence.xml"/>
+    <xi:include href="xml/program.xml"/>
+    <xi:include href="xml/flow.xml"/>
+    <xi:include href="xml/parameter_group.xml"/>
+    <xi:include href="xml/program-parameter.xml"/>
+    <xi:include href="xml/parameter_group_p.xml"/>
+    <xi:include href="xml/error.xml"/>
+    <xi:include href="xml/gebr-geoxml-validate.xml"/>
+    <xi:include href="xml/clipboard.xml"/>
+    <xi:include href="xml/gebr-gui-utils.xml"/>
+    <xi:include href="xml/gebr-gui-program-edit.xml"/>
+    <xi:include href="xml/gebr-gui-pixmaps.xml"/>
+    <xi:include href="xml/gebr-gui-js.xml"/>
+    <xi:include href="xml/gebr-gui-parameter.xml"/>
+    <xi:include href="xml/gebr-gui-value-sequence-edit.xml"/>
+    <xi:include href="xml/gebr-gui-about.xml"/>
+    <xi:include href="xml/gebr-gui-icons.xml"/>
+
+  </chapter>
+  <chapter id="object-tree">
+    <title>Object Hierarchy</title>
+     <xi:include href="xml/tree_index.sgml"/>
+  </chapter>
+  <index id="api-index-full">
+    <title>API Index</title>
+    <xi:include href="xml/api-index-full.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>
+</book>
