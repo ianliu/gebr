@@ -1,6 +1,5 @@
 syntax: glob
 
-*.orig
 *.Plo
 *.a
 *.gmo
@@ -8,6 +7,7 @@ syntax: glob
 *.lai
 *.lo
 *.o
+*.orig
 *.so
 *.stamp
 *.swp
@@ -55,10 +55,20 @@ gebrd/src/gebrd
 gebrd/tests/test-job-queue
 install-sh
 intltool-*.in
-libgebr/docs/reference/*/gebr-*
-libgebr/docs/reference/*/html
-libgebr/docs/reference/*/tmpl
-libgebr/docs/reference/*/xml
+libgebr/docs/reference/libgebr/html
+libgebr/docs/reference/libgebr/libgebr-decl-list.txt
+libgebr/docs/reference/libgebr/libgebr-decl.txt
+libgebr/docs/reference/libgebr/libgebr-overrides.txt
+libgebr/docs/reference/libgebr/libgebr-undeclared.txt
+libgebr/docs/reference/libgebr/libgebr-undocumented.txt
+libgebr/docs/reference/libgebr/libgebr-unused.txt
+libgebr/docs/reference/libgebr/libgebr.args
+libgebr/docs/reference/libgebr/libgebr.hierarchy
+libgebr/docs/reference/libgebr/libgebr.interfaces
+libgebr/docs/reference/libgebr/libgebr.prerequisites
+libgebr/docs/reference/libgebr/libgebr.signals
+libgebr/docs/reference/libgebr/version.xml
+libgebr/docs/reference/libgebr/xml
 libgebr/gtk-doc.make
 libgebr/m4
 libgebr/packages/rpm/libgebr.fedora.spec
@@ -70,9 +80,9 @@ libgebr/src/comm/tests/test-protocol
 libgebr/src/comm/tests/test-socket
 libgebr/src/defines.h
 libgebr/src/gebr.pc
+libgebr/src/geoxml/*/gebr-geoxml-*
 libgebr/src/geoxml/gebr-geoxml.pc
 libgebr/src/geoxml/geoxml/defines.h
-libgebr/src/geoxml/*/gebr-geoxml-*
 libgebr/src/geoxml/tests/test-program
 libgebr/src/geoxml/tests/test-sequence
 libgebr/src/geoxml/upgrade/gebr-geoxml-upgrade
