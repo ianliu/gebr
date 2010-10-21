@@ -639,6 +639,7 @@ static void flow_browse_on_revision_delete_activate(GtkWidget * widget, GebrGeoX
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 		menu_item = g_object_get_data(G_OBJECT(widget), "menu-item-to-be-removed");
 		gtk_widget_destroy(GTK_WIDGET(menu_item));
+		flow_browse_info_update();
 	}
 }
 
