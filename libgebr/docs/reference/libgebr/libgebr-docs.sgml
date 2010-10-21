@@ -16,30 +16,22 @@
   </bookinfo>
 
   <chapter>
-    <title>[Insert title here]</title>
-        <xi:include href="xml/terminalprocess.xml"/>
+    <title>The Communication Library</title>
+    <xi:include href="xml/terminalprocess.xml"/>
     <xi:include href="xml/listensocket.xml"/>
     <xi:include href="xml/process.xml"/>
     <xi:include href="xml/channelsocket.xml"/>
     <xi:include href="xml/socket.xml"/>
     <xi:include href="xml/streamsocket.xml"/>
-    <xi:include href="xml/gebr-gui-directory-chooser.xml"/>
-    <xi:include href="xml/gebr-gui-save-dialog.xml"/>
-    <xi:include href="xml/gebr-gui-html-viewer-widget.xml"/>
-    <xi:include href="xml/gebr-gui-enhanced-entry.xml"/>
-    <xi:include href="xml/gebr-gui-html-viewer-window.xml"/>
-    <xi:include href="xml/gebr-gui-sequence-edit.xml"/>
-    <xi:include href="xml/gebr-gui-file-entry.xml"/>
-    <xi:include href="xml/gebr-gui-help-edit-widget.xml"/>
-    <xi:include href="xml/gebr-gui-help-edit-window.xml"/>
-    <xi:include href="xml/gebr-gui-styles-combo.xml"/>
     <xi:include href="xml/socketaddress.xml"/>
     <xi:include href="xml/server.xml"/>
     <xi:include href="xml/protocol.xml"/>
     <xi:include href="xml/hostinfo.xml"/>
+  </chapter>
+  <chapter>
+    <title>The GeoXml Library</title>
     <xi:include href="xml/project.xml"/>
     <xi:include href="xml/enum_option.xml"/>
-    <xi:include href="xml/macros.xml"/>
     <xi:include href="xml/value_sequence.xml"/>
     <xi:include href="xml/document.xml"/>
     <xi:include href="xml/parameter.xml"/>
@@ -57,6 +49,20 @@
     <xi:include href="xml/parameter_group_p.xml"/>
     <xi:include href="xml/error.xml"/>
     <xi:include href="xml/gebr-geoxml-validate.xml"/>
+  </chapter>
+  <chapter>
+    <title>The Graphical Library</title>
+    <xi:include href="xml/gebr-gui-directory-chooser.xml"/>
+    <xi:include href="xml/gebr-gui-save-dialog.xml"/>
+    <xi:include href="xml/gebr-gui-html-viewer-widget.xml"/>
+    <xi:include href="xml/gebr-gui-enhanced-entry.xml"/>
+    <xi:include href="xml/gebr-gui-html-viewer-window.xml"/>
+    <xi:include href="xml/gebr-gui-sequence-edit.xml"/>
+    <xi:include href="xml/gebr-gui-file-entry.xml"/>
+    <xi:include href="xml/gebr-gui-help-edit-widget.xml"/>
+    <xi:include href="xml/gebr-gui-help-edit-window.xml"/>
+    <xi:include href="xml/gebr-gui-styles-combo.xml"/>
+    <xi:include href="xml/macros.xml"/>
     <xi:include href="xml/clipboard.xml"/>
     <xi:include href="xml/gebr-gui-utils.xml"/>
     <xi:include href="xml/gebr-gui-program-edit.xml"/>
@@ -66,11 +72,11 @@
     <xi:include href="xml/gebr-gui-value-sequence-edit.xml"/>
     <xi:include href="xml/gebr-gui-about.xml"/>
     <xi:include href="xml/gebr-gui-icons.xml"/>
-
   </chapter>
+
   <chapter id="object-tree">
     <title>Object Hierarchy</title>
-     <xi:include href="xml/tree_index.sgml"/>
+    <xi:include href="xml/tree_index.sgml"/>
   </chapter>
   <index id="api-index-full">
     <title>API Index</title>
