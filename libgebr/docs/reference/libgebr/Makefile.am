@@ -1,3 +1,5 @@
+include $(top_srcdir)/Makefile.decl
+
 ## Process this file with automake to produce Makefile.in
 
 # We require automake 1.6 at least.
@@ -22,7 +24,9 @@ DOC_MAIN_SGML_FILE=$(DOC_MODULE)-docs.sgml
 # gtk-doc will search all .c and .h files beneath these paths
 # for inline comments documenting functions and macros.
 # e.g. DOC_SOURCE_DIR=../../../gtk ../../../gdk
-DOC_SOURCE_DIR=
+DOC_SOURCE_DIR=../../../src/comm/comm		\
+	       ../../../src/geoxml/geoxml	\
+	       ../../../src/gui/gui
 
 # Extra options to pass to gtkdoc-scangobj. Not normally needed.
 SCANGOBJ_OPTIONS=
@@ -49,8 +53,13 @@ FIXXREF_OPTIONS=
 # Used for dependencies. The docs will be rebuilt if any of these change.
 # e.g. HFILE_GLOB=$(top_srcdir)/gtk/*.h
 # e.g. CFILE_GLOB=$(top_srcdir)/gtk/*.c
-HFILE_GLOB=
-CFILE_GLOB=
+HFILE_GLOB=../../../src/comm/comm/*.h		\
+	   ../../../src/geoxml/geoxml/*.h	\
+	   ../../../src/gui/gui/*.h
+
+CFILE_GLOB=../../../src/comm/comm/*.c		\
+	   ../../../src/geoxml/geoxml/*.c	\
+	   ../../../src/gui/gui/*.c
 
 # Extra header to include when scanning, which are not under DOC_SOURCE_DIR
 # e.g. EXTRA_HFILES=$(top_srcdir}/contrib/extra.h
@@ -58,11 +67,11 @@ EXTRA_HFILES=
 
 # Header files to ignore when scanning. Use base file name, no paths
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h
-IGNORE_HFILES=
+IGNORE_HFILES=sexy-icon-entry.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png
-HTML_IMAGES=
+HTML_IMAGES=$(srcdir)/images/gebr-gui-help-edit-window.png
 
 # Extra SGML files that are included by $(DOC_MAIN_SGML_FILE).
 # e.g. content_files=running.sgml building.sgml changes-2.0.sgml
@@ -78,8 +87,24 @@ expand_content_files=
 # signals and properties.
 # e.g. GTKDOC_CFLAGS=-I$(top_srcdir) -I$(top_builddir) $(GTK_DEBUG_FLAGS)
 # e.g. GTKDOC_LIBS=$(top_builddir)/gtk/$(gtktargetlib)
-GTKDOC_CFLAGS=
-GTKDOC_LIBS=
+GTKDOC_CFLAGS=-I$(top_srcdir)/src/comm/comm	\
+	      -I$(top_srcdir)/src/geoxml/geoxml	\
+	      -I$(top_srcdir)/src/gui/gui	\
+	       $(GLIB_CFLAGS)			\
+	       $(GOBJECT_CFLAGS)		\
+	       $(GTK_CFLAGS)			\
+	       $(GTHREAD_CFLAGS)		\
+	       $(WEBKIT_CFLAGS)
+
+GTKDOC_LIBS=$(top_builddir)/src/comm/comm/libgebr_comm.la	\
+	    $(top_builddir)/src/geoxml/geoxml/libgebr_geoxml.la	\
+	    $(top_builddir)/src/gui/gui/libgebr_gui.la		\
+	    $(GLIB_LIBS)					\
+	    $(GOBJECT_LIBS)					\
+	    $(GTK_LIBS)						\
+	    $(GTHREAD_LIBS)					\
+	    $(WEBKIT_LIBS)
+
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
 include $(top_srcdir)/gtk-doc.make
