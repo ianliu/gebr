@@ -612,16 +612,21 @@ static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, Geb
 
 	gchar *date;
 	gchar *comment;
+	gboolean report_merged = FALSE;
 
 	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
-	if (!gebr_geoxml_flow_change_to_revision(gebr.flow, revision)) {
+	if (!gebr_geoxml_flow_change_to_revision(gebr.flow, revision, &report_merged)) {
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not revert to state '%s' ('%s')."), comment, date);
 		return;
 	}
+
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
-	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Reverted to state '%s' ('%s')."), comment, date);
+	if (report_merged)
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Reverted to state '%s' ('%s'), and merged report to current"), comment, date);
+	else
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Reverted to state '%s' ('%s')."), comment, date);
 	flow_browse_load();
 }
 

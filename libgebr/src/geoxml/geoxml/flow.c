@@ -489,7 +489,7 @@ glong gebr_geoxml_flow_get_categories_number(GebrGeoXmlFlow * flow)
 	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), "category");
 }
 
-gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRevision * revision)
+gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRevision * revision, gboolean * report_merged)
 {
 	if (flow == NULL || revision == NULL)
 		return FALSE;
@@ -500,6 +500,7 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 	GebrGeoXmlDocument *revision_flow;
 	GebrGeoXmlSequence *first_revision;
 	GdomeElement *child;
+	*report_merged = FALSE;
 
 	/* load document validating it */
 	if (gebr_geoxml_document_load_buffer(&revision_flow,
@@ -537,6 +538,7 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 
 			gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
 			g_string_append(revision_data, comment);
+			g_string_append(revision_data, " ");
 			g_string_append(revision_data, date);
 			g_string_insert (merged_help, flow_i, revision_data->str); 
 			g_string_insert_len (merged_help, flow_i + revision_data->len, revision_help + start, length); 
@@ -546,6 +548,7 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 		gebr_geoxml_document_to_string (revision_flow, &revision_xml);
 		__gebr_geoxml_set_element_value((GdomeElement *) revision, revision_xml, __gebr_geoxml_create_CDATASection);
 		g_free (revision_xml);
+		*report_merged = TRUE;
 	}
 
 	gebr_geoxml_flow_get_revision(flow, &first_revision, 0);
