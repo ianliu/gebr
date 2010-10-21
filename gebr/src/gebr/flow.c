@@ -762,7 +762,7 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
 				_("By"),
 				gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(flow)),
 				gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(flow)),
-				date);
+				date ? date : "");
 	g_free (date);
 
 	g_string_append_printf (dump, "<p>%s</p>\n", _("Flow with programs"));
