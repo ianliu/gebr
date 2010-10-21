@@ -81,7 +81,7 @@ static void gebr_gui_html_viewer_widget_class_init(GebrGuiHtmlViewerWidgetClass 
 	 *
 	 * This signal is fired when the title is ready to be set. The title is passed by parameter @title, and its
 	 * value may depend on context. If this viewer is showing the help of a geoxml-menu, the title is the same as
-	 * the menu. Otherwise, the title is defined by the <title> tag inside the Html.
+	 * the menu. Otherwise, the title is defined by the &lt;title&gt; tag inside the Html.
 	 */
 	signals[ TITLE_READY ] =
 		g_signal_new("title-ready",

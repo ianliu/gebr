@@ -15,21 +15,48 @@
     </releaseinfo>
   </bookinfo>
 
-  <chapter>
+  <part>
     <title>The Communication Library</title>
-    <xi:include href="xml/terminalprocess.xml"/>
-    <xi:include href="xml/listensocket.xml"/>
-    <xi:include href="xml/process.xml"/>
-    <xi:include href="xml/channelsocket.xml"/>
-    <xi:include href="xml/socket.xml"/>
-    <xi:include href="xml/streamsocket.xml"/>
-    <xi:include href="xml/socketaddress.xml"/>
-    <xi:include href="xml/server.xml"/>
-    <xi:include href="xml/protocol.xml"/>
-    <xi:include href="xml/hostinfo.xml"/>
-  </chapter>
-  <chapter>
+    <partintro>
+      <para>
+        The communication library provides methods and classes for working with
+        sockets and other type of communications in general. It is responsible
+        for passing information between GêBR and the GêBR Daemon.
+      </para>
+    </partintro>
+
+    <chapter>
+      <title>Socket related classes</title>
+      <xi:include href="xml/listensocket.xml"/>
+      <xi:include href="xml/channelsocket.xml"/>
+      <xi:include href="xml/socket.xml"/>
+      <xi:include href="xml/streamsocket.xml"/>
+      <xi:include href="xml/socketaddress.xml"/>
+      <xi:include href="xml/hostinfo.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Protocol related classes</title>
+      <xi:include href="xml/protocol.xml"/>
+      <xi:include href="xml/server.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Process related classes</title>
+      <xi:include href="xml/terminalprocess.xml"/>
+      <xi:include href="xml/process.xml"/>
+    </chapter>
+  </part>
+
+  <part>
     <title>The GeoXml Library</title>
+    <partintro>
+      <para>
+        The GeoXml library provides abstractions for the XML representation of
+        GêBR projects, lines, menus and flow.
+      </para>
+    </partintro>
+
     <xi:include href="xml/project.xml"/>
     <xi:include href="xml/enum_option.xml"/>
     <xi:include href="xml/value_sequence.xml"/>
@@ -37,8 +64,6 @@
     <xi:include href="xml/parameter.xml"/>
     <xi:include href="xml/types.xml"/>
     <xi:include href="xml/line.xml"/>
-    <xi:include href="xml/xml.xml"/>
-    <xi:include href="xml/document_p.xml"/>
     <xi:include href="xml/parameters.xml"/>
     <xi:include href="xml/object.xml"/>
     <xi:include href="xml/sequence.xml"/>
@@ -46,21 +71,42 @@
     <xi:include href="xml/flow.xml"/>
     <xi:include href="xml/parameter_group.xml"/>
     <xi:include href="xml/program-parameter.xml"/>
-    <xi:include href="xml/parameter_group_p.xml"/>
     <xi:include href="xml/error.xml"/>
     <xi:include href="xml/gebr-geoxml-validate.xml"/>
-  </chapter>
-  <chapter>
+  </part>
+
+  <part>
     <title>The Graphical Library</title>
+    <partintro>
+      <para>
+        The Graphical User Interface library contains some widgets used in GêBR
+        and DéBR. It also provides some utilities functions to ease working with
+        GTK+.
+      </para>
+    </partintro>
+
+    <chapter>
+      <title>Help/Report Editor</title>
+      <xi:include href="xml/gebr-gui-help-edit-widget.xml"/>
+      <xi:include href="xml/gebr-gui-help-edit-window.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Html Viewer</title>
+      <xi:include href="xml/gebr-gui-html-viewer-window.xml"/>
+      <xi:include href="xml/gebr-gui-html-viewer-widget.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Sequence Editors</title>
+      <xi:include href="xml/gebr-gui-sequence-edit.xml"/>
+      <xi:include href="xml/gebr-gui-value-sequence-edit.xml"/>
+    </chapter>
+
     <xi:include href="xml/gebr-gui-directory-chooser.xml"/>
     <xi:include href="xml/gebr-gui-save-dialog.xml"/>
-    <xi:include href="xml/gebr-gui-html-viewer-widget.xml"/>
     <xi:include href="xml/gebr-gui-enhanced-entry.xml"/>
-    <xi:include href="xml/gebr-gui-html-viewer-window.xml"/>
-    <xi:include href="xml/gebr-gui-sequence-edit.xml"/>
     <xi:include href="xml/gebr-gui-file-entry.xml"/>
-    <xi:include href="xml/gebr-gui-help-edit-widget.xml"/>
-    <xi:include href="xml/gebr-gui-help-edit-window.xml"/>
     <xi:include href="xml/gebr-gui-styles-combo.xml"/>
     <xi:include href="xml/macros.xml"/>
     <xi:include href="xml/clipboard.xml"/>
@@ -69,10 +115,9 @@
     <xi:include href="xml/gebr-gui-pixmaps.xml"/>
     <xi:include href="xml/gebr-gui-js.xml"/>
     <xi:include href="xml/gebr-gui-parameter.xml"/>
-    <xi:include href="xml/gebr-gui-value-sequence-edit.xml"/>
     <xi:include href="xml/gebr-gui-about.xml"/>
     <xi:include href="xml/gebr-gui-icons.xml"/>
-  </chapter>
+  </part>
 
   <chapter id="object-tree">
     <title>Object Hierarchy</title>
