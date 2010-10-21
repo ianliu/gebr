@@ -95,9 +95,7 @@ AC_OUTPUT([
 Makefile
 docs/Makefile
 docs/reference/Makefile
-docs/reference/comm/Makefile
-docs/reference/geoxml/Makefile
-docs/reference/gui/Makefile
+docs/reference/libgebr/Makefile
 packages/Makefile
 packages/rpm/libgebr.fedora.spec
 packages/rpm/libgebr.mandriva.spec
