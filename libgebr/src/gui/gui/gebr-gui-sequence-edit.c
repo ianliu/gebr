@@ -336,6 +336,11 @@ __gebr_gui_sequence_edit_on_edited(GtkCellRendererText * cell, gchar * path_stri
 	gtk_tree_selection_get_selected(selection, &model, &iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(sequence_edit->list_store), &iter, 0, &old_text, -1);
 
+	/* false rename */
+	if (!strcmp(old_text, new_text)) {
+		g_free(old_text);
+		return;
+	}
 	g_signal_emit(sequence_edit, object_signals[RENAMED], 0, old_text, new_text, &retval);
 
 	if (retval)
