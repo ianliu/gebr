@@ -79,12 +79,13 @@ GebrGeoXmlFlow *gebr_geoxml_flow_new()
 
 void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 {
-	if (flow == NULL || flow2 == NULL)
-		return;
-
+	GebrGeoXmlSequence *category;
 	GdomeNodeList *flow2_node_list;
 	GdomeDOMString *string;
 	gulong i, n;
+
+	g_return_if_fail (flow != NULL);
+	g_return_if_fail (flow2 != NULL);
 
 	/* import each program from flow2 */
 	string = gdome_str_mkref("program");
@@ -106,6 +107,14 @@ void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 		root_element = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow));
 		revision = __gebr_geoxml_get_first_element(root_element, "revision");
 		gdome_el_insertBefore_protected(root_element, new_node, (GdomeNode *)revision, &exception);
+	}
+
+	gebr_geoxml_flow_get_category (flow2, &category, 0);
+	while (category) {
+		const gchar *name;
+		name = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (category));
+		gebr_geoxml_flow_append_category (flow, name);
+		gebr_geoxml_sequence_next (&category);
 	}
 
 	gdome_str_unref(string);
@@ -453,10 +462,20 @@ GebrGeoXmlProgram *gebr_geoxml_flow_get_first_mpi_program(GebrGeoXmlFlow * flow)
 
 GebrGeoXmlCategory *gebr_geoxml_flow_append_category(GebrGeoXmlFlow * flow, const gchar * name)
 {
-	if (flow == NULL || name == NULL)
-		return NULL;
-
 	GebrGeoXmlCategory *category;
+	GebrGeoXmlSequence *sequence;
+
+	g_return_val_if_fail (flow != NULL, NULL);
+	g_return_val_if_fail (name != NULL, NULL);
+
+	gebr_geoxml_flow_get_category (flow, &sequence, 0);
+	while (sequence) {
+		const gchar *catname;
+		catname = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (sequence));
+		if (strcmp (catname, name) == 0)
+			return (GebrGeoXmlCategory *)(sequence);
+		gebr_geoxml_sequence_next (&sequence);
+	}
 
 	category = (GebrGeoXmlCategory *)
 	    __gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), "category",
