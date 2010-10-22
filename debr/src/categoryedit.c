@@ -36,6 +36,7 @@ static void __category_edit_move(CategoryEdit * category_edit, GtkTreeIter * ite
 static void __category_edit_move_top(CategoryEdit * category_edit, GtkTreeIter * iter);
 static void __category_edit_move_bottom(CategoryEdit * category_edit, GtkTreeIter * iter);
 static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit);
+static void category_edit_add_request(CategoryEdit * category_edit, GtkWidget *combo);
 static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gchar * category);
 	
 /*
