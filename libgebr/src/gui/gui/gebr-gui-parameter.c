@@ -57,6 +57,8 @@ static void __on_sequence_edit_changed(GebrGuiSequenceEdit * sequence_edit,
 static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget, struct gebr_gui_parameter_widget
 							      *parameter_widget);
 
+static void on_entry_activate_add (GtkEntry *entry, struct gebr_gui_parameter_widget *parameter_widget);
+
 
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
@@ -521,10 +523,12 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			parameter_widget->value_widget = entry = gtk_entry_new();
 			gtk_widget_set_size_request(entry, 90, 30);
 
-			g_signal_connect(entry, "activate", G_CALLBACK(__validate_float), parameter_widget);
-			g_signal_connect(entry, "focus-out-event",
-					 G_CALLBACK(__validate_on_leaving), parameter_widget);
-
+			g_signal_connect (entry, "activate",
+					  G_CALLBACK (__validate_float), parameter_widget);
+			g_signal_connect (entry, "activate",
+					  G_CALLBACK (on_entry_activate_add), parameter_widget);
+			g_signal_connect (entry, "focus-out-event",
+					  G_CALLBACK (__validate_on_leaving), parameter_widget);
 			break;
 		}
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:{
@@ -533,15 +537,20 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			parameter_widget->value_widget = entry = gtk_entry_new();
 			gtk_widget_set_size_request(entry, 90, 30);
 
-			g_signal_connect(entry, "activate", G_CALLBACK(__validate_int), parameter_widget);
-			g_signal_connect(entry, "focus-out-event",
-					 G_CALLBACK(__validate_on_leaving), parameter_widget);
+			g_signal_connect (entry, "activate",
+					  G_CALLBACK(__validate_int), parameter_widget);
+			g_signal_connect (entry, "activate",
+					  G_CALLBACK (on_entry_activate_add), parameter_widget);
+			g_signal_connect (entry, "focus-out-event",
+					  G_CALLBACK(__validate_on_leaving), parameter_widget);
 
 			break;
 		}
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:{
 			parameter_widget->value_widget = gtk_entry_new();
 			gtk_widget_set_size_request(parameter_widget->value_widget, 140, 30);
+			g_signal_connect (parameter_widget->value_widget, "activate",
+					  G_CALLBACK (on_entry_activate_add), parameter_widget);
 
 			break;
 		}
@@ -564,6 +573,8 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 					inc = 1.0;
 
 				parameter_widget->value_widget = spin = gtk_spin_button_new_with_range(min, max, inc);
+				g_signal_connect (spin, "activate",
+						  G_CALLBACK (on_entry_activate_add), parameter_widget);
 				gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), atoi(digits_str));
 			} else {
 				parameter_widget->value_widget = gtk_entry_new();
@@ -580,6 +591,8 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			    gebr_gui_gtk_file_entry_new((GebrGuiGtkFileEntryCustomize)
 							gebr_gui_parameter_widget_file_entry_customize_function,
 							parameter_widget);
+			g_signal_connect (GEBR_GUI_GTK_FILE_ENTRY (file_entry)->entry, "activate",
+					  G_CALLBACK (on_entry_activate_add), parameter_widget);
 			gtk_widget_set_size_request(file_entry, 220, 30);
 
 			gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_GTK_FILE_ENTRY(file_entry),
@@ -1038,4 +1051,12 @@ void gebr_gui_parameter_widget_reconfigure(struct gebr_gui_parameter_widget *par
 	    gebr_geoxml_parameter_get_type(parameter_widget->parameter);
 
 	gebr_gui_parameter_widget_configure(parameter_widget);
+}
+
+static void on_entry_activate_add (GtkEntry *entry, struct gebr_gui_parameter_widget *parameter_widget)
+{
+	if (gebr_geoxml_program_parameter_get_is_list(parameter_widget->program_parameter)) {
+		g_signal_emit_by_name (parameter_widget->gebr_gui_value_sequence_edit, "add-request");
+		gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+	}
 }
