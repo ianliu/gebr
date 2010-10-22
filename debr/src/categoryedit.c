@@ -138,6 +138,7 @@ G_DEFINE_TYPE(CategoryEdit, category_edit, GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT);
 static void on_combo_box_entry_activate (GtkWidget *entry, CategoryEdit *self)
 {
 	category_edit_add_request(self, gtk_widget_get_parent (entry));
+	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
 }
 
 /**
