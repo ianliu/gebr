@@ -36,6 +36,7 @@ static void __category_edit_move(CategoryEdit * category_edit, GtkTreeIter * ite
 static void __category_edit_move_top(CategoryEdit * category_edit, GtkTreeIter * iter);
 static void __category_edit_move_bottom(CategoryEdit * category_edit, GtkTreeIter * iter);
 static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit);
+static void category_edit_add_request(CategoryEdit * category_edit, GtkWidget *combo);
 
 /*
  * gobject stuff
@@ -132,6 +133,11 @@ G_DEFINE_TYPE(CategoryEdit, category_edit, GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT);
 /*
  * Internal functions
  */
+
+static void on_combo_box_entry_activate (GtkWidget *entry, CategoryEdit *self)
+{
+	category_edit_add_request(self, gtk_widget_get_parent (entry));
+}
 
 /**
  * \internal
@@ -469,7 +475,11 @@ GtkWidget *category_edit_new(GebrGeoXmlFlow * menu, gboolean new_menu)
 	category_edit->menu = menu;
 	if (!new_menu)
 		validate_image_set_check_category_list(category_edit->validate_image, category_edit->menu);
-	g_signal_connect(GTK_OBJECT(category_edit), "add-request", G_CALLBACK(category_edit_add_request), categories_combo);
+
+	g_signal_connect (gtk_bin_get_child (GTK_BIN (categories_combo)), "activate",
+			  G_CALLBACK (on_combo_box_entry_activate), category_edit);
+	g_signal_connect (category_edit, "add-request",
+			  G_CALLBACK (category_edit_add_request), categories_combo);
 
 	return (GtkWidget *) category_edit;
 }
