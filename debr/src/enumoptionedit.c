@@ -275,6 +275,18 @@ static GtkWidget *__enum_option_edit_create_tree_view(EnumOptionEdit * enum_opti
 	return tree_view;
 }
 
+static void on_label_entry_activate (GtkEntry *entry, EnumOptionEdit *self)
+{
+	g_signal_emit_by_name (self, "add-request");
+	gtk_widget_grab_focus (self->value_entry);
+	gtk_editable_select_region (GTK_EDITABLE (self->value_entry), 0, -1);
+}
+
+static void on_value_entry_activate (GtkEntry *entry, EnumOptionEdit *self)
+{
+	gtk_widget_grab_focus (self->label_entry);
+}
+
 GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlProgramParameter * program_parameter, gboolean new_parameter)
 {
 	EnumOptionEdit *enum_option_edit;
@@ -307,7 +319,13 @@ GtkWidget *enum_option_edit_new(GebrGeoXmlEnumOption * enum_option, GebrGeoXmlPr
 	enum_option_edit->value_entry = value_entry;
 	if (!new_parameter)
 		validate_image_set_check_enum_option_list(validate_image, program_parameter); 
-	g_signal_connect(GTK_OBJECT(enum_option_edit), "add-request", G_CALLBACK(enum_option_edit_add_request), NULL);
+
+	g_signal_connect (enum_option_edit, "add-request",
+			  G_CALLBACK (enum_option_edit_add_request), NULL);
+	g_signal_connect (label_entry, "activate",
+			  G_CALLBACK (on_label_entry_activate), enum_option_edit);
+	g_signal_connect (value_entry, "activate",
+			  G_CALLBACK (on_value_entry_activate), enum_option_edit);
 
 	gtk_widget_set_size_request(GTK_WIDGET(enum_option_edit), -1, 150);
 
