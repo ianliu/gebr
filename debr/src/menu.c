@@ -738,6 +738,8 @@ void menu_install(void)
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter,
 				   MENU_STATUS, &status, MENU_PATH, &menu_path, MENU_XMLPOINTER, &menu, -1);
 
+		const gchar *menu_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu));
+
 		flags = debr_menu_check_valid (menu);
 		if (flags != 0) {
 			GString *problems = g_string_new ("");
@@ -755,14 +757,14 @@ void menu_install(void)
 				g_string_append (problems, _("\n - At least one program has no title"));
 
 			gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						 _("Unable to install menu"),
-						 _("The menu has the following problems, and can not be installed:"
-						   "%s"), problems->str);
+						 _("Unable to install menu "),
+						 _("The menu %s can not be installed,\n"
+						   "and has the following problems:"
+						   "%s"), menu_filename, problems->str);
 			g_string_free (problems, TRUE);
 			continue;
 		}
 
-		const gchar *menu_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu));
 		destination = g_string_new(NULL);
 		command = g_string_new(NULL);
 		g_string_printf(destination, "%s/.gebr/gebr/menus/%s", getenv("HOME"), menu_filename);
