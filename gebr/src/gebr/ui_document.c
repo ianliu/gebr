@@ -130,6 +130,8 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data);
 
 void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data);
 
+static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequence_edit);
+
 static const GtkActionEntry dict_actions_entries[] = {
 	{"add", GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter."),
 	 G_CALLBACK(on_dict_edit_add_clicked)},
@@ -279,6 +281,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesR
 		gtk_misc_set_alignment(GTK_MISC(line_path_label), 0, 0);
 
 		file_entry = gebr_gui_gtk_file_entry_new(NULL, NULL);
+
 		gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_GTK_FILE_ENTRY(file_entry), TRUE);
 		gtk_widget_set_size_request(file_entry, 220, 30);
 
@@ -288,9 +291,14 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesR
 						  (ValueSequenceSetFunction) gebr_geoxml_value_sequence_set,
 						  (ValueSequenceGetFunction) gebr_geoxml_value_sequence_get, NULL);
 
-		g_signal_connect(GTK_OBJECT(path_sequence_edit), "add-request", G_CALLBACK(path_add), NULL);
-		g_signal_connect(GTK_OBJECT(path_sequence_edit), "changed", G_CALLBACK(path_save), NULL);
-		g_signal_connect(GTK_OBJECT(path_sequence_edit), "renamed", G_CALLBACK(path_renamed), NULL);
+		g_signal_connect (GEBR_GUI_GTK_FILE_ENTRY (file_entry)->entry, "activate",
+				  G_CALLBACK (on_file_entry_activate), path_sequence_edit);
+		g_signal_connect (path_sequence_edit, "add-request",
+				  G_CALLBACK (path_add), NULL);
+		g_signal_connect (path_sequence_edit, "changed",
+				  G_CALLBACK (path_save), NULL);
+		g_signal_connect (path_sequence_edit, "renamed",
+				  G_CALLBACK (path_renamed), NULL);
 
 		gtk_table_attach(GTK_TABLE(table), path_sequence_edit, 1, 2, 5, 6, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
 				 3);
@@ -1018,4 +1026,10 @@ void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data)
 	if (data->func)
 		data->func(data->accept_response);
 	g_free(data);
+}
+
+static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequence_edit)
+{
+	g_signal_emit_by_name (sequence_edit, "add-request");
+	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
 }
