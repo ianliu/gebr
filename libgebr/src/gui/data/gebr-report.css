@@ -1,0 +1,113 @@
+* { font-family: Verdana, sans-serif;}
+
+.gebr-email:before { content: "<"; }
+.gebr-email:after  { content: ">"; }
+
+p.credits { margin-bottom: 40px;}
+
+/* Header ---------------------------------------------------------- */
+
+.header h1 {
+    font-size: 18pt;
+    margin-bottom: 0px;
+}
+
+.header h2 { 
+    font-size: 14pt;
+    font-weight: normal;
+    font-style : italic;
+    margin-top: 0px;
+}
+
+.header .gebr-author {
+    text-decoration: none;
+}
+
+/* Content --------------------------------------------------------- */
+
+.content h1 {
+    font-size: 16pt;
+}
+
+.content h2 {
+    font-size: 14pt;
+}
+
+/* Flow dump ------------------------------------------------------- */
+
+.gebr-flow-dump table{
+    border: 1px solid #dddddd;
+    border-collapse: collapse;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.gebr-flow-dump table.gebr-io-table td {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.gebr-flow-dump table.gebr-parameter-table {
+}
+
+.gebr-flow-dump table.gebr-parameter-table thead {
+    background-color: #c0c0c0;
+    text-align: center;
+}
+
+.gebr-flow-dump table.gebr-parameter-table td {
+    border-top: solid 1px #dddddd;
+    border-bottom: solid 1px #dddddd;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.gebr-flow-dump tr.parameter-group td {
+    background-color: #d0d0d0;
+    padding-left: 4px;
+}
+
+.gebr-flow-dump tr.group-instance td {
+    background-color: #dddddd;
+    padding-left: 8px;
+}
+
+.gebr-flow-dump td.group-label {
+    font-style: italic;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.gebr-flow-dump * td.label {
+    font-style: italic;
+    padding-right: 20px;
+    padding-left: 4px;
+}
+
+.gebr-flow-dump * td.value {
+    font-style: normal;
+    text-align: right;
+    padding-right: 4px;
+}
+
+/* Flow ------------------------------------------------------------- */
+
+.gebr-geoxml-flow h1 {
+    margin: 0px;
+    font-size: 14pt;
+}
+
+.gebr-geoxml-flow h2 {
+    margin: 0px;
+    font-style : italic;
+    font-size: 12pt;
+}
+
+.gebr-geoxml-flow p.credits {
+    font-size: 11pt;
+    margin-bottom: 20px;
+}

@@ -623,7 +623,7 @@ void flow_program_paste(void)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 }
 
-static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump)
+static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump, gboolean in_group)
 {
 	gint i, n_instances;
 	GebrGeoXmlSequence * param;
@@ -636,7 +636,8 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 
 		program = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 		str_value = gebr_geoxml_program_parameter_get_string_value(program, FALSE);
-		g_string_append_printf(dump, "<tr>\n  <td>%s</td>\n  <td>%s</td>\n</tr>\n",
+		g_string_append_printf(dump, "<tr>\n  <td class=\"%slabel\">%s</td>\n  <td class=\"value\">%s</td>\n</tr>\n",
+                                       (in_group?"group-":""),
 				       gebr_geoxml_parameter_get_label(parameter),
 				       str_value->str);
 		g_string_free(str_value, TRUE);
@@ -655,7 +656,7 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 			parameters = GEBR_GEOXML_PARAMETERS(instance);
 			gebr_geoxml_parameters_get_parameter(parameters, &param, 0);
 			while (param) {
-				append_parameter_row(GEBR_GEOXML_PARAMETER(param), dump);
+				append_parameter_row(GEBR_GEOXML_PARAMETER(param), dump, TRUE);
 				gebr_geoxml_sequence_next(&param);
 			}
 
@@ -672,19 +673,19 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 
 	table = g_string_new ("");
 	g_string_append_printf (table,
-				"<h3>%s</h3>\n"
-				"<table>\n"
+				_("<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
+				"<caption>Parameters for %s program</caption>\n"
 				"<thead>\n<tr>\n"
 				"  <td>%s</td><td>%s</td>\n"
 				"</tr>\n</thead>\n"
-				"<tbody>\n",
+                                  "<tbody>\n"),
 				gebr_geoxml_program_get_title (program),
 				_("Parameter"), _("Value"));
 
 	parameters = gebr_geoxml_program_get_parameters (program);
 	gebr_geoxml_parameters_get_parameter (parameters, &sequence, 0);
 	while (sequence) {
-		append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), table);
+		append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), table, FALSE);
 		gebr_geoxml_sequence_next (&sequence);
 	}
 
@@ -707,12 +708,14 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 
 	dump = g_string_new(NULL);
 	g_string_append_printf(dump,
-			       "<div class='gebr-flow-dump'>\n"
-			       "<table>\n"
+			       "<div class=\"gebr-flow-dump\">\n"
+			       "<table class=\"gebr-io-table\" summary=\"I/O table\">\n"
+                               "<caption>%s</caption>\n"
 			       "<tr><td>%s</td><td>%s</td></tr>\n"
 			       "<tr><td>%s</td><td>%s</td></tr>\n"
 			       "<tr><td>%s</td><td>%s</td></tr>\n"
 			       "</table>\n",
+                               _("I/O table"),
 			       _("Input"), strlen (input) > 0? input : _("(none)"),
 			       _("Output"), strlen (output) > 0? output : _("(none)"),
 			       _("Error"), strlen (error) > 0? error : _("(none)")); 
@@ -752,21 +755,21 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
 			gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(flow)));
 
 	if (include_date)
-		date = g_strdup_printf (", <span style='gebr-date'>%s</span>",
+		date = g_strdup_printf (", <span class=\"gebr-date\">%s</span>",
 					gebr_localized_date(gebr_iso_date()));
 	else
 		date = NULL;
 
 	g_string_append_printf (dump,
-				"<p>%s <span class='gebr-author'>%s</span>"
-				" <span class='gebr-email'>%s</span>%s</p>\n",
+				"<p class=\"credits\">%s <span class=\"gebr-author\">%s</span>"
+				" <span class=\"gebr-email\">%s</span>%s</p>\n",
 				_("By"),
 				gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(flow)),
 				gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(flow)),
 				date ? date : "");
 	g_free (date);
 
-	g_string_append_printf (dump, "<p>%s</p>\n", _("Flow with programs"));
+	g_string_append_printf (dump, "<p>%s</p>\n", _("Flow with program(s):"));
 	g_string_append_printf (dump, "<ul>\n");
 	gebr_geoxml_flow_get_program (flow, &program, 0);
 	while (program) {
