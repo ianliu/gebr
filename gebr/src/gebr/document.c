@@ -25,6 +25,7 @@
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
+#include <libgebr/defines.h>
 #include <libgebr/gui/gebr-gui-save-dialog.h>
 
 #include "document.h"
@@ -664,8 +665,8 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 
 	if (type == GEBR_GEOXML_OBJECT_TYPE_LINE) {
 		if (gebr.config.detailed_line_css->len != 0)
-			styles = g_strdup_printf ("<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" />",
-						  gebr.config.detailed_line_css->str);
+			styles = g_strdup_printf ("<link rel=\"stylesheet\" type=\"text/css\" href=\"%s/%s\" />",
+						  LIBGEBR_STYLES_DIR, gebr.config.detailed_line_css->str);
 		else
 			styles = gebr_document_report_get_styles_string(report);
 
@@ -689,10 +690,9 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 			}
 		}
 	} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
-
 		if (gebr.config.detailed_flow_css->len != 0)
-			styles = g_strdup_printf ("<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" />",
-						  gebr.config.detailed_flow_css->str);
+			styles = g_strdup_printf ("<link rel=\"stylesheet\" type=\"text/css\" href=\"%s/%s\" />",
+						  LIBGEBR_STYLES_DIR, gebr.config.detailed_flow_css->str);
 		else
 			styles = gebr_document_report_get_styles_string (report);
 

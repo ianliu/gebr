@@ -1,7 +1,3 @@
-/**
- * @file interface.c Assembly the main components of the interface.
- */
-
 /*   GeBR - An environment for seismic processing.
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
@@ -31,6 +27,10 @@
 #include "gebr.h"
 #include "flow.h"
 #include "callbacks.h"
+
+/**
+ * @file interface.c Assembly the main components of the interface.
+ */
 
 /*
  * Private data
