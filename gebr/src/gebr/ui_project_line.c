@@ -465,20 +465,18 @@ void project_line_import(void)
 		return ret;
 	}
 
-	char *quoted_dir;
-	char *quoted_fil;
-	char *quoted_com;
-
 	tmp_dir = gebr_temp_directory_create();
-
+	gchar *quoted_dir;
+	gchar *quoted_fil;
+	gchar *quoted_com;
 	quoted_dir = g_shell_quote(tmp_dir->str);
 	quoted_fil = g_shell_quote(filename);
-
 	g_string_printf(command_line, "cd %s; tar xzfv %s", quoted_dir, quoted_fil);
 	quoted_com = g_shell_quote(command_line->str);
-
 	g_string_printf(command, "bash -c %s", quoted_com);
-
+	g_free(quoted_dir);
+	g_free(quoted_fil);
+	g_free(quoted_com);
 	if (!g_spawn_command_line_sync(command->str, &output, NULL, &exit_status, &error))
 		goto err;
 	if (exit_status)
@@ -607,12 +605,10 @@ out3:	gtk_widget_destroy(chooser_dialog);
 
 void project_line_export(void)
 {
-	GString *command;
 	GString *filename;
 	GString *tmpdir;
 	const gchar *extension;
 	gchar *tmp;
-	gchar *current_dir;
 
 	GtkWidget *chooser_dialog;
 	GtkWidget *check_box;
@@ -648,7 +644,6 @@ void project_line_export(void)
 	if (!tmp)
 		return;
 	
-	command = g_string_new("");
 	filename = g_string_new("");
 	tmpdir = gebr_temp_directory_create();
 
@@ -701,21 +696,18 @@ void project_line_export(void)
 	} else
 		parse_line(gebr.line);
 
-	current_dir = g_get_current_dir();
+	gchar *current_dir = g_get_current_dir();
 	g_chdir(tmpdir->str);
-	char *quoted;
-	quoted = g_shell_quote(tmp);
-	g_string_printf(command, "tar czf %s *", quoted);
-
-	if (system(command->str))
+	gchar *quoted = g_shell_quote(tmp);
+	if (gebr_system("tar czf %s *", quoted))
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not export."));
 	else
 		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Export succesful."));
+	g_free(quoted);
 	g_chdir(current_dir);
 	g_free(current_dir);
 
 	g_free(tmp);
-	g_string_free(command, TRUE);
 	g_string_free(filename, TRUE);
 	gebr_temp_directory_destroy(tmpdir);
 }

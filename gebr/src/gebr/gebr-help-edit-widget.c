@@ -23,6 +23,7 @@
 #include "gebr-help-edit-widget.h"
 #include "document.h"
 #include "defines.h"
+#include "gebr.h"
 
 /*
  * HTML_HOLDER:
@@ -217,6 +218,8 @@ static void gebr_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self)
 	gchar * content;
 	JSContextRef context;
 	GebrHelpEditWidgetPrivate * priv;
+	GtkWidget * widget;
+	const gchar * help;
 
 	context = gebr_gui_help_edit_widget_get_js_context(self);
 	gebr_js_evaluate(context, "ed.resetDirty();");
@@ -226,6 +229,14 @@ static void gebr_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self)
 	gebr_geoxml_document_set_help(priv->document, content);
 	document_save(priv->document, TRUE, TRUE);
 	g_free(content);
+
+	if (gebr_geoxml_object_get_type(GEBR_GEOXML_OBJECT(priv->document)) == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+		widget = gebr.ui_flow_browse->info.help_view;
+	else
+		widget = gebr.ui_project_line->info.help_view;
+
+	help = gebr_geoxml_document_get_help (priv->document);
+	g_object_set(widget, "sensitive", strlen(help) ? TRUE : FALSE, NULL);
 }
 
 static gchar * gebr_help_edit_widget_get_content(GebrGuiHelpEditWidget * self)

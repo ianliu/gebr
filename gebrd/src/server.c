@@ -259,10 +259,8 @@ gboolean server_parse_client_messages(struct client *client)
 					g_string_printf(client->display, ":%d", display);
 
 					/* add client magic cookie */
-					cmd_line = g_string_new(NULL);
-					g_string_printf(cmd_line, "xauth add :%d . %s", display, x11->str);
 					gint i = 0;
-					while (i++ < 5 && WEXITSTATUS(system(cmd_line->str))) {
+					while (i++ < 5 && WEXITSTATUS(gebr_system("xauth add :%d . %s", display, x11->str))) {
 						gebrd_message(GEBR_LOG_ERROR, "Failed to add X11 authorization.");
 						usleep(200*1000);
 					}
@@ -270,8 +268,6 @@ gboolean server_parse_client_messages(struct client *client)
 					if (i == 5)
 						g_string_assign(display_port, "0");
 					gebrd_message(GEBR_LOG_DEBUG, "xauth ran: %s", cmd_line->str);
-
-					g_string_free(cmd_line, TRUE);
 				} else
 					g_string_assign(client->display, "");
 			} else {

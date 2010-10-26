@@ -1124,12 +1124,11 @@ gboolean gebr_gui_gtk_expander_hacked_idle(GtkWidget * label_widget, GdkEventExp
 #if !GTK_CHECK_VERSION(2,14,0)
 gboolean gtk_show_uri(GdkScreen *screen, const gchar *uri, guint32 timestamp, GError **error)
 {
-	gboolean ret;
+	gint ret;
 
-	GString *cmd = g_string_new("");
-	g_string_printf(cmd, "x-www-browser %s &", uri);
-	ret = system(cmd->str) == 0 ? TRUE : FALSE;
-	g_string_free(cmd, TRUE);
+	gchar *quote = g_shell_quote(uri);
+	ret = gebr_system("x-www-browser %s &", quote) == 0 ? TRUE : FALSE;
+	g_free(quote);
 
 	return ret;
 }
