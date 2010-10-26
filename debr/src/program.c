@@ -195,7 +195,7 @@ void program_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(alignment), button_hbox);
 	gtk_container_add(GTK_CONTAINER(debr.ui_program.details.help_edit), alignment);
 
-	gtk_box_pack_start(GTK_BOX(details), hbox_aux, FALSE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(details), hbox_aux, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox_aux), debr.ui_program.details.help_view, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(hbox_aux), debr.ui_program.details.help_edit, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(debr.ui_program.details.help_view), "clicked",
