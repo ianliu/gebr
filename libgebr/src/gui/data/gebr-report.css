@@ -1,9 +1,23 @@
 * { font-family: Verdana, sans-serif;}
 
+body {
+    counter-reset: flow;
+}
+
 .gebr-email:before { content: "<"; }
 .gebr-email:after  { content: ">"; }
 
 p.credits { margin-bottom: 40px;}
+
+.gebr-flows-list {
+ }
+
+.gebr-flows-list ul { list-style-type: decimal; }
+
+.gebr-flows-list .gebr-flow-description { 
+    font-style: italic; 
+    font-size: 11pt;
+}
 
 /* Header ---------------------------------------------------------- */
 
@@ -36,6 +50,7 @@ p.credits { margin-bottom: 40px;}
 /* Flow dump ------------------------------------------------------- */
 
 .gebr-flow-dump table{
+    font-size: 10pt;
     border: 1px solid #dddddd;
     border-collapse: collapse;
     margin-top: 30px;
@@ -96,14 +111,21 @@ p.credits { margin-bottom: 40px;}
 
 /* Flow ------------------------------------------------------------- */
 
+.gebr-geoxml-flow h1:before {
+        content: counter(flow) ". ";
+	counter-increment: flow;
+}
+
 .gebr-geoxml-flow h1 {
     margin: 0px;
+    margin-top: 60px;
     font-size: 14pt;
 }
 
 .gebr-geoxml-flow h2 {
     margin: 0px;
     font-style : italic;
+    font-weight: normal;
     font-size: 12pt;
 }
 
