@@ -1,0 +1,227 @@
+* {
+    font-family: Verdana, sans-serif;
+}
+
+html {
+    background-color: #333333;
+}
+
+body {
+    padding-right: 30px;
+    padding-left: 30px;
+    margin-top: 20px;
+    counter-reset: flow;
+}
+
+.gebr-email:before { content: "<"; }
+.gebr-email:after  { content: ">"; }
+
+p.credits { margin-bottom: 20px;}
+
+.gebr-flows-list {
+    background-color: #ffffff;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 0px;
+ }
+
+.gebr-flows-list ul { list-style-type: decimal; }
+
+.gebr-flows-list .gebr-flow-description { 
+    font-style: italic; 
+    font-size: 11pt;
+}
+
+/* Header ---------------------------------------------------------- */
+.header p, .header ul {
+    background-color: #ffffff;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.header ul li{
+    margin-left: 60px;
+    margin-right: 20px;
+}
+
+.header h1 {
+    text-align: right;
+    color: #fff;
+    padding-top: 40px;
+    padding-right: 20px;
+    padding-bottom: 5px;
+    padding-left: 230px;
+    margin-bottom: 0px;
+    background: #4d6a91;
+    background-image: url('http://www.gebrproject.com/wp-content/uploads/2010/10/logo-5porcento.png');
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: 15px;
+    font-size: 18pt;
+}
+
+.header h2 { 
+    text-align: right;
+    font-size: 14pt;
+    font-weight: normal;
+    font-style : italic;
+    margin-top: 0px;
+    padding-bottom: 30px;
+    padding-right: 20px;
+    padding-left: 230px;
+    background-color: #4d6a91;
+    color: #fff;
+}
+
+.header .gebr-author {
+    text-decoration: none;
+}
+
+.header p.credits {
+    background-color: #f7f8e0;
+    font-size: 11pt;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Content --------------------------------------------------------- */
+
+.content {
+    background-color: #ffffff;
+    margin-top: 0px;
+    margin-bottom: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 10px;
+}
+
+.content h1 {
+    font-size: 16pt;
+}
+
+.content h2 {
+    font-size: 14pt;
+}
+
+/* Flow dump ------------------------------------------------------- */
+
+.gebr-flow-dump table{
+    font-size: 10pt;
+    border: 1px solid #dddddd;
+    border-collapse: collapse;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.gebr-flow-dump table{
+    font-style: italic;
+}
+
+.gebr-flow-dump table.gebr-io-table td {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.gebr-flow-dump table.gebr-parameter-table {
+}
+
+.gebr-flow-dump table.gebr-parameter-table thead {
+    background-color: #333333;
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+}
+
+.gebr-flow-dump table.gebr-parameter-table td {
+    border-top: solid 1px #dddddd;
+    border-bottom: solid 1px #dddddd;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.gebr-flow-dump tr.parameter-group td {
+    background-color: #d0d0d0;
+    padding-left: 4px;
+}
+
+.gebr-flow-dump tr.group-instance td {
+    background-color: #dddddd;
+    padding-left: 8px;
+}
+
+.gebr-flow-dump td.group-label {
+    font-style: italic;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.gebr-flow-dump * td.label {
+    font-style: italic;
+    padding-right: 20px;
+    padding-left: 4px;
+}
+
+.gebr-flow-dump * td.value {
+    font-style: normal;
+    text-align: right;
+    padding-right: 4px;
+}
+
+/* Flow ------------------------------------------------------------- */
+
+.gebr-geoxml-flow {
+    text-align: justify;
+    background-color: #fff;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 20px;
+    padding-bottom: 10px;
+}
+
+.gebr-geoxml-flow h1:before {
+}
+
+.gebr-geoxml-flow h1 {
+    margin: 0px;
+    padding-top:10px;
+    font-size: 14pt;
+    color: #336666;
+}
+
+.gebr-geoxml-flow h2 {
+    margin: 0px;
+    font-style : italic;
+    font-weight: normal;
+    font-size: 12pt;
+    color: #336666;
+    border-bottom-width: 2pt;
+    border-bottom-style: solid;
+}
+
+.gebr-geoxml-flow p.credits {
+    font-size: 11pt;
+    margin-bottom: 20px;
+    margin-top: 0px;
+    text-align: right;
+}
+
+.gebr-geoxml-flow .content{
+    padding-left: 0px;
+    padding-right: 0px;
+
+}
