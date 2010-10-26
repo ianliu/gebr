@@ -119,9 +119,9 @@ static const GtkActionEntry actions_entries[] = {
 		NULL, N_("Copy selected component(s) to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_edition_paste", GTK_STOCK_PASTE, N_("Paste"),
 		NULL, N_("Paste component(s) from clipboard"), G_CALLBACK(on_paste_activate)},
-	{"flow_edition_top", GTK_STOCK_GOTO_TOP, N_("Move Top"),
+	{"flow_edition_top", GTK_STOCK_GOTO_TOP, N_("Move to Top"),
 		"Home", NULL, G_CALLBACK(on_flow_component_move_top)},
-	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move Down"),
+	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move to Bottom"),
 		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
 
 	/*
@@ -134,7 +134,7 @@ static const GtkActionEntry actions_entries[] = {
 	{"job_control_close", "edit-clear", N_("Clear current"),
 		NULL, N_("Clear current job log"), G_CALLBACK(on_job_control_close)},
 	{"job_control_clear", GTK_STOCK_CLEAR, NULL,
-		NULL, N_("Clear all unactive job logs"), G_CALLBACK(on_job_control_clear)},
+		NULL, N_("Clear all inactive job logs"), G_CALLBACK(on_job_control_clear)},
 	{"job_control_stop", GTK_STOCK_STOP, NULL,
 		NULL, N_("Ask server to kill the job"), G_CALLBACK(on_job_control_stop)}
 };
