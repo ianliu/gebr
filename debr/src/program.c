@@ -1017,15 +1017,11 @@ gchar * debr_program_get_backup_help_from_pointer (gpointer program)
 
 	gtk_tree_model_get (GTK_TREE_MODEL (debr.ui_menu.model), &iter, MENU_PATH, &fname, -1);
 
-	g_message ("Program index: %d", index);
-	g_message ("File name: %s", fname);
-
 	gebr_geoxml_document_load (&menu, fname, TRUE, NULL);
 	gebr_geoxml_flow_get_program (GEBR_GEOXML_FLOW (menu), &sequence, index);
 
 	if (sequence) {
 		help = g_strdup (gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (sequence)));
-		g_message ("Help: %s", help);
 	}
 
 	gebr_geoxml_document_free (menu);
