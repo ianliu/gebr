@@ -152,6 +152,9 @@ static void gebr_gui_help_edit_widget_init(GebrGuiHelpEditWidget * self)
 	priv->html_viewer = gebr_gui_html_viewer_widget_new();
 	priv->is_editing = TRUE;
 
+	/* a reasonable minimum size, considering the toolbar */
+	gtk_widget_set_size_request(priv->edit_widget, 800, -1);
+
 	box = GTK_BOX(self);
 	priv->scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(priv->scrolled_window),
