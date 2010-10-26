@@ -159,7 +159,7 @@ GString *gebr_temp_directory_create(void)
 	close(g_mkstemp(path->str));
 	unlink(path->str);
 
-	g_mkdir(path->str, gebr_home_mode());
+	g_mkdir_with_parents(path->str, gebr_home_mode());
 
 	return path;
 }
@@ -171,8 +171,7 @@ void gebr_temp_directory_destroy(GString * path)
 {
 	// FIXME: Should this free 'path' argument?
 	//
-	g_string_prepend(path, "rm -fr ");
-	if (system(path->str) != 0) {
+	if (gebr_system("rm -fr %s", path->str) != 0) {
 		// do nothing
 	}
 	g_string_free(path, TRUE);
@@ -202,6 +201,24 @@ GString *gebr_make_temp_filename(const gchar * template)
 }
 
 /**
+ * GêBR's wrapper to system command.
+ * Remember to escape each argument.
+ */
+gint gebr_system(const gchar *cmd, ...)
+{
+	gint ret;
+
+	va_list argp;
+	va_start(argp, cmd);
+	gchar *cmd_parsed = g_strdup_vprintf(cmd, argp);
+	va_end(argp);
+	ret = system(cmd_parsed);
+	g_free(cmd_parsed);
+
+	return ret;
+}
+
+/**
  * Returns the home's permission mode. Useful for
  * preserving permissions when creating files
  */
@@ -224,7 +241,7 @@ static gboolean gebr_make_config_dir(const gchar * dirname)
 	path = g_string_new(NULL);
 	g_string_printf(path, "%s/.gebr/%s", getenv("HOME"), dirname);
 	if (g_file_test(path->str, G_FILE_TEST_IS_DIR) == FALSE)
-		if (g_mkdir(path->str, gebr_home_mode()))
+		if (g_mkdir_with_parents(path->str, gebr_home_mode()))
 			ret = FALSE;
 	g_string_free(path, TRUE);
 
@@ -237,10 +254,9 @@ static gboolean gebr_make_config_dir(const gchar * dirname)
  */
 gboolean gebr_create_config_dirs(void)
 {
-	GString *string;
+	GString *string = g_string_new(NULL);
 	gboolean ret = TRUE;
-
-	string = g_string_new(NULL);
+	gchar *home = getenv("$HOME");
 
 	/* Test for gebr conf dir and subdirs */
 	if (!gebr_make_config_dir(""))
@@ -263,36 +279,36 @@ gboolean gebr_create_config_dirs(void)
 		goto err;
 
 	/* DEPRECATED: migration from old structure */
-	g_string_printf(string, "%s/.gebr/menus", getenv("HOME"));
+	g_string_printf(string, "%s/.gebr/menus", home);
 	if (g_file_test(string->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == TRUE) {
-		g_string_printf(string, "mv %s/.gebr/menus/* %s/.gebr/gebr/menus; rmdir %s/.gebr/menus/",
-				getenv("HOME"), getenv("HOME"), getenv("HOME"));
-		if (system(string->str))
+		gint ret = gebr_system("mv %s/.gebr/menus/* %s/.gebr/gebr/menus; rmdir %s/.gebr/menus/",
+				       home, home, home);
+		if (ret)
 			goto err;
 	}
-	g_string_printf(string, "%s/.gebr/gebrdata", getenv("HOME"));
+	g_string_printf(string, "%s/.gebr/gebrdata", home);
 	if (g_file_test(string->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == TRUE) {
-		g_string_printf(string, "mv %s/.gebr/gebrdata/* %s/.gebr/gebr/data; rmdir %s/.gebr/gebrdata/",
-				getenv("HOME"), getenv("HOME"), getenv("HOME"));
-		if (system(string->str))
+		gint ret = gebr_system("mv %s/.gebr/gebrdata/* %s/.gebr/gebr/data; rmdir %s/.gebr/gebrdata/",
+				       home, home, home);
+		if (ret)
 			goto err;
 	}
-	g_string_printf(string, "%s/.gebr/menus.idx", getenv("HOME"));
+	g_string_printf(string, "%s/.gebr/menus.idx", home);
 	if (g_file_test(string->str, G_FILE_TEST_EXISTS) == TRUE) {
-		g_string_printf(string, "mv %s/.gebr/menus.idx %s/.gebr/gebr", getenv("HOME"), getenv("HOME"));
-		if (system(string->str))
+		gint ret = gebr_system("mv %s/.gebr/menus.idx %s/.gebr/gebr", home, home);
+		if (ret)
 			goto err;
 	}
-	g_string_printf(string, "%s/.gebr/gebr.conf", getenv("HOME"));
+	g_string_printf(string, "%s/.gebr/gebr.conf", home);
 	if (g_file_test(string->str, G_FILE_TEST_EXISTS) == TRUE) {
-		g_string_printf(string, "mv %s/.gebr/gebr.conf %s/.gebr/gebr", getenv("HOME"), getenv("HOME"));
-		if (system(string->str))
+		gint ret = gebr_system("mv %s/.gebr/gebr.conf %s/.gebr/gebr", home, home);
+		if (ret)
 			goto err;
 	}
-	g_string_printf(string, "%s/.gebr/debr.conf", getenv("HOME"));
+	g_string_printf(string, "%s/.gebr/debr.conf", home);
 	if (g_file_test(string->str, G_FILE_TEST_EXISTS) == TRUE) {
-		g_string_printf(string, "mv %s/.gebr/debr.conf %s/.gebr/debr", getenv("HOME"), getenv("HOME"));
-		if (system(string->str))
+		gint ret = gebr_system("mv %s/.gebr/debr.conf %s/.gebr/debr", home, home);
+		if (ret)
 			goto err;
 	}
 

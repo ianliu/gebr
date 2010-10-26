@@ -232,31 +232,27 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 			gtk_widget_show(window);
 		}
 	} else {
-		GString *prepared_html;
-		GString *cmd_line;
+		GString *prepared_html = g_string_new(NULL);
+		GString *html_path = gebr_make_temp_filename("gebr_XXXXXX.html");
 		FILE *html_fp;
-		GString *html_path;
-
-		/* initialization */
-		prepared_html = g_string_new(NULL);
-		g_string_assign(prepared_html, gebr_geoxml_document_get_help(document));
-		/* create temporary filename */
-		html_path = gebr_make_temp_filename("gebr_XXXXXX.html");
 
 		/* open temporary file with help from XML */
 		html_fp = fopen(html_path->str, "w");
 		if (html_fp == NULL) {
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to create temporary file."));
-			goto out2;
+			goto out;
 		}
+		g_string_assign(prepared_html, gebr_geoxml_document_get_help(document));
 		fputs(prepared_html->str, html_fp);
 		fclose(html_fp);
 
-		cmd_line = g_string_new(NULL);
-		g_string_printf(cmd_line, "%s  %s", gebr.config.editor->str, html_path->str);
-		if (WEXITSTATUS(system(cmd_line->str))){
+		gchar *quote1 = gebr.config.editor->str;
+		gchar *quote2 = html_path->str;
+		if (gebr_system("%s %s", quote1, quote2)) {
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Error during editor execution."));
 		}
+		g_free(quote1);
+		g_free(quote2);
 
 		/* Add file to list of files to be removed */
 		gebr.tmpfiles = g_slist_append(gebr.tmpfiles, html_path->str);
@@ -264,7 +260,7 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 		html_fp = fopen(html_path->str, "r");
 		if (html_fp == NULL) {
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to create temporary file."));
-			goto out1;
+			goto out;
 		}
 		gchar buffer[1000];
 		g_string_assign(prepared_html, "");
@@ -274,10 +270,8 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 
 		gebr_geoxml_document_set_help(document, prepared_html->str);
 
-out1:		g_string_free(cmd_line, TRUE);
-out2:		g_string_free(html_path, FALSE);
+out:		g_string_free(html_path, FALSE);
 		g_string_free(prepared_html, TRUE);
-
 	}
 }
 

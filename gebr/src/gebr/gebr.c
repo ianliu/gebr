@@ -228,7 +228,7 @@ gint gebr_config_load()
 									"general", "usermenus", data_dir->str);
 		if (!strcmp(gebr.config.usermenus->str, data_dir->str)
 		    && !g_file_test(data_dir->str, G_FILE_TEST_EXISTS))
-			g_mkdir(data_dir->str, 0755);
+			g_mkdir_with_parents(data_dir->str, 0755);
 		gebr_path_resolve_home_variable(gebr.config.usermenus);
 
 		g_string_printf(data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
@@ -564,10 +564,10 @@ static void gebr_migrate_data_dir(void)
 	    if (!fnmatch("*.prj", filename, 1) || !fnmatch("*.lne", filename, 1) || !fnmatch("*.flw", filename, 1))
 		g_string_append_printf(command_line, "%s/%s ", gebr.config.data->str, filename);
 	empty = command_line->len == 0 ? TRUE : FALSE;
-	g_string_prepend(command_line, "cp -f ");
+	g_string_prepend(command_line, "cp ");
 	g_string_append(command_line, new_data_dir->str);
 
-	if (empty || !system(command_line->str)) {
+	if (empty || !gebr_system(command_line->str)) {
 		dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
 						(GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 						GTK_MESSAGE_INFO, GTK_BUTTONS_OK,

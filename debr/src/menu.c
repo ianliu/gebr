@@ -719,7 +719,6 @@ void menu_install(void)
 
 		gchar *menu_path;
 		GString *destination;
-		GString *command;
 		GebrGeoXmlFlow *menu;
 		MenuStatus status;
 		gboolean do_save = FALSE;
@@ -729,9 +728,7 @@ void menu_install(void)
 
 		const gchar *menu_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu));
 		destination = g_string_new(NULL);
-		command = g_string_new(NULL);
 		g_string_printf(destination, "%s/.gebr/gebr/menus/%s", getenv("HOME"), menu_filename);
-		g_string_printf(command, "cp %s %s", menu_path, destination->str);
 
 		if (!overwriteall && g_file_test(destination->str, G_FILE_TEST_EXISTS)) {
 			gint response;
@@ -753,15 +750,18 @@ void menu_install(void)
 		} else
 			do_save = TRUE;
 
-		if (do_save && system(command->str) != 0){
-				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-							_("Failed to install menu %s"),
-							menu_filename);
-			}
+		gchar *quote1 = g_shell_quote(menu_path);
+		gchar *quote2 = g_shell_quote(destination->str);
+		if (do_save && gebr_system("cp %s %s", quote1, quote2) != 0) {
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
+						_("Failed to install menu '%s'"),
+						menu_filename);
+		}
+		g_free(quote1);
+		g_free(quote2);
 
 		g_free(menu_path);
 		g_string_free(destination, TRUE);
-		g_string_free(command, TRUE);
 	}
 }
 

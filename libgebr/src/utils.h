@@ -46,6 +46,8 @@ void gebr_temp_directory_destroy(GString * path);
 GString *gebr_make_unique_filename(const gchar * template);
 GString *gebr_make_temp_filename(const gchar * template);
 
+gint gebr_system(const gchar *cmd, ...);
+
 int gebr_home_mode(void);
 
 gboolean gebr_create_config_dirs(void);
