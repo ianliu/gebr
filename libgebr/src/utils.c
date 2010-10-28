@@ -463,3 +463,13 @@ const gchar* gebr_version()
 {
 	return LIBGEBR_VERSION LIBGEBR_NANOVERSION;
 }
+
+gboolean gebr_paths_equal (const gchar *path1, const gchar *path2)
+{
+	struct stat stat1, stat2;
+
+	g_stat (path1, &stat1);
+	g_stat (path2, &stat2);
+
+	return stat1.st_ino == stat2.st_ino;
+}

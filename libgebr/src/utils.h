@@ -99,5 +99,16 @@ int g_strcmp0(const char * str1, const char * str2);
 
 const gchar *gebr_version();
 
+/**
+ * gebr_paths_equal:
+ * @dir1: the first path
+ * @dir2: the second path
+ *
+ * Compares the paths for equality by calling g_stat() on both of them and comparing their inode parameters.
+ *
+ * Returns: %TRUE if @path1 points to the same file/directory as @path2.
+ */
+gboolean gebr_paths_equal (const gchar *path1, const gchar *path2);
+
 G_END_DECLS
 #endif				//__GEBR_UTILS_H
