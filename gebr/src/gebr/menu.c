@@ -266,7 +266,7 @@ gboolean menu_list_create_index(void)
 	menu_scan_directory(path->str, menu_key_file, category_key_file);
 	menu_scan_directory(directory_list[0], menu_key_file, category_key_file);
 	for (int i = 1; directory_list[i]; i++)
-		if (strcmp(directory_list[i], directory_list[0]))
+		if (!gebr_paths_equal (directory_list[i], directory_list[0]))
 			menu_scan_directory(directory_list[i], menu_key_file, category_key_file);
 
 	g_string_printf(path, "%s/.gebr/gebr/menus.idx2", getenv("HOME"));
