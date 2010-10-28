@@ -9,14 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-26 15:37-0200\n"
-"PO-Revision-Date: 2010-10-26 16:51-0200\n"
+"POT-Creation-Date: 2010-10-28 09:32-0200\n"
+"PO-Revision-Date: 2010-10-28 09:51-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: \n"
 
 #. create file chooser
 #: ../src/callbacks.c:150
@@ -148,24 +148,26 @@ msgid ""
 "<span font_weight='bold' size='large'>Do you really want to revert this help?"
 "</span>"
 msgstr ""
-"<span font_weight='bold' size='large'>Você realmente deseja reverter esse componente?"
-"</span>"
+"<span font_weight='bold' size='large'>Você realmente deseja reverter esse "
+"componente?</span>"
 
 #: ../src/help.c:711
 msgid ""
 "By choosing yes, you will lose all modifications made after the associated "
 "menu was saved."
 msgstr ""
+"Ao escolher sim, serão perdidas todas as modificações feitas apóso menu ter "
+"sido salvo"
 
 #: ../src/help.c:766
 msgid "Unable to open template. Please check your installation."
 msgstr "Não foi possível abrir o modelo. Por favor verifique sua instalação."
 
-#: ../src/help.c:867 ../src/help.c:885
+#: ../src/help.c:861 ../src/help.c:883
 msgid "Unable to create temporary file."
 msgstr "Não foi possível criar um arquivo temporário."
 
-#: ../src/help.c:875
+#: ../src/help.c:873
 msgid "Error during editor execution."
 msgstr "Erro durante a execução do editor."
 
@@ -184,7 +186,7 @@ msgstr "Criar um novo menu"
 
 #: ../src/interface.c:42
 msgid "Import"
-msgstr ""
+msgstr "Importar"
 
 #: ../src/interface.c:43
 msgid "Create menu from flow"
@@ -281,7 +283,7 @@ msgstr "Visualizar Ajuda"
 
 #: ../src/interface.c:70
 msgid "View the help related to menu"
-msgstr ""
+msgstr "Visualizar o documento de ajuda, relativo ao menu"
 
 #: ../src/interface.c:71 ../src/interface.c:93 ../src/menu.c:233
 #: ../src/program.c:188
@@ -290,7 +292,7 @@ msgstr "Editar Ajuda"
 
 #: ../src/interface.c:72
 msgid "Edit the help related to menu"
-msgstr ""
+msgstr "Editar o documento de ajuda relacionado com o menu"
 
 #. program
 #: ../src/interface.c:75
@@ -335,11 +337,11 @@ msgstr "Colar programa(s) da área de transferência"
 
 #: ../src/interface.c:92
 msgid "View the help related to program"
-msgstr ""
+msgstr "Visualizar o documento de ajuda relacionado ao programa"
 
 #: ../src/interface.c:94
 msgid "Edit the help related to program"
-msgstr ""
+msgstr "Editar o documento de ajuda relacionado ao programa"
 
 #. parameter
 #. "paramter_new" is a special button, where a popup menu is created on its bottom.
@@ -477,29 +479,29 @@ msgstr "Escolher arquivo para \"%s\""
 
 #: ../src/menu.c:710
 msgid "There are menus unsaved. You need to save then before install."
-msgstr ""
+msgstr "Existem menus não salvos. É necessário salvá-los antes da instalação."
 
-#: ../src/menu.c:741
+#: ../src/menu.c:738
 #, c-format
 msgid ""
 "Menu '%s' already exists on destination folder. Do you want to overwrite it?"
 msgstr "Menu '%s' já existe. Deseja sobrescrevê-lo?"
 
-#: ../src/menu.c:743
+#: ../src/menu.c:740
 msgid "Don't overwrite"
 msgstr "Não sobrescreva"
 
-#: ../src/menu.c:744
+#: ../src/menu.c:741
 msgid "Overwrite"
 msgstr "Sobrescrever"
 
-#: ../src/menu.c:745
+#: ../src/menu.c:742
 msgid "Overwrite all"
 msgstr "Sobrescrever todos"
 
-#: ../src/menu.c:758
+#: ../src/menu.c:757
 #, c-format
-msgid "Failed to install menu %s"
+msgid "Failed to install menu '%s'"
 msgstr "Falha ao instalar o menu '%s'"
 
 #: ../src/menu.c:790
@@ -1166,6 +1168,9 @@ msgstr ""
 msgid "Select the menus you want to save:"
 msgstr "Selecione os menus que você deseja salvar:"
 
+#~ msgid "Failed to install menu %s"
+#~ msgstr "Falha ao instalar o menu '%s'"
+
 #~ msgid "No menu selected."
 #~ msgstr "Nenhum menu selecionado."
 
@@ -1336,9 +1341,6 @@ msgstr "Selecione os menus que você deseja salvar:"
 #~ msgid "Failed to run GêBR. Please check if GêBR is installed."
 #~ msgstr ""
 #~ "Falha ao executar a GêBR. Por favor, confira se a GêBR está instalada."
-
-#~ msgid "Failed to install menu '%s'."
-#~ msgstr "Falha ao instalar o menu '%s'."
 
 #~ msgid "No HTML editor specified in preferences."
 #~ msgstr "Nenhum editor HTML especificado nas preferências."
