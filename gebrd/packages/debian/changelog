@@ -1,3 +1,9 @@
+gebrd (0.9.18) maverick; urgency=low
+
+  * Development release for validate fixes on freeze.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Thu, 28 Oct 2010 12:04:05 -0200
+
 gebrd (0.9.17) lucid; urgency=low
 
   * Release 0.9.17.

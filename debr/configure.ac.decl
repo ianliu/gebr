@@ -1,4 +1,4 @@
-VERSION=`hg parent --template '{latesttag}\n' 2> /dev/null || date +%y.%m.%d`
+VERSION=0.9.20
 NANOVERSION=`hg parent --template '+{latesttagdistance}-{node|short}\n' 2> /dev/null || date ++%H%M`
 AC_SUBST(VERSION)
 
@@ -36,6 +36,7 @@ dnl Debug option
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [turn on debugging])],, enable_debug=yes)
 if test "$enable_debug" = "yes"; then
 	DEBUG_CFLAGS="-DDEBUG"
+	NANOVERSION="" #FIXME: nanoversion is only for development
 else
 	DEBUG_CFLAGS=""
 	NANOVERSION=""
