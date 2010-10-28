@@ -99,8 +99,7 @@ void program_setup_ui(void)
 	debr.ui_program.list_store = gtk_list_store_new(PROGRAM_N_COLUMN,
 							GDK_TYPE_PIXBUF,	// PROGRAM_STATUS
 							G_TYPE_STRING,		// PROGRAM_TITLE
-							G_TYPE_POINTER,		// PROGRAM_XMLPOINTER
-							G_TYPE_STRING);		// PROGRAM_HELP_BACKUP
+							G_TYPE_POINTER);	// PROGRAM_XMLPOINTER
 
 	debr.ui_program.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_program.list_store));
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(debr.ui_program.tree_view), TRUE);
@@ -794,7 +793,6 @@ static GtkTreeIter program_append_to_ui(GebrGeoXmlProgram * program)
 	gtk_list_store_append(debr.ui_program.list_store, &iter);
 	gtk_list_store_set(debr.ui_program.list_store, &iter,
 			   PROGRAM_XMLPOINTER, program,
-			   PROGRAM_HELP_BACKUP, help,
 			   -1);
 	program_load_iter(&iter);
 
@@ -1027,28 +1025,6 @@ gchar * debr_program_get_backup_help_from_pointer (gpointer program)
 	gebr_geoxml_document_free (menu);
 
 	return help;
-}
-
-void debr_program_sync_help_backups()
-{
-	gboolean valid;
-	GtkTreeIter iter;
-	GtkTreeModel * model;
-	const gchar * help;
-	GebrGeoXmlProgram * program;
-
-	model = GTK_TREE_MODEL (debr.ui_program.list_store);
-	valid = gtk_tree_model_get_iter_first(model, &iter);
-	while (valid) {
-		gtk_tree_model_get(model, &iter,
-				   PROGRAM_XMLPOINTER, &program,
-				   -1);
-		help = gebr_geoxml_program_get_help(program);
-		gtk_list_store_set(debr.ui_program.list_store, &iter,
-				   PROGRAM_HELP_BACKUP, help,
-				   -1);
-		valid = gtk_tree_model_iter_next(model, &iter);
-	}
 }
 
 /**
