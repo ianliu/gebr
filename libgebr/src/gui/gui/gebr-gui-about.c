@@ -46,6 +46,8 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
                 "  Fábio Azevedo <fabioaz@gebrproject.com>",
                 "  Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>",
 		"  Ian Liu Rodrigues <ian.liu@gebrproject.com>",
+		"  Priscila Morais <pris.moraiss@gebrproject.com>",
+		"  Renan Giarola <renangiarola@gebrproject.com>",
                 " ",
                 _("Consultants"),
 		"  Eduardo Filpo <efilpo@gmail.com>",
