@@ -2243,10 +2243,17 @@ static void update_revert_sensitiveness(gpointer xmlpointer)
 		const gchar * path;
 		GtkUIManager * manager;
 		GtkAction * action;
-		path = "/ui/" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_NAME "/RevertAction";
+
+		path = g_strconcat (gebr_gui_help_edit_window_get_tool_bar_mark (window),
+			    "/PreviewAction",
+			    NULL);
 		manager = gebr_gui_help_edit_window_get_ui_manager(window);
 		action = gtk_ui_manager_get_action(manager, path);
-		gtk_action_set_sensitive(action, TRUE);
+		if (!gtk_toggle_action_get_active (GTK_TOGGLE_ACTION(action))){
+			path = "/ui/" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_NAME "/RevertAction";
+			action = gtk_ui_manager_get_action(manager, path);
+			gtk_action_set_sensitive(action, TRUE);
+		}
 	}
 }
 
