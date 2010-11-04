@@ -272,7 +272,7 @@ gboolean gebr_create_config_dirs(void)
 {
 	GString *string = g_string_new(NULL);
 	gboolean ret = TRUE;
-	gchar *home = getenv("$HOME");
+	gchar *home = getenv("HOME");
 
 	/* Test for gebr conf dir and subdirs */
 	if (!gebr_make_config_dir(""))
@@ -296,21 +296,23 @@ gboolean gebr_create_config_dirs(void)
 
 	/* DEPRECATED: migration from old structure */
 	g_string_printf(string, "%s/.gebr/menus", home);
-	if (g_file_test(string->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == TRUE && 
+	if (g_file_test(string->str, G_FILE_TEST_IS_DIR) == TRUE && 
 	    gebr_dir_has_files(string->str) == TRUE) {
-		gint ret = gebr_system("mv %s/.gebr/menus/* %s/.gebr/gebr/menus; rmdir %s/.gebr/menus/",
-				       home, home, home);
+		gint ret = gebr_system("mv %s/.gebr/menus/* %s/.gebr/gebr/menus",
+				       home, home);
 		if (ret)
 			goto err;
 	}
+	gebr_system("rm -fr %s", string->str);
 	g_string_printf(string, "%s/.gebr/gebrdata", home);
 	if (g_file_test(string->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == TRUE &&
 	    gebr_dir_has_files(string->str) == TRUE) {
-		gint ret = gebr_system("mv %s/.gebr/gebrdata/* %s/.gebr/gebr/data; rmdir %s/.gebr/gebrdata/",
+		gint ret = gebr_system("mv %s/.gebr/gebrdata/* %s/.gebr/gebr/data",
 				       home, home, home);
 		if (ret)
 			goto err;
 	}
+	gebr_system("rm -fr %s", string->str);
 	g_string_printf(string, "%s/.gebr/menus.idx", home);
 	if (g_file_test(string->str, G_FILE_TEST_EXISTS) == TRUE) {
 		gint ret = gebr_system("mv %s/.gebr/menus.idx %s/.gebr/gebr", home, home);
