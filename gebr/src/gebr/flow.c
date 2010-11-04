@@ -200,6 +200,15 @@ void flow_import(void)
 	GtkTreeIter iter = line_append_flow_iter(imported_flow, line_flow);
 	flow_browse_select_iter(&iter);
 
+	GString *new_title = g_string_new(NULL);
+	g_string_printf(new_title, _("%s (Imported)"), gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(imported_flow)));
+	gtk_list_store_set(gebr.ui_flow_browse->store, &iter, FB_TITLE, new_title->str, -1);
+	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(imported_flow), new_title->str);
+	g_string_free(new_title, TRUE);
+
+
+	document_save(GEBR_GEOXML_DOC(imported_flow), FALSE, FALSE);
+
 out2:	g_free(dir);
 out:	gtk_widget_destroy(chooser_dialog);
 }
