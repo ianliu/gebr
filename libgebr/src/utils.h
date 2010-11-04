@@ -47,6 +47,7 @@ GString *gebr_make_unique_filename(const gchar * template);
 GString *gebr_make_temp_filename(const gchar * template);
 
 gint gebr_system(const gchar *cmd, ...);
+gboolean gebr_dir_has_files(const gchar *dir_path);
 
 int gebr_home_mode(void);
 
