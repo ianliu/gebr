@@ -307,7 +307,7 @@ static gboolean job_set_status_finished(struct job *job)
 
 		error = NULL;
 		output = g_string_new(NULL);
-		g_string_printf(output, "%s/STDIN.o%s", getenv("HOME"), job->moab_jid->str);
+		g_string_printf(output, "%s/STDIN.o%s", g_get_home_dir(), job->moab_jid->str);
 		file = g_io_channel_new_file(output->str, "r", &error);
 		if (file == NULL)
 			goto out2;

@@ -568,7 +568,7 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_menu.model), &parent, iter);
 	if (gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(debr.ui_menu.model),
 						  &parent, &debr.ui_menu.iter_other)) {
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), getenv("HOME"));
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), g_get_home_dir());
 	} else {
 		gchar *menu_path;
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &parent, MENU_PATH, &menu_path, -1);
@@ -721,7 +721,7 @@ void menu_install(void)
 
 		const gchar *menu_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(menu));
 		destination = g_string_new(NULL);
-		g_string_printf(destination, "%s/.gebr/gebr/menus/%s", getenv("HOME"), menu_filename);
+		g_string_printf(destination, "%s/.gebr/gebr/menus/%s", g_get_home_dir(), menu_filename);
 
 		if (!overwriteall && g_file_test(destination->str, G_FILE_TEST_EXISTS)) {
 			gint response;
