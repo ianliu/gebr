@@ -77,12 +77,12 @@ gboolean server_init(void)
 
 	/* log */
 	log_filename = g_string_new(NULL);
-	g_string_printf(log_filename, "%s/.gebr/log/gebrd-%s.log", getenv("HOME"), gebrd.hostname);
+	g_string_printf(log_filename, "%s/.gebr/log/gebrd-%s.log", g_get_home_dir(), gebrd.hostname);
 	gebrd.log = gebr_log_open(log_filename->str);
 
 	/* check if there is another daemon running for this user and hostname */
 	gebrd.run_filename = g_string_new(NULL);
-	g_string_printf(gebrd.run_filename, "%s/.gebr/run/gebrd-%s.run", getenv("HOME"), gebrd.hostname);
+	g_string_printf(gebrd.run_filename, "%s/.gebr/run/gebrd-%s.run", g_get_home_dir(), gebrd.hostname);
 	if (g_file_test(gebrd.run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
 		/* check if server crashed by trying connecting to it
 		 * if the connection is refused, the it *probably* did

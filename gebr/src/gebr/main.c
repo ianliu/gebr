@@ -72,7 +72,7 @@ int main(int argc, char **argv, char **env)
 		path = g_string_new(NULL);
 		error = NULL;
 
-		g_string_printf(path, "%s/.gebr/gebr/gebr.conf", getenv("HOME"));
+		g_string_printf(path, "%s/.gebr/gebr/gebr.conf", g_get_home_dir());
 		g_key_file_load_from_file(file, path->str, G_KEY_FILE_NONE, &error);
 
 		if (error) {

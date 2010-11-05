@@ -109,10 +109,10 @@ gboolean menu_refresh_needed(void)
 	needed = FALSE;
 	index_path = g_string_new(NULL);
 	menudir_path = g_string_new(NULL);
-	home_menu_dir = g_strconcat(getenv("HOME"), "/.gebr/gebr/menus", NULL);
+	home_menu_dir = g_strconcat(g_get_home_dir(), "/.gebr/gebr/menus", NULL);
 
 	/* index path string */
-	g_string_printf(index_path, "%s/.gebr/gebr/menus.idx2", getenv("HOME"));
+	g_string_printf(index_path, "%s/.gebr/gebr/menus.idx2", g_get_home_dir());
 	if (g_access(index_path->str, F_OK | R_OK) && menu_list_create_index() == FALSE)
 		goto out;
 
@@ -160,8 +160,8 @@ void menu_list_populate(void)
 
 	gtk_tree_store_clear(gebr.ui_flow_edition->menu_store);
 
-	g_string_printf(categories_path, "%s/.gebr/gebr/categories.idx2", getenv("HOME"));
-	g_string_printf(menus_path, "%s/.gebr/gebr/menus.idx2", getenv("HOME"));
+	g_string_printf(categories_path, "%s/.gebr/gebr/categories.idx2", g_get_home_dir());
+	g_string_printf(menus_path, "%s/.gebr/gebr/menus.idx2", g_get_home_dir());
 	if (!g_file_test(categories_path->str, G_FILE_TEST_EXISTS) ||
 	    !g_file_test(menus_path->str, G_FILE_TEST_EXISTS)) {
 		menu_list_create_index();
@@ -261,7 +261,7 @@ gboolean menu_list_create_index(void)
 	category_key_file = g_key_file_new();
 
 	// Verify duplicates in directory_list
-	g_string_printf(path, "%s/.gebr/gebr/menus", getenv("HOME"));
+	g_string_printf(path, "%s/.gebr/gebr/menus", g_get_home_dir());
 	menu_scan_directory(gebr.config.usermenus->str, menu_key_file, category_key_file);
 	menu_scan_directory(path->str, menu_key_file, category_key_file);
 	menu_scan_directory(directory_list[0], menu_key_file, category_key_file);
@@ -269,7 +269,7 @@ gboolean menu_list_create_index(void)
 		if (!gebr_paths_equal (directory_list[i], directory_list[0]))
 			menu_scan_directory(directory_list[i], menu_key_file, category_key_file);
 
-	g_string_printf(path, "%s/.gebr/gebr/menus.idx2", getenv("HOME"));
+	g_string_printf(path, "%s/.gebr/gebr/menus.idx2", g_get_home_dir());
 	if ((menu_fp = fopen(path->str, "w")) == NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Unable to write menus' index."));
 		ret = FALSE;
@@ -282,7 +282,7 @@ gboolean menu_list_create_index(void)
 
 	fclose(menu_fp);
 	
-	g_string_printf(path, "%s/.gebr/gebr/categories.idx2", getenv("HOME"));
+	g_string_printf(path, "%s/.gebr/gebr/categories.idx2", g_get_home_dir());
 	if ((category_fp = fopen(path->str, "w")) == NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Unable to write menus' index."));
 		ret = FALSE;

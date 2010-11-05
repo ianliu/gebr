@@ -93,7 +93,7 @@ gboolean gebr_append_filename_extension(GString * filename, const gchar * extens
 
 gboolean gebr_path_is_at_home(const gchar * path)
 {
-	gchar *home = getenv("HOME");
+	gchar *home = g_get_home_dir();
 	if (home == NULL)
 		return FALSE;
 	return g_str_has_prefix(path, home);
@@ -102,7 +102,7 @@ gboolean gebr_path_is_at_home(const gchar * path)
 gboolean gebr_path_use_home_variable(GString * path)
 {
 	if (gebr_path_is_at_home(path->str)) {
-		gchar *home = getenv("HOME");
+		gchar *home = g_get_home_dir();
 		gebr_g_string_replace_first_ref(path, home, "$HOME");
 		return TRUE;
 	}
@@ -113,7 +113,7 @@ gboolean gebr_path_use_home_variable(GString * path)
 gboolean gebr_path_resolve_home_variable(GString * path)
 {
 	if (gebr_g_string_starts_with(path, "$HOME")) {
-		gchar *home = getenv("HOME");
+		gchar *home = g_get_home_dir();
 		gebr_g_string_replace_first_ref(path, "$HOME", home);
 		return TRUE;
 	}
@@ -153,7 +153,7 @@ GString *gebr_temp_directory_create(void)
 
 	/* assembly dir path */
 	path = g_string_new(NULL);
-	g_string_printf(path, "%s/.gebr/tmp/XXXXXX", getenv("HOME"));
+	g_string_printf(path, "%s/.gebr/tmp/XXXXXX", g_get_home_dir());
 
 	/* create a temporary file. */
 	close(g_mkstemp(path->str));
@@ -192,7 +192,7 @@ GString *gebr_make_temp_filename(const gchar * template)
 
 	/* assembly file path */
 	path = g_string_new(NULL);
-	g_string_printf(path, "%s/.gebr/tmp/%s", getenv("HOME"), template);
+	g_string_printf(path, "%s/.gebr/tmp/%s", g_get_home_dir(), template);
 
 	/* create a temporary file. */
 	close(g_mkstemp(path->str));
@@ -243,7 +243,7 @@ int gebr_home_mode(void)
 	struct stat home_stat;
 	gchar *home;
 
-	home = getenv("HOME");
+	home = g_get_home_dir();
 	g_stat(home, &home_stat);
 
 	return home_stat.st_mode;
@@ -255,7 +255,7 @@ static gboolean gebr_make_config_dir(const gchar * dirname)
 	gboolean ret = TRUE;
 
 	path = g_string_new(NULL);
-	g_string_printf(path, "%s/.gebr/%s", getenv("HOME"), dirname);
+	g_string_printf(path, "%s/.gebr/%s", g_get_home_dir(), dirname);
 	if (g_file_test(path->str, G_FILE_TEST_IS_DIR) == FALSE)
 		if (g_mkdir_with_parents(path->str, gebr_home_mode()))
 			ret = FALSE;
@@ -272,7 +272,7 @@ gboolean gebr_create_config_dirs(void)
 {
 	GString *string = g_string_new(NULL);
 	gboolean ret = TRUE;
-	gchar *home = getenv("HOME");
+	gchar *home = g_get_home_dir();
 
 	/* Test for gebr conf dir and subdirs */
 	if (!gebr_make_config_dir(""))
