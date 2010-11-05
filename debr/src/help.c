@@ -413,7 +413,7 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 	if (strlen(escaped_content)) {
 		pos = strip_block(help, "ttl");
 		if (pos) {
-			g_string_printf(text, "\n  <title>G&ecirc;BR - %s</title>\n  ", escaped_content);
+			g_string_printf(text, "\n  <title>%s</title>\n  ", escaped_content);
 			g_string_insert(help, pos, text->str);
 		}
 
