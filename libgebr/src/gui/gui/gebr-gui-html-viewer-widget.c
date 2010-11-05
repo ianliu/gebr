@@ -96,7 +96,6 @@ static void gebr_gui_html_viewer_widget_init(GebrGuiHtmlViewerWidget * self)
 	priv->object = NULL;
 	priv->web_view = webkit_web_view_new();
 
-	g_signal_connect(priv->web_view, "navigation-requested", G_CALLBACK(on_navigation_requested), self);
 	g_signal_connect(priv->web_view, "load-finished", G_CALLBACK(on_load_finished), self);
 
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -189,6 +188,7 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 
 	title = js_get_document_title(context);
 
+	g_signal_connect(priv->web_view, "navigation-requested", G_CALLBACK(on_navigation_requested), self);
 	g_signal_emit(self, signals[ TITLE_READY ], 0, title);
 	g_free (title);
 }
@@ -238,10 +238,22 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 		}
 
 		gebr_gui_html_viewer_widget_generate_links(self, object);
+		g_signal_handlers_disconnect_by_func (priv->web_view,
+						      on_navigation_requested,
+						      self);
 		gebr_gui_html_viewer_widget_show_html(self, help);
+		g_signal_connect(priv->web_view, "navigation-requested", G_CALLBACK(on_navigation_requested), self);
 		return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 	}
-	if (g_str_has_prefix(uri, "file://") || g_str_has_prefix(uri, "about:"))
+
+	gchar * path = (gchar *) webkit_web_view_get_uri(web_view);
+	g_strdelimit(path, "#", '\0');
+
+	puts("URI HTML");
+	puts(uri);
+	puts("PATH HTML");
+	puts(path);
+	if ((g_str_has_prefix(uri, "file://") && g_str_has_prefix(uri, path)) || g_str_has_prefix(uri, "about:"))
 		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 
 	gebr_gui_show_uri(uri);

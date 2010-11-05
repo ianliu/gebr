@@ -156,8 +156,6 @@ static void gebr_gui_help_edit_widget_init(GebrGuiHelpEditWidget * self)
 	priv->html_viewer = gebr_gui_html_viewer_widget_new();
 	priv->is_editing = TRUE;
 
-	g_signal_connect(priv->edit_widget, "navigation-requested", G_CALLBACK(on_navigation_requested), self);
-
 	/* a reasonable minimum size, considering the toolbar */
 	gtk_widget_set_size_request(priv->edit_widget, 800, -1);
 
@@ -228,6 +226,8 @@ static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrG
 					      on_load_finished,
 					      self);
 
+	g_signal_connect(priv->edit_widget, "navigation-requested", G_CALLBACK(on_navigation_requested), self);
+
 	g_signal_emit (self, signals[ CONTENT_LOADED ], 0);
 }
 
@@ -236,9 +236,16 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 {
 	const gchar * uri = webkit_network_request_get_uri(request);
 
-	if (g_str_has_prefix(uri, "file://") || g_str_has_prefix(uri, "about:"))
-		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
+	gchar * path = (gchar *) webkit_web_view_get_uri(web_view);
+	g_strdelimit(path, "#", '\0');
 
+	puts("URI HELP");
+	puts(uri);
+	puts("PATH HELP");
+	puts(path);
+	if ((g_str_has_prefix(uri, "file://") && g_str_has_prefix(uri, path)) || g_str_has_prefix(uri, "about:"))
+		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
+	
 	return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 }
 //==============================================================================

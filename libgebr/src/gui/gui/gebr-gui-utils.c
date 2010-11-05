@@ -22,6 +22,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "gebr-gui-utils.h"
+#include "../../intl.h"
 
 /**
  * \internal
@@ -1140,7 +1141,8 @@ gboolean gebr_gui_show_uri(const gchar * uri)
 	gboolean ret;
 	ret = gtk_show_uri(NULL, uri, GDK_CURRENT_TIME, &error);
 	if (error) {
-		g_warning("%s", error->message);
+		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+					_("No such file or directory:"), uri);
 		g_error_free(error);
 	}
 	return ret;
