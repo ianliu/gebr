@@ -139,11 +139,17 @@ static void create_help_edit_window(GebrGeoXmlObject * object, const gchar * hel
 	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
 		help_backup = debr_program_get_backup_help_from_pointer(object);
 		object_title = gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(object));
-		title = g_strdup_printf(_("Program: %s"), object_title);
+		if (object_title && strlen (object_title))
+			title = g_strdup_printf(_("Help of the program \"%s\""), object_title);
+		else
+			title = g_strdup_printf(_("Help of the program"));
 	} else {
 		help_backup = debr_menu_get_backup_help_from_pointer(object);
 		object_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(object));
-		title = g_strdup_printf(_("Menu: %s"), object_title);
+		if (object_title && strlen (object_title))
+			title = g_strdup_printf(_("Help of the menu \"%s\""), object_title);
+		else
+			title = g_strdup_printf(_("Help of the menu"));
 	}
 
 	is_menu_selected = menu_get_selected(&iter, TRUE);
