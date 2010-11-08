@@ -705,7 +705,7 @@ static void program_details_update(void)
 		g_string_printf(text, _("This program has 1 parameter"));
 		break;
 	default:
-		g_string_printf(text, _("This program has %" G_GSIZE_FORMAT " parameters"),
+		g_string_printf(text, _("This program has %") G_GSIZE_FORMAT _(" parameters"),
 				parameters_count);
 	}
 	gtk_label_set_text(GTK_LABEL(debr.ui_program.details.nparams_label), text->str);
