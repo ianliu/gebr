@@ -361,7 +361,7 @@ void gebr_gui_html_viewer_widget_generate_links(GebrGuiHtmlViewerWidget *self, G
 	priv->object = object;
 }
 
-const GebrGeoXmlObject *
+GebrGeoXmlObject *
 gebr_gui_html_viewer_widget_get_related_object (GebrGuiHtmlViewerWidget *self)
 {
 	g_return_val_if_fail (GEBR_GUI_IS_HTML_VIEWER_WIDGET (self), NULL);

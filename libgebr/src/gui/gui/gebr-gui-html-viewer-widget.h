@@ -86,7 +86,7 @@ void gebr_gui_html_viewer_widget_generate_links(GebrGuiHtmlViewerWidget *self, G
  * Returns: the #GebrGeoXmlObject associated with the help being shown by this widget. If the help shown has nothing to
  * do with any object, than NULL is returned.
  */
-const GebrGeoXmlObject *
+GebrGeoXmlObject *
 gebr_gui_html_viewer_widget_get_related_object (GebrGuiHtmlViewerWidget *self);
 
 G_END_DECLS
