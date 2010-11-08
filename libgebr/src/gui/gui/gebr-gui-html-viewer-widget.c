@@ -20,6 +20,7 @@
 #include <regex.h>
 #include <webkit/webkit.h>
 #include <glib.h>
+#include <glib/gstdio.h>
 #include <geoxml.h>
 
 #include "gebr-gui-html-viewer-widget.h"
@@ -43,6 +44,7 @@ typedef struct _GebrGuiHtmlViewerWidgetPrivate GebrGuiHtmlViewerWidgetPrivate;
 struct _GebrGuiHtmlViewerWidgetPrivate {
 	GtkWidget * web_view;
 	GebrGeoXmlObject *object;
+	gchar *tmp_file;
 };
 
 #define GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_GUI_TYPE_HTML_VIEWER_WIDGET, GebrGuiHtmlViewerWidgetPrivate))
@@ -56,6 +58,8 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame *frame,
 							WebKitNetworkRequest *request, GebrGuiHtmlViewerWidget *self);
 
+static void gebr_gui_html_viewer_widget_finalize (GObject *object);
+
 G_DEFINE_TYPE(GebrGuiHtmlViewerWidget, gebr_gui_html_viewer_widget, GTK_TYPE_VBOX);
 
 //==============================================================================
@@ -64,6 +68,11 @@ G_DEFINE_TYPE(GebrGuiHtmlViewerWidget, gebr_gui_html_viewer_widget, GTK_TYPE_VBO
 
 static void gebr_gui_html_viewer_widget_class_init(GebrGuiHtmlViewerWidgetClass * klass)
 {
+	GObjectClass *gobject_class;
+
+	gobject_class = G_OBJECT_CLASS (klass);
+	gobject_class->finalize = gebr_gui_html_viewer_widget_finalize;
+
 	/**
 	 * GebrGuiHtmlViewerWidget::title-ready:
 	 * @widget: This #GebrGuiHtmlViewerWidget
@@ -89,12 +98,16 @@ static void gebr_gui_html_viewer_widget_class_init(GebrGuiHtmlViewerWidgetClass 
 
 static void gebr_gui_html_viewer_widget_init(GebrGuiHtmlViewerWidget * self)
 {
+	GString *tmp_file;
 	GtkWidget * scrolled_window;
 	GebrGuiHtmlViewerWidgetPrivate * priv;
 
 	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	priv->object = NULL;
 	priv->web_view = webkit_web_view_new();
+	tmp_file = gebr_make_temp_filename("XXXXXX.html");
+	priv->tmp_file = g_string_free (tmp_file, FALSE);
+
 
 	g_signal_connect(priv->web_view, "load-finished", G_CALLBACK(on_load_finished), self);
 
@@ -199,6 +212,9 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	const gchar * uri = webkit_network_request_get_uri(request);
 
+	gchar * path = (gchar *) webkit_web_view_get_uri(web_view);
+	g_strdelimit(path, "#", '\0');
+
 	if (priv->object && g_str_has_prefix(uri, "gebr://")) {
 		const gchar *help;
 		GebrGeoXmlObject *object;
@@ -238,22 +254,11 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 		}
 
 		gebr_gui_html_viewer_widget_generate_links(self, object);
-		g_signal_handlers_disconnect_by_func (priv->web_view,
-						      on_navigation_requested,
-						      self);
 		gebr_gui_html_viewer_widget_show_html(self, help);
-		g_signal_connect(priv->web_view, "navigation-requested", G_CALLBACK(on_navigation_requested), self);
 		return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 	}
 
-	gchar * path = (gchar *) webkit_web_view_get_uri(web_view);
-	g_strdelimit(path, "#", '\0');
-
-	puts("URI HTML");
-	puts(uri);
-	puts("PATH HTML");
-	puts(path);
-	if ((g_str_has_prefix(uri, "file://") && g_str_has_prefix(uri, path)) || g_str_has_prefix(uri, "about:"))
+	if (g_str_has_prefix(uri, path) || g_str_has_prefix(uri, "about:"))
 		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 
 	gebr_gui_show_uri(uri);
@@ -261,7 +266,18 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 	return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 }
 
-void pre_process_html(GebrGuiHtmlViewerWidgetPrivate * priv, GString *html)
+static void gebr_gui_html_viewer_widget_finalize (GObject *object)
+{
+	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE (object);
+
+	if (priv->tmp_file)
+		g_unlink (priv->tmp_file);
+	g_free (priv->tmp_file);
+
+	G_OBJECT_CLASS (gebr_gui_html_viewer_widget_parent_class)->finalize (object);
+}
+
+static void pre_process_html(GebrGuiHtmlViewerWidgetPrivate * priv, GString *html)
 {
 	regex_t regexp;
 	regmatch_t matchptr;
@@ -316,9 +332,7 @@ void gebr_gui_html_viewer_widget_show_html(GebrGuiHtmlViewerWidget * self, const
 
 	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	GString *_content = g_string_new(content);
-	GString *tmp_file;
 
-	tmp_file = gebr_make_temp_filename("XXXXXX.html");
 	g_string_assign(_content, content);
 
 	pre_process_html(priv, _content);
@@ -329,13 +343,12 @@ void gebr_gui_html_viewer_widget_show_html(GebrGuiHtmlViewerWidget * self, const
 
 	/* write current _content to temporary file */
 	FILE *fp;
-	fp = fopen(tmp_file->str, "w");
+	fp = fopen(priv->tmp_file, "w");
 	fputs(_content->str, fp);
 	fclose(fp);
 
-	webkit_web_view_open(WEBKIT_WEB_VIEW(priv->web_view), tmp_file->str);
+	webkit_web_view_open(WEBKIT_WEB_VIEW(priv->web_view), priv->tmp_file);
 
-	g_string_free(tmp_file, TRUE);
 	g_string_free(_content, TRUE);
 
 }

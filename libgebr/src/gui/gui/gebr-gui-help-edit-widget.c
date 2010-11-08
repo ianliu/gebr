@@ -226,7 +226,8 @@ static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrG
 					      on_load_finished,
 					      self);
 
-	g_signal_connect(priv->edit_widget, "navigation-requested", G_CALLBACK(on_navigation_requested), self);
+	g_signal_connect(priv->edit_widget, "navigation-requested",
+			 G_CALLBACK (on_navigation_requested), self);
 
 	g_signal_emit (self, signals[ CONTENT_LOADED ], 0);
 }
@@ -239,11 +240,7 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 	gchar * path = (gchar *) webkit_web_view_get_uri(web_view);
 	g_strdelimit(path, "#", '\0');
 
-	puts("URI HELP");
-	puts(uri);
-	puts("PATH HELP");
-	puts(path);
-	if ((g_str_has_prefix(uri, "file://") && g_str_has_prefix(uri, path)) || g_str_has_prefix(uri, "about:"))
+	if (g_str_has_prefix(uri, path) || g_str_has_prefix(uri, "about:"))
 		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 	
 	return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
