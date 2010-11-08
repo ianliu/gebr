@@ -246,8 +246,9 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 		fputs(prepared_html->str, html_fp);
 		fclose(html_fp);
 
-		gchar *quote1 = gebr.config.editor->str;
-		gchar *quote2 = html_path->str;
+		gchar *quote1 = g_shell_quote(gebr.config.editor->str);
+		gchar *quote2 = g_shell_quote(html_path->str);
+
 		if (gebr_system("%s %s", quote1, quote2)) {
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Error during editor execution."));
 		}
