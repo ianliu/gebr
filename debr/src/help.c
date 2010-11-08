@@ -816,9 +816,32 @@ static void on_preview_toggled(GtkToggleAction * action, GebrGuiHelpEditWindow *
 	g_free (help);
 }
 
-static void on_title_ready (GebrGuiHtmlViewerWidget * widget, const gchar * title, GtkWindow * window)
+static void on_title_ready (GebrGuiHtmlViewerWidget * widget,
+			    const gchar * received_title, GtkWindow * window)
 {
-	gtk_window_set_title (window, title);
+	gchar *title;
+	const gchar *object_title;
+	GebrGeoXmlObject *object;
+
+	object = gebr_gui_html_viewer_widget_get_related_object (widget);
+
+	if (object) {
+		if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
+			object_title = gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(object));
+			if (object_title && strlen (object_title))
+				title = g_strdup_printf(_("Help of the program \"%s\""), object_title);
+			else
+				title = g_strdup_printf(_("Help of the program"));
+		} else {
+			object_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(object));
+			if (object_title && strlen (object_title))
+				title = g_strdup_printf(_("Help of the menu \"%s\""), object_title);
+			else
+				title = g_strdup_printf(_("Help of the menu"));
+		}
+		gtk_window_set_title (window, title);
+	} else
+		gtk_window_set_title (window, received_title);
 }
 
 //==============================================================================
