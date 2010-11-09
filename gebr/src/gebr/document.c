@@ -637,7 +637,6 @@ gchar * gebr_document_report_get_inner_body(const gchar * report)
 
 	g_match_info_free(match);
 	g_regex_unref(body);
-
 	return inner_body;
 }
 

@@ -689,8 +689,8 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 		g_string_append_printf(table,
 					_("<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
 					  "<caption>Parameters for %s program</caption>\n"
-					  "<tbody>\n"),
-					  "<tr><td>This program does not have parameters.</td></tr>\n"
+					  "<tbody>\n"
+					  "<tr><td>This program does not have parameters.</td></tr>\n"),
 					gebr_geoxml_program_get_title (program));
 	}
 	else
@@ -710,9 +710,9 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 			gebr_geoxml_sequence_next (&sequence);
 		}
 
-		g_string_append_printf (table, "</tbody>\n</table>\n");
 	}
 
+	g_string_append_printf (table, "</tbody>\n</table>\n");
 	return g_string_free (table, FALSE);
 }
 
@@ -847,6 +847,10 @@ gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_t
 
 	help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (flow));
 	inner = gebr_document_report_get_inner_body (help);
+	
+	if (inner == NULL)
+		inner = g_strdup_printf("");
+
 	table = include_table ? gebr_flow_generate_parameter_value_table (flow) : "";
 	header = gebr_flow_generate_header (flow, include_date);
 	report = g_strdup_printf ("<div class='gebr-geoxml-flow'>%s%s%s</div>\n", header, inner, table);
