@@ -11,37 +11,38 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-28 10:07-0200\n"
+"POT-Creation-Date: 2010-11-09 21:14-0200\n"
 "PO-Revision-Date: 2010-10-28 11:42-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);X-"
 "Generator: Lokalize 0.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../src/comm/comm/server.c:142
+#: ../src/comm/comm/server.c:143
 #, c-format
 msgid "Launching server at %s."
 msgstr "Iniciando servidor em %s."
 
-#: ../src/comm/comm/server.c:157
+#: ../src/comm/comm/server.c:158
 msgid "Launching local server."
 msgstr "Iniciando servidor local."
 
-#: ../src/comm/comm/server.c:193
+#: ../src/comm/comm/server.c:195
 #, c-format
 msgid "Stoping server at %s."
 msgstr "Parando servidor em %s."
 
 #. log
-#: ../src/comm/comm/server.c:263
+#: ../src/comm/comm/server.c:265
 #, c-format
 msgid "Redirecting '%s' graphical output."
 msgstr "Redirecionando saída gráfica de '%s'."
 
-#: ../src/comm/comm/server.c:338
+#: ../src/comm/comm/server.c:340
 #, c-format
 msgid ""
 "Could not launch local server: \n"
@@ -50,7 +51,7 @@ msgstr ""
 "Não foi possível executar o servidor local: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:385
+#: ../src/comm/comm/server.c:388
 #, c-format
 msgid ""
 "Server %s needs SSH login.\n"
@@ -61,7 +62,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/comm/comm/server.c:388
+#: ../src/comm/comm/server.c:391
 #, c-format
 msgid ""
 "Wrong password for server %s, please try again.\n"
@@ -72,15 +73,15 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/comm/comm/server.c:391
+#: ../src/comm/comm/server.c:394
 msgid "SSH login:"
 msgstr "Login SSH:"
 
-#: ../src/comm/comm/server.c:409
+#: ../src/comm/comm/server.c:413
 msgid "SSH inquiry:"
 msgstr "Pergunta SSH:"
 
-#: ../src/comm/comm/server.c:419
+#: ../src/comm/comm/server.c:424
 #, c-format
 msgid ""
 "Received SSH message: \n"
@@ -89,7 +90,7 @@ msgstr ""
 "Mensagem SSH recebida: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:432
+#: ../src/comm/comm/server.c:437
 #, c-format
 msgid ""
 "Error contacting server at address %s via ssh: \n"
@@ -98,7 +99,7 @@ msgstr ""
 "Erro ao contatar o servidor no endereço %s via ssh: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:491
+#: ../src/comm/comm/server.c:496
 #, c-format
 msgid ""
 "Could not comunicate with server %s: \n"
@@ -107,7 +108,7 @@ msgstr ""
 "Não foi possível se comunicar com o servidor %s: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:675
+#: ../src/comm/comm/server.c:679
 #, c-format
 msgid "Connection error '%d' on server '%s'."
 msgstr "Erro de conexão '%d' no servidor '%s'."
@@ -134,8 +135,8 @@ msgid ""
 "You can use this to do socket channelling, e.g., from a tcp host-port to "
 "another tcp host-port or an unix socket"
 msgstr ""
-"Você pode usá-lo para fazer um canal para socket, e.g., à partir de uma porta hospedeira tcp "
-"para outra porta hospedeira tcp ou um socket unix"
+"Você pode usá-lo para fazer um canal para socket, e.g., à partir de uma "
+"porta hospedeira tcp para outra porta hospedeira tcp ou um socket unix"
 
 #: ../src/comm/socketchannel/socketchannel.c:81
 #, c-format
@@ -532,15 +533,15 @@ msgstr "Coordenador"
 msgid "Developers"
 msgstr "Desenvolvedores"
 
-#: ../src/gui/gui/gebr-gui-about.c:50
+#: ../src/gui/gui/gebr-gui-about.c:55
 msgid "Consultants"
 msgstr "Consultores"
 
-#: ../src/gui/gui/gebr-gui-about.c:68
+#: ../src/gui/gui/gebr-gui-about.c:73
 msgid "GêBR Core Team"
 msgstr "GêBR Core Team"
 
-#: ../src/gui/gui/gebr-gui-about.c:71
+#: ../src/gui/gui/gebr-gui-about.c:76
 msgid ""
 "Copyright (C) 2007-2010 GêBR core team (http://www.gebrproject.com/)\n"
 "\n"
@@ -581,14 +582,15 @@ msgstr ""
 "abrl de 1998, e #9610, 19 de fevereiro de 1998, e é registrado no Instituto "
 "Nacional de Propriedade Industrial (INPI) sob número 70156."
 
-#: ../src/gui/gui/gebr-gui-about.c:89
+#: ../src/gui/gui/gebr-gui-about.c:94
 msgid "GêBR Home page"
 msgstr "Página da GêBR"
 
 #: ../src/gui/gui/gebr-gui-save-dialog.c:189
 #, c-format
 msgid "<b>A file named \"%s\" already exists. Do you want to replace it?</b>"
-msgstr "<b>Um arquivo de nome \"%s\" já existe. Você gostaria de substituí-lo?</b>"
+msgstr ""
+"<b>Um arquivo de nome \"%s\" já existe. Você gostaria de substituí-lo?</b>"
 
 #: ../src/gui/gui/gebr-gui-save-dialog.c:193
 msgid "_Replace"
@@ -634,13 +636,19 @@ msgstr "Dicionário"
 msgid "Link"
 msgstr "Link"
 
+#: ../src/gui/gui/gebr-gui-utils.c:1145
+msgid "No such file or directory:"
+msgstr "Diretório não encontrado:"
+
 #: ../src/validate.c:33
 msgid "File names must be a valid path."
 msgstr "Nomes de arquivos, devem ser um caminho válido."
 
 #: ../src/validate.c:38
 msgid "Titles should not start with spaces or end with punctuation characters."
-msgstr "Títulos não devem começar com espaços ou terminar com caracteres de pontuação."
+msgstr ""
+"Títulos não devem começar com espaços ou terminar com caracteres de "
+"pontuação."
 
 #: ../src/validate.c:43
 msgid ""
@@ -685,8 +693,8 @@ msgid ""
 "Program description should be capitalized and have no punctuation characters "
 "at the end."
 msgstr ""
-"Descrição de programa deve iniciar com maiúscula e não ter caracteres de pontuação no "
-"fim."
+"Descrição de programa deve iniciar com maiúscula e não ter caracteres de "
+"pontuação no fim."
 
 #: ../src/validate.c:80
 msgid "Binaries should not be empty."
@@ -705,8 +713,8 @@ msgid ""
 "Parameter label should be capitalized and have no punctuation characters at "
 "the end. Also, be careful with colliding shortcuts."
 msgstr ""
-"Rótulo de parâmetro deve iniciar com maiúscula e não ter caracteres de pontuação no "
-"fim. Também tome cuidado com o conflito de atalhos."
+"Rótulo de parâmetro deve iniciar com maiúscula e não ter caracteres de "
+"pontuação no fim. Também tome cuidado com o conflito de atalhos."
 
 #: ../src/validate.c:100
 msgid "Parameter keyword should not be empty."
@@ -750,7 +758,7 @@ msgid ""
 " - Remove final punctuation character"
 msgstr ""
 "\n"
-" - Remover caracter final de pontuação" 
+" - Remover caracter final de pontuação"
 
 #: ../src/validate.c:271
 msgid ""
