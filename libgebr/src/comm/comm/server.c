@@ -110,6 +110,7 @@ struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const stru
 			 G_CALLBACK(gebr_comm_server_error), server);
 
 	gebr_comm_server_disconnected_state(server);
+	gebr_comm_server_free_for_reuse(server);
 
 	return server;
 }
@@ -171,6 +172,7 @@ void gebr_comm_server_connect(struct gebr_comm_server *server)
 void gebr_comm_server_disconnect(struct gebr_comm_server *server)
 {
 	gebr_comm_server_disconnected_state(server);
+	gebr_comm_server_free_for_reuse(server);
 	gebr_comm_stream_socket_disconnect(server->stream_socket);
 }
 
@@ -363,6 +365,7 @@ static void local_run_server_finished(GebrCommProcess * process, struct gebr_com
 
 /**
  * \internal
+ * Return TRUE if callee should not proceed.
  */
 static gboolean
 gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_server *server,
@@ -390,9 +393,10 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_s
 
 		password = server->ops->ssh_login(_("SSH login:"), string->str);
 		if (password == NULL) {
+			g_string_assign(server->password, "");
+
 			server->error = SERVER_ERROR_SSH;
 			gebr_comm_server_disconnected_state(server);
-			g_string_assign(server->password, "");
 			gebr_comm_terminal_process_kill(process);
 		} else {
 			g_string_printf(server->password, "%s\n", password->str);
@@ -407,9 +411,10 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_s
 
 		answer = g_string_new(NULL);
 		if (server->ops->ssh_question(_("SSH inquiry:"), output->str) == FALSE) {
+			g_string_assign(answer, "no\n");
+
 			server->error = SERVER_ERROR_SSH;
 			gebr_comm_server_disconnected_state(server);
-			g_string_assign(answer, "no\n");
 		} else
 			g_string_assign(answer, "yes\n");
 		gebr_comm_terminal_process_write_string(process, answer);
@@ -623,10 +628,11 @@ static void gebr_comm_server_connected(GebrCommStreamSocket * stream_socket, str
  */
 static void gebr_comm_server_disconnected_state(struct gebr_comm_server *server)
 {
+	/* take care not to free the process here cause this function
+	 * maybe be used by Process's read callback */
 	server->port = 0;
 	server->protocol->logged = FALSE;
 	server->state = SERVER_STATE_DISCONNECTED;
-	gebr_comm_server_free_for_reuse(server);
 }
 
 /**
@@ -670,8 +676,6 @@ gebr_comm_server_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocket
 {
 	server->error = SERVER_ERROR_CONNECT;
 	gebr_comm_server_disconnected_state(server);
-	if (error == GEBR_COMM_SOCKET_ERROR_UNKNOWN)
-		puts("FIXME: handle G_SOCKET_ERROR_UNKNOWN");
 	gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("Connection error '%d' on server '%s'."), error,
 				     server->address->str);
 }
