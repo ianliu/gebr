@@ -226,8 +226,8 @@ static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrG
 					      on_load_finished,
 					      self);
 
-	g_signal_connect(priv->edit_widget, "navigation-requested",
-			 G_CALLBACK (on_navigation_requested), self);
+	g_signal_connect (priv->edit_widget, "navigation-requested",
+			  G_CALLBACK (on_navigation_requested), self);
 
 	g_signal_emit (self, signals[ CONTENT_LOADED ], 0);
 }
