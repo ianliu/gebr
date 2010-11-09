@@ -681,24 +681,37 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 	GebrGeoXmlSequence * sequence;
 
 	table = g_string_new ("");
-	g_string_append_printf (table,
-				_("<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
-				"<caption>Parameters for %s program</caption>\n"
-				"<thead>\n<tr>\n"
-				"  <td>%s</td><td>%s</td>\n"
-				"</tr>\n</thead>\n"
-                                  "<tbody>\n"),
-				gebr_geoxml_program_get_title (program),
-				_("Parameter"), _("Value"));
-
 	parameters = gebr_geoxml_program_get_parameters (program);
 	gebr_geoxml_parameters_get_parameter (parameters, &sequence, 0);
-	while (sequence) {
-		append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), table, FALSE);
-		gebr_geoxml_sequence_next (&sequence);
+	
+	if (sequence == NULL)
+	{
+		g_string_append_printf(table,
+					_("<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
+					  "<caption>Parameters for %s program</caption>\n"
+					  "<tbody>\n"),
+					  "<tr><td>This program does not have parameters.</td></tr>\n"
+					gebr_geoxml_program_get_title (program));
 	}
+	else
+	{
+		g_string_append_printf (table,
+					_("<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
+					  "<caption>Parameters for %s program</caption>\n"
+					  "<thead>\n<tr>\n"
+					  "  <td>%s</td><td>%s</td>\n"
+					  "</tr>\n</thead>\n"
+					  "<tbody>\n"),
+					gebr_geoxml_program_get_title (program),
+					_("Parameter"), _("Value"));
 
-	g_string_append_printf (table, "</tbody>\n</table>\n");
+		while (sequence) {
+			append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), table, FALSE);
+			gebr_geoxml_sequence_next (&sequence);
+		}
+
+		g_string_append_printf (table, "</tbody>\n</table>\n");
+	}
 
 	return g_string_free (table, FALSE);
 }
@@ -716,6 +729,7 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 	error = gebr_geoxml_flow_server_io_get_error (gebr.flow_server);
 
 	dump = g_string_new(NULL);
+
 	g_string_append_printf(dump,
 			       "<div class=\"gebr-flow-dump\">\n"
 			       "<table class=\"gebr-io-table\" summary=\"I/O table\">\n"
