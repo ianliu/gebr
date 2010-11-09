@@ -44,5 +44,10 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
  */
 void gebr_help_edit_document(GebrGeoXmlDocument * document);
 
+/**
+ * Set \p help on XML and enable/disable "View help" accordingly
+ */
+void gebr_help_set_on_xml(GebrGeoXmlDocument *document, const gchar *help);
+
 G_END_DECLS
 #endif				//__UI_HELP_H

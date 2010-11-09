@@ -266,11 +266,25 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 			g_string_append(prepared_html, buffer);
 		fclose(html_fp);
 
-		gebr_geoxml_document_set_help(document, prepared_html->str);
+		gebr_help_set_on_xml(document, prepared_html->str);
 
-out:		g_string_free(html_path, FALSE);
+out:		g_string_free(html_path, TRUE);
 		g_string_free(prepared_html, TRUE);
 	}
+}
+
+void gebr_help_set_on_xml(GebrGeoXmlDocument *document, const gchar *help)
+{
+	gebr_geoxml_document_set_help(document, help);
+	document_save(document, TRUE, TRUE);
+
+	GtkWidget * widget;
+	if (gebr_geoxml_object_get_type(GEBR_GEOXML_OBJECT(document)) == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+		widget = gebr.ui_flow_browse->info.help_view;
+	else
+		widget = gebr.ui_project_line->info.help_view;
+
+	g_object_set(widget, "sensitive", strlen(help) ? TRUE : FALSE, NULL);
 }
 
 static void on_save_activate(GtkAction * action, GebrGuiHelpEditWidget * self)
