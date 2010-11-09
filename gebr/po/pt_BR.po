@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-09 17:01-0200\n"
-"PO-Revision-Date: 2010-11-09 17:02-0200\n"
+"POT-Creation-Date: 2010-11-09 18:27-0200\n"
+"PO-Revision-Date: 2010-11-09 19:35-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -122,36 +122,44 @@ msgstr "Erro na comunicação com o servidor '%s'. Por favor, reconecte."
 msgid "Can't load file at %s: %s"
 msgstr "Não foi possível carregar documento em %s: %s."
 
-#. the final point already comes with gebr_geoxml_error_string
-#: ../src/gebr/document.c:263
+#: ../src/gebr/document.c:258
 #, c-format
 msgid ""
-"Can't load menu %s at %s:\n"
+"Can't load menu '%s' at %s:\n"
 "%s"
 msgstr ""
 "Não foi possível carregar o menu %s em %s:\n"
-"%s."
+"%s"
 
-#: ../src/gebr/document.c:270
+#: ../src/gebr/document.c:261
+#, c-format
+msgid ""
+"Can't load menu at %s:\n"
+"%s"
+msgstr ""
+"Não foi possível carregar o menu em %s:\n"
+"%s"
+
+#: ../src/gebr/document.c:269
 msgid "document"
 msgstr "documento"
 
-#: ../src/gebr/document.c:273 ../src/gebr/ui_document.c:962
+#: ../src/gebr/document.c:272 ../src/gebr/ui_document.c:962
 #: ../src/gebr/ui_help.c:98 ../src/gebr/ui_help.c:153
 msgid "project"
 msgstr "projeto"
 
-#: ../src/gebr/document.c:276 ../src/gebr/ui_document.c:964
+#: ../src/gebr/document.c:275 ../src/gebr/ui_document.c:964
 #: ../src/gebr/ui_help.c:95 ../src/gebr/ui_help.c:157
 msgid "line"
 msgstr "linha"
 
-#: ../src/gebr/document.c:279 ../src/gebr/ui_document.c:966
+#: ../src/gebr/document.c:278 ../src/gebr/ui_document.c:966
 #: ../src/gebr/ui_help.c:92 ../src/gebr/ui_help.c:161
 msgid "flow"
 msgstr "fluxo"
 
-#: ../src/gebr/document.c:300
+#: ../src/gebr/document.c:305
 #, c-format
 msgid ""
 "The file %s could not be loaded.\n"
@@ -160,24 +168,24 @@ msgstr ""
 "O arquivo %s não pode ser carregado.\n"
 "%s"
 
-#: ../src/gebr/document.c:311
+#: ../src/gebr/document.c:316
 msgid "Ignore"
 msgstr "Ignorar"
 
-#: ../src/gebr/document.c:312 ../src/gebr/interface.c:72
+#: ../src/gebr/document.c:317 ../src/gebr/interface.c:72
 #: ../src/gebr/interface.c:94
 msgid "Export"
 msgstr "Exportar"
 
-#: ../src/gebr/document.c:314
+#: ../src/gebr/document.c:319
 msgid "Delete"
 msgstr "Apagar"
 
-#: ../src/gebr/document.c:324
+#: ../src/gebr/document.c:329
 msgid "Choose filename to export"
 msgstr "Escolha o nome do arquivo para exportar"
 
-#: ../src/gebr/document.c:337
+#: ../src/gebr/document.c:342
 #, c-format
 msgid ""
 "Failed to export file '%s':\n"
@@ -186,15 +194,15 @@ msgstr ""
 "Falha ao exportar o arquivo '%s':\n"
 "%s."
 
-#: ../src/gebr/document.c:361
+#: ../src/gebr/document.c:366
 msgid "Orphans lines"
 msgstr "Linhas órfans"
 
-#: ../src/gebr/document.c:379 ../src/gebr/document.c:393
+#: ../src/gebr/document.c:384 ../src/gebr/document.c:398
 msgid "Orphans flows"
 msgstr "Fluxos órfãos"
 
-#: ../src/gebr/document.c:439
+#: ../src/gebr/document.c:444
 #, c-format
 msgid "Failed to save document '%s' file at '%s'."
 msgstr "Falha ao salvar o documento '%s' em '%s'."
