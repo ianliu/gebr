@@ -247,21 +247,20 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		goto out;
 	}
 
-	if (!gebr_geoxml_document_load(document, path, FALSE, NULL)) {
-		const gchar *title;
+	const gchar *title = NULL;
+	if (!gebr_geoxml_document_load(document, path, FALSE, NULL))
 		title = gebr_geoxml_document_get_title(*document);
-		g_string_printf(string, "%s", title != NULL ? title : "");
-		if (title != NULL) {
-			g_string_prepend(string, "'");
-			g_string_append(string, "' ");
-		}
-	}
 
 	/* don't do document recovery for menus */
 	if (g_str_has_suffix(path, ".mnu")) {
 		/* the final point already comes with gebr_geoxml_error_string */
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load menu %s at %s:\n%s"),
-			     string->str, path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
+		if (title != NULL)
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load menu '%s' at %s:\n%s"),
+				     title, path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
+		else
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load menu at %s:\n%s"),
+				     path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
+
 		goto out;
 	}
 
@@ -291,11 +290,17 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	GtkWidget *dialog;
 	dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW(gebr.window),
 						    (GtkDialogFlags)(GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL),
-						    GTK_MESSAGE_ERROR, GTK_BUTTONS_NONE,
-						    "<span weight='bold' size='large'>Could not load %s</span>", document_name);
-
-	g_string_printf(string, "Couldn't load %s", document_name);
+						    GTK_MESSAGE_ERROR, GTK_BUTTONS_NONE, NULL); 
+	g_string_printf(string, "Could not load %s", document_name);
 	gtk_window_set_title(GTK_WINDOW(dialog), string->str); 
+
+	if (title != NULL)
+		g_string_printf(string, "Couldn't load %s '%s'", document_name, title);
+	else
+		g_string_printf(string, "Couldn't load %s", document_name);
+	g_string_prepend(string, "<span weight='bold' size='large'>");
+	g_string_append(string, "</span>");
+	gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), string->str);
 	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog),
 						 _("The file %s could not be loaded.\n%s"),
 						 fname, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
