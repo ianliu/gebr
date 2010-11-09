@@ -40,7 +40,7 @@
 	"<script src='" GEBR_HELP_EDIT_SCRIPT_PATH "ckeditor.js'>"			\
 	"</script></head>"								\
 	"<body>"									\
-	"<textarea id=\"editor\" name=\"editor\">%s</textarea>"				\
+	"<textarea id=\"editor\" name=\"editor\"></textarea>"				\
 	"<script>"									\
 	"ed = CKEDITOR.replace('editor', {"						\
 	"	fullPage:true,"								\
@@ -199,14 +199,22 @@ static void gebr_help_edit_widget_finalize(GObject * object)
  */
 static void pre_process_html(GString * html)
 {
-	// Do nothing for now ;)
+	gchar *escaped = g_strescape (html->str, NULL);
+	g_string_assign (html, escaped);
+	g_free (escaped);
 }
 
 static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrGuiHelpEditWidget * self)
 {
+	const gchar *content;
+
 	g_signal_handlers_disconnect_by_func(view,
 					     on_load_finished,
 					     self);
+
+	content = g_object_get_data (G_OBJECT (self), "content");
+	g_object_set_data (G_OBJECT (self), "content", NULL);
+	gebr_gui_help_edit_widget_set_content (self, content);
 
 	gebr_gui_help_edit_widget_set_loaded (self);
 }
@@ -248,14 +256,18 @@ static void gebr_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, cons
 	// Executes the JavaScript code:
 	//   ed.setData(content);
 
-	gchar * script;
+	gchar *script;
+	GString *help;
 	JSContextRef context;
 
-	script = g_strdup_printf("ed.setData(%s);", content);
+	help = g_string_new (content);
+	pre_process_html (help);
+	script = g_strdup_printf ("ed.setData(\"%s\");", help->str);
 	context = gebr_gui_help_edit_widget_get_js_context(self);
 	gebr_js_evaluate(context, script);
 
-	g_free(script);
+	g_free (script);
+	g_string_free (help, TRUE);
 }
 
 static gboolean gebr_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self)
@@ -273,8 +285,6 @@ static gboolean gebr_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * s
 GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlDocument * document, const gchar * content)
 {
 	FILE * fp;
-	gchar * escaped;
-	GString * help;
 	GString * temp_file;
 	GtkWidget * web_view;
 	GebrGuiHelpEditWidget * self;
@@ -284,19 +294,10 @@ GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlDocument * document, const gchar
 			    "geoxml-document", document,
 			    NULL);
 
-	escaped = g_markup_escape_text(content, -1);
-	help = g_string_new(escaped);
 	web_view = gebr_gui_help_edit_widget_get_web_view(self);
 	temp_file = gebr_make_temp_filename("XXXXXX.html");
 	priv = GEBR_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	priv->temp_file = g_string_free(temp_file, FALSE);
-
-	g_free(escaped);
-
-	if (!help->len)
-		g_string_assign(help, " ");
-
-	pre_process_html(help);
 
 	fp = fopen(priv->temp_file, "w");
 
@@ -305,11 +306,14 @@ GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlDocument * document, const gchar
 
 	/* Return with a warning, if we could not insert content into the
 	 * temporary file */
-	g_return_val_if_fail(fprintf(fp, HTML_HOLDER, help->str) >= 0, GTK_WIDGET(self));
+	g_return_val_if_fail(fputs (HTML_HOLDER, fp) != EOF, GTK_WIDGET(self));
 
-	g_signal_connect(web_view, "load-finished", G_CALLBACK(on_load_finished), self);
+	g_object_set_data (G_OBJECT (self), "content", (gpointer) content);
 
-	g_object_set(G_OBJECT(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(web_view))),
+	g_signal_connect(web_view, "load-finished",
+			 G_CALLBACK (on_load_finished), self);
+
+	g_object_set(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(web_view)),
 		     "enable-universal-access-from-file-uris", TRUE, NULL);
 
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), priv->temp_file);
