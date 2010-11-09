@@ -114,18 +114,18 @@ static const GtkActionEntry actions_entries[] = {
 	{"flow_edition_help", GTK_STOCK_HELP, NULL,
 		NULL, N_("Show component's help"), G_CALLBACK(on_flow_component_help_activate)},
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL,
-		"Delete", N_("Delete component"), G_CALLBACK(on_flow_component_delete_activate)},
+		"Delete", N_("Delete menu"), G_CALLBACK(on_flow_component_delete_activate)},
 	{"flow_edition_properties", GTK_STOCK_PROPERTIES, NULL,
-		NULL, N_("Edit component parameters"), G_CALLBACK(on_flow_component_properties_activate)},
+		NULL, N_("Edit menu parameters"), G_CALLBACK(on_flow_component_properties_activate)},
 	{"flow_edition_refresh", GTK_STOCK_REFRESH, NULL,
 		NULL, N_("Refresh available components list"), G_CALLBACK(on_flow_component_refresh_activate)},
 	{"flow_edition_copy", GTK_STOCK_COPY, N_("Copy"),
-		NULL, N_("Copy selected component(s) to clipboard"), G_CALLBACK(on_copy_activate)},
+		NULL, N_("Copy selected menu(s) to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_edition_paste", GTK_STOCK_PASTE, N_("Paste"),
-		NULL, N_("Paste component(s) from clipboard"), G_CALLBACK(on_paste_activate)},
-	{"flow_edition_top", GTK_STOCK_GOTO_TOP, N_("Move Top"),
+		NULL, N_("Paste menus(s) from clipboard"), G_CALLBACK(on_paste_activate)},
+	{"flow_edition_top", GTK_STOCK_GOTO_TOP, N_("Move to Top"),
 		"Home", NULL, G_CALLBACK(on_flow_component_move_top)},
-	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move Down"),
+	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move to Bottom"),
 		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
 
 	/*
@@ -138,7 +138,7 @@ static const GtkActionEntry actions_entries[] = {
 	{"job_control_close", "edit-clear", N_("Clear current"),
 		NULL, N_("Clear current job log"), G_CALLBACK(on_job_control_close)},
 	{"job_control_clear", GTK_STOCK_CLEAR, NULL,
-		NULL, N_("Clear all unactive job logs"), G_CALLBACK(on_job_control_clear)},
+		NULL, N_("Clear all inactive job logs"), G_CALLBACK(on_job_control_clear)},
 	{"job_control_stop", GTK_STOCK_STOP, NULL,
 		NULL, N_("Ask server to kill the job"), G_CALLBACK(on_job_control_stop)}
 };

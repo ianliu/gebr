@@ -6,14 +6,14 @@
 #
 # Ricardo Biloti <biloti@gebrproject.com>, 2009-2010.
 # Bráulio Barros de Oliveira <brauliobo@gebrproject.com>, 2009.
-#: ../src/geoxml/upgrade/upgrade.c:50
+#: ../src/geoxml/upgrade/upgrade.c:45
 msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-13 14:49-0300\n"
-"PO-Revision-Date: 2010-07-13 14:49-0300\n"
-"Last-Translator: Ricardo Biloti <biloti@gebrproject.com>\n"
+"POT-Creation-Date: 2010-10-28 10:07-0200\n"
+"PO-Revision-Date: 2010-10-28 11:42-0200\n"
+"Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -21,27 +21,27 @@ msgstr ""
 "Generator: Lokalize 0.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../src/comm/comm/server.c:141
+#: ../src/comm/comm/server.c:142
 #, c-format
 msgid "Launching server at %s."
 msgstr "Iniciando servidor em %s."
 
-#: ../src/comm/comm/server.c:156
+#: ../src/comm/comm/server.c:157
 msgid "Launching local server."
 msgstr "Iniciando servidor local."
 
-#: ../src/comm/comm/server.c:196
+#: ../src/comm/comm/server.c:193
 #, c-format
 msgid "Stoping server at %s."
 msgstr "Parando servidor em %s."
 
 #. log
-#: ../src/comm/comm/server.c:267
+#: ../src/comm/comm/server.c:263
 #, c-format
 msgid "Redirecting '%s' graphical output."
 msgstr "Redirecionando saída gráfica de '%s'."
 
-#: ../src/comm/comm/server.c:342
+#: ../src/comm/comm/server.c:338
 #, c-format
 msgid ""
 "Could not launch local server: \n"
@@ -50,7 +50,7 @@ msgstr ""
 "Não foi possível executar o servidor local: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:389
+#: ../src/comm/comm/server.c:385
 #, c-format
 msgid ""
 "Server %s needs SSH login.\n"
@@ -61,7 +61,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/comm/comm/server.c:392
+#: ../src/comm/comm/server.c:388
 #, c-format
 msgid ""
 "Wrong password for server %s, please try again.\n"
@@ -72,15 +72,15 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/comm/comm/server.c:395
+#: ../src/comm/comm/server.c:391
 msgid "SSH login:"
 msgstr "Login SSH:"
 
-#: ../src/comm/comm/server.c:413
+#: ../src/comm/comm/server.c:409
 msgid "SSH inquiry:"
 msgstr "Pergunta SSH:"
 
-#: ../src/comm/comm/server.c:423
+#: ../src/comm/comm/server.c:419
 #, c-format
 msgid ""
 "Received SSH message: \n"
@@ -89,7 +89,7 @@ msgstr ""
 "Mensagem SSH recebida: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:436
+#: ../src/comm/comm/server.c:432
 #, c-format
 msgid ""
 "Error contacting server at address %s via ssh: \n"
@@ -98,7 +98,7 @@ msgstr ""
 "Erro ao contatar o servidor no endereço %s via ssh: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:495
+#: ../src/comm/comm/server.c:491
 #, c-format
 msgid ""
 "Could not comunicate with server %s: \n"
@@ -107,10 +107,57 @@ msgstr ""
 "Não foi possível se comunicar com o servidor %s: \n"
 "%s"
 
-#: ../src/comm/comm/server.c:670
+#: ../src/comm/comm/server.c:675
 #, c-format
 msgid "Connection error '%d' on server '%s'."
 msgstr "Erro de conexão '%d' no servidor '%s'."
+
+#: ../src/comm/socketchannel/socketchannel.c:30
+#: ../src/geoxml/upgrade/upgrade.c:51 ../src/geoxml/validate/validate.c:49
+#, c-format
+msgid "%s: syntax error\n"
+msgstr "%s: erro de sintaxe\n"
+
+#: ../src/comm/socketchannel/socketchannel.c:31
+#: ../src/geoxml/upgrade/upgrade.c:52 ../src/geoxml/upgrade/upgrade.c:61
+#: ../src/geoxml/validate/validate.c:50
+#, c-format
+msgid "Try %s --help\n"
+msgstr "Tente %s --help\n"
+
+#: ../src/comm/socketchannel/socketchannel.c:49
+msgid "LibGebrComm socket channelling"
+msgstr "LibGebrComm canais para socket"
+
+#: ../src/comm/socketchannel/socketchannel.c:50
+msgid ""
+"You can use this to do socket channelling, e.g., from a tcp host-port to "
+"another tcp host-port or an unix socket"
+msgstr ""
+"Você pode usá-lo para fazer um canal para socket, e.g., à partir de uma porta hospedeira tcp "
+"para outra porta hospedeira tcp ou um socket unix"
+
+#: ../src/comm/socketchannel/socketchannel.c:81
+#, c-format
+msgid "Unknown source address\n"
+msgstr "Endereço origem desconhecido\n"
+
+#: ../src/comm/socketchannel/socketchannel.c:86
+#, c-format
+msgid "Unknown destination address\n"
+msgstr "Endereço destino desconhecido\n"
+
+#. fprintf(stderr, _("Could not create channel\n"));
+#. return -4;
+#. }
+#: ../src/comm/socketchannel/socketchannel.c:94
+#, c-format
+msgid "Channel created successful. Forwarding connections...\n"
+msgstr "Canal criado com sucesso. Encaminhando conexões...\n"
+
+#: ../src/date.c:69
+msgid "Unknown"
+msgstr "Desconhecida"
 
 #: ../src/geoxml/geoxml/error.c:25
 msgid "Success."
@@ -255,84 +302,86 @@ msgstr "O parâmetro de referência faz referência a si próprio."
 msgid "The operation only applies to the first instance of the group."
 msgstr "A operação aplica-se somente à primeira instância do grupo."
 
-#: ../src/geoxml/geoxml/gebr-gui-parameter.c:254
+#: ../src/geoxml/geoxml/parameter.c:285
 msgid "string"
 msgstr "texto"
 
-#: ../src/geoxml/geoxml/gebr-gui-parameter.c:254
+#: ../src/geoxml/geoxml/parameter.c:285
 msgid "integer"
 msgstr "inteiro"
 
-#: ../src/geoxml/geoxml/gebr-gui-parameter.c:254
+#: ../src/geoxml/geoxml/parameter.c:285
 msgid "file"
 msgstr "arquivo"
 
-#: ../src/geoxml/geoxml/gebr-gui-parameter.c:254
+#: ../src/geoxml/geoxml/parameter.c:285
 msgid "flag"
 msgstr "boleano"
 
-#: ../src/geoxml/geoxml/gebr-gui-parameter.c:255
+#: ../src/geoxml/geoxml/parameter.c:286
 msgid "real number"
 msgstr "número real"
 
-#: ../src/geoxml/geoxml/gebr-gui-parameter.c:255
+#: ../src/geoxml/geoxml/parameter.c:286
 msgid "range"
 msgstr "intervalo"
 
-#: ../src/geoxml/geoxml/gebr-gui-parameter.c:255
+#: ../src/geoxml/geoxml/parameter.c:286
 msgid "enum"
 msgstr "enumeração"
 
-#: ../src/geoxml/geoxml/gebr-gui-parameter.c:256
+#: ../src/geoxml/geoxml/parameter.c:287
 msgid "group"
 msgstr "grupo"
 
-#: ../src/geoxml/geoxml/gebr-gui-parameter.c:256
+#: ../src/geoxml/geoxml/parameter.c:287
 msgid "reference"
 msgstr "referência"
 
-#: ../src/geoxml/geoxml/validate.c:127
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:127
 msgid "Title:         "
 msgstr "Título:        "
 
-#: ../src/geoxml/geoxml/validate.c:131
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:131
 msgid "Description:   "
 msgstr "Descrição:     "
 
-#: ../src/geoxml/geoxml/validate.c:135
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:135
 msgid "Author:        "
 msgstr "Autor:         "
 
-#: ../src/geoxml/geoxml/validate.c:143
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:143
 msgid "Created:       "
 msgstr "Criado:        "
 
-#: ../src/geoxml/geoxml/validate.c:146
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:146
 msgid "Modified:      "
 msgstr "Modificado:    "
 
-#: ../src/geoxml/geoxml/validate.c:151
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:151
 msgid "Help:          "
 msgstr "Ajuda:         "
 
-#: ../src/geoxml/geoxml/validate.c:153 ../src/geoxml/geoxml/validate.c:208
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:153
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:218
 msgid "Defined"
 msgstr "Definido"
 
-#: ../src/geoxml/geoxml/validate.c:161 ../src/geoxml/geoxml/validate.c:164
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:165
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:168
 msgid "Category:      "
 msgstr "Categoria:     "
 
-#: ../src/geoxml/geoxml/validate.c:172
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:182
 msgid "Menu with:     "
 msgstr "Menu com:      "
 
-#: ../src/geoxml/geoxml/validate.c:173
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:183
 #, c-format
 msgid "%ld program(s)\n"
 msgstr "%ld programa(s)\n"
 
-#: ../src/geoxml/geoxml/validate.c:182
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:192
 msgid ""
 "\n"
 ">>Program:     "
@@ -340,92 +389,93 @@ msgstr ""
 "\n"
 ">>Programa:     "
 
-#: ../src/geoxml/geoxml/validate.c:184
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:194
 msgid "  Title:       "
 msgstr "  Título:      "
 
-#: ../src/geoxml/geoxml/validate.c:187
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:197
 msgid "  Description: "
 msgstr "  Descrição:   "
 
-#: ../src/geoxml/geoxml/validate.c:191
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:201
 msgid "  In/out/err:  "
 msgstr "  Entrada/saída/erro: "
 
-#: ../src/geoxml/geoxml/validate.c:193
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:203
 msgid "Read"
 msgstr "Lê"
 
-#: ../src/geoxml/geoxml/validate.c:193 ../src/geoxml/geoxml/validate.c:194
-#: ../src/geoxml/geoxml/validate.c:195
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:203
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:204
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:205
 msgid "Ignore"
 msgstr "Ignora"
 
-#: ../src/geoxml/geoxml/validate.c:194
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:204
 msgid "Write"
 msgstr "Escreve"
 
-#: ../src/geoxml/geoxml/validate.c:195
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:205
 msgid "Append"
 msgstr "Anexa"
 
-#: ../src/geoxml/geoxml/validate.c:197
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:207
 msgid "  Binary:      "
 msgstr "Binário"
 
-#: ../src/geoxml/geoxml/validate.c:200
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:210
 msgid "  Version:     "
 msgstr "  Versão:      "
 
-#: ../src/geoxml/geoxml/validate.c:203
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:213
 msgid "  URL:         "
 msgstr "  URL:         "
 
-#: ../src/geoxml/geoxml/validate.c:206
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:216
 msgid "  Help:        "
 msgstr "  Ajuda:       "
 
-#: ../src/geoxml/geoxml/validate.c:218
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:228
 msgid "  >>Parameters:\n"
 msgstr "  >>Parâmetros:\n"
 
-#: ../src/geoxml/geoxml/validate.c:230
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:240
 #, c-format
-msgid "%d potential error(s)"
-msgstr "%d provável(is) erro(s)"
+msgid "%d potential error(s)\n"
+msgstr "%d provável(is) erro(s)\n"
 
-#: ../src/geoxml/geoxml/validate.c:268
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:280
 msgid "UNSET"
 msgstr "VAZIO"
 
-#: ../src/geoxml/geoxml/validate.c:303
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:315
 msgid ", already used above"
 msgstr ", já usado acima"
 
-#: ../src/geoxml/geoxml/validate.c:310
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:322
 #, c-format
 msgid " (Alt+%s)"
 msgstr " (Alt+%s)"
 
-#: ../src/geoxml/geoxml/validate.c:375
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:387
 #, c-format
 msgid " in [%s,%s]"
 msgstr " em [%s,%s]"
 
-#: ../src/geoxml/geoxml/validate.c:381
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:393
 #, c-format
 msgid " (entries separated by '%s')"
 msgstr " (entradas separadas por '%s')"
 
-#: ../src/geoxml/geoxml/validate.c:385
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:397
 msgid " (missing entries separator)"
 msgstr " (separador de entradas perdidas)"
 
-#: ../src/geoxml/geoxml/validate.c:391
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:403
 msgid "  REQUIRED "
 msgstr "  REQUERIDO "
 
-#: ../src/geoxml/geoxml/validate.c:400
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:412
 msgid ""
 "\n"
 "        missing options"
@@ -433,75 +483,64 @@ msgstr ""
 "\n"
 "        opções perdidas"
 
-#: ../src/geoxml/geoxml/validate.c:426
+#: ../src/geoxml/geoxml/gebr-geoxml-validate.c:438
 msgid "   [Instantiable]\n"
 msgstr "   [Instanciável]\n"
 
-#: ../src/geoxml/upgrade/upgrade.c:32 ../src/geoxml/validate/validate.c:29
+#: ../src/geoxml/upgrade/upgrade.c:31 ../src/geoxml/validate/validate.c:31
 msgid "file1.flw file2.mnu file3.prj file4.lne ..."
 msgstr "arquivo1.flw arquivo2.flw arquivo3.prj arquivo4.lne ..."
 
-#: ../src/geoxml/upgrade/upgrade.c:48 ../src/geoxml/validate/validate.c:45
+#: ../src/geoxml/upgrade/upgrade.c:43 ../src/geoxml/validate/validate.c:43
 msgid "LibGebrGeoXml XML validator"
 msgstr "Validador XML da LibGebrGeoXml"
 
-#: ../src/geoxml/upgrade/upgrade.c:56 ../src/geoxml/validate/validate.c:52
-#, c-format
-msgid "%s: syntax error\n"
-msgstr "%s: erro de sintaxe\n"
-
-#: ../src/geoxml/upgrade/upgrade.c:57 ../src/geoxml/upgrade/upgrade.c:66
-#: ../src/geoxml/validate/validate.c:53
-#, c-format
-msgid "Try %s --help\n"
-msgstr "Tente %s --help\n"
-
-#: ../src/geoxml/upgrade/upgrade.c:76
+#: ../src/geoxml/upgrade/upgrade.c:71
 #, c-format
 msgid "Could not load file %s.\n"
 msgstr "Não foi possível carregar o arquivo %s.\n"
 
-#: ../src/geoxml/upgrade/upgrade.c:81
+#: ../src/geoxml/upgrade/upgrade.c:76
 #, c-format
 msgid "Could not save file %s.\n"
 msgstr "Não foi possível salvar o arquivo %s.\n"
 
-#: ../src/geoxml/upgrade/upgrade.c:85
+#: ../src/geoxml/upgrade/upgrade.c:80
 #, c-format
 msgid "Upgraded file %s to version %s!\n"
 msgstr "Atualizando arquivo %s para a versão %s!\n"
 
-#: ../src/geoxml/validate/validate.c:61
+#: ../src/geoxml/validate/validate.c:58
 #, c-format
 msgid "%s INVALID: %s"
 msgstr "%s INVÁLIDO: %s"
 
-#: ../src/geoxml/validate/validate.c:66
+#: ../src/geoxml/validate/validate.c:63
 #, c-format
 msgid "%s valid!\n"
 msgstr "%s válido!\n"
 
-#: ../src/gui/gui/gebr-gui-about.c:36
+#: ../src/gui/gui/gebr-gui-about.c:39
 msgid "GêBR Core Team:"
 msgstr "GêBR Core Team:"
 
-#: ../src/gui/gui/gebr-gui-about.c:37
+#: ../src/gui/gui/gebr-gui-about.c:40
 msgid "Coordinator"
 msgstr "Coordenador"
 
-#: ../src/gui/gui/gebr-gui-about.c:40
+#: ../src/gui/gui/gebr-gui-about.c:43
 msgid "Developers"
 msgstr "Desenvolvedores"
 
-#: ../src/gui/gui/gebr-gui-about.c:47
+#: ../src/gui/gui/gebr-gui-about.c:50
 msgid "Consultants"
 msgstr "Consultores"
 
-#: ../src/gui/gui/gebr-gui-about.c:63
+#: ../src/gui/gui/gebr-gui-about.c:68
 msgid "GêBR Core Team"
 msgstr "GêBR Core Team"
 
-#: ../src/gui/gui/gebr-gui-about.c:66
+#: ../src/gui/gui/gebr-gui-about.c:71
 msgid ""
 "Copyright (C) 2007-2010 GêBR core team (http://www.gebrproject.com/)\n"
 "\n"
@@ -542,9 +581,26 @@ msgstr ""
 "abrl de 1998, e #9610, 19 de fevereiro de 1998, e é registrado no Instituto "
 "Nacional de Propriedade Industrial (INPI) sob número 70156."
 
-#: ../src/gui/gui/gebr-gui-about.c:84
+#: ../src/gui/gui/gebr-gui-about.c:89
 msgid "GêBR Home page"
 msgstr "Página da GêBR"
+
+#: ../src/gui/gui/gebr-gui-save-dialog.c:189
+#, c-format
+msgid "<b>A file named \"%s\" already exists. Do you want to replace it?</b>"
+msgstr "<b>Um arquivo de nome \"%s\" já existe. Você gostaria de substituí-lo?</b>"
+
+#: ../src/gui/gui/gebr-gui-save-dialog.c:193
+msgid "_Replace"
+msgstr "_Substituir"
+
+#: ../src/gui/gui/gebr-gui-save-dialog.c:196
+msgid ""
+"The file you are saving already exists. Replacing it will overwrite its "
+"contents."
+msgstr ""
+"O arquivo que você está salvando já existe. Substituí-lo irá sobrescrever "
+"seu conteúdo."
 
 #: ../src/gui/gui/gebr-gui-file-entry.c:136
 msgid "Choose file"
@@ -554,29 +610,247 @@ msgstr "Escolha um arquivo"
 msgid "Choose directory"
 msgstr "Escolha um diretório"
 
-#: ../src/gui/gui/gebr-gui-sequence-edit.c:424
+#: ../src/gui/gui/gebr-gui-sequence-edit.c:427
 msgid "<empty value>"
 msgstr "<valor vazio>"
 
-#: ../src/gui/gui/gebr-gui-parameter.c:113
+#: ../src/gui/gui/gebr-gui-parameter.c:119
 msgid "All"
 msgstr "Todos"
 
-#: ../src/gui/gui/gebr-gui-parameter.c:633
+#: ../src/gui/gui/gebr-gui-parameter.c:644
 msgid "Edit list"
 msgstr "Editar lista"
 
-#: ../src/gui/gui/gebr-gui-parameter.c:827
+#: ../src/gui/gui/gebr-gui-parameter.c:828
 msgid "Do not use dictionary"
 msgstr "Não use o dicionário"
 
-#: ../src/gui/gui/gebr-gui-parameter.c:887
+#: ../src/gui/gui/gebr-gui-parameter.c:893
 msgid "Dictionary"
 msgstr "Dicionário"
 
-#: ../src/date.c:69
-msgid "Unknown"
-msgstr "Desconhecida"
+#: ../src/gui/gui/gebr-gui-program-edit.c:142
+msgid "Link"
+msgstr "Link"
+
+#: ../src/validate.c:33
+msgid "File names must be a valid path."
+msgstr "Nomes de arquivos, devem ser um caminho válido."
+
+#: ../src/validate.c:38
+msgid "Titles should not start with spaces or end with punctuation characters."
+msgstr "Títulos não devem começar com espaços ou terminar com caracteres de pontuação."
+
+#: ../src/validate.c:43
+msgid ""
+"Description should be capitalized and have no punctuation characters at the "
+"end."
+msgstr ""
+"Descrição deve iniciar com maiúscula e não ter caracteres de pontuação no "
+"fim."
+
+#: ../src/validate.c:48
+msgid ""
+"Author should be capitalized and have no punctuation characters at the end."
+msgstr ""
+"Autor deve iniciar com maiúscula e não ter caracteres de pontuação no fim."
+
+#: ../src/validate.c:52
+msgid "Date should not be empty."
+msgstr "Data não deve ser vazia."
+
+#: ../src/validate.c:56
+msgid "Help should not be empty."
+msgstr "Documento de Ajuda não dever ser vazio."
+
+#: ../src/validate.c:61
+msgid ""
+"Categories should be capitalized and have no punctuation characters at the "
+"end."
+msgstr ""
+"Categorias devem iniciar com maiúscula e não ter caracteres de pontuação no "
+"fim."
+
+#: ../src/validate.c:65
+msgid "Invalid email address."
+msgstr "Endereço de email inválido."
+
+#: ../src/validate.c:71
+msgid "Program titles should not have extra spaces."
+msgstr "Títulos de programa não devem ter espaços extras."
+
+#: ../src/validate.c:76
+msgid ""
+"Program description should be capitalized and have no punctuation characters "
+"at the end."
+msgstr ""
+"Descrição de programa deve iniciar com maiúscula e não ter caracteres de pontuação no "
+"fim."
+
+#: ../src/validate.c:80
+msgid "Binaries should not be empty."
+msgstr "Binários não devem ser vazios."
+
+#: ../src/validate.c:85
+msgid "Program version should be filled in."
+msgstr "Versão do programa deve ser preenchida."
+
+#: ../src/validate.c:89
+msgid "Program url should start with a protocol."
+msgstr "Url de programa deve iniciar com um protocolo."
+
+#: ../src/validate.c:96
+msgid ""
+"Parameter label should be capitalized and have no punctuation characters at "
+"the end. Also, be careful with colliding shortcuts."
+msgstr ""
+"Rótulo de parâmetro deve iniciar com maiúscula e não ter caracteres de pontuação no "
+"fim. Também tome cuidado com o conflito de atalhos."
+
+#: ../src/validate.c:100
+msgid "Parameter keyword should not be empty."
+msgstr "Palavra-chave de parâmetro não deve ser vazia."
+
+#: ../src/validate.c:259
+msgid "<b>No automatic fix available</b>"
+msgstr "<b>Correção automática não disponível</b>"
+
+#: ../src/validate.c:261
+msgid "<b>Click on the icon to fix:</b>"
+msgstr "<b>Clique no ícone para corrigir:</b>"
+
+#: ../src/validate.c:263
+msgid ""
+"\n"
+" - Capitalize first letter"
+msgstr ""
+"\n"
+" - Tornar primeira letra maiúscula"
+
+#: ../src/validate.c:265
+msgid ""
+"\n"
+" - Remove spaces at the beginning/end"
+msgstr ""
+"\n"
+" - Remover espaços no começo/fim"
+
+#: ../src/validate.c:267
+msgid ""
+"\n"
+" - Remove multiples spaces"
+msgstr ""
+"\n"
+" - Remover múltiplos espaços"
+
+#: ../src/validate.c:269
+msgid ""
+"\n"
+" - Remove final punctuation character"
+msgstr ""
+"\n"
+" - Remover caracter final de pontuação" 
+
+#: ../src/validate.c:271
+msgid ""
+"\n"
+" - Add URL scheme"
+msgstr ""
+"\n"
+" - Adicionar esquema de URL"
+
+#: ../src/validate.c:273
+msgid ""
+"\n"
+" - Replace tabs by space"
+msgstr ""
+"\n"
+" - Substituir tabulações por espaço"
+
+#: ../src/validate.c:286
+msgid "<b>Error(s) found:</b>"
+msgstr "<b>Erro(s) encontrado(s):</b>"
+
+#: ../src/validate.c:288
+msgid ""
+"\n"
+" - The field is not filled in"
+msgstr ""
+"\n"
+" - O campo não está preenchido"
+
+#: ../src/validate.c:290
+msgid ""
+"\n"
+" - First letter should be capitalized"
+msgstr ""
+"\n"
+" - Primeira letra deve ser maiúscula"
+
+#: ../src/validate.c:292
+msgid ""
+"\n"
+" - There are spaces at the beginning/end"
+msgstr ""
+"\n"
+" - Existem espaços no começo/fim"
+
+#: ../src/validate.c:294
+msgid ""
+"\n"
+" - There are multiples spaces"
+msgstr ""
+"\n"
+" - Existem espaços múltiplos"
+
+#: ../src/validate.c:296
+msgid ""
+"\n"
+" - This field should not have a final punctuation"
+msgstr ""
+"\n"
+" - Este campo não deve ter uma pontuação final"
+
+#: ../src/validate.c:298
+msgid ""
+"\n"
+" - Invalid email address"
+msgstr ""
+"\n"
+" - Endereço de email inválido"
+
+#: ../src/validate.c:300
+msgid ""
+"\n"
+" - Invalid menu filename"
+msgstr ""
+"\n"
+" - Nome de arquivo de menu inválido"
+
+#: ../src/validate.c:302
+msgid ""
+"\n"
+" - Duplicated hotkey"
+msgstr ""
+"\n"
+" - Atalho de teclado duplicado"
+
+#: ../src/validate.c:304
+msgid ""
+"\n"
+" - URL scheme is missing"
+msgstr ""
+"\n"
+" - Esquema de URL está faltando"
+
+#: ../src/validate.c:306
+msgid ""
+"\n"
+" - There are tabs"
+msgstr ""
+"\n"
+" - Existem tabulações"
 
 #~ msgid ""
 #~ "Can't access file. The file doesn't exist or there is not enough "

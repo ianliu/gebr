@@ -109,7 +109,7 @@ gboolean debr_config_load(void)
 	gchar ** list;
 
 	gebr_create_config_dirs();
-	debr.config.path = g_string_new(getenv("HOME"));
+	debr.config.path = g_string_new(g_get_home_dir());
 	g_string_append(debr.config.path, "/.gebr/debr/debr.conf");
 
 	error = NULL;

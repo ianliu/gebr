@@ -77,7 +77,8 @@ void gebr_gui_html_viewer_widget_show_html(GebrGuiHtmlViewerWidget * self, const
  * @widget: The HTML viewer widget
  * @object: A #GebrGeoXmlObject for generating the links
  *
- * Generate links for @object.
+ * Schedules the generation of the links for @object, which happens when the next call to
+ * gebr_gui_html_viewer_widget_show_html() is done.
  */
 void gebr_gui_html_viewer_widget_generate_links(GebrGuiHtmlViewerWidget *self, GebrGeoXmlObject * object);
 
@@ -102,6 +103,16 @@ void gebr_gui_html_viewer_widget_set_custom_tab(GebrGuiHtmlViewerWidget * self, 
  * Returns: the HTML content shown by this widget. The string is owned by GêBR and should not be modified or freed.
  */
 const gchar * gebr_gui_html_viewer_widget_get_html (GebrGuiHtmlViewerWidget *self);
+
+/**
+ * gebr_gui_html_viewer_widget_get_related_object:
+ *
+ * Returns: the #GebrGeoXmlObject associated with the help being shown by this widget. If the help shown has nothing to
+ * do with any object, than NULL is returned.
+ */
+GebrGeoXmlObject *
+gebr_gui_html_viewer_widget_get_related_object (GebrGuiHtmlViewerWidget *self);
+
 
 G_END_DECLS
 

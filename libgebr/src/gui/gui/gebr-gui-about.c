@@ -43,9 +43,14 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
 		_("Developers"),
                 "  Alexandre Baaklini <abaaklini@gebrproject.com>",
 		"  Bráulio Oliveira <brauliobo@gebrproject.com>",
+                "  Davi Clemente <davi.clemente@gebrproject.com>",
                 "  Fábio Azevedo <fabioaz@gebrproject.com>",
                 "  Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>",
+                "  Gabriel Sobral <sobral@gebrproject.com>",
 		"  Ian Liu Rodrigues <ian.liu@gebrproject.com>",
+                "  Jorge Pizzolatto <jorge.pzt@gebrproject.com>",
+		"  Priscila Morais <pris.moraiss@gebrproject.com>",
+		"  Renan Giarola <renangiarola@gebrproject.com>",
                 " ",
                 _("Consultants"),
 		"  Eduardo Filpo <efilpo@gmail.com>",
@@ -90,10 +95,14 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
 	gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(about.dialog), authors);
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about.dialog), description);
 
-	g_signal_connect(GTK_OBJECT(about.dialog), "close", G_CALLBACK(gtk_widget_hide), GTK_OBJECT(about.dialog));
-	g_signal_connect(GTK_OBJECT(about.dialog), "delete-event", G_CALLBACK(gtk_widget_hide), NULL);
-	g_signal_connect_swapped(GTK_OBJECT(about.dialog), "response",
-				 G_CALLBACK(gtk_widget_hide), GTK_OBJECT(about.dialog));
+	g_signal_connect (about.dialog, "close",
+			  G_CALLBACK (gtk_widget_hide), about.dialog);
+
+	g_signal_connect (about.dialog, "response",
+			  G_CALLBACK (gtk_widget_hide), about.dialog);
+
+	g_signal_connect(about.dialog, "delete-event",
+			 G_CALLBACK (gtk_widget_hide_on_delete), NULL);
 
 	return about;
 }

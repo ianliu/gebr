@@ -7,9 +7,9 @@ src/help.c
 src/interface.c
 src/main.c
 src/menu.c
-src/gebr-gui-parameter.c
+src/parameter.c
 src/parametergroup.c
 src/preferences.c
 src/program.c
-src/validate.c
+src/debr-validate.c
 src/menu-dialog-save-ui.glade

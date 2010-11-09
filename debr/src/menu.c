@@ -82,8 +82,6 @@ static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object)
 
 static void debr_menu_commit_help_edit_windows(GtkTreeIter * iter);
 
-static void debr_menu_backup_help(GtkTreeIter * iter);
-
 static void debr_menu_sync_revert_buttons(GtkTreeIter * iter);
 
 static gint debr_menu_check_valid (GebrGeoXmlFlow *menu);
@@ -127,8 +125,7 @@ void menu_setup_ui(void)
 						G_TYPE_POINTER,	// MENU_XMLPOINTER
 						G_TYPE_STRING,	// MENU_PATH
 						G_TYPE_BOOLEAN,	// MENU_VALIDATE_NEED_UPDATE
-						G_TYPE_POINTER,	// MENU_VALIDATE_POINTER
-						G_TYPE_STRING);	// MENU_HELP_BACKUP
+						G_TYPE_POINTER);// MENU_VALIDATE_POINTER
 
 	debr.ui_menu.tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(debr.ui_menu.model));
 	gtk_widget_show(debr.ui_menu.tree_view);
@@ -420,14 +417,12 @@ void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * men
 		label = g_markup_printf_escaped("%s", filename);
 
 	debr_menu_sync_help_edit_window(iter, menu);
-	debr_program_sync_help_backups();
 	gtk_tree_store_set(debr.ui_menu.model, iter,
 			   MENU_FILENAME, label,
 			   MENU_MODIFIED_DATE, tmp,
 			   MENU_XMLPOINTER, menu,
 			   MENU_PATH, path,
 			   MENU_VALIDATE_POINTER, NULL,
-			   MENU_HELP_BACKUP, help,
 			   -1);
 
 	/* select it and load its contents into UI */
@@ -505,8 +500,6 @@ MenuMessage menu_save(GtkTreeIter * iter)
 		return MENU_MESSAGE_PERMISSION_DENIED;	
 	} else {
 		debr_menu_commit_help_edit_windows(iter);
-		debr_menu_backup_help(iter);
-		debr_program_sync_help_backups();
 		debr_menu_sync_revert_buttons(iter);
 
 		gebr_geoxml_document_set_filename (GEBR_GEOXML_DOC (menu), filename);
@@ -584,7 +577,7 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_menu.model), &parent, iter);
 	if (gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(debr.ui_menu.model),
 						  &parent, &debr.ui_menu.iter_other)) {
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), getenv("HOME"));
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), g_get_home_dir());
 	} else {
 		gchar *menu_path;
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &parent, MENU_PATH, &menu_path, -1);
@@ -765,7 +758,7 @@ void menu_install(void)
 		}
 
 		destination = g_string_new(NULL);
-		g_string_printf(destination, "%s/.gebr/gebr/menus/%s", getenv("HOME"), menu_filename);
+		g_string_printf(destination, "%s/.gebr/gebr/menus/%s", g_get_home_dir(), menu_filename);
 
 		if (!overwriteall && g_file_test(destination->str, G_FILE_TEST_EXISTS)) {
 			gint response;
@@ -1701,39 +1694,26 @@ GebrGeoXmlFlow * menu_get_xml_pointer(GtkTreeIter * iter)
 
 gchar * debr_menu_get_backup_help_from_pointer(gpointer menu)
 {
-	gchar * help;
-	gboolean valid;
+	gint retval;
+	gchar *help;
+	gchar *fname;
+	GebrGeoXmlDocument *document;
 	GtkTreeIter iter;
-	GtkTreeIter child;
-	GtkTreeModel * model;
 
-	// Searches the menu's model for 'menu', returning the corresponding help backup
-	help = NULL;
-	model = GTK_TREE_MODEL (debr.ui_menu.model);
-	valid = gtk_tree_model_get_iter_first(model, &iter);
+	if (!debr_menu_get_iter_from_xmlpointer (menu, &iter))
+		return NULL;
 
-	while (valid) {
-		valid = gtk_tree_model_iter_children(model, &child, &iter);
-		while (valid) {
-			gpointer ptr;
-			gtk_tree_model_get(model, &child,
-					   MENU_XMLPOINTER, &ptr,
-					   MENU_HELP_BACKUP, &help,
-					   -1);
-			if (ptr == menu)
-				break;
-			g_free(help);
-			help = NULL;
+	gtk_tree_model_get (GTK_TREE_MODEL (debr.ui_menu.model), &iter,
+			    MENU_PATH, &fname,
+			    -1);
 
-			valid = gtk_tree_model_iter_next(model, &child);
-		}
-		valid = gtk_tree_model_iter_next(model, &iter);
-	}
+	retval = gebr_geoxml_document_load (&document, fname, TRUE, NULL);
 
-	if (help && strlen(help) == 0) {
-		g_free(help);
-		help = NULL;
-	}
+	if (retval != GEBR_GEOXML_RETV_SUCCESS)
+		return NULL;
+
+	help = g_strdup (gebr_geoxml_document_get_help (document));
+	gebr_geoxml_document_free (document);
 
 	return help;
 }
@@ -2290,25 +2270,6 @@ static void debr_menu_commit_help_edit_windows(GtkTreeIter * iter)
 	}
 }
 
-/*
- * debr_menu_backup_help:
- * @iter:
- */
-static void debr_menu_backup_help(GtkTreeIter * iter)
-{
-	const gchar * help;
-	GebrGeoXmlDocument * document;
-
-	gtk_tree_model_get(GTK_TREE_MODEL (debr.ui_menu.model), iter,
-			   MENU_XMLPOINTER, &document,
-			   -1);
-
-	help = gebr_geoxml_document_get_help(document);
-	gtk_tree_store_set(debr.ui_menu.model, iter,
-			   MENU_HELP_BACKUP, help,
-			   -1);
-}
-
 static void update_revert_sensitiveness(gpointer xmlpointer)
 {
 	GebrGuiHelpEditWindow * window;
@@ -2319,10 +2280,17 @@ static void update_revert_sensitiveness(gpointer xmlpointer)
 		const gchar * path;
 		GtkUIManager * manager;
 		GtkAction * action;
-		path = "/ui/" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_NAME "/RevertAction";
+
+		path = g_strconcat (gebr_gui_help_edit_window_get_tool_bar_mark (window),
+			    "/PreviewAction",
+			    NULL);
 		manager = gebr_gui_help_edit_window_get_ui_manager(window);
 		action = gtk_ui_manager_get_action(manager, path);
-		gtk_action_set_sensitive(action, TRUE);
+		if (!gtk_toggle_action_get_active (GTK_TOGGLE_ACTION(action))){
+			path = "/ui/" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_NAME "/RevertAction";
+			action = gtk_ui_manager_get_action(manager, path);
+			gtk_action_set_sensitive(action, TRUE);
+		}
 	}
 }
 

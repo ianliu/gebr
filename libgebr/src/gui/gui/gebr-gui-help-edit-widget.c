@@ -21,6 +21,7 @@
 #include "../../intl.h"
 #include "gebr-gui-help-edit-widget.h"
 #include "gebr-gui-html-viewer-widget.h"
+#include "gebr-gui-utils.h"
 
 enum {
 	PROP_0,
@@ -69,6 +70,9 @@ static void gebr_gui_help_edit_widget_get_property	(GObject	*object,
 							 GParamSpec	*pspec);
 
 static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrGuiHelpEditWidget * self);
+
+static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame *frame,
+							WebKitNetworkRequest *request, GebrGuiHelpEditWidget *self);
 
 G_DEFINE_ABSTRACT_TYPE(GebrGuiHelpEditWidget, gebr_gui_help_edit_widget, GTK_TYPE_VBOX);
 
@@ -152,6 +156,9 @@ static void gebr_gui_help_edit_widget_init(GebrGuiHelpEditWidget * self)
 	priv->html_viewer = gebr_gui_html_viewer_widget_new();
 	priv->is_editing = TRUE;
 
+	/* a reasonable minimum size, considering the toolbar */
+	gtk_widget_set_size_request(priv->edit_widget, 800, -1);
+
 	box = GTK_BOX(self);
 	priv->scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(priv->scrolled_window),
@@ -219,9 +226,25 @@ static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrG
 					      on_load_finished,
 					      self);
 
+	g_signal_connect(priv->edit_widget, "navigation-requested",
+			 G_CALLBACK (on_navigation_requested), self);
+
 	g_signal_emit (self, signals[ CONTENT_LOADED ], 0);
 }
 
+static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame *frame,
+							WebKitNetworkRequest *request, GebrGuiHelpEditWidget *self)
+{
+	const gchar * uri = webkit_network_request_get_uri(request);
+
+	gchar * path = (gchar *) webkit_web_view_get_uri(web_view);
+	g_strdelimit(path, "#", '\0');
+
+	if (g_str_has_prefix(uri, path) || g_str_has_prefix(uri, "about:"))
+		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
+	
+	return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
+}
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================

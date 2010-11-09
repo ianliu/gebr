@@ -24,9 +24,10 @@ G_BEGIN_DECLS
 
 #define DEBR_DATA_DIR			"@prefix@/share/debr/"
 
-#define DEBR_GLADE_DIR			DEBR_DATA_DIR"glade/"
-#define DEBR_HELP_EDIT_SCRIPT_PATH	DATA_DIR"libgebr/ckeditor/"
-#define DEBR_USERDOC_HTML		DEBR_DATA_DIR"userdoc/debr.html"
+#define DEBR_GLADE_DIR			DEBR_DATA_DIR "glade/"
+#define DEBR_HELP_EDIT_SCRIPT		DEBR_DATA_DIR "/debr-help-edit-script.js"
+#define DEBR_HELP_EDIT_CKEDITOR		"@prefix@/share/libgebr/ckeditor/ckeditor.js"
+#define DEBR_USERDOC_HTML		DEBR_DATA_DIR "userdoc/debr.html"
 
 G_END_DECLS
 #endif //__DEFINES_H

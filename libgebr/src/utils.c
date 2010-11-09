@@ -93,7 +93,7 @@ gboolean gebr_append_filename_extension(GString * filename, const gchar * extens
 
 gboolean gebr_path_is_at_home(const gchar * path)
 {
-	gchar *home = getenv("HOME");
+	const gchar *home = g_get_home_dir();
 	if (home == NULL)
 		return FALSE;
 	return g_str_has_prefix(path, home);
@@ -102,7 +102,7 @@ gboolean gebr_path_is_at_home(const gchar * path)
 gboolean gebr_path_use_home_variable(GString * path)
 {
 	if (gebr_path_is_at_home(path->str)) {
-		gchar *home = getenv("HOME");
+		const gchar *home = g_get_home_dir();
 		gebr_g_string_replace_first_ref(path, home, "$HOME");
 		return TRUE;
 	}
@@ -113,7 +113,7 @@ gboolean gebr_path_use_home_variable(GString * path)
 gboolean gebr_path_resolve_home_variable(GString * path)
 {
 	if (gebr_g_string_starts_with(path, "$HOME")) {
-		gchar *home = getenv("HOME");
+		const gchar *home = g_get_home_dir();
 		gebr_g_string_replace_first_ref(path, "$HOME", home);
 		return TRUE;
 	}
@@ -153,7 +153,7 @@ GString *gebr_temp_directory_create(void)
 
 	/* assembly dir path */
 	path = g_string_new(NULL);
-	g_string_printf(path, "%s/.gebr/tmp/XXXXXX", getenv("HOME"));
+	g_string_printf(path, "%s/.gebr/tmp/XXXXXX", g_get_home_dir());
 
 	/* create a temporary file. */
 	close(g_mkstemp(path->str));
@@ -192,7 +192,7 @@ GString *gebr_make_temp_filename(const gchar * template)
 
 	/* assembly file path */
 	path = g_string_new(NULL);
-	g_string_printf(path, "%s/.gebr/tmp/%s", getenv("HOME"), template);
+	g_string_printf(path, "%s/.gebr/tmp/%s", g_get_home_dir(), template);
 
 	/* create a temporary file. */
 	close(g_mkstemp(path->str));
@@ -219,15 +219,31 @@ gint gebr_system(const gchar *cmd, ...)
 }
 
 /**
+ * Return TRUE if the directory at \p dir_path could be loaded and has at least one file.
+ * Otherwise return FALSE.
+ */
+gboolean gebr_dir_has_files(const gchar *dir_path)
+{
+	GError *error = NULL;
+	GDir *dir = g_dir_open(dir_path, 0, &error);
+	if (dir == NULL)
+		return FALSE;
+
+	gboolean ret = g_dir_read_name(dir) == NULL ? FALSE : TRUE; 
+	g_dir_close(dir);
+	return ret;
+}
+
+/**
  * Returns the home's permission mode. Useful for
  * preserving permissions when creating files
  */
 int gebr_home_mode(void)
 {
 	struct stat home_stat;
-	gchar *home;
+	const gchar *home;
 
-	home = getenv("HOME");
+	home = g_get_home_dir();
 	g_stat(home, &home_stat);
 
 	return home_stat.st_mode;
@@ -239,7 +255,7 @@ static gboolean gebr_make_config_dir(const gchar * dirname)
 	gboolean ret = TRUE;
 
 	path = g_string_new(NULL);
-	g_string_printf(path, "%s/.gebr/%s", getenv("HOME"), dirname);
+	g_string_printf(path, "%s/.gebr/%s", g_get_home_dir(), dirname);
 	if (g_file_test(path->str, G_FILE_TEST_IS_DIR) == FALSE)
 		if (g_mkdir_with_parents(path->str, gebr_home_mode()))
 			ret = FALSE;
@@ -256,7 +272,7 @@ gboolean gebr_create_config_dirs(void)
 {
 	GString *string = g_string_new(NULL);
 	gboolean ret = TRUE;
-	gchar *home = getenv("$HOME");
+	const gchar *home = g_get_home_dir();
 
 	/* Test for gebr conf dir and subdirs */
 	if (!gebr_make_config_dir(""))
@@ -280,19 +296,23 @@ gboolean gebr_create_config_dirs(void)
 
 	/* DEPRECATED: migration from old structure */
 	g_string_printf(string, "%s/.gebr/menus", home);
-	if (g_file_test(string->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == TRUE) {
-		gint ret = gebr_system("mv %s/.gebr/menus/* %s/.gebr/gebr/menus; rmdir %s/.gebr/menus/",
-				       home, home, home);
+	if (g_file_test(string->str, G_FILE_TEST_IS_DIR) == TRUE && 
+	    gebr_dir_has_files(string->str) == TRUE) {
+		gint ret = gebr_system("mv %s/.gebr/menus/* %s/.gebr/gebr/menus",
+				       home, home);
 		if (ret)
 			goto err;
 	}
+	gebr_system("rm -fr %s", string->str);
 	g_string_printf(string, "%s/.gebr/gebrdata", home);
-	if (g_file_test(string->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == TRUE) {
-		gint ret = gebr_system("mv %s/.gebr/gebrdata/* %s/.gebr/gebr/data; rmdir %s/.gebr/gebrdata/",
+	if (g_file_test(string->str, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS) == TRUE &&
+	    gebr_dir_has_files(string->str) == TRUE) {
+		gint ret = gebr_system("mv %s/.gebr/gebrdata/* %s/.gebr/gebr/data",
 				       home, home, home);
 		if (ret)
 			goto err;
 	}
+	gebr_system("rm -fr %s", string->str);
 	g_string_printf(string, "%s/.gebr/menus.idx", home);
 	if (g_file_test(string->str, G_FILE_TEST_EXISTS) == TRUE) {
 		gint ret = gebr_system("mv %s/.gebr/menus.idx %s/.gebr/gebr", home, home);
@@ -462,4 +482,14 @@ int g_strcmp0(const char * str1, const char * str2)
 const gchar* gebr_version()
 {
 	return LIBGEBR_VERSION LIBGEBR_NANOVERSION;
+}
+
+gboolean gebr_paths_equal (const gchar *path1, const gchar *path2)
+{
+	struct stat stat1, stat2;
+
+	g_stat (path1, &stat1);
+	g_stat (path2, &stat2);
+
+	return stat1.st_ino == stat2.st_ino;
 }

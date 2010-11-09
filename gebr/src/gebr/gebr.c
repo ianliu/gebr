@@ -80,7 +80,7 @@ void gebr_init(void)
 	gebr.config.detailed_flow_css = g_string_new (NULL);
 	gebr.config.detailed_line_css = g_string_new (NULL);
 	gebr.config.path = g_string_new(NULL);
-	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", getenv("HOME"));
+	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", g_get_home_dir());
 
 	/* allocating list of temporary files */
 	gebr.tmpfiles = g_slist_alloc();
@@ -227,7 +227,7 @@ gint gebr_config_load()
 								       "general", "name", g_get_real_name());
 		gebr.config.email = gebr_g_key_file_load_string_key(gebr.config.key_file,
 								    "general", "email", g_get_user_name());
-		g_string_printf(data_dir, "%s/GeBR-Menus", getenv("HOME"));
+		g_string_printf(data_dir, "%s/GeBR-Menus", g_get_home_dir());
 		gebr.config.usermenus = gebr_g_key_file_load_string_key(gebr.config.key_file,
 									"general", "usermenus", data_dir->str);
 		if (!strcmp(gebr.config.usermenus->str, data_dir->str)
@@ -235,12 +235,12 @@ gint gebr_config_load()
 			g_mkdir_with_parents(data_dir->str, 0755);
 		gebr_path_resolve_home_variable(gebr.config.usermenus);
 
-		g_string_printf(data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
+		g_string_printf(data_dir, "%s/.gebr/gebr/data", g_get_home_dir());
 		gebr.config.data = gebr_g_key_file_load_string_key(gebr.config.key_file,
 								   "general", "data", data_dir->str);
 		/* DEPRECATED: old config structure */
 		if (g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))
-			g_string_printf(gebr.config.data, "%s/.gebr/gebr/data", getenv("HOME"));
+			g_string_printf(gebr.config.data, "%s/.gebr/gebr/data", g_get_home_dir());
 		else if (!g_str_has_suffix(gebr.config.data->str, ".gebr/gebr/data"))
 			gebr_migrate_data_dir();
 		else
@@ -498,7 +498,7 @@ static void gebr_log_load(void)
 	GList *i;
 
 	log_filename = g_string_new(NULL);
-	g_string_printf(log_filename, "%s/.gebr/log/gebr.log", getenv("HOME"));
+	g_string_printf(log_filename, "%s/.gebr/log/gebr.log", g_get_home_dir());
 	gebr.log = gebr_log_open(log_filename->str);
 
 	if (gebr.config.log_load) {
@@ -581,7 +581,7 @@ static void gebr_migrate_data_dir(void)
 	gboolean empty;
 
 	new_data_dir = g_string_new(NULL);
-	g_string_printf(new_data_dir, "%s/.gebr/gebr/data", getenv("HOME"));
+	g_string_printf(new_data_dir, "%s/.gebr/gebr/data", g_get_home_dir());
 
 	command_line = g_string_new("");
 	gebr_directory_foreach_file(filename, gebr.config.data->str)

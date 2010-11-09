@@ -759,6 +759,15 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect(GTK_OBJECT(menu_item), "activate", G_CALLBACK(flow_edition_menu_show_help), NULL);
+	gchar *menu_filename;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &iter,
+			   MENU_FILEPATH_COLUMN, &menu_filename, -1);
+	GebrGeoXmlDocument *xml = GEBR_GEOXML_DOCUMENT(menu_load_path(menu_filename));
+	if (xml != NULL && strlen(gebr_geoxml_document_get_help(xml)) <= 1)
+		gtk_widget_set_sensitive(menu_item, FALSE);
+	if (xml)
+		document_free(xml);
+	g_free(menu_filename);
 
  out:	gtk_widget_show_all(menu);
 

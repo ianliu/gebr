@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the debr package.
 # biloti <biloti@gebrproject.com>, 2009.
 #
-#: ../src/main.c:51 ../src/main.c:52
+#: ../src/main.c:48 ../src/main.c:49
 msgid ""
 msgstr ""
 "Project-Id-Version: gebrd 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-13 14:50-0300\n"
-"PO-Revision-Date: 2010-07-13 14:51-0300\n"
+"POT-Creation-Date: 2010-10-28 11:33-0200\n"
+"PO-Revision-Date: 2010-10-28 11:34-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -18,10 +18,10 @@ msgstr ""
 
 #: ../src/client.c:100
 #, c-format
-msgid "Connection error '%s' on client '%s'"
-msgstr "Erro '%s' na conexão com o servidor '%s'"
+msgid "Connection error '%d' on client '%s'"
+msgstr "Erro '%d' na conexão com o cliente '%s'"
 
-#: ../src/gebrd.c:91
+#: ../src/gebrd.c:94
 msgid "Server quit."
 msgstr "Servidor finalizado."
 
@@ -114,57 +114,58 @@ msgstr "Não foi possível submeter a tarefa ao servidor MOAB: %s.\n"
 msgid "Cannot get MOAB job id.\n"
 msgstr "Não foi possível obter a identificação da tarefa no MOAB.\n"
 
-#: ../src/job.c:988 ../src/job.c:992
+#: ../src/job.c:994 ../src/job.c:998
 #, c-format
 msgid "Cannot cancel job at MOAB server.\n"
 msgstr "Não foi possível cancelar a tarefa no servidor MOAB.\n"
 
-#: ../src/main.c:35
+#: ../src/main.c:36
 msgid "Run server in interactive mode, not as a daemon"
 msgstr "Executando servidor em modo iterativo e não com daemon"
 
-#: ../src/main.c:37
+#: ../src/main.c:38
 msgid "Show GeBR daemon version"
 msgstr "Exibe a versão do daemon"
 
-#: ../src/main.c:50
+#: ../src/main.c:47
 msgid "GeBR daemon"
 msgstr "Daemon GeBR"
 
-#: ../src/main.c:56
+#: ../src/main.c:53
 #, c-format
 msgid "%s: syntax error\n"
 msgstr "%s: erro de sintaxe\n"
 
-#: ../src/main.c:57
+#: ../src/main.c:54
 #, c-format
 msgid "Try %s --help\n"
 msgstr "Tente %s --help\n"
 
-#: ../src/server.c:74
+#: ../src/server.c:71
 #, c-format
 msgid "%s:%d: Could not access GêBR configuration directories.\n"
-msgstr "%s:%d: Não foi possível acessar os diretórios de configuração da GêBR.\n"
+msgstr ""
+"%s:%d: Não foi possível acessar os diretórios de configuração da GêBR.\n"
 
-#: ../src/server.c:107
+#: ../src/server.c:104
 msgid "Cannot run interactive server, GêBR daemon is already running"
 msgstr ""
 "Não é possível executar o servidor iterativavmente. Daemon GêBR já está em "
 "execução"
 
-#: ../src/server.c:128
+#: ../src/server.c:125
 msgid "Could not listen for connections.\n"
 msgstr "Não foi possível escutar por conexões.\n"
 
-#: ../src/server.c:136
+#: ../src/server.c:133
 msgid "Could not write run file."
 msgstr "Não foi possível escrever arquivo de trava de execução."
 
-#: ../src/server.c:155
+#: ../src/server.c:153
 #, c-format
 msgid "Server started at %u port"
 msgstr "Servidor inicializado na porta %u"
 
-#: ../src/server.c:167
+#: ../src/server.c:165
 msgid "Could not init server. Quiting..."
 msgstr "Não foi possível inicializar o servidor. Abortando..."

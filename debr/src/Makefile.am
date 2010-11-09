@@ -22,7 +22,7 @@ bin_PROGRAMS = debr
 debrgladedir = $(datadir)/debr/glade/
 debrglade_DATA = menu-dialog-save-ui.glade
 
-debrscriptsdir = $(datadir)/libgebr/ckeditor/
+debrscriptsdir = $(datadir)/debr
 debrscripts_DATA = debr-help-edit-script.js
 
 noinst_LIBRARIES = libdebr.a

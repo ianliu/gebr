@@ -58,7 +58,6 @@ enum {
 	MENU_PATH,			/**< Absolute path for this menu in system. */
 	MENU_VALIDATE_NEED_UPDATE,	/**< If menu has changed than validation needs to be updated. */
 	MENU_VALIDATE_POINTER,		/**< If this menu was validated, then keeps the validation structure. */
-	MENU_HELP_BACKUP,
 	MENU_N_COLUMN
 };
 
