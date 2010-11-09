@@ -27,8 +27,8 @@
 
 void gebr_libinit(const gchar * gettext_package, const gchar * argv0)
 {
-	bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	bindtextdomain(gettext_package, PACKAGE_LOCALE_DIR);
+	bind_textdomain_codeset(gettext_package, "UTF-8");
 	if (gettext_package != NULL)
 		textdomain(gettext_package);
 }
