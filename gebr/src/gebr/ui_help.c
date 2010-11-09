@@ -246,14 +246,11 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 		fputs(prepared_html->str, html_fp);
 		fclose(html_fp);
 
-		gchar *quote1 = g_shell_quote(gebr.config.editor->str);
-		gchar *quote2 = g_shell_quote(html_path->str);
-
-		if (gebr_system("%s %s", quote1, quote2)) {
+		gchar *quote = g_shell_quote(html_path->str);
+		if (gebr_system("%s %s", gebr.config.editor->str, quote)) {
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Error during editor execution."));
 		}
-		g_free(quote1);
-		g_free(quote2);
+		g_free(quote);
 
 		/* Add file to list of files to be removed */
 		gebr.tmpfiles = g_slist_append(gebr.tmpfiles, html_path->str);

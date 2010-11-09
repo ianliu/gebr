@@ -909,11 +909,9 @@ void debr_help_edit(GebrGeoXmlObject * object)
 		fputs(help, htmlfp);
 		fclose(htmlfp);
 
-		gchar *quote1 = g_shell_quote(debr.config.htmleditor->str);
-		gchar *quote2 = g_shell_quote(html_path->str);
-		gint exitstatus = WEXITSTATUS(gebr_system("%s %s", quote1, quote2));
-		g_free(quote1);
-		g_free(quote2);
+		gchar *quote = g_shell_quote(html_path->str);
+		gint exitstatus = WEXITSTATUS(gebr_system("%s %s", debr.config.htmleditor->str, quote));
+		g_free(quote);
 		if (exitstatus) {
 			debr_message(GEBR_LOG_ERROR, _("Error during editor execution."));
 			goto out;
