@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-05 17:41-0200\n"
-"PO-Revision-Date: 2010-11-05 17:45-0200\n"
+"POT-Creation-Date: 2010-11-09 17:01-0200\n"
+"PO-Revision-Date: 2010-11-09 17:02-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -470,24 +470,24 @@ msgid "Show component's help"
 msgstr "Exibir ajuda do componente"
 
 #: ../src/gebr/interface.c:113
-msgid "Delete menu"
-msgstr "Apagar menu"
+msgid "Delete program"
+msgstr "Deletar programa"
 
 #: ../src/gebr/interface.c:115
-msgid "Edit menu parameters"
-msgstr "Editar parâmetros do menu"
+msgid "Edit program parameters"
+msgstr "Editar parâmetros do programa"
 
 #: ../src/gebr/interface.c:117
 msgid "Refresh available components list"
 msgstr "Atualizar lista de componentes disponível"
 
 #: ../src/gebr/interface.c:119
-msgid "Copy selected menu(s) to clipboard"
-msgstr "Copiar menu(s) selecionado(s) para a área de transferência"
+msgid "Copy selected programs(s) to clipboard"
+msgstr "Copiar programas(s) selecionado(s) para a área de transferência"
 
 #: ../src/gebr/interface.c:121
-msgid "Paste menus(s) from clipboard"
-msgstr "Colar menu(s) da área de transferência"
+msgid "Paste program(s) from clipboard"
+msgstr "Colar programa(s) da área de transferência"
 
 #: ../src/gebr/interface.c:122
 msgid "Move to Top"
@@ -1122,11 +1122,11 @@ msgstr "programa"
 msgid "Program help"
 msgstr "Ajuda do programa"
 
-#: ../src/gebr/ui_help.c:242 ../src/gebr/ui_help.c:262
+#: ../src/gebr/ui_help.c:242 ../src/gebr/ui_help.c:260
 msgid "Unable to create temporary file."
 msgstr "Impossível escrever arquivo temporário."
 
-#: ../src/gebr/ui_help.c:252
+#: ../src/gebr/ui_help.c:251
 msgid "Error during editor execution."
 msgstr "Erro durate a execução do editor."
 
@@ -1531,6 +1531,15 @@ msgstr ""
 #: ../src/gebr/ui_server.c:486
 msgid "Select server"
 msgstr "Selecione um servidor"
+
+#~ msgid "Delete menu"
+#~ msgstr "Apagar menu"
+
+#~ msgid "Copy selected menu(s) to clipboard"
+#~ msgstr "Copiar menu(s) selecionado(s) para a área de transferência"
+
+#~ msgid "Paste menus(s) from clipboard"
+#~ msgstr "Colar menu(s) da área de transferência"
 
 #~ msgid "Move Down"
 #~ msgstr "Mover para baixo"
