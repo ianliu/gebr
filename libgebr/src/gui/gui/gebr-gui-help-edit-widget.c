@@ -235,12 +235,15 @@ static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrG
 static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame *frame,
 							WebKitNetworkRequest *request, GebrGuiHelpEditWidget *self)
 {
-	const gchar * uri = webkit_network_request_get_uri(request);
+	GebrGuiHelpEditWidgetPrivate *priv;
+	const gchar *uri;
+	const gchar *path;
 
-	gchar * path = (gchar *) webkit_web_view_get_uri(web_view);
-	g_strdelimit(path, "#", '\0');
+	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE (self);
+	uri = webkit_network_request_get_uri (request);
+	path = gebr_gui_help_edit_widget_get_uri (self);
 
-	if (g_str_has_prefix(uri, path) || g_str_has_prefix(uri, "about:"))
+	if (g_str_has_prefix(uri + strlen("file://"), path) || g_str_has_prefix(uri, "about:"))
 		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 	
 	return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
@@ -360,4 +363,11 @@ void gebr_gui_help_edit_widget_set_loaded(GebrGuiHelpEditWidget * self)
 
 	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	priv->state = STATE_LOADED;
+}
+
+const gchar *gebr_gui_help_edit_widget_get_uri (GebrGuiHelpEditWidget * self)
+{
+	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), NULL);
+
+	return GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS (self)->get_uri (self);
 }

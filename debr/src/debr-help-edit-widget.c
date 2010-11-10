@@ -70,6 +70,8 @@ static void debr_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, cons
 
 static gboolean debr_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self);
 
+static const gchar *debr_help_edit_widget_get_uri (GebrGuiHelpEditWidget *self);
+
 static gboolean check_editor_dirty(GebrGuiHelpEditWidget * self);
 
 static void reset_editor_dirty(GebrGuiHelpEditWidget * self);
@@ -95,6 +97,7 @@ static void debr_help_edit_widget_class_init(DebrHelpEditWidgetClass * klass)
 	super_class->get_content = debr_help_edit_widget_get_content;
 	super_class->set_content = debr_help_edit_widget_set_content;
 	super_class->is_content_saved = debr_help_edit_widget_is_content_saved;
+	super_class->get_uri = debr_help_edit_widget_get_uri;
 
 	/**
 	 * DebrHelpEditWidget:geoxml-object:
@@ -310,6 +313,14 @@ static gboolean debr_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * s
 	DebrHelpEditWidgetPrivate * priv;
 	priv = DEBR_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	return priv->is_commited && !check_editor_dirty(self);
+}
+
+static const gchar *debr_help_edit_widget_get_uri (GebrGuiHelpEditWidget *self)
+{
+	DebrHelpEditWidgetPrivate *priv;
+
+	priv = DEBR_HELP_EDIT_WIDGET_GET_PRIVATE (self);
+	return priv->temp_file;
 }
 
 //==============================================================================

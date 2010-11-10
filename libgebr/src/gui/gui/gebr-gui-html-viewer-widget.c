@@ -212,9 +212,6 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 	const gchar * uri = webkit_network_request_get_uri(request);
 
-	gchar * path = (gchar *) webkit_web_view_get_uri(web_view);
-	g_strdelimit(path, "#", '\0');
-
 	if (priv->object && g_str_has_prefix(uri, "gebr://")) {
 		const gchar *help;
 		GebrGeoXmlObject *object;
@@ -258,7 +255,10 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 		return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 	}
 
-	if (g_str_has_prefix(uri, path) || g_str_has_prefix(uri, "about:"))
+	puts ("+++");
+	puts (uri);
+	puts (priv->tmp_file);
+	if (g_str_has_prefix(uri + strlen("file://"), priv->tmp_file) || g_str_has_prefix(uri, "about:"))
 		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 
 	gebr_gui_show_uri(uri);

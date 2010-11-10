@@ -61,6 +61,7 @@ struct _GebrGuiHelpEditWidgetClass {
 	void (*set_content) (GebrGuiHelpEditWidget * self, const gchar * content);
 	void (*commit_changes) (GebrGuiHelpEditWidget * self);
 	gboolean (*is_content_saved) (GebrGuiHelpEditWidget * self);
+	const gchar * (*get_uri) (GebrGuiHelpEditWidget * self);
 
 	/* Signals */
 	void (*commit_request) (GebrGuiHelpEditWidget * self);
@@ -142,6 +143,13 @@ GebrGuiHtmlViewerWidget * gebr_gui_help_edit_widget_get_html_viewer(GebrGuiHelpE
  * Sets the widget's state to STATE_LOADED.
  */
 void gebr_gui_help_edit_widget_set_loaded(GebrGuiHelpEditWidget * self);
+
+/**
+ * gebr_gui_help_edit_widget_get_uri:
+ *
+ * Returns: the URI for the file being displayed by this help edit widget.
+ */
+const gchar *gebr_gui_help_edit_widget_get_uri (GebrGuiHelpEditWidget * self);
 
 G_END_DECLS
 

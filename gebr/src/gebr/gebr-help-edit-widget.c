@@ -33,6 +33,7 @@
 #define HTML_HOLDER									\
 	"<html>"									\
 	"<head>"									\
+	"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"	\
 	"<script>"									\
 	"var menu_edition = false;"							\
 	"function onCkEditorLoadFinished() {}"						\
@@ -97,6 +98,8 @@ static void gebr_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, cons
 
 static gboolean gebr_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self);
 
+static const gchar *gebr_help_edit_widget_get_uri (GebrGuiHelpEditWidget *self);
+
 G_DEFINE_TYPE(GebrHelpEditWidget, gebr_help_edit_widget, GEBR_GUI_TYPE_HELP_EDIT_WIDGET);
 
 //==============================================================================
@@ -118,6 +121,7 @@ static void gebr_help_edit_widget_class_init(GebrHelpEditWidgetClass * klass)
 	super_class->get_content = gebr_help_edit_widget_get_content;
 	super_class->set_content = gebr_help_edit_widget_set_content;
 	super_class->is_content_saved = gebr_help_edit_widget_is_content_saved;
+	super_class->get_uri = gebr_help_edit_widget_get_uri;
 
 	/**
 	 * GebrHelpEditWidget:geoxml-document:
@@ -277,6 +281,14 @@ static gboolean gebr_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * s
 	context = gebr_gui_help_edit_widget_get_js_context(self);
 	value = gebr_js_evaluate(context, "ed.checkDirty();");
 	return !gebr_js_value_get_boolean(context, value);
+}
+
+static const gchar *gebr_help_edit_widget_get_uri (GebrGuiHelpEditWidget *self)
+{
+	GebrHelpEditWidgetPrivate *priv;
+
+	priv = GEBR_HELP_EDIT_WIDGET_GET_PRIVATE (self);
+	return priv->temp_file;
 }
 
 //==============================================================================
