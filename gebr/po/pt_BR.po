@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-10 11:27-0200\n"
-"PO-Revision-Date: 2010-11-09 19:35-0200\n"
+"POT-Creation-Date: 2010-11-10 17:15-0200\n"
+"PO-Revision-Date: 2010-11-10 17:40-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -128,7 +128,7 @@ msgid ""
 "Can't load menu '%s' at %s:\n"
 "%s"
 msgstr ""
-"Não foi possível carregar o menu %s em %s:\n"
+"Não foi possível carregar o menu '%s' em %s:\n"
 "%s"
 
 #: ../src/gebr/document.c:261
@@ -196,7 +196,7 @@ msgstr ""
 
 #: ../src/gebr/document.c:366
 msgid "Orphans lines"
-msgstr "Linhas órfans"
+msgstr "Linhas órfãs"
 
 #: ../src/gebr/document.c:384 ../src/gebr/document.c:398
 msgid "Orphans flows"
@@ -652,19 +652,19 @@ msgstr "Apagando a linha '%s' do projeto '%s'."
 msgid "Flows loaded."
 msgstr "Fluxos carregados."
 
-#: ../src/gebr/main.c:37
+#: ../src/gebr/main.c:39
 msgid "Return the users menu directory"
 msgstr "Retorna o diretório de menus do usuário"
 
-#: ../src/gebr/main.c:39
+#: ../src/gebr/main.c:41
 msgid "Show GeBR version"
 msgstr "Exibe a versão da GêBR"
 
-#: ../src/gebr/main.c:47
+#: ../src/gebr/main.c:49
 msgid " - GeBR, a seismic processing environment"
 msgstr "- GêBR, um ambiente de processamento sísmico"
 
-#: ../src/gebr/main.c:49
+#: ../src/gebr/main.c:51
 msgid ""
 "GeBR is a free-software which provides an environment to seismic\n"
 "data processing, designed to easily assemble and run processing\n"
@@ -674,31 +674,31 @@ msgstr ""
 "projetado para criar e executar fluxos de processamento facilmente,\n"
 "bem como para gerir tarefas."
 
-#: ../src/gebr/main.c:52
+#: ../src/gebr/main.c:54
 msgid "GeBR Project - http://www.gebrproject.com/"
 msgstr "Projeto GêBR - http://www.gebrproject.com/"
 
-#: ../src/gebr/main.c:56
+#: ../src/gebr/main.c:58
 #, c-format
 msgid "%s: syntax error\n"
 msgstr "%s: erro de sintaxe\n"
 
-#: ../src/gebr/main.c:57
+#: ../src/gebr/main.c:59
 #, c-format
 msgid "Try %s --help\n"
 msgstr "Tente %s --help\n"
 
-#: ../src/gebr/main.c:79
+#: ../src/gebr/main.c:81
 #, c-format
 msgid "ERROR: Could not find GeBR configuration file at %s.\n"
 msgstr ""
-"ERRO: Não foi possível encontrar o arquivo de configuração da GeBR em %s.\n"
+"ERRO: Não foi possível encontrar o arquivo de configuração da GêBR em %s.\n"
 
-#: ../src/gebr/main.c:85
+#: ../src/gebr/main.c:87
 #, c-format
 msgid "ERROR: Local menu directory not defined in GeBR configuration.\n"
 msgstr ""
-"ERROR: Diretório de menus local não definido nas configurações da GeBR.\n"
+"ERROR: Diretório de menus local não definido nas configurações da GêBR.\n"
 
 #: ../src/gebr/menu.c:274 ../src/gebr/menu.c:287
 msgid "Unable to write menus' index."
@@ -741,7 +741,7 @@ msgstr "Acrescentar um novo parâmetro."
 
 #: ../src/gebr/ui_document.c:136
 msgid "Remove current parameters."
-msgstr "Remover o parâmetro atual."
+msgstr "Remover parâmetros atuais."
 
 #: ../src/gebr/ui_document.c:195
 #, c-format
@@ -904,7 +904,7 @@ msgstr "Conta"
 
 #: ../src/gebr/ui_flow.c:555
 msgid "Choose the queue's name"
-msgstr "Por favor, entre o nome da fila."
+msgstr "Por favor, escolha o nome da fila."
 
 #: ../src/gebr/ui_flow.c:563 ../src/gebr/ui_moab.c:55
 msgid "Number of processes"
@@ -932,7 +932,7 @@ msgstr "Número vazio"
 
 #: ../src/gebr/ui_flow.c:622
 msgid "Please enter the number of processes to run the flow."
-msgstr "Por favor, forneça o número de processos para rodar o fluxos."
+msgstr "Por favor, forneça o número de processos para rodar o fluxo."
 
 #: ../src/gebr/ui_flow.c:650
 msgid "No flow selected."
@@ -941,7 +941,7 @@ msgstr "Nenhum fluxo selecionado"
 #. just happen if the current server was removed
 #: ../src/gebr/ui_flow.c:655
 msgid "No server selected."
-msgstr "Nenhuma servidor selecionado."
+msgstr "Nenhum servidor selecionado."
 
 #: ../src/gebr/ui_flow.c:675
 msgid "You are not connected to the local server."

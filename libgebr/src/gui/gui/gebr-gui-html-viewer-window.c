@@ -27,6 +27,7 @@ typedef struct _GebrGuiHtmlViewerWindowPrivate GebrGuiHtmlViewerWindowPrivate;
 
 struct _GebrGuiHtmlViewerWindowPrivate {
 	GtkWidget * viewer_widget;
+	GtkUIManager * manager;
 };
 
 #define GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_GUI_TYPE_HTML_VIEWER_WINDOW, GebrGuiHtmlViewerWindowPrivate))
@@ -42,6 +43,27 @@ static void on_print_clicked(GtkWidget * printer_item, GebrGuiHtmlViewerWindow *
 static void on_quit_clicked(GtkWidget * quit_item, GebrGuiHtmlViewerWindow * self);
 
 G_DEFINE_TYPE(GebrGuiHtmlViewerWindow, gebr_gui_html_viewer_window, GTK_TYPE_DIALOG);
+
+static GtkActionEntry actions[] = {
+        {"FileAction", NULL, N_("_File")},
+        {"PrintAction", GTK_STOCK_PRINT, NULL, NULL,
+                N_("Print content"), G_CALLBACK (on_print_clicked)},
+        {"QuitAction", GTK_STOCK_CLOSE, NULL, NULL,
+                N_("Quit this window"), G_CALLBACK (on_quit_clicked)}
+};
+
+static guint n_actions = G_N_ELEMENTS (actions);
+
+static gchar * uidef =
+"<ui>"
+" <menubar name='menubar'>"
+"  <menu action='FileAction'>"
+"   <menuitem action='PrintAction' />"
+"   <separator />"
+"   <menuitem action='QuitAction' />"
+"  </menu>"
+" </menubar>"
+"</ui>";
 
 //==============================================================================
 // GOBJECT RELATED FUNCTIONS						       =
@@ -59,60 +81,41 @@ static void gebr_gui_html_viewer_window_class_init(GebrGuiHtmlViewerWindowClass 
 
 static void gebr_gui_html_viewer_window_init(GebrGuiHtmlViewerWindow * self)
 {
-	GebrGuiHtmlViewerWindowPrivate * priv;
-	GtkDialog * dialog;
-	GtkWidget *menu_bar;
-	GtkWidget *file_item;
-	GtkWidget *print_item;
-	GtkWidget *quit_item;
-	GtkWidget *file_menu;
+        GebrGuiHtmlViewerWindowPrivate * priv;
+        GtkActionGroup *group;
+        GtkWidget *vbox;
+        GtkWidget *menubar;
+        GError *error = NULL;
 
-	priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
-	priv->viewer_widget = gebr_gui_html_viewer_widget_new();
+        priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
 
-	dialog = GTK_DIALOG(self);
-	gtk_window_set_default_size(GTK_WINDOW(dialog), 800, 600);
+        priv->viewer_widget = gebr_gui_html_viewer_widget_new();
+        priv->manager = gtk_ui_manager_new ();
 
-	gtk_widget_show(priv->viewer_widget);
+        group = gtk_action_group_new ("Actions");
+        gtk_action_group_add_actions (group, actions, n_actions, self);
+        gtk_ui_manager_insert_action_group (priv->manager, group, -1);
+        gtk_ui_manager_add_ui_from_string (priv->manager, uidef, -1, &error);
+        g_object_unref (group);
 
-	file_menu = gtk_menu_new ();    /* Don't need to show menus */
+        if (error) {
+                g_warning ("%s", error->message);
+                g_clear_error (&error);
+        }
 
-	/* Create the menu items */
-	print_item = gtk_menu_item_new_with_label (_("Print"));
-	quit_item = gtk_menu_item_new_with_label (_("Quit"));
+        menubar = gtk_ui_manager_get_widget (priv->manager, "/menubar");
+        vbox = GTK_DIALOG(self)->vbox;
+        gtk_box_pack_start (GTK_BOX (vbox), menubar, FALSE, TRUE, 0);
+        gtk_box_pack_start (GTK_BOX (vbox), priv->viewer_widget, TRUE, TRUE, 0);
 
-	/* Add them to the menu */
-	gtk_menu_shell_append (GTK_MENU_SHELL (file_menu), print_item);
-	gtk_menu_shell_append (GTK_MENU_SHELL (file_menu), quit_item);
+        gtk_window_set_default_size (GTK_WINDOW (self), 800, 600);
+        gtk_window_add_accel_group (GTK_WINDOW (self), gtk_ui_manager_get_accel_group (priv->manager));
 
-	/* Attach the callback functions to the activate signal */
-	g_signal_connect (G_OBJECT (print_item), "activate",
-			  G_CALLBACK (on_print_clicked),
-			  self);
-
-	/* We can attach the Quit menu item to our exit function */
-	g_signal_connect (G_OBJECT (quit_item), "activate",
-			  G_CALLBACK (on_quit_clicked),
-			  self);
-
-	/* We do need to show menu items */
-	gtk_widget_show (print_item);
-	gtk_widget_show (quit_item);
-
-	menu_bar = gtk_menu_bar_new ();
-	gtk_box_pack_start (GTK_BOX (dialog->vbox), menu_bar, FALSE, TRUE, 0);
-	gtk_widget_show (menu_bar);
-
-	file_item = gtk_menu_item_new_with_label (_("File"));
-	gtk_widget_show (file_item);
-
-	gtk_menu_item_set_submenu (GTK_MENU_ITEM (file_item), file_menu);
-
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu_bar), file_item);
-
-	gtk_box_pack_start(GTK_BOX(dialog->vbox), priv->viewer_widget, TRUE, TRUE, 0);
-
+        gtk_widget_show_all (menubar);
+        gtk_widget_show (priv->viewer_widget);
+        gtk_widget_show (vbox);
 }
+
 
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
