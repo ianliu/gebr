@@ -174,9 +174,9 @@ static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, 
 	final_title = g_string_new ("");
 
 	if (strlen(obj_title) > 0)
-		g_string_printf (final_title, "Report of the %s \"%s\"", obj_name, obj_title);
+		g_string_printf (final_title, _("Report of the %s \"%s\""), obj_name, obj_title);
 	else
-		g_string_printf (final_title, "Report of the %s", obj_name);
+		g_string_printf (final_title, _("Report of the %s"), obj_name);
 
 	gtk_window_set_title (window, final_title->str);
 	g_string_free (final_title, TRUE);
