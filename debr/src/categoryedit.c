@@ -506,11 +506,16 @@ static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gcha
 		gchar *i_categ;
 		gtk_tree_model_get(model, &iter, 0, &i_categ, -1);
 
-		if (!g_utf8_collate(i_categ, category)) {
+		gchar * category_first_up = gebr_validate_change_first_to_upper(category);
+		gchar * i_categ_first_up = gebr_validate_change_first_to_upper(i_categ);
+
+		if (!g_utf8_collate(i_categ_first_up, category_first_up)) {
 			gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(sequence_edit->tree_view), &iter);
 			retval = TRUE;
 		}
 		g_free(i_categ);
+		g_free(i_categ_first_up);
+		g_free(category_first_up);
 	}
 
 	if (retval) {
