@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-09 12:11-0200\n"
-"PO-Revision-Date: 2010-11-09 12:12-0200\n"
+"POT-Creation-Date: 2010-11-10 11:27-0200\n"
+"PO-Revision-Date: 2010-11-09 19:35-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -126,36 +126,44 @@ msgstr "Erro na comunicação com o servidor '%s'. Por favor, reconecte."
 msgid "Can't load file at %s: %s"
 msgstr "Não foi possível carregar documento em %s: %s."
 
-#. the final point already comes with gebr_geoxml_error_string
-#: ../src/gebr/document.c:265
+#: ../src/gebr/document.c:258
 #, c-format
 msgid ""
-"Can't load menu %s at %s:\n"
+"Can't load menu '%s' at %s:\n"
 "%s"
 msgstr ""
 "Não foi possível carregar o menu %s em %s:\n"
-"%s."
+"%s"
 
-#: ../src/gebr/document.c:272
+#: ../src/gebr/document.c:261
+#, c-format
+msgid ""
+"Can't load menu at %s:\n"
+"%s"
+msgstr ""
+"Não foi possível carregar o menu em %s:\n"
+"%s"
+
+#: ../src/gebr/document.c:269
 msgid "document"
 msgstr "documento"
 
-#: ../src/gebr/document.c:275 ../src/gebr/ui_document.c:970
+#: ../src/gebr/document.c:272 ../src/gebr/ui_document.c:962
 #: ../src/gebr/ui_help.c:100 ../src/gebr/ui_help.c:155
 msgid "project"
 msgstr "projeto"
 
-#: ../src/gebr/document.c:278 ../src/gebr/ui_document.c:972
+#: ../src/gebr/document.c:275 ../src/gebr/ui_document.c:964
 #: ../src/gebr/ui_help.c:97 ../src/gebr/ui_help.c:159
 msgid "line"
 msgstr "linha"
 
-#: ../src/gebr/document.c:281 ../src/gebr/ui_document.c:974
+#: ../src/gebr/document.c:278 ../src/gebr/ui_document.c:966
 #: ../src/gebr/ui_help.c:94 ../src/gebr/ui_help.c:163
 msgid "flow"
 msgstr "fluxo"
 
-#: ../src/gebr/document.c:302
+#: ../src/gebr/document.c:305
 #, c-format
 msgid ""
 "The file %s could not be loaded.\n"
@@ -164,24 +172,24 @@ msgstr ""
 "O arquivo %s não pode ser carregado.\n"
 "%s"
 
-#: ../src/gebr/document.c:313
+#: ../src/gebr/document.c:316
 msgid "Ignore"
 msgstr "Ignorar"
 
-#: ../src/gebr/document.c:314 ../src/gebr/interface.c:72
+#: ../src/gebr/document.c:317 ../src/gebr/interface.c:72
 #: ../src/gebr/interface.c:96
 msgid "Export"
 msgstr "Exportar"
 
-#: ../src/gebr/document.c:316
+#: ../src/gebr/document.c:319
 msgid "Delete"
 msgstr "Apagar"
 
-#: ../src/gebr/document.c:326
+#: ../src/gebr/document.c:329
 msgid "Choose filename to export"
 msgstr "Escolha o nome do arquivo para exportar"
 
-#: ../src/gebr/document.c:339
+#: ../src/gebr/document.c:342
 #, c-format
 msgid ""
 "Failed to export file '%s':\n"
@@ -190,15 +198,15 @@ msgstr ""
 "Falha ao exportar o arquivo '%s':\n"
 "%s."
 
-#: ../src/gebr/document.c:363
+#: ../src/gebr/document.c:366
 msgid "Orphans lines"
 msgstr "Linhas órfans"
 
-#: ../src/gebr/document.c:381 ../src/gebr/document.c:395
+#: ../src/gebr/document.c:384 ../src/gebr/document.c:398
 msgid "Orphans flows"
 msgstr "Fluxos órfãos"
 
-#: ../src/gebr/document.c:441
+#: ../src/gebr/document.c:444
 #, c-format
 msgid "Failed to save document '%s' file at '%s'."
 msgstr "Falha ao salvar o documento '%s' em '%s'."
@@ -589,24 +597,24 @@ msgid "Show component's help"
 msgstr "Exibir ajuda do componente"
 
 #: ../src/gebr/interface.c:117
-msgid "Delete menu"
-msgstr "Apagar menu"
+msgid "Delete program"
+msgstr "Deletar programa"
 
 #: ../src/gebr/interface.c:119
-msgid "Edit menu parameters"
-msgstr "Editar parâmetros do menu"
+msgid "Edit program parameters"
+msgstr "Editar parâmetros do programa"
 
 #: ../src/gebr/interface.c:121
 msgid "Refresh available components list"
 msgstr "Atualizar lista de componentes disponível"
 
 #: ../src/gebr/interface.c:123
-msgid "Copy selected menu(s) to clipboard"
-msgstr "Copiar menu(s) selecionado(s) para a área de transferência"
+msgid "Copy selected programs(s) to clipboard"
+msgstr "Copiar programas(s) selecionado(s) para a área de transferência"
 
 #: ../src/gebr/interface.c:125
-msgid "Paste menus(s) from clipboard"
-msgstr "Colar menu(s) da área de transferência"
+msgid "Paste program(s) from clipboard"
+msgstr "Colar programa(s) da área de transferência"
 
 #: ../src/gebr/interface.c:126
 msgid "Move to Top"
@@ -1211,12 +1219,12 @@ msgstr "Verifique a configuração dos parâmetros"
 msgid "Save the current document"
 msgstr "Salvar o documento atual"
 
-#: ../src/gebr/ui_help.c:109
+#: ../src/gebr/ui_help.c:107 ../src/gebr/ui_help.c:177
 #, c-format
 msgid "Report of the %s \"%s\""
 msgstr "Relatório de %s \"%s\""
 
-#: ../src/gebr/ui_help.c:111
+#: ../src/gebr/ui_help.c:109 ../src/gebr/ui_help.c:179
 #, c-format
 msgid "Report of the %s"
 msgstr "Relatório de %s"
@@ -1229,11 +1237,11 @@ msgstr "programa"
 msgid "Program help"
 msgstr "Ajuda do programa"
 
-#: ../src/gebr/ui_help.c:254 ../src/gebr/ui_help.c:275
+#: ../src/gebr/ui_help.c:242 ../src/gebr/ui_help.c:260
 msgid "Unable to create temporary file."
 msgstr "Impossível escrever arquivo temporário."
 
-#: ../src/gebr/ui_help.c:265
+#: ../src/gebr/ui_help.c:251
 msgid "Error during editor execution."
 msgstr "Erro durate a execução do editor."
 
@@ -1651,6 +1659,15 @@ msgstr ""
 #: ../src/gebr/ui_server.c:486
 msgid "Select server"
 msgstr "Selecione um servidor"
+
+#~ msgid "Delete menu"
+#~ msgstr "Apagar menu"
+
+#~ msgid "Copy selected menu(s) to clipboard"
+#~ msgstr "Copiar menu(s) selecionado(s) para a área de transferência"
+
+#~ msgid "Paste menus(s) from clipboard"
+#~ msgstr "Colar menu(s) da área de transferência"
 
 #~ msgid "Move Down"
 #~ msgstr "Mover para baixo"

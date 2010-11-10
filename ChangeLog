@@ -1,14 +1,1524 @@
-2010-07-16  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+2010-11-09  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
+	* Update version to 0.9.19.
+	* Last minute translations.
+
+2010-11-09  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Little translation fix
+
+2010-11-09  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Removed "(null)" from line report, when it don't have user defined
+	flow report
+
+2010-11-09  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Correct gettext package parameter
+
+2010-11-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug with GebrHelpEditWidget implementation of set_content
+	(Fixes issue 706)
+
+2010-11-09  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Title wasn't used in invalid document dialog
+
+2010-11-09  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Changed flow edition tooltip to use "programs" instead of "menus".
+
+2010-11-09  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Added gebr_help_set_on_xml for common help set between internal and
+	external editor and the corresponding UI changes
+
+2010-11-09  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Removing "onClick return false;" snippets from debr js file
+	* Don't free GebrComTerminalProcess or GebrCommProcess on read
+	callback.
+	* Include "const" identifier to solve some warning messages
+
+2010-11-09  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* On flow report, fixed parameters table behavior when program does
+	not have parameters.
+
+2010-10-28  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Fixes lack of file:// protocol
+	* DéBR icon updated in desktop
+	* DéBR icons
+
+2010-10-26  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Update issue 689
+
+2010-10-26  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Fancy style added
+	* Report css update
+	* Some minor CSS fixes
+	* First version for CSS for line and flow reports
+
+2010-10-25  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The menu name was added at the warning message.
+
+2010-10-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added AM_SILENT_RULES to configure.ac files
+	* Added ENTER keybinding to line paths widget in GêBR
+	* Added an error dialog when trying to install an invalid menu
+	* Added ENTER keypress behavior to Enums sequence editor
+
+2010-11-09  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Don't escape editor on the command line
+
+2010-10-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* ENTER key adds items into some list widget (Fixes issue 639)
+
+2010-11-08  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Fixed error on internacionalization string.
+
+2010-10-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Pressing ENTER in the category sequence edit selects its text
+
+2010-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changed title from HTML Viewer widget (Fixes issue 689)
+
+2010-10-22  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Recovering some badly applied merge
+
+2010-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed 'const' modifier from get_realted_object function of
+	HtmlViewer class
+
+2010-10-22  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Implemented checks for duplicated category on added and renamed
+	category.
+
+2010-11-08  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Fixed wrong pt_BR translation for debr status message.
+
+2010-10-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added 'activate' signal to categories sequence edit (Fixes issue
+	637)
+
+2010-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Included GtkDoc file into .hgignore
+
+2010-10-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Adding menu to flows also adds their categories (Fixes issue 554)
+
+2010-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changed the title for DeBR help edit windows
+
+2010-10-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Some modifications into project.vimrc
+
+2010-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added a function for inspecting the current object of a HtmlViewer
+
+2010-10-22  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Fixed "false rename" on line paths
+
+2010-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug with about dialog signals (Fixes issue 707)
+
+2010-10-21  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* A message about, report merged between two revisions, was created.
+
+2010-11-08  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Include string quotation when compose command line to be executed to
+	shell, fixes the external editor crash. (Fixes issue 709)
+
+2010-10-21  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* When a revision are created or deleted the Flow Browser Detail panel
+	is updated.
+
+2010-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed some bugs with link navigation in HTML viewer class (Fixes
+	issue 706)
+
+2010-10-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Updated .hgignore
+
+2010-11-05  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Changed tooltips of "Flow Edition" tab toolbar to "menus" instead of
+	"components".
+
+2010-10-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added description to Comm, GeoXml and Gui parts
+	* Reordered some indexes in GtkDoc
+
+2010-11-05  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Replace old-fashioned getenv("HOME") by g_get_home_dir().
+
+2010-10-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed libgebr-overrides.txt from GtkDoc configuration files
+
+2010-11-05  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Updated html template generator title, removed "GêBR -" from title.
+
+2010-11-05  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Navigation was disabled when it came from HELP EDIT widget.
+
+2010-10-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added files for GtkDoc generation
+
+2010-11-04  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Added "(Imported)" on imported flow title. (Fixes issue 700)
+
+2010-10-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed old GtkDoc directories
+	* Filled GtkDoc stub makefile with GeBR specific settings
+
+2010-11-04  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Bringing back NANOVERSION to use
+
+2010-11-04  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Update issue 703
+
+2010-10-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added stub make file for 'libgebr' folder; removed other docs
+	folders from build
+
+2010-11-04  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Bringing on_navigate_requested from HTML_VIEWER to HELP_EDIT class
+
+2010-11-04  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Don't run mv * if the directory has no files.
+
+2010-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug with NULL string in detailed report
+
+2010-11-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.9.18 for changeset 80304293adec
+
+2010-10-20  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Line breaks included to turn readable
+
+2010-11-03  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* On saving an untitled menu, with the help edit window in the preview
+	mode, the revert button stay insensitive.
+
+2010-10-20  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Included on report recovered from old revision, Comment and Date
+
+2010-10-28  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Disable help context option if there is help in the selected menu.
+
+2010-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* When recovering a revision, merge helps and delete the revision help
+
+2010-10-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed some bugs with Revert button in DeBR's help edit
+
+2010-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Flow revisions no longer contains help
+
+2010-10-28  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Credits updated
+
+2010-10-20  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Implemented the number of flow revision on Details window
+
+2010-10-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed version number to 0.9.18.
+
+2010-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Using the /share/libgebr/styles folder for searching styles sheets
+
+2010-10-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.9.18 for internal tests.
+
+2010-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added gebr-report.css
+
+2010-10-28  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Included Priscila and Renan as developers
+
+2010-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug when retrieving the detailed report stylesheet
+
+2010-10-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a crash when editing helps in DeBR (Fixes issue 674)
+
+2010-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added list of flows in line's detailed report
+
+2010-10-28  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Included "last translator" information
+
+2010-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed the sensitiveness for the detailed report buttons
+
+2010-10-28  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The daemon internationalization
+
+2010-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added another detailed report action for project&lines
+
+2010-10-28  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The hole libgebr internationalization
+
+2010-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed more bugs in detailed report
+
+2010-10-28  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Last translations made on DéBR files
+
+2010-10-20  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The "generate detailed report" button, was changed to become
+	sensitive if a Line and a Flow was selected
+
+2010-10-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Using the new path comparison function when generating GêBR menu's
+	index
+
+2010-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Various bugs related to detailed report fixed
+
+2010-10-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added function for comparing system paths for equality
+
+2010-10-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed detailed line report generation
+
+2010-10-27  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Part of DéBR internationalization was done
+
+2010-10-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed detailed report for flow to meet the new requirements
+
+2010-10-19  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* First changes related to Create dialog to generate report.
+
+2010-10-26  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Update issue 688
+
+2010-10-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added setter method for 'path' member into StylesCombo
+	* Added GebrGuiStylesCombo widget
+
+2010-10-26  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Some internationalization for GêBR binary
+
+2010-10-26  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Update issue 685
+
+2010-10-26  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Remove some debugging messages
+
+2010-10-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added save button to HtmlViewerWindow (Fixes issue 676)
+
+2010-10-26  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Report viewer stay sensitive after report edit
+
+2010-10-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added gebr_gui_html_viewer_widget_get_html function
+
+2010-10-26  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* View/Edit buttons for program help, are moved to window bottom.
+
+2010-10-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Eliminated deprecated use of AM_INIT_AUTOMAKE
+
+2010-10-15  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* CSS update
+
+2010-10-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed Json from GêBR
+
+2010-10-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* It is now impossible to rename line paths to duplicate ones (Fixes
+	issue 619)
+
+2010-10-15  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug when generating detailed report for Lines (Fixes issue
+	513)
+
+2010-10-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added large title for gebr message dialogs
+	* Fixed some marshalers bugs in Makefile.am
+
+2010-10-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug with 'Configure' action in GêBR
+
+2010-10-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug where line paths were being shown in Flows property
+	dialog
+
+2010-10-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed the input/output/error bug in flow dump
+
+2010-10-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added warning for directories which can not be created when
+	importing a line
+	* Fixed SPACE keybinding for GêBR
+
+2010-10-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed setting help to empy when closing a help edit window
+	* Set help to empty when closing a help edit window with no content,
+	in DeBR
+
+2010-10-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added title for the help edit window in GêBR
+
+2010-10-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added default response for IO dialog in GêBR
+	* Fixed a bug that the flow details were not being updated
+
+2010-10-06  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The "full report was generated every time", was corrected
+
+2010-10-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Set _activates_default for FileEntry widgets in input/output/error
+	dialog, in GêBR
+	* Added a function to set activates_default in GebrGuiFileEntry widget
+
+2010-10-06  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* If line has no paths the section was not shown
+
+2010-10-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug with the revert button for programs in DéBR
+
+2010-10-06  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Included the Line's path on detailed report
+
+2010-10-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug with promotion of DTD 0.3.5 to 0.3.6
+
+2010-10-05  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Line Report detailed implemented
+
+2010-10-07  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Only show Imported for line/project (reverted old code)
+
+2010-10-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed the generation of the parameter/value table and header for
+	Flows
+
+2010-10-07  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Cache on save program paste
+
+2010-10-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added list of programs in gebr_flow_generate_header
+
+2010-10-07  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Don't free imported flow (kept on cache)
+
+2010-10-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added title for the help edit window in GêBR
+
+2010-10-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Created gebr_flow_get_detailed_report function method
+
+2010-10-07  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Fixed cancel click on Create Menu from Flow
+
+2010-10-05  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The custom tab offers the simplified report to be printed
+
+2010-10-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* The HTML viewer window title is now properly set (Fixes issue 654)
+
+2010-10-04  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Custom Tab user interface, uniformed on line and flow report.
+
+2010-10-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* The title-ready signal only emits the HTML title
+	* Removed title parameter for gebr_gui_html_viewer_window_new method
+
+2010-10-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Implemented the "bold" behavior for Space hotkey in GêBR
+
+2010-10-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added title into DéBR due to the previous change on
+	HtmlViewerWindow
+
+2010-10-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed button for changing the state of a program
+
+2010-10-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed the title-ready signal from HtmlViewerWidget (Fixes issue
+	653)
+
+2010-10-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug with multiples selection of programs and their states in
+	GêBR (Fixes issue 594)
+
+2010-10-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug that saving a report in GêBR was not possible
+
+2010-09-27  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* CSS fix for wrong csslint identation
+
+2010-10-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed <Space> keybinding for GêBR
+
+2010-09-24  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Leaving menu out of print callback
+	* Checks if the document is a program
+
+2010-10-05  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Update issue 628
+
+2010-10-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug with Space keybinding in GêBR
+
+2010-10-05  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Update issue 628
+
+2010-09-24  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Some markup for print widget
+
+2010-10-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed some warnings and erroneous call of gebr_libinit
+
+2010-09-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changed gebr_help_show to insert custom tabs and generate detailed
+	reports
+
+2010-10-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug with filenames in DeBR
+
+2010-09-24  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Created the function to generate the Header for Line documents
+
+2010-10-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Ported the keybindings for Flow Edition into branch 0.9.18
+
+2010-09-24  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Custom tabs created and saved to config file
+
+2010-10-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Update Refresh and Revert sensitiveness when previewing in a Help
+	Edit Window, in DeBR
+
+2010-09-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added 'print-requested' signal into GebrGuiHtmlViewerWidget class
+
+2010-10-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changed the default label for PreviewAction in HelpEditWindow
+
+2010-09-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Created custom tab for print dialog in project_line module
+
+2010-10-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Synchronize Revert button for never-saved menus (Fixes issue 655)
+
+2010-09-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Created a convinience function for getting <style>s
+
+2010-10-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Refresh button in DeBR help edit window gets insensitive
+
+2010-09-23  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Custom tabs created at print report dialog. (Updates issue 581)
+
+2010-10-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added a 'content-loaded' signal into GebrGuiHelpEditWidget class
+
+2010-09-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added function for fetching inner html of <body> tags
+
+2010-10-01  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Crash on editing a help came from a new menu
+
+2010-09-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added method to extract all <style> and <link> from an html
+
+2010-10-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed debugging messages
+
+2010-09-23  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Detailed report done and flow dump recovered. (Fixes issue
+	577)(Fixes issue 580)
+
+2010-10-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Refresh action in DeBR inserts HTML template when content is empty
+	(Fixes issue 608)
+
+2010-09-22  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Included Input and Output files and some beautifier. (Fixes issue
+	587).
+
+2010-10-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added function debr_help_edit_widget_is_content_empty into
+	DebrHelpEditWidget
+
+2010-09-22  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Included CSS support to Flow Dump. (Update issue 587).
+
+2010-10-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed Revert button for programs (Fixes issue 607)
+
+2010-09-22  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Date report changed from flow creation date to dump creation date.
+	Update issue 587.
+
+2010-09-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added states for HelpEditWidget class
+
+2010-09-22  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Improved the email on Dump report, with surrounding brackets
+	* Solved the date and message i18n.
+
+2010-09-30  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Don't free flows of an imported line as they are cached
+
+2010-10-01  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Syncing when a help edit window stay opened during the save process
+	of an untitled menu, was done
+
+2010-09-22  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Created the Header Generated function to be used at Dump button
+	report. Fixes issue 582.
+
+2010-09-30  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* When a Help Edit Window has the xmlpointer changed, the sync process
+	doesn't removes the old key of the Hash Table.
+
+2010-09-21  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Removed lib copying from static package script
+
+2010-09-28  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Show diretories to be created on the dialog
+
+2010-09-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* The detailed report button shows the table!
+
+2010-09-28  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Fix duplicate add of line path
+
+2010-09-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added gebr_flow_generate_parameter_value_table
+
+2010-09-28  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* renamed GebrGuiGtkDirectoryChooser to GebrGuiDirectoryChooser
+
+2010-09-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a typo bug in interface.c in GeBR
+
+2010-09-28  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* renamed GtkSequenceEdit to GebrGuiSequenceEdit
+
+2010-09-21  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* HTML_HOLDER defined as the root html document.
+
+2010-09-28  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* LibGeBRGui filenames refactoring
+
+2010-09-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added a detailed flow report button in GeBR
+
+2010-09-23  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* NULLify pointer after free
+
+2010-09-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed html_viewer_window_new signature to conform with its header
+	signature
+
+2010-09-23  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Index XMLs by filename to avoid concurrency problems
+
+2010-09-20  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Changed the signature of the setter from Window and Widget class to
+	set custom tab, from widget to callback
+
+2010-09-23  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Removed vestigial code that was causing a warning
+	* Fix import of lines without paths and check if directories exist
+	before prompting to create them
+
+2010-09-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added type checking for GebrGuiHelpEditWidget class
+
+2010-09-20  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Created the setter function to HtmlViewer Widget and Window to set
+	custom tab.
+
+2010-09-23  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Fix import of project/line/flow not to free memory of documents.
+
+2010-09-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changed GebrGuiHtmlViewerWidget to use GtkPrintOperation
+
+2010-09-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Feature freeze for 0.9.18 release (Fixes issue 560).
+
+2010-09-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GeBR documents are loaded on demand and freed when the app quits
+
+2010-09-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added a return value for gebr_gui_help_edit_window_quit function
+
+2010-09-17  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The multiple selection program problem when the context menu was
+	used, is fixed. Fixes issue 466
+
+2010-09-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Get project version details from repository and displays libgebr
+	version with program version.
+
+2010-09-14  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Update issue 465
+
+2010-09-16  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Included key binding at flow edition widget. Updates issue 466.
+
+2010-09-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed revert button for programs in DeBR
+
+2010-09-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed 'Jump To' menu generation
+
+2010-09-13  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Kill feature on "job control" notebook was repaired, reverting to
+	previous code. (Fixes issue 491)
+
+2010-09-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added confirmation window for revert button
+
+2010-09-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug where reverting the help of a menu, crashed DeBR
+	* Fixed a bug where deleting a program would not destroy its help edit
+	window
+	* Created gebr_geoxml_parameter_group_set_exclusive and is_exclusive
+	(Fixes issue 536)
+	* Fixed hotkey clashing between menu_close and validate_close (Fixes
+	issue 515)
+
+2010-09-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changed the way we get the page title in HtmlViewerWidget to work in
+	Jaunty
+	* Revert button in DeBR's help edit window is now functioning (Fixes
+	issue 549)
+	* Backing up menu's help in menu_load_iter function
+	* Added HELP_BACKUP column to menu's and program's tree model
+	* Added autosave when window loses focus (Fixes issue 548)
+
+2010-09-09  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Fixing a bug when CTRL-Q or QUIT was clicked
+
+2010-09-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* HtmlViewerWindow gets its title updated (Fixes issue 457)
+	* Created Help Edit window for DeBR and added Jump To menu
+
+2010-09-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changed debr_remove_help_edit_window signature
+	* Changed GeBR to use the new HelpEditWindow class
+	* Added a hash table in GeBR for holding help edit windows
+	* Changed GebrHelpEditWidget to use finalize instead of destroy
+	callback
+	* Changed HelpEditWindow class to use GtkUIManager
+	* Changed destroy callback to finalize callback
+
+2010-09-09  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Finally, when the "Edit" link is clicked, the Help Edit window is
+	launched. (Fixes issue 545)
+
+2010-09-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed destroy callback from HtmlViewerWindow class
+
+2010-09-09  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Fixed some erroneous includes in geoxml
+
+2010-09-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed destroy callback from HtmlViewerWidget class
+
+2010-09-09  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Renamed DeBR's validate module to debr-validate
+
+2010-09-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed destroy callback from HelpEditWidget class
+
+2010-09-08  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Renamed validate module to gebr-geoxml-validate
+
+2010-09-02  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Validate and fix each category individually.
+
+2010-09-02  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* On installing an unsaved menu, a warning arise, saying that the menu
+	should be saved. Fixes issue 518
+
+2010-09-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changed gebr-js module name to gebr-gui-js
+
+2010-08-31  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Fixed a bug when DéBR install menu was clicked and the menu has no
+	name.
+
+2010-09-02  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Reverted last commit to recover the "overwrite on destination"
+	feature and applied the bug fix related to "a menu never saved".
+
+2010-08-30  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Proposal for unified DTD
+
+2010-08-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added warning image into 'Edit Help' button in programs tab
+	* Corrected the layout of the warning icon in Help Edit button for
+	menus
+	* Changed 'Edit help' button to contain the validate warning image
+
+2010-08-30  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* CSS support for printing layout
+
+2010-08-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added threads initialization in GeBR and DeBR
+
+2010-08-27  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* In DéBR's Menu and Program context menus, was added the View/Edit
+	Help
+
+2010-08-26  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Use menu_cleanup_iter_list on menu_close action.
+	* Added function menu_cleanup_iter_list
+	* Fixed infinite loop on flow_set_paths_to.
+	* Update issue 495
+
+2010-08-26  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Set locale to C for data generation in help (Fixes issue 486)
+
+2010-08-26  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* In GêBR's Line/Project and Flow context menus, was added the
+	View/Edit Report options
+	* At GêBr, the Edit/View Buttons are sensitive depending on Report
+	existence
+
+2010-08-25  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* At DéBr, the Edit/View Buttons are sensitive depending on Help
+	existence
+
+2010-08-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug where the HelpEditWindows Hash Table entries were not
+	being removed
+
+2010-08-24  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Call flow_set_paths_to for each flow revision.
+	* Added gebr_path_set_to for code reuse
+	* Show GeBRD version at protocol version mismatch error message.
+	* Renabled -ehelp option in menu-query
+
+2010-08-24  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added includes in eclipse project.
+	* Fixed printing in edit mode.
+	* Makes more sense a editor have a preview mode than a edit one.
+	* Disable edition buttons on preview mode.
+
+2010-08-24  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Change a range parameter widget to a GtkEntry when using a dict's
+	value
+	* Update issue 523
+
+2010-08-24  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Help Edit/View buttons was moved from GêBR to DéBR.
+
+2010-08-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Code beautification commit
+	* Fixed a bug where the exclusive parameter wasn't being set to group
+	templates
+	* Added tooltip for the print button in GebrGuiHelpEditWindow class
+	* Fixed a bug where commiting changes in a HelpEditWindow would set
+	its menu as modified
+	* Small fix in gui to take advantage of existing variable
+	* Refactored synchronization of HelpEdit Xml pointers into a function
+	* Added 'commit-request' signal into GebrGuiHelpEditWidget class
+
+2010-08-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Synchronization of Flow's xml pointer completed for HelpEditWindow's
+	* The 'geoxml-object' property of DebrHelpEdit is now settable
+	* Included gebr-gui-save-dialog.h into gui.h
+	* Added 'commit-request' signal to HelpEditWidget class in GebrGui
+	package
+	* Added tooltips for GebrGuiHelpEditWindow tool items (Fixes issue
+	507)
+
+2010-08-23  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Fixing some warnings related with validation, that arise after Help
+	Edit/View improvement
+
+2010-08-20  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* After edit a report and switch to another iter, the report content
+	was lost. (Update issue 506)
+	* The report/help edit button was removed from property context menu
+	to Details frame window as View/Edit Report. (Update issue 506)
+
+2010-08-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug where the CSS was being inserted into GeBR reports, in
+	HtmlViewer
+	* Implemented 'is_content_saved' method for GebrHelpEditWidget class
+	* Refactored some function names in ui_help.c in GeBR
+	* Fixed a bug with properties window
+
+2010-08-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed DeBR refresh callback to work with the new refresh-requested
+	signal
+	* Changed the refresh-requested signal to a more common approach
+	* Set a default size for HelpEditWindow's to 600x500
+	* Fixed a bug that when you close a menu, its programs
+	HelpEditWindow's were not destroyed
+
+2010-08-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added menu bar with shortcut links into HelpEditWindows
+
+2010-08-19  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Completed help.{js,c} removal (Fixes issue 461).
+
+2010-08-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Included a hash table to keep track of the HelpEditWindows
+
+2010-08-19  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* help.c removal: Don't use gebr_gui_help_edit on test-help
+
+2010-08-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added funcitons in HelpEditWindow to insert a menubar into the
+	window
+
+2010-08-19  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* help.c removal: Don't use gebr_gui_help_show on DeBR
+
+2010-08-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* New programs comes with 'New program %d' title
+	* Added 'Untitle menu %d' into new menus
+	* Fixed a little mistake in help.c
+
+2010-08-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Include dictionary comment only if it exists
+
+2010-08-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Help edit window's title is now set appropriately
+
+2010-08-20  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed path of debr menu install. (Fixes issue 518)
+
+2010-08-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed erroneous label for help edit button in Programs tab (Fixes
+	issue 502)
+
+2010-08-20  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Disabled dictionary for lists. (Fixes issue 471)
+
+2010-08-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Using the new HelpEditClass in DeBR
+
+2010-08-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed segfault when called with no flows.
+
+2010-08-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Included DebrHelpEditWidget class into Makefile.am
+
+2010-08-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Imported flow-dump into repository.
+
+2010-08-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Created DebrHelpEditWidget class
+
+2010-08-18  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Last bug fixes related with issue 490.
+
+2010-08-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Rolling back to old 'default.js' style
+	* Fixed a bug where a confirmation dialog was always shown in
+	GebrGuiHelpEditWindow
+
+2010-08-17  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Don't ask for a filename when importing a flow in DeBR.
+
+2010-08-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changed super type of GebrGuiHelpEditWindow from GtkDialog to
+	GtkWindow
+
+2010-08-17  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Show template values when editing a group in DeBR.
+
+2010-08-18  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Bugs Fix to "Group Edit" issues, associated with issue 490.
+
+2010-08-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Created the virtual method `is_content_saved' into
+	GebrGuiHelpEditWidget class
+
+2010-08-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug when propagating changes for group instances
+
+2010-08-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Created gebr_js_value_get_boolean function in GebrJs module
+
+2010-08-14  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Updates issue 411.
+
+2010-08-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug where signals were being connect with a NULL callback
+
+2010-08-14  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Fix regexp to replace tabs
+
+2010-08-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Moved the help edit button from the program properties dialog to
+	details view
+
+2010-08-13  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Fixes issue 411.
+
+2010-08-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug where a void function was returning FALSE
+
+2010-08-12  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Fixed use of GHashTable.
+
+2010-08-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Menu's help edit button moved from properties dialog to details view
+
+2010-08-12  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Use a GHashTable to lookup for categories when populating menus.
+
+2010-08-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added image for GebrGuiHelpEditWindow documentation
+	* Changed GêBR's properties dialog into a GtkWindow
+
+2010-08-12  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Fixed multiple level of nested categories.
+
+2010-08-10  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* CkEditor customization applied again.
+
+2010-08-12  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Check for empty categories
+
+2010-08-12  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Property label "Line Path:" changed to "Path" an some alignment
+	done.
+
+2010-08-10  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Upgraded ckeditor with upstream release 3.3.2.
+
+2010-08-10  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Move "Export as menu" from GeBR to "Create menu from flow" in DeBR
+
+2010-08-10  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The lastest code that implement the report print. (Fixes issue 497)
+	(Fixes issue 461)
+
+2010-08-10  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Update issue 431
+
+2010-08-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Removes program navigation from help edition. (Fixes issue 487)
+
+2010-08-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed `help_show' function to include the CSS for programs only
+
+2010-08-06  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Better check for file existence
+
+2010-08-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changed GeBR to use the new class, GebrGuiHelpEditWindow
+
+2010-08-06  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Grace menu updated
+
+2010-08-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changed parent type for HelpEditWindow from GtkWindow to GtkDialog
+
+2010-08-06  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* CSS update
+
+2010-08-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changed the type for the GeoXml object in GebrHelpEdit from Flow to
+	Document
+
+2010-08-04  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Suppress right justify for help menus
+
+2010-08-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added HelpEditWindow class into GebrGui package
+
+2010-08-04  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Portuguese translation updated
+
+2010-08-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Reverting an erroneous change in json-glib Makefile.am
+
+2010-08-10  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Implemented the initial part of Menu at HtmlViewer
+
+2010-08-03  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Update issue 483
+
+2010-08-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added a ScrolledWindow containing the WebView in HtmlViewerWidget
+	class (Fixes issue 496)
+
+2010-08-06  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Correcting libgebr Makefile.am
+
+2010-08-03  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Update issue 483
+	* Update issue 483
+
+2010-08-03  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Path renamed to empty string goes to XML files (Fixes issue 484)
+	(Fixes issue 446)
+
+2010-08-06  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Implemented another methods of Html Viewer Window class and the
+	related code on GêBR to replace gebr_gui_help_show. (Update issue
+	489)
+	* Implemented the Html Viewer Window class and the print method of
+	Html Viewer Widget class (Update issue 489)
+
+2010-08-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Renamed HelpEdit class to HelpEditWidget in Gebr and GebrGui
+
+2010-08-02  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Replaces outdated qtcreator by eclipse project file.
+
+2010-08-06  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Class HtmlViewerWidget implemented (Updates issue 489)
+
+2010-08-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed libgebr/src/utils.* file permissions
+
+2010-08-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* More include fixes
+	* Fixing some wrong includes
+
+2010-07-30  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* added *.orig to .hgignore
+
+2010-08-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Created GebrHelpEdit class
+
+2010-07-30  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.9.17 for changeset 5ccde4d6d604
+
+2010-08-03  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Line Path's defined at line property dialog. (Fixes issue 475)
+	(Fixes issue 446)
+
+2010-08-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Renamed 'js' module to 'gebr-js' and included it into public API
+
+2010-07-30  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Line Paths was not being saved (Fixes issue 474).
+
+2010-08-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Created get_js_context method in GebrGuiHelpEdit class
+
+2010-07-29  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Update issue 483
+
+2010-08-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Renamed the function get_edit_widget to get_web_view in
+	GebrGuiHelpEdit class
+
+2010-07-28  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Required parameter style added do ckeditor
+
+2010-08-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed typo in GebrGuiHelpEditClass definition
+
+2010-07-28  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* required parameter layout on help template updated
+
+2010-08-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed some bugs in GObject stuff
+
+2010-07-28  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* help template's content updated
+
+2010-07-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added GebrGuiHelpEdit abstract class
+
+2010-07-26  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Built files should not be in the repository.
+	* More build system fixes.
+
+2010-07-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added *.types files for GtkDoc
+	* Sorted AC_OUTPUT files in gebr/configure.ac
+	* Removes about dialog workaround for GTK 2.20.0 and later
+
+2010-07-26  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Older automake does not support space in assign.
+
+2010-07-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GêBR's tarball passes 'distcheck' (Fixes issue 469)
+
+2010-07-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GeBRd now loads configuration from /etc/gebr/gebrd.conf (Fixes issue
+	470)
+
+2010-07-23  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The project tree view, doesn't change after a preference change.
+	(Fixes issue 467)
+	* The custom editor was left blank when the built-in was selected
+	(Fixes issue 468)
+
+2010-07-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Missing flag.
+	* The make distcheck shall pass.
+
+2010-07-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Examples in gebrd/doc are more complete (Fixes issue 328)
+
+2010-07-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Included an MPI example into GeBRd's examples
+
+2010-07-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changed init_script and end_script to init_cmd and end_cmd (Fixes
+	issue 460)
+	* Included the ui specification into EXTRA_DIST
+
+2010-07-20  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Daemon checks if GêBR version was up to date, and otherwise reports
+	error message (Fixes issue 456)
+
+2010-07-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed typo with --enable-tests.
+
+2010-07-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed userdoc install.
+	* Added tag 0.9.17 for changeset 7b11f9b0fa13
+	* Release 0.9.17. (Fixes issue 366)
 	* Protocol version has changed from last release.
 
-2010-07-16  Ian Liu Rodrigues <ian.liu@gebrproject.com>
+2010-07-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 
+	* Removed 'EXTRA_DIST' from Automake.am files from GeBR and DeBR doc/
 	* Saving a menu on top of another validated menu, removes that
 	validation
 	* Fixed a bug when validating & saving a newly created menu
 
-2010-07-16  Fabrício Matheus Gonçalvez <fmatheus@gebrproject.com>
+2010-07-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Disabled gtk_test on lenny.
 

@@ -50,6 +50,12 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document);
  */
 gchar * gebr_generate_report(const gchar * title, const gchar * styles, const gchar * header, const gchar * table);
 
+/**
+ * Set \p help on XML and enable/disable "View help" accordingly
+ */
+void gebr_help_set_on_xml(GebrGeoXmlDocument *document, const gchar *help);
+
+
 G_END_DECLS
 
 #endif				//__UI_HELP_H

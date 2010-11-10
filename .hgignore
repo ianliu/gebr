@@ -8,6 +8,7 @@ syntax: glob
 *.lo
 *.o
 *.orig
+*.pot
 *.so
 *.stamp
 *.swp

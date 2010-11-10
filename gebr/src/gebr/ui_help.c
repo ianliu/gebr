@@ -176,9 +176,9 @@ static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, 
 	final_title = g_string_new ("");
 
 	if (strlen(obj_title) > 0)
-		g_string_printf (final_title, "Report of the %s \"%s\"", obj_name, obj_title);
+		g_string_printf (final_title, _("Report of the %s \"%s\""), obj_name, obj_title);
 	else
-		g_string_printf (final_title, "Report of the %s", obj_name);
+		g_string_printf (final_title, _("Report of the %s"), obj_name);
 
 	gtk_window_set_title (window, final_title->str);
 	g_string_free (final_title, TRUE);
@@ -258,14 +258,11 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 		fputs(prepared_html->str, html_fp);
 		fclose(html_fp);
 
-		gchar *quote1 = g_shell_quote(gebr.config.editor->str);
-		gchar *quote2 = g_shell_quote(html_path->str);
-
-		if (gebr_system("%s %s", quote1, quote2)) {
+		gchar *quote = g_shell_quote(html_path->str);
+		if (gebr_system("%s %s", gebr.config.editor->str, quote)) {
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Error during editor execution."));
 		}
-		g_free(quote1);
-		g_free(quote2);
+		g_free(quote);
 
 		/* Add file to list of files to be removed */
 		gebr.tmpfiles = g_slist_append(gebr.tmpfiles, html_path->str);
@@ -281,11 +278,25 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 			g_string_append(prepared_html, buffer);
 		fclose(html_fp);
 
-		gebr_geoxml_document_set_help(document, prepared_html->str);
+		gebr_help_set_on_xml(document, prepared_html->str);
 
-out:		g_string_free(html_path, FALSE);
+out:		g_string_free(html_path, TRUE);
 		g_string_free(prepared_html, TRUE);
 	}
+}
+
+void gebr_help_set_on_xml(GebrGeoXmlDocument *document, const gchar *help)
+{
+	gebr_geoxml_document_set_help(document, help);
+	document_save(document, TRUE, TRUE);
+
+	GtkWidget * widget;
+	if (gebr_geoxml_object_get_type(GEBR_GEOXML_OBJECT(document)) == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+		widget = gebr.ui_flow_browse->info.help_view;
+	else
+		widget = gebr.ui_project_line->info.help_view;
+
+	g_object_set(widget, "sensitive", strlen(help) ? TRUE : FALSE, NULL);
 }
 
 static void on_save_activate(GtkAction * action, GebrGuiHelpEditWidget * self)

@@ -24,6 +24,7 @@
 #include "document.h"
 #include "defines.h"
 #include "gebr.h"
+#include "ui_help.h"
 
 /*
  * HTML_HOLDER:
@@ -32,6 +33,7 @@
 #define HTML_HOLDER									\
 	"<html>"									\
 	"<head>"									\
+	"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"	\
 	"<script>"									\
 	"var menu_edition = false;"							\
 	"function onCkEditorLoadFinished() {}"						\
@@ -39,7 +41,7 @@
 	"<script src='" GEBR_HELP_EDIT_SCRIPT_PATH "ckeditor.js'>"			\
 	"</script></head>"								\
 	"<body>"									\
-	"<textarea id=\"editor\" name=\"editor\">%s</textarea>"				\
+	"<textarea id=\"editor\" name=\"editor\"></textarea>"				\
 	"<script>"									\
 	"ed = CKEDITOR.replace('editor', {"						\
 	"	fullPage:true,"								\
@@ -96,6 +98,8 @@ static void gebr_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, cons
 
 static gboolean gebr_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self);
 
+static const gchar *gebr_help_edit_widget_get_uri (GebrGuiHelpEditWidget *self);
+
 G_DEFINE_TYPE(GebrHelpEditWidget, gebr_help_edit_widget, GEBR_GUI_TYPE_HELP_EDIT_WIDGET);
 
 //==============================================================================
@@ -117,6 +121,7 @@ static void gebr_help_edit_widget_class_init(GebrHelpEditWidgetClass * klass)
 	super_class->get_content = gebr_help_edit_widget_get_content;
 	super_class->set_content = gebr_help_edit_widget_set_content;
 	super_class->is_content_saved = gebr_help_edit_widget_is_content_saved;
+	super_class->get_uri = gebr_help_edit_widget_get_uri;
 
 	/**
 	 * GebrHelpEditWidget:geoxml-document:
@@ -198,14 +203,22 @@ static void gebr_help_edit_widget_finalize(GObject * object)
  */
 static void pre_process_html(GString * html)
 {
-	// Do nothing for now ;)
+	gchar *escaped = g_strescape (html->str, NULL);
+	g_string_assign (html, escaped);
+	g_free (escaped);
 }
 
 static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrGuiHelpEditWidget * self)
 {
+	const gchar *content;
+
 	g_signal_handlers_disconnect_by_func(view,
 					     on_load_finished,
 					     self);
+
+	content = g_object_get_data (G_OBJECT (self), "content");
+	g_object_set_data (G_OBJECT (self), "content", NULL);
+	gebr_gui_help_edit_widget_set_content (self, content);
 
 	gebr_gui_help_edit_widget_set_loaded (self);
 }
@@ -215,28 +228,16 @@ static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrG
 //==============================================================================
 static void gebr_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self)
 {
-	gchar * content;
 	JSContextRef context;
 	GebrHelpEditWidgetPrivate * priv;
-	GtkWidget * widget;
-	const gchar * help;
 
 	context = gebr_gui_help_edit_widget_get_js_context(self);
 	gebr_js_evaluate(context, "ed.resetDirty();");
 
 	priv = GEBR_HELP_EDIT_WIDGET_GET_PRIVATE(self);
-	content = gebr_help_edit_widget_get_content(self);
-	gebr_geoxml_document_set_help(priv->document, content);
-	document_save(priv->document, TRUE, TRUE);
+	gchar * content = gebr_help_edit_widget_get_content(self);
+	gebr_help_set_on_xml(priv->document, content);
 	g_free(content);
-
-	if (gebr_geoxml_object_get_type(GEBR_GEOXML_OBJECT(priv->document)) == GEBR_GEOXML_OBJECT_TYPE_FLOW)
-		widget = gebr.ui_flow_browse->info.help_view;
-	else
-		widget = gebr.ui_project_line->info.help_view;
-
-	help = gebr_geoxml_document_get_help (priv->document);
-	g_object_set(widget, "sensitive", strlen(help) ? TRUE : FALSE, NULL);
 }
 
 static gchar * gebr_help_edit_widget_get_content(GebrGuiHelpEditWidget * self)
@@ -259,14 +260,18 @@ static void gebr_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, cons
 	// Executes the JavaScript code:
 	//   ed.setData(content);
 
-	gchar * script;
+	gchar *script;
+	GString *help;
 	JSContextRef context;
 
-	script = g_strdup_printf("ed.setData(%s);", content);
+	help = g_string_new (content);
+	pre_process_html (help);
+	script = g_strdup_printf ("ed.setData(\"%s\");", help->str);
 	context = gebr_gui_help_edit_widget_get_js_context(self);
 	gebr_js_evaluate(context, script);
 
-	g_free(script);
+	g_free (script);
+	g_string_free (help, TRUE);
 }
 
 static gboolean gebr_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * self)
@@ -278,14 +283,20 @@ static gboolean gebr_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * s
 	return !gebr_js_value_get_boolean(context, value);
 }
 
+static const gchar *gebr_help_edit_widget_get_uri (GebrGuiHelpEditWidget *self)
+{
+	GebrHelpEditWidgetPrivate *priv;
+
+	priv = GEBR_HELP_EDIT_WIDGET_GET_PRIVATE (self);
+	return priv->temp_file;
+}
+
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
 GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlDocument * document, const gchar * content)
 {
 	FILE * fp;
-	gchar * escaped;
-	GString * help;
 	GString * temp_file;
 	GtkWidget * web_view;
 	GebrGuiHelpEditWidget * self;
@@ -295,19 +306,10 @@ GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlDocument * document, const gchar
 			    "geoxml-document", document,
 			    NULL);
 
-	escaped = g_markup_escape_text(content, -1);
-	help = g_string_new(escaped);
 	web_view = gebr_gui_help_edit_widget_get_web_view(self);
 	temp_file = gebr_make_temp_filename("XXXXXX.html");
 	priv = GEBR_HELP_EDIT_WIDGET_GET_PRIVATE(self);
 	priv->temp_file = g_string_free(temp_file, FALSE);
-
-	g_free(escaped);
-
-	if (!help->len)
-		g_string_assign(help, " ");
-
-	pre_process_html(help);
 
 	fp = fopen(priv->temp_file, "w");
 
@@ -316,11 +318,14 @@ GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlDocument * document, const gchar
 
 	/* Return with a warning, if we could not insert content into the
 	 * temporary file */
-	g_return_val_if_fail(fprintf(fp, HTML_HOLDER, help->str) >= 0, GTK_WIDGET(self));
+	g_return_val_if_fail(fputs (HTML_HOLDER, fp) != EOF, GTK_WIDGET(self));
 
-	g_signal_connect(web_view, "load-finished", G_CALLBACK(on_load_finished), self);
+	g_object_set_data (G_OBJECT (self), "content", (gpointer) content);
 
-	g_object_set(G_OBJECT(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(web_view))),
+	g_signal_connect(web_view, "load-finished",
+			 G_CALLBACK (on_load_finished), self);
+
+	g_object_set(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(web_view)),
 		     "enable-universal-access-from-file-uris", TRUE, NULL);
 
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), priv->temp_file);

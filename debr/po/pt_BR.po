@@ -9,14 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-08 16:39-0200\n"
+"POT-Creation-Date: 2010-11-09 21:15-0200\n"
 "PO-Revision-Date: 2010-11-08 16:40-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
-"Language: \n"
 
 #. create file chooser
 #: ../src/callbacks.c:150
@@ -133,17 +133,37 @@ msgstr "Atualizar o conteúdo do editor com dados do menu"
 msgid "Revert help content to the saved state"
 msgstr "Reverter conteúdo de ajuda para a última versão salva"
 
-#: ../src/help.c:142 ../src/help.c:217
+#: ../src/help.c:143 ../src/help.c:832
+#, c-format
+msgid "Help of the program \"%s\""
+msgstr "Ajuda do programa \"%s\""
+
+#: ../src/help.c:145 ../src/help.c:834
+#, c-format
+msgid "Help of the program"
+msgstr "Ajuda do programa"
+
+#: ../src/help.c:150 ../src/help.c:838
+#, c-format
+msgid "Help of the menu \"%s\""
+msgstr "Ajuda do menu \"%s\""
+
+#: ../src/help.c:152 ../src/help.c:840
+#, c-format
+msgid "Help of the menu"
+msgstr "Ajuda do menu"
+
+#: ../src/help.c:223
 #, c-format
 msgid "Program: %s"
 msgstr "Programa: %s"
 
-#: ../src/help.c:146 ../src/help.c:220
+#: ../src/help.c:226
 #, c-format
 msgid "Menu: %s"
 msgstr "Menu: %s"
 
-#: ../src/help.c:706
+#: ../src/help.c:712
 msgid ""
 "<span font_weight='bold' size='large'>Do you really want to revert this help?"
 "</span>"
@@ -151,7 +171,7 @@ msgstr ""
 "<span font_weight='bold' size='large'>Você realmente deseja reverter esse "
 "componente?</span>"
 
-#: ../src/help.c:711
+#: ../src/help.c:717
 msgid ""
 "By choosing yes, you will lose all modifications made after the associated "
 "menu was saved."
@@ -159,15 +179,15 @@ msgstr ""
 "Ao escolher sim, serão perdidas todas as modificações feitas apóso menu ter "
 "sido salvo"
 
-#: ../src/help.c:766
+#: ../src/help.c:772
 msgid "Unable to open template. Please check your installation."
 msgstr "Não foi possível abrir o modelo. Por favor verifique sua instalação."
 
-#: ../src/help.c:877 ../src/help.c:899
+#: ../src/help.c:906 ../src/help.c:926
 msgid "Unable to create temporary file."
 msgstr "Não foi possível criar um arquivo temporário."
 
-#: ../src/help.c:889
+#: ../src/help.c:916
 msgid "Error during editor execution."
 msgstr "Erro durante a execução do editor."
 
@@ -1104,11 +1124,6 @@ msgstr "Este programa tem 1 parâmetro"
 msgid "This program has %"
 msgstr "Este programa tem %"
 
-#: ../src/program.c:708
-#, c-format
-msgid " parameters"
-msgstr "parâmetros"
-
 #: ../src/program.c:714
 msgid "Binary"
 msgstr "Binário"
@@ -1173,6 +1188,9 @@ msgstr ""
 #: ../src/menu-dialog-save-ui.glade.h:4
 msgid "Select the menus you want to save:"
 msgstr "Selecione os menus que você deseja salvar:"
+
+#~ msgid " parameters"
+#~ msgstr "parâmetros"
 
 #~ msgid "Failed to install menu %s"
 #~ msgstr "Falha ao instalar o menu '%s'"

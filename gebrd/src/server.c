@@ -249,7 +249,6 @@ gboolean server_parse_client_messages(struct client *client)
 				goto err;
 
 			if (client->server_location == GEBR_COMM_SERVER_LOCATION_REMOTE) {
-				GString *cmd_line;
 				guint16 display;
 
 				/* figure out a free display */
@@ -267,7 +266,8 @@ gboolean server_parse_client_messages(struct client *client)
 					/* failed to add X11 authorization */
 					if (i == 5)
 						g_string_assign(display_port, "0");
-					gebrd_message(GEBR_LOG_DEBUG, "xauth ran: %s", cmd_line->str);
+
+					gebrd_message(GEBR_LOG_DEBUG, "xauth authorized");
 				} else
 					g_string_assign(client->display, "");
 			} else {

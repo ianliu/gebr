@@ -49,6 +49,7 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
                 "  Gabriel Sobral <sobral@gebrproject.com>",
 		"  Ian Liu Rodrigues <ian.liu@gebrproject.com>",
                 "  Jorge Pizzolatto <jorge.pzt@gebrproject.com>",
+                "  Luis Alberto D'Afonseca <luis.dafonseca@gebrproject.com>",
 		"  Priscila Morais <pris.moraiss@gebrproject.com>",
 		"  Renan Giarola <renangiarola@gebrproject.com>",
                 " ",

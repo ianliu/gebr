@@ -74,10 +74,6 @@ document.oncontextmenu = function() {
 	return false;
 }
 
-document.onclick = function() {
-	return false;
-}
-
 /**
  * generateNavigationIndex:
  * Generate the navigation index menu with a link to all headers from @doc.
