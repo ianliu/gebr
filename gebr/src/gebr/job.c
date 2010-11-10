@@ -87,7 +87,7 @@ struct job *job_add(struct server *server, GString * jid,
 	job->hostname = g_string_new(hostname == NULL ? local_hostname : hostname->str);
 	job->issues = g_string_new(issues->str);
 	job->cmd_line = g_string_new(cmd_line->str);
-	job->output = g_string_new(output->str);
+	job->output = g_string_new(NULL);
 	job->queue = g_string_new(queue->str); 
 	job->moab_jid = g_string_new(moab_jid->str);
 
@@ -147,6 +147,7 @@ struct job *job_add(struct server *server, GString * jid,
 			   JC_IS_JOB, TRUE,
 			   -1);
 	job->iter = iter;
+	job_append_output(job, output);
 	job_set_active(job);
 
 	return job;
