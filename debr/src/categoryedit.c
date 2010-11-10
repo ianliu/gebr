@@ -505,7 +505,8 @@ static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gcha
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
 		gchar *i_categ;
 		gtk_tree_model_get(model, &iter, 0, &i_categ, -1);
-		if (!strcmp(i_categ, category)) {
+
+		if (!g_utf8_collate(i_categ, category)) {
 			gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(sequence_edit->tree_view), &iter);
 			retval = TRUE;
 		}
