@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-10 17:15-0200\n"
-"PO-Revision-Date: 2010-11-10 17:40-0200\n"
+"POT-Creation-Date: 2010-11-11 01:21-0200\n"
+"PO-Revision-Date: 2010-11-11 01:22-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -79,8 +79,8 @@ msgstr "Servidor '%s' informou erro '%s'."
 msgid "Immediately"
 msgstr "Imediatamente"
 
-#: ../src/gebr/client.c:86 ../src/gebr/job.c:128 ../src/gebr/job.c:373
-#: ../src/gebr/job.c:383
+#: ../src/gebr/client.c:86 ../src/gebr/job.c:128 ../src/gebr/job.c:374
+#: ../src/gebr/job.c:384
 #, c-format
 msgid "At '%s'"
 msgstr "Em '%s'"
@@ -299,11 +299,11 @@ msgstr "Criar um comentário para este estado:"
 
 #: ../src/gebr/flow.c:593
 msgid "Could not paste flow. It was probably deleted."
-msgstr "Não foi possível colar componente."
+msgstr "Não foi possível colar o fluxo. Provavelmente ele foi apagado."
 
 #: ../src/gebr/flow.c:625
-msgid "Could not paste component."
-msgstr "Não foi possível colar componente."
+msgid "Could not paste program."
+msgstr "Não foi possível colar programa."
 
 #: ../src/gebr/gebr.c:73
 #, c-format
@@ -474,8 +474,8 @@ msgid "Edit the report related to flow"
 msgstr "Editar o relatório relacionado ao fluxo"
 
 #: ../src/gebr/interface.c:111
-msgid "Show component's help"
-msgstr "Exibir ajuda do componente"
+msgid "Show program's help"
+msgstr "Exibe ajuda do programa"
 
 #: ../src/gebr/interface.c:113
 msgid "Delete program"
@@ -486,8 +486,8 @@ msgid "Edit program parameters"
 msgstr "Editar parâmetros do programa"
 
 #: ../src/gebr/interface.c:117
-msgid "Refresh available components list"
-msgstr "Atualizar lista de componentes disponível"
+msgid "Refresh available menu's list"
+msgstr "Atualizar lista de menus disponíveis"
 
 #: ../src/gebr/interface.c:119
 msgid "Copy selected programs(s) to clipboard"
@@ -595,25 +595,25 @@ msgstr "Depois de '%s'"
 msgid "After '%s' at '%s'"
 msgstr "Depois de '%s' em '%s'"
 
-#: ../src/gebr/job.c:187
+#: ../src/gebr/job.c:188
 #, c-format
 msgid "Can't close running job '%s'"
 msgstr "Não foi possível fechar a tarefa '%s' em execução"
 
-#: ../src/gebr/job.c:189
+#: ../src/gebr/job.c:190
 #, c-format
 msgid "Can't close queued job '%s'"
 msgstr "Não foi possível fechar a tarefa '%s' em espera"
 
-#: ../src/gebr/job.c:224 ../src/gebr/ui_flow_browse.c:290
+#: ../src/gebr/job.c:225 ../src/gebr/ui_flow_browse.c:290
 msgid "Output:"
 msgstr "Saída:"
 
-#: ../src/gebr/job.c:403 ../src/gebr/ui_job_control.c:384
+#: ../src/gebr/job.c:404 ../src/gebr/ui_job_control.c:384
 msgid "Finish date:"
 msgstr "Data de término:"
 
-#: ../src/gebr/job.c:405 ../src/gebr/ui_job_control.c:386
+#: ../src/gebr/job.c:406 ../src/gebr/ui_job_control.c:386
 msgid "Cancel date:"
 msgstr "Data de cancelamento:"
 
@@ -1079,8 +1079,8 @@ msgstr "Nenhum menu selecionado."
 
 #: ../src/gebr/ui_flow_edition.c:294
 #, c-format
-msgid "Configuring menu '%s'."
-msgstr "Configurando menu '%s'."
+msgid "Configuring program '%s'."
+msgstr "Configurando programa '%s'."
 
 #: ../src/gebr/ui_flow_edition.c:482
 msgid "Select a menu instead of a category."
@@ -1539,6 +1539,9 @@ msgstr ""
 #: ../src/gebr/ui_server.c:486
 msgid "Select server"
 msgstr "Selecione um servidor"
+
+#~ msgid "Show component's help"
+#~ msgstr "Exibir ajuda do componente"
 
 #~ msgid "Delete menu"
 #~ msgstr "Apagar menu"
