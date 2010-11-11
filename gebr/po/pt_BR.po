@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-10 23:53-0200\n"
+"POT-Creation-Date: 2010-11-11 17:05-0200\n"
 "PO-Revision-Date: 2010-11-11 00:00-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -1251,11 +1251,11 @@ msgstr "programa"
 msgid "Program help"
 msgstr "Ajuda do programa"
 
-#: ../src/gebr/ui_help.c:254 ../src/gebr/ui_help.c:272
+#: ../src/gebr/ui_help.c:253 ../src/gebr/ui_help.c:271
 msgid "Unable to create temporary file."
 msgstr "Impossível escrever arquivo temporário."
 
-#: ../src/gebr/ui_help.c:263
+#: ../src/gebr/ui_help.c:262
 msgid "Error during editor execution."
 msgstr "Erro durate a execução do editor."
 

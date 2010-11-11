@@ -18,7 +18,7 @@ include $(top_srcdir)/Makefile.decl
 if ENABLE_TESTS
 TESTSDIR=tests
 endif
-SUBDIRS = . data validate upgrade menu-diff menu-edit menu-query flow-dump doc ${TESTSDIR}
+SUBDIRS = . data validate upgrade menu-diff menu-edit menu-query flow-dump ${TESTSDIR}
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr-geoxml.pc

@@ -17,8 +17,8 @@
 # We have the following line for use by intltoolize:
 # INTLTOOL_MAKEFILE
 
-GETTEXT_PACKAGE = libgebr
-PACKAGE = libgebr
+GETTEXT_PACKAGE = gebrd
+PACKAGE = gebrd
 VERSION = @PACKAGE_VERSION@
 
 SHELL = @SHELL@
@@ -62,7 +62,7 @@ USE_LINGUAS=$(shell if test -n "$(USER_LINGUAS)" -o -n "$(LINGUAS)"; then LLINGU
 
 POFILES=$(shell LINGUAS="$(PO_LINGUAS)"; for lang in $$LINGUAS; do printf "$$lang.po "; done)
 
-DISTFILES = Makefile.in.in POTFILES.in $(POFILES)
+DISTFILES = Makefile.in POTFILES.in $(POFILES)
 EXTRA_DISTFILES = ChangeLog POTFILES.skip Makevars LINGUAS
 
 POTFILES = \
@@ -155,13 +155,8 @@ mostlyclean:
 clean: mostlyclean
 
 distclean: clean
-	rm -f Makefile Makefile.in POTFILES stamp-it
+	rm -f Makefile POTFILES stamp-it
 	rm -f *.mo *.msg *.cat *.cat.m *.gmo
-
-maintainer-clean: distclean
-	@echo "This command is intended for maintainers to use;"
-	@echo "it deletes files that may require special tools to rebuild."
-	rm -f Makefile.in.in
 
 distdir = ../$(PACKAGE)-$(VERSION)/$(subdir)
 dist distdir: $(DISTFILES)
@@ -207,7 +202,7 @@ Makefile POTFILES: stamp-it
 	  $(MAKE) stamp-it; \
 	fi
 
-stamp-it: Makefile.in.in $(top_builddir)/config.status POTFILES.in
+stamp-it: Makefile.in $(top_builddir)/config.status POTFILES.in
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/Makefile.in CONFIG_HEADERS= CONFIG_LINKS= \
 	       $(SHELL) ./config.status

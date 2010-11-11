@@ -27,7 +27,7 @@ AC_CONFIG_MACRO_DIR([m4])
 GEBR_VERSION_INFO=`echo $PACKAGE_VERSION | awk -F. '{ printf "%d:%d:%d", $0+$2, $3, $2 }'`
 AC_SUBST(GEBR_VERSION_INFO)
 
-#m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 m4_include(configure.ac.decl)
 
 AC_PROG_INSTALL
@@ -137,7 +137,7 @@ libgebr/packages/Makefile
 libgebr/packages/rpm/libgebr.fedora.spec
 libgebr/packages/rpm/libgebr.mandriva.spec
 libgebr/packages/rpm/libgebr.opensuse.spec
-libgebr/po/Makefile.in
+libgebr/po/Makefile
 libgebr/comm/Makefile
 libgebr/comm/gebr-comm.pc
 libgebr/comm/socketchannel/Makefile
@@ -146,7 +146,6 @@ libgebr/defines.h
 libgebr/gebr.pc
 libgebr/geoxml/Makefile
 libgebr/geoxml/data/Makefile
-libgebr/geoxml/doc/Makefile
 libgebr/geoxml/gebr-geoxml.pc
 libgebr/geoxml/menu-diff/Makefile
 libgebr/geoxml/menu-edit/Makefile
@@ -170,7 +169,7 @@ gebrd/Makefile
 gebrd/src/Makefile
 gebrd/src/defines.h
 gebrd/packages/Makefile
-gebrd/po/Makefile.in
+gebrd/po/Makefile
 gebrd/tests/Makefile
 gebrd/doc/Makefile
 gebr/packages/rpm/gebr.fedora.spec
@@ -185,7 +184,7 @@ gebr/src/gebr-client/Makefile
 gebr/src/gebr/Makefile
 gebr/src/gebr/tests/Makefile
 gebr/gebr.desktop
-gebr/po/Makefile.in
+gebr/po/Makefile
 gebr/doc/Makefile
 gebr/doc/userdoc/Makefile
 gebr/doc/develdoc/Makefile
@@ -199,7 +198,7 @@ debr/packages/Makefile
 debr/packages/rpm/debr.fedora.spec
 debr/packages/rpm/debr.mandriva.spec
 debr/packages/rpm/debr.opensuse.spec
-debr/po/Makefile.in
+debr/po/Makefile
 debr/src/Makefile
 debr/src/defines.h
 debr/tests/Makefile

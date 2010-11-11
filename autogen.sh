@@ -1,5 +1,5 @@
 # Generates gtk-doc.make file
 #
-mkdir m4
+mkdir -p m4
 gtkdocize
 autoreconf --install $*
