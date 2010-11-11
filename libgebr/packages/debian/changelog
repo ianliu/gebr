@@ -1,3 +1,9 @@
+libgebr (0.10.0) lenny; urgency=low
+
+  * One step closer to 1.0.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Thu, 11 Nov 2010 13:39:29 -0200
+
 libgebr (0.9.20) lenny; urgency=low
 
   * More bugs fixed and translations.

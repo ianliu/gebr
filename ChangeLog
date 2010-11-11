@@ -1,3 +1,20 @@
+2010-11-11  Ricardo Biloti  <biloti@gebrproject.com>
+
+        * DéBR icon updated
+
+2010-11-11  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+        * Enables 'Paste' in CKEditor
+
+2010-11-11  Ricardo Biloti  <biloti@gebrproject.com>
+
+        * Portuguese translation updated
+
+2010-11-10  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+        * Added tag 0.9.20 for changeset de961ffde0f3
+        * Updated ChangeLogs for 0.9.20 release.
+
 2010-11-10  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
 
 	* The "Output:" label is included before it content and the "Finish
