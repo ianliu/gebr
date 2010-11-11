@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <locale.h>
 
-#include <libgebr.h>
+#include "libgebr.h"
 
 #include "../../intl.h"
 #include "../comm/channelsocket.h"

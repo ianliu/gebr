@@ -23,14 +23,164 @@ m4_define(gebr_version, gebr_major_version.gebr_minor_version.gebr_micro_version
 
 AC_INIT([gebr], [gebr_version], [http://code.google.com/p/gebr/issues/list])
 AM_INIT_AUTOMAKE
+AC_CONFIG_MACRO_DIR([m4])
+GEBR_VERSION_INFO=`echo $PACKAGE_VERSION | awk -F. '{ printf "%d:%d:%d", $0+$2, $3, $2 }'`
+AC_SUBST(GEBR_VERSION_INFO)
 
+#m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 m4_include(configure.ac.decl)
 
-AC_CONFIG_SUBDIRS([libgebr
-		   gebrd
-		   gebr
-		   debr])
+IT_PROG_INTLTOOL
+AC_PROG_INSTALL
+AC_PROG_CC
+AM_PROG_CC_STDC
+AC_PROG_LIBTOOL
+AC_HEADER_STDC
+AM_GLIB_GNU_GETTEXT
 
-AC_CONFIG_FILES([Makefile])
+dnl Option to turn on GUI build or not (useful for servers).
+AC_ARG_ENABLE(gui, [AC_HELP_STRING([--enable-gui], [turn on GUI build])],, enable_gui=yes)
+AC_ARG_ENABLE(gui, [AC_HELP_STRING([--disable-gui], [turn off GUI elements])],, enable_gui=no)
+if test "$enable_gui" = "yes"; then
+	CONFIG_SUBDIRS="geoxml comm gui"
+	CONFIG_GUI="gui/gui/libgebr_gui.la"
+else
+	CONFIG_SUBDIRS="geoxml comm"
+fi
+AC_SUBST(CONFIG_SUBDIRS)
+AC_SUBST(CONFIG_GUI)
+
+dnl check for zlib
+AC_CHECK_LIB(z,main,, [AC_MSG_ERROR(zlib required)])
+# check for gtk-doc
+GTK_DOC_CHECK([1.11],[--flavour no-tmpl])
+dnl check for GLIB >= 2.8.0 (needed for g_access)
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.12.0],,AC_MSG_ERROR([Could not find glib >= 2.12.0]))
+AC_SUBST(GLIB_LIBS)
+AC_SUBST(GLIB_CFLAGS)
+dnl check for GOBJECT >= 2.8 (which is thread safe)
+PKG_CHECK_MODULES(GOBJECT, [gobject-2.0 >= 2.8],,AC_MSG_ERROR([Could not find gobject >= 2.8]))
+AC_SUBST(GOBJECT_LIBS)
+AC_SUBST(GOBJECT_CFLAGS)
+dnl check for GTHREAD >= 2.8 (which is thread safe)
+PKG_CHECK_MODULES(GTHREAD, [gthread-2.0 >= 2.8],,AC_MSG_ERROR([Could not find gthread >= 2.8]))
+AC_SUBST(GTHREAD_LIBS)
+AC_SUBST(GTHREAD_CFLAGS)
+dnl check for gdome >= 0.8.0 (which is thread safe)
+PKG_CHECK_MODULES(GDOME2, [gdome2 >= 0.8.0],,AC_MSG_ERROR([Could not find gdome2 >= 0.8.0]))
+AC_SUBST(GDOME2_LIBS)
+AC_SUBST(GDOME2_CFLAGS)
+dnl check for GTK
+if test "$enable_gui" = "yes"; then
+	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.12.0,,AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.12.0]))
+	AC_SUBST(GTK_LIBS)
+	AC_SUBST(GTK_CFLAGS)
+
+	PKG_CHECK_MODULES(WEBKIT, webkit-1.0,, AC_MSG_ERROR([Could not find webkitgtk]))
+	AC_SUBST(WEBKIT_CFLAGS)
+	AC_SUBST(WEBKIT_LIBS)
+fi
+
+dnl REMOVEME!!!
+dnl check for libgebr
+PKG_CHECK_MODULES(LIBGEBR, [gebr = $VERSION],,AC_MSG_ERROR([Could not find libgebr = $VERSION]))
+AC_SUBST(CFLAGS)
+AC_SUBST(LIBS)
+dnl check for libgebr_geoxml
+PKG_CHECK_MODULES(GEBR_GEOXML, [gebr-geoxml = $VERSION],,AC_MSG_ERROR([Could not find libgebr_geoxml = $VERSION]))
+AC_SUBST(GEBR_GEOXML_CFLAGS)
+AC_SUBST(GEBR_GEOXML_LIBS)
+dnl check for libgebr_gui
+PKG_CHECK_MODULES(GEBR_GUI, [gebr-gui = $VERSION],,AC_MSG_ERROR([Could not find libgebr_gui = $VERSION]))
+AC_SUBST(GEBR_GUI_CFLAGS)
+AC_SUBST(GEBR_GUI_LIBS)
+dnl check for libgebr_comm
+PKG_CHECK_MODULES(GEBR_COMM, [gebr-comm = $VERSION],,AC_MSG_ERROR([Could not find libgebr_comm = $VERSION]))
+AC_SUBST(GEBR_COMM_CFLAGS)
+AC_SUBST(GEBR_COMM_LIBS)
+
+AC_CONFIG_FILES([
+Makefile
+po/Makefile.in
+libgebr/Makefile
+libgebr/docs/Makefile
+libgebr/docs/reference/Makefile
+libgebr/docs/reference/libgebr/Makefile
+libgebr/docs/reference/libgebr/version.xml
+libgebr/packages/Makefile
+libgebr/packages/rpm/libgebr.fedora.spec
+libgebr/packages/rpm/libgebr.mandriva.spec
+libgebr/packages/rpm/libgebr.opensuse.spec
+libgebr/po/Makefile.in
+libgebr/src/Makefile
+libgebr/src/comm/Makefile
+libgebr/src/comm/gebr-comm.pc
+libgebr/src/comm/comm/Makefile
+libgebr/src/comm/socketchannel/Makefile
+libgebr/src/comm/tests/Makefile
+libgebr/src/defines.h
+libgebr/src/gebr.pc
+libgebr/src/geoxml/Makefile
+libgebr/src/geoxml/data/Makefile
+libgebr/src/geoxml/doc/Makefile
+libgebr/src/geoxml/gebr-geoxml.pc
+libgebr/src/geoxml/geoxml/Makefile
+libgebr/src/geoxml/menu-diff/Makefile
+libgebr/src/geoxml/menu-edit/Makefile
+libgebr/src/geoxml/menu-query/Makefile
+libgebr/src/geoxml/flow-dump/Makefile
+libgebr/src/geoxml/tests/Makefile
+libgebr/src/geoxml/upgrade/Makefile
+libgebr/src/geoxml/validate/Makefile
+libgebr/src/gui/Makefile
+libgebr/src/gui/ckeditor/Makefile
+libgebr/src/gui/data/Makefile
+libgebr/src/gui/gebr-gui.pc
+libgebr/src/gui/gui/Makefile
+libgebr/src/gui/icons/Makefile
+libgebr/src/gui/icons/gebr-theme/Makefile
+libgebr/src/gui/pixmaps/Makefile
+libgebr/src/gui/tests/Makefile
+gebrd/packages/rpm/gebrd.fedora.spec
+gebrd/packages/rpm/gebrd.opensuse.spec
+gebrd/packages/rpm/gebrd.mandriva.spec
+gebrd/Makefile
+gebrd/src/Makefile
+gebrd/src/defines.h
+gebrd/packages/Makefile
+gebrd/po/Makefile.in
+gebrd/tests/Makefile
+gebrd/doc/Makefile
+gebr/packages/rpm/gebr.fedora.spec
+gebr/packages/rpm/gebr.opensuse.spec
+gebr/packages/rpm/gebr.mandriva.spec
+gebr/Makefile
+gebr/menus/Makefile
+gebr/packages/Makefile
+gebr/src/Makefile 
+gebr/src/defines.h
+gebr/src/gebr-client/Makefile
+gebr/src/gebr/Makefile
+gebr/src/gebr/tests/Makefile
+gebr/gebr.desktop
+gebr/po/Makefile.in
+gebr/doc/Makefile
+gebr/doc/userdoc/Makefile
+gebr/doc/develdoc/Makefile
+debr/Makefile
+debr/data/Makefile
+debr/data/help-template.html
+debr/debr.desktop
+debr/doc/Makefile
+debr/doc/userdoc/Makefile
+debr/packages/Makefile 
+debr/packages/rpm/debr.fedora.spec
+debr/packages/rpm/debr.mandriva.spec
+debr/packages/rpm/debr.opensuse.spec
+debr/po/Makefile.in
+debr/src/Makefile
+debr/src/defines.h
+debr/tests/Makefile
+])
 
 AC_OUTPUT
