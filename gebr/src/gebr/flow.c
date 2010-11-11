@@ -622,7 +622,7 @@ void flow_program_paste(void)
 
 	pasted = GEBR_GEOXML_SEQUENCE(gebr_geoxml_clipboard_paste(GEBR_GEOXML_OBJECT(gebr.flow)));
 	if (pasted == NULL) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not paste component."));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not paste program."));
 		return;
 	}
 
