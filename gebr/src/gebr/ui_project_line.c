@@ -1079,8 +1079,8 @@ gebr_project_line_print_dialog_custom_tab()
 	gtk_widget_show(detailed_line_css_combo);
 
 	detailed_line_include_report = gtk_check_button_new_with_label(_("Include user's report"));
-	detailed_line_include_flow_report = gtk_check_button_new_with_label(_("Include flow reports"));
-	detailed_line_include_flow_params = gtk_check_button_new_with_label(_("Include parameter/value table"));
+	detailed_line_include_flow_report = gtk_check_button_new_with_label(_("Include flow report"));
+	detailed_line_include_flow_params = gtk_check_button_new_with_label(_("Include parameter table"));
 
 	g_signal_connect(detailed_line_css_combo, "changed",
 			 G_CALLBACK(on_detailed_line_css_changed), NULL);
@@ -1152,7 +1152,7 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 			       gebr_localized_date(gebr_iso_date()));
 			
 
-	g_string_append_printf (dump, "<div class=\"gebr-flows-list\">\n   <p>%s</p>\n   <ul>\n", _("Line with flow(s):"));
+	g_string_append_printf (dump, "<div class=\"gebr-flows-list\">\n   <p>%s</p>\n   <ul>\n", _("Line composed by the flow(s):"));
 	gebr_geoxml_line_get_flow (GEBR_GEOXML_LINE (document), &sequence, 0);
 	while (sequence) {
 		const gchar *fname;

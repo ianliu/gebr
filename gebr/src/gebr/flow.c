@@ -795,7 +795,7 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
 				date ? date : "");
 	g_free (date);
 
-	g_string_append_printf (dump, "<p>%s</p>\n", _("Flow with program(s):"));
+	g_string_append_printf (dump, "<p>%s</p>\n", _("Flow composed by the program(s):"));
 	g_string_append_printf (dump, "<ul>\n");
 	gebr_geoxml_flow_get_program (flow, &program, 0);
 	while (program) {
@@ -892,7 +892,7 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 		return NULL;
 	}
 
-	gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_flow_css), _("Report style"));
+	gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_flow_css), _("User's report style"));
 	filename = g_dir_read_name(directory);
 	while (filename != NULL) {
 		if (fnmatch ("*.css", filename, 1) == 0) {

@@ -308,7 +308,7 @@ void flow_browse_info_update(void)
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Error log:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.error_label), markup);
 	g_free(markup);
-	markup = g_markup_printf_escaped("<b>%s</b>", _("Flow State Number:"));
+	markup = g_markup_printf_escaped("<b>%s</b>", _("Number of flow revisions:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.rev_num_label), markup);
 	g_free(markup);
 	/* Server */
