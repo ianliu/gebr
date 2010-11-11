@@ -271,7 +271,7 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 		if (html_fp == NULL) {
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to create temporary file."));
 			goto out;
-		}
+ 		}
 		gchar buffer[1000];
 		g_string_assign(prepared_html, "");
 		while (fgets(buffer, sizeof(buffer), html_fp))
@@ -279,8 +279,11 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 		fclose(html_fp);
 
 		gebr_help_set_on_xml(document, prepared_html->str);
-
-out:		g_string_free(html_path, TRUE);
+                /* The html_path->str is not freed here since this
+                   responsability is passed to gebr.tempfiles list.
+                   This is a BAD practice and should be avoided.
+                */
+out:		g_string_free(html_path, FALSE);
 		g_string_free(prepared_html, TRUE);
 	}
 }
