@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-10 23:22-0200\n"
-"PO-Revision-Date: 2010-11-10 23:23-0200\n"
+"POT-Creation-Date: 2010-11-10 23:53-0200\n"
+"PO-Revision-Date: 2010-11-10 23:55-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -345,7 +345,7 @@ msgstr ""
 "  <td>%s</td><td>%s</td>\n"
 "</tr>\n"
 "</thead>\n"
-"<tbody>"
+"<tbody>\n"
 
 #: ../src/gebr/flow.c:706
 msgid "Parameter"
@@ -364,8 +364,8 @@ msgid "Input"
 msgstr "Entrada"
 
 #: ../src/gebr/flow.c:745 ../src/gebr/flow.c:746 ../src/gebr/flow.c:747
-#: ../src/gebr/ui_flow_browse.c:325 ../src/gebr/ui_flow_browse.c:331
-#: ../src/gebr/ui_flow_browse.c:337 ../src/gebr/ui_flow_browse.c:347
+#: ../src/gebr/ui_flow_browse.c:338 ../src/gebr/ui_flow_browse.c:344
+#: ../src/gebr/ui_flow_browse.c:350
 msgid "(none)"
 msgstr "(nenhum)"
 
@@ -724,7 +724,7 @@ msgstr "Não foi possível fechar a tarefa '%s' em execução"
 msgid "Can't close queued job '%s'"
 msgstr "Não foi possível fechar a tarefa '%s' em espera"
 
-#: ../src/gebr/job.c:224 ../src/gebr/ui_flow_browse.c:305
+#: ../src/gebr/job.c:224 ../src/gebr/ui_flow_browse.c:321
 msgid "Output:"
 msgstr "Saída:"
 
@@ -1080,57 +1080,70 @@ msgstr "Este servidor está desconectado."
 msgid "Details"
 msgstr "Detalhes"
 
-#: ../src/gebr/ui_flow_browse.c:220 ../src/gebr/ui_project_line.c:176
+#: ../src/gebr/ui_flow_browse.c:214 ../src/gebr/ui_project_line.c:176
 msgid "View report"
 msgstr "Visualizar relatório"
 
-#: ../src/gebr/ui_flow_browse.c:221 ../src/gebr/ui_project_line.c:177
+#: ../src/gebr/ui_flow_browse.c:215 ../src/gebr/ui_project_line.c:177
 msgid "Edit report"
 msgstr "Editar relatório"
 
 #. Date labels
-#: ../src/gebr/ui_flow_browse.c:282 ../src/gebr/ui_project_line.c:252
+#: ../src/gebr/ui_flow_browse.c:275 ../src/gebr/ui_project_line.c:252
 msgid "Created:"
 msgstr "Criado:"
 
-#: ../src/gebr/ui_flow_browse.c:285 ../src/gebr/ui_project_line.c:255
+#: ../src/gebr/ui_flow_browse.c:278 ../src/gebr/ui_project_line.c:255
 msgid "Modified:"
 msgstr "Alterado:"
 
-#: ../src/gebr/ui_flow_browse.c:288
+#: ../src/gebr/ui_flow_browse.c:281
 msgid "Last run:"
 msgstr "Última execução:"
 
-#. I/O labels
 #: ../src/gebr/ui_flow_browse.c:299
+msgid "This flow has never had its state saved"
+msgstr "Este fluxo numca teve seu estado salvo"
+
+#: ../src/gebr/ui_flow_browse.c:302
+msgid "This flow had its state saved once"
+msgstr "Este fluxo teve seu estado salvo 1 vez"
+
+#: ../src/gebr/ui_flow_browse.c:305
+msgid "This flow had its state saved twice"
+msgstr "Este fluxo teve seu estado salvo 2 vezes"
+
+#: ../src/gebr/ui_flow_browse.c:308
+#, c-format
+msgid "This flow had its state saved %ld times"
+msgstr "Este fluxo teve seu estado salvo %ld vezes"
+
+#. I/O labels
+#: ../src/gebr/ui_flow_browse.c:315
 msgid "Server:"
 msgstr "Servidor:"
 
-#: ../src/gebr/ui_flow_browse.c:302
+#: ../src/gebr/ui_flow_browse.c:318
 msgid "Input:"
 msgstr "Entrada:"
 
-#: ../src/gebr/ui_flow_browse.c:308
+#: ../src/gebr/ui_flow_browse.c:324
 msgid "Error log:"
 msgstr "Log de erro:"
 
-#: ../src/gebr/ui_flow_browse.c:311
-msgid "Number of flow revisions:"
-msgstr "Número de revisões do fluxo:"
-
-#: ../src/gebr/ui_flow_browse.c:376
+#: ../src/gebr/ui_flow_browse.c:378
 msgid "No flow selected"
 msgstr "Nenhum fluxo selecionado"
 
-#: ../src/gebr/ui_flow_browse.c:504
+#: ../src/gebr/ui_flow_browse.c:506
 msgid "Flow report"
 msgstr "Relatório do fluxo"
 
-#: ../src/gebr/ui_flow_browse.c:607
+#: ../src/gebr/ui_flow_browse.c:609
 msgid "Backup current state?"
 msgstr "Fazer backup do estado atual?"
 
-#: ../src/gebr/ui_flow_browse.c:608
+#: ../src/gebr/ui_flow_browse.c:610
 msgid ""
 "You are about to revert to a previous state. The current flow will be lost "
 "after this action. Do you want to save the current flow state?"
@@ -1138,27 +1151,27 @@ msgstr ""
 "Você está prestes a reverter a um estado anterior. O fluxo atual será "
 "perdido depois dessa ação. Você quer salvar o estado do fluxo atual?"
 
-#: ../src/gebr/ui_flow_browse.c:620
+#: ../src/gebr/ui_flow_browse.c:622
 #, c-format
 msgid "Could not revert to state '%s' ('%s')."
 msgstr "Não foi possível reverter para o estado '%s' ('%s')."
 
-#: ../src/gebr/ui_flow_browse.c:627
+#: ../src/gebr/ui_flow_browse.c:629
 #, c-format
 msgid "Reverted to state '%s' ('%s'), and merged report to current"
 msgstr ""
 "Estado '%s' ('%s') revertido e relatório mesclado ao relatório do fluxo"
 
-#: ../src/gebr/ui_flow_browse.c:629
+#: ../src/gebr/ui_flow_browse.c:631
 #, c-format
 msgid "Reverted to state '%s' ('%s')."
 msgstr "Revertido para o estado '%s' ('%s')."
 
-#: ../src/gebr/ui_flow_browse.c:639
+#: ../src/gebr/ui_flow_browse.c:641
 msgid "Remove this revision permanently?"
 msgstr "Remover esta revisão permanentemente?"
 
-#: ../src/gebr/ui_flow_browse.c:640
+#: ../src/gebr/ui_flow_browse.c:642
 msgid ""
 "If you choose to remove this revision, you will not be able to recover it "
 "later."
@@ -1608,7 +1621,6 @@ msgid "Include parameter table"
 msgstr "Incluir tabela de parâmetros"
 
 #: ../src/gebr/ui_project_line.c:1155
-#, fuzzy
 msgid "Line composed by the flow(s):"
 msgstr "Linha composta pelo(s) fluxo(s):"
 
@@ -1669,6 +1681,12 @@ msgstr ""
 #: ../src/gebr/ui_server.c:486
 msgid "Select server"
 msgstr "Selecione um servidor"
+
+#~ msgid "Number of flow revisions:"
+#~ msgstr "Número de revisões do fluxo:"
+
+#~ msgid "no saved revisions"
+#~ msgstr "nenhuma revisão salva"
 
 #~ msgid "Line with flow(s):"
 #~ msgstr "Linha composta pelo(s) fluxo(s):"
