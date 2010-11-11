@@ -215,16 +215,15 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 	}
 	else switch (gebr_geoxml_object_get_type(object)) {
 	case GEBR_GEOXML_OBJECT_TYPE_FLOW:
-		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
-		break;
 	case GEBR_GEOXML_OBJECT_TYPE_LINE:
+	case GEBR_GEOXML_OBJECT_TYPE_PROJECT:
 		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
 		break;
 	case GEBR_GEOXML_OBJECT_TYPE_PROGRAM:
 		html = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
 		break;
 	default:
-		break;
+		g_return_if_reached ();
 	}
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
 	gtk_widget_show (window);
