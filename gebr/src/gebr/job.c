@@ -147,6 +147,7 @@ struct job *job_add(struct server *server, GString * jid,
 			   JC_IS_JOB, TRUE,
 			   -1);
 	job->iter = iter;
+	job_append_output(job, output);
 	job_set_active(job);
 
 	return job;

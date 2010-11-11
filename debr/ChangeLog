@@ -1,5 +1,62 @@
+2010-11-11  Ricardo Biloti  <biloti@gebrproject.com>
+
+        * DéBR icon updated
+
+2010-11-10  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+        * Updated ChangeLogs for 0.9.20 release.
+
+2010-11-10  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The "Output:" label is included before it content and the "Finish
+	date:" after.
+
+2010-11-10  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Fixed help viewer and editor window menu. Reviewed translations.
+
+2010-11-10  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The job output are shown after a GÊBR restart.
+
+2010-11-10  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.9.19 for changeset 3b30b382a916
+
+2010-11-10  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Fix double free on temporary file string.
+
+2010-11-10  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The validate to check if a string has the first letter lower case,
+	was changed to consider UTF-8 characters
+	* When two category differs only on the first letter by case
+	sensitiveness, it will be considered as the same. (Fixes issue 715)
+
+2010-11-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added translation to strings
+
+2010-11-10  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Changed the use of strcmp to a glib compliance function,
+	g_utf8_collate
+
+2010-11-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed json from 0.9.18 since it is not being used for a long time
+	* Avoid using webkit_web_view_get_uri for Jaunty compatibility
+
+2010-11-10  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Grace menu updated
+	* Credits updated
+
 2010-11-09  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
+	* Added tag 0.9.19 for changeset 17050f370999
+	* Updated ChangeLogs.
 	* Update version to 0.9.19.
 	* Last minute translations.
 

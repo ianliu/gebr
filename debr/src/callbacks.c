@@ -368,7 +368,7 @@ void on_menu_create_from_flow_activate(void)
 	/* 
 	 * Ask if default values should be used.
 	 */
-	use_value = gebr_gui_confirm_action_dialog(_("Default values"), _("Do you want to use your parameters' values as default values?"));
+	use_value = gebr_gui_confirm_action_dialog(_("Default values"), _("Do you want to use your parameter's values as default values?"));
 
 	/*
 	 * Flow to menu transformations.

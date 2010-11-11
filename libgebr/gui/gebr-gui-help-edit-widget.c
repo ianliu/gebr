@@ -159,7 +159,7 @@ static void gebr_gui_help_edit_widget_init(GebrGuiHelpEditWidget * self)
 #if WEBKIT_CHECK_VERSION(1,1,16)
 	WebKitWebSettings *settings;
 	settings = webkit_web_view_get_settings (WEBKIT_WEB_VIEW (priv->edit_widget));
-	g_object_set (settings, "enable-dom-paste", TRUE);
+	g_object_set (settings, "enable-dom-paste", TRUE, NULL);
 #endif
 
 	/* a reasonable minimum size, considering the toolbar */

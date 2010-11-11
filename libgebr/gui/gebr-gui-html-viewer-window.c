@@ -29,7 +29,7 @@ typedef struct _GebrGuiHtmlViewerWindowPrivate GebrGuiHtmlViewerWindowPrivate;
 
 struct _GebrGuiHtmlViewerWindowPrivate {
 	GtkWidget *viewer_widget;
-	GtkUIManager *manager;
+	GtkUIManager * manager;
 };
 
 #define GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(o) \
@@ -74,6 +74,27 @@ static gchar * uidef =
 " </menubar>"
 "</ui>";
 
+static GtkActionEntry actions[] = {
+        {"FileAction", NULL, N_("_File")},
+        {"PrintAction", GTK_STOCK_PRINT, NULL, NULL,
+                N_("Print content"), G_CALLBACK (on_print_clicked)},
+        {"QuitAction", GTK_STOCK_CLOSE, NULL, NULL,
+                N_("Quit this window"), G_CALLBACK (on_quit_clicked)}
+};
+
+static guint n_actions = G_N_ELEMENTS (actions);
+
+static gchar * uidef =
+"<ui>"
+" <menubar name='menubar'>"
+"  <menu action='FileAction'>"
+"   <menuitem action='PrintAction' />"
+"   <separator />"
+"   <menuitem action='QuitAction' />"
+"  </menu>"
+" </menubar>"
+"</ui>";
+
 //==============================================================================
 // GOBJECT RELATED FUNCTIONS						       =
 //==============================================================================
@@ -89,7 +110,7 @@ static void gebr_gui_html_viewer_window_class_init(GebrGuiHtmlViewerWindowClass 
 
 static void gebr_gui_html_viewer_window_init(GebrGuiHtmlViewerWindow * self)
 {
-	GebrGuiHtmlViewerWindowPrivate * priv;
+        GebrGuiHtmlViewerWindowPrivate * priv;
 	GtkActionGroup *group;
 	GtkWidget *vbox;
 	GtkWidget *menubar;
@@ -135,6 +156,7 @@ static void gebr_gui_html_viewer_window_finalize (GObject *object)
 
 	G_OBJECT_CLASS (gebr_gui_html_viewer_window_parent_class)->finalize (object);
 }
+
 
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
