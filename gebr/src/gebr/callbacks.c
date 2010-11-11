@@ -18,8 +18,8 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#include <libgebr/gui.h>
 #include <libgebr/intl.h>
+#include <libgebr/gui/gui.h>
 
 #include "callbacks.h"
 #include "../defines.h"

@@ -21,7 +21,7 @@
 #include <glib.h>
 
 #include <libgebr/log.h>
-#include <libgebr/geoxml.h>
+#include <libgebr/geoxml/geoxml.h>
 
 #include "streamsocket.h"
 #include "protocol.h"

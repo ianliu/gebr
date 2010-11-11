@@ -19,11 +19,11 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
-#include <libgebr/geoxml/gebr-geoxml-validate.h>
 #include <libgebr/intl.h>
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
-#include <libgebr/gui.h>
+#include <libgebr/gui/gui.h>
+#include <libgebr/geoxml/gebr-geoxml-validate.h>
 
 #include "callbacks.h"
 #include "defines.h"

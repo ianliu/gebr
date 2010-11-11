@@ -19,8 +19,8 @@
 #ifndef __GEBR_HELP_EDIT_WIDGET__
 #define __GEBR_HELP_EDIT_WIDGET__
 
-#include <libgebr/gui.h>
-#include <libgebr/geoxml.h>
+#include <libgebr/gui/gui.h>
+#include <libgebr/geoxml/geoxml.h>
 
 
 G_BEGIN_DECLS

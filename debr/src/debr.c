@@ -24,7 +24,7 @@
 #include <libgebr.h>
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
-#include <libgebr/gui.h>
+#include <libgebr/gui/gui.h>
 
 #include "debr.h"
 #include "help.h"

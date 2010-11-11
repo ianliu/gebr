@@ -21,7 +21,7 @@
 #include <glib.h>
 
 #include <libgebr/intl.h>
-#include <libgebr/geoxml.h>
+#include <libgebr/geoxml/geoxml.h>
 #include <libgebr/comm/streamsocket.h>
 #include <libgebr/comm/protocol.h>
 

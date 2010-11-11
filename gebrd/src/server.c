@@ -31,9 +31,9 @@
 
 #include <libgebr.h>
 #include <libgebr/intl.h>
-#include <libgebr/comm.h>
-#include <libgebr/geoxml.h>
 #include <libgebr/utils.h>
+#include <libgebr/comm/comm.h>
+#include <libgebr/geoxml/geoxml.h>
 
 #include <gdome.h>
 

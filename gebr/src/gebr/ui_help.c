@@ -30,7 +30,7 @@
 
 #include <libgebr/intl.h>
 #include <libgebr/utils.h>
-#include <libgebr/gui.h>
+#include <libgebr/gui/gui.h>
 
 #include "gebr-help-edit-widget.c"
 #include "ui_help.h"

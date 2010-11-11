@@ -23,7 +23,7 @@
 #include <glib/gprintf.h>
 
 #include <libgebr/intl.h>
-#include <libgebr/geoxml.h>
+#include <libgebr/geoxml/geoxml.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/gui/gebr-gui-icons.h>
 

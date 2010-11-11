@@ -26,7 +26,7 @@
 #include <gtk/gtk.h>
 
 #include <libgebr/intl.h>
-#include <libgebr/gui.h>
+#include <libgebr/gui/gui.h>
 
 #include "ui_paths.h"
 #include "gebr.h"

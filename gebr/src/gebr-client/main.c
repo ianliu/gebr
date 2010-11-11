@@ -20,8 +20,8 @@
 #include <glib.h>
 
 #include <libgebr/intl.h>
-#include <libgebr/comm.h>
 #include <libgebr/libgebr.h>
+#include <libgebr/comm/comm.h>
 
 #include "gebrclient.h"
 #include "../defines.h"

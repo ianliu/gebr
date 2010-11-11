@@ -19,7 +19,7 @@
 #define __HELP_H
 
 #include <glib.h>
-#include <libgebr/geoxml.h>
+#include <libgebr/geoxml/geoxml.h>
 
 G_BEGIN_DECLS
 

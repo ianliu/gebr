@@ -60,24 +60,20 @@ noinst_HEADERS = \
 	streamsocketprivate.h
 
 AM_CPPFLAGS = \
-	-I$(srcdir)/..		\
-	-I$(srcdir)/../geoxml	\
-	$(GLIB_CFLAGS)			\
+	$(GEBR_CFLAGS)			\
+	$(GEBR_GEOXML_CFLAGS)		\
 	$(GOBJECT_CFLAGS)		\
 	$(GTHREAD_CFLAGS)		\
-	$(JSONGLIB_CFLAGS)		\
 	@DEBUG_CFLAGS@
 
 AM_CFLAGS = -Wall -std=gnu99
 
 libgebr_comm_la_LIBADD = \
 	-lutil				\
-	../libgebr.la			\
-	../geoxml/libgebr_geoxml.la 	\
 	$(INTLLIBS)			\
-	$(GLIB_LIBS)			\
+	$(GEBR_LIBS)			\
+	$(GEBR_GEOXML_LIBS)		\
 	$(GOBJECT_LIBS)			\
-	$(GTHREAD_LIBS)			\
-	$(JSONGLIB_LIBS)
+	$(GTHREAD_LIBS)			
 
 libgebr_comm_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@

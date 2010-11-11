@@ -20,7 +20,7 @@
 #include <unistd.h>
 
 #include <libgebr/intl.h>
-#include <libgebr/gui.h>
+#include <libgebr/gui/gui.h>
 
 #include <gebr.h>
 #include <../defines.h>

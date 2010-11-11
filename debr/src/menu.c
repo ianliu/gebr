@@ -24,7 +24,7 @@
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
 #include <libgebr/validate.h>
-#include <libgebr/gui.h>
+#include <libgebr/gui/gui.h>
 
 #include "menu.h"
 #include "defines.h"

@@ -23,8 +23,8 @@
 #define __PARAMETER_H
 
 #include <gtk/gtk.h>
-#include <libgebr/geoxml.h>
 
+#include <libgebr/geoxml/geoxml.h>
 #include <libgebr/gui/gebr-gui-parameter.h>
 
 G_BEGIN_DECLS

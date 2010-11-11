@@ -23,12 +23,12 @@
 #include <gtk/gtk.h>
 
 #include <libgebr/intl.h>
-#include <libgebr/geoxml.h>
-#include <libgebr/comm.h>
-#include <libgebr/gui/gebr-gui-utils.h>
-#include <libgebr/gui/gebr-gui-save-dialog.h>
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
+#include <libgebr/geoxml/geoxml.h>
+#include <libgebr/comm/comm.h>
+#include <libgebr/gui/gebr-gui-utils.h>
+#include <libgebr/gui/gebr-gui-save-dialog.h>
 
 #include "flow.h"
 #include "line.h"

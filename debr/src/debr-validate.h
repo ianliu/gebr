@@ -23,9 +23,9 @@
 #define __DEBR_VALIDATE_H
 
 #include <gtk/gtk.h>
+
 #include <libgebr/validate.h>
-#include <libgebr/geoxml.h>
-#include <libgebr/geoxml/gebr-geoxml-validate.h>
+#include <libgebr/geoxml/geoxml.h>
 
 G_BEGIN_DECLS
 

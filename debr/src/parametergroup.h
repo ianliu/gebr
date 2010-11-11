@@ -22,7 +22,7 @@
 #ifndef __PARAMETER_GROUP_H
 #define __PARAMETER_GROUP_H
 
-#include <libgebr/geoxml.h>
+#include <libgebr/geoxml/geoxml.h>
 
 G_BEGIN_DECLS
 

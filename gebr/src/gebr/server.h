@@ -22,7 +22,7 @@
 
 #include <libgebr/comm/protocol.h>
 #include <libgebr/comm/server.h>
-#include <libgebr/geoxml.h>
+#include <libgebr/geoxml/geoxml.h>
 
 G_BEGIN_DECLS
 
