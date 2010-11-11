@@ -22,6 +22,7 @@
 
 G_BEGIN_DECLS
 
+#define GETTEXT_PACKAGE	"gebrd"
 #define GEBRD_VERSION	"@VERSION@"
 
 G_END_DECLS

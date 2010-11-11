@@ -1,5 +1,5 @@
-# GeBR - An environment for seismic processing.
-# Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+# libgebr - G�BR Library
+# Copyright (C) 2007  Br�ulio Barros de Oliveira (brauliobo@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,17 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-bin_PROGRAMS = gebr-client
+bin_PROGRAMS = gebr-comm-socketchannel
+gebr_comm_socketchannel_SOURCES = socketchannel.c
 
-gebr_client_SOURCES = main.c \
-	gebrclient.c \
-	server.c client.c
-noinst_HEADERS = \
-	gebrclient.h \
-	server.h client.h
-EXTRA_DIST = ${noinst_HEADERS}
-
-INCLUDES =
-AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
-	$(GEBR_CFLAGS) $(GEBR_MISC_CFLAGS) $(GEBR_COMM_CFLAGS)
-gebr_client_LDADD = $(GEBR_LIBS) $(GEBR_MISC_LIBS) $(GEBR_COMM_LIBS)
+INCLUDES = -I$(srcdir)/.. -I$(srcdir)/../..
+AM_CFLAGS = -Wall $(GOBJECT_CFLAGS) $(GLIB_CFLAGS)
+gebr_comm_socketchannel_LDADD = ../../libgebr.la ../libgebr_comm.la \
+				$(GOBJECT_LIBS) $(GLIB_LIBS)

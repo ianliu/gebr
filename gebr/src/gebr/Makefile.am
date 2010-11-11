@@ -86,7 +86,7 @@ EXTRA_DIST = ${noinst_HEADERS}
 
 AM_CPPFLAGS =			\
 	-I..			\
-	$(CFLAGS)		\
+	$(GEBR_CFLAGS)		\
 	$(GEBR_GEOXML_CFLAGS)	\
 	$(GEBR_COMM_CFLAGS)	\
 	$(GEBR_GUI_CFLAGS)	\
@@ -97,7 +97,7 @@ AM_CFLAGS = -Wall -std=gnu99
 
 gebr_LDADD =			\
 	libgebr.a		\
-	$(LIBS)			\
+	$(GEBR_LIBS)		\
 	$(GEBR_GEOXML_LIBS)	\
 	$(GEBR_COMM_LIBS)	\
 	$(GEBR_GUI_LIBS)	\
