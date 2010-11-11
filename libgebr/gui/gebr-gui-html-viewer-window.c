@@ -74,27 +74,6 @@ static gchar * uidef =
 " </menubar>"
 "</ui>";
 
-static GtkActionEntry actions[] = {
-        {"FileAction", NULL, N_("_File")},
-        {"PrintAction", GTK_STOCK_PRINT, NULL, NULL,
-                N_("Print content"), G_CALLBACK (on_print_clicked)},
-        {"QuitAction", GTK_STOCK_CLOSE, NULL, NULL,
-                N_("Quit this window"), G_CALLBACK (on_quit_clicked)}
-};
-
-static guint n_actions = G_N_ELEMENTS (actions);
-
-static gchar * uidef =
-"<ui>"
-" <menubar name='menubar'>"
-"  <menu action='FileAction'>"
-"   <menuitem action='PrintAction' />"
-"   <separator />"
-"   <menuitem action='QuitAction' />"
-"  </menu>"
-" </menubar>"
-"</ui>";
-
 //==============================================================================
 // GOBJECT RELATED FUNCTIONS						       =
 //==============================================================================
