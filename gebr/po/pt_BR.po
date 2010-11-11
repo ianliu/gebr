@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-11-10 23:53-0200\n"
-"PO-Revision-Date: 2010-11-10 23:55-0200\n"
+"PO-Revision-Date: 2010-11-11 00:00-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -1103,7 +1103,7 @@ msgstr "Última execução:"
 
 #: ../src/gebr/ui_flow_browse.c:299
 msgid "This flow has never had its state saved"
-msgstr "Este fluxo numca teve seu estado salvo"
+msgstr "Este fluxo nunca teve seu estado salvo"
 
 #: ../src/gebr/ui_flow_browse.c:302
 msgid "This flow had its state saved once"
