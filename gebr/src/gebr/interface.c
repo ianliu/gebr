@@ -112,13 +112,13 @@ static const GtkActionEntry actions_entries[] = {
 	 * Flow Edition
 	 */
 	{"flow_edition_help", GTK_STOCK_HELP, NULL,
-		NULL, N_("Show component's help"), G_CALLBACK(on_flow_component_help_activate)},
+		NULL, N_("Show program's help"), G_CALLBACK(on_flow_component_help_activate)},
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL,
 		"Delete", N_("Delete program"), G_CALLBACK(on_flow_component_delete_activate)},
 	{"flow_edition_properties", GTK_STOCK_PROPERTIES, NULL,
 		NULL, N_("Edit program parameters"), G_CALLBACK(on_flow_component_properties_activate)},
 	{"flow_edition_refresh", GTK_STOCK_REFRESH, NULL,
-		NULL, N_("Refresh available components list"), G_CALLBACK(on_flow_component_refresh_activate)},
+		NULL, N_("Refresh available menu's list"), G_CALLBACK(on_flow_component_refresh_activate)},
 	{"flow_edition_copy", GTK_STOCK_COPY, N_("Copy"),
 		NULL, N_("Copy selected programs(s) to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_edition_paste", GTK_STOCK_PASTE, N_("Paste"),

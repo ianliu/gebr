@@ -76,16 +76,16 @@ static const GtkActionEntry action_entries[] = {
 	{"EditMenu", NULL, N_("_Edit")},
 
 	{"PrintAction", GTK_STOCK_PRINT, NULL, NULL,
-		N_("Prints the content of this window"), G_CALLBACK(on_print_clicked)},
-	{"QuitAction", GTK_STOCK_QUIT, NULL, NULL,
-		N_("Quits the window"), G_CALLBACK(on_quit_clicked)},
+		N_("Print the content of this window"), G_CALLBACK(on_print_clicked)},
+	{"QuitAction", GTK_STOCK_CLOSE, NULL, NULL,
+		N_("Quit this window"), G_CALLBACK(on_quit_clicked)},
 };
 
 static const guint n_action_entries = G_N_ELEMENTS(action_entries);
 
 static const GtkToggleActionEntry toggle_entries[] = {
 	{"PreviewAction", GTK_STOCK_PRINT_PREVIEW, N_("Preview"), NULL,
-		N_("Toggles between edit and preview modes"), G_CALLBACK(on_preview_toggled), FALSE},
+		N_("Toggle between edit and preview modes"), G_CALLBACK(on_preview_toggled), FALSE},
 };
 
 static const guint n_toggle_entries = G_N_ELEMENTS(toggle_entries);

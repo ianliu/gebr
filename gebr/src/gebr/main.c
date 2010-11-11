@@ -28,8 +28,10 @@
 #include "../defines.h"
 #include "interface.h"
 
+
 int main(int argc, char **argv, char **env)
 {
+
 	gboolean show_version = FALSE;
 	gboolean show_sys_dir = FALSE;
 	GOptionEntry entries[] = {
@@ -105,6 +107,5 @@ int main(int argc, char **argv, char **env)
 	gebr_init();
 
 	gtk_main();
-
 	return 0;
 }
