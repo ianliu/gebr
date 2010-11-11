@@ -17,8 +17,8 @@
 AC_PREREQ([2.59])
 
 m4_define(gebr_major_version,  0)
-m4_define(gebr_minor_version,  9)
-m4_define(gebr_micro_version, 19)
+m4_define(gebr_minor_version, 11)
+m4_define(gebr_micro_version,  0)
 m4_define(gebr_version, gebr_major_version.gebr_minor_version.gebr_micro_version)
 
 AC_INIT([gebr], [gebr_version], [http://code.google.com/p/gebr/issues/list])
