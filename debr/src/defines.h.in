@@ -22,6 +22,7 @@
 
 G_BEGIN_DECLS
 
+#define GETTEXT_PACKAGE			"debr"
 #define DEBR_DATA_DIR			"@prefix@/share/debr/"
 
 #define DEBR_GLADE_DIR			DEBR_DATA_DIR "glade/"
