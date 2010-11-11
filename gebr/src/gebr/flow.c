@@ -690,7 +690,7 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 					_("<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
 					  "<caption>Parameters for %s program</caption>\n"
 					  "<tbody>\n"
-					  "<tr><td>This program does not have parameters.</td></tr>\n"),
+					  "<tr><td>This program has no parameters.</td></tr>\n"),
 					gebr_geoxml_program_get_title (program));
 	}
 	else
@@ -723,11 +723,14 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
 	const gchar * output;
 	const gchar * error;
 	GebrGeoXmlSequence * sequence;
+        GebrGeoXmlFlowServer *flow_server;
 
-	input = gebr_geoxml_flow_server_io_get_input (gebr.flow_server);
-	output = gebr_geoxml_flow_server_io_get_output (gebr.flow_server);
-	error = gebr_geoxml_flow_server_io_get_error (gebr.flow_server);
+        flow_server = gebr_geoxml_flow_servers_get_last_run(flow);
 
+	input = gebr_geoxml_flow_server_io_get_input (flow_server);
+	output = gebr_geoxml_flow_server_io_get_output (flow_server);
+	error = gebr_geoxml_flow_server_io_get_error (flow_server);
+        
 	dump = g_string_new(NULL);
 
 	g_string_append_printf(dump,
