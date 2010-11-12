@@ -22,6 +22,7 @@
 #include <libgebr/gui/gebr-gui-icons.h>
 #include <libgebr/libgebr.h>
 
+#include "defines.h"
 #include "interface.h"
 #include "debr.h"
 

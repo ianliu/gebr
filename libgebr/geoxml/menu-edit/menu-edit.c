@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 	GError *error = NULL;
 	GOptionContext *context;
 
-	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
+	gebr_libinit("libgebr", argv[0]);
 
 	/* Summary */
 	context = g_option_context_new(NULL);

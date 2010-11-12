@@ -155,6 +155,7 @@ __gebr_gui_gtk_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIcon
 	}
 
 	gtk_widget_destroy(GTK_WIDGET(chooser_dialog));
+	gtk_widget_grab_focus (file_entry->entry);
 }
 
 static gboolean on_mnemonic_activate(GebrGuiGtkFileEntry * file_entry)

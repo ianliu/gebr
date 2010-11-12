@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 {
 	GebrGeoXmlValidate *validate;
 
-	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
+	gebr_libinit("libgebr", argv[0]);
 
 	/* default values */
 	options.all = TRUE;

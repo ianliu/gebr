@@ -852,7 +852,7 @@ gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_t
 	inner = gebr_document_report_get_inner_body (help);
 	
 	if (inner == NULL)
-		inner = g_strdup_printf("");
+		inner = g_strdup("");
 
 	table = include_table ? gebr_flow_generate_parameter_value_table (flow) : "";
 	header = gebr_flow_generate_header (flow, include_date);

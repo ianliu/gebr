@@ -20,6 +20,6 @@ libgebrdatadir = $(datadir)/libgebr/
 libgebrdata_DATA = gebr.css
 
 gebrstylesdir = $(datadir)/libgebr/styles
-gebrstyles_DATA = gebr-report.css gebr-report-fancy.css gebr.css
+gebrstyles_DATA = gebr-report.css gebr-report-fancy.css
 
 EXTRA_DIST = $(libgebrdata_DATA) $(gebrstyles_DATA)

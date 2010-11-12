@@ -62,7 +62,7 @@ int main(int argc, char **argv)
 	GebrGeoXmlSequence *seq[2];
 	int nmenu;
 
-	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
+	gebr_libinit("libgebr", argv[0]);
 
 	parse_command_line(argc, argv);
 

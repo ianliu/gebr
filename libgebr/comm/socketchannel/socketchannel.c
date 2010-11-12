@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 	GError *error = NULL;
 	GOptionContext *context;
 
-	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
+	gebr_libinit("libgebr", argv[0]);
 
 	context = g_option_context_new(NULL);
 	g_option_context_set_summary(context, _("LibGebrComm socket channelling"));
