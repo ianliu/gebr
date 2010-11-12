@@ -280,18 +280,17 @@ gebrd/tests/Makefile
 
 gebr/Makefile
 gebr/data/Makefile
-gebr/data/userdoc/Makefile
 gebr/data/gebr.desktop
+gebr/data/userdoc/Makefile
+gebr/defines.h
+gebr/gebr-client/Makefile
+gebr/gebr/Makefile
 gebr/packages/Makefile
 gebr/packages/rpm/gebr.fedora.spec
 gebr/packages/rpm/gebr.mandriva.spec
 gebr/packages/rpm/gebr.opensuse.spec
 gebr/po/Makefile
-gebr/src/Makefile 
-gebr/src/defines.h
-gebr/src/gebr-client/Makefile
-gebr/src/gebr/Makefile
-gebr/src/gebr/tests/Makefile
+gebr/tests/Makefile
 
 debr/Makefile
 debr/data/Makefile

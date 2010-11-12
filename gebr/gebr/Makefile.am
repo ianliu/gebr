@@ -17,8 +17,6 @@ include $(top_srcdir)/Makefile.decl
 
 NULL =
 
-SUBDIRS = . tests
-
 bin_PROGRAMS = gebr
 
 #TODO: remove cmdline.{c,h} in future versions (remove old config format support)
