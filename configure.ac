@@ -16,32 +16,71 @@
 
 AC_PREREQ([2.59])
 
-m4_define(gebr_major_version,  0)
-m4_define(gebr_minor_version, 11)
-m4_define(gebr_micro_version,  0)
+# Making releases:
+#   GEBR_MICRO_VERSION += 1;
+#   GEBR_INTERFACE_AGE += 1;
+#   GEBR_BINARY_AGE += 1;
+# if any functions have been added, set GEBR_INTERFACE_AGE to 0.
+# if backwards compatibility has been broken,
+# set GEBR_BINARY_AGE and GEBR_INTERFACE_AGE to 0.
+
+m4_define(gebr_major_version,   [0])
+m4_define(gebr_minor_version,  [11])
+m4_define(gebr_micro_version,   [0])
+m4_define([gebr_interface_age], [0])
+m4_define([gebr_binary_age],
+          [m4_eval(100 * gebr_minor_version + gebr_micro_version)])
 m4_define(gebr_version, gebr_major_version.gebr_minor_version.gebr_micro_version)
 
-AC_INIT([gebr], [gebr_version], [http://code.google.com/p/gebr/issues/list])
-AM_INIT_AUTOMAKE
+AC_INIT([gebrproject], [gebr_version], [http://code.google.com/p/gebr/issues/list])
+AC_CONFIG_SRCDIR([libgebr/libgebr.h])
 AC_CONFIG_MACRO_DIR([m4])
+AM_INIT_AUTOMAKE
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
+dnl ============================================================================
+dnl Defining the library version information
+dnl ============================================================================
+m4_define([lt_current], [m4_eval(100 * gebr_minor_version + gebr_micro_version - gebr_interface_age)])
+m4_define([lt_revision], [gebr_interface_age])
+m4_define([lt_age], [m4_eval(gebr_binary_age - gebr_interface_age)])
+GEBR_VERSION_INFO="lt_current:lt_revision:lt_age"
+AC_SUBST(GEBR_VERSION_INFO)
+
+dnl ============================================================================
+dnl Other versions stuffs
+dnl ============================================================================
+GEBR_MAJOR_VERSION=gebr_major_version
+GEBR_MINOR_VERSION=gebr_minor_version
+GEBR_MICRO_VERSION=gebr_micro_version
+GEBR_INTERFACE_AGE=gebr_interface_age
+GEBR_BINARY_AGE=gebr_binary_age
+AC_SUBST(GEBR_MAJOR_VERSION)
+AC_SUBST(GEBR_MINOR_VERSION)
+AC_SUBST(GEBR_MICRO_VERSION)
+AC_SUBST(GEBR_INTERFACE_AGE)
+AC_SUBST(GEBR_BINARY_AGE)
+
+NANOVERSION=`hg parent --template '+{latesttagdistance}-{node|short}' 2> /dev/null || date ++%H%M`
+DOCUMENT_VERSION=0.3.2
+AC_SUBST(DOCUMENT_VERSION)
+PROJECT_VERSION=0.3.2
+AC_SUBST(PROJECT_VERSION)
+LINE_VERSION=0.3.2
+AC_SUBST(LINE_VERSION)
+FLOW_VERSION=0.3.6
+AC_SUBST(FLOW_VERSION)
+
+dnl ============================================================================
+dnl Need for creating the *.desktop files
+dnl ============================================================================
 PACKAGE_PREFIX_DIR=`echo ${prefix}`
 AC_SUBST(PACKAGE_PREFIX_DIR)
 
-NANOVERSION=`hg parent --template '+{latesttagdistance}-{node|short}' 2> /dev/null || date ++%H%M`
-GEBR_VERSION_INFO=`echo $PACKAGE_VERSION | awk -F. '{ printf "%d:%d:%d", $0+$2, $3, $2 }'`
-DOCUMENT_VERSION=0.3.2
-PROJECT_VERSION=0.3.2
-LINE_VERSION=0.3.2
-FLOW_VERSION=0.3.6
-AC_SUBST(FLOW_VERSION)
-AC_SUBST(LINE_VERSION)
-AC_SUBST(PROJECT_VERSION)
-AC_SUBST(DOCUMENT_VERSION)
-AC_SUBST(GEBR_VERSION_INFO)
-
+dnl ============================================================================
+dnl Better install script
+dnl ============================================================================
 INSTALL_BIN=/usr/bin/install
 $INSTALL_BIN -C configure.ac __install_test 2>/dev/null
 if [[ $? -eq 0 \]]; then
@@ -61,10 +100,15 @@ fi
 GLIB_MINOR_VERSION=`pkg-config glib-2.0 --modversion | awk -F. '{ printf "%d", $2 }'`
 AM_CONDITIONAL(ENABLE_TESTS, test ${GLIB_MINOR_VERSION} -ge 16)
 
-dnl Debug option
-AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [turn on debugging])],, enable_debug=yes)
-if test "$enable_debug" = "yes"; then
-	DEBUG_CFLAGS="-DDEBUG -g3 -O0"
+dnl ============================================================================
+dnl Debugging options
+dnl ============================================================================
+AC_ARG_ENABLE([debug],
+	      [AC_HELP_STRING([--enable-debug], [turn on debugging])],
+	      [enable_debug=no],
+	      [enable_debug=yes])
+if test "x$enable_debug" = "xyes"; then
+	DEBUG_CFLAGS="-DDEBUG"
 else
 	DEBUG_CFLAGS=""
 	NANOVERSION=""
@@ -77,50 +121,89 @@ AC_PROG_CC
 AM_PROG_CC_STDC
 AC_PROG_LIBTOOL
 AC_HEADER_STDC
+
+dnl ============================================================================
+dnl Gettext stuff. Don't define GETTEXT_PACKAGE since we are dealing with
+dnl multiple po/ directories. Each one needs its own GETTEXT_PACKAGE.
+dnl ============================================================================
+IT_PROG_INTLTOOL
 AM_GLIB_GNU_GETTEXT
 
-dnl Gettext stuff
-IT_PROG_INTLTOOL
-
+dnl ============================================================================
 dnl Option to turn on GUI build or not (useful for servers).
-AC_ARG_ENABLE(gui, [AC_HELP_STRING([--enable-gui], [turn on GUI build])],, enable_gui=yes)
-AC_ARG_ENABLE(gui, [AC_HELP_STRING([--disable-gui], [turn off GUI elements])],, enable_gui=no)
+dnl ============================================================================
+AC_ARG_ENABLE([gui],
+	      [AC_HELP_STRING([--enable-gui], [turn on GUI build])],
+	      [enable_gui=no],
+	      [enable_gui=yes])
+
+AC_ARG_ENABLE([gui],
+	      [AC_HELP_STRING([--disable-gui], [turn off GUI elements])],
+	      [enable_gui=yes],
+	      [enable_gui=no])
+
 if test "$enable_gui" = "yes"; then
 	CONFIG_SUBDIRS="geoxml comm gui"
-	CONFIG_GUI="gui/gui/libgebr_gui.la"
+	CONFIG_GUI="gui/libgebr_gui.la"
 else
 	CONFIG_SUBDIRS="geoxml comm"
 fi
 AC_SUBST(CONFIG_SUBDIRS)
 AC_SUBST(CONFIG_GUI)
 
-dnl check for zlib
-AC_CHECK_LIB(z,main,, [AC_MSG_ERROR(zlib required)])
-# check for gtk-doc
+dnl ============================================================================
+dnl Checking for zlib library
+dnl ============================================================================
+AC_CHECK_LIB(z,main,,[AC_MSG_ERROR(zlib required)])
+
+dnl ============================================================================
+dnl Checking for GtkDoc
+dnl ============================================================================
 GTK_DOC_CHECK([1.11],[--flavour no-tmpl])
-dnl check for GLIB >= 2.8.0 (needed for g_access)
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.12.0],,AC_MSG_ERROR([Could not find glib >= 2.12.0]))
+
+dnl ============================================================================
+dnl Checking for Packages
+dnl ============================================================================
+PKG_CHECK_MODULES([GLIB],
+		  [glib-2.0 >= 2.12.0],
+		  [],
+		  [AC_MSG_ERROR([Could not find glib >= 2.12.0])])
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GLIB_CFLAGS)
-dnl check for GOBJECT >= 2.8 (which is thread safe)
-PKG_CHECK_MODULES(GOBJECT, [gobject-2.0 >= 2.8],,AC_MSG_ERROR([Could not find gobject >= 2.8]))
+
+PKG_CHECK_MODULES([GOBJECT],
+		  [gobject-2.0 >= 2.8],
+		  [],
+		  [AC_MSG_ERROR([Could not find gobject >= 2.8])])
 AC_SUBST(GOBJECT_LIBS)
 AC_SUBST(GOBJECT_CFLAGS)
-dnl check for GTHREAD >= 2.8 (which is thread safe)
-PKG_CHECK_MODULES(GTHREAD, [gthread-2.0 >= 2.8],,AC_MSG_ERROR([Could not find gthread >= 2.8]))
+
+PKG_CHECK_MODULES([GTHREAD],
+		  [gthread-2.0 >= 2.8],
+		  [],
+		  [AC_MSG_ERROR([Could not find gthread >= 2.8])])
 AC_SUBST(GTHREAD_LIBS)
 AC_SUBST(GTHREAD_CFLAGS)
-dnl check for gdome >= 0.8.0 (which is thread safe)
-PKG_CHECK_MODULES(GDOME2, [gdome2 >= 0.8.0],,AC_MSG_ERROR([Could not find gdome2 >= 0.8.0]))
+
+PKG_CHECK_MODULES([GDOME2],
+		  [gdome2 >= 0.8.0],
+		  [],
+		  [AC_MSG_ERROR([Could not find gdome2 >= 0.8.0])])
 AC_SUBST(GDOME2_LIBS)
 AC_SUBST(GDOME2_CFLAGS)
-dnl check for GTK
+
 if test "$enable_gui" = "yes"; then
-	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.12.0,,AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.12.0]))
+	PKG_CHECK_MODULES([GTK],
+			  [gtk+-2.0 >= 2.12.0],
+			  [],
+			  [AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.12.0])])
 	AC_SUBST(GTK_LIBS)
 	AC_SUBST(GTK_CFLAGS)
 
-	PKG_CHECK_MODULES(WEBKIT, webkit-1.0,, AC_MSG_ERROR([Could not find webkitgtk]))
+	PKG_CHECK_MODULES([WEBKIT],
+			  [webkit-1.0],
+			  [],
+			  [AC_MSG_ERROR([Could not find webkitgtk])])
 	AC_SUBST(WEBKIT_CFLAGS)
 	AC_SUBST(WEBKIT_LIBS)
 fi
