@@ -102,5 +102,6 @@ m4/lt~obsolete.m4
 marshalers.c
 marshalers.h
 missing
+po/.intltool-merge-cache
 stamp-it
 tags

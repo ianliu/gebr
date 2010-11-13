@@ -1,2 +1,2 @@
 gtkdocize
-autoreconf --install $*
+autoreconf -i
