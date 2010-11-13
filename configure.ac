@@ -126,8 +126,11 @@ dnl ============================================================================
 dnl Gettext stuff. Don't define GETTEXT_PACKAGE since we are dealing with
 dnl multiple po/ directories. Each one needs its own GETTEXT_PACKAGE.
 dnl ============================================================================
-IT_PROG_INTLTOOL
-AM_GLIB_GNU_GETTEXT
+GEBR_PROG_INTLTOOL
+GEBR_PO_SUBDIR([libgebr/po])
+GEBR_PO_SUBDIR([gebrd/po])
+GEBR_PO_SUBDIR([gebr/po])
+GEBR_PO_SUBDIR([debr/po])
 
 dnl ============================================================================
 dnl Option to turn on GUI build or not (useful for servers).
@@ -230,7 +233,6 @@ AC_SUBST(GEBR_GUI_LIBS)
 
 AC_CONFIG_FILES([
 Makefile
-po/Makefile.in
 
 libgebr/Makefile
 libgebr/comm/Makefile
@@ -265,7 +267,7 @@ libgebr/packages/Makefile
 libgebr/packages/rpm/libgebr.fedora.spec
 libgebr/packages/rpm/libgebr.mandriva.spec
 libgebr/packages/rpm/libgebr.opensuse.spec
-libgebr/po/Makefile
+libgebr/po/Makefile.in
 
 gebrd/Makefile
 gebrd/doc/Makefile
@@ -273,14 +275,14 @@ gebrd/packages/Makefile
 gebrd/packages/rpm/gebrd.fedora.spec
 gebrd/packages/rpm/gebrd.mandriva.spec
 gebrd/packages/rpm/gebrd.opensuse.spec
-gebrd/po/Makefile
+gebrd/po/Makefile.in
 gebrd/src/Makefile
 gebrd/src/defines.h
 gebrd/tests/Makefile
 
 gebr/Makefile
 gebr/data/Makefile
-gebr/data/gebr.desktop
+gebr/data/gebr.desktop.in
 gebr/data/userdoc/Makefile
 gebr/defines.h
 gebr/gebr-client/Makefile
@@ -289,7 +291,7 @@ gebr/packages/Makefile
 gebr/packages/rpm/gebr.fedora.spec
 gebr/packages/rpm/gebr.mandriva.spec
 gebr/packages/rpm/gebr.opensuse.spec
-gebr/po/Makefile
+gebr/po/Makefile.in
 gebr/tests/Makefile
 
 debr/Makefile
@@ -302,7 +304,7 @@ debr/packages/Makefile
 debr/packages/rpm/debr.fedora.spec
 debr/packages/rpm/debr.mandriva.spec
 debr/packages/rpm/debr.opensuse.spec
-debr/po/Makefile
+debr/po/Makefile.in
 debr/src/Makefile
 debr/src/defines.h
 debr/tests/Makefile
