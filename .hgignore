@@ -92,7 +92,6 @@ libgebr/packages/rpm/libgebr.mandriva.spec
 libgebr/packages/rpm/libgebr.opensuse.spec
 libtool
 ltmain.sh
-m4
 marshalers.c
 marshalers.h
 missing
