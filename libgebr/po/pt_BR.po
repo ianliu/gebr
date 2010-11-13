@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-11-13 16:27-0200\n"
-"PO-Revision-Date: 2010-11-13 16:29-0200\n"
+"PO-Revision-Date: 2010-11-13 16:32-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "Language: \n"
@@ -593,11 +593,11 @@ msgstr "Escolha um diretório"
 #: ../gui/gebr-gui-help-edit-window.c:75
 #: ../gui/gebr-gui-html-viewer-window.c:52
 msgid "_File"
-msgstr "Arquivo"
+msgstr "_Arquivo"
 
 #: ../gui/gebr-gui-help-edit-window.c:76
 msgid "_Edit"
-msgstr "Editar"
+msgstr "_Editar"
 
 #: ../gui/gebr-gui-help-edit-window.c:79
 msgid "Print the content of this window"
