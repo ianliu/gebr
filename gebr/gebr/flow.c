@@ -683,27 +683,26 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 	table = g_string_new ("");
 	parameters = gebr_geoxml_program_get_parameters (program);
 	gebr_geoxml_parameters_get_parameter (parameters, &sequence, 0);
+
+	gchar *translated = g_strdup_printf (_("Parameters for %s program"),
+					     gebr_geoxml_program_get_title (program));
 	
-	if (sequence == NULL)
-	{
+	if (sequence == NULL) {
 		g_string_append_printf(table,
-					_("<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
-					  "<caption>Parameters for %s program</caption>\n"
-					  "<tbody>\n"
-					  "<tr><td>This program has no parameters.</td></tr>\n"),
-					gebr_geoxml_program_get_title (program));
-	}
-	else
-	{
+				       "<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
+				       "<caption>%s</caption>\n"
+				       "<tbody>\n"
+				       "<tr><td>This program has no parameters.</td></tr>\n",
+				       translated);
+	} else {
 		g_string_append_printf (table,
-					_("<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
-					  "<caption>Parameters for %s program</caption>\n"
-					  "<thead>\n<tr>\n"
-					  "  <td>%s</td><td>%s</td>\n"
-					  "</tr>\n</thead>\n"
-					  "<tbody>\n"),
-					gebr_geoxml_program_get_title (program),
-					_("Parameter"), _("Value"));
+					"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
+					"<caption>%s</caption>\n"
+					"<thead>\n<tr>\n"
+					"  <td>%s</td><td>%s</td>\n"
+					"</tr>\n</thead>\n"
+					"<tbody>\n",
+					translated, _("Parameter"), _("Value"));
 
 		while (sequence) {
 			append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), table, FALSE);
@@ -711,6 +710,8 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 		}
 
 	}
+
+	g_free (translated);
 
 	g_string_append_printf (table, "</tbody>\n</table>\n");
 	return g_string_free (table, FALSE);
