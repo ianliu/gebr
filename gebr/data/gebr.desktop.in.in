@@ -1,0 +1,13 @@
+[Desktop Entry]
+_Name=GêBR
+_GenericName=Seismic processing environment
+_Comment=Assemble and run flows and manage jobs
+Exec=gebr
+TryExec=gebr
+Terminal=false
+Type=Application
+StartupNotify=true
+MimeType=text/plain;
+Icon=@PACKAGE_PREFIX_DIR@/share/libgebr/pixmaps/gebr-icon-64x64.png
+Categories=Education;Science;Geoscience;GTK;
+Version=@PACKAGE_VERSION@

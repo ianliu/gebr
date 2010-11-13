@@ -17,10 +17,14 @@ include $(top_srcdir)/Makefile.decl
 
 SUBDIRS = userdoc
 
+
 gebrmenudir = $(datadir)/gebr/menus/
 gebrmenu_DATA = grace.mnu sleep.mnu
 
 desktopdir = $(datadir)/applications
 desktop_DATA = gebr.desktop
 
-EXTRA_DIST = $(desktop_DATA) $(gebrmenu_DATA)
+%.desktop:   %.desktop.in   $(INTLTOOL_MERGE) $(wildcard $(srcdir)/../po/*.po) ; LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(builddir)/../po/.intltool-merge-cache $(srcdir)/../po $< $@
+
+EXTRA_DIST = gebr.desktop.in $(gebrmenu_DATA)
+CLEANFILES = $(desktop_DATA)
