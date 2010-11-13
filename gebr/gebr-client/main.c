@@ -52,7 +52,7 @@ int main(int argc, char **argv, char **env)
 		return -1;
 	}
 	if (show_version == TRUE) {
-		gebr_client_message(GEBR_LOG_INFO, _("%s"), GEBR_VERSION);
+		gebr_client_message(GEBR_LOG_INFO, "%s", GEBR_VERSION);
 		return 0;
 	}
 	if (argc < 2) {
