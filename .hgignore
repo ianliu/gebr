@@ -54,6 +54,7 @@ gebrd/packages/rpm/gebrd.opensuse.spec
 gebrd/src/defines.h
 gebrd/src/gebrd
 gebrd/tests/test-job-queue
+gebrproject-*
 gtk-doc.make
 install-sh
 intltool-*.in
