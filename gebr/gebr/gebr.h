@@ -129,9 +129,14 @@ struct gebr {
 		//    [ ] Include parameter/value table
 		//  (CSS Combo ^)
 		GString * detailed_line_css;
+                // Parameter table:
+                // 0 - No table at all
+                // 1 - Just parameters wich differ from default
+                // 2 - Just filled in parameters
+                // 3 - All parameters
+		int detailed_line_flow_params;
 		gboolean detailed_line_include_report;
 		gboolean detailed_line_include_flow_report;
-		gboolean detailed_line_include_flow_params;
 	} config;
 
 	/* Pixmaps */

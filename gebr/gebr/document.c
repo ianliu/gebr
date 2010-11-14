@@ -687,7 +687,7 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 
 				document_load((GebrGeoXmlDocument**)(&flow), filename, FALSE);
 
-				gchar * flow_cont = gebr_flow_get_detailed_report(flow, gebr.config.detailed_line_include_flow_params, FALSE);
+				gchar * flow_cont = gebr_flow_get_detailed_report(flow, gebr.config.detailed_line_flow_params, FALSE);
 				g_string_append(content, flow_cont);
 				g_free(flow_cont);
 				gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));

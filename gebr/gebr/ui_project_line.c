@@ -1030,25 +1030,34 @@ static void on_detailed_line_include_flow_report_toggled (GtkToggleButton *butto
 	gebr.config.detailed_line_include_flow_report = toggled;
 }
 
-static void on_detailed_line_include_flow_params_toggled (GtkToggleButton * button)
+/* static void on_detailed_line_include_flow_params_toggled (GtkToggleButton * button) */
+/* { */
+/* 	gboolean toggled; */
+/* 	toggled = gtk_toggle_button_get_active(button); */
+/* 	gebr.config.detailed_line_include_flow_params = toggled; */
+/*}*/
+
+static void on_detailed_line_flow_params_changed (GtkComboBox * combobox)
 {
-	gboolean toggled;
-	toggled = gtk_toggle_button_get_active(button);
-	gebr.config.detailed_line_include_flow_params = toggled;
+	gebr.config.detailed_line_flow_params = gtk_combo_box_get_active (combobox);
 }
+
+
 
 GtkWidget *
 gebr_project_line_print_dialog_custom_tab()
 {
 	GtkWidget * hbox_combo;
+	GtkWidget * flow_params_hbox_combo;
 	GtkWidget * vbox;
 	GtkWidget * frame;
 	GtkWidget * alignment;
 	GtkWidget * detailed_line_css_combo;
 	GtkWidget * detailed_line_include_report;
 	GtkWidget * detailed_line_include_flow_report;
-	GtkWidget * detailed_line_include_flow_params;
+	GtkWidget * detailed_line_flow_params_combo;
 	GtkWidget * css_combo_label;
+	GtkWidget * flow_params_combo_label;
 	GDir * directory;
 	GError * error = NULL;
 	const gchar * filename = NULL;
@@ -1078,27 +1087,36 @@ gebr_project_line_print_dialog_custom_tab()
 	}
 	gtk_widget_show(detailed_line_css_combo);
 
+        flow_params_combo_label = gtk_label_new(_("Parameters"));
+        gtk_widget_show(flow_params_combo_label);
+
+        detailed_line_flow_params_combo = gtk_combo_box_new_text();
+        gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_line_flow_params_combo), _("Do not show"));
+        gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_line_flow_params_combo), _("Show those different from default"));
+        gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_line_flow_params_combo), _("Show those which are filled in"));
+        gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_line_flow_params_combo), _("Show all"));
+        gtk_widget_show(detailed_line_flow_params_combo);
+
 	detailed_line_include_report = gtk_check_button_new_with_label(_("Include user's report"));
 	detailed_line_include_flow_report = gtk_check_button_new_with_label(_("Include flow report"));
-	detailed_line_include_flow_params = gtk_check_button_new_with_label(_("Include parameter table"));
-
+	
 	g_signal_connect(detailed_line_css_combo, "changed",
 			 G_CALLBACK(on_detailed_line_css_changed), NULL);
+
+	g_signal_connect(detailed_line_flow_params_combo, "changed",
+			 G_CALLBACK(on_detailed_line_flow_params_changed), NULL);
 
 	g_signal_connect(detailed_line_include_report, "toggled",
 			 G_CALLBACK(on_detailed_line_include_report_toggled), NULL);
 
 	g_signal_connect(detailed_line_include_flow_report, "toggled",
-			 G_CALLBACK(on_detailed_line_include_flow_report_toggled), detailed_line_include_flow_params);
-
-	g_signal_connect(detailed_line_include_flow_params, "toggled",
-			 G_CALLBACK(on_detailed_line_include_flow_params_toggled), NULL);
+			 G_CALLBACK(on_detailed_line_include_flow_report_toggled), detailed_line_flow_params_combo);
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(detailed_line_css_combo), active);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_line_include_report), gebr.config.detailed_line_include_report);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_line_include_flow_report), gebr.config.detailed_line_include_flow_report);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_line_include_flow_params), gebr.config.detailed_line_include_flow_params); 
-	gtk_widget_set_sensitive (detailed_line_include_flow_params, gebr.config.detailed_line_include_flow_report);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(detailed_line_flow_params_combo), (gebr.config.detailed_line_flow_params > 0 ? 1 : 0)); 
+	gtk_widget_set_sensitive (detailed_line_flow_params_combo, gebr.config.detailed_line_include_flow_report);
 
 	frame = gtk_frame_new(NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 10);
@@ -1115,7 +1133,13 @@ gebr_project_line_print_dialog_custom_tab()
 
 	alignment = gtk_alignment_new(0, 0, 1, 1);
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 10, 0);
-	gtk_container_add (GTK_CONTAINER (alignment), detailed_line_include_flow_params);
+        flow_params_hbox_combo = gtk_hbox_new(FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(flow_params_hbox_combo), flow_params_combo_label, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(flow_params_hbox_combo), detailed_line_flow_params_combo, TRUE, TRUE, 0);
+
+	gtk_container_add (GTK_CONTAINER (alignment), flow_params_hbox_combo);
+        
 	gtk_box_pack_start(GTK_BOX(vbox), alignment, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox_combo, FALSE, TRUE, 0);
 

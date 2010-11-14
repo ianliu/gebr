@@ -41,6 +41,7 @@
 #include "ui_document.h"
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
+#include "ui_project_line.h"
 #include "../defines.h"
 
 static void on_properties_response(gboolean accept)
@@ -641,15 +642,25 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 
 	if (gebr_geoxml_parameter_get_is_program_parameter(parameter)) {
 		GString * str_value;
+		GString * default_value;
 		GebrGeoXmlProgramParameter * program;
 
 		program = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 		str_value = gebr_geoxml_program_parameter_get_string_value(program, FALSE);
-		g_string_append_printf(dump, "<tr>\n  <td class=\"%slabel\">%s</td>\n  <td class=\"value\">%s</td>\n</tr>\n",
-                                       (in_group?"group-":""),
-				       gebr_geoxml_parameter_get_label(parameter),
-				       str_value->str);
+                default_value = gebr_geoxml_program_parameter_get_string_value(program, TRUE);
+
+                if (((gebr.config.detailed_line_flow_params == FLOW_PARAMS_NO_DEFAULT_PARAMS) &&
+                     (strcmp(str_value->str, default_value->str) != 0)) ||
+                    ((gebr.config.detailed_line_flow_params == FLOW_PARAMS_NO_BLANK_PARAMS) &&
+                     (strlen(str_value->str) > 0)) ||
+                    ((gebr.config.detailed_line_flow_params == FLOW_PARAMS_ALL_PARAMS)))
+                        g_string_append_printf(dump, "<tr>\n  <td class=\"%slabel\">%s</td>\n  <td class=\"value\">%s</td>\n</tr>\n",
+                                               (in_group?"group-":""),
+                                               gebr_geoxml_parameter_get_label(parameter),
+                                               str_value->str);
+                
 		g_string_free(str_value, TRUE);
+		g_string_free(default_value, TRUE);
 	} else {
 		g_string_append_printf(dump, "<tr class='parameter-group'>\n  <td colspan='2'>%s</td>\n</tr>\n",
 				       gebr_geoxml_parameter_get_label(parameter));

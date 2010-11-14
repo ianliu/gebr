@@ -50,6 +50,16 @@ enum {
 };
 
 /**
+ * Display modes for parameter's table in detailed report
+ */
+enum {
+        FLOW_PARAMS_NO_TABLE = 0,
+        FLOW_PARAMS_NO_DEFAULT_PARAMS,
+        FLOW_PARAMS_NO_BLANK_PARAMS,
+        FLOW_PARAMS_ALL_PARAMS
+};
+
+/**
  */
 struct ui_project_line {
 	GtkWidget *widget;
