@@ -114,6 +114,9 @@ p.credits { margin-bottom: 20px;}
     font-size: 14pt;
 }
 
+.content p {
+    text-align: justify;
+}
 /* Flow dump ------------------------------------------------------- */
 
 .gebr-flow-dump table{
