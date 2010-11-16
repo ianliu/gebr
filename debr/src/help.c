@@ -65,10 +65,8 @@ static void on_title_ready (GebrGuiHtmlViewerWidget * widget, const gchar * titl
 static const GtkActionEntry action_entries[] = {
 	{"JumpToMenu", NULL, N_("_Jump To"), NULL, NULL,
 		G_CALLBACK(help_edit_on_jump_to_activate)},
-
 	{"RefreshAction", GTK_STOCK_REFRESH, NULL, NULL,
 		N_("Update editor's content with data from menu"), G_CALLBACK(help_edit_on_refresh)},
-
 	{"RevertAction", GTK_STOCK_REVERT_TO_SAVED, NULL, NULL,
 		N_("Revert help content to the saved state"), G_CALLBACK(help_edit_on_revert)}
 };
@@ -103,6 +101,7 @@ static void merge_ui_def(GebrGuiHelpEditWindow * window, gboolean revert_visible
 	ui_manager = gebr_gui_help_edit_window_get_ui_manager(window);
 
 	action_group = gtk_action_group_new("DebrHelpEditGroup");
+	gtk_action_group_set_translation_domain(action_group, GETTEXT_PACKAGE);
 	gtk_action_group_add_actions(action_group, action_entries, n_action_entries, window);
 	action = gtk_action_group_get_action(action_group, "JumpToMenu");
 	g_object_set(action, "hide-if-empty", FALSE, NULL);

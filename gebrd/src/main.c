@@ -45,6 +45,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 
 	context = g_option_context_new(_("GeBR daemon"));
+	g_option_context_set_translation_domain(context, GETTEXT_PACKAGE);
 	g_option_context_set_summary(context, _(""));
 	g_option_context_set_description(context, _(""));
 	g_option_context_add_main_entries(context, entries, NULL);

@@ -28,6 +28,7 @@
 
 #include "ui_document.h"
 #include "gebr.h"
+#include "../defines.h"
 #include "flow.h"
 #include "ui_help.h"
 #include "document.h"
@@ -347,9 +348,8 @@ void document_dict_edit_setup_ui(void)
 					G_TYPE_BOOLEAN /* editable */ );
 	data->tree_model = GTK_TREE_MODEL(tree_store);
 
-	action_group = gtk_action_group_new("dict_edit");
-	data->action_group = action_group;
-	gtk_action_group_set_translation_domain(action_group, PACKAGE);
+	data->action_group = action_group = gtk_action_group_new("dict_edit");
+	gtk_action_group_set_translation_domain(action_group, GETTEXT_PACKAGE);
 	gtk_action_group_add_actions(action_group, dict_actions_entries, G_N_ELEMENTS(dict_actions_entries), data);
 	accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), accel_group);

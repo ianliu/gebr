@@ -25,6 +25,7 @@
 #include "ui_flow_edition.h"
 #include "interface.h"
 #include "gebr.h"
+#include "../defines.h"
 #include "flow.h"
 #include "callbacks.h"
 
@@ -188,7 +189,7 @@ void gebr_setup_ui(void)
 	gtk_widget_show(gebr.window);
 
 	gebr.action_group = gtk_action_group_new("General");
-	gtk_action_group_set_translation_domain(gebr.action_group, PACKAGE);
+	gtk_action_group_set_translation_domain(gebr.action_group, GETTEXT_PACKAGE);
 	gtk_action_group_add_actions(gebr.action_group, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
 	gtk_action_group_add_actions(gebr.action_group, status_action_entries, G_N_ELEMENTS(status_action_entries), NULL);
 	gebr.accel_group = gtk_accel_group_new();

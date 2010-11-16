@@ -27,6 +27,7 @@
 
 #include "parameter.h"
 #include "debr.h"
+#include "defines.h"
 #include "callbacks.h"
 #include "enumoptionedit.h"
 #include "interface.h"
@@ -93,7 +94,7 @@ static int combo_type_map_get_index(GebrGeoXmlParameterType type)
  * \return The index associated to this type.
  */
 #define combo_type_map_get_title(type) \
-	combo_type_map[combo_type_map_get_index(type)].title
+	_(combo_type_map[combo_type_map_get_index(type)].title)
 
 /* same order as combo_box_map */
 const GtkRadioActionEntry parameter_type_radio_actions_entries[] = {

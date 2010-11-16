@@ -197,8 +197,8 @@ static void gebr_gui_help_edit_window_init(GebrGuiHelpEditWindow * self)
 	priv->ui_manager       = gtk_ui_manager_new();
 
 	action_group = gtk_action_group_new("HelpEditWindowGroup");
+	gtk_action_group_set_translation_domain(action_group, GETTEXT_PACKAGE);
 	gtk_action_group_add_actions(action_group, action_entries, n_action_entries, self);
-	gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
 	gtk_action_group_add_toggle_actions(action_group, toggle_entries, n_toggle_entries, self);
 	gtk_ui_manager_insert_action_group(priv->ui_manager, action_group, 0);
 	gtk_ui_manager_add_ui_from_string(priv->ui_manager, ui_def, -1, &error);

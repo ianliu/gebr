@@ -102,6 +102,7 @@ static void gebr_gui_html_viewer_window_init(GebrGuiHtmlViewerWindow * self)
 	priv->manager = gtk_ui_manager_new ();
 
 	group = gtk_action_group_new ("Actions");
+	gtk_action_group_set_translation_domain (group, GETTEXT_PACKAGE);
 	gtk_action_group_add_actions (group, actions, n_actions, self);
 	gtk_ui_manager_insert_action_group (priv->manager, group, -1);
 	gtk_ui_manager_add_ui_from_string (priv->manager, uidef, -1, &error);
