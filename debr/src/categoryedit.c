@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libgebr/intl.h>
+#include <glib/gi18n.h>
 #include <libgebr/validate.h>
 #include <libgebr/gui/gebr-gui-enhanced-entry.h>
 #include <libgebr/gui/gebr-gui-utils.h>

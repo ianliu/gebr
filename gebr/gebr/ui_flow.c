@@ -18,7 +18,7 @@
 
 #include <string.h>
 
-#include <libgebr/intl.h>
+#include <glib/gi18n.h>
 #include <libgebr/date.h>
 #include <libgebr/gui/gebr-gui-file-entry.h>
 #include <libgebr/gui/gebr-gui-utils.h>

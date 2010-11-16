@@ -19,7 +19,7 @@
 
 #include <glib.h>
 
-#include <libgebr/intl.h>
+#include <glib/gi18n.h>
 #include <libgebr/libgebr.h>
 #include <libgebr/comm/comm.h>
 

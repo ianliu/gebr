@@ -9,14 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-13 16:11-0200\n"
-"PO-Revision-Date: 2010-11-13 16:14-0200\n"
+"POT-Creation-Date: 2010-11-16 09:05-0200\n"
+"PO-Revision-Date: 2010-11-16 09:07-0200\n"
 "Last-Translator: Ian Liu Rodrigues <ian.liu@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: \n"
 "Fabio Azevedo <fabioaz@gebrproject.com>\n"
 
 #: ../data/gebr.desktop.in.in.h:1
@@ -216,171 +216,171 @@ msgstr "Fluxos órfãos"
 msgid "Failed to save document '%s' file at '%s'."
 msgstr "Falha ao salvar o documento '%s' em '%s'."
 
-#: ../gebr/flow.c:70
+#: ../gebr/flow.c:71
 msgid "New Flow"
 msgstr "Novo fluxo"
 
-#: ../gebr/flow.c:82
+#: ../gebr/flow.c:83
 #, c-format
 msgid "New flow added to line '%s'."
 msgstr "Novo fluxo adicionado à linha '%s'."
 
-#: ../gebr/flow.c:112
+#: ../gebr/flow.c:113
 msgid "Delete flow"
 msgstr "Apagar fluxo"
 
-#: ../gebr/flow.c:113
+#: ../gebr/flow.c:114
 msgid "Are you sure you want to delete the selected flow(s)?"
 msgstr "Tem certeza que quer apagar o(s) fluxo(s) selecionado(s)?"
 
-#: ../gebr/flow.c:125
+#: ../gebr/flow.c:126
 #, c-format
 msgid "Deleting flow '%s'."
 msgstr "Apagando o fluxo '%s'."
 
-#: ../gebr/flow.c:126
+#: ../gebr/flow.c:127
 #, c-format
 msgid "Deleting flow '%s' from line '%s'."
 msgstr "Apagando o fluxo '%s' da linha '%s'."
 
 #. assembly a file chooser dialog
-#: ../gebr/flow.c:168
+#: ../gebr/flow.c:169
 msgid "Choose filename to open"
 msgstr "Escolha o nome do arquivo para abrir"
 
-#: ../gebr/flow.c:175 ../gebr/flow.c:247
+#: ../gebr/flow.c:176 ../gebr/flow.c:248
 msgid "Flow files (*.flw)"
 msgstr "Arquivos de fluxo (*.flw)"
 
 #. feedback
-#: ../gebr/flow.c:193
+#: ../gebr/flow.c:194
 #, c-format
 msgid "Flow '%s' imported to line '%s' from file '%s'."
 msgstr "Fluxo '%s' importado para a linha '%s' a partir do arquivo '%s'."
 
-#: ../gebr/flow.c:205 ../gebr/ui_project_line.c:544
+#: ../gebr/flow.c:206 ../gebr/ui_project_line.c:544
 #, c-format
 msgid "%s (Imported)"
 msgstr "%s (Importado)"
 
 #. run file chooser
-#: ../gebr/flow.c:241
+#: ../gebr/flow.c:242
 #, c-format
 msgid "Choose filename to save flow '%s'"
 msgstr "Escolha um arquivo para salvar o fluxo '%s'"
 
-#: ../gebr/flow.c:242
+#: ../gebr/flow.c:243
 msgid "Make this flow user-independent."
 msgstr "Tornar este fluxo independente de usuário."
 
-#: ../gebr/flow.c:265
+#: ../gebr/flow.c:266
 #, c-format
 msgid "Flow '%s' exported to %s."
 msgstr "Fluxo '%s' exportado para %s."
 
-#: ../gebr/flow.c:423
+#: ../gebr/flow.c:424
 #, c-format
 msgid "Flow '%s' is empty."
 msgstr "Fluxo '%s' está vazio."
 
-#: ../gebr/flow.c:453
+#: ../gebr/flow.c:454
 #, c-format
 msgid "Asking server to run flow '%s'."
 msgstr "Pedindo para o servidor executar o fluxo '%s'."
 
-#: ../gebr/flow.c:456
+#: ../gebr/flow.c:457
 #, c-format
 msgid "Asking server '%s' to run flow '%s'."
 msgstr "Pedindo para o servidor '%s' executar o fluxo '%s'."
 
-#: ../gebr/flow.c:459
+#: ../gebr/flow.c:460
 #, c-format
 msgid "Asking local server to run flow '%s'."
 msgstr "Pedindo para o servidor local executar o fluxo '%s'."
 
-#: ../gebr/flow.c:479 ../gebr/interface.c:303
+#: ../gebr/flow.c:480 ../gebr/interface.c:303
 msgid "Save flow state"
 msgstr "Salvar estado do fluxo"
 
-#: ../gebr/flow.c:494
+#: ../gebr/flow.c:495
 msgid "Make a comment for this state:"
 msgstr "Criar um comentário para este estado:"
 
-#: ../gebr/flow.c:595
+#: ../gebr/flow.c:596
 msgid "Could not paste flow. It was probably deleted."
 msgstr "Não foi possível colar o fluxo. Provavelmente ele foi apagado."
 
-#: ../gebr/flow.c:627
+#: ../gebr/flow.c:628
 msgid "Could not paste program."
 msgstr "Não foi possível colar programa."
 
-#: ../gebr/flow.c:664
+#: ../gebr/flow.c:675
 msgid "Instance"
 msgstr "Instância"
 
-#: ../gebr/flow.c:687
+#: ../gebr/flow.c:698
 #, c-format
 msgid "Parameters for %s program"
 msgstr "Parâmetros do programa %s"
 
-#: ../gebr/flow.c:705
+#: ../gebr/flow.c:716
 msgid "Parameter"
 msgstr "Parâmetros"
 
-#: ../gebr/flow.c:705 ../gebr/ui_document.c:432
+#: ../gebr/flow.c:716 ../gebr/ui_document.c:432
 msgid "Value"
 msgstr "Valor"
 
-#: ../gebr/flow.c:745
+#: ../gebr/flow.c:756
 msgid "I/O table"
 msgstr "Tabela de entrada/saída"
 
-#: ../gebr/flow.c:746 ../gebr/ui_flow.c:135
+#: ../gebr/flow.c:757 ../gebr/ui_flow.c:135
 msgid "Input"
 msgstr "Entrada"
 
-#: ../gebr/flow.c:746 ../gebr/flow.c:747 ../gebr/flow.c:748
+#: ../gebr/flow.c:757 ../gebr/flow.c:758 ../gebr/flow.c:759
 #: ../gebr/ui_flow_browse.c:338 ../gebr/ui_flow_browse.c:344
 #: ../gebr/ui_flow_browse.c:350
 msgid "(none)"
 msgstr "(nenhum)"
 
-#: ../gebr/flow.c:747 ../gebr/ui_flow.c:145
+#: ../gebr/flow.c:758 ../gebr/ui_flow.c:145
 msgid "Output"
 msgstr "Saída"
 
-#: ../gebr/flow.c:748 ../gebr/ui_flow.c:155
+#: ../gebr/flow.c:759 ../gebr/ui_flow.c:155
 msgid "Error"
 msgstr "Log de erro"
 
 #. Comment for translators:
 #. "By" as in "By John McClane"
-#: ../gebr/flow.c:793 ../gebr/ui_project_line.c:1149
+#: ../gebr/flow.c:804 ../gebr/ui_project_line.c:1173
 msgid "By"
 msgstr "Por"
 
-#: ../gebr/flow.c:799
+#: ../gebr/flow.c:810
 msgid "Flow composed by the program(s):"
 msgstr "Fluxo composto pelo(s) programa(s):"
 
-#: ../gebr/flow.c:885 ../gebr/ui_project_line.c:1057
+#: ../gebr/flow.c:896 ../gebr/ui_project_line.c:1066
 msgid "Style"
 msgstr "Estilo"
 
-#: ../gebr/flow.c:891 ../gebr/ui_project_line.c:1063
+#: ../gebr/flow.c:902 ../gebr/ui_project_line.c:1072
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Não foi possível carregar o arquivo: %s"
 
-#: ../gebr/flow.c:896
+#: ../gebr/flow.c:907
 msgid "User's report style"
 msgstr "Estilo de relatório do usuário"
 
-#: ../gebr/flow.c:910 ../gebr/ui_project_line.c:1081
+#: ../gebr/flow.c:921 ../gebr/ui_project_line.c:1100
 msgid "Include user's report"
 msgstr "Incluir relatório do usuário"
 
-#: ../gebr/flow.c:911
+#: ../gebr/flow.c:922
 msgid "Include parameter/value table"
 msgstr "Incluir tabela de parâmetro/valor"
 
@@ -1393,7 +1393,7 @@ msgstr "Mensagem"
 msgid "Moab execution parameters"
 msgstr "Parâmetros de execução do Moab"
 
-#: ../gebr/ui_parameters.c:61
+#: ../gebr/ui_parameters.c:61 ../gebr/ui_project_line.c:1090
 msgid "Parameters"
 msgstr "Parâmetros"
 
@@ -1584,24 +1584,36 @@ msgstr "Relatório do projeto"
 msgid "Line report"
 msgstr "Relatório da linha"
 
-#: ../gebr/ui_project_line.c:1068
+#: ../gebr/ui_project_line.c:1077
 msgid "Report style"
 msgstr "Estilo do relatório"
 
-#: ../gebr/ui_project_line.c:1082
+#: ../gebr/ui_project_line.c:1094
+msgid "Do not show"
+msgstr "Não mostrar"
+
+#: ../gebr/ui_project_line.c:1095
+msgid "Show those different from default"
+msgstr "Mostrar os diferentes do padrão"
+
+#: ../gebr/ui_project_line.c:1096
+msgid "Show those which are filled in"
+msgstr "Mostrar os preenchidos"
+
+#: ../gebr/ui_project_line.c:1097
+msgid "Show all"
+msgstr "Mostrar todos"
+
+#: ../gebr/ui_project_line.c:1101
 msgid "Include flow report"
 msgstr "Incluir relatório do fluxo"
 
-#: ../gebr/ui_project_line.c:1083
-msgid "Include parameter table"
-msgstr "Incluir tabela de parâmetros"
-
-#: ../gebr/ui_project_line.c:1155
+#: ../gebr/ui_project_line.c:1179
 msgid "Line composed by the flow(s):"
 msgstr "Linha composta pelo(s) fluxo(s):"
 
 #. Comment for translators: HTML header for detailed report
-#: ../gebr/ui_project_line.c:1175
+#: ../gebr/ui_project_line.c:1199
 msgid "Line paths:"
 msgstr "Caminhos da linha:"
 
@@ -1657,6 +1669,9 @@ msgstr ""
 #: ../gebr/ui_server.c:486
 msgid "Select server"
 msgstr "Selecione um servidor"
+
+#~ msgid "Include parameter table"
+#~ msgstr "Incluir tabela de parâmetros"
 
 #~ msgid "%s"
 #~ msgstr "%s"

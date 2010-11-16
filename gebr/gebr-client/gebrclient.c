@@ -18,7 +18,7 @@
 #include <stdio.h>
 
 #include <libgebr.h>
-#include <libgebr/intl.h>
+#include <glib/gi18n.h>
 
 #include "gebrclient.h"
 #include "server.h"

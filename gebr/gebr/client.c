@@ -17,7 +17,7 @@
 
 #include <stdlib.h>
 
-#include <libgebr/intl.h>
+#include <glib/gi18n.h>
 #include <libgebr/comm/protocol.h>
 #include <libgebr/comm/server.h>
 #include <libgebr/gui/gebr-gui-utils.h>

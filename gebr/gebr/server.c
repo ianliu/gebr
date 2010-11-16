@@ -19,7 +19,7 @@
 
 #include <gtk/gtk.h>
 
-#include <libgebr/intl.h>
+#include <glib/gi18n.h>
 #include <libgebr/comm/streamsocket.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 

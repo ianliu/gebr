@@ -22,7 +22,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-#include <libgebr/intl.h>
+#include <glib/gi18n.h>
 #include <libgebr/comm/protocol.h>
 
 #include "client.h"

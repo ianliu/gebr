@@ -23,7 +23,7 @@
 #include <sys/wait.h>
 #include <glib/gstdio.h>
 
-#include <libgebr/intl.h>
+#include <glib/gi18n.h>
 #include <libgebr/utils.h>
 
 #include "help.h"

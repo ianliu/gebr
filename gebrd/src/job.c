@@ -25,7 +25,7 @@
 #include <glib/gstdio.h>
 #include <gdome.h>
 
-#include <libgebr/intl.h>
+#include <glib/gi18n.h>
 #include <libgebr/comm/protocol.h>
 #include <libgebr/comm/streamsocket.h>
 #include <libgebr/comm/socketaddress.h>

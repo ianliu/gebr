@@ -17,12 +17,12 @@
 
 #include <locale.h>
 #ifdef ENABLE_NLS
-#  include <libintl.h>
+#include <glib/gi18n.h>
 #endif
 
 #include <glib.h>
 
-#include <libgebr/intl.h>
+#include <glib/gi18n.h>
 #include <libgebr/libgebr.h>
 
 #include "gebrd.h"

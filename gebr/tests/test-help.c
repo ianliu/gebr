@@ -19,7 +19,7 @@
 #include <gtk/gtk.h>
 #include <unistd.h>
 
-#include <libgebr/intl.h>
+#include <glib/gi18n.h>
 #include <libgebr/gui/gui.h>
 
 #include <gebr.h>

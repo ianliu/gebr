@@ -20,7 +20,7 @@
 
 #include <gtk/gtk.h>
 
-#include <libgebr/intl.h>
+#include <glib/gi18n.h>
 #include <libgebr/gui/gebr-gui-icons.h>
 #include <libgebr/libgebr.h>
 

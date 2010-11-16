@@ -27,7 +27,7 @@
 #include <glib/gstdio.h>
 
 #include <libgebr.h>
-#include <libgebr/intl.h>
+#include <glib/gi18n.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
 #include <libgebr/gui/gebr-gui-utils.h>
