@@ -26,7 +26,7 @@ libgebr_la_SOURCES = libgebr.c \
 
 libgebrincludedir = $(includedir)/libgebr
 libgebrinclude_HEADERS = libgebr.h \
-	defines.h intl.h date.h log.h utils.h validate.h
+	defines.h date.h log.h utils.h validate.h
 noinst_HEADERS = defines.h
 
 EXTRA_DIST = ${pkgconfig_DATA} $(noinst_HEADERS)

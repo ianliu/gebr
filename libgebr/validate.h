@@ -95,17 +95,32 @@ typedef enum {
 
 
 /**
+ * GebrValidateCase:
+ *
+ * A validate case is a simple structure containing flags for checking values (E-mail addresses, capitalized titles,
+ * etc.) for validity.
  */
+typedef struct _GebrValidateCase GebrValidateCase;
 struct _GebrValidateCase {
 	GebrValidateCaseName name;
 	gint flags;
+
+	/*< private >*/
 	const gchar * validcase_msg;
 };
-typedef struct _GebrValidateCase GebrValidateCase;
 
 /**
  */
 GebrValidateCase * gebr_validate_get_validate_case(GebrValidateCaseName name);
+
+/**
+ * gebr_validate_case_get_message:
+ *
+ * This function returns @validate_case message translated into the correct locale.
+ *
+ * Returns: a translated string for @validate_case.
+ */
+const gchar * gebr_validate_case_get_message (GebrValidateCase *validate_case);
 
 /**
  */

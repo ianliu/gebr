@@ -21,10 +21,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <config.h>
+#include <glib/gi18n-lib.h>
 
-#include "../intl.h"
 #include "../defines.h"
-
 #include "server.h"
 #include "listensocket.h"
 

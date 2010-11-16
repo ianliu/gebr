@@ -15,11 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <config.h>
+#include <glib/gi18n-lib.h>
 #include <string.h>
 
 #include "gebr-geoxml-validate.h"
 #include "../validate.h"
-#include "../intl.h"
 #include "../date.h"
 
 GebrGeoXmlValidate *gebr_geoxml_validate_new(gpointer data, GebrGeoXmlValidateOperations operations,

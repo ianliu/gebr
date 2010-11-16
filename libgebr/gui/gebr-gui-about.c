@@ -15,10 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../defines.h"
-#include "../intl.h"
-#include "../utils.h"
+#include <config.h>
+#include <glib/gi18n-lib.h>
 
+#include "../defines.h"
+#include "../utils.h"
 #include "gebr-gui-about.h"
 #include "gebr-gui-pixmaps.h"
 

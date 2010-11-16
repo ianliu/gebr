@@ -17,10 +17,8 @@
 
 #include <unistd.h>
 #include <stdlib.h>
+#include <libintl.h>
 #include <locale.h>
-#ifdef ENABLE_NLS
-#	include <libintl.h>
-#endif
 
 #include "libgebr.h"
 #include "defines.h"
@@ -29,6 +27,5 @@ void gebr_libinit(const gchar * gettext_package, const gchar * argv0)
 {
 	bindtextdomain(gettext_package, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset(gettext_package, "UTF-8");
-	if (gettext_package != NULL)
-		textdomain(gettext_package);
+	textdomain(gettext_package);
 }

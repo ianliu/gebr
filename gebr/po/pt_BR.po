@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-16 09:05-0200\n"
+"POT-Creation-Date: 2010-11-16 12:13-0200\n"
 "PO-Revision-Date: 2010-11-16 09:07-0200\n"
 "Last-Translator: Ian Liu Rodrigues <ian.liu@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -155,17 +155,17 @@ msgid "document"
 msgstr "documento"
 
 #: ../gebr/document.c:274 ../gebr/ui_document.c:970 ../gebr/ui_help.c:100
-#: ../gebr/ui_help.c:155
+#: ../gebr/ui_help.c:156
 msgid "project"
 msgstr "projeto"
 
 #: ../gebr/document.c:277 ../gebr/ui_document.c:972 ../gebr/ui_help.c:97
-#: ../gebr/ui_help.c:159
+#: ../gebr/ui_help.c:160
 msgid "line"
 msgstr "linha"
 
 #: ../gebr/document.c:280 ../gebr/ui_document.c:974 ../gebr/ui_help.c:94
-#: ../gebr/ui_help.c:163
+#: ../gebr/ui_help.c:164
 msgid "flow"
 msgstr "fluxo"
 
@@ -1209,29 +1209,29 @@ msgstr "Verifique a configuração dos parâmetros"
 msgid "Save the current document"
 msgstr "Salvar o documento atual"
 
-#: ../gebr/ui_help.c:109 ../gebr/ui_help.c:179
+#: ../gebr/ui_help.c:109 ../gebr/ui_help.c:180
 #, c-format
 msgid "Report of the %s \"%s\""
 msgstr "Relatório de %s \"%s\""
 
-#: ../gebr/ui_help.c:111 ../gebr/ui_help.c:181
+#: ../gebr/ui_help.c:111 ../gebr/ui_help.c:182
 #, c-format
 msgid "Report of the %s"
 msgstr "Relatório de %s"
 
-#: ../gebr/ui_help.c:167
+#: ../gebr/ui_help.c:168
 msgid "program"
 msgstr "programa"
 
-#: ../gebr/ui_help.c:195
+#: ../gebr/ui_help.c:196
 msgid "Program help"
 msgstr "Ajuda do programa"
 
-#: ../gebr/ui_help.c:253 ../gebr/ui_help.c:271
+#: ../gebr/ui_help.c:254 ../gebr/ui_help.c:272
 msgid "Unable to create temporary file."
 msgstr "Impossível escrever arquivo temporário."
 
-#: ../gebr/ui_help.c:262
+#: ../gebr/ui_help.c:263
 msgid "Error during editor execution."
 msgstr "Erro durate a execução do editor."
 

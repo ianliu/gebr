@@ -18,9 +18,10 @@
 #ifndef __LIBGEBR_H
 #define __LIBGEBR_H
 
+#include <locale.h>
+
 #include "defines.h"
 #include "date.h"
-#include "intl.h"
 #include "log.h"
 #include "utils.h"
 #include "validate.h"

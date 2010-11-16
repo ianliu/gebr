@@ -16,11 +16,9 @@
  */
 
 #include <stdio.h>
-#include <locale.h>
-
 #include <libgebr.h>
+#include <glib/gi18n.h>
 
-#include "../../intl.h"
 #include "../geoxml.h"
 
 int main(int argc, char **argv)

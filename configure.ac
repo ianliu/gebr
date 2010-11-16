@@ -239,6 +239,7 @@ libgebr/comm/Makefile
 libgebr/comm/gebr-comm.pc
 libgebr/comm/socketchannel/Makefile
 libgebr/comm/tests/Makefile
+libgebr/config.h
 libgebr/defines.h
 libgebr/docs/Makefile
 libgebr/docs/reference/Makefile

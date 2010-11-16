@@ -22,8 +22,6 @@
 
 G_BEGIN_DECLS
 
-//#define GETTEXT_PACKAGE		"libgebr"
-
 #define DATA_DIR		"@prefix@/share/"
 #define	PACKAGE_LOCALE_DIR	DATA_DIR"/locale"
 

@@ -15,7 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../intl.h"
+#include <config.h>
+#include <glib/gi18n-lib.h>
 
 #include "error.h"
 
@@ -42,7 +43,7 @@ const gchar *gebr_geoxml_error_string(enum GEBR_GEOXML_RETV error)
 
 	if (index >= GEBR_GEOXML_RETV_LENGTH)
 		return NULL;
-	return error_string_array[index];
+	return _(error_string_array[index]);
 }
 
 const gchar *gebr_geoxml_error_explained_string(enum GEBR_GEOXML_RETV error)
@@ -72,5 +73,5 @@ const gchar *gebr_geoxml_error_explained_string(enum GEBR_GEOXML_RETV error)
 
 	if (index > 13)
 		return NULL;
-	return error_string_array[index];
+	return _(error_string_array[index]);
 }

@@ -1,0 +1,12 @@
+#ifndef __LIBGEBR_CONFIG_H__
+#define __LIBGEBR_CONFIG_H__
+
+/*
+ * Warning: this file is intended to be included by .c files only!
+ * If you include this file in a .h, GeBR, DeBR or GeBRd will complain
+ * about macro redefinitions, such as GETTEXT_PACKAGE.
+ */
+
+#define GETTEXT_PACKAGE		"libgebr"
+
+#endif /* __LIBGEBR_CONFIG_H__ */

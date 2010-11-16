@@ -18,11 +18,11 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <gdk/gdkkeysyms.h>
+#include <config.h>
+#include <glib/gi18n-lib.h>
 
 #include "gebr-gui-utils.h"
-#include "../intl.h"
 
 /**
  * \internal

@@ -18,9 +18,10 @@
 #include <time.h>
 #include <limits.h>
 #include <string.h>
+#include <config.h>
+#include <glib/gi18n-lib.h>
 
 #include "date.h"
-#include "intl.h"
 #include "utils.h"
 
 /*

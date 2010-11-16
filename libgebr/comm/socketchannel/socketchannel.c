@@ -16,11 +16,9 @@
 	 */
 
 #include <stdio.h>
-#include <locale.h>
+#include <glib/gi18n.h>
 
 #include "libgebr.h"
-
-#include "../../intl.h"
 #include "../comm/channelsocket.h"
 
 gint channel_do(const gchar * source, const gchar * destination);
@@ -43,6 +41,7 @@ int main(int argc, char **argv)
 	GError *error = NULL;
 	GOptionContext *context;
 
+	setlocale (LC_ALL, "");
 	gebr_libinit("libgebr", argv[0]);
 
 	context = g_option_context_new(NULL);

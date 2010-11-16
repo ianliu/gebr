@@ -16,15 +16,16 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <regex.h>
-#include <webkit/webkit.h>
+#include <config.h>
 #include <glib.h>
+#include <glib/gi18n-lib.h>
 #include <glib/gstdio.h>
 #include <geoxml.h>
+#include <regex.h>
+#include <string.h>
+#include <webkit/webkit.h>
 
 #include "gebr-gui-html-viewer-widget.h"
-#include "../intl.h"
 #include "../utils.h"
 #include "../defines.h"
 #include "gebr-gui-utils.h"

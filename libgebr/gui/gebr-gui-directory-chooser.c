@@ -16,7 +16,8 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-#include "../intl.h"
+#include <config.h>
+#include <glib/gi18n-lib.h>
 
 #include "gebr-gui-directory-chooser.h"
 #include "gebr-gui-utils.h"

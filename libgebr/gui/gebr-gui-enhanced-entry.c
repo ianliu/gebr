@@ -16,8 +16,8 @@
  */
 
 #include <string.h>
-
-#include "../intl.h"
+#include <config.h>
+#include <glib/gi18n-lib.h>
 
 #include "gebr-gui-enhanced-entry.h"
 

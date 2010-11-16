@@ -114,6 +114,7 @@ create_help_edit_window(GebrGeoXmlDocument * document)
 
 	// Create the Save button and merge with the window UI
 	action_group = gtk_action_group_new("GebrHelpEditButtons");
+	gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
 	gtk_action_group_add_actions(action_group, action_entries, n_action_entries, widget);
 
 	ui_manager = gebr_gui_help_edit_window_get_ui_manager(help_edit_window);

@@ -16,11 +16,9 @@
  */
 
 #include <stdio.h>
-#include <locale.h>
-
 #include <libgebr.h>
+#include <glib/gi18n.h>
 
-#include "../../intl.h"
 #include "../geoxml.h"
 
 int main(int argc, char **argv)
@@ -36,8 +34,8 @@ int main(int argc, char **argv)
 	GError *error = NULL;
 	GOptionContext *context;
 
-	gebr_libinit("libgebr", argv[0]);
 	setlocale(LC_ALL, "");
+	gebr_libinit("libgebr", argv[0]);
 
 	context = g_option_context_new(NULL);
 	g_option_context_set_summary(context, _("LibGebrGeoXml XML validator")

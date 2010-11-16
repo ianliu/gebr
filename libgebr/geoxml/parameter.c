@@ -16,10 +16,9 @@
  */
 
 #include <string.h>
-
 #include <gdome.h>
-
-#include "../intl.h"
+#include <config.h>
+#include <glib/gi18n-lib.h>
 
 #include "parameter.h"
 #include "parameter_p.h"
@@ -287,7 +286,7 @@ const gchar *gebr_geoxml_parameter_get_type_name(GebrGeoXmlParameter * parameter
 		N_("group"), N_("reference")
 	};
 
-	return type_names[__gebr_geoxml_parameter_get_type(parameter, TRUE)];
+	return _(type_names[__gebr_geoxml_parameter_get_type(parameter, TRUE)]);
 }
 
 gboolean gebr_geoxml_parameter_get_is_reference(GebrGeoXmlParameter * parameter)

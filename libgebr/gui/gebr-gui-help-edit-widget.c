@@ -17,8 +17,9 @@
  */
 
 #include <glib.h>
+#include <config.h>
+#include <glib/gi18n-lib.h>
 
-#include "../intl.h"
 #include "gebr-gui-help-edit-widget.h"
 #include "gebr-gui-html-viewer-widget.h"
 #include "gebr-gui-utils.h"

@@ -15,10 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <config.h>
 #include <string.h>
 #include <regex.h>
+#include <glib/gi18n-lib.h>
 
-#include "intl.h"
 #include "validate.h"
 #include "geoxml/gebr-geoxml-validate.h"
 
@@ -112,6 +113,11 @@ GebrValidateCase * gebr_validate_get_validate_case(GebrValidateCaseName name)
 		if (validate_cases[i].name == name)
 			return &validate_cases[i];
 	return NULL;
+}
+
+const gchar * gebr_validate_case_get_message (GebrValidateCase *validate_case)
+{
+	return _(validate_case->validcase_msg);
 }
 
 gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value, gboolean * can_fix)
