@@ -18,4 +18,10 @@ include $(top_srcdir)/Makefile.decl
 debrdatadir = $(datadir)/debr/
 debrdata_DATA = help-template.html
 
-EXTRA_DIST = $(debrdata_DATA)
+desktopdir = $(datadir)/applications
+desktop_DATA = debr.desktop
+
+%.desktop:   %.desktop.in   $(INTLTOOL_MERGE) $(wildcard $(srcdir)/../po/*.po) ; LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(builddir)/../po/.intltool-merge-cache $(srcdir)/../po $< $@
+
+EXTRA_DIST = debr.desktop.in $(debrdata_DATA)
+CLEANFILES = $(desktop_DATA)

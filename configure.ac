@@ -297,8 +297,8 @@ gebr/tests/Makefile
 
 debr/Makefile
 debr/data/Makefile
+debr/data/debr.desktop.in
 debr/data/help-template.html
-debr/debr.desktop
 debr/doc/Makefile
 debr/doc/userdoc/Makefile
 debr/packages/Makefile 

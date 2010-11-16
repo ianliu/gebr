@@ -1,4 +1,5 @@
 # List of source files containing translatable strings.
+data/debr.desktop.in.in
 src/callbacks.c
 src/debr.c
 src/enumoptionedit.c

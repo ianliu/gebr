@@ -19,9 +19,3 @@ if ENABLE_TESTS
 TESTDIR=tests
 endif
 SUBDIRS = data src packages po doc ${TESTDIR}
-
-desktopdir = $(datadir)/applications
-desktop_DATA = debr.desktop
-
-EXTRA_DIST = $(desktop_DATA)
-

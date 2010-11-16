@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-10 17:46-0200\n"
-"PO-Revision-Date: 2010-11-10 17:48-0200\n"
+"POT-Creation-Date: 2010-11-16 17:44-0200\n"
+"PO-Revision-Date: 2010-11-16 17:47-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -18,12 +18,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
 "Language: \n"
 
+#: ../data/debr.desktop.in.in.h:1
+msgid "DéBR"
+msgstr "DéBR"
+
+#: ../data/debr.desktop.in.in.h:2
+msgid "Enhance GêBR with new functionalities"
+msgstr "Aprimora a GêBR com novas funcionalidades"
+
+#: ../data/debr.desktop.in.in.h:3 ../src/interface.c:159
+msgid "Menu designer for GêBR"
+msgstr "Designer de menus para GêBR"
+
 #. create file chooser
 #: ../src/callbacks.c:150
 msgid "Open menu"
 msgstr "Abrir menu"
 
-#: ../src/callbacks.c:160 ../src/menu.c:581
+#: ../src/callbacks.c:160 ../src/menu.c:590
 msgid "Menu files (*.mnu)"
 msgstr "Arquivos de menu (*.mnu)"
 
@@ -90,7 +102,8 @@ msgstr "Valor padrão"
 
 #: ../src/callbacks.c:371
 msgid "Do you want to use your parameter's values as default values?"
-msgstr "Você gostaria de utilizar os seus valores de parâmetros como valores padrão?"
+msgstr ""
+"Você gostaria de utilizar os seus valores de parâmetros como valores padrão?"
 
 #: ../src/callbacks.c:393
 #, c-format
@@ -101,25 +114,36 @@ msgstr "Fluxo '%s' importado como menu."
 msgid "Choose a folder"
 msgstr "Escolher uma pasta"
 
-#: ../src/enumoptionedit.c:264 ../src/enumoptionedit.c:291
+#: ../src/enumoptionedit.c:264 ../src/enumoptionedit.c:303
 msgid "value"
 msgstr "valor"
 
-#: ../src/enumoptionedit.c:271 ../src/enumoptionedit.c:289
+#: ../src/enumoptionedit.c:271 ../src/enumoptionedit.c:301
 msgid "label"
 msgstr "rótulo"
 
-#: ../src/categoryedit.c:209
+#: ../src/categoryedit.c:225
 msgid "Empty category"
 msgstr "Categoria Vazia"
 
-#: ../src/categoryedit.c:210
+#: ../src/categoryedit.c:226
 msgid ""
 "You can't add an empty category name (remember to take care with the '|' "
 "hierarchy separator)."
 msgstr ""
 "Não é permitido incluir categorias vazias (cuidado com o caracter '|' "
 "separador de hierarquia)."
+
+#: ../src/categoryedit.c:523
+msgid "Category already exists"
+msgstr "Categoria já existente"
+
+#: ../src/categoryedit.c:524
+#, c-format
+msgid ""
+"The category <i>%s</i> already exists in the list, the operation will be "
+"cancelled."
+msgstr "A categoria <i>%s</i> já existe na lista, a operação será cancelada."
 
 #: ../src/help.c:66
 msgid "_Jump To"
@@ -183,11 +207,11 @@ msgstr ""
 msgid "Unable to open template. Please check your installation."
 msgstr "Não foi possível abrir o modelo. Por favor verifique sua instalação."
 
-#: ../src/help.c:906 ../src/help.c:926
+#: ../src/help.c:907 ../src/help.c:927
 msgid "Unable to create temporary file."
 msgstr "Não foi possível criar um arquivo temporário."
 
-#: ../src/help.c:916
+#: ../src/help.c:917
 msgid "Error during editor execution."
 msgstr "Erro durante a execução do editor."
 
@@ -296,7 +320,7 @@ msgstr "Desselecionar todos"
 msgid "Unselect all menus"
 msgstr "Desselecionar todos os menus"
 
-#: ../src/interface.c:69 ../src/interface.c:91 ../src/menu.c:233
+#: ../src/interface.c:69 ../src/interface.c:91 ../src/menu.c:242
 #: ../src/program.c:189
 msgid "View Help"
 msgstr "Visualizar Ajuda"
@@ -305,7 +329,7 @@ msgstr "Visualizar Ajuda"
 msgid "View the help related to menu"
 msgstr "Visualizar o documento de ajuda, relativo ao menu"
 
-#: ../src/interface.c:71 ../src/interface.c:93 ../src/menu.c:230
+#: ../src/interface.c:71 ../src/interface.c:93 ../src/menu.c:239
 #: ../src/program.c:187
 msgid "Edit Help"
 msgstr "Editar Ajuda"
@@ -414,10 +438,6 @@ msgstr "Fecha relatórios selecionados"
 msgid "Close all reports"
 msgstr "Fecha todos os relatórios"
 
-#: ../src/interface.c:159
-msgid "Menu designer for GêBR"
-msgstr "Designer de menus para GêBR"
-
 #.
 #. * Menu: Actions
 #.
@@ -432,7 +452,7 @@ msgstr "_Ações"
 msgid "_Help"
 msgstr "A_juda"
 
-#: ../src/interface.c:247 ../src/menu.c:137
+#: ../src/interface.c:247 ../src/menu.c:146
 msgid "Menu"
 msgstr "Menu"
 
@@ -448,34 +468,34 @@ msgstr "Parâmetro"
 msgid "Create a new parameter"
 msgstr "Criar um novo parâmetro"
 
-#: ../src/menu.c:154
+#: ../src/menu.c:163
 msgid "<i>Others</i>"
 msgstr "<i>Outros</i>"
 
-#: ../src/menu.c:164 ../src/program.c:689
+#: ../src/menu.c:173 ../src/program.c:689
 msgid "Details"
 msgstr "Detalhes"
 
-#: ../src/menu.c:276
+#: ../src/menu.c:285
 #, c-format
 msgid "Untitled menu %d"
 msgstr "Menu não nomeado %d"
 
-#: ../src/menu.c:277
+#: ../src/menu.c:286
 #, c-format
 msgid "untitled%d.mnu"
 msgstr "sem_título%d.mnu"
 
-#: ../src/menu.c:325
+#: ../src/menu.c:334
 #, c-format
 msgid "Could not load menu at '%s': %s."
 msgstr "Não foi possível carregar menu em '%s': %s."
 
-#: ../src/menu.c:486
+#: ../src/menu.c:495
 msgid "Could not save the menu"
 msgstr "Não foi possível salvar o menu"
 
-#: ../src/menu.c:487
+#: ../src/menu.c:496
 msgid ""
 "You do not have necessary permissions to save the menu. Please check the "
 "provided location is correct and try again."
@@ -483,137 +503,182 @@ msgstr ""
 "Você não tem permissões necessárias para salvar o menu. Por favor, "
 "certifique-se que a pasta fornecida está correta e tente novamente."
 
-#: ../src/menu.c:490
+#: ../src/menu.c:499
 msgid "Permission denied."
 msgstr "Permissão negada."
 
-#: ../src/menu.c:511
+#: ../src/menu.c:520
 #, c-format
 msgid "Menu \"%s\" saved."
 msgstr "Menu \"%s\" salvo."
 
-#: ../src/menu.c:557
+#: ../src/menu.c:566
 #, c-format
 msgid "Choose file for \"%s\""
 msgstr "Escolher arquivo para \"%s\""
 
-#: ../src/menu.c:703
-msgid "There are menus unsaved. You need to save then before install."
+#: ../src/menu.c:712
+msgid "There are unsaved menus. You need to save then before install."
 msgstr "Existem menus não salvos. É necessário salvá-los antes da instalação."
 
-#: ../src/menu.c:731
+#: ../src/menu.c:740
+msgid ""
+"\n"
+" - No categories set"
+msgstr ""
+"\n"
+" - Nenhuma categoria definida"
+
+#: ../src/menu.c:743
+msgid ""
+"\n"
+" - Menu with no programs"
+msgstr ""
+"\n"
+" - Este menu não tem programas"
+
+#: ../src/menu.c:746
+msgid ""
+"\n"
+" - Menu has no title"
+msgstr ""
+"\n"
+" - Menu não possui título"
+
+#: ../src/menu.c:749
+msgid ""
+"\n"
+" - At least one program has no title"
+msgstr ""
+"\n"
+" - Pelo menos um programa não possui título"
+
+#: ../src/menu.c:752
+msgid "Unable to install menu "
+msgstr "Falha ao instalar o menu "
+
+#: ../src/menu.c:753
+#, c-format
+msgid ""
+"The menu %s can not be installed,\n"
+"and has the following problems:%s"
+msgstr ""
+"O menu %s não pode ser instalado,\n"
+"e possui os seguintes problemas:%s"
+
+#: ../src/menu.c:768
 #, c-format
 msgid ""
 "Menu '%s' already exists on destination folder. Do you want to overwrite it?"
 msgstr "Menu '%s' já existe. Deseja sobrescrevê-lo?"
 
-#: ../src/menu.c:733
+#: ../src/menu.c:770
 msgid "Don't overwrite"
 msgstr "Não sobrescreva"
 
-#: ../src/menu.c:734
+#: ../src/menu.c:771
 msgid "Overwrite"
 msgstr "Sobrescrever"
 
-#: ../src/menu.c:735
+#: ../src/menu.c:772
 msgid "Overwrite all"
 msgstr "Sobrescrever todos"
 
-#: ../src/menu.c:750
+#: ../src/menu.c:787
 #, c-format
 msgid "Failed to install menu '%s'"
 msgstr "Falha ao instalar o menu '%s'"
 
-#: ../src/menu.c:783
+#: ../src/menu.c:820
 #, c-format
 msgid "Menu \"%s\" closed."
 msgstr "O menu \"%s\" foi fechado."
 
 # Corrigi aqui
-#: ../src/menu.c:785
+#: ../src/menu.c:822
 msgid "Menu closed."
 msgstr "O menu foi fechado."
 
-#: ../src/menu.c:1111
+#: ../src/menu.c:1148
 msgid "Edit menu"
 msgstr "Editar menu"
 
 #.
 #. * Title
 #.
-#: ../src/menu.c:1128 ../src/program.c:476
+#: ../src/menu.c:1165 ../src/program.c:476
 msgid "Title:"
 msgstr "Título:"
 
 #.
 #. * Description
 #.
-#: ../src/menu.c:1143 ../src/program.c:541
+#: ../src/menu.c:1180 ../src/program.c:541
 msgid "Description:"
 msgstr "Descrição:"
 
 #.
 #. * Author
 #.
-#: ../src/menu.c:1158
+#: ../src/menu.c:1195
 msgid "Author:"
 msgstr "Autor:"
 
 #.
 #. * Email
 #.
-#: ../src/menu.c:1173
+#: ../src/menu.c:1210
 msgid "Email:"
 msgstr "E-mail:"
 
 #.
 #. * Categories
 #.
-#: ../src/menu.c:1188
+#: ../src/menu.c:1225
 msgid "Categories:"
 msgstr "Categorias:"
 
-#: ../src/menu.c:1287
+#: ../src/menu.c:1324
 msgid "Please select a menu."
 msgstr "Por favor selecione um menu."
 
-#: ../src/menu.c:1327
+#: ../src/menu.c:1364
 #, c-format
 msgid "This menu has no programs"
 msgstr "Este menu não tem programas"
 
-#: ../src/menu.c:1330
+#: ../src/menu.c:1367
 #, c-format
 msgid "This menu has 1 program"
 msgstr "Este menu tem 1 programa"
 
-#: ../src/menu.c:1333
+#: ../src/menu.c:1370
 #, c-format
 msgid "This menu has %li programs"
 msgstr "Este menu tem %li programas"
 
-#: ../src/menu.c:1339
+#: ../src/menu.c:1376
 msgid "Created: "
 msgstr "Criado: "
 
-#: ../src/menu.c:1343
+#: ../src/menu.c:1380
 msgid "Modified: "
 msgstr "Modificado: "
 
-#: ../src/menu.c:1353
+#: ../src/menu.c:1390
 msgid "Categories: "
 msgstr "Categorias: "
 
 #. There is no category, put "None"
-#: ../src/menu.c:1371 ../src/program.c:40
+#: ../src/menu.c:1408 ../src/program.c:40
 msgid "None"
 msgstr "Nenhum"
 
-#: ../src/menu.c:1406
+#: ../src/menu.c:1443
 msgid "<b>Others</b>"
 msgstr "<b>Outros</b>"
 
-#: ../src/menu.c:1408
+#: ../src/menu.c:1445
 msgid ""
 "<i>This folder lists the menus which are not in any configured folder "
 "through users' preferences.</i>"
@@ -621,47 +686,47 @@ msgstr ""
 "<i>Esta pasta lista os menus que não estão em qualquer pasta configurada "
 "pelas preferências do usuário.</i>"
 
-#: ../src/menu.c:1426
+#: ../src/menu.c:1463
 #, c-format
 msgid "This folder has no menu"
 msgstr "Esta pasta não tem menus"
 
-#: ../src/menu.c:1429
+#: ../src/menu.c:1466
 #, c-format
 msgid "This folder has 1 menu"
 msgstr "Esta pasta tem 1 menu"
 
-#: ../src/menu.c:1432
+#: ../src/menu.c:1469
 #, c-format
 msgid "This folder has %d menus"
 msgstr "Esta pasta tem %d menus"
 
-#: ../src/menu.c:1782
+#: ../src/menu.c:1819
 msgid "Collapse all"
 msgstr "Colapsar todos"
 
-#: ../src/menu.c:1785
+#: ../src/menu.c:1822
 msgid "Expand all"
 msgstr "Expandir todos"
 
-#: ../src/menu.c:1790
+#: ../src/menu.c:1827
 msgid "Sort by"
 msgstr "Ordenado por"
 
 #. Name
-#: ../src/menu.c:1803 ../src/preferences.c:61
+#: ../src/menu.c:1840 ../src/preferences.c:61
 msgid "Name"
 msgstr "Nome"
 
-#: ../src/menu.c:1809
+#: ../src/menu.c:1846
 msgid "Modified date"
 msgstr "Data em que foi modificado"
 
-#: ../src/menu.c:1874
+#: ../src/menu.c:1911
 msgid "Menu Help"
 msgstr "Ajuda de Menu"
 
-#: ../src/menu.c:2132
+#: ../src/menu.c:2169
 msgid "All menus were saved."
 msgstr "Todos os menus foram salvos."
 
@@ -1191,9 +1256,6 @@ msgstr "Selecione os menus que você deseja salvar:"
 
 #~ msgid " parameters"
 #~ msgstr "parâmetros"
-
-#~ msgid "Failed to install menu %s"
-#~ msgstr "Falha ao instalar o menu '%s'"
 
 #~ msgid "No menu selected."
 #~ msgstr "Nenhum menu selecionado."

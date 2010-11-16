@@ -1,0 +1,12 @@
+[Desktop Entry]
+_Name=DéBR
+_GenericName=Menu designer for GêBR
+_Comment=Enhance GêBR with new functionalities
+Type=Application
+Exec=debr
+TryExec=debr
+Icon=@PACKAGE_PREFIX_DIR@/share/libgebr/pixmaps/debr-icon-64x64.png
+Terminal=false
+Categories=Education;Science;Geoscience;GTK;
+StartupNotify=true
+Version=@PACKAGE_VERSION@
