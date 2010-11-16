@@ -327,7 +327,7 @@ GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlDocument * document, const gchar
 
 	g_object_set(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(web_view)),
 		     "enable-universal-access-from-file-uris", TRUE, NULL);
-
+	
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), priv->temp_file);
 
 	fclose(fp);

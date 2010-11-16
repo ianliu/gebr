@@ -163,6 +163,11 @@ static void gebr_gui_help_edit_widget_init(GebrGuiHelpEditWidget * self)
 	g_object_set (settings, "enable-dom-paste", TRUE, NULL);
 #endif
 
+#if WEBKIT_CHECK_VERSION(1,2,4)
+	g_object_set(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(priv->edit_widget)),
+		     "javascript-can-access-clipboard", TRUE, NULL);
+#endif	
+	
 	/* a reasonable minimum size, considering the toolbar */
 	gtk_widget_set_size_request(priv->edit_widget, 800, -1);
 
