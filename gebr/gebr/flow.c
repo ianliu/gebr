@@ -830,16 +830,16 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
 
 static void on_detailed_flow_css_changed (GtkComboBox * combobox)
 {
-	gchar * css;
+	GtkTreeIter iter;
+	gchar *text;
 
-	css = gtk_combo_box_get_active_text (combobox);
-	if (gtk_combo_box_get_active (combobox) == 0) {
-		g_string_assign (gebr.config.detailed_flow_css, "");
+	if (gtk_combo_box_get_active_iter (combobox, &iter)) {
+		gtk_tree_model_get(gtk_combo_box_get_model(combobox), &iter, 1, &text, -1);
+		g_string_assign (gebr.config.detailed_flow_css, text);
 	} else {
-		g_string_assign (gebr.config.detailed_flow_css, css);
+		g_string_assign (gebr.config.detailed_flow_css, "");
 	}
-
-	g_free (css);
+	g_free (text);
 }
 
 static void on_detailed_flow_include_report_toggled (GtkToggleButton * button)
@@ -892,11 +892,26 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 	GError * error = NULL;
 	const gchar * filename = NULL;
 	gint active = 0, i = 0;
+	GtkListStore *list_store;
+	GtkTreeIter iter;
+	GtkCellRenderer     *renderer;
+
+	/*Building the Model*/
+	list_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+
+	/*Make a combo_box from model*/
+	detailed_flow_css = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list_store));
+	g_object_unref(list_store);
+
+	renderer = gtk_cell_renderer_text_new ();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(detailed_flow_css), renderer, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(detailed_flow_css), renderer, "text", 0);
+
 
 	css_combo_label = gtk_label_new(_("Style"));
 	gtk_widget_show(css_combo_label);
-	detailed_flow_css = gtk_combo_box_new_text();
 
+	/*Reading the CSS file directory*/
 	directory = g_dir_open(GEBR_STYLES_DIR, 0, &error);
 	if (error != NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to read file: %s"), error->message);
@@ -904,11 +919,14 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 		return NULL;
 	}
 
-	gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_flow_css), _("User's report style"));
+	gtk_list_store_append(list_store, &iter);
+	gtk_list_store_set(list_store, &iter, 0, _("None"), 1, "", -1);
+
 	filename = g_dir_read_name(directory);
 	while (filename != NULL) {
 		if (fnmatch ("*.css", filename, 1) == 0) {
-			gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_flow_css), filename);
+			gtk_list_store_append(list_store, &iter);
+			gtk_list_store_set(list_store, &iter, 0, filename, 1, filename, -1);
 			if (strcmp (filename, gebr.config.detailed_flow_css->str) == 0)
 				// We must sum 1 to active to skip the first entry
 				active = i + 1;
