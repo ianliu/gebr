@@ -131,7 +131,7 @@ void flow_delete(gboolean confirm)
 		/* Seek and destroy */
 		gebr_geoxml_line_get_flow(gebr.line, &line_flow, 0);
 		for (; line_flow != NULL; gebr_geoxml_sequence_next(&line_flow)) {
-			if (strcmp(filename, gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow))) == 0) {
+			if (g_strcmp0(filename, gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow))) == 0) {
 				gebr_geoxml_sequence_remove(line_flow);
 				document_save(GEBR_GEOXML_DOC(gebr.line), TRUE, FALSE);
 				break;
@@ -650,7 +650,7 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
                 default_value = gebr_geoxml_program_parameter_get_string_value(program, TRUE);
 
                 if (((gebr.config.detailed_line_flow_params == FLOW_PARAMS_NO_DEFAULT_PARAMS) &&
-                     (strcmp(str_value->str, default_value->str) != 0)) ||
+                     (g_strcmp0(str_value->str, default_value->str) != 0)) ||
                     ((gebr.config.detailed_line_flow_params == FLOW_PARAMS_NO_BLANK_PARAMS) &&
                      (strlen(str_value->str) > 0)) ||
                     ((gebr.config.detailed_line_flow_params == FLOW_PARAMS_ALL_PARAMS)))
@@ -927,7 +927,7 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 		if (fnmatch ("*.css", filename, 1) == 0) {
 			gtk_list_store_append(list_store, &iter);
 			gtk_list_store_set(list_store, &iter, 0, filename, 1, filename, -1);
-			if (strcmp (filename, gebr.config.detailed_flow_css->str) == 0)
+			if (g_strcmp0 (filename, gebr.config.detailed_flow_css->str) == 0)
 				// We must sum 1 to active to skip the first entry
 				active = i + 1;
 			i++;

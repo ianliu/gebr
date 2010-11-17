@@ -1098,7 +1098,7 @@ gebr_project_line_print_dialog_custom_tab()
 		if (fnmatch("*.css", filename, 1) == 0) {
 			gtk_list_store_append(list_store, &iter);
 			gtk_list_store_set(list_store, &iter, 0, filename, 1, filename, -1);
-			if (strcmp (filename, gebr.config.detailed_line_css->str) == 0)
+			if (g_strcmp0(filename, gebr.config.detailed_line_css->str) == 0)
 				// We must sum 1 to active to skip the first entry
 				active = i + 1;
 			i++;
