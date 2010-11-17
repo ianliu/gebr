@@ -153,6 +153,8 @@ function onCkEditorLoadFinished() {
 	upgradeHelpFormat(document_clone);
 	openCKEditor(getEditableElement(document));
 }
+	
+
 
 //==============================================================================
 // PUBLIC FUNCTIONS: can be used externaly				       =

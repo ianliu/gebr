@@ -288,9 +288,6 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 		return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 	}
 
-	puts ("+++");
-	puts (uri);
-	puts (priv->tmp_file);
 	if (g_str_has_prefix(uri + strlen("file://"), priv->tmp_file) || g_str_has_prefix(uri, "about:"))
 		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 
