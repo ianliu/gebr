@@ -39,7 +39,8 @@
 	"function onCkEditorLoadFinished() {}"						\
 	"</script>"									\
 	"<script src='" GEBR_HELP_EDIT_SCRIPT_PATH "ckeditor.js'>"			\
-	"</script></head>"								\
+	"</script>"									\
+	"</head>"                                                                       \
 	"<body>"									\
 	"<textarea id=\"editor\" name=\"editor\"></textarea>"				\
 	"<script>"									\

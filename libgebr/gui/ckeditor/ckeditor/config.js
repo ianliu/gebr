@@ -8,4 +8,11 @@ CKEDITOR.editorConfig = function( config )
 	// Define changes to default configuration here. For example:
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
+	
 };
+
+CKEDITOR.on('instanceReady', function( evt )
+{
+   var editor = evt.editor;
+   editor.execCommand('maximize');
+});
