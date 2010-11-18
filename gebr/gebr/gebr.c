@@ -444,7 +444,7 @@ void gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboole
 	gchar *string;
 	va_list argp;
 
-#ifndef GEBR_DEBUG
+#ifndef DEBUG
 	if (type == GEBR_LOG_DEBUG)
 		return;
 #endif
