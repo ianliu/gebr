@@ -277,7 +277,7 @@ gint gebr_config_load()
 				 gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_line_css", "")->str);
 		gebr.config.detailed_line_include_report = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "detailed_line_include_report", FALSE);
 		gebr.config.detailed_line_include_flow_report = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "detailed_line_include_flow_report", FALSE);
-		gebr.config.detailed_line_flow_params = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "detailed_line_include_flow_params", FALSE);
+		//gebr.config.detailed_line_flow_params = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "detailed_line_include_flow_params", FALSE);
 		gebr.config.detailed_flow_params = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "detailed_include_flow_params", FALSE);
 
 		g_string_free(data_dir, TRUE);
@@ -388,7 +388,7 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_string(gebr.config.key_file, "general", "detailed_line_css", gebr.config.detailed_line_css->str);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "detailed_line_include_report", gebr.config.detailed_line_include_report);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "detailed_line_include_flow_report", gebr.config.detailed_line_include_flow_report);
-	g_key_file_set_integer(gebr.config.key_file, "general", "detailed_line_include_flow_params", gebr.config.detailed_line_flow_params);
+	//g_key_file_set_integer(gebr.config.key_file, "general", "detailed_line_include_flow_params", gebr.config.detailed_line_flow_params);
 	g_key_file_set_integer(gebr.config.key_file, "general", "detailed_include_flow_params", gebr.config.detailed_flow_params);
 
 	/* Save list of servers */

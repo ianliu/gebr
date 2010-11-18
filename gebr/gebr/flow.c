@@ -724,7 +724,7 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 
 		switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 		case NOTEBOOK_PAGE_PROJECT_LINE:
-			combo_value = gebr.config.detailed_line_flow_params;
+			combo_value = 1/*gebr.config.detailed_line_flow_params*/;
 			break;
 		case NOTEBOOK_PAGE_FLOW_BROWSE:
 			combo_value = gebr.config.detailed_flow_params;

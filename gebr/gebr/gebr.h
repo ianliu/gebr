@@ -122,7 +122,7 @@ struct gebr {
 		GString * detailed_flow_css;
                 // Parameter table:
                 // 0 - No table at all
-                // 1 - Just parameters wich differ from default
+                // 1 - Just parameters which differ from default
                 // 2 - Just filled in parameters
                 // 3 - All parameters
 		gint detailed_flow_params;
@@ -132,15 +132,26 @@ struct gebr {
 		// - For lines:
 		//  [ ] Include user's report
 		//  [ ] Include flow's report
-		//    [ ] Include parameter/value table
+		//  |- Include parameter/value table----
+		//  |    o No table at all              |
+		//  |    o Just parameters which differ from default
+		//  |    o Just filled in parameters    |
+		//  |    o All parameters               |
+		//  |___________________________________
+		//
 		//  (CSS Combo ^)
+
 		GString * detailed_line_css;
                 // Parameter table:
                 // 0 - No table at all
-                // 1 - Just parameters wich differ from default
+                // 1 - Just parameters which differ from default
                 // 2 - Just filled in parameters
                 // 3 - All parameters
-		gint detailed_line_flow_params;
+		GtkWidget *no_param_radio;
+		GtkWidget *just_default_radio;
+		GtkWidget *just_filled_radio;
+		GtkWidget *all_param_radio;
+		GtkWidget *fake_radio;
 		gboolean detailed_line_include_report;
 		gboolean detailed_line_include_flow_report;
 	} config;
