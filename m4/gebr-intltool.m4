@@ -1,15 +1,3 @@
-dnl define AM_NLS if needed
-AC_DEFUN([AM_NLS],
-[
-  AC_MSG_CHECKING([whether NLS is requested])
-  dnl Default is enabled NLS
-  AC_ARG_ENABLE(nls,
-    [  --disable-nls           do not use Native Language Support],
-    USE_NLS=$enableval, USE_NLS=yes)
-  AC_MSG_RESULT($USE_NLS)
-  AC_SUBST(USE_NLS)
-])
-
 dnl GEBR_PROG_INTLTOOL([MINIMUM-VERSION], [no-xml])
 # serial 40 GEBR_PROG_INTLTOOL
 AC_DEFUN([GEBR_PROG_INTLTOOL], [
