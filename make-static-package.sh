@@ -15,60 +15,42 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#dir
-GEBR_DIR=`pwd`/gebr-static
-rm -fr $GEBR_DIR
-mkdir -p $GEBR_DIR
+if [ "x$GEBR_DIR" = "x" ]; then
+	GEBR_DIR=$HOME/.local
+fi
 
-export PKG_CONFIG_PATH=$GEBR_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
+GEBR_BINS="gebr* debr"
 
-#./autogen.sh
+cd $GEBR_DIR/bin && rm -f $GEBR_BINS && cd -
+cd $GEBR_DIR/lib/gebr/bin && rm -f $GEBR_BINS && cd -
 
-#GeBR libray
-cd libgebr
 ./configure --prefix=$GEBR_DIR --disable-debug
-perl -i -pe "s|$GEBR_DIR|..|" src/defines.h
+# perl -i -pe "s|$GEBR_DIR|..|" `find . -name defines.h`
 make -j5 install
-cd ..
-
-#GeBRD
-cd gebrd
-./configure --prefix=$GEBR_DIR --disable-debug
-make -j5 install
-cd ..
-
-#GeBR
-cd gebr
-./configure --prefix=$GEBR_DIR --disable-debug
-perl -i -pe "s|$GEBR_DIR|..|" src/defines.h
-make -j5 install
-cd ..
-
-#DeBR
-cd debr
-./configure --prefix=$GEBR_DIR --disable-debug
-perl -i -pe "s|$GEBR_DIR|..|" src/defines.h
-make -j5 install
-cd ..
 
 #final adjustments
-mkdir -p $GEBR_DIR/real-bin
-mv $GEBR_DIR/bin/* $GEBR_DIR/real-bin
+mkdir -p $GEBR_DIR/lib/gebr/bin
+cd $GEBR_DIR/bin
+mv $GEBR_BINS $GEBR_DIR/lib/gebr/bin
+cd $GEBR_DIR/lib/gebr/bin && GEBR_SAVE=`ls $GEBR_BINS` && cd -
+
 echo '#!/bin/sh
 if test -z $GEBR_HOME; then
-	export GEBR_HOME=$PWD/`dirname $0`/..
+	dir=`dirname $0`
+	if [[ "$dir" == /* ]]; then
+		export GEBR_HOME=$dir/..
+	else
+		export GEBR_HOME=$PWD/$dir/..
+	fi
 	export LD_LIBRARY_PATH=$GEBR_HOME/lib:$LD_LIBRARY_PATH
 	export PATH=$GEBR_HOME/bin:$PATH
 fi
 GEBR_PROG=`basename $0`
 cd $GEBR_HOME/bin
-$GEBR_HOME/real-bin/$GEBR_PROG $*' > $GEBR_DIR/bin/script
-chmod +x $GEBR_DIR/bin/script
-cd $GEBR_DIR/real-bin
-for bin in *; do
-	ln -sf script $GEBR_DIR/bin/$bin
-done
+$GEBR_HOME/lib/gebr/bin/$GEBR_PROG $*' > $GEBR_DIR/lib/gebr/bin/gebr-run.sh
 
-#libs
-cd $GEBR_DIR/lib
-rm *.la *.a
+chmod +x $GEBR_DIR/lib/gebr/bin/gebr-run.sh
+cd $GEBR_DIR/bin
+for bin in $GEBR_SAVE; do
+	ln -sf ../lib/gebr/bin/gebr-run.sh $bin
+done
