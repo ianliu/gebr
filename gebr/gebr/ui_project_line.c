@@ -1032,13 +1032,6 @@ static void on_detailed_line_include_flow_report_toggled (GtkToggleButton *butto
 	gebr.config.detailed_line_include_flow_report = toggled;
 }
 
-/* static void on_detailed_line_include_flow_params_toggled (GtkToggleButton * button) */
-/* { */
-/* 	gboolean toggled; */
-/* 	toggled = gtk_toggle_button_get_active(button); */
-/* 	gebr.config.detailed_line_include_flow_params = toggled; */
-/*}*/
-
 static void on_detailed_line_flow_params_changed (GtkComboBox * combobox)
 {
 	gebr.config.detailed_line_flow_params = gtk_combo_box_get_active (combobox);
@@ -1135,7 +1128,7 @@ gebr_project_line_print_dialog_custom_tab()
 	gtk_combo_box_set_active(GTK_COMBO_BOX(detailed_line_css_combo), active);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_line_include_report), gebr.config.detailed_line_include_report);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_line_include_flow_report), gebr.config.detailed_line_include_flow_report);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(detailed_line_flow_params_combo), (gebr.config.detailed_line_flow_params > 0 ? 1 : 0)); 
+	gtk_combo_box_set_active(GTK_COMBO_BOX(detailed_line_flow_params_combo), gebr.config.detailed_line_flow_params); 
 	gtk_widget_set_sensitive (detailed_line_flow_params_combo, gebr.config.detailed_line_include_flow_report);
 
 	frame = gtk_frame_new(NULL);
