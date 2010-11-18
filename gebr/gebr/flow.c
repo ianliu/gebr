@@ -1010,7 +1010,14 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 	while (filename != NULL) {
 		if (fnmatch ("*.css", filename, 1) == 0) {
 			gtk_list_store_append(list_store, &iter);
-			gtk_list_store_set(list_store, &iter, 0, filename, 1, filename, -1);
+			gchar *absolute_path = g_strconcat(GEBR_STYLES_DIR, "/", filename, NULL);
+			gchar *title = get_css_header_field(absolute_path, "title");
+			g_free(absolute_path);
+			if (!title)
+				gtk_list_store_set(list_store, &iter, 0, filename, 1, filename, -1);
+			else
+				gtk_list_store_set(list_store, &iter, 0, title, 1, filename, -1);
+			g_free(title);
 			if (g_strcmp0 (filename, gebr.config.detailed_flow_css->str) == 0)
 				// We must sum 1 to active to skip the first entry
 				active = i + 1;
