@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-16 17:58-0200\n"
+"POT-Creation-Date: 2010-11-18 18:30-0200\n"
 "PO-Revision-Date: 2010-11-16 17:47-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -149,45 +149,45 @@ msgstr "A categoria <i>%s</i> já existe na lista, a operação será cancelada.
 msgid "_Jump To"
 msgstr "_Ir para"
 
-#: ../src/help.c:70
+#: ../src/help.c:69
 msgid "Update editor's content with data from menu"
 msgstr "Atualizar o conteúdo do editor com dados do menu"
 
-#: ../src/help.c:73
+#: ../src/help.c:71
 msgid "Revert help content to the saved state"
 msgstr "Reverter conteúdo de ajuda para a última versão salva"
 
-#: ../src/help.c:143 ../src/help.c:832
+#: ../src/help.c:142 ../src/help.c:831
 #, c-format
 msgid "Help of the program \"%s\""
 msgstr "Ajuda do programa \"%s\""
 
-#: ../src/help.c:145 ../src/help.c:834
+#: ../src/help.c:144 ../src/help.c:833
 #, c-format
 msgid "Help of the program"
 msgstr "Ajuda do programa"
 
-#: ../src/help.c:150 ../src/help.c:838
+#: ../src/help.c:149 ../src/help.c:837
 #, c-format
 msgid "Help of the menu \"%s\""
 msgstr "Ajuda do menu \"%s\""
 
-#: ../src/help.c:152 ../src/help.c:840
+#: ../src/help.c:151 ../src/help.c:839
 #, c-format
 msgid "Help of the menu"
 msgstr "Ajuda do menu"
 
-#: ../src/help.c:223
+#: ../src/help.c:222
 #, c-format
 msgid "Program: %s"
 msgstr "Programa: %s"
 
-#: ../src/help.c:226
+#: ../src/help.c:225
 #, c-format
 msgid "Menu: %s"
 msgstr "Menu: %s"
 
-#: ../src/help.c:712
+#: ../src/help.c:711
 msgid ""
 "<span font_weight='bold' size='large'>Do you really want to revert this help?"
 "</span>"
@@ -195,7 +195,7 @@ msgstr ""
 "<span font_weight='bold' size='large'>Você realmente deseja reverter esse "
 "componente?</span>"
 
-#: ../src/help.c:717
+#: ../src/help.c:716
 msgid ""
 "By choosing yes, you will lose all modifications made after the associated "
 "menu was saved."
@@ -203,15 +203,15 @@ msgstr ""
 "Ao escolher sim, serão perdidas todas as modificações feitas após o menu ter "
 "sido salvo"
 
-#: ../src/help.c:772
+#: ../src/help.c:771
 msgid "Unable to open template. Please check your installation."
 msgstr "Não foi possível abrir o modelo. Por favor verifique sua instalação."
 
-#: ../src/help.c:907 ../src/help.c:927
+#: ../src/help.c:906 ../src/help.c:926
 msgid "Unable to create temporary file."
 msgstr "Não foi possível criar um arquivo temporário."
 
-#: ../src/help.c:917
+#: ../src/help.c:916
 msgid "Error during editor execution."
 msgstr "Erro durante a execução do editor."
 
@@ -793,11 +793,11 @@ msgstr "Nenhum parâmetro está selecionado."
 #.
 #. * Label
 #.
-#: ../src/parameter.c:757 ../src/parametergroup.c:100
+#: ../src/parameter.c:759 ../src/parametergroup.c:100
 msgid "Label:"
 msgstr "Rótulo:"
 
-#: ../src/parameter.c:764
+#: ../src/parameter.c:766
 msgid ""
 "Characters preceded by an underscore will be underlined and the first, will "
 "be used as a hot-key to focus this parameter. For example, if the label is "
@@ -815,64 +815,64 @@ msgstr ""
 #.
 #. * Keyword
 #.
-#: ../src/parameter.c:780
+#: ../src/parameter.c:782
 msgid "Keyword:"
 msgstr "Palavra-chave:"
 
-#: ../src/parameter.c:799
+#: ../src/parameter.c:801
 msgid "Edit parameter "
 msgstr "Editar parâmetro "
 
-#: ../src/parameter.c:803
+#: ../src/parameter.c:805
 msgid "(text)"
 msgstr "(texto)"
 
-#: ../src/parameter.c:806
+#: ../src/parameter.c:808
 msgid "(integer)"
 msgstr "(inteiro)"
 
-#: ../src/parameter.c:809
+#: ../src/parameter.c:811
 msgid "(file)"
 msgstr "(arquivo)"
 
-#: ../src/parameter.c:812
+#: ../src/parameter.c:814
 msgid "(flag)"
 msgstr "(flag)"
 
-#: ../src/parameter.c:815
+#: ../src/parameter.c:817
 msgid "(real)"
 msgstr "(real)"
 
-#: ../src/parameter.c:818
+#: ../src/parameter.c:820
 msgid "(range)"
 msgstr "(intervalo)"
 
-#: ../src/parameter.c:821
+#: ../src/parameter.c:823
 msgid "(enum)"
 msgstr "(enum)"
 
-#: ../src/parameter.c:824
+#: ../src/parameter.c:826
 msgid "(reference)"
 msgstr "(referência)"
 
 #.
 #. * Required
 #.
-#: ../src/parameter.c:837
+#: ../src/parameter.c:839
 msgid "Required:"
 msgstr "Obrigatório:"
 
 #.
 #. * Is List
 #.
-#: ../src/parameter.c:853
+#: ../src/parameter.c:855
 msgid "List:"
 msgstr "Lista:"
 
 #.
 #. * List separator
 #.
-#: ../src/parameter.c:869
+#: ../src/parameter.c:871
 msgid ""
 "List-item\n"
 "separator:"
@@ -883,105 +883,105 @@ msgstr ""
 #.
 #. * Comma Separator
 #.
-#: ../src/parameter.c:886
+#: ../src/parameter.c:888
 msgid "Comma"
 msgstr "Vírgula"
 
 #.
 #. * Space Separator
 #.
-#: ../src/parameter.c:893
+#: ../src/parameter.c:895
 msgid "Space"
 msgstr "Espaço"
 
 #.
 #. * Other Separator
 #.
-#: ../src/parameter.c:900
+#: ../src/parameter.c:902
 msgid "Other:"
 msgstr "Outro:"
 
 #.
 #. * Type
 #.
-#: ../src/parameter.c:932
+#: ../src/parameter.c:934
 msgid "Type:"
 msgstr "Tipo:"
 
-#: ../src/parameter.c:943
+#: ../src/parameter.c:945
 msgid "File"
 msgstr "Arquivo"
 
-#: ../src/parameter.c:944
+#: ../src/parameter.c:946
 msgid "Directory"
 msgstr "Diretório"
 
 #.
 #. * Filter
 #.
-#: ../src/parameter.c:956
+#: ../src/parameter.c:958
 msgid "Filter file types:"
 msgstr "Tipos de filtros de arquivos:"
 
-#: ../src/parameter.c:966
+#: ../src/parameter.c:968
 msgid "name"
 msgstr "nome"
 
-#: ../src/parameter.c:972
+#: ../src/parameter.c:974
 msgid "pattern (eg. *.jpg *.png)"
 msgstr "padrão (ex. *.jpg *.png)"
 
 #.
 #. * Minimum
 #.
-#: ../src/parameter.c:1006
+#: ../src/parameter.c:1008
 msgid "Minimum:"
 msgstr "Mínimo:"
 
 #.
 #. * Maximum
 #.
-#: ../src/parameter.c:1024
+#: ../src/parameter.c:1026
 msgid "Maximum:"
 msgstr "Máximo:"
 
 #.
 #. * Increment
 #.
-#: ../src/parameter.c:1051
+#: ../src/parameter.c:1053
 msgid "Increment:"
 msgstr "Incremento:"
 
 #.
 #. * Digits
 #.
-#: ../src/parameter.c:1069
+#: ../src/parameter.c:1071
 msgid "Digits:"
 msgstr "Dígitos:"
 
 #.
 #. * Options
 #.
-#: ../src/parameter.c:1098
+#: ../src/parameter.c:1100
 msgid "Options:"
 msgstr "Opções:"
 
 #.
 #. * Default value
 #.
-#: ../src/parameter.c:1126
+#: ../src/parameter.c:1128
 msgid "Default value:"
 msgstr "Valor padrão:"
 
-#: ../src/parameter.c:1142
+#: ../src/parameter.c:1144
 msgid "enabled by default"
 msgstr "habilitado por padrão"
 
-#: ../src/parameter.c:1183
+#: ../src/parameter.c:1185
 msgid "Separator"
 msgstr "Separador"
 
-#: ../src/parameter.c:1184
+#: ../src/parameter.c:1186
 msgid ""
 "You've marked this parameter as a list but no separator was selected.\n"
 "Please select the list separator."
@@ -990,27 +990,27 @@ msgstr ""
 "definido.\n"
 "Por favor, selecione um separador para os elementos da lista."
 
-#: ../src/parameter.c:1289
+#: ../src/parameter.c:1291
 #, c-format
 msgid "with 1 instance"
 msgstr "com 1 instância"
 
-#: ../src/parameter.c:1292
+#: ../src/parameter.c:1294
 #, c-format
 msgid "with %lu instances"
 msgstr "com %lu instâncias"
 
-#: ../src/parameter.c:1297
+#: ../src/parameter.c:1299
 #, c-format
 msgid "not instantiable"
 msgstr "não instanciável"
 
-#: ../src/parameter.c:1300
+#: ../src/parameter.c:1302
 #, c-format
 msgid " and exclusive"
 msgstr " e exclusivo"
 
-#: ../src/parameter.c:1302
+#: ../src/parameter.c:1304
 #, c-format
 msgid " and not exclusive"
 msgstr " e não exclusivo"
