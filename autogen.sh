@@ -1,2 +1,3 @@
+libtoolize
 gtkdocize
 autoreconf -i

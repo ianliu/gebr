@@ -9,5 +9,4 @@ AM_LDFLAGS = $(INTLLIBS) $(GEBR_LIBS) $(GEBR_GEOXML_LIBS) \
 
 TEST_PROGS += test-job-queue
 test_job_queue_SOURCES = test-job-queue.c
-test_job_queue_LDADD = $(builddir)/../src/libgebrd.a
-
+test_job_queue_LDADD = ../src/libgebrd.a
