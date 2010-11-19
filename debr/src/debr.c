@@ -184,7 +184,7 @@ void debr_message(enum gebr_log_message_type type, const gchar * message, ...)
 	gchar *string;
 	va_list argp;
 
-#ifndef DEBR_DEBUG
+#ifndef DEBUG
 	if (type == GEBR_LOG_DEBUG)
 		return;
 #endif

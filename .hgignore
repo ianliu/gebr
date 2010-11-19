@@ -29,7 +29,8 @@ config.log
 config.status
 config.sub
 configure
-debr.desktop
+debr/data/debr.desktop
+debr/data/debr.desktop.in
 debr/data/help-template.html
 debr/doc/userdoc/debr.html
 debr/packages/rpm/debr.fedora.spec
@@ -63,6 +64,7 @@ libgebr/comm/gebr-comm.pc
 libgebr/comm/socketchannel/gebr-comm-socketchannel
 libgebr/comm/tests/test-protocol
 libgebr/comm/tests/test-socket
+libgebr/config.h
 libgebr/defines.h
 libgebr/docs/reference/libgebr/html
 libgebr/docs/reference/libgebr/libgebr-decl-list.txt

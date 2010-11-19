@@ -636,13 +636,12 @@ GtkWidget * parameter_create_menu_with_types(gboolean is_change_type)
 	menu = gtk_menu_new();
 
 	for (guint i = 0; i < combo_type_map_size - 1; i++) {
+		entry = parameter_type_radio_actions_entries[i];
+		GtkAction *action = gtk_action_group_get_action(debr.action_group, entry.name);
 		if (is_change_type) {
-			GtkAction *action;
-			action = gtk_action_group_get_action(debr.action_group, parameter_type_radio_actions_entries[i].name);
 			item = gtk_action_create_menu_item(action);
 		} else {
-			entry = parameter_type_radio_actions_entries[i];
-			item = gtk_menu_item_new_with_label(entry.label);
+			item = gtk_menu_item_new_with_label(gtk_action_get_label(action));
 			g_signal_connect(item, "activate",
 					 G_CALLBACK(on_parameter_menu_item_new_activate),
 					 GINT_TO_POINTER(entry.value));
@@ -655,7 +654,8 @@ GtkWidget * parameter_create_menu_with_types(gboolean is_change_type)
 	 */
 	if (!is_change_type) {
 		entry = parameter_type_radio_actions_entries[combo_type_map_size-1];
-		item = gtk_menu_item_new_with_label(entry.label);
+		GtkAction *action = gtk_action_group_get_action(debr.action_group, entry.name);
+		item = gtk_menu_item_new_with_label(gtk_action_get_label(action));
 		g_signal_connect(item, "activate",
 				 G_CALLBACK(on_parameter_menu_item_new_activate),
 				 GINT_TO_POINTER(entry.value));
