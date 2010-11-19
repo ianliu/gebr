@@ -89,6 +89,7 @@ AM_CPPFLAGS =			\
 	$(GEBR_COMM_CFLAGS)	\
 	$(GEBR_GUI_CFLAGS)	\
 	@DEBUG_CFLAGS@		\
+	-DNANOVERSION=\"`hg parent --template '+{latesttagdistance}-{node|short}' 2> /dev/null || date ++%H%M`\" \
 	$(NULL)
 
 AM_CFLAGS = -Wall -std=gnu99
@@ -100,3 +101,4 @@ gebr_LDADD =			\
 	$(GEBR_COMM_LIBS)	\
 	$(GEBR_GUI_LIBS)	\
 	$(NULL)
+.PHONY: main.c

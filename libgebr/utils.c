@@ -475,15 +475,6 @@ int g_strcmp0(const char * str1, const char * str2)
 }
 #endif
 
-/*
- * Function: gebr_version
- * Returns the libgebr version
- */
-const gchar* gebr_version()
-{
-	return LIBGEBR_VERSION LIBGEBR_NANOVERSION;
-}
-
 gboolean gebr_paths_equal (const gchar *path1, const gchar *path2)
 {
 	struct stat stat1, stat2;

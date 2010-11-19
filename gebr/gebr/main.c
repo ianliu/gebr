@@ -26,6 +26,7 @@
 
 #include "gebr.h"
 #include "../defines.h"
+#include "version.h"
 #include "interface.h"
 
 
@@ -60,7 +61,7 @@ int main(int argc, char **argv, char **env)
 		return -1;
 	}
 	if (show_version == TRUE) {
-		fprintf(stdout, "%s (%s)\n", GEBR_VERSION, gebr_version());
+		fprintf(stdout, "%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
 		return 0;
 	}
 

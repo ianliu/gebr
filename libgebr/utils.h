@@ -98,8 +98,6 @@ const gchar *gebr_validate_float(const gchar * text_value, const gchar * min, co
 int g_strcmp0(const char * str1, const char * str2);
 #endif
 
-const gchar *gebr_version();
-
 /**
  * gebr_paths_equal:
  * @dir1: the first path

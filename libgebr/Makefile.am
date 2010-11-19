@@ -22,18 +22,20 @@ pkgconfig_DATA = gebr.pc
 
 lib_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES = libgebr.c \
-	date.c log.c utils.c validate.c
+	date.c log.c version.c utils.c validate.c
 
 libgebrincludedir = $(includedir)/libgebr
 libgebrinclude_HEADERS = libgebr.h \
-	defines.h date.h log.h utils.h validate.h
+	defines.h version.h date.h log.h utils.h validate.h
 noinst_HEADERS = defines.h
 
 EXTRA_DIST = ${pkgconfig_DATA} $(noinst_HEADERS)
 
-INCLUDES = 
+AM_CPPFLAGS = -DNANOVERSION=\"`hg parent --template '+{latesttagdistance}-{node|short}' 2> /dev/null || date ++%H%M`\"
 AM_CFLAGS = -Wall -std=gnu99 -fPIC @DEBUG_CFLAGS@ $(GLIB_CFLAGS)
 libgebr_la_LIBADD = -lutil $(INTLLIBS) $(GLIB_LIBS)
 libgebr_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@
 
 distcheck-hook: all
+
+.PHONY: version.c

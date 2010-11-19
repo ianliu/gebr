@@ -19,7 +19,7 @@
 #include <glib/gi18n-lib.h>
 
 #include "../defines.h"
-#include "../utils.h"
+#include "../version.h"
 #include "gebr-gui-about.h"
 #include "gebr-gui-pixmaps.h"
 

@@ -27,6 +27,7 @@
 
 #include "gebrd.h"
 #include "defines.h"
+#include "version.h"
 
 int main(int argc, char **argv)
 {
@@ -57,7 +58,7 @@ int main(int argc, char **argv)
 	}
 
 	if (show_version == TRUE) {
-		fprintf(stdout, "%s (%s)\n", GEBRD_VERSION, gebr_version());
+		fprintf(stdout, "%s (%s)\n", GEBRD_VERSION NANOVERSION, gebr_version());
 		return 0;
 	}
 
