@@ -681,13 +681,26 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 
 		if (gebr.config.detailed_line_include_flow_report) {
 			gebr_geoxml_line_get_flow(GEBR_GEOXML_LINE(document), &line_flow, 0);
+
+			gboolean has_table = FALSE;
+
+			switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+			case NOTEBOOK_PAGE_PROJECT_LINE:
+				has_table = !gebr.config.line_no_param_radio;
+				break;
+			case NOTEBOOK_PAGE_FLOW_BROWSE:
+				has_table = !gebr.config.flow_no_param_radio;
+				break;
+			default:
+				break;
+			}
+
 			for (; line_flow != NULL; gebr_geoxml_sequence_next(&line_flow)) {
 				GebrGeoXmlFlow *flow;
 				const gchar *filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
 
 				document_load((GebrGeoXmlDocument**)(&flow), filename, FALSE);
-
-				gchar * flow_cont = gebr_flow_get_detailed_report(flow, 1/*gebr.config.detailed_line_flow_params*/, FALSE);
+				gchar * flow_cont = gebr_flow_get_detailed_report(flow, has_table, FALSE);
 				g_string_append(content, flow_cont);
 				g_free(flow_cont);
 				gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));

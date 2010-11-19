@@ -125,6 +125,10 @@ struct gebr {
                 // 1 - Just parameters which differ from default
                 // 2 - Just filled in parameters
                 // 3 - All parameters
+		gboolean flow_no_param_radio;
+		gboolean flow_just_default_radio;
+		gboolean flow_just_filled_radio;
+		gboolean flow_all_param_radio;
 		gint detailed_flow_params;
 		gboolean detailed_flow_include_report;
 		gboolean detailed_flow_include_params;
@@ -147,11 +151,10 @@ struct gebr {
                 // 1 - Just parameters which differ from default
                 // 2 - Just filled in parameters
                 // 3 - All parameters
-		GtkWidget *no_param_radio;
-		GtkWidget *just_default_radio;
-		GtkWidget *just_filled_radio;
-		GtkWidget *all_param_radio;
-		GtkWidget *fake_radio;
+		gboolean line_no_param_radio;
+		gboolean line_just_default_radio;
+		gboolean line_just_filled_radio;
+		gboolean line_all_param_radio;
 		gboolean detailed_line_include_report;
 		gboolean detailed_line_include_flow_report;
 	} config;

@@ -716,7 +716,7 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 		GString * str_value;
 		GString * default_value;
 		GebrGeoXmlProgramParameter * program;
-		gint combo_value = FLOW_PARAMS_NO_TABLE;
+		gint radio_value = FLOW_PARAMS_NO_TABLE;
 
 		program = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 		str_value = gebr_geoxml_program_parameter_get_string_value(program, FALSE);
@@ -724,18 +724,28 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 
 		switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 		case NOTEBOOK_PAGE_PROJECT_LINE:
-			combo_value = 1/*gebr.config.detailed_line_flow_params*/;
+			if (gebr.config.line_just_default_radio)
+				radio_value = FLOW_PARAMS_NO_DEFAULT_PARAMS;
+			else if (gebr.config.line_just_filled_radio)
+				radio_value = FLOW_PARAMS_NO_BLANK_PARAMS;
+			else if (gebr.config.line_all_param_radio)
+				radio_value = FLOW_PARAMS_ALL_PARAMS;
 			break;
 		case NOTEBOOK_PAGE_FLOW_BROWSE:
-			combo_value = gebr.config.detailed_flow_params;
+			if (gebr.config.flow_just_default_radio)
+				radio_value = FLOW_PARAMS_NO_DEFAULT_PARAMS;
+			else if (gebr.config.flow_just_filled_radio)
+				radio_value = FLOW_PARAMS_NO_BLANK_PARAMS;
+			else if (gebr.config.flow_all_param_radio)
+				radio_value = FLOW_PARAMS_ALL_PARAMS;
 			break;
 		default:
 			break;
 		}
 
-                if (((combo_value == FLOW_PARAMS_NO_DEFAULT_PARAMS) && (g_strcmp0(str_value->str, default_value->str) != 0)) ||
-                    ((combo_value == FLOW_PARAMS_NO_BLANK_PARAMS) && (str_value->len > 0)) ||
-                    ((combo_value == FLOW_PARAMS_ALL_PARAMS)))
+                if (((radio_value == FLOW_PARAMS_NO_DEFAULT_PARAMS) && (g_strcmp0(str_value->str, default_value->str) != 0)) ||
+                    ((radio_value == FLOW_PARAMS_NO_BLANK_PARAMS) && (str_value->len > 0)) ||
+                    ((radio_value == FLOW_PARAMS_ALL_PARAMS)))
                         g_string_append_printf(dump, "<tr>\n  <td class=\"%slabel\">%s</td>\n  <td class=\"value\">%s</td>\n</tr>\n",
                                                (in_group?"group-":""),
                                                gebr_geoxml_parameter_get_label(parameter),
@@ -929,10 +939,24 @@ static void on_detailed_flow_include_report_toggled (GtkToggleButton * button)
 	gebr.config.detailed_flow_include_report = gtk_toggle_button_get_active (button);
 }
 
-static void on_detailed_flow_params_changed (GtkComboBox * combobox)
+
+static void on_detailed_flow_param_none_toggled (GtkToggleButton *toggle)
 {
-	gebr.config.detailed_flow_params = gtk_combo_box_get_active (combobox);
+	gebr.config.flow_no_param_radio =  gtk_toggle_button_get_active (toggle);
 }
+static void on_detailed_flow_param_default_toggled (GtkToggleButton *toggle)
+{
+	gebr.config.flow_just_default_radio =  gtk_toggle_button_get_active (toggle);
+}
+static void on_detailed_flow_param_filled_toggled (GtkToggleButton *toggle)
+{
+	gebr.config.flow_just_filled_radio =  gtk_toggle_button_get_active (toggle);
+}
+static void on_detailed_flow_param_all_toggled (GtkToggleButton *toggle)
+{
+	gebr.config.flow_all_param_radio =  gtk_toggle_button_get_active (toggle);
+}
+
 
 gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_table, gboolean include_date)
 {
@@ -963,15 +987,11 @@ gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_t
 GtkWidget * gebr_flow_print_dialog_custom_tab()
 {
 	GtkWidget * hbox_combo;
-	GtkWidget * flow_params_hbox_combo;
 	GtkWidget * vbox;
 	GtkWidget * frame;
-	GtkWidget * alignment;
 	GtkWidget * detailed_flow_css;
 	GtkWidget * detailed_flow_include_report;
-	GtkWidget * detailed_flow_params_combo;
 	GtkWidget * css_combo_label;
-	GtkWidget * flow_params_combo_label;
 	GDir * directory;
 	GError * error = NULL;
 	const gchar * filename = NULL;
@@ -1027,27 +1047,56 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 	}
 	gtk_widget_show(detailed_flow_css);
 
+	/*Building Parameter's choose radio button*/
+	GtkWidget *param_vbox;
+	GtkWidget *frame_param;
+	GtkWidget *flow_no_param_radio;
+	GtkWidget *flow_just_default_radio;
+	GtkWidget *flow_just_filled_radio;
+	GtkWidget *flow_all_param_radio;
+	GtkWidget *fake_radio;
 
-        flow_params_combo_label = gtk_label_new(_("Parameters"));
-        gtk_widget_show(flow_params_combo_label);
+	frame_param = gtk_frame_new(_("Parameter table:"));
+	gtk_container_set_border_width(GTK_CONTAINER(frame_param), 10);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame_param), GTK_SHADOW_NONE);
 
-        detailed_flow_params_combo = gtk_combo_box_new_text();
-        gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_flow_params_combo), _("Do not show"));
-        gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_flow_params_combo), _("Show those different from default"));
-        gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_flow_params_combo), _("Show those which are filled in"));
-        gtk_combo_box_append_text (GTK_COMBO_BOX (detailed_flow_params_combo), _("Show all"));
-        gtk_widget_show(detailed_flow_params_combo);
+	param_vbox = gtk_vbox_new(FALSE, 0);
+
+	fake_radio = gtk_radio_button_new(NULL);
+
+	flow_no_param_radio = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio), _("No table at all"));
+	gtk_box_pack_start(GTK_BOX(param_vbox), flow_no_param_radio, FALSE, FALSE, 2);
+
+	flow_just_default_radio = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio), _("Just parameters which differ from default"));
+	gtk_box_pack_start(GTK_BOX(param_vbox), flow_just_default_radio, FALSE, FALSE, 2);
+
+	flow_just_filled_radio = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio), _("Just filled in parameters"));
+	gtk_box_pack_start(GTK_BOX(param_vbox), flow_just_filled_radio, FALSE, FALSE, 2);
+
+	flow_all_param_radio = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio), _("All parameters"));
+	gtk_box_pack_start(GTK_BOX(param_vbox), flow_all_param_radio, FALSE, FALSE, 2);
+
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flow_no_param_radio), gebr.config.flow_no_param_radio);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flow_just_default_radio), gebr.config.flow_just_default_radio);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flow_just_filled_radio), gebr.config.flow_just_filled_radio);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flow_all_param_radio), gebr.config.flow_all_param_radio);
+
+	g_signal_connect(GTK_TOGGLE_BUTTON(flow_no_param_radio), "toggled", G_CALLBACK(on_detailed_flow_param_none_toggled), NULL);
+	g_signal_connect(GTK_TOGGLE_BUTTON(flow_just_default_radio), "toggled", G_CALLBACK(on_detailed_flow_param_default_toggled), NULL);
+	g_signal_connect(GTK_TOGGLE_BUTTON(flow_just_filled_radio), "toggled", G_CALLBACK(on_detailed_flow_param_filled_toggled), NULL);
+	g_signal_connect(GTK_TOGGLE_BUTTON(flow_all_param_radio), "toggled", G_CALLBACK(on_detailed_flow_param_all_toggled), NULL);
+
+	gtk_widget_show_all(param_vbox);
+
+	gtk_container_add(GTK_CONTAINER(frame_param),param_vbox);
 
 	detailed_flow_include_report = gtk_check_button_new_with_label(_("Include user's report"));
 
 	g_signal_connect(detailed_flow_css, "changed", G_CALLBACK(on_detailed_flow_css_changed), NULL);
-	g_signal_connect(detailed_flow_params_combo, "changed",
-			 G_CALLBACK(on_detailed_flow_params_changed), NULL);
 	g_signal_connect(detailed_flow_include_report, "toggled", G_CALLBACK(on_detailed_flow_include_report_toggled), NULL);
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(detailed_flow_css), active);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_flow_include_report), gebr.config.detailed_flow_include_report);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(detailed_flow_params_combo), gebr.config.detailed_flow_params); 
 
 	frame = gtk_frame_new(NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 10);
@@ -1056,21 +1105,12 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 	vbox = gtk_vbox_new(FALSE, 0);
 	hbox_combo = gtk_hbox_new(FALSE, 0);
 
-	alignment = gtk_alignment_new(0, 0, 1, 1);
-	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 10, 0);
-
-        flow_params_hbox_combo = gtk_hbox_new(FALSE, 0);
-
-	gtk_box_pack_start(GTK_BOX(flow_params_hbox_combo), flow_params_combo_label, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(flow_params_hbox_combo), detailed_flow_params_combo, TRUE, TRUE, 0);
-
-	gtk_container_add (GTK_CONTAINER (alignment), flow_params_hbox_combo);
-
 	gtk_box_pack_start(GTK_BOX(hbox_combo), css_combo_label, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox_combo), detailed_flow_css, TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), detailed_flow_include_report, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), alignment, FALSE, TRUE, 0);
+
+	gtk_box_pack_start(GTK_BOX(vbox), frame_param, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox_combo, FALSE, TRUE, 0);
 
 	gtk_container_add(GTK_CONTAINER(frame),vbox);
