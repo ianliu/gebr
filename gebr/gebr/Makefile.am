@@ -101,4 +101,3 @@ gebr_LDADD =			\
 	$(GEBR_COMM_LIBS)	\
 	$(GEBR_GUI_LIBS)	\
 	$(NULL)
-.PHONY: main.c

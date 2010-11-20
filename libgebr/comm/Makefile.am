@@ -60,6 +60,7 @@ noinst_HEADERS = \
 	streamsocketprivate.h
 
 AM_CPPFLAGS = \
+	-I..				\
 	$(GEBR_CFLAGS)			\
 	$(GEBR_GEOXML_CFLAGS)		\
 	$(GOBJECT_CFLAGS)		\

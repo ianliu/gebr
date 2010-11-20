@@ -51,7 +51,13 @@ noinst_HEADERS = \
 	parameter_p.h parameter_group_p.h program_parameter_p.h parameters_p.h \
 	types.h
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(srcdir)/.. @DEBUG_CFLAGS@ $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)		\
+	      -I$(top_srcdir)/libgebr	\
+	      -I..			\
+	      $(GLIB_CFLAGS)		\
+	      $(GDOME2_CFLAGS)		\
+	      @DEBUG_CFLAGS@
+
 AM_CFLAGS = -Wall -std=gnu99 -fPIC
 libgebr_geoxml_la_LIBADD = ../libgebr.la $(GLIB_LIBS) $(GDOME2_LIBS)
 libgebr_geoxml_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@

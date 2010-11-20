@@ -81,12 +81,13 @@ libgebr_guisubinclude_HEADERS = 	\
 noinst_HEADERS = marshalers.h
 
 AM_CPPFLAGS =				\
-	-I$(srcdir)/..		\
-	-I$(srcdir)/../geoxml	\
-	@DEBUG_CFLAGS@			\
+	-I..				\
+	-I$(srcdir)/..			\
+	-I$(srcdir)/../geoxml		\
 	$(GTK_CFLAGS)			\
 	$(GTHREAD_CFLAGS)		\
-	$(WEBKIT_CFLAGS)
+	$(WEBKIT_CFLAGS)		\
+	@DEBUG_CFLAGS@
 
 AM_CFLAGS = -Wall -std=gnu99 -fPIC
 
