@@ -754,6 +754,7 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 		g_string_free(str_value, TRUE);
 		g_string_free(default_value, TRUE);
 	} else {
+		GString * previous_table = g_string_new(dump->str);
 		g_string_append_printf(dump, "<tr class='parameter-group'>\n  <td colspan='2'>%s</td>\n</tr>\n",
 				       gebr_geoxml_parameter_get_label(parameter));
 
@@ -761,19 +762,38 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 		n_instances = gebr_geoxml_parameter_group_get_instances_number(GEBR_GEOXML_PARAMETER_GROUP(parameter));
 
 		i = 1;
+		GString * group_table = g_string_new(dump->str);
+
 		while (instance) {
+		GString * instance_table = g_string_new(dump->str);
 			if (n_instances > 1)
 				g_string_append_printf(dump, "<tr class='group-instance'>\n  <td colspan='2'>%s %d</td>\n</tr>\n",
 						       _("Instance"), i++);
 			parameters = GEBR_GEOXML_PARAMETERS(instance);
 			gebr_geoxml_parameters_get_parameter(parameters, &param, 0);
+
+			GString * inner_table = g_string_new(dump->str);
 			while (param) {
 				append_parameter_row(GEBR_GEOXML_PARAMETER(param), dump, TRUE);
 				gebr_geoxml_sequence_next(&param);
 			}
+			/*If there are no parameters returned by the dialog choice...*/
+			if(g_string_equal(dump, inner_table))
+			/*...return the table to it previous content*/
+				g_string_assign(dump, instance_table->str);
+
+			g_string_free(inner_table, TRUE);
 
 			gebr_geoxml_sequence_next(&instance);
+			g_string_free(instance_table, TRUE);
 		}
+		/* If there are no instance inside the group...*/
+		if(g_string_equal(dump, group_table))
+		/*...return the table to it outermost previous content*/
+			g_string_assign(dump, previous_table->str);
+
+		g_string_free(previous_table, TRUE);
+		g_string_free(group_table, TRUE);
 	}
 }
 
