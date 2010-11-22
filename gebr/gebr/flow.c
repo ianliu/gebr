@@ -795,7 +795,7 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 				       "<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
 				       "<caption>%s</caption>\n"
 				       "<tbody>\n"
-				       "<tr><td>This program has no parameters.</td></tr>\n",
+				       "<tr><td>this program has no parameters.</td></tr>\n",
 				       translated);
 	} else {
 		g_string_append_printf (table,
@@ -807,11 +807,55 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 					"<tbody>\n",
 					translated, _("Parameter"), _("Value"));
 
+		GString * initial_table = g_string_new(table->str);
 		while (sequence) {
 			append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), table, FALSE);
 			gebr_geoxml_sequence_next (&sequence);
 		}
 
+		if (g_string_equal(initial_table, table)){
+			switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+			case NOTEBOOK_PAGE_PROJECT_LINE:
+				if (gebr.config.line_just_default_radio)
+					g_string_printf(table,
+							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
+							"<caption>%s</caption>\n"
+							"<tbody>\n"
+							"<tr><td>This program has only default parameters.</td></tr>\n",
+							translated);
+
+				else if (gebr.config.line_just_filled_radio)
+					g_string_printf(table,
+							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
+							"<caption>%s</caption>\n"
+							"<tbody>\n"
+							"<tr><td>This program has only empty parameters.</td></tr>\n",
+							translated);
+
+				break;
+			case NOTEBOOK_PAGE_FLOW_BROWSE:
+				if (gebr.config.flow_just_default_radio)
+					g_string_printf(table,
+							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
+							"<caption>%s</caption>\n"
+							"<tbody>\n"
+							"<tr><td>This program has only default parameters.</td></tr>\n",
+							translated);
+
+				else if (gebr.config.flow_just_filled_radio)
+					g_string_printf(table,
+							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
+							"<caption>%s</caption>\n"
+							"<tbody>\n"
+							"<tr><td>This program has only empty parameters.</td></tr>\n",
+							translated);
+				break;
+			default:
+				break;
+			}
+
+			g_string_free(initial_table, TRUE);
+		} 
 	}
 
 	g_free (translated);
