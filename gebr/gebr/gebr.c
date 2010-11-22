@@ -398,7 +398,7 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_boolean(gebr.config.key_file, "general", "line_no_param_radio", gebr.config.line_no_param_radio);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "line_just_default_radio", gebr.config.line_just_default_radio);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "line_just_filled_radio", gebr.config.line_just_filled_radio);
-	g_key_file_set_boolean(gebr.config.key_file, "general", "flowline_all_param_radio", gebr.config.line_all_param_radio);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "line_all_param_radio", gebr.config.line_all_param_radio);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "flow_no_param_radio", gebr.config.flow_no_param_radio);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "flow_just_default_radio", gebr.config.flow_just_default_radio);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "flow_just_filled_radio", gebr.config.flow_just_filled_radio);
