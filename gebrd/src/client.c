@@ -92,7 +92,7 @@ static void client_read(GebrCommStreamSocket * stream_socket, struct client *cli
 
 	gebrd_message(GEBR_LOG_DEBUG, "client_read %s", data->str);
 
- out:	g_string_free(data, TRUE);
+out:	g_string_free(data, TRUE);
 }
 
 static void client_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocketError error, struct client *client)

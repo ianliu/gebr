@@ -40,7 +40,7 @@
 static void flow_io_populate(struct ui_flow_io *ui_flow_io);
 static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io);
 static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *server, gboolean mpi_program);
-static void flow_io_run(GebrGeoXmlFlowServer * server);
+static void flow_io_run(GebrGeoXmlFlowServer * serve, gboolean parallel);
 static void flow_io_insert(struct ui_flow_io *ui_flow_io, GebrGeoXmlFlowServer * flow_server, GtkTreeIter * iter);
 static void
 on_renderer_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_text, struct ui_flow_io *ui_flow_io);
@@ -327,9 +327,9 @@ void flow_io_simple_setup_ui(gboolean focus_output)
  out:	gtk_widget_destroy(dialog);
 }
 
-void flow_fast_run()
+void flow_fast_run(gboolean parallel)
 {
-	flow_io_run(gebr.flow_server);
+	flow_io_run(gebr.flow_server, parallel);
 }
 
 void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean select_last)
@@ -474,7 +474,7 @@ static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io)
 			return FALSE;
 		}
 
-		flow_io_run(flow_server);
+		flow_io_run(flow_server, FALSE);
 	}
 
 	return TRUE;
@@ -638,7 +638,7 @@ out:
  * \internal
  * Check for current server and if its connected, for the queue selected.
  */
-static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
+static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel)
 {
 	GtkTreeIter iter;
 	const gchar *address;
@@ -650,6 +650,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected."));
 		return;
 	}
+	gboolean multiple = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view))) > 1;
 	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &iter)) {
 		//just happen if the current server was removed
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No server selected."));
@@ -658,6 +659,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 
 	/* initialization */
 	config = gebr_comm_server_run_new();
+	config->parallel = parallel;
 
 	/* find iter */
 	address = gebr_geoxml_flow_server_get_address(flow_server);
@@ -680,6 +682,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	
 	mpi_program = (gebr_geoxml_flow_get_first_mpi_program(gebr.flow) != NULL);
 
+	/* SET config->queue */
 	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) {
 		if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter)) {
 			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &config->queue, -1);
@@ -691,7 +694,22 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 
 	} else {
 		/* Common servers. */
-		if (gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)) == 0) {
+		if (multiple && !parallel) {
+			GList *selected = gebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+			GebrGeoXmlFlow *first;
+			GebrGeoXmlFlow *last;
+			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store),
+					   (GtkTreeIter*)(g_list_first(selected)->data), FB_XMLPOINTER, &first, -1);
+			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store),
+					   (GtkTreeIter*)(g_list_last(selected)->data), FB_XMLPOINTER, &last, -1);
+
+			config->queue = g_strdup_printf(_("After '%s'...'%s'"),
+							gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(first)),
+							gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(last)));
+
+			g_list_foreach(selected, (GFunc) gtk_tree_iter_free, NULL);
+			g_list_free(selected);
+		} else if (parallel || gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)) == 0) {
 			/* If the active combobox entry is the first one (index 0), then
 			 * "Immediately" is selected as queue option. */
 			config->queue = g_strdup("");
@@ -701,8 +719,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 					goto err;
 				}
 			}
-		}
-		else {
+		} else {
 			/* Other queue option is selected: after a running job (flow) or
 			 * on a pre-existent queue. */
 			gchar *internal_queue_name = NULL;

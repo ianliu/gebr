@@ -154,11 +154,12 @@ void on_flow_io_activate(void)
 
 void on_flow_execute_activate(void)
 {
-	flow_fast_run();
+	flow_fast_run(FALSE);
 }
 
-void on_flow_execute_all_activate(void)
+void on_flow_execute_in_parallel_activate(void)
 {
+	flow_fast_run(TRUE);
 }
 
 void on_flow_revision_save_activate(void)

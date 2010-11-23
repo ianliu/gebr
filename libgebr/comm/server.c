@@ -68,6 +68,7 @@ GebrCommServerRun * gebr_comm_server_run_new(void)
 	GebrCommServerRun *config = g_new(GebrCommServerRun, 1);
 	config->flow = NULL;
 	config->queued_flows = NULL;
+	config->parallel = FALSE;
 	config->account = config->queue = config->num_processes = NULL;
 	return config;
 }

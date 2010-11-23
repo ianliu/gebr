@@ -94,7 +94,7 @@ void on_flow_execute_activate(void);
 /**
  *
  */
-void on_flow_execute_all_activate(void);
+void on_flow_execute_in_parallel_activate(void);
 /** 
  * Call #flow_revision_save
  */
