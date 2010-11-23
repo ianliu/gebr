@@ -62,6 +62,48 @@ gebr_comm_server_error(GebrCommStreamSocket * stream_socket, enum GebrCommSocket
 static void gebr_comm_server_free_x11_forward(struct gebr_comm_server *server);
 static void gebr_comm_server_free_for_reuse(struct gebr_comm_server *server);
 
+
+GebrCommServerRun * gebr_comm_server_run_new(void)
+{
+	GebrCommServerRun *config = g_new(GebrCommServerRun, 1);
+	config->flow = NULL;
+	config->queued_flows = NULL;
+	config->account = config->queue = config->num_processes = NULL;
+	return config;
+}
+
+void gebr_comm_server_run_free(GebrCommServerRun *config)
+{
+	g_list_free(config->queued_flows);
+	g_free(config->account);
+	g_free(config->queue);
+	g_free(config);
+}
+
+GebrGeoXmlFlow * gebr_comm_server_run_strip_flow(GebrGeoXmlFlow * flow)
+{
+	GebrGeoXmlFlow * stripped = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
+
+	/* Strip flow: remove helps and revisions */
+	gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(stripped), "");
+	GebrGeoXmlSequence *i;
+	gebr_geoxml_flow_get_program(flow, &i, 0);
+	for (; i != NULL; gebr_geoxml_sequence_next(&i))
+		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(i), "");
+	/* clear all revisions */
+	gebr_geoxml_flow_get_revision(stripped, &i, 0);
+	while (i != NULL) {
+		GebrGeoXmlSequence *tmp;
+
+		tmp = i;
+		gebr_geoxml_sequence_next(&tmp);
+		gebr_geoxml_sequence_remove(i);
+		i = tmp;
+	}
+
+	return stripped;
+}
+
 gchar * gebr_comm_server_get_user(const gchar * address)
 {
 	gchar *addr_temp;
@@ -273,32 +315,25 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 
 void gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerRun * config)
 {
-	GebrGeoXmlFlow *flow_wnh;	/* wnh: with no help */
-	GebrGeoXmlSequence *program;
 	gchar *xml;
-
-	/* removes flow's help */
-	flow_wnh = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOC(config->flow)));
-	gebr_geoxml_document_set_help(GEBR_GEOXML_DOC(flow_wnh), "");
-	/* removes programs' help */
-	gebr_geoxml_flow_get_program(flow_wnh, &program, 0);
-	while (program != NULL) {
-		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(program), "");
-
-		gebr_geoxml_sequence_next(&program);
-	}
-
-	/* get the xml */
-	gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(flow_wnh), &xml);
-
+	gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(config->flow), &xml);
 	gebr_comm_protocol_send_data(server->protocol, server->stream_socket,
 				     gebr_comm_protocol_defs.run_def, 4, xml,
 				     config->account ? config->account : "",
 				     config->queue ? config->queue : "",
 				     config->num_processes ? config->num_processes : "");
-	/* frees */
 	g_free(xml);
-	gebr_geoxml_document_free(GEBR_GEOXML_DOC(flow_wnh));
+	if (g_list_length(config->queued_flows)) {
+		for (GList *i = config->queued_flows; i != NULL; i = g_list_next(i)) {
+			gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(i->data), &xml);
+			gebr_comm_protocol_send_data(server->protocol, server->stream_socket,
+						     gebr_comm_protocol_defs.run_def, 4, xml,
+						     config->account ? config->account : "",
+						     config->queue ? config->queue : "",
+						     config->num_processes ? config->num_processes : "");
+			g_free(xml);
+		}
+	}
 }
 
 /**

@@ -157,6 +157,10 @@ void on_flow_execute_activate(void)
 	flow_fast_run();
 }
 
+void on_flow_execute_all_activate(void)
+{
+}
+
 void on_flow_revision_save_activate(void)
 {
 	flow_revision_save();

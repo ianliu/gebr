@@ -487,42 +487,40 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 
 void flow_run(struct server *server, GebrCommServerRun * config)
 {
-	GebrGeoXmlFlow *flow;
-	GebrGeoXmlSequence *i;
+	GtkTreeIter iter;
+	gboolean first = TRUE;
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
+		GebrGeoXmlFlow *flow;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, FB_XMLPOINTER, &flow, -1);
 
-	flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(gebr.flow)));
-	gebr_geoxml_flow_get_program(flow, &i, 0);
-	if (i == NULL) {
-		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flow '%s' is empty."),
-			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
-		goto out;
+		GebrGeoXmlSequence *i;
+		gebr_geoxml_flow_get_program(flow, &i, 0);
+		if (i == NULL) {
+			if (first)
+				gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flow '%s' is empty."),
+					     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
+			else
+				gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flow '%s' is empty, ignoring."),
+					     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
+			goto out;
+		}
+
+		GebrGeoXmlFlow *stripped = gebr_comm_server_run_strip_flow(flow);
+		flow_copy_from_dicts(stripped);
+		if (first)
+			config->flow = stripped;
+		else
+			config->queued_flows = g_list_append(config->queued_flows, stripped);
+
+		first = FALSE;
 	}
-
-	/* Strip flow: remove helps and revisions */
-	gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(flow), "");
-	for (; i != NULL; gebr_geoxml_sequence_next(&i))
-		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(i), "");
-	/* clear all revisions */
-	gebr_geoxml_flow_get_revision(flow, &i, 0);
-	while (i != NULL) {
-		GebrGeoXmlSequence *tmp;
-
-		tmp = i;
-		gebr_geoxml_sequence_next(&tmp);
-		gebr_geoxml_sequence_remove(i);
-		i = tmp;
-	}
-
-	flow_copy_from_dicts(flow);
 
 	/* RUN */
-	config->flow = flow;
 	gebr_comm_server_run_flow(server->comm, config);
 
 	gebr_geoxml_flow_set_date_last_run(gebr.flow, gebr_iso_date());
 	document_save(GEBR_GEOXML_DOC(gebr.flow), FALSE, TRUE);
-	flow_browse_info_update();
-
+	flow_browse_info_update(); 
 	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'."),
 		     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(config->flow)));
 	if (gebr_comm_server_is_local(server->comm) == FALSE) {
@@ -534,7 +532,9 @@ void flow_run(struct server *server, GebrCommServerRun * config)
 	}
 
 	/* frees */
-out:	document_free(GEBR_GEOXML_DOCUMENT(flow));
+out:	document_free(GEBR_GEOXML_DOCUMENT(config->flow));
+	g_list_foreach(config->queued_flows, (GFunc)document_free, NULL);
+	gebr_comm_server_run_free(config);
 }
 
 gboolean flow_revision_save(void)

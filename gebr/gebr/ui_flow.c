@@ -657,8 +657,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	}
 
 	/* initialization */
-	config = g_new(GebrCommServerRun, 1);
-	config->account = config->queue = config->num_processes = NULL;
+	config = gebr_comm_server_run_new();
 
 	/* find iter */
 	address = gebr_geoxml_flow_server_get_address(flow_server);
@@ -757,11 +756,10 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	flow_run(server, config);
+	return;
 
-	/* frees */
-err:	g_free(config->account);
-	g_free(config->queue);
-	g_free(config);
+err:
+	gebr_comm_server_run_free(config);
 }
 
 /**

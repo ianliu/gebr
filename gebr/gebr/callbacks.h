@@ -91,6 +91,10 @@ void on_flow_io_activate(void);
  * Call #flow_io_setup_ui> from #flow.c
  */
 void on_flow_execute_activate(void);
+/**
+ *
+ */
+void on_flow_execute_all_activate(void);
 /** 
  * Call #flow_revision_save
  */

@@ -112,10 +112,23 @@ struct gebr_comm_server {
  */
 typedef struct {
 	GebrGeoXmlFlow * flow;
+	GList * queued_flows;
 	gchar * account;
 	gchar * queue;
 	gchar * num_processes;
 } GebrCommServerRun;
+
+/**
+ */
+GebrCommServerRun * gebr_comm_server_run_new(void);
+
+/**
+ */
+GebrGeoXmlFlow * gebr_comm_server_run_strip_flow(GebrGeoXmlFlow * flow);
+
+/**
+ */
+void gebr_comm_server_run_free(GebrCommServerRun *run_config);
 
 /**
  */
