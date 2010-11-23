@@ -78,6 +78,7 @@ libgebr/docs/reference/libgebr/libgebr.hierarchy
 libgebr/docs/reference/libgebr/libgebr.interfaces
 libgebr/docs/reference/libgebr/libgebr.prerequisites
 libgebr/docs/reference/libgebr/libgebr.signals
+libgebr/docs/reference/libgebr/tmpl
 libgebr/docs/reference/libgebr/version.xml
 libgebr/docs/reference/libgebr/xml
 libgebr/gebr.pc
