@@ -20,4 +20,4 @@ gebr_geoxml_upgrade_SOURCES = upgrade.c
 
 INCLUDES = -I$(srcdir)/.. -I$(srcdir)/../..
 AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
-gebr_geoxml_upgrade_LDADD = ../geoxml/libgebr_geoxml.la $(GLIB_LIBS)
+gebr_geoxml_upgrade_LDADD = $(top_builddir)/src/libgebr.la ../geoxml/libgebr_geoxml.la $(GLIB_LIBS)
