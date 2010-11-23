@@ -703,9 +703,13 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel)
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store),
 					   (GtkTreeIter*)(g_list_last(selected)->data), FB_XMLPOINTER, &last, -1);
 
-			config->queue = g_strdup_printf(_("After '%s'...'%s'"),
-							gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(first)),
-							gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(last)));
+			GString *queue_name = g_string_new(NULL);
+			g_string_printf(queue_name, _("After '%s'...'%s'"),
+					gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(first)),
+					gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(last)));
+			g_string_prepend(queue_name, "q");
+			config->queue = g_strdup(queue_name->str);
+			g_string_free(queue_name, TRUE);
 
 			g_list_foreach(selected, (GFunc) gtk_tree_iter_free, NULL);
 			g_list_free(selected);
