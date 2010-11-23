@@ -131,7 +131,6 @@ struct gebr {
 		gboolean flow_all_param_radio;
 		gint detailed_flow_params;
 		gboolean detailed_flow_include_report;
-		gboolean detailed_flow_include_params;
 
 		// - For lines:
 		//  [ ] Include user's report

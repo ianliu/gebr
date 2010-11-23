@@ -676,7 +676,7 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 
 		header = gebr_line_generate_header(document);
 
-		if (gebr.config.detailed_line_include_report)
+		if (gebr.config.detailed_line_include_report && inner_body)
 			g_string_append (content, inner_body);
 
 		if (gebr.config.detailed_line_include_flow_report) {
@@ -702,15 +702,13 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 
 		header = gebr_flow_generate_header(GEBR_GEOXML_FLOW(document), TRUE);
 
-		if (gebr.config.detailed_flow_include_report)
+		if (gebr.config.detailed_flow_include_report && inner_body)
 			g_string_append (content, inner_body);
 
-		if (gebr.config.detailed_flow_include_params) {
-			gchar * params;
-			params = gebr.config.flow_no_param_radio ? g_strdup("") : gebr_flow_generate_parameter_value_table (GEBR_GEOXML_FLOW (document));
-			g_string_append (content, params);
-			g_free (params);
-		}
+		gchar * params;
+		params = gebr.config.flow_no_param_radio ? g_strdup("") : gebr_flow_generate_parameter_value_table (GEBR_GEOXML_FLOW (document));
+		g_string_append (content, params);
+		g_free (params);
 	} else
 		g_return_val_if_reached(NULL);
 

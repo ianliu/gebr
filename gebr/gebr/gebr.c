@@ -271,7 +271,6 @@ gint gebr_config_load()
 		g_string_assign (gebr.config.detailed_flow_css,
 				 gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_flow_css", "")->str);
 		gebr.config.detailed_flow_include_report = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "detailed_flow_include_report", FALSE);
-		gebr.config.detailed_flow_include_params = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "detailed_flow_include_params", FALSE);
 
 		g_string_assign (gebr.config.detailed_line_css,
 				 gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_line_css", "")->str);
@@ -390,7 +389,6 @@ void gebr_config_save(gboolean verbose)
 
 	g_key_file_set_string(gebr.config.key_file, "general", "detailed_flow_css", gebr.config.detailed_flow_css->str);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "detailed_flow_include_report", gebr.config.detailed_flow_include_report);
-	g_key_file_set_boolean(gebr.config.key_file, "general", "detailed_flow_include_params", gebr.config.detailed_flow_include_params);
 
 	g_key_file_set_string(gebr.config.key_file, "general", "detailed_line_css", gebr.config.detailed_line_css->str);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "detailed_line_include_report", gebr.config.detailed_line_include_report);
