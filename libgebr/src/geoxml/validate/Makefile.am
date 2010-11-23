@@ -20,4 +20,5 @@ gebr_geoxml_validate_SOURCES = validate.c
 
 INCLUDES = -I$(srcdir)/.. -I$(srcdir)/../..
 AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
-gebr_geoxml_validate_LDADD = ../geoxml/libgebr_geoxml.la $(GLIB_LIBS)
+gebr_geoxml_validate_LDADD = $(top_builddir)/src/libgebr.la \
+			     ../geoxml/libgebr_geoxml.la $(GLIB_LIBS)
