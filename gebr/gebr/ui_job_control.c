@@ -36,6 +36,10 @@ static void job_control_on_cursor_changed(void);
 
 static void on_text_view_populate_popup(GtkTextView * textview, GtkMenu * menu);
 
+static void job_update_text_buffer(GtkTreeIter iter, struct job *job);
+
+static GtkMenu * job_control_popup_menu(GtkWidget * widget, struct ui_job_control *ui_job_control);
+
 /*
  * Public functions.
  */
@@ -77,6 +81,10 @@ struct ui_job_control *job_control_setup_ui(void)
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ui_job_control->store), JC_SERVER_ADDRESS,
 					     GTK_SORT_ASCENDING);
 	ui_job_control->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_job_control->store));
+	
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_job_control->view)),
+				    GTK_SELECTION_MULTIPLE);
+
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_job_control->view), FALSE);
 	g_signal_connect(GTK_OBJECT(ui_job_control->view), "cursor-changed", G_CALLBACK(job_control_on_cursor_changed),
 			 NULL);
@@ -124,6 +132,9 @@ struct ui_job_control *job_control_setup_ui(void)
 	}
 	ui_job_control->text_view = text_view;
 	gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+	
+	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_job_control->view),
+						  (GebrGuiGtkPopupCallback) job_control_popup_menu, ui_job_control);
 
 	return ui_job_control;
 }
@@ -140,12 +151,16 @@ void job_control_save(void)
 	GtkTextIter start_iter;
 	GtkTextIter end_iter;
 	gchar *text;
+	gchar * title;
 
 	struct job *job;
 
+	gint selected_rows = 0;
+	
+	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+
 	if (!job_control_get_selected(&iter, JobControlJobQueueSelection))
 		return;
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
 	/* run file chooser */
 	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
@@ -165,52 +180,85 @@ void job_control_save(void)
 	fp = fopen(path, "w");
 	if (fp == NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not write file."));
-		goto out;
+		g_free(path);
+		return;
 	}
-	gtk_text_buffer_get_start_iter(gebr.ui_job_control->text_buffer, &start_iter);
-	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &end_iter);
-	text = gtk_text_buffer_get_text(gebr.ui_job_control->text_buffer, &start_iter, &end_iter, FALSE);
-	fputs(text, fp);
+
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
+		job_update_text_buffer(iter, job);
+		
+		title = g_strdup_printf("---------- %s ---------\n", job->title->str);
+		fputs(title, fp);
+		g_free(title);
+
+		gtk_text_buffer_get_start_iter(gebr.ui_job_control->text_buffer, &start_iter);
+		gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &end_iter);
+		text = gtk_text_buffer_get_text(gebr.ui_job_control->text_buffer, &start_iter, &end_iter, FALSE);
+		text = g_strdup_printf("%s\n\n", text);
+		fputs(text, fp);
+
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Saved job information at '%s'."), path);
+		
+		g_free(text);
+	}
+	
 	fclose(fp);
-
-	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Saved job information at '%s'."), path);
-
-	g_free(text);
- out:	g_free(path);
+	g_free(path);
 }
 
 void job_control_cancel(void)
 {
 	GtkTreeIter iter;
-
 	struct job *job;
+	gint selected_rows = 0;
+	gboolean asked = FALSE;
 
 	if (!job_control_get_selected(&iter, JobControlJobSelection))
 		return;
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
+	
+	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+	
+	
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
 
-	if (job->status != JOB_STATUS_RUNNING && job->status != JOB_STATUS_QUEUED) {
-		gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("Job is not running."));
-		return;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
+
+		if (job->status != JOB_STATUS_RUNNING && job->status != JOB_STATUS_QUEUED) {
+			gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("Job is not running."));
+			continue;
+		}
+		if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
+			gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("You are not connected to job's server."));
+			continue;
+		}
+		
+		if (selected_rows == 1)
+		{
+			if (gebr_gui_confirm_action_dialog
+			    (_("Terminate job"), _("Are you sure you want to terminate job '%s'?"), job->title->str) == FALSE)
+				return;
+		}
+		else if (!asked)
+		{
+			if (gebr_gui_confirm_action_dialog
+			    (_("Terminate job"), _("Are you sure you want to terminate the selected jobs?")) == FALSE)
+				return;
+			/* Already asked to user for confirmation */
+			asked = TRUE;
+		}
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to terminate job."));
+		if (gebr_comm_server_is_local(job->server->comm) == FALSE)
+			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to terminate job '%s'."),
+				     job->server->comm->address->str, job->title->str);
+		else
+			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to terminate job '%s'."),
+				     job->title->str);
+
+		gebr_comm_protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
+					     gebr_comm_protocol_defs.end_def, 1, job->jid->str);
 	}
-	if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
-		gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("You are not connected to job's server."));
-		return;
-	}
-	if (gebr_gui_confirm_action_dialog
-	    (_("Terminate job"), _("Are you sure you want to terminate job '%s'?"), job->title->str) == FALSE)
-		return;
-
-	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to terminate job."));
-	if (gebr_comm_server_is_local(job->server->comm) == FALSE)
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to terminate job '%s'."),
-			     job->server->comm->address->str, job->title->str);
-	else
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to terminate job '%s'."),
-			     job->title->str);
-
-	gebr_comm_protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
-				     gebr_comm_protocol_defs.end_def, 1, job->jid->str);
 }
 
 void job_control_close(void)
@@ -218,16 +266,37 @@ void job_control_close(void)
 	GtkTreeIter iter;
 
 	struct job *job;
+	
+	gboolean asked = FALSE;
+	gint selected_rows = 0;
 
+	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+	
+	
 	if (!job_control_get_selected(&iter, JobControlJobSelection))
 		return;
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
-	if (gebr_gui_confirm_action_dialog
-	    (_("Clear job "), _("Are you sure you want to clear job '%s'?"), job->title->str) == FALSE)
-		return;
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
 
-	job_close(job, FALSE, TRUE);
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
+
+		if (selected_rows == 1)
+		{
+			if (gebr_gui_confirm_action_dialog
+			    (_("Clear job "), _("Are you sure you want to clear job '%s'?"), job->title->str) == FALSE)
+				return;
+		}
+		else if (!asked)
+		{
+			if (gebr_gui_confirm_action_dialog
+			    (_("Clear job "), _("Are you sure you want to clear the selected jobs?")) == FALSE)
+				return;
+
+			asked = TRUE;
+		}
+
+		job_close(job, FALSE, TRUE);
+	}
 }
 
 void job_control_clear(gboolean force)
@@ -258,32 +327,52 @@ void job_control_stop(void)
 	GtkTreeIter iter;
 
 	struct job *job;
-
+	
+	gboolean asked = FALSE;
+	gint selected_rows = 0;
+	
+	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+	
+	
 	if (!job_control_get_selected(&iter, JobControlJobSelection))
 		return;
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
-	if (job->status != JOB_STATUS_RUNNING) {
-		gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("Job is not running."));
-		return;
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
+
+		if (job->status != JOB_STATUS_RUNNING) {
+			gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("Job is not running."));
+			continue;
+		}
+		if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("You are not connected to job's server."));
+			continue;
+		}
+		
+		if (selected_rows == 1)
+		{
+			if (gebr_gui_confirm_action_dialog(_("Kill job"), _("Are you sure you want to kill job '%s'?"), job->title->str)
+			    == FALSE)
+				return;
+		}
+		else if (!asked)
+		{
+			if (gebr_gui_confirm_action_dialog(_("Kill job"), _("Are you sure you want to kill the selected jobs?"))
+			    == FALSE)
+				return;
+			asked = TRUE;
+		}
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to kill job."));
+		if (gebr_comm_server_is_local(job->server->comm) == FALSE) 
+			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to kill job '%s'."),
+				     job->server->comm->address->str, job->title->str);
+		else 
+			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to kill job '%s'."), job->title->str);
+
+		gebr_comm_protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
+					     gebr_comm_protocol_defs.kil_def, 1, job->jid->str);
 	}
-	if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("You are not connected to job's server."));
-		return;
-	}
-	if (gebr_gui_confirm_action_dialog(_("Kill job"), _("Are you sure you want to kill job '%s'?"), job->title->str)
-	    == FALSE)
-		return;
-
-	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to kill job."));
-	if (gebr_comm_server_is_local(job->server->comm) == FALSE) 
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to kill job '%s'."),
-			     job->server->comm->address->str, job->title->str);
-	else 
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to kill job '%s'."), job->title->str);
-
-	gebr_comm_protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
-				     gebr_comm_protocol_defs.kil_def, 1, job->jid->str);
 }
 
 gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionType check_type)
@@ -327,12 +416,62 @@ gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionTy
 /**
  * \internal
  */
+
+/* Updates the job text buffer */
+static void job_update_text_buffer(GtkTreeIter iter, struct job *job)
+{
+	GString *info, *queue_info;
+	
+	info = g_string_new(NULL);
+	/*
+	 * Fill job information
+	 */
+	/* who and where */
+	queue_info = g_string_new(NULL); 
+	if (job->queue->str[0] == 'j') {
+		g_string_assign(queue_info, "unqueued");
+	}
+	else if (job->queue->str[0] == 'q') {
+		g_string_printf(queue_info, "on %s", job->queue->str+1);
+	}
+	g_string_append_printf(info, _("Job executed at %s (%s) by %s.\n"),
+			       job->server->comm->protocol->hostname->str, queue_info->str, job->hostname->str);
+	g_string_free(queue_info, TRUE);
+
+	/* start date */
+	g_string_append_printf(info, "%s %s\n", _("Start date:"), gebr_localized_date(job->start_date->str));
+	/* issues */
+	if (job->issues->len)
+		g_string_append_printf(info, "\n%s\n%s", _("Issues:"), job->issues->str); /* command line */
+	if (job->cmd_line->len)
+		g_string_append_printf(info, "\n%s\n%s\n", _("Command line:"), job->cmd_line->str);
+
+	/* job id */
+	if (job->server->type == GEBR_COMM_SERVER_TYPE_MOAB && job->moab_jid->len)
+		g_string_append_printf(info, "\n%s\n%s\n", _("Moab Job ID:"), job->moab_jid->str);
+
+	/* output */
+	if (job->output->len)
+		g_string_append(info, job->output->str);
+	/* finish date */
+	if (job->finish_date->len)
+		if (job->status == JOB_STATUS_FINISHED)
+			g_string_append_printf(info, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
+	if (job->status == JOB_STATUS_CANCELED)
+		g_string_append_printf(info, "\n%s %s", _("Cancel date:"), gebr_localized_date(job->finish_date->str));
+
+ 	/* to view */
+ 	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, info->str, info->len);
+
+	/* frees */
+	g_string_free(info, TRUE);
+}
+
 static void job_control_on_cursor_changed(void)
 {
 	GtkTreeIter iter;
 	struct job *job;
 	gboolean is_job;
- 	GString *info, *queue_info;
   
 	if (!job_control_get_selected(&iter, JobControlDontWarnUnselection)) {
 		gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
@@ -347,50 +486,9 @@ static void job_control_on_cursor_changed(void)
 		return;
 	}
 	
-	info = g_string_new(NULL);
- 	/*
- 	 * Fill job information
- 	 */
- 	/* who and where */
-	queue_info = g_string_new(NULL); 
-	if (job->queue->str[0] == 'j') {
-		g_string_assign(queue_info, "unqueued");
-	}
-	else if (job->queue->str[0] == 'q') {
-		g_string_printf(queue_info, "on %s", job->queue->str+1);
-	}
- 	g_string_append_printf(info, _("Job executed at %s (%s) by %s.\n"),
- 			       job->server->comm->protocol->hostname->str, queue_info->str, job->hostname->str);
-	g_string_free(queue_info, TRUE);
-
- 	/* start date */
- 	g_string_append_printf(info, "%s %s\n", _("Start date:"), gebr_localized_date(job->start_date->str));
- 	/* issues */
- 	if (job->issues->len)
- 		g_string_append_printf(info, "\n%s\n%s", _("Issues:"), job->issues->str); /* command line */
- 	if (job->cmd_line->len)
- 		g_string_append_printf(info, "\n%s\n%s\n", _("Command line:"), job->cmd_line->str);
- 
- 	/* job id */
- 	if (job->server->type == GEBR_COMM_SERVER_TYPE_MOAB && job->moab_jid->len)
- 		g_string_append_printf(info, "\n%s\n%s\n", _("Moab Job ID:"), job->moab_jid->str);
- 
- 	/* output */
- 	if (job->output->len)
- 		g_string_append(info, job->output->str);
- 	/* finish date */
- 	if (job->finish_date->len)
-		if (job->status == JOB_STATUS_FINISHED)
-			g_string_append_printf(info, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
-		if (job->status == JOB_STATUS_CANCELED)
-			g_string_append_printf(info, "\n%s %s", _("Cancel date:"), gebr_localized_date(job->finish_date->str));
- 	/* to view */
- 	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, info->str, info->len);
-
+	job_update_text_buffer(iter, job);
 	job_status_show(job);
  
- 	/* frees */
- 	g_string_free(info, TRUE);
 }
 
 /**
@@ -434,3 +532,40 @@ static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
 	g_signal_connect(menu_item, "toggled", G_CALLBACK(autoscroll_toggled), NULL);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), gebr.config.job_log_auto_scroll);
 }
+
+/**
+ * \internal
+ * Build popup menu
+ */
+static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control *ui_job_control)
+{
+	GtkWidget *menu;
+	/*
+	GtkWidget *menu_item;
+	*/
+	GtkTreeIter iter;
+
+	/* no flow, no new job possible */
+	if (gebr.flow == NULL)
+		return NULL;
+
+	menu = gtk_menu_new();
+
+	if (job_control_get_selected(&iter, JobControlJobSelection))
+	{
+		gtk_container_add(GTK_CONTAINER(menu),
+				  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_save")));
+		gtk_container_add(GTK_CONTAINER(menu),
+				  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_cancel")));
+		gtk_container_add(GTK_CONTAINER(menu),
+				  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_close")));
+		gtk_container_add(GTK_CONTAINER(menu),
+				  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_stop")));
+		gtk_widget_show_all(menu);
+		return GTK_MENU(menu);
+	}
+
+	return NULL;
+
+}
+

@@ -134,12 +134,14 @@ static const GtkActionEntry actions_entries[] = {
 	 */
 	{"job_control_save", GTK_STOCK_SAVE, NULL,
 		NULL, N_("Save job information in a file"), G_CALLBACK(on_job_control_save)},
-	{"job_control_cancel", GTK_STOCK_MEDIA_STOP, NULL,
+	{"job_control_cancel", GTK_STOCK_MEDIA_STOP, N_("Cancel"),
 		NULL, N_("Ask server to terminate the job"), G_CALLBACK(on_job_control_cancel)},
-	{"job_control_close", "edit-clear", N_("Clear current"),
-		NULL, N_("Clear current job log"), G_CALLBACK(on_job_control_close)},
+	{"job_control_close", "edit-clear", N_("Clear selected"),
+		NULL, N_("Clear selected job log"), G_CALLBACK(on_job_control_close)},
+	/*
 	{"job_control_clear", GTK_STOCK_CLEAR, NULL,
 		NULL, N_("Clear all inactive job logs"), G_CALLBACK(on_job_control_clear)},
+	*/
 	{"job_control_stop", GTK_STOCK_STOP, NULL,
 		NULL, N_("Ask server to kill the job"), G_CALLBACK(on_job_control_stop)}
 };
@@ -392,6 +394,7 @@ void gebr_setup_ui(void)
 					 (gtk_action_group_get_action(gebr.action_group, "job_control_stop"))), -1);
 
 	gebr.ui_job_control = job_control_setup_ui();
+
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gebr.ui_job_control->widget, TRUE, TRUE, 0);

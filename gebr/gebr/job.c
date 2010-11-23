@@ -397,7 +397,13 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 
 		GString *finish_date;
 		GtkTextIter iter;
+		GtkTreeIter tree_iter;
+		
+		if (!job_control_get_selected(&tree_iter, JobControlDontWarnUnselection))
+			return;
 
+		if (!gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(gebr.ui_job_control->store), &(job->iter), &tree_iter))
+			return;
 		finish_date = g_string_new(NULL);
 
 		if (job->status == JOB_STATUS_FINISHED)
