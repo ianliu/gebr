@@ -160,9 +160,6 @@ void job_control_save(void)
 	
 	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 
-	if (!job_control_get_selected(&iter, JobControlJobQueueSelection))
-		return;
-
 	/* run file chooser */
 	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".txt");
@@ -222,8 +219,6 @@ void job_control_cancel(void)
 	gboolean asked = FALSE;
 	gint iter_depth = 0;
 
-	if (!job_control_get_selected(&iter, JobControlJobSelection))
-		return;
 	
 	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 	
@@ -285,10 +280,10 @@ void job_control_close(void)
 
 	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 	
-	
+	/*
 	if (!job_control_get_selected(&iter, JobControlJobSelection))
 		return;
-
+*/
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
 
 		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &iter);
@@ -352,8 +347,6 @@ void job_control_stop(void)
 	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 	
 	
-	if (!job_control_get_selected(&iter, JobControlJobSelection))
-		return;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
 		
@@ -567,25 +560,30 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control
 	GtkWidget *menu_item;
 	*/
 	GtkTreeIter iter;
+	gint iter_depth = 0;
 
 	/* no flow, no new job possible */
 	if (gebr.flow == NULL)
 		return NULL;
 
 	menu = gtk_menu_new();
-
-	if (job_control_get_selected(&iter, JobControlJobSelection))
-	{
-		gtk_container_add(GTK_CONTAINER(menu),
-				  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_save")));
-		gtk_container_add(GTK_CONTAINER(menu),
-				  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_cancel")));
-		gtk_container_add(GTK_CONTAINER(menu),
-				  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_close")));
-		gtk_container_add(GTK_CONTAINER(menu),
-				  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_stop")));
-		gtk_widget_show_all(menu);
-		return GTK_MENU(menu);
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
+	
+		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &iter);
+		
+		if (iter_depth > 0 )
+		{
+				gtk_container_add(GTK_CONTAINER(menu),
+						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_save")));
+				gtk_container_add(GTK_CONTAINER(menu),
+						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_cancel")));
+				gtk_container_add(GTK_CONTAINER(menu),
+						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_close")));
+				gtk_container_add(GTK_CONTAINER(menu),
+						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_stop")));
+				gtk_widget_show_all(menu);
+				return GTK_MENU(menu);
+		}
 	}
 
 	return NULL;
