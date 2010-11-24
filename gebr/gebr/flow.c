@@ -1076,7 +1076,7 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(detailed_flow_css), renderer, "text", 0);
 
 
-	css_combo_label = gtk_label_new(_("Style"));
+	css_combo_label = gtk_label_new(_("Style "));
 	gtk_widget_show(css_combo_label);
 
 	/*Reading the CSS file directory*/
@@ -1172,10 +1172,9 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 	gtk_box_pack_start(GTK_BOX(hbox_combo), css_combo_label, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox_combo), detailed_flow_css, TRUE, TRUE, 0);
 
-	gtk_box_pack_start(GTK_BOX(vbox), detailed_flow_include_report, FALSE, TRUE, 0);
-
-	gtk_box_pack_start(GTK_BOX(vbox), frame_param, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox_combo, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), detailed_flow_include_report, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), frame_param, FALSE, TRUE, 0);
 
 	gtk_container_add(GTK_CONTAINER(frame),vbox);
 

@@ -1094,9 +1094,10 @@ static void on_detailed_line_include_report_toggled (GtkToggleButton *toggle)
 	gebr.config.detailed_line_include_report = gtk_toggle_button_get_active (toggle);
 }
 
-static void on_detailed_line_include_flow_report_toggled (GtkToggleButton *button)
+static void on_detailed_line_include_flow_report_toggled (GtkToggleButton *button, GtkWidget * widget)
 {
 	gebr.config.detailed_line_include_flow_report = gtk_toggle_button_get_active (button);
+	gtk_widget_set_sensitive(widget, gebr.config.detailed_line_include_flow_report);
 }
 
 static void on_detailed_line_flow_param_none_toggled (GtkToggleButton *toggle)
@@ -1146,7 +1147,7 @@ gebr_project_line_print_dialog_custom_tab()
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(detailed_line_css_combo), renderer, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(detailed_line_css_combo), renderer, "text", 0);
 
-	css_combo_label = gtk_label_new(_("Style"));
+	css_combo_label = gtk_label_new(_("Style "));
 	gtk_widget_show(css_combo_label);
 
 	/*Reading the CSS file directory*/
@@ -1235,11 +1236,12 @@ gebr_project_line_print_dialog_custom_tab()
 			 G_CALLBACK(on_detailed_line_include_report_toggled), NULL);
 
 	g_signal_connect(detailed_line_include_flow_report, "toggled",
-			 G_CALLBACK(on_detailed_line_include_flow_report_toggled), NULL/*detailed_line_flow_params_combo*/);
+			 G_CALLBACK(on_detailed_line_include_flow_report_toggled), frame_param);
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(detailed_line_css_combo), active);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_line_include_report), gebr.config.detailed_line_include_report);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_line_include_flow_report), gebr.config.detailed_line_include_flow_report);
+	gtk_widget_set_sensitive(frame_param, gebr.config.detailed_line_include_flow_report);
 
 	frame = gtk_frame_new(NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 10);
@@ -1251,11 +1253,11 @@ gebr_project_line_print_dialog_custom_tab()
 	gtk_box_pack_start(GTK_BOX(hbox_combo), css_combo_label, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox_combo), detailed_line_css_combo, TRUE, TRUE, 0);
 
+	gtk_box_pack_start(GTK_BOX(vbox), hbox_combo, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), detailed_line_include_report, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), detailed_line_include_flow_report, FALSE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), frame_param, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox_combo, FALSE, TRUE, 0);
 
 	gtk_container_add(GTK_CONTAINER(frame),vbox);
 	gtk_widget_show_all(frame);
