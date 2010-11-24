@@ -703,13 +703,27 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel)
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store),
 					   (GtkTreeIter*)(g_list_last(selected)->data), FB_XMLPOINTER, &last, -1);
 
+			gint queue_num = 1;
+			GString *suffix = g_string_new(NULL);
 			GString *queue_name = g_string_new(NULL);
-			g_string_printf(queue_name, _("After '%s'...'%s'"),
+			GtkTreeIter queue_iter;
+
+			g_string_printf(suffix, _("After '%s'...'%s'"),
 					gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(first)),
 					gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(last)));
-			g_string_prepend(queue_name, "q");
+			g_string_prepend(suffix, "q");
+			g_string_assign (queue_name, suffix->str);
+
+			while (server_queue_find(server, queue_name->str, NULL))
+				g_string_printf (queue_name, "%s %d", suffix->str, queue_num++);
+
+			/* Now that we found a proper queue name, add it to the queues model */
+			gtk_list_store_append(server->queues_model, &queue_iter);
+			gtk_list_store_set(server->queues_model, &queue_iter, 1, queue_name->str, -1);
+
 			config->queue = g_strdup(queue_name->str);
 			g_string_free(queue_name, TRUE);
+			g_string_free(suffix, TRUE);
 
 			g_list_foreach(selected, (GFunc) gtk_tree_iter_free, NULL);
 			g_list_free(selected);

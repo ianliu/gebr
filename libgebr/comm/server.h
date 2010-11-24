@@ -108,6 +108,13 @@ struct gebr_comm_server {
 };
 
 /**
+ * GebrCommServerRun:
+ * @flow: the flow definition to be executed
+ * @parallel: whether this will be executed in a parallel environment
+ * @account: account for moab servers
+ * @queue: the queue this flow will be appended
+ * @num_processes: the number of processes to run in parallel
+ *
  * Configurations for running a flow.
  */
 typedef struct {
