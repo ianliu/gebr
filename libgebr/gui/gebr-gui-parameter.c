@@ -301,6 +301,7 @@ static void gebr_gui_parameter_widget_report_change(struct gebr_gui_parameter_wi
 static void gebr_gui_parameter_on_list_value_widget_changed(GtkEntry * entry,
 							    struct gebr_gui_parameter_widget *parameter_widget)
 {
+
 	gebr_geoxml_program_parameter_set_parse_list_value(parameter_widget->program_parameter,
 							   parameter_widget->use_default_value,
 							   gtk_entry_get_text(entry));
@@ -651,10 +652,11 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		gtk_widget_show(parameter_widget->list_value_widget);
 		gtk_box_pack_start(GTK_BOX(hbox), parameter_widget->list_value_widget, TRUE, TRUE, 0);
 		if (parameter_widget->parameter_type != GEBR_GEOXML_PARAMETER_TYPE_ENUM)
+		{
 			g_signal_connect(parameter_widget->list_value_widget, "changed",
 					 G_CALLBACK(gebr_gui_parameter_on_list_value_widget_changed),
 					 parameter_widget);
-
+		}
 		button = gtk_toggle_button_new_with_label(_("Edit list"));
 		if (parameter_widget->readonly)
 			gtk_widget_set_sensitive(button, FALSE);
@@ -673,8 +675,10 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		g_signal_connect(sequence_edit, "add-request",
 				 G_CALLBACK(__on_sequence_edit_add_request), parameter_widget);
 		if (parameter_widget->parameter_type != GEBR_GEOXML_PARAMETER_TYPE_ENUM)
+		{
 			g_signal_connect(sequence_edit, "changed",
 					 G_CALLBACK(__on_sequence_edit_changed), parameter_widget);
+		}
 		else {
 			gtk_widget_show(sequence_edit);
 			g_object_set(sequence_edit, "may-rename", FALSE, NULL);

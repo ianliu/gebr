@@ -156,6 +156,7 @@ void job_control_save(void)
 	struct job *job;
 
 	gint selected_rows = 0;
+	gint iter_depth = 0;
 	
 	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 
@@ -185,6 +186,11 @@ void job_control_save(void)
 	}
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
+		
+		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &iter);
+
+		if (iter_depth <= 0)
+			continue;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 		job_update_text_buffer(iter, job);
@@ -214,6 +220,7 @@ void job_control_cancel(void)
 	struct job *job;
 	gint selected_rows = 0;
 	gboolean asked = FALSE;
+	gint iter_depth = 0;
 
 	if (!job_control_get_selected(&iter, JobControlJobSelection))
 		return;
@@ -222,6 +229,11 @@ void job_control_cancel(void)
 	
 	
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
+
+		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &iter);
+
+		if (iter_depth <= 0)
+			continue;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
@@ -269,6 +281,7 @@ void job_control_close(void)
 	
 	gboolean asked = FALSE;
 	gint selected_rows = 0;
+	gint iter_depth = 0;
 
 	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 	
@@ -278,6 +291,11 @@ void job_control_close(void)
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
 
+		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &iter);
+
+		if (iter_depth <= 0)
+			continue;
+		
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 
 		if (selected_rows == 1)
@@ -330,7 +348,7 @@ void job_control_stop(void)
 	
 	gboolean asked = FALSE;
 	gint selected_rows = 0;
-	
+	gint iter_depth	= 0;
 	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 	
 	
@@ -338,6 +356,11 @@ void job_control_stop(void)
 		return;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
+		
+		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &iter);
+
+		if (iter_depth <= 0)
+			continue;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
 

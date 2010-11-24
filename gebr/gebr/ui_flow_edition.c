@@ -293,7 +293,6 @@ void flow_edition_component_activated(void)
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, FSEQ_TITLE_COLUMN, &title, -1);
 	gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Configuring program '%s'."), title);
 	parameters_configure_setup_ui();
-
 	g_free(title);
 }
 

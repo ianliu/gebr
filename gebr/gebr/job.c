@@ -177,6 +177,10 @@ void job_delete(struct job *job)
 
 void job_close(struct job *job, gboolean force, gboolean verbose)
 {
+	/* Checking if passed job pointer is valid */
+	if (job == NULL)
+		return;
+
 	if (force) {
 		job_delete(job);
 		return;
