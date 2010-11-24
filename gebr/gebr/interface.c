@@ -140,10 +140,6 @@ static const GtkActionEntry actions_entries[] = {
 		NULL, N_("Ask server to terminate the job"), G_CALLBACK(on_job_control_cancel)},
 	{"job_control_close", "edit-clear", N_("Clear selected"),
 		NULL, N_("Clear selected job log"), G_CALLBACK(on_job_control_close)},
-	/*
-	{"job_control_clear", GTK_STOCK_CLEAR, NULL,
-		NULL, N_("Clear all inactive job logs"), G_CALLBACK(on_job_control_clear)},
-	*/
 	{"job_control_stop", GTK_STOCK_STOP, NULL,
 		NULL, N_("Ask server to kill the job"), G_CALLBACK(on_job_control_stop)}
 };
@@ -388,9 +384,6 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "job_control_close"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "job_control_clear"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "job_control_stop"))), -1);
