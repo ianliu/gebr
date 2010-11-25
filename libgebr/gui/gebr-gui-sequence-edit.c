@@ -330,8 +330,8 @@ __gebr_gui_sequence_edit_on_edited(GtkCellRendererText * cell, gchar * path_stri
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	gchar *old_text;
-	gboolean retval;
-
+	GValue *params;
+	GValue retval = {0,};
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(sequence_edit->tree_view));
 	gtk_tree_selection_get_selected(selection, &model, &iter);
@@ -342,9 +342,25 @@ __gebr_gui_sequence_edit_on_edited(GtkCellRendererText * cell, gchar * path_stri
 		g_free(old_text);
 		return;
 	}
-	g_signal_emit(sequence_edit, object_signals[RENAMED], 0, old_text, new_text, &retval);
 
-	if (retval)
+	params = g_new0 (GValue, 3);
+	g_value_init (params, G_TYPE_OBJECT);
+	g_value_set_object (params, sequence_edit);
+
+	g_value_init (params+1, G_TYPE_STRING);
+	g_value_set_string (params+1, old_text);
+
+	g_value_init (params+2, G_TYPE_STRING);
+	g_value_set_string (params+2, new_text);
+
+	g_value_init (&retval, G_TYPE_BOOLEAN);
+	g_value_set_boolean (&retval, TRUE);
+
+	g_signal_emitv (params, object_signals[RENAMED], 0, &retval);
+
+	g_free (params);
+
+	if (g_value_get_boolean (&retval))
 		GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(sequence_edit)->rename(sequence_edit, &iter, new_text);
 
 	g_free(old_text);
