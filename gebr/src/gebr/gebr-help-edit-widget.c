@@ -325,8 +325,10 @@ GtkWidget * gebr_help_edit_widget_new(GebrGeoXmlDocument * document, const gchar
 	g_signal_connect(web_view, "load-finished",
 			 G_CALLBACK (on_load_finished), self);
 
+#if WEBKIT_CHECK_VERSION(1,1,13)
 	g_object_set(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(web_view)),
 		     "enable-universal-access-from-file-uris", TRUE, NULL);
+#endif
 
 	webkit_web_view_open(WEBKIT_WEB_VIEW(web_view), priv->temp_file);
 
