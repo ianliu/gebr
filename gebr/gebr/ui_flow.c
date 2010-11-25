@@ -634,8 +634,9 @@ out:
 	return ret;
 }
 
-/**
- * \internal
+/*
+ * flow_io_run:
+ *
  * Check for current server and if its connected, for the queue selected.
  */
 static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel)
@@ -694,40 +695,73 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel)
 
 	} else {
 		/* Common servers. */
+		gboolean is_immediately = gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)) == 0;
+
 		if (multiple && !parallel) {
-			GList *selected = gebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-			GebrGeoXmlFlow *first;
-			GebrGeoXmlFlow *last;
-			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store),
-					   (GtkTreeIter*)(g_list_first(selected)->data), FB_XMLPOINTER, &first, -1);
-			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store),
-					   (GtkTreeIter*)(g_list_last(selected)->data), FB_XMLPOINTER, &last, -1);
-
-			gint queue_num = 1;
-			GString *suffix = g_string_new(NULL);
-			GString *queue_name = g_string_new(NULL);
 			GtkTreeIter queue_iter;
+			gchar *internal_queue_name;
+			struct job *job;
+			GString *queue_name;
 
-			g_string_printf(suffix, _("After '%s'...'%s'"),
-					gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(first)),
-					gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(last)));
-			g_string_prepend(suffix, "q");
-			g_string_assign (queue_name, suffix->str);
+			gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter);
+			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter,
+					   1, &internal_queue_name, 2, &job, -1);
 
-			while (server_queue_find(server, queue_name->str, NULL))
-				g_string_printf (queue_name, "%s %d", suffix->str, queue_num++);
+			/* If the first flow is marked to run Immediately or it has a Job Queue selected,
+			 * we must create a new queue name. The name is composed by the first and the last
+			 * flow title in the selection.
+			 */
+			if (is_immediately || internal_queue_name[0] == 'j') {
+				GList *selected;
+				GebrGeoXmlFlow *first;
+				GebrGeoXmlFlow *last;
+				GString *suffix;
+				gint queue_num = 1;
 
-			/* Now that we found a proper queue name, add it to the queues model */
-			gtk_list_store_append(server->queues_model, &queue_iter);
-			gtk_list_store_set(server->queues_model, &queue_iter, 1, queue_name->str, -1);
+				selected = gebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 
-			config->queue = g_strdup(queue_name->str);
-			g_string_free(queue_name, TRUE);
-			g_string_free(suffix, TRUE);
+				gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store),
+						   (GtkTreeIter*)(g_list_first(selected)->data), FB_XMLPOINTER, &first, -1);
+				gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store),
+						   (GtkTreeIter*)(g_list_last(selected)->data), FB_XMLPOINTER, &last, -1);
 
-			g_list_foreach(selected, (GFunc) gtk_tree_iter_free, NULL);
-			g_list_free(selected);
-		} else if (parallel || gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)) == 0) {
+				g_list_foreach(selected, (GFunc) gtk_tree_iter_free, NULL);
+				g_list_free(selected);
+
+				suffix = g_string_new(NULL);
+				g_string_printf(suffix, _("After '%s'...'%s'"),
+						gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(first)),
+						gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(last)));
+				g_string_prepend(suffix, "q");
+
+				queue_name = g_string_new(NULL);
+				g_string_assign (queue_name, suffix->str);
+
+				/* Finds a unique name for the queue.
+				 */
+				while (server_queue_find(server, queue_name->str, NULL))
+					g_string_printf (queue_name, "%s %d", suffix->str, queue_num++);
+
+				if (is_immediately || (internal_queue_name[0] == 'j' && job->status != JOB_STATUS_RUNNING)) {
+					gtk_list_store_append(server->queues_model, &queue_iter);
+					iter = queue_iter;
+				}
+				gtk_list_store_set(server->queues_model, &iter, 1, queue_name->str, -1);
+				g_string_free(suffix, TRUE);
+			} else {
+				queue_name = g_string_new (internal_queue_name);
+			}
+
+			config->queue = g_string_free(queue_name, FALSE);
+
+			/* In this case, we have renamed the `internal_queue_name' to queue_name, so we must
+			 * send the request to the server.
+			 */
+			if (!is_immediately && internal_queue_name[0] == 'j')
+				gebr_comm_protocol_send_data(server->comm->protocol, server->comm->stream_socket,
+							     gebr_comm_protocol_defs.rnq_def, 2, internal_queue_name, config->queue);
+			g_free (internal_queue_name);
+		} else if (parallel || is_immediately) {
 			/* If the active combobox entry is the first one (index 0), then
 			 * "Immediately" is selected as queue option. */
 			config->queue = g_strdup("");
