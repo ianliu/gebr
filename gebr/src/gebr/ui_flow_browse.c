@@ -216,6 +216,8 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->info.help_edit), "clicked",
 			 G_CALLBACK(flow_browse_edit_help), NULL);
 	gtk_box_pack_end(GTK_BOX(infopage), hbox, FALSE, TRUE, 0);
+	g_object_set(ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
+	g_object_set(ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
 
 	/* Author */
 	ui_flow_browse->info.author = gtk_label_new("");

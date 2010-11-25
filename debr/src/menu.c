@@ -250,6 +250,9 @@ void menu_setup_ui(void)
 	gtk_misc_set_alignment(GTK_MISC(debr.ui_menu.details.author_label), 0, 0);
 	gtk_box_pack_end(GTK_BOX(details), debr.ui_menu.details.author_label, FALSE, TRUE, 0);
 
+	g_object_set(debr.ui_menu.details.help_view, "sensitive", FALSE, NULL);
+	g_object_set(debr.ui_menu.details.help_edit, "sensitive", FALSE, NULL);
+
 	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save_all"), FALSE);
 	debr.ui_menu.widget = hpanel;
 	gtk_widget_show_all(debr.ui_menu.widget);
@@ -1309,6 +1312,7 @@ void menu_details_update(void)
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.hbox), (GtkCallback) gtk_widget_show, NULL);
 
 		g_object_set(debr.ui_menu.details.help_view, "sensitive", help_exists, NULL);
+		g_object_set(debr.ui_menu.details.help_edit, "sensitive", TRUE, NULL);
 		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_help_view"), help_exists);
 		validate_image_set_check_help(debr.ui_menu.help_validate_image,
 					      gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)));

@@ -202,6 +202,9 @@ void program_setup_ui(void)
 	g_signal_connect(GTK_OBJECT(debr.ui_program.details.help_edit), "clicked",
 			 G_CALLBACK(program_help_edit), NULL);
 
+	g_object_set(debr.ui_program.details.help_view, "sensitive", FALSE, NULL);
+	g_object_set(debr.ui_program.details.help_edit, "sensitive", FALSE, NULL);
+
 	debr.ui_program.widget = hpanel;
 	gtk_widget_show_all(debr.ui_program.widget);
 
@@ -665,6 +668,7 @@ static void program_details_update(void)
 		help = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(debr.program));
 		help_exists = strlen(help) > 0 ? TRUE : FALSE;
 		g_object_set(debr.ui_program.details.help_view, "sensitive", help_exists, NULL);
+		g_object_set(debr.ui_program.details.help_edit, "sensitive", TRUE, NULL);
 		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "program_help_view"), help_exists);
 		validate_image_set_check_help(debr.ui_program.help_validate_image, help);
 	}
