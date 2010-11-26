@@ -377,8 +377,12 @@ struct ui_server_list *server_list_setup_ui(void)
 
 	ui_server_list = g_new(struct ui_server_list, 1);
 	ui_server_list->common.store = gtk_list_store_new(SERVER_N_COLUMN,
-							  GDK_TYPE_PIXBUF,
-							  G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER);
+							  GDK_TYPE_PIXBUF,	/* Status icon */
+							  G_TYPE_BOOLEAN,	/* Autoconnect */
+							  G_TYPE_STRING,	/* Server name */
+							  G_TYPE_POINTER,	/* Server pointer */
+							  G_TYPE_INT		/* Last used queue */
+							  );
 
 	dialog = gtk_dialog_new_with_buttons(_("Servers configuration"),
 					     GTK_WINDOW(gebr.window),
