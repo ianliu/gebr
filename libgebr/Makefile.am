@@ -41,7 +41,7 @@ libgebrinclude_HEADERS = date.h		\
 noinst_HEADERS = defines.h
 
 EXTRA_DIST = ${pkgconfig_DATA} $(noinst_HEADERS) config.h.in
-CLEANFILES = config.h
+DISTCLEANFILES = config.h
 
 AM_CPPFLAGS = -DNANOVERSION=\"`hg parent --template '+{latesttagdistance}-{node|short}' 2> /dev/null || date ++%H%M`\"
 AM_CFLAGS = -Wall -std=gnu99 -fPIC @DEBUG_CFLAGS@ $(GLIB_CFLAGS)
