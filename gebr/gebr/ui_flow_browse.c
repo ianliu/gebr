@@ -39,15 +39,15 @@
 static void flow_browse_load(void);
 static void
 flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
-			     GtkTreeViewColumn * column, struct ui_flow_browse *ui_flow_browse);
-static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse *ui_flow_browse);
+			     GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse);
+static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_flow_browse);
 static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * revision);
 static void flow_browse_on_revision_delete_activate(GtkWidget * menu_item, GebrGeoXmlRevision * revision);
 static void flow_browse_on_flow_move(void);
 
-struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
+GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 {
-	struct ui_flow_browse *ui_flow_browse;
+	GebrUiFlowBrowse *ui_flow_browse;
 
 	GtkTreeViewColumn *col;
 	GtkCellRenderer *renderer;
@@ -61,7 +61,7 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gint row;
 
 	/* alloc */
-	ui_flow_browse = g_new(struct ui_flow_browse, 1);
+	ui_flow_browse = g_new(GebrUiFlowBrowse, 1);
 	ui_flow_browse->revisions_menu = revisions_menu;
 
 	/* Create flow browse page */
@@ -522,7 +522,7 @@ void flow_browse_edit_help(void)
  */
 static void
 flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
-			     GtkTreeViewColumn * column, struct ui_flow_browse *ui_flow_browse)
+			     GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse)
 {
 	gebr.config.current_notebook = 2;
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
@@ -532,7 +532,7 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
  * \internal
  * Build popup menu
  */
-static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, struct ui_flow_browse *ui_flow_browse)
+static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_flow_browse)
 {
 	GtkWidget *menu;
 	GtkWidget *menu_item;

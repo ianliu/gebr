@@ -27,7 +27,7 @@
 
 G_BEGIN_DECLS
 
-/**
+/*
  * Store fields
  */
 enum {
@@ -35,12 +35,13 @@ enum {
 	FB_FILENAME,
 	FB_LINE_FLOW_POINTER,
 	FB_XMLPOINTER,
+	FB_LAST_QUEUE,
 	FB_N_COLUMN
 };
 
 /**
  */
-struct ui_flow_browse {
+typedef struct {
 	GtkWidget *widget;
 	GtkListStore *store;
 	GtkWidget *view;
@@ -72,14 +73,14 @@ struct ui_flow_browse {
 		GtkWidget *help_edit;
 		GtkWidget *author;
 	} info;
-};
+} GebrUiFlowBrowse;
 
 /**
  * Assembly the flow browse page.
  * Return:
  * The structure containing relevant data.
  */
-struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu);
+GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu);
 
 /**
  * Update information shown about the selected flow

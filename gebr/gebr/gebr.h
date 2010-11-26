@@ -88,7 +88,7 @@ struct gebr {
 	/* Persistent GUI */
 	GtkWidget *navigation_box_label;
 	struct ui_project_line *ui_project_line;
-	struct ui_flow_browse *ui_flow_browse;
+	GebrUiFlowBrowse *ui_flow_browse;
 	struct ui_flow_edition *ui_flow_edition;
 	struct ui_job_control *ui_job_control;
 	struct ui_log *ui_log;
