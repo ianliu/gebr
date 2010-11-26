@@ -282,21 +282,21 @@ void gebr_geoxml_flow_server_io_set_error(GebrGeoXmlFlowServer * server, const g
 const gchar *gebr_geoxml_flow_server_io_get_input(GebrGeoXmlFlowServer * server)
 {
 	if (server == NULL)
-		return NULL;
+		return "";
 	return __gebr_geoxml_get_tag_value(__gebr_geoxml_get_first_element((GdomeElement *) server, "io"), "input");
 }
 
 const gchar *gebr_geoxml_flow_server_io_get_output(GebrGeoXmlFlowServer * server)
 {
 	if (server == NULL)
-		return NULL;
+		return "";
 	return __gebr_geoxml_get_tag_value(__gebr_geoxml_get_first_element((GdomeElement *) server, "io"), "output");
 }
 
 const gchar *gebr_geoxml_flow_server_io_get_error(GebrGeoXmlFlowServer * server)
 {
 	if (server == NULL)
-		return NULL;
+		return "";
 	return __gebr_geoxml_get_tag_value(__gebr_geoxml_get_first_element((GdomeElement *) server, "io"), "error");
 }
 
