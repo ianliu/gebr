@@ -203,8 +203,8 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	ui_flow_browse->info.error = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.error), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.error, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3),
-	    row++;
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
+	row++;
 
 	/* Help */
 	
@@ -221,6 +221,8 @@ struct ui_flow_browse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->info.help_edit), "clicked",
 			 G_CALLBACK(flow_browse_edit_help), NULL);
 	gtk_box_pack_end(GTK_BOX(infopage), hbox, FALSE, TRUE, 0);
+	g_object_set(ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
+	g_object_set(ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
 
 	/* Author */
 	ui_flow_browse->info.author = gtk_label_new("");

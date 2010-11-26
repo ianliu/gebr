@@ -89,10 +89,10 @@ AM_CPPFLAGS =			\
 	$(GEBR_COMM_CFLAGS)	\
 	$(GEBR_GUI_CFLAGS)	\
 	@DEBUG_CFLAGS@		\
-	-DNANOVERSION=\"`hg parent --template '+{latesttagdistance}-{node|short}' 2> /dev/null || date ++%H%M`\" \
+	-DNANOVERSION=\"$(NANOVERSION)\" \
 	$(NULL)
 
-AM_CFLAGS = -Wall -std=gnu99
+AM_CFLAGS = $(COMMON_CFLAGS)
 
 gebr_LDADD =			\
 	libgebr.a		\

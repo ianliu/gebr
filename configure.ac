@@ -78,6 +78,20 @@ PACKAGE_PREFIX_DIR=`echo ${prefix}`
 AC_SUBST(PACKAGE_PREFIX_DIR)
 
 dnl ============================================================================
+dnl Common compilation cflags
+dnl ============================================================================
+COMMON_CFLAGS='-Wall -std=gnu99 -fshow-column'
+AC_SUBST(COMMON_CFLAGS)
+
+dnl ============================================================================
+dnl The nano-version is the mercurial revision hash.
+dnl Notice that it is escaped so the shell expansion only occurs when `make'
+dnl is executed.
+dnl ============================================================================
+NANOVERSION='`hg parent --template "+{latesttagdistance}-{node|short}" 2> /dev/null || date ++%H%M`'
+AC_SUBST(NANOVERSION)
+
+dnl ============================================================================
 dnl Better install script
 dnl ============================================================================
 INSTALL_BIN=/usr/bin/install

@@ -280,7 +280,10 @@ static gchar* expand_escapes_alloc(const gchar* src)
  */
 static void pre_process_html(GString * html)
 {
-	g_string_assign(html, expand_escapes_alloc(html->str)); 
+	gchar *escaped;
+	escaped = expand_escapes_alloc(html->str);
+	g_string_assign(html, escaped); 
+	g_free (escaped);
 }
 
 

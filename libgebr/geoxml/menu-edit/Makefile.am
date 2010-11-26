@@ -16,8 +16,11 @@
 include $(top_srcdir)/Makefile.decl
 
 bin_PROGRAMS = gebr-geoxml-menu-edit
-gebr_geoxml_menu_edit_SOURCES = menu-edit.c
 
-INCLUDES = -I$(srcdir)/.. -I$(srcdir)/../..
-AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
-gebr_geoxml_menu_edit_LDADD = ../libgebr_geoxml.la ../../libgebr.la $(GLIB_LIBS)
+AM_CFLAGS = $(COMMON_CFLAGS)
+AM_CPPFLAGS = $(GEBR_CFLAGS)		\
+	      $(GEBR_GEOXML_CFLAGS)	\
+	      -I$(srcdir)/..
+
+gebr_geoxml_menu_edit_SOURCES = menu-edit.c
+gebr_geoxml_menu_edit_LDADD = $(GEBR_LIBS) $(GEBR_GEOXML_LIBS)

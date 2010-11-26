@@ -58,6 +58,6 @@ AM_CPPFLAGS = -I$(top_srcdir)		\
 	      $(GDOME2_CFLAGS)		\
 	      @DEBUG_CFLAGS@
 
-AM_CFLAGS = -Wall -std=gnu99 -fPIC
+AM_CFLAGS = $(COMMON_CFLAGS) -fPIC
 libgebr_geoxml_la_LIBADD = ../libgebr.la $(GLIB_LIBS) $(GDOME2_LIBS)
 libgebr_geoxml_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@

@@ -92,8 +92,8 @@ AM_CPPFLAGS =				\
 AM_CFLAGS = -Wall -std=gnu99 -fPIC
 
 libgebr_gui_la_LIBADD =			\
-	../libgebr.la		\
-	../geoxml/libgebr_geoxml.la \
+	../libgebr.la			\
+	../geoxml/libgebr_geoxml.la	\
 	$(INTLLIBS)			\
 	$(GTK_LIBS)			\
 	$(GTHREAD_LIBS)			\

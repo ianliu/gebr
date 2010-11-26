@@ -4,6 +4,8 @@ noinst_PROGRAMS = $(TEST_PROGS)
 
 EXTRA_DIST = test.mnu
 
+AM_CFLAGS = $(COMMON_CFLAGS)
+
 AM_CPPFLAGS = -I$(srcdir)/../gebr	\
 	      $(GEBR_CFLAGS)		\
 	      $(GEBR_GEOXML_CFLAGS)	\
@@ -12,7 +14,6 @@ AM_CPPFLAGS = -I$(srcdir)/../gebr	\
 	      @DEBUG_CFLAGS@		\
 	      -DTEST_DIR=\"$(srcdir)\"
 	    
-AM_CFLAGS = -Wall -std=gnu99
 AM_LDFLAGS = $(GEBR_LIBS)		\
 	     $(GEBR_GEOXML_LIBS)	\
 	     $(GEBR_COMM_LIBS)		\

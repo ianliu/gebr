@@ -61,8 +61,15 @@ noinst_HEADERS = \
 
 EXTRA_DIST = $(noinst_HEADERS) $(debrglade_DATA) $(debrscripts_DATA)
 
-AM_CFLAGS = -Wall -std=gnu99 @DEBUG_CFLAGS@ \
-	    $(GEBR_CFLAGS) $(GEBR_GEOXML_CFLAGS) $(GEBR_GUI_CFLAGS)
+AM_CFLAGS = $(COMMON_CFLAGS)
 
-debr_LDADD = libdebr.a $(INTLLIBS) \
-	$(GEBR_LIBS) $(GEBR_GEOXML_LIBS) $(GEBR_GUI_LIBS)
+AM_CPPFLAGS = $(GEBR_CFLAGS)		\
+	      $(GEBR_GEOXML_CFLAGS)	\
+	      $(GEBR_GUI_CFLAGS)	\
+	      @DEBUG_CFLAGS@
+
+debr_LDADD = $(GEBR_LIBS)		\
+	     $(GEBR_GEOXML_LIBS)	\
+	     $(GEBR_GUI_LIBS)		\
+	     libdebr.a
+	

@@ -1,4 +1,4 @@
-# libgebr - G�BR Library
+# libgebr - GêBR Library
 # Copyright (C) 2007  Br�ulio Barros de Oliveira (brauliobo@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,8 +16,12 @@
 include $(top_srcdir)/Makefile.decl
 
 bin_PROGRAMS = gebr-geoxml-upgrade
-gebr_geoxml_upgrade_SOURCES = upgrade.c
 
-INCLUDES = -I$(srcdir)/.. -I$(srcdir)/../..
-AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
-gebr_geoxml_upgrade_LDADD = ../libgebr_geoxml.la $(GLIB_LIBS)
+AM_CFLAGS = $(COMMON_CFLAGS)
+AM_CPPFLAGS = $(GEBR_CFLAGS)		\
+	      $(GEBR_GEOXML_CFLAGS)	\
+	      -I$(srcdir)/..
+
+gebr_geoxml_upgrade_SOURCES = upgrade.c
+gebr_geoxml_upgrade_LDADD = $(GEBR_LIBS)	\
+			    $(GEBR_GEOXML_LIBS)

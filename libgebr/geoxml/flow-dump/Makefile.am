@@ -18,6 +18,9 @@ include $(top_srcdir)/Makefile.decl
 bin_PROGRAMS = gebr-geoxml-flow-dump
 gebr_geoxml_flow_dump_SOURCES = flow-dump.c
 
-INCLUDES = -I$(srcdir)/.. -I$(srcdir)/../..
-AM_CFLAGS = -Wall $(GLIB_CFLAGS) $(GDOME2_CFLAGS)
-gebr_geoxml_flow_dump_LDADD = ../libgebr_geoxml.la ../../libgebr.la $(GLIB_LIBS)
+AM_CFLAGS = $(COMMON_CFLAGS)
+AM_CPPFLAGS = $(GEBR_CFLAGS)		\
+	      $(GEBR_GEOXML_CFLAGS)	\
+	      -I$(srcdir)/..
+
+gebr_geoxml_flow_dump_LDADD = $(GEBR_LIBS) $(GEBR_GEOXML_LIBS)

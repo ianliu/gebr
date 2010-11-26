@@ -67,7 +67,7 @@ AM_CPPFLAGS = \
 	$(GTHREAD_CFLAGS)		\
 	@DEBUG_CFLAGS@
 
-AM_CFLAGS = -Wall -std=gnu99
+AM_CFLAGS = $(COMMON_CFLAGS)
 
 libgebr_comm_la_LIBADD = \
 	-lutil				\
