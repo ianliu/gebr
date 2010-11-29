@@ -414,6 +414,8 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 			g_string_printf(finish_date, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
 		if (job->status == JOB_STATUS_CANCELED)
 			g_string_printf(finish_date, "\n%s %s", _("Cancel date:"), gebr_localized_date(job->finish_date->str));
+
+		job_update_label(job);
 		
 		gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
 		gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, finish_date->str, finish_date->len);
