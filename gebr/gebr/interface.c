@@ -138,12 +138,10 @@ static const GtkActionEntry actions_entries[] = {
 	 */
 	{"job_control_save", GTK_STOCK_SAVE, NULL,
 		NULL, N_("Save job information in a file"), G_CALLBACK(on_job_control_save)},
-	{"job_control_cancel", GTK_STOCK_MEDIA_STOP, N_("Cancel"),
-		NULL, N_("Ask server to terminate the job"), G_CALLBACK(on_job_control_cancel)},
-	{"job_control_close", "edit-clear", N_("Clear selected"),
-		NULL, N_("Clear selected job log"), G_CALLBACK(on_job_control_close)},
-	{"job_control_stop", GTK_STOCK_STOP, NULL,
-		NULL, N_("Ask server to kill the job"), G_CALLBACK(on_job_control_stop)}
+	{"job_control_close", "gnome-fs-trash-empty", N_("Close"),
+		NULL, N_("Close job"), G_CALLBACK(on_job_control_close)},
+	{"job_control_stop", GTK_STOCK_STOP, N_("Cancel"),
+		NULL, N_("Ask server to cancel the job"), G_CALLBACK(on_job_control_stop)}
 };
 
 static const GtkActionEntry status_action_entries[] = {
@@ -384,9 +382,6 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "job_control_save"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "job_control_cancel"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "job_control_close"))), -1);

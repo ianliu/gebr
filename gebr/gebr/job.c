@@ -317,9 +317,10 @@ void job_status_show(struct job *job)
 
 	if (job_is_active(job) == FALSE) 
 		return;
-
+/*
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "job_control_stop"),
 				 job->status != JOB_STATUS_QUEUED);
+*/
 	job_update_label(job);
 	if (gebr.config.job_log_auto_scroll) {
 		GtkTextMark *mark;

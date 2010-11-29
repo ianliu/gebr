@@ -296,13 +296,13 @@ void job_control_close(void)
 		if (selected_rows == 1)
 		{
 			if (gebr_gui_confirm_action_dialog
-			    (_("Clear job "), _("Are you sure you want to clear job '%s'?"), job->title->str) == FALSE)
+			    (_("Close job "), _("Are you sure you want to close job '%s'?"), job->title->str) == FALSE)
 				return;
 		}
 		else if (!asked)
 		{
 			if (gebr_gui_confirm_action_dialog
-			    (_("Clear job "), _("Are you sure you want to clear the selected jobs?")) == FALSE)
+			    (_("Close job "), _("Are you sure you want to close the selected jobs?")) == FALSE)
 				return;
 
 			asked = TRUE;
@@ -356,11 +356,12 @@ void job_control_stop(void)
 			continue;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
-
+/*		
 		if (job->status != JOB_STATUS_RUNNING) {
 			gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("Job is not running."));
 			continue;
 		}
+*/
 		if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
 			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("You are not connected to job's server."));
 			continue;
@@ -385,7 +386,7 @@ void job_control_stop(void)
 				     job->server->comm->address->str, job->title->str);
 		else 
 			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to kill job '%s'."), job->title->str);
-
+			
 		gebr_comm_protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
 					     gebr_comm_protocol_defs.kil_def, 1, job->jid->str);
 	}
@@ -575,8 +576,6 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control
 		{
 				gtk_container_add(GTK_CONTAINER(menu),
 						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_save")));
-				gtk_container_add(GTK_CONTAINER(menu),
-						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_cancel")));
 				gtk_container_add(GTK_CONTAINER(menu),
 						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_close")));
 				gtk_container_add(GTK_CONTAINER(menu),
