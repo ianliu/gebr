@@ -37,161 +37,13 @@
 
 #define GEBR_FLOW_UI_RESPONSE_EXECUTE 1
 
-static void flow_io_populate(struct ui_flow_io *ui_flow_io);
-static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io);
 static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *server, gboolean mpi_program);
-static void flow_io_run(GebrGeoXmlFlowServer * serve, gboolean parallel);
-static void flow_io_insert(struct ui_flow_io *ui_flow_io, GebrGeoXmlFlowServer * flow_server, GtkTreeIter * iter);
-static void
-on_renderer_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_text, struct ui_flow_io *ui_flow_io);
-static void
-on_renderer_combo_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_text, struct ui_flow_io *ui_flow_io);
-static void
-on_renderer_editing_started(GtkCellRenderer * renderer,
-			    GtkCellEditable * editable, gchar * path, struct ui_flow_io *ui_flow_io);
-static void
-on_renderer_entry_icon_release(GtkEntry * widget,
-			       GtkEntryIconPosition position, GdkEvent * event, struct ui_flow_io *ui_flow_io);
-static GtkMenu *on_menu_popup(GtkTreeView * treeview, struct ui_flow_io *data);
-static void on_delete_server_io_activate(GtkWidget * menu_item, struct ui_flow_io *ui_flow_io);
-static void on_tree_view_cursor_changed(GtkTreeView * treeview, struct ui_flow_io *ui_flow_io);
-
-#if GTK_CHECK_VERSION(2,12,0)
-static gboolean
-on_tree_view_tooltip(GtkTreeView * treeview,
-		     gint x, gint y, gboolean keyboard_mode, GtkTooltip * tooltip, struct ui_flow_io *ui_flow_io);
-#endif
-
-void flow_io_setup_ui(gboolean executable)
-{
-	struct ui_flow_io *ui_flow_io;
-
-	GtkWidget *dialog;
-	GtkWidget *treeview;
-	GtkListStore *store;
-	GtkCellRenderer *renderer;
-	GtkTreeViewColumn *column;
-	GtkTreeIter iter;
-	GtkTreeIter server_iter;
-	GebrGeoXmlFlowServer *flow_server;
-	struct server *server;
-
-	gint response;
-
-	ui_flow_io = g_new(struct ui_flow_io, 1);
-	store = gtk_list_store_new(FLOW_IO_N,
-				   GDK_TYPE_PIXBUF,	// Icon
-				   G_TYPE_STRING,	// Address
-				   G_TYPE_STRING,	// Input
-				   G_TYPE_STRING,	// Output
-				   G_TYPE_STRING,	// Error
-				   G_TYPE_BOOLEAN,	// server listed
-				   G_TYPE_POINTER,	// GebrGeoXmlFlowServer
-				   G_TYPE_POINTER,	// struct server
-				   G_TYPE_BOOLEAN,	// Is new row? Server column
-				   G_TYPE_BOOLEAN);	// Is new row? Other columns
-	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
-	dialog = gtk_dialog_new_with_buttons(_("Server and I/O setup"),
-					     GTK_WINDOW(gebr.window),
-					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
-	ui_flow_io->execute_button = !executable ? NULL :
-		gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_EXECUTE, GEBR_FLOW_UI_RESPONSE_EXECUTE);
-	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)), GTK_SELECTION_BROWSE);
-	gtk_window_set_default_size(GTK_WINDOW(dialog), -1, 300);
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), 2);
-	g_object_set(G_OBJECT(treeview), "has-tooltip", TRUE, NULL);
-	g_signal_connect(G_OBJECT(treeview), "query-tooltip", G_CALLBACK(on_tree_view_tooltip), ui_flow_io);
-	g_signal_connect(G_OBJECT(treeview), "cursor-changed", G_CALLBACK(on_tree_view_cursor_changed), ui_flow_io);
-	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(treeview),
-						  (GebrGuiGtkPopupCallback) on_menu_popup, ui_flow_io);
-
-	//---------------------------------------
-	// Setting up the GtkTreeView
-	//---------------------------------------
-
-	// Server column
-	column = gtk_tree_view_column_new();
-	renderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(column, renderer, FALSE);
-	gtk_tree_view_column_add_attribute(column, renderer, "pixbuf", FLOW_IO_ICON);
-	renderer = gtk_cell_renderer_combo_new();
-	g_object_set(renderer,
-		     "model", gebr.ui_server_list->common.store, "has-entry", FALSE, "text-column", SERVER_NAME, NULL);
-	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_renderer_editing_started), ui_flow_io);
-	g_signal_connect(renderer, "edited", G_CALLBACK(on_renderer_combo_edited), ui_flow_io);
-	gtk_tree_view_column_pack_start(column, renderer, FALSE);
-	g_object_set(column, "resizable", TRUE, NULL);
-	gtk_tree_view_column_set_attributes(column, renderer,
-					    "text", FLOW_IO_SERVER_NAME, "editable", FLOW_IO_IS_SERVER_ADD, NULL);
-	gtk_tree_view_column_set_title(column, _("Server"));
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
-	g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(FLOW_IO_IS_SERVER_ADD));
-
-	// Input column
-	renderer = gtk_cell_renderer_text_new();
-	g_signal_connect(renderer, "edited", G_CALLBACK(on_renderer_edited), ui_flow_io);
-	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_renderer_editing_started), ui_flow_io);
-	column = gtk_tree_view_column_new_with_attributes(_("Input"), renderer, "text", FLOW_IO_INPUT,
-							  "editable", FLOW_IO_IS_SERVER_ADD2, NULL);
-	g_object_set(column, "resizable", TRUE, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
-	g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(FLOW_IO_INPUT));
-
-	// Output column
-	renderer = gtk_cell_renderer_text_new();
-	g_signal_connect(renderer, "edited", G_CALLBACK(on_renderer_edited), ui_flow_io);
-	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_renderer_editing_started), ui_flow_io);
-	column = gtk_tree_view_column_new_with_attributes(_("Output"), renderer, "text", FLOW_IO_OUTPUT,
-							  "editable", FLOW_IO_IS_SERVER_ADD2, NULL);
-	g_object_set(column, "resizable", TRUE, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
-	g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(FLOW_IO_OUTPUT));
-
-	// Error column
-	renderer = gtk_cell_renderer_text_new();
-	g_signal_connect(renderer, "edited", G_CALLBACK(on_renderer_edited), ui_flow_io);
-	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_renderer_editing_started), ui_flow_io);
-	column = gtk_tree_view_column_new_with_attributes(_("Error"), renderer, "text", FLOW_IO_ERROR,
-							  "editable", FLOW_IO_IS_SERVER_ADD2, NULL);
-	g_object_set(column, "resizable", TRUE, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
-	g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(FLOW_IO_ERROR));
-
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), treeview, TRUE, TRUE, 0);
-
-	ui_flow_io->dialog = dialog;
-	ui_flow_io->store = store;
-	ui_flow_io->treeview = treeview;
-	flow_io_populate(ui_flow_io);
-
-	gtk_widget_show_all(dialog);
-	do
-		response = gtk_dialog_run(GTK_DIALOG(dialog));
-	while (!flow_io_actions(response, ui_flow_io));
-
-	if (flow_io_get_selected(ui_flow_io, &iter)) {
-		gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
-				   FLOW_IO_FLOW_SERVER_POINTER, &flow_server, FLOW_IO_SERVER_POINTER, &server, -1);
-		/* move selected server/IO to the first server/IO of the server */
-		gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(flow_server), NULL);
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, TRUE);
-		/* select current server on flow edition */
-		server_find(server, &server_iter);
-		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &server_iter);
-	} else
-		gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), 0);
-	flow_edition_on_server_changed();
-
-	// Clean up
-	gtk_widget_destroy(dialog);
-	g_free(ui_flow_io);
-}
+static void flow_io_run(GebrGeoXmlFlowServer * serve, gboolean parallel, gboolean single);
 
 gboolean flow_io_get_selected(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
 {
-	return gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_io->treeview)), NULL,
-					       iter);
+	return gtk_tree_selection_get_selected(
+			gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_io->treeview)), NULL, iter);
 }
 
 void flow_io_select_iter(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
@@ -327,9 +179,9 @@ void flow_io_simple_setup_ui(gboolean focus_output)
  out:	gtk_widget_destroy(dialog);
 }
 
-void flow_fast_run(gboolean parallel)
+void flow_fast_run(gboolean parallel, gboolean single)
 {
-	flow_io_run(gebr.flow_server, parallel);
+	flow_io_run(gebr.flow_server, parallel, single);
 }
 
 void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean select_last)
@@ -350,134 +202,6 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean se
 		if (select_last)
 			flow_edition_select_component_iter(&iter);
 	}
-}
-
-/**
- * \internal
- * Inserts a new entry in Server/IO model, respecting the special new row position.
- * @param ui_flow_io The structure containing relevant data.
- * @param flow_server The server/IO configuration to be added.
- * @param iter An emtpy iterator that will point to the newly inserted row.
- */
-static void flow_io_insert(struct ui_flow_io *ui_flow_io, GebrGeoXmlFlowServer * flow_server, GtkTreeIter * iter)
-{
-	gchar *name;
-	const gchar *address;
-	const gchar *input;
-	const gchar *output;
-	const gchar *error;
-
-	GdkPixbuf *icon;
-	struct server *server;
-	gboolean server_found;
-	GtkTreeIter server_iter;
-	GtkTreeIter iter_;
-
-	address = gebr_geoxml_flow_server_get_address(GEBR_GEOXML_FLOW_SERVER(flow_server));
-	input = gebr_geoxml_flow_server_io_get_input(GEBR_GEOXML_FLOW_SERVER(flow_server));
-	output = gebr_geoxml_flow_server_io_get_output(GEBR_GEOXML_FLOW_SERVER(flow_server));
-	error = gebr_geoxml_flow_server_io_get_error(GEBR_GEOXML_FLOW_SERVER(flow_server));
-
-	server_found = server_find_address(address, &server_iter);
-	if (server_found)
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server_iter,
-				   SERVER_STATUS_ICON, &icon, SERVER_NAME, &name, SERVER_POINTER, &server, -1);
-	else {
-		icon = gebr.pixmaps.stock_warning;
-		name = g_strdup(address);
-		server = NULL;
-	}
-	gtk_list_store_insert_before(ui_flow_io->store, &iter_, &ui_flow_io->row_new_server);
-	gtk_list_store_set(ui_flow_io->store, &iter_,
-			   FLOW_IO_ICON, icon,
-			   FLOW_IO_SERVER_NAME, name,
-			   FLOW_IO_INPUT, input,
-			   FLOW_IO_OUTPUT, output,
-			   FLOW_IO_ERROR, error,
-			   FLOW_IO_SERVER_LISTED, server_found,
-			   FLOW_IO_FLOW_SERVER_POINTER, flow_server,
-			   FLOW_IO_SERVER_POINTER, server,
-			   FLOW_IO_IS_SERVER_ADD, FALSE,
-			   FLOW_IO_IS_SERVER_ADD2, TRUE,
-			   -1);
-
-	if (iter)
-		*iter = iter_;
-	g_free(name);
-}
-
-/**
- * \internal
- * Fills the #GtkListStore of @ui_flow_io with data.
- * @param ui_flow_io The structure to be filled with data.
- */
-static void flow_io_populate(struct ui_flow_io *ui_flow_io)
-{
-	GebrGeoXmlSequence *flow_server;
-	GtkTreeIter iter;
-
-	gtk_list_store_append(ui_flow_io->store, &ui_flow_io->row_new_server);
-	gtk_list_store_set(ui_flow_io->store, &ui_flow_io->row_new_server,
-			   FLOW_IO_SERVER_NAME, _("New"),
-			   FLOW_IO_IS_SERVER_ADD, TRUE,
-			   FLOW_IO_IS_SERVER_ADD2, FALSE,
-			   -1);
-
-	gebr_geoxml_flow_get_server(gebr.flow, &flow_server, 0);
-	for (; flow_server != NULL; gebr_geoxml_sequence_next(&flow_server))
-		flow_io_insert(ui_flow_io, GEBR_GEOXML_FLOW_SERVER(flow_server), NULL);
-
-	/* select first, which is the last edited */
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_flow_io->store)) {
-		gboolean sensitive;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter, FLOW_IO_SERVER_LISTED, &sensitive, -1);
-
-		if (sensitive) {
-			flow_io_select_iter(ui_flow_io, &iter);
-			break;
-		}
-	}
-}
-
-/**
- * \internal
- * Actions for Flow IO files edition dialog.
- *
- * @param response The response id sent by the dialog.
- * @param ui_flow_io The structure representing the servers io dialog.
- * @return #TRUE if the dialog should be destroyed, #FALSE otherwise.
- */
-static gboolean flow_io_actions(gint response, struct ui_flow_io *ui_flow_io)
-{
-	GtkTreeIter iter;
-	GdkPixbuf *icon;
-	GebrGeoXmlFlowServer *flow_server;
-
-	if (response == GEBR_FLOW_UI_RESPONSE_EXECUTE) {
-		if (!flow_io_get_selected(ui_flow_io, &iter))
-			return TRUE;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter,
-				   FLOW_IO_ICON, &icon, FLOW_IO_FLOW_SERVER_POINTER, &flow_server, -1);
-
-		if (icon != gebr.pixmaps.stock_connect) {
-			GtkWidget *dialog;
-			dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
-							(GtkDialogFlags)(GTK_DIALOG_DESTROY_WITH_PARENT),
-							GTK_MESSAGE_ERROR,
-							GTK_BUTTONS_CLOSE,
-							_("This server is disconnected. "
-							  "To use this server, you must " "connect it first."));
-			gtk_dialog_run(GTK_DIALOG(dialog));
-			gtk_widget_destroy(dialog);
-			return FALSE;
-		}
-
-		flow_io_run(flow_server, FALSE);
-	}
-
-	return TRUE;
 }
 
 /**
@@ -639,19 +363,24 @@ out:
  *
  * Check for current server and if its connected, for the queue selected.
  */
-static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel)
+static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, gboolean single)
 {
 	GtkTreeIter iter;
 	const gchar *address;
 	struct server *server;
 	GebrCommServerRun *config;
 	gboolean mpi_program;
+	GtkTreeSelection *selection;
+	gboolean multiple;
 
 	if (!flow_browse_get_selected(NULL, FALSE)) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected."));
 		return;
 	}
-	gboolean multiple = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view))) > 1;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	multiple = !single && gtk_tree_selection_count_selected_rows(selection) > 1;
+
 	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &iter)) {
 		//just happen if the current server was removed
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No server selected."));
@@ -824,317 +553,9 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel)
 	gebr_geoxml_flow_io_set_from_server(gebr.flow, flow_server);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
-	flow_run(server, config);
+	flow_run(server, config, single);
 	return;
 
 err:
 	gebr_comm_server_run_free(config);
-}
-
-/**
- * \internal
- * Updates model information based on \p renderer's "column" data and \p new_text.
- * @param renderer Must have a "column" data (set with g_object_set_data) representing the edited column.
- * @param path A string path pointing to the edited row.
- * @param new_text The updated data.
- * @param ui_flow_io Structure containing relevant data.
- */
-static void
-on_renderer_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_text, struct ui_flow_io *ui_flow_io)
-{
-	gchar *row_new_path;
-	gint column;
-	GtkTreeIter iter;
-	GebrGeoXmlFlowServer *flow_server;
-
-	if (!flow_io_get_selected(ui_flow_io, &iter))
-		return;
-
-	row_new_path =
-	    gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(ui_flow_io->store), &ui_flow_io->row_new_server);
-	if (path != NULL && !strcmp(path, row_new_path)) {
-		g_free(row_new_path);
-		return;
-	}
-	g_free(row_new_path);
-
-	column = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(renderer), "column"));
-
-	gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter, FLOW_IO_FLOW_SERVER_POINTER, &flow_server, -1);
-	gtk_list_store_set(ui_flow_io->store, &iter, column, new_text, -1);
-	switch (column) {
-	case FLOW_IO_INPUT:
-		gebr_geoxml_flow_server_io_set_input(flow_server, new_text);
-		break;
-	case FLOW_IO_OUTPUT:
-		gebr_geoxml_flow_server_io_set_output(flow_server, new_text);
-		break;
-	case FLOW_IO_ERROR:
-		gebr_geoxml_flow_server_io_set_error(flow_server, new_text);
-		break;
-	}
-
-	gtk_list_store_move_after(ui_flow_io->store, &iter, NULL);
-	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(flow_server), NULL);
-
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
-}
-
-/**
- * \internal
- * Called upon click on the special row to create a new Server/IO configuration.
- */
-static void
-on_renderer_combo_edited(GtkCellRendererText * renderer, gchar * path, gchar * new_text, struct ui_flow_io *ui_flow_io)
-{
-	gchar *name;
-	gchar *address;
-	gboolean has_server;
-	GtkTreeIter iter;
-	struct server *server;
-	GebrGeoXmlFlowServer *flow_server;
-
-	has_server = FALSE;
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
-				   SERVER_POINTER, &server, SERVER_NAME, &name, -1);
-		if (!strcmp(name, new_text)) {
-			has_server = TRUE;
-			break;
-		}
-	}
-
-	address = has_server ? server->comm->address->str : new_text;
-
-	flow_server = gebr_geoxml_flow_append_server(gebr.flow);
-	gebr_geoxml_flow_server_set_address(flow_server, address);
-	flow_io_insert(ui_flow_io, flow_server, &iter);
-
-	// Focus cell
-	GtkTreePath *focus_path;
-	GtkTreeViewColumn *focus_column;
-	GtkCellRenderer *focus_cell;
-	GList *cell_list;
-
-	focus_path = gtk_tree_model_get_path(GTK_TREE_MODEL(ui_flow_io->store), &iter);
-	focus_column = gtk_tree_view_get_column(GTK_TREE_VIEW(ui_flow_io->treeview), 1);
-	cell_list = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(focus_column));
-	focus_cell = cell_list->data;
-	g_list_free(cell_list);
-	gtk_tree_view_set_cursor_on_cell(GTK_TREE_VIEW(ui_flow_io->treeview),
-					 focus_path, focus_column, focus_cell, TRUE);
-}
-
-/**
- * \internal
- * Adds a clickable icon in the cell, when user starts editing it, to fire a #GtkDirectoryChooser.
- */
-static void
-on_renderer_editing_started(GtkCellRenderer * renderer,
-			    GtkCellEditable * editable, gchar * path, struct ui_flow_io *ui_flow_io)
-{
-	GtkTreeIter iter;
-	gint column;
-
-	if (!flow_io_get_selected(ui_flow_io, &iter))
-		return;
-
-	column = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(renderer), "column"));
-
-	if (column == FLOW_IO_IS_SERVER_ADD) {
-		GtkCellLayout *layout;
-		GtkCellRenderer *cell;
-		layout = GTK_CELL_LAYOUT(editable);
-		cell = gtk_cell_renderer_pixbuf_new();
-		gtk_cell_layout_pack_start(layout, cell, FALSE);
-		gtk_cell_layout_add_attribute(layout, cell, "pixbuf", SERVER_STATUS_ICON);
-		gtk_cell_layout_reorder(layout, cell, 0);
-		return;
-	}
-
-	g_object_set_data(G_OBJECT(editable), "column", GINT_TO_POINTER(column));
-	g_object_set_data(G_OBJECT(editable), "renderer", (gpointer) renderer);
-
-	gtk_entry_set_icon_from_stock(GTK_ENTRY(editable), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIRECTORY);
-	g_signal_connect(editable, "icon-release", G_CALLBACK(on_renderer_entry_icon_release), ui_flow_io);
-}
-
-/**
- * \internal
- * Fires a #GtkDirectoryChooser upon a click on icon.
- */
-static void
-on_renderer_entry_icon_release(GtkEntry * widget,
-			       GtkEntryIconPosition position, GdkEvent * event, struct ui_flow_io *ui_flow_io)
-{
-	GtkWidget *dialog;
-	gint response;
-	gchar *filename;
-	gint column;
-	GebrGeoXmlSequence *path;
-
-	if (!flow_io_get_selected(ui_flow_io, NULL))
-		return;
-
-	column = GPOINTER_TO_INT (g_object_get_data(G_OBJECT(widget), "column"));
-	dialog = gtk_file_chooser_dialog_new(_("Choose a file"),
-					     GTK_WINDOW(gebr.window),
-					     GTK_FILE_CHOOSER_ACTION_SAVE,
-					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					     GTK_STOCK_OPEN, GTK_RESPONSE_APPLY, NULL);
-
-	gebr_geoxml_line_get_path(gebr.line, &path, 0);
-
-	if (path) {
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
-						    gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path)));
-	}
-
-	while (path) {
-		const gchar *path_str;
-		path_str = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path));
-		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(dialog), path_str, NULL);
-		gebr_geoxml_sequence_next(&path);
-	}
-
-	response = gtk_dialog_run(GTK_DIALOG(dialog));
-	if (response != GTK_RESPONSE_APPLY)
-		goto out;
-
-	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-	on_renderer_edited(GTK_CELL_RENDERER_TEXT(g_object_get_data(G_OBJECT(widget), "renderer")),
-			   NULL, filename, ui_flow_io);
-	g_free(filename);
-
- out:	gtk_widget_destroy(dialog);
-}
-
-/**
- * \internal
- * Deletes an entry from the model.
- */
-static void on_delete_server_io_activate(GtkWidget * menu_item, struct ui_flow_io *ui_flow_io)
-{
-	GtkTreeIter iter;
-	GebrGeoXmlSequence *server;
-
-	if (!flow_io_get_selected(ui_flow_io, &iter))
-		return;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter, FLOW_IO_FLOW_SERVER_POINTER, &server, -1);
-
-	gebr_geoxml_sequence_remove(server);
-	if (gtk_list_store_remove(ui_flow_io->store, &iter))
-		gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(ui_flow_io->treeview), &iter);
-
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
-}
-
-/**
- * \internal
- * Pops a context menu to perform actions on it, such as delete.
- */
-static GtkMenu *on_menu_popup(GtkTreeView * treeview, struct ui_flow_io *ui_flow_io)
-{
-	GtkWidget *menu;
-	GtkWidget *menu_item;
-	GtkTreeIter iter;
-
-	if (!flow_io_get_selected(ui_flow_io, &iter)
-	    || gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(ui_flow_io->store), &ui_flow_io->row_new_server, &iter))
-		return NULL;
-
-	menu = gtk_menu_new();
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(G_OBJECT(menu_item), "activate", G_CALLBACK(on_delete_server_io_activate), ui_flow_io);
-
-	gtk_widget_show_all(menu);
-
-	return GTK_MENU(menu);
-}
-
-/**
- * \internal
- * Updates state of the execute button based on connectivity of selected server.
- */
-static void on_tree_view_cursor_changed(GtkTreeView * treeview, struct ui_flow_io *ui_flow_io)
-{
-	GtkTreeIter iter;
-	gboolean server_listed;
-
-	if (!flow_io_get_selected(ui_flow_io, &iter))
-		return;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_io->store), &iter, FLOW_IO_SERVER_LISTED, &server_listed, -1);
-	if (ui_flow_io->execute_button != NULL)
-		gtk_widget_set_sensitive(ui_flow_io->execute_button, server_listed);
-}
-
-/**
- * \internal
- * Shows tooltips for each cell in Server/IO tree view.
- */
-static gboolean
-on_tree_view_tooltip(GtkTreeView * treeview,
-		     gint x, gint y, gboolean keyboard_tip, GtkTooltip * tooltip, struct ui_flow_io *ui_flow_io)
-{
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-	GtkTreeViewColumn *column;
-	gchar *text;
-
-	if (!gtk_tree_view_get_tooltip_context(treeview, &x, &y, keyboard_tip, &model, NULL, &iter))
-		return FALSE;
-
-	if (keyboard_tip)
-		gtk_tree_view_convert_widget_to_bin_window_coords(treeview, x, y, &x, &y);
-
-	if (!gtk_tree_view_get_path_at_pos(treeview, x, y, NULL, &column, NULL, NULL)) {
-		return FALSE;
-	}
-
-	if (gebr_gui_gtk_tree_model_iter_equal_to(model, &ui_flow_io->row_new_server, &iter)) {
-		gtk_tooltip_set_text(tooltip, _("Creates a new Input/Output configuration."));
-		return TRUE;
-	}
-
-	if (gtk_tree_view_get_column(treeview, 0) == column) {
-		GdkPixbuf *icon;
-		gtk_tree_model_get(model, &iter, FLOW_IO_ICON, &icon, -1);
-		if (icon == gebr.pixmaps.stock_warning)
-			gtk_tooltip_set_text(tooltip, _("This server no longer exists in the servers list dialog."));
-		else if (icon == gebr.pixmaps.stock_disconnect)
-			gtk_tooltip_set_text(tooltip, _("This server is disconnected."));
-		else
-			return FALSE;
-	} else if (gtk_tree_view_get_column(treeview, 1) == column) {
-		gtk_tree_model_get(model, &iter, FLOW_IO_INPUT, &text, -1);
-		if (text && !strlen(text)) {
-			g_free(text);
-			return FALSE;
-		}
-		gtk_tooltip_set_text(tooltip, text);
-		g_free(text);
-	} else if (gtk_tree_view_get_column(treeview, 2) == column) {
-		gtk_tree_model_get(model, &iter, FLOW_IO_OUTPUT, &text, -1);
-		if (text && !strlen(text)) {
-			g_free(text);
-			return FALSE;
-		}
-		gtk_tooltip_set_text(tooltip, text);
-		g_free(text);
-	} else if (gtk_tree_view_get_column(treeview, 3) == column) {
-		gtk_tree_model_get(model, &iter, FLOW_IO_ERROR, &text, -1);
-		if (text && !strlen(text)) {
-			g_free(text);
-			return FALSE;
-		}
-		gtk_tooltip_set_text(tooltip, text);
-		g_free(text);
-	} else {
-		return FALSE;
-	}
-
-	return TRUE;
 }

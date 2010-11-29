@@ -485,35 +485,53 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 	g_string_free(path, TRUE);
 }
 
-void flow_run(struct server *server, GebrCommServerRun * config)
+/*
+ * flow_prepare_to_run:
+ *
+ */
+static gboolean flow_prepare_to_run (GebrGeoXmlFlow *flow, GebrCommServerRun *config, gboolean enqueue)
+{
+	GebrGeoXmlSequence *i;
+	gebr_geoxml_flow_get_program(flow, &i, 0);
+	if (i == NULL) {
+		if (!enqueue)
+			gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flow '%s' is empty."),
+				     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
+		else
+			gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flow '%s' is empty, ignoring."),
+				     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
+		return FALSE;
+	}
+
+	GebrGeoXmlFlow *stripped = gebr_comm_server_run_strip_flow(flow);
+	flow_copy_from_dicts(stripped);
+	if (!enqueue)
+		config->flow = stripped;
+	else
+		config->queued_flows = g_list_append(config->queued_flows, stripped);
+
+	return TRUE;
+}
+
+void flow_run(struct server *server, GebrCommServerRun * config, gboolean single)
 {
 	GtkTreeIter iter;
-	gboolean first = TRUE;
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
-		GebrGeoXmlFlow *flow;
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, FB_XMLPOINTER, &flow, -1);
 
-		GebrGeoXmlSequence *i;
-		gebr_geoxml_flow_get_program(flow, &i, 0);
-		if (i == NULL) {
-			if (first)
-				gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flow '%s' is empty."),
-					     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
-			else
-				gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flow '%s' is empty, ignoring."),
-					     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
-			goto out;
+	if (single) {
+		flow_prepare_to_run (gebr.flow, config, FALSE);
+	} else {
+		gboolean enqueue = FALSE;
+		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
+			GebrGeoXmlFlow *flow;
+
+			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+					   FB_XMLPOINTER, &flow, -1);
+			if (!flow_prepare_to_run (flow, config, enqueue))
+				goto out;
+			enqueue = TRUE;
 		}
-
-		GebrGeoXmlFlow *stripped = gebr_comm_server_run_strip_flow(flow);
-		flow_copy_from_dicts(stripped);
-		if (first)
-			config->flow = stripped;
-		else
-			config->queued_flows = g_list_append(config->queued_flows, stripped);
-
-		first = FALSE;
 	}
+
 
 	/* RUN */
 	gebr_comm_server_run_flow(server->comm, config);

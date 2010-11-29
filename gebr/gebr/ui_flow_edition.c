@@ -800,8 +800,6 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 			   SERVER_LAST_QUEUE, &last_queue,
 			   -1);
 
-	g_message ("Combobox with model %p", server->queues_model);
-
 	/* Pass `rowref' to the signal so we can set SERVER_LAST_QUEUE on change */
 	path = gtk_tree_model_get_path (GTK_TREE_MODEL (gebr.ui_server_list->common.store), &iter);
 	rowref = gtk_tree_row_reference_new (GTK_TREE_MODEL (gebr.ui_server_list->common.store), path);
@@ -815,7 +813,7 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(queue_combobox), renderer, "text", 0);
 
 	gebr.ui_flow_edition->queue_combobox = queue_combobox;
-	gtk_combo_box_set_active(GTK_COMBO_BOX(queue_combobox), 0/*last_queue*/);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(queue_combobox), last_queue);
 
 	if (gtk_bin_get_child(gebr.ui_flow_edition->queue_bin))
 		gtk_widget_destroy(gtk_bin_get_child(gebr.ui_flow_edition->queue_bin));
@@ -906,9 +904,10 @@ static void on_queue_combobox_changed (GtkComboBox *combo, GtkTreeRowReference *
 	model = gtk_tree_row_reference_get_model (rowref);
 	path = gtk_tree_row_reference_get_path (rowref);
 
-	if (path && gtk_tree_model_get_iter (model, &iter, path))
+	if (path && gtk_tree_model_get_iter (model, &iter, path)) {
 		gtk_list_store_set (gebr.ui_server_list->common.store, &iter,
-				    SERVER_LAST_QUEUE, index, -1);
+				    SERVER_LAST_QUEUE, MAX (index, 0), -1);
+	}
 
 	gtk_tree_path_free (path);
 }

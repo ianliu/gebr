@@ -68,13 +68,6 @@ struct ui_flow_simple {
 };
 
 /**
- * A dialog for user selection of the flow IO files.
- * 
- * @param executable Whether execute button is visible or not.
- */
-void flow_io_setup_ui(gboolean executable);
-
-/**
  * Fills in \p iter a reference for the selected row if there is a selection.
  * @param iter A reference to a #GtkTreeIter or #NULL.
  * @return #TRUE if there is a selection, #FALSE otherwise.
@@ -113,7 +106,7 @@ void flow_io_simple_setup_ui(gboolean focus_output);
 /**
  * Runs the last used IO configuration.
  */
-void flow_fast_run(gboolean parellel);
+void flow_fast_run(gboolean parellel, gboolean single);
 
 /**
  * Adds all programs in the sequence \p program into the flow edition view.

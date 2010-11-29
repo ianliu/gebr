@@ -146,20 +146,14 @@ void on_flow_delete_activate(void)
 	flow_delete(TRUE);
 }
 
-void on_flow_io_activate(void)
-{
-	flow_browse_single_selection();
-	flow_io_setup_ui(TRUE);
-}
-
 void on_flow_execute_activate(void)
 {
-	flow_fast_run(FALSE);
+	flow_fast_run(FALSE, FALSE);
 }
 
 void on_flow_execute_in_parallel_activate(void)
 {
-	flow_fast_run(TRUE);
+	flow_fast_run(TRUE, FALSE);
 }
 
 void on_flow_revision_save_activate(void)
@@ -242,6 +236,12 @@ void on_flow_component_status_activate(GtkAction *action,
 {
 	guint status = GPOINTER_TO_UINT(user_data);
 	flow_edition_status_changed(status);
+}
+
+void on_flow_component_execute ()
+{
+	/* not parallel, single flow execution */
+	flow_fast_run (FALSE, TRUE);
 }
 
 void on_job_control_save(void)

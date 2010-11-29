@@ -489,7 +489,6 @@ static void flow_browse_load(void)
 	}
 
 	/* select last edited server */
-	g_message ("Selecting server %s", gebr_geoxml_flow_server_get_address(flow_server));
 	if (server_find_address(gebr_geoxml_flow_server_get_address(flow_server), &server_iter))
 		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &server_iter);
 	else

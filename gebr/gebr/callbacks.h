@@ -83,13 +83,7 @@ void on_flow_export_activate(void);
  * Call #flow_delete> from #flow.c
  */
 void on_flow_delete_activate(void);
-/** 
- * Adjust selection and show flow IO dialog
- */
-void on_flow_io_activate(void);
-/**
- * Call #flow_io_setup_ui> from #flow.c
- */
+
 void on_flow_execute_activate(void);
 /**
  *
@@ -129,6 +123,8 @@ void on_flow_component_status_activate(GtkAction *action,
 void on_flow_component_move_top(void);
 
 void on_flow_component_move_bottom(void);
+
+void on_flow_component_execute (void);
 
 /**
  * on_job_control_save:

@@ -97,9 +97,9 @@ static const GtkActionEntry actions_entries[] = {
 	{"flow_export", "document-export", N_("Export"),
 		NULL, N_("Export the flow"), G_CALLBACK(on_flow_export_activate)},
 	{"flow_execute", GTK_STOCK_EXECUTE, NULL,
-		"<Control>R", N_("Run selected flow(s)"), G_CALLBACK(on_flow_execute_activate)},
+		"<Control>R", N_("Execute selected flow(s) by queuing them into the first flow's queue"), G_CALLBACK(on_flow_execute_activate)},
 	{"flow_execute_in_parallel", GTK_STOCK_EXECUTE, NULL,
-		"<Control><Shift>R", N_("Run selected flow(s) in parallel (all immediatly)"), G_CALLBACK(on_flow_execute_in_parallel_activate)},
+		"<Control><Shift>R", N_("Run selected flow(s) in parallel (all immediately)"), G_CALLBACK(on_flow_execute_in_parallel_activate)},
 	{"flow_copy", GTK_STOCK_COPY, N_("Copy"),
 		NULL, N_("Copy selected flow(s) to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_paste", GTK_STOCK_PASTE, N_("Paste"),
@@ -130,6 +130,8 @@ static const GtkActionEntry actions_entries[] = {
 		"Home", NULL, G_CALLBACK(on_flow_component_move_top)},
 	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move to Bottom"),
 		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
+	{"flow_edition_execute", GTK_STOCK_EXECUTE, N_("Execute this flow"),
+		NULL, NULL, G_CALLBACK (on_flow_component_execute)},
 
 	/*
 	 * Job control
@@ -296,6 +298,10 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group, "flow_properties"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
 
 	menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock("document-open-recent");
@@ -360,7 +366,7 @@ void gebr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group, "flow_edition_execute"))), -1);
 
 	gebr.ui_flow_edition = flow_edition_setup_ui();
 	vbox = gtk_vbox_new(FALSE, 0);
