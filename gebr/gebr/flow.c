@@ -859,7 +859,7 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
 							"<caption>%s</caption>\n"
 							"<tbody>\n"
-							"<tr><td>This program has only default parameters.</td></tr>\n",
+							"<tr><td>This program has only default parameters</td></tr>\n",
 							translated);
 
 				else if (gebr.config.line_just_filled_radio)
@@ -867,7 +867,7 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
 							"<caption>%s</caption>\n"
 							"<tbody>\n"
-							"<tr><td>This program has only empty parameters.</td></tr>\n",
+							"<tr><td>This program has only empty parameters</td></tr>\n",
 							translated);
 
 				break;
@@ -877,7 +877,7 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
 							"<caption>%s</caption>\n"
 							"<tbody>\n"
-							"<tr><td>This program has only default parameters.</td></tr>\n",
+							"<tr><td>This program has only default parameters</td></tr>\n",
 							translated);
 
 				else if (gebr.config.flow_just_filled_radio)
@@ -885,7 +885,7 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
 							"<caption>%s</caption>\n"
 							"<tbody>\n"
-							"<tr><td>This program has only empty parameters.</td></tr>\n",
+							"<tr><td>This program has only empty parameters</td></tr>\n",
 							translated);
 				break;
 			default:
