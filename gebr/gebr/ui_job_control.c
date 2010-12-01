@@ -550,6 +550,23 @@ static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), gebr.config.job_log_auto_scroll);
 }
 
+
+/*
+ * Queue Actions
+ */
+void job_control_queue_stop(void)
+{
+}
+
+void job_control_queue_save(void)
+{
+}
+
+void job_control_queue_close(void)
+{
+}
+
+
 /**
  * \internal
  * Build popup menu
@@ -557,11 +574,12 @@ static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
 static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control *ui_job_control)
 {
 	GtkWidget *menu;
-	/*
-	GtkWidget *menu_item;
-	*/
 	GtkTreeIter iter;
 	gint iter_depth = 0;
+
+	gint selected_rows = 0;
+	
+	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 
 	/* no flow, no new job possible */
 	if (gebr.flow == NULL)
@@ -571,7 +589,22 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
 	
 		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &iter);
-		
+	
+		if (selected_rows == 1 && iter_depth == 0)
+		{
+				gtk_container_add(GTK_CONTAINER(menu),
+						  gtk_action_create_menu_item(
+								  gtk_action_group_get_action(gebr.action_group, "job_control_queue_save")));
+				gtk_container_add(GTK_CONTAINER(menu),
+						  gtk_action_create_menu_item(
+								  gtk_action_group_get_action(gebr.action_group, "job_control_queue_close")));
+				gtk_container_add(GTK_CONTAINER(menu),
+						  gtk_action_create_menu_item(
+								  gtk_action_group_get_action(gebr.action_group, "job_control_queue_stop")));
+				gtk_widget_show_all(menu);
+				return GTK_MENU(menu);
+		}
+
 		if (iter_depth > 0 )
 		{
 				gtk_container_add(GTK_CONTAINER(menu),

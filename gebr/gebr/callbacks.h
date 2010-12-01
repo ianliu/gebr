@@ -146,6 +146,13 @@ void on_job_control_clear(void);
  */
 void on_job_control_stop(void);
 
+/*
+ * Job Control - Queue Actions
+ */
+void on_job_control_queue_stop(void);
+void on_job_control_queue_save(void);
+void on_job_control_queue_close(void);
+
 void on_configure_preferences_activate(void);
 
 /**

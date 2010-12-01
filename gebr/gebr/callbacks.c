@@ -269,6 +269,25 @@ void on_job_control_stop(void)
 	job_control_stop();
 }
 
+/*
+ * Job Control - Queue Actions
+ */
+
+void on_job_control_queue_stop(void)
+{
+	job_control_queue_stop();
+}
+
+void on_job_control_queue_save(void)
+{
+	job_control_queue_save();
+}
+
+void on_job_control_queue_close(void)
+{
+	job_control_queue_close();
+}
+
 void on_configure_preferences_activate(void)
 {
 	preferences_setup_ui(FALSE);

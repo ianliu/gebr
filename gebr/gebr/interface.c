@@ -134,14 +134,24 @@ static const GtkActionEntry actions_entries[] = {
 		NULL, NULL, G_CALLBACK (on_flow_component_execute)},
 
 	/*
-	 * Job control
+	 * Job control - Job Actions
 	 */
 	{"job_control_save", GTK_STOCK_SAVE, NULL,
 		NULL, N_("Save job information in a file"), G_CALLBACK(on_job_control_save)},
 	{"job_control_close", "gnome-fs-trash-empty", N_("Close"),
 		NULL, N_("Close job"), G_CALLBACK(on_job_control_close)},
 	{"job_control_stop", GTK_STOCK_STOP, N_("Cancel"),
-		NULL, N_("Ask server to cancel the job"), G_CALLBACK(on_job_control_stop)}
+		NULL, N_("Ask server to cancel the job"), G_CALLBACK(on_job_control_stop)},
+	/*
+	 * Job Control - Queue Actions
+	 */
+	{"job_control_queue_save", GTK_STOCK_SAVE, N_("Save All"),
+		NULL, N_("Ask server to save all jobs from queue"), G_CALLBACK(on_job_control_queue_save)},
+	{"job_control_queue_close", "gnome-fs-trash-empty", N_("Close All"),
+		NULL, N_("Close all jobs from selected queue"), G_CALLBACK(on_job_control_queue_close)},
+	{"job_control_queue_stop", GTK_STOCK_STOP, N_("Cancel All"),
+		NULL, N_("Ask server to cancel all jobs from selected queue"), G_CALLBACK(on_job_control_queue_stop)}
+
 };
 
 static const GtkActionEntry status_action_entries[] = {
