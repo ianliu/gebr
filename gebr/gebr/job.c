@@ -285,6 +285,8 @@ enum JobStatus job_translate_status(GString * status)
 		translated_status = JOB_STATUS_CANCELED;
 	else if (!strcmp(status->str, "requeued"))
 		translated_status = JOB_STATUS_REQUEUED;
+	else if (!strcmp(status->str, "issued"))
+		translated_status = JOB_STATUS_ISSUED;
 	else
 		translated_status = JOB_STATUS_UNKNOWN;
 
@@ -307,6 +309,7 @@ void job_status_show(struct job *job)
 		break;
 	case JOB_STATUS_FAILED:
 	case JOB_STATUS_CANCELED:
+	case JOB_STATUS_ISSUED:
 		pixbuf = gebr.pixmaps.stock_cancel;
 		break;
 	default:
@@ -360,6 +363,11 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 		job->status = status;
 	
 	job_status_show(job);
+
+	if (job->status == JOB_STATUS_ISSUED){
+		g_string_assign(job->issues , parameter);
+		return;
+	}
 
 	if ((job->status == JOB_STATUS_FINISHED) || job->status == JOB_STATUS_CANCELED) {
 		/* Update combobox model. */
