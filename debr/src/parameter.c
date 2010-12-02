@@ -129,9 +129,9 @@ static void parameter_separator_changed(GtkEntry * entry, struct ui_parameter_di
 static void parameter_separator_changed_by_string(const gchar * separator, struct ui_parameter_dialog *ui);
 static void parameter_file_type_changed(GtkComboBox * combo, struct gebr_gui_parameter_widget *widget);
 static void
-parameter_file_filter_name_changed(GebrGuiGtkEnhancedEntry * entry, struct gebr_gui_parameter_widget *widget);
+parameter_file_filter_name_changed(GebrGuiEnhancedEntry * entry, struct gebr_gui_parameter_widget *widget);
 static void
-parameter_file_filter_pattern_changed(GebrGuiGtkEnhancedEntry * entry, struct gebr_gui_parameter_widget *widget);
+parameter_file_filter_pattern_changed(GebrGuiEnhancedEntry * entry, struct gebr_gui_parameter_widget *widget);
 static void parameter_number_min_on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *widget);
 static gboolean
 parameter_number_min_on_focus_out(GtkEntry * entry, GdkEvent * event, struct gebr_gui_parameter_widget *widget);
@@ -971,22 +971,22 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 		gtk_table_attach(GTK_TABLE(table), hbox, 1, 2, row, row + 1,
 				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 				 (GtkAttachOptions) (0), 0, 0), ++row;
-		filter_name_entry = gebr_gui_gtk_enhanced_entry_new_with_empty_text(_("name"));
+		filter_name_entry = gebr_gui_enhanced_entry_new_with_empty_text(_("name"));
 		gtk_widget_show(filter_name_entry);
 		gtk_box_pack_start(GTK_BOX(hbox), filter_name_entry, FALSE, FALSE, 0);
 		g_signal_connect(filter_name_entry, "changed",
 				 G_CALLBACK(parameter_file_filter_name_changed), gebr_gui_parameter_widget);
 		filter_pattern_entry =
-			gebr_gui_gtk_enhanced_entry_new_with_empty_text(_("pattern (eg. *.jpg *.png)"));
+			gebr_gui_enhanced_entry_new_with_empty_text(_("pattern (eg. *.jpg *.png)"));
 		gtk_widget_show(filter_pattern_entry);
 		gtk_box_pack_start(GTK_BOX(hbox), filter_pattern_entry, FALSE, FALSE, 0);
 		g_signal_connect(filter_pattern_entry, "changed",
 				 G_CALLBACK(parameter_file_filter_pattern_changed), gebr_gui_parameter_widget);
 
 		gebr_geoxml_program_parameter_get_file_filter(program_parameter, &filter_name, &filter_pattern);
-		gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_ENHANCED_ENTRY(filter_name_entry),
+		gebr_gui_enhanced_entry_set_text(GEBR_GUI_ENHANCED_ENTRY(filter_name_entry),
 						     filter_name);
-		gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_ENHANCED_ENTRY(filter_pattern_entry),
+		gebr_gui_enhanced_entry_set_text(GEBR_GUI_ENHANCED_ENTRY(filter_pattern_entry),
 						     filter_pattern);
 
 		break;
@@ -1659,7 +1659,7 @@ static void parameter_file_type_changed(GtkComboBox * combo, struct gebr_gui_par
 
 	is_directory = gtk_combo_box_get_active(combo) == 0 ? FALSE : TRUE;
 
-	gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_FILE_ENTRY(widget->value_widget), is_directory);
+	gebr_gui_file_entry_set_choose_directory(GEBR_GUI_FILE_ENTRY(widget->value_widget), is_directory);
 	gebr_geoxml_program_parameter_set_file_be_directory(GEBR_GEOXML_PROGRAM_PARAMETER(widget->parameter),
 							    is_directory);
 
@@ -1670,10 +1670,10 @@ static void parameter_file_type_changed(GtkComboBox * combo, struct gebr_gui_par
  * \internal
  */
 static void
-parameter_file_filter_name_changed(GebrGuiGtkEnhancedEntry * entry, struct gebr_gui_parameter_widget *widget)
+parameter_file_filter_name_changed(GebrGuiEnhancedEntry * entry, struct gebr_gui_parameter_widget *widget)
 {
 	gebr_geoxml_program_parameter_set_file_filter(widget->program_parameter,
-						      gebr_gui_gtk_enhanced_entry_get_text(entry), NULL);
+						      gebr_gui_enhanced_entry_get_text(entry), NULL);
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 
@@ -1681,10 +1681,10 @@ parameter_file_filter_name_changed(GebrGuiGtkEnhancedEntry * entry, struct gebr_
  * \internal
  */
 static void
-parameter_file_filter_pattern_changed(GebrGuiGtkEnhancedEntry * entry, struct gebr_gui_parameter_widget *widget)
+parameter_file_filter_pattern_changed(GebrGuiEnhancedEntry * entry, struct gebr_gui_parameter_widget *widget)
 {
 	gebr_geoxml_program_parameter_set_file_filter(widget->program_parameter,
-						      NULL, gebr_gui_gtk_enhanced_entry_get_text(entry));
+						      NULL, gebr_gui_enhanced_entry_get_text(entry));
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
 

@@ -49,8 +49,8 @@ static void gebr_gui_directory_chooser_init(GebrGuiDirectoryChooser * directory_
 	GtkWidget *file_entry;
 	GtkWidget *sequence_edit;
 
-	file_entry = gebr_gui_gtk_file_entry_new(NULL, NULL);
-	gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_FILE_ENTRY(file_entry), TRUE);
+	file_entry = gebr_gui_file_entry_new(NULL, NULL);
+	gebr_gui_file_entry_set_choose_directory(GEBR_GUI_FILE_ENTRY(file_entry), TRUE);
 	sequence_edit = gebr_gui_sequence_edit_new(file_entry);
 
 	directory_chooser->sequence_edit = sequence_edit;
@@ -126,7 +126,7 @@ static void __gebr_gui_sequence_edit_add_request(GebrGuiSequenceEdit * sequence_
 	const gchar *path;
 
 	g_object_get(sequence_edit, "value-widget", &file_entry, NULL);
-	path = gebr_gui_gtk_file_entry_get_path(GEBR_GUI_FILE_ENTRY(file_entry));
+	path = gebr_gui_file_entry_get_path(GEBR_GUI_FILE_ENTRY(file_entry));
 	gebr_gui_sequence_edit_add(sequence_edit, path, TRUE);
 }
 

@@ -25,15 +25,15 @@
  * Prototypes
  */
 
-static void __gebr_gui_gtk_enhanced_entry_text_changed(GtkEntry * entry, GebrGuiGtkEnhancedEntry * enhanced_entry);
+static void __gebr_gui_enhanced_entry_text_changed(GtkEntry * entry, GebrGuiEnhancedEntry * enhanced_entry);
 
 static gboolean
-__gebr_gui_gtk_enhanced_entry_focus_in(GtkEntry * entry, GdkEventFocus * event,
-				       GebrGuiGtkEnhancedEntry * enhanced_entry);
+__gebr_gui_enhanced_entry_focus_in(GtkEntry * entry, GdkEventFocus * event,
+				       GebrGuiEnhancedEntry * enhanced_entry);
 
 static gboolean
-__gebr_gui_gtk_enhanced_entry_focus_out(GtkEntry * widget, GdkEventFocus * event,
-					GebrGuiGtkEnhancedEntry * enhanced_entry);
+__gebr_gui_enhanced_entry_focus_out(GtkEntry * widget, GdkEventFocus * event,
+					GebrGuiEnhancedEntry * enhanced_entry);
 
 /*
  * gobject stuff
@@ -45,12 +45,12 @@ enum {
 };
 
 static void
-gebr_gui_gtk_enhanced_entry_set_property(GebrGuiGtkEnhancedEntry * enhanced_entry, guint property_id,
+gebr_gui_enhanced_entry_set_property(GebrGuiEnhancedEntry * enhanced_entry, guint property_id,
 					 const GValue * value, GParamSpec * param_spec)
 {
 	switch (property_id) {
 	case EMPTY_TEXT:
-		gebr_gui_gtk_enhanced_entry_set_empty_text(enhanced_entry, g_value_get_pointer(value));
+		gebr_gui_enhanced_entry_set_empty_text(enhanced_entry, g_value_get_pointer(value));
 		break;
 	default:
 		/* We don't have any other property... */
@@ -60,12 +60,12 @@ gebr_gui_gtk_enhanced_entry_set_property(GebrGuiGtkEnhancedEntry * enhanced_entr
 }
 
 static void
-gebr_gui_gtk_enhanced_entry_get_property(GebrGuiGtkEnhancedEntry * enhanced_entry, guint property_id, GValue * value,
+gebr_gui_enhanced_entry_get_property(GebrGuiEnhancedEntry * enhanced_entry, guint property_id, GValue * value,
 					 GParamSpec * param_spec)
 {
 	switch (property_id) {
 	case EMPTY_TEXT:
-		g_value_set_pointer(value, (gchar *) gebr_gui_gtk_enhanced_entry_get_empty_text(enhanced_entry));
+		g_value_set_pointer(value, (gchar *) gebr_gui_enhanced_entry_get_empty_text(enhanced_entry));
 		break;
 	default:
 		/* We don't have any other property... */
@@ -74,26 +74,26 @@ gebr_gui_gtk_enhanced_entry_get_property(GebrGuiGtkEnhancedEntry * enhanced_entr
 	}
 }
 
-static void gebr_gui_gtk_enhanced_entry_destroy(GtkObject *object)
+static void gebr_gui_enhanced_entry_destroy(GtkObject *object)
 {
-	GebrGuiGtkEnhancedEntry *enhanced_entry = GEBR_GUI_ENHANCED_ENTRY(object);
+	GebrGuiEnhancedEntry *enhanced_entry = GEBR_GUI_ENHANCED_ENTRY(object);
 	if (enhanced_entry->empty_text != NULL) {
 		g_free(enhanced_entry->empty_text);
 		enhanced_entry->empty_text = NULL;
 	}
 }
 
-static void gebr_gui_gtk_enhanced_entry_class_init(GebrGuiGtkEnhancedEntryClass * klass)
+static void gebr_gui_enhanced_entry_class_init(GebrGuiEnhancedEntryClass * klass)
 {
 	GParamSpec *param_spec;
 
 	GObjectClass *gobject_class;
 	gobject_class = G_OBJECT_CLASS(klass);
-	gobject_class->set_property = (typeof(gobject_class->set_property)) gebr_gui_gtk_enhanced_entry_set_property;
-	gobject_class->get_property = (typeof(gobject_class->get_property)) gebr_gui_gtk_enhanced_entry_get_property;
+	gobject_class->set_property = (typeof(gobject_class->set_property)) gebr_gui_enhanced_entry_set_property;
+	gobject_class->get_property = (typeof(gobject_class->get_property)) gebr_gui_enhanced_entry_get_property;
 	GtkObjectClass *gtkobject_class;
 	gtkobject_class = GTK_OBJECT_CLASS(klass);
-	gtkobject_class->destroy = gebr_gui_gtk_enhanced_entry_destroy;
+	gtkobject_class->destroy = gebr_gui_enhanced_entry_destroy;
 
 	param_spec = g_param_spec_pointer("empty-text",
 					  "Empty text", "Text to show when there is no user text in it",
@@ -101,32 +101,32 @@ static void gebr_gui_gtk_enhanced_entry_class_init(GebrGuiGtkEnhancedEntryClass 
 	g_object_class_install_property(gobject_class, EMPTY_TEXT, param_spec);
 }
 
-static void gebr_gui_gtk_enhanced_entry_init(GebrGuiGtkEnhancedEntry * enhanced_entry)
+static void gebr_gui_enhanced_entry_init(GebrGuiEnhancedEntry * enhanced_entry)
 {
 //      gdk_window_set_events(GTK_WIDGET(enhanced_entry)->window,
 //              GDK_FOCUS_CHANGE_MASK | gdk_window_get_events(GTK_WIDGET(enhanced_entry)->window));
 	enhanced_entry->empty = TRUE;
 
 	g_signal_connect(GTK_ENTRY(enhanced_entry), "changed",
-			 G_CALLBACK(__gebr_gui_gtk_enhanced_entry_text_changed), enhanced_entry);
+			 G_CALLBACK(__gebr_gui_enhanced_entry_text_changed), enhanced_entry);
 	g_signal_connect(GTK_ENTRY(enhanced_entry), "focus-in-event",
-			 G_CALLBACK(__gebr_gui_gtk_enhanced_entry_focus_in), enhanced_entry);
+			 G_CALLBACK(__gebr_gui_enhanced_entry_focus_in), enhanced_entry);
 	g_signal_connect(GTK_ENTRY(enhanced_entry), "focus-out-event",
-			 G_CALLBACK(__gebr_gui_gtk_enhanced_entry_focus_out), enhanced_entry);
+			 G_CALLBACK(__gebr_gui_enhanced_entry_focus_out), enhanced_entry);
 }
 
-G_DEFINE_TYPE(GebrGuiGtkEnhancedEntry, gebr_gui_gtk_enhanced_entry, GTK_TYPE_ENTRY);
+G_DEFINE_TYPE(GebrGuiEnhancedEntry, gebr_gui_enhanced_entry, GTK_TYPE_ENTRY);
 
 /*
  * Internal functions
  */
 
-static void __gebr_gui_gtk_enhanced_entry_text_changed(GtkEntry * entry, GebrGuiGtkEnhancedEntry * enhanced_entry)
+static void __gebr_gui_enhanced_entry_text_changed(GtkEntry * entry, GebrGuiEnhancedEntry * enhanced_entry)
 {
 	enhanced_entry->empty = (gboolean) ! strlen(gtk_entry_get_text(entry));
 }
 
-static void __gebr_gui_gtk_enhanced_entry_check_empty(GebrGuiGtkEnhancedEntry * enhanced_entry)
+static void __gebr_gui_enhanced_entry_check_empty(GebrGuiEnhancedEntry * enhanced_entry)
 {
 	if (enhanced_entry->empty && !GTK_WIDGET_HAS_FOCUS(enhanced_entry) && enhanced_entry->empty_text != NULL) {
 		GtkEntry *entry = GTK_ENTRY(enhanced_entry);
@@ -140,17 +140,17 @@ static void __gebr_gui_gtk_enhanced_entry_check_empty(GebrGuiGtkEnhancedEntry * 
 
 		g_signal_handlers_block_matched(G_OBJECT(enhanced_entry),
 						G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-						G_CALLBACK(__gebr_gui_gtk_enhanced_entry_text_changed), NULL);
+						G_CALLBACK(__gebr_gui_enhanced_entry_text_changed), NULL);
 		gtk_entry_set_text(entry, enhanced_entry->empty_text);
 		g_signal_handlers_unblock_matched(G_OBJECT(enhanced_entry),
 						  G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-						  G_CALLBACK(__gebr_gui_gtk_enhanced_entry_text_changed), NULL);
+						  G_CALLBACK(__gebr_gui_enhanced_entry_text_changed), NULL);
 	}
 }
 
 static gboolean
-__gebr_gui_gtk_enhanced_entry_focus_in(GtkEntry * entry, GdkEventFocus * event,
-				       GebrGuiGtkEnhancedEntry * enhanced_entry)
+__gebr_gui_enhanced_entry_focus_in(GtkEntry * entry, GdkEventFocus * event,
+				       GebrGuiEnhancedEntry * enhanced_entry)
 {
 	gtk_widget_modify_text(GTK_WIDGET(entry), GTK_STATE_NORMAL, &(GdkColor) {
 			       0xFFFF, 255, 255, 255});
@@ -160,21 +160,21 @@ __gebr_gui_gtk_enhanced_entry_focus_in(GtkEntry * entry, GdkEventFocus * event,
 	if (enhanced_entry->empty) {
 		g_signal_handlers_block_matched(G_OBJECT(entry),
 						G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-						G_CALLBACK(__gebr_gui_gtk_enhanced_entry_text_changed), NULL);
+						G_CALLBACK(__gebr_gui_enhanced_entry_text_changed), NULL);
 		gtk_entry_set_text(entry, "");
 		g_signal_handlers_unblock_matched(G_OBJECT(entry),
 						  G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-						  G_CALLBACK(__gebr_gui_gtk_enhanced_entry_text_changed), NULL);
+						  G_CALLBACK(__gebr_gui_enhanced_entry_text_changed), NULL);
 	}
 
 	return FALSE;
 }
 
 static gboolean
-__gebr_gui_gtk_enhanced_entry_focus_out(GtkEntry * entry, GdkEventFocus * event,
-					GebrGuiGtkEnhancedEntry * enhanced_entry)
+__gebr_gui_enhanced_entry_focus_out(GtkEntry * entry, GdkEventFocus * event,
+					GebrGuiEnhancedEntry * enhanced_entry)
 {
-	__gebr_gui_gtk_enhanced_entry_check_empty(enhanced_entry);
+	__gebr_gui_enhanced_entry_check_empty(enhanced_entry);
 
 	return FALSE;
 }
@@ -183,36 +183,36 @@ __gebr_gui_gtk_enhanced_entry_focus_out(GtkEntry * entry, GdkEventFocus * event,
  * Library functions
  */
 
-GtkWidget *gebr_gui_gtk_enhanced_entry_new()
+GtkWidget *gebr_gui_enhanced_entry_new()
 {
 	return g_object_new(GEBR_GUI_TYPE_ENHANCED_ENTRY, "empty-text", NULL, NULL);
 }
 
-GtkWidget *gebr_gui_gtk_enhanced_entry_new_with_empty_text(const gchar * empty_text)
+GtkWidget *gebr_gui_enhanced_entry_new_with_empty_text(const gchar * empty_text)
 {
 	return g_object_new(GEBR_GUI_TYPE_ENHANCED_ENTRY, "empty-text", empty_text, NULL);
 }
 
-void gebr_gui_gtk_enhanced_entry_set_text(GebrGuiGtkEnhancedEntry * enhanced_entry, const gchar * text)
+void gebr_gui_enhanced_entry_set_text(GebrGuiEnhancedEntry * enhanced_entry, const gchar * text)
 {
 	gtk_entry_set_text(GTK_ENTRY(enhanced_entry), text);
-	__gebr_gui_gtk_enhanced_entry_check_empty(enhanced_entry);
+	__gebr_gui_enhanced_entry_check_empty(enhanced_entry);
 }
 
-const gchar *gebr_gui_gtk_enhanced_entry_get_text(GebrGuiGtkEnhancedEntry * enhanced_entry)
+const gchar *gebr_gui_enhanced_entry_get_text(GebrGuiEnhancedEntry * enhanced_entry)
 {
 	return enhanced_entry->empty == TRUE ? "" : gtk_entry_get_text(GTK_ENTRY(enhanced_entry));
 }
 
-void gebr_gui_gtk_enhanced_entry_set_empty_text(GebrGuiGtkEnhancedEntry * enhanced_entry, const gchar * empty_text)
+void gebr_gui_enhanced_entry_set_empty_text(GebrGuiEnhancedEntry * enhanced_entry, const gchar * empty_text)
 {
 	if (enhanced_entry->empty_text != NULL)
 		g_free(enhanced_entry->empty_text);
 	enhanced_entry->empty_text = (empty_text != NULL) ? strdup(empty_text) : NULL;
-	__gebr_gui_gtk_enhanced_entry_focus_out(GTK_ENTRY(enhanced_entry), NULL, enhanced_entry);
+	__gebr_gui_enhanced_entry_focus_out(GTK_ENTRY(enhanced_entry), NULL, enhanced_entry);
 }
 
-const gchar *gebr_gui_gtk_enhanced_entry_get_empty_text(GebrGuiGtkEnhancedEntry * enhanced_entry)
+const gchar *gebr_gui_enhanced_entry_get_empty_text(GebrGuiEnhancedEntry * enhanced_entry)
 {
 	return enhanced_entry->empty_text;
 }

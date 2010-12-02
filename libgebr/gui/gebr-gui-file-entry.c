@@ -25,13 +25,13 @@
  * Prototypes
  */
 
-static void __gebr_gui_gtk_file_entry_entry_changed(GtkEntry * entry, GebrGuiGtkFileEntry * file_entry);
+static void __gebr_gui_file_entry_entry_changed(GtkEntry * entry, GebrGuiFileEntry * file_entry);
 
 static void
-__gebr_gui_gtk_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIconPosition icon_pos, GdkEvent * event,
-						GebrGuiGtkFileEntry * file_entry);
+__gebr_gui_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIconPosition icon_pos, GdkEvent * event,
+						GebrGuiFileEntry * file_entry);
 
-static gboolean on_mnemonic_activate(GebrGuiGtkFileEntry * file_entry);
+static gboolean on_mnemonic_activate(GebrGuiFileEntry * file_entry);
 
 /*
  * gobject stuff
@@ -49,7 +49,7 @@ enum {
 static guint object_signals[LAST_SIGNAL];
 
 static void
-gebr_gui_gtk_file_entry_set_property(GebrGuiGtkFileEntry * file_entry, guint property_id, const GValue * value,
+gebr_gui_file_entry_set_property(GebrGuiFileEntry * file_entry, guint property_id, const GValue * value,
 				     GParamSpec * param_spec)
 {
 	switch (property_id) {
@@ -64,7 +64,7 @@ gebr_gui_gtk_file_entry_set_property(GebrGuiGtkFileEntry * file_entry, guint pro
 }
 
 static void
-gebr_gui_gtk_file_entry_get_property(GebrGuiGtkFileEntry * file_entry, guint property_id, GValue * value,
+gebr_gui_file_entry_get_property(GebrGuiFileEntry * file_entry, guint property_id, GValue * value,
 				     GParamSpec * param_spec)
 {
 	switch (property_id) {
@@ -78,14 +78,14 @@ gebr_gui_gtk_file_entry_get_property(GebrGuiGtkFileEntry * file_entry, guint pro
 	}
 }
 
-static void gebr_gui_gtk_file_entry_class_init(GebrGuiGtkFileEntryClass * klass)
+static void gebr_gui_file_entry_class_init(GebrGuiFileEntryClass * klass)
 {
 	GObjectClass *gobject_class;
 	GParamSpec *param_spec;
 
 	gobject_class = G_OBJECT_CLASS(klass);
-	gobject_class->set_property = (typeof(gobject_class->set_property)) gebr_gui_gtk_file_entry_set_property;
-	gobject_class->get_property = (typeof(gobject_class->get_property)) gebr_gui_gtk_file_entry_get_property;
+	gobject_class->set_property = (typeof(gobject_class->set_property)) gebr_gui_file_entry_set_property;
+	gobject_class->get_property = (typeof(gobject_class->get_property)) gebr_gui_file_entry_get_property;
 
 	param_spec = g_param_spec_pointer("customize-function",
 					  "Customize function", "Customize GtkFileChooser of dialog",
@@ -93,11 +93,11 @@ static void gebr_gui_gtk_file_entry_class_init(GebrGuiGtkFileEntryClass * klass)
 	g_object_class_install_property(gobject_class, CUSTOMIZE_FUNCTION, param_spec);
 
 	/* signals */
-	object_signals[PATH_CHANGED] = g_signal_new("path-changed", GEBR_GUI_TYPE_FILE_ENTRY, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrGuiGtkFileEntryClass, path_changed), NULL, NULL,	/* acumulators */
+	object_signals[PATH_CHANGED] = g_signal_new("path-changed", GEBR_GUI_TYPE_FILE_ENTRY, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrGuiFileEntryClass, path_changed), NULL, NULL,	/* acumulators */
 						    g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
-static void gebr_gui_gtk_file_entry_init(GebrGuiGtkFileEntry * file_entry)
+static void gebr_gui_file_entry_init(GebrGuiFileEntry * file_entry)
 {
 	GtkWidget *entry;
 
@@ -106,9 +106,9 @@ static void gebr_gui_gtk_file_entry_init(GebrGuiGtkFileEntry * file_entry)
 	file_entry->entry = entry;
 	gtk_widget_show(entry);
 	gtk_box_pack_start(GTK_BOX(file_entry), entry, TRUE, TRUE, 0);
-	g_signal_connect(GTK_ENTRY(entry), "changed", G_CALLBACK(__gebr_gui_gtk_file_entry_entry_changed), file_entry);
+	g_signal_connect(GTK_ENTRY(entry), "changed", G_CALLBACK(__gebr_gui_file_entry_entry_changed), file_entry);
 	g_signal_connect(entry, "icon-release",
-			 G_CALLBACK(__gebr_gui_gtk_file_entry_browse_button_clicked), file_entry);
+			 G_CALLBACK(__gebr_gui_file_entry_browse_button_clicked), file_entry);
 	g_signal_connect(file_entry, "mnemonic-activate", G_CALLBACK(on_mnemonic_activate), NULL);
 	gtk_entry_set_icon_from_stock(GTK_ENTRY(entry), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
 
@@ -116,20 +116,20 @@ static void gebr_gui_gtk_file_entry_init(GebrGuiGtkFileEntry * file_entry)
 	file_entry->do_overwrite_confirmation = TRUE;
 }
 
-G_DEFINE_TYPE(GebrGuiGtkFileEntry, gebr_gui_gtk_file_entry, GTK_TYPE_HBOX);
+G_DEFINE_TYPE(GebrGuiFileEntry, gebr_gui_file_entry, GTK_TYPE_HBOX);
 
 /*
  * Internal functions
  */
 
-static void __gebr_gui_gtk_file_entry_entry_changed(GtkEntry * entry, GebrGuiGtkFileEntry * file_entry)
+static void __gebr_gui_file_entry_entry_changed(GtkEntry * entry, GebrGuiFileEntry * file_entry)
 {
 	g_signal_emit(file_entry, object_signals[PATH_CHANGED], 0);
 }
 
 static void
-__gebr_gui_gtk_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIconPosition icon_pos, GdkEvent * event,
-						GebrGuiGtkFileEntry * file_entry)
+__gebr_gui_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIconPosition icon_pos, GdkEvent * event,
+						GebrGuiFileEntry * file_entry)
 {
 	GtkWidget *chooser_dialog;
 
@@ -159,7 +159,7 @@ __gebr_gui_gtk_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIcon
 	gtk_widget_grab_focus (file_entry->entry);
 }
 
-static gboolean on_mnemonic_activate(GebrGuiGtkFileEntry * file_entry)
+static gboolean on_mnemonic_activate(GebrGuiFileEntry * file_entry)
 {
 	gtk_widget_mnemonic_activate(file_entry->entry, TRUE);
 	return TRUE;
@@ -169,9 +169,9 @@ static gboolean on_mnemonic_activate(GebrGuiGtkFileEntry * file_entry)
  * Library functions
  */
 
-GtkWidget *gebr_gui_gtk_file_entry_new(GebrGuiGtkFileEntryCustomize customize_function, gpointer user_data)
+GtkWidget *gebr_gui_file_entry_new(GebrGuiFileEntryCustomize customize_function, gpointer user_data)
 {
-	GebrGuiGtkFileEntry *file_entry;
+	GebrGuiFileEntry *file_entry;
 
 	file_entry = g_object_new(GEBR_GUI_TYPE_FILE_ENTRY, "customize-function", customize_function, NULL);
 	file_entry->customize_user_data = user_data;
@@ -179,39 +179,39 @@ GtkWidget *gebr_gui_gtk_file_entry_new(GebrGuiGtkFileEntryCustomize customize_fu
 	return GTK_WIDGET(file_entry);
 }
 
-void gebr_gui_gtk_file_entry_set_choose_directory(GebrGuiGtkFileEntry * file_entry, gboolean choose_directory)
+void gebr_gui_file_entry_set_choose_directory(GebrGuiFileEntry * file_entry, gboolean choose_directory)
 {
 	file_entry->choose_directory = choose_directory;
 }
 
-gboolean gebr_gui_gtk_file_entry_get_choose_directory(GebrGuiGtkFileEntry * file_entry)
+gboolean gebr_gui_file_entry_get_choose_directory(GebrGuiFileEntry * file_entry)
 {
 	return file_entry->choose_directory;
 }
 
 void
-gebr_gui_gtk_file_entry_set_do_overwrite_confirmation(GebrGuiGtkFileEntry * file_entry,
+gebr_gui_file_entry_set_do_overwrite_confirmation(GebrGuiFileEntry * file_entry,
 						      gboolean do_overwrite_confirmation)
 {
 	file_entry->do_overwrite_confirmation = do_overwrite_confirmation;
 }
 
-gboolean gebr_gui_gtk_file_entry_get_do_overwrite_confirmation(GebrGuiGtkFileEntry * file_entry)
+gboolean gebr_gui_file_entry_get_do_overwrite_confirmation(GebrGuiFileEntry * file_entry)
 {
 	return file_entry->do_overwrite_confirmation;
 }
 
-void gebr_gui_gtk_file_entry_set_path(GebrGuiGtkFileEntry * file_entry, const gchar * path)
+void gebr_gui_file_entry_set_path(GebrGuiFileEntry * file_entry, const gchar * path)
 {
 	gtk_entry_set_text(GTK_ENTRY(file_entry->entry), path);
 }
 
-const gchar *gebr_gui_gtk_file_entry_get_path(GebrGuiGtkFileEntry * file_entry)
+const gchar *gebr_gui_file_entry_get_path(GebrGuiFileEntry * file_entry)
 {
 	return gtk_entry_get_text(GTK_ENTRY(file_entry->entry));
 }
 
-void gebr_gui_file_entry_set_activates_default (GebrGuiGtkFileEntry * self, gboolean setting)
+void gebr_gui_file_entry_set_activates_default (GebrGuiFileEntry * self, gboolean setting)
 {
 	g_return_if_fail (GEBR_GUI_IS_FILE_ENTRY (self));
 

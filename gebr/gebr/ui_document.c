@@ -281,9 +281,9 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesR
 				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 3, 3);
 		gtk_misc_set_alignment(GTK_MISC(line_path_label), 0, 0);
 
-		file_entry = gebr_gui_gtk_file_entry_new(NULL, NULL);
+		file_entry = gebr_gui_file_entry_new(NULL, NULL);
 
-		gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_FILE_ENTRY(file_entry), TRUE);
+		gebr_gui_file_entry_set_choose_directory(GEBR_GUI_FILE_ENTRY(file_entry), TRUE);
 		gtk_widget_set_size_request(file_entry, 220, 30);
 
 		gebr_geoxml_line_get_path(gebr.line, &path_sequence, 0);
