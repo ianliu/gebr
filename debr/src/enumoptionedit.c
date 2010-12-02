@@ -110,7 +110,7 @@ static void enum_option_edit_init(EnumOptionEdit * enum_option_edit)
 {
 }
 
-G_DEFINE_TYPE(EnumOptionEdit, enum_option_edit, GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT);
+G_DEFINE_TYPE(EnumOptionEdit, enum_option_edit, GEBR_GUI_TYPE_SEQUENCE_EDIT);
 
 /*
  * Internal functions
@@ -122,15 +122,15 @@ static void enum_option_edit_add_request(EnumOptionEdit * enum_option_edit)
 
 	enum_option = gebr_geoxml_program_parameter_append_enum_option(enum_option_edit->program_parameter,
 								       gebr_gui_gtk_enhanced_entry_get_text
-								       (GEBR_GUI_GTK_ENHANCED_ENTRY
+								       (GEBR_GUI_ENHANCED_ENTRY
 									(enum_option_edit->label_entry)),
 								       gebr_gui_gtk_enhanced_entry_get_text
-								       (GEBR_GUI_GTK_ENHANCED_ENTRY
+								       (GEBR_GUI_ENHANCED_ENTRY
 									(enum_option_edit->value_entry)));
 	__enum_option_edit_add(enum_option_edit, enum_option);
 
-	gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_GTK_ENHANCED_ENTRY(enum_option_edit->label_entry), "");
-	gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_GTK_ENHANCED_ENTRY(enum_option_edit->value_entry), "");
+	gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_ENHANCED_ENTRY(enum_option_edit->label_entry), "");
+	gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_ENHANCED_ENTRY(enum_option_edit->value_entry), "");
 
 	validate_image_set_check_enum_option_list(enum_option_edit->validate_image, enum_option_edit->program_parameter); 
 	g_signal_emit_by_name(enum_option_edit, "changed");

@@ -141,19 +141,19 @@ static void gebr_gui_sequence_edit_class_init(GebrGuiSequenceEditClass * klass)
 	GParamSpec *param_spec;
 
 	/* signals */
-	object_signals[ADD_REQUEST] = g_signal_new("add-request", GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrGuiSequenceEditClass, add_request), NULL, NULL,	/* acumulators */
+	object_signals[ADD_REQUEST] = g_signal_new("add-request", GEBR_GUI_TYPE_SEQUENCE_EDIT, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrGuiSequenceEditClass, add_request), NULL, NULL,	/* acumulators */
 						   g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
-	object_signals[CHANGED] = g_signal_new("changed", GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrGuiSequenceEditClass, changed), NULL, NULL,	/* acumulators */
+	object_signals[CHANGED] = g_signal_new("changed", GEBR_GUI_TYPE_SEQUENCE_EDIT, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrGuiSequenceEditClass, changed), NULL, NULL,	/* acumulators */
 					       g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 	object_signals[RENAMED] = g_signal_new(("renamed"),
-					       GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT,
+					       GEBR_GUI_TYPE_SEQUENCE_EDIT,
 					       G_SIGNAL_RUN_LAST,
 					       G_STRUCT_OFFSET(GebrGuiSequenceEditClass, renamed),
 					       NULL, NULL,
 					       _gebr_gui_marshal_BOOLEAN__STRING_STRING,
 					       G_TYPE_BOOLEAN, 2, G_TYPE_STRING, G_TYPE_STRING);
 	object_signals[REMOVED] = g_signal_new(("removed"),
-					       GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT,
+					       GEBR_GUI_TYPE_SEQUENCE_EDIT,
 					       G_SIGNAL_RUN_LAST,
 					       G_STRUCT_OFFSET(GebrGuiSequenceEditClass, removed),
 					       NULL, NULL,
@@ -432,12 +432,12 @@ static gboolean gebr_sequence_edit_on_mnemonic_activate(GebrGuiSequenceEdit * se
 
 GtkWidget *gebr_gui_sequence_edit_new(GtkWidget * widget)
 {
-	return g_object_new(GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, "value-widget", widget, "list-store", NULL, NULL);
+	return g_object_new(GEBR_GUI_TYPE_SEQUENCE_EDIT, "value-widget", widget, "list-store", NULL, NULL);
 }
 
 GtkWidget *gebr_gui_sequence_edit_new_from_store(GtkWidget * widget, GtkListStore * list_store)
 {
-	return g_object_new(GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, "value-widget", widget, "list-store", list_store, NULL);
+	return g_object_new(GEBR_GUI_TYPE_SEQUENCE_EDIT, "value-widget", widget, "list-store", list_store, NULL);
 }
 
 GtkTreeIter gebr_gui_sequence_edit_add(GebrGuiSequenceEdit * sequence_edit, const gchar * text, gboolean show_empty_value_text)

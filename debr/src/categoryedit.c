@@ -129,7 +129,7 @@ static void category_edit_init(CategoryEdit * category_edit)
 {
 }
 
-G_DEFINE_TYPE(CategoryEdit, category_edit, GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT);
+G_DEFINE_TYPE(CategoryEdit, category_edit, GEBR_GUI_TYPE_SEQUENCE_EDIT);
 
 /*
  * Internal functions

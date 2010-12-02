@@ -76,7 +76,7 @@ gebr_gui_gtk_enhanced_entry_get_property(GebrGuiGtkEnhancedEntry * enhanced_entr
 
 static void gebr_gui_gtk_enhanced_entry_destroy(GtkObject *object)
 {
-	GebrGuiGtkEnhancedEntry *enhanced_entry = GEBR_GUI_GTK_ENHANCED_ENTRY(object);
+	GebrGuiGtkEnhancedEntry *enhanced_entry = GEBR_GUI_ENHANCED_ENTRY(object);
 	if (enhanced_entry->empty_text != NULL) {
 		g_free(enhanced_entry->empty_text);
 		enhanced_entry->empty_text = NULL;
@@ -185,12 +185,12 @@ __gebr_gui_gtk_enhanced_entry_focus_out(GtkEntry * entry, GdkEventFocus * event,
 
 GtkWidget *gebr_gui_gtk_enhanced_entry_new()
 {
-	return g_object_new(GEBR_GUI_GTK_TYPE_ENHANCED_ENTRY, "empty-text", NULL, NULL);
+	return g_object_new(GEBR_GUI_TYPE_ENHANCED_ENTRY, "empty-text", NULL, NULL);
 }
 
 GtkWidget *gebr_gui_gtk_enhanced_entry_new_with_empty_text(const gchar * empty_text)
 {
-	return g_object_new(GEBR_GUI_GTK_TYPE_ENHANCED_ENTRY, "empty-text", empty_text, NULL);
+	return g_object_new(GEBR_GUI_TYPE_ENHANCED_ENTRY, "empty-text", empty_text, NULL);
 }
 
 void gebr_gui_gtk_enhanced_entry_set_text(GebrGuiGtkEnhancedEntry * enhanced_entry, const gchar * text)

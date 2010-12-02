@@ -173,7 +173,7 @@ static void gebr_gui_parameter_widget_set_non_list_widget_value(struct gebr_gui_
 		}
 		break;
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
-		gebr_gui_gtk_file_entry_set_path(GEBR_GUI_GTK_FILE_ENTRY(parameter_widget->value_widget),
+		gebr_gui_gtk_file_entry_set_path(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget),
 						 value);
 		break;
 	case GEBR_GEOXML_PARAMETER_TYPE_ENUM: {
@@ -252,7 +252,7 @@ static GString *gebr_gui_parameter_widget_get_widget_value_full(struct gebr_gui_
 		}
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 		g_string_assign(value,
-				gebr_gui_gtk_file_entry_get_path(GEBR_GUI_GTK_FILE_ENTRY
+				gebr_gui_gtk_file_entry_get_path(GEBR_GUI_FILE_ENTRY
 								 (parameter_widget->value_widget)));
 		break;
 	case GEBR_GEOXML_PARAMETER_TYPE_ENUM:{
@@ -593,14 +593,14 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			    gebr_gui_gtk_file_entry_new((GebrGuiGtkFileEntryCustomize)
 							gebr_gui_parameter_widget_file_entry_customize_function,
 							parameter_widget);
-			g_signal_connect (GEBR_GUI_GTK_FILE_ENTRY (file_entry)->entry, "activate",
+			g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
 					  G_CALLBACK (on_entry_activate_add), parameter_widget);
 			gtk_widget_set_size_request(file_entry, 220, 30);
 
-			gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_GTK_FILE_ENTRY(file_entry),
+			gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_FILE_ENTRY(file_entry),
 								     gebr_geoxml_program_parameter_get_file_be_directory
 								     (parameter_widget->program_parameter));
-			gebr_gui_gtk_file_entry_set_do_overwrite_confirmation(GEBR_GUI_GTK_FILE_ENTRY(file_entry),
+			gebr_gui_gtk_file_entry_set_do_overwrite_confirmation(GEBR_GUI_FILE_ENTRY(file_entry),
 									      FALSE);
 
 			break;

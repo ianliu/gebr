@@ -24,12 +24,12 @@ G_BEGIN_DECLS
 
 GType gebr_gui_sequence_edit_get_type(void);
 
-#define GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT			(gebr_gui_sequence_edit_get_type())
-#define GEBR_GUI_SEQUENCE_EDIT(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEdit))
-#define GEBR_GUI_SEQUENCE_EDIT_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEditClass))
-#define GEBR_GUI_GTK_IS_SEQUENCE_EDIT(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT))
-#define GEBR_GUI_GTK_IS_SEQUENCE_EDIT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT))
-#define GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEditClass))
+#define GEBR_GUI_TYPE_SEQUENCE_EDIT			(gebr_gui_sequence_edit_get_type())
+#define GEBR_GUI_SEQUENCE_EDIT(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEdit))
+#define GEBR_GUI_SEQUENCE_EDIT_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_GUI_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEditClass))
+#define GEBR_GUI_IS_SEQUENCE_EDIT(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_GUI_TYPE_SEQUENCE_EDIT))
+#define GEBR_GUI_IS_SEQUENCE_EDIT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_GUI_TYPE_SEQUENCE_EDIT))
+#define GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEditClass))
 
 typedef struct _GebrGuiSequenceEdit GebrGuiSequenceEdit;
 typedef struct _GebrGuiSequenceEditClass GebrGuiSequenceEditClass;

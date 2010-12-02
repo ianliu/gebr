@@ -984,9 +984,9 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 				 G_CALLBACK(parameter_file_filter_pattern_changed), gebr_gui_parameter_widget);
 
 		gebr_geoxml_program_parameter_get_file_filter(program_parameter, &filter_name, &filter_pattern);
-		gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_GTK_ENHANCED_ENTRY(filter_name_entry),
+		gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_ENHANCED_ENTRY(filter_name_entry),
 						     filter_name);
-		gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_GTK_ENHANCED_ENTRY(filter_pattern_entry),
+		gebr_gui_gtk_enhanced_entry_set_text(GEBR_GUI_ENHANCED_ENTRY(filter_pattern_entry),
 						     filter_pattern);
 
 		break;
@@ -1659,7 +1659,7 @@ static void parameter_file_type_changed(GtkComboBox * combo, struct gebr_gui_par
 
 	is_directory = gtk_combo_box_get_active(combo) == 0 ? FALSE : TRUE;
 
-	gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_GTK_FILE_ENTRY(widget->value_widget), is_directory);
+	gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_FILE_ENTRY(widget->value_widget), is_directory);
 	gebr_geoxml_program_parameter_set_file_be_directory(GEBR_GEOXML_PROGRAM_PARAMETER(widget->parameter),
 							    is_directory);
 

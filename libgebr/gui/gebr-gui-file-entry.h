@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEBR_GUI_GTK_FILE_ENTRY_H
-#define __GEBR_GUI_GTK_FILE_ENTRY_H
+#ifndef __GEBR_GUI_FILE_ENTRY_H
+#define __GEBR_GUI_FILE_ENTRY_H
 
 #include <gtk/gtk.h>
 
@@ -24,12 +24,12 @@ G_BEGIN_DECLS
 
 GType gebr_gui_gtk_file_entry_get_type(void);
 
-#define GEBR_GUI_GTK_TYPE_FILE_ENTRY		(gebr_gui_gtk_file_entry_get_type())
-#define GEBR_GUI_GTK_FILE_ENTRY(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_GTK_TYPE_FILE_ENTRY, GebrGuiGtkFileEntry))
-#define GEBR_GUI_GTK_FILE_ENTRY_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_GUI_GTK_TYPE_FILE_ENTRY, GebrGuiGtkFileEntryClass))
-#define GEBR_GUI_GTK_IS_FILE_ENTRY(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_GUI_GTK_TYPE_FILE_ENTRY))
-#define GEBR_GUI_GTK_IS_FILE_ENTRY_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_GUI_GTK_TYPE_FILE_ENTRY))
-#define GEBR_GUI_GTK_FILE_ENTRY_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_GTK_TYPE_FILE_ENTRY, GebrGuiGtkFileEntryClass))
+#define GEBR_GUI_TYPE_FILE_ENTRY		(gebr_gui_gtk_file_entry_get_type())
+#define GEBR_GUI_FILE_ENTRY(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_TYPE_FILE_ENTRY, GebrGuiGtkFileEntry))
+#define GEBR_GUI_FILE_ENTRY_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_GUI_TYPE_FILE_ENTRY, GebrGuiGtkFileEntryClass))
+#define GEBR_GUI_IS_FILE_ENTRY(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_GUI_TYPE_FILE_ENTRY))
+#define GEBR_GUI_IS_FILE_ENTRY_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_GUI_TYPE_FILE_ENTRY))
+#define GEBR_GUI_FILE_ENTRY_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_TYPE_FILE_ENTRY, GebrGuiGtkFileEntryClass))
 
 typedef struct _GebrGuiGtkFileEntry GebrGuiGtkFileEntry;
 typedef struct _GebrGuiGtkFileEntryClass GebrGuiGtkFileEntryClass;
@@ -84,4 +84,4 @@ const gchar *gebr_gui_gtk_file_entry_get_path(GebrGuiGtkFileEntry * file_entry);
 void gebr_gui_file_entry_set_activates_default (GebrGuiGtkFileEntry * self, gboolean setting);
 
 G_END_DECLS
-#endif				//__GEBR_GUI_GTK_FILE_ENTRY_H
+#endif				//__GEBR_GUI_FILE_ENTRY_H

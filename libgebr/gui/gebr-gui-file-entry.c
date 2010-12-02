@@ -93,7 +93,7 @@ static void gebr_gui_gtk_file_entry_class_init(GebrGuiGtkFileEntryClass * klass)
 	g_object_class_install_property(gobject_class, CUSTOMIZE_FUNCTION, param_spec);
 
 	/* signals */
-	object_signals[PATH_CHANGED] = g_signal_new("path-changed", GEBR_GUI_GTK_TYPE_FILE_ENTRY, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrGuiGtkFileEntryClass, path_changed), NULL, NULL,	/* acumulators */
+	object_signals[PATH_CHANGED] = g_signal_new("path-changed", GEBR_GUI_TYPE_FILE_ENTRY, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrGuiGtkFileEntryClass, path_changed), NULL, NULL,	/* acumulators */
 						    g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
@@ -173,7 +173,7 @@ GtkWidget *gebr_gui_gtk_file_entry_new(GebrGuiGtkFileEntryCustomize customize_fu
 {
 	GebrGuiGtkFileEntry *file_entry;
 
-	file_entry = g_object_new(GEBR_GUI_GTK_TYPE_FILE_ENTRY, "customize-function", customize_function, NULL);
+	file_entry = g_object_new(GEBR_GUI_TYPE_FILE_ENTRY, "customize-function", customize_function, NULL);
 	file_entry->customize_user_data = user_data;
 
 	return GTK_WIDGET(file_entry);
@@ -213,7 +213,7 @@ const gchar *gebr_gui_gtk_file_entry_get_path(GebrGuiGtkFileEntry * file_entry)
 
 void gebr_gui_file_entry_set_activates_default (GebrGuiGtkFileEntry * self, gboolean setting)
 {
-	g_return_if_fail (GEBR_GUI_GTK_IS_FILE_ENTRY (self));
+	g_return_if_fail (GEBR_GUI_IS_FILE_ENTRY (self));
 
 	gtk_entry_set_activates_default (GTK_ENTRY (self->entry), setting);
 }

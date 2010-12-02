@@ -104,7 +104,7 @@ static void gebr_gui_value_sequence_edit_init(GebrGuiValueSequenceEdit * gebr_gu
 {
 }
 
-G_DEFINE_TYPE(GebrGuiValueSequenceEdit, gebr_gui_value_sequence_edit, GEBR_GUI_GTK_TYPE_SEQUENCE_EDIT);
+G_DEFINE_TYPE(GebrGuiValueSequenceEdit, gebr_gui_value_sequence_edit, GEBR_GUI_TYPE_SEQUENCE_EDIT);
 
 /*
  * Internal functions

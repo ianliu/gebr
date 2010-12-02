@@ -283,7 +283,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesR
 
 		file_entry = gebr_gui_gtk_file_entry_new(NULL, NULL);
 
-		gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_GTK_FILE_ENTRY(file_entry), TRUE);
+		gebr_gui_gtk_file_entry_set_choose_directory(GEBR_GUI_FILE_ENTRY(file_entry), TRUE);
 		gtk_widget_set_size_request(file_entry, 220, 30);
 
 		gebr_geoxml_line_get_path(gebr.line, &path_sequence, 0);
@@ -292,7 +292,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesR
 						  (ValueSequenceSetFunction) gebr_geoxml_value_sequence_set,
 						  (ValueSequenceGetFunction) gebr_geoxml_value_sequence_get, NULL);
 
-		g_signal_connect (GEBR_GUI_GTK_FILE_ENTRY (file_entry)->entry, "activate",
+		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
 				  G_CALLBACK (on_file_entry_activate), path_sequence_edit);
 		g_signal_connect (path_sequence_edit, "add-request",
 				  G_CALLBACK (path_add), NULL);

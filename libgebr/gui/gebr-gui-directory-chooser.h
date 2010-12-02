@@ -30,12 +30,12 @@ G_BEGIN_DECLS
 
 GType gebr_gui_directory_chooser_get_type(void) G_GNUC_CONST;
 
-#define GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER		(gebr_gui_directory_chooser_get_type())
-#define gebr_gui_directory_chooser(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER, GebrGuiDirectoryChooser))
-#define gebr_gui_directory_chooser_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER, GebrGuiDirectoryChooserClass))
-#define GEBR_GUI_GTK_IS_DIRECTORY_CHOOSER(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER))
-#define GEBR_GUI_GTK_IS_DIRECTORY_CHOOSER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER))
-#define gebr_gui_directory_chooser_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_GTK_TYPE_DIRECTORY_CHOOSER, GebrGuiDirectoryChooserClass))
+#define GEBR_GUI_TYPE_DIRECTORY_CHOOSER		(gebr_gui_directory_chooser_get_type())
+#define gebr_gui_directory_chooser(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_GUI_TYPE_DIRECTORY_CHOOSER, GebrGuiDirectoryChooser))
+#define gebr_gui_directory_chooser_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_GUI_TYPE_DIRECTORY_CHOOSER, GebrGuiDirectoryChooserClass))
+#define GEBR_GUI_IS_DIRECTORY_CHOOSER(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_GUI_TYPE_DIRECTORY_CHOOSER))
+#define GEBR_GUI_IS_DIRECTORY_CHOOSER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_GUI_TYPE_DIRECTORY_CHOOSER))
+#define gebr_gui_directory_chooser_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_TYPE_DIRECTORY_CHOOSER, GebrGuiDirectoryChooserClass))
 
 typedef struct _GebrGuiDirectoryChooser GebrGuiDirectoryChooser;
 typedef struct _GebrGuiDirectoryChooserClass GebrGuiDirectoryChooserClass;
