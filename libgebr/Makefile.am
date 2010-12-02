@@ -46,8 +46,7 @@ DISTCLEANFILES = config.h
 AM_CFLAGS = $(COMMON_CFLAGS) -fPIC
 
 AM_CPPFLAGS = $(GLIB_CFLAGS)	\
-	      @DEBUG_CFLAGS@	\
-	      -DNANOVERSION=\"$(NANOVERSION)\"
+	      @DEBUG_CFLAGS@
 
 libgebr_la_LIBADD = -lutil $(INTLLIBS) $(GLIB_LIBS)
 libgebr_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@
