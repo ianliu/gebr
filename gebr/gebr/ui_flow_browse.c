@@ -79,10 +79,13 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gtk_paned_pack1(GTK_PANED(hpanel), scrolled_window, FALSE, FALSE);
 	gtk_widget_set_size_request(scrolled_window, 300, -1);
 
-	ui_flow_browse->store = gtk_list_store_new(FB_N_COLUMN, G_TYPE_STRING,	/* Name (title for libgeoxml) */
+	ui_flow_browse->store = gtk_list_store_new(FB_N_COLUMN,
+						   G_TYPE_STRING,	/* Name (title for libgeoxml) */
 						   G_TYPE_STRING,	/* Filename */
-						   G_TYPE_POINTER, /* GebrGeoXmlFlow pointer */
-						   G_TYPE_POINTER  /* GebrGeoXmlLineFlow pointer */ );
+						   G_TYPE_POINTER,	/* GebrGeoXmlFlow pointer */
+						   G_TYPE_POINTER,	/* GebrGeoXmlLineFlow pointer */
+						   G_TYPE_POINTER	/* Last queue hash table */);
+
 	ui_flow_browse->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->store));
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(ui_flow_browse->view), TRUE);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->view);
