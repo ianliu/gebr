@@ -216,6 +216,7 @@ static void gebr_gui_help_edit_window_init(GebrGuiHelpEditWindow * self)
 	tool_bar_path = gebr_gui_help_edit_window_get_tool_bar_path(self);
 	menu_bar = gtk_ui_manager_get_widget(priv->ui_manager, menu_bar_path);
 	tool_bar = gtk_ui_manager_get_widget(priv->ui_manager, tool_bar_path);
+	gtk_toolbar_set_style(GTK_TOOLBAR(tool_bar), GTK_TOOLBAR_ICONS);
 
 	gtk_box_pack_start(GTK_BOX(priv->action_area), menu_bar, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(priv->action_area), tool_bar, FALSE, TRUE, 0);
