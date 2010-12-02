@@ -37,6 +37,10 @@
  * Private data
  */
 
+#ifndef GTK_STOCK_PRINT_REPORT
+# define GTK_STOCK_PRINT_REPORT GTK_STOCK_PRINT
+#endif
+
 /**
  * \internal
  * The various actions for GeBR interface.

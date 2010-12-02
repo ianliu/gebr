@@ -354,14 +354,15 @@ GtkWidget *gebr_gui_html_viewer_widget_new(void)
 
 void gebr_gui_html_viewer_widget_print(GebrGuiHtmlViewerWidget * self)
 {
-	WebKitWebFrame * frame;
-	GtkPrintOperation * print_op;
 	GebrGuiHtmlViewerWidgetPrivate * priv;
-	GError * error = NULL;
+	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
 
 	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
 
-	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+#if WEBKIT_CHECK_VERSION(1,1,5)
+	WebKitWebFrame * frame;
+	GtkPrintOperation * print_op;
+	GError * error = NULL;
 
 	print_op = gtk_print_operation_new();
 	g_signal_connect(print_op, "create-custom-widget", G_CALLBACK(on_create_custom_widget), self);
@@ -376,6 +377,9 @@ void gebr_gui_html_viewer_widget_print(GebrGuiHtmlViewerWidget * self)
 		g_clear_error(&error);
 	}
 	g_object_unref(print_op);
+#else
+	gebr_gui_show_uri (priv->tmp_file);
+#endif
 }
 
 void gebr_gui_html_viewer_widget_show_html(GebrGuiHtmlViewerWidget * self, const gchar * content)
