@@ -84,6 +84,10 @@ void job_control_clear(gboolean force);
  */
 void job_control_stop(void);
 
+void job_control_queue_stop(void);
+void job_control_queue_save(void);
+void job_control_queue_close(void);
+
 /**
  * Get selected job/queue and put it at \p iter.
  * Return TRUE if there was something selected. Otherwise, return FALSE.

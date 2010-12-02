@@ -249,7 +249,7 @@ static void job_process_read_stderr(GebrCommProcess * process, struct job *job)
 static void job_set_status(struct job *job, enum JobStatus status)
 {
 	const gchar * enum_to_string [] = {
-		"unknown", "queued", "failed", "running", "finished", "canceled", "requeued", NULL };
+		"unknown", "queued", "failed", "running", "finished", "canceled", "requeued", "issued", NULL };
 
 	g_string_assign(job->status_string, enum_to_string[status]);
 	job->status = status;
@@ -532,7 +532,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 	gebr_geoxml_flow_get_program(flow, &program, 0);
 	while (program != NULL &&
 	       gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
-		g_string_append_printf(job->issues, _("%u) Skiping disabled/unconfigured program '%s'.\n"),
+		g_string_append_printf(job->issues, _("%u) Skipping disabled/not configured program '%s'.\n"),
 				       ++issue_number, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
 
 		gebr_geoxml_sequence_next(&program);
@@ -552,15 +552,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 			goto err;
 		}
 
-		/* Input file */
-		if (check_for_readable_file(gebr_geoxml_flow_io_get_input(flow))) {
-			g_string_append_printf(job->issues,
-					       _("Input file %s not present or not accessable.\n"),
-					       gebr_geoxml_flow_io_get_input(flow));
-			goto err;
-		}
-
-		quoted = g_shell_quote(gebr_geoxml_flow_io_get_input(flow));
+		quoted = g_shell_quote(gebr_geoxml_flow_io_get_input(job->flow));
 		g_string_append_printf(job->cmd_line, "<%s ", quoted);
 		g_free(quoted);
 
@@ -608,9 +600,9 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 	previous_stdout = gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(program));
 	gebr_geoxml_sequence_next(&program);
 	while (program != NULL) {
-		/* Skiping disabled/unconfigured programs */
+		/* Skipping disabled/not configured programs */
 		if (gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
-			g_string_append_printf(job->issues, _("%u) Skiping disabled/unconfigured program '%s'.\n"),
+			g_string_append_printf(job->issues, _("%u) Skipping disabled/not configured program '%s'.\n"),
 					       ++issue_number,
 					       gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
 
@@ -621,7 +613,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 		mpi = job_get_mpi_impl(gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program)),
 				       n_process);
 
-		/* How to connect chainned programs */
+		/* How to connect chained programs */
 		int chain_option = gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program)) + (previous_stdout << 1);
 		switch (chain_option) {
 		case 0:	{
@@ -761,12 +753,48 @@ void job_run_flow(struct job *job)
 	gsize bytes_written;
 	gchar * quoted;
 	gboolean may_run;
+	guint issue_number = 0;
 
 	/* initialization */
 	may_run = TRUE;
 	cmd_line = g_string_new(NULL);
 	locale_str = g_filename_from_utf8(job->cmd_line->str, -1, NULL, &bytes_written, NULL);
 
+	/* Check if there is configured programs */
+	gebr_geoxml_flow_get_program(job->flow, &program, 0);
+
+	while (program != NULL &&
+	       gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
+		g_string_append_printf(job->issues, _("%u) Skipping disabled/not configured program '%s'.\n"),
+				       ++issue_number, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
+
+		gebr_geoxml_sequence_next(&program);
+	}
+	if (program == NULL) {
+		goto err;
+	}
+
+	/*
+	 * First program
+	 */
+	/* Start wi.hwithout stdin */
+	if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program))) {
+		/* Input file */
+		if (check_for_readable_file(gebr_geoxml_flow_io_get_input(job->flow))) {
+			GString * issue = g_string_new(NULL);
+			may_run = FALSE;
+			g_string_printf(issue,
+					_("Input file %s not present or not accessible.\n"),
+					gebr_geoxml_flow_io_get_input(job->flow));
+			g_string_append(job->issues,
+					       issue->str);
+			job_notify_status(job, JOB_STATUS_ISSUED, issue->str);
+			job->user_finished = TRUE;
+			job_set_status_finished(job);
+			g_string_free(issue, TRUE);
+			goto err;
+		}
+	}
 	/* command-line */
 	if (job->display->len) {
 		GString *to_quote;
@@ -866,7 +894,7 @@ out:		g_free(moab_quoted);
 			      job->hostname->str, cmd_line->str);
 	
 	/* frees */
-	g_string_free(cmd_line, TRUE);
+err:	g_string_free(cmd_line, TRUE);
 	g_free(locale_str);
 }
 
