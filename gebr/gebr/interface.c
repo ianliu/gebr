@@ -101,7 +101,7 @@ static const GtkActionEntry actions_entries[] = {
 	{"flow_export", "document-export", N_("Export"),
 		NULL, N_("Export the flow"), G_CALLBACK(on_flow_export_activate)},
 	{"flow_execute", GTK_STOCK_EXECUTE, NULL,
-		"<Control>R", N_("Execute selected flow(s) by queuing them into the first flow's queue"), G_CALLBACK(on_flow_execute_activate)},
+		"<Control>R", N_("Execute selected flow(s) sequentialy"), G_CALLBACK(on_flow_execute_activate)},
 	{"flow_execute_in_parallel", GTK_STOCK_EXECUTE, NULL,
 		"<Control><Shift>R", N_("Run selected flow(s) in parallel (all immediately)"), G_CALLBACK(on_flow_execute_in_parallel_activate)},
 	{"flow_copy", GTK_STOCK_COPY, N_("Copy"),
@@ -134,8 +134,8 @@ static const GtkActionEntry actions_entries[] = {
 		"Home", NULL, G_CALLBACK(on_flow_component_move_top)},
 	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move to Bottom"),
 		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
-	{"flow_edition_execute", GTK_STOCK_EXECUTE, N_("Execute this flow"),
-		NULL, NULL, G_CALLBACK (on_flow_component_execute)},
+	{"flow_edition_execute", GTK_STOCK_EXECUTE, NULL,
+		NULL, N_("Execute this flow"), G_CALLBACK (on_flow_component_execute)},
 
 	/*
 	 * Job control - Job Actions
