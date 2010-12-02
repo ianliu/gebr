@@ -63,7 +63,7 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 					   GtkTreeIter     *iter,
 					   gpointer         data);
 
-static void on_queue_combobox_changed (GtkComboBox *combo, GtkTreeRowReference *rowref);
+static void on_queue_combobox_changed (GtkComboBox *combo, const gchar *addr);
 
 /*
  * Public functions
@@ -779,17 +779,17 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_
  */
 static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 {
-	gint last_queue;
+	gint lstq;
+	GHashTable *last_queue_hash;
 	struct server *server;
 	GtkTreeIter iter;
-	GtkTreePath *path;
-	GtkTreeRowReference *rowref;
+	GtkTreeIter flow_iter;
 	GtkWidget *queue_combobox;
 	GtkCellRenderer *renderer;
 
 	gebr.flow_server = NULL;
 
-	if (!flow_browse_get_selected(NULL, TRUE))
+	if (!flow_browse_get_selected(&flow_iter, TRUE))
 		return;
 
 	if (!gtk_combo_box_get_active_iter(combobox, &iter))
@@ -797,23 +797,37 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 			   SERVER_POINTER, &server,
-			   SERVER_LAST_QUEUE, &last_queue,
 			   -1);
 
-	/* Pass `rowref' to the signal so we can set SERVER_LAST_QUEUE on change */
-	path = gtk_tree_model_get_path (GTK_TREE_MODEL (gebr.ui_server_list->common.store), &iter);
-	rowref = gtk_tree_row_reference_new (GTK_TREE_MODEL (gebr.ui_server_list->common.store), path);
+	gchar *addr = server->comm->address->str;
+
 	queue_combobox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(server->queues_model));
-	g_signal_connect (queue_combobox, "changed", G_CALLBACK (on_queue_combobox_changed), rowref);
-	g_object_weak_ref (G_OBJECT (queue_combobox), (GWeakNotify) gtk_tree_row_reference_free, rowref);
-	gtk_tree_path_free (path);
+	g_signal_connect (queue_combobox, "changed", G_CALLBACK (on_queue_combobox_changed), addr);
 
 	renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(queue_combobox), renderer, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(queue_combobox), renderer, "text", 0);
 
+	gtk_tree_model_get (GTK_TREE_MODEL (gebr.ui_flow_browse->store), &flow_iter,
+			    FB_LAST_QUEUES, &last_queue_hash,
+			    -1);
+
+	if (!last_queue_hash) {
+		last_queue_hash = g_hash_table_new_full (g_str_hash,
+							 g_str_equal,
+							 (GDestroyNotify) g_free,
+							 NULL);
+
+		gtk_list_store_set (gebr.ui_flow_browse->store, &flow_iter,
+				    FB_LAST_QUEUES, last_queue_hash,
+				    -1);
+		g_object_weak_ref (G_OBJECT (gebr.ui_flow_browse->store),
+				   (GWeakNotify) g_hash_table_destroy, last_queue_hash);
+	}
+
 	gebr.ui_flow_edition->queue_combobox = queue_combobox;
-	gtk_combo_box_set_active(GTK_COMBO_BOX(queue_combobox), last_queue);
+	lstq = GPOINTER_TO_INT (g_hash_table_lookup (last_queue_hash, addr));
+	gtk_combo_box_set_active(GTK_COMBO_BOX(queue_combobox), lstq);
 
 	if (gtk_bin_get_child(gebr.ui_flow_edition->queue_bin))
 		gtk_widget_destroy(gtk_bin_get_child(gebr.ui_flow_edition->queue_bin));
@@ -893,21 +907,19 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 		g_object_set (cell, "sensitive", gebr_comm_server_is_logged(server->comm), NULL);
 }
 
-static void on_queue_combobox_changed (GtkComboBox *combo, GtkTreeRowReference *rowref)
+static void on_queue_combobox_changed (GtkComboBox *combo, const gchar *addr)
 {
 	gint index;
 	GtkTreeIter iter;
-	GtkTreePath *path;
-	GtkTreeModel *model;
+	GHashTable *last_queue_hash;
+
+	if (!flow_browse_get_selected (&iter, FALSE))
+		return;
 
 	index = gtk_combo_box_get_active (combo);
-	model = gtk_tree_row_reference_get_model (rowref);
-	path = gtk_tree_row_reference_get_path (rowref);
+	gtk_tree_model_get (GTK_TREE_MODEL (gebr.ui_flow_browse->store), &iter,
+			    FB_LAST_QUEUES, &last_queue_hash,
+			    -1);
 
-	if (path && gtk_tree_model_get_iter (model, &iter, path)) {
-		gtk_list_store_set (gebr.ui_server_list->common.store, &iter,
-				    SERVER_LAST_QUEUE, MAX (index, 0), -1);
-	}
-
-	gtk_tree_path_free (path);
+	g_hash_table_insert (last_queue_hash, g_strdup (addr), GINT_TO_POINTER (index));
 }
