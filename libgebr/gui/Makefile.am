@@ -48,7 +48,6 @@ libgebr_gui_la_SOURCES = 		\
 	gebr-gui-value-sequence-edit.c	\
 	gebr-gui-program-edit.c		\
 	gebr-gui-parameter.c		\
-	gebr-gui-directory-chooser.c	\
 	gebr-gui-save-dialog.c		\
 	gebr-gui-help-edit-widget.c	\
 	gebr-gui-help-edit-window.c	\
@@ -70,7 +69,6 @@ libgebr_guisubinclude_HEADERS = 	\
 	gebr-gui-value-sequence-edit.h	\
 	gebr-gui-program-edit.h		\
 	gebr-gui-parameter.h		\
-	gebr-gui-directory-chooser.h	\
 	gebr-gui-save-dialog.h		\
 	gebr-gui-help-edit-widget.h	\
 	gebr-gui-help-edit-window.h	\
