@@ -31,6 +31,16 @@ enum {
 	MENUBAR_N
 };
 
+/* Accel Group entries */
+enum {
+    GENERAL = 0,
+    PROJECT_AND_LINE,
+    FLOW,
+    FLOW_EDITION,
+    JOB_CONTROL,
+    STATUS,
+    ACCEL_N
+};
 void gebr_setup_ui(void);
 
 G_END_DECLS

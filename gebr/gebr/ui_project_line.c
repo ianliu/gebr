@@ -380,7 +380,7 @@ void project_line_info_update(void)
 	/* Info button */
 	gboolean help_exists = gebr.project_line != NULL && (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.project_line)))? TRUE : FALSE);
 	g_object_set(gebr.ui_project_line->info.help_view, "sensitive", help_exists, NULL);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "project_line_view"), help_exists);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"), help_exists);
 	g_object_set(gebr.ui_project_line->info.help_edit, "sensitive", TRUE, NULL);
 
 	navigation_bar_update();
@@ -820,7 +820,7 @@ static void project_line_load(void)
 	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
 	gtk_tree_path_free(path);
 
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "project_line_dump"), is_line);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dump"), is_line);
 
 	if (is_line == TRUE) {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
@@ -896,7 +896,7 @@ static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_li
 	/* new project */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group, "project_line_new_project")));
+						      (gebr.action_group_project_line, "project_line_new_project")));
 
 	if (!project_line_get_selected(NULL, DontWarnUnselection)) {
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
@@ -914,25 +914,25 @@ static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_li
 	/* new line */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group, "project_line_new_line")));
+						      (gebr.action_group_project_line, "project_line_new_line")));
 	/* properties */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group, "project_line_properties")));
+						      (gebr.action_group_project_line, "project_line_properties")));
 	/* delete */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group, "project_line_delete")));
+						      (gebr.action_group_project_line, "project_line_delete")));
 
 	/* view report */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group, "project_line_view")));
+						      (gebr.action_group_project_line, "project_line_view")));
 
 	/* edit report */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group, "project_line_edit")));
+						      (gebr.action_group_project_line, "project_line_edit")));
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 

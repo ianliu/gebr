@@ -602,13 +602,13 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control
 		{
 				gtk_container_add(GTK_CONTAINER(menu),
 						  gtk_action_create_menu_item(
-								  gtk_action_group_get_action(gebr.action_group, "job_control_queue_save")));
+								  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_save")));
 				gtk_container_add(GTK_CONTAINER(menu),
 						  gtk_action_create_menu_item(
-								  gtk_action_group_get_action(gebr.action_group, "job_control_queue_close")));
+								  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_close")));
 				gtk_container_add(GTK_CONTAINER(menu),
 						  gtk_action_create_menu_item(
-								  gtk_action_group_get_action(gebr.action_group, "job_control_queue_stop")));
+								  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_stop")));
 				gtk_widget_show_all(menu);
 				return GTK_MENU(menu);
 		}
@@ -616,11 +616,11 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control
 		if (iter_depth > 0 )
 		{
 				gtk_container_add(GTK_CONTAINER(menu),
-						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_save")));
+						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save")));
 				gtk_container_add(GTK_CONTAINER(menu),
-						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_close")));
+						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close")));
 				gtk_container_add(GTK_CONTAINER(menu),
-						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "job_control_stop")));
+						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop")));
 				gtk_widget_show_all(menu);
 				return GTK_MENU(menu);
 		}

@@ -259,7 +259,7 @@ void flow_browse_info_update(void)
 
 		g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
 		g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_dump"), FALSE);
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dump"), FALSE);
 
 		navigation_bar_update();
 		return;
@@ -367,11 +367,11 @@ void flow_browse_info_update(void)
 
 	g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", help_exists, NULL);
 
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_view"), help_exists);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), help_exists);
 
 	g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", TRUE, NULL);
 
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_dump"), TRUE);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dump"), TRUE);
 
 	navigation_bar_update();
 }
@@ -451,7 +451,7 @@ static void flow_browse_load(void)
 	if (!flow_browse_get_selected(&iter, FALSE))
 		return;
 
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group, "flow_change_revision"),
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"),
 				 gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection
 									(GTK_TREE_VIEW(gebr.ui_flow_browse->view))) >
 				 1 ? FALSE : TRUE);
@@ -551,10 +551,10 @@ static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_
 	if (!flow_browse_get_selected(&iter, FALSE)) {
 		gtk_container_add(GTK_CONTAINER(menu),
 				  gtk_action_create_menu_item(gtk_action_group_get_action
-							      (gebr.action_group, "flow_new")));
+							      (gebr.action_group_flow, "flow_new")));
 		gtk_container_add(GTK_CONTAINER(menu),
 				  gtk_action_create_menu_item(gtk_action_group_get_action
-							      (gebr.action_group, "flow_paste")));
+							      (gebr.action_group_flow, "flow_paste")));
 		goto out;
 	}
 
@@ -576,29 +576,27 @@ static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_new")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_new")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_copy")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_paste")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_delete")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_delete")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_properties")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_view")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_view")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_edit")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit")));
 
-	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_change_revision"));
+	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), ui_flow_browse->revisions_menu);
 	gtk_container_add(GTK_CONTAINER(menu), menu_item);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-	/* gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_io"))); */
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "flow_execute")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute")));
 
  out:	gtk_widget_show_all(menu);
 

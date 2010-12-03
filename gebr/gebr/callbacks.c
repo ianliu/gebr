@@ -411,3 +411,15 @@ void on_project_line_edit_help (void)
 {
     project_line_edit_help();
 }
+
+void on_notebook_switch_page (GtkNotebook     *notebook,
+                              GtkNotebookPage *page,
+                              guint            page_num,
+                              gpointer         user_data)
+{
+
+    if (gebr.last_notebook >= 0)
+        gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[page_num]);
+    gebr.last_notebook = page_num;
+}
