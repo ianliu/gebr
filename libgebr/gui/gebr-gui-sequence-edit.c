@@ -110,7 +110,7 @@ static void gebr_gui_sequence_edit_set_property (GObject *object,
 		self->widget = g_value_get_pointer(value);
 		gtk_box_pack_start(GTK_BOX(self->widget_hbox), self->widget, TRUE, TRUE, 0);
 		break;
-	case LIST_STORE:{
+	case LIST_STORE: {
 			GtkWidget *scrolled_window;
 			GtkWidget *tree_view;
 
@@ -122,11 +122,11 @@ static void gebr_gui_sequence_edit_set_property (GObject *object,
 			scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 			gtk_widget_show(scrolled_window);
 			gtk_box_pack_start(GTK_BOX(self), scrolled_window, TRUE, TRUE, 0);
-			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
-						       GTK_POLICY_AUTOMATIC);
+			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
+							GTK_POLICY_AUTOMATIC,
+							GTK_POLICY_AUTOMATIC);
 
-			tree_view =
-			    GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(self)->create_tree_view(self);
+			tree_view = GEBR_GUI_SEQUENCE_EDIT_GET_CLASS (self)->create_tree_view (self);
 			gebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(tree_view),
 								    (GebrGuiGtkTreeViewReorderCallback)
 								    on_reorder, NULL,
@@ -138,11 +138,11 @@ static void gebr_gui_sequence_edit_set_property (GObject *object,
 								  popup_menu, self);
 
 			break;
+	}
 	case MAY_RENAME:
 			self->may_rename = g_value_get_boolean(value);
 			g_object_set(self->renderer, "editable", self->may_rename, NULL);
 			break;
-		}
 	default:
 		/*We don't have any other property... */
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(self, property_id, param_spec);
