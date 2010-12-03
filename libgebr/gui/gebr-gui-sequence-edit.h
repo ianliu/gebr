@@ -47,7 +47,13 @@ struct _GebrGuiSequenceEdit {
 	gboolean may_rename;
 };
 
+/**
+ * GebrGuiSequenceEditClass:
+ * @add: Called when 
+ * @create_tree_view: 
+ */
 struct _GebrGuiSequenceEditClass {
+	/*< private >*/
 	GtkVBoxClass parent;
 
 	/* signals */
@@ -62,7 +68,8 @@ struct _GebrGuiSequenceEditClass {
 					 const gchar *old_text,
 					 const gchar *new_text);
 
-	/* abstract methods */
+	/* Abstract methods */
+	/*< public >*/
 	void		(*add)		(GebrGuiSequenceEdit *self);
 
 	void		(*remove)	(GebrGuiSequenceEdit *self,

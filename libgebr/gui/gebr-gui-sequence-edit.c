@@ -291,12 +291,17 @@ static void gebr_gui_sequence_edit_init (GebrGuiSequenceEdit *self)
 	gtk_box_pack_start(GTK_BOX(hbox), self->widget_hbox, TRUE, TRUE, 0);
 
 	button = gtk_button_new();
-	gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(GTK_STOCK_ADD, 1));
+	gtk_container_add (GTK_CONTAINER (button),
+			  gtk_image_new_from_stock (GTK_STOCK_ADD, GTK_ICON_SIZE_MENU));
 	g_object_set(G_OBJECT(button), "relief", GTK_RELIEF_NONE, NULL);
 	gtk_widget_show_all(button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-	g_signal_connect(button, "clicked", G_CALLBACK(on_add_clicked), self);
-	g_signal_connect(self, "mnemonic-activate", G_CALLBACK(gebr_sequence_edit_on_mnemonic_activate), NULL);
+
+	g_signal_connect (button, "clicked",
+			  G_CALLBACK (on_add_clicked), self);
+
+	g_signal_connect (self, "mnemonic-activate",
+			  G_CALLBACK (gebr_sequence_edit_on_mnemonic_activate), NULL);
 }
 
 //==============================================================================
