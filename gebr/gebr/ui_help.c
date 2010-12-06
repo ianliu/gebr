@@ -52,12 +52,61 @@ static void on_help_edit_window_destroy(GtkWidget * widget, gpointer user_data);
 
 static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, GtkWindow * window);
 
+static void on_include_comment_activate ();
+
 static const GtkActionEntry action_entries[] = {
 	{"SaveAction", GTK_STOCK_SAVE, NULL, NULL,
 		N_("Save the current document"), G_CALLBACK(on_save_activate)},
 };
-
 static guint n_action_entries = G_N_ELEMENTS(action_entries);
+
+static const GtkActionEntry html_viewer_entries[] = {
+	{"OptionsMenu", NULL, N_("_Options")},
+	{"ParameterTableMenu", NULL, N_("Parameter table")},
+};
+static guint n_html_viewer_entries = G_N_ELEMENTS (html_viewer_entries);
+
+static const GtkToggleActionEntry html_viewer_toggle_entries[] = {
+	{"IncludeCommentAction", NULL, N_("_Include user's commentary"), NULL,
+		N_("If checked, include your commentary into the report"),
+		G_CALLBACK (on_include_comment_activate), TRUE},
+};
+static guint n_html_viewer_toggle_entries = G_N_ELEMENTS (html_viewer_toggle_entries);
+
+typedef enum {
+	PTBL_NO_TABLE,
+	PTBL_ONLY_CHANGED,
+	PTBL_ONLY_FILLED,
+	PTBL_ALL
+} ParamTable;
+
+static const GtkRadioActionEntry html_viewer_radio_entries[] = {
+	{"NoTableAction", NULL, N_("No table at all"),
+		NULL, NULL, PTBL_NO_TABLE},
+	{"OnlyChangedAction", NULL, N_("Just parameters which differ from default"),
+		NULL, NULL, PTBL_ONLY_CHANGED},
+	{"OnlyFilledAction", NULL, N_("Just filled in parameters"),
+		NULL, NULL, PTBL_ONLY_FILLED},
+	{"AllAction", NULL, N_("Just filled in parameters"),
+		NULL, NULL, PTBL_ALL},
+};
+static guint n_html_viewer_radio_entries = G_N_ELEMENTS (html_viewer_radio_entries);
+
+static const gchar *html_viewer_ui_def =
+"<ui>"
+" <menubar name='" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "'>"
+"  <menu action='OptionsMenu'>"
+"   <menuitem action='IncludeCommentAction' />"
+"   <separator />"
+"   <menu action='ParameterTableMenu'>"
+"    <menuitem action='NoTableAction' />"
+"    <menuitem action='OnlyChangedAction' />"
+"    <menuitem action='OnlyFilledAction' />"
+"    <menuitem action='AllAction' />"
+"   </menu>"
+"  <menu>"
+" </menubar>"
+"</ui>";
 
 //==============================================================================
 // PRIVATE METHODS 							       =
@@ -185,6 +234,10 @@ static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, 
 	g_string_free (final_title, TRUE);
 }
 
+static void on_include_comment_activate ()
+{
+}
+
 //==============================================================================
 // PUBLIC METHODS 							       =
 //==============================================================================
@@ -219,8 +272,36 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu)
 	case GEBR_GEOXML_OBJECT_TYPE_FLOW:
 	case GEBR_GEOXML_OBJECT_TYPE_LINE:
 	case GEBR_GEOXML_OBJECT_TYPE_PROJECT: {
-		gchar *str = gebr_document_generate_report (GEBR_GEOXML_DOCUMENT (object));
-		gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), str);
+		gchar *str;
+		GtkWidget *manager;
+		GError *error = NULL;
+		GtkActionGroup *group;
+		GebrGuiHtmlViewerWindow *html_window;
+
+		html_window = GEBR_GUI_HTML_VIEWER_WINDOW (window);
+		manager = gebr_gui_html_viewer_window_get_ui_manager (html_window);
+		group = gtk_action_group_new ("HtmlViewerGroup");
+		gtk_action_group_add_actions (group, html_viewer_entries,
+					      n_html_viewer_entries, NULL);
+
+		gtk_action_group_add_toggle_actions (group, html_viewer_toggle_entries,
+						     n_html_viewer_toggle_entries, NULL);
+
+		gtk_action_group_add_radio_actions (group, html_viewer_radio_entries,
+						    n_html_viewer_radio_entries,
+						    0, on_ptbl_changed, NULL);
+
+		gtk_ui_manager_insert_action_group (manager, group, 0);
+		gtk_ui_manager_add_ui_from_string (manager, html_viewer_ui_def, -1, &error);
+		g_object_unref (group);
+
+		if (error) {
+			g_critical ("%s", error->message);
+			g_clear_error (&error);
+		}
+
+		str = gebr_document_generate_report (GEBR_GEOXML_DOCUMENT (object));
+		gebr_gui_html_viewer_window_show_html (GEBR_GUI_HTML_VIEWER_WINDOW (window), str);
 		g_free (str);
 		break;
 	}
@@ -276,7 +357,7 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 		if (html_fp == NULL) {
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to create temporary file."));
 			goto out;
- 		}
+		}
 		gchar buffer[1000];
 		g_string_assign(prepared_html, "");
 		while (fgets(buffer, sizeof(buffer), html_fp))
@@ -285,11 +366,11 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 
 		gebr_help_set_on_xml(document, prepared_html->str);
 
-                /* The html_path->str is not freed here since this
-                   responsability is passed to gebr.tempfiles list.
-                   
-                   This is a BAD practice and should be avoided.
-                */
+		/* The html_path->str is not freed here since this
+		   responsability is passed to gebr.tempfiles list.
+
+		   This is a BAD practice and should be avoided.
+		   */
 out:		g_string_free(html_path, FALSE);
 		g_string_free(prepared_html, TRUE);
 	}

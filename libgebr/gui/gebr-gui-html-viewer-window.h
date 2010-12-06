@@ -70,6 +70,7 @@ GebrGuiHtmlViewerWidget* gebr_gui_html_viewer_window_get_widget(GebrGuiHtmlViewe
 
 /**
  * gebr_gui_html_viewer_window_set_custom_tab:
+ * @self: A #GebrGuiHtmlViewerWindow
  * @label: Name the new custom tab
  * @widget: The widget to attach to the print dialog, as the only custom tab
  *
@@ -78,6 +79,14 @@ GebrGuiHtmlViewerWidget* gebr_gui_html_viewer_window_get_widget(GebrGuiHtmlViewe
 void gebr_gui_html_viewer_window_set_custom_tab (GebrGuiHtmlViewerWindow * self,
 						 const gchar * label,
 						 GebrGuiHtmlViewerCustomTab callback);
+
+/**
+ * gebr_gui_html_viewer_window_get_ui_manager:
+ * @self: A #GebrGuiHtmlViewerWindow
+ *
+ * Returns: the #GtkMenuBar this window is displaying.
+ */
+GtkWidget *gebr_gui_html_viewer_window_get_menubar (GebrGuiHtmlViewerWindow * self);
 
 G_END_DECLS
 

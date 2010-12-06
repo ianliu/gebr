@@ -218,3 +218,12 @@ void gebr_gui_html_viewer_window_set_custom_tab(GebrGuiHtmlViewerWindow * self, 
 	GebrGuiHtmlViewerWindowPrivate * priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
 	gebr_gui_html_viewer_widget_set_custom_tab(GEBR_GUI_HTML_VIEWER_WIDGET(priv->viewer_widget), label, callback);
 }
+
+GtkWidget *gebr_gui_html_viewer_window_get_menubar (GebrGuiHtmlViewerWindow * self)
+{
+	g_return_val_if_fail(GEBR_GUI_IS_HTML_VIEWER_WINDOW(self), NULL);
+
+	GebrGuiHtmlViewerWindowPrivate * priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
+
+	return gtk_ui_manager_get_widget (priv->manager, "/menubar");
+}
