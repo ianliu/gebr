@@ -246,7 +246,7 @@ struct ui_project_line *project_line_setup_ui(void)
 	GtkWidget * hbox;
 	hbox = gtk_hbox_new(FALSE, 0);
 	ui_project_line->info.help_view = gtk_button_new_with_label(_("View report"));
-	ui_project_line->info.help_edit = gtk_button_new_with_label(_("Edit report"));
+	ui_project_line->info.help_edit = gtk_button_new_with_label(_("Edit line commentaries"));
 	gtk_box_pack_start(GTK_BOX(hbox), ui_project_line->info.help_view, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), ui_project_line->info.help_edit, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(ui_project_line->info.help_view), "clicked",
@@ -1220,8 +1220,8 @@ gebr_project_line_print_dialog_custom_tab()
 	gtk_container_add(GTK_CONTAINER(frame_param),param_vbox);
 
 
-	detailed_line_include_report = gtk_check_button_new_with_label(_("Include user's report"));
-	detailed_line_include_flow_report = gtk_check_button_new_with_label(_("Include flow report"));
+	detailed_line_include_report = gtk_check_button_new_with_label(_("Include line commentaries"));
+	detailed_line_include_flow_report = gtk_check_button_new_with_label(_("Include flow commentaries"));
 	
 	g_signal_connect(detailed_line_css_combo, "changed",
 			 G_CALLBACK(on_detailed_line_css_changed), NULL);

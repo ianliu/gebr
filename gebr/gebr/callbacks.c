@@ -373,7 +373,7 @@ static void on_detailed_report_request (GebrGeoXmlDocument *document,
 		return;
 
 	content = content_func ();
-	dialog = gtk_dialog_new_with_buttons (_("Generate detailed report"),
+	dialog = gtk_dialog_new_with_buttons (_("Generate report"),
 					      GTK_WINDOW (gebr.window),
 					      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 					      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
