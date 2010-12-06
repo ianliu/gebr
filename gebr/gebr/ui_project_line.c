@@ -1060,15 +1060,7 @@ line_can_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *
  */
 void project_line_show_help(void)
 {
-	const gchar * title;
-	GebrGeoXmlObject * object;
-
-	object = GEBR_GEOXML_OBJECT(gebr.project_line);
-	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
-		title = _("Project report");
-	else
-		title = _("Line report");
-	gebr_help_show(object, FALSE, title);
+	gebr_help_show (GEBR_GEOXML_OBJECT (gebr.project_line), FALSE);
 }
 
 void project_line_edit_help(void)

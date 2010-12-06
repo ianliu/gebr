@@ -651,10 +651,10 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 	GebrGeoXmlObjectType type;
 	const gchar * title;
 	const gchar * report;
-	gchar * detailed_html = NULL;
-	gchar * inner_body = NULL;
-	gchar * styles = NULL;
-	gchar * header = NULL;
+	gchar * detailed_html = "";
+	gchar * inner_body = "";
+	gchar * styles = "";
+	gchar * header = "";
 	GString * content;
 
 	content = g_string_new (NULL);
@@ -709,8 +709,13 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 		params = gebr.config.flow_no_param_radio ? g_strdup("") : gebr_flow_generate_parameter_value_table (GEBR_GEOXML_FLOW (document));
 		g_string_append_printf (content, "<div class='gebr-geoxml-flow'>%s</div>\n", params);
 		g_free (params);
-	} else
-		g_return_val_if_reached(NULL);
+	} else if (type == GEBR_GEOXML_OBJECT_TYPE_PROJECT) {
+		g_free (inner_body);
+		return g_strdup (report);
+	} else {
+		g_free (inner_body);
+		g_return_val_if_reached (NULL);
+	}
 
 	detailed_html = gebr_generate_report(title, styles, header, content->str);
 

@@ -508,7 +508,7 @@ static void flow_browse_load(void)
  */
 void flow_browse_show_help(void)
 {
-	gebr_help_show(GEBR_GEOXML_OBJECT(gebr.flow), FALSE, _("Flow report"));
+	gebr_help_show(GEBR_GEOXML_OBJECT(gebr.flow), FALSE);
 }
 
 /**

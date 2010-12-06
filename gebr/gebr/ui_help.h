@@ -37,7 +37,7 @@ void gebr_help_show_selected_program_help(void);
  *
  * Show help of \p object (program or flow) HTML. 
  */
-void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title);
+void gebr_help_show(GebrGeoXmlObject * object, gboolean menu);
 
 /**
  * gebr_help_edit_document:

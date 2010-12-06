@@ -193,10 +193,10 @@ void gebr_help_show_selected_program_help(void)
 	if (!flow_edition_get_selected_component(NULL, TRUE))
 		return;
 
-	gebr_help_show(GEBR_GEOXML_OBJECT(gebr.program), FALSE, _("Program help"));
+	gebr_help_show(GEBR_GEOXML_OBJECT(gebr.program), FALSE);
 }
 
-void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
+void gebr_help_show(GebrGeoXmlObject * object, gboolean menu)
 {
 	const gchar * html;
 	GtkWidget * window;
@@ -213,20 +213,25 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 	if (menu) {
 		gebr_gui_html_viewer_widget_generate_links(html_viewer_widget, object);
 		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
+		gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
 	}
 	else switch (gebr_geoxml_object_get_type(object)) {
 	case GEBR_GEOXML_OBJECT_TYPE_FLOW:
 	case GEBR_GEOXML_OBJECT_TYPE_LINE:
-	case GEBR_GEOXML_OBJECT_TYPE_PROJECT:
-		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
+	case GEBR_GEOXML_OBJECT_TYPE_PROJECT: {
+		gchar *str = gebr_document_generate_report (GEBR_GEOXML_DOCUMENT (object));
+		gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), str);
+		g_free (str);
 		break;
+	}
 	case GEBR_GEOXML_OBJECT_TYPE_PROGRAM:
 		html = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
+		gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
 		break;
 	default:
 		g_return_if_reached ();
 	}
-	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
+
 	gtk_widget_show (window);
 }
 
