@@ -277,6 +277,7 @@ void gebr_setup_ui(void)
 	 */
 	gebr.notebook = gtk_notebook_new();
 	gtk_box_pack_start(GTK_BOX(main_vbox), gebr.notebook, TRUE, TRUE, 0);
+	gebr.last_notebook = -1;
 	g_signal_connect(GTK_OBJECT(gebr.notebook), "switch-page", G_CALLBACK(on_notebook_switch_page), NULL);
 	gtk_widget_show(gebr.notebook);
 

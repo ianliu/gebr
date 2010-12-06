@@ -32,12 +32,13 @@ enum {
 };
 
 /* Accel Group entries */
+/* The order here are similar to the notebook pages*/
 enum {
-    GENERAL = 0,
-    PROJECT_AND_LINE,
+    PROJECT_AND_LINE = 0,
     FLOW,
     FLOW_EDITION,
     JOB_CONTROL,
+    GENERAL,
     STATUS,
     ACCEL_N
 };

@@ -420,6 +420,7 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 
     if (gebr.last_notebook >= 0)
         gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
-	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[page_num]);
+
+    gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[page_num]);
     gebr.last_notebook = page_num;
 }
