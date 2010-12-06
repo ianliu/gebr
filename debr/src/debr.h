@@ -27,6 +27,7 @@
 #include "menu.h"
 #include "program.h"
 #include "parameter.h"
+#include "interface.h"
 #include "debr-validate.h"
 
 G_BEGIN_DECLS
@@ -60,7 +61,16 @@ struct debr {
 	struct about about;
 	GtkWidget *invisible;
 	GtkAccelGroup *accel_group;
+	//GtkActionGroup *action_group;
+
+	gint last_notebook;
+	GtkAccelGroup *accel_group_array[ACCEL_N];
 	GtkActionGroup *action_group;
+	GtkActionGroup *action_group_general;
+	GtkActionGroup *action_group_menu;
+	GtkActionGroup *action_group_program;
+	GtkActionGroup *action_group_parameter;
+	GtkActionGroup *action_group_validate;
 
 	/* 'special' tool items */
 	GtkToolItem *tool_item_new;

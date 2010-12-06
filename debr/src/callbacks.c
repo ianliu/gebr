@@ -35,6 +35,14 @@
 
 void on_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num)
 {
+
+
+	if (debr.last_notebook >= 0)
+		gtk_window_remove_accel_group(GTK_WINDOW(debr.window), debr.accel_group_array[debr.last_notebook]);
+
+	gtk_window_add_accel_group(GTK_WINDOW(debr.window), debr.accel_group_array[page_num]);
+	debr.last_notebook = page_num;
+
 	if (page_num == NOTEBOOK_PAGE_VALIDATE) {
 		GtkTreeIter iter;
 		gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_validate.list_store)) {

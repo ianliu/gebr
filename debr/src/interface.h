@@ -27,6 +27,16 @@
 
 G_BEGIN_DECLS
 
+/* Accel Group entries */
+/* The order here are similar to the notebook pages*/
+enum {
+    MENU = 0,
+    PROGRAM,
+    PARAMETER,
+    VALIDATE,
+    GENERAL,
+    ACCEL_N
+};
 /**
  * Creates the main window for DeBR and initialize all structures.
  */

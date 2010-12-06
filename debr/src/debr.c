@@ -75,7 +75,11 @@ gboolean debr_quit(void)
 	debr_config_save();
 
 	gtk_widget_destroy(debr.about.dialog);
-	g_object_unref(debr.accel_group);
+	g_object_unref(debr.accel_group_array[MENU]);
+	g_object_unref(debr.accel_group_array[PROGRAM]);
+	g_object_unref(debr.accel_group_array[PARAMETER]);
+	g_object_unref(debr.accel_group_array[VALIDATE]);
+	g_object_unref(debr.accel_group_array[GENERAL]);
 
 	g_hash_table_destroy(debr.help_edit_windows);
 

@@ -262,7 +262,7 @@ void menu_setup_ui(void)
 	g_object_set(debr.ui_menu.details.help_view, "sensitive", FALSE, NULL);
 	g_object_set(debr.ui_menu.details.help_edit, "sensitive", FALSE, NULL);
 
-	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save_all"), FALSE);
+	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group_menu, "menu_save_all"), FALSE);
 	debr.ui_menu.widget = hpanel;
 	gtk_widget_show_all(debr.ui_menu.widget);
 }
@@ -880,7 +880,7 @@ void menu_selected(void)
 		}
 
 		gboolean help_exists = (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu))) ? TRUE : FALSE);
-		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_help_view"), help_exists);
+		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group_menu, "menu_help_view"), help_exists);
 
 	} else if (type == ITER_FOLDER) {
 		menu_folder_details_update(&iter);
@@ -907,7 +907,7 @@ void menu_selected(void)
 		debr_set_actions_sensitive(names_on, TRUE);
 
 		GtkAction * action;
-		action = gtk_action_group_get_action(debr.action_group, "menu_remove_folder");
+		action = gtk_action_group_get_action(debr.action_group_menu, "menu_remove_folder");
 		if (gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(debr.ui_menu.model), &iter, &debr.ui_menu.iter_other))
 			gtk_action_set_sensitive(action, FALSE);
 		else
@@ -1096,13 +1096,13 @@ void menu_status_set_from_iter(GtkTreeIter * iter, MenuStatus status)
 				   MENU_VALIDATE_NEED_UPDATE, TRUE,
 				   -1);
 
-	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save"), unsaved);
-	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert"), unsaved);
+	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group_menu, "menu_save"), unsaved);
+	gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group_menu, "menu_revert"), unsaved);
 
 	if (menu_count_unsaved(NULL) > 0)
-		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save_all"), TRUE);
+		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group_menu, "menu_save_all"), TRUE);
 	else
-		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save_all"), FALSE);
+		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group_menu, "menu_save_all"), FALSE);
 }
 
 void menu_status_set_unsaved(void)
@@ -1355,7 +1355,7 @@ void menu_details_update(void)
 
 		g_object_set(debr.ui_menu.details.help_view, "sensitive", help_exists, NULL);
 		g_object_set(debr.ui_menu.details.help_edit, "sensitive", TRUE, NULL);
-		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "menu_help_view"), help_exists);
+		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group_menu, "menu_help_view"), help_exists);
 		validate_image_set_check_help(debr.ui_menu.help_validate_image,
 					      gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)));
 	}
@@ -1778,50 +1778,50 @@ static GtkMenu *menu_popup_menu(GtkTreeView * tree_view)
 	menu = gtk_menu_new();
 
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_new")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_menu, "menu_new")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_close")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_menu, "menu_close")));
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (debr.action_group, "menu_properties")));
+						      (debr.action_group_menu, "menu_properties")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_validate")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_menu, "menu_validate")));
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-	if (gtk_action_get_sensitive(gtk_action_group_get_action(debr.action_group, "menu_save")))
+	if (gtk_action_get_sensitive(gtk_action_group_get_action(debr.action_group_menu, "menu_save")))
 		gtk_container_add(GTK_CONTAINER(menu),
 				  gtk_action_create_menu_item(gtk_action_group_get_action
-							      (debr.action_group, "menu_save")));
+							      (debr.action_group_menu, "menu_save")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_save_as")));
-	if (gtk_action_get_sensitive(gtk_action_group_get_action(debr.action_group, "menu_revert")))
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_menu, "menu_save_as")));
+	if (gtk_action_get_sensitive(gtk_action_group_get_action(debr.action_group_menu, "menu_revert")))
 		gtk_container_add(GTK_CONTAINER(menu),
 				  gtk_action_create_menu_item(gtk_action_group_get_action
-							      (debr.action_group, "menu_revert")));
+							      (debr.action_group_menu, "menu_revert")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_delete")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_menu, "menu_delete")));
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_add_folder")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_menu, "menu_add_folder")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_remove_folder")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_menu, "menu_remove_folder")));
 
 	/* view help */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (debr.action_group, "menu_help_view")));
+						      (debr.action_group_menu, "menu_help_view")));
 
 	/* edit help */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (debr.action_group, "menu_help_edit")));
+						      (debr.action_group_menu, "menu_help_edit")));
 	/*
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_select_all")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_menu, "menu_select_all")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_unselect_all")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_menu, "menu_unselect_all")));
 	*/
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
@@ -1860,7 +1860,7 @@ static GtkMenu *menu_popup_menu(GtkTreeView * tree_view)
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_install")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_menu, "menu_install")));
 
 	gtk_widget_show_all(menu);
 
@@ -1879,11 +1879,11 @@ static GtkMenu *menu_dialog_save_popup_menu(GtkTreeView * tree_view)
 
 	popup_menu = gtk_menu_new();
 
-	select_all_menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_select_all"));
+	select_all_menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_menu, "menu_select_all"));
 	g_signal_connect(select_all_menu_item, "activate", G_CALLBACK(on_menu_select_all_activate), tree_view);
 	gtk_container_add(GTK_CONTAINER(popup_menu), select_all_menu_item);
 	
-	unselect_all_menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "menu_unselect_all"));
+	unselect_all_menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_menu, "menu_unselect_all"));
 	g_signal_connect(unselect_all_menu_item, "activate", G_CALLBACK(on_menu_unselect_all_activate), tree_view);
 	gtk_container_add(GTK_CONTAINER(popup_menu), unselect_all_menu_item);
 
