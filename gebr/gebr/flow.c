@@ -761,14 +761,35 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 			break;
 		}
 
-                if (((radio_value == FLOW_PARAMS_NO_DEFAULT_PARAMS) && (g_strcmp0(str_value->str, default_value->str) != 0)) ||
-                    ((radio_value == FLOW_PARAMS_NO_BLANK_PARAMS) && (str_value->len > 0)) ||
-                    ((radio_value == FLOW_PARAMS_ALL_PARAMS)))
-                        g_string_append_printf(dump, "<tr>\n  <td class=\"%slabel\">%s</td>\n  <td class=\"value\">%s</td>\n</tr>\n",
-                                               (in_group?"group-":""),
-                                               gebr_geoxml_parameter_get_label(parameter),
-                                               str_value->str);
-                
+		if (((radio_value == FLOW_PARAMS_NO_DEFAULT_PARAMS) && (g_strcmp0(str_value->str, default_value->str) != 0)) ||
+		    ((radio_value == FLOW_PARAMS_NO_BLANK_PARAMS) && (str_value->len > 0)) ||
+		    ((radio_value == FLOW_PARAMS_ALL_PARAMS)))
+		{
+			/* Translating enum values to labels */		
+			GebrGeoXmlSequence *enum_option = NULL;
+			gint return_value = 0;
+
+			return_value = gebr_geoxml_program_parameter_get_enum_option(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), &enum_option, 0);
+
+
+			if (enum_option != NULL && GEBR_GEOXML_RETV_INVALID_INDEX !=  return_value)
+				for (; enum_option != NULL; gebr_geoxml_sequence_next(&enum_option)) 
+				{
+					if (g_strcmp0(str_value->str, 
+						      gebr_geoxml_enum_option_get_value(GEBR_GEOXML_ENUM_OPTION(enum_option))) == 0)
+					{
+						g_string_printf(str_value, "%s", 
+								gebr_geoxml_enum_option_get_label(GEBR_GEOXML_ENUM_OPTION(enum_option)));
+						break;
+					}
+
+				}
+
+			g_string_append_printf(dump, "<tr>\n  <td class=\"%slabel\">%s</td>\n  <td class=\"value\">%s</td>\n</tr>\n",
+					       (in_group?"group-":""),
+					       gebr_geoxml_parameter_get_label(parameter),
+					       str_value->str);
+		}
 		g_string_free(str_value, TRUE);
 		g_string_free(default_value, TRUE);
 	} else {
@@ -791,6 +812,8 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 			gebr_geoxml_parameters_get_parameter(parameters, &param, 0);
 
 			GString * inner_table = g_string_new(dump->str);
+
+
 			while (param) {
 				append_parameter_row(GEBR_GEOXML_PARAMETER(param), dump, TRUE);
 				gebr_geoxml_sequence_next(&param);
