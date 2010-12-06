@@ -1570,7 +1570,6 @@ parameter_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter *
 static void parameter_reconfigure_default_widget(struct ui_parameter_dialog *ui)
 {
 	gebr_gui_parameter_widget_reconfigure(ui->gebr_gui_parameter_widget);
-	gtk_box_pack_start(GTK_BOX(ui->default_widget_hbox), ui->gebr_gui_parameter_widget->widget, TRUE, TRUE, 0);
 	gtk_widget_show(ui->gebr_gui_parameter_widget->widget);
 }
 
