@@ -1230,15 +1230,20 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	widget = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(widget);
 	gtk_box_pack_start(GTK_BOX(widget), categories_label, FALSE, FALSE, 0);
-	gtk_table_attach(GTK_TABLE(table), widget, 0, 1, 5, 6,
-			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, 0);
+	gtk_table_attach (GTK_TABLE (table), widget, 0, 1, 5, 6,
+			  (GtkAttachOptions) (GTK_FILL),
+			  (GtkAttachOptions) (GTK_FILL),
+			  0, 0);
+
 	gtk_misc_set_alignment(GTK_MISC(categories_label), 0, 0.5);
 
 	categories_sequence_edit = category_edit_new(debr.menu, new_menu);
 	gtk_widget_show(categories_sequence_edit);
-	gtk_table_attach(GTK_TABLE(table), categories_sequence_edit, 1, 2, 5, 6,
-			 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, 0);
-	gtk_widget_show(categories_sequence_edit);
+	gtk_table_attach (GTK_TABLE (table),
+			  categories_sequence_edit, 1, 2, 5, 6,
+			  (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
+			  (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
+			  0, 0);
 
 	/*
 	 * Load menu into widgets
