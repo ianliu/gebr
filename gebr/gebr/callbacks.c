@@ -357,6 +357,9 @@ static void on_detailed_report_dialog_response (GtkWidget *dialog, gint response
 	html_viewer = gebr_gui_html_viewer_window_new ();
 	detailed_report = gebr_document_generate_report (document);
 	gebr_gui_html_viewer_window_show_html (GEBR_GUI_HTML_VIEWER_WINDOW (html_viewer), detailed_report);
+	
+	gtk_window_set_transient_for(GTK_WINDOW(html_viewer), GTK_WINDOW(gebr.window));
+
 	gtk_widget_show (html_viewer);
 	g_free (detailed_report);
 out:
