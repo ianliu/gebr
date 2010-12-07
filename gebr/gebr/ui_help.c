@@ -94,7 +94,7 @@ static const GtkRadioActionEntry html_viewer_radio_entries[] = {
 		NULL, NULL, GEBR_PARAM_TABLE_ONLY_CHANGED},
 	{"OnlyFilledAction", NULL, N_("Just filled in parameters"),
 		NULL, NULL, GEBR_PARAM_TABLE_ONLY_FILLED},
-	{"AllAction", NULL, N_("Just filled in parameters"),
+	{"AllAction", NULL, N_("All parameters"),
 		NULL, NULL, GEBR_PARAM_TABLE_ALL},
 };
 static guint n_html_viewer_radio_entries = G_N_ELEMENTS (html_viewer_radio_entries);
