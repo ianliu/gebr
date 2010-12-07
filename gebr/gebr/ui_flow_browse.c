@@ -259,7 +259,6 @@ void flow_browse_info_update(void)
 
 		g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
 		g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dump"), FALSE);
 
 		navigation_bar_update();
 		return;
@@ -370,8 +369,6 @@ void flow_browse_info_update(void)
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), help_exists);
 
 	g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", TRUE, NULL);
-
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dump"), TRUE);
 
 	navigation_bar_update();
 }

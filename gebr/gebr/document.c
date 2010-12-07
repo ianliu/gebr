@@ -684,10 +684,12 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 
 			for (; line_flow != NULL; gebr_geoxml_sequence_next(&line_flow)) {
 				GebrGeoXmlFlow *flow;
+				gboolean include_table;
 				const gchar *filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
 
+				include_table = gebr.config.detailed_line_parameter_table != GEBR_PARAM_TABLE_NO_TABLE;
 				document_load((GebrGeoXmlDocument**)(&flow), filename, FALSE);
-				gchar * flow_cont = gebr_flow_get_detailed_report(flow, !gebr.config.line_no_param_radio, FALSE);
+				gchar * flow_cont = gebr_flow_get_detailed_report(flow, include_table, FALSE);
 				g_string_append(content, flow_cont);
 				g_free(flow_cont);
 				gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
@@ -706,7 +708,10 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 			g_string_append_printf (content, "<div class='gebr-geoxml-flow'>%s</div>\n", inner_body);
 
 		gchar * params;
-		params = gebr.config.flow_no_param_radio ? g_strdup("") : gebr_flow_generate_parameter_value_table (GEBR_GEOXML_FLOW (document));
+		if (gebr.config.detailed_flow_parameter_table == GEBR_PARAM_TABLE_NO_TABLE)
+			params = g_strdup("");
+		else
+			params = gebr_flow_generate_parameter_value_table (GEBR_GEOXML_FLOW (document));
 		g_string_append_printf (content, "<div class='gebr-geoxml-flow'>%s</div>\n", params);
 		g_free (params);
 	} else if (type == GEBR_GEOXML_OBJECT_TYPE_PROJECT) {

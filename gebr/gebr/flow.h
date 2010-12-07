@@ -134,7 +134,6 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date);
  */
 gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_table, gboolean include_date);
 
-GtkWidget * gebr_flow_print_dialog_custom_tab(void);
-
 G_END_DECLS
+
 #endif				//__FLOW_H

@@ -651,7 +651,7 @@ void flow_program_paste(void)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 }
 
-static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump, gboolean in_group)
+static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump, gboolean in_group, GebrGeoXmlDocumentType type)
 {
 	gint i, n_instances;
 	GebrGeoXmlSequence * param;
@@ -662,38 +662,29 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 		GString * str_value;
 		GString * default_value;
 		GebrGeoXmlProgramParameter * program;
-		gint radio_value = FLOW_PARAMS_NO_TABLE;
+		gint radio_value = GEBR_PARAM_TABLE_NO_TABLE;
 
 		program = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 		str_value = gebr_geoxml_program_parameter_get_string_value(program, FALSE);
                 default_value = gebr_geoxml_program_parameter_get_string_value(program, TRUE);
 
-		switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
-		case NOTEBOOK_PAGE_PROJECT_LINE:
-			if (gebr.config.line_just_default_radio)
-				radio_value = FLOW_PARAMS_NO_DEFAULT_PARAMS;
-			else if (gebr.config.line_just_filled_radio)
-				radio_value = FLOW_PARAMS_NO_BLANK_PARAMS;
-			else if (gebr.config.line_all_param_radio)
-				radio_value = FLOW_PARAMS_ALL_PARAMS;
+		switch (type) {
+		case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+			radio_value = gebr.config.detailed_line_parameter_table;
 			break;
-		case NOTEBOOK_PAGE_FLOW_BROWSE:
-			if (gebr.config.flow_just_default_radio)
-				radio_value = FLOW_PARAMS_NO_DEFAULT_PARAMS;
-			else if (gebr.config.flow_just_filled_radio)
-				radio_value = FLOW_PARAMS_NO_BLANK_PARAMS;
-			else if (gebr.config.flow_all_param_radio)
-				radio_value = FLOW_PARAMS_ALL_PARAMS;
+		case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
+			radio_value = gebr.config.detailed_flow_parameter_table;
 			break;
 		default:
+			g_warn_if_reached ();
 			break;
 		}
 
-		if (((radio_value == FLOW_PARAMS_NO_DEFAULT_PARAMS) && (g_strcmp0(str_value->str, default_value->str) != 0)) ||
-		    ((radio_value == FLOW_PARAMS_NO_BLANK_PARAMS) && (str_value->len > 0)) ||
-		    ((radio_value == FLOW_PARAMS_ALL_PARAMS)))
+		if (((radio_value == GEBR_PARAM_TABLE_ONLY_CHANGED) && (g_strcmp0(str_value->str, default_value->str) != 0)) ||
+		    ((radio_value == GEBR_PARAM_TABLE_ONLY_FILLED) && (str_value->len > 0)) ||
+		    ((radio_value == GEBR_PARAM_TABLE_ALL)))
 		{
-			/* Translating enum values to labels */		
+			/* Translating enum values to labels */
 			GebrGeoXmlSequence *enum_option = NULL;
 			gint return_value = 0;
 
@@ -743,7 +734,7 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 
 
 			while (param) {
-				append_parameter_row(GEBR_GEOXML_PARAMETER(param), dump, TRUE);
+				append_parameter_row(GEBR_GEOXML_PARAMETER(param), dump, TRUE, type);
 				gebr_geoxml_sequence_next(&param);
 			}
 			/*If there are no parameters returned by the dialog choice...*/
@@ -766,11 +757,16 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 	}
 }
 
-static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * program)
+static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program)
 {
 	GString * table;
-	GebrGeoXmlParameters * parameters;
-	GebrGeoXmlSequence * sequence;
+	GebrGeoXmlDocumentType type;
+	GebrGeoXmlDocument *document;
+	GebrGeoXmlParameters *parameters;
+	GebrGeoXmlSequence *sequence;
+
+	document = gebr_geoxml_object_get_owner_document (GEBR_GEOXML_OBJECT (program));
+	type = gebr_geoxml_document_get_type (document);
 
 	table = g_string_new ("");
 	parameters = gebr_geoxml_program_get_parameters (program);
@@ -798,14 +794,14 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 
 		GString * initial_table = g_string_new(table->str);
 		while (sequence) {
-			append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), table, FALSE);
+			append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), table, FALSE, type);
 			gebr_geoxml_sequence_next (&sequence);
 		}
 
-		if (g_string_equal(initial_table, table)){
-			switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
-			case NOTEBOOK_PAGE_PROJECT_LINE:
-				if (gebr.config.line_just_default_radio)
+		if (g_string_equal(initial_table, table)) {
+			switch (type) {
+			case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+				if (gebr.config.detailed_line_parameter_table == GEBR_PARAM_TABLE_ONLY_CHANGED)
 					g_string_printf(table,
 							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
 							"<caption>%s</caption>\n"
@@ -813,7 +809,7 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 							"<tr><td>This program has only default parameters</td></tr>\n",
 							translated);
 
-				else if (gebr.config.line_just_filled_radio)
+				else if (gebr.config.detailed_line_parameter_table == GEBR_PARAM_TABLE_ONLY_FILLED)
 					g_string_printf(table,
 							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
 							"<caption>%s</caption>\n"
@@ -822,8 +818,8 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 							translated);
 
 				break;
-			case NOTEBOOK_PAGE_FLOW_BROWSE:
-				if (gebr.config.flow_just_default_radio)
+			case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
+				if (gebr.config.detailed_flow_parameter_table == GEBR_PARAM_TABLE_ONLY_CHANGED)
 					g_string_printf(table,
 							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
 							"<caption>%s</caption>\n"
@@ -831,7 +827,7 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 							"<tr><td>This program has only default parameters</td></tr>\n",
 							translated);
 
-				else if (gebr.config.flow_just_filled_radio)
+				else if (gebr.config.detailed_flow_parameter_table == GEBR_PARAM_TABLE_ONLY_FILLED)
 					g_string_printf(table,
 							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
 							"<caption>%s</caption>\n"
@@ -840,6 +836,7 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram * 
 							translated);
 				break;
 			default:
+				g_warn_if_reached ();
 				break;
 			}
 
@@ -953,44 +950,6 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
 	return g_string_free(dump, FALSE);
 }
 
-static void on_detailed_flow_css_changed (GtkComboBox * combobox)
-{
-	GtkTreeIter iter;
-	gchar *text;
-
-	if (gtk_combo_box_get_active_iter (combobox, &iter)) {
-		gtk_tree_model_get(gtk_combo_box_get_model(combobox), &iter, 1, &text, -1);
-		g_string_assign (gebr.config.detailed_flow_css, text);
-	} else {
-		g_string_assign (gebr.config.detailed_flow_css, "");
-	}
-	g_free (text);
-}
-
-static void on_detailed_flow_include_report_toggled (GtkToggleButton * button)
-{
-	gebr.config.detailed_flow_include_report = gtk_toggle_button_get_active (button);
-}
-
-
-static void on_detailed_flow_param_none_toggled (GtkToggleButton *toggle)
-{
-	gebr.config.flow_no_param_radio =  gtk_toggle_button_get_active (toggle);
-}
-static void on_detailed_flow_param_default_toggled (GtkToggleButton *toggle)
-{
-	gebr.config.flow_just_default_radio =  gtk_toggle_button_get_active (toggle);
-}
-static void on_detailed_flow_param_filled_toggled (GtkToggleButton *toggle)
-{
-	gebr.config.flow_just_filled_radio =  gtk_toggle_button_get_active (toggle);
-}
-static void on_detailed_flow_param_all_toggled (GtkToggleButton *toggle)
-{
-	gebr.config.flow_all_param_radio =  gtk_toggle_button_get_active (toggle);
-}
-
-
 gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_table, gboolean include_date)
 {
 	gchar * table;
@@ -1015,138 +974,4 @@ gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_t
 	g_free (header);
 
 	return report;
-}
-
-GtkWidget * gebr_flow_print_dialog_custom_tab()
-{
-	GtkWidget * hbox_combo;
-	GtkWidget * vbox;
-	GtkWidget * frame;
-	GtkWidget * detailed_flow_css;
-	GtkWidget * detailed_flow_include_report;
-	GtkWidget * css_combo_label;
-	GDir * directory;
-	GError * error = NULL;
-	const gchar * filename = NULL;
-	gint active = 0, i = 0;
-	GtkListStore *list_store;
-	GtkTreeIter iter;
-	GtkCellRenderer     *renderer;
-
-	/*Building the Model*/
-	list_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
-
-	/*Make a combo_box from model*/
-	detailed_flow_css = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list_store));
-	g_object_unref(list_store);
-
-	renderer = gtk_cell_renderer_text_new ();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(detailed_flow_css), renderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(detailed_flow_css), renderer, "text", 0);
-
-
-	css_combo_label = gtk_label_new(_("Style "));
-	gtk_widget_show(css_combo_label);
-
-	/*Reading the CSS file directory*/
-	directory = g_dir_open(GEBR_STYLES_DIR, 0, &error);
-	if (error != NULL) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Unable to read file: %s"), error->message);
-		g_clear_error (&error);
-		return NULL;
-	}
-
-	gtk_list_store_append(list_store, &iter);
-	gtk_list_store_set(list_store, &iter, 0, _("None"), 1, "", -1);
-
-	filename = g_dir_read_name(directory);
-	while (filename != NULL) {
-		if (fnmatch ("*.css", filename, 1) == 0) {
-			gtk_list_store_append(list_store, &iter);
-			gchar *absolute_path = g_strconcat(GEBR_STYLES_DIR, "/", filename, NULL);
-			gchar *title = gebr_document_get_css_header_field(absolute_path, "title");
-			g_free(absolute_path);
-			if (!title)
-				gtk_list_store_set(list_store, &iter, 0, filename, 1, filename, -1);
-			else
-				gtk_list_store_set(list_store, &iter, 0, title, 1, filename, -1);
-			g_free(title);
-			if (g_strcmp0 (filename, gebr.config.detailed_flow_css->str) == 0)
-				// We must sum 1 to active to skip the first entry
-				active = i + 1;
-			i++;
-		}
-		filename = g_dir_read_name(directory);
-	}
-	gtk_widget_show(detailed_flow_css);
-
-	/*Building Parameter's choose radio button*/
-	GtkWidget *param_vbox;
-	GtkWidget *frame_param;
-	GtkWidget *flow_no_param_radio;
-	GtkWidget *flow_just_default_radio;
-	GtkWidget *flow_just_filled_radio;
-	GtkWidget *flow_all_param_radio;
-	GtkWidget *fake_radio;
-
-	frame_param = gtk_frame_new(_("Parameter table:"));
-	gtk_container_set_border_width(GTK_CONTAINER(frame_param), 10);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame_param), GTK_SHADOW_NONE);
-
-	param_vbox = gtk_vbox_new(FALSE, 0);
-
-	fake_radio = gtk_radio_button_new(NULL);
-
-	flow_no_param_radio = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio), _("No table at all"));
-	gtk_box_pack_start(GTK_BOX(param_vbox), flow_no_param_radio, FALSE, FALSE, 2);
-
-	flow_just_default_radio = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio), _("Just parameters which differ from default"));
-	gtk_box_pack_start(GTK_BOX(param_vbox), flow_just_default_radio, FALSE, FALSE, 2);
-
-	flow_just_filled_radio = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio), _("Just filled in parameters"));
-	gtk_box_pack_start(GTK_BOX(param_vbox), flow_just_filled_radio, FALSE, FALSE, 2);
-
-	flow_all_param_radio = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(fake_radio), _("All parameters"));
-	gtk_box_pack_start(GTK_BOX(param_vbox), flow_all_param_radio, FALSE, FALSE, 2);
-
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flow_no_param_radio), gebr.config.flow_no_param_radio);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flow_just_default_radio), gebr.config.flow_just_default_radio);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flow_just_filled_radio), gebr.config.flow_just_filled_radio);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flow_all_param_radio), gebr.config.flow_all_param_radio);
-
-	g_signal_connect(GTK_TOGGLE_BUTTON(flow_no_param_radio), "toggled", G_CALLBACK(on_detailed_flow_param_none_toggled), NULL);
-	g_signal_connect(GTK_TOGGLE_BUTTON(flow_just_default_radio), "toggled", G_CALLBACK(on_detailed_flow_param_default_toggled), NULL);
-	g_signal_connect(GTK_TOGGLE_BUTTON(flow_just_filled_radio), "toggled", G_CALLBACK(on_detailed_flow_param_filled_toggled), NULL);
-	g_signal_connect(GTK_TOGGLE_BUTTON(flow_all_param_radio), "toggled", G_CALLBACK(on_detailed_flow_param_all_toggled), NULL);
-
-	gtk_widget_show_all(param_vbox);
-
-	gtk_container_add(GTK_CONTAINER(frame_param),param_vbox);
-
-	detailed_flow_include_report = gtk_check_button_new_with_label(_("Include flow comments"));
-
-	g_signal_connect(detailed_flow_css, "changed", G_CALLBACK(on_detailed_flow_css_changed), NULL);
-	g_signal_connect(detailed_flow_include_report, "toggled", G_CALLBACK(on_detailed_flow_include_report_toggled), NULL);
-
-	gtk_combo_box_set_active(GTK_COMBO_BOX(detailed_flow_css), active);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(detailed_flow_include_report), gebr.config.detailed_flow_include_report);
-
-	frame = gtk_frame_new(NULL);
-	gtk_container_set_border_width(GTK_CONTAINER(frame), 10);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
-
-	vbox = gtk_vbox_new(FALSE, 0);
-	hbox_combo = gtk_hbox_new(FALSE, 0);
-
-	gtk_box_pack_start(GTK_BOX(hbox_combo), css_combo_label, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox_combo), detailed_flow_css, TRUE, TRUE, 0);
-
-	gtk_box_pack_start(GTK_BOX(vbox), hbox_combo, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), detailed_flow_include_report, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), frame_param, FALSE, TRUE, 0);
-
-	gtk_container_add(GTK_CONTAINER(frame),vbox);
-
-	gtk_widget_show_all(frame);
-	return frame;
 }

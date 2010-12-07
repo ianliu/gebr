@@ -31,13 +31,14 @@
 
 #include "cmdline.h"
 #include "interface.h"
-#include "ui_project_line.h"
 #include "ui_flow.h"
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
+#include "ui_help.h"
 #include "ui_job_control.h"
 #include "ui_log.h"
 #include "ui_preferences.h"
+#include "ui_project_line.h"
 #include "ui_server.h"
 
 G_BEGIN_DECLS
@@ -120,48 +121,16 @@ struct gebr {
 		GString *project_line_string;
 		GString *flow_string;
 
-		// Detailed report options
-		// - For flows:
-		//  [ ] Include user's report
-		//  [ ] Include parameter/value table
-		//  (CSS Combo ^)
-		GString * detailed_flow_css;
-                // Parameter table:
-                // 0 - No table at all
-                // 1 - Just parameters which differ from default
-                // 2 - Just filled in parameters
-                // 3 - All parameters
-		gboolean flow_no_param_radio;
-		gboolean flow_just_default_radio;
-		gboolean flow_just_filled_radio;
-		gboolean flow_all_param_radio;
-		gint detailed_flow_params;
+		// Configurations for flow report generation
+		GString *detailed_flow_css;
 		gboolean detailed_flow_include_report;
+		GebrHelpParamTable detailed_flow_parameter_table;
 
-		// - For lines:
-		//  [ ] Include user's report
-		//  [ ] Include flow's report
-		//  |- Include parameter/value table----
-		//  |    o No table at all              |
-		//  |    o Just parameters which differ from default
-		//  |    o Just filled in parameters    |
-		//  |    o All parameters               |
-		//  |___________________________________
-		//
-		//  (CSS Combo ^)
-
-		GString * detailed_line_css;
-                // Parameter table:
-                // 0 - No table at all
-                // 1 - Just parameters which differ from default
-                // 2 - Just filled in parameters
-                // 3 - All parameters
-		gboolean line_no_param_radio;
-		gboolean line_just_default_radio;
-		gboolean line_just_filled_radio;
-		gboolean line_all_param_radio;
+		// Configurations for line report generation
+		GString *detailed_line_css;
 		gboolean detailed_line_include_report;
 		gboolean detailed_line_include_flow_report;
+		GebrHelpParamTable detailed_line_parameter_table;
 	} config;
 
 	/* Pixmaps */

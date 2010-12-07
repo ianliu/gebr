@@ -346,65 +346,6 @@ void on_flow_browse_edit_help(void) {
     flow_browse_edit_help();
 }
 
-static void on_detailed_report_dialog_response (GtkWidget *dialog, gint response, GebrGeoXmlDocument *document)
-{
-	GtkWidget *html_viewer;
-	gchar *detailed_report;
-
-	if (response != GTK_RESPONSE_OK)
-		goto out;
-
-	html_viewer = gebr_gui_html_viewer_window_new ();
-	detailed_report = gebr_document_generate_report (document);
-	gebr_gui_html_viewer_window_show_html (GEBR_GUI_HTML_VIEWER_WINDOW (html_viewer), detailed_report);
-	
-	gtk_window_set_transient_for(GTK_WINDOW(html_viewer), GTK_WINDOW(gebr.window));
-
-	gtk_widget_show (html_viewer);
-	g_free (detailed_report);
-out:
-	gtk_widget_destroy (dialog);
-}
-
-static void on_detailed_report_request (GebrGeoXmlDocument *document,
-					GtkWidget * (*content_func) (void))
-{
-	GtkWidget *dialog;
-	GtkWidget *content;
-
-	if (!document)
-		return;
-
-	content = content_func ();
-	dialog = gtk_dialog_new_with_buttons (_("Generate report"),
-					      GTK_WINDOW (gebr.window),
-					      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-					      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					      GTK_STOCK_OK, GTK_RESPONSE_OK,
-					      NULL);
-
-	g_signal_connect (dialog, "response",
-			  G_CALLBACK (on_detailed_report_dialog_response), document);
-
-	gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
-	gtk_container_set_border_width (GTK_CONTAINER (dialog), 5);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), content, TRUE, TRUE, 0);
-	gtk_widget_show_all (content);
-	gtk_widget_show (dialog);
-}
-
-void on_flow_detailed_report_activate ()
-{
-	on_detailed_report_request (GEBR_GEOXML_DOCUMENT (gebr.flow),
-				    gebr_flow_print_dialog_custom_tab);
-}
-
-void on_line_detailed_report_activate ()
-{
-	on_detailed_report_request (GEBR_GEOXML_DOCUMENT (gebr.line),
-				    gebr_project_line_print_dialog_custom_tab);
-}
-
 void on_project_line_show_help (void)
 {
     project_line_show_help();

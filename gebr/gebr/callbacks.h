@@ -181,17 +181,6 @@ void on_project_line_show_help (void);
 
 void on_project_line_edit_help (void);
 
-/**
- * on_detailed_report_activate:
- *
- * Called when the user presses the Detailed report button in Flow's tab.
- * This function creates a #GebrGuiHtmlViewerWindow to show the detailed
- * report.
- */
-void on_flow_detailed_report_activate (void);
-
-void on_line_detailed_report_activate (void);
-
 void on_notebook_switch_page (GtkNotebook     *notebook,
 			      GtkNotebookPage *page,
 			      guint            page_num,

@@ -23,6 +23,13 @@
 
 G_BEGIN_DECLS
 
+typedef enum {
+	GEBR_PARAM_TABLE_NO_TABLE,
+	GEBR_PARAM_TABLE_ONLY_CHANGED,
+	GEBR_PARAM_TABLE_ONLY_FILLED,
+	GEBR_PARAM_TABLE_ALL
+} GebrHelpParamTable;
+
 /**
  * gebr_help_show_selected_program_help:
  * Show help for the currently selected program.

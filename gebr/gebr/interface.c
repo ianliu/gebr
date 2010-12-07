@@ -37,10 +37,6 @@
  * Private data
  */
 
-#ifndef GTK_STOCK_PRINT_REPORT
-# define GTK_STOCK_PRINT_REPORT GTK_STOCK_PRINT
-#endif
-
 /**
  * \internal
  * The various actions for GeBR interface.
@@ -82,8 +78,6 @@ static const GtkActionEntry actions_entries_project_line[] = {
 		NULL, N_("View the report related to project/line"), G_CALLBACK(on_project_line_show_help)},
 	{"project_line_edit", GTK_STOCK_EDIT, N_("Edit Comments"),
 		NULL, N_("Edit the comments related to project/line"), G_CALLBACK(on_project_line_edit_help)},
-	{"project_line_dump", GTK_STOCK_PRINT_REPORT, N_("Line report"),
-		NULL, N_("View line report"), G_CALLBACK(on_line_detailed_report_activate)},
 };
 
 static const GtkActionEntry actions_entries_flow[] = {
@@ -116,8 +110,6 @@ static const GtkActionEntry actions_entries_flow[] = {
 		NULL, N_("View the report related to flow"), G_CALLBACK(on_flow_browse_show_help)},
 	{"flow_edit", GTK_STOCK_EDIT, N_("Edit Comments"),
 		NULL, N_("Edit the comments related to flow"), G_CALLBACK(on_flow_browse_edit_help)},
-	{"flow_dump", GTK_STOCK_PRINT_REPORT, N_("Flow report"),
-		NULL, N_("View flow report"), G_CALLBACK(on_flow_detailed_report_activate)},
 };
 
 static const GtkActionEntry actions_entries_flow_edition[] = {
@@ -309,9 +301,6 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"))),
 			   -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dump"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
@@ -360,10 +349,6 @@ void gebr_setup_ui(void)
 	gebr_gui_gtk_widget_set_tooltip(GTK_WIDGET(tool_item), _("Save flow state"));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
 	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_dump"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),

@@ -83,22 +83,15 @@ static const GtkToggleActionEntry html_viewer_toggle_entries[] = {
 };
 static guint n_html_viewer_toggle_entries = G_N_ELEMENTS (html_viewer_toggle_entries);
 
-typedef enum {
-	PTBL_NO_TABLE,
-	PTBL_ONLY_CHANGED,
-	PTBL_ONLY_FILLED,
-	PTBL_ALL
-} ParamTable;
-
 static const GtkRadioActionEntry html_viewer_radio_entries[] = {
 	{"NoTableAction", NULL, N_("No table at all"),
-		NULL, NULL, PTBL_NO_TABLE},
+		NULL, NULL, GEBR_PARAM_TABLE_NO_TABLE},
 	{"OnlyChangedAction", NULL, N_("Just parameters which differ from default"),
-		NULL, NULL, PTBL_ONLY_CHANGED},
+		NULL, NULL, GEBR_PARAM_TABLE_ONLY_CHANGED},
 	{"OnlyFilledAction", NULL, N_("Just filled in parameters"),
-		NULL, NULL, PTBL_ONLY_FILLED},
+		NULL, NULL, GEBR_PARAM_TABLE_ONLY_FILLED},
 	{"AllAction", NULL, N_("Just filled in parameters"),
-		NULL, NULL, PTBL_ALL},
+		NULL, NULL, GEBR_PARAM_TABLE_ALL},
 };
 static guint n_html_viewer_radio_entries = G_N_ELEMENTS (html_viewer_radio_entries);
 
