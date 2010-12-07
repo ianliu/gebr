@@ -75,11 +75,21 @@ gboolean debr_quit(void)
 	debr_config_save();
 
 	gtk_widget_destroy(debr.about.dialog);
-	g_object_unref(debr.accel_group_array[MENU]);
-	g_object_unref(debr.accel_group_array[PROGRAM]);
-	g_object_unref(debr.accel_group_array[PARAMETER]);
-	g_object_unref(debr.accel_group_array[VALIDATE]);
-	g_object_unref(debr.accel_group_array[GENERAL]);
+	g_object_unref(debr.accel_group_array[ACCEL_MENU]);
+	g_object_unref(debr.accel_group_array[ACCEL_PROGRAM]);
+	g_object_unref(debr.accel_group_array[ACCEL_PARAMETER]);
+	g_object_unref(debr.accel_group_array[ACCEL_VALIDATE]);
+	g_object_unref(debr.accel_group_array[ACCEL_GENERAL]);
+	g_object_unref(debr.accel_group_array[ACCEL_COMMON]);
+	g_object_unref(debr.accel_group_array[ACCEL_PARAMETER_CHANGE_TYPE]);
+
+	g_object_unref(debr.action_group_general);
+	g_object_unref(debr.action_group_menu);
+	g_object_unref(debr.action_group_program);
+	g_object_unref(debr.action_group_parameter);
+	g_object_unref(debr.action_group_validate);
+	g_object_unref(debr.common_action_group);
+	g_object_unref(debr.parameter_type_radio_actions_group);
 
 	g_hash_table_destroy(debr.help_edit_windows);
 

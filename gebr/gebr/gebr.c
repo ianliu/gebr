@@ -194,6 +194,19 @@ gboolean gebr_quit(void)
 	g_object_unref(gebr.pixmaps.stock_info);
 	gtk_widget_destroy(gebr.invisible);
 
+	g_object_unref(gebr.accel_group_array[ACCEL_PROJECT_AND_LINE]);
+	g_object_unref(gebr.accel_group_array[ACCEL_FLOW]);
+	g_object_unref(gebr.accel_group_array[ACCEL_FLOW_EDITION]);
+	g_object_unref(gebr.accel_group_array[ACCEL_JOB_CONTROL]);
+	g_object_unref(gebr.accel_group_array[ACCEL_GENERAL]);
+	g_object_unref(gebr.accel_group_array[ACCEL_STATUS]);
+	g_object_unref(gebr.action_group_general);
+	g_object_unref(gebr.action_group_project_line);
+	g_object_unref(gebr.action_group_flow);
+	g_object_unref(gebr.action_group_flow_edition);
+	g_object_unref(gebr.action_group_job_control);
+	g_object_unref(gebr.action_group_status);
+
 	gtk_main_quit();
 
 	return FALSE;

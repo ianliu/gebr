@@ -67,7 +67,7 @@ struct gebr {
 	struct about about;
 	gint last_notebook;
 	GtkAccelGroup *accel_group_array[ACCEL_N];
-	GtkActionGroup *action_group;
+	GtkActionGroup *action_group_general;
 	GtkActionGroup *action_group_project_line;
 	GtkActionGroup *action_group_flow;
 	GtkActionGroup *action_group_flow_edition;

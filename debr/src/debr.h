@@ -63,12 +63,12 @@ struct debr {
 
 	gint last_notebook;
 	GtkAccelGroup *accel_group_array[ACCEL_N];
-	GtkActionGroup *action_group;
 	GtkActionGroup *action_group_general;
 	GtkActionGroup *action_group_menu;
 	GtkActionGroup *action_group_program;
 	GtkActionGroup *action_group_parameter;
 	GtkActionGroup *action_group_validate;
+	GtkActionGroup *common_action_group;
 	GtkActionGroup *parameter_type_radio_actions_group;
 
 	/* 'special' tool items */

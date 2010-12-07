@@ -30,13 +30,13 @@ G_BEGIN_DECLS
 /* Accel Group entries */
 /* The order here are similar to the notebook pages*/
 enum {
-    MENU = 0,
-    PROGRAM,
-    PARAMETER,
-    VALIDATE,
-    GENERAL,
-    COMMON,
-    PARAMETER_CHANGE_TYPE,
+    ACCEL_MENU = 0,
+    ACCEL_PROGRAM,
+    ACCEL_PARAMETER,
+    ACCEL_VALIDATE,
+    ACCEL_GENERAL,
+    ACCEL_COMMON,
+    ACCEL_PARAMETER_CHANGE_TYPE,
     ACCEL_N
 };
 /**

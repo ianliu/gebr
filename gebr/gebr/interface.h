@@ -34,12 +34,12 @@ enum {
 /* Accel Group entries */
 /* The order here are similar to the notebook pages*/
 enum {
-    PROJECT_AND_LINE = 0,
-    FLOW,
-    FLOW_EDITION,
-    JOB_CONTROL,
-    GENERAL,
-    STATUS,
+    ACCEL_PROJECT_AND_LINE = 0,
+    ACCEL_FLOW,
+    ACCEL_FLOW_EDITION,
+    ACCEL_JOB_CONTROL,
+    ACCEL_GENERAL,
+    ACCEL_STATUS,
     ACCEL_N
 };
 void gebr_setup_ui(void);

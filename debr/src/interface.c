@@ -165,7 +165,6 @@ void debr_setup_ui(void)
 	GtkWidget *child_menu_item;
 	GtkWidget *toolbar;
 
-	GtkActionGroup *common_action_group;
 
 	/*
 	 * Main window and its vbox contents
@@ -209,45 +208,45 @@ void debr_setup_ui(void)
 	debr.action_group_general = gtk_action_group_new("General");
 	gtk_action_group_set_translation_domain(debr.action_group_general, GETTEXT_PACKAGE);
 	gtk_action_group_add_actions(debr.action_group_general, actions_entries_general, G_N_ELEMENTS(actions_entries_general), NULL);
-	debr.accel_group_array[GENERAL] = gtk_accel_group_new();
-	gebr_gui_gtk_action_group_set_accel_group(debr.action_group_general, debr.accel_group_array[GENERAL]);
+	debr.accel_group_array[ACCEL_GENERAL] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(debr.action_group_general, debr.accel_group_array[ACCEL_GENERAL]);
 	
 	debr.action_group_menu = gtk_action_group_new("Menu");
 	gtk_action_group_set_translation_domain(debr.action_group_menu, GETTEXT_PACKAGE);
 	gtk_action_group_add_actions(debr.action_group_menu, actions_entries_menu, G_N_ELEMENTS(actions_entries_menu), NULL);
-	debr.accel_group_array[MENU] = gtk_accel_group_new();
-	gebr_gui_gtk_action_group_set_accel_group(debr.action_group_menu, debr.accel_group_array[MENU]);
+	debr.accel_group_array[ACCEL_MENU] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(debr.action_group_menu, debr.accel_group_array[ACCEL_MENU]);
 	
 	debr.action_group_program = gtk_action_group_new("Program");
 	gtk_action_group_set_translation_domain(debr.action_group_program, GETTEXT_PACKAGE);
 	gtk_action_group_add_actions(debr.action_group_program, actions_entries_program, G_N_ELEMENTS(actions_entries_program), NULL);
-	debr.accel_group_array[PROGRAM] = gtk_accel_group_new();
-	gebr_gui_gtk_action_group_set_accel_group(debr.action_group_program, debr.accel_group_array[PROGRAM]);
+	debr.accel_group_array[ACCEL_PROGRAM] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(debr.action_group_program, debr.accel_group_array[ACCEL_PROGRAM]);
 	
 	debr.action_group_parameter = gtk_action_group_new("Parameter");
 	gtk_action_group_set_translation_domain(debr.action_group_parameter, GETTEXT_PACKAGE);
 	gtk_action_group_add_actions(debr.action_group_parameter, actions_entries_parameter, G_N_ELEMENTS(actions_entries_parameter), NULL);
-	debr.accel_group_array[PARAMETER] = gtk_accel_group_new();
-	gebr_gui_gtk_action_group_set_accel_group(debr.action_group_parameter, debr.accel_group_array[PARAMETER]);
+	debr.accel_group_array[ACCEL_PARAMETER] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(debr.action_group_parameter, debr.accel_group_array[ACCEL_PARAMETER]);
 	
 	debr.action_group_validate = gtk_action_group_new("Validate");
 	gtk_action_group_set_translation_domain(debr.action_group_validate, GETTEXT_PACKAGE);
 	gtk_action_group_add_actions(debr.action_group_validate, actions_entries_validate, G_N_ELEMENTS(actions_entries_validate), NULL);
-	debr.accel_group_array[VALIDATE] = gtk_accel_group_new();
-	gebr_gui_gtk_action_group_set_accel_group(debr.action_group_validate, debr.accel_group_array[VALIDATE]);
+	debr.accel_group_array[ACCEL_VALIDATE] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(debr.action_group_validate, debr.accel_group_array[ACCEL_VALIDATE]);
 	
-	common_action_group = gtk_action_group_new("Common");
-	gtk_action_group_set_translation_domain(common_action_group, GETTEXT_PACKAGE);
-	gtk_action_group_add_actions(common_action_group, common_actions_entries, G_N_ELEMENTS(common_actions_entries), NULL);
-	debr.accel_group_array[COMMON] = gtk_accel_group_new();
-	gebr_gui_gtk_action_group_set_accel_group(common_action_group, debr.accel_group_array[COMMON]);
+	debr.common_action_group = gtk_action_group_new("Common");
+	gtk_action_group_set_translation_domain(debr.common_action_group, GETTEXT_PACKAGE);
+	gtk_action_group_add_actions(debr.common_action_group, common_actions_entries, G_N_ELEMENTS(common_actions_entries), NULL);
+	debr.accel_group_array[ACCEL_COMMON] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(debr.common_action_group, debr.accel_group_array[ACCEL_COMMON]);
 
 	debr.parameter_type_radio_actions_group = gtk_action_group_new("Parameter Type");
 	gtk_action_group_set_translation_domain(debr.parameter_type_radio_actions_group, GETTEXT_PACKAGE);
 	gtk_action_group_add_radio_actions(debr.parameter_type_radio_actions_group, parameter_type_radio_actions_entries,
 					   combo_type_map_size, -1, G_CALLBACK(on_parameter_type_activate), NULL);
-	debr.accel_group_array[PARAMETER_CHANGE_TYPE] = gtk_accel_group_new();
-	gebr_gui_gtk_action_group_set_accel_group(debr.parameter_type_radio_actions_group, debr.accel_group_array[PARAMETER_CHANGE_TYPE]);
+	debr.accel_group_array[ACCEL_PARAMETER_CHANGE_TYPE] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(debr.parameter_type_radio_actions_group, debr.accel_group_array[ACCEL_PARAMETER_CHANGE_TYPE]);
 
 
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group_menu, "menu_new"));
@@ -266,7 +265,7 @@ void debr_setup_ui(void)
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
 
-	child_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PREFERENCES, debr.accel_group_array[GENERAL]);
+	child_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PREFERENCES, debr.accel_group_array[ACCEL_GENERAL]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), child_menu_item);
 	g_signal_connect(child_menu_item, "activate", G_CALLBACK(on_configure_preferences_activate), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());

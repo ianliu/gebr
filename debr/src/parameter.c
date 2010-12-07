@@ -1453,7 +1453,7 @@ static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 	}
 
 out:	
-	gtk_menu_set_accel_group(GTK_MENU(menu), debr.accel_group_array[PARAMETER_CHANGE_TYPE]);
+	gtk_menu_set_accel_group(GTK_MENU(menu), debr.accel_group_array[ACCEL_PARAMETER_CHANGE_TYPE]);
 	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
