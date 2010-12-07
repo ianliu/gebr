@@ -34,6 +34,8 @@ G_BEGIN_DECLS
 #define GEBR_GUI_HTML_VIEWER_WINDOW_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_GUI_TYPE_HTML_VIEWER_WINDOW, GebrGuiHtmlViewerWindowClass))
 
 
+#define GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "menubar"
+
 typedef struct _GebrGuiHtmlViewerWindow GebrGuiHtmlViewerWindow;
 typedef struct _GebrGuiHtmlViewerWindowClass GebrGuiHtmlViewerWindowClass;
 
@@ -84,9 +86,11 @@ void gebr_gui_html_viewer_window_set_custom_tab (GebrGuiHtmlViewerWindow * self,
  * gebr_gui_html_viewer_window_get_ui_manager:
  * @self: A #GebrGuiHtmlViewerWindow
  *
- * Returns: the #GtkMenuBar this window is displaying.
+ * You can get this ui manager to customize this window's interface.
+ *
+ * Returns: the #GtkUIManager this window is using.
  */
-GtkWidget *gebr_gui_html_viewer_window_get_menubar (GebrGuiHtmlViewerWindow * self);
+GtkUIManager *gebr_gui_html_viewer_window_get_ui_manager (GebrGuiHtmlViewerWindow * self);
 
 G_END_DECLS
 
