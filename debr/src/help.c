@@ -412,6 +412,7 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 		content = (gchar *) gebr_geoxml_program_get_title(program);
 	else
 		content = (gchar *) gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu));
+	
 
 	escaped_content = g_markup_escape_text((const gchar *) content, -1);
 
@@ -436,7 +437,8 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 		content = (gchar *) gebr_geoxml_program_get_description(program);
 	else
 		content = (gchar *) gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(debr.menu));
-	
+
+
 	escaped_content = g_markup_escape_text((const gchar *) content, -1);
 	
 	if (strlen(escaped_content)) {
@@ -473,13 +475,15 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 			gebr_geoxml_sequence_next(&category);
 		}
 		g_string_insert(help, pos, catstr->str);
+
 		g_string_free(catstr, TRUE);
 	}
 
+	/* DTD version update */
 	pos = strip_block(help, "dtd");
 	if (pos)
 		g_string_insert(help, pos, gebr_geoxml_document_get_version(GEBR_GEOXML_DOCUMENT(debr.menu)));
-
+	
         GDate *date;
         gchar datestr[13];
 	gchar *original_locale = NULL, *new_locale = NULL;
@@ -501,6 +505,7 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 	if (new_locale)
 		g_free(new_locale);
 
+	/* Program Version */
 	if (program != NULL) {
 		pos = strip_block(help, "ver");
 		if (pos)
@@ -885,6 +890,14 @@ void debr_help_edit(GebrGeoXmlObject * object)
 
 	if (strlen(help) <= 1)
 		help = generate_help_from_template(object);
+	
+	/* Update of help title, author, date, etc */
+	GString * help_g_string = NULL;
+	help_g_string = g_string_new(help);
+	help_subst_fields(help_g_string, program, TRUE);
+	g_free(help);
+	help = g_strdup(help_g_string->str);
+	g_string_free(help_g_string, TRUE);
 
 	/* EDIT IT */
 	if (debr.config.native_editor || !debr.config.htmleditor->len) {
