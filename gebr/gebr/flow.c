@@ -1195,7 +1195,7 @@ GtkWidget * gebr_flow_print_dialog_custom_tab()
 
 	gtk_container_add(GTK_CONTAINER(frame_param),param_vbox);
 
-	detailed_flow_include_report = gtk_check_button_new_with_label(_("Include flow commentaries"));
+	detailed_flow_include_report = gtk_check_button_new_with_label(_("Include flow comments"));
 
 	g_signal_connect(detailed_flow_css, "changed", G_CALLBACK(on_detailed_flow_css_changed), NULL);
 	g_signal_connect(detailed_flow_include_report, "toggled", G_CALLBACK(on_detailed_flow_include_report_toggled), NULL);

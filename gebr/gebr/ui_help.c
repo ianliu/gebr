@@ -106,7 +106,7 @@ create_help_edit_window(GebrGeoXmlDocument * document)
 
 	doc_title = gebr_geoxml_document_get_title (document);
 	if (strlen (doc_title))
-		title = g_strdup_printf (_("Commentaries of the %s \"%s\""), document_type, doc_title);
+		title = g_strdup_printf (_("Comments of the %s \"%s\""), document_type, doc_title);
 	else
 		title = g_strdup_printf (_("Report of the %s"), document_type);
 	gtk_window_set_title (GTK_WINDOW (window), title);
